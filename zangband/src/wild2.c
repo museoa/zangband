@@ -703,7 +703,7 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[0] = i;
 					gate_num[0] = 2;
-					pl_ptr->gates_x[0] = i;
+					pl_ptr->gates_x[0] = i - 1;
 					pl_ptr->gates_y[0] = j;
 				}
 				else if ((gate_value[0] == i) && one_in_(gate_num[0]))
@@ -711,7 +711,7 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[0] = i;
 					gate_num[0]++;
-					pl_ptr->gates_x[0] = i;
+					pl_ptr->gates_x[0] = i - 1;
 					pl_ptr->gates_y[0] = j;
 				}
 
@@ -721,7 +721,7 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[1] = i;
 					gate_num[1] = 2;
-					pl_ptr->gates_x[1] = i;
+					pl_ptr->gates_x[1] = i + 1;
 					pl_ptr->gates_y[1] = j;
 				}
 				else if ((gate_value[1] == i) && one_in_(gate_num[1]))
@@ -729,7 +729,7 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[1] = i;
 					gate_num[1]++;
-					pl_ptr->gates_x[1] = i;
+					pl_ptr->gates_x[1] = i + 1;
 					pl_ptr->gates_y[1] = j;
 				}
 
@@ -740,7 +740,7 @@ static bool create_city(int x, int y, int town_num)
 					gate_value[2] = j;
 					gate_num[2] = 2;
 					pl_ptr->gates_x[2] = i;
-					pl_ptr->gates_y[2] = j;
+					pl_ptr->gates_y[2] = j - 1;
 				}
 				else if ((gate_value[2] == j) && one_in_(gate_num[2]))
 				{
@@ -748,7 +748,7 @@ static bool create_city(int x, int y, int town_num)
 					gate_value[2] = j;
 					gate_num[2]++;
 					pl_ptr->gates_x[2] = i;
-					pl_ptr->gates_y[2] = j;
+					pl_ptr->gates_y[2] = j - 1;
 				}
 
 				/* Top gate */
@@ -758,7 +758,7 @@ static bool create_city(int x, int y, int town_num)
 					gate_value[3] = j;
 					gate_num[3] = 2;
 					pl_ptr->gates_x[3] = i;
-					pl_ptr->gates_y[3] = j;
+					pl_ptr->gates_y[3] = j + 1;
 				}
 				else if ((gate_value[3] == j) && one_in_(gate_num[3]))
 				{
@@ -766,10 +766,19 @@ static bool create_city(int x, int y, int town_num)
 					gate_value[3] = j;
 					gate_num[3]++;
 					pl_ptr->gates_x[3] = i;
-					pl_ptr->gates_y[3] = j;
+					pl_ptr->gates_y[3] = j + 1;
 				}
 			}
 		}
+	}
+
+	/* Fix gates so that they are in range */
+	for (i = 0; i < 4; i++)
+	{
+		if (pl_ptr->gates_x[i] + x < 0) pl_ptr->gates_x[i] = 0;
+		if (pl_ptr->gates_y[i] + y < 0) pl_ptr->gates_y[i] = 0;
+		if (pl_ptr->gates_x[i] + x > WILD_SIZE) pl_ptr->gates_x[i] = WILD_BLOCK_SIZE;
+		if (pl_ptr->gates_y[i] + y > WILD_SIZE) pl_ptr->gates_y[i] = WILD_BLOCK_SIZE;
 	}
 
 	/*
