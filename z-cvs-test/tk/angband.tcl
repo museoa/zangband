@@ -162,10 +162,6 @@ if {[Global borg,active]} return
 #return
 			}
 
-			building {
-				NSModule::LoadIfNeeded NSBuilding
-			}
-
 			choosemonster {
 				NSModule::LoadIfNeeded NSChooseMonster
 			}

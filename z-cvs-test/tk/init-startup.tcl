@@ -585,9 +585,6 @@ proc angband_startup {what} {
 		init_towns {
 			set prompt "    towns"
 		}
-		init_buildings {
-			set prompt "    buildings"
-		}
 		init_quests {
 			set prompt "    quests"
 		}

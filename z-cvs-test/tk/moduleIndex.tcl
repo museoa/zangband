@@ -6,7 +6,6 @@ if {[llength [angband player spell_book]]} {
 	IndexOne NSBookMenu book-menu.tcl
 	IndexOne NSBookWindow book-window.tcl
 }
-IndexOne NSBuilding building.tcl
 IndexOne NSCharacterWindow character-window.tcl
 IndexOne NSCharFlagsCanvas charflags-canvas.tcl
 IndexOne NSCharInfoCanvas charinfo-canvas.tcl
