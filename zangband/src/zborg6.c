@@ -5708,8 +5708,8 @@ static int borg_attack_aux_launch(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d * (100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 
 		/* Paranoia */
@@ -5786,8 +5786,8 @@ static int borg_attack_aux_launch_seeker(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + (100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 		/* Paranoia */
 		if (d <= 0) continue;
@@ -5859,8 +5859,8 @@ static int borg_attack_aux_launch_flame(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + ( 100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 
 		/* Paranoia */
@@ -5935,8 +5935,8 @@ static int borg_attack_aux_launch_frost(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 		/* Paranoia */
 		if (d <= 0) continue;
@@ -6010,8 +6010,8 @@ static int borg_attack_aux_launch_animal(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 
 		/* Paranoia */
@@ -6085,8 +6085,8 @@ static int borg_attack_aux_launch_evil(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 
 		/* Paranoia */
@@ -6161,8 +6161,8 @@ static int borg_attack_aux_launch_dragon(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 
 		/* Paranoia */
@@ -6237,8 +6237,8 @@ static int borg_attack_aux_launch_wounding(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + l_ptr->to_d + bow->to_d;
-		d = d * my_ammo_power * borg_skill[BI_SHOTS];
+		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
+		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 
 		/* Paranoia */

@@ -251,8 +251,7 @@ s16b home_stat_add[6];
 bool borg_wearing_cursed;
 
 int my_ammo_tval;	/* Ammo -- "tval" */
-int my_ammo_sides;	/* Ammo -- "sides" */
-s16b my_ammo_power;	/* Shooting multipler */
+s16b my_ammo_power;	/* Average power */
 s16b my_ammo_range;	/* Shooting range */
 
 s16b my_need_enchant_to_a;	/* Need some enchantment */

@@ -3051,33 +3051,13 @@ static s32b borg_power_aux3(void)
 	if (l_ptr)
 	{
 		/* Calculate "average" damage per "normal" shot (times 2) */
-		if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 25)
-			damage = ((my_ammo_sides) + (l_ptr->to_d)) * my_ammo_power;
-		else
-			damage = (my_ammo_sides + 8) * my_ammo_power;
-
-		/* Reward "damage" */
-		value += (borg_skill[BI_SHOTS] * damage * 9L);
-
-		/*
-		 * AJG - slings force you to carry heavy ammo.
-		 * Penalty for that unles you have lots of str
-		 */
-		if (k_info[l_ptr->k_idx].sval == SV_SLING &&
-			!(l_ptr->xtra_name && *l_ptr->xtra_name) && my_stat_ind[A_STR] < 14)
-		{
-			value -= 5000L;
-		}
+		value += (borg_skill[BI_BMAXDAM] * 20L);
 
 		/* Reward "bonus to hit" */
 		if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
 			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 7L);
 		else
 			value += ((borg_skill[BI_TOHIT] + 8) * 7L);
-
-		/* Prefer bows */
-		if (borg_class == CLASS_RANGER &&
-			my_ammo_tval == TV_ARROW) value += 30000L;
 
 		/* Hack -- It is hard to hold a heavy weapon */
 		if (hold < l_ptr->weight / 10) value -= 500000L;

@@ -737,9 +737,6 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	/* Reset the "ammo" tval to darts by default */
 	my_ammo_tval = 0;
 
-	/* Reset the "ammo" sides for darts */
-	my_ammo_sides = 4;
-
 	/* Reset the shooting power */
 	my_ammo_power = 0;
 
@@ -779,56 +776,125 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 			case SV_SLING:
 			{
 				my_ammo_tval = TV_SHOT;
-				my_ammo_sides = 3;
-				my_ammo_power = 2;
+				my_ammo_power = 16;
+				if (extra_might) my_ammo_power = 24;
 				break;
 			}
 
 			case SV_SHORT_BOW:
 			{
 				my_ammo_tval = TV_ARROW;
-				my_ammo_sides = 4;
-				my_ammo_power = 2;
+				if (extra_might)
+				{
+					my_ammo_power = 18;
+					my_ammo_range = 20;
+				}
+				else
+				{
+					my_ammo_power = 12;
+					my_ammo_range = 15;
+				}
 				break;
 			}
 
 			case SV_LONG_BOW:
 			{
 				my_ammo_tval = TV_ARROW;
-				my_ammo_sides = 4;
-				my_ammo_power = 3;
+				if (borg_skill[BI_CSTR] >= 16)
+				{
+					if (extra_might)
+					{
+						my_ammo_power = 24;
+						my_ammo_range = 25;
+					}
+					else
+					{
+						my_ammo_power = 18;
+						my_ammo_range = 20;
+					}
+				}
+				else
+				{
+					if (extra_might)
+					{
+						my_ammo_power = 18;
+						my_ammo_range = 20;
+					}
+					else
+					{
+						my_ammo_power = 12;
+						my_ammo_range = 15;
+					}
+				}
 				break;
 			}
 
 			case SV_LIGHT_XBOW:
 			{
 				my_ammo_tval = TV_BOLT;
-				my_ammo_sides = 5;
-				my_ammo_power = 3;
+				if (extra_might)
+				{
+					my_ammo_power = 28;
+					my_ammo_range = 30;
+				}
+				else
+				{
+					my_ammo_power = 23;
+					my_ammo_range = 25;
+				}
 				break;
 			}
 
 			case SV_HEAVY_XBOW:
 			{
 				my_ammo_tval = TV_BOLT;
-				my_ammo_sides = 5;
-				my_ammo_power = 4;
+				if (extra_might)
+				{
+					my_ammo_power = 29;
+					my_ammo_range = 35;
+				}
+				else
+				{
+					my_ammo_power = 24;
+					my_ammo_range = 30;
+				}
 				break;
 			}
 		}
 
-		/* Add in extra power */
-		my_ammo_power += extra_might;
-
-		/* Calculate total range */
-		my_ammo_range = 10 + my_ammo_power * 5;
-
 		/* Hack -- Reward High Level Rangers using Bows */
 		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_ARROW))
 		{
+			/* Extra shot at level 15 */
+			if (borg_skill[BI_CLEVEL] >= 15) my_num_fire++;
+
+			/* Extra shot at level 30 */
+			if (borg_skill[BI_CLEVEL] >= 30) my_num_fire++;
+			
+			/* Extra shot at level 45 */
+			if (borg_skill[BI_CLEVEL] >= 45) my_num_fire++;
+		}
+		
+		/* Hack -- Reward High Level Rangers using XBows */
+		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_BOLT))
+		{
+			/* Extra shot at level 30 */
+			if (borg_skill[BI_CLEVEL] >= 30) my_num_fire++;
+		}
+		
+		/* Hack -- Reward High Level Rogues using Slings */
+		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_SHOT))
+		{
 			/* Extra shot at level 20 */
 			if (borg_skill[BI_CLEVEL] >= 20) my_num_fire++;
-
+			
+			/* Extra shot at level 40 */
+			if (borg_skill[BI_CLEVEL] >= 40) my_num_fire++;
+		}
+		
+		/* Hack -- Reward High Level Warriors */
+		if (borg_class == CLASS_WARRIOR)
+		{
 			/* Extra shot at level 40 */
 			if (borg_skill[BI_CLEVEL] >= 40) my_num_fire++;
 		}
@@ -842,9 +908,9 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	borg_skill[BI_SHOTS] = my_num_fire;
 
 	/* Calculate "average" damage per "normal" shot (times 2) */
-	borg_skill[BI_BMAXDAM] =
-		(my_ammo_sides + borg_skill[BI_BTODAM]) * my_ammo_power;
-	borg_skill[BI_BMAXDAM] *= borg_skill[BI_SHOTS];
+	borg_skill[BI_BMAXDAM] = my_ammo_power *
+								(borg_skill[BI_BTODAM] + 100) * 3 / 100;
+	borg_skill[BI_BMAXDAM] *= (my_num_fire + 1) / 2;
 }
 
 

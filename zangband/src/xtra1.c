@@ -3445,7 +3445,7 @@ static void calc_bonuses(void)
 			if ((p_ptr->pclass == CLASS_RANGER) &&
 				(p_ptr->ammo_tval == TV_BOLT))
 			{
-				/* Extra shot at level 20 */
+				/* Extra shot at level 30 */
 				if (p_ptr->lev >= 30) p_ptr->num_fire++;
 			}
 

@@ -602,8 +602,7 @@ extern bool borg_wearing_cursed;
 extern s16b weapon_swap_digger;
 
 extern int my_ammo_tval;	/* Ammo -- "tval"   */
-extern int my_ammo_sides;	/* Ammo -- "sides"  */
-extern s16b my_ammo_power;	/* Shooting multipler   */
+extern s16b my_ammo_power;	/* Average power   */
 extern s16b my_ammo_range;	/* Shooting range   */
 
 extern s16b my_need_enchant_to_a;	/* Need some enchantment */
