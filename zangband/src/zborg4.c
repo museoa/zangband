@@ -8870,17 +8870,6 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 			v2 = v2 / 6;
 		}
 
-#if 0							/* They still cast spells, they are still dangerous */
-		/* Reduce danger from scared monsters */
-		if (borg_fear_mon_spell)
-		{
-			v2 = v2 * 8 / 10;
-		}
-		if (kill->afraid)
-		{
-			v2 = v2 * 8 / 10;
-		}
-#endif
 		/* Tweak danger based on the "alertness" of the monster */
 		if (kill->m_flags & MONST_ASLEEP)
 		{
