@@ -1818,14 +1818,6 @@ bool borg_crush_junk(void)
 			{
 				value += 5000L;
 			}
-			/* borg_worships_gold will sell all kinds of stuff,
-			 * nothing, except {cursed} is junk
-			 */
-			if (item->value > 0 &&
-				(borg_worships_gold) &&
-				borg_skill[BI_MAXCLEVEL] <= 20 &&
-				!(strstr(item->desc, "{cursed"))) continue;
-
 
 			/* up to level 5, keep anything of any value */
 			if (borg_skill[BI_CDEPTH] < 5 && value > 0)
@@ -4603,12 +4595,8 @@ bool borg_leave_level(bool bored)
 
 
 		/* Hack -- Recall into dungeon */
-		if ((borg_skill[BI_MAXDEPTH] >= (borg_worships_gold ? 8 : 5)) &&
-			(borg_skill[BI_RECALL] >= 3) &&
-#if 0							/* This is riskier but more fun :) */
-			((cptr)NULL == borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10)) &&
-#endif
-			borg_recall())
+		if ((borg_skill[BI_MAXDEPTH] >= 5) &&
+			 (borg_skill[BI_RECALL] >= 6) && borg_recall())
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");
@@ -4619,7 +4607,7 @@ bool borg_leave_level(bool bored)
 		else
 		{
 			/* note why we didn't recall. */
-			if (borg_skill[BI_MAXDEPTH] < (borg_worships_gold ? 8 : 5))
+			if (borg_skill[BI_MAXDEPTH] < 5)
 				borg_note("# Not deep enough to recall");
 			else if (borg_skill[BI_RECALL] <= 2)
 				borg_note("# Not enough recalls to recall");
@@ -4749,13 +4737,6 @@ bool borg_leave_level(bool bored)
 
 	/* Power dive if Morgoth is dead */
 	if (borg_skill[BI_KING]) g = 1;
-
-	/* Return to town to sell stuff -- No recall allowed. */
-	if ((borg_worships_gold && borg_skill[BI_MAXCLEVEL] <= 20) && (k >= 12))
-	{
-		borg_note("# Going to town (Sell Stuff, Worshipping Gold).");
-		g = -1;
-	}
 
 	/* Return to town to sell stuff */
 	if (bored && (k >= 12))

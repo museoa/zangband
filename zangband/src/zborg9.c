@@ -3130,12 +3130,6 @@ static void init_borg_txt_file(void)
 		msg_print(NULL);
 
 		/* use default values */
-		borg_worships_damage = FALSE;
-		borg_worships_speed = FALSE;
-		borg_worships_hp = FALSE;
-		borg_worships_mana = FALSE;
-		borg_worships_ac = FALSE;
-		borg_worships_gold = FALSE;
 		borg_plays_risky = FALSE;
 		borg_scums_uniques = TRUE;
 		borg_uses_swaps = TRUE;
@@ -3163,72 +3157,6 @@ static void init_borg_txt_file(void)
 		/* Chop the buffer */
 		buf[sizeof(buf) - 1] = '\0';
 
-		/* Extract the true/false */
-		if (prefix(buf, "borg_worships_damage ="))
-		{
-			if (buf[strlen("borg_worships_damage =") + 1] == 'T' ||
-				buf[strlen("borg_worships_damage =") + 1] == '1' ||
-				buf[strlen("borg_worships_damage =") + 1] == 't')
-				borg_worships_damage = TRUE;
-			else
-				borg_worships_damage = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_worships_speed ="))
-		{
-			if (buf[strlen("borg_worships_speed =") + 1] == 'T' ||
-				buf[strlen("borg_worships_speed =") + 1] == '1' ||
-				buf[strlen("borg_worships_speed =") + 1] ==
-				't') borg_worships_speed = TRUE;
-			else
-				borg_worships_speed = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_worships_hp ="))
-		{
-			if (buf[strlen("borg_worships_hp =") + 1] == 'T' ||
-				buf[strlen("borg_worships_hp =") + 1] == '1' ||
-				buf[strlen("borg_worships_hp =") + 1] == 't') borg_worships_hp =
-TRUE;
-			else
-				borg_worships_hp = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_worships_mana ="))
-		{
-			if (buf[strlen("borg_worships_mana =") + 1] == 'T' ||
-				buf[strlen("borg_worships_mana =") + 1] == '1' ||
-				buf[strlen("borg_worships_mana =") + 1] ==
-				't') borg_worships_mana = TRUE;
-			else
-				borg_worships_mana = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_worships_ac ="))
-		{
-			if (buf[strlen("borg_worships_ac =") + 1] == 'T' ||
-				buf[strlen("borg_worships_ac =") + 1] == '1' ||
-				buf[strlen("borg_worships_ac =") + 1] == 't') borg_worships_ac =
-TRUE;
-			else
-				borg_worships_ac = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_worships_gold ="))
-		{
-			if (buf[strlen("borg_worships_gold =") + 1] == 'T' ||
-				buf[strlen("borg_worships_gold =") + 1] == '1' ||
-				buf[strlen("borg_worships_gold =") + 1] ==
-				't') borg_worships_gold = TRUE;
-			else
-				borg_worships_gold = FALSE;
-			continue;
-		}
 
 
 		if (prefix(buf, "borg_plays_risky ="))

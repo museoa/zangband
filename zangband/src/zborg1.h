@@ -217,12 +217,6 @@ extern int borg_respawn_chr;
 extern int borg_dump_level;
 extern bool borg_respawn_winners;
 
-extern bool borg_worships_damage;
-extern bool borg_worships_speed;
-extern bool borg_worships_hp;
-extern bool borg_worships_mana;
-extern bool borg_worships_ac;
-extern bool borg_worships_gold;
 extern bool borg_plays_risky;
 extern bool borg_uses_swaps;
 extern bool borg_uses_calcs;

@@ -13290,11 +13290,6 @@ static bool borg_play_step(int y2, int x2)
 		borg_keypress('0');
 		borg_keypress('9');
 		borg_keypress('9');
-		/* Some borgs will dig more */
-		if (borg_worships_gold)
-		{
-			borg_keypress('9');
-		}
 
 		borg_keypress('T');
 		borg_keypress(I2D(dir));

@@ -4413,7 +4413,6 @@ extern s32b borg_power_aux1(void)
 
 /*
  * Helper function -- calculate non dynamic entries of dynamic calcs
- * and the borg_worship_ bonuses
  */
 extern s32b borg_power_aux2(void)
 {
@@ -4479,56 +4478,10 @@ extern s32b borg_power_aux2(void)
 	}
 
 
-	/*** Borg_worship_ variables ***/
-
-	/* borg_worships_damage */
-	if (borg_worships_damage)
-	{
-		value += ((borg_skill[BI_TOHIT] + borg_items[INVEN_WIELD].to_h) * 15L);
-
-		value += borg_items[INVEN_WIELD].dd *
-			borg_items[INVEN_WIELD].ds * 20L * 2 * borg_skill[BI_BLOWS];
-	}
-
-	/* borg_worships_speed */
-	if (borg_worships_speed)
-	{
-		value += (((borg_skill[BI_SPEED] - 110) * 1500L));
-	}
-
-	/* borg_worships_hp */
-	if (borg_worships_hp && my_stat_ind[A_CON] <= 37)
-	{
-		value += (my_stat_ind[A_CON] * 250L);
-	}
-
-	/* borg_worships_mana */
-	if (borg_worships_mana)
-	{
-		/* Priests / paladins */
-		if ((borg_skill[BI_WISMANA]) && my_stat_ind[A_WIS] <= 37)
-		{
-			value += (my_stat_ind[A_WIS] * 250L);
-		}
-		/* Mages / Rogues / Rangers */
-		if (borg_skill[BI_INTMANA] && my_stat_ind[A_INT] <= 37)
-		{
-			value += (my_stat_ind[A_INT] * 250L);
-		}
-	}
-
-	/* borg_worships_ac */
-	if (borg_worships_ac) value += ((borg_skill[BI_ARMOR]) * 2500L);
-
 	/* Fudge factors for normalizing the AC-Reward curve */
 	if (borg_skill[BI_ARMOR] >= 16 &&
 		borg_skill[BI_ARMOR] <= 74) value += 28250L;
 	if (borg_skill[BI_ARMOR] >= 75) value += 73750L;
-
-	/* borg_worships_gold */
-	/* does not need an entry.  It deals
-	 * with how the borg handles/sells items
-	 */
 
 	/* extra boost for high damage weapon deep dungeon */
 	if (borg_skill[BI_MAXDEPTH] >= 75)
@@ -4933,12 +4886,6 @@ static s32b borg_power_aux3(void)
 		/* Reward "bonus to dam" */
 		value += ((borg_skill[BI_TODAM] + item->to_d) * 30L);
 
-		/* extra damage for some */
-		if (borg_worships_damage)
-		{
-			value += ((borg_skill[BI_TOHIT] + item->to_h) * 15L);
-		}
-
 		/* extra boost for deep dungeon */
 		if (borg_skill[BI_MAXDEPTH] >= 75)
 		{
@@ -4952,12 +4899,6 @@ static s32b borg_power_aux3(void)
 		if (borg_skill[BI_WS_ANIMAL]) value += (dam * 2) / 2;
 		if (borg_skill[BI_WB_POIS]) value += (dam * 2) / 2;
 		if (borg_skill[BI_WS_EVIL]) value += (dam * 7) / 2;
-
-		/* extra damage for some */
-		if (borg_worships_damage)
-		{
-			value += (dam);
-		}
 
 		/* assume 3x base damage for x% of creatures */
 		dam = damage * 3 * borg_skill[BI_BLOWS];
@@ -4982,20 +4923,9 @@ static s32b borg_power_aux3(void)
 		if (borg_skill[BI_WS_TROLL] &&
 			!borg_skill[BI_WS_EVIL]) value += (dam * 1) / 2;
 
-		/* extra damage for some */
-		if (borg_worships_damage)
-		{
-			value += (dam);
-		}
-
 		/* assume 5x base damage for x% of creatures */
 		dam = damage * 5 * borg_skill[BI_BLOWS];
 		if (borg_skill[BI_WK_DRAGON]) value += (dam * 5) / 2;
-		/* extra damage for some */
-		if (borg_worships_damage)
-		{
-			value += (dam);
-		}
 	}
 	else						/* Martial Artists */
 	{
@@ -5030,12 +4960,6 @@ static s32b borg_power_aux3(void)
 		/* Reward "bonus to dam" */
 		value += ((borg_skill[BI_TODAM]) * 30L);
 
-		/* extra damage for some */
-		if (borg_worships_damage)
-		{
-			value += ((borg_skill[BI_TOHIT]) * 15L);
-		}
-
 		/* extra boost for deep dungeon */
 		if (borg_skill[BI_MAXDEPTH] >= 75)
 		{
@@ -5068,14 +4992,7 @@ static s32b borg_power_aux3(void)
 		damage = (my_ammo_sides + 8) * my_ammo_power;
 
 	/* Reward "damage" */
-	if (borg_worships_damage)
-	{
-		value += (borg_skill[BI_SHOTS] * damage * 11L);
-	}
-	else
-	{
-		value += (borg_skill[BI_SHOTS] * damage * 9L);
-	}
+	value += (borg_skill[BI_SHOTS] * damage * 9L);
 
 	/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
 	if (item->sval == SV_SLING && !item->xtra_name && my_stat_ind[A_STR] < 14)
@@ -5089,13 +5006,6 @@ static s32b borg_power_aux3(void)
 		value += ((borg_skill[BI_TOHIT] + item->to_h) * 7L);
 	else
 		value += ((borg_skill[BI_TOHIT] + 8) * 7L);
-
-	/* extra damage for some */
-	if (borg_worships_damage)
-	{
-		value += ((borg_skill[BI_TOHIT] + item->to_h) * 2L);
-	}
-
 
 	/* Prefer bows */
 	if (borg_class == CLASS_RANGER && my_ammo_tval == TV_ARROW) value += 30000L;
@@ -5150,72 +5060,36 @@ static s32b borg_power_aux3(void)
 	/* Hack -- Reward light radius */
 	value += (borg_skill[BI_CUR_LITE] * 1000000L);
 
-	/* Hack -- Reward speed
-	 * see if speed can be a bonus if good speed; not +3.
-	 * reward higher for +10 than +50 speed (decreased return).
-	 */
-	if (borg_worships_speed)
-	{
-		if (borg_skill[BI_SPEED] >= 150)
-			value += (((borg_skill[BI_SPEED] - 120) * 1500L) + 185000L);
+	/* Hack -- Reward speed */
 
-		if (borg_skill[BI_SPEED] >= 145 && borg_skill[BI_SPEED] <= 149)
-			value += (((borg_skill[BI_SPEED] - 120) * 1500L) + 180000L);
+   if (borg_skill[BI_SPEED] >= 150)
+       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 185000L);
 
-		if (borg_skill[BI_SPEED] >= 140 && borg_skill[BI_SPEED] <= 144)
-			value += (((borg_skill[BI_SPEED] - 120) * 1500L) + 175000L);
+   if (borg_skill[BI_SPEED] >= 145 && borg_skill[BI_SPEED] <= 149)
+       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 180000L);
 
-		if (borg_skill[BI_SPEED] >= 135 && borg_skill[BI_SPEED] <= 139)
-			value += (((borg_skill[BI_SPEED] - 120) * 1500L) + 175000L);
+   if (borg_skill[BI_SPEED] >= 140 && borg_skill[BI_SPEED] <= 144)
+       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 175000L);
 
-		if (borg_skill[BI_SPEED] >= 130 && borg_skill[BI_SPEED] <= 134)
-			value += (((borg_skill[BI_SPEED] - 120) * 1500L) + 160000L);
+   if (borg_skill[BI_SPEED] >= 135 && borg_skill[BI_SPEED] <= 139)
+       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 165000L);
 
-		if (borg_skill[BI_SPEED] >= 125 && borg_skill[BI_SPEED] <= 129)
-			value += (((borg_skill[BI_SPEED] - 110) * 1500L) + 135000L);
+   if (borg_skill[BI_SPEED] >= 130 && borg_skill[BI_SPEED] <= 134)
+       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 150000L);
 
-		if (borg_skill[BI_SPEED] >= 120 && borg_skill[BI_SPEED] <= 124)
-			value += (((borg_skill[BI_SPEED] - 110) * 1500L) + 110000L);
+   if (borg_skill[BI_SPEED] >= 125 && borg_skill[BI_SPEED] <= 129)
+       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 125000L);
 
-		if (borg_skill[BI_SPEED] >= 115 && borg_skill[BI_SPEED] <= 119)
-			value += (((borg_skill[BI_SPEED] - 110) * 1500L) + 85000L);
+   if (borg_skill[BI_SPEED] >= 120 && borg_skill[BI_SPEED] <= 124)
+       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 100000L);
 
-		if (borg_skill[BI_SPEED] >= 110 && borg_skill[BI_SPEED] <= 114)
-			value += (((borg_skill[BI_SPEED] - 110) * 1500L) + 65000L);
-		else
-			value += (((borg_skill[BI_SPEED] - 110) * 2500L));
-	}
-	else
-	{
-		if (borg_skill[BI_SPEED] >= 150)
-			value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 185000L);
+   if (borg_skill[BI_SPEED] >= 115 && borg_skill[BI_SPEED] <= 119)
+       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 75000L);
 
-		if (borg_skill[BI_SPEED] >= 145 && borg_skill[BI_SPEED] <= 149)
-			value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 180000L);
-
-		if (borg_skill[BI_SPEED] >= 140 && borg_skill[BI_SPEED] <= 144)
-			value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 175000L);
-
-		if (borg_skill[BI_SPEED] >= 135 && borg_skill[BI_SPEED] <= 139)
-			value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 165000L);
-
-		if (borg_skill[BI_SPEED] >= 130 && borg_skill[BI_SPEED] <= 134)
-			value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 150000L);
-
-		if (borg_skill[BI_SPEED] >= 125 && borg_skill[BI_SPEED] <= 129)
-			value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 125000L);
-
-		if (borg_skill[BI_SPEED] >= 120 && borg_skill[BI_SPEED] <= 124)
-			value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 100000L);
-
-		if (borg_skill[BI_SPEED] >= 115 && borg_skill[BI_SPEED] <= 119)
-			value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 75000L);
-
-		if (borg_skill[BI_SPEED] >= 110 && borg_skill[BI_SPEED] <= 114)
-			value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 55000L);
-		else
-			value += (((borg_skill[BI_SPEED] - 110) * 2500L));
-	}
+   if (borg_skill[BI_SPEED] >= 110 && borg_skill[BI_SPEED] <= 114)
+       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 55000L);
+   else
+       value += (((borg_skill[BI_SPEED] - 110) * 2500L));
 
 
 	/* Hack -- Reward strength bonus */
@@ -5227,18 +5101,8 @@ static s32b borg_power_aux3(void)
 		value += (my_stat_ind[A_INT] * 500L);
 
 		/* Bonus for sp. */
-		if (borg_worships_mana)
-		{
-			value +=
-				((adj_mag_mana[my_stat_ind[A_INT]] * borg_skill[BI_CLEVEL]) /
-				 2) * 255L;
-		}
-		else
-		{
-			value +=
-				((adj_mag_mana[my_stat_ind[A_INT]] * borg_skill[BI_CLEVEL]) /
-				 2) * 155L;
-		}
+		value +=((adj_mag_mana[my_stat_ind[A_INT]] *
+			 borg_skill[BI_CLEVEL]) / 2) * 155L;
 
 		/* bonus for fail rate */
 		value += adj_mag_stat[my_stat_ind[A_INT]] * 5010L;
@@ -5299,31 +5163,15 @@ my_stat_ind[A_INT] * 35000L;
 			(((adj_con_mhp[my_stat_ind[A_CON]] -
 			   128) * borg_skill[BI_MAXCLEVEL]) / 2);
 
-		if (borg_worships_hp)
-		{
-			value += (my_stat_ind[A_CON] * 250L);
-			/* Hack -- Reward hp bonus */
-			/*         This is a bit wierd because we are not really giving a bonus for */
-			/*         what hp you have, but for the 'bonus' hp you get */
-			/*         getting over 800hp is very important. */
-			if (bonus_hp < 800)
-				value += bonus_hp * 450L;
-			else
-				value += (bonus_hp - 800) * 100L + (350L * 500);
-		}
-		else					/*does not worship hp */
-		{
-			value += (my_stat_ind[A_CON] * 150L);
-			/* Hack -- Reward hp bonus */
-			/*         This is a bit wierd because we are not really giving a bonus for */
-			/*         what hp you have, but for the 'bonus' hp you get */
-			/*         getting over 500hp is very important. */
-			if (bonus_hp < 500)
-				value += bonus_hp * 350L;
-			else
-				value += (bonus_hp - 500) * 100L + (350L * 500);
-		}
-
+	   value += (my_stat_ind[A_CON] * 150L);
+	   /* Hack -- Reward hp bonus */
+	   /*		  This is a bit wierd because we are not really giving a bonus for */
+	   /*		  what hp you have, but for the 'bonus' hp you get */
+	   /*		  getting over 500hp is very important. */
+	   if (bonus_hp < 500)
+	       value += bonus_hp * 350L;
+	   else
+	       value += (bonus_hp - 500) * 100L + (350L * 500);
 	}
 
 
@@ -5526,28 +5374,12 @@ my_stat_ind[A_INT] * 35000L;
 
 
 	/*** Reward powerful armor ***/
-
-	/* Reward armor */
-	if (borg_worships_ac)
+	if (borg_skill[BI_ARMOR] < 15) value += borg_skill[BI_ARMOR] * 2000L;
+	if ((borg_skill[BI_ARMOR] >= 15) && (borg_skill[BI_ARMOR] < 75))
 	{
-		if (borg_skill[BI_ARMOR] < 15) value +=
-				((borg_skill[BI_ARMOR]) * 2500L);
-		if (borg_skill[BI_ARMOR] >= 15 &&
-			borg_skill[BI_ARMOR] < 75) value +=
-((borg_skill[BI_ARMOR]) * 2000L) + 28250L;
-		if (borg_skill[BI_ARMOR] >= 75) value +=
-				((borg_skill[BI_ARMOR]) * 1500L) + 73750L;
+		value += borg_skill[BI_ARMOR] * 1500L + 28350L;
 	}
-	else
-	{
-		if (borg_skill[BI_ARMOR] < 15) value +=
-				((borg_skill[BI_ARMOR]) * 2000L);
-		if (borg_skill[BI_ARMOR] >= 15 &&
-			borg_skill[BI_ARMOR] < 75) value +=
-((borg_skill[BI_ARMOR]) * 1500L) + 28350L;
-		if (borg_skill[BI_ARMOR] >= 75) value +=
-				((borg_skill[BI_ARMOR]) * 500L) + 73750L;
-	}
+    if (borg_skill[BI_ARMOR] >= 75) value += borg_skill[BI_ARMOR] * 500L + 73750L;
 
 	/*** Penalize various things ***/
 
