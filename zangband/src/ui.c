@@ -165,7 +165,6 @@ int get_player_choice(cptr *choices, int num, int col, int wid,
 
 		if (c == KTRL('X'))
 		{
-			remove_loc();
 			quit(NULL);
 		}
 		if (c == ESCAPE)
