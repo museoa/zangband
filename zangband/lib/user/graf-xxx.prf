@@ -5008,11 +5008,10 @@ T:30:0xA2/0x91
 T:31:0xA2/0x89
 
 # Locked Door
-# no tile.
+T:32:0x81:0x8B
 
 # Jammed Door
-# no tile.
-
+T:33:0x81:0x8B
 
 # Load the special player pictures
 %:xtra-xxx.prf

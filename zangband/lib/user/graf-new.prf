@@ -4821,10 +4821,10 @@ T:30:0x82/0x80
 T:31:0x81/0x8F
 
 # Locked Door
-# no tile.
+T:32:0x82/0x83
 
 # Jammed Door
-# no tile.
+T:33:0x82/0x83
 
 # Load the special player pictures
 %:xtra-new.prf
