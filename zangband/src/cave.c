@@ -202,7 +202,7 @@ static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
 static bool cave_stop_wall(cave_type *c_ptr)
 {
 	/* Walls block the path */
-	if (!cave_floor_grid(c_ptr)) return (TRUE);
+	if (!cave_los_grid(c_ptr)) return (TRUE);
 	
 	/* Seems ok */
 	return (FALSE);
@@ -280,6 +280,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 	
 	if (dist > MAX_RANGE)
 	{
+		/* Rescale */
 		dx = (dx * MAX_RANGE) / dist;
 		dy = (dy * MAX_RANGE) / dist;
 	}
@@ -319,7 +320,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 		
 				c_ptr = area(yy, xx);
 			
-				if (cave_floor_grid(c_ptr))
+				if (cave_los_grid(c_ptr))
 				{
 					/* Advance along ray */
 					(*sq)++;
@@ -355,7 +356,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 		
 				c_ptr = area(yy, xx);
 		
-				if (cave_floor_grid(c_ptr))
+				if (cave_los_grid(c_ptr))
 				{
 					/* Advance along ray */
 					(*sq)++;
@@ -414,8 +415,15 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
  * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
  * at the final destination, assuming no monster gets in the way.
  *
- * This needs to be as fast as possible - so do not use the general_los()
+ * This needs to be as fast as possible - so do not use the los_general()
  * function.
+ *
+ * XXX XXX Should we use a version of los(), but choose the average slope?
+ *
+ * XXX XXX Should we use los_general() anyway?
+ *
+ * XXX XXX Should there be two slightly different versions of this function
+ *         a 'smart' one, and a 'dumb' but fast one?
  */
 bool projectable(int y1, int x1, int y2, int x2)
 {
@@ -445,7 +453,7 @@ bool projectable(int y1, int x1, int y2, int x2)
 /* Does this square stop the projection? */
 static bool project_stop(cave_type *c_ptr, u16b flg)
 {
-	if (cave_floor_grid(c_ptr))
+	if (cave_los_grid(c_ptr))
 	{
 		/* Require fields do not block magic */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
@@ -496,8 +504,8 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
  * This function returns the number of grids (if any) in the path.  This
  * function will return zero if and only if (y1,x1) and (y2,x2) are equal.
  *
- * This algorithm is similar to, but slightly different from, the one used
- * by "los()".
+ * This algorithm is the same as that used by "los_general()", however
+ * the grids are saved along the path.
  */
 sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 {
@@ -527,6 +535,7 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 	
 	if (dist > MAX_RANGE)
 	{
+		/* Rescale */
 		dx = (dx * MAX_RANGE) / dist;
 		dy = (dy * MAX_RANGE) / dist;
 	}
@@ -669,7 +678,7 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 static bool cave_stop_ball(cave_type *c_ptr)
 {
 	/* Walls block spells */
-	if (!cave_floor_grid(c_ptr)) return (TRUE);
+	if (!cave_los_grid(c_ptr)) return (TRUE);
 				
 	/* Fields can block magic */
 	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) return (TRUE);
@@ -2889,7 +2898,9 @@ void do_cmd_view_map(void)
  *
  * A grid may be marked as "CAVE_ROOM" which means that it is part of a "room".
  * This is used only in dungeon generation.  Perhaps this flag can be used in
- * other code if required.
+ * other code if required.  This is an alias for "CAVE_MNLT" which is set if
+ * the square is lit by a monsters light source.  Hack: If the player is blind,
+ * no squares have this flag.
  *
  *
  * A grid may be marked as "CAVE_ICKY" which means it is part of a "vault",
@@ -2903,7 +2914,12 @@ void do_cmd_view_map(void)
  * Note that currently the processing of the "view_perma_grids" option is
  * broken.  If it is off, then you can't see floor with the "CAVE_GLOW" flag.
  * Perhaps the "view_perma_grids" flag, and the "view_torch_grids" flags should
- * be combined.
+ * be combined.  The "view_torch_grids" option is also broken.  When on, walls
+ * are not shown properly.  This is due to optimisations elsewhere...
+ *
+ * XXX XXX Perhaps these bugs can be fixed, or these flags removed in some way.
+ * Do we really need all this optional functionality?
+ *
  *
  * Note that the new "update_view()" method allows, among other things, a room
  * to be "partially" seen as the player approaches it, with a growing cone of
@@ -3595,11 +3611,24 @@ errr vinfo_init(void)
  * which are needed by this function are stored in the large "vinfo" array
  * (above), which is initialised at startup.
  *
+ * This has been changed to allow a more circular view, due to the more
+ * advanced distance() function in Zangband.  There are now 135 lines of sight
+ * and one more 32bit flag to hold the data.
+ *
  * Hack -- The queue must be able to hold more than VINFO_MAX_GRIDS grids
  * because the grids at the edge of the field of view use "grid zero" as
  * their children, and the queue must be able to hold several of these
  * special grids.  Because the actual number of required grids is bizarre,
  * we simply allocate twice as many as we would normally need.  XXX XXX XXX
+ *
+ * This method is somewhat complicated and obscure... perhaps the
+ * 'radar sweep' method used by los() and friends is better.  I need to prove
+ * that the new method does not overscan grids.  If that is true, then it is
+ * probably more efficient than this method. XXX XXX
+ *
+ * If we do end up using the new los code, we may need to convert some of the
+ * ints to bytes to save memory. It might also be nice to scan one quadrant at
+ * a time, instead of by octants. XXX XXX XXX
  */
 void update_view(void)
 {
