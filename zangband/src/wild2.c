@@ -149,6 +149,7 @@ static wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_BUILD_CASINO, BT_BUILD, 100, 200, 200, 20},
 	{0, FT_BUILD_INN, BT_BUILD, 100, 100, 200, 5},
 	{0, FT_BUILD_HEALER, BT_BUILD, 250, 250, 200, 20},
+	{0, FT_STORE_BLACK0, BT_STORE, 100, 100, 100, 5},
 };
 
 /* The stores in the starting town */
@@ -159,7 +160,8 @@ static int wild_first_town[START_STORE_NUM] =
 	BUILD_SUPPLIES0,
 	BUILD_WARHALL0,
 	BUILD_STORE_TEMPLE,
-	BUILD_STORE_MAGIC
+    BUILD_STORE_MAGIC,
+    BUILD_BLACK0
 };
 
 

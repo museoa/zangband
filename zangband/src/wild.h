@@ -51,7 +51,7 @@
 	(((TOWN_HGT / WILD_BLOCK_SIZE) + 1) * WILD_BLOCK_SIZE)
 
 /* Starting town has pre-defined stores */
-#define START_STORE_NUM		6
+#define START_STORE_NUM     7
 
 /* Town types */
 #define TOWN_OLD		1
