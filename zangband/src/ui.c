@@ -388,9 +388,31 @@ bool display_menu(int num, menu_type *options, int select)
 	/* Show the list */
 	cnt = show_menu(num, options, select);
 	
-	/* Display the prompt */
-	prtf(0, 0, "(Command (a-%c), ESC=exit) Select a command: ",
+	/* Paranoia */
+	if (!cnt)
+	{
+		prtf(0, 0, "(No commands available, ESC=exit)");
+		
+		while (inkey() != ESCAPE)
+		{
+			/* Do nothing */
+		}
+		
+		/* Restore the screen */
+		Term_load();
+		return (FALSE);
+	}
+	else if (cnt == 1)
+	{
+		/* Display the prompt */
+		prtf(0, 0, "(Command (a), ESC=exit) Select a command: ");
+	}
+	else
+	{
+		/* Display the prompt */
+		prtf(0, 0, "(Command (a-%c), ESC=exit) Select a command: ",
 				  I2A(cnt));
+	}
 
 	/* Border below menu */
 	clear_row(num + 1);
@@ -401,6 +423,7 @@ bool display_menu(int num, menu_type *options, int select)
     	/* Handle "cancel" */
 		if (choice == ESCAPE)
         {
+			/* Restore the screen */
 			Term_load();
         	return (FALSE);
         }
@@ -461,8 +484,11 @@ bool display_menu(int num, menu_type *options, int select)
 					}
 					else
 					{
-						/* Select this option for next time */
-						select = i;
+						/*
+						 * Select this option for next time
+						 * if had a previous selection.
+						 */
+						if (select >= 0) select = i;
 						
 						/* Show the list */
 						show_menu(num, options, select);
