@@ -983,56 +983,56 @@ A:0/1
 P:1:0d0:0:0:-1
 D:This looks like it was once a fine robe, but now it's ripped and tattered.
 
-N:103:Soft Leather Armour~
+N:103:& Soft Leather Armour~
 G:(:U
 I:36:4:0
 W:5:0:80:18
 A:5/1
 P:4:0d0:0:0:0
 
-N:104:Soft Studded Leather~
+N:104:& Soft Studded Leather~
 G:(:U
 I:36:5:0
 W:5:0:90:35
 A:5/1
 P:5:1d1:0:0:0
 
-N:105:Hard Leather Armour~
+N:105:& Hard Leather Armour~
 G:(:U
 I:36:6:0
 W:9:0:100:150
 A:9/1
 P:6:1d1:-1:0:0
 
-N:106:Hard Studded Leather~
+N:106:& Hard Studded Leather~
 G:(:U
 I:36:7:0
 W:17:0:110:250
 A:17/1
 P:7:1d2:-1:0:0
 
-N:107:Leather Scale Mail~
+N:107:& Leather Scale Mail~
 G:(:U
 I:36:11:0
 W:26:0:140:500
 A:26/1
 P:11:1d1:-1:0:0
 
-N:108:Metal Scale Mail~
+N:108:& Metal Scale Mail~
 G:[:s
 I:37:3:0
 W:43:0:250:600
 A:43/1
 P:13:1d4:-2:0:0
 
-N:109:Chain Mail~
+N:109:& Chain Mail~
 G:[:s
 I:37:4:0
 W:43:0:220:800
 A:43/1
 P:14:1d4:-2:0:0
 
-N:110:Rusty Chain Mail~
+N:110:& Rusty Chain Mail~
 G:[:r
 I:37:1:0
 W:25:0:200:550
@@ -1040,56 +1040,56 @@ A:43/1
 P:14:1d4:-5:0:-8
 D:This rusted heap still offers small protection, but hinders movement.
 
-N:111:Augmented Chain Mail~
+N:111:& Augmented Chain Mail~
 G:[:s
 I:37:6:0
 W:52:0:270:1200
 A:52/1
 P:16:1d4:-2:0:0
 
-N:112:Bar Chain Mail~
+N:112:& Bar Chain Mail~
 G:[:s
 I:37:8:0
 W:61:0:280:1500
 A:61/1
 P:18:1d4:-2:0:0
 
-N:113:Metal Brigandine Armour~
+N:113:& Metal Brigandine Armour~
 G:[:s
 I:37:9:0
 W:61:0:290:1750
 A:61/1
 P:19:1d4:-3:0:0
 
-N:114:Partial Plate Armour~
+N:114:& Partial Plate Armour~
 G:[:W
 I:37:12:0
 W:70:0:260:2000
 A:70/1
 P:22:1d6:-3:0:0
 
-N:115:Metal Lamellar Armour~
+N:115:& Metal Lamellar Armour~
 G:[:W
 I:37:13:0
 W:70:0:340:2500
 A:70/1
 P:23:1d6:-3:0:0
 
-N:116:Full Plate Armour~
+N:116:& Full Plate Armour~
 G:[:W
 I:37:15:0
 W:75:0:380:5000
 A:75/1
 P:25:2d4:-3:0:0
 
-N:117:Ribbed Plate Armour~
+N:117:& Ribbed Plate Armour~
 G:[:W
 I:37:18:0
 W:80:0:380:6000
 A:80/1
 P:28:2d4:-3:0:0
 
-N:118:Adamantite Plate Mail~
+N:118:& Adamantite Plate Mail~
 G:[:G
 I:37:30:0
 W:95:0:420:20000
@@ -1097,7 +1097,7 @@ A:95/2
 P:40:2d4:-4:0:0
 F:IGNORE_ACID
 
-N:119:Mithril Plate Mail~
+N:119:& Mithril Plate Mail~
 G:[:B
 I:37:25:0
 W:90:0:300:15000
@@ -1105,7 +1105,7 @@ A:90/1
 P:35:2d4:-3:0:0
 F:IGNORE_ACID
 
-N:120:Mithril Chain Mail~
+N:120:& Mithril Chain Mail~
 G:[:B
 I:37:20:0
 W:85:0:150:10000
@@ -1113,7 +1113,7 @@ A:85/1
 P:28:1d4:-1:0:0
 F:IGNORE_ACID
 
-N:121:Double Chain Mail~
+N:121:& Double Chain Mail~
 G:[:s
 I:37:7:0
 W:52:0:250:1500
@@ -1585,7 +1585,7 @@ D:This amulet seems to growl silently as you touch it.
 
 ##### Extra armor #####
 
-N:170:Double Ring Mail~
+N:170:& Double Ring Mail~
 G:[:s
 I:37:5:0
 W:43:0:230:1000
@@ -4053,7 +4053,7 @@ F:SHOW_MODS
 
 ##### Dragon Scale Mail #####
 
-N:400:Black Dragon Scale Mail~
+N:400:& Black Dragon Scale Mail~
 G:[:s
 I:38:1:0
 W:60:0:200:17500
@@ -4068,7 +4068,7 @@ L:USE:	fire_ball(GF_ACID, dir, 430, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe acid (430) every 50-100 turns"
 
-N:401:Blue Dragon Scale Mail~
+N:401:& Blue Dragon Scale Mail~
 G:[:b
 I:38:2:0
 W:40:0:200:15000
@@ -4083,7 +4083,7 @@ L:USE:	fire_ball(GF_ELEC, dir, 330, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe lightning (330) every 50-100 turns"
 
-N:402:White Dragon Scale Mail~
+N:402:& White Dragon Scale Mail~
 G:[:w
 I:38:3:0
 W:50:0:200:20000
@@ -4098,7 +4098,7 @@ L:USE:	fire_ball(GF_COLD, dir, 370, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe frost (370) every 50-100 turns"
 
-N:403:Red Dragon Scale Mail~
+N:403:& Red Dragon Scale Mail~
 G:[:r
 I:38:4:0
 W:80:0:200:50000
@@ -4113,7 +4113,7 @@ L:USE:	fire_ball(GF_FIRE, dir, 670, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe fire (670) every 50-100 turns"
 
-N:404:Green Dragon Scale Mail~
+N:404:& Green Dragon Scale Mail~
 G:[:g
 I:38:5:0
 W:70:0:200:40000
@@ -4128,7 +4128,7 @@ L:USE:	fire_ball(GF_POIS, dir, 500, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe poison gas (500) every 50-100 turns"
 
-N:405:Multi-Hued Dragon Scale Mail~
+N:405:& Multi-Hued Dragon Scale Mail~
 G:[:v
 I:38:6:0
 W:100:0:200:75000
@@ -4151,7 +4151,7 @@ L:USE:	fire_ball(damtype, dir, 840, 2)
 L:USE:	object.timeout = rand_range(25, 50)
 L:DESC:	return "breathe multi-hued (840) every 25-50 turns"
 
-N:406:Pseudo Dragon Scale Mail~
+N:406:& Pseudo Dragon Scale Mail~
 G:[:v
 I:38:10:0
 W:65:0:200:30000
@@ -4170,7 +4170,7 @@ L:USE:	fire_ball(damtype, dir, 670, 2)
 L:USE:	object.timeout = rand_range(30, 60)
 L:DESC:	return "breathe light/darkness (670) every 30-60 turns"
 
-N:407:Law Dragon Scale Mail~
+N:407:& Law Dragon Scale Mail~
 G:[:B
 I:38:12:0
 W:80:0:200:40000
@@ -4189,7 +4189,7 @@ L:USE:	fire_ball(damtype, dir, 750, 2)
 L:USE:	object.timeout = rand_range(30, 60)
 L:DESC:	return "breathe sound/shards (750) every 30-60 turns"
 
-N:408:Bronze Dragon Scale Mail~
+N:408:& Bronze Dragon Scale Mail~
 G:[:U
 I:38:14:0
 W:55:0:200:17500
@@ -4204,7 +4204,7 @@ L:USE:	fire_ball(GF_CONFUSION, dir, 400, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe confusion (400) every 50-100 turns"
 
-N:409:Gold Dragon Scale Mail~
+N:409:& Gold Dragon Scale Mail~
 G:[:y
 I:38:16:0
 W:65:0:200:20000
@@ -4219,7 +4219,7 @@ L:USE:	fire_ball(GF_SOUND, dir, 430, 2)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "breathe sound (430) every 50-100 turns"
 
-N:410:Chaos Dragon Scale Mail~
+N:410:& Chaos Dragon Scale Mail~
 G:[:v
 I:38:18:0
 W:75:0:200:35000
@@ -4238,7 +4238,7 @@ L:USE:	fire_ball(damtype, dir, 740, 2)
 L:USE:	object.timeout = rand_range(30, 60)
 L:DESC:	return "breathe chaos/disenchant (740) every 30-60 turns"
 
-N:411:Balance Dragon Scale Mail~
+N:411:& Balance Dragon Scale Mail~
 G:[:v
 I:38:20:0
 W:90:0:200:50000
@@ -4260,7 +4260,7 @@ L:USE:	fire_ball(damtype, dir, 840, 2)
 L:USE:	object.timeout = rand_range(30, 60)
 L:DESC:	return "breathe balance (840) every 30-60 turns"
 
-N:412:Power Dragon Scale Mail~
+N:412:& Power Dragon Scale Mail~
 G:[:v
 I:38:30:0
 W:110:0:250:175000
