@@ -111,6 +111,7 @@ static cptr r_info_blow_effect[] =
 	"EXP_80",
 	"DISEASE",
 	"TIME",
+	"EXP_VAMP",
 	NULL
 };
 
@@ -318,7 +319,7 @@ static cptr r_info_flags6[] =
 	"HASTE",
 	"HAND_DOOM",
 	"HEAL",
-	"XXX2X6",
+	"INVULNER",
 	"BLINK",
 	"TPORT",
 	"XXX3X6",

@@ -1,4 +1,4 @@
-/* CVS: Last edit by $Author$ on $Date$ */
+]/* CVS: Last edit by $Author$ on $Date$ */
 /* File: defines.h */
 
 /* Purpose: global constants and macro definitions */
@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 1
+#define SAVEFILE_VERSION 2
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -52,7 +52,7 @@
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 3
-#define FAKE_VER_PATCH 1
+#define FAKE_VER_PATCH 2
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1
@@ -505,6 +505,9 @@
  * Lower values yield harder monsters more often.
  */
 #define NASTY_MON       50              /* 1/chance of inflated monster level */
+
+/* 1/x chance of hurting even if invulnerable!*/
+#define PENETRATE_INVULNERABILITY 13
 
 
 
@@ -2538,6 +2541,7 @@
 #define RBE_EXP_80      28
 #define RBE_DISEASE     29
 #define RBE_TIME        30
+#define RBE_EXP_VAMP    31
 
 
 /*** Monster flag values (hard-coded) ***/
@@ -2729,7 +2733,7 @@
 #define RF6_HASTE           0x00000001  /* Speed self */
 #define RF6_HAND_DOOM       0x00000002  /* Hand of Doom */
 #define RF6_HEAL            0x00000004  /* Heal self */
-#define RF6_XXX2            0x00000008  /* Heal a lot (?) */
+#define RF6_INVULNER        0x00000008  /* INVULNERABILITY! */
 #define RF6_BLINK           0x00000010  /* Teleport Short */
 #define RF6_TPORT           0x00000020  /* Teleport Long */
 #define RF6_XXX3            0x00000040  /* Move to Player (?) */
@@ -2797,7 +2801,7 @@
 
 #define RF6_INT_MASK \
    (RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
-    RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
+    RF6_HEAL | RF6_INVULNER | RF6_HASTE | RF6_TRAPS | \
     RF6_S_KIN | RF6_S_CYBER | RF6_S_MONSTER | RF6_S_MONSTERS | \
     RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
     RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \

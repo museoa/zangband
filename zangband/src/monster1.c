@@ -762,7 +762,7 @@ static void roff_aux(int r_idx, int remem)
 	if (flags5 & (RF5_HOLD))            vp[vn++] = "paralyze";
 	if (flags6 & (RF6_HASTE))           vp[vn++] = "haste-self";
 	if (flags6 & (RF6_HEAL))            vp[vn++] = "heal-self";
-	if (flags6 & (RF6_XXX2))            vp[vn++] = "do something";
+	if (flags6 & (RF6_INVULNER))	    vp[vn++] = "make invulnerable";
 	if (flags6 & (RF6_BLINK))           vp[vn++] = "blink-self";
 	if (flags6 & (RF6_TPORT))           vp[vn++] = "teleport-self";
 	if (flags6 & (RF6_XXX3))            vp[vn++] = "do something";
@@ -1308,6 +1308,7 @@ static void roff_aux(int r_idx, int remem)
 			case RBE_EXP_80:	q = "lower experience (by 80d6+)"; break;
 			case RBE_DISEASE:	q = "disease"; break;
 			case RBE_TIME:      q = "time"; break;
+                        case RBE_EXP_VAMP:      q = "drain life force"; break;
 		}
 
 

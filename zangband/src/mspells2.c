@@ -780,8 +780,8 @@ bool monst_spell_monst(int m_idx)
 					bool fear;
 					msg_format("%^s is blasted by psionic energy.", t_name);
 					t_ptr->confused += rand_int(4) + 4;
-
 					mon_take_hit_mon(t_idx, damroll(8, 8), &fear, " collapses, a mindless husk.");
+					
 				}
 
 				wake_up = TRUE;
@@ -870,6 +870,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					bool fear;
 					mon_take_hit_mon(t_idx, damroll(8, 8), &fear, " is destroyed.");
+					
 				}
 				wake_up = TRUE;
 				break;
@@ -1283,12 +1284,28 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_XXX2X6 */
+	                /* RF6_INVULNER */
 			case 160+3:
 			{
-				break;
+	
+				disturb(1, 0);
+	
+				/* Message */
+				if (!seen)
+				{
+	                                msg_format("%^s mumbles powerfully.", m_name);
+				}
+				else
+				{
+	                                msg_format("%^s casts a Globe of Invulnerability.", m_name);
 			}
 
+	                        if (!(m_ptr->invulner))
+	                                m_ptr->invulner = randint(4) + 4;
+
+
+			break;
+			}
 			/* RF6_BLINK */
 			case 160+4:
 			{

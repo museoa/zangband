@@ -141,6 +141,7 @@ bool make_attack_normal(int m_idx)
 	bool blinked;
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE;
+        bool resist_drain = FALSE;
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & (RF1_NEVER_BLOW)) return (FALSE);
@@ -229,6 +230,7 @@ bool make_attack_normal(int m_idx)
 			case RBE_EXP_80:    power =  5; break;
 			case RBE_DISEASE:   power =  5; break;
 			case RBE_TIME:      power =  5; break;
+			case RBE_EXP_VAMP:  power =  5; break;
 		}
 
 
@@ -1334,6 +1336,59 @@ bool make_attack_normal(int m_idx)
 					}
 					take_hit(damage, ddesc);
 				}
+				case RBE_EXP_VAMP:
+				{
+					/* Obvious */
+					obvious = TRUE;
+
+					/* Take damage */
+					take_hit(damage, ddesc);
+
+					if (p_ptr->hold_life && (rand_int(100) < 50))
+					{
+						msg_print("You keep hold of your life force!");
+                                                resist_drain = TRUE;
+					}
+					else
+					{
+                                                s32b d = damroll(60, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
+						if (p_ptr->hold_life)
+						{
+							msg_print("You feel your life slipping away!");
+							lose_exp(d/10);
+						}
+						else
+						{
+							msg_print("You feel your life draining away!");
+							lose_exp(d);
+						}
+					}
+
+					/* Heal the attacker? */
+					if (!(p_ptr->prace == RACE_ZOMBIE || p_ptr->prace == RACE_VAMPIRE
+						|| p_ptr->prace == RACE_SPECTRE || p_ptr->prace == RACE_SKELETON
+						|| p_ptr->prace == RACE_GOLEM)
+                                                 && (damage > 2) && !(resist_drain))
+					{
+                                                bool did_heal = FALSE;
+
+                                                if (m_ptr->hp < m_ptr->maxhp) did_heal = TRUE;
+
+						/* Heal */
+						m_ptr->hp += damroll(4, damage / 6);
+                                                if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
+
+						/* Redraw (later) if needed */
+						if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
+
+						/* Special message */
+                                                if ((m_ptr->ml) && (did_heal))
+						{
+							msg_format("%^s appears healthier.", m_name);
+						}
+					}
+				}
+
 			}
 
 
@@ -1406,6 +1461,11 @@ bool make_attack_normal(int m_idx)
 			if (explode)
 			{
 				sound(SOUND_EXPLODE);
+
+                                /* Cancel Invulnerability */
+                                if (m_ptr->invulner)
+                                        m_ptr->invulner = 0;
+
 				if (mon_take_hit(m_idx, m_ptr->hp + 1, &fear, NULL))
 				{
 					blinked = FALSE;

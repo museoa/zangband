@@ -2793,7 +2793,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
 
 					/* Anger friends */
-					if (!is_hostile(m_ptr))
+					if ((!is_hostile(m_ptr)) && !(m_ptr->invulner))
 					{
 						char m_name[80];
 						monster_desc(m_name, m_ptr, 0);
@@ -3171,7 +3171,9 @@ void do_cmd_throw_aux(int mult)
 					message_pain(c_ptr->m_idx, tdam);
 
 					/* Anger friends */
-					if (!is_hostile(m_ptr) && !object_is_potion(q_ptr))
+					if (!is_hostile(m_ptr)  
+						&& !object_is_potion(q_ptr) 
+						&& !(m_ptr->invulner))
 					{
 						char m_name[80];
 						monster_desc(m_name, m_ptr, 0);
@@ -3214,7 +3216,9 @@ void do_cmd_throw_aux(int mult)
 
 			if (potion_smash_effect(0, y, x, q_ptr->sval))
 			{
-				if (cave[y][x].m_idx && !is_hostile(&m_list[cave[y][x].m_idx]))
+                                monster_type *m_ptr = &m_list[cave[y][x].m_idx];
+				if (cave[y][x].m_idx && !is_hostile(&m_list[cave[y][x].m_idx])
+                                        && !(m_ptr->invulner))
 				{
 					char m_name[80];
 					monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);

@@ -1126,12 +1126,13 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 			msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 		}
 
-		if (!is_hostile(m_ptr))
+		if ((!is_hostile(m_ptr)) && !(m_ptr->invulner))
 		{
 			msg_format("%^s gets angry!", m_name);
 			set_hostile(m_ptr);
 		}
 
+		
 		/* Damage, check for fear and mdeath */
 		switch (attack)
 		{
@@ -1524,7 +1525,7 @@ void py_attack(int y, int x)
 				break;
 			}
 
-			if (!is_hostile(m_ptr))
+			 if ((!is_hostile(m_ptr)) && !(m_ptr->invulner))
 			{
 				msg_format("%^s gets angry!", m_name);
 				set_hostile(m_ptr);

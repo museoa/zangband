@@ -269,6 +269,7 @@ void monster_death(int m_idx)
 				case RBE_EXP_80:    typ = GF_MISSILE; break;
 				case RBE_DISEASE:   typ = GF_POIS; break;
 				case RBE_TIME:      typ = GF_TIME; break;
+                                case RBE_EXP_VAMP:  typ = GF_MISSILE; break;
 			}
 
 			project(m_idx, 3, y, x, damage, typ, flg);
@@ -876,6 +877,23 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 	/* Wake it up */
 	m_ptr->csleep = 0;
+
+	if ((m_ptr->invulner)&& !(randint(PENETRATE_INVULNERABILITY )==1))
+
+	{
+		if (m_ptr->ml)
+		{
+			char m_name[80];
+        
+				/* Extract monster name */
+                        monster_desc(m_name, m_ptr, 0);
+
+				msg_format("%^s is unharmed.", m_name);
+		}
+
+
+		return FALSE;
+ 	}
 
 	/* Hurt it */
 	m_ptr->hp -= dam;

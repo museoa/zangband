@@ -13,10 +13,6 @@
 
 #include "angband.h"
 
-/* 1/x chance of hurting even if invulnerable!*/
-#define PENETRATE_INVULNERABILITY 13
-
-
 /*
  * Set "p_ptr->blind", notice observable changes
  *

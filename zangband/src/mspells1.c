@@ -438,7 +438,6 @@ bool clean_shot(int y2, int x2, int y1, int x1, bool friend)
 	return (TRUE);
 }
 
-
 /*
  * Cast a bolt at the player
  * Stop if we hit a monster
@@ -616,6 +615,17 @@ static bool spell_tactic(byte spell)
 	return (FALSE);
 }
 
+/*
+ * Return TRUE if a spell makes invulnerable.
+ */
+static bool spell_invulner(byte spell)
+{
+        /* Invulnerability */
+        if (spell == 160 + 3) return (TRUE);
+
+        /* Not invulnerability */
+        return (FALSE);
+}
 
 /*
  * Return TRUE if a spell hastes.
@@ -667,6 +677,7 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 	byte summon[96], summon_num = 0;
 	byte tactic[96], tactic_num = 0;
 	byte annoy[96], annoy_num = 0;
+        byte invul[96], invul_num = 0;
 	byte haste[96], haste_num = 0;
 	byte heal[96], heal_num = 0;
 
@@ -696,6 +707,9 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 
 		/* Annoyance spell? */
 		if (spell_annoy(spells[i])) annoy[annoy_num++] = spells[i];
+
+                /* Invulnerability spell? */
+                if (spell_invulner(spells[i])) invul[invul_num++] = spells[i];
 
 		/* Haste spell? */
 		if (spell_haste(spells[i])) haste[haste_num++] = spells[i];
@@ -754,6 +768,13 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 		/* Choose tactic spell */
 		return (tactic[rand_int(tactic_num)]);
 	}
+
+        /* Cast globe of invulnerability if not already in effect */
+        if (invul_num && (rand_int(100) < 50) && !(m_ptr->invulner))
+        {
+                /* Choose Globe of Invulnerability */
+                return (invul[rand_int(invul_num)]);
+        }
 
 	/* Haste self if we aren't already somewhat hasted (rarely) */
 	if (haste_num && (rand_int(100) < (20 + r_ptr->speed - m_ptr->mspeed)))
@@ -2076,9 +2097,26 @@ bool make_attack_spell(int m_idx)
 			break;
 		}
 
-		/* RF6_XXX2X6 */
+                /* RF6_INVULNER */
 		case 160+3:
 		{
+
+			disturb(1, 0);
+
+			/* Message */
+			if (!seen)
+			{
+                                msg_format("%^s mumbles powerfully.", m_name);
+			}
+			else
+			{
+                                msg_format("%^s casts a Globe of Invulnerability.", m_name);
+			}
+
+                        if (!(m_ptr->invulner))
+                                m_ptr->invulner = randint(4) + 4;
+
+
 			break;
 		}
 

@@ -938,6 +938,13 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
+
+	/* Monster invulnerability introduced from 2.3.2 + */
+	if (sf_version < 2)
+		m_ptr->invulner = 0;
+	else
+		rd_byte(&m_ptr->invulner);
+
 	if (!(z_major == 2 && z_minor == 0 && z_patch == 6))
 		rd_u32b(&m_ptr->smart);
 	else

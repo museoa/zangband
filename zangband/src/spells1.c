@@ -3091,6 +3091,17 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Wake the monster up */
 		m_ptr->csleep = 0;
 
+		if ((m_ptr->invulner)&& !(randint(PENETRATE_INVULNERABILITY )==1))
+               {
+
+                        if(m_ptr->ml)
+                        {
+                                msg_format("%^s is unharmed.", m_name);
+                        }
+               }
+               else
+               {
+
 		/* Hurt the monster */
 		m_ptr->hp -= dam;
 
@@ -3146,20 +3157,23 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		else
 		{
 			/* HACK - anger the monster before showing the sleep message */
-			if (do_sleep && !is_hostile(m_ptr))
+			if (do_sleep && !is_hostile(m_ptr) && !(m_ptr->invulner))
 			{
 				msg_format("%^s gets angry!", m_name);
 				set_hostile(m_ptr);
 			}
 			
 			/* Give detailed messages if visible or destroyed */
-			if (note && seen) msg_format("%^s%s", m_name, note);
+                        if (note && seen && !(m_ptr->invulner))
+                                msg_format("%^s%s", m_name, note);
 
 			/* Hack -- Pain message */
-			else if (dam > 0) message_pain(c_ptr->m_idx, dam);
+			else if ((dam > 0) && !(m_ptr->invulner))
+				message_pain(c_ptr->m_idx, dam);
 
 			/* Anger friendly monsters */
-			if (((dam > 0) || get_angry) && !is_hostile(m_ptr) && !do_sleep)
+			if (((dam > 0) || get_angry) && !is_hostile(m_ptr) 
+				&& !do_sleep && !(m_ptr->invulner))
 			{
 				msg_format("%^s gets angry!", m_name);
 				set_hostile(m_ptr);

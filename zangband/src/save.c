@@ -654,6 +654,7 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
+	wr_byte(m_ptr->invulner);
 	wr_u32b(m_ptr->smart);
 	wr_byte(0);
 }
