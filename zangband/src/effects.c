@@ -2648,11 +2648,11 @@ void do_poly_self(void)
 
 			/* Adjust current stat */
 			p_ptr->stat_cur[i] =
-				adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
+				adjust_stat(i, p_ptr->stat_cur[i], change);
 
 			/* Set maximum stat based on current stat and drainage */
 			p_ptr->stat_max[i] =
-				adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
+				adjust_stat(i, p_ptr->stat_cur[i], change);
 		}
 
 		/* Experience factor */

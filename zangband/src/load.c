@@ -1165,7 +1165,7 @@ static void rd_extra(void)
             int bonus = race_info[p_ptr->prace].r_adj[i] +
                 class_info[p_ptr->pclass].c_adj[i];
 
-            p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], bonus, FALSE);
+            p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], bonus);
             /* Hack - Restore all stats... */
             p_ptr->stat_cur[i] = p_ptr->stat_max[i];
         }

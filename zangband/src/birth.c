@@ -788,7 +788,7 @@ static void get_stats(void)
 		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 		/* Apply the bonus to the stat (somewhat randomly) */
-		stat_use[i] = adjust_stat(i, j, bonus, FALSE);
+		stat_use[i] = adjust_stat(i, j, bonus);
 
 		/* Start fully healed */
 		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
@@ -2296,7 +2296,7 @@ static bool player_birth_aux_2(void)
 			int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 			/* Reset stats */
-			p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus, TRUE);
+			p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus);
 			p_ptr->stat_max[i] = p_ptr->stat_cur[i];
 
 			/* Total cost */
@@ -2401,7 +2401,7 @@ static bool player_birth_aux_2(void)
 		int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 		/* Apply some randomness */
-		p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus, FALSE);
+		p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus);
 		p_ptr->stat_max[i] = p_ptr->stat_cur[i];
 	}
 
