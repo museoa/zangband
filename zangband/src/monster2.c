@@ -106,8 +106,11 @@ void delete_monster_idx(int i)
 	if (r_ptr->flags2 & (RF2_MULTIPLY)) num_repro--;
 
 	/* Decrement visibility count */
-	if (m_ptr->ml) update_mon_vis(m_ptr->r_idx, -1);
-
+	if (m_ptr->ml && !(m_ptr->smart & SM_MIMIC))
+	{
+		update_mon_vis(m_ptr->r_idx, -1);
+	}
+	
 	/* Hack -- remove target monster */
 	if (i == p_ptr->target_who) p_ptr->target_who = 0;
 
@@ -1136,6 +1139,9 @@ void update_mon_vis(u16b r_idx, int increment)
 
 	/* Changes on screen */
 	p_ptr->window |= PW_VISIBLE;
+
+	/* Paranoia */
+	if (!r_ptr->r_see && (increment == -1)) quit("Monster visibility error!");
 
 	/* Update the counter */
 	r_ptr->r_see += increment;
