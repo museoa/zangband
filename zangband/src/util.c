@@ -2029,8 +2029,9 @@ cptr message_str(int age)
  */
 void message_add(cptr str)
 {
-	int i, k, x, n;
+	int i, k, x, m, n;
 
+	char u[1024];
 
 	/*** Step 1 -- Analyze the message ***/
 
@@ -2047,10 +2048,69 @@ void message_add(cptr str)
 	/*** Step 2 -- Attempt to optimize ***/
 
 	/* Limit number of messages to check */
-	k = message_num() / 4;
+	m = message_num();
+
+	k = m / 4;
 
 	/* Limit number of messages to check */
 	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
+
+	/* Check previous message */
+	for(i = message__next; m; m--)
+	{
+		int j = 1;
+
+		char buf[1024];
+		char *t;
+
+		cptr old;
+
+		/* Back up and wrap if needed */
+		if (i-- == 0) i = MESSAGE_MAX - 1;
+
+		/* Access the old string */
+		old = &message__buf[message__ptr[i]];
+
+		/* Skip small messages */
+		if (!old) continue;
+
+		strcpy(buf, old);
+
+		/* Find multiple */
+		for (t = buf; *t && (*t != '<'); t++);
+
+		if (*t)
+		{
+			/* Message is too small */
+			if (strlen(buf) < 6) break;
+
+			/* Drop the space */
+			*(t - 1) = '\0';
+
+			/* Get multiplier */
+			j = atoi(++t);
+		}
+
+		/* Limit the multiplier to 1000 */
+		if (buf && streq(buf, str) && (j < 1000))
+		{
+			j++;
+
+			/* Overwrite */
+			message__next = i;
+
+			str = u;
+
+			/* Write it out */
+			sprintf(u, "%s <%dx>", buf, j);
+
+			/* Message length */
+			n = strlen(str);
+		}
+
+		/* Done */
+		break;
+	}
 
 	/* Check the last few messages (if any to count) */
 	for (i = message__next; k; k--)
