@@ -18,6 +18,9 @@
 #include "z-virt.h"
 
 
+#include "tnb.h" /* TNB */
+
+
 /*
  * This file provides a generic, efficient, terminal window package,
  * which can be used not only on standard terminal environments such
@@ -284,11 +287,11 @@ term *Term = NULL;
 /*
  * Nuke a term_win (see below)
  */
-static errr term_win_nuke(term_win *s, int w, int h)
+static errr term_win_nuke(term_win * s, int w, int h)
 {
 	/* Free the window access arrays */
-	C_KILL(s->a, h, byte*);
-	C_KILL(s->c, h, char*);
+	C_KILL(s->a, h, byte *);
+	C_KILL(s->c, h, char *);
 
 	/* Free the window content arrays */
 	C_KILL(s->va, h * w, byte);
@@ -297,8 +300,8 @@ static errr term_win_nuke(term_win *s, int w, int h)
 #ifdef USE_TRANSPARENCY
 
 	/* Free the terrain access arrays */
-	C_KILL(s->ta, h, byte*);
-	C_KILL(s->tc, h, char*);
+	C_KILL(s->ta, h, byte *);
+	C_KILL(s->tc, h, char *);
 
 	/* Free the terrain content arrays */
 	C_KILL(s->vta, h * w, byte);
@@ -314,13 +317,13 @@ static errr term_win_nuke(term_win *s, int w, int h)
 /*
  * Initialize a "term_win" (using the given window size)
  */
-static errr term_win_init(term_win *s, int w, int h)
+static errr term_win_init(term_win * s, int w, int h)
 {
 	int y;
 
 	/* Make the window access arrays */
-	C_MAKE(s->a, h, byte*);
-	C_MAKE(s->c, h, char*);
+	C_MAKE(s->a, h, byte *);
+	C_MAKE(s->c, h, char *);
 
 	/* Make the window content arrays */
 	C_MAKE(s->va, h * w, byte);
@@ -329,8 +332,8 @@ static errr term_win_init(term_win *s, int w, int h)
 #ifdef USE_TRANSPARENCY
 
 	/* Make the terrain access arrays */
-	C_MAKE(s->ta, h, byte*);
-	C_MAKE(s->tc, h, char*);
+	C_MAKE(s->ta, h, byte *);
+	C_MAKE(s->tc, h, char *);
 
 	/* Make the terrain content arrays */
 	C_MAKE(s->vta, h * w, byte);
@@ -362,7 +365,7 @@ static errr term_win_init(term_win *s, int w, int h)
 /*
  * Copy a "term_win" from another
  */
-static errr term_win_copy(term_win *s, term_win *f, int w, int h)
+static errr term_win_copy(term_win * s, term_win * f, int w, int h)
 {
 	int x, y;
 
@@ -418,10 +421,11 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 errr Term_user(int n)
 {
 	/* Verify the hook */
-	if (!Term->user_hook) return (-1);
+	if (!Term->user_hook)
+		return (-1);
 
 	/* Call the hook */
-	return ((*Term->user_hook)(n));
+	return ((*Term->user_hook) (n));
 }
 
 /*
@@ -430,13 +434,15 @@ errr Term_user(int n)
 errr Term_xtra(int n, int v)
 {
 	/* Verify the hook */
-	if (!Term->xtra_hook) return (-1);
+	if (!Term->xtra_hook)
+		return (-1);
 
 	/* Call the hook */
-	return ((*Term->xtra_hook)(n, v));
+	return ((*Term->xtra_hook) (n, v));
 }
 
 
+#if 0 /* TNB */
 
 /*** Fake hooks ***/
 
@@ -447,7 +453,8 @@ errr Term_xtra(int n, int v)
 static errr Term_curs_hack(int x, int y)
 {
 	/* Compiler silliness */
-	if (x || y) return (-2);
+	if (x || y)
+		return (-2);
 
 	/* Oops */
 	return (-1);
@@ -459,7 +466,8 @@ static errr Term_curs_hack(int x, int y)
 static errr Term_wipe_hack(int x, int y, int n)
 {
 	/* Compiler silliness */
-	if (x || y || n) return (-2);
+	if (x || y || n)
+		return (-2);
 
 	/* Oops */
 	return (-1);
@@ -471,7 +479,8 @@ static errr Term_wipe_hack(int x, int y, int n)
 static errr Term_text_hack(int x, int y, int n, byte a, const char *cp)
 {
 	/* Compiler silliness */
-	if (x || y || n || a || cp) return (-2);
+	if (x || y || n || a || cp)
+		return (-2);
 
 	/* Oops */
 	return (-1);
@@ -481,16 +490,20 @@ static errr Term_text_hack(int x, int y, int n, byte a, const char *cp)
  * Hack -- fake hook for "Term_pict()" (see above)
  */
 #ifdef USE_TRANSPARENCY
-static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
+static errr Term_pict_hack(int x, int y, int n, const byte * ap,
+	const char *cp, const byte * tap, const char *tcp)
 #else /* USE_TRANSPARENCY */
-static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
+static errr Term_pict_hack(int x, int y, int n, const byte * ap,
+	const char *cp)
 #endif /* USE_TRANSPARENCY */
 {
 	/* Compiler silliness */
 #ifdef USE_TRANSPARENCY
-	if (x || y || n || ap || cp || tap || tcp) return (-2);
+	if (x || y || n || ap || cp || tap || tcp)
+		return (-2);
 #else /* USE_TRANSPARENCY */
-	if (x || y || n || ap || cp) return (-2);
+	if (x || y || n || ap || cp)
+		return (-2);
 #endif /* USE_TRANSPARENCY */
 
 	/* Oops */
@@ -498,6 +511,7 @@ static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
 }
 
 
+#endif /* TNB */
 
 /*** Efficient routines ***/
 
@@ -513,53 +527,155 @@ void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
 void Term_queue_char(int x, int y, byte a, char c)
 #endif /* USE_TRANSPARENCY */
 {
-	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	term_win *scrn = Term->scr;
 
-	int oa = scr_aa[x];
-	int oc = scr_cc[x];
+	byte *scr_aa = &scrn->a[y][x];
+	char *scr_cc = &scrn->c[y][x];
 
 #ifdef USE_TRANSPARENCY
 
-	byte *scr_taa = Term->scr->ta[y];
-	char *scr_tcc = Term->scr->tc[y];
-
-	int ota = scr_taa[x];
-	int otc = scr_tcc[x];
-
-	/* Don't change is the terrain value is 0 */
-	if (!ta) ta = ota;
-	if (!tc) tc = otc;
+	byte *scr_taa = &scrn->ta[y][x];
+	char *scr_tcc = &scrn->tc[y][x];
 
 	/* Hack -- Ignore non-changes */
-	if ((oa == a) && (oc == c) && (ota == ta) && (otc == tc)) return;
+	if ((*scr_aa == a) && (*scr_cc == c) && (*scr_taa == ta) &&
+		(*scr_tcc == tc))
+		return;
 
 #else /* USE_TRANSPARENCY */
 
 	/* Hack -- Ignore non-changes */
-	if ((oa == a) && (oc == c)) return;
+	if ((*scr_aa == a) && (*scr_cc == c))
+		return;
 
 #endif /* USE_TRANSPARENCY */
 
 	/* Save the "literal" information */
-	scr_aa[x] = a;
-	scr_cc[x] = c;
+	*scr_aa = a;
+	*scr_cc = c;
 
 #ifdef USE_TRANSPARENCY
 
-	scr_taa[x] = ta;
-	scr_tcc[x] = tc;
+	*scr_taa = ta;
+	*scr_tcc = tc;
 
 #endif /* USE_TRANSPARENCY */
 
 	/* Check for new min/max row info */
-	if (y < Term->y1) Term->y1 = y;
-	if (y > Term->y2) Term->y2 = y;
+	if (y < Term->y1)
+		Term->y1 = y;
+	if (y > Term->y2)
+		Term->y2 = y;
 
 	/* Check for new min/max col info for this row */
-	if (x < Term->x1[y]) Term->x1[y] = x;
-	if (x > Term->x2[y]) Term->x2[y] = x;
+	if (x < Term->x1[y])
+		Term->x1[y] = x;
+	if (x > Term->x2[y])
+		Term->x2[y] = x;
 }
+
+
+/*
+ * Mentally draw a string of attr/chars at a given location
+ *
+ * Assumes given location and values are valid.
+ *
+ * This function is designed to be fast, with no consistancy checking.
+ * It is used to update the map in the game.
+ */
+#ifdef USE_TRANSPARENCY
+void Term_queue_line(int x, int y, int n, byte * a, char *c, byte * ta,
+	char *tc)
+#else /* USE_TRANSPARENCY */
+void Term_queue_line(int x, int y, int n, byte * a, char *c)
+#endif /* USE_TRANSPARENCY */
+{
+	term_win *scrn = Term->scr;
+
+	int x1 = -1;
+	int x2 = -1;
+
+	byte *scr_aa = &scrn->a[y][x];
+	char *scr_cc = &scrn->c[y][x];
+
+#ifdef USE_TRANSPARENCY
+
+	byte *scr_taa = &scrn->ta[y][x];
+	char *scr_tcc = &scrn->tc[y][x];
+
+#endif /* USE_TRANSPARENCY */
+
+	while (n--)
+	{
+
+#ifdef USE_TRANSPARENCY
+
+		/* Hack -- Ignore non-changes */
+		if ((*scr_aa == *a) && (*scr_cc == *c) && (*scr_taa == *ta) &&
+			(*scr_tcc == *tc))
+		{
+			x++;
+			a++;
+			c++;
+			ta++;
+			tc++;
+			scr_aa++;
+			scr_cc++;
+			scr_taa++;
+			scr_tcc++;
+			continue;
+		}
+
+		/* Save the "literal" information */
+		*scr_taa++ = *ta++;
+		*scr_tcc++ = *tc++;
+
+#else /* USE_TRANSPARENCY */
+
+		/* Hack -- Ignore non-changes */
+		if ((*scr_aa == *a) && (*scr_cc == *c))
+		{
+			x++;
+			a++;
+			c++;
+			scr_aa++;
+			scr_cc++;
+			continue;
+		}
+
+#endif /* USE_TRANSPARENCY */
+
+		/* Save the "literal" information */
+		*scr_aa++ = *a++;
+		*scr_cc++ = *c++;
+
+		/* Track minimum changed column */
+		if (x1 < 0)
+			x1 = x;
+
+		/* Track maximum changed column */
+		x2 = x;
+
+		x++;
+	}
+
+	/* Expand the "change area" as needed */
+	if (x1 >= 0)
+	{
+		/* Check for new min/max row info */
+		if (y < Term->y1)
+			Term->y1 = y;
+		if (y > Term->y2)
+			Term->y2 = y;
+
+		/* Check for new min/max col info in this row */
+		if (x1 < Term->x1[y])
+			Term->x1[y] = x1;
+		if (x2 > Term->x2[y])
+			Term->x2[y] = x2;
+	}
+}
+
 
 
 /*
@@ -585,7 +701,7 @@ void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 #endif /* USE_TRANSPARENCY */
 
 	/* Queue the attr/chars */
-	for ( ; n; x++, s++, n--)
+	for (; n; x++, s++, n--)
 	{
 		int oa = scr_aa[x];
 		int oc = scr_cc[x];
@@ -596,12 +712,14 @@ void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 		int otc = scr_tcc[x];
 
 		/* Hack -- Ignore non-changes */
-		if ((oa == a) && (oc == *s) && (ota == 0) && (otc == 0)) continue;
+		if ((oa == a) && (oc == *s) && (ota == 0) && (otc == 0))
+			continue;
 
 #else /* USE_TRANSPARENCY */
 
 		/* Hack -- Ignore non-changes */
-		if ((oa == a) && (oc == *s)) continue;
+		if ((oa == a) && (oc == *s))
+			continue;
 
 #endif /* USE_TRANSPARENCY */
 
@@ -617,7 +735,8 @@ void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 #endif /* USE_TRANSPARENCY */
 
 		/* Note the "range" of window updates */
-		if (x1 < 0) x1 = x;
+		if (x1 < 0)
+			x1 = x;
 		x2 = x;
 	}
 
@@ -625,16 +744,21 @@ void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 	if (x1 >= 0)
 	{
 		/* Check for new min/max row info */
-		if (y < Term->y1) Term->y1 = y;
-		if (y > Term->y2) Term->y2 = y;
+		if (y < Term->y1)
+			Term->y1 = y;
+		if (y > Term->y2)
+			Term->y2 = y;
 
 		/* Check for new min/max col info in this row */
-		if (x1 < Term->x1[y]) Term->x1[y] = x1;
-		if (x2 > Term->x2[y]) Term->x2[y] = x2;
+		if (x1 < Term->x1[y])
+			Term->x1[y] = x1;
+		if (x2 > Term->x2[y])
+			Term->x2[y] = x2;
 	}
 }
 
 
+#if 0 /* TNB */
 
 /*** Refresh routines ***/
 
@@ -717,10 +841,11 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 			{
 				/* Draw pending attr/char pairs */
 #ifdef USE_TRANSPARENCY
-				(void)((*Term->pict_hook)(fx, y, fn,
-				       &scr_aa[fx], &scr_cc[fx],&scr_taa[fx], &scr_tcc[fx]));
+				(void) ((*Term->pict_hook) (fx, y, fn, &scr_aa[fx],
+						&scr_cc[fx], &scr_taa[fx], &scr_tcc[fx]));
 #else /* USE_TRANSPARENCY */
-				(void)((*Term->pict_hook)(fx, y, fn, &scr_aa[fx], &scr_cc[fx]));
+				(void) ((*Term->pict_hook) (fx, y, fn, &scr_aa[fx],
+						&scr_cc[fx]));
 #endif /* USE_TRANSPARENCY */
 
 				/* Forget */
@@ -740,7 +865,8 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 #endif /* USE_TRANSPARENCY */
 
 		/* Restart and Advance */
-		if (fn++ == 0) fx = x;
+		if (fn++ == 0)
+			fx = x;
 	}
 
 	/* Flush */
@@ -748,10 +874,10 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 	{
 		/* Draw pending attr/char pairs */
 #ifdef USE_TRANSPARENCY
-		(void)((*Term->pict_hook)(fx, y, fn,
-			&scr_aa[fx], &scr_cc[fx], &scr_taa[fx], &scr_tcc[fx]));
+		(void) ((*Term->pict_hook) (fx, y, fn, &scr_aa[fx], &scr_cc[fx],
+				&scr_taa[fx], &scr_tcc[fx]));
 #else /* USE_TRANSPARENCY */
-		(void)((*Term->pict_hook)(fx, y, fn, &scr_aa[fx], &scr_cc[fx]));
+		(void) ((*Term->pict_hook) (fx, y, fn, &scr_aa[fx], &scr_cc[fx]));
 #endif /* USE_TRANSPARENCY */
 	}
 }
@@ -840,13 +966,14 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 				/* Draw pending chars (normal) */
 				if (fa || always_text)
 				{
-					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+					(void) ((*Term->text_hook) (fx, y, fn, fa,
+							&scr_cc[fx]));
 				}
 
 				/* Draw pending chars (black) */
 				else
 				{
-					(void)((*Term->wipe_hook)(fx, y, fn));
+					(void) ((*Term->wipe_hook) (fx, y, fn));
 				}
 
 				/* Forget */
@@ -877,13 +1004,14 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 				/* Draw pending chars (normal) */
 				if (fa || always_text)
 				{
-					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+					(void) ((*Term->text_hook) (fx, y, fn, fa,
+							&scr_cc[fx]));
 				}
 
 				/* Draw pending chars (black) */
 				else
 				{
-					(void)((*Term->wipe_hook)(fx, y, fn));
+					(void) ((*Term->wipe_hook) (fx, y, fn));
 				}
 
 				/* Forget */
@@ -892,13 +1020,13 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 
 #ifdef USE_TRANSPARENCY
 
-		/* Hack -- Draw the special attr/char pair */
-		(void)((*Term->pict_hook)(x, y, 1, &na, &nc, &nta, &ntc));
+			/* Hack -- Draw the special attr/char pair */
+			(void) ((*Term->pict_hook) (x, y, 1, &na, &nc, &nta, &ntc));
 
 #else /* USE_TRANSPARENCY */
 
-		/* Hack -- Draw the special attr/char pair */
-		(void)((*Term->pict_hook)(x, y, 1, &na, &nc));
+			/* Hack -- Draw the special attr/char pair */
+			(void) ((*Term->pict_hook) (x, y, 1, &na, &nc));
 
 #endif /* USE_TRANSPARENCY */
 
@@ -915,13 +1043,14 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 				/* Draw the pending chars */
 				if (fa || always_text)
 				{
-					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+					(void) ((*Term->text_hook) (fx, y, fn, fa,
+							&scr_cc[fx]));
 				}
 
 				/* Hack -- Erase "leading" spaces */
 				else
 				{
-					(void)((*Term->wipe_hook)(fx, y, fn));
+					(void) ((*Term->wipe_hook) (fx, y, fn));
 				}
 
 				/* Forget */
@@ -933,7 +1062,8 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 		}
 
 		/* Restart and Advance */
-		if (fn++ == 0) fx = x;
+		if (fn++ == 0)
+			fx = x;
 	}
 
 	/* Flush */
@@ -942,13 +1072,13 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 		/* Draw pending chars (normal) */
 		if (fa || always_text)
 		{
-			(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+			(void) ((*Term->text_hook) (fx, y, fn, fa, &scr_cc[fx]));
 		}
 
 		/* Draw pending chars (black) */
 		else
 		{
-			(void)((*Term->wipe_hook)(fx, y, fn));
+			(void) ((*Term->wipe_hook) (fx, y, fn));
 		}
 	}
 }
@@ -1008,13 +1138,14 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 				/* Draw pending chars (normal) */
 				if (fa || always_text)
 				{
-					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+					(void) ((*Term->text_hook) (fx, y, fn, fa,
+							&scr_cc[fx]));
 				}
 
 				/* Draw pending chars (black) */
 				else
 				{
-					(void)((*Term->wipe_hook)(fx, y, fn));
+					(void) ((*Term->wipe_hook) (fx, y, fn));
 				}
 
 				/* Forget */
@@ -1038,13 +1169,14 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 				/* Draw the pending chars */
 				if (fa || always_text)
 				{
-					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+					(void) ((*Term->text_hook) (fx, y, fn, fa,
+							&scr_cc[fx]));
 				}
 
 				/* Hack -- Erase "leading" spaces */
 				else
 				{
-					(void)((*Term->wipe_hook)(fx, y, fn));
+					(void) ((*Term->wipe_hook) (fx, y, fn));
 				}
 
 				/* Forget */
@@ -1056,7 +1188,8 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 		}
 
 		/* Restart and Advance */
-		if (fn++ == 0) fx = x;
+		if (fn++ == 0)
+			fx = x;
 	}
 
 	/* Flush */
@@ -1065,25 +1198,26 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 		/* Draw pending chars (normal) */
 		if (fa || always_text)
 		{
-			(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
+			(void) ((*Term->text_hook) (fx, y, fn, fa, &scr_cc[fx]));
 		}
 
 		/* Draw pending chars (black) */
 		else
 		{
-			(void)((*Term->wipe_hook)(fx, y, fn));
+			(void) ((*Term->wipe_hook) (fx, y, fn));
 		}
 	}
 }
 
 
+#endif /* TNB */
 
 
 
 /*
  * Actually perform all requested changes to the window
  *
- * If aboslutely nothing has changed, not even temporarily, or if the
+ * If absolutely nothing has changed, not even temporarily, or if the
  * current "Term" is not mapped, then this function will return 1 and
  * do absolutely nothing.
  *
@@ -1192,6 +1326,8 @@ static void Term_fresh_row_text(int y, int x1, int x2)
  * Currently, the use of "Term->icky_corner" and "Term->soft_cursor"
  * together may result in undefined behavior.
  */
+#if 0 /* TNB */
+
 errr Term_fresh(void)
 {
 	int x, y;
@@ -1207,16 +1343,14 @@ errr Term_fresh(void)
 
 
 	/* Do nothing unless "mapped" */
-	if (!Term->mapped_flag) return (1);
+	if (!Term->mapped_flag)
+		return (1);
 
 
 	/* Trivial Refresh */
-	if ((y1 > y2) &&
-	    (scr->cu == old->cu) &&
-	    (scr->cv == old->cv) &&
-	    (scr->cx == old->cx) &&
-	    (scr->cy == old->cy) &&
-	    !(Term->total_erase))
+	if ((y1 > y2) && (scr->cu == old->cu) && (scr->cv == old->cv) &&
+		(scr->cx == old->cx) && (scr->cy == old->cy) &&
+		!(Term->total_erase))
 	{
 		/* Nothing */
 		return (1);
@@ -1224,10 +1358,14 @@ errr Term_fresh(void)
 
 
 	/* Paranoia -- use "fake" hooks to prevent core dumps */
-	if (!Term->curs_hook) Term->curs_hook = Term_curs_hack;
-	if (!Term->wipe_hook) Term->wipe_hook = Term_wipe_hack;
-	if (!Term->text_hook) Term->text_hook = Term_text_hack;
-	if (!Term->pict_hook) Term->pict_hook = Term_pict_hack;
+	if (!Term->curs_hook)
+		Term->curs_hook = Term_curs_hack;
+	if (!Term->wipe_hook)
+		Term->wipe_hook = Term_wipe_hack;
+	if (!Term->text_hook)
+		Term->text_hook = Term_text_hack;
+	if (!Term->pict_hook)
+		Term->pict_hook = Term_pict_hack;
 
 
 	/* Handle "total erase" */
@@ -1318,9 +1456,10 @@ errr Term_fresh(void)
 			if (Term->always_pict)
 			{
 #ifdef USE_TRANSPARENCY
-				(void)((*Term->pict_hook)(tx, ty, 1, &oa, &oc, &ota, &otc));
+				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc, &ota,
+						&otc));
 #else /* USE_TRANSPARENCY */
-				(void)((*Term->pict_hook)(tx, ty, 1, &oa, &oc));
+				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc));
 #endif /* USE_TRANSPARENCY */
 			}
 
@@ -1328,22 +1467,23 @@ errr Term_fresh(void)
 			else if (Term->higher_pict && (oa & 0x80) && (oc & 0x80))
 			{
 #ifdef USE_TRANSPARENCY
-				(void)((*Term->pict_hook)(tx, ty, 1, &oa, &oc, &ota, &otc));
+				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc, &ota,
+						&otc));
 #else /* USE_TRANSPARENCY */
-				(void)((*Term->pict_hook)(tx, ty, 1, &oa, &oc));
+				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc));
 #endif /* USE_TRANSPARENCY */
 			}
 
 			/* Hack -- restore the actual character */
 			else if (oa || Term->always_text)
 			{
-				(void)((*Term->text_hook)(tx, ty, 1, oa, &oc));
+				(void) ((*Term->text_hook) (tx, ty, 1, oa, &oc));
 			}
 
 			/* Hack -- erase the grid */
 			else
 			{
-				(void)((*Term->wipe_hook)(tx, ty, 1));
+				(void) ((*Term->wipe_hook) (tx, ty, 1));
 			}
 		}
 	}
@@ -1414,7 +1554,8 @@ errr Term_fresh(void)
 				Term->x2[y] = 0;
 
 				/* Hack -- Flush that row (if allowed) */
-				if (!Term->never_frosh) Term_xtra(TERM_XTRA_FROSH, y);
+				if (!Term->never_frosh)
+					Term_xtra(TERM_XTRA_FROSH, y);
 			}
 		}
 
@@ -1431,7 +1572,7 @@ errr Term_fresh(void)
 		if (!scr->cu && scr->cv)
 		{
 			/* Call the cursor display routine */
-			(void)((*Term->curs_hook)(scr->cx, scr->cy));
+			(void) ((*Term->curs_hook) (scr->cx, scr->cy));
 		}
 	}
 
@@ -1442,7 +1583,7 @@ errr Term_fresh(void)
 		if (scr->cu)
 		{
 			/* Paranoia -- Put the cursor NEAR where it belongs */
-			(void)((*Term->curs_hook)(w - 1, scr->cy));
+			(void) ((*Term->curs_hook) (w - 1, scr->cy));
 
 			/* Make the cursor invisible */
 			/* Term_xtra(TERM_XTRA_SHAPE, 0); */
@@ -1452,7 +1593,7 @@ errr Term_fresh(void)
 		else if (!scr->cv)
 		{
 			/* Paranoia -- Put the cursor where it belongs */
-			(void)((*Term->curs_hook)(scr->cx, scr->cy));
+			(void) ((*Term->curs_hook) (scr->cx, scr->cy));
 
 			/* Make the cursor invisible */
 			/* Term_xtra(TERM_XTRA_SHAPE, 0); */
@@ -1462,7 +1603,7 @@ errr Term_fresh(void)
 		else
 		{
 			/* Put the cursor where it belongs */
-			(void)((*Term->curs_hook)(scr->cx, scr->cy));
+			(void) ((*Term->curs_hook) (scr->cx, scr->cy));
 
 			/* Make the cursor visible */
 			Term_xtra(TERM_XTRA_SHAPE, 1);
@@ -1485,10 +1626,13 @@ errr Term_fresh(void)
 	return (0);
 }
 
+#endif /* TNB */
+
 
 
 /*** Output routines ***/
 
+#if 0 /* TNB */
 
 /*
  * Set the cursor visibility
@@ -1496,7 +1640,8 @@ errr Term_fresh(void)
 errr Term_set_cursor(int v)
 {
 	/* Already done */
-	if (Term->scr->cv == v) return (1);
+	if (Term->scr->cv == v)
+		return (1);
 
 	/* Change */
 	Term->scr->cv = v;
@@ -1517,8 +1662,10 @@ errr Term_gotoxy(int x, int y)
 	int h = Term->hgt;
 
 	/* Verify */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w))
+		return (-1);
+	if ((y < 0) || (y >= h))
+		return (-1);
 
 	/* Remember the cursor */
 	Term->scr->cx = x;
@@ -1543,11 +1690,14 @@ errr Term_draw(int x, int y, byte a, char c)
 	int h = Term->hgt;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w))
+		return (-1);
+	if ((y < 0) || (y >= h))
+		return (-1);
 
 	/* Paranoia -- illegal char */
-	if (!c) return (-2);
+	if (!c)
+		return (-2);
 
 	/* Queue it for later */
 #ifdef USE_TRANSPARENCY
@@ -1582,10 +1732,12 @@ errr Term_addch(byte a, char c)
 	int w = Term->wid;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu)
+		return (-1);
 
 	/* Paranoia -- no illegal chars */
-	if (!c) return (-2);
+	if (!c)
+		return (-2);
 
 	/* Queue the given character for display */
 #ifdef USE_TRANSPARENCY
@@ -1598,7 +1750,8 @@ errr Term_addch(byte a, char c)
 	Term->scr->cx++;
 
 	/* Success */
-	if (Term->scr->cx < w) return (0);
+	if (Term->scr->cx < w)
+		return (0);
 
 	/* Note "Useless" cursor */
 	Term->scr->cu = 1;
@@ -1636,16 +1789,18 @@ errr Term_addstr(int n, byte a, cptr s)
 	errr res = 0;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu)
+		return (-1);
 
 	/* Obtain maximal length */
 	k = (n < 0) ? (w + 1) : n;
 
 	/* Obtain the usable string length */
-	for (n = 0; (n < k) && s[n]; n++) /* loop */;
+	for (n = 0; (n < k) && s[n]; n++) /* loop */ ;
 
 	/* React to reaching the edge of the screen */
-	if (Term->scr->cx + n >= w) res = n = w - Term->scr->cx;
+	if (Term->scr->cx + n >= w)
+		res = n = w - Term->scr->cx;
 
 	/* Queue the first "n" characters for display */
 	Term_queue_chars(Term->scr->cx, Term->scr->cy, n, a, s);
@@ -1654,7 +1809,8 @@ errr Term_addstr(int n, byte a, cptr s)
 	Term->scr->cx += n;
 
 	/* Hack -- Notice "Useless" cursor */
-	if (res) Term->scr->cu = 1;
+	if (res)
+		Term->scr->cu = 1;
 
 	/* Success (usually) */
 	return (res);
@@ -1669,10 +1825,12 @@ errr Term_putch(int x, int y, byte a, char c)
 	errr res;
 
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	if ((res = Term_gotoxy(x, y)) != 0)
+		return (res);
 
 	/* Then add the char */
-	if ((res = Term_addch(a, c)) != 0) return (res);
+	if ((res = Term_addch(a, c)) != 0)
+		return (res);
 
 	/* Success */
 	return (0);
@@ -1687,10 +1845,12 @@ errr Term_putstr(int x, int y, int n, byte a, cptr s)
 	errr res;
 
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	if ((res = Term_gotoxy(x, y)) != 0)
+		return (res);
 
 	/* Then add the string */
-	if ((res = Term_addstr(n, a, s)) != 0) return (res);
+	if ((res = Term_addstr(n, a, s)) != 0)
+		return (res);
 
 	/* Success */
 	return (0);
@@ -1723,10 +1883,12 @@ errr Term_erase(int x, int y, int n)
 #endif /* USE_TRANSPARENCY */
 
 	/* Place cursor */
-	if (Term_gotoxy(x, y)) return (-1);
+	if (Term_gotoxy(x, y))
+		return (-1);
 
 	/* Force legal size */
-	if (x + n > w) n = w - x;
+	if (x + n > w)
+		n = w - x;
 
 	/* Fast access */
 	scr_aa = Term->scr->a[y];
@@ -1744,7 +1906,8 @@ errr Term_erase(int x, int y, int n)
 		int oc = scr_cc[x];
 
 		/* Hack -- Ignore "non-changes" */
-		if ((oa == na) && (oc == nc)) continue;
+		if ((oa == na) && (oc == nc))
+			continue;
 
 		/* Save the "literal" information */
 		scr_aa[x] = na;
@@ -1755,8 +1918,9 @@ errr Term_erase(int x, int y, int n)
 		scr_tcc[x] = 0;
 #endif /* USE_TRANSPARENCY */
 
-		/* Track minumum changed column */
-		if (x1 < 0) x1 = x;
+		/* Track minimum changed column */
+		if (x1 < 0)
+			x1 = x;
 
 		/* Track maximum changed column */
 		x2 = x;
@@ -1766,12 +1930,16 @@ errr Term_erase(int x, int y, int n)
 	if (x1 >= 0)
 	{
 		/* Check for new min/max row info */
-		if (y < Term->y1) Term->y1 = y;
-		if (y > Term->y2) Term->y2 = y;
+		if (y < Term->y1)
+			Term->y1 = y;
+		if (y > Term->y2)
+			Term->y2 = y;
 
 		/* Check for new min/max col info in this row */
-		if (x1 < Term->x1[y]) Term->x1[y] = x1;
-		if (x2 > Term->x2[y]) Term->x2[y] = x2;
+		if (x1 < Term->x1[y])
+			Term->x1[y] = x1;
+		if (x2 > Term->x2[y])
+			Term->x2[y] = x2;
 	}
 
 	/* Success */
@@ -1840,7 +2008,7 @@ errr Term_clear(void)
 	return (0);
 }
 
-
+#endif /* TNB */
 
 
 
@@ -1860,6 +2028,51 @@ errr Term_redraw(void)
 }
 
 
+/*
+ * Redraw part of a widow.
+ */
+errr Term_redraw_section(int x1, int y1, int x2, int y2)
+{
+	int i, j;
+
+	char *c_ptr;
+
+	/* Bounds checking */
+	if (y2 >= Term->hgt)
+		y2 = Term->hgt - 1;
+	if (x2 >= Term->wid)
+		x2 = Term->wid - 1;
+	if (y1 < 0)
+		y1 = 0;
+	if (x1 < 0)
+		x1 = 0;
+
+	/* Set y limits */
+	Term->y1 = y1;
+	Term->y2 = y2;
+
+	/* Set the x limits */
+	for (i = Term->y1; i <= Term->y2; i++)
+	{
+		Term->x1[i] = x1;
+		Term->x2[i] = x2;
+
+		c_ptr = Term->old->c[i];
+
+		/* Clear the section so it is redrawn */
+		for (j = x1; j <= x2; j++)
+		{
+			/* Hack - set the old character to "none" */
+			c_ptr[j] = 0;
+		}
+	}
+
+	/* Hack -- Refresh */
+	Term_fresh();
+
+	/* Success */
+	return (0);
+}
 
 
 
@@ -1903,7 +2116,8 @@ errr Term_locate(int *x, int *y)
 	(*y) = Term->scr->cy;
 
 	/* Warn about "useless" cursor */
-	if (Term->scr->cu) return (1);
+	if (Term->scr->cu)
+		return (1);
 
 	/* Success */
 	return (0);
@@ -1915,14 +2129,16 @@ errr Term_locate(int *x, int *y)
  * Note that this refers to what will be on the window after the
  * next call to "Term_fresh()".  It may or may not already be there.
  */
-errr Term_what(int x, int y, byte *a, char *c)
+errr Term_what(int x, int y, byte * a, char *c)
 {
 	int w = Term->wid;
 	int h = Term->hgt;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w))
+		return (-1);
+	if ((y < 0) || (y >= h))
+		return (-1);
 
 	/* Direct access */
 	(*a) = Term->scr->a[y][x];
@@ -1960,20 +2176,24 @@ errr Term_flush(void)
 errr Term_keypress(int k)
 {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k)
+		return (-1);
 
 	/* Store the char, advance the queue */
 	Term->key_queue[Term->key_head++] = k;
 
 	/* Circular queue, handle wrap */
-	if (Term->key_head == Term->key_size) Term->key_head = 0;
+	if (Term->key_head == Term->key_size)
+		Term->key_head = 0;
 
 	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
+	if (Term->key_head != Term->key_tail)
+		return (0);
 
 #if 0
 	/* Hack -- Forget the oldest key */
-	if (++Term->key_tail == Term->key_size) Term->key_tail = 0;
+	if (++Term->key_tail == Term->key_size)
+		Term->key_tail = 0;
 #endif
 
 	/* Problem */
@@ -1987,20 +2207,24 @@ errr Term_keypress(int k)
 errr Term_key_push(int k)
 {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k)
+		return (-1);
 
 	/* Hack -- Overflow may induce circular queue */
-	if (Term->key_tail == 0) Term->key_tail = Term->key_size;
+	if (Term->key_tail == 0)
+		Term->key_tail = Term->key_size;
 
 	/* Back up, Store the char */
 	Term->key_queue[--Term->key_tail] = k;
 
 	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
+	if (Term->key_head != Term->key_tail)
+		return (0);
 
 #if 0
 	/* Hack -- Forget the oldest key */
-	if (++Term->key_tail == Term->key_size) Term->key_tail = 0;
+	if (++Term->key_tail == Term->key_size)
+		Term->key_tail = 0;
 #endif
 
 	/* Problem */
@@ -2036,6 +2260,9 @@ errr Term_inkey(char *ch, bool wait, bool take)
 	/* Wait */
 	if (wait)
 	{
+		if (Term->key_head == Term->key_tail)
+			Bind_Generic(EVENT_TERM, KEYWORD_TERM_INKEY + 1); /* TNB */
+
 		/* Process pending events while necessary */
 		while (Term->key_head == Term->key_tail)
 		{
@@ -2056,13 +2283,15 @@ errr Term_inkey(char *ch, bool wait, bool take)
 	}
 
 	/* No keys are ready */
-	if (Term->key_head == Term->key_tail) return (1);
+	if (Term->key_head == Term->key_tail)
+		return (1);
 
 	/* Extract the next keypress */
 	(*ch) = Term->key_queue[Term->key_tail];
 
 	/* If requested, advance the queue, wrap around if necessary */
-	if (take && (++Term->key_tail == Term->key_size)) Term->key_tail = 0;
+	if (take && (++Term->key_tail == Term->key_size))
+		Term->key_tail = 0;
 
 	/* Success */
 	return (0);
@@ -2206,17 +2435,18 @@ errr Term_resize(int w, int h)
 	term_win *hold_mem;
 	term_win *hold_tmp;
 
-
 	/* Resizing is forbidden */
-	if (Term->fixed_shape) return (-1);
-
+	if (Term->fixed_shape)
+		return (-1);
 
 	/* Ignore illegal changes */
-	if ((w < 1) || (h < 1)) return (-1);
+	if ((w < 1) || (h < 1))
+		return (-1);
 
 
 	/* Ignore non-changes */
-	if ((Term->wid == w) && (Term->hgt == h)) return (1);
+	if ((Term->wid == w) && (Term->hgt == h))
+		return (1);
 
 
 	/* Minimum dimensions */
@@ -2298,8 +2528,10 @@ errr Term_resize(int w, int h)
 	KILL(hold_old, term_win);
 
 	/* Illegal cursor */
-	if (Term->old->cx >= w) Term->old->cu = 1;
-	if (Term->old->cy >= h) Term->old->cu = 1;
+	if (Term->old->cx >= w)
+		Term->old->cu = 1;
+	if (Term->old->cy >= h)
+		Term->old->cu = 1;
 
 	/* Nuke */
 	term_win_nuke(hold_scr, Term->wid, Term->hgt);
@@ -2308,8 +2540,10 @@ errr Term_resize(int w, int h)
 	KILL(hold_scr, term_win);
 
 	/* Illegal cursor */
-	if (Term->scr->cx >= w) Term->scr->cu = 1;
-	if (Term->scr->cy >= h) Term->scr->cu = 1;
+	if (Term->scr->cx >= w)
+		Term->scr->cu = 1;
+	if (Term->scr->cy >= h)
+		Term->scr->cu = 1;
 
 	/* If needed */
 	if (hold_mem)
@@ -2321,8 +2555,10 @@ errr Term_resize(int w, int h)
 		KILL(hold_mem, term_win);
 
 		/* Illegal cursor */
-		if (Term->mem->cx >= w) Term->mem->cu = 1;
-		if (Term->mem->cy >= h) Term->mem->cu = 1;
+		if (Term->mem->cx >= w)
+			Term->mem->cu = 1;
+		if (Term->mem->cy >= h)
+			Term->mem->cu = 1;
 	}
 
 	/* If needed */
@@ -2335,8 +2571,10 @@ errr Term_resize(int w, int h)
 		KILL(hold_tmp, term_win);
 
 		/* Illegal cursor */
-		if (Term->tmp->cx >= w) Term->tmp->cu = 1;
-		if (Term->tmp->cy >= h) Term->tmp->cu = 1;
+		if (Term->tmp->cx >= w)
+			Term->tmp->cu = 1;
+		if (Term->tmp->cy >= h)
+			Term->tmp->cu = 1;
 	}
 
 	/* Save new size */
@@ -2374,19 +2612,22 @@ errr Term_resize(int w, int h)
  * To "create" a valid "term", one should do "term_init(t)", then
  * set the various flags and hooks, and then do "Term_activate(t)".
  */
-errr Term_activate(term *t)
+errr Term_activate(term * t)
 {
 	/* Hack -- already done */
-	if (Term == t) return (1);
+	if (Term == t)
+		return (1);
 
 	/* Deactivate the old Term */
-	if (Term) Term_xtra(TERM_XTRA_LEVEL, 0);
+	if (Term)
+		Term_xtra(TERM_XTRA_LEVEL, 0);
 
 	/* Hack -- Call the special "init" hook */
 	if (t && !t->active_flag)
 	{
 		/* Call the "init" hook */
-		if (t->init_hook) (*t->init_hook)(t);
+		if (t->init_hook)
+			(*t->init_hook) (t);
 
 		/* Remember */
 		t->active_flag = TRUE;
@@ -2399,7 +2640,8 @@ errr Term_activate(term *t)
 	Term = t;
 
 	/* Activate the new Term */
-	if (Term) Term_xtra(TERM_XTRA_LEVEL, 1);
+	if (Term)
+		Term_xtra(TERM_XTRA_LEVEL, 1);
 
 	/* Success */
 	return (0);
@@ -2410,7 +2652,7 @@ errr Term_activate(term *t)
 /*
  * Nuke a term
  */
-errr term_nuke(term *t)
+errr term_nuke(term * t)
 {
 	int w = t->wid;
 	int h = t->hgt;
@@ -2420,7 +2662,8 @@ errr term_nuke(term *t)
 	if (t->active_flag)
 	{
 		/* Call the "nuke" hook */
-		if (t->nuke_hook) (*t->nuke_hook)(t);
+		if (t->nuke_hook)
+			(*t->nuke_hook) (t);
 
 		/* Remember */
 		t->active_flag = FALSE;
@@ -2480,13 +2723,13 @@ errr term_nuke(term *t)
  * By default, the cursor starts out "invisible"
  * By default, we "erase" using "black spaces"
  */
-errr term_init(term *t, int w, int h, int k)
+errr term_init(term * t, int w, int h, int k)
 {
 	int y;
 
 
 	/* Wipe it */
-	WIPE(t, term);
+	(void) WIPE(t, term);
 
 
 	/* Prepare the input queue */
@@ -2546,5 +2789,3 @@ errr term_init(term *t, int w, int h, int k)
 	/* Success */
 	return (0);
 }
-
-

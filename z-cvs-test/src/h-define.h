@@ -17,7 +17,7 @@
 #  define NULL ((void*)0)
 # else
 #  define NULL ((char*)0)
-# endif /* __STDC__ */
+# endif	/* __STDC__ */
 #endif /* NULL */
 
 
@@ -131,4 +131,3 @@
 
 
 #endif
-

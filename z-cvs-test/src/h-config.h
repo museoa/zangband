@@ -33,23 +33,17 @@
 /* #define WINDOWS */
 #endif
 
+
 #ifdef USE_IBM
 
-  /*
-   * OPTION: Compile on an IBM (automatic)
-   */
-  #ifndef MSDOS
-    #define MSDOS
-  #endif
+/*
+* OPTION: Compile on an IBM (automatic)
+*/
+#ifndef MSDOS
+#define MSDOS
+#endif /* MSDOS */
 
-
-  /* Use the new SVGA code */
-  #ifndef USE_IBM_SVGA
-    #define USE_IBM_SVGA
-  #endif
-
-
-#endif
+#endif /* USE_IBM */
 
 /*
  * OPTION: Compile on a SYS III version of UNIX
@@ -160,6 +154,7 @@
 /*
  * Extract the "WINDOWS" flag from the compiler
  */
+#ifndef WIN_CYGWIN /* TNB */
 #if defined(_Windows) || defined(__WINDOWS__) || \
     defined(__WIN32__) || defined(WIN32) || \
     defined(__WINNT__) || defined(__NT__)
@@ -167,7 +162,7 @@
 #  define WINDOWS
 # endif
 #endif
-
+#endif /* WIN_CYGWIN -- TNB */
 
 
 /*
@@ -312,11 +307,9 @@
 #endif
 
 #ifdef USE_IBM
-    #ifndef HAS_USLEEP
-    #define HAS_USLEEP /* Set for gcc (djgpp-v2), TY */
-    #endif
+#ifndef HAS_USLEEP
+#define HAS_USLEEP /* Set for gcc (djgpp-v2), TY */
+#endif
 #endif
 
 #endif
-
-

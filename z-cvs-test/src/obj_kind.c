@@ -66,7 +66,7 @@ void k_info_reset(void)
 
 
 /* Add a new object template */
-object_kind *k_info_add(object_kind *k_info_entry)
+object_kind *k_info_add(object_kind * k_info_entry)
 {
 	/* Resize if necessary */
 	while (k_info_size <= max_k_idx)
@@ -77,20 +77,22 @@ object_kind *k_info_add(object_kind *k_info_entry)
 		k_info = realloc(k_info, k_info_size * sizeof(object_kind));
 
 		/* Failure */
-		if (!k_info) quit("Out of memory!");
+		if (!k_info)
+			quit("Out of memory!");
 
 		/* Wipe the new memory */
-		C_WIPE(&k_info[(k_info_size - K_INFO_RESIZE)], K_INFO_RESIZE, object_kind);
+		(void) C_WIPE(&k_info[(k_info_size - K_INFO_RESIZE)],
+			K_INFO_RESIZE, object_kind);
 	}
 
 	/* Increase the maximum index of the array */
 	max_k_idx++;
 
 	/* Copy the new object_kind */
-	COPY(&k_info[max_k_idx-1], k_info_entry, object_kind);
+	COPY(&k_info[max_k_idx - 1], k_info_entry, object_kind);
 
 	/* Success */
-	return (&k_info[max_k_idx-1]);
+	return (&k_info[max_k_idx - 1]);
 }
 
 
@@ -109,10 +111,10 @@ errr init_object_alloc(void)
 	/*** Analyze object allocation info ***/
 
 	/* Clear the "aux" array */
-	C_WIPE(&aux, MAX_DEPTH, s16b);
+	(void) C_WIPE(&aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	C_WIPE(&num, MAX_DEPTH, s16b);
+	(void) C_WIPE(&num, MAX_DEPTH, s16b);
 
 	/* Free the old "alloc_kind_table" (if it exists) */
 	if (alloc_kind_table)
@@ -147,11 +149,12 @@ errr init_object_alloc(void)
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 		/* Group by level */
-		num[i] += num[i-1];
+		num[i] += num[i - 1];
 	}
 
 	/* Paranoia */
-	if (!num[0]) quit("No town objects!");
+	if (!num[0])
+		quit("No town objects!");
 
 
 	/*** Initialize object allocation info ***/
@@ -182,7 +185,7 @@ errr init_object_alloc(void)
 				p = (100 / k_ptr->chance[j]);
 
 				/* Skip entries preceding our locale */
-				y = (x > 0) ? num[x-1] : 0;
+				y = (x > 0) ? num[x - 1] : 0;
 
 				/* Skip previous entries at this locale */
 				z = y + aux[x];
@@ -205,17 +208,17 @@ errr init_object_alloc(void)
 }
 
 
-byte get_object_level(object_type *o_ptr)
+byte get_object_level(object_type * o_ptr)
 {
 #if 0
-	return (byte)get_object_level_callback(o_ptr);
+	return (byte) get_object_level_callback(o_ptr);
 #else
 	return k_info[o_ptr->k_idx].level;
 #endif
 }
 
 
-s32b get_object_cost(object_type *o_ptr)
+s32b get_object_cost(object_type * o_ptr)
 {
 #if 0
 	return get_object_cost_callback(o_ptr);
@@ -225,7 +228,7 @@ s32b get_object_cost(object_type *o_ptr)
 }
 
 
-cptr get_object_name(object_type *o_ptr)
+cptr get_object_name(object_type * o_ptr)
 {
 #if 0
 	return get_object_name_callback(o_ptr);
@@ -236,7 +239,7 @@ cptr get_object_name(object_type *o_ptr)
 
 
 /* Default object attribute */
-byte get_object_d_attr(object_type *o_ptr)
+byte get_object_d_attr(object_type * o_ptr)
 {
 #if 0
 	return get_object_d_attr_callback(o_ptr);
@@ -247,7 +250,7 @@ byte get_object_d_attr(object_type *o_ptr)
 
 
 /* Default object character */
-byte get_object_x_attr(object_type *o_ptr)
+byte get_object_x_attr(object_type * o_ptr)
 {
 #if 0
 	return get_object_x_attr_callback(o_ptr);
@@ -258,7 +261,7 @@ byte get_object_x_attr(object_type *o_ptr)
 
 
 /* Desired object attribute */
-char get_object_d_char(object_type *o_ptr)
+char get_object_d_char(object_type * o_ptr)
 {
 #if 0
 	return get_object_d_char_callback(o_ptr);
@@ -269,7 +272,7 @@ char get_object_d_char(object_type *o_ptr)
 
 
 /* Desired object character */
-char get_object_x_char(object_type *o_ptr)
+char get_object_x_char(object_type * o_ptr)
 {
 #if 0
 	return get_object_x_char_callback(o_ptr);
@@ -280,7 +283,7 @@ char get_object_x_char(object_type *o_ptr)
 
 
 /* The player is "aware" of the item's effects */
-bool get_object_aware(object_type *o_ptr)
+bool get_object_aware(object_type * o_ptr)
 {
 #if 0
 	return get_object_aware_callback(o_ptr);
@@ -291,7 +294,7 @@ bool get_object_aware(object_type *o_ptr)
 
 
 /* The player has "tried" one of the items */
-bool get_object_tried(object_type *o_ptr)
+bool get_object_tried(object_type * o_ptr)
 {
 #if 0
 	return get_object_tried_callback(o_ptr);
@@ -301,7 +304,7 @@ bool get_object_tried(object_type *o_ptr)
 }
 
 
-bool object_is_potion(object_type *o_ptr)
+bool object_is_potion(object_type * o_ptr)
 {
 	return (k_info[o_ptr->k_idx].tval == TV_POTION);
 }

@@ -14,18 +14,20 @@
 
 #include "angband.h"
 
+#include "tnb.h" /* TNB */
+
 
 /*
  * Helper for plasma generation.
  */
-static void perturb_point_mid(int x1, int x2, int x3, int x4,
-			  int xmid, int ymid, int rough, int depth_max)
+static void perturb_point_mid(int x1, int x2, int x3, int x4, int xmid,
+	int ymid, int rough, int depth_max)
 {
 	/*
 	 * Average the four corners & perturb it a bit.
 	 * tmp is a random int +/- rough
 	 */
-	int tmp2 = rough*2 + 1;
+	int tmp2 = rough * 2 + 1;
 	int tmp = randint(tmp2) - (rough + 1);
 
 	int avg = ((x1 + x2 + x3 + x4) / 4) + tmp;
@@ -35,16 +37,18 @@ static void perturb_point_mid(int x1, int x2, int x3, int x4,
 		avg++;
 
 	/* Normalize */
-	if (avg < 0) avg = 0;
-	if (avg > depth_max) avg = depth_max;
+	if (avg < 0)
+		avg = 0;
+	if (avg > depth_max)
+		avg = depth_max;
 
 	/* Set the new value. */
 	cave[ymid][xmid].feat = avg;
 }
 
 
-static void perturb_point_end(int x1, int x2, int x3,
-			  int xmid, int ymid, int rough, int depth_max)
+static void perturb_point_end(int x1, int x2, int x3, int xmid, int ymid,
+	int rough, int depth_max)
 {
 	/*
 	 * Average the three corners & perturb it a bit.
@@ -56,11 +60,14 @@ static void perturb_point_end(int x1, int x2, int x3,
 	int avg = ((x1 + x2 + x3) / 3) + tmp;
 
 	/* Division always rounds down, so we round up again */
-	if ((x1 + x2 + x3) % 3) avg++;
+	if ((x1 + x2 + x3) % 3)
+		avg++;
 
 	/* Normalize */
-	if (avg < 0) avg = 0;
-	if (avg > depth_max) avg = depth_max;
+	if (avg < 0)
+		avg = 0;
+	if (avg > depth_max)
+		avg = depth_max;
 
 	/* Set the new value. */
 	cave[ymid][xmid].feat = avg;
@@ -74,30 +81,32 @@ static void perturb_point_end(int x1, int x2, int x3,
  * are NOT actual features; They are raw heights which
  * need to be converted to features.
  */
-static void plasma_recursive(int x1, int y1, int x2, int y2,
-			     int depth_max, int rough)
+static void plasma_recursive(int x1, int y1, int x2, int y2, int depth_max,
+	int rough)
 {
 	/* Find middle */
 	int xmid = (x2 - x1) / 2 + x1;
 	int ymid = (y2 - y1) / 2 + y1;
 
 	/* Are we done? */
-	if (x1 + 1 == x2) return;
+	if (x1 + 1 == x2)
+		return;
 
-	perturb_point_mid(cave[y1][x1].feat, cave[y2][x1].feat, cave[y1][x2].feat,
-		cave[y2][x2].feat, xmid, ymid, rough, depth_max);
+	perturb_point_mid(cave[y1][x1].feat, cave[y2][x1].feat,
+		cave[y1][x2].feat, cave[y2][x2].feat, xmid, ymid, rough,
+		depth_max);
 
-	perturb_point_end(cave[y1][x1].feat, cave[y1][x2].feat, cave[ymid][xmid].feat,
-		xmid, y1, rough, depth_max);
+	perturb_point_end(cave[y1][x1].feat, cave[y1][x2].feat,
+		cave[ymid][xmid].feat, xmid, y1, rough, depth_max);
 
-	perturb_point_end(cave[y1][x2].feat, cave[y2][x2].feat, cave[ymid][xmid].feat,
-		x2, ymid, rough, depth_max);
+	perturb_point_end(cave[y1][x2].feat, cave[y2][x2].feat,
+		cave[ymid][xmid].feat, x2, ymid, rough, depth_max);
 
-	perturb_point_end(cave[y2][x2].feat, cave[y2][x1].feat, cave[ymid][xmid].feat,
-		xmid, y2, rough, depth_max);
+	perturb_point_end(cave[y2][x2].feat, cave[y2][x1].feat,
+		cave[ymid][xmid].feat, xmid, y2, rough, depth_max);
 
-	perturb_point_end(cave[y2][x1].feat, cave[y1][x1].feat, cave[ymid][xmid].feat,
-		x1, ymid, rough, depth_max);
+	perturb_point_end(cave[y2][x1].feat, cave[y1][x1].feat,
+		cave[ymid][xmid].feat, x1, ymid, rough, depth_max);
 
 
 	/* Recurse the four quadrants */
@@ -111,8 +120,7 @@ static void plasma_recursive(int x1, int y1, int x2, int y2,
 /*
  * The default table in terrain level generation.
  */
-static int terrain_table[MAX_WILDERNESS][18] =
-{
+static int terrain_table[MAX_WILDERNESS][18] = {
 	/* TERRAIN_EDGE */
 	{
 			FEAT_PERM_SOLID,
@@ -138,7 +146,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_PERM_SOLID,
 			FEAT_PERM_SOLID,
 			FEAT_PERM_SOLID,
-	},
+		},
 	/* TERRAIN_TOWN */
 	{
 			FEAT_FLOOR,
@@ -164,7 +172,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_FLOOR,
 			FEAT_FLOOR,
 			FEAT_FLOOR,
-	},
+		},
 	/* TERRAIN_DEEP_WATER */
 	{
 			FEAT_DEEP_WATER,
@@ -190,7 +198,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_SHAL_WATER,
 			FEAT_SHAL_WATER,
 			FEAT_SHAL_WATER,
-	},
+		},
 	/* TERRAIN_SHALLOW_WATER */
 	{
 			FEAT_DEEP_WATER,
@@ -216,7 +224,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_FLOOR,
 			FEAT_DIRT,
 			FEAT_GRASS,
-	},
+		},
 	/* TERRAIN_SWAMP */
 	{
 			FEAT_FLOOR,
@@ -242,7 +250,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_DIRT,
 			FEAT_TREES,
 			FEAT_TREES,
-	},
+		},
 	/* TERRAIN_DIRT */
 	{
 			FEAT_FLOOR,
@@ -268,7 +276,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_GRASS,
 			FEAT_TREES,
 			FEAT_TREES,
-	},
+		},
 	/* TERRAIN_GRASS */
 	{
 			FEAT_FLOOR,
@@ -294,7 +302,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_GRASS,
 			FEAT_TREES,
 			FEAT_TREES,
-	},
+		},
 	/* TERRAIN_TREES */
 	{
 			FEAT_FLOOR,
@@ -320,7 +328,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_GRASS,
 			FEAT_GRASS,
 			FEAT_GRASS,
-	},
+		},
 	/* TERRAIN_DESERT */
 	{
 			FEAT_FLOOR,
@@ -346,7 +354,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_GRASS,
 			FEAT_GRASS,
 			FEAT_GRASS,
-	},
+		},
 	/* TERRAIN_SHALLOW_LAVA */
 	{
 			FEAT_SHAL_LAVA,
@@ -372,7 +380,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_DEEP_LAVA,
 			FEAT_MOUNTAIN,
 			FEAT_MOUNTAIN,
-	},
+		},
 	/* TERRAIN_DEEP_LAVA */
 	{
 			FEAT_DIRT,
@@ -398,7 +406,7 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_MOUNTAIN,
 			FEAT_MOUNTAIN,
 			FEAT_MOUNTAIN,
-	},
+		},
 	/* TERRAIN_MOUNTAIN */
 	{
 			FEAT_FLOOR,
@@ -424,12 +432,12 @@ static int terrain_table[MAX_WILDERNESS][18] =
 			FEAT_MOUNTAIN,
 			FEAT_MOUNTAIN,
 			FEAT_MOUNTAIN,
-	},
-
+		},
 };
 
 
-void generate_wilderness_area(int terrain, u32b seed, bool border, bool corner)
+void generate_wilderness_area(int terrain, u32b seed, bool border,
+	bool corner)
 {
 	int x1, y1;
 	int table_size = sizeof(terrain_table[0]) / sizeof(int);
@@ -475,23 +483,24 @@ void generate_wilderness_area(int terrain, u32b seed, bool border, bool corner)
 	 * ToDo: calculate the medium height of the adjacent
 	 * terrains for every corner.
 	 */
-	cave[1][1].feat = (byte)rand_int(table_size);
-	cave[MAX_HGT-2][1].feat = (byte)rand_int(table_size);
-	cave[1][MAX_WID-2].feat = (byte)rand_int(table_size);
-	cave[MAX_HGT-2][MAX_WID-2].feat = (byte)rand_int(table_size);
+	cave[1][1].feat = (byte) rand_int(table_size);
+	cave[MAX_HGT - 2][1].feat = (byte) rand_int(table_size);
+	cave[1][MAX_WID - 2].feat = (byte) rand_int(table_size);
+	cave[MAX_HGT - 2][MAX_WID - 2].feat = (byte) rand_int(table_size);
 
 	if (!corner)
 	{
 		/* x1, y1, x2, y2, num_depths, roughness */
-		plasma_recursive(1, 1, MAX_WID-2, MAX_HGT-2, table_size-1, roughness);
+		plasma_recursive(1, 1, MAX_WID - 2, MAX_HGT - 2, table_size - 1,
+			roughness);
 	}
 
 	/* Use the complex RNG */
 	Rand_quick = FALSE;
 
-	for (y1 = 1; y1 < MAX_HGT-1; y1++)
+	for (y1 = 1; y1 < MAX_HGT - 1; y1++)
 	{
-		for (x1 = 1; x1 < MAX_WID-1; x1++)
+		for (x1 = 1; x1 < MAX_WID - 1; x1++)
 		{
 			cave[y1][x1].feat = terrain_table[terrain][cave[y1][x1].feat];
 		}
@@ -530,11 +539,6 @@ static void generate_area(int y, int x, bool border, bool corner)
 	/* Set the object generation level */
 	object_level = base_level;
 
-#ifdef USE_SCRIPT
-	if (generate_wilderness_callback(y, x)) return;
-#endif /* USE_SCRIPT */
-
-
 	/* Create the town */
 	if (p_ptr->town_num)
 	{
@@ -568,9 +572,9 @@ static void generate_area(int y, int x, bool border, bool corner)
 		if (road & ROAD_NORTH)
 		{
 			/* North road */
-			for (y1 = 1; y1 < MAX_HGT/2; y1++)
+			for (y1 = 1; y1 < MAX_HGT / 2; y1++)
 			{
-				x1 = MAX_WID/2;
+				x1 = MAX_WID / 2;
 				cave[y1][x1].feat = FEAT_FLOOR;
 			}
 		}
@@ -578,9 +582,9 @@ static void generate_area(int y, int x, bool border, bool corner)
 		if (road & ROAD_SOUTH)
 		{
 			/* North road */
-			for (y1 = MAX_HGT/2; y1 < MAX_HGT - 1; y1++)
+			for (y1 = MAX_HGT / 2; y1 < MAX_HGT - 1; y1++)
 			{
-				x1 = MAX_WID/2;
+				x1 = MAX_WID / 2;
 				cave[y1][x1].feat = FEAT_FLOOR;
 			}
 		}
@@ -588,9 +592,9 @@ static void generate_area(int y, int x, bool border, bool corner)
 		if (road & ROAD_EAST)
 		{
 			/* East road */
-			for (x1 = MAX_WID/2; x1 < MAX_WID - 1; x1++)
+			for (x1 = MAX_WID / 2; x1 < MAX_WID - 1; x1++)
 			{
-				y1 = MAX_HGT/2;
+				y1 = MAX_HGT / 2;
 				cave[y1][x1].feat = FEAT_FLOOR;
 			}
 		}
@@ -598,9 +602,9 @@ static void generate_area(int y, int x, bool border, bool corner)
 		if (road & ROAD_WEST)
 		{
 			/* West road */
-			for (x1 = 1; x1 < MAX_WID/2; x1++)
+			for (x1 = 1; x1 < MAX_WID / 2; x1++)
 			{
-				y1 = MAX_HGT/2;
+				y1 = MAX_HGT / 2;
 				cave[y1][x1].feat = FEAT_FLOOR;
 			}
 		}
@@ -611,8 +615,22 @@ static void generate_area(int y, int x, bool border, bool corner)
 /*
  * Border of the wilderness area
  */
+
 static border_type border;
 
+
+typedef struct road_type road_type;
+struct road_type
+{
+	/* location of point */
+	s16b x;
+	s16b y;
+
+	/* Number of connections */
+	byte connect;
+
+	coord con_pts[4];
+};
 
 /*
  * Build the wilderness area outside of the town.
@@ -622,6 +640,19 @@ void wilderness_gen(void)
 	int i, y, x;
 	bool daytime;
 	cave_type *c_ptr;
+
+
+	/* Big town */
+	cur_hgt = MAX_HGT;
+	cur_wid = MAX_WID;
+
+	/* Determine number of panels */
+	max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
+	max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
+
+	/* Assume illegal panel */
+	panel_row = max_panel_rows;
+	panel_col = max_panel_cols;
 
 	/* Init the wilderness */
 	process_dungeon_file("w_info.txt", 0, 0, max_wild_y, max_wild_x);
@@ -659,6 +690,7 @@ void wilderness_gen(void)
 	/* East border */
 	generate_area(y, x + 1, TRUE, FALSE);
 
+
 	for (i = 1; i < MAX_HGT - 1; i++)
 	{
 		border.east[i] = cave[i][1].feat;
@@ -690,9 +722,9 @@ void wilderness_gen(void)
 	}
 
 
+
 	/* Create terrain of the current area */
 	generate_area(y, x, FALSE, FALSE);
-
 
 	/* Special boundary walls -- North */
 	for (i = 0; i < MAX_WID; i++)
@@ -734,12 +766,23 @@ void wilderness_gen(void)
 	/* South east corner */
 	cave[MAX_HGT - 1][MAX_WID - 1].mimic = border.south_east;
 
+#if 1 /* TNB */
+	if (vanilla_town)
+	{
+		/* Try to use any special town layout */
+		angtk_build_town();
+	}
+#endif /* TNB */
 
 	/* Day time */
 	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
 		daytime = TRUE;
 	else
 		daytime = FALSE;
+
+#if 1 /* TNB */
+	town_illuminate(daytime);
+#else /* not 1 -- TNB */
 
 	/* Light up or darken the area */
 	for (y = 0; y < cur_hgt; y++)
@@ -755,14 +798,19 @@ void wilderness_gen(void)
 				c_ptr->info |= (CAVE_GLOW);
 
 				/* Hack -- Memorize lit grids if allowed */
-				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+				if (view_perma_grids)
+					c_ptr->info |= (CAVE_MARK);
 			}
 			else
 			{
 				/* Darken "boring" features */
+#if 1 /* TNB */
+				if (g_feat_flag[c_ptr->feat] & FEAT_FLAG_BORING)
+#else /* TNB */
 				if ((c_ptr->feat <= FEAT_INVIS) ||
-				    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-					(c_ptr->feat <= FEAT_TREES)))
+					((c_ptr->feat >= FEAT_DEEP_WATER) &&
+						(c_ptr->feat <= FEAT_TREES)))
+#endif /* TNB */
 				{
 					/* Forget the grid */
 					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
@@ -770,6 +818,8 @@ void wilderness_gen(void)
 			}
 		}
 	}
+
+#endif /* not 1 -- TNB */
 
 	player_place(p_ptr->oldpy, p_ptr->oldpx);
 	p_ptr->leftbldg = FALSE;
@@ -779,7 +829,7 @@ void wilderness_gen(void)
 	for (i = 0; i < MIN_M_ALLOC_TN; i++)
 	{
 		/* Make a resident */
-		(void)alloc_monster(3, TRUE);
+		(void) alloc_monster(3, TRUE);
 	}
 
 	/* Set rewarded quests to finished */
@@ -793,38 +843,44 @@ void wilderness_gen(void)
 
 typedef struct wilderness_grid wilderness_grid;
 
+	/* Fix location of grid */
+
 struct wilderness_grid
 {
-	int		terrain;    /* Terrain type */
-	int		town;       /* Town number */
-	byte	level;		/* Level of the wilderness */
-	byte	road;       /* Road */
-	char	name[32];	/* Name of the town/wilderness */
+	int terrain; /* Terrain type */
+	int town; /* Town number */
+	byte level;	/* Level of the wilderness */
+	byte road; /* Road */
+	char name[32]; /* Name of the town/wilderness */
 };
+
 
 
 static wilderness_grid w_letter[255];
 
-
 /*
  * Parse a sub-file of the "extra info"
  */
-errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int xmax, int *y, int *x)
+errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax,
+	int xmax, int *y, int *x)
 {
+
 	int i, num;
 	char *zz[33];
 
-
 	/* Paranoia */
-	if (!(buf[0] == 'W')) return (PARSE_ERROR_GENERIC);
+	if (!(buf[0] == 'W'))
+		return (PARSE_ERROR_GENERIC);
 
 	switch (buf[2])
+
 	{
-		/* Process "W:F:<letter>:<terrain>:<town>:<road>:<name> */
+			/* Process "W:F:<letter>:<terrain>:<town>:<road>:<name> */
 		case 'F':
 		{
-			if ((num = tokenize(buf+4, 6, zz, 0)) > 1)
+			if ((num = tokenize(buf + 4, 6, zz, 0)) > 1)
 			{
+
 				int index = zz[0][0];
 
 				if (num > 1)
@@ -861,17 +917,18 @@ errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int xmax, in
 			break;
 		}
 
-		/* Process "W:D:<layout> */
-		/* Layout of the wilderness */
+			/* Process "W:D:<layout> */
+			/* Layout of the wilderness */
 		case 'D':
 		{
 			/* Acquire the text */
-			char *s = buf+4;
+			char *s = buf + 4;
 
 			/* Length of the text */
 			int len = strlen(s);
 
-			for (*x = xmin, i = 0; ((*x < xmax) && (i < len)); (*x)++, s++, i++)
+			for (*x = xmin, i = 0; ((*x < xmax) && (i < len));
+				(*x)++, s++, i++)
 			{
 				int idx = s[0];
 
@@ -891,21 +948,20 @@ errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int xmax, in
 			break;
 		}
 
-		/* Process "W:P:<x>:<y> - starting position in the wilderness */		
+			/* Process "W:P:<x>:<y> - starting position in the wilderness */
 		case 'P':
 		{
-			if ((p_ptr->wilderness_x == 0) &&
-				(p_ptr->wilderness_y == 0))
+			if ((p_ptr->wilderness_x == 0) && (p_ptr->wilderness_y == 0))
 			{
-				if (tokenize(buf+4, 2, zz, 0) == 2)
+				if (tokenize(buf + 4, 2, zz, 0) == 2)
 				{
 					p_ptr->wilderness_x = atoi(zz[0]);
 					p_ptr->wilderness_y = atoi(zz[1]);
 
 					if ((p_ptr->wilderness_x < 1) ||
-					    (p_ptr->wilderness_x > max_wild_x) ||
-					    (p_ptr->wilderness_y < 1) ||
-					    (p_ptr->wilderness_y > max_wild_y))
+						(p_ptr->wilderness_x > max_wild_x) ||
+						(p_ptr->wilderness_y < 1) ||
+						(p_ptr->wilderness_y > max_wild_y))
 					{
 						return (PARSE_ERROR_OUT_OF_BOUNDS);
 					}
@@ -935,10 +991,6 @@ errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int xmax, in
 void seed_wilderness(void)
 {
 	int x, y;
-
-#ifdef USE_SCRIPT
-	if (!wilderness_init_callback())
-#endif /* USE_SCRIPT */
 	{
 		/* Init wilderness seeds */
 		for (x = 0; x < max_wild_x; x++)

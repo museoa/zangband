@@ -14,12 +14,14 @@
 #include "angband.h"
 
 
+#include "tnb.h" /* TNB */
+
+
 #define RUMOR_CHANCE 8
 
 #define MAX_COMMENT_1	6
 
-static cptr comment_1[MAX_COMMENT_1] =
-{
+static cptr comment_1[MAX_COMMENT_1] = {
 	"Okay.",
 	"Fine.",
 	"Accepted!",
@@ -30,16 +32,14 @@ static cptr comment_1[MAX_COMMENT_1] =
 
 #define MAX_COMMENT_2A	2
 
-static cptr comment_2a[MAX_COMMENT_2A] =
-{
+static cptr comment_2a[MAX_COMMENT_2A] = {
 	"You try my patience.  %s is final.",
 	"My patience grows thin.  %s is final."
 };
 
 #define MAX_COMMENT_2B	12
 
-static cptr comment_2b[MAX_COMMENT_2B] =
-{
+static cptr comment_2b[MAX_COMMENT_2B] = {
 	"I can take no less than %s gold pieces.",
 	"I will accept no less than %s gold pieces.",
 	"Ha!  No less than %s gold pieces.",
@@ -56,8 +56,7 @@ static cptr comment_2b[MAX_COMMENT_2B] =
 
 #define MAX_COMMENT_3A	2
 
-static cptr comment_3a[MAX_COMMENT_3A] =
-{
+static cptr comment_3a[MAX_COMMENT_3A] = {
 	"You try my patience.  %s is final.",
 	"My patience grows thin.  %s is final."
 };
@@ -65,8 +64,7 @@ static cptr comment_3a[MAX_COMMENT_3A] =
 
 #define MAX_COMMENT_3B	12
 
-static cptr comment_3b[MAX_COMMENT_3B] =
-{
+static cptr comment_3b[MAX_COMMENT_3B] = {
 	"Perhaps %s gold pieces?",
 	"How about %s gold pieces?",
 	"I will pay no more than %s gold pieces.",
@@ -83,8 +81,7 @@ static cptr comment_3b[MAX_COMMENT_3B] =
 
 #define MAX_COMMENT_4A	4
 
-static cptr comment_4a[MAX_COMMENT_4A] =
-{
+static cptr comment_4a[MAX_COMMENT_4A] = {
 	"Enough!  You have abused me once too often!",
 	"Arghhh!  I have had enough abuse for one day!",
 	"That does it!  You shall waste my time no more!",
@@ -93,8 +90,7 @@ static cptr comment_4a[MAX_COMMENT_4A] =
 
 #define MAX_COMMENT_4B	4
 
-static cptr comment_4b[MAX_COMMENT_4B] =
-{
+static cptr comment_4b[MAX_COMMENT_4B] = {
 	"Leave my store!",
 	"Get out of my sight!",
 	"Begone, you scoundrel!",
@@ -103,8 +99,7 @@ static cptr comment_4b[MAX_COMMENT_4B] =
 
 #define MAX_COMMENT_5	8
 
-static cptr comment_5[MAX_COMMENT_5] =
-{
+static cptr comment_5[MAX_COMMENT_5] = {
 	"Try again.",
 	"Ridiculous!",
 	"You will have to do better than that!",
@@ -117,8 +112,7 @@ static cptr comment_5[MAX_COMMENT_5] =
 
 #define MAX_COMMENT_6	4
 
-static cptr comment_6[MAX_COMMENT_6] =
-{
+static cptr comment_6[MAX_COMMENT_6] = {
 	"I must have heard you wrong.",
 	"I'm sorry, I missed that.",
 	"I'm sorry, what was that?",
@@ -151,10 +145,10 @@ static void say_comment_1(void)
  */
 static void say_comment_2(s32b value, int annoyed)
 {
-	char	tmp_val[80];
+	char tmp_val[80];
 
 	/* Prepare a string to insert */
-	sprintf(tmp_val, "%ld", (long)value);
+	sprintf(tmp_val, "%ld", (long) value);
 
 	/* Final offer */
 	if (annoyed > 0)
@@ -177,10 +171,10 @@ static void say_comment_2(s32b value, int annoyed)
  */
 static void say_comment_3(s32b value, int annoyed)
 {
-	char	tmp_val[80];
+	char tmp_val[80];
 
 	/* Prepare a string to insert */
-	sprintf(tmp_val, "%ld", (long)value);
+	sprintf(tmp_val, "%ld", (long) value);
 
 	/* Final offer */
 	if (annoyed > 0)
@@ -233,8 +227,7 @@ static void say_comment_6(void)
 
 #define MAX_COMMENT_7A	4
 
-static cptr comment_7a[MAX_COMMENT_7A] =
-{
+static cptr comment_7a[MAX_COMMENT_7A] = {
 	"Arrgghh!",
 	"You bastard!",
 	"You hear someone sobbing...",
@@ -243,8 +236,7 @@ static cptr comment_7a[MAX_COMMENT_7A] =
 
 #define MAX_COMMENT_7B	4
 
-static cptr comment_7b[MAX_COMMENT_7B] =
-{
+static cptr comment_7b[MAX_COMMENT_7B] = {
 	"Damn!",
 	"You fiend!",
 	"The shopkeeper curses at you.",
@@ -253,8 +245,7 @@ static cptr comment_7b[MAX_COMMENT_7B] =
 
 #define MAX_COMMENT_7C	4
 
-static cptr comment_7c[MAX_COMMENT_7C] =
-{
+static cptr comment_7c[MAX_COMMENT_7C] = {
 	"Cool!",
 	"You've made my day!",
 	"The shopkeeper giggles.",
@@ -263,8 +254,7 @@ static cptr comment_7c[MAX_COMMENT_7C] =
 
 #define MAX_COMMENT_7D	4
 
-static cptr comment_7d[MAX_COMMENT_7D] =
-{
+static cptr comment_7d[MAX_COMMENT_7D] = {
 	"Yipee!",
 	"I think I'll retire!",
 	"The shopkeeper jumps for joy.",
@@ -285,8 +275,8 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7a[rand_int(MAX_COMMENT_7A)]);
 
-		/* Sound */
-		sound(SOUND_STORE1);
+		chg_virtue(V_HONOUR, -1);
+		chg_virtue(V_JUSTICE, -1);
 	}
 
 	/* Item was cheaper than we thought, and we paid more than necessary */
@@ -295,8 +285,9 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7b[rand_int(MAX_COMMENT_7B)]);
 
-		/* Sound */
-		sound(SOUND_STORE2);
+		chg_virtue(V_JUSTICE, -1);
+		if (randint(4) == 1)
+			chg_virtue(V_HONOUR, -1);
 	}
 
 	/* Item was a good bargain, and we got away with it */
@@ -305,8 +296,10 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7c[rand_int(MAX_COMMENT_7C)]);
 
-		/* Sound */
-		sound(SOUND_STORE3);
+		if (randint(4) == 1)
+			chg_virtue(V_HONOUR, -1);
+		else if (randint(4) == 1)
+			chg_virtue(V_HONOUR, 1);
 	}
 
 	/* Item was a great bargain, and we got away with it */
@@ -315,8 +308,13 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7d[rand_int(MAX_COMMENT_7D)]);
 
-		/* Sound */
-		sound(SOUND_STORE4);
+		if (randint(2) == 1)
+			chg_virtue(V_HONOUR, -1);
+		if (randint(4) == 1)
+			chg_virtue(V_HONOUR, 1);
+
+		if (10 * price < value)
+			chg_virtue(V_SACRIFICE, 1);
 	}
 }
 
@@ -353,161 +351,160 @@ static owner_type *ot_ptr = NULL;
  * Buying and selling adjustments for race combinations.
  * Entry[owner][player] gives the basic "cost inflation".
  */
-static byte rgold_adj[MAX_RACES][MAX_RACES] =
-{
+static byte rgold_adj[MAX_RACES][MAX_RACES] = {
 	/*Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE, Barbarian,
-	 HfOg, HGn, HTn, Cyc, Yek, Klc, Kbd, Nbl, DkE, Drc, Mind Flayer,
-	 Imp,  Glm, Skl, Zombie, Vampire, Spectre */
+	 * HfOg, HGn, HTn, Cyc, Yek, Klc, Kbd, Nbl, DkE, Drc, Mind Flayer,
+	 * Imp,  Glm, Skl, Zombie, Vampire, Spectre */
 
 	/* Human */
-	{ 100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
-	  124, 120, 110, 125, 115, 120, 120, 120, 120, 115, 120,
-	  115, 105, 125, 125, 125, 125, 105, 120 },
+	{100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
+			124, 120, 110, 125, 115, 120, 120, 120, 120, 115, 120,
+		115, 105, 125, 125, 125, 125, 105, 120},
 
 	/* Half-Elf */
-	{ 110, 100, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  120, 115, 108, 115, 110, 110, 120, 120, 115, 115, 110,
-	  120, 110, 110, 110, 120, 110, 100, 125 },
+	{110, 100, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			120, 115, 108, 115, 110, 110, 120, 120, 115, 115, 110,
+		120, 110, 110, 110, 120, 110, 100, 125},
 
 	/* Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  120, 120, 105, 120, 110, 105, 125, 125, 110, 115, 108,
-	  120, 115, 110, 110, 120, 110, 100, 125},
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			120, 120, 105, 120, 110, 105, 125, 125, 110, 115, 108,
+		120, 115, 110, 110, 120, 110, 100, 125},
 
 	/* Halfling */
-	{ 115, 110, 105,  95, 105, 110, 115, 130, 115, 105, 115,
-	  125, 120, 120, 125, 115, 110, 120, 120, 120, 115, 115,
-	  120, 110, 120, 120, 130, 110, 110, 130 },
+	{115, 110, 105, 95, 105, 110, 115, 130, 115, 105, 115,
+			125, 120, 120, 125, 115, 110, 120, 120, 120, 115, 115,
+		120, 110, 120, 120, 130, 110, 110, 130},
 
 	/* Gnome */
-	{ 115, 115, 110, 105,  95, 110, 115, 130, 115, 110, 115,
-	  120, 125, 110, 120, 110, 105, 120, 110, 110, 105, 110,
-	  120, 101, 110, 110, 120, 120, 115, 130 },
+	{115, 115, 110, 105, 95, 110, 115, 130, 115, 110, 115,
+			120, 125, 110, 120, 110, 105, 120, 110, 110, 105, 110,
+		120, 101, 110, 110, 120, 120, 115, 130},
 
 	/* Dwarf */
-	{ 115, 120, 120, 110, 110,	95, 125, 135, 115, 120, 115,
-	  125, 140, 130, 130, 120, 115, 115, 115, 135, 125, 120,
-	  120, 105, 115, 115, 115, 115, 120, 130 },
+	{115, 120, 120, 110, 110, 95, 125, 135, 115, 120, 115,
+			125, 140, 130, 130, 120, 115, 115, 115, 135, 125, 120,
+		120, 105, 115, 115, 115, 115, 120, 130},
 
 	/* Half-Orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 115, 120, 125, 115 },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 115, 120, 125, 115},
 
 	/* Half-Troll */
-	{ 110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
-	  110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
-	  110, 115, 112, 112, 115, 112, 120, 110 },
+	{110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
+			110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
+		110, 115, 112, 112, 115, 112, 120, 110},
 
-	/* Amberite (Dunedain)	*/
-	{ 100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
-	  120, 120, 105, 120, 115, 105, 115, 120, 110, 105, 105,
-	  120, 105, 120, 120, 125, 120, 105, 135 },
+	/* Amberite (Dunedain)  */
+	{100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
+			120, 120, 105, 120, 115, 105, 115, 120, 110, 105, 105,
+		120, 105, 120, 120, 125, 120, 105, 135},
 
 	/* High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
-	  125, 115, 120, 120, 125, 120, 100, 125 },
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
+		125, 115, 120, 120, 125, 120, 100, 125},
 
 	/* Human / Barbarian (copied from human) */
-	{ 100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
-	  124, 120, 110, 125, 115, 120, 120, 120, 120, 115, 120,
-	  115, 105, 125, 125, 130, 125, 115, 120 },
+	{100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
+			124, 120, 110, 125, 115, 120, 120, 120, 120, 115, 120,
+		115, 105, 125, 125, 130, 125, 115, 120},
 
 	/* Half-Ogre: theoretical, copied from half-troll */
-	{ 110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
-	  110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
-	  110, 115, 112, 112, 115, 112, 120, 110 },
+	{110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
+			110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
+		110, 115, 112, 112, 115, 112, 120, 110},
 
 	/* Half-Giant: theoretical, copied from half-troll */
-	{ 110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
-	  110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
-	  110, 115, 112, 112, 115, 112, 130, 120 },
+	{110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
+			110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
+		110, 115, 112, 112, 115, 112, 130, 120},
 
 	/* Half-Titan: theoretical, copied from High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
-	  125, 115, 120, 120, 120, 120, 130, 130   },
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
+		125, 115, 120, 120, 120, 120, 130, 130},
 
 	/* Cyclops: theoretical, copied from half-troll */
-	{ 110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
-	  110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
-	  110, 115, 112, 112, 115, 112, 130, 130  },
+	{110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 110,
+			110, 115, 120, 110, 120, 120, 110, 110, 110, 115, 110,
+		110, 115, 112, 112, 115, 112, 130, 130},
 
 	/* Yeek: theoretical, copied from Half-Orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130  },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Klackon: theoretical, copied from Gnome */
-	{ 115, 115, 110, 105,  95, 110, 115, 130, 115, 110, 115,
-	  120, 125, 110, 120, 110, 105, 120, 110, 110, 105, 110,
-	  120, 101, 110, 110, 120, 120, 130, 130  },
+	{115, 115, 110, 105, 95, 110, 115, 130, 115, 110, 115,
+			120, 125, 110, 120, 110, 105, 120, 110, 110, 105, 110,
+		120, 101, 110, 110, 120, 120, 130, 130},
 
 	/* Kobold: theoretical, copied from Half-Orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130  },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Nibelung: theoretical, copied from Dwarf */
-	{ 115, 120, 120, 110, 110,	95, 125, 135, 115, 120, 115,
-	  125, 140, 130, 130, 120, 115, 115, 115, 135, 125, 120,
-	  120, 105, 115, 115, 120, 120, 130, 130   },
+	{115, 120, 120, 110, 110, 95, 125, 135, 115, 120, 115,
+			125, 140, 130, 130, 120, 115, 115, 115, 135, 125, 120,
+		120, 105, 115, 115, 120, 120, 130, 130},
 
 	/* Dark Elf */
-	{ 110, 110, 110, 115, 120, 130, 115, 115, 120, 110, 115,
-	  115, 115, 116, 115, 120, 120, 115, 115, 101, 110, 110,
-	  110, 110, 112, 122, 110, 110, 110, 115  },
+	{110, 110, 110, 115, 120, 130, 115, 115, 120, 110, 115,
+			115, 115, 116, 115, 120, 120, 115, 115, 101, 110, 110,
+		110, 110, 112, 122, 110, 110, 110, 115},
 
 	/* Draconian: theoretical, copied from High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
-	  125, 115, 120, 120, 120, 120, 130, 130  },
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
+		125, 115, 120, 120, 120, 120, 130, 130},
 
 	/* Mind Flayer: theoretical, copied from High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
-	  125, 115, 120, 120, 120, 120, 130, 130   },
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
+		125, 115, 120, 120, 120, 120, 130, 130},
 
 	/* Imp: theoretical, copied from High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
-	  125, 115, 120, 120, 120, 120, 130, 130   },
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
+		125, 115, 120, 120, 120, 120, 130, 130},
 
 	/* Golem: theoretical, copied from High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
-	  125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
-	  125, 115, 120, 120, 120, 120, 130, 130 },
+	{110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 110,
+			125, 125, 101, 120, 115, 110, 115, 125, 110, 110, 110,
+		125, 115, 120, 120, 120, 120, 130, 130},
 
 	/* Skeleton: theoretical, copied from half-orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130   },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Zombie: Theoretical, copied from half-orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130   },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Vampire: Theoretical, copied from half-orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130   },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Spectre: Theoretical, copied from half-orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130   },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Sprite: Theoretical, copied from half-orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130   },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 	/* Beastman: Theoretical, copied from half-orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
-	  110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
-	  115, 125, 120, 120, 120, 120, 130, 130   },
+	{115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 115,
+			110, 110, 120, 110, 120, 125, 115, 115, 110, 120, 110,
+		115, 125, 120, 120, 120, 120, 130, 130},
 
 };
 
@@ -533,18 +530,19 @@ static byte rgold_adj[MAX_RACES][MAX_RACES] =
  * to adjust (by 200) to extract a usable multiplier.  Note that the
  * "greed" value is always something (?).
  */
-static s32b price_item(object_type *o_ptr, int greed, bool flip)
+static s32b price_item(object_type * o_ptr, int greed, bool flip)
 {
-	int 	factor;
-	int 	adjust;
-	s32b	price;
+	int factor;
+	int adjust;
+	s32b price;
 
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);
 
 	/* Worthless items */
-	if (price <= 0) return (0L);
+	if (price <= 0)
+		return (0L);
 
 
 	/* Compute the racial factor */
@@ -561,7 +559,8 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		adjust = 100 + (300 - (greed + factor));
 
 		/* Never get "silly" */
-		if (adjust > 100) adjust = 100;
+		if (adjust > 100)
+			adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
 		if (cur_store_num == STORE_BLACK)
@@ -575,7 +574,8 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		adjust = 100 + ((greed + factor) - 300);
 
 		/* Never get "silly" */
-		if (adjust < 100) adjust = 100;
+		if (adjust < 100)
+			adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
 		if (cur_store_num == STORE_BLACK)
@@ -586,7 +586,8 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 	price = (price * adjust + 50L) / 100L;
 
 	/* Note -- Never become "free" */
-	if (price <= 0L) return (1L);
+	if (price <= 0L)
+		return (1L);
 
 	/* Return the price */
 	return (price);
@@ -594,21 +595,10 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 
 
 /*
- * Special "mass production" computation
- */
-static int mass_roll(int num, int max)
-{
-	int i, t = 0;
-	for (i = 0; i < num; i++) t += rand_int(max);
-	return (t);
-}
-
-
-/*
  * Certain "cheap" objects should be created in "piles"
  * Some objects can be sold at a "discount" (in small piles)
  */
-static void mass_produce(object_type *o_ptr)
+static void mass_produce(object_type * o_ptr)
 {
 	int size = 1;
 	int discount = 0;
@@ -619,21 +609,25 @@ static void mass_produce(object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
-		/* Food, Flasks, and Lites */
+			/* Food, Flasks, and Lites */
 		case TV_FOOD:
 		case TV_FLASK:
 		case TV_LITE:
 		{
-			if (cost <= 5L) size += mass_roll(3, 5);
-			if (cost <= 20L) size += mass_roll(3, 5);
+			if (cost <= 5L)
+				size += damroll(3, 5);
+			if (cost <= 20L)
+				size += damroll(3, 5);
 			break;
 		}
 
 		case TV_POTION:
 		case TV_SCROLL:
 		{
-			if (cost <= 60L) size += mass_roll(3, 5);
-			if (cost <= 240L) size += mass_roll(1, 5);
+			if (cost <= 60L)
+				size += damroll(3, 5);
+			if (cost <= 240L)
+				size += damroll(1, 5);
 			break;
 		}
 
@@ -645,8 +639,10 @@ static void mass_produce(object_type *o_ptr)
 		case TV_TRUMP_BOOK:
 		case TV_ARCANE_BOOK:
 		{
-			if (cost <= 50L) size += mass_roll(2, 3);
-			if (cost <= 500L) size += mass_roll(1, 3);
+			if (cost <= 50L)
+				size += damroll(2, 3);
+			if (cost <= 500L)
+				size += damroll(1, 3);
 			break;
 		}
 
@@ -664,9 +660,12 @@ static void mass_produce(object_type *o_ptr)
 		case TV_DIGGING:
 		case TV_BOW:
 		{
-			if (o_ptr->name2) break;
-			if (cost <= 10L) size += mass_roll(3, 5);
-			if (cost <= 100L) size += mass_roll(3, 5);
+			if (o_ptr->name2)
+				break;
+			if (cost <= 10L)
+				size += damroll(3, 5);
+			if (cost <= 100L)
+				size += damroll(3, 5);
 			break;
 		}
 
@@ -675,25 +674,40 @@ static void mass_produce(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			if (cost <= 5L) size += mass_roll(5, 5);
-			if (cost <= 50L) size += mass_roll(5, 5);
-			if (cost <= 500L) size += mass_roll(5, 5);
+			if (cost <= 5L)
+				size += damroll(5, 5);
+			if (cost <= 50L)
+				size += damroll(5, 5);
+			if (cost <= 500L)
+				size += damroll(5, 5);
 			break;
 		}
 
-		/*
-		 * Because many rods (and a few wands and staffs) are useful mainly
-		 * in quantity, the Black Market will occasionally have a bunch of
-		 * one kind. -LM-
-		 */
+		case TV_FIGURINE:
+		case TV_STATUE:
+		{
+			if (cost <= 100L)
+				size += damroll(2, 2);
+			if (cost <= 1000L)
+				size += damroll(2, 2);
+			break;
+		}
+
+			/*
+			 * Because many rods (and a few wands and staffs) are useful mainly
+			 * in quantity, the Black Market will occasionally have a bunch of
+			 * one kind. -LM-
+			 */
 		case TV_ROD:
 		case TV_WAND:
 		case TV_STAFF:
 		{
 			if ((cur_store_num == STORE_BLACK) && (randint(3) == 1))
 			{
-				if (cost < 1601L) size += mass_roll(1, 5);
-				else if (cost < 3201L) size += mass_roll(1, 3);
+				if (cost < 1601L)
+					size += damroll(1, 5);
+				else if (cost < 3201L)
+					size += damroll(1, 3);
 			}
 
 			/* Ensure that mass-produced rods and wands get the correct pvals. */
@@ -743,6 +757,13 @@ static void mass_produce(object_type *o_ptr)
 
 	/* Save the total pile size */
 	o_ptr->number = size - (size * discount / 100);
+
+#if 1 /* BUG -- TNB */
+	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
+	{
+		o_ptr->pval = o_ptr->number * k_info[o_ptr->k_idx].pval;
+	}
+#endif /* BUG -- TNB */
 }
 
 
@@ -752,53 +773,70 @@ static void mass_produce(object_type *o_ptr)
  *
  * See "object_similar()" for the same function for the "player"
  */
-static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
+static bool store_object_similar(object_type * o_ptr, object_type * j_ptr)
 {
 	/* Hack -- Identical items cannot be stacked */
-	if (o_ptr == j_ptr) return (0);
+	if (o_ptr == j_ptr)
+		return (0);
 
 	/* Different objects cannot be stacked */
-	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
+	if (o_ptr->k_idx != j_ptr->k_idx)
+		return (0);
 
 	/* Different charges (etc) cannot be stacked, unless wands or rods. */
-	if ((o_ptr->pval != j_ptr->pval) && (o_ptr->tval != TV_WAND) && (o_ptr->tval != TV_ROD)) return (0);
+	if ((o_ptr->pval != j_ptr->pval) && (o_ptr->tval != TV_WAND) &&
+		(o_ptr->tval != TV_ROD))
+		return (0);
 
 	/* Require many identical values */
-	if (o_ptr->to_h != j_ptr->to_h) return (0);
-	if (o_ptr->to_d != j_ptr->to_d) return (0);
-	if (o_ptr->to_a != j_ptr->to_a) return (0);
+	if (o_ptr->to_h != j_ptr->to_h)
+		return (0);
+	if (o_ptr->to_d != j_ptr->to_d)
+		return (0);
+	if (o_ptr->to_a != j_ptr->to_a)
+		return (0);
 
 	/* Require identical "artifact" names */
-	if (o_ptr->name1 != j_ptr->name1) return (0);
+	if (o_ptr->name1 != j_ptr->name1)
+		return (0);
 
 	/* Require identical "ego-item" names */
-	if (o_ptr->name2 != j_ptr->name2) return (0);
+	if (o_ptr->name2 != j_ptr->name2)
+		return (0);
 
-	/* Random artifacts don't stack !*/
-	if (o_ptr->art_name || j_ptr->art_name) return (0);
+	/* Random artifacts don't stack ! */
+	if (o_ptr->art_name || j_ptr->art_name)
+		return (0);
 
 	/* Hack -- Identical art_flags! */
 	if ((o_ptr->art_flags1 != j_ptr->art_flags1) ||
 		(o_ptr->art_flags2 != j_ptr->art_flags2) ||
 		(o_ptr->art_flags3 != j_ptr->art_flags3))
-			return (0);
+		return (0);
 
 	/* Hack -- Never stack "powerful" items */
-	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);
+	if (o_ptr->xtra1 || j_ptr->xtra1)
+		return (0);
 
 	/* Hack -- Never stack recharging items */
-	if (o_ptr->timeout || j_ptr->timeout) return (0);
+	if (o_ptr->timeout || j_ptr->timeout)
+		return (0);
 
 	/* Require many identical values */
-	if (o_ptr->ac != j_ptr->ac)   return (0);
-	if (o_ptr->dd != j_ptr->dd)   return (0);
-	if (o_ptr->ds != j_ptr->ds)   return (0);
+	if (o_ptr->ac != j_ptr->ac)
+		return (0);
+	if (o_ptr->dd != j_ptr->dd)
+		return (0);
+	if (o_ptr->ds != j_ptr->ds)
+		return (0);
 
 	/* Hack -- Never stack chests */
-	if (o_ptr->tval == TV_CHEST) return (0);
+	if (o_ptr->tval == TV_CHEST)
+		return (0);
 
 	/* Require matching discounts */
-	if (o_ptr->discount != j_ptr->discount) return (0);
+	if (o_ptr->discount != j_ptr->discount)
+		return (0);
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -808,7 +846,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 /*
  * Allow a store item to absorb another item
  */
-static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
+static void store_object_absorb(object_type * o_ptr, object_type * j_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
 
@@ -834,13 +872,14 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
  * Note that the shop, just like a player, will not accept things
  * it cannot hold.	Before, one could "nuke" potions this way.
  */
-static bool store_check_num(object_type *o_ptr)
+static bool store_check_num(object_type * o_ptr)
 {
-	int 	   i;
+	int i;
 	object_type *j_ptr;
 
 	/* Free space is always usable */
-	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
+	if (st_ptr->stock_num < st_ptr->stock_size)
+		return TRUE;
 
 	/* The "home" acts like the player */
 	if (cur_store_num == STORE_HOME)
@@ -852,7 +891,8 @@ static bool store_check_num(object_type *o_ptr)
 			j_ptr = &st_ptr->stock[i];
 
 			/* Can the new object be combined with the old one? */
-			if (object_similar(j_ptr, o_ptr)) return (TRUE);
+			if (object_similar(j_ptr, o_ptr))
+				return (TRUE);
 		}
 	}
 
@@ -866,7 +906,8 @@ static bool store_check_num(object_type *o_ptr)
 			j_ptr = &st_ptr->stock[i];
 
 			/* Can the new object be combined with the old one? */
-			if (store_object_similar(j_ptr, o_ptr)) return (TRUE);
+			if (store_object_similar(j_ptr, o_ptr))
+				return (TRUE);
 		}
 	}
 
@@ -875,12 +916,14 @@ static bool store_check_num(object_type *o_ptr)
 }
 
 
-static bool is_blessed(object_type *o_ptr)
+static bool is_blessed(object_type * o_ptr)
 {
 	u32b f1, f2, f3;
 	object_flags(o_ptr, &f1, &f2, &f3);
-	if (f3 & TR3_BLESSED) return (TRUE);
-	else return (FALSE);
+	if (f3 & TR3_BLESSED)
+		return (TRUE);
+	else
+		return (FALSE);
 }
 
 
@@ -890,15 +933,20 @@ static bool is_blessed(object_type *o_ptr)
  *
  * Note that a shop-keeper must refuse to buy "worthless" items
  */
-static bool store_will_buy(object_type *o_ptr)
+#if 1 /* TNB */
+bool store_will_buy(const object_type * o_ptr)
+#else /* TNB */
+static bool store_will_buy(object_type * o_ptr)
+#endif /* TNB */
 {
 	/* Hack -- The Home is simple */
-	if (cur_store_num == STORE_HOME) return (TRUE);
+	if (cur_store_num == STORE_HOME)
+		return (TRUE);
 
 	/* Switch on the store */
 	switch (cur_store_num)
 	{
-		/* General Store */
+			/* General Store */
 		case STORE_GENERAL:
 		{
 			/* Analyze the type */
@@ -914,14 +962,16 @@ static bool store_will_buy(object_type *o_ptr)
 				case TV_DIGGING:
 				case TV_CLOAK:
 				case TV_BOTTLE: /* 'Green', recycling Angband */
-				break;
+				case TV_FIGURINE:
+				case TV_STATUE:
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		}
 
-		/* Armoury */
+			/* Armoury */
 		case STORE_ARMOURY:
 		{
 			/* Analyze the type */
@@ -936,14 +986,14 @@ static bool store_will_buy(object_type *o_ptr)
 				case TV_SOFT_ARMOR:
 				case TV_HARD_ARMOR:
 				case TV_DRAG_ARMOR:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		}
 
-		/* Weapon Shop */
+			/* Weapon Shop */
 		case STORE_WEAPON:
 		{
 			/* Analyze the type */
@@ -957,35 +1007,60 @@ static bool store_will_buy(object_type *o_ptr)
 				case TV_HAFTED:
 				case TV_POLEARM:
 				case TV_SWORD:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		}
 
-		/* Temple */
+			/* Temple */
 		case STORE_TEMPLE:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-						case TV_LIFE_BOOK:
+				case TV_LIFE_BOOK:
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_HAFTED:
-				break;
+				{
+					break;
+				}
+				case TV_FIGURINE:
+				case TV_STATUE:
+				{
+					monster_race *r_ptr = &r_info[o_ptr->pval];
+
+					/* Decline evil */
+					if (!(r_ptr->flags3 & RF3_EVIL))
+					{
+						/* Accept good */
+						if (r_ptr->flags3 & RF3_GOOD)
+							break;
+
+						/* Accept animals */
+						if (r_ptr->flags3 & RF3_ANIMAL)
+							break;
+
+						/* Accept mimics */
+						if (strchr("?!", r_ptr->d_char))
+							break;
+					}
+				}
 				case TV_POLEARM:
 				case TV_SWORD:
-				if (is_blessed(o_ptr))
-					break;
+				{
+					if (is_blessed(o_ptr))
+						break;
+				}
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		}
 
-		/* Alchemist */
+			/* Alchemist */
 		case STORE_ALCHEMIST:
 		{
 			/* Analyze the type */
@@ -993,14 +1068,14 @@ static bool store_will_buy(object_type *o_ptr)
 			{
 				case TV_SCROLL:
 				case TV_POTION:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		}
 
-		/* Magic Shop */
+			/* Magic Shop */
 		case STORE_MAGIC:
 		{
 			/* Analyze the type */
@@ -1019,25 +1094,26 @@ static bool store_will_buy(object_type *o_ptr)
 				case TV_ROD:
 				case TV_SCROLL:
 				case TV_POTION:
-				break;
+				case TV_FIGURINE:
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		}
-		/* Bookstore Shop */
+			/* Bookstore Shop */
 		case STORE_BOOK:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-						case TV_SORCERY_BOOK:
-						case TV_NATURE_BOOK:
-						case TV_CHAOS_BOOK:
-						case TV_DEATH_BOOK:
-						case TV_LIFE_BOOK:
-						case TV_TRUMP_BOOK:
-						case TV_ARCANE_BOOK:
+				case TV_SORCERY_BOOK:
+				case TV_NATURE_BOOK:
+				case TV_CHAOS_BOOK:
+				case TV_DEATH_BOOK:
+				case TV_LIFE_BOOK:
+				case TV_TRUMP_BOOK:
+				case TV_ARCANE_BOOK:
 					break;
 				default:
 					return (FALSE);
@@ -1047,7 +1123,8 @@ static bool store_will_buy(object_type *o_ptr)
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */
-	if (object_value(o_ptr) <= 0) return (FALSE);
+	if (object_value(o_ptr) <= 0)
+		return (FALSE);
 
 	/* Assume okay */
 	return (TRUE);
@@ -1065,11 +1142,11 @@ static bool store_will_buy(object_type *o_ptr)
  * Also note that it may not correctly "adapt" to "knowledge" bacoming
  * known, the player may have to pick stuff up and drop it again.
  */
-static int home_carry(object_type *o_ptr)
+static int home_carry(object_type * o_ptr)
 {
-	int 				slot;
-	s32b			   value, j_value;
-	int 	i;
+	int slot;
+	s32b value, j_value;
+	int i;
 	object_type *j_ptr;
 
 
@@ -1091,7 +1168,8 @@ static int home_carry(object_type *o_ptr)
 	}
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
+	if (st_ptr->stock_num >= st_ptr->stock_size)
+		return (-1);
 
 
 	/* Determine the "value" of the item */
@@ -1105,25 +1183,35 @@ static int home_carry(object_type *o_ptr)
 
 		/* Hack -- readable books always come first */
 		if ((o_ptr->tval == mp_ptr->spell_book) &&
-			(j_ptr->tval != mp_ptr->spell_book)) break;
+			(j_ptr->tval != mp_ptr->spell_book))
+			break;
 		if ((j_ptr->tval == mp_ptr->spell_book) &&
-			(o_ptr->tval != mp_ptr->spell_book)) continue;
+			(o_ptr->tval != mp_ptr->spell_book))
+			continue;
 
 		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
+		if (o_ptr->tval > j_ptr->tval)
+			break;
+		if (o_ptr->tval < j_ptr->tval)
+			continue;
 
 		/* Can happen in the home */
-		if (!object_aware_p(o_ptr)) continue;
-		if (!object_aware_p(j_ptr)) break;
+		if (!object_aware_p(o_ptr))
+			continue;
+		if (!object_aware_p(j_ptr))
+			break;
 
 		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
+		if (o_ptr->sval < j_ptr->sval)
+			break;
+		if (o_ptr->sval > j_ptr->sval)
+			continue;
 
 		/* Objects in the home can be unknown */
-		if (!object_known_p(o_ptr)) continue;
-		if (!object_known_p(j_ptr)) break;
+		if (!object_known_p(o_ptr))
+			continue;
+		if (!object_known_p(j_ptr))
+			break;
 
 		/*
 		 * Hack:  otherwise identical rods sort by
@@ -1131,20 +1219,24 @@ static int home_carry(object_type *o_ptr)
 		 */
 		if (o_ptr->tval == TV_ROD)
 		{
-			if (o_ptr->pval < j_ptr->pval) break;
-			if (o_ptr->pval > j_ptr->pval) continue;
+			if (o_ptr->pval < j_ptr->pval)
+				break;
+			if (o_ptr->pval > j_ptr->pval)
+				continue;
 		}
 
 		/* Objects sort by decreasing value */
 		j_value = object_value(j_ptr);
-		if (value > j_value) break;
-		if (value < j_value) continue;
+		if (value > j_value)
+			break;
+		if (value < j_value)
+			continue;
 	}
 
 	/* Slide the others up */
 	for (i = st_ptr->stock_num; i > slot; i--)
 	{
-		st_ptr->stock[i] = st_ptr->stock[i-1];
+		st_ptr->stock[i] = st_ptr->stock[i - 1];
 	}
 
 	/* More stuff now */
@@ -1152,6 +1244,8 @@ static int home_carry(object_type *o_ptr)
 
 	/* Insert the new item */
 	st_ptr->stock[slot] = *o_ptr;
+
+	chg_virtue(V_SACRIFICE, -1);
 
 	/* Return the location */
 	return (slot);
@@ -1170,10 +1264,10 @@ static int home_carry(object_type *o_ptr)
  *
  * In all cases, return the slot (or -1) where the object was placed
  */
-static int store_carry(object_type *o_ptr)
+static int store_carry(object_type * o_ptr)
 {
-	int 	i, slot;
-	s32b	value, j_value;
+	int i, slot;
+	s32b value, j_value;
 	object_type *j_ptr;
 
 
@@ -1181,13 +1275,17 @@ static int store_carry(object_type *o_ptr)
 	value = object_value(o_ptr);
 
 	/* Cursed/Worthless items "disappear" when sold */
-	if (value <= 0) return (-1);
+	if (value <= 0)
+		return (-1);
 
 	/* All store items are fully *identified* */
 	o_ptr->ident |= IDENT_MENTAL;
 
 	/* Erase the inscription */
-	o_ptr->note = 0;
+	o_ptr->inscription = 0;
+
+	/* Erase the "feeling" */
+	o_ptr->feeling = FEEL_NONE;
 
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < st_ptr->stock_num; slot++)
@@ -1207,7 +1305,8 @@ static int store_carry(object_type *o_ptr)
 	}
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
+	if (st_ptr->stock_num >= st_ptr->stock_size)
+		return (-1);
 
 
 	/* Check existing slots to see if we must "slide" */
@@ -1217,35 +1316,43 @@ static int store_carry(object_type *o_ptr)
 		j_ptr = &st_ptr->stock[slot];
 
 		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
+		if (o_ptr->tval > j_ptr->tval)
+			break;
+		if (o_ptr->tval < j_ptr->tval)
+			continue;
 
 		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
+		if (o_ptr->sval < j_ptr->sval)
+			break;
+		if (o_ptr->sval > j_ptr->sval)
+			continue;
 
 		/*
 		 * Hack:  otherwise identical rods sort by
-		 * increasing recharge time --dsb
+		 * increasing recharge time --dsb 
 		 */
 		if (o_ptr->tval == TV_ROD)
 		{
-			if (o_ptr->pval < j_ptr->pval) break;
-			if (o_ptr->pval > j_ptr->pval) continue;
+			if (o_ptr->pval < j_ptr->pval)
+				break;
+			if (o_ptr->pval > j_ptr->pval)
+				continue;
 		}
 
 		/* Evaluate that slot */
 		j_value = object_value(j_ptr);
 
 		/* Objects sort by decreasing value */
-		if (value > j_value) break;
-		if (value < j_value) continue;
+		if (value > j_value)
+			break;
+		if (value < j_value)
+			continue;
 	}
 
 	/* Slide the others up */
 	for (i = st_ptr->stock_num; i > slot; i--)
 	{
-		st_ptr->stock[i] = st_ptr->stock[i-1];
+		st_ptr->stock[i] = st_ptr->stock[i - 1];
 	}
 
 	/* More stuff now */
@@ -1265,7 +1372,7 @@ static int store_carry(object_type *o_ptr)
  */
 static void store_item_increase(int item, int num)
 {
-	int 		cnt;
+	int cnt;
 	object_type *o_ptr;
 
 	/* Get the item */
@@ -1273,8 +1380,10 @@ static void store_item_increase(int item, int num)
 
 	/* Verify the number */
 	cnt = o_ptr->number + num;
-	if (cnt > 255) cnt = 255;
-	else if (cnt < 0) cnt = 0;
+	if (cnt > 255)
+		cnt = 255;
+	else if (cnt < 0)
+		cnt = 0;
 	num = cnt - o_ptr->number;
 
 	/* Save the new number */
@@ -1287,21 +1396,19 @@ static void store_item_increase(int item, int num)
  */
 static void store_item_optimize(int item)
 {
-	int 		j;
+	int j;
 	object_type *o_ptr;
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[item];
 
 	/* Must exist */
-	if (!o_ptr->k_idx) return;
+	if (!o_ptr->k_idx)
+		return;
 
 	/* Must have no items */
-	if (o_ptr->number) return;
-
-#ifdef USE_SCRIPT
-	object_delete_callback(o_ptr);
-#endif /* USE_SCRIPT */
+	if (o_ptr->number)
+		return;
 
 	/* One less item */
 	st_ptr->stock_num--;
@@ -1322,22 +1429,27 @@ static void store_item_optimize(int item)
  * Crap is defined as any item that is "available" elsewhere
  * Based on a suggestion by "Lee Vogt" <lvogt@cig.mcel.mot.com>
  */
-static bool black_market_crap(object_type *o_ptr)
+static bool black_market_crap(object_type * o_ptr)
 {
-	int 	i, j;
+	int i, j;
 
 	/* Ego items are never crap */
-	if (o_ptr->name2) return (FALSE);
+	if (o_ptr->name2)
+		return (FALSE);
 
 	/* Good items are never crap */
-	if (o_ptr->to_a > 0) return (FALSE);
-	if (o_ptr->to_h > 0) return (FALSE);
-	if (o_ptr->to_d > 0) return (FALSE);
+	if (o_ptr->to_a > 0)
+		return (FALSE);
+	if (o_ptr->to_h > 0)
+		return (FALSE);
+	if (o_ptr->to_d > 0)
+		return (FALSE);
 
 	/* Check all stores */
 	for (i = 0; i < MAX_STORES; i++)
 	{
-		if (i == STORE_HOME) continue;
+		if (i == STORE_HOME)
+			continue;
 
 		/* Check every item in the store */
 		for (j = 0; j < town[p_ptr->town_num].store[i].stock_num; j++)
@@ -1345,7 +1457,8 @@ static bool black_market_crap(object_type *o_ptr)
 			object_type *j_ptr = &town[p_ptr->town_num].store[i].stock[j];
 
 			/* Duplicate item "type", assume crappy */
-			if (o_ptr->k_idx == j_ptr->k_idx) return (TRUE);
+			if (o_ptr->k_idx == j_ptr->k_idx)
+				return (TRUE);
 		}
 	}
 
@@ -1369,15 +1482,19 @@ static void store_delete(void)
 	num = st_ptr->stock[what].number;
 
 	/* Hack -- sometimes, only destroy half the items */
-	if (rand_int(100) < 50) num = (num + 1) / 2;
+	if (rand_int(100) < 50)
+		num = (num + 1) / 2;
 
 	/* Hack -- sometimes, only destroy a single item */
-	if (rand_int(100) < 50) num = 1;
+	if (rand_int(100) < 50)
+		num = 1;
 
 	/* Hack -- decrement the maximum timeouts and total charges of rods and wands. -LM- */
-	if ((st_ptr->stock[what].tval == TV_ROD) || (st_ptr->stock[what].tval == TV_WAND))
+	if ((st_ptr->stock[what].tval == TV_ROD) ||
+		(st_ptr->stock[what].tval == TV_WAND))
 	{
-		st_ptr->stock[what].pval -= num * st_ptr->stock[what].pval / st_ptr->stock[what].number;
+		st_ptr->stock[what].pval -=
+			num * st_ptr->stock[what].pval / st_ptr->stock[what].number;
 	}
 
 	/* Actually destroy (part of) the item */
@@ -1406,7 +1523,8 @@ static void store_create(void)
 
 
 	/* Paranoia -- no room left */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return;
+	if (st_ptr->stock_num >= st_ptr->stock_size)
+		return;
 
 
 	/* Hack -- consider up to four items */
@@ -1422,7 +1540,8 @@ static void store_create(void)
 			i = get_obj_num(level);
 
 			/* Handle failure */
-			if (!i) continue;
+			if (!i)
+				continue;
 		}
 
 		/* Normal Store */
@@ -1443,13 +1562,19 @@ static void store_create(void)
 		object_prep(q_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(q_ptr, level, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, level, FALSE, FALSE, FALSE, FALSE);
+
+		/* Require valid object */
+		if (!store_will_buy(q_ptr))
+			continue;
 
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
 		{
-			if (q_ptr->sval == SV_LITE_TORCH) q_ptr->pval = FUEL_TORCH / 2;
-			if (q_ptr->sval == SV_LITE_LANTERN) q_ptr->pval = FUEL_LAMP / 2;
+			if (q_ptr->sval == SV_LITE_TORCH)
+				q_ptr->pval = FUEL_TORCH / 2;
+			if (q_ptr->sval == SV_LITE_LANTERN)
+				q_ptr->pval = FUEL_LAMP / 2;
 		}
 
 
@@ -1460,16 +1585,19 @@ static void store_create(void)
 		q_ptr->ident |= IDENT_STOREB;
 
 		/* Mega-Hack -- no chests in stores */
-		if (q_ptr->tval == TV_CHEST) continue;
+		if (q_ptr->tval == TV_CHEST)
+			continue;
 
 		/* Prune the black market */
 		if (cur_store_num == STORE_BLACK)
 		{
 			/* Hack -- No "crappy" items */
-			if (black_market_crap(q_ptr)) continue;
+			if (black_market_crap(q_ptr))
+				continue;
 
 			/* Hack -- No "cheap" items */
-			if (object_value(q_ptr) < 10) continue;
+			if (object_value(q_ptr) < 10)
+				continue;
 
 			/* No "worthless" items */
 			/* if (object_value(q_ptr) <= 0) continue; */
@@ -1479,19 +1607,16 @@ static void store_create(void)
 		else
 		{
 			/* No "worthless" items */
-			if (object_value(q_ptr) <= 0) continue;
+			if (object_value(q_ptr) <= 0)
+				continue;
 		}
 
 
 		/* Mass produce and/or Apply discount */
 		mass_produce(q_ptr);
 
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		/* Attempt to carry the (known) item */
-		(void)store_carry(q_ptr);
+		(void) store_carry(q_ptr);
 
 		/* Definitely done */
 		break;
@@ -1509,13 +1634,16 @@ static bool noneedtobargain(s32b minprice)
 	s32b bad = st_ptr->bad_buy;
 
 	/* Cheap items are "boring" */
-	if (minprice < 10L) return (TRUE);
+	if (minprice < 10L)
+		return (TRUE);
 
 	/* Perfect haggling */
-	if (good == MAX_SHORT) return (TRUE);
+	if (good == MAX_SHORT)
+		return (TRUE);
 
 	/* Reward good haggles, punish bad haggles, notice price */
-	if (good > ((3 * bad) + (5 + (minprice/50)))) return (TRUE);
+	if (good > ((3 * bad) + (5 + (minprice / 50))))
+		return (TRUE);
 
 	/* Return the flag */
 	return (FALSE);
@@ -1528,10 +1656,12 @@ static bool noneedtobargain(s32b minprice)
 static void updatebargain(s32b price, s32b minprice)
 {
 	/* Hack -- auto-haggle */
-	if (auto_haggle) return;
+	if (auto_haggle)
+		return;
 
 	/* Cheap items are "boring" */
-	if (minprice < 10L) return;
+	if (minprice < 10L)
+		return;
 
 	/* Count the successful haggles */
 	if (price == minprice)
@@ -1561,12 +1691,14 @@ static void updatebargain(s32b price, s32b minprice)
  */
 static void display_entry(int pos)
 {
-	int 		i;
-	object_type 	*o_ptr;
-	s32b		x;
+#if 0 /* TNB */
 
-	char		o_name[80];
-	char		out_val[160];
+	int i;
+	object_type *o_ptr;
+	s32b x;
+
+	char o_name[80];
+	char out_val[160];
 
 
 	int maxwid = 75;
@@ -1578,8 +1710,8 @@ static void display_entry(int pos)
 	i = (pos % 12);
 
 	/* Label it, clear the line --(-- */
-	(void)sprintf(out_val, "%c) ", I2A(i));
-	prt(out_val, i+6, 0);
+	(void) sprintf(out_val, "%c) ", I2A(i));
+	prt(out_val, i + 6, 0);
 
 	if (show_store_graph)
 	{
@@ -1600,20 +1732,22 @@ static void display_entry(int pos)
 		maxwid = 75;
 
 		/* Leave room for weights, if necessary -DRS- */
-		if (show_weights) maxwid -= 10;
+		if (show_weights)
+			maxwid -= 10;
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3);
 		o_name[maxwid] = '\0';
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, show_store_graph ? 5 : 3);
+		c_put_str(tval_to_attr[o_ptr->tval], o_name, i + 6,
+			show_store_graph ? 5 : 3);
 
 		/* Show weights */
 		if (show_weights)
 		{
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
-			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(out_val, i+6, 68);
+			(void) sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
+			put_str(out_val, i + 6, 68);
 		}
 	}
 
@@ -1624,20 +1758,22 @@ static void display_entry(int pos)
 		maxwid = 65;
 
 		/* Leave room for weights, if necessary -DRS- */
-		if (show_weights) maxwid -= 7;
+		if (show_weights)
+			maxwid -= 7;
 
 		/* Describe the object (fully) */
 		object_desc_store(o_name, o_ptr, TRUE, 3);
 		o_name[maxwid] = '\0';
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, show_store_graph ? 5 : 3);
+		c_put_str(tval_to_attr[o_ptr->tval], o_name, i + 6,
+			show_store_graph ? 5 : 3);
 
 		/* Show weights */
 		if (show_weights)
 		{
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
-			(void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-			put_str(out_val, i+6, 61);
+			(void) sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
+			put_str(out_val, i + 6, 61);
 		}
 
 		/* Display a "fixed" cost */
@@ -1647,8 +1783,8 @@ static void display_entry(int pos)
 			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
 			/* Actually draw the price (not fixed) */
-			(void)sprintf(out_val, "%9ld F", (long)x);
-			put_str(out_val, i+6, 68);
+			(void) sprintf(out_val, "%9ld F", (long) x);
+			put_str(out_val, i + 6, 68);
 		}
 
 		/* Display a "taxed" cost */
@@ -1658,11 +1794,12 @@ static void display_entry(int pos)
 			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
 			/* Hack -- Apply Sales Tax if needed */
-			if (!noneedtobargain(x)) x += x / 10;
+			if (!noneedtobargain(x))
+				x += x / 10;
 
 			/* Actually draw the price (with tax) */
-			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, i+6, 68);
+			(void) sprintf(out_val, "%9ld  ", (long) x);
+			put_str(out_val, i + 6, 68);
 		}
 
 		/* Display a "haggle" cost */
@@ -1672,10 +1809,12 @@ static void display_entry(int pos)
 			x = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
 
 			/* Actually draw the price (not fixed) */
-			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, i+6, 68);
+			(void) sprintf(out_val, "%9ld  ", (long) x);
+			put_str(out_val, i + 6, 68);
 		}
 	}
+
+#endif /* TNB */
 }
 
 
@@ -1685,20 +1824,24 @@ static void display_entry(int pos)
  */
 static void display_inventory(void)
 {
+#if 0 /* TNB */
+
 	int i, k;
 
 	/* Display the next 12 items */
 	for (k = 0; k < 12; k++)
 	{
 		/* Do not display "dead" items */
-		if (store_top + k >= st_ptr->stock_num) break;
+		if (store_top + k >= st_ptr->stock_num)
+			break;
 
 		/* Display that line */
 		display_entry(store_top + k);
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < 13; i++) prt("", i + 6, 0);
+	for (i = k; i < 13; i++)
+		prt("", i + 6, 0);
 
 	/* Assume "no current page" */
 	put_str("        ", 5, 20);
@@ -1710,8 +1853,10 @@ static void display_inventory(void)
 		prt("-more-", k + 6, 3);
 
 		/* Indicate the "current page" */
-		put_str(format("(Page %d)", store_top/12 + 1), 5, 20);
+		put_str(format("(Page %d)", store_top / 12 + 1), 5, 20);
 	}
+
+#endif /* TNB */
 }
 
 
@@ -1720,12 +1865,20 @@ static void display_inventory(void)
  */
 static void store_prt_gold(void)
 {
+#if 1 /* TNB */
+
+	Bind_Generic(EVENT_PY, KEYWORD_PY_GOLD + 1);
+
+#else /* TNB */
+
 	char out_val[64];
 
 	prt("Gold Remaining: ", 19, 53);
 
-	sprintf(out_val, "%9ld", (long)p_ptr->au);
+	sprintf(out_val, "%9ld", (long) p_ptr->au);
 	prt(out_val, 19, 68);
+
+#endif /* TNB */
 }
 
 
@@ -1734,6 +1887,16 @@ static void store_prt_gold(void)
  */
 static void display_store(void)
 {
+#if 1 /* TNB */
+
+	/* Show or update the store display */
+	angtk_eval("angband_display", "store", "show", NULL);
+
+	/* Display the current gold */
+	store_prt_gold();
+
+#else /* TNB */
+
 	char buf[80];
 
 
@@ -1759,7 +1922,8 @@ static void display_store(void)
 	/* Normal stores */
 	else
 	{
-		cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + cur_store_num].name);
+		cptr store_name =
+			(f_name + f_info[FEAT_SHOP_HEAD + cur_store_num].name);
 		cptr owner_name = (ot_ptr->owner_name);
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 
@@ -1768,7 +1932,7 @@ static void display_store(void)
 		put_str(buf, 3, 10);
 
 		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost));
+		sprintf(buf, "%s (%ld)", store_name, (long) (ot_ptr->max_cost));
 		prt(buf, 3, 50);
 
 		/* Label the item descriptions */
@@ -1789,6 +1953,8 @@ static void display_store(void)
 
 	/* Draw in the inventory */
 	display_inventory();
+
+#endif /* TNB */
 }
 
 
@@ -1798,11 +1964,11 @@ static void display_store(void)
  */
 static int get_stock(int *com_val, cptr pmt, int i, int j)
 {
-	char	command;
+	char command;
 
-	char	out_val[160];
+	char out_val[160];
 
-#ifdef ALLOW_REPEAT /* TNB */
+#ifdef ALLOW_REPEAT	/* TNB */
 
 	/* Get the item index */
 	if (repeat_pull(com_val))
@@ -1825,16 +1991,33 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	*com_val = (-1);
 
 	/* Build the prompt */
-	(void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s",
-				  I2A(i), I2A(j), pmt);
+	(void) sprintf(out_val, "(Items %c-%c, ESC to exit) %s", I2A(i),
+		I2A(j), pmt);
 
 	/* Ask until done */
 	while (TRUE)
 	{
 		int k;
 
+#if 1 /* TNB */
+
+		int flag;
+
+		inkey_flags = (INKEY_ITEM_STORE);
+		flag = get_com(out_val, &command);
+		inkey_flags = 0;
+
 		/* Escape */
-		if (!get_com(out_val, &command)) break;
+		if (!flag)
+			return (FALSE);
+
+#else /* TNB */
+
+		/* Escape */
+		if (!get_com(out_val, &command))
+			break;
+
+#endif /* TNB */
 
 		/* Convert */
 		k = (islower(command) ? A2I(command) : -1);
@@ -1854,9 +2037,10 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	prt("", 0, 0);
 
 	/* Cancel */
-	if (command == ESCAPE) return (FALSE);
+	if (command == ESCAPE)
+		return (FALSE);
 
-#ifdef ALLOW_REPEAT /* TNB */
+#ifdef ALLOW_REPEAT	/* TNB */
 
 	repeat_push(*com_val);
 
@@ -1904,7 +2088,8 @@ static int increase_insults(void)
 static void decrease_insults(void)
 {
 	/* Decrease insults */
-	if (st_ptr->insult_cur) st_ptr->insult_cur--;
+	if (st_ptr->insult_cur)
+		st_ptr->insult_cur--;
 }
 
 
@@ -1914,7 +2099,8 @@ static void decrease_insults(void)
 static int haggle_insults(void)
 {
 	/* Increase insults */
-	if (increase_insults()) return (TRUE);
+	if (increase_insults())
+		return (TRUE);
 
 	/* Display and flush insult */
 	say_comment_5();
@@ -1938,18 +2124,19 @@ static s32b last_inc = 0L;
 /*
  * Get a haggle
  */
-static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
+static int get_haggle(cptr pmt, s32b * poffer, s32b price, int final)
 {
-	s32b		i;
+	s32b i;
 
-	cptr		p;
+	cptr p;
 
-	char				buf[128];
-	char		out_val[160];
+	char buf[128];
+	char out_val[160];
 
 
 	/* Clear old increment if necessary */
-	if (!allow_inc) last_inc = 0L;
+	if (!allow_inc)
+		last_inc = 0L;
 
 
 	/* Final offer */
@@ -1961,13 +2148,13 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
 	/* Old (negative) increment, and not final */
 	else if (last_inc < 0)
 	{
-		sprintf(buf, "%s [-%ld] ", pmt, (long)(ABS(last_inc)));
+		sprintf(buf, "%s [-%ld] ", pmt, (long) (ABS(last_inc)));
 	}
 
 	/* Old (positive) increment, and not final */
 	else if (last_inc > 0)
 	{
-		sprintf(buf, "%s [+%ld] ", pmt, (long)(ABS(last_inc)));
+		sprintf(buf, "%s [+%ld] ", pmt, (long) (ABS(last_inc)));
 	}
 
 	/* Normal haggle */
@@ -1988,10 +2175,11 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
 		strcpy(out_val, "");
 
 		/* Ask the user for a response */
-		if (!get_string(buf, out_val, 32)) return (FALSE);
+		if (!get_string(buf, out_val, 32))
+			return (FALSE);
 
 		/* Skip leading spaces */
-		for (p = out_val; *p == ' '; p++) /* loop */;
+		for (p = out_val; *p == ' '; p++) /* loop */ ;
 
 		/* Empty response */
 		if (*p == '\0')
@@ -2056,21 +2244,23 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
  *
  * Return TRUE if offer is NOT okay
  */
-static bool receive_offer(cptr pmt, s32b *poffer,
-                          s32b last_offer, int factor,
-                          s32b price, int final)
+static bool receive_offer(cptr pmt, s32b * poffer, s32b last_offer,
+	int factor, s32b price, int final)
 {
 	/* Haggle till done */
 	while (TRUE)
 	{
 		/* Get a haggle (or cancel) */
-		if (!get_haggle(pmt, poffer, price, final)) return (TRUE);
+		if (!get_haggle(pmt, poffer, price, final))
+			return (TRUE);
 
 		/* Acceptable offer */
-		if (((*poffer) * factor) >= (last_offer * factor)) break;
+		if (((*poffer) * factor) >= (last_offer * factor))
+			break;
 
 		/* Insult, and check for kicked out */
-		if (haggle_insults()) return (TRUE);
+		if (haggle_insults())
+			return (TRUE);
 
 		/* Reject offer (correctly) */
 		(*poffer) = last_offer;
@@ -2086,20 +2276,20 @@ static bool receive_offer(cptr pmt, s32b *poffer,
  *
  * Return TRUE if purchase is NOT successful
  */
-static bool purchase_haggle(object_type *o_ptr, s32b *price)
+static bool purchase_haggle(object_type * o_ptr, s32b * price)
 {
-	s32b			   cur_ask, final_ask;
-	s32b			   last_offer, offer;
-	s32b			   x1, x2, x3;
-	s32b			   min_per, max_per;
-	int 			   flag, loop_flag, noneed;
-	int 			   annoyed = 0, final = FALSE;
+	s32b cur_ask, final_ask;
+	s32b last_offer, offer;
+	s32b x1, x2, x3;
+	s32b min_per, max_per;
+	int flag, loop_flag, noneed;
+	int annoyed = 0, final = FALSE;
 
-	bool		cancel = FALSE;
+	bool cancel = FALSE;
 
-	cptr		pmt = "Asking";
+	cptr pmt = "Asking";
 
-	char		out_val[160];
+	char out_val[160];
 
 
 	*price = 0;
@@ -2154,8 +2344,9 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	/* Mega-Hack -- artificial "last offer" value */
 	last_offer = object_value(o_ptr) * o_ptr->number;
-	last_offer = last_offer * (200 - (int)(ot_ptr->max_inflate)) / 100L;
-	if (last_offer <= 0) last_offer = 1;
+	last_offer = last_offer * (200 - (int) (ot_ptr->max_inflate)) / 100L;
+	if (last_offer <= 0)
+		last_offer = 1;
 
 	/* No offer yet */
 	offer = 0;
@@ -2163,17 +2354,25 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	/* No incremental haggling yet */
 	allow_inc = FALSE;
 
+	angtk_eval("angband_store", "haggle_open", NULL); /* TNB */
+
 	/* Haggle until done */
-	for (flag = FALSE; !flag; )
+	for (flag = FALSE; !flag;)
 	{
 		loop_flag = TRUE;
 
 		while (!flag && loop_flag)
 		{
-			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
+#if 1 /* TNB */
+			(void) sprintf(out_val, "%s: %ld", pmt, (long)cur_ask);
+#else /* TNB */
+			(void) sprintf(out_val, "%s :  %ld", pmt, (long) cur_ask);
 			put_str(out_val, 1, 0);
-			cancel = receive_offer("What do you offer? ",
-			                       &offer, last_offer, 1, cur_ask, final);
+#endif /* TNB */
+			angtk_eval("angband_store", "price_owner", out_val, NULL); /* TNB */
+			cancel =
+				receive_offer("What do you offer? ", &offer, last_offer, 1,
+				cur_ask, final);
 
 			if (cancel)
 			{
@@ -2209,12 +2408,14 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 			else if (x1 > max_per)
 			{
 				x1 = x1 * 3 / 4;
-				if (x1 < max_per) x1 = max_per;
+				if (x1 < max_per)
+					x1 = max_per;
 			}
-			x2 = rand_range(x1-2, x1+2);
+			x2 = rand_range(x1 - 2, x1 + 2);
 			x3 = ((cur_ask - offer) * x2 / 100L) + 1;
 			/* don't let the price go up */
-			if (x3 < 0) x3 = 0;
+			if (x3 < 0)
+				x3 = 0;
 			cur_ask -= x3;
 
 			/* Too little */
@@ -2226,7 +2427,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 				annoyed++;
 				if (annoyed > 3)
 				{
-					(void)(increase_insults());
+					(void) (increase_insults());
 					cancel = TRUE;
 					flag = TRUE;
 				}
@@ -2242,16 +2443,21 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 				last_offer = offer;
 				allow_inc = TRUE;
 				prt("", 1, 0);
-				(void)sprintf(out_val, "Your last offer: %ld",
-							  (long)last_offer);
+				angtk_eval("angband_store", "price_owner", "", NULL); /* TNB */
+				(void) sprintf(out_val, "Your last offer: %ld",
+					(long) last_offer);
 				put_str(out_val, 1, 39);
+				angtk_eval("angband_store", "price_character", out_val, NULL); /* TNB */
 				say_comment_2(cur_ask, annoyed);
 			}
 		}
 	}
 
+	angtk_eval("angband_store", "haggle_close", NULL); /* TNB */
+
 	/* Cancel */
-	if (cancel) return (TRUE);
+	if (cancel)
+		return (TRUE);
 
 	/* Update bargaining info */
 	updatebargain(*price, final_ask);
@@ -2266,17 +2472,17 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
  *
  * Return TRUE if purchase is NOT successful
  */
-static bool sell_haggle(object_type *o_ptr, s32b *price)
+static bool sell_haggle(object_type * o_ptr, s32b * price)
 {
-	s32b    purse, cur_ask, final_ask;
-	s32b    last_offer = 0, offer = 0;
-	s32b    x1, x2, x3;
-	s32b    min_per, max_per;
-	int     flag, loop_flag, noneed;
-	int     annoyed = 0, final = FALSE;
-	bool    cancel = FALSE;
-	cptr    pmt = "Offer";
-	char    out_val[160];
+	s32b purse, cur_ask, final_ask;
+	s32b last_offer = 0, offer = 0;
+	s32b x1, x2, x3;
+	s32b min_per, max_per;
+	int flag, loop_flag, noneed;
+	int annoyed = 0, final = FALSE;
+	bool cancel = FALSE;
+	cptr pmt = "Offer";
+	char out_val[160];
 
 
 	*price = 0;
@@ -2290,7 +2496,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	noneed = noneedtobargain(final_ask);
 
 	/* Get the owner's payout limit */
-	purse = (s32b)(ot_ptr->max_cost);
+	purse = (s32b) (ot_ptr->max_cost);
 
 	/* No need to haggle */
 	if (noneed || auto_haggle || (final_ask >= purse))
@@ -2354,17 +2560,26 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	/* No incremental haggling yet */
 	allow_inc = FALSE;
 
+	angtk_eval("angband_store", "haggle_open", NULL); /* TNB */
+
 	/* Haggle */
-	for (flag = FALSE; !flag; )
+	for (flag = FALSE; !flag;)
 	{
 		while (1)
 		{
 			loop_flag = TRUE;
 
-			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
+#if 1 /* TNB */
+			(void) sprintf(out_val, "%s: %ld", pmt, (long )cur_ask);
+#else /* TNB */
+			(void) sprintf(out_val, "%s :  %ld", pmt, (long) cur_ask);
 			put_str(out_val, 1, 0);
-			cancel = receive_offer("What price do you ask? ",
-								   &offer, last_offer, -1, cur_ask, final);
+#endif /* TNB */
+			angtk_eval("angband_store", "price_owner", out_val, NULL); /* TNB */
+
+			cancel =
+				receive_offer("What price do you ask? ", &offer,
+				last_offer, -1, cur_ask, final);
 
 			if (cancel)
 			{
@@ -2387,7 +2602,8 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 			}
 
 			/* Stop */
-			if (flag || !loop_flag) break;
+			if (flag || !loop_flag)
+				break;
 		}
 
 		if (!flag)
@@ -2404,12 +2620,14 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 			else if (x1 > max_per)
 			{
 				x1 = x1 * 3 / 4;
-				if (x1 < max_per) x1 = max_per;
+				if (x1 < max_per)
+					x1 = max_per;
 			}
-			x2 = rand_range(x1-2, x1+2);
+			x2 = rand_range(x1 - 2, x1 + 2);
 			x3 = ((offer - cur_ask) * x2 / 100L) + 1;
 			/* don't let the price go down */
-			if (x3 < 0) x3 = 0;
+			if (x3 < 0)
+				x3 = 0;
 			cur_ask += x3;
 
 			if (cur_ask > final_ask)
@@ -2421,7 +2639,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 				if (annoyed > 3)
 				{
 					flag = TRUE;
-					(void)(increase_insults());
+					(void) (increase_insults());
 				}
 			}
 			else if (offer <= cur_ask)
@@ -2435,16 +2653,26 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 				last_offer = offer;
 				allow_inc = TRUE;
 				prt("", 1, 0);
-				(void)sprintf(out_val,
-							  "Your last bid %ld", (long)last_offer);
+				angtk_eval("angband_store", "price_owner", "", NULL); /* TNB */
+#if 1 /* TNB */
+				(void) sprintf(out_val, "Your last bid: %ld",
+					(long) last_offer);
+#else /* TNB */
+				(void) sprintf(out_val, "Your last bid %ld",
+					(long) last_offer);
 				put_str(out_val, 1, 39);
+#endif /* TNB */
+				angtk_eval("angband_store", "price_character", out_val, NULL); /* TNB */
 				say_comment_3(cur_ask, annoyed);
 			}
 		}
 	}
 
+	angtk_eval("angband_store", "haggle_close", NULL); /* TNB */
+
 	/* Cancel */
-	if (cancel) return (TRUE);
+	if (cancel)
+		return (TRUE);
 
 	/* Update bargaining info */
 	updatebargain(*price, final_ask);
@@ -2469,7 +2697,7 @@ static void store_purchase(void)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[O_NAME_MAX];
 
 	char out_val[160];
 
@@ -2489,7 +2717,8 @@ static void store_purchase(void)
 	i = (st_ptr->stock_num - store_top);
 
 	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
+	if (i > 12)
+		i = 12;
 
 	/* Prompt */
 	if (cur_store_num == STORE_HOME)
@@ -2502,10 +2731,12 @@ static void store_purchase(void)
 	}
 
 	/* Get the item number to be bought */
-	if (!get_stock(&item, out_val, 0, i - 1)) return;
+	if (!get_stock(&item, out_val, 0, st_ptr->stock_num - 1	/* i-1 -- TNB */
+		))
+		return;
 
 	/* Get the actual index */
-	item = item + store_top;
+/*	item = item + store_top; -- TNB */
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
@@ -2519,17 +2750,11 @@ static void store_purchase(void)
 	/* Get a copy of the object */
 	object_copy(j_ptr, o_ptr);
 
+	/* Recalculate charges for a single wand/rod */
+	reduce_charges(j_ptr, j_ptr->number - 1);
+
 	/* Modify quantity */
 	j_ptr->number = amt;
-
-	/*
-	 * Hack -- If a rod or wand, allocate total maximum timeouts or charges
-	 * between those purchased and left on the shelf. -LM-
-	 */
-	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-	{
-		j_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-	}
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(j_ptr))
@@ -2545,17 +2770,17 @@ static void store_purchase(void)
 	if (o_ptr->number > 1)
 	{
 		/* Hack -- note cost of "fixed" items */
-		if ((cur_store_num != STORE_HOME) &&
-		    (o_ptr->ident & IDENT_FIXED))
+		if ((cur_store_num != STORE_HOME) && (o_ptr->ident & IDENT_FIXED))
 		{
-			msg_format("That costs %ld gold per item.", (long)(best));
+			msg_format("That costs %ld gold per item.", (long) (best));
 		}
 
 		/* Get a quantity */
 		amt = get_quantity(NULL, o_ptr->number);
 
 		/* Allow user abort */
-		if (amt <= 0) return;
+		if (amt <= 0)
+			return;
 	}
 
 	/* Get local object */
@@ -2564,17 +2789,14 @@ static void store_purchase(void)
 	/* Get desired object */
 	object_copy(j_ptr, o_ptr);
 
+	/*
+	 * If a rod or wand, allocate total maximum timeouts or charges
+	 * between those purchased and left on the shelf.
+	 */
+	reduce_charges(j_ptr, j_ptr->number - amt);
+
 	/* Modify quantity */
 	j_ptr->number = amt;
-
-	/*
-	 * Hack -- If a rod or wand, allocate total maximum timeouts or charges
-	 * between those purchased and left on the shelf. -LM-
-	 */
-	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-	{
-		j_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-	}
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(j_ptr))
@@ -2610,7 +2832,8 @@ static void store_purchase(void)
 			choice = purchase_haggle(j_ptr, &price);
 
 			/* Hack -- Got kicked out */
-			if (st_ptr->store_open >= turn) return;
+			if (st_ptr->store_open >= turn)
+				return;
 		}
 
 
@@ -2618,7 +2841,8 @@ static void store_purchase(void)
 		if (choice == 0)
 		{
 			/* Fix the item price (if "correctly" haggled) */
-			if (price == (best * j_ptr->number)) o_ptr->ident |= (IDENT_FIXED);
+			if (price == (best * j_ptr->number))
+				o_ptr->ident |= (IDENT_FIXED);
 
 			/* Player can afford it */
 			if (p_ptr->au >= price)
@@ -2626,8 +2850,11 @@ static void store_purchase(void)
 				/* Say "okay" */
 				say_comment_1();
 
-				/* Make a sound */
-				sound(SOUND_BUY);
+				if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
+					chg_virtue(V_JUSTICE, -1);
+				if ((o_ptr->tval == TV_BOTTLE) &&
+					(cur_store_num != STORE_HOME))
+					chg_virtue(V_NATURE, -1);
 
 				/* Be happy */
 				decrease_insults();
@@ -2648,11 +2875,14 @@ static void store_purchase(void)
 				object_desc(o_name, j_ptr, TRUE, 3);
 
 				/* Message */
-				msg_format("You bought %s for %ld gold.", o_name, (long)price);
+				msg_format("You bought %s for %ld gold.", o_name,
+					(long) price);
 
 				/* Erase the inscription */
-				j_ptr->note = 0;
+				j_ptr->inscription = 0;
 
+				/* Erase the "feeling" */
+				j_ptr->feeling = FEEL_NONE;
 				/* Give it to the player */
 				item_new = inven_carry(j_ptr);
 
@@ -2660,8 +2890,8 @@ static void store_purchase(void)
 				object_desc(o_name, &inventory[item_new], TRUE, 3);
 
 				/* Message */
-				msg_format("You have %s (%c).",
-						   o_name, index_to_label(item_new));
+				msg_format("You have %s (%c).", o_name,
+					index_to_label(item_new));
 
 				/* Now, reduce the original stack's pval. */
 				if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
@@ -2696,7 +2926,8 @@ static void store_purchase(void)
 					else
 					{
 						/* Message */
-						msg_print("The shopkeeper brings out some new stock.");
+						msg_print
+							("The shopkeeper brings out some new stock.");
 					}
 
 					/* New inventory */
@@ -2717,7 +2948,8 @@ static void store_purchase(void)
 				else if (st_ptr->stock_num != i)
 				{
 					/* Pick the correct screen */
-					if (store_top >= st_ptr->stock_num) store_top -= 12;
+					if (store_top >= st_ptr->stock_num)
+						store_top -= 12;
 
 					/* Redraw everything */
 					display_inventory();
@@ -2729,6 +2961,8 @@ static void store_purchase(void)
 					/* Redraw the item */
 					display_entry(item);
 				}
+
+				angtk_eval("angband_display", "store", "show", NULL);
 			}
 
 			/* Player cannot afford it */
@@ -2743,28 +2977,8 @@ static void store_purchase(void)
 	/* Home is much easier */
 	else
 	{
-		/* Hack -- If a rod or wand, allocate total maximum
-		 * timeouts or charges between those picked up and
-		 * those left behind. -LM-
-		 */
-		if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-		{
-			j_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			o_ptr->pval -= j_ptr->pval;
-
-			/* Hack -- Rods also need to have their timeouts distributed.
-			 * The dropped stack will accept all time remaining to charge
-			 * up to its maximum.
-		 	 */
-			if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-			{
-				if (j_ptr->pval > o_ptr->timeout)
-					j_ptr->timeout = o_ptr->timeout;
-				else j_ptr->timeout = j_ptr->pval;
-
-				if (amt < o_ptr->number) o_ptr->timeout -= j_ptr->timeout;
-			}
-		}
+		/* Distribute charges of wands/rods */
+		distribute_charges(o_ptr, j_ptr, amt);
 
 		/* Give it to the player */
 		item_new = inven_carry(j_ptr);
@@ -2796,14 +3010,20 @@ static void store_purchase(void)
 		else
 		{
 			/* Nothing left */
-			if (st_ptr->stock_num == 0) store_top = 0;
+			if (st_ptr->stock_num == 0)
+				store_top = 0;
 
 			/* Nothing left on that screen */
-			else if (store_top >= st_ptr->stock_num) store_top -= 12;
+			else if (store_top >= st_ptr->stock_num)
+				store_top -= 12;
 
 			/* Redraw everything */
 			display_inventory();
+
+			chg_virtue(V_SACRIFICE, 1);
 		}
+
+		angtk_eval("angband_display", "store", "show", NULL); /* TNB */
 	}
 
 	/* Not kicked out */
@@ -2829,7 +3049,7 @@ static void store_sell(void)
 
 	cptr q, s;
 
-	char o_name[80];
+	char o_name[O_NAME_MAX];
 
 
 	/* Prepare a prompt */
@@ -2843,7 +3063,8 @@ static void store_sell(void)
 
 	/* Get an item */
 	s = "You have nothing that I want.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+		return;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -2879,7 +3100,8 @@ static void store_sell(void)
 		amt = get_quantity(NULL, o_ptr->number);
 
 		/* Allow user abort */
-		if (amt <= 0) return;
+		if (amt <= 0)
+			return;
 	}
 
 	/* Get local object */
@@ -2891,7 +3113,8 @@ static void store_sell(void)
 	/* Modify quantity */
 	q_ptr->number = amt;
 
-	/* Hack -- If a rod or wand, allocate total maximum
+	/*
+	 * Hack -- If a rod or wand, allocate total maximum
 	 * timeouts or charges to those being sold. -LM-
 	 */
 	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
@@ -2902,9 +3125,12 @@ static void store_sell(void)
 	/* Get a full description */
 	object_desc(o_name, q_ptr, TRUE, 3);
 
-	/* Remove any inscription for stores */
-	if (cur_store_num != STORE_HOME) q_ptr->note = 0;
-
+	/* Remove any inscription, feeling for stores */
+	if (cur_store_num != STORE_HOME)
+	{
+		q_ptr->inscription = 0;
+		q_ptr->feeling = FEEL_NONE;
+	}
 
 	/* Is there room in the store (or the home?) */
 	if (!store_check_num(q_ptr))
@@ -2928,7 +3154,8 @@ static void store_sell(void)
 		choice = sell_haggle(q_ptr, &price);
 
 		/* Kicked out */
-		if (st_ptr->store_open >= turn) return;
+		if (st_ptr->store_open >= turn)
+			return;
 
 		/* Sold... */
 		if (choice == 0)
@@ -2936,8 +3163,12 @@ static void store_sell(void)
 			/* Say "okay" */
 			say_comment_1();
 
-			/* Make a sound */
-			sound(SOUND_SELL);
+			if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
+				chg_virtue(V_JUSTICE, -1);
+
+			if ((o_ptr->tval == TV_BOTTLE) &&
+				(cur_store_num != STORE_HOME))
+				chg_virtue(V_NATURE, 1);
 
 			/* Be happy */
 			decrease_insults();
@@ -2964,7 +3195,7 @@ static void store_sell(void)
 			q_ptr->number = amt;
 
 			/*
-			 * Hack -- If a rod or wand, let the shopkeeper know just
+			 * Hack -- If a rod or wand, let the shopkeeper know just 
 			 * how many charges he really paid for. -LM-
 			 */
 			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
@@ -2979,21 +3210,22 @@ static void store_sell(void)
 			object_desc(o_name, q_ptr, TRUE, 3);
 
 			/* Describe the result (in message buffer) */
-			msg_format("You sold %s for %ld gold.", o_name, (long)price);
+			msg_format("You sold %s for %ld gold.", o_name, (long) price);
 
-			/* Analyze the prices (and comment verbally) */
-			purchase_analyze(price, value, dummy);
+			if (!((o_ptr->tval == TV_FIGURINE) && (value > 0)))
+			{
+				/* Analyze the prices (and comment verbally) unless a figurine */
+				purchase_analyze(price, value, dummy);
+			}
 
 			/*
-			 * Hack -- Allocate charges between those wands or rods sold
+			 * Hack -- Allocate charges between those wands or rods sold 
 			 * and retained, unless all are being sold. -LM-
 			 */
-			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-			{
-				q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+			distribute_charges(o_ptr, q_ptr, amt);
 
-				if (o_ptr->number > amt) o_ptr->pval -= q_ptr->pval;
-			}
+			/* Reset timeouts of the sold items */
+			q_ptr->timeout = 0;
 
 			/* Take the item from the player, describe the result */
 			inven_item_increase(item, -amt);
@@ -3011,6 +3243,8 @@ static void store_sell(void)
 			{
 				store_top = (item_pos / 12) * 12;
 				display_inventory();
+
+				angtk_eval("angband_display", "store", "show", NULL); /* TNB */
 			}
 		}
 	}
@@ -3018,28 +3252,8 @@ static void store_sell(void)
 	/* Player is at home */
 	else
 	{
-		/* Hack -- If a rod or wand, allocate total maximum timeouts or
-		 * charges between those dropped and kept in the backpack, unless
-		 * all are being dropped. -LM-
-		 */
-		if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-		{
-			q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			if (o_ptr->number > amt) o_ptr->pval -= q_ptr->pval;
-
-			/* Hack -- Rods also need to have their timeouts distributed.
-			 * The dropped stack will accept all time remaining to charge
-			 * up to its maximum.
-		 	 */
-			if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-			{
-				if (q_ptr->pval > o_ptr->timeout)
-					q_ptr->timeout = o_ptr->timeout;
-				else q_ptr->timeout = q_ptr->pval;
-
-				if (amt < o_ptr->number) o_ptr->timeout -= q_ptr->timeout;
-			}
-		}
+		/* Distribute charges of wands/rods */
+		distribute_charges(o_ptr, q_ptr, amt);
 
 		/* Describe */
 		msg_format("You drop %s (%c).", o_name, index_to_label(item));
@@ -3060,6 +3274,8 @@ static void store_sell(void)
 		{
 			store_top = (item_pos / 12) * 12;
 			display_inventory();
+
+			angtk_eval("angband_display", "store", "show", NULL); /* TNB */
 		}
 	}
 }
@@ -3070,11 +3286,11 @@ static void store_sell(void)
  */
 static void store_examine(void)
 {
-	int         i;
-	int         item;
+	int i;
+	int item;
 	object_type *o_ptr;
-	char        o_name[80];
-	char        out_val[160];
+	char o_name[O_NAME_MAX];
+	char out_val[160];
 
 
 	/* Empty? */
@@ -3092,16 +3308,19 @@ static void store_examine(void)
 	i = (st_ptr->stock_num - store_top);
 
 	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
+	if (i > 12)
+		i = 12;
 
 	/* Prompt */
 	sprintf(out_val, "Which item do you want to examine? ");
 
 	/* Get the item number to be examined */
-	if (!get_stock(&item, out_val, 0, i - 1)) return;
+	if (!get_stock(&item, out_val, 0, st_ptr->stock_num	/* i-1 -- TNB */
+		))
+		return;
 
 	/* Get the actual index */
-	item = item + store_top;
+/*	item = item + store_top; -- TNB */
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
@@ -3124,14 +3343,165 @@ static void store_examine(void)
 	if (!identify_fully_aux(o_ptr))
 		msg_print("You see nothing special.");
 
-#ifdef USE_SCRIPT
-
-	store_examine_callback(o_ptr);
-
-#endif /* USE_SCRIPT */
-
 	return;
 }
+
+
+#if 1 /* TNB */
+
+extern bool high_level_book(object_type * o_ptr);
+
+/*
+ * Let the user choose an object to destroy in the Home.
+ */
+static void home_destroy(void)
+{
+	int amt = 1, item, old_number;
+
+	object_type *o_ptr;
+
+	char o_name[O_NAME_MAX];
+	char out_val[160];
+
+	/* Empty? */
+	if (st_ptr->stock_num <= 0)
+	{
+		msg_print("Your home is empty.");
+		return;
+	}
+
+	/* Get the object number to be bought */
+	if (!get_stock(&item, "Destroy which item? ", 0,
+			st_ptr->stock_num - 1)) return;
+
+	/* Get the item */
+	o_ptr = &st_ptr->stock[item];
+
+	/* See how many items */
+	if (o_ptr->number > 1)
+	{
+		/* Get a quantity */
+		amt = get_quantity(NULL, o_ptr->number);
+
+		/* Allow user abort */
+		if (amt <= 0)
+			return;
+	}
+
+	/* Describe the object */
+	old_number = o_ptr->number;
+	o_ptr->number = amt;
+	object_desc(o_name, o_ptr, TRUE, 3);
+	o_ptr->number = old_number;
+
+	/* Verify destruction */
+	if (!(auto_destroy && (object_value(o_ptr) < 1)))
+	{
+		sprintf(out_val, "Really destroy %s? ", o_name);
+		if (!get_check(out_val))
+			return;
+	}
+
+	/* Artifacts cannot be destroyed */
+	if (artifact_p(o_ptr) || o_ptr->art_name)
+	{
+		/* Message */
+		msg_format("You cannot destroy %s.", o_name);
+
+		/* Don't mark id'ed objects */
+		if (!object_known_p(o_ptr))
+		{
+			if (cursed_p(o_ptr) || broken_p(o_ptr))
+				o_ptr->feeling = FEEL_TERRIBLE;
+			else
+				o_ptr->feeling = FEEL_SPECIAL;
+
+			/* We have "felt" it (again) */
+			o_ptr->ident |= (IDENT_SENSE);
+
+			/* Redraw everything */
+			angtk_eval("angband_display", "store", "show", NULL); /* TNB */
+		}
+
+		/* Done */
+		return;
+	}
+
+	/* Message */
+	msg_format("You destroy %s.", o_name);
+
+	if (high_level_book(o_ptr))
+	{
+		bool gain_expr = FALSE;
+
+		if (p_ptr->pclass == CLASS_WARRIOR)
+		{
+			gain_expr = TRUE;
+		}
+		else if (p_ptr->pclass == CLASS_PALADIN)
+		{
+			if (p_ptr->realm1 == REALM_LIFE)
+			{
+				if (o_ptr->tval != TV_LIFE_BOOK)
+					gain_expr = TRUE;
+			}
+			else
+			{
+				if (o_ptr->tval == TV_LIFE_BOOK)
+					gain_expr = TRUE;
+			}
+		}
+
+		if (gain_expr && (p_ptr->exp < PY_MAX_EXP))
+		{
+			s32b tester_exp = p_ptr->max_exp / 20;
+			if (tester_exp > 10000)
+				tester_exp = 10000;
+			if (o_ptr->sval < 3)
+				tester_exp /= 4;
+			if (tester_exp < 1)
+				tester_exp = 1;
+
+			msg_print("You feel more experienced.");
+			gain_exp(tester_exp * amt);
+		}
+
+		if (high_level_book(o_ptr) && o_ptr->tval == TV_LIFE_BOOK)
+		{
+			chg_virtue(V_UNLIFE, 1);
+			chg_virtue(V_VITALITY, -1);
+		}
+		else if (high_level_book(o_ptr) && o_ptr->tval == TV_DEATH_BOOK)
+		{
+			chg_virtue(V_UNLIFE, -1);
+			chg_virtue(V_VITALITY, 1);
+		}
+
+		if (o_ptr->to_a || o_ptr->to_h || o_ptr->to_d)
+			chg_virtue(V_ENCHANT, -1);
+
+		if (object_value_real(o_ptr) > 30000)
+			chg_virtue(V_SACRIFICE, 2);
+
+		else if (object_value_real(o_ptr) > 10000)
+			chg_virtue(V_SACRIFICE, 1);
+	}
+
+	if (o_ptr->to_a != 0 || o_ptr->to_d != 0 || o_ptr->to_h != 0)
+		chg_virtue(V_HARMONY, 1);
+
+	/* Reduce the charges of rods/wands */
+	reduce_charges(o_ptr, amt);
+
+	/* Remove the items from the home */
+	store_item_increase(item, -amt);
+	store_item_optimize(item);
+
+	/* Redraw everything */
+	angtk_eval("angband_display", "store", "show", NULL); /* TNB */
+}
+
+#endif /* 1 -- TNB */
 
 
 /*
@@ -3150,7 +3520,7 @@ static bool leave_store = FALSE;
  */
 static void store_process_command(void)
 {
-#ifdef ALLOW_REPEAT /* TNB */
+#ifdef ALLOW_REPEAT	/* TNB */
 
 	/* Handle repeating the last command */
 	repeat_check();
@@ -3159,20 +3529,22 @@ static void store_process_command(void)
 
 	if (rogue_like_commands && command_cmd == 'l')
 	{
-		command_cmd = 'x';	/* hack! */
+		command_cmd = 'x'; /* hack! */
 	}
 
 	/* Parse the command */
 	switch (command_cmd)
 	{
-		/* Leave */
+			/* Leave */
 		case ESCAPE:
 		{
 			leave_store = TRUE;
 			break;
 		}
 
-		/* Browse */
+#if 0 /* TNB */
+
+			/* Browse */
 		case ' ':
 		{
 			if (st_ptr->stock_num <= 12)
@@ -3182,13 +3554,16 @@ static void store_process_command(void)
 			else
 			{
 				store_top += 12;
-				if (store_top >= st_ptr->stock_num) store_top = 0;
+				if (store_top >= st_ptr->stock_num)
+					store_top = 0;
 				display_inventory();
 			}
 			break;
 		}
 
-		/* Redraw */
+#endif /* TNB */
+
+			/* Redraw */
 		case KTRL('R'):
 		{
 			do_cmd_redraw();
@@ -3196,28 +3571,28 @@ static void store_process_command(void)
 			break;
 		}
 
-		/* Get (purchase) */
+			/* Get (purchase) */
 		case 'g':
 		{
 			store_purchase();
 			break;
 		}
 
-		/* Drop (Sell) */
+			/* Drop (Sell) */
 		case 'd':
 		{
 			store_sell();
 			break;
 		}
 
-		/* Examine */
+			/* Examine */
 		case 'x':
 		{
 			store_examine();
 			break;
 		}
 
-		/* Ignore return */
+			/* Ignore return */
 		case '\r':
 		{
 			break;
@@ -3225,14 +3600,14 @@ static void store_process_command(void)
 
 		/*** Inventory Commands ***/
 
-		/* Wear/wield equipment */
+			/* Wear/wield equipment */
 		case 'w':
 		{
 			do_cmd_wield();
 			break;
 		}
 
-		/* Take off equipment */
+			/* Take off equipment */
 		case 't':
 		{
 			do_cmd_takeoff();
@@ -3241,7 +3616,7 @@ static void store_process_command(void)
 
 #if 0
 
-		/* Drop an item */
+			/* Drop an item */
 		case 'd':
 		{
 			do_cmd_drop();
@@ -3250,21 +3625,21 @@ static void store_process_command(void)
 
 #endif
 
-		/* Destroy an item */
+			/* Destroy an item */
 		case 'k':
 		{
 			do_cmd_destroy();
 			break;
 		}
 
-		/* Equipment list */
+			/* Equipment list */
 		case 'e':
 		{
 			do_cmd_equip();
 			break;
 		}
 
-		/* Inventory list */
+			/* Inventory list */
 		case 'i':
 		{
 			do_cmd_inven();
@@ -3274,14 +3649,14 @@ static void store_process_command(void)
 
 		/*** Various commands ***/
 
-		/* Identify an object */
+			/* Identify an object */
 		case 'I':
 		{
 			do_cmd_observe();
 			break;
 		}
 
-		/* Hack -- toggle windows */
+			/* Hack -- toggle windows */
 		case KTRL('I'):
 		{
 			toggle_inven_equip();
@@ -3292,21 +3667,21 @@ static void store_process_command(void)
 
 		/*** Use various objects ***/
 
-		/* Browse a book */
+			/* Browse a book */
 		case 'b':
 		{
 			do_cmd_browse();
 			break;
 		}
 
-		/* Inscribe an object */
+			/* Inscribe an object */
 		case '{':
 		{
 			do_cmd_inscribe();
 			break;
 		}
 
-		/* Uninscribe an object */
+			/* Uninscribe an object */
 		case '}':
 		{
 			do_cmd_uninscribe();
@@ -3317,24 +3692,24 @@ static void store_process_command(void)
 
 		/*** Help and Such ***/
 
-		/* Help */
+			/* Help */
 		case '?':
 		{
 			do_cmd_help();
 			break;
 		}
 
-		/* Identify symbol */
+			/* Identify symbol */
 		case '/':
 		{
 			do_cmd_query_symbol();
 			break;
 		}
 
-		/* Character description */
+			/* Character description */
 		case 'C':
 		{
-			do_cmd_change_name();
+			do_cmd_character();
 			display_store();
 			break;
 		}
@@ -3342,42 +3717,42 @@ static void store_process_command(void)
 
 		/*** System Commands ***/
 
-		/* Hack -- User interface */
+			/* Hack -- User interface */
 		case '!':
 		{
-			(void)Term_user(0);
+			(void) Term_user(0);
 			break;
 		}
 
-		/* Single line from a pref file */
+			/* Single line from a pref file */
 		case '"':
 		{
 			do_cmd_pref();
 			break;
 		}
 
-		/* Interact with macros */
+			/* Interact with macros */
 		case '@':
 		{
 			do_cmd_macros();
 			break;
 		}
 
-		/* Interact with visuals */
+			/* Interact with visuals */
 		case '%':
 		{
 			do_cmd_visuals();
 			break;
 		}
 
-		/* Interact with colors */
+			/* Interact with colors */
 		case '&':
 		{
 			do_cmd_colors();
 			break;
 		}
 
-		/* Interact with options */
+			/* Interact with options */
 		case '=':
 		{
 			do_cmd_options();
@@ -3386,42 +3761,42 @@ static void store_process_command(void)
 
 		/*** Misc Commands ***/
 
-		/* Take notes */
+			/* Take notes */
 		case ':':
 		{
 			do_cmd_note();
 			break;
 		}
 
-		/* Version info */
+			/* Version info */
 		case 'V':
 		{
 			do_cmd_version();
 			break;
 		}
 
-		/* Repeat level feeling */
+			/* Repeat level feeling */
 		case KTRL('F'):
 		{
 			do_cmd_feeling();
 			break;
 		}
 
-		/* Show previous message */
+			/* Show previous message */
 		case KTRL('O'):
 		{
 			do_cmd_message_one();
 			break;
 		}
 
-		/* Show previous messages */
+			/* Show previous messages */
 		case KTRL('P'):
 		{
 			do_cmd_messages();
 			break;
 		}
 
-		/* Check artifacts, uniques etc. */
+			/* Check artifacts, uniques etc. */
 		case '~':
 		case '|':
 		{
@@ -3429,21 +3804,35 @@ static void store_process_command(void)
 			break;
 		}
 
-		/* Load "screen dump" */
+			/* Load "screen dump" */
 		case '(':
 		{
 			do_cmd_load_screen();
 			break;
 		}
 
-		/* Save "screen dump" */
+			/* Save "screen dump" */
 		case ')':
 		{
 			do_cmd_save_screen();
 			break;
 		}
 
-		/* Hack -- Unknown command */
+#if 1 /* TNB */
+
+			/* Destroy item in the Home */
+		case 'K':
+		{
+			if (cur_store_num != STORE_HOME)
+				msg_print("That command only works in the Home.");
+			else
+				home_destroy();
+			break;
+		}
+
+#endif /* TNB */
+
+			/* Hack -- Unknown command */
 		default:
 		{
 			msg_print("That command does not work in stores.");
@@ -3465,11 +3854,11 @@ static void store_process_command(void)
  */
 void do_cmd_store(void)
 {
-	int         which;
-	int         maintain_num;
-	int         tmp_chr;
-	int         i;
-	cave_type   *c_ptr;
+	int which;
+	int maintain_num;
+	int tmp_chr;
+	int i;
+	cave_type *c_ptr;
 
 
 	/* Access the player grid */
@@ -3477,7 +3866,7 @@ void do_cmd_store(void)
 
 	/* Verify a store */
 	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-		  (c_ptr->feat <= FEAT_SHOP_TAIL)))
+			(c_ptr->feat <= FEAT_SHOP_TAIL)))
 	{
 		msg_print("You see no store here.");
 		return;
@@ -3488,17 +3877,21 @@ void do_cmd_store(void)
 
 	/* Hack -- Check the "locked doors" */
 	if ((town[p_ptr->town_num].store[which].store_open >= turn) ||
-	    (ironman_shops))
+		(ironman_shops))
 	{
 		msg_print("The doors are locked.");
 		return;
 	}
 
 	/* Calculate the number of store maintainances since the last visit */
-	maintain_num = (turn - town[p_ptr->town_num].store[which].last_visit) / (10L * STORE_TURNS);
+	maintain_num =
+		(turn -
+		town[p_ptr->town_num].store[which].last_visit) / (10L *
+		STORE_TURNS);
 
 	/* Maintain the store max. 10 times */
-	if (maintain_num > 10) maintain_num = 10;
+	if (maintain_num > 10)
+		maintain_num = 10;
 
 	if (maintain_num)
 	{
@@ -3509,6 +3902,8 @@ void do_cmd_store(void)
 		/* Save the visit */
 		town[p_ptr->town_num].store[which].last_visit = turn;
 	}
+
+	angtk_widget_lock(TRUE); /* TNB */
 
 	/* Forget the lite */
 	forget_lite();
@@ -3538,6 +3933,15 @@ void do_cmd_store(void)
 	st_ptr = &town[p_ptr->town_num].store[cur_store_num];
 	ot_ptr = &owners[cur_store_num][st_ptr->owner];
 
+#if 1 /* TNB */
+
+	/* Information used by Tcl "store" command */
+	storedata.shopping = TRUE;
+	storedata.store_num = which;
+	storedata.st_ptr = st_ptr;
+	storedata.ot_ptr = ot_ptr;
+
+#endif /* TNB */
 
 	/* Start at the beginning */
 	store_top = 0;
@@ -3573,15 +3977,15 @@ void do_cmd_store(void)
 		/* Home commands */
 		if (cur_store_num == STORE_HOME)
 		{
-		   prt(" g) Get an item.", 22, 31);
-		   prt(" d) Drop an item.", 23, 31);
+			prt(" g) Get an item.", 22, 31);
+			prt(" d) Drop an item.", 23, 31);
 		}
 
 		/* Shop commands XXX XXX XXX */
 		else
 		{
-		   prt(" p) Purchase an item.", 22, 31);
-		   prt(" s) Sell an item.", 23, 31);
+			prt(" p) Purchase an item.", 22, 31);
+			prt(" s) Sell an item.", 23, 31);
 		}
 
 		/* Add in the eXamine option */
@@ -3616,7 +4020,8 @@ void do_cmd_store(void)
 			if (cur_store_num != STORE_HOME)
 			{
 				/* Message */
-				msg_print("Your pack is so full that you flee the store...");
+				msg_print
+					("Your pack is so full that you flee the store...");
 
 				/* Leave */
 				leave_store = TRUE;
@@ -3626,7 +4031,8 @@ void do_cmd_store(void)
 			else if (!store_check_num(o_ptr))
 			{
 				/* Message */
-				msg_print("Your pack is so full that you flee your home...");
+				msg_print
+					("Your pack is so full that you flee your home...");
 
 				/* Leave */
 				leave_store = TRUE;
@@ -3640,8 +4046,7 @@ void do_cmd_store(void)
 				object_type forge;
 				object_type *q_ptr;
 
-				char o_name[80];
-
+				char o_name[O_NAME_MAX];
 
 				/* Give a message */
 				msg_print("Your pack overflows!");
@@ -3656,7 +4061,8 @@ void do_cmd_store(void)
 				object_desc(o_name, q_ptr, TRUE, 3);
 
 				/* Message */
-				msg_format("You drop %s (%c).", o_name, index_to_label(item));
+				msg_format("You drop %s (%c).", o_name,
+					index_to_label(item));
 
 				/* Remove it from the players inventory */
 				inven_item_increase(item, -255);
@@ -3679,10 +4085,12 @@ void do_cmd_store(void)
 		}
 
 		/* Hack -- Redisplay store prices if charisma changes */
-		if (tmp_chr != p_ptr->stat_use[A_CHR]) display_inventory();
+		if (tmp_chr != p_ptr->stat_use[A_CHR])
+			display_inventory();
 
 		/* Hack -- get kicked out of the store */
-		if (st_ptr->store_open >= turn) leave_store = TRUE;
+		if (st_ptr->store_open >= turn)
+			leave_store = TRUE;
 	}
 
 
@@ -3721,6 +4129,15 @@ void do_cmd_store(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+
+#if 1 /* TNB */
+
+	storedata.shopping = FALSE;
+	angtk_eval("angband_display", "store", "hide", NULL);
+
+	angtk_widget_lock(FALSE);
+
+#endif /* TNB */
 }
 
 
@@ -3734,7 +4151,8 @@ void store_shuffle(int which)
 
 
 	/* Ignore home */
-	if (which == STORE_HOME) return;
+	if (which == STORE_HOME)
+		return;
 
 
 	/* Save the store index */
@@ -3744,9 +4162,9 @@ void store_shuffle(int which)
 	st_ptr = &town[p_ptr->town_num].store[cur_store_num];
 
 	/* Pick a new owner */
-	for (j = st_ptr->owner; j == st_ptr->owner; )
+	for (j = st_ptr->owner; j == st_ptr->owner;)
 	{
-		st_ptr->owner = (byte)rand_int(MAX_OWNERS);
+		st_ptr->owner = (byte) rand_int(MAX_OWNERS);
 	}
 
 	/* Activate the new owner */
@@ -3776,7 +4194,7 @@ void store_shuffle(int which)
 		o_ptr->ident &= ~(IDENT_FIXED);
 
 		/* Mega-Hack -- Note that the item is "on sale" */
-		o_ptr->note = quark_add("on sale");
+		o_ptr->inscription = quark_add("on sale");
 	}
 }
 
@@ -3786,14 +4204,15 @@ void store_shuffle(int which)
  */
 void store_maint(int town_num, int store_num)
 {
-	int 		j;
+	int j;
 
-	int 	old_rating = rating;
+	int old_rating = rating;
 
 	cur_store_num = store_num;
 
 	/* Ignore home */
-	if (store_num == STORE_HOME) return;
+	if (store_num == STORE_HOME)
+		return;
 
 	/* Activate that store */
 	st_ptr = &town[town_num].store[store_num];
@@ -3830,16 +4249,20 @@ void store_maint(int town_num, int store_num)
 	j = j - randint(STORE_TURNOVER);
 
 	/* Never keep more than "STORE_MAX_KEEP" slots */
-	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
+	if (j > STORE_MAX_KEEP)
+		j = STORE_MAX_KEEP;
 
 	/* Always "keep" at least "STORE_MIN_KEEP" items */
-	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
+	if (j < STORE_MIN_KEEP)
+		j = STORE_MIN_KEEP;
 
 	/* Hack -- prevent "underflow" */
-	if (j < 0) j = 0;
+	if (j < 0)
+		j = 0;
 
 	/* Destroy objects until only "j" slots are left */
-	while (st_ptr->stock_num > j) store_delete();
+	while (st_ptr->stock_num > j)
+		store_delete();
 
 
 	/* Choose the number of slots to fill */
@@ -3849,16 +4272,20 @@ void store_maint(int town_num, int store_num)
 	j = j + randint(STORE_TURNOVER);
 
 	/* Never keep more than "STORE_MAX_KEEP" slots */
-	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
+	if (j > STORE_MAX_KEEP)
+		j = STORE_MAX_KEEP;
 
 	/* Always "keep" at least "STORE_MIN_KEEP" items */
-	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
+	if (j < STORE_MIN_KEEP)
+		j = STORE_MIN_KEEP;
 
 	/* Hack -- prevent "overflow" */
-	if (j >= st_ptr->stock_size) j = st_ptr->stock_size - 1;
+	if (j >= st_ptr->stock_size)
+		j = st_ptr->stock_size - 1;
 
 	/* Acquire some new items */
-	while (st_ptr->stock_num < j) store_create();
+	while (st_ptr->stock_num < j)
+		store_create();
 
 
 	/* Hack -- Restore the rating */
@@ -3871,7 +4298,7 @@ void store_maint(int town_num, int store_num)
  */
 void store_init(int town_num, int store_num)
 {
-	int 		k;
+	int k;
 
 	cur_store_num = store_num;
 
@@ -3880,7 +4307,7 @@ void store_init(int town_num, int store_num)
 
 
 	/* Pick an owner */
-	st_ptr->owner = (byte)rand_int(MAX_OWNERS);
+	st_ptr->owner = (byte) rand_int(MAX_OWNERS);
 
 	/* Activate the new owner */
 	ot_ptr = &owners[store_num][st_ptr->owner];
@@ -3904,29 +4331,71 @@ void store_init(int town_num, int store_num)
 	/* Clear any old items */
 	for (k = 0; k < st_ptr->stock_size; k++)
 	{
-#ifdef USE_SCRIPT
-		object_delete_callback(&st_ptr->stock[k]);
-#endif /* USE_SCRIPT */
-
 		object_wipe(&st_ptr->stock[k]);
 	}
 }
 
 
-void move_to_black_market(object_type *o_ptr)
+void move_to_black_market(object_type * o_ptr)
 {
 	/* Not in town */
-	if (!p_ptr->town_num) return;
+	if (!p_ptr->town_num)
+		return;
 
 	st_ptr = &town[p_ptr->town_num].store[STORE_BLACK];
 
 	o_ptr->ident |= IDENT_STOREB;
 
-	(void)store_carry(o_ptr);
-
-#ifdef USE_SCRIPT
-	object_delete_callback(o_ptr);
-#endif /* USE_SCRIPT */
-
-	object_wipe(o_ptr); /* Don't leave a bogus object behind... */
+	(void) store_carry(o_ptr);
+	object_wipe(o_ptr);	/* Don't leave a bogus object behind... */
 }
+
+#if 1 /* TNB */
+
+char *store_cost(object_type *o_ptr)
+{
+	s32b x;
+
+	/* No cost in home */
+	if (storedata.store_num == STORE_HOME)
+	{
+		/* Sanity: zero cost */
+		return "0";
+	}
+
+	/* Display a "fixed" cost */
+	else if (o_ptr->ident & (IDENT_FIXED))
+	{
+		/* Extract the "minimum" price */
+		x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+
+		/* Set the price (fixed) */
+		return format("%ld F", (long) x);
+	}
+
+	/* Display a "taxed" cost */
+	else if (auto_haggle)
+	{
+		/* Extract the "minimum" price */
+		x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+
+		/* Hack -- Apply Sales Tax if needed */
+		if (!noneedtobargain(x))
+			x += x / 10;
+
+		/* Set the price (with tax) */
+		return format("%ld", (long) x);
+	}
+
+	/* Display a "haggle" cost */
+	else
+	{
+		/* Extrect the "maximum" price */
+		x = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
+
+		/* Set the price (not fixed) */
+		return format("%ld", (long) x);
+	}
+}
+
+#endif /* TNB */

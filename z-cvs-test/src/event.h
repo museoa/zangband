@@ -28,13 +28,13 @@ extern bool generate_wilderness_callback(int y, int x);
 extern bool enter_wilderness_callback(int y, int x);
 extern bool leave_wilderness_callback(int y, int x);
 
-extern void store_examine_callback(object_type *o_ptr);
+extern void store_examine_callback(object_type * o_ptr);
 extern bool monster_move_callback(int *mm, int m_idx);
 extern void create_monster_callback(int m_idx);
 extern void delete_monster_callback(int m_idx);
 extern void copy_monster_callback(int i1, int i2);
 extern char inkey_borg_callback(bool inkey_base, bool inkey_xtra,
-                                bool inkey_flag, bool inkey_scan);
+	bool inkey_flag, bool inkey_scan);
 extern char inkey_callback(char key);
 
 /* Birth */
@@ -47,32 +47,35 @@ extern bool get_player_flags_callback(void);
 extern bool player_outfit_callback(void);
 
 extern long sense_inventory_callback(void);
-extern bool destroy_object_callback(object_type *o_ptr, int number);
+extern bool destroy_object_callback(object_type * o_ptr, int number);
 
 /* Object callbacks - global */
-extern PyObject* object_create_callback(object_type *o_ptr);
-extern PyObject* object_load_callback(char *code);
+extern PyObject *object_create_callback(object_type * o_ptr);
+extern PyObject *object_load_callback(char *code);
 
 /* Object callbacks - object specific */
-extern bool object_eat_callback(object_type *o_ptr);
-extern bool object_browse_callback(object_type *o_ptr);
-extern bool object_cast_callback(object_type *o_ptr);
-extern cptr object_save_callback(object_type *o_ptr);
-extern void object_delete_callback(object_type *o_ptr);
-extern PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr);
-extern long get_object_level_callback(object_type *o_ptr);
-extern long get_object_cost_callback(object_type *o_ptr);
-extern cptr get_object_name_callback(object_type *o_ptr);
-extern char get_object_d_char_callback(object_type *o_ptr);
-extern char get_object_x_char_callback(object_type *o_ptr);
-extern byte get_object_d_attr_callback(object_type *o_ptr);
-extern byte get_object_x_attr_callback(object_type *o_ptr);
-extern bool get_object_aware_callback(object_type *o_ptr);
-extern bool get_object_tried_callback(object_type *o_ptr);
+extern bool object_eat_callback(object_type * o_ptr);
+extern bool object_browse_callback(object_type * o_ptr);
+extern bool object_cast_callback(object_type * o_ptr);
+extern cptr object_save_callback(object_type * o_ptr);
+extern void object_delete_callback(object_type * o_ptr);
+extern PyObject *object_copy_callback(object_type * o_ptr,
+	object_type * j_ptr);
+extern long get_object_level_callback(object_type * o_ptr);
+extern long get_object_cost_callback(object_type * o_ptr);
+extern cptr get_object_name_callback(object_type * o_ptr);
+extern char get_object_d_char_callback(object_type * o_ptr);
+extern char get_object_x_char_callback(object_type * o_ptr);
+extern byte get_object_d_attr_callback(object_type * o_ptr);
+extern byte get_object_x_attr_callback(object_type * o_ptr);
+extern bool get_object_aware_callback(object_type * o_ptr);
+extern bool get_object_tried_callback(object_type * o_ptr);
 
 /* Object_kind callbacks */
 extern bool free_object_kind_list_callback(void);
 extern bool init_object_kind_list_callback(void);
+
+extern bool use_skill_callback(void);
 
 
 #define CMD_EAT_EVENT                1
@@ -113,5 +116,6 @@ extern bool init_object_kind_list_callback(void);
 #define GET_PLAYER_REALMS_EVENT     36
 #define GET_WORLD_EVENT             37
 #define COPY_MONSTER_EVENT          38
+#define USE_SKILL_EVENT             39
 
-#define MAX_EVENT                   39
+#define MAX_EVENT                   40

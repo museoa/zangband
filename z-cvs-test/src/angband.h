@@ -36,7 +36,7 @@
 /*
  * Include the "Angband" configuration header
  */
-#include "config.h"
+#include "z-config.h"
 
 
 /*
@@ -45,10 +45,6 @@
 #include "defines.h"
 #include "types.h"
 #include "externs.h"
-
-#ifdef USE_SCRIPT
-#include "event.h"
-#endif /* USE_SCRIPT */
 
 /***** Some copyright messages follow below *****/
 
@@ -100,6 +96,3 @@
 
 
 #endif
-
-
-

@@ -52,12 +52,6 @@ bool Rand_quick = TRUE;
 
 
 /*
- * Use an unbiased RNG (slow)
- */
-bool Rand_unbiased;
-
-
-/*
  * Current "value" of the "simple" RNG
  */
 u32b Rand_value;
@@ -73,120 +67,10 @@ u16b Rand_place;
  */
 u32b Rand_state[RAND_DEG];
 
-
-
-/* Random number generator selector */
-
-
 /*
- * Generate a random bit
- *
- * This is done by generating two random bits (either 0 or 1)
- * until the bits are different, at which point the first is returned.
- * This gives an *unbiased* random bit.
- *
- * Consider the situation where a '0' has probability 'p' and a '1' has
- * probability 'q' (1-p).  The probabilities for the four possibilities with
- * two bits are as follows:
- *
- * 	00		p*p = p^2
- *		01		p*q = pq
- *		10		q*p = pq
- *		11		q*q = q^2
- *
- *	Note that '01' and '10' appear with equal probability.  This means that
- * if either is generated, the first bit is as likely to be '0' as '1',
- * and therefore the generator has no inherent bias.
- *
- * Note also that we cannot simply discard the first bit when a duplicate is
- * found, and continue the test using the second bit and a new bit -- doing so
- * predetermines the return value.
- *
- * Unfortunately, this method depends on the variation in the bit generator.
- * Any periodicity present in the bit stream will be reflected to some extent
- * in the output.
- *
- * Eric Bock (kobe@micron.net)
+ * Current "state" of the quick RNG  - don't bother to put this in save files.
  */
-int Rand_bit(void)
-{
-	int a, b;
-
-	/* Obtain a random pair */
-	do
-	{
-		a = Rand_div(0x10000) < 0x08000;
-		b = Rand_div(0x10000) < 0x08000;
-	}
-	while (a == b);
-
-	return a;
-}
-
-/*
- * Generate a random 32-bit integer.
- * Note that this can be extended to any number of bits.
- */
-u32b Rand_u32b(void)
-{
-	u32b r = 0;
-	byte i = 0;
-
-	int a, b;
-
-	for (; i < 32; i++)
-	{
-		/* Obtain a random pair */
-		do
-		{
-			a = Rand_div(0x10000) < 0x08000;
-			b = Rand_div(0x10000) < 0x08000;
-		}
-		while (a == b);
-
-		/* Add a random bit */
-		r += (u32b)a << i;
-	}
-
-	return r;
-}
-
-/* Generate a random integer with 0 <= X < M */
-u32b Rand_num(u32b m)
-{
-	u32b r = m;
-
-	byte i = 0;
-
-	int a, b;
-
-	/* Simple case */
-	if (m <= 1) return 0;
-
-	/* Wait for it */
-	while (r >= m)
-	{
-		r = 0;
-
-		/* Generate a random log(2)m-bit integer */
-		for (i = 0; (1UL << i) < m; i++)
-		{
-			/* Obtain a random pair */
-			do
-			{
-				a = Rand_div(0x10000) < 0x08000;
-				b = Rand_div(0x10000) < 0x08000;
-			}
-			while (a == b);
-
-			/* Add a random bit */
-			r += (u32b)a << i;
-		}
-	}
-
-	/* Success */
-	return r;
-}
+byte quick_rand_place;
 
 
 /*
@@ -200,14 +84,16 @@ void Rand_state_init(u32b seed)
 	Rand_state[0] = seed;
 
 	/* Propagate the seed */
-	for (i = 1; i < RAND_DEG; i++) Rand_state[i] = LCRNG(Rand_state[i-1]);
+	for (i = 1; i < RAND_DEG; i++)
+		Rand_state[i] = LCRNG(Rand_state[i - 1]);
 
 	/* Cycle the table ten times per degree */
 	for (i = 0; i < RAND_DEG * 10; i++)
 	{
 		/* Acquire the next index */
 		j = Rand_place + 1;
-		if (j == RAND_DEG) j = 0;
+		if (j == RAND_DEG)
+			j = 0;
 
 		/* Update the table, extract an entry */
 		Rand_state[j] += Rand_state[Rand_place];
@@ -230,7 +116,8 @@ s32b Rand_mod(s32b m)
 	u32b r;
 
 	/* Hack -- simple case */
-	if (m <= 1) return (0);
+	if (m <= 1)
+		return (0);
 
 	/* Use the "simple" RNG */
 	if (Rand_quick)
@@ -247,7 +134,8 @@ s32b Rand_mod(s32b m)
 	{
 		/* Acquire the next index */
 		j = Rand_place + 1;
-		if (j == RAND_DEG) j = 0;
+		if (j == RAND_DEG)
+			j = 0;
 
 		/* Update the table, extract an entry */
 		r = (Rand_state[j] += Rand_state[Rand_place]);
@@ -280,7 +168,8 @@ s32b Rand_div(u32b m)
 	u32b r, n;
 
 	/* Hack -- simple case */
-	if (m <= 1) return (0);
+	if (m <= 1)
+		return (0);
 
 	/* Partition size */
 	n = (0x10000000 / m);
@@ -298,7 +187,8 @@ s32b Rand_div(u32b m)
 			r = (r >> 4) / n;
 
 			/* Done */
-			if (r < m) break;
+			if (r < m)
+				break;
 		}
 	}
 
@@ -312,7 +202,8 @@ s32b Rand_div(u32b m)
 
 			/* Acquire the next index */
 			j = Rand_place + 1;
-			if (j == RAND_DEG) j = 0;
+			if (j == RAND_DEG)
+				j = 0;
 
 			/* Update the table, extract an entry */
 			r = (Rand_state[j] += Rand_state[Rand_place]);
@@ -324,7 +215,8 @@ s32b Rand_div(u32b m)
 			Rand_place = j;
 
 			/* Done */
-			if (r < m) break;
+			if (r < m)
+				break;
 		}
 	}
 
@@ -348,43 +240,42 @@ s32b Rand_div(u32b m)
 /*
  * The normal distribution table for the "randnor()" function (below)
  */
-static s16b randnor_table[RANDNOR_NUM] =
-{
-	206,     613,    1022,    1430,		1838,	 2245,	  2652,	   3058,
-	3463,    3867,    4271,    4673,	5075,	 5475,	  5874,	   6271,
-	6667,    7061,    7454,    7845,	8234,	 8621,	  9006,	   9389,
-	9770,   10148,   10524,   10898,   11269,	11638,	 12004,	  12367,
-	12727,   13085,   13440,   13792,   14140,	14486,	 14828,	  15168,
-	15504,   15836,   16166,   16492,   16814,	17133,	 17449,	  17761,
-	18069,   18374,   18675,   18972,   19266,	19556,	 19842,	  20124,
-	20403,   20678,   20949,   21216,   21479,	21738,	 21994,	  22245,
+static s16b randnor_table[RANDNOR_NUM] = {
+	206, 613, 1022, 1430, 1838, 2245, 2652, 3058,
+	3463, 3867, 4271, 4673, 5075, 5475, 5874, 6271,
+	6667, 7061, 7454, 7845, 8234, 8621, 9006, 9389,
+	9770, 10148, 10524, 10898, 11269, 11638, 12004, 12367,
+	12727, 13085, 13440, 13792, 14140, 14486, 14828, 15168,
+	15504, 15836, 16166, 16492, 16814, 17133, 17449, 17761,
+	18069, 18374, 18675, 18972, 19266, 19556, 19842, 20124,
+	20403, 20678, 20949, 21216, 21479, 21738, 21994, 22245,
 
-	22493,   22737,   22977,   23213,   23446,	23674,	 23899,	  24120,
-	24336,   24550,   24759,   24965,   25166,	25365,	 25559,	  25750,
-	25937,   26120,   26300,   26476,   26649,	26818,	 26983,	  27146,
-	27304,   27460,   27612,   27760,   27906,	28048,	 28187,	  28323,
-	28455,   28585,   28711,   28835,   28955,	29073,	 29188,	  29299,
-	29409,   29515,   29619,   29720,   29818,	29914,	 30007,	  30098,
-	30186,   30272,   30356,   30437,   30516,	30593,	 30668,	  30740,
-	30810,   30879,   30945,   31010,   31072,	31133,	 31192,	  31249,
+	22493, 22737, 22977, 23213, 23446, 23674, 23899, 24120,
+	24336, 24550, 24759, 24965, 25166, 25365, 25559, 25750,
+	25937, 26120, 26300, 26476, 26649, 26818, 26983, 27146,
+	27304, 27460, 27612, 27760, 27906, 28048, 28187, 28323,
+	28455, 28585, 28711, 28835, 28955, 29073, 29188, 29299,
+	29409, 29515, 29619, 29720, 29818, 29914, 30007, 30098,
+	30186, 30272, 30356, 30437, 30516, 30593, 30668, 30740,
+	30810, 30879, 30945, 31010, 31072, 31133, 31192, 31249,
 
-	31304,   31358,   31410,   31460,   31509,	31556,	 31601,	  31646,
-	31688,   31730,   31770,   31808,   31846,	31882,	 31917,	  31950,
-	31983,   32014,   32044,   32074,   32102,	32129,	 32155,	  32180,
-	32205,   32228,   32251,   32273,   32294,	32314,	 32333,	  32352,
-	32370,   32387,   32404,   32420,   32435,	32450,	 32464,	  32477,
-	32490,   32503,   32515,   32526,   32537,	32548,	 32558,	  32568,
-	32577,   32586,   32595,   32603,   32611,	32618,	 32625,	  32632,
-	32639,   32645,   32651,   32657,   32662,	32667,	 32672,	  32677,
+	31304, 31358, 31410, 31460, 31509, 31556, 31601, 31646,
+	31688, 31730, 31770, 31808, 31846, 31882, 31917, 31950,
+	31983, 32014, 32044, 32074, 32102, 32129, 32155, 32180,
+	32205, 32228, 32251, 32273, 32294, 32314, 32333, 32352,
+	32370, 32387, 32404, 32420, 32435, 32450, 32464, 32477,
+	32490, 32503, 32515, 32526, 32537, 32548, 32558, 32568,
+	32577, 32586, 32595, 32603, 32611, 32618, 32625, 32632,
+	32639, 32645, 32651, 32657, 32662, 32667, 32672, 32677,
 
-	32682,   32686,   32690,   32694,   32698,	32702,	 32705,	  32708,
-	32711,   32714,   32717,   32720,   32722,	32725,	 32727,	  32729,
-	32731,   32733,   32735,   32737,   32739,	32740,	 32742,	  32743,
-	32745,   32746,   32747,   32748,   32749,	32750,	 32751,	  32752,
-	32753,   32754,   32755,   32756,   32757,	32757,	 32758,	  32758,
-	32759,   32760,   32760,   32761,   32761,	32761,	 32762,	  32762,
-	32763,   32763,   32763,   32764,   32764,	32764,	 32764,	  32765,
-	32765,   32765,   32765,   32766,   32766,	32766,	 32766,	  32767,
+	32682, 32686, 32690, 32694, 32698, 32702, 32705, 32708,
+	32711, 32714, 32717, 32720, 32722, 32725, 32727, 32729,
+	32731, 32733, 32735, 32737, 32739, 32740, 32742, 32743,
+	32745, 32746, 32747, 32748, 32749, 32750, 32751, 32752,
+	32753, 32754, 32755, 32756, 32757, 32757, 32758, 32758,
+	32759, 32760, 32760, 32761, 32761, 32761, 32762, 32762,
+	32763, 32763, 32763, 32764, 32764, 32764, 32764, 32765,
+	32765, 32765, 32765, 32766, 32766, 32766, 32766, 32767,
 };
 
 
@@ -417,10 +308,11 @@ s16b randnor(int mean, int stand)
 	s16b high = RANDNOR_NUM;
 
 	/* Paranoia */
-	if (stand < 1) return (mean);
+	if (stand < 1)
+		return (mean);
 
 	/* Roll for probability */
-	tmp = (s16b)rand_int(32768);
+	tmp = (s16b) rand_int(32768);
 
 	/* Binary Search */
 	while (low < high)
@@ -441,10 +333,11 @@ s16b randnor(int mean, int stand)
 	}
 
 	/* Convert the index into an offset */
-	offset = (long)stand * (long)low / RANDNOR_STD;
+	offset = (long) stand *(long) low / RANDNOR_STD;
 
 	/* One half should be negative */
-	if (rand_int(100) < 50) return (mean - offset);
+	if (rand_int(100) < 50)
+		return (mean - offset);
 
 	/* One half should be positive */
 	return (mean + offset);
@@ -458,7 +351,8 @@ s16b randnor(int mean, int stand)
 s16b damroll(int num, int sides)
 {
 	int i, sum = 0;
-	for (i = 0; i < num; i++) sum += randint(sides);
+	for (i = 0; i < num; i++)
+		sum += randint(sides);
 	return (sum);
 }
 
@@ -472,4 +366,65 @@ s16b maxroll(int num, int sides)
 }
 
 
+/* 256 random boolean values generated by throwing many, many dice... -SF-*/
 
+static bool qrand_table[256] = {
+	TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE,
+	FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE,
+	TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE,
+	TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE,
+	TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE,
+	FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE,
+	FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE,
+	FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE,
+
+	FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE,
+	TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE,
+	FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE,
+	TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
+	FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE,
+	TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
+	TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE,
+	FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
+
+	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+	FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE,
+	FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE,
+	FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE,
+	TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE,
+	TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE,
+	FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE,
+	FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE,
+
+	TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE,
+	FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
+	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE,
+	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE,
+	TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
+	FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE,
+	FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
+	FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE
+};
+
+/*
+ * This is an ultra-quick "random" bool generator.
+ * The bools have a 50% chance of being true or false.
+ * This routine is designed to be used in LOS code + other
+ * time critical routines where the small period is not
+ * important.
+ */
+bool quick_rand(void)
+{
+	return qrand_table[quick_rand_place++];
+}
+
+
+/*
+ * This function adds a new random bool to the table.
+ * This is done to reduce the effect of the tables small size.
+ *  (Called once every 10 turns in dungeon.c)
+ */
+void quick_rand_add(void)
+{
+	qrand_table[quick_rand_place++] = (randint(2) == 1);
+}

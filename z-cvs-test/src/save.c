@@ -6,6 +6,10 @@
 #include "angband.h"
 
 
+#include "tnb.h" /* TNB */
+static void wr_tnb(void); /* TNB */
+
+
 #ifdef FUTURE_SAVEFILES
 
 /*
@@ -109,16 +113,16 @@ static errr wr_block(void)
 	byte fake[4];
 
 	/* Save the type and size */
-	fake[0] = (byte)(data_type);
-	fake[1] = (byte)(data_type >> 8);
-	fake[2] = (byte)(data_size);
-	fake[3] = (byte)(data_size >> 8);
+	fake[0] = (byte) (data_type);
+	fake[1] = (byte) (data_type >> 8);
+	fake[2] = (byte) (data_size);
+	fake[3] = (byte) (data_size >> 8);
 
 	/* Dump the head */
-	err = fd_write(data_fd, (char*)&fake, 4);
+	err = fd_write(data_fd, (char *) &fake, 4);
 
 	/* Dump the actual data */
-	err = fd_write(data_fd, (char*)data_head, data_size);
+	err = fd_write(data_fd, (char *) data_head, data_size);
 
 	/* XXX XXX XXX */
 	fake[0] = 0;
@@ -127,7 +131,7 @@ static errr wr_block(void)
 	fake[3] = 0;
 
 	/* Dump the tail */
-	err = fd_write(data_fd, (char*)&fake, 4);
+	err = fd_write(data_fd, (char *) &fake, 4);
 
 	/* Hack -- reset */
 	data_next = data_head;
@@ -154,7 +158,7 @@ static void put_byte(byte v)
  */
 static void put_char(char v)
 {
-	put_byte((byte)(v));
+	put_byte((byte) (v));
 }
 
 /*
@@ -162,8 +166,8 @@ static void put_char(char v)
  */
 static void put_u16b(u16b v)
 {
-	*data_next++ = (byte)(v);
-	*data_next++ = (byte)(v >> 8);
+	*data_next++ = (byte) (v);
+	*data_next++ = (byte) (v >> 8);
 }
 
 /*
@@ -171,7 +175,7 @@ static void put_u16b(u16b v)
  */
 static void put_s16b(s16b v)
 {
-	put_u16b((u16b)(v));
+	put_u16b((u16b) (v));
 }
 
 /*
@@ -179,10 +183,10 @@ static void put_s16b(s16b v)
  */
 static void put_u32b(u32b v)
 {
-	*data_next++ = (byte)(v);
-	*data_next++ = (byte)(v >> 8);
-	*data_next++ = (byte)(v >> 16);
-	*data_next++ = (byte)(v >> 24);
+	*data_next++ = (byte) (v);
+	*data_next++ = (byte) (v >> 8);
+	*data_next++ = (byte) (v >> 16);
+	*data_next++ = (byte) (v >> 24);
 }
 
 /*
@@ -190,7 +194,7 @@ static void put_u32b(u32b v)
  */
 static void put_s32b(s32b v)
 {
-	put_u32b((u32b)(v));
+	put_u32b((u32b) (v));
 }
 
 /*
@@ -208,22 +212,22 @@ static void put_string(char *str)
  */
 static errr wr_savefile(void)
 {
-	int     i;
+	int i;
 
-	u32b    now;
+	u32b now;
 
-	byte    tmp8u;
-	u16b    tmp16u;
+	byte tmp8u;
+	u16b tmp16u;
 
-	errr    err;
+	errr err;
 
-	byte    fake[4];
+	byte fake[4];
 
 
 	/*** Hack -- extract some data ***/
 
 	/* Hack -- Acquire the current time */
-	now = time((time_t*)(NULL));
+	now = time((time_t *) (NULL));
 
 	/* Note the operating system */
 	sf_xtra = 0L;
@@ -241,14 +245,14 @@ static errr wr_savefile(void)
 	data_fd = -1;
 
 	/* Dump the version */
-	fake[0] = (byte)(FAKE_VER_MAJOR);
-	fake[1] = (byte)(FAKE_VER_MINOR);
-	fake[2] = (byte)(FAKE_VER_PATCH);
-	fake[3] = (byte)(VERSION_EXTRA);
+	fake[0] = (byte) (FAKE_VER_MAJOR);
+	fake[1] = (byte) (FAKE_VER_MINOR);
+	fake[2] = (byte) (FAKE_VER_PATCH);
+	fake[3] = (byte) (VERSION_EXTRA);
 
 
 	/* Dump the data */
-	err = fd_write(data_fd, (char*)&fake, 4);
+	err = fd_write(data_fd, (char *) &fake, 4);
 
 
 	/* Make array XXX XXX XXX */
@@ -300,20 +304,20 @@ static errr rd_block(void)
 	byte fake[4];
 
 	/* Read the head data */
-	err = fd_read(data_fd, (char*)&fake, 4);
+	err = fd_read(data_fd, (char *) &fake, 4);
 
 	/* Extract the type and size */
-	data_type = (fake[0] | ((u16b)fake[1] << 8));
-	data_size = (fake[2] | ((u16b)fake[3] << 8));
+	data_type = (fake[0] | ((u16b) fake[1] << 8));
+	data_size = (fake[2] | ((u16b) fake[3] << 8));
 
 	/* Wipe the data block */
 	C_WIPE(data_head, 65535, byte);
 
 	/* Read the actual data */
-	err = fd_read(data_fd, (char*)data_head, data_size);
+	err = fd_read(data_fd, (char *) data_head, data_size);
 
 	/* Read the tail data */
-	err = fd_read(data_fd, (char*)&fake, 4);
+	err = fd_read(data_fd, (char *) &fake, 4);
 
 	/* XXX XXX XXX Verify */
 
@@ -328,7 +332,7 @@ static errr rd_block(void)
 /*
  * Hack -- get data from the current block
  */
-static void get_byte(byte *ip)
+static void get_byte(byte * ip)
 {
 	byte d1;
 	d1 = (*data_next++);
@@ -340,13 +344,13 @@ static void get_byte(byte *ip)
  */
 static void get_char(char *ip)
 {
-	get_byte((byte*)ip);
+	get_byte((byte *) ip);
 }
 
 /*
  * Hack -- get data from the current block
  */
-static void get_u16b(u16b *ip)
+static void get_u16b(u16b * ip)
 {
 	u16b d0, d1;
 	d0 = (*data_next++);
@@ -357,15 +361,15 @@ static void get_u16b(u16b *ip)
 /*
  * Hack -- get data from the current block
  */
-static void get_s16b(s16b *ip)
+static void get_s16b(s16b * ip)
 {
-	get_u16b((u16b*)ip);
+	get_u16b((u16b *) ip);
 }
 
 /*
  * Hack -- get data from the current block
  */
-static void get_u32b(u32b *ip)
+static void get_u32b(u32b * ip)
 {
 	u32b d0, d1, d2, d3;
 	d0 = (*data_next++);
@@ -378,9 +382,9 @@ static void get_u32b(u32b *ip)
 /*
  * Hack -- get data from the current block
  */
-static void get_s32b(s32b *ip)
+static void get_s32b(s32b * ip)
 {
-	get_u32b((u32b*)ip);
+	get_u32b((u32b *) ip);
 }
 
 
@@ -390,19 +394,21 @@ static void get_s32b(s32b *ip)
  */
 static errr rd_savefile(void)
 {
-	bool    done = FALSE;
+	bool done = FALSE;
 
-	byte    fake[4];
+	byte fake[4];
 
 
 	/* Open the savefile */
 	data_fd = fd_open(savefile, O_RDONLY);
 
 	/* No file */
-	if (data_fd < 0) return (1);
+	if (data_fd < 0)
+		return (1);
 
 	/* Strip the first four bytes (see below) */
-	if (fd_read(data_fd, (char*)(fake), 4)) return (1);
+	if (fd_read(data_fd, (char *) (fake), 4))
+		return (1);
 
 
 	/* Make array XXX XXX XXX */
@@ -416,28 +422,31 @@ static errr rd_savefile(void)
 	while (!done)
 	{
 		/* Read the block */
-		if (rd_block()) break;
+		if (rd_block())
+			break;
 
 		/* Analyze the type */
 		switch (data_type)
 		{
-			/* Done XXX XXX XXX */
+				/* Done XXX XXX XXX */
 			case 0:
 			{
 				done = TRUE;
 				break;
 			}
 
-			/* Grab the options */
+				/* Grab the options */
 			case TYPE_OPTIONS:
 			{
-				if (get_options()) err = -1;
+				if (get_options())
+					err = -1;
 				break;
 			}
 		}
 
 		/* XXX XXX XXX verify "data_next" */
-		if (data_next - data_head > data_size) break;
+		if (data_next - data_head > data_size)
+			break;
 	}
 
 
@@ -462,14 +471,64 @@ static errr rd_savefile(void)
  * Some "local" parameters, used to help write savefiles
  */
 
-static FILE     *fff;           /* Current save "file" */
+static FILE *fff; /* Current save "file" */
 
-static byte     xor_byte;       /* Simple encryption */
+static byte xor_byte; /* Simple encryption */
 
-static u32b     v_stamp = 0L;   /* A simple "checksum" on the actual values */
-static u32b     x_stamp = 0L;   /* A simple "checksum" on the encoded bytes */
+static u32b v_stamp = 0L; /* A simple "checksum" on the actual values */
+static u32b x_stamp = 0L; /* A simple "checksum" on the encoded bytes */
 
 
+#ifdef ALLOW_SAVEFILE_BUFFER /* TNB */
+
+static byte *data_head;	/* Temporary buffer */
+static byte *data_next;	/* Pointer into temporary buffer */
+
+/*
+ * Hack -- Flush/reset the file buffer whether full or not.
+ */
+static void flush_buffer(void)
+{
+	u32b data_size = data_next - data_head;
+
+	/* Reset */
+	data_next = data_head;
+
+	/* Nothing to write */
+	if (data_size <= 0)
+		return;
+
+	/* Actually write data to the file */
+	(void) fwrite(data_head, 1, data_size, fff);
+}
+
+/*
+ * Append a byte to the file buffer. Flush it it full.
+ */
+static void put_byte(byte v)
+{
+	u32b data_size = data_next - data_head;
+
+	/* Dump/reset the buffer when full */
+	if (data_size >= SAVEFILE_BUFFER_MAX)
+		flush_buffer();
+
+	/* Append the byte to our buffer */
+	*data_next++ = v;
+}
+
+static void sf_put(byte v)
+{
+	/* Encode the value, write a character */
+	xor_byte ^= v;
+	put_byte(xor_byte);
+
+	/* Maintain the checksum info */
+	v_stamp += v;
+	x_stamp += xor_byte;
+}
+
+#else /* ALLOW_SAVEFILE_BUFFER -- TNB */
 
 /*
  * These functions place information into a savefile a byte at a time
@@ -479,12 +538,14 @@ static void sf_put(byte v)
 {
 	/* Encode the value, write a character */
 	xor_byte ^= v;
-	(void)putc((int)xor_byte, fff);
+	(void) putc((int) xor_byte, fff);
 
 	/* Maintain the checksum info */
 	v_stamp += v;
 	x_stamp += xor_byte;
 }
+
+#endif /* ALLOW_SAVEFILE_BUFFER -- TNB */
 
 static void wr_byte(byte v)
 {
@@ -493,26 +554,26 @@ static void wr_byte(byte v)
 
 static void wr_u16b(u16b v)
 {
-	sf_put((byte)(v & 0xFF));
-	sf_put((byte)((v >> 8) & 0xFF));
+	sf_put((byte) (v & 0xFF));
+	sf_put((byte) ((v >> 8) & 0xFF));
 }
 
 static void wr_s16b(s16b v)
 {
-	wr_u16b((u16b)v);
+	wr_u16b((u16b) v);
 }
 
 static void wr_u32b(u32b v)
 {
-	sf_put((byte)(v & 0xFF));
-	sf_put((byte)((v >> 8) & 0xFF));
-	sf_put((byte)((v >> 16) & 0xFF));
-	sf_put((byte)((v >> 24) & 0xFF));
+	sf_put((byte) (v & 0xFF));
+	sf_put((byte) ((v >> 8) & 0xFF));
+	sf_put((byte) ((v >> 16) & 0xFF));
+	sf_put((byte) ((v >> 24) & 0xFF));
 }
 
 static void wr_s32b(s32b v)
 {
-	wr_u32b((u32b)v);
+	wr_u32b((u32b) v);
 }
 
 static void wr_string(cptr str)
@@ -534,7 +595,7 @@ static void wr_string(cptr str)
 /*
  * Write an "item" record
  */
-static void wr_item(object_type *o_ptr)
+static void wr_item(object_type * o_ptr)
 {
 	wr_s16b(o_ptr->k_idx);
 
@@ -568,19 +629,19 @@ static void wr_item(object_type *o_ptr)
 #if 0
 	/* Old flags */
 	if (o_ptr->art_name || o_ptr->art_flags1 || o_ptr->art_flags2 ||
-	    o_ptr->art_flags3)
+		o_ptr->art_flags3)
 	{
 #endif
-	wr_u32b(o_ptr->art_flags1);
-	wr_u32b(o_ptr->art_flags2);
-	wr_u32b(o_ptr->art_flags3);
+		wr_u32b(o_ptr->art_flags1);
+		wr_u32b(o_ptr->art_flags2);
+		wr_u32b(o_ptr->art_flags3);
 #if 0
 	}
 	else
 	{
-	wr_u32b(0L);
-	wr_u32b(0L);
-	wr_u32b(0L);
+		wr_u32b(0L);
+		wr_u32b(0L);
+		wr_u32b(0L);
 	}
 #endif
 
@@ -591,10 +652,13 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->xtra1);
 	wr_byte(o_ptr->xtra2);
 
+	/* Feelings */
+	wr_byte(o_ptr->feeling);
+
 	/* Save the inscription (if any) */
-	if (o_ptr->note)
+	if (o_ptr->inscription)
 	{
-		wr_string(quark_str(o_ptr->note));
+		wr_string(quark_str(o_ptr->inscription));
 	}
 	else
 	{
@@ -611,34 +675,16 @@ static void wr_item(object_type *o_ptr)
 		wr_string("");
 	}
 
-#ifdef USE_SCRIPT
-	{
-		cptr python_object = object_save_callback(o_ptr);
-		if (python_object && *python_object)
-		{
-			wr_s32b(strlen(python_object));
-			wr_string(python_object);
-			string_free(python_object);
-		}
-		else
-		{
-			/* No Python object */
-			wr_s32b(0);
-		}
-	}
-#else /* USE_SCRIPT */
 
 	/* No Python object */
 	wr_s32b(0);
-
-#endif /* USE_SCRIPT */
 }
 
 
 /*
  * Write a "monster" record
  */
-static void wr_monster(monster_type *m_ptr)
+static void wr_monster(monster_type * m_ptr)
 {
 	wr_s16b(m_ptr->r_idx);
 	wr_byte(m_ptr->fy);
@@ -651,6 +697,7 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
+	wr_byte(m_ptr->invulner);
 	wr_u32b(m_ptr->smart);
 	wr_byte(0);
 }
@@ -719,8 +766,10 @@ static void wr_xtra(int k_idx)
 
 	object_kind *k_ptr = &k_info[k_idx];
 
-	if (k_ptr->aware) tmp8u |= 0x01;
-	if (k_ptr->tried) tmp8u |= 0x02;
+	if (k_ptr->aware)
+		tmp8u |= 0x01;
+	if (k_ptr->tried)
+		tmp8u |= 0x02;
 
 	wr_byte(tmp8u);
 }
@@ -729,7 +778,7 @@ static void wr_xtra(int k_idx)
 /*
  * Write a "store" record
  */
-static void wr_store(store_type *st_ptr)
+static void wr_store(store_type * st_ptr)
 {
 	int j;
 
@@ -797,7 +846,8 @@ static void wr_options(void)
 	/*** Oops ***/
 
 	/* Oops */
-	for (i = 0; i < 4; i++) wr_u32b(0L);
+	for (i = 0; i < 4; i++)
+		wr_u32b(0L);
 
 
 	/*** Special Options ***/
@@ -813,14 +863,21 @@ static void wr_options(void)
 
 	c = 0;
 
-	if (wizard) c |= 0x0002;
+	if (wizard)
+		c |= 0x0002;
 
-	if (cheat_peek) c |= 0x0100;
-	if (cheat_hear) c |= 0x0200;
-	if (cheat_room) c |= 0x0400;
-	if (cheat_xtra) c |= 0x0800;
-	if (cheat_know) c |= 0x1000;
-	if (cheat_live) c |= 0x2000;
+	if (cheat_peek)
+		c |= 0x0100;
+	if (cheat_hear)
+		c |= 0x0200;
+	if (cheat_room)
+		c |= 0x0400;
+	if (cheat_xtra)
+		c |= 0x0800;
+	if (cheat_know)
+		c |= 0x1000;
+	if (cheat_live)
+		c |= 0x2000;
 
 	wr_u16b(c);
 
@@ -860,19 +917,23 @@ static void wr_options(void)
 	/*** Normal options ***/
 
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(option_flag[i]);
+	for (i = 0; i < 8; i++)
+		wr_u32b(option_flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(option_mask[i]);
+	for (i = 0; i < 8; i++)
+		wr_u32b(option_mask[i]);
 
 
 	/*** Window options ***/
 
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(window_flag[i]);
+	for (i = 0; i < 8; i++)
+		wr_u32b(window_flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(window_mask[i]);
+	for (i = 0; i < 8; i++)
+		wr_u32b(window_mask[i]);
 }
 
 
@@ -887,7 +948,8 @@ static void wr_ghost(void)
 	wr_string("Broken Ghost");
 
 	/* Hack -- stupid data */
-	for (i = 0; i < 60; i++) wr_byte(0);
+	for (i = 0; i < 60; i++)
+		wr_byte(0);
 }
 
 
@@ -923,11 +985,14 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->wt);
 
 	/* Dump the stats (maximum and current) */
-	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_max[i]);
-	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cur[i]);
+	for (i = 0; i < 6; ++i)
+		wr_s16b(p_ptr->stat_max[i]);
+	for (i = 0; i < 6; ++i)
+		wr_s16b(p_ptr->stat_cur[i]);
 
 	/* Ignore the transient stats */
-	for (i = 0; i < 12; ++i) wr_s16b(0);
+	for (i = 0; i < 12; ++i)
+		wr_s16b(0);
 
 	wr_u32b(p_ptr->au);
 
@@ -951,7 +1016,8 @@ static void wr_extra(void)
 	/* Save builing rewards */
 	wr_s16b(MAX_BACT);
 
-	for (i = 0; i < MAX_BACT; i++) wr_s16b(p_ptr->rewards[i]);
+	for (i = 0; i < MAX_BACT; i++)
+		wr_s16b(p_ptr->rewards[i]);
 
 	wr_s16b(p_ptr->mhp);
 	wr_s16b(p_ptr->chp);
@@ -966,20 +1032,20 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->max_dlv);
 
 	/* More info */
-	wr_s16b(0);     /* oops */
-	wr_s16b(0);     /* oops */
-	wr_s16b(0);     /* oops */
-	wr_s16b(0);     /* oops */
+	wr_s16b(0);	/* oops */
+	wr_s16b(0);	/* oops */
+	wr_s16b(0);	/* oops */
+	wr_s16b(0);	/* oops */
 	wr_s16b(p_ptr->sc);
-	wr_s16b(0);     /* oops */
+	wr_s16b(0);	/* oops */
 
-	wr_s16b(0);             /* old "rest" */
+	wr_s16b(0);	/* old "rest" */
 	wr_s16b(p_ptr->blind);
 	wr_s16b(p_ptr->paralyzed);
 	wr_s16b(p_ptr->confused);
 	wr_s16b(p_ptr->food);
-	wr_s16b(0);     /* old "food_digested" */
-	wr_s16b(0);     /* old "protection" */
+	wr_s16b(0);	/* old "food_digested" */
+	wr_s16b(0);	/* old "protection" */
 	wr_s16b(p_ptr->energy);
 	wr_s16b(p_ptr->fast);
 	wr_s16b(p_ptr->slow);
@@ -1020,22 +1086,33 @@ static void wr_extra(void)
 	wr_u32b(p_ptr->muta2);
 	wr_u32b(p_ptr->muta3);
 
+	for (i = 0; i < MAX_PLAYER_VIRTUES; i++)
+	{
+		wr_s16b(p_ptr->virtues[i]);
+	}
+
+	for (i = 0; i < MAX_PLAYER_VIRTUES; i++)
+	{
+		wr_s16b(p_ptr->vir_types[i]);
+	}
+
 	wr_byte(p_ptr->confusing);
-	wr_byte(0);     /* oops */
-	wr_byte(0);     /* oops */
-	wr_byte(0);     /* oops */
+	wr_byte(0);	/* oops */
+	wr_byte(0);	/* oops */
+	wr_byte(0);	/* oops */
 	wr_byte(p_ptr->searching);
 	wr_byte(maximize_mode);
 	wr_byte(preserve_mode);
 	wr_byte(0);
 
 	/* Future use */
-	for (i = 0; i < 12; i++) wr_u32b(0L);
+	for (i = 0; i < 12; i++)
+		wr_u32b(0L);
 
 	/* Ignore some flags */
-	wr_u32b(0L);    /* oops */
-	wr_u32b(0L);    /* oops */
-	wr_u32b(0L);    /* oops */
+	wr_u32b(0L); /* oops */
+	wr_u32b(0L); /* oops */
+	wr_u32b(0L); /* oops */
 
 
 	/* Write the "object seeds" */
@@ -1115,8 +1192,8 @@ static void wr_dungeon(void)
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1132,8 +1209,8 @@ static void wr_dungeon(void)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 
 
@@ -1157,8 +1234,8 @@ static void wr_dungeon(void)
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1174,8 +1251,8 @@ static void wr_dungeon(void)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 
 
@@ -1199,8 +1276,8 @@ static void wr_dungeon(void)
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1216,8 +1293,8 @@ static void wr_dungeon(void)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 
 
@@ -1241,7 +1318,7 @@ static void wr_dungeon(void)
 			/* If the run is broken, or too full, flush it */
 			if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
+				wr_byte((byte) count);
 				wr_u16b(prev_s16b);
 				prev_s16b = tmp16s;
 				count = 1;
@@ -1258,7 +1335,7 @@ static void wr_dungeon(void)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
+		wr_byte((byte) count);
 		wr_u16b(prev_s16b);
 	}
 
@@ -1306,16 +1383,16 @@ static void wr_dungeon(void)
  */
 static bool wr_savefile_new(void)
 {
-	int        i, j;
+	int i, j;
 
-	u32b              now;
+	u32b now;
 
-	byte            tmp8u;
-	u16b            tmp16u;
+	byte tmp8u;
+	u16b tmp16u;
 
 
 	/* Guess at the current time */
-	now = time((time_t *)0);
+	now = time((time_t *) 0);
 
 
 	/* Note the operating system */
@@ -1339,7 +1416,7 @@ static bool wr_savefile_new(void)
 	wr_byte(FAKE_VER_PATCH);
 	xor_byte = 0;
 
-	tmp8u = (byte)rand_int(256);
+	tmp8u = (byte) rand_int(256);
 	wr_byte(tmp8u);
 
 
@@ -1347,6 +1424,8 @@ static bool wr_savefile_new(void)
 	v_stamp = 0L;
 	x_stamp = 0L;
 
+	/* Write the savefile version */
+	wr_u32b(SAVEFILE_VERSION);
 
 	/* Operating system */
 	wr_u32b(sf_xtra);
@@ -1377,26 +1456,29 @@ static bool wr_savefile_new(void)
 
 	/* Dump the number of "messages" */
 	tmp16u = message_num();
-	if (compress_savefile && (tmp16u > 40)) tmp16u = 40;
+	if (compress_savefile && (tmp16u > 40))
+		tmp16u = 40;
 	wr_u16b(tmp16u);
 
 	/* Dump the messages (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
-		wr_string(message_str((s16b)i));
+		wr_string(message_str(i));
 	}
 
 
 	/* Dump the monster lore */
 	tmp16u = max_r_idx;
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_lore(i);
+	for (i = 0; i < tmp16u; i++)
+		wr_lore(i);
 
 
 	/* Dump the object memory */
 	tmp16u = max_k_idx;
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_xtra(i);
+	for (i = 0; i < tmp16u; i++)
+		wr_xtra(i);
 
 	/* Dump the towns */
 	tmp16u = max_towns;
@@ -1490,10 +1572,11 @@ static bool wr_savefile_new(void)
 		object_type *o_ptr = &inventory[i];
 
 		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+		if (!o_ptr->k_idx)
+			continue;
 
 		/* Dump index */
-		wr_u16b((u16b)i);
+		wr_u16b((u16b) i);
 
 		/* Dump object */
 		wr_item(o_ptr);
@@ -1520,7 +1603,7 @@ static bool wr_savefile_new(void)
 	}
 
 	/* Write the pet command settings */
-	wr_byte(p_ptr->pet_follow_distance);
+	wr_s16b(p_ptr->pet_follow_distance);
 	wr_byte(p_ptr->pet_open_doors);
 	wr_byte(p_ptr->pet_pickup_items);
 
@@ -1533,27 +1616,8 @@ static bool wr_savefile_new(void)
 		/* Dump the ghost */
 		wr_ghost();
 
-#ifdef USE_SCRIPT
-		{
-			cptr callbacks = callbacks_save_callback();
-			if (callbacks && *callbacks)
-			{
-				wr_s32b(strlen(callbacks));
-				wr_string(callbacks);
-				string_free(callbacks);
-			}
-			else
-			{
-				/* No scripts */
-				wr_s32b(0);
-			}
-		}
-#else /* USE_SCRIPT */
-
 		/* No scripts */
 		wr_s32b(0);
-
-#endif /* USE_SCRIPT */
 
 	}
 
@@ -1564,9 +1628,12 @@ static bool wr_savefile_new(void)
 	/* Write the "encoded checksum" */
 	wr_u32b(x_stamp);
 
+	/* Write additional stuff -- TNB */
+	wr_tnb();
 
 	/* Error in save */
-	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	if (ferror(fff) || (fflush(fff) == EOF))
+		return FALSE;
 
 	/* Successful save */
 	return TRUE;
@@ -1580,11 +1647,11 @@ static bool wr_savefile_new(void)
  */
 static bool save_player_aux(char *name)
 {
-	bool    ok = FALSE;
+	bool ok = FALSE;
 
-	int             fd = -1;
+	int fd = -1;
 
-	int             mode = 0644;
+	int mode = 0644;
 
 
 	/* No file yet */
@@ -1602,7 +1669,7 @@ static bool save_player_aux(char *name)
 	if (fd >= 0)
 	{
 		/* Close the "fd" */
-		(void)fd_close(fd);
+		(void) fd_close(fd);
 
 		/* Open the savefile */
 		fff = my_fopen(name, "wb");
@@ -1610,20 +1677,44 @@ static bool save_player_aux(char *name)
 		/* Successful open */
 		if (fff)
 		{
+#ifdef ALLOW_SAVEFILE_BUFFER /* TNB */
+
+			/* Temporary file buffer */
+			C_MAKE(data_head, SAVEFILE_BUFFER_MAX, byte);
+
+			/* Reset */
+			data_next = data_head;
+
+#endif /* ALLOW_SAVEFILE_BUFFER -- TNB */
+
 			/* Write the savefile */
-			if (wr_savefile_new()) ok = TRUE;
+			if (wr_savefile_new())
+				ok = TRUE;
+
+#ifdef ALLOW_SAVEFILE_BUFFER /* TNB */
+
+			/* Flush the file buffer */
+			flush_buffer();
+
+			/* Kill the buffer */
+			C_KILL(data_head, SAVEFILE_BUFFER_MAX, byte);
+
+#endif /* ALLOW_SAVEFILE_BUFFER -- TNB */
 
 			/* Attempt to close it */
-			if (my_fclose(fff)) ok = FALSE;
+			if (my_fclose(fff))
+				ok = FALSE;
 		}
 
 		/* Remove "broken" files */
-		if (!ok) (void)fd_kill(name);
+		if (!ok)
+			(void) fd_kill(name);
 	}
 
 
 	/* Failure */
-	if (!ok) return (FALSE);
+	if (!ok)
+		return (FALSE);
 
 	/* Successful save */
 	character_saved = TRUE;
@@ -1639,9 +1730,9 @@ static bool save_player_aux(char *name)
  */
 bool save_player(void)
 {
-	int             result = FALSE;
+	int result = FALSE;
 
-	char    safe[1024];
+	char safe[1024];
 
 
 #ifdef SET_UID
@@ -1726,6 +1817,7 @@ bool save_player(void)
 
 #endif
 
+	if (result) angtk_eval("angband_save", savefile, NULL); /* TNB */
 
 	/* Return the result */
 	return (result);
@@ -1758,17 +1850,17 @@ bool save_player(void)
  */
 bool load_player(void)
 {
-	int             fd = -1;
+	int fd = -1;
 
-	errr    err = 0;
+	errr err = 0;
 
-	byte    vvv[4];
+	byte vvv[4];
 
 #ifdef VERIFY_TIMESTAMP
-	struct stat     statbuf;
+	struct stat statbuf;
 #endif
 
-	cptr    what = "generic";
+	cptr what = "generic";
 
 
 	/* Paranoia */
@@ -1779,7 +1871,8 @@ bool load_player(void)
 
 
 	/* Allow empty savefile name */
-	if (!savefile[0]) return (TRUE);
+	if (!savefile[0])
+		return (TRUE);
 
 
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(VM)
@@ -1850,10 +1943,12 @@ bool load_player(void)
 		fd = fd_open(savefile, O_RDONLY);
 
 		/* No file */
-		if (fd < 0) err = -1;
+		if (fd < 0)
+			err = -1;
 
 		/* Message (below) */
-		if (err) what = "Cannot open savefile";
+		if (err)
+			what = "Cannot open savefile";
 	}
 
 	/* Process file */
@@ -1862,17 +1957,19 @@ bool load_player(void)
 
 #ifdef VERIFY_TIMESTAMP
 		/* Get the timestamp */
-		(void)fstat(fd, &statbuf);
+		(void) fstat(fd, &statbuf);
 #endif
 
 		/* Read the first four bytes */
-		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
+		if (fd_read(fd, (char *) (vvv), 4))
+			err = -1;
 
 		/* What */
-		if (err) what = "Cannot read savefile";
+		if (err)
+			what = "Cannot read savefile";
 
 		/* Close the file */
-		(void)fd_close(fd);
+		(void) fd_close(fd);
 	}
 
 	/* Process file */
@@ -1890,9 +1987,8 @@ bool load_player(void)
 
 
 		/* Pre-2.1.0: Assume 2.0.6 (same as 2.0.0 - 2.0.5) */
-		if ((z_major == sf_major) &&
-		    (z_minor == sf_minor) &&
-		    (z_patch == sf_patch))
+		if ((z_major == sf_major) && (z_minor == sf_minor) &&
+			(z_patch == sf_patch))
 		{
 			z_major = 2;
 			z_minor = 0;
@@ -1930,17 +2026,20 @@ bool load_player(void)
 		}
 
 		/* Message (below) */
-		if (err) what = "Cannot parse savefile";
+		if (err)
+			what = "Cannot parse savefile";
 	}
 
 	/* Paranoia */
 	if (!err)
 	{
 		/* Invalid turn */
-		if (!turn) err = -1;
+		if (!turn)
+			err = -1;
 
 		/* Message (below) */
-		if (err) what = "Broken savefile";
+		if (err)
+			what = "Broken savefile";
 	}
 
 #ifdef VERIFY_TIMESTAMP
@@ -1949,7 +2048,7 @@ bool load_player(void)
 	{
 		/* Hack -- Verify the timestamp */
 		if (sf_when > (statbuf.st_ctime + 100) ||
-		    sf_when < (statbuf.st_ctime - 100))
+			sf_when < (statbuf.st_ctime - 100))
 		{
 			/* Message */
 			what = "Invalid timestamp";
@@ -1965,10 +2064,23 @@ bool load_player(void)
 	if (!err)
 	{
 		/* Give a conversion warning */
-		if ((FAKE_VER_MAJOR != z_major) ||
-		    (FAKE_VER_MINOR != z_minor) ||
-		    (FAKE_VER_PATCH != z_patch))
+		if ((FAKE_VER_MAJOR != z_major) || (FAKE_VER_MINOR != z_minor) ||
+			(FAKE_VER_PATCH != z_patch))
 		{
+#if 1 /* TNB */
+			if (z_major == 2 && z_minor == 0 && z_patch == 6)
+			{
+				angtk_eval("angband_load", "note",
+					format("Converted a 2.0.* savefile."), NULL);
+			}
+			else
+			{
+				/* Message */
+				angtk_eval("angband_load", "note",
+					format("Converted a %d.%d.%d savefile.", z_major,
+						z_minor, z_patch), NULL);
+			}
+#else /* TNB */
 			if (z_major == 2 && z_minor == 0 && z_patch == 6)
 			{
 				msg_print("Converted a 2.0.* savefile.");
@@ -1976,10 +2088,11 @@ bool load_player(void)
 			else
 			{
 				/* Message */
-				msg_format("Converted a %d.%d.%d savefile.",
-				    z_major, z_minor, z_patch);
+				msg_format("Converted a %d.%d.%d savefile.", z_major,
+					z_minor, z_patch);
 			}
 			msg_print(NULL);
+#endif /* TNB */
 		}
 
 		/* Player is dead */
@@ -2015,7 +2128,7 @@ bool load_player(void)
 		if (p_ptr->chp >= 0)
 		{
 			/* Reset cause of death */
-			(void)strcpy(died_from, "(alive and well)");
+			(void) strcpy(died_from, "(alive and well)");
 		}
 
 		/* Success */
@@ -2042,9 +2155,15 @@ bool load_player(void)
 
 
 	/* Message */
-	msg_format("Error (%s) reading %d.%d.%d savefile.",
-		   what, z_major, z_minor, z_patch);
+#if 1 /* TNB */
+	angtk_eval("angband_load", "note",
+		format("Error (%s) reading %d.%d.%d savefile.", what, z_major,
+			z_minor, z_patch), NULL);
+#else /* TNB */
+	msg_format("Error (%s) reading %d.%d.%d savefile.", what, z_major,
+		z_minor, z_patch);
 	msg_print(NULL);
+#endif /* TNB */
 
 	/* Oops */
 	return (FALSE);
@@ -2063,7 +2182,7 @@ void remove_loc(void)
 	/* Get "games" permissions */
 	beGames();
 
-# endif /* SECURE */
+# endif	/* SECURE */
 #endif /* SET_UID */
 
 #ifdef VERIFY_SAVEFILE
@@ -2083,7 +2202,107 @@ void remove_loc(void)
 	/* Drop "games" permissions */
 	bePlayer();
 
-# endif /* SECURE */
+# endif	/* SECURE */
 #endif /* SET_UID */
 
 }
+
+
+#if 1 /* TNB */
+
+static void wr_grid_xtra(void)
+{
+	int y, x;
+	byte count, prev_char;
+	byte tmp8u;
+
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_char = 0;
+
+	/* Dump the cave */
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+
+			/* Get the flags */
+			tmp8u = (byte) g_grid[y][x].xtra;
+
+			/* If the run is broken, or too full, flush it */
+			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			{
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
+				prev_char = tmp8u;
+				count = 1;
+			}
+
+			/* Continue the run */
+			else
+			{
+				count++;
+			}
+		}
+	}
+
+	/* Flush the data (if any) */
+	if (count)
+	{
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
+	}
+}
+
+/*
+ * Write my extra stuff to the end of an Angband savefile.
+ */
+static void wr_tnb(void)
+{
+	byte tmp8u;
+
+	/*
+	 * Write 'TNB '. This is the indication that my extra stuff
+	 * exists. When reading a savefile, we check these things:
+	 * 1) The file version is 2.8.1 or greater.
+	 * 2) 'TNB ' follows the end of Angband data.
+	 */
+	xor_byte = 0;
+	wr_byte('T');
+	xor_byte = 0;
+	wr_byte('N');
+	xor_byte = 0;
+	wr_byte('B');
+	xor_byte = 0;
+	wr_byte(' ');
+
+	/* Dump the file header */
+	xor_byte = 0;
+	wr_byte(VERSION_MAJOR_TNB);
+	xor_byte = 0;
+	wr_byte(VERSION_MINOR_TNB);
+	xor_byte = 0;
+	wr_byte(VERSION_PATCH_TNB);
+	xor_byte = 0;
+	tmp8u = rand_int(256);
+	wr_byte(tmp8u);
+
+	/* Reset the checksum */
+	v_stamp = 0L;
+	x_stamp = 0L;
+
+	if (!death)
+	{
+
+		/* Write the g_grid[].xtra array */
+		wr_grid_xtra();
+	}
+
+	/* Write the "value check-sum" */
+	wr_u32b(v_stamp);
+
+	/* Write the "encoded checksum" */
+	wr_u32b(x_stamp);
+}
+
+#endif /* TNB */

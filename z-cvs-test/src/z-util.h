@@ -44,9 +44,9 @@ extern cptr argv0;
 
 
 /* Aux functions */
-extern void (*plog_aux)(cptr);
-extern void (*quit_aux)(cptr);
-extern void (*core_aux)(cptr);
+extern void (*plog_aux) (cptr);
+extern void (*quit_aux) (cptr);
+extern void (*core_aux) (cptr);
 
 
 /**** Available Functions ****/
@@ -82,4 +82,3 @@ extern void core(cptr str);
 
 
 #endif
-

@@ -14,6 +14,9 @@
 #include "angband.h"
 
 
+#include "tnb.h" /* TNB */
+
+
 /*
  * This file includes code for eating food, drinking potions,
  * reading scrolls, aiming wands, using staffs, zapping rods,
@@ -72,9 +75,6 @@ static void do_cmd_eat_food_aux(int item)
 		o_ptr = &o_list[0 - item];
 	}
 
-	/* Sound */
-	sound(SOUND_EAT);
-
 	/* Take a turn */
 	energy_use = 100;
 
@@ -83,12 +83,6 @@ static void do_cmd_eat_food_aux(int item)
 
 	/* Object level */
 	lev = get_object_level(o_ptr);
-
-#ifdef USE_SCRIPT
-	eat_callback(o_ptr->sval);
-
-	if (!object_eat_callback(o_ptr))
-#endif /* USE_SCRIPT */
 
 	{
 		/* Analyze the food */
@@ -158,7 +152,8 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!p_ptr->free_act)
 				{
-					if (set_paralyzed(p_ptr->paralyzed + rand_int(10) + 10))
+					if (set_paralyzed(p_ptr->paralyzed + rand_int(10) +
+							10))
 					{
 						ident = TRUE;
 					}
@@ -168,102 +163,115 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_WEAKNESS:
 			{
-				take_hit(damroll(6, 6), "poisonous food.");
-				(void)do_dec_stat(A_STR);
+				take_hit(damroll(6, 6), "poisonous food");
+				(void) do_dec_stat(A_STR);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_SICKNESS:
 			{
-				take_hit(damroll(6, 6), "poisonous food.");
-				(void)do_dec_stat(A_CON);
+				take_hit(damroll(6, 6), "poisonous food");
+				(void) do_dec_stat(A_CON);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_STUPIDITY:
 			{
-				take_hit(damroll(8, 8), "poisonous food.");
-				(void)do_dec_stat(A_INT);
+				take_hit(damroll(8, 8), "poisonous food");
+				(void) do_dec_stat(A_INT);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_NAIVETY:
 			{
-				take_hit(damroll(8, 8), "poisonous food.");
-				(void)do_dec_stat(A_WIS);
+				take_hit(damroll(8, 8), "poisonous food");
+				(void) do_dec_stat(A_WIS);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_UNHEALTH:
 			{
-				take_hit(damroll(10, 10), "poisonous food.");
-				(void)do_dec_stat(A_CON);
+				take_hit(damroll(10, 10), "poisonous food");
+				(void) do_dec_stat(A_CON);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_DISEASE:
 			{
-				take_hit(damroll(10, 10), "poisonous food.");
-				(void)do_dec_stat(A_STR);
+				take_hit(damroll(10, 10), "poisonous food");
+				(void) do_dec_stat(A_STR);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_CURE_POISON:
 			{
-				if (set_poisoned(0)) ident = TRUE;
+				if (set_poisoned(0))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_CURE_BLINDNESS:
 			{
-				if (set_blind(0)) ident = TRUE;
+				if (set_blind(0))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_CURE_PARANOIA:
 			{
-				if (set_afraid(0)) ident = TRUE;
+				if (set_afraid(0))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_CURE_CONFUSION:
 			{
-				if (set_confused(0)) ident = TRUE;
+				if (set_confused(0))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_CURE_SERIOUS:
 			{
-				if (hp_player(damroll(4, 8))) ident = TRUE;
+				if (hp_player(damroll(4, 8)))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_RESTORE_STR:
 			{
-				if (do_res_stat(A_STR)) ident = TRUE;
+				if (do_res_stat(A_STR))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_RESTORE_CON:
 			{
-				if (do_res_stat(A_CON)) ident = TRUE;
+				if (do_res_stat(A_CON))
+					ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_RESTORING:
 			{
-				if (do_res_stat(A_STR)) ident = TRUE;
-				if (do_res_stat(A_INT)) ident = TRUE;
-				if (do_res_stat(A_WIS)) ident = TRUE;
-				if (do_res_stat(A_DEX)) ident = TRUE;
-				if (do_res_stat(A_CON)) ident = TRUE;
-				if (do_res_stat(A_CHR)) ident = TRUE;
+				if (do_res_stat(A_STR))
+					ident = TRUE;
+				if (do_res_stat(A_INT))
+					ident = TRUE;
+				if (do_res_stat(A_WIS))
+					ident = TRUE;
+				if (do_res_stat(A_DEX))
+					ident = TRUE;
+				if (do_res_stat(A_CON))
+					ident = TRUE;
+				if (do_res_stat(A_CHR))
+					ident = TRUE;
 				break;
 			}
 
@@ -281,8 +289,8 @@ static void do_cmd_eat_food_aux(int item)
 			case SV_FOOD_WAYBREAD:
 			{
 				msg_print("That tastes good.");
-				(void)set_poisoned(0);
-				(void)hp_player(damroll(4, 8));
+				(void) set_poisoned(0);
+				(void) hp_player(damroll(4, 8));
 				ident = TRUE;
 				break;
 			}
@@ -299,6 +307,12 @@ static void do_cmd_eat_food_aux(int item)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	if (!(object_aware_p(o_ptr)))
+	{
+		chg_virtue(V_PATIENCE, -1);
+		chg_virtue(V_CHANCE, 1);
+	}
 
 	/* We have tried it */
 	object_tried(o_ptr);
@@ -318,15 +332,17 @@ static void do_cmd_eat_food_aux(int item)
 	if (p_ptr->prace == RACE_VAMPIRE)
 	{
 		/* Reduced nutritional benefit */
-		(void)set_food(p_ptr->food + (o_ptr->pval / 10));
-		msg_print("Mere victuals hold scant sustenance for a being such as yourself.");
-		if (p_ptr->food < PY_FOOD_ALERT)   /* Hungry */
-			msg_print("Your hunger can only be satisfied with fresh blood!");
+		(void) set_food(p_ptr->food + (o_ptr->pval / 10));
+		msg_print
+			("Mere victuals hold scant sustenance for a being such as yourself.");
+		if (p_ptr->food < PY_FOOD_ALERT) /* Hungry */
+			msg_print
+				("Your hunger can only be satisfied with fresh blood!");
 	}
 	else if (p_ptr->prace == RACE_SKELETON)
 	{
 		if (!((o_ptr->sval == SV_FOOD_WAYBREAD) ||
-		      (o_ptr->sval < SV_FOOD_BISCUIT)))
+				(o_ptr->sval < SV_FOOD_BISCUIT)))
 		{
 			object_type forge;
 			object_type *q_ptr = &forge;
@@ -335,29 +351,24 @@ static void do_cmd_eat_food_aux(int item)
 
 			/* Create the item */
 			object_prep(q_ptr, lookup_kind(o_ptr->tval, o_ptr->sval));
-
-#ifdef USE_SCRIPT
-			q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
+			
 			/* Drop the object from heaven */
-			(void)drop_near(q_ptr, -1, py, px);
+			(void) drop_near(q_ptr, -1, py, px);
 		}
 		else
 		{
 			msg_print("The food falls through your jaws and vanishes!");
 		}
 	}
-	else if ((p_ptr->prace == RACE_GOLEM) ||
-	         (p_ptr->prace == RACE_ZOMBIE) ||
-	         (p_ptr->prace == RACE_SPECTRE))
+	else if ((p_ptr->prace == RACE_GOLEM) || (p_ptr->prace == RACE_ZOMBIE)
+		|| (p_ptr->prace == RACE_SPECTRE))
 	{
 		msg_print("The food of mortals is poor sustenance for you.");
 		set_food(p_ptr->food + ((o_ptr->pval) / 20));
 	}
 	else
 	{
-		(void)set_food(p_ptr->food + o_ptr->pval);
+		(void) set_food(p_ptr->food + o_ptr->pval);
 	}
 
 	/* Destroy a food in the pack */
@@ -383,8 +394,8 @@ static void do_cmd_eat_food_aux(int item)
  */
 void do_cmd_eat_food(void)
 {
-	int         item;
-	cptr        q, s;
+	int item;
+	cptr q, s;
 
 
 	/* Restrict choices to food */
@@ -393,7 +404,8 @@ void do_cmd_eat_food(void)
 	/* Get an item */
 	q = "Eat which item? ";
 	s = "You have nothing to eat.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+		return;
 
 	/* Eat the object */
 	do_cmd_eat_food_aux(item);
@@ -405,8 +417,8 @@ void do_cmd_eat_food(void)
  */
 static void do_cmd_quaff_potion_aux(int item)
 {
-	int         ident, lev;
-	object_type	*o_ptr;
+	int ident, lev;
+	object_type *o_ptr;
 	object_type forge;
 	object_type *q_ptr;
 
@@ -448,10 +460,6 @@ static void do_cmd_quaff_potion_aux(int item)
 		floor_item_optimize(0 - item);
 	}
 
-	/* Sound */
-	sound(SOUND_QUAFF);
-
-
 	/* Take a turn */
 	energy_use = 100;
 
@@ -475,16 +483,17 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_SLOWNESS:
 		{
-			if (set_slow(p_ptr->slow + randint(25) + 15)) ident = TRUE;
+			if (set_slow(p_ptr->slow + randint(25) + 15))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_SALT_WATER:
 		{
 			msg_print("The potion makes you vomit!");
-			(void)set_food(PY_FOOD_STARVE - 1);
-			(void)set_poisoned(0);
-			(void)set_paralyzed(p_ptr->paralyzed + 4);
+			(void) set_food(PY_FOOD_STARVE - 1);
+			(void) set_poisoned(0);
+			(void) set_paralyzed(p_ptr->paralyzed + 4);
 			ident = TRUE;
 			break;
 		}
@@ -515,28 +524,37 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CONFUSION: /* Booze */
 		{
-			if (!((p_ptr->resist_conf) || (p_ptr->resist_chaos)))
+			chg_virtue(V_HARMONY, -1);
+
+			if (!p_ptr->resist_conf)
 			{
 				if (set_confused(p_ptr->confused + rand_int(20) + 15))
 				{
 					ident = TRUE;
 				}
-				if (randint(2) == 1)
+			}
+
+			if (!p_ptr->resist_chaos)
+			{
+				if (one_in_(2))
 				{
 					if (set_image(p_ptr->image + rand_int(150) + 150))
 					{
 						ident = TRUE;
 					}
 				}
-				if (randint(13) == 1)
+				if (one_in_(13))
 				{
 					ident = TRUE;
-					if (randint(3) == 1) lose_all_info();
-					else wiz_dark();
+					if (one_in_(3))
+						lose_all_info();
+					else
+						wiz_dark();
 					teleport_player(100);
 					wiz_dark();
 					msg_print("You wake up somewhere with a sore head...");
-					msg_print("You can't remember a thing, or how you got here!");
+					msg_print
+						("You can't remember a thing, or how you got here!");
 				}
 			}
 			break;
@@ -546,6 +564,21 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!p_ptr->free_act)
 			{
+				msg_print("You fall asleep.");
+
+				if (ironman_nightmare)
+				{
+					msg_print("A horrible vision enters your mind.");
+
+					/* Pick a nightmare */
+					get_mon_num_prep(get_nightmare, NULL);
+
+					/* Have some nightmares */
+					have_nightmare(get_mon_num(MAX_DEPTH));
+
+					/* Remove the monster restriction */
+					get_mon_num_prep(NULL, NULL);
+				}
 				if (set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4))
 				{
 					ident = TRUE;
@@ -559,6 +592,9 @@ static void do_cmd_quaff_potion_aux(int item)
 			if (!p_ptr->hold_life && (p_ptr->exp > 0))
 			{
 				msg_print("You feel your memories fade.");
+
+				chg_virtue(V_KNOWLEDGE, -5);
+
 				lose_exp(p_ptr->exp / 4);
 				ident = TRUE;
 			}
@@ -569,49 +605,55 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			msg_print("Your nerves and muscles feel weak and lifeless!");
 			take_hit(damroll(10, 10), "a potion of Ruination");
-			(void)dec_stat(A_DEX, 25, TRUE);
-			(void)dec_stat(A_WIS, 25, TRUE);
-			(void)dec_stat(A_CON, 25, TRUE);
-			(void)dec_stat(A_STR, 25, TRUE);
-			(void)dec_stat(A_CHR, 25, TRUE);
-			(void)dec_stat(A_INT, 25, TRUE);
+			(void) dec_stat(A_DEX, 25, TRUE);
+			(void) dec_stat(A_WIS, 25, TRUE);
+			(void) dec_stat(A_CON, 25, TRUE);
+			(void) dec_stat(A_STR, 25, TRUE);
+			(void) dec_stat(A_CHR, 25, TRUE);
+			(void) dec_stat(A_INT, 25, TRUE);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_STR:
 		{
-			if (do_dec_stat(A_STR)) ident = TRUE;
+			if (do_dec_stat(A_STR))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_INT:
 		{
-			if (do_dec_stat(A_INT)) ident = TRUE;
+			if (do_dec_stat(A_INT))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_WIS:
 		{
-			if (do_dec_stat(A_WIS)) ident = TRUE;
+			if (do_dec_stat(A_WIS))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_DEX:
 		{
-			if (do_dec_stat(A_DEX)) ident = TRUE;
+			if (do_dec_stat(A_DEX))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_CON:
 		{
-			if (do_dec_stat(A_CON)) ident = TRUE;
+			if (do_dec_stat(A_CON))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_CHR:
 		{
-			if (do_dec_stat(A_CHR)) ident = TRUE;
+			if (do_dec_stat(A_CHR))
+				ident = TRUE;
 			break;
 		}
 
@@ -619,14 +661,17 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			msg_print("Massive explosions rupture your body!");
 			take_hit(damroll(50, 20), "a potion of Detonation");
-			(void)set_stun(p_ptr->stun + 75);
-			(void)set_cut(p_ptr->cut + 5000);
+			(void) set_stun(p_ptr->stun + 75);
+			(void) set_cut(p_ptr->cut + 5000);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEATH:
 		{
+			chg_virtue(V_VITALITY, -1);
+			chg_virtue(V_UNLIFE, 5);
+
 			msg_print("A feeling of Death flows through your body.");
 			take_hit(5000, "a potion of Death");
 			ident = TRUE;
@@ -653,19 +698,22 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_SLOW_POISON:
 		{
-			if (set_poisoned(p_ptr->poisoned / 2)) ident = TRUE;
+			if (set_poisoned(p_ptr->poisoned / 2))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_CURE_POISON:
 		{
-			if (set_poisoned(0)) ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_BOLDNESS:
 		{
-			if (set_afraid(0)) ident = TRUE;
+			if (set_afraid(0))
+				ident = TRUE;
 			break;
 		}
 
@@ -673,11 +721,12 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(25) + 15)) ident = TRUE;
+				if (set_fast(randint(25) + 15))
+					ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void) set_fast(p_ptr->fast + 5);
 			}
 			break;
 		}
@@ -702,87 +751,121 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_HEROISM:
 		{
-			if (set_afraid(0)) ident = TRUE;
-			if (set_hero(p_ptr->hero + randint(25) + 25)) ident = TRUE;
-			if (hp_player(10)) ident = TRUE;
+			if (set_afraid(0))
+				ident = TRUE;
+			if (set_hero(p_ptr->hero + randint(25) + 25))
+				ident = TRUE;
+			if (hp_player(10))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_BESERK_STRENGTH:
 		{
-			if (set_afraid(0)) ident = TRUE;
-			if (set_shero(p_ptr->shero + randint(25) + 25)) ident = TRUE;
-			if (hp_player(30)) ident = TRUE;
+			if (set_afraid(0))
+				ident = TRUE;
+			if (set_shero(p_ptr->shero + randint(25) + 25))
+				ident = TRUE;
+			if (hp_player(30))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_CURE_LIGHT:
 		{
-			if (hp_player(damroll(2, 8))) ident = TRUE;
-			if (set_blind(0)) ident = TRUE;
-			if (set_cut(p_ptr->cut - 10)) ident = TRUE;
+			if (hp_player(damroll(2, 8)))
+				ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_cut(p_ptr->cut - 10))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_CURE_SERIOUS:
 		{
-			if (hp_player(damroll(4, 8))) ident = TRUE;
-			if (set_blind(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_cut((p_ptr->cut / 2) - 50)) ident = TRUE;
+			if (hp_player(damroll(4, 8)))
+				ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_cut((p_ptr->cut / 2) - 50))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_CURE_CRITICAL:
 		{
-			if (hp_player(damroll(6, 8))) ident = TRUE;
-			if (set_blind(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (hp_player(damroll(6, 8)))
+				ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_HEALING:
 		{
-			if (hp_player(300)) ident = TRUE;
-			if (set_blind(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (hp_player(300))
+				ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_STAR_HEALING:
 		{
-			if (hp_player(1200)) ident = TRUE;
-			if (set_blind(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (hp_player(1200))
+				ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_LIFE:
 		{
+			chg_virtue(V_VITALITY, 1);
+			chg_virtue(V_UNLIFE, -5);
+
 			msg_print("You feel life flow through your body!");
 			restore_level();
 			hp_player(5000);
-			(void)set_poisoned(0);
-			(void)set_blind(0);
-			(void)set_confused(0);
-			(void)set_image(0);
-			(void)set_stun(0);
-			(void)set_cut(0);
-			(void)do_res_stat(A_STR);
-			(void)do_res_stat(A_CON);
-			(void)do_res_stat(A_DEX);
-			(void)do_res_stat(A_WIS);
-			(void)do_res_stat(A_INT);
-			(void)do_res_stat(A_CHR);
+			(void) set_poisoned(0);
+			(void) set_blind(0);
+			(void) set_confused(0);
+			(void) set_image(0);
+			(void) set_stun(0);
+			(void) set_cut(0);
+			(void) do_res_stat(A_STR);
+			(void) do_res_stat(A_CON);
+			(void) do_res_stat(A_DEX);
+			(void) do_res_stat(A_WIS);
+			(void) do_res_stat(A_INT);
+			(void) do_res_stat(A_CHR);
 			ident = TRUE;
 			break;
 		}
@@ -804,96 +887,118 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_RESTORE_EXP:
 		{
-			if (restore_level()) ident = TRUE;
+			if (restore_level())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_RES_STR:
 		{
-			if (do_res_stat(A_STR)) ident = TRUE;
+			if (do_res_stat(A_STR))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_RES_INT:
 		{
-			if (do_res_stat(A_INT)) ident = TRUE;
+			if (do_res_stat(A_INT))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_RES_WIS:
 		{
-			if (do_res_stat(A_WIS)) ident = TRUE;
+			if (do_res_stat(A_WIS))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_RES_DEX:
 		{
-			if (do_res_stat(A_DEX)) ident = TRUE;
+			if (do_res_stat(A_DEX))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_RES_CON:
 		{
-			if (do_res_stat(A_CON)) ident = TRUE;
+			if (do_res_stat(A_CON))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_RES_CHR:
 		{
-			if (do_res_stat(A_CHR)) ident = TRUE;
+			if (do_res_stat(A_CHR))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INC_STR:
 		{
-			if (do_inc_stat(A_STR)) ident = TRUE;
+			if (do_inc_stat(A_STR))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INC_INT:
 		{
-			if (do_inc_stat(A_INT)) ident = TRUE;
+			if (do_inc_stat(A_INT))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INC_WIS:
 		{
-			if (do_inc_stat(A_WIS)) ident = TRUE;
+			if (do_inc_stat(A_WIS))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INC_DEX:
 		{
-			if (do_inc_stat(A_DEX)) ident = TRUE;
+			if (do_inc_stat(A_DEX))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INC_CON:
 		{
-			if (do_inc_stat(A_CON)) ident = TRUE;
+			if (do_inc_stat(A_CON))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INC_CHR:
 		{
-			if (do_inc_stat(A_CHR)) ident = TRUE;
+			if (do_inc_stat(A_CHR))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_AUGMENTATION:
 		{
-			if (do_inc_stat(A_STR)) ident = TRUE;
-			if (do_inc_stat(A_INT)) ident = TRUE;
-			if (do_inc_stat(A_WIS)) ident = TRUE;
-			if (do_inc_stat(A_DEX)) ident = TRUE;
-			if (do_inc_stat(A_CON)) ident = TRUE;
-			if (do_inc_stat(A_CHR)) ident = TRUE;
+			if (do_inc_stat(A_STR))
+				ident = TRUE;
+			if (do_inc_stat(A_INT))
+				ident = TRUE;
+			if (do_inc_stat(A_WIS))
+				ident = TRUE;
+			if (do_inc_stat(A_DEX))
+				ident = TRUE;
+			if (do_inc_stat(A_CON))
+				ident = TRUE;
+			if (do_inc_stat(A_CHR))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_ENLIGHTENMENT:
 		{
-			msg_print("An image of your surroundings forms in your mind...");
+			chg_virtue(V_ENLIGHTEN, 1);
+
+			msg_print
+				("An image of your surroundings forms in your mind...");
 			wiz_lite();
 			ident = TRUE;
 			break;
@@ -904,14 +1009,14 @@ static void do_cmd_quaff_potion_aux(int item)
 			msg_print("You begin to feel more enlightened...");
 			msg_print(NULL);
 			wiz_lite();
-			(void)do_inc_stat(A_INT);
-			(void)do_inc_stat(A_WIS);
-			(void)detect_traps();
-			(void)detect_doors();
-			(void)detect_stairs();
-			(void)detect_treasure();
-			(void)detect_objects_gold();
-			(void)detect_objects_normal();
+			(void) do_inc_stat(A_INT);
+			(void) do_inc_stat(A_WIS);
+			(void) detect_traps();
+			(void) detect_doors();
+			(void) detect_stairs();
+			(void) detect_treasure();
+			(void) detect_objects_gold();
+			(void) detect_objects_normal();
 			identify_pack();
 			self_knowledge();
 			ident = TRUE;
@@ -929,10 +1034,13 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_EXPERIENCE:
 		{
+			chg_virtue(V_ENLIGHTEN, 1);
+
 			if (p_ptr->exp < PY_MAX_EXP)
 			{
 				s32b ee = (p_ptr->exp / 2) + 10;
-				if (ee > 100000L) ee = 100000L;
+				if (ee > 100000L)
+					ee = 100000L;
 				msg_print("You feel more experienced.");
 				gain_exp(ee);
 				ident = TRUE;
@@ -942,30 +1050,37 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_RESISTANCE:
 		{
-			(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-			(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-			(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-			(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-			(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+			(void) set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
+			(void) set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
+			(void) set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
+			(void) set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
+			(void) set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_CURING:
 		{
-			if (hp_player(50)) ident = TRUE;
-			if (set_blind(0)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
-			if (set_image(0)) ident = TRUE;
+			if (hp_player(50))
+				ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
+			if (set_image(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_INVULNERABILITY:
 		{
-			(void)set_invuln(p_ptr->invuln + randint(7) + 7);
+			(void) set_invuln(p_ptr->invuln + randint(7) + 7);
 			ident = TRUE;
 			break;
 		}
@@ -975,6 +1090,8 @@ static void do_cmd_quaff_potion_aux(int item)
 			do_cmd_rerate();
 			if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 			{
+				chg_virtue(V_CHANCE, -5);
+
 				msg_print("You are cured of all mutations.");
 				p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
 				p_ptr->update |= PU_BONUS;
@@ -988,11 +1105,17 @@ static void do_cmd_quaff_potion_aux(int item)
 	if (p_ptr->prace == RACE_SKELETON)
 	{
 		msg_print("Some of the fluid falls through your jaws!");
-		potion_smash_effect(0, py, px, q_ptr->sval);
+		(void) potion_smash_effect(0, py, px, q_ptr->k_idx);
 	}
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	if (!(object_aware_p(o_ptr)))
+	{
+		chg_virtue(V_PATIENCE, -1);
+		chg_virtue(V_CHANCE, 1);
+	}
 
 	/* The item has been tried */
 	object_tried(q_ptr);
@@ -1011,7 +1134,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	switch (p_ptr->prace)
 	{
 		case RACE_VAMPIRE:
-			(void)set_food(p_ptr->food + (o_ptr->pval / 10));
+			(void) set_food(p_ptr->food + (o_ptr->pval / 10));
 			break;
 		case RACE_SKELETON:
 			/* Do nothing */
@@ -1022,14 +1145,14 @@ static void do_cmd_quaff_potion_aux(int item)
 			set_food(p_ptr->food + ((o_ptr->pval) / 20));
 			break;
 		default:
-			(void)set_food(p_ptr->food + o_ptr->pval);
+			(void) set_food(p_ptr->food + o_ptr->pval);
 	}
 }
 
 
 void do_cmd_quaff_potion(void)
 {
-	int  item;
+	int item;
 	cptr q, s;
 
 	/* Restrict choices to potions */
@@ -1038,7 +1161,8 @@ void do_cmd_quaff_potion(void)
 	/* Get an item */
 	q = "Quaff which potion? ";
 	s = "You have no potions to quaff.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+		return;
 
 	/* Quaff the potion */
 	do_cmd_quaff_potion_aux(item);
@@ -1054,9 +1178,9 @@ void do_cmd_quaff_potion(void)
  */
 static void do_cmd_read_scroll_aux(int item)
 {
-	int         k, used_up, ident, lev;
+	int k, used_up, ident, lev;
 	object_type *o_ptr;
-	char        Rumor[1024];
+	char Rumor[1024];
 
 
 	/* Don't save while reading the scroll */
@@ -1094,29 +1218,32 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
-				(void)set_blind(p_ptr->blind + 3 + randint(5));
+				(void) set_blind(p_ptr->blind + 3 + randint(5));
 			}
-			if (unlite_area(10, 3)) ident = TRUE;
+			if (unlite_area(10, 3))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_AGGRAVATE_MONSTER:
 		{
 			msg_print("There is a high pitched humming noise.");
-			aggravate_monsters(1);
+			aggravate_monsters(0);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_CURSE_ARMOR:
 		{
-			if (curse_armor()) ident = TRUE;
+			if (curse_armor())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_CURSE_WEAPON:
 		{
-			if (curse_weapon()) ident = TRUE;
+			if (curse_weapon())
+				ident = TRUE;
 			break;
 		}
 
@@ -1124,7 +1251,8 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				if (summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE,
+						FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1136,7 +1264,8 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				if (summon_specific(py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, SUMMON_UNDEAD,
+						TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1146,7 +1275,8 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_TRAP_CREATION:
 		{
-			if (trap_creation()) ident = TRUE;
+			if (trap_creation())
+				ident = TRUE;
 			break;
 		}
 
@@ -1166,7 +1296,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_TELEPORT_LEVEL:
 		{
-			(void)teleport_player_level();
+			(void) teleport_player_level();
 			ident = TRUE;
 			break;
 		}
@@ -1181,14 +1311,16 @@ static void do_cmd_read_scroll_aux(int item)
 		case SV_SCROLL_IDENTIFY:
 		{
 			ident = TRUE;
-			if (!ident_spell()) used_up = FALSE;
+			if (!ident_spell())
+				used_up = FALSE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_IDENTIFY:
 		{
 			ident = TRUE;
-			if (!identify_fully()) used_up = FALSE;
+			if (!identify_fully())
+				used_up = FALSE;
 			break;
 		}
 
@@ -1212,48 +1344,63 @@ static void do_cmd_read_scroll_aux(int item)
 		case SV_SCROLL_ENCHANT_ARMOR:
 		{
 			ident = TRUE;
-			if (!enchant_spell(0, 0, 1)) used_up = FALSE;
+			if (!enchant_spell(0, 0, 1))
+				used_up = FALSE;
 			break;
 		}
 
 		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 		{
-			if (!enchant_spell(1, 0, 0)) used_up = FALSE;
+			if (!enchant_spell(1, 0, 0))
+				used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 		{
-			if (!enchant_spell(0, 1, 0)) used_up = FALSE;
+			if (!enchant_spell(0, 1, 0))
+				used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_ENCHANT_ARMOR:
 		{
-			if (!enchant_spell(0, 0, randint(3) + 2)) used_up = FALSE;
+			if (!enchant_spell(0, 0, randint(3) + 2))
+				used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_ENCHANT_WEAPON:
 		{
-			if (!enchant_spell(randint(3), randint(3), 0)) used_up = FALSE;
+			if (!enchant_spell(randint(3), randint(3), 0))
+				used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_RECHARGING:
 		{
-			if (!recharge(130)) used_up = FALSE;
+			if (!recharge(130))
+				used_up = FALSE;
 			ident = TRUE;
+			break;
+		}
+
+		case SV_SCROLL_MUNDANITY:
+		{
+			ident = TRUE;
+			if (!mundane_spell())
+				used_up = FALSE;
 			break;
 		}
 
 		case SV_SCROLL_LIGHT:
 		{
-			if (lite_area(damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(damroll(2, 8), 2))
+				ident = TRUE;
 			break;
 		}
 
@@ -1266,57 +1413,68 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_DETECT_GOLD:
 		{
-			if (detect_treasure()) ident = TRUE;
-			if (detect_objects_gold()) ident = TRUE;
+			if (detect_treasure())
+				ident = TRUE;
+			if (detect_objects_gold())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_ITEM:
 		{
-			if (detect_objects_normal()) ident = TRUE;
+			if (detect_objects_normal())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_TRAP:
 		{
-			if (detect_traps()) ident = TRUE;
+			if (detect_traps())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_DOOR:
 		{
-			if (detect_doors()) ident = TRUE;
-			if (detect_stairs()) ident = TRUE;
+			if (detect_doors())
+				ident = TRUE;
+			if (detect_stairs())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_INVIS:
 		{
-			if (detect_monsters_invis()) ident = TRUE;
+			if (detect_monsters_invis())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
-			if (set_food(PY_FOOD_MAX - 1)) ident = TRUE;
+			if (set_food(PY_FOOD_MAX - 1))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_BLESSING:
 		{
-			if (set_blessed(p_ptr->blessed + randint(12) + 6)) ident = TRUE;
+			if (set_blessed(p_ptr->blessed + randint(12) + 6))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_HOLY_CHANT:
 		{
-			if (set_blessed(p_ptr->blessed + randint(24) + 12)) ident = TRUE;
+			if (set_blessed(p_ptr->blessed + randint(24) + 12))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_HOLY_PRAYER:
 		{
-			if (set_blessed(p_ptr->blessed + randint(48) + 24)) ident = TRUE;
+			if (set_blessed(p_ptr->blessed + randint(48) + 24))
+				ident = TRUE;
 			break;
 		}
 
@@ -1327,6 +1485,7 @@ static void do_cmd_read_scroll_aux(int item)
 				msg_print("Your hands begin to glow.");
 				p_ptr->confusing = TRUE;
 				ident = TRUE;
+				p_ptr->redraw |= (PR_STATUS);
 			}
 			break;
 		}
@@ -1334,7 +1493,8 @@ static void do_cmd_read_scroll_aux(int item)
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
 		{
 			k = 3 * p_ptr->lev;
-			if (set_protevil(p_ptr->protevil + randint(25) + k)) ident = TRUE;
+			if (set_protevil(p_ptr->protevil + randint(25) + k))
+				ident = TRUE;
 			break;
 		}
 
@@ -1347,7 +1507,8 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
 		{
-			if (destroy_doors_touch()) ident = TRUE;
+			if (destroy_doors_touch())
+				ident = TRUE;
 			break;
 		}
 
@@ -1363,20 +1524,21 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_DISPEL_UNDEAD:
 		{
-			if (dispel_undead(60)) ident = TRUE;
+			if (dispel_undead(60))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_GENOCIDE:
 		{
-			(void)genocide(TRUE);
+			(void) genocide(TRUE);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_MASS_GENOCIDE:
 		{
-			(void)mass_genocide(TRUE);
+			(void) mass_genocide(TRUE);
 			ident = TRUE;
 			break;
 		}
@@ -1395,12 +1557,13 @@ static void do_cmd_read_scroll_aux(int item)
 			break;
 		}
 
-		/* New Zangband scrolls */
+			/* New Zangband scrolls */
 		case SV_SCROLL_FIRE:
 		{
 			fire_ball(GF_FIRE, 0, 150, 4);
 			/* Note: "Double" damage since it is centered on the player ... */
-			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
+			if (!(p_ptr->oppose_fire || p_ptr->resist_fire ||
+					p_ptr->immune_fire))
 				take_hit(50 + randint(50), "a Scroll of Fire");
 			ident = TRUE;
 			break;
@@ -1410,7 +1573,8 @@ static void do_cmd_read_scroll_aux(int item)
 		case SV_SCROLL_ICE:
 		{
 			fire_ball(GF_ICE, 0, 175, 4);
-			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
+			if (!(p_ptr->oppose_cold || p_ptr->resist_cold ||
+					p_ptr->immune_cold))
 				take_hit(100 + randint(100), "a Scroll of Ice");
 			ident = TRUE;
 			break;
@@ -1448,7 +1612,8 @@ static void do_cmd_read_scroll_aux(int item)
 			}
 
 			/* An error occured */
-			if (err) strcpy(Rumor, "Some rumors are wrong.");
+			if (err)
+				strcpy(Rumor, "Some rumors are wrong.");
 
 			msg_print("There is message on the scroll. It says:");
 			msg_print(NULL);
@@ -1461,7 +1626,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_ARTIFACT:
 		{
-			(void)artifact_scroll();
+			(void) artifact_scroll();
 			ident = TRUE;
 			break;
 		}
@@ -1470,6 +1635,12 @@ static void do_cmd_read_scroll_aux(int item)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	if (!(object_aware_p(o_ptr)))
+	{
+		chg_virtue(V_PATIENCE, -1);
+		chg_virtue(V_CHANCE, 1);
+	}
 
 	/* The item was tried */
 	object_tried(o_ptr);
@@ -1494,8 +1665,6 @@ static void do_cmd_read_scroll_aux(int item)
 		return;
 	}
 
-	sound(SOUND_SCROLL);
-
 	/* Destroy a scroll in the pack */
 	if (item >= 0)
 	{
@@ -1519,22 +1688,34 @@ static void do_cmd_read_scroll_aux(int item)
 
 void do_cmd_read_scroll(void)
 {
-	int  item;
+	int item;
 	cptr q, s;
 
 	/* Check some conditions */
 	if (p_ptr->blind)
 	{
+#if 1 /* TNB */
+		if (flush_failure)
+			flush();
+#endif /* TNB */
 		msg_print("You can't see anything.");
 		return;
 	}
 	if (no_lite())
 	{
+#if 1 /* TNB */
+		if (flush_failure)
+			flush();
+#endif /* TNB */
 		msg_print("You have no light to read by.");
 		return;
 	}
 	if (p_ptr->confused)
 	{
+#if 1 /* TNB */
+		if (flush_failure)
+			flush();
+#endif /* TNB */
 		msg_print("You are too confused!");
 		return;
 	}
@@ -1546,7 +1727,8 @@ void do_cmd_read_scroll(void)
 	/* Get an item */
 	q = "Read which scroll? ";
 	s = "You have no scrolls to read.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+		return;
 
 	/* Read the scroll */
 	do_cmd_read_scroll_aux(item);
@@ -1562,7 +1744,7 @@ void do_cmd_read_scroll(void)
  */
 static void do_cmd_use_staff_aux(int item)
 {
-	int         ident, chance, k, lev;
+	int ident, chance, k, lev;
 	object_type *o_ptr;
 
 
@@ -1604,7 +1786,8 @@ static void do_cmd_use_staff_aux(int item)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->confused)
+		chance = chance / 2;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -1618,24 +1801,25 @@ static void do_cmd_use_staff_aux(int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("You failed to use the staff properly.");
-		sound(SOUND_FAIL);
 		return;
 	}
 
 	/* Notice empty staffs */
 	if (o_ptr->pval <= 0)
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("The staff has no charges left.");
 		o_ptr->ident |= (IDENT_EMPTY);
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
 		return;
 	}
-
-
-	/* Sound */
-	sound(SOUND_ZAP);
 
 
 	/* Analyze the staff */
@@ -1645,21 +1829,25 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
-				if (set_blind(p_ptr->blind + 3 + randint(5))) ident = TRUE;
+				if (set_blind(p_ptr->blind + 3 + randint(5)))
+					ident = TRUE;
 			}
-			if (unlite_area(10, 3)) ident = TRUE;
+			if (unlite_area(10, 3))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_SLOWNESS:
 		{
-			if (set_slow(p_ptr->slow + randint(30) + 15)) ident = TRUE;
+			if (set_slow(p_ptr->slow + randint(30) + 15))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_HASTE_MONSTERS:
 		{
-			if (speed_monsters()) ident = TRUE;
+			if (speed_monsters())
+				ident = TRUE;
 			break;
 		}
 
@@ -1667,7 +1855,8 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			for (k = 0; k < randint(4); k++)
 			{
-				if (summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE,
+						FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1684,7 +1873,8 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_IDENTIFY:
 		{
-			if (!ident_spell()) use_charge = FALSE;
+			if (!ident_spell())
+				use_charge = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -1704,18 +1894,41 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_STARLITE:
 		{
+			int num = damroll(5, 3);
+			int y, x;
+			int attempts;
+
 			if (!p_ptr->blind)
 			{
 				msg_print("The end of the staff glows brightly...");
 			}
-			for (k = 0; k < 8; k++) (void)lite_line(ddd[k]);
+			for (k = 0; k < num; k++)
+			{
+				attempts = 1000;
+
+				while (attempts--)
+				{
+					scatter(&y, &x, py, px, 4, 0);
+
+					if (!cave_floor_bold(y, x))
+						continue;
+
+					if ((y != py) || (x != px))
+						break;
+				}
+
+				project(0, 0, y, x, damroll(6, 8), GF_LITE_WEAK,
+					(PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+						PROJECT_KILL));
+			}
 			ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_LITE:
 		{
-			if (lite_area(damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(damroll(2, 8), 2))
+				ident = TRUE;
 			break;
 		}
 
@@ -1728,70 +1941,89 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_DETECT_GOLD:
 		{
-			if (detect_treasure()) ident = TRUE;
-			if (detect_objects_gold()) ident = TRUE;
+			if (detect_treasure())
+				ident = TRUE;
+			if (detect_objects_gold())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_ITEM:
 		{
-			if (detect_objects_normal()) ident = TRUE;
+			if (detect_objects_normal())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_TRAP:
 		{
-			if (detect_traps()) ident = TRUE;
+			if (detect_traps())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_DOOR:
 		{
-			if (detect_doors()) ident = TRUE;
-			if (detect_stairs()) ident = TRUE;
+			if (detect_doors())
+				ident = TRUE;
+			if (detect_stairs())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_INVIS:
 		{
-			if (detect_monsters_invis()) ident = TRUE;
+			if (detect_monsters_invis())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_EVIL:
 		{
-			if (detect_monsters_evil()) ident = TRUE;
+			if (detect_monsters_evil())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_CURE_LIGHT:
 		{
-			if (hp_player(randint(8))) ident = TRUE;
+			if (hp_player(randint(8)))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_CURING:
 		{
-			if (set_blind(0)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
-			if (set_image(0)) ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
+			if (set_image(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_HEALING:
 		{
-			if (hp_player(300)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (hp_player(300))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_THE_MAGI:
 		{
-			if (do_res_stat(A_INT)) ident = TRUE;
+			if (do_res_stat(A_INT))
+				ident = TRUE;
 			if (p_ptr->csp < p_ptr->msp)
 			{
 				p_ptr->csp = p_ptr->msp;
@@ -1807,13 +2039,15 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_SLEEP_MONSTERS:
 		{
-			if (sleep_monsters()) ident = TRUE;
+			if (sleep_monsters())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_SLOW_MONSTERS:
 		{
-			if (slow_monsters()) ident = TRUE;
+			if (slow_monsters())
+				ident = TRUE;
 			break;
 		}
 
@@ -1821,11 +2055,12 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(30) + 15)) ident = TRUE;
+				if (set_fast(randint(30) + 15))
+					ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void) set_fast(p_ptr->fast + 5);
 			}
 			break;
 		}
@@ -1839,32 +2074,41 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_DISPEL_EVIL:
 		{
-			if (dispel_evil(60)) ident = TRUE;
+			if (dispel_evil(60))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_POWER:
 		{
-			if (dispel_monsters(120)) ident = TRUE;
+			if (dispel_monsters(120))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_HOLINESS:
 		{
-			if (dispel_evil(120)) ident = TRUE;
+			if (dispel_evil(120))
+				ident = TRUE;
 			k = 3 * p_ptr->lev;
-			if (set_protevil(p_ptr->protevil + randint(25) + k)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_afraid(0)) ident = TRUE;
-			if (hp_player(50)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (set_protevil(p_ptr->protevil + randint(25) + k))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_afraid(0))
+				ident = TRUE;
+			if (hp_player(50))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_GENOCIDE:
 		{
-			(void)genocide(TRUE);
+			(void) genocide(TRUE);
 			ident = TRUE;
 			break;
 		}
@@ -1873,7 +2117,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			if (earthquake(py, px, 10))
 				ident = TRUE;
-			else
+			if (!ident)
 				msg_print("The dungeon trembles.");
 
 			break;
@@ -1888,6 +2132,11 @@ static void do_cmd_use_staff_aux(int item)
 		}
 	}
 
+	if (!(object_aware_p(o_ptr)))
+	{
+		chg_virtue(V_PATIENCE, -1);
+		chg_virtue(V_CHANCE, 1);
+	}
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -1907,7 +2156,8 @@ static void do_cmd_use_staff_aux(int item)
 
 
 	/* Hack -- some uses are "free" */
-	if (!use_charge) return;
+	if (!use_charge)
+		return;
 
 
 	/* Use a single charge */
@@ -1956,7 +2206,7 @@ static void do_cmd_use_staff_aux(int item)
 
 void do_cmd_use_staff(void)
 {
-	int  item;
+	int item;
 	cptr q, s;
 
 	/* Restrict choices to wands */
@@ -1965,7 +2215,8 @@ void do_cmd_use_staff(void)
 	/* Get an item */
 	q = "Use which staff? ";
 	s = "You have no staff to use.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+		return;
 
 	do_cmd_use_staff_aux(item);
 }
@@ -1993,7 +2244,7 @@ void do_cmd_use_staff(void)
  */
 static void do_cmd_aim_wand_aux(int item)
 {
-	int         lev, ident, chance, dir, sval;
+	int lev, ident, chance, dir, sval;
 	object_type *o_ptr;
 
 
@@ -2018,7 +2269,8 @@ static void do_cmd_aim_wand_aux(int item)
 
 
 	/* Allow direction to be cancelled for free */
-	if (!get_aim_dir(&dir)) return;
+	if (!get_aim_dir(&dir))
+		return;
 
 
 	/* Take a turn */
@@ -2034,7 +2286,8 @@ static void do_cmd_aim_wand_aux(int item)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->confused)
+		chance = chance / 2;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -2048,118 +2301,136 @@ static void do_cmd_aim_wand_aux(int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("You failed to use the wand properly.");
-		sound(SOUND_FAIL);
 		return;
 	}
 
 	/* The wand is already empty! */
 	if (o_ptr->pval <= 0)
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("The wand has no charges left.");
 		o_ptr->ident |= (IDENT_EMPTY);
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
 		return;
 	}
-
-
-	/* Sound */
-	sound(SOUND_ZAP);
-
 
 	/* XXX Hack -- Extract the "sval" effect */
 	sval = o_ptr->sval;
 
 	/* XXX Hack -- Wand of wonder can do anything before it */
-	if (sval == SV_WAND_WONDER) sval = rand_int(SV_WAND_WONDER);
+	if (sval == SV_WAND_WONDER)
+	{
+		sval = rand_int(SV_WAND_WONDER);
+		if (sval < SV_WAND_TELEPORT_AWAY)
+			chg_virtue(V_CHANCE, 1);
+	}
 
 	/* Analyze the wand */
 	switch (sval)
 	{
 		case SV_WAND_HEAL_MONSTER:
 		{
-			if (heal_monster(dir)) ident = TRUE;
+			if (heal_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_HASTE_MONSTER:
 		{
-			if (speed_monster(dir)) ident = TRUE;
+			if (speed_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_CLONE_MONSTER:
 		{
-			if (clone_monster(dir)) ident = TRUE;
+			if (clone_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_TELEPORT_AWAY:
 		{
-			if (teleport_monster(dir)) ident = TRUE;
+			if (teleport_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_DISARMING:
 		{
-			if (disarm_trap(dir)) ident = TRUE;
+			if (disarm_trap(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_TRAP_DOOR_DEST:
 		{
-			if (destroy_door(dir)) ident = TRUE;
+			if (destroy_door(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_STONE_TO_MUD:
 		{
-			if (wall_to_mud(dir)) ident = TRUE;
+			if (wall_to_mud(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_LITE:
 		{
 			msg_print("A line of blue shimmering light appears.");
-			(void)lite_line(dir);
+			(void) lite_line(dir);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_SLEEP_MONSTER:
 		{
-			if (sleep_monster(dir)) ident = TRUE;
+			if (sleep_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_SLOW_MONSTER:
 		{
-			if (slow_monster(dir)) ident = TRUE;
+			if (slow_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_CONFUSE_MONSTER:
 		{
-			if (confuse_monster(dir, 10)) ident = TRUE;
+			if (confuse_monster(dir, 10))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_FEAR_MONSTER:
 		{
-			if (fear_monster(dir, 10)) ident = TRUE;
+			if (fear_monster(dir, 10))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_DRAIN_LIFE:
 		{
-			if (drain_life(dir, 75)) ident = TRUE;
+			if (drain_life(dir, 75))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_POLYMORPH:
 		{
-			if (poly_monster(dir)) ident = TRUE;
+			if (poly_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
@@ -2187,7 +2458,7 @@ static void do_cmd_aim_wand_aux(int item)
 		case SV_WAND_CHARM_MONSTER:
 		{
 			if (charm_monster(dir, 45))
-			ident = TRUE;
+				ident = TRUE;
 			break;
 		}
 
@@ -2294,14 +2565,15 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			if (drain_life(dir, 125)) ident = TRUE;
+			fire_ball(GF_DISINTEGRATE, dir, 125 + randint(100), 2);
+			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_ROCKETS:
 		{
 			msg_print("You launch a rocket!");
-			fire_ball(GF_ROCKET, dir, 75 + (randint(50)), 2);
+			fire_ball(GF_ROCKET, dir, 250, 2);
 			ident = TRUE;
 			break;
 		}
@@ -2310,6 +2582,12 @@ static void do_cmd_aim_wand_aux(int item)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	if (!(object_aware_p(o_ptr)))
+	{
+		chg_virtue(V_PATIENCE, -1);
+		chg_virtue(V_CHANCE, 1);
+	}
 
 	/* Mark it as tried */
 	object_tried(o_ptr);
@@ -2344,8 +2622,8 @@ static void do_cmd_aim_wand_aux(int item)
 
 void do_cmd_aim_wand(void)
 {
-	int     item;
-	cptr    q, s;
+	int item;
+	cptr q, s;
 
 	/* Restrict choices to wands */
 	item_tester_tval = TV_WAND;
@@ -2353,7 +2631,8 @@ void do_cmd_aim_wand(void)
 	/* Get an item */
 	q = "Aim which wand? ";
 	s = "You have no wand to aim.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+		return;
 
 	/* Aim the wand */
 	do_cmd_aim_wand_aux(item);
@@ -2372,7 +2651,7 @@ void do_cmd_aim_wand(void)
  */
 static void do_cmd_zap_rod_aux(int item)
 {
-	int         ident, chance, dir, lev;
+	int ident, chance, dir, lev;
 	object_type *o_ptr;
 
 	/* Hack -- let perception get aborted */
@@ -2402,11 +2681,12 @@ static void do_cmd_zap_rod_aux(int item)
 
 
 	/* Get a direction (unless KNOWN not to need it) */
-	if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) && (o_ptr->sval != SV_ROD_HAVOC)) ||
-	     !object_aware_p(o_ptr))
+	if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) &&
+			(o_ptr->sval != SV_ROD_HAVOC)) || !object_aware_p(o_ptr))
 	{
 		/* Get a direction, allow cancel */
-		if (!get_aim_dir(&dir)) return;
+		if (!get_aim_dir(&dir))
+			return;
 	}
 
 
@@ -2423,7 +2703,8 @@ static void do_cmd_zap_rod_aux(int item)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->confused)
+		chance = chance / 2;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -2437,9 +2718,9 @@ static void do_cmd_zap_rod_aux(int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("You failed to use the rod properly.");
-		sound(SOUND_FAIL);
 		return;
 	}
 
@@ -2448,20 +2729,20 @@ static void do_cmd_zap_rod_aux(int item)
 	/* A single rod is still charging */
 	if ((o_ptr->number == 1) && (o_ptr->timeout))
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("The rod is still charging.");
 		return;
 	}
 	/* A stack of rods lacks enough energy. */
-	else if ((o_ptr->number > 1) && (o_ptr->timeout > o_ptr->pval - k_ptr->pval))
+	else if ((o_ptr->number > 1) &&
+		(o_ptr->timeout > o_ptr->pval - k_ptr->pval))
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("The rods are all still charging.");
 		return;
 	}
-
-	/* Sound */
-	sound(SOUND_ZAP);
 
 	/* Increase the timeout by the rod kind's pval. -LM- */
 	o_ptr->timeout += k_ptr->pval;
@@ -2471,21 +2752,25 @@ static void do_cmd_zap_rod_aux(int item)
 	{
 		case SV_ROD_DETECT_TRAP:
 		{
-			if (detect_traps()) ident = TRUE;
+			if (detect_traps())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_DETECT_DOOR:
 		{
-			if (detect_doors()) ident = TRUE;
-			if (detect_stairs()) ident = TRUE;
+			if (detect_doors())
+				ident = TRUE;
+			if (detect_stairs())
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_IDENTIFY:
 		{
 			ident = TRUE;
-			if (!ident_spell()) use_charge = FALSE;
+			if (!ident_spell())
+				use_charge = FALSE;
 			break;
 		}
 
@@ -2498,7 +2783,8 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_ILLUMINATION:
 		{
-			if (lite_area(damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(damroll(2, 8), 2))
+				ident = TRUE;
 			break;
 		}
 
@@ -2525,32 +2811,48 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_CURING:
 		{
-			if (set_blind(0)) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
-			if (set_confused(0)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
-			if (set_image(0)) ident = TRUE;
+			if (set_blind(0))
+				ident = TRUE;
+			if (set_poisoned(0))
+				ident = TRUE;
+			if (set_confused(0))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
+			if (set_image(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_HEALING:
 		{
-			if (hp_player(500)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (hp_player(500))
+				ident = TRUE;
+			if (set_stun(0))
+				ident = TRUE;
+			if (set_cut(0))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_RESTORATION:
 		{
-			if (restore_level()) ident = TRUE;
-			if (do_res_stat(A_STR)) ident = TRUE;
-			if (do_res_stat(A_INT)) ident = TRUE;
-			if (do_res_stat(A_WIS)) ident = TRUE;
-			if (do_res_stat(A_DEX)) ident = TRUE;
-			if (do_res_stat(A_CON)) ident = TRUE;
-			if (do_res_stat(A_CHR)) ident = TRUE;
+			if (restore_level())
+				ident = TRUE;
+			if (do_res_stat(A_STR))
+				ident = TRUE;
+			if (do_res_stat(A_INT))
+				ident = TRUE;
+			if (do_res_stat(A_WIS))
+				ident = TRUE;
+			if (do_res_stat(A_DEX))
+				ident = TRUE;
+			if (do_res_stat(A_CON))
+				ident = TRUE;
+			if (do_res_stat(A_CHR))
+				ident = TRUE;
 			break;
 		}
 
@@ -2558,11 +2860,12 @@ static void do_cmd_zap_rod_aux(int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(30) + 15)) ident = TRUE;
+				if (set_fast(randint(30) + 15))
+					ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void) set_fast(p_ptr->fast + 5);
 			}
 			break;
 		}
@@ -2576,45 +2879,51 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_TELEPORT_AWAY:
 		{
-			if (teleport_monster(dir)) ident = TRUE;
+			if (teleport_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_DISARMING:
 		{
-			if (disarm_trap(dir)) ident = TRUE;
+			if (disarm_trap(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_LITE:
 		{
 			msg_print("A line of blue shimmering light appears.");
-			(void)lite_line(dir);
+			(void) lite_line(dir);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_SLEEP_MONSTER:
 		{
-			if (sleep_monster(dir)) ident = TRUE;
+			if (sleep_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_SLOW_MONSTER:
 		{
-			if (slow_monster(dir)) ident = TRUE;
+			if (slow_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_DRAIN_LIFE:
 		{
-			if (drain_life(dir, 75)) ident = TRUE;
+			if (drain_life(dir, 75))
+				ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_POLYMORPH:
 		{
-			if (poly_monster(dir)) ident = TRUE;
+			if (poly_monster(dir))
+				ident = TRUE;
 			break;
 		}
 
@@ -2686,6 +2995,12 @@ static void do_cmd_zap_rod_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
+	if (!(object_aware_p(o_ptr)))
+	{
+		chg_virtue(V_PATIENCE, -1);
+		chg_virtue(V_CHANCE, 1);
+	}
+
 	/* Tried the object */
 	object_tried(o_ptr);
 
@@ -2719,7 +3034,8 @@ void do_cmd_zap_rod(void)
 	/* Get an item */
 	q = "Zap which rod? ";
 	s = "You have no rod to zap.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+		return;
 
 	/* Zap the rod */
 	do_cmd_zap_rod_aux(item);
@@ -2729,18 +3045,24 @@ void do_cmd_zap_rod(void)
 /*
  * Hook to determine if an object is activatable
  */
-static bool item_tester_hook_activate(object_type *o_ptr)
+static bool item_tester_hook_activate(object_type * o_ptr)
 {
 	u32b f1, f2, f3;
 
+	/* Ignore dungeon objects */
+	if (o_ptr->iy || o_ptr->ix)
+		return (FALSE);
+
 	/* Not known */
-	if (!object_known_p(o_ptr)) return (FALSE);
+	if (!object_known_p(o_ptr))
+		return (FALSE);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Check activation flag */
-	if (f3 & (TR3_ACTIVATE)) return (TRUE);
+	if (f3 & (TR3_ACTIVATE))
+		return (TRUE);
 
 	/* Assume not */
 	return (FALSE);
@@ -2760,15 +3082,14 @@ void ring_of_power(int dir)
 		{
 			/* Message */
 			msg_print("You are surrounded by a malignant aura.");
-			sound(SOUND_EVIL);
 
 			/* Decrease all stats (permanently) */
-			(void)dec_stat(A_STR, 50, TRUE);
-			(void)dec_stat(A_INT, 50, TRUE);
-			(void)dec_stat(A_WIS, 50, TRUE);
-			(void)dec_stat(A_DEX, 50, TRUE);
-			(void)dec_stat(A_CON, 50, TRUE);
-			(void)dec_stat(A_CHR, 50, TRUE);
+			(void) dec_stat(A_STR, 50, TRUE);
+			(void) dec_stat(A_INT, 50, TRUE);
+			(void) dec_stat(A_WIS, 50, TRUE);
+			(void) dec_stat(A_DEX, 50, TRUE);
+			(void) dec_stat(A_CON, 50, TRUE);
+			(void) dec_stat(A_CHR, 50, TRUE);
 
 			/* Lose some experience (permanently) */
 			p_ptr->exp -= (p_ptr->exp / 4);
@@ -2825,7 +3146,7 @@ void ring_of_power(int dir)
  */
 static void do_cmd_activate_aux(int item)
 {
-	int         i, k, dir, lev, chance;
+	int k, dir, lev, chance;
 	object_type *o_ptr;
 
 
@@ -2848,13 +3169,19 @@ static void do_cmd_activate_aux(int item)
 	lev = get_object_level(o_ptr);
 
 	/* Hack -- use artifact level instead */
-	if (artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
+	if (artifact_p(o_ptr))
+		lev = a_info[o_ptr->name1].level;
 
 	/* Base chance of success */
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->confused)
+		chance /= 2;
+
+	/* Cursed items are difficult to activate */
+	if (o_ptr->ident & IDENT_CURSED)
+		chance /= 3;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -2868,9 +3195,9 @@ static void do_cmd_activate_aux(int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
+		if (flush_failure)
+			flush();
 		msg_print("You failed to activate it properly.");
-		sound(SOUND_FAIL);
 		return;
 	}
 
@@ -2885,13 +3212,9 @@ static void do_cmd_activate_aux(int item)
 	/* Activate the artifact */
 	msg_print("You activate it...");
 
-	/* Sound */
-	sound(SOUND_ZAP);
-
-
 	if (o_ptr->art_name && o_ptr->xtra2)
 	{
-		(void)activate_random_artifact(o_ptr);
+		(void) activate_random_artifact(o_ptr);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -2929,9 +3252,9 @@ static void do_cmd_activate_aux(int item)
 				wiz_lite();
 				msg_print("The Jewel drains your vitality...");
 				take_hit(damroll(3, 8), "the Jewel of Judgement");
-				(void)detect_traps();
-				(void)detect_doors();
-				(void)detect_stairs();
+				(void) detect_traps();
+				(void) detect_doors();
+				(void) detect_stairs();
 
 				if (get_check("Activate recall? "))
 				{
@@ -2946,7 +3269,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(p_ptr->protevil + randint(25) + k);
+				(void) set_protevil(p_ptr->protevil + randint(25) + k);
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -2962,9 +3285,10 @@ static void do_cmd_activate_aux(int item)
 			case ART_BARAHIR:
 			{
 				msg_print("You order Frakir to strangle your opponent.");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				if (drain_life(dir, 100))
-				o_ptr->timeout = rand_int(100) + 100;
+					o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
 
@@ -2973,11 +3297,11 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(75) + 75);
+					(void) set_fast(randint(75) + 75);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void) set_fast(p_ptr->fast + 5);
 				}
 				o_ptr->timeout = rand_int(150) + 150;
 				break;
@@ -2986,7 +3310,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_NARYA:
 			{
 				msg_print("The ring glows deep red...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_FIRE, dir, 120, 3);
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
@@ -2995,7 +3320,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_NENYA:
 			{
 				msg_print("The ring glows bright white...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_COLD, dir, 200, 3);
 				o_ptr->timeout = rand_int(325) + 325;
 				break;
@@ -3004,7 +3330,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_VILYA:
 			{
 				msg_print("The ring glows deep blue...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_ELEC, dir, 250, 3);
 				o_ptr->timeout = rand_int(425) + 425;
 				break;
@@ -3013,7 +3340,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_POWER:
 			{
 				msg_print("The ring glows intensely black...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				ring_of_power(dir);
 				o_ptr->timeout = rand_int(450) + 450;
 				break;
@@ -3021,27 +3349,57 @@ static void do_cmd_activate_aux(int item)
 
 			case ART_RAZORBACK:
 			{
+				int num = damroll(5, 3);
+				int y, x;
+				int attempts;
+
 				msg_print("Your armor is surrounded by lightning...");
-				for (i = 0; i < 8; i++) fire_ball(GF_ELEC, ddd[i], 150, 3);
+
+				for (k = 0; k < num; k++)
+				{
+					attempts = 1000;
+
+					while (attempts--)
+					{
+						scatter(&y, &x, py, px, 4, 0);
+
+						if (!cave_floor_bold(y, x))
+							continue;
+
+						if ((y != py) || (x != px))
+							break;
+					}
+
+					project(0, 3, y, x, 150, GF_ELEC,
+						(PROJECT_THRU | PROJECT_STOP | PROJECT_GRID |
+							PROJECT_ITEM | PROJECT_KILL));
+				}
+
 				o_ptr->timeout = 1000;
 				break;
 			}
 
 			case ART_BLADETURNER:
 			{
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				msg_print("You breathe the elements.");
 				fire_ball(GF_MISSILE, dir, 300, 4);
 				msg_print("Your armor glows many colours...");
-				(void)set_afraid(0);
-				(void)set_shero(p_ptr->shero + randint(50) + 50);
-				(void)hp_player(30);
-				(void)set_blessed(p_ptr->blessed + randint(50) + 50);
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(50) + 50);
-				(void)set_oppose_elec(p_ptr->oppose_elec + randint(50) + 50);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(50) + 50);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(50) + 50);
-				(void)set_oppose_pois(p_ptr->oppose_pois + randint(50) + 50);
+				(void) set_afraid(0);
+				(void) set_shero(p_ptr->shero + randint(50) + 50);
+				(void) hp_player(30);
+				(void) set_blessed(p_ptr->blessed + randint(50) + 50);
+				(void) set_oppose_acid(p_ptr->oppose_acid + randint(50) +
+					50);
+				(void) set_oppose_elec(p_ptr->oppose_elec + randint(50) +
+					50);
+				(void) set_oppose_fire(p_ptr->oppose_fire + randint(50) +
+					50);
+				(void) set_oppose_cold(p_ptr->oppose_cold + randint(50) +
+					50);
+				(void) set_oppose_pois(p_ptr->oppose_pois + randint(50) +
+					50);
 				o_ptr->timeout = 400;
 				break;
 			}
@@ -3050,8 +3408,8 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your armor glows a bright white...");
 				msg_print("You feel much better...");
-				(void)hp_player(1000);
-				(void)set_cut(0);
+				(void) hp_player(1000);
+				(void) set_cut(0);
 				o_ptr->timeout = 888;
 				break;
 			}
@@ -3059,13 +3417,13 @@ static void do_cmd_activate_aux(int item)
 			case ART_BELEGENNON:
 			{
 				msg_print("A heavenly choir sings...");
-				(void)set_poisoned(0);
-				(void)set_cut(0);
-				(void)set_stun(0);
-				(void)set_confused(0);
-				(void)set_blind(0);
-				(void)set_hero(p_ptr->hero + randint(25) + 25);
-				(void)hp_player(777);
+				(void) set_poisoned(0);
+				(void) set_cut(0);
+				(void) set_stun(0);
+				(void) set_confused(0);
+				(void) set_blind(0);
+				(void) set_hero(p_ptr->hero + randint(25) + 25);
+				(void) hp_player(777);
 				o_ptr->timeout = 300;
 				break;
 			}
@@ -3073,7 +3431,7 @@ static void do_cmd_activate_aux(int item)
 			case ART_CELEBORN:
 			{
 				msg_print("Your armor glows deep blue...");
-				(void)genocide(TRUE);
+				(void) genocide(TRUE);
 				o_ptr->timeout = 500;
 				break;
 			}
@@ -3089,13 +3447,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_DOR:
 			case ART_TERROR:
 			{
-#if 0
-				for (i = 0; i < 8; i++) fear_monster(ddd[i], (p_ptr->lev)+10);
-#else
 				turn_monsters(40 + p_ptr->lev);
-#endif
 				o_ptr->timeout = 3 * (p_ptr->lev + 10);
-
 				break;
 			}
 
@@ -3112,8 +3465,8 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your crown glows deep blue...");
 				msg_print("You feel a warm tingling inside...");
-				(void)hp_player(700);
-				(void)set_cut(0);
+				(void) hp_player(700);
+				(void) set_cut(0);
 				o_ptr->timeout = 250;
 				break;
 			}
@@ -3121,11 +3474,16 @@ static void do_cmd_activate_aux(int item)
 			case ART_COLLUIN:
 			{
 				msg_print("Your cloak glows many colours...");
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-				(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-				(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+				(void) set_oppose_acid(p_ptr->oppose_acid + randint(20) +
+					20);
+				(void) set_oppose_elec(p_ptr->oppose_elec + randint(20) +
+					20);
+				(void) set_oppose_fire(p_ptr->oppose_fire + randint(20) +
+					20);
+				(void) set_oppose_cold(p_ptr->oppose_cold + randint(20) +
+					20);
+				(void) set_oppose_pois(p_ptr->oppose_pois + randint(20) +
+					20);
 				o_ptr->timeout = 111;
 				break;
 			}
@@ -3165,7 +3523,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_CAMMITHRIM:
 			{
 				msg_print("Your gloves glow extremely brightly...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_MISSILE, dir, damroll(2, 6));
 				o_ptr->timeout = 2;
 				break;
@@ -3174,7 +3533,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_PAURHACH:
 			{
 				msg_print("Your gauntlets are covered in fire...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_FIRE, dir, damroll(9, 8));
 				o_ptr->timeout = rand_int(8) + 8;
 				break;
@@ -3183,7 +3543,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_CORWIN:
 			{
 				msg_print("Your gauntlets are covered in frost...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_COLD, dir, damroll(6, 8));
 				o_ptr->timeout = rand_int(7) + 7;
 				break;
@@ -3192,7 +3553,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_PAURAEGEN:
 			{
 				msg_print("Your gauntlets are covered in sparks...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_ELEC, dir, damroll(4, 8));
 				o_ptr->timeout = rand_int(6) + 6;
 				break;
@@ -3201,7 +3563,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_PAURNEN:
 			{
 				msg_print("Your gauntlets are covered in acid...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_ACID, dir, damroll(5, 8));
 				o_ptr->timeout = rand_int(5) + 5;
 				break;
@@ -3210,7 +3573,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_FINGOLFIN:
 			{
 				msg_print("Your cesti grows magical spikes...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_ARROW, dir, 150);
 				o_ptr->timeout = rand_int(90) + 90;
 				break;
@@ -3221,11 +3585,11 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your boots glow bright green...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void) set_fast(randint(20) + 20);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void) set_fast(p_ptr->fast + 5);
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -3234,8 +3598,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_DAL:
 			{
 				msg_print("Your boots glow deep blue...");
-				(void)set_afraid(0);
-				(void)set_poisoned(0);
+				(void) set_afraid(0);
+				(void) set_poisoned(0);
 				o_ptr->timeout = 5;
 				break;
 			}
@@ -3243,7 +3607,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_NARTHANC:
 			{
 				msg_print("Your dagger is covered in fire...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_FIRE, dir, damroll(9, 8));
 				o_ptr->timeout = rand_int(8) + 8;
 				break;
@@ -3252,7 +3617,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_NIMTHANC:
 			{
 				msg_print("Your dagger is covered in frost...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_COLD, dir, damroll(6, 8));
 				o_ptr->timeout = rand_int(7) + 7;
 				break;
@@ -3261,7 +3627,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_DETHANC:
 			{
 				msg_print("Your dagger is covered in sparks...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_bolt(GF_ELEC, dir, damroll(4, 8));
 				o_ptr->timeout = rand_int(6) + 6;
 				break;
@@ -3270,7 +3637,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_RILIA:
 			{
 				msg_print("Your dagger throbs deep green...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_POIS, dir, 12, 3);
 				o_ptr->timeout = rand_int(4) + 4;
 				break;
@@ -3279,7 +3647,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_BELANGIL:
 			{
 				msg_print("Your dagger is covered in frost...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_COLD, dir, 48, 2);
 				o_ptr->timeout = rand_int(5) + 5;
 				break;
@@ -3289,23 +3658,33 @@ static void do_cmd_activate_aux(int item)
 			{
 				switch (randint(13))
 				{
-				case 1: case 2: case 3: case 4: case 5:
-					teleport_player(10);
-					break;
-				case 6: case 7: case 8: case 9: case 10:
-					teleport_player(222);
-					break;
-				case 11: case 12:
-					(void)stair_creation();
-					break;
-				default:
-					if (get_check("Leave this level? "))
-					{
-						if (autosave_l) do_cmd_save_game(TRUE);
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+						teleport_player(10);
+						break;
+					case 6:
+					case 7:
+					case 8:
+					case 9:
+					case 10:
+						teleport_player(222);
+						break;
+					case 11:
+					case 12:
+						(void) stair_creation();
+						break;
+					default:
+						if (get_check("Leave this level? "))
+						{
+							if (autosave_l)
+								do_cmd_save_game(TRUE);
 
-						/* Leaving */
-						p_ptr->leaving = TRUE;
-					}
+							/* Leaving */
+							p_ptr->leaving = TRUE;
+						}
 				}
 				o_ptr->timeout = 35;
 				break;
@@ -3314,7 +3693,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_RINGIL:
 			{
 				msg_print("Your sword glows an intense blue...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_COLD, dir, 100, 2);
 				o_ptr->timeout = 300;
 				break;
@@ -3323,7 +3703,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_DAWN:
 			{
 				msg_print("You summon the Legion of the Dawn.");
-				(void)summon_specific(py, px, dun_level, SUMMON_DAWN, TRUE, TRUE, TRUE);
+				(void) summon_specific(-1, py, px, dun_level, SUMMON_DAWN,
+					TRUE, TRUE, TRUE);
 				o_ptr->timeout = 500 + randint(500);
 				break;
 			}
@@ -3331,7 +3712,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_ANDURIL:
 			{
 				msg_print("Your sword glows an intense red...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_FIRE, dir, 72, 2);
 				o_ptr->timeout = 400;
 				break;
@@ -3340,7 +3722,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_THEODEN:
 			{
 				msg_print("Your axe blade glows black...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				drain_life(dir, 120);
 				o_ptr->timeout = 400;
 				break;
@@ -3349,7 +3732,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_AEGLOS:
 			{
 				msg_print("Your spear crackles with electricity...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_ELEC, dir, 100, 3);
 				o_ptr->timeout = 500;
 				break;
@@ -3358,7 +3742,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_OROME:
 			{
 				msg_print("Your spear pulsates...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				wall_to_mud(dir);
 				o_ptr->timeout = 5;
 				break;
@@ -3367,7 +3752,7 @@ static void do_cmd_activate_aux(int item)
 			case ART_EONWE:
 			{
 				msg_print("Your axe lets out a long, shrill note...");
-				(void)mass_genocide(TRUE);
+				(void) mass_genocide(TRUE);
 				o_ptr->timeout = 1000;
 				break;
 			}
@@ -3376,7 +3761,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your battle axe radiates deep purple...");
 				hp_player(damroll(4, 8));
-				(void)set_cut((p_ptr->cut / 2) - 50);
+				(void) set_cut((p_ptr->cut / 2) - 50);
 				o_ptr->timeout = rand_int(3) + 3;
 				break;
 			}
@@ -3384,7 +3769,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_ULMO:
 			{
 				msg_print("Your trident glows deep red...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				teleport_monster(dir);
 				o_ptr->timeout = 150;
 				break;
@@ -3395,7 +3781,7 @@ static void do_cmd_activate_aux(int item)
 				if (dun_level && (p_ptr->max_dlv > dun_level))
 				{
 					if (get_check("Reset recall depth? "))
-					p_ptr->max_dlv = dun_level;
+						p_ptr->max_dlv = dun_level;
 				}
 
 				msg_print("Your scythe glows soft white...");
@@ -3403,12 +3789,15 @@ static void do_cmd_activate_aux(int item)
 				{
 					p_ptr->word_recall = randint(20) + 15;
 					msg_print("The air about you becomes charged...");
+					p_ptr->redraw |= (PR_STATUS);
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
 					msg_print("A tension leaves the air around you...");
+					p_ptr->redraw |= (PR_STATUS);
 				}
+				redraw_add(PR_RECALL); /* ALLOW_STATUS_EXTRA */
 				o_ptr->timeout = 200;
 				break;
 			}
@@ -3416,7 +3805,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_TOTILA:
 			{
 				msg_print("Your flail glows in scintillating colours...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				confuse_monster(dir, 20);
 				o_ptr->timeout = 15;
 				break;
@@ -3425,7 +3815,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_FIRESTAR:
 			{
 				msg_print("Your morning star rages in fire...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				fire_ball(GF_FIRE, dir, 72, 3);
 				o_ptr->timeout = 100;
 				break;
@@ -3436,11 +3827,11 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your mace glows bright green...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void) set_fast(randint(20) + 20);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void) set_fast(p_ptr->fast + 5);
 				}
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
@@ -3449,7 +3840,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_ERIRIL:
 			{
 				msg_print("Your quarterstaff glows yellow...");
-				if (!ident_spell()) return;
+				if (!ident_spell())
+					return;
 				o_ptr->timeout = 10;
 				break;
 			}
@@ -3467,7 +3859,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_TURMIL:
 			{
 				msg_print("Your hammer glows white...");
-				if (!get_aim_dir(&dir)) return;
+				if (!get_aim_dir(&dir))
+					return;
 				drain_life(dir, 90);
 				o_ptr->timeout = 70;
 				break;
@@ -3476,7 +3869,7 @@ static void do_cmd_activate_aux(int item)
 			case ART_BRAND:
 			{
 				msg_print("Your crossbow glows deep red...");
-				(void)brand_bolts();
+				(void) brand_bolts();
 				o_ptr->timeout = 999;
 				break;
 			}
@@ -3507,7 +3900,8 @@ static void do_cmd_activate_aux(int item)
 	if (o_ptr->tval == TV_DRAG_ARMOR)
 	{
 		/* Get a direction for breathing (or abort) */
-		if (!get_aim_dir(&dir)) return;
+		if (!get_aim_dir(&dir))
+			return;
 
 		/* Branch on the sub-type */
 		switch (o_ptr->sval)
@@ -3556,15 +3950,15 @@ static void do_cmd_activate_aux(int item)
 			{
 				chance = rand_int(5);
 				msg_format("You breathe %s.",
-				           ((chance == 1) ? "lightning" :
-				            ((chance == 2) ? "frost" :
-				             ((chance == 3) ? "acid" :
-				              ((chance == 4) ? "poison gas" : "fire")))));
-				fire_ball(((chance == 1) ? GF_ELEC :
-				           ((chance == 2) ? GF_COLD :
-				            ((chance == 3) ? GF_ACID :
-				             ((chance == 4) ? GF_POIS : GF_FIRE)))),
-				          dir, 250, 2);
+					((chance == 1) ? "lightning" : ((chance ==
+								2) ? "frost" : ((chance ==
+									3) ? "acid" : ((chance ==
+										4) ? "poison gas" : "fire")))));
+				fire_ball(((chance == 1) ? GF_ELEC : ((chance ==
+								2) ? GF_COLD : ((chance ==
+									3) ? GF_ACID : ((chance ==
+										4) ? GF_POIS : GF_FIRE)))), dir,
+					250, 2);
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -3589,9 +3983,9 @@ static void do_cmd_activate_aux(int item)
 			{
 				chance = rand_int(2);
 				msg_format("You breathe %s.",
-				           ((chance == 1 ? "chaos" : "disenchantment")));
-				fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT),
-				          dir, 220, 2);
+					((chance == 1 ? "chaos" : "disenchantment")));
+				fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT), dir,
+					220, 2);
 				o_ptr->timeout = rand_int(300) + 300;
 				break;
 			}
@@ -3600,9 +3994,9 @@ static void do_cmd_activate_aux(int item)
 			{
 				chance = rand_int(2);
 				msg_format("You breathe %s.",
-				           ((chance == 1 ? "sound" : "shards")));
-				fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS),
-				          dir, 230, 2);
+					((chance == 1 ? "sound" : "shards")));
+				fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS), dir, 230,
+					2);
 				o_ptr->timeout = rand_int(300) + 300;
 				break;
 			}
@@ -3611,13 +4005,13 @@ static void do_cmd_activate_aux(int item)
 			{
 				chance = rand_int(4);
 				msg_format("You breathe %s.",
-				           ((chance == 1) ? "chaos" :
-				            ((chance == 2) ? "disenchantment" :
-				             ((chance == 3) ? "sound" : "shards"))));
-				fire_ball(((chance == 1) ? GF_CHAOS :
-				           ((chance == 2) ? GF_DISENCHANT :
-				            ((chance == 3) ? GF_SOUND : GF_SHARDS))),
-				          dir, 250, 2);
+					((chance == 1) ? "chaos" : ((chance ==
+								2) ? "disenchantment" : ((chance ==
+									3) ? "sound" : "shards"))));
+				fire_ball(((chance == 1) ? GF_CHAOS : ((chance ==
+								2) ? GF_DISENCHANT : ((chance ==
+									3) ? GF_SOUND : GF_SHARDS))), dir, 250,
+					2);
 				o_ptr->timeout = rand_int(300) + 300;
 				break;
 			}
@@ -3626,7 +4020,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				chance = rand_int(2);
 				msg_format("You breathe %s.",
-				           ((chance == 0 ? "light" : "darkness")));
+					((chance == 0 ? "light" : "darkness")));
 				fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 200, 2);
 				o_ptr->timeout = rand_int(300) + 300;
 				break;
@@ -3651,14 +4045,16 @@ static void do_cmd_activate_aux(int item)
 	else if (o_ptr->tval == TV_RING)
 	{
 		/* Get a direction for breathing (or abort) */
-		if (!get_aim_dir(&dir)) return;
+		if (!get_aim_dir(&dir))
+			return;
 
 		switch (o_ptr->sval)
 		{
 			case SV_RING_ACID:
 			{
 				fire_ball(GF_ACID, dir, 50, 2);
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
+				(void) set_oppose_acid(p_ptr->oppose_acid + randint(20) +
+					20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}
@@ -3666,7 +4062,8 @@ static void do_cmd_activate_aux(int item)
 			case SV_RING_ICE:
 			{
 				fire_ball(GF_COLD, dir, 50, 2);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
+				(void) set_oppose_cold(p_ptr->oppose_cold + randint(20) +
+					20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}
@@ -3674,7 +4071,8 @@ static void do_cmd_activate_aux(int item)
 			case SV_RING_FLAMES:
 			{
 				fire_ball(GF_FIRE, dir, 50, 2);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
+				(void) set_oppose_fire(p_ptr->oppose_fire + randint(20) +
+					20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}
@@ -3694,8 +4092,8 @@ static void do_cmd_activate_aux(int item)
 
 void do_cmd_activate(void)
 {
-	int     item;
-	cptr    q, s;
+	int item;
+	cptr q, s;
 
 
 	/* Prepare the hook */
@@ -3704,7 +4102,8 @@ void do_cmd_activate(void)
 	/* Get an item */
 	q = "Activate which item? ";
 	s = "You have nothing to activate.";
-	if (!get_item(&item, q, s, (USE_EQUIP))) return;
+	if (!get_item(&item, q, s, (USE_EQUIP)))
+		return;
 
 	/* Activate the item */
 	do_cmd_activate_aux(item);
@@ -3714,7 +4113,7 @@ void do_cmd_activate(void)
 /*
  * Hook to determine if an object is useable
  */
-static bool item_tester_hook_use(object_type *o_ptr)
+static bool item_tester_hook_use(object_type * o_ptr)
 {
 	u32b f1, f2, f3;
 
@@ -3744,7 +4143,8 @@ static bool item_tester_hook_use(object_type *o_ptr)
 			int i;
 
 			/* Not known */
-			if (!object_known_p(o_ptr)) return (FALSE);
+			if (!object_known_p(o_ptr))
+				return (FALSE);
 
 			/* HACK - only items from the equipment can be activated */
 			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -3755,7 +4155,8 @@ static bool item_tester_hook_use(object_type *o_ptr)
 					object_flags(o_ptr, &f1, &f2, &f3);
 
 					/* Check activation flag */
-					if (f3 & TR3_ACTIVATE) return (TRUE);
+					if (f3 & TR3_ACTIVATE)
+						return (TRUE);
 				}
 			}
 		}
@@ -3772,9 +4173,9 @@ static bool item_tester_hook_use(object_type *o_ptr)
  */
 void do_cmd_use(void)
 {
-	int         item;
+	int item;
 	object_type *o_ptr;
-	cptr        q, s;
+	cptr q, s;
 
 	/* Prepare the hook */
 	item_tester_hook = item_tester_hook_use;
@@ -3782,7 +4183,8 @@ void do_cmd_use(void)
 	/* Get an item */
 	q = "Use which item? ";
 	s = "You have nothing to use.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR)))
+		return;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -3797,14 +4199,14 @@ void do_cmd_use(void)
 
 	switch (o_ptr->tval)
 	{
-		/* Spike a door */
+			/* Spike a door */
 		case TV_SPIKE:
 		{
 			do_cmd_spike();
 			break;
 		}
 
-		/* Eat some food */
+			/* Eat some food */
 		case TV_FOOD:
 		{
 			do_cmd_eat_food_aux(item);
@@ -3812,7 +4214,7 @@ void do_cmd_use(void)
 		}
 
 #if 0
-		/* Fuel your lantern */
+			/* Fuel your lantern */
 		case TV_FLASK:
 		{
 			do_cmd_refill();
@@ -3820,42 +4222,59 @@ void do_cmd_use(void)
 		}
 #endif
 
-		/* Aim a wand */
+			/* Aim a wand */
 		case TV_WAND:
 		{
 			do_cmd_aim_wand_aux(item);
 			break;
 		}
 
-		/* Use a staff */
+			/* Use a staff */
 		case TV_STAFF:
 		{
 			do_cmd_use_staff_aux(item);
 			break;
 		}
 
-		/* Zap a rod */
+			/* Zap a rod */
 		case TV_ROD:
 		{
 			do_cmd_zap_rod_aux(item);
 			break;
 		}
 
-		/* Quaff a potion */
+			/* Quaff a potion */
 		case TV_POTION:
 		{
 			do_cmd_quaff_potion_aux(item);
 			break;
 		}
 
-		/* Read a scroll */
+			/* Read a scroll */
 		case TV_SCROLL:
 		{
+			/* Check some conditions */
+			if (p_ptr->blind)
+			{
+				msg_print("You can't see anything.");
+				return;
+			}
+			if (no_lite())
+			{
+				msg_print("You have no light to read by.");
+				return;
+			}
+			if (p_ptr->confused)
+			{
+				msg_print("You are too confused!");
+				return;
+			}
+
 			do_cmd_read_scroll_aux(item);
 			break;
 		}
 
-		/* Fire ammo */
+			/* Fire ammo */
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
@@ -3864,7 +4283,7 @@ void do_cmd_use(void)
 			break;
 		}
 
-		/* Activate an artifact */
+			/* Activate an artifact */
 		default:
 		{
 			do_cmd_activate_aux(item);

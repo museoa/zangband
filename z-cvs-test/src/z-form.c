@@ -145,7 +145,7 @@
 /*
  * The "type" of the "user defined print routine" pointer
  */
-typedef uint (*vstrnfmt_aux_func)(char *buf, uint max, cptr fmt, vptr arg);
+typedef uint(*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, vptr arg);
 
 /*
  * The "default" user defined print routine.  Ignore the "fmt" string.
@@ -161,7 +161,8 @@ static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, vptr arg)
 	/* Pointer display */
 	sprintf(tmp, "<<%p>>", arg);
 	len = strlen(tmp);
-	if (len >= max) len = max - 1;
+	if (len >= max)
+		len = max - 1;
 	tmp[len] = '\0';
 	strcpy(buf, tmp);
 	return (len);
@@ -249,10 +250,12 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 
 
 	/* Mega-Hack -- treat "illegal" length as "infinite" */
-	if (!max) max = 32767;
+	if (!max)
+		max = 32767;
 
 	/* Mega-Hack -- treat "no format" as "empty string" */
-	if (!fmt) fmt = "";
+	if (!fmt)
+		fmt = "";
 
 
 	/* Begin the buffer */
@@ -265,13 +268,15 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 	while (TRUE)
 	{
 		/* All done */
-		if (!*s) break;
+		if (!*s)
+			break;
 
 		/* Normal character */
 		if (*s != '%')
 		{
 			/* Check total length */
-			if (n == max-1) break;
+			if (n == max - 1)
+				break;
 
 			/* Save the character */
 			buf[n++] = *s++;
@@ -287,7 +292,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		if (*s == '%')
 		{
 			/* Check total length */
-			if (n == max-1) break;
+			if (n == max - 1)
+				break;
 
 			/* Save the percent */
 			buf[n++] = '%';
@@ -415,7 +421,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					sprintf(aux + q, "%d", arg);
 
 					/* Hack -- accept the "length" */
-					while (aux[q]) q++;
+					while (aux[q])
+						q++;
 
 					/* Skip the "*" */
 					s++;
@@ -448,9 +455,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		tmp[0] = '\0';
 
 		/* Process the "format" char */
-		switch (aux[q-1])
+		switch (aux[q - 1])
 		{
-			/* Simple Character -- standard format */
+				/* Simple Character -- standard format */
 			case 'c':
 			{
 				int arg;
@@ -465,8 +472,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Signed Integers -- standard format */
-			case 'd': case 'i':
+				/* Signed Integers -- standard format */
+			case 'd':
+			case 'i':
 			{
 				if (do_long)
 				{
@@ -493,8 +501,11 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Unsigned Integers -- various formats */
-			case 'u': case 'o': case 'x': case 'X':
+				/* Unsigned Integers -- various formats */
+			case 'u':
+			case 'o':
+			case 'x':
+			case 'X':
 			{
 				if (do_long)
 				{
@@ -521,10 +532,12 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Floating Point -- various formats */
+				/* Floating Point -- various formats */
 			case 'f':
-			case 'e': case 'E':
-			case 'g': case 'G':
+			case 'e':
+			case 'E':
+			case 'g':
+			case 'G':
 			{
 				double arg;
 
@@ -538,7 +551,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Pointer -- implementation varies */
+				/* Pointer -- implementation varies */
 			case 'p':
 			{
 				vptr arg;
@@ -553,7 +566,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* String */
+				/* String */
 			case 's':
 			{
 				cptr arg;
@@ -562,7 +575,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				arg = va_arg(vp, cptr);
 
 				/* Hack -- convert NULL to EMPTY */
-				if (!arg) arg = "";
+				if (!arg)
+					arg = "";
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);
@@ -571,7 +585,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* User defined data */
+				/* User defined data */
 			case 'V':
 			case 'v':
 			{
@@ -581,14 +595,14 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				arg = va_arg(vp, vptr);
 
 				/* Format the "user data" */
-				(void)vstrnfmt_aux(tmp, 1000, aux, arg);
+				(void) vstrnfmt_aux(tmp, 1000, aux, arg);
 
 				/* Done */
 				break;
 			}
 
 
-			/* Oops */
+				/* Oops */
 			default:
 			{
 				/* Error -- illegal format char */
@@ -610,7 +624,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				if (!isspace(tmp[q]))
 				{
 					/* Capitalize if possible */
-					if (islower(tmp[q])) tmp[q] = toupper(tmp[q]);
+					if (islower(tmp[q]))
+						tmp[q] = toupper(tmp[q]);
 
 					/* Done */
 					break;
@@ -622,7 +637,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		for (q = 0; tmp[q]; q++)
 		{
 			/* Check total length */
-			if (n == max-1) break;
+			if (n == max - 1)
+				break;
 
 			/* Save the character */
 			buf[n++] = tmp[q];
@@ -655,7 +671,8 @@ char *vformat(cptr fmt, va_list vp)
 	}
 
 	/* Null format yields last result */
-	if (!fmt) return (format_buf);
+	if (!fmt)
+		return (format_buf);
 
 	/* Keep going until successful */
 	while (1)
@@ -666,7 +683,8 @@ char *vformat(cptr fmt, va_list vp)
 		len = vstrnfmt(format_buf, format_len, fmt, vp);
 
 		/* Success */
-		if (len < format_len-1) break;
+		if (len < format_len - 1)
+			break;
 
 		/* Grow the buffer */
 		C_KILL(format_buf, format_len, char);
@@ -822,5 +840,3 @@ void core_fmt(cptr fmt, ...)
 	/* Call core() */
 	core(res);
 }
-
-

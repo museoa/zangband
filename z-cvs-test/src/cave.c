@@ -7,6 +7,9 @@
 #include "angband.h"
 
 
+#include "tnb.h" /* TNB */
+
+
 /*
  * Support for Adam Bolt's tileset, lighting and transparency effects
  * by Robert Ruehlmann (rr9@angband.org)
@@ -14,27 +17,76 @@
 
 
 /*
- * Approximate Distance between two points.
- *
- * When either the X or Y component dwarfs the other component,
- * this function is almost perfect, and otherwise, it tends to
- * over-estimate about one grid per fifteen grids of distance.
- *
- * Algorithm: hypot(dy,dx) = max(dy,dx) + min(dy,dx) / 2
+ * Distance between two points via Newton-Raphson technique
  */
 int distance(int y1, int x1, int y2, int x2)
 {
-	int dy, dx, d;
+	int dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
+	int dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
 
-	/* Find the absolute y/x distance components */
-	dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
-	dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
+	/* Squared distance */
+	int target = (dy * dy) + (dx * dx);
 
-	/* Hack -- approximate the distance */
-	d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+	/* Approximate distance: hypot(dy,dx) = max(dy,dx) + min(dy,dx) / 2 */
+	int d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
-	/* Return the distance */
-	return (d);
+	int err;
+
+	/* Simple case */
+	if (!dy || !dx)
+		return d;
+
+	while (1)
+	{
+		/* Approximate error */
+		err = (target - d * d) / (2 * d);
+
+		/* No error - we are done */
+		if (!err)
+			break;
+
+		/* Adjust distance */
+		d += err;
+	}
+
+	return d;
+}
+
+
+/*
+ * Return TRUE if the given feature is a trap
+ */
+bool is_trap(int feat)
+{
+	switch (feat)
+	{
+		case FEAT_TRAP_TRAPDOOR:
+		case FEAT_TRAP_PIT:
+		case FEAT_TRAP_SPIKED_PIT:
+		case FEAT_TRAP_POISON_PIT:
+		case FEAT_TRAP_TY_CURSE:
+		case FEAT_TRAP_TELEPORT:
+		case FEAT_TRAP_FIRE:
+		case FEAT_TRAP_ACID:
+		case FEAT_TRAP_SLOW:
+		case FEAT_TRAP_LOSE_STR:
+		case FEAT_TRAP_LOSE_DEX:
+		case FEAT_TRAP_LOSE_CON:
+		case FEAT_TRAP_BLIND:
+		case FEAT_TRAP_CONFUSE:
+		case FEAT_TRAP_POISON:
+		case FEAT_TRAP_SLEEP:
+		case FEAT_TRAP_TRAPS:
+		{
+			/* A trap */
+			return (TRUE);
+		}
+		default:
+		{
+			/* Not a trap */
+			return (FALSE);
+		}
+	}
 }
 
 
@@ -107,7 +159,8 @@ bool los(int y1, int x1, int y2, int x2)
 
 
 	/* Handle adjacent (or identical) grids */
-	if ((ax < 2) && (ay < 2)) return (TRUE);
+	if ((ax < 2) && (ay < 2))
+		return (TRUE);
 
 
 	/* Paranoia -- require "safe" origin */
@@ -122,7 +175,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 + 1; ty < y2; ty++)
 			{
-				if (!cave_floor_bold(ty, x1)) return (FALSE);
+				if (!cave_floor_bold(ty, x1))
+					return (FALSE);
 			}
 		}
 
@@ -131,7 +185,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 - 1; ty > y2; ty--)
 			{
-				if (!cave_floor_bold(ty, x1)) return (FALSE);
+				if (!cave_floor_bold(ty, x1))
+					return (FALSE);
 			}
 		}
 
@@ -147,7 +202,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 + 1; tx < x2; tx++)
 			{
-				if (!cave_floor_bold(y1, tx)) return (FALSE);
+				if (!cave_floor_bold(y1, tx))
+					return (FALSE);
 			}
 		}
 
@@ -156,7 +212,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 - 1; tx > x2; tx--)
 			{
-				if (!cave_floor_bold(y1, tx)) return (FALSE);
+				if (!cave_floor_bold(y1, tx))
+					return (FALSE);
 			}
 		}
 
@@ -175,7 +232,8 @@ bool los(int y1, int x1, int y2, int x2)
 	{
 		if (ay == 2)
 		{
-			if (cave_floor_bold(y1 + sy, x1)) return (TRUE);
+			if (cave_floor_bold(y1 + sy, x1))
+				return (TRUE);
 		}
 	}
 
@@ -184,7 +242,8 @@ bool los(int y1, int x1, int y2, int x2)
 	{
 		if (ax == 2)
 		{
-			if (cave_floor_bold(y1, x1 + sx)) return (TRUE);
+			if (cave_floor_bold(y1, x1 + sx))
+				return (TRUE);
 		}
 	}
 
@@ -220,7 +279,8 @@ bool los(int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx)
 		{
-			if (!cave_floor_bold(ty, tx)) return (FALSE);
+			if (!cave_floor_bold(ty, tx))
+				return (FALSE);
 
 			qy += m;
 
@@ -231,7 +291,8 @@ bool los(int y1, int x1, int y2, int x2)
 			else if (qy > f2)
 			{
 				ty += sy;
-				if (!cave_floor_bold(ty, tx)) return (FALSE);
+				if (!cave_floor_bold(ty, tx))
+					return (FALSE);
 				qy -= f1;
 				tx += sx;
 			}
@@ -267,7 +328,8 @@ bool los(int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty)
 		{
-			if (!cave_floor_bold(ty, tx)) return (FALSE);
+			if (!cave_floor_bold(ty, tx))
+				return (FALSE);
 
 			qx += m;
 
@@ -278,7 +340,8 @@ bool los(int y1, int x1, int y2, int x2)
 			else if (qx > f2)
 			{
 				tx += sx;
-				if (!cave_floor_bold(ty, tx)) return (FALSE);
+				if (!cave_floor_bold(ty, tx))
+					return (FALSE);
 				qx -= f1;
 				ty += sy;
 			}
@@ -339,22 +402,27 @@ bool player_can_see_bold(int y, int x)
 	cave_type *c_ptr;
 
 	/* Blind players see nothing */
-	if (p_ptr->blind) return (FALSE);
+	if (p_ptr->blind)
+		return (FALSE);
 
 	/* Access the cave grid */
 	c_ptr = &cave[y][x];
 
 	/* Note that "torch-lite" yields "illumination" */
-	if (c_ptr->info & (CAVE_LITE)) return (TRUE);
+	if (c_ptr->info & (CAVE_LITE))
+		return (TRUE);
 
 	/* Require line of sight to the grid */
-	if (!player_has_los_bold(y, x)) return (FALSE);
+	if (!player_has_los_bold(y, x))
+		return (FALSE);
 
 	/* Require "perma-lite" of the grid */
-	if (!(c_ptr->info & (CAVE_GLOW))) return (FALSE);
+	if (!(c_ptr->info & (CAVE_GLOW)))
+		return (FALSE);
 
 	/* Floors are simple */
-	if (cave_floor_bold(y, x)) return (TRUE);
+	if (cave_floor_bold(y, x))
+		return (TRUE);
 
 	/* Hack -- move towards player */
 	yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
@@ -397,7 +465,8 @@ bool cave_valid_bold(int y, int x)
 
 
 	/* Forbid perma-grids */
-	if (cave_perma_grid(c_ptr)) return (FALSE);
+	if (cave_perma_grid(c_ptr))
+		return (FALSE);
 
 	/* Check objects */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -411,7 +480,8 @@ bool cave_valid_bold(int y, int x)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Forbid artifact grids */
-		if ((o_ptr->art_name) || artifact_p(o_ptr)) return (FALSE);
+		if ((o_ptr->art_name) || artifact_p(o_ptr))
+			return (FALSE);
 	}
 
 	/* Accept */
@@ -420,48 +490,29 @@ bool cave_valid_bold(int y, int x)
 
 
 
+#if 0 /* TNB */
 
 /*
  * Hack -- Legal monster codes
  */
-static cptr image_monster_hack = \
-"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-/*
- * Hack -- Legal monster codes for IBM pseudo-graphics
- */
-static cptr image_monster_hack_ibm = \
-"ÉÑÖÜáàâäçéèêëíïñôöõúùûü°•®©™Ø∞≤≥¥µ∂∑∏æ«Ã—‘’◊Ÿ›ﬁﬂ‡·‚„ÂËÈÊÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛";
-
+static cptr image_monster_hack =
+	\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 /*
  * Mega-Hack -- Hallucinatory monster
  */
-static void image_monster(byte *ap, char *cp)
+static void image_monster(byte * ap, char *cp)
 {
 	int n = strlen(image_monster_hack);
 
 	/* Random symbol from set above */
 	if (use_graphics)
 	{
-		/* Normal graphics */
-		if (!(streq(ANGBAND_SYS, "ibm")))
-		{
-			(*cp) = r_info[randint(max_r_idx-1)].x_char;
-			(*ap) = r_info[randint(max_r_idx-1)].x_attr;
-		}
-		else
-		/* IBM-pseudo graphics */
-		{
-			n = strlen(image_monster_hack_ibm);
-			(*cp) = (image_monster_hack_ibm[rand_int(n)]);
-
-			/* Random color */
-			(*ap) = randint(15);
-		}
+		(*cp) = r_info[randint(max_r_idx - 1)].x_char;
+		(*ap) = r_info[randint(max_r_idx - 1)].x_attr;
 	}
 	else
-	/* Text mode */
+		/* Text mode */
 	{
 		(*cp) = (image_monster_hack[rand_int(n)]);
 
@@ -475,34 +526,20 @@ static void image_monster(byte *ap, char *cp)
 /*
  * Hack -- Legal object codes
  */
-static cptr image_object_hack = \
-"?/|\\\"!$()_-=[]{},~";
+static cptr image_object_hack = \"?/|\\\"!$()_-=[]{},~";
 
-static cptr image_object_hack_ibm = \
-"ÄÅìîó§¶´≠Æ∫ªºΩ¿¡¬√ƒ»… ÀÕŒ”⁄Á";
 
 /*
  * Mega-Hack -- Hallucinatory object
  */
-static void image_object(byte *ap, char *cp)
+static void image_object(byte * ap, char *cp)
 {
 	int n = strlen(image_object_hack);
 
 	if (use_graphics)
 	{
-		if (!(streq(ANGBAND_SYS, "ibm")))
-		{
-			(*cp) = k_info[randint(max_k_idx-1)].x_char;
-			(*ap) = k_info[randint(max_k_idx-1)].x_attr;
-		}
-		else
-		{
-			n = strlen(image_object_hack_ibm);
-			(*cp) = (image_object_hack_ibm[rand_int(n)]);
-
-			/* Random color */
-			(*ap) = randint(15);
-		}
+		(*cp) = k_info[randint(max_k_idx - 1)].x_char;
+		(*ap) = k_info[randint(max_k_idx - 1)].x_attr;
 	}
 	else
 	{
@@ -518,7 +555,7 @@ static void image_object(byte *ap, char *cp)
 /*
  * Hack -- Random hallucination
  */
-static void image_random(byte *ap, char *cp)
+static void image_random(byte * ap, char *cp)
 {
 	/* Normally, assume monsters */
 	if (rand_int(100) < 75)
@@ -539,7 +576,8 @@ static void image_random(byte *ap, char *cp)
  */
 static bool feat_supports_lighting(byte feat)
 {
-	if ((feat >= FEAT_TRAP_HEAD) && (feat <= FEAT_TRAP_TAIL)) return TRUE;
+	if (is_trap(feat))
+		return TRUE;
 
 	switch (feat)
 	{
@@ -702,9 +740,9 @@ static bool feat_supports_lighting(byte feat)
  * then a whole lot of code should be changed...  XXX XXX
  */
 #ifdef USE_TRANSPARENCY
-void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
+void map_info(int y, int x, byte * ap, char *cp, byte * tap, char *tcp)
 #else /* USE_TRANSPARENCY */
-void map_info(int y, int x, byte *ap, char *cp)
+void map_info(int y, int x, byte * ap, char *cp)
 #endif /* USE_TRANSPARENCY */
 {
 	cave_type *c_ptr;
@@ -728,11 +766,9 @@ void map_info(int y, int x, byte *ap, char *cp)
 	if (feat <= FEAT_INVIS)
 	{
 		/* Memorized (or visible) floor */
-		if   ((c_ptr->info & CAVE_MARK) ||
-		    (((c_ptr->info & CAVE_LITE) ||
-		     ((c_ptr->info & CAVE_GLOW) &&
-		      (c_ptr->info & CAVE_VIEW))) &&
-		     !p_ptr->blind))
+		if ((c_ptr->info & CAVE_MARK) || (((c_ptr->info & CAVE_LITE) ||
+					((c_ptr->info & CAVE_GLOW) &&
+						(c_ptr->info & CAVE_VIEW))) && !p_ptr->blind))
 		{
 			/* Access floor */
 			f_ptr = &f_info[FEAT_FLOOR];
@@ -744,7 +780,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
-			if (view_special_lite && ((a == TERM_WHITE) || use_transparency))
+			if (view_special_lite && ((a == TERM_WHITE) ||
+					use_transparency))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -852,9 +889,9 @@ void map_info(int y, int x, byte *ap, char *cp)
 			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
-			if (view_granite_lite &&
-			   (((a == TERM_WHITE) && !use_transparency) ||
-			   (use_transparency && feat_supports_lighting(c_ptr->feat))))
+			if (view_granite_lite && (((a == TERM_WHITE) &&
+						!use_transparency) || (use_transparency &&
+						feat_supports_lighting(c_ptr->feat))))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -1001,7 +1038,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 			(*ap) = object_attr(o_ptr);
 
 			/* Hack -- hallucination */
-			if (p_ptr->image) image_object(ap, cp);
+			if (p_ptr->image)
+				image_object(ap, cp);
 
 			/* Done */
 			break;
@@ -1035,6 +1073,16 @@ void map_info(int y, int x, byte *ap, char *cp)
 				(*ap) = a;
 			}
 
+			/* Mimics' colors vary */
+			else if (strchr("\"!=", c) && !(r_ptr->flags1 & RF1_UNIQUE))
+			{
+				/* Use char */
+				(*cp) = c;
+
+				/* Use semi-random attr */
+				(*ap) = c_ptr->m_idx % 15 + 1;
+			}
+
 			/* Special attr/char codes */
 			else if ((a & 0x80) && (c & 0x80))
 			{
@@ -1053,25 +1101,18 @@ void map_info(int y, int x, byte *ap, char *cp)
 				{
 					if (use_graphics)
 					{
-						if (!(streq(ANGBAND_SYS, "ibm")))
-						{
-							(*cp) = r_info[randint(max_r_idx-1)].x_char;
-							(*ap) = r_info[randint(max_r_idx-1)].x_attr;
-						}
-						else
-						{
-							int n =  strlen(image_monster_hack_ibm);
-							(*cp) = (image_monster_hack_ibm[rand_int(n)]);
-
-							/* Random color */
-							(*ap) = randint(15);
-						}
+						(*cp) = r_info[randint(max_r_idx - 1)].x_char;
+						(*ap) = r_info[randint(max_r_idx - 1)].x_attr;
 					}
 					else
 					{
-						(*cp) = (randint(25) == 1 ?
-							image_object_hack[randint(strlen(image_object_hack))] :
-							image_monster_hack[randint(strlen(image_monster_hack))]);
+						(*cp) =
+							(randint(25) ==
+							1 ?
+							image_object_hack[randint(strlen
+								(image_object_hack))] :
+							image_monster_hack[randint(strlen
+									(image_monster_hack))]);
 					}
 				}
 				else
@@ -1080,30 +1121,31 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Multi-hued attr */
 				if (r_ptr->flags2 & RF2_ATTR_ANY)
 					(*ap) = randint(15);
-				else switch (randint(7))
-				{
-					case 1:
-						(*ap) = TERM_RED;
-						break;
-					case 2:
-						(*ap) = TERM_L_RED;
-						break;
-					case 3:
-						(*ap) = TERM_WHITE;
-						break;
-					case 4:
-						(*ap) = TERM_L_GREEN;
-						break;
-					case 5:
-						(*ap) = TERM_BLUE;
-						break;
-					case 6:
-						(*ap) = TERM_L_DARK;
-						break;
-					case 7:
-						(*ap) = TERM_GREEN;
-						break;
-				}
+				else
+					switch (randint(7))
+					{
+						case 1:
+							(*ap) = TERM_RED;
+							break;
+						case 2:
+							(*ap) = TERM_L_RED;
+							break;
+						case 3:
+							(*ap) = TERM_WHITE;
+							break;
+						case 4:
+							(*ap) = TERM_L_GREEN;
+							break;
+						case 5:
+							(*ap) = TERM_BLUE;
+							break;
+						case 6:
+							(*ap) = TERM_L_DARK;
+							break;
+						case 7:
+							(*ap) = TERM_GREEN;
+							break;
+					}
 			}
 
 			/* Normal monster (not "clear" in any way) */
@@ -1168,20 +1210,21 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 		if (!streq(ANGBAND_GRAF, "new"))
 		{
-			if (!streq(ANGBAND_SYS,"ibm"))
+			if (!streq(ANGBAND_SYS, "ibm"))
 			{
 
 				if (use_graphics && player_symbols)
 				{
 					a = BMP_FIRST_PC_CLASS + p_ptr->pclass;
-					c = BMP_FIRST_PC_RACE  + p_ptr->prace;
+					c = BMP_FIRST_PC_RACE + p_ptr->prace;
 				}
 			}
 			else
 			{
 				if (use_graphics && player_symbols)
 				{
-					if (p_ptr->psex == SEX_FEMALE) c = (char)242;
+					if (p_ptr->psex == SEX_FEMALE)
+						c = (char) 242;
 					switch (p_ptr->pclass)
 					{
 						case CLASS_PALADIN:
@@ -1348,6 +1391,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	}
 }
 
+#endif /* TNB */
 
 
 /*
@@ -1355,12 +1399,14 @@ void map_info(int y, int x, byte *ap, char *cp)
  */
 void move_cursor_relative(int row, int col)
 {
+#if 0 /* TNB */
 	/* Real co-ords convert to screen positions */
 	row -= panel_row_prt;
 	col -= panel_col_prt;
 
 	/* Go there */
 	Term_gotoxy(col, row);
+#endif /* TNB */
 }
 
 
@@ -1370,19 +1416,23 @@ void move_cursor_relative(int row, int col)
  */
 void print_rel(char c, byte a, int y, int x)
 {
+#if 0 /* TNB */
 	/* Only do "legal" locations */
 	if (panel_contains(y, x))
 	{
 		/* Hack -- fake monochrome */
 		if (!use_graphics || streq(ANGBAND_SYS, "ibm"))
 		{
-			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-			else if (p_ptr->wraith_form) a = TERM_L_DARK;
+			if (p_ptr->invuln || !use_color)
+				a = TERM_WHITE;
+			else if (p_ptr->wraith_form)
+				a = TERM_L_DARK;
 		}
 
 		/* Draw the char using the attr */
-		Term_draw(x-panel_col_prt, y-panel_row_prt, a, c);
+		Term_draw(x - panel_col_prt, y - panel_row_prt, a, c);
 	}
+#endif /* TNB */
 }
 
 
@@ -1436,16 +1486,19 @@ void note_spot(int y, int x)
 
 
 	/* Blind players see nothing */
-	if (p_ptr->blind) return;
+	if (p_ptr->blind)
+		return;
 
 	/* Analyze non-torch-lit grids */
 	if (!(c_ptr->info & (CAVE_LITE)))
 	{
 		/* Require line of sight to the grid */
-		if (!(c_ptr->info & (CAVE_VIEW))) return;
+		if (!(c_ptr->info & (CAVE_VIEW)))
+			return;
 
 		/* Require "perma-lite" of the grid */
-		if (!(c_ptr->info & (CAVE_GLOW))) return;
+		if (!(c_ptr->info & (CAVE_GLOW)))
+			return;
 	}
 
 
@@ -1466,13 +1519,20 @@ void note_spot(int y, int x)
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if (c_ptr->feat <= FEAT_INVIS)
+#if 1 /* TNB */
+		if ((g_feat_flag[c_ptr->feat] & FEAT_FLAG_BORING) ||
+			(c_ptr->feat == FEAT_WALL_INVIS))
+#else /* TNB */
+		if ((c_ptr->feat <= FEAT_INVIS) ||
+			(c_ptr->feat == FEAT_WALL_INVIS))
+#endif /* TNB */
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
 			{
 				/* Memorize */
 				c_ptr->info |= (CAVE_MARK);
+				angtk_feat_known(y, x); /* TNB */
 			}
 
 			/* Option -- memorize all perma-lit floors */
@@ -1480,6 +1540,7 @@ void note_spot(int y, int x)
 			{
 				/* Memorize */
 				c_ptr->info |= (CAVE_MARK);
+				angtk_feat_known(y, x); /* TNB */
 			}
 		}
 
@@ -1488,6 +1549,7 @@ void note_spot(int y, int x)
 		{
 			/* Memorize */
 			c_ptr->info |= (CAVE_MARK);
+			angtk_feat_known(y, x); /* TNB */
 		}
 
 		/* Memorize torch-lit walls */
@@ -1495,6 +1557,7 @@ void note_spot(int y, int x)
 		{
 			/* Memorize */
 			c_ptr->info |= (CAVE_MARK);
+			angtk_feat_known(y, x); /* TNB */
 		}
 
 		/* Memorize certain non-torch-lit wall grids */
@@ -1511,11 +1574,13 @@ void note_spot(int y, int x)
 			{
 				/* Memorize */
 				c_ptr->info |= (CAVE_MARK);
+				angtk_feat_known(y, x); /* TNB */
 			}
 		}
 	}
 }
 
+#if 0 /* TNB */
 
 void display_dungeon(void)
 {
@@ -1546,16 +1611,20 @@ void display_dungeon(void)
 				/* Hack -- fake monochrome */
 				if (!use_graphics || streq(ANGBAND_SYS, "ibm"))
 				{
-					if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-					else if (p_ptr->wraith_form) a = TERM_L_DARK;
+					if (p_ptr->invuln || !use_color)
+						a = TERM_WHITE;
+					else if (p_ptr->wraith_form)
+						a = TERM_L_DARK;
 				}
 
 #ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c, ta, tc);
+				Term_queue_char(x - px + Term->wid / 2 - 1,
+					y - py + Term->hgt / 2 - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c);
+				Term_queue_char(x - px + Term->wid / 2 - 1,
+					y - py + Term->hgt / 2 - 1, a, c);
 #endif /* USE_TRANSPARENCY */
 
 			}
@@ -1574,16 +1643,19 @@ void display_dungeon(void)
 
 #ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c, ta, tc);
+				Term_queue_char(x - px + Term->wid / 2 - 1,
+					y - py + Term->hgt / 2 - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c);
+				Term_queue_char(x - px + Term->wid / 2 - 1,
+					y - py + Term->hgt / 2 - 1, a, c);
 #endif /* USE_TRANSPARENCY */
 			}
 		}
 	}
 }
 
+#endif /* 0 -- TNB */
 
 /*
  * Redraw (on the screen) a given MAP location
@@ -1592,6 +1664,13 @@ void display_dungeon(void)
  */
 void lite_spot(int y, int x)
 {
+#if 1 /* TNB */
+
+	/* Display */
+	angtk_lite_spot(y, x);
+
+#else /* TNB */
+
 	/* Redraw if on screen */
 	if (panel_contains(y, x))
 	{
@@ -1612,18 +1691,23 @@ void lite_spot(int y, int x)
 		/* Hack -- fake monochrome */
 		if (!use_graphics || streq(ANGBAND_SYS, "ibm"))
 		{
-			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-			else if (p_ptr->wraith_form) a = TERM_L_DARK;
+			if (p_ptr->invuln || !use_color)
+				a = TERM_WHITE;
+			else if (p_ptr->wraith_form)
+				a = TERM_L_DARK;
 		}
 
 #ifdef USE_TRANSPARENCY
 		/* Hack -- Queue it */
-		Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
+		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta,
+			tc);
 #else /* USE_TRANSPARENCY */
 		/* Hack -- Queue it */
-		Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c);
+		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
 	}
+
+#endif /* 0 -- TNB */
 }
 
 
@@ -1636,16 +1720,17 @@ void lite_spot(int y, int x)
  */
 void prt_map(void)
 {
-	int     x, y;
-	int     v;
-	bool    fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
+#if 0 /* TNB */
+	int x, y;
+	int v;
+	bool fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
 
 
 	/* Access the cursor state */
-	(void)Term_get_cursor(&v);
+	(void) Term_get_cursor(&v);
 
 	/* Hide the cursor */
-	(void)Term_set_cursor(0);
+	(void) Term_set_cursor(0);
 
 	/* Dump the map */
 	for (y = panel_row_min; y <= panel_row_max; y++)
@@ -1666,12 +1751,15 @@ void prt_map(void)
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
-				if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-				else if (p_ptr->wraith_form) a = TERM_L_DARK;
+				if (p_ptr->invuln || !use_color)
+					a = TERM_WHITE;
+				else if (p_ptr->wraith_form)
+					a = TERM_L_DARK;
 			}
 
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta,
+				tc);
 #else /* USE_TRANSPARENCY */
 			/* Determine what is there */
 			map_info(y, x, &a, &c);
@@ -1679,12 +1767,14 @@ void prt_map(void)
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
-				if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-				else if (p_ptr->wraith_form) a = TERM_L_DARK;
+				if (p_ptr->invuln || !use_color)
+					a = TERM_WHITE;
+				else if (p_ptr->wraith_form)
+					a = TERM_L_DARK;
 			}
 
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c);
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
 		}
 	}
@@ -1693,82 +1783,71 @@ void prt_map(void)
 	lite_spot(py, px);
 
 	/* Restore the cursor */
-	(void)Term_set_cursor(v);
+	(void) Term_set_cursor(v);
+#endif /* TNB */
 }
 
 
 
-
-
-/*
- * Display highest priority object in the RATIO by RATIO area
- */
-#define RATIO 3
-
-/*
- * Display the entire map
- */
-#define MAP_HGT (MAX_HGT / RATIO)
-#define MAP_WID (MAX_WID / RATIO)
+#if 0 /* TNB */
 
 /*
  * Hack -- priority array (see below)
  *
  * Note that all "walls" always look like "secret doors" (see "map_info()").
  */
-static byte priority_table[][2] =
-{
+static byte priority_table[][2] = {
 	/* Dark */
-	{ FEAT_NONE, 2 },
+	{FEAT_NONE, 2},
 
 	/* Floors */
-	{ FEAT_FLOOR, 5 },
+	{FEAT_FLOOR, 5},
 
 	/* Walls */
-	{ FEAT_SECRET, 10 },
+	{FEAT_SECRET, 10},
 
 	/* Quartz */
-	{ FEAT_QUARTZ, 11 },
+	{FEAT_QUARTZ, 11},
 
 	/* Magma */
-	{ FEAT_MAGMA, 12 },
+	{FEAT_MAGMA, 12},
 
 	/* Rubble */
-	{ FEAT_RUBBLE, 13 },
+	{FEAT_RUBBLE, 13},
 
 	/* Open doors */
-	{ FEAT_OPEN, 15 },
-	{ FEAT_BROKEN, 15 },
+	{FEAT_OPEN, 15},
+	{FEAT_BROKEN, 15},
 
 	/* Closed doors */
-	{ FEAT_DOOR_HEAD + 0x00, 17 },
+	{FEAT_DOOR_HEAD + 0x00, 17},
 
 	/* Hidden gold */
-	{ FEAT_QUARTZ_K, 19 },
-	{ FEAT_MAGMA_K, 19 },
+	{FEAT_QUARTZ_K, 19},
+	{FEAT_MAGMA_K, 19},
 
 	/* water, lava, & trees */
-	{ FEAT_DEEP_WATER, 20 },
-	{ FEAT_SHAL_WATER, 20 },
-	{ FEAT_DEEP_LAVA, 20 },
-	{ FEAT_SHAL_LAVA, 20 },
-	{ FEAT_DIRT, 6 },
-	{ FEAT_GRASS, 6 },
-	{ FEAT_DARK_PIT, 20 },
-	{ FEAT_TREES, 6 },
-	{ FEAT_MOUNTAIN, 20 },
+	{FEAT_DEEP_WATER, 20},
+	{FEAT_SHAL_WATER, 20},
+	{FEAT_DEEP_LAVA, 20},
+	{FEAT_SHAL_LAVA, 20},
+	{FEAT_DIRT, 6},
+	{FEAT_GRASS, 6},
+	{FEAT_DARK_PIT, 20},
+	{FEAT_TREES, 6},
+	{FEAT_MOUNTAIN, 20},
 
 	/* Stairs */
-	{ FEAT_LESS, 25 },
-	{ FEAT_MORE, 25 },
+	{FEAT_LESS, 25},
+	{FEAT_MORE, 25},
 
-	{ FEAT_QUEST_ENTER, 25 },
-	{ FEAT_QUEST_EXIT, 25 },
-	{ FEAT_QUEST_DOWN, 25 },
-	{ FEAT_QUEST_UP, 25 },
+	{FEAT_QUEST_ENTER, 25},
+	{FEAT_QUEST_EXIT, 25},
+	{FEAT_QUEST_DOWN, 25},
+	{FEAT_QUEST_UP, 25},
 
 	/* End */
-	{ 0, 0 }
+	{0, 0}
 };
 
 
@@ -1788,7 +1867,8 @@ static byte priority(byte a, char c)
 		p1 = priority_table[i][1];
 
 		/* End of table */
-		if (!p1) break;
+		if (!p1)
+			break;
 
 		/* Feature index */
 		p0 = priority_table[i][0];
@@ -1797,12 +1877,14 @@ static byte priority(byte a, char c)
 		f_ptr = &f_info[p0];
 
 		/* Check character and attribute, accept matches */
-		if ((f_ptr->x_char == c) && (f_ptr->x_attr == a)) return (p1);
+		if ((f_ptr->x_char == c) && (f_ptr->x_attr == a))
+			return (p1);
 	}
 
 	/* Default */
 	return (20);
 }
+
 
 
 /*
@@ -1827,16 +1909,18 @@ void display_map(int *cy, int *cx)
 
 	byte tp;
 
-	byte ma[MAP_HGT + 2][MAP_WID + 2];
-	char mc[MAP_HGT + 2][MAP_WID + 2];
+	byte ma[SCREEN_HGT + 2][SCREEN_WID + 2];
+	char mc[SCREEN_HGT + 2][SCREEN_WID + 2];
 
-	byte mp[MAP_HGT + 2][MAP_WID + 2];
+	byte mp[SCREEN_HGT + 2][SCREEN_WID + 2];
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 
 	bool fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
 
+	int yrat = cur_hgt / SCREEN_HGT;
+	int xrat = cur_wid / SCREEN_WID;
 
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
@@ -1848,9 +1932,9 @@ void display_map(int *cy, int *cx)
 
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < MAP_HGT + 2; ++y)
+	for (y = 0; y < SCREEN_HGT + 2; ++y)
 	{
-		for (x = 0; x < MAP_WID + 2; ++x)
+		for (x = 0; x < SCREEN_WID + 2; ++x)
 		{
 			/* Nothing here */
 			ma[y][x] = TERM_WHITE;
@@ -1867,8 +1951,11 @@ void display_map(int *cy, int *cx)
 		for (j = 0; j < cur_hgt; ++j)
 		{
 			/* Location */
-			x = i / RATIO + 1;
-			y = j / RATIO + 1;
+			x = i / xrat + 1;
+			y = j / yrat + 1;
+
+			/* Priority zero */
+			tp = 0;
 
 			/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
@@ -1878,7 +1965,7 @@ void display_map(int *cy, int *cx)
 #endif /* USE_TRANSPARENCY */
 
 			/* Extract the priority of that attr/char */
-			tp = priority(ta, tc);
+			tp += priority(ta, tc);
 
 			/* Save "best" */
 			if (mp[y][x] < tp)
@@ -1897,27 +1984,29 @@ void display_map(int *cy, int *cx)
 
 
 	/* Corners */
-	x = MAP_WID + 1;
-	y = MAP_HGT + 1;
+	x = SCREEN_WID + 1;
+	y = SCREEN_HGT + 1;
 
 	/* Draw the corners */
 	mc[0][0] = mc[0][x] = mc[y][0] = mc[y][x] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x <= MAP_WID; x++) mc[0][x] = mc[y][x] = '-';
+	for (x = 1; x <= SCREEN_WID; x++)
+		mc[0][x] = mc[y][x] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y <= MAP_HGT; y++) mc[y][0] = mc[y][x] = '|';
+	for (y = 1; y <= SCREEN_HGT; y++)
+		mc[y][0] = mc[y][x] = '|';
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y)
+	for (y = 0; y < SCREEN_HGT + 2; ++y)
 	{
 		/* Start a new line */
 		Term_gotoxy(0, y);
 
 		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x)
+		for (x = 0; x < SCREEN_WID + 2; ++x)
 		{
 			ta = ma[y][x];
 			tc = mc[y][x];
@@ -1925,8 +2014,10 @@ void display_map(int *cy, int *cx)
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
-				if (p_ptr->invuln || !use_color) ta = TERM_WHITE;
-				else if (p_ptr->wraith_form) ta = TERM_L_DARK;
+				if (p_ptr->invuln || !use_color)
+					ta = TERM_WHITE;
+				else if (p_ptr->wraith_form)
+					ta = TERM_L_DARK;
 			}
 
 			/* Add the character */
@@ -1936,8 +2027,8 @@ void display_map(int *cy, int *cx)
 
 
 	/* Player location */
-	(*cy) = py / RATIO + 1;
-	(*cx) = px / RATIO + 1;
+	(*cy) = py / yrat + 1;
+	(*cx) = px / xrat + 1;
 
 
 	/* Restore lighting effects */
@@ -1945,6 +2036,7 @@ void display_map(int *cy, int *cx)
 	view_granite_lite = old_view_granite_lite;
 }
 
+#endif /* TNB */
 
 /*
  * Display a "small-scale" map of the dungeon for the player
@@ -1953,6 +2045,14 @@ void display_map(int *cy, int *cx)
  */
 void do_cmd_view_map(void)
 {
+#if 1 /* TNB */
+
+	angtk_eval("angband_display", "map", "show", NULL);
+	inkey();
+	angtk_eval("angband_display", "map", "hide", NULL);
+
+#else /* TNB */
+
 	int cy, cx;
 
 
@@ -1972,7 +2072,7 @@ void do_cmd_view_map(void)
 	display_map(&cy, &cx);
 
 	/* Wait for it */
-	put_str("Hit any key to continue", 23, 23);
+	put_str("Hit any key to continue", 23, 35);
 
 	/* Hilite the player */
 	move_cursor(cy, cx);
@@ -1982,6 +2082,7 @@ void do_cmd_view_map(void)
 
 	/* Restore the screen */
 	screen_load();
+#endif /* TNB */
 }
 
 
@@ -2195,12 +2296,6 @@ void do_cmd_view_map(void)
  */
 
 
-
-
-
-
-
-
 /*
  * Actually erase the entire "lite" array, redrawing every grid
  */
@@ -2209,7 +2304,8 @@ void forget_lite(void)
 	int i, x, y;
 
 	/* None to forget */
-	if (!lite_n) return;
+	if (!lite_n)
+		return;
 
 	/* Clear them all */
 	for (i = 0; i < lite_n; i++)
@@ -2219,6 +2315,13 @@ void forget_lite(void)
 
 		/* Forget "LITE" flag */
 		cave[y][x].info &= ~(CAVE_LITE);
+
+#if 1 /* TNB */
+		if (cave_floor_bold(y, x))
+			angtk_view_floor(y, x, cave_info(y, x), 0);
+		else
+			angtk_view_wall(y, x, cave_info(y, x), 0);
+#endif /* TNB */
 
 		/* Redraw */
 		lite_spot(y, x);
@@ -2241,9 +2344,7 @@ void forget_lite(void)
     cave[Y][X].info |= (CAVE_LITE); \
     lite_y[lite_n] = (Y); \
     lite_x[lite_n] = (X); \
-    lite_n++
-
-
+    lite_n++;
 
 /*
  * Update the set of grids "illuminated" by the player's lite.
@@ -2326,51 +2427,51 @@ void update_lite(void)
 	if (p_ptr->cur_lite >= 1)
 	{
 		/* Adjacent grid */
-		cave_lite_hack(py+1, px);
-		cave_lite_hack(py-1, px);
-		cave_lite_hack(py, px+1);
-		cave_lite_hack(py, px-1);
+		cave_lite_hack(py + 1, px);
+		cave_lite_hack(py - 1, px);
+		cave_lite_hack(py, px + 1);
+		cave_lite_hack(py, px - 1);
 
 		/* Diagonal grids */
-		cave_lite_hack(py+1, px+1);
-		cave_lite_hack(py+1, px-1);
-		cave_lite_hack(py-1, px+1);
-		cave_lite_hack(py-1, px-1);
+		cave_lite_hack(py + 1, px + 1);
+		cave_lite_hack(py + 1, px - 1);
+		cave_lite_hack(py - 1, px + 1);
+		cave_lite_hack(py - 1, px - 1);
 	}
 
 	/* Radius 2 -- lantern radius */
 	if (p_ptr->cur_lite >= 2)
 	{
 		/* South of the player */
-		if (cave_floor_bold(py+1, px))
+		if ((cave_floor_bold(py + 1, px)) || (cave_half_bold(py + 1, px)))
 		{
-			cave_lite_hack(py+2, px);
-			cave_lite_hack(py+2, px+1);
-			cave_lite_hack(py+2, px-1);
+			cave_lite_hack(py + 2, px);
+			cave_lite_hack(py + 2, px + 1);
+			cave_lite_hack(py + 2, px - 1);
 		}
 
 		/* North of the player */
-		if (cave_floor_bold(py-1, px))
+		if ((cave_floor_bold(py - 1, px)) || (cave_half_bold(py - 1, px)))
 		{
-			cave_lite_hack(py-2, px);
-			cave_lite_hack(py-2, px+1);
-			cave_lite_hack(py-2, px-1);
+			cave_lite_hack(py - 2, px);
+			cave_lite_hack(py - 2, px + 1);
+			cave_lite_hack(py - 2, px - 1);
 		}
 
 		/* East of the player */
-		if (cave_floor_bold(py, px+1))
+		if ((cave_floor_bold(py, px + 1)) || (cave_half_bold(py, px + 1)))
 		{
-			cave_lite_hack(py, px+2);
-			cave_lite_hack(py+1, px+2);
-			cave_lite_hack(py-1, px+2);
+			cave_lite_hack(py, px + 2);
+			cave_lite_hack(py + 1, px + 2);
+			cave_lite_hack(py - 1, px + 2);
 		}
 
 		/* West of the player */
-		if (cave_floor_bold(py, px-1))
+		if ((cave_floor_bold(py, px - 1)) || (cave_half_bold(py, px - 1)))
 		{
-			cave_lite_hack(py, px-2);
-			cave_lite_hack(py+1, px-2);
-			cave_lite_hack(py-1, px-2);
+			cave_lite_hack(py, px - 2);
+			cave_lite_hack(py + 1, px - 2);
+			cave_lite_hack(py - 1, px - 2);
 		}
 	}
 
@@ -2383,47 +2484,58 @@ void update_lite(void)
 		p = p_ptr->cur_lite;
 
 		/* Paranoia -- see "LITE_MAX" */
-		if (p > 5) p = 5;
+		if (p > 5)
+			p = 5;
 
 		/* South-East of the player */
-		if (cave_floor_bold(py+1, px+1))
+		if ((cave_floor_bold(py + 1, px + 1)) ||
+			(cave_half_bold(py + 1, px + 1)))
 		{
-			cave_lite_hack(py+2, px+2);
+			cave_lite_hack(py + 2, px + 2);
 		}
 
 		/* South-West of the player */
-		if (cave_floor_bold(py+1, px-1))
+		if ((cave_floor_bold(py + 1, px - 1)) ||
+			(cave_half_bold(py + 1, px - 1)))
 		{
-			cave_lite_hack(py+2, px-2);
+			cave_lite_hack(py + 2, px - 2);
 		}
 
 		/* North-East of the player */
-		if (cave_floor_bold(py-1, px+1))
+		if ((cave_floor_bold(py - 1, px + 1)) ||
+			(cave_half_bold(py - 1, px + 1)))
 		{
-			cave_lite_hack(py-2, px+2);
+			cave_lite_hack(py - 2, px + 2);
 		}
 
 		/* North-West of the player */
-		if (cave_floor_bold(py-1, px-1))
+		if ((cave_floor_bold(py - 1, px - 1)) ||
+			(cave_half_bold(py - 1, px - 1)))
 		{
-			cave_lite_hack(py-2, px-2);
+			cave_lite_hack(py - 2, px - 2);
 		}
 
 		/* Maximal north */
 		min_y = py - p;
-		if (min_y < 0) min_y = 0;
 
 		/* Maximal south */
 		max_y = py + p;
-		if (max_y > cur_hgt-1) max_y = cur_hgt-1;
 
 		/* Maximal west */
 		min_x = px - p;
-		if (min_x < 0) min_x = 0;
 
 		/* Maximal east */
 		max_x = px + p;
-		if (max_x > cur_wid-1) max_x = cur_wid-1;
+
+
+		if (min_y < 0)
+			min_y = 0;
+		if (max_y > cur_hgt - 1)
+			max_y = cur_hgt - 1;
+		if (min_x < 0)
+			min_x = 0;
+		if (max_x > cur_wid - 1)
+			max_x = cur_wid - 1;
 
 		/* Scan the maximal box */
 		for (y = min_y; y <= max_y; y++)
@@ -2434,13 +2546,15 @@ void update_lite(void)
 				int dx = (px > x) ? (px - x) : (x - px);
 
 				/* Skip the "central" grids (above) */
-				if ((dy <= 2) && (dx <= 2)) continue;
+				if ((dy <= 2) && (dx <= 2))
+					continue;
 
 				/* Hack -- approximate the distance */
-				d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+				d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 				/* Skip distant grids */
-				if (d > p) continue;
+				if (d > p)
+					continue;
 
 				/* Viewable, nearby, grids get "torch lit" */
 				if (player_has_los_bold(y, x))
@@ -2462,7 +2576,15 @@ void update_lite(void)
 		x = lite_x[i];
 
 		/* Update fresh grids */
-		if (cave[y][x].info & (CAVE_TEMP)) continue;
+		if (cave[y][x].info & (CAVE_TEMP))
+			continue;
+
+#if 1 /* TNB */
+		if (cave_floor_bold(y, x))
+			angtk_view_floor(y, x, cave_info(y, x), 1);
+		else
+			angtk_view_wall(y, x, cave_info(y, x), 1);
+#endif /* TNB */
 
 		/* Note */
 		note_spot(y, x);
@@ -2481,7 +2603,15 @@ void update_lite(void)
 		cave[y][x].info &= ~(CAVE_TEMP);
 
 		/* Update stale grids */
-		if (cave[y][x].info & (CAVE_LITE)) continue;
+		if (cave[y][x].info & (CAVE_LITE))
+			continue;
+
+#if 1 /* TNB */
+		if (cave_floor_bold(y, x))
+			angtk_view_floor(y, x, cave_info(y, x), 0);
+		else
+			angtk_view_wall(y, x, cave_info(y, x), 0);
+#endif /* TNB */
 
 		/* Redraw */
 		lite_spot(y, x);
@@ -2507,7 +2637,8 @@ void forget_view(void)
 	cave_type *c_ptr;
 
 	/* None to forget */
-	if (!view_n) return;
+	if (!view_n)
+		return;
 
 	/* Clear them all */
 	for (i = 0; i < view_n; i++)
@@ -2520,6 +2651,13 @@ void forget_view(void)
 
 		/* Forget that the grid is viewable */
 		c_ptr->info &= ~(CAVE_VIEW);
+
+#if 1 /* TNB */
+		if (cave_floor_bold(y, x))
+			angtk_view_floor(y, x, cave_info(y, x), 0);
+		else
+			angtk_view_wall(y, x, cave_info(y, x), 0);
+#endif /* TNB */
 
 		/* Update the screen */
 		lite_spot(y, x);
@@ -2578,11 +2716,12 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	f1 = (cave_floor_grid(g1_c_ptr));
-	f2 = (cave_floor_grid(g2_c_ptr));
+	f1 = (cave_floor_grid(g1_c_ptr)) || (cave_half_grid(g1_c_ptr));
+	f2 = (cave_floor_grid(g2_c_ptr)) || (cave_half_grid(g2_c_ptr));
 
 	/* Totally blocked by physical walls */
-	if (!f1 && !f2) return (TRUE);
+	if (!f1 && !f2)
+		return (TRUE);
 
 
 	/* Check for visibility */
@@ -2590,7 +2729,8 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 	v2 = (f2 && (g2_c_ptr->info & (CAVE_VIEW)));
 
 	/* Totally blocked by "unviewable neighbors" */
-	if (!v1 && !v2) return (TRUE);
+	if (!v1 && !v2)
+		return (TRUE);
 
 
 	/* Access the grid */
@@ -2598,7 +2738,7 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	wall = (!cave_floor_grid(c_ptr));
+	wall = (!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr));
 
 
 	/* Check the "ease" of visibility */
@@ -2657,6 +2797,23 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 	return (TRUE);
 }
 
+
+/*
+ * Helper function for calculating LOS.
+ */
+static int scan_grid(int y, int x)
+{
+	cave_type *c_ptr = &cave[y][x];
+
+	c_ptr->info |= (CAVE_XTRA);
+	cave_view_hack(c_ptr, y, x);
+
+	/* Is LOS free ? */
+	if (!cave_floor_grid(c_ptr) && !cave_half_grid(c_ptr))
+		return FALSE;
+	else
+		return TRUE;
+}
 
 
 /*
@@ -2763,7 +2920,6 @@ void update_view(void)
 
 	cave_type *c_ptr;
 
-
 	/*** Initialize ***/
 
 	/* Optimize */
@@ -2838,37 +2994,29 @@ void update_view(void)
 	/* Scan south-east */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y+d][x+d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y+d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y + d, x + d))
+			break;
 	}
 
 	/* Scan south-west */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y+d][x-d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y+d, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y + d, x - d))
+			break;
 	}
 
 	/* Scan north-east */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y-d][x+d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y-d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y - d, x + d))
+			break;
 	}
 
 	/* Scan north-west */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y-d][x-d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y-d, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y - d, x - d))
+			break;
 	}
 
 
@@ -2877,10 +3025,8 @@ void update_view(void)
 	/* Scan south */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y+d][x];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y+d, x);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y + d, x))
+			break;
 	}
 
 	/* Initialize the "south strips" */
@@ -2889,10 +3035,8 @@ void update_view(void)
 	/* Scan north */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y-d][x];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y-d, x);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y - d, x))
+			break;
 	}
 
 	/* Initialize the "north strips" */
@@ -2901,10 +3045,8 @@ void update_view(void)
 	/* Scan east */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y][x+d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y, x + d))
+			break;
 	}
 
 	/* Initialize the "east strips" */
@@ -2913,10 +3055,8 @@ void update_view(void)
 	/* Scan west */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y][x-d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!scan_grid(y, x - d))
+			break;
 	}
 
 	/* Initialize the "west strips" */
@@ -2933,8 +3073,10 @@ void update_view(void)
 
 		/* Acquire the "bounds" of the maximal circle */
 		z = over - n - n;
-		if (z > full - n) z = full - n;
-		while ((z + n + (n>>1)) > full) z--;
+		if (z > full - n)
+			z = full - n;
+		while ((z + n + (n >> 1)) > full)
+			z--;
 
 
 		/* Access the four diagonal grids */
@@ -2957,9 +3099,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ypn+d, xpn, ypn+d-1, xpn-1, ypn+d-1, xpn))
+					if (update_view_aux(ypn + d, xpn, ypn + d - 1, xpn - 1,
+							ypn + d - 1, xpn))
 					{
-						if (n + d >= se) break;
+						if (n + d >= se)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -2980,9 +3124,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ypn+d, xmn, ypn+d-1, xmn+1, ypn+d-1, xmn))
+					if (update_view_aux(ypn + d, xmn, ypn + d - 1, xmn + 1,
+							ypn + d - 1, xmn))
 					{
-						if (n + d >= sw) break;
+						if (n + d >= sw)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3011,9 +3157,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ymn-d, xpn, ymn-d+1, xpn-1, ymn-d+1, xpn))
+					if (update_view_aux(ymn - d, xpn, ymn - d + 1, xpn - 1,
+							ymn - d + 1, xpn))
 					{
-						if (n + d >= ne) break;
+						if (n + d >= ne)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3034,9 +3182,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ymn-d, xmn, ymn-d+1, xmn+1, ymn-d+1, xmn))
+					if (update_view_aux(ymn - d, xmn, ymn - d + 1, xmn + 1,
+							ymn - d + 1, xmn))
 					{
-						if (n + d >= nw) break;
+						if (n + d >= nw)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3065,9 +3215,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ypn, xpn+d, ypn-1, xpn+d-1, ypn, xpn+d-1))
+					if (update_view_aux(ypn, xpn + d, ypn - 1, xpn + d - 1,
+							ypn, xpn + d - 1))
 					{
-						if (n + d >= es) break;
+						if (n + d >= es)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3088,9 +3240,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ymn, xpn+d, ymn+1, xpn+d-1, ymn, xpn+d-1))
+					if (update_view_aux(ymn, xpn + d, ymn + 1, xpn + d - 1,
+							ymn, xpn + d - 1))
 					{
-						if (n + d >= en) break;
+						if (n + d >= en)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3119,9 +3273,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ypn, xmn-d, ypn-1, xmn-d+1, ypn, xmn-d+1))
+					if (update_view_aux(ypn, xmn - d, ypn - 1, xmn - d + 1,
+							ypn, xmn - d + 1))
 					{
-						if (n + d >= ws) break;
+						if (n + d >= ws)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3142,9 +3298,11 @@ void update_view(void)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(ymn, xmn-d, ymn+1, xmn-d+1, ymn, xmn-d+1))
+					if (update_view_aux(ymn, xmn - d, ymn + 1, xmn - d + 1,
+							ymn, xmn - d + 1))
 					{
-						if (n + d >= wn) break;
+						if (n + d >= wn)
+							break;
 					}
 
 					/* Track most distant "non-blockage" */
@@ -3175,8 +3333,18 @@ void update_view(void)
 		/* Clear the "CAVE_XTRA" flag */
 		c_ptr->info &= ~(CAVE_XTRA);
 
+#if 1 /* TNB */
+		if (cave_floor_bold(y, x))
+			angtk_view_floor(y, x, cave_info(y, x),
+				(c_ptr->info & CAVE_LITE) != 0);
+		else
+			angtk_view_wall(y, x, cave_info(y, x),
+				(c_ptr->info & CAVE_LITE) != 0);
+#endif /* TNB */
+
 		/* Update only newly viewed grids */
-		if (c_ptr->info & (CAVE_TEMP)) continue;
+		if (c_ptr->info & (CAVE_TEMP))
+			continue;
 
 		/* Note */
 		note_spot(y, x);
@@ -3198,7 +3366,17 @@ void update_view(void)
 		c_ptr->info &= ~(CAVE_TEMP);
 
 		/* Update only non-viewable grids */
-		if (c_ptr->info & (CAVE_VIEW)) continue;
+		if (c_ptr->info & (CAVE_VIEW))
+			continue;
+
+#if 1 /* TNB */
+		if (cave_floor_bold(y, x))
+			angtk_view_floor(y, x, cave_info(y, x),
+				(c_ptr->info & CAVE_LITE) != 0);
+		else
+			angtk_view_wall(y, x, cave_info(y, x),
+				(c_ptr->info & CAVE_LITE) != 0);
+#endif /* TNB */
 
 		/* Redraw */
 		lite_spot(y, x);
@@ -3206,6 +3384,17 @@ void update_view(void)
 
 	/* None left */
 	temp_n = 0;
+
+#if 1 /* TNB */
+	if (target_who < 0)
+	{
+		int y = target_row;
+		int x = target_col;
+		target_vis = ((y == py) && (x == px)) ||
+			projectable(py, px, y, x);
+		p_ptr->redraw |= (PR_TARGET);
+	}
+#endif /* TNB */
 }
 
 
@@ -3241,7 +3430,8 @@ void forget_flow(void)
 	int x, y;
 
 	/* Nothing to forget */
-	if (!flow_n) return;
+	if (!flow_n)
+		return;
 
 	/* Check the entire dungeon */
 	for (y = 0; y < cur_hgt; y++)
@@ -3260,7 +3450,6 @@ void forget_flow(void)
 #endif /* MONSTER_FLOW */
 
 }
-
 
 #ifdef MONSTER_FLOW
 
@@ -3285,10 +3474,12 @@ static void update_flow_aux(int y, int x, int n)
 	c_ptr = &cave[y][x];
 
 	/* Ignore "pre-stamped" entries */
-	if (c_ptr->when == flow_n) return;
+	if (c_ptr->when == flow_n)
+		return;
 
 	/* Ignore "walls" and "rubble" */
-	if (c_ptr->feat >= FEAT_RUBBLE) return;
+	if (c_ptr->feat >= FEAT_RUBBLE)
+		return;
 
 	/* Save the time-stamp */
 	c_ptr->when = flow_n;
@@ -3297,17 +3488,20 @@ static void update_flow_aux(int y, int x, int n)
 	c_ptr->cost = n;
 
 	/* Hack -- limit flow depth */
-	if (n == MONSTER_FLOW_DEPTH) return;
+	if (n == MONSTER_FLOW_DEPTH)
+		return;
 
 	/* Enqueue that entry */
 	temp_y[flow_head] = y;
 	temp_x[flow_head] = x;
 
 	/* Advance the queue */
-	if (++flow_head == TEMP_MAX) flow_head = 0;
+	if (++flow_head == TEMP_MAX)
+		flow_head = 0;
 
 	/* Hack -- notice overflow by forgetting new entry */
-	if (flow_head == flow_tail) flow_head = old_head;
+	if (flow_head == flow_tail)
+		flow_head = old_head;
 }
 
 #endif /* MONSTER_FLOW */
@@ -3334,10 +3528,12 @@ void update_flow(void)
 	int x, y, d;
 
 	/* Hack -- disabled */
-	if (!flow_by_sound) return;
+	if (!flow_by_sound)
+		return;
 
 	/* Paranoia -- make sure the array is empty */
-	if (temp_n) return;
+	if (temp_n)
+		return;
 
 	/* Cycle the old entries (once per 128 updates) */
 	if (flow_n == 255)
@@ -3374,13 +3570,15 @@ void update_flow(void)
 		x = temp_x[flow_tail];
 
 		/* Forget that entry */
-		if (++flow_tail == TEMP_MAX) flow_tail = 0;
+		if (++flow_tail == TEMP_MAX)
+			flow_tail = 0;
 
 		/* Add the "children" */
 		for (d = 0; d < 8; d++)
 		{
 			/* Add that child if "legal" */
-			update_flow_aux(y+ddy_ddd[d], x+ddx_ddd[d], cave[y][x].cost+1);
+			update_flow_aux(y + ddy_ddd[d], x + ddx_ddd[d],
+				cave[y][x].cost + 1);
 		}
 	}
 
@@ -3398,10 +3596,21 @@ void update_flow(void)
  */
 void map_area(void)
 {
-	int             i, x, y, y1, y2, x1, x2;
+	int i, x, y, y1, y2, x1, x2;
 
-	cave_type       *c_ptr;
+	cave_type *c_ptr;
 
+#if 1 /* TNB */
+
+#define MAP_RANGE 40
+
+	/* Pick an area to map */
+	y1 = py - MAP_RANGE;
+	y2 = py + MAP_RANGE;
+	x1 = px - MAP_RANGE;
+	x2 = px + MAP_RANGE;
+
+#else /* TNB */
 
 	/* Pick an area to map */
 	y1 = panel_row_min - randint(10);
@@ -3409,11 +3618,17 @@ void map_area(void)
 	x1 = panel_col_min - randint(20);
 	x2 = panel_col_max + randint(20);
 
+#endif /* TNB */
+
 	/* Speed -- shrink to fit legal bounds */
-	if (y1 < 1) y1 = 1;
-	if (y2 > cur_hgt - 2) y2 = cur_hgt - 2;
-	if (x1 < 1) x1 = 1;
-	if (x2 > cur_wid - 2) x2 = cur_wid - 2;
+	if (y1 < 1)
+		y1 = 1;
+	if (y2 > cur_hgt - 2)
+		y2 = cur_hgt - 2;
+	if (x1 < 1)
+		x1 = 1;
+	if (x2 > cur_wid - 2)
+		x2 = cur_wid - 2;
 
 	/* Scan that area */
 	for (y = y1; y <= y2; y++)
@@ -3423,10 +3638,10 @@ void map_area(void)
 			c_ptr = &cave[y][x];
 
 			/* All non-walls are "checked" */
-			if ((c_ptr->feat < FEAT_SECRET) ||
-			    (c_ptr->feat == FEAT_RUBBLE) ||
-			   ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
-			    (c_ptr->feat <= FEAT_TREES)))
+			if ((c_ptr->feat < FEAT_SECRET) || (c_ptr->feat == FEAT_RUBBLE)
+				|| ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
+					(c_ptr->feat <= FEAT_TREES) &&
+					(c_ptr->feat != FEAT_WALL_INVIS)))
 			{
 				/* Memorize normal features */
 				if (c_ptr->feat > FEAT_INVIS)
@@ -3441,7 +3656,8 @@ void map_area(void)
 					c_ptr = &cave[y + ddy_ddd[i]][x + ddx_ddd[i]];
 
 					/* Memorize walls (etc) */
-					if (c_ptr->feat >= FEAT_SECRET)
+					if ((c_ptr->feat >= FEAT_SECRET) &&
+						(c_ptr->feat != FEAT_WALL_INVIS))
 					{
 						/* Memorize the walls */
 						c_ptr->info |= (CAVE_MARK);
@@ -3450,6 +3666,8 @@ void map_area(void)
 			}
 		}
 	}
+
+	p_ptr->update |= (PU_MAP_INFO);	/* TNB */
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
@@ -3480,6 +3698,8 @@ void wiz_lite(void)
 {
 	int i, y, x;
 
+	chg_virtue(V_KNOWLEDGE, 1);
+	chg_virtue(V_ENLIGHTEN, 1);
 
 	/* Memorize objects */
 	for (i = 1; i < o_max; i++)
@@ -3487,55 +3707,71 @@ void wiz_lite(void)
 		object_type *o_ptr = &o_list[i];
 
 		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
+		if (!o_ptr->k_idx)
+			continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held_m_idx)
+			continue;
 
 		/* Memorize */
 		o_ptr->marked = TRUE;
 	}
 
+	/* Detect monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx)
+			continue;
+
+		/* Repair visibility later */
+		repair_monsters = TRUE;
+
+		/* Hack -- Detect monster */
+		m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
+
+		/* Update the monster */
+		update_mon(i, FALSE);
+	}
+
 	/* Scan all normal grids */
-	for (y = 1; y < cur_hgt - 1; y++)
+	for (y = 0; y < cur_hgt; y++)
 	{
 		/* Scan all normal grids */
-		for (x = 1; x < cur_wid - 1; x++)
+		for (x = 0; x < cur_wid; x++)
 		{
 			cave_type *c_ptr = &cave[y][x];
 
-			/* Process all non-walls */
-			if (cave_floor_bold(y, x))
+/* Enlightenment is not light */
+#if 0
+			/* Perma-lite the grid */
+			c_ptr->info |= (CAVE_GLOW);
+#endif
+
+			/* Memorize normal features */
+			if ((c_ptr->feat > FEAT_INVIS) &&
+				(c_ptr->feat != FEAT_WALL_INVIS))
 			{
-				/* Scan all neighbors */
-				for (i = 0; i < 9; i++)
-				{
-					int yy = y + ddy_ddd[i];
-					int xx = x + ddx_ddd[i];
-
-					/* Get the grid */
-					c_ptr = &cave[yy][xx];
-
-					/* Perma-lite the grid */
-					c_ptr->info |= (CAVE_GLOW);
-
-					/* Memorize normal features */
-					if (c_ptr->feat > FEAT_INVIS)
-					{
-						/* Memorize the grid */
-						c_ptr->info |= (CAVE_MARK);
-					}
-
-					/* Normally, memorize floors (see above) */
-					if (view_perma_grids && !view_torch_grids)
-					{
-						/* Memorize the grid */
-						c_ptr->info |= (CAVE_MARK);
-					}
-				}
+				/* Memorize the grid */
+				c_ptr->info |= (CAVE_MARK);
 			}
+
+/* Inconsistent with 'magic mapping' */
+#if 0
+			/* Normally, memorize floors (see above) */
+			if (view_perma_grids && !view_torch_grids)
+			{
+				/* Memorize the grid */
+				c_ptr->info |= (CAVE_MARK);
+			}
+#endif
 		}
 	}
+
+	p_ptr->update |= (PU_MAP_INFO);	/* TNB */
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -3574,14 +3810,18 @@ void wiz_dark(void)
 		object_type *o_ptr = &o_list[i];
 
 		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
+		if (!o_ptr->k_idx)
+			continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held_m_idx)
+			continue;
 
 		/* Forget the object */
 		o_ptr->marked = FALSE;
 	}
+
+	p_ptr->update |= (PU_MAP_INFO);	/* TNB */
 
 	/* Mega-Hack -- Forget the view and lite */
 	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
@@ -3600,12 +3840,91 @@ void wiz_dark(void)
 }
 
 
+#if 1 /* TNB */
+
+/*
+ * Light or Darken the town
+ */
+void town_illuminate(bool daytime)
+{
+	int y, x;
+
+	/* Light up or darken the area */
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			/* Get the cave grid */
+			cave_type *c_ptr = &cave[y][x];
+
+			byte feat = c_ptr->mimic ? c_ptr->mimic :
+				f_info[c_ptr->feat].mimic;
+
+			/* Interesting grids */
+			if (!(g_feat_flag[feat] & FEAT_FLAG_BORING))
+			{
+				/* Illuminate the grid */
+				c_ptr->info |= (CAVE_GLOW);
+
+				/* Memorize the grid */
+				c_ptr->info |= (CAVE_MARK);
+			}
+
+			/* Boring grids (light) */
+			else if (daytime)
+			{
+				/* Assume lit */
+				c_ptr->info |= (CAVE_GLOW);
+
+				/* Hack -- Memorize lit grids if allowed */
+				if (view_perma_grids)
+					c_ptr->info |= (CAVE_MARK);
+			}
+
+			/* Boring grids (dark) */
+			else
+			{
+				/* Darken "boring" features */
+				if (g_feat_flag[feat] & FEAT_FLAG_BORING)
+				{
+					/* Forget the grid */
+					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
+				}
+			}
+		}
+	}
+}
+
+#endif /* 1 -- TNB */
 
 
 
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
  */
+#if 1 /* TNB */
+
+void cave_set_feat(int y, int x, int feat)
+{
+	cave_type *c_ptr = &cave[y][x];
+
+	/* Change the feature */
+	c_ptr->feat = feat;
+
+	angtk_feat_changed(y, x); /* TNB */
+
+	if (character_dungeon)
+	{
+		/* Notice */
+		note_spot(y, x);
+
+		/* Redraw */
+		lite_spot(y, x);
+	}
+}
+
+#else /* TNB */
+
 void cave_set_feat(int y, int x, int feat)
 {
 	cave_type *c_ptr = &cave[y][x];
@@ -3621,6 +3940,7 @@ void cave_set_feat(int y, int x, int feat)
 }
 
 
+#endif /* TNB */
 
 /*
  * Calculate "incremental motion". Used by project() and shoot().
@@ -3646,7 +3966,8 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 	dx = (x2 < x1) ? (x1 - x2) : (x2 - x1);
 
 	/* Paranoia -- Hack -- no motion */
-	if (!dy && !dx) return;
+	if (!dy && !dx)
+		return;
 
 
 	/* Move mostly vertically */
@@ -3689,25 +4010,22 @@ bool projectable(int y1, int x1, int y2, int x2)
 	int y, x;
 
 	int grid_n = 0;
-	u16b grid_g[512];
+	coord grid_g[512];
 
 	/* Check the projection path */
 	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
 
 	/* No grid is ever projectable from itself */
-	if (!grid_n) return (FALSE);
+	if (!grid_n)
+		return (FALSE);
 
 	/* Final grid */
-	y = GRID_Y(grid_g[grid_n - 1]);
-	x = GRID_X(grid_g[grid_n - 1]);
-
-#if 0
-	/* May not end in a wall grid */
-	if (!cave_floor_bold(y, x)) return (FALSE);
-#endif
+	y = grid_g[grid_n - 1].y;
+	x = grid_g[grid_n - 1].x;
 
 	/* May not end in an unrequested grid */
-	if ((y != y2) || (x != x2)) return (FALSE);
+	if ((y != y2) || (x != x2))
+		return (FALSE);
 
 	/* Assume okay */
 	return (TRUE);
@@ -3740,13 +4058,16 @@ void scatter(int *yp, int *xp, int y, int x, int d, int m)
 		nx = rand_spread(x, d);
 
 		/* Ignore annoying locations */
-		if (!in_bounds(ny, nx)) continue;
+		if (!in_bounds(ny, nx))
+			continue;
 
 		/* Ignore "excessively distant" locations */
-		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
+		if ((d > 1) && (distance(y, x, ny, nx) > d))
+			continue;
 
 		/* Require "line of sight" */
-		if (los(y, x, ny, nx)) break;
+		if (los(y, x, ny, nx))
+			break;
 	}
 
 	/* Save the location */
@@ -3842,8 +4163,11 @@ void disturb(int stop_search, int unused_flag)
 		/* Cancel */
 		running = 0;
 
+#if 0 /* TNB */
 		/* Check for new panel if appropriate */
-		if (center_player && avoid_center) verify_panel();
+		if (center_player && avoid_center)
+			verify_panel();
+#endif /* TNB */
 
 		/* Calculate torch radius */
 		p_ptr->update |= (PU_TORCH);
@@ -3863,5 +4187,6 @@ void disturb(int stop_search, int unused_flag)
 	}
 
 	/* Flush the input if requested */
-	if (flush_disturb) flush();
+	if (flush_disturb)
+		flush();
 }
