@@ -1569,11 +1569,6 @@ bool detect_objects_gold(void)
 		y = o_ptr->iy;
 		x = o_ptr->ix;
 
-		/* Only detect nearby objects */
-#if 0
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
-
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect "gold" objects */
@@ -1630,11 +1625,6 @@ bool detect_objects_normal(void)
 		/* Location */
 		y = o_ptr->iy;
 		x = o_ptr->ix;
-
-		/* Only detect nearby objects */
-#if 0
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -1698,11 +1688,6 @@ bool detect_objects_magic(void)
 		/* Location */
 		y = o_ptr->iy;
 		x = o_ptr->ix;
-
-		/* Only detect nearby objects */
-#if 0
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -1774,11 +1759,6 @@ bool detect_monsters_normal(void)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
-#if 0
-		/* Only detect nearby monsters */
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
-
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect all non-invisible monsters */
@@ -1831,10 +1811,6 @@ bool detect_monsters_invis(void)
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-#if 0
-		/* Only detect nearby monsters */
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -1896,11 +1872,6 @@ bool detect_monsters_evil(void)
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-
-#if 0
-		/* Only detect nearby monsters */
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -1967,11 +1938,6 @@ bool detect_monsters_string(cptr Match)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
-#if 0
-		/* Only detect nearby monsters */
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
-
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect monsters with the same symbol */
@@ -2032,11 +1998,6 @@ bool detect_monsters_xxx(u32b match_flag)
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-
-#if 0
-		/* Only detect nearby monsters */
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -4345,11 +4306,6 @@ bool detect_monsters_nonliving(void)
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-
-		/* Only detect nearby monsters */
-#if 0
-		if (!panel_contains(y, x)) continue;
-#endif /* 0 */
 
 		/* Only detect monsters in range */
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
