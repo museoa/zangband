@@ -1973,13 +1973,13 @@ bool borg_crush_hole(void)
 
 	/* Do not destroy items unless we need the space */
 	if (!borg_items[INVEN_PACK - 1].iqty) return (FALSE);
-
+#if 0
 	/* No crush if even slightly dangerous */
 	if (borg_danger(c_y, c_x, 1, TRUE) > borg_skill[BI_CURHP] / 10 &&
 		(borg_skill[BI_CURHP] != borg_skill[BI_MAXHP] ||
 		 borg_danger(c_y, c_x, 1, TRUE) > (borg_skill[BI_CURHP] * 2) / 3))
 		return (FALSE);
-
+#endif /* 0 */
 	/* Scan the inventory */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
