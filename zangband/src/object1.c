@@ -1579,6 +1579,20 @@ bool item_tester_hook_melee_weapon(object_type *o_ptr)
 	return (FALSE);
 }
 
+/*
+ * Hook to specify "non-sword melee"
+ */
+bool item_tester_hook_nonsword(object_type *o_ptr)
+{
+	if ((o_ptr->tval == TV_HAFTED) || (o_ptr->tval == TV_POLEARM))
+	{
+		return (TRUE);
+	}
+
+	return (FALSE);
+}
+
+
 
 /*
  * Hook to specify "ammo"
@@ -1641,6 +1655,81 @@ bool item_tester_hook_armour(object_type *o_ptr)
 
 	return (FALSE);
 }
+
+/*
+ * Hook to specify "soft armour"
+ */
+bool item_tester_hook_soft_armour(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SOFT_ARMOR:
+		case TV_CLOAK:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+/*
+ * Hook to specify "hard armour"
+ */
+bool item_tester_hook_hard_armour(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_DRAG_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_SHIELD:
+		case TV_CROWN:
+		case TV_HELM:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Hook to specify "helm or crown"
+ */
+bool item_tester_hook_helm(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_CROWN:
+		case TV_HELM:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+/*
+ * Hook to specify "pure hard armour"
+ */
+bool item_tester_hook_pure_hard_armour(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_DRAG_ARMOR:
+		case TV_HARD_ARMOR:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
 
 
 /*

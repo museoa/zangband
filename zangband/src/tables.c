@@ -6899,6 +6899,27 @@ field_action f_action[] =
 	
 	/* Fletcher store */
 	{field_action_isfletcher_tester, "field_action_isfletcher_tester"},
+	
+	/* Swordsman */
+	{field_action_issword_tester, "field_action_issword_tester"},
+	
+	/* Axeman */
+	{field_action_isnonsword_tester, "field_action_isnonsword_tester"},
+
+	/* Shieldsman */
+	{field_action_isshield_tester, "field_action_isshield_tester"},
+	
+	/* Clothes store */
+	{field_action_isclothes_tester, "field_action_isclothes_tester"},
+	
+	/* Hard Armour store */
+	{field_action_ishardarmour_tester, "field_action_ishardarmour_tester"},
+	
+	/* Pure Hard armour store */
+	{field_action_isphardarmour_tester, "field_action_isphardarmour_tester"},
+	
+	/* Helms maker */
+	{field_action_ishelm_tester, "field_action_ishelm_tester"},
 
 	/* Done */
 	{NULL, NULL}

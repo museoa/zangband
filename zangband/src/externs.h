@@ -639,9 +639,14 @@ extern s16b inven_takeoff(int item, int amt);
 extern void inven_drop(int item, int amt);
 extern bool item_tester_hook_weapon(object_type *o_ptr);
 extern bool item_tester_hook_melee_weapon(object_type *o_ptr);
+extern bool item_tester_hook_nonsword(object_type *o_ptr);
 extern bool item_tester_hook_ammo(object_type *o_ptr);
 extern bool item_tester_hook_fletcher(object_type *o_ptr);
 extern bool item_tester_hook_armour(object_type *o_ptr);
+extern bool item_tester_hook_soft_armour(object_type *o_ptr);
+extern bool item_tester_hook_hard_armour(object_type *o_ptr);
+extern bool item_tester_hook_helm(object_type *o_ptr);
+extern bool item_tester_hook_pure_hard_armour(object_type *o_ptr);
 extern bool item_tester_hook_weapon_armour(object_type *o_ptr);
 extern bool item_tester_hook_wear(object_type *o_ptr);
 extern bool item_tester_hook_recharge(object_type *o_ptr);
@@ -1223,10 +1228,13 @@ extern void field_action_isfood_tester(s16b *field_ptr, void *input);
 extern void field_action_isrecharge_tester(s16b *field_ptr, void *input);
 extern void field_action_iswield_tester(s16b *field_ptr, void *input);
 extern void field_action_isfletcher_tester(s16b *field_ptr, void *input);
-
-
-
-
+extern void field_action_issword_tester(s16b *field_ptr, void *input);
+extern void field_action_isnonsword_tester(s16b *field_ptr, void *input);
+extern void field_action_isshield_tester(s16b *field_ptr, void *input);
+extern void field_action_isclothes_tester(s16b *field_ptr, void *input);
+extern void field_action_ishardarmour_tester(s16b *field_ptr, void *input);
+extern void field_action_isphardarmour_tester(s16b *field_ptr, void *input);
+extern void field_action_ishelm_tester(s16b *field_ptr, void *input);
 
 
 /*

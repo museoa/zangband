@@ -3558,84 +3558,6 @@ void field_action_weaponmaster1(s16b *field_ptr, void *input)
 }
 
 /*
- * Recharge1
- */
-void field_action_recharge1(s16b *field_ptr, void *input)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
-	int factor = *((int*) input);
-	char tmp_str[80];
-
-	sprintf(tmp_str, " R) Recharge Items");
-	c_put_str(TERM_YELLOW, tmp_str, 19, 0);
-	sprintf(tmp_str, " I) Identify Items (%dgp)",
-	f_ptr->data[2] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-}
-
-
-/*
- * Weaponplus1
- */
-void field_action_weaponplus1(s16b *field_ptr, void *input)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
-	int factor = *((int*) input);
-	char tmp_str[80];
-
-	sprintf(tmp_str, " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-}
-
-/*
- * Armourplus1
- */
-void field_action_armourplus1(s16b *field_ptr, void *input)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
-	int factor = *((int*) input);
-	char tmp_str[80];
-
-	sprintf(tmp_str, " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-}
-
-/*
- * Mutate1
- */
-void field_action_mutate1(s16b *field_ptr, void *input)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
-	int factor = *((int*) input);
-	char tmp_str[80];
-
-	sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
-		 f_ptr->data[1] * factor * (count_mutations() + 1));
-	c_put_str(TERM_YELLOW, tmp_str, 19, 30);
-}
-
-
-/*
- * Buymap1
- */
-void field_action_buymap1(s16b *field_ptr, void *input)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
-	int factor = *((int*) input);
-	char tmp_str[80];
-
-	sprintf(tmp_str, " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-}
-
-
-
-/*
  * Weaponmaster2
  */
 void field_action_weaponmaster2(s16b *field_ptr, void *input)
@@ -3666,6 +3588,23 @@ void field_action_weaponmaster2(s16b *field_ptr, void *input)
 	}
 }
 
+
+/*
+ * Recharge1
+ */
+void field_action_recharge1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " R) Recharge Items");
+	c_put_str(TERM_YELLOW, tmp_str, 19, 0);
+	sprintf(tmp_str, " I) Identify Items (%dgp)",
+	f_ptr->data[2] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
 
 /*
  * Recharge2
@@ -3713,6 +3652,20 @@ void field_action_recharge2(s16b *field_ptr, void *input)
 
 
 /*
+ * Weaponplus1
+ */
+void field_action_weaponplus1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
  * Weaponplus2
  */
 void field_action_weaponplus2(s16b *field_ptr, void *input)
@@ -3738,6 +3691,20 @@ void field_action_weaponplus2(s16b *field_ptr, void *input)
 
 
 /*
+ * Armourplus1
+ */
+void field_action_armourplus1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
  * Armourplus2
  */
 void field_action_armourplus2(s16b *field_ptr, void *input)
@@ -3761,6 +3728,21 @@ void field_action_armourplus2(s16b *field_ptr, void *input)
 	}
 }
 
+
+/*
+ * Mutate1
+ */
+void field_action_mutate1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
+		 f_ptr->data[1] * factor * (count_mutations() + 1));
+	c_put_str(TERM_YELLOW, tmp_str, 19, 30);
+}
 
 /*
  * Mutate2
@@ -3808,6 +3790,20 @@ void field_action_mutate2(s16b *field_ptr, void *input)
 	}
 }
 
+
+/*
+ * Buymap1
+ */
+void field_action_buymap1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
 
 /*
  * Buymap2
@@ -4031,5 +4027,105 @@ void field_action_isfletcher_tester(s16b *field_ptr, void *input)
 		
 	f_o_ptr->result = item_tester_hook_fletcher(f_o_ptr->o_ptr);
 }
+
+
+/*
+ * Swordsman will buy/sell
+ */
+void field_action_issword_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	/* Pick swords */
+	item_tester_tval = TV_SWORD;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+/*
+ * Axeman will buy/sell
+ */
+void field_action_isnonsword_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_nonsword(f_o_ptr->o_ptr);
+}
+
+/*
+ * Shieldsman will buy/sell
+ */
+void field_action_isshield_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	/* Pick swords */
+	item_tester_tval = TV_SHIELD;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+/*
+ * Clothesstore will buy/sell
+ */
+void field_action_isclothes_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_soft_armour(f_o_ptr->o_ptr);
+}
+
+/*
+ * Heavy Armour store will buy/sell
+ */
+void field_action_ishardarmour_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_hard_armour(f_o_ptr->o_ptr);
+}
+
+/*
+ * Pure Heavy Armour store will buy/sell
+ */
+void field_action_isphardarmour_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_pure_hard_armour(f_o_ptr->o_ptr);
+}
+
+/*
+ * Helmsman will buy/sell
+ */
+void field_action_ishelm_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_helm(f_o_ptr->o_ptr);
+}
+
+
 
 
