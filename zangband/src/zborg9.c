@@ -510,7 +510,8 @@ static bool borg_think(void)
  */
 static cptr suffix_pain[] =
 {
-	" is unharmed." " barely notices.",
+	" is unharmed.",
+	" barely notices.",
 	" flinches.",
 	" squelches.",
 	" quivers in pain.",
