@@ -3934,19 +3934,12 @@
 
 /*
  * Determine if a "legal" grid is a "floor" grid
- *
- * Line 1 -- forbid doors, rubble, seams, walls
- *
- * Note that the terrain features are split by a one bit test
- * into those features which block line of sight and those that
- * do not, allowing an extremely fast single bit check below.
- *
- * Add in the fact that some new terrain (water & lava) do NOT block sight
- * -KMW-
  */
 #define cave_floor_grid(C) \
     (!(f_info[(C)->feat].flags & FF_BLOCK))
-
+/*
+ * Determine if a "legal" grid is a "wall" grid
+ */
 #define cave_wall_grid(C) \
     (f_info[(C)->feat].flags & FF_BLOCK)
 	
