@@ -26,14 +26,14 @@ bindir = @bindir@
 datadir = @datadir@
 
 DESTDIR = $(datadir)/games/zangband/
-GAMEGROUP = games
+GAMEGROUP = @GAMEGROUP@
 
 CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)lib/\"
 
 #
-# Edit me to turn on and off things like tcl/tk detection
+# Rerun configure with previous command line
 #
-CONFIGURE = ./configure
+CONFIGURE = ./config.status --recheck && ./config.status
 
 
 cygwin = @cygwin@
@@ -96,8 +96,10 @@ installbase: dirs zangband
 
 install: installbase
 	cp zangband $(bindir)/zangband
-	chgrp $(GAMEGROUP) $(bindir)/zangband
-	chmod g+s $(bindir)/zangband
+	if [ -n "$(GAMEGROUP)" ] ; then \
+		chgrp $(GAMEGROUP) $(bindir)/zangband; \
+		chmod g+s $(bindir)/zangband; \
+	fi
 
 uninstall:
 	-rm -f $(bindir)/zangband

@@ -24,10 +24,10 @@ GAMEGROUP="games"
 
 AC_ARG_WITH(setgid,
 [  --with-setgid=NAME      setgid usage: install angband as group NAME],
-[case "${withval}" in
-  no) GAMEGROUP="games";;
-  yes) AC_MSG_ERROR(missing argument for --with-setgid);;
-  *) GAMEGROUP="$withval";;
+[case "$withval" in
+  no)  GAMEGROUP= ;;
+  yes) GAMEGROUP="games" ;;
+  *)   GAMEGROUP="$withval" ;;
 esac])
 AC_SUBST(GAMEGROUP)
 

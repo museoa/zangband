@@ -110,7 +110,7 @@ src/autoconf.h:
 ## Low-level Headers
 ##
 
-HDRS := makefile $(addprefix src/,\
+HDRS := $(addprefix src/,\
 	autoconf.h h-basic.h h-define.h h-type.h h-system.h h-config.h)
 
 ##
