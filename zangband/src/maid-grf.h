@@ -44,9 +44,9 @@
 		{ \
 			int _map_i, _map_j; \
 			\
-			if (!map_cache_x[_map_count]) continue; \
+			if (map_cache_x[_map_count] == -1) continue; \
 			\
-			if (!map_grid[map_cache_y[_map_count]][map_cache_x[_map_count]])\
+			if (map_grid[map_cache_y[_map_count]][map_cache_x[_map_count]] == -1)\
 				 continue; \
 			\
 			for (_map_i = 0; _map_i < WILD_BLOCK_SIZE; _map_i++) \
