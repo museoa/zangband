@@ -1423,7 +1423,18 @@ static int borg_guess_race_name(cptr who)
 
 	char partial[160];
 
-	int len = strlen(who);
+	int suflen = 0, len = strlen(who);
+
+
+	/* If the borg is hallucinating */
+	if (bp_ptr->status.image)
+	{
+		/* Say so */
+		borg_note("# Seeing a monster while hallucinating (%s)", who);
+
+		/* The borg can't recognize monster when it is seeing funny things */
+		return (0);
+	}
 
 	/* Start the search */
 	m = 0;
@@ -1455,38 +1466,63 @@ static int borg_guess_race_name(cptr who)
 		return (borg_unique_what[m]);
 	}
 
-
 	/* Assume player ghost */
 	if (!prefix(who, "The "))
 	{
-		/* Message */
-		if (bp_ptr->status.image)
-		{
-			borg_note("# Seeing a monster while hallucinating (%s)", who);
-		}
-		else
-		{
-			borg_note("# Assuming unknown (%s)", who);
-		}
+		/* What sort of monster is this? */
+		borg_note("# Assuming unknown (%s)", who);
 
 		/* Oops */
 		return (0);
 	}
 
 	/* Hack -- handle "offscreen" */
-	if (suffix(who, " (offscreen)"))
+	if (suffix(who, " (offscreen)")) suflen = 12;
+
+	/* Handle mutations */
+	if (bp_ptr->muta2 & MUT2_SCOR_TAIL &&
+		suffix(who, " with your tail")) suflen = 16;
+	else if (bp_ptr->muta2 & MUT2_HORNS &&
+		suffix(who, " with your horns")) suflen = 17;
+	else if (bp_ptr->muta2 & MUT2_BEAK &&
+		suffix(who, " with your beak")) suflen = 16;
+	else if (bp_ptr->muta2 & MUT2_TRUNK &&
+		suffix(who, " with your trunk")) suflen = 17;
+	else if (bp_ptr->muta2 & MUT2_TENTACLES &&
+		suffix(who, " with your tentacles")) suflen = 21;
+
+	/* Handle monk suffices */
+	if (borg_class == CLASS_MONK)
+	{
+		if (suffix(who, " with your knee"))
+		{
+			if (suffix(who, " in the groin with your knee"))
+				suflen = 28;
+			else
+				suflen = 15;
+		}
+		else if (suffix(who, " with your elbow")) suflen = 16;
+		else if (suffix(who, " in the ankle")) suflen = 13;
+		else if (suffix(who, " with a Cat's Claw")) suflen = 18;
+		else if (suffix(who, " with a jump kick")) suflen = 17;
+		else if (suffix(who, " with an Eagle's Claw")) suflen = 21;
+		else if (suffix(who, " with a circle kick")) suflen = 19;
+		else if (suffix(who, " with an Iron Fist")) suflen = 18;
+		else if (suffix(who, " with a flying kick")) suflen = 19;
+		else if (suffix(who, " with a Dragon Fist")) suflen = 19;
+		else if (suffix(who, " with a Crushing Blow")) suflen = 21;
+	}
+
+	if (suflen)
 	{
 		/* Remove the suffix */
 		strcpy(partial, who);
-		partial[len - 12] = '\0';
+		partial[len - suflen] = '\0';
 		who = partial;
-
-		/* Message */
-		borg_note("# Handling offscreen monster (%s)", who);
 	}
 
 	/* Skip the prefix */
-	who += 4;
+	who += 4;								   
 
 
 	/* Start the search */
@@ -1542,16 +1578,7 @@ static int borg_guess_race_name(cptr who)
 
 	if (b_i) return (b_i);
 
-
-	/* Message */
-	if (bp_ptr->status.image)
-	{
-		borg_note("# Seeing a monster while hallucinating (%s)", who);
-	}
-	else
-	{
-		borg_note("# Assuming unknown (%s)", who);
-	}
+	borg_oops("# Assuming unknown (%s)", who);
  
 	/* Oops */
 	return (0);
@@ -2603,13 +2630,18 @@ static int borg_add_town_screen(int x, int y)
 	}
 
 	/* Is the borg somewhere in the wilderness? */
-	if (strstr(buf, "Wilderness")) return (-1);
+	if (prefix(buf, "Wilderness")) return (-1);
 
 	/* Is the borg somewhere next to a dungeon? */
-	if (strstr(buf, "Dungeon")) return (-1);
+	if (prefix(buf, "Dungeon")) return (-1);
 
 	/* Is the borg somewhere next to a dungeon with a quest? */
-	if (strstr(buf, "Ruin")) return (-1);
+	if (prefix(buf, "Ruin")) return (-1);
+
+	/* Is this a dungeon? */
+	if (prefix(buf, "Bottom ") ||
+		prefix(buf, "Lev ") ||
+		strstr(buf, "0 ft")) return (-1);
 
 	/* Discard leading spaces */
 	while (buf[count] == ' ') count++;
