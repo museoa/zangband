@@ -3330,11 +3330,14 @@ void calc_bonuses(void)
 			if ((p_ptr->pclass == CLASS_RANGER) &&
 			    (p_ptr->ammo_tval == TV_ARROW))
 			{
-				/* Extra shot at level 20 */
-				if (p_ptr->lev >= 20) p_ptr->num_fire++;
+				/* Extra shot at level 15 */
+				if (p_ptr->lev >= 15) p_ptr->num_fire++;
 
-				/* Extra shot at level 40 */
-				if (p_ptr->lev >= 40) p_ptr->num_fire++;
+				/* Extra shot at level 30 */
+				if (p_ptr->lev >= 30) p_ptr->num_fire++;
+				
+				/* Extra shot at level 45 */
+				if (p_ptr->lev >= 45) p_ptr->num_fire++;
 			}
 
 			/* Hack -- Rangers can use XBows as well */
