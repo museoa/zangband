@@ -2090,6 +2090,45 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			break;
 		}
 
+		/* Drain Life + give it to the player */
+		case GF_NEW_DRAIN:
+		{
+			if (seen) obvious = TRUE;
+
+			if (!monster_living(r_ptr))
+			{
+				if (r_ptr->flags3 & RF3_UNDEAD)
+				{
+					if (seen) r_ptr->r_flags3 |= (RF3_UNDEAD);
+				}
+
+				if (r_ptr->flags3 & (RF3_DEMON))
+				{
+					if (seen) r_ptr->r_flags3 |= (RF3_DEMON);
+				}
+
+				note = " is unaffected!";
+				obvious = FALSE;
+				dam = 0;
+			}
+			else
+			{
+				u16b hp = dam;
+				
+				/* Cannot drain more than monsters life */
+				if (m_ptr->hp < dam) hp = m_ptr->hp;
+				
+				/* Cannot drain more than 100hp at a time */
+				if (hp > 100) hp = 100;
+				
+				/* Give the player the hit points */
+				(void)hp_player(hp);
+			}
+
+			break;
+		}
+		
+		
 		/* Death Ray */
 		case GF_DEATH_RAY:
 		{

@@ -1716,8 +1716,7 @@ bool activate_random_artifact(object_type * o_ptr)
 			if (!get_aim_dir(&dir)) return FALSE;
 			for (dummy = 0; dummy < 3; dummy++)
 			{
-				if (drain_life(dir, 100))
-				hp_player(100);
+				drain_gain_life(dir, 100);
 			}
 			o_ptr->timeout = 400;
 			break;
@@ -1793,8 +1792,7 @@ bool activate_random_artifact(object_type * o_ptr)
 			if (!get_aim_dir(&dir)) return FALSE;
 			for (dummy = 0; dummy < 3; dummy++)
 			{
-				if (drain_life(dir, 200))
-				hp_player(200);
+				drain_gain_life(dir, 200);
 			}
 
 			o_ptr->timeout = 400;

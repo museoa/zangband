@@ -1519,12 +1519,16 @@ static bool cast_death_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		dummy = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
-		if (drain_life(dir, dummy))
+		if (drain_gain_life(dir, dummy))
 		{
+			/* 
+			 * Hack - this only happens when monster is seen to
+			 * be hit.
+			 */
+			
 			chg_virtue(V_SACRIFICE, -1);
 			chg_virtue(V_VITALITY, -1);
 
-			(void)hp_player(dummy);
 			/* Gain nutritional sustenance: 150/hp drained */
 			/* A Food ration gives 5000 food points (by contrast) */
 			/* Don't ever get more than "Full" this way */
@@ -1701,8 +1705,7 @@ static bool cast_death_spell(int spell)
 
 		for (dummy = 0; dummy < 3; dummy++)
 		{
-			if (drain_life(dir, 100))
-				hp_player(100);
+			drain_gain_life(dir, 100);
 		}
 		break;
 	case 21: /* Vampiric Branding */

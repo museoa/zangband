@@ -3688,13 +3688,19 @@ bool lite_line(int dir)
 	return (project_hook(GF_LITE_WEAK, dir, damroll(6, 8), flg));
 }
 
-
+/* Drain life from monster, and do not give it to the player */
 bool drain_life(int dir, int dam)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_DRAIN, dir, dam, flg));
 }
 
+/* Drain life from monster, and give it to the player */
+bool drain_gain_life(int dir, int dam)
+{
+	int flg = PROJECT_STOP | PROJECT_KILL;
+	return (project_hook(GF_NEW_DRAIN, dir, dam, flg));
+}
 
 bool wall_to_mud(int dir)
 {
