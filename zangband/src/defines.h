@@ -257,10 +257,27 @@
 #define BUILD_SCROLL2			87
 #define BUILD_SCROLL3			88
 #define BUILD_SCROLL4			89
+#define BUILD_MAGIC0			90
+#define BUILD_MAGIC1			91
+#define BUILD_MAGIC2			92
+#define BUILD_MAGIC3			93
+#define BUILD_MAGIC4			94
+#define BUILD_BOOK1				95
+#define BUILD_TEMPLE1			96
+#define BUILD_TEMPLE2			97
+#define BUILD_TEMPLE3			98
+#define BUILD_SUPPLIES0			99
+#define BUILD_SUPPLIES1			100
+#define BUILD_BLACK1			101
+#define BUILD_BLACK2			102
+#define BUILD_ALCHEMY1			103
+#define BUILD_ALCHEMY2			104
+#define BUILD_JUNK				105
+#define BUILD_FOOD				106
 
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			90
+#define MAX_CITY_BUILD			107
 
 
 /*
@@ -1230,6 +1247,25 @@
 #define FT_STORE_SCROLL2		0x0076
 #define FT_STORE_SCROLL3		0x0077
 #define FT_STORE_SCROLL4		0x0078
+#define FT_STORE_MAGIC0			0x0079
+#define FT_STORE_MAGIC1			0x007A
+#define FT_STORE_MAGIC2			0x007B
+#define FT_STORE_MAGIC3			0x007C
+#define FT_STORE_MAGIC4			0x007D
+#define FT_STORE_BOOK1			0x007E
+#define FT_STORE_TEMPLE1		0x007F
+#define FT_STORE_TEMPLE2		0x0080
+#define FT_STORE_TEMPLE3		0x0081
+#define FT_STORE_SUPPLIES0		0x0082
+#define FT_STORE_SUPPLIES1		0x0083
+#define FT_STORE_BLACK1			0x0084
+#define FT_STORE_BLACK2			0x0085
+#define FT_STORE_ALCHEMY1		0x0086
+#define FT_STORE_ALCHEMY2		0x0087
+#define FT_STORE_JUNK			0x0088
+#define FT_STORE_FOOD			0x0089
+
+
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
