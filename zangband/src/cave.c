@@ -1927,7 +1927,7 @@ void display_map(int *cy, int *cx)
 
 	byte tp;
 	
-	u16b w_type;
+	u16b w_type, town;
 
 	byte ma[SCREEN_HGT + 2][SCREEN_WID + 2];
 	char mc[SCREEN_HGT + 2][SCREEN_WID + 2];
@@ -2003,7 +2003,22 @@ void display_map(int *cy, int *cx)
 					mc[j + 1][i + 1] = wild_gen_data[w_type].w_char;
 				}
 				
-				/* Add in town / road / rivers later */
+				/* Road / rivers later */
+				
+				
+				/* Hack - draw towns/specials */
+				/* Eventually will get attr,char from town data structure. */
+				
+				town = wild[j + y][i + x].done.town;
+				
+				/* If there is a town... */
+				if(town)
+				{
+					/* Hack make a char /attr */
+					ma[j + 1][i + 1] = TERM_WHITE;
+					mc[j + 1][i + 1] = '0' + town % 10;
+				
+				}
 				
 				/* Finally show position of player */
 				if ((i + x == px / 16) && (j + y == py / 16))
