@@ -1897,7 +1897,7 @@ static field_trap_type trap_num[] =
 	{FT_TRAP_LOSE_XP,		80},
 	{FT_TRAP_DISENCHANT,	35}, 
 	{FT_TRAP_DROP_ITEM,		55},
-	{FT_TRAP_MUTATE,		45},
+	{FT_TRAP_MUTATE,		90},
 	{FT_TRAP_NEW_LIFE,		100},
 	{FT_TRAP_NO_LITE,		0},
 	{FT_TRAP_HUNGER,		0},
