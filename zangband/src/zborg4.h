@@ -48,6 +48,15 @@ extern s32b borg_power_home(void);
 
 
 /*
+ * Macro for the borg_power functions:  This way the borg can count how far (a)
+ * is in a range from (b) to (c)
+ * if a <= b return 0
+ * if a <= c return a - b
+ * if a > c return c - b
+ */
+#define MIN_FLOOR(a,b,c)	(MIN(MAX((a), (b)), (c)) - (b))
+
+/*
  * Initialize this file
  */
 extern void borg_init_4(void);

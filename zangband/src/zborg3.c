@@ -1825,7 +1825,7 @@ bool borg_spell_legal(int realm, int book, int what)
 	borg_magic *as = &borg_magics[realm][book][what];
 
 	/* The borg must be able to "cast" spells this realm */
-	if (bp_ptr->realm1 != realm && bp_ptr->realm2 != realm) return (FALSE);
+	if (!borg_has_realm(realm)) return (FALSE);
 
 	/* Make sure we have this realm book */
 	if (amt_book[realm][book] <= 0) return (FALSE);
@@ -2691,7 +2691,7 @@ static void prepare_book_info(int realm, int book)
 
 
 	/* Can we use spells/prayers? */
-	if (!bp_ptr->realm1) return;
+	if (borg_class == CLASS_WARRIOR) return;
 
 
 	/* Extract spells */
@@ -2796,10 +2796,6 @@ void prepare_race_class_info(void)
 	for (book = 0; book < 4; book++)
 	{
 		prepare_book_info(bp_ptr->realm1, book);
-	}
-
-	for (book = 0; book < 4; book++)
-	{
 		prepare_book_info(bp_ptr->realm2, book);
 	}
 

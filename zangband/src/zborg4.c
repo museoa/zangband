@@ -468,6 +468,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		bp_ptr->flags[0] |= l_ptr->kn_flags[0];
 		bp_ptr->flags[1] |= l_ptr->kn_flags[1];
 		bp_ptr->flags[2] |= l_ptr->kn_flags[2];
+		bp_ptr->flags[3] |= l_ptr->kn_flags[3];
 
 		/* Affect infravision */
 		if (KN_FLAG(l_ptr, TR_INFRA)) bp_ptr->see_infra += l_ptr->pval;
@@ -1977,52 +1978,49 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		case TV_LIFE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE)
+			if (borg_has_realm(REALM_LIFE))
 				amt_book[REALM_LIFE][k_ptr->sval] += number;
 			break;
 		}
 		case TV_SORCERY_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_SORCERY ||
-				bp_ptr->realm2 == REALM_SORCERY)
+			if (borg_has_realm(REALM_SORCERY))
 				amt_book[REALM_SORCERY][k_ptr->sval] += number;
 			break;
 		}
 		case TV_NATURE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_NATURE ||
-				bp_ptr->realm2 == REALM_NATURE)
+			if (borg_has_realm(REALM_NATURE))
 				amt_book[REALM_NATURE][k_ptr->sval] += number;
 			break;
 		}
 		case TV_CHAOS_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_CHAOS || bp_ptr->realm2 == REALM_CHAOS)
+			if (borg_has_realm(REALM_CHAOS))
 				amt_book[REALM_CHAOS][k_ptr->sval] += number;
 			break;
 		}
 		case TV_DEATH_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_DEATH || bp_ptr->realm2 == REALM_DEATH)
+			if (borg_has_realm(REALM_DEATH))
 				amt_book[REALM_DEATH][k_ptr->sval] += number;
 			break;
 		}
 		case TV_TRUMP_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_TRUMP || bp_ptr->realm2 == REALM_TRUMP)
+			if (borg_has_realm(REALM_TRUMP))
 				amt_book[REALM_TRUMP][k_ptr->sval] += number;
 			break;
 		}
 		case TV_ARCANE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_ARCANE ||
-				bp_ptr->realm2 == REALM_ARCANE)
+			if (borg_has_realm(REALM_ARCANE))
 				amt_book[REALM_ARCANE][k_ptr->sval] += number;
 			break;
 		}
@@ -2613,6 +2611,7 @@ static void borg_notice_aux2(void)
 	 * Correct the high and low calorie foods for the correct
 	 * races.
 	 */
+
 	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
 		bp_ptr->food += amt_food_hical * 5;
@@ -3597,11 +3596,7 @@ static void borg_notice_home_spells(void)
 	/* Handle recall */
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
-		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		((bp_ptr->depth == 100) &&
-		 (borg_spell_legal(REALM_LIFE, 3, 6) ||
-		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
-		  borg_spell_legal(REALM_TRUMP, 1, 6))))
+		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40))
 	{
 		num_recall += 1000;
 	}
@@ -3824,7 +3819,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_LIFE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE)
+			if (borg_has_realm(REALM_LIFE))
 				num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3833,8 +3828,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_SORCERY_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_SORCERY ||
-				bp_ptr->realm2 == REALM_SORCERY)
+			if (borg_has_realm(REALM_SORCERY))
 				num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3843,8 +3837,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_NATURE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_NATURE ||
-				bp_ptr->realm2 == REALM_NATURE)
+			if (borg_has_realm(REALM_NATURE))
 				num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3852,7 +3845,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_CHAOS_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_CHAOS || bp_ptr->realm2 == REALM_CHAOS)
+			if (borg_has_realm(REALM_CHAOS))
 				num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3860,7 +3853,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_DEATH_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_DEATH || bp_ptr->realm2 == REALM_DEATH)
+			if (borg_has_realm(REALM_DEATH))
 				num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3868,7 +3861,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_TRUMP_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_TRUMP || bp_ptr->realm2 == REALM_TRUMP)
+			if (borg_has_realm(REALM_TRUMP))
 				num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3876,8 +3869,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_ARCANE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_ARCANE ||
-				bp_ptr->realm2 == REALM_ARCANE)
+			if (borg_has_realm(REALM_ARCANE))
 				num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -4491,12 +4483,10 @@ static s32b borg_power_home_aux1(void)
 
 /*
  * Helper function -- calculate power of items in the home
- *
- * The wierd calculations help spread out the purchase order
  */
 static s32b borg_power_home_aux2(void)
 {
-	int k, book = 0, realm = 0;
+	int book = 0, realm = 0;
 
 	s32b value = 0L;
 
@@ -4504,82 +4494,107 @@ static s32b borg_power_home_aux2(void)
 	/*** Basic abilities ***/
 
 	/* Collect food */
-	for (k = 0; k < 50 && k < num_food; k++) value += 8000L - k * 10L;
+	value += 8000 * MIN(num_food, 20);
+	value += 800 * MIN_FLOOR(num_food, 20, 50);
+	value += 80 * MIN_FLOOR(num_food, 50, 99);
 
 	/* Collect ident */
-	for (k = 0; k < 50 && k < num_ident; k++) value += 2000L - k * 10L;
+	value += 2000 * MIN(num_ident, 20);
+	value += 200 * MIN_FLOOR(num_ident, 20, 50);
+	value += 20 * MIN_FLOOR(num_ident, 50, 99);
 
 	/* Collect *id*ent */
-	for (k = 0; k < 50 && k < num_star_ident; k++) value += 5000L - k * 10L;
+	value += 5000 * MIN(num_star_ident, 10);
+	value += 500 * MIN_FLOOR(num_ident, 10, 50);
+	value += 50 * MIN_FLOOR(num_ident, 50, 99);
 
 	/* Collect *remove curse* */
-	for (k = 0; k < 50 && k < num_star_remove_curse; k++) value += 500L - k * 10L;
+	value += 5000 * MIN(num_star_remove_curse, 5);
+	value += 50 * MIN_FLOOR(num_star_remove_curse, 5, 99);
 
 	/* apw Collect pfe */
-	for (k = 0; k < 100 && k < num_pfe; k++) value += 5000L - k * 10L;
+	value += 2000 * MIN(num_pfe, 5);
+	value += 200 * MIN_FLOOR(num_pfe, 5, 99);
 
 	/* apw Collect glyphs */
-	for (k = 0; k < 100 && k < num_glyph; k++) value += 5000L - k * 10L;
+	value += 5000 * MIN(num_glyph, 20);
+	value += 500 * MIN_FLOOR(num_glyph, 20, 99);
 
-	/* Reward Genocide scrolls. Just scrolls, mainly used for Morgoth */
-	for (k = 0; k < 100 && k < num_genocide; k++) value += 5000L - k * 10L;
+	/* Reward Genocide scrolls. Just scrolls, mainly used for the Serpent */
+	value += 5000 * MIN(num_genocide, 20);
+	value += 500 * MIN_FLOOR(num_genocide, 20, 99);
 
 	/* Reward Mass Genocide scrolls. Just scrolls, mainly used for Morgoth */
-	for (k = 0; k < 100 && k < num_mass_genocide; k++) value += 5000L - k * 10L;
+	value += 5000 * MIN(num_mass_genocide, 20);
+	value += 500 * MIN_FLOOR(num_mass_genocide, 20, 99);
 
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		k = 0;
-		for (; k < 99 && k < num_pot_rheat; k++) value += 1000L - k * 10L;
-		for (; k < 99 && k < num_pot_rcold; k++) value += 1000L - k * 10L;
+		value += 1000 * MIN(num_pot_rheat, 20);
+		value += 100 * MIN_FLOOR(num_pot_rheat, 20, 99);
+		value += 1000 * MIN(num_pot_rcold, 20);
+		value += 100 * MIN_FLOOR(num_pot_rcold, 20, 99);
 	}
 
 	/* Collect recall */
-	for (k = 0; k < 50 && k < num_recall; k++) value += 3000L - k * 10L;
+	value += 3000 * MIN(num_recall, 20);
+	value += 300 * MIN_FLOOR(num_recall, 20, 99);
 
 	/* Collect escape */
-	for (k = 0; k < 50 && k < num_escape; k++) value += 2000L - k * 10L;
+	value += 3000 * MIN(num_escape, 20);
+	value += 300 * MIN_FLOOR(num_escape, 20, 99);
 
 	/* Collect teleport */
-	for (k = 0; k < 50 && k < num_teleport; k++) value += 400L - k * 8L;
+	value += 1000 * MIN(num_teleport, 20);
+	value += 100 * MIN_FLOOR(num_teleport, 20, 99);
 
 	/* Collect teleport level scrolls */
-	for (k = 0; k < 99 && k < num_teleport_level; k++) value += 1000L - k * 8L;
+	value += 1000 * MIN(num_teleport_level, 20);
+	value += 100 * MIN_FLOOR(num_teleport_level, 20, 99);
 
 	/* Collect Speed */
-	for (k = 0; k < 99 && k < num_speed; k++) value += 5000L - k * 10L;
+	value += 5000 * MIN(num_speed, 20);
+	value += 500 * MIN_FLOOR(num_speed, 20, 99);
 
-	/* Collect Invuln Potions */
-	for (k = 0; k < 99 && k < num_goi_pot; k++) value += 5000L - k * 10L;
+	/* Collect Invuln Potions (As if you'd ever find 99 potions) */
+	value += 5000 * MIN(num_goi_pot, 99);
 
-	/* Collect heal/mana/ */
-	for (k = 0; k < 99 && k < num_heal; k++) value += 3000L - k * 8L;
-	for (k = 0; k < 99 && k < num_ez_heal; k++) value += 8000L - k * 8L;
-	if (bp_ptr->msp > 1)
+	/* Collect heal */
+	value += 3000 * MIN(num_heal, 20);
+	value += 300 * MIN_FLOOR(num_heal, 20, 99);
+	value += 8000 * MIN(num_ez_heal, 20);
+	value += 800 * MIN_FLOOR(num_ez_heal, 20, 99);
+
+	/* Potion of Mana */
+	if (borg_class != CLASS_WARRIOR)
 	{
-		for (k = 0; k < 99 && k < num_mana; k++) value += 2000L - k * 8L;
+		value += 2000 * MIN(num_mana, 20);
+		value += 200 * MIN_FLOOR(num_mana, 20, 99);
 	}
 
-	/*** Healing ***/
-
 	/* Collect cure critical */
-	for (k = 0; k < 99 && k < num_cure_critical; k++) value += 1500L - k * 10L;
+	value += 3500 * MIN(num_cure_critical, 50);
+	value += 350 * MIN_FLOOR(num_cure_critical, 50, 99);
 
 	/* Collect cure serious - but they aren't as good */
-	for (k = 0; k < 99 && k < num_cure_serious; k++) value += 750L - k * 2L;
+	value += 750 * MIN(num_cure_serious, 20);
+	value += 75 * MIN_FLOOR(num_cure_serious, 20, 99);
 
 	/*** Various ***/
 
 	/* Fixing Stats */
 	if (bp_ptr->lev == 50) value += 500L * num_fix_exp;
 	if (bp_ptr->lev > 35)
-		for (k = 0; k < 70 && k < num_fix_exp; k++) value += 5000L - k * 10L;
+	{
+		value += 5000 * MIN(num_fix_exp, 20);
+		value += 500 * MIN_FLOOR(num_fix_exp, 20, 99);
+	}
 	else
-		for (k = 0; k < 5 && k < num_fix_exp; k++) value += 5000L - k * 10L;
+		value += 5000 * MIN(num_fix_exp, 5);
 
 	/* Keep shrooms in the house */
-	for (k = 0; k < 99 && k < num_fix_stat[6]; k++) value += 5000L;
+	value += 5000 * MIN(num_fix_stat[6], 99);
 
 	/*** Hack -- books ***/
 
@@ -4587,28 +4602,20 @@ static s32b borg_power_home_aux2(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* Only my realms */
-		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
+		if (!borg_has_realm(realm)) continue;
 
 		/* Scan Books */
-		for (book = 0; book < 4; book++)
+		for (book = 0; book < 2; book++)
 		{
 			if (bp_ptr->lev > 35)
 			{
 				/* Collect up to 20 copies of each normal book */
-				for (k = 0; k < 20 && k < num_book[realm][book]; k++)
-				{
-					/* Hack -- only stockpile useful books */
-					if (num_book[realm][book]) value += 5000L - k * 10L;
-				}
+				value += 5000 * MIN(num_book[realm][book], 20);
 			}
 			else
 			{
 				/* Collect up to 5 copies of each normal book */
-				for (k = 0; k < 5 && k < num_book[realm][book]; k++)
-				{
-					/* Hack -- only stockpile useful books */
-					if (num_book[realm][book]) value += 5000L - k * 10L;
-				}
+				value += 5000 * MIN(num_book[realm][book], 5);
 			}
 		}
 	}

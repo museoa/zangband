@@ -37,6 +37,9 @@
 #define borg_obj_is_ego_art(T) \
 	((T)->xtra_name && (*(T)->xtra_name))
 
+/* Macro to determine if the borg can use a certain realm */
+#define borg_has_realm(realm)	((bp_ptr->realm1 == (realm)) ? TRUE : \
+								(bp_ptr->realm2 == (realm)) ? TRUE : FALSE)
 
 /*
  * Spell method values

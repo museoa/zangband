@@ -3458,7 +3458,8 @@ static s32b borg_power_aux3(void)
 	if (FLAG(bp_ptr, TR_TELEPORT)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_TY_CURSE)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_NO_TELE)) value -= 1000000L;
-	if (FLAG(bp_ptr, TR_NO_MAGIC) && bp_ptr->realm1) value -= 1000000L;
+	if (FLAG(bp_ptr, TR_NO_MAGIC) &&
+		borg_class != CLASS_WARRIOR) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_HURT_LITE) &&
 		!FLAG(bp_ptr, TR_RES_LITE)) value -= 1000000L;
 
@@ -3543,7 +3544,7 @@ static s32b borg_power_aux3(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* My realm only */
-		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
+		if (!borg_has_realm(realm)) continue;
 
 		for (book = 0; book < 4; book++)
 		{
@@ -3627,7 +3628,7 @@ static s32b borg_power_aux3(void)
  */
 static s32b borg_power_aux4(void)
 {
-	int k, book, realm;
+	int book, realm;
 
 	s32b value = 0L;
 
@@ -3638,32 +3639,33 @@ static s32b borg_power_aux4(void)
 	 * if you have a perma light source you get all these points,
 	 * except for a Lantern of Everburning, that still needs fuel
 	 */
-	for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 6000L;
-	for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 600L;
-
+	value += 6000 * MIN(bp_ptr->able.fuel, 5);
+	value += 600 * MIN_FLOOR(bp_ptr->able.fuel, 5, 10);
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
 	if ((bp_ptr->status.hungry || bp_ptr->status.weak) &&
 		bp_ptr->food) value += 100000;
 
-	for (k = 0; (k < 25) && (k < bp_ptr->food); k++) value += 10000L;
-	for (; (k < 35) && (k < bp_ptr->food); k++) value += 200L;
-	
+	value += 10000 * MIN(bp_ptr->food, 25);
+	value += 200 * MIN_FLOOR(bp_ptr->food, 25, 35);
+
+	/* If you burn more food */
 	if ((FLAG(bp_ptr, TR_REGEN)) && !(FLAG(bp_ptr, TR_SLOW_DIGEST)))
 	{
-		for (k = 0; (k < 10) && (k < bp_ptr->food); k++) value += 500L;
+		/* take more food */
+		value += 200 * MIN_FLOOR(bp_ptr->food, 35, 45);
 	}
 
-	/* if you can digest food */
+	/* If you can digest food */
 	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
 		/* Prefer to buy HiCalorie foods over LowCalorie */
-		if (amt_food_hical <= 5) value += amt_food_hical * 50;
+		value += 50 * MIN(amt_food_hical, 5);
 	}
 
 	/* Reward throwing potions of poison for low level borgs */
-	if (bp_ptr->lev <= 16) value += bp_ptr->able.poison * 50;
+	if (bp_ptr->lev < 16) value += 50 * MIN(bp_ptr->able.poison, 20);
 
 	/* Reward potions you can throw for damage */
 	value += bp_ptr->able.death * 1000;
@@ -3678,7 +3680,8 @@ static s32b borg_power_aux4(void)
 		bp_ptr->able.heal) value += 50000;
 	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) && bp_ptr->able.csw)
 	{
-		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 25000L;
+		/* Reward cure serious wounds if needed */
+		value += 25000 * MIN(bp_ptr->able.csw, 5);
 	}
 	if (bp_ptr->status.poisoned && bp_ptr->able.curepois) value += 15000;
 	if (bp_ptr->status.poisoned && amt_slow_poison) value += 5000;
@@ -3686,214 +3689,195 @@ static s32b borg_power_aux4(void)
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		for (k = 0; (k < 4) && (k < bp_ptr->able.res_heat); k++) value += 1500L;
-		for (k = 0; (k < 4) && (k < bp_ptr->able.res_cold); k++) value += 1500L;
+		value += 1500 * MIN(bp_ptr->able.res_heat, 5);
+		value += 1500 * MIN(bp_ptr->able.res_cold, 5);
 	}
 
 	/* Reward ident */
-	for (k = 0; (k < 10) && (k < bp_ptr->able.id); k++) value += 6000L;
-	for (; (k < 15) && (k < bp_ptr->able.id); k++) value += 600L;
+	value += 6000 * MIN(bp_ptr->able.id, 10);
+	value += 600 * MIN_FLOOR(bp_ptr->able.id, 10, 25);
 
-	/*  Reward *id* apw carry lots of these */
-	for (k = 0; k < 8 && k < bp_ptr->able.star_id; k++) value += 10000L;
-	for (; k < 15 && k < bp_ptr->able.star_id; k++) value += 2000L;
+	/*  Don't start with these before you are likely to need them */
+	if (bp_ptr->lev > 20)
+	{
+		/* *identify* scrolls */
+		value += 10000 * MIN(bp_ptr->able.star_id, 7);
+		value += 2000 * MIN_FLOOR(bp_ptr->able.star_id, 7, 15);
 
-	/*  Reward PFE  carry lots of these */
-	for (k = 0; (k < 10) && (k < bp_ptr->able.pfe); k++) value += 10000L;
-	for (; (k < 25) && (k < bp_ptr->able.pfe); k++) value += 2000L;
+		/*  Reward PFE  carry lots of these */
+		value += 10000 * MIN(bp_ptr->able.pfe, 10);
+		value += 2000 * MIN_FLOOR(bp_ptr->able.pfe, 10, 25);
 
-	/*  apw Reward Glyph- Rune of Protection-  carry lots of these */
-	for (k = 0; (k < 10) && (k < bp_ptr->able.glyph); k++) value += 10000L;
-	for (; (k < 25) && (k < bp_ptr->able.glyph); k++) value += 2000L;
+		if (bp_ptr->lev > 40)
+		{
+			/*  Reward Glyph- Rune of Protection-  carry lots of these */
+			value += 10000 * MIN(bp_ptr->able.glyph, 10);
+			value += 2000 * MIN_FLOOR(bp_ptr->able.glyph, 10, 25);
+		}
+	}
 
 	/* Reward recall */
-	for (k = 0; (k < 3) && (k < bp_ptr->recall); k++) value += 50000L;
-	for (; (k < 7) && (k < bp_ptr->recall); k++) value += 5000L;
+	value += 50000 * MIN(bp_ptr->recall, 3);
+	value += 5000 * MIN_FLOOR(bp_ptr->recall, 3, 7);
 
 	/* first phase door is very important */
-	if (amt_phase) value += 50000;
-	for (k = 1; k < 15 && k < amt_phase; k++) value += 500L;
+	value += 50000 * MIN(amt_phase, 1);
+	value += 5000 * MIN_FLOOR(amt_phase, 1, 15);
 
 	/* Reward escape */
-	for (k = 0; (k < 5) && (k < bp_ptr->able.escape); k++) value += 10000L;
-	if (bp_ptr->depth > 90)
+	value += 10000 * MIN(bp_ptr->able.escape, 5);
+
+	/* If the borg is a grown up */
+	if (bp_ptr->lev > 30)
 	{
-		for (; (k < 15) && (k < bp_ptr->able.escape); k++) value += 10000L;
+		/* Give him more escapes */
+		value += 10000 * MIN_FLOOR(bp_ptr->able.escape, 5, 15);
+
+		/* Reward Teleport Level scrolls */
+		value += 5000 * MIN(bp_ptr->able.teleport_level, 5);
 	}
 
 	/* Reward teleport */
-	for (k = 0; (k < 10) && (k < bp_ptr->able.teleport); k++) value += 10000L;
+	value += 10000 * MIN(bp_ptr->able.teleport, 10);
 
-	/* Reward Teleport Level scrolls */
-	if (bp_ptr->max_depth >= 99)
+	/* Rod of healing */
+	value += 20000 * MIN(borg_has[374], 4);
+
+	/* Potion of *Healing* */
+	value += 10000 * MIN(borg_has[419], 2);
+
+	if (borg_has[419] == 0)
 	{
-		for (k = 0; (k < 5) && (k < bp_ptr->able.teleport_level); k++)
-			value += 5000L;
+		/* Potion of life */
+		value += 10000 * MIN(borg_has[420], 2);
 	}
 
-
-	/*** Healing ***/
+	/* Potion of Healing */
 	if (borg_class == CLASS_WARRIOR || borg_class == CLASS_ROGUE)
 	{
-		for (k = 0; (k < 15) && (k < bp_ptr->able.heal); k++) value += 8000L;
-
-		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 10000L;
-		if (borg_has[419] == 0)
-		{
-			for (k = 0; k < 2 && k < borg_has[420]; k++) value += 10000L;
-		}
-
-		for (k = 0; k < 4 && k < borg_has[374]; k++) value += 20000L;
+		/* Reward healing */
+		value += 8000 * MIN(bp_ptr->able.heal, 15);
 	}
 	else if (borg_class == CLASS_RANGER || borg_class == CLASS_PALADIN ||
 			 borg_class == CLASS_MAGE)
 	{
-		for (k = 0; (k < 10) && (k < bp_ptr->able.heal); k++) value += 4000L;
-
-		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 9000L;
-		if (borg_has[419] == 0)
-		{
-			for (k = 0; k < 2 && k < borg_has[420]; k++) value += 9000L;
-		}
-
-		if (borg_class == CLASS_PALADIN)
-		{
-			/* Reward heal potions */
-			for (k = 0; k < 3 && k < borg_has[242]; k++) value += 5000L;
-		}
-
+		/* Reward healing */
+		value += 4000 * MIN(bp_ptr->able.heal, 10);
 	}
 	else if (borg_class == CLASS_PRIEST)
 	{
-		/* Reward heal potions */
-		for (k = 0; k < 5 && k < borg_has[242]; k++) value += 2000L;
-
-		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 9000L;
-		if (borg_has[419] == 0)
-		{
-			for (k = 0; k < 2 && k < borg_has[420]; k++) value += 9000L;
-		}
+		/* Reward heal */
+		value += 2000 * MIN(bp_ptr->able.heal, 5);
 	}
 
 	/* Restore Mana */
 	if (bp_ptr->msp > 100)
 	{
 		/* reward carrying potions/staffs of mana to use */
-		for (k = 0; k < 10 && k < bp_ptr->able.mana; k++) value += 4000L;
-		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi);
-			 k++) value += 4000L;
+		value += 4000 * MIN(bp_ptr->able.mana, 10);
+		value += 4000 * MIN(bp_ptr->able.staff_magi, 10);
 	}
 	else if (borg_class != CLASS_WARRIOR)
 	{
 		/* reward carrying potions/staffs of mana to bring home */
-		for (k = 0; k < 99 && k < bp_ptr->able.mana; k++) value += 1000L;
-		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi);
-			 k++) value += 1000L;
+		value += 1000 * MIN(bp_ptr->able.mana, 99);
+		value += 1000 * MIN(bp_ptr->able.staff_magi, 99);
 	}
 
-	/* Reward cure critical.  Heavy reward on first 5 */
-	if ((bp_ptr->lev < 35) || !(FLAG(bp_ptr, TR_RES_CONF)))
+	/* Reward cure critical.  Heavy reward on first 10 */
+	value += 5000 * MIN(bp_ptr->able.ccw, 10);
+
+	/* If the borg has no confusion resist */
+	if (!FLAG(bp_ptr, TR_RES_CONF))
 	{
-		for (k = 0; (k < 10) && (k < bp_ptr->able.ccw); k++) value += 5000L;
-		for (; (k < 15) && (k < bp_ptr->able.ccw); k++) value += 500L;
-	}
-	else
-	{
-		/* Reward cure critical.  Later on in game. */
-		for (k = 0; (k < 10) && (k < bp_ptr->able.ccw); k++) value += 5000L;
+		/* Carry some more cure criticals */
+		value += 500 * MIN_FLOOR(bp_ptr->able.csw, 10, 15);
 	}
 
-	/* Reward cure serious -- only reward serious if low on crits */
-	if (bp_ptr->able.ccw < 10)
+	/* If the borg is low on cure critical or is low level */
+	if (bp_ptr->able.ccw < 10 || bp_ptr->lev < 15)
 	{
-		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 50L;
-		for (; (k < 10) && (k < bp_ptr->able.csw); k++) value += 5L;
-	}
-
-	/* Reward cure serious -- Low Level Characters */
-	if (bp_ptr->lev < 15)
-	{
-		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 250L;
-		for (; (k < 10) && (k < bp_ptr->able.csw); k++) value += 55L;
+		/* Reward cure serious */
+		value += 250 * MIN(bp_ptr->able.csw, 5);
+		value += 55 * MIN_FLOOR(bp_ptr->able.csw, 5, 10);
 	}
 	
-	/* Reward Cures */
-	if (!(FLAG(bp_ptr, TR_RES_CONF)))
+	/* If the borg has no confucius resist */
+	if (!FLAG(bp_ptr, TR_RES_CONF))
 	{
-		for (k = 0; k < 10 && k < amt_cure_confusion; k++) value += 400L;
+		/* Reward cure blindness */
+		value += 400 * MIN(amt_cure_confusion, 10);
 	}
-	if (!(FLAG(bp_ptr, TR_RES_BLIND)))
+
+	/* If the borg has no blindness resist */
+	if (!FLAG(bp_ptr, TR_RES_BLIND))
 	{
-		for (k = 0; k < 5 && k < amt_cure_blind; k++) value += 300L;
+		/* Reward cure blindness */
+		value += 300 * MIN(amt_cure_blind, 5);
 	}
-	if (!(FLAG(bp_ptr, TR_RES_POIS)))
+
+	/* If the borg has no poison resist */
+	if (!FLAG(bp_ptr, TR_RES_POIS))
 	{
-		for (k = 0; (k < 5) && (k < bp_ptr->able.curepois); k++) value += 250L;
+		/* Reward cure poison */
+		value += 250 * MIN(bp_ptr->able.curepois, 5);
 	}
 
 	/*** Detection ***/
 
 	/* Reward detect trap */
-	for (k = 0; (k < 1) && (k < bp_ptr->able.det_trap); k++) value += 4000L;
+	value += 4000 * MIN(bp_ptr->able.det_trap, 1);
 
 	/* Reward detect door */
-	for (k = 0; (k < 1) && (k < bp_ptr->able.det_door); k++) value += 2000L;
+	value += 2000 * MIN(bp_ptr->able.det_door, 1);
 
 	/* Reward detect evil */
-	if (!(FLAG(bp_ptr, TR_TELEPATHY)))
+	if (!FLAG(bp_ptr, TR_TELEPATHY))
 	{
-		for (k = 0; (k < 1) && (k < bp_ptr->able.det_evil); k++) value += 1000L;
+		value += 1000 * MIN(bp_ptr->able.det_evil, 1);
 	}
 
 	/* Reward magic mapping */
-	for (k = 0; (k < 1) && (k < bp_ptr->able.magic_map); k++) value += 4000L;
+	value += 4000 * MIN(bp_ptr->able.magic_map, 1);
 
 	/* Reward room lites */
-	for (k = 0; (k < 10) && (k < bp_ptr->able.lite); k++) value += 600L;
-	for (; (k < 20) && (k < bp_ptr->able.lite); k++) value += 60L;
+	value += 600 * MIN(bp_ptr->able.lite, 10);
+	value += 60 * MIN_FLOOR(bp_ptr->able.lite, 10, 25);
 
-	/* Genocide scrolls. Just scrolls, mainly used for Morgoth */
+	/* Stuff to use against the the Serpent */
 	if (bp_ptr->max_depth >= 98)
 	{
-		for (k = 0; k < 10 && k < borg_has[207]; k++) value += 10000L;
-		for (; k < 25 && k < borg_has[207]; k++) value += 2000L;
-	}
+		/* Genocide scrolls */
+		value += 10000 * MIN(borg_has[207], 10);
+		value += 2000 * MIN_FLOOR(borg_has[207], 10, 25);
+	
+		/* Mass Genocide scrolls */
+		value += 10000 * MIN(borg_has[200], 10);
+		value += 2000 * MIN_FLOOR(borg_has[200], 10, 25);
 
-	/* Mass Genocide scrolls. Just scrolls, mainly used for Morgoth */
-	if (bp_ptr->max_depth >= 98)
-	{
-		for (k = 0; k < 10 && k < borg_has[200]; k++) value += 10000L;
-		for (; k < 25 && k < borg_has[200]; k++) value += 2000L;
+		/* Invulnerability Potions */
+		value += 10000 * MIN(borg_has[238], 15);
+		value += 2000 * MIN_FLOOR(borg_has[238], 15, 99);
 	}
 
 	/* Reward speed potions/staves */
-	if (bp_ptr->max_depth <= 98)
-	{
-		for (k = 0; (k < 20) && (k < bp_ptr->able.speed); k++) value += 5000L;
-	}
-
-	/* Invuln Potions, mainly used for Morgoth */
-	if (bp_ptr->max_depth >= 98)
-	{
-		for (k = 0; k < 15 && k < borg_has[238]; k++) value += 10000L;
-		for (; k < 99 && k < borg_has[238]; k++) value += 2000L;
-	}
+	value += 5000 * MIN(bp_ptr->able.speed, 20);
 
 	/* Reward Recharge ability */
-	for (k = 0; (k < 5) && (k < bp_ptr->able.recharge); k++) value += 2000L;
+	value += 200 * MIN(bp_ptr->able.recharge, 5);
 
 	/*** Missiles ***/
 
-	/* Reward missiles */
+	/* Reward missiles, Rangers carry more */
 	if (borg_class == CLASS_RANGER)
 	{
-		for (k = 0; (k < 30) && (k < bp_ptr->able.missile); k++) value += 1000L;
-		for (; (k < 80) && (k < bp_ptr->able.missile); k++) value += 100L;
+		value += 1000 * MIN(bp_ptr->able.missile, 30);
+		value += 100 * MIN_FLOOR(bp_ptr->able.missile, 30, 80);
 	}
 	else
 	{
-		for (k = 0; (k < 20) && (k < bp_ptr->able.missile); k++) value += 1000L;
-		for (; (k < 50) && (k < bp_ptr->able.missile); k++) value += 100L;
+		value += 1000 * MIN(bp_ptr->able.missile, 20);
+		value += 100 * MIN_FLOOR(bp_ptr->able.missile, 20, 50);
 	}
 
 	/*** Various ***/
@@ -3904,13 +3888,13 @@ static s32b borg_power_aux4(void)
 	/* Reward carrying a wand or rod with bolts */
 	value += 50 * MIN(bp_ptr->able.bolt, 5);
 
-	/*  -- Reward carrying a (empty) staff of destr/holiness/power */
-	if (bp_ptr->able.staff_cool) value += 2000L;
-	if (bp_ptr->able.staff_dest) value += 4800L;
+	/* Reward the charges a staff of power/holiness. */
+	value += 2000 * MIN(bp_ptr->able.staff_cool, 1);
+	value += 500 * MIN_FLOOR(bp_ptr->able.staff_cool, 1, 5);
 
-	/*  -- Reward the charges a staff of destr/power/holiness. */
-	value += 500 * MIN(bp_ptr->able.staff_cool, 4);
-	value += 200 * MIN(bp_ptr->able.staff_dest, 4);
+	/* Reward the charges a staff of destruction. */
+	value += 2000 * MIN(bp_ptr->able.staff_dest, 1);
+	value += 200 * MIN_FLOOR(bp_ptr->able.staff_dest, 1, 5);
 
 	/* Hack -- Reward add stat */
 	if (amt_add_stat[A_STR]) value += 50000;
@@ -3942,7 +3926,10 @@ static s32b borg_power_aux4(void)
 
 	/* Reward *Remove Curse* */
 	if (borg_heavy_curse && bp_ptr->able.star_remove_curse) value += 90000;
-	if (bp_ptr->able.star_remove_curse < 1000) value += bp_ptr->able.star_remove_curse * 100;
+	if (bp_ptr->able.star_remove_curse < 1000)
+	{
+		value += bp_ptr->able.star_remove_curse * 100;
+	}
 
 	/* Hack -- Restore experience */
 	if (amt_fix_exp) value += 500000;
@@ -3964,7 +3951,7 @@ static s32b borg_power_aux4(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* My realm only */
-		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
+		if (!borg_has_realm(realm)) continue;
 
 		for (book = 0; book < 4; book++)
 		{
@@ -3975,10 +3962,7 @@ static s32b borg_power_aux4(void)
 			if (book >= 2)
 			{
 				/* Reward the book */
-				for (k = 0; k < 1 && k < amt_book[realm][book]; k++)
-				{
-					value += 300000L;
-				}
+				value += 300000 * MIN(amt_book[realm][book], 1);
 			}
 
 			/* The "easy" books */
@@ -3999,22 +3983,19 @@ static s32b borg_power_aux4(void)
 				if ((when > 5) && (when >= bp_ptr->max_lev + 2)) continue;
 
 				/* Reward the book */
-				for (k = 0; k < 1 && k < amt_book[realm][book]; k++)
+				value += 500000 * MIN(amt_book[realm][book], 1);
+
+				/* Higher level */
+				if (bp_ptr->lev > 10)
 				{
-					value += 500000L;
-				}
-				if (bp_ptr->max_depth > 5)
-				{
-					for (; k < 2 && k < amt_book[realm][book]; k++)
+					/* Reward two books */
+					value += 10000 * MIN_FLOOR(amt_book[realm][book], 1, 2);
+				
+					/* Still higher level */
+					if (bp_ptr->lev > 40)
 					{
-						value += 10000L;
-					}
-				}
-				if (bp_ptr->max_depth > 50)
-				{
-					for (; k < 3 && k < amt_book[realm][book]; k++)
-					{
-						value += 2500L;
+						/* Reward three books */
+						value += 2500 * MIN_FLOOR(amt_book[realm][book], 2, 3);
 					}
 				}
 			}
@@ -4028,14 +4009,7 @@ static s32b borg_power_aux4(void)
 	value -= bp_ptr->weight / adj_str_wgt[my_stat_ind[A_STR]];
 
 	/* Reward empty slots */
-	if (INVEN_PACK - inven_num < 5)
-	{
-		value += 400L * (INVEN_PACK - inven_num);
-	}
-	else
-	{
-		value += 400L * 5;
-	}
+	value += 400 * MIN(INVEN_PACK - inven_num, 5);
 
 	/* Return the value */
 	return (value);
@@ -4319,11 +4293,11 @@ static cptr borg_prepared_aux2(int depth)
 
 	if (borg_stat[A_STR] < 16) return ("low STR");
 
-	if ((bp_ptr->realm1 >= REALM_SORCERY || bp_ptr->realm2 >= REALM_SORCERY))
+	if (borg_has_realm(REALM_SORCERY))
 	{
 		if (borg_stat[A_INT] < 16) return ("low INT");
 	}
-	if ((bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE))
+	if (borg_has_realm(REALM_LIFE))
 	{
 		if (borg_stat[A_WIS] < 16) return ("low WIS");
 	}
@@ -4344,11 +4318,11 @@ static cptr borg_prepared_aux2(int depth)
 	/* High stats XXX XXX XXX */
 	if (borg_stat[A_STR] < 18 + 40) return ("low STR");
 
-	if ((bp_ptr->realm1 >= REALM_SORCERY || bp_ptr->realm2 >= REALM_SORCERY))
+	if (borg_has_realm(REALM_SORCERY))
 	{
 		if (borg_stat[A_INT] < 18 + 100) return ("low INT");
 	}
-	if ((bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE))
+	if (borg_has_realm(REALM_LIFE))
 	{
 		if (borg_stat[A_WIS] < 18 + 100) return ("low WIS");
 	}

@@ -1623,8 +1623,7 @@ bool borg_crush_junk(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Don't crush our spell books */
-		if ((l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm1)) ||
-			(l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm2))) continue;
+		if (borg_has_realm(l_ptr->tval - TV_BOOKS_MIN + 1)) continue;
 
 		/* Hack - we need to work this out properly */
 		value = 0;
@@ -1764,8 +1763,7 @@ bool borg_crush_hole(void)
 		if (KN_FLAG(l_ptr, TR_INSTA_ART)) continue;
 
 		/* Don't crush our spell books */
-		if ((l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm1)) ||
-			(l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm2))) continue;
+		if (borg_has_realm(l_ptr->tval - TV_BOOKS_MIN + 1)) continue;
 
 		/* Hack -- skip artifacts and ego items not fully identified */
 		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
@@ -2761,8 +2759,7 @@ bool borg_play_magic(bool bored)
 	for (realm = MAX_REALM; realm > 0; realm--)
 	{
 		/* skip non my realms */
-		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
-
+		if (!borg_has_realm(realm)) continue;
 
 		/* Check each book (backwards) */
 		for (book = 3; book >= 0; book--)
@@ -2853,8 +2850,7 @@ bool borg_play_magic(bool bored)
 		{
 
 			/* Only my realms */
-			if ((realm != bp_ptr->realm1) &&
-				(realm != bp_ptr->realm2)) continue;
+			if (!borg_has_realm(realm)) continue;
 
 			/* Look for the book */
 			inven = borg_book[realm][book];

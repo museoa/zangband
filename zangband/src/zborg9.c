@@ -398,7 +398,7 @@ static bool borg_think(void)
 		for (ii = 1; ii < MAX_REALM; ii++)
 		{
 			/* skip non my realms */
-			if ((ii != bp_ptr->realm1) && (ii != bp_ptr->realm2)) continue;
+			if (!borg_has_realm(ii)) continue;
 
 			for (i = 0; i < inven_num; i++)
 			{
@@ -4056,8 +4056,7 @@ void do_cmd_borg(void)
 				realm = inventory[inv].tval + 1 - TV_BOOKS_MIN;
 
 				/* Is this one the possible realms? */
-				if (realm == bp_ptr->realm1 ||
-					realm == bp_ptr->realm2)
+				if (borg_has_realm(realm))
 				{
 					/* Display name of the book */
 					put_fstr(1, ii - 2, "%s", inventory[inv].o_name);

@@ -8448,8 +8448,7 @@ static int borg_attack_spell(int *b_slot, int *b_spell)
 			realm = l_ptr->tval - TV_BOOKS_MIN + 1;
 
 			/* Is this a realm that the borg knows? */
-			if (realm != bp_ptr->realm1 &&
-				realm != bp_ptr->realm2) continue;
+			if (!borg_has_realm(realm)) continue;
 
 			/* Realize which book this is */
 			book = k_info[l_ptr->k_idx].sval;
@@ -8572,8 +8571,7 @@ static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 			realm = l_ptr->tval - TV_BOOKS_MIN + 1;
 
 			/* Is this a realm that the borg knows? */
-			if (realm != bp_ptr->realm1 &&
-				realm != bp_ptr->realm2) continue;
+			if (!borg_has_realm(realm)) continue;
 
 			/* Realize which book this is */
 			book = k_info[l_ptr->k_idx].sval;
