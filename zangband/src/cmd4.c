@@ -1467,16 +1467,11 @@ errr keymap_dump(cptr fname)
 	return (0);
 }
 
-#ifdef ALLOW_MACROS
-#define MACRO_MENU_MAX 
-#else
-#define MACRO_MENU_MAX	2
-#endif /* ALLOW_MACROS */
 
 /*
  * Load a user pref file
  */
-static bool do_cmd_pref_load(int dummy)
+static bool do_cmd_pref_key_load(int dummy)
 {
 	char tmp[1024];
 
@@ -1484,10 +1479,8 @@ static bool do_cmd_pref_load(int dummy)
 	(void) dummy;
 
 	/* Prompt */
-	prtf(0, 16, "Command: Load a user pref file");
-
-	/* Prompt */
-	prtf(0, 18, "File: ");
+	prtf(0, 16, "Command: Load a user pref file\n\n"
+				"File: ");
 
 	/* Default filename */
 	strnfmt(tmp, 1024, "%s.prf", player_base);
@@ -1912,10 +1905,16 @@ static bool do_cmd_action_create(int dummy)
 #endif /* ALLOW_MACROS */
 
 
-/* The main options menu */
+#ifdef ALLOW_MACROS
+#define MACRO_MENU_MAX		11
+#else
+#define MACRO_MENU_MAX		2
+#endif /* ALLOW_MACROS */
+
+/* The macro / keymap menu */
 static menu_type macro_menu[MACRO_MENU_MAX] =
 {
-	{"Load a user pref file", NULL, do_cmd_pref_load, MN_AVAILABLE},
+	{"Load a user pref file", NULL, do_cmd_pref_key_load, MN_AVAILABLE},
 #ifdef ALLOW_MACROS
 	{"Append macros to a file", NULL, do_cmd_macro_append, MN_AVAILABLE},
 	{"Query a macro", NULL, do_cmd_macro_query, MN_AVAILABLE},
@@ -1947,526 +1946,658 @@ void do_cmd_macros(void)
 }
 
 
+
+/*
+ * Load a user pref file
+ */
+static bool do_cmd_pref_vis_load(int dummy)
+{
+	char tmp[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	Term_clear();
+	
+	/* Prompt */
+	prtf(0, 12, "Command: Load a user pref file\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Query */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Process the given filename */
+	if (0 != process_pref_file(tmp))
+	{
+		/* Prompt */
+		msg_print("Could not load file!");
+	}
+	
+	screen_load();
+	return (FALSE);
+}
+
+#ifdef ALLOW_VISUALS
+
+/* Dump monster attr/chars to pref file */
+static bool do_cmd_dump_monster(int dummy)
+{
+	char tmp[1024], buf[1024];
+	FILE *fff;
+	
+	int i;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	/* Prompt */
+	prtf(0, 12, "Command: Dump monster attr/chars\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Monster attr/char definitions\n\n");
+
+	/* Dump monsters */
+	for (i = 0; i < z_info->r_max; i++)
+	{
+		monster_race *r_ptr = &r_info[i];
+
+		/* Skip non-entries */
+		if (!r_ptr->name) continue;
+
+		/* Dump a comment */
+		fprintf(fff, "# %s\n", (r_name + r_ptr->name));
+
+		/* Dump the monster attr/char info */
+		fprintf(fff, "R:%d:0x%02X:0x%02X\n\n", i,
+				(byte)(r_ptr->x_attr), (byte)(r_ptr->x_char));
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped monster attr/chars.");
+
+	screen_load();
+	return (FALSE);
+}
+
+
+/* Dump object attr/chars to a pref file */
+static bool do_cmd_dump_object(int dummy)
+{
+	char tmp[1024], buf[1024];
+	FILE *fff;
+	
+	int i;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	/* Prompt */
+	prtf(0, 12, "Command: Dump object attr/chars\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Object attr/char definitions\n\n");
+
+	/* Dump objects */
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		object_kind *k_ptr = &k_info[i];
+
+		/* Skip non-entries */
+		if (!k_ptr->name) continue;
+
+		/* Dump a comment */
+		fprintf(fff, "# %s\n", (k_name + k_ptr->name));
+
+		/* Dump the object attr/char info */
+		fprintf(fff, "K:%d:0x%02X:0x%02X\n\n", i,
+				(byte)(k_ptr->x_attr), (byte)(k_ptr->x_char));
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped object attr/chars.");
+
+	screen_load();
+
+	return (FALSE);
+}
+
+
+/* Dump terrain feature attr/chars to a pref file */
+static bool do_cmd_dump_feature(int dummy)
+{
+	char tmp[1024], buf[1024];
+	FILE *fff;
+	
+	int i;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	screen_save();
+	
+	/* Prompt */
+	prtf(0, 12, "Command: Dump feature attr/chars\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Feature attr/char definitions\n\n");
+
+	/* Dump features */
+	for (i = 0; i < z_info->f_max; i++)
+	{
+		feature_type *f_ptr = &f_info[i];
+
+		/* Skip non-entries */
+		if (!f_ptr->name) continue;
+
+		/* Dump a comment */
+		fprintf(fff, "# %s\n", (f_name + f_ptr->name));
+
+		/* Dump the feature attr/char info */
+		fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
+				(byte)(f_ptr->x_attr), (byte)(f_ptr->x_char));
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped feature attr/chars.");
+	
+	screen_load();
+	
+	return (FALSE);
+}
+
+
+/* Dump field attr/chars to a pref file */
+static bool do_cmd_dump_field(int dummy)
+{
+	char tmp[1024], buf[1024];
+	FILE *fff;
+	
+	int i;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	/* Prompt */
+	prtf(0, 12, "Command: Dump field attr/chars\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Field attr/char definitions\n\n");
+
+	/* Dump features */
+	for (i = 0; i < z_info->t_max; i++)
+	{
+		field_thaum *t_ptr = &t_info[i];
+
+		/* Skip non-entries */
+		if (!t_ptr->name) continue;
+
+		/* Dump a comment */
+		fprintf(fff, "# %s\n", t_ptr->name);
+
+		/* Dump the field attr/char info */
+		fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
+				(byte)(t_ptr->f_attr), (byte)(t_ptr->f_char));
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped field attr/chars.");
+
+	screen_load();
+
+	return (FALSE);
+}
+
+
+/* Modify monster attr/chars */
+static bool do_cmd_change_monster(int dummy)
+{
+	static int r = 0;
+	
+	char i;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	screen_save();
+	
+	Term_clear();
+	
+	/* Prompt */
+	prtf(0, 5, "Command: Change monster attr/chars");
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		monster_race *r_ptr = &r_info[r];
+
+		byte da = (r_ptr->d_attr);
+		byte dc = (r_ptr->d_char);
+		byte ca = (r_ptr->x_attr);
+		byte cc = (r_ptr->x_char);
+
+		/* Label the object */
+		prtf(5, 7, "Monster = %d, Name = %-40.40s",
+						   r, (r_name + r_ptr->name));
+
+		/* Label the Default values */
+		prtf(10, 9, "Default attr/char = %3u / %3u", da, dc);
+		put_fstr(40, 9, "<< ? >>");
+		Term_putch(43, 9, da, dc);
+
+		/* Label the Current values */
+		prtf(10, 10, "Current attr/char = %3u / %3u", ca, cc);
+		put_fstr(40, 10, "<< ? >>");
+		Term_putch(43, 10, ca, cc);
+
+		/* Prompt */
+		prtf(0, 12, "Command (n/N/a/A/c/C): ");
+
+		/* Get a command */
+		i = inkey();
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Analyze */
+		if (i == 'n') r = (r + z_info->r_max + 1) % z_info->r_max;
+		if (i == 'N') r = (r + z_info->r_max - 1) % z_info->r_max;
+		if (i == 'a') r_ptr->x_attr = (byte)(ca + 1);
+		if (i == 'A') r_ptr->x_attr = (byte)(ca - 1);
+		if (i == 'c') r_ptr->x_char = (byte)(cc + 1);
+		if (i == 'C') r_ptr->x_char = (byte)(cc - 1);
+	}
+
+	screen_load();
+
+	return (FALSE);
+}
+
+
+/* Modify object attr/chars */
+static bool do_cmd_change_object(int dummy)
+{
+	static int k = 0;
+	
+	char i;
+
+	/* Hack - ignore parameters */
+	(void) dummy;
+	
+	screen_save();
+	
+	Term_clear();
+	
+	/* Prompt */
+	prtf(0, 5, "Command: Change object attr/chars");
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		object_kind *k_ptr = &k_info[k];
+
+		byte da = (byte)k_ptr->d_attr;
+		byte dc = (byte)k_ptr->d_char;
+		byte ca = (byte)k_ptr->x_attr;
+		byte cc = (byte)k_ptr->x_char;
+
+		/* Label the object */
+		prtf(5, 7, "Object = %d, Name = %-40.40s",
+						   k, (k_name + k_ptr->name));
+
+		/* Label the Default values */
+		prtf(10, 9, "Default attr/char = %3d / %3d", da, dc);
+		put_fstr(40, 9, "<< ? >>");
+		Term_putch(43, 9, da, dc);
+
+		/* Label the Current values */
+		prtf(10, 10, "Current attr/char = %3d / %3d", ca, cc);
+		put_fstr(40, 10, "<< ? >>");
+		Term_putch(43, 10, ca, cc);
+
+		/* Prompt */
+		prtf(0, 12, "Command (n/N/a/A/c/C): ");
+
+		/* Get a command */
+		i = inkey();
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Analyze */
+		if (i == 'n') k = (k + z_info->k_max + 1) % z_info->k_max;
+		if (i == 'N') k = (k + z_info->k_max - 1) % z_info->k_max;
+		if (i == 'a') k_info[k].x_attr = (byte)(ca + 1);
+		if (i == 'A') k_info[k].x_attr = (byte)(ca - 1);
+		if (i == 'c') k_info[k].x_char = (byte)(cc + 1);
+		if (i == 'C') k_info[k].x_char = (byte)(cc - 1);
+	}	
+
+	screen_load();
+	
+	return (FALSE);
+}
+
+
+/* Modify feature attr/chars */
+static bool do_cmd_change_feature(int dummy)
+{
+	static int f = 0;
+	
+	char i;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	Term_clear();
+	
+	/* Prompt */
+	prtf(0, 5, "Command: Change feature attr/chars");
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		feature_type *f_ptr = &f_info[f];
+
+		byte da = (byte)f_ptr->d_attr;
+		byte dc = (byte)f_ptr->d_char;
+		byte ca = (byte)f_ptr->x_attr;
+		byte cc = (byte)f_ptr->x_char;
+
+		/* Label the object */
+		prtf(5, 7, "Terrain = %d, Name = %-40.40s",
+						   f, (f_name + f_ptr->name));
+
+		/* Label the Default values */
+		prtf(10, 9, "Default attr/char = %3d / %3d", da, dc);
+		put_fstr(40, 9, "<< ? >>");
+		Term_putch(43, 9, da, dc);
+
+		/* Label the Current values */
+		prtf(10, 10, "Current attr/char = %3d / %3d", ca, cc);
+		put_fstr(40, 10, "<< ? >>");
+		Term_putch(43, 10, ca, cc);
+
+		/* Prompt */
+		prtf(0, 12, "Command (n/N/a/A/c/C): ");
+
+		/* Get a command */
+		i = inkey();
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Analyze */
+		if (i == 'n') f = (f + z_info->f_max + 1) % z_info->f_max;
+		if (i == 'N') f = (f + z_info->f_max - 1) % z_info->f_max;
+		if (i == 'a') f_info[f].x_attr = (byte)(ca + 1);
+		if (i == 'A') f_info[f].x_attr = (byte)(ca - 1);
+		if (i == 'c') f_info[f].x_char = (byte)(cc + 1);
+		if (i == 'C') f_info[f].x_char = (byte)(cc - 1);
+	}
+
+	screen_load();
+
+	return (FALSE);
+}
+
+
+/* Modify field attr/chars */
+static bool do_cmd_change_field(int dummy)
+{
+	static int f = 0;
+	
+	char i;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	screen_save();
+	
+	Term_clear();
+	
+	/* Prompt */
+	prtf(0, 5, "Command: Change field attr/chars");
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		field_thaum *t_ptr = &t_info[f];
+
+		byte da = (byte)t_ptr->d_attr;
+		byte dc = (byte)t_ptr->d_char;
+		byte ca = (byte)t_ptr->f_attr;
+		byte cc = (byte)t_ptr->f_char;
+
+		/* Label the object */
+		prtf(5, 7, "Field = %d, Name = %-40.40s", f, t_ptr->name);
+
+		/* Label the Default values */
+		prtf(10, 9, "Default attr/char = %3d / %3d", da, dc);
+		put_fstr(40, 9, "<< ? >>");
+		Term_putch(43, 9, da, dc);
+
+		/* Label the Current values */
+		prtf(10, 10, "Current attr/char = %3d / %3d", ca, cc);
+		put_fstr(40, 10, "<< ? >>");
+		Term_putch(43, 10, ca, cc);
+
+		/* Prompt */
+		prtf(0, 12, "Command (n/N/a/A/c/C): ");
+
+		/* Get a command */
+		i = inkey();
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Analyze */
+		if (i == 'n') f = (f + z_info->t_max + 1) % z_info->t_max;
+		if (i == 'N') f = (f + z_info->t_max - 1) % z_info->t_max;
+		if (i == 'a') t_info[f].f_attr = (byte)(ca + 1);
+		if (i == 'A') t_info[f].f_attr = (byte)(ca - 1);
+		if (i == 'c') t_info[f].f_char = (byte)(cc + 1);
+		if (i == 'C') t_info[f].f_char = (byte)(cc - 1);
+	}
+
+	screen_load();
+
+	return (FALSE);
+}
+
+#endif /* ALLOW_VISUALS */
+
+
+static bool do_cmd_reset_visuals(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Reset */
+	reset_visuals();
+
+	/* Message */
+	msg_print("Visual attr/char tables reset.");
+
+	return (FALSE);
+}
+
+
+#ifdef ALLOW_VISUALS
+#define VISUAL_MENU_MAX		11
+#else
+#define VISUAL_MENU MAX		3
+#endif /* ALLOW_VISUALS */
+
+
+/* The visuals menu */
+static menu_type visuals_menu[VISUAL_MENU_MAX] =
+{
+	{"Load a user pref file", NULL, do_cmd_pref_vis_load, MN_AVAILABLE},
+#ifdef ALLOW_VISUALS
+	{"Dump monster attr/chars", NULL, do_cmd_dump_monster, MN_AVAILABLE},
+	{"Dump object attr/chars", NULL, do_cmd_dump_object, MN_AVAILABLE},
+	{"Dump feature attr/chars", NULL, do_cmd_dump_feature, MN_AVAILABLE},
+	{"Dump field attr/chars", NULL, do_cmd_dump_field, MN_AVAILABLE},
+	{"Change monster attr/chars", NULL, do_cmd_change_monster, MN_AVAILABLE | MN_CLEAR},
+	{"Change object attr/chars", NULL, do_cmd_change_object, MN_AVAILABLE | MN_CLEAR},
+	{"Change feature attr/chars", NULL, do_cmd_change_feature, MN_AVAILABLE | MN_CLEAR},
+	{"Change field attr/chars", NULL, do_cmd_change_field, MN_AVAILABLE | MN_CLEAR},
+#endif
+	{"Reset Visuals", NULL, do_cmd_reset_visuals, MN_AVAILABLE},
+	MENU_END
+};
+
+
 /*
  * Interact with "visuals"
  */
 void do_cmd_visuals(void)
 {
-	int i;
-
-	FILE *fff;
-
-	char tmp[160];
-
-	char buf[1024];
-
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
-
-
-	/* Save the screen */
-	screen_save();
-
-
-	/* Interact until done */
-	while (1)
-	{
-		/* Clear screen */
-		Term_clear();
-
-		/* Ask for a choice */
-		prtf(0, 2, "Interact with Visuals");
-
-		/* Give some choices */
-		prtf(5, 4, "(1) Load a user pref file");
-#ifdef ALLOW_VISUALS
-		prtf(5, 5, "(2) Dump monster attr/chars");
-		prtf(5, 6, "(3) Dump object attr/chars");
-		prtf(5, 7, "(4) Dump feature attr/chars");
-		prtf(5, 8, "(5) Dump field attr/chars");
-		prtf(5, 9, "(6) Change monster attr/chars");
-		prtf(5, 10, "(7) Change object attr/chars");
-		prtf(5, 11, "(8) Change feature attr/chars");
-		prtf(5, 12, "(9) Change field attr/chars");
-#endif
-		prtf(5, 13, "(0) Reset visuals");
-
-		/* Prompt */
-		prtf(0, 15, "Command: ");
-
-		/* Prompt */
-		i = inkey();
-
-		/* Done */
-		if (i == ESCAPE) break;
-
-		/* Load a 'pref' file */
-		else if (i == '1')
-		{
-			/* Prompt */
-			prtf(0, 15, "Command: Load a user pref file");
-
-			/* Prompt */
-			prtf(0, 17, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Query */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Process the given filename */
-			(void)process_pref_file(tmp);
-		}
-
-#ifdef ALLOW_VISUALS
-
-		/* Dump monster attr/chars */
-		else if (i == '2')
-		{
-			/* Prompt */
-			prtf(0, 15, "Command: Dump monster attr/chars");
-
-			/* Prompt */
-			prtf(0, 17, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Monster attr/char definitions\n\n");
-
-			/* Dump monsters */
-			for (i = 0; i < z_info->r_max; i++)
-			{
-				monster_race *r_ptr = &r_info[i];
-
-				/* Skip non-entries */
-				if (!r_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", (r_name + r_ptr->name));
-
-				/* Dump the monster attr/char info */
-				fprintf(fff, "R:%d:0x%02X:0x%02X\n\n", i,
-						(byte)(r_ptr->x_attr), (byte)(r_ptr->x_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped monster attr/chars.");
-		}
-
-		/* Dump object attr/chars */
-		else if (i == '3')
-		{
-			/* Prompt */
-			prtf(0, 15, "Command: Dump object attr/chars");
-
-			/* Prompt */
-			prtf(0, 17, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Object attr/char definitions\n\n");
-
-			/* Dump objects */
-			for (i = 0; i < z_info->k_max; i++)
-			{
-				object_kind *k_ptr = &k_info[i];
-
-				/* Skip non-entries */
-				if (!k_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", (k_name + k_ptr->name));
-
-				/* Dump the object attr/char info */
-				fprintf(fff, "K:%d:0x%02X:0x%02X\n\n", i,
-						(byte)(k_ptr->x_attr), (byte)(k_ptr->x_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped object attr/chars.");
-		}
-
-		/* Dump feature attr/chars */
-		else if (i == '4')
-		{
-			/* Prompt */
-			prtf(0, 15, "Command: Dump feature attr/chars");
-
-			/* Prompt */
-			prtf(0, 17, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Feature attr/char definitions\n\n");
-
-			/* Dump features */
-			for (i = 0; i < z_info->f_max; i++)
-			{
-				feature_type *f_ptr = &f_info[i];
-
-				/* Skip non-entries */
-				if (!f_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", (f_name + f_ptr->name));
-
-				/* Dump the feature attr/char info */
-				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-						(byte)(f_ptr->x_attr), (byte)(f_ptr->x_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped feature attr/chars.");
-		}
-
-		/* Dump field attr/chars */
-		else if (i == '5')
-		{
-			/* Prompt */
-			prtf(0, 15, "Command: Dump field attr/chars");
-
-			/* Prompt */
-			prtf(0, 17, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Field attr/char definitions\n\n");
-
-			/* Dump features */
-			for (i = 0; i < z_info->t_max; i++)
-			{
-				field_thaum *t_ptr = &t_info[i];
-
-				/* Skip non-entries */
-				if (!t_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", t_ptr->name);
-
-				/* Dump the field attr/char info */
-				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-						(byte)(t_ptr->f_attr), (byte)(t_ptr->f_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped field attr/chars.");
-		}
-
-
-		/* Modify monster attr/chars */
-		else if (i == '6')
-		{
-			static int r = 0;
-
-			/* Prompt */
-			prtf(0, 15, "Command: Change monster attr/chars");
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				monster_race *r_ptr = &r_info[r];
-
-				byte da = (r_ptr->d_attr);
-				byte dc = (r_ptr->d_char);
-				byte ca = (r_ptr->x_attr);
-				byte cc = (r_ptr->x_char);
-
-				/* Label the object */
-				put_fstr(5, 17, "Monster = %d, Name = %-40.40s",
-								   r, (r_name + r_ptr->name));
-
-				/* Label the Default values */
-				put_fstr(10, 19, "Default attr/char = %3u / %3u", da, dc);
-				put_fstr(40, 19, "<< ? >>");
-				Term_putch(43, 19, da, dc);
-
-				/* Label the Current values */
-				put_fstr(10, 20, "Current attr/char = %3u / %3u", ca, cc);
-				put_fstr(40, 20, "<< ? >>");
-				Term_putch(43, 20, ca, cc);
-
-				/* Prompt */
-				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') r = (r + z_info->r_max + 1) % z_info->r_max;
-				if (i == 'N') r = (r + z_info->r_max - 1) % z_info->r_max;
-				if (i == 'a') r_ptr->x_attr = (byte)(ca + 1);
-				if (i == 'A') r_ptr->x_attr = (byte)(ca - 1);
-				if (i == 'c') r_ptr->x_char = (byte)(cc + 1);
-				if (i == 'C') r_ptr->x_char = (byte)(cc - 1);
-			}
-		}
-
-		/* Modify object attr/chars */
-		else if (i == '7')
-		{
-			static int k = 0;
-
-			/* Prompt */
-			prtf(0, 15, "Command: Change object attr/chars");
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				object_kind *k_ptr = &k_info[k];
-
-				byte da = (byte)k_ptr->d_attr;
-				byte dc = (byte)k_ptr->d_char;
-				byte ca = (byte)k_ptr->x_attr;
-				byte cc = (byte)k_ptr->x_char;
-
-				/* Label the object */
-				put_fstr(5, 17, "Object = %d, Name = %-40.40s",
-								   k, (k_name + k_ptr->name));
-
-				/* Label the Default values */
-				put_fstr(10, 19, "Default attr/char = %3d / %3d", da, dc);
-				put_fstr(40, 19, "<< ? >>");
-				Term_putch(43, 19, da, dc);
-
-				/* Label the Current values */
-				put_fstr(10, 20, "Current attr/char = %3d / %3d", ca, cc);
-				put_fstr(40, 20, "<< ? >>");
-				Term_putch(43, 20, ca, cc);
-
-				/* Prompt */
-				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') k = (k + z_info->k_max + 1) % z_info->k_max;
-				if (i == 'N') k = (k + z_info->k_max - 1) % z_info->k_max;
-				if (i == 'a') k_info[k].x_attr = (byte)(ca + 1);
-				if (i == 'A') k_info[k].x_attr = (byte)(ca - 1);
-				if (i == 'c') k_info[k].x_char = (byte)(cc + 1);
-				if (i == 'C') k_info[k].x_char = (byte)(cc - 1);
-			}
-		}
-
-		/* Modify feature attr/chars */
-		else if (i == '8')
-		{
-			static int f = 0;
-
-			/* Prompt */
-			prtf(0, 15, "Command: Change feature attr/chars");
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				feature_type *f_ptr = &f_info[f];
-
-				byte da = (byte)f_ptr->d_attr;
-				byte dc = (byte)f_ptr->d_char;
-				byte ca = (byte)f_ptr->x_attr;
-				byte cc = (byte)f_ptr->x_char;
-
-				/* Label the object */
-				put_fstr(5, 17, "Terrain = %d, Name = %-40.40s",
-								   f, (f_name + f_ptr->name));
-
-				/* Label the Default values */
-				put_fstr(10, 19, "Default attr/char = %3d / %3d", da, dc);
-				put_fstr(40, 19, "<< ? >>");
-				Term_putch(43, 19, da, dc);
-
-				/* Label the Current values */
-				put_fstr(10, 20, "Current attr/char = %3d / %3d", ca, cc);
-				put_fstr(40, 20, "<< ? >>");
-				Term_putch(43, 20, ca, cc);
-
-				/* Prompt */
-				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') f = (f + z_info->f_max + 1) % z_info->f_max;
-				if (i == 'N') f = (f + z_info->f_max - 1) % z_info->f_max;
-				if (i == 'a') f_info[f].x_attr = (byte)(ca + 1);
-				if (i == 'A') f_info[f].x_attr = (byte)(ca - 1);
-				if (i == 'c') f_info[f].x_char = (byte)(cc + 1);
-				if (i == 'C') f_info[f].x_char = (byte)(cc - 1);
-			}
-		}
-
-		/* Modify feature attr/chars */
-		else if (i == '9')
-		{
-			static int f = 0;
-
-			/* Prompt */
-			prtf(0, 15, "Command: Change field attr/chars");
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				field_thaum *t_ptr = &t_info[f];
-
-				byte da = (byte)t_ptr->d_attr;
-				byte dc = (byte)t_ptr->d_char;
-				byte ca = (byte)t_ptr->f_attr;
-				byte cc = (byte)t_ptr->f_char;
-
-				/* Label the object */
-				put_fstr(5, 17, "Field = %d, Name = %-40.40s", f, t_ptr->name);
-
-				/* Label the Default values */
-				put_fstr(10, 19, "Default attr/char = %3d / %3d", da, dc);
-				put_fstr(40, 19, "<< ? >>");
-				Term_putch(43, 19, da, dc);
-
-				/* Label the Current values */
-				put_fstr(10, 20, "Current attr/char = %3d / %3d", ca, cc);
-				put_fstr(40, 20, "<< ? >>");
-				Term_putch(43, 20, ca, cc);
-
-				/* Prompt */
-				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') f = (f + z_info->t_max + 1) % z_info->t_max;
-				if (i == 'N') f = (f + z_info->t_max - 1) % z_info->t_max;
-				if (i == 'a') t_info[f].f_attr = (byte)(ca + 1);
-				if (i == 'A') t_info[f].f_attr = (byte)(ca - 1);
-				if (i == 'c') t_info[f].f_char = (byte)(cc + 1);
-				if (i == 'C') t_info[f].f_char = (byte)(cc - 1);
-			}
-		}
-
-#endif
-
-		/* Reset visuals */
-		else if (i == '0')
-		{
-			/* Reset */
-			reset_visuals();
-
-			/* Message */
-			msg_print("Visual attr/char tables reset.");
-		}
-
-		/* Unknown option */
-		else
-		{
-			bell("Illegal command for visuals!");
-		}
-
-		/* Flush messages */
-		message_flush();
-	}
-
-
-	/* Restore the screen */
-	screen_load();
+	
+	display_menu(visuals_menu, -1, FALSE, NULL, "Interact with Visuals");
 }
 
 
