@@ -88,30 +88,22 @@ void check_experience(void)
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_lev)
 		{
-			int vir, i;
+			int vir;
 			for (vir = 0; vir < MAX_PLAYER_VIRTUES; vir++)
 				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
 
 			if (p_ptr->flags4 & (TR4_MUTATE))
 			{
-				/*
-				 * Chance for a mutation is increased
-				 * if multiple levels are gained.
-				 */
-				for (i = p_ptr->max_lev; i < p_ptr->lev; i++)
-				{
-					if (one_in_(5)) level_mutation = TRUE;
-				}
+				if (one_in_(5)) level_mutation = TRUE;
 			}
 
 			p_ptr->max_lev = p_ptr->lev;
 
-			if (p_ptr->flags4 & (TR4_PATRON))
+			if ((p_ptr->flags4 & (TR4_PATRON)) ||
+				(one_in_(7) && (p_ptr->flags4 & TR4_STRANGE_LUCK)))
 			{
 				level_reward = TRUE;
 			}
-
-
 		}
 
 		/* Sound */
@@ -133,13 +125,13 @@ void check_experience(void)
 		/* Handle stuff */
 		handle_stuff();
 
-		if (level_reward || (one_in_(7) && 
-					(p_ptr->flags4 & TR4_STRANGE_LUCK)))
+		if (level_reward) 
 		{
 			if (!multi_rew)
 			{
 				gain_level_reward(0);
 				multi_rew = TRUE;
+				level_reward = FALSE;
 			}
 		}
 
@@ -147,6 +139,7 @@ void check_experience(void)
 		{
 			msgf("You feel different...");
 			(void)gain_mutation(0);
+			level_mutation = FALSE;
 		}
 	}
 }
