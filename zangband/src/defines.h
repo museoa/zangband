@@ -843,6 +843,11 @@
 #define COL_DEPTH               70      /* "Lev NNN" / "NNNN ft" */
 
 
+#define ROW_STATBAR             14
+#define COL_STATBAR             0       /* "Status bar" */
+
+#define MAX_EFFECTS		30	/* Max #of player timed effects*/
+
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 

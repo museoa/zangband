@@ -3627,3 +3627,60 @@ bool monk_heavy_armor(void)
 
 	return (monk_arm_wgt > (100 + (p_ptr->lev * 4)));
 }
+
+
+static int bar_count=0;
+
+void show_status_bar(char_ptr letter, byte_ptr colour, int num)
+{
+	int i;
+		
+	if (num<=12)
+	{
+		/* Reset everything */
+		bar_count=0;
+		clear_status_bar();
+		
+		/*Display the flags */
+		for (i=0;i<num;i++)
+		{
+			Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i], letter[i]);
+		}
+	}
+	else
+	{
+		/* increment offset of scroll */
+		bar_count++;
+		if (bar_count>=num) bar_count=0;
+		
+		
+		if (bar_count+12<num)
+		{
+			/*Simple case - all in a row*/
+			for (i=0;i<12;i++)
+			{
+				Term_putch(COL_STATBAR+i,ROW_STATBAR, colour[i+bar_count],
+					letter[i+bar_count]);
+			}
+		}
+		else
+		{
+			/*Split over boundary*/
+			for (i=0;i<num-bar_count;i++)
+			{
+				Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i+bar_count],
+					letter[i+bar_count]);
+			}
+			for (i=0;i<12+bar_count-num;i++)
+			{
+				Term_putch(COL_STATBAR+i+num-bar_count, ROW_STATBAR, 
+					colour[i],letter[i]);
+			}		
+		}
+	}
+}
+
+void clear_status_bar(void)
+{
+	Term_putstr(COL_STATBAR, ROW_STATBAR, 12, TERM_WHITE, "            ");
+}

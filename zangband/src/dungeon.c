@@ -871,6 +871,10 @@ static void process_world(void)
 	int temp;
 	object_kind *k_ptr;
 
+	int num=0;
+	char letter[30];
+	byte colour[30];
+
 	/* Every 10 game turns */
 	if (turn % 10) return;
 
@@ -1430,18 +1434,30 @@ static void process_world(void)
 	if (p_ptr->image)
 	{
 		(void)set_image(p_ptr->image - 1);
+		
+		letter[num]='H';
+		colour[num]=TERM_VIOLET;
+		num++;
 	}
 
 	/* Blindness */
 	if (p_ptr->blind)
 	{
 		(void)set_blind(p_ptr->blind - 1);
+		
+		letter[num]='B';
+		colour[num]=TERM_L_DARK;
+		num++;
 	}
 
 	/* Times see-invisible */
 	if (p_ptr->tim_invis)
 	{
 		(void)set_tim_invis(p_ptr->tim_invis - 1);
+		
+		letter[num]='I';
+		colour[num]=TERM_L_BLUE;
+		num++;
 	}
 
 	if (multi_rew)
@@ -1453,114 +1469,190 @@ static void process_world(void)
 	if (p_ptr->tim_esp)
 	{
 		(void)set_tim_esp(p_ptr->tim_esp - 1);
+		
+		letter[num]='E';
+		colour[num]=TERM_ORANGE;
+		num++;
 	}
 
 	/* Timed infra-vision */
 	if (p_ptr->tim_infra)
 	{
 		(void)set_tim_infra(p_ptr->tim_infra - 1);
+		
+		letter[num]='I';
+		colour[num]=TERM_L_RED;
+		num++;
 	}
 
 	/* Paralysis */
 	if (p_ptr->paralyzed)
 	{
 		(void)set_paralyzed(p_ptr->paralyzed - 1);
+		
+		letter[num]='P';
+		colour[num]=TERM_RED;
+		num++;
 	}
 
 	/* Confusion */
 	if (p_ptr->confused)
 	{
 		(void)set_confused(p_ptr->confused - 1);
+		
+		letter[num]='C';
+		colour[num]=TERM_VIOLET;
+		num++;
 	}
 
 	/* Afraid */
 	if (p_ptr->afraid)
 	{
 		(void)set_afraid(p_ptr->afraid - 1);
+		
+		letter[num]='A';
+		colour[num]=TERM_YELLOW;
+		num++;
 	}
 
 	/* Fast */
 	if (p_ptr->fast)
 	{
 		(void)set_fast(p_ptr->fast - 1);
+		
+		letter[num]='S';
+		colour[num]=TERM_GREEN;
+		num++;
 	}
 
 	/* Slow */
 	if (p_ptr->slow)
 	{
 		(void)set_slow(p_ptr->slow - 1);
+		
+		letter[num]='S';
+		colour[num]=TERM_RED;
+		num++;
 	}
 
 	/* Protection from evil */
 	if (p_ptr->protevil)
 	{
 		(void)set_protevil(p_ptr->protevil - 1);
+		
+		letter[num]='E';
+		colour[num]=TERM_L_DARK;
+		num++;
 	}
 
 	/* Invulnerability */
 	if (p_ptr->invuln)
 	{
 		(void)set_invuln(p_ptr->invuln - 1);
+		
+		letter[num]='I';
+		colour[num]=TERM_YELLOW;
+		num++;
 	}
 
 	/* Wraith form */
 	if (p_ptr->wraith_form)
 	{
 		(void)set_wraith_form(p_ptr->wraith_form - 1);
+		
+		letter[num]='W';
+		colour[num]=TERM_L_DARK;
+		num++;
 	}
 
 	/* Heroism */
 	if (p_ptr->hero)
 	{
 		(void)set_hero(p_ptr->hero - 1);
+		
+		letter[num]='H';
+		colour[num]=TERM_WHITE;
+		num++;
 	}
 
 	/* Super Heroism */
 	if (p_ptr->shero)
 	{
 		(void)set_shero(p_ptr->shero - 1);
+		
+		letter[num]='H';
+		colour[num]=TERM_YELLOW;
+		num++;
 	}
 
 	/* Blessed */
 	if (p_ptr->blessed)
 	{
 		(void)set_blessed(p_ptr->blessed - 1);
+		
+		letter[num]='B';
+		colour[num]=TERM_WHITE;
+		num++;
 	}
 
 	/* Shield */
 	if (p_ptr->shield)
 	{
 		(void)set_shield(p_ptr->shield - 1);
+		
+		letter[num]='S';
+		colour[num]=TERM_WHITE;
+		num++;
 	}
 
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)
 	{
 		(void)set_oppose_acid(p_ptr->oppose_acid - 1);
+		
+		letter[num]='A';
+		colour[num]=TERM_GREEN;
+		num++;
 	}
 
 	/* Oppose Lightning */
 	if (p_ptr->oppose_elec)
 	{
 		(void)set_oppose_elec(p_ptr->oppose_elec - 1);
+		
+		letter[num]='E';
+		colour[num]=TERM_BLUE;
+		num++;
 	}
 
 	/* Oppose Fire */
 	if (p_ptr->oppose_fire)
 	{
 		(void)set_oppose_fire(p_ptr->oppose_fire - 1);
+		
+		letter[num]='F';
+		colour[num]=TERM_RED;
+		num++;
 	}
 
 	/* Oppose Cold */
 	if (p_ptr->oppose_cold)
 	{
 		(void)set_oppose_cold(p_ptr->oppose_cold - 1);
+		
+		letter[num]='C';
+		colour[num]=TERM_WHITE;
+		num++;
 	}
 
 	/* Oppose Poison */
 	if (p_ptr->oppose_pois)
 	{
 		(void)set_oppose_pois(p_ptr->oppose_pois - 1);
+		
+		letter[num]='P';
+		colour[num]=TERM_GREEN;
+		num++;
 	}
 
 
@@ -1573,6 +1665,10 @@ static void process_world(void)
 
 		/* Apply some healing */
 		(void)set_poisoned(p_ptr->poisoned - adjust);
+		
+		letter[num]='P';
+		colour[num]=TERM_L_GREEN;
+		num++;
 	}
 
 	/* Stun */
@@ -1582,6 +1678,10 @@ static void process_world(void)
 
 		/* Apply some healing */
 		(void)set_stun(p_ptr->stun - adjust);
+		
+		letter[num]='S';
+		colour[num]=TERM_BLUE;
+		num++;
 	}
 
 	/* Cut */
@@ -1594,10 +1694,20 @@ static void process_world(void)
 
 		/* Apply some healing */
 		(void)set_cut(p_ptr->cut - adjust);
+		
+		letter[num]='W';
+		colour[num]=TERM_RED;
+		num++;
 	}
 
-
-
+	if (num)
+	{
+		/*Display the status bar if there are flags set*/
+		show_status_bar(letter,colour,num);
+	}
+	else clear_status_bar();
+	
+	
 	/*** Process Light ***/
 
 	/* Check for light being wielded */

@@ -1014,6 +1014,8 @@ extern void handle_stuff(void);
 extern bool monk_empty_hands(void);
 extern bool monk_heavy_armor(void);
 extern void calc_bonuses(void);
+extern void show_status_bar(char_ptr letter, byte_ptr colour, int num);
+extern void clear_status_bar(void);
 
 /* effects.c */
 extern bool set_blind(int v);
@@ -1052,6 +1054,7 @@ extern bool lose_all_info(void);
 extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
 extern void do_poly_self(void);
+
 
 /* xtra2.c */
 extern void check_experience(void);
