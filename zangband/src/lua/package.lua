@@ -106,8 +106,11 @@ function classPackage:preamble ()
  output('\n')
 
  output('/* error messages */')
- output('#define TOLUA_ERR_SELF tolua_error(tolua_S,\"invalid \'self\'\")')
+ output('#define TOLUA_TEST_ERR_SELF if (!self) tolua_error(tolua_S,\"invalid \'self\'\")')
  output('#define TOLUA_ERR_ASSIGN tolua_error(tolua_S,\"#vinvalid type in variable assignment.\")')
+ output('#define TOLUA_DEF(L,N) tolua_constant(tolua_S,NULL, #L, N)')
+ output('#define TOLUA_FUN(L,N) tolua_function(tolua_S,NULL, #L, N)')
+ output('#define TOLUA_UNDEF(L) lua_pushnil(tolua_S); lua_setglobal(tolua_S,#L)')
  output('\n')
 end
 

@@ -26,14 +26,14 @@ function classDefine:register ()
  if p then
   output(' tolua_constant(tolua_S,"'..p..'","'..self.lname..'",'..self.name..');') 
  else
-  output(' tolua_constant(tolua_S,NULL,"'..self.lname..'",'..self.name..');') 
+  output(' TOLUA_DEF('..self.lname..','..self.name..');') 
  end
 end
 
 -- unregister define
 function classDefine:unregister ()
  if not self:inmodule() then
-  output(' lua_pushnil(tolua_S); lua_setglobal(tolua_S,"'..self.lname..'");') 
+  output(' TOLUA_UNDEF('..self.lname..');') 
  end
 end
 

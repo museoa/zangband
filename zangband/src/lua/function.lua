@@ -231,14 +231,14 @@ function classFunction:register ()
  if parent then
   output(' tolua_function(tolua_S,"'..parent..'","'..self.lname..'",'..self.cname..');')
  else
-  output(' tolua_function(tolua_S,NULL,"'..self.lname..'",'..self.cname..');')
+  output(' TOLUA_FUN('..self.lname..','..self.cname..');') 
  end
 end
 
 -- unregister function
 function classFunction:unregister ()
  if self:inclass()==nil and self:inmodule()==nil then
-  output(' lua_pushnil(tolua_S); lua_setglobal(tolua_S,"'..self.lname..'");')
+  output(' TOLUA_UNDEF('..self.lname..');')
  end
 end
 
