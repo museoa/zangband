@@ -196,16 +196,3 @@ if {[string match classic* [Global config,prefix]]} {
 # classic
 }
 
-
-proc VaultCurrentProc {depth} {
-
-	if {$depth} {
-		vault current 0
-	}
-
-	return
-}
-
-# When entering a level, see if a custom .vlt file exists
-qebind VaultCurrent <Dungeon-enter> {VaultCurrentProc %c}
-
