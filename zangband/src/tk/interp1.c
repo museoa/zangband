@@ -793,8 +793,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		{
 			char buf[128];
 			
-			index = 0;
-			Tcl_SetResult(interp, assign_print2(buf, ASSIGN_CHARACTER, index),
+			Tcl_SetResult(interp, assign_print2(buf, ASSIGN_CHARACTER),
 				TCL_VOLATILE);
 			break;
 		}

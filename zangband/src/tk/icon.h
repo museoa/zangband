@@ -194,8 +194,8 @@ extern int *g_image_monster;
 
 extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr);
 extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
-extern char *assign_print(char *buf, t_assign_icon *assignPtr);
-extern char *assign_print2(char *buf, int assignType, int assignIndex);
+extern char *AssignToString_Icon(char *buf, t_assign_icon *assign);
+extern char *assign_print2(char *buf, int assignType);
 extern char *assign_print_object(char *buf, object_type *o_ptr);
 extern void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr);
 

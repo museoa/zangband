@@ -775,7 +775,7 @@ static char *Assign_PrintProc(ClientData clientData, Tk_Window tkwin,
 	(void) clientData;
 
 	*freeProcPtr = (Tcl_FreeProc *) TCL_DYNAMIC;
-	return assign_print(buf, (t_assign_icon *) (widgRec + offset));
+	return AssignToString_Icon(buf, (t_assign_icon *) (widgRec + offset));
 }
 
 int CanvasWidget_Init(Tcl_Interp *interp)

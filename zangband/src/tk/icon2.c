@@ -14,7 +14,7 @@
 #include "icon.h"
 
 
-static char *AssignToString_Icon(char *buf, t_assign_icon *assign)
+char *AssignToString_Icon(char *buf, t_assign_icon *assign)
 {
 	if (assign->ascii == -1)
 	{
@@ -62,18 +62,6 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cpt
 
 cptr keyword_assign_type[] = {"icon", NULL};
 
-/* char* -> t_assign */
-typedef char *(*AssignToStringProc)(char *buf, t_assign_icon *assign);
-AssignToStringProc gAssignToStringProc[ASSIGN_TYPE_MAX] = {
-	AssignToString_Icon
-};
-
-/* t_assign -> char* */
-typedef int (*StringToAssignProc)(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
-StringToAssignProc gStringToAssignProc[ASSIGN_TYPE_MAX] = {
-	StringToAssign_Icon
-};
-
 int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 {
 	char option[64];
@@ -97,25 +85,20 @@ int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 	}
 	Tcl_DecrRefCount(objPtr);
 
-	return (*gStringToAssignProc[assignType])(interp, assignPtr, desc);
+	return StringToAssign_Icon(interp, assignPtr, desc);
 }
 
-char *assign_print(char *buf, t_assign_icon *assignPtr)
+char *assign_print2(char *buf, int assignType)
 {
-	return (*gAssignToStringProc[0])(buf, assignPtr);
-}
-
-char *assign_print2(char *buf, int assignType, int assignIndex)
-{
-	t_assign_icon *assignPtr = &g_assign[assignType].assign[assignIndex];
-	return assign_print(buf, assignPtr);
+	t_assign_icon *assignPtr = &g_assign[assignType].assign[0];
+	return AssignToString_Icon(buf, assignPtr);
 }
 
 char *assign_print_object(char *buf, object_type *o_ptr)
 {
 	t_assign_icon assign;
 	get_object_assign(&assign, o_ptr);
-	return assign_print(buf, &assign);
+	return AssignToString_Icon(buf, &assign);
 }
 
 /*
