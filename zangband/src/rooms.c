@@ -4336,6 +4336,13 @@ static void build_type16(int bx0, int by0)
  */
 static bool test_tri(int px, int py, int x1, int y1, int x2, int y2, int x3, int y3, int det)
 {
+	/*
+	 * Use the cross product to make sure the point is on the 'right side'
+	 * of the angle defined by the particular side, and the vector from a
+	 * vertex of that side to the specified point.
+	 *
+	 * Do this three times, once for each side of the triangle.
+	 */
 	if (det > 0)
 	{
 		if ((x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) < 0) return (FALSE);
@@ -4433,7 +4440,15 @@ static void build_type17(int bx0, int by0)
 			vy1 = rand_range(y1, y2);
 			vy2 = rand_range(y1, y2);
 			vy3 = rand_range(y1, y2);
-		
+			
+			/*
+			 * Calculate the cross product of two vectors that
+			 * define the sides of the triangle.
+			 *
+			 * This will be equal to twice the area of the triangle
+			 * times a sign factor that depends on the ordering
+			 * of the vertex points in space.
+			 */
 			det = (vx2 - vx1) * (vy3 - vy1) - (vx3 - vx1) * (vy2 - vy1);
 		
 			/* Make sure the triangle is large enough. */
@@ -4463,7 +4478,53 @@ static void build_type17(int bx0, int by0)
 	add_outer_wall(xval, yval, light, x1 - 1, y1 - 1, x2 + 1, y2 + 1);
 }
 
-#define ROOM_TYPES	17
+
+
+/*
+ * Type 18 -- Large room with many small rooms inside.
+ *
+ * (A jail).
+ */
+static void build_type18(int bx0, int by0)
+{
+	int y1, x1;
+	int y2, x2, yval, xval;
+	bool light;
+	
+	int i;
+
+	/* Try to allocate space for room. */
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
+
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+
+	/* Large room */
+	y1 = yval - 4;
+	y2 = yval + 4;
+	x1 = xval - 11;
+	x2 = xval + 11;
+
+	/* Generate new room */
+	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
+
+	/* Generate inner floors */
+	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	
+	for (i = 0; i < 6; i++)
+	{
+		generate_draw(x1 - 1 + i * 4, y1 - 1, x1 + 3 + i * 4, yval - 1, FEAT_WALL_INNER);
+		generate_draw(x1 - 1 + i * 4, yval + 1, x1 + 3 + i * 4, y2 + 1, FEAT_WALL_INNER);
+		place_random_door(x1 + 1 + i * 4, yval - 1);
+		place_random_door(x1 + 1 + i * 4, yval + 1);
+	}
+	
+	/* Generate outer walls */
+	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
+}
+
+
+#define ROOM_TYPES	18
 
 typedef void (*room_build_type)(int, int);
 
@@ -4485,7 +4546,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type14,
 	build_type15,
 	build_type16,
-	build_type17
+	build_type17,
+	build_type18
 };
 
 
@@ -4507,7 +4569,8 @@ bool room_build(int bx0, int by0, int typ)
 	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);
 	
 	/* Build a room */
-	room_list[typ - 1](bx0, by0);
+	/* room_list[typ - 1](bx0, by0); */
+	room_list[17](bx0, by0);
 
 	return (TRUE);
 }
