@@ -4826,8 +4826,8 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		/* Region */
 		o_ptr->region = cur_region;
 
-		/* Not held */
-		o_ptr->held = FALSE;
+		/* Is 'held' */
+		o_ptr->held = TRUE;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;

@@ -2756,8 +2756,6 @@ void do_cmd_throw_aux(int mult)
 
     object_type *o_ptr;
 
-    object_type temp_object;
-
 	bool hit_body = FALSE;
 	bool hit_wall = FALSE;
 
@@ -2796,7 +2794,7 @@ void do_cmd_throw_aux(int mult)
 
 
 	/* Split object */
-	q_ptr = item_split(o_ptr, 1, &temp_object);
+	q_ptr = item_split(o_ptr, 1);
 
 	/* Extract the thrown object's flags. */
 	object_flags(q_ptr, &f1, &f2, &f3);

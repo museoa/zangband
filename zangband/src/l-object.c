@@ -2420,17 +2420,15 @@ static int toluaI_object_item_split00(lua_State* tolua_S)
  if (
      !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
      !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
-     !tolua_istype(tolua_S,3,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_isnoobj(tolua_S,4)
+     !tolua_isnoobj(tolua_S,3)
  )
   goto tolua_lerror;
  else
  {
   object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
   int num = ((int)  tolua_getnumber(tolua_S,2,0));
-  object_type* q_ptr = ((object_type*)  tolua_getusertype(tolua_S,3,0));
   {
-   object_type* toluaI_ret = (object_type*)  item_split(o_ptr,num,q_ptr);
+   object_type* toluaI_ret = (object_type*)  item_split(o_ptr,num);
    tolua_pushusertype(tolua_S,(void*)toluaI_ret,tolua_tag(tolua_S,"object_type"));
   }
  }

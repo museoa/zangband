@@ -133,8 +133,6 @@ void do_cmd_wield(void)
 
     object_type *o_ptr;
 
-    object_type temp_object;
-
 	cptr act;
 
 	char o_name[256];
@@ -148,19 +146,22 @@ void do_cmd_wield(void)
 	q = "Wear/Wield which item? ";
 	s = "You have nothing you can wear or wield.";
 
-	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+	q_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
 
 	/* Not a valid item */
-	if (!o_ptr) return;
+	if (!q_ptr) return;
 
 	/* Check the slot */
-	slot = wield_slot(o_ptr);
+	slot = wield_slot(q_ptr);
+	
+	/* Access the wield slot */
+	o_ptr = &p_ptr->equipment[slot];
 
 	/* Prevent wielding into a cursed slot */
-	if (cursed_p(&p_ptr->equipment[slot]))
+	if (cursed_p(o_ptr))
 	{
 		/* Describe it */
-		object_desc(o_name, &p_ptr->equipment[slot], FALSE, 0, 256);
+		object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 		/* Message */
 		msg_format("The %s you are %s appears to be cursed.",
@@ -170,13 +171,13 @@ void do_cmd_wield(void)
 		return;
 	}
 
-	if (cursed_p(o_ptr) && confirm_wear &&
-		(object_known_p(o_ptr) || (o_ptr->info & OB_SENSE)))
+	if (cursed_p(q_ptr) && confirm_wear &&
+		(object_known_p(q_ptr) || (q_ptr->info & OB_SENSE)))
 	{
 		char dummy[512];
 
 		/* Describe it */
-		object_desc(o_name, o_ptr, FALSE, 0, 256);
+		object_desc(o_name, q_ptr, FALSE, 0, 256);
 
 		sprintf(dummy, "Really use the %s {cursed}? ", o_name);
 
@@ -186,19 +187,16 @@ void do_cmd_wield(void)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
-
-	/* Split object */
-	q_ptr = item_split(o_ptr, 1, &temp_object);
-
-	/* Access the wield slot */
-	o_ptr = &p_ptr->equipment[slot];
-
+	
 	/* Take off existing item */
 	if (o_ptr->k_idx)
 	{
 		/* Take off existing item */
 		(void)inven_takeoff(o_ptr, 255);
 	}
+
+	/* Split object */
+	q_ptr = item_split(q_ptr, 1);
 
 	/* Wear the new stuff */
 	object_copy(o_ptr, q_ptr);
@@ -211,6 +209,9 @@ void do_cmd_wield(void)
 
 	/* Forget Region */
 	o_ptr->region = 0;
+	
+	/* Now no longer "held" */
+	o_ptr->held = FALSE;
 
 	/* Where is the item now */
 	if (slot == EQUIP_WIELD)
