@@ -1047,7 +1047,7 @@ static void borg_notice_aux2(void)
 	int i, ii;
 	int carry_capacity;
 
-	borg_item *item;
+	list_item *l_ptr;
 
 
 	/*** Reset counters ***/
@@ -1103,32 +1103,33 @@ static void borg_notice_aux2(void)
 	/*** Process the inventory ***/
 
 	/* Scan the inventory */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		item = &borg_items[i];
+		object_kind *k_ptr;
+	
+		l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
-		/* Hack -- skip un-aware items */
-		if (!item->kind) continue;
-
-		/* count up the items on the borg (do not count artifacts  */
-		/* that are not being wielded) */
-		borg_has[item->kind] += item->iqty;
+		/* count up the items on the borg */
+		borg_has[l_ptr->k_idx] += l_ptr->number;
 
 		/* Keep track of weight */
-		borg_skill[BI_ENCUMBERD] += item->weight * item->iqty;
+		borg_skill[BI_ENCUMBERD] += l_ptr->weight * l_ptr->number;
+		
+		/* Get item type */
+		k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Analyze the item */
-		switch (item->tval)
+		switch (l_ptr->tval)
 		{
 			case TV_LIFE_BOOK:
 			{
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_LIFE ||
 					borg_skill[BI_REALM2] == REALM_LIFE)
-					amt_book[REALM_LIFE][item->sval] += item->iqty;
+					amt_book[REALM_LIFE][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 			case TV_SORCERY_BOOK:
@@ -1136,7 +1137,7 @@ static void borg_notice_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_SORCERY ||
 					borg_skill[BI_REALM2] == REALM_SORCERY)
-					amt_book[REALM_SORCERY][item->sval] += item->iqty;
+					amt_book[REALM_SORCERY][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 			case TV_NATURE_BOOK:
@@ -1144,7 +1145,7 @@ static void borg_notice_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_NATURE ||
 					borg_skill[BI_REALM2] == REALM_NATURE)
-					amt_book[REALM_NATURE][item->sval] += item->iqty;
+					amt_book[REALM_NATURE][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 			case TV_CHAOS_BOOK:
@@ -1152,7 +1153,7 @@ static void borg_notice_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_CHAOS ||
 					borg_skill[BI_REALM2] == REALM_CHAOS)
-					amt_book[REALM_CHAOS][item->sval] += item->iqty;
+					amt_book[REALM_CHAOS][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 			case TV_DEATH_BOOK:
@@ -1160,7 +1161,7 @@ static void borg_notice_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_DEATH ||
 					borg_skill[BI_REALM2] == REALM_DEATH)
-					amt_book[REALM_DEATH][item->sval] += item->iqty;
+					amt_book[REALM_DEATH][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 			case TV_TRUMP_BOOK:
@@ -1168,7 +1169,7 @@ static void borg_notice_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_TRUMP ||
 					borg_skill[BI_REALM2] == REALM_TRUMP)
-					amt_book[REALM_TRUMP][item->sval] += item->iqty;
+					amt_book[REALM_TRUMP][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 			case TV_ARCANE_BOOK:
@@ -1176,7 +1177,7 @@ static void borg_notice_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_ARCANE ||
 					borg_skill[BI_REALM2] == REALM_ARCANE)
-					amt_book[REALM_ARCANE][item->sval] += item->iqty;
+					amt_book[REALM_ARCANE][k_ptr->sval] += l_ptr->number;
 				break;
 			}
 
@@ -1184,71 +1185,71 @@ static void borg_notice_aux2(void)
 			case TV_FOOD:
 			{
 				/* Analyze */
-				switch (item->sval)
+				switch (k_ptr->sval)
 				{
 					case SV_FOOD_WAYBREAD:
 					{
-						amt_food_hical += item->iqty;
+						amt_food_hical += l_ptr->number;
 						break;
 					}
 					case SV_FOOD_RATION:
 					{
-						amt_food_hical += item->iqty;
+						amt_food_hical += l_ptr->number;
 						break;
 					}
 					case SV_FOOD_JERKY:
 					{
-						amt_food_lowcal += item->iqty;
+						amt_food_lowcal += l_ptr->number;
 						break;
 					}
 					case SV_FOOD_BISCUIT:
 					{
-						amt_food_lowcal += item->iqty;
+						amt_food_lowcal += l_ptr->number;
 						break;
 					}
 					case SV_FOOD_SLIME_MOLD:
 					{
-						amt_food_lowcal += item->iqty;
+						amt_food_lowcal += l_ptr->number;
 						break;
 					}
 
 					case SV_FOOD_RESTORE_STR:
 					{
-						amt_fix_stat[A_STR] += item->iqty;
+						amt_fix_stat[A_STR] += l_ptr->number;
 						break;
 					}
 					case SV_FOOD_RESTORE_CON:
 					{
-						amt_fix_stat[A_CON] += item->iqty;
+						amt_fix_stat[A_CON] += l_ptr->number;
 						break;
 					}
 					case SV_FOOD_RESTORING:
 					{
-						amt_fix_stat[A_STR] += item->iqty;
-						amt_fix_stat[A_INT] += item->iqty;
-						amt_fix_stat[A_WIS] += item->iqty;
-						amt_fix_stat[A_DEX] += item->iqty;
-						amt_fix_stat[A_CON] += item->iqty;
-						amt_fix_stat[A_CHR] += item->iqty;
-						amt_fix_stat[6] += item->iqty;
+						amt_fix_stat[A_STR] += l_ptr->number;
+						amt_fix_stat[A_INT] += l_ptr->number;
+						amt_fix_stat[A_WIS] += l_ptr->number;
+						amt_fix_stat[A_DEX] += l_ptr->number;
+						amt_fix_stat[A_CON] += l_ptr->number;
+						amt_fix_stat[A_CHR] += l_ptr->number;
+						amt_fix_stat[6] += l_ptr->number;
 						break;
 					}
 
 					case SV_FOOD_CURE_CONFUSION:
 					{
-						amt_cure_confusion += item->iqty;
+						amt_cure_confusion += l_ptr->number;
 						break;
 					}
 
 					case SV_FOOD_CURE_BLINDNESS:
 					{
-						amt_cure_blind += item->iqty;
+						amt_cure_blind += l_ptr->number;
 						break;
 					}
 
 					case SV_FOOD_CURE_POISON:
 					{
-						borg_skill[BI_ACUREPOIS] += item->iqty;
+						borg_skill[BI_ACUREPOIS] += l_ptr->number;
 						break;
 					}
 
@@ -1260,206 +1261,205 @@ static void borg_notice_aux2(void)
 			case TV_POTION:
 			{
 				/* Analyze */
-				switch (item->sval)
+				switch (k_ptr->sval)
 				{
 					case SV_POTION_HEALING:
 					{
-						borg_skill[BI_AHEAL] += item->iqty;
+						borg_skill[BI_AHEAL] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_STAR_HEALING:
 					case SV_POTION_LIFE:
 					{
-						borg_skill[BI_AEZHEAL] += item->iqty;
+						borg_skill[BI_AEZHEAL] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_CURE_CRITICAL:
 					{
-						borg_skill[BI_ACCW] += item->iqty;
+						borg_skill[BI_ACCW] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_CURE_SERIOUS:
 					{
-						borg_skill[BI_ACSW] += item->iqty;
+						borg_skill[BI_ACSW] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_CURE_LIGHT:
 					{
 						if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] +=
-								item->iqty;
+								l_ptr->number;
 						break;
 					}
 					case SV_POTION_CURE_POISON:
 					{
-						borg_skill[BI_ACUREPOIS] += item->iqty;
+						borg_skill[BI_ACUREPOIS] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_SLOW_POISON:
 					{
-						amt_slow_poison += item->iqty;
+						amt_slow_poison += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RESIST_HEAT:
 					{
-						borg_skill[BI_ARESHEAT] += item->iqty;
+						borg_skill[BI_ARESHEAT] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RESIST_COLD:
 					{
-						borg_skill[BI_ARESCOLD] += item->iqty;
+						borg_skill[BI_ARESCOLD] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_INC_STR:
 					{
-						amt_add_stat[A_STR] += item->iqty;
+						amt_add_stat[A_STR] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_INC_INT:
 					{
-						amt_add_stat[A_INT] += item->iqty;
+						amt_add_stat[A_INT] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_INC_WIS:
 					{
-						amt_add_stat[A_WIS] += item->iqty;
+						amt_add_stat[A_WIS] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_INC_DEX:
 					{
-						amt_add_stat[A_DEX] += item->iqty;
+						amt_add_stat[A_DEX] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_INC_CON:
 					{
-						amt_add_stat[A_CON] += item->iqty;
+						amt_add_stat[A_CON] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_INC_CHR:
 					{
-						amt_add_stat[A_CHR] += item->iqty;
+						amt_add_stat[A_CHR] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RES_STR:
 					{
-						amt_fix_stat[A_STR] += item->iqty;
+						amt_fix_stat[A_STR] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RES_INT:
 					{
-						amt_fix_stat[A_INT] += item->iqty;
+						amt_fix_stat[A_INT] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RES_WIS:
 					{
-						amt_fix_stat[A_WIS] += item->iqty;
+						amt_fix_stat[A_WIS] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RES_DEX:
 					{
-						amt_fix_stat[A_DEX] += item->iqty;
+						amt_fix_stat[A_DEX] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RES_CON:
 					{
-						amt_fix_stat[A_CON] += item->iqty;
+						amt_fix_stat[A_CON] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RES_CHR:
 					{
-						amt_fix_stat[A_CHR] += item->iqty;
+						amt_fix_stat[A_CHR] += l_ptr->number;
 						break;
 					}
 					case SV_POTION_RESTORE_EXP:
 					{
-						amt_fix_exp += item->iqty;
+						amt_fix_exp += l_ptr->number;
 						break;
 					}
 					case SV_POTION_SPEED:
 					{
-						borg_skill[BI_ASPEED] += item->iqty;
+						borg_skill[BI_ASPEED] += l_ptr->number;
 						break;
 					}
 				}
 				break;
 			}
 
-
-				/* Scrolls */
 			case TV_SCROLL:
 			{
-
+				/* Scrolls */
+				
 				/* Analyze the scroll */
-				switch (item->sval)
+				switch (k_ptr->sval)
 				{
 					case SV_SCROLL_IDENTIFY:
 					{
-						borg_skill[BI_AID] += item->iqty;
+						borg_skill[BI_AID] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_RECHARGING:
 					{
-						borg_skill[BI_ARECHARGE] += item->iqty;
+						borg_skill[BI_ARECHARGE] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_PHASE_DOOR:
 					{
-						amt_phase += item->iqty;
+						amt_phase += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_TELEPORT:
 					{
-						borg_skill[BI_AESCAPE] += item->iqty;
-						borg_skill[BI_ATELEPORT] += item->iqty;
+						borg_skill[BI_AESCAPE] += l_ptr->number;
+						borg_skill[BI_ATELEPORT] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_WORD_OF_RECALL:
 					{
-						borg_skill[BI_RECALL] += item->iqty;
+						borg_skill[BI_RECALL] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_ENCHANT_ARMOR:
 					{
-						amt_enchant_to_a += item->iqty;
+						amt_enchant_to_a += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 					{
-						amt_enchant_to_h += item->iqty;
+						amt_enchant_to_h += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 					{
-						amt_enchant_to_d += item->iqty;
+						amt_enchant_to_d += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_STAR_ENCHANT_WEAPON:
 					{
-						amt_enchant_weapon += item->iqty;
+						amt_enchant_weapon += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_PROTECTION_FROM_EVIL:
 					{
-						borg_skill[BI_APFE] += item->iqty;
+						borg_skill[BI_APFE] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_STAR_ENCHANT_ARMOR:
 					{
-						amt_enchant_armor += item->iqty;
+						amt_enchant_armor += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_RUNE_OF_PROTECTION:
 					{
-						borg_skill[BI_AGLYPH] += item->iqty;
+						borg_skill[BI_AGLYPH] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_TELEPORT_LEVEL:
 					{
-						borg_skill[BI_ATELEPORTLVL] += item->iqty;
+						borg_skill[BI_ATELEPORTLVL] += l_ptr->number;
 						break;
 					}
 					case SV_SCROLL_SATISFY_HUNGER:
 					{
-						borg_skill[BI_FOOD] += item->iqty;
+						borg_skill[BI_FOOD] += l_ptr->number;
 						break;
 					}
 				}
@@ -1471,17 +1471,17 @@ static void borg_notice_aux2(void)
 
 			{
 				/* Analyze */
-				switch (item->sval)
+				switch (k_ptr->sval)
 				{
 					case SV_ROD_IDENTIFY:
 					{
-						if (borg_skill[BI_DEV] - item->level > 7)
+						if (borg_skill[BI_DEV] - k_ptr->level > 7)
 						{
-							borg_skill[BI_AID] += item->iqty * 100;
+							borg_skill[BI_AID] += l_ptr->number * 100;
 						}
 						else
 						{
-							borg_skill[BI_AID] += item->iqty;
+							borg_skill[BI_AID] += l_ptr->number;
 						}
 						break;
 					}
@@ -1489,54 +1489,54 @@ static void borg_notice_aux2(void)
 					case SV_ROD_RECALL:
 					{
 						/* Don't count on it if I suck at activations */
-						if (borg_skill[BI_DEV] - item->level > 7)
+						if (borg_skill[BI_DEV] - k_ptr->level > 7)
 						{
-							borg_skill[BI_RECALL] += item->iqty * 100;
+							borg_skill[BI_RECALL] += l_ptr->number * 100;
 						}
 						else
 						{
-							borg_skill[BI_RECALL] += item->iqty;
+							borg_skill[BI_RECALL] += l_ptr->number;
 						}
 						break;
 					}
 
 					case SV_ROD_DETECT_TRAP:
 					{
-						borg_skill[BI_ADETTRAP] += item->iqty * 100;
+						borg_skill[BI_ADETTRAP] += l_ptr->number * 100;
 						break;
 					}
 
 					case SV_ROD_DETECT_DOOR:
 					{
-						borg_skill[BI_ADETDOOR] += item->iqty * 100;
+						borg_skill[BI_ADETDOOR] += l_ptr->number * 100;
 						break;
 					}
 
 					case SV_ROD_DETECTION:
 					{
-						borg_skill[BI_ADETTRAP] += item->iqty * 100;
-						borg_skill[BI_ADETDOOR] += item->iqty * 100;
-						borg_skill[BI_ADETEVIL] += item->iqty * 100;
+						borg_skill[BI_ADETTRAP] += l_ptr->number * 100;
+						borg_skill[BI_ADETDOOR] += l_ptr->number * 100;
+						borg_skill[BI_ADETEVIL] += l_ptr->number * 100;
 						break;
 					}
 
 					case SV_ROD_SPEED:
 					{
 						/* Don't count on it if I suck at activations */
-						if (borg_skill[BI_DEV] - item->level > 7)
+						if (borg_skill[BI_DEV] - k_ptr->level > 7)
 						{
-							borg_skill[BI_ASPEED] += item->iqty * 100;
+							borg_skill[BI_ASPEED] += l_ptr->number * 100;
 						}
 						else
 						{
-							borg_skill[BI_ASPEED] += item->iqty;
+							borg_skill[BI_ASPEED] += l_ptr->number;
 						}
 						break;
 					}
 
 					case SV_ROD_MAPPING:
 					{
-						borg_skill[BI_AMAGICMAP] += item->iqty * 100;
+						borg_skill[BI_AMAGICMAP] += l_ptr->number * 100;
 						break;
 					}
 
@@ -1544,13 +1544,13 @@ static void borg_notice_aux2(void)
 					{
 						/* only +2 per rod because of long charge time. */
 						/* Don't count on it if I suck at activations */
-						if (borg_skill[BI_DEV] - item->level > 7)
+						if (borg_skill[BI_DEV] - k_ptr->level > 7)
 						{
-							borg_skill[BI_AHEAL] += item->iqty * 2;
+							borg_skill[BI_AHEAL] += l_ptr->number * 2;
 						}
 						else
 						{
-							borg_skill[BI_AHEAL] += item->iqty;
+							borg_skill[BI_AHEAL] += l_ptr->number;
 						}
 						break;
 					}
@@ -1570,47 +1570,47 @@ static void borg_notice_aux2(void)
 					break;
 				}
 				/* Analyze */
-				switch (item->sval)
+				switch (k_ptr->sval)
 				{
 					case SV_STAFF_IDENTIFY:
 					{
-						borg_skill[BI_AID] += item->iqty * item->pval;
+						borg_skill[BI_AID] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 					case SV_STAFF_TELEPORTATION:
 					{
-						borg_skill[BI_ATELEPORT] += item->iqty * item->pval;
+						borg_skill[BI_ATELEPORT] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 					case SV_STAFF_SPEED:
 					{
-						borg_skill[BI_ASPEED] += item->iqty * item->pval;
+						borg_skill[BI_ASPEED] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 					case SV_STAFF_HEALING:
 					{
-						borg_skill[BI_AHEAL] += item->iqty * item->pval;
+						borg_skill[BI_AHEAL] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 					case SV_STAFF_THE_MAGI:
 					{
-						borg_skill[BI_ASTFMAGI] += item->iqty * item->pval;
+						borg_skill[BI_ASTFMAGI] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 					case SV_STAFF_DESTRUCTION:
 					{
-						borg_skill[BI_ASTFDEST] += item->iqty * item->pval;
+						borg_skill[BI_ASTFDEST] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 					case SV_STAFF_POWER:
 					{
-						amt_cool_staff += item->iqty;
+						amt_cool_staff += l_ptr->number;
 						break;
 					}
 					case SV_STAFF_HOLINESS:
 					{
-						amt_cool_staff += item->iqty;
-						borg_skill[BI_AHEAL] += item->iqty * item->pval;
+						amt_cool_staff += l_ptr->number;
+						borg_skill[BI_AHEAL] += l_ptr->number * l_ptr->pval;
 						break;
 					}
 				}
@@ -1625,11 +1625,11 @@ static void borg_notice_aux2(void)
 
 				/* Use as fuel if we equip a lantern */
 				if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] +=
-						item->iqty;
+						l_ptr->number;
 
 				/* Count as Missiles */
 				if (borg_skill[BI_CLEVEL] < 15) borg_skill[BI_AMISSILES] +=
-						item->iqty;
+						l_ptr->number;
 
 				break;
 			}
@@ -1640,10 +1640,10 @@ static void borg_notice_aux2(void)
 				/* Torches */
 
 				/* Use as fuel if it is a torch and we carry a torch */
-				if ((item->sval == SV_LITE_TORCH) &&
+				if ((k_ptr->sval == SV_LITE_TORCH) &&
 					(borg_skill[BI_CUR_LITE] <= 1))
 				{
-					borg_skill[BI_AFUEL] += item->iqty;
+					borg_skill[BI_AFUEL] += l_ptr->number;
 				}
 				break;
 			}
@@ -1667,13 +1667,12 @@ static void borg_notice_aux2(void)
 				/* Shovels and such */
 
 				/* Hack -- ignore worthless ones (including cursed) */
-				if (item->value <= 0) break;
-				if (item->cursed) break;
+				if (l_ptr->kn_flags3 & TR3_CURSED) break;
 
 				/* Do not carry if weak, won't be able to dig anyway */
 				if (borg_skill[BI_DIG] < 30) break;
 
-				amt_digger += item->iqty;
+				amt_digger += l_ptr->number;
 				break;
 			}
 
@@ -1684,49 +1683,37 @@ static void borg_notice_aux2(void)
 				/* Missiles */
 
 				/* Hack -- ignore invalid missiles */
-				if (item->tval != my_ammo_tval) break;
-
-				/* Hack -- ignore worthless missiles */
-				if (item->value <= 0) break;
+				if (l_ptr->tval != my_ammo_tval) break;
 
 				/* Count them */
-				borg_skill[BI_AMISSILES] += item->iqty;
+				borg_skill[BI_AMISSILES] += l_ptr->number;
 
-				if (borg_equips_artifact(ART_BRAND, INVEN_BOW) &&
-					item->iqty >= 5 &&
-					/* Skip artifacts and ego-items */
-					!item->xtra_name && item->able && item->tval == TV_BOLT)
-				{
-					my_need_brand_weapon += 10L;
-				}
-
-				/* if we have shit loads of cash (as we will at level 35),  */
-				/* enchant missiles */
+				/* Enchant missiles if have lots of cash */
 				if (borg_skill[BI_CLEVEL] > 35)
 				{
 					if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) &&
-						item->iqty >= 5)
+						l_ptr->number >= 5)
 					{
-						if (item->to_h < 10)
+						if (l_ptr->to_h < 8)
 						{
-							my_need_enchant_to_h += (10 - item->to_h);
+							my_need_enchant_to_h += (10 - l_ptr->to_h);
 						}
 
-						if (item->to_d < 10)
+						if (l_ptr->to_d < 8)
 						{
-							my_need_enchant_to_d += (10 - item->to_d);
+							my_need_enchant_to_d += (10 - l_ptr->to_d);
 						}
 					}
 					else
 					{
-						if (item->to_h < 8)
+						if (l_ptr->to_h < 5)
 						{
-							my_need_enchant_to_h += (8 - item->to_h);
+							my_need_enchant_to_h += (8 - l_ptr->to_h);
 						}
 
-						if (item->to_d < 8)
+						if (l_ptr->to_d < 5)
 						{
-							my_need_enchant_to_d += (8 - item->to_d);
+							my_need_enchant_to_d += (8 - l_ptr->to_d);
 						}
 					}
 				}
@@ -1745,7 +1732,7 @@ static void borg_notice_aux2(void)
 	 *  moment he needes it.  Then he would need the spell and not be able
 	 *  to cast it. (ie. teleport, phase)
 	 *  2.  An artifact may grant a power then he assumes he has infinite
-	 *  amounts.  He then selif (borg_goi) {z /=25; break;}ls off his scrolls with the duplicate power.
+	 *  amounts.  He then sells off his scrolls with the duplicate power.
 	 *  When it comes time to upgrade and swap out the artifact, he wont
 	 *  because his power drops since he does not have the scrolls anymore.
 	 *  and he does not buy items first.
@@ -1770,7 +1757,6 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
 		borg_spell_legal(REALM_ARCANE, 3, 2) ||
 		borg_mindcr_legal(MIND_PSYCHOMETRY, 40))
-		/*borg_equips_artifact(ART_ERIRIL, INVEN_WIELD)) */
 	{
 		borg_skill[BI_AID] += 1000;
 	}
@@ -1799,7 +1785,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "detection" */
-	if (borg_equips_artifact(ART_HOLHENNETH, INVEN_HEAD) ||
+	if (borg_equips_artifact(ART_HOLHENNETH, EQUIP_HEAD) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 30))
 	{
 		borg_skill[BI_ADETDOOR] += 1000;
@@ -1810,7 +1796,7 @@ static void borg_notice_aux2(void)
 	/* Handle "magic mapping" */
 	if (borg_spell_legal(REALM_SORCERY, 1, 0) ||
 		borg_spell_legal(REALM_NATURE, 1, 2) ||
-		borg_equips_artifact(ART_ELENDIL, INVEN_LITE) ||
+		borg_equips_artifact(ART_ELENDIL, EQUIP_LITE) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 20))
 	{
 		borg_skill[BI_ADETDOOR] += 1000;
@@ -1820,7 +1806,7 @@ static void borg_notice_aux2(void)
 
 	/* Handle "protection from evil" */
 	if (borg_spell_legal(REALM_LIFE, 1, 5) ||
-		borg_equips_artifact(ART_CARLAMMAS, INVEN_HEAD))
+		borg_equips_artifact(ART_CARLAMMAS, EQUIP_HEAD))
 	{
 		borg_skill[BI_APFE] += 1000;
 	}
@@ -1841,7 +1827,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* apw Handle "Brand Weapon (bolts)" */
-	if (borg_equips_artifact(ART_BRAND, INVEN_BOW))
+	if (borg_equips_artifact(ART_BRAND, EQUIP_BOW))
 	{
 		amt_brand_weapon += 1000;
 	}
@@ -1866,11 +1852,10 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		(borg_skill[BI_CDEPTH] == 100 && (borg_spell_legal(REALM_LIFE, 3, 6) ||
+		((borg_skill[BI_CDEPTH] == 100) && (borg_spell_legal(REALM_LIFE, 3, 6) ||
 										  borg_spell_legal(REALM_SORCERY, 2, 7)
 										  || borg_spell_legal(REALM_TRUMP, 1,
 															  6))))
-		/*  Avavir not counted because it may not be charged */
 	{
 		borg_skill[BI_RECALL] += 1000;
 	}
@@ -1899,7 +1884,7 @@ static void borg_notice_aux2(void)
 		 borg_spell_legal_fail(REALM_SORCERY, 3, 7, 4)) &&
 		borg_skill[BI_RBLIND] &&
 		borg_skill[BI_RCONF] &&
-		borg_skill[BI_ESP] && borg_skill[BI_MAXHP] >= 650)
+		borg_skill[BI_ESP] && (borg_skill[BI_MAXHP] >= 650))
 	{
 		borg_skill[BI_AXGOI] += 1000;
 	}
@@ -1918,46 +1903,29 @@ static void borg_notice_aux2(void)
 	}
 
 	/* speed spells */
-	if (borg_spell_legal(REALM_SORCERY, 1, 5) || borg_spell_legal(REALM_DEATH, 2, 3) || borg_mindcr_legal(MIND_ADRENALINE, 35)	/* ||
-																																   borg_equips_artifact(ART_TARATOL, INVEN_WIELD) ||
-																																   borg_equips_artifact(ART_FEANOR, INVEN_FEET) ||
-																																   borg_equips_artifact(ART_TULKAS, INVEN_RIGHT) */ )
+	if (borg_spell_legal(REALM_SORCERY, 1, 5) || borg_spell_legal(REALM_DEATH, 2, 3) || borg_mindcr_legal(MIND_ADRENALINE, 35))
 	{
 		borg_skill[BI_ASPEED] += 1000;
 	}
 
 	/* Handle "cure light wounds" */
-	if (borg_equips_artifact(ART_LOTHARANG, INVEN_WIELD))
+	if (borg_equips_artifact(ART_LOTHARANG, EQUIP_WIELD))
 	{
 		borg_skill[BI_ACSW] += 1000;
 	}
 
 
 	/* Handle "heal" */
-	if (borg_equips_artifact(ART_SOULKEEPER, INVEN_BODY) ||
-		borg_equips_artifact(ART_GONDOR, INVEN_HEAD) ||
+	if (borg_equips_artifact(ART_SOULKEEPER, EQUIP_BODY) ||
+		borg_equips_artifact(ART_GONDOR, EQUIP_HEAD) ||
 		borg_spell_legal(REALM_LIFE, 1, 6) ||
 		borg_spell_legal(REALM_NATURE, 1, 7))
 	{
 		borg_skill[BI_AHEAL] += 1000;
 	}
 
-#if 0
-	/* Handle "phase" */
-	if (borg_equips_artifact(ART_BELEGENNON, INVEN_BODY))
-	{
-		amt_phase += 1000;
-	}
-
-	/* Handle "escape" */
-	if (borg_equips_artifact(ART_COLANNON, INVEN_OUTER))
-	{
-		borg_skill[BI_AESCAPE] += 1000;
-	}
-#endif
-
 	/* Handle "fix exp" */
-	if (borg_equips_artifact(ART_LUTHIEN, INVEN_OUTER) ||
+	if (borg_equips_artifact(ART_LUTHIEN, EQUIP_OUTER) ||
 		borg_spell_legal(REALM_LIFE, 3, 3) ||
 		borg_spell_legal(REALM_DEATH, 1, 7) ||
 		borg_racial_check(RACE_SKELETON, FALSE) ||
@@ -1967,7 +1935,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "recharge" */
-	if (borg_equips_artifact(ART_THINGOL, INVEN_OUTER) ||
+	if (borg_equips_artifact(ART_THINGOL, EQUIP_OUTER) ||
 		borg_spell_legal(REALM_ARCANE, 3, 0) ||
 		borg_spell_legal(REALM_SORCERY, 0, 7))
 	{
@@ -1977,9 +1945,8 @@ static void borg_notice_aux2(void)
 	/*** Process the Needs ***/
 
 	/* No need for fuel */
-	if ((borg_items[INVEN_LITE].sval != SV_LITE_TORCH) &&
-		(borg_items[INVEN_LITE].sval !=
-		 SV_LITE_LANTERN)) borg_skill[BI_AFUEL] += 1000;
+	if (equipment[EQUIP_LITE].kn_flags3 & TR3_LITE)
+		 borg_skill[BI_AFUEL] += 1000;
 
 	/* No need to *buy* stat increase potions */
 	if (my_stat_cur[A_STR] >= (18 + 100) + 10 *
