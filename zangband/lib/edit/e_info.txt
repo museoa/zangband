@@ -490,7 +490,6 @@ F:VORPAL | TUNNEL
 N:79:of Earthquakes
 X:24:20
 W:0:0:0:2000
-C:0:0:0:3
 F:TUNNEL | IMPACT
 
 # The "Slay" brands (8)
