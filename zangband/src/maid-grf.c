@@ -1959,6 +1959,8 @@ void Term_erase_map(void)
  * Note that, for efficiency, we contain an "optimized" version
  * of both "lite_spot()" and "print_rel()", and that we use the
  * "lite_spot()" function to display the player grid, if needed.
+ *
+ * This function may be called when the cache is wrong.
  */
 void prt_map(void)
 {
@@ -2037,28 +2039,8 @@ void prt_map(void)
 		/* Scan the columns of row "y" */
 		for (x = xmin; x <= xmax; x++)
 		{
-			if (map_in_bounds(x, y))
-			{
-				/* Get overhead map square */
-				mb_ptr = map_loc(x, y);
-				
-				if (mb_ptr->a)
-				{
-					/* Get attributes from overhead map */
-					*pa++ = mb_ptr->a;
-					*pc++ = mb_ptr->c;
-					*pta++ = mb_ptr->ta;
-					*ptc++ = mb_ptr->tc;
-				}
-				else
-				{
-					map_info(x, y, pa++, pc++, pta++, ptc++);
-				}
-			}
-			else
-			{
-				map_info(x, y, pa++, pc++, pta++, ptc++);
-			}
+			/* Get map info */
+			map_info(x, y, pa++, pc++, pta++, ptc++);
 		}
 
 
