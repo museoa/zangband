@@ -7981,7 +7981,8 @@ F:BASH_DOOR | DROP_CORPSE | WILD_DUNGEON_01
 F:ANIMAL
 D:A massive elephantine form with eyes twisted by madness.
 
-N:548:Giant red ant
+# Used to be Giant red ant, but there was another monster of that name
+N:548:Giant fire ant
 G:a:r
 I:110:12d10:14:30:40
 W:48:1:0:6949
@@ -14650,3 +14651,31 @@ S:1_IN_5
 S:BO_MANA
 D:A gaunt, vaguely humanoid torso merged with the form of a giant 
 D:spider, ugly as sin. It screams horribly as it charges at you.
+
+N:885:Giant silver ant
+G:a:W
+I:110:20d12:14:50:20
+W:55:1:0:14500
+O:0:0:0
+B:BITE:HURT:3d10
+B:BITE:HURT:3d10
+B:BITE:HURT:3d10
+F:FORCE_MAXHP | KILL_BODY | FRIENDS | DROP_SKELETON
+F:WEIRD_MIND | BASH_DOOR | WILD_DUNGEON_01
+F:ANIMAL | IM_ACID | IM_FIRE | IM_COLD
+D:This ant shines strangely, as if made out of metal.
+
+N:886:Bakeneko
+G:f:B
+I:120:10d8:25:22:40
+W:23:2:0:520
+O:0:0:0
+B:CLAW:HURT:1d6
+B:CLAW:HURT:1d6
+B:BITE:ELEC:1d10
+F:WILD_DUNGEON_01
+F:ANIMAL | FRIENDS | IM_ELEC | AURA_ELEC | EVIL
+S:1_IN_10
+S:HEAL
+D:A feline surrounded by a strange energy.
+
