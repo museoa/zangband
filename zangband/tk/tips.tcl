@@ -74,7 +74,7 @@ proc NSTips::ReadTipsFile {} {
 	variable Priv
 
 	set tips_file [mc tips.txt]
-	if {[catch {open [CPathTk doc $tips_file]} fileId]} {
+	if {[catch {open [PathTk doc $tips_file]} fileId]} {
 		set prompt "The following error occurred while attempting to open "
 		append prompt "the \"$tips_file\" file for reading"
 		HandleError $fileId $prompt

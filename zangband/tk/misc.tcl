@@ -106,16 +106,6 @@ proc InitImageIfNeeded {imageName fileName args} {
 		return 0
 	}
 
-	# Look in CommonTk/tk/image and subdirectories, then user-supplied tk
-	# subdirectories
-	foreach elem [concat [list {image} {image dg} {image dg misc-win}] $args] {
-		set path [eval CPathTk $elem [list $fileName]]
-		if {[file exists $path]} {
-			image create photo $imageName -file $path
-			return 1
-		}
-	}
-
 	# Look in tk/image and subdirectories, then user-supplied tk
 	# subdirectories
 	foreach elem [concat [list {image} {image dg} {image dg misc-win}] $args] {
@@ -479,12 +469,13 @@ proc MakeDivider {divider orient} {
 #
 # Results:
 #	What happened.
-
+if 0 {
 proc Path {args} {
 
 	global Angband
 
 	return [eval file join [list $Angband(dir)] $args]
+}
 }
 
 # PathTk --
@@ -502,57 +493,6 @@ proc PathTk {args} {
 	global Angband
 
 	return [eval file join [list $Angband(dirTK)] $args]
-}
-
-# CPath --
-#
-#	Create a path relative to Angband(dir,common)
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc CPath {args} {
-
-	global Angband
-
-	return [eval file join [list $Angband(dir,common)] $args]
-}
-
-# CPathTk --
-#
-#	Create a path relative to Angband(dir,common,tk)
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc CPathTk {args} {
-
-	global Angband
-
-	return [eval file join [list $Angband(dir,common,tk)] $args]
-}
-
-# PathUser --
-#
-#	Create a path relative to Angband(dir,user)
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc PathUser {args} {
-
-	global Angband
-
-	return [eval file join [list $Angband(dir,user)] $args]
 }
 
 # AddStyle --

@@ -806,22 +806,6 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_OTHER $entries
 
-	if {[file exists [CPathTk vault vault-editor.tcl]]} {
-
-		#
-		# Tool Menu
-		#
-	
-		NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_TOOL
-		NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-			-menu MENU_TOOL -label [mc Tool] -underline 0 -identifier M_TOOL
-
-		set entries {}
-		lappend entries [list -type command -label [mc "Vault Editor"] \
-			-identifier E_TOOL_VAULT]
-		NSMenu::MenuInsertEntries $mbarId -end MENU_TOOL $entries
-	}
-
 	#
 	# Window Menu
 	#
@@ -838,7 +822,7 @@ proc NSMainWindow::InitMenus {oop} {
 	lappend entries [list -type command -label [mc "Load Window Positions"] -identifier E_WINDOW_LOADPOS]
 	lappend entries [list -type checkbutton -label [mc "AutoSave Positions"] \
 		-variable ::NSMainWindow($oop,window,autosave) -identifier E_WINDOW_AUTOSAVE]
-	if {[file exists [CPathTk choice-window.tcl]]} {
+	if {[file exists [PathTk choice-window.tcl]]} {
 		Info $oop choiceWindow [Value choicewindow,show]
 		lappend entries [list -type separator]
 		lappend entries [list -type checkbutton -label [mc "Choice Window"] \
@@ -925,9 +909,6 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 
 	if {[file exists [Path borg borg.tcl]]} {
 		lappend identList E_PREF_BORG
-	}
-	if {[file exists [CPathTk vault vault-editor.tcl]]} {
-		lappend identList E_TOOL_VAULT
 	}
 
 	lappend identList E_CHOICEWINDOW E_WINDOW_MESSAGE E_WINDOW_MESSAGES \

@@ -967,21 +967,6 @@ proc IsUserFile {path} {
 	return [IsFileInX $path [PathUser] 0]
 }
 
-# IsFileInCPath --
-#
-#	Determine whether the given file is a child of the [CPath] directory.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc IsFileInCPath {path} {
-
-	return [IsFileInX $path [CPath]]
-}
-
 # IsFileInPath --
 #
 #	Determine whether the given file is a child of the [Path] directory.
@@ -1000,12 +985,7 @@ proc IsFileInPath {path} {
 
 proc InitModules {} {
 
-	NSModule::IndexLoad [CPathTk moduleIndex.tcl]
-
-	set path [CPathTk vault vault-editor.tcl]
-	if {[file exists $path]} {
-		NSModule::AddModule NSVaultEditor $path
-	}
+	NSModule::IndexLoad [PathTk moduleIndex.tcl]
 
 	return
 }
@@ -1140,8 +1120,8 @@ proc InitOther {} {
 	update idletasks
 
 	if {$::DEBUG} {
-		NSModule::AddModule NSDebug [CPathTk debug.tcl]
-		NSModule::AddModule NSDebugAlloc [CPathTk debug-alloc.tcl]
+		NSModule::AddModule NSDebug [PathTk debug.tcl]
+		NSModule::AddModule NSDebugAlloc [PathTk debug-alloc.tcl]
 		NSModule::LoadIfNeeded NSDebug
 		NSModule::LoadIfNeeded NSDebugAlloc
 	}
@@ -1326,7 +1306,7 @@ InitBrightnessContrast
 	
 } else {
 
-set darkenFile [CPathTk image darken.gif]
+set darkenFile [PathTk image darken.gif]
 if {[file exists $darkenFile]} {
 	image create photo Image_Darken -file $darkenFile
 	for {set i 0} {$i < 3} {incr i} {

@@ -242,7 +242,7 @@ proc NSConfig::SourceOne {fileName {required 0}} {
 		uplevel #0 source $path
 		return
 	}
-	set path [CPathTk config $fileName]
+	set path [PathTk config $fileName]
 	if {[file exists $path]} {
 		uplevel #0 source $path
 		return
@@ -311,14 +311,6 @@ proc NSConfig::FindImageFile {imageFile} {
 		return $path
 	}
 	set path [PathTk image dg [file tail $imageFile]]
-	if {[file exists $path]} {
-		return $path
-	}
-	set path [CPathTk image $imageFile]
-	if {[file exists $path]} {
-		return $path
-	}
-	set path [CPathTk image dg [file tail $imageFile]]
 	if {[file exists $path]} {
 		return $path
 	}

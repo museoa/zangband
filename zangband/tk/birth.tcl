@@ -70,7 +70,7 @@ proc NSBirth::InitModule {} {
 	set oop [NSObject::New NSBirth]
 
 	# Create a player-info window...
-	NSModule::AddModule NSPlayer [CPathTk player.tcl]
+	NSModule::AddModule NSPlayer [PathTk player.tcl]
 	NSModule::LoadIfNeeded NSPlayer
 	set playerId [Global player,oop]
 
@@ -111,7 +111,7 @@ proc NSBirth::InitModule {} {
 	}
 
 	# The Birth Options Window will be loaded if needed
-	NSModule::AddModule NSBirthOptions [CPathTk birth-options.tcl]
+	NSModule::AddModule NSBirthOptions [PathTk birth-options.tcl]
 
 	return
 }

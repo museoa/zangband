@@ -138,29 +138,18 @@ proc NSHelp::NSHelp {oop} {
 	set win [Info $oop win]
 	set listId [Info $oop listId]
 
-if 0 {
-	# Add a ReadMe book with readme files
-	set bookId [NSHelpList::BookAdd $listId 0 "ReadMe Files" {}]
-	set globList [concat \
-		[glob -nocomplain -directory [Path ReadMe] *] \
-		[glob -nocomplain -directory [CPath ReadMe] *]]
-	foreach path [lsort -dictionary $globList] {
-		NSHelpList::PageAdd $listId $bookId [file tail $path] $path
-	}
-}
-
 	ReadContents $oop [PathTk doc contents]
 
 	# See if TANG is installed
-	set path [CPathTk doc TANG.html]
+	set path [PathTk doc TANG.html]
 	if {[file exists $path] && [file isfile $path]} {
-		ReadContents $oop [CPathTk doc contents-TANG]
+		ReadContents $oop [PathTk doc contents-TANG]
 	}
 
 	# See if the Variant FAQ is installed
-	set path [CPathTk doc variant-faq.txt]
+	set path [PathTk doc variant-faq.txt]
 	if {[file exists $path] && [file isfile $path]} {
-		ReadContents $oop [CPathTk doc contents-FAQ]
+		ReadContents $oop [PathTk doc contents-FAQ]
 	}
 
 	variable Priv
@@ -1155,9 +1144,6 @@ proc NSHelp::HyperlinkCmd {oop click url} {
 				} elseif {[file exists [PathTk doc $fileName]]} {
 					set url [PathTk doc $fileName]
 					set doLabel 1
-				} elseif {[file exists [CPathTk doc $fileName]]} {
-					set url [CPathTk doc $fileName]
-					set doLabel 1
 				} else {
 					# Error
 					set url "? $url"
@@ -1225,11 +1211,7 @@ proc NSHelp::DisplayPageByUrl {oop url {title ""}} {
 		# Look in tk\doc
 		} elseif {[file exists [PathTk doc $fileName]]} {
 			set filePath [PathTk doc $fileName]
-
-		# Look in CommonTk\tk\doc
-		} elseif {[file exists [CPathTk doc $fileName]]} {
-			set filePath [CPathTk doc $fileName]
-	
+		
 		# Can't find the file
 		} else {
 			tk_messageBox -message "Cannot display URL \"$url\""
@@ -1737,9 +1719,6 @@ proc NSHelp::ReadContents {oop path} {
 						if {[string equal $elem ANGBAND_DIR]} {
 							set elem [Path]
 						}
-						if {[string equal $elem COMMON_DIR]} {
-							set elem [CPath]
-						}
 						lappend list $elem
 					}
 					set dir [eval file join $list]
@@ -1838,8 +1817,6 @@ proc NSHelp::SelectPageCmd {oop url data} {
 		set url2 [Path lib help $fileName]
 	} elseif {[file exists [PathTk doc $fileName]]} {
 		set url2 [PathTk doc $fileName]
-	} elseif {[file exists [CPathTk doc $fileName]]} {
-		set url2 [CPathTk doc $fileName]
 	} else {
 		return 1
 	}

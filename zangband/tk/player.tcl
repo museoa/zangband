@@ -32,7 +32,7 @@ proc NSPlayer::InitModule {} {
 
 	MsgCatInit player
 
-	NSModule::AddModuleIfNeeded NSCharInfoCanvas [CPathTk charinfo-canvas.tcl]
+	NSModule::AddModuleIfNeeded NSCharInfoCanvas [PathTk charinfo-canvas.tcl]
 	NSModule::LoadIfNeeded NSCharInfoCanvas
 
 	NSObject::New NSPlayer

@@ -314,78 +314,6 @@ proc QuitNoSave {} {
 	return
 }
 
-# Setup --
-#
-#	Show the Setup Window.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc Setup {} {
-
-	NSModule::LoadIfNeeded NSSetup
-	NSModule::CloseModule NSSetup
-
-	return
-}
-
-# NSInitStartup::UpgradeTool --
-#
-#	Description.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSInitStartup::UpgradeTool {} {
-
-	global Angband
-
-	# FIXME: test on Unix
-	if {![Platform windows]} return
-
-	# See if tk\config\value exists. If it does, we assume
-	# UpgradeTool does not need to be used.
-	if {[file exists [PathTk config value]]} return
-	
-	set message [format [mc upgrade-tool-prompt] $Angband(name)]
-	set title [mc upgrade-tool-title]
-
-	# Ask the user if he wants to run UpgradeTool
-	set answer [tk_messageBox -message $message -icon question \
-		-title $title -type yesno]
-	if {[string equal $answer no]} return
-
-	# Hack -- Create a slave interpreter, load Tk into it,
-	# set argc/argv so it will use the game directory, and
-	# override the 'exit' command to tell us when it is
-	# finished.
-
-	set i [interp create]
-	load {} Tk $i
-	$i eval [list set ::argc 2]
-	$i eval [list set ::argv [list -dstdir [Path]]]
-	$i alias exit set ::UpgradeToolExit 1
-	$i eval source [CPath lib UpgradeTool main.tcl]
-
-	# Wait for UpgradeTool to exit
-	set ::UpgradeToolExit 0
-	tkwait variable ::UpgradeToolExit
-
-	interp delete $i
-
-	# If UpgradeTool was used, then perhaps read in tk\config\value
-	if {[file exists [PathTk config value]]} {
-		NSValueManager::LoadValueFile
-	}
-
-	return
-}
 
 # angband_save --
 #
@@ -426,7 +354,7 @@ proc NSInitStartup::InitStartupScreen {} {
 
 	# Load the "Tcl Powered Logo"
 	image create photo Image_PwrdLogo175 \
-		-file [CPathTk image pwrdLogo175.gif]
+		-file [PathTk image pwrdLogo175.gif]
 
 	# Program name
 	if {[Platform unix]} {
@@ -499,8 +427,6 @@ proc NSInitStartup::FinalizeStartupWindow {} {
 		-text [mc New] -command NewGame -width 11 -underline 0
 	button .opengame \
 		-text [mc Open] -command OpenGame -width 11 -underline 0
-	button .config \
-		-text [mc Setup] -command Setup -width 11 -underline 0
 	button .quit \
 		-text [mc Quit] -command "angband game quit" -width 11 -underline 0
 
@@ -689,8 +615,8 @@ proc angband_initialized {} {
 	angband_startup "    window-manager.tcl"
 	Source library window-manager.tcl
 
-	NSModule::AddModule NSChooseGame [CPathTk choose-game.tcl]
-	NSModule::IndexLoad [CPathTk library moduleIndex.tcl]
+	NSModule::AddModule NSChooseGame [PathTk choose-game.tcl]
+	NSModule::IndexLoad [PathTk library moduleIndex.tcl]
 
 	NSInitStartup::FinalizeStartupWindow
 
@@ -698,10 +624,6 @@ proc angband_initialized {} {
 
 	Source config.tcl
 	NSConfig::InitModule
-
-	NSInitStartup::UpgradeTool
-
-	NSModule::AddModule NSSetup [CPathTk setup.tcl]
 
 	# Now process other command-line options
 	HandleArgv
@@ -727,9 +649,6 @@ proc HandleArgv {} {
 	# Assume no savefile
 	set savefile ""
 
-	# Show Setup Window if never done
-	set doSetup [expr {![Value warning,setup]}]
-
 	for {set i 0} {$i < $argc} {incr i} {
 		set arg [lindex $argv $i]
 		switch -- $arg {
@@ -745,25 +664,12 @@ proc HandleArgv {} {
 					NSConfig::SetPrefix $prefix
 				}
 			}
-			-setup {
-				set boolean [lindex $argv [incr i]]
-				if {[string is boolean -strict $boolean]} {
-					set doSetup [string is true $boolean]
-				}
-			}
 			-savefile {
 				set savefile [lindex $argv [incr i]]
 			}
 			default {
 			}
 		}
-	}
-
-	# Do this before opening the savefile
-	if {$doSetup} {
-		update
-		tkButtonInvoke .config
-		Value warning,setup 1
 	}
 
 	if {[string length $savefile]} {
@@ -809,7 +715,7 @@ proc angband_birth {action} {
 		switch -- $action {
 	
 			setup {
-				NSModule::AddModule NSBirth [CPathTk birth.tcl]
+				NSModule::AddModule NSBirth [PathTk birth.tcl]
 				NSModule::LoadIfNeeded NSBirth
 			}
 		}
@@ -1041,17 +947,10 @@ proc NSInitStartup::InitStartup {} {
 	global auto_path
 	global Angband
 	global DEBUG
-
-	# Global variant
-	set Angband(variant) [angband game variant]
 	
 	# Angband's directory
 	set Angband(dir) [angband game directory ANGBAND_DIR_ROOT]
 	set Angband(dir) [LongName $Angband(dir)]
-
-	# The lib/user directory (user-specific on Unix)
-	set Angband(dir,user) [angband game directory ANGBAND_DIR_USER]
-	set Angband(dir,user) [LongName $Angband(dir,user)]
 	
 	# The tk directory
 	set Angband(dirTK) [angband game directory ANGBAND_DIR_TK]
@@ -1741,7 +1640,7 @@ proc TestHelpList {} {
 
 proc TestUpDownControl {} {
 
-	NSModule::AddModule NSUpDownControl [CPathTk library updowncontrol.tcl]
+	NSModule::AddModule NSUpDownControl [PathTk library updowncontrol.tcl]
 	NSModule::LoadIfNeeded NSUpDownControl
 
 	set win .udc
