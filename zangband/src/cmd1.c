@@ -561,11 +561,8 @@ void search(void)
 					/* Pick a door */
 					place_closed_door(y, x);
 					
-					/* Notice this */
+					/* Notice + Lite this */
 					note_spot(y, x);
-					
-					/* Lite this */
-					lite_spot(y, x);
 
 					/* Disturb */
 					disturb(0, 0);

@@ -579,11 +579,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				/* Get rid of attached fields */
 				delete_field_location(c_ptr);
 				
-				/* Note the spot */
+				/* Note + Lite the spot */
 				note_spot(y, x);
-	
-				/* Visual update */
-				lite_spot(y, x);
 			}
 
 			/* Deliberate missing "break;" */
@@ -890,11 +887,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			/* Turn on the light */
 			c_ptr->info |= (CAVE_GLOW);
 
-			/* Notice */
+			/* Notice + Redraw */
 			note_spot(y, x);
-
-			/* Redraw */
-			lite_spot(y, x);
 
 			/* Observe */
 			if (player_can_see_bold(y, x)) obvious = TRUE;
@@ -922,12 +916,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				/* Forget */
 				c_ptr->info &= ~(CAVE_MARK);
 
-				/* Notice */
+				/* Notice + Redraw */
 				note_spot(y, x);
 			}
-
-			/* Redraw */
-			lite_spot(y, x);
+			else
+			{
+				/* Redraw */
+				lite_spot(y, x);
+			}
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */

@@ -1031,6 +1031,8 @@ void call_the_(void)
 
 /*
  * Fetch an item (teleport it right underneath the caster)
+ *
+ * This is a massive hack.
  */
 void fetch(int dir, int wgt, bool require_los)
 {
@@ -1118,7 +1120,8 @@ void fetch(int dir, int wgt, bool require_los)
 
 	i = c_ptr->o_idx;
 	c_ptr->o_idx = o_ptr->next_o_idx;
-	area(py,px)->o_idx = i; /* 'move' it */
+
+	area(py, px)->o_idx = i; /* 'move' it */
 	o_ptr->next_o_idx = 0;
 	o_ptr->iy = py;
 	o_ptr->ix = px;
@@ -1126,7 +1129,10 @@ void fetch(int dir, int wgt, bool require_los)
 	object_desc(o_name, o_ptr, TRUE, 0);
 	msg_format("%^s flies through the air to your feet.", o_name);
 
+	/* Notice the moved object (The player gets redrawn) */
 	note_spot(py, px);
+	
+	/* Redraw the map???  Can we just use lite_spot() a few times? */
 	p_ptr->redraw |= PR_MAP;
 }
 

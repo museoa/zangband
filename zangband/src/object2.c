@@ -4303,11 +4303,8 @@ void place_object(int y, int x, bool good, bool great)
 		o_ptr->python = object_create_callback(o_ptr);
 #endif /* USE_SCRIPT */
 
-		/* Notice */
+		/* Notice + Redraw */
 		note_spot(y, x);
-
-		/* Redraw */
-		lite_spot(y, x);
 	}
 	else
 	{
@@ -4423,11 +4420,8 @@ void place_gold(int y, int x)
 		o_ptr->python = object_create_callback(o_ptr);
 #endif /* USE_SCRIPT */
 
-		/* Notice */
+		/* Notice + Redraw */
 		note_spot(y, x);
-
-		/* Redraw */
-		lite_spot(y, x);
 	}
 }
 
@@ -4787,11 +4781,8 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		done = TRUE;
 	}
 
-	/* Note the spot */
+	/* Note + Redraw the spot */
 	note_spot(by, bx);
-
-	/* Draw the spot */
-	lite_spot(by, bx);
 
 	/* Sound */
 	sound(SOUND_DROP);

@@ -131,11 +131,8 @@ void notice_field(field_type *f_ptr)
 		/* Can the player see the square? */
 		if (area(y, x)->info & CAVE_VIEW)
 		{		
-			/* Note the spot */
+			/* Note + Lite the spot */
 			note_spot(y, x);
-		
-			/* Visual update */
-			lite_spot(y, x);
 		}
 	}
 }
@@ -164,11 +161,8 @@ void delete_field_idx(int fld_idx)
 	/* Refuse "illegal" locations */
 	if (in_bounds(y, x))
 	{
-		/* Note the spot */
+		/* Note + Lite the spot */
 		note_spot(y, x);
-		
-		/* Visual update */
-		lite_spot(y, x);
 	}
 
 #ifdef USE_SCRIPT
@@ -208,11 +202,8 @@ void delete_field_ptr(s16b *fld_idx)
 	/* Refuse "illegal" locations */
 	if (in_bounds(y, x))
 	{
-		/* Note the spot */
+		/* Note + Lite the spot */
 		note_spot(y, x);
-		
-		/* Visual update */
-		lite_spot(y, x);
 	}
 
 #ifdef USE_SCRIPT
@@ -277,11 +268,8 @@ void delete_field(int y, int x)
 
 	delete_field_aux(&(c_ptr->fld_idx));
 
-	/* Note the spot */
+	/* Note + Lite the spot */
 	note_spot(y, x);
-	
-	/* Visual update */
-	lite_spot(y, x);
 }
 
 /*
@@ -962,11 +950,8 @@ bool field_detect_type(s16b fld_idx, byte typ)
 			/* We found something */
 			flag = TRUE;
 			
-			/* Note the spot */
+			/* Note + Lite the spot */
 			note_spot(f_ptr->fy, f_ptr->fx);
-		
-			/* Visual update */
-			lite_spot(f_ptr->fy, f_ptr->fx);
 		}
 
 		/* If not, get next one. */

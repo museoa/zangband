@@ -3232,11 +3232,8 @@ static void cave_temp_room_lite(void)
 				}
 			}
 
-			/* Note */
+			/* Note + Redraw */
 			note_spot(y, x);
-
-			/* Redraw */
-			lite_spot(y, x);
 		}
 	}
 
@@ -3280,16 +3277,6 @@ static void cave_temp_room_unlite(void)
 			/* Darken the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
 
-			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat == FEAT_FLOOR)
-			{
-				/* Forget the grid */
-				c_ptr->info &= ~(CAVE_MARK);
-
-				/* Notice */
-				note_spot(y, x);
-			}
-
 			/* Process affected monsters */
 			if (c_ptr->m_idx)
 			{
@@ -3297,8 +3284,20 @@ static void cave_temp_room_unlite(void)
 				update_mon(c_ptr->m_idx, FALSE);
 			}
 
-			/* Redraw */
-			lite_spot(y, x);
+			/* Hack -- Forget "boring" grids */
+			if (c_ptr->feat == FEAT_FLOOR)
+			{
+				/* Forget the grid */
+				c_ptr->info &= ~(CAVE_MARK);
+
+				/* Notice + Redraw */
+				note_spot(y, x);
+			}
+			else
+			{
+				/* Redraw */
+				lite_spot(y, x);
+			}
 		}
 	}
 

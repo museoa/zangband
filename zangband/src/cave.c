@@ -1373,90 +1373,85 @@ void note_spot(int y, int x)
 	s16b this_f_idx, next_f_idx = 0;
 
 
-	/* Blind players see nothing */
-	if (p_ptr->blind) return;
-
-	/* Analyze non-torch-lit grids */
-	if (!(c_ptr->info & (CAVE_LITE)))
+	/* Is it lit + in view + player is not blind? */
+	if ((c_ptr->info & (CAVE_GLOW | CAVE_MNLT | CAVE_LITE))
+		 && (c_ptr->info & CAVE_VIEW) && !p_ptr->blind)
 	{
-		/* Require line of sight to the grid */
-		if (!(c_ptr->info & (CAVE_VIEW))) return;
 
-		/* Require "perma-lite" of the grid or monster lit grid. */
-		if (!(c_ptr->info & (CAVE_GLOW | CAVE_MNLT))) return;
-	}
-
-
-	/* Hack -- memorize objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
-		object_type *o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
-		/* Memorize objects */
-		o_ptr->marked = TRUE;
-	}
-
-	/* Hack -- memorize fields */
-	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
-	{
-		field_type *f_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = f_ptr->next_f_idx;
-
-		/* Memorize fields */
-		f_ptr->info |= FIELD_INFO_MARK;
-	}
-
-
-	/* Hack -- memorize grids */
-	if (!(c_ptr->info & (CAVE_MARK)))
-	{
-		/* Handle floor grids first */
-		if (cave_floor_grid(c_ptr))
+		/* Hack -- memorize objects */
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{
-			/* Option -- memorize all torch-lit floors */
-			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
+			object_type *o_ptr = &o_list[this_o_idx];
+
+			/* Acquire next object */
+			next_o_idx = o_ptr->next_o_idx;
+
+			/* Memorize objects */
+			o_ptr->marked = TRUE;
+		}
+
+		/* Hack -- memorize fields */
+		for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+		{
+			field_type *f_ptr = &fld_list[this_f_idx];
+
+			/* Acquire next field */
+			next_f_idx = f_ptr->next_f_idx;
+
+			/* Memorize fields */
+			f_ptr->info |= FIELD_INFO_MARK;
+		}
+
+
+		/* Hack -- memorize grids */
+		if (!(c_ptr->info & (CAVE_MARK)))
+		{
+			/* Handle floor grids first */
+			if (cave_floor_grid(c_ptr))
+			{
+				/* Option -- memorize all torch-lit floors */
+				if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
+				{
+					/* Memorize */
+					c_ptr->info |= (CAVE_MARK);
+				}
+
+				/* Option -- memorize all perma-lit floors */
+				else if (view_perma_grids && (c_ptr->info & (CAVE_GLOW)))
+				{
+					/* Memorize */
+					c_ptr->info |= (CAVE_MARK);
+				}
+			}
+
+			/* Memorize torch-lit walls */
+			else if (c_ptr->info & (CAVE_LITE))
 			{
 				/* Memorize */
 				c_ptr->info |= (CAVE_MARK);
 			}
 
-			/* Option -- memorize all perma-lit floors */
-			else if (view_perma_grids && (c_ptr->info & (CAVE_GLOW)))
+			/* Memorize certain non-torch-lit wall grids */
+			else
 			{
-				/* Memorize */
-				c_ptr->info |= (CAVE_MARK);
-			}
-		}
+				int yy, xx;
 
-		/* Memorize torch-lit walls */
-		else if (c_ptr->info & (CAVE_LITE))
-		{
-			/* Memorize */
-			c_ptr->info |= (CAVE_MARK);
-		}
+				/* Hack -- move one grid towards player */
+				yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
+				xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
 
-		/* Memorize certain non-torch-lit wall grids */
-		else
-		{
-			int yy, xx;
-
-			/* Hack -- move one grid towards player */
-			yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-			xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
-
-			/* Check for "local" illumination */
-			if (area(yy,xx)->info & (CAVE_GLOW))
-			{
-				/* Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				/* Check for "local" illumination */
+				if (area(yy,xx)->info & (CAVE_GLOW))
+				{
+					/* Memorize */
+					c_ptr->info |= (CAVE_MARK);
+				}
 			}
 		}
 	}
+	
+	/* Light the spot, now that we have noticed the changes. */
+	lite_spot(y, x);
 }
 
 /*
@@ -3584,7 +3579,6 @@ void update_mon_lite(void)
 		{
 			/* It is now unlit */
 			note_spot(fy, fx);
-			lite_spot(fy, fx);
 		}
 
 		/* Add to end of temp array */
@@ -3619,7 +3613,6 @@ void update_mon_lite(void)
 			{
 				/* It is now lit */
 				lite_spot(fy, fx);
-				note_spot(fy, fx);
 			}
 
 			/* Save in the monster lit array */
@@ -4082,11 +4075,8 @@ void cave_set_feat(int y, int x, int feat)
 	/* Change the feature */
 	c_ptr->feat = feat;
 
-	/* Notice */
+	/* Notice + Redraw */
 	note_spot(y, x);
-
-	/* Redraw */
-	lite_spot(y, x);
 }
 
 
