@@ -4457,6 +4457,9 @@ bool borg_target_unknown_wall(int y, int x)
 		!borg_cave_floor_bold(c_y - 1, c_x))
 		y_hall = TRUE;
 
+	/* Initialise multi-move */
+	borg_mmove_init(c_x, c_y, x, y);
+
 	while (n_x != x && n_y != y)
 	{
 		map_block *mb_ptr;
@@ -4478,7 +4481,7 @@ bool borg_target_unknown_wall(int y, int x)
 		}
 
 		/* Calculate the new location */
-		borgmove2(&n_y, &n_x, c_y, c_x, y, x);
+		borg_mmove(&n_x, &n_y, c_x, c_y);
 	}
 
 	return found;
@@ -5432,6 +5435,9 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
 
 	r_ptr = &r_info[mb_ptr->monster];
 
+	/* Initialise multi-move */
+	borg_mmove_init(x1, y1, x2, y2);
+
 	/* Simulate the spell/missile path */
 	for (dist = 0; dist < max; dist++)
 	{
@@ -5612,7 +5618,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
 		}
 
 		/* Calculate the new location */
-		borgmove2(&y, &x, y1, x1, y2, x2);
+		borg_mmove(&x, &y, x1, y1);
 	}
 
 	/* Bolt/Beam attack */
