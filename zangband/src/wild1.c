@@ -1560,7 +1560,7 @@ static bool is_road_town(u16b town_num)
 	town_type *t_ptr = &town[town_num];
 	
 	/* No roads to wilderness quests */
-	/* if (t_ptr->quest_num) return (FALSE); */
+	if (t_ptr->quest_num) return (FALSE);
 	
 	/* Default to true otherwise */
 	return (TRUE);
