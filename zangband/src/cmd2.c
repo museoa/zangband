@@ -2295,7 +2295,7 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 	int px = p_ptr->px;
 
 	int dir;
-	int j, y, x, ny, nx, ty, tx;
+	int x, y, nx, ny, tx, ty;
 
 	int armour, bonus, chance, total_deadliness;
 
@@ -2317,8 +2317,6 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 	int chance2;
 
 	object_type *i_ptr;
-
-	bool hit_body = FALSE;
 
 	char o_name[256];
 	char m_name[80];
@@ -2497,8 +2495,10 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 
 			chance2 = chance - cur_dis;
 
-			/* Note the collision */
-			hit_body = TRUE;
+			/* Drop (or break) near that location */
+			drop_near(i_ptr, breakage_chance(i_ptr), x, y);
+
+			make_noise(3);
 
 			/* Sleeping, visible monsters are easier to hit. -LM- */
 			if ((m_ptr->csleep) && (m_ptr->ml))
@@ -2668,15 +2668,12 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 			}
 
 			/* Stop looking */
-			break;
+			return;
 		}
 	}
 
-	/* Chance of breakage (during attacks) */
-	j = (hit_body ? breakage_chance(i_ptr) : 0);
-
 	/* Drop (or break) near that location */
-	drop_near(i_ptr, j, x, y);
+	drop_near(i_ptr, 0, x, y);
 
 	make_noise(3);
 }
@@ -2714,6 +2711,73 @@ void do_cmd_fire(void)
 	do_cmd_fire_aux(o_ptr, j_ptr);
 }
 
+/*
+ * Process the effect of hitting something with a
+ * thrown item.
+ */
+static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
+							 int x, int y)
+{
+	char o_name[256];
+
+	/* Chance of breakage (during attacks) */
+	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
+	
+	/* Description */
+	object_desc(o_name, o_ptr, FALSE, 3, 256);
+
+	/* Figurines transform */
+	if (o_ptr->tval == TV_FIGURINE)
+	{
+		/* Always break */
+		breakage = 100;
+
+		if (!(summon_named_creature(x, y, o_ptr->pval, FALSE, FALSE, TRUE)))
+		{
+			msg_print("The Figurine writhes and then shatters.");
+		}
+	}
+
+	/* Potions smash open */
+	if (object_is_potion(o_ptr))
+	{
+		if (hit_body || hit_wall || (randint1(100) < breakage))
+		{
+			/* Message */
+			msg_format("The %s shatters!", o_name);
+
+			if (potion_smash_effect(0, x, y, o_ptr->k_idx))
+			{
+				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
+
+				/* ToDo (Robert): fix the invulnerability */
+				if (area(x, y)->m_idx &&
+					!is_hostile(&m_list[area(x, y)->m_idx]) &&
+					!(m_ptr->invulner))
+				{
+					char m_name2[80];
+					monster_desc(m_name2, &m_list[area(x, y)->m_idx], 0);
+					msg_format("%^s gets angry!", m_name2);
+					set_hostile(&m_list[area(x, y)->m_idx]);
+				}
+			}
+
+			return;
+		}
+		else
+		{
+			breakage = 0;
+		}
+	}
+
+	/* Drop (or break) near that location */
+	drop_near(o_ptr, breakage, x, y);
+
+	p_ptr->redraw |= (PR_EQUIPPY);
+
+	make_noise(3);
+}
+
 
 /*
  * Throw an object from the pack or floor.
@@ -2733,7 +2797,7 @@ void do_cmd_throw_aux(int mult)
 	int y, x, ny, nx, ty, tx;
 
 	int chance, chance2, tdis;
-	int breakage;
+	
 	int mul, div;
 	int cur_dis;
 
@@ -2748,7 +2812,6 @@ void do_cmd_throw_aux(int mult)
 
 	object_type *o_ptr;
 
-	bool hit_body = FALSE;
 	bool hit_wall = FALSE;
 
 	char o_name[256];
@@ -2810,16 +2873,19 @@ void do_cmd_throw_aux(int mult)
 	/* Paranoia */
 	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
 
-	/* Chance of hitting.  Other thrown objects are easier to use, but
+	/*
+	 * Chance of hitting.  Other thrown objects are easier to use, but
 	 * only throwing weapons take advantage of bonuses to Skill from
 	 * other items. -LM-
 	 */
-	if (f2 & (TR2_THROW)) chance = ((p_ptr->skill_tht) +
-									((p_ptr->to_h +
-									  q_ptr->to_h) * BTH_PLUS_ADJ));
+	if (f2 & (TR2_THROW))
+	{
+		chance = p_ptr->skill_tht + (p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ;
+	}
 	else
-		chance = ((3 * p_ptr->skill_tht / 2) + (q_ptr->to_h * BTH_PLUS_ADJ));
-
+	{
+		chance = p_ptr->skill_tht * 3 / 2 + q_ptr->to_h * BTH_PLUS_ADJ;
+	}
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -2839,7 +2905,6 @@ void do_cmd_throw_aux(int mult)
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
-
 
 	/* Hack -- Handle stuff */
 	handle_stuff();
@@ -2902,7 +2967,6 @@ void do_cmd_throw_aux(int mult)
 		x = nx;
 		y = ny;
 
-
 		/* Monster here, Try to hit it */
 		if (c_ptr->m_idx)
 		{
@@ -2932,9 +2996,9 @@ void do_cmd_throw_aux(int mult)
 				terrain_bonus -= r_ptr->ac / 4;
 			}
 
-			/* Note the collision */
-			hit_body = TRUE;
-
+			/* The item hits the monster */
+			throw_item_effect(q_ptr, TRUE, FALSE, x, y);
+		
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
@@ -3005,7 +3069,8 @@ void do_cmd_throw_aux(int mult)
 				slay = tot_dam_aux(q_ptr, m_ptr);
 				tdam *= slay;
 
-				/* Only allow critical hits if the object is a throwing
+				/*
+				 * Only allow critical hits if the object is a throwing
 				 * weapon.  Otherwise, grant the default multiplier.
 				 * (10x inflation)
 				 */
@@ -3015,7 +3080,9 @@ void do_cmd_throw_aux(int mult)
 										  m_name, m_ptr->ml);
 				}
 				else
+				{
 					tdam *= 10;
+				}
 
 				/*
 				 * Convert total or object-only Deadliness into a percen-
@@ -3083,63 +3150,12 @@ void do_cmd_throw_aux(int mult)
 			}
 
 			/* Stop looking */
-			break;
-		}
-	}
-
-	/* Chance of breakage (during attacks) */
-	breakage = (hit_body ? breakage_chance(q_ptr) : 0);
-
-	/* Figurines transform */
-	if (q_ptr->tval == TV_FIGURINE)
-	{
-		/* Always break */
-		breakage = 100;
-
-		if (!(summon_named_creature(x, y, q_ptr->pval, FALSE, FALSE, TRUE)))
-		{
-			msg_print("The Figurine writhes and then shatters.");
-		}
-	}
-
-	/* Potions smash open */
-	if (object_is_potion(q_ptr))
-	{
-		if (hit_body || hit_wall || (randint1(100) < breakage))
-		{
-			/* Message */
-			msg_format("The %s shatters!", o_name);
-
-			if (potion_smash_effect(0, x, y, q_ptr->k_idx))
-			{
-				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
-
-				/* ToDo (Robert): fix the invulnerability */
-				if (area(x, y)->m_idx &&
-					!is_hostile(&m_list[area(x, y)->m_idx]) &&
-					!(m_ptr->invulner))
-				{
-					char m_name2[80];
-					monster_desc(m_name2, &m_list[area(x, y)->m_idx], 0);
-					msg_format("%^s gets angry!", m_name2);
-					set_hostile(&m_list[area(x, y)->m_idx]);
-				}
-			}
-
 			return;
 		}
-		else
-		{
-			breakage = 0;
-		}
 	}
 
-	/* Drop (or break) near that location */
-	drop_near(q_ptr, breakage, x, y);
-
-	p_ptr->redraw |= (PR_EQUIPPY);
-
-	make_noise(3);
+	/* The item hits the ground */
+	throw_item_effect(q_ptr, FALSE, hit_wall, x, y);
 }
 
 
