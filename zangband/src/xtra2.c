@@ -295,7 +295,7 @@ void monster_death(int m_idx)
 
 			/* Quest is not on this level */
 			if ((quest[i].level != dun_level) &&
-			    (quest[i].type != QUEST_TYPE_KILL_ANY_LEVEL))
+				 (quest[i].type != QUEST_TYPE_KILL_ANY_LEVEL))
 				continue;
 
 			/* Not a "kill monster" quest */
@@ -556,12 +556,12 @@ void monster_death(int m_idx)
 	{
 		if (randint(20) != 13)
 		{
-			int wy = py, wx = px;
+			int wy = y, wx = x;
 			int attempts = 100;
 
 			do
 			{
-				scatter(&wy, &wx, py, px, 20, 0);
+				scatter(&wy, &wx, y, x, 20, 0);
 			}
 			while (!(in_bounds(wy, wx) && cave_floor_bold(wy, wx)) && --attempts);
 
