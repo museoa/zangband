@@ -11,9 +11,6 @@
 #include "zborg4.h"
 #include "zborg5.h"
 
-#include <assert.h>
-
-
 /*
  * This file is responsible for the "borg_update" routine, which is used
  * to notice changes in the world, and to keep track of terrain features,
@@ -104,8 +101,23 @@ static void borg_delete_take(int i)
 {
 	borg_take *take = &borg_takes[i];
 
+	map_block *mb_ptr;
+
 	/* Paranoia -- Already wiped */
-	if (!take->k_idx) return;
+	if (!take->k_idx)
+	{
+		borg_oops("Deleting already gone object!");
+		return;
+	}
+	
+	/* Bounds checking */
+	if (map_in_bounds(take->x, take->y))
+	{
+		mb_ptr = map_loc(take->x, take->y);
+		
+		/* Delete the 'take' value on grid. */
+		mb_ptr->take = 0;
+	}
 
 	/* Note */
 	borg_note(format("# Forgetting an object '%s' at (%d,%d)",
@@ -125,7 +137,7 @@ static void borg_delete_take(int i)
 /*
  * Guess the kidx for an unknown item.
  */
-static int borg_guess_kidx(int unknown)
+static int borg_guess_kidx(char unknown)
 {
 	int k;
 
@@ -148,9 +160,11 @@ static int borg_guess_kidx(int unknown)
 		/* Return the result */
 		return k;
 	}
+	
+	borg_note(format("# Cannot guess object '%c'", unknown));
 
 	/* Didn't find anything */
-	return (0);
+	return (1);
 }
 
 
@@ -163,8 +177,18 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 
 	borg_take *take;
 	
+	borg_note("Trying to make object");
+	
+	
 	/* Handle unknown items */
 	if (unknown) k_idx = borg_guess_kidx(unknown);
+	
+	/* Paranoia */
+	if (!k_idx)
+	{
+		borg_oops("Cannot find object!");
+		return(0);
+	}
 
 	/* Look for a "dead" object */
 	for (i = 1; i < borg_takes_nxt; i++)
@@ -205,6 +229,7 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 
 	/* Save the kind */
 	take->k_idx = k_idx;
+	take->unknown = unknown;
 
 	/* Save the location */
 	take->x = x;
@@ -2492,6 +2517,16 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 
 	bool old_wall;
 	bool new_wall;
+	
+	/* Don't do anything if the borg is inactive */
+	if (!borg_active)
+	{
+		/* Chain into the old hook, if it exists */
+		if (old_info_hook) old_info_hook(mb_ptr, map);
+		
+		/* Done */
+		return;
+	}
 
 	/* Save the old "wall" or "door" */
 	old_wall = borg_cave_wall_grid(mb_ptr);
@@ -2528,9 +2563,12 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		{
 			borg_take *bt_ptr = &borg_takes[mb_ptr->take];
 		
-			if (!((bt_ptr->k_idx == map->object) ||
+			if (!((bt_ptr->k_idx == map->object) &&
 				(bt_ptr->unknown == map->unknown)))
 			{
+				borg_note(format("# The object %d is different! (%d,%d)",
+					mb_ptr->take, bt_ptr->k_idx, map->object));
+			
 				/* The object is different- delete it */
 				borg_delete_take(mb_ptr->take);
 				
@@ -2540,6 +2578,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		}
 		else
 		{
+			borg_note("# placing object");
+		
 			/* Make a new object */
 			mb_ptr->take = borg_new_take(map->object, map->unknown, x, y);
 		}
@@ -2549,6 +2589,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		/* Do we think there is an object here that we cannot see? */
 		if (mb_ptr->take && (map->flags & MAP_SEEN))
 		{
+			borg_note(format("# Removing missing object (%d)", mb_ptr->take));
+		
 			/* The object is no longer here - delete it */
 			borg_delete_take(mb_ptr->take);
 		}
@@ -2708,32 +2750,33 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	if (old_info_hook) old_info_hook(mb_ptr, map);
 }
 
-
+/*
+ * Hack - save old hook to erase map.
+ *
+ * We chain into this after storing our information.
+ * (This is so multiple sub-systems can hook into
+ * map changes.)
+ */
+map_erase_hook_type old_erase_hook = NULL;
 
 /*
- * Update the Borg based on the current "map"
+ * Save the borg information into the overhead map
  */
-static void borg_forget_map(void)
+void borg_map_erase(void)
 {
-	map_block *mb_ptr;
-
-	/* Itterate over the map */
-	MAP_ITT_START (mb_ptr)
-	{
-		/* Clear flow information */
-		mb_ptr->cost = 255;
-		mb_ptr->flow = 255;
-
-		/* Clear icky + know flag */
-		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
-	}
-	MAP_ITT_END;
-
 	/* Forget the view */
 	borg_forget_view();
+	
+	/* No objects here */
+	borg_takes_cnt = 0;
+	borg_takes_nxt = 1;
+
+	/* Forget old objects */
+	C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
+
+
 }
 
-static byte Get_f_info_number[256];
 
 /*
  * Update the "map" based on visual info on the screen
@@ -3442,13 +3485,6 @@ void borg_update(void)
 		/* No known doors */
 		track_door_num = 0;
 
-		/* No objects here */
-		borg_takes_cnt = 0;
-		borg_takes_nxt = 1;
-
-		/* Forget old objects */
-		C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
-
 		/* No monsters here */
 		borg_kills_cnt = 0;
 		borg_kills_nxt = 1;
@@ -3479,10 +3515,6 @@ void borg_update(void)
 			/* Mega-Hack -- Access "dead unique" list */
 			if (r_ptr->max_num == 0) borg_race_death[i] = 1;
 		}
-
-
-		/* Forget the map */
-		borg_forget_map();
 
 		/* Reset */
 		reset = TRUE;
@@ -4064,12 +4096,6 @@ void borg_init_5(void)
 	C_MAKE(borg_wanks, AUTO_VIEW_MAX, borg_wank);
 
 
-	/*** Reset the map ***/
-
-	/* Forget the map */
-	borg_forget_map();
-
-
 	/*** Parse "unique" monster names ***/
 
 	/* Start over */
@@ -4150,17 +4176,6 @@ void borg_init_5(void)
 	/* Save the entries */
 	for (i = 0; i < size; i++) borg_normal_text[i] = text[i];
 	for (i = 0; i < size; i++) borg_normal_what[i] = what[i];
-
-	/* Initialize */
-	for (i = 0; i < 256; i++) Get_f_info_number[i] = -1;
-
-	for (i = z_info->f_max - 1; i >= 0; i--)
-	{
-		if (i == FEAT_SECRET || i == FEAT_INVIS)
-			continue;
-
-		Get_f_info_number[(int)f_info[i].d_char] = i;
-	}
 
 	/* Free the arrays */
 	FREE(what);

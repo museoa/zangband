@@ -133,7 +133,7 @@ typedef map_block *map_blk_ptr;
 typedef map_block **map_blk_ptr_ptr;
 
 typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map);
-typedef errr (*map_erase_hook_type) (void);
+typedef void (*map_erase_hook_type) (void);
 
 #endif /* TERM_USE_MAP */
 

@@ -3889,14 +3889,6 @@ void borg_init_9(void)
 	C_MAKE(test, 400 * 1024L, byte);
 	KILL(test);
 
-	/* Hack - initialise the hooks into the overhead map code */
-
-	/* Initialise the overhead map code */
-	init_overhead_map();
-
-	/* Save the borg hook into the overhead map */
-	old_info_hook = set_map_hook(borg_map_info);
-
 	/*** Hack -- initialize borg.ini options ***/
 
 	/* Message */
@@ -3991,6 +3983,15 @@ void borg_init_9(void)
 	borg_init_6();
 	borg_init_7();
 	borg_init_8();
+	
+	/* Hack - initialise the hooks into the overhead map code */
+
+	/* Initialise the overhead map code */
+	init_overhead_map();
+
+	/* Save the borg hooks into the overhead map */
+	old_info_hook = set_map_hook(borg_map_info);
+	old_erase_hook = set_erase_hook(borg_map_erase);
 
 	/*** Redraw ***/
 
@@ -4840,6 +4841,17 @@ void do_cmd_borg(void)
 
 			/* Step forever */
 			borg_step = 0;
+			
+			/*** Redraw ***/
+
+			/* Redraw map */
+			p_ptr->redraw |= (PR_MAP);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_OVERHEAD);
+
+			/* Redraw everything */
+			do_cmd_redraw();
 
 			/* need to check all stats */
 			my_need_stat_check[0] = TRUE;
@@ -4941,6 +4953,17 @@ void do_cmd_borg(void)
 
 			/* Step N times */
 			borg_step = 1;
+			
+			/*** Redraw ***/
+
+			/* Redraw map */
+			p_ptr->redraw |= (PR_MAP);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_OVERHEAD);
+
+			/* Redraw everything */
+			do_cmd_redraw();
 
 			/* need to check all stats */
 			my_need_stat_check[0] = TRUE;

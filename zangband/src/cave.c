@@ -2676,6 +2676,12 @@ void display_map(int *cx, int *cy)
 				c_ptr = area(i, j);
 				pc_ptr = parea(i, j);
 
+#ifdef TERM_USE_MAP
+			/* Tell the world about this square */
+			Term_write_map(i, j, c_ptr, pc_ptr);
+#endif /* TERM_USE_MAP */				
+				
+
 				/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
 				map_info(c_ptr, pc_ptr, &ta, &tc, &tta, &ttc);

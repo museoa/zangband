@@ -21,13 +21,19 @@
 #define FEAT_INVIS	0x02
 
 
-/* Old overhead map info hook to chain into */
+/* Old overhead map hooks to chain into */
 extern map_info_hook_type old_info_hook;
+extern map_erase_hook_type old_erase_hook;
 
 /*
  * Save the borg information into the overhead map
  */
 extern void borg_map_info(map_block *mb_ptr, term_map *map);
+
+/*
+ * Notice when we change level
+ */
+extern void borg_map_erase(void);
 
 
 /*
