@@ -13101,7 +13101,7 @@ static bool borg_play_step(int y2, int x2)
 
 			/* Traps. Disarm it w/ fail check */
 			if (o_ptr->pval >= 1 && object_known_p(o_ptr) &&
-				borg_skill[BI_DEV] - o_ptr->pval >= borg_chest_fail_tolerance)
+				borg_skill[BI_DEV] - o_ptr->pval >= 13)
 			{
 				borg_note(format("# Disarming a '%s' at (%d,%d)",
 								 k_name + k_info[mb_ptr->object].name, y, x));

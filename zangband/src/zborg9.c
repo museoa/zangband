@@ -3111,7 +3111,6 @@ static void init_borg_txt_file(void)
 		borg_respawn_winners = FALSE;
 		borg_respawn_class = -1;
 		borg_respawn_race = -2;
-		borg_chest_fail_tolerance = 13;
 
 		return;
 	}
@@ -3234,12 +3233,6 @@ TRUE;
 		{
 			sscanf(buf + strlen("borg_stop_dlevel =") + 1, "%d",
 				   &borg_stop_dlevel);
-			continue;
-		}
-		if (prefix(buf, "borg_chest_fail_tolerance ="))
-		{
-			sscanf(buf + strlen("borg_chest_fail_tolerance =") + 1, "%d",
-				   &borg_chest_fail_tolerance);
 			continue;
 		}
 

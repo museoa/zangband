@@ -222,7 +222,6 @@ extern bool borg_uses_calcs;
 extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
 extern bool borg_engage_cloak;
-extern int borg_chest_fail_tolerance;
 
 /* HACK... this should really be a parm into borg_prepared */
 /*         I am just being lazy */
