@@ -800,86 +800,6 @@ static t_widget_color *WidgetColor_Find(int color, int opacity)
 	return NULL;
 }
 
-/*
- * Fiddle with configuration options for a Widget item
- *
- * $widget itemconfigure $index ?option? ?value? ?option value ...?
- */
-static int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
-	int objc, Tcl_Obj *CONST objv[])
-{
-	WidgetItem *itemPtr;
-	int index, result = TCL_OK;
-	Tcl_Obj *objPtr;
-	DoubleLink *link;
-
-	/* Required number of arguments */
-	if (objc < 3)
-	{
-		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "index ?option? ?value? ?option value ...?");
-		
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the item index */
-	if (Tcl_GetIntFromObj(interp, objv[2], &index) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the item index */
-	if ((index < 0) || (index >= widgetPtr->linkerItem.count))
-	{
-		/* Set the error */
-		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the first item */
-	link = widgetPtr->linkerItem.head;
-
-	/* Walk through the items to the desired item */
-	while (index--) link = link->next;
-	itemPtr = DoubleLink_Data(link, WidgetItem);
-
-	if (objc <= 4)
-	{
-		objPtr = Tk_GetOptionInfo(interp, (char *) itemPtr,
-			itemPtr->typePtr->optionTable,
-			(objc == 4) ? objv[3] : NULL,
-			widgetPtr->tkwin);
-		if (objPtr == NULL)
-		{
-			result = TCL_ERROR;
-		}
-		else
-		{
-			Tcl_SetObjResult(interp, objPtr);
-		}
-	}
-	else
-	{
-		result = (*itemPtr->typePtr->configProc)(interp, widgetPtr, itemPtr,
-			objc - 3, objv + 3);
-
-		if (itemPtr->visible != itemPtr->linkVis.isLinked)
-		{
-			if (itemPtr->linkVis.isLinked)
-				DoubleLink_Unlink(&itemPtr->linkVis);
-			else
-				DoubleLink_Link(&itemPtr->linkVis);
-		}
-	}
-
-	/* Result */
-	return result;
-}
-
 
 /*
  * Set the interpreter result with the value of an item's configuration
@@ -1103,10 +1023,10 @@ static t_widget_color *WidgetColor_Alloc(int color, int opacity)
 static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	static cptr commandNames[] = {"caveyx", "center", "cget", "configure",
-		"coloralloc", "colorderef", "itemcget", "itemconfigure",
+		"coloralloc", "colorderef", "itemcget",
 		"wipe", "bounds", "visible", "wipespot", "hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CGET, IDX_CONFIGURE,
-		IDX_COLORALLOC, IDX_COLORDEREF, IDX_ITEMCGET, IDX_ITEMCONFIGURE,
+		IDX_COLORALLOC, IDX_COLORDEREF, IDX_ITEMCGET,
 		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_WIPESPOT, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
@@ -1391,13 +1311,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 		{
 			/* Query a Widget item option */
 			result = WidgetItem_Cget(interp, widgetPtr, objc, objv);
-			break;
-		}
-
-		case IDX_ITEMCONFIGURE: /* itemconfigure */
-		{
-			/* Configure a Widget item */
-			result = WidgetItem_Configure(interp, widgetPtr, objc, objv);
 			break;
 		}
 
