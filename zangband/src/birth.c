@@ -1736,6 +1736,7 @@ static bool get_player_sex(void)
 	return (TRUE);
 }
 
+
 /*
  * Generic "get choice from menu" function
  */
@@ -1849,7 +1850,7 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		else if ((c == '\n') || (c == '\r'))
 		{
 			/* Highlight the selection */
-			Term_putstr(col, cur + TABLE_ROW, wid, TERM_BLUE, choices[cur]);
+			Term_putstr(col, cur - top + TABLE_ROW, wid, TERM_BLUE, choices[cur]);
 			
 			/* Exit when the player makes a selection */
 			return(cur);
@@ -1898,9 +1899,94 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		bell();
 	}
 	
-	/* Paranoia: This should never execute */
 	return (255);
 }
+
+
+/*
+ * Sorting hook -- comp function -- strings (see below)
+ *
+ * We use "u" to point to an array of strings.
+ */
+static bool ang_sort_comp_hook_string(const vptr u, const vptr v, int a, int b)
+{
+	cptr *x = (cptr*)(u);
+
+	/* Hack - ignore v */
+	(void)v;
+	
+	return (strcmp(x[a], x[b]) <= 0);
+}
+
+
+/*
+ * Sorting hook -- swap function -- array of strings (see below)
+ *
+ * We use "u" to point to an array of strings.
+ */
+static void ang_sort_swap_hook_string(const vptr u, const vptr v, int a, int b)
+{
+	cptr *x = (cptr*)(u);
+
+	cptr temp;
+
+	/* Hack - ignore v */
+	(void)v;
+	
+	/* Swap */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+}
+
+
+/*
+ * Present a sorted list to the player, and get a selection
+ */
+static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
+	 cptr helpfile)
+{
+	int i;
+	int choice;
+	cptr *strings;
+	
+	C_MAKE(strings, num, cptr);
+
+	/* Initialise the sorted string array */
+	for (i = 0; i < num; i++)
+	{
+		strings[i] = choices[i];
+	}
+
+	/* Sort the strings */
+	ang_sort_comp = ang_sort_comp_hook_string;
+	ang_sort_swap = ang_sort_swap_hook_string;
+
+	/* Sort the (unique) slopes */
+	ang_sort(strings, NULL, num);	
+	
+	/* Get the choice */
+	choice = get_player_choice(strings, num, col, wid, helpfile);
+	
+	/* Invert the choice */
+	for (i = 0; i < num; i++)
+	{
+		/* Does the string match the one we selected? */
+		if (choices[i] == strings[choice])
+		{
+			/* Save the choice + exit */
+			choice = i;
+			break;
+		}
+	}
+	
+	/* Free the strings */
+	C_KILL(strings, num, cptr);
+
+	/* Return the value from the list */
+	return (choice);
+}
+
 
 /*
  * Player race
@@ -1922,7 +2008,7 @@ static bool get_player_race(void)
 		races[i] =  race_info[i].title;
 	}
 
-	p_ptr->prace = get_player_choice(races, MAX_RACES, RACE_COL, 15,
+	p_ptr->prace = get_player_sort_choice(races, MAX_RACES, RACE_COL, 15,
 		"charattr.txt#TheRaces");
 	
 	/* No selection? */
@@ -1991,7 +2077,7 @@ static bool get_player_class(void)
 	{
 		p_ptr->pclass = 0;
 		
-		for (i = 0; i < MAX_RACES; i++)
+		for (i = 0; i < MAX_CLASS; i++)
 		{
 			/* Free the strings */
 			string_free(classes[i]);
