@@ -1087,10 +1087,10 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 		/* We're using sound */
 		else
 		{
-			byte cost = c_ptr->cost;
+            byte cost = c_ptr->cost;
 
 			/* Accept louder sounds */
-			if ((!best_val) || (cost > best_val)) continue;
+			if (cost < best_val) continue;
 			best_val = cost;
 		}
 

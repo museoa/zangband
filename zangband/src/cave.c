@@ -4697,11 +4697,13 @@ void update_flow(void)
 				continue;
 			}
 
+#if 0
 			/*
 			 * Hack - do not overwrite loud sounds with quiet ones,
 			 * unless some time has passed
 			 */
 			if (c_ptr->cost + c_ptr->when > n + flow_n) continue;
+#endif
 
 			/* Save the time-stamp */
 			c_ptr->when = flow_n;
