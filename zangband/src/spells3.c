@@ -2010,19 +2010,29 @@ void identify_item(object_type *o_ptr)
 
 static bool item_tester_unknown(const object_type *o_ptr)
 {
-	if (object_known_p(o_ptr))
-		return FALSE;
-	else
-		return TRUE;
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	
+	/* Check to see if we don't know the flavor */
+	if (k_ptr->flavor && !k_ptr->aware) return (TRUE);
+	
+	/* Check to see if we have identified the item */
+	if (object_known_p(o_ptr)) return (FALSE);
+	
+	return (TRUE);
 }
 
 
 static bool item_tester_unknown_star(const object_type *o_ptr)
 {
-	if (o_ptr->ident & IDENT_MENTAL)
-		return FALSE;
-	else
-		return TRUE;
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	
+	/* Check to see if we don't know the flavor */
+	if (k_ptr->flavor && !k_ptr->aware) return (TRUE);
+	
+	/* Check to see if we have identified the item */
+	if (o_ptr->ident & IDENT_MENTAL) return (FALSE);
+	
+	return (TRUE);
 }
 
 
