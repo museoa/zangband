@@ -115,10 +115,10 @@ static int critical_melee(int chance, int sleeping_bonus, char *m_name,
 			msg_print("You ruthlessly sneak attack!");
 		
 		/* Determine level of critical hit x 10. */
-		if		(rand_int(90) == 0) mult_m_crit = 50;
-		if      (rand_int(40) == 0) mult_m_crit = 36;
-		else if (rand_int(12) == 0) mult_m_crit = 27;
-		else if (rand_int(3)  == 0) mult_m_crit = 20;
+		if		(randint0(90) == 0) mult_m_crit = 50;
+		if      (randint0(40) == 0) mult_m_crit = 36;
+		else if (randint0(12) == 0) mult_m_crit = 27;
+		else if (randint0(3)  == 0) mult_m_crit = 20;
 		else                        mult_m_crit = 15;
 		
 
@@ -1690,7 +1690,7 @@ void py_attack(int y, int x)
 				 * and then get total dice damage.
 				 */
 				k = damroll(o_ptr->dd, k / 10000 +
-				        (rand_int(10000) < (k % 10000) ? 1 : 0));
+				        (randint0(10000) < (k % 10000) ? 1 : 0));
 
 				/* Add in extra effect due to slays */
 				k += (slay - 10);

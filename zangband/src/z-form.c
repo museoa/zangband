@@ -1,5 +1,13 @@
 /* File: z-form.c */
 
+/*
+ * Copyright (c) 1997 Ben Harrison
+ *
+ * This software may be copied and distributed for educational, research,
+ * and not for profit purposes provided that this copyright and statement
+ * are included in all such copies.
+ */
+
 /* Purpose: Low level text formatting -BEN- */
 
 #include "z-form.h"
@@ -154,8 +162,9 @@ static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, vptr arg)
 	uint len;
 	char tmp[32];
 
-	/* XXX XXX */
-	fmt = fmt ? fmt : 0;
+
+	/* Unused parameter */
+	(void)fmt;
 
 	/* Pointer display */
 	sprintf(tmp, "<<%p>>", arg);
@@ -303,7 +312,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		{
 			int *arg;
 
-			/* Access the next argument */
+			/* Get the next argument */
 			arg = va_arg(vp, int *);
 
 			/* Save the current length */
@@ -407,7 +416,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				{
 					int arg;
 
-					/* Access the next argument */
+					/* Get the next argument */
 					arg = va_arg(vp, int);
 
 					/* Hack -- append the "length" */
@@ -454,7 +463,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			{
 				int arg;
 
-				/* Access next argument */
+				/* Get the next argument */
 				arg = va_arg(vp, int);
 
 				/* Format the argument */
@@ -471,7 +480,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				{
 					long arg;
 
-					/* Access next argument */
+					/* Get the next argument */
 					arg = va_arg(vp, long);
 
 					/* Format the argument */
@@ -481,7 +490,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				{
 					int arg;
 
-					/* Access next argument */
+					/* Get the next argument */
 					arg = va_arg(vp, int);
 
 					/* Format the argument */
@@ -499,7 +508,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				{
 					unsigned long arg;
 
-					/* Access next argument */
+					/* Get the next argument */
 					arg = va_arg(vp, unsigned long);
 
 					/* Format the argument */
@@ -509,7 +518,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				{
 					unsigned int arg;
 
-					/* Access next argument */
+					/* Get the next argument */
 					arg = va_arg(vp, unsigned int);
 
 					/* Format the argument */
@@ -527,7 +536,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			{
 				double arg;
 
-				/* Access next argument */
+				/* Get the next argument */
 				arg = va_arg(vp, double);
 
 				/* Format the argument */
@@ -542,7 +551,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			{
 				vptr arg;
 
-				/* Access next argument */
+				/* Get the next argument */
 				arg = va_arg(vp, vptr);
 
 				/* Format the argument */
@@ -558,7 +567,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				cptr arg;
 				char arg2[1024];
 
-				/* Access next argument */
+				/* Get the next argument */
 				arg = va_arg(vp, cptr);
 
 				/* Hack -- convert NULL to EMPTY */
@@ -581,7 +590,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			{
 				vptr arg;
 
-				/* Access next argument */
+				/* Get the next argument */
 				arg = va_arg(vp, vptr);
 
 				/* Format the "user data" */
@@ -652,9 +661,6 @@ static huge format_len = 0;
  */
 char *vformat(cptr fmt, va_list vp)
 {
-	static char *format_buf = NULL;
-	static huge format_len = 0;
-
 	/* Initial allocation */
 	if (!format_buf)
 	{

@@ -2425,10 +2425,10 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 		}
 		
 		/* Determine level of critical hit x 10. */
-		if		(rand_int(100) == 0) mult_a_crit = 50;
-		if      (rand_int(40) == 0)  mult_a_crit = 36;
-		else if (rand_int(12) == 0)  mult_a_crit = 27;
-		else if (rand_int(3)  == 0)  mult_a_crit = 20;
+		if		(randint0(100) == 0) mult_a_crit = 50;
+		if      (randint0(40) == 0)  mult_a_crit = 36;
+		else if (randint0(12) == 0)  mult_a_crit = 27;
+		else if (randint0(3)  == 0)  mult_a_crit = 20;
 		else                         mult_a_crit = 15;
 		
 		/* Only give a message if we see it hit. */
@@ -2855,7 +2855,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 * and then get total dice damage.
 				 */
 				tdam = damroll(i_ptr->dd, tdam / 10000 + 
-				        (rand_int(10000) < (tdam % 10000) ? 1 : 0));
+				        (randint0(10000) < (tdam % 10000) ? 1 : 0));
 
 				/* Add in extra effect due to slays */
 				tdam += (slay - 10);
@@ -3299,7 +3299,7 @@ void do_cmd_throw_aux(int mult)
 				 * and then get total dice damage.
 				 */
 				tdam = damroll(q_ptr->dd, tdam / 10000 + 
-				        (rand_int(10000) < (tdam % 10000) ? 1 : 0));
+				        (randint0(10000) < (tdam % 10000) ? 1 : 0));
 				
 				/* Add in extra effect due to slays */
 				tdam += (slay - 10);

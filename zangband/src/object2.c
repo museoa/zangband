@@ -1813,7 +1813,7 @@ void object_prep(object_type *o_ptr, int k_idx)
  * we simply round the results of division in such a way as to "average" the
  * correct floating point value.
  *
- * This function has been changed.  It uses "randnor()" to choose values from
+ * This function has been changed.  It uses "Rand_mormal()" to choose values from
  * a normal distribution, whose mean moves from zero towards the max as the
  * level increases, and whose standard deviation is equal to 1/4 of the max,
  * and whose values are forced to lie between zero and the max, inclusive.
@@ -1875,7 +1875,7 @@ static s16b m_bonus(int max, int level)
 
 
 	/* Choose an "interesting" value */
-	value = randnor(bonus, stand);
+	value = Rand_normal(bonus, stand);
 
 	/* Enforce the minimum value */
 	if (value < 0) return (0);

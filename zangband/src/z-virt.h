@@ -32,6 +32,11 @@
  * The macros MAKE/C_MAKE and KILL/C_KILL have a "procedural" metaphor,
  * and they actually modify their arguments.
  *
+ * Note that, for some reason, some allocation macros may disallow
+ * "stars" in type names, but you can use typedefs to circumvent
+ * this.  For example, instead of "type **p; MAKE(p,type*);" you
+ * can use "typedef type *type_ptr; type_ptr *p; MAKE(p,type_ptr)".
+ *
  * Note that it is assumed that "memset()" will function correctly,
  * in particular, that it returns its first argument.
  */
@@ -52,11 +57,11 @@
 
 /* Compare two arrays of type T[N], at locations P1 and P2 */
 #define C_DIFF(P1,P2,N,T) \
-	(memcmp((char*)(P1),(char*)(P2),C_SIZE(N,T)))
+	(memcmp((const char*)(P1),(const char*)(P2),C_SIZE(N,T)))
 
 /* Compare two things of type T, at locations P1 and P2 */
 #define DIFF(P1,P2,T) \
-	(memcmp((char*)(P1),(char*)(P2),SIZE(T)))
+	(memcmp((const char*)(P1),(const char*)(P2),SIZE(T)))
 
 
 /* Set every byte in an array of type T[N], at location P, to V, and return P */
@@ -79,11 +84,11 @@
 
 /* Load an array of type T[N], at location P1, from another, at location P2 */
 #define C_COPY(P1,P2,N,T) \
-	(T *)(memcpy((char*)(P1),(char*)(P2),C_SIZE(N,T)))
+	(T *)(memcpy((char*)(P1),(const char*)(P2),C_SIZE(N,T)))
 
 /* Load a thing of type T, at location P1, from another, at location P2 */
 #define COPY(P1,P2,T) \
-	(T *)(memcpy((char*)(P1),(char*)(P2),SIZE(T)))
+	(T *)(memcpy((char*)(P1),(const char*)(P2),SIZE(T)))
 
 
 /* Free an array of N things of type T at P, return NULL */
@@ -161,7 +166,4 @@ extern cptr string_make(cptr str);
 /* Free a string allocated with "string_make()" */
 extern void string_free(cptr str);
 
-#endif
-
-
-
+#endif /* INCLUDED_Z_VIRT_H */

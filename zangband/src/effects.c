@@ -2542,15 +2542,15 @@ void do_poly_self(void)
 		/* Calculate the height/weight for males */
 		if (p_ptr->psex == SEX_MALE)
 		{
-			p_ptr->ht = randnor(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
-			p_ptr->wt = randnor(rp_ptr->m_b_wt, rp_ptr->m_m_wt);
+			p_ptr->ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
+			p_ptr->wt = Rand_normal(rp_ptr->m_b_wt, rp_ptr->m_m_wt);
 		}
 
 		/* Calculate the height/weight for females */
 		else if (p_ptr->psex == SEX_FEMALE)
 		{
-			p_ptr->ht = randnor(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
-			p_ptr->wt = randnor(rp_ptr->f_b_wt, rp_ptr->f_m_wt);
+			p_ptr->ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
+			p_ptr->wt = Rand_normal(rp_ptr->f_b_wt, rp_ptr->f_m_wt);
 		}
 
 		check_experience();
