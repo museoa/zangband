@@ -1630,11 +1630,6 @@ static bool borg_think_shop_sell(void)
 		/* The purchase is complete */
 		goal_shop = goal_item = -1;
 
-		/* Go back to the first page and rebrowse this store AJG */
-		if (borg_shops[shop_num].page)
-			borg_keypress(' ');
-		borg_do_browse_what = -1;
-
 		/* Success */
 		return (TRUE);
 	}
@@ -1665,9 +1660,6 @@ static bool borg_think_shop_buy(void)
 		{
 			/* The purchase is complete */
 			goal_shop = goal_ware = -1;
-
-			/* rebrowse this store */
-			borg_do_browse_what = -1;
 
 			return (FALSE);
 		}
@@ -1702,9 +1694,6 @@ static bool borg_think_shop_buy(void)
 		/* The purchase is complete */
 		goal_shop = goal_ware = -1;
 
-		/* rebrowse this store */
-		borg_do_browse_what = -1;
-
 		/*
 		 * It is easier for the borg to wear the Equip if he exits
 		 * the shop after buying it, even though there may be a few
@@ -1714,10 +1703,6 @@ static bool borg_think_shop_buy(void)
 		{
 			/* leave the store */
 			borg_keypress(ESCAPE);
-
-			/* rebrowse this store */
-			borg_do_browse_what = -1;
-
 		}
 
 		/* Success */

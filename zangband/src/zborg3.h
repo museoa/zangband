@@ -221,6 +221,10 @@ extern borg_shop *safe_shops;	/* Safety "shops" */
 extern s16b track_shop_num;
 extern s16b track_shop_size;
 
+/*
+ * Hack -- current shop index
+ */
+extern s16b shop_num;	/* Current shop index */
 
 
 /*

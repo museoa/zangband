@@ -22,6 +22,8 @@ list_notice_hook_type old_list_hook = NULL;
 
 void borg_list_info(byte list_type)
 {
+	int i;
+
 	/* Don't do anything if the borg is inactive */
 	if (!borg_active)
 	{
@@ -76,7 +78,25 @@ void borg_list_info(byte list_type)
 		case LIST_STORE:
 		{
 			/* Notice store inventory changes */
-			borg_inside_store = TRUE;
+			
+			/* Silly value */
+			shop_num = -1;
+	
+			/* Scan for the right shop */
+			for (i = 0; i < track_shop_num; i++)
+			{
+				if ((borg_shops[i].x == c_x) &&
+					(borg_shops[i].y == c_y))
+				{
+					shop_num = i;
+					break;
+				}
+			}
+						
+			/* Clear the goal */
+			goal = 0;
+			
+			/* Save items for later? ... */
 			
 			break;
 		}
@@ -85,6 +105,24 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice home inventory changes */
 			
+			/* Silly value */
+			shop_num = -1;
+	
+			/* Scan for the home */
+			for (i = 0; i < track_shop_num; i++)
+			{
+				if ((borg_shops[i].x == c_x) &&
+					(borg_shops[i].y == c_y))
+				{
+					shop_num = i;
+					break;
+				}
+			}
+			
+			/* Clear the goal */
+			goal = 0;
+			
+			/* Save items for later? ... */
 			
 			break;
 		}

@@ -187,8 +187,6 @@ extern int sold_item_sval;
 extern int sold_item_pval;
 extern int sold_item_store;
 
-extern bool borg_inside_store;
-
 extern bool borg_plays_risky;
 extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
@@ -717,11 +715,6 @@ extern int num_boots;
 
 extern int borg_feeling;	/* Current level "feeling" */
 
-/*
- * Hack -- current shop index
- */
-
-extern s16b shop_num;	/* Current shop index */
 
 
 

@@ -488,37 +488,6 @@ static bool borg_think(void)
 	if ((0 == borg_what_text(3, 5, 16, &t_a, buf)) &&
 		(streq(buf, "Item Description")))
 	{
-		/* Silly value */
-		shop_num = 0;
-
-		/* Scan for the right shop */
-		for (i = 0; i < track_shop_num; i++)
-		{
-			if ((borg_shops[i].x == c_x) &&
-				(borg_shops[i].y == c_y))
-			{
-				shop_num = i;
-				break;
-			}
-		}
-
-		/* Clear the goal (the goal was probably going to a shop) */
-		goal = 0;
-
-		/* React to new stores */
-		if (borg_do_browse_what != shop_num)
-		{
-			/* Clear all the items */
-			for (i = 0; i < 24; i++)
-			{
-				/* XXX Wipe the ware */
-				WIPE(&borg_shops[shop_num].ware[i], borg_item);
-			}
-
-			/* Save the store */
-			borg_do_browse_what = shop_num;
-		}
-
 		/* Cheat the current gold (unless in home) */
 		borg_gold = p_ptr->au;
 

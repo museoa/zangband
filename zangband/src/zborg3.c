@@ -41,6 +41,11 @@ s16b track_shop_num;
 s16b track_shop_size;
 
 
+/*
+ * Hack -- current shop index
+ */
+s16b shop_num = -1;	/* Current shop index */
+
 
 /*
  * Spell info

@@ -394,13 +394,6 @@ int num_boots;
 
 int borg_feeling = 0;	/* Current level "feeling" */
 
-/*
- * Hack -- current shop index
- */
-
-s16b shop_num = -1;	/* Current shop index */
-
-
 
 /*
  * State variables extracted from the screen
