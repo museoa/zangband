@@ -1377,8 +1377,6 @@ void init_icons(int size, int depth)
 	/*
 	 * A feature can use lighting in one of three ways:
 	 * (1) FT_LIGHT_NONE means ignore lighting
-	 * (2) FT_LIGHT_ICON means use a sequence of icons
-	 * (3) FT_LIGHT_TINT means use the g_darken[] tint table (slow)
 	 */
 	C_MAKE(g_feat_lite, z_info->f_max, int);
 

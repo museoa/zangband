@@ -26,7 +26,7 @@ int g_alternate_count;  /* Number of elems in g_alternate[] array */
 t_effect *g_effect; /* Array of effect icon info */
 int *g_feat_lite = NULL;
 int *g_background = NULL;
-t_darken g_darken[3];
+
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 bool g_icon_map_changed = FALSE;
 int *g_image_monster, *g_image_object;
@@ -507,61 +507,6 @@ void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_
 	}
 }
 
-static int read_dark_file(char *fileName)
-{
-	FILE *fp;
-	int count, table_count, index[16], i;
-	char buf[80];
-
-	if ((fp = fopen(fileName, "r")) == NULL)
-	{
-		return TCL_ERROR;
-	}
-
-	count = 0;
-	table_count = 0;
-	
-	/* Parse the file */
-	while (!feof(fp))
-	{
-		/* Read a line */
-		if (!fgets(buf, 80, fp)) continue;
-
-		/* Skip comments */
-		if (buf[0] == '#') continue;
-
-		/* Scan 16 values */
-		if (sscanf(buf, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ",
-			&index[0], &index[1], &index[2], &index[3], &index[4],
-			&index[5], &index[6], &index[7], &index[8], &index[9],
-			&index[10], &index[11], &index[12], &index[13], &index[14],
-			&index[15]) != 16) continue;
-
-		/* Remember 16 values */
-		for (i = 0; i < 16; i++)
-		{
-			g_darken[table_count].table[count++] = index[i];
-		}
-		
-		/* Next table */
-		if (count == 256)
-		{
-			table_count++;
-			count = 0;
-		}
-
-		/* Error */
-		if (table_count > 3) break;
-	}
-
-	/* Close the file */
-	fclose(fp);
-
-	if (table_count != 3) return TCL_ERROR;
-	
-	/* Success */
-	return TCL_OK;
-}
 
 void init_palette(void)
 {
@@ -579,22 +524,6 @@ void init_palette(void)
 		quit(Tcl_GetStringResult(g_interp));
 
 	g_palette_rgb = Palette_GetRGB();
-
-	/*
-	 * Tint table for light effect.
-	 */
-	for (i = 0; i < 3; i++)
-	{
-		g_darken[i].brightness = 0;
-		g_darken[i].contrast = 0;
-		Colormap_One2OneTable(g_darken[i].table);
-	}
-	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
-	path_build(path, 1024, path2, "dark");
-	if (read_dark_file(path) != TCL_OK)
-	{
-		quit_fmt("error reading \"%s\"", path);
-	}
 }
 
 /*

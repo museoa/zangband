@@ -176,8 +176,6 @@ extern t_assign g_assign_none;
 
 /* Constants for g_feat_lite[] */
 #define FT_LIGHT_NONE 0 /* Always use 1 icon, no tinting */
-#define FT_LIGHT_ICON 1 /* Use 3 icons, no tinting */
-#define FT_LIGHT_TINT 2 /* Use 1 icon, with tinting as needed */
 
 extern int *g_feat_lite;
 
@@ -306,14 +304,6 @@ typedef struct t_effect {
 extern t_effect *g_effect; /* Array of "effect" info */
 extern cptr keyword_effect_spell[];
 extern cptr keyword_effect_ammo[];
-
-typedef struct t_darken {
-	TintTable table; /* Tint table for darkening feature icons */
-	int brightness;
-	int contrast;
-	double gamma;
-} t_darken;
-extern t_darken g_darken[3];
 
 /* Recalculate g_icon_map[] */
 extern bool g_icon_map_changed;
