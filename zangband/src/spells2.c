@@ -3646,9 +3646,10 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 13:  case 14:  case 15:  case 19:  case 20:
 			{
+				/* The TY_CURSE is effectively a level 80 monster */
 				if (stop_ty ||
 					((FLAG(p_ptr, TR_FREE_ACT)) &&
-					 (saving_throw(p_ptr->skills[SKILL_SAV]))))
+					 (player_save(80))))
 				{
 					/* Do nothing */ ;
 				}

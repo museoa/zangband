@@ -2976,7 +2976,7 @@ bool lose_all_info(void)
 		object_kind *k_ptr = &k_info[k];
 
 		/* Forget flavored items, with saving throw */
-		if (k_ptr->flavor && one_in_(p_ptr->skills[SKILL_SAV]))
+		if (k_ptr->flavor && player_save(k_ptr->level - 50))
 		{
 			/* Forget knowledge */
 			k_ptr->aware = FALSE;

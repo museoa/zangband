@@ -2742,7 +2742,7 @@ void do_cmd_cast(void)
 				msgf("Your sanity is shaken by reading the Necronomicon!");
 
 				/* Mind blast */
-				if (!saving_throw(p_ptr->skills[SKILL_SAV]))
+				if (!player_save(100))
 				{
 					if (!(FLAG(p_ptr, TR_RES_CONF)))
 					{
@@ -2755,7 +2755,7 @@ void do_cmd_cast(void)
 				}
 
 				/* Lose int & wis */
-				else if (!saving_throw(p_ptr->skills[SKILL_SAV]))
+				else if (!player_save(100))
 				{
 					(void)do_dec_stat(A_INT);
 					(void)do_dec_stat(A_WIS);

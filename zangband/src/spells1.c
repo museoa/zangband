@@ -1494,8 +1494,8 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
-					/* Saving throw (unadjusted) */
-					if (saving_throw(p_ptr->skills[SKILL_SAV]))
+					/* Saving throw */
+					if (player_save(r_ptr->level))
 					{
 						msgf("You resist the effects!");
 					}
@@ -1587,8 +1587,8 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
-					/* Saving throw (unadjusted) */
-					if (saving_throw(p_ptr->skills[SKILL_SAV]))
+					/* Saving throw */
+					if (player_save(r_ptr->level))
 					{
 						msgf("You resist the effects!");
 					}
@@ -1677,8 +1677,8 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
-					/* Saving throw (unadjusted) */
-					if (saving_throw(p_ptr->skills[SKILL_SAV]))
+					/* Saving throw */
+					if (player_save(r_ptr->level))
 					{
 						msgf("You resist the effects!");
 					}

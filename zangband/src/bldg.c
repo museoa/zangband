@@ -27,6 +27,7 @@ static void have_nightmare_aux(int r_idx)
 	int power = r_ptr->level + 10;
 	cptr desc = mon_race_name(r_ptr);
 
+	int i;
 
 	if (!FLAG(r_ptr, RF_UNIQUE))
 	{
@@ -35,7 +36,7 @@ static void have_nightmare_aux(int r_idx)
 
 		if (FLAG(r_ptr, RF_FRIENDS))
 		{
-			power /= 2;
+			power -= 50;
 		}
 	}
 	else
@@ -43,10 +44,10 @@ static void have_nightmare_aux(int r_idx)
 		/* Describe it */
 		strnfmt(m_name, 80, "%s", desc);
 
-		power *= 2;
+		power += 50;
 	}
 
-	if (saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
+	if (player_save(power))
 	{
 		msgf("%^s chases you through your dreams.", m_name);
 
@@ -100,7 +101,7 @@ static void have_nightmare_aux(int r_idx)
 	}
 
 	/* Mind blast */
-	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
+	if (!player_save(power))
 	{
 		if (!(FLAG(p_ptr, TR_RES_CONF)))
 		{
@@ -114,7 +115,7 @@ static void have_nightmare_aux(int r_idx)
 	}
 
 	/* Lose int & wis */
-	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
+	if (!player_save(power))
 	{
 		(void)do_dec_stat(A_INT);
 		(void)do_dec_stat(A_WIS);
@@ -122,7 +123,7 @@ static void have_nightmare_aux(int r_idx)
 	}
 
 	/* Brain smash */
-	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
+	if (!player_save(power))
 	{
 		if (!(FLAG(p_ptr, TR_RES_CONF)))
 		{
@@ -132,14 +133,13 @@ static void have_nightmare_aux(int r_idx)
 		{
 			(void)inc_paralyzed(rand_range(4, 8));
 		}
-		while (!saving_throw(p_ptr->skills[SKILL_SAV]))
+
+		for (i = 0; !player_save(power - i); i += 10)
 		{
 			(void)do_dec_stat(A_INT);
-		}
-		while (!saving_throw(p_ptr->skills[SKILL_SAV]))
-		{
 			(void)do_dec_stat(A_WIS);
 		}
+
 		if (!(FLAG(p_ptr, TR_RES_CHAOS)))
 		{
 			(void)inc_image(rand_range(250, 400));
@@ -148,7 +148,7 @@ static void have_nightmare_aux(int r_idx)
 	}
 
 	/* Permanent lose int & wis */
-	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
+	if (!player_save(power))
 	{
 		if (dec_stat(A_INT, 10, TRUE)) happened = TRUE;
 		if (dec_stat(A_WIS, 10, TRUE)) happened = TRUE;
@@ -160,7 +160,7 @@ static void have_nightmare_aux(int r_idx)
 	}
 
 	/* Amnesia */
-	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
+	if (!player_save(power))
 	{
 		if (lose_all_info())
 		{
