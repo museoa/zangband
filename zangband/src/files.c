@@ -3252,7 +3252,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		}
 
 		/* Goto the selected line */
-		while (1)
+		while (next < line)
 		{
 			/* Get a line */
 			if (my_fgets(fff, buf, 1024)) break;
@@ -3262,9 +3262,6 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 			/* Count the lines */
 			next++;
-
-			/* Stop at the selected line */
-			if (next >= line) break;
 		}
 
 		/* Dump the next 20 lines of the file */
