@@ -589,8 +589,8 @@ void activate_quests(int level)
 					/* Create a starting level */
 					int min_level = d_ptr->min_level;
 
-					/* Create an ending level */
-					int max_level = MIN(d_ptr->max_level, 99);
+					/* How deep is the dungeon? */
+					int depth = MIN(d_ptr->max_level, 99) - min_level;
 
 					/* How many have been killed? */
 					int cur_num = q_ptr->data.bnt.cur_num;
@@ -599,7 +599,7 @@ void activate_quests(int level)
 					int max_num = q_ptr->data.bnt.max_num;
 
 					/* Spread the monsters evenly throughout the dungeon */
-					if (level == min_level + (max_level * (cur_num + 1)) / (max_num + 1))
+					if (level == min_level + (depth * (cur_num + 1)) / (max_num + 1))
 					{
 						/* Activate the quest */
 						q_ptr->flags |= QUEST_FLAG_ACTIVE;
