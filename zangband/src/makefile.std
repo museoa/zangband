@@ -35,9 +35,11 @@
 
 
 ##
-## This is my compiler of choice, it seems to work most everywhere
+## The list of ports available
 ##
-CC := gcc
+PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
+         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx \
+		 amiga borland gcu linux-tk
 
 ##
 ## This is the default port to compile.
@@ -45,6 +47,11 @@ CC := gcc
 ## Change this to your favourite port if you compile the game often.
 ##
 DEFAULT := linux
+
+##
+## This is my compiler of choice, it seems to work most everywhere
+##
+CC := gcc
 
 ##
 ## Default Lua location
@@ -85,7 +92,7 @@ ANGOBJS := $(LUAWOBJS) \
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
 	maid-grf.o main-dos.o main-ibm.o main-acn.o main-emx.o \
-	main-ami.o
+	main-ami.o main-tnb.o
 
 ##
 ## The "Utility" files
@@ -101,12 +108,19 @@ BORGOBJS := \
 	zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o \
 	zborg6.o zborg7.o zborg8.o zborg9.o \
 
+
 ##
-## The list of ports available
+## The Tk port files
 ##
-PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx \
-		 amiga borland gcu
+TKOBJS := \
+	tk/bind.o birth-tnb.o tk/canv.o tk/cmdinfo.o \
+	tk/icon1.o tk/icon2.o tk/icon3.o tk/const.o \
+	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
+	tk/map1.o tk/map2.o tk/qebind.o \
+	tk/r_info.o tk/setting.o tk/struct1.o tk/struct2.o \
+	tk/widget1.o tk/widget2.o tk/widget3.o \
+	tk/tk-util.o tk/tcltk.o
+
 
 ##
 ## Following are some "system" definitions
@@ -177,6 +191,26 @@ linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
  
 linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
                -lXaw -lXext -lSM -lICE -lXmu -lXt -lgtk `gtk-config --libs`
+
+##
+## Variation -- tk port to linux
+##
+linux-tk: CFLAGS += -D"USE_TNB" -D"USE_X11" -D"PLATFORM_X11"\
+				 -I/usr/include/tcl8.3 \
+				 -I/usr/include/tcl8.3/tk-private/unix \
+				 -I/usr/include/tcl8.3/tk-private/generic \
+				 -I/usr/include/tcl8.3/tcl-private/generic \
+                 -pedantic -W -Wmissing-prototypes -Wmissing-declarations \
+				 -Wno-long-long -Wwrite-strings -Wpointer-arith \
+				 -Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
+				 -Waggregate-return -Wstrict-prototypes \
+				 -Wredundant-decls #-Wunreachable-code
+ 
+linux-tk: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
+               -lXaw -lXext -lSM -lICE -lXmu -lXt -ltcl8.3 -ltk8.3 -lz
+linux-tk: OTHEROBJS := $(TKOBJS)
+linux-tk: $(TKOBJS)
+	# Blank line required here
 
 ##
 ## Linux with the (depreciated) svga port.
@@ -486,6 +520,8 @@ clean:
 	-$(RM) ./lua/*.bak ./lua/*.o
 	-$(RM) ./l-*.c
 	-$(RM) ./lua/tolua
+	-$(RM) ./tk/*.bak ./tk/*.o
+
 ##
 ## Generate dependencies automatically
 ##
@@ -593,6 +629,30 @@ angband.res : angband.rc
 
 $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 	$(LUA)tolua -n $(subst l-,,$*) -o $@ $<
+
+##
+## Extra dependancies for the tk port
+##
+$(TKOBJS): $(INCS) tk/tnb.h
+tk/bind.o: tk/qebind.h tk/icon.h
+tk/canv.o: tk/icon.h
+tk/icon1.o: tk/icon.h
+tk/icon2.o: tk/widget.h tk/icon.h
+tk/icon3.o: tk/icon.h
+tk/interp1.o: tk/struct.h tk/icon.h
+tk/interp2.o: tk/struct.h tk/icon.h
+tk/map1.o: tk/widget.h tk/icon.h tk/map.h
+tk/map2.o: tk/widget.h tk/icon.h tk/map.h
+tk/plat.o: tk/icon.h
+tk/qebind.o: tk/qebind.h
+tk/setting.o: tk/icon.h
+tk/struct1.o: tk/struct.h tk/icon.h
+tk/struct2.o: tk/struct.h
+tk/widget1.o: tk/widget.h tk/icon.h
+tk/widget2.o: tk/widget.h tk/icon.h
+tk/widget3.o: tk/widget.h tk/icon.h
+
+main-tnb.o: tk/tnb.h
 
 ##
 ## Hack... .o files can be created from .obj files
