@@ -207,12 +207,47 @@ extern int size_obj;
 
 
 /*
+ * Borg-abilities
+ */
+typedef struct borg_ability borg_ability;
+
+struct borg_ability
+{
+	s16b teleport;
+	s16b teleport_level;
+	s16b escape;
+	s16b fuel;
+	s16b heal;
+	s16b easy_heal;
+	s16b id;
+	s16b speed;
+	s16b staff_magi;
+	s16b staff_dest;
+	s16b missile;
+	s16b curepois;
+	s16b det_trap;
+	s16b det_door;
+	s16b det_evil;
+	s16b magic_map;
+	s16b recharge;
+	s16b pfe;
+	s16b glyph;
+	s16b ccw;
+	s16b csw;
+	s16b res_heat;
+	s16b res_cold;
+};
+
+/*
  * Borg-player information
  */
 typedef struct borg_player borg_player;
 
 struct borg_player
 {
+	/* Abilities */
+	borg_ability able;
+
 	/* Sustains */
 	bool sust[A_MAX];
 
@@ -220,7 +255,7 @@ struct borg_player
 	bool wismana;
 
 	bool britelite;	/* Lite does not require fuel */
-	byte cur_lite; /* Current light radius */
+	byte cur_lite;	/* Current light radius */
 
 	/* Hitpoints */
 	int chp;
@@ -230,8 +265,8 @@ struct borg_player
 	/* Spellpoints */
 	int csp;
 	int msp;
-	
-	s16b speed; /* Current speed */
+
+	s16b speed;	/* Current speed */
 
 	byte realm1;	/* First magic realm */
 	byte realm2;	/* Second magic realm */
@@ -246,13 +281,13 @@ struct borg_player
 	u32b flags1;
 	u32b flags2;
 	u32b flags3;
-	
+
 	s16b food;	/* Power of food */
-	s16b recall; /* Power of recall */
+	s16b recall;	/* Power of recall */
 
 
 	u32b value;	/* Cost of items we are carrying */
-	s16b weight; /* Weight of items we are carrying */
+	s16b weight;	/* Weight of items we are carrying */
 };
 
 extern borg_player *bp_ptr;
@@ -322,34 +357,7 @@ extern borg_player *bp_ptr;
 #define BI_ENCUMBERD	144
 
 
-#define BI_ATELEPORT	164
-#define BI_AESCAPE	165
-#define BI_AFUEL	166
-#define BI_AHEAL	167
-#define BI_AEZHEAL	168
-#define BI_AID		169
-#define BI_ASPEED	170
-#define BI_ASTFMAGI	171
-#define BI_ASTFDEST	172
-#define BI_AMISSILES	173
-#define BI_ACUREPOIS	174
-#define BI_ADETTRAP	175
-#define BI_ADETDOOR	176
-#define BI_ADETEVIL	177
-#define BI_AMAGICMAP	178
-#define BI_ARECHARGE	179
-#define BI_APFE		180
-#define BI_AGLYPH	181
-#define BI_ACCW		182
-#define BI_ACSW		183
-#define BI_ARESHEAT	184
-#define BI_ARESCOLD	185
-#define BI_ATELEPORTLVL	186		/* scroll of teleport level */
-#define BI_AXGOI	187			/* reliable GOI spell */
-#define BI_AGOI		188			/* GOI spell */
-#define BI_AHWORD	189			/* Holy Word prayer */
-
-#define BI_MAX		190
+#define BI_MAX		145
 
 
 /*

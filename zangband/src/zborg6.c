@@ -1571,8 +1571,8 @@ static bool borg_escape(int b_q)
 		 borg_fighting_unique >= 2 && borg_fighting_unique <= 8) ||
 		((b_q >= avoidance * (10 + risky_boost) / 10) && !borg_fighting_unique)
 		|| ((b_q >= avoidance * (10 + risky_boost) / 10) &&
-			borg_skill[BI_ISAFRAID] && (borg_skill[BI_AMISSILES] <= 0 &&
-										borg_class == CLASS_WARRIOR)))
+			borg_skill[BI_ISAFRAID] && !bp_ptr->able.missile &&
+										(borg_class == CLASS_WARRIOR)))
 	{
 		/* try Dimension Door */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
@@ -2120,7 +2120,7 @@ static bool borg_heal(int danger)
 		/*  use the potion if battling a unique and not too dangerous */
 		if (borg_fighting_unique >= 11 ||
 			(borg_fighting_unique && danger < avoidance * 2) ||
-			(borg_skill[BI_ATELEPORT] == 0 && danger > avoidance))
+			(!bp_ptr->able.teleport && danger > avoidance))
 		{
 			if (borg_use_staff_fail(SV_STAFF_THE_MAGI) ||
 				borg_quaff_potion(SV_POTION_RESTORE_MANA))
@@ -2270,7 +2270,7 @@ static bool borg_heal(int danger)
 	/* Heal step one (200hp) */
 	if (hp_down < 250 &&
 		danger / 2 < bp_ptr->chp + 200 &&
-		(((!borg_skill[BI_ATELEPORT] ||
+		(((!bp_ptr->able.teleport ||
 		   borg_skill[BI_DEV] -
 		   borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
@@ -2285,71 +2285,37 @@ static bool borg_heal(int danger)
 	}
 
 	/* Heal step two (300hp) */
-	if (hp_down < 350 && danger / 2 < bp_ptr->chp + 300 && (borg_use_staff_fail(SV_STAFF_HEALING) || (borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
-/* Vamp Drain ? */
-															borg_use_staff_fail
-															(SV_STAFF_HOLINESS)
-															||
-															borg_spell_fail
-															(REALM_LIFE,
-															 1, 6,
-															 allow_fail)
-															||
-															((!borg_skill
-															  [BI_ATELEPORT] ||
-															  borg_skill[BI_DEV]
-															  -
-															  borg_get_kind
-															  (TV_ROD,
-															   SV_ROD_HEALING)->
-															  level > 7) &&
-															 borg_zap_rod
-															 (SV_ROD_HEALING))
-															||
-															borg_zap_rod
-															(SV_ROD_HEALING) ||
-															borg_quaff_potion
-															(SV_POTION_HEALING)))
+	if (hp_down < 350 && danger / 2 < bp_ptr->chp + 300 &&
+		(borg_use_staff_fail(SV_STAFF_HEALING) ||
+		 (borg_fighting_evil_unique &&
+		  borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||
+		 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
+		 borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) ||
+		 ((!bp_ptr->able.teleport ||
+		   borg_skill[BI_DEV] - borg_get_kind(TV_ROD,
+											  SV_ROD_HEALING)->level > 7) &&
+		  borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) ||
+		 borg_quaff_potion(SV_POTION_HEALING)))
 	{
 		borg_note("# Healing Level 7.");
 		return (TRUE);
 	}
 
 	/* Healing step three (300hp).  */
-	if (hp_down < 650 && danger / 2 < bp_ptr->chp + 300 && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
-/* Vamp Drain ? */
-															((!borg_skill
-															  [BI_ATELEPORT] ||
-															  borg_skill[BI_DEV]
-															  -
-															  borg_get_kind
-															  (TV_ROD,
-															   SV_ROD_HEALING)->
-															  level > 7) &&
-															 borg_zap_rod
-															 (SV_ROD_HEALING))
-															||
-															borg_spell_fail
-															(REALM_LIFE, 1, 6,
-															 allow_fail) ||
-															borg_spell_fail
-															(REALM_NATURE, 1, 7,
-															 allow_fail) ||
-															borg_use_staff_fail
-															(SV_STAFF_HOLINESS)
-															||
-															borg_use_staff_fail
-															(SV_STAFF_HEALING)
-															||
-															borg_quaff_potion
-															(SV_POTION_HEALING)
-															||
-															borg_activate_artifact
-															(ART_SOULKEEPER,
-															 FALSE) ||
-															borg_activate_artifact
-															(ART_GONDOR,
-															 FALSE)))
+	if (hp_down < 650 && danger / 2 < bp_ptr->chp + 300 &&
+		((borg_fighting_evil_unique &&
+		  borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||
+		 ((!bp_ptr->able.teleport ||
+		   borg_skill[BI_DEV] - borg_get_kind(TV_ROD,
+											  SV_ROD_HEALING)->level > 7) &&
+		  borg_zap_rod(SV_ROD_HEALING)) ||
+		 borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) ||
+		 borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||
+		 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
+		 borg_use_staff_fail(SV_STAFF_HEALING) ||
+		 borg_quaff_potion(SV_POTION_HEALING) ||
+		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+		 borg_activate_artifact(ART_GONDOR, FALSE)))
 	{
 		borg_note("# Healing Level 8.");
 		return (TRUE);
@@ -2359,44 +2325,23 @@ static bool borg_heal(int danger)
 	 * wasted.  They are saved for Morgoth and emergencies.  The
 	 * Emergency check is at the end of borg_caution().
 	 */
-	if (hp_down >= 650 && (danger / 2 < bp_ptr->chp + 500) && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
-/* Vamp Drain ? */
-															   borg_spell_fail(REALM_LIFE, 3, 4, allow_fail) ||	/* 2000 */
-															   borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||	/* 1000 */
-															   borg_use_staff_fail
-															   (SV_STAFF_HOLINESS)
-															   ||
-															   borg_use_staff_fail
-															   (SV_STAFF_HEALING)
-															   ||
-															   ((!borg_skill
-																 [BI_ATELEPORT]
-																 ||
-																 borg_skill
-																 [BI_DEV] -
-																 borg_get_kind
-																 (TV_ROD,
-																  SV_ROD_HEALING)->
-																 level > 7) &&
-																borg_zap_rod
-																(SV_ROD_HEALING))
-															   ||
-															   borg_quaff_potion
-															   (SV_POTION_HEALING)
-															   ||
-															   borg_activate_artifact
-															   (ART_SOULKEEPER,
-																FALSE) ||
-															   borg_activate_artifact
-															   (ART_GONDOR,
-																FALSE) ||
-															   (borg_fighting_unique
-																&&
-																(borg_quaff_potion
-																 (SV_POTION_HEALING)
-																 ||
-																 borg_quaff_potion
-																 (SV_POTION_LIFE)))))
+	if (hp_down >= 650 && (danger / 2 < bp_ptr->chp + 500) &&
+		((borg_fighting_evil_unique &&
+		  borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||
+		 borg_spell_fail(REALM_LIFE, 3, 4, allow_fail) ||
+		 borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||
+		 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
+		 borg_use_staff_fail(SV_STAFF_HEALING) ||
+		 ((!bp_ptr->able.teleport ||
+		   borg_skill[BI_DEV] - borg_get_kind(TV_ROD,
+											  SV_ROD_HEALING)->level > 7) &&
+		  borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING)
+		 || borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+		 borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique &&
+													   (borg_quaff_potion
+														(SV_POTION_HEALING) ||
+														borg_quaff_potion
+														(SV_POTION_LIFE)))))
 	{
 		borg_note("# Healing Level 9.");
 		return (TRUE);
@@ -2951,7 +2896,7 @@ bool borg_caution(void)
 			goal_leaving = TRUE;
 		}
 		/* Start fleeing */
-		if (!goal_fleeing && borg_skill[BI_ACCW] < 2)
+		if (!goal_fleeing && (bp_ptr->able.ccw < 2))
 		{
 			/* Flee */
 			borg_note_fmt
@@ -3575,7 +3520,7 @@ bool borg_caution(void)
 	/* Hack -- cure fear when afraid */
 	if (borg_skill[BI_ISAFRAID] &&
 		(randint0(100) < 70 ||
-		 (borg_class == CLASS_WARRIOR && borg_skill[BI_AMISSILES] <= 0)))
+		 ((borg_class == CLASS_WARRIOR) && !bp_ptr->able.missile)))
 	{
 		if (borg_spell_fail(REALM_LIFE, 0, 3, 100) ||
 			borg_mindcr_fail(MIND_ADRENALINE, 23, 100) ||
@@ -3595,8 +3540,8 @@ bool borg_caution(void)
 	/* Flee from low hit-points */
 	if (((bp_ptr->chp < bp_ptr->mhp / 3) ||
 		 ((bp_ptr->chp < bp_ptr->mhp / 2) &&
-		  bp_ptr->chp < (bp_ptr->lev * 3))) &&
-		(borg_skill[BI_ACCW] < 3) && (borg_skill[BI_AHEAL] < 1))
+		  (bp_ptr->chp < (bp_ptr->lev * 3)))) &&
+		(bp_ptr->able.ccw < 3) && !bp_ptr->able.heal)
 	{
 		/* Flee from low hit-points */
 		if (bp_ptr->depth && (randint0(100) < 25))
@@ -3658,15 +3603,13 @@ bool borg_caution(void)
 	 * but we did not use our ez_heal potions.  All other attempts to save
 	 * ourself have failed.  Use the ez_heal if I have it.
 	 */
-	if ((bp_ptr->chp < bp_ptr->mhp / 10 ||
-		 (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] == 0 &&
-		  bp_ptr->chp < bp_ptr->mhp / 4)) && (p > bp_ptr->chp * 2 ||
-											  (p > bp_ptr->chp &&
-											   borg_skill[BI_AEZHEAL] > 5) ||
-											  (p > bp_ptr->chp * 12 / 10 &&
-											   bp_ptr->mhp - bp_ptr->chp >= 400
-											   && borg_fighting_unique &&
-											   bp_ptr->depth >= 85)) &&
+	if (((bp_ptr->chp < bp_ptr->mhp / 10) ||
+		 (!bp_ptr->able.teleport && !bp_ptr->able.escape &&
+		  (bp_ptr->chp < bp_ptr->mhp / 4))) &&
+		((p > bp_ptr->chp * 2) ||
+		 ((p > bp_ptr->chp) && (bp_ptr->able.easy_heal > 5)) ||
+		 ((p > bp_ptr->chp * 12 / 10) && (bp_ptr->mhp - bp_ptr->chp >= 400) &&
+		  borg_fighting_unique && (bp_ptr->depth >= 85))) &&
 		(borg_quaff_potion(SV_POTION_HEALING) ||
 		 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 		 borg_quaff_potion(SV_POTION_LIFE)))
@@ -6238,8 +6181,8 @@ static int borg_attack_aux_object(void)
 		if (d <= 0) continue;
 
 		/* Hack -- Save last seven flasks for fuel, if needed */
-		if (l_ptr->tval == TV_FLASK &&
-			(borg_skill[BI_AFUEL] <= 7 && !borg_fighting_unique)) continue;
+		if ((l_ptr->tval == TV_FLASK) && (bp_ptr->able.fuel <= 7) &&
+			!borg_fighting_unique) continue;
 
 		/* Ignore worse damage */
 		if ((b_k >= 0) && (d <= b_d)) continue;
@@ -10257,7 +10200,7 @@ static int borg_defend_aux_destruction(void)
 	 * instead of using the scrolls.
 	 */
 	/* Use teleport scrolls instead of WoD */
-	if (borg_skill[BI_AESCAPE] && !borg_skill[BI_ISBLIND] &&
+	if (bp_ptr->able.escape && !borg_skill[BI_ISBLIND] &&
 		!borg_skill[BI_ISCONFUSED]) return (0);
 
 	/* Obtain initial danger */

@@ -186,7 +186,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
 				if (!bp_ptr->cur_lite) break;
-				if (borg_skill[BI_AFUEL] > 5) break;
+				if (bp_ptr->able.fuel > 5) break;
 				if (!borg_full_damage)
 					z += 20;
 				if ((pfe) && !borg_attacking)
@@ -3062,7 +3062,7 @@ static s32b borg_power_aux3(void)
 
 	/* Earthquakes... */
 	if (bp_ptr->flags1 & TR1_IMPACT) value += 5000L;
-	
+
 
 	/* Hack -- It is hard to hold a heavy weapon */
 	if (borg_skill[BI_HEAVYWEPON]) value -= 500000L;
@@ -3396,7 +3396,8 @@ static s32b borg_power_aux3(void)
 	/* APW Mega-Hack -- Speed / Hold Life (level 46) and maxed out */
 	if (((bp_ptr->flags2 & TR2_HOLD_LIFE) && (bp_ptr->max_depth + 1 >= 46) &&
 		 (bp_ptr->max_lev < 50))) value += 100000L;
-	if ((bp_ptr->speed >= 115) && (bp_ptr->max_depth + 1 >= 46)) value += 100000L;
+	if ((bp_ptr->speed >= 115) &&
+		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 	if ((bp_ptr->flags2 & TR2_RES_CONF) &&
 		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 
@@ -3422,10 +3423,12 @@ static s32b borg_power_aux3(void)
 		(bp_ptr->max_depth + 1 >= 60)) value += 104000L;
 	if ((bp_ptr->flags2 & TR2_RES_DISEN) &&
 		(bp_ptr->max_depth + 1 >= 60)) value += 90000L;
-	if ((bp_ptr->speed >= 120) && (bp_ptr->max_depth + 1 >= 60)) value += 100000L;
+	if ((bp_ptr->speed >= 120) &&
+		(bp_ptr->max_depth + 1 >= 60)) value += 100000L;
 
 	/*  Must have +20 speed (level 80) */
-	if ((bp_ptr->speed >= 130) && (bp_ptr->max_depth + 1 >= 80)) value += 100000L;
+	if ((bp_ptr->speed >= 130) &&
+		(bp_ptr->max_depth + 1 >= 80)) value += 100000L;
 
 	/* Not Req, but a good idea:
 	 * Extra boost to Nether deeper down
@@ -3620,8 +3623,8 @@ static s32b borg_power_aux4(void)
 	/*** Basic abilities ***/
 
 	/* Reward fuel */
-	for (k = 0; k < 5 && k < borg_skill[BI_AFUEL]; k++) value += 60000L;
-	for (; k < 10 && k < borg_skill[BI_AFUEL]; k++) value += 6000L;
+	for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 60000L;
+	for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 6000L;
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
@@ -3640,39 +3643,39 @@ static s32b borg_power_aux4(void)
 
 	/* Reward Cure Poison and Cuts */
 	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
-		borg_skill[BI_ACCW]) value += 100000;
+		bp_ptr->able.ccw) value += 100000;
 	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
-		borg_skill[BI_AHEAL]) value += 50000;
+		bp_ptr->able.heal) value += 50000;
 	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
-		borg_skill[BI_ACSW])
+		bp_ptr->able.csw)
 	{
-		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 25000L;
+		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 25000L;
 	}
-	if (borg_skill[BI_ISPOISONED] && borg_skill[BI_ACUREPOIS]) value += 15000;
+	if (borg_skill[BI_ISPOISONED] && bp_ptr->able.curepois) value += 15000;
 	if (borg_skill[BI_ISPOISONED] && amt_slow_poison) value += 5000;
 
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		for (k = 0; k < 4 && k < borg_skill[BI_ARESHEAT]; k++) value += 500L;
-		for (k = 0; k < 4 && k < borg_skill[BI_ARESCOLD]; k++) value += 500L;
+		for (k = 0; (k < 4) && (k < bp_ptr->able.res_heat); k++) value += 500L;
+		for (k = 0; (k < 4) && (k < bp_ptr->able.res_cold); k++) value += 500L;
 	}
 
 	/* Reward ident */
-	for (k = 0; k < 10 && k < borg_skill[BI_AID]; k++) value += 6000L;
-	for (; k < 15 && k < borg_skill[BI_AID]; k++) value += 600L;
+	for (k = 0; (k < 10) && (k < bp_ptr->able.id); k++) value += 6000L;
+	for (; (k < 15) && (k < bp_ptr->able.id); k++) value += 600L;
 
 	/*  Reward *id* apw carry lots of these */
 	for (k = 0; k < 8 && k < borg_has[177]; k++) value += 10000L;
 	for (; k < 15 && k < borg_has[177]; k++) value += 2000L;
 
 	/*  Reward PFE  carry lots of these */
-	for (k = 0; k < 10 && k < borg_skill[BI_APFE]; k++) value += 10000L;
-	for (; k < 25 && k < borg_skill[BI_APFE]; k++) value += 2000L;
+	for (k = 0; (k < 10) && (k < bp_ptr->able.pfe); k++) value += 10000L;
+	for (; (k < 25) && (k < bp_ptr->able.pfe); k++) value += 2000L;
 
 	/*  apw Reward Glyph- Rune of Protection-  carry lots of these */
-	for (k = 0; k < 10 && k < borg_skill[BI_AGLYPH]; k++) value += 10000L;
-	for (; k < 25 && k < borg_skill[BI_AGLYPH]; k++) value += 2000L;
+	for (k = 0; (k < 10) && (k < bp_ptr->able.glyph); k++) value += 10000L;
+	for (; (k < 25) && (k < bp_ptr->able.glyph); k++) value += 2000L;
 
 	/* Reward recall */
 	for (k = 0; (k < 3) && (k < bp_ptr->recall); k++) value += 50000L;
@@ -3683,27 +3686,27 @@ static s32b borg_power_aux4(void)
 	for (k = 1; k < 15 && k < amt_phase; k++) value += 500L;
 
 	/* Reward escape */
-	for (k = 0; k < 5 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
+	for (k = 0; (k < 5) && (k < bp_ptr->able.escape); k++) value += 10000L;
 	if (bp_ptr->depth > 90)
 	{
-		for (; k < 15 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
+		for (; (k < 15) && (k < bp_ptr->able.escape); k++) value += 10000L;
 	}
 
 	/* Reward teleport */
-	for (k = 0; k < 10 && k < borg_skill[BI_ATELEPORT]; k++) value += 10000L;
+	for (k = 0; (k < 10) && (k < bp_ptr->able.teleport); k++) value += 10000L;
 
 	/* Reward Teleport Level scrolls */
 	if (bp_ptr->max_depth >= 99)
 	{
-		for (k = 0; k < 5 && k < borg_skill[BI_ATELEPORTLVL];
-			 k++) value += 5000L;
+		for (k = 0; (k < 5) && (k < bp_ptr->able.teleport_level); k++)
+			value += 5000L;
 	}
 
 
 	/*** Healing ***/
 	if (borg_class == CLASS_WARRIOR || borg_class == CLASS_ROGUE)
 	{
-		for (k = 0; k < 15 && k < borg_skill[BI_AHEAL]; k++) value += 8000L;
+		for (k = 0; (k < 15) && (k < bp_ptr->able.heal); k++) value += 8000L;
 
 		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 10000L;
 		if (borg_has[419] == 0)
@@ -3716,7 +3719,7 @@ static s32b borg_power_aux4(void)
 	else if (borg_class == CLASS_RANGER || borg_class == CLASS_PALADIN ||
 			 borg_class == CLASS_MAGE)
 	{
-		for (k = 0; k < 10 && k < borg_skill[BI_AHEAL]; k++) value += 4000L;
+		for (k = 0; (k < 10) && (k < bp_ptr->able.heal); k++) value += 4000L;
 
 		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 9000L;
 		if (borg_has[419] == 0)
@@ -3747,33 +3750,33 @@ static s32b borg_power_aux4(void)
 	if (bp_ptr->msp > 100)
 	{
 		for (k = 0; k < 10 && k < borg_has[266]; k++) value += 4000L;
-		for (k = 0; k < 100 && k < borg_skill[BI_ASTFMAGI]; k++) value += 4000L;
+		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi); k++) value += 4000L;
 	}
 
 	/* Reward cure critical.  Heavy reward on first 5 */
 	if ((bp_ptr->lev < 35) || !(bp_ptr->flags2 & TR2_RES_CONF))
 	{
-		for (k = 0; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
-		for (; k < 15 && k < borg_skill[BI_ACCW]; k++) value += 500L;
+		for (k = 0; (k < 10) && (k < bp_ptr->able.ccw); k++) value += 5000L;
+		for (; (k < 15) && (k < bp_ptr->able.ccw); k++) value += 500L;
 	}
 	else
 	{
 		/* Reward cure critical.  Later on in game. */
-		for (k = 0; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
+		for (k = 0; (k < 10) && (k < bp_ptr->able.ccw); k++) value += 5000L;
 	}
 
 	/* Reward cure serious -- only reward serious if low on crits */
-	if (borg_skill[BI_ACCW] < 10)
+	if (bp_ptr->able.ccw < 10)
 	{
-		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 50L;
-		for (; k < 10 && k < borg_skill[BI_ACSW]; k++) value += 5L;
+		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 50L;
+		for (; (k < 10) && (k < bp_ptr->able.csw); k++) value += 5L;
 	}
 
 	/* Reward cure serious -- Low Level Characters */
 	if (bp_ptr->lev < 15)
 	{
-		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 250L;
-		for (; k < 10 && k < borg_skill[BI_ACSW]; k++) value += 55L;
+		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 250L;
+		for (; (k < 10) && (k < bp_ptr->able.csw); k++) value += 55L;
 	}
 
 	/* Reward Cures */
@@ -3787,25 +3790,25 @@ static s32b borg_power_aux4(void)
 	}
 	if (!(bp_ptr->flags2 & TR2_RES_POIS))
 	{
-		for (k = 0; k < 5 && k < borg_skill[BI_ACUREPOIS]; k++) value += 250L;
+		for (k = 0; (k < 5) && (k < bp_ptr->able.curepois); k++) value += 250L;
 	}
 
 	/*** Detection ***/
 
 	/* Reward detect trap */
-	for (k = 0; k < 1 && k < borg_skill[BI_ADETTRAP]; k++) value += 4000L;
+	for (k = 0; (k < 1) && (k < bp_ptr->able.det_trap); k++) value += 4000L;
 
 	/* Reward detect door */
-	for (k = 0; k < 1 && k < borg_skill[BI_ADETDOOR]; k++) value += 2000L;
+	for (k = 0; (k < 1) && (k < bp_ptr->able.det_door); k++) value += 2000L;
 
 	/* Reward detect evil */
 	if (!(bp_ptr->flags3 & TR3_TELEPATHY))
 	{
-		for (k = 0; k < 1 && k < borg_skill[BI_ADETEVIL]; k++) value += 1000L;
+		for (k = 0; (k < 1) && (k < bp_ptr->able.det_evil); k++) value += 1000L;
 	}
 
 	/* Reward magic mapping */
-	for (k = 0; k < 1 && k < borg_skill[BI_AMAGICMAP]; k++) value += 4000L;
+	for (k = 0; (k < 1) && (k < bp_ptr->able.magic_map); k++) value += 4000L;
 
 	/* Genocide scrolls. Just scrolls, mainly used for Morgoth */
 	if (bp_ptr->max_depth >= 98)
@@ -3824,7 +3827,7 @@ static s32b borg_power_aux4(void)
 	/* Reward speed potions/staves */
 	if (bp_ptr->max_depth <= 98)
 	{
-		for (k = 0; k < 20 && k < borg_skill[BI_ASPEED]; k++) value += 5000L;
+		for (k = 0; (k < 20) && (k < bp_ptr->able.speed); k++) value += 5000L;
 	}
 
 	/* Invuln Potions, mainly used for Morgoth */
@@ -3835,20 +3838,20 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Reward Recharge ability */
-	for (k = 0; k < 5 && k < borg_skill[BI_ARECHARGE]; k++) value += 2000L;
+	for (k = 0; (k < 5) && (k < bp_ptr->able.recharge); k++) value += 2000L;
 
 	/*** Missiles ***/
 
 	/* Reward missiles */
 	if (borg_class == CLASS_RANGER)
 	{
-		for (k = 0; k < 30 && k < borg_skill[BI_AMISSILES]; k++) value += 1000L;
-		for (; k < 80 && k < borg_skill[BI_AMISSILES]; k++) value += 100L;
+		for (k = 0; (k < 30) && (k < bp_ptr->able.missile); k++) value += 1000L;
+		for (; (k < 80) && (k < bp_ptr->able.missile); k++) value += 100L;
 	}
 	else
 	{
-		for (k = 0; k < 20 && k < borg_skill[BI_AMISSILES]; k++) value += 1000L;
-		for (; k < 50 && k < borg_skill[BI_AMISSILES]; k++) value += 100L;
+		for (k = 0; (k < 20) && (k < bp_ptr->able.missile); k++) value += 1000L;
+		for (; (k < 50) && (k < bp_ptr->able.missile); k++) value += 100L;
 	}
 
 	/*** Various ***/
@@ -4054,7 +4057,7 @@ cptr borg_restock(int depth)
 	if (!bp_ptr->cur_lite) return ("rs my_cur_lite");
 
 	/* Must have "fuel" */
-	if (borg_skill[BI_AFUEL] < 1) return ("rs amt_fuel");
+	if (!bp_ptr->able.fuel) return ("rs amt_fuel");
 
 	/* Must have "food" */
 	if (!bp_ptr->food) return ("rs amt_food");
@@ -4068,7 +4071,7 @@ cptr borg_restock(int depth)
 	if (bp_ptr->cur_lite == 1) return ("rs lite+1");
 
 	/* Must have "fuel" */
-	if (borg_skill[BI_AFUEL] < 3) return ("rs fuel+2");
+	if (bp_ptr->able.fuel < 3) return ("rs fuel+2");
 
 	/* Must have "food" */
 	if (bp_ptr->food < 3) return ("rs food+2");
@@ -4086,7 +4089,7 @@ cptr borg_restock(int depth)
 	/*** Level 6 to 9 ***/
 
 	/* Potions of Critical Wounds */
-	if ((borg_skill[BI_ACCW] < 1) &&
+	if (!bp_ptr->able.ccw &&
 		(!(bp_ptr->flags2 & TR2_RES_BLIND) ||
 		 !(bp_ptr->flags2 & TR2_RES_CONF))) return ("rs cure crit");
 
@@ -4100,10 +4103,10 @@ cptr borg_restock(int depth)
 
 	/* Must have "cure" */
 	if ((bp_ptr->max_lev < 30) &&
-		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 4) return ("rs cure");
+		(bp_ptr->able.csw + bp_ptr->able.ccw < 4)) return ("rs cure");
 
 	/* Must have "teleport" */
-	if (borg_skill[BI_ATELEPORT] < 2) return ("rs teleport");
+	if (bp_ptr->able.teleport < 2) return ("rs teleport");
 
 	/* Assume happy at level 19 */
 	if (depth <= 19) return (NULL);
@@ -4112,11 +4115,11 @@ cptr borg_restock(int depth)
 
 	/* Must have "cure" */
 	if ((bp_ptr->max_lev < 30) &&
-		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 6) return ("rs cure");
+		(bp_ptr->able.csw + bp_ptr->able.ccw < 6)) return ("rs cure");
 
 	/* Must have "teleport" */
-	if (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] <
-		4) return ("rs teleport");
+	if (bp_ptr->able.teleport + bp_ptr->able.escape < 4)
+		return ("rs teleport");
 
 	/* Assume happy at level 44 */
 	if (depth <= 44) return (NULL);
@@ -4124,8 +4127,8 @@ cptr borg_restock(int depth)
 	/*** Level 46 - 99  ***/
 
 	/* Must have "Heal" */
-	if (borg_skill[BI_AHEAL] + borg_has[374] + borg_skill[BI_AEZHEAL] <
-		1) return ("rs heal");
+	if (bp_ptr->able.heal + borg_has[374] + bp_ptr->able.easy_heal < 1)
+		return ("rs heal");
 
 	/* Assume happy at level 99 */
 	if (depth <= 99) return (NULL);
@@ -4134,8 +4137,8 @@ cptr borg_restock(int depth)
 
 	/* Must have "Heal" */
 	/* If I just got to dlevel 100 and low on heals, get out now. */
-	if (borg_t - borg_began < 10 &&
-		borg_skill[BI_AEZHEAL] < 15) return ("rs *heal*");
+	if (borg_t - borg_began < 10 && bp_ptr->able.easy_heal < 15)
+		return ("rs *heal*");
 
 	/* Assume happy */
 	return (NULL);
@@ -4169,7 +4172,7 @@ static cptr borg_prepared_aux2(int depth)
 	if (bp_ptr->cur_lite == 1) return ("2 Lite");
 
 	/* Require fuel */
-	if (borg_skill[BI_AFUEL] < 5) return ("5 Fuel");
+	if (bp_ptr->able.fuel < 5) return ("5 Fuel");
 
 	/* Require recall */
 	if (!bp_ptr->recall) return ("1 recall");
@@ -4184,7 +4187,7 @@ static cptr borg_prepared_aux2(int depth)
 
 	/* Potions of Cure Serious Wounds */
 	if ((bp_ptr->max_lev < 30) &&
-		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 2) return ("2 cure");
+		(bp_ptr->able.csw + bp_ptr->able.ccw < 2)) return ("2 cure");
 
 	/* Usually ready for level 3 and 4 */
 	if (depth <= 4) return (NULL);
@@ -4197,7 +4200,7 @@ static cptr borg_prepared_aux2(int depth)
 
 	/* Potions of Cure Serious/Critical Wounds */
 	if ((bp_ptr->max_lev < 30) &&
-		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 5) return ("5 cures");
+		(bp_ptr->able.csw + bp_ptr->able.ccw < 5)) return ("5 cures");
 
 	/* Usually ready for level 5 to 9 */
 	if (depth <= 9) return (NULL);
@@ -4206,12 +4209,12 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 10 to 19 ***/
 
 	/* Escape or Teleport */
-	if (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] <
-		2) return ("2 teleports");
+	if (bp_ptr->able.teleport + bp_ptr->able.escape < 2)
+		return ("2 teleports");
 
 	/* Potions of Cure Critical Wounds */
-	if ((bp_ptr->max_lev < 30) &&
-		borg_skill[BI_ACCW] < 5) return ("cure crit5");
+	if ((bp_ptr->max_lev < 30) && (bp_ptr->able.ccw < 5))
+		return ("cure crit5");
 
 	/* See invisible */
 	/* or telepathy */
@@ -4255,13 +4258,13 @@ static cptr borg_prepared_aux2(int depth)
 
 
 	/* Escape and Teleport */
-	if (borg_skill[BI_ATELEPORT] < 2) return ("teleport2");
-	if (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] <
-		6) return ("tell&esc6");
+	if (bp_ptr->able.teleport < 2) return ("teleport2");
+	if (bp_ptr->able.teleport + bp_ptr->able.escape < 6)
+		return ("tell&esc6");
 
 	/* Cure Critical Wounds */
 	if ((bp_ptr->max_lev < 30) &&
-		(borg_skill[BI_ACCW] + borg_skill[BI_ACSW]) < 10) return ("cure10");
+		(bp_ptr->able.ccw + bp_ptr->able.csw < 10)) return ("cure10");
 
 	/* Ready for level 33 */
 	if (depth <= 33) return (NULL);
@@ -4298,8 +4301,7 @@ static cptr borg_prepared_aux2(int depth)
 	if (bp_ptr->speed < 115) return ("+5 speed");
 
 	/* Potions of heal */
-	if (borg_skill[BI_AHEAL] < 1 &&
-		(borg_skill[BI_AEZHEAL] < 1)) return ("1heal");
+	if (!bp_ptr->able.heal && !bp_ptr->able.easy_heal) return ("1heal");
 
 	/* High stats XXX XXX XXX */
 	if (borg_stat[A_STR] < 18 + 40) return ("low STR");
@@ -4325,8 +4327,7 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 55 to 59 ***/
 
 	/* Potions of heal */
-	if (borg_skill[BI_AHEAL] < 2 &&
-		borg_skill[BI_AEZHEAL] < 1) return ("2heal");
+	if (bp_ptr->able.heal < 2 && !bp_ptr->able.easy_heal) return ("2heal");
 
 	/* Telepathy, better have it by now */
 	if (!(bp_ptr->flags3 & TR3_TELEPATHY)) return ("ESP");
@@ -4372,10 +4373,10 @@ static cptr borg_prepared_aux2(int depth)
 		else if (borg_has[242] < 25) return ("25Heal");
 
 		/* must have lots of ez-heal */
-		if (borg_skill[BI_AEZHEAL] < 15) return ("15EZHeal");
+		if (bp_ptr->able.easy_heal < 15) return ("15EZHeal");
 
 		/* must have lots of speed */
-		if (borg_skill[BI_ASPEED] < 15) return ("15Speed");
+		if (bp_ptr->able.speed < 15) return ("15Speed");
 
 	}
 

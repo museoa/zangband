@@ -977,8 +977,7 @@ bool borg_quaff_crit(bool no_check)
 	}
 
 	/* Save the last two for when we really need them */
-	if (borg_skill[BI_ACCW] < 2)
-		return FALSE;
+	if (bp_ptr->able.ccw < 2) return FALSE;
 
 	/* Avoid drinking CCW twice in a row */
 	if (when_last_quaff > (borg_t - 4) &&

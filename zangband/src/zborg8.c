@@ -1398,8 +1398,7 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Hack -- caution from breeders */
-	if ((j >= MIN(bp_ptr->lev, 5)) &&
-		(!bp_ptr->recall || (bp_ptr->lev < 35)))
+	if ((j >= MIN(bp_ptr->lev, 5)) && (!bp_ptr->recall || (bp_ptr->lev < 35)))
 	{
 		/* Ignore monsters from caution */
 		if (!goal_ignoring)

@@ -1209,7 +1209,7 @@ static void borg_notice_lite(void)
 	if (!l_ptr) return;
 
 	/* No need for fuel */
-	if (l_ptr->kn_flags3 & TR3_LITE) borg_skill[BI_AFUEL] += 1000;
+	if (l_ptr->kn_flags3 & TR3_LITE) bp_ptr->able.fuel += 1000;
 
 	/* Lite */
 	if (l_ptr->tval == TV_LITE)
@@ -1366,7 +1366,7 @@ static void borg_notice_food(list_item *l_ptr, int number)
 
 		case SV_FOOD_CURE_POISON:
 		{
-			borg_skill[BI_ACUREPOIS] += number;
+			bp_ptr->able.curepois += number;
 			break;
 		}
 	}
@@ -1385,33 +1385,33 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 	{
 		case SV_POTION_HEALING:
 		{
-			borg_skill[BI_AHEAL] += number;
+			bp_ptr->able.heal += number;
 			break;
 		}
 		case SV_POTION_STAR_HEALING:
 		case SV_POTION_LIFE:
 		{
-			borg_skill[BI_AEZHEAL] += number;
+			bp_ptr->able.easy_heal += number;
 			break;
 		}
 		case SV_POTION_CURE_CRITICAL:
 		{
-			borg_skill[BI_ACCW] += number;
+			bp_ptr->able.ccw += number;
 			break;
 		}
 		case SV_POTION_CURE_SERIOUS:
 		{
-			borg_skill[BI_ACSW] += number;
+			bp_ptr->able.csw += number;
 			break;
 		}
 		case SV_POTION_CURE_LIGHT:
 		{
-			if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] += number;
+			if (borg_skill[BI_ISCUT]) bp_ptr->able.csw += number;
 			break;
 		}
 		case SV_POTION_CURE_POISON:
 		{
-			borg_skill[BI_ACUREPOIS] += number;
+			bp_ptr->able.curepois += number;
 			break;
 		}
 		case SV_POTION_SLOW_POISON:
@@ -1421,12 +1421,12 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		}
 		case SV_POTION_RESIST_HEAT:
 		{
-			borg_skill[BI_ARESHEAT] += number;
+			bp_ptr->able.res_heat += number;
 			break;
 		}
 		case SV_POTION_RESIST_COLD:
 		{
-			borg_skill[BI_ARESCOLD] += number;
+			bp_ptr->able.res_cold += number;
 			break;
 		}
 		case SV_POTION_INC_STR:
@@ -1496,7 +1496,7 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		}
 		case SV_POTION_SPEED:
 		{
-			borg_skill[BI_ASPEED] += number;
+			bp_ptr->able.speed += number;
 			break;
 		}
 	}
@@ -1515,12 +1515,12 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 	{
 		case SV_SCROLL_IDENTIFY:
 		{
-			borg_skill[BI_AID] += number;
+			bp_ptr->able.id += number;
 			break;
 		}
 		case SV_SCROLL_RECHARGING:
 		{
-			borg_skill[BI_ARECHARGE] += number;
+			bp_ptr->able.recharge += number;
 			break;
 		}
 		case SV_SCROLL_PHASE_DOOR:
@@ -1530,8 +1530,8 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_TELEPORT:
 		{
-			borg_skill[BI_AESCAPE] += number;
-			borg_skill[BI_ATELEPORT] += number;
+			bp_ptr->able.escape += number;
+			bp_ptr->able.teleport += number;
 			break;
 		}
 		case SV_SCROLL_WORD_OF_RECALL:
@@ -1561,7 +1561,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
 		{
-			borg_skill[BI_APFE] += number;
+			bp_ptr->able.pfe += number;
 			break;
 		}
 		case SV_SCROLL_STAR_ENCHANT_ARMOR:
@@ -1571,12 +1571,12 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_RUNE_OF_PROTECTION:
 		{
-			borg_skill[BI_AGLYPH] += number;
+			bp_ptr->able.glyph += number;
 			break;
 		}
 		case SV_SCROLL_TELEPORT_LEVEL:
 		{
-			borg_skill[BI_ATELEPORTLVL] += number;
+			bp_ptr->able.teleport_level += number;
 			break;
 		}
 		case SV_SCROLL_SATISFY_HUNGER:
@@ -1603,11 +1603,11 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		{
 			if (borg_skill[BI_DEV] - k_ptr->level > 7)
 			{
-				borg_skill[BI_AID] += number * 100;
+				bp_ptr->able.id += number * 100;
 			}
 			else
 			{
-				borg_skill[BI_AID] += number;
+				bp_ptr->able.id += number;
 			}
 			break;
 		}
@@ -1628,21 +1628,21 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 
 		case SV_ROD_DETECT_TRAP:
 		{
-			borg_skill[BI_ADETTRAP] += number * 100;
+			bp_ptr->able.det_trap += number * 100;
 			break;
 		}
 
 		case SV_ROD_DETECT_DOOR:
 		{
-			borg_skill[BI_ADETDOOR] += number * 100;
+			bp_ptr->able.det_door += number * 100;
 			break;
 		}
 
 		case SV_ROD_DETECTION:
 		{
-			borg_skill[BI_ADETTRAP] += number * 100;
-			borg_skill[BI_ADETDOOR] += number * 100;
-			borg_skill[BI_ADETEVIL] += number * 100;
+			bp_ptr->able.det_trap += number * 100;
+			bp_ptr->able.det_door += number * 100;
+			bp_ptr->able.det_evil += number * 100;
 			break;
 		}
 
@@ -1651,18 +1651,18 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			/* Don't count on it if I suck at activations */
 			if (borg_skill[BI_DEV] - k_ptr->level > 7)
 			{
-				borg_skill[BI_ASPEED] += number * 100;
+				bp_ptr->able.speed += number * 100;
 			}
 			else
 			{
-				borg_skill[BI_ASPEED] += number;
+				bp_ptr->able.speed += number;
 			}
 			break;
 		}
 
 		case SV_ROD_MAPPING:
 		{
-			borg_skill[BI_AMAGICMAP] += number * 100;
+			bp_ptr->able.magic_map += number * 100;
 			break;
 		}
 
@@ -1672,11 +1672,11 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			/* Don't count on it if I suck at activations */
 			if (borg_skill[BI_DEV] - k_ptr->level > 7)
 			{
-				borg_skill[BI_AHEAL] += number * 2;
+				bp_ptr->able.heal += number * 2;
 			}
 			else
 			{
-				borg_skill[BI_AHEAL] += number;
+				bp_ptr->able.heal += number;
 			}
 			break;
 		}
@@ -1706,32 +1706,27 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 	{
 		case SV_STAFF_IDENTIFY:
 		{
-			borg_skill[BI_AID] += number * l_ptr->pval;
+			bp_ptr->able.id += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_TELEPORTATION:
 		{
-			borg_skill[BI_ATELEPORT] += number * l_ptr->pval;
+			bp_ptr->able.teleport += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_SPEED:
 		{
-			borg_skill[BI_ASPEED] += number * l_ptr->pval;
+			bp_ptr->able.speed += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_HEALING:
 		{
-			borg_skill[BI_AHEAL] += number * l_ptr->pval;
+			bp_ptr->able.heal += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_THE_MAGI:
 		{
-			borg_skill[BI_ASTFMAGI] += number * l_ptr->pval;
-			break;
-		}
-		case SV_STAFF_DESTRUCTION:
-		{
-			borg_skill[BI_ASTFDEST] += number * l_ptr->pval;
+			bp_ptr->able.staff_magi += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_POWER:
@@ -1742,7 +1737,7 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		case SV_STAFF_HOLINESS:
 		{
 			amt_cool_staff += number;
-			borg_skill[BI_AHEAL] += number * l_ptr->pval;
+			bp_ptr->able.heal += number * l_ptr->pval;
 			break;
 		}
 	}
@@ -1878,12 +1873,12 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Flasks */
 
 			/* Use as fuel if we equip a lantern */
-			if (bp_ptr->cur_lite == 2) borg_skill[BI_AFUEL] += number;
+			if (bp_ptr->cur_lite == 2) bp_ptr->able.fuel += number;
 
 			/* Count as (crappy) Missiles */
 			if (bp_ptr->lev < 15)
 			{
-				borg_skill[BI_AMISSILES] += number / 2;
+				bp_ptr->able.missile += number / 2;
 			}
 			break;
 		}
@@ -1894,10 +1889,9 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Torches */
 
 			/* Use as fuel if it is a torch and we carry a torch */
-			if ((k_ptr->sval == SV_LITE_TORCH) &&
-				(bp_ptr->cur_lite <= 1))
+			if ((k_ptr->sval == SV_LITE_TORCH) && (bp_ptr->cur_lite <= 1))
 			{
-				borg_skill[BI_AFUEL] += number;
+				bp_ptr->able.fuel += number;
 			}
 			break;
 		}
@@ -1938,7 +1932,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			if (l_ptr->tval != my_ammo_tval) break;
 
 			/* Count them */
-			borg_skill[BI_AMISSILES] += number;
+			bp_ptr->able.missile += number;
 
 			/* Enchant missiles if have lots of cash */
 			if (bp_ptr->lev > 35)
@@ -2198,7 +2192,7 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_ARCANE, 3, 2) ||
 		borg_mindcr_legal(MIND_PSYCHOMETRY, 40))
 	{
-		borg_skill[BI_AID] += 1000;
+		bp_ptr->able.id += 1000;
 	}
 
 	/* Handle "detect traps, doors, stairs" */
@@ -2210,8 +2204,8 @@ static void borg_notice_aux2(void)
 		borg_racial_check(RACE_DWARF, TRUE) ||
 		borg_racial_check(RACE_NIBELUNG, TRUE))
 	{
-		borg_skill[BI_ADETTRAP] += 1000;
-		borg_skill[BI_ADETDOOR] += 1000;
+		bp_ptr->able.det_trap += 1000;
+		bp_ptr->able.det_door += 1000;
 	}
 
 	/* Handle "detect evil & monsters" */
@@ -2221,15 +2215,15 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_DEATH, 0, 2) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 1))
 	{
-		borg_skill[BI_ADETEVIL] += 1000;
+		bp_ptr->able.det_evil += 1000;
 	}
 
 	/* Handle "detection" */
 	if (borg_mindcr_legal(MIND_PRECOGNIT, 30))
 	{
-		borg_skill[BI_ADETDOOR] += 1000;
-		borg_skill[BI_ADETTRAP] += 1000;
-		borg_skill[BI_ADETEVIL] += 1000;
+		bp_ptr->able.det_door += 1000;
+		bp_ptr->able.det_trap += 1000;
+		bp_ptr->able.det_evil += 1000;
 	}
 
 	/* Handle "magic mapping" */
@@ -2237,22 +2231,22 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_NATURE, 1, 2) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 20))
 	{
-		borg_skill[BI_ADETDOOR] += 1000;
-		borg_skill[BI_ADETTRAP] += 1000;
-		borg_skill[BI_AMAGICMAP] += 1000;
+		bp_ptr->able.det_door += 1000;
+		bp_ptr->able.det_trap += 1000;
+		bp_ptr->able.magic_map += 1000;
 	}
 
 	/* Handle "protection from evil" */
 	if (borg_spell_legal(REALM_LIFE, 1, 5))
 	{
-		borg_skill[BI_APFE] += 1000;
+		bp_ptr->able.pfe += 1000;
 	}
 
 	/* Handle "rune of protection" glyph" */
 	if (borg_spell_legal(REALM_LIFE, 1, 7) ||
 		borg_spell_legal(REALM_LIFE, 2, 7))
 	{
-		borg_skill[BI_AGLYPH] += 1000;
+		bp_ptr->able.glyph += 1000;
 	}
 
 	/* Handle "enchant weapon" */
@@ -2296,7 +2290,7 @@ static void borg_notice_aux2(void)
 		borg_spell_legal_fail(REALM_ARCANE, 3, 1, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40))
 	{
-		borg_skill[BI_ATELEPORTLVL] += 1000;
+		bp_ptr->able.teleport_level += 1000;
 	}
 
 	/* Handle teleport spell carefully */
@@ -2307,30 +2301,7 @@ static void borg_notice_aux2(void)
 		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5)) &&
 		(bp_ptr->flags2 & TR2_RES_BLIND) && (bp_ptr->flags2 & TR2_RES_CONF))
 	{
-		borg_skill[BI_ATELEPORT] += 1000;
-	}
-
-	/* Handle GOI spell carefully */
-	if ((borg_spell_legal_fail(REALM_LIFE, 3, 7, 4) ||
-		 borg_spell_legal_fail(REALM_SORCERY, 3, 7, 4)) &&
-		(bp_ptr->flags2 & TR2_RES_BLIND) &&
-		(bp_ptr->flags2 & TR2_RES_CONF) &&
-		(bp_ptr->flags3 & TR3_TELEPATHY) && (bp_ptr->mhp >= 650))
-	{
-		borg_skill[BI_AXGOI] += 1000;
-	}
-
-	/* Handle GOI spell just to see if legal */
-	if (borg_spell_legal(REALM_SORCERY, 3, 7) ||
-		borg_spell_legal(REALM_LIFE, 3, 7))
-	{
-		borg_skill[BI_AGOI] += 1000;
-	}
-
-	/* Handle Holy Word prayer just to see if legal */
-	if (borg_spell_legal(REALM_LIFE, 2, 6))
-	{
-		borg_skill[BI_AHWORD] += 1000;
+		bp_ptr->able.teleport += 1000;
 	}
 
 	/* speed spells */
@@ -2338,14 +2309,14 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_DEATH, 2, 3) ||
 		borg_mindcr_legal(MIND_ADRENALINE, 35))
 	{
-		borg_skill[BI_ASPEED] += 1000;
+		bp_ptr->able.speed += 1000;
 	}
 
 	/* Handle "heal" */
 	if (borg_spell_legal(REALM_LIFE, 1, 6) ||
 		borg_spell_legal(REALM_NATURE, 1, 7))
 	{
-		borg_skill[BI_AHEAL] += 1000;
+		bp_ptr->able.heal += 1000;
 	}
 
 	/* Handle "fix exp" */
@@ -2361,7 +2332,7 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal(REALM_ARCANE, 3, 0) ||
 		borg_spell_legal(REALM_SORCERY, 0, 7))
 	{
-		borg_skill[BI_ARECHARGE] += 1000;
+		bp_ptr->able.recharge += 1000;
 	}
 
 	/*** Process the Needs ***/

@@ -1691,11 +1691,11 @@ bool borg_crush_hole(void)
 			sval == SV_SCROLL_PROTECTION_FROM_EVIL) continue;
 		if (l_ptr->tval == TV_SCROLL &&
 			sval == SV_SCROLL_RUNE_OF_PROTECTION) continue;
-		if (l_ptr->tval == TV_SCROLL && sval == SV_SCROLL_TELEPORT_LEVEL &&
-			borg_skill[BI_ATELEPORTLVL] < 1000) continue;
-		if (l_ptr->tval == TV_ROD && (sval == SV_ROD_HEALING ||
-									  sval == SV_ROD_MAPPING) &&
-			borg_class == CLASS_WARRIOR && l_ptr->number <= 5) continue;
+		if ((l_ptr->tval == TV_SCROLL) && (sval == SV_SCROLL_TELEPORT_LEVEL) &&
+			(bp_ptr->able.teleport_level < 1000)) continue;
+		if ((l_ptr->tval == TV_ROD) && (sval == SV_ROD_HEALING ||
+										(sval == SV_ROD_MAPPING)) &&
+			(borg_class == CLASS_WARRIOR) && (l_ptr->number <= 5)) continue;
 
 
 		/* Pretend one item isn't there */
