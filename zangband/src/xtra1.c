@@ -2306,6 +2306,8 @@ static sint add_special_missile_skill(byte pclass)
 	return (add_skill);
 }
 
+/* Monk armour status */
+static bool monk_notify_aux;
 
 /*
  * Calculate the players current "state", taking into account
@@ -2343,7 +2345,7 @@ void calc_bonuses(void)
 	bool old_heavy_wield = p_ptr->heavy_wield;
 	bool old_heavy_shoot = p_ptr->heavy_shoot;
 	bool old_icky_wield = p_ptr->icky_wield;
-
+	bool monk_armour_aux;
 
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
