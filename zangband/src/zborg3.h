@@ -232,6 +232,7 @@ extern bool borg_mutation_check(u32b mutation, bool check_fail);
 extern bool borg_mutation(u32b mutation);
 extern void borg_cheat_spell(int realm);
 extern void prepare_race_class_info(void);
+extern void borg_dungeon_remember(bool down_stairs);
 
 
 /* Big list of artifact activations with some use */

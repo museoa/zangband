@@ -304,6 +304,15 @@ bool borg_on_safe_feat(byte feat)
  */
 bool borg_recall(void)
 {
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* Is the borg somewhere in the wilderness? */
+	if (borg_term_text_comp(wid - 18, hgt - 1, "Wilderness"))
+		return (FALSE);
+
 	/* Multiple "recall" fails */
 	if (!goal_recalling)
 	{
@@ -325,6 +334,9 @@ bool borg_recall(void)
 				/* Do not reset depth */
 				borg_keypress('n');
 			}
+
+			/* Keep track of the dungeon */
+			borg_dungeon_remember(FALSE);
 
 			/* Success */
 			return (TRUE);
@@ -2834,6 +2846,9 @@ bool borg_caution(void)
 		{
 			borg_keypress('<');
 
+			/* Do the dungeon bookkeeping */
+			borg_dungeon_remember(FALSE);
+
 			/* Success */
 			return (TRUE);
 		}
@@ -2893,6 +2908,9 @@ bool borg_caution(void)
 
 			/* Take the stairs */
 			borg_keypress('>');
+
+			/* Do the dungeon bookkeeping */
+			borg_dungeon_remember(TRUE);
 
 			/* Success */
 			return (TRUE);

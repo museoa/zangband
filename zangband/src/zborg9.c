@@ -353,9 +353,6 @@ static bool borg_think(void)
 {
 	int i;
 
-	byte t_a;
-
-	char buf[128];
 	static char svSavefile[1024];
 	static bool justSaved = FALSE;
 
@@ -447,10 +444,8 @@ static bool borg_think(void)
 	/*** Handle stores ***/
 
 	/* Hack -- Check for being in a store */
-	if ((0 == borg_what_text(53, 19, 14, &t_a, buf) &&
-		streq(buf, "Gold Remaining")) ||
-		(0 == borg_what_text(40, 23, 14, &t_a, buf) &&
-		streq(buf, "Gold Remaining")))
+	if (borg_term_text_comp(53, 19, "Gold Remaining") ||
+		borg_term_text_comp(40, 23, "Gold Remaining"))
 	{
 		/* Hack -- allow user abort */
 		if (borg_cancel) return (TRUE);
@@ -1881,6 +1876,8 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Recognize Drowning */
 	if (prefix(msg, "You are drowning"))
 	{
+		/* Clear goals */
+		goal = 0;
 		borg_note("# Help! I can't swim");
 
 		return;
@@ -1890,6 +1887,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (prefix(msg, "The lava burns you!") ||
 		prefix(msg, "The heat burns you!"))
 	{
+		/* Clear goals */
+		goal = 0;
 		borg_note("# Help! I'm burning");
 
 		return;
@@ -1899,6 +1898,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (prefix(msg, "The acid burns you!") ||
 		prefix(msg, "The fumes burn you!"))
 	{
+		/* Clear goals */
+		goal = 0;
 		borg_note("# Help! I'm corroding");
 
 		return;
@@ -1910,6 +1911,8 @@ static void borg_parse_aux(cptr msg, int len)
 	{
 		borg_note("# Help! I'm poisoned");
 
+		/* Clear goals */
+		goal = 0;
 		return;
 	}
 
@@ -2337,9 +2340,8 @@ static char borg_inkey_hack(int flush_first)
 	 * And that text is "-more-"
 	 */
 	if (borg_prompt && !p_ptr->cmd.inkey_flag &&
-		(y == 0) && (x >= 7) &&
-		(0 == borg_what_text(x - 7, y, 7, &t_a, buf)) &&
-		(streq(buf, " -more-")))
+		y == 0 && x >= 7 &&
+		borg_term_text_comp(x - 7, y, " -more-"))
 	{
 		/* Get the message */
 		if (0 == borg_what_text(0, 0, x - 7, &t_a, buf))
@@ -3129,14 +3131,13 @@ void borg_status_window(void)
 			if (unique_on_level) prtf(58, 2, "(%s)", mon_race_name(&r_info[unique_r_idx]));
 			else
 				prtf(58, 2, "");
-			if (breeder_level) attr = CLR_WHITE;
-			else
-				attr = CLR_SLATE;
-			prtf(42, 4, "%sBreeder level (close the door, will ye)", attr);
+
+			prtf(42, 4, CLR_SLATE "Borg is ready for level " CLR_WHITE "%d",
+				borg_prepared_depth());
 
 			/* level preparedness */
-			prtf(42, 6, CLR_SLATE "Reason for not diving: " CLR_WHITE
-						"%s", borg_prepared(bp_ptr->max_depth + 1));
+			prtf(42, 6, CLR_SLATE "Reason: " CLR_WHITE
+						"%s", borg_prepared(borg_prepared_depth()));
 
 			if (goal_fleeing) attr = CLR_WHITE;
 			else
@@ -3792,6 +3793,36 @@ void do_cmd_borg(void)
 			break;
 		}
 
+		case '9':
+		{
+			/* Command: debug -- show dungeons */
+			int i, n = 0;
+
+			for (i = 0; i < borg_dungeon_num; i++)
+			{
+				/* Print */
+				print_rel('*', TERM_RED, borg_dungeons[i].x, borg_dungeons[i].y);
+			}
+
+			/* Get keypress */
+			msgf("There are %d known dungeons.", borg_dungeon_num);
+			message_flush();
+
+			/* Redraw map */
+			prt_map();
+
+			msgf("(c_x, c_y) = (%d, %d), dungeon_num = %d", c_x, c_y, dungeon_num);
+			for (i = 0; i < borg_dungeon_num; i++)
+			{
+				/* Print */
+				msgf("i = %d, (x, y) = (%d, %d), min = %d, max = %d, bottom = %s",
+					i, borg_dungeons[i].x, borg_dungeons[i].y,
+					borg_dungeons[i].mindepth, borg_dungeons[i].maxdepth,
+					borg_dungeons[i].bottom ? "T" : "F");
+			}
+			break;
+		}
+
 		case '%':
 		{
 			/* Command: debug -- current flow */
@@ -3985,7 +4016,7 @@ void do_cmd_borg(void)
 			borg_notice_home();
 
 			/* Dump prep codes */
-			for (i = 1; i <= 127; i++)
+			for (i = 1; i <= MAX_DEPTH; i++)
 			{
 				/* Dump fear code */
 				if (borg_prepared(i)) break;
@@ -4174,6 +4205,8 @@ void do_cmd_borg(void)
 				"Command 'x' steps the Borg.\n"
 				"Command 'u' updates the Borg.\n"
 		    	"Command '2' level prep info.\n"
+		    	"Command '8' Shows the shops.\n"
+		    	"Command '9' Shows the dungeons.\n"
 		        "Command 's' activates search mode.\n"
 		        "Command 'g' displays grid feature.\n"
 	    	    "Command 'k' displays monster info.\n"

@@ -164,24 +164,26 @@ bool borg_slow_spell;	/* borg is about to cast the spell */
 bool borg_confuse_spell;
 bool borg_fear_mon_spell;
 
-/*
- * Current shopping information
- */
+/* Which shop or dungeon to visit next */
+s16b goal_shop = -1;
+s16b goal_dungeon = -1;
 
-s16b goal_shop = -1;	/* Next shop to visit */
-
-
-
-/* Current "shops" */
-borg_shop *borg_shops;
-
-s16b track_shop_num;
-s16b track_shop_size;
-
-/*
- * Hack -- current shop index
- */
+/* Current shop/dungeon index */
 s16b shop_num = -1;
+s16b dungeon_num = -1;
+
+/* List of known shops and dungeons */
+borg_shop *borg_shops;
+borg_dungeon *borg_dungeons;
+
+/* Number of allocated dungeons */
+s16b track_shop_num = 0;
+s16b track_shop_size = 16;
+
+/* Number of allocated dungeons */
+s16b borg_dungeon_num = 0;
+s16b borg_dungeon_size = 16;
+
 
 /*
  * Location variables
@@ -550,6 +552,31 @@ errr borg_what_text(int x, int y, int n, byte *a, char *s)
 	/* Success */
 	return (0);
 }
+
+/* Compare what you get from borg_what_text immediately */
+bool borg_term_text_comp(int x, int y, cptr what)
+{
+	byte t_a;
+	int wid, hgt;
+	int len = strlen(what);
+	char buf[120];
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* That's left or right of the term */
+	if (x < 0 || x + len > wid) return (FALSE);
+
+	/* That's higher or lower of the term */
+	if (y < 0 || y >= hgt) return (FALSE);
+
+	if (0 == borg_what_text(x, y, strlen(what), &t_a, buf) &&
+		streq(buf, what)) return (TRUE);
+
+	/* No match */
+	return (FALSE);
+}
+
 
 
 /*

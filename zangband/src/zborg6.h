@@ -87,9 +87,13 @@ extern bool borg_flow_kill_aim(bool viewable);
 extern bool borg_flow_kill_corridor(bool viewable);
 extern bool borg_flow_take(bool viewable, int nearness);
 
-/*
- * Flow towards "interesting" grids
- */
+/* Flow in the wilderness */
+extern bool borg_flow_dungeon(int dun_num);
+extern bool borg_find_dungeon(void);
+extern bool borg_waits_daylight(void);
+extern bool borg_flow_dark_wild(void);
+
+/* Flow towards unexplored grids */
 extern bool borg_flow_dark(bool neer);
 
 /*

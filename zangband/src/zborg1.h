@@ -191,6 +191,27 @@ struct borg_shop
 
 
 /*
+ * A dungeon
+ */
+typedef struct borg_dungeon borg_dungeon;
+
+struct borg_dungeon
+{
+	/* Location */
+	s16b x;
+	s16b y;
+
+	/* depth */
+	s16b mindepth;
+	s16b maxdepth;
+
+	bool bottom;
+};
+
+/* Maximal distance the borg can travel between dungeons */
+#define BORG_MAX_DISTANCE	(max_wild * WILD_BLOCK_SIZE * 3 / 2)
+
+/*
  * Some variables
  */
 extern bool borg_active;	/* Actually active */
@@ -509,25 +530,25 @@ extern bool borg_confuse_spell;
 extern bool borg_fear_mon_spell;
 
 
-/*
- * Shop goals
- */
+/* Which shop or dungeon to visit next */
+extern s16b goal_shop;
+extern s16b goal_dungeon;
 
-extern s16b goal_shop;	/* Next shop to visit */
-
-/*
- * Hack -- current shop index
- */
+/* Current shop/dungeon index */
 extern s16b shop_num;
+extern s16b dungeon_num;
 
-/* Current "shops" */
+/* List of known shops and dungeons */
 extern borg_shop *borg_shops;
+extern borg_dungeon *borg_dungeons;
 
-/*
- * Number of allocated stores...
- */
+/* Number of allocated stores */
 extern s16b track_shop_num;
 extern s16b track_shop_size;
+
+/* Number of allocated dungeons */
+extern s16b borg_dungeon_num;
+extern s16b borg_dungeon_size;
 
 /*
  * Other variables
@@ -816,6 +837,7 @@ extern errr borg_what_char(int x, int y, byte *a, char *c);
  * Obtain some text from the screen (multiple characters)
  */
 extern errr borg_what_text(int x, int y, int n, byte *a, char *s);
+extern bool borg_term_text_comp(int x, int y, cptr what);
 
 
 /*

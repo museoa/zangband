@@ -619,6 +619,9 @@ static bool borg_play_step(int y2, int x2)
 			bp_ptr->depth == 0 && bp_ptr->lev < 5)
 			return (FALSE);
 
+		/* Quick hack to prevent the walking into player bug */
+		if (!mb_ptr->monster) return (FALSE);
+
 		/* Message */
 		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
 					  r_name + r_info[mb_ptr->monster].name, x, y);
@@ -832,12 +835,60 @@ static bool borg_play_step(int y2, int x2)
 }
 
 
+/* Find a new dungeon */
+bool borg_find_dungeon(void)
+{
+	int i, b_i = -1;
+	int d, b_d = BORG_MAX_DISTANCE;
+	int p;
+
+	/* Find the target depth */
+	p = borg_prepared_depth();
+
+	for (i = 0; i < borg_dungeon_num; i++)
+	{
+		/* This dungeon starts too deep */
+		if (borg_dungeons[i].mindepth > p) continue;
+
+		/* This dungeon ends too shallow */
+		if (borg_dungeons[i].maxdepth < p &&
+			borg_dungeons[i].bottom) continue;
+		
+		/* How far away is this? */
+		d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
+
+		/* Ignore dungeons far away */
+		if (d > b_d) continue;
+
+		/* Remember this one */
+		b_i = i;
+		b_d = d;
+	}
+
+	/* No good dungeon found */
+	if (b_i == -1) return (FALSE);
+
+	if (borg_flow_dungeon(b_i))
+	{
+		borg_note("# Aiming to reach a dungeon at (%d, %d).",
+			borg_dungeons[b_i].x, borg_dungeons[b_i].y);
+
+		return (TRUE);
+	}
+
+	return (FALSE);
+}
+
+
 /*
  * Act twitchy
  */
 bool borg_twitchy(void)
 {
 	int dir;
+
+	/* Not in the wilderness */
+	if (!bp_ptr->depth) borg_oops("Twitching in the wilderness!");
 
 	/* This is a bad thing */
 	borg_note("# Twitchy!");
@@ -1139,7 +1190,6 @@ static void borg_flow_enqueue_grid(int x, int y)
 	/* Only enqueue a grid once */
 	if (mb_ptr->cost == 1) return;
 
-
 	/* Save the flow cost (zero) */
 	mb_ptr->cost = 1;
 
@@ -1156,7 +1206,6 @@ static void borg_flow_enqueue_grid(int x, int y)
 
 	/* Circular queue -- handle overflow */
 	if (flow_head == flow_tail) flow_head = old_head;
-
 }
 
 
@@ -1585,12 +1634,33 @@ bool borg_flow_shop_entry(int i)
 	/* Must be in town */
 	if (bp_ptr->depth) return (FALSE);
 
-	/* Obtain the location */
-	x = borg_shops[i].x;
-	y = borg_shops[i].y;
+	/* Pick up the new target, but not too far */
+	if (c_x < borg_shops[i].x)
+	{
+		/* Flow a block east */
+		x = MIN(c_x + 16, borg_shops[i].x);
+	}
+	else if (c_x > borg_shops[i].x)
+	{
+		/* Flow a block west */
+		x = MAX(c_x - 16, borg_shops[i].x);
+	}
+	else x = c_x;
+
+	if (c_y < borg_shops[i].y)
+	{
+		/* Flow a block south */
+		y = MIN(c_y + 16, borg_shops[i].y);
+	}
+	else if (c_y > borg_shops[i].y)
+	{
+		/* Flow a block north */
+		y = MAX(c_y - 16, borg_shops[i].y);
+	}
+	else y = c_y;
 
 	/* Hack -- re-enter a shop if needed */
-	if ((x == c_x) && (y == c_y))
+	if (x == c_x && y == c_y)
 	{
 		/* Note */
 		borg_note("# Re-entering a shop");
@@ -1619,6 +1689,62 @@ bool borg_flow_shop_entry(int i)
 
 	/* Success */
 	return (TRUE);
+}
+
+
+/* When it is dark and the borg is outside, find an inn */
+bool borg_waits_daylight(void)
+{
+	int i, b_i = -1;
+	int d, b_d = BORG_MAX_DISTANCE;
+
+	/* Is there a wilderness? */
+	if (vanilla_town) return (FALSE);
+
+	/* Is it dark at all? */
+	if (bp_ptr->hour > 5 && bp_ptr->hour < 18) return (FALSE);
+
+	/* Find the closest inn */
+	for (i = 0; i < track_shop_num; i++)
+	{
+		if (borg_shops[i].type != BUILD_INN) continue;
+
+		/* How far away is this? */
+		d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
+
+		/* Ignore dungeons far away */
+		if (d > b_d) continue;
+
+		/* Remember this one */
+		b_i = i;
+		b_d = d;
+	}
+
+	/* No inn found */
+	if (b_i == -1)
+	{
+		/* Wait out the night */
+		borg_keypress('0');
+		borg_keypress('2');
+		borg_keypress('9');
+		borg_keypress('9');
+		borg_keypress('R');
+
+		borg_note("# Wait out the night.");
+
+		return (TRUE);
+	}
+
+	/* Go to that inn */
+	if (borg_flow_shop_entry(b_i))
+	{
+		borg_note("# Looking for a place to spend the night.");
+
+		return (TRUE);
+	}
+
+	borg_oops("Huh");
+	return (FALSE);
 }
 
 
@@ -3130,7 +3256,7 @@ static bool borg_flow_wild_check(int x, int y)
 
 
 /* Prepare to flow somewhere in the wilderness */
-static bool borg_flow_dark_wild(void)
+bool borg_flow_dark_wild(void)
 {
 	int x, y, side = 0;
 	int loop_min, loop_max;
@@ -3143,8 +3269,8 @@ static bool borg_flow_dark_wild(void)
 	/* Is the borg in the wilderness? */
 	if (bp_ptr->depth || vanilla_town) return (FALSE);
 
-	/* Don't do this until level 20 */
-	if (bp_ptr->lev < 20) return (FALSE);
+	/* No exploring in the dark */
+	if (bp_ptr->hour < 6 || bp_ptr->hour > 17) return (FALSE);
 
 	/*
 	 * Try to find a dark spot on the overhead map.
@@ -3249,9 +3375,6 @@ static bool borg_flow_dark_wild(void)
 	/* Failure */
 	if (!found) return (FALSE);
 
-	/* Clear the flow codes */
-	borg_flow_clear();
-
 	/* normalize x and y */
 	if (x == base_x) x = 0;
 	else if (x < base_x) x = -16;
@@ -3261,11 +3384,14 @@ static bool borg_flow_dark_wild(void)
 	else if (y < base_y) y = -16;
 	else if (y > base_y) y = 16;
 
+	/* Clear the flow codes */
+	borg_flow_clear();
+
 	/* Enqueue the grid */
 	borg_flow_enqueue_grid(c_x + x, c_y + y);
 
 	/* Spread the flow */
-	borg_flow_spread(50, TRUE, TRUE, FALSE);
+	borg_flow_spread(100, TRUE, TRUE, FALSE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("a dark wild spot", GOAL_DARK)) return (FALSE);
@@ -3273,10 +3399,72 @@ static bool borg_flow_dark_wild(void)
 	/* Take one step */
 	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
 
-borg_note("x= %d, y = %d, side = %d", x, y, side);
+	/* Success */
+	return (TRUE);
+}
+
+/*
+ * Flow closer to the stairs of the desired dungeon.  This proce aims to get
+ * the borg on the stairs of the entrance for the dungeon.  That is closer than
+ * needed for a word of recall, but it is an easy way to make sure that the borg
+ * doesn't go down the wrong dungeon.
+ */
+bool borg_flow_dungeon(int dun_num)
+{
+	int x, y;
+
+	if (dun_num == -1 || dun_num > borg_dungeon_num)
+	{
+		borg_oops("Attempt to flow to an non-existing dungeon.");
+		return (FALSE);
+	}
+
+	/* Pick up the new target, but not too far */
+	if (c_x < borg_dungeons[dun_num].x)
+	{
+		/* Flow a block east */
+		x = MIN(c_x + 16, borg_dungeons[dun_num].x);
+	}
+	else if (c_x > borg_dungeons[dun_num].x)
+	{
+		/* Flow a block west */
+		x = MAX(c_x - 16, borg_dungeons[dun_num].x);
+	}
+	else x = c_x;
+
+	if (c_y < borg_dungeons[dun_num].y)
+	{
+		/* Flow a block south */
+		y = MIN(c_y + 16, borg_dungeons[dun_num].y);
+	}
+	else if (c_y > borg_dungeons[dun_num].y)
+	{
+		/* Flow a block north */
+		y = MAX(c_y - 16, borg_dungeons[dun_num].y);
+	}
+	else y = c_y;
+
+	/* No need to go where you already are */
+	if (x == c_x && y == c_y) return (FALSE);
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue the grid */
+	borg_flow_enqueue_grid(x, y);
+
+	/* Spread the flow */
+	borg_flow_spread(100, TRUE, TRUE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("my dungeon", GOAL_BORE)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_BORE)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
+	
 }
 
 /*
@@ -3334,9 +3522,6 @@ bool borg_flow_dark(bool close)
 		/* Method 5 */
 		if (borg_flow_dark_5(b_stair)) return (TRUE);
 	}
-
-	/* Explore the wilderness */
-	if (borg_flow_dark_wild()) return (TRUE);
 
 	/* Fail */
 	return (FALSE);

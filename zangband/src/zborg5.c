@@ -4572,15 +4572,11 @@ static cptr borg_prepared_aux2(int depth)
 	}
 
 	/* Its good to be the king */
-	if (depth <= 127) return (NULL);
+	if (depth <= MAX_DEPTH) return (NULL);
 
 	/* all bases covered */
 	return (NULL);
 }
-
-
-
-
 
 /*
  * Determine if the Borg is "prepared" for the given level
@@ -4610,6 +4606,22 @@ cptr borg_prepared(int depth)
 	/* Always okay */
 	return (NULL);
 }
+
+/* This proc returns the depth that the borg is prepared for */
+int borg_prepared_depth(void)
+{
+	int i;
+
+	/* Check all depths */
+	for (i = 1; i < MAX_DEPTH; i++)
+	{
+		/* Is the borg prepared for this depth? */
+		if (borg_prepared(i)) break;
+	}
+
+	return (i);
+}
+
 
 /*
  * Initialize this file

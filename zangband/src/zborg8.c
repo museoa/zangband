@@ -264,22 +264,12 @@ static void borg_think_shop_buy(int item)
 {
 	list_item *l_ptr = &cur_list[item];
 
-	byte t_a;
-	char buf[2];
-
-	/* Keep it small */
-	buf[1] = '\0';
-
-	/* Grab the page number of the screen*/
-	if (0 == borg_what_text(26, 5, 1, &t_a, buf))
+	/* Is the borg on page 1 but wants to be one page 2? */
+	if ((borg_term_text_comp(26, 5, "1") && item >= STORE_INVEN_MAX / 2) ||
+		(borg_term_text_comp(26, 5, "2") && item <  STORE_INVEN_MAX / 2))
 	{
-		/* If you are on the wrong page of the shop */
-		if ((streq(buf, "1") && item >= (STORE_INVEN_MAX / 2)) ||
-			(streq(buf, "2") && item <  (STORE_INVEN_MAX / 2)))
-		{
-			/* Goto the other page */
-			borg_keypress(' ');
-		}
+		/* Goto the other page */
+		borg_keypress(' ');
 	}
 
 	/* Log */
@@ -1409,11 +1399,8 @@ static bool borg_build_inn(void)
 	list_item *l_ptr;
 	bool rest = TRUE;
 
-	/* Don't do this if the borg is low on cash */
-	if (borg_gold < 200) return (FALSE);
-
 	/* Is it light outside */
-	rest &= ((turn % (10L * TOWN_DAWN)) >= 50000);
+	rest &= (bp_ptr->hour < 6 || bp_ptr->hour > 17);
 
 	/* This is a respectable place */
 	rest &= !bp_ptr->status.cut && !bp_ptr->status.poisoned;
@@ -1435,8 +1422,6 @@ static bool borg_build_inn(void)
 	{
 		/* Wait for daybreak */
 		borg_keypress('R');
-
-		return (TRUE);
 	}
 
 	/* Can the borg use more food? */
@@ -1444,11 +1429,9 @@ static bool borg_build_inn(void)
 	{
 		/* Have dinner */
 		borg_keypress('E');
-
-		return (TRUE);
 	}
 
-	/* no rest or food needed */
+	/* One pass takes care of all needs */
 	return (FALSE);
 }
 
@@ -1482,15 +1465,11 @@ static bool borg_build_healer(void)
 /* What to do inside a magetower */
 static bool borg_build_magetower(void)
 {
-	byte t_a;
-	char buf[20];
-
 	/* No need to be here when broke */
 	if (borg_gold < 2000) return (FALSE);
 
 	/* Is the borg registered here? */
-	if (0 == borg_what_text(39, 18, 11, &t_a, buf) &&
-		streq(buf, "Record aura"))
+	if (borg_term_text_comp(39, 18, "Record aura"))
 	{
 		/* Register */
 		borg_keypress('R');
@@ -1505,12 +1484,8 @@ static bool borg_build_magetower(void)
 /* What to do inside a castle? */
 static bool borg_build_castle(bool large)
 {
-	byte t_a;
-	char buf[20];
-
 	/* Is the borg registered here? */
-	if (0 == borg_what_text(35, 19, 13, &t_a, buf) &&
-		streq(buf, "Request Quest"))
+	if (borg_term_text_comp(35, 19, "Request Quest"))
 	{
 		/* Get a quest */
 		borg_keypress('R');
@@ -1728,6 +1703,9 @@ static bool borg_think_dungeon_brave(void)
 			borg_note("# Fleeing town via Stairs.");
 			borg_keypress('>');
 
+			/* Do the dungeon bookkeeping */
+			borg_dungeon_remember(TRUE);
+
 			/* Success */
 			return (TRUE);
 		}
@@ -1918,7 +1896,7 @@ bool borg_think_dungeon(void)
 	/* Avoid the burning sun */
 	if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE) &&
 		!bp_ptr->depth &&
-		(bp_ptr->hour >= 5) && (bp_ptr->hour <= 18))
+		bp_ptr->hour > 5 && bp_ptr->hour < 18)
 	{
 		/* Get out of the Sun */
 		if (!goal_fleeing)
@@ -2031,6 +2009,9 @@ bool borg_think_dungeon(void)
 		if (map_loc(c_x, c_y)->feat == FEAT_LESS)
 		{
 			borg_keypress('<');
+
+			/* Do the dungeon bookkeeping */
+			borg_dungeon_remember(FALSE);
 		}
 
 		/* Try to flow to a lite if I can recall */
@@ -2307,6 +2288,15 @@ bool borg_think_dungeon(void)
 	}
 
 	/*** Nothing to do ***/
+
+	/* Wait for daylight */
+	if (borg_waits_daylight()) return (TRUE);
+
+	/* Try to cross the wilderness to find a challenging dungeon */
+	if (borg_find_dungeon()) return (TRUE);
+
+	/* Explore the wilderness */
+	if (borg_flow_dark_wild()) return (TRUE);
 
 	/* Set a flag that the borg is  not allowed to retreat for 5 rounds */
 	borg_no_retreat = 5;

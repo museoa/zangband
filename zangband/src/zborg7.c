@@ -3100,6 +3100,9 @@ bool borg_wait_recharge(void)
 bool borg_leave_level(bool bored)
 {
 	int k, g = 0;
+	int target_depth;
+	int i, b_i = -1;
+	int d, b_d = max_wild * WILD_BLOCK_SIZE * 3 / 2;
 
 	/* Hack -- waiting for "recall" */
 	if (goal_recalling) return (FALSE);
@@ -3129,8 +3132,38 @@ bool borg_leave_level(bool bored)
 		/* Wait until bored */
 		if (!bored) return (FALSE);
 
-		/* Hack -- Recall into dungeon */
-		if ((bp_ptr->max_depth >= 5) && (bp_ptr->recall >= 4) && borg_recall())
+		/* Find out how deep the borg wants to go */
+		target_depth = borg_prepared_depth();
+
+		/* find the closest dungeon that contains the target_depth */
+		for (i = 0; i < borg_dungeon_num; i++)
+		{
+			if ((borg_dungeons[i].mindepth != 0 &&
+				 borg_dungeons[i].mindepth > target_depth) ||
+				(borg_dungeons[i].maxdepth != 0 &&
+				 borg_dungeons[i].maxdepth < target_depth)) continue;
+
+			/* How far is this dungeon? */
+			d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
+
+			/* Skip dungeons that are further than the closest */
+			if (d > b_d) continue;
+
+			/* Remember this one */
+			b_d = d;
+			b_i = i;
+		}
+
+		/* No dungeon known yet */
+		if (b_i == -1) return (FALSE);
+
+		/* Flow closer to the desired dungeon */
+		if (borg_flow_dungeon(b_i)) return (TRUE);
+
+		/* If the dungeon was visited and the target depth is not shallow */
+		if (target_depth >= borg_dungeons[b_i].mindepth + 4 &&
+			borg_dungeons[b_i].mindepth != 0 &&
+			bp_ptr->recall >= 4 && borg_recall())
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");
@@ -3138,37 +3171,16 @@ bool borg_leave_level(bool bored)
 			/* Give it a shot */
 			return (TRUE);
 		}
-		else
-		{
-			/* note why we didn't recall. */
-			if (bp_ptr->max_depth < 5)
-				borg_note("# Not deep enough to recall");
-			else if (bp_ptr->recall <= 4)
-				borg_note("# Not enough recalls to recall");
-			else
-			{
-				/* recall unless way out of our league */
-				if (borg_prepared(bp_ptr->max_depth * 6 / 10))
-				{
-					cptr reason = borg_prepared(bp_ptr->max_depth);
-					borg_note
-						("# Way too scary to recall down there!   %s", reason);
-				}
-				else
-					borg_note("# failed to recall when I wanted to");
-			}
 
-			goal_fleeing = TRUE;
-			goal_leaving = TRUE;
-		}
-
+		goal_fleeing = TRUE;
+		goal_leaving = TRUE;
 		stair_more = TRUE;
-
-		/* Try to get to town location (town gate for now) */
-		if (borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 		/* Attempt to use those stairs */
 		if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
+
+		/* Try to get to town location (town gate for now) */
+		if (borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 		/* Oops */
 		return (FALSE);
@@ -3232,15 +3244,6 @@ bool borg_leave_level(bool bored)
 			borg_note("# returning to town (too deep: %s)", reason);
 			goal_rising = TRUE;
 		}
-	}
-
-	/* Hack -- if I am playing way too shallow return to town */
-	if (!borg_prepared(bp_ptr->depth + 20) &&
-		!borg_prepared(bp_ptr->max_depth * 6 / 10) &&
-		bp_ptr->max_depth > bp_ptr->depth + 10)
-	{
-		borg_note("# returning to town to recall back down (too shallow)");
-		goal_rising = TRUE;
 	}
 
 	/* Power dive too 100 if ready */
