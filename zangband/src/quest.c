@@ -54,7 +54,7 @@ static void quest_wipe(int i)
 
 	/*
 	 * Do not need to clear the extra data
-	 * - it is ignored since q_ptr->type = UNKNOWN
+	 * - it is ignored since q_ptr->type = QUEST_TYPE_NONE
 	 */
 }
 
@@ -194,7 +194,7 @@ static void insert_winner_quest(u16b r_idx, u16b num, u16b level)
 /*
  * Look for an appropriate dungeon for a given level
  */
-static u16b find_good_dungeon(int level)
+static u16b find_good_dungeon(int level, int dist)
 {
 	int i;
 	
@@ -210,6 +210,12 @@ static u16b find_good_dungeon(int level)
 		
 		/* Want dungeons */
 		if (!pl_ptr->dungeon) continue;
+		
+		/* Constrain distance */
+		if (distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) < dist)
+		{
+			continue;
+		}
 	
 		/* Get difference in levels */
 		score = abs(pl_ptr->dungeon->max_level - level);
@@ -232,7 +238,7 @@ static u16b find_good_dungeon(int level)
  * Look for an appropriate town with a distance appropriate
  * for the given level.
  */
-static u16b find_good_town(int level)
+static u16b find_good_town(int dist)
 {
 	int i;
 	
@@ -250,7 +256,7 @@ static u16b find_good_town(int level)
 		if (!pl_ptr->numstores) continue;
 			
 		/* Get difference of distance in wilderness blocks and difficulty level */
-		score = abs(distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) - level);
+		score = abs(distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) - dist);
 		
 		/* The bigger the difference, the less likely a high score is */
 		score = randint1(WILD_SIZE - score); 
@@ -587,6 +593,23 @@ void activate_quests(int level)
 			case QUEST_TYPE_MESSAGE:
 			{
 				int place_num = q_ptr->data.msg.place;
+				
+				place_type *pl_ptr;
+				
+				/* Not correct place? */
+				if (place_num != p_ptr->place_num) break;
+				
+				pl_ptr = &place[place_num];
+				
+				/* Need to be on the surface */
+				if (pl_ptr->dungeon) break;
+				
+				q_ptr->flags |= QUEST_FLAG_ACTIVE;
+			}
+			
+			case QUEST_TYPE_FIND_PLACE:
+			{
+				int place_num = q_ptr->data.fpl.place;
 				
 				place_type *pl_ptr;
 				
@@ -1059,6 +1082,39 @@ void reward_quest(quest_type *q_ptr)
 			
 			break;
 		}
+		
+		case QUEST_TYPE_FIND_PLACE:
+		{
+			if (q_ptr->status == QUEST_STATUS_COMPLETED)
+			{
+				/* Work out reward */
+				long reward = q_ptr->reward * 100;
+				
+				/* Give to player */
+				p_ptr->au += reward;
+				
+				msgf("You are given %ld gold pieces for your efforts.", reward);
+				
+				/* Allow another quest to be selected */
+				q_ptr->place = 0;
+				q_ptr->shop = 0;
+				
+				/* Allow this quest to be deleted if needed */
+				q_ptr->status = QUEST_STATUS_FINISHED;
+				
+				/* Take note */
+				if (auto_notes)
+				{
+					add_note('Q', "Finished quest: %s", q_ptr->name);
+				}
+			}
+			else
+			{
+				msgf("Please find it as soon as possible!");
+			}
+			
+			break;
+		}
 
 		
 		default:
@@ -1131,7 +1187,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	
 	/* Save the quest data */
 	q_ptr->data.fit.a_idx = a_idx;
-	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level);
+	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level, 0);
 	
 	/* Where is it? */
 	pl_ptr = &place[q_ptr->data.fit.place];
@@ -1493,8 +1549,108 @@ static bool request_message(int dummy)
 	return (TRUE);
 }
 
+static quest_type *insert_find_place_quest(int dist)
+{
+	place_type *pl_ptr;
+	
+	quest_type *q_ptr;
 
-#define QUEST_MENU_MAX		4
+	cptr town_name, town_dir;
+
+	u16b place_num;
+
+	/* Get a new quest */
+	int q_num = q_pop();
+		
+	/* Paranoia */
+	if (!q_num) return (NULL);
+	
+	q_ptr = &quest[q_num];
+
+	/* Store in information */
+	q_ptr->type = QUEST_TYPE_FIND_PLACE;
+	
+	/* We have taken the quest */
+	q_ptr->status = QUEST_STATUS_TAKEN;
+
+	/* We don't need any special creation operation */
+	q_ptr->c_type = QC_NONE;
+	
+	/* Finished when the player finds it */
+	q_ptr->x_type = QX_WILD_ENTER;
+	
+	/* Find a dungeon that is roughly dist wilderness blocks away */
+	place_num = find_good_dungeon(50, dist);
+	
+	/* Get the place */
+	pl_ptr = &place[place_num];
+	
+	/*
+	 * Hack XXX XXX
+	 * Increment "active block" counter once.
+	 *
+	 * This should work somewhat differently than
+	 * the normal wilderness quests.
+	 */
+	pl_ptr->data++;
+	
+	pl_ptr->quest_num = q_num;
+	
+	/* Get name of closest town + direction away from it */
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+				
+	/* XXX XXX Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Find a certain lost ruin, which is hidden %s of %s.", town_dir, town_name);
+
+	q_ptr->data.fpl.place = place_num;
+	
+	/* Set the reward level */
+	q_ptr->reward = dist;
+	
+	/* Done */
+	return (q_ptr);
+}
+
+static bool request_find_place(int dummy)
+{
+	quest_type *q_ptr;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/*
+	 * Generate a quest to find a dungeon
+	 * roughly 100 wilderness blocks away
+	 */
+	q_ptr = insert_find_place_quest(100);
+
+	if (!q_ptr)
+	{
+		msgf("Sorry, I'm not looking for any lost ruins.");
+	
+		message_flush();
+	
+		/* No available quests, unfortunately. */
+		return (FALSE);
+	}
+		
+	/* Show it on the screen? */
+			
+	/* Display a helpful message. */
+	msgf("%s.", q_ptr->name);
+				  
+	message_flush();
+			
+	/* Remember who gave us the quest */
+	set_quest_giver(q_ptr);
+			
+	/* Exit */
+	return (TRUE);
+}
+
+
+
+#define QUEST_MENU_MAX		5
 
 /* The quest selection menu */
 static menu_type quest_menu[QUEST_MENU_MAX] =
@@ -1502,6 +1658,7 @@ static menu_type quest_menu[QUEST_MENU_MAX] =
 	{"To fund a lost relic", NULL, request_find_item, MN_ACTIVE},
 	{"To hunt down a bounty of monsters", NULL, request_bounty, MN_ACTIVE},
 	{"To send a message to someone far away", NULL, request_message, MN_ACTIVE},
+	{"To find a lost ruin", NULL, request_find_place, MN_ACTIVE},
 	MENU_END
 };
 
@@ -1576,8 +1733,7 @@ bool do_cmd_knowledge_quests(int dummy)
 					strnfmt(tmp_str, 256, "%s (Killed)\n", q_ptr->name);
 				}
 
-				/* Paranoia */
-				continue;
+				break;
 			}
 
 			case QUEST_TYPE_DUNGEON:
@@ -1630,6 +1786,7 @@ bool do_cmd_knowledge_quests(int dummy)
 			}
 			
 			case QUEST_TYPE_FIND_ITEM:
+			case QUEST_TYPE_FIND_PLACE:
 			{
 				if (taken)
 				{
@@ -1641,6 +1798,7 @@ bool do_cmd_knowledge_quests(int dummy)
 					/* Hack - this is simple */
 					strnfmt(tmp_str, 256, "%s (Found)\n", q_ptr->name);
 				}
+				break;
 			}
 
 			case QUEST_TYPE_WILD:
