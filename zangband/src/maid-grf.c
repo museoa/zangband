@@ -771,6 +771,8 @@ void do_cmd_view_map(void)
 	int cy, cx;
 	int wid, hgt;
 
+	place_type *pl_ptr;
+
 	/* No overhead map in vanilla town mode. */
 	if (!p_ptr->depth && vanilla_town) return;
 
@@ -836,12 +838,16 @@ void do_cmd_view_map(void)
 
 			display_map(&cx, &cy);
 
+			/* Get wilderness square */
 			w_ptr = &wild[y + py / WILD_BLOCK_SIZE][x + px / WILD_BLOCK_SIZE].done;
 
+			/* Do we have a place here? */
+			pl_ptr = (w_ptr->place ? &place[w_ptr->place] : NULL);
+
 			/* Show the town name, if it exists */
-			if (w_ptr->place && (w_ptr->info & WILD_INFO_SEEN))
+			if (pl_ptr && (w_ptr->info & WILD_INFO_SEEN) && pl_ptr->numstores)
 			{
-				town_name = place[w_ptr->place].name;
+				town_name = pl_ptr->name;
 				town_name_len = strlen(town_name);
 			
 				/* Display it */
