@@ -1031,13 +1031,13 @@ static bool store_will_buy(object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-						case TV_SORCERY_BOOK:
-						case TV_NATURE_BOOK:
-						case TV_CHAOS_BOOK:
-						case TV_DEATH_BOOK:
-						case TV_LIFE_BOOK:
-						case TV_TRUMP_BOOK:
-						case TV_ARCANE_BOOK:
+				case TV_SORCERY_BOOK:
+				case TV_NATURE_BOOK:
+				case TV_CHAOS_BOOK:
+				case TV_DEATH_BOOK:
+				case TV_LIFE_BOOK:
+				case TV_TRUMP_BOOK:
+				case TV_ARCANE_BOOK:
 					break;
 				default:
 					return (FALSE);
@@ -2522,17 +2522,14 @@ static void store_purchase(void)
 	/* Get a copy of the object */
 	object_copy(j_ptr, o_ptr);
 
+	/*
+	 * If a rod or wand, allocate total maximum timeouts or charges
+	 * between those purchased and left on the shelf.
+	 */
+	reduce_charges(j_ptr, amt);
+
 	/* Modify quantity */
 	j_ptr->number = amt;
-
-	/*
-	 * Hack -- If a rod or wand, allocate total maximum timeouts or charges
-	 * between those purchased and left on the shelf. -LM-
-	 */
-	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-	{
-		j_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-	}
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(j_ptr))
@@ -2567,17 +2564,14 @@ static void store_purchase(void)
 	/* Get desired object */
 	object_copy(j_ptr, o_ptr);
 
+	/*
+	 * If a rod or wand, allocate total maximum timeouts or charges
+	 * between those purchased and left on the shelf.
+	 */
+	reduce_charges(j_ptr, amt);
+
 	/* Modify quantity */
 	j_ptr->number = amt;
-
-	/*
-	 * Hack -- If a rod or wand, allocate total maximum timeouts or charges
-	 * between those purchased and left on the shelf. -LM-
-	 */
-	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-	{
-		j_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-	}
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(j_ptr))
@@ -2748,28 +2742,8 @@ static void store_purchase(void)
 	/* Home is much easier */
 	else
 	{
-		/* Hack -- If a rod or wand, allocate total maximum
-		 * timeouts or charges between those picked up and
-		 * those left behind. -LM-
-		 */
-		if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-		{
-			j_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			o_ptr->pval -= j_ptr->pval;
-
-			/* Hack -- Rods also need to have their timeouts distributed.
-			 * The dropped stack will accept all time remaining to charge
-			 * up to its maximum.
-		 	 */
-			if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-			{
-				if (j_ptr->pval > o_ptr->timeout)
-					j_ptr->timeout = o_ptr->timeout;
-				else j_ptr->timeout = j_ptr->pval;
-
-				if (amt < o_ptr->number) o_ptr->timeout -= j_ptr->timeout;
-			}
-		}
+		/* Distribute charges of wands/rods */
+		distribute_charges(o_ptr, j_ptr, amt);
 
 		/* Give it to the player */
 		item_new = inven_carry(j_ptr);
@@ -2893,16 +2867,14 @@ static void store_sell(void)
 	/* Get a copy of the object */
 	object_copy(q_ptr, o_ptr);
 
+	/*
+	 * If a rod or wand, allocate total maximum
+	 * timeouts or charges to those being sold.
+	 */
+	reduce_charges(q_ptr, amt);
+
 	/* Modify quantity */
 	q_ptr->number = amt;
-
-	/* Hack -- If a rod or wand, allocate total maximum
-	 * timeouts or charges to those being sold. -LM-
-	 */
-	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-	{
-		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-	}
 
 	/* Get a full description */
 	object_desc(o_name, q_ptr, TRUE, 3);
@@ -2968,17 +2940,14 @@ static void store_sell(void)
 			/* Get a copy of the object */
 			object_copy(q_ptr, o_ptr);
 
+			/*
+			 * If a rod or wand, let the shopkeeper know just
+			 * how many charges he really paid for.
+			 */
+			reduce_charges(q_ptr, amt);
+
 			/* Modify quantity */
 			q_ptr->number = amt;
-
-			/*
-			 * Hack -- If a rod or wand, let the shopkeeper know just
-			 * how many charges he really paid for. -LM-
-			 */
-			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-			{
-				q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			}
 
 			/* Get the "actual" value */
 			value = object_value(q_ptr) * q_ptr->number;
@@ -3026,28 +2995,8 @@ static void store_sell(void)
 	/* Player is at home */
 	else
 	{
-		/* Hack -- If a rod or wand, allocate total maximum timeouts or
-		 * charges between those dropped and kept in the backpack, unless
-		 * all are being dropped. -LM-
-		 */
-		if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-		{
-			q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			if (o_ptr->number > amt) o_ptr->pval -= q_ptr->pval;
-
-			/* Hack -- Rods also need to have their timeouts distributed.
-			 * The dropped stack will accept all time remaining to charge
-			 * up to its maximum.
-		 	 */
-			if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-			{
-				if (q_ptr->pval > o_ptr->timeout)
-					q_ptr->timeout = o_ptr->timeout;
-				else q_ptr->timeout = q_ptr->pval;
-
-				if (amt < o_ptr->number) o_ptr->timeout -= q_ptr->timeout;
-			}
-		}
+		/* Distribute charges of wands/rods */
+		distribute_charges(o_ptr, q_ptr, amt);
 
 		/* Describe */
 		msg_format("You drop %s (%c).", o_name, index_to_label(item));

@@ -3283,15 +3283,8 @@ int inven_damage(inven_func typ, int perc)
 					(void)potion_smash_effect(0, py, px, o_ptr->sval);
 				}
 
-				/* Hack -- If rods or wand are destroyed, the total maximum
-				 * timeout or charges of the stack needs to be reduced,
-				 * unless all the items are being destroyed. -LM-
-				 */
-				if (((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD))
-					&& (amt < o_ptr->number))
-				{
-					o_ptr->pval -= o_ptr->pval * amt / o_ptr->number;
-				}
+				/* Reduce the charges of rods/wands */
+				reduce_charges(o_ptr, amt);
 
 				/* Destroy "amt" items */
 				inven_item_increase(i, -amt);

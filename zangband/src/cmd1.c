@@ -1129,11 +1129,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 			msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 		}
 
-		if ((k > 0) && !is_hostile(m_ptr))
-		{
-			msg_format("%^s gets angry!", m_name);
-			set_hostile(m_ptr);
-		}
+		/* Anger the monster */
+		if (k > 0) anger_monster(m_ptr);
 
 		/* Damage, check for fear and mdeath */
 		switch (attack)
@@ -1535,11 +1532,8 @@ void py_attack(int y, int x)
 				break;
 			}
 
-			if ((k > 0) && !is_hostile(m_ptr))
-			{
-				msg_format("%^s gets angry!", m_name);
-				set_hostile(m_ptr);
-			}
+			/* Anger the monster */
+			if (k > 0) anger_monster(m_ptr);
 
 			touch_zap_player(m_ptr);
 

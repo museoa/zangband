@@ -604,16 +604,8 @@ void do_cmd_destroy(void)
 		}
 	}
 
-	/*
-	 * Hack -- If rods or wand are destroyed, the total maximum timeout or
-	 * charges of the stack needs to be reduced, unless all the items are
-	 * being destroyed. -LM-
-	 */
-	if (((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD)) &&
-		(amt < o_ptr->number))
-	{
-		o_ptr->pval -= o_ptr->pval * amt / o_ptr->number;
-	}
+	/* Reduce the charges of rods/wands */
+	reduce_charges(o_ptr, amt);
 
 	/* Eliminate the item (from the pack) */
 	if (item >= 0)

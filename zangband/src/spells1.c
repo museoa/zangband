@@ -3140,11 +3140,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		else
 		{
 			/* HACK - anger the monster before showing the sleep message */
-			if (do_sleep && !is_hostile(m_ptr))
-			{
-				msg_format("%^s gets angry!", m_name);
-				set_hostile(m_ptr);
-			}
+			if (do_sleep) anger_monster(m_ptr);
 
 			/* Give detailed messages if visible or destroyed */
 			if (note && seen)
@@ -3154,12 +3150,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			else
 				message_pain(c_ptr->m_idx, dam);
 
-			/* Anger friendly monsters */
-			if (((dam > 0) || get_angry) && !is_hostile(m_ptr) && !do_sleep)
-			{
-				msg_format("%^s gets angry!", m_name);
-				set_hostile(m_ptr);
-			}
+			/* Anger monsters */
+			if (((dam > 0) || get_angry) && !do_sleep)
+				anger_monster(m_ptr);
 
 			/* Take note */
 			if ((fear || do_fear) && (m_ptr->ml))

@@ -2821,14 +2821,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 					/* Message */
 					message_pain(c_ptr->m_idx, tdam);
 
-					/* Anger friends */
-					if ((tdam > 0) && !is_hostile(m_ptr))
-					{
-						char m_name[80];
-						monster_desc(m_name, m_ptr, 0);
-						msg_format("%s gets angry!", m_name);
-						set_hostile(m_ptr);
-					}
+					/* Anger the monster */
+					if (tdam > 0) anger_monster(m_ptr);
 
 					/* Take note */
 					if (fear && m_ptr->ml)
@@ -2951,28 +2945,8 @@ void do_cmd_throw_aux(int mult)
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
 
-	/*
-	 * Hack -- If rods or wands are thrown, the total maximum timeout or
-	 * charges need to be allocated between the two stacks.
-	 */
-	if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD))
-	{
-		q_ptr->pval = o_ptr->pval / o_ptr->number;
-
-		if (o_ptr->number > 1) o_ptr->pval -= q_ptr->pval;
-
-		/* Hack -- Rods also need to have their timeouts distributed.  The
-		 * thrown rod will accept all time remaining to charge up to its
-		 * maximum.
-		 */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-		{
-			if (q_ptr->pval > o_ptr->timeout) q_ptr->timeout = o_ptr->timeout;
-			else q_ptr->timeout = q_ptr->pval;
-
-			if (o_ptr->number > 1) o_ptr->timeout -= q_ptr->timeout;
-		}
-	}
+	/* Distribute the charges of rods/wands between the stacks */
+	distribute_charges(o_ptr, q_ptr, 1);
 
 	/* Single object */
 	q_ptr->number = 1;
@@ -3175,15 +3149,9 @@ void do_cmd_throw_aux(int mult)
 					/* Message */
 					message_pain(c_ptr->m_idx, tdam);
 
-					/* Anger friends */
-					if ((tdam > 0) && !is_hostile(m_ptr) &&
-					    !object_is_potion(q_ptr))
-					{
-						char m_name[80];
-						monster_desc(m_name, m_ptr, 0);
-						msg_format("%s gets angry!", m_name);
-						set_hostile(m_ptr);
-					}
+					/* Anger the monster */
+					if ((tdam > 0) && !object_is_potion(q_ptr))
+						anger_monster(m_ptr);
 
 					/* Take note */
 					if (fear && m_ptr->ml)

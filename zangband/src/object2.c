@@ -1326,6 +1326,57 @@ s32b object_value(object_type *o_ptr)
 
 
 /*
+ * Distribute charges of rods or wands.
+ *
+ * o_ptr = source item
+ * q_ptr = target item, must be of the same type as o_ptr
+ * amt   = number of items that are transfered
+ */
+void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt)
+{
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
+	 * stack's pval alone. -LM-
+	 */
+	if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD))
+	{
+		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+		if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
+
+		/* Hack -- Rods also need to have their timeouts distributed.  The
+		 * dropped stack will accept all time remaining to charge up to its
+		 * maximum.
+		 */
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
+		{
+			if (q_ptr->pval > o_ptr->timeout)
+				q_ptr->timeout = o_ptr->timeout;
+			else
+				q_ptr->timeout = q_ptr->pval;
+
+			if (amt < o_ptr->number) o_ptr->timeout -= q_ptr->timeout;
+		}
+	}
+}
+
+void reduce_charges(object_type *o_ptr, int amt)
+{
+	/*
+	 * Hack -- If rods or wand are destroyed, the total maximum timeout or
+	 * charges of the stack needs to be reduced, unless all the items are
+	 * being destroyed. -LM-
+	 */
+	if (((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD)) &&
+		(amt < o_ptr->number))
+	{
+		o_ptr->pval -= o_ptr->pval * amt / o_ptr->number;
+	}
+}
+
+
+/*
  * Determine if an item can "absorb" a second item
  *
  * See "object_absorb()" for the actual "absorption" code.
@@ -5123,29 +5174,8 @@ void inven_drop(int item, int amt)
 	/* Obtain local object */
 	object_copy(q_ptr, o_ptr);
 
-	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or
-	 * charges need to be allocated between the two stacks.  If all the items
-	 * are being dropped, it makes for a neater message to leave the original
-	 * stack's pval alone. -LM-
-	 */
-	if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD))
-	{
-		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-		if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
-
-		/* Hack -- Rods also need to have their timeouts distributed.  The
-		 * dropped stack will accept all time remaining to charge up to its
-		 * maximum.
-		 */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-		{
-			if (q_ptr->pval > o_ptr->timeout) q_ptr->timeout = o_ptr->timeout;
-			else q_ptr->timeout = q_ptr->pval;
-
-			if (amt < o_ptr->number) o_ptr->timeout -= q_ptr->timeout;
-		}
-	}
+	/* Distribute charges of wands or rods */
+	distribute_charges(o_ptr, q_ptr, amt);
 
 	/* Modify quantity */
 	q_ptr->number = amt;

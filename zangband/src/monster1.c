@@ -1768,6 +1768,21 @@ void set_hostile(monster_type *m_ptr)
 }
 
 
+/*
+ * Anger the monster
+ */
+void anger_monster(monster_type *m_ptr)
+{
+	if (!is_hostile(m_ptr))
+	{
+		char m_name[80];
+
+		monster_desc(m_name, m_ptr, 0);
+		msg_format("%^s gets angry!", m_name);
+		set_hostile(m_ptr);
+	}
+}
+
 
 /*
  * Check if monster can cross terrain
