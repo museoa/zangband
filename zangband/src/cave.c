@@ -2419,20 +2419,8 @@ void forget_view(void)
 		/* Access the grid */
 		c_ptr = area(y,x);
 
-		if (!(view_perma_grids || (c_ptr->info & CAVE_GLOW))
-			 && cave_floor_grid(c_ptr))
-		{
-			/* 
-			 * Do not memorize floor grids if
-			 * not glowing or the view_perma_grids option is set
-			 */
-			c_ptr->info &= ~(CAVE_MARK | CAVE_VIEW | CAVE_LITE);
-		}
-		else
-		{
-			/* Forget that the grid is viewable or lit */
-			c_ptr->info &= ~(CAVE_VIEW | CAVE_LITE);
-		}
+		/* Forget that the grid is viewable or lit */
+		c_ptr->info &= ~(CAVE_VIEW | CAVE_LITE);
 		
 		/* Only lite the spot if is on the panel (can change due to resizing */
 		if (!panel_contains(y, x)) continue;
@@ -3250,14 +3238,8 @@ void update_view(void)
 					if ((c_ptr->feat <= FEAT_INVIS) ||
 						(c_ptr->feat == FEAT_WALL_INVIS))
 					{
-						if ((info & (CAVE_LITE)) && view_torch_grids)	
-						{
-							/* Memorize */
-							info |= (CAVE_MARK);
-						}
-	
-						/* Mark all perma-lit floors */
-						else if (info & (CAVE_GLOW))
+						if (((info & (CAVE_LITE)) && view_torch_grids)
+							 || info & (CAVE_GLOW))	
 						{
 							/*
 							 * Hack - Memorize
@@ -3266,15 +3248,17 @@ void update_view(void)
 							 * view_perma_grids flag is set.
 							 *
 							 * This hack is done to simplify the map_info()
-							 * function enormously.  All glowing grids in
+							 * function enormously.  All lit grids in
 							 * view are marked...
 							 */
+							
+							/* Memorize */
 							info |= (CAVE_MARK);
 						}
 					}
 					else if (info & (CAVE_LITE | CAVE_GLOW))
 					{
-						/* Memorize */
+						/* Memorize misc. terrain. */
 						info |= (CAVE_MARK);
 					}
 
@@ -3309,7 +3293,7 @@ void update_view(void)
 					}
 
 					/* Perma-lit grids */
-					else
+					else if (info & (CAVE_GLOW))
 					{
 						int yy, xx;
 
@@ -3399,29 +3383,27 @@ void update_view(void)
 		/* Get grid info */
 		info = c_ptr->info;
 
-		if (!(view_perma_grids || (info & CAVE_GLOW)) && cave_floor_grid(c_ptr))
-		{
-			/* 
-			 * Do not memorize floor grids if
-			 * not glowing or the view_perma_grids option is set
-			 */
-			info &= ~(CAVE_MARK | CAVE_TEMP | CAVE_XTRA);
-		}
-		else
-		{
-			/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
-			info &= ~(CAVE_TEMP | CAVE_XTRA);
-		}
+		/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
+		info &= ~(CAVE_TEMP | CAVE_XTRA);
 
-		/* Save cave info */
-		c_ptr->info = info;
+		
 
 		/* Was "CAVE_VIEW", is now not "CAVE_VIEW" */
 		if (!(info & (CAVE_VIEW)))
 		{
+			if (info & (CAVE_GLOW) && !view_perma_grids &&
+				 cave_floor_grid(c_ptr))
+			{
+				info &= ~(CAVE_MARK);
+			}
+			
+			
 			/* Redraw */
 			lite_spot(y, x);
 		}
+		
+		/* Save cave info */
+		c_ptr->info = info;
 	}
 	
 	/* None left */
