@@ -309,9 +309,7 @@ void do_cmd_wield(void)
 		/* Warn the player */
 		msg_print("Oops! It feels deathly cold!");
 		
-		#ifdef AVATAR
 		chg_virtue(V_HARMONY, -1);
-		#endif
 
 		/* Note the curse */
 		o_ptr->ident |= (IDENT_SENSE);
@@ -607,7 +605,6 @@ void do_cmd_destroy(void)
 			gain_exp(tester_exp * amt);
 		}
 	
-		#ifdef AVATAR
 		if (high_level_book(o_ptr) && o_ptr->tval == TV_LIFE_BOOK)
 		{
 			chg_virtue(V_UNLIFE, 1);
@@ -627,16 +624,11 @@ void do_cmd_destroy(void)
 	
 		else if (object_value_real(o_ptr) > 10000)
 			chg_virtue(V_SACRIFICE, 1);
-	
-		#endif
-	
 	}
-	
-	#ifdef AVATAR
+
 	if (o_ptr->to_a != 0 || o_ptr->to_d != 0 || o_ptr->to_h != 0)
 		chg_virtue(V_HARMONY, 1);
-	#endif
-	
+
 	/* Reduce the charges of rods/wands */
 	reduce_charges(o_ptr, amt);
 

@@ -20,12 +20,8 @@
 
 #include "angband.h"
 
-#ifdef AVATAR
-
-
 
 /* The names of the virtues */
-
 cptr virtue[MAX_VIRTUE] =
 {
   "Compassion",
@@ -427,5 +423,3 @@ void dump_virtues(FILE * OutFile)
 	if (wizard) fprintf(OutFile, "Your overall alignment is %d.\n", p_ptr->align);
 }
 
-
-#endif /* Endif ifdef AVATAR */

@@ -84,12 +84,10 @@ void check_experience(void)
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv)
 		{
-			#ifdef AVATAR
 			int vir;
 			for (vir = 0; vir < 8; vir++)
 				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
-			#endif
-			
+
 			p_ptr->max_plv = p_ptr->lev;
 
 			if ((p_ptr->pclass == CLASS_CHAOS_WARRIOR) ||
@@ -968,11 +966,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 	s32b            div, new_exp, new_exp_frac;
 
-	#ifdef AVATAR
 	/* Innocent until proven otherwise */
 	bool        innocent = TRUE, thief = FALSE;
 	int         i;
-	#endif
 
 	/* Redraw (later) if needed */
 	if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
@@ -1037,14 +1033,11 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 					p_ptr->au += reward;
 					p_ptr->redraw |= (PR_GOLD);
 					
-					#ifdef AVATAR
 					chg_virtue(V_JUSTICE, 5);
-					#endif
 				}
 			}
 		}
 		
-		#ifdef AVATAR
 		if (r_ptr->level > dun_level)
 		{
 			if (randint(10) <= (dun_level - r_ptr->level))
@@ -1139,8 +1132,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (randint(3)==1) chg_virtue(V_NATURE, -1);
 		}
-		
-		#endif
 
 		/* Make a sound */
 		sound(SOUND_KILL);

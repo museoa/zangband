@@ -300,13 +300,11 @@ static void do_cmd_eat_food_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	#ifdef AVATAR
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
-	#endif
 
 	/* We have tried it */
 	object_tried(o_ptr);
@@ -523,9 +521,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CONFUSION: /* Booze */
 		{
-			#ifdef AVATAR
 			chg_virtue(V_HARMONY, -1);
-			#endif
 			
 			if (!p_ptr->resist_conf)
 			{
@@ -591,9 +587,7 @@ static void do_cmd_quaff_potion_aux(int item)
 			{
 				msg_print("You feel your memories fade.");
 				
-				#ifdef AVATAR
 				chg_virtue(V_KNOWLEDGE, -5);
-				#endif
 				
 				lose_exp(p_ptr->exp / 4);
 				ident = TRUE;
@@ -663,10 +657,8 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_DEATH:
 		{
-			#ifdef AVATAR
 			chg_virtue(V_VITALITY, -1);
 			chg_virtue(V_UNLIFE, 5);
-			#endif
 			
 			msg_print("A feeling of Death flows through your body.");
 			take_hit(5000, "a potion of Death");
@@ -809,10 +801,8 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_LIFE:
 		{
-			#ifdef AVATAR
 			chg_virtue(V_VITALITY, 1);
 			chg_virtue(V_UNLIFE, -5);
-			#endif
 			
 			msg_print("You feel life flow through your body!");
 			restore_level();
@@ -939,9 +929,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_ENLIGHTENMENT:
 		{
-			#ifdef AVATAR
 			chg_virtue(V_ENLIGHTEN, 1);
-			#endif
 			
 			msg_print("An image of your surroundings forms in your mind...");
 			wiz_lite();
@@ -979,9 +967,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_EXPERIENCE:
 		{
-			#ifdef AVATAR
 			chg_virtue(V_ENLIGHTEN, 1);
-			#endif
 			
 			if (p_ptr->exp < PY_MAX_EXP)
 			{
@@ -1029,9 +1015,7 @@ static void do_cmd_quaff_potion_aux(int item)
 			do_cmd_rerate();
 			if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 			{
-				#ifdef AVATAR
 				chg_virtue(V_CHANCE, -5);
-				#endif
 				
 				msg_print("You are cured of all mutations.");
 				p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
@@ -1052,13 +1036,11 @@ static void do_cmd_quaff_potion_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	
-	#ifdef AVATAR
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
-	#endif
 
 	/* The item has been tried */
 	object_tried(q_ptr);
@@ -1545,13 +1527,11 @@ static void do_cmd_read_scroll_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	#ifdef AVATAR
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
-	#endif
 
 	/* The item was tried */
 	object_tried(o_ptr);
@@ -1993,13 +1973,11 @@ static void do_cmd_use_staff_aux(int item)
 		}
 	}
 
-	#ifdef AVATAR
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
-	#endif
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -2191,10 +2169,8 @@ static void do_cmd_aim_wand_aux(int item)
 	if (sval == SV_WAND_WONDER)
 	{
 		sval = rand_int(SV_WAND_WONDER);
-		#ifdef AVATAR
 		if (sval < SV_WAND_TELEPORT_AWAY)
 			chg_virtue(V_CHANCE, 1);
-		#endif
 	}
 
 	/* Analyze the wand */
@@ -2436,13 +2412,11 @@ static void do_cmd_aim_wand_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	#ifdef AVATAR
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
-	#endif
 
 	/* Mark it as tried */
 	object_tried(o_ptr);
@@ -2819,13 +2793,11 @@ static void do_cmd_zap_rod_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	#ifdef AVATAR
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
-	#endif
 
 	/* Tried the object */
 	object_tried(o_ptr);

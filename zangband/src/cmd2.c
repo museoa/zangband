@@ -1181,9 +1181,8 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		{
 			msg_print("You have cleared away the trees.");
 			
-			#ifdef AVATAR
 			chg_virtue(V_DILIGENCE, 1);
-			#endif
+			chg_virtue(V_NATURE, -1);
 		}
 
 		/* Keep trying */
@@ -1208,9 +1207,8 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		{
 			msg_print("You have finished the tunnel.");
 			
-			#ifdef AVATAR
 			chg_virtue(V_DILIGENCE, 1);
-			#endif
+			chg_virtue(V_NATURE, -1);
 		}
 
 		/* Keep trying */
@@ -1268,9 +1266,8 @@ static bool do_cmd_tunnel_aux(int y, int x)
 				/* Message */
 				msg_print("You have finished the tunnel.");
 				
-				#ifdef AVATAR
 				chg_virtue(V_DILIGENCE, 1);
-				#endif
+				chg_virtue(V_NATURE, -1);
 			}
 		}
 
@@ -2466,11 +2463,10 @@ void do_cmd_rest(void)
 	/* Paranoia */
 	if (command_arg > 9999) command_arg = 9999;
 
-	#ifdef AVATAR
 	/* The sin of sloth */
 	if (command_arg > 100)
 		chg_virtue(V_DILIGENCE, -1);
-	
+
 	/* Why are you sleeping when there's no need?  WAKE UP!*/
 	if ((p_ptr->chp == p_ptr->mhp) &&
 		(p_ptr->csp == p_ptr->msp) &&
@@ -2480,8 +2476,7 @@ void do_cmd_rest(void)
 		!p_ptr->slow && !p_ptr->paralyzed &&
 		!p_ptr->image && !p_ptr->word_recall)
 			chg_virtue(V_DILIGENCE, -1);
-	
-	#endif
+
 	/* Take a turn XXX XXX XXX (?) */
 	energy_use = 100;
 

@@ -1370,13 +1370,11 @@ void py_attack(int y, int x)
 	/* Initial blows available. */
 	blows = p_ptr->num_blow;
 
-	#ifdef AVATAR
 	if (m_ptr->csleep) /* It is not honorable etc to attack helpless victims */
 	{
 		chg_virtue(V_COMPASSION, -1);
 		if (!(p_ptr->pclass == CLASS_ROGUE)) chg_virtue(V_HONOUR, -1);
 	}
-	#endif
 
 	if (p_ptr->pclass == CLASS_ROGUE)
 	{
@@ -1424,12 +1422,10 @@ void py_attack(int y, int x)
 
 		msg_format("Your black blade greedily attacks %s!", m_name);
 		
-		#ifdef AVATAR
 		chg_virtue(V_INDIVIDUALISM, 1);
 		chg_virtue(V_HONOUR, -1);
 		chg_virtue(V_JUSTICE, -1);
 		chg_virtue(V_COMPASSION, -1);
-		#endif		
 	}
 
 
@@ -1576,10 +1572,8 @@ void py_attack(int y, int x)
 			/* Select a chaotic effect (50% chance) */
 			if ((f1 & TR1_CHAOTIC) && (randint(2) == 1))
 			{
-				#ifdef AVATAR
 				if (randint(10)==1)
 				chg_virtue(V_CHANCE, 1);
-				#endif
 				
 				if (randint(5) < 3)
 				{
@@ -2041,7 +2035,6 @@ void py_attack(int y, int x)
 		msg_format("%^s flees in terror!", m_name);
 	}
 
-	#ifdef AVATAR
 	if (drain_left != MAX_VAMPIRIC_DRAIN)
 	{
 		if (randint(4)==1)
@@ -2049,7 +2042,6 @@ void py_attack(int y, int x)
 			chg_virtue(V_VITALITY, 1);
 		}
 	}
-	#endif	
 
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)

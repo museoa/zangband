@@ -1754,12 +1754,10 @@ void anger_monster(monster_type *m_ptr)
 		msg_format("%^s gets angry!", m_name);
 		set_hostile(m_ptr);
 		
-		#ifdef AVATAR
 		chg_virtue(V_INDIVIDUALISM, 1);
 		chg_virtue(V_HONOUR, -1);
 		chg_virtue(V_JUSTICE, -1);
 		chg_virtue(V_COMPASSION, -1);
-		#endif
 	}
 }
 

@@ -36,9 +36,7 @@ bool set_blind(int v)
 			msg_print("You are blind!");
 			notice = TRUE;
 			
-			#ifdef AVATAR
 			chg_virtue(V_ENLIGHTEN, -1);
-			#endif
 		}
 	}
 
@@ -102,9 +100,7 @@ bool set_confused(int v)
 			msg_print("You are confused!");
 			notice = TRUE;
 			
-			#ifdef AVATAR
 			chg_virtue(V_HARMONY, -1);
-			#endif
 		}
 	}
 
@@ -209,9 +205,7 @@ bool set_afraid(int v)
 			msg_print("You are terrified!");
 			notice = TRUE;
 			
-			#ifdef AVATAR
 			chg_virtue(V_VALOUR, -1);
-			#endif
 		}
 	}
 
@@ -380,10 +374,8 @@ bool set_fast(int v)
 			msg_print("You feel yourself moving faster!");
 			notice = TRUE;
 			
-			#ifdef AVATAR
 			chg_virtue(V_PATIENCE, -1);
 			chg_virtue(V_DILIGENCE, 1);
-			#endif
 		}
 	}
 
@@ -831,12 +823,10 @@ bool set_invuln(int v)
 			msg_print("Invulnerability!");
 			notice = TRUE;
 			
-			#ifdef AVATAR
 			chg_virtue(V_TEMPERANCE, -5);
 			chg_virtue(V_HONOUR, -5);
 			chg_virtue(V_SACRIFICE, -5);
 			chg_virtue(V_VALOUR, -10);
-			#endif
 
 			/* Redraw map */
 			p_ptr->redraw |= (PR_MAP);
@@ -1772,7 +1762,6 @@ bool set_food(int v)
 		new_aux = 5;
 	}
 
-	#ifdef AVATAR
 	if (old_aux < 1 && new_aux > 0)
 		chg_virtue(V_PATIENCE, 2);
 	else if (old_aux < 3 && (old_aux != new_aux))
@@ -1781,7 +1770,6 @@ bool set_food(int v)
 		chg_virtue(V_TEMPERANCE, 1);
 	if (old_aux == 0)
 		chg_virtue(V_TEMPERANCE, -1);
-	#endif
 
 	/* Food increase */
 	if (new_aux > old_aux)
@@ -1813,11 +1801,9 @@ bool set_food(int v)
 			case 5:
 			msg_print("You have gorged yourself!");
 			
-			#ifdef AVATAR
 			chg_virtue(V_HARMONY, -1);
 			chg_virtue(V_PATIENCE, -1);
 			chg_virtue(V_TEMPERANCE, -2);
-			#endif
 			break;
 		}
 
@@ -2020,11 +2006,9 @@ bool dec_stat(int stat, int amount, int permanent)
 	/* Damage "max" value */
 	if (permanent && (max > 3))
 	{
-		#ifdef AVATAR
 		chg_virtue(V_SACRIFICE, 1);
 		if (stat == A_WIS || stat == A_INT)
 			chg_virtue(V_ENLIGHTEN, -2);
-		#endif		
 		
 		/* Handle "low" values */
 		if (max <= 18)
@@ -2106,11 +2090,9 @@ bool hp_player(int num)
 	/* Healing needed */
 	if (p_ptr->chp < p_ptr->mhp)
 	{
-		#ifdef AVATAR
 		chg_virtue(V_CHANCE, -1);
 		if ((num > 0) && (p_ptr->chp < (p_ptr->mhp/3)))
 			chg_virtue(V_TEMPERANCE, 1);
-		#endif
 		
 		/* Gain hitpoints */
 		p_ptr->chp += num;
@@ -2266,7 +2248,6 @@ bool do_inc_stat(int stat)
 	/* Attempt to increase */
 	if (inc_stat(stat))
 	{
-		#ifdef AVATAR
 		if (stat == A_WIS)
 		{
 			chg_virtue(V_ENLIGHTEN, 1);
@@ -2279,7 +2260,6 @@ bool do_inc_stat(int stat)
 		}
 		else if (stat == A_CON)
 			chg_virtue(V_VITALITY, 1);
-		#endif
 		
 		/* Message */
 		msg_format("Wow!  You feel very %s!", desc_stat_pos[stat]);
@@ -2336,10 +2316,8 @@ bool lose_all_info(void)
 {
 	int i;
 
-	#ifdef AVATAR
 	chg_virtue(V_KNOWLEDGE, -5);
 	chg_virtue(V_ENLIGHTEN, -5);
-	#endif
 
 	/* Forget info about objects */
 	for (i = 0; i < INVEN_TOTAL; i++)
@@ -2413,9 +2391,7 @@ void do_poly_self(void)
 
 	msg_print("You feel a change coming over you...");
 	
-	#ifdef AVATAR
 	chg_virtue(V_CHANCE, 1);
-	#endif
 
 	if ((power > rand_int(20)) && (rand_int(3) == 1))
 	{
@@ -2518,9 +2494,7 @@ void do_poly_self(void)
 				race_info[new_race].title);
 		}
 
-		#ifdef AVATAR
 		chg_virtue(V_CHANCE, 2);
-		#endif
 
 		p_ptr->prace = new_race;
 		rp_ptr = &race_info[p_ptr->prace];
@@ -2659,7 +2633,6 @@ void take_hit(int damage, cptr hit_from)
 	if (pen_invuln)
 		msg_print("The attack penetrates your shield of invulnerability!");
 
-	#ifdef AVATAR
 	if (!(p_ptr->invuln) || (pen_invuln))
 	{
 		if (p_ptr->chp == 0)
@@ -2668,7 +2641,6 @@ void take_hit(int damage, cptr hit_from)
 			chg_virtue(V_CHANCE, 2);
 		}
 	}
-	#endif
 
 	/* Dead player */
 	if (p_ptr->chp < 0)
@@ -2676,9 +2648,7 @@ void take_hit(int damage, cptr hit_from)
 		/* Sound */
 		sound(SOUND_DEATH);
 		
-		#ifdef AVATAR
 		chg_virtue(V_SACRIFICE, 10);
-		#endif
 
 		/* Hack -- Note death */
 		if (!last_words)

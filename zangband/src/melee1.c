@@ -627,18 +627,15 @@ bool make_attack_normal(int m_idx)
 						{
 							msg_print("Your purse feels lighter.");
 							msg_format("%ld coins were stolen!", (long)gold);
-							#ifdef AVATAR
+
 							chg_virtue(V_SACRIFICE, 1);
-							#endif
 						}
 						else
 						{
 							msg_print("Your purse feels lighter.");
 							msg_print("All of your coins were stolen!");
-							
-							#ifdef AVATAR
+
 							chg_virtue(V_SACRIFICE, 2);
-							#endif
 						}
 
 						/* Redraw gold */
@@ -703,9 +700,7 @@ bool make_attack_normal(int m_idx)
 						           ((o_ptr->number > 1) ? "One of y" : "Y"),
 						           o_name, index_to_label(i));
 
-						#ifdef AVATAR
 						chg_virtue(V_SACRIFICE, 1);
-						#endif
 						
 						/* Option */
 						if (testing_carry)

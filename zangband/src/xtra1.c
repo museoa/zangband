@@ -3661,10 +3661,9 @@ void calc_bonuses(void)
 		if (p_ptr->icky_wield)
 		{
 			msg_print("You do not feel comfortable with your weapon.");
-			#ifdef AVATAR
+
 			if (hack_mind)
 				chg_virtue(V_FAITH, -1);
-			#endif		
 		}
 		else if (inventory[INVEN_WIELD].k_idx)
 		{
@@ -3684,12 +3683,11 @@ void calc_bonuses(void)
 		if (monk_heavy_armor())
 		{
 			msg_print("The weight of your armor disrupts your balance.");
-			#ifdef AVATAR
+
 			if (hack_mind)
 			{
 				chg_virtue(V_HARMONY, -1);
 			}
-			#endif
 		}
 		else
 			msg_print("You regain your balance.");
@@ -3699,13 +3697,11 @@ void calc_bonuses(void)
 
 	p_ptr->align = friend_align;
 
-#ifdef AVATAR
 	/* Determine player alignment */
 	for (i = 0; i < 8; i++)
 	{
 		p_ptr->align += p_ptr->virtues[i];
 	}
-#endif
 }
 
 

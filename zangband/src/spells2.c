@@ -31,10 +31,8 @@ void self_knowledge(void)
 {
 	int i = 0, j, k;
 
-	#ifdef AVATAR
 	int v_nr = 0;
 	char v_string [8] [128];
-	#endif
 	
 	u32b f1 = 0L, f2 = 0L, f3 = 0L;
 
@@ -57,10 +55,8 @@ void self_knowledge(void)
 	sprintf(Dummy, "Your current Life Rating is %d/100.", percent);
 	info[i++] = Dummy;
 
-	#ifdef AVATAR
 	chg_virtue(V_KNOWLEDGE, 1);
 	chg_virtue(V_ENLIGHTEN, 1);
-	#endif
 	
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
@@ -81,7 +77,6 @@ void self_knowledge(void)
 		f3 |= t3;
 	}
 
-	#ifdef AVATAR
 	for (v_nr = 0; v_nr < 8; v_nr++)
 	{
 		char v_name [20];
@@ -135,8 +130,6 @@ void self_knowledge(void)
 	
 		info[i++] = v_string[v_nr];
 	}
-	
-	#endif
 
 	/* Racial powers... */
 	switch (p_ptr->prace)
@@ -2169,10 +2162,10 @@ bool banish_evil(int dist)
 bool turn_undead(void)
 {
 	bool tester = (project_hack(GF_TURN_UNDEAD, p_ptr->lev));
-	#ifdef AVATAR
+
 	if (tester)
 		chg_virtue(V_UNLIFE, -1);
-	#endif
+
 	return tester;
 }
 
@@ -2183,10 +2176,10 @@ bool turn_undead(void)
 bool dispel_undead(int dam)
 {
 	bool tester = (project_hack(GF_DISP_UNDEAD, dam));
-	#ifdef AVATAR
+
 	if (tester)
 		chg_virtue(V_UNLIFE, -2);
-	#endif
+
 	return tester;
 }
 
@@ -2353,10 +2346,8 @@ bool genocide(int player_cast)
 		result = TRUE;
 	}
 
-	#ifdef AVATAR
 	if (result)
 		chg_virtue(V_VITALITY, -2);
-	#endif
 
 	return (result);
 }
@@ -2426,10 +2417,8 @@ bool mass_genocide(int player_cast)
 		result = TRUE;
 	}
 
-	#ifdef AVATAR
 	if (result)
 		chg_virtue(V_VITALITY, -2);
-	#endif
 
 	return (result);
 }
@@ -2481,10 +2470,8 @@ bool probing(void)
 	/* Done */
 	if (probe)
 	{
-		#ifdef AVATAR
 		if (probe)
 			chg_virtue(V_KNOWLEDGE, 1);
-		#endif
 		
 		msg_print("That's all.");
 	}
@@ -3722,10 +3709,8 @@ bool poly_monster(int dir)
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	bool tester = (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
  
-	#ifdef AVATAR
 	if (tester)
 		chg_virtue(V_CHANCE, 1);
-	#endif
 
 	return(tester);
 }

@@ -1571,10 +1571,8 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 			msg_print("No bias in artifact.");
 	}
 
-	#ifdef AVATAR
 	chg_virtue(V_INDIVIDUALISM, 2);
 	chg_virtue(V_ENCHANT, 5);
-	#endif
 
 	/* Save the inscription */
 	o_ptr->art_name = quark_add(new_name);

@@ -47,13 +47,11 @@ bool teleport_away(int m_idx, int dis)
 	/* Minimum distance */
 	min = dis / 2;
 	
-	#ifdef AVATAR
 	if ((((p_ptr->chp * 10) / p_ptr->mhp) < 5) &&
 		(randint(5) > ((p_ptr->chp * 10) / p_ptr->mhp)))
-	{	
+	{
 		chg_virtue(V_VALOUR, -1);
 	}
-	#endif
 
 	/* Look until done */
 	while (look)
@@ -661,10 +659,8 @@ bool apply_disenchant(int mode)
 		   o_name, index_to_label(t),
 		   ((o_ptr->number != 1) ? "were" : "was"));
 		   
-	#ifdef AVATAR
 	chg_virtue(V_HARMONY, 1);
 	chg_virtue(V_ENCHANT, -2);
-	#endif
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -861,9 +857,7 @@ void brand_weapon(int brand_type)
 
 		msg_print("The Branding failed.");
 		
-		#ifdef AVATAR
 		chg_virtue(V_ENCHANT, -2);
-		#endif
 	}
 }
 
@@ -1620,14 +1614,10 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 		/* Message */
 		msg_print("The enchantment failed.");
 		
-	#ifdef AVATAR
 		if (randint(3)==1) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
-	#else
-	}
-	#endif
 
 	/* Something happened */
 	return (TRUE);
@@ -1718,14 +1708,10 @@ bool artifact_scroll(void)
 
 		/* Message */
 		msg_print("The enchantment failed.");
-	#ifdef AVATAR
 		if (randint(3)==1) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
-	#else
-	}
-	#endif
 
 	/* Something happened */
 	return (TRUE);
@@ -1845,7 +1831,6 @@ void identify_item(object_type *o_ptr)
 		bad_luck(o_ptr);
 	}
 	
-	#ifdef AVATAR
 	if (!(o_ptr->ident & (IDENT_MENTAL)))
 	{
 		if ((o_ptr->art_name) || (artifact_p(o_ptr)))
@@ -1853,7 +1838,6 @@ void identify_item(object_type *o_ptr)
 		else
 			chg_virtue(V_KNOWLEDGE, 1);
 	}
-	#endif
 	
 	/* Identify it fully */
 	object_aware(o_ptr);
@@ -3767,9 +3751,7 @@ bool curse_armor(void)
 		/* Oops */
 		msg_format("A terrible black aura blasts your %s!", o_name);
 
-		#ifdef AVATAR
 		chg_virtue(V_ENCHANT, -5);
-		#endif
 
 		/* Blast the armor */
 		o_ptr->name1 = 0;
@@ -3838,9 +3820,7 @@ bool curse_weapon(void)
 		/* Oops */
 		msg_format("A terrible black aura blasts your %s!", o_name);
 
-		#ifdef AVATAR
 		chg_virtue(V_ENCHANT, -5);
-		#endif
 
 		/* Shatter the weapon */
 		o_ptr->name1 = 0;
