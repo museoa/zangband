@@ -12,15 +12,23 @@
 
 /* Why did I call it "Widget"? Why? WHY?! Aargh! */
 
+#include "angband.h"
+
+/* Hack - prevent warnings from tk headers */
+#if defined errno
+#	undef errno
+#	define errno errno_hack
+#endif /* errno */
+
 #define HAVE_LIMITS_H
 #define HAVE_UNISTD_H
-#include <tclInt.h>
+#define _TCLINTDECLS
 #include <tkInt.h>
 #include "util-dll.h"
 #include "plat-dll.h"
 #include "widget-dll.h"
 
-char *keyword_widget_style[] = {
+cptr keyword_widget_style[] = {
 	"icon", "map", NULL
 };
 
@@ -28,22 +36,22 @@ char *keyword_widget_style[] = {
  * Table specifying legal configuration options for a Widget.
  */
 static Tk_OptionSpec optionSpecs[20] = {
-    {TK_OPTION_INT, "-height", "height", "Height",
-     "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
-    {TK_OPTION_INT, "-width", "width", "Width",
-     "100", -1, Tk_Offset(Widget, width), 0, 0, 0},
-    {TK_OPTION_INT, "-gheight", "gheight", "Height",
-     "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
-    {TK_OPTION_INT, "-gwidth", "gwidth", "Width",
-     "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
-    {TK_OPTION_CURSOR, "-cursor", "cursor", "Cursor",
-     "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
-    {TK_OPTION_BOOLEAN, "-setgrid", "setGrid", "SetGrid",
-	 "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-noupdate", "noUpdate", "NoUpdate",
-	 "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
-	{TK_OPTION_STRING_TABLE, "-style", "style", "Style",
-	 "icon", -1, Tk_Offset(Widget, style), 0, keyword_widget_style, 0},
+    {TK_OPTION_INT, (char *) "-height", (char *) "height", (char *) "Height",
+     (char *) "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-width", (char *) "width", (char *) "Width",
+     (char *) "100", -1, Tk_Offset(Widget, width), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-gheight", (char *) "gheight", (char *) "Height",
+     (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
+     (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
+    {TK_OPTION_CURSOR, (char *) "-cursor", (char *) "cursor", (char *) "Cursor",
+     (char *) "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-setgrid", (char *) "setGrid", (char *) "SetGrid",
+	 (char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-noupdate", (char *) "noUpdate", (char *) "NoUpdate",
+	 (char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
+	{TK_OPTION_STRING_TABLE, (char *) "-style", (char *) "style", (char *) "Style",
+	 (char *) "icon", -1, Tk_Offset(Widget, style), 0, keyword_widget_style, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -103,8 +111,11 @@ int g_widget_color_count;
 /*
  * Initialize the Widget item color package
  */
-int WidgetColor_Init(Tcl_Interp *interp)
+static int WidgetColor_Init(Tcl_Interp *interp)
 {
+	/* Hack - ignore parameter */
+	(void) interp;
+
 	g_widget_color = Array_New(1, sizeof(t_widget_color *));
 	g_widget_color_count = 0;
 	return TCL_OK;
@@ -114,7 +125,7 @@ int WidgetColor_Init(Tcl_Interp *interp)
  * Search for an existing Widget item color of the given properties.
  * Return NULL if no such color was allocated.
  */
-t_widget_color *WidgetColor_Find(int color, int opacity)
+static t_widget_color *WidgetColor_Find(int color, int opacity)
 {
 	int i;
 
@@ -140,7 +151,7 @@ t_widget_color *WidgetColor_Find(int color, int opacity)
 /*
  * Search for an already allocated but unused Widget item color.
  */
-t_widget_color *WidgetColor_FindFree(void)
+static t_widget_color *WidgetColor_FindFree(void)
 {
 	int i;
 
@@ -266,7 +277,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
     if (objc < 2)
     {
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 1, objv, "pathName ?options?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "pathName ?options?");
 
 		/* Failure */
 		return(TCL_ERROR);
@@ -287,7 +298,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	 * a capital letter, and there exists a Tcl command with the same
 	 * name as each class.
 	 */
-    Tk_SetClass(tkwin, "Widget");
+    Tk_SetClass(tkwin, (char *) "Widget");
 
     /* Allocate a new Widget struct */
     if ((*g_create_proc)(interp, &widgetPtr) != TCL_OK)
@@ -332,9 +343,9 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
 	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
 	DoubleLink_Init(&widgetPtr->linkerItem, NULL, NULL);
-widgetPtr->linkerItem.what = "item";
+	widgetPtr->linkerItem.what = (char *) "item";
 	DoubleLink_Init(&widgetPtr->linkerItemVis, NULL, NULL);
-widgetPtr->linkerItemVis.what = "itemVis";
+	widgetPtr->linkerItemVis.what = (char *)"itemVis";
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
@@ -388,7 +399,7 @@ widgetPtr->linkerItemVis.what = "itemVis";
  */
 int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static char *commandNames[] = {"caveyx", "center", "cget", "configure",
+	static cptr commandNames[] = {"caveyx", "center", "cget", "configure",
 		"coloralloc", "colorderef", "create", "itemcget", "itemconfigure",
 		"photo", "wipe", "bounds", "visible", "wipespot",
 		"hittest", NULL};
@@ -404,14 +415,14 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 	if (objc < 2)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 1, objv, "option ?arg arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option ?arg arg ...?");
 
 		/* Failure */
 		return TCL_ERROR;
 	}
 
-	result = Tcl_GetIndexFromObj(interp, objv[1], commandNames,
-		"option", 0, (int *) &option);
+	result = Tcl_GetIndexFromObj(interp, objv[1], (char **) commandNames,
+		(char *) "option", 0, (int *) &option);
 	if (result != TCL_OK)
 	{
 		return result;
@@ -505,7 +516,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 3)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, "option");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "option");
 	
 				/* Failure */
 				goto error;
@@ -569,7 +580,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			{
 				/* Set the error */
 				Tcl_WrongNumArgs(interp, 2, objv,
-					"paletteIndex opacity");
+					(char *) "paletteIndex opacity");
 	
 				/* Failure */
 				goto error;
@@ -624,7 +635,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 4)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, "paletteIndex opacity");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "paletteIndex opacity");
 	
 				/* Failure */
 				goto error;
@@ -729,7 +740,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 4)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, "y x");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "y x");
 	
 				/* Failure */
 				goto error;
@@ -860,7 +871,7 @@ static void Tcl_FreeDebugHack(char *ptr)
  * to clean up the internal structure of a Widget at a safe time
  * (when no-one is using it anymore).
  */
-void Widget_Destroy(Widget *widgetPtr)
+static void Widget_Destroy(Widget *widgetPtr)
 {
     widgetPtr->flags |= WIDGET_DELETED;
 
@@ -1408,6 +1419,9 @@ extern WidgetItemType RectType;
  */
 static int WidgetItem_Init(Tcl_Interp *interp)
 {
+	/* Hack - ignore unused parameter */
+	(void) interp;
+
 	/* Add each Widget item type to the global list */
 	typeList = &ProgressType;
 	ProgressType.nextPtr = &TextType;
@@ -1558,7 +1572,7 @@ int WidgetItem_Create(Tcl_Interp *interp, Widget *widgetPtr,
 	if (objc < 3)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "type ?arg arg ...?");
+		Tcl_WrongNumArgs(interp, 2, objv, (char *) "type ?arg arg ...?");
 
 		/* Failure */
 		goto error;
@@ -1664,7 +1678,7 @@ int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
 	if (objc != 4)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "index option");
+		Tcl_WrongNumArgs(interp, 2, objv, (char *) "index option");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -1725,7 +1739,7 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	if (objc < 3)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "index ?option? ?value? ?option value ...?");
+		Tcl_WrongNumArgs(interp, 2, objv, (char *) "index ?option? ?value? ?option value ...?");
 		
 		/* Failure */
 		return TCL_ERROR;
@@ -1827,7 +1841,7 @@ int Widget_Photo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	if (objc < 3)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "imageName ?x1 y1 x2 y2?");
+		Tcl_WrongNumArgs(interp, 2, objv, (char *) "imageName ?x1 y1 x2 y2?");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -1928,6 +1942,9 @@ int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option)
 {
 	int i, j;
 
+	/* Hack - ignore unused parameter */
+	(void) interp;
+
 	for (i = 0; optionSpecs[i].type != TK_OPTION_END; i++) ;
 	
 	for (j = 0; option[j].type != TK_OPTION_END; j++)
@@ -1947,9 +1964,9 @@ int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc)
 
 	/* Linked lists of Widgets */
 	DoubleLink_Init(&WidgetList, NULL, NULL);
-WidgetList.what = "widget";
+	WidgetList.what = (char *) "widget";
 	DoubleLink_Init(&WidgetListMap, NULL, NULL);
-WidgetListMap.what = "widgetMap";
+	WidgetListMap.what = (char *) "widgetMap";
 
 	/* Initialize Widget item colors */
 	if (WidgetColor_Init(interp) != TCL_OK)
@@ -1964,7 +1981,7 @@ WidgetListMap.what = "widgetMap";
 	}
 
 	/* Create the "widget" interpreter command */
-	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
+	Tcl_CreateObjCommand(interp, (char *) "widget", Widget_ObjCmd, NULL, NULL);
 
 	/* Success */
     return TCL_OK;

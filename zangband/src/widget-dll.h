@@ -190,10 +190,10 @@ extern void WidgetColor_Deref(t_widget_color *color_ptr);
 #define DEBUG_WIDGET_ITEM 0x0004
 #define DEBUG_WIDGET_ISO 0x0008
 #define DEBUG_WIDGET_ALL 0xFFFF
-int debug_widgets;
+extern int debug_widgets;
 
-DoubleLinker WidgetList;
-DoubleLinker WidgetListMap;
+extern DoubleLinker WidgetList;
+extern DoubleLinker WidgetListMap;
 int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc);
 int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option);
 void Widget_Center(Widget *widgetPtr, int cy, int cx);
