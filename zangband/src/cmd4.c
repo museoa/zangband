@@ -2866,12 +2866,48 @@ void do_cmd_knowledge_artifacts(void)
  */
 static void do_cmd_knowledge_uniques(void)
 {
-	int k;
-
 	FILE *fff;
 
 	char file_name[1024];
 
+	int i, n;
+
+	u16b	why = 2;
+	u16b	*who;
+
+	/* Allocate the "who" array */
+	C_MAKE(who, max_r_idx, u16b);
+
+	/* Collect matching monsters */
+	for (n = 0, i = 1; i < max_r_idx; i++)
+	{
+		monster_race *r_ptr = &r_info[i];
+
+		/* Nothing to recall */
+		if (!cheat_know && !r_ptr->r_sights) continue;
+
+		/* Require unique monsters if needed */
+		if (!(r_ptr->flags1 & (RF1_UNIQUE))) continue;
+
+		/* Collect "appropriate" monsters */
+		who[n++] = i;
+	}
+
+	/* Nothing to recall */
+	if (!n) 
+	{
+		/* No monsters to recall */
+		msg_print("No known uniques.");
+		msg_print(NULL);
+		return;
+	}
+
+	/* Select the sort method */
+	ang_sort_comp = ang_sort_comp_hook;
+	ang_sort_swap = ang_sort_swap_hook;
+
+	/* Sort the array by dungeon depth of monsters */
+	ang_sort(who, &why, n);
 
 	/* Temporary file */
 	if (path_temp(file_name, 1024)) return;
@@ -2880,24 +2916,14 @@ static void do_cmd_knowledge_uniques(void)
 	fff = my_fopen(file_name, "w");
 
 	/* Scan the monster races */
-	for (k = 1; k < max_r_idx; k++)
+	for (i = 0; i < n; i++)
 	{
-		monster_race *r_ptr = &r_info[k];
-
-		/* Only print Uniques */
-		if (r_ptr->flags1 & (RF1_UNIQUE))
-		{
-			bool dead = (r_ptr->max_num == 0);
-
-			/* Only display "known" uniques */
-			if (dead || cheat_know || r_ptr->r_sights)
-			{
-				/* Print a message */
-				fprintf(fff, "     %s is %s\n",
-				        (r_name + r_ptr->name),
-				        (dead ? "dead" : "alive"));
-			}
-		}
+		monster_race *r_ptr = &r_info[who[i]];
+		bool dead = (r_ptr->max_num == 0);
+		
+		/* Print a message */
+		fprintf(fff, "     %s is %s\n",(r_name + r_ptr->name),
+			(dead ? "dead" : "alive"));		
 	}
 
 	/* Close the file */
@@ -3107,14 +3133,47 @@ static void do_cmd_knowledge_pets(void)
  */
 static void do_cmd_knowledge_kill_count(void)
 {
-	int k;
-
 	FILE *fff;
 
 	char file_name[1024];
 
 	s32b Total = 0;
+	
+	int i, n;
 
+	u16b	why = 2;
+	u16b	*who;
+
+	/* Allocate the "who" array */
+	C_MAKE(who, max_r_idx, u16b);
+
+	/* Collect matching monsters */
+	for (n = 0, i = 1; i < max_r_idx; i++)
+	{
+		monster_race *r_ptr = &r_info[i];
+
+		/* Nothing to recall */
+		if (!cheat_know && !r_ptr->r_sights) continue;
+
+		/* Collect "appropriate" monsters */
+		who[n++] = i;
+	}
+
+	/* Nothing to recall */
+	if (!n) 
+	{
+		/* No monsters to recall */
+		msg_print("No known monsters!");
+		msg_print(NULL);
+		return;
+	}
+
+	/* Select the sort method */
+	ang_sort_comp = ang_sort_comp_hook;
+	ang_sort_swap = ang_sort_swap_hook;
+
+	/* Sort the array by dungeon depth of monsters */
+	ang_sort(who, &why, n);
 
 	/* Temporary file */
 	if (path_temp(file_name, 1024)) return;
@@ -3161,9 +3220,9 @@ static void do_cmd_knowledge_kill_count(void)
 	Total = 0;
 
 	/* Scan the monster races */
-	for (k = 1; k < max_r_idx; k++)
+	for (i = 0; i < n; i++)
 	{
-		monster_race *r_ptr = &r_info[k];
+		monster_race *r_ptr = &r_info[who[i]];
 
 		if (r_ptr->flags1 & (RF1_UNIQUE))
 		{

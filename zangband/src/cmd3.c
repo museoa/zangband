@@ -1244,7 +1244,7 @@ static cptr ident_info[] =
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform on "u".
  */
-static bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
+bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
 {
 	u16b *who = (u16b*)(u);
 
@@ -1319,7 +1319,7 @@ static bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform.
  */
-static void ang_sort_swap_hook(vptr u, vptr v, int a, int b)
+void ang_sort_swap_hook(vptr u, vptr v, int a, int b)
 {
 	u16b *who = (u16b*)(u);
 
