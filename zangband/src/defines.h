@@ -4125,6 +4125,8 @@ extern int PlayerUID;
 #define CLR_L_GREEN		"$N"
 #define CLR_L_BLUE		"$O"
 #define CLR_L_UMBER		"$P"
+#define CLR_SET_DEFAULT "$Q"
+#define CLR_DEFAULT		"$R"
 
 
 #define MSG_GENERIC          0

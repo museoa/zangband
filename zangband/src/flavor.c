@@ -1271,6 +1271,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Add the false name */
 			t = object_desc_chr(t, ' ');
 			t = object_desc_str(t, &str[1]);
+			t = object_desc_str(t, CLR_DEFAULT);
 		}
 
 		/* Is it a new artifact or ego item? */
@@ -1783,6 +1784,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, c1);
 		t = object_desc_str(t, tmp_val2);
+		t = object_desc_str(t, CLR_DEFAULT);
 		t = object_desc_chr(t, c2);
 	}
 

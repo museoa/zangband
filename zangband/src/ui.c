@@ -624,6 +624,7 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 	
 	/* Default to white */
 	byte a = TERM_WHITE;
+	byte da = a;
 	
 	int x = col;
 	
@@ -655,6 +656,25 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 				continue;
 			}
 			
+			/* Default colour change? */
+			else if (*c == 'Q')
+			{
+				/* Save current colour as 'default' */
+				da = a;
+				c++;
+				
+				continue;
+			}
+			
+			/* Go back to default colour */
+			else if (*c == 'R')
+			{
+				a = da;
+				c++;
+
+				continue;
+			}
+			
 			/*
 			 * Hack XXX XXX - otherwise, ignore the dollar sign
 			 *
@@ -662,7 +682,7 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 			 */
 			
 			/* Stop if reach null */
-			if (*c == 0) break;
+			else if (*c == 0) break;
 		}
 		
 		if (*c == '\n')
@@ -757,6 +777,7 @@ void roff(cptr str, ...)
 	cptr s;
 	
 	byte a = TERM_WHITE;
+	byte da = a;
 	
 	va_list vp;
 
@@ -810,14 +831,30 @@ void roff(cptr str, ...)
 				 * Hack - this depends on ASCII symbols
 				 */
 				a = *s - 'A';
-				s++;
-				
-				/* Paranoia: no more in string? */
-				if (!(*s)) return;
-				
+								
 				/* Hack -- fake monochrome */
 				if (!use_color || ironman_moria) a = TERM_WHITE;
+				
+				continue;
 			}
+			
+			/* Default colour change? */
+			else if (*s == 'Q')
+			{
+				/* Save current colour as 'default' */
+				da = a;
+				
+				continue;
+			}
+			
+			/* Go back to default colour */
+			else if (*s == 'R')
+			{
+				a = da;
+
+				continue;
+			}
+			
 			/*
 			 * Hack XXX XXX - otherwise, ignore the dollar sign
 			 *
@@ -825,7 +862,7 @@ void roff(cptr str, ...)
 			 */
 			 
 			 /* Stop if new reach null */
-			if (*s == 0) break;
+			else if (*s == 0) break;
 		}
 
 		/* Clean up the char */
@@ -985,9 +1022,6 @@ bool askfor_aux(char *buf, int len)
 	/* Process input */
 	while (!done)
 	{
-		/* Place cursor */
-		/* Term_gotoxy(x + k, y); */
-
 		/* Get a key */
 		i = inkey();
 

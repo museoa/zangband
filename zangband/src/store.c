@@ -981,7 +981,7 @@ static void display_entry(int pos)
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, maxwid);
-		put_fstr(5, i + 6, "%s%s",
+		put_fstr(5, i + 6, "%s" CLR_SET_DEFAULT "%s",
 					color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 		/* Show weights */
@@ -1004,7 +1004,7 @@ static void display_entry(int pos)
 
 		/* Describe the object (fully) */
 		object_desc_store(o_name, o_ptr, TRUE, 3, maxwid);
-		put_fstr(5, i + 6, "%s%s",
+		put_fstr(5, i + 6, "%s" CLR_SET_DEFAULT "%s",
 					color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 		/* Show weights */

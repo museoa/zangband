@@ -2295,7 +2295,7 @@ void display_inven(void)
 		if (item_is_recharging(o_ptr)) attr = CLR_L_DARK;
 
 		/* Display the entry itself */
-		put_fstr(3, i, "%s%s", attr, o_name);
+		put_fstr(3, i, "%s" CLR_SET_DEFAULT "%s", attr, o_name);
 
 		/* Display the weight if needed */
 		if (show_weights && o_ptr->weight)
@@ -2366,7 +2366,7 @@ void display_equip(void)
 		if (item_is_recharging(o_ptr)) attr = CLR_L_DARK;
 
 		/* Display the entry itself */
-		put_fstr(3, i, "%s%s", attr, o_name);
+		put_fstr(3, i, "%s" CLR_SET_DEFAULT "%s", attr, o_name);
 
 		/* Display the slot description (if needed) */
 		if (show_labels)
@@ -2408,7 +2408,7 @@ void show_list(s16b o_list_ptr)
 
 	object_type *out_object[23];
 	int out_index[23];
-	byte out_color[23];
+	cptr out_color[23];
 	char out_desc[23][256];
 
 	byte a;
@@ -2456,10 +2456,10 @@ void show_list(s16b o_list_ptr)
 		/* Save the object index, color, and description */
 		out_index[k] = i;
 		out_object[k] = o_ptr;
-		out_color[k] = tval_to_attr[o_ptr->tval % 128];
+		out_color[k] = color_seq[tval_to_attr[o_ptr->tval % 128]];
 
 		/* Grey out charging items */
-		if (item_is_recharging(o_ptr)) out_color[k] = TERM_L_DARK;
+		if (item_is_recharging(o_ptr)) out_color[k] = CLR_L_DARK;
 
 		(void)strcpy(out_desc[k], o_name);
 
@@ -2516,7 +2516,8 @@ void show_list(s16b o_list_ptr)
 		Term_draw(col + 3, j + 1, a, c);
 
 		/* Display the entry itself */
-		put_fstr(col + 5, j + 1, "%s%s", color_seq[out_color[j]], out_desc[j]);
+		put_fstr(col + 5, j + 1, "%s" CLR_SET_DEFAULT "%s",
+				 out_color[j], out_desc[j]);
 
 		/* Display the weight if needed */
 		if (show_weights)
@@ -2543,7 +2544,7 @@ void show_equip(void)
 
 	char o_name[256];
 	int out_index[23];
-	byte out_color[23];
+	cptr out_color[23];
 	char out_desc[23][256];
 
 	byte a;
@@ -2586,10 +2587,10 @@ void show_equip(void)
 
 		/* Save the color */
 		out_index[k] = i;
-		out_color[k] = tval_to_attr[o_ptr->tval % 128];
+		out_color[k] = color_seq[tval_to_attr[o_ptr->tval % 128]];
 
 		/* Grey out charging items */
-		if (item_is_recharging(o_ptr)) out_color[k] = TERM_L_DARK;
+		if (item_is_recharging(o_ptr)) out_color[k] = CLR_L_DARK;
 
 		(void)strcpy(out_desc[k], o_name);
 
@@ -2664,16 +2665,16 @@ void show_equip(void)
 			put_fstr(col + 5, j + 1, "%-14s: ", mention_use(i));
 
 			/* Display the entry itself */
-			put_fstr(col + 21, j + 1, "%s%s", color_seq[out_color[j]],
-					 out_desc[j]);
+			put_fstr(col + 21, j + 1, "%s" CLR_SET_DEFAULT "%s",
+					 out_color[j], out_desc[j]);
 		}
 
 		/* No labels */
 		else
 		{
 			/* Display the entry itself */
-			put_fstr(col + 5, j + 1, "%s%s", color_seq[out_color[j]],
-					 out_desc[j]);
+			put_fstr(col + 5, j + 1, "%s" CLR_SET_DEFAULT "%s",
+					 out_color[j], out_desc[j]);
 		}
 
 		/* Display the weight if needed */
