@@ -828,15 +828,12 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 		}
 		else
 		{
-			if (quest_status_taken(pl_ptr->quest_num))
-			{
-				/* Fetch wilderness quest name */
-				banner = quest[pl_ptr->quest_num].name;
-				banner_len = strlen(banner);
+			/* Fetch wilderness quest name */
+			banner = quest[pl_ptr->quest_num].name;
+			banner_len = strlen(banner);
 
-				/* Display wilderness quest name */
-				put_fstr(1 + (wid - banner_len) / 2, 0, banner);
-			}
+			/* Display wilderness quest name */
+			put_fstr(1 + (wid - banner_len) / 2, 0, banner);
 		}
 	}
 }

@@ -1146,7 +1146,7 @@ extern void test_compress_module(void);
 
 /* quest.c */
 extern u16b q_pop(void);
-extern bool quest_status_taken(int q_num);
+extern void discover_wild_quest(int q_num);
 extern u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level);
 extern cptr describe_quest_location(cptr * dirn, int x, int y, bool known);
 extern bool dump_castle_info(FILE *fff, int place);

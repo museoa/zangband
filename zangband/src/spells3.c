@@ -692,12 +692,12 @@ void recall_player(int turns)
 	if (p_ptr->depth && (d_ptr->recall_depth > p_ptr->depth))
 	{
 		if (get_check("Reset recall depth? "))
-			d_ptr->recall_depth = p_ptr->depth;
+			d_ptr->recall_depth = (char) p_ptr->depth;
 
 	}
 	else if (p_ptr->depth > d_ptr->recall_depth)
 	{
-		d_ptr->recall_depth = p_ptr->depth;
+		d_ptr->recall_depth = (char) p_ptr->depth;
 	}
 
 	if (!p_ptr->tim.word_recall)
@@ -4401,6 +4401,9 @@ void map_wilderness(int radius, s32b x, s32b y)
 				{
 					/* Memorise the location */
 					wild[j][i].done.info |= WILD_INFO_SEEN;
+
+					/* Alert player to a new wilderness quest */
+					discover_wild_quest(place[wild[j][i].done.place].quest_num);
 				}
 			}
 		}

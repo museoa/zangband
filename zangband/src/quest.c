@@ -116,10 +116,27 @@ u16b q_pop(void)
 }
 
 
-/* Test if this quest has been discovered */
-bool quest_status_taken(int q_num)
+/* See if this quest is a wild quest and activate it if necessary */
+void discover_wild_quest(int q_num)
 {
-	return (quest[q_num].status == QUEST_STATUS_TAKEN);
+	/* Is there a quest here? */
+	if (!q_num) return;
+
+	/* Is it a wild quest */
+	if (quest[q_num].type != QUEST_TYPE_WILD) return;
+
+	/* Was this a taken quest? */
+	if (quest[q_num].status == QUEST_STATUS_UNTAKEN)
+	{
+		/* Now we take it */
+		quest[q_num].status = QUEST_STATUS_TAKEN;
+
+		/* Hack -- make him active to make the discovery */
+		quest[q_num].flags |= QUEST_FLAG_ACTIVE;
+
+		/* Announce */
+		quest_discovery();
+	}
 }
 
 
