@@ -539,25 +539,20 @@ static void move_mon_entry(u16b who, byte type)
 	}
 
 	kill->type = type;
-	
-	borg_note(format("# Moving monster entry. (%d)", who));
 }
 
-
 /*
- * Delete an old "kill" record
+ * Merge an old "kill" record
  */
-void borg_delete_kill(int who)
+static void borg_merge_kill(int who)
 {
 	borg_kill *kill = &borg_kills[who];
-	
-	borg_note(format("# Removing monster entry. (%d)", who));
 
 	/* Paranoia -- Already wiped */
 	if (!kill->r_idx) return;
 
 	/* Note */
-	borg_note(format("# Forgetting a monster '%s' at (%d,%d)",
+	borg_note(format("# Merging a monster '%s' at (%d,%d)",
 					 (r_name + r_info[kill->r_idx].name), kill->x, kill->y));
 #if 0
 	/* Reduce the regional fear with this guy dead */
@@ -570,6 +565,15 @@ void borg_delete_kill(int who)
 
 	/* One less monster */
 	borg_kills_cnt--;
+}
+
+
+/*
+ * Delete an old "kill" record
+ */
+void borg_delete_kill(int who)
+{
+	borg_merge_kill(who);
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
@@ -577,6 +581,8 @@ void borg_delete_kill(int who)
 	/* Wipe goals */
 	goal = 0;
 }
+
+
 
 
 /*
@@ -594,7 +600,7 @@ static void borg_wipe_mon(byte type)
 		
 		if (kill->type == type)
 		{
-			borg_delete_kill(i);
+			borg_merge_kill(i);
 		}
 	}
 }
@@ -837,7 +843,7 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			move_mon_entry(i, BORG_MON_USED);
 			
 			/* Remove the new monster */
-			borg_delete_kill(j);
+			borg_merge_kill(j);
 
 			/* Note */
 			borg_note(format("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
@@ -956,7 +962,8 @@ static void handle_old_mons(byte type)
 
 			continue;
 		}
-		
+
+#if 0
 		/* Scan for non-visible squares near the monster */
 		for (j = 0; j < 8; j++)
 		{
@@ -1008,6 +1015,7 @@ static void handle_old_mons(byte type)
 		{
 			/* Just delete the monster */
 			borg_delete_kill(i);
+
 			continue;
 		}
 		
@@ -1030,7 +1038,7 @@ static void handle_old_mons(byte type)
 			kill->x = ox;
 			kill->y = oy;
 		}
-		
+#endif /* 0 */	
 		/* Move the old monster to the used list */
 		move_mon_entry(i, BORG_MON_USED);
 	}
@@ -3292,6 +3300,7 @@ void borg_update(void)
 	/* New monsters near 'old forgotten' monsters */
 	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 1);
 	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 2);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 3);
 	
 	/* Scan all the remaining 'old' monsters */
 	handle_old_mons(BORG_MON_OLD);
