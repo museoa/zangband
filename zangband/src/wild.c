@@ -570,15 +570,15 @@ static void frac_block(void)
 				if (hstep > grd)
 				{
 					/* If greater than 'grid' level then is random */
-					store_height(i / 256, j / 256, randint(WILD_BLOCK_SIZE * 256));
+					store_height(i >> 8, j >> 8, randint(WILD_BLOCK_SIZE * 256));
 				}
 			   	else
 				{
 					/* Average of left and right points +random bit */
-					store_height(i / 256, j / 256,
-					(temp_block[j / 256][(i - hstep) / 256] +
-					temp_block[j / 256][(i + hstep) / 256]) / 2 +
-					(randint(lstep) - hstep) / 2);
+					store_height(i >> 8, j >> 8,
+					((temp_block[j >> 8][(i - hstep) >> 8] +
+					temp_block[j >> 8][(i + hstep) >>8]) >> 1) +
+					((randint(lstep) - hstep) >> 1));
 				}
 			}
 		}
@@ -592,15 +592,15 @@ static void frac_block(void)
 				if (hstep > grd)
 				{
 					/* If greater than 'grid' level then is random */
-					store_height(i / 256, j / 256, randint(WILD_BLOCK_SIZE * 256));
+					store_height(i >> 8, j >> 8, randint(WILD_BLOCK_SIZE * 256));
 				}
 		   		else
 				{
 					/* Average of up and down points +random bit */
-					store_height(i / 256, j / 256,
-					(temp_block[(j - hstep) / 256][i / 256]
-					+ temp_block[(j + hstep) / 256][i / 256]) / 2
-					+ (randint(lstep) - hstep) / 2);
+					store_height(i >> 8, j >> 8,
+					((temp_block[(j - hstep) >> 8][i >> 8]
+					+ temp_block[(j + hstep) >> 8][i >> 8]) >> 1)
+					+ ((randint(lstep) - hstep) >> 1));
 				}
 			}
 		}
@@ -613,18 +613,18 @@ static void frac_block(void)
 			   	if (hstep > grd)
 				{
 					/* If greater than 'grid' level then is random */
-					store_height(i / 256, j / 256, randint(WILD_BLOCK_SIZE * 256));
+					store_height(i >> 8, j >> 8, randint(WILD_BLOCK_SIZE * 256));
 				}
 		   		else
 				{
 					/* average over all four corners + scale by diagsize to
 					 * reduce the effect of the square grid on the shape of the fractal */
-					store_height(i / 256, j / 256,
-					(temp_block[(j - hstep) / 256][(i - hstep) / 256]
-					+ temp_block[(j + hstep) / 256][(i - hstep) / 256]
-					+ temp_block[(j - hstep) / 256][(i + hstep) / 256]
-					+ temp_block[(j + hstep) / 256][(i + hstep) / 256]) / 4
-					+ (randint(lstep) - hstep) * diagsize / 256);
+					store_height(i >> 8, j >> 8,
+					((temp_block[(j - hstep) >> 8][(i - hstep) >> 8]
+					+ temp_block[(j + hstep) >> 8][(i - hstep) >> 8]
+					+ temp_block[(j - hstep) >> 8][(i + hstep) >> 8]
+					+ temp_block[(j + hstep) >> 8][(i + hstep) >> 8]) >> 2)
+					+ (((randint(lstep) - hstep) * diagsize) >> 8));
 				}
 			}
 		}
