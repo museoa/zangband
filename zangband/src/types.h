@@ -779,6 +779,7 @@ struct object_type
 	u32b kn_flags3;	/* Known Flags, set 3 */
 
 	s32b cost;	/* Object "base cost" */
+	s32b temp_cost;	/* Cost including shopkeeper effects */
 
 	s16b region;	/* Region */
 
