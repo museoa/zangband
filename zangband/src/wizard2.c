@@ -1899,7 +1899,7 @@ void do_cmd_debug(void)
 
 		/* Test compression code */
 		case 'J':
-			test_compress_module();
+			/* test_compress_module(); */
 		break;
 		
 		/* Self-Knowledge */
