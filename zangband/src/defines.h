@@ -4492,8 +4492,9 @@ extern int PlayerUID;
  */
 #define DISPLAY_PLAYER_STANDARD		0	/* standard display */
 #define DISPLAY_PLAYER_SUMMARY		1	/* summary of various things */
+#define DISPLAY_PLAYER_FLAG             2
 
-#define DISPLAY_PLAYER_MAX		2
+#define DISPLAY_PLAYER_MAX		3
 
 /* Types of object list */
 #define LIST_INVEN			1

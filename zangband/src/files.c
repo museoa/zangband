@@ -2055,6 +2055,7 @@ static void display_player_flag_aux(int col, int row,
 {
 	display_player_flag_aux3(col, row, header, n1, flag1, 1, 0, 1, 0);
 }
+
 /*
  * Special display, part 1
  */
@@ -2066,7 +2067,7 @@ static void display_player_flag_info(void)
 
 	/*** Set 1 ***/
 
-	row = 0;
+	row = 1;
 	col = 0;
 
 	display_player_equippy(col + 8, row++);
@@ -2105,37 +2106,20 @@ static void display_player_flag_info(void)
 
 	/*** Set 2 ***/
 
-	row = 9;
-	col = 25;
-
-	display_player_equippy(col + 10, row++);
-
-	put_fstr(col + 10, row++, "abcdefghijkl@");
-
-	display_player_flag_aux(col, row++, "Speed   :", 1, TR1_SPEED);
-	display_player_flag_aux(col, row++, "Reflect :", 2, TR2_REFLECT);
-	display_player_flag_aux(col, row++, "AuraAcid:", 4, TR4_SH_ACID);
-	display_player_flag_aux(col, row++, "AuraFire:", 3, TR3_SH_FIRE);
-	display_player_flag_aux(col, row++, "AuraElec:", 3, TR3_SH_ELEC);
-	display_player_flag_aux(col, row++, "AuraCold:", 4, TR4_SH_COLD);
-	display_player_flag_aux(col, row++, "NoTelprt:", 3, TR3_NO_TELE);
-	display_player_flag_aux(col, row++, "No Magic:", 3, TR3_NO_MAGIC);
-	display_player_flag_aux2(col, row++, "Cursed  :", 3, TR3_CURSED,
-							3, TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
-	display_player_flag_aux(col, row++, "DrainExp:", 3, TR3_DRAIN_EXP);
-	display_player_flag_aux(col, row++, "Teleport:", 3, TR3_TELEPORT);
-
-	/* XXX MUTATE, PATRON, STRANGE_LUCK, AUTO_CURSE, DRAIN_STATS, CANT_EAT, SLOW_HEAL */
-
-	/*** Set 3 ***/
-
-	row = 11;
-	col = 52;
+	row = 1;
+	col = 24;
 
 	display_player_equippy(col + 11, row++);
 
 	put_fstr(col + 11, row++, "abcdefghijkl@");
 
+	display_player_flag_aux(col, row++, "Reflect  :", 2, TR2_REFLECT);
+	display_player_flag_aux(col, row++, "Aura Acid:", 4, TR4_SH_ACID);
+	display_player_flag_aux(col, row++, "Aura Fire:", 3, TR3_SH_FIRE);
+	display_player_flag_aux(col, row++, "Aura Elec:", 3, TR3_SH_ELEC);
+	display_player_flag_aux(col, row++, "Aura Cold:", 4, TR4_SH_COLD);
+	display_player_flag_aux(col, row++, "NoTeleprt:", 3, TR3_NO_TELE);
+	display_player_flag_aux(col, row++, "No Magic :", 3, TR3_NO_MAGIC);
 	display_player_flag_aux(col, row++, "Free Actn:", 2, TR2_FREE_ACT);
 	display_player_flag_aux(col, row++, "SeeInvis.:", 3, TR3_SEE_INVIS);
 	display_player_flag_aux(col, row++, "Hold Life:", 2, TR2_HOLD_LIFE);
@@ -2144,7 +2128,39 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "Regen.   :", 3, TR3_REGEN);
 	display_player_flag_aux(col, row++, "Levitate :", 3, TR3_FEATHER);
 	display_player_flag_aux(col, row++, "PermLite :", 3, TR3_LITE);
+	display_player_flag_aux(col, row++, "Mutate   :", 4, TR4_MUTATE);
+	display_player_flag_aux(col, row++, "Patron   :", 4, TR4_PATRON);
+	display_player_flag_aux(col, row++, "WeirdLuck:", 4, TR4_STRANGE_LUCK);
+	display_player_flag_aux(col, row++, "Pass Wall:", 4, TR4_PASS_WALL);
+	display_player_flag_aux(col, row++, "GhulTouch:", 4, TR4_GHOUL_TOUCH);
+
+	/*** Set 3 ***/
+
+	row = 1;
+	col = 52;
+
+	display_player_equippy(col + 11, row++);
+
+	put_fstr(col + 11, row++, "abcdefghijkl@");
+
+	display_player_flag_aux(col, row++, "Pr Animal:", 1, TR1_SLAY_ANIMAL);
+	display_player_flag_aux(col, row++, "Pr Evil  :", 1, TR1_SLAY_EVIL);
+	display_player_flag_aux(col, row++, "Pr Undead:", 1, TR1_SLAY_UNDEAD);
+	display_player_flag_aux(col, row++, "Pr Demon :", 1, TR1_SLAY_DEMON);
+	display_player_flag_aux(col, row++, "Pr Orc   :", 1, TR1_SLAY_ORC);
+	display_player_flag_aux(col, row++, "Pr Troll :", 1, TR1_SLAY_TROLL);
+	display_player_flag_aux(col, row++, "Pr Giant :", 1, TR1_SLAY_GIANT);
+	display_player_flag_aux(col, row++, "Pr Dragon:", 1, TR1_SLAY_DRAGON);
+
+	display_player_flag_aux2(col, row++, "Cursed   :", 3, TR3_CURSED,
+							3, TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
+	display_player_flag_aux(col, row++, "AutoCurse:", 4, TR4_AUTO_CURSE);
+	display_player_flag_aux(col, row++, "Teleport :", 3, TR3_TELEPORT);
 	display_player_flag_aux(col, row++, "Aggravate:", 3, TR3_AGGRAVATE);
+	display_player_flag_aux(col, row++, "DrainStat:", 4, TR4_DRAIN_STATS);
+	display_player_flag_aux(col, row++, "Drain Exp:", 3, TR3_DRAIN_EXP);
+	display_player_flag_aux(col, row++, "Slow Heal:", 4, TR4_SLOW_HEAL);
+	display_player_flag_aux(col, row++, "Can't Eat:", 4, TR4_CANT_EAT);
 	display_player_flag_aux(col, row++, "EvilCurse:", 3, TR3_TY_CURSE);
 }
 
@@ -2162,7 +2178,7 @@ static void display_player_flag_info(void)
  */
 static void display_player_stat_info(void)
 {
-	int i, e_adj;
+	int i, e_adj, r_adj, c_adj;
 	int stat_col, stat;
 	int row, col;
 
@@ -2174,7 +2190,7 @@ static void display_player_stat_info(void)
 	char c;
 
 	/* Column */
-	stat_col = 24;
+	stat_col = 16;
 
 	/* Row */
 	row = 3;
@@ -2190,31 +2206,25 @@ static void display_player_stat_info(void)
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Calculate equipment adjustment */
-		e_adj = 0;
+		e_adj = p_ptr->stat[i].top - p_ptr->stat[i].max;
 
-		/* Icky formula to deal with the 18 barrier */
-		if ((p_ptr->stat[i].max > 18) && (p_ptr->stat[i].top > 18))
-			e_adj = (p_ptr->stat[i].top - p_ptr->stat[i].max) / 10;
-		if ((p_ptr->stat[i].max <= 18) && (p_ptr->stat[i].top <= 18))
-			e_adj = p_ptr->stat[i].top - p_ptr->stat[i].max;
-		if ((p_ptr->stat[i].max <= 18) && (p_ptr->stat[i].top > 18))
-			e_adj = (p_ptr->stat[i].top - 18) / 10 - p_ptr->stat[i].max + 18;
-
-		if ((p_ptr->stat[i].max > 18) && (p_ptr->stat[i].top <= 18))
-			e_adj = p_ptr->stat[i].top - (p_ptr->stat[i].max - 18) / 10 - 19;
+		/* Get race and class adjustments */
+		r_adj = rp_ptr->r_adj[i] * 10;
+		c_adj = cp_ptr->c_adj[i] * 10;
 
 		/* Reduced name of stat */
 		put_fstr(stat_col, row + i, stat_names_reduced[i]);
 
-		/* Internal "natural" max value.  Maxes at 18/100 */
+		/* Internal "natural" max value.  Maxes at 40 */
 		/* This is useful to see if you are maxed out */
+		/* We actually fake this by subtracting out the race/class bonuses... */
 		put_fstr(stat_col + 5, row + i, CLR_BLUE "%v",
-				 stat_format, p_ptr->stat[i].max);
+				 stat_format, p_ptr->stat[i].max - r_adj - c_adj);
 
 		/* Race, class, and equipment modifiers */
-		put_fstr(stat_col + 12, row + i, CLR_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
-		put_fstr(stat_col + 16, row + i, CLR_L_BLUE "%3d", (int)cp_ptr->c_adj[i]);
-		put_fstr(stat_col + 20, row + i, CLR_L_BLUE "%3d", (int)e_adj);
+		put_fstr(stat_col + 12, row + i, CLR_L_BLUE "%3d", (int)(r_adj / 10));
+		put_fstr(stat_col + 16, row + i, CLR_L_BLUE "%3d", (int)(c_adj / 10));
+		put_fstr(stat_col + 20, row + i, CLR_L_BLUE "%3d", (int)(e_adj / 10));
 
 		/* Actual maximal modified value */
 		put_fstr(stat_col + 24, row + i, CLR_L_GREEN "%v",
@@ -2232,6 +2242,7 @@ static void display_player_stat_info(void)
 	col = stat_col + 39;
 
 	/* Header and Footer */
+	display_player_equippy(col, row - 2);
 	put_fstr(col, row - 1, "abcdefghijkl@");
 	put_fstr(col, row + 6, CLR_L_GREEN "Modifications");
 
@@ -2283,7 +2294,7 @@ static void display_player_stat_info(void)
 					a = TERM_RED;
 
 					/* Label boost */
-					if (o_ptr->pval < 10) c = '0' - o_ptr->pval;
+					if (-o_ptr->pval < 10) c = '0' - o_ptr->pval;
 				}
 			}
 
@@ -2316,8 +2327,17 @@ static void display_player_stat_info(void)
 		a = TERM_SLATE;
 		c = '.';
 
+		/* Sustain */
+		if (f2 & 1 << stat)
+		{
+			/* Dark green "s" */
+			a = TERM_GREEN;
+			c = 's';
+		}
+
+
 		/* Mutations ... */
-		if (p_ptr->muta3)
+		if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 		{
 			int dummy = 0;
 
@@ -2325,17 +2345,37 @@ static void display_player_stat_info(void)
 			{
 				if (p_ptr->muta3 & MUT3_HYPER_STR) dummy += 4;
 				if (p_ptr->muta3 & MUT3_PUNY) dummy -= 4;
+				if (p_ptr->muta1 & MUT1_MIND_BLST) dummy -= 1;
+				if (p_ptr->muta3 & MUT3_LIMBER) dummy -= 1;
 			}
-			else if (stat == A_WIS || stat == A_INT)
+			else if (stat == A_INT)
 			{
 				if (p_ptr->muta3 & MUT3_HYPER_INT) dummy += 4;
 				if (p_ptr->muta3 & MUT3_MORONIC) dummy -= 4;
+				if (p_ptr->muta1 & MUT1_STERILITY) dummy -= 1;
+				if (p_ptr->muta3 & MUT3_HYPER_STR) dummy -= 1;
+			}
+			else if (stat == A_WIS)
+			{
+				if (p_ptr->muta3 & MUT3_HYPER_INT) dummy += 4;
+				if (p_ptr->muta3 & MUT3_MORONIC) dummy -= 4;
+				if (p_ptr->muta1 & MUT1_HYPN_GAZE) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_BERSERK) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_MIDAS_TCH) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_EARTHQUAKE) dummy -= 1;
+				if (p_ptr->muta2 & MUT2_INVULN) dummy -= 2;
+				if (p_ptr->muta3 & MUT3_HYPER_STR) dummy -= 1;
 			}
 			else if (stat == A_DEX)
 			{
 				if (p_ptr->muta3 & MUT3_IRON_SKIN) dummy -= 1;
 				if (p_ptr->muta3 & MUT3_LIMBER) dummy += 3;
 				if (p_ptr->muta3 & MUT3_ARTHRITIS) dummy -= 3;
+				if (p_ptr->muta1 & MUT1_COLD_TOUCH) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_LAUNCHER) dummy -= 1;
+				if (p_ptr->muta2 & MUT2_TENTACLES) dummy += 1;
+				if (p_ptr->muta3 & MUT3_PUNY) dummy += 2;
+				if (p_ptr->muta3 & MUT3_XTRA_LEGS) dummy -= 1;
 			}
 			else if (stat == A_CON)
 			{
@@ -2343,6 +2383,10 @@ static void display_player_stat_info(void)
 				if (p_ptr->muta3 & MUT3_XTRA_FAT) dummy += 2;
 				if (p_ptr->muta3 & MUT3_ALBINO) dummy -= 4;
 				if (p_ptr->muta3 & MUT3_FLESH_ROT) dummy -= 2;
+				if (p_ptr->muta1 & MUT1_HYPN_GAZE) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_RADIATION) dummy -= 1;
+				if (p_ptr->muta3 & MUT3_SHORT_LEG) dummy += 1;
+				if (p_ptr->muta2 & MUT2_WRAITH) dummy -= 2;
 			}
 			else if (stat == A_CHR)
 			{
@@ -2351,6 +2395,12 @@ static void display_player_stat_info(void)
 				if (p_ptr->muta3 & MUT3_FLESH_ROT) dummy -= 1;
 				if (p_ptr->muta3 & MUT3_SCALES) dummy -= 1;
 				if (p_ptr->muta3 & MUT3_WART_SKIN) dummy -= 2;
+				if (p_ptr->muta1 & MUT1_SHRIEK) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_MIDAS_TCH) dummy -= 1;
+				if (p_ptr->muta2 & MUT2_SCOR_TAIL) dummy -= 2;
+				if (p_ptr->muta2 & MUT2_TRUNK) dummy -= 1;
+				if (p_ptr->muta2 & MUT2_TENTACLES) dummy -= 1;
+				if (p_ptr->muta3 & MUT3_XTRA_EYES) dummy -= 1;
 				if (p_ptr->muta3 & MUT3_ILL_NORM) dummy = 0;
 			}
 
@@ -2370,6 +2420,12 @@ static void display_player_stat_info(void)
 					if (dummy < 10) c = '0' + dummy;
 				}
 
+				/* Sustains */
+				if (f2 & 1 << stat)
+				{
+					a = TERM_GREEN;
+				}
+
 				/* Bad */
 				if (dummy < 0)
 				{
@@ -2377,18 +2433,9 @@ static void display_player_stat_info(void)
 					a = TERM_RED;
 
 					/* Label boost */
-					if (dummy < 10) c = '0' - dummy;
+					if (-dummy < 10) c = '0' - dummy;
 				}
 			}
-		}
-
-
-		/* Sustain */
-		if (f2 & 1 << stat)
-		{
-			/* Dark green "s" */
-			a = TERM_GREEN;
-			c = 's';
 		}
 
 
@@ -2398,6 +2445,178 @@ static void display_player_stat_info(void)
 		/* Dump */
 		Term_putch(col, row + stat, a, c);
 	}
+}
+
+static void display_player_skill_info(void)
+{
+	int row, col, skill_col;
+	int i;
+	int skill;
+
+	object_type *o_ptr;
+	u32b f1, f2, f3, f4;
+	s16b k_idx;
+
+	byte a;
+	char c;
+
+	row = 13;
+	skill_col = 45;
+
+	put_fstr(skill_col, row - 1, "Skill");
+
+	put_fstr(skill_col, row,     "Stealth:");
+	put_fstr(skill_col, row + 1, "Search :");
+	put_fstr(skill_col, row + 2, "Infra  :");
+	put_fstr(skill_col, row + 3, "Tunnel :");
+	put_fstr(skill_col, row + 4, "Speed  :");
+	put_fstr(skill_col, row + 5, "Blows  :");
+
+	/* Column */
+	col = skill_col + 10;
+
+	/* Header and Footer */
+	display_player_equippy(col, row - 2);
+	put_fstr(col, row - 1, "abcdefghijkl@");
+	put_fstr(col, row + 6, CLR_L_GREEN "Modifications");
+
+	/* Process equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		/* Access object */
+		o_ptr = &p_ptr->equipment[i];
+
+		/* Object kind */
+		k_idx = o_ptr->k_idx;
+
+		/* Acquire "known" flags */
+		object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
+
+		/* Initialize color based of sign of pval. */
+		for (skill = 0; skill < 6; skill++)
+		{
+			/* Default */
+			a = TERM_SLATE;
+			c = '.';
+
+			/* Boost */
+			if (f1 & TR1_STEALTH << skill)
+			{
+				/* Default */
+				c = '*';
+
+				/* Good */
+				if (o_ptr->pval > 0)
+				{
+					/* Good */
+					a = TERM_L_GREEN;
+
+					/* Label boost */
+					if (o_ptr->pval < 10) c = '0' + o_ptr->pval;
+				}
+
+				/* Bad */
+				if (o_ptr->pval < 0)
+				{
+					/* Bad */
+					a = TERM_RED;
+
+					/* Label boost */
+					if (-o_ptr->pval < 10) c = '0' - o_ptr->pval;
+				}
+			}
+
+			/* Handle monochrome */
+			if (!use_color) a = TERM_WHITE;
+
+			/* Dump proper character */
+			Term_putch(col, row + skill, a, c);
+		}
+
+		/* Advance */
+		col++;
+	}
+
+	/* Player flags */
+	player_flags(&f1, &f2, &f3, &f4);
+
+	for (skill = 0; skill < 6; skill++)
+	{
+		int dummy = 0;
+
+		/* Default */
+		a = TERM_SLATE;
+		c = '.';
+
+		if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
+		{
+			/* Stealth */
+			if (skill == 0)
+			{
+				if (p_ptr->muta1 & MUT1_ILLUMINE) dummy -= 1;
+				if (p_ptr->muta1 & MUT1_DAZZLE) dummy -= 1;
+				if (p_ptr->muta3 & MUT3_XTRA_NOIS) dummy -= 3;
+				if (p_ptr->muta3 & MUT3_MOTION) dummy += 1;
+			}
+			/* Search */
+			else if (skill == 1)
+			{
+				if (p_ptr->muta1 & MUT1_LASER_EYE) dummy -= 1;
+				/* Actually +1.5 or so */
+				if (p_ptr->muta3 & MUT3_XTRA_EYES) dummy += 2;
+			}
+			/* Infra */
+			else if (skill == 2)
+			{
+				if (p_ptr->muta3 & MUT3_INFRAVIS) dummy += 3;
+			}
+			/* Speed */
+			else if (skill == 4)
+			{
+				if (p_ptr->muta3 & MUT3_XTRA_LEGS) dummy += 3;
+				if (p_ptr->muta3 & MUT3_SHORT_LEG) dummy -= 3;
+			}
+		}
+				
+		if (skill == 4 && (f1 & TR1_SPEED))
+		{
+			dummy += p_ptr->lev / 10;
+		}
+
+		/* Boost */
+		if (dummy)
+		{
+			/* Default */
+			c = '*';
+
+			/* Good */
+			if (dummy > 0)
+			{
+				/* Good */
+				a = TERM_L_GREEN;
+
+				/* Label boost */
+				if (dummy < 10) c = '0' + dummy;
+			}
+
+			/* Bad */
+			if (dummy < 0)
+			{
+				/* Bad */
+				a = TERM_RED;
+
+				/* Label boost */
+				if (-dummy < 10) c = '0' - dummy;
+			}
+		}
+
+		/* No color */
+		if (!use_color) a = TERM_WHITE;
+
+		/* Dump */
+		Term_putch(col, row + skill, a, c);
+	}
+
 }
 
 #define COL_NAME			0
@@ -2601,11 +2820,20 @@ static void display_player_standard(void)
  *
  * See "http://www.cs.berkeley.edu/~davidb/angband.html"
  */
-static void display_player_summary(void)
+static void display_player_flag(void)
+{
+	/* Dump the info */
+	display_player_flag_info();
+}
+
+/*
+ * Display a summary of the player's bonuses
+ */
+static void display_player_stat(void)
 {
 	/* Dump the info */
 	display_player_stat_info();
-	display_player_flag_info();
+	display_player_skill_info();
 }
 
 
@@ -2618,7 +2846,10 @@ static display_func displays[DISPLAY_PLAYER_MAX] =
 	display_player_standard,
 
 	/* Summary of various things */
-	display_player_summary,
+	display_player_flag,
+
+	/* Summary of stat & skill boosts */
+	display_player_stat,
 };
 
 
