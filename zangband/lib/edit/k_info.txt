@@ -1674,7 +1674,8 @@ I:70:15:0
 W:75:0:5:8000
 A:75/1:100/1
 F:EASY_KNOW
-L:USE:	remove_all_curse()
+L:USE:	if remove_all_curse() then msgf("You feel as if someone is watching over you.")
+L:USE:	else ident = FALSE end
 
 N:192:Treasure Detection
 G:?:d
