@@ -1993,7 +1993,7 @@ static byte get_ego_num(int level)
 
 
 	/* Pick an ego item */
-	value = randint0(total);
+	value = randint1(total);
 
 	/* Find the ego item */
 	for (i = 0; i < alloc_ego_size; i++)
