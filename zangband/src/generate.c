@@ -377,17 +377,15 @@ static bool new_player_spot(void)
  * Count the number of walls adjacent to the given grid.
  *
  * Note -- Assumes "in_bounds(y, x)"
- *
- * We count only granite walls and permanent walls.
  */
 static int next_to_walls(int y, int x)
 {
 	int	k = 0;
 
-	if (cave[y+1][x].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[y-1][x].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[y][x+1].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[y][x-1].feat >= FEAT_WALL_EXTRA) k++;
+	if (!cave_floor_bold(y+1, x)) k++;
+	if (!cave_floor_bold(y-1, x)) k++;
+	if (!cave_floor_bold(y, x+1)) k++;
+	if (!cave_floor_bold(y, x-1)) k++;
 
 	return (k);
 }
@@ -441,7 +439,7 @@ static void place_random_stairs(int y, int x)
 
 
 	/* Paranoia */
-	if (!cave_clean_bold(y, x)) return;
+	if (!cave_clean_bold(y, x) || (cave[y][x].feat != FEAT_FLOOR)) return;
 
 	/* Town */
 	if (!dun_level)
@@ -608,6 +606,9 @@ static void alloc_stairs(int feat, int num, int walls)
 
 				/* Require "naked" floor grid */
 				if (!cave_naked_bold(y, x)) continue;
+
+				/* Require floor */
+				if (cave[y][x].feat != FEAT_FLOOR) continue;
 
 				/* Require a certain number of adjacent walls */
 				if (next_to_walls(y, x) < walls) continue;
@@ -4428,6 +4429,10 @@ static bool cave_gen(void)
 							y = rand_int(cur_hgt);
 							x = rand_int(cur_wid);
 							if (!cave_naked_bold(y, x)) continue;
+
+							/* No random quests for aquatic monsters */
+							if (cave[y][x].feat != FEAT_FLOOR) continue;
+							
 							if (distance(y, x, py, px) < 10) continue;
 							else break;
 						}
