@@ -3087,13 +3087,6 @@ void do_cmd_feeling(void)
 		return;
 	}
 
-	/* No useful feeling in quests */
-	if (is_quest_level(p_ptr->depth))
-	{
-		msgf("Looks like a typical quest level.");
-		return;
-	}
-
 	/* Display the feeling */
 	if (turn - old_turn >= 1000)
 	{
