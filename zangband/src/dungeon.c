@@ -4148,6 +4148,23 @@ void play_game(bool new_game)
 	/* Roll new character */
 	if (new_game)
 	{
+		/* Roll up a new character */
+		player_birth();
+
+		/* Hack -- enter the world */
+		if ((p_ptr->prace == RACE_VAMPIRE) ||
+		    (p_ptr->prace == RACE_SKELETON) ||
+		    (p_ptr->prace == RACE_ZOMBIE) ||
+		    (p_ptr->prace == RACE_SPECTRE))
+		{
+			/* Undead start just after midnight */
+			turn = (30L * TOWN_DAWN) / 4 + 1;
+		}
+		else
+		{
+			turn = 1;
+		}
+		
 		/* Create a new wilderness for the player */
 		create_wilderness();
 
@@ -4170,23 +4187,6 @@ void play_game(bool new_game)
 
 		/* Hack -- seed for town layout (not used an more) */
 		seed_town = 0;
-
-		/* Roll up a new character */
-		player_birth();
-
-		/* Hack -- enter the world */
-		if ((p_ptr->prace == RACE_VAMPIRE) ||
-		    (p_ptr->prace == RACE_SKELETON) ||
-		    (p_ptr->prace == RACE_ZOMBIE) ||
-		    (p_ptr->prace == RACE_SPECTRE))
-		{
-			/* Undead start just after midnight */
-			turn = (30L * TOWN_DAWN) / 4 + 1;
-		}
-		else
-		{
-			turn = 1;
-		}
 	}
 	
 	/* Hack - if note file exists, load it */
