@@ -2991,12 +2991,6 @@ static void dungeon(void)
 		p_ptr->max_lev = p_ptr->lev;
 	}
 
-	/* Track maximum dungeon level */
-	if (p_ptr->max_depth < p_ptr->depth)
-	{
-		p_ptr->max_depth = p_ptr->depth;
-	}
-
 	/* No stairs down from final quests */
 	if (is_special_level(p_ptr->depth))
 	{
