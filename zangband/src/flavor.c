@@ -1798,12 +1798,15 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
  * Hack -- describe an item currently in a store's inventory
  * This allows an item to *look* like the player is "aware" of it
  */
-void object_desc_store(char *buf, object_type *o_ptr, int pref,
+void object_desc_store(char *buf, const object_type *o_ptr, int pref,
                        int mode, int size)
 {
 	byte hack_flavor;
 	bool hack_aware;
 	byte info;
+	
+	/* Hack - we will reset the object to exactly like it was */
+	object_type *q_ptr = (object_type *) o_ptr;
 
 	/* Save the "flavor" */
 	hack_flavor = k_info[o_ptr->k_idx].flavor;
@@ -1818,13 +1821,13 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref,
 	k_info[o_ptr->k_idx].flavor = FALSE;
 
 	/* Set the "known" flag */
-	o_ptr->info |= (OB_KNOWN);
+	q_ptr->info |= (OB_KNOWN);
 
 	/* Force "aware" for description */
 	k_info[o_ptr->k_idx].aware = TRUE;
 
 	/* Describe the object */
-	object_desc(buf, o_ptr, pref, mode, size);
+	object_desc(buf, q_ptr, pref, mode, size);
 
 	/* Restore "flavor" value */
 	k_info[o_ptr->k_idx].flavor = hack_flavor;
@@ -1833,5 +1836,5 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref,
 	k_info[o_ptr->k_idx].aware = hack_aware;
 
 	/* Restore the "info" */
-	o_ptr->info = info;
+	q_ptr->info = info;
 }
