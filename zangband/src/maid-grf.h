@@ -126,7 +126,8 @@ struct map_block
 	byte flags;
 };
 
-typedef map_block **map_blk_ptr;
+typedef map_block *map_blk_ptr;
+typedef map_block **map_blk_ptr_ptr;
 
 typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map);
 typedef errr (*map_erase_hook_type) (void);
@@ -135,7 +136,7 @@ typedef errr (*map_erase_hook_type) (void);
 
 /* Extern Variables */
 extern byte gamma_table[256];
-extern map_blk_ptr *map_cache;
+extern map_blk_ptr_ptr *map_cache;
 extern byte *map_cache_refcount;
 extern int *map_cache_x;
 extern int *map_cache_y;

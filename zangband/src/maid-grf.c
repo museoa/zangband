@@ -288,7 +288,7 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 static bool map_init = FALSE;
 
 /* List of 16x16 blocks for the overhead map */
-map_blk_ptr *map_cache;
+map_blk_ptr_ptr *map_cache;
 
 /* Refcount for map cache */
 byte *map_cache_refcount;
@@ -379,7 +379,6 @@ static void clear_map(void)
 	player_y = 0;
 }
 
-
 /*
  * Create the map information
  */
@@ -391,7 +390,7 @@ void init_overhead_map(void)
 	if (map_init) return;
 
 	/* Make the list of pointers to blocks */
-	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr);
+	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr_ptr);
 
 	/* Refcount for cache blocks */
 	C_MAKE(map_cache_refcount, MAP_CACHE, byte);
@@ -404,7 +403,7 @@ void init_overhead_map(void)
 	for (i = 0; i < MAP_CACHE; i++)
 	{
 		/* Allocate block */
-		C_MAKE(map_cache[i], WILD_BLOCK_SIZE, map_block *);
+		C_MAKE(map_cache[i], WILD_BLOCK_SIZE, map_blk_ptr);
 
 		/* Allocate rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -571,7 +570,7 @@ bool map_in_bounds(int x, int y)
  */
 static void save_map_location(int x, int y, term_map *map)
 {
-	map_blk_ptr mbp_ptr;
+	map_blk_ptr_ptr mbp_ptr;
 	map_block *mb_ptr;
 
 	int x1 = x / WILD_BLOCK_SIZE;
