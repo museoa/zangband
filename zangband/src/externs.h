@@ -424,7 +424,6 @@ extern void do_cmd_zap_rod(void);
 extern void do_cmd_activate(void);
 extern void do_cmd_rerate(void);
 extern void ring_of_power(int dir);
-extern void do_cmd_use(void);
 
 /* dungeon.c */
 extern void play_game(bool new_game);
