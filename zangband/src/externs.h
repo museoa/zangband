@@ -910,6 +910,7 @@ extern void redraw_stuff(void);
 extern void window_stuff(void);
 extern void handle_stuff(void);
 extern void change_stuff(void);
+bool player_save(int power);
 
 
 /* effects.c */

@@ -3739,3 +3739,11 @@ void change_stuff(void)
 		(void)gain_mutation(0);
 	}
 }
+
+/*
+ * Roll a saving throw for the player
+ */
+bool player_save(int power)
+{
+	return saving_throw(p_ptr->skills[SKILL_SAV] + p_ptr->lev - power);
+}
