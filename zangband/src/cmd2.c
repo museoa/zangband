@@ -1649,7 +1649,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	
 	/* Get type of trap */
 	t_ptr = &t_info[f_ptr->t_idx];
-	
+	 
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;
 
