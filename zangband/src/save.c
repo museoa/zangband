@@ -725,8 +725,6 @@ static void wr_xtra(int k_idx)
  */
 static void wr_store(const store_type *st_ptr)
 {
-	int j;
-
 	/* Save the "data" */
 	wr_s16b(st_ptr->data);
 
@@ -745,12 +743,8 @@ static void wr_store(const store_type *st_ptr)
 
 	wr_s32b(st_ptr->last_visit);
 
-	/* Save the stock */
-	for (j = 0; j < st_ptr->stock_num; j++)
-	{
-		/* Save each item in stock */
-		wr_item(&st_ptr->stock[j]);
-	}
+	/* Pointer to stock list */
+	wr_s16b(st_ptr->stock);
 }
 
 
@@ -1045,9 +1039,6 @@ static void wr_extra(void)
 
 	/* Trap detection status */
 	wr_byte(p_ptr->detected);
-
-	/* Compact the objects before saving inventory */
-	compact_objects(0);
 
 	/* Player inventory item */
 	wr_s16b(p_ptr->inventory);

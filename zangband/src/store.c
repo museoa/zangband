@@ -475,13 +475,12 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 
 
 /*
- * Check to see if the shop will be carrying too many objects	-RAK-
+ * Check to see if the shop will be carrying too many objects
  * Note that the shop, just like a player, will not accept things
  * it cannot hold.	Before, one could "nuke" potions this way.
  */
 static bool store_check_num(object_type *o_ptr)
 {
-	int i;
 	object_type *j_ptr;
 
 	/* Free space is always usable */
@@ -491,28 +490,24 @@ static bool store_check_num(object_type *o_ptr)
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		/* Check all the items */
-		for (i = 0; i < st_ptr->stock_num; i++)
+		OBJ_ITT_START(st_ptr->stock, j_ptr)
 		{
-			/* Get the existing item */
-			j_ptr = &st_ptr->stock[i];
-
 			/* Can the new object be combined with the old one? */
 			if (object_similar(j_ptr, o_ptr)) return (TRUE);
 		}
+		OBJ_ITT_END;
 	}
 
 	/* Normal stores do special stuff */
 	else
 	{
 		/* Check all the items */
-		for (i = 0; i < st_ptr->stock_num; i++)
+		OBJ_ITT_START(st_ptr->stock, j_ptr)
 		{
-			/* Get the existing item */
-			j_ptr = &st_ptr->stock[i];
-
 			/* Can the new object be combined with the old one? */
 			if (store_object_similar(j_ptr, o_ptr)) return (TRUE);
 		}
+		OBJ_ITT_END;
 	}
 
 	/* But there was no room at the inn... */
@@ -613,6 +608,39 @@ static bool store_will_stock(const object_type *o_ptr)
 }
 
 
+/*
+ * Compare two items to see if they are in store-order.
+ */
+static bool reorder_store_comp(object_type *o1_ptr, object_type *o2_ptr)
+{
+	/* Hack -- readable books always come first */
+	if ((o1_ptr->tval == mp_ptr->spell_book) &&
+		(o2_ptr->tval != mp_ptr->spell_book)) return (TRUE);
+	if ((o1_ptr->tval == mp_ptr->spell_book) &&
+		(o2_ptr->tval != mp_ptr->spell_book)) return (FALSE);
+
+	/* Objects sort by decreasing type */
+	if (o1_ptr->tval > o2_ptr->tval) return (TRUE);
+	if (o1_ptr->tval < o2_ptr->tval) return (FALSE);
+
+	/* Can happen in the home */
+	if (!object_aware_p(o2_ptr)) return (TRUE);
+	if (!object_aware_p(o1_ptr)) return (FALSE);
+
+	/* Objects sort by increasing sval */
+	if (o1_ptr->sval < o2_ptr->sval) return (TRUE);
+	if (o1_ptr->sval > o2_ptr->sval) return (FALSE);
+
+	/* Objects in the home can be unknown */
+	if (!object_known_p(o2_ptr)) return (TRUE);
+	if (!object_known_p(o1_ptr)) return (FALSE);
+
+	/* Objects sort by decreasing value */
+	if (object_value(o1_ptr) > object_value(o2_ptr)) return (TRUE);
+	
+	return (FALSE);
+}
+
 
 /*
  * Add the item "o_ptr" to the inventory of the "Home"
@@ -624,20 +652,14 @@ static bool store_will_stock(const object_type *o_ptr)
  * Also note that it may not correctly "adapt" to "knowledge" becoming
  * known, the player may have to pick stuff up and drop it again.
  */
-static int home_carry(object_type *o_ptr)
+static object_type *home_carry(object_type *o_ptr)
 {
-	int slot;
-	s32b value, j_value;
-	int i;
 	object_type *j_ptr;
 
 
 	/* Check each existing item (try to combine) */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
+	OBJ_ITT_START(st_ptr->stock, j_ptr)
 	{
-		/* Get the existing item */
-		j_ptr = &st_ptr->stock[slot];
-
 		/* The home acts just like the player */
 		if (object_similar(j_ptr, o_ptr))
 		{
@@ -645,77 +667,36 @@ static int home_carry(object_type *o_ptr)
 			object_absorb(j_ptr, o_ptr);
 
 			/* All done */
-			return (slot);
+			return (j_ptr);
 		}
 	}
+	OBJ_ITT_END;
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->max_stock) return (-1);
+	if (st_ptr->stock_num >= st_ptr->max_stock) return (NULL);
 
+	/* Add the item to the store */
+	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
+	
+	/* Forget location */
+	o_ptr->iy = o_ptr->ix = 0;
 
-	/* Determine the "value" of the item */
-	value = object_value(o_ptr);
+	/* Forget Region */
+	o_ptr->region = 0;
 
-	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
-	{
-		/* Get that item */
-		j_ptr = &st_ptr->stock[slot];
+	/* No longer marked */
+	o_ptr->info &= ~(OB_SEEN);
 
-		/* Hack -- readable books always come first */
-		if ((o_ptr->tval == mp_ptr->spell_book) &&
-			(j_ptr->tval != mp_ptr->spell_book)) break;
-		if ((j_ptr->tval == mp_ptr->spell_book) &&
-			(o_ptr->tval != mp_ptr->spell_book)) continue;
-
-		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
-
-		/* Can happen in the home */
-		if (!object_aware_p(o_ptr)) continue;
-		if (!object_aware_p(j_ptr)) break;
-
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
-
-		/* Objects in the home can be unknown */
-		if (!object_known_p(o_ptr)) continue;
-		if (!object_known_p(j_ptr)) break;
-
-		/*
-		 * Hack:  otherwise identical rods sort by
-		 * increasing recharge time --dsb
-		 */
-		if (o_ptr->tval == TV_ROD)
-		{
-			if (o_ptr->pval < j_ptr->pval) break;
-			if (o_ptr->pval > j_ptr->pval) continue;
-		}
-
-		/* Objects sort by decreasing value */
-		j_value = object_value(j_ptr);
-		if (value > j_value) break;
-		if (value < j_value) continue;
-	}
-
-	/* Slide the others up */
-	for (i = st_ptr->stock_num; i > slot; i--)
-	{
-		st_ptr->stock[i] = st_ptr->stock[i - 1];
-	}
+	/* Reorder the items */
+	o_ptr = reorder_objects_aux(o_ptr, reorder_store_comp, st_ptr->stock);
 
 	/* More stuff now */
 	st_ptr->stock_num++;
 
-	/* Insert the new item */
-	st_ptr->stock[slot] = *o_ptr;
-
 	chg_virtue(V_SACRIFICE, -1);
 
 	/* Return the location */
-	return (slot);
+	return (o_ptr);
 }
 
 
@@ -729,20 +710,17 @@ static int home_carry(object_type *o_ptr)
  * this price will be negative, since the price will not be "fixed" yet.
  * Adding an item to a "fixed" price stack will not change the fixed price.
  *
- * In all cases, return the slot (or -1) where the object was placed
+ * In all cases, return the slot (or NULL) where the object was placed
  */
-static int store_carry(object_type *o_ptr)
+static object_type *store_carry(object_type *o_ptr)
 {
-	int i, slot;
-	s32b value, j_value;
 	object_type *j_ptr;
 
-
 	/* Evaluate the object */
-	value = object_value(o_ptr);
+	s32b value = object_value(o_ptr);
 
 	/* Cursed/Worthless items "disappear" when sold */
-	if (value <= 0) return (-1);
+	if (value <= 0) return (NULL);
 
 	/* Identify it fully */
 	object_known(o_ptr);
@@ -752,11 +730,6 @@ static int store_carry(object_type *o_ptr)
 	o_ptr->kn_flags2 = o_ptr->flags2;
 	o_ptr->kn_flags3 = o_ptr->flags3;
 
-#if 0
-	/* We will buy some items we will not stock */
-	if (!store_will_stock(o_ptr)) return (-1);
-#endif
-
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
 
@@ -764,11 +737,8 @@ static int store_carry(object_type *o_ptr)
 	o_ptr->feeling = FEEL_NONE;
 
 	/* Check each existing item (try to combine) */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
+	OBJ_ITT_START(st_ptr->stock, j_ptr)
 	{
-		/* Get the existing item */
-		j_ptr = &st_ptr->stock[slot];
-
 		/* Can the existing items be incremented? */
 		if (store_object_similar(j_ptr, o_ptr))
 		{
@@ -776,60 +746,34 @@ static int store_carry(object_type *o_ptr)
 			store_object_absorb(j_ptr, o_ptr);
 
 			/* All done */
-			return (slot);
+			return (j_ptr);
 		}
 	}
+	OBJ_ITT_END;
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->max_stock) return (-1);
+	if (st_ptr->stock_num >= st_ptr->max_stock) return (NULL);
+	
+	/* Add the item to the store */
+	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
+	
+	/* Forget location */
+	o_ptr->iy = o_ptr->ix = 0;
 
+	/* Forget Region */
+	o_ptr->region = 0;
 
-	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
-	{
-		/* Get that item */
-		j_ptr = &st_ptr->stock[slot];
+	/* No longer marked */
+	o_ptr->info &= ~(OB_SEEN);
 
-		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
-
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
-
-		/*
-		 * Hack:  otherwise identical rods sort by
-		 * increasing recharge time --dsb
-		 */
-		if (o_ptr->tval == TV_ROD)
-		{
-			if (o_ptr->pval < j_ptr->pval) break;
-			if (o_ptr->pval > j_ptr->pval) continue;
-		}
-
-		/* Evaluate that slot */
-		j_value = object_value(j_ptr);
-
-		/* Objects sort by decreasing value */
-		if (value > j_value) break;
-		if (value < j_value) continue;
-	}
-
-	/* Slide the others up */
-	for (i = st_ptr->stock_num; i > slot; i--)
-	{
-		st_ptr->stock[i] = st_ptr->stock[i - 1];
-	}
+	/* Reorder the items */
+	o_ptr = reorder_objects_aux(o_ptr, reorder_store_comp, st_ptr->stock);
 
 	/* More stuff now */
 	st_ptr->stock_num++;
 
-	/* Insert the new item */
-	st_ptr->stock[slot] = *o_ptr;
-
 	/* Return the location */
-	return (slot);
+	return (o_ptr);
 }
 
 
@@ -837,39 +781,17 @@ static int store_carry(object_type *o_ptr)
  * Increase, by a given amount, the number of a certain item
  * in a certain store.	This can result in zero items.
  */
-static void store_item_increase(int item, int num)
+static void store_item_increase(object_type *o_ptr, int num)
 {
-	int j;
 
-	int cnt;
-	object_type *o_ptr;
 
-	/* Get the item */
-	o_ptr = &st_ptr->stock[item];
+	/* One less item? */
+	if (num >= o_ptr->number) st_ptr->stock_num--;
 
-	/* Verify the number */
-	cnt = o_ptr->number + num;
-	if (cnt > 255) cnt = 255;
-	else if (cnt < 0) cnt = 0;
-	num = cnt - o_ptr->number;
-
-	/* Save the new number */
-	o_ptr->number += num;
-
-	/* Must have no items */
-	if (o_ptr->number) return;
-
-	/* One less item */
-	st_ptr->stock_num--;
-
-	/* Slide everyone */
-	for (j = item; j < st_ptr->stock_num; j++)
-	{
-		st_ptr->stock[j] = st_ptr->stock[j + 1];
-	}
-
-	/* Nuke the final slot */
-	object_wipe(&st_ptr->stock[j]);
+	/* Simply call standard list... */
+	item_increase(o_ptr, num);
+	
+	st_ptr->stock_num = get_list_length(st_ptr->stock);
 }
 
 
@@ -881,12 +803,16 @@ static void store_item_increase(int item, int num)
 static void store_delete(void)
 {
 	int what, num;
+	object_type *o_ptr;
 
 	/* Pick a random slot */
 	what = randint0(st_ptr->stock_num);
+	
+	/* Get the item */
+	o_ptr = get_list_item(st_ptr->stock, what);
 
 	/* Determine how many items are here */
-	num = st_ptr->stock[what].number;
+	num = o_ptr->number;
 
 	/* Hack -- sometimes, only destroy half the items */
 	if (one_in_(2)) num = (num + 1) / 2;
@@ -898,15 +824,14 @@ static void store_delete(void)
 	 * Hack -- decrement the maximum timeouts and
 	 * total charges of rods and wands. -LM-
 	 */
-	if ((st_ptr->stock[what].tval == TV_ROD) ||
-		(st_ptr->stock[what].tval == TV_WAND))
+	if ((o_ptr->tval == TV_ROD) ||
+		(o_ptr->tval == TV_WAND))
 	{
-		st_ptr->stock[what].pval -= num * st_ptr->stock[what].pval /
-			st_ptr->stock[what].number;
+		o_ptr->pval -= num * o_ptr->pval / o_ptr->number;
 	}
 
 	/* Actually destroy (part of) the item */
-	store_item_increase(what, -num);
+	store_item_increase(o_ptr, -num);
 }
 
 
@@ -1015,7 +940,10 @@ static void store_create(void)
 static void display_entry(int pos)
 {
 	int i;
-	object_type *o_ptr;
+	
+	/* Get the object */
+	object_type *o_ptr = get_list_item(st_ptr->stock, pos);
+	
 	s32b x;
 
 	char o_name[256];
@@ -1032,9 +960,6 @@ static void display_entry(int pos)
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
-
-	/* Get the item */
-	o_ptr = &st_ptr->stock[pos];
 
 	/* Get the "offset" */
 	i = (pos % 12);
@@ -1114,13 +1039,13 @@ static void display_entry(int pos)
 
 
 /*
- * Displays a store's inventory 		-RAK-
+ * Displays a store's inventory
  * All prices are listed as "per individual object".  -BEN-
  */
 static void display_inventory(int store_top)
 {
 	int i, k;
-
+	
 	/* Display the next 12 items */
 	for (k = 0; k < 12; k++)
 	{
@@ -1320,7 +1245,9 @@ static void store_maint(void)
  */
 static void store_shuffle(store_type *st_ptr)
 {
-	int i, j;
+	int j;
+	
+	object_type *o_ptr;
 
 	/* Ignore home + locker */
 	if (st_ptr->type == BUILD_STORE_HOME) return;
@@ -1335,13 +1262,8 @@ static void store_shuffle(store_type *st_ptr)
 	st_ptr->data = 0;
 
 	/* Hack -- discount all the items */
-	for (i = 0; i < st_ptr->stock_num; i++)
+	OBJ_ITT_START(st_ptr->stock, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Get the item */
-		o_ptr = &st_ptr->stock[i];
-
 		/* Hack -- Sell all old items for "half price" */
 		if (!(o_ptr->xtra_name))
 		{
@@ -1351,11 +1273,12 @@ static void store_shuffle(store_type *st_ptr)
 		/* Mega-Hack -- Note that the item is "on sale" */
 		o_ptr->inscription = quark_add("on sale");
 	}
+	OBJ_ITT_END;
 }
 
 
 /*
- * Get the ID of a store item and return its value	-RAK-
+ * Get the ID of a store item and return its value
  */
 static int get_stock(int *com_val, cptr pmt, int i, int j)
 {
@@ -1512,7 +1435,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 
 /*
- * Buy an item from a store 			-RAK-
+ * Buy an item from a store
  */
 static void store_purchase(int *store_top)
 {
@@ -1542,7 +1465,6 @@ static void store_purchase(int *store_top)
 		return;
 	}
 
-
 	/* Find the number of objects on this and following pages */
 	i = (st_ptr->stock_num - *store_top);
 
@@ -1566,7 +1488,7 @@ static void store_purchase(int *store_top)
 	item = item + *store_top;
 
 	/* Get the actual item */
-	o_ptr = &st_ptr->stock[item];
+	o_ptr = get_list_item(st_ptr->stock, item);
 
 	/* Assume the player wants just one of them */
 	amt = 1;
@@ -1696,7 +1618,7 @@ static void store_purchase(int *store_top)
 				i = st_ptr->stock_num;
 
 				/* Remove the bought items from the store */
-				store_item_increase(item, -amt);
+				store_item_increase(o_ptr, -amt);
 
 				/* Store is empty */
 				if (st_ptr->stock_num == 0)
@@ -1784,7 +1706,7 @@ static void store_purchase(int *store_top)
 		i = st_ptr->stock_num;
 
 		/* Remove the items from the home */
-		store_item_increase(item, -amt);
+		store_item_increase(o_ptr, -amt);
 
 		/* Hack -- Item is still here */
 		if (i == st_ptr->stock_num)
@@ -2031,7 +1953,10 @@ static void store_sell(int *store_top)
 			handle_stuff();
 
 			/* The store gets that (known) item */
-			item_pos = store_carry(q_ptr);
+			q_ptr = store_carry(q_ptr);
+
+			/* Get position */
+			item_pos = get_item_position(st_ptr->stock, q_ptr);
 
 			/* Re-display if item is now in store */
 			if (item_pos >= 0)
@@ -2072,7 +1997,10 @@ static void store_sell(int *store_top)
 		handle_stuff();
 
 		/* Let the home carry it */
-		item_pos = home_carry(q_ptr);
+		q_ptr = home_carry(q_ptr);
+		
+		/* Get position */
+		item_pos = get_item_position(st_ptr->stock, q_ptr);
 
 		/* Update store display */
 		if (item_pos >= 0)
@@ -2123,7 +2051,7 @@ static void store_examine(int store_top)
 	item = item + store_top;
 
 	/* Get the actual item */
-	o_ptr = &st_ptr->stock[item];
+	o_ptr = get_list_item(st_ptr->stock, item);
 
 	/* Require full knowledge */
 	if (!object_known_full(o_ptr))
@@ -2483,11 +2411,10 @@ static void deallocate_store(void)
 	}
 
 	/* Delete store least used. */
-	FREE(store_cache[0]->stock);
+	delete_object_list(&store_cache[0]->stock);
 
 	/* No stock */
 	store_cache[0]->stock_num = 0;
-	store_cache[0]->stock = NULL;
 
 	/* Shift all other stores down the cache to fill the gap */
 	for (i = 1; i < store_cache_num; i++)
@@ -2512,7 +2439,7 @@ bool allocate_store(store_type *st_ptr)
 	int i, n = 0;
 
 	/* See if store has stock. */
-	if (st_ptr->stock != NULL)
+	if (st_ptr->stock)
 	{
 		/* Find the location in the cache */
 		for (i = 0; i < store_cache_num; i++)
@@ -2550,8 +2477,6 @@ bool allocate_store(store_type *st_ptr)
 
 	/* Add store to end of cache */
 	store_cache[store_cache_num] = st_ptr;
-
-	C_MAKE(st_ptr->stock, STORE_INVEN_MAX, object_type);
 
 	/* The number in the cache has increased */
 	store_cache_num++;
@@ -2610,6 +2535,9 @@ void do_cmd_store(field_type *f1_ptr)
 
 	/* Save the store pointer */
 	st_ptr = get_current_store();
+	
+	/* Hack - get current amount of stock */
+	st_ptr->stock_num = get_list_length(st_ptr->stock);
 
 	/* Paranoia */
 	if (!st_ptr) return;
@@ -2827,7 +2755,7 @@ void store_init(int town_num, int store_num, byte store_type)
 	st_ptr->owner = (byte)randint0(MAX_OWNERS);
 
 	/* Do not allocate the stock yet. */
-	st_ptr->stock = NULL;
+	st_ptr->stock = 0;
 
 	/* Set the store type */
 	st_ptr->type = store_type;

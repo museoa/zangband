@@ -3036,17 +3036,24 @@ errr file_character(cptr name, bool full)
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Home -- if anything there */
-				if (st_ptr->stock_num)
+				if (st_ptr->stock)
 				{
 					/* Header with name of the town */
 					fprintf(fff, "  [Home Inventory - %s]\n\n", place[i].name);
+					
+					/* Initialise counter */
+					k = 0;
 
 					/* Dump all available items */
-					for (k = 0; k < st_ptr->stock_num; k++)
+					OBJ_ITT_START(st_ptr->stock, o_ptr)
 					{
-						object_desc(o_name, &st_ptr->stock[k], TRUE, 3, 256);
+						object_desc(o_name, o_ptr, TRUE, 3, 256);
 						fprintf(fff, "%c%s %s\n", I2A(k), paren, o_name);
+						
+						/* Increment counter */
+						k++;
 					}
+					OBJ_ITT_END;
 
 					/* Add an empty line */
 					fprintf(fff, "\n\n");
@@ -4137,7 +4144,7 @@ static void print_tomb(void)
  */
 static void show_info(void)
 {
-	int i, j, k, l;
+	int i, j, l;
 	object_type *o_ptr;
 	store_type *st_ptr;
 
@@ -4182,13 +4189,8 @@ static void show_info(void)
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Hack -- Know everything in the home */
-				for (k = 0; k < st_ptr->stock_num; k++)
+				OBJ_ITT_START(st_ptr->stock, o_ptr)
 				{
-					o_ptr = &st_ptr->stock[k];
-
-					/* Skip non-objects */
-					if (!o_ptr->k_idx) continue;
-
 					/* Aware and Known */
 					object_aware(o_ptr);
 					object_known(o_ptr);
@@ -4198,6 +4200,7 @@ static void show_info(void)
 					o_ptr->kn_flags2 = o_ptr->flags2;
 					o_ptr->kn_flags3 = o_ptr->flags3;
 				}
+				OBJ_ITT_END;
 			}
 		}
 	}
@@ -4261,43 +4264,46 @@ static void show_info(void)
 				/* Home -- if anything there */
 				if (st_ptr->stock_num)
 				{
+					char tmp_val[10];
+					char o_name[256];
+					
+					/* Initialise counter */
+					j = 0;
+					
+					/* Clear screen */
+					Term_clear();
+				
 					/* Display contents of the home */
-					for (k = 0, i = 0; i < st_ptr->stock_num; k++)
+					OBJ_ITT_START(st_ptr->stock , o_ptr)
 					{
-						/* Clear screen */
-						Term_clear();
+						/* Print header, clear line */
+						sprintf(tmp_val, "%c) ", I2A(j));
+						prt(tmp_val, 4, j + 2);
 
-						/* Show 12 items */
-						for (j = 0; (j < 12) && (i < st_ptr->stock_num);
-							 j++, i++)
+						/* Display object description */
+						object_desc(o_name, o_ptr, TRUE, 3, 256);
+						c_put_str(tval_to_attr[o_ptr->tval], o_name, 7, j + 2);
+								  
+						/* Show 12 items at a time */
+						if (j == 12)
 						{
-							char o_name[256];
-							char tmp_val[80];
+							/* Caption */
+							prt(format("Your home in %s: -more-", place[i].name), 0, 0);
 
-							/* Acquire item */
-							o_ptr = &st_ptr->stock[i];
+							/* Flush keys */
+							flush();
 
-							/* Print header, clear line */
-							sprintf(tmp_val, "%c) ", I2A(j));
-							prt(tmp_val, 4, j + 2);
-
-							/* Display object description */
-							object_desc(o_name, o_ptr, TRUE, 3, 256);
-							c_put_str(tval_to_attr[o_ptr->tval], o_name, 7,
-									  j + 2);
-						}
-
-						/* Caption */
-						prt(format
-							("Your home in %s (page %d): -more-",
-							 place[i].name, k + 1), 0, 0);
-
-						/* Flush keys */
-						flush();
-
-						/* Wait for it */
-						if (inkey() == ESCAPE) return;
+							/* Wait for it */
+							if (inkey() == ESCAPE) return;
+							
+							/* Restart counter */
+							j = 0;
+							
+							/* Clear screen */
+							Term_clear();
+						}	
 					}
+					OBJ_ITT_END;
 				}
 			}
 		}

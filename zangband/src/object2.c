@@ -4890,25 +4890,44 @@ s16b *look_up_list(object_type *o_ptr)
 	object_type *j_ptr;
 
 	cave_type *c_ptr;
+	
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	
+	int i;
 
 	/* Some objects have no list */
 	if (!o_ptr->allocated) return (NULL);
 
+	/* Scan dungeon */
+	if (o_ptr->ix || o_ptr->iy)
+	{
+		c_ptr = area(o_ptr->ix, o_ptr->iy);
+
+		/* Scan square */
+		OBJ_ITT_START (c_ptr->o_idx, j_ptr)
+		{
+			if (o_ptr == j_ptr) return (&c_ptr->o_idx);
+		}
+		OBJ_ITT_END;
+	}
+	
 	/* Scan player inventory */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
 	{
 		if (o_ptr == j_ptr) return (&p_ptr->inventory);
 	}
 	OBJ_ITT_END;
-
-	c_ptr = area(p_ptr->px, p_ptr->py);
-
-	/* Scan square under the player */
-	OBJ_ITT_START (c_ptr->o_idx, j_ptr)
+	
+	/* Scan stores */
+	for (i = 0; i < pl_ptr->numstores; i++)
 	{
-		if (o_ptr == j_ptr) return (&c_ptr->o_idx);
+		/* Scan store stock */
+		OBJ_ITT_START (pl_ptr->store[i].stock, j_ptr)
+		{
+			if (o_ptr == j_ptr) return (&pl_ptr->store[i].stock);
+		}
+		OBJ_ITT_END;
 	}
-	OBJ_ITT_END;
 
 	/* Failure - the object is inconsistant */
 	quit("Failed to look up object.");
@@ -4984,16 +5003,31 @@ int get_list_length(s16b list_start)
 bool floor_item(object_type *o_ptr)
 {
 	s16b *o_list = look_up_list(o_ptr);
+	
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
-	/* Equipment */
-	if (!o_list) return (FALSE);
+	/* On floor? */
+	if (o_list == &c_ptr->o_idx) return (TRUE);
+
+	/* Elsewhere */
+	return (FALSE);
+}
+
+/* Is the item in the players inventory or equipment? */
+bool player_item(object_type *o_ptr)
+{
+	s16b *o_list = look_up_list(o_ptr);
+	
+	/* Equipment? */
+	if (!o_list) return (TRUE);
 
 	/* Inventory */
-	if (o_list == &p_ptr->inventory) return (FALSE);
+	if (o_list == &p_ptr->inventory) return (TRUE);
 
-	/* Must be on the floor */
+	/* Elsewhere */
 	return (TRUE);
 }
+
 
 
 /*
@@ -5025,6 +5059,8 @@ void item_describe(object_type *o_ptr)
 
 	/* Get list */
 	s16b *list = look_up_list(o_ptr);
+	
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -5043,11 +5079,12 @@ void item_describe(object_type *o_ptr)
 
 		msg_format("In your pack: %s (%c).", o_name, I2A(item));
 	}
-	else
+	else if (list == &c_ptr->o_idx)
 	{
 		msg_format("On the ground: %s.", o_name);
 	}
-
+	
+	/* Elsewhere??? */
 }
 
 
@@ -5057,6 +5094,8 @@ void item_describe(object_type *o_ptr)
 static void item_optimize(object_type *o_ptr)
 {
 	s16b *list;
+	
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	/* Only optimize real items */
 	if (!o_ptr->k_idx) return;
@@ -5090,14 +5129,21 @@ static void item_optimize(object_type *o_ptr)
 		/* Delete the object */
 		if (list == &p_ptr->inventory)
 		{
+			/* Inventory item */
 			delete_held_object(list, o_ptr);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
 		}
+		else if (list == &c_ptr->o_idx)
+		{
+			/* Floor item */
+			delete_dungeon_object(o_ptr);
+		}
 		else
 		{
-			delete_dungeon_object(o_ptr);
+			/* Store item */
+			delete_held_object(list, o_ptr);
 		}
 	}
 
@@ -5127,7 +5173,7 @@ object_type *item_split(object_type *o_ptr, int num)
 	q_ptr->number = num;
 
 	/* Notice the change */
-	if (num && !floor_item(o_ptr))
+	if (num && player_item(o_ptr))
 	{
 		/* Recalculate bonuses and weight */
 		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
@@ -5172,7 +5218,7 @@ void item_increase(object_type *o_ptr, int num)
 	o_ptr->number += num;
 
 	/* Notice the change */
-	if (num && !floor_item(o_ptr))
+	if (num && player_item(o_ptr))
 	{
 		/* Recalculate bonuses and weight */
 		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
@@ -5266,43 +5312,40 @@ static bool reorder_pack_comp(object_type *o1_ptr, object_type *o2_ptr)
 }
 
 /*
- * Actually reorder the pack
+ * Actually reorder the objects
  *
  * This uses a simple bubble sort.
  *
  * Usually we only need to make a few swaps.
  */
-static void reorder_pack_aux(object_type **q_ptr)
+object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func, u16b o_idx)
 {
 	object_type *o_ptr, *j_ptr;
 
-	bool flag = FALSE;
-
 	/* Re-order the pack */
-	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	OBJ_ITT_START (o_idx, o_ptr)
 	{
 		OBJ_ITT_START (o_ptr->next_o_idx, j_ptr)
 		{
 			/* Are they in the right order? */
-			if (reorder_pack_comp(j_ptr, o_ptr))
+			if (comp_func(j_ptr, o_ptr))
 			{
 				/* Are we moving the watched item? */
 				if (q_ptr)
 				{
-					if (*q_ptr == o_ptr) *q_ptr = j_ptr;
-					else if (*q_ptr == j_ptr) *q_ptr = o_ptr;
+					if (q_ptr == o_ptr) q_ptr = j_ptr;
+					else if (q_ptr == j_ptr) q_ptr = o_ptr;
 				}
 
 				/* Swap the objects */
 				swap_objects(o_ptr, j_ptr);
-
-				/* Notice changes */
-				flag = TRUE;
 			}
 		}
 		OBJ_ITT_END;
 	}
 	OBJ_ITT_END;
+	
+	return (q_ptr);
 }
 
 
@@ -5364,7 +5407,7 @@ object_type *inven_carry(object_type *o_ptr)
 	o_ptr->info &= ~(OB_SEEN);
 
 	/* Reorder the pack */
-	reorder_pack_aux(&o_ptr);
+	o_ptr = reorder_objects_aux(o_ptr, reorder_pack_comp, p_ptr->inventory);
 
 	/* Recalculate bonuses and weight */
 	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
@@ -5543,12 +5586,10 @@ void combine_pack(void)
 
 /*
  * Reorder items in the pack
- *
- * Note special handling of the "overflow" slot
  */
 void reorder_pack(void)
 {
-	reorder_pack_aux(NULL);
+	(void) reorder_objects_aux(NULL, reorder_pack_comp, p_ptr->inventory);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);

@@ -3945,11 +3945,10 @@ void wipe_all_list(void)
 	/* Clear the store cache */
 	for (i = 0; i < store_cache_num; i++)
 	{
-		if (store_cache[i]->stock != NULL)
+		if (store_cache[i]->stock)
 		{
-			FREE(store_cache[i]->stock);
+			delete_object_list(&store_cache[i]->stock);
 			store_cache[i]->stock_num = 0;
-			store_cache[i]->stock = NULL;
 		}
 	}
 	store_cache_num = 0;

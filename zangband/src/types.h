@@ -1701,7 +1701,7 @@ struct store_type
 
 	byte max_stock;	/* Stock -- Max number of entries */
 	byte stock_num;	/* Stock -- Number of entries */
-	object_type *stock;	/* Stock -- Actual stock items */
+	s16b stock;	/* Stock -- list of items in o_list[] */
 
 	u16b x;	/* Location x coord. */
 	u16b y;	/* Location y coord. */
@@ -1764,10 +1764,11 @@ struct dun_type
 	cptr name;	/* The name of the dungeon */
 };
 
-
+/* Various function pointer types */
 typedef bool (*monster_hook_type) (int r_idx);
 typedef int (*inven_func) (object_type *);
 typedef bool (*cave_hook_type) (cave_type *c_ptr);
+typedef bool (*object_comp) (object_type *, object_type *);
 
 
 

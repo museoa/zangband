@@ -899,32 +899,30 @@ static void rd_store(int town_num, int store_num)
 		(void)allocate_store(st_ptr);
 	}
 
-	/* Read the items */
-	for (j = 0; j < num; j++)
+	if (sf_version < 38)
 	{
-		object_type forge;
-		object_type *q_ptr;
-
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Wipe the object */
-		object_wipe(q_ptr);
-
-		/* Read the item */
-		rd_item(q_ptr);
-
-		/* Hack - item is not allocated in o_list[] (yet) */
-		q_ptr->allocated = FALSE;
-
-		/* Acquire valid items */
-		if (st_ptr->stock_num < st_ptr->max_stock)
+		/* Read the items */
+		for (j = 0; j < num; j++)
 		{
-			int k = st_ptr->stock_num++;
+			object_type forge;
+			object_type *q_ptr;
 
-			/* Acquire the item */
-			object_copy(&st_ptr->stock[k], q_ptr);
+			/* Get local object */
+			q_ptr = &forge;
+
+			/* Wipe the object */
+			object_wipe(q_ptr);
+
+			/* Read the item */
+			rd_item(q_ptr);
+			
+			/* Ignore item */
 		}
+	}
+	else
+	{
+		/* Get pointer to item list in o_list[] */
+		rd_s16b(&st_ptr->stock);
 	}
 }
 
