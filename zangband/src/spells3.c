@@ -4458,7 +4458,7 @@ void map_wilderness(int radius, s32b x, s32b y)
 		for (j = y - radius; j < y + radius + 1; j++)
 		{
 			/* In bounds? */
-			if ((i >= 0) && (i < max_wild) && (j >= 0) && (j < max_wild))
+			if ((i >= 0) && (i < max_wild - 1) && (j >= 0) && (j < max_wild - 1))
 			{
 				dist = distance(i, j, x, y);
 
