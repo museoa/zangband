@@ -1117,7 +1117,7 @@ static void process_world(void)
 			cave_no_regen = TRUE;
 		}
 	}
-	
+
 	if ((c_ptr->feat == FEAT_SHAL_ACID) &&
 		!p_ptr->invuln && !p_ptr->immune_acid && !p_ptr->ffall)
 	{
@@ -1245,7 +1245,7 @@ static void process_world(void)
 		else if ((c_ptr->feat & 0x80) == 0x80)
 		{
 			/* Player can walk through the "slow floor" terrains. */
-			
+
 			/* Do nothing */
 		}
 		else if (!p_ptr->invuln && !p_ptr->wraith_form &&
@@ -3285,7 +3285,7 @@ static void process_player(void)
 {
 	int i;
 
-	
+
 
 	if (hack_mutation)
 	{
@@ -3609,13 +3609,13 @@ static void process_player(void)
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
-		
+
 		/* Used up energy for this turn */
 		if (energy_use) break;
 	}
 }
 
-/* 
+/*
  * Add energy to player and monsters.
  * Those with the most energy move first.
  * (This prevents monsters like Morgoth getting double moves
@@ -3625,7 +3625,7 @@ static void process_energy(void)
 {
 	int i, speed, e;
 	monster_type *m_ptr;
-	
+
 	/*** Apply energy to player ***/
 	if (p_ptr->pspeed > 199) i = 49;
 	else if (p_ptr->pspeed < 0) i = 1;
@@ -3636,7 +3636,6 @@ static void process_energy(void)
 	/* Give energy to all monsters */
 	for (i = m_max - 1; i >= 1; i--)
 	{
-		
 		/* Access the monster */
 		m_ptr = &m_list[i];
 
@@ -3678,8 +3677,8 @@ static void process_energy(void)
 static void dungeon(void)
 {
 	int quest_num;
-	
-	cave_type *c_ptr;	
+
+	cave_type *c_ptr;
 
 	/* Set the base level */
 	base_level = dun_level;
@@ -3789,7 +3788,7 @@ static void dungeon(void)
 	}
 	else
 	{
-	panel_bounds();
+		panel_bounds();
 	}
 
 
@@ -3897,8 +3896,8 @@ static void dungeon(void)
 
 		/* Hack -- Compress the object list occasionally */
 		if (o_cnt + 32 < o_max) compact_objects(0);
-		
-		/* 
+
+		/*
 		 * Add energy to player and monsters.
 		 * Those with the most energy move first.
 		 */
@@ -4131,7 +4130,6 @@ void play_game(bool new_game)
 				/* Set */
 				(*option_info[i].o_var) = TRUE;
 			}
-
 			/* Clear */
 			else
 			{
@@ -4142,25 +4140,24 @@ void play_game(bool new_game)
 	}
 
 	/* Hack - if note file exists, load it */
-	if (!new_game && take_notes) {
+	if (!new_game && take_notes)
+	{
+		char long_day[30];
+		time_t ct = time((time_t*)NULL);
+		FILE *fff;
 
-   	  char long_day[30];
- 	  time_t ct = time((time_t*)NULL);
-	  FILE *fff;
- 
-  	  /* Open file */
-          fff = my_fopen(notes_file(), "a");
-  
-  	  /* Get the date */
-  	  strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
-  
-  	  /* Add in continuation info */
-  	  fprintf(fff, "================================================\n");
-  	  fprintf(fff, "New session start: %s\n\n", long_day);
-  
-          /* Close file */
-          my_fclose(fff);
-  	  
+		/* Open file */
+		fff = my_fopen(notes_file(), "a");
+
+		/* Get the date */
+		strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+
+		/* Add in continuation info */
+		fprintf(fff, "================================================\n");
+		fprintf(fff, "New session start: %s\n\n", long_day);
+
+		/* Close file */
+		my_fclose(fff);
 	}
 
 	/* Roll new character */
@@ -4212,7 +4209,8 @@ void play_game(bool new_game)
 	/* Flavor the objects */
 	flavor_init();
 
-	#if 0	
+#if 0
+
 	/* Initialize the town-buildings if necessary */
 	if (!dun_level && !p_ptr->inside_quest)
 	{
@@ -4220,8 +4218,8 @@ void play_game(bool new_game)
 		init_flags = INIT_ONLY_BUILDINGS;
 		process_dungeon_file("t_info.txt", 0, 0, MAX_HGT, MAX_WID);
 	}
-	
-	#endif
+
+#endif
 
 	/* Reset the visual mappings */
 	reset_visuals();
@@ -4257,7 +4255,7 @@ void play_game(bool new_game)
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
 
-	
+
 	/* Character is now "complete" */
 	character_generated = TRUE;
 
