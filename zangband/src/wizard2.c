@@ -79,6 +79,9 @@ void do_cmd_rerate(void)
  */
 static void wiz_create_named_art(int a_idx)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	/* Create the artifact */
 	create_named_art(a_idx, py, px);
 
@@ -104,6 +107,9 @@ static void do_cmd_wiz_hack_ben(void)
 /* Summon a horde of monsters */
 static void do_cmd_summon_horde(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int wy = py, wx = px;
 	int attempts = 1000;
 	cave_type *c_ptr;
@@ -387,6 +393,9 @@ static void do_cmd_wiz_change(void)
  */
 static void do_cmd_wiz_feature(int feat)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int y, x, d = 3, attempts = 30;
 
 	while (1)
@@ -1254,6 +1263,9 @@ static void do_cmd_wiz_play(void)
  */
 static void wiz_create_item(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	object_type	forge;
 	object_type *q_ptr;
 
@@ -1441,6 +1453,9 @@ static void do_cmd_wiz_learn(void)
  */
 static void do_cmd_wiz_summon(int num)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int i;
 
 	for (i = 0; i < num; i++)
@@ -1457,6 +1472,9 @@ static void do_cmd_wiz_summon(int num)
  */
 static void do_cmd_wiz_named(int r_idx, bool slp)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int i, x, y;
 
 	cave_type *c_ptr;
@@ -1495,6 +1513,9 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
  */
 static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	(void)summon_named_creature(py, px, r_idx, slp, TRUE, TRUE);
 }
 
@@ -1880,6 +1901,9 @@ void output_monster_matlab(void)
  */
 void do_cmd_debug(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int     x, y;
 	char    cmd;
 

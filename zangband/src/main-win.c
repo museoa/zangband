@@ -2445,10 +2445,8 @@ static void windows_map_aux(void)
 	char tc;
 #endif /* USE_TRANSPARENCY */
 
-#ifndef ZANGBAND
 	s16b py = p_ptr->py;
 	s16b px = p_ptr->px;
-#endif /* ZANGBAND */
 
 #ifdef ZANGBAND
 

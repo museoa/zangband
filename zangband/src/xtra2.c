@@ -51,7 +51,7 @@ void check_experience(void)
 	{
 		/* Lose a level */
 		p_ptr->lev--;
-		lite_spot(py, px);
+		lite_spot(p_ptr->py, p_ptr->px);
 
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
@@ -73,7 +73,7 @@ void check_experience(void)
 	{
 		/* Gain a level */
 		p_ptr->lev++;
-		lite_spot(py, px);
+		lite_spot(p_ptr->py, p_ptr->px);
 
 		/*
 		 * If auto-note taking enabled, write a note to the file.
@@ -1443,6 +1443,9 @@ bool change_panel(int dy, int dx)
  */
 void verify_panel(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int y = py;
 	int x = px;
 
@@ -1688,6 +1691,9 @@ void ang_sort(vptr u, vptr v, int n)
  */
 bool target_able(int m_idx)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	monster_type *m_ptr = &m_list[m_idx];
 
 	/* Monster must be alive */
@@ -1750,6 +1756,9 @@ bool target_okay(void)
  */
 static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	s16b *x = (s16b*)(u);
 	s16b *y = (s16b*)(v);
 
@@ -1857,6 +1866,9 @@ static s16b target_pick(int y1, int x1, int dy, int dx)
  */
 static bool target_set_accept(int y, int x)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	cave_type *c_ptr;
 
 	s16b this_o_idx, next_o_idx = 0;
@@ -2029,6 +2041,9 @@ static void target_set_prepare(int mode)
  */
 static int target_set_aux(int y, int x, int mode, cptr info)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	cave_type *c_ptr = area(y, x);
 
 	s16b this_o_idx, next_o_idx = 0;
@@ -2580,6 +2595,9 @@ static int target_set_aux(int y, int x, int mode, cptr info)
  */
 bool target_set(int mode)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int		i, d, m, t, bd;
 	int		y = py;
 	int		x = px;
@@ -3241,6 +3259,9 @@ int get_chaos_patron(void)
 
 void gain_level_reward(int chosen_reward)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	object_type *q_ptr;
 	object_type forge;
 	char        wrath_reason[32] = "";
@@ -3646,6 +3667,9 @@ void gain_level_reward(int chosen_reward)
  */
 bool tgt_pt(int *x, int *y)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	char ch = 0;
 	int d, cu, cv;
 	bool success = FALSE;

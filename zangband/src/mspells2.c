@@ -165,7 +165,7 @@ bool monst_spell_monst(int m_idx)
 		}
 
 		/* Prevent collateral damage */
-		if (friendly && (distance(py, px, y, x) <= rad))
+		if (friendly && (distance(p_ptr->py, p_ptr->px, y, x) <= rad))
 		{
 			f4 &= ~(RF4_BALL_MASK);
 			f5 &= ~(RF5_BALL_MASK);

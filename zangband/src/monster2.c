@@ -1196,6 +1196,9 @@ void update_mon(int m_idx, bool full)
 	/* Compute distance */
 	if (full)
 	{
+		int py = p_ptr->py;
+		int px = p_ptr->px;
+
 		/* Distance components */
 		int dy = (py > fy) ? (py - fy) : (fy - py);
 		int dx = (px > fx) ? (px - fx) : (fx - px);
@@ -1491,7 +1494,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	if (!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) ||
 		cave_floor_grid(c_ptr) ||
 		 ((c_ptr->feat & 0x60) == 0x60)) &&
-		 (!((c_ptr->m_idx) || (c_ptr == area(py, px)))))) return FALSE;
+		 (!((c_ptr->m_idx) || (c_ptr == area(p_ptr->py, p_ptr->px)))))) return FALSE;
 
 	/* Nor on the Pattern */
 	if ((c_ptr->feat >= FEAT_PATTERN_START) &&
@@ -2061,6 +2064,9 @@ bool alloc_horde(int y, int x)
  */
 bool alloc_monster(int dis, bool slp)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int	y = 0, x = 0;
 	int	attempts_left = 10000;
 	cave_type	*c_ptr;
@@ -3043,10 +3049,6 @@ bool player_place(int y, int x)
 
 	/* Paranoia XXX XXX */
 	if (area(y, x)->m_idx != 0) return FALSE;
-
-	/* Save player location */
-	py = y;
-	px = x;
 
 	/* Save player location */
 	p_ptr->py = y;

@@ -1763,6 +1763,9 @@ int calc_mutant_regenerate_mod(void)
 
 void mutation_power_aux(u32b power)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int     dir = 0;
 	int     lvl = p_ptr->lev;
 	cptr    q, s;

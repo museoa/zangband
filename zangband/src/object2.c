@@ -433,7 +433,7 @@ void compact_objects(int size)
 			}
 
 			/* Nearby objects start out "immune" */
-			if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
+			if ((cur_dis > 0) && (distance(p_ptr->py, p_ptr->px, y, x) < cur_dis)) continue;
 
 			/* Saving throw */
 			chance = 90;
@@ -4781,7 +4781,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	/* Mega-Hack -- no message if "dropped" by player */
 	/* Message when an object falls under the player */
-	if (chance && (by == py) && (bx == px))
+	if (chance && (by == p_ptr->py) && (bx == p_ptr->px))
 	{
 		msg_print("You feel something roll beneath your feet.");
 	}
@@ -5439,7 +5439,7 @@ void inven_drop(int item, int amt)
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 	/* Drop it near the player */
-	(void)drop_near(q_ptr, 0, py, px);
+	(void)drop_near(q_ptr, 0, p_ptr->py, p_ptr->px);
 
 	/* Modify, Describe, Optimize */
 	inven_item_increase(item, -amt);

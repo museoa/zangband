@@ -2442,6 +2442,9 @@ void show_floor(int y, int x)
  */
 bool get_item(int *cp, cptr pmt, cptr str, int mode)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	char n1 = ' ', n2 = ' ', which;
 
 	int i, j, k, i1, i2, e1, e2;

@@ -3614,7 +3614,7 @@ void do_cmd_store(void)
 
 
 	/* Access the player grid */
-	c_ptr = area(py,px);
+	c_ptr = area(p_ptr->py, p_ptr->px);
 
 	/* Verify a store */
 	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&

@@ -178,7 +178,7 @@ bool teleport_away(int m_idx, int dis)
  */
 void teleport_to_player(int m_idx)
 {
-	int ny, nx, oy, ox, d, i, min;
+	int ny, nx, oy, ox, px, py, d, i, min;
 	int attempts = 500;
 	int dis = 2;
 	bool look = TRUE;
@@ -196,6 +196,10 @@ void teleport_to_player(int m_idx)
 	/* Initialize */
 	ny = m_ptr->fy;
 	nx = m_ptr->fx;
+
+	/* Initialize */
+	py = p_ptr->py;
+	px = p_ptr->px;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
@@ -329,6 +333,9 @@ void teleport_to_player(int m_idx)
  */
 void teleport_player(int dis)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int d, i, min, ox, oy;
 	int tries = 0;
 
@@ -507,6 +514,9 @@ void teleport_player(int dis)
  */
 void teleport_player_to(int ny, int nx)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int y, x, oy, ox, dis = 0, ctr = 0;
 
 	cave_type *c_ptr;
@@ -1009,6 +1019,9 @@ void brand_weapon(int brand_type)
 
 void call_the_(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int i;
 
 	if (in_bounds(py, px) &&
@@ -1060,6 +1073,9 @@ void call_the_(void)
  */
 void fetch(int dir, int wgt, bool require_los)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int             ty, tx, i;
 	cave_type       *c_ptr;
 	object_type     *o_ptr;
@@ -1194,6 +1210,9 @@ void alter_reality(void)
  */
 bool warding_glyph(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	cave_type *c_ptr = area(py, px);
 
 	/* XXX XXX XXX */
@@ -1215,6 +1234,9 @@ bool warding_glyph(void)
  */
 bool explosive_rune(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	cave_type *c_ptr = area(py, px);
 
 	/* XXX XXX XXX */
@@ -1473,6 +1495,9 @@ bool alchemy(void)
  */
 void stair_creation(void)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	cave_type *c_ptr = area(py, px);
 
 	/* XXX XXX XXX */
@@ -3685,6 +3710,9 @@ int inven_damage(inven_func typ, int perc)
 				/* Potions smash open */
 				if (object_is_potion(o_ptr))
 				{
+					int px = p_ptr->px;
+					int py = p_ptr->py;
+
 					(void)potion_smash_effect(0, py, px, o_ptr->k_idx);
 				}
 
@@ -4227,6 +4255,9 @@ bool polymorph_monster(int y, int x)
  */
 bool dimension_door(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int	plev = p_ptr->lev;
 	int	x = 0, y = 0;
 	cave_type *c_ptr;

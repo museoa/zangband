@@ -1836,6 +1836,7 @@ static void load_wild_data(void)
 static errr rd_dungeon(void)
 {
 	int i;
+	s16b py, px;
 	int wid, hgt;
 	u16b limit;
 	cave_type *c_ptr;
@@ -1874,10 +1875,6 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
 
-	/* Temporary Hack */
-	p_ptr->py = py;
-	p_ptr->px = px;
-	
 	/* Assume we are in the dungeon */
 	max_hgt = cur_hgt;
 	min_hgt = 0;

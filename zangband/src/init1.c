@@ -3665,9 +3665,6 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				/* Place player in a quest level */
 				if (p_ptr->inside_quest)
 				{
-					py = atoi(zz[0]);
-					px = atoi(zz[1]);
-
 					p_ptr->py = atoi(zz[0]);
 					p_ptr->px = atoi(zz[1]);
 

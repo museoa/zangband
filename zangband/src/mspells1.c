@@ -446,6 +446,9 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
  */
 static void bolt(int m_idx, int typ, int dam_hp)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
 	/* Target the player with a bolt attack */
@@ -460,6 +463,9 @@ static void bolt(int m_idx, int typ, int dam_hp)
  */
 static void breath(int m_idx, int typ, int dam_hp, int rad, bool breath)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -777,6 +783,9 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
  */
 bool make_attack_spell(int m_idx)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int             k, chance, thrown_spell, rlev, failrate;
 	u32b            f4, f5, f6;
 	monster_type    *m_ptr = &m_list[m_idx];

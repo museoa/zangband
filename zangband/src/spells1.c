@@ -831,7 +831,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (!cave_naked_grid(c_ptr)) break;
 
 			/* Not under the player */
-			if ((x == px) && (y == py)) break;
+			if ((x == p_ptr->px) && (y == p_ptr->py)) break;
 
 			/* Create a closed door */
 			cave_set_feat(y, x, FEAT_CLOSED);
@@ -1819,7 +1819,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (seen) obvious = TRUE;
 
 			/* PSI only works if the monster can see you! -- RG */
-			if (!(los(m_ptr->fy, m_ptr->fx, py, px)))
+			if (!(los(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)))
 			{
 				dam = 0;
 				note = " can't see you, and isn't affected!";
@@ -3441,7 +3441,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	cave_type *c_ptr;
 
 	/* Player is not here */
-	if ((x != px) || (y != py)) return (FALSE);
+	if ((x != p_ptr->px) || (y != p_ptr->py)) return (FALSE);
 
 	/* Player cannot hurt himself */
 	if (!who) return (FALSE);
@@ -4999,6 +4999,9 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
  */
 bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int i, t, dist;
 
 	int y1, x1;

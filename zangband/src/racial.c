@@ -178,7 +178,7 @@ static void cmd_racial_power_aux(s32b command)
 #endif /* USE_SCRIPT */
 
 				/* Drop the object from heaven */
-				(void)drop_near(q_ptr, -1, py, px);
+				(void)drop_near(q_ptr, -1, p_ptr->py, p_ptr->px);
 				msg_print("You cook some food.");
 			}
 			break;
@@ -512,8 +512,8 @@ static void cmd_racial_power_aux(s32b command)
 
 				/* Only works on adjacent monsters */
 				if (!get_rep_dir(&dir,FALSE)) break;   /* was get_aim_dir */
-				y = py + ddy[dir];
-				x = px + ddx[dir];
+				y = p_ptr->py + ddy[dir];
+				x = p_ptr->px + ddx[dir];
 
 				/* Paranoia */
 				if (!in_bounds2(y, x)) break;

@@ -367,8 +367,8 @@ static void compact_fields_aux(int i1, int i2)
  */
 void compact_fields(int size)
 {
-	int px3 = p_ptr-> px;
-	int py3 = p_ptr-> py;
+	int px = p_ptr-> px;
+	int py = p_ptr-> py;
 
 	int y, x, num, cnt;
 	int cur_lev, cur_dis, chance;
@@ -492,7 +492,7 @@ void compact_fields(int size)
 			x = f_ptr->fx;
 
 			/* Nearby fields start out "immune" */
-			if ((cur_dis > 0) && (distance(py3, px3, y, x) < cur_dis)) continue;
+			if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
 
 			/* Saving throw */
 			chance = 90;
@@ -1428,8 +1428,8 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
  */
 void field_action_glyph_explode(s16b *field_ptr, void *input)
 {
-	int px3 = p_ptr-> px;
-	int py3 = p_ptr-> py;
+	int px = p_ptr-> px;
+	int py = p_ptr-> py;
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -1458,7 +1458,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
 	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
-		if ((f_ptr->fy == py3) && (f_ptr->fx == px3))
+		if ((f_ptr->fy == py) && (f_ptr->fx == px))
 		{
 			msg_print("The rune explodes!");
 			fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
@@ -2456,8 +2456,8 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 
 void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 {
-	int px3 = p_ptr->px;
-	int py3 = p_ptr->py;
+	int px = p_ptr->px;
+	int py = p_ptr->py;
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2470,7 +2470,7 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 	msg_print("There is a bright flash of light!");
 
 	/* Make some new traps */
-	project(0, 1, py3, px3, 0, GF_MAKE_TRAP,
+	project(0, 1, py, px, 0, GF_MAKE_TRAP,
 	        PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
 
 	/* Delete the field */
@@ -2662,8 +2662,8 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 
 void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 {	
-	int px3 = p_ptr->px;
-	int py3 = p_ptr->py;
+	int px = p_ptr->px;
+	int py = p_ptr->py;
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2688,7 +2688,7 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Darkeness */
-	unlite_room(py3, px3);
+	unlite_room(py, px);
 	
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
@@ -2766,8 +2766,8 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 
 void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 {	
-	int px3 = p_ptr->px;
-	int py3 = p_ptr->py;
+	int px = p_ptr->px;
+	int py = p_ptr->py;
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2779,7 +2779,7 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 	
 	msg_print("You smell something musty.");
 	
-	(void)raise_dead(py3, px3, FALSE);
+	(void)raise_dead(py, px, FALSE);
 }
 
 
@@ -2847,8 +2847,8 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 
 void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 {	
-	int px3 = p_ptr->px;
-	int py3 = p_ptr->py;
+	int px = p_ptr->px;
+	int py = p_ptr->py;
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2861,7 +2861,7 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 	msg_print("Zap!");
 	
 	/* Summon monsters */
-	summon_specific(0, py3, px3, dun_level, 0, TRUE, FALSE, FALSE);
+	summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 	
 	/* Delete the field */
 	delete_field_ptr(field_ptr);

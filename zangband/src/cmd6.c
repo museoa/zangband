@@ -1101,8 +1101,8 @@ void do_cmd_quaff_potion(void)
  */
 static void do_cmd_read_scroll_aux(int item)
 {
-	int py3 = p_ptr->py;
-	int px3 = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	int         k, used_up, ident, lev;
 	object_type *o_ptr;
@@ -1174,7 +1174,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			for (k = 0; k < randint1(3); k++)
 			{
-				if (summon_specific(0, py3, px3, dun_level, 0, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1186,7 +1186,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			for (k = 0; k < randint1(3); k++)
 			{
-				if (summon_specific(0, py3, px3, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1411,7 +1411,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_STAR_DESTRUCTION:
 		{
-			if (destroy_area(py3, px3, 15, TRUE))
+			if (destroy_area(py, px, 15, TRUE))
 				ident = TRUE;
 			else
 				msg_print("The dungeon trembles...");
@@ -1441,14 +1441,14 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_ACQUIREMENT:
 		{
-			acquirement(py3, px3, 1, TRUE, FALSE);
+			acquirement(py, px, 1, TRUE, FALSE);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_ACQUIREMENT:
 		{
-			acquirement(py3, px3, randint1(2) + 1, TRUE, FALSE);
+			acquirement(py, px, randint1(2) + 1, TRUE, FALSE);
 			ident = TRUE;
 			break;
 		}
@@ -1626,8 +1626,8 @@ void do_cmd_read_scroll(void)
  */
 static void do_cmd_use_staff_aux(int item)
 {
-	int py3 = p_ptr->py;
-	int px3 = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	int         ident, chance, k, lev;
 	object_type *o_ptr;
@@ -1738,7 +1738,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			for (k = 0; k < randint1(4); k++)
 			{
-				if (summon_specific(0, py3, px3, dun_level, 0, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1792,7 +1792,7 @@ static void do_cmd_use_staff_aux(int item)
 
 				while (attempts--)
 				{
-					scatter(&y, &x, py3, px3, 4, 0);
+					scatter(&y, &x, py, px, 4, 0);
 
 					/* paranoia */
 					if (!in_bounds2(y, x)) continue;
@@ -1801,7 +1801,7 @@ static void do_cmd_use_staff_aux(int item)
 
 					if (!cave_floor_grid(c_ptr)) continue;
 
-					if ((y != py3) || (x != px3)) break;
+					if ((y != py) || (x != px)) break;
 				}
 
 				project(0, 0, y, x, damroll(6, 8), GF_LITE_WEAK,
@@ -1970,7 +1970,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_EARTHQUAKES:
 		{
-			if (earthquake(py3, px3, 10))
+			if (earthquake(py, px, 10))
 				ident = TRUE;
 			else
 				msg_print("The dungeon trembles.");
@@ -1980,7 +1980,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_DESTRUCTION:
 		{
-			if (destroy_area(py3, px3, 15, TRUE))
+			if (destroy_area(py, px, 15, TRUE))
 				ident = TRUE;
 
 			break;

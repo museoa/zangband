@@ -419,6 +419,9 @@ static int mon_will_run(int m_idx)
  */
 static bool get_moves_aux(int m_idx, int *yp, int *xp)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int i, y, x, y1, x1, when = 0, cost = 999;
 
 	cave_type *c_ptr;
@@ -441,7 +444,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	c_ptr = area(y1,x1);
 
 	/* The player is not currently near the monster grid */
-	if (c_ptr->when < area(py,px)->when)
+	if (c_ptr->when < area(py, px)->when)
 	{
 		/* The player has never been near the monster grid */
 		if (!c_ptr->when) return (FALSE);
@@ -507,7 +510,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 */
 static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 {
-	int y, x, y1, x1, fy, fx, gy = 0, gx = 0;
+	int y, x, y1, x1, fy, fx, px, py, gy = 0, gx = 0;
 	int when = 0, score = -1;
 	int i;
 
@@ -516,6 +519,10 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 
 	/* Monster flowing disabled */
 	if (!flow_by_sound) return (FALSE);
+
+	/* Player location */
+	py = p_ptr->py;
+	px = p_ptr->px;
 
 	/* Monster location */
 	fy = m_ptr->fy;
@@ -526,7 +533,7 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 	x1 = fx - (*xp);
 
 	/* The player is not currently near the monster grid */
-	if (area(fy,fx)->when < area(py,px)->when)
+	if (area(fy,fx)->when < area(py, px)->when)
 	{
 		/* No reason to attempt flowing */
 		return (FALSE);
@@ -740,6 +747,9 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
@@ -778,10 +788,10 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 			if (flow_by_sound)
 				{
 				/* Ignore grids very far from the player */
-				if (c_ptr->when < area(py,px)->when) continue;
+				if (c_ptr->when < area(py, px)->when) continue;
 
 				/* Ignore too-distant grids */
-				if (c_ptr->cost > area(fy,fx)->cost + 2 * d) continue;
+				if (c_ptr->cost > area(fy, fx)->cost + 2 * d) continue;
 			}
 
 			/* Check for absence of shot (more or less) */
@@ -845,6 +855,9 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
+
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	int y, x, dy, dx, d, dis, i;
 	int gy = 0, gx = 0, gdis = 999;
@@ -914,6 +927,9 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
  */
 static bool get_moves(int m_idx, int *mm)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	int          y, ay, x, ax;
@@ -2476,7 +2492,7 @@ static void process_monster(int m_idx)
 		}
 
 		/* Hack -- player 'in' wall */
-		else if ((ny == py) && (nx == px))
+		else if ((ny == p_ptr->py) && (nx == p_ptr->px))
 		{
 			do_move = TRUE;
 		}
@@ -2543,7 +2559,7 @@ static void process_monster(int m_idx)
 		}
 
 		/* Some monsters never attack */
-		if (do_move && (ny == py) && (nx == px) &&
+		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
 			(r_ptr->flags1 & RF1_NEVER_BLOW))
 		{
 			/* Hack -- memorize lack of attacks */
@@ -2607,7 +2623,7 @@ static void process_monster(int m_idx)
 		}
 
 		/* The player is in the way.  Attack him. */
-		if (do_move && (ny == py) && (nx == px))
+		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px))
 		{
 			/* Do the attack */
 			(void)make_attack_normal(m_idx);
@@ -3160,7 +3176,7 @@ void process_monsters(int min_energy)
 		/* Hack -- Monsters can "smell" the player from far away */
 		/* Note that most monsters have "aaf" of "20" or so */
 		else if (flow_by_sound &&
-			(area(py,px)->when == c_ptr->when) &&
+			(area(p_ptr->py, p_ptr->px)->when == c_ptr->when) &&
 			(c_ptr->cost < MONSTER_FLOW_DEPTH) &&
 			(c_ptr->cost < r_ptr->aaf))
 		{

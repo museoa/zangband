@@ -369,7 +369,7 @@ static bool cast_mindcrafter_spell(int spell)
 		/* Mindwave */
 		msg_print("Mind-warping forces emanate from your brain!");
 		if (plev < 25)
-			project(0, 2 + plev / 10, py, px,
+			project(0, 2 + plev / 10, p_ptr->py, p_ptr->px,
 			        (plev * 3) / 2, GF_PSI, PROJECT_KILL);
 		else
 			(void)mindblast_monsters(plev * ((plev - 5) / 10 + 1));
@@ -417,7 +417,7 @@ static bool cast_mindcrafter_spell(int spell)
 	case 11:
 		/* Telekinesis */
 		msg_print("A wave of pure physical force radiates out from your body!");
-		project(0, 3 + plev / 10, py, px,
+		project(0, 3 + plev / 10, p_ptr->py, p_ptr->px,
 			plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID);
 		break;
 	default:
@@ -528,7 +528,7 @@ void do_cmd_mindcraft(void)
 			{
 				/* Mana storm */
 				msg_print("Your mind unleashes its power in an uncontrollable storm!");
-				project(1, 2 + plev / 10, py, px, plev * 2,
+				project(1, 2 + plev / 10, p_ptr->py, p_ptr->px, plev * 2,
 					GF_MANA, PROJECT_JUMP | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM);
 				p_ptr->csp = MAX(0, p_ptr->csp - plev * MAX(1, plev / 10));
 			}

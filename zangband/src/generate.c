@@ -867,7 +867,7 @@ static bool cave_gen(void)
 							c_ptr = &cave[y][x];
 
 							if (!cave_naked_grid(c_ptr)) continue;
-							if (distance(y, x, py, px) < 10) continue;
+							if (distance(y, x, p_ptr->py, p_ptr->px) < 10) continue;
 							else break;
 						}
 
@@ -1161,8 +1161,8 @@ void generate_cave(void)
 		/* Hack XXX XXX */
 		/* Exit, information is already in other data type. */
 
-		px = (s16b)p_ptr->wilderness_x;
-		py = (s16b)p_ptr->wilderness_y;
+		/* px = (s16b)p_ptr->wilderness_x; */
+		/* py = (s16b)p_ptr->wilderness_y; */
 
 		p_ptr->px = (s16b)p_ptr->wilderness_x;
 		p_ptr->py = (s16b)p_ptr->wilderness_y;

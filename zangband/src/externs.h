@@ -272,8 +272,6 @@ extern char *mp_c;
 extern byte *mp_ta;
 extern char *mp_tc;
 #endif /* USE_TRANSPARENCY */
-extern s16b py;
-extern s16b px;
 extern s16b target_who;
 extern s16b target_col;
 extern s16b target_row;

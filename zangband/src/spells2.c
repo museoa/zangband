@@ -1323,6 +1323,9 @@ void report_magics(void)
  */
 bool detect_traps(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int             x, y;
 	bool            detect = FALSE;
 	cave_type       *c_ptr;
@@ -1373,6 +1376,9 @@ bool detect_traps(void)
  */
 bool detect_doors(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int y, x;
 
 	bool detect = FALSE;
@@ -1431,6 +1437,9 @@ bool detect_doors(void)
  */
 bool detect_stairs(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int y, x;
 
 	bool detect = FALSE;
@@ -1481,6 +1490,9 @@ bool detect_stairs(void)
  */
 bool detect_treasure(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int y, x;
 
 	bool detect = FALSE;
@@ -1541,6 +1553,9 @@ bool detect_treasure(void)
  */
 bool detect_objects_gold(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x;
 
 	bool detect = FALSE;
@@ -1598,6 +1613,9 @@ bool detect_objects_gold(void)
  */
 bool detect_objects_normal(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x;
 
 	bool detect = FALSE;
@@ -1661,6 +1679,9 @@ bool detect_objects_normal(void)
  */
 bool detect_objects_magic(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x, tv;
 
 	bool detect = FALSE;
@@ -1731,6 +1752,9 @@ bool detect_objects_magic(void)
  */
 bool detect_monsters_normal(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x;
 
 	bool flag = FALSE;
@@ -1786,6 +1810,9 @@ bool detect_monsters_normal(void)
  */
 bool detect_monsters_invis(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x;
 	bool flag = FALSE;
 
@@ -1846,6 +1873,9 @@ bool detect_monsters_invis(void)
  */
 bool detect_monsters_evil(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x;
 	bool flag = FALSE;
 
@@ -1911,6 +1941,9 @@ bool detect_monsters_evil(void)
  */
 bool detect_monsters_string(cptr Match)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i, y, x;
 	bool flag = FALSE;
 
@@ -1971,6 +2004,9 @@ bool detect_monsters_string(cptr Match)
  */
 bool detect_monsters_xxx(u32b match_flag)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int  i, y, x;
 	bool flag = FALSE;
 	cptr desc_monsters = "weird monsters";
@@ -2337,6 +2373,9 @@ void aggravate_monsters(int who)
  */
 bool genocide(int player_cast)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int     i;
 	char    typ;
 	bool    result = FALSE;
@@ -2412,6 +2451,9 @@ bool genocide(int player_cast)
  */
 bool mass_genocide(int player_cast)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int     i;
 	bool    result = FALSE;
 	int     msec = delay_factor * delay_factor * delay_factor;
@@ -2582,7 +2624,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 			c_ptr->info &= ~(CAVE_MARK | CAVE_GLOW);
 
 			/* Hack -- Notice player affect */
-			if ((x == px) && (y == py))
+			if ((x == p_ptr->px) && (y == p_ptr->py))
 			{
 				/* Hurt the player later */
 				flag = TRUE;
@@ -2710,6 +2752,9 @@ bool destroy_area(int y1, int x1, int r, int full)
  */
 bool earthquake(int cy, int cx, int r)
 {
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
 	int             i, t, y, x, yy, xx, dy, dx, oy, ox;
 	int             damage = 0;
 	int             sn = 0, sy = 0, sx = 0;
@@ -3388,6 +3433,9 @@ static int next_to_walls_adj(int cy, int cx)
  */
 static void cave_temp_room_aux(int y, int x)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	cave_type *c_ptr;
 
 	/* Verify */
@@ -3518,6 +3566,9 @@ void unlite_room(int y1, int x1)
  */
 bool lite_area(int dam, int rad)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
@@ -3543,6 +3594,9 @@ bool lite_area(int dam, int rad)
  */
 bool unlite_area(int dam, int rad)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
@@ -3571,6 +3625,9 @@ bool unlite_area(int dam, int rad)
  */
 bool fire_ball(int typ, int dir, int dam, int rad)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int tx, ty;
 
 	u16b flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -3599,6 +3656,9 @@ bool fire_ball(int typ, int dir, int dam, int rad)
  */
 bool teleport_swap(int dir)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int tx, ty;
 	cave_type * c_ptr;
 	monster_type * m_ptr;
@@ -3654,7 +3714,7 @@ bool teleport_swap(int dir)
 		 FIELD_ACT_MONSTER_LEAVE, m_ptr);
 		 
 	/* Move monster */
-	area(py,px)->m_idx = c_ptr->m_idx;
+	area(py, px)->m_idx = c_ptr->m_idx;
 
 	/* Update the old location */
 	c_ptr->m_idx = 0;
@@ -3731,6 +3791,9 @@ bool teleport_swap(int dir)
  */
 bool project_hook(int typ, int dir, int dam, u16b flg)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int tx, ty;
 
 	/* Pass through the target if needed */
@@ -3937,6 +4000,9 @@ bool teleport_monster(int dir)
  */
 bool door_creation(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0, 1, py, px, 0, GF_MAKE_DOOR, flg));
 }
@@ -3944,6 +4010,9 @@ bool door_creation(void)
 
 bool trap_creation(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0, 1, py, px, 0, GF_MAKE_TRAP, flg));
 }
@@ -3951,6 +4020,9 @@ bool trap_creation(void)
 
 bool glyph_creation(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_ITEM;
 	return (project(0, 1, py, px, 0, GF_MAKE_GLYPH, flg));
 }
@@ -3958,6 +4030,9 @@ bool glyph_creation(void)
 
 bool wall_stone(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 
 	bool dummy = (project(0, 1, py, px, 0, GF_STONE_WALL, flg));
@@ -3980,6 +4055,9 @@ bool wall_stone(void)
 
 bool destroy_doors_touch(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0, 1, py, px, 0, GF_KILL_DOOR, flg));
 }
@@ -3987,6 +4065,9 @@ bool destroy_doors_touch(void)
 
 bool sleep_monsters_touch(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	u16b flg = PROJECT_KILL | PROJECT_HIDE;
 	return (project(0, 1, py, px, p_ptr->lev, GF_OLD_SLEEP, flg));
 }
@@ -4048,6 +4129,9 @@ void call_chaos(void)
  */
 bool activate_ty_curse(bool stop_ty, int *count)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int stat = 0;
 
 	u16b flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
@@ -4184,6 +4268,9 @@ bool activate_ty_curse(bool stop_ty, int *count)
 
 int activate_hi_summon(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i;
 	int count = 0;
 
@@ -4268,6 +4355,9 @@ int summon_cyber(int who, int y, int x)
 
 void wall_breaker(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int i;
 	int y, x;
 	int attempts = 1000;
@@ -4313,6 +4403,9 @@ void wall_breaker(void)
  */
 bool detect_monsters_nonliving(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int     i, y, x;
 	bool    flag = FALSE;
 

@@ -394,12 +394,6 @@ char *mp_tc = NULL;
 
 
 /*
- * Player location in dungeon
- */
-s16b py;
-s16b px;
-
-/*
  * Targeting variables
  */
 s16b target_who;

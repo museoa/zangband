@@ -477,8 +477,8 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
  */
 void search(void)
 {
-	int py3 = p_ptr->py;
-	int px3 = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	int y, x, chance;
 	int old_count;
@@ -503,9 +503,9 @@ void search(void)
 	if (p_ptr->confused || p_ptr->image) chance = chance / 10;
 
 	/* Search the nearby grids, which are always in bounds */
-	for (y = (py3 - 1); y <= (py3 + 1); y++)
+	for (y = (py - 1); y <= (py + 1); y++)
 	{
-		for (x = (px3 - 1); x <= (px3 + 1); x++)
+		for (x = (px - 1); x <= (px + 1); x++)
 		{
 			/* Sometimes, notice things */
 			if (randint0(100) < chance)
@@ -726,8 +726,8 @@ static void auto_destroy_items(cave_type *c_ptr)
  */
 void carry(int pickup)
 {
-	int py3 = p_ptr->py;
-	int px3 = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	s16b this_o_idx, next_o_idx;
 
@@ -756,10 +756,10 @@ void carry(int pickup)
 	handle_stuff();
 	
 	/* Destroy worthless items below the player */
-	auto_destroy_items(area(py3, px3));
+	auto_destroy_items(area(py, px));
 
 	/* Scan the pile of objects */
-	for (this_o_idx = area(py3, px3)->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(py, px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -1972,10 +1972,10 @@ void py_attack(int y, int x)
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
 	{
-		int px3 = p_ptr->px;
-		int py3 = p_ptr->py;
+		int px = p_ptr->px;
+		int py = p_ptr->py;
 
-		earthquake(py3, px3, 10);
+		earthquake(py, px, 10);
 	}
 }
 
@@ -2184,8 +2184,8 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
  */
 void move_player(int dir, int do_pickup)
 {
-	int py3 = p_ptr->py;
-	int px3 = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	int y, x;
 
@@ -2201,8 +2201,8 @@ void move_player(int dir, int do_pickup)
 	bool oktomove = TRUE;
 
 	/* Find the result of moving */
-	y = py3 + ddy[dir];
-	x = px3 + ddx[dir];
+	y = py + ddy[dir];
+	x = px + ddx[dir];
 
 	/* Do not exit the wilderness-area */
 	if (!dun_level)
@@ -2250,7 +2250,7 @@ void move_player(int dir, int do_pickup)
 		if (!is_hostile(m_ptr) &&
 		    !(p_ptr->confused || p_ptr->image || !m_ptr->ml || p_ptr->stun ||
 		    ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)) &&
-		    (pattern_seq(py3, px3, y, x)) &&
+		    (pattern_seq(py, px, y, x)) &&
 		    ((cave_floor_grid(c_ptr)) || p_can_pass_walls))
 		{
 			m_ptr->csleep = 0;
@@ -2269,15 +2269,15 @@ void move_player(int dir, int do_pickup)
 			{
 				py_attack(y, x);
 			}
-			else if (cave_floor_grid(area(py3, px3)) ||
+			else if (cave_floor_grid(area(py, px)) ||
 			    (r_info[m_ptr->r_idx].flags2 & RF2_PASS_WALL))
 			{
 				msg_format("You push past %s.", m_name);
-				m_ptr->fy = py3;
-				m_ptr->fx = px3;
-				area(py3, px3)->m_idx = c_ptr->m_idx;
+				m_ptr->fy = py;
+				m_ptr->fx = px;
+				area(py, px)->m_idx = c_ptr->m_idx;
 				c_ptr->m_idx = 0;
-				update_mon(area(py3, px3)->m_idx, TRUE);
+				update_mon(area(py, px)->m_idx, TRUE);
 			}
 			else
 			{
@@ -2462,7 +2462,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Normal movement */
-	if (!pattern_seq(py3, px3, y, x))
+	if (!pattern_seq(py, px, y, x))
 	{
 		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 		{
@@ -2488,20 +2488,20 @@ void move_player(int dir, int do_pickup)
 #endif /* USE_SCRIPT */
 
 		/* Save old location */
-		oy = py3;
-		ox = px3;
+		oy = py;
+		ox = px;
 
 		/* Process fields under the player. */
-		field_hook(&area(py3, px3)->fld_idx,
+		field_hook(&area(py, px)->fld_idx,
 			 FIELD_ACT_PLAYER_LEAVE, NULL);
+
+		/* Move the player */
+		/* py = y; */
+		/* px = x; */
 
 		/* Move the player */
 		py = y;
 		px = x;
-
-		/* Move the player */
-		py3 = y;
-		px3 = x;
 
 		/* Move the player */
 		p_ptr->py = y;
@@ -2510,21 +2510,21 @@ void move_player(int dir, int do_pickup)
 		if (!dun_level)
 		{
 			/* Scroll wilderness */
-			p_ptr->wilderness_x = px3;
-			p_ptr->wilderness_y = py3;
+			p_ptr->wilderness_x = px;
+			p_ptr->wilderness_y = py;
 			move_wild();
 		}
 		
 		/* Process fields under the player. */
-		field_hook(&area(py3, px3)->fld_idx,
+		field_hook(&area(py, px)->fld_idx,
 			 FIELD_ACT_PLAYER_ENTER, NULL);
 		
 		/* Redraw new spot */
-		lite_spot(py3, px3);		
+		lite_spot(py, px);		
 
 		/* Redraw old spot */
 		lite_spot(oy, ox);
-
+ 
 		/* Sound */
 		/* sound(SOUND_WALK); */
 
@@ -2548,7 +2548,7 @@ void move_player(int dir, int do_pickup)
 		 * we are running?
 		 */
 		if (disturb_traps && p_ptr->detected && running && 
-			(distance(py3, px3, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
+			(distance(py, px, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
 		{
 			/* We are out of range */
 				
@@ -2898,8 +2898,8 @@ static bool find_breakleft;
  */
 static void run_init(int dir)
 {
-	int py3 = p_ptr->py;
-	int px3 = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	int             row, col, deepleft, deepright;
 	int             i, shortleft, shortright;
@@ -2933,14 +2933,14 @@ static void run_init(int dir)
 	shortright = shortleft = FALSE;
 
 	/* Find the destination grid */
-	row = py3 + ddy[dir];
-	col = px3 + ddx[dir];
+	row = py + ddy[dir];
+	col = px + ddx[dir];
 
 	/* Extract cycle index */
 	i = chome[dir];
 
 	/* Check for walls */
-	if (see_wall(cycle[i+1], py3, px3))
+	if (see_wall(cycle[i+1], py, px))
 	{
 		find_breakleft = TRUE;
 		shortleft = TRUE;
@@ -2952,7 +2952,7 @@ static void run_init(int dir)
 	}
 
 	/* Check for walls */
-	if (see_wall(cycle[i-1], py3, px3))
+	if (see_wall(cycle[i-1], py, px))
 	{
 		find_breakright = TRUE;
 		shortright = TRUE;
@@ -3005,8 +3005,8 @@ static void run_init(int dir)
  */
 static bool run_test(void)
 {
-	int px3 = p_ptr->px;
-	int py3 = p_ptr->py;
+	int px = p_ptr->px;
+	int py = p_ptr->py;
 
 	int         prev_dir, new_dir, check_dir = 0;
 	int         row, col;
@@ -3015,7 +3015,7 @@ static bool run_test(void)
 	cave_type   *c_ptr;
 
 	/* Hack - do not run next to edge of wilderness */
-	if (!in_bounds(py3, px3)) return TRUE;
+	if (!in_bounds(py, px)) return TRUE;
 
 	/* Where we came from */
 	prev_dir = find_prevdir;
@@ -3035,8 +3035,8 @@ static bool run_test(void)
 		new_dir = cycle[chome[prev_dir] + i];
 
 		/* New location */
-		row = py3 + ddy[new_dir];
-		col = px3 + ddx[new_dir];
+		row = py + ddy[new_dir];
+		col = px + ddx[new_dir];
 
 		if (!in_bounds2(row, col)) continue;
 
@@ -3298,13 +3298,13 @@ static bool run_test(void)
 		{
 			new_dir = cycle[chome[prev_dir] + i];
 
-			row = py3 + ddy[new_dir];
-			col = px3 + ddx[new_dir];
+			row = py + ddy[new_dir];
+			col = px + ddx[new_dir];
 
 			if (!in_bounds2(row, col)) continue;
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
-			if (!see_wall(new_dir, py3, px3))
+			if (!see_wall(new_dir, py, px))
 
 			{
 				/* Looking to break right */
@@ -3330,8 +3330,8 @@ static bool run_test(void)
 		{
 			new_dir = cycle[chome[prev_dir] + i];
 
-			row = py3 + ddy[new_dir];
-			col = px3 + ddx[new_dir];
+			row = py + ddy[new_dir];
+			col = px + ddx[new_dir];
 
 			if (!in_bounds2(row, col)) continue;
 
@@ -3339,7 +3339,7 @@ static bool run_test(void)
 			c_ptr = area(row, col);
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
-			if (!see_wall(new_dir, py3, px3))
+			if (!see_wall(new_dir, py, px))
 
 			{
 				/* Looking to break left */
@@ -3395,8 +3395,8 @@ static bool run_test(void)
 		else
 		{
 			/* Get next location */
-			row = py3 + ddy[option];
-			col = px3 + ddx[option];
+			row = py + ddy[option];
+			col = px + ddx[option];
 
 			/* Don't see that it is closed off. */
 			/* This could be a potential corner or an intersection. */
@@ -3439,7 +3439,7 @@ static bool run_test(void)
 
 
 	/* About to hit a known wall, stop */
-	if (see_wall(find_current, py3, px3))
+	if (see_wall(find_current, py, px))
 	{
 		return (TRUE);
 	}
@@ -3455,14 +3455,14 @@ static bool run_test(void)
  */
 void run_step(int dir)
 {
-	int px3 = p_ptr->px;
-	int py3 = p_ptr->py;
+	int px = p_ptr->px;
+	int py = p_ptr->py;
 
 	/* Start running */
 	if (dir)
 	{
 		/* Hack -- do not start silly run */
-		if (see_wall(dir, py3, px3))
+		if (see_wall(dir, py, px))
 		{
 			/* Message */
 			msg_print("You cannot run in that direction.");

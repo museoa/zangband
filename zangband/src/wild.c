@@ -3346,6 +3346,9 @@ static void add_monsters_block(int x, int y)
  */
 static void add_monsters(void)
 {
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
 	int x, y;
 
 	/* Add monsters */
@@ -5129,8 +5132,8 @@ static void create_law_map(u16b sea)
  */
 static void wild_done(void)
 {
-	px = (s16b)p_ptr->wilderness_x;
-	py = (s16b)p_ptr->wilderness_y;
+	/* px = (s16b)p_ptr->wilderness_x; */
+	/* py = (s16b)p_ptr->wilderness_y; */
 
 	p_ptr->px = (s16b)p_ptr->wilderness_x;
 	p_ptr->py = (s16b)p_ptr->wilderness_y;

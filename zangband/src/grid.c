@@ -49,8 +49,8 @@ bool new_player_spot(void)
 
 
 	/* Save the new player grid */
-	py = y;
-	px = x;
+	/* py = y; */
+	/* px = x; */
 
 	/* Save the new player grid */
 	p_ptr->py = y;
