@@ -3706,15 +3706,18 @@ static void borg_notice_home_weapon(list_item *l_ptr)
 
 	num_blow *= l_ptr->number;
 
+	/*
+	 * It should include bp_ptr->to_d in the home damage calculation too but
+	 * that value is not necessarily finished when it is used here.  This can
+	 * cause home loops so I delete the reference to it
+	 */
 	if (l_ptr->to_d > 8 || bp_ptr->lev < 15)
 	{
-		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-								   (bp_ptr->to_d + l_ptr->to_d));
+		home_damage += num_blow * (l_ptr->dd * l_ptr->ds + l_ptr->to_d);
 	}
 	else
 	{
-		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-								   (bp_ptr->to_d + 8));
+		home_damage += num_blow * (l_ptr->dd * l_ptr->ds + 8);
 	}
 }
 
@@ -4492,8 +4495,9 @@ static void borg_notice_home_aux(void)
 		/* Skip empty / unaware items */
 		if (!l_ptr || !l_ptr->k_idx) continue;
 
-		/* Don't count items we are swapping */
+		/* Don't count items we are swapping or dropping */
 		if (l_ptr->treat_as == TREAT_AS_SWAP) continue;
+		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
 
 		/* Save number of items */
 		num = l_ptr->number;

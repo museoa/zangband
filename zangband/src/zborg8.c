@@ -342,7 +342,7 @@ static int borg_think_home_sell_aux2(void)
 			list_item *l_ptr = &borg_home[i];
 
 			/* Remove the item */
-			l_ptr->treat_as = TREAT_AS_LESS;
+			l_ptr->treat_as = TREAT_AS_GONE;
 
 			/* Evaluate the home */
 			p = borg_power() + borg_power_home();
@@ -359,6 +359,7 @@ static int borg_think_home_sell_aux2(void)
 
 		/* Up the minimum a bit */
 		if (b_s < b_p) b_p += b_p - b_s;
+
 	}
 
 	/* Loop through all the items */
@@ -947,7 +948,7 @@ static bool borg_think_home_grab_aux(void)
 	/* Evaluate the home */
 	b_s = borg_power() + borg_power_home();
 
-	/* If the home is full force one item to be picked up */
+	/* If the home is full, force one item to be picked up */
 	if (home_num == STORE_INVEN_MAX) b_s = 0;
 
 	/* Scan the home */
@@ -955,8 +956,17 @@ static bool borg_think_home_grab_aux(void)
 	{
 		list_item *l_ptr = &borg_home[n];
 
-		/* Remove the item */
-		l_ptr->treat_as = TREAT_AS_LESS;
+		/* If the home is full */
+		if (home_num == STORE_INVEN_MAX)
+		{
+			/* Remove the pile */
+			l_ptr->treat_as = TREAT_AS_GONE;
+		}
+		else
+		{
+			/* Remove one item */
+			l_ptr->treat_as = TREAT_AS_LESS;
+		}
 
 		/* Evaluate the home */
 		s = borg_power() + borg_power_home();
