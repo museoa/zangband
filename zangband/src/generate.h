@@ -8,7 +8,7 @@
 #define DUN_DEST    18  /* 1/chance of having a destroyed level */
 #define SMALL_LEVEL 3   /* 1/chance of smaller size (3) */
 #define EMPTY_LEVEL 15  /* 1/chance of being 'empty' (15) */
-#define LAKE_LEVEL  7   /* 1/chance of being a lake on the level */
+#define LAKE_LEVEL  10   /* 1/chance of being a lake on the level */
 #define DARK_EMPTY  5   /* 1/chance of arena level NOT being lit (2) */
 #define DUN_CAV1    600 /* 1/chance for getting a cavern is: */
 #define DUN_CAV2    75  /* DUN_CAV1/(dun_level + DUN_CAV2)  */
