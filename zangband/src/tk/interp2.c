@@ -349,18 +349,10 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"abort", "tkdir"
-		"new", "open", "quit", "version",
-		"savefile", NULL};
-	enum {IDX_ABORT, IDX_TKDIR,
-		IDX_NEW, IDX_OPEN, IDX_QUIT, IDX_VERSION,
-		IDX_SAVEFILE} option;
+	static cptr cmdOptions[] = {"abort", "tkdir" "version", NULL};
+	enum {IDX_ABORT, IDX_TKDIR, IDX_VERSION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
-
-	char *t, *utfString, *extString;
-	Tcl_DString utfDString, extDString;
-	Tcl_Channel c;
 
 	if (objC < 2)
 	{
@@ -413,123 +405,9 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			break;
 		}
 		
-		case IDX_NEW: /* new */
-			if (!g_initialized)
-			{
-				Tcl_SetStringObj(resultPtr, (char *) "game is not initialized", -1);
-				return TCL_ERROR;
-			}
-			if (game_in_progress)
-			{
-				Tcl_SetStringObj(resultPtr, (char *) "game is in progress", -1);
-				return TCL_ERROR;
-			}
-			game_in_progress = 1;
-			play_game(TRUE);
-			quit(NULL);
-			break;
-
-		case IDX_OPEN: /* open */
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "filename");
-				return TCL_ERROR;
-			}
-			if (!g_initialized)
-			{
-				Tcl_SetStringObj(resultPtr, (char *) "game is not initialized", -1);
-				return TCL_ERROR;
-			}
-			if (game_in_progress)
-			{
-				Tcl_SetStringObj(resultPtr, (char *) "game is in progress", -1);
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetString(objV[2]);
-
-			/* Translate the file name */
-			utfString = Tcl_TranslateFileName(interp, t, &utfDString);
-			if (utfString == NULL)
-			{
-				/* Note: Tcl_DStringFree() is called for us */
-				return TCL_ERROR;
-			}
-
-			/* Test that the file is readable */
-			c = Tcl_OpenFileChannel(interp, utfString, (char *) "r", 0);
-			if (c == (Tcl_Channel) NULL)
-			{
-				/* Clean up */
-				Tcl_DStringFree(&utfDString);
-
-				/* Failure */
-				return TCL_ERROR;
-			}
-
-			/* Convert UTF8 to native encoding */
-			Tcl_UtfToExternalDString(NULL, utfString, -1, &extDString);
-			extString = Tcl_DStringValue(&extDString);
-
-			/* Set savefile */
-			(void) strcpy(savefile, extString);
-
-			/* Clean up */
-			Tcl_DStringFree(&extDString);
-			Tcl_DStringFree(&utfDString);
-			Tcl_Close(NULL, c);
-
-			/* Play the game (never returns) */
-			game_in_progress = 1;
-			play_game(FALSE);
-			quit(NULL);
-			break;
-
-		case IDX_QUIT: /* quit */
-			if (game_in_progress && character_generated)
-			{
-				/* Hack -- Forget messages */
-				msg_flag = FALSE;
-
-				/* Save the game */
-				do_cmd_save_game(FALSE);
-			}
-			quit(NULL);
-			break;
-
 		case IDX_VERSION: /* version */
 			Tcl_SetStringObj(resultPtr, format("%d.%d.%d", FAKE_VER_MAJOR,
 				FAKE_VER_MINOR, FAKE_VER_PATCH), -1);
-			break;
-
-		case IDX_SAVEFILE: /* savefile */
-			if (!g_initialized)
-			{
-				Tcl_SetStringObj(resultPtr, (char *) "game is not initialized", -1);
-				return TCL_ERROR;
-			}
-
-			/* Return current savefile */
-			if (objC == 2)
-			{
-				ExtToUtf_SetResult(interp, savefile);
-				break;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetString(objV[2]);
-
-			/* Translate the file path */
-			extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-			if (extString == NULL) return TCL_ERROR;
-
-			/* Remember the savefile */
-			(void) strcpy(savefile, extString);
-
-			/* Clean up */
-			Tcl_DStringFree(&extDString);
-			
 			break;
 	}
 
