@@ -1218,9 +1218,7 @@ static void fix_inven(void)
 	int j;
 
 	/* Update inventory information */
-#ifdef TERM_USE_LIST
 	Term_write_list(p_ptr->inventory, LIST_INVEN);
-#endif /* TERM_USE_LIST */
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++)
@@ -1257,9 +1255,7 @@ static void fix_equip(void)
 	int j;
 
 	/* Update equipment information */
-#ifdef TERM_USE_LIST
 	Term_write_equipment();
-#endif /* TERM_USE_LIST */
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++)

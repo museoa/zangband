@@ -3547,15 +3547,11 @@ void play_game(bool new_game)
 	window_stuff();
 
 	/* Initialise inventory and equipment info for ports */
-#ifdef TERM_USE_LIST
 	Term_write_list(p_ptr->inventory, LIST_INVEN);
 	Term_write_equipment();
-#endif /* TERM_USE_LIST */
 
-#ifdef TERM_USE_MAP		
-		/* Notice movement */
-		Term_move_player();
-#endif /* TERM_USE_MAP */
+	/* Notice movement */
+	Term_move_player();
 
 	/* Process */
 	while (TRUE)

@@ -2543,10 +2543,8 @@ void move_player(int dir, int do_pickup)
 		p_ptr->py = y;
 		p_ptr->px = x;
 
-#ifdef TERM_USE_MAP		
 		/* Notice movement */
 		Term_move_player();
-#endif /* TERM_USE_MAP */
 
 		if (!p_ptr->depth)
 		{

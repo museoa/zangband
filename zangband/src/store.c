@@ -1690,7 +1690,6 @@ static void store_sell(int *store_top)
 	s = "You have nothing that I want.";
 
 	/* Update player inventory information */
-#ifdef TERM_USE_LIST
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Not right type of item? */
@@ -1729,7 +1728,6 @@ static void store_sell(int *store_top)
 	OBJ_ITT_END;
 
 	Term_write_list(p_ptr->inventory, LIST_INVEN);
-#endif /* TERM_USE_LIST */
 
 	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN));
 
@@ -2551,7 +2549,6 @@ void do_cmd_store(field_type *f1_ptr)
 		clear_from(21);
 
 		/* Update store inventory information */
-#ifdef TERM_USE_LIST
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
 			Term_write_list(st_ptr->stock, LIST_HOME);
@@ -2560,8 +2557,6 @@ void do_cmd_store(field_type *f1_ptr)
 		{
 			Term_write_list(st_ptr->stock, LIST_STORE);
 		}
-#endif /* TERM_USE_LIST */
-
 
 		/* Basic commands */
 		prt(" ESC) Exit from Building.", 0, 22);

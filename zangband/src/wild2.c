@@ -3930,10 +3930,8 @@ void change_level(int level)
 		}
 	}
 
-#ifdef TERM_USE_MAP
 	/* Tell the rest of the world that the map is no longer valid */
 	Term_erase_map();
-#endif /* TERM_USE_MAP */
 }
 
 

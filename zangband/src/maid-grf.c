@@ -849,6 +849,32 @@ void Term_move_player(void)
 	set_player_location(p_ptr->px, p_ptr->py);
 }
 
+#else /* TERM_USE_MAP */
+
+/*** Make generic do-nothing functions ***/
+
+
+void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
+{
+	/* Ignore all parameters */
+	(void) x;
+	(void) y;
+	(void) c_ptr;
+	(void) pc_ptr;
+	
+	/* Do nothing */
+}
+
+void Term_erase_map(void)
+{
+	/* Do nothing */
+}
+
+void Term_move_player(void)
+{
+	/* Do nothing */
+}
+
 #endif /* TERM_USE_MAP */
 
 
@@ -1255,6 +1281,24 @@ void Term_write_list(s16b o_idx, byte list_type)
 
 	/* Free the list */
 	FREE(list);
+}
+
+#else /* TERM_USE_LIST */
+
+/*** Make generic do-nothing functions ***/
+
+void Term_write_equipment(void)
+{
+	/* Do nothing */
+}
+
+void Term_write_list(s16b o_idx, byte list_type)
+{
+	/* Ignore parameters */
+	(void) o_idx;
+	(void) list_type;
+	
+	/* Do nothing */
 }
 
 #endif /* TERM_USE_LIST */

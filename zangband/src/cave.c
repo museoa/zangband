@@ -2153,10 +2153,8 @@ void display_dungeon(void)
 				c_ptr = area(x, y);
 				pc_ptr = parea(x, y);
 
-#ifdef TERM_USE_MAP
 				/* Tell the world about this square */
 				Term_write_map(x, y, c_ptr, pc_ptr);
-#endif /* TERM_USE_MAP */
 
 				/* Examine the grid */
 				map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
@@ -2206,10 +2204,8 @@ void lite_spot(int x, int y)
 		c_ptr = area(x, y);
 		pc_ptr = parea(x, y);
 
-#ifdef TERM_USE_MAP
 		/* Tell the world about this square */
 		Term_write_map(x, y, c_ptr, pc_ptr);
-#endif /* TERM_USE_MAP */
 
 		/* Redraw if on screen */
 		if (panel_contains(x, y))
@@ -2330,10 +2326,8 @@ void prt_map(void)
 
 			pc_ptr = parea(x, y);
 
-#ifdef TERM_USE_MAP
 			/* Tell the world about this square */
 			Term_write_map(x, y, c_ptr, pc_ptr);
-#endif /* TERM_USE_MAP */
 
 			/* Determine what is there */
 			map_info(c_ptr, pc_ptr, pa++, pc++, pta++, ptc++);
@@ -2736,11 +2730,8 @@ void display_map(int *cx, int *cy)
 				c_ptr = area(i, j);
 				pc_ptr = parea(i, j);
 
-#ifdef TERM_USE_MAP
 				/* Tell the world about this square */
 				Term_write_map(i, j, c_ptr, pc_ptr);
-#endif /* TERM_USE_MAP */
-
 
 				/* Extract the current attr/char at that map location */
 				map_info(c_ptr, pc_ptr, &ta, &tc, &tta, &ttc);

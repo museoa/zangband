@@ -434,11 +434,8 @@ void teleport_player(int dis)
 	p_ptr->py = y;
 	p_ptr->px = x;
 	
-#ifdef TERM_USE_MAP		
 	/* Notice movement */
 	Term_move_player();
-#endif /* TERM_USE_MAP */
-
 
 	if (!p_ptr->depth)
 	{
@@ -578,10 +575,8 @@ void teleport_player_to(int nx, int ny)
 	p_ptr->py = y;
 	p_ptr->px = x;
 	
-#ifdef TERM_USE_MAP		
 	/* Notice movement */
 	Term_move_player();
-#endif /* TERM_USE_MAP */
 	
 	if (!p_ptr->depth)
 	{
