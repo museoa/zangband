@@ -3006,14 +3006,14 @@ static void wild_done(void)
 	/* Refresh random number seed */
 	wild_seed = randint0(0x10000000);
 
-	/* We now are in the wilderness */
-	character_dungeon = TRUE;
-
 	/* Change back to inside wilderness */
 	p_ptr->depth = 0;
 
 	/* Change to the wilderness */
 	change_level(0);
+	
+	/* We now are in the wilderness */
+	character_dungeon = TRUE;
 }
 
 
