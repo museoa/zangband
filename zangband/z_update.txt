@@ -3,6 +3,8 @@ standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
 Done since 2.3.0:
+-Added Tom Morton's 'fake artifact names' patch.  Inscribing "a Foo" with
+ "#'Bar'" will display the item as "a Foo 'Bar'".
 -Due to popular demand, multiple rings are supported.  Additional rings 
  can be obtained upon reaching an appropriate level.
 -New ironman option: Nightmare mode.  It isn't even remotely fair.

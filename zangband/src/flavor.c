@@ -1266,8 +1266,18 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	/* Hack -- Append "Artifact" or "Special" names */
 	if (known)
 	{
+		if (o_ptr->inscription && strchr(quark_str(o_ptr->inscription), '#'))
+		{
+			/* Find the '#' */
+			cptr str = strchr(quark_str(o_ptr->inscription), '#');
+
+			/* Add the false name */
+			t = object_desc_chr(t, ' ');
+			t = object_desc_str(t, &str[1]);
+		}
+
 		/* Is it a new random artifact ? */
-		if (o_ptr->art_name)
+		else if (o_ptr->art_name)
 		{
 #if 0
 			if (o_ptr->ident & IDENT_STOREB)
@@ -1670,8 +1680,15 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	/* Use the standard inscription if available */
 	if (o_ptr->inscription)
 	{
+		char *u = tmp_val2;
+
 		strcpy(tmp_val2, quark_str(o_ptr->inscription));
+
+		for (; *u && (*u != '#'); u++);
+
+		*u = '\0';
 	}
+
 	/* Use the game-generated "feeling" otherwise, if available */
 	else if (o_ptr->feeling)
 	{
