@@ -6042,7 +6042,7 @@ cptr stat_names_reduced[A_MAX] =
  * The "ctrl-g" command (or pseudo-command) should perhaps grab a snapshot
  * of the main screen into any interested windows.
  */
-cptr window_flag_desc[32] =
+cptr window_flag_desc[WINDOW_CHOICE_MAX] =
 {
 	"Display inven/equip",
 	"Display equip/inven",
@@ -6057,25 +6057,8 @@ cptr window_flag_desc[32] =
 	"Display dungeon view",
 	"Display snap-shot",
 	"Display visible monsters",
-	NULL,
 	"Display borg messages",
 	"Display borg status",
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
 };
 
 
@@ -6142,7 +6125,8 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 0, NULL,					"Number 54" },
 	{TRUE,  4, "fresh_before",			"Flush output before every command" },
 	{FALSE, 4, "fresh_after",			"Flush output after every command" },
-	{FALSE, 0, NULL,					"Number 57" },
+	{FALSE, 2, "emergency_stop",		"Halt all input after hp warning" },
+/*	{FALSE, 0, NULL,					"Number 57" },*/
 	{TRUE,  4, "compress_savefile",		"Compress messages in savefiles" },
 	{TRUE,  5, "hilite_player",			"Hilite the player with the cursor" },
 	{FALSE, 5, "view_yellow_lite",		"Use special colors for torch-lit grids" },

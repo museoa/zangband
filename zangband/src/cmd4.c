@@ -899,12 +899,12 @@ static bool do_cmd_options_win(int dummy)
 		}
 
 		/* Display the options */
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < WINDOW_CHOICE_MAX; i++)
 		{
 			cptr str = window_flag_desc[i];
 
 			/* Unused option */
-			if (!str) str = "(Unused option)";
+			if (!str) continue;
 
 			/* Flag name */
 			put_fstr(0, i + 5, CLR_L_BLUE "%s", str);
@@ -956,7 +956,7 @@ static bool do_cmd_options_win(int dummy)
 				}
 
 				/* Clear flags */
-				for (i = 0; i < 16; i++)
+				for (i = 0; i < WINDOW_CHOICE_MAX; i++)
 				{
 					window_flag[x] &= ~(1L << i);
 				}
@@ -988,7 +988,7 @@ static bool do_cmd_options_win(int dummy)
 				d = get_keymap_dir(ch);
 
 				x = (x + ddx[d] + 8) % 8;
-				y = (y + ddy[d] + 16) % 16;
+				y = (y + ddy[d] + WINDOW_CHOICE_MAX) % WINDOW_CHOICE_MAX;
 
 				if (!d) bell("Illegal command for window options!");
 			}

@@ -3361,7 +3361,25 @@ void take_hit(int damage, cptr hit_from)
 	if (p_ptr->chp <= warning)
 	{
 		/* Hack -- bell on first notice */
-		if (old_chp > warning) bell("Low hitpoint warning!");
+		if (old_chp > warning)
+		{
+			/* Alert */
+			bell("Low hitpoint warning!");
+
+			if (emergency_stop)
+			{
+				/* Show all the messages */
+				message_flush();
+
+				/* Alert the user to the problem */
+				put_fstr(0, 0, "Emergency stop.  Press 'c' to continue.");
+
+				/* Wait for acknowledgement */
+				while (inkey() != 'c') ;
+
+				disturb(TRUE);
+			}
+		}
 
 		sound(SOUND_WARN);
 

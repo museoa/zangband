@@ -64,7 +64,7 @@ extern cptr color_seq[16];
 extern cptr msg_names[MSG_MAX];
 extern cptr stat_names[A_MAX];
 extern cptr stat_names_reduced[A_MAX];
-extern cptr window_flag_desc[32];
+extern cptr window_flag_desc[WINDOW_CHOICE_MAX];
 extern const int birth_options[OPT_BIRTH + 1];
 extern const int server_options[OPT_BIRTH + 1];
 extern cptr chaos_patrons[MAX_PATRON];

@@ -109,6 +109,11 @@
 #define ANGBAND_TERM_MAX 8
 
 /*
+ * Maximum of different windows
+ */
+#define WINDOW_CHOICE_MAX	15
+
+/*
  * Number of grids in each block (vertically)
  */
 #define BLOCK_HGT	11
