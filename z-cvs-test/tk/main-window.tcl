@@ -795,7 +795,6 @@ if 0 {
 		-menu MENU_HELP -label [mc Help] -underline 0 -identifier M_HELP
 
 	set entries {}
-	lappend entries [list -type command -label [mc Help] -identifier E_HELP]
 	lappend entries [list -type command -label [mc Tips] -identifier E_TIPS]
 	lappend entries [list -type separator]
 	lappend entries [list -type command \
@@ -862,7 +861,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 	if {[string equal [angband inkey_flags] INKEY_CMD]} {
 		lappend identList E_GAME_SAVE E_GAME_EXIT E_OTHER_FEELING \
 			E_OTHER_INFO E_OTHER_KNOWLEDGE E_PREF_MACROS \
-			E_OTHER_MESSAGES E_PREF_OPTIONS E_OTHER_SCORE E_HELP \
+			E_OTHER_MESSAGES E_PREF_OPTIONS E_OTHER_SCORE \
 			E_OTHER_QUEST E_OTHER_TIME
 	}
 
@@ -1122,7 +1121,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 			}
 		}
 
-		E_HELP {DoUnderlyingCommand ?}
 		E_TIPS {
 			NSModule::LoadIfNeeded NSTips 
 			WindowBringToFront [Window tip]
@@ -1871,7 +1869,6 @@ proc NSMainWindow::SynchMenuAccel {oop force} {
 	lappend data E_ACTION_PETS p
 	lappend data E_ACTION_POWER U
 
-	lappend data E_HELP ?
 	lappend data E_OTHER_FEELING ^F
 	lappend data E_OTHER_INFO C
 	lappend data E_OTHER_KNOWLEDGE ~

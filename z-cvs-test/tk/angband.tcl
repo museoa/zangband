@@ -200,10 +200,6 @@ if {[Global borg,active]} return
 #return
 			}	
 	
-			help {
-				NSModule::LoadIfNeeded NSHelp
-			}
-	
 			highscore {
 
 				if {[catch {
@@ -387,119 +383,6 @@ if {[Global borg,active]} return
 	update
 
 	return
-}
-
-if 0 {
-
-set RequestDisplay(window) {}
-
-qebind RequestDisplay <Term-inkey> {
-	FreshDisplay
-}
-qeconfigure RequestDisplay <Term-inkey> -active no
-
-proc FreshDisplay {} {
-
-	global RequestDisplay
-
-	while {[llength $RequestDisplay(window)]} {
-
-		set window [lindex $RequestDisplay(window) 0]
-		set action [lindex $RequestDisplay(action) 0]
-		set args [lindex $RequestDisplay(args) 0]
-
-		eval HandleRequest $window $action $args
-
-		PopRequest
-	}
-
-	qeconfigure RequestDisplay <Term-inkey> -active no
-
-	return
-}
-
-proc HandleRequest {window action args} {
-
-	global Display
-
-	if {[string equal $action show]} {
-
-		# The window isn't already displayed
-		if {[string compare $Display(window) $window]} {
-
-			# Save current focus
-			set Display($window,oldFocus) [focus]
-
-			set Display(window) $window
-		}
-
-		# Display the window
-		if {[info exists NSWindowManager::Priv($window,win)]} {
-			eval NSWindowManager::Display $window $args
-		} else {
-			WindowBringToFront [Window $window]
-		}
-
-	# Hide the window
-	} else {
-
-		# Undisplay the window
-		if {[info exists NSWindowManager::Priv($window,win)]} {
-			eval NSWindowManager::Undisplay $window $args
-		} else {
-			wm withdraw [Window $window]
-		}
-
-		# Restore focus
-		catch {focus $Display($window,oldFocus)}
-
-		set Display(window) none
-	}
-
-	return
-}
-
-proc RequestDisplay {window action args} {
-
-	global RequestDisplay
-
-	if {[llength $RequestDisplay(window)]} {
-		set window2 [lindex $RequestDisplay(window) end]
-		if {[string equal $window $window2]} {
-			PopRequest
-		}
-	}
-
-	eval PushRequest $window $action $args
-
-	qeconfigure RequestDisplay <Term-inkey> -active yes
-
-	return
-}
-
-proc PushRequest {window action args} {
-
-	global RequestDisplay
-
-	lappend RequestDisplay(window) $window
-	lappend RequestDisplay(action) $action
-	lappend RequestDisplay(args) $args
-
-	return
-}
-
-proc PopRequest {} {
-
-	global RequestDisplay
-
-	set RequestDisplay(window) [lrange $RequestDisplay(window) 1 end]
-	set RequestDisplay(action) [lrange $RequestDisplay(action) 1 end]
-	set RequestDisplay(args) [lrange $RequestDisplay(args) 1 end]
-
-	return
-}
-
-# 0
 }
 
 # angband_prompt --
