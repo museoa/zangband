@@ -429,15 +429,7 @@ static void init_windows(void)
  */
 static void hook_quit(cptr str)
 {
-	/* Give a warning */
-#if 0
-	if (str)
-	{
-#ifdef PLATFORM_X11
-		fputs(str, stderr);
-#endif
-	}
-#endif /* 0 */
+	(void) str;
 
 	free_icons();
 
