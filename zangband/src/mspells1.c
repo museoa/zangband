@@ -301,6 +301,9 @@ static bool summon_possible(int y1, int x1)
 		{
 			/* Only check a circular area */
 			if ((ABS(dx) == 2) && (ABS(dy) == 2)) continue;
+			
+			/* Not on top of player */
+			if ((dx == 0) && (dy == 0)) continue;
 
 			/* Get square */
 			x = x1 + dx;

@@ -88,6 +88,9 @@ bool teleport_away(int m_idx, int dis)
 			
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
+			
+			/* Not on player */
+			if ((ny == p_ptr->py) && (nx == p_ptr->px)) continue; 
 
 			/* ...nor onto the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
@@ -254,6 +257,9 @@ void teleport_to_player(int m_idx)
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
+			
+			/* Not on player */
+			if ((ny == py) && (nx == px)) continue;
 
 			/* ...nor onto the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&

@@ -2107,7 +2107,7 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 	}
 
 	/* Hack -- apply rating bonus */
-	rating += e_ptr->rating;
+	dun_ptr->rating += e_ptr->rating;
 
 	/* Cheat -- describe the item */
 	if (cheat_peek) object_mention(o_ptr);
@@ -2234,7 +2234,7 @@ bool make_artifact(object_type *o_ptr)
 		o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
 		/* Hack - increase the level rating */
-		rating += 30;
+		dun_ptr->rating += 30;
 
 		if (!a_ptr->cost)
 		{
@@ -2254,7 +2254,7 @@ bool make_artifact(object_type *o_ptr)
 		if (cheat_peek) object_mention(o_ptr);
 
 		/* Set the good item flag */
-		good_item_flag = TRUE;
+		dun_ptr->good_item_flag = TRUE;
 
 		/* Success */
 		return (TRUE);
@@ -2704,7 +2704,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 		case TV_DRAG_ARMOR:
 		{
 			/* Rating boost */
-			rating += 30;
+			dun_ptr->rating += 30;
 
 			/* Mention the item */
 			if (cheat_peek) object_mention(o_ptr);
@@ -2780,7 +2780,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (o_ptr->sval == SV_DRAGON_SHIELD)
 			{
 				/* Rating boost */
-				rating += 5;
+				dun_ptr->rating += 5;
 
 				/* Mention the item */
 				if (cheat_peek) object_mention(o_ptr);
@@ -2972,7 +2972,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (o_ptr->sval == SV_DRAGON_HELM)
 			{
 				/* Rating boost */
-				rating += 5;
+				dun_ptr->rating += 5;
 
 				/* Mention the item */
 				if (cheat_peek) object_mention(o_ptr);
@@ -3182,7 +3182,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					}
 
 					/* Rating boost */
-					rating += 25;
+					dun_ptr->rating += 25;
 
 					/* Mention the item */
 					if (cheat_peek) object_mention(o_ptr);
@@ -3207,7 +3207,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 						/* Bonus to armor class */
 						o_ptr->to_a = rand_range(10, 15) + m_bonus(10, level);
-						rating += 5;
+						dun_ptr->rating += 5;
 					}
 				}
 				break;
@@ -3464,7 +3464,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						if (one_in_(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
 						/* Boost the rating */
-						rating += 25;
+						dun_ptr->rating += 25;
 					}
 
 					/* Mention the item */
@@ -3806,7 +3806,7 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	}
 
 	/* Change level feeling for random artifacts */
-	if (o_ptr->flags3 & TR3_INSTA_ART) rating += 30;
+	if (o_ptr->flags3 & TR3_INSTA_ART) dun_ptr->rating += 30;
 
 	/* Examine real objects */
 	if (o_ptr->k_idx)
@@ -4068,7 +4068,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	    (obj_level > p_ptr->depth))
 	{
 		/* Rating increase */
-		rating += (obj_level - p_ptr->depth);
+		dun_ptr->rating += (obj_level - p_ptr->depth);
 
 		/* Cheat -- peek at items */
 		if (cheat_peek) object_mention(o_ptr);
@@ -4464,8 +4464,8 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		else
 		{
 				/* Pick a location */
-				ty = rand_range(min_hgt, max_hgt - 1);
-				tx = rand_range(min_wid, max_wid - 1);
+				ty = rand_range(p_ptr->min_hgt, p_ptr->max_hgt - 1);
+				tx = rand_range(p_ptr->min_wid, p_ptr->max_wid - 1);
 		}
 
 		/* Grid */

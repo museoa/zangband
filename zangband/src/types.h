@@ -499,44 +499,6 @@ typedef cave_type **blk_ptr;
 
 
 /*
- * Grid of blocks around the player.
- * This stores important information about what the player can see
- * in the wilderness.  The max/ min vaules are stored for speed of
- * the in_bounds and in_bounds2 functions.
- * The cache_ count is no longer used.  (Before the number of blocks
- * Allocated would change as the player moves around.  Now - this
- * number is constant, and equal to the number of blocks the player
- * can see.  The overhead involved in maintaining a cache of blocks
- * did not seem worth the small speed increase that would exist only
- * in a few cases.
- */
-
-typedef struct wild_grid_type wild_grid_type;
-
-struct wild_grid_type
-{
-	/* location of top left hand corner of grid div 16 */
-	byte x;
-	byte y;
-
-	/* Pointers to blocks */
-	blk_ptr block_ptr[WILD_GRID_SIZE][WILD_GRID_SIZE];
-
-	/* Number of grids in cache */
-	byte cache_count;
-
-	u16b y_max;
-	u16b x_max;
-
-	u16b y_min;
-	u16b x_min;
-
-	/* Random seed of the wilderness */
-	u32b wild_seed;
-};
-
-
-/*
  * Structure used to generate the wilderness.
  * This stores the "height", "population" and "law" results
  * after the initial plasma fractal routines.
@@ -1225,6 +1187,9 @@ struct player_type
 
 	s32b wilderness_x;	/* Coordinates in the wilderness */
 	s32b wilderness_y;
+	
+	s16b old_wild_x;	/* Previous block coords in the wilderness */
+	s16b old_wild_y;
 
 	s16b mhp;			/* Max hit pts */
 	s16b chp;			/* Cur hit pts */
@@ -1503,6 +1468,12 @@ struct player_type
 	u16b max_seen_r_idx;	/* Most powerful monster visible */
 	bool monk_armour_stat;	/* Status of monk armour */
 	byte noise_level;		/* Amount of noise since last update */
+
+	/*** Boundary of player-known area ****/
+	u16b max_hgt;
+	u16b min_hgt;
+	u16b max_wid;
+	u16b min_wid;
 };
 
 
@@ -1650,6 +1621,16 @@ struct dun_type
 	byte min_level; /* Minimum level in the dungeon */
 	byte max_level; /* Maximum dungeon level allowed */
 
+	s16b rating;			/* Level's current rating */
+
+	s16b min_hgt;			/* Current y bounds of area() */
+	s16b max_hgt;
+	s16b min_wid;			/* Current x bounds of area() */
+	s16b max_wid;
+	
+	byte feeling;			/* Most recent feeling */
+	bool good_item_flag;	/* True if "Artifact" on this level */
+	
 	cptr name;      /* The name of the dungeon */
 };
 

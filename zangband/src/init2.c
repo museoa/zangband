@@ -836,7 +836,6 @@ errr init_w_info(void)
 	/* Later must add in raw file support later. */
 	C_MAKE(wild_choice_tree, z_info->wn_max, wild_choice_tree_type);
 	C_MAKE(wild_gen_data, z_info->wt_max, wild_gen_data_type);
-	C_MAKE(wild_temp_dist, z_info->ws_max, byte);
 
 	/*** Load the ascii template file ***/
 
@@ -964,7 +963,6 @@ static errr init_other(void)
 {
 	int i, j, n;
 
-
 	/*** Prepare the various "bizarre" arrays ***/
 
 	/* Macro variables */
@@ -1002,8 +1000,11 @@ static errr init_other(void)
 		C_MAKE(temp_block[i], WILD_BLOCK_SIZE + 1, u16b);
 	}
 
-	/* Allocate cache of wilderness blocks */
-	for (i = 0; i < WILD_BLOCKS; i++)
+	/* Make the list of pointers to blocks */
+	C_MAKE(wild_cache, WILD_CACHE, blk_ptr);
+
+	/* Allocate each block */
+	for (i = 0; i < WILD_CACHE; i++)
 	{
 		/* Allocate block */
 		C_MAKE(wild_cache[i], WILD_BLOCK_SIZE, cave_type*);
@@ -1022,11 +1023,15 @@ static errr init_other(void)
 
 	/* Allocate the wilderness itself */
 	C_MAKE(wild, z_info->ws_max, wild_type*);
+	C_MAKE(wild_grid, z_info->ws_max, blk_ptr*);
+	C_MAKE(wild_refcount, z_info->ws_max, int*);
 
 	for (i = 0; i < z_info->ws_max; i++)
 	{
 		/* Allocate one row of the wilderness */
 		C_MAKE(wild[i], z_info->ws_max, wild_type);
+		C_MAKE(wild_grid[i], z_info->ws_max, blk_ptr);
+		C_MAKE(wild_refcount[i], z_info->ws_max, int);
 	}
 
 	/*** Prepare "vinfo" array ***/
@@ -1539,6 +1544,9 @@ void cleanup_angband(void)
  * initiated. It works fine thereafter.
  */
 #if 0
+
+	This code is wrong - the wilderness works differently now. -SF-
+
 	/* Free the wilderness */
 	for (i = 0; i < z_info->ws_max; i++)
 	{

@@ -81,11 +81,6 @@ u32b seed_flavor;		/* Hack -- consistent object colors */
 
 bool msg_flag;			/* Used in msg_print() for "buffering" */
 
-s16b min_hgt;			/* Current y bounds of area() */
-s16b max_hgt;
-s16b min_wid;			/* Current x bounds of area() */
-s16b max_wid;
-
 obj_theme dun_theme;	/* Current dungeon object theme */
 s16b num_repro;			/* Current reproducer count */
 
@@ -162,15 +157,6 @@ bool cheat_xtra;
 bool cheat_know;
 bool cheat_live;
 
-
-/*
- * Dungeon variables
- */
-
-byte feeling;			/* Most recent feeling */
-s16b rating;			/* Level's current rating */
-
-bool good_item_flag;	/* True if "Artifact" on this level */
 
 bool closing_flag;		/* Dungeon is closing */
 
@@ -449,14 +435,23 @@ cave_type *(*area)(int, int);
 /* block used to generate plasma fractal for random wilderness */
 u16b *temp_block[WILD_BLOCK_SIZE + 1];
 
-/* cache of blocks near the player */
-cave_type **wild_cache[WILD_BLOCKS];
+/* List of 16x16 blocks in the wilderness */
+blk_ptr *wild_cache;
 
-/* grid of blocks around the player */
-wild_grid_type wild_grid;
+/* Reference count of each 16x16 block in the wilderness */
+int **wild_refcount;
 
-/* The wilderness itself */
+/* Counter of where in the list of cache blocks we are */
+u32b wc_cnt = 0;
+
+/* The wilderness itself - grid of 16x16 blocks*/
+blk_ptr **wild_grid;
+
+/* The data used to generate the wilderness */
 wild_type **wild;
+
+/* The seed for the wilderness */
+u32b wild_seed;
 
 /* Description of wilderness block types */
 wild_gen_data_type *wild_gen_data;
@@ -464,7 +459,16 @@ wild_gen_data_type *wild_gen_data;
 /* The decision tree for working out what block type to pick */
 wild_choice_tree_type *wild_choice_tree;
 
-byte *wild_temp_dist;
+/* Bounds checking function pointers */
+bool (*in_bounds)(int, int);
+bool (*in_bounds2)(int, int);
+
+
+/*
+ * The dungeon data itself
+ */
+dun_type dun_data;
+dun_type *dun_ptr = &dun_data;
 
 /*
  * The array of dungeon items [z_info->o_max]

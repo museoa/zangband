@@ -383,8 +383,8 @@ bool monster_death(int m_idx, bool explode)
 				/* This only happens in the dungeon I hope. */
 
 				/* Count all hostile monsters */
-				for (i2 = min_wid; i2 < max_wid; ++i2)
-					for (j2 = min_hgt; j2 < max_hgt; j2++)
+				for (i2 = p_ptr->min_wid; i2 < p_ptr->max_wid; ++i2)
+					for (j2 = p_ptr->min_hgt; j2 < p_ptr->max_hgt; j2++)
 						if (area(j2,i2)->m_idx > 0)
 							if (is_hostile(&m_list[area(j2,i2)->m_idx]) &&
 								area(j2,i2)->m_idx != m_idx)
@@ -1376,10 +1376,10 @@ bool change_panel(int dy, int dx)
 	x = panel_col_min + dx * (wid / 2);
 
 	/* Bounds */
-	if (y > max_hgt - hgt) y = max_hgt - hgt;
-	if (y < min_hgt) y = min_hgt;
-	if (x > max_wid - wid) x = max_wid - wid;
-	if (x < min_wid) x = min_wid;
+	if (y > p_ptr->max_hgt - hgt) y = p_ptr->max_hgt - hgt;
+	if (y < p_ptr->min_hgt) y = p_ptr->min_hgt;
+	if (x > p_ptr->max_wid - wid) x = p_ptr->max_wid - wid;
+	if (x < p_ptr->min_wid) x = p_ptr->min_wid;
 	
 	if (vanilla_town && (!p_ptr->depth))
 	{
@@ -1568,8 +1568,8 @@ void panel_center(void)
 	new_panel_col = p_ptr->px - (wid / 2);
 
 	/* Move the map so that it only shows the dungeon */
-	if (new_panel_row + hgt > max_hgt) new_panel_row = max_hgt - hgt;
-	if (new_panel_col + wid > max_wid) new_panel_col = max_wid - wid;
+	if (new_panel_row + hgt > p_ptr->max_hgt) new_panel_row = p_ptr->max_hgt - hgt;
+	if (new_panel_col + wid > p_ptr->max_wid) new_panel_col = p_ptr->max_wid - wid;
 
 	/* Verify the lower panel bounds */
 	if (new_panel_row < 0) new_panel_row = 0;
@@ -2973,12 +2973,12 @@ bool target_set(int mode)
 						}
 
 						/* Slide into legality */
-						if (x <= min_wid) x = min_wid + 1;
-						else if (x >= max_wid - 1) x = max_wid - 2;
+						if (x <= p_ptr->min_wid) x = p_ptr->min_wid + 1;
+						else if (x >= p_ptr->max_wid - 1) x = p_ptr->max_wid - 2;
 
 						/* Slide into legality */
-						if (y <= min_hgt) y = min_hgt + 1;
-						else if (y >= max_hgt - 1) y = max_hgt - 2;
+						if (y <= p_ptr->min_hgt) y = p_ptr->min_hgt + 1;
+						else if (y >= p_ptr->max_hgt - 1) y = p_ptr->max_hgt - 2;
 					}
 				}
 
@@ -3131,12 +3131,12 @@ bool target_set(int mode)
 				}
 
 				/* Slide into legality */
-				if (x <= min_wid) x = min_wid + 1;
-				else if (x >= max_wid - 1) x = max_wid - 2;
+				if (x <= p_ptr->min_wid) x = p_ptr->min_wid + 1;
+				else if (x >= p_ptr->max_wid - 1) x = p_ptr->max_wid - 2;
 
 				/* Slide into legality */
-				if (y <= min_hgt) y = min_hgt + 1;
-				else if (y >= max_hgt - 1) y = max_hgt - 2;
+				if (y <= p_ptr->min_hgt) y = p_ptr->min_hgt + 1;
+				else if (y >= p_ptr->max_hgt - 1) y = p_ptr->max_hgt - 2;
 			}
 		}
 	}
@@ -3836,12 +3836,24 @@ bool tgt_pt(int *x, int *y)
 			*y += ddy[d];
 
 			/* Hack -- Verify x */
-			if ((*x >= max_wid - 1) || (*x >= panel_col_min + wid - 14)) (*x)--;
-			else if ((*x <= min_wid) || (*x <= panel_col_min)) (*x)++;
+			if ((*x >= p_ptr->max_wid - 1) || (*x >= panel_col_min + wid - 14))
+			{
+				(*x)--;
+			}
+			else if ((*x <= p_ptr->min_wid) || (*x <= panel_col_min))
+			{
+				(*x)++;
+			}
 
 			/* Hack -- Verify y */
-			if ((*y >= max_hgt - 1) || (*y >= panel_row_min + hgt - 2)) (*y)--;
-			else if ((*y <= min_hgt) || (*y <= panel_row_min)) (*y)++;
+			if ((*y >= p_ptr->max_hgt - 1) || (*y >= panel_row_min + hgt - 2))
+			{
+				(*y)--;
+			}
+			else if ((*y <= p_ptr->min_hgt) || (*y <= panel_row_min))
+			{
+				(*y)++;
+			}
 
 			break;
 		}

@@ -1049,7 +1049,7 @@ static void wr_extra(void)
 	wr_byte(p_ptr->is_dead);
 
 	/* Write feeling */
-	wr_byte(feeling);
+	wr_byte(dun_ptr->feeling);
 
 	/* Turn of last "feeling" */
 	wr_s32b(old_turn);
@@ -1255,19 +1255,8 @@ static void save_wild_data(void)
 {
 	int i, j;
 
-	/* Save bounds */
-	wr_u16b(wild_grid.y_max);
-	wr_u16b(wild_grid.x_max);
-	wr_u16b(wild_grid.y_min);
-	wr_u16b(wild_grid.x_min);
-	wr_byte(wild_grid.y);
-	wr_byte(wild_grid.x);
-
-	/* Save cache status */
-	wr_byte(wild_grid.cache_count);
-
 	/* Save wilderness seed */
-	wr_u32b(wild_grid.wild_seed);
+	wr_u32b(wild_seed);
 
 	/* Save wilderness map */
 	for (i = 0; i < max_wild; i++)
@@ -1299,9 +1288,6 @@ static void wr_dungeon(void)
 {
 	int i;
 	
-	int cur_wid = max_wid;
-	int cur_hgt = max_hgt;
-
 	/*** Basic info ***/
 
 	/* Dungeon specific info follows */
@@ -1310,8 +1296,8 @@ static void wr_dungeon(void)
 	wr_u16b(num_repro);
 	wr_u16b(p_ptr->py);
 	wr_u16b(p_ptr->px);
-	wr_u16b(max_hgt);
-	wr_u16b(max_wid);
+	wr_u16b(p_ptr->max_hgt);
+	wr_u16b(p_ptr->max_wid);
 	wr_u16b(max_panel_rows);
 	wr_u16b(max_panel_cols);
 
@@ -1321,8 +1307,8 @@ static void wr_dungeon(void)
 	if (p_ptr->depth)
 	{
 		/* Save dungeon map */
-		save_map(max_hgt, min_hgt, max_wid, min_wid);
-
+		save_map(p_ptr->max_hgt, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->min_wid);
+#if 0
 		/* Hack - the player is not in this dungeon */
 		character_dungeon = FALSE;
 		
@@ -1340,11 +1326,12 @@ static void wr_dungeon(void)
 		/* Restore bounds */
 		max_hgt = cur_hgt;
 		max_wid = cur_wid;
+#endif /* 0 */
 	}
 	else
 	{
-		save_map(wild_grid.y_max, wild_grid.y_min,
-		         wild_grid.x_max, wild_grid.x_min);
+		/* Save wilderness map */
+		save_map(p_ptr->max_hgt, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->min_wid);
 	}
 
 

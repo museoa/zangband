@@ -157,6 +157,10 @@ static int wild_first_town[START_STORE_NUM] =
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
+	/* Reset 'old' block location */
+	p_ptr->old_wild_x = town[this_town].x;
+	p_ptr->old_wild_y = town[this_town].y;
+	
 	/* Hack - Reset player position to be on the stairs in town */
 	*x = town[this_town].x * 16 + wild_stairs_x;
 	*y = town[this_town].y * 16 + wild_stairs_y;
@@ -3398,6 +3402,11 @@ static void create_lakes(void)
  * (Done for a less "griddy" result.)
  */
 
+
+/* Value used for sea-level calculation */
+static byte *wild_temp_dist;
+
+
 /*
  * this routine probably should be an inline function or a macro.
  */
@@ -3922,17 +3931,6 @@ static void wild_done(void)
 	/* Clear cache */
 	init_wild_cache();
 
-	/* Fix location of grid */
-
-	/*
-	 * Hack - set the coords to crazy values so move_wild() works
-	 * when change_level is called to make the player actually enter the
-	 * new wilderness.
-	 */
-
-	wild_grid.x = max_wild + 1;
-	wild_grid.y = max_wild + 1;
-
 	/* hack */
 	p_ptr->depth = 1;
 
@@ -3946,7 +3944,7 @@ static void wild_done(void)
 	p_ptr->depth = 0;
 
 	/* Refresh random number seed */
-	wild_grid.wild_seed = randint0(0x10000000);
+	wild_seed = randint0(0x10000000);
 
 	/* Make the wilderness block cache. */
 	move_wild();
@@ -3994,7 +3992,7 @@ void create_wilderness(void)
 	if (vanilla_town)
 	{
 		/* Tiny wilderness */
-		max_wild = WILD_GRID_SIZE + 1;
+		max_wild = WILD_VIEW + 1;
 
 		/* Mega Hack - make an "empty" wilderness. */
 		for (i = 0; i < max_wild; i++)
@@ -4030,6 +4028,7 @@ void create_wilderness(void)
 
 	/* Huge wilderness */
 	max_wild = z_info->ws_max;
+	C_MAKE(wild_temp_dist, z_info->ws_max, byte);
 
 	/* Create "height" information of wilderness */
 	create_hgt_map();

@@ -1431,12 +1431,12 @@ static void build_type5(int by0, int bx0)
 	}
 
 	/* Increase the level rating */
-	rating += 10;
+	dun_ptr->rating += 10;
 
 	/* (Sometimes) Cause a "special feeling" (for "Monster Nests") */
 	if ((p_ptr->depth <= 40) && (randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
-		good_item_flag = TRUE;
+		dun_ptr->good_item_flag = TRUE;
 	}
 
 	/* Place some monsters */
@@ -1627,12 +1627,12 @@ static void build_type6(int by0, int bx0)
 	}
 
 	/* Increase the level rating */
-	rating += 10;
+	dun_ptr->rating += 10;
 
 	/* (Sometimes) Cause a "special feeling" (for "Monster Pits") */
 	if ((p_ptr->depth <= 40) && (randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
-		good_item_flag = TRUE;
+		dun_ptr->good_item_flag = TRUE;
 	}
 
 	/* Top and bottom rows */
@@ -2066,13 +2066,13 @@ static void build_type7(int by0, int bx0)
 	if (cheat_room) msg_format("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
-	rating += v_ptr->rat;
+	dun_ptr->rating += v_ptr->rat;
 
 	/* (Sometimes) Cause a special feeling */
 	if ((p_ptr->depth <= 50) ||
 		(randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 50) < 400))
 	{
-		good_item_flag = TRUE;
+		dun_ptr->good_item_flag = TRUE;
 	}
 
 	/* Hack -- Build the vault */
@@ -2163,13 +2163,13 @@ static void build_type8(int by0, int bx0)
 	if (cheat_room) msg_format("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
-	rating += v_ptr->rat;
+	dun_ptr->rating += v_ptr->rat;
 
 	/* (Sometimes) Cause a special feeling */
 	if ((p_ptr->depth <= 50) ||
 	    (randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 50) < 400))
 	{
-		good_item_flag = TRUE;
+		dun_ptr->good_item_flag = TRUE;
 	}
 
 	/* Hack -- Build the vault */
@@ -3521,14 +3521,17 @@ static void build_type10(int by0, int bx0)
 	/* Allocate in room_map.  If will not fit, exit */
 	if (!room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
 
-	/* Boost the rating- higher than lesser vaults and lower than greater vaults */
-	rating += 10;
+	/*
+	 * Boost the rating- higher than lesser vaults
+	 * and lower than greater vaults
+	 */
+	dun_ptr->rating += 10;
 
 	/* (Sometimes) Cause a special feeling */
 	if ((p_ptr->depth <= 50) ||
 	    (randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 1) < 400))
 	{
-		good_item_flag = TRUE;
+		dun_ptr->good_item_flag = TRUE;
 	}
 
 	/* Select type of vault */

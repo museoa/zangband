@@ -148,8 +148,8 @@ void add_river(int feat1, int feat2)
 
 
 	/* Hack -- Choose starting point */
-	y2 = rand_range(min_hgt + 1, max_hgt - 2);
-	x2 = rand_range(min_wid + 1, max_wid - 2);
+	y2 = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
+	x2 = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
 
 	/* Hack -- Choose ending point somewhere on boundary */
 	switch (randint1(4))
@@ -157,29 +157,29 @@ void add_river(int feat1, int feat2)
 		case 1:
 		{
 			/* top boundary */
-			x1 = rand_range(min_wid + 1, max_wid - 2);
-			y1 = min_hgt + 1;
+			x1 = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
+			y1 = p_ptr->min_hgt + 1;
 			break;
 		}
 		case 2:
 		{
 			/* left boundary */
-			x1 = min_wid + 1;
-			y1 = rand_range(min_hgt + 1, max_hgt - 2);
+			x1 = p_ptr->min_wid + 1;
+			y1 = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
 			break;
 		}
 		case 3:
 		{
 			/* right boundary */
-			x1 = max_wid - 2;
-			y1 = rand_range(min_hgt + 1, max_hgt - 2);
+			x1 = p_ptr->max_wid - 2;
+			y1 = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
 			break;
 		}
 		case 4:
 		{
 			/* bottom boundary */
-			x1 = rand_range(min_wid + 1, max_wid - 2);
-			y1 = max_hgt - 2;
+			x1 = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
+			y1 = p_ptr->max_hgt - 2;
 			break;
 		}
 	}
@@ -214,8 +214,10 @@ void build_streamer(int feat, int chance)
 	cave_type *c_ptr;
 
 	/* Hack -- Choose starting point */
-	y = rand_spread(max_hgt / 2, (max_hgt / 2 > 10? 10: max_hgt / 2));
-	x = rand_spread(max_wid / 2, (max_wid / 2 > 15? 15: max_wid / 2));
+	y = rand_spread(p_ptr->max_hgt / 2, (p_ptr->max_hgt / 2 > 10 ?
+		 10: p_ptr->max_hgt / 2));
+	x = rand_spread(p_ptr->max_wid / 2, (p_ptr->max_wid / 2 > 15 ?
+		 15: p_ptr->max_wid / 2));
 
 	/* Choose a random compass direction */
 	dir = ddd[randint0(8)];
@@ -356,8 +358,8 @@ void destroy_level(void)
 	for (n = 0; n < randint1(5); n++)
 	{
 		/* Pick an epi-center */
-		x1 = rand_range(min_wid + 5, max_wid - 1 - 5);
-		y1 = rand_range(min_hgt + 5, max_hgt - 1 - 5);
+		x1 = rand_range(p_ptr->min_wid + 5, p_ptr->max_wid - 1 - 5);
+		y1 = rand_range(p_ptr->min_hgt + 5, p_ptr->max_hgt - 1 - 5);
 
 		/* Big area of affect */
 		for (y = (y1 - 15); y <= (y1 + 15); y++)
@@ -442,8 +444,8 @@ void build_cavern(void)
 	done = FALSE;
 
 	/* Make a cave the size of the dungeon */
-	xsize = max_wid - 1;
-	ysize = max_hgt - 1;
+	xsize = p_ptr->max_wid - 1;
+	ysize = p_ptr->max_hgt - 1;
 	x0 = xsize / 2;
 	y0 = ysize / 2;
 
@@ -488,8 +490,8 @@ void build_lake(int type)
 	}
 
 	/* Make the size of the dungeon */
-	xsize = max_wid - 1;
-	ysize = max_hgt - 1;
+	xsize = p_ptr->max_wid - 1;
+	ysize = p_ptr->max_hgt - 1;
 	x0 = xsize / 2;
 	y0 = ysize / 2;
 

@@ -2271,10 +2271,14 @@ void prt_map(void)
 
 
 	/* Get bounds */
-	xmin = (min_wid < panel_col_min) ? panel_col_min : min_wid;
-	xmax = (max_wid - 1 > panel_col_max) ? panel_col_max : max_wid - 1;
-	ymin = (min_hgt < panel_row_min) ? panel_row_min : min_hgt;
-	ymax = (max_hgt - 1 > panel_row_max) ? panel_row_max : max_hgt - 1;
+	xmin = (p_ptr->min_wid < panel_col_min) ?
+		 panel_col_min : p_ptr->min_wid;
+	xmax = (p_ptr->max_wid - 1 > panel_col_max) ?
+		 panel_col_max : p_ptr->max_wid - 1;
+	ymin = (p_ptr->min_hgt < panel_row_min) ?
+		 panel_row_min : p_ptr->min_hgt;
+	ymax = (p_ptr->max_hgt - 1 > panel_row_max) ?
+		 panel_row_max : p_ptr->max_hgt - 1;
 
 	/* Bottom section of screen */
 	for (y = 1; y <= ymin - panel_row_prt; y++)
@@ -2689,8 +2693,8 @@ void display_map(int *cy, int *cx)
 	}
 	else
 	{
-		yrat = max_hgt - min_hgt;
-		xrat = max_wid - min_wid;
+		yrat = p_ptr->max_hgt - p_ptr->min_hgt;
+		xrat = p_ptr->max_wid - p_ptr->min_wid;
 
 		/* Get scaling factors */
 		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 10 : 1;
@@ -2704,9 +2708,9 @@ void display_map(int *cy, int *cx)
 		(*cx) = px * xfactor / xrat + COL_MAP;
 
 		/* Fill in the map of dungeon */
-		for (i = min_wid; i < max_wid; ++i)
+		for (i = p_ptr->min_wid; i < p_ptr->max_wid; ++i)
 		{
-			for (j = min_hgt; j < max_hgt; ++j)
+			for (j = p_ptr->min_hgt; j < p_ptr->max_hgt; ++j)
 			{
 				/* Location */
 				x = i * xfactor / xrat + 1;
@@ -4612,9 +4616,9 @@ void forget_flow(void)
 	if (!flow_n) return;
 
 	/* Check the entire dungeon */
-	for (y = min_hgt; y < max_hgt; y++)
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
-		for (x = min_wid; x < max_wid; x++)
+		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
 			/* Forget the old data */
 			area(y, x)->cost = 0;
@@ -4682,9 +4686,9 @@ void update_flow(void)
 	if (flow_n++ == 255)
 	{
 		/* Rotate the time-stamps */
-		for (y = min_hgt; y < max_hgt; y++)
+		for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 		{
-			for (x = min_wid; x < max_wid; x++)
+			for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 			{
 				c_ptr = area(y, x);
 				w = c_ptr->when;
@@ -4803,10 +4807,10 @@ void map_area(void)
 	x2 = px + MAX_DETECT + randint1(20);
 
 	/* Speed -- shrink to fit legal bounds */
-	if (y1 < min_hgt + 1) y1 = min_hgt + 1;
-	if (y2 > max_hgt - 2) y2 = max_hgt - 2;
-	if (x1 < min_wid + 1) x1 = min_wid + 1;
-	if (x2 > max_wid - 2) x2 = max_wid - 2;
+	if (y1 < p_ptr->min_hgt + 1) y1 = p_ptr->min_hgt + 1;
+	if (y2 > p_ptr->max_hgt - 2) y2 = p_ptr->max_hgt - 2;
+	if (x1 < p_ptr->min_wid + 1) x1 = p_ptr->min_wid + 1;
+	if (x2 > p_ptr->max_wid - 2) x2 = p_ptr->max_wid - 2;
 
 	/* Scan that area */
 	for (y = y1; y <= y2; y++)
@@ -4909,9 +4913,9 @@ void wiz_lite(void)
 	}
 
 	/* Scan all normal grids */
-	for (y = min_hgt; y < max_hgt; y++)
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
-		for (x = min_wid; x < max_wid; x++)
+		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
 			cave_type *c_ptr = area(y,x);
 
@@ -4944,9 +4948,9 @@ void wiz_dark(void)
 	int i, y, x;
 
 	/* Forget every grid */
-	for (y = min_hgt; y < max_hgt; y++)
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
-		for (x = min_wid; x < max_wid; x++)
+		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
 			cave_type *c_ptr = area(y, x);
 

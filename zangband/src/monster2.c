@@ -1351,13 +1351,20 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 
 	/* Access the location */
 	c_ptr = area(y,x);
-
-	/* Require empty space (if not ghostly) */
-	if (!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) ||
-		cave_floor_grid(c_ptr) ||
-		 ((c_ptr->feat & 0x60) == 0x60)) &&
-		 (!((c_ptr->m_idx) || (c_ptr == area(p_ptr->py, p_ptr->px)))))) return FALSE;
-
+	
+	/* Not if other monster is here */
+	if (c_ptr->m_idx) return (FALSE);
+	
+	/* Not if player is here */
+	if ((y == p_ptr->py) && (x == p_ptr->px)) return (FALSE);
+	
+	/* Permanent walls are out */
+	if (cave_perma_grid(c_ptr)) return (FALSE);
+	
+	/* Walls also stops generation if we aren't ghostly */
+	if (!(cave_floor_grid(c_ptr) || ((c_ptr->feat & 0x60) == 0x60)
+		|| (r_ptr->flags2 & RF2_PASS_WALL))) return (FALSE);
+	
 	/* Nor on the Pattern */
 	if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 	    (c_ptr->feat <= FEAT_PATTERN_XTRA2))
@@ -1425,7 +1432,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 			if (cheat_hear) msg_format("Deep Unique (%s).", name);
 
 			/* Boost rating by twice delta-depth */
-			rating += (r_ptr->level - p_ptr->depth) * 2;
+			dun_ptr->rating += (r_ptr->level - p_ptr->depth) * 2;
 		}
 
 		/* Normal monsters */
@@ -1435,7 +1442,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 			if (cheat_hear) msg_format("Deep Monster (%s).", name);
 
 			/* Boost rating by delta-depth */
-			rating += (r_ptr->level - p_ptr->depth);
+			dun_ptr->rating += (r_ptr->level - p_ptr->depth);
 		}
 	}
 
@@ -1641,7 +1648,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 
 
 	/* Save the rating */
-	old = rating;
+	old = dun_ptr->rating;
 
 	/* Start on the monster */
 	hack_n = 1;
@@ -1664,6 +1671,9 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 
 			/* paranoia */
 			if (!in_bounds2(my, mx)) continue;
+			
+			/* Not on player */
+			if ((my == p_ptr->py) && (mx == p_ptr->px)) continue;
 
 			/* Walls and Monsters block flow */
 			c_ptr = area(my, mx);
@@ -1681,7 +1691,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 	}
 
 	/* Hack -- restore the rating */
-	rating = old;
+	dun_ptr->rating = old;
 
 
 	/* Success */
@@ -1796,6 +1806,9 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 
 			/* paranoia */
 			if (!in_bounds2(y, x)) continue;
+			
+			/* Not on player */
+			if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 			/* Require empty grids */
 			c_ptr = area(ny, nx);
@@ -1939,8 +1952,11 @@ bool alloc_monster(int dis, bool slp)
 	while (--attempts_left)
 	{
 		/* Pick a location */
-		y = rand_range(min_hgt, max_hgt - 1);
-		x = rand_range(min_wid, max_wid - 1);
+		y = rand_range(p_ptr->min_hgt, p_ptr->max_hgt - 1);
+		x = rand_range(p_ptr->min_wid, p_ptr->max_wid - 1);
+		
+		/* Not on player */
+		if ((y == py) && (x == px)) continue;
 
 		/* Require empty floor grid (was "naked") */
 		c_ptr = area(y, x);
@@ -2319,6 +2335,9 @@ bool summon_specific(int who, int y1, int x1, int lev, int type,
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
+		
+		/* Not on top of player */
+		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 		/* Require "empty" floor grid */
 		c_ptr = area(y, x);
@@ -2410,6 +2429,9 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp,
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
+		
+		/* Not on top of player */
+		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 		/* Require empty grids */
 		c_ptr = area(y, x);
@@ -2452,6 +2474,9 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
+		
+		/* Not on top of player */
+		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 		/* Require an "empty" floor grid */
 		c_ptr = area(y, x);

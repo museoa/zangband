@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 27
+#define SAVEFILE_VERSION 28
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -65,14 +65,17 @@
 #define VERSION_EXTRA   0
 
 /*
+ * The maximum number of players we support
+ */
+#define MAX_PLAYERS		1
+
+/*
  * Number of grids in each block (vertically)
- * Probably hard-coded to 11, see "generate.c"
  */
 #define BLOCK_HGT	11
 
 /*
  * Number of grids in each block (horizontally)
- * Probably hard-coded to 11, see "generate.c"
  */
 #define BLOCK_WID	11
 
@@ -91,14 +94,15 @@
  * Defines used by the wilderness data structures
  */
 
-/* size of blocks - hard coded. */
+/* Size of blocks - hard coded. */
 #define WILD_BLOCK_SIZE	16
 
-/* size of local wilderness grid in blocks - hard coded. */
-#define WILD_GRID_SIZE	9
+/* Number of blocks the player can see at one time */
+#define WILD_VIEW		9
 
-/* number of wilderness blocks in cache */
-#define WILD_BLOCKS	(WILD_GRID_SIZE * WILD_GRID_SIZE)
+/* Number of blocks of wilderness cache */
+#define WILD_CACHE		(MAX_PLAYERS * WILD_VIEW * WILD_VIEW * 2)
+
 
 /* Hack XXX  Start of the sea types = 2^16 - 65*/
 #define WILD_SEA	65471
@@ -3881,19 +3885,6 @@
    ((X) >= panel_col_min) && ((X) <= panel_col_max))
 
 /*
- * Determine is a map location is fully inside the outer walls.
- */
-#define in_bounds(Y,X) \
-	(((Y) > min_hgt) && ((X) > min_wid)\
-	 && ((Y) < max_hgt - 1) && ((X) < max_wid - 1))
-
-/*
- * Determine is a map location is on or inside the outer walls.
- */
-#define in_bounds2(Y,X) \
-	(((Y) >= min_hgt) && ((X) >= min_wid)\
-	 && ((Y) < max_hgt) && ((X) < max_wid))
-/*
  * Determine if a "legal" grid is a "floor" grid
  *
  * Line 1 -- forbid doors, rubble, seams, walls
@@ -3957,12 +3948,10 @@
 	  ((C)->o_idx == 0))
 
 /*
- * Grid based version of "cave_empty_bold()"
+ * Not occupied by a monster
  */
 #define cave_empty_grid(C) \
-    (cave_floor_grid(C) && \
-     !((C)->m_idx) && \
-     !((C) == area(p_ptr->py, p_ptr->px)))
+    (cave_floor_grid(C) && !((C)->m_idx))
 
 /*
  * Grid based version of "cave_naked_bold()"

@@ -2819,7 +2819,7 @@ static cptr do_cmd_feeling_text[11] =
 void do_cmd_feeling(void)
 {
 	/* Verify the feeling */
-	if (feeling > 10) feeling = 10;
+	if (dun_ptr->feeling > 10) dun_ptr->feeling = 10;
 
 	/* No useful feeling in quests */
 	if (p_ptr->inside_quest)
@@ -2845,7 +2845,7 @@ void do_cmd_feeling(void)
 	/* Display the feeling */
 	if (turn - old_turn >= 1000)
 	{
-		msg_print(do_cmd_feeling_text[feeling]);
+		msg_print(do_cmd_feeling_text[dun_ptr->feeling]);
 	}
 	else
 	{

@@ -29,8 +29,8 @@ bool new_player_spot(void)
 	while (max_attempts--)
 	{
 		/* Pick a legal spot */
-		y = rand_range(min_hgt, max_hgt - 1);
-		x = rand_range(min_wid, max_wid - 1);
+		y = rand_range(p_ptr->min_hgt, p_ptr->max_hgt - 1);
+		x = rand_range(p_ptr->min_wid, p_ptr->max_wid - 1);
 
 		c_ptr = &cave[y][x];
 

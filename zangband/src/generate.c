@@ -150,8 +150,8 @@ static bool alloc_stairs(int feat, int num, int walls)
 			for (j = 0; !flag && j <= 10000; j++)
 			{
 				/* Pick a random grid */
-				y = rand_range(min_hgt + 1, max_hgt - 2);
-				x = rand_range(min_wid + 1, max_wid - 2);
+				y = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
+				x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
 
 				/* Access the grid */
 				c_ptr = &cave[y][x];
@@ -212,8 +212,8 @@ static void alloc_object(int set, int typ, int num)
 			dummy++;
 
 			/* Location */
-			y = rand_range(min_hgt + 1, max_hgt - 2);
-			x = rand_range(min_wid + 1, max_wid - 2);
+			y = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
+			x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
 
 			c_ptr = &cave[y][x];
 
@@ -412,8 +412,8 @@ static bool cave_gen(void)
 	/* Global data */
 	dun = &dun_body;
 
-	if (max_hgt - min_hgt < 23) max_vault_ok--;
-	if (max_wid - min_wid < 34) max_vault_ok--;
+	if (p_ptr->max_hgt - p_ptr->min_hgt < 23) max_vault_ok--;
+	if (p_ptr->max_wid - p_ptr->min_wid < 34) max_vault_ok--;
 
 	/* Hack - no vaults in moria mode */
 	if (ironman_moria) max_vault_ok = 0;
@@ -437,9 +437,9 @@ static bool cave_gen(void)
 
 
 	/* Hack -- Start with basic granite */
-	for (y = min_hgt; y < max_hgt; y++)
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
-		for (x = min_wid; x < max_wid; x++)
+		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
 			if (empty_level)
 				cave[y][x].feat = FEAT_FLOOR;
@@ -492,8 +492,8 @@ static bool cave_gen(void)
 	if (quest_number(p_ptr->depth)) destroyed = FALSE;
 
 	/* Actual maximum number of rooms on this level */
-	dun->row_rooms = (max_hgt - min_hgt) / BLOCK_HGT;
-	dun->col_rooms = (max_wid - min_hgt) / BLOCK_WID;
+	dun->row_rooms = (p_ptr->max_hgt - p_ptr->min_hgt) / BLOCK_HGT;
+	dun->col_rooms = (p_ptr->max_wid - p_ptr->min_hgt) / BLOCK_WID;
 
 	/* Initialize the room table */
 	for (y = 0; y < dun->row_rooms; y++)
@@ -637,8 +637,8 @@ static bool cave_gen(void)
 	{
 		while (one_in_(DUN_MOS_DEN))
 		{
-			place_trees(rand_range(min_wid + 1, max_wid - 2),
-				 rand_range(min_hgt + 1, max_hgt - 2));
+			place_trees(rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2),
+				 rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2));
 		}
 	}
 
@@ -671,31 +671,31 @@ static bool cave_gen(void)
 	}
 
 	/* Special boundary walls -- Top */
-	for (x = min_wid; x < max_wid; x++)
+	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[min_hgt][x].feat = FEAT_PERM_SOLID;
+		cave[p_ptr->min_hgt][x].feat = FEAT_PERM_SOLID;
 	}
 
 	/* Special boundary walls -- Bottom */
-	for (x = min_wid; x < max_wid; x++)
+	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[max_hgt - 1][x].feat = FEAT_PERM_SOLID;
+		cave[p_ptr->max_hgt - 1][x].feat = FEAT_PERM_SOLID;
 	}
 
 	/* Special boundary walls -- Left */
-	for (y = min_hgt; y < max_hgt; y++)
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[y][min_wid].feat = FEAT_PERM_SOLID;
+		cave[y][p_ptr->min_wid].feat = FEAT_PERM_SOLID;
 	}
 
 	/* Special boundary walls -- Right */
-	for (y = min_hgt; y < max_hgt; y++)
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[y][max_wid - 1].feat = FEAT_PERM_SOLID;
+		cave[y][p_ptr->max_wid - 1].feat = FEAT_PERM_SOLID;
 	}
 
 
@@ -867,8 +867,10 @@ static bool cave_gen(void)
 						/* Find an empty grid */
 						while (TRUE)
 						{
-							y = rand_range(min_hgt + 1, max_hgt - 2);
-							x = rand_range(min_wid + 1, max_wid - 2);
+							y = rand_range(p_ptr->min_hgt + 1,
+									 p_ptr->max_hgt - 2);
+							x = rand_range(p_ptr->min_wid + 1,
+									 p_ptr->max_wid - 2);
 
 							/* Access the grid */
 							c_ptr = &cave[y][x];
@@ -909,12 +911,12 @@ static bool cave_gen(void)
 	i = MIN_M_ALLOC_LEVEL;
 
 	/* To make small levels a bit more playable */
-	if (max_hgt < MAX_HGT || max_wid < MAX_WID)
+	if (p_ptr->max_hgt < MAX_HGT || p_ptr->max_wid < MAX_WID)
 	{
 		int small_tester = i;
 
-		i = (i * max_hgt) / MAX_HGT;
-		i = (i * max_wid) / MAX_WID;
+		i = (i * p_ptr->max_hgt) / MAX_HGT;
+		i = (i * p_ptr->max_wid) / MAX_WID;
 		i += 1;
 
 		if (i > small_tester) i = small_tester;
@@ -954,9 +956,9 @@ static bool cave_gen(void)
 	if (empty_level && (!one_in_(DARK_EMPTY) || (randint1(100) > p_ptr->depth)))
 	{
 		/* Lite the cave */
-		for (y = min_hgt; y < max_hgt; y++)
+		for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 		{
-			for (x = min_hgt; x < max_wid; x++)
+			for (x = p_ptr->min_hgt; x < p_ptr->max_wid; x++)
 			{
 				cave[y][x].info |= (CAVE_GLOW);
 			}
@@ -992,8 +994,8 @@ void map_panel_size(void)
 	if (p_ptr->depth)
 	{
 		/* Determine number of panels (dungeon) */
-		max_panel_rows = max_hgt - min_hgt;
-		max_panel_cols = max_wid - min_wid;
+		max_panel_rows = p_ptr->max_hgt - p_ptr->min_hgt;
+		max_panel_cols = p_ptr->max_wid - p_ptr->min_wid;
 	}
 	else
 	{
@@ -1059,21 +1061,21 @@ static bool level_gen(cptr *why)
 		}
 
 		/* Get bounds of dungeon */
-		min_hgt = 0;
-		max_hgt = level_height * BLOCK_HGT;
-		min_wid = 0;
-		max_wid = level_width * BLOCK_WID;
+		p_ptr->min_hgt = 0;
+		p_ptr->max_hgt = level_height * BLOCK_HGT;
+		p_ptr->min_wid = 0;
+		p_ptr->max_wid = level_width * BLOCK_WID;
 
 		if (cheat_room)
-		  msg_format("X:%d, Y:%d.", max_wid, max_hgt);
+		  msg_format("X:%d, Y:%d.", p_ptr->max_wid, p_ptr->max_hgt);
 	}
 	else
 	{
 		/* Big dungeon */
-		min_hgt = 0;
-		max_hgt = MAX_HGT;
-		min_wid = 0;
-		max_wid = MAX_WID;
+		p_ptr->min_hgt = 0;
+		p_ptr->max_hgt = MAX_HGT;
+		p_ptr->min_wid = 0;
+		p_ptr->max_wid = MAX_WID;
 	}
 	
 	/* Make a dungeon */
@@ -1093,16 +1095,16 @@ static byte extract_feeling(void)
 	if (!p_ptr->depth) return 0;
 
 	/* Hack -- Have a special feeling sometimes */
-	if (good_item_flag && !preserve_mode) return 1;
+	if (dun_ptr->good_item_flag && !preserve_mode) return 1;
 
- 	if (rating > 100) return 2;
-	if (rating > 80) return 3;
-	if (rating > 60) return 4;
-	if (rating > 40) return 5;
-	if (rating > 30) return 6;
-	if (rating > 20) return 7;
-	if (rating > 10) return 8;
-	if (rating > 0) return 9;
+ 	if (dun_ptr->rating > 100) return 2;
+	if (dun_ptr->rating > 80) return 3;
+	if (dun_ptr->rating > 60) return 4;
+	if (dun_ptr->rating > 40) return 5;
+	if (dun_ptr->rating > 30) return 6;
+	if (dun_ptr->rating > 20) return 7;
+	if (dun_ptr->rating > 10) return 8;
+	if (dun_ptr->rating > 0) return 9;
 
 	if ((turn - old_turn) > 50000L)
 		chg_virtue(V_PATIENCE, 1);
@@ -1120,7 +1122,7 @@ static byte extract_feeling(void)
  */
 void generate_cave(void)
 {
-	int y, x, num;
+	int y, num;
 
 	/* Hack - Reset the object theme */
 	dun_theme.treasure = 20;
@@ -1131,20 +1133,11 @@ void generate_cave(void)
 	/* Build the wilderness */
 	if (!p_ptr->depth)
 	{
-		/* Hack XXX XXX */
-		/* Exit, information is already in other data type. */
-
-		p_ptr->px = (s16b)p_ptr->wilderness_x;
-		p_ptr->py = (s16b)p_ptr->wilderness_y;
-
 		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
 		
 		/* Reset map panels */
 		map_panel_size();
-
-		/* Add monsters to the wilderness */
-		repopulate_wilderness();
 
 		return;
 	}
@@ -1187,15 +1180,15 @@ void generate_cave(void)
 		object_level = base_level;
 
 		/* Nothing special here yet */
-		good_item_flag = FALSE;
+		dun_ptr->good_item_flag = FALSE;
 
 		/* Nothing good here yet */
-		rating = 0;
+		dun_ptr->rating = 0;
 
 		okay = level_gen(&why);
 
 		/* Extract the feeling */
-		feeling = extract_feeling();
+		dun_ptr->feeling = extract_feeling();
 
 		/* Prevent object over-flow */
 		if (o_max >= z_info->o_max)
@@ -1221,11 +1214,11 @@ void generate_cave(void)
 				 !p_ptr->inside_quest)
 		{
 			/* Require "goodness" */
-			if ((feeling > 9) ||
-			    ((p_ptr->depth >= 7) && (feeling > 8)) ||
-			    ((p_ptr->depth >= 15) && (feeling > 7)) ||
-			    ((p_ptr->depth >= 35) && (feeling > 6)) ||
-			    ((p_ptr->depth >= 70) && (feeling > 5)))
+			if ((dun_ptr->feeling > 9) ||
+			    ((p_ptr->depth >= 7) && (dun_ptr->feeling > 8)) ||
+			    ((p_ptr->depth >= 15) && (dun_ptr->feeling > 7)) ||
+			    ((p_ptr->depth >= 35) && (dun_ptr->feeling > 6)) ||
+			    ((p_ptr->depth >= 70) && (dun_ptr->feeling > 5)))
 			{
 				/* Give message to cheaters */
 				if (cheat_room || cheat_hear ||
@@ -1264,16 +1257,18 @@ void generate_cave(void)
 	
 	/* Verify the panel */
 	verify_panel();
-	
+
+#if 0	
 	/* Remove the CAVE_ROOM flags... reused as CAVE_MNLT */
-	for (x = min_wid; x < max_wid; x++)
+	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
-		for (y = min_hgt; y < max_hgt; y++)
+		for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 		{
 			/* Clear the flag */
 			cave[y][x].info &= ~(CAVE_ROOM);
 		}
 	}
+#endif /* 0 */
 
 	/* Remember when this level was "created" */
 	old_turn = turn;

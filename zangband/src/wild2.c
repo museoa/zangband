@@ -25,114 +25,6 @@ static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type);
 static void blend_helper(cave_type *c_ptr, byte *data, int g_type);
 
 
-/* Lighten / Darken new block depending on Day/ Night */
-void light_dark_block(blk_ptr block_ptr, int x, int y)
-{
-	int i, j;
-
-	bool daytime;
-	cave_type *c_ptr;
-
-
-	/* Day time */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
-		daytime = TRUE;
-	else
-		daytime = FALSE;
-
-	/* If is daytime - have seen this square */
-	if (daytime) wild[y][x].done.info |= WILD_INFO_SEEN;
-
-	/* Light up or darken the area */
-	for (j = 0; j < WILD_BLOCK_SIZE; j++)
-	{
-		for (i = 0; i < WILD_BLOCK_SIZE; i++)
-		{
-			/* Get the cave grid */
-			c_ptr = &block_ptr[j][i];
-
-			/* Hack -- Notice spot */
-			note_wild_spot(c_ptr);
-
-			if (daytime)
-			{
-				/* Assume lit */
-				c_ptr->info |= (CAVE_GLOW);
-
-				/* Hack -- Memorize lit grids if allowed */
-				if (view_perma_grids) c_ptr->player |= (GRID_MARK);
-			}
-			else
-			{
-				/* Darken "boring" features */
-				if (!(((c_ptr->feat >= FEAT_OPEN) &&
-				    (c_ptr->feat <= FEAT_MORE)) ||
-				    ((c_ptr->feat >= FEAT_CLOSED) &&
-					(c_ptr->feat <= FEAT_PERM_SOLID))))
-				{
-					/* Forget the grid */
-					c_ptr->info &= ~(CAVE_GLOW);
-					c_ptr->player &= ~(GRID_MARK);
-				}
-				else
-				{
-					/* Assume lit */
-					c_ptr->info |= (CAVE_GLOW);
-
-					/* Hack -- Memorize lit grids if allowed */
-					if (view_perma_grids) c_ptr->player |= (GRID_MARK);
-				}
-			}
-		}
-	}
-}
-
-
-/*
- * Lighten / Darken Wilderness
- */
-static void day_night(void)
-{
-	u16b x, y;
-
-	/* Light up or darken the area */
-	for (y = 0; y < WILD_GRID_SIZE; y++)
-	{
-		for (x = 0; x < WILD_GRID_SIZE; x++)
-		{
-			/* Light or darken wilderness block */
-			light_dark_block(wild_grid.block_ptr[y][x],
-			                 (x + min_wid / 16),
-			                 (y + min_hgt / 16));
-		}
-	}
-}
-
-
-/*
- * Access the old cave array.
- */
-static cave_type *access_cave(int y, int x)
-{
-	return &cave[y][x];
-}
-
-
-/*
- * Access wilderness
- */
-static cave_type *access_wild(int y, int x)
-{
-	/*
-	 * Divide by 16 to get block.
-	 * Logical AND with 15 to get location within block.
-	 */
-
-	return &wild_grid.block_ptr[(y / 16) - wild_grid.y]
-		[(x / 16) - wild_grid.x][y & 15][x & 15];
-}
-
-
 /* Town currently stored in cave[][] */
 static u16b cur_town = 0;
 
@@ -909,19 +801,19 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 	}
 
 	/* Find block to copy */
-	xx = (x - town[cur_town].x) * 16;
-	yy = (y - town[cur_town].y - town_offset_y) * 16;
+	xx = (x - town[cur_town].x) * WILD_BLOCK_SIZE;
+	yy = (y - town[cur_town].y - town_offset_y) * WILD_BLOCK_SIZE;
 
 	if (yy < 0)
 	{
-		yy += 4 * 16;
+		yy += 4 * WILD_BLOCK_SIZE;
 		town_offset_y -= 4;
 		redraw = TRUE;
 	}
 
-	if (yy >= 4 * 16)
+	if (yy >= 4 * WILD_BLOCK_SIZE)
 	{
-		yy -= 4 * 16;
+		yy -= 4 * WILD_BLOCK_SIZE;
 		town_offset_y += 4;
 		redraw = TRUE;
 	}
@@ -962,7 +854,8 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FTYPE_TRAP:
 				{
 					/* Activate the trap */
-					if (place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx))
+					if (place_field(y * WILD_BLOCK_SIZE + j,
+						 x * WILD_BLOCK_SIZE + i, c_ptr->fld_idx))
 					{
 						/* Hack - Initialise it (without "extra" information) */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
@@ -977,7 +870,8 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 					int data = 9;
 
 					/* Add a door field */
-					if (place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx))
+					if (place_field(y * WILD_BLOCK_SIZE + j,
+						 x * WILD_BLOCK_SIZE + i, c_ptr->fld_idx))
 					{
 						/* Add "power" of lock / jam to the field */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
@@ -990,7 +884,8 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FTYPE_BUILD:
 				{
 					/* Stores + buildings */
-					(void) place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx);
+					(void) place_field(y * WILD_BLOCK_SIZE + j,
+						 x * WILD_BLOCK_SIZE + i, c_ptr->fld_idx);
 
 					break;
 				}
@@ -999,122 +894,6 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 	}
 }
 
-
-
-
-
-/*
- * This function _must_ be called whenever the dungeon level changes.
- * It makes sure the bounds and access functions point to the correct
- * functions.  If this is not done - bad things happen.
- */
-
-void change_level(int level)
-{
-	int x, y;
-
-	/* Hack - reset trap detection flag */
-	p_ptr->detected = FALSE;
-
-	/* Clear the monster lights */
-	clear_mon_lite();
-
-	if (level == 0)
-	{
-		/* In the wilderness */
-
-		/* Reset the bounds */
-		min_hgt = wild_grid.y_min;
-		max_hgt = wild_grid.y_max;
-		min_wid = wild_grid.x_min;
-		max_wid = wild_grid.x_max;
-
-		/* Access the wilderness */
-		area = access_wild;
-
-		if (p_ptr->depth == 0)
-		{
-			/* Lighten / darken wilderness */
-			day_night();
-		}
-
-		/* Only do this if everything is initialised */
-		if (!character_dungeon) return;
-
-		/*
-		 * Restore the outside town if it exists
-		 * This is mainly done to reinit the fields
-		 */
-		for (y = wild_grid.y; y < WILD_GRID_SIZE + wild_grid.y; y++)
-		{
-			for (x = wild_grid.x; x < WILD_GRID_SIZE + wild_grid.x; x++)
-			{
-				/* The block to use */
-				blk_ptr block_ptr =
-					 wild_grid.block_ptr[y - wild_grid.y][x - wild_grid.x];
-
-				/* Overlay town */
-				u16b w_town = wild[y][x].done.town;
-
-				/* Is there a town? */
-				if (w_town)
-				{
-					/* overlay town on wilderness */
-					overlay_town(y, x, w_town, block_ptr);
-				}
-			}
-		}
-	}
-	else
-	{
-		/* In the dungeon */
-
-		/* Reset the bounds */
-		min_hgt = 0;
-		max_hgt = MAX_HGT;
-		min_wid = 0;
-		max_wid = MAX_WID;
-
-		/* Access the cave */
-		area = access_cave;
-
-		/* No town stored in cave[][] */
-		cur_town = 0;
-	}
-}
-
-/* Delete a wilderness block */
-static void del_block(blk_ptr block_ptr)
-{
-	int x, y;
-	int m_idx;
-
-	for (x = 0; x < WILD_BLOCK_SIZE; x++)
-	{
-		for (y = 0; y < WILD_BLOCK_SIZE; y++)
-		{
-			/* Clear old terrain data */
-			block_ptr[y][x].info = 0;
-			block_ptr[y][x].feat = 0;
-
-			/* Delete monster on the square */
-			m_idx = block_ptr[y][x].m_idx;
-
-			/* Only delete if one exists */
-			if (m_idx)
-			{
-				delete_monster_idx(m_idx);
-				block_ptr[y][x].m_idx = 0;
-			}
-
-			/* Delete objects on the square */
-			delete_object_location(&block_ptr[y][x]);
-
-			/* Delete fields on the square */
-			delete_field_aux(&block_ptr[y][x].fld_idx);
-		}
-	}
-}
 
 
 /* Clear the temporary block */
@@ -2154,12 +1933,12 @@ static void add_monsters_block(int x, int y)
 	 */
 	prob /= (wild[y][x].done.mon_prob + 1);
 
-	xx = x * 16;
-	yy = y * 16;
+	xx = x * WILD_BLOCK_SIZE;
+	yy = y * WILD_BLOCK_SIZE;
 
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
-		for (j = 0; j < 16; j++)
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* See if monster should go on square */
 			if (!randint0(prob))
@@ -2179,58 +1958,65 @@ static void add_monsters_block(int x, int y)
 	}
 }
 
-
-/*
- * Add monsters to the boundary of the visible grid.
- */
-static void add_monsters(void)
+void light_dark_square(cave_type *c_ptr, bool daytime)
 {
-	int x, y;
-
-	/* Add monsters */
-	for (x = 0; x < WILD_GRID_SIZE; x++)
+	/* Hack -- Notice spot */
+	note_wild_spot(c_ptr);
+	
+	if (daytime)
 	{
-		for (y = 0; y < WILD_GRID_SIZE; y++)
+		/* Assume lit */
+		c_ptr->info |= (CAVE_GLOW);
+
+		/* Hack -- Memorize lit grids if allowed */
+		if (view_perma_grids) c_ptr->player |= (GRID_MARK);
+	}
+	else
+	{
+		/* Darken "boring" features */
+		if (!(((c_ptr->feat >= FEAT_OPEN) &&
+		    (c_ptr->feat <= FEAT_MORE)) ||
+		    ((c_ptr->feat >= FEAT_CLOSED) &&
+			(c_ptr->feat <= FEAT_PERM_SOLID))))
 		{
-			/* Only on bounding blocks */
-			if (!((x == 0) || (x == WILD_GRID_SIZE - 1))) continue;
-			if (!((y == 0) || (y == WILD_GRID_SIZE - 1))) continue;
+			/* Forget the grid */
+			c_ptr->info &= ~(CAVE_GLOW);
+			c_ptr->player &= ~(GRID_MARK);
+		}
+		else
+		{
+			/* Assume lit */
+			c_ptr->info |= (CAVE_GLOW);
 
-			/* Not too close to player */
-			if (distance(p_ptr->px / 16, p_ptr->py / 16,
-			             x + wild_grid.x, y + wild_grid.y) < 3) continue;
-
-			/* Set the monster generation level */
-
-			/* Hack - use a number based on "law" statistic */
-			monster_level = wild[y + wild_grid.y][x + wild_grid.x].done.mon_gen;
-
-			/* Add monsters to block */
-			add_monsters_block(x + wild_grid.x, y + wild_grid.y);
+			/* Hack -- Memorize lit grids if allowed */
+			if (view_perma_grids) c_ptr->player |= (GRID_MARK);
 		}
 	}
 }
 
 
-/*
- * Add monsters to the wilderness in all blocks
- */
-void repopulate_wilderness(void)
+/* Lighten / Darken new block depending on Day/ Night */
+static void light_dark_block(blk_ptr block_ptr, int x, int y)
 {
-	int x, y;
+	int i, j;
 
-	/* Add monsters */
-	for (x = 0; x < WILD_GRID_SIZE; x++)
+	bool daytime;
+
+	/* Day time */
+	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+		daytime = TRUE;
+	else
+		daytime = FALSE;
+
+	/* If is daytime - have seen this square */
+	if (daytime) wild[y][x].done.info |= WILD_INFO_SEEN;
+
+	/* Light up or darken the area */
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
 	{
-		for (y = 0; y < WILD_GRID_SIZE; y++)
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			/* Set the monster generation level */
-
-			/* Hack - use a number based on "law" statistic */
-			monster_level = wild[y + wild_grid.y][x + wild_grid.x].done.mon_gen;
-
-			/* Add monsters to block */
-			add_monsters_block(x + wild_grid.x, y + wild_grid.y);
+			light_dark_square(&block_ptr[j][i], daytime);
 		}
 	}
 }
@@ -2239,15 +2025,16 @@ void repopulate_wilderness(void)
 /*
  * Make a new block based on the terrain type
  */
-static void gen_block(int x, int y, blk_ptr block_ptr)
+static void gen_block(int x, int y)
 {
 	u16b w_town, w_type;
+	blk_ptr block_ptr = wild_grid[y][x];
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant wilderness blocks */
-	Rand_value = wild_grid.wild_seed + x + y * max_wild;
+	Rand_value = wild_seed + x + y * max_wild;
 
 	/* Generate a terrain block */
 
@@ -2318,6 +2105,9 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
 
+	/* Hack - exit if data structures are currently being loaded */
+	if (!character_dungeon) return;
+	
 	/* Overlay town */
 	w_town = wild[y][x].done.town;
 
@@ -2336,58 +2126,12 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Hack - set object level to monster level */
 	object_level = wild[y][x].done.mon_gen;
 
-	/* Add monsters. (Not done) */
-}
-
-
-/* Allocate all grids around player */
-void init_wild_cache(void)
-{
-	int x, y;
-
-	/* Allocate blocks around player */
-	for (x = 0; x < WILD_GRID_SIZE; x++)
-	{
-		for (y = 0; y < WILD_GRID_SIZE; y++)
-		{
-			/* Link to the grid */
-			wild_grid.block_ptr[y][x] = wild_cache[x + WILD_GRID_SIZE * y];
-		}
-	}
-}
-
-
-/*
- * Allocate all grids around player
- */
-static void allocate_all(void)
-{
-	u16b x, y;
-	blk_ptr block_ptr;
-
-	/* Allocate blocks around player */
-	for (y = 0; y < WILD_GRID_SIZE; y++)
-	{
-		for (x = 0; x < WILD_GRID_SIZE; x++)
-		{
-			/* The block to use */
-			block_ptr = wild_cache[x + WILD_GRID_SIZE * y];
-
-			/* Delete the block */
-			del_block(block_ptr);
-
-			/* Link to the grid */
-			wild_grid.block_ptr[y][x] = block_ptr;
-
-			/* Make the new block */
-			gen_block(x + wild_grid.x, y + wild_grid.y, block_ptr);
-		}
-	}
-
 	/* Add monsters */
-	add_monsters();
+	add_monsters_block(x, y);	
 }
 
+
+#if 0
 
 /*
  * The following four functions shift the visible
@@ -2398,7 +2142,7 @@ static void shift_down(void)
 {
 	u16b i, j;
 	blk_ptr block_ptr;
-
+	
 	for (i = 0; i < WILD_GRID_SIZE; i++)
 	{
 		/* The block on the edge */
@@ -2420,9 +2164,6 @@ static void shift_down(void)
 		gen_block(i + wild_grid.x, WILD_GRID_SIZE - 1 + wild_grid.y,
 		          block_ptr);
 	}
-
-	/* Add monsters */
-	add_monsters();
 }
 
 
@@ -2430,7 +2171,7 @@ static void shift_up(void)
 {
 	u16b i, j;
 	blk_ptr block_ptr;
-
+	
 	for (i = 0; i < WILD_GRID_SIZE; i++)
 	{
 		/* The block on the edge */
@@ -2451,9 +2192,6 @@ static void shift_up(void)
 		/* Make the new block */
 		gen_block(i + wild_grid.x, wild_grid.y, block_ptr);
 	}
-
-	/* Add monsters */
-	add_monsters();
 }
 
 
@@ -2461,7 +2199,7 @@ static void shift_right(void)
 {
 	u16b i, j;
 	blk_ptr block_ptr;
-
+	
 	for (j = 0; j < WILD_GRID_SIZE; j++)
 	{
 		/* The block on the edge */
@@ -2483,9 +2221,6 @@ static void shift_right(void)
 		gen_block(WILD_GRID_SIZE - 1 + wild_grid.x, j + wild_grid.y,
 		          block_ptr);
 	}
-
-	/* Add monsters */
-	add_monsters();
 }
 
 
@@ -2493,7 +2228,7 @@ static void shift_left(void)
 {
 	u16b i, j;
 	blk_ptr block_ptr;
-
+	
 	for (j = 0; j < WILD_GRID_SIZE; j++)
 	{
 		/* The block on the edge */
@@ -2514,9 +2249,101 @@ static void shift_left(void)
 		/* Make the new block */
 		gen_block(wild_grid.x, j + wild_grid.y, block_ptr);
 	}
+}
 
-	/* Add monsters */
-	add_monsters();
+#endif /* 0 */
+
+/* Delete a wilderness block */
+static void del_block(int x, int y)
+{
+	blk_ptr block_ptr;
+	int xx, yy;
+	int m_idx;
+
+	/* Decrement refcount */
+	wild_refcount[y][x]--;
+	
+	/* Don't do anything if someone else is here */
+	if (wild_refcount[y][x]) return;
+	
+	/* Paranoia */
+	if (wild_refcount[y][x] > 3) quit("Del wild cache error.");
+	
+	/* Time to delete it - get block pointer */
+	block_ptr = wild_grid[y][x];
+	
+	for (xx = 0; xx < WILD_BLOCK_SIZE; xx++)
+	{
+		for (yy = 0; yy < WILD_BLOCK_SIZE; yy++)
+		{
+			/* Clear old terrain data */
+			block_ptr[yy][xx].info = 0;
+			block_ptr[yy][xx].feat = 0;
+			
+			/* Hack XXX */
+			block_ptr[yy][xx].player = 0;
+
+			/* Delete monster on the square */
+			m_idx = block_ptr[yy][xx].m_idx;
+
+			/* Only delete if one exists */
+			if (m_idx)
+			{
+				delete_monster_idx(m_idx);
+				block_ptr[yy][xx].m_idx = 0;
+			}
+
+			/* Delete objects on the square */
+			delete_object_location(&block_ptr[yy][xx]);
+
+			/* Delete fields on the square */
+			delete_field_aux(&block_ptr[yy][xx].fld_idx);
+		}
+	}
+	
+	/* Clear old reference */
+	wild_grid[y][x] = NULL;
+	
+	/* Attach to head of the list */
+	wild_cache[--wc_cnt] = block_ptr;
+}
+
+/*
+ * Allocate a new block
+ */
+static void allocate_block(int x, int y)
+{
+	/* Increment refcount */
+	wild_refcount[y][x]++;
+	
+	/* Paranoia */
+	if (wild_refcount[y][x] > 3) quit("Alloc wild cache error.");
+	
+	/* Don't do anything if someone else is here */
+	if (wild_refcount[y][x] != 1) return;
+
+	/* Paranoia */
+	if (wc_cnt >= WILD_CACHE) quit("Out of wilderness cache!!");
+	
+	/* Get new block */
+	wild_grid[y][x] = wild_cache[wc_cnt++];
+		
+	/* Generate the block */
+	gen_block(x, y);
+}
+
+
+static void shift_in_bounds(int *x, int *y)
+{
+	/* Recenter map */
+	*x -= WILD_VIEW / 2;
+	*y -= WILD_VIEW / 2;
+
+	/* Move if out of bounds */
+	if (*x < 0) *x = 0;
+	if (*y < 0) *y = 0;
+	if (*x + WILD_VIEW >= max_wild) *x = max_wild - WILD_VIEW - 1;
+	if (*y + WILD_VIEW >= max_wild) *y = max_wild - WILD_VIEW - 1;
 }
 
 
@@ -2529,100 +2356,294 @@ static void shift_left(void)
  */
 void move_wild(void)
 {
-	int x, y, dx, dy;
+	int x, y;
+	int ox, oy;
+	int i, j;
 
 	/* Get upper left hand block in grid. */
 
-	/* Divide by 16 to get block from (x,y) coord */
-	x = ((u16b)p_ptr->wilderness_x / 16);
-	y = ((u16b)p_ptr->wilderness_y / 16);
+	/* Divide by WILD_BLOCK_SIZE to get block from (x,y) coord */
+	x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
+	y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);
 
 	/* The player sees the wilderness block he is on. */
 	wild[y][x].done.info |= WILD_INFO_SEEN;
-
-	/* Recenter map */
-	x -= WILD_GRID_SIZE / 2;
-	y -= WILD_GRID_SIZE / 2;
-
-	/* Move if out of bounds */
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
-	if (x + WILD_GRID_SIZE > max_wild) x = max_wild - WILD_GRID_SIZE;
-	if (y + WILD_GRID_SIZE > max_wild) y = max_wild - WILD_GRID_SIZE;
-
+	
 	/* Hack - set town */
-	p_ptr->town_num =
-	    wild[p_ptr->wilderness_y / 16][p_ptr->wilderness_x / 16].done.town;
-
-	/*
-	 * Hack - check to see if first block is the same.
-	 * If so, the grid doesn't need to move.
-	 */
-	if ((x == wild_grid.x) && (y == wild_grid.y)) return;
+	p_ptr->town_num = wild[y][x].done.town;
+	
+	/* If we haven't moved block - exit */
+	if ((p_ptr->old_wild_x == x) && (p_ptr->old_wild_y == y)) return;
+	
+	/* Move boundary */
+	shift_in_bounds(&x, &y);
+	
+	/* Allocate new blocks */
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			allocate_block(x + i, y + j);
+		}
+	}
+	
+	p_ptr->min_wid = x * WILD_BLOCK_SIZE;
+	p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
+	p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
+	p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
+	
+	/* Get old area */
+	ox = p_ptr->old_wild_x;
+	oy = p_ptr->old_wild_y;
+	shift_in_bounds(&ox, &oy);
+	
+	/* Deallocate old blocks */
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			del_block(ox + i, oy + j);
+		}
+	}
 
 	/* Redraw depth */
 	p_ptr->redraw |= (PR_DEPTH);
+
+#if 0	
+	/* Shift the player information */
+	while(ox < x)
+	{
+		ox++;
+		shift_right();
+	}
+
+	while(ox > x)
+	{
+		ox--;
+		shift_left();
+	}
 	
-	dx = x - wild_grid.x;
-	dy = y - wild_grid.y;
-
-	/* Store in upper left hand corner. */
-	wild_grid.y = y;
-
-	/* Recalculate boundaries */
-	wild_grid.y_max = (y + WILD_GRID_SIZE) * 16;
-	wild_grid.y_min = y * 16;
-
-	max_hgt = wild_grid.y_max;
-	min_hgt = wild_grid.y_min;
-
-	/* Shift in only a small discrepency */
-	if (ABS(dy) == 1)
+	while(oy < y)
 	{
-		if (dy == 1) shift_down();
-		else shift_up();
+		oy++;
+		shift_up();
 	}
-	else if (dy)
+	
+	while(oy > y)
 	{
-		/* Too large of a shift */
-
-		/* Store in upper left hand corner. */
-		wild_grid.x = x;
-
-		/* Recalculate boundaries */
-		wild_grid.x_max = (x + WILD_GRID_SIZE) * 16;
-		wild_grid.x_min = x * 16;
-
-		max_wid = wild_grid.x_max;
-		min_wid = wild_grid.x_min;
-
-		allocate_all();
-		return;
+		oy--;
+		shift_down();
 	}
+#endif /* 0 */
 
-	/* Store in upper left hand corner. */
-	wild_grid.x = x;
+	/* Save the new location */
+	p_ptr->old_wild_x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
+	p_ptr->old_wild_y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);	
+}
 
-	/* Recalculate boundaries */
-	wild_grid.x_max = (x + WILD_GRID_SIZE) * 16;
-	wild_grid.x_min = x * 16;
+#if 0
 
-	max_wid = wild_grid.x_max;
-	min_wid = wild_grid.x_min;
+/*
+ * Lighten / Darken Wilderness
+ */
+static void day_night(void)
+{
+	u16b x, y;
 
-	/* Shift in only a small discrepency */
-	if (ABS(dx) == 1)
+	/* Light up or darken the area */
+	for (y = 0; y < WILD_GRID_SIZE; y++)
 	{
-		if (dx == 1) shift_right();
-		else shift_left();
-
-		/* Done */
-		return;
-	}
-
-	if (dx)
-	{
-		/* Too big of a jump */
-		allocate_all();
+		for (x = 0; x < WILD_GRID_SIZE; x++)
+		{
+			/* Light or darken wilderness block */
+			light_dark_block(wild_grid.block_ptr[y][x],
+			                 (x + min_wid / WILD_BLOCK_SIZE),
+			                 (y + min_hgt / WILD_BLOCK_SIZE));
+		}
 	}
 }
+
+#endif /* 0 */
+
+/*
+ * Access the old cave array.
+ */
+static cave_type *access_cave(int y, int x)
+{
+	return &cave[y][x];
+}
+
+
+/*
+ * Access wilderness
+ */
+static cave_type *access_wild(int y, int x)
+{
+	/*
+	 * Divide by 16 to get block.
+	 * Logical AND with 15 to get location within block.
+	 */
+	return &wild_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE][y & 15][x & 15];
+}
+
+
+/*
+ * Bounds checking
+ *
+ * Hack - in_bounds() and in_bounds2() are the same
+ * in the wilderness.
+ */
+static bool in_bounds_wild(int y, int x)
+{
+	/* Make sure we are inside the wilderness */
+	if ((y < 0) || (x < 0) ||
+		 (y >= max_wild * WILD_BLOCK_SIZE) || (x >= max_wild * WILD_BLOCK_SIZE))
+	{
+		return (FALSE);
+	}
+	
+	/* Return TRUE if block is in use */
+	return (wild_refcount[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] != 0);
+}
+
+static bool in_bounds_cave(int y, int x)
+{
+	return((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
+		 && (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
+}
+
+static bool in_bounds2_cave(int y, int x)
+{
+	return((y >= p_ptr->min_hgt) && (x >= p_ptr->min_wid)
+		 && (y < p_ptr->max_hgt) && (x < p_ptr->max_wid));
+}
+
+
+/* Allocate all grids around player */
+void init_wild_cache(void)
+{
+	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
+	int i, j;
+	
+	/* Move square in bounds */
+	shift_in_bounds(&x, &y);
+	
+	/* Allocate blocks around player */
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			allocate_block(x + i, y + j);
+		}
+	}
+}
+
+/* Deallocate all grids around player */
+static void del_wild_cache(void)
+{
+	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
+	int i, j;
+	
+	/* Move square in bounds */
+	shift_in_bounds(&x, &y);
+	
+	/* Deallocate blocks around player */
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			del_block(x + i, y + j);
+		}
+	}
+}
+
+
+/*
+ * This function _must_ be called whenever the dungeon level changes.
+ * It makes sure the bounds and access functions point to the correct
+ * functions.  If this is not done - bad things happen.
+ */
+
+void change_level(int level)
+{
+	int x, y;
+
+	bool switched = FALSE;
+
+	/* Hack - reset trap detection flag */
+	p_ptr->detected = FALSE;
+
+	/* Clear the monster lights */
+	clear_mon_lite();
+
+	if (level == 0)
+	{
+		/* In the wilderness */
+		p_ptr->px = (s16b)p_ptr->wilderness_x;
+		p_ptr->py = (s16b)p_ptr->wilderness_y;
+		
+		/* Used to be in the dungeon? */
+		if (area != access_wild) switched = TRUE;
+		
+		/* Access the wilderness */
+		area = access_wild;
+		
+		/* Bounds checking rountine */
+		in_bounds = in_bounds_wild;
+		in_bounds2 = in_bounds_wild;
+#if 0
+		if (p_ptr->depth == 0)
+		{
+			/* Lighten / darken wilderness */
+			day_night();
+		}
+
+#endif /* 0 */
+
+		/* Initialise the boundary */
+		x = p_ptr->old_wild_x;
+		y = p_ptr->old_wild_y;
+		
+		shift_in_bounds(&x, &y);
+		
+		p_ptr->min_wid = x * WILD_BLOCK_SIZE;
+		p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
+		p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
+		p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
+
+		/*
+		 * Restore the outside town if it exists
+		 * This is mainly done to reinit the fields
+		 */
+		if (switched) init_wild_cache();
+	}
+	else
+	{
+		/* In the dungeon */
+		
+		/* Used to be in the wilderness? */
+		if (area != access_cave) switched = TRUE;
+		
+		/* Change dun_ptr? */
+
+		/* Reset the bounds */
+		p_ptr->min_hgt = 0;
+		p_ptr->max_hgt = MAX_HGT;
+		p_ptr->min_wid = 0;
+		p_ptr->max_wid = MAX_WID;
+
+		/* Access the cave */
+		area = access_cave;
+		
+		/* Bounds checking */
+		in_bounds = in_bounds_cave;
+		in_bounds2 = in_bounds2_cave;
+
+		/* No town stored in cave[][] */
+		cur_town = 0;
+		
+		/* Hack XXX XXX Delete the wilderness cache */
+		if (switched) del_wild_cache();
+	}
+}
+

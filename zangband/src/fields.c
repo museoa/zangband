@@ -1287,9 +1287,9 @@ void test_field_data_integrity(void)
 	s16b fld_idx;
 
 	/* Test cave data structure */
-	for (i = min_wid; i < max_wid; i++)
+	for (i = p_ptr->min_wid; i < p_ptr->max_wid; i++)
 	{
-		for (j = min_hgt; j < max_hgt; j++)
+		for (j = p_ptr->min_hgt; j < p_ptr->max_hgt; j++)
 		{
 			/* Point to location */
 			c_ptr = area(j, i);

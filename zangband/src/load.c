@@ -1373,7 +1373,7 @@ static void rd_extra(void)
 
 	/* Read "feeling" */
 	rd_byte(&tmp8u);
-	feeling = tmp8u;
+	dun_ptr->feeling = tmp8u;
 
 	/* Turn of last "feeling" */
 	rd_s32b(&old_turn);
@@ -1885,19 +1885,22 @@ static void load_wild_data(void)
 	u16b tmp_u16b;
 	byte tmp_byte;
 
-	/* Load bounds */
-	rd_u16b(&wild_grid.y_max);
-	rd_u16b(&wild_grid.x_max);
-	rd_u16b(&wild_grid.y_min);
-	rd_u16b(&wild_grid.x_min);
-	rd_byte(&wild_grid.y);
-	rd_byte(&wild_grid.x);
+	if (sf_version < 28)
+	{
+		/* Load bounds */
+		rd_u16b(&tmp_u16b);
+		rd_u16b(&tmp_u16b);
+		rd_u16b(&tmp_u16b);
+		rd_u16b(&tmp_u16b);
+		rd_byte(&tmp_byte);
+		rd_byte(&tmp_byte);
 
-	/* Load cache status */
-	rd_byte(&wild_grid.cache_count);
-
+		/* Load cache status */
+		rd_byte(&tmp_byte);
+	}
+	
 	/* Load wilderness seed */
-	rd_u32b(&wild_grid.wild_seed);
+	rd_u32b(&wild_seed);
 
 	/* Load wilderness map */
 	for (i = 0; i < wild_x_size; i++)
@@ -1942,25 +1945,7 @@ static void load_wild_data(void)
 		}
 	}
 
-	/* Allocate blocks around player */
-	for (i = 0; i < WILD_GRID_SIZE; i++)
-	{
-		for (j = 0; j < WILD_GRID_SIZE; j++)
-		{
-			/* Allocate block and link to the grid */
-			wild_grid.block_ptr[j][i] =
-				wild_cache[i + WILD_GRID_SIZE * j];
-		}
-	}
-	
-	/* If not in dungeon - reset the bounds */
-	if (!p_ptr->depth)
-	{
-		min_hgt = wild_grid.y_min;
-		max_hgt = wild_grid.y_max;
-		min_wid = wild_grid.x_min;
-		max_wid = wild_grid.x_max;
-	}
+	/* init_wild_cache(); */
 }
 
 /* The version when the format of the wilderness last changed */
@@ -2019,10 +2004,10 @@ static errr rd_dungeon(void)
 	character_dungeon = FALSE;
 	
 	/* Assume we are in the dungeon */
-	max_hgt = cur_hgt;
-	min_hgt = 0;
-	max_wid = cur_wid;
-	min_wid = 0;
+	p_ptr->max_hgt = cur_hgt;
+	p_ptr->min_hgt = 0;
+	p_ptr->max_wid = cur_wid;
+	p_ptr->min_wid = 0;
 	
 	if (sf_version < 12)
 	{
@@ -2090,23 +2075,23 @@ static errr rd_dungeon(void)
 			load_map(cur_hgt, 0, cur_wid, 0);
 
 			/* Strip the wilderness map */
-			strip_map(wild_grid.y_max, wild_grid.y_min,
-			         wild_grid.x_max, wild_grid.x_min);
+			strip_map(p_ptr->max_hgt, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->min_wid);
 			
 			px = px_back;
 			py = py_back;
 			
 			/* Restore the bounds */
-			max_hgt = cur_hgt;
-			min_hgt = 0;
-			max_wid = cur_wid;
-			min_wid = 0;
+			p_ptr->max_hgt = cur_hgt;
+			p_ptr->min_hgt = 0;
+			p_ptr->max_wid = cur_wid;
+			p_ptr->min_wid = 0;
 		}
 		else
 		{
 			/* Strip the wilderness map */
-			strip_map(wild_grid.y_max, wild_grid.y_min,
-			         wild_grid.x_max, wild_grid.x_min);
+			strip_map(p_ptr->max_hgt, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->min_wid);
 
 			/* Make a new wilderness */
 			create_wilderness();
@@ -2128,16 +2113,16 @@ static errr rd_dungeon(void)
 			change_level(0);
 
 			/* Load wilderness map */
-			load_map(wild_grid.y_max, wild_grid.y_min,
-			         wild_grid.x_max, wild_grid.x_min);
+			load_map(p_ptr->max_hgt, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->min_wid);
 
 			change_level(p_ptr->depth);
 			
 			/* Restore the bounds */
-			max_hgt = cur_hgt;
-			min_hgt = 0;
-			max_wid = cur_wid;
-			min_wid = 0;
+			p_ptr->max_hgt = cur_hgt;
+			p_ptr->min_hgt = 0;
+			p_ptr->max_wid = cur_wid;
+			p_ptr->min_wid = 0;
 		}
 		else
 		{
@@ -2146,8 +2131,8 @@ static errr rd_dungeon(void)
 			change_level(0);
 
 			/* Load the wilderness */
-			load_map(wild_grid.y_max, wild_grid.y_min,
-			         wild_grid.x_max, wild_grid.x_min);
+			load_map(p_ptr->max_hgt, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->min_wid);
 
 			/* Reset level */
 			p_ptr->depth = 0;
@@ -2356,10 +2341,10 @@ static errr rd_dungeon(void)
 		if (p_ptr->depth)
 		{
 			/* Restore the bounds */
-			max_hgt = cur_hgt;
-			min_hgt = 0;
-			max_wid = cur_wid;
-			min_wid = 0;
+			p_ptr->max_hgt = cur_hgt;
+			p_ptr->min_hgt = 0;
+			p_ptr->max_wid = cur_wid;
+			p_ptr->min_wid = 0;
 			
 			/* Delete the fields */
 			
@@ -2667,7 +2652,10 @@ static errr rd_savefile_new_aux(void)
 		/* Position in the wilderness */
 		rd_s32b(&p_ptr->wilderness_x);
 		rd_s32b(&p_ptr->wilderness_y);
-
+		
+		p_ptr->old_wild_x = (u16b) p_ptr->wilderness_x / 16;
+		p_ptr->old_wild_y = (u16b) p_ptr->wilderness_y / 16;
+		
 		/* Size of the wilderness */
 		rd_s32b(&wild_x_size);
 		rd_s32b(&wild_y_size);

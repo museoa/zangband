@@ -109,4 +109,3 @@ extern void set_temp_mid(u16b val);
 extern void frac_block(void);
 extern void draw_city(u16b town_num);
 extern void van_town_gen(u16b town_num);
-extern void init_wild_cache(void);

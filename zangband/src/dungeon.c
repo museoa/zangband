@@ -933,7 +933,7 @@ static void process_world(void)
 	/*** Handle the wilderness/town (sunshine) ***/
 
 	/* While in town/wilderness */
-	if (!p_ptr->depth && !p_ptr->inside_quest)
+	if (!p_ptr->depth)
 	{
 		/* Hack -- Daybreak/Nighfall in town */
 		if (!(turn % ((10L * TOWN_DAWN) / 2)))
@@ -948,36 +948,19 @@ static void process_world(void)
 			{
 				/* Message */
 				msg_print("The sun has risen.");
-
-				/* Light up or darken the area */
-				for (y = 0; y < WILD_GRID_SIZE; y++)
-				{
-					for (x = 0; x < WILD_GRID_SIZE; x++)
-					{
-						/* Lighten wilderness block */
-						light_dark_block(wild_grid.block_ptr[y][x],
-						 (u16b)(x + wild_grid.x_min / 16),
-						  (u16b)(y + wild_grid.y_min / 16));
-					}
-				}
 			}
-
-			/* Night falls */
 			else
 			{
 				/* Message */
 				msg_print("The sun has fallen.");
-
-				/* Light up or darken the area */
-				for (y = 0; y < WILD_GRID_SIZE; y++)
+			}
+			
+			/* Light up or darken the area */
+			for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
+			{
+				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 				{
-					for (x = 0; x < WILD_GRID_SIZE; x++)
-					{
-						/* Darken wilderness block */
-						light_dark_block(wild_grid.block_ptr[y][x],
-						 (u16b)(x + wild_grid.x_min / 16),
-						  (u16b)(y + wild_grid.y_min / 16));
-					}
+					light_dark_square(area(y, x), dawn);
 				}
 			}
 
@@ -3513,9 +3496,6 @@ void play_game(bool new_game)
 
 		/* Start in town */
 		p_ptr->inside_quest = 0;
-
-		/* Add monsters to the wilderness */
-		repopulate_wilderness();
 
 		/* The dungeon is ready */
 		character_dungeon = TRUE;

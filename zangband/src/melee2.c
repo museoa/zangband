@@ -849,6 +849,9 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 
 			/* Skip occupied locations */
 			if (!cave_empty_grid(c_ptr)) continue;
+			
+			/* Not on player */
+			if ((y == py) && (x == px)) continue;
 
 			/* Check for hidden, available grid */
 			if (!player_has_los_grid(c_ptr) && clean_shot(fy, fx, y, x, FALSE))
@@ -976,6 +979,9 @@ static bool get_moves(int m_idx, int *mm)
 				/* Ignore filled grids */
 				c_ptr = area(y2, x2);
 				if (!cave_empty_grid(c_ptr)) continue;
+				
+				/* Not on player */
+				if ((y == py) && (x == px)) continue;
 
 				/* Try to fill this hole */
 				break;

@@ -2633,6 +2633,9 @@ bool earthquake(int cy, int cx, int r)
 
 							/* Skip non-empty grids */
 							if (!cave_empty_grid(c_ptr)) continue;
+							
+							/* Not on player */
+							if ((y == py) && (x == px)) continue;							
 
 							/* Check for a field that blocks movement */
 							if (fields_have_flags(c_ptr->fld_idx,

@@ -1374,6 +1374,9 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		/* Require empty grids */
 		c_ptr = area(y, x);
 		if (!cave_empty_grid(c_ptr)) continue;
+		
+		/* Not on player */
+		if ((x == px) && (y == py)) continue;
 
 		/* Place it (allow groups) */
 		if (place_monster_aux(y, x, r_idx, slp, TRUE, FALSE, FALSE)) break;
@@ -1965,9 +1968,9 @@ void do_cmd_debug(void)
 		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
-			for (y = min_hgt; y < max_hgt; y++)
+			for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 			{
-				for (x = min_wid; x < max_wid; x++)
+				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 				{
 					area(y, x)->info |= (CAVE_GLOW);
 					area(y, x)->player |= (GRID_MARK);
