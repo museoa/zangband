@@ -2204,7 +2204,7 @@ static errr rd_dungeon(void)
 		change_level(1);
 
 		/* Get the new region */
-		dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
+		create_region(dundata, cur_wid, cur_hgt, REGION_CAVE);
 		incref_region(cur_region);
 
 		/* Load dungeon map */
@@ -2239,7 +2239,7 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 
 			/* Get the new region */
-			dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
+			create_region(dundata, cur_wid, cur_hgt, REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2297,7 +2297,7 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 
 			/* Get the new region */
-			dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
+			create_region(dundata, cur_wid, cur_hgt, REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2338,7 +2338,7 @@ static errr rd_dungeon(void)
 		if (p_ptr->depth)
 		{
 			/* Get the new region */
-			dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
+			create_region(dundata, cur_wid, cur_hgt, REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */

@@ -4562,6 +4562,13 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 	(void) ((C1)->info), \
 	(void) ((C2)->player))
 
+
+/*
+ * Create a dungeon region
+ */
+#define create_region(R, WID, HGT, FLAGS) \
+	create_region_aux(&(R)->region, (WID), (HGT), (FLAGS))
+
 /*
  * Is the monster a pet of the player?
  */

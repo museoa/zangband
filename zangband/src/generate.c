@@ -1071,8 +1071,7 @@ static bool level_gen(cptr *why, dun_type *d_ptr)
 	}
 
 	/* Get the new region */
-	d_ptr->region = (s16b)create_region(p_ptr->max_wid, p_ptr->max_hgt,
-										  REGION_CAVE);
+	create_region(d_ptr, p_ptr->max_wid, p_ptr->max_hgt, REGION_CAVE);
 
 	/* Grab the reference to it */
 	incref_region(cur_region);
@@ -1274,7 +1273,7 @@ static void allocate_region(int rg_idx, int x, int y)
  * This rountine should never fail - but be prepared
  * for when it does.
  */
-int create_region(int x, int y, byte flags)
+void create_region_aux(s16b *region, int x, int y, byte flags)
 {
 	int rg_idx;
 	int i;
@@ -1296,8 +1295,11 @@ int create_region(int x, int y, byte flags)
 		/* Save the flags */
 		ri_list[rg_idx].flags = flags;
 
+		/* Save the region number */
+		*region = rg_idx;
+
 		/* Done */
-		return (rg_idx);
+		return;
 	}
 
 	/* Recycle dead regions */
@@ -1314,16 +1316,21 @@ int create_region(int x, int y, byte flags)
 
 		/* Save the flags */
 		ri_list[i].flags = flags;
-
+		
 		/* Use this region */
-		return (i);
+		*region = i;
+
+		return;
 	}
 
 	/* Warn the player */
 	msgf("Too many regions!");
 
+	/* Paranoia */
+	*region = 0;
+
 	/* Oops */
-	return (0);
+	return;
 }
 
 

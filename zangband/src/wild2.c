@@ -1167,9 +1167,9 @@ void draw_city(u16b town_num)
 	if (pl_ptr->region) quit("Town already has region during creation.");
 
 	/* Get region */
-	pl_ptr->region = (s16b)create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
-										 pl_ptr->ysize * WILD_BLOCK_SIZE,
-										 REGION_NULL);
+	create_region(pl_ptr, pl_ptr->xsize * WILD_BLOCK_SIZE,
+						pl_ptr->ysize * WILD_BLOCK_SIZE,
+						REGION_NULL);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -1284,8 +1284,7 @@ void draw_dungeon(u16b place_num)
 	if (pl_ptr->region) quit("Dungeon entrance already has region during creation.");
 
 	/* Get region */
-	pl_ptr->region = (s16b)create_region(WILD_BLOCK_SIZE, WILD_BLOCK_SIZE,
-										 REGION_NULL);
+	create_region(pl_ptr, WILD_BLOCK_SIZE, WILD_BLOCK_SIZE, REGION_NULL);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -2118,8 +2117,7 @@ void van_town_gen(u16b town_num)
 	if (pl_ptr->region) quit("Town already has region during creation.");
 
 	/* Get region */
-	pl_ptr->region = (s16b)create_region(V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT,
-										 REGION_NULL);
+	create_region(pl_ptr, V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT, REGION_NULL);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 

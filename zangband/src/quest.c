@@ -2268,9 +2268,9 @@ void draw_quest(u16b place_num)
 	if (pl_ptr->region) quit("Quest already has region during creation.");
 
 	/* Get region */
-	pl_ptr->region = (s16b)create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
-										 pl_ptr->ysize * WILD_BLOCK_SIZE,
-										 REGION_NULL);
+	create_region(pl_ptr, pl_ptr->xsize * WILD_BLOCK_SIZE,
+						 pl_ptr->ysize * WILD_BLOCK_SIZE,
+						 REGION_NULL);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 

@@ -454,7 +454,7 @@ extern int unref_region(int rg_idx);
 extern void incref_region(int rg_idx);
 extern void set_region(int rg_idx);
 extern void wipe_rg_list(void);
-extern int create_region(int x, int y, byte flags);
+extern void create_region_aux(s16b *region, int x, int y, byte flags);
 extern void generate_cave(void);
 
 /* init1.c */
