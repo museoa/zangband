@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "cmdinfo.h"
 
 /*
  * Like strcpy() but returns the length of the string copied

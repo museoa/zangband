@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "cmdinfo.h"
 #include "struct.h"
 
 StructType *g_struct;

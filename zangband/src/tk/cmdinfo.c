@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "cmdinfo.h"
 
 int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])

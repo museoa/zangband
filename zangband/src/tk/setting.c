@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "cmdinfo.h"
 #include "icon.h" /* FIXME: only for allow_animation */
 
 /*

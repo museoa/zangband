@@ -11,8 +11,8 @@
  */
 
 #include "tnb.h"
+#include "icon.h"
 #include "widget.h"
-#include "plat.h"
 
 #define XSetRect(r,x1,y1,w,h) (*r).x=x1,(*r).y=y1,(*r).width=w,(*r).height=h
 

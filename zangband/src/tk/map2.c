@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "cmdinfo.h"
 #include "icon.h"
 #include "widget.h"
 #include "map.h"

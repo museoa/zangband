@@ -12,7 +12,6 @@
 
 #include "tnb.h"
 #include "icon.h"
-#include "plat.h"
 #include <tkCanvas.h>
 
 static BitmapType CanvWidgetBitmap;

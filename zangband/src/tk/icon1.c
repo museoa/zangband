@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "cmdinfo.h"
 #include "icon.h"
 
 unsigned char *g_palette_rgb;

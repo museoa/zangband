@@ -10,7 +10,6 @@
  * included in all such copies.
  */
 #include "tnb.h"
-#include "cmdinfo.h"
 #include "icon.h"
 #include "widget.h"
 #include "map.h"

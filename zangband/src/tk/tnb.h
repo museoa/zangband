@@ -73,6 +73,47 @@ extern int CanvasWidget_Init(Tcl_Interp *interp);
 extern int init_const(Tcl_Interp *interp);
 
 
+/* cmdinfo.c */
+typedef struct CommandInfo CommandInfo;
+typedef struct CommandInit CommandInit;
+typedef struct SubCommandInfo SubCommandInfo;
+
+struct SubCommandInfo {
+	int alloc;
+	int count;
+	char **name;
+	CommandInfo **info;
+};
+
+struct CommandInfo {
+	int depth;
+	cptr name;
+	int minArgs, maxArgs;
+	cptr errorMsg;
+	Tcl_ObjCmdProc *proc;
+	ClientData clientData;
+	SubCommandInfo subCmd;
+};
+
+struct CommandInit {
+	int depth;
+	cptr name;
+	int minArgs, maxArgs;
+	cptr errorMsg;
+	Tcl_ObjCmdProc *proc;
+	ClientData clientData;
+};
+
+void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd);
+CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, char *names[]);
+extern int CommandInfo_InitAux(Tcl_Interp *interp, CommandInit *init,
+	int index, CommandInfo *parent);
+int CommandInfo_Init(Tcl_Interp *interp, CommandInit *init,
+	CommandInfo *parent);
+CommandInfo *CommandInfo_New(CommandInit *init);
+extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
+	int objc, Tcl_Obj *CONST objv[]);
+
 /* icon1.c */
 
 #define FLAVOR_AMULET 0
@@ -335,7 +376,6 @@ extern void init_struct(void);
 Tcl_Interp *TclTk_Init(int argc, char **argv);
 void TclTk_Exit(Tcl_Interp *interp);
 
-
 /* util-tnb.c */
 extern cptr keyword_term_color[];
 extern byte g_prompt_attr;
@@ -457,6 +497,15 @@ Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
 void ExtToUtf_SetResult(Tcl_Interp *interp, char *string);
 char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
 	Tcl_DString *extDStringPtr);
+
+
+/* plat.c */
+extern void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr);
+extern void Plat_BitmapDelete(BitmapPtr bitmapPtr);
+extern void *Plat_PaletteInit(unsigned char *rgb);
+extern int Plat_XColor2Pixel(XColor *xColorPtr);
+extern void Plat_SyncDisplay(Display *display);
+
 
 
 /* Make a tk hook function called 'objcmd_name' */
