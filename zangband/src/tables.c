@@ -6307,7 +6307,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 6, "ironman_rooms",			"Always generate very unusual rooms" },
 	{TRUE,  0, NULL,					"Number 205" },
 	{TRUE,  6, "preserve_mode",			"Preserve artifacts" },
-	{TRUE,  6, "autoroller",			"Specify 'minimal' stats" },
+	{TRUE,  6, "autoroller",			"Specify stat weightings" },
 	{FALSE, 6, "point_based",			"Generate character using a point system" },
 	{TRUE,  6, "silly_monsters",		"Allow silly monsters" },
 	{FALSE, 6, "ironman_nightmare",		"Nightmare mode (this isn't even remotely fair!)" },
