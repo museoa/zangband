@@ -2674,7 +2674,7 @@ bool earthquake(int cx, int cy, int r)
 
 							/* Initialise info to pass to action functions */
 							mon_enter_test.m_ptr = NULL;
-							mon_enter_test.do_move = TRUE;
+							mon_enter_test.flags = MEG_DO_MOVE;
 
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
@@ -2682,7 +2682,7 @@ bool earthquake(int cx, int cy, int r)
 								 (vptr) &mon_enter_test);
 
 							/* Get result */
-							if (!mon_enter_test.do_move) continue;
+							if (!(mon_enter_test.flags & MEG_DO_MOVE)) continue;
 
 							/* ... nor on the Pattern */
 							if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&

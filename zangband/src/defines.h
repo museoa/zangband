@@ -58,6 +58,8 @@
 #define ZANGBAND
 #define ZANGBAND_BIGSCREEN
 #define ZANGBAND_WILDERNESS
+/* hack - define if the source contains the cleanup_angband() function. */
+#define HAS_CLEANUP
 
 /*
  * This value is not currently used
@@ -4342,6 +4344,14 @@ extern int PlayerUID;
 
 #define FIELD_ACTION_MAX		20
 
+/*
+ * Monster enter grid test flags
+ */
+#define MEG_DO_MOVE			0x01	/* Do move */
+#define MEG_OPEN			0x02	/* Opened a door */
+#define MEG_BASH			0x04	/* Bashed a door */
+#define MEG_FORCE			0x08	/* Forced a rune */
+#define MEG_DO_TURN			0x10	/* Take turn */
 
 
 /*
@@ -4354,7 +4364,4 @@ extern int PlayerUID;
 #define DISPLAY_PLAYER_MAX		3
 
 
-/*
- * HACK - define if the source contains the cleanup_angband() function.
- */
-#define HAS_CLEANUP
+

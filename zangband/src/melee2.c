@@ -2502,6 +2502,12 @@ static void process_monster(int m_idx)
 			do_move = FALSE;
 		}
 		
+		/* Require "empty" fields */
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+		{
+			do_move = FALSE;
+		}
+		
 		/* 
 		 * Test for fields that will not allow this
 		 * specific monster to pass.  (i.e. Glyph of warding)
@@ -2509,17 +2515,20 @@ static void process_monster(int m_idx)
 		 
 		/* Initialise information to pass to action functions */
 		mon_enter_test.m_ptr = m_ptr;
-		mon_enter_test.do_move = do_move;
+		
+		/* Set up flags */
+		mon_enter_test.flags = 0x00;
+		if (do_move) mon_enter_test.flags |= MEG_DO_MOVE;
 		
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
 			 (vptr) &mon_enter_test);
-			 
-		/* Take turn in some cases. */
-		if (!mon_enter_test.do_move && do_move) do_turn = TRUE;
-		
+				
 		/* Get result */
-		do_move = mon_enter_test.do_move;
+		if (mon_enter_test.flags & (MEG_DO_MOVE)) do_move = TRUE;
+		if (mon_enter_test.flags & (MEG_OPEN)) did_open_door = TRUE;
+		if (mon_enter_test.flags & (MEG_BASH)) did_bash_door = TRUE;
+		if (mon_enter_test.flags & (MEG_DO_TURN)) do_turn = TRUE;
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
@@ -2529,12 +2538,6 @@ static void process_monster(int m_idx)
 			if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_BLOW);
 
 			/* Do not move */
-			do_move = FALSE;
-		}
-		
-		/* Require "empty" fields */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
-		{
 			do_move = FALSE;
 		}
 

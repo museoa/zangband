@@ -103,14 +103,14 @@ bool teleport_away(int m_idx, int dis)
 		 
 			/* Initialise information to pass to action functions */
 			mon_enter_test.m_ptr = NULL;
-			mon_enter_test.do_move = TRUE;
+			mon_enter_test.flags = MEG_DO_MOVE;
 		
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
 				 (vptr) &mon_enter_test);
 			 
 			/* Get result */
-			if (!mon_enter_test.do_move) continue;
+			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
 
 			/* No teleporting into vaults and such */
 			if (c_ptr->info & CAVE_ICKY) continue;
@@ -245,14 +245,14 @@ void teleport_to_player(int m_idx)
 		 
 			/* Initialise information to pass to action functions */
 			mon_enter_test.m_ptr = NULL;
-			mon_enter_test.do_move = TRUE;
+			mon_enter_test.flags = MEG_DO_MOVE;
 		
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
 				 (vptr) &mon_enter_test);
 			 
 			/* Get result */
-			if (!mon_enter_test.do_move) continue;
+			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;

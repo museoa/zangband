@@ -982,7 +982,7 @@ typedef struct field_mon_test field_mon_test;
 struct field_mon_test
 {
 	monster_type *m_ptr; /* The monster */
-	bool do_move; /* Does the monster enter this grid? */
+	byte flags; /* Does the monster enter this grid? */
 };
 
 /*

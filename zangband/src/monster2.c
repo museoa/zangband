@@ -1438,14 +1438,14 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly, bool pe
 		 
 	/* Initialise information to pass to action functions */
 	mon_enter_test.m_ptr = NULL;
-	mon_enter_test.do_move = TRUE;
+	mon_enter_test.flags = MEG_DO_MOVE;
 		
 	/* Call the hook */
 	field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
 		 (vptr) &mon_enter_test);
 			 
 	/* Get result */
-	if (!mon_enter_test.do_move) return (FALSE);
+	if (!(mon_enter_test.flags & (MEG_DO_MOVE))) return (FALSE);
 
 
 	/* Powerful monster */
@@ -2387,14 +2387,14 @@ bool summon_specific(int who, int x1, int y1, int lev, int type,
 		 
 		/* Initialise info to pass to action functions */
 		mon_enter_test.m_ptr = NULL;
-		mon_enter_test.do_move = TRUE;
+		mon_enter_test.flags = MEG_DO_MOVE;
 		
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, 
 			 (vptr) &mon_enter_test);
 			 
 		/* Get result */
-		if (!mon_enter_test.do_move) continue;
+		if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
 
 		/* Okay */
 		break;

@@ -1431,17 +1431,21 @@ bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 	if (!m_ptr)
 	{
 		/* Monsters cannot be generated / teleported onto glyph */
-		mon_enter->do_move = FALSE;
+		mon_enter->flags &= ~(MEG_DO_MOVE);
 		
 		/* Done */
 		return (FALSE);
 	}
 	
+	/* Take turn */
+	mon_enter->flags |= MEG_DO_TURN;
+	
 	/* Get race */
 	r_ptr = &r_info[m_ptr->r_idx];
 	
-	if (mon_enter->do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
+	if ((mon_enter->flags & (MEG_DO_MOVE))
+		 && !(r_ptr->flags1 & RF1_NEVER_BLOW)
+		 && (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		/* Describe observable breakage */
 		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
@@ -1449,8 +1453,8 @@ bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 			msg_print("The rune of protection is broken!");
 		}
 		
-		/* Allow movement */
-		mon_enter->do_move = TRUE;
+		/* Destroyed the rune */
+		mon_enter->flags |= MEG_FORCE;
 
 		/* Delete ourself */
 		return (TRUE);
@@ -1458,7 +1462,7 @@ bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 	else
 	{
 		/* No move allowed */
-		mon_enter->do_move = FALSE;
+		mon_enter->flags &= ~(MEG_DO_MOVE);
 	}
 	
 	/* Done */
@@ -1482,17 +1486,21 @@ bool field_action_glyph_explode(field_type *f_ptr, vptr input)
 	if (!m_ptr)
 	{
 		/* Monsters cannot be generated / teleported onto glyph */
-		mon_enter->do_move = FALSE;
+		mon_enter->flags &= ~(MEG_DO_MOVE);
 				
 		/* Done */
 		return (FALSE);
 	}
 	
+	/* Take turn */
+	mon_enter->flags |= MEG_DO_TURN;
+	
 	/* Get race */
 	r_ptr = &r_info[m_ptr->r_idx];
 	
-	if (mon_enter->do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-	    (randint1(BREAK_MINOR_GLYPH) < r_ptr->level)) 
+	if ((mon_enter->flags & (MEG_DO_MOVE))
+		 && !(r_ptr->flags1 & RF1_NEVER_BLOW)
+		 && (randint1(BREAK_MINOR_GLYPH) < r_ptr->level)) 
 	{
 		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
 		{
@@ -1502,8 +1510,8 @@ bool field_action_glyph_explode(field_type *f_ptr, vptr input)
 		else
 			msg_print("An explosive rune was disarmed.");
 			
-		/* Allow movement */
-		mon_enter->do_move = TRUE;
+		/* Forced a rune */
+		mon_enter->flags |= MEG_FORCE;
 		
 		/* Delete the field */
 		return (TRUE);
@@ -1511,7 +1519,7 @@ bool field_action_glyph_explode(field_type *f_ptr, vptr input)
 	else
 	{
 		/* No move allowed */
-		mon_enter->do_move = FALSE;
+		mon_enter->flags &= ~(MEG_DO_MOVE);
 	}
 	
 	/* Done */
@@ -3312,7 +3320,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 	if (!m_ptr)
 	{
 		/* Monsters cannot be generated / teleported on doors */
-		mon_enter->do_move = FALSE;
+		mon_enter->flags &= ~(MEG_DO_MOVE);
 		
 		/* Done */
 		return (FALSE);
@@ -3321,7 +3329,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 	/* Get race */
 	r_ptr = &r_info[m_ptr->r_idx];
 	
-	if (!mon_enter->do_move)
+	if (!(mon_enter->flags & (MEG_DO_MOVE)))
 	{
 		/* Monster cannot open the door */
 		
@@ -3330,7 +3338,8 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 	}
 	
 	/* Use move to try to open the door */
-	mon_enter->do_move = FALSE;	
+	mon_enter->flags &= ~(MEG_DO_MOVE);
+	mon_enter->flags |= MEG_DO_TURN;
 	
 	/* Locked doors */
 	if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
@@ -3341,6 +3350,9 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 		{
 			/* Open the door */
 			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
+			
+			/* Record the fact that we opened the door */
+			mon_enter->flags |= (MEG_OPEN);
 			
 			/* Delete the field */
 			return (TRUE);
@@ -3364,7 +3376,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 	if (!m_ptr)
 	{
 		/* Monsters cannot be generated / teleported on doors */
-		mon_enter->do_move = FALSE;
+		mon_enter->flags &= ~(MEG_DO_MOVE);
 		
 		/* Done */
 		return (FALSE);
@@ -3373,13 +3385,16 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 	/* Get race */
 	r_ptr = &r_info[m_ptr->r_idx];
 	
-	if (!mon_enter->do_move)
+	if (!(mon_enter->flags & (MEG_DO_MOVE)))
 	{
 		/* Monster cannot open the door */
 		
 		/* Done */
 		return (FALSE);
 	}
+	
+	/* Take turn */
+	mon_enter->flags |= MEG_DO_TURN;
 			
 	/* Stuck Door */
 	if ((r_ptr->flags2 & RF2_BASH_DOOR) &&
@@ -3405,9 +3420,11 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 			{
 				cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
 			}
-
-			/* Hack -- fall into doorway */
-			mon_enter->do_move = TRUE;
+			
+			/* Monster bashed the door */
+			mon_enter->flags |= (MEG_BASH);
+			
+			/* Hack - fall into door */
 			
 			/* Delete the field */
 			return (TRUE);
@@ -3415,7 +3432,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 	}
 	
 	/* Cannot move */
-	mon_enter->do_move = FALSE;
+	mon_enter->flags &= ~(MEG_DO_MOVE);
 	
 	/* Done */
 	return (FALSE);
