@@ -400,12 +400,7 @@ extern int size_obj;
 #define BI_AGOI		188			/* GOI spell */
 #define BI_AHWORD	189			/* Holy Word prayer */
 
-#define BI_TOWN_NUM	190			/* Current town number */
-#define BI_INSIDEQUEST	191		/* Inside quest level */
-#define BI_X_WILD	192			/* Coordinates in the wilderness */
-#define BI_Y_WILD	193
-
-#define BI_MAX		194
+#define BI_MAX		190
 
 
 /*

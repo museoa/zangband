@@ -1266,18 +1266,6 @@ void borg_update_frame(void)
 			borg_skill[BI_INTMANA] = 0;
 		}
 	}
-
-	/* Misc Zang stuff */
-#if 0
-	borg_skill[BI_TOWN_NUM] = p_ptr->town_num;
-	borg_skill[BI_ARENA_NUM] = p_ptr->arena_number;
-	borg_skill[BI_INSIDEARENA] = p_ptr->inside_arena;
-	borg_skill[BI_INSIDEQUEST] = p_ptr->inside_quest;
-#endif /* 0 */
-	borg_skill[BI_X_WILD] = p_ptr->wilderness_x;
-	borg_skill[BI_Y_WILD] = p_ptr->wilderness_y;
-
-	/* Time issues for Vampires */
 }
 
 
@@ -1289,7 +1277,7 @@ void borg_init_1(void)
 	/* Allocate the "keypress queue" */
 	C_MAKE(borg_key_queue, KEY_SIZE, char);
 
-	/* Prapare a local random number seed */
+	/* Prepare a local random number seed */
 	if (!borg_rand_local) borg_rand_local = randint0(0x10000000);
 
 	/*** Special "tracking" arrays ***/
