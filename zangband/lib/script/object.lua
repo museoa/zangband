@@ -226,13 +226,9 @@ function quaff_potion(object)
 		take_hit(5000, "a potion of Death")
 		ident = TRUE
 	elseif object.sval == SV_POTION_INFRAVISION then
-		if set_tim_infra(player.tim_infra + rand_range(100, 200)) then
-			ident = TRUE
-		end
+		if inc_tim_infra(rand_range(100, 200)) then ident = TRUE end
 	elseif object.sval == SV_POTION_DETECT_INVIS then
-		if set_tim_invis(player.tim_invis + rand_range(12, 24)) then
-			ident = TRUE
-		end
+		if inc_tim_invis(rand_range(12, 24)) then ident = TRUE end
 	elseif object.sval == SV_POTION_SLOW_POISON then
 		if inc_poisoned(-player.tim.poisoned / 2) then ident = TRUE end
 	elseif object.sval == SV_POTION_CURE_POISON then
@@ -399,7 +395,7 @@ function quaff_potion(object)
 		if set_cut(0) then ident = TRUE end
 		if clear_image() then ident = TRUE end
 	elseif object.sval == SV_POTION_INVULNERABILITY then
-		set_invuln(player.invuln + rand_range(7, 14))
+		inc_invuln(rand_range(7, 14))
 		ident = TRUE
 	elseif object.sval == SV_POTION_NEW_LIFE then
 		do_cmd_rerate()
@@ -530,7 +526,7 @@ function read_scroll(object)
 		end
 	elseif object.sval == SV_SCROLL_PROTECTION_FROM_EVIL then
 		k = 3 * player.lev
-		if set_protevil(player.protevil + randint1(25) + k) then ident = TRUE end
+		if inc_protevil(randint1(25) + k) then ident = TRUE end
 	elseif object.sval == SV_SCROLL_RUNE_OF_PROTECTION then
 		if not warding_glyph() then used_up = FALSE end
 		ident = TRUE
@@ -691,7 +687,7 @@ function use_staff(object)
 	elseif sval == SV_STAFF_HOLINESS then
 		if dispel_evil(300) then ident = TRUE end
 		local k = 3 * player.lev
-		if set_protevil(player.protevil + randint1(25) + k) then ident = TRUE end
+		if inc_protevil(randint1(25) + k) then ident = TRUE end
 		if clear_poisoned() then ident = TRUE end
 		if clear_afraid() then ident = TRUE end
 		if hp_player(50) then ident = TRUE end
