@@ -5125,7 +5125,7 @@ static void build_type25(int bx0, int by0)
 	}
 }
 
-#define ROOM_TYPES	25
+#define ROOM_TYPES	30
 
 typedef void (*room_build_type)(int, int);
 
@@ -5134,38 +5134,48 @@ typedef struct room_type room_type;
 struct room_type
 {
 	const int depth;	/* Minimum depth */
+	const int chance;       /* Relative probability (higher is more common) */
 	const room_build_type build_func;	/* Function to build room */
 	const u16b flags;
 };
 
 
+/*
+ * There are some duplicate entries, which cause the more interesting rooms
+ * to become more common at deeper depths.
+ */
 room_type room_list[ROOM_TYPES] =
 {
-	{1,		build_type1, RT_SIMPLE},	/* Simple Rectangle */
-	{1,		build_type2, RT_FANCY},	/* Overlapping */
-	{3,		build_type3, RT_FANCY},	/* Crossed */
-	{3,		build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
-	{10,	build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
-	{10,	build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
-	{10,	build_type7, RT_DENSE},	/* Small vault */
-	{20,	build_type8, RT_DENSE},	/* Large vault */
-	{5,		build_type9, RT_NATURAL},	/* Fractal cave */
-	{10,	build_type10, RT_RVAULT},	/* Random vault */
-	{3,		build_type11, RT_NATURAL | RT_FANCY},	/* Circle */
-	{10,	build_type12, RT_CRYPT},	/* Crypt I */
-	{5,		build_type13, RT_NATURAL},	/* Large with fractal feature */
-	{3,		build_type14, RT_COMPLEX},	/* Large with walls */
-	{3,		build_type15, RT_STRANGE},	/* Parallelogram */
-	{3,		build_type16, RT_RUIN | RT_NATURAL},	/* Rectangle minus inverse overlap */
-	{3,		build_type17, RT_RUIN},	/* Triangles */
-	{5,		build_type18, RT_BUILDING},	/* Chambers */
-	{5,		build_type19, RT_STRANGE},	/* Channel */
-	{1,		build_type20, RT_RUIN},	/* Collapsed */
-	{10,	build_type21, RT_CRYPT},	/* Crypt II */
-	{10,	build_type22, RT_COMPLEX},	/* Very large pillared chamber */
-	{3,		build_type23, RT_FANCY},	/* Semicircle */
-	{3,		build_type24, RT_COMPLEX},	/* Hourglass */
-	{3,		build_type25, RT_BUILDING}	/* Connected rooms */
+	{1,  30, build_type1, RT_SIMPLE},	/* Simple Rectangle */
+	{1,  10, build_type2, RT_FANCY},	/* Overlapping */
+	{1,  10, build_type20, RT_RUIN},	/* Collapsed */
+	{3,  10, build_type3, RT_FANCY},	/* Crossed */
+	{3,  10, build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
+	{3,  10, build_type11, RT_NATURAL | RT_FANCY},	/* Circle */
+	{3,  10, build_type14, RT_COMPLEX},	/* Large with walls */
+	{3,  10, build_type15, RT_STRANGE},	/* Parallelogram */
+	{3,  10, build_type16, RT_RUIN | RT_NATURAL},	/* Rectangle minus inverse overlap */
+	{3,  10, build_type17, RT_RUIN},	/* Triangles */
+	{3,  10, build_type23, RT_FANCY},	/* Semicircle */
+	{3,  10, build_type24, RT_COMPLEX},	/* Hourglass */
+	{3,  10, build_type25, RT_BUILDING},	/* Connected rooms */
+	{5,  10, build_type9, RT_NATURAL},	/* Fractal cave */
+	{5,  10, build_type13, RT_NATURAL},	/* Large with fractal feature */
+	{5,  10, build_type18, RT_BUILDING},	/* Chambers */
+	{5,  10, build_type19, RT_STRANGE},	/* Channel */
+	{7,  10, build_type22, RT_COMPLEX},	/* Very large pillared chamber */
+	{10, 10, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
+	{10, 10, build_type12, RT_CRYPT},	/* Crypt I */
+	{10, 10, build_type21, RT_CRYPT},	/* Crypt II */
+	{12, 10, build_type7, RT_DENSE},	/* Small vault */
+	{12, 10, build_type10, RT_RVAULT},	/* Random vault */
+	{15, 10, build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
+	{20, 10, build_type8, RT_DENSE},	/* Large vault */
+	{25, 10, build_type10, RT_RVAULT},	/* Random vault */
+	{30, 10, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
+	{35, 10, build_type7, RT_DENSE},	/* Small vault */
+	{40, 10, build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
+	{45, 10, build_type8, RT_DENSE},	/* Large vault */
 };
 
 
@@ -5180,21 +5190,48 @@ bool room_build(void)
 	int x, y;
 
 	int type;
+
+	int i;
+	int val, total;
+
+	int depth;
+
+	/* Choose base depth */
+	depth = p_ptr->depth;
+
+	/* Occasionally give a chance for an "out-of-depth" room */
+	if (one_in_(10)) depth += randint1(5);
+	if (one_in_(10)) depth += randint1(5);
+	
+	/* Collect the total possible chance */
+	total = 0;
+	for (i = 0; i < ROOM_TYPES; i++)
+	{
+		if (depth < room_list[i].depth) continue;
+		if (!(dun->room_types & room_list[i].flags)) continue;
+		if ((dun->crowded >= 2) && (room_list[type].flags & RT_TAG_CROWDED)) continue;
+		
+		total += room_list[i].chance;
+	}
 	
 	/* Find a room type for this dungeon */
-	do
+	val = randint0(total);
+	for (i = 0; i < ROOM_TYPES; i++)
 	{
-		/* Select room type at random */
-		type = randint0(ROOM_TYPES);
-	}
-	while (!(dun->room_types & room_list[type].flags));
-	
-	/* Restrict level */
-	if (p_ptr->depth < room_list[type].depth) return (FALSE);
+		
+		if (depth < room_list[i].depth) continue;
+		if (!(dun->room_types & room_list[i].flags)) continue;
+		if ((dun->crowded >= 2) && (room_list[type].flags & RT_TAG_CROWDED)) continue;
+		
+		val -= room_list[i].chance;
 
-	/* Restrict "crowded" rooms */
-	if ((dun->crowded >= 2) && (room_list[type].flags & RT_TAG_CROWDED)) return (FALSE);
-	
+		if (val < 0)
+		{
+			type = i;
+			break;
+		}
+	}
+
 	/* Pick a block for the room */
 	x = randint0(dun->col_rooms);
 	y = randint0(dun->row_rooms);
