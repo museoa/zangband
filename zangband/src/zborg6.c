@@ -578,7 +578,7 @@ bool borg_recall(void)
 {
 
 	/* Vampires dont like to Recall up in Daytime */
-	if (borg_skill[BI_FEAR_LITE] && borg_skill[BI_CDEPTH] >= 1)
+	if (borg_skill[BI_FEAR_LITE] && bp_ptr->depth >= 1)
 	{
 		/* If day time, Recall could be bad */
 		if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
@@ -843,7 +843,7 @@ static int borg_freedom(int x, int y)
 	int d, f = 0;
 
 	/* Hack -- chase down stairs in town */
-	if (!borg_skill[BI_CDEPTH] && track_more_num)
+	if (!bp_ptr->depth && track_more_num)
 	{
 		/* Love the stairs! */
 		d = double_distance(y, x, track_more_y[0], track_more_x[0]);
@@ -856,7 +856,7 @@ static int borg_freedom(int x, int y)
 	}
 
 	/* Hack -- chase Up Stairs in dungeon */
-	if (borg_skill[BI_CDEPTH] && track_less_num)
+	if (bp_ptr->depth && track_less_num)
 	{
 		/* Love the stairs! */
 		d = double_distance(y, x, track_less_y[0], track_less_x[0]);
@@ -1493,7 +1493,7 @@ static bool borg_escape(int b_q)
 	 * trips this routine.  So we must bypass this routine for some
 	 * particular circumstances.
 	 */
-	if (!borg_skill[BI_CDEPTH] &&
+	if (!bp_ptr->depth &&
 		(borg_skill[BI_ISPOISONED] || borg_skill[BI_ISWEAK] ||
 		 borg_skill[BI_ISCUT])) return (FALSE);
 
@@ -1505,17 +1505,17 @@ static bool borg_escape(int b_q)
 	if (borg_skill[BI_ISHEAVYSTUN] ||
 		(b_q >= avoidance * (45 + risky_boost) / 10) ||
 		((b_q >= avoidance * (40 + risky_boost) / 10) &&
-		 borg_fighting_unique >= 10 && borg_skill[BI_CDEPTH] == 100 &&
+		 borg_fighting_unique >= 10 && bp_ptr->depth == 100 &&
 		 bp_ptr->chp < 600) ||
 		((b_q >= avoidance * (30 + risky_boost) / 10) &&
-		 borg_fighting_unique >= 10 && borg_skill[BI_CDEPTH] == 99 &&
+		 borg_fighting_unique >= 10 && bp_ptr->depth == 99 &&
 		 bp_ptr->chp < 600) ||
 		((b_q >= avoidance * (25 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
-		 borg_skill[BI_CDEPTH] >= 95 && bp_ptr->chp < 550) ||
+		 bp_ptr->depth >= 95 && bp_ptr->chp < 550) ||
 		((b_q >= avoidance * (17 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
-		 borg_skill[BI_CDEPTH] < 95) ||
+		 bp_ptr->depth < 95) ||
 		((b_q >= avoidance * (15 + risky_boost) / 10) && !borg_fighting_unique))
 	{
 
@@ -1609,7 +1609,7 @@ static bool borg_escape(int b_q)
 	 * finish the fight.  Only bail out in extreme danger as above.
 	 */
 	if ((b_q < avoidance * (25 + risky_boost) / 10 && borg_fighting_unique >= 1
-		 && borg_fighting_unique <= 3 && borg_skill[BI_CDEPTH] >= 97) ||
+		 && borg_fighting_unique <= 3 && bp_ptr->depth >= 97) ||
 		bp_ptr->chp > 550) return (FALSE);
 
 
@@ -1619,7 +1619,7 @@ static bool borg_escape(int b_q)
 	if (borg_skill[BI_ISHEAVYSTUN] ||
 		((b_q >= avoidance * (15 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
-		 borg_skill[BI_CDEPTH] != 99) ||
+		 bp_ptr->depth != 99) ||
 		((b_q >= avoidance * (13 + risky_boost) / 10) && !borg_fighting_unique))
 	{
 
@@ -2371,8 +2371,8 @@ static bool borg_heal(int danger)
 	 * (unless morgoth is dead)
 	 * Priests wont need to bail, they have good heal spells.
 	 */
-	if (borg_skill[BI_MAXDEPTH] >= 98 && !borg_skill[BI_KING] &&
-		!borg_fighting_unique && borg_class != CLASS_PRIEST)
+	if ((bp_ptr->max_depth >= 98) && !borg_skill[BI_KING] &&
+		!borg_fighting_unique && (borg_class != CLASS_PRIEST))
 	{
 		/* Bail out to save the heal pots for Morgoth */
 		return (FALSE);
@@ -2778,7 +2778,7 @@ bool borg_caution(void)
 	if ((borg_escapes > 3 && !unique_on_level) || borg_escapes > 7)
 	{
 		/* No leaving if going after questors */
-		if (borg_skill[BI_CDEPTH] <= 98)
+		if (bp_ptr->depth <= 98)
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -2836,7 +2836,7 @@ bool borg_caution(void)
 		/* Describe (briefly) the current situation */
 		borg_note_fmt
 			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
-			 c_y, c_x, borg_skill[BI_CDEPTH], bp_ptr->lev,
+			 c_y, c_x, bp_ptr->depth, bp_ptr->lev,
 			 bp_ptr->chp, bp_ptr->mhp,
 			 bp_ptr->csp, bp_ptr->msp, p);
 		if (borg_goi)
@@ -2919,7 +2919,7 @@ bool borg_caution(void)
 	}
 
 	/* If I am waiting for recall,  & safe, then stay put. */
-	if (goal_recalling && borg_check_rest() && borg_skill[BI_CDEPTH])
+	if (goal_recalling && borg_check_rest() && bp_ptr->depth)
 	{
 		/* note the resting */
 		borg_note("# Resting here, waiting for Recall.");
@@ -2933,7 +2933,7 @@ bool borg_caution(void)
 
 	/* If I am waiting for recall in town */
 	if (goal_recalling && goal_recalling <= (borg_game_ratio * 2) &&
-		!borg_skill[BI_CDEPTH])
+		!bp_ptr->depth)
 	{
 		/* Cast GOI just before returning to dungeon */
 		if (!borg_goi &&
@@ -2981,7 +2981,7 @@ bool borg_caution(void)
 	/* Don't take off in the middle of a fight */
 	/* just to restock and it is useless to restock */
 	/* if you have just left town. */
-	if (borg_restock(borg_skill[BI_CDEPTH]) &&
+	if (borg_restock(bp_ptr->depth) &&
 		!borg_fighting_unique && (borg_time_town + (borg_t - borg_began)) > 200)
 	{
 		/* Start leaving */
@@ -2989,7 +2989,7 @@ bool borg_caution(void)
 		{
 			/* Note */
 			borg_note_fmt
-				("# Leaving (restock) %s", borg_restock(borg_skill[BI_CDEPTH]));
+				("# Leaving (restock) %s", borg_restock(bp_ptr->depth));
 
 			/* Start leaving */
 			goal_leaving = TRUE;
@@ -2999,7 +2999,7 @@ bool borg_caution(void)
 		{
 			/* Flee */
 			borg_note_fmt
-				("# Fleeing (restock) %s", borg_restock(borg_skill[BI_CDEPTH]));
+				("# Fleeing (restock) %s", borg_restock(bp_ptr->depth));
 
 			/* Start fleeing */
 			goal_fleeing = TRUE;
@@ -3011,7 +3011,7 @@ bool borg_caution(void)
 		/* Start fleeing */
 		if (!goal_fleeing && !borg_fighting_unique &&
 			(bp_ptr->lev < 50) && !vault_on_level &&
-			(borg_skill[BI_CDEPTH] < 100))
+			(bp_ptr->depth < 100))
 		{
 			/* Note */
 			borg_note("# Fleeing (excessive danger)");
@@ -3021,7 +3021,7 @@ bool borg_caution(void)
 		}
 	}
 	/* Potential danger (near death) in town */
-	else if (!borg_skill[BI_CDEPTH] && (p > bp_ptr->chp) &&
+	else if (!bp_ptr->depth && (p > bp_ptr->chp) &&
 			 (bp_ptr->lev < 50))
 	{
 		/* Flee now */
@@ -3051,7 +3051,7 @@ bool borg_caution(void)
 		 * but not when starving, or lacking food
 		 */
 		stair_more = goal_fleeing;
-		if (!borg_prepared(borg_skill[BI_CDEPTH] + 1))
+		if (!borg_prepared(bp_ptr->depth + 1))
 			stair_more = TRUE;
 
 		/* Its ok to go one level deep if evading scary guy */
@@ -3062,7 +3062,7 @@ bool borg_caution(void)
 			stair_more = FALSE;
 
 		/* if fleeing town, then dive */
-		if (!borg_skill[BI_CDEPTH]) stair_more = TRUE;
+		if (!bp_ptr->depth) stair_more = TRUE;
 
 
 	}
@@ -3168,7 +3168,7 @@ bool borg_caution(void)
 		}
 
 		/* Flee for fuel */
-		if (borg_skill[BI_CDEPTH] && (l_ptr->timeout < 250))
+		if (bp_ptr->depth && (l_ptr->timeout < 250))
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -3200,7 +3200,7 @@ bool borg_caution(void)
 		if (borg_quaff_potion(SV_POTION_RESTORE_MANA)) return (TRUE);
 
 		/* Flee for food */
-		if (borg_skill[BI_CDEPTH])
+		if (bp_ptr->depth)
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -3647,7 +3647,7 @@ bool borg_caution(void)
 		(borg_skill[BI_ACCW] < 3) && (borg_skill[BI_AHEAL] < 1))
 	{
 		/* Flee from low hit-points */
-		if (borg_skill[BI_CDEPTH] && (randint0(100) < 25))
+		if (bp_ptr->depth && (randint0(100) < 25))
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -3677,7 +3677,7 @@ bool borg_caution(void)
 		(bp_ptr->chp < bp_ptr->mhp / 2))
 	{
 		/* Flee from bleeding wounds */
-		if (borg_skill[BI_CDEPTH] && (randint0(100) < 25))
+		if (bp_ptr->depth && (randint0(100) < 25))
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -3710,7 +3710,7 @@ bool borg_caution(void)
 		 (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] == 0 && bp_ptr->chp < bp_ptr->mhp / 4)) &&
 		(p > bp_ptr->chp * 2 ||
 		 (p > bp_ptr->chp && borg_skill[BI_AEZHEAL] > 5) ||
-		 (p > bp_ptr->chp * 12 / 10 && bp_ptr->mhp - bp_ptr->chp >= 400 && borg_fighting_unique && borg_skill[BI_CDEPTH] >= 85)) &&	
+		 (p > bp_ptr->chp * 12 / 10 && bp_ptr->mhp - bp_ptr->chp >= 400 && borg_fighting_unique && bp_ptr->depth >= 85)) &&	
 		(borg_quaff_potion(SV_POTION_HEALING) ||
 		 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 		 borg_quaff_potion(SV_POTION_LIFE)))
@@ -3720,7 +3720,7 @@ bool borg_caution(void)
 	}
 
 	/* Hack -- use "recall" to flee if possible */
-	if (goal_fleeing && borg_skill[BI_CDEPTH] && (borg_recall()))
+	if (goal_fleeing && bp_ptr->depth && (borg_recall()))
 	{
 		/* Note */
 		borg_note("# Fleeing the level (recall)");
@@ -4098,13 +4098,13 @@ static int borg_thrust_damage_one(int i)
 	 *
 	 */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
-		borg_skill[BI_CDEPTH] >= 1) dam += (dam * 5);
+		bp_ptr->depth >= 1) dam += (dam * 5);
 
 	/* Hack -- ignore Maggot until later.  Player will chase Maggot
 	 * down all accross the screen waking up all the monsters.  Then
 	 * he is stuck in a comprimised situation.
 	 */
-	if ((r_ptr->flags1 & RF1_UNIQUE) && borg_skill[BI_CDEPTH] == 0)
+	if ((r_ptr->flags1 & RF1_UNIQUE) && bp_ptr->depth == 0)
 	{
 		dam = dam * 2 / 3;
 
@@ -4210,7 +4210,7 @@ int borg_attack_aux_thrust(void)
 		}
 
 		/* Hack -- ignore sleeping town monsters */
-		if (!borg_skill[BI_CDEPTH] && (kill->m_flags & MONST_ASLEEP)) continue;
+		if (!bp_ptr->depth && (kill->m_flags & MONST_ASLEEP)) continue;
 
 
 		/* Calculate "danger" to player */
@@ -4837,7 +4837,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (r_ptr->flags1 & RF1_UNIQUE)
 			{
 				/* If this unique is causing the danger, get rid of it */
-				if (dam > avoidance * 3 && borg_skill[BI_CDEPTH] <= 95)
+				if (dam > avoidance * 3 && bp_ptr->depth <= 95)
 				{
 					/* get rid of this unique */
 				}
@@ -5040,7 +5040,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 
 	/* give a small bonus for whacking a unique */
 	/* this should be just enough to give prefrence to wacking uniques */
-	if ((r_ptr->flags1 & RF1_UNIQUE) && borg_skill[BI_CDEPTH] >= 1)
+	if ((r_ptr->flags1 & RF1_UNIQUE) && bp_ptr->depth >= 1)
 		dam = (dam * 5);
 
 	/*
@@ -5048,7 +5048,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	 * down all accross the screen waking up all the monsters.  Then
 	 * he is stuck in a comprimised situation.
 	 */
-	if ((r_ptr->flags1 & RF1_UNIQUE) && borg_skill[BI_CDEPTH] == 0)
+	if ((r_ptr->flags1 & RF1_UNIQUE) && bp_ptr->depth == 0)
 	{
 		dam = dam * 2 / 3;
 
@@ -5199,7 +5199,7 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 	}
 
 	/* Hack -- ignore sleeping town monsters */
-	if (!borg_skill[BI_CDEPTH] && (kill->m_flags & MONST_ASLEEP))
+	if (!bp_ptr->depth && (kill->m_flags & MONST_ASLEEP))
 	{
 		return (0);
 	}
@@ -7016,7 +7016,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 		}
 
 		/* Hack -- ignore sleeping town monsters */
-		if (!borg_skill[BI_CDEPTH] && (kill->m_flags & MONST_ASLEEP)) continue;
+		if (!bp_ptr->depth && (kill->m_flags & MONST_ASLEEP)) continue;
 
 		/* Calculate "danger" to player */
 		borg_full_damage = TRUE;
@@ -8478,7 +8478,7 @@ bool borg_attack(bool boosted_bravery)
 		{
 
 			/* probably Grip or Fang. */
-			if (borg_skill[BI_CDEPTH] <= 5 && borg_skill[BI_CDEPTH] != 0 &&
+			if (bp_ptr->depth <= 5 && bp_ptr->depth != 0 &&
 				borg_fighting_unique)
 			{
 				/* Try to fight Grip and Fang. */
@@ -8733,13 +8733,13 @@ static int borg_defend_aux_speed(int p1)
 		p2 = p2 * 7 / 10;
 	}
 	/* if the unique is Sauron cast it */
-	if (borg_skill[BI_CDEPTH] == 99 && borg_fighting_unique >= 10)
+	if (bp_ptr->depth == 99 && borg_fighting_unique >= 10)
 	{
 		p2 = p2 * 6 / 10;
 	}
 
 	/* if the unique is Morgoth cast it */
-	if (borg_skill[BI_CDEPTH] == 100 && borg_fighting_unique >= 10)
+	if (bp_ptr->depth == 100 && borg_fighting_unique >= 10)
 	{
 		p2 = p2 * 5 / 10;
 	}
@@ -8808,7 +8808,7 @@ static int borg_defend_aux_goi(int p1)
 		fail_allowed = 25;
 
 	/* If fighting Questor boost the fail rate */
-	if (borg_fighting_unique >= 11 || borg_skill[BI_DEPTH] == 100)
+	if ((borg_fighting_unique >= 11) || (bp_ptr->depth == 100))
 		fail_allowed = 33;
 
 	if (!borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed) &&
@@ -8827,13 +8827,13 @@ static int borg_defend_aux_goi(int p1)
 	}
 
 	/* if the unique is Sauron cast it */
-	if (borg_skill[BI_CDEPTH] == 99 && borg_fighting_unique >= 10)
+	if (bp_ptr->depth == 99 && borg_fighting_unique >= 10)
 	{
 		p2 = p2 * 4 / 10;
 	}
 
 	/* if the unique is Morgoth cast it */
-	if (borg_skill[BI_CDEPTH] == 100 && borg_fighting_unique >= 10)
+	if (bp_ptr->depth == 100 && borg_fighting_unique >= 10)
 	{
 		p2 = 0;
 	}
@@ -8884,13 +8884,13 @@ static int borg_defend_aux_goi_pot(int p1)
 	p2 = p2 / 2;
 
 	/* if the unique is Sauron cast it */
-	if (borg_skill[BI_CDEPTH] == 99 && borg_fighting_unique >= 10)
+	if (bp_ptr->depth == 99 && borg_fighting_unique >= 10)
 	{
 		p2 = p2 * 4 / 10;
 	}
 
 	/* if the unique is Morgoth cast it */
-	if (borg_skill[BI_CDEPTH] == 100 && borg_fighting_unique >= 10)
+	if (bp_ptr->depth == 100 && borg_fighting_unique >= 10)
 	{
 		p2 = 0;
 	}
@@ -10116,7 +10116,7 @@ static int borg_defend_aux_genocide(void)
 		 * or deeper in the dungeon, conservatively,
 		 */
 		if (p1 < avoidance * 12 / 10 ||
-			(borg_skill[BI_CDEPTH] > 75 && p1 < avoidance * 7 / 10)) b_i = 0;
+			(bp_ptr->depth > 75 && p1 < avoidance * 7 / 10)) b_i = 0;
 
 		/* Did this help improve my situation? */
 		if (p1 < p2 && p2 >= (avoidance / 2)) b_i = 0;
@@ -10184,7 +10184,7 @@ static int borg_defend_aux_genocide_hounds(void)
 		bp_ptr->chp < 350) return (0);
 
 	/* only do it when deep, */
-	if (borg_skill[BI_CDEPTH] < 50) return (0);
+	if (bp_ptr->depth < 50) return (0);
 
 	/* Do not perform in Danger */
 	if (borg_danger(c_x, c_y, 1, TRUE) > avoidance / 3)
@@ -10452,9 +10452,9 @@ static int borg_defend_aux_banishment(int p1)
 
 	/* Try not to cast this against Morgy/Sauron */
 	if (borg_fighting_unique >= 10 && bp_ptr->chp > 250 &&
-		borg_skill[BI_CDEPTH] == 99) p2 = 9999;
+		bp_ptr->depth == 99) p2 = 9999;
 	if (borg_fighting_unique >= 10 && bp_ptr->chp > 350 &&
-		borg_skill[BI_CDEPTH] == 100) p2 = 9999;
+		bp_ptr->depth == 100) p2 = 9999;
 
 	/* check to see if I am left better off */
 	if (p1 > p2 &&
@@ -11297,7 +11297,7 @@ static int borg_perma_aux_goi(void)
 		return (0);
 
 	/* only on 100 and when Morgy is near */
-	if (borg_skill[BI_CDEPTH] != 100 || borg_fighting_unique <= 9)
+	if (bp_ptr->depth != 100 || borg_fighting_unique <= 9)
 		return (0);
 
 	if (!borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed) &&
@@ -11775,7 +11775,7 @@ bool borg_perma_spell()
 	borg_simulate = TRUE;
 
 	/* Not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 	/* No perma-spells until clevel 30 to avoid nasty loops with resting for
 	 * mana regain
@@ -11825,7 +11825,7 @@ bool borg_check_rest(void)
 	int i;
 
 	/* Do not rest in Sunlight */
-	if (borg_skill[BI_FEAR_LITE] && (borg_skill[BI_CDEPTH] == 0))
+	if (borg_skill[BI_FEAR_LITE] && (bp_ptr->depth == 0))
 	{
 		/* day time */
 		if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
@@ -12434,7 +12434,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Hack -- ignore Maggot until later.  */
 		if ((r_info[mb_ptr->monster].flags1 & RF1_UNIQUE) &&
-			borg_skill[BI_CDEPTH] == 0 && bp_ptr->lev < 5)
+			bp_ptr->depth == 0 && bp_ptr->lev < 5)
 			return (FALSE);
 
 		/* Message */
@@ -12568,7 +12568,7 @@ static bool borg_play_step(int y2, int x2)
 	}
 
 	/* Perhaps the borg could search for traps as he walks around level one. */
-	if ((bp_ptr->max_lev <= 3) && borg_skill[BI_CDEPTH] &&
+	if ((bp_ptr->max_lev <= 3) && bp_ptr->depth &&
 		!borg_skill[BI_ISSEARCHING] && borg_needs_searching)
 	{
 		borg_keypress('S');
@@ -12807,7 +12807,7 @@ bool borg_flow_stair_both(int why)
 	if (!track_less_num && !track_more_num) return (FALSE);
 
 	/* dont go down if hungry or low on food, unless fleeing a scary town */
-	if ((!goal_fleeing && !borg_skill[BI_CDEPTH]) &&
+	if ((!goal_fleeing && !bp_ptr->depth) &&
 		(borg_skill[BI_CUR_LITE] == 0 || borg_skill[BI_ISWEAK] ||
 		 borg_skill[BI_ISHUNGRY] || borg_skill[BI_FOOD] < 2))
 		return (FALSE);
@@ -12902,11 +12902,11 @@ bool borg_flow_stair_more(int why)
 	if (!track_more_num) return (FALSE);
 
 	/* if not fleeing do not go down unless safe */
-	if (!goal_fleeing && borg_prepared(borg_skill[BI_CDEPTH] + 1))
+	if (!goal_fleeing && borg_prepared(bp_ptr->depth + 1))
 		return (FALSE);
 
 	/* dont go down if hungry or low on food, unless fleeing a scary town */
-	if (borg_skill[BI_CDEPTH] &&
+	if (bp_ptr->depth &&
 		(borg_skill[BI_ISWEAK] || borg_skill[BI_ISHUNGRY] ||
 		 borg_skill[BI_FOOD] < 2))
 		return (FALSE);
@@ -13067,7 +13067,7 @@ bool borg_flow_shop_entry(int i)
 	int x, y;
 
 	/* Must be in town */
-	if (borg_skill[BI_CDEPTH]) return (FALSE);
+	if (bp_ptr->depth) return (FALSE);
 
 	/* Obtain the location */
 	x = borg_shops[i].x;
@@ -13296,7 +13296,7 @@ bool borg_flow_kill_corridor(bool viewable)
 				borg_spell_legal(REALM_NATURE, 1, 0) ||
 				borg_spell_legal(REALM_CHAOS, 2, 3) ||
 				borg_racial_check(RACE_HALF_GIANT, TRUE) ||
-				borg_skill[BI_DIG] > (borg_skill[BI_CDEPTH] > 80 ? 30 : 40))
+				borg_skill[BI_DIG] > (bp_ptr->depth > 80 ? 30 : 40))
 			{
 				/* digging ought to work */
 			}
@@ -13385,12 +13385,12 @@ bool borg_flow_kill(bool viewable, int nearness)
 	if (!borg_kills_cnt) return (FALSE);
 
 	/* Don't chase down town monsters when you are just starting out */
-	if (borg_skill[BI_CDEPTH] == 0 && bp_ptr->lev < 7) return (FALSE);
+	if (bp_ptr->depth == 0 && bp_ptr->lev < 7) return (FALSE);
 
 	/* YOU ARE NOT A WARRIOR!! DON'T ACT LIKE ONE!! */
 	if (borg_class == CLASS_MAGE &&
 		bp_ptr->lev <
-		(borg_skill[BI_CDEPTH] ? 35 : 5)) return (FALSE);
+		(bp_ptr->depth ? 35 : 5)) return (FALSE);
 
 
 	/* Nothing found */
@@ -13471,7 +13471,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 		 * he is stuck in a comprimised situation.
 		 */
 		if ((r_info[kill->r_idx].flags1 & RF1_UNIQUE) &&
-			borg_skill[BI_CDEPTH] == 0 && bp_ptr->lev < 5) continue;
+			bp_ptr->depth == 0 && bp_ptr->lev < 5) continue;
 
 		/* Access the location */
 		x = kill->x;
@@ -13946,7 +13946,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (borg_skill[BI_CUR_LITE] == 0) return (FALSE);
 
 		/* Do not disarm trap doors on level 99 */
-		if (borg_skill[BI_CDEPTH] == 99 &&
+		if (bp_ptr->depth == 99 &&
 			mb_ptr->feat == FEAT_TRAP_TRAPDOOR) return (FALSE);
 
 		/* Do not disarm when you could end up dead */
@@ -14264,7 +14264,7 @@ static bool borg_flow_dark_2(void)
 	map_block *mb_ptr;
 
 	/* Hack -- not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 	/* Set the searching flag for low level borgs */
 	borg_needs_searching = TRUE;
@@ -14359,7 +14359,7 @@ static bool borg_flow_dark_3(int b_stair)
 
 
 	/* Hack -- not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 
 	/* Local region */
@@ -14447,7 +14447,7 @@ static bool borg_flow_dark_4(int b_stair)
 
 
 	/* Hack -- not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 
 	/* Local region */
@@ -14535,7 +14535,7 @@ static bool borg_flow_dark_5(int b_stair)
 	map_block *mb_ptr;
 
 	/* Hack -- not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 	/* Nothing yet */
 	borg_temp_n = 0;
@@ -14683,7 +14683,7 @@ bool borg_flow_spastic(bool bored)
 	map_block *mb_ptr;
 
 	/* Hack -- not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 
 	/* Not bored */

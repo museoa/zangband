@@ -235,9 +235,16 @@ struct borg_player
 	
 	s16b lev; /* Cur level */
 	s16b max_lev;	/* Max level */
+	
+	s16b depth;	/* Cur depth */
+	s16b max_depth;	/* Max depth */
+	
+	
+	
 };
 
 extern borg_player *bp_ptr;
+
 
 #define BI_ESP		35
 #define BI_CUR_LITE	36
@@ -300,9 +307,7 @@ extern borg_player *bp_ptr;
 #define BI_SRDIS	93
 #define BI_SHLIFE	94
 #define BI_SFRACT	95
-#define BI_DEPTH	96
-#define BI_CDEPTH	97
-#define BI_MAXDEPTH	98
+
 #define BI_KING		99
 
 #define BI_ISWEAK 	100

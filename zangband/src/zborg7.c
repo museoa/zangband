@@ -280,7 +280,7 @@ bool borg_use_things(void)
 					{
 
 						/* Never quaff these in town */
-						if (!borg_skill[BI_CDEPTH]) break;
+						if (!bp_ptr->depth) break;
 
 						/* fall through */
 					}
@@ -316,7 +316,7 @@ bool borg_use_things(void)
 					case SV_SCROLL_STAR_ACQUIREMENT:
 					{
 						/* Never read these in town */
-						if (!borg_skill[BI_CDEPTH]) break;
+						if (!bp_ptr->depth) break;
 
 						/* Try reading the scroll */
 						if (borg_read_scroll(k_info[l_ptr->k_idx].sval))
@@ -401,7 +401,7 @@ bool borg_check_lite(void)
 
 
 	/* Never in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 	/* Never when comprimised, save your mana */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
@@ -712,14 +712,11 @@ bool borg_check_lite_only(void)
 
 	map_block *mb_ptr;
 
-
 	bool do_lite;
-
 	bool do_lite_aux = FALSE;
 
-
 	/* Never in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 	/* Never when blind or hallucinating */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE]) return (FALSE);
@@ -1244,8 +1241,8 @@ bool borg_enchanting(void)
 
 	/*apw Forbid if been sitting on level forever */
 	/*    Just come back and finish the job later */
-	if ((borg_t - borg_began > 150 && borg_skill[BI_CDEPTH]) ||
-		(borg_t - borg_began > 350 && !borg_skill[BI_CDEPTH])) return (FALSE);
+	if ((borg_t - borg_began > 150 && bp_ptr->depth) ||
+		(borg_t - borg_began > 350 && !bp_ptr->depth)) return (FALSE);
 
 	/* Remove Curses */
 	if (borg_decurse()) return (TRUE);
@@ -1585,31 +1582,31 @@ bool borg_crush_junk(void)
 			if (my_power > p) continue;
 
 			/* up to level 5, keep anything of value 100 or better */
-			if (borg_skill[BI_CDEPTH] < 5 && value > 100)
+			if (bp_ptr->depth < 5 && value > 100)
 				continue;
 			/* up to level 15, keep anything of value 100 or better */
-			if (borg_skill[BI_CDEPTH] < 15 && value > 200)
+			if (bp_ptr->depth < 15 && value > 200)
 				continue;
 			/* up to level 30, keep anything of value 500 or better */
-			if (borg_skill[BI_CDEPTH] < 30 && value > 500)
+			if (bp_ptr->depth < 30 && value > 500)
 				continue;
 			/* up to level 40, keep anything of value 1000 or better */
-			if (borg_skill[BI_CDEPTH] < 40 && value > 1000)
+			if (bp_ptr->depth < 40 && value > 1000)
 				continue;
 			/* up to level 60, keep anything of value 1200 or better */
-			if (borg_skill[BI_CDEPTH] < 60 && value > 1200)
+			if (bp_ptr->depth < 60 && value > 1200)
 				continue;
 			/* up to level 80, keep anything of value 1400 or better */
-			if (borg_skill[BI_CDEPTH] < 80 && value > 1400)
+			if (bp_ptr->depth < 80 && value > 1400)
 				continue;
 			/* up to level 90, keep anything of value 1600 or better */
-			if (borg_skill[BI_CDEPTH] < 90 && value > 1600)
+			if (bp_ptr->depth < 90 && value > 1600)
 				continue;
 			/* up to level 95, keep anything of value 1800 or better */
-			if (borg_skill[BI_CDEPTH] < 95 && value > 1800)
+			if (bp_ptr->depth < 95 && value > 1800)
 				continue;
 			/* below level 127, keep anything of value 2000 or better */
-			if (borg_skill[BI_CDEPTH] < 127 && value > 2000)
+			if (bp_ptr->depth < 127 && value > 2000)
 				continue;
 		}
 
@@ -1764,7 +1761,7 @@ bool borg_crush_slow(void)
 		bp_ptr->chp / 20) return (FALSE);
 
 	/* Hack -- never in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
+	if (!bp_ptr->depth) return (FALSE);
 
 	/* Do not crush items unless we are slow */
 	if (borg_skill[BI_SPEED] >= 110) return (FALSE);
@@ -1953,7 +1950,7 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Hack -- reward depth */
-					v += (borg_skill[BI_MAXDEPTH] * 5000L);
+					v += (bp_ptr->max_depth * 5000L);
 
 					break;
 				}
@@ -1962,7 +1959,7 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Hack -- reward depth */
-					v += (borg_skill[BI_MAXDEPTH] * 3000L);
+					v += (bp_ptr->max_depth * 3000L);
 
 					break;
 				}
@@ -1972,7 +1969,7 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Hack -- reward depth */
-					v += (borg_skill[BI_MAXDEPTH] * 2000L);
+					v += (bp_ptr->max_depth * 2000L);
 
 					break;
 				}
@@ -1981,7 +1978,7 @@ bool borg_test_stuff(bool star_id)
 				case TV_SCROLL:
 				{
 					/* Hack -- reward depth */
-					v += (borg_skill[BI_MAXDEPTH] * 500L);
+					v += (bp_ptr->max_depth * 500L);
 
 					break;
 				}
@@ -1990,7 +1987,7 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Hack -- reward depth */
-					v += (borg_skill[BI_MAXDEPTH] * 10L);
+					v += (bp_ptr->max_depth * 10L);
 
 					break;
 				}
@@ -2578,7 +2575,7 @@ bool borg_play_magic(bool bored)
 	}
 
 	/* Hack -- only in town */
-	if (borg_skill[BI_CDEPTH]) return (FALSE);
+	if (bp_ptr->depth) return (FALSE);
 
 	/* Hack -- only when bored */
 	if (!bored) return (FALSE);
@@ -2807,7 +2804,7 @@ bool borg_leave_level(bool bored)
 	 */
 
 	/* Town */
-	if (!borg_skill[BI_CDEPTH])
+	if (!bp_ptr->depth)
 	{
 		/* Cancel rising */
 		goal_rising = FALSE;
@@ -2816,7 +2813,7 @@ bool borg_leave_level(bool bored)
 		if (!bored) return (FALSE);
 
 		/* Hack -- Recall into dungeon */
-		if ((borg_skill[BI_MAXDEPTH] >= 5) &&
+		if ((bp_ptr->max_depth >= 5) &&
 			(borg_skill[BI_RECALL] >= 6) && borg_recall())
 		{
 			/* Note */
@@ -2828,16 +2825,16 @@ bool borg_leave_level(bool bored)
 		else
 		{
 			/* note why we didn't recall. */
-			if (borg_skill[BI_MAXDEPTH] < 5)
+			if (bp_ptr->max_depth < 5)
 				borg_note("# Not deep enough to recall");
 			else if (borg_skill[BI_RECALL] <= 2)
 				borg_note("# Not enough recalls to recall");
 			else
 			{
 				/* recall unless way out of our league */
-				if (borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10))
+				if (borg_prepared(bp_ptr->max_depth * 6 / 10))
 				{
-					cptr reason = borg_prepared(borg_skill[BI_MAXDEPTH]);
+					cptr reason = borg_prepared(bp_ptr->max_depth);
 					borg_note_fmt
 						("# Way too scary to recall down there!   %s", reason);
 				}
@@ -2864,7 +2861,7 @@ bool borg_leave_level(bool bored)
 	/** In the Dungeon **/
 
 	/* do not hangout on boring levels for *too* long */
-	if (!borg_prepared(borg_skill[BI_CDEPTH] + 1)) g = 1;
+	if (!borg_prepared(bp_ptr->depth + 1)) g = 1;
 
 	/* Count sellable items */
 	k = borg_count_sell();
@@ -2884,28 +2881,28 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Rise a level if bored and unable to dive. */
-	if (bored && borg_prepared(borg_skill[BI_CDEPTH] + 1))
+	if (bored && borg_prepared(bp_ptr->depth + 1))
 	{
-		cptr reason = borg_prepared(borg_skill[BI_CDEPTH] + 1);
+		cptr reason = borg_prepared(bp_ptr->depth + 1);
 		g = -1;
 		borg_note_fmt("# heading up (bored and unable to dive: %s)", reason);
 	}
 
 	/* Power dive if I am playing too shallow */
-	if (!borg_prepared(borg_skill[BI_CDEPTH] + 5)) g = 1;
+	if (!borg_prepared(bp_ptr->depth + 5)) g = 1;
 
 	/* Hack -- Power-climb upwards when needed */
-	if (borg_prepared(borg_skill[BI_CDEPTH]) && !unique_on_level)
+	if (borg_prepared(bp_ptr->depth) && !unique_on_level)
 	{
-		cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
+		cptr reason = borg_prepared(bp_ptr->depth);
 
 		borg_note_fmt("# heading up (too deep: %s)", reason);
 		g = -1;
 
 		/* if I must restock go to town */
-		if (borg_restock(borg_skill[BI_CDEPTH]))
+		if (borg_restock(bp_ptr->depth))
 		{
-			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
+			cptr reason = borg_prepared(bp_ptr->depth);
 
 			borg_note_fmt("# returning to town to restock(too deep: %s)",
 						  reason);
@@ -2913,18 +2910,18 @@ bool borg_leave_level(bool bored)
 		}
 
 		/* if I am really out of depth go to town */
-		if (borg_prepared(borg_skill[BI_MAXDEPTH] * 5 / 10))
+		if (borg_prepared(bp_ptr->max_depth * 5 / 10))
 		{
-			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
+			cptr reason = borg_prepared(bp_ptr->depth);
 			borg_note_fmt("# returning to town (too deep: %s)", reason);
 			goal_rising = TRUE;
 		}
 	}
 
 	/* Hack -- if I am playing way too shallow return to town */
-	if (!borg_prepared(borg_skill[BI_CDEPTH] + 20) &&
-		!borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10) &&
-		borg_skill[BI_MAXDEPTH] > borg_skill[BI_CDEPTH] + 10)
+	if (!borg_prepared(bp_ptr->depth + 20) &&
+		!borg_prepared(bp_ptr->max_depth * 6 / 10) &&
+		bp_ptr->max_depth > bp_ptr->depth + 10)
 	{
 		borg_note("# returning to town to recall back down (too shallow)");
 		goal_rising = TRUE;
@@ -2968,8 +2965,8 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* return to town if been scumming for a bit */
-	if (borg_skill[BI_MAXDEPTH] >= borg_skill[BI_CDEPTH] + 25 &&
-		borg_skill[BI_CDEPTH] < 9 &&
+	if (bp_ptr->max_depth >= bp_ptr->depth + 25 &&
+		bp_ptr->depth < 9 &&
 		borg_time_town + borg_t - borg_began > 3500)
 	{
 		borg_note("# Going to town (scumming check).");
@@ -2981,7 +2978,7 @@ bool borg_leave_level(bool bored)
 
 	/* Mega-Hack -- spend time on the first level to rotate shops */
 	if ((bp_ptr->lev > 10) &&
-		(borg_skill[BI_CDEPTH] == 1) && (borg_t - borg_began < 100) && (g < 0))
+		(bp_ptr->depth == 1) && (borg_t - borg_began < 100) && (g < 0))
 	{
 		g = 0;
 	}
@@ -3005,7 +3002,7 @@ bool borg_leave_level(bool bored)
 		/* Hack -- recall if going to town */
 		if (goal_rising &&
 			((borg_time_town + (borg_t - borg_began)) > 200) &&
-			(borg_skill[BI_CDEPTH] >= 5) && borg_recall())
+			(bp_ptr->depth >= 5) && borg_recall())
 		{
 			borg_note("# Recalling to town (goal rising)");
 			return (TRUE);

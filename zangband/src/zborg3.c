@@ -1190,9 +1190,8 @@ bool borg_read_scroll(int sval)
 	borg_keypress(I2A(look_up_index(l_ptr)));
 
 	/* reset recall depth in dungeon? */
-	if (sval == SV_SCROLL_WORD_OF_RECALL &&
-		borg_skill[BI_CDEPTH] < borg_skill[BI_MAXDEPTH] &&
-		borg_skill[BI_CDEPTH] != 0)
+	if ((sval == SV_SCROLL_WORD_OF_RECALL) &&
+		(bp_ptr->depth < bp_ptr->max_depth) && bp_ptr->depth)
 	{
 		/* Do not reset Depth */
 		borg_keypress('n');

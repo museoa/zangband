@@ -1481,7 +1481,7 @@ static int borg_guess_race_name(cptr who)
 		s = 1000;
 
 		/* Penalize "depth miss" */
-		s = s - ABS(r_ptr->level - borg_skill[BI_CDEPTH]);
+		s = s - ABS(r_ptr->level - bp_ptr->depth);
 
 		/* Track best */
 		if (b_i && (s < b_s)) continue;
@@ -1574,19 +1574,19 @@ static int borg_guess_kidx(char unknown)
 		s = 10000;
 
 		/* Hack -- penalize "extremely" out of depth */
-		if (k_ptr->level > borg_skill[BI_CDEPTH] + 50) s = s - 500;
+		if (k_ptr->level > bp_ptr->depth + 50) s = s - 500;
 
 		/* Hack -- penalize "very" out of depth */
-		if (k_ptr->level > borg_skill[BI_CDEPTH] + 15) s = s - 100;
+		if (k_ptr->level > bp_ptr->depth + 15) s = s - 100;
 
 		/* Hack -- penalize "rather" out of depth */
-		if (k_ptr->level > borg_skill[BI_CDEPTH] + 5) s = s - 50;
+		if (k_ptr->level > bp_ptr->depth + 5) s = s - 50;
 
 		/* Hack -- penalize "somewhat" out of depth */
-		if (k_ptr->level > borg_skill[BI_CDEPTH]) s = s - 10;
+		if (k_ptr->level > bp_ptr->depth) s = s - 10;
 
 		/* Hack -- Penalize "depth miss" */
-		s = s - ABS(k_ptr->level - borg_skill[BI_CDEPTH]);
+		s = s - ABS(k_ptr->level - bp_ptr->depth);
 
 		/* Hack -- Penalize INSTA_ART items */
 		if (k_ptr->flags3 & TR3_INSTA_ART) s = s - 1000;
@@ -2975,7 +2975,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_FAILED spell by monster.  Fear it! */
 			/* It could be a unique like Azriel */
-			p += borg_skill[BI_CDEPTH];
+			p += bp_ptr->depth;
 			break;
 		}
 
@@ -3490,7 +3490,7 @@ static int borg_fear_spell(int i)
 		case 64:
 		{
 			/* RF6_HASTE */
-			p += 10 + borg_skill[BI_CDEPTH];
+			p += 10 + bp_ptr->depth;
 			break;
 		}
 
@@ -3528,7 +3528,7 @@ static int borg_fear_spell(int i)
 		case 70:
 		{
 			/* RF6_TELE_TO */
-			p += 20 + borg_skill[BI_CDEPTH];
+			p += 20 + bp_ptr->depth;
 			break;
 		}
 
@@ -4133,7 +4133,7 @@ void borg_update(void)
 	/*** Handle new levels ***/
 
 	/* Hack -- note new levels */
-	if (old_depth != borg_skill[BI_CDEPTH])
+	if (old_depth != bp_ptr->depth)
 	{
 		/* if we are not leaving town increment time since town clock */
 		if (!old_depth)
@@ -4211,7 +4211,7 @@ void borg_update(void)
 		stair_more = FALSE;
 
 		/* Hack -- cannot rise past town */
-		if (!borg_skill[BI_CDEPTH]) goal_rising = FALSE;
+		if (!bp_ptr->depth) goal_rising = FALSE;
 
 		/* Assume not leaving the level */
 		goal_leaving = FALSE;
@@ -4257,7 +4257,7 @@ void borg_update(void)
 		if (borg_flag_save) borg_save = TRUE;
 
 		/* Save new depth */
-		old_depth = borg_skill[BI_CDEPTH];
+		old_depth = bp_ptr->depth;
 
 		borg_times_twitch = 0;
 		borg_escapes = 0;
@@ -4418,7 +4418,7 @@ void borg_update(void)
 		if (prefix(msg, "HIT_BY:"))
 		{
 			borg_fear_grid(what, c_x, c_y,
-						   4 * ((borg_skill[BI_CDEPTH] / 5) + 1), FALSE);
+						   4 * ((bp_ptr->depth / 5) + 1), FALSE);
 			borg_msg_use[i] = 5;
 		}
 
@@ -4426,7 +4426,7 @@ void borg_update(void)
 		else if (prefix(msg, "MISS_BY:"))
 		{
 			borg_fear_grid(what, c_x, c_y,
-						   2 * ((borg_skill[BI_CDEPTH] / 5) + 1), FALSE);
+						   2 * ((bp_ptr->depth / 5) + 1), FALSE);
 			borg_msg_use[i] = 5;
 		}
 

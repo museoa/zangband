@@ -488,14 +488,6 @@ static bool borg_think(void)
 	/* Check spells again later */
 	borg_do_spell = TRUE;
 
-
-	/*** Analyze status ***/
-
-	if (borg_skill[BI_CDEPTH] > borg_skill[BI_MAXDEPTH])
-	{
-		borg_skill[BI_MAXDEPTH] = borg_skill[BI_CDEPTH];
-	}
-
 	/*** Think about it ***/
 
 	/* Increment the clock */
@@ -3133,7 +3125,7 @@ void borg_status(void)
 			attr = TERM_WHITE;
 			Term_putstr(64, 6, -1, attr,
 						format("%s                              ",
-							   borg_prepared(borg_skill[BI_MAXDEPTH] + 1)));
+							   borg_prepared(bp_ptr->max_depth + 1)));
 
 			if (goal_fleeing) attr = TERM_WHITE;
 			else
@@ -3144,7 +3136,7 @@ void borg_status(void)
 			Term_putstr(42, 8, -1, attr, "Maximal Depth:");
 			attr = TERM_WHITE;
 			Term_putstr(56, 8, -1, attr,
-						format("%d    ", borg_skill[BI_MAXDEPTH]));
+						format("%d    ", bp_ptr->max_depth));
 
 			/* Fresh */
 			Term_fresh();
@@ -3242,7 +3234,7 @@ void do_cmd_borg(void)
 		Term_putstr(42, i, -1, TERM_WHITE, "Command '#' displays danger grid.");
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command '_' Regional Fear info.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'p' Borg Power.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command '1' change max depth.");
+		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'R' Respawn Borg.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command '2' level prep info.");
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'e' Examine Equip Item.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command '!' Time.");
@@ -3256,7 +3248,7 @@ void do_cmd_borg(void)
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'y' Last 75 steps.");
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command '^' Flow Pathway.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'o' Examine Inven Item.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'R' Respawn Borg.");
+		
 
 
 		/* Prompt for key */
@@ -4045,25 +4037,6 @@ void do_cmd_borg(void)
 			break;
 		}
 
-		case '1':
-		{
-			/* APW command: debug -- change max depth */
-			int new_borg_skill[BI_MAXDEPTH];
-
-			/* Get the new max depth */
-			new_borg_skill[BI_MAXDEPTH] =
-				get_quantity("Enter new Max Depth: ", MAX_DEPTH - 1);
-
-			/* Allow user abort */
-			if (new_borg_skill[BI_MAXDEPTH] >= 0)
-			{
-				p_ptr->max_depth = new_borg_skill[BI_MAXDEPTH];
-				borg_skill[BI_MAXDEPTH] = new_borg_skill[BI_MAXDEPTH];
-			}
-
-			break;
-		}
-
 		case 'q':
 		{
 			char cmd;
@@ -4100,7 +4073,7 @@ void do_cmd_borg(void)
 			}
 
 			msg_format("Max Level: %d  Prep'd For: %d  Reason: %s",
-					   borg_skill[BI_MAXDEPTH], i - 1, borg_prepared(i));
+					   bp_ptr->max_depth, i - 1, borg_prepared(i));
 
 			break;
 		}

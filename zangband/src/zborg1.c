@@ -1121,11 +1121,11 @@ void borg_update_frame(void)
 		borg_stat[i] = p_ptr->stat_cur[i];
 	}
 
-	/* Hack -- Access max depth */
-	borg_skill[BI_CDEPTH] = p_ptr->depth;
+	/* Hack -- Access depth */
+	bp_ptr->depth = p_ptr->depth;
 
 	/* Hack -- Access max depth */
-	borg_skill[BI_MAXDEPTH] = p_ptr->max_depth;
+	bp_ptr->max_depth = p_ptr->max_depth;
 
 	/* Hack -- Realms */
 	bp_ptr->realm1 = p_ptr->realm1;

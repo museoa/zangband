@@ -1819,7 +1819,7 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 	 * Staves should not be carried to Morgoth, he drains
 	 * them to heal himself- not good at all
 	 */
-	if (borg_skill[BI_MAXDEPTH] >= 99 && !borg_skill[BI_KING])
+	if ((bp_ptr->max_depth >= 99) && !borg_skill[BI_KING])
 	{
 		/* skip these */
 		return;
@@ -2411,7 +2411,7 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		((borg_skill[BI_CDEPTH] == 100) &&
+		((bp_ptr->depth == 100) &&
 		 (borg_spell_legal(REALM_LIFE, 3, 6) ||
 		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
 		  borg_spell_legal(REALM_TRUMP, 1, 6))))
@@ -3297,7 +3297,7 @@ static void borg_notice_home_spells(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		(borg_skill[BI_CDEPTH] == 100 &&
+		((bp_ptr->depth == 100) &&
 		 (borg_spell_legal(REALM_LIFE, 3, 6) ||
 		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
 		  borg_spell_legal(REALM_TRUMP, 1, 6))))
@@ -3696,7 +3696,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 					 * charges will get drained and he wont have any
 					 * scrolls left to read
 					 */
-					if (borg_skill[BI_MAXDEPTH] < 97)
+					if (bp_ptr->max_depth < 97)
 					{
 						num_teleport += l_ptr->number * l_ptr->pval;
 					}

@@ -2954,7 +2954,7 @@ static s32b borg_power_aux3(void)
 		value += ((borg_skill[BI_TODAM] + l_ptr->to_d) * 30L);
 
 		/* extra boost for deep dungeon */
-		if (borg_skill[BI_MAXDEPTH] >= 75)
+		if (bp_ptr->max_depth >= 75)
 		{
 			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 15L);
 
@@ -3028,7 +3028,7 @@ static s32b borg_power_aux3(void)
 		value += (borg_skill[BI_TODAM] * 30L);
 
 		/* extra boost for deep dungeon */
-		if (borg_skill[BI_MAXDEPTH] >= 75)
+		if (bp_ptr->max_depth >= 75)
 		{
 			value += ((borg_skill[BI_TOHIT]) * 15L);
 
@@ -3261,7 +3261,7 @@ static s32b borg_power_aux3(void)
 	if (borg_skill[BI_SDIG]) value += 10L;
 
 	/* Feather Fall if low level is nice */
-	if (borg_skill[BI_MAXDEPTH] < 20)
+	if (bp_ptr->max_depth < 20)
 	{
 		if (borg_skill[BI_FEATH]) value += 500L;
 	}
@@ -3346,66 +3346,66 @@ static s32b borg_power_aux3(void)
 
 	/* Mega-Hack -- See invisible (level 10) */
 	if ((borg_skill[BI_SINV] || borg_skill[BI_ESP]) &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 10)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 10)) value += 100000L;
 
 
 	/* Mega-Hack -- Free action (level 20) */
 	if (borg_skill[BI_FRACT] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 20)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 20)) value += 100000L;
 
 
 	/*  Mega-Hack -- resists (level 25) */
 	if (borg_skill[BI_RFIRE] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 25)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 25)) value += 100000L;
 
 
 	/*  Mega-Hack -- resists (level 40) */
 	if (borg_skill[BI_RPOIS] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 40)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
 	if (borg_skill[BI_RELEC] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 40)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
 	if (borg_skill[BI_RACID] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 40)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
 	if (borg_skill[BI_RCOLD] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 40)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
 
 
 	/* APW Mega-Hack -- Speed / Hold Life (level 46) and maxed out */
-	if ((borg_skill[BI_HLIFE] && (borg_skill[BI_MAXDEPTH] + 1 >= 46) &&
+	if ((borg_skill[BI_HLIFE] && (bp_ptr->max_depth + 1 >= 46) &&
 		 (bp_ptr->max_lev < 50))) value += 100000L;
 	if ((borg_skill[BI_SPEED] >= 115) &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 46)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 	if (borg_skill[BI_RCONF] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 46)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 
 	/*  Mega-Hack -- resist Nether is -very- nice to have at level 50 */
 	if (borg_skill[BI_RNTHR] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 50)) value += 55000L;
+		(bp_ptr->max_depth + 1 >= 50)) value += 55000L;
 
 	/*  Mega-Hack -- resist Sound to avoid being KO'd */
 	if (borg_skill[BI_RSND] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 50)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 50)) value += 100000L;
 
 	/*  Mega-Hack -- resists & Telepathy (level 55) */
 	if (borg_skill[BI_RBLIND] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 55)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 55)) value += 100000L;
 	if (borg_skill[BI_ESP] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 55)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 55)) value += 100000L;
 	if (borg_skill[BI_RNTHR] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 60)) value += 55000L;
+		(bp_ptr->max_depth + 1 >= 60)) value += 55000L;
 
 
 	/*  Mega-Hack -- resists & +10 speed (level 60) */
 	if (borg_skill[BI_RKAOS] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 60)) value += 104000L;
+		(bp_ptr->max_depth + 1 >= 60)) value += 104000L;
 	if (borg_skill[BI_RDIS] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 60)) value += 90000L;
+		(bp_ptr->max_depth + 1 >= 60)) value += 90000L;
 	if ((borg_skill[BI_SPEED] >= 120) &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 60)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 60)) value += 100000L;
 
 	/*  Must have +20 speed (level 80) */
 	if ((borg_skill[BI_SPEED] >= 130) &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 80)) value += 100000L;
+		(bp_ptr->max_depth + 1 >= 80)) value += 100000L;
 
 	/* Not Req, but a good idea:
 	 * Extra boost to Nether deeper down
@@ -3413,10 +3413,10 @@ static s32b borg_power_aux3(void)
 	 * Good to have +30 speed
 	 */
 	if (borg_skill[BI_RNTHR] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 80)) value += 15000L;
+		(bp_ptr->max_depth + 1 >= 80)) value += 15000L;
 	if (borg_skill[BI_RDARK] &&
-		(borg_skill[BI_MAXDEPTH] + 1 >= 80)) value += 25000L;
-	if ((borg_skill[BI_SPEED] >= 140) && (borg_skill[BI_MAXDEPTH] + 1 >= 80) &&
+		(bp_ptr->max_depth + 1 >= 80)) value += 25000L;
+	if ((borg_skill[BI_SPEED] >= 140) && (bp_ptr->max_depth + 1 >= 80) &&
 		borg_class == CLASS_WARRIOR) value += 100000L;
 
 
@@ -3548,10 +3548,10 @@ static s32b borg_power_aux3(void)
 				k = 0;
 				for (; k < 1 && k < amt_book[realm][book];
 					 k++) value += 500000L;
-				if (borg_skill[BI_MAXDEPTH] > 5)
+				if (bp_ptr->max_depth > 5)
 					for (; k < 2 && k < amt_book[realm][book];
 						 k++) value += 10000L;
-				if (borg_skill[BI_MAXDEPTH] > 50)
+				if (bp_ptr->max_depth > 50)
 					for (; k < 3 && k < amt_book[realm][book];
 						 k++) value += 2500L;
 			}
@@ -3666,7 +3666,7 @@ static s32b borg_power_aux4(void)
 
 	/* Reward escape */
 	for (k = 0; k < 5 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
-	if (borg_skill[BI_CDEPTH] > 90)
+	if (bp_ptr->depth > 90)
 	{
 		for (; k < 15 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
 	}
@@ -3675,7 +3675,7 @@ static s32b borg_power_aux4(void)
 	for (k = 0; k < 10 && k < borg_skill[BI_ATELEPORT]; k++) value += 10000L;
 
 	/* Reward Teleport Level scrolls */
-	if (borg_skill[BI_MAXDEPTH] >= 99)
+	if (bp_ptr->max_depth >= 99)
 	{
 		for (k = 0; k < 5 && k < borg_skill[BI_ATELEPORTLVL];
 			 k++) value += 5000L;
@@ -3790,27 +3790,27 @@ static s32b borg_power_aux4(void)
 	for (k = 0; k < 1 && k < borg_skill[BI_AMAGICMAP]; k++) value += 4000L;
 
 	/* Genocide scrolls. Just scrolls, mainly used for Morgoth */
-	if (borg_skill[BI_MAXDEPTH] >= 98)
+	if (bp_ptr->max_depth >= 98)
 	{
 		for (k = 0; k < 10 && k < borg_has[207]; k++) value += 10000L;
 		for (; k < 25 && k < borg_has[207]; k++) value += 2000L;
 	}
 
 	/* Mass Genocide scrolls. Just scrolls, mainly used for Morgoth */
-	if (borg_skill[BI_MAXDEPTH] >= 98)
+	if (bp_ptr->max_depth >= 98)
 	{
 		for (k = 0; k < 10 && k < borg_has[200]; k++) value += 10000L;
 		for (; k < 25 && k < borg_has[200]; k++) value += 2000L;
 	}
 
 	/* Reward speed potions/staves */
-	if (borg_skill[BI_MAXDEPTH] <= 98)
+	if (bp_ptr->max_depth <= 98)
 	{
 		for (k = 0; k < 20 && k < borg_skill[BI_ASPEED]; k++) value += 5000L;
 	}
 
 	/* Invuln Potions, mainly used for Morgoth */
-	if (borg_skill[BI_MAXDEPTH] >= 98)
+	if (bp_ptr->max_depth >= 98)
 	{
 		for (k = 0; k < 15 && k < borg_has[238]; k++) value += 10000L;
 		for (; k < 99 && k < borg_has[238]; k++) value += 2000L;
@@ -3943,14 +3943,14 @@ static s32b borg_power_aux4(void)
 				{
 					value += 500000L;
 				}
-				if (borg_skill[BI_MAXDEPTH] > 5)
+				if (bp_ptr->max_depth > 5)
 				{
 					for (; k < 2 && k < amt_book[realm][book]; k++)
 					{
 						value += 10000L;
 					}
 				}
-				if (borg_skill[BI_MAXDEPTH] > 50)
+				if (bp_ptr->max_depth > 50)
 				{
 					for (; k < 3 && k < amt_book[realm][book]; k++)
 					{
@@ -4004,7 +4004,7 @@ s32b borg_power(void)
 	
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
-	for (i = 1; i <= borg_skill[BI_MAXDEPTH] + 10; i++)
+	for (i = 1; i <= bp_ptr->max_depth + 10; i++)
 	{
 		/* Dump fear code */
 		if (borg_prepared(i)) break;
@@ -4029,8 +4029,8 @@ cptr borg_restock(int depth)
 	if (!depth) return (NULL);
 
 	/* Always spend time on a level unless 100 */
-	if (borg_t - borg_began < 100 &&
-		borg_skill[BI_CDEPTH] != 100) return (NULL);
+	if ((borg_t - borg_began < 100) &&
+		(bp_ptr->depth != 100)) return (NULL);
 
 
 	/*** Level 1 ***/

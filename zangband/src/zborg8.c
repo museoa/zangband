@@ -491,7 +491,7 @@ static bool borg_good_sell(list_item *l_ptr)
 		case TV_SCROLL:
 		{
 			/* Never sell if not "known" and interesting */
-			if (!l_ptr->k_idx && (borg_skill[BI_MAXDEPTH] > 20)) return (FALSE);
+			if (!l_ptr->k_idx && (bp_ptr->max_depth > 20)) return (FALSE);
 
 			break;
 		}
@@ -1016,7 +1016,7 @@ static bool borg_choose_shop(void)
 	s32b time;
 
 	/* Must be in town */
-	if (borg_skill[BI_CDEPTH]) return (FALSE);
+	if (bp_ptr->depth) return (FALSE);
 
 	/* If we are already flowing toward a shop do not check again... */
 	if (goal_shop != -1)
@@ -1160,7 +1160,7 @@ static bool borg_think_dungeon_brave(void)
 	/*** Flee (or leave) the level ***/
 
 	/* Take stairs down from town */
-	if (borg_skill[BI_CDEPTH] == 0)
+	if (bp_ptr->depth == 0)
 	{
 		/* Current grid */
 		map_block *mb_ptr = map_loc(c_x, c_y);
@@ -1184,7 +1184,7 @@ static bool borg_think_dungeon_brave(void)
 		if (borg_flow_old(GOAL_FLEE)) return (TRUE);
 
 		/* Try to find some stairs */
-		if (scaryguy_on_level && !borg_skill[BI_CDEPTH] &&
+		if (scaryguy_on_level && !bp_ptr->depth &&
 			borg_flow_stair_both(GOAL_FLEE)) return (TRUE);
 
 		/* Try to find some stairs up */
@@ -1200,7 +1200,7 @@ static bool borg_think_dungeon_brave(void)
 
 		/* Only go down if fleeing or prepared. */
 		stair_more = goal_fleeing;
-		if (!borg_prepared(borg_skill[BI_CDEPTH] + 1))
+		if (!borg_prepared(bp_ptr->depth + 1))
 			stair_more = TRUE;
 
 		/* Continue fleeing the level */
@@ -1360,8 +1360,7 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Avoid the burning sun */
-	if (borg_skill[BI_FEAR_LITE] &&
-		borg_skill[BI_CDEPTH] == 0 &&
+	if (borg_skill[BI_FEAR_LITE] && !bp_ptr->depth &&
 		(borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
 	{
 		/* Get out of the Sun */
@@ -1448,7 +1447,7 @@ bool borg_think_dungeon(void)
 	borg_notice();
 
 	/* require light-- */
-	if (borg_skill[BI_CUR_LITE] <= 0 && borg_skill[BI_CDEPTH] >= 1)
+	if (borg_skill[BI_CUR_LITE] <= 0 && bp_ptr->depth >= 1)
 	{
 		if (goal_recalling)
 		{
@@ -1555,7 +1554,7 @@ bool borg_think_dungeon(void)
 		if (borg_flow_old(GOAL_FLEE)) return (TRUE);
 
 		/* Try to find some stairs */
-		if (scaryguy_on_level && !borg_skill[BI_CDEPTH] &&
+		if (scaryguy_on_level && !bp_ptr->depth &&
 			borg_flow_stair_both(GOAL_FLEE)) return (TRUE);
 
 		/* Try to find some stairs up */
@@ -1572,7 +1571,7 @@ bool borg_think_dungeon(void)
 		if (borg_flow_old(GOAL_FLEE)) return (TRUE);
 
 		/* Try to find some stairs */
-		if (scaryguy_on_level && !borg_skill[BI_CDEPTH] &&
+		if (scaryguy_on_level && !bp_ptr->depth &&
 			borg_flow_stair_both(GOAL_FLEE)) return (TRUE);
 
 		/* Try to find some stairs up */
@@ -1639,7 +1638,7 @@ bool borg_think_dungeon(void)
 	if (goal_leaving && !goal_recalling && !unique_on_level)
 	{
 		/* Only go down if fleeing or prepared. */
-		if (!borg_prepared(borg_skill[BI_CDEPTH] + 1))
+		if (!borg_prepared(bp_ptr->depth + 1))
 			stair_more = TRUE;
 
 		/* Continue leaving the level */
@@ -1735,7 +1734,7 @@ bool borg_think_dungeon(void)
 		/* Take note */
 		borg_note("# Waiting for Recall...");
 
-		if (borg_skill[BI_CDEPTH])
+		if (bp_ptr->depth)
 		{
 			/* Rest until done */
 			borg_keypress('R');
@@ -1892,7 +1891,7 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Recall to town */
-	if (borg_skill[BI_CDEPTH] && (borg_recall()))
+	if (bp_ptr->depth && (borg_recall()))
 	{
 		/* Note */
 		borg_note("# Recalling (twitchy)");
