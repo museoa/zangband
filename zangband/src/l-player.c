@@ -1,6 +1,6 @@
 /*
 ** Lua binding: player
-** Generated automatically by tolua 4.0a - angband on Mon Nov 26 19:29:47 2001.
+** Generated automatically by tolua 4.0a - angband on Sun Dec 30 21:34:36 2001.
 */
 
 #include "lua/tolua.h"
@@ -2971,86 +2971,6 @@ static int toluaI_set_player_player_type_align(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: detectx of class  player_type */
-static int toluaI_get_player_player_type_detectx(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->detectx);
- return 1;
-}
-
-/* set function: detectx of class  player_type */
-static int toluaI_set_player_player_type_detectx(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
-  self->detectx = ((s16b)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
-/* get function: detecty of class  player_type */
-static int toluaI_get_player_player_type_detecty(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->detecty);
- return 1;
-}
-
-/* set function: detecty of class  player_type */
-static int toluaI_set_player_player_type_detecty(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
-  self->detecty = ((s16b)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
-/* get function: detected of class  player_type */
-static int toluaI_get_player_player_type_detected(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->detected);
- return 1;
-}
-
-/* set function: detected of class  player_type */
-static int toluaI_set_player_player_type_detected(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
-  self->detected = ((bool)  tolua_getbool(tolua_S,2,0));
- return 0;
-}
-
-/* get function: det_pad of class  player_type */
-static int toluaI_get_player_player_type_det_pad(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->det_pad);
- return 1;
-}
-
-/* set function: det_pad of class  player_type */
-static int toluaI_set_player_player_type_det_pad(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
-  self->det_pad = ((bool)  tolua_getbool(tolua_S,2,0));
- return 0;
-}
-
 /* get function: total_weight of class  player_type */
 static int toluaI_get_player_player_type_total_weight(lua_State* tolua_S)
 {
@@ -3691,23 +3611,23 @@ static int toluaI_set_player_player_type_icky_wield(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: pad_byte of class  player_type */
-static int toluaI_get_player_player_type_pad_byte(lua_State* tolua_S)
+/* get function: detected of class  player_type */
+static int toluaI_get_player_player_type_detected(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
  if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->pad_byte);
+ tolua_pushbool(tolua_S,(int)self->detected);
  return 1;
 }
 
-/* set function: pad_byte of class  player_type */
-static int toluaI_set_player_player_type_pad_byte(lua_State* tolua_S)
+/* set function: detected of class  player_type */
+static int toluaI_set_player_player_type_detected(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
  if (!self) TOLUA_ERR_SELF;
  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
  TOLUA_ERR_ASSIGN;
-  self->pad_byte = ((bool)  tolua_getbool(tolua_S,2,0));
+  self->detected = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
 
@@ -6621,10 +6541,6 @@ int tolua_player_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"player_type","create_up_stair",toluaI_get_player_player_type_create_up_stair,toluaI_set_player_player_type_create_up_stair);
  tolua_tablevar(tolua_S,"player_type","create_down_stair",toluaI_get_player_player_type_create_down_stair,toluaI_set_player_player_type_create_down_stair);
  tolua_tablevar(tolua_S,"player_type","align",toluaI_get_player_player_type_align,toluaI_set_player_player_type_align);
- tolua_tablevar(tolua_S,"player_type","detectx",toluaI_get_player_player_type_detectx,toluaI_set_player_player_type_detectx);
- tolua_tablevar(tolua_S,"player_type","detecty",toluaI_get_player_player_type_detecty,toluaI_set_player_player_type_detecty);
- tolua_tablevar(tolua_S,"player_type","detected",toluaI_get_player_player_type_detected,toluaI_set_player_player_type_detected);
- tolua_tablevar(tolua_S,"player_type","det_pad",toluaI_get_player_player_type_det_pad,toluaI_set_player_player_type_det_pad);
  tolua_tablevar(tolua_S,"player_type","total_weight",toluaI_get_player_player_type_total_weight,toluaI_set_player_player_type_total_weight);
  tolua_tablevar(tolua_S,"player_type","inven_cnt",toluaI_get_player_player_type_inven_cnt,toluaI_set_player_player_type_inven_cnt);
  tolua_tablevar(tolua_S,"player_type","equip_cnt",toluaI_get_player_player_type_equip_cnt,toluaI_set_player_player_type_equip_cnt);
@@ -6657,7 +6573,7 @@ int tolua_player_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"player_type","heavy_wield",toluaI_get_player_player_type_heavy_wield,toluaI_set_player_player_type_heavy_wield);
  tolua_tablevar(tolua_S,"player_type","heavy_shoot",toluaI_get_player_player_type_heavy_shoot,toluaI_set_player_player_type_heavy_shoot);
  tolua_tablevar(tolua_S,"player_type","icky_wield",toluaI_get_player_player_type_icky_wield,toluaI_set_player_player_type_icky_wield);
- tolua_tablevar(tolua_S,"player_type","pad_byte",toluaI_get_player_player_type_pad_byte,toluaI_set_player_player_type_pad_byte);
+ tolua_tablevar(tolua_S,"player_type","detected",toluaI_get_player_player_type_detected,toluaI_set_player_player_type_detected);
  tolua_tablevar(tolua_S,"player_type","cur_lite",toluaI_get_player_player_type_cur_lite,toluaI_set_player_player_type_cur_lite);
  tolua_tablevar(tolua_S,"player_type","notice",toluaI_get_player_player_type_notice,toluaI_set_player_player_type_notice);
  tolua_tablevar(tolua_S,"player_type","update",toluaI_get_player_player_type_update,toluaI_set_player_player_type_update);

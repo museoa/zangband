@@ -1,6 +1,6 @@
 /*
 ** Lua binding: ui
-** Generated automatically by tolua 4.0a - angband on Mon Nov 26 19:42:59 2001.
+** Generated automatically by tolua 4.0a - angband on Sun Dec 30 21:34:41 2001.
 */
 
 #include "lua/tolua.h"
@@ -295,10 +295,10 @@ static int toluaI_ui_c_put_str00(lua_State* tolua_S)
  {
   byte attr = ((byte)  tolua_getnumber(tolua_S,1,0));
   cptr str = ((cptr)  tolua_getstring(tolua_S,2,0));
-  int row = ((int)  tolua_getnumber(tolua_S,3,0));
-  int col = ((int)  tolua_getnumber(tolua_S,4,0));
+  int col = ((int)  tolua_getnumber(tolua_S,3,0));
+  int row = ((int)  tolua_getnumber(tolua_S,4,0));
  {
-  c_put_str(attr,str,row,col);
+  c_put_str(attr,str,col,row);
  }
  }
  return 0;
@@ -320,10 +320,10 @@ static int toluaI_ui_put_str00(lua_State* tolua_S)
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
-  int row = ((int)  tolua_getnumber(tolua_S,2,0));
-  int col = ((int)  tolua_getnumber(tolua_S,3,0));
+  int col = ((int)  tolua_getnumber(tolua_S,2,0));
+  int row = ((int)  tolua_getnumber(tolua_S,3,0));
  {
-  put_str(str,row,col);
+  put_str(str,col,row);
  }
  }
  return 0;
@@ -347,10 +347,10 @@ static int toluaI_ui_c_prt00(lua_State* tolua_S)
  {
   byte attr = ((byte)  tolua_getnumber(tolua_S,1,0));
   cptr str = ((cptr)  tolua_getstring(tolua_S,2,0));
-  int row = ((int)  tolua_getnumber(tolua_S,3,0));
-  int col = ((int)  tolua_getnumber(tolua_S,4,0));
+  int col = ((int)  tolua_getnumber(tolua_S,3,0));
+  int row = ((int)  tolua_getnumber(tolua_S,4,0));
  {
-  c_prt(attr,str,row,col);
+  c_prt(attr,str,col,row);
  }
  }
  return 0;
@@ -372,10 +372,10 @@ static int toluaI_ui_prt00(lua_State* tolua_S)
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
-  int row = ((int)  tolua_getnumber(tolua_S,2,0));
-  int col = ((int)  tolua_getnumber(tolua_S,3,0));
+  int col = ((int)  tolua_getnumber(tolua_S,2,0));
+  int row = ((int)  tolua_getnumber(tolua_S,3,0));
  {
-  prt(str,row,col);
+  prt(str,col,row);
  }
  }
  return 0;
@@ -615,7 +615,6 @@ int tolua_ui_open (lua_State* tolua_S)
  tolua_constant(tolua_S,NULL,"PU_HP",PU_HP);
  tolua_constant(tolua_S,NULL,"PU_MANA",PU_MANA);
  tolua_constant(tolua_S,NULL,"PU_SPELLS",PU_SPELLS);
- tolua_constant(tolua_S,NULL,"PU_UN_VIEW",PU_UN_VIEW);
  tolua_constant(tolua_S,NULL,"PU_VIEW",PU_VIEW);
  tolua_constant(tolua_S,NULL,"PU_MON_LITE",PU_MON_LITE);
  tolua_constant(tolua_S,NULL,"PU_MONSTERS",PU_MONSTERS);
@@ -809,7 +808,6 @@ void tolua_ui_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_HP");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_MANA");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_SPELLS");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_UN_VIEW");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_VIEW");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_MON_LITE");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_MONSTERS");
