@@ -3,6 +3,8 @@ standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
 ZAngband 2.3.0
+-Due to popular demand, multiple rings are supported.  Additional rings 
+ can be obtained upon reaching an appropriate level.
 -New ironman option: Nightmare mode.  It isn't even remotely fair.
 -Maximize mode, preserve mode, and the autoroller are now specified in
  the startup-options.

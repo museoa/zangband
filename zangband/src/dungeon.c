@@ -3965,6 +3965,18 @@ void play_game(bool new_game)
 		}
 	}
 
+	/* Hack -- munchkin_rings allows multiply rings */
+	if (munchkin_rings)
+	{
+		for (i = 1; i < max_r_idx; i++)
+		{
+			monster_race *r_ptr = &r_info[i];
+			if ((r_ptr->d_char == '=') && !(r_ptr->flags1 & (RF1_UNIQUE)))
+			{
+				r_ptr->flags2 |= RF2_MULTIPLY;
+			}
+		}
+	}
 
 	/* Flash a message */
 	prt("Please wait...", 0, 0);
