@@ -940,7 +940,7 @@ static bool do_cmd_view_map_aux(char c, int town)
 		case '*':
 		{
 			/* Display the list of shops */
-			dump_town_info(fff, town);
+			dump_town_info(fff, town, FALSE);
 
 			success = TRUE;
 			title = "Town info";

@@ -3887,7 +3887,7 @@ static bool do_cmd_knowledge_notes(int dummy)
 /*
  * Dump info about a town to the given file
  */
-void dump_town_info(FILE *fff, int town)
+void dump_town_info(FILE *fff, int town, bool ignore)
 {
 	int j;
 
@@ -3961,7 +3961,8 @@ void dump_town_info(FILE *fff, int town)
 		/* Never been near the place */
 		else
 		{
-			froff(fff, "\nThis town has not been visited yet.\n");
+			/* Give an empty message or no message */
+			if (!ignore) froff(fff, "\nThis town has not been visited yet.\n");
 		}
 	}
 }
@@ -3990,7 +3991,7 @@ static bool do_cmd_knowledge_wild(int dummy)
 	/* Cycle through the places */
 	for (k = 1; k < place_count; k++)
 	{
-		dump_town_info(fff, k);
+		dump_town_info(fff, k, TRUE);
 	}
 
 	/* Close the file */

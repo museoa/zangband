@@ -378,7 +378,7 @@ extern void do_cmd_feeling(void);
 extern void do_cmd_load_screen(void);
 extern void do_cmd_save_screen(void);
 extern bool do_cmd_knowledge_pets(int dummy);
-extern void dump_town_info(FILE *fff, int town);
+extern void dump_town_info(FILE *fff, int town, bool ignore);
 extern void do_cmd_knowledge(void);
 extern void plural_aux(char *Name);
 extern void do_cmd_checkquest(void);
