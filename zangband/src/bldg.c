@@ -15,6 +15,10 @@
 #include "angband.h"
 
 
+/* Hack - force exit from building */
+static bool force_build_exit = FALSE;
+
+
 void have_nightmare(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
@@ -1524,6 +1528,162 @@ bool building_healer(void)
 }
 
 
+static int collect_magetower_links(store_type *st_ptr, int n, int which,
+                                  int link_p[], int link_w[])
+{
+    int i, j;
+    int max_link = 0;
+
+    /* Find the magetowers we're linked to */
+    for (i = 0; i < place_count; i++)
+    {
+        place_type *pl_ptr2 = &place[i];
+
+        for (j = 0; j < pl_ptr2->numstores; j++)
+        {
+            store_type *st_ptr2 = &pl_ptr2->store[j];
+
+            if (max_link >= n)
+                return max_link;
+
+            /* Hack - store link data in good_buy and bad_buy */
+            if (st_ptr->good_buy == i && st_ptr->bad_buy == j)
+            {
+                link_p[max_link] = i;
+                link_w[max_link] = j;
+                max_link++;
+
+                /* Only collect 1 link per city */
+                break;
+            }
+            else if (st_ptr2->good_buy == p_ptr->place_num &&
+                     st_ptr2->bad_buy == which)
+            {
+                link_p[max_link] = i;
+                link_w[max_link] = j;
+                max_link++;
+
+                /* Only collect 1 link per city */
+                break;
+            }
+        }
+    }
+
+    return max_link;
+}
+
+bool building_magetower(bool display)
+{
+    int which = -1;
+    int i;
+
+    store_type *st_ptr = NULL;
+
+    place_type *pl_ptr = &place[p_ptr->place_num];
+
+    int link_p[12], link_w[12];
+    int max_link = 0;
+
+	/* Get the building the player is on */
+	for (i = 0; i < pl_ptr->numstores; i++)
+	{
+		if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
+			(p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
+		{
+			which = i;
+		}
+	}
+
+	/* Paranoia */
+	if (which == -1)
+	{
+		msg_print("Could not locate building!");
+		return (FALSE);
+	}
+
+	/* Save the store pointer */
+    st_ptr = &pl_ptr->store[which];
+
+    /* Collect links */
+    max_link = collect_magetower_links(st_ptr, 12, which, link_p, link_w);
+
+    if (display)
+    {
+        char out_val[160];
+
+        for (i = 0; i < max_link; i++)
+        {
+            /* Label it, clear the line --(-- */
+            (void)sprintf(out_val, "%c) ", I2A(i));
+            prt(out_val, 0, i + 6);
+
+            /* Print place name */
+            prt(place[link_p[i]].name, 3, i + 6);
+        }
+    }
+    else
+    {
+        /* XXX Jump to first */
+        int tempx, tempy;
+        char command;
+        int index = -1;
+
+        char out_val[160];
+
+        /* Build the prompt */
+        (void)sprintf(out_val, "(Towns %c-%c, ESC to exit)",
+                      I2A(0), I2A(max_link - 1));
+
+        while (TRUE)
+        {
+            int k;
+
+            /* Escape */
+            if (!get_com(out_val, &command)) break;
+
+            k = (islower(command) ? A2I(command) : -1);
+
+            if (k >= 0 && k < max_link)
+            {
+                index = k;
+                break;
+            }
+
+            /* Oops */
+            bell("Illegal town choice!");
+        }
+
+        if (index >= 0)
+        {
+            place_type *pl_ptr2 = &place[link_p[index]];
+            store_type *st_ptr2 = &pl_ptr2->store[link_w[index]];
+
+            /* Move the player -- first to the right general area... */
+            p_ptr->px = p_ptr->wilderness_x = pl_ptr2->x * 16 + st_ptr2->x;
+            p_ptr->py = p_ptr->wilderness_y = pl_ptr2->y * 16 + st_ptr2->y;
+
+            move_wild();
+
+            /* Move the player -- now try to get to the exact spot. */
+            p_ptr->px = p_ptr->wilderness_x = pl_ptr2->x * 16 + st_ptr2->x;
+            p_ptr->py = p_ptr->wilderness_y = pl_ptr2->y * 16 + st_ptr2->y;
+
+            move_wild();
+
+            verify_panel();
+
+            /* Avoid problems */
+            lite_n = 0;
+
+            force_build_exit = TRUE;
+
+            return (TRUE);
+        }
+    }
+
+    return (FALSE);
+}
+
 #if 0
 /*
  * Execute a building command
@@ -2015,7 +2175,13 @@ void do_cmd_bldg(field_type *f_ptr)
 		request_command(FALSE);
 
 		/* Process the command */
-		leave_build = build_process_command(f_ptr, b_ptr);
+        leave_build = build_process_command(f_ptr, b_ptr);
+
+        if (force_build_exit)
+        {
+            force_build_exit = FALSE;
+            break;
+        }
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;

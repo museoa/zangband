@@ -1370,3 +1370,21 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:5:30:25:25:25:25:16
 F:2,field_action_door_store
 
+# Teleport
+N:143:Magetower
+G:9:v
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
+D:5:5:0:0:0:0:0:0
+F:2,field_action_door_build
+F:18,field_action_magetower1 | 19,field_action_magetower2
+
+# Teleport
+N:144:Large Magetower
+G:9:v
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
+D:5:5:0:0:0:0:0:0
+F:2,field_action_door_build
+F:18,field_action_magetower1 | 19,field_action_magetower2
+

@@ -291,9 +291,11 @@
 #define BUILD_INN				109
 #define BUILD_HEALER			110
 #define BUILD_BLACK0            111
+#define BUILD_MAGETOWER0        112
+#define BUILD_MAGETOWER1        113
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			112
+#define MAX_CITY_BUILD			114
 
 
 /*
@@ -1309,6 +1311,8 @@
 #define FT_BUILD_INN			0x008C
 #define FT_BUILD_HEALER			0x008D
 #define FT_STORE_BLACK0         0x008E
+#define FT_BUILD_MAGETOWER0     0x008F
+#define FT_BUILD_MAGETOWER1     0x0090
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/

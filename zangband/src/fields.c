@@ -4117,7 +4117,56 @@ bool field_action_healer2(field_type *f_ptr, vptr input)
 	return (FALSE);
 }
 
+/*
+ * Mage Tower1
+ */
+bool field_action_magetower1(field_type *f_ptr, vptr input)
+{
+	char tmp_str[80];
 
+    int factor = *((int *)input);
+
+    /* Display options */
+    building_magetower(TRUE);
+
+	sprintf(tmp_str, " T) Teleport (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 18);
+
+    /* Done */
+    return (FALSE);
+}
+
+
+/*
+ * Mage Tower2
+ */
+bool field_action_magetower2(field_type *f_ptr, vptr input)
+{
+	int *factor = ((int *)input);
+
+	s32b cost;
+
+	if (p_ptr->command_cmd == 'T')
+	{
+		cost = f_ptr->data[1] * *factor;
+
+		if (test_gold(&cost) && building_magetower(FALSE))
+		{
+			/* Subtract off cost */
+            p_ptr->au -= cost;
+        }
+
+        /* Hack, use factor as a return value */
+        *factor = TRUE;
+	}
+	else
+	{
+		*factor = FALSE;
+	}
+
+	/* Done */
+	return (FALSE);
+}
 
 
 /*

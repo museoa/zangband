@@ -150,7 +150,9 @@ static wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_BUILD_CASINO, BT_BUILD, 100, 200, 200, 20},
 	{0, FT_BUILD_INN, BT_BUILD, 100, 100, 200, 5},
 	{0, FT_BUILD_HEALER, BT_BUILD, 250, 250, 200, 20},
-	{0, FT_STORE_BLACK0, BT_STORE, 100, 100, 100, 10},
+    {0, FT_STORE_BLACK0, BT_STORE, 100, 100, 100, 10},
+    {0, FT_BUILD_MAGETOWER0, BT_BUILD, 100, 150, 100, 3},
+    {0, FT_BUILD_MAGETOWER1, BT_BUILD, 150, 250, 150, 10},
 };
 
 /* The stores in the starting town */
@@ -162,7 +164,8 @@ static int wild_first_town[START_STORE_NUM] =
 	BUILD_WARHALL0,
 	BUILD_STORE_TEMPLE,
 	BUILD_STORE_MAGIC,
-	BUILD_BLACK0
+    BUILD_BLACK0,
+    BUILD_MAGETOWER0
 };
 
 
@@ -570,7 +573,7 @@ static bool create_city(int x, int y, int town_num)
 	if (town_num == 1)
 	{
 		/* Use a low pop - we don't want too many blank buildings */
-		pop = 32 + 128;
+		pop = 64 + 128;
 	}
 
 	/* Wipe the list of allocated buildings */
@@ -1290,7 +1293,7 @@ static void draw_city(u16b town_num)
  */
 bool init_places(int xx, int yy)
 {
-	int x, y, i;
+	int x, y, i, j, n;
 	bool first_try = TRUE;
 
 	wild_gen2_type *w_ptr;
@@ -1400,7 +1403,51 @@ bool init_places(int xx, int yy)
 	}
 
 	/* Paranoia */
-	if (!best_town) return (FALSE);
+    if (!best_town) return (FALSE);
+
+    /* Link magetowers together */
+    {
+        int large_tower_max = 0;
+        int large_tower_i[32];
+        int large_tower_j[32];
+
+        for (i = 0; i < place_count; i++)
+        {
+            place_type *pl_ptr2 = &place[i];
+
+            for (j = 0; j < pl_ptr2->numstores; j++)
+            {
+                store_type *st_ptr2 = &pl_ptr2->store[j];
+
+                if (large_tower_max < 32 &&
+                    st_ptr2->type == BUILD_MAGETOWER1)
+                {
+                    large_tower_i[large_tower_max] = i;
+                    large_tower_j[large_tower_max] = j;
+                    large_tower_max++;
+                }
+            }
+        }
+
+        for (i = 0; i < place_count; i++)
+        {
+            place_type *pl_ptr2 = &place[i];
+
+            for (j = 0; j < pl_ptr2->numstores; j++)
+            {
+                store_type *st_ptr2 = &pl_ptr2->store[j];
+
+                if (large_tower_max > 0 &&
+                    (st_ptr2->type == BUILD_MAGETOWER0 ||
+                     st_ptr2->type == BUILD_MAGETOWER1))
+                {
+                    n = randint0(large_tower_max);
+                    st_ptr2->good_buy = large_tower_i[n];
+                    st_ptr2->bad_buy = large_tower_j[n];
+                }
+            }
+        }
+    }
 
 	/* Build starting city / town */
 	draw_city(best_town);

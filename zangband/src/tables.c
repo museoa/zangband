@@ -7003,7 +7003,13 @@ const field_action f_action[] =
 	{field_action_healer1, "field_action_healer1"},
 	
 	/* Healer part 2 */
-	{field_action_healer2, "field_action_healer2"},
+    {field_action_healer2, "field_action_healer2"},
+
+    /* Mage Tower part 1 */
+    {field_action_magetower1, "field_action_magetower1"},
+
+    /* Mage Tower part 2 */
+    {field_action_magetower2, "field_action_magetower2"},
 	
 	/* Bookstore */
 	{field_action_isbook_tester, "field_action_isbook_tester"},
