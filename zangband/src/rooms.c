@@ -3372,7 +3372,7 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 
 	/* Set icky flag because is a vault */
 	generate_vault(y0 - yhsize , x0 - xhsize,
-		 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1);
+		 y0 - yhsize + ysize, x0 - xhsize + xsize);
 
 	/* make a few rooms in the vault */
 	for (i = 1; i <= (xsize * ysize) / 50; i++)

@@ -2057,7 +2057,7 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 
 	/* Do boundarys- set to normal granite */
 	generate_draw(y0 - yhsize , x0 - xhsize,
-		y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1, FEAT_WALL_EXTRA);
+		y0 - yhsize + ysize, x0 - xhsize + xsize, FEAT_WALL_EXTRA);
 
 	/* Do the rest: convert back to the normal format */
 	for (x = 1; x < xsize; ++x)
