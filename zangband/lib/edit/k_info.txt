@@ -1343,12 +1343,12 @@ W:35:0:3:150
 A:35/2
 F:RES_ACID | IGNORE_ACID | EASY_KNOW
 
-N:169:Adornment
+N:169:Berserk Strength
 G:":d
 I:40:2:0
-W:10:0:3:20
-A:10/2
-F:EASY_KNOW
+W:33:0:3:50
+A:33/3
+F:AGGRAVATE
 
 ##### Extra armor #####
 

@@ -1282,7 +1282,16 @@ s32b object_value_real(const object_type *o_ptr)
 		case TV_RING:
 		case TV_AMULET:
 		{
-			/* Rings/Amulets */
+            /* Rings/Amulets */
+
+            /* Hack -- special handling for amulets of Berserk Strength */
+            if (o_ptr->sval == SV_AMULET_BERSERK)
+            {
+                value += (bonus_value(o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 20);
+
+                /* Done */
+                break;
+            }
 
 			/* Hack -- negative bonuses are bad */
 			if (o_ptr->to_a < 0) return (0L);
@@ -3575,7 +3584,31 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					}
 
 					break;
-				}
+                }
+
+                case SV_AMULET_BERSERK:
+                {
+                    /* Amulet of Berserk Strength */
+
+                    /* Bonus to damage and to hit */
+                    o_ptr->to_d = randint1(7) + m_bonus(10, level);
+                    o_ptr->to_h = randint1(7) + m_bonus(10, level);
+
+                    /* Penalty to AC */
+                    o_ptr->to_a = -(rand_range(5, 10));
+
+                    /* Curse */
+                    if (flags & OC_FORCE_BAD)
+                    {
+                        /* Cursed */
+                        o_ptr->flags3 |= (TR3_CURSED);
+
+                        /* Larger AC penalty */
+                        o_ptr->to_a -= rand_range(10, 20);
+                    }
+
+                    break;
+                }
 
 				case SV_AMULET_THE_MAGI:
 				{
