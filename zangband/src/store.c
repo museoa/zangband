@@ -1098,8 +1098,8 @@ static void store_create(void)
 	get_obj_num_prep();
 
 
-	/* Hack -- consider up to four items */
-	for (tries = 0; tries < 4; tries++)
+	/* Hack -- consider up to twenty items */
+	for (tries = 0; tries < 20; tries++)
 	{
 		/* Get level to use */
 		level = rand_range(f_ptr->data[1], f_ptr->data[2]);
@@ -1471,7 +1471,7 @@ static void display_store(int store_top)
  */
 static void store_maint(void)
 {
-	int 		j;
+	int 		i = 0, j;
 
 	int 	old_rating = rating;
 
@@ -1516,7 +1516,14 @@ static void store_maint(void)
 	if (j >= st_ptr->max_stock) j = st_ptr->max_stock - 1;
 
 	/* Acquire some new items */
-	while (st_ptr->stock_num < j) store_create();
+	while ((st_ptr->stock_num < j) && (i < 100))
+	{
+		/* Increment counter so we avoid taking too long */
+		i++;
+		
+		/* Try to allocate some items */
+		store_create();
+	}
 
 
 	/* Hack -- Restore the rating */
