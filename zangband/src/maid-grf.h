@@ -100,10 +100,10 @@ struct term_map
 
 	/* Player-known flags */
 	byte flags;
-	
+
 	/* Monster flags */
 	byte m_flags;
-	
+
 	/* Rough measure of monster hp */
 	byte m_hp;
 };
@@ -124,13 +124,13 @@ struct map_block
 	s16b monster;
 	s16b field;
 	byte terrain;
-	
+
 	/* unknown mimics or flavoured objects */
 	char unknown;
-	
+
 	/* Monster flags */
 	byte m_flags;
-	
+
 	/* Monster hp (scaled) */
 	byte m_hp;
 #endif /* TERM_CAVE_MAP */

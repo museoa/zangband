@@ -20,7 +20,8 @@
  * See make_wild_03() for an instance of this.
  * This ability will also be used by other routines in the future.
  */
-static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type, bool road);
+static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type,
+							 bool road);
 static void blend_helper(cave_type *c_ptr, byte *data, int g_type);
 
 /* The starting position of the player */
@@ -2573,7 +2574,7 @@ static void make_wild_01(blk_ptr block_ptr, byte *data, bool road)
 	byte new_feat, element;
 
 	/* Ignore road for now */
-	(void) road;
+	(void)road;
 
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -2619,9 +2620,9 @@ static void make_wild_02(blk_ptr block_ptr, byte *data, bool road)
 {
 	int i, j, k;
 	byte new_feat, feat, chance;
-	
+
 	/* Ignore road for now */
-	(void) road;
+	(void)road;
 
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -2737,74 +2738,74 @@ static void make_wild_04(blk_ptr block_ptr, byte *data, bool road)
 	cave_type *c_ptr;
 
 	/* Hack - ignore parameter */
-    (void)data;
+	(void)data;
 
-    /* Hack - generate and throw away a few random numbers */
-    randint0(100);
-    randint0(100);
-    randint0(100);
+	/* Hack - generate and throw away a few random numbers */
+	randint0(100);
+	randint0(100);
+	randint0(100);
 
 	/* Get location of building */
 	x = rand_range(4, 11);
 	y = rand_range(3, 12);
 
-    /* Get size of building */
-    x1 = x - randint1(3);
-    x2 = x + randint1(3);
-    y1 = y - randint1(2);
-    y2 = y + randint1(2);
+	/* Get size of building */
+	x1 = x - randint1(3);
+	x2 = x + randint1(3);
+	y1 = y - randint1(2);
+	y2 = y + randint1(2);
 
 	/* Get type of ground */
 	switch (randint0(8))
 	{
 		case 0:
-        case 1:
-        case 2:
-        {
-            /* Grass */
+		case 1:
+		case 2:
+		{
+			/* Grass */
 			type = 1;
 			break;
-        }
+		}
 		case 3:
 #if 0
-        {
-            /* Use "underlying" type */
-            gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
-                             wild_gen_data[data[0]].gen_routine, road);
-            return;
-        }
+		{
+			/* Use "underlying" type */
+			gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
+							 wild_gen_data[data[0]].gen_routine, road);
+			return;
+		}
 #endif
-        case 4:
+		case 4:
 		{
-            /* Alternating grass & dirt */
-            type = 3;
-			break;
-        }
-        case 5:
-		{
-            /* Dirt */
-            type = 2;
-			break;
-        }
-        case 6:
-		{
-            /* Dirt with building */
-            type = 4;
-			break;
-        }
-		default:
-		{
-            /* Grass with building */
-            type = 5;
+			/* Alternating grass & dirt */
+			type = 3;
 			break;
 		}
-    }
+		case 5:
+		{
+			/* Dirt */
+			type = 2;
+			break;
+		}
+		case 6:
+		{
+			/* Dirt with building */
+			type = 4;
+			break;
+		}
+		default:
+		{
+			/* Grass with building */
+			type = 5;
+			break;
+		}
+	}
 
-    /*
-     * If there is a road or river going through here we should
-     * use types 1 or 2 because we don't want roads running through
-     * buildings and other weirdness.
-     */
+	/*
+	 * If there is a road or river going through here we should
+	 * use types 1 or 2 because we don't want roads running through
+	 * buildings and other weirdness.
+	 */
 	if (road && (type > 2)) type = rand_range(1, 2);
 
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -2824,17 +2825,16 @@ static void make_wild_04(blk_ptr block_ptr, byte *data, bool road)
 				c_ptr->feat = FEAT_DIRT;
 			}
 
-			if ((i >= x1) && (i <= x2) &&
-				(j >= y1) && (j <= y2) && (type >= 4))
+			if ((i >= x1) && (i <= x2) && (j >= y1) && (j <= y2) && (type >= 4))
 			{
 				/* Build an invulnerable rectangular building */
 				c_ptr->feat = FEAT_PERM_EXTRA;
-            }
-            else if ((i >= x1 - 1) && (i <= x2 + 1) &&
-                     (j >= y1 - 1) && (j <= y2 + 1) && (type >= 4))
-            {
-                c_ptr->feat = FEAT_DIRT;
-            }
+			}
+			else if ((i >= x1 - 1) && (i <= x2 + 1) &&
+					 (j >= y1 - 1) && (j <= y2 + 1) && (type >= 4))
+			{
+				c_ptr->feat = FEAT_DIRT;
+			}
 		}
 	}
 }
@@ -3000,7 +3000,8 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 /*
  * Make the specified terrain type at a wilderness block
  */
-static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type, bool road)
+static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type,
+                             bool road)
 {
 	/* Based on type - choose wilderness block generation function */
 	switch (gen_type)
@@ -3191,7 +3192,7 @@ static void gen_block(int x, int y)
 
 	/* Get wilderness type */
 	w_type = wild[y][x].done.wild;
-	
+
 	/* Is there a road here? */
 	if (wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD))
 	{

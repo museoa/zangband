@@ -936,13 +936,13 @@ static s32b sqvalue(s32b x)
 /* Return a number dependent on the argument */
 static s32b bonus_value(s32b x)
 {
-    if (x <= 0)
-        return 5 * x;
-    if (x < 10)
-        return x + 5;
-    if (x < 20)
-        return 2 * (x - 10) + 15;
-    return 5 * (x - 20) + 35;
+	if (x <= 0)
+		return 5 * x;
+	if (x < 10)
+		return x + 5;
+	if (x < 20)
+		return 2 * (x - 10) + 15;
+	return 5 * (x - 20) + 35;
 }
 
 
@@ -1277,9 +1277,9 @@ s32b object_value_real(const object_type *o_ptr)
 			if (o_ptr->to_h < 0) return (0L);
 			if (o_ptr->to_d < 0) return (0L);
 
-            /* Factor in the bonuses */
-            value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 20 +
-                      bonus_value(o_ptr->to_a * 2) * 10);
+			/* Factor in the bonuses */
+			value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 20 +
+					  bonus_value(o_ptr->to_a * 2) * 10);
 
 			/* Done */
 			break;
@@ -1297,10 +1297,10 @@ s32b object_value_real(const object_type *o_ptr)
 		{
 			/* Armour */
 
-            /* Factor in the bonuses */
-            value += (bonus_value(o_ptr->to_h - k_ptr->to_a +
-                                  o_ptr->to_d - k_ptr->to_d) * 20);
-            value += (bonus_value((o_ptr->to_a - k_ptr->to_a) * 2) * 10);
+			/* Factor in the bonuses */
+			value += (bonus_value(o_ptr->to_h - k_ptr->to_a +
+								  o_ptr->to_d - k_ptr->to_d) * 20);
+			value += (bonus_value((o_ptr->to_a - k_ptr->to_a) * 2) * 10);
 
 			/* Done */
 			break;
@@ -1314,9 +1314,9 @@ s32b object_value_real(const object_type *o_ptr)
 		{
 			/* Bows/Weapons */
 
-            /* Factor in the bonuses */
-            value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 20 +
-                      bonus_value(o_ptr->to_a * 2) * 10);
+			/* Factor in the bonuses */
+			value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 20 +
+					  bonus_value(o_ptr->to_a * 2) * 10);
 
 			/* Hack -- Factor in extra damage dice */
 			if (k_ptr->dd * k_ptr->ds)
@@ -1334,8 +1334,8 @@ s32b object_value_real(const object_type *o_ptr)
 		{
 			/* Ammo */
 
-            /* Factor in the bonuses */
-            value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 2);
+			/* Factor in the bonuses */
+			value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 2);
 
 			/* Hack -- Factor in extra damage dice */
 			if (k_ptr->dd * k_ptr->ds)

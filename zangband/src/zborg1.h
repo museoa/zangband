@@ -163,12 +163,12 @@ struct borg_kill
 
 	byte speed;	/* Estimated speed */
 	byte moves;	/* Estimates moves */
-	
+
 	s16b power;	/* Estimated hit-points */
 	s16b when;	/* When last seen */
-	
+
 	bool ranged_attack;	/* can attack from a dx */
-	
+
 	byte m_flags;
 };
 
@@ -359,8 +359,8 @@ extern int size_obj;
 #define BI_CRSTELE	139
 #define BI_CRSAGRV	140
 #define BI_CRSTY	141
-#define BI_CRSNOTELE	142	/* no teleport */
-#define BI_CRSNOMAGIC	143	/* no magic */
+#define BI_CRSNOTELE	142		/* no teleport */
+#define BI_CRSNOMAGIC	143		/* no magic */
 #define BI_ENCUMBERD	144
 #define BI_FEAR_LITE	145
 #define BI_WS_ANIMAL	146
@@ -403,14 +403,14 @@ extern int size_obj;
 #define BI_ACSW		183
 #define BI_ARESHEAT	184
 #define BI_ARESCOLD	185
-#define BI_ATELEPORTLVL	186	/* scroll of teleport level */
-#define BI_AXGOI	187	/* reliable GOI spell */
-#define BI_AGOI		188	/* GOI spell */
-#define BI_AHWORD	189	/* Holy Word prayer */
+#define BI_ATELEPORTLVL	186		/* scroll of teleport level */
+#define BI_AXGOI	187			/* reliable GOI spell */
+#define BI_AGOI		188			/* GOI spell */
+#define BI_AHWORD	189			/* Holy Word prayer */
 
-#define BI_TOWN_NUM	190	/* Current town number */
-#define BI_INSIDEQUEST	191	/* Inside quest level */
-#define BI_X_WILD	192	/* Coordinates in the wilderness */
+#define BI_TOWN_NUM	190			/* Current town number */
+#define BI_INSIDEQUEST	191		/* Inside quest level */
+#define BI_X_WILD	192			/* Coordinates in the wilderness */
 #define BI_Y_WILD	193
 
 #define BI_MAX		194

@@ -638,10 +638,10 @@ static void save_map_location(int x, int y, term_map *map)
 	/* Save the information */
 	mb_ptr->terrain = map->terrain;
 	mb_ptr->field = map->field;
-	
+
 	mb_ptr->object = map->object;
 	mb_ptr->unknown = map->unknown;
-	
+
 	mb_ptr->monster = map->monster;
 	mb_ptr->m_flags = map->m_flags;
 	mb_ptr->m_hp = map->m_hp;
@@ -720,7 +720,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;
-				
+
 				/* Get monster information */
 				if (m_ptr->csleep) map.m_flags |= MONST_ASLEEP;
 				if (is_friendly(m_ptr)) map.m_flags |= MONST_FRIEND;
@@ -729,7 +729,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 				if (m_ptr->monfear) map.m_flags |= MONST_FEAR;
 				if (m_ptr->stunned) map.m_flags |= MONST_STUN;
 				if (m_ptr->invulner) map.m_flags |= MONST_INVULN;
-				
+
 				/* Get scaled monster hp */
 				map.m_hp = m_ptr->hp * 10 / m_ptr->maxhp;
 			}

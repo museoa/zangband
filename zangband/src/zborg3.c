@@ -842,7 +842,7 @@ int borg_wield_slot(borg_item *item)
  */
 static bool borg_object_star_id_aux(borg_item *borg_item)
 {
-	(void) borg_item;
+	(void)borg_item;
 
 	/* This function doesn't work */
 

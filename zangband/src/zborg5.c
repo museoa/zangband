@@ -256,7 +256,7 @@ static void delete_dead_objects(void)
 	for (i = 1; i < borg_takes_nxt; i++)
 	{
 		bt_ptr = &borg_takes[i];
-	
+
 		/* Is the object "alive"? */
 		if (bt_ptr->k_idx)
 		{
@@ -485,12 +485,12 @@ static void borg_update_kill(int i)
 	borg_kill *kill = &borg_kills[i];
 
 	monster_race *r_ptr = &r_info[kill->r_idx];
-	
+
 	map_block *mb_ptr;
 
 	/* Extract the monster speed */
 	kill->speed = (r_ptr->speed);
-	
+
 	/* Player energy per game turn */
 	e = extract_energy[borg_skill[BI_SPEED]];
 
@@ -502,7 +502,7 @@ static void borg_update_kill(int i)
 
 	/* Monster moves (times ten) */
 	kill->moves = (t * e) / 10;
-	
+
 	/* Assume no ranged attacks */
 	kill->ranged_attack = FALSE;
 
@@ -511,21 +511,21 @@ static void borg_update_kill(int i)
 	{
 		kill->ranged_attack = TRUE;
 	}
-	
+
 	/* Get the default power */
 	kill->power = r_ptr->hdice * r_ptr->hside;
-	
+
 	if (map_in_bounds(kill->x, kill->y))
 	{
 		/* Get grid */
 		mb_ptr = map_loc(kill->x, kill->y);
-		
+
 		/* Do we know about this monster? */
 		if (mb_ptr->monster == kill->r_idx)
 		{
 			/* Use the known hp */
 			kill->power = kill->power * mb_ptr->m_hp / 10;
-			
+
 			/* Save the flags */
 			kill->m_flags = mb_ptr->m_flags;
 		}
@@ -3379,7 +3379,7 @@ void borg_update(void)
 
 	/* Update the map */
 	borg_update_map();
-	
+
 	/* Update the objects */
 	delete_dead_objects();
 
