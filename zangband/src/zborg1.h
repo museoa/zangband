@@ -276,23 +276,6 @@ struct borg_grid
 };
 
 
-/*
- * Forward declare
- */
-typedef struct borg_data borg_data;
-
-/*
- * Hack -- one byte of info per grid
- *
- * We use a structure to encapsulate the data into a "typed" form.
- */
-struct borg_data
-{
-    byte data[AUTO_MAX_Y][AUTO_MAX_X];
-};
-
-
-
 
 /*** Some macros ***/
 
