@@ -635,3 +635,8 @@
  * Compile in virtues
  */
 /* #define AVATAR */
+
+/*
+ * Add caverns and lakes to the dungeon (buggy)
+ */
+/* #define ALLOW_CAVERNS_AND_LAKES */

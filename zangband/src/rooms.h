@@ -14,6 +14,9 @@
 
 
 /* Externs */
+#ifdef ALLOW_CAVERNS_AND_LAKES
 extern void build_lake(int type);
 extern void build_cavern(void);
+#endif /* ALLOW_CAVERNS_AND_LAKES */
+
 extern bool room_build(int y0, int x0, int typ);

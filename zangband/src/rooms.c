@@ -3027,7 +3027,7 @@ static void build_type9(int by0, int bx0)
 	}
 }
 
-
+#ifdef ALLOW_CAVERNS_AND_LAKES
 /*
  * Builds a cave system in the center of the dungeon.
  */
@@ -3244,6 +3244,8 @@ void build_lake(int type)
 		done = generate_lake(y0 + 1, x0 + 1, xsize, ysize, c1, c2, c3, type);
 	}
 }
+#endif /* ALLOW_CAVERNS_AND_LAKES */
+
 
 /*
  * Routine used by the random vault creators to add a door to a location
@@ -4449,6 +4451,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 }
 
 
+#ifdef ALLOW_CAVERNS_AND_LAKES
 /*
  * This routine uses a modified version of the lake code to make a
  * distribution of some terrain type over the vault.  This type
@@ -4539,6 +4542,7 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
 	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
 }
+#endif /* ALLOW_CAVERNS_AND_LAKES */
 
 
 /*
@@ -4567,7 +4571,11 @@ static void build_type10(int by0, int bx0)
 	}
 
 	/* Select type of vault*/
+#ifdef ALLOW_CAVERNS_AND_LAKES
 	vtype = randint(8);
+#else /* ALLOW_CAVERNS_AND_LAKES */
+	vtype = randint(7);
+#endif /* ALLOW_CAVERNS_AND_LAKES */
 
 	switch (vtype)
 	{
@@ -4579,7 +4587,9 @@ static void build_type10(int by0, int bx0)
 		case 5: build_mini_c_vault(x0, y0, xsize, ysize); break;
 		case 6: build_castle_vault(x0, y0, xsize, ysize); break;
 		case 7: build_target_vault(x0, y0, xsize, ysize); break;
+#ifdef ALLOW_CAVERNS_AND_LAKES
 		case 8: build_elemental_vault(x0, y0, xsize, ysize); break;
+#endif /* ALLOW_CAVERNS_AND_LAKES */
 		/* I know how to add a few more... give me some time. */
 
 		/* Paranoia */

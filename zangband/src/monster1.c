@@ -1674,29 +1674,29 @@ monster_hook_type get_monster_hook(void)
 		switch (wilderness[p_ptr->wilderness_y][p_ptr->wilderness_x].terrain)
 		{
 		case TERRAIN_TOWN:
-			return monster_town;
+			return &(monster_town);
 		case TERRAIN_DEEP_WATER:
-			return monster_ocean;
+			return &(monster_ocean);
 		case TERRAIN_SHALLOW_WATER:
-			return monster_shore;
+			return &(monster_shore);
 		case TERRAIN_DIRT:
-			return monster_waste;
+			return &(monster_waste);
 		case TERRAIN_GRASS:
-			return monster_grass;
+			return &(monster_grass);
 		case TERRAIN_TREES:
-			return monster_wood;
+			return &(monster_wood);
 		case TERRAIN_SHALLOW_LAVA:
 		case TERRAIN_DEEP_LAVA:
-			return monster_volcano;
+			return &(monster_volcano);
 		case TERRAIN_MOUNTAIN:
-			return monster_mountain;
+			return &(monster_mountain);
 		default:
-			return monster_dungeon;
+			return &(monster_dungeon);
 		}
 	}
 	else
 	{
-		return monster_dungeon;
+		return &(monster_dungeon);
 	}
 }
 
@@ -1707,12 +1707,12 @@ monster_hook_type get_monster_hook2(int y, int x)
 	switch (cave[y][x].feat)
 	{
 	case FEAT_SHAL_WATER:
-		return monster_shallow_water;
+		return &(monster_shallow_water);
 	case FEAT_DEEP_WATER:
-		return monster_deep_water;
+		return &(monster_deep_water);
 	case FEAT_DEEP_LAVA:
 	case FEAT_SHAL_LAVA:
-		return monster_lava;
+		return &(monster_lava);
 	default:
 		return NULL;
 	}
