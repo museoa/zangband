@@ -10,6 +10,7 @@
  * included in all such copies.
  */
 
+#include "angband.h"
 #include "util-dll.h"
 #include "plat-dll.h"
 
@@ -167,8 +168,11 @@ void *Plat_PaletteInit(unsigned char *rgb)
 
 #include <errno.h>
 #include <X11/extensions/XShm.h>
+
+#include <X11/Xutil.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include "tcltk.h"
 
 struct PlatBitmap
 {
@@ -180,6 +184,10 @@ struct PlatBitmap
 static int ErrorHandler(ClientData clientData, XErrorEvent *errEventPtr)
 {
     int *anyError = (int *) clientData;
+
+	/* Hack - ignore parameter */
+	(void) errEventPtr;
+
     *anyError = 1;
     return 0;
 }
@@ -204,7 +212,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 		XShmQueryVersion(display, &major, &minor, &pixmaps);
 		if (pixmaps != True)
 		{
-			Tcl_Panic("no shared pixmaps");
+			Tcl_Panic((char *) "no shared pixmaps");
 		}
 	}
 
@@ -222,16 +230,17 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	if (ret < 0)
 	{
 		printf("shmget: errno is %s (%d): %s\n", Tcl_ErrnoId(), errno, Tcl_ErrnoMsg(errno));
-		Tcl_Panic("shmget() failed");
+		Tcl_Panic((char *)"shmget() failed");
 	}
 
-    ret = (int) platData->shminfo.shmaddr =
-    	shmat(platData->shminfo.shmid, 0, 0);
+	platData->shminfo.shmaddr = shmat(platData->shminfo.shmid, 0, 0);
+	ret = (int) platData->shminfo.shmaddr;
+	
     if(ret == -1)
     {
 		printf("shmat: errno is %s (%d): %s\n", Tcl_ErrnoId(), errno, Tcl_ErrnoMsg(errno));
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("shmat() failed");
+		Tcl_Panic((char *) "shmat() failed");
 	}
 
 	/* Allow the server to write into our pixmap */
@@ -245,7 +254,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
     {
 		shmdt(platData->shminfo.shmaddr);
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("XShmAttach() failed");
+		Tcl_Panic((char *) "XShmAttach() failed");
     }
 	XSync(display, False);
     Tk_DeleteErrorHandler(handler);
@@ -253,7 +262,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
     {
 		shmdt(platData->shminfo.shmaddr);
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("XShmAttach() etc gave errors");
+		Tcl_Panic((char *) "XShmAttach() etc gave errors");
     }
 
     ret = shmctl(platData->shminfo.shmid, IPC_RMID, 0);
@@ -262,7 +271,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 		XShmDetach(display, &platData->shminfo);
 		shmdt(platData->shminfo.shmaddr);
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("shmctl() failed");
+		Tcl_Panic((char *) "shmctl() failed");
     }
 
 	/* Image uses shared memory we allocated */
@@ -275,20 +284,18 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 
 	if (bitmapPtr->pixmap == None)
 	{
-		Tcl_Panic("XShmCreatePixmap() failed");
+		Tcl_Panic((char *) "XShmCreatePixmap() failed");
 	}
 
 	/* Set pitch, pixelSize, and pixelPtr */
 	bitmapPtr->pitch = platData->ximage->bytes_per_line;
 	bitmapPtr->pixelSize = platData->ximage->bits_per_pixel / 8;
-	bitmapPtr->pixelPtr = platData->shminfo.shmaddr;
+	bitmapPtr->pixelPtr = (unsigned char *) platData->shminfo.shmaddr;
 
 	platData->display = display;
 
 	bitmapPtr->platData = platData;
 }
-
-#include "tcltk.h"
 
 void Plat_BitmapDelete(BitmapPtr bitmapPtr)
 {
@@ -307,6 +314,8 @@ void Plat_BitmapDelete(BitmapPtr bitmapPtr)
 
 void *Plat_PaletteInit(unsigned char *rgb)
 {
+	/* Hack - just return NULL */
+	(void) rgb;
 	return NULL;
 }
 
@@ -347,21 +356,3 @@ int Plat_XColor2Pixel(XColor *xColorPtr)
 
 	return 0;
 }
-
-int Plat_RGB2XPixel(int r, int g, int b)
-{
-#ifdef PLATFORM_X11
-	return 0;
-#endif
-#ifdef PLATFORM_WIN
-	return RGB(r, g, b);
-#endif
-}
-
-void Plat_SyncDisplay(Display *display)
-{
-#ifdef PLATFORM_X11
-	TkpSync(display);
-#endif
-}
-

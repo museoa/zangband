@@ -1308,7 +1308,10 @@ void Widget_Display(ClientData clientData)
 		widgetPtr->dy - widgetPtr->by /* dest top-left */
 	);
 
-	Plat_SyncDisplay(widgetPtr->display);
+#ifdef PLATFORM_X11
+	/* Sync the display */
+	TkpSync(widgetPtr->display);
+#endif
 
 	/* Reset dirty bounds to entire window */
 	widgetPtr->dx = widgetPtr->bx;
