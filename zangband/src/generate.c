@@ -767,20 +767,47 @@ static void add_moss(void)
 		if (!in_bounds(y, x)) break;
 	}
 }
+#endif /* 0 */
+
+/*
+ * Find the distance from (x, y) to a line.
+ */
+static int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
+{
+	/* Vector from (x, y) to (x1, y1) */
+	int py = y1 - y;
+	int px = x1 - x;
+
+	/* Normal vector */
+	int ny = x2 - x1;
+	int nx = y1 - y2;
+
+   /* Length of N */
+	int d = distance(y1, x1, y2, x2);
+
+	/* Component of P on N */
+	d = ((d) ? ((py * ny + px * nx) / d) : 0);
+
+   /* Absolute value */
+	return ((d >= 0) ? d : 0 - d);
+}
 
 
 /*
  * Places water through dungeon.
  */
-static void add_river(int feat1, int feat2)
+static void add_river(int feat1, int feat2, int depth)
 {
 	int tx, ty;
 	int y, x, dir, dd, len, wid;
+	int d;
 
+	int ly, lx;
+	int ny, nx;
 
 	/* Hack -- Choose starting point */
-	y = rand_spread(cur_hgt / 2, cur_hgt / 2 - 10);
-	x = rand_spread(cur_wid / 2, cur_wid / 2 - 10);
+	ly = y = rand_spread(cur_hgt / 2, cur_hgt / 2 - 10);
+	lx = x = rand_spread(cur_wid / 2, cur_wid / 2 - 10);
 
 	/* Choose a random direction */
 	dd = rand_int(16);
@@ -791,6 +818,19 @@ static void add_river(int feat1, int feat2)
 	/* Choose a length */
 	len = rand_int(10) + 5;
 
+	/* Find endpoint */
+	if (dd % 2 == 0)
+	{
+		ny = y + len * ddy[dir];
+		nx = x + len * ddx[dir];
+	}
+	/* Acquire the intermediate direction */
+	else
+	{
+		ny = y + len * (ddy[dir] + ddy_cdd[((dd + 1) / 2) % 8]);
+		nx = x + len * (ddx[dir] + ddx_cdd[((dd + 1) / 2) % 8]);
+	}
+
 	/* Place streamer into dungeon */
 	while (TRUE)
 	{
@@ -800,21 +840,36 @@ static void add_river(int feat1, int feat2)
 			{
 				if (!in_bounds(ty, tx)) continue;
 
-				if (cave[ty][tx].feat == feat1) continue;
-				if (cave[ty][tx].feat == feat2) continue;
-
 				if (distance(ty, tx, y, x) > rand_spread(wid, 1)) continue;
 
 				/* Do not convert permanent features */
 				if (cave_perma_bold(ty, tx)) continue;
 
+				/* Find the distance from the center */
+				if (distance(ty, tx, ny, nx) > distance(ly, lx, ny, nx))
+				{
+					/* Beginning of river */
+					d = distance(ty, tx, ly, lx);
+				}
+				else
+				{
+					/* Middle of river */
+					d = dist_to_line(ty, tx, ly, lx, ny, nx);
+				}
+
 				/*
 				 * Clear previous contents, add feature
-				 * The border mainly gets feat2, while the center gets feat1 */
-				if (distance(ty, tx, y, x) > wid)
+				 * The border mainly gets feat2, while the center gets feat1
+				 */
+				if (!wid || ((d > wid * rand_spread(depth, 10) / 100) &&
+					 (rand_int(d * 100 / wid) >= depth)))
+				{
 					cave[ty][tx].feat = feat2;
+				}
 				else
+				{
 					cave[ty][tx].feat = feat1;
+				}
 
 				/* Lava terrain glows */
 				if ((feat1 == FEAT_DEEP_LAVA) ||
@@ -849,17 +904,38 @@ static void add_river(int feat1, int feat2)
 
 			wid = rand_spread(wid, 1);
 
+			depth = rand_spread(depth, 10);
+
 			if (wid < 0) wid = 0;
 			if (wid > DUN_WAT_RNG) wid = DUN_WAT_RNG;
 
+			if (depth < 0) depth = 0;
+			if (depth > 100) depth = 100;
+
 			len = rand_int(10) + 5;
+
+			/* Find starting point */
+			ly = y;
+			lx = x;
+
+			/* Find endpoint */
+			if (dd % 2 == 0)
+			{
+				ny = y + len * ddy[dir];
+				nx = x + len * ddx[dir];
+			}
+			/* Acquire the intermediate direction */
+			else
+			{
+				ny = y + len * (ddy[dir] + ddy_cdd[((dd + 1) / 2) % 8]);
+				nx = x + len * (ddx[dir] + ddx_cdd[((dd + 1) / 2) % 8]);
+			}
 		}
 
 		/* Stop at dungeon edge */
 		if (!in_bounds(y, x)) break;
 	}
 }
-#endif /* 0 */
 
 
 /*
@@ -4041,10 +4117,6 @@ static bool cave_gen(void)
 
 	int max_vault_ok = 2;
 
-#if 0
-	int feat1, feat2;
-#endif
-
 	bool destroyed = FALSE;
 	bool empty_level = FALSE;
 
@@ -4311,7 +4383,16 @@ static bool cave_gen(void)
 		build_streamer(FEAT_QUARTZ, DUN_STR_QC);
 	}
 
-#if 0
+	/* Add other terrain types */
+	if (terrain_streams)
+	{
+		int feat1, feat2;
+
+		/* Add streamers of trees, water, or lava */
+		if ((dun_level == 1) && (randint(20) > 10))
+			for (i = 0; i < randint(DUN_STR_QUA); i++)
+				build_streamer2(FEAT_TREES, FALSE, TRUE);
+
 	/* Choose water or lava */
 	if (rand_int(MAX_DEPTH) > dun_level)
 	{
@@ -4325,52 +4406,11 @@ static bool cave_gen(void)
 	}
 
 	/* Hack -- Add some rivers */
-	while(!rand_int(3)) add_river(feat1, feat2);
-#endif /* 0 */
+		while(!rand_int(3)) add_river(feat1, feat2, randnor(40, 15));
+	}
 
 	/* Destroy the level if necessary */
 	if (destroyed) destroy_level();
-
-	/* Add other terrain types */
-	if (terrain_streams)
-	{
-		/* Add streamers of trees, water, or lava */
-		if ((dun_level == 1) && (randint(20) > 10))
-			for (i = 0; i < randint(DUN_STR_QUA); i++)
-				build_streamer2(FEAT_TREES, FALSE, TRUE);
-
-		if ((dun_level <= 19) && (randint(20) > 15))
-		{
-			for (i = 0; i < randint(DUN_STR_QUA - 1); i++)
-				build_streamer2(FEAT_SHAL_WATER, FALSE, FALSE);
-			if (randint(20) > 15)
-			{
-				for (i = 0; i < randint(DUN_STR_QUA); i++)
-					build_streamer2(FEAT_DEEP_WATER, TRUE, (bool)(randint(10) < 3));
-			}
-		}
-		else if ((dun_level > 19) && (randint(20) > 15))
-		{
-			for (i = 0; i < randint(DUN_STR_QUA); i++)
-				build_streamer2(FEAT_SHAL_LAVA, FALSE, FALSE);
-			if (randint(20) > 15)
-			{
-				for (i = 0; i < randint(DUN_STR_QUA - 1); i++)
-					build_streamer2(FEAT_DEEP_LAVA, TRUE, (bool)(randint(10) < 3));
-			}
-		}
-		else if ((randint(20) > 15))
-		{
-			for (i = 0; i < randint(DUN_STR_QUA - 1); i++)
-				build_streamer2(FEAT_SHAL_WATER, FALSE, FALSE);
-
-			if (randint(20) > 15)
-			{
-				for (i = 0; i < randint(DUN_STR_QUA); i++)
-					build_streamer2(FEAT_DEEP_WATER, TRUE, (bool)(randint(10) < 3));
-			}
-		}
-	}
 
 	/* Place 3 or 4 down stairs near some walls */
 	alloc_stairs(FEAT_MORE, rand_range(3, 4), 3);
