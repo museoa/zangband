@@ -2029,6 +2029,7 @@
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
  *   FRND: Stop if hit a friendly monster / player.
+ *	 FELD: Create fields using GF_XXX value as type.
  */
 #define PROJECT_JUMP    0x0001
 #define PROJECT_BEAM    0x0002
@@ -2039,6 +2040,7 @@
 #define PROJECT_KILL    0x0040
 #define PROJECT_HIDE    0x0080
 #define PROJECT_FRND	0x0100
+#define PROJECT_FELD	0x0200
 
 /*
  * Bit flags for the "enchant()" function
@@ -3699,26 +3701,26 @@ extern int PlayerUID;
 /*
  * Field Actions
  */
-#define FIELD_ACT_INIT		0	/* Initialise the field data */
-#define FIELD_ACT_ALWAYS	1	/* Every turn */
+#define FIELD_ACT_INIT			0	/* Initialise the field data */
+#define FIELD_ACT_ALWAYS		1	/* Every turn */
 #define FIELD_ACT_PLAYER_ENTER	2	/* Player walks onto square */
-#define FIELD_ACT_PLAYER_ON	3	/* Player is on square */
+#define FIELD_ACT_PLAYER_ON		3	/* Player is on square */
 #define FIELD_ACT_PLAYER_LEAVE	4	/* Player leaves square */
 #define FIELD_ACT_MONSTER_ENTER	5	/* Monster walks onto square */
 #define FIELD_ACT_MONSTER_ON	6	/* Monster is on square */
 #define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
 #define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
-#define FIELD_ACT_OBJECT_ON	9	/* Object is on square */
-#define FIELD_ACT_MAGIC_PASS	10	/* bolt/beam/ball spell tries to pass this field */
+#define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
+#define FIELD_ACT_MAGIC_TEST	10	/* bolt/beam/ball spell tries to pass this field */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
-#define FIELD_ACT_COMPACT	12	/* Compaction hook */
-#define FIELD_ACT_EXIT		13	/* Field is destroyed */
+#define FIELD_ACT_COMPACT		12	/* Compaction hook */
+#define FIELD_ACT_EXIT			13	/* Field is destroyed */
 #define FIELD_ACT_MONSTER_AI	14 /* Monster AI hook */
 #define FIELD_ACT_ENTER_TEST	15 /* Monster / player entry test hook */
 #define FIELD_ACT_PLAYER_INTERACT	16 /* The player interacts with grid */
 #define FIELD_ACT_OBJECT_TEST	17 /* Test to see if can drop on field */
 
-#define FIELD_ACTION_MAX	18	/* The last action + 1 */
+#define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
 #define FIELD_ACTION_TYPES  3 /* Number of FIELD_ACT functions */

@@ -2348,6 +2348,9 @@ static void process_world(void)
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
 
+		field_hook(&area(o_ptr->iy, o_ptr->ix)->fld_idx,
+			 FIELD_ACT_OBJECT_ON, (void *) o_ptr);
+
 		if (!o_ptr->timeout) continue;
 
 		/* Recharge rods on the ground.  No messages. */

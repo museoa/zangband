@@ -35,7 +35,9 @@ bool teleport_away(int m_idx, int dis)
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
-	cave_type *c_ptr;
+	cave_type *c_ptr = NULL;
+	
+	bool m_can_enter;
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return (FALSE);
@@ -77,7 +79,16 @@ bool teleport_away(int m_idx, int dis)
 			if (!in_bounds(ny, nx)) continue;
 
 			c_ptr = area(ny, nx);
+			
+			/* Can the monster enter? */
+			m_can_enter = TRUE;
+			
+			/* Check for a field that blocks movement */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &m_can_enter);
 
+			/* Require "empty" fields */
+			if (!m_can_enter) continue;
+			
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
 
@@ -112,6 +123,10 @@ bool teleport_away(int m_idx, int dis)
 
 	/* Sound */
 	sound(SOUND_TPOTHER);
+	
+	/* Process fields under the monster. */
+	field_hook(&c_ptr->fld_idx,
+			 FIELD_ACT_MONSTER_LEAVE, (void *) m_ptr);
 
 	/* Update the new location */
 	area(ny,nx)->m_idx = m_idx;
@@ -122,7 +137,11 @@ bool teleport_away(int m_idx, int dis)
 	/* Move the monster */
 	m_ptr->fy = ny;
 	m_ptr->fx = nx;
-
+	
+	/* Process fields under the monster. */
+	field_hook(&c_ptr->fld_idx,
+			 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
+	
 	/* Update the monster (new location) */
 	update_mon(m_idx, TRUE);
 
@@ -147,7 +166,9 @@ void teleport_to_player(int m_idx)
 	int dis = 2;
 	bool look = TRUE;
 	monster_type *m_ptr = &m_list[m_idx];
-	cave_type *c_ptr;
+	cave_type *c_ptr = NULL;
+	
+	bool m_can_enter;
 
 
 	/* Paranoia */
@@ -189,6 +210,15 @@ void teleport_to_player(int m_idx)
 			if (!in_bounds(ny, nx)) continue;
 
 			c_ptr = area(ny, nx);
+			
+			/* Can the monster enter? */
+			m_can_enter = TRUE;
+			
+			/* Check for a field that blocks movement */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &m_can_enter);
+
+			/* Require "empty" fields */
+			if (!m_can_enter) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -222,6 +252,10 @@ void teleport_to_player(int m_idx)
 
 	/* Sound */
 	sound(SOUND_TPOTHER);
+	
+	/* Process fields under the monster. */
+	field_hook(&c_ptr->fld_idx,
+			 FIELD_ACT_MONSTER_LEAVE, (void *) m_ptr);
 
 	/* Update the new location */
 	area(ny,nx)->m_idx = m_idx;
@@ -232,6 +266,10 @@ void teleport_to_player(int m_idx)
 	/* Move the monster */
 	m_ptr->fy = ny;
 	m_ptr->fx = nx;
+	
+	/* Process fields under the monster. */
+	field_hook(&c_ptr->fld_idx,
+			 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
 
 	/* Update the monster (new location) */
 	update_mon(m_idx, TRUE);

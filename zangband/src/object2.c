@@ -4521,6 +4521,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	bool flag = FALSE;
 	bool done = FALSE;
+	bool o_test = TRUE;
 
 	bool plural = FALSE;
 
@@ -4594,6 +4595,14 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			    (c_ptr->feat != FEAT_SHAL_ACID) &&
 			    ((c_ptr->feat & 0xF8) != 0x08) &&
 			    ((c_ptr->feat & 0x80) != 0x80)) continue;
+			
+			o_test = TRUE;
+			
+			/* See if objects can be dropped onto square */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_OBJECT_TEST, &o_test);
+			
+			/* Cannot drop it here */
+			if (!o_test) continue;
 
 			/* No objects */
 			k = 0;
@@ -4705,6 +4714,14 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		    (c_ptr->feat != FEAT_SHAL_ACID) &&
 		    ((c_ptr->feat & 0xF8) != 0x08) &&
 		    ((c_ptr->feat & 0x80) != 0x80)) continue;
+		
+		o_test = TRUE;
+			
+		/* See if objects can be dropped onto square */
+		field_hook(&c_ptr->fld_idx, FIELD_ACT_OBJECT_TEST, &o_test);
+		
+		/* Cannot drop it here */
+		if (!o_test) continue;
 
 		/* Bounce to that location */
 		by = ty;
@@ -4856,6 +4873,9 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		msg_print("You feel something roll beneath your feet.");
 	}
 
+	/* Fields may interact with an object in some way */
+	field_hook(&area(by, bx)->fld_idx, FIELD_ACT_OBJECT_DROP, (void *) &o_idx);
+	
 	/* XXX XXX XXX */
 
 	/* Result */
