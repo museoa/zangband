@@ -609,8 +609,8 @@ static void wiz_display_item(const object_type *o_ptr)
 	    		"AFFECT........SLAY........BRAND.\n"
 	    		"              cvae      xsqpaefc\n"
 	    		"siwdcc  ssidsahanvudotgddhuoclio\n"
-	    		"tnieoh  trnipttmiinmrrnrrraiierl\n"
-	    		"rtsxna..lcfgdkcpmldncltggpksdced\n"
+	    		"tnieoh strnipttmiinmrrnrrraiierl\n"
+	    		"rtsxna.plcfgdkcpmldncltggpksdced\n"
                 "%v", binary_fmt, o_ptr->flags1);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
