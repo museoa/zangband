@@ -2379,7 +2379,7 @@ static void build_type7(int by0, int bx0)
 #endif
 
 	/* Message */
-	if (cheat_room) msg_print("Lesser Vault");
+	if (cheat_room) msg_format("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
 	rating += v_ptr->rat;
@@ -2464,7 +2464,7 @@ static void build_type8(int by0, int bx0)
 #endif
 
 	/* Message */
-	if (cheat_room) msg_print("Greater Vault");
+	if (cheat_room) msg_format("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
 	rating += v_ptr->rat;
