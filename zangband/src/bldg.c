@@ -343,6 +343,28 @@ int random_quest_number(int level)
 	return 0;
 }
 
+/* Count the number of random quests chosen */
+int number_of_quests(void)
+{
+	int i, j;
+
+	/* Clear the counter */
+	i = 0;
+
+	for (j = MIN_RANDOM_QUEST; j < MAX_RANDOM_QUEST + 1; j++)
+	{
+		if (quest[j].status != QUEST_STATUS_UNTAKEN)
+		{
+			/* Increment count of quests taken. */
+			i++;
+		}
+	}
+
+	/* Return the number of quests taken */
+	return (i);
+}
+
+
 #if 0
 
 /* hack as in leave_store in store.c */

@@ -4071,25 +4071,3 @@ bool monk_heavy_armor(void)
 
 	return (monk_arm_wgt > (100 + (p_ptr->lev * 4)));
 }
-
-/* Count the number of random quests chosen */
-int number_of_quests(void)
-{
-	int i, j;
-
-	/* Clear the counter */
-	i = 0;
-
-	for (j = MIN_RANDOM_QUEST; j < MAX_RANDOM_QUEST; j++)
-	{
-		if (quest[j].status != QUEST_STATUS_UNTAKEN)
-		{
-			/* Increment count of quests taken. */
-			i++;
-		}
-	}
-
-	/* Return the number of quests taken */
-	return (i);
-}
-
