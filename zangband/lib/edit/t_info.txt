@@ -363,7 +363,7 @@ G:+:U
 W:100:2:0
 I:FEAT | NFT_LOOK | MERGE
 D:0:0:0:0:0:0:0:0
-F:10,field_action_door_unlock | 12,field_action_door_bash
+F:10,field_action_door_unlock
 F:15,field_action_delete | 16,field_action_interact_open
 F:17,field_action_door_lock_monster
 
@@ -372,7 +372,7 @@ N:33:stuck door
 G:+:U
 W:100:2:0
 I:FEAT | NFT_LOOK | MERGE
-D:0:0:0:0:0:0:0:0
-F:10,field_action_door_unlock_jammed | 12,field_action_door_bash
-F:15,field_action_delete | 16,field_action_interact_bash
+D:15:0:0:0:0:0:0:0
+F:10,field_action_door_bash
+F:15,field_action_delete | 16,field_action_interact_disarm
 F:17,field_action_door_jam_monster
