@@ -1264,7 +1264,6 @@ bad_index:
  *		game open -- Open a save file
  *		game process_pref_file -- Process a preference file
  *		game quit -- Quit with save
- *		game variant -- Which variant is this?
  *
  *--------------------------------------------------------------
  */
@@ -1301,11 +1300,11 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 	static char *cmdOptions[] = {"abort", "directory",
 		"macro_dump", "new", "open", "process_pref_file", "quit",
-		"keymap_dump", "savefile_info", "version", "variant",
+		"keymap_dump", "savefile_info", "version",
 		"savefile", NULL};
 	enum {IDX_ABORT, IDX_DIRECTORY,
 		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
-		IDX_KEYMAP_DUMP, IDX_SAVEFILE_INFO, IDX_VERSION, IDX_VARIANT,
+		IDX_KEYMAP_DUMP, IDX_SAVEFILE_INFO, IDX_VERSION,
 		IDX_SAVEFILE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -1681,11 +1680,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		case IDX_VERSION: /* version */
 			Tcl_SetStringObj(resultPtr, format("%d.%d.%d", FAKE_VER_MAJOR,
 				FAKE_VER_MINOR, FAKE_VER_PATCH), -1);
-			break;
-
-		case IDX_VARIANT: /* variant */
-			/* Try char *g_variant = "ANGBANDTK" */
-			Tcl_SetStringObj(resultPtr, "ZANGBANDTK", -1);
 			break;
 
 		case IDX_SAVEFILE: /* savefile */

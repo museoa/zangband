@@ -751,7 +751,6 @@ bool is_wall(int y, int x)
 	/* Apply mimic field */
 	f_idx = f_info[f_idx].mimic;
 
-	/* FIXME: wall for each variant */
 	if ((f_idx == FEAT_SECRET) ||
 		((f_idx >= FEAT_MAGMA) && (f_idx <= FEAT_PERM_SOLID)))
 	{
