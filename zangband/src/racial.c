@@ -831,8 +831,11 @@ void do_cmd_racial_power(void)
 
 		repeat_push(i);
 	}
-
-
+	else
+	{
+		/* Restore the screen */
+		screen_load();
+	}
 
 	if (power_desc[i].number == -1)
 	{
