@@ -1511,13 +1511,6 @@ static void player_wipe(void)
 		quest[i].r_idx = 0;
 	}
 
-	/* No weight */
-	p_ptr->total_weight = 0;
-
-	/* No items */
-	p_ptr->inven_cnt = 0;
-	p_ptr->equip_cnt = 0;
-
 	/* Clear the inventory */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
@@ -1560,9 +1553,6 @@ static void player_wipe(void)
 
 
 	/* Wipe the spells */
-	p_ptr->spell_learned1 = p_ptr->spell_learned2 = 0L;
-	p_ptr->spell_worked1 = p_ptr->spell_worked2 = 0L;
-	p_ptr->spell_forgotten1 = p_ptr->spell_forgotten2 = 0L;
 	for (i = 0; i < 64; i++) p_ptr->spell_order[i] = 99;
 
 	/* Clean the mutation count */
@@ -1576,19 +1566,8 @@ static void player_wipe(void)
 	cheat_know = FALSE;
 	cheat_live = FALSE;
 
-	/* Assume no winning game */
-	p_ptr->total_winner = FALSE;
-
-	/* Assume no panic save */
-	p_ptr->panic_save = 0;
-
-	/* Assume no cheating */
-	p_ptr->noscore = 0;
-
 	/* Default pet command settings */
 	p_ptr->pet_follow_distance = PET_FOLLOW_DIST;
-	p_ptr->pet_open_doors = FALSE;
-	p_ptr->pet_pickup_items = FALSE;
 }
 
 
