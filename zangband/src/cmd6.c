@@ -1388,7 +1388,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_RUNE_OF_PROTECTION:
 		{
-			warding_glyph();
+			if (!warding_glyph()) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
