@@ -761,7 +761,7 @@ I:19:24:0
 W:52:0:100:300
 A:52/1:90/1
 F:SHOW_MODS
-D:One shot can take of small fry.
+D:One shot can take care of small fry.
 
 N:77:& Sling~
 G:}:u
