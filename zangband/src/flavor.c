@@ -16,7 +16,7 @@
 /*
  * Max sizes of the following arrays
  */
-#define MAX_ROCKS      56		/* Used with rings (min 51) */
+#define MAX_ROCKS      68		/* Used with rings (min 51) */
 #define MAX_AMULETS    17		/* Used with amulets (min 16) */
 #define MAX_WOODS      32		/* Used with staffs (min 30) */
 #define MAX_METALS     39		/* Used with wands/rods (min 30/29) */
@@ -40,11 +40,12 @@ static cptr ring_adj[MAX_ROCKS] =
 	"Rhodonite", "Ruby", "Sapphire", "Tiger Eye", "Topaz",
 	"Turquoise", "Zircon", "Platinum", "Bronze", "Gold",
 	"Obsidian", "Silver", "Tortoise Shell", "Mithril", "Jet",
-	"Engagement", "Adamantite",
-	"Wire", "Dilithium", "Bone", "Wooden",
-	"Iron", "Serpent", "Wedding", "Double",
-	"Plain", "Brass", "Scarab", "Shining",
-	"Rusty", "Transparent"
+	"Engagement", "Adamantite", "Wire", "Dilithium", "Bone",
+	"Wooden", "Iron", "Serpent", "Wedding", "Double",
+	"Plain", "Brass", "Scarab", "Shining", "Rusty", 
+	"Transparent", "Cat's-Eye", "Chrysoberyl", "Serpentine", "Spinel", 
+	"Topaz", "Morganite", "Heliodor", "Tourmaline", "Chalcedony", 
+	"Peridot", "Hematite", "Coral"
 };
 
 static byte ring_col[MAX_ROCKS] =
@@ -57,11 +58,12 @@ static byte ring_col[MAX_ROCKS] =
 	TERM_L_RED, TERM_RED, TERM_BLUE, TERM_YELLOW, TERM_YELLOW,
 	TERM_L_BLUE, TERM_L_UMBER, TERM_WHITE, TERM_L_UMBER, TERM_YELLOW,
 	TERM_L_DARK, TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_L_DARK,
-	TERM_YELLOW, TERM_VIOLET,
-	TERM_UMBER, TERM_L_WHITE, TERM_WHITE, TERM_UMBER,
-	TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
-	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_YELLOW,
-	TERM_RED, TERM_WHITE
+	TERM_YELLOW, TERM_VIOLET, TERM_UMBER, TERM_L_WHITE, TERM_WHITE, 
+	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
+	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_YELLOW, TERM_RED, 
+	TERM_WHITE, TERM_YELLOW, TERM_YELLOW, TERM_L_GREEN, TERM_RED, 
+	TERM_YELLOW, TERM_L_RED, TERM_YELLOW, TERM_GREEN, TERM_L_DARK, 
+	TERM_L_GREEN, TERM_L_DARK, TERM_L_RED
 };
 
 
