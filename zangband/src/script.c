@@ -226,10 +226,7 @@ cptr apply_object_trigger_str(int trigger_id, const object_type *o_ptr)
 	else if (k_ptr->trigger[trigger_id])
 		script = k_text + k_ptr->trigger[trigger_id];
 	else
-	{
-		script = "return apply_default_object_trigger(trigger_id, "
-					"object, who, x, y)";
-	}
+		return "";
 
 	/* Set parameters (really globals) */
 	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
@@ -281,8 +278,8 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 		script = k_text + k_ptr->trigger[trigger_id];
 	else
 	{
-		script = "return apply_default_object_trigger(trigger_id, "
-					"object, who, x, y)";
+		*ident = FALSE;
+		return (FALSE);
 	}
 
 	/* Set parameters (really globals) */
