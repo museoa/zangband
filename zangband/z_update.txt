@@ -4,14 +4,53 @@ code for details. In reversed chronological order (more or less):
 
 
 ZAngband 2.5.0:
--Completely reworked the wilderness.  The extended towns and fixed quests
- are not available at the moment.
+-Completely reworked the wilderness.  The extended towns and fixed
+ quests are not available at the moment.
 -Added a feature to allow your game to be automatically logged. You
  may append notes to the log file by pressing ':'.
--Added an invisible wall for nightmare mode.
+-Added point-bases stat allocation at birth (adapted from standard
+ Angband).
+-Revised monster and object listings to distribute them more evenly
+ throughout the dungeon.
+-Removed makefile.org  (It was a copy of makfile.std)
+-Removed the overhead map in vanilla town mode - it isn't needed.
+-Removed some warnings given by VC.
+-Uniques are now entered correctly in the monster list even if blinded
+ or hallucinating.
+-Score now rewards ironman options rather than penalizing options which
+ can be turned on and off.
+-Adjusted minimum levels for the various types of rooms.
+-Adjusted probability to use the new corridor type.
+-Rescaled the monster breaths for the 30% reduction in monster hp.
+-Renormalised the shop items to use the changed object depth
+ distribution.
+-Changed DSM to be more useful.  More damage + can be activated more
+ often.
+-Made the weaker healing potions / staff heal more damage.  Before
+ they were completely useless. However, they are slightly more
+ expensive to compensate.
+-Altered monster saving throws to use the changed dungeon distribution.
+ Some spells are much more useful now.
+-Changed the failure rates for monster-monster spells.
+-Recharging spells are more powerful.
+-Changed the power of many rods/ wands/ staves/ scrolls and artifacts.
+ They are more useful now.
+-Most wands/ staves/ rods and a few scrolls are cheaper.
+-Changed the prices of the armour.  Changed the prices of the ego
+ items.
+-Rebalancing the artifacts.  A few have had a price cut.  A few have
+ had various flags removed.
+-The energy it takes to zap a rod/ aim a wand / use a staff and
+ activate an artifact now depends on the players device skill.
+-The XP function now uses the one taken from Rangband.
+-Changed monster critical hit code so that stormy doesn't get
+ insta-kills quite as often.
+-Golems lose their "nostun" ability in hard games with the ironman
+ options on.
 -Added numerous new vaults.
 -Added new graphics tiles by Marten Woxberg.
 -Revised and re-ordered the options menus.
+-Switched off the sanity blasting effect when seeing an eldritch horror.
 -The Nazguls can no longer be killed by other monsters.
 -Made cursed items somewhat easier to activate.
 -Statues now do more damage when thrown.
@@ -42,6 +81,7 @@ ZAngband 2.5.0:
  main-mac-carbon.c.
 -Added makefiles for the Cygwin, LCC-32 and Borland command line
  compilers.
+-Enabled transparency for x11 systems (this is a hack).
 -Added some Draconian histories.
 -Added a patch by Jason Willoughby to remove Y2K warnings when
  compiling.
@@ -51,6 +91,8 @@ ZAngband 2.5.0:
 -Toned down the damage dice of some artifacts.
 -Tweaked the levels at which monks gain additional attacks.
 -Tweaked the line-of-sight code.
+-Tweaked spell-casting AI to reduce the chance of smart monsters
+ healing and teleporting.
 -Added a new type of bolt (a "steel bolt"). Some missiles are no
  longer sold in the stores. Missile rarity tweaked.
 -Fixed grapics in the x11 port.
@@ -67,6 +109,8 @@ ZAngband 2.5.0:
  without using any energy.
 -Fixed a problem with item activations when wielding them from
  the ground.
+-Prevented very fast monsters from getting double-moves against a
+ character moving at a faster speed than the monster.
 -Caverns are rarer deeper in the dungeon.
 -Store memory allocation is now dynamic.
 -Removed a number of unused variables, intializations and some
@@ -77,6 +121,7 @@ ZAngband 2.5.0:
  terrain.
 -Updated the FAQ.
 -Fishes are now 'l', trees '%' and watery terrain '~'.
+
 
 ZAngband 2.3.5:
 -Cleaned up monster fighting messages.
