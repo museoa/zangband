@@ -150,18 +150,10 @@
 #define MAX_OWNERS			32
 
 
-/* The building types - Do we need these?? */
-#define BLDG_WEAPONMASTER	0
-#define BLDG_RECHARGE		1
-#define BLDG_PLUS_WEAPON	2
-#define BLDG_PLUS_ARMOUR	3
-#define BLDG_MUTATE			4
-#define BLDG_MAP			5
-
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG		6
+#define MAX_BLDG			6
 
 /* List of building types */
 #define	BUILD_STORE_GENERAL		0
