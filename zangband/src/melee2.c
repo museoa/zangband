@@ -2346,7 +2346,7 @@ static void process_monster(int m_idx)
 			cave_set_feat(ny, nx, FEAT_FLOOR);
 
 			/* Note changes to viewable region */
-			if (player_has_los_grid(c_ptr)) do_view = TRUE;
+			if (player_can_see_bold(ny, nx)) do_view = TRUE;
 		}
 
 		/* Handle doors and secret doors */
@@ -2443,7 +2443,7 @@ static void process_monster(int m_idx)
 				}
 
 				/* Handle viewable doors */
-				if (player_has_los_grid(c_ptr)) do_view = TRUE;
+				if (player_can_see_bold(ny, nx)) do_view = TRUE;
 			}
 		}
 
@@ -2727,7 +2727,7 @@ static void process_monster(int m_idx)
 							did_take_item = TRUE;
 
 							/* Describe observable situations */
-							if (m_ptr->ml && player_has_los_grid(c_ptr))
+							if (m_ptr->ml && player_can_see_bold(ny, nx))
 							{
 								/* Dump a message */
 								msg_format("%^s tries to pick up %s, but fails.",
@@ -2743,7 +2743,7 @@ static void process_monster(int m_idx)
 						did_take_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_has_los_grid(c_ptr))
+						if (player_can_see_bold(ny, nx))
 						{
 							/* Dump a message */
 							msg_format("%^s picks up %s.", m_name, o_name);
@@ -2786,7 +2786,7 @@ static void process_monster(int m_idx)
 						did_kill_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_has_los_grid(c_ptr))
+						if (player_can_see_bold(ny, nx))
 						{
 							/* Dump a message */
 							msg_format("%^s destroys %s.", m_name, o_name);

@@ -1961,7 +1961,7 @@ static void target_set_prepare(int mode)
 			c_ptr = area(y, x);
 
 			/* Require line of sight, unless "look" is "expanded" */
-			if (!expand_look && !player_has_los_grid(c_ptr)) continue;
+			if (!expand_look && !player_can_see_bold(y, x)) continue;
 
 			/* Require "interesting" contents */
 			if (!target_set_accept(y, x)) continue;
