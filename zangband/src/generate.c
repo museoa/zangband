@@ -997,18 +997,18 @@ static bool level_gen(cptr *why)
 
 		do
 		{
-			level_height = randint(MAX_HGT / map_hgt);
-			level_width = randint(MAX_WID / map_wid);
+			level_height = randint(MAX_HGT / BLOCK_HGT);
+			level_width = randint(MAX_WID / BLOCK_WID);
 		}
-		while ((level_height == MAX_HGT / map_hgt) &&
-			   (level_width == MAX_WID / map_wid));
+		while ((level_height == MAX_HGT / BLOCK_HGT) &&
+			   (level_width == MAX_WID / BLOCK_WID));
 
-		cur_hgt = level_height * map_hgt;
-		cur_wid = level_width * map_wid;
+		cur_hgt = level_height * BLOCK_HGT;
+		cur_wid = level_width * BLOCK_WID;
 
 		/* Determine number of panels */
-		max_panel_rows = level_height * 2 - 2;
-		max_panel_cols = level_width * 2 - 2;
+		max_panel_rows = (cur_hgt / map_hgt) * 2 - 2;
+		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
 
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;

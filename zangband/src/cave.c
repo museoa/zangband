@@ -1751,8 +1751,8 @@ void prt_map(void)
 				/* Outside the wilderness */
 				a = TERM_WHITE;
 				ta = TERM_WHITE;
-				c = '#';
-				tc = '#';
+				c = ' ';
+				tc = ' ';
 			}
 			else
 			{
@@ -1774,7 +1774,7 @@ void prt_map(void)
 			{
 				/* Outside the wilderness */
 				a = TERM_WHITE;
-				c = '#';
+				c = ' ';
 			}
 			else
 			{
