@@ -1526,90 +1526,115 @@ bool inc_oppose_pois(int v)
  * XXX XXX Should these "magic numbers" have #defines?
  */
 
+static int resist_table[20] = {
+3, 4, 5, 7, 8, 9, 11, 15, 
+19, 22, 33, 44, 55, 66, 77, 88, 
+100, 133, 166, 200};
+
 /*
  * Acid resist level
  */
-byte res_acid_lvl(void)
+int res_acid_lvl(void)
 {
-	byte level = 9;
+	byte level = 16;
 	
 	if (FLAG(p_ptr, TR_IM_ACID)) return (0);
-	if (FLAG(p_ptr, TR_RES_ACID)) level /= 3;
-	if (p_ptr->tim.oppose_acid) level /= 3;
-	if (FLAG(p_ptr, TR_HURT_ACID)) level *= 2;
+	
+	if (FLAG(p_ptr, TR_RES_ACID))  level -= 6;
+	if (p_ptr->tim.oppose_acid)    level -= 6;
+	if (FLAG(p_ptr, TR_HURT_ACID)) level += 3;
 
-	return (level);
+	if (level < 0)  level = 0;
+	if (level > 19) level = 19;
+	
+	return resist_table[level];;
 }
 
 /*
  * Electricity resist level
  */
-byte res_elec_lvl(void)
+int res_elec_lvl(void)
 {
-	byte level = 9;
+	byte level = 16;
 	
 	if (FLAG(p_ptr, TR_IM_ELEC)) return (0);
-	if (FLAG(p_ptr, TR_RES_ELEC)) level /= 3;
-	if (p_ptr->tim.oppose_elec) level /= 3;
-	if (FLAG(p_ptr, TR_HURT_ELEC)) level *= 2;
+	
+	if (FLAG(p_ptr, TR_RES_ELEC))  level -= 6;
+	if (p_ptr->tim.oppose_elec)    level -= 6;
+	if (FLAG(p_ptr, TR_HURT_ELEC)) level += 3;
 
-	return (level);
+	if (level < 0)  level = 0;
+	if (level > 19) level = 19;
+	
+	return resist_table[level];;
 }
 
 /*
  * Fire resist level
  */
-byte res_fire_lvl(void)
+int res_fire_lvl(void)
 {
-	byte level = 9;
+	byte level = 16;
 	
 	if (FLAG(p_ptr, TR_IM_FIRE)) return (0);
-	if (FLAG(p_ptr, TR_RES_FIRE)) level /= 3;
-	if (p_ptr->tim.oppose_fire) level /= 3;
-	if (FLAG(p_ptr, TR_HURT_FIRE)) level *= 2;
 
-	return (level);
+	if (FLAG(p_ptr, TR_RES_FIRE))  level -= 6;
+	if (p_ptr->tim.oppose_fire)    level -= 6;
+	if (FLAG(p_ptr, TR_HURT_FIRE)) level += 3;
+
+	if (level < 0)  level = 0;
+	if (level > 19) level = 19;
+	
+	return resist_table[level];;
 }
 
 /*
  * Cold resist level
  */
-byte res_cold_lvl(void)
+int res_cold_lvl(void)
 {
-	byte level = 9;
+	byte level = 16;
 	
 	if (FLAG(p_ptr, TR_IM_COLD)) return (0);
-	if (FLAG(p_ptr, TR_RES_COLD)) level /= 3;
-	if (p_ptr->tim.oppose_cold) level /= 3;
-	if (FLAG(p_ptr, TR_HURT_COLD)) level *= 2;
+	
+	if (FLAG(p_ptr, TR_RES_COLD))  level -= 6;
+	if (p_ptr->tim.oppose_cold)    level -= 6;
+	if (FLAG(p_ptr, TR_HURT_COLD)) level += 3;
 
-	return (level);
+	if (level < 0)  level = 0;
+	if (level > 19) level = 19;
+	
+	return resist_table[level];;
 }
 
 /*
  * Poison resist level
  */
-byte res_pois_lvl(void)
+int res_pois_lvl(void)
 {
-	byte level = 9;
+	byte level = 16;
 	
 	if (FLAG(p_ptr, TR_IM_POIS)) return (0);
-	if (FLAG(p_ptr, TR_RES_POIS)) level /= 3;
-	if (p_ptr->tim.oppose_pois) level /= 3;
 
-	return (level);
+	if (FLAG(p_ptr, TR_RES_POIS)) level -= 6;
+	if (p_ptr->tim.oppose_pois)   level -= 6;
+
+	if (level < 0)  level = 0;
+	if (level > 19) level = 19;
+	
+	return resist_table[level];;
 }
 
 /*
  * Apply resistance to damage
  */
-int resist(int dam, byte (*f_func) (void))
+int resist(int dam, int (*f_func) (void))
 {
 	/* Invulnerability */
 	if (p_ptr->tim.invuln) return (0);
 
 	/* Use the function we were passed, and round up the damage */
-	return ((dam * f_func() + 8) / 9);
+	return ((dam * f_func() + 99) / 100);
 }
 
 
@@ -1705,7 +1730,7 @@ bool acid_dam(int dam, cptr kb_str)
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((res_acid_lvl() > 3) && one_in_(HURT_CHANCE))
+	if ((res_acid_lvl() > 50) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
@@ -1715,7 +1740,7 @@ bool acid_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_acid_lvl() > 2)
+	if (res_acid_lvl() > 25)
 		(void)inven_damage(set_acid_destroy, inv);
 	
 	/* Obvious */
@@ -1737,14 +1762,14 @@ bool elec_dam(int dam, cptr kb_str)
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((res_elec_lvl() > 3) && one_in_(HURT_CHANCE))
+	if ((res_elec_lvl() > 50) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_DEX);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_acid_lvl() > 2)
+	if (res_acid_lvl() > 25)
 		(void)inven_damage(set_elec_destroy, inv);
 
 	/* Obvious */
@@ -1766,14 +1791,14 @@ bool fire_dam(int dam, cptr kb_str)
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((res_fire_lvl() > 3) && one_in_(HURT_CHANCE))
+	if ((res_fire_lvl() > 50) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_fire_lvl() > 2)
+	if (res_fire_lvl() > 25)
 		(void)inven_damage(set_fire_destroy, inv);
 
 	/* Obvious */
@@ -1795,14 +1820,14 @@ bool cold_dam(int dam, cptr kb_str)
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((res_cold_lvl() > 3) && one_in_(HURT_CHANCE))
+	if ((res_cold_lvl() > 50) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_cold_lvl() > 2)
+	if (res_cold_lvl() > 25)
 		(void)inven_damage(set_cold_destroy, inv);
 
 	/* Obvious */
@@ -1823,14 +1848,14 @@ bool pois_dam(int dam, cptr kb_str, int pois)
 	/* Totally immune? */
 	if (dam <= 0) return (FALSE);
 
-	if ((res_pois_lvl() > 3) && one_in_(HURT_CHANCE))
+	if ((res_pois_lvl() > 50) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CON);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Add poison to counter */
-	if (res_pois_lvl() > 2)
+	if (res_pois_lvl() > 25)
 	{
 		pois = resist(pois, res_pois_lvl);
 		inc_poisoned(pois);
