@@ -473,10 +473,14 @@ void monster_death(int m_idx)
 
 			/* Stagger */
 			y = ny; x = nx;
-			c_ptr = area(y, x);
 			
 			/* paranoia - increment counter */
 			i++;
+			
+			/* paranoia */
+			if(!in_bounds(y, x)) continue;
+			
+			c_ptr = area(y, x);
 		}
 
 		/* Explain the staircase */
@@ -1854,6 +1858,8 @@ static bool target_set_accept(int y, int x)
 	/* Handle hallucination */
 	if (p_ptr->image) return (FALSE);
 
+	/* paranoia */
+	if (!in_bounds2(y, x)) return (FALSE);
 
 	/* Examine the grid */
 	c_ptr = area(y,x);
