@@ -644,7 +644,7 @@ extern byte kind_is_match(int k_idx);
 extern void init_match_theme(obj_theme theme);
 extern byte kind_is_theme(int k_idx);
 extern bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme);
-extern void place_object(int y, int x, bool good, bool great);
+extern void place_object(int x, int y, bool good, bool great);
 extern bool make_gold(object_type *j_ptr, int coin_type);
 extern void place_gold(int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, int y, int x);

@@ -1338,7 +1338,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			if (one_in_(10))
 			{
 				/* Create a simple object */
-				place_object(y, x, FALSE, FALSE);
+				place_object(x, y, FALSE, FALSE);
 
 				/* Observe new object */
 				if (player_can_see_bold(x, y))

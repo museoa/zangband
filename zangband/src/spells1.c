@@ -422,7 +422,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				if (randint0(100) < 10)
 				{
 					/* Place gold */
-					place_object(y, x, FALSE, FALSE);
+					place_object(x, y, FALSE, FALSE);
 					
 					/* Found something */
 					if (known)

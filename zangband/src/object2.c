@@ -4083,7 +4083,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
  *
  * This routine requires a clean floor grid destination.
  */
-void place_object(int y, int x, bool good, bool great)
+void place_object(int x, int y, bool good, bool great)
 {
 	s16b o_idx;
 
