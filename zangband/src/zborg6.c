@@ -261,7 +261,6 @@ static void borg_flow_clear(void)
 
 
 
-
 /*
  * Spread a "flow" from the "destination" grids outwards
  *
@@ -373,12 +372,11 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 			map_block *mb_ptr;
 
-
 			/* Neighbor grid */
 			x = x1 + ddx_ddd[i];
 			y = y1 + ddy_ddd[i];
 
-			/* only on legal grids */
+			/* Only on legal grids */
 			if (!map_in_bounds(x, y)) continue;
 
 			/* Access the grid */
@@ -407,7 +405,6 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Avoid Water if dangerous */
 			if (mb_ptr->feat == FEAT_SHAL_WATER &&
 				(borg_skill[BI_ENCUMBERD] && !borg_skill[BI_FEATH])) continue;
-
 
 			/* Avoid Mountains */
 			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
@@ -12399,15 +12396,15 @@ static bool borg_play_step(int y2, int x2)
 	/* Breeder levels, close all doors */
 	if (breeder_level)
 	{
-		/* scan the adjacent grids */
+		/* Scan the adjacent grids */
 		for (ox = -1; ox <= 1; ox++)
 		{
 			for (oy = -1; oy <= 1; oy++)
 			{
-				/* skip our own spot */
+				/* Skip our own spot */
 				if ((oy + c_y == c_y) && (ox + c_x == c_x)) continue;
 
-				/* skip our orignal goal */
+				/* Skip our orignal goal */
 				if ((oy + c_y == y2) && (ox + c_x == x2)) continue;
 
 				/* Bounds checking */
@@ -12416,16 +12413,16 @@ static bool borg_play_step(int y2, int x2)
 				/* Acquire location */
 				mb_ptr = map_loc(ox + c_x, oy + c_y);
 
-				/* skip non open doors */
+				/* Skip non open doors */
 				if (mb_ptr->feat != FEAT_OPEN) continue;
 
-				/* skip monster on door */
+				/* Skip monster on door */
 				if (mb_ptr->monster) continue;
 
 				/* Skip repeatedly closed doors */
 				if (track_door_num >= 255) continue;
 
-				/* save this spot */
+				/* Save this spot */
 				o_y = oy;
 				o_x = ox;
 				door_found = 1;
@@ -12493,7 +12490,7 @@ static bool borg_play_step(int y2, int x2)
 	/* Monsters -- Attack */
 	if (mb_ptr->kill)
 	{
-		/* can't attack someone if afraid! */
+		/* Can't attack someone if afraid! */
 		if (borg_skill[BI_ISAFRAID])
 			return (FALSE);
 
@@ -12524,63 +12521,6 @@ static bool borg_play_step(int y2, int x2)
 	/* Objects -- Take */
 	if (mb_ptr->object)
 	{
-#if 0
-		/*** Handle Chests ***/
-		/* The borg will cheat when it comes to chests.
-		 * He does not have to but it makes him faster and
-		 * it does not give him any information that a
-		 * person would not know by looking at the trap.
-		 * So there is no advantage to the borg.
-		 */
-		if (strstr(k_name + k_info[mb_ptr->object].name, "chest") &&
-			!strstr(k_name + k_info[mb_ptr->object].name, "Ruined"))
-		{
-			cave_type *c_ptr = &cave[y2][x2];
-			object_type *o_ptr = &o_list[c_ptr->o_idx];
-
-			/* Unknown, Search it */
-			if (!object_known_p(o_ptr) && chest_traps[o_ptr->pval])
-			{
-				borg_note(format("# Searching a '%s' at (%d,%d)",
-								 k_name + k_info[mb_ptr->object].name, x, y));
-
-				/* Walk onto it */
-				borg_keypress('0');
-				borg_keypress('5');
-				borg_keypress('s');
-				return (TRUE);
-			}
-
-			/* Traps. Disarm it w/ fail check */
-			if (o_ptr->pval >= 1 && object_known_p(o_ptr) &&
-				borg_skill[BI_DEV] - o_ptr->pval >= 13)
-			{
-				borg_note(format("# Disarming a '%s' at (%d,%d)",
-								 k_name + k_info[mb_ptr->object].name, x, y));
-
-				/* Open it */
-				borg_keypress('D');
-				borg_keypress(I2D(dir));
-				return (TRUE);
-			}
-
-			/* No trap, or unknown trap that passed above checks - Open it */
-			/* if (o_ptr->pval < 0 || !object_known_p(o_ptr)) */
-			{
-				borg_note(format("# Opening a '%s' at (%d,%d)",
-								 k_name + k_info[mb_ptr->object].name, x, y));
-
-				/* Open it */
-				borg_keypress('o');
-				borg_keypress(I2D(dir));
-				return (TRUE);
-			}
-
-			/* Empty chest */
-			/* continue in routine and pick it up */
-		}
-#endif /* 0 */
-
 		/*** Handle other takes ***/
 		/* Message */
 		borg_note(format("# Walking onto a '%s' at (%d,%d)",
@@ -12592,19 +12532,6 @@ static bool borg_play_step(int y2, int x2)
 	}
 
 #if 0
-	/* Glyph of Warding */
-	if (mb_ptr->feat == FEAT_MINOR_GLYPH || mb_ptr->feat == FEAT_GLYPH)
-	{
-		/* Message */
-		borg_note(format("# Walking onto a glyph of warding."));
-
-		/* Walk onto it */
-		borg_keypress(I2D(dir));
-		return (TRUE);
-	}
-#endif /* 0 */
-
-#if 0
 	/* Traps -- disarm -- */
 	if (borg_skill[BI_CUR_LITE] && !borg_skill[BI_ISBLIND] &&
 		!borg_skill[BI_ISCONFUSED] && !scaryguy_on_level &&
@@ -12612,7 +12539,9 @@ static bool borg_play_step(int y2, int x2)
 		(mb_ptr->feat <= FEAT_TRAP_SLEEP))
 	{
 
-		/* NOTE: If a scary guy is on the level, we allow the borg to run over the
+		/*
+		 * NOTE: If a scary guy is on the level,
+		 * we allow the borg to run over the
 		 * trap in order to escape this level.
 		 */
 
@@ -12664,43 +12593,6 @@ static bool borg_play_step(int y2, int x2)
 		return (TRUE);
 	}
 
-
-#if 0							/* Need to use fields */
-	/* Jammed Doors -- Bash or destroy */
-	if ((mb_ptr->feat >= FEAT_DOOR_HEAD + 0x08) &&
-		(mb_ptr->feat <= FEAT_DOOR_TAIL))
-	{
-		/* Paranoia XXX XXX XXX */
-		if (one_in_(100)) return (FALSE);
-
-		/* Not if hungry */
-		if (borg_skill[BI_ISWEAK]) return (FALSE);
-
-		if (borg_spell(REALM_ARCANE, 0, 6) | borg_spell(REALM_CHAOS, 0, 1))
-		{
-			borg_note("# Destroying doors");
-			return (TRUE);
-		}
-
-		/* Mega-Hack -- allow "stone to mud" */
-		if (borg_spell(REALM_SORCERY, 1, 8) ||
-			borg_spell(REALM_ARCANE, 2, 4) ||
-			borg_spell(REALM_NATURE, 1, 0) ||
-			borg_spell(REALM_CHAOS, 2, 3) || borg_racial(RACE_HALF_GIANT))
-		{
-			borg_note("# Melting a door");
-			borg_keypress(I2D(dir));
-			return (TRUE);
-		}
-
-		/* Bash */
-		borg_note("# Bashing a door");
-		borg_keypress('B');
-		borg_keypress(I2D(dir));
-		return (TRUE);
-	}
-#endif /* 0 */
-
 	/* Rubble, Treasure, Seams, Walls -- Tunnel or Melt */
 	if (mb_ptr->feat >= FEAT_PILLAR && mb_ptr->feat <= FEAT_WALL_SOLID)
 	{
@@ -12737,21 +12629,6 @@ static bool borg_play_step(int y2, int x2)
 		return (TRUE);
 	}
 
-#if 0							/* Need to use fields */
-	/* Shops -- Enter */
-	if ((mb_ptr->feat >= FEAT_SHOP_HEAD) && (mb_ptr->feat <= FEAT_SHOP_TAIL))
-	{
-		/* Message */
-		borg_note(format
-				  ("# Entering a '%d' shop",
-				   (mb_ptr->feat - FEAT_SHOP_HEAD) + 1));
-
-		/* Enter the shop */
-		borg_keypress(I2D(dir));
-		return (TRUE);
-	}
-#endif /* 0 */
-
 	/* Perhaps the borg could search for traps as he walks around level one. */
 	if (borg_skill[BI_MAXCLEVEL] <= 3 && borg_skill[BI_CDEPTH] &&
 		!borg_skill[BI_ISSEARCHING] && borg_needs_searching)
@@ -12771,12 +12648,8 @@ static bool borg_play_step(int y2, int x2)
 		borg_keypress('+');
 		my_need_alter = FALSE;
 	}
-	else
-	{
-		/* nothing */
-	}
-	borg_keypress(I2D(dir));
 
+	borg_keypress(I2D(dir));
 
 	/* Stand stairs up */
 	if (goal_less)
@@ -12792,13 +12665,9 @@ static bool borg_play_step(int y2, int x2)
 		}
 	}
 
-
-
 	/* Did something */
 	return (TRUE);
 }
-
-
 
 
 /*
@@ -12852,9 +12721,6 @@ bool borg_twitchy(void)
 }
 
 
-
-
-
 /*
  * Commit the current "flow"
  */
@@ -12887,8 +12753,6 @@ static bool borg_flow_commit(cptr who, int why)
 	/* Success */
 	return (TRUE);
 }
-
-
 
 
 
@@ -12957,7 +12821,6 @@ bool borg_flow_old(int why)
 
 			/* Never backtrack */
 			if (c > b_c) continue;
-
 
 			/* Notice new best value */
 			if (c < b_c) b_n = 0;
@@ -13043,8 +12906,6 @@ bool borg_flow_stair_both(int why)
 	/* Success */
 	return (TRUE);
 }
-
-
 
 
 /*

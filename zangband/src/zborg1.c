@@ -397,8 +397,8 @@ s16b *borg_race_count;
 
 s16b borg_glow_n = 0;
 
-byte borg_glow_x[AUTO_LITE_MAX];
-byte borg_glow_y[AUTO_LITE_MAX];
+s16b borg_glow_x[AUTO_LITE_MAX];
+s16b borg_glow_y[AUTO_LITE_MAX];
 
 
 /*
@@ -407,8 +407,8 @@ byte borg_glow_y[AUTO_LITE_MAX];
 
 s16b borg_view_n = 0;
 
-byte borg_view_x[AUTO_VIEW_MAX];
-byte borg_view_y[AUTO_VIEW_MAX];
+s16b borg_view_x[AUTO_VIEW_MAX];
+s16b borg_view_y[AUTO_VIEW_MAX];
 
 
 /*
@@ -417,8 +417,8 @@ byte borg_view_y[AUTO_VIEW_MAX];
 
 s16b borg_temp_n = 0;
 
-byte borg_temp_x[AUTO_TEMP_MAX];
-byte borg_temp_y[AUTO_TEMP_MAX];
+s16b borg_temp_x[AUTO_TEMP_MAX];
+s16b borg_temp_y[AUTO_TEMP_MAX];
 
 /*
  * Maintain a circular queue of grids
@@ -426,8 +426,8 @@ byte borg_temp_y[AUTO_TEMP_MAX];
 
 s16b borg_flow_n = 0;
 
-byte borg_flow_x[AUTO_FLOW_MAX];
-byte borg_flow_y[AUTO_FLOW_MAX];
+s16b borg_flow_x[AUTO_FLOW_MAX];
+s16b borg_flow_y[AUTO_FLOW_MAX];
 
 
 /*

@@ -716,10 +716,9 @@ extern s16b *borg_race_count;
 /*
  * Maintain a set of glow grids (liteable grids)
  */
-
 extern s16b borg_glow_n;
-extern byte borg_glow_y[AUTO_LITE_MAX];
-extern byte borg_glow_x[AUTO_LITE_MAX];
+extern s16b borg_glow_y[AUTO_LITE_MAX];
+extern s16b borg_glow_x[AUTO_LITE_MAX];
 
 
 /*
@@ -727,32 +726,29 @@ extern byte borg_glow_x[AUTO_LITE_MAX];
  */
 
 extern s16b borg_view_n;
-extern byte borg_view_y[AUTO_VIEW_MAX];
-extern byte borg_view_x[AUTO_VIEW_MAX];
+extern s16b borg_view_y[AUTO_VIEW_MAX];
+extern s16b borg_view_x[AUTO_VIEW_MAX];
 
 
 /*
  * Maintain a set of grids (scanning arrays)
  */
-
 extern s16b borg_temp_n;
-extern byte borg_temp_y[AUTO_TEMP_MAX];
-extern byte borg_temp_x[AUTO_TEMP_MAX];
+extern s16b borg_temp_y[AUTO_TEMP_MAX];
+extern s16b borg_temp_x[AUTO_TEMP_MAX];
 
 
 /*
  * Maintain a set of grids (flow calculations)
  */
-
 extern s16b borg_flow_n;
-extern byte borg_flow_y[AUTO_FLOW_MAX];
-extern byte borg_flow_x[AUTO_FLOW_MAX];
+extern s16b borg_flow_y[AUTO_FLOW_MAX];
+extern s16b borg_flow_x[AUTO_FLOW_MAX];
 
 
 /*
  * Hack -- use "flow" array as a queue
  */
-
 extern int flow_head;
 extern int flow_tail;
 

@@ -1512,7 +1512,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	/* if ((l_ptr->number > 1) && (number > 1)) borg_keypress('\r'); */
 
 	/* Verify destruction */
-	borg_keypress('y');
+	/* borg_keypress('y'); */
 }
 
 

@@ -230,6 +230,10 @@ static void borg_think_shop_sell(int item)
 	/* Log */
 	borg_note(format("# Selling %s", l_ptr->o_name));
 
+	/* One item */
+	borg_keypress('0');
+	borg_keypress('1');
+
 	/* Buy an item */
 	borg_keypress('s');
 
@@ -237,7 +241,7 @@ static void borg_think_shop_sell(int item)
 	borg_keypress(I2A(item));
 
 	/* Mega-Hack -- Accept the price */
-	borg_keypress('\n');
+	borg_keypress('y');
 	borg_keypress('\n');
 	borg_keypress('\n');
 	borg_keypress('\n');
@@ -263,6 +267,10 @@ static void borg_think_shop_buy(int item)
 	/* Log */
 	borg_note(format("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost));
 
+	/* Buy one item */
+	borg_keypress('0');
+	borg_keypress('1');
+
 	/* Buy an item */
 	borg_keypress('p');
 
@@ -270,8 +278,7 @@ static void borg_think_shop_buy(int item)
 	borg_keypress(I2A(item % 12));
 
 	/* Mega-Hack -- Accept the price */
-	borg_keypress('\n');
-	borg_keypress('\n');
+	borg_keypress('y');
 	borg_keypress('\n');
 	borg_keypress('\n');
 	
@@ -1095,7 +1102,7 @@ static bool borg_choose_shop(void)
 		dist = distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y);
 		
 		/* Get time since last been there */
-		time = borg_t - borg_shops[shop_num].when;
+		time = borg_t - borg_shops[i].when;
 		
 		/* How useful is this shop? */
 		use = time / (dist * dist + 1);
