@@ -450,25 +450,6 @@ proc NSConfig::CreateIconType {iconType iconFile maskFile imageSize} {
 	return
 }
 
-# NSConfig::Maskify --
-#
-#	After the masks data is loaded, and any mask-assignments are done
-#	(with the "icon mask" command), we must fiddle with the icon data
-#	so it does not conflict with the mask data.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSConfig::Maskify {iconType} {
-
-#	icon maskify $iconType
-icon rle $iconType White
-
-	return
-}
 
 # NSConfig::NoMoreIcons --
 #
