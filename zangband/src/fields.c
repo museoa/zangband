@@ -1159,9 +1159,6 @@ void field_hook(s16b *field_ptr, int action, ...)
 	
 	field_type *f_ptr;
 	field_thaum *t_ptr;
-    
-    /* Begin the Varargs Stuff */
-	va_start(vp, action);
 
 	while (*field_ptr)
 	{
@@ -1172,6 +1169,9 @@ void field_hook(s16b *field_ptr, int action, ...)
 		/* Paranoia - Is there a function to call? */
 		if (t_ptr->action[action])
 		{
+			/* Begin the Varargs Stuff */
+			va_start(vp, action);
+		
 			/* Call the action function */
 			if (t_ptr->action[action] (f_ptr, vp))
 			{
@@ -1183,6 +1183,9 @@ void field_hook(s16b *field_ptr, int action, ...)
 				/* Get next field in the list */
 				field_ptr = &f_ptr->next_f_idx;
 			}
+			
+			/* End the Varargs Stuff */
+			va_end(vp);
 		}
 		else
 		{
@@ -1190,9 +1193,6 @@ void field_hook(s16b *field_ptr, int action, ...)
 			field_ptr = &f_ptr->next_f_idx;
 		}
 	}
-    
-    /* End the Varargs Stuff */
-	va_end(vp);
 }
 
 
