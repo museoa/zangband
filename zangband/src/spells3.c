@@ -928,18 +928,25 @@ void phlogiston(void)
 {
 	int max_flog;
 	object_type *o_ptr = &p_ptr->equipment[EQUIP_LITE];
+	cptr lite_item;
 
 
 	/* It's a lamp */
 	if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_LANTERN))
 	{
 		max_flog = FUEL_LAMP;
+
+		/* Remember what the item is */
+		lite_item = "lantern";
 	}
 
 	/* It's a torch */
 	else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_TORCH))
 	{
 		max_flog = FUEL_TORCH;
+
+		/* Remember what the item is */
+		lite_item = "torch";
 	}
 
 	/* No torch to refill */
@@ -951,7 +958,7 @@ void phlogiston(void)
 
 	if (o_ptr->timeout >= max_flog)
 	{
-		msgf("No more phlogiston can be put in this item.");
+		msgf("No more phlogiston can be put in this %s.", lite_item);
 		return;
 	}
 
@@ -959,13 +966,13 @@ void phlogiston(void)
 	o_ptr->timeout += (max_flog / 2);
 
 	/* Message */
-	msgf("You add phlogiston to your light item.");
+	msgf("You add phlogiston to your %s.", lite_item);
 
 	/* Comment */
 	if (o_ptr->timeout >= max_flog)
 	{
 		o_ptr->timeout = max_flog;
-		msgf("Your light item is full.");
+		msgf("Your %s is full.", lite_item);
 	}
 
 	/* Recalculate torch */
