@@ -1266,8 +1266,8 @@ static void process_world(void)
 	 */
 	if (!cave_floor_bold(py, px))
 	{
-		/* Player can walk through trees */
-		if (area(py, px)->feat == FEAT_TREES)
+		/* Player can walk through semi-transparent terrain */
+		if ((area(py, px)->feat & 0x60) == 0x60)
 		{
 			/* Do nothing */
 		}
