@@ -14728,7 +14728,7 @@ static bool borg_flow_dark_reachable(int x, int y)
  *
  * It is also used to move around town without looking like a drunk.
  */
-extern void borg_flow_direct(int y, int x)
+extern void borg_flow_direct(int x, int y)
 {
 	int n = 0;
 
@@ -14867,7 +14867,7 @@ extern void borg_flow_direct(int y, int x)
 }
 
 /* Currently not used, I thought I might need it for anti-summoning */
-extern void borg_flow_direct_dig(int y, int x)
+extern void borg_flow_direct_dig(int x, int y)
 {
 	int n = 0;
 
@@ -15098,7 +15098,7 @@ static bool borg_flow_dark_1(int b_stair)
 		x = borg_temp_x[i];
 #if 0
 		/* Create a path */
-		borg_flow_direct(y, x);
+		borg_flow_direct(x, y);
 #endif /* 0 */
 
 		borg_flow_enqueue_grid(x, y);
@@ -15194,7 +15194,7 @@ static bool borg_flow_dark_2(void)
 		x = borg_temp_x[i];
 #if 0
 		/* Create a path */
-		borg_flow_direct(y, x);
+		borg_flow_direct(x, y);
 #endif /* 0 */
 		borg_flow_enqueue_grid(x, y);
 	}
