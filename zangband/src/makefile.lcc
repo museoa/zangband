@@ -74,6 +74,7 @@ OBJS=\
 	melee2.obj \
 	melee1.obj \
 	main-win.obj \
+	maid-grf.obj \
 	notes.obj \
 	load.obj \
 	init2.obj \
@@ -133,6 +134,7 @@ ZBORG1_C=\
 	types.h\
 	externs.h\
 	zborg1.h\
+	maid-grf.h\
 
 zborg1.obj: $(ZBORG1_C) zborg1.c
 	$(CC) -c $(CFLAGS) zborg1.c
@@ -156,6 +158,7 @@ ZBORG2_C=\
 	externs.h\
 	zborg1.h\
 	zborg2.h\
+	maid-grf.h\
 
 zborg2.obj: $(ZBORG2_C) zborg2.c
 	$(CC) -c $(CFLAGS) zborg2.c
@@ -180,6 +183,7 @@ ZBORG3_C=\
 	zborg1.h\
 	zborg2.h\
 	zborg3.h\
+	maid-grf.h\
 
 zborg3.obj: $(ZBORG3_C) zborg3.c
 	$(CC) -c $(CFLAGS) zborg3.c
@@ -205,6 +209,7 @@ ZBORG4_C=\
 	zborg2.h\
 	zborg3.h\
 	zborg4.h\
+	maid-grf.h\
 
 zborg4.obj: $(ZBORG4_C) zborg4.c
 	$(CC) -c $(CFLAGS) zborg4.c
@@ -231,6 +236,7 @@ ZBORG5_C=\
 	zborg3.h\
 	zborg4.h\
 	zborg5.h\
+	maid-grf.h\
 
 zborg5.obj: $(ZBORG5_C) zborg5.c
 	$(CC) -c $(CFLAGS) zborg5.c
@@ -258,6 +264,7 @@ ZBORG6_C=\
 	zborg4.h\
 	zborg5.h\
 	zborg6.h\
+	maid-grf.h\
 
 zborg6.obj: $(ZBORG6_C) zborg6.c
 	$(CC) -c $(CFLAGS) zborg6.c
@@ -286,6 +293,7 @@ ZBORG7_C=\
 	zborg5.h\
 	zborg6.h\
 	zborg7.h\
+	maid-grf.h\
 
 zborg7.obj: $(ZBORG7_C) zborg7.c
 	$(CC) -c $(CFLAGS) zborg7.c
@@ -315,6 +323,7 @@ ZBORG8_C=\
 	zborg6.h\
 	zborg7.h\
 	zborg8.h\
+	maid-grf.h\
 
 zborg8.obj: $(ZBORG8_C) zborg8.c
 	$(CC) -c $(CFLAGS) zborg8.c
@@ -345,6 +354,7 @@ ZBORG9_C=\
 	zborg7.h\
 	zborg8.h\
 	zborg9.h\
+	maid-grf.h\
 
 zborg9.obj: $(ZBORG9_C) zborg9.c
 	$(CC) -c $(CFLAGS) zborg9.c
@@ -1109,7 +1119,7 @@ MAID-GRF_C=\
 	defines.h\
 	types.h\
 	externs.h\
-	readdib.h\
+	maid-grf.h\
 
 maid-grf.obj: $(MAID-GRF_C) maid-grf.c
 	$(CC) -c $(CFLAGS) maid-grf.c

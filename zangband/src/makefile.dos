@@ -41,7 +41,7 @@ OBJS = \
   wild1.o wild2.o wizard1.o wizard2.o xtra1.o \
   xtra2.o z-form.o z-rand.o z-term.o \
   z-util.o z-virt.o \
-  script.o \
+  script.o maid-grf.o \
   l-monst.o l-object.o l-player.o l-random.o l-ui.o \
   l-misc.o l-spell.o \
   zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o \
@@ -163,6 +163,7 @@ streams.o: streams.c $(INCS) grid.h generate.h
 init1.o: init1.c $(INCS)
 init2.o: init2.c $(INCS)
 load.o: load.c $(INCS)
+maid-grf.o: maid-grf.c $(INCS) maid-grf.h
 main-dos.o: main-dos.c $(INCS)
 main.o: main.c $(INCS)
 melee1.o: melee1.c $(INCS)
@@ -204,7 +205,7 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 # Each borg file depends on the one before it.
 # Hack - the dependance on the .o files encodes this.
 
-zborg1.o: zborg1.c $(HDRS) zborg1.h
+zborg1.o: zborg1.c $(HDRS) zborg1.h maid-grf.h
 zborg2.o: zborg2.c $(HDRS) zborg2.h zborg1.o
 zborg3.o: zborg3.c $(HDRS) zborg3.h zborg2.o
 zborg4.o: zborg4.c $(HDRS) zborg4.h zborg3.o

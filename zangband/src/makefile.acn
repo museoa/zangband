@@ -29,7 +29,7 @@ OBJS = \
   artifact.o mutation.o flavor.o spells3.o \
   mspells1.o mspells2.o scores.o mind.o \
   bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
-  main-acn.o main.o \
+  main-acn.o maid-grf.o main.o \
   zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o \
   zborg6.o zborg7.o zborg8.o zborg9.o \
   C:o.Stubs OSLib:o.OSLib C:o.eventlib
