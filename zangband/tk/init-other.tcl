@@ -957,11 +957,6 @@ proc InitOther {} {
 	
 	angband_load progress 0.75
 	
-	if {[file exists [PathTk config feature]]} {
-		angband_load prompt "Reading feature file..."
-		Config::Feature::Source [PathTk config feature] 
-	}
-	
 	angband_load note "Initializing modules..."
 	InitModules
 

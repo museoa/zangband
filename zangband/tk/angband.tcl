@@ -32,7 +32,6 @@ proc angband_close_game {} {
 
 		Config::Alternate::Write
 		Config::Assign::Write
-		Config::Feature::Write
 		Config::Sprite::Write
 		Config::CharIcon::Write
 
