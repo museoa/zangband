@@ -37,7 +37,7 @@ end
 
 -- unregister class
 function classClass:unregister ()
- output(' lua_pushnil(tolua_S); lua_setglobal(tolua_S,"'..self.name..'");')
+ output(' TOLUA_UNDEF('..self.name..');')
 end
 
 -- output tags
