@@ -2197,15 +2197,6 @@ static void angtk_character_generated(void)
 
 static CommandInit commandInit[] = {
 	{0, "angband", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "r_info", 0, 0, NULL, NULL, (ClientData) 0},
-			{2, "info", 3, 0, "r_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "monster_race"},
-			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "monster_race"},
-		{1, "m_list", 0, 0, NULL, NULL, (ClientData) 0},
-			{2, "info", 3, 0, "m_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "monster_type"},
-			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "monster_type"},
-		{1, "o_list", 0, 0, NULL, NULL, (ClientData) 0},
-			{2, "info", 3, 0, "o_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "object_type"},
-			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "object_type"},
 		{1, "cave", 0, 0, NULL, objcmd_cave, (ClientData) 0},
 		{1, "equipment", 0, 0, NULL, objcmd_equipment, (ClientData) 0},
 		{1, "game", 0, 0, NULL, objcmd_game, (ClientData) 0},

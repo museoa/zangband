@@ -1326,51 +1326,6 @@ objcmd_keypress(ClientData clientData, Tcl_Interp *interp, int objc,
 	return TCL_OK;
 }
 
-/* (array) info $index ?arg ...? */
-int
-objcmd_ARRAY_info(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	char *arrayName = (char *) infoCmd->clientData;
-	StructType *typePtr = Struct_Lookup(interp, arrayName);
-	int elemIndex;
-	
-	unsigned char *elem;
-
-	/* Get the array index */
-	if (Struct_GetArrayIndexFromObj(interp, typePtr, &elemIndex, objV[1])
-		!= TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	
-	/* Point to the array element */
-	elem = typePtr->elem + typePtr->elem_size * elemIndex;
-
-	/* Call the custom command */
-	return (*typePtr->infoProc)(interp, typePtr, objc, objv,
-		infoCmd->depth + 2, elem, elemIndex);
-}
-
-/* (array) max */
-int
-objcmd_ARRAY_max(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	char *arrayName = (char *) infoCmd->clientData;
-
-	StructType *typePtr = Struct_Lookup(interp, arrayName);
-	
-	/* Hack - ignore parameters */
-	(void) objc;
-	(void) objv;
-
-	Tcl_SetObjResult(interp, Tcl_NewIntObj(typePtr->max));
-	return TCL_OK;
-}
 
 /*
  *--------------------------------------------------------------
