@@ -807,10 +807,6 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			yc = widgetPtr->y_min + row;
 			xc = widgetPtr->x_min + col;
 
-			/* Refine the hit */
-			if (widgetPtr->hitTestProc)
-				layer = (*widgetPtr->hitTestProc)(widgetPtr, x, y, col, row, &xc, &yc);
-
 			(void) sprintf(buffer, "%d %d %d", yc, xc, layer);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
 			
@@ -1360,8 +1356,7 @@ static int WidgetItem_Init(Tcl_Interp *interp)
 	typeList = &ProgressType;
 	ProgressType.nextPtr = &TextType;
 	TextType.nextPtr = &CursorType;
-	CursorType.nextPtr = &RectType;
-	RectType.nextPtr = NULL;
+	CursorType.nextPtr = NULL;
 
 	return TCL_OK;
 }

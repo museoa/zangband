@@ -413,7 +413,6 @@ static int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 	{
 		widgetPtr->drawAllProc = map_draw_all;
 		widgetPtr->drawInvalidProc = map_draw_invalid;
-		widgetPtr->hitTestProc = NULL;
 		exPtr->whatToDrawProc = NULL;
 		exPtr->symbolProc = map_symbol_proc;
 	}
@@ -423,7 +422,6 @@ static int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 	{
 		widgetPtr->drawAllProc = widget_draw_all;
 		widgetPtr->drawInvalidProc = widget_draw_invalid;
-		widgetPtr->hitTestProc = NULL;
 		exPtr->whatToDrawProc = widget_wtd;
 		exPtr->symbolProc = NULL;
 	}
@@ -482,7 +480,6 @@ static int widget_create(Tcl_Interp *interp, Widget **ptr)
 	widgetPtr->changedProc = widget_changed;
 	widgetPtr->destroyProc = widget_destroy;
 	widgetPtr->drawInvalidProc = NULL;
-	widgetPtr->hitTestProc = NULL;
 	widgetPtr->wipeProc = NULL;
 	widgetPtr->invalidateProc = NULL;
 	widgetPtr->invalidateAreaProc = NULL;

@@ -62,7 +62,6 @@ struct Widget
 	Widget_InvalidateProc *invalidateProc;
 	Widget_InvalidateAreaProc *invalidateAreaProc;
 	Widget_WipeProc *wipeProc;  /* Per-widget fresh routine */
-	Widget_HitTestProc *hitTestProc; /* Per-widget hit-test routine */
 	DoubleLink link;			/* Linked list of Widget's */
 	DoubleLink linkMap;			/* Linked list of mapped Widget's */
 	DoubleLinker linkerItem;	/* List of items */
@@ -190,7 +189,6 @@ extern int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *
 extern WidgetItemType ProgressType;
 extern WidgetItemType TextType;
 extern WidgetItemType CursorType;
-extern WidgetItemType RectType;
 
 extern void map_draw_all(Widget *widgetPtr);
 extern void map_draw_invalid(Widget *widgetPtr);
