@@ -558,7 +558,8 @@ static void image_random(byte *ap, char *cp)
  */
 static bool feat_supports_lighting[256] =
 {
-	FALSE, TRUE,  TRUE,  TRUE,  FALSE, FALSE, TRUE,  TRUE, /* 0x08 */
+	FALSE, TRUE,  TRUE,  TRUE,  FALSE, FALSE, TRUE,  TRUE, /* 0x00 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x08 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x10 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x18 */
 	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x20 */
