@@ -619,6 +619,7 @@ extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
 extern errr init_w_info_txt(FILE *fp, char *buf);
 extern errr process_dungeon_file(cptr name, int ymin, int xmin, int ymax, int xmax);
+extern void write_r_info_txt(void);
 
 /* init2.c */
 extern cptr err_str[PARSE_ERROR_MAX];
@@ -1233,6 +1234,10 @@ extern object_kind *k_info_add(object_kind *k_info_entry);
 extern byte get_object_level(object_type *o_ptr);
 extern s32b get_object_cost(object_type *o_ptr);
 extern cptr get_object_name(object_type *o_ptr);
+extern byte get_object_d_attr(object_type *o_ptr);
+extern byte get_object_x_attr(object_type *o_ptr);
+extern char get_object_d_char(object_type *o_ptr);
+extern char get_object_x_char(object_type *o_ptr);
 extern bool get_object_aware(object_type *o_ptr);
 extern bool get_object_tried(object_type *o_ptr);
 extern bool object_is_potion(object_type *o_ptr);

@@ -430,7 +430,7 @@ static void do_cmd_wiz_feature(int feat)
 }
 
 /* Learn the whole wilderness map */
-void learn_map(void)
+static void learn_map(void)
 {
 	int i, j;
 	for (i = 0; i < max_wild; i++)

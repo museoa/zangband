@@ -4222,7 +4222,7 @@ static void create_law_map(u16b sea)
 }
 
 /* Finish making the wilderness - recenter the screen around the player. */
-void wild_done(void)
+static void wild_done(void)
 {
 	px = (s16b)p_ptr->wilderness_x;
 	py = (s16b)p_ptr->wilderness_y;

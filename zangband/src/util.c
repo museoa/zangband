@@ -1316,7 +1316,8 @@ errr macro_add(cptr pat, cptr act)
 	return (0);
 }
 
-
+/* This is never used. */
+#if 0
 
 /*
  * Initialize the "macro" package
@@ -1333,6 +1334,7 @@ errr macro_init(void)
 	return (0);
 }
 
+#endif /* 0 */
 
 /*
  * Local "need flush" variable

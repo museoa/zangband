@@ -1719,7 +1719,7 @@ cptr describe_use(int i)
 
 /* Hack: Check if a spellbook is one of the realms we can use. -- TY */
 
-bool check_book_realm(const byte book_tval)
+static bool check_book_realm(const byte book_tval)
 {
 	return (REALM1_BOOK == book_tval || REALM2_BOOK == book_tval);
 }

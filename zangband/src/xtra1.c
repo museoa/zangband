@@ -146,13 +146,13 @@ static void prt_stat(int stat)
 
 static int bar_count = 0;
 
-void clear_status_bar(void)
+static void clear_status_bar(void)
 {
 	Term_putstr(COL_STATBAR, ROW_STATBAR, 12, TERM_WHITE, "            ");
 }
 
 
-void show_status_bar(cptr letter, byte *colour, int num)
+static void show_status_bar(cptr letter, byte *colour, int num)
 {
 	int i;
 
@@ -2109,7 +2109,7 @@ static int weight_limit(void)
  * a large, heavy weapon - training that many classes simply do not have the
  * time or inclination for.  -LM-
  */
-sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
+static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
 {
 	int add_skill = 0;
 
@@ -2215,7 +2215,7 @@ sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
 }
 
 /* Calculate all class and race-based bonuses and penalties to missile Skill -LM- */
-sint add_special_missile_skill(byte pclass, s16b weight, object_type *o_ptr)
+static sint add_special_missile_skill(byte pclass, s16b weight, object_type *o_ptr)
 {
 	int add_skill = 0;
 

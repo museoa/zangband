@@ -440,10 +440,10 @@ static void do_cmd_options_cheat(cptr info)
 
 static option_type autosave_info[2] =
 {
-	{ &autosave_l, FALSE, 255, 0x01, 0x00,
+	{ (bool *)(&autosave_l), FALSE, 255, 0x01, 0x00,
 	  "autosave_l", "Autosave when entering new levels" },
 
-	{ &autosave_t, FALSE, 255, 0x02, 0x00,
+	{ (bool *)(&autosave_t), FALSE, 255, 0x02, 0x00,
 	  "autosave_t", "Timed autosave" },
 };
 
@@ -3615,7 +3615,7 @@ static void do_cmd_knowledge_quests(void)
 /*
  * Print notes file
  */
-void do_cmd_knowledge_notes(void)
+static void do_cmd_knowledge_notes(void)
 {
 	char fname[80];
 
