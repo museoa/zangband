@@ -3841,6 +3841,52 @@ void field_action_buymap2(s16b *field_ptr, vptr input)
 	}
 }
 
+
+/*
+ * Library1
+ */
+void field_action_library1(s16b *field_ptr, vptr input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " R) Read about monsters (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
+ * Library2
+ */
+void field_action_library2(s16b *field_ptr, vptr input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int *factor = ((int*) input);
+	s32b cost;
+	
+	if (p_ptr->command_cmd == 'R')
+	{
+		cost = f_ptr->data[1] * *factor;
+				
+		if (test_gold(&cost) && research_mon())
+		{
+			/* Subtract off cost */
+			p_ptr->au -= cost;
+		}
+		
+		/* Hack, use factor as a return value */	
+		*factor = TRUE;
+	}
+	else
+	{
+		*factor = FALSE;
+	}
+}
+
+
+
 /*
  * Bookstore will buy/sell
  */

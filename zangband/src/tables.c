@@ -1472,6 +1472,15 @@ b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 		{ "Wop of the high",	125,			RACE_GNOME},
 		{ "Kaquin of the West",	95,				RACE_HIGH_ELF},
 	},
+	
+	{
+		/* Library */
+		{ "Agpoan",				 85,			RACE_HUMAN},
+		{ "Wewton", 			100,			RACE_HALF_ELF},
+		{ "Masoognnix", 		110,			RACE_VAMPIRE},
+		{ "Pagpon",				120,			RACE_AMBERITE},
+		{ "Leiwthen",			100,			RACE_HIGH_ELF},
+	},
 };
 
 
@@ -6860,6 +6869,12 @@ field_action f_action[] =
 	
 	/* Map maker part 2 */
 	{field_action_buymap2, "field_action_buymap2"},
+	
+	/* Libarary part 1 */
+	{field_action_library1, "field_action_library1"},
+	
+	/* Library part 2 */
+	{field_action_library2, "field_action_library2"},
 	
 	/* Bookstore */
 	{field_action_isbook_tester, "field_action_isbook_tester"},

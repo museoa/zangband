@@ -153,7 +153,7 @@
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG			6
+#define MAX_BLDG			7
 
 /* List of building types */
 #define	BUILD_STORE_GENERAL		0
@@ -263,10 +263,10 @@
 #define BUILD_ALCHEMY2			104
 #define BUILD_JUNK				105
 #define BUILD_FOOD				106
-
+#define BUILD_LIBRARY			107
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			107
+#define MAX_CITY_BUILD			108
 
 
 /*
@@ -1255,7 +1255,7 @@
 #define FT_STORE_ALCHEMY2		0x0087
 #define FT_STORE_JUNK			0x0088
 #define FT_STORE_FOOD			0x0089
-
+#define FT_BUILD_LIBRARY		0x008A
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/

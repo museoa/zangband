@@ -137,6 +137,7 @@ wild_building_type	wild_build[MAX_CITY_BUILD] =
 	{0, FT_STORE_ALCHEMY2,		BT_STORE,	150, 200, 150, 20},
 	{0, FT_STORE_JUNK,			BT_STORE,	200, 50, 150, 10},
 	{0, FT_STORE_FOOD,			BT_STORE,	200, 100, 150, 10},
+	{0, FT_BUILD_LIBRARY,		BT_BUILD,	200, 200, 200, 20},
 };
 
 
