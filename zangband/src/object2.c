@@ -372,8 +372,8 @@ void compact_objects(int size)
 
 /*
  * Delete all the non-held items.
- * Items in stores, and in the players inventory are not
- * touched.  Items in monster inventories are wiped by
+ * Items in the players inventory are not touched.
+ * Items in monster inventories are wiped by
  * calling wipe_m_list() before this function.
  *
  * Hack -- we clear the "c_ptr->o_idx" field for every grid
@@ -388,17 +388,34 @@ void wipe_o_list(void)
 	int x, y;
 
 	cave_type *c_ptr;
-
+	
+	object_type *o_ptr;
+	
+	/* Set all objects to be unallocated */
+	for (i = 1; i < o_max; i++)
+	{
+		o_ptr = &o_list[i];
+		
+		o_ptr->allocated = FALSE;
+	}
+	
+	/* Save players inventory (only objects in a list to save) */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		o_ptr->allocated = TRUE;
+	}
+	OBJ_ITT_END;
+	
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
 	{
-		object_type *o_ptr = &o_list[i];
+		o_ptr = &o_list[i];
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* Skip non-dungeon objects */
-		if (!(o_ptr->ix || o_ptr->iy)) continue;
+		/* Skip allocated objects */
+		if (o_ptr->allocated) continue;
 
 		/* Preserve artifacts */
 		if (preserve_mode && (FLAG(o_ptr, TR_INSTA_ART)) &&
@@ -407,10 +424,22 @@ void wipe_o_list(void)
 		{
 			a_info[o_ptr->a_idx].cur_num = 0;
 		}
-
+		
 		/* Access location */
 		y = o_ptr->iy;
 		x = o_ptr->ix;
+		
+		/* Store item? */
+		if (!x && !y)
+		{
+			/* Hack - just kill it */
+			object_wipe(o_ptr);
+
+			/* Count objects */
+			o_cnt--;
+			
+			continue;
+		}
 
 		/* Access grid */
 		c_ptr = area(x, y);
