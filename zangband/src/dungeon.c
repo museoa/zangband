@@ -866,7 +866,7 @@ static void process_world(void)
 	bool cave_no_regen = FALSE;
 	int upkeep_factor = 0;
 
-	int x, y;
+	u16b x, y;
 
 	object_type *o_ptr;
 	u32b f1 = 0 , f2 = 0 , f3 = 0;

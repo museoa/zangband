@@ -2470,7 +2470,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 {
 	char *s, *t;
 	
-	int i = 0;
+	u16b i = 0;
 
 	/* Bounding box of entry */
 	wild_bound_box_type bound;

@@ -91,7 +91,7 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 /* Lighten / Darken Wilderness */
 static void day_night(void)
 {	
-	int x, y;
+	u16b x, y;
 
 	/* Light up or darken the area */
 	for (y = 0; y < WILD_GRID_SIZE; y++)
@@ -465,7 +465,7 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 /*
  * Overlay a section of a town onto the wilderness
  */
-static void overlay_town(byte y, byte x, u16b w_town, blk_ptr block_ptr)
+static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 {
 	int i, j, xx, yy;
 	byte feat;
@@ -548,7 +548,7 @@ static void init_towns(void)
 	wild_done_type *w_ptr;
 	
 	/* Variables to pick "easiest" town. */
-	int best_town, town_value;
+	u16b best_town, town_value;
 
 	/* No towns yet */
 	town_count = 1;
@@ -591,7 +591,10 @@ static void init_towns(void)
 					best_town = town_count;
 				}
 				
-				/* Add town to wilderness */
+				/* 
+				 * Add town to wilderness
+				 * Note: only 255 towns can be stored currently.
+				 */
 				w_ptr->town = town_count;
 				
 				/* Monsters are easy */
@@ -2257,7 +2260,7 @@ static void set_temp_mid(u16b val)
  *
  * This is used for rivers, beaches, lakes etc.
  */
-static bool wild_info_bounds(u16b x, u16b y, byte info)
+static bool wild_info_bounds(int x, int y, byte info)
 {
 	int i, x1, y1;
 	bool grad1[10], grad2[10], any;
@@ -2580,7 +2583,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
  * with this function.
  */
 
-static void make_wild_sea(blk_ptr block_ptr,int sea_type)
+static void make_wild_sea(blk_ptr block_ptr,byte sea_type)
 {
 	int i, j;
 
@@ -2654,8 +2657,8 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
  */
 static void make_wild_01(blk_ptr block_ptr, byte *data)
 {
-	int i, j, element;
-	byte new_feat;
+	int i, j;
+	byte new_feat, element;
 	
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -3070,7 +3073,7 @@ void repopulate_wilderness(void)
 }
 
 /* Make a new block based on the terrain type */
-static void gen_block(int x, int y, blk_ptr block_ptr)
+static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 {
 	u16b w_town, w_type;
 	int dummy1, dummy2;
@@ -3184,7 +3187,7 @@ static void init_wild_cache(void)
 /* Allocate all grids around player */
 static void allocate_all(void)
 {
-	int x, y;
+	u16b x, y;
 	blk_ptr block_ptr;
 
 	/* Allocate blocks around player */
@@ -3219,7 +3222,7 @@ static void allocate_all(void)
 
 static void shift_down(void)
 {
-	int i, j;
+	u16b i, j;
 	blk_ptr block_ptr;
 
 	for (i = 0; i < WILD_GRID_SIZE; i++)
@@ -3251,7 +3254,7 @@ static void shift_down(void)
 
 static void shift_up(void)
 {
-	int i, j;
+	u16b i, j;
 	blk_ptr block_ptr;
 
 	for (i = 0; i < WILD_GRID_SIZE; i++)
@@ -3282,7 +3285,7 @@ static void shift_up(void)
 
 static void shift_right(void)
 {
-	int i, j;
+	u16b i, j;
 	blk_ptr block_ptr;
 
 	for (j = 0; j < WILD_GRID_SIZE; j++)
@@ -3315,7 +3318,7 @@ static void shift_right(void)
 
 static void shift_left(void)
 {
-	int i, j;
+	u16b i, j;
 	blk_ptr block_ptr;
 
 	for (j = 0; j < WILD_GRID_SIZE; j++)
@@ -3572,12 +3575,12 @@ static void link_river(int x1, int x2, int y1, int y2, int sea_level)
 
 static void create_rivers(int sea_level)
 {
-	int i, cur_posn, high_posn, dh;
+	int i, cur_posn, high_posn, dh, river_start;
 	int cx, cy, ch;
-	long dist, dx, dy, val, h_val, river_start;
+	long dist, dx, dy, val, h_val;
 	
 	/* Number of river starting points. */
-	river_start = max_wild * max_wild / 400;
+	river_start = (long) max_wild * max_wild / 400;
 	
 	/* paranoia - bounds checking */
 	if (river_start > TEMP_MAX) river_start = TEMP_MAX;
