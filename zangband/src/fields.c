@@ -2029,7 +2029,7 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 	int *disarm = (int *) input;
 	
 	/* Extract trap "power" */
-	int	power = f_ptr->data[0];	
+	int	power = f_ptr->data[0] / 2;	
 	
 	/* Extract the difficulty */
 	int j = *disarm - power;
