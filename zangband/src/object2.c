@@ -2037,6 +2037,9 @@ static bool make_artifact_special(object_type *o_ptr)
 		o_ptr->flags2 |= a_ptr->flags2;
 		o_ptr->flags3 |= a_ptr->flags3;
 		
+		/* Set the pval */
+		o_ptr->pval = a_ptr->pval;
+		
 		/* Mega-Hack -- set activation */
 		o_ptr->activate = i + 128;
 
@@ -2120,6 +2123,9 @@ static bool make_artifact(object_type *o_ptr)
 		o_ptr->flags1 |= a_ptr->flags1;
 		o_ptr->flags2 |= a_ptr->flags2;
 		o_ptr->flags3 |= a_ptr->flags3;
+		
+		/* Set the pval */
+		o_ptr->pval = a_ptr->pval;
 		
 		/* Hack -- set activation */
 		o_ptr->activate = i + 128;

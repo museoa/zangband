@@ -452,9 +452,6 @@ static void rd_item(object_type *o_ptr)
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];
 
-	/* Obtain tval/sval from k_info */
-	o_ptr->tval = k_ptr->tval;
-	o_ptr->sval = k_ptr->sval;
 
 	/* For rod-stacking */
 	if (z_older_than(2, 2, 5) && (o_ptr->tval == TV_ROD))
@@ -632,6 +629,11 @@ static void rd_item(object_type *o_ptr)
 
 		/* Acquire standard weight */
 		o_ptr->weight = k_ptr->weight;
+		
+		
+		/* Obtain tval/sval from k_info */
+		o_ptr->tval = k_ptr->tval;
+		o_ptr->sval = k_ptr->sval;
 	}
 
 	/* Change shattered weapons from 0d0 to 1d1 */
