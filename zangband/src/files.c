@@ -3948,6 +3948,29 @@ void change_player_name(void)
 	clear_from(22);
 }
 
+/* Gets a name for the character, reacting to name changes.
+ * Taken from V 2.9.0.
+ */
+
+void get_character_name(void)
+{
+
+        char tmp[16];
+
+	/* Save the player name */
+	strcpy(tmp, player_name);
+
+	/* Prompt for a new name */
+	if (get_string("Enter a name for your character: ", tmp, 15))
+	{
+		/* Use the name */
+		strcpy(player_name, tmp);
+
+		/* Process the player name */
+		process_player_name(FALSE);
+	}
+}
+
 
 /*
  * Hack -- commit suicide
@@ -4566,6 +4589,7 @@ void close_game(void)
 			
 			/* Output to the notes file */
 			output_note(buf);
+
 		}
 
 		print_tomb();
