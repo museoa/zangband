@@ -18,13 +18,13 @@
 #include "util-dll.h"
 #include "icon.h"
 
-char *AssignToString_Alternate(char *buf, t_assign *assign)
+static char *AssignToString_Alternate(char *buf, t_assign *assign)
 {
 	(void) sprintf(buf, "alternate %d", assign->alternate.index);
 	return buf;
 }
 
-int StringToAssign_Alternate(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+static int StringToAssign_Alternate(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 {
 	char option[64];
 	int index;
@@ -53,7 +53,7 @@ int StringToAssign_Alternate(Tcl_Interp *interp, t_assign *assignPtr, char *desc
 	return TCL_OK;
 }
 
-char *AssignToString_Flavor(char *buf, t_assign *assignPtr)
+static char *AssignToString_Flavor(char *buf, t_assign *assignPtr)
 {
 	(void) sprintf(buf, "flavor %s %d",
 		g_flavor[assignPtr->flavor.group].desc,
@@ -61,7 +61,7 @@ char *AssignToString_Flavor(char *buf, t_assign *assignPtr)
 	return buf;
 }
 
-int StringToAssign_Flavor(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+static int StringToAssign_Flavor(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 {
 	char option[64], flavorName[64];
 	int group, index;
@@ -110,7 +110,7 @@ int StringToAssign_Flavor(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 	return TCL_OK;
 }
 
-char *AssignToString_Icon(char *buf, t_assign *assign)
+static char *AssignToString_Icon(char *buf, t_assign *assign)
 {
 	if (assign->icon.ascii == -1)
 	{
@@ -128,7 +128,7 @@ char *AssignToString_Icon(char *buf, t_assign *assign)
 	return buf;
 }
 
-int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 {
 	char option[64], typeName[64];
 	IconSpec iconSpec;
@@ -156,13 +156,13 @@ int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 	return TCL_OK;
 }
 
-char *AssignToString_Sprite(char *buf, t_assign *assign)
+static char *AssignToString_Sprite(char *buf, t_assign *assign)
 {
 	(void) sprintf(buf, "sprite %d", assign->sprite.index);
 	return buf;
 }
 
-int StringToAssign_Sprite(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+static int StringToAssign_Sprite(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 {
 	char option[64];
 	int index;
@@ -191,7 +191,7 @@ int StringToAssign_Sprite(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 	return TCL_OK;
 }
 
-char *keyword_assign_type[] = {"alternate", "flavor", "icon", "sprite", NULL};
+cptr keyword_assign_type[] = {"alternate", "flavor", "icon", "sprite", NULL};
 
 /* char* -> t_assign */
 typedef char *(*AssignToStringProc)(char *buf, t_assign *assign);
@@ -226,8 +226,8 @@ int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 	}
 
 	objPtr = Tcl_NewStringObj(option, -1);
-	if (Tcl_GetIndexFromObj(interp, objPtr, keyword_assign_type,
-		"option", 0, &assignType) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objPtr, (char **) keyword_assign_type,
+		(char *) "option", 0, &assignType) != TCL_OK)
 	{
 		Tcl_DecrRefCount(objPtr);
 		return TCL_ERROR;
@@ -358,7 +358,7 @@ static int ValidateFrameAlternate(Tcl_Interp *interp, int alternateIndex,
 
 cptr keyword_alternate_reason[] = {"none", "number", "ident", "feature", NULL};
 
-int AlternateFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
+static int AlternateFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
 	t_alternate **alternatePtrPtr, int *alternateIndexPtr)
 {
 	int alternateIndex;
@@ -385,7 +385,7 @@ int AlternateFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
 	return TCL_OK;
 }
 
-int AlternateFrameFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
+static int AlternateFrameFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
 	int alternateIndex, int *frameIndexPtr)
 {
 	int frameIndex;
@@ -411,7 +411,7 @@ int AlternateFrameFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
 /*
  * (alternate) assign alternateIndex frameIndex -type iconType -index iconIndex
  */
-int objcmd_alternate_assign(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -459,7 +459,7 @@ int objcmd_alternate_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (alternate) create reason
  */
-int objcmd_alternate_create(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_create(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -470,9 +470,12 @@ int objcmd_alternate_create(ClientData clientData, Tcl_Interp *interp, int objc,
 	int index;
 	t_alternate *alternate_ptr;
 
+	/* Hack - ignore parameter */
+	(void) objc;
+
     if (Tcl_GetIndexFromObj(interp, objV[1],
     	(char **) keyword_alternate_reason,
-		"reason", 0, &index) != TCL_OK)
+		(char *) "reason", 0, &index) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -499,7 +502,7 @@ int objcmd_alternate_create(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (alternate) delete alternateIndex ?frameIndex?
  */
-int objcmd_alternate_delete(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_delete(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -554,7 +557,7 @@ int objcmd_alternate_delete(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (alternate) get alternateIndex ?frameIndex?
  */
-int objcmd_alternate_get(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_get(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -626,7 +629,7 @@ int objcmd_alternate_get(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (alternate) count ?alternateIndex?
  */
-int objcmd_alternate_count(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_count(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -664,7 +667,7 @@ int objcmd_alternate_count(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (alternate) configure alternateIndex ?option? ?value? ?option value ...?
  */
-int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -672,7 +675,7 @@ int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int ob
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	static char *configSwitch[] = {"-reason", NULL};
+	static cptr configSwitch[] = {"-reason", NULL};
 	t_alternate *alternate_ptr;
 	int alternateIndex, index;
 	Tcl_Obj *CONST *objPtr;
@@ -696,8 +699,8 @@ int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int ob
 	/* Return the value of a single option */
 	if (objC == 3)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objV[2], configSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) configSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -723,15 +726,15 @@ int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int ob
 	if (objC & 1)
 	{
 		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv,
-			"alternateIndex option value ?option value ...?");
+			(char *) "alternateIndex option value ?option value ...?");
 		return TCL_ERROR;
 	}
 
 	/* Scan all option/value pairs */
 	while (objC > 1)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -741,7 +744,7 @@ int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int ob
 			case 0: /* -reason */
 			    if (Tcl_GetIndexFromObj(interp, objPtr[1],
 			    	(char **) keyword_alternate_reason,
-					"reason", 0, &alternate_ptr->reason) != TCL_OK)
+					(char *) "reason", 0, &alternate_ptr->reason) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -760,7 +763,7 @@ int objcmd_alternate_configure(ClientData clientData, Tcl_Interp *interp, int ob
 /*
  * (alternate) insert alternateIndex frameIndex ?-type iconType -index iconIndex?
  */
-int objcmd_alternate_insert(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_alternate_insert(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -816,11 +819,16 @@ int objcmd_alternate_insert(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* (assign) groups */
-int objcmd_assign_groups(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_assign_groups(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	int i;
 	Tcl_Obj *listObjPtr;
+
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
 
 	listObjPtr = Tcl_NewListObj(0, NULL);
 	
@@ -836,11 +844,16 @@ int objcmd_assign_groups(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* (assign) types */
-int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	int i;
 	Tcl_Obj *listObjPtr;
+
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
 
 	listObjPtr = Tcl_NewListObj(0, NULL);
 	
@@ -858,7 +871,7 @@ int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (assign) set $group $member ?$assign?
  */
-int objcmd_assign_set(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_assign_set(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -869,7 +882,7 @@ int objcmd_assign_set(ClientData clientData, Tcl_Interp *interp, int objc,
 	char buf[128];
 
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_assign,
-		"group", 0, &group) != TCL_OK)
+		(char *) "group", 0, &group) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -923,7 +936,7 @@ int objcmd_assign_set(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* (assign) toicon $assign */
-int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -931,6 +944,9 @@ int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
 	char buf[128], *t;
 	IconSpec iconSpec;
 	t_assign assign;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	t = Tcl_GetString(objV[1]);
 	if (assign_parse(interp, &assign, t) != TCL_OK)
@@ -946,7 +962,7 @@ int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* (assign) validate $assign */
-int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -954,20 +970,26 @@ int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int objc,
 	char *t;
 	t_assign assign;
 
+	/* Hack - ignore parameter */
+	(void) objc;
+
 	t = Tcl_GetString(objV[1]);
     return assign_parse(interp, &assign, t);
 }
 
 /* (assign) count $group */
-int objcmd_assign_count(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_assign_count(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	int group;
 
+	/* Hack - ignore parameter */
+	(void) objc;
+
     if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_assign,
-    	"option", 0, &group) != TCL_OK)
+    	(char *) "option", 0, &group) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -1031,7 +1053,7 @@ cptr keyword_effect_group[] = {"ball", "bolt", "ammo", NULL};
 /*
  * (effect) assign $group $effect ?-type iconType -index iconIndex?
  */
-int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1045,7 +1067,7 @@ int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 
 	/* Get the effect type */
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_effect_group,
-		"type", 0, &effectType) != TCL_OK)
+		(char *) "type", 0, &effectType) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -1055,7 +1077,7 @@ int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 
 	/* Get the effect keyword */
 	if (Tcl_GetIndexFromObj(interp, objV[2], effect_ptr->name,
-		"effect", 0, &effectIndex) != TCL_OK)
+		(char *) "effect", 0, &effectIndex) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -1091,7 +1113,7 @@ int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (effect) groups
  */
-int objcmd_effect_groups(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_effect_groups(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 /*	CommandInfo *infoCmd = (CommandInfo *) clientData; */
@@ -1100,6 +1122,11 @@ int objcmd_effect_groups(ClientData clientData, Tcl_Interp *interp, int objc,
 
 	int index;
 	Tcl_Obj *listObjPtr;
+
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
 
 	/* Create a new Tcl list object */
 	listObjPtr = Tcl_NewListObj(0, NULL);
@@ -1122,7 +1149,7 @@ int objcmd_effect_groups(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (effect) names $group
  */
-int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1133,9 +1160,12 @@ int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int objc,
 	int effectType, index;
 	Tcl_Obj *listObjPtr;
 
+	/* Hack - ignore parameter */
+	(void) objc;
+
 	/* Get the effect type */
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_effect_group,
-		"type", 0, &effectType) != TCL_OK)
+		(char *) "type", 0, &effectType) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -1163,7 +1193,7 @@ int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int objc,
 
 cptr keyword_feat_lite[] = {"none", "icon", "tint", NULL};
 
-int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
+static int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 {
 	/* Get the f_info[] index */
 	if (Tcl_GetIntFromObj(interp, objPtr, f_idx) != TCL_OK)
@@ -1172,7 +1202,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 	}
 
 	/* Verify the feature index */
-	if ((*f_idx < 0) || (*f_idx >= max_f_idx))
+	if ((*f_idx < 0) || (*f_idx >= z_info->f_max))
 	{
 		/* Get the interpreter result object */
 		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -1180,7 +1210,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 		/* Set the error */
 		Tcl_SetStringObj(resultPtr,
 			format("bad f_info index \"%d\": must be between 0 and %d",
-			*f_idx, (int) max_f_idx - 1), -1);
+			*f_idx, z_info->f_max - 1), -1);
 	
 		/* Failure */
 		return TCL_ERROR;
@@ -1193,7 +1223,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 /*
  * (feature) assignshape f_idx shape ?assign?
  */
-int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1212,7 +1242,7 @@ int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int ob
 	}
 
     if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_wall,
-		"shape", 0, &shape) != TCL_OK)
+		(char *) "shape", 0, &shape) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -1231,9 +1261,10 @@ int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int ob
 		return TCL_ERROR;
 	}
 
-if (objC == 5) g_assignshape[shape][max_f_idx + f_idx] = assign;
-else
-	g_assignshape[shape][f_idx] = assign;
+	if (objC == 5)
+		g_assignshape[shape][z_info->f_max + f_idx] = assign;
+	else
+		g_assignshape[shape][f_idx] = assign;
 	g_icon_map_changed = TRUE;
 
 	return TCL_OK;
@@ -1242,7 +1273,7 @@ else
 /*
  * (feature) configure f_idx ?option value?
  */
-int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1250,7 +1281,7 @@ int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	static char *configSwitch[] = {"-background", "-light", "-boring",
+	static cptr configSwitch[] = {"-background", "-light", "-boring",
 		"-town", NULL};
 	Tcl_Obj *CONST *objPtr;
 	int f_idx, i, index;
@@ -1273,8 +1304,8 @@ int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc
 	/* Return the value of a single option */
 	if (objC == 3)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objV[2], configSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) configSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -1314,7 +1345,7 @@ int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc
 	{
 		/* Set the error */
 		Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv,
-			"f_idx ?option? ?value? ?option value ...?");
+			(char *) "f_idx ?option? ?value? ?option value ...?");
 	
 		/* Failure */
 		return TCL_ERROR;
@@ -1323,8 +1354,8 @@ int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc
 	/* Scan all option/value pairs */
 	while (objC > 1)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -1342,7 +1373,7 @@ int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc
 				
 			case 1: /* -light */
 				if (Tcl_GetIndexFromObj(interp, objPtr[1],
-					(char **) keyword_feat_lite, "option", 0,
+					(char **) keyword_feat_lite, (char *) "option", 0,
 					&g_feat_lite[f_idx]) != TCL_OK)
 				{
 					return TCL_ERROR;
@@ -1392,7 +1423,7 @@ int objcmd_feature_configure(ClientData clientData, Tcl_Interp *interp, int objc
 /*
  * (feature) torchlite ?boolean?
  */
-int objcmd_feature_torchlite(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_feature_torchlite(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1419,7 +1450,7 @@ int objcmd_feature_torchlite(ClientData clientData, Tcl_Interp *interp, int objc
 /*
  * (feature) torch paletteIndex opacity
  */
-int objcmd_feature_torch(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_feature_torch(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1427,6 +1458,9 @@ int objcmd_feature_torch(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	int tint, opacity;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Get the palette index */
 	if (Tcl_GetIntFromObj(interp, objV[1], &tint) != TCL_OK)
@@ -1452,7 +1486,7 @@ int objcmd_feature_torch(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* (flavor) assign $group $index ?-type $type -index $index -ascii $ascii? */
-int
+static int
 objcmd_flavor_assign(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1536,7 +1570,7 @@ objcmd_flavor_assign(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Ob
 }
 
 /* (flavor) count $group */
-int
+static int
 objcmd_flavor_count(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1546,6 +1580,9 @@ objcmd_flavor_count(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 	char *flavorName;
 	int flavor;
 	Tcl_HashEntry *hPtr;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Get the specified flavor name */
 	flavorName = Tcl_GetStringFromObj(objV[1], NULL);
@@ -1584,7 +1621,7 @@ objcmd_flavor_count(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
  * using the tk/config/dark file. The values in that file were created
  * on a Macintosh using a somewhat complicated procedure.
  */
-int
+static int
 objcmd_lighting(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1610,11 +1647,11 @@ objcmd_lighting(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	/* Scan all option/value pairs */
 	while (objC > 1)
 	{
-		static char *lightOption[] = {"-brightness", "-contrast",
+		static cptr lightOption[] = {"-brightness", "-contrast",
 			"-gamma", "-radius", NULL};
 			
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], lightOption,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) lightOption,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -1743,7 +1780,7 @@ wrongNumArgs:
 
 	/* Set the error */
 	Tcl_WrongNumArgs(interp, 1, objv,
-		"-radius radius ?-brightness b -contrast c -gamma g?");
+		(char *) "-radius radius ?-brightness b -contrast c -gamma g?");
 
 	/* Failure */
 	return TCL_ERROR;
@@ -1803,7 +1840,7 @@ static int ValidateFrame(Tcl_Interp *interp, int spriteIndex, int frameIndex)
 	return TCL_OK;
 }
 
-int SpriteFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, t_sprite **spritePtrPtr,
+static int SpriteFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, t_sprite **spritePtrPtr,
 	int *spriteIndexPtr)
 {
 	int spriteIndex;
@@ -1830,7 +1867,7 @@ int SpriteFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, t_sprite **spritePtrPtr,
 	return TCL_OK;
 }
 
-int SpriteFrameFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int spriteIndex,
+static int SpriteFrameFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int spriteIndex,
 	int *frameIndexPtr)
 {
 	int frameIndex;
@@ -1856,7 +1893,7 @@ int SpriteFrameFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int spriteIndex,
 /*
  * (sprite) assign spriteIndex frameIndex args ...
  */
-int objcmd_sprite_assign(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1898,7 +1935,7 @@ int objcmd_sprite_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (sprite) create
  */
-int objcmd_sprite_create(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_create(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 /*	CommandInfo *infoCmd = (CommandInfo *) clientData; */
@@ -1907,6 +1944,11 @@ int objcmd_sprite_create(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	t_sprite *spritePtr;
+
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
 
 	/* Append a sprite to the global array */
 	g_sprite = Array_Insert(g_sprite, &g_sprite_count,
@@ -1934,7 +1976,7 @@ int objcmd_sprite_create(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (sprite) delete spriteIndex ?frameIndex?
  */
-int objcmd_sprite_delete(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_delete(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1988,7 +2030,7 @@ int objcmd_sprite_delete(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (sprite) get spriteIndex ?frameIndex?
  */
-int objcmd_sprite_get(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_get(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2059,7 +2101,7 @@ int objcmd_sprite_get(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (sprite) count ?spriteIndex?
  */
-int objcmd_sprite_count(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_count(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2096,7 +2138,7 @@ int objcmd_sprite_count(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (sprite) configure spriteIndex ?option? ?value? ?option value ...?
  */
-int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2104,7 +2146,7 @@ int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	static char *configSwitch[] = {"-delay", "-reverse", NULL};
+	static cptr configSwitch[] = {"-delay", "-reverse", NULL};
 	Tcl_Obj *CONST *objPtr;
 	t_sprite *spritePtr;
 	int index, spriteIndex;
@@ -2127,8 +2169,8 @@ int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	/* Return the value of a single option */
 	if (objC == 3)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objV[2], configSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) configSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -2156,7 +2198,7 @@ int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	{
 		/* Set the error */
 		Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv,
-			"spriteIndex option value ?option value ...?");
+			(char *) "spriteIndex option value ?option value ...?");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2165,8 +2207,8 @@ int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 	/* Scan all option/value pairs */
 	while (objC > 1)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -2202,7 +2244,7 @@ int objcmd_sprite_configure(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * (sprite) insert spriteIndex frameIndex args
  */
-int objcmd_sprite_insert(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_sprite_insert(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
