@@ -2915,7 +2915,7 @@ bool monst_spell_monst(int m_idx)
 		}
 
 		/* Remember what the monster did, if we saw it */
-		if (see_m)
+		if (m_ptr->ml)
 		{
 			/* Look to see if we've spotted a mimic */
 			if (m_ptr->smart & SM_MIMIC)

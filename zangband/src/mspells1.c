@@ -2343,8 +2343,8 @@ bool make_attack_spell(int m_idx)
 			/* Toggle flag */
 			m_ptr->smart &= ~(SM_MIMIC);
 			
-			/* It is in the monster list now */
-			update_mon_vis(m_ptr->r_idx, 1);
+			/* It is in the monster list now if visible */
+			if (m_ptr->ml) update_mon_vis(m_ptr->r_idx, 1);
 		
 			/*Hack - no need for a message */
 		}
