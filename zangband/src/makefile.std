@@ -40,7 +40,7 @@
 PORTS := default_port linux linux-svga linux-no-gtk openbsd freebsd main-cap \
 		 vt100 solaris sgi dec isc next aix dos ibm borland gcu
 
-OTHER_PORTS := amiga cygwin emx lcc linux-tk freebsd-tk
+OTHER_PORTS := amiga cygwin emx lcc linux-tk freebsd-tk mingw
 
 ##
 ## This is the default port to compile.
@@ -307,6 +307,24 @@ cygwin-objs: $(OBJS) angband.res readdib.o
 	$(MAKE-ZANGBAND)
 cygwin: cygwin-objs
 	cp $^ ../zangband
+
+##
+## Variation -- Cross compile with mingw
+##
+mingw: MINGPREFIX := i586-mingw32msvc-
+mingw: CC := $(MINGPREFIX)cc
+mingw: LD := $(MINGPREFIX)ld
+mingw: CFLAGS += -W -pedantic -mno-cygwin -DWINDOWS
+mingw: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
+mingw: INSTALL := mv -f zangband.exe ../zangband.exe
+mingw: RES := $(MINGPREFIX)windres
+mingw: RESCMD = $< -O coff -o $@
+mingw-objs: $(OBJS) angband.res readdib.o
+	$(MAKE-ZANGBAND)
+mingw: mingw-objs
+	cp $^ ../zangband
+
+
 
 ##
 ## Variation -- OpenBSD 
