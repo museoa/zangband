@@ -1147,8 +1147,15 @@ static void get_extra(void)
 		/* Roll the hitpoint values */
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
-			j = randint(p_ptr->hitdie);
+			/* Add in racial hit dice */			
+			j = randint(rp_ptr->r_mhp);
 			player_hp[i] = player_hp[i - 1] + j;
+			
+			/* If class hit dice is non zero - add it on */
+			if (cp_ptr->c_mhp)
+			{
+				player_hp[i] += randint(cp_ptr->c_mhp);
+			}
 		}
 
 		/* XXX Could also require acceptable "mid-level" hitpoints */

@@ -19,7 +19,7 @@
  */
 void do_cmd_rerate(void)
 {
-	int min_value, max_value, i, percent;
+	int min_value, max_value, i, j, percent;
 
 	min_value = (PY_MAX_LEVEL * 3 * (p_ptr->hitdie - 1)) / 8;
 	min_value += PY_MAX_LEVEL;
@@ -35,8 +35,15 @@ void do_cmd_rerate(void)
 		/* Collect values */
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
-			player_hp[i] = randint(p_ptr->hitdie);
-			player_hp[i] += player_hp[i - 1];
+			/* Add in racial hit dice */			
+			j = randint(rp_ptr->r_mhp);
+			player_hp[i] = player_hp[i - 1] + j;
+			
+			/* If class hit dice is non zero - add it on */
+			if (cp_ptr->c_mhp)
+			{
+				player_hp[i] += randint(cp_ptr->c_mhp);
+			}
 		}
 
 		/* Legal values */
