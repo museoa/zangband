@@ -6624,5 +6624,8 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Monster attemts to enter jammed door */
 	{field_action_door_jam_monster, "field_action_door_jam_monster"},
+	
+	/* Doors interact with magic */
+	{field_action_door_gf, "field_action_door_gf"},
 };
 

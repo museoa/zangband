@@ -507,9 +507,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(y, x);
-	
-	s16b fld_idx;
-
 
 	/* XXX XXX XXX */
 	who = who ? who : 0;
@@ -547,27 +544,26 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		/* Destroy Doors (and traps) */
 		case GF_KILL_DOOR:
 		{
-			/* Destroy all doors and traps */
-			if ((c_ptr->feat == FEAT_OPEN) ||
-				 (c_ptr->feat == FEAT_BROKEN) ||
-				 (c_ptr->feat == FEAT_CLOSED))
+			/* Fields can block destruction */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
+			
+			/* Destroy all open doors */
+			if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_BROKEN) ||
+				(c_ptr->feat == FEAT_CLOSED))
 			{
-				/* Fields can block destruction */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
-				
 				/* Check line of sight */
 				if (known)
 				{
 					/* Message */
 					msg_print("There is a bright flash of light!");
 					obvious = TRUE;
+				}
 
-					/* Visibility change */
-					if (c_ptr->feat == FEAT_CLOSED)
-					{
-						/* Update some things */
-						p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
-					}
+				if (c_ptr->feat == FEAT_CLOSED)
+				{
+					/* Update some things */
+					p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS |
+						 PU_MON_LITE);
 				}
 
 				/* Now is floor */
@@ -575,9 +571,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 						
 				/* Forget the door */
 				c_ptr->info &= ~(CAVE_MARK);
-				
-				/* Get rid of attached fields */
-				delete_field_location(c_ptr);
 				
 				/* Note + Lite the spot */
 				note_spot(y, x);
@@ -589,6 +582,9 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		/* Destroy Traps (and Locks) */
 		case GF_KILL_TRAP:
 		{
+			/* Fields can block destruction */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
+			
 			/* Reveal secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
 			{
@@ -601,31 +597,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 					obvious = TRUE;
 				}
 			}
-			
-			/* Locked doors are unlocked */
-			else if (c_ptr->feat == FEAT_CLOSED)
-			{
-				/* Fields can block destruction */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
-
-				/* Get fields */
-				fld_idx = *field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
-								
-				if (fld_idx)
-				{
-					/* Remove locked doors. */
-					if (field_hook_special(&c_ptr->fld_idx, FTYPE_DOOR, NULL))
-					{
-						/* Check line of sound */
-						if (known)
-						{
-							msg_print("Click!");
-							obvious = TRUE;
-						}
-					}
-				}
-			}
-
 			break;
 		}
 
@@ -649,8 +620,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
 		{
-			int action;
-			
 			/* Non-walls (etc) */
 			if (cave_floor_grid(c_ptr)) break;
 
@@ -764,7 +733,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			}
 
 			/* Destroy doors (and secret doors) */
-			else /* if (c_ptr->feat >= FEAT_DOOR_HEAD) */
+			else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_SECRET))
 			{
 				/* Hack -- special message */
 				if (known && (c_ptr->info & (CAVE_MARK)))
@@ -775,9 +744,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 				/* Forget the wall */
 				c_ptr->info &= ~(CAVE_MARK);
-
-				/* Get rid of attached fields */
-				delete_field_location(c_ptr);
 				
 				/* Destroy the feature */
 				cave_set_feat(y, x, FEAT_FLOOR);

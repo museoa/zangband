@@ -3153,8 +3153,6 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 			
 			/* Delete the field */
 			delete_field_ptr(field_ptr);
-
-			/* Note that *field_ptr does not need to be updated */
 		}
 	}
 	
@@ -3239,4 +3237,75 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 	
 	/* Cannot move */
 	mon_enter->do_move = FALSE;
+}
+
+/*
+ * Doors interact with various magic effects
+ */
+void field_action_door_gf(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	field_magic_target *f_m_t = (field_magic_target*) input;
+	
+	cave_type *c_ptr;
+	
+	if (f_m_t->typ == GF_KILL_WALL)
+	{
+		/* Destroy the door */
+		if (f_m_t->known)
+		{
+			msg_print("The door turns into mud!");
+			f_m_t->notice = TRUE;
+		}
+
+		c_ptr = area(f_ptr->fy, f_ptr->fx);
+		
+		/* Forget the door */
+		c_ptr->info &= ~(CAVE_MARK);
+		
+		/* Destroy the feature */
+		c_ptr->feat = FEAT_FLOOR;
+		
+		/* Update some things */
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
+
+		/* Delete the field */
+		delete_field_ptr(field_ptr);
+	}
+	else if (f_m_t->typ == GF_KILL_DOOR)
+	{
+		/* Destroy the door */
+		if (f_m_t->known)
+		{
+			msg_print("There is a bright flash of light!");
+			f_m_t->notice = TRUE;
+		}
+
+		c_ptr = area(f_ptr->fy, f_ptr->fx);
+		
+		/* Forget the door */
+		c_ptr->info &= ~(CAVE_MARK);
+		
+		/* Destroy the feature */
+		c_ptr->feat = FEAT_FLOOR;
+		
+		/* Update some things */
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
+
+		/* Delete the field */
+		delete_field_ptr(field_ptr);
+	}
+	else if (f_m_t->typ == GF_KILL_TRAP)
+	{
+		/* Unlock the door */
+		if (f_m_t->known)
+		{
+			msg_print("Click!");
+			f_m_t->notice = TRUE;
+		}
+		
+		/* Delete the field */
+		delete_field_ptr(field_ptr);
+	}
 }

@@ -1254,7 +1254,7 @@ extern void field_action_door_unlock(s16b *field_ptr, void *input);
 extern void field_action_door_bash(s16b *field_ptr, void *input);
 extern void field_action_door_lock_monster(s16b *field_ptr, void *input);
 extern void field_action_door_jam_monster(s16b *field_ptr, void *input);
-extern void field_action_door_interact(s16b *field_ptr, void *input);
+extern void field_action_door_gf(s16b *field_ptr, void *input);
 
 /*
  * Hack -- conditional (or "bizarre") externs
