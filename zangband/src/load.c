@@ -945,9 +945,9 @@ static void rd_options(void)
 {
 	int i, n;
 
-	byte b;
+	byte b, tmp8u;
 
-	u16b c;
+	u16b tmp16u;
 
 	u32b flag[8];
 	u32b mask[8];
@@ -972,16 +972,8 @@ static void rd_options(void)
 
 	/*** Cheating options ***/
 
-	rd_u16b(&c);
+	rd_u16b(&tmp16u);
 
-	if (c & 0x0002) p_ptr->wizard = TRUE;
-
-	cheat_peek = (c & 0x0100) ? TRUE : FALSE;
-	cheat_hear = (c & 0x0200) ? TRUE : FALSE;
-	cheat_room = (c & 0x0400) ? TRUE : FALSE;
-	cheat_xtra = (c & 0x0800) ? TRUE : FALSE;
-	cheat_know = (c & 0x1000) ? TRUE : FALSE;
-	cheat_live = (c & 0x2000) ? TRUE : FALSE;
 
 	/* Pre-2.8.0 savefiles are done */
 	if (older_than(2, 8, 0)) return;
@@ -993,8 +985,8 @@ static void rd_options(void)
 	}
 	else
 	{
-		rd_byte(&autosave_l);
-		rd_byte(&autosave_t);
+		rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
 		rd_s16b(&autosave_freq);
 	}
 
@@ -1008,30 +1000,29 @@ static void rd_options(void)
 	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
 
 	/* Analyze the options */
-	for (n = 0; n < 8; n++)
+	for (i = 0; i < OPT_MAX; i++)
 	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
+		int os = i / 32;
+		int ob = i % 32;
+
+		/* Process real entries */
+		if (option_text[i])
 		{
-			/* Process valid flags */
-			if (mask[n] & (1L << i))
+			/* Process saved entries */
+			if (mask[os] & (1L << ob))
 			{
-				/* Process valid flags */
-				if (option_mask[n] & (1L << i))
+				/* Set flag */
+				if (flag[os] & (1L << ob))
 				{
 					/* Set */
-					if (flag[n] & (1L << i))
-					{
-						/* Set */
-						option_flag[n] |= (1L << i);
-					}
+					op_ptr->opt[i] = TRUE;
+				}
 
-					/* Clear */
-					else
-					{
-						/* Clear */
-						option_flag[n] &= ~(1L << i);
-					}
+				/* Clear flag */
+				else
+				{
+					/* Set */
+					op_ptr->opt[i] = FALSE;
 				}
 			}
 		}
@@ -1053,23 +1044,16 @@ static void rd_options(void)
 		for (i = 0; i < 32; i++)
 		{
 			/* Process valid flags */
-			if (mask[n] & (1L << i))
+			if (window_flag_desc[i])
 			{
 				/* Process valid flags */
-				if (window_mask[n] & (1L << i))
+				if (mask[n] & (1L << i))
 				{
 					/* Set */
 					if (flag[n] & (1L << i))
 					{
 						/* Set */
-						window_flag[n] |= (1L << i);
-					}
-
-					/* Clear */
-					else
-					{
-						/* Clear */
-						window_flag[n] &= ~(1L << i);
+						op_ptr->window_flag[n] |= (1L << i);
 					}
 				}
 			}

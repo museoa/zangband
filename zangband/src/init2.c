@@ -2749,47 +2749,18 @@ static errr init_other(void)
 
 	/*** Prepare the options ***/
 
-	/* Scan the options */
-	for (i = 0; option_info[i].o_desc; i++)
+	/* Initialize the options */
+	for (i = 0; i < OPT_MAX; i++)
 	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Accept */
-			option_mask[os] |= (1L << ob);
-
-			/* Set */
-			if (option_info[i].o_norm)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
+		/* Default value */
+		op_ptr->opt[i] = option_norm[i];
 	}
 
-	/* Analyze the windows */
+	/* Initialize the window flags */
 	for (n = 0; n < 8; n++)
 	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
-		{
-			/* Accept */
-			if (window_flag_desc[i])
-			{
-				/* Accept */
-				window_mask[n] |= (1L << i);
-			}
-		}
+		/* Assume no flags */
+		op_ptr->window_flag[n] = 0L;
 	}
 
 

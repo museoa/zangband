@@ -540,47 +540,67 @@ errr process_pref_file_aux(char *buf)
 	/* Process "X:<str>" -- turn option off */
 	else if (buf[0] == 'X')
 	{
-		for (i = 0; option_info[i].o_desc; i++)
+		/* Check non-birth options */
+		for (i = 0; i < OPT_MAX; i++)
 		{
-			int os = option_info[i].o_set;
-			int ob = option_info[i].o_bit;
-
-			if (option_info[i].o_var &&
-				 option_info[i].o_text &&
-				 streq(option_info[i].o_text, buf + 2))
+			if (option_text[i] && streq(option_text[i], buf + 2))
 			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-				(*option_info[i].o_var) = FALSE;
+				op_ptr->opt[i] = FALSE;
 				return (0);
 			}
 		}
-
-		/* XXX XXX XXX - ignore unknown options */
-		return (0);
 	}
 
 	/* Process "Y:<str>" -- turn option on */
 	else if (buf[0] == 'Y')
 	{
-		for (i = 0; option_info[i].o_desc; i++)
+		/* Check non-birth options */
+		for (i = 0; i < OPT_MAX; i++)
 		{
-			int os = option_info[i].o_set;
-			int ob = option_info[i].o_bit;
-
-			if (option_info[i].o_var &&
-				 option_info[i].o_text &&
-				 streq(option_info[i].o_text, buf + 2))
+			if (option_text[i] && streq(option_text[i], buf + 2))
 			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-				(*option_info[i].o_var) = TRUE;
+				op_ptr->opt[i] = TRUE;
 				return (0);
 			}
 		}
+	}
 
-		/* XXX XXX XXX - ignore unknown options */
-		return (0);
+	/* Process "W:<win>:<flag>:<value>" -- window flags */
+	else if (buf[0] == 'W')
+	{
+		int win, flag, value;
+
+		if (tokenize(buf + 2, 3, zz, 0) == 3)
+		{
+			win = strtol(zz[0], NULL, 0);
+			flag = strtol(zz[1], NULL, 0);
+			value = strtol(zz[2], NULL, 0);
+
+			/* Ignore illegal windows */
+			/* Hack -- Ignore the main window */
+			if ((win <= 0) || (win >= 8)) return (1);
+
+			/* Ignore illegal flags */
+			if ((flag < 0) || (flag >= 32)) return (1);
+
+			/* Require a real flag */
+			if (window_flag_desc[flag])
+			{
+				if (value)
+				{
+					/* Turn flag on */
+					op_ptr->window_flag[win] |= (1L << flag);
+				}
+				else
+				{
+					/* Turn flag off */
+					op_ptr->window_flag[win] &= ~(1L << flag);
+				}
+			}
+
+			/* Success */
+			return (0);
+		}
 	}
 
 	/* Process "Z:<type>:<str>" -- set spell color */

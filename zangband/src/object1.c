@@ -2040,22 +2040,22 @@ void toggle_inven_equip(void)
 		if (!angband_term[j]) continue;
 
 		/* Flip inven to equip */
-		if (window_flag[j] & (PW_INVEN))
+		if (op_ptr->window_flag[j] & (PW_INVEN))
 		{
 			/* Flip flags */
-			window_flag[j] &= ~(PW_INVEN);
-			window_flag[j] |= (PW_EQUIP);
+			op_ptr->window_flag[j] &= ~(PW_INVEN);
+			op_ptr->window_flag[j] |= (PW_EQUIP);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_EQUIP);
 		}
 
 		/* Flip inven to equip */
-		else if (window_flag[j] & (PW_EQUIP))
+		else if (op_ptr->window_flag[j] & (PW_EQUIP))
 		{
 			/* Flip flags */
-			window_flag[j] &= ~(PW_EQUIP);
-			window_flag[j] |= (PW_INVEN);
+			op_ptr->window_flag[j] &= ~(PW_EQUIP);
+			op_ptr->window_flag[j] |= (PW_INVEN);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
@@ -2630,10 +2630,10 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			if (!angband_term[j]) continue;
 
 			/* Count windows displaying inven */
-			if (window_flag[j] & (PW_INVEN)) ni++;
+			if (op_ptr->window_flag[j] & (PW_INVEN)) ni++;
 
 			/* Count windows displaying equip */
-			if (window_flag[j] & (PW_EQUIP)) ne++;
+			if (op_ptr->window_flag[j] & (PW_EQUIP)) ne++;
 		}
 
 		/* Toggle if needed */

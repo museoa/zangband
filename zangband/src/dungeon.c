@@ -4119,6 +4119,7 @@ void play_game(bool new_game)
 		Rand_state_init(seed);
 	}
 
+#if 0
 	/* Extract the options */
 	for (i = 0; option_info[i].o_desc; i++)
 	{
@@ -4142,6 +4143,7 @@ void play_game(bool new_game)
 			}
 		}
 	}
+#endif
 
 	/* Roll new character */
 	if (new_game)

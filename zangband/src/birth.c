@@ -745,7 +745,7 @@ static byte choose_realm(byte choices)
 		else if (c == '=')
 		{
 			screen_save();
-			do_cmd_options_aux(6, "Startup Options");
+			do_cmd_options_aux(8, "Startup Options");
 			screen_load();
 		}
 		else bell();
@@ -1969,7 +1969,7 @@ static bool get_player_race(void)
 			else if (c == '=')
 			{
 				screen_save();
-				do_cmd_options_aux(6, "Startup Options");
+				do_cmd_options_aux(8, "Startup Options");
 				screen_load();
 			}
 			else bell();
@@ -2067,7 +2067,7 @@ static bool get_player_class(void)
 		else if (c == '=')
 		{
 			screen_save();
-			do_cmd_options_aux(6, "Startup Options");
+			do_cmd_options_aux(8, "Startup Options");
 			screen_load();
 		}
 		else bell();
@@ -2193,7 +2193,7 @@ static bool player_birth_aux_1(void)
 		else if (ch == '=')
 		{
 			screen_save();
-			do_cmd_options_aux(6, "Startup Options");
+			do_cmd_options_aux(8, "Startup Options");
 			screen_load();
 		}
 		else bell();
@@ -2920,7 +2920,7 @@ static bool player_birth_aux_3(void)
 			else if (ch == '=')
 			{
 				screen_save();
-				do_cmd_options_aux(6, "Startup Options");
+				do_cmd_options_aux(8, "Startup Options");
 				screen_load();
 				continue;
 			}
@@ -3040,10 +3040,10 @@ void player_birth(void)
 	}
 
 	/* Set the message window flag as default */
-	if (!window_flag[1])
-		window_flag[1] |= PW_MESSAGE;
+	if (!op_ptr->window_flag[1])
+		op_ptr->window_flag[1] |= PW_MESSAGE;
 
 	/* Set the inv/equip window flag as default */
-	if (!window_flag[2])
-		window_flag[2] |= PW_INVEN;
+	if (!op_ptr->window_flag[2])
+		op_ptr->window_flag[2] |= PW_INVEN;
 }

@@ -1135,7 +1135,7 @@ static void fix_inven(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_INVEN))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_INVEN))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1169,7 +1169,7 @@ static void fix_equip(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_EQUIP))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_EQUIP))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1202,7 +1202,7 @@ static void fix_spell(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_SPELL))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_SPELL))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1235,7 +1235,7 @@ static void fix_player(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_PLAYER))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_PLAYER))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1273,7 +1273,7 @@ static void fix_message(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_MESSAGE))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_MESSAGE))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1329,7 +1329,7 @@ static void fix_overhead(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_OVERHEAD))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_OVERHEAD))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1366,7 +1366,7 @@ static void fix_dungeon(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_DUNGEON))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_DUNGEON))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1399,7 +1399,7 @@ static void fix_monster(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_MONSTER))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_MONSTER))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1432,7 +1432,7 @@ static void fix_object(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(window_flag[j] & (PW_OBJECT))) continue;
+		if (!(op_ptr->window_flag[j] & (PW_OBJECT))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -3943,7 +3943,7 @@ void window_stuff(void)
 	for (j = 0; j < 8; j++)
 	{
 		/* Save usable flags */
-		if (angband_term[j]) mask |= window_flag[j];
+		if (angband_term[j]) mask |= op_ptr->window_flag[j];
 	}
 
 	/* Apply usable flags */

@@ -831,9 +831,10 @@ static errr wr_randomizer(void)
  */
 static void wr_options(void)
 {
-	int i;
+	int i, k;
 
-	u16b c;
+	u32b flag[8];
+	u32b mask[8];
 
 
 	/*** Oops ***/
@@ -851,70 +852,79 @@ static void wr_options(void)
 	wr_byte(op_ptr->hitpoint_warn);
 
 
-	/*** Cheating options ***/
+	/*** Old Cheating options ***/
 
-	c = 0;
-
-	if (p_ptr->wizard) c |= 0x0002;
-
-	if (cheat_peek) c |= 0x0100;
-	if (cheat_hear) c |= 0x0200;
-	if (cheat_room) c |= 0x0400;
-	if (cheat_xtra) c |= 0x0800;
-	if (cheat_know) c |= 0x1000;
-	if (cheat_live) c |= 0x2000;
-
-	wr_u16b(c);
+	wr_u16b(0);
 
 	/* Autosave info */
-	wr_byte(autosave_l);
-	wr_byte(autosave_t);
+	wr_byte(0);
+	wr_byte(0);
 	wr_s16b(autosave_freq);
-
-	/*** Extract options ***/
-
-	/* Analyze the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Process real entries */
-		if (option_info[i].o_var)
-		{
-			/* Set */
-			if (*option_info[i].o_var)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
-	}
-
 
 	/*** Normal options ***/
 
+	/* Reset */
+	for (i = 0; i < 8; i++)
+	{
+		flag[i] = 0L;
+		mask[i] = 0L;
+	}
+
+	/* Analyze the options */
+	for (i = 0; i < OPT_MAX; i++)
+	{
+		int os = i / 32;
+		int ob = i % 32;
+
+		/* Process real entries */
+		if (option_text[i])
+		{
+			/* Set flag */
+			if (op_ptr->opt[i])
+			{
+				/* Set */
+				flag[os] |= (1L << ob);
+			}
+
+			/* Set mask */
+			mask[os] |= (1L << ob);
+		}
+	}
+
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(option_flag[i]);
+	for (i = 0; i < 8; i++) wr_u32b(flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(option_mask[i]);
+	for (i = 0; i < 8; i++) wr_u32b(mask[i]);
 
 
 	/*** Window options ***/
 
+	/* Reset */
+	for (i = 0; i < 8; i++)
+	{
+		/* Flags */
+		flag[i] = op_ptr->window_flag[i];
+
+		/* Mask */
+		mask[i] = 0L;
+
+		/* Build the mask */
+		for (k = 0; k < 32; k++)
+		{
+			/* Set mask */
+			if (window_flag_desc[k])
+			{
+				mask[i] |= (1L << k);
+			}
+		}
+	}
+
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(window_flag[i]);
+	for (i = 0; i < 8; i++) wr_u32b(flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(window_mask[i]);
+	for (i = 0; i < 8; i++) wr_u32b(mask[i]);
 }
 
 
