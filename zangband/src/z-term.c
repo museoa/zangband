@@ -368,7 +368,7 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h, bool bigtile)
 		for (x = 0; x < w; x++)
 		{
 			if ((!bigtile) && (x > s->big_x1) &&
-					(y >= s->big_y1) && (y <= s->big_y2)) continue;
+					(y >= s->big_y1) && (y <= s->big_y2)) break;
 			
 			*s_aa++ = *f_aa++;
 			*s_cc++ = *f_cc++;
@@ -737,7 +737,8 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 		ntc = scr_tcc[x];
 
 		/* Handle unchanged grids */
-		if ((na == oa) && (nc == oc) && (nta == ota) && (ntc == otc))
+		if ((na == oa) && (nc == oc) && (nta == ota) && (ntc == otc)
+			&& !Term->total_erase)
 		{
 			/* Flush */
 			if (fn)
@@ -839,7 +840,8 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 		ntc = scr_tcc[x];
 
 		/* Handle unchanged grids */
-		if ((na == oa) && (nc == oc) && (nta == ota) && (ntc == otc))
+		if ((na == oa) && (nc == oc) && (nta == ota) && (ntc == otc)
+			&& !Term->total_erase)
 		{
 			/* Flush */
 			if (fn)
@@ -987,7 +989,7 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 		nc = scr_cc[x];
 
 		/* Handle unchanged grids */
-		if ((na == oa) && (nc == oc))
+		if ((na == oa) && (nc == oc) && !Term->total_erase)
 		{
 			/* Flush */
 			if (fn)
@@ -1178,7 +1180,7 @@ static void Term_fresh_row_text(int y, int x1, int x2)
  */
 void Term_fresh(void)
 {
-	int x, y;
+	int y;
 
 	int w = Term->wid;
 	int h = Term->hgt;
@@ -1211,36 +1213,11 @@ void Term_fresh(void)
 	if (!Term->text_hook) Term->text_hook = Term_text_hack;
 	if (!Term->pict_hook) Term->pict_hook = Term_pict_hack;
 
-
 	/* Handle "total erase" */
 	if (Term->total_erase)
 	{
-		byte na = Term->attr_blank;
-		char nc = Term->char_blank;
-
 		/* Hack -- clear all "cursor" data */
 		old->cv = old->cu = old->cx = old->cy = 0;
-
-		/* Wipe each row */
-		for (y = 0; y < h; y++)
-		{
-			byte *aa = old->a[y];
-			char *cc = old->c[y];
-
-			byte *taa = old->ta[y];
-			char *tcc = old->tc[y];
-
-			/* Wipe each column */
-			for (x = 0; x < w; x++)
-			{
-				/* Wipe each grid */
-				*aa++ = na;
-				*cc++ = nc;
-
-				*taa++ = na;
-				*tcc++ = nc;
-			}
-		}
 
 		/* Redraw every row */
 		Term->y1 = y1 = 0;
@@ -1252,9 +1229,6 @@ void Term_fresh(void)
 			Term->x1[y] = 0;
 			Term->x2[y] = w - 1;
 		}
-
-		/* Forget "total erase" */
-		Term->total_erase = FALSE;
 	}
 
 
@@ -1437,6 +1411,8 @@ void Term_fresh(void)
 	/* Actually flush the output */
 	Term_xtra(TERM_XTRA_FRESH, 0);
 
+	/* Forget "total erase" */
+	Term->total_erase = FALSE;
 
 	/* Success */
 	return;
@@ -2010,6 +1986,9 @@ void Term_save(void)
 	/* Add the front of the list */
 	tmp->next = Term->scr;
 	Term->scr = tmp;
+	
+	/* Hack - redraw wrongly? */
+	/* if (tmp->next->big_x1 != -1) Term->total_erase = TRUE; */
 }
 
 
