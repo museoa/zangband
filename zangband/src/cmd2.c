@@ -1474,8 +1474,6 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 
 	bool more = FALSE;
 
-	int xp;
-
 	/* Get trap */
 	f_ptr = field_first_known(c_ptr, FTYPE_TRAP);
 
@@ -1488,9 +1486,6 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
-
-	/* Get amount of xp for a successful disarm */
-	xp = f_ptr->data[0] * f_ptr->data[0];
 
 	/* Get type of trap */
 	t_ptr = &t_info[f_ptr->t_idx];
@@ -1508,9 +1503,6 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	{
 		/* Message */
 		msgf("You have disarmed the %s.", t_ptr->name);
-
-		/* Reward */
-		gain_exp(xp);
 	}
 
 	/* Failure -- Keep trying */
