@@ -2028,6 +2028,7 @@ static bool borg_easy_open;
 static bool borg_easy_disarm;
 static bool borg_easy_floor;
 static bool borg_auto_more;
+static bool borg_emergency_stop;
 static bool borg_disturb_other;
 static bool borg_confirm_wear;
 static bool borg_check_transaction;
@@ -2068,7 +2069,9 @@ static void borg_set_options(void)
 
 	/* The borg can get off-sequence with this */
 	borg_auto_more = auto_more;
+	borg_emergency_stop = emergency_stop;
 	auto_more = FALSE;
+	emergency_stop = FALSE;
 
 	/* Keep track of these options values */
 	borg_confirm_wear = confirm_wear;
@@ -2105,6 +2108,7 @@ static void borg_reset_options(void)
 
 	/* The borg can get off-sequence with this */
 	auto_more = borg_auto_more;
+	emergency_stop = borg_emergency_stop;
 
 	/* Prevent some [y/n] questions */
 	disturb_other = borg_disturb_other;
