@@ -1004,19 +1004,6 @@ static errr Infowin_resize(int w, int h)
 
 
 /*
- * Visually clear Infowin
- */
-static errr Infowin_wipe(void)
-{
-	/* Execute the request */
-	XClearWindow(Metadpy->dpy, Infowin->win);
-
-	/* Success */
-	return (0);
-}
-
-
-/*
  * A NULL terminated pair list of legal "operation names"
  *
  * Pairs of values, first is texttual name, second is the string
@@ -1838,9 +1825,6 @@ static errr Term_xtra_xpj(int n, int v)
 
 		/* Handle change in the "level" */
 		case TERM_XTRA_LEVEL: return (Term_xtra_xpj_level(v));
-
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR: Infowin_wipe(); return (0);
 
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY: usleep(1000 * v); return (0);

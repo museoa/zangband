@@ -311,10 +311,6 @@ static errr Term_xtra_vm(int n, int v)
 		/* Success */
 		return (0);
 
-		case TERM_XTRA_CLEAR:
-
-		ScreenClear();
-		return (0);
 
 #if 0
 		case TERM_XTRA_FROSH:

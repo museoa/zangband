@@ -181,12 +181,6 @@ static errr Term_xtra_tnb(int n, int v)
 			return (Term_xtra_tnb_flush());
 		}
 
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR:
-		{
-			return (Term_xtra_tnb_clear());
-		}
-
 		/* React to global changes */
 		case TERM_XTRA_REACT:
 		{

@@ -2610,10 +2610,6 @@ static errr amiga_xtra( int n, int v )
 		case TERM_XTRA_FLUSH:
 			return ( amiga_flush( v ));
 
-		/* Make a noise */
-		case TERM_XTRA_CLEAR:
-			return ( amiga_clear());
-
 		/* Change cursor visibility */
 		case TERM_XTRA_SHAPE:
 

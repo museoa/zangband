@@ -379,13 +379,6 @@ static errr term_xtra_svgalib(int n, int v)
 			return 0;
 		}
 
-		case TERM_XTRA_CLEAR:
-		{
-			/* Clear the entire window */
-			gl_fillbox(0, 0, 80 * CHAR_W, 25 * CHAR_H, 0);
-			return 0;
-		}
-
 		case TERM_XTRA_DELAY:
 		{
 			/* Delay for some milliseconds */

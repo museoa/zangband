@@ -664,46 +664,6 @@ static errr Term_xtra_ibm(int n, int v)
 			return (0);
 		}
 
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR:
-		{
-
-#ifdef USE_CONIO
-
-			/* Clear the screen */
-			clrscr();
-
-#else /* USE_CONIO */
-
-			/* Clear each line (virtual or physical) */
-			for (i = 0; i < rows; i++)
-			{
-				/* Clear the line */
-				memcpy((VirtualScreen + ((i*cols) << 1)), wiper, (cols << 1));
-			}
-
-# ifdef USE_VIRTUAL
-
-#  ifdef USE_WAT
-
-			/* Copy the virtual screen to the physical screen */
-			memcpy(PhysicalScreen, VirtualScreen, 25*80*2);
-
-#  else /* USE_WAT */
-
-			/* Erase the physical screen */
-			ScreenClear();
-
-#  endif /* USE_WAT */
-
-# endif /* USE_VIRTUAL */
-
-#endif /* USE_CONIO */
-
-			/* Success */
-			return (0);
-		}
-
 		/* Process events */
 		case TERM_XTRA_EVENT:
 		{
@@ -1350,10 +1310,35 @@ errr init_ibm(void)
 
 #endif /* USE_VIRTUAL */
 
+#ifdef USE_CONIO
+	/* Clear the screen */
+	clrscr();
+#else /* USE_CONIO */
 
-	/* Erase the screen */
-	Term_xtra_ibm(TERM_XTRA_CLEAR, 0);
+	/* Clear each line (virtual or physical) */
+	for (i = 0; i < rows; i++)
+	{
+		/* Clear the line */
+		memcpy((VirtualScreen + ((i*cols) << 1)), wiper, (cols << 1));
+	}
 
+# ifdef USE_VIRTUAL
+
+#  ifdef USE_WAT
+
+	/* Copy the virtual screen to the physical screen */
+	memcpy(PhysicalScreen, VirtualScreen, 25*80*2);
+
+#  else /* USE_WAT */
+
+	/* Erase the physical screen */
+	ScreenClear();
+
+#  endif /* USE_WAT */
+
+# endif /* USE_VIRTUAL */
+
+#endif /* USE_CONIO */
 
 	/* Place the cursor */
 	Term_curs_ibm(0, 0);

@@ -1369,11 +1369,6 @@ static errr Term_xtra_xaw(int n, int v)
 		while (!CheckEvent(FALSE));
 		return (0);
 
-		/* Clear the window */
-		case TERM_XTRA_CLEAR:
-		XClearWindow(dpy, XtWindow(widget));
-		return (0);
-
 		/* Delay */
 		case TERM_XTRA_DELAY:
 		if (v > 0) usleep(1000 * v);

@@ -857,8 +857,6 @@ static errr Infowin_locate(int x, int y, int w, int h)
 	return (0);
 }
 
-#endif /* IGNORE_UNUSED_FUNCTIONS */
-
 
 /*
  * Visually clear Infowin
@@ -872,8 +870,6 @@ static errr Infowin_wipe(void)
 	return (0);
 }
 
-
-#ifndef IGNORE_UNUSED_FUNCTIONS
 
 /*
  * Visually Paint Infowin with the current color
@@ -1441,19 +1437,8 @@ static errr Infofnt_text_non(int x, int y, int len)
 
 	/*** Find the dimensions ***/
 	square_to_pixel(&x1, &y1, x, y);
-	square_to_pixel(&x2, &y2, x + len - 1, y);
+	square_to_pixel(&x2, &y2, x + len, y + 1);
 	
-	/* Get bottom rhs of rectangle */
-	if (is_bigtiled(x + len, y))
-	{
-		x2 += Infofnt->twid;
-	}
-	else
-	{
-		x2 += Infofnt->wid;
-	}
-	y2 += Infofnt->hgt;
-
 	/*** Actually 'paint' the area ***/
 
 	/* Just do a Fill Rectangle */
@@ -1988,10 +1973,7 @@ static void scan_pending_windows(void)
 			/* Desired size of window */
 			wid = cols * td->fnt->wid + (ox + ox);
 			hgt = rows * td->fnt->hgt + (oy + oy);
-
-			/* Resize the Term (if needed) */
-			(void)Term_resize(cols, rows);
-
+			
 			/* Resize the windows if any "change" is needed */
 			if ((Infowin->w != wid) || (Infowin->h != hgt))
 			{
@@ -1999,6 +1981,10 @@ static void scan_pending_windows(void)
 				Infowin_set(td->win);
 				Infowin_resize(wid, hgt);
 			}
+
+			/* Resize the Term (if needed) */
+			(void)Term_resize(cols, rows);
+
 		}
 		else if (td->win->redraw == TRUE)
 		{
@@ -2173,6 +2159,7 @@ static errr CheckEvent(bool wait)
 			else
 			{
 				/* Make sure to redraw later */
+				event_pending = TRUE;
 				Infowin->redraw = TRUE;
 			}
 
@@ -2196,16 +2183,53 @@ static errr CheckEvent(bool wait)
 		/* Move and/or Resize */
 		case ConfigureNotify:
 		{
+			int cols, rows, wid, hgt;
+
+			int ox = Infowin->ox;
+			int oy = Infowin->oy;
+			
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;
 			Infowin->y = xev->xconfigure.y;
-			Infowin->w = xev->xconfigure.width;
-			Infowin->h = xev->xconfigure.height;
 			
-			/* We need to resize this window (later) */
-			Infowin->resize = TRUE;
-			event_pending = TRUE;
+			if ((Infowin->w != xev->xconfigure.width) ||
+				(Infowin->h != xev->xconfigure.height))
+			{
+				Infowin->w = xev->xconfigure.width;
+				Infowin->h = xev->xconfigure.height;
+							
+				/* We need to notice the resize of this window (later) */
+				Infowin->resize = TRUE;
+				event_pending = TRUE;
+			}
+			
+			/* Determine "proper" number of rows/cols */
+			cols = ((Infowin->w - (ox + ox)) / td->fnt->wid);
+			rows = ((Infowin->h - (oy + oy)) / td->fnt->hgt);
+			
+			/* Hack -- minimal size */
+			if (cols < 1) cols = 1;
+			if (rows < 1) rows = 1;
 
+			/* Hack the main window must be at least 80x24 */
+			if (i == 0)
+			{
+				if (cols < 80) cols = 80;
+				if (rows < 24) rows = 24;
+			}
+			
+			/* Desired size of window */
+			wid = cols * td->fnt->wid + (ox + ox);
+			hgt = rows * td->fnt->hgt + (oy + oy);
+			
+			/* Resize the windows if any "change" is needed */
+			if ((Infowin->w != wid) || (Infowin->h != hgt))
+			{
+				/* Resize window */
+				Infowin_set(td->win);
+				Infowin_resize(wid, hgt);
+			}
+			
 			break;
 		}
 	}
@@ -2313,10 +2337,7 @@ static errr Term_xtra_x11(int n, int v)
 
 		/* Handle change in the "level" */
 		case TERM_XTRA_LEVEL: return (Term_xtra_x11_level(v));
-
-		/* Clear the screen and redraw any selection later */
-		case TERM_XTRA_CLEAR: Infowin_wipe(); x11_selection->drawn = FALSE; return (0);
-
+		
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY:
 			if (v > 0) usleep(1000 * v);

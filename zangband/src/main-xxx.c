@@ -275,20 +275,6 @@ static errr Term_xtra_xxx(int n, int v)
 			return (0);
 		}
 
-		case TERM_XTRA_CLEAR:
-		{
-			/*
-			 * Clear the entire window XXX XXX XXX
-			 *
-			 * This action should clear the entire window, and redraw
-			 * any "borders" or other "graphic" aspects of the window.
-			 *
-			 * This action is required.
-			 */
-
-			return (0);
-		}
-
 		case TERM_XTRA_SHAPE:
 		{
 			/*

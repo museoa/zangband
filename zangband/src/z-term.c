@@ -1087,9 +1087,6 @@ static void Term_fresh_row_text(int y, int x1, int x2)
  * are done, and we make it visible after moving it to its final location
  * after all of the screen updates are complete.
  *
- * Note that "Term_xtra(TERM_XTRA_CLEAR,0)" must erase the entire screen,
- * including the cursor, if needed, and may place the cursor anywhere.
- *
  * Note that "Term_xtra(TERM_XTRA_FROSH,y)" will be always be called
  * after any row "y" has been "flushed", unless the "Term->never_frosh"
  * flag is set, and "Term_xtra(TERM_XTRA_FRESH,0)" will be called after
@@ -1222,9 +1219,6 @@ void Term_fresh(void)
 	{
 		byte na = Term->attr_blank;
 		char nc = Term->char_blank;
-
-		/* Physically erase the entire window */
-		Term_xtra(TERM_XTRA_CLEAR, 0);
 
 		/* Hack -- clear all "cursor" data */
 		old->cv = old->cu = old->cx = old->cy = 0;

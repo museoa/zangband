@@ -743,12 +743,6 @@ static errr Term_xtra_gcu(int n, int v)
 	/* Analyze the request */
 	switch (n)
 	{
-		/* Clear screen */
-		case TERM_XTRA_CLEAR:
-		touchwin(td->win);
-		(void)wclear(td->win);
-		return (0);
-
 		/* Make a noise */
 		case TERM_XTRA_NOISE:
 		(void)write(1, "\007", 1);

@@ -915,12 +915,6 @@ static errr Term_xtra_cap(int n, int v)
 	/* Analyze the request */
 	switch (n)
 	{
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR:
-		do_cl();
-		do_move(0, 0, 0, 0);
-		return (0);
-
 		/* Make a noise */
 		case TERM_XTRA_NOISE:
 		(void)write(1, "\007", 1);

@@ -1911,8 +1911,6 @@ static void term_data_resize(term_data *td)
 
 /*
  * Hack -- redraw a term_data
- *
- * Note that "Term_redraw()" calls "TERM_XTRA_CLEAR"
  */
 static void term_data_redraw(term_data *td)
 {
@@ -2550,44 +2548,6 @@ static errr Term_xtra_mac(int n, int v)
 		{
 			/* Activate if requested */
 			if (v) activate(td->w);
-
-			/* Success */
-			return (0);
-		}
-
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR:
-		{
-			Rect		portRect;
-			
-#ifdef TARGET_CARBON
-			GetWindowBounds( (WindowRef)td->w, kWindowContentRgn, &portRect );
-			global_to_local( &portRect );
-#else
-			portRect = td->w->portRect;
-#endif
-			
-			/* No clipping XXX XXX XXX */
-			ClipRect(&portRect);
-
-			/* Erase the window */
-			EraseRect(&portRect);
-
-			/* Set the color */
-			term_data_color(td, TERM_WHITE);
-
-			/* Frame the window in white */
-			MoveTo(0, 0);
-			LineTo(0, td->size_hgt-1);
-			LineTo(td->size_wid-1, td->size_hgt-1);
-			LineTo(td->size_wid-1, 0);
-
-			/* Clip to the new size */
-			r.left = portRect.left + td->size_ow1;
-			r.top = portRect.top + td->size_oh1;
-			r.right = portRect.right - td->size_ow2;
-			r.bottom = portRect.bottom - td->size_oh2;
-			ClipRect(&r);
 
 			/* Success */
 			return (0);

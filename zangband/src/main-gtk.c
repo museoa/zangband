@@ -266,37 +266,6 @@ static errr Term_xtra_gtk_react(void)
 	return (0);
 }
 
-
-/*
- * Erase the whole term.
- */
-static errr Term_clear_gtk(void)
-{
-	int width, height;
-
-	term_data *td = (term_data*)(Term->data);
-	
-	/* Don't draw to hidden windows */
-	if (!td->shown) return (0);
-
-	g_assert(td->pixmap);
-	g_assert(td->drawing_area->window);
-
-    /* Find proper dimensions for rectangle */
-    gdk_window_get_size(td->drawing_area->window, &width, &height);
-
-    /* Clear the area */
-	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc,
-	                   1, 0, 0, width, height);
-
-	/* Copy it to the window */
-	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                0, 0, 0, 0, width, height);
-
-	/* Success */
-	return (0);
-}
-
 #ifdef USE_GRAPHICS
 
 /*
@@ -995,9 +964,6 @@ static errr Term_xtra_gtk(int n, int v)
 
 		/* Handle change in the "level" */
 		case TERM_XTRA_LEVEL: return (0);
-
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR: return (Term_clear_gtk());
 
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY:

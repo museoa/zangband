@@ -649,16 +649,6 @@ static errr Term_xtra_dos(int n, int v)
 			return (0);
 		}
 
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR:
-		{
-			/* Clear the screen */
-			Term_xtra_dos_clear();
-
-			/* Success */
-			return (0);
-		}
-
 		/* Process events */
 		case TERM_XTRA_EVENT:
 		{

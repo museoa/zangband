@@ -2132,12 +2132,6 @@ static errr Term_xtra_win(int n, int v)
 			return (Term_xtra_win_flush());
 		}
 
-		/* Clear the screen */
-		case TERM_XTRA_CLEAR:
-		{
-			return (Term_xtra_win_clear());
-		}
-
 		/* React to global changes */
 		case TERM_XTRA_REACT:
 		{

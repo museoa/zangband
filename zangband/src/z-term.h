@@ -250,7 +250,6 @@ struct term
  */
 #define TERM_XTRA_EVENT	1		/* Process some pending events */
 #define TERM_XTRA_FLUSH 2		/* Flush all pending events */
-#define TERM_XTRA_CLEAR 3		/* Clear the entire window */
 #define TERM_XTRA_SHAPE 4		/* Set cursor shape (optional) */
 #define TERM_XTRA_FROSH 5		/* Flush one row (optional) */
 #define TERM_XTRA_FRESH 6		/* Flush all rows (optional) */
