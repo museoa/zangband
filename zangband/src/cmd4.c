@@ -2115,7 +2115,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the monster attr/char info */
 				fprintf(fff, "R:%d:0x%02X:0x%02X\n\n", i,
-						(uint)(r_ptr->x_attr), (uint)(r_ptr->x_char));
+						(byte)(r_ptr->x_attr), (byte)(r_ptr->x_char));
 			}
 
 			/* All done */
@@ -2169,7 +2169,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the object attr/char info */
 				fprintf(fff, "K:%d:0x%02X:0x%02X\n\n", i,
-						(uint)(k_ptr->x_attr), (uint)(k_ptr->x_char));
+						(byte)(k_ptr->x_attr), (byte)(k_ptr->x_char));
 			}
 
 			/* All done */
@@ -2223,7 +2223,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the feature attr/char info */
 				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-						(uint)(f_ptr->x_attr), (uint)(f_ptr->x_char));
+						(byte)(f_ptr->x_attr), (byte)(f_ptr->x_char));
 			}
 
 			/* All done */
@@ -2277,7 +2277,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the field attr/char info */
 				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-						(uint)(t_ptr->f_attr), (uint)(t_ptr->f_char));
+						(byte)(t_ptr->f_attr), (byte)(t_ptr->f_char));
 			}
 
 			/* All done */
@@ -2305,9 +2305,9 @@ void do_cmd_visuals(void)
 				monster_race *r_ptr = &r_info[r];
 
 				byte da = (r_ptr->d_attr);
-				char dc = (r_ptr->d_char);
+				byte dc = (r_ptr->d_char);
 				byte ca = (r_ptr->x_attr);
-				char cc = (r_ptr->x_char);
+				byte cc = (r_ptr->x_char);
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
@@ -2359,9 +2359,9 @@ void do_cmd_visuals(void)
 				object_kind *k_ptr = &k_info[k];
 
 				byte da = (byte)k_ptr->d_attr;
-				char dc = (byte)k_ptr->d_char;
+				byte dc = (byte)k_ptr->d_char;
 				byte ca = (byte)k_ptr->x_attr;
-				char cc = (byte)k_ptr->x_char;
+				byte cc = (byte)k_ptr->x_char;
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
@@ -2413,9 +2413,9 @@ void do_cmd_visuals(void)
 				feature_type *f_ptr = &f_info[f];
 
 				byte da = (byte)f_ptr->d_attr;
-				char dc = (byte)f_ptr->d_char;
+				byte dc = (byte)f_ptr->d_char;
 				byte ca = (byte)f_ptr->x_attr;
-				char cc = (byte)f_ptr->x_char;
+				byte cc = (byte)f_ptr->x_char;
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
@@ -2467,9 +2467,9 @@ void do_cmd_visuals(void)
 				field_thaum *t_ptr = &t_info[f];
 
 				byte da = (byte)t_ptr->d_attr;
-				char dc = (byte)t_ptr->d_char;
+				byte dc = (byte)t_ptr->d_char;
 				byte ca = (byte)t_ptr->f_attr;
-				char cc = (byte)t_ptr->f_char;
+				byte cc = (byte)t_ptr->f_char;
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
