@@ -1529,7 +1529,7 @@ bool borg_crush_junk(void)
 	int i;
 	bool fix = FALSE;
 	s32b p;
-	s32b value;
+	s32b value, old_value;
 	s32b my_power;
 
 	/* Hack -- no need */
@@ -1545,7 +1545,7 @@ bool borg_crush_junk(void)
 	my_power = borg_power();
 
 	/* Include the effects of value of items */
-	my_power += (long)borg_skill[BI_VALUE];
+	old_value = (long)borg_skill[BI_VALUE];
 
 	/* Destroy actual "junk" items */
 	for (i = 0; i < inven_num; i++)
@@ -1586,13 +1586,13 @@ bool borg_crush_junk(void)
 			p = borg_power();
 
 			/* Include the effects of value of items */
-			p += borg_skill[BI_VALUE];
+			value = old_value - borg_skill[BI_VALUE];
 
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 
-			/* Hack - set value */
-			value = my_power - p;
+			/* Do not junk useful things */
+			if (my_power > p) continue;
 
 			/* up to level 5, keep anything of value 100 or better */
 			if (borg_skill[BI_CDEPTH] < 5 && value > 100)
