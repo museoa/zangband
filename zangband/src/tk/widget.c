@@ -298,9 +298,9 @@ static void draw_char(int x, int y, byte a, char c, Widget *widgetPtr)
 				pixel = 0;
 			}
 						
-			b = (pixel & 0x00FF0000) >> 16;
+			r = (pixel & 0x00FF0000) >> 16;
 			g = (pixel & 0x0000FF00) >> 8;
-			r = pixel & 0xFF;
+			b = pixel & 0xFF;
 						
 			
 			/* Convert to bitdepth of screen bitmap and display */
