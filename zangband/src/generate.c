@@ -705,9 +705,9 @@ static bool cave_gen(void)
 			/* make catacomb-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
 		}
-		else if (randint(dun_level) > 25)
+		else if (randint(dun_level) > 50)
 #else
-		if (randint(dun_level) > 25)
+		if (randint(dun_level) > 50)
 #endif /* PILLAR_TUNNELS */
 		{
 			/* make cave-like tunnel */
