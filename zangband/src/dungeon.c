@@ -35,29 +35,36 @@ static byte value_check_aux1(object_type *o_ptr)
 	if (ego_item_p(o_ptr))
 	{
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return FEEL_WORTHLESS;
-
+		if (o_ptr->flags3 & TR3_CURSED || broken_p(o_ptr))
+		{
+			return FEEL_WORTHLESS;
+		}
+		else if (cursed_p(o_ptr))
+		{
+			return FEEL_TAINTED;
+		}
 		/* Normal */
 		return FEEL_EXCELLENT;
 	}
 
-	/* Cursed items */
-	if (cursed_p(o_ptr)) return FEEL_CURSED;
-
 	/* Broken items */
 	if (broken_p(o_ptr)) return FEEL_BROKEN;
 
-	/* Good "armor" bonus */
-	if (o_ptr->to_a > 0) return FEEL_GOOD;
-
-	/* Good "weapon" bonus */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return FEEL_GOOD;
+	/* Good bonus */
+	if ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0))
+	{
+		/* Cursed good item? */
+		if (cursed_p(o_ptr)) return FEEL_DUBIOUS;
+		
+		/* Normal good item */
+		return FEEL_GOOD;	
+	}
 	
-	/* Bad "armor" bonus */
-	if (o_ptr->to_a < 0) return FEEL_BAD;
-
-	/* Bad "weapon" bonus */
-	if (o_ptr->to_h + o_ptr->to_d < 0) return FEEL_BAD;
+	/* Cursed items */
+	if (cursed_p(o_ptr)) return FEEL_CURSED;
+	
+	/* Bad  bonus */
+	if ((o_ptr->to_a < 0) || (o_ptr->to_h + o_ptr->to_d < 0)) return FEEL_BAD;
 
 	/* Default to "average" */
 	return FEEL_AVERAGE;

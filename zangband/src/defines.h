@@ -2389,8 +2389,10 @@
 #define FEEL_EXCELLENT         8
 #define FEEL_SPECIAL           9
 #define FEEL_BAD			   10
+#define FEEL_DUBIOUS		   11
+#define FEEL_TAINTED		   12
 
-#define FEEL_MAX               11
+#define FEEL_MAX               13
 
 /*
  * Hack -- special "xtra" object powers for ego items and some artifacts

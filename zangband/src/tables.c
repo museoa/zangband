@@ -6398,6 +6398,8 @@ cptr game_inscriptions[FEEL_MAX] =
 	"excellent",     /* FEEL_EXCELLENT */
 	"special",       /* FEEL_SPECIAL */
 	"bad",			 /* FEEL_BAD */
+	"dubious",		 /* FEEL_DUBIOUS */
+	"tainted",		 /* FEEL_TAINTED */
 };
 
 
