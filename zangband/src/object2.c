@@ -4384,6 +4384,9 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 			/* Add new object */
 			if (!comb) k++;
+			
+			/* No stacking (allow combining) [Optional for Topi] */
+			if (!testing_stack && (k > 1)) continue;
 
 			/* Paranoia */
 			if (k > 99) continue;

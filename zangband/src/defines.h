@@ -3705,7 +3705,7 @@
 #define auto_notes				p_ptr->options[189]
 #define take_notes				p_ptr->options[190]
 /* {TRUE,  0, NULL,					"Number 253" }, p_ptr->options[191] */
-/* {TRUE,  0, NULL,					"Number 254" }, svr_ptr->options[30] */
+#define testing_stack			svr_ptr->options[30]
 /* {TRUE,  0, NULL,					"Number 255" }, svr_ptr->options[31] */
 
 
