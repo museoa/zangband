@@ -462,6 +462,9 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		y = y1 + ddy_ddd[i];
 		x = x1 + ddx_ddd[i];
 
+		/* Ignore locations off of edge */
+		if (!in_bounds2(y,x)) continue;
+		
 		/* Ignore illegal locations */
 		if (!area(y,x)->when) continue;
 
@@ -535,6 +538,9 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 		y = fy + ddy_ddd[i];
 		x = fx + ddx_ddd[i];
 
+		/* Ignore locations off of edge */
+		if (!in_bounds2(y,x)) continue;
+		
 		/* Ignore illegal locations */
 		if (area(y,x)->when == 0) continue;
 
@@ -780,7 +786,7 @@ static bool get_moves(int m_idx, int *mm)
 			{
 				int x = px + ddx_ddd[i];
 				int y = py + ddy_ddd[i];
-
+				
 				/* Check grid */
 				if (monster_can_cross_terrain(area(y,x)->feat, r_ptr))
 				{
@@ -2022,6 +2028,9 @@ static void process_monster(int m_idx)
 		{
 			for (x = ox - 1; x <= ox + 1; x++)
 			{
+				/* Ignore locations off of edge */
+				if (!in_bounds2(y,x)) continue;
+				
 				if (area(y,x)->m_idx) k++;
 			}
 		}
@@ -2249,6 +2258,9 @@ static void process_monster(int m_idx)
 		ny = oy + ddy[d];
 		nx = ox + ddx[d];
 
+		/* Ignore locations off of edge */
+		if (!in_bounds2(ny,nx)) continue;
+		
 		/* Access that cave grid */
 		c_ptr = area(ny,nx);
 
