@@ -815,7 +815,7 @@
 #define REALM_DEATH        5
 #define REALM_TRUMP        6
 #define REALM_ARCANE       7
-#define MAX_REALM          7
+#define MAX_REALM          8
 
 /*
  * Magic-books for the realms

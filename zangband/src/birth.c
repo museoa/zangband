@@ -2138,7 +2138,7 @@ static bool get_player_realms(void)
 	select[0] = REALM_NONE;
 
 	/* Get choices */
-	for (i = 1; i <= MAX_REALM; i++)
+	for (i = 1; i < MAX_REALM; i++)
 	{
 		/* Can we use this realm? */
 		if (realm_choices1[p_ptr->pclass] & (1 << (i - 1)))
@@ -2177,7 +2177,7 @@ static bool get_player_realms(void)
 	count = 0;
 
 	/* Get choices */
-	for (i = 1; i <= MAX_REALM; i++)
+	for (i = 1; i < MAX_REALM; i++)
 	{
 		/* Can we use this realm? */
 		if ((realm_choices2[p_ptr->pclass] & (1 << (i - 1)))
