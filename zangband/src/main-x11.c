@@ -1719,14 +1719,26 @@ static errr CheckEvent(bool wait)
 
 		case Expose:
 		{
+			int x1, x2, y1, y2;
+			
 			/* Ignore "extra" exposes */
-			if (xev->xexpose.count) break;
+			/*if (xev->xexpose.count) break;*/
 
 			/* Clear the window */
-			Infowin_wipe();
+			/*Infowin_wipe();*/
+			
+			x1 = (xev->xexpose.x - Infowin->ox)/Infofnt->wid;
+			x2 = (xev->xexpose.x + xev->xexpose.width -
+				 Infowin->ox)/Infofnt->wid;
+			
+			y1 = (xev->xexpose.y - Infowin->oy)/Infofnt->hgt;
+			y2 = (xev->xexpose.y + xev->xexpose.height -
+				 Infowin->oy)/Infofnt->hgt;
+			
+			Term_redraw_section(x1, y1, x2, y2);
 
 			/* Redraw */
-			Term_redraw();
+			/*Term_redraw();*/
 
 			break;
 		}
