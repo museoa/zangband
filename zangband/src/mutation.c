@@ -1908,6 +1908,7 @@ void mutation_power_aux(u32b power)
 			{
 				int x, y, ox, oy;
 				cave_type *c_ptr;
+				byte dummy;
 
 				if (!get_rep_dir(&dir,FALSE)) break;
 				y = py + ddy[dir];
@@ -1960,11 +1961,21 @@ void mutation_power_aux(u32b power)
 				}
 				(void)wall_to_mud(dir);
 
+				/* Save old location */
 				oy = py;
 				ox = px;
 
+				/* Process fields under the player. */
+				field_hook(&area(py, px)->fld_idx,
+					 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+
+				/* Move the player */
 				py = y;
 				px = x;
+		
+				/* Process fields under the player. */
+				field_hook(&area(py, px)->fld_idx,
+			 		FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
 
 				if (!dun_level)
 				{

@@ -3033,6 +3033,8 @@ void update_smart_learn(int m_idx, int what)
  */
 bool player_place(int y, int x)
 {
+#if 0 /* This is never used */
+
 	/* Paranoia XXX XXX */
 	if (area(y, x)->m_idx != 0) return FALSE;
 
@@ -3047,6 +3049,8 @@ bool player_place(int y, int x)
 		p_ptr->wilderness_y = py;
 		move_wild();
 	}
+	
+#endif /* 0 */
 
 	/* Success */
 	return TRUE;

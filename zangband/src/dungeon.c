@@ -1273,6 +1273,13 @@ static void process_world(void)
 		}
 	}
 
+	/* 
+	 * Fields you are standing on may do something.
+	 *
+	 * Note the use of temp as a dummy field in the function call.
+	 */
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_PLAYER_ON, (void *) &temp);
+
 	/* Nightmare mode activates the TY_CURSE at midnight */
 	if (ironman_nightmare)
 	{

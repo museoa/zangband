@@ -1968,6 +1968,16 @@ static void process_monster(int m_idx)
 			return;
 		}
 	}
+	
+	/* Get the origin */
+	oy = m_ptr->fy;
+	ox = m_ptr->fx;
+	
+	/* Access that cave grid */
+	c_ptr = area(oy,ox);
+
+	/* Process fields under the monster. */
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (void *) m_ptr);
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)
@@ -2194,9 +2204,7 @@ static void process_monster(int m_idx)
 		}
 	}
 
-	/* Get the origin */
-	oy = m_ptr->fy;
-	ox = m_ptr->fx;
+
 
 
 	/* Attempt to "multiply" if able and allowed */
@@ -2781,12 +2789,19 @@ static void process_monster(int m_idx)
 		if (do_move)
 		{
 			s16b this_o_idx, next_o_idx;
+			
+			cave_type *old_ptr = area(oy, ox);
 
 			/* Take a turn */
 			do_turn = TRUE;
 
+			
+			/* Process fields under the monster. */
+			field_hook(&old_ptr->fld_idx,
+				 FIELD_ACT_MONSTER_LEAVE, (void *) m_ptr);
+			
 			/* Hack -- Update the old location */
-			area(oy, ox)->m_idx = c_ptr->m_idx;
+			old_ptr->m_idx = c_ptr->m_idx;
 
 			/* Mega-Hack -- move the old monster, if any */
 			if (c_ptr->m_idx)
@@ -2808,6 +2823,10 @@ static void process_monster(int m_idx)
 			/* Move the monster */
 			m_ptr->fy = ny;
 			m_ptr->fx = nx;
+			
+			/* Process fields under the monster. */
+			field_hook(&old_ptr->fld_idx,
+				 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
 
 			/* Update the monster */
 			update_mon(m_idx, TRUE);

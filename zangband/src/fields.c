@@ -272,6 +272,8 @@ void compact_fields(int size)
 	int cur_lev, cur_dis, chance;
 	int dummy;
 	s16b i;
+	
+	s16b *fld_ptr;
 
 
 	/* Compact */
@@ -307,8 +309,12 @@ void compact_fields(int size)
 			/* Skip dead fields */
 			if (!f_ptr->t_idx) continue;
 
+			/* Get pointer to field index */
+			fld_ptr = field_find(i);
+
 			/* Get compaction "value" */
-			field_hook(field_find(i), FIELD_ACT_COMPACT, (void *) &fld_level);
+			(void) field_hook_single(fld_ptr, FIELD_ACT_COMPACT,
+				 (void *) &fld_level);
 
 			/* Hack -- High level fields start out "immune" */
 			if (fld_level > cur_lev) continue;
@@ -330,7 +336,11 @@ void compact_fields(int size)
 			if (rand_int(100) < chance) continue;
 
 			/* Call completion routine */
-			field_hook(field_find(i), FIELD_ACT_EXIT, (void *) &dummy);
+			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, (void *) &dummy))
+			{
+				/* It didn't delete itself (naughty) so we do it now */
+				delete_field_aux(fld_ptr);
+			}
 
 			/* Count it */
 			num++;
@@ -748,6 +758,40 @@ s16b *field_find(s16b fld_idx)
 }
 
 /*
+ * Call the action function for the field pointed to by *field_ptr.
+ *
+ * This function does not do a list of fields like the one below.
+ *
+ * It returns FALSE if the field deleted itself, FALSE otherwise.
+ */
+bool field_hook_single(s16b *field_ptr, int action, void *action_struct)
+{
+	/* Point to the field */
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	
+	/* Paranoia - Is there a function to call? */
+	if (f_ptr->action[action])
+	{
+		/* Call the action function */
+		f_ptr->action[action](field_ptr, action_struct);
+	}
+	
+	/* Check for deletion */
+	if (&fld_list[*field_ptr] == f_ptr)
+	{
+		/* The field is still there */
+		return TRUE;
+	}
+	else
+	{
+		/* The field has moved - assume it has deleted itself */
+		return FALSE;
+	}
+}
+
+
+/*
  * Call the specified action routine for each field
  * in the list specified by *field_ptr.
  *
@@ -763,11 +807,16 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
 		/* Point to the field */
 		f_ptr = &fld_list[*field_ptr];
 
-		/* Is there a function to call? */
+		/* Paranoia - Is there a function to call? */
 		if (f_ptr->action[action])
 		{
 			/* Call the action function */
 			f_ptr->action[action](field_ptr, action_struct);
+		}
+		else
+		{
+			/* Paranoia - Next field in the list */
+			field_ptr = &f_ptr->next_f_idx;
 		}
 
 		/*
@@ -786,6 +835,8 @@ void process_fields(void)
 	s16b fld_idx;
 	field_type *f_ptr;
 	int dummy;
+	
+	s16b *fld_ptr;
 
 	for (fld_idx = 0; fld_idx < fld_max; fld_idx++)
 	{
@@ -794,6 +845,9 @@ void process_fields(void)
 
 		/* No dead fields */
 		if (!f_ptr->t_idx) continue;
+		
+		/* Get pointer to field index */
+		fld_ptr = field_find(fld_idx);
 
 		/* If it is a temporary field */
 		if (f_ptr->info & FIELD_INFO_TEMP)
@@ -805,7 +859,13 @@ void process_fields(void)
 			if (!f_ptr->counter)
 			{
 				/* Call completion routine */
-				field_hook(field_find(fld_idx), FIELD_ACT_EXIT, (void *) &dummy);
+				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT,
+					 (void *) &dummy));
+				{
+					/* It didn't delete itself - do it now */
+					delete_field_aux(fld_ptr);
+				
+				}
 
 				/* Nothing else to do now */
 				continue;
@@ -813,7 +873,7 @@ void process_fields(void)
 		}
 
 		/* If acts every turn */
-		field_hook(field_find(fld_idx), FIELD_ACT_ALWAYS, (void *) &dummy);
+		(void) field_hook_single(fld_ptr, FIELD_ACT_ALWAYS, (void *) &dummy);
 	}
 }
 

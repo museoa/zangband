@@ -271,6 +271,9 @@ void teleport_player(int dis)
 	bool look = TRUE;
 	cave_type *c_ptr;
 
+	bool p_can_enter;
+	byte dummy;
+
 	if (p_ptr->anti_tele)
 	{
 		msg_print("A mysterious force prevents you from teleporting!");
@@ -311,6 +314,15 @@ void teleport_player(int dis)
 			if (!(cave_naked_grid(c_ptr) ||
 			    ((c_ptr->feat & 0x60) == 0x60))) continue;
 
+			/* Can the player enter? */
+			p_can_enter = TRUE;
+			
+			/* Check for a field that blocks movement */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_enter);
+			
+			/* Cannot enter grid? */
+			if (!p_can_enter) continue;
+			
 			/* No teleporting into vaults and such */
 			if (c_ptr->info & CAVE_ICKY) continue;
 
@@ -334,13 +346,21 @@ void teleport_player(int dis)
 	/* Sound */
 	sound(SOUND_TELEPORT);
 
-	/* Save the old location */
+	/* Save old location */
 	oy = py;
 	ox = px;
+
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
 
 	/* Move the player */
 	py = y;
 	px = x;
+		
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
 
 	if (!dun_level)
 	{
@@ -419,6 +439,8 @@ void teleport_player_to(int ny, int nx)
 	int y, x, oy, ox, dis = 0, ctr = 0;
 
 	cave_type *c_ptr;
+	bool p_can_enter;
+	byte dummy;
 
 	if (p_ptr->anti_tele)
 	{
@@ -439,7 +461,15 @@ void teleport_player_to(int ny, int nx)
 
 		/* Accept "naked" floor grids */
 		c_ptr = area(y, x);
-		if (cave_naked_grid(c_ptr)) break;
+		
+		/* Can the player enter? */
+		p_can_enter = TRUE;
+			
+		/* Check for a field that blocks movement */
+		field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_enter);
+			
+		/* Can enter grid? */
+		if (cave_naked_grid(c_ptr) && p_can_enter) break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
@@ -452,13 +482,21 @@ void teleport_player_to(int ny, int nx)
 	/* Sound */
 	sound(SOUND_TELEPORT);
 
-	/* Save the old location */
+	/* Save old location */
 	oy = py;
 	ox = px;
+
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
 
 	/* Move the player */
 	py = y;
 	px = x;
+		
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
 
 	if (!dun_level)
 	{

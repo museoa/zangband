@@ -2476,6 +2476,7 @@ void move_player(int dir, int do_pickup)
 
 	bool p_can_pass_walls = FALSE;
 	bool stormbringer = FALSE;
+	bool p_can_pass_fields = TRUE;
 
 	bool oktomove = TRUE;
 
@@ -2516,6 +2517,9 @@ void move_player(int dir, int do_pickup)
 	{
 		p_can_pass_walls = FALSE;
 	}
+	
+	/* Get passability of field(s) if there */
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_pass_fields);
 
 	/* Hack -- attack monsters */
 	if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr) || p_can_pass_walls))
@@ -2572,6 +2576,14 @@ void move_player(int dir, int do_pickup)
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->ffall)
 	{
 		msg_print("You can't cross the chasm.");
+		running = 0;
+		oktomove = FALSE;
+	}
+	
+	/* Fields can block movement */
+	else if(!(p_can_pass_walls || p_can_pass_fields))
+	{
+		msg_print("You can't cross that!");
 		running = 0;
 		oktomove = FALSE;
 	}
@@ -2804,6 +2816,7 @@ void move_player(int dir, int do_pickup)
 	if (oktomove)
 	{
 		int oy, ox;
+		byte dummy;
 
 #ifdef USE_SCRIPT
 		if (player_enter_grid_callback(y, x)) return;
@@ -2816,9 +2829,17 @@ void move_player(int dir, int do_pickup)
 		oy = py;
 		ox = px;
 
+		/* Process fields under the player. */
+		field_hook(&area(py, px)->fld_idx,
+			 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+
 		/* Move the player */
 		py = y;
 		px = x;
+		
+		/* Process fields under the player. */
+		field_hook(&area(py, px)->fld_idx,
+			 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
 
 		if (!dun_level)
 		{

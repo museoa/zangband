@@ -2772,6 +2772,9 @@ bool earthquake(int cy, int cx, int r)
 	bool            hurt = FALSE;
 	cave_type       *c_ptr;
 	bool            map[32][32];
+	byte			dummy;
+	
+	bool			p_can_enter;
 
 
 	/* Prevent destruction of quest levels and town */
@@ -2850,6 +2853,15 @@ bool earthquake(int cy, int cx, int r)
 
 			/* Important -- Skip "quake" grids */
 			if (map[16+y-cy][16+x-cx]) continue;
+			
+			/* Default is that you can enter the square */
+			p_can_enter = TRUE;
+			
+			/* Check for a field that blocks movement */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_enter);
+			
+			/* Cannot enter grid? */
+			if (!p_can_enter) continue;
 
 			/* Count "safe" grids */
 			sn++;
@@ -2917,13 +2929,21 @@ bool earthquake(int cy, int cx, int r)
 				}
 			}
 
-			/* Save the old location */
+			/* Save old location */
 			oy = py;
 			ox = px;
 
-			/* Move the player to the safe location */
+			/* Process fields under the player. */
+			field_hook(&area(py, px)->fld_idx,
+				 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+
+			/* Move the player */
 			py = sy;
 			px = sx;
+		
+			/* Process fields under the player. */
+			field_hook(&area(py, px)->fld_idx,
+				 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
 
 			if (!dun_level)
 			{
@@ -3616,6 +3636,8 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 
 /*
  * Switch position with a monster.
+ *
+ * This function allows the player to teleport into a wall!
  */
 bool teleport_swap(int dir)
 {
@@ -3623,6 +3645,7 @@ bool teleport_swap(int dir)
 	cave_type * c_ptr;
 	monster_type * m_ptr;
 	monster_race * r_ptr;
+	byte dummy;
 
 	if ((dir == 5) && target_okay())
 	{
@@ -3671,6 +3694,11 @@ bool teleport_swap(int dir)
 	/* Update the old location */
 	c_ptr->m_idx = 0;
 
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+	
+	
 	/* Move the monster */
 	m_ptr->fy = py;
 	m_ptr->fx = px;
@@ -3681,6 +3709,10 @@ bool teleport_swap(int dir)
 
 	tx = m_ptr->fx;
 	ty = m_ptr->fy;
+	
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
 
 	/* Update the monster (new location) */
 	update_mon(area(ty, tx)->m_idx, TRUE);
