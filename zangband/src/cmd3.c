@@ -1424,8 +1424,6 @@ void do_cmd_query_symbol(void)
 	u16b	why = 0;
 	u16b	*who;
 
-	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, u16b);
 
 	/* Get a character, or abort */
 	if (!get_com("Enter character to be identified: ", &sym)) return;
@@ -1464,6 +1462,8 @@ void do_cmd_query_symbol(void)
 	/* Display the result */
 	prt(buf, 0, 0);
 
+	/* Allocate the "who" array */
+	C_MAKE(who, max_r_idx, u16b);
 
 	/* Collect matching monsters */
 	for (n = 0, i = 1; i < max_r_idx; i++)
@@ -1484,8 +1484,13 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Nothing to recall */
-	if (!n) return;
+	if (!n)
+	{
+		/* XXX XXX Free the "who" array */
+		C_KILL(who, max_r_idx, u16b);
 
+		return;
+	}
 
 	/* Prompt XXX XXX XXX */
 	put_str("Recall details? (k/y/n): ", 0, 40);
@@ -1513,7 +1518,14 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Catch "escape" */
-	if (query != 'y') return;
+	if (query != 'y')
+	{
+		/* XXX XXX Free the "who" array */
+		C_KILL(who, max_r_idx, u16b);
+
+		return;
+	}
+
 
 	/* Sort if needed */
 	if (why == 4)
@@ -1604,6 +1616,9 @@ void do_cmd_query_symbol(void)
 			}
 		}
 	}
+
+	/* Free the "who" array */
+	C_KILL(who, max_r_idx, u16b);
 
 	/* Re-display the identity */
 	prt(buf, 0, 0);

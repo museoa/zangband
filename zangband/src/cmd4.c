@@ -2869,14 +2869,15 @@ static void do_cmd_knowledge_artifacts(void)
 
 	bool *okay;
 
-	/* Allocate the "okay" array */
-	C_MAKE(okay, max_a_idx, bool);
 
 	/* Temporary file */
 	if (path_temp(file_name, 1024)) return;
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
+
+	/* Allocate the "okay" array */
+	C_MAKE(okay, max_a_idx, bool);
 
 	/* Scan the artifacts */
 	for (k = 0; k < max_a_idx; k++)
@@ -3014,6 +3015,9 @@ static void do_cmd_knowledge_artifacts(void)
 		fprintf(fff, "     The %s\n", base_name);
 	}
 
+	/* Free the "okay" array */
+	C_KILL(okay, max_a_idx, bool);
+
 	/* Close the file */
 	my_fclose(fff);
 
@@ -3063,6 +3067,10 @@ static void do_cmd_knowledge_uniques(void)
 		/* No monsters to recall */
 		msg_print("No known uniques.");
 		msg_print(NULL);
+
+		/* XXX XXX Free the "who" array */
+		C_KILL(who, max_r_idx, u16b);
+		
 		return;
 	}
 
@@ -3074,7 +3082,13 @@ static void do_cmd_knowledge_uniques(void)
 	ang_sort(who, &why, n);
 
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, 1024))
+	{
+		/* XXX XXX Free the "who" array */
+		C_KILL(who, max_r_idx, u16b);
+
+		return;
+	}
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -3089,6 +3103,9 @@ static void do_cmd_knowledge_uniques(void)
 		fprintf(fff, "     %s is %s\n",(r_name + r_ptr->name),
 			(dead ? "dead" : "alive"));
 	}
+
+	/* Free the "who" array */
+	C_KILL(who, max_r_idx, u16b);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3330,6 +3347,10 @@ static void do_cmd_knowledge_kill_count(void)
 		/* No monsters to recall */
 		msg_print("No known monsters!");
 		msg_print(NULL);
+
+		/* XXX XXX Free the "who" array */
+		C_KILL(who, max_r_idx, u16b);
+		
 		return;
 	}
 
@@ -3341,7 +3362,13 @@ static void do_cmd_knowledge_kill_count(void)
 	ang_sort(who, &why, n);
 
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, 1024))
+	{
+		/* XXX XXX Free the "who" array */
+		C_KILL(who, max_r_idx, u16b);
+
+		return;
+	}
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -3434,6 +3461,9 @@ static void do_cmd_knowledge_kill_count(void)
 	fprintf(fff,"----------------------------------------------\n");
 	fprintf(fff,"   Total: %lu creature%s killed.\n",
 	        Total, (Total == 1 ? "" : "s"));
+
+	/* Free the "who" array */
+	C_KILL(who, max_r_idx, u16b);
 
 	/* Close the file */
 	my_fclose(fff);

@@ -1311,8 +1311,6 @@ static void spoil_mon_desc(cptr fname)
 	char hp[80];
 	char exp[80];
 
-	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, s16b);
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
@@ -1348,6 +1346,9 @@ static void spoil_mon_desc(cptr fname)
 	fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
 		"----", "---", "---", "---", "--", "--", "-----------");
 
+
+	/* Allocate the "who" array */
+	C_MAKE(who, max_r_idx, s16b);
 
 	/* Scan the monsters */
 	for (i = 1; i < max_r_idx; i++)
@@ -1428,6 +1429,9 @@ static void spoil_mon_desc(cptr fname)
 		fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
 			nam, lev, rar, spd, hp, ac, exp);
 	}
+
+	/* Free the "who" array */
+	C_KILL(who, max_r_idx, s16b);
 
 	/* End it */
 	fprintf(fff, "\n");
@@ -1547,9 +1551,6 @@ static void spoil_mon_info(cptr fname)
 	s16b *who;
 
 
-	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, s16b);
-
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
@@ -1579,6 +1580,8 @@ static void spoil_mon_info(cptr fname)
 	spoil_out(buf);
 	spoil_out("------------------------------------------\n\n");
 
+	/* Allocate the "who" array */
+	C_MAKE(who, max_r_idx, s16b);
 
 	/* Scan the monsters */
 	for (i = 1; i < max_r_idx; i++)
@@ -2308,6 +2311,9 @@ static void spoil_mon_info(cptr fname)
 
 		spoil_out(NULL);
 	}
+
+	/* Free the "who" array */
+	C_KILL(who, max_r_idx, s16b);
 
 	/* Check for errors */
 	if (ferror(fff) || my_fclose(fff))
