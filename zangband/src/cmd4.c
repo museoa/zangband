@@ -1382,7 +1382,7 @@ void do_cmd_pref(void)
 /*
  * Hack -- append all current macros to the given file
  */
-static errr macro_dump(cptr fname)
+errr macro_dump(cptr fname)
 {
 	int i;
 
@@ -1535,7 +1535,7 @@ static void do_cmd_macro_aux_keymap(char *buf)
 /*
  * Hack -- append all keymaps to the given file
  */
-static errr keymap_dump(cptr fname)
+errr keymap_dump(cptr fname)
 {
 	int i;
 

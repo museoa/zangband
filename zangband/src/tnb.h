@@ -27,13 +27,6 @@
 #endif /* */
 
 
-#define PU_MAP_INFO 0x04000000L	/* Update g_grid[] */
-
-/* cmd4.c */
-
-#define CHEAT_MAX 6
-extern option_type cheat_info[];
-
 /* main-tnb.c */
 extern bool g_initialized;
 extern bool game_in_progress;
@@ -352,95 +345,5 @@ extern void prompt_update(cptr str);
 extern void any_more(cptr prompt);
 
 extern int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value);
-
-/*
- * Option: Use a fast file buffer when writing/reading savefiles.
- */
-#define ALLOW_SAVEFILE_BUFFER
-
-/* Size of temp savefile buffer */
-#define SAVEFILE_BUFFER_MAX (30L * 1024L)
-
-/* Version number for savefile extension */
-#define VERSION_MAJOR_TNB 1
-#define VERSION_MINOR_TNB 0
-
-#define VERSION_PATCH_TNB 0
-
-/* Constants for racial and mutation powers */
-enum {
-
-/* Racial power */
-POWER_DWARF,
-POWER_HOBBIT,
-POWER_GNOME,
-POWER_HALF_ORC,
-POWER_HALF_TROLL,
-POWER_AMBERITE_A,
-POWER_AMBERITE_B,
-POWER_BARBARIAN,
-POWER_HALF_OGRE,
-POWER_HALF_GIANT,
-POWER_HALF_TITAN,
-POWER_CYCLOPS,
-POWER_YEEK,
-POWER_KLACKON,
-POWER_KOBOLD,
-POWER_NIBELUNG,
-POWER_DARK_ELF,
-POWER_DRACONIAN,
-POWER_MIND_FLAYER,
-POWER_IMP,
-POWER_GOLEM,
-POWER_SKELETON,
-POWER_ZOMBIE,
-POWER_VAMPIRE,
-POWER_SPECTRE,
-POWER_SPRITE,
-
-/* Mutation power */
-POWER_SPIT_ACID,
-POWER_BR_FIRE,
-POWER_HYPN_GAZE,
-POWER_TELEKINES,
-POWER_VTELEPORT,
-POWER_MIND_BLST,
-POWER_RADIATION,
-POWER_VAMPIRISM,
-POWER_SMELL_MET,
-POWER_SMELL_MON,
-POWER_BLINK,
-POWER_EAT_ROCK,
-POWER_SWAP_POS,
-POWER_SHRIEK,
-POWER_ILLUMINE,
-POWER_DET_CURSE,
-POWER_BERSERK,
-POWER_POLYMORPH,
-POWER_MIDAS_TCH,
-POWER_GROW_MOLD,
-POWER_RESIST,
-POWER_EARTHQUAKE,
-POWER_EAT_MAGIC,
-POWER_WEIGH_MAG,
-POWER_STERILITY,
-POWER_PANIC_HIT,
-POWER_DAZZLE,
-POWER_LASER_EYE,
-POWER_RECALL,
-POWER_BANISH,
-POWER_COLD_TOUCH,
-POWER_LAUNCHER,
-
-/* Max number of power's */
-MAX_POWER
-};
-
-extern cptr power_desc[MAX_POWER];
-extern int get_powers(int *power);
-
-#ifdef ALLOW_EASY_FLOOR
-extern int floor_y, floor_x;
-#endif /* ALLOW_EASY_FLOOR */
 
 #endif /* _INCLUDE_TNB_H_ */

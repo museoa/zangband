@@ -324,7 +324,6 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int i_idx;
 	object_type *o_ptr;
 	char buf[80], *t;
-	Tcl_Obj *listObjPtr;
 
 	if (objC < 2)
 	{
@@ -443,8 +442,6 @@ bad_index:
 
 #ifdef ALLOW_EASY_FLOOR
 
-int floor_y = -1, floor_x = -1;
-
 /*
  *--------------------------------------------------------------
  *
@@ -504,13 +501,8 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	}
 
 	/* XXX Hack -- Determine the location to display */
-	fy = floor_y;
-	fx = floor_x;
-	if (fy == -1)
-	{
-		fy = py;
-		fx = px;
-	}
+	fy = py;
+	fx = px;
 
 	switch (option)
 	{
@@ -756,8 +748,6 @@ bad_index:
  *--------------------------------------------------------------
  */
 
-extern errr macro_dump(cptr fname); /* see cmd4.c */
-extern errr keymap_dump(cptr fname); /* see cmd4.c */
 
 /* List of directory keywords */
 cptr keyword_path[] = {

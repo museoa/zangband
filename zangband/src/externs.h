@@ -393,6 +393,8 @@ extern void do_cmd_messages(void);
 extern void init_options(byte flags);
 extern void do_cmd_options(byte flags);
 extern void do_cmd_pref(void);
+extern errr macro_dump(cptr fname);
+extern errr keymap_dump(cptr fname);
 extern void do_cmd_macros(void);
 extern void do_cmd_visuals(void);
 extern void do_cmd_colors(void);
