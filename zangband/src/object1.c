@@ -619,7 +619,11 @@ cptr item_activation(const object_type *o_ptr)
 			case ART_ULMO:
 			{
 				return "teleport away every 150 turns";
-			}
+            }
+            case ART_KERI:
+            {
+                return "create food every 100 turns";
+            }
 			case ART_COLLUIN:
 			{
 				return "resistance (20+d20 turns) every 111 turns";

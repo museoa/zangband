@@ -1880,6 +1880,27 @@ bool activate_effect(object_type *o_ptr)
 				break;
 			}
 
+            case ART_KERI:
+			{
+				object_type *q_ptr;
+				object_type forge;
+
+				msg_print("Your rag feels warm for a moment...");
+
+                /* Get local object */
+				q_ptr = &forge;
+
+				/* Create the food ration */
+				object_prep(q_ptr, 21);
+
+				/* Drop the object from heaven */
+                (void)drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+
+                o_ptr->timeout = 100;
+
+				break;
+			}
+
 			case ART_COLLUIN:
 			{
 				msg_print("Your cloak glows many colours...");

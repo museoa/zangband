@@ -1376,6 +1376,7 @@
 #define ART_GONDOR              42
 
 /* Cloaks */
+#define ART_KERI                43
 #define ART_COLLUIN             44
 #define ART_HOLCOLLETH          45
 #define ART_THINGOL             46
