@@ -984,7 +984,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		"The %v enters your thoughts...",
 		"telepathy (%s+ turns)",
-		"inc_time_esp(rand_range2(%s))",
+		"inc_tim_esp(rand_range2(%s))",
 		25, FALSE, 200, 100, 0	/* lev */
 	},
 	{
