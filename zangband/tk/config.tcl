@@ -545,22 +545,6 @@ proc Config::Assign::Group {group} {
 	return
 }
 
-
-proc Config::Assign::Effect {effect typeIndex iconIndex} {
-
-	variable Priv
-
-	set iconType [lindex $Priv(type) $typeIndex]
-
-	if {[catch {icon validate -type $iconType -index $iconIndex}]} {
-		set iconType default
-		set iconIndex 0
-	}
-	effect assign $Priv(group) $effect -type $iconType -index $iconIndex
-
-	return
-}
-
 proc Config::Assign::Feat {light background} {
 
 	variable Priv
