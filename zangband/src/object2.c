@@ -189,7 +189,9 @@ static void compact_objects_aux(int i1, int i2)
 
 	cave_type *c_ptr;
 
-	object_type *o_ptr;
+    object_type *o_ptr;
+
+    monster_type *m_ptr;
 
 	/* Do nothing */
 	if (i1 == i2) return;
@@ -225,7 +227,27 @@ static void compact_objects_aux(int i1, int i2)
 
 		/* Repair grid */
 		if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
-	}
+    }
+
+    /* Repair player inventory */
+    if (p_ptr->inventory == i1) p_ptr->inventory = i2;
+
+    /* Repair monster inventories */
+    for (i = 0; i < m_max; i++)
+    {
+        m_ptr = &m_list[i];
+
+        /* Skip dead monsters */
+        if (!m_ptr->r_idx) continue;
+
+        /* Repair inventory pointers */
+        if (m_ptr->hold_o_idx == i1)
+        {
+            m_ptr->hold_o_idx = i2;
+
+            break;
+        }
+    }
 
 	/* Structure copy */
 	o_list[i2] = o_list[i1];
@@ -367,9 +389,6 @@ void compact_objects(int size)
 	for (i = o_max - 1; i >= 1; i--)
 	{
 		object_type *o_ptr = &o_list[i];
-
-		/* Stop when we get to a held object */
-		if (o_ptr->held) break;
 
 		/* Skip real objects */
 		if (o_ptr->k_idx) continue;

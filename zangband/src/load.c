@@ -2005,7 +2005,10 @@ static errr rd_dungeon(void)
 	cave_type *c_ptr;
 	u16b dun_level_backup, px_back, py_back;
 
-	bool ignore_stuff = FALSE;
+    bool ignore_stuff = FALSE;
+
+    /* This variable is only for toggling in the debugger, for now. */
+    bool try_recover = FALSE;
 
 	s16b cur_wid, cur_hgt;
 
@@ -2252,7 +2255,7 @@ static errr rd_dungeon(void)
 
 	/* Verify maximum */
 	if (limit > z_info->o_max)
-	{
+    {
 		note(format("Too many (%d) object entries!", limit));
 		return (151);
 	}
@@ -2269,8 +2272,8 @@ static errr rd_dungeon(void)
 		o_idx = o_pop();
 
 		/* Oops */
-		if (i != o_idx)
-		{
+		if (i != o_idx && !try_recover)
+        {
 			note(format("Object allocation error (%d <> %d)", i, o_idx));
 			return (152);
 		}
@@ -2289,6 +2292,9 @@ static errr rd_dungeon(void)
 		{
             if (!in_bounds(o_ptr->ix, o_ptr->iy))
             {
+                if (try_recover)
+                    continue;
+
 				note(format
 					 ("Object placement error (%d,%d)", o_ptr->ix, o_ptr->iy));
 				return (152);
@@ -2368,14 +2374,17 @@ static errr rd_dungeon(void)
 		if (!ignore_stuff)
 		{
 			/* Oops */
-			if (i != m_idx)
+			if (i != m_idx && !try_recover)
 			{
 				note(format("Monster allocation error (%d <> %d)", i, m_idx));
 				return (162);
 			}
 
 			if (!in_bounds(m_ptr->fx, m_ptr->fy))
-			{
+            {
+                if (try_recover)
+                    continue;
+
 				note(format
 					 ("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy));
 				return (162);
@@ -2433,7 +2442,7 @@ static errr rd_dungeon(void)
 				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
 
 				/* Oops */
-				if (i != fld_idx)
+				if (i != fld_idx && !try_recover)
 				{
 					note(format
 						 ("Field allocation error (%d <> %d)", i, fld_idx));
