@@ -4316,8 +4316,8 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 		case TV_BOLT:
 		{
 			o_ptr->number = (byte)damroll(6, 7);
-		}
 			break;
+		}
 
 		case TV_FOOD:
 		{
@@ -4326,6 +4326,7 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 				/* mushrooms appear in clumps */
 				o_ptr->number = (byte)randint1(6);
 			}
+			break;
 		}
 	}
 
@@ -4345,9 +4346,60 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 	return (o_ptr);
 }
 
+
+/*
+ * Put an object on the ground.
+ * We assume the grid is in bounds.
+ */
+static bool put_object(object_type *o_ptr, int x, int y)
+{
+	/* Acquire grid */
+	cave_type *c_ptr = area(x, y);
+	
+	/* Require nice floor space */
+	if (!cave_nice_grid(c_ptr)) return (FALSE);
+	
+	/* Paranoia */
+	if (!o_ptr) return (FALSE);
+
+	/* Add the object to the ground */
+	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
+
+	/* Success */
+	if (o_ptr)
+	{
+		/* Location */
+		o_ptr->iy = y;
+		o_ptr->ix = x;
+
+		/* Region */
+		o_ptr->region = cur_region;
+
+		/* Notice + Redraw */
+		note_spot(x, y);
+		
+		return (TRUE);
+	}
+	
+	/* Paranoia - preserve artifacts */
+	if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
+		(o_ptr->activate > 127))
+	{
+		a_info[o_ptr->activate - 128].cur_num = 0;
+	}	
+	
+	/* Failure */
+	return (FALSE);
+}
+
+/*
+ * Put an object of the requested type on the location given.
+ *
+ * This is mostly used for creating items in quests.
+ */
 void place_specific_object(int x, int y, int level, int k_idx)
 {
-	object_type *q_ptr;
+	object_type *o_ptr;
 	object_kind *k_ptr;
 
 	int i;
@@ -4356,7 +4408,10 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	if (!k_idx) return;
 
 	/* Create the item */
-	q_ptr = object_prep(k_idx);
+	o_ptr = object_prep(k_idx);
+	
+	/* Failure? */
+	if (!o_ptr) return;
 
 	k_ptr = &k_info[k_idx];
 
@@ -4382,11 +4437,35 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	else
 	{
 		/* Apply magic */
-		apply_magic(q_ptr, level, 0, 0);
+		apply_magic(o_ptr, level, 0, OC_NORMAL);
+		
+		/* Hack -- generate multiple spikes/missiles/ mushrooms */
+		switch (o_ptr->tval)
+		{
+			case TV_SPIKE:
+			case TV_SHOT:
+			case TV_ARROW:
+			case TV_BOLT:
+			{
+				o_ptr->number = (byte)damroll(6, 7);
+				break;
+			}
+			
+			case TV_FOOD:
+			{
+				if (o_ptr->sval < SV_FOOD_BISCUIT)
+				{
+					/* Mushrooms appear in clumps */
+					o_ptr->number = (byte)randint1(6);
+				}
+				
+				break;
+			}
+		}
 	}
-
-	/* Drop the object at the square */
-	drop_near(q_ptr, -1, x, y);
+	
+	/* Add the object to the ground */
+	put_object(o_ptr, x, y);
 }
 
 
@@ -4411,9 +4490,6 @@ void place_object(int x, int y, bool good, bool great)
 	/* Acquire grid */
 	c_ptr = area(x, y);
 
-	/* Require nice floor space */
-	if (!cave_nice_grid(c_ptr)) return;
-
 	/* Do not generate items on "nasty" terrain */
 	if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
 		(c_ptr->feat == FEAT_SHAL_WATER) || (c_ptr->feat == FEAT_SHAL_ACID))
@@ -4423,34 +4499,9 @@ void place_object(int x, int y, bool good, bool great)
 
 	/* Make an object (if possible) */
 	o_ptr = make_object((u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme);
-
-	/* Failure? */
-	if (!o_ptr) return;
-
-	/* Add the object to the ground */
-	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
-
-	/* Success */
-	if (o_ptr)
-	{
-		/* Location */
-		o_ptr->iy = y;
-		o_ptr->ix = x;
-
-		/* Region */
-		o_ptr->region = cur_region;
-
-		/* Notice + Redraw */
-		note_spot(x, y);
-	}
-	else
-	{
-		if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
-			(o_ptr->activate > 127))
-		{
-			a_info[o_ptr->activate - 128].cur_num = 0;
-		}
-	}
+	
+	/* Put it on the ground */
+	(void) put_object(o_ptr, x, y);
 }
 
 
@@ -4510,36 +4561,11 @@ void place_gold(int x, int y)
 {
 	object_type *o_ptr;
 
-	cave_type *c_ptr;
-
-	/* Paranoia -- check bounds */
-	if (!in_bounds(x, y)) return;
-
-	/* Acquire grid */
-	c_ptr = area(x, y);
-
-	/* Require nice floor space */
-	if (!cave_nice_grid(c_ptr)) return;
-
 	/* Make some gold */
 	o_ptr = make_gold(0);
-
-	/* Add the object to the ground */
-	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
-
-	/* Success */
-	if (o_ptr)
-	{
-		/* Location */
-		o_ptr->iy = y;
-		o_ptr->ix = x;
-
-		/* Region */
-		o_ptr->region = cur_region;
-
-		/* Notice + Redraw */
-		note_spot(x, y);
-	}
+	
+	/* Put it on the ground */
+	(void) put_object(o_ptr, x, y);
 }
 
 
@@ -4818,20 +4844,8 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	/* Get new object */
 	if (!done)
 	{
-		/* Add the object to the ground */
-		o_ptr = add_object_list(&c_ptr->o_idx, j_ptr);
-
-		/* Success */
-		if (o_ptr)
-		{
-			/* Location */
-			o_ptr->iy = by;
-			o_ptr->ix = bx;
-
-			/* Region */
-			o_ptr->region = cur_region;
-		}
-		else
+		/* Put it on the ground */
+		if (!put_object(j_ptr, bx, by));
 		{
 			/* Message */
 			msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
@@ -4843,9 +4857,6 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			return;
 		}
 	}
-
-	/* Note + Redraw the spot */
-	note_spot(bx, by);
 
 	/* Sound */
 	sound(SOUND_DROP);
