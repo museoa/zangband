@@ -3787,57 +3787,57 @@ static void borg_display_item(object_type *item2)
 	object_flags(item2, &f1, &f2, &f3);
 
 	/* Clear the screen */
-	for (i = 1; i <= 23; i++) prt("", i, j - 2);
+	for (i = 1; i <= 23; i++) prt("", j - 2, i);
 
 	/* Describe fully */
-	prt(item->desc, 2, j);
+	prt(item->desc, j, 2);
 
 	prt(format("kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
-			   item->kind, item->level, item->tval, item->sval), 4, j);
+			   item->kind, item->level, item->tval, item->sval), j, 4);
 
 	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
-			   item->iqty, item->weight, item->ac, item->dd, item->ds), 5, j);
+			   item->iqty, item->weight, item->ac, item->dd, item->ds), j, 5);
 
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
-			   item->pval, item->to_a, item->to_h, item->to_d), 6, j);
+			   item->pval, item->to_a, item->to_h, item->to_d), j, 6);
 
 	prt(format("xtra_name = %-4d  value = %d   cursed = %ld",
-			   item->xtra_name, (long)item->value, item->cursed), 7, j);
+			   item->xtra_name, (long)item->value, item->cursed), j, 7);
 
 	prt(format("*id*need = %d  able = %d      fully_id = %d  timeout = %-d",
 			   item->needs_I_exam, item->able, item->fully_identified,
-			   item->timeout), 8, j);
+			   item->timeout), j, 8);
 
 	/* maybe print the inscription */
-	prt(format("Inscription: %s", item->note), 9, j);
+	prt(format("Inscription: %s", item->note), j, 9);
 
 
-	prt("+------------FLAGS1------------+", 10, j);
-	prt("AFFECT........SLAY........BRAND.", 11, j);
-	prt("              cvae      xsqpaefc", 12, j);
-	prt("siwdcc  ssidsahanvudotgddhuoclio", 13, j);
-	prt("tnieoh  trnipttmiinmrrnrrraiierl", 14, j);
-	prt("rtsxna..lcfgdkcpmldncltggpksdced", 15, j);
-	borg_prt_binary(f1, 16, j);
+	prt("+------------FLAGS1------------+", j, 10);
+	prt("AFFECT........SLAY........BRAND.", j, 11);
+	prt("              cvae      xsqpaefc", j, 12);
+	prt("siwdcc  ssidsahanvudotgddhuoclio", j, 13);
+	prt("tnieoh  trnipttmiinmrrnrrraiierl", j, 14);
+	prt("rtsxna..lcfgdkcpmldncltggpksdced", j, 15);
+	borg_prt_binary(f1, j, 16);
 
-	prt("+------------FLAGS2------------+", 17, j);
-	prt("SUST...IMMUN..RESIST............", 18, j);
-	prt("        aefctrpsaefcpfldbc sn   ", 19, j);
-	prt("siwdcc  clioheatcliooeialoshtncd", 20, j);
-	prt("tnieoh  ierlrfraierliatrnnnrhehi", 21, j);
-	prt("rtsxna..dcedwlatdcedsrekdfddrxss", 22, j);
-	borg_prt_binary(f2, 23, j);
+	prt("+------------FLAGS2------------+", j, 17);
+	prt("SUST...IMMUN..RESIST............", j, 18);
+	prt("        aefctrpsaefcpfldbc sn   ", j, 19);
+	prt("siwdcc  clioheatcliooeialoshtncd", j, 20);
+	prt("tnieoh  ierlrfraierliatrnnnrhehi", j, 21);
+	prt("rtsxna..dcedwlatdcedsrekdfddrxss", j, 22);
+	borg_prt_binary(f2, j, 23);
 
-	prt("+------------FLAGS3------------+", 10, j + 32);
-	prt("fe      ehsi  st    iiiiadta  hp", 11, j + 32);
-	prt("il   n taihnf ee    ggggcregb vr", 12, j + 32);
-	prt("re  nowysdose eld   nnnntalrl ym", 13, j + 32);
-	prt("ec  omrcyewta ieirmsrrrriieaeccc", 14, j + 32);
-	prt("aa  taauktmatlnpgeihaefcvnpvsuuu", 15, j + 32);
-	prt("uu  egirnyoahivaeggoclioaeoasrrr", 16, j + 32);
-	prt("rr  litsopdretitsehtierltxrtesss", 17, j + 32);
-	prt("aa  echewestreshtntsdcedeptedeee", 18, j + 32);
-	borg_prt_binary(f3, 19, j + 32);
+	prt("+------------FLAGS3------------+", j + 32, 10);
+	prt("fe      ehsi  st    iiiiadta  hp", j + 32, 11);
+	prt("il   n taihnf ee    ggggcregb vr", j + 32, 12);
+	prt("re  nowysdose eld   nnnntalrl ym", j + 32, 13);
+	prt("ec  omrcyewta ieirmsrrrriieaeccc", j + 32, 14);
+	prt("aa  taauktmatlnpgeihaefcvnpvsuuu", j + 32, 15);
+	prt("uu  egirnyoahivaeggoclioaeoasrrr", j + 32, 16);
+	prt("rr  litsopdretitsehtierltxrtesss", j + 32, 17);
+	prt("aa  echewestreshtntsdcedeptedeee", j + 32, 18);
+	borg_prt_binary(f3, j + 32, 19);
 
 	return;
 }
@@ -4156,7 +4156,7 @@ static void borg_display_map_info(byte data, byte type)
 						break;
 					}
 				}
-			}
+            }
 		
 
             if (c != ' ')
@@ -5342,7 +5342,35 @@ void do_cmd_borg(void)
 			/* Redraw map */
 			prt_map();
 			break;
-		}
+        }
+
+#if 0
+        case '8':
+        {
+            /* Command: debug -- show shops */
+            int i, n = 0;
+
+            for (i = 0; i < MAX_STORES; i++)
+            {
+                /* Only real shops */
+                if (track_shop_x[i] == 0) continue;
+
+                /* Print */
+                print_rel('*', TERM_RED, track_shop_x[i], track_shop_y[i]);
+
+                /* Count */
+                n++;
+            }
+
+            /* Get keypress */
+			msg_format("There are %d known shops.", n);
+			msg_print(NULL);
+
+			/* Redraw map */
+			prt_map();
+			break;
+        }
+#endif /* 0 */
 
 		case '%':
 		{
