@@ -547,6 +547,8 @@ static int get_empty_block(void)
  */
 bool map_in_bounds(int x, int y)
 {
+    if (x < 0 || x >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
+    if (y < 0 || y >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
 	return (map_refcount[y / 16][x / 16] ? TRUE : FALSE);
 }
 
