@@ -4083,7 +4083,15 @@ static void dump_dungeon_info(FILE *fff, int town, bool ignore)
 		}
 	}
 
-	froff(fff, ".\n");
+	/* Is the player in this dungeon? */
+	if (p_ptr->place_num == town) 
+	{
+		froff(fff, " (Current).\n\n");
+	}
+	else
+	{
+		froff(fff, ".\n");
+	}
 }
 
 
