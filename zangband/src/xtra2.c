@@ -2184,9 +2184,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 							attitude = " ";
 
 						/* Describe, and prompt for recall */
-						sprintf(out_val, "%s%s%s%s (%s)%s%s[r,%s]",
+						sprintf(out_val, "%s%s%s%s (%s)%s[r,%s]",
 						    s1, s2, s3, m_name, look_mon_desc(c_ptr->m_idx),
-						    (m_ptr->smart & SM_CLONED ? " (clone)": ""),
 						    attitude, info);
 
 						prt(out_val, 0, 0);
