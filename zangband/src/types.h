@@ -769,7 +769,7 @@ struct object_type
 	byte marked;		/* Object is marked */
 
 	u16b inscription;	/* Inscription index */
-	u16b xtra_name;      /* Extra Name (Artifacts and ego items) */
+	u16b xtra_name;		/* Extra Name (Artifacts and ego items) */
 
 	u32b flags1;        /* Flags, set 1 */
 	u32b flags2;        /* Flags, set 2 */
@@ -827,26 +827,32 @@ typedef struct monster_type monster_type;
 struct monster_type
 {
 	s16b r_idx;			/* Monster race index */
+	
+	s16b csleep;		/* Inactive counter */
 
-	s16b fy;			/* Y location on map */
 	s16b fx;			/* X location on map */
+	s16b fy;			/* Y location on map */
+	
+	
+	s16b tx;			/* Target X location on map */
+	s16b ty;			/* Target Y location on map */
 
 	s16b hp;			/* Current Hit points */
 	s16b maxhp;			/* Max Hit points */
 
-	s16b csleep;		/* Inactive counter */
 
 	byte mspeed;		/* Monster "speed" */
 	byte energy;		/* Monster "energy" */
 
 	byte stunned;		/* Monster is stunned */
 	byte confused;		/* Monster is confused */
+
 	byte monfear;		/* Monster is afraid */
-	byte invulner;          /* Monster is temporarily invulnerable */
-	
-	u32b smart;			/* Field for "smart_learn" */
+	byte invulner;		/* Monster is temporarily invulnerable */
 	
 	s16b hold_o_idx;	/* Object being held (if any) */
+	
+	u32b smart;			/* Field for "smart_learn" */
 	
 	s16b region;		/* Region */
 

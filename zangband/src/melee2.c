@@ -21,138 +21,190 @@
 #define GRINDNOISE 20
 #define CYBERNOISE 20
 
+/*
+ * Convert the target a monster has
+ * to a direction to move in.
+ *
+ * This uses the old direction encoding still.
+ */
+static void convert_target_dir(monster_type *m_ptr, int *mm)
+{
+	int x = m_ptr->tx;
+	int y = m_ptr->ty;
+	
+	/* Paranoia */
+	if (!x && !y) return;
+	
+	/* Extract the direction */
+	x -= m_ptr->fx;
+	y -= m_ptr->fy;
+
+	/* North */
+	if ((y < 0) && (x == 0))
+	{
+		mm[0] = 8;
+		mm[1] = 7;
+		mm[2] = 9;
+	}
+	/* South */
+	else if ((y > 0) && (x == 0))
+	{
+		mm[0] = 2;
+		mm[1] = 1;
+		mm[2] = 3;
+	}
+	/* East */
+	else if ((x > 0) && (y == 0))
+	{
+		mm[0] = 6;
+		mm[1] = 9;
+		mm[2] = 3;
+	}
+	/* West */
+	else if ((x < 0) && (y == 0))
+	{
+		mm[0] = 4;
+		mm[1] = 7;
+		mm[2] = 1;
+	}
+	/* North-West */
+	else if ((y < 0) && (x < 0))
+	{
+		mm[0] = 7;
+		mm[1] = 4;
+		mm[2] = 8;
+	}
+	/* North-East */
+	else if ((y < 0) && (x > 0))
+	{
+		mm[0] = 9;
+		mm[1] = 6;
+		mm[2] = 8;
+	}
+	/* South-West */
+	else if ((y > 0) && (x < 0))
+	{
+		mm[0] = 1;
+		mm[1] = 4;
+		mm[2] = 2;
+	}
+	/* South-East */
+	else if ((y > 0) && (x > 0))
+	{
+		mm[0] = 3;
+		mm[1] = 6;
+		mm[2] = 2;
+	}
+}
+
+static bool nice_target(monster_type *m_ptr, monster_race *r_ptr,
+	 monster_type *t_ptr)
+{
+	/* The monster itself isn't a target */
+	if (t_ptr == m_ptr) return (FALSE);
+
+	/* Paranoia -- Skip dead monsters */
+	if (!t_ptr->r_idx) return (FALSE);
+		
+	/* Monster must be 'an enemy' */
+	if (!are_enemies(m_ptr, t_ptr)) return (FALSE);
+
+	/* Mega Hack - Monster must be close */
+	if (ABS(m_ptr->fy - t_ptr->fy) + ABS(m_ptr->fx - t_ptr->fx) > 20)
+	{
+		return (FALSE);
+	}
+		
+	if (is_pet(m_ptr))
+	{
+		/* Hack -- only fight away from player */
+		if (p_ptr->pet_follow_distance < 0)
+		{
+			/* No fighting near player */
+			if (t_ptr->cdis <= (0 - p_ptr->pet_follow_distance))
+			{
+				return (FALSE);
+			}
+		}
+		/* Hack -- no fighting away from player */
+		else if ((m_ptr->cdis < t_ptr->cdis) &&
+					(t_ptr->cdis > p_ptr->pet_follow_distance))
+		{
+			return (FALSE);
+		}
+	}
+
+	/* Monster must be projectable if we can't pass through walls */
+	if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
+		!projectable(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy))
+	{
+		return (FALSE);
+	}
+
+	/* We have a target */
+	return (TRUE);
+}
+
 
 /*
- * Calculate the direction to the next enemy
+ * Find an enemy to target
  */
-static bool get_enemy_dir(monster_type *m_ptr, int *mm)
+static bool get_enemy_target(monster_type *m_ptr)
 {
 	int i;
-	int x, y;
-	int t_idx;
-
+	
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	monster_type *t_ptr;
+	
+	cave_type *c_ptr;
 
-	/* Scan thru all monsters */
-	for (i = 1; i < m_max; i++)
+
+	/* Do we already have a nice enemy? */
+	if (m_ptr->tx || m_ptr->ty)
 	{
-		t_idx = i;
-		t_ptr = &m_list[t_idx];
+		c_ptr = area(m_ptr->tx, m_ptr->ty);
 
-		/* The monster itself isn't a target */
-		if (t_ptr == m_ptr) continue;
+		/* Is there a monster on our target? */
+		if (c_ptr->m_idx)
+		{
+			t_ptr = &m_list[c_ptr->m_idx];
+			
+			/* Is it a a good monster to target? */
+			if (nice_target(m_ptr, r_ptr, t_ptr)) return (TRUE);
+		}
+#if 0
+		/* Forget target */
+		m_ptr->tx = 0;
+		m_ptr->ty = 0;
 
-		/* Paranoia -- Skip dead monsters */
-		if (!t_ptr->r_idx) continue;
+#endif /* 0 */
+	}
+
+	/*
+	 * Scan through all monsters
+	 *
+	 * Scanning backwards seems to give the best results -
+	 * We tend to find the "newer" monsters first.
+	 * "Newer" monsters tend to be closer. 
+	 */
+	for (i = m_max; i > 0; i--)
+	{
+		t_ptr = &m_list[i];
 		
-		/* Monster must be 'an enemy' */
-		if (!are_enemies(m_ptr, t_ptr)) continue;
+		if (nice_target(m_ptr, r_ptr, t_ptr))
+		{
+			/* OK -- we've got a target */
+			m_ptr->ty = t_ptr->fy;
+			m_ptr->tx = t_ptr->fx;
 
-		/* Mega Hack - Monster must be close */
-		if (ABS(m_ptr->fy - t_ptr->fy) + ABS(m_ptr->fx - t_ptr->fx) > 20)
-		{
-			continue;
+			/* Pick the first such monster... */
+			return (TRUE);
 		}
-		
-		if (is_pet(m_ptr))
-		{
-			/* Hack -- only fight away from player */
-			if (p_ptr->pet_follow_distance < 0)
-			{
-				/* No fighting near player */
-				if (t_ptr->cdis <= (0 - p_ptr->pet_follow_distance))
-				{
-					continue;
-				}
-			}
-			/* Hack -- no fighting away from player */
-			else if ((m_ptr->cdis < t_ptr->cdis) &&
-						(t_ptr->cdis > p_ptr->pet_follow_distance))
-			{
-				continue;
-			}
-		}
-
-		/* Monster must be projectable if we can't pass through walls */
-		if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
-			!projectable(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy))
-		{
-			continue;
-		}
-
-		/* OK -- we've got a target */
-		y = t_ptr->fy;
-		x = t_ptr->fx;
-
-		/* Extract the direction */
-		x -= m_ptr->fx;
-		y -= m_ptr->fy;
-
-		/* North */
-		if ((y < 0) && (x == 0))
-		{
-			mm[0] = 8;
-			mm[1] = 7;
-			mm[2] = 9;
-		}
-		/* South */
-		else if ((y > 0) && (x == 0))
-		{
-			mm[0] = 2;
-			mm[1] = 1;
-			mm[2] = 3;
-		}
-		/* East */
-		else if ((x > 0) && (y == 0))
-		{
-			mm[0] = 6;
-			mm[1] = 9;
-			mm[2] = 3;
-		}
-		/* West */
-		else if ((x < 0) && (y == 0))
-		{
-			mm[0] = 4;
-			mm[1] = 7;
-			mm[2] = 1;
-		}
-		/* North-West */
-		else if ((y < 0) && (x < 0))
-		{
-			mm[0] = 7;
-			mm[1] = 4;
-			mm[2] = 8;
-		}
-		/* North-East */
-		else if ((y < 0) && (x > 0))
-		{
-			mm[0] = 9;
-			mm[1] = 6;
-			mm[2] = 8;
-		}
-		/* South-West */
-		else if ((y > 0) && (x < 0))
-		{
-			mm[0] = 1;
-			mm[1] = 4;
-			mm[2] = 2;
-		}
-		/* South-East */
-		else if ((y > 0) && (x > 0))
-		{
-			mm[0] = 3;
-			mm[1] = 6;
-			mm[2] = 2;
-		}
-
-		/* Found a monster */
-		return TRUE;
 	}
 
 	/* No monster found */
-	return FALSE;
+	return (FALSE);
 }
 
 
@@ -374,6 +426,176 @@ static int mon_will_run(int m_idx)
 	/* Assume no terror */
 	return (FALSE);
 }
+
+/*
+ * Can the monster catch a whiff of the character?
+ *
+ * Many more monsters can smell, but they find it hard to smell and 
+ * track down something at great range.
+ *
+ * XXX XXX Use SMELL_STRENGTH as a function of monster race...
+ */
+static bool monster_can_smell(monster_type *m_ptr)
+{
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+	cave_type *c_ptr = area(m_ptr->fy, m_ptr->fx);
+
+	/* No information? */
+	if (!c_ptr->when) return (FALSE);
+
+#if 0
+
+	/* Scent is too old */
+	if (age > SMELL_STRENGTH) return (FALSE);
+
+#endif /* 0 */
+
+	/* Canines and Zephyer Hounds are amazing trackers */
+	if (strchr("CZ", r_ptr->d_char)) return (TRUE);
+
+	/* So are the Nazgul */
+	else if ((strchr("W", r_ptr->d_char)) && 
+	         (r_ptr->flags1 & (RF1_UNIQUE)))
+	{
+		/* Bloodscent! */
+		return (TRUE);
+	}
+#if 0
+	/* Other monsters can sometimes make good use of scent */
+	else if (strchr("fkoqyHORTY", r_ptr->d_char))
+	{
+		if (age <= SMELL_STRENGTH - 10)
+		{
+			/* Something's in the air... */
+			return (TRUE);
+		}
+	}
+#endif /* 0 */
+
+	/* You're imagining things. */
+	return (FALSE);
+}
+
+
+
+/*
+ * Helper function for monsters that want to advance toward the character.
+ * Assumes that the monster isn't frightened, and is not in LOS of the 
+ * character.
+ *
+ * Ghosts and rock-eaters do not use flow information, because they 
+ * can - in general - move directly towards the character.  We could make 
+ * them look for a grid at their preferred range, but the character 
+ * would then be able to avoid them better (it might also be a little 
+ * hard on those poor warriors...).
+ *
+ * Other monsters will use target information, then their ears, then their
+ * noses (if they can), and advance blindly if nothing else works.
+ * 
+ * When flowing, monsters prefer non-diagonal directions.
+ *
+ * XXX - At present, this function does not handle difficult terrain 
+ * intelligently.  Monsters using flow may bang right into a door that 
+ * they can't handle.  Fixing this may require code to set monster 
+ * paths.
+ */
+static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
+{
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
+	int i, x, y;
+
+	int best_val = 0;
+	
+	cave_type *c_ptr;
+
+	bool use_sound = FALSE;
+	bool use_scent = FALSE;
+
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+
+	/* Hack - Monster can go through rocks - head straight for character */
+	if ((r_ptr->flags2 & (RF2_PASS_WALL)) || 
+	   (r_ptr->flags2 & (RF2_KILL_WALL)))
+	{
+		*tx = px;
+		*ty = py;
+		return;
+	}
+
+	/* Use target information if available */
+	if ((m_ptr->ty) || (m_ptr->tx))
+	{
+		*tx = m_ptr->tx;
+		*ty = m_ptr->ty;
+		return;
+	}
+	
+	/* Monster location */
+	c_ptr = area(m_ptr->fx, m_ptr->fy);
+
+	/* If we can hear noises, advance towards them */
+	if (c_ptr->cost)
+	{
+		use_sound = TRUE;
+	}
+
+	/* Otherwise, try to follow a scent trail */
+	else if (monster_can_smell(m_ptr))
+	{
+		use_scent = TRUE;
+	}
+
+	/* Otherwise, advance blindly */
+	if ((!use_sound) && (!use_scent))
+	{
+		*ty = py;
+		*tx = px;
+		return;
+	}
+
+	/* Using flow information.  Check nearby grids, diagonals first. */
+	for (i = 7; i >= 0; i--)
+	{
+		/* Get the location */
+		x = m_ptr->fx + ddx_ddd[i];
+		y = m_ptr->fy + ddy_ddd[i];
+
+		/* Check Bounds */
+		if (!in_bounds(x, y)) continue;
+		
+		c_ptr = area(x, y);
+
+		/* We're following a scent trail */
+		if (use_scent)
+		{
+			byte when = c_ptr->when;
+	
+			/* Accept younger scent */
+			if (best_val < when) continue;
+			best_val = when;
+		}
+
+		/* We're using sound */
+		else
+		{
+			byte cost = c_ptr->cost;
+
+			/* Accept louder sounds */
+			if ((!best_val) || (cost > best_val)) continue;
+			best_val = cost;
+		}
+
+		/* Save the location */
+		*ty = y;
+		*tx = x;
+	}
+}
+
+
 
 
 /*
@@ -2349,7 +2571,11 @@ static void process_monster(int m_idx)
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 
 		/* Look for an enemy */
-		if (!get_enemy_dir(m_ptr, mm))
+		if (get_enemy_target(m_ptr))
+		{
+			convert_target_dir(m_ptr, mm);
+		}
+		else
 		{
 			/* Find the player if necessary */
 			if (avoid || lonely || distant)
@@ -2379,7 +2605,14 @@ static void process_monster(int m_idx)
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 
 		/* Look for an enemy */
-		(void)get_enemy_dir(m_ptr, mm);
+		if (get_enemy_target(m_ptr))
+		{
+			convert_target_dir(m_ptr, mm);
+		}
+		else
+		{
+			/* Failure... we need to do something else */
+		}
 	}
 	/* Normal movement */
 	else if (stupid_monsters)
@@ -2949,7 +3182,7 @@ static void process_monster(int m_idx)
  * Most of the rest of the time is spent in "update_view()" and "lite_spot()",
  * especially when the player is running.
  *
- * Note the special "MFLAG_MOVE" flag, which allows us to ignore "fresh"
+ * Note the special "MFLAG_BORN" flag, which allows us to ignore "fresh"
  * monsters while they are still being "born".  A monster is "fresh" only
  * during the turn in which it is created, and we use the "hack_m_idx" to
  * determine if the monster is yet to be processed during the current turn.
@@ -3060,15 +3293,11 @@ void process_monsters(int min_energy)
 			}
 		}
 
-		/* Handle "fresh" monsters */
-		if (m_ptr->mflag & MFLAG_MOVE)
-		{
-			/* No longer "fresh" */
-			m_ptr->mflag &= ~(MFLAG_MOVE);
-
-			/* Skip */
-			continue;
-		}
+		/* Has the monster already moved? */
+		if (m_ptr->mflag & MFLAG_MOVE) continue;
+		
+		/* Make a move */
+		m_ptr->mflag |= (MFLAG_MOVE);
 
 		/* Not enough energy to move */
 		if (m_ptr->energy < min_energy) continue;
@@ -3169,4 +3398,36 @@ void process_monsters(int min_energy)
 	}
 
 	if (old_friend_align != friend_align) p_ptr->update |= (PU_BONUS);
+}
+
+/*
+ * Clear 'moved' status from all monsters.
+ * 
+ * Clear noise if appropriate???
+ */
+void reset_monsters(void)
+{
+	int i;
+	monster_type *m_ptr;
+
+	/* Process the monsters */
+	for (i = 1 ; i < m_max; i++)
+	{
+		/* Access the monster */
+		m_ptr = &m_list[i];
+		
+		/* Monster is ready to go again */
+		m_ptr->mflag &= ~(MFLAG_MOVE);
+	}
+	
+#if 0
+
+	/* Clear the current noise after it is used to wake up monsters */
+	if (turn % 10 == 0)
+	{
+		total_wakeup_chance = 0L;
+		add_wakeup_chance = 0;
+	}
+	
+#endif /* 0 */
 }

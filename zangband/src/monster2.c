@@ -1594,7 +1594,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly, bool pe
 	/* Hack -- see "process_monsters()" */
 	if (c_ptr->m_idx < hack_m_idx)
 	{
-		/* Monsters take a turn to be born */
+		/* Monster is still being born */
 		m_ptr->mflag |= (MFLAG_MOVE);
 	}
 
