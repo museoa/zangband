@@ -4363,17 +4363,19 @@ static bool put_object(object_type *o_ptr, int x, int y)
 	if (j_ptr)
 	{
 		/* Location */
-		o_ptr->iy = y;
-		o_ptr->ix = x;
+		j_ptr->iy = y;
+		j_ptr->ix = x;
 
 		/* Region */
-		o_ptr->region = cur_region;
+		j_ptr->region = cur_region;
 
 		/* Notice + Redraw */
 		note_spot(x, y);
 
 		return (TRUE);
 	}
+
+	quit("Failed to place object!");
 
 	/* Paranoia - preserve artifacts */
 	if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
