@@ -803,23 +803,29 @@ cptr item_activation(const object_type *o_ptr)
 
 
 /*
- * Describe a "fully identified" item
+ * Fully describe the known information about an item
  */
 bool identify_fully_aux(const object_type *o_ptr)
 {
-	int                     i = 0, j, k;
+	int	i = 0, j, k;
 
 	u32b f1, f2, f3;
 
-	cptr            info[128];
+	cptr info[128], reclaim[128], temp;
+	int num_reclaim = 0;
 
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags_known(o_ptr, &f1, &f2, &f3);
 
-
-	/* Mega-Hack -- describe activation */
-	if (f3 & (TR3_ACTIVATE))
+	/* Indicate if fully known */
+	if (o_ptr->ident & IDENT_MENTAL)
+	{
+		info[i++] = "You have full knowlege of this item.";
+	}
+	
+	/* Mega-Hack -- describe activation if item is identified */
+	if ((o_ptr->flags3 & (TR3_ACTIVATE)) && object_known_p(o_ptr))
 	{
 		info[i++] = "It can be activated for...";
 		info[i++] = item_activation(o_ptr);
@@ -861,52 +867,138 @@ bool identify_fully_aux(const object_type *o_ptr)
 
 	if (f1 & (TR1_STR))
 	{
-		info[i++] = "It affects your strength.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your strength by %+i.", o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your strength by %+i.", o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_INT))
 	{
-		info[i++] = "It affects your intelligence.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your intelligence by %+i.",
+				 o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your intelligence by %+i.",
+				 o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_WIS))
 	{
-		info[i++] = "It affects your wisdom.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your wisdom by %+i.", o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your wisdom by %+i.", o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_DEX))
 	{
-		info[i++] = "It affects your dexterity.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your dexterity by %+i.",
+				 o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your dexterity by %+i.",
+				 o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_CON))
 	{
-		info[i++] = "It affects your constitution.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your constitution by %+i.",
+				 o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your constitution by %+i.",
+				 o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_CHR))
 	{
-		info[i++] = "It affects your charisma.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your charisma by %+i.", o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your charisma by %+i.", o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 
 	if (f1 & (TR1_STEALTH))
 	{
-		info[i++] = "It affects your stealth.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your stealth by %+i.", o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your stealth by %+i.", o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_SEARCH))
 	{
-		info[i++] = "It affects your searching.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your searching ability by %+i.",
+				 o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your searching ability by %+i.",
+				 o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_INFRA))
 	{
-		info[i++] = "It affects your infravision.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your infravision by %i feet.",
+				 o_ptr->pval * 10));
+		else
+			temp = string_make(format("It decreases your infravision by %i feet.",
+				 -o_ptr->pval * 10));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_TUNNEL))
 	{
-		info[i++] = "It affects your ability to tunnel.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your ability to dig by %+i.",
+				 o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your ability to dig by %+i.",
+				 o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_SPEED))
 	{
-		info[i++] = "It affects your speed.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It increases your speed by %+i.", o_ptr->pval));
+		else
+			temp = string_make(format("It decreases your speed by %+i.", o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_BLOWS))
 	{
-		info[i++] = "It affects your attack speed.";
+		if (o_ptr->pval > 0)
+			temp = string_make(format("It provides %i extra blows per turn.",
+				 o_ptr->pval));
+		else
+			temp = string_make(format("It provides %i fewer blows per turn.",
+				 -o_ptr->pval));
+		
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
 	}
 
 	if (f1 & (TR1_BRAND_ACID))
@@ -1170,7 +1262,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 
 	if (f3 & (TR3_DRAIN_EXP))
 	{
-		info[i++] = "It drains experience.";
+		info[i++] = "It drains your experience.";
 	}
 	if (f3 & (TR3_TELEPORT))
 	{
@@ -1259,6 +1351,9 @@ bool identify_fully_aux(const object_type *o_ptr)
 
 	/* Restore the screen */
 	screen_load();
+	
+	/* Reclaim the used memory */
+	for (i = 0; i < num_reclaim; i++) string_free(reclaim[i]);
 
 	/* Gave knowledge */
 	return (TRUE);

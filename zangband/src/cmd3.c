@@ -633,14 +633,14 @@ void do_cmd_observe(void)
 		o_ptr = &o_list[0 - item];
 	}
 
-
+#if 0
 	/* Require full knowledge */
 	if (!(o_ptr->ident & IDENT_MENTAL))
 	{
 		msg_print("You have no special knowledge about that item.");
 		return;
 	}
-
+#endif /* 0 */
 
 	/* Description */
 	object_desc(o_name, o_ptr, TRUE, 3);
