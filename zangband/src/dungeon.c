@@ -4412,7 +4412,9 @@ void play_game(bool new_game)
 				/* Do not die */
 				death = FALSE;
 
-				dun_level = 0;
+				dun_level = 0;				
+				change_level(dun_level);
+				
 				p_ptr->inside_arena = 0;
 				leaving_quest = 0;
 				p_ptr->inside_quest = 0;
