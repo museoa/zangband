@@ -1732,6 +1732,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			int num = damroll(5, 3);
 			int y, x;
+			int attempts;
 
 			if (!p_ptr->blind)
 			{
@@ -1739,14 +1740,18 @@ static void do_cmd_use_staff_aux(int item)
 			}
 			for (k = 0; k < num; k++)
 			{
-				while(1)
-				{
-					scatter(&y, &x, py, px, 10, 0);
+         	attempts = 1000;
 
-					if ((y != py) && (x != px)) break;
+				while(attempts--)
+				{
+					scatter(&y, &x, py, px, 4, 0);
+
+					if (!cave_floor_bold(y, x)) continue;
+
+					if ((y != py) || (x != px)) break;
 				}
 
-				project(0, 0, y, x, damroll(6, 8), GF_LITE,
+				project(0, 0, y, x, damroll(6, 8), GF_LITE_WEAK,
 						  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL));
 			}
 			ident = TRUE;
@@ -3063,16 +3068,21 @@ static void do_cmd_activate_aux(int item)
 			{
 				int num = damroll(5, 3);
 				int y, x;
+				int attempts;
 
 				msg_print("Your armor is surrounded by lightning...");
 
 				for (k = 0; k < num; k++)
 				{
-					while(1)
-					{
-						scatter(&y, &x, py, px, 10, 0);
+            	attempts = 1000;
 
-						if ((y != py) && (x != px)) break;
+					while(attempts--)
+					{
+						scatter(&y, &x, py, px, 4, 0);
+
+						if (!cave_floor_bold(y, x)) continue;
+
+						if ((y != py) || (x != px)) break;
 					}
 
 					project(0, 3, y, x, 150, GF_ELEC,

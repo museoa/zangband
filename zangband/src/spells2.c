@@ -3849,14 +3849,17 @@ void wall_breaker(void)
 {
 	int i;
 	int y, x;
+	int attempts = 1000;
 
 	if (randint(80 + p_ptr->lev) < 70)
 	{
-		while(1)
+		while(attempts--)
 		{
-			scatter(&y, &x, py, px, 10, 0);
+			scatter(&y, &x, py, px, 4, 0);
 
-			if ((y != py) && (x != px)) break;
+			if (!cave_floor_bold(y, x)) continue;
+
+			if ((y != py) || (x != px)) break;
 		}
 
 		project(0, 0, y, x, 20 + randint(30), GF_KILL_WALL,
