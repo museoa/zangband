@@ -1101,7 +1101,7 @@ static bool borg_choose_shop(void)
 	/* If we are already flowing toward a shop do not check again... */
 	if (goal_shop != -1)
 	{
-		borg_note(format("# Goal shop: %d", goal_shop));
+		borg_note(format("# Using previous goal shop: %d", goal_shop));
 		return (TRUE);
 	}
 	
@@ -1115,7 +1115,7 @@ static bool borg_choose_shop(void)
 		time = borg_t - borg_shops[i].when;
 		
 		/* How useful is this shop? */
-		use = time / (dist * dist + 1);
+		use = time / (dist + 1);
 		use *= (borg_shops[i].b_count + 1) / (borg_shops[i].u_count + 1);
 		
 		/* Track most-useful shop */
@@ -1130,7 +1130,7 @@ static bool borg_choose_shop(void)
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
 		/* We want to shop */
-		borg_note(format("# Goal shop: %d", goal_shop));
+		borg_note(format("# Goal shop: %d, use: %d", goal_shop, bu));
 	
 		/* Success */
 		return (TRUE);
@@ -1156,6 +1156,7 @@ bool borg_think_store(void)
 	if (shop_num == -1)
 	{
 		borg_oops("# Entering invalid store.");
+		return (FALSE);
 	}
 
 	/* Stamp the shop with a time stamp */
@@ -1197,6 +1198,9 @@ bool borg_think_store(void)
 	
 	/* Leave the store */
 	borg_keypress(ESCAPE);
+	
+	/* Assume no important shop */
+	goal_shop = -1;
 
 	/* Choose a shop to visit */
 	if (borg_choose_shop()) return (TRUE);
@@ -1208,7 +1212,7 @@ bool borg_think_store(void)
 	shop_num = -1;
 
 	/* Done */
-	return (FALSE);
+	return (TRUE);
 }
 
 

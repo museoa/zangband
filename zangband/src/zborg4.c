@@ -176,6 +176,10 @@ void borg_list_info(byte list_type)
 		case LIST_STORE:
 		{
 			/* Notice store inventory changes */
+			
+			/* Mega-hack - update position */
+			c_x = p_ptr->px;
+			c_y = p_ptr->py;
 
 			/* Silly value */
 			shop_num = -1;
@@ -191,7 +195,7 @@ void borg_list_info(byte list_type)
 			}
 			
 			/* Paranoia */
-			if (shop_num == -1) quit("Could not find home!");
+			if (shop_num == -1) quit("Could not find store!");
 
 			/* Clear the goal */
 			goal = 0;
@@ -202,6 +206,10 @@ void borg_list_info(byte list_type)
 		case LIST_HOME:
 		{
 			/* Notice home inventory changes */
+			
+			/* Mega-hack - update position */
+			c_x = p_ptr->px;
+			c_y = p_ptr->py;
 
 			/* Silly value */
 			shop_num = -1;
