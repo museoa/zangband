@@ -412,6 +412,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_mig
 	}
 }
 
+
 /*
  * Recalculate player stats
  */
@@ -478,9 +479,8 @@ static void borg_notice_stats(void)
 	borg_skill[BI_ARMOR] += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
 	borg_skill[BI_TODAM] += ((int)(adj_str_td[my_stat_ind[A_STR]]) - 128);
 	borg_skill[BI_TOHIT] += ((int)(adj_dex_th[my_stat_ind[A_DEX]]) - 128);
-
-
 }
+
 
 /*
  * Examine bow
@@ -602,52 +602,13 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	borg_skill[BI_BMAXDAM] *= borg_skill[BI_SHOTS];
 }
 
+
 /*
- * Helper function -- notice the player equipment
+ * Examine sword
  */
-static void borg_notice_aux1(void)
+static void borg_notice_weapon(int hold, int extra_blows)
 {
-	int i, hold;
-
-	int extra_blows = 0;
-
-	int extra_shots = 0;
-	int extra_might = 0;
-
 	list_item *l_ptr;
-
-	/* Recalc some Variables */
-	borg_skill[BI_ARMOR] = 0;
-	borg_skill[BI_SPEED] = 110;
-
-	/* Start with a single blow per turn */
-	borg_skill[BI_BLOWS] = 1;
-
-	/* Notice player flags */
-	borg_notice_player();
-
-	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
-
-	/* Notice equipment */
-	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
-
-	/* Vampires that do not Resist Light are in trouble */
-	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
-		borg_skill[BI_FEAR_LITE] = TRUE;
-
-	
-	/* Bloating slows the player down (a little) */
-	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
-	
-	/* Recalculate the stats */
-	borg_notice_stats();
-
-	/* Obtain the "hold" value */
-	hold = adj_str_hold[my_stat_ind[A_STR]];
-
-	/* Examine ranged weapon */
-	borg_notice_shooter(hold, extra_might, extra_shots);
 
 	/* Examine the "main weapon" */
 	l_ptr = &equipment[EQUIP_WIELD];
@@ -811,14 +772,14 @@ static void borg_notice_aux1(void)
 
 	/* Calculate base damage, used to calculating slays */
 	borg_skill[BI_WBASEDAM] = (l_ptr->dd * l_ptr->ds);
+}
 
-	/* Hack -- Reward High Level Warriors with Res Fear */
-	if (borg_class == CLASS_WARRIOR)
-	{
-		/* Resist fear at level 30 */
-		if (borg_skill[BI_CLEVEL] >= 30) borg_skill[BI_RFEAR] = TRUE;
-	}
 
+/*
+ * Notice skills
+ */
+static void borg_notice_skills(void)
+{
 	/* Affect Skill -- stealth (bonus one) */
 	borg_skill[BI_STL] += 1;
 
@@ -869,7 +830,70 @@ static void borg_notice_aux1(void)
 
 	/* Limit Skill -- digging from 1 up */
 	if (borg_skill[BI_DIG] < 1) borg_skill[BI_DIG] = 1;
+}
 
+
+
+/*
+ * Helper function -- notice the player equipment
+ */
+static void borg_notice_aux1(void)
+{
+	int i, hold;
+
+	int extra_blows = 0;
+
+	int extra_shots = 0;
+	int extra_might = 0;
+
+	list_item *l_ptr;
+
+	/* Recalc some Variables */
+	borg_skill[BI_ARMOR] = 0;
+	borg_skill[BI_SPEED] = 110;
+
+	/* Start with a single blow per turn */
+	borg_skill[BI_BLOWS] = 1;
+
+	/* Notice player flags */
+	borg_notice_player();
+
+	/* Clear the stat modifiers */
+	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
+
+	/* Notice equipment */
+	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
+
+	/* Vampires that do not Resist Light are in trouble */
+	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
+		borg_skill[BI_FEAR_LITE] = TRUE;
+
+	
+	/* Bloating slows the player down (a little) */
+	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
+	
+	/* Recalculate the stats */
+	borg_notice_stats();
+
+	/* Obtain the "hold" value */
+	hold = adj_str_hold[my_stat_ind[A_STR]];
+
+	/* Examine ranged weapon */
+	borg_notice_shooter(hold, extra_might, extra_shots);
+	
+	/* Examine melee weapon */
+	borg_notice_weapon(hold, extra_blows);
+
+
+	/* Hack -- Reward High Level Warriors with Res Fear */
+	if (borg_class == CLASS_WARRIOR)
+	{
+		/* Resist fear at level 30 */
+		if (borg_skill[BI_CLEVEL] >= 30) borg_skill[BI_RFEAR] = TRUE;
+	}
+
+	/* Recalculate skills */
+	borg_notice_skills();
 
 	/* Monks get bonus for not using weapon or armour */
 	if (borg_class == CLASS_MONK)
