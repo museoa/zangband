@@ -681,21 +681,21 @@ static GdkImage *resize_tiles(int tile_wid, int tile_hgt)
 			offset++;
 		}
 	}
-	
+
 	/* Initialize copy routine */
-	switch(tiles_norm->depth)
+	switch (new_image->bpp)
 	{
-		case 8: copy_pixels = copy_pixels8; break;
-		case 16: copy_pixels = copy_pixels16; break;
-		case 24: copy_pixels = copy_pixels24; break;
-		case 32: copy_pixels = copy_pixels32; break;
+		case 1: copy_pixels = copy_pixels8; break;
+		case 2: copy_pixels = copy_pixels16; break;
+		case 3: copy_pixels = copy_pixels24; break;
+		case 4: copy_pixels = copy_pixels32; break;
  		default:
 		{
 			quit_fmt("Invalid bits per pixel of image: %d", new_image->bpp);
 			break;
 		}
 	}
-	
+
 	/* Scan each row */
 	
 	/* Initialize line parameters */
