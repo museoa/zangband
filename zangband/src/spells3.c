@@ -779,6 +779,11 @@ void recall_player(int turns)
 			p_ptr->max_depth = p_ptr->depth;
 
 	}
+	else if (p_ptr->depth > p_ptr->max_depth)
+	{
+		p_ptr->max_depth = p_ptr->depth;
+	}
+
 	if (!p_ptr->tim.word_recall)
 	{
 		p_ptr->tim.word_recall = turns;
