@@ -21,7 +21,7 @@
 #include "angband.h"
 
 /* 4k for each block_type */
-#define BLOCK_DATA_SIZE (4096 - sizeof(u16b) - sizeof(void *))
+#define BLOCK_DATA_SIZE ((int)(4096 - sizeof(u16b) - sizeof(void *)))
 
 #define HI_BIT_32		0x80000000
 #define NEXT_BIT_32		0x40000000
@@ -190,7 +190,7 @@ static void write_block_bit(block_handle *h_ptr, byte output)
 	/* Move to next bit */
 	current_bit++;
 	
-	if (current_bit = 8)
+	if (current_bit == 8)
 	{
 		/* We've done a whole byte */
 		h_ptr->b_ptr->block_data[h_ptr->counter++] = current_byte;
@@ -341,12 +341,30 @@ static void cln_blocks(block_type *b_ptr)
 		next_ptr = free_list->b_next;
 		
 		/* Destroy the current block */
-		C_KILL(free_list);
+		KILL(free_list, block_type);
 		
 		/* Point to next block */
 		free_list = next_ptr;
 	}
 }
+
+/*
+ * Delete all the blocks in a particular stream
+ */
+static void delete_handle(block_handle *h_ptr)
+{
+	block_type *b_ptr = h_ptr->b_ptr;
+	
+	while (b_ptr)
+	{
+		/* Delete the block - and point to its child */
+		b_ptr = del_block(b_ptr);
+	}
+
+	/* Reset counter */
+	h_ptr->counter = 0;
+}
+
 
 /*
  * RLE encode this list of blocks - inserting new blocks as needed
@@ -362,7 +380,7 @@ static void rle_blocks_encode(block_handle *h1_ptr)
 	/* Swap the block streams the two handles refer to */
 	b_ptr = h1_ptr->b_ptr;
 	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr
+	h2_ptr->b_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
@@ -433,12 +451,12 @@ static void rle_blocks_decode(block_handle *h1_ptr)
 	block_type *b_ptr;
 	
 	int count = 0;
-	byte symbol = 0, new_symbol;
+	int symbol = 0, new_symbol;
 
 	/* Swap the block streams the two handles refer to */
 	b_ptr = h1_ptr->b_ptr;
 	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr
+	h2_ptr->b_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
@@ -489,6 +507,42 @@ static void rle_blocks_decode(block_handle *h1_ptr)
 	}
 }
 
+/* Information for model of data to compress */
+
+/* Variables for move-to-front probability model */
+static byte mtf_table[256];
+static u32b mtf_prob_table[256];
+
+static void init_compress(u32b *prob_table)
+{
+	int i;
+	u32b value;
+	
+	/* Reset the move-to-front table */
+	for (i = 0; i < 255; i++)
+	{
+		mtf_table[i] = i;
+	}
+
+	/* Reset the probability table */
+	for (i = 0; i < 255; i++)
+	{
+		/* Hack - we are going to assume fixed probabilities for now */
+		if (i > 128) value = 1;
+		else if (i > 64) value = 2;
+		else if (i > 32) value = 4;
+	
+	
+	}
+
+}
+
+static void calc_prob(byte symbol, u32b *prob_table)
+{
+
+
+}
+
 /* Bounds of arithmetic code value */
 static u32b bound1;
 static u32b bound2;
@@ -510,27 +564,27 @@ static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol
 	 * Rescale the bounds
 	 * Note how upper bound is exclusive of the number.
 	 */
-	bounds2 = bounds1 + range * prob_table[symbol] / table_total - 1;
-	bounds1 += range * (prob_table[symbol + 1] - 1) / table_total;
+	bound2 = bound1 + range * prob_table[symbol] / prob_table[256] - 1;
+	bound1 += range * (prob_table[symbol + 1] - 1) / prob_table[256];
 
 	/* Prune as many bits as possible */
 	while (TRUE)
 	{
 		/* Do the high bits match? */
-		if ((bounds1 & HI_BIT_32) == (bounds2 & HI_BIT_32))
+		if ((bound1 & HI_BIT_32) == (bound2 & HI_BIT_32))
 		{
 			/* Output the bit */
-			write_block_bit(h_ptr, bounds1 & HI_BIT_32);
+			write_block_bit(h_ptr, bound1 & HI_BIT_32);
 			
 			/* Output the overflow bits in a run */
 			for (;run_bits > 0; run_bits--)
 			{
-				write_block_bit(h_ptr, !(bounds1 & (~NEXT_BIT_32))
+				write_block_bit(h_ptr, !(bound1 & (~NEXT_BIT_32)));
 			}
 		}	
 	
 		/* Check the overflow bits - and store runs */
-		else if ((bounds1 & NEXT_BIT_32) != (bounds2 & NEXT_BIT_32))
+		else if ((bound1 & NEXT_BIT_32) != (bound2 & NEXT_BIT_32))
 		{
 			/* Count the run bits */
 			run_bits++;
@@ -539,16 +593,16 @@ static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol
 			 * Make sure the bits differ so we
 			 * shift them into the correct location.
 			 *
-			 * Note: we know that bounds2 has the bit set,
-			 * and bounds1 has it cleared, because
-			 * bounds2 > bounds1.
+			 * Note: we know that bound2 has the bit set,
+			 * and bound1 has it cleared, because
+			 * bound2 > bound1.
 			 *
 			 * (Basically we are just deleting the bits -
 			 * which means setting them to the right thing,
 			 * and shifting them into the high bit.)
 			 */
-			bounds1 &= ~(NEXT_BIT_32)
-			bounds2 |= NEXT_BIT_32;
+			bound1 &= ~(NEXT_BIT_32);
+			bound2 |= NEXT_BIT_32;
 		}
 		else
 		{
@@ -559,10 +613,10 @@ static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol
 		/* Shift out the high bits */
 		
 		/* Shift in a zero */
-		bounds1 = bounds1 << 1;
+		bound1 = bound1 << 1;
 		
 		/* Shift in a one */
-		bounds2 = (bounds2 << 1) + 1;
+		bound2 = (bound2 << 1) + 1;
 	}
 
 }
@@ -574,8 +628,8 @@ static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol
  */
 static u32b arth_block_decode(u32b code, u32b *prob_table)
 {
-    return (((code - bounds1 + 1 ) * prob_table[256] - 1) /
-		(bounds2 - bounds1 + 1));
+    return (((code - bound1 + 1 ) * prob_table[256] - 1) /
+		(bound2 - bound1 + 1));
 }
 
 
@@ -584,14 +638,14 @@ static u32b arth_block_decode(u32b code, u32b *prob_table)
  * bits as needed.
  */
 static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
-	block_handle *h_ptr);
+	block_handle *h_ptr)
 {
 	/* How large is the current range of possibilities? */
 	u32b range = bound2 - bound1 + 1;
 	
 	byte b1 = 0, b2 = 255;
 	int test = (b1 + b2) / 2;
-	int tv = prob_table[test];
+	u32b tv = prob_table[test];
 	
 	
 	
@@ -641,27 +695,27 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 	}	
 		
 	/* Rescale the bounds */
-	bounds2 = bounds1 + range * prob_table[tv] / prob_table[256] - 1;
-	bounds1 += range * (prob_table[tv + 1] - 1) / prob_table[256];
+	bound2 = bound1 + range * prob_table[tv] / prob_table[256] - 1;
+	bound1 += range * (prob_table[tv + 1] - 1) / prob_table[256];
 
 	/* Try to remove as many bits as possible */
 	while (TRUE)
 	{
 		/* If the high bits match - remove them */
-		if ((bounds1 & HI_BIT_32) == (bounds2 & HI_BIT_32))
+		if ((bound1 & HI_BIT_32) == (bound2 & HI_BIT_32))
 		{
 			/* Shift out the bits below */
 		}
 		
 		/* Are we near an underflow? */
-		else if (((bounds1 & NEXT_BIT_32) == NEXT_BIT_32)
-			 && !(bounds2 & NEXT_BIT_32))
+		else if (((bound1 & NEXT_BIT_32) == NEXT_BIT_32)
+			 && !(bound2 & NEXT_BIT_32))
 		{
 			/* Delete these bits by copying in the state of the high bits */
 			
 			/* Make these bits match the high bit. */
-			bounds1 &= ~(NEXT_BIT_32)
-			bounds2 |= NEXT_BIT_32;
+			bound1 &= ~(NEXT_BIT_32);
+			bound2 |= NEXT_BIT_32;
 			
 			/* Flip the second highest bit in the code */
 			*code ^= NEXT_BIT_32;
@@ -676,8 +730,8 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 		}
 
 		/* Swap out the high bits */
-		bounds1 *= 2;
-		bounds2 = bounds2 * 2 + 1;
+		bound1 *= 2;
+		bound2 = bound2 * 2 + 1;
 		
 		/* Add in a new bit from the stream */
 		*code = *code * 2 + rerase_block_bit(h_ptr);
@@ -688,7 +742,7 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 static void flush_arith(block_handle *h_ptr)
 {
 	/* Output the second highest bit */
-	write_block_bit(h_ptr, bounds1 & NEXT_BIT_32)
+	write_block_bit(h_ptr, bound1 & NEXT_BIT_32);
 	
 	/*
 	 * Increment the number of overflow bits,
@@ -698,7 +752,7 @@ static void flush_arith(block_handle *h_ptr)
 	 */
 	for(run_bits++; run_bits > 0; run_bits--)
 	{
-		write_block_bit(h_ptr, !(bounds1 & (~NEXT_BIT_32))
+		write_block_bit(h_ptr, !(bound1 & (~NEXT_BIT_32)));
 	}
 	
 	/* Write out the final byte, if required */
@@ -710,14 +764,13 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	block_handle handle, *h2_ptr = &handle;
 	block_type *b_ptr;
 
-	byte symbol;
-	int i = 0, j = 0;
-	u32b size, prob_table[256];
+	int symbol;
+	u32b size = 0, prob_table[256];
 	
 	/* Swap the block streams the two handles refer to */
 	b_ptr = h1_ptr->b_ptr;
 	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr
+	h2_ptr->b_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
@@ -737,7 +790,7 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	write_block_byte(h1_ptr, size & 0xFF);
 	write_block_byte(h1_ptr, (size >> 8) & 0xFF);
 	write_block_byte(h1_ptr, (size >> 16) & 0xFF);
-	write_block_byte(h1_ptr, &j, (size >> 24) & 0xFF);
+	write_block_byte(h1_ptr, (size >> 24) & 0xFF);
 	
 	/*
 	 * Init the encoder.
@@ -771,7 +824,7 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 		}
 	
 		/* Encode it */
-		arth_block_encode(h1_ptr, prob_table, table_total, symbol);
+		arth_block_encode(h1_ptr, prob_table, symbol);
 		
 		/* Update probability table */
 		calc_prob(symbol, prob_table);
@@ -791,7 +844,7 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	/* Swap the block streams the two handles refer to */
 	b_ptr = h1_ptr->b_ptr;
 	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr
+	h2_ptr->b_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
@@ -857,7 +910,7 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 }
 
 /* Macro for finding character in string at specified location */
-#define GET_LOCATE (X)	((X)) < string_len) ? ((X)) : ((X) - string_len)
+#define GET_LOCATE(X)	((((X)) < string_len) ? ((X)) : ((X) - string_len))
 
 static int string_len = 0;
 
@@ -871,7 +924,7 @@ static int string_len = 0;
 static bool ang_sort_comp_string(vptr u, vptr v, int a, int b)
 {
 	int *x = (int*)(u);
-	char *s = (char*) v;
+	byte *s = (byte*) v;
 
 	int size, p1 = x[a], p2 = x[b];
 	bool result;
@@ -918,6 +971,9 @@ static void ang_sort_swap_string(vptr u, vptr v, int a, int b)
 
 	int temp;
 
+	/* Ignore v */
+	(void) v;
+	
 	/* Swap "x" */
 	temp = x[a];
 	x[a] = x[b];
@@ -931,7 +987,7 @@ static void ang_sort_swap_string(vptr u, vptr v, int a, int b)
  * This has a worst-case time of O(n^2log(n))
  * We avoid that by doing a RLE before calling this routine.
  */
-static void sort_string(int *s_ptr, char *string, int len)
+static void sort_string(int *s_ptr, byte *string, int len)
 {
 	byte symbol;
 	int i;
@@ -948,7 +1004,7 @@ static void sort_string(int *s_ptr, char *string, int len)
 	/* Get the sub-totals of the buckets */
 	for (i = 0; i < len; i++)
 	{
-		counts[string[i]]++;
+		counts[(int) string[i]]++;
 	}
 	
 	/* Work out the partial regions */
@@ -963,13 +1019,13 @@ static void sort_string(int *s_ptr, char *string, int len)
 	{
 		symbol = string[i];
 		
-		s_ptr[position[symbol]++] = i;
+		s_ptr[positions[symbol]++] = i;
 	}
 	
 
 	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_height;
-	ang_sort_swap = ang_sort_swap_height;
+	ang_sort_comp = ang_sort_comp_string;
+	ang_sort_swap = ang_sort_swap_string;
 
 	/* Sort positions by height of wilderness */
 	ang_sort(s_ptr, string, len);
@@ -980,13 +1036,13 @@ static void sort_string(int *s_ptr, char *string, int len)
  *
  * Reading h1_ptr, writing to h2_ptr;
  */
-static void bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
+static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 {
 	int *offsets;
-	block_type b_ptr = h1_ptr->b_ptr;
-	char *data = b_ptr->block_data;
+	block_type *b_ptr = h1_ptr->b_ptr;
+	byte *data = b_ptr->block_data;
 	
-	int size = h1_ptr->b_ptr->size, transform;
+	int size = h1_ptr->b_ptr->size, transform = 0;
 	int i, j;
 	
 	
@@ -994,12 +1050,12 @@ static void bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 	C_MAKE(offsets, BLOCK_DATA_SIZE, int);
 
 	/* Sort the block, filling the offset array */
-	sort_string(offsets, data, size)	
+	sort_string(offsets, data, size);
 
 	/* Record location of original string in sorted list */
 	for (i = 0; i < size; i++)
 	{
-		if (!offset[i])
+		if (!offsets[i])
 		{
 			transform = i;
 			break;
@@ -1010,18 +1066,18 @@ static void bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 	write_block_byte(h2_ptr, size & 0xFF);
 	write_block_byte(h2_ptr, (size >> 8) & 0xFF);
 	write_block_byte(h2_ptr, (size >> 16) & 0xFF);
-	write_block_byte(h2_ptr, &j, (size >> 24) & 0xFF);
+	write_block_byte(h2_ptr, (size >> 24) & 0xFF);
 	
 	/* Write the transformation number to the file */
 	write_block_byte(h2_ptr, transform & 0xFF);
 	write_block_byte(h2_ptr, (transform >> 8) & 0xFF);
 	write_block_byte(h2_ptr, (transform >> 16) & 0xFF);
-	write_block_byte(h2_ptr, &j, (transform >> 24) & 0xFF);
+	write_block_byte(h2_ptr, (transform >> 24) & 0xFF);
 	
 	/* Write the transformed block */
 	for (i = 0; i < size; i++)
 	{
-		j = offset[i] - 1;
+		j = offsets[i] - 1;
 		if (j == -1) j = size - 1;
 		
 		write_block_byte(h2_ptr, data[j]);
@@ -1036,11 +1092,12 @@ static void bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
  *
  * Reading h1_ptr, writing to h2_ptr
  */
-static void ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
+static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 {
 	int size, transform;
 	int i;
 	int counts[256];
+	int symbol, total;
 
 	u32b *temp, t;
 	
@@ -1066,7 +1123,7 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 	 *
 	 * Doing this saves on cache misses, and makes the
 	 * inverse transformation much quicker with large
-	 * block sizes. */
+	 * block sizes.
 	 */
 	for (i = 0; i < size; i++)
 	{
@@ -1087,8 +1144,8 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 	for (i = 0; i < 256; i++)
 	{
 		/* Replace with cumulative counts */
-		symbol = count[i];
-		count[i] = total;
+		symbol = counts[i];
+		counts[i] = total;
 		total += symbol;
 	}
 	
@@ -1109,21 +1166,20 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 	C_KILL(temp, size, u32b);
 }
 
-
 /*
  * Read a file into an empty stream of blocks.
  */
 static errr read_file(block_handle *h_ptr, cptr name)
 {
-	FILE *fp;
+	int fd;
 	
 	block_type *b_ptr;
 	
 	/* Open the file */
-	fp = my_fopen(name, "r");
+	fd = fd_open(name, O_RDONLY);
 
 	/* No such file */
-	if (!fp) return (-1);
+	if (fd < 0) return (-1);
 	
 	/* Get a new block */
 	h_ptr->b_ptr = new_block();
@@ -1134,7 +1190,7 @@ static errr read_file(block_handle *h_ptr, cptr name)
 	while (TRUE)
 	{
 		/* Read the data */
-		b_ptr->size = read(fp, b_ptr->block_data, BLOCK_DATA_SIZE);
+		b_ptr->size = read(fd, b_ptr->block_data, BLOCK_DATA_SIZE);
 		
 		/* Out of data */
 		if (b_ptr->size != BLOCK_DATA_SIZE) break;
@@ -1145,23 +1201,26 @@ static errr read_file(block_handle *h_ptr, cptr name)
 	}
 	
 	/* Close the file */
-	my_fclose(fp);
+	fd_close(fd);
 
 	/* Done */
 	return (0);
 }
 
+/*
+ * Write the stream of blocks to a file.
+ */
 static errr write_file(block_handle *h_ptr, cptr name)
 {
-	FILE *fp;
+	int fd;
 	
 	block_type *b_ptr;
 	
 	/* Open the file */
-	fp = my_fopen(name, "w");
+	fd = fd_open(name, O_WRONLY);
 
 	/* No such file */
-	if (!fp) return (-1);
+	if (fd < 0) return (-1);
 
 	b_ptr = h_ptr->b_ptr;
 
@@ -1179,8 +1238,31 @@ static errr write_file(block_handle *h_ptr, cptr name)
 	}
 	
 	/* Close the file */
-	my_fclose(fp);
+	fd_close(fd);
 
 	/* Done */
 	return (0);
+}
+
+
+/*
+ * Test this module
+ */
+void test_compress_module(void)
+{
+	block_handle handle, *h_ptr = &handle;
+	cptr infile = "test"; 
+	cptr outfile =  "result";
+	char buf[1024];
+	
+	/* Build the filename */
+	(void) path_build(buf, 1024, ANGBAND_DIR, infile);
+	
+	(void) read_file(h_ptr, buf);
+	
+	/* Build the filename */
+	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
+
+	(void) write_file(h_ptr, buf);
+
 }
