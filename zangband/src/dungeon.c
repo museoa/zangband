@@ -1582,18 +1582,6 @@ static void process_world(void)
 		}
 	}
 
-	/* Rarely, take damage from the Jewel of Judgement */
-	if (one_in_(999) && !(p_ptr->flags3 & (TR3_NO_MAGIC)))
-	{
-		if ((p_ptr->equipment[EQUIP_LITE].tval) && !p_ptr->tim.invuln &&
-			(p_ptr->equipment[EQUIP_LITE].sval == SV_LITE_THRAIN))
-		{
-			msgf("The Jewel of Judgement drains life from you!");
-			take_hit(MIN(p_ptr->lev, 50), "the Jewel of Judgement");
-		}
-	}
-
-
 	/* Process equipment */
 	for (i = 0; i < EQUIP_MAX; i++)
 	{

@@ -92,6 +92,11 @@ L:USE:	detect_traps(); detect_doors(); detect_stairs()
 L:USE:	if get_check("Activate recall? ") then word_of_recall() end
 L:USE:	object.timeout = rand_range(20, 40)
 L:DESC:	return "dangerous clairvoyance and recall every 20-40 turns"
+L:TIMED:	if randint0(999) == 0 and bAnd(player.flags3, TR3_NO_MAGIC) == 0 and
+L:TIMED:	not player.tim_invuln then
+L:TIMED:		msgf("The Jewel of Judgement drains life from you!")
+L:TIMED:		take_hit(player.lev, "The Jewel of Judgement")
+L:TIMED:	end
 
 
 # The Amulet of Carlammas
@@ -1187,7 +1192,6 @@ W:52:15:130:66666
 P:0:9d5:-30:7:0
 F:DEX | CHR | HIDE_TYPE | SPEED | AGGRAVATE |
 F:SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS | INSTA_ART
-L:TIMED:	if randint0(10) == 0 then msgf("Boo!") end
 L:TIMED:	if randint0(100) == 0 then
 L:TIMED:		local line = get_rnd_line("chainswd.txt")
 L:TIMED:		if line then msgf(line) end
