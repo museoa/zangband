@@ -388,7 +388,7 @@ static void prt_exp(void)
 	else
 	{
 		/* Use the 'old' experience display */
-		put_fstr(COL_EXP, ROW_EXP, "EXP %s%8ld", attr, (long)p_ptr->exp);
+		put_fstr(COL_EXP, ROW_EXP, "EXP  %s%8ld", attr, (long)p_ptr->exp);
 	}
 }
 
