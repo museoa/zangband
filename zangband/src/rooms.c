@@ -3387,6 +3387,75 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 
 
 /*
+*This makes a vault that has many micro-rooms.
+*/
+static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
+{
+	int dy, dx;
+	int y1, x1, y2, x2;
+
+	int i, j;
+
+	/* Pick a random room size */
+	dy = ysize / 2 - 1;
+	dx = xsize / 2 - 1;
+
+	y1 = y0 - dy;
+ 	x1 = x0 - dx;
+ 	y2 = y0 + dy;
+ 	x2 = x0 + dx;
+
+	if (cheat_room) msg_print("Micro-Room Vault");
+
+	/* generate the room */
+	generate_vault(y1 - 1, x1 - 1, y2 + 1, x2 + 1);
+	
+	/* Make the whole room floor */
+	generate_fill(y1, x1, y2, x2, FEAT_FLOOR);
+	
+	/* Make outer walls */
+	generate_draw(y1 - 1, x1 - 1, y2 + 1, x2 + 1, FEAT_WALL_OUTER);
+	
+	/* Make a grid of "features" */
+	for (j = y1 + 2; j < y2 - 1; j += 4)
+	{
+		for (i = x1 + 2; i < x2 - 1; i +=4)
+		{
+			if (rand_int(2) == 1)
+			{
+				/* A tiny room */
+				build_small_room(i, j);
+			}
+			else if (rand_int(2) == 1)
+			{
+				/* 1/4 chance for a pillar */
+				generate_fill(j - 1, i - 1, j + 1, i + 1, FEAT_WALL_INNER); 
+			}
+			else if (rand_int(2) == 1)
+			{
+				/* 1/8 chance for a plus */
+				generate_plus(j - 1, i - 1, j + 1, i + 1, FEAT_WALL_INNER);
+			}
+		}
+	}
+	
+	/* Make a set of walls to break up the flow */
+	for (j = y1; j < y2 - 1; j += 4)
+	{
+		for (i = x1; i < x2 - 1; i +=4)
+		{
+			if (rand_int(2) == 1)
+			{
+				cave[j][i].feat = FEAT_WALL_INNER;
+			}
+		}
+	}
+	
+	/* Fill with monsters and treasure, low difficulty */
+	fill_treasure(x1, x2, y1, y2, randint(5));
+}
+
+/*
  * Type 10 -- Random vault
  */
 static void build_type10(int by0, int bx0)
@@ -3412,7 +3481,7 @@ static void build_type10(int by0, int bx0)
 	}
 
 	/* Select type of vault */
-	vtype = randint(8);
+	vtype = randint(9);
 
 	switch (vtype)
 	{
@@ -3425,6 +3494,7 @@ static void build_type10(int by0, int bx0)
 		case 6: build_castle_vault(x0, y0, xsize, ysize); break;
 		case 7: build_target_vault(x0, y0, xsize, ysize); break;
 		case 8: build_elemental_vault(x0, y0, xsize, ysize); break;
+		case 9: build_micro_room_vault(x0, y0, xsize, ysize); break;
 		/* I know how to add a few more... give me some time. */
 
 		/* Paranoia */
