@@ -1473,10 +1473,21 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (!(o_ptr->flags3 & TR3_LITE)))
+	else if (o_ptr->tval == TV_LITE)
 	{
-		/* Hack -- Turns of light for normal lites */
-		strnfcat(buf, max, &len, " (with %d turns of light)", o_ptr->timeout);
+		if (o_ptr->flags3 & TR3_LITE)
+		{
+			/* Hack - tell us when lites of everburning are "empty" */
+			if ((o_ptr->sval <= SV_LITE_LANTERN) && !o_ptr->timeout)
+			{
+				strnfcat(buf, max, &len, " (empty)");
+			}
+		}
+		else
+		{
+			/* Hack -- Turns of light for normal lites */
+			strnfcat(buf, max, &len, " (with %d turns of light)", o_ptr->timeout);
+		}
 	}
 
 
