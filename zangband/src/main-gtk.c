@@ -42,22 +42,10 @@ cptr help_gtk[] =
 #undef double
 
 /* Ansi C please */
-#define __STRICT_ANSI__
-
-/* No GCC-specific includes */
-#undef __GNUC__
+#define __STRICT_ANSI__ 
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-
-/*
- * Mega Hack - reference fake functions in header to prevent warnings.
- *
- * They really need to clean up their code.
- */
-static void *glib_hack1 = (void *) g_error;
-static void *glib_hack2 = (void *) g_message;
-static void *glib_hack3 = (void *) g_warning;
 
 /* Mega-hack redefine them again */
 #undef float
@@ -2673,11 +2661,6 @@ errr init_gtk(int argc, char **argv, unsigned char *new_game)
 #ifdef USE_GRAPHICS
 	int graphmode = GRAPHICS_ANY;
 #endif /* USE_GRAPHICS */
-
-	/* Mega Hack - ignore crappy glib header file problems */
-	(void) glib_hack1;
-	(void) glib_hack2;
-	(void) glib_hack3;
 	
 	/* See if gtk exists and works */
 	if (!gtk_init_check(&argc, &argv)) return (1);
