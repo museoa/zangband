@@ -505,7 +505,6 @@ static void borg_update_kill(int i)
 	
 	/* Assume we don't know */
 	kill->afraid = FALSE;
-	kill->confused = FALSE;
 	kill->stunned = FALSE;
 	kill->invulner = FALSE;
 	
@@ -533,7 +532,6 @@ static void borg_update_kill(int i)
 			kill->power = kill->power * mb_ptr->m_hp / 10;
 		
 			/* Set the monster flags we know about */
-			if (mb_ptr->m_flags & MONST_CONFUSED) kill->confused = TRUE;
 			if (mb_ptr->m_flags & MONST_FEAR) kill->afraid = TRUE;
 			if (mb_ptr->m_flags & MONST_STUN) kill->stunned = TRUE;
 			if (mb_ptr->m_flags & MONST_INVULN) kill->invulner = TRUE;

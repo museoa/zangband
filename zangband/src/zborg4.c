@@ -8725,7 +8725,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 		v1 = v1 / (d + 2);
 	}
 	/* Reduce danger from confused monsters */
-	if (kill->confused)
+	if (kill->m_flags & MONST_CONFUSED)
 	{
 		v1 = v1 / 2;
 	}
@@ -8856,7 +8856,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 			v2 = v2 / (d + 2);
 		}
 		/* Reduce danger from confused monsters */
-		if (kill->confused)
+		if (kill->m_flags & MONST_CONFUSED)
 		{
 			v2 = v2 / 2;
 		}

@@ -5029,8 +5029,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (r_ptr->flags2 & RF2_MULTIPLY) break;
 			if (kill->speed < r_ptr->speed) break;
 			if (kill->afraid) break;
-			if (kill->confused) break;
-			if (kill->m_flags & MONST_ASLEEP) break;
+			if (kill->m_flags & (MONST_ASLEEP | MONST_CONFUSED)) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5052,8 +5051,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->speed < r_ptr->speed) break;
 			if (r_ptr->flags3 & RF3_NO_FEAR) break;
 			if (kill->afraid) break;
-			if (kill->confused) break;
-			if (kill->m_flags & MONST_ASLEEP) break;
+			if (kill->m_flags & (MONST_ASLEEP | MONST_CONFUSED)) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5074,8 +5072,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			dam = 0;
 			if (kill->speed < r_ptr->speed) break;
 			if (kill->afraid) break;
-			if (kill->confused) break;
-			if (kill->m_flags & MONST_ASLEEP) break;
+			if (kill->m_flags & (MONST_ASLEEP | MONST_CONFUSED)) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5098,8 +5095,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (r_ptr->flags3 & RF3_NO_SLEEP) break;
 			if (kill->speed < r_ptr->speed) break;
 			if (kill->afraid) break;
-			if (kill->confused) break;
-			if (kill->m_flags & MONST_ASLEEP) break;
+			if (kill->m_flags & (MONST_ASLEEP | MONST_CONFUSED)) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5135,10 +5131,9 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (r_ptr->flags3 & RF3_UNDEAD)
 			{
 				dam = 0;
-				if (kill->confused) break;
 				if (kill->afraid) break;
 				if (kill->speed < r_ptr->speed) break;
-				if (kill->m_flags & MONST_ASLEEP) break;
+				if (kill->m_flags & (MONST_ASLEEP | MONST_CONFUSED)) break;
 				if (r_ptr->level > borg_skill[BI_CLEVEL] - 5) break;
 				borg_fear_mon_spell = FALSE;
 				p1 = borg_danger_aux(c_y, c_x, 1, i, TRUE);
