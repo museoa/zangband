@@ -984,9 +984,6 @@ void display_map(int *cx, int *cy)
 	byte **mta;
 	char **mtc;
 
-	bool old_view_special_lite = view_special_lite;
-	bool old_view_granite_lite = view_granite_lite;
-
 	int hgt, wid, yrat, xrat, xfactor, yfactor;
 
 	/* Get size */
@@ -1005,10 +1002,6 @@ void display_map(int *cx, int *cy)
 		(*cx) = COL_MAP;
 		return;
 	}
-
-	/* Disable lighting effects */
-	view_special_lite = FALSE;
-	view_granite_lite = FALSE;
 
 	/* Allocate the maps */
 	C_MAKE(ma, (hgt + 2), byte *);
@@ -1278,10 +1271,6 @@ void display_map(int *cx, int *cy)
 			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
 		}
 	}
-
-	/* Restore lighting effects */
-	view_special_lite = old_view_special_lite;
-	view_granite_lite = old_view_granite_lite;
 
 	/* Free each line map */
 	for (i = 0; i < (hgt + 2); i++)
@@ -2453,7 +2442,7 @@ void Term_erase_map(void)
 void prt_map(void)
 {
 	int x, y;
-	int v, n;
+	int v;
 
 	/* map bounds */
 	s16b xmin, xmax, ymin, ymax;
@@ -2468,6 +2457,8 @@ void prt_map(void)
 
 	byte *pta;
 	char *ptc;
+	
+	map_block *mb_ptr;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -2522,14 +2513,27 @@ void prt_map(void)
 	/* Dump the map */
 	for (y = ymin; y <= ymax; y++)
 	{
-		/* No characters yet */
-		n = 0;
-
 		/* Scan the columns of row "y" */
 		for (x = xmin; x <= xmax; x++)
 		{
-			/* Update this square */
-			map_info(x, y, pa++, pc++, pta++, ptc++);
+			if (map_in_bounds(x, y))
+			{
+				/* Get overhead map square */
+				mb_ptr = map_loc(x, y);
+	
+				/* Get attributes from overhead map */
+				*pa++ = mb_ptr->a;
+				*pc++ = mb_ptr->c;
+				*pta++ = mb_ptr->ta;
+				*ptc++ = mb_ptr->tc;
+			}
+			else
+			{
+				*pa++ = 0;
+				*pc++ = ' ';
+				*pta++ = 0;
+				*ptc++ = ' ';
+			}
 		}
 
 
