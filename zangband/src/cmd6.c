@@ -2417,14 +2417,16 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			if (drain_life(dir, 125)) ident = TRUE;
+			
+			fire_ball(GF_DISINTEGRATE, dir, 125 + randint(100), 2);
+			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_ROCKETS:
 		{
 			msg_print("You launch a rocket!");
-			fire_ball(GF_ROCKET, dir, 75 + (randint(50)), 2);
+			fire_ball(GF_ROCKET, dir, 250, 2);
 			ident = TRUE;
 			break;
 		}
