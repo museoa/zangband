@@ -2433,7 +2433,12 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					/* Point to it */
 					name = f_name;
 				}
-				
+				else
+				{
+					/* Just use the normal name of the field */
+					name = t_info[f_ptr->t_idx].name;
+				}
+					
 				/* Not boring */
 				boring = FALSE;
 				
@@ -2460,6 +2465,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				
 				/* Hack - we've seen a field here */
 				seen = TRUE;
+				
 			}
 		}
 		
@@ -2500,17 +2506,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		/* Terrain feature if needed */
 		if (boring || (feat >= FEAT_OPEN))
 		{
-			cptr name;
-
-#if 0
-			/* Hack -- special handling for building doors */
-			if ((feat >= FEAT_BLDG_HEAD) && (feat <= FEAT_BLDG_TAIL))
-			{
-				name = building[feat - FEAT_BLDG_HEAD].name;
-			}
-#endif
-
-			name = f_name + f_info[feat].name;
+			cptr name = f_name + f_info[feat].name;
 
 #if 0
 			/* Hack -- special handling for quest entrances */
