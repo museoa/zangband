@@ -175,7 +175,6 @@ extern void Widget_DrawInvalid(Widget *widgetPtr);
 extern void Widget_EventuallyRedraw(Widget *widgetPtr);
 extern int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr);
 
-extern WidgetItemType ProgressType;
 extern WidgetItemType TextType;
 extern WidgetItemType CursorType;
 
