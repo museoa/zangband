@@ -1000,8 +1000,6 @@ static void display_entry(int pos)
 			put_str(out_val, wid - 19, i + 6);
 		}
 
-		/* Display a "taxed" cost */
-
 		/* Extract the "minimum" price */
 		x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
@@ -1257,7 +1255,7 @@ static void store_shuffle(store_type *st_ptr)
 /*
  * Get the ID of a store item and return its value
  */
-static int get_stock(int *com_val, cptr pmt, int i, int j)
+static int get_stock(int *com_val, cptr pmt, int maxobj)
 {
 	char command;
 
@@ -1267,7 +1265,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	if (repeat_pull(com_val))
 	{
 		/* Verify the item */
-		if ((*com_val >= i) && (*com_val <= j))
+		if ((*com_val >= 0) && (*com_val < maxobj))
 		{
 			/* Success */
 			return (TRUE);
@@ -1287,8 +1285,8 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	*com_val = (-1);
 
 	/* Build the prompt */
-	(void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s",
-				  I2A(i), I2A(j), pmt);
+	(void)sprintf(out_val, "(Items a-%c, ESC to exit) %s",
+			 I2A(maxobj - 1), pmt);
 
 	/* Ask until done */
 	while (TRUE)
@@ -1302,7 +1300,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 		k = (islower(command) ? A2I(command) : -1);
 
 		/* Legal responses */
-		if ((k >= i) && (k <= j))
+		if ((k >= 0) && (k < maxobj))
 		{
 			*com_val = k;
 			break;
@@ -1459,7 +1457,7 @@ static void store_purchase(int *store_top)
 	}
 
 	/* Get the item number to be bought */
-	if (!get_stock(&item, out_val, 0, i - 1)) return;
+	if (!get_stock(&item, out_val, i)) return;
 
 	/* Get the actual index */
 	item = item + *store_top;
@@ -2028,7 +2026,7 @@ static void store_examine(int store_top)
 	sprintf(out_val, "Which item do you want to examine? ");
 
 	/* Get the item number to be examined */
-	if (!get_stock(&item, out_val, 0, i - 1)) return;
+	if (!get_stock(&item, out_val, i)) return;
 
 	/* Get the actual index */
 	item = item + store_top;
@@ -2655,25 +2653,11 @@ void do_cmd_store(field_type *f1_ptr)
 		/* XXX XXX XXX Pack Overflow */
 		if (get_list_length(p_ptr->inventory) > INVEN_PACK)
 		{
-			/* Hack -- Flee from the store */
-			if (!(st_ptr->type == BUILD_STORE_HOME))
-			{
-				/* Message */
-				msg_print("Your pack is so full that you flee the store...");
+			/* Message */
+			msg_print("Your pack is so full that you flee outside...");
 
-				/* Leave */
-				leave_store = TRUE;
-			}
-
-			/* Hack -- Flee from the home */
-			else
-			{
-				/* Message */
-				msg_print("Your pack is so full that you flee your home...");
-
-				/* Leave */
-				leave_store = TRUE;
-			}
+			/* Leave */
+			leave_store = TRUE;
 		}
 
 		/* Hack -- Redisplay store prices if charisma changes */
