@@ -237,6 +237,8 @@ errr init_quests(void)
 	return (0);
 }
 
+
+#if 0
 static bool monster_quest(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
@@ -259,23 +261,16 @@ static bool monster_quest(int r_idx)
 	return TRUE;
 }
 
+#endif /* 0 */
+
 /*
  * Quests
  *
- * q_num is the number of random quests to use.
- * If it is -1, then we ask how many to use.
  */
-void get_player_quests(int q_num)
+void init_player_quests(void)
 {
-	char inp[80];
+	int i;
 
-	monster_race *r_ptr;
-
-	int r_idx;
-	int i, j, v, level;
-
-	int best_level, best_r_idx;
-	int num;
 	int q_idx;
 
 	/* Reset number of quests */
@@ -286,133 +281,6 @@ void get_player_quests(int q_num)
 	{
 		quest_wipe(i);
 	}
-	
-	if (q_num == -1)
-	{
-		/* Extra info */
-		put_fstr(5, 15,
-				"You can enter the number of quests you'd like to perform in addition\n"
-				"to the two obligatory ones ( Oberon and the Serpent of Chaos )\n"
-				"In case you do not want any additional quests, just enter 0\n"
-				"If you want a random number of random quests, just enter *");
-
-		/* Ask the number of additional quests */
-		while (TRUE)
-		{
-			put_fstr(2, 20, "Number of additional quests? (<50) ");
-
-			/* Get a the number of additional quest */
-			while (TRUE)
-			{
-				/* Move the cursor */
-				Term_gotoxy(37, 20);
-
-				/* Default */
-				strcpy(inp, "20");
-
-				/* Get a response (or escape) */
-				if (!askfor_aux(inp, 3)) inp[0] = '\0';
-
-				/* Check for random number of quests */
-				if (inp[0] == '*')
-				{
-					/* 0 to 49 random quests */
-					v = randint0(50);
-				}
-				else
-				{
-					v = atoi(inp);
-				}
-
-				/* Break on valid input */
-				if ((v < 50) && (v >= 0)) break;
-			}
-			break;
-		}
-	}
-	else
-	{
-		v = q_num;
-	}
-#if 0
-
-	/*
-	 * Hard-code number of dungeon quests until
-	 * we get the quest-giver stores working.
-	 */
-	v = 20;
-
-#endif /* 0 */
-
-	/* Prepare monster list */
-	get_mon_num_prep(monster_quest);	
-
-	/* Generate quests */
-	for (i = 0; i < v; i++)
-	{
-		level = (i * 96 + 48) / v + 1;
-
-		best_r_idx = 1;
-		best_level = 1;
-
-		/* Get monster */
-		for (j = 0; j < MAX_TRIES; j++)
-		{
-			int depth;
-			int min_depth;
-
-			depth = level + 6 +
-					randint1(level * v / 200 + 1) +
-					randint1(level * v / 200 + 1);
-			min_depth = level + (level / 20) + 1;
-
-			/*
-			 * Random monster out of depth
-			 * (depending on level + number of quests)
-			 */
-			r_idx = get_mon_num(depth);
-
-			r_ptr = &r_info[r_idx];
-
-			/* Save the index if the monster is deeper than current monster */
-			if (!best_r_idx || (r_info[r_idx].level > best_level))
-			{
-				best_r_idx = r_idx;
-				best_level = r_info[r_idx].level;
-			}
-
-			/* Accept monsters that are a few levels out of depth */
-			if (best_level > min_depth) break;
-		}
-
-		r_ptr = &r_info[best_r_idx];
-
-		/* Get the number of monsters */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
-			/* Mark uniques */
-			r_ptr->flags1 |= RF1_QUESTOR;
-
-			num = 1;
-		}
-		else if (r_ptr->flags3 & RF3_UNIQUE_7)
-		{
-			/* Mark uniques */
-			r_ptr->flags1 |= RF1_QUESTOR;
-
-			num = randint1(r_ptr->max_num);
-		}
-		else
-		{
-			num = 5 + (s16b)randint0(level / 3 + 5) / r_ptr->rarity;
-		}
-
-		/* Create the quest */
-		insert_dungeon_monster_quest(best_r_idx, num, level);
-	}
-	
-	/* Restore allocation table */
-	get_mon_num_prep(NULL);
 
 	/* Add the winner quests */
 
@@ -604,7 +472,7 @@ void activate_quests(int level)
 /*
  * Count the number of quests chosen so far
  */
-int number_of_quests(void)
+static int number_of_quests(void)
 {
 	int i;
 

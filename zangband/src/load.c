@@ -278,6 +278,26 @@ static void strip_bytes(int n)
 	while (n--) rd_byte(&tmp8u);
 }
 
+#ifdef UNUSED_FUNC
+
+/*
+ * Hack -- strip a string
+ */
+static void strip_string(void)
+{
+	byte tmp8u;
+	
+	/* Read the string */
+	do
+	{
+		/* Read a byte */
+		rd_byte(&tmp8u);
+	}
+	/* End of string */
+	while (tmp8u);
+}
+
+#endif /* UNUSED_FUNC */
 
 /*
  * Read an object
@@ -1467,12 +1487,6 @@ static object_type old_inventory[24];
 
 /*
  * Read the player inventory
- *
- * Note that the inventory changed in Angband 2.7.4.  Two extra
- * pack slots were added and the equipment was rearranged.  Note
- * that these two features combine when parsing old save-files, in
- * which items from the old "aux" slot are "carried", perhaps into
- * one of the two new "inventory" slots.
  *
  * Note that the inventory is "re-sorted" later by "dungeon()".
  */
@@ -2986,6 +3000,9 @@ static errr rd_savefile_new_aux(void)
 	if (sf_version < 30)
 	{
 		strip_quests(max_quests_load);
+		
+		/* Reinitialise the quests when loading an old version */
+		init_player_quests();
 	}
 
 	/* Newer versions */
@@ -3000,6 +3017,8 @@ static errr rd_savefile_new_aux(void)
 
 		rd_quests(max_quests_load);
 	}
+	
+	if (arg_fiddle) note("Loaded Quests");
 
 	/* Only in 2.2.1 and 2.2.2 */
 	if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
@@ -3060,16 +3079,6 @@ static errr rd_savefile_new_aux(void)
 			}
 		}
 	}
-
-	/*
-	 * Reinitialise the quests when loading an old version
-	 */
-	if (sf_version < 30)
-	{
-		get_player_quests(-1);
-	}
-
-	if (arg_fiddle) note("Loaded Quests");
 
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);

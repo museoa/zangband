@@ -1080,8 +1080,8 @@ static bool player_birth_aux_1(void)
 		put_fstr(11, 7, CLR_L_BLUE "%s", realm_names[p_ptr->spell.r[1].realm]);
 	}
 
-	/* And finally, get the number of random quests */
-	get_player_quests(-1);
+	/* And finally, initialize the starting quests */
+	init_player_quests();
 
 	/* Clear */
 	clear_from(15);
