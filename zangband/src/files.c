@@ -3117,6 +3117,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		{
 			filename[i] = '\0';
 			tag = filename + i + 1;
+			break;
 		}
 	}
 
@@ -3190,7 +3191,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				menu = TRUE;
 
 				/* Extract the menu item */
-				k = isdigit(buf[7]) ? D2I(buf[7]) : A2I(buf[7]) + 10;
+				k = isdigit(buf[7]) ? D2I(buf[7]) : buf[7] - 'A' + 10;
 
 				if ((buf[8] == ']') && (buf[9] == ' '))
 				{
@@ -3203,7 +3204,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			    (buf[8] == '>'))
 			{
 				/* Extract the menu item */
-				k = isdigit(buf[7]) ? D2I(buf[7]) : A2I(buf[7]) + 10;
+				k = isdigit(buf[7]) ? D2I(buf[7]) : buf[7] - 'A' + 10;
 
 				/* Extract the menu item */
 				tags[k] = next;
@@ -3222,7 +3223,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Go to the tagged line */
 	if (tag)
-		line = tags[isdigit(tag[0]) ? D2I(tag[0]) : A2I(tag[0]) + 10];
+		line = tags[isdigit(tag[0]) ? D2I(tag[0]) : tag[0] - 'A' + 10];
 
 	/* Display the file */
 	while (TRUE)
@@ -3250,13 +3251,20 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			next = 0;
 		}
 
-		/* Skip lines if needed */
-		for (; next < line; next++)
+		/* Goto the selected line */
+		while (1)
 		{
 			/* Skip a line */
 			if (my_fgets(fff, buf, 1024)) break;
-		}
 
+			/* Skip tags */
+			if (prefix(buf, "***** ")) continue;
+
+			next++;
+
+			/* Goto the selected line */
+			if (next >= line) break;
+		}
 
 		/* Dump the next 20 lines of the file */
 		for (i = 0; i < 20; )
@@ -3445,7 +3453,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			int key = -1;
 
 			if (isdigit(k)) key = D2I(k);
-			else if isalpha(k) key = A2I(k) + 10;
+			else if isalpha(k) key = k - 'A' + 10;
 
 			if ((key > -1) && hook[key][0])
 			{
