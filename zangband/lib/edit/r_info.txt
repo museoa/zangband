@@ -1237,7 +1237,7 @@ O:0:0:0
 B:STING:HURT:5d1
 B:STING:HURT:5d1
 F:ANIMAL | AQUATIC | WILD_DUNGEON_01 | WILD_GRASS | WILD_SHORE
-D:An animal with a swordlike "beak".
+D:A fish with a swordlike upper jaw.
 
 N:89:Blue worm mass
 G:w:b
