@@ -2820,7 +2820,9 @@ void do_cmd_cast(void)
 		/* A spell was cast */
 		if (!(p_ptr->spell.r[increment / 32].worked & (1L << spell)))
 		{
-			int e = s_ptr->sexp;
+			/* Experience: 5, 20, 45, or 80 * spell level */
+			int book = 1 + (spell / 8);
+			int exp = 5 * book * book * s_ptr->slevel;
 
 			/* The spell worked */
 			if (realm == p_ptr->spell.r[0].realm)
@@ -2833,7 +2835,7 @@ void do_cmd_cast(void)
 			}
 
 			/* Gain experience */
-			gain_exp(e * s_ptr->slevel);
+			gain_exp(exp);
 
 			if (mp_ptr->spell_book == TV_LIFE_BOOK)
 				chg_virtue(V_FAITH, 1);

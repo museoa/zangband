@@ -1100,7 +1100,6 @@ struct magic_type
 	byte slevel;	/* Required level (to learn) */
 	byte smana;	/* Required mana (to cast) */
 	byte sfail;	/* Minimum chance of failure */
-	byte sexp;	/* Encoded experience bonus */
 };
 
 
