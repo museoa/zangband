@@ -319,7 +319,6 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
     widgetPtr->oldStyle = -1;
     widgetPtr->cursor = None;
 	widgetPtr->setGrid = FALSE;
-    widgetPtr->takeFocus = NULL;
     widgetPtr->flags = 0;
 	widgetPtr->y = widgetPtr->x = 0;
 	widgetPtr->y_min = widgetPtr->y_max = 0;
@@ -335,7 +334,6 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	widgetPtr->dw = widgetPtr->dh = 0;
 	widgetPtr->info = NULL;
 	widgetPtr->invalid = NULL;
-	widgetPtr->yp = widgetPtr->xp = NULL;
 
 	/*
 	 * Arrange for our routine to be called when any of the specified
@@ -900,10 +898,6 @@ static void Widget_Destroy(Widget *widgetPtr)
 		Tcl_Free((void *) widgetPtr->info);
 	if (widgetPtr->invalid)
 		Tcl_Free((void *) widgetPtr->invalid);
-	if (widgetPtr->yp)
-		Tcl_Free((void *) widgetPtr->yp);
-	if (widgetPtr->xp)
-		Tcl_Free((void *) widgetPtr->xp);
 
 	widgetPtr->tkwin = NULL;
 
@@ -1023,16 +1017,6 @@ void Widget_WorldChanged(ClientData instanceData)
 		{
 			Tcl_Free((char *) widgetPtr->invalid);
 			widgetPtr->invalid = NULL;
-		}
-		if (widgetPtr->yp)
-		{
-			Tcl_Free((char *) widgetPtr->yp);
-			widgetPtr->yp = NULL;
-		}
-		if (widgetPtr->xp)
-		{
-			Tcl_Free((char *) widgetPtr->xp);
-			widgetPtr->xp = NULL;
 		}
 	}
 

@@ -51,7 +51,6 @@ struct Widget
     int oldTileCnt;				/* To notice changes */
     Tk_Cursor cursor;           /* Cursor? */
 	int setGrid;                /* Use gridded geometry */
-    char *takeFocus;			/* Used? */
 
 	int y, x;					/* Cave location (center of widget) */
 	Widget_CenterProc *centerProc; /* Per-widget centering routine */
@@ -93,12 +92,6 @@ struct Widget
 
 	/* WIDGET_STYLE_MAP */
 	int dirty[4]; /* Dirty rect for map */
-
-    /* WIDGET_STYLE_ISO */
-	int *yp, *xp;				/* Pixel offsets of each tile */
-	int y0, x0;					/* Cave location of top-left (tile 0) */
-	int cx, cy;					/* Offset of bitmap from "canvas" */
-	int ox, oy;					/* testing */
 };
 
 /*
