@@ -30,25 +30,12 @@
  * Race groups only needed in the race selection display
  */
 
-/* 
- *In fact, THESE are not needed...
- * #define RACES_HUMAN       0
- * #define RACES_ELVEN       1
- * #define RACES_TINY        2
- * #define RACES_HUGE        3
- * #define RACES_ZOOMORPH    4
- * #define RACES_GOBLIN      5
- * #define RACES_MAGIC       6
- * #define RACES_UNDEAD      7
- * #define RACES_PLANAR      8
- */
-
-#define MAX_RACE_GROUPS   9
+#define MAX_RACE_GROUPS   10
 
 const cptr race_group_name[MAX_RACE_GROUPS]=
 {
   "Human", "Elven", "Midget", "Giant", "Goblinoid", 
-  "Natural", "Magic", "Undead", "Extraplanar",
+  "Natural", "Magic", "Constructs", "Undead", "Extraplanar",
 
 };
 
@@ -61,6 +48,7 @@ const cptr race_group_desc[MAX_RACE_GROUPS]=
   "This group consists of 'evil' races such as kobolds and half-orcs.",
   "This group consists of sentient animal and plant races.",
   "This group consists of races with a magical origin or background.",
+  "This group consists of artificial creatures.",
   "This group consists of undead races.",
   "This group consists of races from other planes of existence."
 };
@@ -71,11 +59,12 @@ const sint race_groups [MAX_RACE_GROUPS][MAX_GROUP_INT]=
 {
   {RACE_HUMAN, RACE_BARBARIAN, RACE_AMBERITE, -1, -1, -1},
   {RACE_HALF_ELF, RACE_ELF, RACE_HIGH_ELF, RACE_DARK_ELF, -1, -1},
-  {RACE_HOBBIT, RACE_GNOME, RACE_DWARF, RACE_NIBELUNG, RACE_YEEK, RACE_SPRITE},
+  {RACE_HOBBIT, RACE_GNOME, RACE_DWARF, RACE_NIBELUNG, RACE_YEEK, -1},
   {RACE_CYCLOPS, RACE_HALF_OGRE, RACE_HALF_GIANT, RACE_HALF_TITAN, -1, -1},
   {RACE_KOBOLD, RACE_HALF_ORC, RACE_HALF_TROLL, -1, -1, -1},
   {RACE_KLACKON, -1, -1, -1, -1, -1},
-  {RACE_DRACONIAN, RACE_MIND_FLAYER, RACE_GOLEM, RACE_BEASTMAN, -1, -1},
+  {RACE_SPRITE, RACE_DRACONIAN, RACE_MIND_FLAYER, RACE_BEASTMAN, -1, -1},
+  {RACE_GOLEM, -1, -1, -1, -1, -1},
   {RACE_SKELETON, RACE_ZOMBIE, RACE_VAMPIRE, RACE_SPECTRE, -1, -1},
   {RACE_IMP, -1, -1, -1, -1, -1}
 };
