@@ -705,95 +705,95 @@ static sint d_off_x_3[] =
 static sint d_off_y_4[] =
 {
 	-1, -1, -2, -2, -3, -3, -3, -3, -4, -4, -4, 0, 0, 1, 1, 2, 2, 3, 3, 3, 3, 4,
-		4, 4, 0
+	4, 4, 0
 };
 
 static sint d_off_x_4[] =
 {
 	-4, 4, -3, 3, -2, -3, 2, 3, -1, 0, 1, -4, 4, -4, 4, -3, 3, -2, -3, 2, 3, -1,
-		0, 1, 0
+	0, 1, 0
 };
 
 
 static sint d_off_y_5[] =
 {
 	-1, -1, -2, -2, -3, -3, -4, -4, -4, -4, -5, -5, -5, 0, 0, 1, 1, 2, 2, 3, 3,
-		4, 4, 4, 4, 5, 5, 5, 0
+	4, 4, 4, 4, 5, 5, 5, 0
 };
 
 static sint d_off_x_5[] =
 {
 	-5, 5, -4, 4, -4, 4, -2, -3, 2, 3, -1, 0, 1, -5, 5, -5, 5, -4, 4, -4, 4, -2,
-		-3, 2, 3, -1, 0, 1, 0
+	-3, 2, 3, -1, 0, 1, 0
 };
 
 
 static sint d_off_y_6[] =
 {
 	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5, -6, -6, -6, 0, 0, 1, 1, 2,
-		2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 0
+	2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 0
 };
 
 static sint d_off_x_6[] =
 {
 	-6, 6, -5, 5, -5, 5, -4, 4, -2, -3, 2, 3, -1, 0, 1, -6, 6, -6, 6, -5, 5, -5,
-		5, -4, 4, -2, -3, 2, 3, -1, 0, 1, 0
+	5, -4, 4, -2, -3, 2, 3, -1, 0, 1, 0
 };
 
 
 static sint d_off_y_7[] =
 {
 	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5, -6, -6, -6, -6, -7, -7, -7,
-		0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 0
+	0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 0
 };
 
 static sint d_off_x_7[] =
 {
 	-7, 7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, -7, 7, -7,
-		7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, 0
+	7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, 0
 };
 
 
 static sint d_off_y_8[] =
 {
 	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6, -6, -6, -7, -7, -7, -7, -8,
-		-8, -8, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8,
-		8, 8, 0
+	-8, -8, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8,
+	8, 8, 0
 };
 
 static sint d_off_x_8[] =
 {
 	-8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, -8,
-		8, -8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
-		1, 0
+	8, -8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
+	1, 0
 };
 
 
 static sint d_off_y_9[] =
 {
 	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6, -7, -7, -7, -7, -8, -8, -8,
-		-8, -9, -9, -9, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 7, 8,
-		8, 8, 8, 9, 9, 9, 0
+	-8, -9, -9, -9, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 7, 8,
+	8, 8, 8, 9, 9, 9, 0
 };
 
 static sint d_off_x_9[] =
 {
 	-9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
-		1, -9, 9, -9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5, 4, 5, -2,
-		-3, 2, 3, -1, 0, 1, 0
+	1, -9, 9, -9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5, 4, 5, -2,
+	-3, 2, 3, -1, 0, 1, 0
 };
 
 
 static sint *dist_offsets_y[10] =
 {
 	d_off_y_0, d_off_y_1, d_off_y_2, d_off_y_3, d_off_y_4, d_off_y_5, d_off_y_6,
-		d_off_y_7, d_off_y_8, d_off_y_9
+	d_off_y_7, d_off_y_8, d_off_y_9
 };
 
 static sint *dist_offsets_x[10] =
 {
 	d_off_x_0, d_off_x_1, d_off_x_2, d_off_x_3, d_off_x_4, d_off_x_5, d_off_x_6,
-		d_off_x_7, d_off_x_8, d_off_x_9
+	d_off_x_7, d_off_x_8, d_off_x_9
 };
 
 /*
@@ -861,13 +861,14 @@ static void find_safety(monster_type *m_ptr, int *xp, int *yp)
 				{
 					*yp = y;
 					*xp = x;
-					if (!player_has_los_grid(parea(x, y)))
+
+					if (in_boundsp(x, y) && player_has_los_grid(parea(x, y)))
 					{
-						gdis = dis * 5;
+						gdis = dis;
 					}
 					else
 					{
-						gdis = dis;
+						gdis = dis * 5;
 					}
 				}
 			}
@@ -1006,15 +1007,12 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 	}
 
 	/* Can the player see us? - if so run towards him */
-	if (in_boundsp(mx, my))
+	if (in_boundsp(mx, my) && player_has_los_grid(parea(mx, my)))
 	{
-		if (player_has_los_grid(parea(mx, my)))
-		{
-			*tx = px;
-			*ty = py;
+		*tx = px;
+		*ty = py;
 
-			return;
-		}
+		return;
 	}
 
 #if 0
@@ -1151,7 +1149,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 			 * It's out of LOS;
 			 * keep using it, except in "knight's move" cases
 			 */
-		
+
 			/* Get axis distance from character to current target */
 			int dist_x = ABS(p_ptr->px - m_ptr->tx);
 			int dist_y = ABS(p_ptr->py - m_ptr->ty);
@@ -1173,7 +1171,8 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 					/* Check Bounds */
 					if (!in_bounds(x, y)) continue;
 
-					if (player_has_los_grid(parea(x, y))) continue;
+					if (in_boundsp(x, y) &&
+						player_has_los_grid(parea(x, y))) continue;
 
 					if ((x == m_ptr->tx) && (y == m_ptr->ty)) continue;
 
@@ -1214,14 +1213,15 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 					y = m_ptr->fy + ddy_ddd[i];
 
 					/* Check Bounds */
-					if (!in_bounds(y, x)) continue;
+					if (!in_bounds(x, y)) continue;
 
 					c_ptr = area(x, y);
 
 					/* Accept the first non-visible grid with a lower cost */
 					if (c_ptr->cost < start_cost)
 					{
-						if (!player_has_los_grid(parea(x, y)))
+						if (!(in_boundsp(x, y)
+							  && player_has_los_grid(parea(x, y))))
 						{
 							*tx = x;
 							*ty = y;
@@ -2275,7 +2275,6 @@ static void take_move(int m_idx, int *mm)
 	int oy, ox;
 
 	cave_type *c_ptr;
-	pcave_type *pc_ptr;
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -2297,6 +2296,8 @@ static void take_move(int m_idx, int *mm)
 	bool did_move_body = FALSE;
 	bool did_pass_wall = FALSE;
 	bool did_kill_wall = FALSE;
+
+	bool see_grid = FALSE;
 
 	/* Get the origin */
 	oy = m_ptr->fy;
@@ -2321,7 +2322,11 @@ static void take_move(int m_idx, int *mm)
 
 		/* Access that cave grid */
 		c_ptr = area(nx, ny);
-		pc_ptr = parea(nx, ny);
+
+		if (in_boundsp(nx, ny) && player_can_see_grid(parea(nx, ny)))
+		{
+			see_grid = TRUE;
+		}
 
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
@@ -2690,7 +2695,7 @@ static void take_move(int m_idx, int *mm)
 							did_take_item = TRUE;
 
 							/* Describe observable situations */
-							if (m_ptr->ml && player_can_see_grid(pc_ptr))
+							if (m_ptr->ml && see_grid)
 							{
 								/* Dump a message */
 								msg_format
@@ -2707,7 +2712,7 @@ static void take_move(int m_idx, int *mm)
 						did_take_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_can_see_grid(pc_ptr))
+						if (see_grid)
 						{
 							/* Dump a message */
 							msg_format("%^s picks up %s.", m_name, o_name);
@@ -2742,7 +2747,7 @@ static void take_move(int m_idx, int *mm)
 						did_kill_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_can_see_grid(pc_ptr))
+						if (see_grid)
 						{
 							/* Dump a message */
 							msg_format("%^s destroys %s.", m_name, o_name);
@@ -3169,8 +3174,8 @@ static void process_monster(int m_idx)
 
 	/* Some monsters can speak */
 	if (speak_unique &&
-		(r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE) &&
-		player_has_los_grid(parea(ox, oy)))
+		(r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE)
+		&& in_boundsp(ox, oy) && player_has_los_grid(parea(ox, oy)))
 	{
 		char monmessage[1024];
 		cptr filename;
@@ -3506,7 +3511,8 @@ void process_monsters(int min_energy)
 
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
-				 (player_has_los_grid(parea(fx, fy)) || p_ptr->aggravate))
+				 ((in_boundsp(fx, fy) && player_has_los_grid(parea(fx, fy)))
+				  || p_ptr->aggravate))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;
