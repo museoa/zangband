@@ -1451,7 +1451,6 @@ static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 }
 
 
-
 /*
  * Hack -- Delete all nearby monsters
  */
@@ -1470,6 +1469,27 @@ static void do_cmd_wiz_zap(void)
 
 		/* Delete nearby monsters */
 		if (m_ptr->cdis <= MAX_SIGHT) delete_monster_idx(i);
+	}
+}
+
+
+/*
+ * Hack -- Delete all monsters
+ */
+static void do_cmd_wiz_zap_all(void)
+{
+	int i;
+
+	/* Genocide everyone */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Delete this monster */
+		delete_monster_idx(i);
 	}
 }
 
@@ -1748,6 +1768,10 @@ void do_cmd_debug(void)
 		/* Zap Monsters (Genocide) */
 		case 'z':
 		do_cmd_wiz_zap();
+		break;
+
+		case 'Z':
+		do_cmd_wiz_zap_all();
 		break;
 
 		/* Hack -- whatever I desire */
