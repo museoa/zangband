@@ -1613,11 +1613,6 @@ proc NSInventory::AlwaysOnTop {oop} {
 	} else {
 		wm transient $win ""
 		raise $win
-
-		if {[string compare 8.3.3 [info patchlevel]] < 0} {
-			# Hack -- Set the application icon again
-			angband system windowicon $win
-		}
 	}
 
 	if {[Platform unix]} {

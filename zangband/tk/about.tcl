@@ -155,10 +155,6 @@ proc NSAbout::InitWindow {} {
 	append text "\nTcl $::tcl_patchLevel   Tk $::tk_patchLevel"
 	set os $::tcl_platform(os)
 
-	# Hack -- Windows 98/ME/2000 are not detected by Tcl
-	if {[Platform windows]} {
-		set os [angband system osversion]
-	}
 	append text "   $os $::tcl_platform(osVersion)"
 	$canvas create text [expr {$width / 2}] [expr {$height - $height2 + 6}] \
 		-text $text -fill gray80 -justify center -anchor n -tags message

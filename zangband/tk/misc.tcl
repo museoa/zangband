@@ -187,27 +187,13 @@ proc SetWindowIcon {win} {
 	global WindowIcon
 
 	if {![info exists WindowIcon($win)]} {
-		if {![string length [wm transient $win]]} {
+		if {0 && ![string length [wm transient $win]]} {
 			angband system windowicon $win
 		}
 		set WindowIcon($win) 1
 	}
 
 	return
-}
-
-if {[string compare 8.3.3 [info patchlevel]] < 0} {
-
-bind Toplevel <Map> {+
-	SetWindowIcon %W
-}
-
-# The pesky root window does not have the Toplevel bindtag!!!
-bind . <Map> {+
-	SetWindowIcon .
-}
-
-# < 8.3.3
 }
 
 # fmt_wgt --
