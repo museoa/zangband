@@ -61,6 +61,8 @@ ZAngband 2.6.2:
 - The gtk port is now of at least beta quality.  It has been added to
   the makefile.  It supports graphics and bigscreen resizing.
 - The spell-list term type now adjusts to window size.
+- Potions of resist heat and cold are more common.
+- Fixed compilation problems on machines lacking memset().
 
 ZAngband 2.6.1:
 - The supplies store can sell ammo.
