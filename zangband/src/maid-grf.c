@@ -987,6 +987,40 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 }
 
 /*
+ * Set the basic object flags to send to the port
+ */
+static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
+{
+	/* Known flags */
+	l_ptr->kn_flags1 = o_ptr->kn_flags1;
+	l_ptr->kn_flags2 = o_ptr->kn_flags2;
+	l_ptr->kn_flags3 = o_ptr->kn_flags3;
+
+	/* Type of object */
+	l_ptr->k_idx = o_ptr->k_idx;
+
+	/* Weight and number */
+	l_ptr->weight = o_ptr->weight;
+	l_ptr->number = o_ptr->number;
+
+	/* Save information */
+	l_ptr->info = o_ptr->info;
+
+	/* Hack - Save cost (If not in a store, this will be inaccurate) */
+	l_ptr->cost = o_ptr->temp_cost;
+
+	/* Do we have extra name information? */
+	if (object_known_p(o_ptr) && (o_ptr->xtra_name))
+	{
+		l_ptr->xtra_name = string_make(quark_str(o_ptr->xtra_name));
+	}
+	else
+	{
+		l_ptr->xtra_name = NULL;
+	}
+}
+
+/*
  * Write out the equipment so that the ports can access it.
  *
  * This is equivalent to Term_write_list() below, except with
@@ -996,7 +1030,7 @@ void Term_write_equipment(void)
 {
 	term_list *list, *l_ptr;
 	
-	int i, j;
+	int i, j = 0;
 	object_type *o_ptr;
 	char o_name[256];
 	
@@ -1029,42 +1063,18 @@ void Term_write_equipment(void)
 		/* Get object list element */
 		l_ptr = &list[j];
 		
-		/* Known flags */
-		l_ptr->kn_flags1 = o_ptr->kn_flags1;
-		l_ptr->kn_flags2 = o_ptr->kn_flags2;
-		l_ptr->kn_flags3 = o_ptr->kn_flags3;
-		
-		/* Type of object */
-		l_ptr->k_idx = o_ptr->k_idx;
-		
-		/* Weight and number */
-		l_ptr->weight = o_ptr->weight;
-		l_ptr->number = o_ptr->number;
-		
-		/* Save information */
-		l_ptr->info = o_ptr->info;
-		
+		/* Set object flags */
+		set_basic_flags(l_ptr, o_ptr);
+				
 		/* Save slot */
 		l_ptr->slot = (byte) i;
 		
-		/* Hack - Save cost (If not in a store, this will be inaccurate) */
-		l_ptr->cost = o_ptr->temp_cost;
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
 		
 		l_ptr->o_name = string_make(o_name);
-		
-		/* Do we have extra name information? */
-		if (object_known_p(o_ptr) && (o_ptr->xtra_name))
-		{
-			l_ptr->xtra_name = string_make(quark_str(o_ptr->xtra_name));
-		}
-		else
-		{
-			l_ptr->xtra_name = NULL;
-		}
-	
+
 		/* Increment counter */
 		j++;
 	}
@@ -1115,35 +1125,12 @@ void Term_write_list(s16b o_idx, byte list_type)
 		/* Get object list element */
 		l_ptr = &list[i];
 		
-		/* Known flags */
-		l_ptr->kn_flags1 = o_ptr->kn_flags1;
-		l_ptr->kn_flags2 = o_ptr->kn_flags2;
-		l_ptr->kn_flags3 = o_ptr->kn_flags3;
-		
-		/* Type of object */
-		l_ptr->k_idx = o_ptr->k_idx;
-		
-		/* Weight and number */
-		l_ptr->weight = o_ptr->weight;
-		l_ptr->number = o_ptr->number;
-		
-		/* Save information */
-		l_ptr->info = o_ptr->info;
+		/* Set object flags */
+		set_basic_flags(l_ptr, o_ptr);
 		
 		/* Stores are special */
-		if (list_type == LIST_STORE_BUY)
+		if (list_type == LIST_STORE_SELL)
 		{
-			/* Get cost */
-			l_ptr->cost = o_ptr->temp_cost;
-			
-			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3, 256);
-		}
-		else if (list_type == LIST_STORE_SELL)
-		{
-			/* Get cost */
-			l_ptr->cost = o_ptr->temp_cost;
-			
 			/* Describe the object */
 			object_desc_store(o_name, o_ptr, TRUE, 3, 256);
 		}
@@ -1154,16 +1141,6 @@ void Term_write_list(s16b o_idx, byte list_type)
 		}
 		
 		l_ptr->o_name = string_make(o_name);
-		
-		/* Do we have extra name information? */
-		if (object_known_p(o_ptr) && (o_ptr->xtra_name))
-		{
-			l_ptr->xtra_name = string_make(quark_str(o_ptr->xtra_name));
-		}
-		else
-		{
-			l_ptr->xtra_name = NULL;
-		}
 	
 		/* Increment counter */
 		i++;
