@@ -241,6 +241,11 @@
 #define NOKANJI           /* Kanji support stuff. */
 #define NOMCX             /* Modem Configuration Extensions */
 
+
+/* Mega-hack, these include files require double and float to work */
+#undef float
+#undef double
+
 /*
  * Include the "windows" support file
  */
@@ -292,6 +297,12 @@
 #define FA_DIREC    0x10        /* Directory */
 unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 #endif /* WIN32 */
+
+/* Mega-hack redefine them again */
+#undef float
+#define float floating_point_is_not_allowed
+#undef double
+#define double floating_point_is_not_allowed
 
 /*
  * Silliness in WIN32 drawing routine
