@@ -4251,7 +4251,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 	/* Apply magic (allow artifacts) */
 	apply_magic(j_ptr, object_level, TRUE, good, great, FALSE);
 
-	/* Hack -- generate multiple spikes/missiles */
+	/* Hack -- generate multiple spikes/missiles/ mushrooms */
 	switch (j_ptr->tval)
 	{
 		case TV_SPIKE:
@@ -4260,6 +4260,16 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		case TV_BOLT:
 		{
 			j_ptr->number = (byte)damroll(10, 8);
+		}
+		break;
+		
+		case TV_FOOD:
+		{
+			if (j_ptr->sval < SV_FOOD_BISCUIT)
+			{
+				/* mushrooms appear in clumps */
+				j_ptr->number = (byte)randint(6);
+			}
 		}
 	}
 
