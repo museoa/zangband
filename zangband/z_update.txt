@@ -2,18 +2,45 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-
 ZAngband 2.5.0:
 -Completely reworked the wilderness.  The extended towns and fixed
  quests are not available at the moment.
--Towns now have gates so the nasty monsters in the wilderness cannot
- get in.
+-Towns now have locked gates so the nasty monsters in the wilderness
+ cannot get in. No experience is given for picking them.
 -Added a feature to allow your game to be automatically logged. You
  may append notes to the log file by pressing ':'.
 -Added point-bases stat allocation at birth (adapted from standard
  Angband).
 -Revised monster and object listings to distribute them more evenly
  throughout the dungeon.
+-Slow and haste spells acting on monsters will decrease in effect if
+ the monster is already slowed/hasted.
+-Fixed a bug that forced parsing of v_info.txt every time the game started.
+-Lava rivers are found deeper in the dungeon.
+-Fixed some out of bounds accesses of the wilderness map.
+-Added out of bounds checks to the running algorithm.
+-If you choose more than 20 quests, the chance to get excellent items
+ is decreased.
+-The number of random quests chosen appears in the character dump.
+-Fixed problem with some messages that were given when the subject was
+ in "LOS" but not visible due to lighting effects.
+-Added bugfixes for the amiga overhead map.
+-Removed excess elemental resistances from a few monsters.  Now, only
+ very powerful, or multihued monsters will resist all five basic
+ elements.
+-Running next to the wilderness boundary no longer should crash the
+ game.
+-Increased number of affectable squares to 1024 per projection.
+-Fixed problems with monsters passing through walls, passing through
+ other monsters and passing through the player.
+-Fixed the "missing monsters" bug.
+-Items that grant extra blows are now worth slightly more.
+-Fixed some problems with taking various actions near the wilderness
+ boundary.
+-Vampires / vampiric mutation can no longer be used if you are
+ afraid.
+-You can choose a random number of random quests when generating
+ your character.
 -Removed makefile.org  (It was a copy of makfile.std).
 -Removed the overhead map in vanilla town mode - it isn't needed.
 -Removed some warnings given by VC.
