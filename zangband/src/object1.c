@@ -855,17 +855,17 @@ void identify_fully_aux(const object_type *o_ptr)
 	/* Save the screen */
 	screen_save();
 
+	/* Show the item in a message including its pack letter */
+	put_fstr(0, 0, "Examining %v:", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+
 	/* Begin recall */
 	clear_row(1);
 
 	/* Recall object */
 	roff_obj_aux(o_ptr);
 
-	/* Show the item in a message including its pack letter */
-	put_fstr(0, 0, "Examining %v:", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
-
-	/* Wait for it if the player ignores all messages */
-	if (auto_more) (void)inkey();
+	/* Wait for the player to read the info */
+	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
