@@ -336,7 +336,7 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
  *;
  * We return the number of active options.
  */
-static int show_menu(int num, menu_type *options, int select)
+static int show_menu(int num, menu_type *options, int select, bool scroll)
 {
 	int cnt = 0;
 	int i;
@@ -345,8 +345,24 @@ static int show_menu(int num, menu_type *options, int select)
 	{
 		if (options[i].available)
 		{
-			prtf(0, i + 2, "%c%c) %s", (i == select) ? '*' : ' ', I2A(cnt),
-				 options[i].text);
+			/* Is this option selected */
+			if (i == select)
+			{
+				/* Highlight this option? */
+				if (scroll)
+				{
+					prtf(0, i + 2, " %c) " CLR_L_BLUE "%s", I2A(cnt), options[i].text);
+				}
+				else
+				{
+					prtf(0, i + 2, "*%c) %s", I2A(cnt), options[i].text);
+				}
+			}
+			else
+			{
+				prtf(0, i + 2, " %c) %s", I2A(cnt), options[i].text);
+			}
+			
 			cnt++;
 		}
 		else
@@ -354,6 +370,9 @@ static int show_menu(int num, menu_type *options, int select)
 			prtf(0, i + 2, "    %s", options[i].text);
 		}
 	}
+	
+	/* Border below menu */
+	clear_row(num + 2);
 	
 	return (cnt);
 }
@@ -368,9 +387,11 @@ static int show_menu(int num, menu_type *options, int select)
  *       flags for each option.
  * 'select' shows the default/current option.
  *       If negative, it is ignored.
+ * 'scroll' controls whether or not to allow scrolling option
+ *       selection.
  * 'prompt' is an optional prompt.
  */
-bool display_menu(menu_type *options, int select, cptr prompt)
+bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 {
 	int i = -1, j, cnt;
 	int ask = 0;
@@ -392,11 +413,8 @@ bool display_menu(menu_type *options, int select, cptr prompt)
 	clear_row(1);
     
 	/* Show the list */
-	cnt = show_menu(num, options, select);
-	
-	/* Border below menu */
-	clear_row(num + 2);
-	
+	cnt = show_menu(num, options, select, scroll);
+		
 	/* Paranoia */
 	if (!cnt)
 	{
@@ -460,6 +478,54 @@ bool display_menu(menu_type *options, int select, cptr prompt)
 			/* Extract request */
 			i = (islower(choice) ? A2I(choice) : -1);
 		}
+		else if (scroll)
+		{
+			/* Scroll selected option up or down */
+			if (choice == '8')
+			{
+				do
+				{
+					/* Find previous option */
+					select--;
+					
+					/* Scroll over */
+					if (select < 0) select = num - 1;
+				}
+				while(!options[select].select);
+				
+				/* Show the list */
+				show_menu(num, options, select, scroll);
+						
+				/* Reset the cursor */
+				Term_gotoxy(x, y);
+				
+				/* Next time */
+				continue;
+			}
+			
+			/* Scroll selected option up or down */
+			if (choice == '2')
+			{
+				do
+				{
+					/* Find next option */
+					select++;
+					
+					/* Scroll over */
+					if (select >= num) select = 0;
+				}
+				while(!options[select].select);
+				
+				/* Show the list */
+				show_menu(num, options, select, scroll);
+						
+				/* Reset the cursor */
+				Term_gotoxy(x, y);
+				
+				/* Next time */
+				continue;
+			}
+		}
 
 		/* Totally Illegal */
 		if ((i < 0) || (i >= cnt))
@@ -499,7 +565,7 @@ bool display_menu(menu_type *options, int select, cptr prompt)
 						if ((select >= 0) && options[j].select) select = j;
 						
 						/* Show the list */
-						show_menu(num, options, select);
+						show_menu(num, options, select, scroll);
 						
 						/* Reset the cursor */
 						Term_gotoxy(x, y);

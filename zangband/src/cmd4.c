@@ -497,6 +497,47 @@ static const cheat_option_type cheat_info[CHEAT_MAX] =
 	 "cheat_live", "Allow player to avoid death"}
 };
 
+/* Forward declare */
+extern menu_type cheat_menu[CHEAT_MAX + 1];
+
+static bool do_cmd_options_cheat_aux(int option)
+{
+	char buf[1024];
+
+	/* Toggle the option */
+	(*cheat_info[option].o_var) = ~(*cheat_info[option].o_var);
+	
+	if (*cheat_info[option].o_var)
+	{
+		/* Turn on the cheating flag */
+		p_ptr->noscore |= cheat_info[option].o_word;
+	}
+	
+	/* Change the option text */
+	strnfmt(buf, 1024, "%-48s: %s  (%s)",
+			cheat_info[option].o_desc,
+			(*cheat_info[option].o_var ? "yes" : "no "),
+			cheat_info[option].o_text);
+	
+	/* Delete old string */
+	string_free(cheat_menu[option].text);
+
+	/* Save new string */
+	cheat_menu[option].text = string_make(buf);
+
+	return (FALSE);
+}
+
+menu_type cheat_menu[CHEAT_MAX + 1] =
+{
+	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	MENU_END
+};
 
 /*
  * Interact with some options for cheating
@@ -505,6 +546,8 @@ static bool do_cmd_options_cheat(int dummy)
 {
 	char ch;
 
+	char buf[1024];
+
 	int i, k = 0, n = CHEAT_MAX;
 	
 	cptr info = "Cheaters never win";
@@ -512,6 +555,24 @@ static bool do_cmd_options_cheat(int dummy)
 	/* Hack - ignore unused parameter */
 	(void) dummy;
 	
+	/* Create the list of options */
+	for (i = 0; i < CHEAT_MAX; i++)
+	{
+		/* Change the option text */
+		strnfmt(buf, 1024, "%-48s: %s  (%s)",
+				cheat_info[i].o_desc,
+				(*cheat_info[i].o_var ? "yes" : "no "),
+				cheat_info[i].o_text);
+	
+		/* Delete old string */
+		string_free(cheat_menu[i].text);
+
+		/* Save new string */
+		cheat_menu[i].text = string_make(buf);
+	}
+
+	display_menu(cheat_menu, 0, TRUE, info);
+#if 0
 	screen_save();
 
 	/* Clear screen */
@@ -597,6 +658,8 @@ static bool do_cmd_options_cheat(int dummy)
 	}
 	
 	screen_load();
+#endif /* 0 */
+
 	return (FALSE);
 }
 
@@ -1212,7 +1275,7 @@ static bool do_cmd_options_dump(int dummy)
 
 
 /* The main options menu */
-menu_type options_menu[OPTION_MENU_MAX] =
+static menu_type options_menu[OPTION_MENU_MAX] =
 {
 	{"User Interface Options", do_cmd_options_aux, TRUE, FALSE},
 	{"Disturbance Options", do_cmd_options_aux, TRUE, FALSE},
@@ -1246,7 +1309,7 @@ void do_cmd_options(byte flags)
 	/* Save option flags so menu functions can access them */
 	option_flags = flags;
 
-	display_menu(options_menu, -1, format("%s options", VERSION_NAME));
+	display_menu(options_menu, -1, FALSE, format("%s options", VERSION_NAME));
 
 	/* Hack - Redraw equippy chars */
 	p_ptr->redraw |= (PR_EQUIPPY);
