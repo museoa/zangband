@@ -922,15 +922,6 @@ extern int flow_tail;
 
 
 /*
- * Strategy flags -- recalculate things
- */
-
-extern bool borg_danger_wipe;	/* Recalculate danger */
-
-extern bool borg_do_update_view;	/* Recalculate view */
-
-
-/*
  * Strategy flags -- examine the world
  */
 extern bool borg_do_frame;	/* Acquire "frame" info */

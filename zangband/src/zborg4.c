@@ -8046,7 +8046,6 @@ int borg_danger(int x, int y, int c, bool average)
  */
 cptr borg_restock(int depth)
 {
-
 	/* We are now looking at our preparedness */
 	if (-1 == borg_ready_morgoth)
 		borg_ready_morgoth = 0;
@@ -8692,12 +8691,6 @@ static cptr borg_prepared_aux2(int depth)
 	/* all bases covered */
 	return ((cptr)NULL);
 }
-
-/* Buffer for borg_prepared()
- */
-#define MAX_REASON 1024
-
-static char borg_prepared_buffer[MAX_REASON];
 
 /*
  * Determine if the Borg is "prepared" for the given level

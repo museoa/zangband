@@ -26,6 +26,9 @@
 #define BORG_MON_OLD	3
 #define BORG_MON_MOVE	4
 
+/* Recalculate danger */
+extern bool borg_danger_wipe;
+
 
 /* Old overhead map hooks to chain into */
 extern map_info_hook_type old_info_hook;

@@ -80,6 +80,14 @@ static int borg_normal_size;	/* Number of normals */
 static s16b *borg_normal_what;	/* Indexes of normals */
 static cptr *borg_normal_text;	/* Names of normals */
 
+/*
+ * Strategy flags -- recalculate things
+ */
+
+bool borg_danger_wipe = FALSE;	/* Recalculate danger */
+
+static bool borg_do_update_view = FALSE;	/* Recalculate view */
+
 
 /*
  * Delete an old "object" record

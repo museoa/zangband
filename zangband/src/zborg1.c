@@ -604,15 +604,6 @@ int flow_tail = 0;
 
 
 /*
- * Strategy flags -- recalculate things
- */
-
-bool borg_danger_wipe = FALSE;	/* Recalculate danger */
-
-bool borg_do_update_view = FALSE;	/* Recalculate view */
-
-
-/*
  * Strategy flags -- examine the world
  */
 bool borg_do_frame = TRUE;	/* Acquire "frame" info */
