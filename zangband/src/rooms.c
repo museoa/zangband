@@ -3359,7 +3359,7 @@ static void add_outer_wall(int x, int y, int light,
 	/* set room flag */
 	c_ptr->info |= CAVE_ROOM;
 
-	if (c_ptr->feat == dun->feat_floor)
+	if (cave_floor_grid(c_ptr))
 	{
 		for (i = -1; i <= 1; i++)
 		{
