@@ -13,7 +13,8 @@ Changes since 2.5.0
 -Fixed the vanilla town bug where the stores / home were not saved.
 -Fixed a problem withthe 'Cheat Death' option.
 -Fixed a buffer-overrun with long notes.
--Fixed an error with fraction monster hit points.
+-Fixed rounding error with fractional monster experience points shown in
+ monster memory.
 -Fixed a problem with life ratings and racial intrinsics being
  mixed up in the self-knowledge scrren.
 -Fixed a problem with generating full monster spoilers.
