@@ -428,16 +428,6 @@ if 0 {
 	Global mapdetail,widget $widget2
 	Global mapdetail,cursor $itemId
 
-	# Keep the Micro Map centered on the character
-	qebind MicroMap <Position> {
-		NSMiscWindow::PositionChanged %y %x
-	}
-	qeconfigure MicroMap <Position> -active no
-
-	qebind $widget <Dungeon-enter> {
-		WidgetCenter %W
-	}
-
 	return $widget
 }
 
@@ -521,12 +511,6 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 	
 	# Focus ring around character image (since user can click it)
 	$c create rectangle 0 0 1 1 -outline Black -tags focus
-
-	# When the character is assigned a new icon, I need to update the
-	# canvas Widget item. This binding does the trick.
-	qebind $c <Assign-character> {
-		%W itemconfigure icon -assign %a
-	}
 
 	# Character name
 	$c create text 0 0 -font $font -justify left \
@@ -617,16 +601,12 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 		CanvasFeedbackAdd $c $slot \
 			"NSMiscWindow::CanvasFeedbackCmd_MiscWindow $slot"
 	}
-	qebind NSMiscWindow <Track-equipment> \
-		NSMiscWindow::Equippy
 	
 	foreach title {HP SP FD} option {hitpoints mana food} {
 		$c create text 0 0 -text [mc $title] -font $font \
 			-fill White -anchor nw -tags "font $title"
 		$c create text 0 0 -text 99999 -font $font \
 			-fill [Value TERM_L_GREEN] -anchor ne -tags "font $option"
-		qebind NSMiscWindow <Py-$option> \
-			"NSMiscWindow::UpdateHP_SP_FD $option %c %m %f"
 		CanvasFeedbackAdd $c $title \
 			"NSMiscWindow::CanvasFeedbackCmd_MiscWindow $option"
 		CanvasFeedbackAdd $c $option \
@@ -671,42 +651,6 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 		namespace eval NSMiscWindow {
 			eval bind_Py_ac [angband player armor_class]
 			CanvasFeedbackCmd_MiscWindow AC enter
-		}
-	}
-
-	qebind NSMiscWindow <Stat> {
-		NSMiscWindow::bind_Stat %d
-	}
-
-	qebind NSMiscWindow <Py-armor_class> {
-		NSMiscWindow::bind_Py_ac %c %t
-	}
-
-	qebind NSMiscWindow <Py-exp> {
-		NSMiscWindow::bind_Py_exp %c %m %a
-	}
-
-	qebind NSMiscWindow <Py-gold> {
-		NSMiscWindow::bind_Py_value %d %c
-	}
-
-	qebind NSMiscWindow <Py-level> {
-		NSMiscWindow::bind_Py_level %c %m
-	}
-
-	qebind NSMiscWindow <Py-name> {
-		NSMiscWindow::bind_Py_value %d %c
-	}
-
-	qebind NSMiscWindow <Py-title> {
-		NSMiscWindow::bind_Py_value %d %c
-	}
-
-	# Race can change in ZAngband!
-	qebind NSMiscWindow <Py-race> {
-		NSMiscWindow::bind_Py_value %d %c
-		if {[Global autoAssign]} {
-			AutoAssignCharacterIcon
 		}
 	}
 	
@@ -1031,10 +975,6 @@ proc NSMiscWindow::ShowProgressWindow {} {
 
 	set canvas [Global progress,canvas]
 
-	qeconfigure $canvas <Py-hitpoints> -active yes
-	qeconfigure $canvas <Py-mana> -active yes
-	qeconfigure $canvas <Py-food> -active yes
-
 	return
 }
 
@@ -1048,10 +988,6 @@ return
 	wm withdraw [Window progress]
 
 	set canvas [Global progress,canvas]
-
-	qeconfigure $canvas <Py-hitpoints> -active no
-	qeconfigure $canvas <Py-mana> -active no
-	qeconfigure $canvas <Py-food> -active no
 
 	return
 }

@@ -72,9 +72,6 @@ proc NSChoiceWindow::CloseModule {} {
 	catch {
 		set oop [Global choice,oop]
 		set win [Window choice]
-		qebind NSChoiceWindow <Choose> {}
-		qebind NSChoiceWindow <Term-fresh> {}
-		qebind NSChoiceWindow <Setting-show_flavors> {}
 		destroy $win
 	}
 
@@ -102,17 +99,6 @@ proc NSChoiceWindow::NSChoiceWindow {oop} {
 
 	NSWindowManager::RegisterWindow choice $win \
 		"NSChoiceWindow::GeometryCmd $oop" "" "NSChoiceWindow::DisplayCmd $oop"
-
-	qebind NSChoiceWindow <Choose> \
-		"NSChoiceWindow::Choose $oop %d %s %o"
-
-	qebind NSChoiceWindow <Term-fresh> \
-		"NSChoiceWindow::Fresh_Display $oop"
-	qeconfigure NSChoiceWindow <Term-fresh> -active no
-
-	qebind NSChoiceWindow <Setting-show_flavors> \
-		"after idle NSChoiceWindow::Fresh_Display $oop"
-	qeconfigure NSChoiceWindow <Setting-show_flavors> -active no
 
 	# Update ourself when the list highlight color changes
 	Info $oop clientId,listHilite \
@@ -392,9 +378,6 @@ proc NSChoiceWindow::DisplayCmd {oop message first args} {
 			}
 			SetHook $oop $hook
 			CallHook $oop fresh
-			if {![Info $oop choosing]} {
-				qeconfigure NSChoiceWindow <Term-fresh> -active no
-			}
 		}
 		postDisplay {
 Setting show_choices 0
@@ -484,11 +467,8 @@ proc NSChoiceWindow::SetHook {oop hook} {
 	if {[string length $hook]} {
 		Info $oop hook $hook
 		CallHook $oop open
-		qeconfigure NSChoiceWindow <Term-fresh> -active yes
-		qeconfigure NSChoiceWindow <Setting-show_flavors> -active yes
 	} elseif {[string length [Info $oop hook]]} {
 		Info $oop hook ""
-		qeconfigure NSChoiceWindow <Setting-show_flavors> -active no
 	}
 
 	return
@@ -523,8 +503,6 @@ proc NSChoiceWindow::CallHook {oop message args} {
 proc NSChoiceWindow::Fresh_Display {oop} {
 
 	CallHook $oop fresh
-
-	qeconfigure NSChoiceWindow <Term-fresh> -active no
 
 	return
 }

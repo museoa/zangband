@@ -119,27 +119,6 @@ proc NSStore2::NSStore2 {oop} {
 		set NSWindowManager::Priv(store2,setupCmd) "NSStore2::SetupCmd $oop"
 	}
 
-	# Update the display when some settings change
-	qebind NSStore2 <Setting> {
-		Store2Obj SettingChanged %d %c
-	}
-	qeconfigure NSStore2 <Setting> -active no
-
-	qebind NSStore2 <Track-inventory> {
-		Store2Obj TrackInventory
-	}
-	qeconfigure NSStore2 <Track-inventory> -active no
-
-	qebind NSStore2 <Term-inkey> {
-		Store2Obj TermInkey
-	}
-	qeconfigure NSStore2 <Term-inkey> -active no
-
-	qebind NSStore2 <Choose-item> {
-		Store2Obj ChooseItem %s %o
-	}
-	qeconfigure NSStore2 <Choose-item> -active no
-
 	# Update ourself when the font,statusBar value changes
 	Info $oop clientId,font,statusBar \
 		[NSValueManager::AddClient font,statusBar \
@@ -317,10 +296,6 @@ proc NSStore2::InitWindow {oop} {
 	# Typing Enter in the Quantity Entry initiates a purchase
 	bind $frame.quantity <KeyPress-Return> \
 		"NSStore2::InvokeSelected $oop"
-
-	# Update the display when the character's gold changes
-	qebind $frame.gold <Py-gold> {%W configure -text %c}
-	qeconfigure $frame.gold <Py-gold> -active no
 
 	label $frame.price_character \
 		-font $font -text "" -anchor w
@@ -837,12 +812,8 @@ proc NSStore2::DisplayCmd {oop message first} {
 			ConfigureWindow $oop
 
 			SetList $oop
-			qeconfigure $win.info.gold <Py-gold> -active yes
-			qeconfigure NSStore2 <Setting> -active yes
 
 			SetList_Inventory $oop
-			qeconfigure NSStore2 <Track-inventory> -active yes
-			qeconfigure NSStore2 <Choose-item> -active yes
 		}
 		reDisplay {
 			SetList $oop
@@ -857,14 +828,6 @@ proc NSStore2::DisplayCmd {oop message first} {
 			}
 		}
 		postWithdraw {
-			# Clear both lists
-			
-			qeconfigure $win.info.gold <Py-gold> -active no
-			qeconfigure NSStore2 <Setting> -active no
-
-			qeconfigure NSStore2 <Track-inventory> -active no
-			qeconfigure NSStore2 <Choose-item> -active no
-
 			Info $oop busy 0
 		}
 	}
@@ -2294,8 +2257,6 @@ proc NSStore2::ChooseItem {oop show other} {
 		Info $oop didChoose 0
 	}
 
-	qeconfigure NSStore2 <Term-inkey> -active yes
-
 	return
 }
 
@@ -2310,8 +2271,6 @@ proc NSStore2::ChooseItem {oop show other} {
 #	What happened.
 
 proc NSStore2::TermInkey {oop} {
-
-	qeconfigure NSStore2 <Term-inkey> -active no
 
 	if {[Info $oop choose,show]} {
 		# Show the choices
@@ -2683,14 +2642,6 @@ proc NSStore2::SkipMoreMessages {oop skip} {
 		return
 	}
 	Info $oop skipMore $skip
-
-	if {$skip} {
-		qebind NSStore2 <Inkey-more> {angband keypress \033}
-		qebind NSStore2 <Inkey-cmd> {Store2Obj SkipMoreMessages 0}
-	} else {
-		qebind NSStore2 <Inkey-more> {}
-		qebind NSStore2 <Inkey-cmd> {}
-	}
 
 	return
 }

@@ -84,12 +84,6 @@ proc NSStore::NSStore {oop} {
 		"GetDefaultGeometry $win main2 main" "NSStore::SetupCmd $oop" \
 		"NSStore::DisplayCmd $oop"
 
-	# Update the display when some settings change
-	qebind NSStore <Setting> {
-		StoreObj SettingChanged %d %c
-	}
-	qeconfigure NSStore <Setting> -active no
-
 	#
 	# Global list of application windows
 	#
@@ -251,10 +245,6 @@ proc NSStore::InitWindow {oop} {
 		-font $font -text [mc "Gold Remaining:"]
 	label $frame.gold \
 		-font $font -text [angband player gold]
-
-	# Update the display when the character's gold changes
-	qebind $frame.gold <Py-gold> {Debug frame.gold ; %W configure -text %c}
-	qeconfigure $frame.gold <Py-gold> -active no
 
 	label $frame.price_character \
 		-font $font -text "" -width 25 -anchor w
@@ -678,8 +668,6 @@ proc NSStore::DisplayCmd {oop message first} {
 			ConfigureWindow $oop
 
 			SetList $oop
-			qeconfigure $win.info.gold <Py-gold> -active yes
-			qeconfigure NSStore <Setting> -active yes
 		}
 		postDisplay {
 		}
@@ -714,9 +702,6 @@ proc NSStore::DisplayCmd {oop message first} {
 			# does nothing. The list should be cleared anyways, because
 			# it might contain sprites.
 			NSCanvist::DeleteAll [Info $oop canvistId]
-
-			qeconfigure $win.info.gold <Py-gold> -active no
-			qeconfigure NSStore <Setting> -active no
 		}
 	}
 

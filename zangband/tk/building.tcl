@@ -309,10 +309,6 @@ proc NSBuilding::InitWindow {oop} {
 	label $frame.gold \
 		-font $font -text [angband player gold]
 
-	# Update the display when the character's gold changes
-	qebind $frame.gold <Py-gold> {%W configure -text %c}
-	bind $frame.gold <Destroy> {+qebind %W <Py-gold> ""}
-
 	#
 	# Canvas
 	#

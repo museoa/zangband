@@ -983,11 +983,6 @@ proc InitOther {} {
 	} else {
 		Global message,message [Window main].message.message
 	}
-	if {[Value micromap,float]} {
-		qeconfigure MicroMap <Position> -active yes
-	} else {
-		qeconfigure MicroMap <Position> -active no
-	}
 	if {[Value misc,float]} {
 		grid remove [Window main].misc
 	} else {

@@ -235,16 +235,6 @@ proc NSMainWindow::InitWindow {oop} {
 		NSMainWindow::StatusText $oop {}
 	"
 
-	# When the dungeon level changes, update the depth display
-	qebind $win.statusBar.depth <Py-depth> {
-		NSMainWindow::DisplayDepth %W %c
-	}
-
-	# When the "depth_in_feet" option changes, update the depth display
-	qebind $win.statusBar.depth <Setting-depth_in_feet> {
-		NSMainWindow::DisplayDepth %W [angband player depth]
-	}
-
 	# Update ourself when the font,statusBar value changes
 	NSValueManager::AddClient font,statusBar \
 		"NSMainWindow::ValueChanged_font_statusBar"
@@ -323,30 +313,9 @@ proc NSMainWindow::InitWindow {oop} {
 	# NSWidget module.
 #	bind $widget <Leave> "+NSMainWindow::StatusText $oop {}"
 
-	# Do something when the character position changes.
-	qebind $widget <Position> {NSMainWindow::PositionChanged %W %y %x}
-
 	# Remember the center of the Main Window Widget.
 	Global main,widget,center [angband player position]
-
-	# When the dungeon level changes, recenter the Main Window Widget
-	# on the character's location.
-	qebind $widget <Dungeon-enter> {		
-		Global main,widget,center [WidgetCenter %W]
-	}
-
-	# When the player level changes, display big status message
-	Info $oop Py_level [angband player level]
-	qebind NSMainWindow <Py-level> \
-		"NSMainWindow::Bind_Py_level $oop %c"
 	
-	# When the game begins waiting for a keypress, check if we are
-	# tracking the mouse.
-	qebind $widget <Inkey> "NSMainWindow::TrackOnce $oop"
-
-	# Update the monster health bar when needed
-	qebind $widget <Track-health> "NSMainWindow::UpdateHealthWho $oop %w %f"
-
 # Debug: draw 1 spot
 proc ::wipespot {y x} {
 	scan [[Global main,widget] caveyx $x $y] "%d %d" y x
@@ -401,13 +370,6 @@ bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
 
 	pack $widget -expand yes -fill both
 
-if {0} {
-	qebind $widget <Position> {}
-	$widget configure -noupdate yes
-	grid forget $widget
-	pack $isoview -expand yes -fill both
-}
-
 	#
 	# Geometry
 	#
@@ -447,62 +409,6 @@ if {0} {
 
 	# The monster health bar
 	ProgressSetup $widget
-
-if {0 && $::DEBUG} {
-	# This creates a text item that displays the character's current
-	# location as "y:YYY x:XXX"
-	set itemId [$widget create text -x 0 \
-		-y [expr {[$widget cget -height] * [$widget cget -gheight] - 1}] \
-		-anchor sw -clipx yes -width 100 -height 16 -bevel yes \
-		-fill [Value statusText] \
-		-fill2 [Value statusText2] \
-		-background [Value statusBG] \
-		-background2 [Value statusBG2] \
-		-bevellight [Value statusBL] \
-		-bevellight2 [Value statusBL2] \
-		-beveldark [Value statusBD] \
-		-beveldark2 [Value statusBD2] \
-		-visible yes]
-	qebind $widget <Position> "+
-		$widget itemconfigure $itemId -text {y:%y x:%x}
-	"
-}
-
-if {0 && $::DEBUG} {
-	set height 18
-
-	# This creates a text item that displays the character's hitpoints
-	set itemId [$widget create text -x 4 \
-		-y [expr {[$widget cget -height] * [$widget cget -gheight] - 5 - $height * 2}] \
-		-anchor sw -clipx yes -width 48 -height $height -bevel no \
-		-font {Courier 10} \
-		-fill [Value statusText] \
-		-fill2 [Value statusText2] \
-		-background 35 \
-		-background2 [Value statusBG2] \
-		-bevellight [Value statusBL] \
-		-bevellight2 [Value statusBL2] \
-		-beveldark [Value statusBD] \
-		-beveldark2 [Value statusBD2] \
-		-visible yes]
-	qebind $widget <Py-hitpoints> "NSMainWindow::DisplayPoints $oop $itemId %c"
-
-	# This creates a text item that displays the character's mana
-	set itemId [$widget create text -x 4 \
-		-y [expr {[$widget cget -height] * [$widget cget -gheight] - 5 - $height}] \
-		-anchor sw -clipx yes -width 48 -height $height -bevel no \
-		-font {Courier 10} \
-		-fill [Value statusText] \
-		-fill2 [Value statusText2] \
-		-background 235 \
-		-background2 [Value statusBG2] \
-		-bevellight [Value statusBL] \
-		-bevellight2 [Value statusBL2] \
-		-beveldark [Value statusBD] \
-		-beveldark2 [Value statusBD2] \
-		-visible yes]
-	qebind $widget <Py-mana> "NSMainWindow::DisplayPoints $oop $itemId %c"
-}
 
 	return
 }
@@ -813,15 +719,9 @@ if 0 {
 	
 	# Hack -- Accelerators depend on current keymap!
 	SynchMenuAccel $oop 1
-	qebind $win <Setting-rogue_like_commands> \
-		"NSMainWindow::SynchMenuAccel $oop 0"
-	qebind $win <Keymap> \
-		"NSMainWindow::SynchMenuAccel $oop 0"
 
 	# Hack -- Some labels depends on always_pickup
 	AlwaysPickupChanged $oop
-	qebind $win <Setting-always_pickup> \
-		"NSMainWindow::AlwaysPickupChanged $oop"
 
 NSMenu::SetIdentArray $mbarId
 
@@ -1066,10 +966,8 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_WINDOW_MAP {
 			if {[Info $oop mapWindow]} {
 				wm deiconify [Window micromap]
-				qeconfigure MicroMap <Position> -active yes
 			} else {
 				wm withdraw [Window micromap]
-				qeconfigure MicroMap <Position> -active no
 			}
 			Value micromap,float [Info $oop mapWindow]
 		}
@@ -1260,14 +1158,6 @@ proc NSMainWindow::TargetSetup {oop} {
 		-beveldark [Value targetBD] \
 		-beveldark2 [Value targetBD2]]
 
-	qebind $widget <Target-set> {
-		NSMainWindow::TargetSet %W %r
-	}
-	
-	qebind $widget <Target-unset> "
-		$widget itemconfigure $itemId -visible no
-	"
-
 	# Reserve the widget colors for the target image
 	set data {
 		-fill targetText 1
@@ -1291,42 +1181,14 @@ proc NSMainWindow::TargetSetup {oop} {
 			"NSMainWindow::TargetSynch ${valueName}2 ${option}2 $visible"
 	}
 	
-	qebind $widget <Target-visibility> {
-		if {[Global target,visible] != %v} {
-			NSMainWindow::SetTargetColors %v
-		}
-	}
-
 	Global target,itemId $itemId
 	Global target,visible 0
 
 	# This "cursor" is displayed during targetting/looking
 	set itemId [$widget create cursor -color yellow -linewidth 2 -visible no]
 
-	qebind $widget <Term-fresh> "NSMainWindow::Fresh_Cursor $oop"
-	qeconfigure $widget <Term-fresh> -active no
-
 	if {$::DEBUG} {
 		set ::debug_cursor 0
-	}
-
-	qebind $widget <Cursor-show> {
-		Global cursor,x %x
-		Global cursor,y %y
-		qeconfigure %W <Term-fresh> -active yes
-		if {$::DEBUG} {
-			set ::debug_cursor 1
-		}
-	}
-
-	qebind $widget <Cursor-hide> {
-		if {[Global cursor,visible]} {
-			NSMainWindow::DisplayCursor [Global main,oop] 0 -1 -1
-		}
-		qeconfigure [Global main,widget] <Term-fresh> -active no
-		if {$::DEBUG} {
-			set ::debug_cursor 0
-		}
 	}
 
 	Global cursor,itemId $itemId

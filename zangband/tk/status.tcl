@@ -131,11 +131,6 @@ proc NSStatus::InitModule {} {
 	# Remember the width of a status item
 	set Priv(width) $statusWid
 
-	# Catch "Status" events
-	qebind $widget <Status> {
-		NSStatus::SetText %d %f %v
-	}
-
 	set data {
 		Text -fill
 		BG -background

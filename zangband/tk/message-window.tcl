@@ -87,10 +87,6 @@ proc NSMessageWindow::NSMessageWindow {oop} {
 		[NSValueManager::AddClient listBG \
 		"[Info $oop text] configure -background \[Value listBG]"]
 
-	qebind NSMessageWindow <Track-message> \
-		"NSMessageWindow::TrackMessage $oop"
-	qeconfigure NSMessageWindow <Track-message> -active no
-
 	#
 	# Global list of application windows
 	#
@@ -231,13 +227,11 @@ proc NSMessageWindow::DisplayCmd {oop message first args} {
 
 	switch -- $message {
 		preDisplay {
-			qeconfigure NSMessageWindow <Track-message> -active yes
 		}
 		postDisplay {
 			Value message2window,show 1
 		}
 		postWithdraw {
-			qeconfigure NSMessageWindow <Track-message> -active no
 			Value message2window,show 0
 		}
 	}

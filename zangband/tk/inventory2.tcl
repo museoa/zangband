@@ -105,27 +105,6 @@ proc NSInventory2::NSInventory2 {oop} {
 	# Destroy the object along with the toplevel (later)
 	NSUtils::DestroyObjectWithWidget NSInventory2 $oop $win
 
-	# Update the display when some settings change
-	qebind NSInventory2 <Setting> {
-		Inventory2Obj SettingChanged %d %c
-	}
-	qeconfigure NSInventory2 <Setting> -active no
-
-	qebind NSInventory2 <Track> {
-		Inventory2Obj Track %d
-	}
-	qeconfigure NSInventory2 <Track> -active no
-
-	qebind NSInventory2 <Term-inkey> {
-		Inventory2Obj TermInkey
-	}
-	qeconfigure NSInventory2 <Term-inkey> -active no
-
-	qebind NSInventory2 <Choose-item> {
-		Inventory2Obj ChooseItem %s %o
-	}
-	qeconfigure NSInventory2 <Choose-item> -active no
-
 	bind $win <KeyPress-Escape> {
 		Inventory2Obj Close
 		break
@@ -560,13 +539,10 @@ proc NSInventory2::DisplayCmd {oop message first args} {
 
 	switch -- $message {
 		preDisplay {
-			qeconfigure NSInventory2 <Setting> -active yes
 			eval SetList $oop $args
 			if {([llength $args] == 3) && [lindex $args 2]} {
 				Info $oop browsing 1
 			}
-			qeconfigure NSInventory2 <Track> -active yes
-			qeconfigure NSInventory2 <Choose-item> -active yes
 		}
 		postDisplay {
 			if {0 && ![Value warning,inventory,window]} {
@@ -606,11 +582,8 @@ proc NSInventory2::DisplayCmd {oop message first args} {
 				Info $oop assign,$slot "icon none 0"
 			}
 
-			qeconfigure NSInventory2 <Setting> -active no
 
 			Info $oop browsing 0
-			qeconfigure NSInventory2 <Track> -active no
-			qeconfigure NSInventory2 <Choose-item> -active no
 
 			# In case of errors, prevent paralysis
 			Info $oop busy 0
@@ -2234,8 +2207,6 @@ proc NSInventory2::ChooseItem {oop show other} {
 		Info $oop didChoose 0
 	}
 
-	qeconfigure NSInventory2 <Term-inkey> -active yes
-
 	return
 }
 
@@ -2252,8 +2223,6 @@ proc NSInventory2::ChooseItem {oop show other} {
 proc NSInventory2::TermInkey {oop} {
 
 	set win [Info $oop win]
-
-	qeconfigure NSInventory2 <Term-inkey> -active no
 
 	if {[Info $oop choose,show]} {
 		SetList $oop [Info $oop choose,other] ""
@@ -2425,14 +2394,6 @@ proc NSInventory2::ValueChanged_font_statusBar {oop} {
 #	What happened.
 
 proc NSInventory2::SkipMoreMessages {oop skip} {
-
-	if {$skip} {
-		qebind NSInventory2 <Inkey-more> {angband keypress \033}
-		qebind NSInventory2 <Inkey-cmd> {Inventory2Obj SkipMoreMessages 0}
-	} else {
-		qebind NSInventory2 <Inkey-more> {}
-		qebind NSInventory2 <Inkey-cmd> {}
-	}
 
 	return
 }

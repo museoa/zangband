@@ -48,9 +48,6 @@ proc NSAssign::InitModule {} {
 	set Priv(find,fromStart) 1
 
 	set Priv(didAssign) 0
-	qebind ASSIGN <Assign> {
-		set NSAssign::Priv(didAssign) 1
-	}
 
 	# Create the Assign Window
 	NSObject::New NSAssign

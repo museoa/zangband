@@ -68,34 +68,16 @@ proc NSRecall::NSRecall {oop} {
 		"" \
 		"NSRecall::DisplayCmd $oop"
 
-	qebind NSRecall <Choose> \
-		"NSRecall::Choose $oop %d %s %o"
-	qeconfigure NSRecall <Choose> \
-		-active no ; # [expr {![Value choicewindow,show]}]
-
 	# If the Choice Window is displayed, we don't show choices in
 	# the Recall Window.
 	Info $oop clientId,choicewindow \
 		[NSValueManager::AddClient choicewindow,show {
 			NSRecall::SetHook [Global recall,oop] ""
-			qeconfigure NSRecall <Choose> \
-				-active [expr {![Value choicewindow,show]}]
 		}]
 
-	qebind NSRecall <Term-fresh> \
-		"NSRecall::Fresh_Display $oop"	
-	qeconfigure NSRecall <Term-fresh> -active no
 	if {$::DEBUG} {
 		set ::debug_display 0
 	}
-
-	qebind $win <Setting-depth_in_feet> \
-		"NSRecall::SettingChanged_depth_in_feet $oop"
-
-	qebind NSRecall <Track-race> {
-		NSRecall::RecallMonster %w
-	}
-	qeconfigure NSRecall <Track-race> -active no
 
 	Info $oop hook ""
 	Info $oop busy 0
@@ -241,15 +223,6 @@ proc NSRecall::InitWindow {oop} {
 	set x [expr {$iconSize / 2}]
 	$canvas create polygon [expr {$x - 3}] 46 [expr {$x + 3}] 46 \
 		$x 49 -fill Red -outline Red -tags arrow
-if 0 {
-	# Display the Assign Window when the icon is clicked
-	$canvas bind icon <ButtonPress-1> \
-		"NSRecall::DisplayAssign $oop"
-}
-	# If the icon of the displayed monster/object changes, we must
-	# update the canvas Widget item. This binding does it.
-	qebind $canvas <Assign> \
-		"NSRecall::IconChanged $oop %d %I %a"
 
 	set wrap word
 	if {$::JAPANESE} {set wrap char}
@@ -361,14 +334,9 @@ proc NSRecall::DisplayCmd {oop message first args} {
 		preDisplay {
 		}
 		postDisplay {
-			qeconfigure NSRecall <Choose> \
-				-active [expr {![Value choicewindow,show]}]
-			qeconfigure NSRecall <Track-race> -active yes
 			Value recall,show 1
 		}
 		postWithdraw {
-			qeconfigure NSRecall <Choose> -active no
-			qeconfigure NSRecall <Track-race> -active no
 			SetHook $oop ""
 			Value recall,show 0
 		}
@@ -875,14 +843,12 @@ proc NSRecall::SetHook {oop hook} {
 	if {[string length $hook]} {
 		Info $oop hook NSRecall::$hook
 		CallHook $oop open
-		qeconfigure NSRecall <Term-fresh> -active yes
 		if {$::DEBUG} {
 			set ::debug_display 1
 		}
 	} elseif {[string length [Info $oop hook]]} {
 		Info $oop hook ""
 		Restore $oop
-		qeconfigure NSRecall <Term-fresh> -active no
 		if {$::DEBUG} {
 			set ::debug_display 0
 		}

@@ -94,27 +94,6 @@ proc NSInventory::NSInventory {oop} {
 	# Destroy the object along with the toplevel (later)
 	NSUtils::DestroyObjectWithWidget NSInventory $oop $win
 
-	# Update the display when some settings change
-	qebind NSInventory <Setting> {
-		InventoryObj SettingChanged %d %c
-	}
-	qeconfigure NSInventory <Setting> -active no
-
-	qebind NSInventory <Track> {
-		InventoryObj Track %d
-	}
-	qeconfigure NSInventory <Track> -active no
-
-	qebind NSInventory <Term-inkey> {
-		InventoryObj TermInkey
-	}
-	qeconfigure NSInventory <Term-inkey> -active no
-
-	qebind NSInventory <Choose-item> {
-		InventoryObj ChooseItem %s %o
-	}
-	qeconfigure NSInventory <Choose-item> -active no
-
 	bind $win <KeyPress-Escape> {
 		InventoryObj Close
 		break
@@ -447,13 +426,10 @@ proc NSInventory::DisplayCmd {oop message first args} {
 
 	switch -- $message {
 		preDisplay {
-			qeconfigure NSInventory <Setting> -active yes
 			eval SetList $oop $args
 			if {([llength $args] == 3) && [lindex $args 2]} {
 				Info $oop browsing 1
 			}
-			qeconfigure NSInventory <Track> -active yes
-			qeconfigure NSInventory <Choose-item> -active yes
 		}
 		postDisplay {
 		}
@@ -488,9 +464,6 @@ proc NSInventory::DisplayCmd {oop message first args} {
 			}
 		}
 		postWithdraw {
-			qeconfigure NSInventory <Setting> -active no
-			qeconfigure NSInventory <Track> -active no
-			qeconfigure NSInventory <Choose-item> -active no
 			Info $oop browsing 0
 		}
 	}
@@ -1536,8 +1509,6 @@ proc NSInventory::ChooseItem {oop show other} {
 		Info $oop didChoose 0
 	}
 
-	qeconfigure NSInventory <Term-inkey> -active yes
-
 	return
 }
 
@@ -1554,8 +1525,6 @@ proc NSInventory::ChooseItem {oop show other} {
 proc NSInventory::TermInkey {oop} {
 
 	set win [Info $oop win]
-
-	qeconfigure NSInventory <Term-inkey> -active no
 
 	if {[Info $oop choose,show]} {
 		SetList $oop [Info $oop choose,other] ""

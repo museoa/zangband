@@ -645,13 +645,6 @@ proc ExpandSetting {which object event detail} {
 	}
 }
 
-# Allow scripts to bind to these "fake" settings.
-qeinstall detail <Setting> scroll_follow 502 ExpandSetting
-qeinstall detail <Setting> show_icons 503 ExpandSetting
-
-qeinstall detail <Setting> show_flavors 504 ExpandSetting
-
-
 # Setting --
 #
 #	Get or set the value of a setting. This one routine consolidates

@@ -403,8 +403,6 @@ set AngbandPriv(prompt,new) {}
 set AngbandPriv(prompt,old) {}
 set AngbandPriv(prompt,fresh) 0
 
-qebind PROMPT <Term-fresh> Fresh_Prompt
-
 proc Fresh_Prompt {} {
 
 	global AngbandPriv

@@ -87,9 +87,6 @@ proc NSKeymap::NSKeymap {oop} {
 		"GetDefaultGeometry $win reqwidth reqheight" "" \
 		"NSKeymap::DisplayCmd $oop"
 
-	qebind NSKeymap <Setting-rogue_like_commands> \
-		"NSKeymap::UpdateKeymap $oop"
-
 	# Destroy the object along with the toplevel (later)
 	NSUtils::DestroyObjectWithWidget NSKeymap $oop $win
 

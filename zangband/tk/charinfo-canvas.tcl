@@ -100,9 +100,6 @@ proc NSCharInfoCanvas::NSCharInfoCanvas {oop parent} {
 		"+NSCharInfoCanvas::Configure $oop"
 	bind $canvas <Map> \
 		"+NSCharInfoCanvas::Configure $oop"
-
-	qebind $canvas <Py-name> \
-		{%W itemconfigure name -text "%c"}
 		
 	NSUtils::DestroyObjectWithWidget NSCharInfoCanvas $oop $canvas
 
@@ -129,8 +126,6 @@ proc NSCharInfoCanvas::NSCharInfoCanvas {oop parent} {
 #	What happened.
 
 proc NSCharInfoCanvas::~NSCharInfoCanvas {oop} {
-
-	qebind [Info $oop canvas] <Py-name> {}
 
 	return
 }
