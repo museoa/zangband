@@ -1300,12 +1300,15 @@ void do_cmd_options(byte flags)
 				fprintf(fff, "# Allow user specification of various options\n\n");
 
 				/* Scan the options */
-				for (i = 0; option_info[i].o_desc; i++)
+				for (i = 0; i < OPT_MAX; i++)
 				{
-					/* Dump the option */
-					fprintf(fff, "%c:%s\n",
-					        (option_info[i].o_val ? 'Y' : 'X'),
-					        option_info[i].o_text);
+					if (option_info[i].o_text)
+					{
+						/* Dump the option */
+						fprintf(fff, "%c:%s\n",
+							(option_info[i].o_val ? 'Y' : 'X'),
+							option_info[i].o_text);
+					}
 				}
 
 				/* Close the file */
