@@ -614,7 +614,7 @@ static bool is_closed(int feat)
 /*
  * Return the number of traps around (or under) the character.
  */
-static int count_traps(int *y, int *x, bool under)
+int count_traps(int *y, int *x, bool under)
 {
 	int d;
 	int xx, yy;

@@ -482,6 +482,14 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 void search(void)
 {
 	int y, x, chance;
+	int old_count;
+	
+	/* 
+	 * Temp variables to store x and y because the
+	 * count_traps() function stomps on its inputs.
+	 */
+	int tx, ty;
+	
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -519,14 +527,29 @@ void search(void)
 				}
 #endif /* USE_SCRIPT */
 
+				/* Save x and y into temp variables */
+				tx = x;
+				ty = y;
+
+				/* Count number of visible traps next to player */
+				old_count = count_traps(&ty, &tx, TRUE);
+
 				/* Look for invisible traps */
 				if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
 				{
-					/* Message */
-					msg_print("You have found a trap.");
+					/* Save x and y into temp variables */
+					tx = x;
+					ty = y;
+										
+					/* See if the number of known traps has changed */
+					if (old_count != count_traps(&ty, &tx, TRUE))
+					{
+						/* Message */
+						msg_print("You have found a trap.");
 
-					/* Disturb */
-					disturb(0, 0);
+						/* Disturb */
+						disturb(0, 0);
+					}
 				}
 
 				/* Secret door */

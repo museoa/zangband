@@ -516,6 +516,7 @@ extern void do_cmd_go_up(void);
 extern void do_cmd_go_down(void);
 extern void do_cmd_search(void);
 extern void do_cmd_toggle_search(void);
+extern int count_traps(int *y, int *x, bool under);
 extern void do_cmd_open(void);
 extern void do_cmd_close(void);
 extern void do_cmd_tunnel(void);
