@@ -4128,8 +4128,8 @@ void update_view(void)
 	temp_n = 0;
 }
 
-/* Is the current monster visible? */
-static bool mon_invis;
+/* Monster location */
+static int mon_lite_mx, mon_lite_my;
 
 /*
  * Add a square to the changes array
@@ -4138,6 +4138,8 @@ static void mon_lite_hack(int x, int y)
 {
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
+	
+	int dx1, dy1, dx2, dy2;
 
 	/* Out of bounds */
 	if (!in_boundsp(x, y)) return;
@@ -4148,9 +4150,21 @@ static void mon_lite_hack(int x, int y)
 	/* Want an unlit square */
 	if (c_ptr->info & (CAVE_MNLT)) return;
 
-	/* Hack XXX XXX - Is it a wall and monster not in LOS? */
-	if (!cave_los_grid(c_ptr) && mon_invis) return;
-
+	/* Get vectors */
+	dx1 = p_ptr->px - x;
+	dy1 = p_ptr->py - y;
+	dx2 = mon_lite_mx - x;
+	dy2 = mon_lite_my - y;
+	
+	/*
+	 * Use a dot product to determine angle of illumination
+	 *
+	 * Only illuminate the correct sides of walls.  (We don't
+	 * need to worry about floor - we won't illuminate that
+	 * if we cannot see it.)
+	 */
+	if (!cave_los_grid(c_ptr) && ((dx1 * dx2 + dy1 * dy2) < 0)) return;
+	
 	/* Save this square */
 	if (temp_n < TEMP_MAX)
 	{
@@ -4271,16 +4285,10 @@ void update_mon_lite(void)
 		/* Access the location */
 		fx = m_ptr->fx;
 		fy = m_ptr->fy;
-
-		if (in_boundsp(fx, fy))
-		{
-			/* Is the monster visible? */
-			mon_invis = !player_has_los_grid(parea(fx, fy));
-		}
-		else
-		{
-			mon_invis = TRUE;
-		}
+		
+		/* Save information */
+		mon_lite_mx = fx;
+		mon_lite_my = fy;
 
 		/* The square it is on */
 		mon_lite_hack(fx, fy);
