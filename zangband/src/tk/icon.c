@@ -205,16 +205,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	/* Set the foreground icon */
 	displayPtr->fg = iconSpec;
 	
-	/* Don't bother calculating background if foreground is not masked */
-	if (g_icon_data[iconSpec.type].rle_data == NULL)
-	{
-		/* Other layers uninitialized */
-		displayPtr->bg[ICON_LAYER_1].type = ICON_TYPE_NONE;
-
-		/* Done */
-		return;
-	}
-
 	/* The feature is not known */
 	if (f_idx == 0)
 	{
@@ -680,8 +670,13 @@ void init_icons(int size, int depth)
 
 	Icon_AddType(icon_data_ptr);
 
-	g_icon_data[ICON_TYPE_NONE].rle_pixel = 0;
-	Icon_MakeRLE(&g_icon_data[ICON_TYPE_NONE]);
+	for (i = 0; i < g_icon_length; i++)
+	{
+		if (g_icon_depth != 8)
+			icon_data_ptr->icon_data[i] = 0; /* Black (RGB 0,0,0) */
+		else
+			icon_data_ptr->icon_data[i] = COLORMAP_BLACK;
+	}
 
 	/*
 	 * The TYPE_BLANK/"blank" icon type is a single black unmasked icon
@@ -864,7 +859,6 @@ void init_icons(int size, int depth)
 }
 
 
-
 #include <limits.h>
 #ifndef USHRT_MAX
 #define USHRT_MAX 65535
@@ -882,290 +876,6 @@ int g_term_palette[16] = {255, 0, 250, 17, 217, 196, 199, 101, 129,
 /* Actual 8/16/24 pixel values for above */
 unsigned long g_term_colormap[16];
 
-/* RL_Encode(), but discard results (return len only) */
-int RL_Len(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key)
-{
-	int y;
-	int total = 0, lastline = 0;
-
-	for (y = 0; y < h; y++)
-	{
-		int x = 0;
-		int blankline = 0;
-
-		do
-		{
-			int opaq, trans;
-			int opaqstart;
-			int transstart = x;
-
-			while ((x < w) && (PixelPtrToLong(srcbuf + x * bypp, bypp) == key))
-				x++;
-			opaqstart = x;
-			while ((x < w) && (PixelPtrToLong(srcbuf + x * bypp, bypp) != key))
-				x++;
-			trans = opaqstart - transstart;
-			if (trans == w)
-				blankline = 1;
-			opaq = x - opaqstart;
-
-			total += 2;
-
-			if (opaq)
-			{
-				total += opaq * bypp;
-			}
-
-			if (!blankline)
-				lastline = total;
-
-		} while (x < w);
-
-		srcbuf += pitch;
-	}
-
-	total = lastline + 2;
-
-	return total;
-}
-
-int RL_Encode(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key, IconPtr rlePtr)
-{
-	int y;
-	IconPtr dst, lastline;
-
-	dst = rlePtr;
-	lastline = dst;
-
-	for (y = 0; y < h; y++)
-	{
-		int x = 0;
-		int blankline = 0;
-
-		do
-		{
-			int opaq, trans;
-			int opaqstart;
-			int transstart = x;
-
-			while ((x < w) && (PixelPtrToLong(srcbuf + x * bypp, bypp) == key))
-				x++;
-			opaqstart = x;
-			while ((x < w) && (PixelPtrToLong(srcbuf + x * bypp, bypp) != key))
-				x++;
-			trans = opaqstart - transstart;
-			if (trans == w)
-				blankline = 1;
-			opaq = x - opaqstart;
-
-			dst[0] = trans;
-			dst[1] = opaq;
-			dst += 2;
-
-			if (opaq)
-			{
-				memcpy(dst, srcbuf + opaqstart * bypp, opaq * bypp);
-				dst += opaq * bypp;
-			}
-
-			if (!blankline)
-				lastline = dst;
-
-		} while (x < w);
-
-		srcbuf += pitch;
-	}
-
-	dst = lastline;
-	dst[0] = 0;
-	dst[1] = 0;
-	dst += 2;
-
-	return dst - rlePtr;
-}
-
-int RL_Decode(int w, int h, int bypp, IconPtr rlePtr, IconPtr dst, int pitch)
-{
-	int offset = 0;
-	int total = 0;
-
-	while (1)
-	{
-		unsigned int trans, opaq;
-
-		trans = rlePtr[0];
-		opaq = rlePtr[1];
-		rlePtr += 2;
-
-		offset += trans;
-
-		if (opaq)
-		{
-			memcpy(dst + offset * bypp, rlePtr, opaq * bypp);
-			rlePtr += opaq * bypp;
-			offset += opaq;
-		}
-		else if (!offset)
-			break;
-
-		total += trans + opaq;
-
-		if (offset == w)
-		{
-			offset = 0;
-			dst += pitch;
-			if (!--h)
-				break;
-		}
-	}
-	return total;
-}
-
-void RL_Bounds(int w, int h, int bypp, IconPtr srcbuf, int key, unsigned char *bounds)
-{
-	int left, top, right, bottom;
-	int x, y;
-
-	left = 255;
-	right = 0;
-	top = 255;
-	bottom = 0;
-
-	for (y = 0; y < h; y++)
-	{
-		for (x = 0; x < w; x++)
-		{
-			if (PixelPtrToLong(srcbuf + x * bypp, bypp) != key)
-			{
-				if (x < left)
-					left = x;
-				if (x > right)
-					right = x;
-				if (y < top)
-					top = y;
-				if (y > bottom)
-					bottom = y;
-			}
-		}
-		srcbuf += w * bypp;
-	}
-
-	if (!right)
-		left = 0;
-	if (!bottom)
-		top = 0;
-
-	bounds[0] = left;
-	bounds[1] = top;
-	bounds[2] = right - left + 1;
-	bounds[3] = bottom - top + 1;
-}
-
-void Icon_MakeRLEBounds(t_icon_data *iconDataPtr, int i)
-{
-	int left, top, right, bottom;
-	int bypp = iconDataPtr->bypp;
-	int x, y;
-	IconPtr srcbuf = iconDataPtr->icon_data + i * iconDataPtr->length;
-	unsigned char *bounds;
-
-	left = 255;
-	right = 0;
-	top = 255;
-	bottom = 0;
-
-	for (y = 0; y < iconDataPtr->height; y++)
-	{
-		for (x = 0; x < iconDataPtr->width; x++)
-		{
-			if (PixelPtrToLong(srcbuf + x * bypp, bypp) != iconDataPtr->rle_pixel)
-			{
-				if (x < left)
-					left = x;
-				if (x > right)
-					right = x;
-				if (y < top)
-					top = y;
-				if (y > bottom)
-					bottom = y;
-			}
-		}
-		srcbuf += iconDataPtr->pitch;
-	}
-
-	if (!right)
-		left = 0;
-	if (!bottom)
-		top = 0;
-
-	bounds = iconDataPtr->rle_bounds + i * 4;
-	bounds[0] = left;
-	bounds[1] = top;
-	bounds[2] = right - left + 1;
-	bounds[3] = bottom - top + 1;
-}
-
-void Icon_MakeRLE(t_icon_data *iconDataPtr)
-{
-	int i, len, slop;
-	long total;
-
-	total = 0;
-
-	/* x, y, width, height for each icon */
-	C_MAKE(iconDataPtr->rle_bounds, iconDataPtr->icon_count * 4, byte);
-
-	for (i = 0; i < iconDataPtr->icon_count; i++)
-	{
-		IconPtr iconPtr = iconDataPtr->icon_data + i * iconDataPtr->length;
-		unsigned char *bounds = iconDataPtr->rle_bounds + i * 4;
-
-		Icon_MakeRLEBounds(iconDataPtr, i);
-
-		iconPtr += bounds[0] * iconDataPtr->bypp +
-			bounds[1] * iconDataPtr->pitch;
-
-		/* Get length of encoded data */
-		len = RL_Len(bounds[2], bounds[3], iconDataPtr->bypp,
-			iconPtr, iconDataPtr->pitch, iconDataPtr->rle_pixel);
-
-		total += len;
-	}
-
-	/* RL_Encode() can write past 'len' by a number of transparent lines */
-	if (iconDataPtr->bypp == 4)
-		slop = iconDataPtr->height * 4;
-	else
-		slop = iconDataPtr->height * 2;
-
-	C_MAKE(iconDataPtr->rle_data, total + slop, byte);
-	C_MAKE(iconDataPtr->rle_offset, iconDataPtr->icon_count, long);
-	C_MAKE(iconDataPtr->rle_len, iconDataPtr->icon_count, int);
-
-	total = 0;
-
-	for (i = 0; i < iconDataPtr->icon_count; i++)
-	{
-		IconPtr iconPtr = iconDataPtr->icon_data + i * iconDataPtr->length;
-		unsigned char *bounds = iconDataPtr->rle_bounds + i * 4;
-
-		iconPtr += bounds[0] * iconDataPtr->bypp +
-			bounds[1] * iconDataPtr->pitch;
-
-		/* Encode */
-		len = RL_Encode(bounds[2], bounds[3], iconDataPtr->bypp,
-			iconPtr, iconDataPtr->pitch, iconDataPtr->rle_pixel,
-			iconDataPtr->rle_data + total);
-	
-		iconDataPtr->rle_offset[i] = total;
-		iconDataPtr->rle_len[i] = len;
-
-		total += len;
-	}
-
-	FREE(iconDataPtr->icon_data);
-	iconDataPtr->icon_data = NULL;
-}
 
 static int InitPixelSize(Tcl_Interp *interp)
 {
@@ -2501,13 +2211,5 @@ void Icon_Exit(void)
 		/* Help the memory debugger */
 		if (iconDataPtr->icon_data)
 			FREE(iconDataPtr->icon_data);
-
-		/* Help the memory debugger */
-		if (iconDataPtr->rle_data)
-		{
-			FREE(iconDataPtr->rle_offset);
-			FREE(iconDataPtr->rle_len);
-			FREE(iconDataPtr->rle_bounds);
-		}
 	}
 }

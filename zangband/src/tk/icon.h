@@ -42,11 +42,6 @@ typedef struct t_icon_data {
 	Tk_Font font; /* Font for ascii icons */
 	int *char_table; /* Table of chars for ascii icons */
 
-	IconPtr rle_data; /* Address of RLE data */
-	long *rle_offset; /* Per-icon offset into RLE data */
-	int *rle_len; /* Per-icon length of RLE data */
-	byte *rle_bounds; /* Per-icon x, y, width, height */
-	int rle_pixel; /* Transparent pixel (must be 4 bytes) */
 	int depth; /* Bits per pixel (8, 16, 24) */
 	int bypp; /* Bytes per pixel (1, 2, 3 or 4) */
 	int width; /* Pixels per column */
@@ -66,12 +61,6 @@ typedef struct t_ascii {
 extern int g_ascii_count; /* Number of elements in g_ascii[] array */
 
 extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
-extern void RL_Bounds(int w, int h, int bypp, IconPtr srcbuf, int key, byte *bounds);
-extern int RL_Len(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key);
-extern int RL_Encode(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key, IconPtr rlebuf);
-extern int RL_Decode(int w, int h, int bypp, IconPtr rlebuf, IconPtr dst, int pitch);
-extern void Icon_MakeRLEBounds(t_icon_data *iconDataPtr, int i);
-extern void Icon_MakeRLE(t_icon_data *iconDataPtr);
 
 extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr);

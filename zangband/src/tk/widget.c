@@ -169,53 +169,6 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		}
 	}
 
-	/* Transparent */
-	if (iconDataPtr->rle_data)
-	{
-		unsigned char *bounds = iconDataPtr->rle_bounds + iconSpec.index * 4;
-		int w = bounds[2];
-		int h = bounds[3];
-		int col = 0;
-		IconPtr rlePtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[iconSpec.index];
-
-		dstPtr = bitmapPtr->pixelPtr +
-			x * bypp +
-			y * pitch
-			+ bounds[0] * bypp
-			+ bounds[1] * pitch;
-
-		while (1)
-		{
-			unsigned int trans, opaq;
-		
-			trans = rlePtr[0];
-			opaq = rlePtr[1];
-			rlePtr += 2;
-		
-			col += trans;
-		
-			if (opaq)
-			{
-				memcpy(dstPtr + col * bypp, rlePtr, opaq * bypp);
-				rlePtr += opaq * bypp;
-				col += opaq;
-			}
-			else if (!col)
-				break;
-		
-			if (col == w)
-			{
-				if (!--h)
-					break;
-				col = 0;
-				dstPtr += pitch;
-			}
-		}
-
-		/* Done */
-		return;
-	}
-
 	/* FIXME: tint */
 	srcPtr = iconDataPtr->icon_data + iconSpec.index * iconDataPtr->length;
 

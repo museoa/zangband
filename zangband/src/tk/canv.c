@@ -396,59 +396,11 @@ static void DrawIconSpec(IconSpec *iconSpecPtr)
 	{
 		srcPtr = iconDataPtr->icon_data + iconSpecPtr->index * g_icon_length;
 	
-		/* Transparent */
-		if (iconDataPtr->rle_data)
-		{	
-			int col = 0;
-			IconPtr rlebuf;
-			unsigned char *bounds = iconDataPtr->rle_bounds +
-				iconSpecPtr->index * 4;
-			int bypp = iconDataPtr->bypp;
-			IconPtr dst = dstPtr + bounds[0] * bypp +
-				bounds[1] * CanvWidgetBitmap.pitch;
-			int w = bounds[2], h = bounds[3];
-
-			rlebuf = iconDataPtr->rle_data +
-				iconDataPtr->rle_offset[iconSpecPtr->index];
-
-			while (1)
-			{
-				unsigned int trans, opaq;
-		
-				trans = rlebuf[0];
-				opaq = rlebuf[1];
-				rlebuf += 2;
-		
-				col += trans;
-		
-				if (opaq)
-				{
-					memcpy(dst + col * bypp, rlebuf, opaq * bypp);
-					rlebuf += opaq * bypp;
-					col += opaq;
-				}
-				else if (!col)
-					break;
-
-				if (col == w)
-				{
-					if (!--h)
-						break;
-					col = 0;
-					dst += CanvWidgetBitmap.pitch;
-				}
-			}
-		}
-	
-		/* Not transparent */
-		else
+		for (y = 0; y < iconDataPtr->height; y++)
 		{
-			for (y = 0; y < iconDataPtr->height; y++)
-			{
-				memcpy(dstPtr, srcPtr, iconDataPtr->pitch);
-				srcPtr += iconDataPtr->pitch;
-				dstPtr += CanvWidgetBitmap.pitch;
-			}
+			memcpy(dstPtr, srcPtr, iconDataPtr->pitch);
+			srcPtr += iconDataPtr->pitch;
+			dstPtr += CanvWidgetBitmap.pitch;
 		}
 	}
 }
@@ -520,51 +472,6 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		gcValues.graphics_exposures = False;
 		gc = Tk_GetGC(tkwin, GCFunction | GCGraphicsExposures, &gcValues);
 #endif /* PLATFORM_X11 */
-
-		/* Transparent */
-		if (g_icon_data[iconSpecFG.type].rle_data ||
-			g_icon_data[iconSpecBG.type].rle_data)
-		{
-			/*
-			 * Ignorance alert! I want to copy the background from where
-			 * the masked icon should be drawn to the CanvWidgetBitmap
-			 * and draw the masked icon on top of that. So I figure I
-			 * will BitBlt() from the canvas HDC to CanvWidgetBitmap HDC.
-			 * But on 256-color monitors it is way too slow. So I find
-			 * what color is under the canvas item and use that.
-			 */
-#ifdef PLATFORM_WIN
-
-			if (!g_256color)
-			{
-			    BitBlt(dc2, 0, 0, widgetPtr->gwidth,
-					widgetPtr->gheight, dc, drawableX + borderSize,
-					drawableY + borderSize, SRCCOPY);
-			}
-			else
-			{
-				TkWinFillRect(dc2, 0, 0,
-					widgetPtr->gwidth, widgetPtr->gheight,
-					GetPixel(dc, drawableX + borderSize,
-					drawableY + borderSize));
-			}
-#endif /* PLATFORM_WIN */
-
-#ifdef PLATFORM_X11
-			XCopyArea(display,
-				drawable, /* source drawable */
-				CanvWidgetBitmap.pixmap, /* dest drawable */
-				gc, /* graphics context */
-				drawableX + borderSize, drawableY + borderSize, /* source top-left */
-				(unsigned int) widgetPtr->gwidth, /* width */
-				(unsigned int) widgetPtr->gheight, /* height */
-				0, 0 /* dest top-left */
-			);
-
-			Plat_SyncDisplay(display);
-#endif /* PLATFORM_X11 */
-
-		}
 		
 		/* Draw background icon */
 		if (iconSpecBG.type != ICON_TYPE_NONE)
