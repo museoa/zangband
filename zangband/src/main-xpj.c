@@ -61,6 +61,13 @@
 
 
 
+/*
+ * Set this to be 1 if you want the walls to be bright.
+ * Bright walls may or may not look better.
+ */
+#define BRIGHT_WALLS 0
+
+
 
 
 /* Rest of the dependancies */
@@ -2104,6 +2111,9 @@ static void draw_block32(void *tiles[PJ_MAX],
 		+ (t_offsety1[N] + (Y) * P_TILE_SIZE) * 32 * P_TILE_SIZE)\
 		 * bytes_per_pixel])
 
+/* Hack XXX XXX - convert to illuminated wall */
+#define ILLUMINATE(X) (((((X & 0x3f) - 1) / 3) * 3) + 2 + BRIGHT_WALLS)
+
 static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 {
 	term_win *window = td->t.scr;
@@ -2190,6 +2200,7 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		if (tc & 0x40)
 		{
 			mask |= (PJ_T_WALLF | PJ_T_WALL1 | PJ_T_WALL1_T);
+
 			set_tile1(PJ_WALLF, tc & 0x3F, ta & 0x7F);
 			set_tile1(PJ_WALL1, tc & 0x3F, ta & 0x7F);
 			set_tile1(PJ_WALL1_T, tc & 0x3F, ta & 0x7F);
@@ -2242,6 +2253,7 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			else
 			{
 				mask |= (PJ_T_WALL1 | PJ_T_WALL1_T);
+				
 				set_tile1(PJ_WALL1, tc & 0x3F, ta & 0x7F);
 				set_tile1(PJ_WALL1_T, tc & 0x3F, ta & 0x7F);
 			}
@@ -2289,10 +2301,19 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		if (tc & 0x40)
 		{
 			mask |= PJ_T_TOP1 | PJ_T_TOP_T1;
-			
-			set_tile1(PJ_TOP1, tc & 0x3F, ta & 0x7F);
-			set_tile1(PJ_TOP_T1, tc & 0x3F, ta & 0x7F);
 
+			if (tc & 0x80)
+			{			
+				/* Special lighting for walls */
+				set_tile1(PJ_TOP1, ILLUMINATE(tc), ta & 0x7F);
+				set_tile1(PJ_TOP_T1, ILLUMINATE(tc), ta & 0x7F);
+			}
+			else
+			{
+				set_tile1(PJ_TOP1, tc & 0x3F, ta & 0x7F);
+				set_tile1(PJ_TOP_T1, tc & 0x3F, ta & 0x7F);
+			}
+			
 			if (mask & PJ_T_WALLF)
 			{
 				mask &= (~PJ_T_WALLF);
@@ -2313,7 +2334,6 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			{
 				mask &= ~(PJ_T_FLOOR2);
 			}
-
 		}
 		
 		/* Are we overlaying anything? */
@@ -2426,6 +2446,7 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		if (tc & 0x40)
 		{
 			mask |= (PJ_T_WALLF);
+
 			set_tile2(PJ_WALLF, tc & 0x3F, ta & 0x7F);
 		}
 		
@@ -2473,8 +2494,18 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			mask |= (PJ_T_WALL2 | PJ_T_WALL2_T | PJ_T_TOP2 | PJ_T_TOP_T2);
 			set_tile2(PJ_WALL2, tc & 0x3F, ta & 0x7F);
 			set_tile2(PJ_WALL2_T, tc & 0x3F, ta & 0x7F);
-			set_tile2(PJ_TOP2, tc & 0x3F, ta & 0x7F);
-			set_tile2(PJ_TOP_T2, tc & 0x3F, ta & 0x7F);
+			
+			if (tc & 0x80)
+			{
+				/* Special lighting for walls */
+				set_tile2(PJ_TOP2, ILLUMINATE(tc), ta & 0x7F);
+				set_tile2(PJ_TOP_T2, ILLUMINATE(tc), ta & 0x7F);
+			}
+			else
+			{
+				set_tile2(PJ_TOP2, tc & 0x3F, ta & 0x7F);
+				set_tile2(PJ_TOP_T2, tc & 0x3F, ta & 0x7F);
+			}
 			
 			/* Hack - check for "blank floor" */
 			if (floor_blank)
@@ -2514,15 +2545,24 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		{
 			mask |= PJ_T_TOP1 | PJ_T_TOP_T1;
 			
-			set_tile2(PJ_TOP1, tc & 0x3F, ta & 0x7F);
-			set_tile2(PJ_TOP_T1, tc & 0x3F, ta & 0x7F);
+			if (tc & 0x80)
+			{			
+				/* Special lighting for walls */
+				set_tile2(PJ_TOP1, ILLUMINATE(tc), ta & 0x7F);
+				set_tile2(PJ_TOP_T1, ILLUMINATE(tc), ta & 0x7F);
+			}
+			else
+			{
+				set_tile2(PJ_TOP1, tc & 0x3F, ta & 0x7F);
+				set_tile2(PJ_TOP_T1, tc & 0x3F, ta & 0x7F);
+			}
 			
 			/* Hack - check for "blank floor" */
 			if (floor_blank)
 			{
 				mask &= ~(PJ_T_FLOOR1);
 			}
-	
+			
 			if (mask & PJ_T_WALL2)
 			{
 				mask &= ~(PJ_T_WALL2 | PJ_T_WALL2_T);
