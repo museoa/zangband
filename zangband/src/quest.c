@@ -940,7 +940,14 @@ void trigger_quest_complete(byte x_type, vptr data)
 					/* Are we done yet? */
 					if (pl_ptr->data) continue;
 				}
-				/* Else always completed on first entrance */
+
+				/* find a place breaks the link between place and quest */
+				else if (q_ptr->type == QUEST_TYPE_FIND_PLACE)
+				{
+					/* Break the link between place and quest */
+					pl_ptr->quest_num = 0;
+				}
+
 
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_COMPLETED;
@@ -1825,7 +1832,6 @@ bool do_cmd_knowledge_quests(int dummy)
 			}
 
 			case QUEST_TYPE_WILD:
-			case QUEST_TYPE_MESSAGE:
 			{
 				if (taken)
 				{
@@ -1838,6 +1844,26 @@ bool do_cmd_knowledge_quests(int dummy)
 					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
 				}
 
+				break;
+			}
+
+			case QUEST_TYPE_MESSAGE:
+			{
+				if (taken)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+				}
+				else if (finished)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
+				}
+				else
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Delivered)\n", q_ptr->name);
+				}
 				break;
 			}
 
