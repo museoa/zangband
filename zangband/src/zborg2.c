@@ -1421,7 +1421,14 @@ static int borg_guess_race_name(cptr who)
 	if (!prefix(who, "The "))
 	{
 		/* Message */
-		borg_oops_fmt("# Assuming unknown (%s)", who);
+		if (bp_ptr->status.image)
+		{
+			borg_note_fmt("# Seeing a monster while hallucinating (%s)", who);
+		}
+		else
+		{
+			borg_oops_fmt("# Assuming unknown (%s)", who);
+		}
 
 		/* Oops */
 		return (0);
@@ -1498,8 +1505,15 @@ static int borg_guess_race_name(cptr who)
 
 
 	/* Message */
-	borg_oops_fmt("# Assuming unknown (%s)", who);
-
+	if (bp_ptr->status.image)
+	{
+		borg_note_fmt("# Seeing a monster while hallucinating (%s)", who);
+	}
+	else
+	{
+		borg_oops_fmt("# Assuming unknown (%s)", who);
+	}
+ 
 	/* Oops */
 	return (0);
 }
