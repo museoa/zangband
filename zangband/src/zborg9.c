@@ -3938,16 +3938,6 @@ void borg_init_9(void)
 	/* Hack -- notice "command" mode */
 	hilite_player = FALSE;
 
-	/*** Redraw ***/
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
-
-	/* Redraw everything */
-	do_cmd_redraw();
-
 	/*** Various ***/
 
 	/* Message */
@@ -3976,6 +3966,17 @@ void borg_init_9(void)
 	borg_init_6();
 	borg_init_7();
 	borg_init_8();
+	
+	/*** Redraw ***/
+	
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Redraw everything */
+	do_cmd_redraw();
 
 
 	/*** Hack -- Extract race ***/
