@@ -1692,7 +1692,7 @@ static menu_type quest_menu[QUEST_MENU_MAX] =
 	{"To hunt down a bounty of monsters", NULL, request_bounty, MN_ACTIVE},
 	{"To send a message to someone far away", NULL, request_message, MN_ACTIVE},
 	{"To find a lost ruin", NULL, request_find_place, MN_ACTIVE},
-	{"To fund a lost relic", NULL, request_find_item, MN_ACTIVE},
+	{"To find a lost relic", NULL, request_find_item, MN_ACTIVE},
 	MENU_END
 };
 
