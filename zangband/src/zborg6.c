@@ -14726,8 +14726,8 @@ bool borg_flow_dark(bool close)
  * Hack -- spastic searching
  */
 
-static byte spastic_x;
-static byte spastic_y;
+static s16b spastic_x;
+static s16b spastic_y;
 
 
 
