@@ -2368,6 +2368,8 @@ static void mon_lite_hack(int x, int y)
 	pcave_type *pc_ptr;
 
 	int dx1, dy1, dx2, dy2;
+	
+	int xt = x, yt = y;
 
 	/* Out of bounds */
 	if (!in_boundsp(x, y)) return;
@@ -2392,8 +2394,32 @@ static void mon_lite_hack(int x, int y)
 	 * if we cannot see it.)
 	 */
 	if (!cave_los_grid(c_ptr) && ((dx1 * dx2 + dy1 * dy2) < 0)) return;
+	
+	/* Test to see if ray bounces on a side of the block that is visible */
+	if ((dx1 < 0) && (dx2 < 0))
+	{
+		xt = x - 1;
+	}
+	else if ((dx1 > 0) && (dx2 > 0))
+	{
+		xt = x + 1;
+	}
+	else if ((dy1 < 0) && (dy2 < 0))
+	{
+		yt = y - 1;
+	}
+	else if ((dy1 > 0) && (dy2 > 0))
+	{
+		yt = y + 1;
+	}
+	
+	/* Hack Bounce block is not in bounds - assume is solid */
+	if (!in_bounds(xt, yt)) return;
 
-	/* Save this square */
+	/* Make sure that the light path doesn't pass through a wall on the bounce. */
+	if (!cave_los_grid(area(xt, yt))) return;
+
+	/* Save the square */
 	if (temp_n < TEMP_MAX)
 	{
 		temp_x[temp_n] = x;
