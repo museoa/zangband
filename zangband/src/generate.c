@@ -1190,8 +1190,8 @@ void generate_cave(void)
 		/* Hack XXX XXX */
 		/* Exit, information is already in other data type. */
 
-		px = p_ptr->wilderness_x;
-		py = p_ptr->wilderness_y;
+		px = (s16b) p_ptr->wilderness_x;
+		py = (s16b) p_ptr->wilderness_y;
 
 		/* Determine number of panels */
 		max_panel_rows = (max_wild*16 / SCREEN_HGT) * 2;

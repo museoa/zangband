@@ -1639,9 +1639,9 @@ static void rd_extra(void)
 	rd_byte(&tmp8u); /* oops */
 	rd_byte(&tmp8u); /* oops */
 	rd_byte(&tmp8u); /* oops */
-	rd_byte(&p_ptr->searching);
-	rd_byte(&maximize_mode);
-	rd_byte(&preserve_mode);
+	rd_byte((byte*) &p_ptr->searching);
+	rd_byte((byte*) &maximize_mode);
+	rd_byte((byte*) &preserve_mode);
 	rd_byte(&tmp8u);
 
 	/* Future use */
@@ -2680,7 +2680,7 @@ static void load_wild_data(void)
 
 				/* Town / Dungeon / Specials */
 				rd_u16b(&tmp_u16b);
-				wild[j][i].done.town = tmp_u16b;
+				wild[j][i].done.town = (byte) tmp_u16b;
 
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
@@ -3310,7 +3310,7 @@ static errr rd_savefile_new_aux(void)
 		if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
 		{
 			/* "Hard quests" flag */
-			rd_byte(&ironman_hard_quests);
+			rd_byte((byte*) &ironman_hard_quests);
 
 			/****** HACK ******/
 			if (ironman_hard_quests)
@@ -3320,7 +3320,7 @@ static errr rd_savefile_new_aux(void)
 			}
 
 			/* Inverted "Wilderness" flag */
-			rd_byte(&vanilla_town);
+			rd_byte((byte*) &vanilla_town);
 			vanilla_town = !vanilla_town;
 
 			/****** HACK ******/

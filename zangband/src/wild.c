@@ -100,7 +100,8 @@ static void day_night(void)
 		{
 			/* Light or darken wilderness block */
 			light_dark_block(wild_grid.block_ptr[y][x],
-			 x + wild_grid.x_min / 16, y + wild_grid.y_min / 16);
+			 (byte) x + wild_grid.x_min / 16,
+			  (byte) y + wild_grid.y_min / 16);
 		}
 	}
 }
@@ -635,7 +636,7 @@ static void init_towns(void)
 				 * Add town to wilderness
 				 * Note: only 255 towns can be stored currently.
 				 */
-				w_ptr->town = town_count;
+				w_ptr->town = (byte) town_count;
 				
 				/* Monsters are easy */
 				w_ptr->mon_gen = 0;
@@ -2121,22 +2122,22 @@ u16b add_node_tree_root(wild_bound_box_type *bound, u16b type)
 /* Testing code - remove later. */
 void test_decision_tree(void)
 {
-	u16b hgt, pop, law;
+	byte hgt, pop, law;
 	
 	u16b type;
 	
 	/* get parameters */
 	msg_print("Type in hgt");
 	
-	hgt = get_quantity(NULL, 255);
+	hgt = (byte) get_quantity(NULL, 255);
 	
 	msg_print("Type in pop");
 	
-	pop = get_quantity(NULL, 255);
+	pop = (byte) get_quantity(NULL, 255);
 	
 	msg_print("Type in law");
 	
-	law = get_quantity(NULL, 255);
+	law = (byte) get_quantity(NULL, 255);
 	
 	/* Get value from decision tree */
 	type = get_gen_type(hgt, pop, law);
@@ -3614,8 +3615,8 @@ static void create_rivers(int sea_level)
 	/* Make some random starting positions */
 	for (i = 0; i < river_start; i++)
 	{
-		temp_y[i] = rand_int(max_wild);
-		temp_x[i] = rand_int(max_wild);	
+		temp_y[i] = (s16b) rand_int(max_wild);
+		temp_x[i] = (s16b) rand_int(max_wild);	
 	}
 
 	temp_n = river_start;
@@ -4208,8 +4209,8 @@ static void create_law_map(u16b sea)
 /* Finish making the wilderness - recenter the screen around the player. */
 void wild_done(void)
 {	
-	px = p_ptr->wilderness_x;
-	py = p_ptr->wilderness_y;
+	px = (s16b) p_ptr->wilderness_x;
+	py = (s16b) p_ptr->wilderness_y;
 
 	/* Determine number of panels */
 	max_panel_rows = (max_wild*16 / SCREEN_HGT) * 2;
@@ -4449,7 +4450,7 @@ void create_wilderness(void)
 				
 				
 				/* Get wilderness type. */
-				wild[j][i].done.wild = get_gen_type(hgt, pop, law);
+				wild[j][i].done.wild = get_gen_type((byte) hgt, (byte) pop, (byte) law);
 				
 				/* No rivers / roads / all unknown */
 				wild[j][i].done.info = 0;
