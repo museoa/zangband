@@ -1120,7 +1120,7 @@ static void store_create(void)
 	
 	obj_theme theme;
 
-	byte restrict = f_ptr->data[7];
+	byte restricted = f_ptr->data[7];
 		
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->max_stock) return;
@@ -1160,12 +1160,12 @@ static void store_create(void)
 		object_prep(q_ptr, kind);
 		
 		/* Create object based on restrictions */
-		if (restrict & ST_REST_GREAT)
+		if (restricted & ST_REST_GREAT)
 		{
 			/* Apply some "low-level" magic (great) */
 			apply_magic(q_ptr, level, 30, OC_FORCE_GOOD);
 		}
-		else if (restrict & ST_REST_GOOD)
+		else if (restricted & ST_REST_GOOD)
 		{
 			/* Apply some "low-level" magic (good) */
 			apply_magic(q_ptr, level, 15, OC_NONE);
