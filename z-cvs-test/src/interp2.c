@@ -1068,13 +1068,11 @@ char *keyword_path[] = {
 	"ANGBAND_DIR_ROOT",
 	"ANGBAND_DIR_USER",
 	"ANGBAND_DIR_TK",
-	"ANGBAND_DIR_COMMON",
 	NULL
 };
 
 /* Can the above directories be changed? */
 static bool s_edit_path[] = {
-	FALSE,
 	FALSE,
 	FALSE,
 	FALSE,
@@ -1165,7 +1163,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			angband_path[0] = &ANGBAND_DIR_ROOT;
 			angband_path[1] = &ANGBAND_DIR_USER;
 			angband_path[2] = &ANGBAND_DIR_TK;
-			angband_path[3] = &ANGBAND_DIR_COMMON;
 			
 			if (objC == 4)
 			{

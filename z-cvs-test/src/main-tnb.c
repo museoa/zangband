@@ -26,7 +26,6 @@ bool g_initialized = FALSE;
 bool game_in_progress = FALSE;
 cptr ANGBAND_DIR_ROOT;
 cptr ANGBAND_DIR_TK;
-cptr ANGBAND_DIR_COMMON;
 Tcl_Interp *g_interp;
 static char *gGameDir, *gVariantDir;
 
@@ -659,7 +658,6 @@ static void init_stuff(int argc, char **argv)
 
 	/* Allocate the path */
 	ANGBAND_DIR_TK = string_make(path);
-	ANGBAND_DIR_COMMON = string_make(path);
 
 	/* Validate the "tk" directory */
 	validate_dir(ANGBAND_DIR_TK);
