@@ -6,7 +6,6 @@
 #define INCLUDED_BORG6_H
 
 #include "angband.h"
-#include "maid-grf.h"
 
 #ifdef ALLOW_BORG
 

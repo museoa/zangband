@@ -29,6 +29,771 @@
  * flow calculations that penalize grids by variable amounts.
  */
 
+/*
+ * Maximum number of slopes in a single octant
+ */
+#define VINFO_MAX_SLOPES 135
+
+
+/*
+ * Table of data used to calculate projections / los / shots.
+ */
+static project_type *project_data[VINFO_MAX_SLOPES];
+
+/* Number of squares per slope */
+static int slope_count[VINFO_MAX_SLOPES];
+
+/* The min and max slopes for each square in sight */
+static int p_slope_min[MAX_SIGHT + 1][MAX_SIGHT + 1];
+static int p_slope_max[MAX_SIGHT + 1][MAX_SIGHT + 1];
+
+
+/*
+ * Maximum number of grids in a single octant
+ */
+#define VINFO_MAX_GRIDS 175
+
+
+/*
+ * Mask of bits used in a single octant
+ */
+#define VINFO_BITS_4 0x0000007FL
+#define VINFO_BITS_3 0xFFFFFFFFL
+#define VINFO_BITS_2 0xFFFFFFFFL
+#define VINFO_BITS_1 0xFFFFFFFFL
+#define VINFO_BITS_0 0xFFFFFFFFL
+
+
+/*
+ * Forward declare
+ */
+typedef struct vinfo_type vinfo_type;
+
+
+/*
+ * The 'vinfo_type' structure
+ */
+struct vinfo_type
+{
+	s16b grid_x[8];
+	s16b grid_y[8];
+
+	u32b bits[5];
+
+	vinfo_type *next_0;
+	vinfo_type *next_1;
+
+	byte y;
+	byte x;
+	byte d;
+	byte r;
+};
+
+
+
+/*
+ * The array of "vinfo" objects, initialized by "vinfo_init()"
+ */
+static vinfo_type vinfo[VINFO_MAX_GRIDS];
+
+
+
+
+/*
+ * Slope scale factor
+ */
+#define SCALE 100000L
+
+
+/*
+ * Forward declare
+ */
+typedef struct vinfo_hack vinfo_hack;
+
+
+/*
+ * Temporary data used by "vinfo_init()"
+ *
+ *	- Number of slopes
+ *
+ *	- Slope values
+ *
+ *  - Slope min and max for each square
+ */
+struct vinfo_hack
+{
+	int num_slopes;
+
+	s32b slopes[VINFO_MAX_SLOPES];
+
+	s32b slopes_min[MAX_SIGHT + 1][MAX_SIGHT + 1];
+	s32b slopes_max[MAX_SIGHT + 1][MAX_SIGHT + 1];
+};
+
+
+
+/*
+ * Sorting hook -- comp function -- array of s32b (see below)
+ *
+ * We use "u" to point to an array of s32b.
+ */
+static bool ang_sort_comp_hook_s32b(const vptr u, const vptr v, int a, int b)
+{
+	s32b *x = (s32b *)(u);
+
+	/* Hack - ignore v */
+	(void)v;
+
+	return (x[a] <= x[b]);
+}
+
+
+/*
+ * Sorting hook -- swap function -- array of s32b (see below)
+ *
+ * We use "u" to point to an array of s32b.
+ */
+static void ang_sort_swap_hook_s32b(const vptr u, const vptr v, int a, int b)
+{
+	s32b *x = (s32b *)(u);
+
+	s32b temp;
+
+	/* Hack - ignore v */
+	(void)v;
+
+	/* Swap */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+}
+
+
+
+/*
+ * Save a slope
+ */
+static void vinfo_init_aux(vinfo_hack *hack, int x, int y, s32b m)
+{
+	int i;
+
+	/* Handle "legal" slopes */
+	if ((m > 0) && (m <= SCALE))
+	{
+		/* Look for that slope */
+		for (i = 0; i < hack->num_slopes; i++)
+		{
+			if (hack->slopes[i] == m) break;
+		}
+
+		/* New slope */
+		if (i == hack->num_slopes)
+		{
+			/* Paranoia */
+			if (hack->num_slopes >= VINFO_MAX_SLOPES)
+			{
+				quit_fmt("Too many slopes (%d)!", VINFO_MAX_SLOPES);
+			}
+
+			/* Save the slope, and advance */
+			hack->slopes[hack->num_slopes++] = m;
+		}
+	}
+
+	/* Track slope range */
+	if (hack->slopes_min[y][x] > m) hack->slopes_min[y][x] = m;
+	if (hack->slopes_max[y][x] < m) hack->slopes_max[y][x] = m;
+}
+
+
+/*
+ * Initialize the "vinfo" and "project_data" arrays
+ *
+ * Full Octagon (radius 20), Grids=1149
+ *
+ * Quadrant (south east), Grids=308, Slopes=251
+ *
+ * Octant (east then south), Grids=161, Slopes=126
+ *
+ * This function assumes that VINFO_MAX_GRIDS and VINFO_MAX_SLOPES
+ * have the correct values, which can be derived by setting them to
+ * a number which is too high, running this function, and using the
+ * error messages to obtain the correct values.
+ */
+static errr borg_vinfo_init(void)
+{
+	int i, j;
+	int y, x;
+
+	s32b m;
+
+	vinfo_hack *hack;
+
+	int num_grids = 0;
+
+	int queue_head = 0;
+	int queue_tail = 0;
+	vinfo_type *queue[VINFO_MAX_GRIDS * 2];
+
+
+	/* Make hack */
+	MAKE(hack, vinfo_hack);
+
+
+	/* Analyze grids */
+	for (y = 0; y <= MAX_SIGHT; ++y)
+	{
+		for (x = y; x <= MAX_SIGHT; ++x)
+		{
+			/* Skip grids which are out of sight range */
+			if (distance(0, 0, x, y) > MAX_SIGHT) continue;
+
+			/* Default slope range */
+			hack->slopes_min[y][x] = 999999999;
+			hack->slopes_max[y][x] = 0;
+
+			/* Clear the p_slope_min and max arrays */
+			p_slope_min[x][y] = VINFO_MAX_SLOPES;
+			p_slope_max[x][y] = 0;
+			p_slope_min[y][x] = VINFO_MAX_SLOPES;
+			p_slope_max[y][x] = 0;
+
+			/* Paranoia */
+			if (num_grids >= VINFO_MAX_GRIDS)
+			{
+				quit_fmt("Too many grids (%d >= %d)!",
+						 num_grids, VINFO_MAX_GRIDS);
+			}
+
+			/* Count grids */
+			num_grids++;
+
+			/* Slope to the top right corner */
+			m = SCALE * (1000L * y - 500) / (1000L * x + 500);
+
+			/* Handle "legal" slopes */
+			vinfo_init_aux(hack, x, y, m);
+
+			/* Slope to top left corner */
+			m = SCALE * (1000L * y - 500) / (1000L * x - 500);
+
+			/* Handle "legal" slopes */
+			vinfo_init_aux(hack, x, y, m);
+
+			/* Slope to bottom right corner */
+			m = SCALE * (1000L * y + 500) / (1000L * x + 500);
+
+			/* Handle "legal" slopes */
+			vinfo_init_aux(hack, x, y, m);
+
+			/* Slope to bottom left corner */
+			m = SCALE * (1000L * y + 500) / (1000L * x - 500);
+
+			/* Handle "legal" slopes */
+			vinfo_init_aux(hack, x, y, m);
+		}
+	}
+
+
+	/* Enforce maximal efficiency */
+	if (num_grids < VINFO_MAX_GRIDS)
+	{
+		quit_fmt("Too few grids (%d < %d)!", num_grids, VINFO_MAX_GRIDS);
+	}
+
+	/* Enforce maximal efficiency */
+	if (hack->num_slopes < VINFO_MAX_SLOPES)
+	{
+		quit_fmt("Too few slopes (%d < %d)!",
+				 hack->num_slopes, VINFO_MAX_SLOPES);
+	}
+
+
+	/* Sort slopes numerically */
+	ang_sort_comp = ang_sort_comp_hook_s32b;
+
+	/* Sort slopes numerically */
+	ang_sort_swap = ang_sort_swap_hook_s32b;
+
+	/* Sort the (unique) slopes */
+	ang_sort(hack->slopes, NULL, hack->num_slopes);
+
+
+	/* Clear the counters for each slope */
+	(void)C_WIPE(slope_count, VINFO_MAX_SLOPES, int);
+
+	/* Enqueue player grid */
+	queue[queue_tail++] = &vinfo[0];
+
+	/* Process queue */
+	while (queue_head < queue_tail)
+	{
+		int e;
+
+		vinfo_type *p;
+
+
+		/* Index */
+		e = queue_head;
+
+		/* Dequeue next grid */
+		p = queue[queue_head++];
+
+		/* Location */
+		y = vinfo[e].grid_y[0];
+		x = vinfo[e].grid_x[0];
+
+
+		/* Compute grid offsets */
+		vinfo[e].grid_x[0] = x;
+		vinfo[e].grid_x[1] = y;
+		vinfo[e].grid_x[2] = -y;
+		vinfo[e].grid_x[3] = -x;
+		vinfo[e].grid_x[4] = -x;
+		vinfo[e].grid_x[5] = -y;
+		vinfo[e].grid_x[6] = y;
+		vinfo[e].grid_x[7] = x;
+
+		vinfo[e].grid_y[0] = y;
+		vinfo[e].grid_y[1] = x;
+		vinfo[e].grid_y[2] = x;
+		vinfo[e].grid_y[3] = y;
+		vinfo[e].grid_y[4] = -y;
+		vinfo[e].grid_y[5] = -x;
+		vinfo[e].grid_y[6] = -x;
+		vinfo[e].grid_y[7] = -y;
+
+
+		/* Analyze slopes */
+		for (i = 0; i < hack->num_slopes; ++i)
+		{
+			m = hack->slopes[i];
+
+			/* Memorize intersection slopes (for non-player-grids) */
+			if ((e > 0) &&
+				(hack->slopes_min[y][x] < m) && (m < hack->slopes_max[y][x]))
+			{
+				/* We use this slope */
+				slope_count[i]++;
+
+				/* Save the bit that stands for this slope */
+				vinfo[e].bits[i / 32] |= (1L << (i % 32));
+			}
+		}
+
+
+		/* Default */
+		vinfo[e].next_0 = &vinfo[0];
+
+		/* Grid next child */
+		if (distance(0, 0, x + 1, y) <= MAX_SIGHT)
+		{
+			if (!((queue[queue_tail - 1]->grid_x[0] == x + 1) &&
+				  (queue[queue_tail - 1]->grid_y[0] == y)))
+			{
+				vinfo[queue_tail].grid_x[0] = x + 1;
+				vinfo[queue_tail].grid_y[0] = y;
+				queue[queue_tail] = &vinfo[queue_tail];
+				queue_tail++;
+			}
+
+			vinfo[e].next_0 = &vinfo[queue_tail - 1];
+		}
+
+
+		/* Default */
+		vinfo[e].next_1 = &vinfo[0];
+
+		/* Grid diag child */
+		if (distance(0, 0, x + 1, y + 1) <= MAX_SIGHT)
+		{
+			if (!((queue[queue_tail - 1]->grid_x[0] == x + 1) &&
+				  (queue[queue_tail - 1]->grid_y[0] == y + 1)))
+			{
+				vinfo[queue_tail].grid_x[0] = x + 1;
+				vinfo[queue_tail].grid_y[0] = y + 1;
+				queue[queue_tail] = &vinfo[queue_tail];
+				queue_tail++;
+			}
+
+			vinfo[e].next_1 = &vinfo[queue_tail - 1];
+		}
+
+
+		/* Hack -- main diagonal has special children */
+		if (y == x) vinfo[e].next_0 = vinfo[e].next_1;
+
+
+		/* Extra values */
+		vinfo[e].y = y;
+		vinfo[e].x = x;
+		vinfo[e].d = ((y > x) ? (y + x / 2) : (x + y / 2));
+		vinfo[e].r = ((!y) ? x : (!x) ? y : (y == x) ? y : 0);
+	}
+
+
+	/* Verify maximal bits XXX XXX XXX */
+	if (((vinfo[1].bits[4] | vinfo[2].bits[4]) != VINFO_BITS_4) ||
+		((vinfo[1].bits[3] | vinfo[2].bits[3]) != VINFO_BITS_3) ||
+		((vinfo[1].bits[2] | vinfo[2].bits[2]) != VINFO_BITS_2) ||
+		((vinfo[1].bits[1] | vinfo[2].bits[1]) != VINFO_BITS_1) ||
+		((vinfo[1].bits[0] | vinfo[2].bits[0]) != VINFO_BITS_0))
+	{
+		quit("Incorrect bit masks!");
+	}
+
+	/* Create the project_data array */
+	for (i = 0; i < VINFO_MAX_SLOPES; i++)
+	{
+		/* Create the list of squares intersected by this slope */
+		C_MAKE(project_data[i], slope_count[i], project_type);
+
+		j = 0;
+
+		for (y = 0; y <= MAX_SIGHT; ++y)
+		{
+			for (x = y; x <= MAX_SIGHT; ++x)
+			{
+				/* Only if in range */
+				if (distance(0, 0, x, y) > MAX_SIGHT) continue;
+
+				/* Hack - ignore the origin */
+				if (!x && !y) continue;
+
+				m = hack->slopes[i];
+
+				/* Does this square intersect the line? */
+				if ((hack->slopes_min[y][x] < m) &&
+					(m < hack->slopes_max[y][x]))
+				{
+					/* Save the square */
+					project_data[i][j].x = x;
+					project_data[i][j].y = y;
+
+					/* Add in the slopes information */
+					if (p_slope_min[x][y] > i) p_slope_min[x][y] = i;
+					if (p_slope_max[x][y] < i) p_slope_max[x][y] = i;
+
+					/* Next square... */
+					j++;
+				}
+			}
+		}
+	}
+
+
+	/* 
+	 * Add in the final information in the projection table.
+	 *
+	 * We need to know where to go to if the current square
+	 * is blocked.
+	 *
+	 * This is calculated in the following way:
+	 *
+	 * First, we need to find the first slope that does not
+	 * include the current square.
+	 *
+	 *  This will be the first slope that does
+	 * not contain this square.  The position along that slope
+	 * will be the first square that is not already scanned
+	 * by the current slope.
+	 *
+	 * This means that we may end up scanning squares twice,
+	 * but the simplification of the algorithm is worth it. 
+	 */
+	for (i = 0; i < VINFO_MAX_SLOPES; i++)
+	{
+		for (j = 0; j < slope_count[i]; j++)
+		{
+			/* Set default case. */
+			project_data[i][j].slope = VINFO_MAX_SLOPES;
+			project_data[i][j].square = 0;
+
+			/* Find first slope without this square */
+			for (x = i + 1; x < VINFO_MAX_SLOPES; x++)
+			{
+				bool found = FALSE;
+
+				for (y = 0; y < slope_count[x]; y++)
+				{
+					if ((project_data[x][y].x == project_data[i][j].x) &&
+						(project_data[x][y].y == project_data[i][j].y))
+					{
+						found = TRUE;
+						break;
+					}
+				}
+
+				/* Did we find the blocking square? */
+				if (found) continue;
+
+				/* Do we already have an answer? */
+				if (project_data[i][j].slope != VINFO_MAX_SLOPES) break;
+
+				/* We did not find the square - save the row */
+				project_data[i][j].slope = x;
+
+				/* Paranoia */
+				project_data[i][j].square = 0;
+
+				/* Find the first non-matching square */
+				for (y = 0; y < slope_count[x]; y++)
+				{
+					if ((project_data[x][y].x != project_data[i][y].x) ||
+						(project_data[x][y].y != project_data[i][y].y))
+					{
+						/* Not a match */
+						project_data[i][j].square = y;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/* Kill hack */
+	FREE(hack);
+
+	/* Success */
+	return (0);
+}
+
+/*
+ * Calculate the complete field of view using a new algorithm
+ *
+ *
+ * Normally, vision along the major axes is more likely than vision
+ * along the diagonal axes, so we check the bits corresponding to
+ * the lines of sight near the major axes first.
+ *
+ * We use the "temp_x/y" arrays (and the "CAVE_TEMP" flag) to keep track of
+ * which grids were previously marked "GRID_VIEW", since only those grids
+ * whose "GRID_VIEW" value changes during this routine must be redrawn.
+ *
+ * This function is now responsible for maintaining the "GRID_LITE"
+ * flags as well as the "GRID_VIEW" flags, which is good, because
+ * the only grids which normally need to be memorized and/or redrawn
+ * are the ones whose "GRID_VIEW" flag changes during this routine.
+ *
+ * Basically, this function divides the "octagon of view" into octants of
+ * grids (where grids on the main axes and diagonal axes are "shared" by
+ * two octants), and processes each octant one at a time, processing each
+ * octant one grid at a time, processing only those grids which "might" be
+ * viewable, and setting the "GRID_VIEW" flag for each grid for which there
+ * is an (unobstructed) line of sight from the center of the player grid to
+ * any internal point in the grid (and collecting these "GRID_VIEW" grids
+ * into the "view_g" array), and setting the "GRID_LITE" flag for the grid
+ * if, in addition, the grid is "illuminated" in some way (by a torch).
+ *
+ * This function relies on a theorem (suggested and proven by Mat Hostetter)
+ * which states that in each octant of a field of view, a given grid will
+ * be "intersected" by one or more unobstructed "lines of sight" from the
+ * center of the player grid if and only if it is "intersected" by at least
+ * one such unobstructed "line of sight" which passes directly through some
+ * corner of some grid in the octant which is not shared by any other octant.
+ * The proof is based on the fact that there are at least three significant
+ * lines of sight involving any non-shared grid in any octant, one which
+ * intersects the grid and passes though the corner of the grid closest to
+ * the player, and two which "brush" the grid, passing through the "outer"
+ * corners of the grid, and that any line of sight which intersects a grid
+ * without passing through the corner of a grid in the octant can be "slid"
+ * slowly towards the corner of the grid closest to the player, until it
+ * either reaches it or until it brushes the corner of another grid which
+ * is closer to the player, and in either case, the existance of a suitable
+ * line of sight is thus demonstrated.
+ *
+ * It turns out that in each octant of the radius 20 "octagon of view",
+ * there are 161 grids (with 128 not shared by any other octant), and there
+ * are exactly 126 distinct "lines of sight" passing from the center of the
+ * player grid through any corner of any non-shared grid in the octant.  To
+ * determine if a grid is "viewable" by the player, therefore, you need to
+ * simply show that one of these 126 lines of sight intersects the grid but
+ * does not intersect any wall grid closer to the player.  So we simply use
+ * a bit vector with 126 bits to represent the set of interesting lines of
+ * sight which have not yet been obstructed by wall grids, and then we scan
+ * all the grids in the octant, moving outwards from the player grid.  For
+ * each grid, if any of the lines of sight which intersect that grid have not
+ * yet been obstructed, then the grid is viewable.  Furthermore, if the grid
+ * is a wall grid, then all of the lines of sight which intersect the grid
+ * should be marked as obstructed for future reference.  Also, we only need
+ * to check those grids for whom at least one of the "parents" was a viewable
+ * non-wall grid, where the parents include the two grids touching the grid
+ * but closer to the player grid (one adjacent, and one diagonal).  For the
+ * bit vector, we simply use 4 32-bit integers.  All of the static values
+ * which are needed by this function are stored in the large "vinfo" array
+ * (above), which is initialised at startup.
+ *
+ * This has been changed to allow a more circular view, due to the more
+ * advanced distance() function in Zangband.  There are now 135 lines of
+ * sight and one more 32 bit flag to hold the data.
+ *
+ * Hack -- The queue must be able to hold more than VINFO_MAX_GRIDS grids
+ * because the grids at the edge of the field of view use "grid zero" as
+ * their children, and the queue must be able to hold several of these
+ * special grids.  Because the actual number of required grids is bizarre,
+ * we simply allocate twice as many as we would normally need.  XXX XXX XXX
+ */
+void borg_update_view(void)
+{
+	/* int py = p_ptr->py; */
+	/* int px = p_ptr->px; */
+	
+	int py = c_y;
+    int px = c_x;
+	
+	borg_grid *bg_ptr;
+	
+	/* map_block *mp_ptr; */
+
+	byte info;
+
+	int x, y, i, o2;
+
+	/* Clear the old "view" grids */
+	for (i = 0; i < view_n; i++)
+	{
+		y = borg_view_y[i];
+		x = borg_view_x[i];
+
+		if (!map_in_bounds(x, y)) continue;
+		
+		bg_ptr = &borg_grids[y][x];
+		
+		/* Clear "BORG_VIEW" flag */
+		bg_ptr->info &= ~(BORG_VIEW);
+	}
+
+	/* empty the viewable list */
+	borg_view_n = 0;
+
+	/*** Step 1 -- player grid ***/
+
+	/* Player grid */
+
+	/* Get grid info */
+	bg_ptr = &borg_grids[py][px];
+
+	/* Assume viewable */
+	bg_ptr->info |= (BORG_VIEW);
+
+	/* Save in array */
+	borg_view_y[view_n] = py;
+	borg_view_x[view_n] = px;
+	borg_view_n++;
+
+	/*** Step 2 -- octants ***/
+
+	/* Scan each octant */
+	for (o2 = 0; o2 < 8; o2 += 1)
+	{
+		vinfo_type *p;
+
+		/* Last added */
+		vinfo_type *last = &vinfo[0];
+
+		/* Grid queue */
+		int queue_head = 0;
+		int queue_tail = 0;
+		vinfo_type *queue[VINFO_MAX_GRIDS * 2];
+
+		/* Slope bit vector */
+		u32b bits0 = VINFO_BITS_0;
+		u32b bits1 = VINFO_BITS_1;
+		u32b bits2 = VINFO_BITS_2;
+		u32b bits3 = VINFO_BITS_3;
+		u32b bits4 = VINFO_BITS_4;
+
+		/* Reset queue */
+		queue_head = queue_tail = 0;
+
+		/* Initial grids */
+		queue[queue_tail++] = &vinfo[1];
+		queue[queue_tail++] = &vinfo[2];
+
+		/* Process queue */
+		while (queue_head < queue_tail)
+		{
+			/* Dequeue next grid */
+			p = queue[queue_head++];
+
+			/* Check bits */
+			if ((bits0 & (p->bits[0])) ||
+				(bits1 & (p->bits[1])) ||
+				(bits2 & (p->bits[2])) ||
+				(bits3 & (p->bits[3])) || (bits4 & (p->bits[4])))
+			{
+				/* Get location */
+				x = p->grid_x[o2] + px;
+				y = p->grid_y[o2] + py;
+
+				/* Is it in bounds? */
+				if (!map_in_bounds(x, y))
+				{
+					/* Clear bits */
+					bits0 &= ~(p->bits[0]);
+					bits1 &= ~(p->bits[1]);
+					bits2 &= ~(p->bits[2]);
+					bits3 &= ~(p->bits[3]);
+					bits4 &= ~(p->bits[4]);
+
+					continue;
+				}
+
+				/* Point to the location on the map */
+				bg_ptr = &borg_grids[y][x];
+
+				/* Get current info flags for the square */
+				info = bg_ptr->info;
+
+				if (borg_cave_los_grid(bg_ptr))
+				{
+					/* Floor or semi-blocking terrain like trees */
+
+					/* Enqueue child */
+					if (last != p->next_0)
+					{
+						queue[queue_tail++] = last = p->next_0;
+					}
+
+					/* Enqueue child */
+					if (last != p->next_1)
+					{
+						queue[queue_tail++] = last = p->next_1;
+					}
+				}
+				/* Handle wall */
+				else
+				{
+					/* Clear bits */
+					bits0 &= ~(p->bits[0]);
+					bits1 &= ~(p->bits[1]);
+					bits2 &= ~(p->bits[2]);
+					bits3 &= ~(p->bits[3]);
+					bits4 &= ~(p->bits[4]);
+				}
+				
+				/* All ready seen.  Next... */
+				if (info & BORG_VIEW) continue;
+
+				/* Mark as viewable */
+				info |= (BORG_VIEW);
+
+				/* Save cave info */
+				bg_ptr->info = info;
+
+				/* Save in array */
+				borg_view_y[view_n] = y;
+				borg_view_x[view_n] = x;
+				borg_view_n++;
+			}
+		}
+	}
+}
+
+
+
+
+
 
 /*
  * A simple, fast, integer-based line-of-sight algorithm.
@@ -205,7 +970,7 @@ void borg_forget_view(void)
     borg_view_n = 0;
 }
 
-
+#if 0
 
 /*
  * This macro allows us to efficiently add a grid to the "view" array,
@@ -319,7 +1084,6 @@ static bool borg_update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
     /* Assume no line of sight. */
     return (TRUE);
 }
-
 
 
 /*
@@ -745,7 +1509,7 @@ void borg_update_view(void)
 }
 
 
-
+#endif /* 0 */
 
 
 /*
@@ -753,7 +1517,8 @@ void borg_update_view(void)
  */
 void borg_init_2(void)
 {
-    /* Nothing */
+	/* Initialise los information */
+	borg_vinfo_init();
 }
 
 

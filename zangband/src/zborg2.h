@@ -14,6 +14,29 @@
 
 #include "zborg1.h"
 
+/*
+ * Determine if a "legal" grid is a "floor" grid
+ */
+#define borg_cave_floor_grid(C) \
+    (!(f_info[(C)->feat].flags & FF_BLOCK))
+/*
+ * Determine if a "legal" grid is a "wall" grid
+ */
+#define borg_cave_wall_grid(C) \
+    (f_info[(C)->feat].flags & FF_BLOCK)
+
+/*
+ * True half the time for trees. (Block line of sight half the time.)
+ */
+#define borg_cave_half_grid(C) \
+    ((f_info[(C)->feat].flags & FF_HALF_LOS) && (quick_rand()))
+
+/*
+ * Grid will block LOS.
+ */
+#define borg_cave_los_grid(C) \
+   ((cave_floor_grid(C)) || (cave_half_grid(C)))
+
 
 /*
  * Determine if a grid is a floor grid
@@ -43,12 +66,6 @@
 	  (cave[Y][X].feat == FEAT_DIRT)) && \
 	  (cave[Y][X].o_idx == 0))
 
-
-/*
- * Grid based version of "borg_cave_floor_bold()"
- */
-#define borg_cave_floor_grid(A) \
-    (!((A)->feat & 0x20))
 
 
 

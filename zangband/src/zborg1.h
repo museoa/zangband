@@ -6,6 +6,7 @@
 #define INCLUDED_BORG1_H
 
 #include "angband.h"
+#include "maid-grf.h"
 
 
 
