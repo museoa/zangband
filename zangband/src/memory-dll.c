@@ -157,7 +157,7 @@ dbst* DBSetup(int siz, char* file, int line) {
   return heap=v;
 }
 
-void *_db_malloc(size_t siz, char *file, int line) {
+void *_db_malloc(size_t siz, cptr file, int line) {
    dbst *v;
    if (!db_is_init) _db_init();
    if (!db_heap) return Tcl_Alloc(siz);
@@ -166,20 +166,7 @@ void *_db_malloc(size_t siz, char *file, int line) {
    return _db_mempad(v,siz);
 }
 
-void *_db_calloc(size_t sz, size_t cnt, char *file, int line) {
-   char *p;
-   unsigned int siz;
-   dbst *v;
-   if (!db_is_init) _db_init();
-   if (!db_heap) return Tcl_Alloc(sz * cnt);
-   siz=sz*cnt;
-   DBSETUP
-   p=_db_mempad(v,siz);
-   memset(p,0,siz);
-   return p;
-}
-
-void *_db_realloc(void *ptr, size_t siz, char *file, int line) {
+void *_db_realloc(void *ptr, size_t siz, cptr file, int line) {
    dbst *nv, *pv, *v,*ov;
    if (!db_is_init) _db_init();
    if (!db_heap) return Tcl_Realloc(ptr, siz);
@@ -220,7 +207,7 @@ char *_db_strdup(const char *str, char *file, int line) {
    return p;
 }
 
-void _db_free(void *ptr, char *file, int line) {
+void _db_free(void *ptr, cptr file, int line) {
    dbst *v;
    if (!db_is_init) _db_init();
    if (!db_heap) { if (ptr) Tcl_Free(ptr); return; }

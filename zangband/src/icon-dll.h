@@ -22,11 +22,11 @@ typedef struct IconSpec {
 	int dark;
 } IconSpec;
 
-long g_icon_length; /* size x size x pixel_size */
-int g_icon_size; /* 16, 24 or 32 */
-int g_icon_depth; /* 8, 16 or 24 */
-int g_icon_pixels; /* size x size */
-int g_pixel_size; /* 1, 2, 3 or 4 */
+extern long g_icon_length; /* size x size x pixel_size */
+extern int g_icon_size; /* 16, 24 or 32 */
+extern int g_icon_depth; /* 8, 16 or 24 */
+extern int g_icon_pixels; /* size x size */
+extern int g_pixel_size; /* 1, 2, 3 or 4 */
 
 #define ICON_LENGTH_16 256L
 #define ICON_LENGTH_24 576L
@@ -47,7 +47,7 @@ typedef union PixelPtr
 } PixelPtr;
 
 typedef struct t_icon_data {
-	char *desc; /* type name */
+	cptr desc; /* type name */
 	IconPtr icon_data; /* Address of icon data */
 	int icon_count; /* Number of icons */
 	Tk_Font font; /* Font for ascii icons */
@@ -76,9 +76,9 @@ typedef struct t_icon_data {
 	int pixels; /* Convenience: width * height */
 } t_icon_data;
 
-t_icon_data *g_icon_data; /* Array of icon types */
-int g_icon_data_count; /* Number of icon types */
-Tcl_HashTable g_icon_table; /* Hash table for icon types */
+extern t_icon_data *g_icon_data; /* Array of icon types */
+extern int g_icon_data_count; /* Number of icon types */
+extern Tcl_HashTable g_icon_table; /* Hash table for icon types */
 
 #define ASCII_NORMAL 0 /* Colored char */
 #define ASCII_ATTR_MULTI 1 /* Animate color */
@@ -89,12 +89,12 @@ typedef struct t_ascii {
 	int mode; /* Special behaviour, ASCII_XXX flags */
 } t_ascii;
 
-t_ascii *g_ascii; /* Array of "ascii" icon info */
-int g_ascii_count; /* Number of elements in g_ascii[] array */
-int g_ascii_delay, g_ascii_multi, g_ascii_ticks, g_ascii_char;
+extern t_ascii *g_ascii; /* Array of "ascii" icon info */
+extern int g_ascii_count; /* Number of elements in g_ascii[] array */
+extern int g_ascii_delay, g_ascii_multi, g_ascii_ticks, g_ascii_char;
 
 #define ICON_STYLE_ICON 0
-int g_icon_style;
+extern int g_icon_style;
 
 void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
 void RL_Bounds(int w, int h, int bypp, IconPtr srcbuf, int key, unsigned char *bounds);

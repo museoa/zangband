@@ -63,7 +63,7 @@ struct RGBInfo
 	int red_shift, green_shift, blue_shift;
 	int extra;
 };
-RGBInfo g_rgbi;
+extern RGBInfo g_rgbi;
 
 void GetPix16(unsigned char *p, int *r, int *g, int *b);
 void SetPix16(unsigned char *p, int r, int g, int b);
@@ -86,9 +86,9 @@ void *Array_Delete(void *array_ptr, int *count, int elem_size,
 void db_dump_allocs(void);
 int db_heap_error(void* vp,int head);
 
-void *_db_malloc(size_t siz, char *file, int line);
-void *_db_realloc(void *ptr, size_t siz, char *file, int line);
-void _db_free(void *ptr, char *file, int line);
+void *_db_malloc(size_t siz, cptr file, int line);
+void *_db_realloc(void *ptr, size_t siz, cptr file, int line);
+void _db_free(void *ptr, cptr file, int line);
 #define Tcl_AllocDebug(siz) _db_malloc(siz,__FILE__,__LINE__)
 #define Tcl_ReallocDebug(str,siz) _db_realloc(str,siz,__FILE__,__LINE__)
 #define Tcl_FreeDebug(str) _db_free(str,__FILE__,__LINE__)
