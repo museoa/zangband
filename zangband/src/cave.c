@@ -473,6 +473,7 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
 			{
 				return (TRUE);
 			}
+			
 			if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx]))
 			{
 				return (TRUE);
@@ -486,6 +487,45 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
 	/* Blocked */	
 	return (TRUE);
 }
+
+
+/*
+ * Does this square stop a projection in a 'bad' way?
+ *
+ * We are trying to make the "best" projection for the player.
+ * If we use the other routine, then monsters will not be hit,
+ * even when we want them to be.
+ */
+static bool project_gen(cave_type *c_ptr, u16b flg)
+{
+	if (cave_los_grid(c_ptr))
+	{
+		/* Require fields do not block magic */
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
+		{
+			return (TRUE);
+		}
+		
+		/* Is the square occupied by a monster? */
+		if (c_ptr->m_idx != 0)
+		{
+			/* Do _not_ stop with the project stop option */
+			
+			if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx]))
+			{
+				return (TRUE);
+			}
+		}
+		
+		/* Seems ok */
+		return (FALSE);
+	}
+	
+	/* Blocked */	
+	return (TRUE);
+}
+
+
 
 
 /*
@@ -579,7 +619,7 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 			
 			c_ptr = area(y, x);
 			
-			if (project_stop(c_ptr, flg))
+			if (project_gen(c_ptr, flg))
 			{
 				/* Advance to the best position we have not looked at yet */
 				temp = project_data[sl][sq].slope;
@@ -618,7 +658,7 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 			
 			c_ptr = area(y, x);
 		
-			if (project_stop(c_ptr, flg))
+			if (project_gen(c_ptr, flg))
 			{
 				/* Advance to the best position we have not looked at yet */
 				temp = project_data[sl][sq].slope;
