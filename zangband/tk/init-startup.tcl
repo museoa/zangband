@@ -947,23 +947,13 @@ proc NSInitStartup::InitStartup {} {
 	global auto_path
 	global Angband
 	global DEBUG
-	
-	# Angband's directory
-	set Angband(dir) [angband game directory ANGBAND_DIR_ROOT]
-	set Angband(dir) [LongName $Angband(dir)]
-	
+		
 	# The tk directory
 	set Angband(dirTK) [angband game directory ANGBAND_DIR_TK]
 	set Angband(dirTK) [LongName $Angband(dirTK)]
 
-	# The Common directory, and Common\tk
-	set Angband(dir,common) [angband game directory ANGBAND_DIR_COMMON]
-	set Angband(dir,common) [LongName $Angband(dir,common)]
-	set Angband(dir,common,tk) [angband game directory ANGBAND_DIR_COMMON_TK]
-	set Angband(dir,common,tk) [LongName $Angband(dir,common,tk)]
-
 	# The msgs directory (message catalog)
-	set Angband(dir,msgs) [file join $Angband(dir,common) msgs]
+	set Angband(dirTk,msgs) [file join $Angband(dirTk) msgs]
 	
 	# List of object tval's.
 	set Angband(tval) [angband info tval]
