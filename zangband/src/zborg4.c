@@ -401,7 +401,7 @@ static void borg_notice_player(void)
 	if (borg_class == CLASS_WARRIOR)
 	{
 		/* Resist fear at level 30 */
-		if (borg_skill[BI_CLEVEL] >= 30) borg_skill[BI_RFEAR] = TRUE;
+		if (bp_ptr->lev >= 30) borg_skill[BI_RFEAR] = TRUE;
 	}
 
 	/* Bloating slows the player down (a little) */
@@ -721,13 +721,13 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	/* No bow? */
 	if (!l_ptr) return;
 
-	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
+	/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
 	borg_skill[BI_BTOHIT] = l_ptr->to_h;
-	if (borg_skill[BI_BTOHIT] < 8 && borg_skill[BI_CLEVEL] >= 25)
+	if (borg_skill[BI_BTOHIT] < 8 && bp_ptr->lev >= 25)
 		borg_skill[BI_BTOHIT] = 8;
 
 	borg_skill[BI_BTODAM] = l_ptr->to_d;
-	if (borg_skill[BI_BTODAM] < 8 && borg_skill[BI_CLEVEL] >= 25)
+	if (borg_skill[BI_BTODAM] < 8 && bp_ptr->lev >= 25)
 		borg_skill[BI_BTODAM] = 8;
 
 	/* It is hard to carry a heavy bow */
@@ -838,37 +838,37 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_ARROW))
 		{
 			/* Extra shot at level 15 */
-			if (borg_skill[BI_CLEVEL] >= 15) my_num_fire++;
+			if (bp_ptr->lev >= 15) my_num_fire++;
 
 			/* Extra shot at level 30 */
-			if (borg_skill[BI_CLEVEL] >= 30) my_num_fire++;
+			if (bp_ptr->lev >= 30) my_num_fire++;
 
 			/* Extra shot at level 45 */
-			if (borg_skill[BI_CLEVEL] >= 45) my_num_fire++;
+			if (bp_ptr->lev >= 45) my_num_fire++;
 		}
 
 		/* Hack -- Reward High Level Rangers using XBows */
 		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_BOLT))
 		{
 			/* Extra shot at level 30 */
-			if (borg_skill[BI_CLEVEL] >= 30) my_num_fire++;
+			if (bp_ptr->lev >= 30) my_num_fire++;
 		}
 
 		/* Hack -- Reward High Level Rogues using Slings */
 		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_SHOT))
 		{
 			/* Extra shot at level 20 */
-			if (borg_skill[BI_CLEVEL] >= 20) my_num_fire++;
+			if (bp_ptr->lev >= 20) my_num_fire++;
 
 			/* Extra shot at level 40 */
-			if (borg_skill[BI_CLEVEL] >= 40) my_num_fire++;
+			if (bp_ptr->lev >= 40) my_num_fire++;
 		}
 
 		/* Hack -- Reward High Level Warriors */
 		if (borg_class == CLASS_WARRIOR)
 		{
 			/* Extra shot at level 40 */
-			if (borg_skill[BI_CLEVEL] >= 40) my_num_fire++;
+			if (bp_ptr->lev >= 40) my_num_fire++;
 		}
 
 		/* Add in the "bonus shots" */
@@ -899,12 +899,12 @@ static void borg_notice_weapon(int hold, int extra_blows)
 	/* No weapon? */
 	if (!l_ptr) return;
 
-	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
+	/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
 	borg_skill[BI_WTOHIT] = l_ptr->to_h;
-	if (borg_skill[BI_WTOHIT] < 8 && borg_skill[BI_CLEVEL] >= 25)
+	if (borg_skill[BI_WTOHIT] < 8 && bp_ptr->lev >= 25)
 		borg_skill[BI_WTOHIT] = 8;
 	borg_skill[BI_WTODAM] = l_ptr->to_d;
-	if (borg_skill[BI_WTODAM] < 8 && borg_skill[BI_CLEVEL] >= 25)
+	if (borg_skill[BI_WTODAM] < 8 && bp_ptr->lev >= 25)
 		borg_skill[BI_WTODAM] = 8;
 
 	/* It is hard to hold a heavy weapon */
@@ -1051,7 +1051,7 @@ static void borg_notice_weapon(int hold, int extra_blows)
 	}
 
 	/* Calculate "max" damage per "normal" blow  */
-	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
+	/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
 	borg_skill[BI_WMAXDAM] =
 		(l_ptr->dd * l_ptr->ds + borg_skill[BI_TODAM] + borg_skill[BI_WTODAM]);
 
@@ -1083,31 +1083,31 @@ static void borg_notice_skills(void)
 
 
 	/* Affect Skill -- disarming (Level, by Class) */
-	borg_skill[BI_DIS] += (cb_ptr->x_dis * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_DIS] += (cb_ptr->x_dis * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
-	borg_skill[BI_DEV] += (cb_ptr->x_dev * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_DEV] += (cb_ptr->x_dev * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- saving throw (Level, by Class) */
-	borg_skill[BI_SAV] += (cb_ptr->x_sav * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_SAV] += (cb_ptr->x_sav * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- stealth (Level, by Class) */
-	borg_skill[BI_STL] += (cb_ptr->x_stl * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_STL] += (cb_ptr->x_stl * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- search ability (Level, by Class) */
-	borg_skill[BI_SRCH] += (cb_ptr->x_sns * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_SRCH] += (cb_ptr->x_sns * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	borg_skill[BI_SRCHFREQ] += (cb_ptr->x_fos * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_SRCHFREQ] += (cb_ptr->x_fos * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-	borg_skill[BI_THN] += (cb_ptr->x_thn * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_THN] += (cb_ptr->x_thn * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	borg_skill[BI_THB] += (cb_ptr->x_thb * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_THB] += (cb_ptr->x_thb * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
-	borg_skill[BI_THT] += (cb_ptr->x_thb * borg_skill[BI_MAXCLEVEL] / 10);
+	borg_skill[BI_THT] += (cb_ptr->x_thb * bp_ptr->max_lev / 10);
 
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (borg_skill[BI_STL] > 30) borg_skill[BI_STL] = 30;
@@ -1145,17 +1145,17 @@ static void borg_recalc_monk(int extra_blows)
 	{
 		borg_skill[BI_BLOWS] = 2;
 
-		if (borg_skill[BI_CLEVEL] > 9) borg_skill[BI_BLOWS]++;
-		if (borg_skill[BI_CLEVEL] > 14) borg_skill[BI_BLOWS]++;
-		if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_BLOWS]++;
-		if (borg_skill[BI_CLEVEL] > 34) borg_skill[BI_BLOWS]++;
-		if (borg_skill[BI_CLEVEL] > 44) borg_skill[BI_BLOWS]++;
-		if (borg_skill[BI_CLEVEL] > 49) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 9) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 14) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 24) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 34) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 44) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 49) borg_skill[BI_BLOWS]++;
 
-		if (monk_arm_wgt < (100 + (borg_skill[BI_CLEVEL] * 4)))
+		if (monk_arm_wgt < (100 + (bp_ptr->lev * 4)))
 		{
-			borg_skill[BI_TOHIT] += (borg_skill[BI_CLEVEL] / 3);
-			borg_skill[BI_TODAM] += (borg_skill[BI_CLEVEL] / 3);
+			borg_skill[BI_TOHIT] += (bp_ptr->lev / 3);
+			borg_skill[BI_TODAM] += (bp_ptr->lev / 3);
 		}
 		else
 		{
@@ -1170,7 +1170,7 @@ static void borg_recalc_monk(int extra_blows)
 			ma_ptr = &ma_blows[ma];
 
 			/* Can do this attack */
-			if (borg_skill[BI_CLEVEL] >= ma_ptr->min_level)
+			if (bp_ptr->lev >= ma_ptr->min_level)
 				break;
 
 			/* Reduce the ma level and try again */
@@ -1188,36 +1188,36 @@ static void borg_recalc_monk(int extra_blows)
 	/** Monk Armour **/
 
 	/* Unencumbered Monks become faster every 10 levels */
-	if (monk_arm_wgt < (100 + (borg_skill[BI_CLEVEL] * 4)))
+	if (monk_arm_wgt < (100 + (bp_ptr->lev * 4)))
 	{
-		borg_skill[BI_SPEED] += (borg_skill[BI_CLEVEL]) / 10;
+		borg_skill[BI_SPEED] += (bp_ptr->lev) / 10;
 
 		/* Free action if unencumbered at level 25 */
-		if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_FRACT] = TRUE;
+		if (bp_ptr->lev > 24) borg_skill[BI_FRACT] = TRUE;
 
 		if (!look_up_equip_slot(EQUIP_BODY))
 		{
-			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] * 3) / 2;
+			borg_skill[BI_ARMOR] += (bp_ptr->lev * 3) / 2;
 		}
-		if (!look_up_equip_slot(EQUIP_OUTER) && (borg_skill[BI_CLEVEL] > 15))
+		if (!look_up_equip_slot(EQUIP_OUTER) && (bp_ptr->lev > 15))
 		{
-			borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 13) / 3);
+			borg_skill[BI_ARMOR] += ((bp_ptr->lev - 13) / 3);
 		}
-		if (!look_up_equip_slot(EQUIP_ARM) && (borg_skill[BI_CLEVEL] > 10))
+		if (!look_up_equip_slot(EQUIP_ARM) && (bp_ptr->lev > 10))
 		{
-			borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 8) / 3);
+			borg_skill[BI_ARMOR] += ((bp_ptr->lev - 8) / 3);
 		}
-		if (!look_up_equip_slot(EQUIP_HEAD) && (borg_skill[BI_CLEVEL] > 4))
+		if (!look_up_equip_slot(EQUIP_HEAD) && (bp_ptr->lev > 4))
 		{
-			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] - 2) / 3;
+			borg_skill[BI_ARMOR] += (bp_ptr->lev - 2) / 3;
 		}
 		if (!look_up_equip_slot(EQUIP_HANDS))
 		{
-			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 2);
+			borg_skill[BI_ARMOR] += (bp_ptr->lev / 2);
 		}
 		if (!look_up_equip_slot(EQUIP_FEET))
 		{
-			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 3);
+			borg_skill[BI_ARMOR] += (bp_ptr->lev / 3);
 		}
 	}
 }
@@ -2009,7 +2009,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] += number;
 
 			/* Count as (crappy) Missiles */
-			if (borg_skill[BI_CLEVEL] < 15)
+			if (bp_ptr->lev < 15)
 			{
 				borg_skill[BI_AMISSILES] += number / 2;
 			}
@@ -2069,7 +2069,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			borg_skill[BI_AMISSILES] += number;
 
 			/* Enchant missiles if have lots of cash */
-			if (borg_skill[BI_CLEVEL] > 35)
+			if (bp_ptr->lev > 35)
 			{
 				if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) && number >= 5)
 				{
@@ -3030,7 +3030,7 @@ static void borg_notice_home_weapon(list_item *l_ptr)
 
 	num_blow *= l_ptr->number;
 
-	if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 15)
+	if (l_ptr->to_d > 8 || bp_ptr->lev < 15)
 	{
 		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
 								   (borg_skill[BI_TODAM] + l_ptr->to_d));
@@ -3677,7 +3677,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Staffs */
 
 			/* Only collect staves with more than 3 charges at high level */
-			if (l_ptr->pval <= 3 && borg_skill[BI_CLEVEL] > 30)
+			if (l_ptr->pval <= 3 && bp_ptr->lev > 30)
 				break;
 
 			/* Analyze */
@@ -4270,8 +4270,8 @@ static s32b borg_power_home_aux2(void)
 	/*** Various ***/
 
 	/* Fixing Stats */
-	if (borg_skill[BI_CLEVEL] == 50) value += 500L * num_fix_exp;
-	if (borg_skill[BI_CLEVEL] > 35)
+	if (bp_ptr->lev == 50) value += 500L * num_fix_exp;
+	if (bp_ptr->lev > 35)
 		for (k = 0; k < 70 && k < num_fix_exp; k++) value += 5000L - k * 10L;
 	else
 		for (k = 0; k < 5 && k < num_fix_exp; k++) value += 5000L - k * 10L;
@@ -4291,7 +4291,7 @@ static s32b borg_power_home_aux2(void)
 		/* Scan Books */
 		for (book = 0; book < 4; book++)
 		{
-			if (borg_skill[BI_CLEVEL] > 35)
+			if (bp_ptr->lev > 35)
 			{
 				/* Collect up to 20 copies of each normal book */
 				for (k = 0; k < 20 && k < num_book[realm][book]; k++)

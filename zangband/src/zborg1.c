@@ -1004,10 +1004,12 @@ void borg_update_frame(void)
 	if (p_ptr->lev < p_ptr->max_lev) borg_skill[BI_ISFIXLEV] = TRUE;
 
 	/* Extract "LEVEL xxxxxx" */
-	borg_skill[BI_CLEVEL] = borg_skill[BI_CLEVEL] = p_ptr->lev;
+	bp_ptr->lev = p_ptr->lev;
 
 	/* cheat the max clevel */
-	borg_skill[BI_MAXCLEVEL] = p_ptr->max_lev;
+	bp_ptr->max_lev = p_ptr->max_lev;
+	
+	
 
 	/* Note "Winner" */
 	borg_skill[BI_KING] = p_ptr->total_winner;
@@ -1017,7 +1019,7 @@ void borg_update_frame(void)
 
 	/* Note "Exp" vs "EXP" and am I lower than level 50 */
 	if ((p_ptr->exp < p_ptr->max_exp) &&
-		(borg_skill[BI_CLEVEL] != 50)) borg_skill[BI_ISFIXEXP] = TRUE;
+		(bp_ptr->lev != 50)) borg_skill[BI_ISFIXEXP] = TRUE;
 
 	/* Extract "AU xxxxxxxxx" */
 	borg_gold = p_ptr->au;

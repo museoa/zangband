@@ -42,7 +42,7 @@ static int borg_danger_aux1(int r_idx)
 	/* apw PFE gives a protection.  */
 	/* Hack -- Apply "protection from evil" */
 	if ((borg_prot_from_evil) &&
-		(r_ptr->flags3 & RF3_EVIL) && ((borg_skill[BI_CLEVEL]) >= r_ptr->level))
+		(r_ptr->flags3 & RF3_EVIL) && (bp_ptr->lev >= r_ptr->level))
 	{
 		pfe = 1;
 	}
@@ -131,14 +131,14 @@ static int borg_danger_aux1(int r_idx)
 			{
 				z = (b_ptr->d_dice * b_ptr->d_side);
 				/* if in town and low level avoid them stupid urchins */
-				if (borg_skill[BI_CLEVEL] < 5) z += 50;
+				if (bp_ptr->lev < 5) z += 50;
 				/* if invulnurable, no damage */
 				power = 5;
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
 				if (100 <=
 					adj_dex_safe[my_stat_ind[A_DEX]] +
-					borg_skill[BI_CLEVEL]) break;
+					bp_ptr->lev) break;
 				if (borg_gold < 100) break;
 				if (borg_gold > 100000) break;
 				if (!borg_full_damage)
@@ -157,7 +157,7 @@ static int borg_danger_aux1(int r_idx)
 					z = 0;
 				if (100 <=
 					adj_dex_safe[my_stat_ind[A_DEX]] +
-					borg_skill[BI_CLEVEL]) break;
+					bp_ptr->lev) break;
 				if (!borg_full_damage)
 					z += 20;
 				if ((pfe) && !borg_attacking)
@@ -462,7 +462,7 @@ static int borg_danger_aux1(int r_idx)
 					z = 0;
 				if (borg_skill[BI_HLIFE]) break;
 				/* do not worry about drain exp after level 50 */
-				if (borg_skill[BI_CLEVEL] == 50) break;
+				if (bp_ptr->lev == 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
 					borg_spell_legal(REALM_DEATH, 1, 7)) break;
 				if (!borg_full_damage)
@@ -480,7 +480,7 @@ static int borg_danger_aux1(int r_idx)
 					z = 0;
 				if (borg_skill[BI_HLIFE]) break;
 				/* do not worry about drain exp after level 50 */
-				if (borg_skill[BI_CLEVEL] >= 50) break;
+				if (bp_ptr->lev >= 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
 					borg_spell_legal(REALM_DEATH, 1, 7)) break;
 				if (!borg_full_damage)
@@ -498,7 +498,7 @@ static int borg_danger_aux1(int r_idx)
 					z = 0;
 				if (borg_skill[BI_HLIFE]) break;
 				/* do not worry about drain exp after level 50 */
-				if (borg_skill[BI_CLEVEL] >= 50) break;
+				if (bp_ptr->lev >= 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
 					borg_spell_legal(REALM_DEATH, 1, 7)) break;
 				if (!borg_full_damage)
@@ -516,7 +516,7 @@ static int borg_danger_aux1(int r_idx)
 					z = 0;
 				if (borg_skill[BI_HLIFE]) break;
 				/* do not worry about drain exp after level 50 */
-				if (borg_skill[BI_CLEVEL] >= 50) break;
+				if (bp_ptr->lev >= 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
 					borg_spell_legal(REALM_DEATH, 1, 7)) break;
 				if (!borg_full_damage)
@@ -549,7 +549,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
 				if (!borg_skill[BI_HLIFE] &&
-					borg_skill[BI_CLEVEL] != 50) z += 25;
+					bp_ptr->lev != 50) z += 25;
 				if (!borg_spell_legal(REALM_LIFE, 3, 3) &&
 					!borg_spell_legal(REALM_DEATH, 1, 7)) z += 25;
 				/* Some fear for non sustaining stats ? */
@@ -567,7 +567,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
 				if (!borg_skill[BI_HLIFE] &&
-					borg_skill[BI_CLEVEL] != 50) z += 25;
+					bp_ptr->lev != 50) z += 25;
 				if (!borg_spell_legal(REALM_LIFE, 3, 3) &&
 					!borg_spell_legal(REALM_DEATH, 1, 7)) z += 25;
 				if (!borg_full_damage)
@@ -644,7 +644,7 @@ static int borg_danger_aux2(int i, bool average)
 	/* apw PFE gives a protection.  */
 	/* Hack -- Apply "protection from evil" */
 	if ((borg_prot_from_evil) &&
-		(r_ptr->flags3 & RF3_EVIL) && ((borg_skill[BI_CLEVEL]) >= r_ptr->level))
+		(r_ptr->flags3 & RF3_EVIL) && ((bp_ptr->lev) >= r_ptr->level))
 	{
 		pfe = 1;
 	}
@@ -1957,7 +1957,7 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					/* if you have lots of cash (like you will at level 35) */
 					/* this is not very scary... just re-ID. */
-					if (borg_skill[BI_CLEVEL] < 35)
+					if (bp_ptr->lev < 35)
 					{
 						p += 500;
 					}
@@ -2537,27 +2537,27 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	/* If the monster is next to us and gets a partial hit, count it. */
 	if (q > 10 || d != 1)
 	{
-		if (q < (d * 10) && borg_skill[BI_CLEVEL] > 20)
+		if (q < (d * 10) && bp_ptr->lev > 20)
 		{
 			v1 = 0;
 		}
-		else if (q < (d * 10) && borg_skill[BI_CLEVEL] <= 20)
+		else if (q < (d * 10) && bp_ptr->lev <= 20)
 		{						/* reduce damage to 20% if we are weak */
 			v1 = (v1 * 2 / 10);
 		}
 	}
 
 	/* multipliers yeild some trouble when I am weak */
-	if ((r_ptr->flags2 & RF2_MULTIPLY) && (borg_skill[BI_CLEVEL] < 20))
+	if ((r_ptr->flags2 & RF2_MULTIPLY) && (bp_ptr->lev < 20))
 	{							/* extra 50% */
 		v1 = v1 + (v1 * 15 / 10);
 	}
 
 	/* Friends yeild some trouble when I am weak */
 	if ((r_ptr->flags1 & RF1_FRIENDS || r_ptr->flags1 & RF1_ESCORTS) &&
-		(borg_skill[BI_CLEVEL] < 20))
+		(bp_ptr->lev < 20))
 	{
-		if (borg_skill[BI_CLEVEL] < 15)
+		if (bp_ptr->lev < 15)
 		{
 			/* extra 80% */
 			v1 = v1 + (v1 * 18 / 10);
@@ -2597,7 +2597,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	if ((kill->m_flags & MONST_ASLEEP) && (d > 1))
 	{
 		/* Normal reduction of fear */
-		if (borg_skill[BI_CLEVEL] >= 10)
+		if (bp_ptr->lev >= 10)
 		{
 			v1 = v1 / d;
 		}
@@ -2615,7 +2615,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 			(!(kill->m_flags & MONST_ASLEEP)) &&
 			(!(r_ptr->flags3 & RF3_NO_SLEEP)) &&
 			(!(r_ptr->flags1 & RF1_UNIQUE)) &&
-			(r_ptr->level <= (borg_skill[BI_CLEVEL] - 15)))
+			(r_ptr->level <= (bp_ptr->lev - 15)))
 		{
 			v1 = v1 / 3;
 		}
@@ -2699,14 +2699,14 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 		v2 = borg_danger_aux2(i, average);
 
 		/* multipliers yeild some trouble when I am weak */
-		if ((r_ptr->flags2 & RF2_MULTIPLY) && (borg_skill[BI_CLEVEL] < 20))
+		if ((r_ptr->flags2 & RF2_MULTIPLY) && (bp_ptr->lev < 20))
 		{
 			v2 = v2 + (v2 * 12 / 10);
 		}
 
 		/* Friends yeild some trouble when I am weak */
 		if ((r_ptr->flags1 & RF1_FRIENDS || r_ptr->flags1 & RF1_ESCORTS) &&
-			(borg_skill[BI_CLEVEL] < 20))
+			(bp_ptr->lev < 20))
 		{
 			v2 = v2 + (v2 * 12 / 10);
 		}
@@ -2715,7 +2715,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 		if ((kill->m_flags & MONST_ASLEEP) && (d > 1))
 		{
 			/* weaklings and should still fear */
-			if (borg_skill[BI_CLEVEL] >= 10)
+			if (bp_ptr->lev >= 10)
 			{
 				v2 = v2 / d;
 			}
@@ -2735,8 +2735,8 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 				(!(r_ptr->flags3 & RF3_NO_SLEEP)) &&
 				(!(r_ptr->flags1 & RF1_UNIQUE)) &&
 				(r_ptr->level <=
-				 ((borg_skill[BI_CLEVEL] <
-				   15) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10)
+				 ((bp_ptr->lev <
+				   15) ? bp_ptr->lev : (((bp_ptr->lev - 10)
 												   / 4) * 3) + 10)))
 			{
 				v2 = v2 / 3;
@@ -2938,14 +2938,14 @@ static s32b borg_power_aux3(void)
 	if (l_ptr)
 	{
 		/* Calculate "average" damage per "normal" blow  */
-		/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
+		/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
 		damage = (l_ptr->dd * l_ptr->ds * 20L);
 
 		/* Reward "damage" and increased blows per round */
 		value += damage * (borg_skill[BI_BLOWS] + 1);
 
 		/* Reward "bonus to hit" */
-		if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
+		if (l_ptr->to_h > 8 || bp_ptr->lev < 25)
 			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 30L);
 		else
 			value += ((borg_skill[BI_TOHIT] + 8) * 30L);
@@ -3007,7 +3007,7 @@ static s32b borg_power_aux3(void)
 			ma_ptr = &ma_blows[ma];
 
 			/* Can do this attack */
-			if (borg_skill[BI_CLEVEL] >= ma_ptr->min_level)
+			if (bp_ptr->lev >= ma_ptr->min_level)
 				break;
 
 			/* Reduce the ma level and try again */
@@ -3053,7 +3053,7 @@ static s32b borg_power_aux3(void)
 		value += (borg_skill[BI_BMAXDAM] * 20L);
 
 		/* Reward "bonus to hit" */
-		if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
+		if (l_ptr->to_h > 8 || bp_ptr->lev < 25)
 			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 7L);
 		else
 			value += ((borg_skill[BI_TOHIT] + 8) * 7L);
@@ -3149,7 +3149,7 @@ static s32b borg_power_aux3(void)
 
 		/* Bonus for sp. */
 		value += ((adj_mag_mana[my_stat_ind[A_INT]] *
-				   borg_skill[BI_CLEVEL]) / 2) * 155L;
+				   bp_ptr->lev) / 2) * 155L;
 
 		/* bonus for fail rate */
 		value += adj_mag_stat[my_stat_ind[A_INT]] * 5010L;
@@ -3178,7 +3178,7 @@ static s32b borg_power_aux3(void)
 
 		/* Bonus for sp. */
 		value +=
-			((adj_mag_mana[my_stat_ind[A_WIS]] * borg_skill[BI_CLEVEL]) / 2) *
+			((adj_mag_mana[my_stat_ind[A_WIS]] * bp_ptr->lev) / 2) *
 			150L;
 
 		/* bonus for fail rate */
@@ -3208,8 +3208,7 @@ static s32b borg_power_aux3(void)
 	if (my_stat_ind[A_CON] <= 37)
 	{
 		int bonus_hp =
-			(((adj_con_mhp[my_stat_ind[A_CON]] -
-			   128) * borg_skill[BI_MAXCLEVEL]) / 2);
+			(((adj_con_mhp[my_stat_ind[A_CON]] - 128) * bp_ptr->max_lev) / 2);
 
 		value += (my_stat_ind[A_CON] * 150L);
 		/* Hack -- Reward hp bonus */
@@ -3224,7 +3223,7 @@ static s32b borg_power_aux3(void)
 
 
 	/* Hack -- Reward charisma bonus up to level 25 */
-	if (borg_skill[BI_CLEVEL] < 25)
+	if (bp_ptr->lev < 25)
 		value += (my_stat_ind[A_CHR] * 2L);
 
 
@@ -3280,7 +3279,7 @@ static s32b borg_power_aux3(void)
 	if (borg_skill[BI_FRACT]) value += 10000L;
 
 	/* after you max out you are pretty safe from drainers. */
-	if (borg_skill[BI_MAXCLEVEL] < 50)
+	if (bp_ptr->max_lev < 50)
 	{
 		if (borg_skill[BI_HLIFE]) value += 2000L;
 	}
@@ -3373,7 +3372,7 @@ static s32b borg_power_aux3(void)
 
 	/* APW Mega-Hack -- Speed / Hold Life (level 46) and maxed out */
 	if ((borg_skill[BI_HLIFE] && (borg_skill[BI_MAXDEPTH] + 1 >= 46) &&
-		 (borg_skill[BI_MAXCLEVEL] < 50))) value += 100000L;
+		 (bp_ptr->max_lev < 50))) value += 100000L;
 	if ((borg_skill[BI_SPEED] >= 115) &&
 		(borg_skill[BI_MAXDEPTH] + 1 >= 46)) value += 100000L;
 	if (borg_skill[BI_RCONF] &&
@@ -3467,7 +3466,7 @@ static s32b borg_power_aux3(void)
 	/* Hack -- heavy armor hurts magic */
 	if (bp_ptr->intmana &&
 		(((cur_wgt - max_wgt) / 10) > 0) &&
-		((adj_mag_mana[my_stat_ind[A_INT]] * borg_skill[BI_CLEVEL]) / 2) < 150)
+		((adj_mag_mana[my_stat_ind[A_INT]] * bp_ptr->lev) / 2) < 150)
 	{
 		/* Mega-Hack -- Penalize heavy armor which hurts mana */
 		value -= (((cur_wgt - max_wgt) / 10) * 3600L);
@@ -3543,7 +3542,7 @@ static s32b borg_power_aux3(void)
 
 				/* Hack -- Ignore "difficult" normal books */
 				if ((when > 5) &&
-					(when >= borg_skill[BI_MAXCLEVEL] + 2)) continue;
+					(when >= bp_ptr->max_lev + 2)) continue;
 
 				/* Reward the book */
 				k = 0;
@@ -3734,7 +3733,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Reward cure critical.  Heavy reward on first 5 */
-	if (borg_skill[BI_CLEVEL] < 35 || !borg_skill[BI_RCONF])
+	if (bp_ptr->lev < 35 || !borg_skill[BI_RCONF])
 	{
 		for (k = 0; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
 		for (; k < 15 && k < borg_skill[BI_ACCW]; k++) value += 500L;
@@ -3753,7 +3752,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Reward cure serious -- Low Level Characters */
-	if (borg_skill[BI_CLEVEL] < 15)
+	if (bp_ptr->lev < 15)
 	{
 		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 250L;
 		for (; k < 10 && k < borg_skill[BI_ACSW]; k++) value += 55L;
@@ -3937,7 +3936,7 @@ static s32b borg_power_aux4(void)
 
 				/* Hack -- Ignore "difficult" normal books */
 				if ((when > 5) &&
-					(when >= borg_skill[BI_MAXCLEVEL] + 2)) continue;
+					(when >= bp_ptr->max_lev + 2)) continue;
 
 				/* Reward the book */
 				for (k = 0; k < 1 && k < amt_book[realm][book]; k++)
@@ -4085,7 +4084,7 @@ cptr borg_restock(int depth)
 	if (amt_phase < 1) return ("rs phase");
 
 	/* Must have "cure" */
-	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
+	if ((bp_ptr->max_lev < 30) &&
 		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 4) return ("rs cure");
 
 	/* Must have "teleport" */
@@ -4097,7 +4096,7 @@ cptr borg_restock(int depth)
 	/*** Level 20 - 45  ***/
 
 	/* Must have "cure" */
-	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
+	if ((bp_ptr->max_lev < 30) &&
 		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 6) return ("rs cure");
 
 	/* Must have "teleport" */
@@ -4169,7 +4168,7 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_skill[BI_RECALL] < 3) return ("3 recall");
 
 	/* Potions of Cure Serious Wounds */
-	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
+	if ((bp_ptr->max_lev < 30) &&
 		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 2) return ("2 cure");
 
 	/* Usually ready for level 3 and 4 */
@@ -4182,7 +4181,7 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_skill[BI_RECALL] < 4) return ("4 recalls");
 
 	/* Potions of Cure Serious/Critical Wounds */
-	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
+	if ((bp_ptr->max_lev < 30) &&
 		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 5) return ("5 cures");
 
 	/* Usually ready for level 5 to 9 */
@@ -4196,7 +4195,7 @@ static cptr borg_prepared_aux2(int depth)
 		2) return ("2 teleports");
 
 	/* Potions of Cure Critical Wounds */
-	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
+	if ((bp_ptr->max_lev < 30) &&
 		borg_skill[BI_ACCW] < 5) return ("cure crit5");
 
 	/* See invisible */
@@ -4254,14 +4253,14 @@ static cptr borg_prepared_aux2(int depth)
 		6) return ("tell&esc6");
 
 	/* Cure Critical Wounds */
-	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
+	if ((bp_ptr->max_lev < 30) &&
 		(borg_skill[BI_ACCW] + borg_skill[BI_ACSW]) < 10) return ("cure10");
 
 	/* Ready for level 33 */
 	if (depth <= 33) return (NULL);
 
 	/* Minimal level */
-	if (borg_skill[BI_MAXCLEVEL] < 40) return ("level 40");
+	if (bp_ptr->max_lev < 40) return ("level 40");
 
 	/* Usually ready for level 20 to 39 */
 	if (depth <= 39) return (NULL);
@@ -4323,7 +4322,7 @@ static cptr borg_prepared_aux2(int depth)
 
 	/* Hold Life */
 	if (!borg_skill[BI_HLIFE] &&
-		(borg_skill[BI_MAXCLEVEL] < 50)) return ("hold life");
+		(bp_ptr->max_lev < 50)) return ("hold life");
 
 	/* Usually ready for level 46 to 55 */
 	if (depth <= 55) return (NULL);

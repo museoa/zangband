@@ -230,14 +230,15 @@ struct borg_player
 	int csp;
 	int msp;
 	
-	byte realm1;
-	byte realm2;
+	byte realm1; /* First magic realm */
+	byte realm2; /* Second magic realm */
+	
+	s16b lev; /* Cur level */
+	s16b max_lev;	/* Max level */
 };
 
 extern borg_player *bp_ptr;
 
-#define BI_CLEVEL	33
-#define BI_MAXCLEVEL	34
 #define BI_ESP		35
 #define BI_CUR_LITE	36
 #define BI_RECALL	37

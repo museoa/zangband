@@ -1676,7 +1676,7 @@ bool borg_spell_okay(int realm, int book, int what)
 	if (bp_ptr->realm1 == REALM_CHAOS) reserve_mana = 15;
 
 	/* Low level spell casters should not worry about this */
-	if (borg_skill[BI_CLEVEL] < 35) reserve_mana = 0;
+	if (bp_ptr->lev < 35) reserve_mana = 0;
 
 	/* Require ability (when rested) */
 	if (!borg_spell_legal(realm, book, what)) return (FALSE);
@@ -1721,7 +1721,7 @@ static int borg_spell_fail_rate(int realm, int book, int what)
 	chance = as->sfail;
 
 	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (borg_skill[BI_CLEVEL] - as->level);
+	chance -= 3 * (bp_ptr->lev - as->level);
 
 	/* Reduce failure rate by INT/WIS adjustment */
 	chance -= 3 * (adj_mag_stat[my_stat_ind[A_INT]] - 1);
@@ -1862,7 +1862,7 @@ bool borg_mindcr_legal(int spell, int level)
 	if (borg_class != CLASS_MINDCRAFTER) return (FALSE);
 
 	/* The spell must be "known" */
-	if (borg_skill[BI_CLEVEL] < level) return (FALSE);
+	if (bp_ptr->lev < level) return (FALSE);
 
 	/* The spell must be affordable (when rested) */
 	if (as->power > bp_ptr->msp) return (FALSE);
@@ -1886,11 +1886,11 @@ bool borg_mindcr_okay(int spell, int level)
 	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
 	/* Define reserve_mana for Displacement */
-	if (borg_skill[BI_CLEVEL] >= 3) reserve_mana = 2;
-	if (borg_skill[BI_CLEVEL] >= 7) reserve_mana = 6;
+	if (bp_ptr->lev >= 3) reserve_mana = 2;
+	if (bp_ptr->lev >= 7) reserve_mana = 6;
 
 	/* Low level spell casters should not worry about this */
-	if (borg_skill[BI_CLEVEL] < 35) reserve_mana = 0;
+	if (bp_ptr->lev < 35) reserve_mana = 0;
 
 	/* Require ability (when rested) */
 	if (!borg_mindcr_legal(spell, level)) return (FALSE);
@@ -1933,7 +1933,7 @@ static int borg_mindcr_fail_rate(int spell, int level)
 	chance = as->sfail;
 
 	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (borg_skill[BI_CLEVEL] - as->level);
+	chance -= 3 * (bp_ptr->lev - as->level);
 
 	/* Reduce failure rate by INT/WIS adjustment */
 	chance -= 3 * (adj_mag_stat[my_stat_ind[A_WIS]] - 1);
@@ -2094,7 +2094,7 @@ bool borg_racial_check(int race, bool check_fail)
 		case RACE_GNOME:
 		{
 			lev_req = 5;
-			cost = 5 + (borg_skill[BI_CLEVEL] / 5);
+			cost = 5 + (bp_ptr->lev / 5);
 			use_stat = A_INT;
 			diff = 12;
 			break;
@@ -2222,7 +2222,7 @@ bool borg_racial_check(int race, bool check_fail)
 		case RACE_DRACONIAN:
 		{
 			lev_req = 1;
-			cost = borg_skill[BI_CLEVEL];
+			cost = bp_ptr->lev;
 			use_stat = A_CON;
 			diff = 12;
 			break;
@@ -2263,7 +2263,7 @@ bool borg_racial_check(int race, bool check_fail)
 		case RACE_VAMPIRE:
 		{
 			lev_req = 2;
-			cost = 1 + (borg_skill[BI_CLEVEL] / 3);
+			cost = 1 + (bp_ptr->lev / 3);
 			use_stat = A_WIS;
 			diff = 18;
 			break;
@@ -2295,7 +2295,7 @@ bool borg_racial_check(int race, bool check_fail)
 	}
 
 	/* Power is not available yet */
-	if (borg_skill[BI_CLEVEL] < lev_req) return (FALSE);
+	if (bp_ptr->lev < lev_req) return (FALSE);
 
 	/* Not enough mana - use hp */
 	if (bp_ptr->msp < cost) use_hp = TRUE;
@@ -2321,7 +2321,7 @@ bool borg_racial_check(int race, bool check_fail)
 	}
 	else
 	{
-		int lev_adj = ((borg_skill[BI_CLEVEL] - lev_req) / 3);
+		int lev_adj = (bp_ptr->lev - lev_req) / 3;
 		if (lev_adj > 10) lev_adj = 10;
 		difficulty -= lev_adj;
 	}
@@ -2412,7 +2412,7 @@ void borg_cheat_spell(int realm)
 			}
 
 			/* Note "difficult" spells */
-			else if (borg_skill[BI_CLEVEL] < as->level)
+			else if (bp_ptr->lev < as->level)
 			{
 				/* Unknown */
 				as->status = BORG_MAGIC_HIGH;

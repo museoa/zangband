@@ -491,11 +491,6 @@ static bool borg_think(void)
 
 	/*** Analyze status ***/
 
-	/* Track best level */
-	if (borg_skill[BI_CLEVEL] > borg_skill[BI_MAXCLEVEL])
-	{
-		borg_skill[BI_MAXCLEVEL] = borg_skill[BI_CLEVEL];
-	}
 	if (borg_skill[BI_CDEPTH] > borg_skill[BI_MAXDEPTH])
 	{
 		borg_skill[BI_MAXDEPTH] = borg_skill[BI_CDEPTH];
@@ -1859,14 +1854,6 @@ static void borg_parse_aux(cptr msg, int len)
 		}
 
 		return;
-	}
-
-	/* Be aware and concerned of busted doors */
-	if (prefix(msg, "You hear a door burst open!"))
-	{
-		/* on level 1 and 2 be concerned.  Could be Grip or Fang */
-		if (borg_skill[BI_CDEPTH] <= 3 &&
-			borg_skill[BI_CLEVEL] <= 5) scaryguy_on_level = TRUE;
 	}
 
 	/* Recognize Drownin */

@@ -129,7 +129,7 @@ bool borg_item_icky(list_item *l_ptr)
 	/* Mega-Hack -- allow "icky" items */
 	if (borg_class == CLASS_PRIEST ||
 		borg_class == CLASS_RANGER ||
-		borg_class == CLASS_MAGE || borg_skill[BI_CLEVEL] < 20)
+		borg_class == CLASS_MAGE || (bp_ptr->lev < 20))
 	{
 		/* things that are good/excelent/special */
 		if (strstr(l_ptr->o_name, "{special") ||
@@ -453,7 +453,7 @@ bool borg_check_lite(void)
 	/* Hack -- check evil every few turns anyway- more fq if low level */
 	if (!when_detect_evil ||
 		(borg_t - when_detect_evil >=
-		 183 - (20 - borg_skill[BI_MAXCLEVEL]))) do_evil = TRUE;
+		 183 - (20 - bp_ptr->max_lev))) do_evil = TRUE;
 
 	/* Dont bother if I have ESP */
 	if (borg_skill[BI_ESP]) do_evil = FALSE;
@@ -2877,8 +2877,8 @@ bool borg_leave_level(bool bored)
 
 
 	/* Hack -- Stay on each level for a minimal amount of time */
-	if (borg_skill[BI_CLEVEL] > 10 &&
-		g != 0 && (borg_t - borg_began < value_feeling[borg_feeling]))
+	if ((bp_ptr->lev > 10) &&
+		(g != 0) && (borg_t - borg_began < value_feeling[borg_feeling]))
 	{
 		g = 0;
 	}
@@ -2951,7 +2951,7 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Return to town to restore experience */
-	if (bored && borg_skill[BI_ISFIXEXP] && borg_skill[BI_CLEVEL] != 50)
+	if (bored && borg_skill[BI_ISFIXEXP] && (bp_ptr->lev != 50))
 	{
 		borg_note("# Going to town (Fix Experience).");
 		goal_rising = TRUE;
@@ -2980,7 +2980,7 @@ bool borg_leave_level(bool bored)
 	if (goal_rising) g = -1;
 
 	/* Mega-Hack -- spend time on the first level to rotate shops */
-	if (borg_skill[BI_CLEVEL] > 10 &&
+	if ((bp_ptr->lev > 10) &&
 		(borg_skill[BI_CDEPTH] == 1) && (borg_t - borg_began < 100) && (g < 0))
 	{
 		g = 0;

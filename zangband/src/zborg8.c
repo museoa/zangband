@@ -580,7 +580,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		/* Hack - it is good to sell unknown stuff */
 		if (!l_ptr->k_idx)
 		{
-			if (borg_skill[BI_CLEVEL] < 10)
+			if (bp_ptr->lev < 10)
 			{
 				p += 100;
 			}
@@ -1398,8 +1398,8 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Hack -- caution from breeders */
-	if ((j >= MIN(borg_skill[BI_CLEVEL], 5)) &&
-		(borg_skill[BI_RECALL] <= 0 || borg_skill[BI_CLEVEL] < 35))
+	if ((j >= MIN(bp_ptr->lev, 5)) &&
+		((borg_skill[BI_RECALL] <= 0) || (bp_ptr->lev < 35)))
 	{
 		/* Ignore monsters from caution */
 		if (!goal_ignoring)

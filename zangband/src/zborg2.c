@@ -3073,7 +3073,7 @@ static int borg_fear_spell(int i)
 			p += 50;
 			if (borg_skill[BI_HLIFE]) break;
 			/* do not worry about drain exp after level 50 */
-			if (borg_skill[BI_CLEVEL] >= 50) break;
+			if (bp_ptr->lev >= 50) break;
 			p += 150;
 			break;
 		}
@@ -3125,7 +3125,7 @@ static int borg_fear_spell(int i)
 			if (!borg_skill[BI_RNTHR]) p += 50;
 			if (!borg_skill[BI_HLIFE]) p += 50;
 			if (!borg_skill[BI_RCONF]) p += 50;
-			if (borg_skill[BI_CLEVEL] == 50) break;
+			if (bp_ptr->lev == 50) break;
 			p += 100;
 			break;
 		}
@@ -3569,7 +3569,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF6_FORGET */
 			/* if you have lots of cash this is not very scary... just re-ID. */
-			if (borg_skill[BI_CLEVEL] < 35)
+			if (bp_ptr->lev < 35)
 				p += 500;
 			else
 				p += 50;

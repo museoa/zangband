@@ -428,9 +428,9 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 				/* Do not disarm when clumsy */
 				if (borg_skill[BI_DIS] < 30 &&
-					borg_skill[BI_CLEVEL] < 20) continue;
+					bp_ptr->lev < 20) continue;
 				if (borg_skill[BI_DIS] < 45 &&
-					borg_skill[BI_CLEVEL] < 10) continue;
+					bp_ptr->lev < 10) continue;
 			}
 #endif /* 0 */
 
@@ -1207,17 +1207,17 @@ static void borg_near_monster_type(int dist)
 		/*** Scan for Scary Guys ***/
 
 		/* run from certain scaries */
-		if (borg_skill[BI_CLEVEL] < 3 &&
+		if (bp_ptr->lev < 3 &&
 			(strstr(r_name + r_ptr->name, "Squint"))) scaryguy_on_level = TRUE;
 
 		/* run from certain dungeon scaries */
-		if (borg_skill[BI_CLEVEL] <= 3 &&
+		if (bp_ptr->lev <= 3 &&
 			(strstr(r_name + r_ptr->name, "Grip") ||
 			 strstr(r_name + r_ptr->name, "Agent") ||
 			 strstr(r_name + r_ptr->name, "Fang"))) scaryguy_on_level = TRUE;
 
 		/* run from certain scaries */
-		if (borg_skill[BI_CLEVEL] <= 5 &&
+		if (bp_ptr->lev <= 5 &&
 			(strstr(r_name + r_ptr->name, "Small kobold") ||
 			 strstr(r_name + r_ptr->name, "Kobold") ||
 			 strstr(r_name + r_ptr->name, "Jackal") ||
@@ -1226,13 +1226,13 @@ static void borg_near_monster_type(int dist)
 			 strstr(r_name + r_ptr->name,
 					"Mean looking mercenary"))) scaryguy_on_level = TRUE;
 
-		if (borg_skill[BI_CLEVEL] <= 8 &&
+		if (bp_ptr->lev <= 8 &&
 			(strstr(r_name + r_ptr->name, "Giant white mouse") ||
 			 strstr(r_name + r_ptr->name, "White worm mass") ||
 			 strstr(r_name + r_ptr->name,
 					"Green worm mass"))) scaryguy_on_level = TRUE;
 
-		if (borg_skill[BI_CLEVEL] <= 10 &&
+		if (bp_ptr->lev <= 10 &&
 			(strstr(r_name + r_ptr->name, "Cave spider") ||
 			 strstr(r_name + r_ptr->name, "Yellow worm mass") ||
 			 strstr(r_name + r_ptr->name, "Pink naga") ||
@@ -1241,7 +1241,7 @@ static void borg_near_monster_type(int dist)
 TRUE;
 
 
-		if (borg_skill[BI_CLEVEL] <= 40 &&
+		if (bp_ptr->lev <= 40 &&
 			(strstr(r_name + r_ptr->name, "Greater hell"))) scaryguy_on_level =
 TRUE;
 
@@ -1394,7 +1394,7 @@ static bool borg_dim_door(int emergency, int p1)
 	int x, y, p;
 
 	int b_y = -1, b_x = -1, b_p = p1;
-	int dis = borg_skill[BI_CLEVEL] + 2;
+	int dis = bp_ptr->lev + 2;
 
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
@@ -1412,7 +1412,7 @@ static bool borg_dim_door(int emergency, int p1)
 			mb_ptr = map_loc(x, y);
 
 			/* Verify distance again */
-			if (distance(y, x, c_y, c_x) > borg_skill[BI_CLEVEL] + 2) continue;
+			if (distance(y, x, c_y, c_x) > bp_ptr->lev + 2) continue;
 
 			/* Skip unknown grids */
 			if (!mb_ptr->feat) continue;
@@ -1740,7 +1740,7 @@ static bool borg_escape(int b_q)
 		/* if we got this far we tried to escape but couldn't... */
 		/* time to flee */
 		if (!goal_fleeing &&
-			(!borg_fighting_unique || borg_skill[BI_CLEVEL] < 35) &&
+			(!borg_fighting_unique || bp_ptr->lev < 35) &&
 			!vault_on_level)
 		{
 			/* Note */
@@ -1752,7 +1752,7 @@ static bool borg_escape(int b_q)
 
 		/* Flee now */
 		if (!goal_leaving &&
-			(!borg_fighting_unique || borg_skill[BI_CLEVEL] < 35) &&
+			(!borg_fighting_unique || bp_ptr->lev < 35) &&
 			!vault_on_level)
 		{
 			/* Flee! */
@@ -1765,16 +1765,16 @@ static bool borg_escape(int b_q)
 	}
 	/* 4- not too scary but I'm comprimized */
 	if ((b_q >= avoidance * (8 + risky_boost) / 10 &&
-		 (borg_skill[BI_CLEVEL] < 35 ||
+		 (bp_ptr->lev < 35 ||
 		  bp_ptr->chp <= bp_ptr->mhp / 3)) ||
 		((b_q >= avoidance * (12 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
-		 (borg_skill[BI_CLEVEL] < 35 ||
+		 (bp_ptr->lev < 35 ||
 		  bp_ptr->chp <= bp_ptr->mhp / 3)) ||
 		((b_q >= avoidance * (6 + risky_boost) / 10) &&
-		 borg_skill[BI_CLEVEL] <= 20 && !borg_fighting_unique) ||
+		 bp_ptr->lev <= 20 && !borg_fighting_unique) ||
 		((b_q >= avoidance * (6 + risky_boost) / 10) && borg_class == CLASS_MAGE
-		 && borg_skill[BI_CLEVEL] <= 35))
+		 && bp_ptr->lev <= 35))
 	{
 		/* Phase door, if useful */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
@@ -1818,7 +1818,7 @@ static bool borg_escape(int b_q)
 
 		/* if we got this far we tried to escape but couldn't... */
 		/* time to flee */
-		if (!goal_fleeing && !borg_fighting_unique && borg_skill[BI_CLEVEL] < 25
+		if (!goal_fleeing && !borg_fighting_unique && bp_ptr->lev < 25
 			&& !vault_on_level)
 		{
 			/* Note */
@@ -1838,7 +1838,7 @@ static bool borg_escape(int b_q)
 			goal_leaving = TRUE;
 		}
 		/* Emergency Phase door if a weak mage */
-		if ((borg_class == CLASS_MAGE && borg_skill[BI_CLEVEL] <= 35) &&
+		if ((borg_class == CLASS_MAGE && bp_ptr->lev <= 35) &&
 			amt_phase && borg_caution_phase(65, 2) &&
 			(borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			 borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
@@ -1858,7 +1858,7 @@ static bool borg_escape(int b_q)
 	}
 
 	/* 5- not too scary but I'm very low level  */
-	if (borg_skill[BI_CLEVEL] < 10 &&
+	if (bp_ptr->lev < 10 &&
 		(b_q >= avoidance * (6 + risky_boost) / 10 ||
 		 (b_q >= avoidance * (8 + risky_boost) / 10 && borg_fighting_unique >= 1
 		  && borg_fighting_unique <= 8)))
@@ -1924,7 +1924,7 @@ static bool borg_escape(int b_q)
 			goal_leaving = TRUE;
 		}
 		/* Emergency Phase door if a weak mage */
-		if ((borg_class == CLASS_MAGE && borg_skill[BI_CLEVEL] <= 8) &&
+		if ((borg_class == CLASS_MAGE && bp_ptr->lev <= 8) &&
 			amt_phase && borg_caution_phase(65, 2) &&
 			(borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			 borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
@@ -2767,7 +2767,7 @@ bool borg_caution(void)
 	/*** Evaluate local danger ***/
 
 	/* am I fighting a unique or a summoner, or scaryguy? */
-	borg_near_monster_type(borg_skill[BI_MAXCLEVEL] < 15 ? MAX_SIGHT : 12);
+	borg_near_monster_type(bp_ptr->max_lev < 15 ? MAX_SIGHT : 12);
 	borg_surround = borg_surrounded();
 
 
@@ -2836,7 +2836,7 @@ bool borg_caution(void)
 		/* Describe (briefly) the current situation */
 		borg_note_fmt
 			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
-			 c_y, c_x, borg_skill[BI_CDEPTH], borg_skill[BI_CLEVEL],
+			 c_y, c_x, borg_skill[BI_CDEPTH], bp_ptr->lev,
 			 bp_ptr->chp, bp_ptr->mhp,
 			 bp_ptr->csp, bp_ptr->msp, p);
 		if (borg_goi)
@@ -3010,7 +3010,7 @@ bool borg_caution(void)
 	{
 		/* Start fleeing */
 		if (!goal_fleeing && !borg_fighting_unique &&
-			(borg_skill[BI_CLEVEL] < 50) && !vault_on_level &&
+			(bp_ptr->lev < 50) && !vault_on_level &&
 			(borg_skill[BI_CDEPTH] < 100))
 		{
 			/* Note */
@@ -3022,7 +3022,7 @@ bool borg_caution(void)
 	}
 	/* Potential danger (near death) in town */
 	else if (!borg_skill[BI_CDEPTH] && (p > bp_ptr->chp) &&
-			 (borg_skill[BI_CLEVEL] < 50))
+			 (bp_ptr->lev < 50))
 	{
 		/* Flee now */
 		if (!goal_leaving)
@@ -3225,7 +3225,7 @@ bool borg_caution(void)
 	}
 
 	/* Prevent breeder explosions when low level */
-	if (breeder_level && borg_skill[BI_CLEVEL] < 15)
+	if (breeder_level && bp_ptr->lev < 15)
 	{
 		/* Start leaving */
 		if (!goal_leaving)
@@ -3246,7 +3246,7 @@ bool borg_caution(void)
 	/* hop onto them in very few steps, try to head to them */
 	/* out of desperation */
 	if (track_less_num &&
-		(goal_fleeing || (p > avoidance && borg_skill[BI_CLEVEL] < 35)))
+		(goal_fleeing || (p > avoidance && bp_ptr->lev < 35)))
 	{
 		int y, x, i;
 		int b_j = -1;
@@ -3301,7 +3301,7 @@ bool borg_caution(void)
 		}
 
 		/* Low level guys tend to waste money reading the recall scrolls */
-		if (b_j < 15 && scaryguy_on_level && borg_skill[BI_CLEVEL] < 20)
+		if (b_j < 15 && scaryguy_on_level && bp_ptr->lev < 20)
 		{
 			borg_desperate = TRUE;
 			if (borg_flow_stair_less(GOAL_FLEE))
@@ -3557,7 +3557,7 @@ bool borg_caution(void)
 			if (b_k == k)
 			{
 				/* If I am low level, reward backing-up if safe */
-				if (borg_skill[BI_CLEVEL] <= 3 &&
+				if (bp_ptr->lev <= 3 &&
 					(bp_ptr->chp < bp_ptr->mhp ||
 					 bp_ptr->csp < bp_ptr->msp))
 				{
@@ -3643,7 +3643,7 @@ bool borg_caution(void)
 	/* Flee from low hit-points */
 	if (((bp_ptr->chp < bp_ptr->mhp / 3) ||
 		 ((bp_ptr->chp < bp_ptr->mhp / 2) &&
-		  bp_ptr->chp < (borg_skill[BI_CLEVEL] * 3))) &&
+		  bp_ptr->chp < (bp_ptr->lev * 3))) &&
 		(borg_skill[BI_ACCW] < 3) && (borg_skill[BI_AHEAL] < 1))
 	{
 		/* Flee from low hit-points */
@@ -3783,7 +3783,7 @@ bool borg_caution(void)
 	/* if I am gonna die next round, and I have no way to escape
 	 * use the unknown stuff (if I am low level).
 	 */
-	if (p > (bp_ptr->chp * 4) && borg_skill[BI_CLEVEL] < 20 &&
+	if (p > (bp_ptr->chp * 4) && bp_ptr->lev < 20 &&
 		!bp_ptr->msp)
 	{
 		if (borg_use_unknown()) return (TRUE);
@@ -4078,7 +4078,7 @@ static int borg_thrust_damage_one(int i)
 	if (chance < 5) chance = 5;
 
 	/* add 20% to chance to give a bit more wieght to weapons */
-	if (borg_skill[BI_CLEVEL] > 15 && borg_class != CLASS_MAGE) chance += 20;
+	if (bp_ptr->lev > 15 && borg_class != CLASS_MAGE) chance += 20;
 
 	dam = (dam * chance) / 100;
 
@@ -4087,7 +4087,7 @@ static int borg_thrust_damage_one(int i)
 
 	/* Reduce the damage if a mage, they should not melee if they can avoid it */
 	if (borg_class == CLASS_MAGE &&
-		borg_skill[BI_MAXCLEVEL] < 40) dam = dam * 6 / 10;
+		bp_ptr->max_lev < 40) dam = dam * 6 / 10;
 
 	/*
 	 * Enhance the preceived damage on Uniques.  This way we target them
@@ -4109,7 +4109,7 @@ static int borg_thrust_damage_one(int i)
 		dam = dam * 2 / 3;
 
 		/* Dont hunt maggot until later */
-		if (borg_skill[BI_CLEVEL] < 5) dam = 0;
+		if (bp_ptr->lev < 5) dam = 0;
 	}
 
 	/* give a small bonus for whacking a breeder */
@@ -4603,7 +4603,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			}
 			else if (((r_ptr->flags3 & RF3_UNDEAD) ||
 					  (r_ptr->flags3 & RF3_DEMON)) &&
-					 (r_ptr->level > borg_skill[BI_CLEVEL] / 2))
+					 (r_ptr->level > bp_ptr->lev / 2))
 			{
 				dam = 0;
 			}
@@ -4861,8 +4861,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
-				 (borg_skill[BI_CLEVEL] <
-				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
+				 (bp_ptr->lev <
+				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 												  4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
@@ -4882,8 +4882,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
-				 (borg_skill[BI_CLEVEL] <
-				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
+				 (bp_ptr->lev <
+				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 												  4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
@@ -4902,8 +4902,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
-				 (borg_skill[BI_CLEVEL] <
-				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
+				 (bp_ptr->lev <
+				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 												  4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
@@ -4924,8 +4924,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
-				 (borg_skill[BI_CLEVEL] <
-				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
+				 (bp_ptr->lev <
+				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 												  4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
@@ -4942,8 +4942,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			dam = 0;
 			if ((r_ptr->level >=
-				 (borg_skill[BI_CLEVEL] <
-				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
+				 (bp_ptr->lev <
+				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 												  4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
@@ -4961,7 +4961,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				if (kill->
 					m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR))
 					break;
-				if (r_ptr->level > borg_skill[BI_CLEVEL] - 5) break;
+				if (r_ptr->level > bp_ptr->lev - 5) break;
 				borg_fear_mon_spell = FALSE;
 				p1 = borg_danger_aux(c_x, c_y, 1, i, TRUE);
 				borg_fear_mon_spell = TRUE;
@@ -5014,11 +5014,11 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	/* use Missiles on certain types of monsters */
 	if ((borg_danger_aux(kill->x, kill->y, 1, i, TRUE) >= avoidance * 3 / 10) ||
 		(r_ptr->flags1 & RF1_FRIENDS /* monster has friends */  &&
-		 r_ptr->level >= borg_skill[BI_CLEVEL] - 5 /* close levels */ ) ||
+		 r_ptr->level >= bp_ptr->lev - 5 /* close levels */ ) ||
 		(kill->ranged_attack /* monster has a ranged attack */ ) ||
 		(r_ptr->flags1 & RF1_UNIQUE) ||
 		(r_ptr->flags2 & RF2_MULTIPLY) ||
-		(borg_skill[BI_CLEVEL] <= 5 /* stil very weak */ ))
+		(bp_ptr->lev <= 5 /* stil very weak */ ))
 	{
 		borg_use_missile = TRUE;
 	}
@@ -5053,7 +5053,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		dam = dam * 2 / 3;
 
 		/* Dont hunt maggot until later */
-		if (borg_skill[BI_CLEVEL] < 5) dam = 0;
+		if (bp_ptr->lev < 5) dam = 0;
 	}
 
 	/* give a small bonus for whacking a breeder */
@@ -6381,7 +6381,7 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
 
 	/* weaklings need that spell, they dont get penalized */
-	if (book == 0 && what == 0 && borg_skill[BI_MAXCLEVEL] <= 30)
+	if (!book && !what && (bp_ptr->max_lev <= 30))
 	{
 		if (borg_simulate) return (b_n);
 	}
@@ -6438,7 +6438,7 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	int sv_mana = bp_ptr->csp;
 
 	/* Only Weak guys should try this */
-	if (borg_skill[BI_CLEVEL] >= 15) return (0);
+	if (bp_ptr->lev >= 15) return (0);
 
 	/* No firing while blind, confused, or hallucinating */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
@@ -6610,7 +6610,7 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam,
 	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
 
 	/* weaklings need that spell, they dont get penalized */
-	if (spell == MIND_NEURAL_BL && borg_skill[BI_MAXCLEVEL] <= 30)
+	if ((spell == MIND_NEURAL_BL) && (bp_ptr->max_lev <= 30))
 	{
 		if (borg_simulate) return (b_n);
 	}
@@ -6963,7 +6963,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 	if (borg_race != race) return (0);
 
 	/* must be right level */
-	if (borg_skill[BI_CLEVEL] < level) return (0);
+	if (bp_ptr->lev < level) return (0);
 
 	/* Examine possible destinations */
 	for (i = 0; i < borg_temp_n; i++)
@@ -7184,8 +7184,8 @@ static int borg_attack_aux(int what)
 		case BF_LIFE_CALL_LIGHT:
 		{
 			/* Spell -- Call Light */
-			dam = (2 * borg_skill[BI_CLEVEL]) / 2;
-			rad = 10 + (borg_skill[BI_CLEVEL] / 10) + 1;
+			dam = (2 * bp_ptr->lev) / 2;
+			rad = 10 + (bp_ptr->lev / 10) + 1;
 			return (borg_attack_aux_spell_dispel
 					(REALM_LIFE, 0, 4, rad, dam, GF_LITE_WEAK));
 		}
@@ -7194,7 +7194,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Spell -- Holy Orb */
 			dam =
-				((3 * 3) + borg_skill[BI_CLEVEL] + (borg_skill[BI_CLEVEL] / 3));
+				((3 * 3) + bp_ptr->lev + (bp_ptr->lev / 3));
 			rad = 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_LIFE, 1, 4, rad, dam, GF_HOLY_FIRE));
@@ -7203,7 +7203,7 @@ static int borg_attack_aux(int what)
 		case BF_LIFE_EXORCISM:
 		{
 			/* Spell -- Exorcism */
-			dam = borg_skill[BI_CLEVEL] / 2;
+			dam = bp_ptr->lev / 2;
 			rad = MAX_SIGHT + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_LIFE, 2, 0, rad, dam, GF_DISP_UNDEAD_DEMON));
@@ -7212,7 +7212,7 @@ static int borg_attack_aux(int what)
 		case BF_LIFE_DISP_UNDEAD:
 		{
 			/* Spell -- Disp Undead & Demon */
-			dam = (borg_skill[BI_CLEVEL] * 3) / 2;
+			dam = (bp_ptr->lev * 3) / 2;
 			rad = MAX_SIGHT + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_LIFE, 2, 2, rad, dam, GF_DISP_UNDEAD_DEMON));
@@ -7221,7 +7221,7 @@ static int borg_attack_aux(int what)
 		case BF_LIFE_DISP_EVIL:
 		{
 			/* Spell -- Disp Evil */
-			dam = (borg_skill[BI_CLEVEL] * 4) / 2;
+			dam = (bp_ptr->lev * 4) / 2;
 			rad = MAX_SIGHT + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_LIFE, 2, 4, rad, dam, GF_DISP_EVIL));
@@ -7237,7 +7237,7 @@ static int borg_attack_aux(int what)
 				 * Force him to think the spell is more deadly to get him to
 				 * cast it.  This will provide some healing for him.
 				 */
-				dam = ((borg_skill[BI_CLEVEL] * 10));
+				dam = ((bp_ptr->lev * 10));
 				return (borg_attack_aux_spell_dispel
 						(REALM_LIFE, 2, 6, rad, dam, GF_DISP_EVIL));
 			}
@@ -7247,7 +7247,7 @@ static int borg_attack_aux(int what)
 				 * If he is not wounded dont cast this,
 				 * use Disp Evil instead.
 				 */
-				dam = ((borg_skill[BI_CLEVEL] * 3) / 2) - 50;
+				dam = ((bp_ptr->lev * 3) / 2) - 50;
 				return (borg_attack_aux_spell_dispel
 						(REALM_LIFE, 2, 6, rad, dam, GF_DISP_EVIL));
 			}
@@ -7256,7 +7256,7 @@ static int borg_attack_aux(int what)
 		case BF_LIFE_DIVINE_INT:
 		{
 			/* Spell -- Divine Intervention */
-			dam = borg_skill[BI_CLEVEL] * 4 / 2;
+			dam = bp_ptr->lev * 4 / 2;
 			rad = MAX_SIGHT + 10;
 
 			/* if hurting, add bonus */
@@ -7275,7 +7275,7 @@ static int borg_attack_aux(int what)
 		case BF_ARCANE_ZAP:
 		{
 			/* Spell -- Zap */
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1) / 5)) / 2;
+			dam = (3 + ((bp_ptr->lev - 1) / 5)) / 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_ARCANE, 0, 0, rad, dam, GF_ELEC));
 		}
@@ -7283,7 +7283,7 @@ static int borg_attack_aux(int what)
 		case BF_ARCANE_ZAP_RESERVE:
 		{
 			/* Emergency cast of Zap */
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1) / 5)) / 2;
+			dam = (3 + ((bp_ptr->lev - 1) / 5)) / 2;
 			return (borg_attack_aux_spell_bolt_reserve
 					(REALM_ARCANE, 0, 0, rad, dam, GF_ELEC));
 		}
@@ -7291,8 +7291,8 @@ static int borg_attack_aux(int what)
 		case BF_ARCANE_LAREA:
 		{
 			/* Spell -- Light Area */
-			dam = (2 * (borg_skill[BI_CLEVEL]) / 2) / 2;
-			rad = borg_skill[BI_CLEVEL] + 1 + 10;
+			dam = (2 * (bp_ptr->lev) / 2) / 2;
+			rad = bp_ptr->lev + 1 + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_ARCANE, 0, 5, rad, dam, GF_LITE_WEAK));
 		}
@@ -7317,7 +7317,7 @@ static int borg_attack_aux(int what)
 		case BF_ARCANE_ELEM_BALL:
 		{
 			/* Spell -- Elem Ball */
-			dam = (75 + borg_skill[BI_CLEVEL]);
+			dam = (75 + bp_ptr->lev);
 			return (borg_attack_aux_spell_bolt
 					(REALM_ARCANE, 2, 6, rad, dam, GF_ELEMENTS));
 		}
@@ -7325,8 +7325,8 @@ static int borg_attack_aux(int what)
 		case BF_SORC_LAREA:
 		{
 			/* Spell -- Light area */
-			dam = (2 * (borg_skill[BI_CLEVEL]) / 2) / 2;
-			rad = borg_skill[BI_CLEVEL] + 1 + 10;
+			dam = (2 * (bp_ptr->lev) / 2) / 2;
+			rad = bp_ptr->lev + 1 + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_SORCERY, 0, 3, rad, dam, GF_LITE_WEAK));
 		}
@@ -7375,8 +7375,8 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_DAYL:
 		{
 			/* Spell -- Day Light */
-			rad = (borg_skill[BI_CLEVEL] / 10) + 1 + 10;
-			dam = (borg_skill[BI_CLEVEL] / 2);
+			rad = (bp_ptr->lev / 10) + 1 + 10;
+			dam = (bp_ptr->lev / 2);
 			return (borg_attack_aux_spell_dispel
 					(REALM_NATURE, 0, 4, rad, dam, GF_LITE_WEAK));
 		}
@@ -7392,7 +7392,7 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_ELECBOLT:
 		{
 			/* Spell -- lightning bolt */
-			dam = 3 + ((borg_skill[BI_CLEVEL] - 5) / 4);
+			dam = 3 + ((bp_ptr->lev - 5) / 4);
 			return (borg_attack_aux_spell_bolt
 					(REALM_NATURE, 1, 1, rad, dam, GF_ELEC));
 		}
@@ -7400,7 +7400,7 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_FROSTBOLT:
 		{
 			/* Spell -- frost bolt */
-			dam = 5 + ((borg_skill[BI_CLEVEL] - 5) / 4);
+			dam = 5 + ((bp_ptr->lev - 5) / 4);
 			return (borg_attack_aux_spell_bolt
 					(REALM_NATURE, 1, 3, rad, dam, GF_COLD));
 		}
@@ -7432,8 +7432,8 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_BLIZZARD:
 		{
 			/* Blizzard */
-			dam = 70 + borg_skill[BI_CLEVEL];
-			rad = (borg_skill[BI_CLEVEL] / 12) + 1;
+			dam = 70 + bp_ptr->lev;
+			rad = (bp_ptr->lev / 12) + 1;
 			return (borg_attack_aux_spell_bolt
 					(REALM_NATURE, 3, 2, rad, dam, GF_OLD_CONF));
 		}
@@ -7441,8 +7441,8 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_ELECSTORM:
 		{
 			/* Elec Storm */
-			dam = 90 + borg_skill[BI_CLEVEL];
-			rad = (borg_skill[BI_CLEVEL] / 12) + 1;
+			dam = 90 + bp_ptr->lev;
+			rad = (bp_ptr->lev / 12) + 1;
 			return (borg_attack_aux_spell_bolt
 					(REALM_NATURE, 3, 3, rad, dam, GF_ELEC));
 		}
@@ -7450,8 +7450,8 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_WHIRLPOOL:
 		{
 			/* Whirlpool */
-			dam = 100 + borg_skill[BI_CLEVEL];
-			rad = (borg_skill[BI_CLEVEL] / 12) + 1;
+			dam = 100 + bp_ptr->lev;
+			rad = (bp_ptr->lev / 12) + 1;
 			return (borg_attack_aux_spell_bolt
 					(REALM_NATURE, 3, 4, rad, dam, GF_WATER));
 		}
@@ -7469,8 +7469,8 @@ static int borg_attack_aux(int what)
 		case BF_NATURE_NATWRATH:
 		{
 			/* Natures Wrath */
-			dam = ((borg_skill[BI_CLEVEL] + 100));
-			rad = (borg_skill[BI_CLEVEL] / 12) + 1 + 10;
+			dam = ((bp_ptr->lev + 100));
+			rad = (bp_ptr->lev / 12) + 1 + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_NATURE, 3, 7, rad, dam, GF_DISINTEGRATE));
 		}
@@ -7478,7 +7478,7 @@ static int borg_attack_aux(int what)
 		case BF_TRUMP_MINDBLAST:
 		{
 			/* Spell -- Mind Blast */
-			dam = 3 * ((borg_skill[BI_CLEVEL] - 1) / 5);
+			dam = 3 * ((bp_ptr->lev - 1) / 5);
 			return (borg_attack_aux_spell_bolt
 					(REALM_TRUMP, 0, 1, rad, dam, GF_PSI));
 		}
@@ -7486,7 +7486,7 @@ static int borg_attack_aux(int what)
 		case BF_TRUMP_MINDBLAST_RESERVE:
 		{
 			/* Spell -- Mind Blast Reserve */
-			dam = 3 * ((borg_skill[BI_CLEVEL] - 1) / 5);
+			dam = 3 * ((bp_ptr->lev - 1) / 5);
 			return (borg_attack_aux_spell_bolt_reserve
 					(REALM_TRUMP, 0, 1, rad, dam, GF_PSI));
 		}
@@ -7494,7 +7494,7 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_MMISSILE:
 		{
 			/* Magic Missile */
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1) / 5)) * 2;
+			dam = (3 + ((bp_ptr->lev - 1) / 5)) * 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 0, 0, rad, dam, GF_MISSILE));
 		}
@@ -7502,7 +7502,7 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_MMISSILE_RESERVE:
 		{
 			/* Magic Missile */
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1) / 5)) * 2;
+			dam = (3 + ((bp_ptr->lev - 1) / 5)) * 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 0, 0, rad, dam, GF_MISSILE));
 		}
@@ -7510,8 +7510,8 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_FLASHLIGHT:
 		{
 			/* Flash of Light */
-			rad = (borg_skill[BI_CLEVEL] / 10) + 1 + 10;
-			dam = (borg_skill[BI_CLEVEL] / 2);
+			rad = (bp_ptr->lev / 10) + 1 + 10;
+			dam = (bp_ptr->lev / 2);
 			return (borg_attack_aux_spell_dispel
 					(REALM_CHAOS, 0, 2, rad, dam, GF_LITE_WEAK));
 		}
@@ -7519,8 +7519,8 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_MANABURST:
 		{
 			/* Mana Burst */
-			rad = borg_skill[BI_CLEVEL] + (borg_skill[BI_CLEVEL] / 3);
-			dam = ((borg_skill[BI_CLEVEL] < 30) ? 2 : 3);
+			rad = bp_ptr->lev + (bp_ptr->lev / 3);
+			dam = ((bp_ptr->lev < 30) ? 2 : 3);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 0, 4, rad, dam, GF_MANA));
 		}
@@ -7528,7 +7528,7 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_FIREBOLT:
 		{
 			/* Fire Bolt */
-			dam = (8 + ((borg_skill[BI_CLEVEL] - 5) / 4)) * 4;
+			dam = (8 + ((bp_ptr->lev - 5) / 4)) * 4;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 0, 2, rad, dam, GF_FIRE));
 		}
@@ -7536,7 +7536,7 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_FISTFORCE:
 		{
 			/* Fist of Force */
-			dam = (8 + ((borg_skill[BI_CLEVEL] - 5) / 4)) * 4;
+			dam = (8 + ((bp_ptr->lev - 5) / 4)) * 4;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 0, 6, rad, dam, GF_DISINTEGRATE));
 		}
@@ -7544,7 +7544,7 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_CHAOSBOLT:
 		{
 			/* Chaos Bolt */
-			dam = (10 + ((borg_skill[BI_CLEVEL] - 5) / 4)) * 4;
+			dam = (10 + ((bp_ptr->lev - 5) / 4)) * 4;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 1, 1, rad, dam, GF_CHAOS));
 		}
@@ -7552,8 +7552,8 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_SONICBOOM:
 		{
 			/* Sonic Boom */
-			dam = (borg_skill[BI_CLEVEL] + 45);
-			rad = (borg_skill[BI_CLEVEL] / 10) + 2 + 10;
+			dam = (bp_ptr->lev + 45);
+			rad = (bp_ptr->lev / 10) + 2 + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_CHAOS, 1, 2, rad, dam, GF_SOUND));
 		}
@@ -7562,7 +7562,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Doom Bolt */
 			rad = -1;
-			dam = (11 + ((borg_skill[BI_CLEVEL] - 5) / 4)) * 4;
+			dam = (11 + ((bp_ptr->lev - 5) / 4)) * 4;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 1, 3, rad, dam, GF_MANA));
 		}
@@ -7571,7 +7571,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Fire ball */
 			rad = 2;
-			dam = (borg_skill[BI_CLEVEL] + 55);
+			dam = (bp_ptr->lev + 55);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 1, 4, rad, dam, GF_LITE_WEAK));
 		}
@@ -7579,8 +7579,8 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_INVOKELOGRUS:
 		{
 			/* Invoke Lorgrus */
-			rad = (borg_skill[BI_CLEVEL] / 5);
-			dam = (borg_skill[BI_CLEVEL] + 66);
+			rad = (bp_ptr->lev / 5);
+			dam = (bp_ptr->lev + 66);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 1, 7, rad, dam, GF_CHAOS));
 		}
@@ -7597,7 +7597,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Chain Lightning */
 			rad = 13 + 10;
-			dam = (5 + (borg_skill[BI_CLEVEL] / 10)) * 4;
+			dam = (5 + (bp_ptr->lev / 10)) * 4;
 			return (borg_attack_aux_spell_dispel
 					(REALM_CHAOS, 2, 1, rad, dam, GF_ELEC));
 		}
@@ -7606,7 +7606,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Disintegration */
 			rad = 3;
-			dam = (borg_skill[BI_CLEVEL] + 80);
+			dam = (bp_ptr->lev + 80);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 2, 3, rad, dam, GF_DISINTEGRATE));
 		}
@@ -7615,7 +7615,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Gravity */
 			rad = -1;
-			dam = (9 + ((borg_skill[BI_CLEVEL] - 5) / 4)) * 4;
+			dam = (9 + ((bp_ptr->lev - 5) / 4)) * 4;
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 3, 0, rad, dam, GF_GRAVITY));
 		}
@@ -7624,7 +7624,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Meteor Swarm */
 			rad = 3;
-			dam = (borg_skill[BI_CLEVEL] + 65);
+			dam = (bp_ptr->lev + 65);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 3, 1, rad, dam, GF_METEOR));
 		}
@@ -7633,7 +7633,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Flamestrike */
 			rad = 8 + 10;
-			dam = 150 + (borg_skill[BI_CLEVEL] * 2);
+			dam = 150 + (bp_ptr->lev * 2);
 			return (borg_attack_aux_spell_dispel
 					(REALM_CHAOS, 3, 2, rad, dam, GF_FIRE));
 		}
@@ -7642,7 +7642,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Rocket */
 			rad = 2;
-			dam = 120 + (borg_skill[BI_CLEVEL]);
+			dam = 120 + (bp_ptr->lev);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 3, 4, rad, dam, GF_SHARDS));
 		}
@@ -7651,7 +7651,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Mana Storm */
 			rad = 4;
-			dam = 300 + (borg_skill[BI_CLEVEL] * 2);
+			dam = 300 + (bp_ptr->lev * 2);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 3, 5, rad, dam, GF_MANA));
 		}
@@ -7675,7 +7675,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Malediction */
 			rad = 0;
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1) / 5)) / 2;
+			dam = (3 + ((bp_ptr->lev - 1) / 5)) / 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 0, 1, rad, dam, GF_HELL_FIRE));
 		}
@@ -7684,7 +7684,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Malediction RESERVE */
 			rad = 0;
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1) / 5)) / 2;
+			dam = (3 + ((bp_ptr->lev - 1) / 5)) / 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 0, 1, rad, dam, GF_HELL_FIRE));
 		}
@@ -7693,7 +7693,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Poison Ball */
 			rad = 2;
-			dam = (10 + borg_skill[BI_CLEVEL] / 2);
+			dam = (10 + bp_ptr->lev / 2);
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 0, 3, rad, dam, GF_POIS));
 		}
@@ -7718,7 +7718,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Entropy */
 			rad = 2;
-			dam = 10 + borg_skill[BI_CLEVEL] + (borg_skill[BI_CLEVEL] / 2);
+			dam = 10 + bp_ptr->lev + (bp_ptr->lev / 2);
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 1, 0, rad, dam, GF_OLD_DRAIN));
 		}
@@ -7726,7 +7726,7 @@ static int borg_attack_aux(int what)
 		case BF_DEATH_NETHERBOLT:
 		{
 			/* Nether Bolt */
-			dam = (6 + ((borg_skill[BI_CLEVEL] - 5)) / 4);
+			dam = (6 + ((bp_ptr->lev - 5)) / 4);
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 1, 1, rad, dam, GF_HELL_FIRE));
 		}
@@ -7734,7 +7734,7 @@ static int borg_attack_aux(int what)
 		case BF_DEATH_TERROR:
 		{
 			/* Terror */
-			dam = borg_skill[BI_CLEVEL] + 30;
+			dam = bp_ptr->lev + 30;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 1, 2, rad, dam, GF_TURN_ALL));
 		}
@@ -7743,9 +7743,9 @@ static int borg_attack_aux(int what)
 		{
 			/* Vamp Drain */
 			dam =
-				(borg_skill[BI_CLEVEL] +
-				 (borg_skill[BI_CLEVEL] / 2 *
-				  (MAX(1, borg_skill[BI_CLEVEL] / 10))));
+				(bp_ptr->lev +
+				 (bp_ptr->lev / 2 *
+				  (MAX(1, bp_ptr->lev / 10))));
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 1, 3, rad, dam, GF_OLD_DRAIN));
 		}
@@ -7754,7 +7754,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Dispel Good */
 			rad = MAX_SIGHT + 10;
-			dam = (borg_skill[BI_CLEVEL] * 4) / 2;
+			dam = (bp_ptr->lev * 4) / 2;
 			return (borg_attack_aux_spell_dispel
 					(REALM_DEATH, 1, 5, rad, dam, GF_DISP_GOOD));
 		}
@@ -7762,7 +7762,7 @@ static int borg_attack_aux(int what)
 		case BF_DEATH_DARKBOLT:
 		{
 			/* Dark Bolt */
-			dam = (4 + ((borg_skill[BI_CLEVEL] - 5)) / 4);
+			dam = (4 + ((bp_ptr->lev - 5)) / 4);
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 2, 2, rad, dam, GF_DARK));
 		}
@@ -7787,7 +7787,7 @@ static int borg_attack_aux(int what)
 		case BF_DEATH_DEATHRAY:
 		{
 			/* Death Ray */
-			dam = borg_skill[BI_CLEVEL] * 200;
+			dam = bp_ptr->lev * 200;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 3, 0, rad, dam, GF_DEATH_RAY));
 		}
@@ -7796,7 +7796,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Word of Death */
 			rad = MAX_SIGHT + 10;
-			dam = (3 * borg_skill[BI_CLEVEL]) / 2;
+			dam = (3 * bp_ptr->lev) / 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 3, 3, rad, dam, GF_OLD_DRAIN));
 		}
@@ -7804,7 +7804,7 @@ static int borg_attack_aux(int what)
 		case BF_DEATH_EVOCATION:
 		{
 			/* Evocation */
-			dam = borg_skill[BI_CLEVEL] * 2;
+			dam = bp_ptr->lev * 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 3, 4, rad, dam, GF_OLD_DRAIN));
 		}
@@ -7822,8 +7822,8 @@ static int borg_attack_aux(int what)
 		{
 			/* Mind-- Neural Blast */
 			dam =
-				3 + ((borg_skill[BI_CLEVEL] - 1) / 4) * (3 +
-														 (borg_skill[BI_CLEVEL]
+				3 + ((bp_ptr->lev - 1) / 4) * (3 +
+														 (bp_ptr->lev
 														  / 15)) / 2;
 			rad = -1;
 			return (borg_attack_aux_mind_bolt
@@ -7833,7 +7833,7 @@ static int borg_attack_aux(int what)
 		case BF_MIND_PULVERISE:
 		{
 			/* Mind-- Pulverise */
-			dam = ((8 + ((borg_skill[BI_CLEVEL] - 5) / 4) * 8)) / 2;
+			dam = ((8 + ((bp_ptr->lev - 5) / 4) * 8)) / 2;
 			rad = -1;
 			return (borg_attack_aux_mind_bolt
 					(MIND_PULVERISE, 11, rad, dam, GF_SOUND));
@@ -7842,15 +7842,15 @@ static int borg_attack_aux(int what)
 		case BF_MIND_MINDWAVE:
 		{
 			/* Mind-- Mind Wave */
-			if (borg_skill[BI_CLEVEL] < 25)
+			if (bp_ptr->lev < 25)
 			{
-				dam = (borg_skill[BI_CLEVEL] * 3) / 2;
-				rad = 10 + (2 + borg_skill[BI_CLEVEL] / 10);
+				dam = (bp_ptr->lev * 3) / 2;
+				rad = 10 + (2 + bp_ptr->lev / 10);
 			}
 			else
 			{
 				dam =
-					borg_skill[BI_CLEVEL] * ((borg_skill[BI_CLEVEL] - 5) / 11);
+					bp_ptr->lev * ((bp_ptr->lev - 5) / 11);
 				rad = 10 + MAX_SIGHT;
 			}
 			return (borg_attack_aux_mind_bolt
@@ -7860,8 +7860,8 @@ static int borg_attack_aux(int what)
 		case BF_MIND_PSYCH_DRAIN:
 		{
 			/* Mind-- Psychic Drain */
-			dam = ((borg_skill[BI_CLEVEL] / 2) * 6) / 2;
-			rad = (borg_skill[BI_CLEVEL] - 25) / 10;
+			dam = ((bp_ptr->lev / 2) * 6) / 2;
+			rad = (bp_ptr->lev - 25) / 10;
 			return (borg_attack_aux_mind_bolt
 					(MIND_PSYCHIC_DR, 25, rad, dam, GF_PSI_DRAIN));
 		}
@@ -7869,15 +7869,15 @@ static int borg_attack_aux(int what)
 		case BF_MIND_TELE_WAVE:
 		{
 			/* Mind-- Telekinetic Wave */
-			if (borg_skill[BI_CLEVEL] < 40)
+			if (bp_ptr->lev < 40)
 			{
-				dam = (borg_skill[BI_CLEVEL] * 3);
-				rad = 10 + 2 + (borg_skill[BI_CLEVEL] / 10);
+				dam = (bp_ptr->lev * 3);
+				rad = 10 + 2 + (bp_ptr->lev / 10);
 			}
 			else
 			{
-				dam = borg_skill[BI_CLEVEL] * 4;
-				rad = 10 + 2 + (borg_skill[BI_CLEVEL] / 10);
+				dam = bp_ptr->lev * 4;
+				rad = 10 + 2 + (bp_ptr->lev / 10);
 			}
 			return (borg_attack_aux_mind_bolt
 					(MIND_TELE_WAVE, 28, rad, dam, GF_TELEKINESIS));
@@ -8325,14 +8325,14 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_VAMP:
 		{
 			/* Suck Blood */
-			dam = borg_skill[BI_CLEVEL] + ((borg_skill[BI_CLEVEL] / 2) * MAX(1, borg_skill[BI_CLEVEL] / 10));	/* Dmg */
+			dam = bp_ptr->lev + ((bp_ptr->lev / 2) * MAX(1, bp_ptr->lev / 10));	/* Dmg */
 			return (borg_attack_aux_racial_thrust(RACE_VAMPIRE, 2, dam));
 		}
 
 		case BF_RACIAL_CYCLOPS:
 		{
 			/* Throw Boulder */
-			dam = borg_skill[BI_CLEVEL] * 3 / 2;	/* Dmg */
+			dam = bp_ptr->lev * 3 / 2;	/* Dmg */
 			return (borg_attack_aux_racial_bolt
 					(RACE_CYCLOPS, rad, dam, GF_MISSILE));
 		}
@@ -8340,7 +8340,7 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_DARK_ELF:
 		{
 			/* Magic Missile */
-			dam = (3 + ((borg_skill[BI_CLEVEL] - 1)) / 4) * 5;
+			dam = (3 + ((bp_ptr->lev - 1)) / 4) * 5;
 			return (borg_attack_aux_racial_bolt
 					(RACE_DARK_ELF, rad, dam, GF_MISSILE));
 		}
@@ -8348,8 +8348,8 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_DRACONIAN:
 		{
 			/* Draconian Breath */
-			dam = 2 * borg_skill[BI_CLEVEL];
-			rad = 1 + borg_skill[BI_CLEVEL] / 15;
+			dam = 2 * bp_ptr->lev;
+			rad = 1 + bp_ptr->lev / 15;
 			return (borg_attack_aux_racial_bolt
 					(RACE_DRACONIAN, rad, dam, GF_FIRE));
 		}
@@ -8357,16 +8357,16 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_IMP:
 		{
 			/* Fireball */
-			dam = borg_skill[BI_CLEVEL];
-			rad = (borg_skill[BI_CLEVEL] >= 30) ? 2 : 0;
+			dam = bp_ptr->lev;
+			rad = (bp_ptr->lev >= 30) ? 2 : 0;
 			return (borg_attack_aux_racial_bolt(RACE_IMP, rad, dam, GF_FIRE));
 		}
 
 		case BF_RACIAL_KLACKON:
 		{
 			/* Acidball */
-			dam = borg_skill[BI_CLEVEL];
-			rad = (borg_skill[BI_CLEVEL] >= 25) ? 2 : 0;
+			dam = bp_ptr->lev;
+			rad = (bp_ptr->lev >= 25) ? 2 : 0;
 			return (borg_attack_aux_racial_bolt
 					(RACE_KLACKON, rad, dam, GF_ACID));
 		}
@@ -8374,7 +8374,7 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_KOBOLD:
 		{
 			/* Poison bolt */
-			dam = borg_skill[BI_CLEVEL];
+			dam = bp_ptr->lev;
 			return (borg_attack_aux_racial_bolt
 					(RACE_KOBOLD, rad, dam, GF_POIS));
 		}
@@ -8382,7 +8382,7 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_MINDFLAYER:
 		{
 			/* Mindblast bolt */
-			dam = borg_skill[BI_CLEVEL];
+			dam = bp_ptr->lev;
 			return (borg_attack_aux_racial_bolt
 					(RACE_MIND_FLAYER, rad, dam, GF_PSI));
 		}
@@ -8390,7 +8390,7 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_SPRITE:
 		{
 			/* Sleep III */
-			dam = borg_skill[BI_CLEVEL];
+			dam = bp_ptr->lev;
 			rad = 10 + MAX_RANGE;
 			return (borg_attack_aux_racial_bolt
 					(RACE_SPRITE, rad, dam, GF_OLD_SLEEP));
@@ -8399,7 +8399,7 @@ static int borg_attack_aux(int what)
 		case BF_RACIAL_YEEK:
 		{
 			/* Scare Mon */
-			dam = borg_skill[BI_CLEVEL];
+			dam = bp_ptr->lev;
 			return (borg_attack_aux_racial_bolt
 					(RACE_YEEK, rad, dam, GF_OLD_SLEEP));
 		}
@@ -11780,7 +11780,7 @@ bool borg_perma_spell()
 	/* No perma-spells until clevel 30 to avoid nasty loops with resting for
 	 * mana regain
 	 */
-	if (borg_skill[BI_CLEVEL] < 30) return (FALSE);
+	if (bp_ptr->lev < 30) return (FALSE);
 
 	/* Analyze the possible setup moves */
 	for (g = 0; g < BP_MAX; g++)
@@ -12297,7 +12297,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack to recharge mana if a low level mage or priest */
-	if (bp_ptr->msp && borg_skill[BI_CLEVEL] < 25 &&
+	if (bp_ptr->msp && bp_ptr->lev < 25 &&
 		bp_ptr->csp < bp_ptr->msp && p == 0)
 	{
 		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
@@ -12434,7 +12434,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Hack -- ignore Maggot until later.  */
 		if ((r_info[mb_ptr->monster].flags1 & RF1_UNIQUE) &&
-			borg_skill[BI_CDEPTH] == 0 && borg_skill[BI_CLEVEL] < 5)
+			borg_skill[BI_CDEPTH] == 0 && bp_ptr->lev < 5)
 			return (FALSE);
 
 		/* Message */
@@ -12568,7 +12568,7 @@ static bool borg_play_step(int y2, int x2)
 	}
 
 	/* Perhaps the borg could search for traps as he walks around level one. */
-	if (borg_skill[BI_MAXCLEVEL] <= 3 && borg_skill[BI_CDEPTH] &&
+	if ((bp_ptr->max_lev <= 3) && borg_skill[BI_CDEPTH] &&
 		!borg_skill[BI_ISSEARCHING] && borg_needs_searching)
 	{
 		borg_keypress('S');
@@ -12869,7 +12869,7 @@ bool borg_flow_stair_less(int why)
 		borg_flow_enqueue_grid(track_less_x[i], track_less_y[i]);
 	}
 
-	if (borg_skill[BI_CLEVEL] > 35 || borg_skill[BI_CUR_LITE] == 0)
+	if (bp_ptr->lev > 35 || borg_skill[BI_CUR_LITE] == 0)
 	{
 		/* Spread the flow */
 		borg_flow_spread(250, TRUE, FALSE, FALSE);
@@ -13118,7 +13118,7 @@ static bool borg_has_distance_attack(void)
 
 	/* XXX For now only line up Magic Missle shots */
 	rad = 0;
-	dam = (3 + ((borg_skill[BI_CLEVEL]) / 4)) * (4 + 1) / 2;
+	dam = (3 + ((bp_ptr->lev) / 4)) * (4 + 1) / 2;
 	if (borg_attack_aux_spell_bolt(REALM_CHAOS, 0, 0, rad, dam, GF_MISSILE) > 0)
 		return TRUE;
 
@@ -13385,11 +13385,11 @@ bool borg_flow_kill(bool viewable, int nearness)
 	if (!borg_kills_cnt) return (FALSE);
 
 	/* Don't chase down town monsters when you are just starting out */
-	if (borg_skill[BI_CDEPTH] == 0 && borg_skill[BI_CLEVEL] < 7) return (FALSE);
+	if (borg_skill[BI_CDEPTH] == 0 && bp_ptr->lev < 7) return (FALSE);
 
 	/* YOU ARE NOT A WARRIOR!! DON'T ACT LIKE ONE!! */
 	if (borg_class == CLASS_MAGE &&
-		borg_skill[BI_CLEVEL] <
+		bp_ptr->lev <
 		(borg_skill[BI_CDEPTH] ? 35 : 5)) return (FALSE);
 
 
@@ -13463,7 +13463,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 		if (kill->m_flags & (MONST_FRIEND | MONST_PET)) continue;
 
 		/* Avoid multiplying monsters when low level */
-		if (borg_skill[BI_CLEVEL] < 10 &&
+		if (bp_ptr->lev < 10 &&
 			(r_info[kill->r_idx].flags2 & RF2_MULTIPLY)) continue;
 
 		/* Hack -- ignore Maggot until later.  Player will chase Maggot
@@ -13471,7 +13471,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 		 * he is stuck in a comprimised situation.
 		 */
 		if ((r_info[kill->r_idx].flags1 & RF1_UNIQUE) &&
-			borg_skill[BI_CDEPTH] == 0 && borg_skill[BI_CLEVEL] < 5) continue;
+			borg_skill[BI_CDEPTH] == 0 && bp_ptr->lev < 5) continue;
 
 		/* Access the location */
 		x = kill->x;
@@ -13493,18 +13493,18 @@ bool borg_flow_kill(bool viewable, int nearness)
 
 
 		/* Hack -- Skip "deadly" monsters unless uniques */
-		if (borg_skill[BI_CLEVEL] > 15 && (!r_info->flags1 & RF1_UNIQUE) &&
+		if (bp_ptr->lev > 15 && (!r_info->flags1 & RF1_UNIQUE) &&
 			p > avoidance / 2) continue;
-		if (borg_skill[BI_CLEVEL] <= 15 && p > avoidance / 3) continue;
+		if (bp_ptr->lev <= 15 && p > avoidance / 3) continue;
 
 		/* Skip ones that make me wander too far */
-		if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
+		if ((b_stair != -1) && (bp_ptr->lev < 10))
 		{
 			/* Check the distance of this monster to the stair */
 			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
 			/* skip far away monsters while I am close to stair */
-			if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
-				j >= borg_skill[BI_CLEVEL] * 5 + 9) continue;
+			if (b_j <= bp_ptr->lev * 5 + 9 &&
+				j >= bp_ptr->lev * 5 + 9) continue;
 		}
 
 		/* Hack -- Avoid getting surrounded */
@@ -13663,14 +13663,14 @@ bool borg_flow_take(bool viewable, int nearness)
 		y = take->y;
 
 		/* Skip ones that make me wander too far */
-		if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
+		if ((b_stair != -1) && (bp_ptr->lev < 10))
 		{
 			/* Check the distance of this 'take' to the stair */
 			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
 
 			/* skip far away takes while I am close to stair */
-			if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
-				j >= borg_skill[BI_CLEVEL] * 5 + 9) continue;
+			if (b_j <= bp_ptr->lev * 5 + 9 &&
+				j >= bp_ptr->lev * 5 + 9) continue;
 		}
 
 		/* look to see if this is on the bad items list */
@@ -13755,7 +13755,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 
 #if 0
 	/* Skip ones that make me wander too far */
-	if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
+	if ((b_stair != -1) && (bp_ptr->lev < 10))
 	{
 		/* Check the distance of this grid to the stair */
 		j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
@@ -13763,8 +13763,8 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		b_j = distance(c_y, c_x, track_less_y[b_stair], track_less_x[b_stair]);
 
 		/* skip far away grids while I am close to stair */
-		if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
-			j >= borg_skill[BI_CLEVEL] * 5 + 9) return (FALSE);
+		if (b_j <= bp_ptr->lev * 5 + 9 &&
+			j >= bp_ptr->lev * 5 + 9) return (FALSE);
 	}
 #endif /* 0 */
 
@@ -13954,9 +13954,9 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 
 		/* Do not disarm when clumsy */
 		if (borg_skill[BI_DIS] < 30 &&
-			borg_skill[BI_CLEVEL] < 20) return (FALSE);
+			bp_ptr->lev < 20) return (FALSE);
 		if (borg_skill[BI_DIS] < 45 &&
-			borg_skill[BI_CLEVEL] < 10) return (FALSE);
+			bp_ptr->lev < 10) return (FALSE);
 
 		/* NOTE: the flow code allows a borg to flow through a trap and so he may
 		 * still try to disarm one on his way to the other interesting grid.  If mods
@@ -14781,7 +14781,7 @@ bool borg_flow_spastic(bool bored)
 
 		/* Tweak -- Limit total searches */
 		if (xtra_val >= 50) continue;
-		if (xtra_val >= borg_skill[BI_CLEVEL] * 5) continue;
+		if (xtra_val >= bp_ptr->lev * 5) continue;
 
 		/* Limit initial searches until bored */
 		if (!bored && (xtra_val > 5)) continue;
@@ -14793,7 +14793,7 @@ bool borg_flow_spastic(bool bored)
 		if (mb_ptr->detect & BORG_DETECT_DOOR) continue;
 
 		/* Skip ones that make me wander too far */
-		if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
+		if ((b_stair != -1) && (bp_ptr->lev < 10))
 		{
 			/* Check the distance of this grid to the stair */
 			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
@@ -14803,8 +14803,8 @@ bool borg_flow_spastic(bool bored)
 						 track_less_x[b_stair]);
 
 			/* skip far away grids while I am close to stair */
-			if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
-				j >= borg_skill[BI_CLEVEL] * 5 + 9) continue;
+			if (b_j <= bp_ptr->lev * 5 + 9 &&
+				j >= bp_ptr->lev * 5 + 9) continue;
 		}
 
 		/* Extract adjacent locations */
