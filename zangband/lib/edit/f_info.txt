@@ -52,16 +52,19 @@ G: :w
 
 N:1:open floor
 G:.:w
+F:USE_TRANS
 
 # 0x02 --> invisible trap (drawn as open floor)
 
 N:2:invisible trap
 G:.:w
+F:USE_TRANS
 
 # 0x03 --> glyph of warding
 
 N:3:glyph of warding
 G:;:y
+F:USE_TRANS
 
 # 0x04 --> open door
 
@@ -77,114 +80,49 @@ G:':u
 
 N:6:up staircase
 G:<:w
+F:USE_TRANS
 
 # 0x07 --> down stairs (perm)
 
 N:7:down staircase
 G:>:w
+F:USE_TRANS
 
 N:8:sand
 G:.:y
+F:USE_TRANS
 
 N:9:salt
 G:.:W
+F:USE_TRANS
 
 N:10:wet mud
 G:.:u
+F:USE_TRANS
 
 N:11:dry mud
 G:.:D
+F:USE_TRANS
 
 N:12:tiled floor
 G:.:r
+F:USE_TRANS
 
 N:13:wooden floor
 G:.:s
+F:USE_TRANS
 
 N:14:pebbles
 G:.:D
+F:USE_TRANS
 
 N:15:solidified lava
 G:::D
+F:USE_TRANS
 
-# 0x10 --> visible trap -- trap door
-N:16:trap door
-G:^:w
 
-# 0x11 --> visible trap -- open pit
+# Gap for old traps
 
-N:17:pit
-G:^:s
-
-# 0x12 --> visible trap -- spiked pit
-
-N:18:pit
-G:^:s
-
-# 0x13 --> visible trap -- poison pit
-
-N:19:pit
-G:^:s
-
-# 0x14 --> visible trap -- rune -- summon
-
-N:20:evil rune
-G:^:G
-
-# 0x15 --> visible trap -- rune -- teleport
-
-N:21:strange rune
-G:^:o
-
-# 0x16 --> visible trap -- spot -- fire
-
-N:22:discolored spot
-G:^:u
-
-# 0x17 --> visible trap -- spot -- acid
-
-N:23:discolored spot
-G:^:u
-
-# 0x18 --> visible trap -- dart -- slow
-
-N:24:dart trap
-G:^:r
-
-# 0x19 --> visible trap -- dart -- lose str
-
-N:25:dart trap
-G:^:r
-
-# 0x1A --> visible trap -- dart -- lose dex
-
-N:26:dart trap
-G:^:r
-
-# 0x1B --> visible trap -- dart -- lose con
-
-N:27:dart trap
-G:^:r
-
-# 0x1C --> visible trap -- gas -- blind
-
-N:28:gas trap
-G:^:g
-
-# 0x1D --> visible trap -- gas -- confuse
-
-N:29:gas trap
-G:^:g
-
-# 0x1E --> visible trap -- gas -- poison
-
-N:30:gas trap
-G:^:g
-
-# 0x1F --> visible trap -- gas -- sleep
-
-N:31:gas trap
-G:^:g
 
 # 0x2x --> closed door
 
@@ -195,107 +133,108 @@ F:BLOCK
 # Pillar
 N:33:pillar
 G:#:D
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 
 # 0x30 --> secret door
 
 N:48:granite wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x31 --> rubble
 
 N:49:pile of rubble
 G:::w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x32 --> magma vein
 
 N:50:magma vein
 G:#:s
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x33 --> quartz vein
 
 N:51:quartz vein
 G:#:W
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x34 --> magma vein + treasure
 # This terrain type may not actually be needed...
 N:52:magma vein
 G:#:s
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x35 --> quartz vein + treasure
 # This terrain type may not actually be needed...
 N:53:quartz vein
 G:#:W
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x36 --> magma vein + known treasure
 
 N:54:magma vein with treasure
 G:*:o
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x37 --> quartz vein + known treasure
 
 N:55:quartz vein with treasure
 G:*:o
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x38 --> granite wall -- basic
 
 N:56:granite wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x39 --> granite wall -- inner
 
 N:57:granite wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x3A --> granite wall -- outer
 
 N:58:granite wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x3B --> granite wall -- solid
 
 N:59:granite wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x3C --> permanent wall -- basic (perm)
 
 N:60:permanent wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x3D --> permanent wall -- inner (perm)
 
 N:61:permanent wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x3E --> permanent wall -- outer (perm)
 
 N:62:permanent wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 # 0x3F --> permanent wall -- solid (perm)
 
 N:63:permanent wall
 G:#:w
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 N:64:explosive rune
 G:*:R
+F:USE_TRANS
 
 N:65:Pattern startpoint
 G:*:w
@@ -328,128 +267,151 @@ G:*:D
 
 N:83:deep water
 G:~:b
+F:USE_TRANS
 
 N:84:shallow water
 G:~:B
+F:USE_TRANS
 
 N:85:deep lava
 G:~:R
+F:USE_TRANS
 
 N:86:shallow lava
 G:~:r
+F:USE_TRANS
 
 N:87:dark pit
 G:#:D
+F:USE_TRANS
 
 N:88:dirt
 G:.:u
+F:USE_TRANS
 
 N:89:patch of grass
 G:.:g
+F:USE_TRANS
 
 N:90:compact rune
 G:^:D
+F:USE_TRANS
 
 N:91:invisible wall
 G:.:w
+F:USE_TRANS
 
 N:92:very deep water
 G:~:D
+F:USE_TRANS
 
 N:93:deep acid
 G:~:g
+F:USE_TRANS
 
 N:94:shallow acid
 G:~:G
+F:USE_TRANS
 
 N:95:submerged tree
 G:%:b
+F:USE_TRANS
 
 N:96:tree
 G:%:G
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:97:rock face
 G:::u
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:98:snow covered rock face
 G:::W
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:99:boulder
 G:::y
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:100:pine tree
 G:%:g
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:101:snow covered tree
 G:%:w
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:102:obelisk
 G:;:b
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:103:pillar
 G:#:w
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:112:stone fence
 G:::b
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:113:well
 G:~:v
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:114:fountain
 G:~:U
-F:HALF_LOS
+F:HALF_LOS | USE_TRANS
 
 N:115:jungle
 G:%:D
-F:BLOCK
+F:BLOCK | USE_TRANS
 
 
 
 
 N:128:bush
 G:%:y
+F:USE_TRANS
 
 N:129:dead bush
 G:%:s
+F:USE_TRANS
 
 N:130:long grass
 G:;:U
+F:USE_TRANS
 
 #rock on general terrain
 
 N:131:rock
 G:::U
+F:USE_TRANS
 
 #rock on snow
 
 N:132:rock
 G:::U
+F:USE_TRANS
 
 # dead tree on general terrain
 
 N:133:dead tree
 G:%:u
+F:USE_TRANS
 
 # dead tree on snow
 
 N:134:dead tree
 G:%:u
+F:USE_TRANS
 
 N:135:snow
 G:.:W
+F:USE_TRANS
 
 N:136:thick swamp
 G:;:g
+F:USE_TRANS
 
 N:137:swamp
 G:;:G
+F:USE_TRANS
