@@ -3687,16 +3687,6 @@ static void dungeon(void)
 			correct_inven_cnt++;
 		}
 
-#ifdef INVENTORY_DEBUG
-		if (correct_inven_cnt != inven_cnt)
-		{
-			msg_print("*** Warning ***  Inventory corruption detected!");
-			msg_print("Please save the game and send a copy of the savefile to:");
-			msg_print("rr9@angband.org");
-			inven_cnt = correct_inven_cnt;
-		}
-#endif /* INVENTORY_DEBUG */
-
 		/* Update stuff */
 		if (p_ptr->update) update_stuff();
 

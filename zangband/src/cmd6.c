@@ -3917,23 +3917,23 @@ void do_cmd_use(void)
 		/* Read a scroll */
 		case TV_SCROLL:
 		{
-		  /* Check some conditions */
-		  if (p_ptr->blind)
-		    {
-		      msg_print("You can't see anything.");
-		      return;
-		    }
-		  if (no_lite())
-		    {
-		      msg_print("You have no light to read by.");
-		      return;
-		    }
-		  if (p_ptr->confused)
-		    {
-		      msg_print("You are too confused!");
-		      return;
-		    }
-		  
+			/* Check some conditions */
+			if (p_ptr->blind)
+			{
+				msg_print("You can't see anything.");
+				return;
+			}
+			if (no_lite())
+			{
+				msg_print("You have no light to read by.");
+				return;
+			}
+			if (p_ptr->confused)
+			{
+				msg_print("You are too confused!");
+				return;
+			}
+
 		  do_cmd_read_scroll_aux(item);
 		  break;
 		}

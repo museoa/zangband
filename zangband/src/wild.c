@@ -626,16 +626,16 @@ void wilderness_gen(void)
    	/* Big town */
 	cur_hgt = MAX_HGT;
 	cur_wid = MAX_WID;
-	
+
 	/* Determine number of panels */
 	max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
 	max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
-	
+
 	/* Assume illegal panel */
 	panel_row = max_panel_rows;
 	panel_col = max_panel_cols;
 
-	/* Init the wilderness */	
+	/* Init the wilderness */
 	process_dungeon_file("w_info.txt", 0, 0, max_wild_y, max_wild_x);
 
 	x = p_ptr->wilderness_x;
@@ -903,7 +903,7 @@ errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int xmax, in
 			break;
 		}
 
-		/* Process "W:P:<x>:<y> - starting position in the wilderness */		
+		/* Process "W:P:<x>:<y> - starting position in the wilderness */
 		case 'P':
 		{
 			if ((p_ptr->wilderness_x == 0) &&

@@ -3159,7 +3159,8 @@ static void do_cmd_knowledge_pets(void)
 
 
 	fprintf(fff, "----------------------------------------------\n");
-	fprintf(fff, "   Total: %d pet%s.\n", t_friends, (t_friends==1?"":"s"));
+	fprintf(fff, "   Total: %d pet%s.\n",
+	        t_friends, (t_friends == 1 ? "" : "s"));
 	fprintf(fff, "   Upkeep: %d%% mana.\n", show_upkeep);
 
 
@@ -3282,7 +3283,8 @@ static void do_cmd_knowledge_kill_count(void)
 	}
 
 	fprintf(fff,"----------------------------------------------\n");
-	fprintf(fff,"   Total: %lu creature%s killed.\n", Total, (Total==1?"":"s"));
+	fprintf(fff,"   Total: %lu creature%s killed.\n",
+	        Total, (Total == 1 ? "" : "s"));
 
 	/* Close the file */
 	my_fclose(fff);

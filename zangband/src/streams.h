@@ -1,5 +1,5 @@
 /* CVS: Last edit by $Author$ on $Date$
- * 
+ *
  * File: streams.h
  * Purpose: header file for streams.c. This is only used in generate.c.
  */

@@ -453,16 +453,17 @@ void monster_death(int m_idx)
 	}
 
 	/* Drop a dead corpse? */
-	if ((randint(r_ptr->flags1 & RF1_UNIQUE?1:4)==1) 
-			&& ((r_ptr->flags9 & RF9_DROP_CORPSE) || 
-				(r_ptr->flags9 & RF9_DROP_SKELETON)))
+	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 4) == 1) &&
+	    ((r_ptr->flags9 & RF9_DROP_CORPSE) || 
+        (r_ptr->flags9 & RF9_DROP_SKELETON)))
 	{
-
 		/* Assume skeleton */
 		bool corpse = FALSE;
 
-		/* We cannot drop a skeleton? Note, if we are in this check,
-		we *know* we can drop at least a corpse or a skeleton */
+		/*
+		 * We cannot drop a skeleton? Note, if we are in this check,
+		 * we *know* we can drop at least a corpse or a skeleton
+		 */
 		if (!(r_ptr->flags9 & RF9_DROP_SKELETON))
 			corpse = TRUE;
 
@@ -470,23 +471,21 @@ void monster_death(int m_idx)
 		else if (r_ptr->flags9 & RF9_DROP_CORPSE)
 		{
 			/* Lots of damage in one blow */
-			if ((0-((m_ptr->maxhp)/4))>m_ptr->hp)
+			if ((0 - ((m_ptr->maxhp) / 4)) > m_ptr->hp)
 			{
-				if (randint(5)==1)
-					corpse = TRUE;		
+				if (randint(5) == 1) corpse = TRUE;
 			}
 			else
 			{
-				if (randint(5)!=1)
-					corpse = TRUE;
+				if (randint(5) != 1) corpse = TRUE;
 			}
 		}
 
 		/* Get local object */
-		q_ptr = &forge;				
+		q_ptr = &forge;
 
 		/* Prepare to make a Blade of Chaos */
-		object_prep(q_ptr, lookup_kind(TV_CORPSE, (corpse?SV_CORPSE:SV_SKELETON)));
+		object_prep(q_ptr, lookup_kind(TV_CORPSE, (corpse ? SV_CORPSE : SV_SKELETON)));
 
 		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE);
 
@@ -499,8 +498,6 @@ void monster_death(int m_idx)
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
-
-
 
 	/* Drop objects being carried */
 	monster_drop_carried_objects(m_ptr);
@@ -3347,13 +3344,13 @@ bool tgt_pt(int *x, int *y)
 	Term->scr->cv = 1;
 	msg_print("Select a point and press space.");
 
-	while ((ch != 27) && (ch != ' '))
+	while ((ch != ESCAPE) && (ch != ' '))
 	{
-		move_cursor_relative(*y,*x);
+		move_cursor_relative(*y, *x);
 		ch = inkey();
 		switch (ch)
 		{
-		case 27:
+		case ESCAPE:
 			break;
 		case ' ':
 			success = TRUE; break;
@@ -3367,12 +3364,12 @@ bool tgt_pt(int *x, int *y)
 			*y += ddy[d];
 
 			/* Hack -- Verify x */
-			if ((*x>=cur_wid-1) || (*x>=panel_col_min + SCREEN_WID)) (*x)--;
-			else if ((*x<=0) || (*x<=panel_col_min)) (*x)++;
+			if ((*x >= cur_wid - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
+			else if ((*x <= 0) || (*x <= panel_col_min)) (*x)++;
 
 			/* Hack -- Verify y */
-			if ((*y>=cur_hgt-1) || (*y>=panel_row_min + SCREEN_HGT)) (*y)--;
-			else if ((*y<=0) || (*y<=panel_row_min)) (*y)++;
+			if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
+			else if ((*y <= 0) || (*y <= panel_row_min)) (*y)++;
 
 			break;
 		}

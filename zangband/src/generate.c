@@ -465,9 +465,6 @@ static bool cave_gen(void)
 			/* Attempt a very unusual room */
 			if (ironman_rooms || (rand_int(DUN_UNUSUAL) < dun_level))
 			{
-#ifdef FORCE_V_IDX
-				if (room_build(y, x, 8)) continue;
-#else
 				/* Type 8 -- Greater vault (10%) */
 				if (k < 10)
 				{
@@ -500,8 +497,6 @@ static bool cave_gen(void)
 
 				/* Type 6 -- Monster pit (15%) */
 				if ((k < 55) && room_build(y, x, 6)) continue;
-#endif
-
 			}
 
 			/* Type 4 -- Large room (20%) */
@@ -701,7 +696,7 @@ static bool cave_gen(void)
 
 							/* No random quests for aquatic monsters */
 							if (cave[y][x].feat != FEAT_FLOOR) continue;
-							
+
 							if (distance(y, x, py, px) < 10) continue;
 							else break;
 						}
@@ -948,7 +943,7 @@ static bool level_gen(cptr *why)
 	{
 		if (cheat_room)
 		  msg_print("A 'small' dungeon level.");
-		
+
 		do
 		{
 			level_height = randint(MAX_HGT/SCREEN_HGT);
@@ -956,18 +951,18 @@ static bool level_gen(cptr *why)
 		}
 		while ((level_height == MAX_HGT/SCREEN_HGT) &&
 			   (level_width == MAX_WID/SCREEN_WID));
-		
+
 		cur_hgt = level_height * SCREEN_HGT;
 		cur_wid = level_width * SCREEN_WID;
-		
+
 		/* Determine number of panels */
 		max_panel_rows = level_height * 2 - 2;
 		max_panel_cols = level_width * 2 - 2;
-		
+
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
 		panel_col = max_panel_cols;
-		
+
 		if (cheat_room)
 		  msg_format("X:%d, Y:%d.", max_panel_cols, max_panel_rows);
 	}
@@ -976,16 +971,16 @@ static bool level_gen(cptr *why)
 		/* Big dungeon */
 		cur_hgt = MAX_HGT;
 		cur_wid = MAX_WID;
-		
+
 		/* Determine number of panels */
 		max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
 		max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
-		
+
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
 		panel_col = max_panel_cols;
 	}
-	
+
 	/* Make a dungeon */
 	if (!cave_gen())
 	{
@@ -999,13 +994,13 @@ static byte extract_feeling(void)
 {
 	/* It takes 1000 game turns for "feelings" to recharge */
 	if ((turn - old_turn) < 1000) return 0;
-	
+
 	/* Hack -- no feeling in the town */
 	if (!dun_level) return 0;
-	
+
 	/* Hack -- Have a special feeling sometimes */
 	if (good_item_flag && !preserve_mode) return 1;
-	
+
  	if (rating > 100) return 2;
 	if (rating > 80) return 3;
 	if (rating > 60) return 4;
@@ -1014,7 +1009,7 @@ static byte extract_feeling(void)
 	if (rating > 20) return 7;
 	if (rating > 10) return 8;
 	if (rating > 0) return 9;
-	
+
 	return 10;
 }
 
@@ -1152,7 +1147,7 @@ void generate_cave(void)
 		}
 
 		/* Mega-Hack -- "auto-scum" */
-		else if ((auto_scum || ironman_autoscum) && (num < 100) && 
+		else if ((auto_scum || ironman_autoscum) && (num < 100) &&
 				 !p_ptr->inside_quest)
 		{
 			/* Require "goodness" */

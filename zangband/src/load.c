@@ -565,7 +565,7 @@ static void rd_item(object_type *o_ptr)
 #endif
 
 	/* Old version */
-	if (older_than(2,8,0))
+	if (older_than(2, 8, 0))
 	{
 		/* Old something */
 		strip_bytes(2);
@@ -596,14 +596,14 @@ static void rd_item(object_type *o_ptr)
 	{
 		byte i;
 
-		for (i=0; i <= FEEL_MAX; i++)
+		for (i = 0; i <= FEEL_MAX; i++)
 		{
 			if (game_inscriptions[i] == NULL)
 			{
 				continue;
 			}
 
-			if (streq(buf,game_inscriptions[i]))
+			if (streq(buf, game_inscriptions[i]))
 			{
 				o_ptr->feeling = i;
 				buf[0] = 0;
@@ -1368,7 +1368,7 @@ static void rd_extra(void)
 	rd_s16b(&p_ptr->lev);
 
 	/* Current version */
-	if (!z_older_than(2,1,3))
+	if (!z_older_than(2, 1, 3))
 	{
 		rd_s16b(&p_ptr->town_num);
 
@@ -2428,7 +2428,7 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_cols);
 
 	/* Old method */
-	if (older_than(2,8,0))
+	if (older_than(2, 8, 0))
 	{
 		return (rd_dungeon_aux());
 	}
@@ -2501,7 +2501,7 @@ static errr rd_dungeon(void)
 	}
 
 
-	if (!z_older_than(2,1,3))
+	if (!z_older_than(2, 1, 3))
 	{
 		/*** Run length decoding ***/
 
@@ -3028,7 +3028,7 @@ static errr rd_savefile_new_aux(void)
 		}
 
 		/* Only in 2.2.1 and 2.2.2 */
-		if (!z_older_than(2, 2, 1) && z_older_than(2,2,3))
+		if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
 		{
 			/* "Hard quests" flag */
 			rd_byte(&ironman_hard_quests);

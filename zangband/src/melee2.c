@@ -2635,9 +2635,8 @@ static void process_monster(int m_idx)
 				/* Skip "real" corpses and statues, to avoid
 					extreme silliness like a novice rogue
 					pockets full of statues and corpses */
-				if ((o_ptr->tval == TV_CORPSE) 
-					|| (o_ptr->tval == TV_STATUE)) continue;
-			
+				if ((o_ptr->tval == TV_CORPSE) ||
+				    (o_ptr->tval == TV_STATUE)) continue;
 
 				/* Take or Kill objects on the floor */
 				if ((r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&

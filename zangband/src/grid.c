@@ -1,5 +1,5 @@
 /* CVS: Last edit by $Author$ on $Date$
- * 
+ *
  * File: grid.c
  * Purpose: low-level dungeon creation primitives
  */
@@ -165,48 +165,48 @@ void place_closed_door(int y, int x)
 	}
 }
 
+
 /*
  * Make an empty square floor, for the middle of rooms
  */
 void place_floor(int x1, int x2, int y1, int y2, bool light)
 {
 	int x, y;
-	
+
 	/* Place a full floor under the room */
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		for (x = x1 - 1; x <= x2 + 1; x++)
 		{
-			set_cave_feat(y,x,FEAT_FLOOR);
-			add_cave_info(y,x,CAVE_ROOM);
-			if (light) add_cave_info(y,x,CAVE_GLOW);
+			set_cave_feat(y, x, FEAT_FLOOR);
+			add_cave_info(y, x, CAVE_ROOM);
+			if (light) add_cave_info(y, x, CAVE_GLOW);
 		}
-	}	
+	}
 }
 
-/* 
+
+/*
  * Make an empty square room, only floor and wall grids
  */
 void place_room(int x1, int x2, int y1, int y2, bool light)
 {
 	int y, x;
-	
+
 	place_floor(x1, x2, y1, y2, light);
-	
+
 	/* Walls around the room */
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
-		place_outer_wall(y,x1-1);
-		place_outer_wall(y,x2+1);
+		place_outer_wall(y, x1 - 1);
+		place_outer_wall(y, x2 + 1);
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
-		place_outer_wall(y1-1,x);
-		place_outer_wall(y2+1,x);
+		place_outer_wall(y1 - 1, x);
+		place_outer_wall(y2 + 1, x);
 	}
 }
-
-
 
 
 /*

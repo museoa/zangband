@@ -1501,7 +1501,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		give_activation_power(o_ptr);
 	}
 
-	if (o_ptr->tval>=TV_BOOTS)
+	if (o_ptr->tval >= TV_BOOTS)
 	{
 		if (a_cursed) power_level = 0;
 		else if (total_flags < 10000) power_level = 1;

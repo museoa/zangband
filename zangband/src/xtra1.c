@@ -1584,52 +1584,12 @@ static void calc_mana(void)
 	/* Maximum mana has changed */
 	if (p_ptr->msp != msp)
 	{
-
-#if 1
-
-		/* XXX XXX XXX New mana maintenance */
-
 		/* Enforce maximum */
 		if (p_ptr->csp >= msp)
 		{
 			p_ptr->csp = msp;
 			p_ptr->csp_frac = 0;
 		}
-
-#else
-
-		/* Player has no mana now */
-		if (!msp)
-		{
-			/* No mana left */
-			p_ptr->csp = 0;
-			p_ptr->csp_frac = 0;
-		}
-
-		/* Player had no mana, has some now */
-		else if (!p_ptr->msp)
-		{
-			/* Reset mana */
-			p_ptr->csp = msp;
-			p_ptr->csp_frac = 0;
-		}
-
-		/* Player had some mana, adjust current mana */
-		else
-		{
-			s32b value;
-
-			/* change current mana proportionately to change of max mana, */
-			/* divide first to avoid overflow, little loss of accuracy */
-			value = ((((long)p_ptr->csp << 16) + p_ptr->csp_frac) /
-			         p_ptr->msp * msp);
-
-			/* Extract mana components */
-			p_ptr->csp = (value >> 16);
-			p_ptr->csp_frac = (value & 0xFFFF);
-		}
-
-#endif
 
 		/* Save new mana */
 		p_ptr->msp = msp;
@@ -1708,30 +1668,12 @@ static void calc_hitpoints(void)
 	/* New maximum hitpoints */
 	if (p_ptr->mhp != mhp)
 	{
-
-#if 1
-
-		/* XXX XXX XXX New hitpoint maintenance */
-
 		/* Enforce maximum */
 		if (p_ptr->chp >= mhp)
 		{
 			p_ptr->chp = mhp;
 			p_ptr->chp_frac = 0;
 		}
-
-#else
-
-		s32b value;
-
-		/* change current hit points proportionately to change of mhp */
-		/* divide first to avoid overflow, little loss of accuracy */
-		value = (((long)p_ptr->chp << 16) + p_ptr->chp_frac) / p_ptr->mhp;
-		value = value * mhp;
-		p_ptr->chp = (value >> 16);
-		p_ptr->chp_frac = (value & 0xFFFF);
-
-#endif
 
 		/* Save the new max-hitpoints */
 		p_ptr->mhp = mhp;
@@ -2369,7 +2311,7 @@ void calc_bonuses(void)
 
 		if (p_ptr->muta3 & MUT3_ESP)
 		{
-			p_ptr->telepathy =TRUE;
+			p_ptr->telepathy = TRUE;
 		}
 
 		if (p_ptr->muta3 & MUT3_LIMBER)
@@ -2384,13 +2326,13 @@ void calc_bonuses(void)
 
 		if (p_ptr->muta3 & MUT3_MOTION)
 		{
-			p_ptr->free_act =TRUE;
+			p_ptr->free_act = TRUE;
 			p_ptr->skill_stl += 1;
 		}
 
 		if (p_ptr->muta3 & MUT3_SUS_STATS)
 		{
-			p_ptr->sustain_con =TRUE;
+			p_ptr->sustain_con = TRUE;
 			if (p_ptr->lev > 9)
 				p_ptr->sustain_str = TRUE;
 			if (p_ptr->lev > 19)

@@ -170,7 +170,7 @@ u16b bolt_pict(int y, int x, int ny, int nx, int typ)
 	c = misc_to_char[base + k];
 
 	/* Create pict */
-	return (PICT(a,c));
+	return (PICT(a, c));
 }
 
 
@@ -2045,9 +2045,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		case GF_DEATH_RAY:
 		{
 			if (seen) obvious = TRUE;
-			
+
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
-				 (r_ptr->flags3 & RF3_NONLIVING))
+			    (r_ptr->flags3 & RF3_NONLIVING))
 			{
 				if (r_ptr->flags3 & RF3_UNDEAD)
 				{

@@ -2849,7 +2849,7 @@
  * Monster drop info
  */
 
-#define RF9_DROP_CORPSE 	  0x00000001
+#define RF9_DROP_CORPSE         0x00000001
 #define RF9_DROP_SKELETON       0x00000002
 
 /*

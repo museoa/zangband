@@ -2420,8 +2420,8 @@ bool summon_named_creature (int oy, int ox, int r_idx, bool slp, bool group_ok, 
 		if (!cave_empty_bold(y, x)) continue;
 
 		/* Place it (allow groups) */
-		if (place_monster_aux(y, x, r_idx, slp, group_ok, FALSE, pet)) 
-		{	
+		if (place_monster_aux(y, x, r_idx, slp, group_ok, FALSE, pet))
+		{
 			success = TRUE;
 			break;
 		}

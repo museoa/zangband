@@ -81,6 +81,20 @@ class skills:
 	def append(self, skill):
 		self.data.append(skill)
 
+	def __len__(self):
+		return len(self.data)
+	def __getitem__(self, key):
+		return self.data[key]
+	def __setitem__(self, key, value):
+		self.data[key] = value
+	def items(self):
+		return self.data.items()
+	def keys(self):
+		return self.data.keys()
+	def values(self):
+		return self.data.values()
+
+
 	#################################################################
 	# Use a skill
 	#################################################################

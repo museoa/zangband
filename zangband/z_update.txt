@@ -38,6 +38,8 @@ Zangband 2.3.3:
 -Fixed a bug in the wand/rod selling code.
 -Fixed a bug with '.' and ',' in the roguelike keyset.
 -Fixed an over-correction in the 'distance' function.
+-Fixed a bug that allowed *huge* vaults to be placed partially outside
+ of the level causing crashes or strange bugs.
 -Fixed a bug with the 'u' command that allowed you to perform certain
  actions when blinded or confused.
 -Numerous spelling and grammar changes in, and additions to, various

@@ -1,5 +1,5 @@
 /* CVS: Last edit by $Author$ on $Date$
- * 
+ *
  * File: streams.c
  * Purpose: Used by dungeon generation. This file holds all the
  * functions that are applied to a level after the rest has been

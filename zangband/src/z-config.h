@@ -562,9 +562,6 @@
 /* Do we want different characters for different races? */
 # define VARIABLE_PLAYER_GRAPH
 
-/* To turn on the "confirm staircases" check  -- obsolete in 2.1.0 and later */
-/* # define CONFIRM_STAIRCASES */
-
 /* For longer martial arts descriptions */
 # define VERBOSE_MARTIAL_ARTS
 
@@ -580,9 +577,6 @@
 /* #define MONK_HACK */
 
 /* Wizard mode testing options: */
-
-/* For testing the vaults */
-/* # define FORCE_V_IDX */
 
 /* Testing upkeep */
 /* # define TRACK_FRIENDS */
@@ -631,8 +625,3 @@
 # define STATIC_PYTHON
 /* # define SCRIPT_OBJ_KIND */
 #endif /* USE_SCRIPT */
-
-/*
- * Check for corruption of inven_cnt
- */
-/* #define INVENTORY_DEBUG */

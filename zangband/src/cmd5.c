@@ -2787,7 +2787,7 @@ void do_cmd_pet(void)
 	bool			all_pets = FALSE;
 	monster_type	*m_ptr;
 
-	int mode;
+	int mode = 0;
 
 	byte y = 1, x = 0;
 	int ctr = 0;

@@ -1,5 +1,5 @@
 /* CVS: Last edit by $Author$ on $Date$
- * 
+ *
  * File: rooms.h
  * Purpose: Header file for rooms.c, used only in generate.c
  */
