@@ -73,7 +73,7 @@
 
 #include "angband.h"
 
-#include "maid-graf.h"
+#include "maid-grf.h"
 
 
 #ifdef WINDOWS
