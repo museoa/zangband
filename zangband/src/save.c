@@ -555,6 +555,9 @@ static void wr_item(const object_type *o_ptr)
 	wr_u32b(o_ptr->flags1);
 	wr_u32b(o_ptr->flags2);
 	wr_u32b(o_ptr->flags3);
+	
+	/* Next object in list */
+	wr_s16b(o_ptr->next_o_idx);
 
 	/* Held by monster index */
 	wr_s16b(o_ptr->held_m_idx);
@@ -614,7 +617,7 @@ static void wr_monster(const monster_type *m_ptr)
 	wr_byte(m_ptr->monfear);
 	wr_byte(m_ptr->invulner);
 	wr_u32b(m_ptr->smart);
-	wr_byte(0);
+	wr_s16b(m_ptr->hold_o_idx);
 }
 
 /*

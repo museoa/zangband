@@ -396,6 +396,12 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->flags3 |= TR3_LITE;
 		}
 	}
+	
+	if (sf_version > 30)
+	{
+		/* Link to next object in the list */
+		rd_s16b(&o_ptr->next_o_idx);
+	}
 
 	/* Monster holding object */
 	rd_s16b(&o_ptr->held_m_idx);
@@ -717,7 +723,15 @@ static void rd_monster(monster_type *m_ptr)
 		rd_u32b(&m_ptr->smart);
 	else
 		m_ptr->smart = 0;
-	rd_byte(&tmp8u);
+	
+	if (sf_version < 31)
+	{
+		rd_byte(&tmp8u);
+	}
+	else
+	{
+		rd_s16b(&m_ptr->hold_o_idx);
+	}
 }
 
 
@@ -2342,15 +2356,7 @@ static errr rd_dungeon(void)
 			m_ptr = &m_list[o_ptr->held_m_idx];
 
 			/* Paranoia */
-			if (m_ptr->r_idx)
-			{
-				/* Build a stack */
-				o_ptr->next_o_idx = m_ptr->hold_o_idx;
-
-				/* Place the object */
-				m_ptr->hold_o_idx = o_idx;
-			}
-			else
+			if (!m_ptr->r_idx)
 			{
 				/* The monster does not exist any more! */
 				o_ptr->held_m_idx = 0;
@@ -2374,7 +2380,12 @@ static errr rd_dungeon(void)
 			/* Access the item location */
 			c_ptr = area(o_ptr->ix, o_ptr->iy);
 
-			/* Build a stack */
+			/*
+			 * This is so much of a hack it hurts.  We really need
+			 * to have a loop... or something.
+			 */
+
+			/* XXX XXX Mega-hack - build a stack */
 			o_ptr->next_o_idx = c_ptr->o_idx;
 
 			/* Place the object */
