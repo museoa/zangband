@@ -3781,20 +3781,20 @@ static void dungeon(void)
 	/* No stairs down from Quest */
 	if (quest_number(dun_level))
 	{
-		create_down_stair = FALSE;
+		p_ptr->create_down_stair = FALSE;
 	}
 
 	/* Paranoia -- no stairs from town or wilderness */
-	if (!dun_level) create_down_stair = create_up_stair = FALSE;
+	if (!dun_level) p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
 
 	/* Option -- no connected stairs */
-	if (!dungeon_stair) create_down_stair = create_up_stair = FALSE;
+	if (!dungeon_stair) p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
 
 	/* Option -- no up stairs */
-	if (ironman_downward) create_down_stair = create_up_stair = FALSE;
+	if (ironman_downward) p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
 
 	/* Make a stairway. */
-	if (create_up_stair || create_down_stair)
+	if (p_ptr->create_up_stair || p_ptr->create_down_stair)
 	{
 		/* Place a stairway */
 		c_ptr = area(py, px);
@@ -3804,7 +3804,7 @@ static void dungeon(void)
 			delete_object(py, px);
 
 			/* Make stairs */
-			if (create_down_stair)
+			if (p_ptr->create_down_stair)
 			{
 				cave_set_feat(py, px, FEAT_MORE);
 			}
@@ -3815,7 +3815,7 @@ static void dungeon(void)
 		}
 
 		/* Cancel the stair request */
-		create_down_stair = create_up_stair = FALSE;
+		p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
 	}
 
 
@@ -4457,7 +4457,7 @@ void play_game(bool new_game)
 				}
 
 				/* Note cause of death XXX XXX XXX */
-				(void)strcpy(died_from, "Cheating death");
+				(void)strcpy(p_ptr->died_from, "Cheating death");
 
 				/* Do not die */
 				p_ptr->is_dead = FALSE;

@@ -130,7 +130,7 @@ void do_cmd_go_up(void)
 #endif /* 0 */
 
 			/* Create a way back */
-			create_down_stair = TRUE;
+			p_ptr->create_down_stair = TRUE;
 
 			/* New depth */
 			dun_level--;
@@ -252,7 +252,7 @@ void do_cmd_go_down(void)
 			p_ptr->leaving = TRUE;
 
 			/* Create a way back */
-			create_up_stair = TRUE;
+			p_ptr->create_up_stair = TRUE;
 		}
 	}
 }

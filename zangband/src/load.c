@@ -1115,11 +1115,11 @@ static void rd_extra(void)
 
 	rd_string(player_name, 32);
 
-	rd_string(died_from, 80);
+	rd_string(p_ptr->died_from, 80);
 
 	for (i = 0; i < 4; i++)
 	{
-		rd_string(history[i], 60);
+		rd_string(p_ptr->history[i], 60);
 	}
 
 	/* Class/Race/Gender/Spells */

@@ -379,7 +379,7 @@ errr top_twenty(void)
 #endif
 
 	/* Interupted */
-	if (!total_winner && streq(died_from, "Interrupting"))
+	if (!total_winner && streq(p_ptr->died_from, "Interrupting"))
 	{
 		msg_print("Score not registered due to interruption.");
 		msg_print(NULL);
@@ -388,7 +388,7 @@ errr top_twenty(void)
 	}
 
 	/* Quitter */
-	if (!total_winner && streq(died_from, "Quitting"))
+	if (!total_winner && streq(p_ptr->died_from, "Quitting"))
 	{
 		msg_print("Score not registered due to quitting.");
 		msg_print(NULL);
@@ -454,7 +454,7 @@ errr top_twenty(void)
 	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
 
 	/* Save the cause of death (31 chars) */
-	sprintf(the_score.how, "%-.31s", died_from);
+	sprintf(the_score.how, "%-.31s", p_ptr->died_from);
 
 
 	/* Lock (for writing) the highscore file, or fail */
@@ -761,7 +761,7 @@ void kingly(void)
 	dun_level = 0;
 
 	/* Fake death */
-	(void)strcpy(died_from, "Ripe Old Age");
+	(void)strcpy(p_ptr->died_from, "Ripe Old Age");
 
 	/* Restore the experience */
 	p_ptr->exp = p_ptr->max_exp;

@@ -82,9 +82,6 @@ u32b seed_town;			/* Hack -- consistent town layout */
 
 s16b energy_use;		/* Energy use this turn */
 
-bool create_up_stair;	/* Auto-create "up stairs" */
-bool create_down_stair;	/* Auto-create "down stairs" */
-
 bool msg_flag;			/* Used in msg_print() for "buffering" */
 
 s16b min_hgt;			/* Current y bounds of area() */
@@ -390,15 +387,6 @@ char player_name[32];
  */
 char player_base[32];
 
-/*
- * What killed the player
- */
-char died_from[80];
-
-/*
- * Hack -- Textual "history" for the Player
- */
-char history[4][60];
 
 /*
  * Buffer to hold the current savefile name

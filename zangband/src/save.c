@@ -943,11 +943,11 @@ static void wr_extra(void)
 
 	wr_string(player_name);
 
-	wr_string(died_from);
+	wr_string(p_ptr->died_from);
 
 	for (i = 0; i < 4; i++)
 	{
-		wr_string(history[i]);
+		wr_string(p_ptr->history[i]);
 	}
 
 	/* Race/Class/Gender/Spells */
@@ -2133,7 +2133,7 @@ bool load_player(void)
 		if (p_ptr->chp >= 0)
 		{
 			/* Reset cause of death */
-			(void)strcpy(died_from, "(alive and well)");
+			(void)strcpy(p_ptr->died_from, "(alive and well)");
 		}
 
 		/* Success */

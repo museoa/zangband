@@ -2678,9 +2678,9 @@ void take_hit(int damage, cptr hit_from)
 		}
 
 		/* Note cause of death */
-		(void)strcpy(died_from, hit_from);
+		(void)strcpy(p_ptr->died_from, hit_from);
 
-		if (p_ptr->image) strcat(died_from, "(?)");
+		if (p_ptr->image) strcat(p_ptr->died_from, "(?)");
 
 		/* No longer a winner */
 		total_winner = FALSE;

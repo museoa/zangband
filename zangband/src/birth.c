@@ -831,7 +831,7 @@ static void save_prev_data(void)
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(prev.history[i], history[i]);
+		strcpy(prev.history[i], p_ptr->history[i]);
 	}
 
 	/* Save the patron */
@@ -873,7 +873,7 @@ static void load_prev_data(void)
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(temp.history[i], history[i]);
+		strcpy(temp.history[i], p_ptr->history[i]);
 	}
 
 	/* Save the patron */
@@ -905,7 +905,7 @@ static void load_prev_data(void)
 	/* Load the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(history[i], prev.history[i]);
+		strcpy(p_ptr->history[i], prev.history[i]);
 	}
 
 	/* Save the patron */
@@ -1188,7 +1188,7 @@ static void get_history(void)
 	char buf[240];
 
 	/* Clear the previous history strings */
-	for (i = 0; i < 4; i++) history[i][0] = '\0';
+	for (i = 0; i < 4; i++) p_ptr->history[i][0] = '\0';
 
 	/* Clear the history text */
 	buf[0] = '\0';
@@ -1405,7 +1405,7 @@ static void get_history(void)
 		if (n < 60)
 		{
 			/* Save one line of history */
-			strcpy(history[i++], s);
+			strcpy(p_ptr->history[i++], s);
 
 			/* All done */
 			break;
@@ -1421,7 +1421,7 @@ static void get_history(void)
 		while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
 
 		/* Save one line of history */
-		strcpy(history[i++], s);
+		strcpy(p_ptr->history[i++], s);
 
 		/* Start next line */
 		for (s = t; *s == ' '; s++) /* loop */;
@@ -1503,7 +1503,7 @@ static void player_wipe(void)
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(history[i], "");
+		strcpy(p_ptr->history[i], "");
 	}
 
 	/* Wipe the quests */

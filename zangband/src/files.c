@@ -2519,7 +2519,7 @@ static void display_player_history(void)
 	/* Dump the history */
 	for (i = 0; i < 4; i++)
 	{
-		put_str(history[i], i + 16, 10);
+		put_str(p_ptr->history[i], i + 16, 10);
 	}
 }
 
@@ -3833,7 +3833,7 @@ void do_cmd_suicide(void)
 	p_ptr->leaving = TRUE;
 
 	/* Cause of death */
-	(void)strcpy(died_from, "Quitting");
+	(void)strcpy(p_ptr->died_from, "Quitting");
 }
 
 
@@ -3866,7 +3866,7 @@ void do_cmd_save_game(int is_autosave)
 	Term_fresh();
 
 	/* The player is not dead */
-	(void)strcpy(died_from, "(saved)");
+	(void)strcpy(p_ptr->died_from, "(saved)");
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
@@ -3896,7 +3896,7 @@ void do_cmd_save_game(int is_autosave)
 	prt("", 0, 0);
 
 	/* Note that the player is not dead */
-	(void)strcpy(died_from, "(alive and well)");
+	(void)strcpy(p_ptr->died_from, "(alive and well)");
 }
 
 
@@ -4159,14 +4159,14 @@ static void print_tomb(void)
 		put_str(buf, 14, 11);
 
 
-		if (strlen(died_from) > 24)
+		if (strlen(p_ptr->died_from) > 24)
 		{
-			strncpy(dummy, died_from, 24);
+			strncpy(dummy, p_ptr->died_from, 24);
 			dummy[24] = '\0';
 			(void)sprintf(tmp, "by %s.", dummy);
 		}
 		else
-			(void)sprintf(tmp, "by %s.", died_from);
+			(void)sprintf(tmp, "by %s.", p_ptr->died_from);
 
 		center_string(buf, tmp);
 		put_str(buf, 15, 11);
@@ -4424,7 +4424,7 @@ void close_game(void)
 
 			/* Create string */
 			sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
-				 died_from, long_day);
+				 p_ptr->died_from, long_day);
 
 			/* Output to the notes file */
 			output_note(buf);
@@ -4503,7 +4503,7 @@ void exit_game_panic(void)
 	signals_ignore_tstp();
 
 	/* Indicate panic save */
-	(void)strcpy(died_from, "(panic save)");
+	(void)strcpy(p_ptr->died_from, "(panic save)");
 
 	/* Panic save, or get worried */
 	if (!save_player()) quit("panic save failed!");
@@ -4706,7 +4706,7 @@ static void handle_signal_simple(int sig)
 	if (p_ptr->is_dead)
 	{
 		/* Mark the savefile */
-		(void)strcpy(died_from, "Abortion");
+		(void)strcpy(p_ptr->died_from, "Abortion");
 
 		/* Close stuff */
 		close_game();
@@ -4719,7 +4719,7 @@ static void handle_signal_simple(int sig)
 	else if (signal_count >= 5)
 	{
 		/* Cause of "death" */
-		(void)strcpy(died_from, "Interrupting");
+		(void)strcpy(p_ptr->died_from, "Interrupting");
 
 		/* Stop playing */
 		p_ptr->playing = FALSE;
@@ -4795,7 +4795,7 @@ static void handle_signal_abort(int sig)
 	panic_save = 1;
 
 	/* Panic save */
-	(void)strcpy(died_from, "(panic save)");
+	(void)strcpy(p_ptr->died_from, "(panic save)");
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
