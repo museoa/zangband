@@ -1207,13 +1207,13 @@ W:5:0:2:0
 A:5/1
 F:CURSED | INT | HIDE_TYPE
 
-N:151:Damage
+N:151:Combat
 G:=:d
 I:45:29:0
 W:20:0:2:500
 A:20/1
 
-N:152:Accuracy
+N:152:Skill
 G:=:d
 I:45:28:0
 W:20:0:2:500
@@ -1371,13 +1371,13 @@ F:TY_CURSE | NO_TELE | NO_MAGIC | REGEN | HIDE_TYPE
 
 ##### Scrolls #####
 
-N:173:Enchant Weapon To-Hit
+N:173:Enchant Weapon Skill
 G:?:d
 I:70:17:0
 W:15:0:5:125
 A:15/1
 
-N:174:Enchant Weapon To-Dam
+N:174:Enchant Weapon Deadliness
 G:?:d
 I:70:18:0
 W:15:0:5:125
