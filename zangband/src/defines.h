@@ -901,11 +901,12 @@
 #define RACE_SPECTRE            27
 #define RACE_SPRITE             28
 #define RACE_BEASTMAN           29
+#define RACE_GHOUL              30
 
 /*
  * Maximum number of player "race" types (see "table.c", etc)
  */
-#define MAX_RACES               30
+#define MAX_RACES               31
 
 
 /*
