@@ -3329,7 +3329,7 @@ static bool do_cmd_knowledge_uniques(int dummy)
 
 	char file_name[1024];
 
-	int i, n;
+	int i, n, count_dead = 0;
 
 	u16b why = 2;
 	u16b *who;
@@ -3393,6 +3393,9 @@ static bool do_cmd_knowledge_uniques(int dummy)
 
 		if (r_ptr->max_num == 0)
 		{
+			/* Count the dead ones */
+			count_dead++;
+
 			/* Dead */
 			print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char,
 				format(CLR_L_DARK "%s is dead.", mon_race_name(r_ptr)),
@@ -3414,7 +3417,9 @@ static bool do_cmd_knowledge_uniques(int dummy)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void)show_file(file_name, "Known Uniques", 0, 0);
+	(void)show_file(file_name,
+					format("Known uniques, killed %d", count_dead),
+					0, 0);
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
