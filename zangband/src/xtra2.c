@@ -924,7 +924,7 @@ bool monster_death(int m_idx, bool explode)
 			}
 		
 			/* We need a 'good' item - so check the price */
-			if (object_value_real(q_ptr) > 0) break;
+			if (object_value_real(q_ptr) > 100 * p_ptr->depth) break;
 		}
 		
 #ifdef USE_SCRIPT
