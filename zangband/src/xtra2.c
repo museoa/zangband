@@ -1969,6 +1969,9 @@ static void target_set_prepare(int mode)
 
 			/* Require target_able monsters for "TARGET_KILL" */
 			if ((mode & (TARGET_KILL)) && !target_able(c_ptr->m_idx)) continue;
+			
+			/* Require hostile creatures if "TARGET_HOST" is used */
+			if ((mode & (TARGET_HOST)) && !is_hostile(&m_list[c_ptr->m_idx])) continue;
 
 			/* Save the location */
 			temp_x[temp_n] = x;
@@ -3029,7 +3032,7 @@ bool get_aim_dir(int *dp)
 			/* Set new target */
 			case '*':
 			{
-				if (target_set(TARGET_KILL)) dir = 5;
+				if (target_set(TARGET_KILL | TARGET_HOST)) dir = 5;
 				break;
 			}
 
