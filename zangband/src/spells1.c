@@ -651,24 +651,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		{
 			int action;
 			
-			s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
-			 	FIELD_ACT_INTERACT_TEST, (void *) &action);
-			
-			if (*fld_ptr)
-			{
-				if (action == 0)
-				{
-					/*
-					 * The grid can be tunneled.
-					 * Call the spell effect hook.
-					 *
-					 * This is a mega-hack... will be fixed later.
-					 */
-					
-					field_hook_single(fld_ptr, FIELD_ACT_MAGIC_TARGET, NULL);
-				}
-			}
-			
 			/* Non-walls (etc) */
 			if (cave_floor_grid(c_ptr)) break;
 

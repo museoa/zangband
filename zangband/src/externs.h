@@ -1215,6 +1215,7 @@ extern void field_action_corpse_load(s16b *field_ptr, void *input);
 extern void field_action_corpse_init(s16b *field_ptr, void *input);
 extern void field_action_corpse_look(s16b *field_ptr, void *output);
 extern void field_action_wall_tunnel(s16b *field_ptr, void *input);
+extern void field_action_wall_gf(s16b *field_ptr, void *input);
 extern void field_action_interact_tunnel(s16b *field_ptr, void *output);
 extern void field_action_interact_disarm(s16b *field_ptr, void *output);
 extern void field_action_interact_open(s16b *field_ptr, void *output);

@@ -6514,6 +6514,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Tunnel into a "standard" wall to pass */
 	{field_action_wall_tunnel, "field_action_wall_tunnel"},
 	
+	/* Walls interact with GF_KILL_WALL */
+	{field_action_wall_gf, "field_action_wall_gf"},
+	
 	/* Interact with grid 'tunnels' */
 	{field_action_interact_tunnel, "field_action_interact_tunnel"},
 	

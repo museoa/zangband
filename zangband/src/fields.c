@@ -1746,6 +1746,27 @@ void field_action_wall_tunnel(s16b *field_ptr, void *input)
 
 
 /*
+ * Invisible walls interact with GF_KILL_WALL
+ */
+void field_action_wall_gf(s16b *field_ptr, void *input)
+{	
+	field_magic_target *f_m_t = (field_magic_target*) input;
+	
+	if (f_m_t->typ == GF_KILL_WALL)
+	{
+		/* Check line of sight */
+		if (f_m_t->known)
+		{
+			f_m_t->notice = TRUE;
+		}
+		
+		/* Delete the field */
+		delete_field_ptr(field_ptr);
+	}
+}
+
+
+/*
  * The various types of interaction used by
  * the "interact with grid" command.
  */
