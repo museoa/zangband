@@ -22,7 +22,7 @@
 /*
  * Calculate rows/columns covered in parent Widget.
  */
-static void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr)
+void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr)
 {
 	int height, width, dy, dx, my;
 

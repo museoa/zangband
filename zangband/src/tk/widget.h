@@ -189,3 +189,5 @@ typedef struct ExWidget {
 	void (*whatToDrawProc)(Widget *widgetPtr, int y, int x, t_display *wtd);
 } ExWidget;
 
+extern void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr);
+
