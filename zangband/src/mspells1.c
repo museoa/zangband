@@ -37,7 +37,8 @@
  *
  * This has the added advantage that attacks and spells are related.
  * The "smart_learn" option means that the monster "learns" the flags
- * that should be set over time, by trial and error.
+ * that should be set over time, by trial and error.  This is no longer
+ * optional, and is on all the time.
  *
  * The old smart_cheat option was removed.  No one plays with it on.
  */
@@ -67,11 +68,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 
 	/* Too stupid to know anything */
 	if (r_ptr->flags2 & RF2_STUPID) return;
-
-
-	/* Must be cheating or learning */
-	if (!smart_learn) return;
-
 
 	/* Update acquired knowledge */
 	

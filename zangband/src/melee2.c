@@ -916,7 +916,8 @@ static bool get_moves(int m_idx, int *mm)
 	 */
 		if ((r_ptr->flags1 & RF1_FRIENDS) &&
 			 (r_ptr->flags3 & RF3_ANIMAL) &&
-			 !(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)))
+			 !(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
+			 smart_packs)
 		{
 			int i, room = 0;
 
