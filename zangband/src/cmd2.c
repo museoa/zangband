@@ -1191,8 +1191,29 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	}
 
 	else if ((c_ptr->feat == FEAT_TREES) ||
-		(c_ptr->feat == FEAT_PINE_TREE) ||
-		(c_ptr->feat == FEAT_SNOW_TREE))
+		(c_ptr->feat == FEAT_PINE_TREE))
+	{
+		/* Chop Down */
+		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(y, x, FEAT_GRASS))
+		{
+			msg_print("You have cleared away the trees.");
+
+			chg_virtue(V_DILIGENCE, 1);
+			chg_virtue(V_NATURE, -1);
+		}
+
+		/* Keep trying */
+		else
+		{
+			/* We may continue chopping */
+			msg_print("You chop away at the tree.");
+			more = TRUE;
+
+			/* Occasional Search XXX XXX */
+			if (randint0(100) < 25) search();
+		}
+	}
+	else if (c_ptr->feat == FEAT_SNOW_TREE)
 	{
 		/* Chop Down */
 		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(y, x, FEAT_SNOW))
