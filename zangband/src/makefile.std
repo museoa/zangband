@@ -116,7 +116,7 @@ BORGOBJS := \
 ##
 TKOBJS := \
 	tk/canv.o tk/cmdinfo.o tk/icon.o \
-	tk/describe.o tk/interp.o tk/plat.o \
+	tk/describe.o tk/interp.o tk/plat.o tk/term.o \
 	tk/widget.o tk/tk-util.o tk/tcltk.o
 
 ##
@@ -637,7 +637,7 @@ $(TKOBJS): $(INCS) tk/tnb.h
 main-tnb.o: tk/tnb.h
 
 TKICONOBJS := \
-	tk/canv.o tk/icon.o tk/interp.o tk/widget.o
+	tk/canv.o tk/icon.o tk/interp.o tk/term.o tk/widget.o
 
 $(TKICONOBJS): tk/icon.h
 
