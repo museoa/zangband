@@ -292,7 +292,7 @@ races.
 
 Note that special buildings were turned off for the earlier 2.5.x
 development versions while the wilderness code was extensively revised.
-They have started to make a reappearance in versin 2.5.3 and currently
+They have started to make a reappearance in version 2.5.3 and currently
 include shops where you can enchant your equipment, recharge and
 identify items, get maps of the wilderness, and add and cure mutations.
 
@@ -337,7 +337,7 @@ inside fixed quests.
 
 --- Note for development versions 2.5.x ---
 
-Note that fices quests were turned off for the earlier 2.5.x
+Note that fixed quests were turned off for the earlier 2.5.x
 development versions while the relevant code was extensively revised.
 This process is ongoing.
 
