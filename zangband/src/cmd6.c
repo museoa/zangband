@@ -3174,7 +3174,7 @@ static void do_cmd_activate_aux(int item)
 						if ((y != py) || (x != px)) break;
 					}
 
-					project(0, 3, y, x, 1500, GF_ELEC,
+					project(0, 3, y, x, 1000, GF_ELEC,
 							  (PROJECT_THRU | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 				}
 
@@ -3186,7 +3186,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				if (!get_aim_dir(&dir)) return;
 				msg_print("You breathe the elements.");
-				fire_ball(GF_MISSILE, dir, 1500, 4);
+				fire_ball(GF_MISSILE, dir, 1000, 4);
 				msg_print("Your armor glows many colours...");
 				(void)set_afraid(0);
 				(void)set_shero(p_ptr->shero + randint1(50) + 50);
@@ -3667,7 +3667,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_BLUE:
 			{
 				msg_print("You breathe lightning.");
-				fire_ball(GF_ELEC, dir, 500, 2);
+				fire_ball(GF_ELEC, dir, 330, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3675,7 +3675,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_WHITE:
 			{
 				msg_print("You breathe frost.");
-				fire_ball(GF_COLD, dir, 550, 2);
+				fire_ball(GF_COLD, dir, 370, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3683,7 +3683,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_BLACK:
 			{
 				msg_print("You breathe acid.");
-				fire_ball(GF_ACID, dir, 650, 2);
+				fire_ball(GF_ACID, dir, 430, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3691,7 +3691,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_GREEN:
 			{
 				msg_print("You breathe poison gas.");
-				fire_ball(GF_POIS, dir, 750, 2);
+				fire_ball(GF_POIS, dir, 500, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3699,7 +3699,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_RED:
 			{
 				msg_print("You breathe fire.");
-				fire_ball(GF_FIRE, dir, 1000, 2);
+				fire_ball(GF_FIRE, dir, 670, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3716,7 +3716,7 @@ static void do_cmd_activate_aux(int item)
 				           ((chance == 2) ? GF_COLD :
 				            ((chance == 3) ? GF_ACID :
 				             ((chance == 4) ? GF_POIS : GF_FIRE)))),
-				          dir, 1250, 2);
+				          dir, 840, 2);
 				o_ptr->timeout = randint0(25) + 25;
 				break;
 			}
@@ -3724,7 +3724,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_BRONZE:
 			{
 				msg_print("You breathe confusion.");
-				fire_ball(GF_CONFUSION, dir, 600, 2);
+				fire_ball(GF_CONFUSION, dir, 400, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3732,7 +3732,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_GOLD:
 			{
 				msg_print("You breathe sound.");
-				fire_ball(GF_SOUND, dir, 650, 2);
+				fire_ball(GF_SOUND, dir, 430, 2);
 				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
@@ -3743,7 +3743,7 @@ static void do_cmd_activate_aux(int item)
 				msg_format("You breathe %s.",
 				           ((chance == 1 ? "chaos" : "disenchantment")));
 				fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT),
-				          dir, 1100, 2);
+				          dir, 740, 2);
 				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
@@ -3754,7 +3754,7 @@ static void do_cmd_activate_aux(int item)
 				msg_format("You breathe %s.",
 				           ((chance == 1 ? "sound" : "shards")));
 				fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS),
-				          dir, 1150, 2);
+				          dir, 750, 2);
 				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
@@ -3769,7 +3769,7 @@ static void do_cmd_activate_aux(int item)
 				fire_ball(((chance == 1) ? GF_CHAOS :
 				           ((chance == 2) ? GF_DISENCHANT :
 				            ((chance == 3) ? GF_SOUND : GF_SHARDS))),
-				          dir, 1250, 2);
+				          dir, 840, 2);
 				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
@@ -3779,7 +3779,7 @@ static void do_cmd_activate_aux(int item)
 				chance = randint0(2);
 				msg_format("You breathe %s.",
 				           ((chance == 0 ? "light" : "darkness")));
-				fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 1000, 2);
+				fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 670, 2);
 				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
@@ -3787,7 +3787,7 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_POWER:
 			{
 				msg_print("You breathe the elements.");
-				fire_ball(GF_MISSILE, dir, 1500, 3);
+				fire_ball(GF_MISSILE, dir, 1000, 3);
 				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
