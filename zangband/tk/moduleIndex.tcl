@@ -12,7 +12,6 @@ IndexOne NSDisplayInfo display-info.tcl
 IndexOne NSFont font.tcl
 IndexOne NSHelp help-html.tcl
 IndexOne NSHelpList help-list.tcl
-IndexOne NSHighScore highscore.tcl
 IndexOne NSChoiceWindow choice-window.tcl
 IndexOne NSInfoWindow info-window.tcl
 IndexOne NSInventory inventory.tcl
@@ -34,7 +33,6 @@ IndexOne NSPets pets.tcl
 IndexOne NSPower power.tcl
 IndexOne NSPhoto photo.tcl
 IndexOne NSPlayerFlags player-flags.tcl
-IndexOne NSRecord record.tcl
 IndexOne NSRecall recall.tcl
 IndexOne NSStore store.tcl
 IndexOne NSStore2 store2.tcl
