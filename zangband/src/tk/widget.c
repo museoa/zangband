@@ -35,8 +35,8 @@ struct Widget
 
 	int rc, cc;					/* Rows, columns */
 	int bh, bw;					/* Bitmap width & height */
-	int by, bx;					/* Offset of window from bitmap */
-	int dy, dx, dw, dh;			/* Dirty rect for copying */
+	
+	int dx1, dx2, dy1, dy2;		/* Dirty rect for copying */
 
 	int y_min, y_max;           /* Limits of displayed info */
 	int x_min, x_max;           /* Limits of displayed info */
@@ -61,6 +61,7 @@ static Widget *tnb_term;
 
 /* Predeclare */
 static void widget_draw_all(Widget *widgetPtr);
+
 
 /*
  * Actually draw stuff into the Widget's display. This routine is
@@ -94,10 +95,10 @@ static void Widget_Display(ClientData clientData)
 	if (widgetPtr->flags & WIDGET_EXPOSE)
 	{
 		/* Reset dirty bounds to entire window */
-		widgetPtr->dx = widgetPtr->bx;
-		widgetPtr->dy = widgetPtr->by;
-		widgetPtr->dw = widgetPtr->width;
-		widgetPtr->dh = widgetPtr->height;
+		widgetPtr->dx1 = 0;
+		widgetPtr->dy1 = 0;
+		widgetPtr->dx2 = widgetPtr->width;
+		widgetPtr->dy2 = widgetPtr->height;
 
 		/* Forget expose flag */
 		widgetPtr->flags &= ~WIDGET_EXPOSE;
@@ -112,22 +113,20 @@ static void Widget_Display(ClientData clientData)
 		widgetPtr->bitmap->pixmap, /* source drawable */
 		Tk_WindowId(tkwin), /* dest drawable */
 		widgetPtr->gc, /* graphics context */
-		widgetPtr->dx, widgetPtr->dy, /* source top-left */
-		(unsigned int) widgetPtr->dw, /* width */
-		(unsigned int) widgetPtr->dh, /* height */
-		widgetPtr->dx - widgetPtr->bx,
-		widgetPtr->dy - widgetPtr->by /* dest top-left */
+		widgetPtr->dx1, widgetPtr->dy1, /* source top-left */
+		widgetPtr->dx2 - widgetPtr->dx1, /* width */
+		widgetPtr->dy2 - widgetPtr->dy1, /* height */
+		widgetPtr->dx1, widgetPtr->dy1 /* dest top-left */
 	);
 
 	Plat_SyncDisplay(widgetPtr->display);
 
-	/* Reset dirty bounds to entire window */
-	widgetPtr->dx = widgetPtr->bx;
-	widgetPtr->dy = widgetPtr->by;
-	widgetPtr->dw = widgetPtr->width;
-	widgetPtr->dh = widgetPtr->height;
+	/* Clear dirty rectangle */
+	widgetPtr->dx1 = widgetPtr->width;
+	widgetPtr->dy1 = widgetPtr->height;
+	widgetPtr->dx2 = 0;
+	widgetPtr->dy2 = 0;
 }
-
 
 
 static void Widget_EventuallyRedraw(Widget *widgetPtr)
@@ -146,6 +145,33 @@ static void Widget_EventuallyRedraw(Widget *widgetPtr)
 	widgetPtr->flags |= WIDGET_REDRAW;
 }
 
+
+/* Resize the dirty rectangle */
+static void dirty_rectangle(int x1, int y1, int x2, int y2, Widget *widgetPtr)
+{
+	if (x1 < widgetPtr->dx1) widgetPtr->dx1 = x1;
+	if (y1 < widgetPtr->dy1) widgetPtr->dy1 = y1;
+	if (x2 > widgetPtr->dx2) widgetPtr->dx2 = x2;
+	if (y2 > widgetPtr->dy2) widgetPtr->dy2 = y2;
+	
+	/* Redraw later */
+	Widget_EventuallyRedraw(widgetPtr);
+}
+
+/* Dirty a string of changed tiles */
+static void dirty_line(int x, int y, int n, Widget *widgetPtr)
+{
+	int x1, x2, y1, y2;
+
+ 	/* Set dirty region */
+	x1 = (x - widgetPtr->x_min) * widgetPtr->gwidth;
+	x2 = (x + n - widgetPtr->x_min) * widgetPtr->gwidth;
+	y1 = (y - widgetPtr->y_min) * widgetPtr->gheight;
+	y2 = (y + 1 - widgetPtr->y_min) * widgetPtr->gheight;
+	
+	/* Dirty it */
+	dirty_rectangle(x1, y1, x2, y2, widgetPtr);
+}
 
 /*
  * Draw a blank square at this 'unkown' location
@@ -470,14 +496,8 @@ errr Term_wipe_tnb(int x, int y, int n)
 		DrawBlank(xp, yp, tnb_term);
 	}
 	
-	/* Set dirty bounds to entire window */
-	tnb_term->dx = tnb_term->bx;
-	tnb_term->dy = tnb_term->by;
-	tnb_term->dw = tnb_term->width;
-	tnb_term->dh = tnb_term->height;
-	
-	/* Redraw later */
-	Widget_EventuallyRedraw(tnb_term);
+	/* Set dirty region */
+	dirty_line(x, y, n, tnb_term);
 
 	return (0);
 }
@@ -501,15 +521,9 @@ errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp, const by
 		draw_pict(xp, yp, ap[i], cp[i], tap[i], tcp[i], tnb_term);
 	}
 	
-	/* Set dirty bounds to entire window */
-	tnb_term->dx = tnb_term->bx;
-	tnb_term->dy = tnb_term->by;
-	tnb_term->dw = tnb_term->width;
-	tnb_term->dh = tnb_term->height;
+	/* Set dirty region */
+	dirty_line(x, y, n, tnb_term);
 	
-	Widget_EventuallyRedraw(tnb_term);
-	
-	/* Hack - we don't support icons here (yet) */
 	return 0;
 }
 
@@ -535,14 +549,8 @@ errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
 		draw_char(xp, yp, a, s[i], tnb_term);
 	}
 	
-	/* Set dirty bounds to entire window */
-	tnb_term->dx = tnb_term->bx;
-	tnb_term->dy = tnb_term->by;
-	tnb_term->dw = tnb_term->width;
-	tnb_term->dh = tnb_term->height;
-	
-	/* Redraw later */
-	Widget_EventuallyRedraw(tnb_term);
+	/* Set dirty region */
+	dirty_line(x, y, n, tnb_term);
 
 	return 0;
 }
@@ -611,14 +619,8 @@ static void widget_draw_all(Widget *widgetPtr)
 		}
 	}
 
-	/* Set dirty bounds to entire window */
-	widgetPtr->dx = widgetPtr->bx;
-	widgetPtr->dy = widgetPtr->by;
-	widgetPtr->dw = widgetPtr->width;
-	widgetPtr->dh = widgetPtr->height;
-	
-	/* Redraw later */
-	Widget_EventuallyRedraw(widgetPtr);
+	/* Dirty the screen */
+	dirty_rectangle(0, 0, widgetPtr->width, widgetPtr->height, widgetPtr);
 }
 
 
@@ -695,9 +697,6 @@ static void Widget_Calc(Widget *widgetPtr)
 
 	widgetPtr->bw = cc * widgetPtr->gwidth;
 	widgetPtr->bh = rc * widgetPtr->gheight;
-
-	widgetPtr->bx = cLeft * widgetPtr->gwidth - dLeft;
-	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
 }
 
 static void Widget_Wipe(Widget *widgetPtr)
@@ -826,12 +825,6 @@ static void Widget_CmdDeletedProc(ClientData clientData)
 	}
 }
 
-static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
-{
-	*y += widgetPtr->by;
-	*x += widgetPtr->bx;
-}
-
 static Tk_OptionTable optionTable = None;
 
 /*
@@ -928,8 +921,6 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	Widget *widgetPtr = (Widget *) data;
 		
 	int xp, yp;
-	int dl = widgetPtr->dx, dt = widgetPtr->dy;
-	int dr = widgetPtr->dw + dl - 1, db = widgetPtr->dh + dt - 1;
 	int x = map->x, y = map->y;
 	
 	mb_ptr->a = map->a;
@@ -950,19 +941,11 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	/* Draw stuff at this location */
 	draw_square(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
 	
-	/* Dirty bounds */
-	if (xp < dl) dl = xp;
-	if (yp < dt) dt = yp;
-	if (xp + widgetPtr->gwidth - 1 > dr) dr = xp + widgetPtr->gwidth - 1;
-	if (yp + widgetPtr->gheight - 1 > db) db = yp + widgetPtr->gheight - 1;
+	/* Dirty the square */
+	dirty_rectangle(xp, yp,
+					xp + widgetPtr->gwidth - 1,
+					yp + widgetPtr->gheight - 1, widgetPtr);
 
-	/* Keep track of invalid region */
-	widgetPtr->dx = dl;
-	widgetPtr->dy = dt;
-	widgetPtr->dw = dr - dl + 1;
-	widgetPtr->dh = db - dt + 1;
-	
-	Widget_EventuallyRedraw(widgetPtr);
 }
 
 static void Widget_map_erase(vptr data)
@@ -1041,8 +1024,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			if (y < 0 || y >= widgetPtr->height)
 				break;
 
-			WindowToBitmap(widgetPtr, &y, &x);
-	
 			row = y / widgetPtr->gheight;
 			col = x / widgetPtr->gwidth;
 	
@@ -1162,8 +1143,8 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			{
 				int yp, xp, h, w;
 
-				yp = r * widgetPtr->gheight - widgetPtr->by;
-				xp = c * widgetPtr->gwidth - widgetPtr->bx;
+				yp = r * widgetPtr->gheight;
+				xp = c * widgetPtr->gwidth;
 				h = widgetPtr->gheight;
 				w = widgetPtr->gwidth;
 				
@@ -1201,8 +1182,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			if (y < 0 || y >= widgetPtr->height)
 				break;
 
-			WindowToBitmap(widgetPtr, &y, &x);
-	
 			row = y / widgetPtr->gheight;
 			col = x / widgetPtr->gwidth;
 	
@@ -1459,8 +1438,8 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->y = widgetPtr->x = 0;
 	widgetPtr->y_min = widgetPtr->y_max = 0;
 	widgetPtr->x_min = widgetPtr->x_max = 0;
-	widgetPtr->dx = widgetPtr->dy = 0;
-	widgetPtr->dw = widgetPtr->dh = 0;
+	widgetPtr->dx1 = widgetPtr->dy1 = 0;
+	widgetPtr->dx2 = widgetPtr->dy2 = 0;
 	widgetPtr->term = 0;
 
 	/*
