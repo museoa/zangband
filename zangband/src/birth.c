@@ -1356,8 +1356,8 @@ static void player_wipe(void)
 	p_ptr->food = PY_FOOD_FULL - 1;
 
 
-	/* Wipe the spells */
-	for (i = 0; i < 64; i++) p_ptr->spell_order[i] = 99;
+	/* None of the spells have been learned yet */
+	for (i = 0; i < PY_MAX_SPELLS; i++) p_ptr->spell_order[i] = 99;
 
 	/* Clean the mutation count */
 	mutant_regenerate_mod = 100;

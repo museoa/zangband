@@ -29,7 +29,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	int         spell;
 	int         num = 0;
 	int         ask;
-	byte        spells[64];
+	byte        spells[PY_MAX_SPELLS];
 	bool        flag, redraw, okay;
 	char        choice;
 	const magic_type  *s_ptr;
@@ -218,7 +218,7 @@ void do_cmd_browse_aux(const object_type *o_ptr)
 	int spell;
 	int num = 0;
 
-	byte spells[64];
+	byte spells[PY_MAX_SPELLS];
 
 
 	/* Access the item's sval */
@@ -468,7 +468,7 @@ void do_cmd_study(void)
 	}
 
 	/* Find the next open entry in "spell_order[]" */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < PY_MAX_SPELLS; i++)
 	{
 		/* Stop at the first empty space */
 		if (p_ptr->spell_order[i] == 99) break;

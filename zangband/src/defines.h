@@ -772,6 +772,12 @@
 #define PY_REGEN_HPBASE         1442		    /* Min amount hp regen*2^16 */
 #define PY_REGEN_MNBASE         524             /* Min amount mana regen*2^16 */
 
+
+/*
+ * Maximum number of players spells
+ */
+#define PY_MAX_SPELLS 64
+
 /*
  * Possible realms that can be chosen;
  * currently used only by birth.c and tables.c

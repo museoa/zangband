@@ -2989,7 +2989,7 @@ static errr rd_savefile_new_aux(void)
 	rd_u32b(&p_ptr->spell_forgotten1);
 	rd_u32b(&p_ptr->spell_forgotten2);
 
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < PY_MAX_SPELLS; i++)
 	{
 		rd_byte(&p_ptr->spell_order[i]);
 	}

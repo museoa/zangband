@@ -5558,7 +5558,7 @@ void display_koff(int k_idx)
 		int     sval;
 		int     spell = -1;
 		int     num = 0;
-		byte    spells[64];
+		byte    spells[PY_MAX_SPELLS];
 
 
 		/* Access the item's sval */

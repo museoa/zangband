@@ -1582,7 +1582,7 @@ static void calc_spells(void)
 	num_known = 0;
 
 	/* Count the number of spells we know */
-	for (j = 0; j < 64; j++)
+	for (j = 0; j < PY_MAX_SPELLS; j++)
 	{
 		/* Count known spells */
 		if ((j < 32) ?
@@ -1598,7 +1598,7 @@ static void calc_spells(void)
 
 
 	/* Forget spells which are too hard */
-	for (i = 63; i >= 0; i--)
+	for (i = PY_MAX_SPELLS - 1; i >= 0; i--)
 	{
 		/* Efficiency -- all done */
 		if (!p_ptr->spell_learned1 && !p_ptr->spell_learned2) break;
@@ -1649,7 +1649,7 @@ static void calc_spells(void)
 
 
 	/* Forget spells if we know too many spells */
-	for (i = 63; i >= 0; i--)
+	for (i = PY_MAX_SPELLS - 1; i >= 0; i--)
 	{
 		/* Stop when possible */
 		if (p_ptr->new_spells >= 0) break;
@@ -1693,7 +1693,7 @@ static void calc_spells(void)
 
 
 	/* Check for spells to remember */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < PY_MAX_SPELLS; i++)
 	{
 		/* None left to remember */
 		if (p_ptr->new_spells <= 0) break;

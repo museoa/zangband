@@ -1534,7 +1534,7 @@ static bool wr_savefile_new(void)
 	wr_u32b(p_ptr->spell_forgotten2);
 
 	/* Dump the ordered spells */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < PY_MAX_SPELLS; i++)
 	{
 		wr_byte(p_ptr->spell_order[i]);
 	}
