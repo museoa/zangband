@@ -230,9 +230,23 @@ struct term
 };
 
 
+#ifdef USE_TERM_MAP
 
+/*
+ * Map data structure
+ */
+typedef struct term_map term_map;
 
+struct term_map
+{
+	u16b object;
+	u16b monster;
+	u16b field;
+	byte terrain;
+	byte flags;
+};
 
+#endif /* USE_TERM_MAP */
 
 
 /**** Available Constants ****/
@@ -268,6 +282,23 @@ struct term
 #define TERM_XTRA_ALIVE 11		/* Change the "hard" level (optional) */
 #define TERM_XTRA_LEVEL 12		/* Change the "soft" level (optional) */
 #define TERM_XTRA_DELAY 13		/* Delay some milliseconds (optional) */
+#define TERM_XTRA_ERMAP 14		/* Erase the overhead map (optional) */
+
+/*
+ * This is used by the Borg and by ports that like to
+ * draw a "graphical" small-scale map
+ */
+#ifdef TERM_USE_MAP
+
+/*
+ * Constants used to pass lighting information to users
+ * of the overhead map hooks.
+ */
+#define MAP_SEEN	0x01
+#define MAP_GLOW	0x02
+#define MAP_LITE	0x04
+
+#endif /* TERM_USE_MAP */
 
 
 /**** Available Variables ****/
@@ -328,4 +359,13 @@ extern void Term_activate(term *t);
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
 
-#endif
+#ifdef USE_TERM_MAP
+
+extern errr (*term_map_hook) (int x, int y, term_map data) = NULL;
+extern errr (*term_erase_map_hook) (void) = NULL;
+extern void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr);
+extern void Term_erase_map(void);
+
+#endif /* USE_TERM_MAP */
+
+#endif /* INCLUDED_Z_TERM_H */

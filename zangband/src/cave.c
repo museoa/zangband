@@ -2125,36 +2125,48 @@ void display_dungeon(void)
  */
 void lite_spot(int x, int y)
 {
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
+	
 	/* Paranoia */
 	if (!character_dungeon) return;
-
-	/* Redraw if on screen */
-	if (panel_contains(x, y) && in_boundsp(x, y))
+	
+	if (in_boundsp(x, y))
 	{
-		byte a;
-		char c;
+		/* Get location */
+		c_ptr = area(x, y);
+		pc_ptr = parea(x, y);
 
-		cave_type *c_ptr = area(x, y);
-		pcave_type *pc_ptr = parea(x, y);
+#ifdef TERM_USE_MAP
+		/* Tell the world about this square */
+		Term_write_map(x, y, c_ptr, pc_ptr);
+#endif /* TERM_USE_MAP */		
+		
+		/* Redraw if on screen */
+		if (panel_contains(x, y))
+		{
+			byte a;
+			char c;
 
 #ifdef USE_TRANSPARENCY
-		byte ta;
-		char tc;
+			byte ta;
+			char tc;
 
-		/* Examine the grid */
-		map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
+			/* Examine the grid */
+			map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
 #else  /* USE_TRANSPARENCY */
-		/* Examine the grid */
-		map_info(c_ptr, pc_ptr, &a, &c);
+			/* Examine the grid */
+			map_info(c_ptr, pc_ptr, &a, &c);
 #endif /* USE_TRANSPARENCY */
 
 #ifdef USE_TRANSPARENCY
-		/* Hack -- Queue it */
-		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
+			/* Hack -- Queue it */
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
 #else  /* USE_TRANSPARENCY */
-		/* Hack -- Queue it */
-		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
+			/* Hack -- Queue it */
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
+		}
 	}
 }
 

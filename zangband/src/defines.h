@@ -591,10 +591,9 @@
 /* Was 512... 256 quarks added for random artifacts */
 
 /*
- * Number of times to pass through quark list while compacting.
- * QUARK_COMPACT * QUARK_MAX must be less than MAX_SHORT
+ * Threshold for quark list before compacting
  */
-#define QUARK_COMPACT	3
+#define QUARK_COMPACT	(MAX_SHORT - 1)
 
 
 /*
@@ -1160,6 +1159,7 @@
 #define WILD_INFO_QUEST		0x80
 
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
+#define FT_NONE					0x0000
 #define FT_WALL_INVIS			0x0001
 #define FT_GLYPH_WARDING		0x0002
 #define FT_GLYPH_EXPLODE		0x0003
