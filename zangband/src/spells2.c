@@ -2376,7 +2376,7 @@ bool genocide(int player_cast)
 	int     i;
 	char    typ;
 	bool    result = FALSE;
-	int     msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
+	int     msec = delay_factor * delay_factor * delay_factor;
 
 	/* Prevent genocide in quest levels */
 	if (p_ptr->inside_quest)
@@ -2457,7 +2457,7 @@ bool mass_genocide(int player_cast)
 {
 	int     i;
 	bool    result = FALSE;
-	int     msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
+	int     msec = delay_factor * delay_factor * delay_factor;
 
 
 	/* Prevent mass genocide in quest levels */

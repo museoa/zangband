@@ -3991,7 +3991,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 			/* Player name */
 			else if (streq(b+1, "PLAYER"))
 			{
-				v = op_ptr->base_name;
+				v = player_base;
 			}
 
 			/* Town */

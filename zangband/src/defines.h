@@ -48,6 +48,7 @@
 #define FAKE_VER_PATCH 2
 #endif /* USE_SCRIPT */
 
+#define ANGBAND_2_8_1
 #define ZANGBAND
 
 /*
@@ -2199,8 +2200,6 @@
 #define PW_EQUIP        0x00000002L     /* Display equip/inven */
 #define PW_SPELL        0x00000004L     /* Display spell list */
 #define PW_PLAYER       0x00000008L     /* Display character */
-#define PW_PLAYER_0		0x00000004L	/* Display player (basic) */
-#define PW_PLAYER_1		0x00000008L	/* Display player (extra) */
 /* xxx */
 /* xxx */
 #define PW_MESSAGE      0x00000040L     /* Display messages */
@@ -3113,552 +3112,302 @@
 #define RF6_INNATE_MASK \
 	(0L)
 
-
 /*** Option Definitions ***/
 
 /*
- * Max Options
- */
-#define OPT_MAX				256
-
-
-/*
- * Option indexes (normal)
+ * Option indexes (offsets)
  *
- * These values are hard-coded by savefiles.
+ * These values are hard-coded by savefiles (and various pieces of code).
  */
-#define OPT_rogue_like_commands		0
-#define OPT_quick_messages			1
-#define OPT_other_query_flag			2
-#define OPT_carry_query_flag			3
-#define OPT_use_old_target			4
-#define OPT_always_pickup			5
-#define OPT_always_repeat			6
-#define OPT_depth_in_feet			7
-#define OPT_stack_force_notes			8
-#define OPT_stack_force_costs			9
-#define OPT_show_labels				10
-#define OPT_show_weights			11
-/* 12 */
-/* 13 */
-#define OPT_ring_bell				14
-#define OPT_use_color				15
-#define OPT_find_ignore_stairs		16
-#define OPT_find_ignore_doors			17
-#define OPT_find_cut				18
-#define OPT_find_examine			19
-#define OPT_disturb_move			20
-#define OPT_disturb_near			21
-#define OPT_disturb_panel			22
-#define OPT_disturb_state			23
-#define OPT_disturb_minor			24
-#define OPT_disturb_other			25
-#define OPT_disturb_traps			26
-#define OPT_alert_failure			27
-#define OPT_last_words				28
-#define OPT_speak_unique			29
-#define OPT_small_levels			30
-#define OPT_empty_levels			31
-#define OPT_auto_haggle				32
-#define OPT_auto_scum				33
-#define OPT_stack_allow_items			34
-#define OPT_stack_allow_wands			35
-#define OPT_expand_look				36
-#define OPT_expand_list				37
-#define OPT_view_perma_grids			38
-#define OPT_view_torch_grids			39
-#define OPT_dungeon_align			40
-#define OPT_dungeon_stair			41
-#define OPT_flow_by_sound			42
-#define OPT_flow_by_smell			43
-/* 44 */
-/* 45 */
-#define OPT_smart_learn				46
-#define OPT_smart_cheat				47
-#define OPT_view_reduce_lite			48
-#define OPT_view_reduce_view			49
-#define OPT_avoid_abort				50
-#define OPT_avoid_other				51
-#define OPT_flush_failure			52
-#define OPT_flush_disturb			53
-#define OPT_flush_command			54
-#define OPT_fresh_before			55
-#define OPT_fresh_after				56
-#define OPT_fresh_message			57
-#define OPT_compress_savefile			58
-#define OPT_hilite_player			59
-#define OPT_view_yellow_lite			60
-#define OPT_view_bright_lite			61
-#define OPT_view_granite_lite			62
-#define OPT_view_special_lite			63
-/* 64 */
-/* 65 */
-/* 66 */
-/* 67 */
-/* 68 */
-/* 69 */
-/* 70 */
-/* 71 */
-/* 72 */
-/* 73 */
-/* 74 */
-/* 75 */
-/* 76 */
-/* 77 */
-#define OPT_autosave_l				78
-#define OPT_autosave_t				79
-/* 80 */
-/* 81 */
-/* 82 */
-/* 83 */
-/* 84 */
-/* 85 */
-/* 86 */
-/* 87 */
-/* 88 */
-/* 89 */
-/* 90 */
-/* 91 */
-/* 92 */
-/* 93 */
-/* 94 */
-/* 95 */
-/* 96 */
-/* 97 */
-/* 98 */
-/* 99 */
-/* 100 */
-/* 101 */
-/* 102 */
-/* 103 */
-/* 104 */
-/* 105 */
-/* 106 */
-/* 107 */
-/* 108 */
-/* 109 */
-/* 110 */
-/* 111 */
-/* 112 */
-/* 113 */
-/* 114 */
-/* 115 */
-/* 116 */
-/* 117 */
-/* 118 */
-/* 119 */
-/* 120 */
-/* 121 */
-/* 122 */
-/* 123 */
-/* 124 */
-/* 125 */
-/* 126 */
-/* 127 */
 
-/* 128 through 159 reserved for cheating options */
-#define OPT_cheat_peek				128
-#define OPT_cheat_hear				129
-#define OPT_cheat_room				130
-#define OPT_cheat_xtra				131
-#define OPT_cheat_know				132
-#define OPT_cheat_live				133
-/* 134 */
-/* 135 */
-/* 136 */
-/* 137 */
-/* 138 */
-/* 139 */
-/* 140 */
-/* 141 */
-/* 142 */
-/* 143 */
-/* 144 */
-/* 145 */
-/* 146 */
-/* 147 */
-/* 148 */
-/* 149 */
-/* 150 */
-/* 151 */
-/* 152 */
-/* 153 */
-/* 154 */
-/* 155 */
-/* 156 */
-/* 157 */
-/* 158 */
-/* 159 */
+#define OPT_MAX					256
+#define OPT_PLAYER				192
+#define OPT_BIRTH				32
+#define OPT_SERVER				32
 
-/* 160 */
-#define OPT_plain_descriptions		161
-#define OPT_stupid_monsters			162
-#define OPT_auto_destroy			163
-#define OPT_confirm_wear			164
-#define OPT_confirm_stairs			165
-/* 166 */
-#define OPT_easy_open				167
-#define OPT_easy_disarm				168
-#define OPT_easy_floor				169
-#define OPT_use_command				170
-#define OPT_center_player			171
-#define OPT_avoid_center			172
-/* 173 */
-/* 174 */
-/* 175 */
-/* 176 */
-/* 177 */
-/* 178 */
-/* 179 */
-/* 180 */
-/* 181 */
-/* 182 */
-/* 183 */
-/* 184 */
-/* 185 */
-/* 186 */
-/* 187 */
-/* 188 */
-/* 189 */
-/* 190 */
-/* 191 */
+#define OPT_FLAG_BIRTH			0x01
+#define OPT_FLAG_SERVER			0x02
+#define OPT_FLAG_PLAYER			0x04
 
-/* 192 through 223 reserved for Birth Options */
-#define OPT_vanilla_town			192
-/* 193 */
-#define OPT_ironman_shops			194
-#define OPT_ironman_small_levels		195
-#define OPT_ironman_downward			196
-#define OPT_ironman_autoscum			197
-#define OPT_ironman_hard_quests		198
-/* 199 */
-#define OPT_ironman_empty_levels		200
-#define OPT_terrain_streams			201
-/* 202 */
-#define OPT_munchkin_death			203
-#define OPT_ironman_rooms			204
-#define OPT_maximize_mode			205
-#define OPT_preserve_mode			206
-#define OPT_autoroller				207
-#define OPT_point_based				208
-#define OPT_silly_monsters			209
-#define OPT_ironman_nightmare			210
-/* 211 */
-/* 212 */
-/* 213 */
-/* 214 */
-/* 215 */
-/* 216 */
-/* 217 */
-/* 218 */
-/* 219 */
-/* 220 */
-/* 221 */
-/* 222 */
-/* 223 */
+/* Option set 0 */
 
-#define OPT_destroy_worthless			224
-#define OPT_monster_light			225
-/* 226 */
-/* 227 */
-/* 228 */
-/* 229 */
-/* 230 */
-/* 231 */
-/* 232 */
-/* 233 */
-/* 234 */
-/* 235 */
-/* 236 */
-/* 237 */
-/* 238 */
-/* 239 */
-/* 240 */
-/* 241 */
-/* 242 */
-/* 243 */
-/* 244 */
-/* 245 */
-/* 246 */
-/* 247 */
-/* 248 */
-/* 249 */
-/* 250 */
-/* 251 */
-#define OPT_take_notes				252
-#define OPT_auto_notes				253
-#define OPT_testing_stack			254
-#define OPT_testing_carry			255
+#define rogue_like_commands		p_ptr->options[0]
+#define quick_messages			p_ptr->options[1]
+#define other_query_flag		p_ptr->options[2]
+#define carry_query_flag		p_ptr->options[3]
+#define use_old_target			p_ptr->options[4]
+#define always_pickup			p_ptr->options[5]
+#define always_repeat			p_ptr->options[6]
+#define depth_in_feet			p_ptr->options[7]
+#define stack_force_notes		p_ptr->options[8]
+#define stack_force_costs		p_ptr->options[9]
+#define show_labels				p_ptr->options[10]
+#define show_weights			p_ptr->options[11]
+/* {TRUE,  0, NULL,					"Number 12" }, p_ptr->options[12] */
+/* {TRUE,  0, NULL,					"Number 13" }, p_ptr->options[13] */
+#define ring_bell				p_ptr->options[14]
+#define use_color				p_ptr->options[15]
+#define find_ignore_stairs		p_ptr->options[16]
+#define find_ignore_doors		p_ptr->options[17]
+#define find_cut				p_ptr->options[18]
+#define find_examine			p_ptr->options[19]
+#define disturb_move			p_ptr->options[20]
+#define disturb_near			p_ptr->options[21]
+#define disturb_panel			p_ptr->options[22]
+#define disturb_state			p_ptr->options[23]
+#define disturb_minor			p_ptr->options[24]
+#define disturb_other			p_ptr->options[25]
+#define disturb_traps			p_ptr->options[26]
+#define alert_failure			p_ptr->options[27]
+#define last_words				p_ptr->options[28]
+#define speak_unique			p_ptr->options[29]
+#define small_levels			svr_ptr->options[0]
+#define empty_levels			svr_ptr->options[1]
 
+/* Option set 1 */
 
-/*
- * Hack -- Option symbols
- */
-#define rogue_like_commands		op_ptr->opt[OPT_rogue_like_commands]
-#define quick_messages			op_ptr->opt[OPT_quick_messages]
-#define other_query_flag		op_ptr->opt[OPT_other_query_flag]
-#define carry_query_flag		op_ptr->opt[OPT_carry_query_flag]
-#define use_old_target			op_ptr->opt[OPT_use_old_target]
-#define always_pickup			op_ptr->opt[OPT_always_pickup]
-#define always_repeat			op_ptr->opt[OPT_always_repeat]
-#define depth_in_feet			op_ptr->opt[OPT_depth_in_feet]
-#define stack_force_notes		op_ptr->opt[OPT_stack_force_notes]
-#define stack_force_costs		op_ptr->opt[OPT_stack_force_costs]
-#define show_labels			op_ptr->opt[OPT_show_labels]
-#define show_weights			op_ptr->opt[OPT_show_weights]
-/* 12 */
-/* 13 */
-#define ring_bell				op_ptr->opt[OPT_ring_bell]
-#define use_color				op_ptr->opt[OPT_use_color]
-#define find_ignore_stairs		op_ptr->opt[OPT_find_ignore_stairs]
-#define find_ignore_doors		op_ptr->opt[OPT_find_ignore_doors]
-#define find_cut				op_ptr->opt[OPT_find_cut]
-#define find_examine			op_ptr->opt[OPT_find_examine]
-#define disturb_move			op_ptr->opt[OPT_disturb_move]
-#define disturb_near			op_ptr->opt[OPT_disturb_near]
-#define disturb_panel			op_ptr->opt[OPT_disturb_panel]
-#define disturb_state			op_ptr->opt[OPT_disturb_state]
-#define disturb_minor			op_ptr->opt[OPT_disturb_minor]
-#define disturb_other			op_ptr->opt[OPT_disturb_other]
-#define disturb_traps			op_ptr->opt[OPT_disturb_traps]
-#define alert_failure			op_ptr->opt[OPT_alert_failure]
-#define last_words			op_ptr->opt[OPT_last_words]
-#define speak_unique			op_ptr->opt[OPT_speak_unique]
-#define small_levels			op_ptr->opt[OPT_small_levels]
-#define empty_levels			op_ptr->opt[OPT_empty_levels]
-#define auto_haggle			op_ptr->opt[OPT_auto_haggle]
-#define auto_scum				op_ptr->opt[OPT_auto_scum]
-#define stack_allow_items		op_ptr->opt[OPT_stack_allow_items]
-#define stack_allow_wands		op_ptr->opt[OPT_stack_allow_wands]
-#define expand_look			op_ptr->opt[OPT_expand_look]
-#define expand_list			op_ptr->opt[OPT_expand_list]
-#define view_perma_grids		op_ptr->opt[OPT_view_perma_grids]
-#define view_torch_grids		op_ptr->opt[OPT_view_torch_grids]
-#define dungeon_align			op_ptr->opt[OPT_dungeon_align]
-#define dungeon_stair			op_ptr->opt[OPT_dungeon_stair]
-#define flow_by_sound			op_ptr->opt[OPT_flow_by_sound]
-#define flow_by_smell			op_ptr->opt[OPT_flow_by_smell]
-/* 44 */
-/* 45 */
-#define smart_learn			op_ptr->opt[OPT_smart_learn]
-#define smart_cheat			op_ptr->opt[OPT_smart_cheat]
-#define view_reduce_lite		op_ptr->opt[OPT_view_reduce_lite]
-#define view_reduce_view		op_ptr->opt[OPT_view_reduce_view]
-#define avoid_abort			op_ptr->opt[OPT_avoid_abort]
-#define avoid_other			op_ptr->opt[OPT_avoid_other]
-#define flush_failure			op_ptr->opt[OPT_flush_failure]
-#define flush_disturb			op_ptr->opt[OPT_flush_disturb]
-#define flush_command			op_ptr->opt[OPT_flush_command]
-#define fresh_before			op_ptr->opt[OPT_fresh_before]
-#define fresh_after			op_ptr->opt[OPT_fresh_after]
-#define fresh_message			op_ptr->opt[OPT_fresh_message]
-#define compress_savefile		op_ptr->opt[OPT_compress_savefile]
-#define hilite_player			op_ptr->opt[OPT_hilite_player]
-#define view_yellow_lite		op_ptr->opt[OPT_view_yellow_lite]
-#define view_bright_lite		op_ptr->opt[OPT_view_bright_lite]
-#define view_granite_lite		op_ptr->opt[OPT_view_granite_lite]
-#define view_special_lite		op_ptr->opt[OPT_view_special_lite]
-/* 64 */
-/* 65 */
-/* 66 */
-/* 67 */
-/* 68 */
-/* 69 */
-/* 70 */
-/* 71 */
-/* 72 */
-/* 73 */
-/* 74 */
-/* 75 */
-/* 76 */
-/* 77 */
-#define autosave_l			op_ptr->opt[OPT_autosave_l]
-#define autosave_t			op_ptr->opt[OPT_autosave_t]
-/* 80 */
-/* 81 */
-/* 82 */
-/* 83 */
-/* 84 */
-/* 85 */
-/* 86 */
-/* 87 */
-/* 88 */
-/* 89 */
-/* 90 */
-/* 91 */
-/* 92 */
-/* 93 */
-/* 94 */
-/* 95 */
-/* 96 */
-/* 97 */
-/* 98 */
-/* 99 */
-/* 100 */
-/* 101 */
-/* 102 */
-/* 103 */
-/* 104 */
-/* 105 */
-/* 106 */
-/* 107 */
-/* 108 */
-/* 109 */
-/* 110 */
-/* 111 */
-/* 112 */
-/* 113 */
-/* 114 */
-/* 115 */
-/* 116 */
-/* 117 */
-/* 118 */
-/* 119 */
-/* 120 */
-/* 121 */
-/* 122 */
-/* 123 */
-/* 124 */
-/* 125 */
-/* 126 */
-/* 127 */
-#define cheat_peek			op_ptr->opt[OPT_cheat_peek]
-#define cheat_hear 			op_ptr->opt[OPT_cheat_hear]
-#define cheat_room			op_ptr->opt[OPT_cheat_room]
-#define cheat_xtra			op_ptr->opt[OPT_cheat_xtra]
-#define cheat_know			op_ptr->opt[OPT_cheat_know]
-#define cheat_live			op_ptr->opt[OPT_cheat_live]
-/* 134 */
-/* 135 */
-/* 136 */
-/* 137 */
-/* 138 */
-/* 139 */
-/* 140 */
-/* 141 */
-/* 142 */
-/* 143 */
-/* 144 */
-/* 145 */
-/* 146 */
-/* 147 */
-/* 148 */
-/* 149 */
-/* 150 */
-/* 151 */
-/* 152 */
-/* 153 */
-/* 154 */
-/* 155 */
-/* 156 */
-/* 157 */
-/* 158 */
-/* 159 */
-/* 160 */
-#define plain_descriptions		op_ptr->opt[OPT_plain_descriptions]
-#define stupid_monsters			op_ptr->opt[OPT_stupid_monsters]
-#define auto_destroy			op_ptr->opt[OPT_auto_destroy]
-#define confirm_wear			op_ptr->opt[OPT_confirm_wear]
-#define confirm_stairs			op_ptr->opt[OPT_confirm_stairs]
-/* 166 */
-#define easy_open				op_ptr->opt[OPT_easy_open]
-#define easy_disarm			op_ptr->opt[OPT_easy_disarm]
-#define easy_floor			op_ptr->opt[OPT_easy_floor]
-#define use_command			op_ptr->opt[OPT_use_command]
-#define center_player			op_ptr->opt[OPT_center_player]
-#define avoid_center			op_ptr->opt[OPT_avoid_center]
-/* 173 */
-/* 174 */
-/* 175 */
-/* 176 */
-/* 177 */
-/* 178 */
-/* 179 */
-/* 180 */
-/* 181 */
-/* 182 */
-/* 183 */
-/* 184 */
-/* 185 */
-/* 186 */
-/* 187 */
-/* 188 */
-/* 189 */
-/* 190 */
-/* 191 */
-#define vanilla_town			op_ptr->opt[OPT_vanilla_town]
-/* 193 */
-#define ironman_shops			op_ptr->opt[OPT_ironman_shops]
-#define ironman_small_levels		op_ptr->opt[OPT_ironman_small_levels]
-#define ironman_downward		op_ptr->opt[OPT_ironman_downward]
-#define ironman_autoscum		op_ptr->opt[OPT_ironman_autoscum]
-#define ironman_hard_quests		op_ptr->opt[OPT_ironman_hard_quests]
-/* 199 */
-#define ironman_empty_levels		op_ptr->opt[OPT_ironman_empty_levels]
-#define terrain_streams			op_ptr->opt[OPT_terrain_streams]
-/* 202 */
-#define munchkin_death			op_ptr->opt[OPT_munchkin_death]
-#define ironman_rooms			op_ptr->opt[OPT_ironman_rooms]
-#define maximize_mode			op_ptr->opt[OPT_maximize_mode]
-#define preserve_mode			op_ptr->opt[OPT_preserve_mode]
-#define autoroller			op_ptr->opt[OPT_autoroller]
-#define point_based			op_ptr->opt[OPT_point_based]
-#define silly_monsters			op_ptr->opt[OPT_silly_monsters]
-#define ironman_nightmare		op_ptr->opt[OPT_ironman_nightmare]
-/* 211 */
-/* 212 */
-/* 213 */
-/* 214 */
-/* 215 */
-/* 216 */
-/* 217 */
-/* 218 */
-/* 219 */
-/* 220 */
-/* 221 */
-/* 222 */
-/* 223 */
-#define destroy_worthless		op_ptr->opt[OPT_destroy_worthless]
-#define monster_light			op_ptr->opt[OPT_monster_light]
-/* 226 */
-/* 227 */
-/* 228 */
-/* 229 */
-/* 230 */
-/* 231 */
-/* 232 */
-/* 233 */
-/* 234 */
-/* 235 */
-/* 236 */
-/* 237 */
-/* 238 */
-/* 239 */
-/* 240 */
-/* 241 */
-/* 242 */
-/* 243 */
-/* 244 */
-/* 245 */
-/* 246 */
-/* 247 */
-/* 248 */
-/* 249 */
-/* 250 */
-/* 251 */
-#define auto_notes			op_ptr->opt[OPT_take_notes]
-#define take_notes			op_ptr->opt[OPT_auto_notes]
-#define testing_stack			op_ptr->opt[OPT_testing_stack]
-#define testing_carry			op_ptr->opt[OPT_testing_carry]
+#define auto_haggle				p_ptr->options[30]
+#define	auto_scum				svr_ptr->options[2]
+#define stack_allow_items		svr_ptr->options[3]
+#define stack_allow_wands		svr_ptr->options[4]
+#define expand_look				svr_ptr->options[5]
+#define expand_list				svr_ptr->options[6]
+#define view_perma_grids		p_ptr->options[31]
+#define view_torch_grids		p_ptr->options[32]
+#define dungeon_align			svr_ptr->options[7]
+#define dungeon_stair			svr_ptr->options[8]
+#define	flow_by_sound			svr_ptr->options[9]
+#define flow_by_smell			svr_ptr->options[10]
+/* {TRUE,  0, NULL,					"Number 44" }, svr_ptr->options[11] */
+/* {TRUE,  0, NULL,					"Number 45" }, svr_ptr->options[12] */
+#define smart_learn				svr_ptr->options[13]
+#define smart_cheat				svr_ptr->options[14]
+#define	view_reduce_lite		p_ptr->options[33]
+#define view_reduce_view		p_ptr->options[34]
+#define avoid_abort				p_ptr->options[35]
+#define avoid_other				p_ptr->options[36]
+#define flush_failure			p_ptr->options[37]
+#define flush_disturb			p_ptr->options[38]
+#define flush_command			p_ptr->options[39]
+#define fresh_before			p_ptr->options[40]
+#define fresh_after				p_ptr->options[41]
+#define fresh_message			p_ptr->options[42]
+#define compress_savefile		p_ptr->options[43]
+#define hilite_player			p_ptr->options[44]
+#define view_yellow_lite		p_ptr->options[45]
+#define	view_bright_lite		p_ptr->options[46]
+#define view_granite_lite		p_ptr->options[47]
+#define	view_special_lite		p_ptr->options[48]
 
+/* Option Set 2 */
 
+/* {TRUE,  0, NULL,					"Number 64" }, p_ptr->options[49] */
+/* {TRUE,  0, NULL,					"Number 65" }, p_ptr->options[50] */
+/* {TRUE,  0, NULL,					"Number 66" }, p_ptr->options[51] */
+/* {TRUE,  0, NULL,					"Number 67" }, p_ptr->options[52] */
+/* {TRUE,  0, NULL,					"Number 68" }, p_ptr->options[53] */
+/* {TRUE,  0, NULL,					"Number 69" }, p_ptr->options[54] */
+/* {TRUE,  0, NULL,					"Number 70" }, p_ptr->options[55] */
+/* {TRUE,  0, NULL,					"Number 71" }, p_ptr->options[56] */
+/* {TRUE,  0, NULL,					"Number 72" }, p_ptr->options[57] */
+/* {TRUE,  0, NULL,					"Number 73" }, p_ptr->options[58] */
+/* {TRUE,  0, NULL,					"Number 74" }, p_ptr->options[59] */
+/* {TRUE,  0, NULL,					"Number 75" }, p_ptr->options[60] */
+/* {TRUE,  0, NULL,					"Number 76" }, p_ptr->options[61] */
+/* {TRUE,  0, NULL,					"Number 77" }, p_ptr->options[62] */
+/* {TRUE,  0, NULL,					"Number 78" }, p_ptr->options[63] */
+/* {TRUE,  0, NULL,					"Number 79" }, p_ptr->options[64] */
+/* {TRUE,  0, NULL,					"Number 80" }, p_ptr->options[65] */
+/* {TRUE,  0, NULL,					"Number 81" }, p_ptr->options[66] */
+/* {TRUE,  0, NULL,					"Number 82" }, p_ptr->options[67] */
+/* {TRUE,  0, NULL,					"Number 83" }, p_ptr->options[68] */
+/* {TRUE,  0, NULL,					"Number 84" }, p_ptr->options[69] */
+/* {TRUE,  0, NULL,					"Number 85" }, p_ptr->options[70] */
+/* {TRUE,  0, NULL,					"Number 86" }, p_ptr->options[71] */
+/* {TRUE,  0, NULL,					"Number 87" }, p_ptr->options[72] */
+/* {TRUE,  0, NULL,					"Number 88" }, p_ptr->options[73] */
+/* {TRUE,  0, NULL,					"Number 89" }, p_ptr->options[74] */
+/* {TRUE,  0, NULL,					"Number 90" }, p_ptr->options[75] */
+/* {TRUE,  0, NULL,					"Number 91" }, p_ptr->options[76] */
+/* {TRUE,  0, NULL,					"Number 92" }, p_ptr->options[77] */
+/* {TRUE,  0, NULL,					"Number 93" }, p_ptr->options[78] */
+/* {TRUE,  0, NULL,					"Number 94" }, p_ptr->options[79] */
+/* {TRUE,  0, NULL,					"Number 95" }, p_ptr->options[80] */
 
+/* Option Set 3 */
 
-/*
- * Information for "do_cmd_options()".
- */
-#define OPT_PAGE_MAX				10
-#define OPT_PAGE_PER				22
+/* {TRUE,  0, NULL,					"Number 96" }, p_ptr->options[81] */
+/* {TRUE,  0, NULL,					"Number 97" }, p_ptr->options[82] */
+/* {TRUE,  0, NULL,					"Number 98" }, p_ptr->options[83] */
+/* {TRUE,  0, NULL,					"Number 99" }, p_ptr->options[84] */
+/* {TRUE,  0, NULL,					"Number 100" }, p_ptr->options[85] */
+/* {TRUE,  0, NULL,					"Number 101" }, p_ptr->options[86] */
+/* {TRUE,  0, NULL,					"Number 102" }, p_ptr->options[87] */
+/* {TRUE,  0, NULL,					"Number 103" }, p_ptr->options[88] */
+/* {TRUE,  0, NULL,					"Number 104" }, p_ptr->options[89] */
+/* {TRUE,  0, NULL,					"Number 105" }, p_ptr->options[90] */
+/* {TRUE,  0, NULL,					"Number 106" }, p_ptr->options[91] */
+/* {TRUE,  0, NULL,					"Number 107" }, p_ptr->options[92] */
+/* {TRUE,  0, NULL,					"Number 108" }, p_ptr->options[93] */
+/* {TRUE,  0, NULL,					"Number 109" }, p_ptr->options[94] */
+/* {TRUE,  0, NULL,					"Number 110" }, p_ptr->options[95] */
+/* {TRUE,  0, NULL,					"Number 111" }, p_ptr->options[96] */
+/* {TRUE,  0, NULL,					"Number 112" }, p_ptr->options[97] */
+/* {TRUE,  0, NULL,					"Number 113" }, p_ptr->options[98] */
+/* {TRUE,  0, NULL,					"Number 114" }, p_ptr->options[99] */
+/* {TRUE,  0, NULL,					"Number 115" }, p_ptr->options[100] */
+/* {TRUE,  0, NULL,					"Number 116" }, p_ptr->options[101] */
+/* {TRUE,  0, NULL,					"Number 117" }, p_ptr->options[102] */
+/* {TRUE,  0, NULL,					"Number 118" }, p_ptr->options[103] */
+/* {TRUE,  0, NULL,					"Number 119" }, p_ptr->options[104] */
+/* {TRUE,  0, NULL,					"Number 120" }, p_ptr->options[105] */
+/* {TRUE,  0, NULL,					"Number 121" }, p_ptr->options[106] */
+/* {TRUE,  0, NULL,					"Number 122" }, p_ptr->options[107 */
+/* {TRUE,  0, NULL,					"Number 123" }, p_ptr->options[108] */
+/* {TRUE,  0, NULL,					"Number 124" }, p_ptr->options[109] */
+/* {TRUE,  0, NULL,					"Number 125" }, p_ptr->options[110] */
+/* {TRUE,  0, NULL,					"Number 126" }, p_ptr->options[111] */
+/* {TRUE,  0, NULL,					"Number 127" }, p_ptr->options[112] */
+
+/* Option Set 4 */
+
+/* {TRUE,  0, NULL,					"Number 128" },p_ptr->options[113] */
+/* {TRUE,  0, NULL,					"Number 129" },p_ptr->options[114] */
+/* {TRUE,  0, NULL,					"Number 130" },p_ptr->options[115] */
+/* {TRUE,  0, NULL,					"Number 131" },p_ptr->options[116] */
+/* {TRUE,  0, NULL,					"Number 132" },p_ptr->options[117] */
+/* {TRUE,  0, NULL,					"Number 133" },p_ptr->options[118] */
+/* {TRUE,  0, NULL,					"Number 134" },p_ptr->options[119] */
+/* {TRUE,  0, NULL,					"Number 135" },p_ptr->options[120] */
+/* {TRUE,  0, NULL,					"Number 136" },p_ptr->options[121] */
+/* {TRUE,  0, NULL,					"Number 137" },p_ptr->options[122] */
+/* {TRUE,  0, NULL,					"Number 138" },p_ptr->options[123] */
+/* {TRUE,  0, NULL,					"Number 139" },p_ptr->options[124] */
+/* {TRUE,  0, NULL,					"Number 140" },p_ptr->options[125] */
+/* {TRUE,  0, NULL,					"Number 141" },p_ptr->options[126] */
+/* {TRUE,  0, NULL,					"Number 142" },p_ptr->options[127] */
+/* {TRUE,  0, NULL,					"Number 143" },p_ptr->options[128] */
+/* {TRUE,  0, NULL,					"Number 144" },p_ptr->options[129] */
+/* {TRUE,  0, NULL,					"Number 145" },p_ptr->options[130] */
+/* {TRUE,  0, NULL,					"Number 146" },p_ptr->options[131] */
+/* {TRUE,  0, NULL,					"Number 147" },p_ptr->options[132] */
+/* {TRUE,  0, NULL,					"Number 148" },p_ptr->options[133] */
+/* {TRUE,  0, NULL,					"Number 149" },p_ptr->options[134] */
+/* {TRUE,  0, NULL,					"Number 150" },p_ptr->options[135] */
+/* {TRUE,  0, NULL,					"Number 151" },p_ptr->options[136] */
+/* {TRUE,  0, NULL,					"Number 152" },p_ptr->options[137] */
+/* {TRUE,  0, NULL,					"Number 153" },p_ptr->options[138] */
+/* {TRUE,  0, NULL,					"Number 154" },p_ptr->options[139] */
+/* {TRUE,  0, NULL,					"Number 155" },p_ptr->options[140] */
+/* {TRUE,  0, NULL,					"Number 156" },p_ptr->options[141] */
+/* {TRUE,  0, NULL,					"Number 157" },p_ptr->options[142] */
+/* {TRUE,  0, NULL,					"Number 158" },p_ptr->options[143] */
+/* {TRUE,  0, NULL,					"Number 159" },p_ptr->options[144] */
+
+/* Option Set 5 */
+
+/* {TRUE,  0, NULL,					"Number 160" }, p_ptr->options[145] */
+#define	plain_descriptions		p_ptr->options[146]
+#define stupid_monsters			p_ptr->birth[0]
+#define auto_destroy			p_ptr->options[147]
+#define confirm_wear			p_ptr->options[148]
+#define confirm_stairs			p_ptr->options[149]
+#define easy_open				p_ptr->options[150]
+#define easy_disarm				p_ptr->options[151]
+#define easy_floor				p_ptr->options[152]
+#define use_command				p_ptr->options[153]
+#define center_player			p_ptr->options[154]
+#define avoid_center			p_ptr->options[155]
+/* {TRUE,  0, NULL,					"Number 172" }, p_ptr->options[156] */
+/* {TRUE,  0, NULL,					"Number 173" }, p_ptr->options[157] */
+/* {TRUE,  0, NULL,					"Number 174" }, p_ptr->options[158] */
+/* {TRUE,  0, NULL,					"Number 175" }, p_ptr->options[159] */
+/* {TRUE,  0, NULL,					"Number 176" }, p_ptr->options[160] */
+/* {TRUE,  0, NULL,					"Number 177" }, p_ptr->options[161] */
+/* {TRUE,  0, NULL,					"Number 178" }, p_ptr->options[162] */
+/* {TRUE,  0, NULL,					"Number 179" }, p_ptr->options[163] */
+/* {TRUE,  0, NULL,					"Number 180" }, p_ptr->options[164] */
+/* {TRUE,  0, NULL,					"Number 181" }, p_ptr->options[165] */
+/* {TRUE,  0, NULL,					"Number 182" }, p_ptr->options[166] */
+/* {TRUE,  0, NULL,					"Number 183" }, p_ptr->options[167] */
+/* {TRUE,  0, NULL,					"Number 184" }, p_ptr->options[168] */
+/* {TRUE,  0, NULL,					"Number 185" }, p_ptr->options[169] */
+/* {TRUE,  0, NULL,					"Number 186" }, p_ptr->options[170] */
+/* {TRUE,  0, NULL,					"Number 187" }, p_ptr->options[171] */
+/* {TRUE,  0, NULL,					"Number 188" }, p_ptr->options[172] */
+/* {TRUE,  0, NULL,					"Number 189" }, p_ptr->options[173] */
+/* {TRUE,  0, NULL,					"Number 190" }, p_ptr->options[174] */
+/* {TRUE,  0, NULL,					"Number 191" }, p_ptr->options[175] */
+
+/* Option Set 6 */
+
+#define vanilla_town			p_ptr->birth[1]
+/* {TRUE,  0, NULL,					"Number 193" }, p_ptr->options[176] */
+#define ironman_shops			p_ptr->birth[2]
+#define ironman_small_levels	p_ptr->birth[3]
+#define ironman_downward		p_ptr->birth[4]
+#define ironman_autoscum		p_ptr->birth[5]
+#define ironman_hard_quests		p_ptr->birth[6]
+/* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
+#define ironman_empty_levels	p_ptr->birth[8]
+#define terrain_streams			p_ptr->birth[9]
+/* {TRUE,  0, NULL,					"Number 202" }, p_ptr->birth[10] */
+#define munchkin_death			p_ptr->birth[11]
+#define ironman_rooms			p_ptr->birth[12]
+#define maximize_mode			p_ptr->birth[13]
+#define preserve_mode			p_ptr->birth[14]
+#define autoroller				p_ptr->birth[15]
+#define point_based				p_ptr->birth[16]
+#define silly_monsters			p_ptr->birth[17]
+#define ironman_nightmare		p_ptr->birth[18]
+/* {TRUE,  0, NULL,					"Number 211" }, p_ptr->birth[19] */
+/* {TRUE,  0, NULL,					"Number 212" }, p_ptr->birth[20] */
+/* {TRUE,  0, NULL,					"Number 213" }, p_ptr->birth[21] */
+/* {TRUE,  0, NULL,					"Number 214" }, p_ptr->birth[22] */
+/* {TRUE,  0, NULL,					"Number 215" }, p_ptr->birth[23] */
+/* {TRUE,  0, NULL,					"Number 216" }, p_ptr->birth[24] */
+/* {TRUE,  0, NULL,					"Number 217" }, p_ptr->birth[25] */
+/* {TRUE,  0, NULL,					"Number 218" }, p_ptr->birth[26] */
+/* {TRUE,  0, NULL,					"Number 219" }, p_ptr->birth[27] */
+/* {TRUE,  0, NULL,					"Number 220" }, p_ptr->birth[28] */
+/* {TRUE,  0, NULL,					"Number 221" }, p_ptr->birth[29] */
+/* {TRUE,  0, NULL,					"Number 222" }, p_ptr->birth[30] */
+/* {TRUE,  0, NULL,					"Number 223" }, p_ptr->birth[31] */
+
+/* Option Set 7 */
+
+#define destroy_worthless		svr_ptr->options[15]
+#define monster_light			svr_ptr->options[16]
+/* "Turn on muliplayer client - server code" , svr_ptr->options[17] */
+/* {TRUE,  0, NULL,					"Number 227" },svr_ptr->options[18] */
+/* {TRUE,  0, NULL,					"Number 228" },svr_ptr->options[19] */
+/* {TRUE,  0, NULL,					"Number 229" },svr_ptr->options[20] */
+/* {TRUE,  0, NULL,					"Number 230" },svr_ptr->options[21] */
+/* {TRUE,  0, NULL,					"Number 231" },svr_ptr->options[22] */
+/* {TRUE,  0, NULL,					"Number 232" },svr_ptr->options[23] */
+/* {TRUE,  0, NULL,					"Number 233" },svr_ptr->options[24] */
+/* {TRUE,  0, NULL,					"Number 234" },svr_ptr->options[25] */
+/* {TRUE,  0, NULL,					"Number 235" },svr_ptr->options[26] */
+/* {TRUE,  0, NULL,					"Number 236" },svr_ptr->options[27] */
+/* {TRUE,  0, NULL,					"Number 237" },svr_ptr->options[28] */
+/* {TRUE,  0, NULL,					"Number 238" },svr_ptr->options[29] */
+/* {TRUE,  0, NULL,					"Number 239" },p_ptr->options[177] */
+/* {TRUE,  0, NULL,					"Number 240" },p_ptr->options[178] */
+/* {TRUE,  0, NULL,					"Number 241" },p_ptr->options[179] */
+/* {TRUE,  0, NULL,					"Number 242" },p_ptr->options[180] */
+/* {TRUE,  0, NULL,					"Number 243" },p_ptr->options[181] */
+/* {TRUE,  0, NULL,					"Number 244" },p_ptr->options[182] */
+/* {TRUE,  0, NULL,					"Number 245" },p_ptr->options[183] */
+/* {TRUE,  0, NULL,					"Number 246" },p_ptr->options[184] */
+/* {TRUE,  0, NULL,					"Number 247" },p_ptr->options[185] */
+/* {TRUE,  0, NULL,					"Number 248" },p_ptr->options[186] */
+/* {TRUE,  0, NULL,					"Number 249" },p_ptr->options[187] */
+/* {TRUE,  0, NULL,					"Number 250" },p_ptr->options[188] */
+#define auto_notes				p_ptr->options[189]
+#define take_notes				p_ptr->options[190]
+/* {TRUE,  0, NULL,					"Number 253" }, p_ptr->options[191] */
+#define testing_stack			svr_ptr->options[30]
+#define testing_carry			svr_ptr->options[31]
 
 
 

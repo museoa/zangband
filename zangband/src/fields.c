@@ -1646,7 +1646,7 @@ static char corpse_type(char feat)
 /*
  * Initialise a corpse / skeleton after being loaded from a savefile.
  */
-void field_action_corpse_load(s16b *field_ptr, void *input)
+void field_action_corpse_load(s16b *field_ptr, void *nothing)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	

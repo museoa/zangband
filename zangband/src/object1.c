@@ -28,12 +28,11 @@
  *
  * The "prefs" parameter is no longer meaningful.  XXX XXX XXX
  */
-void reset_visuals(bool unused)
+void reset_visuals(void)
 {
 	int i;
 
-
-	/* Extract default attr/char code for features */
+	/* Extract some info about terrain features */
 	for (i = 0; i < max_f_idx; i++)
 	{
 		feature_type *f_ptr = &f_info[i];
@@ -63,7 +62,6 @@ void reset_visuals(bool unused)
 		r_ptr->x_char = r_ptr->d_char;
 	}
 	
-
 	/* Extract default attr/char code for fields */
 	for (i = 0; i < max_t_idx; i++)
 	{
@@ -72,14 +70,6 @@ void reset_visuals(bool unused)
 		/* Default attr/char */
 		t_ptr->f_attr = t_ptr->d_attr;
 		t_ptr->f_char = t_ptr->d_char;
-	}
-
-
-	/* Extract attr/chars for inventory objects (by tval) */
-	for (i = 0; i < 128; i++)
-	{
-		/* Default to white */
-		tval_to_attr[i] = TERM_WHITE;
 	}
 
 
@@ -2040,22 +2030,22 @@ void toggle_inven_equip(void)
 		if (!angband_term[j]) continue;
 
 		/* Flip inven to equip */
-		if (op_ptr->window_flag[j] & (PW_INVEN))
+		if (window_flag[j] & (PW_INVEN))
 		{
 			/* Flip flags */
-			op_ptr->window_flag[j] &= ~(PW_INVEN);
-			op_ptr->window_flag[j] |= (PW_EQUIP);
+			window_flag[j] &= ~(PW_INVEN);
+			window_flag[j] |= (PW_EQUIP);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_EQUIP);
 		}
 
 		/* Flip inven to equip */
-		else if (op_ptr->window_flag[j] & (PW_EQUIP))
+		else if (window_flag[j] & (PW_EQUIP))
 		{
 			/* Flip flags */
-			op_ptr->window_flag[j] &= ~(PW_EQUIP);
-			op_ptr->window_flag[j] |= (PW_INVEN);
+			window_flag[j] &= ~(PW_EQUIP);
+			window_flag[j] |= (PW_INVEN);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
@@ -2630,10 +2620,10 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			if (!angband_term[j]) continue;
 
 			/* Count windows displaying inven */
-			if (op_ptr->window_flag[j] & (PW_INVEN)) ni++;
+			if (window_flag[j] & (PW_INVEN)) ni++;
 
 			/* Count windows displaying equip */
-			if (op_ptr->window_flag[j] & (PW_EQUIP)) ne++;
+			if (window_flag[j] & (PW_EQUIP)) ne++;
 		}
 
 		/* Toggle if needed */

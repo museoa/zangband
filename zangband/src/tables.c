@@ -5874,1076 +5874,290 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Options -- textual names (where defined)
+ * Available Options
  */
-cptr option_text[OPT_MAX] =
+option_type option_info[OPT_MAX] =
 {
-	"rogue_like_commands",		/* OPT_rogue_like_commands */
-	"quick_messages",			/* OPT_quick_messages */
-	"other_query_flag",		/* OPT_other_query_flag */
-	"carry_query_flag",		/* OPT_carry_query_flag */
-	"use_old_target",			/* OPT_use_old_target */
-	"always_pickup",			/* OPT_always_pickup */
-	"always_repeat",			/* OPT_always_repeat */
-	"depth_in_feet",			/* OPT_depth_in_feet */
-	"stack_force_notes",		/* OPT_stack_force_notes */
-	"stack_force_costs",		/* OPT_stack_force_costs */
-	"show_labels",			/* OPT_show_labels */
-	"show_weights",			/* OPT_show_weights */
-	NULL,					/* 12 */
-	NULL,					/* 13 */
-	"ring_bell",			/* OPT_ring_bell */
-	"use_color",			/* OPT_use_color */
-	"find_ignore_stairs",		/* OPT_find_ignore_stairs */
-	"find_ignore_doors",		/* OPT_find_ignore_doors */
-	"find_cut",				/* OPT_find_cut */
-	"find_examine",			/* OPT_find_examine */
-	"disturb_move",			/* OPT_disturb_move */
-	"disturb_near",			/* OPT_disturb_near */
-	"disturb_panel",			/* OPT_disturb_panel */
-	"disturb_state",			/* OPT_disturb_state */
-	"disturb_minor",			/* OPT_disturb_minor */
-	"disturb_other",			/* OPT_disturb_other */
-	"disturb_traps",			/* OPT_disturb_traps */
-	"alert_failure",			/* OPT_alert_failure */
-	"last_words",			/* OPT_last_words */
-	"speak_unique",			/* OPT_speak_unique */
-	"small_levels",			/* OPT_small_levels */
-	"empty_levels",			/* OPT_empty_levels */
-	"auto_haggle",			/* OPT_auto_haggle */
-	"auto_scum",			/* OPT_auto_scum */
-	"stack_allow_items",		/* OPT_stack_allow_items */
-	"stack_allow_wands",		/* OPT_stack_allow_wands */
-	"expand_look",			/* OPT_expand_look */
-	"expand_list",			/* OPT_expand_list */
-	"view_perma_grids",		/* OPT_view_perma_grids */
-	"view_torch_grids",		/* OPT_view_torch_grids */
-	"dungeon_align",			/* OPT_dungeon_align */
-	"dungeon_stair",			/* OPT_dungeon_stair */
-	"flow_by_sound",			/* OPT_flow_by_sound */
-	"flow_by_smell",			/* OPT_flow_by_smell */
-	NULL,					/* 44 */
-	NULL,					/* 45 */
-	"smart_learn",			/* OPT_smart_learn */
-	"smart_cheat",			/* OPT_smart_cheat */
-	"view_reduce_lite",		/* OPT_view_reduce_lite */
-	"view_reduce_view",		/* OPT_view_reduce_view */
-	"avoid_abort",			/* OPT_avoid_abort */
-	"avoid_other",			/* OPT_avoid_other */
-	"flush_failure",			/* OPT_flush_failure */
-	"flush_disturb",			/* OPT_flush_disturb */
-	"flush_command",			/* OPT_flush_command */
-	"fresh_before",			/* OPT_fresh_before */
-	"fresh_after",			/* OPT_fresh_after */
-	"fresh_message",			/* OPT_fresh_message */
-	"compress_savefile",		/* OPT_compress_savefile */
-	"hilite_player",			/* OPT_hilite_player */
-	"view_yellow_lite",		/* OPT_view_yellow_lite */
-	"view_bright_lite",		/* OPT_view_bright_lite */
-	"view_granite_lite",		/* OPT_view_granite_lite */
-	"view_special_lite",		/* OPT_view_special_lite */
-	NULL,					/* 64 */
-	NULL,					/* 65 */
-	NULL,					/* 66 */
-	NULL,					/* 67 */
-	NULL,					/* 68 */
-	NULL,					/* 69 */
-	NULL,					/* 70 */
-	NULL,					/* 71 */
-	NULL,					/* 72 */
-	NULL,					/* 73 */
-	NULL,					/* 74 */
-	NULL,					/* 75 */
-	NULL,					/* 76 */
-	NULL,					/* 77 */
-	"autosave_l",			/* OPT_autosave_l */
-	"autosave_t",			/* OPT_autosave_t */
-	NULL,					/* 80 */
-	NULL,					/* 81 */
-	NULL,					/* 82 */
-	NULL,					/* 83 */
-	NULL,					/* 84 */
-	NULL,					/* 85 */
-	NULL,					/* 86 */
-	NULL,					/* 87 */
-	NULL,					/* 88 */
-	NULL,					/* 89 */
-	NULL,					/* 90 */
-	NULL,					/* 91 */
-	NULL,					/* 92 */
-	NULL,					/* 93 */
-	NULL,					/* 94 */
-	NULL,					/* 95 */
-	NULL,					/* 96 */
-	NULL,					/* 97 */
-	NULL,					/* 98 */
-	NULL,					/* 99 */
-	NULL,					/* 100 */
-	NULL,					/* 101 */
-	NULL,					/* 102 */
-	NULL,					/* 103 */
-	NULL,					/* 104 */
-	NULL,					/* 105 */
-	NULL,					/* 106 */
-	NULL,					/* 107 */
-	NULL,					/* 108 */
-	NULL,					/* 109 */
-	NULL,					/* 110 */
-	NULL,					/* 111 */
-	NULL,					/* 112 */
-	NULL,					/* 113 */
-	NULL,					/* 114 */
-	NULL,					/* 115 */
-	NULL,					/* 116 */
-	NULL,					/* 117 */
-	NULL,					/* 118 */
-	NULL,					/* 119 */
-	NULL,					/* 120 */
-	NULL,					/* 121 */
-	NULL,					/* 122 */
-	NULL,					/* 123 */
-	NULL,					/* 124 */
-	NULL,					/* 125 */
-	NULL,					/* 126 */
-	NULL,					/* 127 */
-	"cheat_peek",			/* OPT_cheat_peek */
-	"cheat_hear",			/* OPT_cheat_hear */
-	"cheat_room",			/* OPT_cheat_room */
-	"cheat_xtra",			/* OPT_cheat_xtra */
-	"cheat_know",			/* OPT_cheat_know */
-	"cheat_live",			/* OPT_cheat_live */
-	NULL,					/* 134 */
-	NULL,					/* 135 */
-	NULL,					/* 136 */
-	NULL,					/* 137 */
-	NULL,					/* 138 */
-	NULL,					/* 139 */
-	NULL,					/* 140 */
-	NULL,					/* 141 */
-	NULL,					/* 142 */
-	NULL,					/* 143 */
-	NULL,					/* 144 */
-	NULL,					/* 145 */
-	NULL,					/* 146 */
-	NULL,					/* 147 */
-	NULL,					/* 148 */
-	NULL,					/* 149 */
-	NULL,					/* 150 */
-	NULL,					/* 151 */
-	NULL,					/* 152 */
-	NULL,					/* 153 */
-	NULL,					/* 154 */
-	NULL,					/* 155 */
-	NULL,					/* 156 */
-	NULL,					/* 157 */
-	NULL,					/* 158 */
-	NULL,					/* 159 */
-	NULL,					/* 160 */
-	"plain_descriptions",		/* OPT_plain_descriptions */
-	"stupid_monsters",		/* OPT_stupid_monsters */
-	"auto_destroy",			/* OPT_auto_destroy */
-	"confirm_wear",			/* OPT_confirm_wear */
-	"confirm_stairs",			/* OPT_confirm_stairs */
-	NULL,					/* 166 */
-	"easy_open",			/* OPT_easy_open */
-	"easy_disarm",			/* OPT_easy_disarm */
-	"easy_floor",			/* OPT_easy_floor */
-	"use_command",			/* OPT_use_command */
-	"center_player",			/* OPT_center_player */
-	"avoid_center",			/* OPT_avoid_center */
-	NULL,					/* 173 */
-	NULL,					/* 174 */
-	NULL,					/* 175 */
-	NULL,					/* 176 */
-	NULL,					/* 177 */
-	NULL,					/* 178 */
-	NULL,					/* 179 */
-	NULL,					/* 180 */
-	NULL,					/* 181 */
-	NULL,					/* 182 */
-	NULL,					/* 183 */
-	NULL,					/* 184 */
-	NULL,					/* 185 */
-	NULL,					/* 186 */
-	NULL,					/* 187 */
-	NULL,					/* 188 */
-	NULL,					/* 189 */
-	NULL,					/* 190 */
-	NULL,					/* 191 */
-	"vanilla_town",			/* OPT_vanilla_town */
-	NULL,					/* 193 */
-	"ironman_shops",			/* OPT_ironman_shops */
-	"ironman_small_levels",		/* OPT_ironman_small_levels */
-	"ironman_downward",		/* OPT_ironman_downward */
-	"ironman_autoscum",		/* OPT_ironman_autoscum */
-	"ironman_hard_quests",		/* OPT_ironman_hard_quests */
-	NULL,					/* 199 */
-	"ironman_empty_levels",		/* OPT_ironman_empty_levels */
-	"terrain_streams",		/* OPT_terrain_streams */
-	NULL,					/* 202 */
-	"munchkin_death",			/* OPT_munchkin_death */
-	"ironman_rooms",			/* OPT_ironman_rooms */
-	"maximize_mode",			/* OPT_maximize_mode */
-	"preserve_mode",			/* OPT_preserve_mode */
-	"autoroller",			/* OPT_autoroller */
-	"point_based",			/* OPT_point_based */
-	"silly_monsters",			/* OPT_silly_monsters */
-	"ironman_nightmare",		/* OPT_ironman_nightmare */
-	NULL,					/* 211 */
-	NULL,					/* 212 */
-	NULL,					/* 213 */
-	NULL,					/* 214 */
-	NULL,					/* 215 */
-	NULL,					/* 216 */
-	NULL,					/* 217 */
-	NULL,					/* 218 */
-	NULL,					/* 219 */
-	NULL,					/* 220 */
-	NULL,					/* 221 */
-	NULL,					/* 222 */
-	NULL,					/* 223 */
-	"destroy_worthless",		/* OPT_destroy_worthless */
-	"monster_light",			/* OPT_monster_light */
-	NULL,					/* 226 */
-	NULL,					/* 227 */
-	NULL,					/* 228 */
-	NULL,					/* 229 */
-	NULL,					/* 230 */
-	NULL,					/* 231 */
-	NULL,					/* 232 */
-	NULL,					/* 233 */
-	NULL,					/* 234 */
-	NULL,					/* 235 */
-	NULL,					/* 236 */
-	NULL,					/* 237 */
-	NULL,					/* 238 */
-	NULL,					/* 239 */
-	NULL,					/* 240 */
-	NULL,					/* 241 */
-	NULL,					/* 242 */
-	NULL,					/* 243 */
-	NULL,					/* 244 */
-	NULL,					/* 245 */
-	NULL,					/* 246 */
-	NULL,					/* 247 */
-	NULL,					/* 248 */
-	NULL,					/* 249 */
-	NULL,					/* 250 */
-	NULL,					/* 251 */
-	"auto_notes",			/* OPT_take_notes */
-	"take_notes",			/* OPT_auto_notes */
-	"testing_stack",			/* OPT_testing_stack */
-	"testing_carry"			/* OPT_testing_carry */
+	{FALSE, 1, "rogue_like_commands",	"Rogue-like commands" },
+	{TRUE,  1, "quick_messages",		"Activate quick messages" },
+	{FALSE, 1, "other_query_flag",		"Prompt for various information" },
+	{TRUE,  1, "carry_query_flag",		"Prompt before picking things up" },
+	{FALSE, 1, "use_old_target",		"Use old target by default" },
+	{TRUE,  1, "always_pickup",			"Pick things up by default" },
+	{TRUE,  1, "always_repeat",			"Repeat obvious commands" },
+	{FALSE, 5, "depth_in_feet",			"Show dungeon level in feet" },
+	{TRUE,  1, "stack_force_notes",		"Merge inscriptions when stacking" },
+	{FALSE, 1, "stack_force_costs",		"Merge discounts when stacking" },
+	{TRUE,  5, "show_labels",			"Show labels in object listings" },
+	{TRUE,  5, "show_weights",			"Show weights in object listings" },
+	{TRUE,  0, NULL,					"Number 12" },
+	{TRUE,  0, NULL,					"Number 13" },
+	{FALSE, 2, "ring_bell",				"Audible bell (on errors, etc)" },
+	{TRUE,  5, "use_color",				"Use color if possible (slow)" },
+	{FALSE, 2, "find_ignore_stairs",	"Run past stairs" },
+	{TRUE,  2, "find_ignore_doors",		"Run through open doors" },
+	{FALSE, 2, "find_cut",				"Run past known corners" },
+	{TRUE,  2, "find_examine",			"Run into potential corners" },
+	{TRUE,  2, "disturb_move",			"Disturb whenever any monster moves" },
+	{TRUE,  2, "disturb_near",			"Disturb whenever viewable monster moves" },
+	{TRUE,  2, "disturb_panel",			"Disturb whenever map panel changes" },
+	{TRUE,  2, "disturb_state",			"Disturb whenever player state changes" },
+	{TRUE,  2, "disturb_minor",			"Disturb whenever boring things happen" },
+	{TRUE,  2, "disturb_other",			"Disturb whenever random things happen" },
+	{TRUE,  2, "disturb_traps",			"Disturb when you leave detection radius" },
+	{FALSE, 2, "alert_failure",			"Alert user to various failures" },
+	{TRUE,  3, "last_words",			"Get last words when the character dies" },
+	{TRUE,  3, "speak_unique",			"Allow uniques to speak" },
+	{TRUE,  3, "small_levels",			"Allow unusually small dungeon levels" },
+	{TRUE,  3, "empty_levels",			"Allow empty 'arena' levels" },
+
+	{TRUE,  1, "auto_haggle",			"Auto-haggle in stores" },
+	{FALSE, 3, "auto_scum",				"Auto-scum for good levels" },
+	{FALSE, 1, "stack_allow_items",		"Allow weapons and armor to stack" },
+	{TRUE,  1, "stack_allow_wands",		"Allow wands/staffs/rods to stack" },
+	{TRUE,  1, "expand_look",			"Expand the power of the look command" },
+	{TRUE,  1, "expand_list",			"Expand the power of the list commands" },
+	{TRUE,  3, "view_perma_grids",		"Map remembers all perma-lit grids" },
+	{FALSE, 3, "view_torch_grids",		"Map remembers all torch-lit grids" },
+	{FALSE, 3, "dungeon_align",			"Generate dungeons with aligned rooms" },
+	{TRUE,  3, "dungeon_stair",			"Generate dungeons with connected stairs" },
+	{TRUE,  7, "flow_by_sound",			"Monsters chase current location (slow)" },
+	{TRUE,  7, "flow_by_smell",			"Monsters chase recent locations (slow)" },
+	{TRUE,  0, NULL,					"Number 44" },
+	{TRUE,  0, NULL,					"Number 45" },
+	{TRUE,  7, "smart_learn",			"Monsters learn from their mistakes" },
+	{FALSE, 7, "smart_cheat",			"Monsters exploit players weaknesses" },
+	{FALSE, 4, "view_reduce_lite",		"Reduce lite-radius when running" },
+	{FALSE, 4, "view_reduce_view",		"Reduce view-radius in town" },
+	{FALSE, 4, "avoid_abort",			"Avoid checking for user abort" },
+	{FALSE, 4, "avoid_other",			"Avoid processing special colors" },
+	{TRUE,  4, "flush_failure",			"Flush input on various failures" },
+	{FALSE, 4, "flush_disturb",			"Flush input whenever disturbed" },
+	{FALSE, 4, "flush_command",			"Flush input before every command" },
+	{TRUE,  4, "fresh_before",			"Flush output before every command" },
+	{FALSE, 4, "fresh_after",			"Flush output after every command" },
+	{FALSE, 4, "fresh_message",			"Flush output after every message" },
+	{TRUE,  4, "compress_savefile",		"Compress messages in savefiles" },
+	{TRUE,  5, "hilite_player",			"Hilite the player with the cursor" },
+	{FALSE, 5, "view_yellow_lite",		"Use special colors for torch-lit grids" },
+	{FALSE, 5, "view_bright_lite",		"Use special colors for 'viewable' grids" },
+	{FALSE, 5, "view_granite_lite",		"Use special colors for wall grids (slow)" },
+	{FALSE, 5, "view_special_lite",		"Use special colors for floor grids (slow)" },
+
+	{TRUE,  0, NULL,					"Number 64" },
+	{TRUE,  0, NULL,					"Number 65" },
+	{TRUE,  0, NULL,					"Number 66" },
+	{TRUE,  0, NULL,					"Number 67" },
+	{TRUE,  0, NULL,					"Number 68" },
+	{TRUE,  0, NULL,					"Number 69" },
+	{TRUE,  0, NULL,					"Number 70" },
+	{TRUE,  0, NULL,					"Number 71" },
+	{TRUE,  0, NULL,					"Number 72" },
+	{TRUE,  0, NULL,					"Number 73" },
+	{TRUE,  0, NULL,					"Number 74" },
+	{TRUE,  0, NULL,					"Number 75" },
+	{TRUE,  0, NULL,					"Number 76" },
+	{TRUE,  0, NULL,					"Number 77" },
+	{TRUE,  0, NULL,					"Number 78" },
+	{TRUE,  0, NULL,					"Number 79" },
+	{TRUE,  0, NULL,					"Number 80" },
+	{TRUE,  0, NULL,					"Number 81" },
+	{TRUE,  0, NULL,					"Number 82" },
+	{TRUE,  0, NULL,					"Number 83" },
+	{TRUE,  0, NULL,					"Number 84" },
+	{TRUE,  0, NULL,					"Number 85" },
+	{TRUE,  0, NULL,					"Number 86" },
+	{TRUE,  0, NULL,					"Number 87" },
+	{TRUE,  0, NULL,					"Number 88" },
+	{TRUE,  0, NULL,					"Number 89" },
+	{TRUE,  0, NULL,					"Number 90" },
+	{TRUE,  0, NULL,					"Number 91" },
+	{TRUE,  0, NULL,					"Number 92" },
+	{TRUE,  0, NULL,					"Number 93" },
+	{TRUE,  0, NULL,					"Number 94" },
+	{TRUE,  0, NULL,					"Number 95" },
+	
+	{TRUE,  0, NULL,					"Number 96" },
+	{TRUE,  0, NULL,					"Number 97" },
+	{TRUE,  0, NULL,					"Number 98" },
+	{TRUE,  0, NULL,					"Number 99" },
+	{TRUE,  0, NULL,					"Number 100" },
+	{TRUE,  0, NULL,					"Number 101" },
+	{TRUE,  0, NULL,					"Number 102" },
+	{TRUE,  0, NULL,					"Number 103" },
+	{TRUE,  0, NULL,					"Number 104" },
+	{TRUE,  0, NULL,					"Number 105" },
+	{TRUE,  0, NULL,					"Number 106" },
+	{TRUE,  0, NULL,					"Number 107" },
+	{TRUE,  0, NULL,					"Number 108" },
+	{TRUE,  0, NULL,					"Number 109" },
+	{TRUE,  0, NULL,					"Number 110" },
+	{TRUE,  0, NULL,					"Number 111" },
+	{TRUE,  0, NULL,					"Number 112" },
+	{TRUE,  0, NULL,					"Number 113" },
+	{TRUE,  0, NULL,					"Number 114" },
+	{TRUE,  0, NULL,					"Number 115" },
+	{TRUE,  0, NULL,					"Number 116" },
+	{TRUE,  0, NULL,					"Number 117" },
+	{TRUE,  0, NULL,					"Number 118" },
+	{TRUE,  0, NULL,					"Number 119" },
+	{TRUE,  0, NULL,					"Number 120" },
+	{TRUE,  0, NULL,					"Number 121" },
+	{TRUE,  0, NULL,					"Number 122" },
+	{TRUE,  0, NULL,					"Number 123" },
+	{TRUE,  0, NULL,					"Number 124" },
+	{TRUE,  0, NULL,					"Number 125" },
+	{TRUE,  0, NULL,					"Number 126" },
+	{TRUE,  0, NULL,					"Number 127" },
+
+	{TRUE,  0, NULL,					"Number 128" },
+	{TRUE,  0, NULL,					"Number 129" },
+	{TRUE,  0, NULL,					"Number 130" },
+	{TRUE,  0, NULL,					"Number 131" },
+	{TRUE,  0, NULL,					"Number 132" },
+	{TRUE,  0, NULL,					"Number 133" },
+	{TRUE,  0, NULL,					"Number 134" },
+	{TRUE,  0, NULL,					"Number 135" },
+	{TRUE,  0, NULL,					"Number 136" },
+	{TRUE,  0, NULL,					"Number 137" },
+	{TRUE,  0, NULL,					"Number 138" },
+	{TRUE,  0, NULL,					"Number 139" },
+	{TRUE,  0, NULL,					"Number 140" },
+	{TRUE,  0, NULL,					"Number 141" },
+	{TRUE,  0, NULL,					"Number 142" },
+	{TRUE,  0, NULL,					"Number 143" },
+	{TRUE,  0, NULL,					"Number 144" },
+	{TRUE,  0, NULL,					"Number 145" },
+	{TRUE,  0, NULL,					"Number 146" },
+	{TRUE,  0, NULL,					"Number 147" },
+	{TRUE,  0, NULL,					"Number 148" },
+	{TRUE,  0, NULL,					"Number 149" },
+	{TRUE,  0, NULL,					"Number 150" },
+	{TRUE,  0, NULL,					"Number 151" },
+	{TRUE,  0, NULL,					"Number 152" },
+	{TRUE,  0, NULL,					"Number 153" },
+	{TRUE,  0, NULL,					"Number 154" },
+	{TRUE,  0, NULL,					"Number 155" },
+	{TRUE,  0, NULL,					"Number 156" },
+	{TRUE,  0, NULL,					"Number 157" },
+	{TRUE,  0, NULL,					"Number 158" },
+	{TRUE,  0, NULL,					"Number 159" },
+
+	{TRUE,  0, NULL,					"Number 160" },
+	{FALSE, 5, "plain_descriptions",	"Plain object descriptions" },
+	{FALSE, 6, "stupid_monsters",		"Monsters behave stupidly" },
+	{FALSE, 1, "auto_destroy",			"No query to destroy known worthless items" },
+	{FALSE, 1, "confirm_wear",			"Confirm to wear/wield known cursed items" },
+	{FALSE, 1, "confirm_stairs",		"Prompt before exiting a dungeon level" },
+	{TRUE,  1, "easy_open",				"Automatically open doors" },
+	{TRUE,  1, "easy_disarm",			"Automatically disarm traps" },
+	{FALSE, 1, "easy_floor",			"Display floor stacks in a list" },
+	{FALSE, 1, "use_command",			"Allow unified use command" },
+	{FALSE, 5, "center_player",			"Always center on the player (*slow*)" },
+	{FALSE, 5, "avoid_center",			"Avoid centering while running" },
+	{TRUE,  0, NULL,					"Number 172" },
+	{TRUE,  0, NULL,					"Number 173" },
+	{TRUE,  0, NULL,					"Number 174" },
+	{TRUE,  0, NULL,					"Number 175" },
+	{TRUE,  0, NULL,					"Number 176" },
+	{TRUE,  0, NULL,					"Number 177" },
+	{TRUE,  0, NULL,					"Number 178" },
+	{TRUE,  0, NULL,					"Number 179" },
+	{TRUE,  0, NULL,					"Number 180" },
+	{TRUE,  0, NULL,					"Number 181" },
+	{TRUE,  0, NULL,					"Number 182" },
+	{TRUE,  0, NULL,					"Number 183" },
+	{TRUE,  0, NULL,					"Number 184" },
+	{TRUE,  0, NULL,					"Number 185" },
+	{TRUE,  0, NULL,					"Number 186" },
+	{TRUE,  0, NULL,					"Number 187" },
+	{TRUE,  0, NULL,					"Number 188" },
+	{TRUE,  0, NULL,					"Number 189" },
+	{TRUE,  0, NULL,					"Number 190" },
+	{TRUE,  0, NULL,					"Number 191" },
+
+	{FALSE, 6, "vanilla_town",			"Use 'vanilla' town without quests and wilderness" },
+	{TRUE,  0, NULL,					"Number 193" },
+	{FALSE, 6, "ironman_shops",			"Stores are permanently closed" },
+	{FALSE, 6, "ironman_small_levels",	"Always create unusually small dungeon levels" },
+	{FALSE, 6, "ironman_downward",		"Don't allow climbing upwards/recalling" },
+	{FALSE, 6, "ironman_autoscum",		"Permanently enable the autoscummer" },
+	{FALSE, 6, "ironman_hard_quests",	"Quest monsters get reinforcements" },
+	{TRUE,  0, NULL,					"Number 199" },
+	{FALSE, 6, "ironman_empty_levels",	"Always create empty 'arena' levels" },
+	{TRUE,  6, "terrain_streams",		"Create terrain 'streamers' in the dungeon" },
+	{TRUE,  0, NULL,					"Number 202" },
+	{FALSE, 6, "munchkin_death",		"Ask for saving death" },
+	{FALSE, 6, "ironman_rooms",			"Always generate very unusual rooms" },
+	{TRUE,  6, "maximize_mode",			"Maximize stats" },
+	{TRUE,  6, "preserve_mode",			"Preserve artifacts" },
+	{TRUE,  6, "autoroller",			"Specify 'minimal' stats" },
+	{FALSE, 6, "point_based",			"Generate character using a point system" },
+	{TRUE,  6, "silly_monsters",		"Allow silly monsters" },
+	{FALSE, 6, "ironman_nightmare",		"Nightmare mode (this isn't even remotely fair!)" },
+	{TRUE,  0, NULL,					"Number 211" },
+	{TRUE,  0, NULL,					"Number 212" },
+	{TRUE,  0, NULL,					"Number 213" },
+	{TRUE,  0, NULL,					"Number 214" },
+	{TRUE,  0, NULL,					"Number 215" },
+	{TRUE,  0, NULL,					"Number 216" },
+	{TRUE,  0, NULL,					"Number 217" },
+	{TRUE,  0, NULL,					"Number 218" },
+	{TRUE,  0, NULL,					"Number 219" },
+	{TRUE,  0, NULL,					"Number 220" },
+	{TRUE,  0, NULL,					"Number 221" },
+	{TRUE,  0, NULL,					"Number 222" },
+	{TRUE,  0, NULL,					"Number 223" },
+
+	{FALSE, 8, "destroy_worthless",		"Auto-destroy known worthless items" },	
+	{FALSE, 8, "monster_light",			"Allow monsters to carry lights" },
+	{TRUE,  0, NULL,					"Turn on muliplayer client - server code" },
+	{TRUE,  0, NULL,					"Number 227" },
+	{TRUE,  0, NULL,					"Number 228" },
+	{TRUE,  0, NULL,					"Number 229" },
+	{TRUE,  0, NULL,					"Number 230" },
+	{TRUE,  0, NULL,					"Number 231" },
+	{TRUE,  0, NULL,					"Number 232" },
+	{TRUE,  0, NULL,					"Number 233" },
+	{TRUE,  0, NULL,					"Number 234" },
+	{TRUE,  0, NULL,					"Number 235" },
+	{TRUE,  0, NULL,					"Number 236" },
+	{TRUE,  0, NULL,					"Number 237" },
+	{TRUE,  0, NULL,					"Number 238" },
+	{TRUE,  0, NULL,					"Number 239" },
+	{TRUE,  0, NULL,					"Number 240" },
+	{TRUE,  0, NULL,					"Number 241" },
+	{TRUE,  0, NULL,					"Number 242" },
+	{TRUE,  0, NULL,					"Number 243" },
+	{TRUE,  0, NULL,					"Number 244" },
+	{TRUE,  0, NULL,					"Number 245" },
+	{TRUE,  0, NULL,					"Number 246" },
+	{TRUE,  0, NULL,					"Number 247" },
+	{TRUE,  0, NULL,					"Number 248" },
+	{TRUE,  0, NULL,					"Number 249" },
+	{TRUE,  0, NULL,					"Number 250" },
+	{FALSE, 3, "auto_notes",			"Automatically note important events" },
+	{FALSE, 3, "take_notes",			"Allow notes to be appended to a file" },
+	{TRUE,  0, NULL,					"Number 253" },
+	{TRUE,  3, "testing_stack",			"Allow objects to stack on floor" },
+	{TRUE,  3, "testing_carry",			"Allow monsters to carry objects" },
 };
 
-
-/*
- * Options -- descriptions (where defined)
- */
-cptr option_desc[OPT_MAX] =
+int birth_options[OPT_BIRTH + 1] =
 {
-	"Rogue-like commands",				/* OPT_rogue_like_commands */
-	"Activate quick messages",			/* OPT_quick_messages */
-	"Prompt for various information",		/* OPT_other_query_flag */
-	"Prompt before picking things up",		/* OPT_carry_query_flag */
-	"Use old target by default",			/* OPT_use_old_target */
-	"Pick things up by default",			/* OPT_always_pickup */
-	"Repeat obvious commands",			/* OPT_always_repeat */
-	"Show dungeon level in feet",			/* OPT_depth_in_feet */
-	"Merge inscriptions when stacking",		/* OPT_stack_force_notes */
-	"Merge discounts when stacking",		/* OPT_stack_force_costs */
-	"Show labels in object listings",		/* OPT_show_labels */
-	"Show weights in object listing",		/* OPT_show_weights */
-	NULL,							/* 12 */
-	NULL,							/* 13 */
-	"Audible bell (on errors, etc)",		/* OPT_ring_bell */
-	"Use color if possible (slow)",		/* OPT_use_color */
-	"Run past stairs",				/* OPT_find_ignore_stairs */
-	"Run through open doors",			/* OPT_find_ignore_doors */
-	"Run past known corners",			/* OPT_find_cut */
-	"Run into potential corners",			/* OPT_find_examine */
-	"Disturb whenever any monster moves",	/* OPT_disturb_move */
-	"Disturb whenever viewable monster moves",/* OPT_disturb_near */
-	"Disturb whenever map panel changes",	/* OPT_disturb_panel */
-	"Disturb whenever player state changes",	/* OPT_disturb_state */
-	"Disturb whenever boring things happen",	/* OPT_disturb_minor */
-	"Disturb whenever random things happen",	/* OPT_disturb_other */
-	"Disturb when you leave detection radius",/* OPT_disturb_traps */
-	"Alert user to various failures",		/* OPT_alert_failure */
-	"Get last words when the character dies",	/* OPT_last_words */
-	"Allow uniques to speak",			/* OPT_speak_unique */
-	"Allow unusually small dungeon levels",	/* OPT_small_levels */
-	"Allow empty 'arena' levels",			/* OPT_empty_levels */
-	"Auto-haggle in stores",			/* OPT_auto_haggle */
-	"Auto-scum for good levels",			/* OPT_auto_scum */
-	"Allow weapons and armor to stack",		/* OPT_stack_allow_items */
-	"Allow wands/staffs/rods to stack",		/* OPT_stack_allow_wands */
-	"Expand the power of the look command",	/* OPT_expand_look */
-	"Expand the power of the list commands",	/* OPT_expand_list */
-	"Map remembers all perma-lit grids",	/* OPT_view_perma_grids */
-	"Map remembers all torch-lit grids",	/* OPT_view_torch_grids */
-	"Generate dungeons with aligned rooms",	/* OPT_dungeon_align */
-	"Generate dungeons with connected stairs",/* OPT_dungeon_stair */
-	"Monsters chase current location (v.slow)",	/* OPT_flow_by_sound */
-	"Monsters chase recent locations (v.slow)",	/* OPT_flow_by_smell */
-	NULL,							/* 44 */
-	NULL,							/* 45 */
-	"Monsters learn from their mistakes",	/* OPT_smart_learn */
-	"Monsters exploit players weaknesses",	/* OPT_smart_cheat */
-	"Reduce lite-radius when running",		/* OPT_view_reduce_lite */
-	"Reduce view-radius in town",			/* OPT_view_reduce_view */
-	"Avoid checking for user abort",		/* OPT_avoid_abort */
-	"Avoid processing special colors",		/* OPT_avoid_other */
-	"Flush input on various failures",		/* OPT_flush_failure */
-	"Flush input whenever disturbed",		/* OPT_flush_disturb */
-	"Flush input before every command",		/* OPT_flush_command */
-	"Flush output before every command",	/* OPT_fresh_before */
-	"Flush output after every command",		/* OPT_fresh_after */
-	"Flush output after every message",		/* OPT_fresh_message */
-	"Compress messages in savefiles",		/* OPT_compress_savefile */
-	"Hilite the player with the cursor",	/* OPT_hilite_player */
-	"Use special colors for torch-lit grids",	/* OPT_view_yellow_lite */
-	"Use special colors for 'viewable' grids",/* OPT_view_bright_lite */
-	"Use special colors for wall grids (slow)",	/* OPT_view_granite_lite */
-	"Use special colors for floor grids (slow)",	/* OPT_view_special_lite */
-	NULL,							/* 64 */
-	NULL,							/* 65 */
-	NULL,							/* 66 */
-	NULL,							/* 67 */
-	NULL,							/* 68 */
-	NULL,							/* 69 */
-	NULL,							/* 70 */
-	NULL,							/* 71 */
-	NULL,							/* 72 */
-	NULL,							/* 73 */
-	NULL,							/* 74 */
-	NULL,							/* 75 */
-	NULL,							/* 76 */
-	NULL,							/* 77 */
-	"Autosave when entering new levels",	/* OPT_autosave_l */
-	"Timed autosave",					/* OPT_autosave_t */
-	NULL,							/* 80 */
-	NULL,							/* 81 */
-	NULL,							/* 82 */
-	NULL,							/* 83 */
-	NULL,							/* 84 */
-	NULL,							/* 85 */
-	NULL,							/* 86 */
-	NULL,							/* 87 */
-	NULL,							/* 88 */
-	NULL,							/* 89 */
-	NULL,							/* 90 */
-	NULL,							/* 91 */
-	NULL,							/* 92 */
-	NULL,							/* 93 */
-	NULL,							/* 94 */
-	NULL,							/* 95 */
-	NULL,							/* 96 */
-	NULL,							/* 97 */
-	NULL,							/* 98 */
-	NULL,							/* 99 */
-	NULL,							/* 100 */
-	NULL,							/* 101 */
-	NULL,							/* 102 */
-	NULL,							/* 103 */
-	NULL,							/* 104 */
-	NULL,							/* 105 */
-	NULL,							/* 106 */
-	NULL,							/* 107 */
-	NULL,							/* 108 */
-	NULL,							/* 109 */
-	NULL,							/* 110 */
-	NULL,							/* 111 */
-	NULL,							/* 112 */
-	NULL,							/* 113 */
-	NULL,							/* 114 */
-	NULL,							/* 115 */
-	NULL,							/* 116 */
-	NULL,							/* 117 */
-	NULL,							/* 118 */
-	NULL,							/* 119 */
-	NULL,							/* 120 */
-	NULL,							/* 121 */
-	NULL,							/* 122 */
-	NULL,							/* 123 */
-	NULL,							/* 124 */
-	NULL,							/* 125 */
-	NULL,							/* 126 */
-	NULL,							/* 127 */
-	"Cheat: Peek into object creation",		/* OPT_cheat_peek */
-	"Cheat: Peek into monster creation",	/* OPT_cheat_hear */
-	"Cheat: Peek into dungeon creation",	/* OPT_cheat_room */
-	"Cheat: Peek into something else",		/* OPT_cheat_xtra */
-	"Cheat: Know complete monster info",	/* OPT_cheat_know */
-	"Cheat: Allow player to avoid death",	/* OPT_cheat_live */
-	NULL,							/* 134 */
-	NULL,							/* 135 */
-	NULL,							/* 136 */
-	NULL,							/* 137 */
-	NULL,							/* 138 */
-	NULL,							/* 139 */
-	NULL,							/* 140 */
-	NULL,							/* 141 */
-	NULL,							/* 142 */
-	NULL,							/* 143 */
-	NULL,							/* 144 */
-	NULL,							/* 145 */
-	NULL,							/* 146 */
-	NULL,							/* 147 */
-	NULL,							/* 148 */
-	NULL,							/* 149 */
-	NULL,							/* 150 */
-	NULL,							/* 151 */
-	NULL,							/* 152 */
-	NULL,							/* 153 */
-	NULL,							/* 154 */
-	NULL,							/* 155 */
-	NULL,							/* 156 */
-	NULL,							/* 157 */
-	NULL,							/* 158 */
-	NULL,							/* 159 */
-	NULL,							/* 160 */
-	"Plain object descriptions",			/* OPT_plain_descriptions */
-	"Monsters behave stupidly",			/* OPT_stupid_monsters */
-	"No query to destroy known worthless items",	/* OPT_auto_destroy */
-	"Confirm to wear/wield known cursed items",	/* OPT_confirm_wear */
-	"Prompt before exiting a dungeon level",	/* OPT_confirm_stairs */
-	NULL,							/* 166 */
-	"Automatically open doors",			/* OPT_easy_open */
-	"Automatically disarm traps",			/* OPT_easy_disarm */
-	"Display floor stacks in a list",		/* OPT_easy_floor */
-	"Allow unified use command",			/* OPT_use_command */
-	"Always center on the player (*slow*)",	/* OPT_center_player */
-	"Avoid centering while running",		/* OPT_avoid_center */
-	NULL,							/* 173 */
-	NULL,							/* 174 */
-	NULL,							/* 175 */
-	NULL,							/* 176 */
-	NULL,							/* 177 */
-	NULL,							/* 178 */
-	NULL,							/* 179 */
-	NULL,							/* 180 */
-	NULL,							/* 181 */
-	NULL,							/* 182 */
-	NULL,							/* 183 */
-	NULL,							/* 184 */
-	NULL,							/* 185 */
-	NULL,							/* 186 */
-	NULL,							/* 187 */
-	NULL,							/* 188 */
-	NULL,							/* 189 */
-	NULL,							/* 190 */
-	NULL,							/* 191 */
-	"Use 'vanilla' town without quests and wilderness",	/* OPT_vanilla_town */
-	NULL,							/* 193 */
-	"Stores are permanently closed",		/* OPT_ironman_shops */
-	"Always create unusually small dungeon levels",	/* OPT_ironman_small_levels */
-	"Don't allow climbing upwards/recalling",	/* OPT_ironman_downward */
-	"Permanently enable the autoscummer",	/* OPT_ironman_autoscum */
-	"Quest monsters get reinforcements",	/* OPT_ironman_hard_quests */
-	NULL,							/* 199 */
-	"Always create empty 'arena' levels",	/* OPT_ironman_empty_levels */
-	"Create terrain 'streamers' in the dungeon",	/* OPT_terrain_streams */
-	NULL,							/* 202 */
-	"Ask for saving death",				/* OPT_munchkin_death */
-	"Always generate very unusual rooms",	/* OPT_ironman_rooms */
-	"Maximize stats",					/* OPT_maximize_mode */
-	"Preserve artifacts",				/* OPT_preserve_mode */
-	"Specify 'minimal' stats",			/* OPT_autoroller */
-	"Generate character using a point system",	/* OPT_point_based */
-	"Allow silly monsters",				/* OPT_silly_monsters */
-	"Nightmare mode (this isn't even remotely fair!)",	/* OPT_ironman_nightmare */
-	NULL,							/* 211 */
-	NULL,							/* 212 */
-	NULL,							/* 213 */
-	NULL,							/* 214 */
-	NULL,							/* 215 */
-	NULL,							/* 216 */
-	NULL,							/* 217 */
-	NULL,							/* 218 */
-	NULL,							/* 219 */
-	NULL,							/* 220 */
-	NULL,							/* 221 */
-	NULL,							/* 222 */
-	NULL,							/* 223 */
-	"Auto-destroy known worthless items",	/* OPT_destroy_worthless */
-	"Allow monsters to carry lights",		/* OPT_monster_light */
-	NULL,							/* 226 */
-	NULL,							/* 227 */
-	NULL,							/* 228 */
-	NULL,							/* 229 */
-	NULL,							/* 230 */
-	NULL,							/* 231 */
-	NULL,							/* 232 */
-	NULL,							/* 233 */
-	NULL,							/* 234 */
-	NULL,							/* 235 */
-	NULL,							/* 236 */
-	NULL,							/* 237 */
-	NULL,							/* 238 */
-	NULL,							/* 239 */
-	NULL,							/* 240 */
-	NULL,							/* 241 */
-	NULL,							/* 242 */
-	NULL,							/* 243 */
-	NULL,							/* 244 */
-	NULL,							/* 245 */
-	NULL,							/* 246 */
-	NULL,							/* 247 */
-	NULL,							/* 248 */
-	NULL,							/* 249 */
-	NULL,							/* 250 */
-	NULL,							/* 251 */
-	"Automatically note important events",	/* OPT_take_notes */
-	"Allow notes to be appended to a file",	/* OPT_auto_notes */
-	"Allow objects to stack on floor",		/* OPT_testing_stack */
-	"Allow monsters to carry objects"		/* OPT_testing_carry */
+	162, 192, 194, 195, 196, 197, 198, 199,
+	200, 201, 202, 203, 204, 205, 206, 207,
+	208, 209, 210, 211, 212, 213, 214, 215,
+	216, 217, 218, 219, 220, 221, 222, 223, 0
 };
 
-
-/*
- * Options -- normal values
- */
-bool option_norm[OPT_MAX] =
+int server_options[OPT_SERVER + 1] =
 {
-	FALSE,		/* OPT_rogue_like_commands */
-	TRUE,			/* OPT_quick_messages */
-	FALSE,		/* OPT_other_query_flag */
-	TRUE,			/* OPT_carry_query_flag */
-	FALSE,		/* OPT_use_old_target */
-	TRUE,			/* OPT_always_pickup */
-	TRUE,			/* OPT_always_repeat */
-	FALSE,		/* OPT_depth_in_feet */
-	TRUE,			/* OPT_stack_force_notes */
-	FALSE,		/* OPT_stack_force_costs */
-	TRUE,			/* OPT_show_labels */
-	TRUE,			/* OPT_show_weights */
-	FALSE,		/* 12 */
-	FALSE,		/* 13 */
-	FALSE,		/* OPT_ring_bell */
-	TRUE,			/* OPT_use_color */
-	FALSE,		/* OPT_find_ignore_stairs */
-	TRUE,			/* OPT_find_ignore_doors */
-	FALSE,		/* OPT_find_cut */
-	TRUE,			/* OPT_find_examine */
-	TRUE,			/* OPT_disturb_move */
-	TRUE,			/* OPT_disturb_near */
-	TRUE,			/* OPT_disturb_panel */
-	TRUE,			/* OPT_disturb_state */
-	TRUE,			/* OPT_disturb_minor */
-	TRUE,			/* OPT_disturb_other */
-	TRUE,			/* OPT_disturb_traps */
-	FALSE,		/* OPT_alert_failure */
-	TRUE,			/* OPT_last_words */
-	TRUE,			/* OPT_speak_unique */
-	TRUE,			/* OPT_small_levels */
-	TRUE,			/* OPT_empty_levels */
-	TRUE,			/* OPT_auto_haggle */
-	FALSE,		/* OPT_auto_scum */
-	FALSE,		/* OPT_stack_allow_items */
-	TRUE,			/* OPT_stack_allow_wands */
-	TRUE,			/* OPT_expand_look */
-	TRUE,			/* OPT_expand_list */
-	TRUE,			/* OPT_view_perma_grids */
-	FALSE,		/* OPT_view_torch_grids */
-	FALSE,		/* OPT_dungeon_align */
-	TRUE,			/* OPT_dungeon_stair */
-	TRUE,			/* OPT_flow_by_sound */
-	TRUE,			/* OPT_flow_by_smell */
-	FALSE,		/* 44 */
-	FALSE,		/* 45 */
-	TRUE,			/* OPT_smart_learn */
-	FALSE,		/* OPT_smart_cheat */
-	FALSE,		/* OPT_view_reduce_lite */
-	FALSE,		/* OPT_view_reduce_view */
-	FALSE,		/* OPT_avoid_abort */
-	FALSE,		/* OPT_avoid_other */
-	TRUE,			/* OPT_flush_failure */
-	FALSE,		/* OPT_flush_disturb */
-	FALSE,		/* OPT_flush_command */
-	TRUE,			/* OPT_fresh_before */
-	FALSE,		/* OPT_fresh_after */
-	FALSE,		/* OPT_fresh_message */
-	TRUE,			/* OPT_compress_savefile */
-	TRUE,			/* OPT_hilite_player */
-	FALSE,		/* OPT_view_yellow_lite */
-	FALSE,		/* OPT_view_bright_lite */
-	FALSE,		/* OPT_view_granite_lite */
-	FALSE,		/* OPT_view_special_lite */
-	FALSE,		/* 64 */
-	FALSE,		/* 65 */
-	FALSE,		/* 66 */
-	FALSE,		/* 67 */
-	FALSE,		/* 68 */
-	FALSE,		/* 69 */
-	FALSE,		/* 70 */
-	FALSE,		/* 71 */
-	FALSE,		/* 72 */
-	FALSE,		/* 73 */
-	FALSE,		/* 74 */
-	FALSE,		/* 75 */
-	FALSE,		/* 76 */
-	FALSE,		/* 77 */
-	FALSE,		/* OPT_autosave_l */
-	FALSE,		/* OPT_autosave_t */
-	FALSE,		/* 80 */
-	FALSE,		/* 81 */
-	FALSE,		/* 82 */
-	FALSE,		/* 83 */
-	FALSE,		/* 84 */
-	FALSE,		/* 85 */
-	FALSE,		/* 86 */
-	FALSE,		/* 87 */
-	FALSE,		/* 88 */
-	FALSE,		/* 89 */
-	FALSE,		/* 90 */
-	FALSE,		/* 91 */
-	FALSE,		/* 92 */
-	FALSE,		/* 93 */
-	FALSE,		/* 94 */
-	FALSE,		/* 95 */
-	FALSE,		/* 96 */
-	FALSE,		/* 97 */
-	FALSE,		/* 98 */
-	FALSE,		/* 99 */
-	FALSE,		/* 100 */
-	FALSE,		/* 101 */
-	FALSE,		/* 102 */
-	FALSE,		/* 103 */
-	FALSE,		/* 104 */
-	FALSE,		/* 105 */
-	FALSE,		/* 106 */
-	FALSE,		/* 107 */
-	FALSE,		/* 108 */
-	FALSE,		/* 109 */
-	FALSE,		/* 110 */
-	FALSE,		/* 111 */
-	FALSE,		/* 112 */
-	FALSE,		/* 113 */
-	FALSE,		/* 114 */
-	FALSE,		/* 115 */
-	FALSE,		/* 116 */
-	FALSE,		/* 117 */
-	FALSE,		/* 118 */
-	FALSE,		/* 119 */
-	FALSE,		/* 120 */
-	FALSE,		/* 121 */
-	FALSE,		/* 122 */
-	FALSE,		/* 123 */
-	FALSE,		/* 124 */
-	FALSE,		/* 125 */
-	FALSE,		/* 126 */
-	FALSE,		/* 127 */
-	FALSE,		/* OPT_cheat_peek */
-	FALSE,		/* OPT_cheat_hear */
-	FALSE,		/* OPT_cheat_room */
-	FALSE,		/* OPT_cheat_xtra */
-	FALSE,		/* OPT_cheat_know */
-	FALSE,		/* OPT_cheat_live */
-	FALSE,		/* 134 */
-	FALSE,		/* 135 */
-	FALSE,		/* 136 */
-	FALSE,		/* 137 */
-	FALSE,		/* 138 */
-	FALSE,		/* 139 */
-	FALSE,		/* 140 */
-	FALSE,		/* 141 */
-	FALSE,		/* 142 */
-	FALSE,		/* 143 */
-	FALSE,		/* 144 */
-	FALSE,		/* 145 */
-	FALSE,		/* 146 */
-	FALSE,		/* 147 */
-	FALSE,		/* 148 */
-	FALSE,		/* 149 */
-	FALSE,		/* 150 */
-	FALSE,		/* 151 */
-	FALSE,		/* 152 */
-	FALSE,		/* 153 */
-	FALSE,		/* 154 */
-	FALSE,		/* 155 */
-	FALSE,		/* 156 */
-	FALSE,		/* 157 */
-	FALSE,		/* 158 */
-	FALSE,		/* 159 */
-	FALSE,		/* 160 */
-	FALSE,		/* OPT_plain_descriptions */
-	FALSE,		/* OPT_stupid_monsters */
-	FALSE,		/* OPT_auto_destroy */
-	FALSE,		/* OPT_confirm_wear */
-	FALSE,		/* OPT_confirm_stairs */
-	FALSE,		/* 166 */
-	TRUE,			/* OPT_easy_open */
-	TRUE,			/* OPT_easy_disarm */
-	FALSE,		/* OPT_easy_floor */
-	FALSE,		/* OPT_use_command */
-	FALSE,		/* OPT_center_player */
-	FALSE,		/* OPT_avoid_center */
-	FALSE,		/* 173 */
-	FALSE,		/* 174 */
-	FALSE,		/* 175 */
-	FALSE,		/* 176 */
-	FALSE,		/* 177 */
-	FALSE,		/* 178 */
-	FALSE,		/* 179 */
-	FALSE,		/* 180 */
-	FALSE,		/* 181 */
-	FALSE,		/* 182 */
-	FALSE,		/* 183 */
-	FALSE,		/* 184 */
-	FALSE,		/* 185 */
-	FALSE,		/* 186 */
-	FALSE,		/* 187 */
-	FALSE,		/* 188 */
-	FALSE,		/* 189 */
-	FALSE,		/* 190 */
-	FALSE,		/* 191 */
-	FALSE,		/* OPT_vanilla_town */
-	FALSE,		/* 193 */
-	FALSE,		/* OPT_ironman_shops */
-	FALSE,		/* OPT_ironman_small_levels */
-	FALSE,		/* OPT_ironman_downward */
-	FALSE,		/* OPT_ironman_autoscum */
-	FALSE,		/* OPT_ironman_hard_quests */
-	FALSE,		/* 199 */
-	FALSE,		/* OPT_ironman_empty_levels */
-	TRUE,			/* OPT_terrain_streams */
-	FALSE,		/* 202 */
-	FALSE,		/* OPT_munchkin_death */
-	FALSE,		/* OPT_ironman_rooms */
-	TRUE,			/* OPT_maximize_mode */
-	TRUE,			/* OPT_preserve_mode */
-	TRUE,			/* OPT_autoroller */
-	FALSE,		/* OPT_point_based */
-	TRUE,			/* OPT_silly_monsters */
-	FALSE,		/* OPT_ironman_nightmare */
-	FALSE,		/* 211 */
-	FALSE,		/* 212 */
-	FALSE,		/* 213 */
-	FALSE,		/* 214 */
-	FALSE,		/* 215 */
-	FALSE,		/* 216 */
-	FALSE,		/* 217 */
-	FALSE,		/* 218 */
-	FALSE,		/* 219 */
-	FALSE,		/* 220 */
-	FALSE,		/* 221 */
-	FALSE,		/* 222 */
-	FALSE,		/* 223 */
-	FALSE,		/* OPT_destroy_worthless */
-	FALSE,		/* OPT_monster_light */
-	FALSE,		/* 226 */
-	FALSE,		/* 227 */
-	FALSE,		/* 228 */
-	FALSE,		/* 229 */
-	FALSE,		/* 230 */
-	FALSE,		/* 231 */
-	FALSE,		/* 232 */
-	FALSE,		/* 233 */
-	FALSE,		/* 234 */
-	FALSE,		/* 235 */
-	FALSE,		/* 236 */
-	FALSE,		/* 237 */
-	FALSE,		/* 238 */
-	FALSE,		/* 239 */
-	FALSE,		/* 240 */
-	FALSE,		/* 241 */
-	FALSE,		/* 242 */
-	FALSE,		/* 243 */
-	FALSE,		/* 244 */
-	FALSE,		/* 245 */
-	FALSE,		/* 246 */
-	FALSE,		/* 247 */
-	FALSE,		/* 248 */
-	FALSE,		/* 249 */
-	FALSE,		/* 250 */
-	FALSE,		/* 251 */
-	FALSE,		/* OPT_take_notes */
-	FALSE,		/* OPT_auto_notes */
-	TRUE,			/* OPT_testing_stack */
-	TRUE			/* OPT_testing_carry */
+	30,  31,  33,  34,  35,  36,  37,  40,
+	41,  42,  43,  44,  45,  46,  47,  224,
+	225, 226, 227, 228, 229, 230, 231, 232,
+	233, 234, 235, 236, 237, 238, 254, 255, 0
 };
-
-
-/*
- * Option screen interface
- *
- * Note the special significance given to the constant "255".
- */
-u16b option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
-{
-	/*** User-Interface ***/
-
-	{
-		OPT_rogue_like_commands,
-		OPT_quick_messages,
-		OPT_other_query_flag,
-		OPT_carry_query_flag,
-		OPT_use_old_target,
-		OPT_always_pickup,
-		OPT_always_repeat,
-		OPT_stack_force_notes,
-		OPT_stack_force_costs,
-		OPT_stack_allow_items,
-		OPT_stack_allow_wands,
-		OPT_auto_destroy,
-		OPT_confirm_wear,
-		OPT_confirm_stairs,
-		OPT_expand_look,
-		OPT_expand_list,
-		OPT_easy_open,
-		OPT_easy_disarm,
-		OPT_auto_haggle,
-		OPT_easy_floor,
-		OPT_use_command,
-		255
-	},
-
-	/* Disturbance Options */
-
-	{
-		OPT_find_ignore_stairs,
-		OPT_find_ignore_doors,
-		OPT_find_cut,
-		OPT_find_examine,
-		OPT_disturb_move,
-		OPT_disturb_near,
-		OPT_disturb_panel,
-		OPT_disturb_state,
-		OPT_disturb_minor,
-		OPT_disturb_other,
-		OPT_disturb_traps,
-		OPT_alert_failure,
-		OPT_ring_bell,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Game-Play options */
-
-	{
-		OPT_auto_scum,
-		OPT_view_perma_grids,
-		OPT_view_torch_grids,
-		OPT_dungeon_align,
-		OPT_dungeon_stair,
-		OPT_last_words,
-		OPT_speak_unique,
-		OPT_small_levels,
-		OPT_empty_levels,
-		OPT_testing_stack,
-		OPT_testing_carry,
-		OPT_take_notes,
-		OPT_auto_notes,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Efficiency Options */
-
-	{
-		OPT_view_reduce_lite,
-		OPT_view_reduce_view,
-		OPT_avoid_abort,
-		OPT_avoid_other,
-		OPT_flush_failure,
-		OPT_flush_disturb,
-		OPT_flush_command,
-		OPT_fresh_before,
-		OPT_fresh_after,
-		OPT_fresh_message,
-		OPT_compress_savefile,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Display Options */
-
-	{
-		OPT_depth_in_feet,
-		OPT_show_labels,
-		OPT_show_weights,
-		OPT_plain_descriptions,
-		OPT_use_color,
-		OPT_view_yellow_lite,
-		OPT_view_bright_lite,
-		OPT_view_granite_lite,
-		OPT_view_special_lite,
-		OPT_hilite_player,
-		OPT_center_player,
-		OPT_avoid_center,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Articial Intelligence Options */
-
-	{
-		OPT_flow_by_sound,
-		OPT_flow_by_smell,
-		OPT_smart_learn,
-		OPT_smart_cheat,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Testing Options */
-
-	{
-		OPT_destroy_worthless,
-		OPT_monster_light,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Cheating Options */
-
-	{
-		OPT_cheat_peek,
-		OPT_cheat_hear,
-		OPT_cheat_room,
-		OPT_cheat_xtra,
-		OPT_cheat_know,
-		OPT_cheat_live,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Birth Options */
-
-	{
-		OPT_vanilla_town,
-		OPT_stupid_monsters,
-		OPT_silly_monsters,
-		OPT_ironman_shops,
-		OPT_ironman_small_levels,
-		OPT_ironman_downward,
-		OPT_ironman_autoscum,
-		OPT_ironman_hard_quests,
-		OPT_ironman_empty_levels,
-		OPT_terrain_streams,
-		OPT_munchkin_death,
-		OPT_ironman_rooms,
-		OPT_ironman_nightmare,
-		OPT_maximize_mode,
-		OPT_preserve_mode,
-		OPT_autoroller,
-		OPT_point_based,
-		255,
-		255,
-		255,
-		255,
-		255
-	},
-
-	/* Autosave Options */
-
-	{
-		OPT_autosave_l,
-		OPT_autosave_t,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255,
-		255
-	}
-};
-
-
 
 cptr chaos_patrons[MAX_PATRON] =
 {

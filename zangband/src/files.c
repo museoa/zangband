@@ -540,67 +540,46 @@ errr process_pref_file_aux(char *buf)
 	/* Process "X:<str>" -- turn option off */
 	else if (buf[0] == 'X')
 	{
-		/* Check non-birth options */
 		for (i = 0; i < OPT_MAX; i++)
 		{
-			if (option_text[i] && streq(option_text[i], buf + 2))
+			if (option_info[i].o_desc &&
+				 option_info[i].o_text &&
+				 streq(option_info[i].o_text, buf + 2))
 			{
-				op_ptr->opt[i] = FALSE;
+				/* Clear */
+				option_info[i].o_val = FALSE;
+				
+				/* Save the change */
+				init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				
 				return (0);
 			}
 		}
+		/* XXX XXX XXX - ignore unknown options */
+		return (0);
 	}
 
 	/* Process "Y:<str>" -- turn option on */
 	else if (buf[0] == 'Y')
 	{
-		/* Check non-birth options */
 		for (i = 0; i < OPT_MAX; i++)
 		{
-			if (option_text[i] && streq(option_text[i], buf + 2))
+			if (option_info[i].o_desc &&
+				 option_info[i].o_text &&
+				 streq(option_info[i].o_text, buf + 2))
 			{
-				op_ptr->opt[i] = TRUE;
+				/* Set */
+				option_info[i].o_val = TRUE;
+				
+				/* Save the change */
+				init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				
 				return (0);
 			}
 		}
-	}
 
-	/* Process "W:<win>:<flag>:<value>" -- window flags */
-	else if (buf[0] == 'W')
-	{
-		int win, flag, value;
-
-		if (tokenize(buf + 2, 3, zz, 0) == 3)
-		{
-			win = strtol(zz[0], NULL, 0);
-			flag = strtol(zz[1], NULL, 0);
-			value = strtol(zz[2], NULL, 0);
-
-			/* Ignore illegal windows */
-			/* Hack -- Ignore the main window */
-			if ((win <= 0) || (win >= 8)) return (1);
-
-			/* Ignore illegal flags */
-			if ((flag < 0) || (flag >= 32)) return (1);
-
-			/* Require a real flag */
-			if (window_flag_desc[flag])
-			{
-				if (value)
-				{
-					/* Turn flag on */
-					op_ptr->window_flag[win] |= (1L << flag);
-				}
-				else
-				{
-					/* Turn flag off */
-					op_ptr->window_flag[win] &= ~(1L << flag);
-				}
-			}
-
-			/* Success */
-			return (0);
-		}
+		/* XXX XXX XXX - ignore unknown options */
+		return (0);
 	}
 
 	/* Process "Z:<type>:<str>" -- set spell color */
@@ -832,7 +811,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			/* Player */
 			else if (streq(b+1, "PLAYER"))
 			{
-				v = op_ptr->base_name;
+				v = player_base;
 			}
 		}
 
@@ -2009,7 +1988,7 @@ static void display_player_misc_info(void)
 	put_str("Race      :", 4, 1);
 	put_str("Class     :", 5, 1);
 
-	c_put_str(TERM_L_BLUE, op_ptr->full_name, 2, 13);
+	c_put_str(TERM_L_BLUE, player_name, 2, 13);
 	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 13);
 	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 13);
 	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 13);
@@ -2318,7 +2297,7 @@ static void display_player_top(void)
 		put_str("Patron   :", 7, COL_NAME);
 	}
 
-	c_put_str(TERM_L_BLUE, op_ptr->full_name, 2, COL_NAME + WID_NAME);
+	c_put_str(TERM_L_BLUE, player_name, 2, COL_NAME + WID_NAME);
 	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, COL_NAME + WID_NAME);
 	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, COL_NAME + WID_NAME);
 	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, COL_NAME + WID_NAME);
@@ -2473,7 +2452,7 @@ static void display_player_middle(void)
 	{
 		attr = TERM_L_GREEN;
 	}
-	else if (p_ptr->chp > (p_ptr->mhp * op_ptr->hitpoint_warn) / 10)
+	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
 	{
 		attr = TERM_YELLOW;
 	}
@@ -2490,7 +2469,7 @@ static void display_player_middle(void)
 	{
 		attr = TERM_L_GREEN;
 	}
-	else if (p_ptr->csp > (p_ptr->msp * op_ptr->hitpoint_warn) / 10)
+	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
 	{
 		attr = TERM_YELLOW;
 	}
@@ -2629,7 +2608,7 @@ void do_cmd_character(void)
 		/* File dump */
 		else if (c == 'f')
 		{
-			sprintf(tmp, "%s.txt", op_ptr->base_name);
+			sprintf(tmp, "%s.txt", player_base);
 			if (get_string("File name: ", tmp, 80))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
@@ -3645,20 +3624,20 @@ void process_player_name(bool sf)
 
 
 	/* Cannot be too long */
-	if (strlen(op_ptr->full_name) > 15)
+	if (strlen(player_name) > 15)
 	{
 		/* Name too long */
-		quit_fmt("The name '%s' is too long!", op_ptr->full_name);
+		quit_fmt("The name '%s' is too long!", player_name);
 	}
 
 	/* Cannot contain "icky" characters */
-	for (i = 0; op_ptr->full_name[i]; i++)
+	for (i = 0; player_name[i]; i++)
 	{
 		/* No control characters */
-		if (iscntrl(op_ptr->full_name[i]))
+		if (iscntrl(player_name[i]))
 		{
 			/* Illegal characters */
-			quit_fmt("The name '%s' contains control chars!", op_ptr->full_name);
+			quit_fmt("The name '%s' contains control chars!", player_name);
 		}
 	}
 
@@ -3666,29 +3645,29 @@ void process_player_name(bool sf)
 #ifdef MACINTOSH
 
 	/* Extract "useful" letters */
-	for (i = 0; op_ptr->full_name[i]; i++)
+	for (i = 0; player_name[i]; i++)
 	{
-		char c = op_ptr->full_name[i];
+		char c = player_name[i];
 
 		/* Convert "dot" to "underscore" */
 		if (c == '.') c = '_';
 
 		/* Accept all the letters */
-		op_ptr->base_name[k++] = c;
+		player_base[k++] = c;
 	}
 
 #else
 
 	/* Extract "useful" letters */
-	for (i = 0; op_ptr->full_name[i]; i++)
+	for (i = 0; player_name[i]; i++)
 	{
-		char c = op_ptr->full_name[i];
+		char c = player_name[i];
 
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) op_ptr->base_name[k++] = c;
+		if (isalpha(c) || isdigit(c)) player_base[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
-		else if (strchr(". _", c)) op_ptr->base_name[k++] = '_';
+		else if (strchr(". _", c)) player_base[k++] = '_';
 	}
 
 #endif
@@ -3702,10 +3681,10 @@ void process_player_name(bool sf)
 #endif
 
 	/* Terminate */
-	op_ptr->base_name[k] = '\0';
+	player_base[k] = '\0';
 
 	/* Require a "base" name */
-	if (!op_ptr->base_name[0]) strcpy(op_ptr->base_name, "PLAYER");
+	if (!player_base[0]) strcpy(player_base, "PLAYER");
 
 
 #ifdef SAVEFILE_MUTABLE
@@ -3722,15 +3701,15 @@ void process_player_name(bool sf)
 
 #ifdef SAVEFILE_USE_UID
 		/* Rename the savefile, using the player_uid and player_base */
-		(void)sprintf(temp, "%d.%s", player_uid, op_ptr->base_name);
+		(void)sprintf(temp, "%d.%s", player_uid, player_base);
 #else
 		/* Rename the savefile, using the player_base */
-		(void)sprintf(temp, "%s", op_ptr->base_name);
+		(void)sprintf(temp, "%s", player_base);
 #endif
 
 #ifdef VM
 		/* Hack -- support "flat directory" usage on VM/ESA */
-		(void)sprintf(temp, "%s.sv", op_ptr->base_name);
+		(void)sprintf(temp, "%s.sv", player_base);
 #endif /* VM */
 
 		/* Build the filename */
@@ -3764,10 +3743,10 @@ void change_player_name(void)
 		move_cursor(2, COL_NAME + WID_NAME);
 
 		/* Save the player name */
-		strcpy(tmp, op_ptr->full_name);
+		strcpy(tmp, player_name);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15)) strcpy(op_ptr->full_name, tmp);
+		if (askfor_aux(tmp, 15)) strcpy(player_name, tmp);
 
 		/* Process the player name */
 		process_player_name(FALSE);
@@ -3777,7 +3756,7 @@ void change_player_name(void)
 	}
 
 	/* Pad the name (to clear junk) */
-	sprintf(tmp, "%-15.15s", op_ptr->full_name);
+	sprintf(tmp, "%-15.15s", player_name);
 
 	/* Re-Draw the name (in light blue) */
 	c_put_str(TERM_L_BLUE, tmp, 2, COL_NAME + WID_NAME);
@@ -3795,13 +3774,13 @@ void get_character_name(void)
 	char tmp[16];
 
 	/* Save the player name */
-	strcpy(tmp, op_ptr->full_name);
+	strcpy(tmp, player_name);
 
 	/* Prompt for a new name */
 	if (get_string("Enter a name for your character: ", tmp, 15))
 	{
 		/* Use the name */
-		strcpy(op_ptr->full_name, tmp);
+		strcpy(player_name, tmp);
 
 		/* Process the player name */
 		process_player_name(FALSE);
@@ -4063,7 +4042,7 @@ static void make_bones(void)
 			if (!fp) return;
 
 			/* Save the info */
-			fprintf(fp, "%s\n", op_ptr->full_name);
+			fprintf(fp, "%s\n", player_name);
 			fprintf(fp, "%d\n", p_ptr->mhp);
 			fprintf(fp, "%d\n", p_ptr->prace);
 			fprintf(fp, "%d\n", p_ptr->pclass);
@@ -4149,7 +4128,7 @@ static void print_tomb(void)
 			p =  player_title[p_ptr->pclass][(p_ptr->lev - 1) / 5];
 		}
 
-		center_string(buf, op_ptr->full_name);
+		center_string(buf, player_name);
 		put_str(buf, 6, 11);
 
 		center_string(buf, "the");
@@ -4195,8 +4174,6 @@ static void print_tomb(void)
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
 		put_str(buf, 17, 11);
-
-		msg_format("Goodbye, %s!", op_ptr->full_name);
 	}
 }
 
@@ -4259,74 +4236,50 @@ static void show_info(void)
 	/* Handle stuff */
 	handle_stuff();
 
-	/* Flush all input keys */
-	flush();
-
-	/* Flush messages */
-	msg_print(NULL);
-
-
-	/* Describe options */
-	prt("You may now dump a character record to one or more files.", 21, 0);
-	prt("Then, hit RETURN to see the character, or ESC to abort.", 22, 0);
-
-	/* Dump character records as requested */
-	while (TRUE)
-	{
-		char out_val[160];
-
-		/* Prompt */
-		put_str("Filename: ", 23, 0);
-
-		/* Default */
-		strcpy(out_val, "");
-
-		/* Ask for filename (or abort) */
-		if (!askfor_aux(out_val, 60)) return;
-
-		/* Return means "show on screen" */
-		if (!out_val[0]) break;
-
-		/* Save screen */
-		screen_save();
-
-		/* Dump a character file */
-		(void)file_character(out_val, TRUE);
-
-		/* Load screen */
-		screen_load();
-	}
-
-
 	/* Display player */
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for inventory */
 	prt("Hit any key to see more information (ESC to abort): ", 23, 0);
 
+	/* Flush keys */
+	flush();
+
 	/* Allow abort at this point */
 	if (inkey() == ESCAPE) return;
 
 
 	/* Show equipment and inventory */
-
-	/* Equipment -- if any */
 	if (p_ptr->equip_cnt)
 	{
 		Term_clear();
+		
+		/* Equipment -- if any */
 		item_tester_full = TRUE;
 		show_equip();
+		
 		prt("You are using: -more-", 0, 0);
+		
+		/* Flush keys */
+		flush();
+		
 		if (inkey() == ESCAPE) return;
 	}
 
-	/* Inventory -- if any */
+	
 	if (p_ptr->inven_cnt)
 	{
 		Term_clear();
+		
+		/* Inventory -- if any */
 		item_tester_full = TRUE;
 		show_inven();
+		
 		prt("You are carrying: -more-", 0, 0);
+		
+		/* Flush keys */
+		flush();
+		
 		if (inkey() == ESCAPE) return;
 	}
 
@@ -4365,8 +4318,153 @@ static void show_info(void)
 				/* Caption */
 				prt(format("Your home contains (page %d): -more-", k+1), 0, 0);
 
+				/* Flush keys */
+				flush();
+				
 				/* Wait for it */
 				if (inkey() == ESCAPE) return;
+			}
+		}
+	}
+}
+
+
+static void close_game_handle_death(void)
+{
+	char ch;
+	
+	/* Handle retirement */
+	if (p_ptr->total_winner)
+	{
+		/* Save winning message to notes file. */
+		if (take_notes)
+		{
+			add_note_type(NOTE_WINNER);
+		}
+
+		kingly();
+	}
+	
+	/* Save memories */
+	if (!munchkin_death || get_check("Save death? "))
+	{
+		if (!save_player()) msg_print("death save failed!");
+	}
+	
+#if 0
+	/* Dump bones file */
+	make_bones();
+#endif
+
+	/* Inform notes file that you are dead */
+	if (take_notes)
+	{
+		char long_day[30];
+		char buf[80];
+		time_t ct = time((time_t*)NULL);
+
+		/* Get the date */
+		strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+
+		/* Create string */
+		sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
+			p_ptr->died_from, long_day);
+
+		/* Output to the notes file */
+		output_note(buf);
+	}
+
+	/* You are dead */
+	print_tomb();
+
+	/* Describe options */
+	prt("(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit", 22, 0);
+
+	/* Flush messages */
+	msg_print(NULL);
+
+	/* Flush all input keys */
+	flush();
+
+	/* Save screen here out of loop to avoid saving more than once */
+	Term_save();
+
+	/* Player selection */
+	/* Escape key is the only thing that will exit this loop */
+	while (TRUE)
+	{
+		/* Load screen */
+		Term_load();
+
+		/* Flush all input keys */
+		flush();
+		
+		ch = inkey();
+
+		switch (ch)
+		{
+			case ESCAPE:
+			{
+				/* Flush the keys */
+				flush();
+			
+				if (get_check("Do you really want to exit? "))
+				{
+					/* Save dead player */
+					if (!save_player())
+					{
+						msg_print("Death save failed!");
+						msg_print(NULL);
+					}
+
+#if 0
+					/* Dump bones file */
+					make_bones();
+#endif
+					/* Go home, we're done */
+					return;
+				}	
+				else
+				{
+					break;
+				}
+			}
+			
+			case 'd':
+			case 'D':
+			{
+				/* Dump char file */
+				char tmp[160] = "";
+	
+				/* Prompt */
+				put_str("Filename: ", 23, 0);
+					
+				/* Ask for filename (or abort) */
+				if (!askfor_aux(tmp, 60)) continue;
+
+				/* Ignore Return */
+				if (!tmp[0]) continue;
+	
+				/* Dump a character file */
+				(void)file_character(tmp, FALSE);
+
+				break;
+			}
+			
+			case 'c':
+			case 'C':		
+			{
+				/* Show char info */
+				show_info();
+				break;
+			}
+			
+			case 't':
+			case 'T':
+			{
+				/* Show top twenty */
+				top_twenty();
+				break;
 			}
 		}
 	}
@@ -4381,7 +4479,6 @@ static void show_info(void)
 void close_game(void)
 {
 	char buf[1024];
-
 
 	/* Handle stuff */
 	handle_stuff();
@@ -4405,58 +4502,11 @@ void close_game(void)
 
 	/* Open the high score file, for reading/writing */
 	highscore_fd = fd_open(buf, O_RDWR);
-
-
-	/* Handle death */
+	
 	if (p_ptr->is_dead)
 	{
-		/* Handle retirement */
-		if (p_ptr->total_winner)
-		{
-			/* Save winning message to notes file. */
-			if (take_notes)
-			{
-				add_note_type(NOTE_WINNER);
-			}
-
-			kingly();
-		}
-
-		/* Save memories */
-		if (!munchkin_death || get_check("Save death? "))
-			if (!save_player()) msg_print("death save failed!");
-
-#if 0
-		/* Dump bones file */
-		make_bones();
-#endif
-
-		/* Inform notes file that you are dead */
-		if (take_notes)
-		{
-			char long_day[30];
-			char buf[80];
-			time_t ct = time((time_t*)NULL);
-
-			/* Get the date */
-			strftime(long_day, 30,
-				"%Y-%m-%d at %H:%M:%S", localtime(&ct));
-
-			/* Create string */
-			sprintf(buf, "\n%s was killed by %s on %s\n", op_ptr->full_name,
-				 p_ptr->died_from, long_day);
-
-			/* Output to the notes file */
-			output_note(buf);
-		}
-
-		print_tomb();
-
-		/* Show more info */
-		show_info();
-
-		/* Handle score, show Top scores */
-		(void)top_twenty();
+		/* Handle death */
+		close_game_handle_death();
 	}
 
 	/* Still alive */

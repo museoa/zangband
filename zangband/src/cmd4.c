@@ -3,15 +3,14 @@
 /* Purpose: Interface commands */
 
 /*
- * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
+ * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
  *
- * This software may be copied and distributed for educational, research,
- * and not for profit purposes provided that this copyright and statement
- * are included in all such copies.  Other copyrights may also apply.
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies.
  */
 
 #include "angband.h"
-
 
 
 /*
@@ -31,21 +30,11 @@ void do_cmd_redraw(void)
 
 	term *old = Term;
 
-
-	/* Low level flush */
-	Term_flush();
-
-	/* Reset "inkey()" */
-	flush();
-
-
-	/* Hack -- React to changes */
+	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
-
 
 	/* Combine and Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 
 	/* Update torch */
 	p_ptr->update |= (PU_TORCH);
@@ -70,9 +59,6 @@ void do_cmd_redraw(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
-
-	/* Clear screen */
-	Term_clear();
 
 	/* Hack -- update */
 	handle_stuff();
@@ -194,7 +180,7 @@ void do_cmd_message_one(void)
 
 
 /*
- * Show previous messages to the user
+ * Show previous messages to the user	-BEN-
  *
  * The screen format uses line 0 and 23 for headers and prompts,
  * skips line 1 and 22, and uses line 2 thru 21 for old messages.
@@ -210,10 +196,8 @@ void do_cmd_message_one(void)
  */
 void do_cmd_messages(void)
 {
-	char ch;
-
-	int i, j, n;
-	uint q;
+	int i, j, k, n;
+	int q;
 
 	char shower[80];
 	char finder[80];
@@ -235,8 +219,7 @@ void do_cmd_messages(void)
 	/* Start at leftmost edge */
 	q = 0;
 
-
-	/* Save screen */
+	/* Save the screen */
 	screen_save();
 
 	/* Get size */
@@ -249,16 +232,16 @@ void do_cmd_messages(void)
 		Term_clear();
 
 		/* Dump messages */
-		for (j = 0; (j < hgt - 4) && (i + j < n); j++)
+		for (j = 0; (j < hgt-4) && (i + j < n); j++)
 		{
-			cptr msg = message_str((s16b)(i+j));
-			byte attr = message_color((s16b)(i+j));
+			cptr msg = message_str(i+j);
+			byte attr = message_color(i+j);
 
 			/* Hack -- fake monochrome */
 			if (!use_color) attr = TERM_WHITE;
 
 			/* Apply horizontal scroll */
-			msg = (strlen(msg) >= q) ? (msg + q) : "";
+			msg = ((int)strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
 			Term_putstr(0, hgt-3 - j, -1, attr, msg);
@@ -284,22 +267,22 @@ void do_cmd_messages(void)
 
 		/* Display header XXX XXX XXX */
 		prt(format("Message Recall (%d-%d of %d), Offset %d",
-			   i, i + j - 1, n, q), 0, 0);
+		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
 		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", hgt-1, 0);
 
 		/* Get a command */
-		ch = inkey();
+		k = inkey();
 
 		/* Exit on Escape */
-		if (ch == ESCAPE) break;
+		if (k == ESCAPE) break;
 
 		/* Hack -- Save the old index */
 		j = i;
 
 		/* Horizontal scroll */
-		if (ch == '4')
+		if (k == '4')
 		{
 			/* Scroll left */
 			q = (q >= wid / 2) ? (q - wid / 2) : 0;
@@ -309,7 +292,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Horizontal scroll */
-		if (ch == '6')
+		if (k == '6')
 		{
 			/* Scroll right */
 			q = q + wid / 2;
@@ -319,7 +302,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Hack -- handle show */
-		if (ch == '=')
+		if (k == '=')
 		{
 			/* Prompt */
 			prt("Show: ", hgt-1, 0);
@@ -332,9 +315,9 @@ void do_cmd_messages(void)
 		}
 
 		/* Hack -- handle find */
-		if (ch == '/')
+		if (k == '/')
 		{
-			s16b z;
+			int z;
 
 			/* Prompt */
 			prt("Find: ", hgt-1, 0);
@@ -362,43 +345,43 @@ void do_cmd_messages(void)
 			}
 		}
 
-		/* Recall 20 older messages */
-		if ((ch == 'p') || (ch == KTRL('P')) || (ch == ' '))
-		{
-			/* Go older if legal */
-			if (i + 20 < n) i += 20;
-		}
-
-		/* Recall 10 older messages */
-		if (ch == '+')
-		{
-			/* Go older if legal */
-			if (i + 10 < n) i += 10;
-		}
-
 		/* Recall 1 older message */
-		if ((ch == '8') || (ch == '\n') || (ch == '\r'))
+		if ((k == '8') || (k == '\n') || (k == '\r'))
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
 		}
 
+		/* Recall 10 older messages */
+		if (k == '+')
+		{
+			/* Go older if legal */
+			if (i + 10 < n) i += 10;
+		}
+
+		/* Recall 20 older messages */
+		if ((k == 'p') || (k == KTRL('P')) || (k == ' '))
+		{
+			/* Go older if legal */
+			if (i + 20 < n) i += 20;
+		}
+
 		/* Recall 20 newer messages */
-		if ((ch == 'n') || (ch == KTRL('N')))
+		if ((k == 'n') || (k == KTRL('N')))
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;
 		}
 
 		/* Recall 10 newer messages */
-		if (ch == '-')
+		if (k == '-')
 		{
 			/* Go newer (if able) */
 			i = (i >= 10) ? (i - 10) : 0;
 		}
 
 		/* Recall 1 newer messages */
-		if (ch == '2')
+		if (k == '2')
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
@@ -408,88 +391,140 @@ void do_cmd_messages(void)
 		if (i == j) bell();
 	}
 
-	/* Load screen */
+	/* Restore the screen */
 	screen_load();
 }
 
-
-
 /*
- * Ask for a "user pref line" and process it
- */
-void do_cmd_pref(void)
-{
-	char tmp[80];
-
-	/* Default */
-	strcpy(tmp, "");
-
-	/* Ask for a "user pref command" */
-	if (!get_string("Pref: ", tmp, 80)) return;
-
-	/* Process that pref command */
-	(void)process_pref_file_aux(tmp);
-}
-
-
-/*
- * Ask for a "user pref file" and process it.
+ * Copy the indicated options out from the
+ * option_info[] data structure into the
+ * player, birth and server data structures as indicated.
  *
- * This function should only be used by standard interaction commands,
- * in which a standard "Command:" prompt is present on the given row.
- *
- * Allow absolute file names?  XXX XXX XXX
+ * Options that should be unchanged are restored to the
+ * current state.  (This stops the player changing the
+ * birth options in the middle of the game.)
  */
-static void do_cmd_pref_file_hack(int row)
+void init_options(byte flags)
 {
-	char ftmp[80];
-
-	/* Prompt */
-	prt("Command: Load a user pref file", row, 0);
-
-	/* Prompt */
-	prt("File: ", row + 2, 0);
-
-	/* Default filename */
-	sprintf(ftmp, "%s.prf", op_ptr->base_name);
-
-	/* Ask for a file (or cancel) */
-	if (!askfor_aux(ftmp, 80)) return;
-
-	/* Process the given filename */
-	if (process_pref_file(ftmp))
+	int birth_counter = 0, server_counter = 0, player_counter = 0;
+	int i;
+	
+	for (i = 0; i < OPT_MAX; i++)
 	{
-		/* Mention failure */
-		msg_format("Failed to load '%s'!", ftmp);
-	}
-	else
-	{
-		/* Mention success */
-		msg_format("Loaded '%s'.", ftmp);
-	}
-}
-
-
-/*
- * Interact with some options
- */
-void do_cmd_options_cheat(int page, cptr info)
-{
-	char    ch;
-	int     i, k = 0, n = 0;
-	int     opt[OPT_PAGE_PER];
-	char    buf[80];
-
-
-	/* Scan the options */
-	for (i = 0; i < OPT_PAGE_PER; i++)
-	{
-		/* Collect options on this "page" */
-		if (option_page[page][i] != 255)
+		/* A birth option? */
+		if (i == birth_options[birth_counter])
 		{
-			opt[n++] = option_page[page][i];
+			/* Are we allowed to copy the data? */
+			if (flags & OPT_FLAG_BIRTH)
+			{
+				/* Copy the state of the flag into p_ptr->birth[] */
+				p_ptr->birth[birth_counter] = option_info[i].o_val;
+			}
+			else
+			{
+				/* Restore the option to its original value */
+				option_info[i].o_val = p_ptr->birth[birth_counter];
+			}
+			
+			/* Increment birth option counter */
+			birth_counter++;
+		}
+		
+		/* A server option? */
+		else if (i == server_options[server_counter])
+		{
+			/* Are we allowed to copy the data? */
+			if (flags & OPT_FLAG_SERVER)
+			{
+				/* Copy the state of the flag into svr_ptr->options[] */
+				svr_ptr->options[server_counter] = option_info[i].o_val;
+			}
+			else
+			{
+				/* Restore the option to its original value */
+				option_info[i].o_val = svr_ptr->options[server_counter];
+			}
+			
+			/* Increment server option counter */
+			server_counter++;
+		}
+		
+		/* A player option */
+		else
+		{
+			/* Are we allowed to copy the data? */
+			if (flags & OPT_FLAG_PLAYER)
+			{
+				/* Copy the state of the flag into p_ptr->options[] */
+				p_ptr->options[player_counter] = option_info[i].o_val;
+			}
+			else
+			{
+				/* Restore the option to its original value */
+				option_info[i].o_val = p_ptr->options[player_counter];
+			}
+			
+			/* Increment player option counter */
+			player_counter++;
 		}
 	}
+}
+
+
+
+/*
+ * Number of cheating options
+ */
+#define CHEAT_MAX 6
+
+typedef struct cheat_option_type cheat_option_type;
+
+struct cheat_option_type
+{
+	bool	*o_var;
+
+	u16b	o_word;
+
+	cptr	o_text;
+	cptr	o_desc;
+};
+
+
+/*
+ * Cheating options
+ */
+static cheat_option_type cheat_info[CHEAT_MAX] =
+{
+	{ &cheat_peek,		0x0001,
+	"cheat_peek",		"Peek into object creation" },
+
+	{ &cheat_hear,		0x0002,
+	"cheat_hear",		"Peek into monster creation" },
+
+	{ &cheat_room,		0x0004,
+	"cheat_room",		"Peek into dungeon creation" },
+
+	{ &cheat_xtra,		0x0008,
+	"cheat_xtra",		"Peek into something else" },
+
+	{ &cheat_know,		0x0010,
+	"cheat_know",		"Know complete monster info" },
+
+	{ &cheat_live,		0x0020,
+	"cheat_live",		"Allow player to avoid death" }
+};
+
+
+/*
+ * Interact with some options for cheating
+ */
+static void do_cmd_options_cheat(cptr info)
+{
+	char	ch;
+
+	int		i, k = 0, n = CHEAT_MAX;
+
+	char	buf[80];
 
 
 	/* Clear screen */
@@ -499,7 +534,7 @@ void do_cmd_options_cheat(int page, cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, 'F' for frequency, ESC to accept) ", info);
+		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
 		prt(buf, 0, 0);
 
 		/* Display the options */
@@ -512,9 +547,9 @@ void do_cmd_options_cheat(int page, cptr info)
 
 			/* Display the option text */
 			sprintf(buf, "%-48s: %s  (%s)",
-			        option_desc[opt[i]],
-			        op_ptr->opt[opt[i]] ? "yes" : "no ",
-			        option_text[opt[i]]);
+			    cheat_info[i].o_desc,
+			    (*cheat_info[i].o_var ? "yes" : "no "),
+			    cheat_info[i].o_text);
 			c_prt(a, buf, i + 2, 0);
 		}
 
@@ -548,20 +583,12 @@ void do_cmd_options_cheat(int page, cptr info)
 				break;
 			}
 
-			case 't':
-			case 'T':
-			case '5':
-			{
-				op_ptr->opt[opt[k]] = !op_ptr->opt[opt[k]];
-				break;
-			}
-
 			case 'y':
 			case 'Y':
 			case '6':
 			{
-				p_ptr->noscore |= (1L << (k + 8));
-				op_ptr->opt[opt[k]] = TRUE;
+				p_ptr->noscore |= cheat_info[k].o_word;
+				(*cheat_info[k].o_var) = TRUE;
 				k = (k + 1) % n;
 				break;
 			}
@@ -570,7 +597,7 @@ void do_cmd_options_cheat(int page, cptr info)
 			case 'N':
 			case '4':
 			{
-				op_ptr->opt[opt[k]] = FALSE;
+				(*cheat_info[k].o_var) = FALSE;
 				k = (k + 1) % n;
 				break;
 			}
@@ -583,6 +610,16 @@ void do_cmd_options_cheat(int page, cptr info)
 		}
 	}
 }
+
+
+static cheat_option_type autosave_info[2] =
+{
+	{ (bool *)(&autosave_l), 0x0001,
+	  "autosave_l", "Autosave when entering new levels" },
+
+	{ (bool *)(&autosave_t), 0x0002,
+	  "autosave_t", "Timed autosave" },
+};
 
 
 static s16b toggle_frequency(s16b current)
@@ -602,25 +639,15 @@ static s16b toggle_frequency(s16b current)
 
 
 /*
- * Interact with some options
+ * Interact with some options for cheating
  */
-void do_cmd_options_autosave(int page, cptr info)
+static void do_cmd_options_autosave(cptr info)
 {
-	char    ch;
-	int     i, k = 0, n = 0;
-	int     opt[OPT_PAGE_PER];
-	char    buf[80];
+	char	ch;
 
+	int     i, k = 0, n = 2;
 
-	/* Scan the options */
-	for (i = 0; i < OPT_PAGE_PER; i++)
-	{
-		/* Collect options on this "page" */
-		if (option_page[page][i] != 255)
-		{
-			opt[n++] = option_page[page][i];
-		}
-	}
+	char	buf[80];
 
 
 	/* Clear screen */
@@ -643,11 +670,14 @@ void do_cmd_options_autosave(int page, cptr info)
 
 			/* Display the option text */
 			sprintf(buf, "%-48s: %s  (%s)",
-			        option_desc[opt[i]],
-			        op_ptr->opt[opt[i]] ? "yes" : "no ",
-			        option_text[opt[i]]);
+			    autosave_info[i].o_desc,
+			    (*autosave_info[i].o_var ? "yes" : "no "),
+			    autosave_info[i].o_text);
 			c_prt(a, buf, i + 2, 0);
 		}
+
+		prt(format("Timed autosave frequency: every %d turns",  autosave_freq), 5, 0);
+
 
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
@@ -679,19 +709,12 @@ void do_cmd_options_autosave(int page, cptr info)
 				break;
 			}
 
-			case 't':
-			case 'T':
-			case '5':
-			{
-				op_ptr->opt[opt[k]] = !op_ptr->opt[opt[k]];
-				break;
-			}
-
 			case 'y':
 			case 'Y':
 			case '6':
 			{
-				op_ptr->opt[opt[k]] = TRUE;
+
+				(*autosave_info[k].o_var) = TRUE;
 				k = (k + 1) % n;
 				break;
 			}
@@ -700,7 +723,7 @@ void do_cmd_options_autosave(int page, cptr info)
 			case 'N':
 			case '4':
 			{
-				op_ptr->opt[opt[k]] = FALSE;
+				(*autosave_info[k].o_var) = FALSE;
 				k = (k + 1) % n;
 				break;
 			}
@@ -727,22 +750,22 @@ void do_cmd_options_autosave(int page, cptr info)
 /*
  * Interact with some options
  */
-void do_cmd_options_aux(int page, cptr info)
+static void do_cmd_options_aux(int page, cptr info)
 {
 	char    ch;
 	int     i, k = 0, n = 0;
-	int     opt[OPT_PAGE_PER];
+	int     opt[24];
 	char    buf[80];
 
 
+	/* Lookup the options */
+	for (i = 0; i < 24; i++) opt[i] = 0;
+
 	/* Scan the options */
-	for (i = 0; i < OPT_PAGE_PER; i++)
+	for (i = 0; option_info[i].o_desc; i++)
 	{
-		/* Collect options on this "page" */
-		if (option_page[page][i] != 255)
-		{
-			opt[n++] = option_page[page][i];
-		}
+		/* Notice options on this "page" */
+		if (option_info[i].o_page == page) opt[n++] = i;
 	}
 
 
@@ -765,10 +788,10 @@ void do_cmd_options_aux(int page, cptr info)
 			if (i == k) a = TERM_L_BLUE;
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
-			        option_desc[opt[i]],
-			        op_ptr->opt[opt[i]] ? "yes" : "no ",
-			        option_text[opt[i]]);
+			sprintf(buf, "%-48s: %s  (%.23s)",
+			        option_info[opt[i]].o_desc,
+			        (option_info[opt[i]].o_val ? "yes" : "no "),
+			        option_info[opt[i]].o_text);
 			c_prt(a, buf, i + 2, 0);
 		}
 
@@ -802,19 +825,11 @@ void do_cmd_options_aux(int page, cptr info)
 				break;
 			}
 
-			case 't':
-			case 'T':
-			case '5':
-			{
-				op_ptr->opt[opt[k]] = !op_ptr->opt[opt[k]];
-				break;
-			}
-
 			case 'y':
 			case 'Y':
 			case '6':
 			{
-				op_ptr->opt[opt[k]] = TRUE;
+				(option_info[opt[k]].o_val) = TRUE;
 				k = (k + 1) % n;
 				break;
 			}
@@ -823,7 +838,7 @@ void do_cmd_options_aux(int page, cptr info)
 			case 'N':
 			case '4':
 			{
-				op_ptr->opt[opt[k]] = FALSE;
+				(option_info[opt[k]].o_val) = FALSE;
 				k = (k + 1) % n;
 				break;
 			}
@@ -850,13 +865,16 @@ static void do_cmd_options_win(void)
 
 	char ch;
 
+	bool go = TRUE;
+
 	u32b old_flag[8];
 
 
 	/* Memorize old flags */
 	for (j = 0; j < 8; j++)
 	{
-		old_flag[j] = op_ptr->window_flag[j];
+		/* Acquire current flags */
+		old_flag[j] = window_flag[j];
 	}
 
 
@@ -864,10 +882,10 @@ static void do_cmd_options_win(void)
 	Term_clear();
 
 	/* Interact */
-	while (1)
+	while (go)
 	{
-		/* Prompt */
-		prt("Window flags (<dir> to move, 't' to toggle, or ESC)", 0, 0);
+		/* Prompt XXX XXX XXX */
+		prt("Window Flags (<dir>, t, y, n, ESC) ", 0, 0);
 
 		/* Display the windows */
 		for (j = 0; j < 8; j++)
@@ -910,7 +928,7 @@ static void do_cmd_options_win(void)
 				if (use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
 
 				/* Active flag */
-				if (op_ptr->window_flag[j] & (1L << i)) c = 'X';
+				if (window_flag[j] & (1L << i)) c = 'X';
 
 				/* Flag value */
 				Term_putch(35 + j * 5, i + 5, a, c);
@@ -923,48 +941,61 @@ static void do_cmd_options_win(void)
 		/* Get key */
 		ch = inkey();
 
-		/* Allow escape */
-		if ((ch == ESCAPE) || (ch == 'q')) break;
-
-		/* Toggle */
-		if ((ch == '5') || (ch == 't'))
+		/* Analyze */
+		switch (ch)
 		{
-			/* Hack -- ignore the main window */
-			if (x == 0)
+			case ESCAPE:
 			{
-				bell();
+				go = FALSE;
+				break;
 			}
 
-			/* Toggle flag (off) */
-			else if (op_ptr->window_flag[x] & (1L << y))
+			case 'T':
+			case 't':
 			{
-				op_ptr->window_flag[x] &= ~(1L << y);
+				/* Clear windows */
+				for (j = 0; j < 8; j++)
+				{
+					window_flag[j] &= ~(1L << y);
+				}
+
+				/* Clear flags */
+				for (i = 0; i < 16; i++)
+				{
+					window_flag[x] &= ~(1L << i);
+				}
+
+				/* Fall through */
 			}
 
-			/* Toggle flag (on) */
-			else
+			case 'y':
+			case 'Y':
 			{
-				op_ptr->window_flag[x] |= (1L << y);
+				/* Ignore screen */
+				if (x == 0) break;
+
+				/* Set flag */
+				window_flag[x] |= (1L << y);
+				break;
 			}
 
-			/* Continue */
-			continue;
-		}
+			case 'n':
+			case 'N':
+			{
+				/* Clear flag */
+				window_flag[x] &= ~(1L << y);
+				break;
+			}
 
-		/* Extract direction */
-		d = target_dir(ch);
+			default:
+			{
+				d = get_keymap_dir(ch);
 
-		/* Move */
-		if (d != 0)
-		{
-			x = (x + ddx[d] + 8) % 8;
-			y = (y + ddy[d] + 16) % 16;
-		}
+				x = (x + ddx[d] + 8) % 8;
+				y = (y + ddy[d] + 16) % 16;
 
-		/* Oops */
-		else
-		{
-			bell();
+				if (!d) bell();
+			}
 		}
 	}
 
@@ -977,7 +1008,7 @@ static void do_cmd_options_win(void)
 		if (!angband_term[j]) continue;
 
 		/* Ignore non-changes */
-		if (op_ptr->window_flag[j] == old_flag[j]) continue;
+		if (window_flag[j] == old_flag[j]) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -994,111 +1025,20 @@ static void do_cmd_options_win(void)
 }
 
 
-/*
- * Write all current options to the given preference file in the
- * lib/user directory. Modified from KAmband 1.8.
- */
-static errr option_dump(cptr fname)
-{
-	int i, j;
-
-	FILE *fff;
-
-	char buf[1024];
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
-	/* Append to the file */
-	fff = my_fopen(buf, "a");
-
-	/* Failure */
-	if (!fff) return (-1);
-
-
-	/* Skip some lines */
-	fprintf(fff, "\n\n");
-
-	/* Start dumping */
-	fprintf(fff, "# Automatic option dump\n\n");
-
-	/* Dump options */
-	for (i = 0; i < OPT_MAX; i++)
-	{
-		/* Require a real option */
-		if (!option_text[i]) continue;
-
-		/* Comment */
-		fprintf(fff, "# Option '%s'\n", option_desc[i]);
-
-		/* Dump the option */
-		if (op_ptr->opt[i])
-		{
-			fprintf(fff, "Y:%s\n", option_text[i]);
-		}
-		else
-		{
-			fprintf(fff, "X:%s\n", option_text[i]);
-		}
-
-		/* Skip a line */
-		fprintf(fff, "\n");
-	}
-
-	/* Dump window flags */
-	for (i = 1; i < 8; i++)
-	{
-		/* Require a real window */
-		if (!angband_term[i]) continue;
-
-		/* Check each flag */
-		for (j = 0; j < 32; j++)
-		{
-			/* Require a real flag */
-			if (!window_flag_desc[j]) continue;
-
-			/* Comment */
-			fprintf(fff, "# Window '%s', Flag '%s'\n",
-			        angband_term_name[i], window_flag_desc[j]);
-
-			/* Dump the flag */
-			if (op_ptr->window_flag[i] & (1L << j))
-			{
-				fprintf(fff, "W:%d:%d:1\n", i, j);
-			}
-			else
-			{
-				fprintf(fff, "W:%d:%d:0\n", i, j);
-			}
-
-			/* Skip a line */
-			fprintf(fff, "\n");
-		}
-	}
-
-	/* Close */
-	my_fclose(fff);
-
-	/* Success */
-	return (0);
-}
 
 
 /*
  * Set or unset various options.
  *
- * After using this command, a complete redraw should be performed,
- * in case any visual options have been changed.
+ * The user must use the "Ctrl-R" command to "adapt" to changes
+ * in any options which control "visual" aspects of the game.
  */
-void do_cmd_options(void)
+void do_cmd_options(byte flags)
 {
-	char ch;
+	int k;
 
 
-	/* Save screen */
+	/* Save the screen */
 	screen_save();
 
 
@@ -1117,183 +1057,250 @@ void do_cmd_options(void)
 		prt("(3) Game-Play Options", 6, 5);
 		prt("(4) Efficiency Options", 7, 5);
 		prt("(5) Display Options", 8, 5);
-		prt("(6) Artificial Intelligence Options", 9, 5);
-		prt("(7) Testing Options", 10, 5);
+		prt("(6) Birth Options", 9, 5);
+		prt("(7) Artificial Intelligence Options", 10, 5);
+		prt("(8) Testing Options", 11, 5);
 
 		/* Special choices */
-		prt("(D) Base Delay Factor", 12, 5);
-		prt("(H) Hitpoint Warning", 13, 5);
-		prt("(A) Autosave Options", 14, 5);
+		prt("(D) Base Delay Factor", 13, 5);
+		prt("(H) Hitpoint Warning", 14, 5);
+		prt("(A) Autosave Options", 15, 5);
 
 
 		/* Window flags */
-		prt("(W) Window Flags", 15, 5);
+		prt("(W) Window Flags", 16, 5);
 
 		/* Cheating */
-		prt("(C) Cheating Options", 16, 5);
+		prt("(C) Cheating Options", 17, 5);
 
 		/* Dump Options */
-		prt("(|) Dump options to a file", 18, 5);
+		prt("(|) Dump Options to a Pref File", 19, 5);
 
 		/* Prompt */
 		prt("Command: ", 20, 0);
 
 		/* Get command */
-		ch = inkey();
+		k = inkey();
 
 		/* Exit */
-		if (ch == ESCAPE) break;
+		if (k == ESCAPE) break;
 
-		/* User Interface Options */
-		else if (ch == '1')
+		/* Analyze */
+		switch (k)
 		{
-			do_cmd_options_aux(0, "User Interface Options");
-		}
-
-		/* Disturbance Options */
-		else if (ch == '2')
-		{
-			do_cmd_options_aux(1, "Disturbance Options");
-		}
-
-		/* Game-Play Options */
-		else if (ch == '3')
-		{
-			do_cmd_options_aux(2, "Game-Play Options");
-		}
-
-		/* Efficiency Options */
-		else if (ch == '4')
-		{
-			do_cmd_options_aux(3, "Efficiency Options");
-		}
-
-		/* Display Options */
-		else if (ch == '5')
-		{
-			do_cmd_options_aux(4, "Display Options");
-		}
-
-		/* Artificial Intelligence Options */
-		else if (ch == '6')
-		{
-			do_cmd_options_aux(5, "Artificial Intelligence Options");
-		}
-
-		/* Testing options */
-		else if ((ch == '7') || (ch == 'T'))
-		{
-			do_cmd_options_aux(6, "Testing Options");
-		}
-
-		/* Cheating Options */
-		else if ((ch == '8') || (ch == 'c') || (ch == 'C'))
-		{
-			do_cmd_options_cheat(7, "Cheat Options");
-		}
-
-		/* Autosave Options */
-		else if ((ch == 'a') || (ch == 'A'))
-		{
-			do_cmd_options_autosave(9, "Autosave");
-		}
-
-		/* Window flags */
-		else if ((ch == 'w') || (ch == 'W'))
-		{
-			do_cmd_options_win();
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL |
-			                  PW_PLAYER | PW_MESSAGE | PW_OVERHEAD |
-			                  PW_MONSTER | PW_OBJECT | PW_SNAPSHOT |
-			                  PW_BORG_1 | PW_BORG_2 | PW_DUNGEON);
-		}
-
-		/* Hack -- Base Delay Factor */
-		else if ((ch == 'D') || (ch == 'd'))
-		{
-			/* Prompt */
-			prt("Command: Base Delay Factor", 19, 0);
-
-			/* Get a new value */
-			while (1)
+			/* User Interface Options */
+			case '1':
 			{
-				char cx;
-				int msec = op_ptr->delay_factor * op_ptr->delay_factor;
-				prt(format("Current base delay factor: %d (%d msec)",
-				           op_ptr->delay_factor, msec), 22, 0);
-				prt("New base delay factor (0-9 or ESC to accept): ", 21, 0);
-
-				cx = inkey();
-				if (cx == ESCAPE) break;
-				if (isdigit(cx)) op_ptr->delay_factor = D2I(cx);
-				else bell();
-			}
-		}
-
-
-		/* Hack -- hitpoint warning factor */
-		else if ((ch == 'H') || (ch == 'h'))
-		{
-			/* Prompt */
-			prt("Command: Hitpoint Warning", 19, 0);
-
-			/* Get a new value */
-			while (1)
-			{
-				char cx;
-				prt(format("Current hitpoint warning: %2d%%",
-				           op_ptr->hitpoint_warn * 10), 22, 0);
-				prt("New hitpoint warning (0-9 or ESC to accept): ", 21, 0);
-
-				cx = inkey();
-				if (cx == ESCAPE) break;
-				if (isdigit(cx)) op_ptr->hitpoint_warn = D2I(cx);
-				else bell();
-			}
-		}
-
-
-		/* Dump the current options to file */
-		else if (ch == '|')
-		{
-			char ftmp[80];
-
-			/* Prompt */
-			prt("Command: Append options to a file", 20, 0);
-
-			/* Prompt */
-			prt("File: ", 21, 0);
-
-			/* Default filename */
-			sprintf(ftmp, "pref-opt.prf");
-
-			/* Ask for a file */
-			if (!askfor_aux(ftmp, 80)) continue;
-
-			/* Drop priv's */
-			safe_setuid_drop();
-
-			/* Dump the options */
-			if (option_dump(ftmp))
-			{
-				/* Failure */
-				msg_print("Failed!");
-			}
-			else
-			{
-				/* Success */
-				msg_print("Done.");
+				/* Spawn */
+				do_cmd_options_aux(1, "User Interface Options");
+				
+				/* Save the changes */
+				init_options(flags);
+				break;
 			}
 
-			/* Grab priv's */
-			safe_setuid_grab();
-		}
+			/* Disturbance Options */
+			case '2':
+			{
+				/* Spawn */
+				do_cmd_options_aux(2, "Disturbance Options");
+				
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
 
-		/* Unknown option */
-		else
-		{
-			/* Oops */
-			bell();
+			/* Game-Play Options */
+			case '3':
+			{
+				/* Spawn */
+				do_cmd_options_aux(3, "Game-Play Options");
+				
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
+
+			/* Efficiency Options */
+			case '4':
+			{
+				/* Spawn */
+				do_cmd_options_aux(4, "Efficiency Options");
+				
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
+
+			/* Display Options */
+			case '5':
+			{
+				/* Spawn */
+				do_cmd_options_aux(5, "Display Options");
+
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
+			
+			/* Birth Options */
+			case '6':
+			{
+				/* Spawn */
+				do_cmd_options_aux(6, "Birth Options");
+
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
+
+			/* Artificial Intelligence Options */
+			case '7':
+			{
+				/* Spawn */
+				do_cmd_options_aux(7, "Artificial Intelligence Options");
+				
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
+
+			/* Testing options */
+			case '8':
+			{
+				/* Spawn */
+				do_cmd_options_aux(8, "Testing Options");
+				
+				/* Save the changes */
+				init_options(flags);
+				break;
+			}
+
+			/* Cheating Options */
+			case 'c':
+			case 'C':
+			{
+				/* Spawn */
+				do_cmd_options_cheat("Cheaters never win");
+				break;
+			}
+
+			case 'a':
+			case 'A':
+			{
+				do_cmd_options_autosave("Autosave");
+				break;
+			}
+
+			/* Window flags */
+			case 'W':
+			case 'w':
+			{
+				/* Spawn */
+				do_cmd_options_win();
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL |
+				                  PW_PLAYER | PW_MESSAGE | PW_OVERHEAD |
+				                  PW_MONSTER | PW_OBJECT | PW_SNAPSHOT |
+				                  PW_BORG_1 | PW_BORG_2 | PW_DUNGEON);
+				break;
+			}
+
+			/* Hack -- Delay Speed */
+			case 'D':
+			case 'd':
+			{
+				/* Prompt */
+				prt("Command: Base Delay Factor", 18, 0);
+
+				/* Get a new value */
+				while (1)
+				{
+					int msec = delay_factor * delay_factor * delay_factor;
+					prt(format("Current base delay factor: %d (%d msec)",
+					           delay_factor, msec), 22, 0);
+					prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
+					k = inkey();
+					if (k == ESCAPE) break;
+					if (isdigit(k)) delay_factor = D2I(k);
+					else bell();
+				}
+
+				break;
+			}
+
+			/* Hack -- hitpoint warning factor */
+			case 'H':
+			case 'h':
+			{
+				/* Prompt */
+				prt("Command: Hitpoint Warning", 18, 0);
+
+				/* Get a new value */
+				while (1)
+				{
+					prt(format("Current hitpoint warning: %d0%%",
+					           hitpoint_warn), 22, 0);
+					prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
+					k = inkey();
+					if (k == ESCAPE) break;
+					if (isdigit(k)) hitpoint_warn = D2I(k);
+					else bell();
+				}
+
+				break;
+			}
+
+			/* Dump the current options to file */
+			case '|':
+			{
+				int i;
+				FILE    *fff;
+				char    buf[1024];
+
+				/* Build the filename */
+				path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
+
+				/* Drop priv's */
+				safe_setuid_drop();
+
+				/* Open the file */
+				fff = my_fopen(buf, "w");
+
+				/* Grab priv's */
+				safe_setuid_grab();
+
+				/* Failed */
+				if (!fff) break;
+
+				/* Header */
+				fprintf(fff, "# File: pref-opt.prf\n\n");
+				fprintf(fff, "# Allow user specification of various options\n\n");
+
+				/* Scan the options */
+				for (i = 0; option_info[i].o_desc; i++)
+				{
+					/* Dump the option */
+					fprintf(fff, "%c:%s\n",
+					        (option_info[i].o_val ? 'Y' : 'X'),
+					        option_info[i].o_text);
+				}
+
+				/* Close the file */
+				my_fclose(fff);
+
+				/* Success message */
+				msg_print("Saved default options.");
+
+				break;
+			}
+
+			/* Unknown option */
+			default:
+			{
+				/* Oops */
+				bell();
+				break;
+			}
 		}
 
 		/* Flush messages */
@@ -1301,13 +1308,33 @@ void do_cmd_options(void)
 	}
 
 
-	/* Load screen */
+	/* Restore the screen */
 	screen_load();
 
 	/* Hack - Redraw equippy chars */
 	p_ptr->redraw |= (PR_EQUIPPY);
 }
 
+
+
+/*
+ * Ask for a "user pref line" and process it
+ *
+ * XXX XXX XXX Allow absolute file names?
+ */
+void do_cmd_pref(void)
+{
+	char buf[80];
+
+	/* Default */
+	strcpy(buf, "");
+
+	/* Ask for a "user pref command" */
+	if (!get_string("Pref: ", buf, 80)) return;
+
+	/* Process that pref command */
+	(void)process_pref_file_aux(buf);
+}
 
 
 #ifdef ALLOW_MACROS
@@ -1337,7 +1364,7 @@ static errr macro_dump(cptr fname)
 	if (!fff) return (-1);
 
 
-	/* Skip some lines */
+	/* Skip space */
 	fprintf(fff, "\n\n");
 
 	/* Start dumping */
@@ -1349,16 +1376,16 @@ static errr macro_dump(cptr fname)
 		/* Start the macro */
 		fprintf(fff, "# Macro '%d'\n\n", i);
 
-		/* Extract the macro action */
+		/* Extract the action */
 		ascii_to_text(buf, macro__act[i]);
 
-		/* Dump the macro action */
+		/* Dump the macro */
 		fprintf(fff, "A:%s\n", buf);
 
-		/* Extract the macro pattern */
+		/* Extract the action */
 		ascii_to_text(buf, macro__pat[i]);
 
-		/* Dump the macro pattern */
+		/* Dump normal macros */
 		fprintf(fff, "P:%s\n", buf);
 
 		/* End the macro */
@@ -1382,14 +1409,11 @@ static errr macro_dump(cptr fname)
  *
  * Note the complex use of the "inkey()" function from "util.c".
  *
- * Note that both "flush()" calls are extremely important.  This may
- * no longer be true, since "util.c" is much simpler now.  XXX XXX XXX
+ * Note that both "flush()" calls are extremely important.
  */
 static void do_cmd_macro_aux(char *buf)
 {
-	char ch;
-
-	int n = 0;
+	int i, n = 0;
 
 	char tmp[1024];
 
@@ -1401,13 +1425,13 @@ static void do_cmd_macro_aux(char *buf)
 	inkey_base = TRUE;
 
 	/* First key */
-	ch = inkey();
+	i = inkey();
 
 	/* Read the pattern */
-	while (ch != '\0')
+	while (i)
 	{
 		/* Save the key */
-		buf[n++] = ch;
+		buf[n++] = i;
 
 		/* Do not process macros */
 		inkey_base = TRUE;
@@ -1416,7 +1440,7 @@ static void do_cmd_macro_aux(char *buf)
 		inkey_scan = TRUE;
 
 		/* Attempt to read a key */
-		ch = inkey();
+		i = inkey();
 	}
 
 	/* Terminate */
@@ -1432,6 +1456,8 @@ static void do_cmd_macro_aux(char *buf)
 	/* Hack -- display the trigger */
 	Term_addstr(-1, TERM_WHITE, tmp);
 }
+
+#endif
 
 
 /*
@@ -1467,7 +1493,7 @@ static void do_cmd_macro_aux_keymap(char *buf)
 
 
 /*
- * Hack -- Append all keymaps to the given file
+ * Hack -- append all keymaps to the given file
  */
 static errr keymap_dump(cptr fname)
 {
@@ -1507,7 +1533,7 @@ static errr keymap_dump(cptr fname)
 	if (!fff) return (-1);
 
 
-	/* Skip some lines */
+	/* Skip space */
 	fprintf(fff, "\n\n");
 
 	/* Start dumping */
@@ -1532,7 +1558,7 @@ static errr keymap_dump(cptr fname)
 		/* Encode the action */
 		ascii_to_text(buf, act);
 
-		/* Dump the keymap action */
+		/* Dump the macro */
 		fprintf(fff, "A:%s\n", buf);
 		fprintf(fff, "C:%d:%s\n", mode, key);
 	}
@@ -1549,8 +1575,6 @@ static errr keymap_dump(cptr fname)
 }
 
 
-#endif
-
 
 /*
  * Interact with "macros"
@@ -1561,11 +1585,11 @@ static errr keymap_dump(cptr fname)
  */
 void do_cmd_macros(void)
 {
-	char ch;
+	int i;
 
 	char tmp[1024];
 
-	char pat[1024];
+	char buf[1024];
 
 	int mode;
 
@@ -1604,10 +1628,10 @@ void do_cmd_macros(void)
 		prt("Current action (if any) shown below:", 20, 0);
 
 		/* Analyze the current action */
-		ascii_to_text(tmp, macro__buf);
+		ascii_to_text(buf, macro__buf);
 
 		/* Display the current action */
-		prt(tmp, 22, 0);
+		prt(buf, 22, 0);
 
 
 		/* Selections */
@@ -1628,26 +1652,39 @@ void do_cmd_macros(void)
 		prt("Command: ", 16, 0);
 
 		/* Get a command */
-		ch = inkey();
+		i = inkey();
 
 		/* Leave */
-		if (ch == ESCAPE) break;
+		if (i == ESCAPE) break;
 
-		/* Load a user pref file */
-		if (ch == '1')
+		/* Load a 'macro' file */
+		else if (i == '1')
 		{
-			/* Ask for and load a user pref file */
-			do_cmd_pref_file_hack(16);
-		}
+			/* Prompt */
+			prt("Command: Load a user pref file", 16, 0);
 
+			/* Prompt */
+			prt("File: ", 18, 0);
+
+			/* Default filename */
+			sprintf(tmp, "%s.prf", player_name);
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 80)) continue;
+
+			/* Process the given filename */
+			if (0 != process_pref_file(tmp))
+			{
+				/* Prompt */
+				msg_print("Could not load file!");
+			}
+		}
 
 #ifdef ALLOW_MACROS
 
 		/* Save macros */
-		else if (ch == '2')
+		else if (i == '2')
 		{
-			char ftmp[80];
-
 			/* Prompt */
 			prt("Command: Append macros to a file", 16, 0);
 
@@ -1655,16 +1692,16 @@ void do_cmd_macros(void)
 			prt("File: ", 18, 0);
 
 			/* Default filename */
-			sprintf(ftmp, "%s.prf", op_ptr->full_name);
+			sprintf(tmp, "%s.prf", player_name);
 
 			/* Ask for a file */
-			if (!askfor_aux(ftmp, 80)) continue;
+			if (!askfor_aux(tmp, 80)) continue;
 
 			/* Drop priv's */
 			safe_setuid_drop();
 
 			/* Dump the macros */
-			(void)macro_dump(ftmp);
+			(void)macro_dump(tmp);
 
 			/* Grab priv's */
 			safe_setuid_grab();
@@ -1674,7 +1711,7 @@ void do_cmd_macros(void)
 		}
 
 		/* Query a macro */
-		else if (ch == '3')
+		else if (i == '3')
 		{
 			int k;
 
@@ -1685,10 +1722,10 @@ void do_cmd_macros(void)
 			prt("Trigger: ", 18, 0);
 
 			/* Get a macro trigger */
-			do_cmd_macro_aux(pat);
+			do_cmd_macro_aux(buf);
 
-			/* Get the action */
-			k = macro_find_exact(pat);
+			/* Acquire action */
+			k = macro_find_exact(buf);
 
 			/* Nothing found */
 			if (k < 0)
@@ -1704,10 +1741,10 @@ void do_cmd_macros(void)
 				strcpy(macro__buf, macro__act[k]);
 
 				/* Analyze the current action */
-				ascii_to_text(tmp, macro__buf);
+				ascii_to_text(buf, macro__buf);
 
 				/* Display the current action */
-				prt(tmp, 22, 0);
+				prt(buf, 22, 0);
 
 				/* Prompt */
 				msg_print("Found a macro.");
@@ -1715,7 +1752,7 @@ void do_cmd_macros(void)
 		}
 
 		/* Create a macro */
-		else if (ch == '4')
+		else if (i == '4')
 		{
 			/* Prompt */
 			prt("Command: Create a macro", 16, 0);
@@ -1724,7 +1761,7 @@ void do_cmd_macros(void)
 			prt("Trigger: ", 18, 0);
 
 			/* Get a macro trigger */
-			do_cmd_macro_aux(pat);
+			do_cmd_macro_aux(buf);
 
 			/* Clear */
 			clear_from(20);
@@ -1742,7 +1779,7 @@ void do_cmd_macros(void)
 				text_to_ascii(macro__buf, tmp);
 
 				/* Link the macro */
-				macro_add(pat, macro__buf);
+				macro_add(buf, macro__buf);
 
 				/* Prompt */
 				msg_print("Added a macro.");
@@ -1750,7 +1787,7 @@ void do_cmd_macros(void)
 		}
 
 		/* Remove a macro */
-		else if (ch == '5')
+		else if (i == '5')
 		{
 			/* Prompt */
 			prt("Command: Remove a macro", 16, 0);
@@ -1759,20 +1796,18 @@ void do_cmd_macros(void)
 			prt("Trigger: ", 18, 0);
 
 			/* Get a macro trigger */
-			do_cmd_macro_aux(pat);
+			do_cmd_macro_aux(buf);
 
 			/* Link the macro */
-			macro_add(pat, pat);
+			macro_add(buf, buf);
 
 			/* Prompt */
 			msg_print("Removed a macro.");
 		}
 
 		/* Save keymaps */
-		else if (ch == '6')
+		else if (i == '6')
 		{
-			char ftmp[80];
-
 			/* Prompt */
 			prt("Command: Append keymaps to a file", 16, 0);
 
@@ -1780,16 +1815,16 @@ void do_cmd_macros(void)
 			prt("File: ", 18, 0);
 
 			/* Default filename */
-			sprintf(ftmp, "%s.prf", op_ptr->full_name);
+			sprintf(tmp, "%s.prf", player_name);
 
 			/* Ask for a file */
-			if (!askfor_aux(ftmp, 80)) continue;
+			if (!askfor_aux(tmp, 80)) continue;
 
 			/* Drop priv's */
 			safe_setuid_drop();
 
 			/* Dump the macros */
-			(void)keymap_dump(ftmp);
+			(void)keymap_dump(tmp);
 
 			/* Grab priv's */
 			safe_setuid_grab();
@@ -1799,7 +1834,7 @@ void do_cmd_macros(void)
 		}
 
 		/* Query a keymap */
-		else if (ch == '7')
+		else if (i == '7')
 		{
 			cptr act;
 
@@ -1810,10 +1845,10 @@ void do_cmd_macros(void)
 			prt("Keypress: ", 18, 0);
 
 			/* Get a keymap trigger */
-			do_cmd_macro_aux_keymap(pat);
+			do_cmd_macro_aux_keymap(buf);
 
 			/* Look up the keymap */
-			act = keymap_act[mode][(byte)(pat[0])];
+			act = keymap_act[mode][(byte)(buf[0])];
 
 			/* Nothing found */
 			if (!act)
@@ -1829,10 +1864,10 @@ void do_cmd_macros(void)
 				strcpy(macro__buf, act);
 
 				/* Analyze the current action */
-				ascii_to_text(tmp, macro__buf);
+				ascii_to_text(buf, macro__buf);
 
 				/* Display the current action */
-				prt(tmp, 22, 0);
+				prt(buf, 22, 0);
 
 				/* Prompt */
 				msg_print("Found a keymap.");
@@ -1840,7 +1875,7 @@ void do_cmd_macros(void)
 		}
 
 		/* Create a keymap */
-		else if (ch == '8')
+		else if (i == '8')
 		{
 			/* Prompt */
 			prt("Command: Create a keymap", 16, 0);
@@ -1849,7 +1884,7 @@ void do_cmd_macros(void)
 			prt("Keypress: ", 18, 0);
 
 			/* Get a keymap trigger */
-			do_cmd_macro_aux_keymap(pat);
+			do_cmd_macro_aux_keymap(buf);
 
 			/* Clear */
 			clear_from(20);
@@ -1867,10 +1902,10 @@ void do_cmd_macros(void)
 				text_to_ascii(macro__buf, tmp);
 
 				/* Free old keymap */
-				string_free(keymap_act[mode][(byte)(pat[0])]);
+				string_free(keymap_act[mode][(byte)(buf[0])]);
 
 				/* Make new keymap */
-				keymap_act[mode][(byte)(pat[0])] = string_make(macro__buf);
+				keymap_act[mode][(byte)(buf[0])] = string_make(macro__buf);
 
 				/* Prompt */
 				msg_print("Added a keymap.");
@@ -1878,7 +1913,7 @@ void do_cmd_macros(void)
 		}
 
 		/* Remove a keymap */
-		else if (ch == '9')
+		else if (i == '9')
 		{
 			/* Prompt */
 			prt("Command: Remove a keymap", 16, 0);
@@ -1887,20 +1922,20 @@ void do_cmd_macros(void)
 			prt("Keypress: ", 18, 0);
 
 			/* Get a keymap trigger */
-			do_cmd_macro_aux_keymap(pat);
+			do_cmd_macro_aux_keymap(buf);
 
 			/* Free old keymap */
-			string_free(keymap_act[mode][(byte)(pat[0])]);
+			string_free(keymap_act[mode][(byte)(buf[0])]);
 
 			/* Make new keymap */
-			keymap_act[mode][(byte)(pat[0])] = NULL;
+			keymap_act[mode][(byte)(buf[0])] = NULL;
 
 			/* Prompt */
 			msg_print("Removed a keymap.");
 		}
 
 		/* Enter a new action */
-		else if (ch == '0')
+		else if (i == '0')
 		{
 			/* Prompt */
 			prt("Command: Enter a new action", 16, 0);
@@ -1912,10 +1947,10 @@ void do_cmd_macros(void)
 			tmp[80] = '\0';
 
 			/* Get an encoded action */
-			if (!askfor_aux(tmp, 80)) continue;
+			if (!askfor_aux(buf, 80)) continue;
 
 			/* Extract an action */
-			text_to_ascii(macro__buf, tmp);
+			text_to_ascii(macro__buf, buf);
 		}
 
 #endif /* ALLOW_MACROS */
@@ -1931,11 +1966,9 @@ void do_cmd_macros(void)
 		msg_print(NULL);
 	}
 
-
 	/* Load screen */
 	screen_load();
 }
-
 
 
 /*
@@ -2480,7 +2513,7 @@ void do_cmd_visuals(void)
 		else if (i == '0')
 		{
 			/* Reset */
-			reset_visuals(TRUE);
+			reset_visuals();
 
 			/* Message */
 			msg_print("Visual attr/char tables reset.");

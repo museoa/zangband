@@ -3465,9 +3465,6 @@ static void add_monsters_block(int x, int y)
  */
 static void add_monsters(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int x, y;
 
 	/* Add monsters */
@@ -3480,7 +3477,7 @@ static void add_monsters(void)
 			if (!((y == 0) || (y == WILD_GRID_SIZE - 1))) continue;
 
 			/* Not too close to player */
-			if (distance(px / 16, py / 16,
+			if (distance(p_ptr->px / 16, p_ptr->py / 16,
 			             x + wild_grid.x, y + wild_grid.y) < 3) continue;
 
 			/* Set the monster generation level */
@@ -5252,9 +5249,6 @@ static void create_law_map(u16b sea)
  */
 static void wild_done(void)
 {
-	/* px = (s16b)p_ptr->wilderness_x; */
-	/* py = (s16b)p_ptr->wilderness_y; */
-
 	p_ptr->px = (s16b)p_ptr->wilderness_x;
 	p_ptr->py = (s16b)p_ptr->wilderness_y;
 

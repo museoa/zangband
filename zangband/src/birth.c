@@ -745,7 +745,7 @@ static byte choose_realm(byte choices)
 		else if (c == '=')
 		{
 			screen_save();
-			do_cmd_options_aux(8, "Startup Options");
+			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			screen_load();
 		}
 		else bell();
@@ -1490,10 +1490,18 @@ static void get_money(void)
 static void player_wipe(void)
 {
 	int i;
+	
+	/* Hack -- save these allocated arrays */
+	bool *options = p_ptr->options;
+	bool *birth = p_ptr->birth;
 
 
 	/* Hack -- zero the struct */
 	(void)WIPE(p_ptr, player_type);
+	
+	/* Hack -- Restore the arrays */
+	p_ptr->options = options;
+	p_ptr->birth = birth; 
 
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)
@@ -1969,7 +1977,8 @@ static bool get_player_race(void)
 			else if (c == '=')
 			{
 				screen_save();
-				do_cmd_options_aux(8, "Startup Options");
+				do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER |
+						 OPT_FLAG_PLAYER);
 				screen_load();
 			}
 			else bell();
@@ -2067,7 +2076,7 @@ static bool get_player_class(void)
 		else if (c == '=')
 		{
 			screen_save();
-			do_cmd_options_aux(8, "Startup Options");
+			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			screen_load();
 		}
 		else bell();
@@ -2193,7 +2202,7 @@ static bool player_birth_aux_1(void)
 		else if (ch == '=')
 		{
 			screen_save();
-			do_cmd_options_aux(8, "Startup Options");
+			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			screen_load();
 		}
 		else bell();
@@ -2920,7 +2929,8 @@ static bool player_birth_aux_3(void)
 			else if (ch == '=')
 			{
 				screen_save();
-				do_cmd_options_aux(8, "Startup Options");
+				do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER |
+						 OPT_FLAG_PLAYER);
 				screen_load();
 				continue;
 			}
@@ -3040,10 +3050,10 @@ void player_birth(void)
 	}
 
 	/* Set the message window flag as default */
-	if (!op_ptr->window_flag[1])
-		op_ptr->window_flag[1] |= PW_MESSAGE;
+	if (!window_flag[1])
+		window_flag[1] |= PW_MESSAGE;
 
 	/* Set the inv/equip window flag as default */
-	if (!op_ptr->window_flag[2])
-		op_ptr->window_flag[2] |= PW_INVEN;
+	if (!window_flag[2])
+		window_flag[2] |= PW_INVEN;
 }

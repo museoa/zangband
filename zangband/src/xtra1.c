@@ -154,6 +154,15 @@ static void clear_status_bar(void)
 static void show_status_bar(cptr letter, byte *colour, int num)
 {
 	int i;
+	
+	if (!use_color)
+	{
+		/* Make the symbols white if colour is not used */
+		for (i = 0; i < num; i++)
+		{
+			colour[i] = TERM_WHITE;
+		}
+	}
 
 	if (num <= 12)
 	{
@@ -533,7 +542,7 @@ static void prt_hp(void)
 	{
 		color = TERM_L_GREEN;
 	}
-	else if (p_ptr->chp > (p_ptr->mhp * op_ptr->hitpoint_warn) / 10)
+	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
 	{
 		color = TERM_YELLOW;
 	}
@@ -575,7 +584,7 @@ static void prt_sp(void)
 	{
 		color = TERM_L_GREEN;
 	}
-	else if (p_ptr->csp > (p_ptr->msp * op_ptr->hitpoint_warn) / 10)
+	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
 	{
 		color = TERM_YELLOW;
 	}
@@ -1039,6 +1048,9 @@ static void health_redraw(void)
 		/* Default to "unknown" */
 		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
 
+		/* Hack -- fake monochrome */
+		if (!use_color) attr = TERM_WHITE;
+
 		/* Dump the current "health" (use '*' symbols) */
 		Term_putstr(COL_INFO + 1, ROW_INFO, len, attr, "**********");
 	}
@@ -1135,7 +1147,7 @@ static void fix_inven(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_INVEN))) continue;
+		if (!(window_flag[j] & (PW_INVEN))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1169,7 +1181,7 @@ static void fix_equip(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_EQUIP))) continue;
+		if (!(window_flag[j] & (PW_EQUIP))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1202,7 +1214,7 @@ static void fix_spell(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_SPELL))) continue;
+		if (!(window_flag[j] & (PW_SPELL))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1235,7 +1247,7 @@ static void fix_player(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_PLAYER))) continue;
+		if (!(window_flag[j] & (PW_PLAYER))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1273,7 +1285,7 @@ static void fix_message(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_MESSAGE))) continue;
+		if (!(window_flag[j] & (PW_MESSAGE))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1329,7 +1341,7 @@ static void fix_overhead(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_OVERHEAD))) continue;
+		if (!(window_flag[j] & (PW_OVERHEAD))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1366,7 +1378,7 @@ static void fix_dungeon(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_DUNGEON))) continue;
+		if (!(window_flag[j] & (PW_DUNGEON))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1399,7 +1411,7 @@ static void fix_monster(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_MONSTER))) continue;
+		if (!(window_flag[j] & (PW_MONSTER))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -1432,7 +1444,7 @@ static void fix_object(void)
 		if (!angband_term[j]) continue;
 
 		/* No relevant flags */
-		if (!(op_ptr->window_flag[j] & (PW_OBJECT))) continue;
+		if (!(window_flag[j] & (PW_OBJECT))) continue;
 
 		/* Activate */
 		Term_activate(angband_term[j]);
@@ -3943,7 +3955,7 @@ void window_stuff(void)
 	for (j = 0; j < 8; j++)
 	{
 		/* Save usable flags */
-		if (angband_term[j]) mask |= op_ptr->window_flag[j];
+		if (angband_term[j]) mask |= window_flag[j];
 	}
 
 	/* Apply usable flags */

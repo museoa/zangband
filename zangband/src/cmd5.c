@@ -1855,7 +1855,7 @@ static bool cast_death_spell(int spell)
 
 			/* Delay */
 			Term_xtra(TERM_XTRA_DELAY,
-				op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor);
+				delay_factor * delay_factor * delay_factor);
 		}
 
 		/* Restore, ready to be deducted properly */

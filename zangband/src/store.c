@@ -1819,7 +1819,7 @@ static void display_store(field_type *f_ptr)
 		put_str(buf, 3, 10);
 
 		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost));
+		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
 		prt(buf, 3, 50);
 
 		/* Label the item descriptions */
@@ -3399,7 +3399,7 @@ static void store_process_command(field_type *f_ptr)
 		/* Interact with options */
 		case '=':
 		{
-			do_cmd_options();
+			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			break;
 		}
 

@@ -2748,19 +2748,38 @@ static errr init_other(void)
 
 
 	/*** Prepare the options ***/
+	C_MAKE(p_ptr->options, OPT_PLAYER, bool);
+	C_MAKE(p_ptr->birth, OPT_BIRTH, bool);
+	C_MAKE(svr_ptr->options, OPT_SERVER, bool);
 
-	/* Initialize the options */
+	/* Initialise the options */
+	init_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+	
+	
+	/* Analyze the options */
 	for (i = 0; i < OPT_MAX; i++)
 	{
-		/* Default value */
-		op_ptr->opt[i] = option_norm[i];
+		if (option_info[i].o_desc)
+		{
+			/* Accept */
+			option_mask[i / 32] |= (1L << (i % 32));
+		}
 	}
 
-	/* Initialize the window flags */
+	
+	/* Analyze the windows */
 	for (n = 0; n < 8; n++)
 	{
-		/* Assume no flags */
-		op_ptr->window_flag[n] = 0L;
+		/* Analyze the options */
+		for (i = 0; i < 32; i++)
+		{
+			/* Accept */
+			if (window_flag_desc[i])
+			{
+				/* Accept */
+				window_mask[n] |= (1L << i);
+			}
+		}
 	}
 
 

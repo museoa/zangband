@@ -47,20 +47,10 @@
  *   TYPE_OBJECTS --> dungeon objects
  *   TYPE_MONSTERS --> dungeon monsters
  *
- * Conversions:
- *   Break old "races" into normals/uniques
- *   Extract info about the "unique" monsters
- *
  * Question:
  *   Should there be a single "block" for info about all the stores, or one
  *   "block" for each store?  Or one "block", which contains "sub-blocks" of
  *   some kind?  Should we dump every "sub-block", or just the "useful" ones?
- *
- * Question:
- *   Should the normals/uniques be broken for 2.8.0, or should 2.8.0 simply
- *   be a "fixed point" into which older savefiles are converted, and then
- *   future versions could ignore older savefiles, and the "conversions"
- *   would be much simpler.
  */
 
 
@@ -831,10 +821,9 @@ static errr wr_randomizer(void)
  */
 static void wr_options(void)
 {
-	int i, k;
+	int i, n;
 
-	u32b flag[8];
-	u32b mask[8];
+	u16b c, flag = 0;
 
 
 	/*** Oops ***/
@@ -846,85 +835,67 @@ static void wr_options(void)
 	/*** Special Options ***/
 
 	/* Write "delay_factor" */
-	wr_byte(op_ptr->delay_factor);
+	wr_byte(delay_factor);
 
 	/* Write "hitpoint_warn" */
-	wr_byte(op_ptr->hitpoint_warn);
+	wr_byte(hitpoint_warn);
 
 
-	/*** Old Cheating options ***/
+	/*** Cheating options ***/
 
-	wr_u16b(0);
+	c = 0;
+
+	if (p_ptr->wizard) c |= 0x0002;
+
+	if (cheat_peek) c |= 0x0100;
+	if (cheat_hear) c |= 0x0200;
+	if (cheat_room) c |= 0x0400;
+	if (cheat_xtra) c |= 0x0800;
+	if (cheat_know) c |= 0x1000;
+	if (cheat_live) c |= 0x2000;
+
+	wr_u16b(c);
 
 	/* Autosave info */
-	wr_byte(0);
-	wr_byte(0);
+	wr_byte(autosave_l);
+	wr_byte(autosave_t);
 	wr_s16b(autosave_freq);
 
 	/*** Normal options ***/
-
-	/* Reset */
-	for (i = 0; i < 8; i++)
-	{
-		flag[i] = 0L;
-		mask[i] = 0L;
-	}
-
+	
 	/* Analyze the options */
-	for (i = 0; i < OPT_MAX; i++)
+	for (n = 0; n < 8; n++)
 	{
-		int os = i / 32;
-		int ob = i % 32;
-
-		/* Process real entries */
-		if (option_text[i])
+		/* Analyze the options */
+		for (i = 0; i < 32; i++)
 		{
-			/* Set flag */
-			if (op_ptr->opt[i])
+			if (option_info[n * 32 + i].o_val)
 			{
-				/* Set */
-				flag[os] |= (1L << ob);
+				/* Set flag */
+				flag |= (1L << i);
 			}
-
-			/* Set mask */
-			mask[os] |= (1L << ob);
+			else
+			{
+				/* Clear flag */
+				flag &= ~(1L << i);
+			}
 		}
+		
+		/* Dump the flag */
+		wr_u32b(flag);
 	}
-
-	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(flag[i]);
-
-	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(mask[i]);
+	
+	/* Oops */
+	for (i = 0; i < 8; i++) wr_u32b(option_mask[i]);
 
 
 	/*** Window options ***/
 
-	/* Reset */
-	for (i = 0; i < 8; i++)
-	{
-		/* Flags */
-		flag[i] = op_ptr->window_flag[i];
-
-		/* Mask */
-		mask[i] = 0L;
-
-		/* Build the mask */
-		for (k = 0; k < 32; k++)
-		{
-			/* Set mask */
-			if (window_flag_desc[k])
-			{
-				mask[i] |= (1L << k);
-			}
-		}
-	}
-
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(flag[i]);
+	for (i = 0; i < 8; i++) wr_u32b(window_flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(mask[i]);
+	for (i = 0; i < 8; i++) wr_u32b(window_mask[i]);
 }
 
 
@@ -950,7 +921,7 @@ static void wr_extra(void)
 {
 	int i;
 
-	wr_string(op_ptr->full_name);
+	wr_string(player_name);
 
 	wr_string(p_ptr->died_from);
 
@@ -1870,14 +1841,6 @@ bool save_player(void)
 /*
  * Attempt to Load a "savefile"
  *
- * Version 2.7.0 introduced a slightly different "savefile" format from
- * older versions, requiring a completely different parsing method.
- *
- * Note that savefiles from 2.7.0 - 2.7.2 are completely obsolete.
- *
- * Pre-2.8.0 savefiles lose some data, see "load2.c" for info.
- *
- * Pre-2.7.0 savefiles lose a lot of things, see "load1.c" for info.
  *
  * On multi-user systems, you may only "read" a savefile if you will be
  * allowed to "write" it later, this prevents painful situations in which

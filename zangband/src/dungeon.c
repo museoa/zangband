@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: dungeon.c */
 
 /* Purpose: Angband game engine */
@@ -3108,7 +3107,7 @@ static void process_command(void)
 		/* Interact with options */
 		case '=':
 		{
-			do_cmd_options();
+			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			do_cmd_redraw();
 			break;
 		}
@@ -3992,7 +3991,7 @@ static void load_all_pref_files(void)
 	process_pref_file(buf);
 
 	/* Access the "character" pref file */
-	sprintf(buf, "%s.prf", op_ptr->base_name);
+	sprintf(buf, "%s.prf", player_base);
 
 	/* Process that file */
 	process_pref_file(buf);
@@ -4092,9 +4091,9 @@ void play_game(bool new_game)
 	}
 
 	/* Hack -- Default base_name */
-	if (!op_ptr->base_name[0])
+	if (!player_base[0])
 	{
-		strcpy(op_ptr->base_name, "PLAYER");
+		strcpy(player_base, "PLAYER");
 	}
 
 	/* Init the RNG */
@@ -4119,32 +4118,7 @@ void play_game(bool new_game)
 		Rand_state_init(seed);
 	}
 
-#if 0
-	/* Extract the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Set */
-			if (option_flag[os] & (1L << ob))
-			{
-				/* Set */
-				(*option_info[i].o_var) = TRUE;
-			}
-			/* Clear */
-			else
-			{
-				/* Clear */
-				(*option_info[i].o_var) = FALSE;
-			}
-		}
-	}
-#endif
-
+	
 	/* Roll new character */
 	if (new_game)
 	{
@@ -4187,7 +4161,7 @@ void play_game(bool new_game)
 	}
 
 	/* Reset the visual mappings */
-	reset_visuals(TRUE);
+	reset_visuals();
 	
 	/* Init the fields */
 	init_fields();

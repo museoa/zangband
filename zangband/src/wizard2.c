@@ -167,7 +167,7 @@ static void prt_binary(u32b flags, int row, int col)
  */
 static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 {
-	int i, j;
+	u32b i, j;
 	u32b maxd = 1, maxr = 1, maxt = 1;
 	u32b rarity[MAX_DEPTH];
 	u32b total[MAX_DEPTH];
@@ -175,7 +175,7 @@ static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 	byte c = TERM_WHITE;
 	cptr r = "+--common--+";
 	u16b kind = o_ptr->k_idx;
-	int home = k_info[kind].level;
+	u16b home = k_info[kind].level;
 
 	/* Wipe the tables */
 	(void)C_WIPE(rarity, MAX_DEPTH, u32b);

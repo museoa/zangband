@@ -1671,57 +1671,6 @@ void ang_sort(vptr u, vptr v, int n)
 
 
 /*
- * Extract a direction (or zero) from a character
- */
-sint target_dir(char ch)
-{
-	int d;
-
-	int mode;
-
-	cptr act;
-
-	cptr s;
-
-
-	/* Default direction */
-	d = (isdigit(ch) ? D2I(ch) : 0);
-
-	/* Roguelike */
-	if (rogue_like_commands)
-	{
-		mode = KEYMAP_MODE_ROGUE;
-	}
-
-	/* Original */
-	else
-	{
-		mode = KEYMAP_MODE_ORIG;
-	}
-
-	/* Extract the action (if any) */
-	act = keymap_act[mode][(byte)(ch)];
-
-	/* Analyze */
-	if (act)
-	{
-		/* Convert to a direction */
-		for (s = act; *s; ++s)
-		{
-			/* Use any digits in keymap */
-			if (isdigit(*s)) d = D2I(*s);
-		}
-	}
-
-	/* Paranoia */
-	if (d == 5) d = 0;
-
-	/* Return direction */
-	return (d);
-}
-
-
-/*
  * Determine is a monster makes a reasonable target
  *
  * The concept of "targeting" was stolen from "Morgul" (?)

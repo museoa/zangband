@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: types.h */
 
 /* Purpose: global type declarations */
@@ -1031,6 +1030,57 @@ struct alloc_entry
 
 
 /*
+ * Available "options"
+ *
+ *	- Address of actual option variable (or NULL)
+ *
+ *	- Normal Value (TRUE or FALSE)
+ *
+ *	- Option Page Number (or zero)
+ *
+ *	- Savefile Set (or zero)
+ *	- Savefile Bit in that set
+ *
+ *	- Textual name (or NULL)
+ *	- Textual description
+ */
+
+#if 0
+
+typedef struct option_type option_type;
+
+struct option_type
+{
+	bool	*o_var;
+
+	byte	o_norm;
+
+	byte	o_page;
+
+	byte	o_set;
+	byte	o_bit;
+
+	cptr	o_text;
+	cptr	o_desc;
+};
+
+#endif /* 0 */
+
+typedef struct option_type option_type;
+
+struct option_type
+{
+	bool	o_val;
+
+	byte	o_page;
+
+	cptr	o_text;
+	cptr	o_desc;
+};
+
+
+
+/*
  * Structure for the "quests"
  */
 typedef struct quest_type quest_type;
@@ -1245,30 +1295,6 @@ struct player_class
 	byte pet_upkeep_div; /* Pet upkeep divider */
 };
 
-
-
-
-/*
- * Some more player information
- *
- * This information is retained across player lives
- */
-
-typedef struct player_other player_other;
-
-struct player_other
-{
-	char full_name[32];		/* Full name */
-	char base_name[32];		/* Base name */
-
-	bool opt[OPT_MAX];		/* Options */
-
-	u32b window_flag[8];	/* Window flags */
-
-	byte hitpoint_warn;		/* Hitpoint warning (0 to 9) */
-
-	byte delay_factor;		/* Delay factor (0 to 9) */
-};
 
 
 /*
@@ -1590,7 +1616,30 @@ struct player_type
 	s16b pet_follow_distance;	/* Length of the imaginary "leash" for pets */
 	byte pet_open_doors;		/* flag - allow pets to open doors */
 	byte pet_pickup_items;		/* flag - allow pets to pickup items */
+	
+	/* Options */
+	bool *options;
+	bool *birth;
 };
+
+
+/*
+ * For mulitplayer use.
+ *
+ * Various information must be stored on the server
+ * when a multiplayer version is created.
+ *
+ * This structure contains such information.
+ * At the moment, this only has dungeon-specific options.
+ * (Which are not already "birth" options.)
+ */
+typedef struct server_type server_type;
+
+struct server_type
+{
+	bool *options;
+};
+
 
 
 /* For Monk martial arts */

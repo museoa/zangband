@@ -945,12 +945,11 @@ static void rd_options(void)
 {
 	int i, n;
 
-	byte b, tmp8u;
+	byte b;
 
-	u16b tmp16u;
+	u16b c;
 
-	u32b flag[8];
-	u32b mask[8];
+	u32b flag[8], mask[8];
 
 
 	/*** Oops ***/
@@ -963,17 +962,25 @@ static void rd_options(void)
 
 	/* Read "delay_factor" */
 	rd_byte(&b);
-	op_ptr->delay_factor = b;
+	delay_factor = b;
 
 	/* Read "hitpoint_warn" */
 	rd_byte(&b);
-	op_ptr->hitpoint_warn = b;
+	hitpoint_warn = b;
 
 
 	/*** Cheating options ***/
 
-	rd_u16b(&tmp16u);
+	rd_u16b(&c);
 
+	if (c & 0x0002) p_ptr->wizard = TRUE;
+
+	cheat_peek = (c & 0x0100) ? TRUE : FALSE;
+	cheat_hear = (c & 0x0200) ? TRUE : FALSE;
+	cheat_room = (c & 0x0400) ? TRUE : FALSE;
+	cheat_xtra = (c & 0x0800) ? TRUE : FALSE;
+	cheat_know = (c & 0x1000) ? TRUE : FALSE;
+	cheat_live = (c & 0x2000) ? TRUE : FALSE;
 
 	/* Pre-2.8.0 savefiles are done */
 	if (older_than(2, 8, 0)) return;
@@ -985,8 +992,8 @@ static void rd_options(void)
 	}
 	else
 	{
-		rd_byte(&tmp8u);
-		rd_byte(&tmp8u);
+		rd_byte(&autosave_l);
+		rd_byte(&autosave_t);
 		rd_s16b(&autosave_freq);
 	}
 
@@ -1000,33 +1007,32 @@ static void rd_options(void)
 	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
 
 	/* Analyze the options */
-	for (i = 0; i < OPT_MAX; i++)
+	for (n = 0; n < 8; n++)
 	{
-		int os = i / 32;
-		int ob = i % 32;
-
-		/* Process real entries */
-		if (option_text[i])
+		/* Analyze the options */
+		for (i = 0; i < 32; i++)
 		{
-			/* Process saved entries */
-			if (mask[os] & (1L << ob))
+			if ((mask[n] & (1L << i)) && (option_mask[n] & (1L << i)))
 			{
-				/* Set flag */
-				if (flag[os] & (1L << ob))
+				/* Set */
+				if (flag[n] & (1L << i))
 				{
 					/* Set */
-					op_ptr->opt[i] = TRUE;
+					option_info[n * 32 + i].o_val = TRUE;
 				}
 
-				/* Clear flag */
+				/* Clear */
 				else
 				{
-					/* Set */
-					op_ptr->opt[i] = FALSE;
+					/* Clear */
+					option_info[n * 32 + i].o_val = FALSE;
 				}
 			}
 		}
 	}
+
+	/* Set the options */
+	init_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 
 
 	/*** Window Options ***/
@@ -1044,16 +1050,23 @@ static void rd_options(void)
 		for (i = 0; i < 32; i++)
 		{
 			/* Process valid flags */
-			if (window_flag_desc[i])
+			if (mask[n] & (1L << i))
 			{
 				/* Process valid flags */
-				if (mask[n] & (1L << i))
+				if (window_mask[n] & (1L << i))
 				{
 					/* Set */
 					if (flag[n] & (1L << i))
 					{
 						/* Set */
-						op_ptr->window_flag[n] |= (1L << i);
+						window_flag[n] |= (1L << i);
+					}
+
+					/* Clear */
+					else
+					{
+						/* Clear */
+						window_flag[n] &= ~(1L << i);
 					}
 				}
 			}
@@ -1097,7 +1110,7 @@ static void rd_extra(void)
 	byte tmp8u;
 	s16b tmp16s;
 
-	rd_string(op_ptr->full_name, 32);
+	rd_string(player_name, 32);
 
 	rd_string(p_ptr->died_from, 80);
 
@@ -2566,23 +2579,9 @@ static errr rd_savefile_new_aux(void)
 			/* "Hard quests" flag */
 			rd_byte((byte*) &ironman_hard_quests);
 
-			/****** HACK ******/
-			if (ironman_hard_quests)
-			{
-				/* Set the option by hand */
-				option_flag[6] |= (1L << 6);
-			}
-
 			/* Inverted "Wilderness" flag */
 			rd_byte((byte*) &vanilla_town);
 			vanilla_town = !vanilla_town;
-
-			/****** HACK ******/
-			if (vanilla_town)
-			{
-				/* Set the option by hand */
-				option_flag[6] |= (1L);
-			}
 		}
 
 		/* Position in the wilderness */

@@ -145,10 +145,25 @@ s16b store_cache_num = 0;	/* Number of stores with stock */
 store_type **store_cache;	/* The cache of store stocks */
 
 
-/*
- * Autosave frequency
- */
-s16b autosave_freq;
+
+/* Special options */
+
+byte hitpoint_warn;		/* Hitpoint warning (0 to 9) */
+
+byte delay_factor;		/* Delay factor (0 to 9) */
+
+byte autosave_l;        /* Autosave before entering new levels */
+byte autosave_t;        /* Timed autosave */
+s16b autosave_freq;     /* Autosave frequency */
+
+/* Cheating options */
+bool cheat_peek;
+bool cheat_hear;
+bool cheat_room;
+bool cheat_xtra;
+bool cheat_know;
+bool cheat_live;
+
 
 /*
  * Dungeon variables
@@ -188,6 +203,16 @@ char *mp_tc = NULL;
 int player_uid;
 int player_euid;
 int player_egid;
+
+/*
+ * Current player's character name
+ */
+char player_name[32];
+
+/*
+ * Stripped version of "player_name"
+ */
+char player_base[32];
 
 
 /*
@@ -303,18 +328,14 @@ char *message__buf;
 byte *message__color;
 
 
-
-/*
- * The array of normal options
- */
-u32b option_flag[8];
-u32b option_mask[8];
-
-
 /*
  * The array of window options
  */
+u32b window_flag[8];
 u32b window_mask[8];
+
+/* Normal option masks */
+u32b option_mask[8];
 
 
 /*
@@ -569,6 +590,16 @@ cptr keymap_act[KEYMAP_MODES][256];
 /*** Player information ***/
 
 /*
+ * Static player info record
+ */
+player_type p_body;
+
+/*
+ * Pointer to the player info
+ */
+player_type *p_ptr = &p_body;
+
+/*
  * Pointer to the player tables
  * (sex, race, class, magic)
  */
@@ -577,25 +608,15 @@ player_race *rp_ptr;
 player_class *cp_ptr;
 player_magic *mp_ptr;
 
-/*
- * The player other record (static)
- */
-static player_other player_other_body;
+/**** Server Information ****/
+
+server_type s_body;
 
 /*
- * Pointer to the player other record
+ * Pointer to the server information
  */
-player_other *op_ptr = &player_other_body;
+server_type *svr_ptr = &s_body; 
 
-/*
- * The player info record (static)
- */
-player_type player_type_body;
-
-/*
- * Pointer to the player info record
- */
-player_type *p_ptr = &player_type_body;
 
 
 /*
@@ -912,9 +933,4 @@ int highscore_fd = -1;
 bool monster_terrain_sensitive = TRUE;
 
 int mutant_regenerate_mod = 100;
-
-
-
-
-
 
