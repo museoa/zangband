@@ -993,8 +993,8 @@ void map_panel_size(void)
 	if (dun_level)
 	{
 		/* Determine number of panels (dungeon) */
-		max_panel_rows = (cur_hgt / map_hgt) * 2 - 2;
-		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
+		max_panel_rows = (cur_hgt / map_hgt) * 2;
+		max_panel_cols = (cur_wid / map_wid) * 2;
 	}
 	else
 	{

@@ -2504,14 +2504,14 @@ void forget_view(void)
 		int y = view_y[i];
 		int x = view_x[i];
 
-		/* Only lite the spot if is on the panel (can change due to resizing */
-		if (!panel_contains(y, x)) continue;
-
 		/* Access the grid */
 		c_ptr = area(y,x);
 
 		/* Forget that the grid is viewable or lit */
 		c_ptr->info &= ~(CAVE_VIEW | CAVE_LITE);
+		
+		/* Only lite the spot if is on the panel (can change due to resizing */
+		if (!panel_contains(y, x)) continue;
 
 		/* Update the screen */
 		lite_spot(y, x);
@@ -3161,7 +3161,7 @@ void update_view(void)
 		y = view_y[i];
 		x = view_x[i];
 
-		if (!in_bounds2(y,x)) continue;
+		if (!in_bounds(y,x)) continue;
 
 		c_ptr = area(y, x);
 		info = c_ptr->info;
@@ -3275,7 +3275,7 @@ void update_view(void)
 				y = p->grid_y[o2] + py;
 			
 				/* Is it in bounds? */
-				if (!in_bounds(y, x))
+				if (!in_bounds2(y, x))
 				{
 					/* Clear bits */
 					bits0 &= ~(p->bits_0);
@@ -3314,7 +3314,7 @@ void update_view(void)
 					info |= (CAVE_VIEW);
 
 					/* Torch-lit grids */
-					if (p->d < radius)
+					if (p->d <= radius)
 					{
 						/* Mark as "CAVE_LITE" */
 						info |= (CAVE_LITE);
@@ -3367,14 +3367,14 @@ void update_view(void)
 					info |= (CAVE_VIEW);
 
 					/* Torch-lit grids */
-					if (p->d < radius)
+					if (p->d <= radius)
 					{
 						/* Mark as "CAVE_LITE", "CAVE_MARK" */
 						info |= (CAVE_LITE | CAVE_MARK);
 					}
 
 					/* Perma-lit grids */
-					else if (info & (CAVE_GLOW))
+					else
 					{
 						int yy, xx;
 
@@ -3575,7 +3575,7 @@ static void update_flow_aux(int y, int x, int n)
 	if (c_ptr->when == flow_n) return;
 
 	/* Ignore "walls" and "rubble" */
-	if (c_ptr->feat >= FEAT_RUBBLE) return;
+	if (!cave_floor_grid(c_ptr)) return;
 
 	/* Save the time-stamp */
 	c_ptr->when = flow_n;
@@ -3618,7 +3618,8 @@ void update_flow(void)
 
 #ifdef MONSTER_FLOW
 
-	int x, y, d;
+	int x, y, d, w;
+	cave_type *c_ptr;
 
 	/* Hack -- disabled */
 	if (!flow_by_sound) return;
@@ -3636,8 +3637,9 @@ void update_flow(void)
 			{
 				for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
 				{
-					int w = area(y, x)->when;
-					area(y, x)->when = (w > 128) ? (w - 128) : 0;
+					c_ptr = area(y, x);
+					w = c_ptr->when;
+					c_ptr->when = (w > 128) ? (w - 128) : 0;
 				}
 			}
 		}
@@ -3648,8 +3650,9 @@ void update_flow(void)
 			{
 				for (x = 0; x < cur_wid; x++)
 				{
-					int w = area(y, x)->when;
-					area(y, x)->when = (w > 128) ? (w - 128) : 0;
+					c_ptr = area(y, x);
+					w = c_ptr->when;
+					c_ptr->when = (w > 128) ? (w - 128) : 0;
 				}
 			}
 		}

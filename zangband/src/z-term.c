@@ -513,42 +513,35 @@ void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
 void Term_queue_char(int x, int y, byte a, char c)
 #endif /* USE_TRANSPARENCY */
 {
-	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
-
-	int oa = scr_aa[x];
-	int oc = scr_cc[x];
+	term_win *scrn = Term->scr; 
+	
+	byte *scr_aa = &scrn->a[y][x];
+	char *scr_cc = &scrn->c[y][x];
 
 #ifdef USE_TRANSPARENCY
 
-	byte *scr_taa = Term->scr->ta[y];
-	char *scr_tcc = Term->scr->tc[y];
-
-	int ota = scr_taa[x];
-	int otc = scr_tcc[x];
-
-	/* Don't change is the terrain value is 0 */
-	if (!ta) ta = ota;
-	if (!tc) tc = otc;
+	byte *scr_taa = &scrn->ta[y][x];
+	char *scr_tcc = &scrn->tc[y][x];
 
 	/* Hack -- Ignore non-changes */
-	if ((oa == a) && (oc == c) && (ota == ta) && (otc == tc)) return;
+	if ((*scr_aa == a) && (*scr_cc == c) &&
+		 (*scr_taa == ta) && (*scr_tcc == tc)) return;
 
 #else /* USE_TRANSPARENCY */
 
 	/* Hack -- Ignore non-changes */
-	if ((oa == a) && (oc == c)) return;
+	if ((*scr_aa == a) && (*scr_cc == c)) return;
 
 #endif /* USE_TRANSPARENCY */
 
 	/* Save the "literal" information */
-	scr_aa[x] = a;
-	scr_cc[x] = c;
+	*scr_aa = a;
+	*scr_cc = c;
 
 #ifdef USE_TRANSPARENCY
 
-	scr_taa[x] = ta;
-	scr_tcc[x] = tc;
+	*scr_taa = ta;
+	*scr_tcc = tc;
 
 #endif /* USE_TRANSPARENCY */
 
