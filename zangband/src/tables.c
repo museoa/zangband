@@ -6020,6 +6020,31 @@ cptr color_names[16] =
 	"Light Umber",
 };
 
+
+/*
+ * Table of colour escape sequences for string formatting
+ */
+cptr color_seq[16] =
+{
+	CLR_DARK,
+	CLR_WHITE,
+	CLR_SLATE,
+	CLR_ORANGE,
+	CLR_RED,
+	CLR_GREEN,
+	CLR_BLUE,
+	CLR_UMBER,
+	CLR_L_DARK,
+	CLR_L_WHITE
+	CLR_VIOLET,
+	CLR_YELLOW,
+	CLR_L_RED,
+	CLR_L_GREEN,
+	CLR_L_BLUE,
+	CLR_L_UMBER,
+};
+
+
 /*
  * Hack -- the message colour names (MSG_* in defines.h)
  * Several are unused, although the corresponding sounds are not.
