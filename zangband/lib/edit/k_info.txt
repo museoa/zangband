@@ -2493,7 +2493,7 @@ I:65:1:29
 W:2:0:10:50
 A:4/2
 P:0:1d1:0:0:0
-L:USE:	ident = haste_monster(dir)
+L:USE:	ident = speed_monster(dir)
 
 N:277:Slow Monster
 G:-:d
