@@ -145,6 +145,7 @@ GRAF_PORTS = $(addprefix src/,\
 		main-gtk.o main-tnb.o main-win.o main-x11.o \
 		main-xaw.o main-xpj.o)
 
+src/cmd2.o: src/script.h
 src/cmd6.o: src/script.h
 src/init1.c: src/init.h
 src/init2.c: src/init.h src/script.h

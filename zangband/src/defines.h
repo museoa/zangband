@@ -5027,6 +5027,10 @@ extern int PlayerUID;
 
 #define FIELD_ACTION_MAX		20
 
+#define ACT_TUNNEL		0
+#define ACT_DISARM		1
+#define ACT_OPEN		2
+
 /* To make the declarations in externs.h simpler */
 #define DECL_FIELD_ACTION(N) \
 	extern bool field_action_##N (field_type *f_ptr, va_list vp)

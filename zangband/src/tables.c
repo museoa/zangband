@@ -6872,16 +6872,7 @@ const field_action f_action[] =
 	
 	/* Walls interact with GF_KILL_WALL */
 	{field_action_wall_gf, "field_action_wall_gf"},
-	
-	/* Interact with grid 'tunnels' */
-	{field_action_interact_tunnel, "field_action_interact_tunnel"},
-	
-	/* Interact with grid 'disarms' */
-	{field_action_interact_disarm, "field_action_interact_disarm"},
-	
-	/* Interact with grid 'opens' */
-	{field_action_interact_open, "field_action_interact_open"},
-		
+			
 	/* Trap init function */
 	{field_action_trap_init, "field_action_trap_init"},
 	

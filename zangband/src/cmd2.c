@@ -11,7 +11,7 @@
  */
 
 #include "angband.h"
-
+#include "script.h"
 
 /*
  * Go up one level
@@ -1011,8 +1011,8 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	int dig = p_ptr->skills[SKILL_DIG];
 
-	field_type *f_ptr = field_hook_find(c_ptr,
-										FIELD_ACT_INTERACT_TEST, &action);
+	field_type *f_ptr = field_script_find(c_ptr,
+										FIELD_ACT_INTERACT_TEST, ":i", LUA_RETURN(action));
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
@@ -1030,7 +1030,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 		return (FALSE);
 	}
 
-	if (f_ptr && (action == 0))
+	if (f_ptr && (action == ACT_TUNNEL))
 	{
 		if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, dig))
 		{
@@ -1711,27 +1711,27 @@ void do_cmd_alter(void)
 			/* Attack */
 			py_attack(x, y);
 		}
-
-		else if (field_hook_find(c_ptr, FIELD_ACT_INTERACT_TEST,
-								  &action))
+		else if (field_script_find(c_ptr,
+									FIELD_ACT_INTERACT_TEST,
+									":i", LUA_RETURN(action)))
 		{
 			switch (action)
 			{
-				case 0:
+				case ACT_TUNNEL:
 				{
 					/* Tunnel */
 					more = do_cmd_tunnel_aux(x, y);
 					break;
 				}
 
-				case 1:
+				case ACT_DISARM:
 				{
 					/* Disarm */
 					more = do_cmd_disarm_aux(c_ptr, dir);
 					break;
 				}
 
-				case 2:
+				case ACT_OPEN:
 				{
 					/* Unlock / open */
 					more = do_cmd_open_aux(x, y);

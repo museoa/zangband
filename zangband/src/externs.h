@@ -1113,6 +1113,7 @@ extern bool field_script_single(field_type *f_ptr, int action, cptr format, ...)
 extern void field_hook(cave_type *c_ptr, int action, ...);
 extern bool field_hook_special(cave_type *c_ptr, u16b t_idx, ...);
 extern field_type *field_hook_find(cave_type *c_ptr, int action, ...);
+extern field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...);
 extern void process_fields(void);
 extern void test_field_data_integrity(void);
 extern void set_corpse_size(field_type *f_ptr, int size);
@@ -1126,9 +1127,6 @@ DECL_FIELD_ACTION(corpse_init);
 DECL_FIELD_ACTION(corpse_look);
 DECL_FIELD_ACTION(wall_tunnel);
 DECL_FIELD_ACTION(wall_gf);
-DECL_FIELD_ACTION(interact_tunnel);
-DECL_FIELD_ACTION(interact_disarm);
-DECL_FIELD_ACTION(interact_open);
 extern void place_trap(int x, int y);
 DECL_FIELD_ACTION(trap_init);
 DECL_FIELD_ACTION(trap_disarm);

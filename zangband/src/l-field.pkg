@@ -5,6 +5,10 @@ typedef char* cptr;
 typedef int errr;
 typedef int sint;
 
+#define ACT_TUNNEL		0
+#define ACT_DISARM		1
+#define ACT_OPEN		2
+
 /*
  * The field structure.
  *

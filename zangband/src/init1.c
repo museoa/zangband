@@ -710,6 +710,24 @@ static cptr t_info_triggers[] =
 {
 	"INIT",
 	"LOAD",
+	"PENTER",
+	"PON",
+	"PLEAVE",
+	"MENTER",
+	"MON",
+	"MLEAVE",
+	"OBDROP",
+	"OBON",
+	"INTER",
+	"TARGET",
+	"LOOK",
+	"EXIT",
+	"AI",
+	"SPEC",
+	"INTERT",
+	"MENTT",
+	"STORE1",
+	"STORE2",
 	NULL
 };
 

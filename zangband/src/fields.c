@@ -1183,7 +1183,7 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
 field_type *field_hook_find(cave_type *c_ptr, int action, ...)
 {
 	field_type *f_ptr;
-	field_thaum *t_ptr;   
+	field_thaum *t_ptr; 
 
 	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
@@ -1214,6 +1214,55 @@ field_type *field_hook_find(cave_type *c_ptr, int action, ...)
 	}
 	FLD_ITT_END;
     
+
+	/* Found nothing */
+	return (NULL);
+}
+
+
+/*
+ * Call the required action function for the first field
+ * in the specified list with that function.
+ */
+field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...)
+{
+	field_type *f_ptr;
+	field_thaum *t_ptr;
+	
+	va_list vp;
+	cptr script;
+    
+    /* Begin the Varargs Stuff */
+	va_start(vp, format);
+
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
+	{
+		/* Point to the field */
+		t_ptr = &t_info[f_ptr->t_idx];
+		
+		/* Get script to use */
+		script = quark_str(t_ptr->action[action]);
+		
+		if (script)
+		{
+			/* Call the action script */
+			if (apply_field_trigger(script, f_ptr, format, vp))
+			{
+				/* The field wants to be deleted */
+				delete_field_ptr(f_ptr);
+			}
+		 
+        	/* End the Varargs Stuff */
+			va_end(vp);
+
+			/* Done */
+			return (f_ptr);
+		}
+	}
+	FLD_ITT_END;
+    
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Found nothing */
 	return (NULL);
@@ -1811,55 +1860,6 @@ bool field_action_wall_gf(field_type *f_ptr, va_list vp)
 		/* Delete field */
 		return (TRUE);
 	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-/*
- * The various types of interaction used by
- * the "interact with grid" command.
- */
-bool field_action_interact_tunnel(field_type *f_ptr, va_list vp)
-{
-	int *action = va_arg(vp, int *);
-
-	/* Hack - ignore f_ptr */
-	(void)f_ptr;
-
-	/* Tunnel flag */
-	*action = 0;
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_interact_disarm(field_type *f_ptr, va_list vp)
-{
-	int *action = va_arg(vp, int *);
-
-	/* Hack - ignore f_ptr */
-	(void)f_ptr;
-
-	/* Disarm flag */
-	*action = 1;
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_interact_open(field_type *f_ptr, va_list vp)
-{
-	int *action = va_arg(vp, int *);
-
-	/* Hack - ignore f_ptr */
-	(void)f_ptr;
-
-	/* Open flag */
-	*action = 2;
 
 	/* Done */
 	return (FALSE);
