@@ -554,7 +554,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				x = p_ptr->px + ddx[dir];
 
 				/* Paranoia */
-				if (!in_bounds2(y, x)) break;
+				if (!in_bounds2(x, y)) break;
 
 				c_ptr = area(x, y);
 

@@ -3178,7 +3178,7 @@ static void add_outer_wall(int x, int y, int light,
 	int i, j;
 	cave_type *c_ptr;
 
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	c_ptr = &cave[y][x];
 

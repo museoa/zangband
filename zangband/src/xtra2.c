@@ -442,7 +442,7 @@ bool monster_death(int m_idx, bool explode)
 			{
 				scatter(&wx, &wy, x, y, 20);
 			}
-			while (!(in_bounds(wy, wx) && cave_floor_grid(area(wx, wy))) && --attempts);
+			while (!(in_bounds(wx, wy) && cave_floor_grid(area(wx, wy))) && --attempts);
 
 			if (attempts > 0)
 			{
@@ -1771,7 +1771,7 @@ static bool target_set_accept(int x, int y)
 	if (p_ptr->image) return (FALSE);
 
 	/* paranoia */
-	if (!in_boundsp(y, x)) return (FALSE);
+	if (!in_boundsp(x, y)) return (FALSE);
 
 	/* Examine the grid */
 	c_ptr = area(x, y);
@@ -1864,7 +1864,7 @@ static void target_set_prepare(int mode)
 		{
 			cave_type *c_ptr;
 
-			if (!in_bounds2(y, x)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			c_ptr = area(x, y);
 

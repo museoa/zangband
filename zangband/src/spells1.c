@@ -3152,7 +3152,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (!max_attempts) break;
 
 			/* not off edge */
-			if (!in_boundsp(t_y, t_x)) continue;
+			if (!in_boundsp(t_x, t_y)) continue;
 
 			/* Hack - exit if can see the reflection */
 			if (player_has_los_grid(parea(t_x, t_y))) break;
@@ -4252,7 +4252,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		if (!blind && !(flg & (PROJECT_HIDE)))
 		{
 			/* Only do visuals if the player can "see" the bolt */
-			if (in_boundsp(y, x) && panel_contains(y, x)
+			if (in_boundsp(x, y) && panel_contains(y, x)
 				 && player_has_los_grid(parea(x, y)))
 			{
 				byte a, c;
@@ -4353,7 +4353,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 						for (x = bx - cdis; x <= bx + cdis; x++)
 						{
 							/* Ignore "illegal" locations */
-							if (!in_bounds(y, x)) continue;
+							if (!in_bounds(x, y)) continue;
 
 							/* Enforce a circular "ripple" */
 							if (distance(y1, x1, y, x) != bdis) continue;
@@ -4410,7 +4410,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 					for (x = x2 - dist; x <= x2 + dist; x++)
 					{
 						/* Ignore "illegal" locations */
-						if (!in_bounds2(y, x)) continue;
+						if (!in_bounds2(x, y)) continue;
 
 						/* Enforce a "circular" explosion */
 						if (distance(y2, x2, y, x) != dist) continue;
@@ -4484,7 +4484,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				x = gx[i];
 
 				/* Only do visuals if the player can "see" the blast */
-				if (in_boundsp(y, x) && panel_contains(y, x)
+				if (in_boundsp(x, y) && panel_contains(y, x)
 					 && player_has_los_grid(parea(x, y)))
 				{
 					byte a, c;
@@ -4523,7 +4523,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				x = gx[i];
 
 				/* Hack -- Erase if needed */
-				if (in_boundsp(y, x) && player_has_los_grid(parea(x, y)))
+				if (in_boundsp(x, y) && player_has_los_grid(parea(x, y)))
 				{
 					lite_spot(x, y);
 				}
@@ -4693,7 +4693,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 						max_attempts--;
 					}
 
-					while (max_attempts && in_bounds2(t_y, t_x) &&
+					while (max_attempts && in_bounds2(t_x, t_y) &&
 					    !(los(x, y, t_x, t_y)));
 
 					if (max_attempts < 1)

@@ -580,7 +580,7 @@ static void create_stairs(int x, int y)
 		i++;
 
 		/* paranoia */
-		if (!in_bounds(y, x)) continue;
+		if (!in_bounds(x, y)) continue;
 
 		c_ptr = area(x, y);
 	}

@@ -288,7 +288,7 @@ static void alloc_object(int set, int typ, int num)
 /*
  * Count the number of "corridor" grids adjacent to the given grid.
  *
- * Note -- Assumes "in_bounds(y1, x1)"
+ * Note -- Assumes "in_bounds(x1, y1)"
  *
  * XXX XXX This routine currently only counts actual "empty floor"
  * grids which are not in rooms.  We might want to also count stairs,
@@ -332,7 +332,7 @@ static int next_to_corr(int x1, int y1)
  * Determine if the given location is "between" two walls,
  * and "next to" two corridor spaces.  XXX XXX XXX
  *
- * Assumes "in_bounds(y, x)"
+ * Assumes "in_bounds(x, y)"
  */
 static bool possible_doorway(int x, int y)
 {
@@ -365,7 +365,7 @@ static bool possible_doorway(int x, int y)
 static void try_door(int x, int y)
 {
 	/* Paranoia */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Ignore walls */
 	if (cave[y][x].feat >= FEAT_MAGMA) return;

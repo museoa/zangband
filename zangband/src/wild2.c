@@ -2509,7 +2509,7 @@ static pcave_type *access_pwild(int x, int y)
  * Hack - in_bounds() and in_bounds2() are the same
  * in the wilderness.
  */
-static bool in_bounds_wild(int y, int x)
+static bool in_bounds_wild(int x, int y)
 {
 	/* Make sure we are inside the wilderness */
 	if ((y < 0) || (x < 0) ||
@@ -2522,13 +2522,13 @@ static bool in_bounds_wild(int y, int x)
 	return (wild_refcount[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] != 0);
 }
 
-static bool in_bounds_cave(int y, int x)
+static bool in_bounds_cave(int x, int y)
 {
 	return((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
 		 && (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
 }
 
-static bool in_bounds2_cave(int y, int x)
+static bool in_bounds2_cave(int x, int y)
 {
 	return((y >= p_ptr->min_hgt) && (x >= p_ptr->min_wid)
 		 && (y < p_ptr->max_hgt) && (x < p_ptr->max_wid));
@@ -2537,7 +2537,7 @@ static bool in_bounds2_cave(int y, int x)
 /*
  * In bounds for the player information?
  */
-static bool in_bounds_wild_player (int y, int x)
+static bool in_bounds_wild_player (int x, int y)
 {
 	/* Use the same player bounds information as in_bounds_cave() */
 	return((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)

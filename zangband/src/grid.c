@@ -225,7 +225,7 @@ void vault_objects(int x, int y, int num)
 				j = rand_spread(y, 2);
 				k = rand_spread(x, 3);
 				dummy++;
-				if (!in_bounds(j, k)) continue;
+				if (!in_bounds(k, j)) continue;
 				break;
 			}
 
@@ -281,7 +281,7 @@ static void vault_trap_aux(int x, int y, int xd, int yd)
 			y1 = rand_spread(y, yd);
 			x1 = rand_spread(x, xd);
 			dummy++;
-			if (!in_bounds(y1, x1)) continue;
+			if (!in_bounds(x1, y1)) continue;
 			break;
 		}
 
@@ -358,7 +358,7 @@ void vault_monsters(int x1, int y1, int num)
 /*
  * Count the number of walls adjacent to the given grid.
  *
- * Note -- Assumes "in_bounds(y, x)"
+ * Note -- Assumes "in_bounds(x, y)"
  *
  * We count only granite walls and permanent walls.
  */
@@ -639,7 +639,7 @@ static void rand_dir(int *cdir, int *rdir)
 /* Function that sees if a square is a floor.  (Includes range checking.) */
 bool get_is_floor(int x, int y)
 {
-	if (!in_bounds(y, x))
+	if (!in_bounds(x, y))
 	{
 		/* Out of bounds */
 		return (FALSE);
@@ -661,7 +661,7 @@ void set_floor(int x, int y)
 {
 	cave_type *c_ptr;
 	
-	if (!in_bounds(y, x))
+	if (!in_bounds(x, y))
 	{
 		/* Out of bounds */
 		return;
@@ -761,7 +761,7 @@ void build_tunnel(int col1, int row1, int col2, int row2)
 
 
 		/* Extremely Important -- do not leave the dungeon */
-		while (!in_bounds(tmp_row, tmp_col))
+		while (!in_bounds(tmp_col, tmp_row))
 		{
 			/* Acquire the correct direction */
 			correct_dir(&col_dir, &row_dir, col1, row1, col2, row2);
@@ -917,7 +917,7 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 	int feat, i, j, dx, dy;
 
 
-	if (!in_bounds(*y, *x)) return TRUE;
+	if (!in_bounds(*x, *y)) return TRUE;
 
 	feat = cave[*y][*x].feat;
 
@@ -994,7 +994,7 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 			dy = randint0(3) - 1;
 			dx = randint0(3) - 1;
 
-			if (!in_bounds(*y + dy, *x + dx))
+			if (!in_bounds(*x + dx, *y + dy))
 			{
 				dx = 0;
 				dy = 0;
@@ -1223,7 +1223,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 		y3 = y1 + dy + changey;
 
 		/* See if in bounds - if not - do not perturb point */
-		if (!in_bounds(y3, x3))
+		if (!in_bounds(x3, y3))
 		{
 			x3 = (x1 + x2) / 2;
 			y3 = (y1 + y2) / 2;
@@ -1242,7 +1242,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 			{
 				dy = randint0(3) - 1;
 				dx = randint0(3) - 1;
-				if (!in_bounds(y3 + dy, x3 + dx))
+				if (!in_bounds(x3 + dx, y3 + dy))
 				{
 					dx = 0;
 					dy = 0;
@@ -1734,7 +1734,7 @@ static void cave_fill(int x, int y)
 			i = tx + ddx_ddd[d];
 			
 			/* Paranoia Don't leave the cave */
-			if (!in_bounds(j, i)) return;
+			if (!in_bounds(i, j)) return;
 
 			/* If within bounds */
 			if ((i > fill_data.xmin) && (i < fill_data.xmax)

@@ -188,7 +188,7 @@ void delete_object(int x, int y)
 	s16b this_o_idx, next_o_idx = 0;
 
 	/* Refuse "illegal" locations */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Grid */
 	c_ptr = area(x, y);
@@ -4093,7 +4093,7 @@ void place_object(int x, int y, bool good, bool great)
 	object_type *q_ptr;
 
 	/* Paranoia -- check bounds */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Acquire grid */
 	c_ptr = area(x, y);
@@ -4213,7 +4213,7 @@ void place_gold(int x, int y)
 
 
 	/* Paranoia -- check bounds */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Acquire grid */
 	c_ptr = area(x, y);
@@ -4350,7 +4350,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			tx = x + dx;
 
 			/* Skip illegal grids */
-			if (!in_bounds(ty, tx)) continue;
+			if (!in_bounds(tx, ty)) continue;
 
 			/* Require line of sight */
 			if (!los(x, y, tx, ty)) continue;

@@ -1766,7 +1766,7 @@ bool activate_effect(object_type *o_ptr)
 						scatter(&x, &y, px, py, 4);
 
 						/* paranoia */
-						if (!in_bounds2(y, x)) continue;
+						if (!in_bounds2(x, y)) continue;
 
 						c_ptr = area(x, y);
 						if (!cave_floor_grid(c_ptr)) continue;
@@ -2406,7 +2406,7 @@ bool activate_effect(object_type *o_ptr)
 				x = px + ddx[dir];
 
 				/* paranoia */
-				if (!in_bounds2(y, x)) continue;
+				if (!in_bounds2(x, y)) continue;
 
 				c_ptr = area(x, y);
 

@@ -958,7 +958,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		x = px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 
 		c_ptr = area(x, y);
 
@@ -1010,7 +1010,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		x = px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 
 		c_ptr = area(x, y);
 
@@ -1276,7 +1276,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		x = px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 
 		if (area(x, y)->m_idx)
 		{
@@ -1320,7 +1320,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		x = px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 
 		c_ptr = area(x, y);
 
@@ -1356,7 +1356,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		x = px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 		
 		c_ptr = area(x, y);
 		

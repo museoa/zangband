@@ -127,7 +127,7 @@ static void notice_field(field_type *f_ptr)
 	int y = f_ptr->fy;
 	
 	/* Refuse "illegal" locations */
-	if (in_boundsp(y, x))
+	if (in_boundsp(x, y))
 	{
 		/* Can the player see the square? */
 		if (player_has_los_grid(parea(x, y)))
@@ -160,7 +160,7 @@ void delete_field_idx(int fld_idx)
 	excise_field_idx(fld_idx);
 
 	/* Refuse "illegal" locations */
-	if (in_boundsp(y, x))
+	if (in_boundsp(x, y))
 	{
 		/* Note + Lite the spot */
 		note_spot(x, y);
@@ -197,7 +197,7 @@ void delete_field_ptr(s16b *fld_idx)
 	*fld_idx = f_ptr->next_f_idx;
 
 	/* Refuse "illegal" locations */
-	if (in_boundsp(y, x))
+	if (in_boundsp(x, y))
 	{
 		/* Note + Lite the spot */
 		note_spot(x, y);
@@ -248,7 +248,7 @@ void delete_field(int x, int y)
 	cave_type *c_ptr;
 
 	/* Refuse "illegal" locations */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Grid */
 	c_ptr = area(x, y);
@@ -256,7 +256,7 @@ void delete_field(int x, int y)
 	delete_field_aux(&(c_ptr->fld_idx));
 	
 	/* Paranoia */
-	if (!in_boundsp(y, x)) return;
+	if (!in_boundsp(x, y)) return;
 
 	/* Note + Lite the spot */
 	if (character_dungeon) note_spot(x, y);
@@ -1957,7 +1957,7 @@ void place_trap(int x, int y)
 	field_trap_type *n_ptr = trap_num;
 
 	/* Paranoia -- verify location */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Calculate the total possibilities */
 	for (total = 0; TRUE; n_ptr++)

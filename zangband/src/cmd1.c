@@ -504,7 +504,7 @@ void search(void)
 			if (randint0(100) < chance)
 			{
 				/* do not search outside the wilderness */
-				if (!in_bounds2(y, x)) continue;
+				if (!in_bounds2(x, y)) continue;
 
 				/* Access the grid */
 				c_ptr = area(x, y);
@@ -2236,7 +2236,7 @@ void move_player(int dir, int do_pickup)
 	/* Do not exit the wilderness-area */
 	if (!p_ptr->depth)
 	{
-		if (!in_bounds2(y, x))
+		if (!in_bounds2(x, y))
 		{
 			/* Do not leave the wilderness */
 			msg_print("You can not leave the wilderness.");
@@ -2605,7 +2605,7 @@ static int see_wall(int dir, int x, int y)
 	x += ddx[dir];
 
 	/* Illegal grids are "walls" */
-	if (!in_boundsp(y, x)) return (TRUE);
+	if (!in_boundsp(x, y)) return (TRUE);
 
 	pc_ptr = parea(x, y);
 	
@@ -2644,7 +2644,7 @@ static int see_nothing(int dir, int x, int y)
 	x += ddx[dir];
 
 	/* Illegal grids are unknown */
-	if (!in_boundsp(y, x)) return (FALSE);
+	if (!in_boundsp(x, y)) return (FALSE);
 
 	c_ptr = area(x, y);
 	pc_ptr = parea(x, y);
@@ -2946,7 +2946,7 @@ static bool run_test(void)
 	pcave_type	*pc_ptr;
 
 	/* Hack - do not run next to edge of wilderness */
-	if (!in_bounds(py, px)) return TRUE;
+	if (!in_bounds(px, py)) return TRUE;
 
 	/* Where we came from */
 	prev_dir = p_ptr->run_old_dir;
@@ -2969,7 +2969,7 @@ static bool run_test(void)
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
 
-		if (!in_boundsp(row, col)) continue;
+		if (!in_boundsp(col, row)) continue;
 
 		/* Access grid */
 		c_ptr = area(col, row);
@@ -3222,7 +3222,7 @@ static bool run_test(void)
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
 
-			if (!in_bounds2(row, col)) continue;
+			if (!in_bounds2(col, row)) continue;
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
 			if (!see_wall(new_dir, px, py))
@@ -3254,7 +3254,7 @@ static bool run_test(void)
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
 
-			if (!in_bounds2(row, col)) continue;
+			if (!in_bounds2(col, row)) continue;
 
 			/* Access grid */
 			c_ptr = area(col, row);

@@ -310,7 +310,7 @@ static bool summon_possible(int x1, int y1)
 			y = y1 + dy;
 
 			/* Ignore illegal locations */
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			/* Access Grid */
 			c_ptr = area(x, y);

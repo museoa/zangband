@@ -824,7 +824,7 @@ bool detect_traps(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_bounds2(y, x)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -876,7 +876,7 @@ bool detect_doors(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -938,7 +938,7 @@ bool detect_stairs(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -992,7 +992,7 @@ bool detect_treasure(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -2225,7 +2225,7 @@ bool destroy_area(int x1, int y1, int r)
 		for (x = (x1 - r); x <= (x1 + r); x++)
 		{
 			/* Skip illegal grids */
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			/* Extract the distance */
 			k = distance(y1, x1, y, x);
@@ -2414,7 +2414,7 @@ bool earthquake(int cx, int cy, int r)
 			xx = cx + dx;
 
 			/* Skip illegal grids */
-			if (!in_boundsp(yy, xx)) continue;
+			if (!in_boundsp(xx, yy)) continue;
 
 			/* Skip distant grids */
 			if (distance(cy, cx, yy, xx) > r) continue;
@@ -2453,7 +2453,7 @@ bool earthquake(int cx, int cy, int r)
 			y = py + ddy_ddd[i];
 			x = px + ddx_ddd[i];
 
-			if (!in_bounds2(y, x)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			/* Access the grid */
 			c_ptr = area(x, y);
@@ -2593,7 +2593,7 @@ bool earthquake(int cx, int cy, int r)
 			/* Skip unaffected grids */
 			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
-			if (!in_bounds2(yy, xx)) continue;
+			if (!in_bounds2(xx, yy)) continue;
 
 			/* Access the grid */
 			c_ptr = area(xx, yy);
@@ -2632,7 +2632,7 @@ bool earthquake(int cx, int cy, int r)
 							y = yy + ddy_ddd[i];
 							x = xx + ddx_ddd[i];
 
-							if (!in_bounds2(y, x)) continue;
+							if (!in_bounds2(x, y)) continue;
 
 							/* Access the grid */
 							c_ptr = area(x, y);
@@ -2753,7 +2753,7 @@ bool earthquake(int cx, int cy, int r)
 			/* Skip unaffected grids */
 			if (!map[16+yy-cy][16+xx-cx]) continue;
 
-			if (!in_bounds2(yy, xx)) continue;
+			if (!in_bounds2(xx, yy)) continue;
 
 			/* Access the cave grid */
 			c_ptr = area(xx, yy);
@@ -2863,7 +2863,7 @@ static void cave_temp_room_lite(void)
 			cave_type *c_ptr = area(x, y);
 
 			/* Verify */
-			if (!in_bounds2(y, x)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
@@ -2954,7 +2954,7 @@ static void cave_temp_room_unlite(void)
 			pcave_type *pc_ptr;
 
 			/* Verify */
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 			
 			c_ptr = area(x, y);
 			pc_ptr = parea(x, y);
@@ -3013,7 +3013,7 @@ static int next_to_open(int cx, int cy)
 		y = cy + ddy_cdd[i % 8];
 		x = cx + ddx_cdd[i % 8];
 
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 
 		c_ptr = area(x, y);
 
@@ -3053,7 +3053,7 @@ static int next_to_walls_adj(int cx, int cy)
 		y = cy + ddy_ddd[i];
 		x = cx + ddx_ddd[i];
 
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 
 		c_ptr = area(x, y);
 
@@ -3072,7 +3072,7 @@ static void cave_temp_room_aux(int x, int y)
 	cave_type *c_ptr;
 
 	/* Verify */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(x, y)) return;
 
 	/* Get the grid */
 	c_ptr = area(x, y);
@@ -3299,7 +3299,7 @@ bool teleport_swap(int dir)
 		ty = py + ddy[dir];
 	}
 
-	if (!in_bounds2(ty, tx))
+	if (!in_bounds2(tx, ty))
 	{
 		msg_print("You can't trade places with that!");
 
@@ -4153,7 +4153,7 @@ bool starlite(void)
 			scatter(&x, &y, p_ptr->px, p_ptr->py, 4);
 
 			/* paranoia */
-			if (!in_bounds2(y, x)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			c_ptr = area(x, y);
 

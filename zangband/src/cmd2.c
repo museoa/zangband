@@ -597,7 +597,7 @@ int count_traps(int *x, int *y, bool under)
 		xx = p_ptr->px + ddx_ddd[d];
 
 		/* paranoia */
-		if (!in_bounds2(yy, xx)) continue;
+		if (!in_bounds2(xx, yy)) continue;
 
 		/* Not looking for this feature */
 		if (!is_visible_trap(area(xx, yy))) continue;
@@ -635,7 +635,7 @@ static int count_doors(int *x, int *y, bool (*test)(int feat), bool under)
 		xx = p_ptr->px + ddx_ddd[d];
 
 		/* paranoia */
-		if (!in_boundsp(yy, xx)) continue;
+		if (!in_boundsp(xx, yy)) continue;
 
 		/* Must have knowledge */
 		if (!(parea(xx, yy)->feat)) continue;
@@ -864,7 +864,7 @@ void do_cmd_open(void)
 		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 
 		/* Get requested grid */
 		c_ptr = area(x, y);
@@ -1016,7 +1016,7 @@ void do_cmd_close(void)
 		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x))
+		if (!in_bounds2(x, y))
 		{
 			/* Message */
 			msg_print("You see nothing there to close.");
@@ -1430,7 +1430,7 @@ void do_cmd_tunnel(void)
 		x = p_ptr->px + ddx[dir];
 
 		/* Cannot escape the wilderness by tunneling */
-		if (!in_bounds2(y, x))
+		if (!in_bounds2(x, y))
 		{
 			/* Message */
 			msg_print("You cannot tunnel outside the wilderness.");
@@ -1719,7 +1719,7 @@ void do_cmd_disarm(void)
 		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x))
+		if (!in_bounds2(x, y))
 		{
 			/* Message */
 			msg_print("You see nothing there to disarm.");
@@ -1812,7 +1812,7 @@ void do_cmd_alter(void)
 		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x))
+		if (!in_bounds2(x, y))
 		{
 			/* Oops */
 			msg_print("You attack the empty air.");
@@ -1959,7 +1959,7 @@ void do_cmd_spike(void)
 		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
-		if (!in_bounds2(y, x))
+		if (!in_bounds2(x, y))
 		{
 			/* Message */
 			msg_print("You see nothing there to spike.");
@@ -2552,7 +2552,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		mmove2(&nx, &ny, px, py, tx, ty, &sl, &sq);
 
 		/* Stopped by wilderness boundary */
-		if (!in_bounds2(ny, nx)) break;
+		if (!in_bounds2(nx, ny)) break;
 
 		/* Stopped by walls/doors */
 		c_ptr = area(nx, ny);
@@ -2985,7 +2985,7 @@ void do_cmd_throw_aux(int mult)
 		mmove2(&nx, &ny, px, py, tx, ty, &sl, &sq);
 
 		/* Stopped by wilderness boundary */
-		if (!in_bounds2(ny, nx))
+		if (!in_bounds2(nx, ny))
 		{
 			hit_wall = TRUE;
 			break;

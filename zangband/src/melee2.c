@@ -446,7 +446,7 @@ static void get_moves_aux(int m_idx, int *xp, int *yp)
 		x = x1 + ddx_ddd[i];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(y, x)) return;
+		if (!in_bounds2(x, y)) return;
 
 		c_ptr = area(x, y);
 
@@ -519,7 +519,7 @@ static bool get_fear_moves_aux(int m_idx, int *xp, int *yp)
 		x = fx + ddx_ddd[i];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 
 		/* Ignore illegal locations */
 		if (area(x, y)->when == 0) continue;
@@ -742,7 +742,7 @@ static bool find_safety(int m_idx, int *xp, int *yp)
 			x = fx + dx;
 
 			/* Skip illegal locations */
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			c_ptr = area(x, y);
 
@@ -843,7 +843,7 @@ static bool find_hiding(int m_idx, int *xp, int *yp)
 			x = fx + dx;
 
 			/* Skip illegal locations */
-			if (!in_boundsp(y, x)) continue;
+			if (!in_boundsp(x, y)) continue;
 
 			c_ptr = area(x, y);
 
@@ -931,7 +931,7 @@ static bool get_moves(int m_idx, int *mm)
 				int xx = px + ddx_ddd[i];
 				int yy = py + ddy_ddd[i];
 
-				if (!in_bounds2(yy, xx)) continue;
+				if (!in_bounds2(xx, yy)) continue;
 
 				c_ptr = area(xx, yy);
 
@@ -975,7 +975,7 @@ static bool get_moves(int m_idx, int *mm)
 					break;
 				}
 
-				if (!in_bounds2(y2, x2)) continue;
+				if (!in_bounds2(x2, y2)) continue;
 
 				/* Ignore filled grids */
 				c_ptr = area(x2, y2);
@@ -2210,7 +2210,7 @@ static void process_monster(int m_idx)
 			for (x = ox - 1; x <= ox + 1; x++)
 			{
 				/* Ignore locations off of edge */
-				if (!in_bounds2(y, x)) continue;
+				if (!in_bounds2(x, y)) continue;
 
 				if (area(x, y)->m_idx) k++;
 			}
@@ -2423,7 +2423,7 @@ static void process_monster(int m_idx)
 		nx = ox + ddx[d];
 
 		/* Ignore locations off of edge */
-		if (!in_boundsp(ny, nx)) continue;
+		if (!in_boundsp(nx, ny)) continue;
 
 		/* Access that cave grid */
 		c_ptr = area(nx, ny);

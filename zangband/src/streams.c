@@ -61,7 +61,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 			changey = 0;
 		}
 
-		if (!in_bounds(y1 + dy + changey, x1 + dx + changex))
+		if (!in_bounds(x1 + dx + changex, y1 + dy + changey))
 		{
 			changex = 0;
 			changey = 0;
@@ -95,7 +95,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 				{
 					for (tx = x - width - 1; tx <= x + width + 1; tx++)
 					{
-						if (!in_bounds(ty, tx)) continue;
+						if (!in_bounds(tx, ty)) continue;
 
 						c_ptr = &cave[ty][tx];
 
@@ -237,7 +237,7 @@ void build_streamer(int feat, int chance)
 			{
 				ty = rand_spread(y, d);
 				tx = rand_spread(x, d);
-				if (!in_bounds2(ty, tx)) continue;
+				if (!in_bounds2(tx, ty)) continue;
 				break;
 			}
 
@@ -278,7 +278,7 @@ void build_streamer(int feat, int chance)
 		x += ddx[dir];
 
 		/* Quit before leaving the dungeon */
-		if (!in_bounds(y, x)) break;
+		if (!in_bounds(x, y)) break;
 	}
 }
 
@@ -300,7 +300,7 @@ void place_trees(int x, int y)
 			c_ptr = &cave[j][i];
 
 			/* Want square to be in the circle and accessable. */
-			if (in_bounds(j, i) && (distance(j, i, y, x) < 4) && !cave_perma_grid(c_ptr))
+			if (in_bounds(i, j) && (distance(j, i, y, x) < 4) && !cave_perma_grid(c_ptr))
 			{
 				/* Adding to grids with fields is problematical */
 				delete_field_location(c_ptr);
@@ -367,7 +367,7 @@ void destroy_level(void)
 			for (x = (x1 - 15); x <= (x1 + 15); x++)
 			{
 				/* Skip illegal grids */
-				if (!in_bounds(y, x)) continue;
+				if (!in_bounds(x, y)) continue;
 
 				/* Extract the distance */
 				k = distance(y1, x1, y, x);

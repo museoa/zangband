@@ -119,7 +119,7 @@ void delete_monster_idx(int i)
 
 
 	/* Monster is gone */
-	if (in_bounds2(y, x))
+	if (in_bounds2(x, y))
 	{
 		area(x, y)->m_idx = 0;
 	}
@@ -162,7 +162,7 @@ void delete_monster(int x, int y)
 	cave_type *c_ptr;
 
 	/* Paranoia */
-	if (!in_bounds2(y, x)) return;
+	if (!in_bounds2(x, y)) return;
 
 	/* Check the grid */
 	c_ptr = area(x, y);
@@ -309,7 +309,7 @@ void compact_monsters(int size)
 		monster_type *m_ptr = &m_list[i];
 
 		/* Hack - kill monsters out of bounds. */
-		if (!in_bounds2(m_ptr->fy, m_ptr->fx))
+		if (!in_bounds2(m_ptr->fx, m_ptr->fy))
 		{
 			delete_monster_idx(i);
 		}
@@ -358,7 +358,7 @@ void wipe_m_list(void)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
-		if (in_bounds2(y, x))
+		if (in_bounds2(x, y))
 		{
 			/* Monster is gone */
 			area(x, y)->m_idx = 0;
@@ -1346,7 +1346,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly, bool pe
 
 
 	/* Verify location */
-	if (!in_bounds2(y, x)) return (FALSE);
+	if (!in_bounds2(x, y)) return (FALSE);
 
 
 	/* Access the location */
@@ -1670,7 +1670,7 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp, bool friendly
 			scatter(&mx, &my, hx, hy, 4);
 
 			/* paranoia */
-			if (!in_bounds2(my, mx)) continue;
+			if (!in_bounds2(mx, my)) continue;
 			
 			/* Not on player */
 			if ((my == p_ptr->py) && (mx == p_ptr->px)) continue;
@@ -1805,7 +1805,7 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp, bool friendl
 			scatter(&nx, &ny, x, y, d);
 
 			/* paranoia */
-			if (!in_bounds2(y, x)) continue;
+			if (!in_bounds2(x, y)) continue;
 			
 			/* Not on player */
 			if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
@@ -2334,7 +2334,7 @@ bool summon_specific(int who, int x1, int y1, int lev, int type,
 		scatter(&x, &y, x1, y1, d);
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 		
 		/* Not on top of player */
 		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
@@ -2428,7 +2428,7 @@ bool summon_named_creature(int x1, int y1, int r_idx, bool slp,
 		scatter(&x, &y, x1, y1, d);
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 		
 		/* Not on top of player */
 		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
@@ -2473,7 +2473,7 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 		scatter(&x, &y, m_ptr->fx, m_ptr->fy, d);
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 		
 		/* Not on top of player */
 		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;

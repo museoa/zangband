@@ -2712,7 +2712,7 @@ bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 	(*item_num) = 0;
 
 	/* Sanity */
-	if (!in_bounds(y, x)) return (FALSE);
+	if (!in_bounds(x, y)) return (FALSE);
 
 	/* Scan all objects in the grid */
 	for (this_o_idx = area(x, y)->o_idx; this_o_idx; this_o_idx = next_o_idx)

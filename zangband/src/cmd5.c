@@ -1101,7 +1101,7 @@ static bool cast_nature_spell(int spell)
 				x = px + ddx[dir];
 
 				/* paranoia */
-				if (!in_bounds2(y, x)) continue;
+				if (!in_bounds2(x, y)) continue;
 				c_ptr = area(x, y);
 
 				/* Get the monster */
@@ -1382,7 +1382,7 @@ static bool cast_chaos_spell(int spell)
 					y = py - 5 + randint1(10);
 
 					/* paranoia */
-					if (!in_boundsp(y, x)) continue;
+					if (!in_boundsp(x, y)) continue;
 
 					/* keep going if not in LOS */
 					if (!player_has_los_grid(parea(x, y))) continue;

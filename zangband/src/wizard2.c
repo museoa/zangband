@@ -121,7 +121,7 @@ static void do_cmd_summon_horde(void)
 		scatter(&wx, &wy, px, py, 3);
 
 		/* paranoia */
-		if (!in_bounds2(wy, wx)) continue;
+		if (!in_bounds2(wx, wy)) continue;
 
 		c_ptr = area(wx, wy);
 		if (cave_naked_grid(c_ptr)) break;
@@ -396,7 +396,7 @@ static void do_cmd_wiz_feature(int feat)
 		x = rand_spread(px, d);
 
 		/* Reject illegal grids */
-		if (!in_boundsp(y, x)) continue;
+		if (!in_boundsp(x, y)) continue;
 
 		/* Reject the player */
 		if ((y == py) && (x == px)) continue;
@@ -1366,7 +1366,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		scatter(&x, &y, px, py, d);
 
 		/* paranoia */
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(x, y)) continue;
 
 		/* Require empty grids */
 		c_ptr = area(x, y);

@@ -76,7 +76,7 @@ bool teleport_away(int m_idx, int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(ny, nx)) continue;
+			if (!in_bounds(nx, ny)) continue;
 
 			c_ptr = area(nx, ny);
 			
@@ -228,7 +228,7 @@ void teleport_to_player(int m_idx)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(ny, nx)) continue;
+			if (!in_bounds(nx, ny)) continue;
 
 			c_ptr = area(nx, ny);
 			
@@ -387,7 +387,7 @@ void teleport_player(int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(y, x)) continue;
+			if (!in_bounds(x, y)) continue;
 
 			c_ptr = area(x, y);
 
@@ -474,7 +474,7 @@ void teleport_player(int dis)
 				x = ox + xx;
 				y = oy + yy;
 				
-				if (in_bounds2(y, x) && area(x, y)->m_idx)
+				if (in_bounds2(x, y) && area(x, y)->m_idx)
 				{
 					m_idx = area(x, y)->m_idx;
 					m_ptr = &m_list[m_idx];
@@ -541,7 +541,7 @@ void teleport_player_to(int nx, int ny)
 		{
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
-			if (in_bounds(y, x)) break;
+			if (in_bounds(x, y)) break;
 		}
 
 		/* Accept "naked" floor grids */
@@ -1065,7 +1065,7 @@ void call_the_(void)
 
 	int i;
 
-	if (in_bounds(py, px) &&
+	if (in_bounds(px, py) &&
 	    cave_floor_grid(area(px - 1, py - 1)) &&
 	    cave_floor_grid(area(px - 1, py    )) &&
 	    cave_floor_grid(area(px - 1, py + 1)) &&
@@ -1137,7 +1137,7 @@ void fetch(int dir, int wgt, bool require_los)
 
 		/* Paranoia */
 		if ((distance(py, px, ty, tx) > MAX_RANGE)
-			 || (!in_bounds2(ty, tx)))
+			 || (!in_bounds2(tx, ty)))
 		{
 			msg_print("You can't fetch something that far away!");
 			return;
@@ -1178,7 +1178,7 @@ void fetch(int dir, int wgt, bool require_los)
 			tx += ddx[dir];
 
 			/* paranoia */
-			if (!in_bounds2(ty, tx)) continue;
+			if (!in_bounds2(tx, ty)) continue;
 
 			c_ptr = area(tx, ty);
 
@@ -4320,7 +4320,7 @@ bool dimension_door(void)
 	p_ptr->energy -= 60 - plev;
 
 	/* paranoia */
-	if (!in_bounds2(y, x)) return FALSE;
+	if (!in_bounds2(x, y)) return FALSE;
 
 	c_ptr = area(x, y);
 
