@@ -490,7 +490,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"ability", "age", "armor_class",
-		"blows_per_round", "icon", "died_from",
+		"blows_per_round", "died_from",
 		"exp", "food", "gold", "height", "history", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "position",
 		"sex", "shots_per_round", "social_class",
@@ -502,7 +502,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		"pets", "realm1", "realm2", "patron",
 		NULL};
 	enum {IDX_ABILITY, IDX_AGE, IDX_ARMOR_CLASS,
-		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_DIED_FROM,
+		IDX_BLOWS_PER_ROUND, IDX_DIED_FROM,
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_POSITION,
 		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS,
@@ -604,15 +604,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			blows_per_round(&blows, &muta_att);
 			Tcl_SetStringObj(resultPtr,
 				format(muta_att ? "%d+%d" : "%d", blows, muta_att), -1);
-			break;
-		}
-
-		case IDX_ICON: /* icon */
-		{
-			char buf[128];
-			
-			Tcl_SetResult(interp, assign_print2(buf, ASSIGN_CHARACTER),
-				TCL_VOLATILE);
 			break;
 		}
 

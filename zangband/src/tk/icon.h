@@ -91,17 +91,6 @@ extern int Icon_GetIndexFromObj(Tcl_Interp *interp,
 #define ICON_TYPE_BLANK 1
 #define ICON_TYPE_DEFAULT 2
 
-/*
- * Constants for g_assign[] index.
- */
-#define ASSIGN_MONSTER 0
-#define ASSIGN_OBJECT 1
-#define ASSIGN_CHARACTER 2
-#define ASSIGN_FEATURE 3
-#define ASSIGN_SHOPKEEPER 4
-#define ASSIGN_ARTIFACT 5
-#define ASSIGN_MAX 6
-
 /* One assigned icon */
 typedef struct t_assign_icon {
 	int type;
@@ -125,6 +114,5 @@ extern byte *g_palette_rgb;
 extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr);
 extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
 extern char *AssignToString_Icon(char *buf, t_assign_icon *assign);
-extern char *assign_print2(char *buf, int assignType);
 
 #endif /* _INCLUDE_ICON_H_ */

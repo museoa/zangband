@@ -14,8 +14,6 @@
 #include "icon.h"
 
 unsigned char *g_palette_rgb;
-t_assign_group g_assign[ASSIGN_MAX];
-t_assign_icon g_assign_none;
 
 t_icon_data *g_icon_data; /* Array of icon types */
 int g_icon_data_count = 0; /* Number of icon types */
@@ -32,7 +30,6 @@ int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
 int *g_background = NULL;
 
 bool g_icon_map_changed = FALSE;
-int *g_image_monster, *g_image_object;
 
 
 /*
@@ -125,9 +122,6 @@ void angtk_image_reset(void)
 			/* Stop */
 			break;
 		}
-
-		/* Remember the monster race */
-		g_image_monster[i] = r_idx;
 	}
 
 	/* Randomize objects */
@@ -154,9 +148,6 @@ void angtk_image_reset(void)
 			/* Stop */
 			break;
 		}
-
-		/* Remember the object kind */
-		g_image_object[i] = k_idx;
 	}
 }
 
@@ -236,13 +227,6 @@ int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 
 	return StringToAssign_Icon(interp, assignPtr, desc);
 }
-
-char *assign_print2(char *buf, int assignType)
-{
-	t_assign_icon *assignPtr = &g_assign[assignType].assign[0];
-	return AssignToString_Icon(buf, assignPtr);
-}
-
 
 /* (assign) types */
 static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
@@ -448,46 +432,11 @@ void init_icons(int size, int depth)
 
 	Icon_AddType(icon_data_ptr);
 
-	/* Allocate array of t_assign_icon for each monster */
-	g_assign[ASSIGN_MONSTER].count = z_info->r_max;
-	C_MAKE(g_assign[ASSIGN_MONSTER].assign, z_info->r_max, t_assign_icon);
-
-	/* Allocate array of t_assign_icon for each object */
-	g_assign[ASSIGN_OBJECT].count = z_info->k_max;
-	C_MAKE(g_assign[ASSIGN_OBJECT].assign, z_info->k_max, t_assign_icon);
-
-	/* Allocate array of t_assign_icon for the character */
-	n = 1;
-	g_assign[ASSIGN_CHARACTER].count = n;
-	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign_icon);
-
-	/* Allocate array of t_assign_icon for each feature */
-	g_assign[ASSIGN_FEATURE].count = z_info->f_max;
-	C_MAKE(g_assign[ASSIGN_FEATURE].assign, z_info->f_max, t_assign_icon);
 
 	assign.type = ICON_TYPE_DEFAULT;
 	assign.index = 0;
 	assign.ascii = -1;
 
-	/* Set default icon for the character */
-	for (i = 0; i < g_assign[ASSIGN_CHARACTER].count; i++)
-	{
-		g_assign[ASSIGN_CHARACTER].assign[i] = assign;
-	}
-
-	/* Set default icon for each monster */
-	for (i = 0; i < g_assign[ASSIGN_MONSTER].count; i++)
-	{
-		g_assign[ASSIGN_MONSTER].assign[i] = assign;
-	}
-	g_assign[ASSIGN_MONSTER].assign[0].type = ICON_TYPE_NONE;
-
-	/* Set default icon for each object */
-	for (i = 0; i < g_assign[ASSIGN_OBJECT].count; i++)
-	{
-		g_assign[ASSIGN_OBJECT].assign[i] = assign;
-	}
-	g_assign[ASSIGN_OBJECT].assign[0].type = ICON_TYPE_NONE;
 
 	/*
 	 * When a feature is masked, or a masked icon is drawn on
@@ -496,25 +445,13 @@ void init_icons(int size, int depth)
 	 */
 	C_MAKE(g_background, z_info->f_max, int);
 
-	/* Set default icon for each feature */
-	for (i = 0; i < g_assign[ASSIGN_FEATURE].count; i++)
-	{
-		g_assign[ASSIGN_FEATURE].assign[i] = assign;
-		g_background[i] = i;
-	}
-	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].type = ICON_TYPE_NONE;
-
 	/* Clear the color hash table */
 	Palette_ResetHash();
 
 	/* Add some new commands to the global interpreter */
 	CommandInfo_Init(g_interp, assignCmdInit, NULL);
-
-	g_assign_none.type = ICON_TYPE_NONE;
-	g_assign_none.index = 0;
-	g_assign_none.ascii = -1;
 	
-	if (init_widget(g_interp) != TCL_OK)
+	if (init_widget(g_interp, g_icon_depth) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
 	
 	if (init_term(g_interp) != TCL_OK)
@@ -522,10 +459,6 @@ void init_icons(int size, int depth)
 
 	if (CanvasWidget_Init(g_interp) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
-
-	/* Hack -- indices for hallucination */
-	C_MAKE(g_image_monster, z_info->r_max, int);
-	C_MAKE(g_image_object, z_info->k_max, int);
 
 	/* Randomize the hallucination indices */
 	angtk_image_reset();
