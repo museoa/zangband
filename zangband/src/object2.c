@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: object2.c */
 
 /* Purpose: Object code, part 2 */
@@ -1464,13 +1463,9 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 		/* Wands */
 		case TV_WAND:
 		{
-			/* Require either knowledge or known empty for both wands. */
-			if ((!(o_ptr->ident & (IDENT_EMPTY)) &&
-				!object_known_p(o_ptr)) ||
-				(!(j_ptr->ident & (IDENT_EMPTY)) &&
-				!object_known_p(j_ptr))) return (FALSE);
-
 			/* Wand charges combine in O&ZAngband. */
+			if (object_known_p(o_ptr) != object_known_p(j_ptr))
+				return (FALSE);
 
 			/* Assume okay */
 			break;
@@ -2651,13 +2646,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 		add_ego_flags(o_ptr, ego);
 		init_ego_item(o_ptr, ego);
 	}
-	
-	
-	/* Cursed some of the time */
-	if ((randint0(100) < 15) && (flags & OC_NORMAL))
-	{
-		o_ptr->ident |= (IDENT_CURSED);
-	}
 }
 
 
@@ -3278,12 +3266,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 		add_ego_flags(o_ptr, ego);
 		init_ego_item(o_ptr, ego);
 	}
-	
-	/* Cursed some of the time */
-	if ((randint0(100) < 15) && (flags & OC_NORMAL))
-	{
-		o_ptr->ident |= (IDENT_CURSED);
-	}
 }
 
 
@@ -3300,9 +3282,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int lev_dif, byte flags)
 	if ((flags & OC_FORCE_GOOD) && (randint0(100) < 50))
 	{
 		/* Half the time, the stuff can be bad */
-		
 		flags |= OC_FORCE_BAD;
-		flags &= ~ OC_FORCE_GOOD;
+		flags &= ~OC_FORCE_GOOD;
 	}
 	
 	/* Apply magic (good or bad) according to type */
@@ -3313,7 +3294,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int lev_dif, byte flags)
 			/* Analyze */
 			switch (o_ptr->sval)
 			{
-
 				case SV_RING_ATTACKS:
 				{
 					/* Rarely have a ring +2 */
@@ -3621,7 +3601,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					if (randint1(3) == 1)
 					{
-						(void) random_resistance(o_ptr, (randint1(34) + 4), 0);
+						(void)random_resistance(o_ptr, (randint1(34) + 4), 0);
 					}
 					
 					if (randint1(5) == 1)
@@ -4297,7 +4277,8 @@ void place_object(int y, int x, bool good, bool great)
 	object_wipe(q_ptr);
 
 	/* Make an object (if possible) */
-	if (!make_object(q_ptr, (good?15:0) + (great?15:0), dun_theme)) return;
+	if (!make_object(q_ptr, (u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme))
+		return;
 
 	/* Make an object */
 	o_idx = o_pop();
