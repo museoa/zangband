@@ -314,9 +314,13 @@ bool gain_random_mutation(int choose_mut)
 			muta_desc = "Your stomach starts to roil nauseously.";
 			break;
 		case 110: case 111:
-			muta_class = &(p_ptr->muta2);
-			muta_which = MUT2_CHAOS_GIFT;
-			muta_desc = "You attract the notice of a chaos deity!";
+			/* Chaos warriors already have a chaos deity */
+			if (p_ptr->pclass != CLASS_CHAOS_WARRIOR)
+			{
+				muta_class = &(p_ptr->muta2);
+				muta_which = MUT2_CHAOS_GIFT;
+				muta_desc = "You attract the notice of a chaos deity!";
+			}
 			break;
 		case 112:
 			muta_class = &(p_ptr->muta2);
@@ -509,7 +513,7 @@ bool gain_random_mutation(int choose_mut)
 			muta_desc = "You feel like you can recover from anything.";
 			break;
 		default:
-			muta_class = 0;
+			muta_class = NULL;
 			muta_which = 0;
 		}
 
