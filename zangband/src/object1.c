@@ -1444,7 +1444,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	}
 
 	/* Wait for it */
-	prtf(15, k, "[Press any key to continue]");
+	prtf(13, k, "[Press any key to continue]");
 	(void)inkey();
 
 	/* Restore the screen */

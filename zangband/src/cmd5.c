@@ -229,10 +229,7 @@ void do_cmd_browse_aux(const object_type *o_ptr)
 	clear_msg();
 
 	/* Prompt user */
-	put_fstr(23, 0, "[Press any key to continue]");
-
-	/* Wait for key */
-	(void)inkey();
+    pause_line(0);
 
 	/* Restore the screen */
 	screen_load();
