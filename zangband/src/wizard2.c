@@ -163,53 +163,41 @@ static void prt_binary(u32b flags, int row, int col)
 
 /*
  * Output a rarity graph for a type of object.
+ * This function is very out of date.
+ * It doesn't print the correct distribution.
  */
-static void prt_alloc(byte tval, byte sval, int row, int col)
+static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 {
 	int i, j;
-	int lev;
-	int home = 0;
 	u32b maxd = 1, maxr = 1, maxt = 1;
 	u32b rarity[MAX_DEPTH];
 	u32b total[MAX_DEPTH];
 	u32b display[20];
 	byte c = TERM_WHITE;
 	cptr r = "+--common--+";
-	object_kind *k_ptr;
-
-
-	/* Get the entry */
-	alloc_entry *table = alloc_kind_table;
+	u16b kind = o_ptr->k_idx;
+	int home = k_info[kind].level;
 
 	/* Wipe the tables */
 	(void)C_WIPE(rarity, MAX_DEPTH, u32b);
 	(void)C_WIPE(total, MAX_DEPTH, u32b);
 	(void)C_WIPE(display, 20, u32b);
+	
+	msg_print(NULL);
+	prt("Calculating probability distribution - please wait.", 0, 0);
+	
+	/* Refresh */
+	Term_fresh();
 
 	/* Scan all entries */
 	for (i = 0; i < MAX_DEPTH; i++)
 	{
-		/* Base level */
-		lev = ((i * (GREAT_OBJ - 1)) + (1 + i * 5433L / 1000)) / GREAT_OBJ;
-
-		for (j = 0; j < alloc_kind_size; j++)
+		for (j = 0; j < monte; j++)
 		{
-			/* Objects are sorted by depth */
-			if (table[j].level > lev) break;
-
-			/* Acquire this kind */
-			k_ptr = &k_info[table[j].index];
-
-			/* Accumulate probabilities */
-			total[i] += table[j].prob1;
-
-			/* Accumulate probabilities */
-			if ((k_ptr->tval == tval) && (k_ptr->sval == sval))
-			{
-				home = k_ptr->level;
-				rarity[i] += table[j].prob1;
-			}
+			if (get_obj_num(i, 0) == kind) rarity[i]++;
 		}
+		
+		total[i] = monte;
 	}
 
 	/* Find maxima */
@@ -523,11 +511,9 @@ static void wiz_display_item(object_type *o_ptr)
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
-
+	
 	/* Clear the screen */
 	for (i = 1; i <= 23; i++) prt("", i, j - 2);
-
-	prt_alloc(o_ptr->tval, o_ptr->sval, 2, 0);
 
 	/* Describe fully */
 	object_desc_store(buf, o_ptr, TRUE, 3);
@@ -927,158 +913,23 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 
 /*
- * Try to create an item again. Output some statistics.    -Bernd-
- *
- * The statistics are correct now.  We acquire a clean grid, and then
- * repeatedly place an object in this grid, copying it into an item
- * holder, and then deleting the object.  We fiddle with the artifact
- * counter flags to prevent weirdness.  We use the items to collect
- * statistics on item creation relative to the initial item.
+ * Redraw the rarity graph with a different number of rolls
+ * per level.  This changes the sqrt(n) poisson error.
+ * (Otherwise really rare items don't get very good graphs.)
  */
 static void wiz_statistics(object_type *o_ptr)
 {
-	u32b i, matches, better, worse, other, correct;
-
-	u32b test_roll = 1000000;
-
-	char ch;
-	char *quality;
-
-	bool great;
-
-	object_type forge;
-	object_type	*q_ptr;
-
-	cptr q = "Rolls: %ld  Correct: %ld  Matches: %ld  Better: %ld  Worse: %ld  Other: %ld";
+	u32b test_roll = 100000;
 
 	cptr p = "Enter number of items to roll: ";
 	char tmp_val[80];
-
-
-	/* Interact */
-	while (TRUE)
-	{
-		cptr pmt = "Roll for [n]ormal or [e]xcellent treasure? ";
-
-		/* Display item */
-		wiz_display_item(o_ptr);
-
-		/* Get choices */
-		if (!get_com(pmt, &ch)) break;
-
-		if (ch == 'n' || ch == 'N')
-		{
-			great = FALSE;
-			quality = "normal";
-		}
-		else if (ch == 'e' || ch == 'E')
-		{
-			great = TRUE;
-			quality = "excellent";
-		}
-		else
-		{
-			great = FALSE;
-			break;
-		}
-
-		sprintf(tmp_val, "%ld", test_roll);
-		if (get_string(p, tmp_val, 10)) test_roll = atol(tmp_val);
-		test_roll = MAX(1, test_roll);
-
-		/* Let us know what we are doing */
-		msg_format("Creating a lot of %s items. Base level = %d.",
-					  quality, dun_level);
-		msg_print(NULL);
-
-		/* Set counters to zero */
-		correct = matches = better = worse = other = 0;
-
-		/* Let's rock and roll */
-		for (i = 0; i <= test_roll; i++)
-		{
-			/* Output every few rolls */
-			if ((i < 100) || (i % 100 == 0))
-			{
-				/* Do not wait */
-				inkey_scan = TRUE;
-
-				/* Allow interupt */
-				if (inkey())
-				{
-					/* Flush */
-					flush();
-
-					/* Stop rolling */
-					break;
-				}
-
-				/* Dump the stats */
-				prt(format(q, i, correct, matches, better, worse, other), 0, 0);
-				Term_fresh();
-			}
-
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Wipe the object */
-			object_wipe(q_ptr);
-
-			/* Create an object */
-			make_object(q_ptr, great ? 30 : 0, dun_theme);
-
-			/* Test for the same tval and sval. */
-			if ((o_ptr->tval) != (q_ptr->tval)) continue;
-			if ((o_ptr->sval) != (q_ptr->sval)) continue;
-
-			/* One more correct item */
-			correct++;
-
-			/* Check for match */
-			if ((q_ptr->pval == o_ptr->pval) &&
-				 (q_ptr->to_a == o_ptr->to_a) &&
-				 (q_ptr->to_h == o_ptr->to_h) &&
-				 (q_ptr->to_d == o_ptr->to_d) &&
-				 (q_ptr->activate == o_ptr->activate))
-			{
-				matches++;
-			}
-
-			/* Check for better */
-			else if ((q_ptr->pval >= o_ptr->pval) &&
-						(q_ptr->to_a >= o_ptr->to_a) &&
-						(q_ptr->to_h >= o_ptr->to_h) &&
-						(q_ptr->to_d >= o_ptr->to_d))
-			{
-				better++;
-			}
-
-			/* Check for worse */
-			else if ((q_ptr->pval <= o_ptr->pval) &&
-						(q_ptr->to_a <= o_ptr->to_a) &&
-						(q_ptr->to_h <= o_ptr->to_h) &&
-						(q_ptr->to_d <= o_ptr->to_d))
-			{
-				worse++;
-			}
-
-			/* Assume different */
-			else
-			{
-				other++;
-			}
-		}
-
-		/* Final dump */
-		msg_format(q, i, correct, matches, better, worse, other);
-		msg_print(NULL);
-		
-		/* Hack -- Normally only make a single artifact */
-		if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128))
-		{
-			a_info[o_ptr->activate - 128].cur_num = 1;
-		}
-	}
+	
+	sprintf(tmp_val, "%ld", test_roll);
+	if (get_string(p, tmp_val, 10)) test_roll = atol(tmp_val);
+	test_roll = MAX(1, test_roll);
+	
+	/* Display the rarity graph */
+	prt_alloc(o_ptr, 2, 0, test_roll);
 }
 
 
@@ -1179,13 +1030,18 @@ static void do_cmd_wiz_play(void)
 	/* Copy object */
 	object_copy(q_ptr, o_ptr);
 
+	/* Display the item */
+	wiz_display_item(q_ptr);
+
+	/* Display the rarity graph */
+	prt_alloc(o_ptr, 2, 0, 1000);
 
 	/* The main loop */
 	while (TRUE)
 	{
 		/* Display the item */
 		wiz_display_item(q_ptr);
-
+	
 		/* Get choice */
 		if (!get_com("[a]ccept [s]tatistics [r]eroll [t]weak [q]uantity? ", &ch))
 		{
