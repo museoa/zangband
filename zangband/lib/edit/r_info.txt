@@ -690,7 +690,7 @@ F:MALE |
 F:FORCE_SLEEP | WILD_DUNGEON_01 | DROP_SKELETON | DROP_CORPSE
 F:DROP_60 | WILD_GRASS
 F:OPEN_DOOR | BASH_DOOR
-S:1_IN_12 | 
+S:1_IN_3 | 
 S:BLINK | BLIND | CONF | MISSILE
 D:He is leaving behind a trail of dropped spell components.
 
@@ -1219,7 +1219,7 @@ F:MALE |
 F:FORCE_SLEEP | 
 F:FRIENDS | DROP_60 | WILD_DUNGEON_01 | WILD_GRASS | DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | BASH_DOOR
-S:1_IN_12 | 
+S:1_IN_3 | 
 S:BLINK | BLIND | CONF | MISSILE
 D:He is leaving behind a trail of dropped spell components.
 
@@ -2261,7 +2261,7 @@ F:FORCE_SLEEP |
 F:ONLY_ITEM | DROP_1D2 | DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | IM_POIS | HURT_LITE
-S:1_IN_5 | 
+S:1_IN_3 | 
 S:BLIND | CONF | MISSILE | DARKNESS | BA_POIS
 D:A dark elven figure, dressed all in black, hurling spells at you.
 
