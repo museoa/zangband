@@ -38,7 +38,7 @@ experience by destroying specific dungeon spell books and there are
 potions in the dungeon that will boost your experience if you quaff
 them.
 
-When your character's expereince crosses certain fixed boundaries, you
+When your character's experience crosses certain fixed boundaries, you
 will attain a new experience level (up to a maximum of 50). When this
 happens, your hitpoints, mana (if any), certain skills such as melee
 fighting and bows and throws will all increase. Some races and classes
@@ -954,18 +954,18 @@ Beastman      -5    -2    -1    -1    -1    +5    +12   +5    None
 
 --- Table 2 - Class Skill Bonus Table ---
 
-              Dsrm  Dvce  Save  Stlh  Srch  Prcp  Melee Bows  Infra
-Warrior       25+12 18+7  18+10  1    14/2        70+45 55+45 N/A
-Mage          30+7  36+13 30+9   2    15/20       34+15 20+15 N/A
-Priest        25+7  30+10 32+12  2    16/8        48+20 35+20 N/A
-Rogue         45+15 32+10 28+10  5    32/24       60+40 66+30 N/A
-Ranger        30+8  32+10 28+10  3    24/16       56+30 72+45 N/A
-Paladin       20+7  24+10 26+11  1    12/2        68+35 40+30 N/A
-Warrior-Mage  30+7  30+10 28+9   2    18/16       50+20 25+20 N/A
-Chaos Warrior 20+7  25+11 25+10  1    14/12       65+34 40+29 N/A
-Monk          45+15 32+11 28+10  5    32/24       64+40 60+30 N/A
-Mindcrafter   30+10 30+10 30+10  3    22/16       50+20 40+30 N/A
-High Mage     30+7  36+13 30+9   2    15/20       34+15 20+15 N/A
+              Dsrm  Dvce  Save  Stlh  Srch  Prcp  Melee  Bows
+Warrior       25+12 18+7  18+10  1    14/2        25+100 25+80
+Mage          30+7  36+13 30+9   2    15/20       10+25  15+20
+Priest        25+7  30+10 32+12  2    16/8        16+50  15+25
+Rogue         45+15 32+10 28+10  5    32/24       15+70  29+60
+Ranger        30+8  32+10 28+10  3    24/16       15+65  30+95
+Paladin       20+7  24+10 26+11  1    12/2        19+76  15+20
+Warrior-Mage  30+7  30+10 28+9   2    18/16       20+75  30+75
+Chaos Warrior 20+7  25+11 25+10  1    14/12       23+90  20+60
+Monk          45+15 32+11 28+10  5    32/24       12+30  21+40
+Mindcrafter   30+10 30+10 30+10  3    22/16       10+30  15+30
+High Mage     30+7  36+13 30+9   2    15/20       10+15  15+15
 
 
 --
