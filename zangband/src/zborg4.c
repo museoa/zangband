@@ -443,14 +443,12 @@ bool borg_test_bad_curse(list_item *l_ptr)
 	/* The borg can't keep up with this drain */
 	if (KN_FLAG(l_ptr, TR_DRAIN_EXP) && bp_ptr->lev < 50) return (TRUE);
 
-	/* Only high level borgs can handle topi */
-	if (KN_FLAG(l_ptr, TR_TY_CURSE) && bp_ptr->lev < 50) return (TRUE);
-
 	/* This curse is meaningless for warriors */
 	if (KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR) return (TRUE);
 
 	/* This curse is no problem if all stats are sustained */
-	if (KN_FLAG(l_ptr, TR_DRAIN_STATS))
+	if (KN_FLAG(l_ptr, TR_DRAIN_STATS) ||
+		KN_FLAG(l_ptr, TR_TY_CURSE))
 	{
 		/* Clear */
 		temp.kn_flags[1] = 0;
@@ -468,14 +466,19 @@ bool borg_test_bad_curse(list_item *l_ptr)
 		}
 
 		/* If there are enough sustains this curse can be ignored */
-		if (KN_FLAG(&temp, TR_SUST_STR) &&
-			KN_FLAG(&temp, TR_SUST_INT) &&
-			KN_FLAG(&temp, TR_SUST_WIS) &&
-			KN_FLAG(&temp, TR_SUST_DEX) &&
-			KN_FLAG(&temp, TR_SUST_CON)) return (FALSE);
+		if (!KN_FLAG(&temp, TR_SUST_STR) ||
+			!KN_FLAG(&temp, TR_SUST_INT) ||
+			!KN_FLAG(&temp, TR_SUST_WIS) ||
+			!KN_FLAG(&temp, TR_SUST_DEX) ||
+			!KN_FLAG(&temp, TR_SUST_CON))
+		{
+			/* not enough sustains */
+			return (TRUE);
+		}
 
-		/* not enough sustains */
-		return (TRUE);
+		/* Only high level borgs can handle topi */
+		if (KN_FLAG(l_ptr, TR_TY_CURSE) &&
+			bp_ptr->lev < 50) return (TRUE);
 	}
 
 	/* No curse */
