@@ -1589,12 +1589,12 @@ static bool get_player_sex(void)
  */
 static void race_aux_hook(cptr r_str)
 {
-	int race, i;
+	int race;
 
 	/* Extract the proper race index from the string. */
 	for (race = 0; race < MAX_RACES; race++)
 	{
-		if (!strcmp(r_str, race_info[race].title)) break;
+		if (streq(r_str, race_info[race].title)) break;
 	}
 
 	if (race == MAX_RACES) return;
@@ -1674,17 +1674,17 @@ static bool get_player_race(void)
  */
 static void class_aux_hook(cptr c_str)
 {
-	int class_idx, i;
+	int class_idx;
 	char s[128];
 
 	/* Extract the proper class index from the string. */
 	for (class_idx = 0; class_idx < MAX_CLASS; class_idx++)
 	{
-		if (!strcmp(c_str, class_info[class_idx].title)) break;
+		if (streq(c_str, class_info[class_idx].title)) break;
 
 		/* Also test for titles in parentheses */
 		sprintf(s, "(%s)", class_info[class_idx].title);
-		if (!strcmp(c_str, s)) break;
+		if (streq(c_str, s)) break;
 	}
 
 	if (class_idx == MAX_CLASS) return;

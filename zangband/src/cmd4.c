@@ -3724,7 +3724,7 @@ static void do_cmd_knowledge_wild(void)
 					strcpy(build_name, building_name(place[k].store[j].type));
 
 					/* Make a string, but only if this is a real building */
-					if (strcmp(build_name, "Nothing"))
+					if (!streq(build_name, "Nothing"))
 					{
 						strcat(stores_info, "     ");
 						strcat(stores_info, build_name);

@@ -979,7 +979,7 @@ errr init_ami( void )
 			attr.ta_Name  = ts->fontname;
 			attr.ta_YSize = fsize;
 			attr.ta_Style = FS_NORMAL;
-			attr.ta_Flags = ( !strcmp( ts->fontname, "topaz.font" ) && ( fsize == 8 || fsize == 9 )) ?
+			attr.ta_Flags = (streq( ts->fontname, "topaz.font" ) && ( fsize == 8 || fsize == 9 )) ?
 					 FPF_ROMFONT : FPF_DISKFONT;
 
 			/* Open font from disk */
@@ -2355,7 +2355,7 @@ static char *handle_font(struct term_data *td, char *fontname)
 		attr.ta_Name  = fontname;
 		attr.ta_YSize = fsize;
 		attr.ta_Style = FS_NORMAL;
-		attr.ta_Flags = ( !strcmp( fontname, "topaz.font" ) && ( fsize == 8 || fsize == 9 )) ?
+		attr.ta_Flags = (streq( fontname, "topaz.font" ) && ( fsize == 8 || fsize == 9 )) ?
 					 FPF_ROMFONT : FPF_DISKFONT;
 
 		/* Open font from disk */

@@ -439,8 +439,8 @@ static char *clean_path(char *inp, char *outp)
 	elem2c = 0;
 	for (i = 0; i < elemc; i++)
 	{
-		if (!strcmp(elem[i], ".")) continue;
-		if (!strcmp(elem[i], ".."))
+		if (streq(elem[i], ".")) continue;
+		if (streq(elem[i], ".."))
 		{
 			elem2c--;
 			continue;
@@ -597,7 +597,7 @@ int init_tnb(int argc, char **argv)
 
 	/* Sanity: Require same Tcl version as common.dll */
 	t = Tcl_GetVar(g_interp, (char *) "tcl_patchLevel", TCL_GLOBAL_ONLY);
-	if (!t || strcmp(t, TCL_PATCH_LEVEL))
+	if (!t || !streq(t, TCL_PATCH_LEVEL))
 	{
 		quit_fmt("The game was compiled with Tcl version %s, "
 			"but common.dll was compiled with Tcl version %s"

@@ -3326,7 +3326,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '?')
 		{
 			/* Hack - prevent silly recursion */
-			if (strcmp(name, "helpinfo.txt") != 0)
+			if (!streq(name, "helpinfo.txt"))
 				show_file("helpinfo.txt", NULL, 0, mode);
 		}
 

@@ -557,7 +557,7 @@ errr init_vcs(int argc,char **argv)
 
 		for (i=1;i<argc;i++)
 		{
-			if (!strcmp(argv[i],"--noframe"))
+			if (streq(argv[i],"--noframe"))
 				frame=0;
 			else
 			{

@@ -930,7 +930,7 @@ static errr process_sound_config_file( const char *name, const char *section )
 			/* Find sound effect in pre-defined sound effect list */
 			for( i = 1; i < SOUND_MAX; i++ )
 			{
-				if( strcmp( angband_sound_name[i], the_name ) == 0 )
+				if(streq( angband_sound_name[i], the_name ))
 				{
 					index = i;
 					break;

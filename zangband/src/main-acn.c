@@ -1337,14 +1337,14 @@ static int create_handler(bits event_code, toolbox_action *event,
 {
 	const char *name=event->data.created.name;
 
-	if (strcmp(name, "File") == 0)
+	if (streq(name, "File"))
 	{
 		event_register_toolbox_handler(id->this_obj, action_MENU_ABOUT_TO_BE_SHOWN,
 		                               showfilemenu_handler, 0);
 		return 1;
 	}
 
-	if (strcmp(name, "Colours") == 0)
+	if (streq(name, "Colours"))
 	{
 		event_register_toolbox_handler(id->this_obj, action_MENU_ABOUT_TO_BE_SHOWN,
 		                               showcoloursmenu_handler, 0);
@@ -1353,14 +1353,14 @@ static int create_handler(bits event_code, toolbox_action *event,
 		return 1;
 	}
 
-	if (strcmp(name, "Windows") == 0)
+	if (streq(name, "Windows"))
 	{
 		event_register_toolbox_handler(id->this_obj, action_MENU_ABOUT_TO_BE_SHOWN,
 		                               showwindowsmenu_handler, 0);
 		return 1;
 	}
 
-	if (strcmp(name, "SaveAs") == 0)
+	if (streq(name, "SaveAs"))
 	{
 		event_register_toolbox_handler(id->this_obj, action_SAVE_AS_ABOUT_TO_BE_SHOWN,
 		                               showsave_handler, 0);
