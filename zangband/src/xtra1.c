@@ -1293,9 +1293,14 @@ static void fix_message(void)
 		/* Dump messages */
 		for (i = 0; i < h; i++)
 		{
+			byte attr = message_color((s16b)i);
+
+			/* Hack -- fake monochrome */
+			if (!use_color) attr = TERM_WHITE;
+
 			/* Dump the message on the appropriate line */
-			Term_putstr(0, (h - 1) - i, -1, message_color((s16b)i),
-			            message_str((s16b)i));
+			Term_putstr(0, (h - 1) - i, -1, attr,
+			            message_str(i));
 
 			/* Cursor */
 			Term_locate(&x, &y);

@@ -2025,7 +2025,7 @@ cptr message_str(int age)
 /*
  * Recall the "color" of a saved message
  */
-byte message_color(s16b age)
+byte message_color(int age)
 {
 	s16b x;
 
@@ -2340,6 +2340,9 @@ void msg_print_color(byte attr, cptr msg)
 
 	char buf[1024];
 
+
+	/* Hack -- fake monochrome */
+	if (!use_color) attr = TERM_WHITE;
 
 	/* Hack -- Reset */
 	if (!msg_flag) p = 0;

@@ -152,6 +152,9 @@ void do_cmd_messages(void)
 			cptr msg = message_str(i+j);
 			byte attr = message_color(i+j);
 
+			/* Hack -- fake monochrome */
+			if (!use_color) attr = TERM_WHITE;
+
 			/* Apply horizontal scroll */
 			msg = (strlen(msg) >= q) ? (msg + q) : "";
 

@@ -199,7 +199,6 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 	BITMAPFILEHEADER bf;
 	WORD nNumColors;
 	BOOL result = FALSE;
-	char str[128];
 	WORD offBits;
 	HDC hDC;
 	BOOL bCoreHead = FALSE;
@@ -207,11 +206,7 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 	/* Open the file and get a handle to it's BITMAPINFO */
 	fh = OpenFile(lpFileName, &of, OF_READ);
 	if (fh == -1)
-	{
-		wsprintf(str, "Can't open file '%ls'", (LPSTR)lpFileName);
-		MessageBox(NULL, str, "Error", MB_ICONSTOP | MB_OK);
 		return (FALSE);
-	}
 
 	pInfo->hDIB = GlobalAlloc(GHND, (DWORD)(sizeof(BITMAPINFOHEADER) +
 	                          256 * sizeof(RGBQUAD)));

@@ -1230,11 +1230,13 @@ static bool init_graphics(void)
 
 		if (arg_graphics == GRAPHICS_ADAM_BOLT)
 		{
+			/* Access the mask file */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_GRAF, "mask.bmp");
+
 			/* Load the bitmap or quit */
 			if (!ReadDIB(data[0].w, buf, &infMask))
 			{
-				plog_fmt("Cannot read bitmap file '%s'", name);
+				plog_fmt("Cannot read bitmap file '%s'", buf);
 				return (FALSE);
 			}
 		}

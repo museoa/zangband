@@ -1470,8 +1470,8 @@ static bool wr_savefile_new(void)
 	/* Dump the messages and colors (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
-		wr_string(message_str((s16b)i));
-		wr_byte(message_color((s16b)i));
+		wr_string(message_str(i));
+		wr_byte(message_color(i));
 	}
 
 
