@@ -881,7 +881,7 @@ static bool borg_good_sell(borg_item *item, int who)
 			if (strstr(item->desc, "{average")) break;
 
 			/* Only sell "known" items (unless "icky") */
-			if (!item->able && !borg_item_icky(item)) return (FALSE);
+			if (!item->able && !borg_item_icky(l_ptr)) return (FALSE);
 
 			break;
 		}

@@ -119,13 +119,12 @@ static s16b value_feeling[] =
  * item might be a blessed, or something.
  *
  */
-bool borg_item_icky(borg_item *item)
+bool borg_item_icky(list_item *l_ptr)
 {
-	int slot;
-
+	object_kind *k_ptr = &k_info[l_ptr->k_idx];
 
 	/* if its average, dump it if you want to. */
-	if (strstr(item->desc, "{average")) return (TRUE);
+	if (strstr(l_ptr->o_name, "{average")) return (TRUE);
 
 	/* Mega-Hack -- allow "icky" items */
 	if (borg_class == CLASS_PRIEST ||
@@ -133,38 +132,37 @@ bool borg_item_icky(borg_item *item)
 		borg_class == CLASS_MAGE || borg_skill[BI_CLEVEL] < 20)
 	{
 		/* things that are good/excelent/special */
-		if (strstr(item->desc, "{special") ||
-			strstr(item->desc, "{terrible") ||
-			strstr(item->desc, "{indestructible") ||
-			strstr(item->desc, "{excellent"))
+		if (strstr(l_ptr->o_name, "{special") ||
+			strstr(l_ptr->o_name, "{terrible") ||
+			strstr(l_ptr->o_name, "{excellent"))
 			/* not icky */
 			return (FALSE);
 
 		/* Broken dagger/sword, Filthy rag */
-		if (((item->tval == TV_SWORD) && (item->sval == SV_BROKEN_DAGGER)) ||
-			((item->tval == TV_SWORD) && (item->sval == SV_BROKEN_SWORD)) ||
-			((item->tval == TV_SOFT_ARMOR) && (item->sval == SV_FILTHY_RAG)))
+		if (((l_ptr->tval == TV_SWORD) && (k_ptr->sval == SV_BROKEN_DAGGER)) ||
+			((l_ptr->tval == TV_SWORD) && (k_ptr->sval == SV_BROKEN_SWORD)) ||
+			((l_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_FILTHY_RAG)))
 		{
 			return (TRUE);
 		}
 
 		/* Dagger, Sling */
-		if (((item->tval == TV_SWORD) && (item->sval == SV_DAGGER)) ||
-			((item->tval == TV_BOW) && (item->sval == SV_SLING)))
+		if (((l_ptr->tval == TV_SWORD) && (k_ptr->sval == SV_DAGGER)) ||
+			((l_ptr->tval == TV_BOW) && (k_ptr->sval == SV_SLING)))
 		{
 			return (TRUE);
 		}
 
 		/* Cloak, Robe */
-		if (((item->tval == TV_CLOAK) && (item->sval == SV_CLOAK)) ||
-			((item->tval == TV_SOFT_ARMOR) && (item->sval == SV_ROBE)))
+		if (((l_ptr->tval == TV_CLOAK) && (k_ptr->sval == SV_CLOAK)) ||
+			((l_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_ROBE)))
 		{
 			return (TRUE);
 		}
 
 		/* Leather Gloves */
-		if ((item->tval == TV_GLOVES) &&
-			(item->sval == SV_SET_OF_LEATHER_GLOVES))
+		if ((l_ptr->tval == TV_GLOVES) &&
+			(k_ptr->sval == SV_SET_OF_LEATHER_GLOVES))
 		{
 			return (TRUE);
 		}
@@ -173,31 +171,32 @@ bool borg_item_icky(borg_item *item)
 		return (FALSE);
 	}
 
-	/* Process other classes which do get pseudo ID */
-	/* things that are good/excelent/special/no P-ID */
-	if (strstr(item->desc, "{special") || strstr(item->desc, "{terrible") || strstr(item->desc, "{excellent") || strstr(item->desc, "{indestructible") || item->note == NULL)	/* no pseudo-id yet */
-		/* not icky */
+	/*
+	 * Process other classes which do get pseudo ID
+	 * things that are good/excelent/special/no P-ID
+	 */
+	if (strstr(l_ptr->o_name, "{special") || strstr(l_ptr->o_name, "{terrible") || strstr(l_ptr->o_name, "{excellent"))
 		return (FALSE);
 
 
 		/*** {Good} items in inven, But I have {excellent} in equip ***/
 
-	if (strstr(item->desc, "{good"))
+	if (strstr(l_ptr->o_name, "{good"))
 	{
+		int slot;
+	
 		/* Obtain the slot of the suspect item */
 		slot = borg_wield_slot(l_ptr);
 
 		/* Obtain my equipped item in the slot */
-		item = &borg_items[slot];
+		l_ptr = &equipment[slot];
 
 		/* Is my item an ego or artifact? */
-		if (item->xtra_name) return (TRUE);
+		if (l_ptr->xtra_name) return (TRUE);
 	}
 	/* Assume not icky, I should have extra ID for the item */
 	return (FALSE);
 }
-
-
 
 
 /*
@@ -261,21 +260,20 @@ bool borg_use_things(void)
 
 
 	/* Use some items right away */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Process "force" items */
-		switch (item->tval)
+		switch (l_ptr->tval)
 		{
 			case TV_POTION:
 			{
 				/* Check the scroll */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_POTION_ENLIGHTENMENT:
 					{
@@ -291,7 +289,7 @@ bool borg_use_things(void)
 					{
 
 						/* Try quaffing the potion */
-						if (borg_quaff_potion(item->sval)) return (TRUE);
+						if (borg_quaff_potion(k_info[l_ptr->k_idx].sval)) return (TRUE);
 
 						break;
 					}
@@ -307,7 +305,7 @@ bool borg_use_things(void)
 				/* XXX XXX XXX Dark */
 
 				/* Check the scroll */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_SCROLL_MAPPING:
 					case SV_SCROLL_DETECT_TRAP:
@@ -319,7 +317,7 @@ bool borg_use_things(void)
 						if (!borg_skill[BI_CDEPTH]) break;
 
 						/* Try reading the scroll */
-						if (borg_read_scroll(item->sval)) return (TRUE);
+						if (borg_read_scroll(k_info[l_ptr->k_idx].sval)) return (TRUE);
 						break;
 					}
 				}
@@ -344,7 +342,6 @@ bool borg_use_things(void)
 			return (TRUE);
 		}
 	}
-
 
 	/* Nothing to do */
 	return (FALSE);
@@ -904,19 +901,18 @@ static bool borg_enchant_to_a(void)
 
 
 	/* Look for armor that needs enchanting */
-	for (i = INVEN_BODY; i < INVEN_TOTAL; i++)
+	for (i = EQUIP_BODY; i < equip_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &equipment[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Obtain the bonus */
-		a = item->to_a;
+		a = l_ptr->to_a;
 
 		/* Skip "boring" items */
 		if (borg_spell_okay_fail(REALM_SORCERY, 3, 5, 40) ||
@@ -935,7 +931,6 @@ static bool borg_enchant_to_a(void)
 		/* Save the info */
 		b_i = i;
 		b_a = a;
-
 	}
 
 	/* Nothing */
@@ -946,14 +941,10 @@ static bool borg_enchant_to_a(void)
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR))
 	{
-		/* Choose from equipment */
-		if (b_i >= INVEN_WIELD)
-		{
-			borg_keypress('/');
+		borg_keypress('/');
 
-			/* Choose that item */
-			borg_keypress(I2A(b_i - INVEN_WIELD));
-		}
+		/* Choose that item */
+		borg_keypress(I2A(b_i));
 
 		/* Success */
 		return (TRUE);
@@ -972,6 +963,8 @@ static bool borg_enchant_to_h(void)
 	int i, b_i = -1;
 	int a, s_a, b_a = 99;
 
+	bool inven = FALSE;
+
 
 	/* Nothing to enchant */
 	if (!my_need_enchant_to_h && !enchant_weapon_swap_to_h) return (FALSE);
@@ -981,19 +974,18 @@ static bool borg_enchant_to_h(void)
 
 
 	/* Look for a weapon that needs enchanting */
-	for (i = INVEN_WIELD; i <= INVEN_BOW; i++)
+	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &equipment[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Obtain the bonus */
-		a = item->to_h;
+		a = l_ptr->to_h;
 
 		/* Skip "boring" items */
 		if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1012,55 +1004,50 @@ static bool borg_enchant_to_h(void)
 		/* Save the info */
 		b_i = i;
 		b_a = a;
-
 	}
+	
 	if (weapon_swap > 1)
 	{
-		for (i = weapon_swap; i <= weapon_swap; i++)
+		list_item *l_ptr = &inventory[weapon_swap];
+		
+		/* Only identified items */
+		if (l_ptr->info & OB_KNOWN)
 		{
-			borg_item *item = &borg_items[weapon_swap];
-
 			/* Obtain the bonus */
-			s_a = item->to_h;
-
-			/* Skip "boring" items */
-			if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-				amt_enchant_weapon >= 1)
-			{
-				if (s_a >= 15) continue;
-			}
-			else
-			{
-				if (s_a >= 8) continue;
-			}
+			s_a = l_ptr->to_h;
 
 			/* Find the least enchanted item */
-			if ((b_i >= 0) && (b_a < s_a)) continue;
-
-			/* Save the info */
-			b_i = weapon_swap;
-			b_a = s_a;
+			if (((b_i < 0) || (b_a > s_a)) && (s_a >= 8))
+			{
+				/* Save the info */
+				b_i = weapon_swap;
+				b_a = s_a;
+		
+				/* Item is in inventory */
+				inven = TRUE;
+			}
 		}
 	}
+	
 	/* Nothing, check ammo */
 	if (b_i < 0)
 	{
 		/* look through inventory for ammo */
-		for (i = 0; i < INVEN_PACK; i++)
+		for (i = 0; i < inven_num; i++)
 		{
-			borg_item *item = &borg_items[i];
+			list_item *l_ptr = &inventory[i];
 
 			/* Only enchant if qty >= 5 */
-			if (item->iqty < 5) continue;
+			if (l_ptr->number < 5) continue;
 
 			/* Skip non-identified items  */
-			if (!item->able) continue;
+			if (!(l_ptr->info & OB_KNOWN)) continue;
 
 			/* Make sure it is the right type if missile */
-			if (item->tval != my_ammo_tval) continue;
+			if (l_ptr->tval != my_ammo_tval) continue;
 
 			/* Obtain the bonus  */
-			a = item->to_h;
+			a = l_ptr->to_h;
 
 			/* Skip items that are already enchanted */
 			if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1079,7 +1066,9 @@ static bool borg_enchant_to_h(void)
 			/* Save the info  */
 			b_i = i;
 			b_a = a;
-
+			
+			/* Item is in inventory */
+			inven = TRUE;
 		}
 	}
 
@@ -1091,16 +1080,18 @@ static bool borg_enchant_to_h(void)
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT))
 	{
-		/* Choose from equipment */
-		if (b_i >= INVEN_WIELD)
+		
+		if (inven)
 		{
+			/* choose the swap or ammo */
+			borg_keypress(I2A(b_i));
+		}
+		else
+		{
+			/* Choose from equipment */
 			borg_keypress('/');
 
 			/* Choose that item */
-			borg_keypress(I2A(b_i - INVEN_WIELD));
-		}
-		else					/* choose the swap or ammo */
-		{
 			borg_keypress(I2A(b_i));
 		}
 
@@ -1120,6 +1111,8 @@ static bool borg_enchant_to_d(void)
 {
 	int i, b_i = -1;
 	int a, s_a, b_a = 99;
+	
+	bool inven = FALSE;
 
 
 	/* Nothing to enchant */
@@ -1130,19 +1123,18 @@ static bool borg_enchant_to_d(void)
 
 
 	/* Look for a weapon that needs enchanting */
-	for (i = INVEN_WIELD; i <= INVEN_BOW; i++)
+	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &equipment[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Obtain the bonus */
-		a = item->to_d;
+		a = l_ptr->to_d;
 
 		/* Skip "boring" items */
 		if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1162,56 +1154,49 @@ static bool borg_enchant_to_d(void)
 		b_i = i;
 		b_a = a;
 	}
+		
 	if (weapon_swap > 1)
 	{
-		for (i = weapon_swap; i <= weapon_swap; i++)
+		list_item *l_ptr = &inventory[weapon_swap];
+		
+		/* Only identified items */
+		if (l_ptr->info & OB_KNOWN)
 		{
-			borg_item *item = &borg_items[weapon_swap];
-
-			/* Skip non-identified items */
-			if (!item->able) continue;
-
 			/* Obtain the bonus */
-			s_a = item->to_d;
-
-			/* Skip "boring" items */
-			if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-				amt_enchant_weapon >= 1)
-			{
-				if (s_a >= 15) continue;
-			}
-			else
-			{
-				if (s_a >= 8) continue;
-			}
+			s_a = l_ptr->to_d;
 
 			/* Find the least enchanted item */
-			if ((b_i >= 0) && (b_a < s_a)) continue;
-
-			/* Save the info */
-			b_i = weapon_swap;
-			b_a = s_a;
+			if (((b_i < 0) || (b_a > s_a)) && (s_a >= 8))
+			{
+				/* Save the info */
+				b_i = weapon_swap;
+				b_a = s_a;
+		
+				/* Item is in inventory */
+				inven = TRUE;
+			}
 		}
 	}
+	
 	/* Nothing, check ammo */
 	if (b_i < 0)
 	{
 		/* look through inventory for ammo */
-		for (i = 0; i < INVEN_PACK; i++)
+		for (i = 0; i < inven_num; i++)
 		{
-			borg_item *item = &borg_items[i];
+			list_item *l_ptr = &inventory[i];
 
 			/* Only enchant if qty >= 5 */
-			if (item->iqty < 5) continue;
+			if (l_ptr->number < 5) continue;
 
 			/* Skip non-identified items  */
-			if (!item->able) continue;
+			if (!(l_ptr->info & OB_KNOWN)) continue;
 
 			/* Make sure it is the right type if missile */
-			if (item->tval != my_ammo_tval) continue;
+			if (l_ptr->tval != my_ammo_tval) continue;
 
 			/* Obtain the bonus  */
-			a = item->to_d;
+			a = l_ptr->to_d;
 
 			/* Skip items that are already enchanted */
 			if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1231,6 +1216,8 @@ static bool borg_enchant_to_d(void)
 			b_i = i;
 			b_a = a;
 
+			/* Item is in the inventory */
+			inven = TRUE;
 		}
 	}
 
@@ -1242,16 +1229,17 @@ static bool borg_enchant_to_d(void)
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_DAM))
 	{
-		/* Choose from equipment */
-		if (b_i >= INVEN_WIELD)
+		if (inven)
 		{
+			/* choose the swap or ammo */
+			borg_keypress(I2A(b_i));
+		}
+		else
+		{
+			/* Choose from equipment */
 			borg_keypress('/');
 
 			/* Choose that item */
-			borg_keypress(I2A(b_i - INVEN_WIELD));
-		}
-		else					/* choose the swap or ammo */
-		{
 			borg_keypress(I2A(b_i));
 		}
 
@@ -1268,6 +1256,8 @@ static bool borg_enchant_to_d(void)
  */
 static bool borg_brand_weapon(void)
 {
+#if 0
+
 	int i, b_i = -1;
 	int a, b_a = 0;
 
@@ -1278,24 +1268,24 @@ static bool borg_brand_weapon(void)
 	if (!amt_brand_weapon) return (FALSE);
 
 	/* look through inventory for ammo */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &inventory[i];
 
 		/* Only enchant if qty >= 5 */
-		if (item->iqty < 5) continue;
+		if (l_ptr->number < 5) continue;
 
 		/* Skip non-identified items  */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Make sure it is the right type if missile */
-		if (item->tval != TV_BOLT) continue;
+		if (l_ptr->tval != TV_BOLT) continue;
 
 		/* Obtain the bonus  */
-		a = item->to_h;
+		a = l_ptr->to_h;
 
 		/* Skip branded items */
-		if (item->xtra_name) continue;
+		if (l_ptr->xtra_name) continue;
 
 		/* Find the most enchanted item */
 		if ((b_i >= 0) && (b_a > a)) continue;
@@ -1303,7 +1293,6 @@ static bool borg_brand_weapon(void)
 		/* Save the info  */
 		b_i = i;
 		b_a = a;
-
 	}
 
 	/* Enchant it */
@@ -1320,6 +1309,7 @@ static bool borg_brand_weapon(void)
 		/* Success */
 		return (TRUE);
 	}
+#endif /* 0 */
 
 	/* Nothing to do */
 	return (FALSE);
@@ -2224,7 +2214,7 @@ bool borg_crush_hole(void)
 		}
 
 		/* Hack -- try not to destroy "unknown" items (unless "icky") */
-		if (!item->able && (value > 0) && !borg_item_icky(item))
+		if (!item->able && (value > 0) && !borg_item_icky(l_ptr))
 		{
 			/* Reward "unknown" items */
 			switch (item->tval)
@@ -2397,7 +2387,7 @@ bool borg_crush_slow(void)
 		if (i == armour_swap) continue;
 
 		/* Skip "good" unknown items (unless "icky") */
-		if (!item->able && !borg_item_icky(item)) continue;
+		if (!item->able && !borg_item_icky(l_ptr)) continue;
 
 		/* Hack -- Skip artifacts */
 		if (item->xtra_name && !item->fully_identified) continue;
@@ -2803,7 +2793,7 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Mega-Hack -- ignore "icky" items */
-					if (!borg_item_icky(item)) v = item->value;
+					if (!borg_item_icky(l_ptr)) v = item->value;
 				}
 
 				/* Mega-Hack -- rangers get bored */
@@ -2812,7 +2802,7 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Mega-Hack -- ignore "icky" items */
-					if (!borg_item_icky(item)) v = item->value;
+					if (!borg_item_icky(l_ptr)) v = item->value;
 				}
 
 				/* Mega-Hack -- priests get bored */
@@ -2821,14 +2811,14 @@ bool borg_test_stuff(bool star_id)
 				{
 
 					/* Mega-Hack -- ignore "icky" items */
-					if (!borg_item_icky(item)) v = item->value;
+					if (!borg_item_icky(l_ptr)) v = item->value;
 				}
 				/* Mega-Hack -- everyone else gets bored */
 				else if (randint0(5000) < borg_skill[BI_CLEVEL])
 				{
 
 					/* Mega-Hack -- ignore "icky" items */
-					if (!borg_item_icky(item)) v = item->value;
+					if (!borg_item_icky(l_ptr)) v = item->value;
 				}
 
 				/* try to ID shovels */

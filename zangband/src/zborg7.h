@@ -21,7 +21,7 @@
 /*
  * Determine if an item is "icky"
  */
-extern bool borg_item_icky(borg_item *item);
+extern bool borg_item_icky(list_item *l_ptr);
 
 /*
  * Various functions
