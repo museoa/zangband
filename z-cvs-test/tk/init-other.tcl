@@ -1140,9 +1140,7 @@ proc InitOther {} {
 	update idletasks
 
 	if {$::DEBUG} {
-		NSModule::AddModule NSDebug [CPathTk debug.tcl]
 		NSModule::AddModule NSDebugAlloc [CPathTk debug-alloc.tcl]
-		NSModule::LoadIfNeeded NSDebug
 		NSModule::LoadIfNeeded NSDebugAlloc
 	}
 
