@@ -8784,7 +8784,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	}
 
 	/* Hack -- verify line of sight (both ways) */
-	else if (!borg_projectable(y9, x9, y, x) && !borg_projectable(y, x, y9, x9))
+	else if (!borg_projectable(x9, y9, x, y) && !borg_projectable(x, y, x9, y9))
 	{
 		v2 = 0;
 	}

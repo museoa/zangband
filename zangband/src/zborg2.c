@@ -1428,6 +1428,26 @@ void borgmove2(int *py, int *px, int y1, int x1, int y2, int x2)
 	}
 }
 
+
+/*
+ * Hack - a function to pass to los_general() used
+ * to do borg_projectable().
+ * Hack -- we refuse to assume that unknown grids are floors
+ */
+static bool map_stop_project(map_block *mb_ptr)
+{
+	/* Unknown area is probably a wall */
+	/* if (!mb_ptr->feat) return (TRUE); */
+	
+	/* Walls block projections */
+	if (borg_cave_wall_grid(mb_ptr)) return (TRUE);
+	
+	/* Seems ok */
+	return (FALSE);
+}
+
+
+
 /*
  * Check the projection from (x1,y1) to (x2,y2).
  * Assume that there is no monster in the way.
@@ -1436,51 +1456,8 @@ void borgmove2(int *py, int *px, int y1, int x1, int y2, int x2)
  */
 bool borg_projectable(int y1, int x1, int y2, int x2)
 {
-	int dist, y, x;
-
-	map_block *mb_ptr;
-
-	/* Start at the initial location */
-	y = y1;
-	x = x1;
-
-	/* Simulate the spell/missile path */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
-	{
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) break;
-
-		/* Get the grid */
-		mb_ptr = map_loc(x, y);
-
-		if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2)
-		{
-			/*
-			 * Assume all unknown grids more than distance 10 from you
-			 * are walls--when I am wounded. This will make me more fearful
-			 */
-			if ((dist > 10) && !mb_ptr->feat) break;
-		}
-		else
-		{
-			/*
-			 * Assume all unknown grids more than distance 3 from you
-			 * are walls.
-			 */
-			if ((dist > 2) && !mb_ptr->feat) break;
-		}
-		/* Never pass through walls/doors */
-		if (dist && borg_cave_wall_grid(mb_ptr)) break;
-
-		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
-
-		/* Calculate the new location */
-		borgmove2(&y, &x, y1, x1, y2, x2);
-	}
-
-	/* Assume obstruction */
-	return (FALSE);
+	/* Are we projectable? */
+	return (los_general(x1, y1, x2, y2, map_stop_project));
 }
 
 

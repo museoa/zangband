@@ -10771,7 +10771,7 @@ static int borg_defend_aux_banishment(int p1)
 		if (!kill->r_idx) continue;
 
 		/* Check the LOS */
-		if (!borg_projectable(c_y, c_x, kill->y, kill->x)) continue;
+		if (!borg_projectable(c_x, c_y, kill->x, kill->y)) continue;
 
 		/* Calculate danger of who is left over */
 		borg_full_damage = TRUE;
@@ -10794,7 +10794,7 @@ static int borg_defend_aux_banishment(int p1)
 		if (!kill->r_idx) continue;
 
 		/* Check the LOS */
-		if (!borg_projectable(c_y, c_x, kill->y, kill->x)) continue;
+		if (!borg_projectable(c_x, c_y, kill->x, kill->y)) continue;
 
 		/* get rid of evil monsters */
 		if (r_ptr->flags3 & RF3_EVIL) continue;

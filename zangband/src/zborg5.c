@@ -1856,7 +1856,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 		if (d > r) continue;
 
 		/* Hopefully this will add fear to our grid */
-		if (!borg_projectable(kill->y, kill->x, y, x)) continue;
+		if (!borg_projectable(kill->x, kill->y, x, y)) continue;
 
 		/* Track closest one */
 		if (d > b_d) continue;

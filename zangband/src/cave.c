@@ -445,8 +445,6 @@ void mmove_init(int x1, int y1, int x2, int y2)
  * The current position is updated.
  *
  * (x,y) encodes the current location.
- * slope and sq encodes the current square along the flight path.
- * Set sq to be zero to initialise the routine.
  *
  * This routine is very similar to los() except that we can use it
  * to return partial results.
