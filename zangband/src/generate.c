@@ -456,8 +456,8 @@ static bool cave_gen(void)
 		}
 	}
 
-	if ((dun_level > DUN_CAVERN) && !empty_level &&
-	    (laketype == 0) && !destroyed && (randint(200) < dun_level))
+	if ((rand_int(DUN_CAV1/(dun_level + DUN_CAV2)) == 0) && !empty_level &&
+	    (laketype == 0) && !destroyed && (dun_level >= MIN_CAVERN))
 	{
 		cavern = TRUE;
 
