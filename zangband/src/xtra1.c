@@ -210,10 +210,9 @@ static void show_status_bar(cptr letter, byte *colour, int num)
 }
 
 
-
-
-/* Show status bar */
-
+/*
+ * Show status bar
+ */
 static void prt_status(void)
 {
 	int num = 0;
@@ -2101,7 +2100,11 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 
 	switch (pclass)
 	{
-		/* Warrior.  Can use 15 lb weapons without penalty at level 1, and 45 lb weapons without penalty at 50th level. */
+		/*
+		 * Warrior.
+		 * Can use 15 lb weapons without penalty at level 1,
+		 * and 45 lb weapons without penalty at 50th level.
+		 */
 		case CLASS_WARRIOR:
 		{
 			add_skill = 25 + p_ptr->lev - (weight / 6);
@@ -2110,7 +2113,11 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 			break;
 		}
 
-		/* Mage/High Mage.  Can use 6 lb weapons without penalty at level 1, and 16 lb weapons without penalty at 50th level. */
+		/*
+		 * Mage/High Mage.
+		 * Can use 6 lb weapons without penalty at level 1,
+		 * and 16 lb weapons without penalty at 50th level.
+		 */
 		case CLASS_MAGE:
 		case CLASS_HIGH_MAGE:
 		{
@@ -2120,7 +2127,11 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 			break;
 		}
 
-		/* Priest.  Can use 12 lb weapons without penalty at level 1, and 22 lb weapons without penalty at 50th level. */
+		/*
+		 * Priest.
+		 * Can use 12 lb weapons without penalty at level 1,
+		 * and 22 lb weapons without penalty at 50th level.
+		 */
 		case CLASS_PRIEST:
 		{
 			add_skill = 30 + (1 * p_ptr->lev / 2) - (weight / 4);
@@ -2129,9 +2140,12 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 			break;
 		}
 
-		/* Rogue.  Can use 10 lb weapons without penalty at level 1, and 20 lb
-		* weapons without penalty at 50th level. Can get a bonus for using light
-		* weapons. */
+		/*
+		 * Rogue.
+		 * Can use 10 lb weapons without penalty at level 1,
+		 * and 20 lb weapons without penalty at 50th level.
+		 * Can get a bonus for using light weapons.
+		 */
 		case CLASS_ROGUE:
 		{
 			if (!o_ptr->k_idx) add_skill = 0;
@@ -2146,8 +2160,11 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 			break;
 		}
 
-		/* Ranger.  Can use 12 lb weapons without penalty at level 1, and 25 lb
-		*weapons without penalty at 50th level. */
+		/*
+		 * Ranger.
+		 * Can use 12 lb weapons without penalty at level 1,
+		 * and 25 lb weapons without penalty at 50th level.
+		 */
 		case CLASS_RANGER:
 		{
 			add_skill = 25 + (1 * p_ptr->lev / 2) - (weight / 5);
@@ -2156,8 +2173,11 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 			break;
 		}
 
-		/* Paladin/Chaos warrior/Warrior mage.  Can use 15 lb weapons without
-		* penalty at level 1, and 45 lb weapons without penalty at 50th level. */
+		/*
+		 * Paladin/Chaos warrior/Warrior mage.
+		 * Can use 15 lb weapons without penalty at level 1,
+		 * and 45 lb weapons without penalty at 50th level.
+		 */
 		case CLASS_PALADIN:
 		case CLASS_CHAOS_WARRIOR:
 		case CLASS_WARRIOR_MAGE:
@@ -2168,9 +2188,11 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 			break;
 		}
 
-		/* Monk.  Can use 5 lb weapons without penalty at level 1, and
-		 * slightly over 12 lb weapons without penalty at 50th level. Much
-		 * prefers to use hands and feet.
+		/*
+		 * Monk.
+		 * Can use 5 lb weapons without penalty at level 1,
+		 * and slightly over 12 lb weapons without penalty at 50th level.
+		 * Much prefers to use hands and feet.
 		 */
 		case CLASS_MONK:
 		{
@@ -2185,9 +2207,10 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 		}
 
 		/*
-		* MindCrafter.  Can use 6 lb weapons without penalty at level 1,
-		* and 16 lb weapons without penalty at 50th level.
-		*/
+		 * Mindcrafter.
+		 * Can use 6 lb weapons without penalty at level 1,
+		 * and 16 lb weapons without penalty at 50th level.
+		 */
 		case CLASS_MINDCRAFTER:
 		{
 			add_skill = 20 + (2 * p_ptr->lev / 3) - (weight / 3);
@@ -2200,7 +2223,10 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 	return (add_skill);
 }
 
-/* Calculate all class and race-based bonuses and penalties to missile Skill -LM- */
+
+/*
+ * Calculate all class and race-based bonuses and penalties to missile skill -LM-
+ */
 static sint add_special_missile_skill(byte pclass, s16b weight)
 {
 	int add_skill = 0;
@@ -2242,8 +2268,10 @@ static sint add_special_missile_skill(byte pclass, s16b weight)
 			}
 		}
 	}
+
 	return (add_skill);
 }
+
 
 /*
  * Calculate the players current "state", taking into account

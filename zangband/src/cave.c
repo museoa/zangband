@@ -1307,7 +1307,7 @@ void map_info(int y, int x, byte *ap, char *cp)
  */
 void move_cursor_relative(int row, int col)
 {
-	/* Real co-ords convert to screen positions */
+	/* Real coordinates convert to screen positions */
 	row -= panel_row_prt;
 	col -= panel_col_prt;
 
@@ -1333,7 +1333,7 @@ void print_rel(char c, byte a, int y, int x)
 		}
 
 		/* Draw the char using the attr */
-		Term_draw(x-panel_col_prt, y-panel_row_prt, a, c);
+		Term_draw(x - panel_col_prt, y - panel_row_prt, a, c);
 	}
 }
 
