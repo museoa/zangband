@@ -1642,6 +1642,27 @@ bool monster_lava(int r_idx)
 		return FALSE;
 }
 
+bool monster_acid(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (((r_ptr->flags3 & RF3_IM_ACID) ||
+	     (r_ptr->flags7 & RF7_CAN_FLY)))
+		return TRUE;
+	else
+		return FALSE;
+}
+
+bool monster_swamp(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (((r_ptr->flags3 & RF3_IM_POIS) ||
+	     (r_ptr->flags7 & RF7_CAN_FLY)))
+		return TRUE;
+	else
+		return FALSE;
+}
 
 monster_hook_type get_monster_hook(void)
 {
@@ -1693,6 +1714,12 @@ monster_hook_type get_monster_hook2(int y, int x)
 	case FEAT_DEEP_LAVA:
 	case FEAT_SHAL_LAVA:
 		return &(monster_lava);
+	case FEAT_DEEP_ACID:
+	case FEAT_SHAL_ACID:
+		return &(monster_acid);
+	case FEAT_DEEP_SWAMP:
+	case FEAT_SHAL_SWAMP:
+		return &(monster_swamp);
 	default:
 		return NULL;
 	}
@@ -1757,25 +1784,50 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 		else
 			return FALSE;
 	}
+	
 	/* Shallow water */
-	else if (feat == FEAT_SHAL_WATER)
+	if (feat == FEAT_SHAL_WATER)
 	{
 		if (r_ptr->flags2 & RF2_AURA_FIRE)
 			return FALSE;
 		else
 			return TRUE;
 	}
+	
 	/* Aquatic monster */
-	else if ((r_ptr->flags7 & RF7_AQUATIC) &&
+	if ((r_ptr->flags7 & RF7_AQUATIC) &&
 		    !(r_ptr->flags7 & RF7_CAN_FLY))
 	{
 		return FALSE;
 	}
+	
 	/* Lava */
-	else if ((feat == FEAT_SHAL_LAVA) ||
+	if ((feat == FEAT_SHAL_LAVA) ||
 	    (feat == FEAT_DEEP_LAVA))
 	{
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
+		    (r_ptr->flags7 & RF7_CAN_FLY))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	/* Acid */
+	if ((feat == FEAT_SHAL_ACID) ||
+	    (feat == FEAT_DEEP_ACID))
+	{
+		if ((r_ptr->flags3 & RF3_IM_ACID) ||
+		    (r_ptr->flags7 & RF7_CAN_FLY))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	/* Swamp */
+	if ((feat == FEAT_SHAL_SWAMP) ||
+	    (feat == FEAT_DEEP_SWAMP))
+	{
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY))
 			return TRUE;
 		else
