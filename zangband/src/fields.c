@@ -4130,7 +4130,7 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
     building_magetower(TRUE);
 
 	sprintf(tmp_str, " T) Teleport (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 35, 18);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
     /* Done */
     return (FALSE);

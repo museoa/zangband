@@ -1539,6 +1539,10 @@ static int collect_magetower_links(store_type *st_ptr, int n, int which,
     {
         place_type *pl_ptr2 = &place[i];
 
+        /* Skip current town */
+        if (i == p_ptr->place_num)
+            continue;
+
         for (j = 0; j < pl_ptr2->numstores; j++)
         {
             store_type *st_ptr2 = &pl_ptr2->store[j];
@@ -1546,18 +1550,19 @@ static int collect_magetower_links(store_type *st_ptr, int n, int which,
             if (max_link >= n)
                 return max_link;
 
-            /* Hack - store link data in good_buy and bad_buy */
-            if (st_ptr->good_buy == i && st_ptr->bad_buy == j)
-            {
-                link_p[max_link] = i;
-                link_w[max_link] = j;
-                max_link++;
+            /* Only allow teleportation to known magetowers */
+            if (!(st_ptr2->x || st_ptr2->y))
+                continue;
 
-                /* Only collect 1 link per city */
-                break;
-            }
-            else if (st_ptr2->good_buy == p_ptr->place_num &&
-                     st_ptr2->bad_buy == which)
+            /* Hack - store link data in good_buy and bad_buy */
+            if (
+#if 0
+                (st_ptr->good_buy == i && st_ptr->bad_buy == j) ||
+                (st_ptr2->good_buy == p_ptr->place_num &&
+                 st_ptr2->bad_buy == which) ||
+#endif
+                (st_ptr2->type == BUILD_MAGETOWER0) ||
+                (st_ptr2->type == BUILD_MAGETOWER1))
             {
                 link_p[max_link] = i;
                 link_w[max_link] = j;
@@ -1615,20 +1620,24 @@ bool building_magetower(bool display)
         {
             /* Label it, clear the line --(-- */
             (void)sprintf(out_val, "%c) ", I2A(i));
-            prt(out_val, 0, i + 6);
+            prt(out_val, 0, i + 4);
 
             /* Print place name */
-            prt(place[link_p[i]].name, 3, i + 6);
+            prt(place[link_p[i]].name, 3, i + 4);
         }
     }
     else
     {
-        /* XXX Jump to first */
-        int tempx, tempy;
         char command;
         int index = -1;
 
         char out_val[160];
+
+        if (max_link == 0)
+        {
+            msg_print("You do not know any other towns to teleport to.");
+            return (FALSE);
+        }
 
         /* Build the prompt */
         (void)sprintf(out_val, "(Towns %c-%c, ESC to exit)",
@@ -1658,13 +1667,7 @@ bool building_magetower(bool display)
             place_type *pl_ptr2 = &place[link_p[index]];
             store_type *st_ptr2 = &pl_ptr2->store[link_w[index]];
 
-            /* Move the player -- first to the right general area... */
-            p_ptr->px = p_ptr->wilderness_x = pl_ptr2->x * 16 + st_ptr2->x;
-            p_ptr->py = p_ptr->wilderness_y = pl_ptr2->y * 16 + st_ptr2->y;
-
-            move_wild();
-
-            /* Move the player -- now try to get to the exact spot. */
+            /* Move the player */
             p_ptr->px = p_ptr->wilderness_x = pl_ptr2->x * 16 + st_ptr2->x;
             p_ptr->py = p_ptr->wilderness_y = pl_ptr2->y * 16 + st_ptr2->y;
 
