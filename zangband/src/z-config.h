@@ -626,7 +626,7 @@
 /*
  * Use a scripting language
  */
-/* #define USE_SCRIPT */
+#define USE_SCRIPT 
 
 #ifdef USE_SCRIPT
 /*

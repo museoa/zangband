@@ -36,7 +36,7 @@
 /*
  * Include the "Angband" configuration header
  */
-#include "config.h"
+#include "z-config.h"
 
 
 /*
