@@ -89,7 +89,7 @@ N:10:wet mud
 G:.:u
 
 N:11:dry mud
-G:.:d
+G:.:D
 
 N:12:tiled floor
 G:.:r
@@ -98,7 +98,7 @@ N:13:wooden floor
 G:.:s
 
 N:14:pebbles
-G:.:d
+G:.:D
 
 N:15:solidified lava
 G:::D
