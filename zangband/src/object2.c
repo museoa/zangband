@@ -2037,10 +2037,7 @@ static s16b w_bonus(int max, int lev_dif)
  */
 static void object_mention(object_type *o_ptr)
 {
-	char o_name[256];
-
-	/* Describe */
-	object_desc_store(o_name, o_ptr, FALSE, 0, 256);
+	cptr type;
 
 	/* Artifact */
 	if (o_ptr->flags3 & TR3_INSTA_ART)
@@ -2048,12 +2045,12 @@ static void object_mention(object_type *o_ptr)
 		if (o_ptr->activate > 127)
 		{
 			/* Silly message */
-			msgf("Artifact (%s)", o_name);
+			type = "Artifact (";
 		}
 		else
 		{
 			/* Silly message */
-			msgf("Random artifact (%s)", o_name);
+			type = "Random artifact (";
 		}
 	}
 
@@ -2061,15 +2058,17 @@ static void object_mention(object_type *o_ptr)
 	else if (ego_item_p(o_ptr))
 	{
 		/* Silly message */
-		msgf("Ego-item (%s)", o_name);
+		type = "Ego-item (";
 	}
 
 	/* Normal item */
 	else
 	{
 		/* Silly message */
-		msgf("Object (%s)", o_name);
+		type = "Object (";
 	}
+	
+	msgf("%s%v)", type, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
 }
 
 
@@ -5539,13 +5538,9 @@ object_type *inven_takeoff(object_type *o_ptr)
 {
 	int item;
 
-	char o_name[256];
 	object_type *q_ptr;
 
 	cptr act;
-
-	/* Describe the object */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Look up item number */
 	item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
@@ -5583,9 +5578,9 @@ object_type *inven_takeoff(object_type *o_ptr)
 		msgf("You cannot take off the item - too many dungeon objects!");
 		return (NULL);
 	}
-
+	
 	/* Message */
-	msgf("%s %s (%c).", act, o_name, I2A(item));
+	msgf("%s %v (%c).", act, OBJECT_FMT(q_ptr, TRUE, 3), I2A(item));
 
 	/* Wipe the old object */
 	object_wipe(o_ptr);
@@ -5618,8 +5613,6 @@ void inven_drop(object_type *o_ptr, int amt)
 {
 	object_type *q_ptr;
 
-	char o_name[256];
-
 	int slot;
 
 	s16b *list;
@@ -5649,11 +5642,8 @@ void inven_drop(object_type *o_ptr, int amt)
 	/* Get local object */
 	q_ptr = item_split(o_ptr, amt);
 
-	/* Describe local object */
-	object_desc(o_name, q_ptr, TRUE, 3, 256);
-
 	/* Message */
-	msgf("You drop %s (%c).", o_name, I2A(slot));
+	msgf("You drop %v (%c).", OBJECT_FMT(q_ptr, TRUE, 3), I2A(slot));
 
 	/* Drop it near the player */
 	drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
@@ -5762,8 +5752,6 @@ void display_koff(int k_idx)
 	/* Get local object */
 	object_type *q_ptr;
 
-	char o_name[256];
-
 	/* Erase the window */
     clear_from(0);
 
@@ -5773,11 +5761,8 @@ void display_koff(int k_idx)
 	/* Prepare the object */
 	q_ptr = object_prep(k_idx);
 
-	/* Describe */
-	object_desc_store(o_name, q_ptr, FALSE, 0, 256);
-
 	/* Mention the object name */
-	put_fstr(0, 0, o_name);
+	prtf(0, 0, "%v", OBJECT_STORE_FMT(q_ptr, FALSE, 0));
 
 	/* Warriors are illiterate */
 	if (!(p_ptr->realm1 || p_ptr->realm2)) return;

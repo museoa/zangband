@@ -457,9 +457,7 @@ void curse_equipment(int chance, int heavy_chance)
 	/* Extra, biased saving throw for blessed items */
 	if ((o3 & TR3_BLESSED) && (randint1(888) > chance))
 	{
-		char o_name[256];
-		object_desc(o_name, o_ptr, FALSE, 0, 256);
-		msgf("Your %s resists cursing!", o_name);
+		msgf("Your %v resists cursing!", OBJECT_FMT(o_ptr, FALSE, 0));
 		return;
 	}
 

@@ -111,8 +111,6 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 
 	int slot;
 
-	char o_name[256];
-
 	bool okay = FALSE;
 
 	/* Valid "tval" codes */
@@ -220,16 +218,14 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	/* Stop everything */
 	if (disturb_minor) disturb(FALSE);
 
-	/* Get an object description */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 	/* Message (equipment) */
 	if (wield)
 	{
 		slot = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-		msgf("You feel the %s (%c) you are %s %s %s...",
-				   o_name, I2A(slot), describe_use(slot),
+		msgf("You feel the %v (%c) you are %s %s %s...",
+				   OBJECT_FMT(o_ptr, FALSE, 0), I2A(slot),
+				   describe_use(slot),
 				   ((o_ptr->number == 1) ? "is" : "are"),
 				   game_inscriptions[feel]);
 	}
@@ -239,8 +235,8 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	{
 		slot = get_item_position(p_ptr->inventory, o_ptr);
 
-		msgf("You feel the %s (%c) in your pack %s %s...",
-				   o_name, I2A(slot),
+		msgf("You feel the %v (%c) in your pack %s %s...",
+				   OBJECT_FMT(o_ptr, FALSE, 0), I2A(slot),
 				   ((o_ptr->number == 1) ? "is" : "are"),
 				   game_inscriptions[feel]);
 	}
@@ -792,7 +788,6 @@ void notice_lite_change(object_type *o_ptr)
 bool psychometry(void)
 {
 	object_type *o_ptr;
-	char o_name[256];
 	byte feel;
 	cptr q, s;
 
@@ -816,19 +811,17 @@ bool psychometry(void)
 	/* Check for a feeling */
 	feel = value_check_aux1(o_ptr);
 
-	/* Get an object description */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 	/* Skip non-feelings */
 	if (!feel)
 	{
-		msgf("You do not perceive anything unusual about the %s.",
-				   o_name);
+		msgf("You do not perceive anything unusual about the %v.",
+				   OBJECT_FMT(o_ptr, FALSE, 0));
 		return TRUE;
 	}
 
-	msgf("You feel that the %s %s %s...",
-			   o_name, ((o_ptr->number == 1) ? "is" : "are"),
+	msgf("You feel that the %v %s %s...",
+			   OBJECT_FMT(o_ptr, FALSE, 0),
+			   ((o_ptr->number == 1) ? "is" : "are"),
 			   game_inscriptions[feel]);
 
 	/* We have "felt" it */
@@ -854,8 +847,6 @@ bool psychometry(void)
  */
 static void recharged_notice(const object_type *o_ptr)
 {
-	char o_name[256];
-
 	cptr s;
 
 	/* No inscription */
@@ -870,14 +861,9 @@ static void recharged_notice(const object_type *o_ptr)
 		/* Find another '!' */
 		if (s[1] == '!')
 		{
-			/* Describe (briefly) */
-			object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 			/* Notify the player */
-			if (o_ptr->number > 1)
-				msgf("Your %s are recharged.", o_name);
-			else
-				msgf("Your %s is recharged.", o_name);
+			msgf("Your %v %s recharged.", OBJECT_FMT(o_ptr, FALSE, 0),
+				(o_ptr->number > 1) ? "are" : "is");
 
 			/* Done. */
 			return;

@@ -103,8 +103,6 @@ void do_cmd_wield(void)
 
 	cptr act;
 
-	char o_name[256];
-
 	cptr q, s;
 
 	/* Restrict the choices */
@@ -139,12 +137,9 @@ void do_cmd_wield(void)
 	/* Prevent wielding into a cursed slot */
 	if (cursed_p(o_ptr))
 	{
-		/* Describe it */
-		object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 		/* Message */
-		msgf("The %s you are %s appears to be cursed.",
-				   o_name, describe_use(slot));
+		msgf("The %v you are %s appears to be cursed.",
+			 OBJECT_FMT(o_ptr, FALSE, 0), describe_use(slot));
 
 		/* Cancel the command */
 		return;
@@ -153,10 +148,8 @@ void do_cmd_wield(void)
 	if (cursed_p(q_ptr) && confirm_wear &&
 		(object_known_p(q_ptr) || (q_ptr->info & OB_SENSE)))
 	{
-		/* Describe it */
-		object_desc(o_name, q_ptr, FALSE, 0, 256);
-
-		if (!get_check("Really use the %s {cursed}? ", o_name))
+		if (!get_check("Really use the %v {cursed}? ",
+			 OBJECT_FMT(q_ptr, FALSE, 0)))
 			return;
 	}
 
@@ -206,11 +199,8 @@ void do_cmd_wield(void)
 		act = "You are wearing";
 	}
 
-	/* Describe the result */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 	/* Message */
-	msgf("%s %s (%c).", act, o_name, I2A(slot));
+	msgf("%s %v (%c).", act, OBJECT_FMT(o_ptr, TRUE, 3), I2A(slot));
 
 	/* Cursed! */
 	if (cursed_p(o_ptr))
@@ -359,17 +349,13 @@ static bool high_level_book(const object_type *o_ptr)
 
 bool destroy_item_aux(object_type *o_ptr, int amt)
 {
-	char o_name[256];
-
 	bool gain_expr = FALSE;
-
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Can the player destroy the object? */
 	if (!can_player_destroy_object(o_ptr))
 	{
 		/* Message */
-		msgf("You cannot destroy %s.", o_name);
+		msgf("You cannot destroy %v.", OBJECT_FMT(o_ptr, TRUE, 3));
 
 		/* Done */
 		return (FALSE);
@@ -378,11 +364,8 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	/* Take a turn */
 	p_ptr->energy_use += 100;
 
-	/* Describe the object (with {terrible/special}) */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 	/* Message */
-	msgf("You destroy %s.", o_name);
+	msgf("You destroy %v.", OBJECT_FMT(o_ptr, TRUE, 3));
 	sound(SOUND_DESTITEM);
 
 	if (high_level_book(o_ptr))
@@ -457,8 +440,6 @@ void do_cmd_destroy(void)
 
 	object_type *o_ptr;
 
-	char o_name[256];
-
 	cptr q, s;
 
 	/* Hack -- force destruction */
@@ -488,7 +469,6 @@ void do_cmd_destroy(void)
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -497,7 +477,7 @@ void do_cmd_destroy(void)
 		if (!(auto_destroy && (object_value(o_ptr) < 1)))
 		{
 			/* Make a verification */
-			if (!get_check("Really destroy %s? ", o_name)) return;
+			if (!get_check("Really destroy %v? ", OBJECT_FMT(o_ptr, TRUE, 3))) return;
 		}
 	}
 
@@ -522,8 +502,6 @@ void do_cmd_observe(void)
 {
 	object_type *o_ptr;
 
-	char o_name[256];
-
 	cptr q, s;
 
 	/* Get an item */
@@ -535,11 +513,8 @@ void do_cmd_observe(void)
 	/* Not a valid item */
 	if (!o_ptr) return;
 
-	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 	/* Describe */
-	msgf("Examining %s...", o_name);
+	msgf("Examining %v...", OBJECT_FMT(o_ptr, TRUE, 3));
 
 	/* Describe it fully */
 	if (!identify_fully_aux(o_ptr)) msgf("You see nothing special.");
@@ -596,8 +571,6 @@ void do_cmd_inscribe(void)
 {
 	object_type *o_ptr;
 
-	char o_name[256];
-
 	char out_val[80];
 
 	cptr q, s;
@@ -611,11 +584,8 @@ void do_cmd_inscribe(void)
 	/* Not a valid item */
 	if (!o_ptr) return;
 
-	/* Describe the activity */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 	/* Message */
-	msgf("Inscribing %s.", o_name);
+	msgf("Inscribing %v.", OBJECT_FMT(o_ptr, TRUE, 3));
 	message_flush();
 
 	/* Start with nothing */

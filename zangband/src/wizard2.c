@@ -582,7 +582,6 @@ static void wiz_display_item(const object_type *o_ptr)
 {
 	int j = 13;
 	u32b f1, f2, f3;
-	char buf[256];
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
@@ -591,9 +590,7 @@ static void wiz_display_item(const object_type *o_ptr)
     clear_region(13 - 2, 1, 23);
 
 	/* Describe fully */
-	object_desc_store(buf, o_ptr, TRUE, 3, 256);
-
-	prtf(j, 2, buf);
+	prtf(j, 2, "%v", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
 
 	prtf(j, 4, "kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
 			   o_ptr->k_idx, get_object_level(o_ptr),

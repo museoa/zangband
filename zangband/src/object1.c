@@ -2251,12 +2251,11 @@ static bool item_is_recharging(object_type *o_ptr)
  */
 void display_inven(void)
 {
-	int i = 0, n;
+	int i = 0;
 	object_type *o_ptr;
 	cptr attr;
 
 	char tmp_val[80];
-	char o_name[256];
 
 	int wid, hgt;
 
@@ -2282,12 +2281,6 @@ void display_inven(void)
 		/* Display the index (or blank space) */
 		prtf(0, i, tmp_val);
 
-		/* Obtain an item description */
-		object_desc(o_name, o_ptr, TRUE, 3, wid - 3);
-
-		/* Obtain the length of the description */
-		n = strlen(o_name);
-
 		/* Get a color */
 		attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
 
@@ -2295,13 +2288,13 @@ void display_inven(void)
 		if (item_is_recharging(o_ptr)) attr = CLR_L_DARK;
 
 		/* Display the entry itself */
-		put_fstr(3, i, "%s" CLR_SET_DEFAULT "%s", attr, o_name);
+		put_fstr(3, i, "%s" CLR_SET_DEFAULT "%v", attr, OBJECT_FMT(o_ptr, TRUE, 3));
 
 		/* Display the weight if needed */
 		if (show_weights && o_ptr->weight)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			put_fstr(wid - 9, i, "%3d.%1d lb", wgt / 10, wgt % 10);
+			prtf(wid - 9, i, "%3d.%1d lb", wgt / 10, wgt % 10);
 		}
 
 		/* Count items in inventory */
@@ -2353,9 +2346,6 @@ void display_equip(void)
 		/* Display the index (or blank space) */
 		prtf(0, i, tmp_val);
 
-		/* Obtain an item description */
-		object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 		/* Obtain the length of the description */
 		n = strlen(o_name);
 
@@ -2366,12 +2356,12 @@ void display_equip(void)
 		if (item_is_recharging(o_ptr)) attr = CLR_L_DARK;
 
 		/* Display the entry itself */
-		put_fstr(3, i, "%s" CLR_SET_DEFAULT "%s", attr, o_name);
+		put_fstr(3, i, "%s" CLR_SET_DEFAULT "%v", attr, OBJECT_FMT(o_ptr, TRUE, 3));
 
 		/* Display the slot description (if needed) */
 		if (show_labels)
 		{
-			put_fstr(wid - 19, i, "<--");
+			prtf(wid - 19, i, "<--");
 			put_fstr(wid - 15, i, mention_use(i));
 		}
 
@@ -2736,13 +2726,8 @@ void toggle_inven_equip(void)
  */
 static bool verify(cptr prompt, object_type *o_ptr)
 {
-	char o_name[256];
-
-	/* Describe */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 	/* Query */
-	return (get_check("%s %s? ", prompt, o_name));
+	return (get_check("%s %v? ", prompt, OBJECT_FMT(o_ptr, TRUE, 3)));
 }
 
 

@@ -2574,8 +2574,7 @@ static void take_move(int m_idx, int *mm)
 							if (m_ptr->ml && see_grid)
 							{
 								/* Dump a message */
-								msgf
-									("%^s tries to pick up %s, but fails.",
+								msgf("%^s tries to pick up %s, but fails.",
 									 m_name, o_name);
 							}
 						}

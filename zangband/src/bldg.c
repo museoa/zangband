@@ -1039,15 +1039,12 @@ static int critical_prob(int to_h, int number)
  */
 static void list_weapon(const object_type *o_ptr)
 {
-	char o_name[256];
-
 	int dambonus;
 
 	int intmaxdam, intmindam;
 
 	/* Print the weapon name */
-	object_desc(o_name, o_ptr, TRUE, 0, 256);
-	put_fstr(WEP_MAST_COL1, 6, CLR_L_BLUE "%s", o_name);
+	put_fstr(WEP_MAST_COL1, 6, CLR_L_BLUE "%v", OBJECT_FMT(o_ptr, TRUE, 0));
 
 	/* Print to_hit and to_dam of the weapon */
 	put_fstr(WEP_MAST_COL1, 8, "To Hit: %d  Deadliness: %d", o_ptr->to_h, o_ptr->to_d);
@@ -1154,7 +1151,6 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	cptr q, s;
 	int maxenchant = (p_ptr->lev / 5);
 	int maxenchant_d = (p_ptr->lev / 3);
-	char tmp_str[256];
 
     clear_region(0, 5, 18);
     
@@ -1177,8 +1173,8 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	/* Check if the player has enough money */
 	if (p_ptr->au < (cost * o_ptr->number))
 	{
-		object_desc(tmp_str, o_ptr, TRUE, 0, 256);
-		msgf("You do not have the gold to improve %s!", tmp_str);
+		msgf("You do not have the gold to improve %v!",
+			OBJECT_FMT(o_ptr, TRUE, 0));
 		message_flush();
 		return (FALSE);
 	}
@@ -1219,8 +1215,8 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	}
 	else
 	{
-		object_desc(tmp_str, o_ptr, TRUE, 1, 256);
-		msgf("Improved %s for %d gold.", tmp_str, cost * o_ptr->number);
+		msgf("Improved %v for %d gold.", OBJECT_FMT(o_ptr, TRUE, 1),
+			 cost * o_ptr->number);
 		message_flush();
 
 		/* Charge the money */
@@ -1252,7 +1248,6 @@ void building_recharge(s32b cost)
 	int price;
 	int charges;
 	int max_charges;
-	char tmp_str[256];
 
 
 	/* Display some info */
@@ -1292,9 +1287,7 @@ void building_recharge(s32b cost)
 			identify_item(o_ptr);
 
 			/* Description */
-			object_desc(tmp_str, o_ptr, TRUE, 3, 256);
-
-			msgf("You have: %s.", tmp_str);
+			msgf("You have: %v.", OBJECT_FMT(o_ptr, TRUE, 3));
 		}
 		else
 		{
@@ -1367,8 +1360,8 @@ void building_recharge(s32b cost)
 	/* Check if the player has enough money */
 	if (p_ptr->au < price)
 	{
-		object_desc(tmp_str, o_ptr, TRUE, 0, 256);
-		msgf("You need %d gold to recharge %s!", price, tmp_str);
+		msgf("You need %d gold to recharge %v!", price,
+			 OBJECT_FMT(o_ptr, TRUE, 0));
 		message_flush();
 		return;
 	}
@@ -1418,8 +1411,7 @@ void building_recharge(s32b cost)
 	}
 
 	/* Give feedback */
-	object_desc(tmp_str, o_ptr, TRUE, 3, 256);
-	msgf("%^s %s recharged for %d gold.", tmp_str,
+	msgf("%^v %s recharged for %d gold.", OBJECT_FMT(o_ptr, TRUE, 3),
 			   ((o_ptr->number > 1) ? "were" : "was"), price);
 	message_flush();
 

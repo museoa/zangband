@@ -1328,7 +1328,7 @@ static void likert(char *buf, uint max, cptr fmt, va_list *vp)
 	(void)fmt;
 	
 	/* Get the first argument */
-	x = va_arg(*vp, int);\
+	x = va_arg(*vp, int);
 	
 	/* Get the second argument */
 	y = va_arg(*vp, int);
@@ -4084,8 +4084,6 @@ static void show_info(void)
 				/* Home -- if anything there */
 				if (st_ptr->stock)
 				{
-					char o_name[256];
-
 					/* Initialise counter */
 					j = 0;
 
@@ -4095,12 +4093,10 @@ static void show_info(void)
 					/* Display contents of the home */
 					OBJ_ITT_START (st_ptr->stock, o_ptr)
 					{
-						/* Get description */
-						object_desc(o_name, o_ptr, TRUE, 3, 256);
-					
 						/* Print header, clear line */
-						prtf(4, j + 2, "%c) %s%s", I2A(j),
-							 color_seq[tval_to_attr[o_ptr->tval]], o_name);
+						prtf(4, j + 2, "%c) %s%v", I2A(j),
+							 color_seq[tval_to_attr[o_ptr->tval]],
+							 OBJECT_FMT(o_ptr, TRUE, 3));
 
 						/* Show 12 items at a time */
 						if (j == 12)

@@ -1169,7 +1169,6 @@ void fetch(int dir, int wgt, bool require_los)
 	int tx, ty;
 	cave_type *c_ptr;
 	object_type *o_ptr;
-	char o_name[256];
 
 	/* Check to see if an object is already there */
 	if (area(px, py)->o_idx)
@@ -1264,8 +1263,7 @@ void fetch(int dir, int wgt, bool require_los)
 	o_ptr->ix = px;
 	o_ptr->iy = py;
 
-	object_desc(o_name, o_ptr, TRUE, 0, 256);
-	msgf("%^s flies through the air to your feet.", o_name);
+	msgf("%^v flies through the air to your feet.", OBJECT_FMT(o_ptr, TRUE, 0));
 
 	/* Notice the moved object (The player gets redrawn) */
 	note_spot(px, py);
@@ -1855,7 +1853,6 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 {
 	bool okay = FALSE;
 	object_type *o_ptr;
-	char o_name[512];
 	cptr q, s;
 
 
@@ -1874,11 +1871,8 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	/* Not a valid item */
 	if (!o_ptr) return (FALSE);
 
-	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 	/* Describe */
-	msgf("The %s glow%s brightly!", o_name,
+	msgf("The %v glow%s brightly!", OBJECT_FMT(o_ptr, FALSE, 0),
 			   ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
@@ -2088,11 +2082,8 @@ void identify_item(object_type *o_ptr)
 			 */
 			if (auto_notes && take_notes)
 			{
-				char item_name[256];
-				object_desc(item_name, o_ptr, FALSE, 0, 256);
-
 				/* Write note */
-				add_note('A', "Found The %s", item_name);
+				add_note('A', "Found The %v", OBJECT_FMT(o_ptr, FALSE, 0));
 			}
 		}
 
@@ -2259,7 +2250,6 @@ bool mundane_spell(void)
 bool identify_fully(void)
 {
 	object_type *o_ptr;
-	char o_name[256];
 	cptr q, s;
 
 	/* Only un-*id*'ed items */
@@ -2285,9 +2275,6 @@ bool identify_fully(void)
 
 	/* Handle stuff */
 	handle_stuff();
-
-	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
 	item_describe(o_ptr);
@@ -2454,9 +2441,8 @@ bool recharge(int power)
 		/* Artifacts are never destroyed. */
 		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
-			object_desc(o_name, o_ptr, TRUE, 0, 256);
-			msgf("The recharging backfires - %s is completely drained!",
-					   o_name);
+			msgf("The recharging backfires - %v is completely drained!",
+					   OBJECT_FMT(o_ptr, TRUE, 0));
 
 			/* Artifact rods. */
 			if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout < 10000))
@@ -2538,15 +2524,13 @@ bool recharge(int power)
 			{
 				if (o_ptr->tval == TV_ROD)
 				{
-					msgf
-						("The recharge backfires, draining the rod further!");
+					msgf("The recharge backfires, draining the rod further!");
 					if (o_ptr->timeout < 10000)
 						o_ptr->timeout = (o_ptr->timeout + 100) * 2;
 				}
 				else if (o_ptr->tval == TV_WAND)
 				{
-					msgf
-						("You save your %s from destruction, but all charges are lost.",
+					msgf("You save your %s from destruction, but all charges are lost.",
 						 o_name);
 					o_ptr->ac += o_ptr->pval;
 					o_ptr->pval = 0;

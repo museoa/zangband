@@ -609,8 +609,6 @@ void py_pickup_aux(object_type *o_ptr)
 
 	int slot;
 
-	char o_name[256];
-
 	/* Duplicate the object */
 	j_ptr = object_dup(o_ptr);
 
@@ -625,14 +623,11 @@ void py_pickup_aux(object_type *o_ptr)
 	 * so j_ptr should never be NULL after inven_carry()
 	 */
 
-	/* Describe the object */
-	object_desc(o_name, j_ptr, TRUE, 3, 256);
-
 	/* Get slot number */
 	slot = get_item_position(p_ptr->inventory, j_ptr);
 
 	/* Message */
-	msgf("You have %s (%c).", o_name, I2A(slot));
+	msgf("You have %v (%c).", OBJECT_FMT(j_ptr, TRUE, 3), I2A(slot));
 }
 
 
@@ -811,11 +806,8 @@ void carry(int pickup)
 		/* One object */
 		if (floor_num == 1)
 		{
-			/* Describe the object */
-			object_desc(o_name, fo_ptr, TRUE, 3, 256);
-
 			/* Message */
-			msgf("You see %s.", o_name);
+			msgf("You see %v.", OBJECT_FMT(fo_ptr, TRUE, 3));
 		}
 
 		/* Multiple objects */
@@ -835,11 +827,8 @@ void carry(int pickup)
 		/* One object */
 		if (floor_num == 1)
 		{
-			/* Describe the object */
-			object_desc(o_name, fo_ptr, TRUE, 3, 256);
-
 			/* Message */
-			msgf("You have no room for %s.", o_name);
+			msgf("You have no room for %v.", OBJECT_FMT(fo_ptr, TRUE, 3));
 		}
 
 		/* Multiple objects */
@@ -864,11 +853,8 @@ void carry(int pickup)
 			/* Paranoia XXX XXX XXX */
 			message_flush();
 
-			/* Describe the object */
-			object_desc(o_name, fo_ptr, TRUE, 3, 256);
-
 			/* Prompt for it */
-			prtf(0, 0,"Pick up %s? [y/n/k] ", o_name);
+			prtf(0, 0,"Pick up %v? [y/n/k] ", OBJECT_FMT(fo_ptr, TRUE, 3));
 
 			/* Get an acceptable answer */
 			while (TRUE)

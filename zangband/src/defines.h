@@ -3948,6 +3948,16 @@
 
 
 /*
+ * Useful macros for object formatting
+ * (So we use the correct number of arguments)
+ */
+#define OBJECT_FMT(O, P, M) \
+	object_fmt, (O), (P), (M)
+
+#define OBJECT_STORE_FMT(O, P, M) \
+	object_store_fmt, (O), (P), (M)
+
+/*
  * Determines if a map location is currently "on screen" -RAK-
  */
 #define panel_contains(X,Y) \

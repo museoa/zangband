@@ -2065,8 +2065,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 	int query;
 
-	char o_name[256];
-
 	object_type *o_ptr;
 
 
@@ -2241,11 +2239,9 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 					/* Scan all objects being carried */
 					OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
 					{
-						/* Obtain an object description */
-						object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 						/* Describe the object */
-						prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
+						prtf(0, 0, "%s%s%s%v [%s]", s1, s2, s3,
+							 OBJECT_FMT(o_ptr, TRUE, 3), info);
 						move_cursor_relative(x, y);
 						query = inkey();
 
@@ -2290,14 +2286,9 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				{
 					if (floor_num == 1)
 					{
-						char o_name[256];
-
 						/* Describe the object */
-						object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-						/* Message */
-						prtf(0, 0, "%s%s%s%s [%s]",
-								s1, s2, s3, o_name, info);
+						prtf(0, 0, "%s%s%s%v [%s]",
+								s1, s2, s3, OBJECT_FMT(o_ptr, TRUE, 3), info);
 					}
 					else
 					{
@@ -2349,16 +2340,12 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			/* Describe it */
 			if (o_ptr->info & OB_SEEN)
 			{
-				char o_name[80];
-
 				/* Not boring */
 				boring = FALSE;
 
-				/* Obtain an object description */
-				object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 				/* Describe the object */
-				prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
+				prtf(0, 0, "%s%s%s%v [%s]", s1, s2, s3,
+					 OBJECT_FMT(o_ptr, TRUE, 3), info);
 				move_cursor_relative(x, y);
 				query = inkey();
 

@@ -660,21 +660,16 @@ bool make_attack_normal(int m_idx)
 						/* Find an item */
 						OBJ_ITT_START (p_ptr->inventory, o_ptr)
 						{
-							char o_name[256];
-
 							/* Only some of the time */
 							if (!one_in_(INVEN_PACK)) continue;
 
 							/* Skip artifacts */
 							if (o_ptr->flags3 & TR3_INSTA_ART) continue;
 
-							/* Get a description */
-							object_desc(o_name, o_ptr, FALSE, 3, 256);
-
 							/* Message */
-							msgf("%sour %s was stolen!",
+							msgf("%sour %v was stolen!",
 									   ((o_ptr->number > 1) ? "One of y" : "Y"),
-									   o_name);
+									   OBJECT_FMT(o_ptr, FALSE, 3));
 
 							chg_virtue(V_SACRIFICE, 1);
 
@@ -704,8 +699,6 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_EAT_FOOD:
 					{
-						char o_name[256];
-
 						/* Take some damage */
 						take_hit(damage, ddesc);
 
@@ -718,13 +711,10 @@ bool make_attack_normal(int m_idx)
 							/* Skip non-food objects */
 							if (o_ptr->tval != TV_FOOD) continue;
 
-							/* Get a description */
-							object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 							/* Message */
-							msgf("%sour %s was eaten!",
+							msgf("%sour %v was eaten!",
 									   ((o_ptr->number > 1) ? "One of y" : "Y"),
-									   o_name);
+									   OBJECT_FMT(o_ptr, FALSE, 0));
 
 							/* Steal the items */
 							item_increase(o_ptr, -1);

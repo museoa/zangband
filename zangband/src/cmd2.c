@@ -2337,11 +2337,9 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 			if (j_ptr->name2 == EGO_VELOCITY) special_dam = TRUE;
 			else if (j_ptr->name2 == EGO_ACCURACY) special_hit = TRUE;
 
-			/* Describe the object */
-			object_desc(o_name, j_ptr, FALSE, 0, 256);
-
 			/* Let player know that weapon is activated. */
-			msgf("You feel your %s tremble in your hand.", o_name);
+			msgf("You feel your %v tremble in your hand.",
+				 OBJECT_FMT(j_ptr, FALSE, 0));
 		}
 	}
 #endif /* 0 */
@@ -2724,13 +2722,8 @@ void do_cmd_fire(void)
 static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
                               int x, int y)
 {
-	char o_name[256];
-
 	/* Chance of breakage (during attacks) */
 	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
-
-	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 	/* Figurines transform */
 	if (o_ptr->tval == TV_FIGURINE)
@@ -2750,7 +2743,7 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 		if (hit_body || hit_wall || (randint1(100) < breakage))
 		{
 			/* Message */
-			msgf("The %s shatters!", o_name);
+			msgf("The %v shatters!", OBJECT_FMT(o_ptr, FALSE, 3));
 
 			if (potion_smash_effect(0, x, y, o_ptr->k_idx))
 			{

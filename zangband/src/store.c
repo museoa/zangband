@@ -939,8 +939,6 @@ static void display_entry(int pos)
 
 	s32b x;
 
-	char o_name[256];
-
 	byte a;
 	char c;
 
@@ -980,9 +978,9 @@ static void display_entry(int pos)
 		if (show_weights) maxwid -= 10;
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3, maxwid);
-		put_fstr(5, i + 6, "%s" CLR_SET_DEFAULT "%s",
-					color_seq[tval_to_attr[o_ptr->tval]], o_name);
+		put_fstr(5, i + 6, "%s" CLR_SET_DEFAULT "%v",
+					color_seq[tval_to_attr[o_ptr->tval]],
+					OBJECT_FMT(o_ptr, TRUE, 3));
 
 		/* Show weights */
 		if (show_weights)
@@ -1003,9 +1001,9 @@ static void display_entry(int pos)
 		if (show_weights) maxwid -= 7;
 
 		/* Describe the object (fully) */
-		object_desc_store(o_name, o_ptr, TRUE, 3, maxwid);
-		put_fstr(5, i + 6, "%s" CLR_SET_DEFAULT "%s",
-					color_seq[tval_to_attr[o_ptr->tval]], o_name);
+		put_fstr(5, i + 6, "%s" CLR_SET_DEFAULT "%v",
+					color_seq[tval_to_attr[o_ptr->tval]],
+					OBJECT_STORE_FMT(o_ptr, TRUE, 3));
 
 		/* Show weights */
 		if (show_weights)
@@ -1367,8 +1365,6 @@ static void store_purchase(int *store_top)
 
 	object_type *o_ptr;
 
-	char o_name[256];
-
 	char out_val[160];
 
 	/* Empty? */
@@ -1490,10 +1486,8 @@ static void store_purchase(int *store_top)
 			object_aware(j_ptr);
 
 			/* Describe the transaction */
-			object_desc(o_name, j_ptr, TRUE, 3, 256);
-
-			/* Message */
-			msgf("You bought %s for %ld gold.", o_name, (long)price);
+			msgf("You bought %v for %ld gold.",
+				 OBJECT_FMT(j_ptr, TRUE, 3), (long)price);
 
             /* Erase the inscription */
             quark_remove(&j_ptr->inscription);
@@ -1511,14 +1505,11 @@ static void store_purchase(int *store_top)
 				return;
 			}
 
-			/* Describe the final result */
-			object_desc(o_name, j_ptr, TRUE, 3, 256);
-
 			/* Get slot */
 			item_new = get_item_position(p_ptr->inventory, j_ptr);
 
-			/* Message */
-			msgf("You have %s (%c).", o_name, I2A(item_new));
+			/* Describe the final result */
+			msgf("You have %v (%c).", OBJECT_FMT(j_ptr, TRUE, 3), I2A(item_new));
 
 			/* Now, reduce the original stack's pval. */
 			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
@@ -1610,14 +1601,11 @@ static void store_purchase(int *store_top)
 			return;
 		}
 
-		/* Describe just the result */
-		object_desc(o_name, j_ptr, TRUE, 3, 256);
-
 		/* Get slot */
 		item_new = get_item_position(p_ptr->inventory, j_ptr);
 
-		/* Message */
-		msgf("You have %s (%c).", o_name, I2A(item_new));
+		/* Describe just the result */
+		msgf("You have %v (%c).", OBJECT_FMT(j_ptr, TRUE, 3), I2A(item_new));
 
 		/* Handle stuff */
 		handle_stuff();
@@ -1671,9 +1659,6 @@ static void store_sell(int *store_top)
 	object_type *o_ptr;
 
 	cptr q, s;
-
-	char o_name[256];
-
 
 	/* Prepare a prompt */
 	if (st_ptr->type == BUILD_STORE_HOME)
@@ -1753,9 +1738,6 @@ static void store_sell(int *store_top)
 		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
 	}
 
-	/* Get a full description */
-	object_desc(o_name, q_ptr, TRUE, 3, 256);
-
 	/* Remove any inscription, feeling for stores */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
     {
@@ -1815,11 +1797,8 @@ static void store_sell(int *store_top)
 			/* Get the "actual" value */
 			value = object_value(q_ptr) * q_ptr->number;
 
-			/* Get the description all over again */
-			object_desc(o_name, q_ptr, TRUE, 3, 256);
-
 			/* Describe the result (in message buffer) */
-			msgf("You sold %s for %ld gold.", o_name, (long)price);
+			msgf("You sold %v for %ld gold.", OBJECT_FMT(q_ptr, TRUE, 3), (long)price);
 
 			if (!((q_ptr->tval == TV_FIGURINE) && (value > 0)))
 			{
@@ -1868,9 +1847,9 @@ static void store_sell(int *store_top)
 	{
 		/* Distribute charges of wands/rods */
 		distribute_charges(o_ptr, q_ptr, amt);
-
+		
 		/* Describe */
-		msgf("You drop %s.", o_name);
+		msgf("You drop %v.", OBJECT_FMT(q_ptr, TRUE, 3));
 
 		/* Take it from the players inventory */
 		item_increase(o_ptr, -amt);
@@ -1902,7 +1881,6 @@ static void store_examine(int store_top)
 	int i;
 	int item;
 	object_type *o_ptr;
-	char o_name[256];
 	char out_val[160];
 
 
@@ -1935,11 +1913,8 @@ static void store_examine(int store_top)
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
 
-	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 	/* Describe */
-	msgf("Examining %s...", o_name);
+	msgf("Examining %v...", OBJECT_FMT(o_ptr, TRUE, 3));
 
 	/* Describe it fully */
 	if (!identify_fully_aux(o_ptr))
