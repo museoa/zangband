@@ -340,6 +340,11 @@ struct borg_player
 	/* Combined object flags */
 	u32b flags[4];
 
+	/* Mutation flags */
+	u32b muta1;
+	u32b muta2;
+	u32b muta3;
+
 	s16b food;	/* Power of food */
 	s16b recall;	/* Power of recall */
 

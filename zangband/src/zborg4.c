@@ -339,7 +339,11 @@ static void borg_notice_player(void)
 	bp_ptr->flags[1] |= oflags.flags[1];
 	bp_ptr->flags[2] |= oflags.flags[2];
 	bp_ptr->flags[3] |= oflags.flags[3];
-	/* XXX XXX XXX Don't handle flags4 yet */
+
+	/* Mutation flags */
+	bp_ptr->muta1 = p_ptr->muta1;
+	bp_ptr->muta2 = p_ptr->muta2;
+	bp_ptr->muta3 = p_ptr->muta3;
 
 	/* Sustain flags */
 	if (FLAG(of_ptr, TR_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
@@ -2496,6 +2500,7 @@ static void borg_notice_aux2(void)
 	/* Handle Diggers */
 	if (borg_spell_legal_fail(REALM_NATURE, 1, 0, 40) ||
 		borg_spell_legal_fail(REALM_CHAOS, 0, 6, 40) ||
+		borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
 		borg_racial_check(RACE_HALF_GIANT, TRUE))
 	{
 		amt_digger += 1;

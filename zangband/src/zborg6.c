@@ -12,6 +12,9 @@
 #include "zborg5.h"
 #include "zborg6.h"
 
+/* Hackity-hack */
+#include "script.h"
+
 static bool borg_desperate = FALSE;
 
 
@@ -311,15 +314,15 @@ bool borg_on_safe_feat(byte feat)
 	/* Swamp */
 	if (feat == FEAT_DEEP_SWAMP)
 	{
-		/* (temp) Resistance helps */
-		if ((FLAG(bp_ptr, TR_RES_POIS)) || my_oppose_pois) return (TRUE);
+		/* (temp) Immunity helps */
+		if (FLAG(bp_ptr, TR_IM_POIS)) return (TRUE);
 
 		return (FALSE);
 	}
 	if (feat == FEAT_SHAL_SWAMP)
 	{
 		/* (temp) Resistance helps */
-		if ((FLAG(bp_ptr, TR_RES_POIS)) || my_oppose_pois) return (TRUE);
+		if (FLAG(bp_ptr, TR_RES_POIS) || my_oppose_pois) return (TRUE);
 
 		/* Levitation helps */
 		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
@@ -669,7 +672,8 @@ bool borg_recall(void)
 			borg_spell_fail(REALM_SORCERY, 2, 7, 60) ||
 			borg_spell_fail(REALM_ARCANE, 3, 6, 60) ||
 			borg_spell_fail(REALM_TRUMP, 1, 6, 60) ||
-			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL))
+			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL) ||
+			borg_mutation(MUT1_RECALL))
 		{
 			/* Press another ESC to avoid the recall reset */
 			borg_keypress(ESCAPE);
@@ -1509,6 +1513,7 @@ static bool borg_escape(int b_q)
 			borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail + 9) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail + 9) ||
 			borg_racial(RACE_GNOME) ||
+			borg_mutation(MUT1_VTELEPORT) ||
 			/* Attempt Teleport Level */
 			borg_spell_fail(REALM_SORCERY, 2, 6, allow_fail + 9) ||
 			borg_spell_fail(REALM_TRUMP, 1, 5, allow_fail + 9) ||
@@ -1612,6 +1617,7 @@ static bool borg_escape(int b_q)
 			borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail) ||
 			borg_racial(RACE_GNOME) ||
+			borg_mutation(MUT1_VTELEPORT) ||
 			/* try Dimension Door */
 			(amt_dim_door && borg_dim_door(TRUE, b_q) &&
 			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
@@ -1684,7 +1690,9 @@ static bool borg_escape(int b_q)
 			borg_activate_artifact(ART_COLANNON, FALSE) ||
 			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
-			borg_read_scroll(SV_SCROLL_TELEPORT) || borg_racial(RACE_GNOME))
+			borg_read_scroll(SV_SCROLL_TELEPORT) ||
+			borg_mutation(MUT1_VTELEPORT) ||
+			borg_racial(RACE_GNOME))
 		{
 			/* Flee! */
 			borg_note("# Danger Level 3.2");
@@ -1779,6 +1787,7 @@ static bool borg_escape(int b_q)
 			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
+			borg_mutation(MUT1_VTELEPORT) ||
 			borg_racial(RACE_GNOME))
 		{
 			/* Flee! */
@@ -1866,6 +1875,7 @@ static bool borg_escape(int b_q)
 			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
+			borg_mutation(MUT1_VTELEPORT) ||
 			borg_racial(RACE_GNOME))
 		{
 			/* Flee! */
@@ -1953,6 +1963,7 @@ static bool borg_escape(int b_q)
 			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
+			borg_mutation(MUT1_VTELEPORT) ||
 			borg_racial(RACE_GNOME))
 		{
 			/* Flee! */
@@ -2541,7 +2552,7 @@ static bool borg_heal(int danger)
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
-			borg_quaff_crit(bp_ptr->chp < 10) ||
+			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_spell_fail(REALM_LIFE, 1, 1, 100) ||
 			borg_spell_fail(REALM_LIFE, 0, 6, 100) ||
 			borg_spell_fail(REALM_LIFE, 0, 1, 100) ||
@@ -3616,7 +3627,9 @@ bool borg_caution(void)
 			borg_quaff_potion(SV_POTION_HEROISM) ||
 			borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
 			borg_activate_artifact(ART_DAL, FALSE) ||
-			borg_racial(RACE_HALF_ORC) || borg_racial(RACE_HALF_TROLL))
+			borg_mutation(MUT1_BERSERK) ||
+			borg_racial(RACE_HALF_ORC) ||
+			borg_racial(RACE_HALF_TROLL))
 		{
 			return (TRUE);
 		}
@@ -3846,9 +3859,10 @@ bool borg_caution(void)
 #define BF_WAND					10
 #define BF_SCROLL				11
 #define BF_LAUNCH				12
-#define BF_SPELL_RESERVE		13
+#define BF_RACIAL				13
+#define BF_SPELL_RESERVE		14
 
-#define	BF_MAX					14
+#define	BF_MAX					15
 
 
 /* What is the radius of the borg ball attacks? */
@@ -4011,11 +4025,11 @@ static int borg_thrust_damage_one(int i)
 /*
  * Simulate/Apply the optimal result of making a physical attack
  */
-static int borg_attack_aux_thrust(int *b_i)
+static int borg_attack_aux_thrust(void)
 {
 	int p, dir;
 
-	int i;
+	int i, b_i;
 	int d, b_d = 0;
 
 	map_block *mb_ptr;
@@ -4081,18 +4095,23 @@ static int borg_attack_aux_thrust(int *b_i)
 			if (d < b_d) continue;
 
 			/* Save the info */
-			*b_i = i;
+			b_i = i;
 			b_d = d;
+		}
+
+		/* If damage was found */
+		if (b_d)
+		{
+			/* Save the location */
+			g_x = borg_bolt_x[b_i];
+			g_y = borg_bolt_y[b_i];
 		}
 
 		/* End of simulation */
 		return (b_d);
 	}
 
-	/* Save the location */
-	g_x = borg_bolt_x[*b_i];
-	g_y = borg_bolt_y[*b_i];
-
+	/* Get the spot on the map */
 	mb_ptr = map_loc(g_x, g_y);
 
 	/* Note */
@@ -5308,9 +5327,9 @@ static int borg_attack_aux_artifact(int *b_slot)
 {
 	/* Ignore parameter */
 	(void) b_slot;
-
+ 
 	/* Yeah well, how do I find out what the activation is */
-	return (0);
+ 	return (0);
 }
 
 
@@ -5773,7 +5792,7 @@ static int borg_throw_damage(list_item *l_ptr, int *typ)
  *
  * First choose the "best" object to throw, then check targets.
  */
-static int borg_attack_aux_object(int *b_slot)
+static int borg_attack_aux_object(int *b_slot, int mult)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
@@ -5800,7 +5819,7 @@ static int borg_attack_aux_object(int *b_slot)
 			if (d <= 0) continue;
 
 			/* Extract a "distance multiplier" */
-			mul = 10;
+			mul = 5 + 5 * mult;
 
 			/* Enforce a minimum "weight" of one pound */
 			div = ((l_ptr->weight > 10) ? l_ptr->weight : 10);
@@ -6419,33 +6438,31 @@ static int borg_attack_wand_aux(int *b_slot)
 /*
  * Simulate/Apply the optimal result of making a racial physical attack
  */
-static int borg_attack_aux_racial_thrust(int race, int level, int dam, int *b_slot)
+static int borg_vampire_damage_monster(int dam)
 {
-	int p, dir;
+	int p;
 
 	int i, b_i = -1;
 	int d, b_d = -1;
+	int x, b_x = c_x;
+	int y, b_y = c_y;
 
 	map_block *mb_ptr;
-
 	borg_kill *kill;
-
 	monster_race *r_ptr;
 
 	/* Too afraid to attack */
 	if (bp_ptr->status.afraid) return (0);
 
-	/* must be right race */
-	if (borg_race != race) return (0);
-
-	/* must be right level */
-	if (bp_ptr->lev < level) return (0);
+	/* Fill the belly */
+	if (!bp_ptr->status.full) dam = dam * 13 / 10;
+	if (bp_ptr->status.hungry) dam = dam * 13 / 10;
 
 	/* Examine possible destinations */
-	for (i = 0; i < borg_temp_n; i++)
+	for (i = 0; i < borg_bolt_n; i++)
 	{
-		int x = borg_temp_x[i];
-		int y = borg_temp_y[i];
+		x = borg_bolt_x[i];
+		y = borg_bolt_y[i];
 
 		/* Require "adjacent" */
 		if (distance(c_y, c_x, y, x) > 1) continue;
@@ -6468,16 +6485,8 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam, int *b_sl
 		/* Base Dam */
 		d = dam;
 
-		/* Vampire Drain */
-		if (race == RACE_VAMPIRE)
-		{
-			if (!bp_ptr->status.full) d = d * 13 / 10;
-			if (bp_ptr->status.hungry) d = d * 13 / 10;
-
-			/* Drain gives food */
-			if (!monster_living(r_ptr)) continue;
-
-		}
+		/* Drain works only on the living */
+		if (!monster_living(r_ptr)) continue;
 
 		/* Hack -- avoid waking most "hard" sleeping monsters */
 		if ((kill->m_flags & MONST_ASLEEP) && (d <= kill->power))
@@ -6508,51 +6517,28 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam, int *b_sl
 		/* Ignore lower damage */
 		if ((b_i >= 0) && (d < b_d)) continue;
 
-		/* Save the info */
-		b_i = i;
+		/* Save the damage info */
 		b_d = d;
+
+		/* Keep the target spot */
+		b_x = x;
+		b_y = y;
 	}
 
 	/* Nothing to attack */
-	if (b_i < 0) return (0);
+	if (b_d <= 0) return (0);
 
-	/* Save the location */
-	g_x = borg_temp_x[b_i];
-	g_y = borg_temp_y[b_i];
+	/* Track the global */
+	g_x = b_x;
+	g_y = b_y;
 
-	mb_ptr = map_loc(g_x, g_y);
-
-	/* Get a direction for attacking */
-	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
-
-	/* Keep this dir for later */
-	*b_slot = dir;
-	
-	/* Simulation */
-	if (borg_simulate) return (b_d);
-
-	/* Note */
-	borg_note_fmt
-		("# Facing %s at (%d,%d).",
-		 (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
-	borg_note_fmt("# Attacking with Racial Attack '%d'", b_d);
-
-	/* Activate */
-	borg_keypress('U');
-
-	/* Racial is always 'a' */
-	borg_keypress('a');
-
-	/* Attack the grid */
-	borg_keypress(I2D(dir));
-
-	/* Success */
+	/* Return the simulation */
 	return (b_d);
 }
 
 
-/* Simulate the damage done by the various mutations/raical abilities */
-static int borg_mutate_damage_monster(int race, int *slot)
+/* Simulate the damage done by the various racial abilities */
+static int borg_racial_damage_monster(int race)
 {
 	int rad, dam;
 	switch (race)
@@ -6561,7 +6547,7 @@ static int borg_mutate_damage_monster(int race, int *slot)
 		{
 			/* Suck Blood */
 			dam = bp_ptr->lev + ((bp_ptr->lev / 2) * MAX(1, bp_ptr->lev / 10));	/* Dmg */
-			return (borg_attack_aux_racial_thrust(RACE_VAMPIRE, 2, dam, slot));
+			return (borg_vampire_damage_monster(dam));
 		}
 
 		case RACE_CYCLOPS:
@@ -6636,56 +6622,231 @@ static int borg_mutate_damage_monster(int race, int *slot)
 	return (0);
 }
 
-/*
- * Simulate/Apply the optimal result of Using a mutation/racial power.
- * I don't know yet how to do this, just the racial powers are here.
- * These are garanteed to have the first spot.
- */
-static int borg_attack_mutate_aux(int *b_slot, int *b_spell)
+
+/* Simulate/Apply the optimal result of Using a racial power. */
+static int borg_attack_racial_aux(void)
 {
 	if (borg_simulate)
 	{
 		/* Check for ability */
 		if (!borg_racial_check(borg_race, TRUE)) return (FALSE);
 
-		/* Which mutation / racial is this */
-		*b_spell = 0;
-
 		/* What is the damage? */
-		return (borg_mutate_damage_monster(borg_race, b_slot));
+		return (borg_racial_damage_monster(borg_race));
 	}
 
 	/* Note */
 	borg_note("# Racial Attack ");
 
-	/* Sprites and Vampires have no need for a target */
-	if (borg_race != RACE_SPRITE &&
-		borg_race != RACE_VAMPIRE)
-	{
-		/* Set the target */
-		borg_target(g_x, g_y);
-	}
+	/* Set the target */
+	borg_target(g_x, g_y);
 
 	/* Activate */
 	borg_keypress('U');
 
-	/* Select the power */
-	borg_keypress(I2A(*b_spell));
+	/* Select the power.  All racial attack are in the first spot */
+	borg_keypress('a');
 
 	if (borg_race == RACE_VAMPIRE)
 	{
-		/* Thrust to the grid next to the borg */
-		borg_keypress(I2D(*b_slot));
+		/* Bite to the grid next to the borg */
+		borg_keypress(I2D(borg_extract_dir(c_x, c_y, g_x, g_y)));
 	}
-	else
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
+
+	/* Success */
+	return (0);
+}
+
+
+/* How much damage can a mutation do */
+static int borg_mutate_damage_monster(u32b mut_nr, int *slot)
+{
+	int n, dam, rad = MAX_RANGE;
+
+	/* What mutation have we here? */
+	switch (mut_nr)
 	{
-		/* Is there a need for a target */
-		if (borg_race != RACE_SPRITE)
+		/* Acid ball */
+		case MUT1_SPIT_ACID:
 		{
-			/* Set our shooting flag */
-			successful_target = BORG_FRESH_TARGET;
+			dam = bp_ptr->lev;
+			rad = 1 + bp_ptr->lev / 30;
+			return (borg_launch_ball(rad, dam, GF_ACID, MAX_RANGE));
 		}
+
+		/* Fire breath */
+		case MUT1_BR_FIRE:
+		{
+			dam = bp_ptr->lev * 2;
+			rad = 1 + bp_ptr->lev / 20;
+			return (borg_launch_ball(rad, dam, GF_FIRE, MAX_RANGE));
+		}
+
+		/* Psi bolt */
+		case MUT1_MIND_BLST:
+		{
+			dam = 2 * (3 + (bp_ptr->lev - 1) / 5);
+			return (borg_launch_bolt(dam, GF_PSI, rad));
+		}
+
+		/* Nuke'em */
+		case MUT1_RADIATION:
+		{
+			dam = 2 * bp_ptr->lev;
+			rad = 3 + bp_ptr->lev / 20;
+			return (borg_launch_ball(rad, dam, GF_NUKE, MAX_RANGE));
+		}
+
+		/* Have a bite */
+		case MUT1_VAMPIRISM:
+		{
+			dam = 2 * bp_ptr->lev;
+			return (borg_vampire_damage_monster(dam));
+		}
+
+		/* Sound of Music */
+		case MUT1_SHRIEK:
+		{
+			dam = 2 * bp_ptr->lev;
+			rad = 8;
+			return (borg_launch_dispel(dam, GF_SOUND, rad));
+		}
+
+		/* Light area */
+		case MUT1_ILLUMINE:
+		{
+			dam = bp_ptr->lev;
+			rad = 1 + bp_ptr->lev / 10;
+			return (borg_launch_dispel(dam, GF_LITE, rad));
+		}
+
+		/* hit and phase door in one move like a novice rogue */
+		case MUT1_PANIC_HIT:
+		{
+			/* Its damage is at least equal to a normal hit */
+			dam = borg_attack_aux_thrust();
+
+			/* If there are a few monsters around then add bonus */
+			if (borg_temp_n < 5) dam = dam * 15 / 10;
+
+			/* Return the damage */
+			return (dam);
+		}
+
+		/* Mass confuse, stun and scare */
+		case MUT1_DAZZLE:
+		{
+			dam = 20;
+			n = borg_launch_dispel(dam, GF_OLD_CONF, rad);
+			return (n + borg_launch_dispel(dam, GF_TURN_ALL, rad));
+		}
+
+		/* Lite beam */
+		case MUT1_LASER_EYE:
+		{
+			dam = 2 * bp_ptr->lev;
+			return (borg_launch_beam(dam, GF_LITE, rad));
+		}
+
+		/* Touch to freeze */
+		case MUT1_COLD_TOUCH:
+		{
+			dam = 2 * bp_ptr->lev;
+			rad = 1;
+			return (borg_launch_bolt(dam, GF_COLD, rad));
+		}
+
+		/* Throw something */
+		case MUT1_LAUNCHER:
+		{
+			/* This is not a real radius, it is a factor */
+			rad = 2 + bp_ptr->lev / 30;
+
+			return (borg_attack_aux_object(slot, rad));
+		}
+
+		/* dud mutation */
+		default: return (0);
 	}
+}
+
+
+/* Simulate/Apply the optimal result of Using a mutation. */
+static int borg_attack_mutation_aux(int *b_slot, int *b_spell)
+{
+	int i, n, b_n = 0;
+	int b_x = c_x, b_y = c_y;
+	u32b mut_nr = 0;
+	int slot, spell;
+
+	if (borg_simulate)
+	{
+		/* Find out if the there isn't a racial in the way */
+		spell = borg_count_racial(borg_race) - 1;
+
+		/* Loop through all the bits in bp_ptr->muta1 */
+		for (i = 1; i < 32; i++)
+		{
+			/* get the current mutation */
+			mut_nr = (mut_nr) ? mut_nr * 2 : 1;
+
+			/* Does the borg have this mutation? */
+			if (!(bp_ptr->muta1 & mut_nr)) continue;
+
+			/* Advance the letter index */
+			spell += 1;
+
+			/* Check if it is castable right now */
+			if (!borg_mutation_check(mut_nr, TRUE)) continue;
+
+			/* What is the damage? */
+			n = borg_mutate_damage_monster(mut_nr, &slot);
+
+			/* Is it more than before? */
+			if (n <= b_n) continue;
+
+			/* Track it */
+			b_n = n;
+			*b_spell = spell;
+			*b_slot = slot;
+			b_x = g_x;
+			b_y = g_y;
+		}
+
+		/* Set the globals */
+		g_x = b_x;
+		g_y = b_y;
+
+		/* return the damage indication */
+		return (b_n);
+	}
+
+	/* Note */
+	borg_note("# Mutation Attack ");
+	borg_note_fmt("With letter = %c", I2A(*b_spell));
+
+	/* Set the target */
+	borg_target(g_x, g_y);
+
+	/* Activate */
+	borg_keypress('U');
+
+	/* Select the mutation */
+	borg_keypress(I2A(*b_spell));
+
+	/* Is this mutation that hits a neighbour? */
+	if (bp_ptr->muta1 & MUT1_VAMPIRISM ||
+		bp_ptr->muta1 & MUT1_PANIC_HIT)
+	{
+		/* Bite the neighbour */
+		borg_keypress(I2D(borg_extract_dir(c_x, c_y, g_x, g_y)));
+	}
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Success */
 	return (0);
@@ -8537,10 +8698,16 @@ static int borg_attack_aux(int what, int *slot, int *spell)
 			return (borg_attack_dragon_aux());
 		}
 
+		case BF_RACIAL:
+		{
+			/* Any damage inducing racial powers */
+			return (borg_attack_racial_aux());
+		}
+
 		case BF_MUTATE:
 		{
 			/* Any damage inducing mutation */
-			return (borg_attack_mutate_aux(slot, spell));
+			return (borg_attack_mutation_aux(slot, spell));
 		}
 
 		case BF_ROD:
@@ -8576,13 +8743,13 @@ static int borg_attack_aux(int what, int *slot, int *spell)
 		case BF_OBJECT:
 		{
 			/* Object attack */
-			return (borg_attack_aux_object(slot));
+			return (borg_attack_aux_object(slot, 1));
 		}
 
 		case BF_THRUST:
 		{
 			/* Physical attack */
-			return (borg_attack_aux_thrust(slot));
+			return (borg_attack_aux_thrust());
 		}
 	}
 
@@ -9346,7 +9513,8 @@ static int borg_defend_aux_resist_fecap(int p1)
 	 * down.  Ought to at least wait until 3 of the 4 are down.
 	 */
 	if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
-		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed))
+		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed) &&
+		!borg_mutation_check(MUT1_RESIST, TRUE))
 		return (0);
 
 	/* pretend we are protected and look again */
@@ -9379,7 +9547,8 @@ static int borg_defend_aux_resist_fecap(int p1)
 		/* do it! */
 		if (borg_activate_artifact(ART_COLLUIN, FALSE) ||
 			borg_spell_fail(REALM_NATURE, 2, 3, fail_allowed) ||
-			borg_mindcr_fail(MIND_CHAR_ARMOUR, 35, fail_allowed))
+			borg_mindcr_fail(MIND_CHAR_ARMOUR, 35, fail_allowed) ||
+			borg_mutation(MUT1_RESIST))
 
 			/* Value */
 			return ((p1 - p2) - 1);
@@ -9850,7 +10019,8 @@ static int borg_defend_aux_berserk(int p1)
 	if (borg_hero || borg_berserk)
 		return (0);
 
-	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH))
+	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
+		borg_mutation_check(MUT1_BERSERK, TRUE))
 		return (0);
 
 	/* if we are in some danger but not much, go for a quick bless */
@@ -9862,7 +10032,8 @@ static int borg_defend_aux_berserk(int p1)
 		if (borg_simulate) return (5);
 
 		/* do it! */
-		if (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH))
+		if (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+			borg_mutation(MUT1_BERSERK))
 			return 2;
 	}
 
@@ -11885,7 +12056,8 @@ static int borg_perma_aux_berserk_potion(void)
 		return (0);
 
 	/* do I have any? */
-	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH))
+	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
+		borg_mutation_check(MUT1_BERSERK, TRUE))
 		return (0);
 
 	/* Simulation */
@@ -11893,7 +12065,8 @@ static int borg_perma_aux_berserk_potion(void)
 	if (borg_simulate) return (2);
 
 	/* do it! */
-	if (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH))
+	if (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+		borg_mutation(MUT1_BERSERK))
 		return (2);
 
 
@@ -12464,7 +12637,7 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_CURING) ||
 			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 			borg_activate_artifact(ART_GONDOR, FALSE) ||
-			borg_quaff_crit(bp_ptr->chp < 10))
+			borg_quaff_crit((bool) (bp_ptr->chp < 10)))
 		{
 			return (TRUE);
 		}
@@ -12477,7 +12650,7 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_SLOW_POISON) ||
 			borg_eat_food(SV_FOOD_WAYBREAD) ||
 			borg_eat_food(SV_FOOD_CURE_POISON) ||
-			borg_quaff_crit(bp_ptr->chp < 10) ||
+			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_quaff_potion(SV_POTION_CURING) ||
@@ -12522,7 +12695,9 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_HEROISM) ||
 			borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
 			borg_activate_artifact(ART_DAL, FALSE) ||
-			borg_racial(RACE_HALF_ORC) || borg_racial(RACE_HALF_TROLL))
+			borg_mutation(MUT1_BERSERK) ||
+			borg_racial(RACE_HALF_ORC) ||
+			borg_racial(RACE_HALF_TROLL))
 		{
 			return (TRUE);
 		}
@@ -12863,6 +13038,7 @@ static bool borg_play_step(int y2, int x2)
 		if (borg_spell(REALM_ARCANE, 2, 4) ||
 			borg_spell(REALM_NATURE, 1, 0) ||
 			borg_spell(REALM_CHAOS, 2, 3) ||
+			borg_mutation(MUT1_EAT_ROCK) ||
 			borg_racial(RACE_HALF_GIANT))
 		{
 			borg_note("# Melting a wall");
@@ -13194,7 +13370,7 @@ bool borg_flow_stair_less(int why)
 	else
 	{
 		/* Spread the flow, No Optimize, Avoid */
-		borg_flow_spread(250, FALSE, !borg_desperate, FALSE);
+		borg_flow_spread(250, FALSE, (bool) !borg_desperate, FALSE);
 	}
 
 	/* Attempt to Commit the flow */
@@ -13484,7 +13660,7 @@ bool borg_flow_kill_aim(bool viewable)
 				c_y = s_c_y;
 
 				/* Spread the flow */
-				borg_flow_spread(5, TRUE, !viewable, FALSE);
+				borg_flow_spread(5, TRUE, (bool) !viewable, FALSE);
 
 				/* Attempt to Commit the flow */
 				if (!borg_flow_commit("targetable position", GOAL_KILL))
@@ -13590,10 +13766,10 @@ bool borg_flow_kill_corridor(bool viewable)
 			}
 
 			/* Do not dig unless we appear strong enough to succeed or we have a digger */
-			if (borg_spell_legal(REALM_SORCERY, 1, 8) ||
-				borg_spell_legal(REALM_ARCANE, 2, 4) ||
+			if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 				borg_spell_legal(REALM_NATURE, 1, 0) ||
 				borg_spell_legal(REALM_CHAOS, 2, 3) ||
+				borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
 				borg_racial_check(RACE_HALF_GIANT, TRUE) ||
 				(bp_ptr->skill_dig > (bp_ptr->depth > 80 ? 30 : 40)))
 			{
@@ -13886,7 +14062,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 	/* if we are not flowing toward monsters that we can see, make sure they */
 	/* are at least easily reachable.  The second flag is whether or not */
 	/* to avoid unknown squares.  This was for performance when we have ESP. */
-	borg_flow_spread(nearness, TRUE, !viewable, FALSE);
+	borg_flow_spread(nearness, TRUE, (bool) !viewable, FALSE);
 
 
 	/* Attempt to Commit the flow */
@@ -14015,7 +14191,7 @@ bool borg_flow_take(bool viewable, int nearness)
 	/* if we are not flowing toward items that we can see, make sure they */
 	/* are at least easily reachable.  The second flag is weather or not  */
 	/* to avoid unkown squares.  This was for performance. */
-	borg_flow_spread(nearness, TRUE, !viewable, FALSE);
+	borg_flow_spread(nearness, TRUE, (bool) !viewable, FALSE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("item", GOAL_TAKE)) return (FALSE);
@@ -14094,6 +14270,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 			borg_spell_legal(REALM_NATURE, 1, 0) ||
 			borg_spell_legal(REALM_CHAOS, 2, 3) ||
+			borg_mutation(MUT1_EAT_ROCK) ||
 			borg_racial(RACE_HALF_GIANT)) return (TRUE);
 
 		/*
@@ -14142,10 +14319,10 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 					if (mb_ptr->feat != FEAT_PERM_INNER) continue;
 
 					/* Allow "stone to mud" ability */
-					if (borg_spell_legal(REALM_SORCERY, 1, 8) ||
-						borg_spell_legal(REALM_ARCANE, 2, 4) ||
+					if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 						borg_spell_legal(REALM_NATURE, 1, 0) ||
 						borg_spell_legal(REALM_CHAOS, 0, 6) ||
+						borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
 						borg_racial_check(RACE_HALF_GIANT, TRUE)) return (TRUE);
 
 					/*

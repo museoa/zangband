@@ -1515,7 +1515,14 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 			borg_spell(REALM_SORCERY, 3, 6);
 		}
 		else
-			borg_keypress('k');
+		{
+			/* Try the mutation to gain money */
+			if (!borg_mutation(MUT1_MIDAS_TCH))
+			{
+				/* Allright then, press the letter */
+				borg_keypress('k');
+			}
+		}
 	}
 	else
 	{

@@ -187,6 +187,9 @@ extern bool borg_mindcr_okay_fail(int spell, int level, int allow_fail);
 extern bool borg_mindcr_legal_fail(int spell, int level, int allow_fail);
 extern bool borg_racial_check(int race, bool check_fail);
 extern bool borg_racial(int race);
+extern int  borg_count_racial(int race);
+extern bool borg_mutation_check(u32b mutation, bool check_fail);
+extern bool borg_mutation(u32b mutation);
 extern void borg_cheat_spell(int realm);
 extern void prepare_race_class_info(void);
 

@@ -2155,239 +2155,13 @@ bool borg_mindcr(int spell, int level)
 	return (TRUE);
 }
 
-
-/*** Racial abilities are much like magic spells ***/
-
-/*
- * Determine if borg can cast a given Racial spell
- * (when fully rested).
- * -or-
- * with a reasonable degree of difficulty with Check_fail
- */
-bool borg_racial_check(int race, bool check_fail)
+static bool borg_power_check(bool race, u32b which, bool check_fail,
+						int lev_req, int cost, int use_stat, int difficulty)
 {
-
 	int i;
 	int val;
 	int sum = 0;
-
-	int lev_req;
-	int cost = 1;
 	int stat;
-	int use_stat = A_INT;
-	int difficulty = 100;
-
-	/* The borg must be able to "cast" spells this race */
-	if (borg_race != race) return (FALSE);
-
-	/* The spell must be "known" */
-	switch (borg_race)
-	{
-		case RACE_HOBBIT:
-		{
-			lev_req = 15;
-			cost = 10;
-			use_stat = A_INT;
-			difficulty = 10;
-			break;
-		}
-		case RACE_GNOME:
-		{
-			lev_req = 5;
-			cost = 10;
-			use_stat = A_INT;
-			difficulty = 12;
-			break;
-		}
-		case RACE_DWARF:
-		{
-			lev_req = 5;
-			cost = 5;
-			use_stat = A_WIS;
-			difficulty = 12;
-			break;
-		}
-		case RACE_HALF_ORC:
-		{
-			lev_req = 3;
-			cost = 5;
-			use_stat = A_WIS;
-			difficulty = 8;
-			break;
-		}
-		case RACE_HALF_TROLL:
-		{
-			lev_req = 10;
-			cost = 12;
-			use_stat = A_WIS;
-			difficulty = 9;
-			break;
-		}
-		case RACE_AMBERITE:	/* not coded yet */
-		{
-			lev_req = 99;
-			cost = 50;
-			use_stat = A_WIS;
-			difficulty = 50;
-			break;
-		}
-		case RACE_BARBARIAN:
-		{
-			lev_req = 8;
-			cost = 10;
-			use_stat = A_WIS;
-			difficulty = 9;
-			break;
-		}
-		case RACE_HALF_OGRE:
-		{
-			lev_req = 25;
-			cost = 35;
-			use_stat = A_STR;
-			difficulty = 15;
-			break;
-		}
-		case RACE_HALF_GIANT:
-		{
-			lev_req = 99;		/* no support */
-			cost = 10;
-			use_stat = A_INT;
-			difficulty = 12;
-			break;
-		}
-		case RACE_HALF_TITAN:
-		{
-			lev_req = 99;		/* no support */
-			cost = 20;
-			use_stat = A_INT;
-			difficulty = 12;
-			break;
-		}
-		case RACE_CYCLOPS:
-		{
-			lev_req = 20;
-			cost = 15;
-			use_stat = A_STR;
-			difficulty = 12;
-			break;
-		}
-		case RACE_YEEK:
-		{
-			lev_req = 15;
-			cost = 15;
-			use_stat = A_WIS;
-			difficulty = 10;
-			break;
-		}
-		case RACE_KLACKON:
-		{
-			lev_req = 9;
-			cost = 9;
-			use_stat = A_DEX;
-			difficulty = 14;
-			break;
-		}
-		case RACE_KOBOLD:
-		{
-			lev_req = 12;
-			cost = 8;
-			use_stat = A_DEX;
-			difficulty = 14;
-			break;
-		}
-		case RACE_NIBELUNG:
-		{
-			lev_req = 10;
-			cost = 5;
-			use_stat = A_WIS;
-			difficulty = 10;
-			break;
-		}
-		case RACE_DARK_ELF:
-		{
-			lev_req = 2;
-			cost = 2;
-			use_stat = A_INT;
-			difficulty = 9;
-			break;
-		}
-		case RACE_DRACONIAN:
-		{
-			lev_req = 15;
-			cost = 25;
-			use_stat = A_CON;
-			difficulty = 12;
-			break;
-		}
-		case RACE_MIND_FLAYER:
-		{
-			lev_req = 15;
-			cost = 12;
-			use_stat = A_INT;
-			difficulty = 14;
-			break;
-		}
-		case RACE_IMP:
-		{
-			lev_req = 9;
-			cost = 15;
-			use_stat = A_WIS;
-			difficulty = 15;
-			break;
-		}
-		case RACE_GOLEM:
-		{
-			lev_req = 20;
-			cost = 15;
-			use_stat = A_CON;
-			difficulty = 8;
-			break;
-		}
-		case RACE_SKELETON:
-		case RACE_ZOMBIE:
-		{
-			lev_req = 30;
-			cost = 30;
-			use_stat = A_WIS;
-			difficulty = 18;
-			break;
-		}
-		case RACE_VAMPIRE:
-		{
-			lev_req = 5;
-			cost = 10;
-			use_stat = A_WIS;
-			difficulty = 9;
-			break;
-		}
-		case RACE_SPECTRE:
-		{
-			lev_req = 4;
-			cost = 6;
-			use_stat = A_INT;
-			difficulty = 3;
-			break;
-		}
-		case RACE_SPRITE:
-		{
-			lev_req = 12;
-			cost = 12;
-			use_stat = A_INT;
-			difficulty = 15;
-			break;
-		}
-		case RACE_GHOUL:
-		case RACE_HUMAN:
-		case RACE_HALF_ELF:
-		case RACE_ELF:
-		case RACE_BEASTMAN:
-		case RACE_HIGH_ELF:
-		default:
-		{
-			lev_req = 99;
-			break;
-		}
-	}
 
 	/* Power is not available yet */
 	if (bp_ptr->lev < lev_req) return (FALSE);
@@ -2402,40 +2176,31 @@ bool borg_racial_check(int race, bool check_fail)
 		if (cost > bp_ptr->chp * 7 / 10) return (FALSE);
 
 		/* How much can we spend? */
-		switch (borg_race)
+		if ((race && (which == RACE_GNOME || which == RACE_AMBERITE)) ||
+			(!race && which == MUT1_VTELEPORT))
 		{
 			/* These are emergency powers, so take more risk */
-			case RACE_GNOME:
-			case RACE_AMBERITE:
-			{
-				if (bp_ptr->chp < bp_ptr->mhp * 3 / 10)	return (FALSE);
-				break;
-			}
-			default:
-			{
-				if (bp_ptr->chp < bp_ptr->mhp * 5 / 10) return (FALSE);
-				break;
-			}
+			if (bp_ptr->chp < bp_ptr->mhp * 3 / 10)	return (FALSE);
+		}
+		else
+		{
+			/* Allow up to 50% of HP to be used */
+			if (bp_ptr->chp < bp_ptr->mhp * 5 / 10) return (FALSE);
 		}
 	}
 	/* Don't use too much SP */
 	else
 	{
 		/* How much can we spend? */
-		switch (borg_race)
+		if ((race && (which == RACE_GNOME || which == RACE_AMBERITE)) ||
+			(!race && which == MUT1_VTELEPORT))
 		{
 			/* These are emergency powers, so any mana usage is allowable */
-			case RACE_GNOME:
-			case RACE_AMBERITE:
-			{
-				break;
-			}
-			default:
-			{
-				/* Disallow if using the power spends reserve mana */
-				if (bp_ptr->csp - cost < borg_reserve_mana()) return (FALSE);
-				break;
-			}
+		}
+		else
+		{
+			/* Disallow if using the power spends reserve mana */
+			if (bp_ptr->csp - cost < borg_reserve_mana()) return (FALSE);
 		}
 	}
 
@@ -2480,11 +2245,116 @@ bool borg_racial_check(int race, bool check_fail)
 	/* Finally get the fail % */
 	difficulty =  100 - 100 * sum / difficulty / stat;
 
+	/* Don't try if the fail rate is higher then 40% */
 	if (difficulty >= 40)
 		return (FALSE);
-	else
-		/* Success */
-		return (TRUE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*** Racial abilities are much like magic spells ***/
+
+/*
+ * Determine if borg can cast a given Racial spell (when fully rested).
+ * -or-
+ * with a reasonable degree of difficulty with Check_fail
+ *
+ * Ghoul and Amberite have a second power but that is ignored
+ * The values for borg_power_check come from tables.c
+ */
+bool borg_racial_check(int race, bool check_fail)
+{
+	/* Who are you?  Who, who.  Who, who. */
+	if (borg_race != race) return (FALSE);
+
+	/* Tell me who are you */
+	switch (race)
+	{
+		case RACE_HOBBIT:
+			return borg_power_check(TRUE, race, check_fail, 15, 10, A_INT, 10);
+
+		case RACE_GNOME:
+			return borg_power_check(TRUE, race, check_fail, 5, 10, A_INT, 12);
+
+		case RACE_DWARF:
+			return borg_power_check(TRUE, race, check_fail, 5, 5, A_WIS, 12);
+
+		case RACE_HALF_ORC:
+			return borg_power_check(TRUE, race, check_fail, 3, 5, A_WIS, 8);
+
+		case RACE_HALF_TROLL:
+			return borg_power_check(TRUE, race, check_fail, 10, 12, A_WIS, 9);
+
+		case RACE_AMBERITE:	/* not coded yet */
+			return borg_power_check(TRUE, race, check_fail, 30, 50, A_INT, 50);
+
+		case RACE_BARBARIAN:
+			return borg_power_check(TRUE, race, check_fail, 8, 10, A_WIS, 9);
+
+		case RACE_HALF_OGRE:
+			return borg_power_check(TRUE, race, check_fail, 25, 35, A_INT, 15);
+
+		case RACE_HALF_GIANT:
+			return borg_power_check(TRUE, race, check_fail, 20, 10, A_STR, 12);
+
+		case RACE_HALF_TITAN:
+			return borg_power_check(TRUE, race, check_fail, 35, 20, A_STR, 12);
+
+		case RACE_CYCLOPS:
+			return borg_power_check(TRUE, race, check_fail, 20, 15, A_STR, 12);
+
+		case RACE_YEEK:
+			return borg_power_check(TRUE, race, check_fail, 15, 15, A_WIS, 10);
+
+		case RACE_KLACKON:
+			return borg_power_check(TRUE, race, check_fail, 9, 9, A_DEX, 14);
+
+		case RACE_KOBOLD:
+			return borg_power_check(TRUE, race, check_fail, 12, 8, A_DEX, 14);
+
+		case RACE_NIBELUNG:
+			return borg_power_check(TRUE, race, check_fail, 10, 5, A_WIS, 10);
+
+		case RACE_DARK_ELF:
+			return borg_power_check(TRUE, race, check_fail, 2, 2, A_INT, 9);
+
+		case RACE_DRACONIAN:
+			return borg_power_check(TRUE, race, check_fail, 15, 25, A_CON, 12);
+
+		case RACE_MIND_FLAYER:
+			return borg_power_check(TRUE, race, check_fail, 15, 12, A_INT, 14);
+
+		case RACE_IMP:
+			return borg_power_check(TRUE, race, check_fail, 9, 15, A_WIS, 15);
+
+		case RACE_GOLEM:
+			return borg_power_check(TRUE, race, check_fail, 20, 15, A_CON, 8);
+
+		case RACE_SKELETON:
+		case RACE_ZOMBIE:
+			return borg_power_check(TRUE, race, check_fail, 30, 30, A_WIS, 18);
+
+		case RACE_VAMPIRE:
+			return borg_power_check(TRUE, race, check_fail, 5, 10, A_CON, 9);
+
+		case RACE_SPECTRE:
+			return borg_power_check(TRUE, race, check_fail, 4, 6, A_INT, 3);
+
+		case RACE_SPRITE:
+			return borg_power_check(TRUE, race, check_fail, 12, 12, A_INT, 15);
+
+		case RACE_GHOUL:
+			return borg_power_check(TRUE, race, check_fail, 1, 0, A_CON, 0);
+
+		case RACE_HUMAN:
+		case RACE_HALF_ELF:
+		case RACE_ELF:
+		case RACE_BEASTMAN:
+		case RACE_HIGH_ELF:
+		default: return (FALSE);
+	}
 }
 
 
@@ -2506,6 +2376,208 @@ bool borg_racial(int race)
 	/* Success */
 	return (TRUE);
 }
+
+
+/*
+ * Mutations and racial both use U and the racial comes first.
+ * This procedure returns the number of racial powers for a race
+ */
+int borg_count_racial(int race)
+{
+	/* Which race is that? */
+	switch (race)
+	{
+		/* Amberite & Ghoul have two racial powers */
+		case RACE_GHOUL:
+		case RACE_AMBERITE: return (2);
+
+		/* These have one racial power */
+		case RACE_HOBBIT:
+		case RACE_GNOME:
+		case RACE_DWARF:
+		case RACE_HALF_ORC:
+		case RACE_HALF_TROLL:
+		case RACE_BARBARIAN:
+		case RACE_HALF_OGRE:
+		case RACE_HALF_GIANT:
+		case RACE_HALF_TITAN:
+		case RACE_CYCLOPS:
+		case RACE_YEEK:
+		case RACE_KLACKON:
+		case RACE_KOBOLD:
+		case RACE_NIBELUNG:
+		case RACE_DARK_ELF:
+		case RACE_DRACONIAN:
+		case RACE_MIND_FLAYER:
+		case RACE_IMP:
+		case RACE_GOLEM:
+		case RACE_SKELETON:
+		case RACE_ZOMBIE:
+		case RACE_VAMPIRE:
+		case RACE_SPECTRE:
+		case RACE_SPRITE: return (1);
+
+		/* No such luck for these guys */
+		case RACE_HUMAN:
+		case RACE_HALF_ELF:
+		case RACE_ELF:
+		case RACE_BEASTMAN:
+		case RACE_HIGH_ELF:
+		default: return (0);
+	}
+}
+
+
+/* Give every mutation its stats.  These numbers come from tables.c */
+bool borg_mutation_check(u32b mutation, bool check)
+{
+	/* Is this mutation available? */
+	if (!(bp_ptr->muta1 & mutation)) return (FALSE);
+
+	switch (mutation)
+	{
+		case MUT1_SPIT_ACID:
+			return borg_power_check(FALSE, mutation, check, 9, 9, A_DEX, 15);
+
+		case MUT1_BR_FIRE:
+			return borg_power_check(FALSE, mutation, check, 20, 20, A_CON, 18);
+
+		case MUT1_HYPN_GAZE:
+			return borg_power_check(FALSE, mutation, check, 12, 12, A_CHR, 18);
+
+		case MUT1_TELEKINES:
+			return borg_power_check(FALSE, mutation, check, 9, 9, A_WIS, 14);
+
+		case MUT1_VTELEPORT:
+			return borg_power_check(FALSE, mutation, check, 7, 7, A_WIS, 15);
+
+		case MUT1_MIND_BLST:
+			return borg_power_check(FALSE, mutation, check, 5, 3, A_WIS, 15);
+
+		case MUT1_RADIATION:
+			return borg_power_check(FALSE, mutation, check, 15, 15, A_CON, 14);
+
+		case MUT1_VAMPIRISM:
+			return borg_power_check(FALSE, mutation, check, 10, 10, A_CON, 9);
+
+		case MUT1_SMELL_MET:
+			return borg_power_check(FALSE, mutation, check, 3, 2, A_INT, 12);
+
+		case MUT1_SMELL_MON:
+			return borg_power_check(FALSE, mutation, check, 5, 4, A_INT, 15);
+
+		case MUT1_BLINK:
+			return borg_power_check(FALSE, mutation, check, 3, 3, A_WIS, 12);
+
+		case MUT1_EAT_ROCK:
+			return borg_power_check(FALSE, mutation, check, 8, 12, A_CON, 18);
+
+		case MUT1_SWAP_POS:
+			return borg_power_check(FALSE, mutation, check, 15, 12, A_DEX, 16);
+
+		case MUT1_SHRIEK:
+			return borg_power_check(FALSE, mutation, check, 20, 14, A_CON, 16);
+
+		case MUT1_ILLUMINE:
+			return borg_power_check(FALSE, mutation, check, 3, 2, A_INT, 10);
+
+		case MUT1_DET_CURSE:
+			return borg_power_check(FALSE, mutation, check, 7, 14, A_WIS, 14);
+
+		case MUT1_BERSERK:
+			return borg_power_check(FALSE, mutation, check, 8, 8, A_STR, 14);
+
+		case MUT1_POLYMORPH:
+			return borg_power_check(FALSE, mutation, check, 18, 20, A_CON, 18);
+
+		case MUT1_MIDAS_TCH:
+			return borg_power_check(FALSE, mutation, check, 10, 5, A_INT, 12);
+
+		case MUT1_GROW_MOLD:
+			return borg_power_check(FALSE, mutation, check, 1, 6, A_CON, 14);
+
+		case MUT1_RESIST:
+			return borg_power_check(FALSE, mutation, check, 10, 12, A_CON, 12);
+
+		case MUT1_EARTHQUAKE:
+			return borg_power_check(FALSE, mutation, check, 12, 12, A_STR, 16);
+
+		case MUT1_EAT_MAGIC:
+			return borg_power_check(FALSE, mutation, check, 17, 1, A_WIS, 15);
+
+		case MUT1_WEIGH_MAG:
+			return borg_power_check(FALSE, mutation, check, 6, 6, A_INT, 10);
+
+		case MUT1_STERILITY:
+			return borg_power_check(FALSE, mutation, check, 12, 23, A_CHR, 15);
+
+		case MUT1_PANIC_HIT:
+			return borg_power_check(FALSE, mutation, check, 10, 12, A_DEX, 14);
+
+		case MUT1_DAZZLE:
+			return borg_power_check(FALSE, mutation, check, 7, 15, A_CHR, 8);
+
+		case MUT1_LASER_EYE:
+			return borg_power_check(FALSE, mutation, check, 7, 10, A_WIS, 9);
+
+		case MUT1_RECALL:
+			return borg_power_check(FALSE, mutation, check, 17, 50, A_INT, 16);
+
+		case MUT1_BANISH:
+			return borg_power_check(FALSE, mutation, check, 25, 25, A_WIS, 18);
+
+		case MUT1_COLD_TOUCH:
+			return borg_power_check(FALSE, mutation, check, 2, 2, A_CON, 11);
+
+		case MUT1_LAUNCHER:
+			return borg_power_check(FALSE, mutation, check, 10, 15, A_STR, 6);
+
+		default: return (FALSE);
+	}
+}
+
+
+/*
+ * Attempt to cast a mutational spell
+ */
+bool borg_mutation(u32b mutation)
+{
+	int i, spell;
+	u32b mut_nr = 0;
+
+	/* Require ability (right now) */
+	if (!borg_mutation_check(mutation, TRUE)) return (FALSE);
+
+	/* Find out if the there isn't a racial in the way */
+	spell = borg_count_racial(borg_race) - 1;
+
+	/* Loop through all the bits in bp_ptr->muta1 */
+	for (i = 1; i < 32; i++)
+	{
+		/* get the current mutation */
+		mut_nr = (mut_nr) ? mut_nr * 2 : 1;
+
+		/* Does the borg have this mutation? */
+		if (!(bp_ptr->muta1 & mut_nr)) continue;
+
+		/* Advance the letter index */
+		spell += 1;
+
+		/* Is this the mutation? (Must have it at some point) */
+		if (mut_nr == mutation) break;
+	}
+
+	/* Debugging Info */
+	borg_note("# Mutated Power.");
+
+	/* Cast a spell */
+	borg_keypress('U');
+	borg_keypress(I2A(spell));
+
+	/* Success */
+	return (TRUE);
+}
+
 
 /*
  * Hack -- Cheat the "spell" info
