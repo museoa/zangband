@@ -569,10 +569,6 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta, char *tc)
 
 	byte *scr_taa = &scrn->ta[y][x];
 	char *scr_tcc = &scrn->tc[y][x];
-	
-	/* Verify location */
-	if ((x < 0) || (x + n - 1 >= Term->wid)) return;
-	if ((y < 0) || (y >= Term->hgt)) return;
 
 	while (n--)
 	{

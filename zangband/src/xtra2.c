@@ -1299,7 +1299,7 @@ void verify_panel(void)
 	{
 		/* Get new 'best value' */
 		x = p_ptr->panel_x1;
-		y = p_ptr->panel_x1;
+		y = p_ptr->panel_y1;
 		nx = p_ptr->px - wid / 2;
 		ny = p_ptr->py - hgt / 2;
 		
@@ -1323,32 +1323,35 @@ void verify_panel(void)
 }
 
 /*
- * Center the dungeon display around the player
+ * Center the dungeon display around the given square
  */
-void panel_center(void)
+bool panel_center(int x, int y)
 {
 	int wid, hgt;
-	
-	int x, y;
 
 	/* Get size */
 	get_map_size(&wid, &hgt);
 		
-	x = p_ptr->px - wid / 2;
-	y = p_ptr->py - hgt / 2;
+	x -= wid / 2;
+	y -= hgt / 2;
+
+	/* How far to move panel? */
+	if (abs(p_ptr->panel_x1 - x) < wid / 4) x = p_ptr->panel_x1;
+	if (abs(p_ptr->panel_y1 - y) < hgt / 4) y = p_ptr->panel_y1; 
 		
 	/* Get new bounds */
 	if (panel_bounds(x, y, wid, hgt))
 	{
-		/* Hack -- optional disturb on "panel change" */
-		if (disturb_panel && !center_player) disturb(FALSE);
-		
 		/* Window stuff */
 		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 		
 		/* Handle stuff */
 		handle_stuff();
+		
+		return (TRUE);
 	}
+	
+	return (FALSE);
 }
 
 
@@ -2664,8 +2667,8 @@ bool target_set(int mode)
 			if (d)
 			{
 				/* Modified to scroll to monster */
-				int y2 = p_ptr->panel_y1;
-				int x2 = p_ptr->panel_x1;
+				int x2 = x;
+				int y2 = y;
 
 				/* Find a new monster */
 				i = target_pick(temp_x[m], temp_y[m], ddx[d], ddy[d]);
@@ -2702,7 +2705,7 @@ bool target_set(int mode)
 						get_map_size(&wid, &hgt);
 
 						/* Restore previous position */
-						panel_bounds(x2, y2, wid, hgt);
+						panel_center(x2, y2);
 						
 						/* Recalculate interesting grids */
 						target_set_prepare(mode);
@@ -2715,15 +2718,15 @@ bool target_set(int mode)
 						y = y2 + dy;
 
 						/* Apply the motion */
-						if (change_panel(dx, dy)) target_set_prepare(mode);
+						if (panel_center(x, y)) target_set_prepare(mode);
+						
+						/* Slide into legality */
+						if (x < p_ptr->min_wid) x = p_ptr->min_wid;
+						else if (x >= p_ptr->max_wid) x = p_ptr->max_wid - 1;
 
 						/* Slide into legality */
-						if (x < p_ptr->panel_x1) x = p_ptr->panel_x1;
-						else if (x >= p_ptr->panel_x2) x = p_ptr->panel_x2 - 1;
-
-						/* Slide into legality */
-						if (y < p_ptr->panel_y1) y = p_ptr->panel_y1;
-						else if (y >= p_ptr->panel_y2) y = p_ptr->panel_y2 - 1;
+						if (y < p_ptr->min_hgt) y = p_ptr->min_hgt;
+						else if (y >= p_ptr->max_hgt) y = p_ptr->max_hgt - 1;
 					}
 				}
 
@@ -2842,15 +2845,15 @@ bool target_set(int mode)
 				x += dx;
 				y += dy;
 
-				if (change_panel(dx, dy)) target_set_prepare(mode);
+				if (panel_center(x, y)) target_set_prepare(mode);
+				
+				/* Slide into legality */
+				if (x < p_ptr->min_wid) x = p_ptr->min_wid;
+				else if (x >= p_ptr->max_wid) x = p_ptr->max_wid - 1;
 
 				/* Slide into legality */
-				if (x < p_ptr->panel_x1) x = p_ptr->panel_x1;
-				else if (x >= p_ptr->panel_x2) x = p_ptr->panel_x2 - 1;
-
-				/* Slide into legality */
-				if (y < p_ptr->panel_y1) y = p_ptr->panel_y1;
-				else if (y >= p_ptr->panel_y2) y = p_ptr->panel_y2 - 1;
+				if (y < p_ptr->min_hgt) y = p_ptr->min_hgt;
+				else if (y >= p_ptr->max_hgt) y = p_ptr->max_hgt - 1;
 			}
 		}
 	}

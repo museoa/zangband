@@ -2976,8 +2976,8 @@ static void evolve_dungeon(void)
 	}
 
 
-	/* Center the panel */
-	panel_center();
+	/* Center the panel on the player */
+	panel_center(p_ptr->px, p_ptr->py);
 
 	/* Flush messages */
 	message_flush();
@@ -3368,19 +3368,18 @@ void play_game(bool new_game)
 	if (arg_force_original) rogue_like_commands = FALSE;
 	if (arg_force_roguelike) rogue_like_commands = TRUE;
 
-	/* React to changes */
-	Term_xtra(TERM_XTRA_REACT, 0);
-
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
-
 
 	/* Character is now "complete" */
 	character_generated = TRUE;
 
 	/* Hack -- Character is no longer "icky" */
 	screen_load();
-
+	
+	/* React to changes */
+	Term_xtra(TERM_XTRA_REACT, 0);
+	
 	/* Start game */
 	p_ptr->state.playing = TRUE;
 
