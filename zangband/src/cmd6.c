@@ -1659,7 +1659,7 @@ static void do_cmd_use_staff_aux(int item)
 
 
 	/* Take a turn */
-	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2126,7 +2126,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 
 	/* Take a turn */
-	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 90 / (175 - p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2533,7 +2533,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 
 	/* Take a turn */
-	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 90 / (175 - p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2973,7 +2973,7 @@ static void do_cmd_activate_aux(int item)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 90 / (175 - p_ptr->skill_dev);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);
