@@ -2294,7 +2294,7 @@ F:EASY_KNOW
 L:USE:	msgf("The potion makes you vomit!")
 L:USE:	if player.food > PY_FOOD_STARVE - 1 then set_food(PY_FOOD_STARVE - 1) end
 L:USE:	clear_poisoned()
-L:USE:	inc_paralzyed(4)
+L:USE:	inc_paralyzed(4)
 L:SMASH:return TRUE,FALSE
 
 N:256:Enlightenment
