@@ -1994,6 +1994,16 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 	}
 }
 
+/*
+ * This function blends adjacent sea blocks
+ * (by picking the feat type to use)
+ */
+static void blend_sea(cave_type *c_ptr, byte sea_type)
+{
+	c_ptr->feat = pick_feat(FEAT_SHAL_WATER, FEAT_DEEP_WATER,
+					FEAT_OCEAN_WATER, FEAT_NONE, 0, 10, 20, 40, sea_type);
+}
+
 
 /*
  * The function that picks a "blending feature" for wild. gen. type 1
@@ -2016,7 +2026,7 @@ static void blend_wild_02(cave_type *c_ptr, byte *data)
 }
 
 
-void blend_helper(cave_type *c_ptr, byte *data,int g_type)
+void blend_helper(cave_type *c_ptr, byte *data, int g_type)
 {
 	/* Based on type - choose wilderness block generation function */
 	switch (g_type)
@@ -2109,11 +2119,23 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 
 			w_type = wild[y + dy][x + dx].done.wild;
 
-			/* The sea doesn't blend. (Use rivers) */
-			if (w_type >= WILD_SEA) continue;
-
 			/* If adjacent type is the same as this one - don't blend */
 			if (w_type == type) continue;
+			
+			/* The sea doesn't blend. (Use rivers) */
+			if (w_type >= WILD_SEA)
+			{
+				if (type >= WILD_SEA)
+				{
+					blend_sea(&block_ptr[j][i], (byte)(w_type - WILD_SEA));
+				}
+				else
+				{
+					/* Do not try to blend sea with land */
+					/* We need to fix the blocky look of oceans though */
+					continue;
+				}
+			}
 
 			/* Blend with generation type specified by gen_routine */
 			blend_helper(&block_ptr[j][i], wild_gen_data[w_type].data,
