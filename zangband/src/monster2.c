@@ -478,7 +478,7 @@ void get_mon_num_prep(monster_hook_type monster_hook)
 bool test_monster_square(cave_type *c_ptr, monster_race *r_ptr)
 {
 	/* Permanent walls are out */
-	if (cave_perma_grid(c_ptr)) return (FALSE);
+	if (cave_perma_grid(c_ptr) && !cave_floor_grid(c_ptr)) return (FALSE);
 
 	/* Nor on the Pattern */
 	if (cave_pattern_grid(c_ptr)) return (FALSE);
