@@ -1,0 +1,149 @@
+# File: config-char
+
+# Purpose: assign an icon to the character
+
+#
+# Copyright (c) 1997-2001 Tim Baker
+#
+# This software may be copied and distributed for educational, research, and
+# not for profit purposes provided that this copyright and statement are
+# included in all such copies.
+#
+
+###
+### Adam Bolt
+###
+proc AutoAssignCharacterIcon {} {
+
+	# List of character classes in order of graphics
+	set classList [list Warrior Mage Priest Rogue Ranger Paladin]
+	lappend classList Warrior-Mage Chaos-Warrior Monk Mindcrafter High-Mage
+
+	foreach class [angband info class_name] {
+		set mapClass($class) $class
+	}
+
+	if {$::DEBUG} {
+		foreach class [angband info class_name] {
+			if {![lsearch -exact $classList $mapClass($class)] == -1} {
+				error "can't find class \"$class\""
+			}
+		}
+	}
+
+	set playerClass $mapClass([angband player class])
+
+	set head [lsearch -exact $classList $playerClass]
+	if {$head == -1} {error "can't find player class"}
+	set head [expr ($head + 18) * 32]
+
+	# List of character races in order of graphics 
+	set raceList [list Human Half-Elf Elf Hobbit Gnome Dwarf Half-Orc \
+		Half-Troll Dunadan High-Elf]
+
+	# Add ZAngband-specific races
+	lappend raceList Amberite Barbarian Half-Ogre Half-Giant Half-Titan \
+		Cyclops Yeek Klackon Kobold Nibelung Dark-Elf Draconian Mindflayer \
+		Imp Golem Skeleton Zombie Vampire Spectre Sprite Beastman
+
+	foreach race [angband info race_name] {
+		set mapRace($race) $race
+	}
+
+	if {$::DEBUG} {
+		foreach race [angband info race_name] {
+			regsub -all " " $race _ race
+			if {[lsearch -exact $raceList $race] == -1} {
+				error "can't find race \"$race\""
+			}
+		}
+	}
+
+	regsub -all " " [angband player race] _ playerRace
+	set playerRace $mapRace($playerRace)
+	
+	set tail [lsearch -exact $raceList $playerRace]
+	if {$tail == -1} {
+		error "can't find player race"
+	}
+	set index [expr {$head + $tail}]
+	assign set character 0 "icon adam $index"
+
+	# Set the flag to indicate the icon was auto-assigned
+	Global autoAssign 1
+
+	return
+}
+
+###
+### David E. Gervais
+###
+if {[string match dg32* [Global config,prefix]]} {
+
+rename AutoAssignCharacterIcon AutoAssignCharacterIcon_ab
+
+proc AutoAssignCharacterIcon {} {
+
+	global Angband
+
+	# First, assign the character icon using Adam Bolt's complete set
+	# of character icons. Then assign using David E. Gervais' incomplete
+	# set of character icons if an appropriate image exists.
+	AutoAssignCharacterIcon_ab
+
+	set iconIndex -1
+
+	# The dg-classes.txt file contains a list of icons by race and class
+	set fileId [open [CPathTk image dg dg-classes.txt]]
+
+	set playerRace [angband player race]
+	set playerClass [angband player class]
+
+	if {[catch {
+
+		# Check each line of the file
+		foreach lineBuf [split [read $fileId] \n] {
+
+			# Skip empty lines
+			if {![string length $lineBuf]} continue
+
+			# Skip comments
+			if {[string index $lineBuf 0] == "#"} continue
+
+			# Look for "race class"
+			if {[scan $lineBuf "%s %s" race class] != 2} continue
+
+			# Next icon
+			incr iconIndex
+
+			# Match the character's race and class
+			if {[string compare $race $playerRace]} continue
+			if {[string compare $class $playerClass]} continue
+
+			# Assign the character icon
+			assign set character 0 "icon classm $iconIndex"
+
+			# Set the flag to indicate the icon was auto-assigned
+			Global autoAssign 1
+			
+			# Done
+			break
+		}
+
+	# catch
+	} error]} {
+		set message "An error occured during startup:\n    $error\nQuit now?"
+		set answer [tk_messageBox -title "$Angband(name) Error" -message $message \
+			-type yesno -icon question]
+		if {$answer == "yes"} [angband game abort]
+	}
+
+	close $fileId
+
+	return
+}
+
+# David E. Gervais
+}
+
+AutoAssignCharacterIcon

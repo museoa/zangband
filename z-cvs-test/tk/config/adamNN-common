@@ -1,0 +1,61 @@
+# File: adamNN-common
+
+# Purpose: common icon configuration settings
+
+#
+# Copyright (c) 1997-2001 Tim Baker
+#
+# This software may be copied and distributed for educational, research, and
+# not for profit purposes provided that this copyright and statement are
+# included in all such copies.
+#
+
+# Set up the special town layout.
+
+# The "town" icon type
+NSConfig::CreateIconType town town[icon size].gif "" [icon size]
+
+# The "town" layout file
+NSConfig::ShareConfigFile town town
+
+
+# Assign ascii-type icons to everything because not everything has an icon.
+NSConfig::SourceOne classic-common
+
+
+# Hack
+NSConfig::NoMoreIcons
+
+proc VaultCurrentProc {depth} {
+
+	if {$depth} {
+		vault current 0
+	}
+
+	return
+}
+
+# When entering a level, see if a custom .vlt file exists
+qebind VaultCurrent <Dungeon-enter> {VaultCurrentProc %c}
+
+# Apply gamma correction to "adam" icon type
+if {[Platform windows]} {
+	icon gamma adam 1.2
+}
+
+# Assign an icon to each flavored object
+NSConfig::SourceOne config-flavor
+
+# Hack -- Some monsters are never seen
+# These "none 0" assignments are never overridden
+foreach r_idx [angband r_info find -flag CHAR_CLEAR -flag ATTR_CLEAR] {
+	assign set monster $r_idx "icon none 0"
+}
+
+# Assign pile icon to "object 0". ZAngbandTk has a unique adam16.gif file.
+# HARDCODED
+assign set object 0 "icon adam 112"
+
+# Assign an icon to the character
+NSConfig::SourceOne config-char
+
