@@ -992,8 +992,8 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	/* Activate the object */
 	apply_object_trigger(TRIGGER_USE, o_ptr, ""); 
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Notice changes */
+	notice_item();
 
 	make_noise(3);
 

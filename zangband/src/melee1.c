@@ -794,9 +794,9 @@ bool make_attack_normal(int m_idx)
 								msgf("Your light dims.");
 								obvious = TRUE;
 							}
-
-							/* Window stuff */
-							p_ptr->window |= (PW_EQUIP);
+							
+							/* Notice changes */
+							notice_equip();
 						}
 
 						break;

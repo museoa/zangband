@@ -1652,8 +1652,8 @@ void drain_lite(void)
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP);
+	/* Notice changes */
+	notice_equip();
 	
 	/* Darkeness */
 	unlite_room(p_ptr->px, p_ptr->py);

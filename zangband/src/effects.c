@@ -3433,20 +3433,14 @@ void notice_inven(void)
 
 void notice_equip(void)
 {
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
 }
 
 void notice_item(void)
 {
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	notice_inven();
+	notice_equip();
 }
 
 

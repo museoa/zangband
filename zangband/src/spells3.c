@@ -829,8 +829,8 @@ bool apply_disenchant(void)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+	/* Notice changes */
+	notice_equip();
 
 	/* Notice */
 	return (TRUE);
@@ -2641,8 +2641,8 @@ bool bless_weapon(void)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+	/* Notice changes */
+	notice_item();
 
 	return TRUE;
 }
@@ -2688,10 +2688,10 @@ bool potion_smash_effect(int who, int x, int y, object_type *o_ptr)
 		gain_exp((k_ptr->level + p_ptr->lev / 2) / p_ptr->lev);
 	}
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Notice changes */
+	notice_item();
 
-	return angry;
+	return (angry);
 }
 
 

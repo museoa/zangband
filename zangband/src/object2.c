@@ -4683,11 +4683,8 @@ object_type *item_split(object_type *o_ptr, int num)
 		/* Recalculate mana */
 		p_ptr->update |= (PU_MANA);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Notice changes */
+		notice_item();
 	}
 
 	/* Fill in holes... */
@@ -4725,11 +4722,8 @@ void item_increase(object_type *o_ptr, int num)
 		/* Recalculate mana */
 		p_ptr->update |= (PU_MANA);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Notice changes */
+		notice_item();
 	}
 
 	item_describe(o_ptr);
@@ -4898,8 +4892,8 @@ object_type *inven_carry(object_type *o_ptr)
 			/* Recalculate bonuses and weight */
 			p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN);
+			/* Notice changes */
+			notice_inven();
 
 			/* Wipe old object */
 			object_wipe(o_ptr);
@@ -4997,9 +4991,6 @@ object_type *inven_takeoff(object_type *o_ptr)
 		return (NULL);
 	}
 
-	/* Recalculate bonuses and weight */
-	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
-
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
 
@@ -5009,7 +5000,7 @@ object_type *inven_takeoff(object_type *o_ptr)
 	p_ptr->redraw |= (PR_EQUIPPY);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
 
 	/* Return the item */
 	return (q_ptr);

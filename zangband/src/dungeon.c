@@ -734,8 +734,8 @@ void notice_lite_change(object_type *o_ptr)
 	/* Hack -- notice interesting fuel steps */
 	if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
 	{
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
+		/* Notice changes */
+		notice_equip();
 	}
 
 	/* Hack -- Special treatment when blind */
@@ -1645,9 +1645,9 @@ static void process_world(void)
 					if (!o_ptr->timeout)
 					{
 						recharged_notice(o_ptr);
-
-						/* Window stuff */
-						p_ptr->window |= (PW_EQUIP);
+						
+						/* Notice changes */
+						notice_equip();
 					}
 				}
 				else if (!(FLAG(o_ptr, TR_LITE)))
@@ -1669,9 +1669,9 @@ static void process_world(void)
 				if (!o_ptr->timeout)
 				{
 					recharged_notice(o_ptr);
-
-					/* Window stuff */
-					p_ptr->window |= (PW_EQUIP);
+					
+					/* Notice changes */
+					notice_equip();
 				}
 			}
 		}

@@ -974,7 +974,11 @@ extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
 extern void do_poly_self(void);
 extern void make_noise(byte amount);
+
 extern void disturb(bool stop_search);
+extern void notice_inven(void);
+extern void notice_equip(void);
+extern void notice_item(void);
 
 
 /* xtra2.c */

@@ -2535,14 +2535,14 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	/* Save the inscription */
 	o_ptr->xtra_name = quark_add(new_name);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
 	/* Make the object an artifact */
 	SET_FLAG(o_ptr, TR_INSTA_ART);
 
 	/* Set the cost */
 	o_ptr->cost = k_info[o_ptr->k_idx].cost + flag_cost(o_ptr, o_ptr->pval);
+	
+	/* Notice changes */
+	notice_item();
 
 	return TRUE;
 }
