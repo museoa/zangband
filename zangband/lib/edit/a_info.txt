@@ -1182,12 +1182,16 @@ F:INSTA_ART
 
 # The Katana 'Aglarang' -> of Groo
 
+# Unique power: Double damage if wielder is a warrior
 N:81:of Groo
 I:23:20:2
 W:52:25:50:75000
-P:0:6d4:0:0:0
+P:0:5d4:0:0:0
 F:DEX | HIDE_TYPE | VORPAL |
 F:SUST_DEX | SHOW_MODS | SPEED | INSTA_ART
+L:HIT:	if player.rp.pclass == CLASS_WARRIOR then
+L:HIT:		damage = damage * 2
+L:HIT:	end
 
 
 # The Long Sword 'Ringil'
