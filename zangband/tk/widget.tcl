@@ -446,8 +446,6 @@ proc NSWidget::yview {oop cmd args} {
 	return
 }
 
-set DY 0
-
 # NSWidget::xview --
 #
 #	Typical xview command
@@ -523,9 +521,6 @@ proc NSWidget::xview {oop cmd args} {
 
 	return
 }
-
-set DX 0
-set DX2 0
 
 
 # NSWidget::TrackPress --
