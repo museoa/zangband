@@ -4871,12 +4871,6 @@ void cave_set_feat(int x, int y, int feat)
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
-			
-			/* Redraw map */
-			p_ptr->redraw |= (PR_MAP);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 		}
 	}
 	else
@@ -4886,14 +4880,14 @@ void cave_set_feat(int x, int y, int feat)
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
-			
-			/* Redraw map */
-			p_ptr->redraw |= (PR_MAP);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 		}
 	}
+	
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Change the feature */
 	c_ptr->feat = feat;
