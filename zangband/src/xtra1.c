@@ -3414,7 +3414,7 @@ static void calc_bonuses(void)
 		if (p_ptr->lev > 44) p_ptr->num_blow++;
 		if (p_ptr->lev > 49) p_ptr->num_blow++;
 
-		if (!p_ptr->monk_armour_stat)
+		if (p_ptr->monk_armour_stat)
 		{
 			p_ptr->num_blow /= 2;
 		}
