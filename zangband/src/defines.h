@@ -654,10 +654,9 @@
 
 /*
  * OPTION: Maximum number of "quarks" (see "utils.c")
- * Default: assume at most 512 different inscriptions are used
+ * Default: assume at most 2048 scripts + names + inscriptions
  */
-#define QUARK_MAX       768
-/* Was 512... 256 quarks added for random artifacts */
+#define QUARK_MAX       2048
 
 /*
  * Threshold for quark list before compacting
@@ -4922,21 +4921,6 @@ extern int PlayerUID;
  * (apart from savefile compatibility).
  */
 #define MAX_PLAYER_VIRTUES 8
-
-
-/*
- * Hack -- attempt to reduce various values
- */
-#ifdef ANGBAND_LITE
-# undef MACRO_MAX
-# define MACRO_MAX      128
-# undef QUARK_MAX
-# define QUARK_MAX      256
-# undef MESSAGE_MAX
-# define MESSAGE_MAX    128
-# undef MESSAGE_BUF
-# define MESSAGE_BUF    4096
-#endif
 
 
 /*
