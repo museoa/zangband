@@ -2,26 +2,28 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-ZAngband 2.5.1 (Preview II):
--Fixed several bugs in dungeon generation routines.
--Fixed some missing static keywords.
+ZAngband 2.5.1:
 -Removed some compiler warnings.
+-Documentation updates.
 -Weakened the Death Ray spell somewhat.
 -CHECK_MODIFICATION_TIME should now work correctly for Macs.
 -Added a SILLY flag to r_info.txt.  This will allow people to turn
- off 'silly' monsters via an option in the future.
+ off 'silly' monsters via a birth option.
 -Sanity blasts have been switched back on but toned down until the
  special buildings return.
--The 'wasting disease' permanent stat drain has been removed until
- the special buidings return.
--Fixed some problems with the 8x8 tiles.
+-The 'wasting disease' permanent stat drain has been removed.
 -Displaying the character history is now possible by pressing 'h'
  when rolling the character (not yet in point-based mode).
-
-
-ZAngband 2.5.1 (Preview I):
--Documentation updates.
+-Closing the Win32 version with minimized main-window no longer
+ causes problems.
+-The terrain_streams option now does something. It toggles the use
+ of (lava)rivers, (lava)lakes, and trees on level 1.
+-You can now disarm traps when standing on them.
+-Rivers should look less silly now.
 -Changed the drive-letters in the Cygwin makefile from d: to c:.
+-Fixed some problems with the 8x8 tiles.
+-Fixed several bugs in dungeon generation routines.
+-Fixed some missing static keywords.
 -Fixed a bug with the Amiga map.
 -Fixed a bug that caused nameless characters to be saved in the wrong
  directory.
