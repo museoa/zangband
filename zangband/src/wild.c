@@ -4698,8 +4698,7 @@ static void wild_done(void)
  *
  * Problem: The towns don't take into account the hpl of the wilderness
  * properly yet.  There may need to be another union to store the information
- * as the wildness is being made...
- 
+ * as the wildness is being made... 
  *
  * This code is incomplete: 
  * No lakes yet.
@@ -4725,7 +4724,7 @@ void create_wilderness(void)
 		/* Tiny wilderness */
 		max_wild = WILD_GRID_SIZE + 1;
 
-		/* Mega Hack - make an "empty" wilderness (all ocean). */
+		/* Mega Hack - make an "empty" wilderness. */
 		for (i = 0; i < max_wild; i++)
 		{
 			for (j = 0; j < max_wild; j++)
