@@ -3913,7 +3913,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	}
 
 	/* Add the object to the ground */
-	put_object(o_ptr, x, y);
+	drop_near(o_ptr, -1, x, y);
 }
 
 
