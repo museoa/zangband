@@ -1535,21 +1535,6 @@ static void player_outfit(void)
 
 
 /*
- * Clear the previous question
- */
-static void clear_question(void)
-{
-	int i;
-
-	for (i = QUESTION_ROW; i < TABLE_ROW; i++)
-	{
-		/* Clear line, position cursor */
-		Term_erase(0, i, 255);
-	}
-}
-
-
-/*
  * Player sex
  */
 static bool get_player_sex(void)
@@ -1884,19 +1869,19 @@ static bool player_birth_aux_1(void)
 	if (!get_player_sex()) return (FALSE);
 
 	/* Clean up */
-	clear_question();
+    clear_region(0, QUESTION_ROW, TABLE_ROW - 1);
 
 	/* Choose the players race */
 	if (!get_player_race()) return (FALSE);
 
 	/* Clean up */
-	clear_question();
+	clear_region(0, QUESTION_ROW, TABLE_ROW - 1);
 
 	/* Choose the players class */
 	if (!get_player_class()) return (FALSE);
 
 	/* Clean up */
-	clear_question();
+	clear_region(0, QUESTION_ROW, TABLE_ROW - 1);
 
 	/* Choose the magic realms */
 	if (!get_player_realms()) return (FALSE);

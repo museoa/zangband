@@ -2277,19 +2277,11 @@ void prt_map(void)
 	ymax = (p_ptr->max_hgt - 1 > panel_row_max) ?
 		panel_row_max : p_ptr->max_hgt - 1;
 
-	/* Bottom section of screen */
-	for (y = 1; y <= ymin - panel_row_prt; y++)
-	{
-		/* Erase the section */
-		Term_erase(COL_MAP, y, wid);
-	}
-
 	/* Top section of screen */
-	for (y = ymax - panel_row_prt; y <= hgt; y++)
-	{
-		/* Erase the section */
-		Term_erase(COL_MAP, y, wid);
-	}
+    clear_region(COL_MAP, 1, ymin - panel_row_prt);
+
+	/* Bottom section of screen */
+    clear_region(COL_MAP, ymax - panel_row_prt, hgt);
 
 	/* Sides of screen */
 	/* Left side */

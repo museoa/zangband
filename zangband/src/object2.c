@@ -5762,19 +5762,13 @@ bool can_player_destroy_object(object_type *o_ptr)
  */
 void display_koff(int k_idx)
 {
-	int y;
-
 	/* Get local object */
 	object_type *q_ptr;
 
 	char o_name[256];
 
 	/* Erase the window */
-	for (y = 0; y < Term->hgt; y++)
-	{
-		/* Erase the line */
-		Term_erase(0, y, 255);
-	}
+    clear_from(0);
 
 	/* No info */
 	if (!k_idx) return;

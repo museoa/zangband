@@ -258,18 +258,6 @@ bool get_nightmare(int r_idx)
 }
 
 
-/*
- * Clear the building information
- */
-static void clear_bldg(int min_row, int max_row)
-{
-	int i;
-
-	for (i = min_row; i <= max_row; i++)
-		Term_erase(0, i, 255);
-}
-
-
 static void building_prt_gold(void)
 {
 	prtf(40, 23, "Gold Remaining: %9ld", (long)p_ptr->au);
@@ -465,7 +453,7 @@ static s32b gamble_init(void)
 		return (0);
 	}
 
-	clear_bldg(5, 23);
+	clear_region(0, 5,23);
 
 	/* Set maximum bet */
 	if (p_ptr->lev < 10)
@@ -1124,7 +1112,7 @@ bool compare_weapons(void)
 	object_type *o_ptr;
 
 	/* Clear the screen */
-	clear_bldg(6, 18);
+    clear_region(0, 6, 18);
 
 	/* Point to wielded weapon */
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
@@ -1176,8 +1164,8 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	int maxenchant_d = (p_ptr->lev / 3);
 	char tmp_str[256];
 
-
-	clear_bldg(5, 18);
+    clear_region(0, 5, 18);
+    
 	if (to_dam)
 		prtf(0, 5, "  Based on your skill, we can improve up to +%d,+%d%%.", maxenchant, maxenchant_d * 3);
 	else
@@ -1276,7 +1264,7 @@ void building_recharge(s32b cost)
 
 
 	/* Display some info */
-	clear_bldg(5, 18);
+    clear_region(0, 5, 18);
 	prtf(0, 6, "  The prices of recharge depend on the type.");
 
 	/* Only accept legal items */

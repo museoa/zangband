@@ -4616,11 +4616,8 @@ static void handle_signal_simple(int sig)
 		/* Make a noise */
 		Term_xtra(TERM_XTRA_NOISE, 0);
 
-		/* Clear the top line */
-		Term_erase(0, 0, 255);
-
 		/* Display the cause */
-		put_fstr(0, 0, "Contemplating suicide!");
+		prtf(0, 0, "Contemplating suicide!");
 
 		/* Flush */
 		Term_fresh();
@@ -4650,12 +4647,8 @@ static void handle_signal_abort(int sig)
 	/* Nothing to save, just quit */
 	if (!character_generated || character_saved) quit(NULL);
 
-
-	/* Clear the bottom line */
-	Term_erase(0, 23, 255);
-
 	/* Give a warning */
-	put_fstr(0, 23, CLR_RED "A gruesome software bug LEAPS out at you!");
+	prtf(0, 23, CLR_RED "A gruesome software bug LEAPS out at you!");
 
 	/* Message */
 	put_fstr(45, 23, CLR_RED "Panic save...");

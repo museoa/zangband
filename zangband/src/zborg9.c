@@ -2342,7 +2342,7 @@ static void borg_prt_binary(u32b flags, int col, int row)
  */
 static void borg_display_item(list_item *l_ptr)
 {
-	int i, j = 13;
+	int j = 13;
 
 	/* Clear the screen */
     clear_region(13 - 2, 1, 23);

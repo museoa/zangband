@@ -2280,7 +2280,7 @@ void display_inven(void)
 		}
 
 		/* Display the index (or blank space) */
-		put_fstr(0, i, tmp_val);
+		prtf(0, i, tmp_val);
 
 		/* Obtain an item description */
 		object_desc(o_name, o_ptr, TRUE, 3, wid - 3);
@@ -2297,9 +2297,6 @@ void display_inven(void)
 		/* Display the entry itself */
 		put_fstr(3, i, "%s%s", attr, o_name);
 
-		/* Erase the rest of the line */
-		Term_erase(3 + n, i, 255);
-
 		/* Display the weight if needed */
 		if (show_weights && o_ptr->weight)
 		{
@@ -2313,11 +2310,7 @@ void display_inven(void)
 	OBJ_ITT_END;
 
 	/* Erase the rest of the window */
-	for (; i < hgt; i++)
-	{
-		/* Erase the line */
-		Term_erase(0, i, 255);
-	}
+    clear_from(i);
 }
 
 
@@ -2358,7 +2351,7 @@ void display_equip(void)
 		}
 
 		/* Display the index (or blank space) */
-		put_fstr(0, i, tmp_val);
+		prtf(0, i, tmp_val);
 
 		/* Obtain an item description */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2374,9 +2367,6 @@ void display_equip(void)
 
 		/* Display the entry itself */
 		put_fstr(3, i, "%s%s", attr, o_name);
-
-		/* Erase the rest of the line */
-		Term_erase(3 + n, i, 255);
 
 		/* Display the slot description (if needed) */
 		if (show_labels)
@@ -2395,11 +2385,7 @@ void display_equip(void)
 	}
 
 	/* Erase the rest of the window */
-	for (i = EQUIP_MAX; i < hgt; i++)
-	{
-		/* Clear that line */
-		Term_erase(0, i, 255);
-	}
+    clear_from(EQUIP_MAX);
 }
 
 

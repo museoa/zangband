@@ -1207,7 +1207,7 @@ static errr init_alloc(void)
  */
 static void note(cptr str)
 {
-	Term_erase(0, 23, 255);
+	clear_row(23);
 	put_fstr(20, 23, str);
 	Term_fresh();
 }

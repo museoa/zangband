@@ -618,7 +618,7 @@ void borg_note(cptr what)
 		Term_locate(&x, &y);
 
 		/* Erase current line */
-		Term_erase(0, y, 255);
+		clear_row(y);
 
 
 		/* Total length */
@@ -662,7 +662,7 @@ void borg_note(cptr what)
 				if (++y >= h) y = 0;
 
 				/* Erase next line */
-				Term_erase(0, y, 255);
+				clear_row(y);
 
 				/* Advance */
 				what += k;
@@ -678,7 +678,7 @@ void borg_note(cptr what)
 			if (++y >= h) y = 0;
 
 			/* Erase next line */
-			Term_erase(0, y, 255);
+			clear_row(y);
 		}
 
 		/* Normal */
@@ -691,7 +691,7 @@ void borg_note(cptr what)
 			if (++y >= h) y = 0;
 
 			/* Erase next line */
-			Term_erase(0, y, 255);
+			clear_row(y);
 		}
 
 

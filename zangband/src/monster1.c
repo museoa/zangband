@@ -1467,8 +1467,8 @@ void roff_top(int r_idx)
 
 
 	/* Clear the top line */
-	Term_erase(0, 0, 255);
-
+	clear_msg();
+    
 	/* Reset the cursor */
 	Term_gotoxy(0, 0);
 
@@ -1509,7 +1509,7 @@ void screen_roff(int r_idx, int remember)
 	message_flush();
 
 	/* Begin recall */
-	Term_erase(0, 1, 255);
+	clear_row(1);
 
 	/* Recall monster */
 	roff_aux(r_idx, remember);
@@ -1526,14 +1526,8 @@ void screen_roff(int r_idx, int remember)
  */
 void display_roff(int r_idx)
 {
-	int y;
-
 	/* Erase the window */
-	for (y = 0; y < Term->hgt; y++)
-	{
-		/* Erase the line */
-		Term_erase(0, y, 255);
-	}
+    clear_from(0);
 
 	/* Begin recall */
 	Term_gotoxy(0, 1);
@@ -1556,13 +1550,8 @@ void display_visible(void)
 	byte a1, a2;
 	monster_race *r_ptr;
 
-
 	/* Erase the window */
-	for (y = 0; y < Term->hgt; y++)
-	{
-		/* Erase the line */
-		Term_erase(0, y, 255);
-	}
+    clear_from(0);
 
 	/* Are we hallucinating? */
 	if (p_ptr->image)
