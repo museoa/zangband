@@ -3943,6 +3943,20 @@ void change_level(int level)
  */
 void wipe_all_list(void)
 {
+    int i;
+
+    /* Clear the store cache */
+    for (i = 0; i < store_cache_num; i++)
+    {
+        if (store_cache[i]->stock != NULL)
+        {
+            FREE(store_cache[i]->stock);
+            store_cache[i]->stock_num = 0;
+            store_cache[i]->stock = NULL;
+        }
+    }
+    store_cache_num = 0;
+
 	if (p_ptr->depth)
 	{
 		/* In the dungeon */
