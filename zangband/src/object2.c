@@ -1171,7 +1171,7 @@ s32b object_value_real(object_type *o_ptr)
 			/* Give credit for bonuses */
 			value += ((sqvalue(o_ptr->to_h) +
 			           sqvalue(o_ptr->to_d) +
-			           sqvalue(o_ptr->to_a)) * 5L);
+			           sqvalue(o_ptr->to_a)) * 7L);
 
 			/* Done */
 			break;
@@ -1189,13 +1189,13 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_DRAG_ARMOR:
 		{
 			/* Give credit for hit bonus */
-			value += (sqvalue(o_ptr->to_h - k_ptr->to_h) * 5L);
+			value += (sqvalue(o_ptr->to_h - k_ptr->to_h) * 7L);
 
 			/* Give credit for damage bonus */
-			value += (sqvalue(o_ptr->to_d - k_ptr->to_d) * 5L);
+			value += (sqvalue(o_ptr->to_d - k_ptr->to_d) * 7L);
 
 			/* Give credit for armor bonus */
-			value += (sqvalue(o_ptr->to_a - k_ptr->to_a) * 5L);
+			value += (sqvalue(o_ptr->to_a - k_ptr->to_a) * 7L);
 
 			/* Done */
 			break;
@@ -1211,7 +1211,7 @@ s32b object_value_real(object_type *o_ptr)
 			/* Factor in the bonuses */
 			value += ((sqvalue(o_ptr->to_h) +
 			           sqvalue(o_ptr->to_d) +
-			           sqvalue(o_ptr->to_a)) * 5L);
+			           sqvalue(o_ptr->to_a)) * 7L);
 
 			/* Hack -- Factor in extra damage dice */
 			if (k_ptr->dd * k_ptr->ds)
