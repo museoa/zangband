@@ -525,8 +525,7 @@ void activate_quests(int level)
 		
 		/* Is the quest relevant? */
 		if ((q_ptr->type == QUEST_TYPE_GENERAL)
-			|| ((q_ptr->type == QUEST_TYPE_DUNGEON) && (level))
-			|| ((q_ptr->type == QUEST_TYPE_WILD) && (!level)))
+			|| ((q_ptr->type == QUEST_TYPE_DUNGEON) && (level)))
 		{
 			q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			
