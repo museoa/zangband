@@ -3662,7 +3662,7 @@
 #define ironman_moria			p_ptr->birth[10]
 #define munchkin_death			p_ptr->birth[11]
 #define ironman_rooms			p_ptr->birth[12]
-#define maximize_mode			p_ptr->birth[13]
+/* {TRUE,  0, NULL,					"Number 205" }, p_ptr->birth[13] */
 #define preserve_mode			p_ptr->birth[14]
 #define autoroller				p_ptr->birth[15]
 #define point_based				p_ptr->birth[16]

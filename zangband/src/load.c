@@ -1341,8 +1341,8 @@ static void rd_extra(void)
 	rd_byte(&tmp8u); /* oops */
 	rd_byte(&tmp8u); /* oops */
 	rd_byte((byte*) &p_ptr->searching);
-	rd_byte((byte*) &maximize_mode);
-	rd_byte((byte*) &preserve_mode);
+	rd_byte(&tmp8u);
+	rd_byte(&tmp8u);
 	rd_byte(&tmp8u);
 
 	/* Future use */

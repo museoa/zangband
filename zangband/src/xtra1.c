@@ -2715,15 +2715,11 @@ static void calc_bonuses(void)
 			break;
 	}
 
-	/* Hack -- apply racial/class stat maxes */
-	if (maximize_mode)
+	/* Apply the racial modifiers */
+	for (i = 0; i < A_MAX; i++)
 	{
-		/* Apply the racial modifiers */
-		for (i = 0; i < A_MAX; i++)
-		{
-			/* Modify the stats for "race" */
-			p_ptr->stat_add[i] += (rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
-		}
+		/* Modify the stats for "race" */
+		p_ptr->stat_add[i] += (rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
 	}
 
 

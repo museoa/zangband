@@ -148,14 +148,13 @@ static long equip_value(void)
 static long total_points(void)
 {
 	long temp;
-	long mult = 100;
+	long mult = 85;
 	
 	/* AI is not that big a deal (yet) */
 	if (stupid_monsters) mult -= 20;
 	
-	/* Penalize preserve, maximize modes */
+	/* Penalize preserve mode */
 	if (preserve_mode) mult -= 10;
-	if (maximize_mode) mult -= 15;
 	
 	/* Vanilla town is harder than normal */
 	if (vanilla_town) mult += 5;

@@ -751,9 +751,8 @@ static void load_prev_data(void)
  * auto_roll is boolean and states maximum changes should be used rather
  * than random ones to allow specification of higher values to wait for.
  *
- * The "maximize" code is important	-BEN-
  */
-static int adjust_stat(int value, int amount, int auto_roll)
+static int adjust_stat(int value, int amount)
 {
 	int i;
 
@@ -788,21 +787,9 @@ static int adjust_stat(int value, int amount, int auto_roll)
 			{
 				value++;
 			}
-			else if (maximize_mode)
+			else
 			{
 				value += 10;
-			}
-			else if (value < 18+70)
-			{
-				value += (auto_roll ? 20 : rand_range(5, 20));
-			}
-			else if (value < 18+90)
-			{
-				value += (auto_roll ? 8 : rand_range(2, 8));
-			}
-			else if (value < 18+100)
-			{
-				value++;
 			}
 		}
 	}
@@ -858,25 +845,11 @@ static void get_stats(void)
 		/* Obtain a "bonus" for "race" and "class" */
 		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
-		/* Variable stat maxes */
-		if (maximize_mode)
-		{
-			/* Start fully healed */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
+		/* Start fully healed */
+		p_ptr->stat_cur[i] = p_ptr->stat_max[i];
 
-			/* Efficiency -- Apply the racial/class bonuses */
-			stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
-		}
-
-		/* Fixed stat maxes */
-		else
-		{
-			/* Apply the bonus to the stat (somewhat randomly) */
-			stat_use[i] = adjust_stat(p_ptr->stat_max[i], bonus, FALSE);
-
-			/* Save the resulting stat maximum */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
-		}
+		/* Efficiency -- Apply the racial/class bonuses */
+		stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 	}
 }
 
@@ -2081,7 +2054,7 @@ static void class_aux_hook(cptr c_str)
 
 	sprintf(s, "Hit die: %d ", class_info[class_idx].c_mhp);
 	Term_putstr(CLASS_AUX_COL, TABLE_ROW + A_MAX, -1, TERM_WHITE, s);
-	sprintf(s, "Experience: %d%%", class_info[class_idx].c_exp);
+	sprintf(s, "Experience: %2d%%", class_info[class_idx].c_exp);
 	Term_putstr(CLASS_AUX_COL, TABLE_ROW + A_MAX + 1, -1, TERM_WHITE, s);
 }
 
@@ -2538,24 +2511,8 @@ static bool player_birth_aux_2(void)
 		/* Process stats */
 		for (i = 0; i < A_MAX; i++)
 		{
-			/* Variable stat maxes */
-			if (maximize_mode)
-			{
-				/* Reset stats */
-				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stats[i];
-
-			}
-
-			/* Fixed stat maxes */
-			else
-			{
-				/* Obtain a "bonus" for "race" and "class" */
-				int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-
-				/* Apply the racial/class bonuses */
-				p_ptr->stat_cur[i] = p_ptr->stat_max[i] =
-					modify_stat_value(stats[i], bonus);
-			}
+			/* Reset stats */
+			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stats[i];
 
 			/* Total cost */
 			cost += birth_stat_costs[stats[i] - 10];
@@ -2729,7 +2686,7 @@ static bool player_birth_aux_3(void)
 			j = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 			/* Obtain the "maximal" stat */
-			m = adjust_stat(17, j, TRUE);
+			m = adjust_stat(17, j);
 
 			/* Save the maximum */
 			mval[i] = m;
@@ -3049,6 +3006,7 @@ static bool player_birth_aux_3(void)
 
 static bool player_birth_aux(void)
 {
+	int i, delta;
 	char ch;
 
 	/* Ask questions */
@@ -3087,7 +3045,28 @@ static bool player_birth_aux(void)
 	/* Start over */
 	if ((ch == 0x7F) || (ch == KTRL('H'))) return (FALSE);
 
-	/* Accept */
+	/* Accepted */
+	
+	/*
+	 * Now lets perturb the stats a little 
+	 * so there is some variation at the start of the game.
+	 */
+	for (i = 0; i < A_MAX; i++)
+	{
+		/* Only if above 18, where the percentiles don't matter much */
+		if (p_ptr->stat_use[i] > 18)
+		{
+			/* Get amount to change the stat */
+			delta = randint0(10);
+			
+			/* Adjust the stats */
+			p_ptr->stat_use[i] += delta;
+			p_ptr->stat_cur[i] += delta;
+			p_ptr->stat_max[i] += delta;
+		}
+	}	
+	
+	/* Done */
 	return (TRUE);
 }
 

@@ -2125,12 +2125,9 @@ static void display_player_stat_info(void)
 		if ((p_ptr->stat_max[i] > 18) && (p_ptr->stat_top[i] <= 18))
 			e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i] - 18) / 10 - 19;
 
-		/* Deduct class and race bonuses if in maximize */
-		if (maximize_mode)
-		{
-			e_adj -= rp_ptr->r_adj[i];
-			e_adj -= cp_ptr->c_adj[i];
-		}
+		/* Deduct class and race bonuses */
+		e_adj -= rp_ptr->r_adj[i];
+		e_adj -= cp_ptr->c_adj[i];
 
 		/* Reduced name of stat */
 		c_put_str(TERM_WHITE, stat_names_reduced[i], row + i, stat_col);
@@ -2830,10 +2827,6 @@ errr file_character(cptr name, bool full)
 	}
 
 	fprintf(fff, "\n\n  [Miscellaneous information]\n");
-	if (maximize_mode)
-		fprintf(fff, "\n Maximize Mode:      ON");
-	else
-		fprintf(fff, "\n Maximize Mode:      OFF");
 
 	if (preserve_mode)
 		fprintf(fff, "\n Preserve Mode:      ON");

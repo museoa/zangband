@@ -1022,9 +1022,9 @@ static void wr_extra(void)
 	wr_byte(0);     /* oops */
 	wr_byte(0);     /* oops */
 	wr_byte(p_ptr->searching);
-	wr_byte(maximize_mode);
-	wr_byte(preserve_mode);
-	wr_byte(0);
+	wr_byte(0);		/* oops */
+	wr_byte(0);		/* oops */
+	wr_byte(0);		/* oops */
 
 	/* Future use */
 	for (i = 0; i < 12; i++) wr_u32b(0L);
