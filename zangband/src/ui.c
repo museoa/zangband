@@ -343,7 +343,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll)
 	
 	for (i = 0; i < num; i++)
 	{
-		if (options[i].available)
+		if (options[i].flags & MN_AVAILABLE)
 		{
 			/* Is this option selected */
 			if (i == select)
@@ -491,7 +491,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 					/* Scroll over */
 					if (select < 0) select = num - 1;
 				}
-				while(!options[select].select);
+				while(!options[select].flags & MN_SELECT);
 				
 				/* Show the list */
 				show_menu(num, options, select, scroll);
@@ -514,7 +514,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 					/* Scroll over */
 					if (select >= num) select = 0;
 				}
-				while(!options[select].select);
+				while(!options[select].flags & MN_SELECT);
 				
 				/* Show the list */
 				show_menu(num, options, select, scroll);
@@ -537,7 +537,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 		/* Find the action to call */
 		for (j = 0; j < num; j++)
 		{
-			if (options[j].available)
+			if (options[j].flags & MN_AVAILABLE)
 			{
 				if (!i)
 				{
@@ -562,7 +562,10 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 						 * Select this option for next time
 						 * if had a previous selection.
 						 */
-						if ((select >= 0) && options[j].select) select = j;
+						if ((select >= 0) && (options[j].flags & MN_SELECT))
+						{
+							select = j;
+						}
 						
 						/* Show the list */
 						show_menu(num, options, select, scroll);

@@ -530,12 +530,12 @@ static bool do_cmd_options_cheat_aux(int option)
 
 menu_type cheat_menu[CHEAT_MAX + 1] =
 {
-	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
-	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
-	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
-	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
-	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
-	{NULL, do_cmd_options_cheat_aux, TRUE, TRUE},
+	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
 	MENU_END
 };
 
@@ -544,11 +544,9 @@ menu_type cheat_menu[CHEAT_MAX + 1] =
  */
 static bool do_cmd_options_cheat(int dummy)
 {
-	char ch;
-
 	char buf[1024];
 
-	int i, k = 0, n = CHEAT_MAX;
+	int i;
 	
 	cptr info = "Cheaters never win";
 	
@@ -572,93 +570,6 @@ static bool do_cmd_options_cheat(int dummy)
 	}
 
 	display_menu(cheat_menu, 0, TRUE, info);
-#if 0
-	screen_save();
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Interact with the player */
-	while (TRUE)
-	{
-		/* Prompt XXX XXX XXX */
-		put_fstr(0, 0, "%s (RET to advance, y/n to set, ESC to accept) ", info);
-
-		/* Display the options */
-		for (i = 0; i < n; i++)
-		{
-			cptr a = CLR_WHITE;
-
-			/* Color current option */
-			if (i == k) a = CLR_L_BLUE;
-
-			/* Display the option text */
-			prtf(0, i + 2, "%s%-48s: %s  (%s)",
-					a, cheat_info[i].o_desc,
-					(*cheat_info[i].o_var ? "yes" : "no "),
-					cheat_info[i].o_text);
-		}
-
-		/* Hilite current option */
-		Term_gotoxy(50, k + 2);
-
-		/* Get a key */
-		ch = inkey();
-
-		/* Analyze */
-		switch (ch)
-		{
-			case ESCAPE:
-			{
-				screen_load();
-				return (FALSE);
-			}
-
-			case '-':
-			case '8':
-			{
-				k = (n + k - 1) % n;
-				break;
-			}
-
-			case ' ':
-			case '\n':
-			case '\r':
-			case '2':
-			{
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'y':
-			case 'Y':
-			case '6':
-			{
-				p_ptr->noscore |= cheat_info[k].o_word;
-				(*cheat_info[k].o_var) = TRUE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'n':
-			case 'N':
-			case '4':
-			{
-				(*cheat_info[k].o_var) = FALSE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			default:
-			{
-				bell("Illegal command for cheat options!");
-				break;
-			}
-		}
-	}
-	
-	screen_load();
-#endif /* 0 */
 
 	return (FALSE);
 }
@@ -1277,23 +1188,23 @@ static bool do_cmd_options_dump(int dummy)
 /* The main options menu */
 static menu_type options_menu[OPTION_MENU_MAX] =
 {
-	{"User Interface Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Disturbance Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Game-Play Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Efficiency Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Display Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Birth Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Artificial Intelligence Options", do_cmd_options_aux, TRUE, FALSE},
-	{"Testing Options", do_cmd_options_aux, TRUE, FALSE},
+	{"User Interface Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Disturbance Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Game-Play Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Efficiency Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Display Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Birth Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Artificial Intelligence Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"Testing Options", do_cmd_options_aux, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Cheating Options", do_cmd_options_cheat, TRUE, FALSE},
-	{"Base Delay Factor", do_cmd_options_delay, TRUE, FALSE},
-	{"Hitpoint Warning", do_cmd_options_hitpoint, TRUE, FALSE},
+	{"Cheating Options", do_cmd_options_cheat, MN_AVAILABLE},
+	{"Base Delay Factor", do_cmd_options_delay, MN_AVAILABLE},
+	{"Hitpoint Warning", do_cmd_options_hitpoint, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Autosave Options", do_cmd_options_autosave, TRUE, FALSE},
-	{"Window Flags", do_cmd_options_win, TRUE, FALSE},
+	{"Autosave Options", do_cmd_options_autosave, MN_AVAILABLE},
+	{"Window Flags", do_cmd_options_win, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Dump Options to a Pref File", do_cmd_options_dump, TRUE, FALSE},
+	{"Dump Options to a Pref File", do_cmd_options_dump, MN_AVAILABLE},
 	MENU_END
 };
 

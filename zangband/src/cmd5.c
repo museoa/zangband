@@ -3026,7 +3026,14 @@ static bool cmd_pets_dismiss(int dummy)
 	}
 
 	/* Can only dismiss pets if actually have some */
-	pet_menu[PET_DISMISS].available = pets;
+	if (pets)
+	{
+		pet_menu[PET_DISMISS].flags |= MN_AVAILABLE;
+	}
+	else
+	{
+		pet_menu[PET_DISMISS].flags &= ~(MN_AVAILABLE);
+	}
 
 	/* Stay at menu */
 	return (FALSE);
@@ -3161,14 +3168,14 @@ static bool cmd_pets_items(int dummy)
 /* The menu used to interact with pets */
 menu_type pet_menu[PET_CHOICE_MAX + 1] =
 {
-	{"dismiss pets", cmd_pets_dismiss, TRUE, FALSE},
-	{"stay close", cmd_pets_close, TRUE, TRUE},
-	{"follow me", cmd_pets_follow, TRUE, TRUE},
-	{"seek and destroy", cmd_pets_destroy, TRUE, TRUE},
-	{"give me space", cmd_pets_space, TRUE, TRUE},
-	{"stay away", cmd_pets_away, TRUE, TRUE},
-	{NULL, cmd_pets_doors, TRUE, FALSE},
-	{NULL, cmd_pets_items, TRUE, FALSE},
+	{"dismiss pets", cmd_pets_dismiss, MN_AVAILABLE},
+	{"stay close", cmd_pets_close, MN_AVAILABLE | MN_SELECT},
+	{"follow me", cmd_pets_follow, MN_AVAILABLE | MN_SELECT},
+	{"seek and destroy", cmd_pets_destroy, MN_AVAILABLE | MN_SELECT},
+	{"give me space", cmd_pets_space, MN_AVAILABLE | MN_SELECT},
+	{"stay away", cmd_pets_away, MN_AVAILABLE | MN_SELECT},
+	{NULL, cmd_pets_doors, MN_AVAILABLE},
+	{NULL, cmd_pets_items, MN_AVAILABLE},
 	MENU_END
 };
 
@@ -3199,15 +3206,41 @@ void do_cmd_pet(void)
 	}
 
 	/* Can only dismiss pets if actually have some */
-	pet_menu[PET_DISMISS].available = pets;
+	if (pets)
+	{
+		pet_menu[PET_DISMISS].flags |= MN_AVAILABLE;
+	}
+	else
+	{
+		pet_menu[PET_DISMISS].flags &= ~(MN_AVAILABLE);
+	}
 
 	/* Get current option */
-	if (p_ptr->pet_follow_distance == PET_CLOSE_DIST) pet_select = PET_STAY_CLOSE;
-	if (p_ptr->pet_follow_distance == PET_FOLLOW_DIST) pet_select = PET_FOLLOW_ME;
-	if (p_ptr->pet_follow_distance == PET_DESTROY_DIST) pet_select = PET_SEEK_AND_DESTROY;
-	if (p_ptr->pet_follow_distance == PET_SPACE_DIST) pet_select = PET_ALLOW_SPACE;
-	if (p_ptr->pet_follow_distance == PET_AWAY_DIST) pet_select = PET_STAY_AWAY;
-
+	if (p_ptr->pet_follow_distance == PET_CLOSE_DIST)
+	{
+		pet_select = PET_STAY_CLOSE;
+	}
+	
+	if (p_ptr->pet_follow_distance == PET_FOLLOW_DIST)
+	{
+		pet_select = PET_FOLLOW_ME;
+	}
+	
+	if (p_ptr->pet_follow_distance == PET_DESTROY_DIST)
+	{
+		pet_select = PET_SEEK_AND_DESTROY;
+	}
+	
+	if (p_ptr->pet_follow_distance == PET_SPACE_DIST)
+	{
+		pet_select = PET_ALLOW_SPACE;
+	}
+	
+	if (p_ptr->pet_follow_distance == PET_AWAY_DIST)
+	{
+		pet_select = PET_STAY_AWAY;
+	}
+	
 	/* Change option text depending on flag */
 	if (p_ptr->pet_open_doors)
 	{

@@ -1802,8 +1802,8 @@ typedef struct menu_type menu_type;
 
 struct menu_type
 {
-	cptr text;	/* Option text */
-	menu_select_type action; /* Action to do */
-	bool available;	/* Is this action available? */
-	bool select; /* Is this action 'selectable'? */
+	cptr text;					/* Option text */
+	menu_select_type action;	/* Action to do */
+
+	byte flags;					/* Flags controling option behaviour */
 };
