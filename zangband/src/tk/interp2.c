@@ -342,7 +342,6 @@ bad_index:
  *		game abort ?confirm? -- Quit without saving
  *		game directory -- Get a directory pathname
  *		game keymap_dump -- Dump a keymap file
- *		game macro_dump -- Dump a macro file
  *		game new -- Start a new game
  *		game open -- Open a save file
  *		game process_pref_file -- Process a preference file
@@ -369,11 +368,11 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"abort", "tkdir"
-		"macro_dump", "new", "open", "quit",
+		"new", "open", "quit",
 		"keymap_dump", "version",
 		"savefile", NULL};
 	enum {IDX_ABORT, IDX_TKDIR,
-		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_QUIT,
+		IDX_NEW, IDX_OPEN, IDX_QUIT,
 		IDX_KEYMAP_DUMP, IDX_VERSION,
 		IDX_SAVEFILE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -434,43 +433,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			break;
 		}
 		
-					
-		case IDX_MACRO_DUMP: /* macro_dump */
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "filename");
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetStringFromObj(objV[2], NULL);
-
-			if (t[0] && t[0] != ' ')
-			{
-				/* Translate the file path */
-				extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-				if (extString == NULL) return TCL_ERROR;
-
-				/* Dump the macros */
-				if (macro_dump(extString) == -1)
-				{
-					/* Set the error */
-					Tcl_AppendStringsToObj(resultPtr,
-						"error writing macro file \"", t, "\"",
-						NULL);
-
-					/* Clean up */
-					Tcl_DStringFree(&extDString);
-
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-			}
-			break;
-
 		case IDX_NEW: /* new */
 			if (!g_initialized)
 			{
@@ -944,192 +906,6 @@ objcmd_keypress(ClientData clientData, Tcl_Interp *interp, int objc,
 	return TCL_OK;
 }
 
-
-/*
- *--------------------------------------------------------------
- *
- * objcmd_macro --
- *
- *	Implements the "macro" script command.
- * 	Syntax:
- *		macro action INDEX ?ACTION? -- get/set a macro's action
- *		macro command INDEX ?BOOLEAN? -- get/set a macro's "command" flag
- *		macro create KEYPRESS -- create a new macro with given keypress
- *		macro delete INDEX -- delete a macro
- *		macro keypress INDEX -- get/set a macro's trigger keypress
- *		macro max -- get number of macros
- *
- *--------------------------------------------------------------
- */
-
-int
-objcmd_macro(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	static cptr cmdOptions[] = {"action", "command", "create", "delete",
-		"keypress", "max", NULL};
-	enum {IDX_ACTION, IDX_COMMAND, IDX_CREATE, IDX_DELETE,
-		IDX_KEYPRESS, IDX_MAX} option;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-	int n;
-	char *t, buf[80];
-
-    if (objC < 2)
-    {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
-		return TCL_ERROR;
-    }
-
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
-		(int *) &option) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-	switch (option)
-	{
-		case IDX_ACTION: /* action */
-			if (Tcl_GetIntFromObj(interp, objV[2], &n) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (n < 0 || n >= macro__num) goto bad_index;
-			if (objC == 4)
-			{
-				/* Get the action */
-				t = Tcl_GetStringFromObj(objV[3], NULL);
-
-				/* Printable --> Ascii */
-				text_to_ascii(buf, t);
-
-				/* Free the old macro action */
-				string_free(macro__act[n]);
-
-				/* Save the macro action */
-				macro__act[n] = string_make(buf);
-			}
-
-			/* Ascii --> Printable */
-			ascii_to_text(buf, macro__act[n]);
-
-			/* Return action */
-			Tcl_SetStringObj(resultPtr, buf, -1);
-			break;
-
-		case IDX_COMMAND: /* command */
-			if (Tcl_GetIntFromObj(interp, objV[2], &n) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (n < 0 || n >= macro__num) goto bad_index;
-			if (objC == 4)
-			{
-				int cmd_flag;
-
-				if (Tcl_GetBooleanFromObj(interp, objV[3], &cmd_flag) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-
-				/* Save the "cmd_flag" */
-				macro__cmd[n] = cmd_flag;
-			}
-
-			/* Return "cmd_flag" */
-			Tcl_SetBooleanObj(resultPtr, macro__cmd[n]);
-			break;
-
-		case IDX_CREATE: /* create */
-
-			/* Get the keypress */
-			t = Tcl_GetStringFromObj(objV[2], NULL);
-
-			/* Printable --> Ascii */
-			text_to_ascii(buf, t);
-
-			/* Look for an existing macro */
-			for (n = 0; n < macro__num; n++)
-			{
-				/* Notice macro redefinition */
-				if (streq(macro__pat[n], buf))
-				{
-					Tcl_SetIntObj(resultPtr, n);
-					return TCL_OK;
-				}
-			}
-			
-			/* Create an empty (normal) macro */
-			macro_add(buf, "");
-
-			/* Return the macro index */
-			Tcl_SetIntObj(resultPtr, macro__num - 1);
-			break;
-
-		case IDX_DELETE: /* delete */
-			Tcl_SetStringObj(resultPtr, (char *) "macros cannot be deleted (yet)", -1);
-			return TCL_ERROR;
-
-		case IDX_KEYPRESS: /* keypress */
-			if (Tcl_GetIntFromObj(interp, objV[2], &n) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (n < 0 || n >= macro__num) goto bad_index;
-
-			if (objC == 4)
-			{
-				/* Get the trigger */
-				t = Tcl_GetStringFromObj(objV[3], NULL);
-
-				/* Printable --> Ascii */
-				text_to_ascii(buf, t);
-
-				/* Look for an existing macro */
-				for (n = 0; n < macro__num; n++)
-				{
-					/* Notice macro redefinition */
-					if (streq(macro__pat[n], buf))
-					{
-						Tcl_SetIntObj(resultPtr, n);
-						break;
-					}
-				}
-
-				/* Free the old macro pattern */
-				string_free(macro__pat[n]);
-
-				/* Save the macro pattern */
-				macro__pat[n] = string_make(buf);
-
-				/* Return macro index */
-				Tcl_SetIntObj(resultPtr, n);
-				break;
-			}
-
-			/* Ascii --> Printable */
-			ascii_to_text(buf, macro__pat[n]);
-
-			/* Return keypress */
-			Tcl_SetStringObj(resultPtr, buf, -1);
-			break;
-
-		case IDX_MAX: /* max */
-			Tcl_SetIntObj(resultPtr, macro__num);
-			break;
-	}
-
-	return TCL_OK;
-
-bad_index:
-	Tcl_AppendStringsToObj(resultPtr, "bad macro index \"",
-		Tcl_GetStringFromObj(objV[2], NULL), "\": must be between ",
-		format("%d and %d", 0, macro__num - 1), -1);
-	return TCL_ERROR;
-}
 
 /*
  *--------------------------------------------------------------

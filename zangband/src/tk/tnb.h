@@ -399,7 +399,6 @@ DECLARE_TK_HOOK(inkey_flags);
 DECLARE_TK_HOOK(inventory);
 DECLARE_TK_HOOK(keycount);
 DECLARE_TK_HOOK(keypress);
-DECLARE_TK_HOOK(macro);
 DECLARE_TK_HOOK(message);
 DECLARE_TK_HOOK(fontdesc);
 DECLARE_TK_HOOK(menuentrystate);

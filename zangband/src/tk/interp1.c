@@ -2202,7 +2202,6 @@ static CommandInit commandInit[] = {
 		{1, "inkey_flags", 1, 1, NULL, objcmd_inkey_flags, (ClientData) 0},
 		{1, "inventory", 0, 0, NULL, objcmd_inventory, (ClientData) 0},
 		{1, "keypress", 2, 2, "string", objcmd_keypress, (ClientData) 0},
-		{1, "macro", 0, 0, NULL, objcmd_macro, (ClientData) 0},
 		{1, "message", 0, 0, NULL, objcmd_message, (ClientData) 0},
 		{1, "player", 0, 0, NULL, objcmd_player, (ClientData) 0},
 		{1, "spell", 0, 0, NULL, objcmd_spell, (ClientData) 0},
