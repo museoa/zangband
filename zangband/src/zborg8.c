@@ -2297,9 +2297,6 @@ static bool borg_think_shop_sell(void)
 
 		qty = borg_min_item_quantity(item);
 
-		/* Remove the inscription */
-		if (item->tval == TV_FOOD) borg_send_deinscribe(goal_item);
-
 		/* Log */
 		borg_note(format("# Selling %s", item->desc));
 
@@ -3222,9 +3219,6 @@ bool borg_think_dungeon(void)
 	if (borg_flow_kill_corridor(TRUE)) return (TRUE);
 
 	/*** Deal with inventory objects ***/
-
-	/* check for anything that should be inscribed */
-	/* if (borg_inscribe_food()) return (TRUE); */
 
 	/* Use things */
 	if (borg_use_things()) return (TRUE);

@@ -258,12 +258,6 @@ extern void borg_item_analyze(borg_item *item, object_type *real_item,
 extern bool borg_object_star_id(void);
 
 /*
- * Inscribe an object
- */
-extern void borg_send_inscribe(int i, cptr str);
-extern void borg_send_deinscribe(int i);
-
-/*
  * Count the items of a given tval/sval
  */
 extern int borg_count(int tval, int sval);
@@ -296,7 +290,6 @@ extern bool borg_aim_wand(int sval);
 extern bool borg_use_staff(int sval);
 extern bool borg_use_staff_fail(int sval);
 extern bool borg_equips_staff_fail(int sval);
-extern bool borg_inscribe_food(void);
 
 /*
  * Artifact usage function (by index)

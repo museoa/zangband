@@ -803,30 +803,30 @@ int borg_wield_slot(borg_item *item)
 	if ((item->tval == TV_SWORD) ||
 		(item->tval == TV_POLEARM) ||
 		(item->tval == TV_HAFTED) ||
-		(item->tval == TV_DIGGING)) return (INVEN_WIELD);
+		(item->tval == TV_DIGGING)) return (EQUIP_WIELD);
 
 	if ((item->tval == TV_DRAG_ARMOR) ||
 		(item->tval == TV_HARD_ARMOR) ||
-		(item->tval == TV_SOFT_ARMOR)) return (INVEN_BODY);
+		(item->tval == TV_SOFT_ARMOR)) return (EQUIP_BODY);
 
-	if (item->tval == TV_SHIELD) return (INVEN_ARM);
+	if (item->tval == TV_SHIELD) return (EQUIP_ARM);
 
 	if ((item->tval == TV_CROWN) ||
-		(item->tval == TV_HELM)) return (INVEN_HEAD);
+		(item->tval == TV_HELM)) return (EQUIP_HEAD);
 
-	if (item->tval == TV_BOW) return (INVEN_BOW);
+	if (item->tval == TV_BOW) return (EQUIP_BOW);
 
-	if (item->tval == TV_RING) return (INVEN_LEFT);
+	if (item->tval == TV_RING) return (EQUIP_LEFT);
 
-	if (item->tval == TV_AMULET) return (INVEN_NECK);
+	if (item->tval == TV_AMULET) return (EQUIP_NECK);
 
-	if (item->tval == TV_LITE) return (INVEN_LITE);
+	if (item->tval == TV_LITE) return (EQUIP_LITE);
 
-	if (item->tval == TV_CLOAK) return (INVEN_OUTER);
+	if (item->tval == TV_CLOAK) return (EQUIP_OUTER);
 
-	if (item->tval == TV_GLOVES) return (INVEN_HANDS);
+	if (item->tval == TV_GLOVES) return (EQUIP_HANDS);
 
-	if (item->tval == TV_BOOTS) return (INVEN_FEET);
+	if (item->tval == TV_BOOTS) return (EQUIP_FEET);
 
 	/* No slot available */
 	return (-1);
@@ -1494,7 +1494,7 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
 /*
  * Send a command to inscribe item number "i" with the inscription "str".
  */
-void borg_send_inscribe(int i, cptr str)
+void borg_send_inscribe(int i, cptr str, bool inven)
 {
 	cptr s;
 
@@ -1502,7 +1502,7 @@ void borg_send_inscribe(int i, cptr str)
 	borg_keypress('{');
 
 	/* Choose from inventory */
-	if (i < INVEN_WIELD)
+	if (inven)
 	{
 		/* Choose the item */
 		borg_keypress(I2A(i));
@@ -1523,7 +1523,6 @@ void borg_send_inscribe(int i, cptr str)
 
 	/* End the inscription */
 	borg_keypress('\n');
-
 }
 
 
@@ -3190,108 +3189,6 @@ bool borg_racial(int race)
 
 	/* Success */
 	return (TRUE);
-}
-
-
-/*
- * Inscribe food and Slime Molds
- */
-bool borg_inscribe_food(void)
-{
-	int ii;
-	char name[80];
-
-	for (ii = 0; ii < INVEN_TOTAL; ii++)
-	{
-		borg_item *item = &borg_items[ii];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Require correct tval */
-		if (item->tval != TV_FOOD) continue;
-
-		/* skip things already inscribed */
-		if (item->note != NULL && (!(streq(item->note, "")) &&
-								   !(streq(item->note, " ")))) continue;
-
-		/* inscribe foods and molds */
-		if (item->sval == SV_FOOD_SLIME_MOLD || item->sval == SV_FOOD_RATION)
-		{
-
-			if (item->sval == SV_FOOD_RATION)
-			{
-				/* get a name */
-				strcpy(name,
-					   food_syllable1[randint0
-									  (sizeof(food_syllable1) /
-									   sizeof(char *))]);
-				strcat(name,
-					   food_syllable2[randint0
-									  (sizeof(food_syllable2) /
-									   sizeof(char *))]);
-
-				borg_send_inscribe(ii, name);
-				return (TRUE);
-			}
-
-			if (item->sval == SV_FOOD_SLIME_MOLD)
-			{
-				/* get a name */
-				strcpy(name,
-					   mold_syllable1[randint0
-									  (sizeof(mold_syllable1) /
-									   sizeof(char *))]);
-				strcat(name,
-					   mold_syllable2[randint0
-									  (sizeof(mold_syllable2) /
-									   sizeof(char *))]);
-				strcat(name,
-					   mold_syllable3[randint0
-									  (sizeof(mold_syllable3) /
-									   sizeof(char *))]);
-
-				borg_send_inscribe(ii, name);
-				return (TRUE);
-			}
-
-		}
-	}
-
-	/* all done */
-	return (FALSE);
-}
-
-/*
- * Send a command to de-inscribe item number "i" .
- */
-void borg_send_deinscribe(int i)
-{
-
-	/* Ok to inscribe Slime Molds */
-	if (borg_items[i].tval == TV_FOOD &&
-		borg_items[i].sval == SV_FOOD_SLIME_MOLD) return;
-
-	/* Label it */
-	borg_keypress('}');
-
-	/* Choose from inventory */
-	if (i < INVEN_WIELD)
-	{
-		/* Choose the item */
-		borg_keypress(I2A(i));
-	}
-
-	/* Choose from equipment */
-	else
-	{
-		/* Go to equipment (if necessary) */
-		if (borg_items[0].iqty) borg_keypress('/');
-
-		/* Choose the item */
-		borg_keypress(I2A(i - INVEN_WIELD));
-	}
-
 }
 
 /*
