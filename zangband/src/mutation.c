@@ -1129,8 +1129,12 @@ void mutation_power_aux(mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT1_BERSERK)
 	{
+		if (!p_ptr->shero)
+		{
+			(void)hp_player(30);
+		}
+		
 		(void)set_shero(p_ptr->shero + randint1(25) + 25);
-		(void)hp_player(30);
 		(void)set_afraid(0);
 	}
 

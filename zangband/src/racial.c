@@ -200,10 +200,13 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 			case RACE_HALF_TROLL:
 			{
 				msg_print("RAAAGH!");
+				if (!p_ptr->shero)
+				{
+					(void)hp_player(30);
+				}
 				(void)set_afraid(0);
-
 				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
-				(void)hp_player(30);
+				
 				break;
 			}
 
@@ -251,10 +254,13 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 			case RACE_BARBARIAN:
 			{
 				msg_print("Raaagh!");
+				if (!p_ptr->shero)
+				{
+					(void)hp_player(30);
+				}
+				
 				(void)set_afraid(0);
-
 				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
-				(void)hp_player(30);
 				break;
 			}
 
