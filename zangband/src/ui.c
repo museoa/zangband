@@ -456,6 +456,56 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	return (cnt);
 }
 
+/*
+ * Get the choice corresponding to the character
+ * chosen, and the number of possible choices.
+ *
+ * Return whether we want this choice verified or not.
+ */
+static int get_choice(char c, int num, bool *ask)
+{
+	int asked;
+	
+	int i;
+
+	if (num < 17)
+	{
+		if (isalpha(c))
+		{
+			/* Note verify */
+			asked = (isupper(c));
+
+			/* Lowercase */
+			if (asked) c = tolower(c);
+			
+			*ask = (ask != FALSE);
+
+			/* Extract request */
+			return(islower(c) ? A2I(c) : -1);
+		}
+		
+		/* Invalid choice */
+		*ask = FALSE;
+		return (-1);
+	}
+	
+	/* Else - look for a match */
+	for (i = 0; i < num; i++)
+	{
+		if (listsym[i] == c)
+		{
+			/* Hack - we cannot ask if there are too many options */
+			*ask = FALSE;
+			return (i);
+		}
+	}
+	
+	/* No match? */
+	*ask = FALSE;
+	
+	return (-1);
+}
+
 
 /*
  * Display a menu, and get a choice.
@@ -476,7 +526,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 					cptr prompt)
 {
 	int i = -1, j, cnt;
-	int ask = 0;
+	bool ask = FALSE;
 	char choice;
 	int num = 0;
 	
@@ -515,96 +565,87 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 			screen_load();
         	return (FALSE);
         }
+		
+		/* Try to match with available options */
+		i = get_choice(choice, cnt, &ask);
     
-		if (choice == '\r')
+		/* No match? */
+		if (i == -1)
 		{
-			/* Default options */
-        	if (num == 1)
-        	{
-				i = 0;
-            }
-            else
+			if (choice == '\r')
 			{
-				i = select;
+				/* Default options */
+        		if (num == 1)
+	        	{
+					i = 0;
+	        	    }
+    	        else
+				{
+					i = select;
+				}
 			}
-		}
-		else if (isalpha(choice))
-		{
-			/* Note verify */
-			ask = (isupper(choice));
 
-			/* Lowercase */
-			if (ask) choice = tolower(choice);
-
-			/* Extract request */
-			i = (islower(choice) ? A2I(choice) : -1);
-		}
-
-		/* Scroll selected option up or down */
-		else if ((choice == '8') && scroll)
-		{
-			do
+			/* Scroll selected option up or down */
+			else if ((choice == '8') && scroll)
 			{
-				/* Find previous option */
-				select--;
+				do
+				{
+					/* Find previous option */
+					select--;
 				
-				/* Scroll over */
-				if (select < 0) select = num - 1;
-			}
-			while(!options[select].flags & MN_SELECT);
+					/* Scroll over */
+					if (select < 0) select = num - 1;
+				}
+				while(!options[select].flags & MN_SELECT);
 			
-			/* Show the list */
-			show_menu(num, options, select, scroll, disp, prompt);
-
-			/* Next time */
-			continue;
-		}
-		
-		/* Scroll selected option up or down */
-		else if ((choice == '2') && scroll)
-		{
-			do
-			{
-				/* Find next option */
-				select++;
-				
-				/* Scroll over */
-				if (select >= num) select = 0;
-			}
-			while(!options[select].flags & MN_SELECT);
-			
-			/* Show the list */
-			show_menu(num, options, select, scroll, disp, prompt);
-			
-			/* Next time */
-			continue;
-		}
-		
-		/* Context-sensitive help */
-		else if (choice == '?')
-		{
-			/* Do we have a help entry? */
-			if ((select >= 0) && options[select].help)
-			{
-				/* Show the information */
-				show_file(options[select].help, NULL, 0, 0);
-								
 				/* Show the list */
 				show_menu(num, options, select, scroll, disp, prompt);
-				
+
 				/* Next time */
 				continue;
 			}
-			else
+
+			/* Scroll selected option up or down */
+			else if ((choice == '2') && scroll)
 			{
-				bell("No context sensitive help available!");
+				do
+				{
+					/* Find next option */
+					select++;
+				
+					/* Scroll over */
+					if (select >= num) select = 0;
+				}
+				while(!options[select].flags & MN_SELECT);
+			
+				/* Show the list */
+				show_menu(num, options, select, scroll, disp, prompt);
+			
+				/* Next time */
 				continue;
 			}
-		}
-		else
-		{
-			/* Hack - set illegal value */
-			i = -1;
+		
+			/* Context-sensitive help */
+			else if (choice == '?')
+			{
+				/* Do we have a help entry? */
+				if ((select >= 0) && options[select].help)
+				{
+					/* Show the information */
+					show_file(options[select].help, NULL, 0, 0);
+								
+					/* Show the list */
+					show_menu(num, options, select, scroll, disp, prompt);
+				
+					/* Next time */
+					continue;
+				}
+				else
+				{
+					bell("No context sensitive help available!");
+					continue;
+				}
+			}
 		}
 
 		/* Totally Illegal */
