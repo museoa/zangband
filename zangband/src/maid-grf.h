@@ -114,9 +114,9 @@ struct map_block
 {
 	/* Save what it looks like */
 
-#ifdef TERM_OVERHEAD_MAP
+#ifdef TERM_MAP_GLYPH
 	u16b feature_code;
-#endif /* TERM_OVERHEAD_MAP */
+#endif /* TERM_MAP_GLYPH */
 
 	/* Save the cave info itself - used by the borg */
 #ifdef TERM_CAVE_MAP
@@ -164,6 +164,80 @@ typedef void (*map_erase_hook_type) (void);
 
 #endif /* TERM_USE_MAP */
 
+
+/*
+ * This is used by the Borg and by ports that would
+ * like to access lists of objects
+ */
+#ifdef TERM_USE_LIST
+
+/* Types of list */
+#define LIST_INVEN			1
+#define LIST_EQUIP			2
+#define LIST_FLOOR			3
+#define LIST_STORE_BUY		4
+#define LIST_STORE_SELL		5
+
+/*
+ * Object List data structure
+ */
+typedef struct term_list term_list;
+
+struct term_list
+{
+	cptr o_name;	/* Name */
+	cptr xtra_name;	/* Extra Name (Artifacts and ego items) */
+	
+	u32b kn_flags1;	/* Known Flags, set 1 */
+	u32b kn_flags2;	/* Known Flags, set 2 */
+	u32b kn_flags3;	/* Known Flags, set 3 */
+	
+	s32b cost;	/* Object "base cost" */
+	
+	s16b k_idx;	/* Kind index (zero if "dead") */
+	s16b weight;	/* Item weight */
+	
+	byte number;	/* Number of items */
+	byte info;	/* Special flags */
+	
+	byte slot;	/* Equipment slot - if applicable */
+};
+
+
+typedef struct list_item list_item;
+
+struct list_item
+{
+	cptr o_name;	/* Name */
+	cptr xtra_name;	/* Extra Name (Artifacts and ego items) */
+	
+	u32b kn_flags1;	/* Known Flags, set 1 */
+	u32b kn_flags2;	/* Known Flags, set 2 */
+	u32b kn_flags3;	/* Known Flags, set 3 */
+	
+	s32b cost;	/* Object "base cost" */
+	
+	s16b k_idx;	/* Kind index (zero if "dead") */
+	s16b weight;	/* Item weight */
+	
+	byte number;	/* Number of items */
+	byte info;	/* Special flags */
+	
+	byte slot;	/* Equipment slot */
+
+	/* Save the glyph to use */
+#ifdef TERM_OBJ_GLYPH
+	u16b feature_code;
+#endif /* TERM_OBJ_GLYPH */
+
+	/* Store extra info here */
+};
+
+typedef void (*list_notice_hook_type) (byte);
+
+
+#endif /* TERM_USE_LIST */
+
 /* Extern Variables */
 extern byte gamma_table[256];
 
@@ -175,11 +249,20 @@ extern int *map_cache_y;
 extern int **map_grid;
 #endif /* TERM_USE_MAP */
 
+#ifdef TERM_USE_LIST
+list_item *equipment;
+int equip_num;
+list_item *inventory;
+int inven_num;
+list_item *cur_list;
+int cur_num;
+#endif /* TERM_USE_LIST */
 
 /* Extern Functions */
 extern void build_gamma_table(int gamma);
 extern cptr get_default_font(int term_num);
 extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
+
 #ifdef TERM_USE_MAP
 extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
 extern map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func);
@@ -188,3 +271,10 @@ extern void del_overhead_map(void);
 extern bool map_in_bounds(int x, int y);
 extern map_block *map_loc(int dx, int dy);
 #endif /* TERM_USE_MAP */
+
+#ifdef TERM_USE_LIST
+extern list_notice_hook_type set_list_notice_hook(list_notice_hook_type
+												 hook_func);
+extern void Term_write_equipment(void);
+extern void Term_write_list(s16b o_idx, byte list_type);
+#endif /* TERM_USE_LIST */

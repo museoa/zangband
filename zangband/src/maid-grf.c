@@ -830,3 +830,361 @@ void Term_erase_map(void)
 }
 
 #endif /* TERM_USE_MAP */
+
+
+#ifdef TERM_USE_LIST
+
+/* Lists of objects on the player */
+list_item *equipment;
+int equip_num;
+
+list_item *inventory;
+int inven_num;
+
+
+/* Current list */
+list_item *cur_list;
+int cur_num;
+
+/* Hook to notice list changes */
+static list_notice_hook_type list_notice_hook = NULL;
+
+/*
+ * Set the list notice hook - returning the old hook
+ *
+ * You need to keep a copy of the old hook
+ * to chain in on because multiple places
+ * use the overhead map.
+ */
+list_notice_hook_type set_list_notice_hook(list_notice_hook_type hook_func)
+{
+	/* Save the original hook */
+	list_notice_hook_type temp = list_notice_hook;
+
+	/* Set the hook */
+	list_notice_hook = hook_func;
+
+	/* Return the old hook for chaining */
+	return (temp);
+}
+
+
+/*
+ * Delete the object list
+ */
+static void delete_list(list_item **l_ptr_ptr, int *num)
+{
+	int i;
+	
+	list_item *l_ptr;
+	
+	for (i = 0; i < *num; i++)
+	{
+		/* Get item */
+		l_ptr = &((*l_ptr_ptr)[i]);
+	
+		/* Delete strings */
+		string_free(l_ptr->o_name);
+		string_free(l_ptr->xtra_name);
+	}
+	
+	/* No more items */
+	*num = 0;
+	
+	/* Kill list */
+	KILL(*l_ptr_ptr);
+}
+
+/*
+ * Copy a list from t_ptr to l_ptr_ptr
+ *
+ * The first list comes from the game, the second is
+ * stored here for later use by the ports / borg.
+ *
+ * We assume l_ptr_ptr points to a NULL pointer.
+ */
+static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
+	int *num2)
+{
+	list_item *l_ptr;
+	term_list *tl_ptr;
+
+	int i;
+
+	/* Paranoia */
+	if (!(*l_ptr_ptr)) quit("Trying to copy over an allocated list.");
+
+	/* Save number of items in list */
+	*num2 = num1;
+
+	/* Create the list */
+	C_MAKE(*l_ptr_ptr, num1, list_item);
+
+	for (i = 0; i < num1; i++)
+	{
+		l_ptr = &((*l_ptr_ptr)[i]);
+		tl_ptr = &t_ptr[i];
+	
+		/* Duplicate flags */
+		l_ptr->kn_flags1 = tl_ptr->kn_flags1;
+		l_ptr->kn_flags2 = tl_ptr->kn_flags2;
+		l_ptr->kn_flags3 = tl_ptr->kn_flags3;
+	
+		/* Duplicate cost */
+		l_ptr->cost = tl_ptr->cost;
+	
+		/* Duplicate item type and weight */
+		l_ptr->k_idx = tl_ptr->k_idx;
+		l_ptr->weight = tl_ptr->weight;
+		l_ptr->number = tl_ptr->number;
+		
+		/* Duplicate info */
+		l_ptr->info = tl_ptr->info;
+		
+		/* Duplicate equipment slot */
+		l_ptr->slot = tl_ptr->slot;
+		
+		/* Duplicate strings */
+		l_ptr->o_name = string_make(tl_ptr->o_name);
+		l_ptr->xtra_name = string_make(tl_ptr->xtra_name);
+	}
+}
+
+/*
+ * Save the object list so that the port can access it.
+ */
+static void save_object_list(term_list *l_ptr, int num, byte list_type)
+{
+	/* Delete the old current list */
+	delete_list(&cur_list, &cur_num);
+	
+	/* Copy over with the new list */
+	copy_list(l_ptr, num, &cur_list, &cur_num);
+
+	if (list_type == LIST_INVEN)
+	{
+		/* Delete old inventory list */
+		delete_list(&inventory, &inven_num);
+		
+		/* Copy over with the new list */
+		copy_list(l_ptr, num, &inventory, &inven_num);
+	}
+	
+	if (list_type == LIST_EQUIP)
+	{
+		/* Delete old equipment list */
+		delete_list(&equipment, &equip_num);
+		
+		/* Copy over with the new list */
+		copy_list(l_ptr, num, &equipment, &equip_num);
+	}
+	
+	/* Notify port */
+	if (list_notice_hook)
+	{
+		list_notice_hook(list_type);
+	}
+}
+
+/*
+ * Write out the equipment so that the ports can access it.
+ *
+ * This is equivalent to Term_write_list() below, except with
+ * a static array of objects rather than a list.
+ */
+void Term_write_equipment(void)
+{
+	term_list *list, *l_ptr;
+	
+	int i, j;
+	object_type *o_ptr;
+	char o_name[256];
+	
+	int num = 0;
+	
+	/* Get list length */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		/* Get object */
+		o_ptr = &p_ptr->equipment[i];
+		
+		/* Count objects */
+		if (o_ptr->k_idx) num++;
+	}
+	
+	/* Paranoia */
+	if (!num) return;
+	
+	/* Create the list */
+	C_MAKE(list, num, term_list);
+	
+	/* Fill with information */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		/* Get object */
+		o_ptr = &p_ptr->equipment[i];
+	
+		if (!o_ptr->k_idx) continue;
+	
+		/* Get object list element */
+		l_ptr = &list[j];
+		
+		/* Known flags */
+		l_ptr->kn_flags1 = o_ptr->kn_flags1;
+		l_ptr->kn_flags2 = o_ptr->kn_flags2;
+		l_ptr->kn_flags3 = o_ptr->kn_flags3;
+		
+		/* Type of object */
+		l_ptr->k_idx = o_ptr->k_idx;
+		
+		/* Weight and number */
+		l_ptr->weight = o_ptr->weight;
+		l_ptr->number = o_ptr->number;
+		
+		/* Save information */
+		l_ptr->info = o_ptr->info;
+		
+		/* Save slot */
+		l_ptr->slot = (byte) i;
+		
+		/* Hack - Save cost (If not in a store, this will be inaccurate) */
+		l_ptr->cost = o_ptr->temp_cost;
+
+		/* Describe the object */
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
+		
+		l_ptr->o_name = string_make(o_name);
+		
+		/* Do we have extra name information? */
+		if (object_known_p(o_ptr) && (o_ptr->xtra_name))
+		{
+			l_ptr->xtra_name = string_make(quark_str(o_ptr->xtra_name));
+		}
+		else
+		{
+			l_ptr->xtra_name = NULL;
+		}
+	
+		/* Increment counter */
+		j++;
+	}
+	
+	/* Save for later */
+	save_object_list(list, num, LIST_EQUIP);
+	
+	for (i = 0; i < num ; i++)
+	{
+		l_ptr = &list[i];
+	
+		/* Free the strings */
+		string_free(l_ptr->o_name);
+		string_free(l_ptr->xtra_name);
+	} 
+	
+	/* Free the list */
+	FREE(list);
+}
+
+
+/*
+ * Angband-specific code used to send a list of objects to the port.
+ * This allows in-game data to be read.
+ *
+ * Hack - we assume every object in the list is 'visible'
+ */
+void Term_write_list(s16b o_idx, byte list_type)
+{
+	term_list *list, *l_ptr;
+	
+	int i = 0;
+	object_type *o_ptr;
+	char o_name[256];
+	
+	/* Get list length */
+	int num = get_list_length(o_idx);
+	
+	/* Paranoia */
+	if (!num) return;
+	
+	/* Create the list */
+	C_MAKE(list, num, term_list);
+	
+	/* Fill with information */
+	OBJ_ITT_START (o_idx, o_ptr)
+	{
+		/* Get object list element */
+		l_ptr = &list[i];
+		
+		/* Known flags */
+		l_ptr->kn_flags1 = o_ptr->kn_flags1;
+		l_ptr->kn_flags2 = o_ptr->kn_flags2;
+		l_ptr->kn_flags3 = o_ptr->kn_flags3;
+		
+		/* Type of object */
+		l_ptr->k_idx = o_ptr->k_idx;
+		
+		/* Weight and number */
+		l_ptr->weight = o_ptr->weight;
+		l_ptr->number = o_ptr->number;
+		
+		/* Save information */
+		l_ptr->info = o_ptr->info;
+		
+		/* Stores are special */
+		if (list_type == LIST_STORE_BUY)
+		{
+			/* Get cost */
+			l_ptr->cost = o_ptr->temp_cost;
+			
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
+		}
+		else if (list_type == LIST_STORE_SELL)
+		{
+			/* Get cost */
+			l_ptr->cost = o_ptr->temp_cost;
+			
+			/* Describe the object */
+			object_desc_store(o_name, o_ptr, TRUE, 3, 256);
+		}
+		else
+		{
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
+		}
+		
+		l_ptr->o_name = string_make(o_name);
+		
+		/* Do we have extra name information? */
+		if (object_known_p(o_ptr) && (o_ptr->xtra_name))
+		{
+			l_ptr->xtra_name = string_make(quark_str(o_ptr->xtra_name));
+		}
+		else
+		{
+			l_ptr->xtra_name = NULL;
+		}
+	
+		/* Increment counter */
+		i++;
+	}
+	OBJ_ITT_END;
+	
+	/* Save for later */
+	save_object_list(list, num, list_type);
+	
+	
+	for (i = 0; i < num ; i++)
+	{
+		l_ptr = &list[i];
+		
+		/* Free the strings */
+		string_free(l_ptr->o_name);
+		string_free(l_ptr->xtra_name);
+	} 
+	
+	/* Free the list */
+	FREE(list);
+}
+
+#endif /* TERM_USE_LIST */
