@@ -534,7 +534,7 @@ static cptr element_list[] =
 	"GF_PLASMA", "GF_WATER", "GF_LITE", "GF_DARK", "GF_SHARDS",
 	"GF_SOUND", "GF_CONFUSION", "GF_FORCE", "GF_INERTIA", "GF_MANA",
 	"GF_ICE", "GF_CHAOS", "GF_NETHER", "GF_NEXUS", "GF_TIME",
-	"GF_GRAVITY", "GF_NUKE", "GF_HOLY_FIRE", "GF_HELL_FIRE",
+	"GF_GRAVITY", "GF_NUKE", "GF_HOLY_FIRE", "GF_HELL_FIRE", "GF_MISSILE",
 };
 static cptr element_names[] =
 {
@@ -542,7 +542,7 @@ static cptr element_names[] =
 	"plasma", "water", "light", "darkness", "shards",
 	"sound", "confusion", "force", "inertia", "mana",
 	"ice", "chaos", "nether", "nexus", "time",
-	"gravity", "toxic waste", "holy power", "unholy power",
+	"gravity", "toxic waste", "holy power", "unholy power", "elemental force",
 };
 static cptr element_colors[] =
 {
@@ -550,7 +550,7 @@ static cptr element_colors[] =
 	"bright orange", "dark blue", "bright white", "black", "dark red",
 	"amber", "dark purple", "light grey", "silver", "many colors",
 	"pale white", "many colors", "black", "yellow", "silver",
-	"dark grey", "sickly yellow", "bright white", "dark red"
+	"dark grey", "sickly yellow", "pure white", "dark red", "many colors",
 };
 static cptr glow_desc[] =
 {
@@ -591,42 +591,71 @@ static void apply_activation_power(object_type *o_ptr, int level)
 		else
 			element = randint0(NUM_ELEMENTS(element_list));
 
-		/* Base dice and charge time */
-		dice = rlev;
-		sides = rand_range(5, 8);
-		pp = dice * sides * 2;
-
-		/* Sometimes use a ball */
-		if (one_in_(3))
-		{
-			/* Radius depends on level */
-			if (level >= rand_range(40, 80))
-				radius = 3;
-			else
-				radius = 2;
-
-			/* Increase damage rather than use dice */
-			dice *= 10;
-			sides = 1;
-
-			/* Increase charge time */
-			pp = dice * 10;
-		}
-
 		/* Describe the visual */
 		strnfmt(buf1, 256, "The %%v %s %s...", glow_desc[randint0(NUM_ELEMENTS(glow_desc))], element_colors[element]);
 		text = buf1;
 
-		/* Give the action */
-		if (radius > 0)
+		switch (randint1(10))
 		{
+		/* Breathe */
+		case 1:
+			strnfmt(buf1, 256, "You breathe %s.", element_names[element]);
+
+			/* Dice, radius, and charge time */
+			dice = rlev * 5;
+			radius = 2 + dice / rand_range(100, 200);
+			pp = dice * 5 * radius;
+
+			/* Create the lua */
+			strnfmt(desc, 256, "breathe %s (%i, rad. %i)", element_names[element], dice, radius);
+			strnfmt(effect, 256, "fire_ball(\"%s\", dir, %i, %i)", element_list[element], dice, radius);
+
+			break;
+
+		/* Emit a blast */
+		case 2:
+			strnfmt(buf1, 256, "The %%v emits a blast of %s...", element_names[element]);
+
+			/* Dice, radius, and charge time */
+			dice = rlev * 10;
+			radius = 2 + dice / rand_range(50, 100);
+			pp = dice * radius;
+			
+			aimed = FALSE;
+
+			/* Create the lua */
+			strnfmt(desc, 256, "%s blast (%i, rad. %i)", element_names[element], dice, radius);
+			strnfmt(effect, 256, "fire_ball(\"%s\", 0, %i, %i)", element_list[element], dice, radius);
+
+			break;
+
+		/* Fire a ball */
+		case 3:
+		case 4:
+		case 5:
+			/* Dice, radius, and charge time */
+			dice = rlev * 5;
+			radius = (level >= rand_range(40, 80) ? 3 : 2);
+			pp = dice * 5 * radius;
+
+			/* Create the lua */
 			strnfmt(desc, 256, "%s%s ball (%i)", radius > 2 ? "large " : "", element_names[element], dice);
 			strnfmt(effect, 256, "fire_ball(\"%s\", dir, %i, %i)", element_list[element], dice, radius);
-		}
-		else
-		{
+
+			break;
+
+		/* Fire a bolt */
+		default:
+			/* Dice and charge time */
+			dice = rlev / 2;
+			sides = rand_range(5, 8);
+			pp = dice * sides * 2;
+
+			/* Create the lua */
 			strnfmt(desc, 256, "%s bolt (%id%i)", element_names[element], dice, sides);
 			strnfmt(effect, 256, "fire_bolt(\"%s\", dir, damroll(%i, %i))", element_list[element], dice, sides);
+
+			break;
 		}
 	}
 	else switch (randint1(84))
@@ -647,7 +676,7 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			dice = randint1(3) + level / 10;
 			sides = 6;
 			strnfmt(desc, 256, "magic missile (%id%i)", dice, sides);
-			strnfmt(desc, 256, "fire_bolt(GF_MISSILE, dir, damroll(%i, %i))", dice, sides);
+			strnfmt(effect, 256, "fire_bolt(GF_MISSILE, dir, damroll(%i, %i))", dice, sides);
 			break;
 
 		case 7: case 8:
@@ -661,16 +690,15 @@ static void apply_activation_power(object_type *o_ptr, int level)
 		case 9:
 			text = "The %v glows black...";
 			dice = 5 * rlev;
-			pp = dice * 20;
+			pp = dice * 10;
 			strnfmt(desc, 256, "drain life (%i)", dice);
 			strnfmt(effect, 256, "drain_life(dir, %i)", dice);
 			break;
 
 		case 10:
-			/* XXX Is there a reason to do 3 seperate bolts? */
 			text = "The %v throbs red...";
 			dice = 10 * rlev;
-			pp = dice * 40;
+			pp = dice * 20;
 			strnfmt(desc, 256, "vampiric drain (%i)", dice);
 			strnfmt(desc, 256, "drain_gain_life(dir, %i)", dice);
 			break;
@@ -737,10 +765,11 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			break;
 
 		case 18:
+			/* Note that this is more powerful than a normal breath activation */
 			text = "You breathe the elements.";
 			dice = 10 * rlev;
 			radius = 2 + dice / rand_range(100, 200);
-			pp = dice * 20;
+			pp = dice * 5 * radius;
 			strnfmt(desc, 256, "breathe the elements (%i, rad. %i)", dice, radius);
 			strnfmt(effect, 256, "fire_ball(GF_MISSILE, dir, %i, %i)", dice, radius);
 			break;
@@ -769,10 +798,11 @@ static void apply_activation_power(object_type *o_ptr, int level)
 
 		case 23:
 			text = "The %v emits a loud blast...";
+			dice = rlev / 2;
+			pp = 1500 + 25 * rlev;
 			strcpy(desc, "terror");
-			strcpy(effect, "turn_monsters(40 + player.lev)");
+			strnfmt(effect, 256, "turn_monsters(%i + player.lev)", dice);
 			aimed = FALSE;
-			pp = 2500;
 			break;
 
 		case 24: case 25:
@@ -888,18 +918,20 @@ static void apply_activation_power(object_type *o_ptr, int level)
 
 		case 39:
 			aimed = FALSE;
-			dice = 2 * rlev;
-			pp = dice * 5;
-			strnfmt(desc, 256, "remove fear & heal (%i)", dice);
-			strnfmt(effect, 256, "clear_afraid(); hp_player(%i)", dice);
+			dice = 1 + rlev / 3;
+			sides = rand_range(4, 8);
+			pp = dice * sides * 5;
+			strnfmt(desc, 256, "remove fear & heal (%id%i)", dice, sides);
+			strnfmt(effect, 256, "clear_afraid(); hp_player(damroll(%i, %i))", dice, sides);
 			break;
 
 		case 40: case 41: case 42:
 			aimed = FALSE;
-			dice = 5 * rlev;
-			pp = dice * 5;
-			strnfmt(desc, 256, "cure wounds & heal (%i)", dice);
-			strnfmt(effect, 256, "hp_player(%i); inc_cut(-50)", dice);
+			dice = rlev;
+			sides = rand_range(4, 8);
+			pp = dice * sides * 5;
+			strnfmt(desc, 256, "cure wounds & heal (%id%i)", dice, sides);
+			strnfmt(effect, 256, "hp_player(damroll(%i, %i)); inc_cut(-%i)", dice, sides, 5 * rlev);
 			break;
 
 		case 43:
@@ -917,6 +949,15 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			break;
 
 		case 45:
+			strcpy(desc, "restore stats");
+			strcpy(effect, "do_res_stat(A_STR); do_res_stat(A_INT); "
+				"do_res_stat(A_WIS); do_res_stat(A_DEX); "
+				"do_res_stat(A_CON); do_res_stat(A_CHR); ");
+			aimed = FALSE;
+			pp = 15000;
+			break;
+
+		case 46:
 			strcpy(desc, "restore stats and life levels");
 			strcpy(effect, "do_res_stat(A_STR); do_res_stat(A_INT); "
 				"do_res_stat(A_WIS); do_res_stat(A_DEX); "
@@ -926,10 +967,10 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			pp = 25000;
 			break;
 
-		case 46: case 47: case 48:
+		case 47: case 48:
 			aimed = FALSE;
 			dice = 10 * rlev;
-			pp = dice * 5;
+			pp = dice * 10;
 			strnfmt(desc, 256, "cure wounds & heal (%i)", dice);
 			strnfmt(effect, 256, "hp_player(%i); clear_cut()", dice);
 			break;
@@ -1125,10 +1166,7 @@ static void apply_activation_power(object_type *o_ptr, int level)
 
 	if (pp) 
 	{
-		if (level > 10)
-			charge_min = pp / level;
-		else
-			charge_min = pp / 10;
+		charge_min = pp / level;
 
 		/* Round to nice numbers */
 		if (charge_min >= 1000)
