@@ -2368,8 +2368,36 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 				/* save minimal path */
 				dist = cdist;
 				
-				*x = t_ptr->x + t_ptr->gates_x[k] / 2;
-				*y = t_ptr->y + t_ptr->gates_y[k] / 2;
+				switch (k)
+				{			
+					case 0:
+					{
+						*x = t_ptr->x + (t_ptr->gates_x[k] + 1) / 2;
+						*y = t_ptr->y + t_ptr->gates_y[k] / 2;				
+						break;
+					}
+					
+					case 1:
+					{
+						*x = t_ptr->x + (t_ptr->gates_x[k] - 1) / 2;
+						*y = t_ptr->y + t_ptr->gates_y[k] / 2;
+						break;
+					}
+					
+					case 2:
+					{
+						*x = t_ptr->x + t_ptr->gates_x[k] / 2;
+						*y = t_ptr->y + (t_ptr->gates_y[k] + 1) / 2;
+						break;
+					}
+					
+					case 3:
+					{
+						*x = t_ptr->x + t_ptr->gates_x[k] / 2;
+						*y = t_ptr->y + (t_ptr->gates_y[k] - 1) / 2;
+						break;
+					}
+				}
 			}
 		}
 
