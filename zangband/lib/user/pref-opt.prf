@@ -11,7 +11,7 @@
 
 ##### User-Interface #####
 
-Y:rogue_like_commands
+X:rogue_like_commands
 Y:quick_messages
 Y:other_query_flag
 Y:carry_query_flag
@@ -19,8 +19,8 @@ X:use_old_target
 Y:always_pickup
 Y:always_repeat
 X:depth_in_feet
-Y:stack_force_notes
-Y:stack_force_costs
+X:stack_force_notes
+X:stack_force_costs
 Y:show_labels
 Y:show_weights
 X:show_inven_graph
@@ -48,8 +48,8 @@ X:alert_failure
 
 ##### Game-Play #####
 
-Y:auto_haggle
-Y:auto_scum
+X:auto_haggle
+X:auto_scum
 Y:stack_allow_items
 Y:stack_allow_wands
 Y:expand_look
@@ -58,9 +58,9 @@ Y:view_perma_grids
 X:view_torch_grids
 X:dungeon_align
 Y:dungeon_stair
-Y:flow_by_sound
-Y:flow_by_smell
-Y:smart_learn
+X:flow_by_sound
+X:flow_by_smell
+X:smart_learn
 X:smart_cheat
 
 
@@ -91,13 +91,13 @@ Y:last_words
 Y:speak_unique
 Y:small_levels
 X:always_small_levels
-X:empty_levels
+Y:empty_levels
 X:player_symbols
 Y:equippy_chars
 X:skip_mutations
-Y:plain_descriptions
+X:plain_descriptions
 X:stupid_monsters
-Y:auto_destroy
+X:auto_destroy
 Y:confirm_wear
 X:confirm_stairs
 X:disturb_pets
@@ -105,7 +105,7 @@ X:easy_open
 X:easy_disarm
 X:easy_floor
 X:use_command
-Y:center_player
+X:center_player
 X:avoid_center
 
 
@@ -116,7 +116,7 @@ X:lite_town
 X:Rand_unbiased
 Y:terrain_streams
 Y:maximize_mode
-X:preserve_mode
+Y:preserve_mode
 Y:autoroller
 
 
