@@ -3260,13 +3260,13 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		if (m_ptr->hp < 0)
 		{
 			bool sad = FALSE;
-
+			
 			if (is_pet(m_ptr) && !(m_ptr->ml))
 				sad = TRUE;
 
 			/* Generate treasure, etc */
 			monster_death(c_ptr->m_idx);
-
+		
 			/* Delete the monster */
 			delete_monster_idx(c_ptr->m_idx);
 
@@ -3312,6 +3312,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	else if (heal_leper)
 	{
 		msg_format("%^s is healed!", m_name);
+		
+		/* Note that lepers do not glow - so no update for mon_lite */
+		
+		/* Remove the leper */
 		delete_monster_idx(c_ptr->m_idx);
 	}
 	/* If the player did it, give him experience, check fear */

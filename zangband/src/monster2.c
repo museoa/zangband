@@ -293,7 +293,7 @@ void compact_monsters(int size)
 
 			/* All monsters get a saving throw */
 			if (randint0(100) < chance) continue;
-
+			
 			/* Delete the monster */
 			delete_monster_idx(i);
 
@@ -301,6 +301,9 @@ void compact_monsters(int size)
 			num++;
 		}
 	}
+
+	/* Update some things */
+	p_ptr->update |= (PU_MON_LITE);
 
 
 	/* Excise dead monsters (backwards!) */

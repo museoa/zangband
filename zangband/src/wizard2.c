@@ -426,7 +426,7 @@ static void do_cmd_wiz_feature(int feat)
 	cave_set_feat(y, x, feat);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 }
 
 /* Learn the whole wilderness map */
@@ -1409,7 +1409,6 @@ static void do_cmd_wiz_zap(void)
 {
 	int i;
 
-
 	/* Genocide everyone nearby */
 	for (i = 1; i < m_max; i++)
 	{
@@ -1421,6 +1420,9 @@ static void do_cmd_wiz_zap(void)
 		/* Delete nearby monsters */
 		if (m_ptr->cdis <= MAX_SIGHT) delete_monster_idx(i);
 	}
+	
+	/* Update some things */
+	p_ptr->update |= (PU_MON_LITE);
 }
 
 
@@ -1442,6 +1444,9 @@ static void do_cmd_wiz_zap_all(void)
 		/* Delete this monster */
 		delete_monster_idx(i);
 	}
+	
+	/* Update some things */
+	p_ptr->update |= (PU_MON_LITE);
 }
 
 

@@ -2407,6 +2407,13 @@ bool genocide(int player_cast)
 
 		/* Skip "wrong" monsters */
 		if (r_ptr->d_char != typ) continue;
+		
+		/* Notice changes in view */
+		if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+		{
+			/* Update some things */
+			p_ptr->update |= (PU_MON_LITE);
+		}
 
 		/* Delete the monster */
 		delete_monster_idx(i);
@@ -2482,6 +2489,13 @@ bool mass_genocide(int player_cast)
 
 		/* Skip distant monsters */
 		if (m_ptr->cdis > MAX_SIGHT) continue;
+
+		/* Notice changes in view */
+		if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+		{
+			/* Update some things */
+			p_ptr->update |= (PU_MON_LITE);
+		}
 
 		/* Delete the monster */
 		delete_monster_idx(i);

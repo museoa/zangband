@@ -2846,7 +2846,7 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 			break;
 		case SV_POTION_DEATH:
 			dt = GF_DEATH_RAY;    /* !! */
-			dam = k_ptr->level * 10;
+			dam = damroll(25, 25);
 			angry = TRUE;
 			radius = 1;
 			ident = TRUE;
@@ -4246,6 +4246,9 @@ bool polymorph_monster(int y, int x)
 		}
 	}
 
+	/* Update some things */
+	p_ptr->update |= (PU_MON_LITE);
+	
 	return polymorphed;
 }
 

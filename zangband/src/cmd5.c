@@ -1823,6 +1823,13 @@ static bool cast_death_spell(int spell)
 			/* Hack -- Skip Quest Monsters */
 			if (r_ptr->flags1 & RF1_QUESTOR) continue;
 
+			/* Notice changes in view */
+			if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+			{
+				/* Update some things */
+				p_ptr->update |= (PU_MON_LITE);
+			}
+
 			/* Delete the monster */
 			delete_monster_idx(i);
 
@@ -3196,6 +3203,14 @@ void do_cmd_pet(void)
 
 					if (delete_this)
 					{
+						/* Notice changes in view */
+						if (r_info[m_ptr->r_idx].flags7 &
+							 (RF7_LITE_1 | RF7_LITE_2))
+						{
+							/* Update some things */
+							p_ptr->update |= (PU_MON_LITE);
+						}
+						
 						delete_monster_idx(pet_ctr);
 						Dismissed++;
 					}

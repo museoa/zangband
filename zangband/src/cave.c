@@ -3405,7 +3405,7 @@ static void mon_lite_hack(int y, int x)
 
 	c_ptr = area(y, x);
 
-	/* Want a unlit square in view of the player */
+	/* Want an unlit square in view of the player */
 	if ((c_ptr->info & (CAVE_MNLT | CAVE_VIEW)) != CAVE_VIEW) return;
 
 	/* Hack XXX XXX - Is it a wall and monster not in LOS? */
