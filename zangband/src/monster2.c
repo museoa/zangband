@@ -499,7 +499,7 @@ errr get_mon_num_prep(monster_hook_type monster_hook,
  * "level" is "modified", for example, by polymorph or summoning.
  *
  * There is a small chance (1/50) of "boosting" the given depth by
- * a small amount (up to four levels), except in the town.
+ * a small amount (up to ten levels), except in the town.
  *
  * It is (slightly) more likely to acquire a monster of the given level
  * than one of a lower level.  This is done by choosing several monsters
@@ -534,22 +534,16 @@ s16b get_mon_num(int level)
 		{
 			/* Occasional "nasty" monster */
 			if (!rand_int(NASTY_MON))
-			{
-				/* Pick a level bonus */
-				int d = level / 4 + 2;
-
+			{				
 				/* Boost the level */
-				level += ((d < 5) ? d : 5);
+				level += 10;
 			}
 
 			/* Occasional "nasty" monster */
 			if (!rand_int(NASTY_MON))
 			{
-				/* Pick a level bonus */
-				int d = level / 4 + 2;
-
 				/* Boost the level */
-				level += ((d < 5) ? d : 5);
+				level += 10;
 			}
 		}
 	}
