@@ -189,7 +189,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 		total +=  build[i] * 20;
 
 		/* calculate probability based on location */
-		wild_build[i].gen = ((u16b) MAX_SHORT / total);
+		wild_build[i].gen = (u16b)(MAX_SHORT / total);
 	}
 
 	/* Effects for cities */
@@ -277,7 +277,7 @@ static void general_init(int town_num, int store_num, byte general_type)
 byte build_x[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 byte build_y[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 static byte build_pop[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
-static u16b build_count;
+static byte build_count;
 
 
 /*
