@@ -1384,6 +1384,9 @@ bool compare_weapons(void)
 
 	put_str("Based on your current abilities, here is what your weapon will do:", 4, 2);
 
+	/* Identify the weapon */
+	identify_item(o_ptr);
+	
 	/* *Identify* the weapon for the player */
 	o_ptr->ident |= IDENT_MENTAL;
 	
