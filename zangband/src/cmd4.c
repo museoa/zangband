@@ -3567,96 +3567,104 @@ void do_cmd_checkquest(void)
 
 
 /*
- * Check on the status of an active quest
+ * Display the time and date
  */
 void do_cmd_time(void)
 {
-	/* dummy is % thru day/night */
-	int dummy = ((turn % ((10L * TOWN_DAWN)/2) * 100) / ((10L * TOWN_DAWN)/2));
-	int minute = ((turn % ((10L * TOWN_DAWN)/2) * 720) / ((10L * TOWN_DAWN)/2)) % 60;
-	int hour = ((12 * dummy) / 100) - 6;    /* -6 to +6 */
-	int hour12 = 0;
-	bool morning = FALSE;
-	int day = 0;
+	s32b len = 10L * TOWN_DAWN;
+	s32b tick = turn % len + len / 4;
 
-	if (turn <= (10L * TOWN_DAWN) / 4)
-	{
-		day = 1;
-	}
-	else
-	{
-		day = (turn - (10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 1;
-	}
+	int day = turn / len + 1;
+	int hour = (24 * tick / len) % 24;
+	int min = (1440 * tick / len) % 60;
+	int full = hour * 100 + min;
 
-	/* night: 6pm -- 6am */
-	if ((turn / ((10L * TOWN_DAWN) / 2)) % 2)
-	{
-		if (hour < 0)
+	int start = 9999;
+	int end = -9999;
+
+	int num = 0;
+
+	char desc[1024];
+
+	char buf[1024];
+
+	FILE *fff;
+
+	strcpy(desc, "It is a strange time.");
+
+	/* Message */
+	msg_format("This is day %d. The time is %d:%02d %s.",
+				  day, (hour % 12 == 0) ? 12 : (hour % 12),
+				  min, (hour < 12) ? "AM" : "PM");
+
+	/* Find the path */
+	if (!rand_int(10) || p_ptr->image)
 		{
-			hour12 = 12 - (hour * -1);
+		path_build(buf, 1024, ANGBAND_DIR_FILE, "timefun.txt");
 		}
 		else
 		{
-			hour12 = hour;
+		path_build(buf, 1024, ANGBAND_DIR_FILE, "timenorm.txt");
 		}
 
-		if (hour >= 0) morning = TRUE;
-		else morning = FALSE;
+	/* Open this file */
+	fff = my_fopen(buf, "rt");
 
-		msg_format("%d:%02d %s, day %d.", hour12, minute, (morning ? "AM" : "PM"),
-			turn / (10L * TOWN_DAWN) + 1);
+	/* Oops */
+	if (!fff) return;
 
-		if (dummy < 5)
-			msg_print("The sun has set.");
-		else if (dummy == 50)
-			msg_print("It is midnight.");
-		else if ((dummy > 94) && (dummy < 101))
-			msg_print("The sun is near to rising.");
-		else if ((dummy > 75) && (dummy < 95))
-			msg_print("It is early morning, but still dark.");
-		else if (dummy > 100)
-			msg_format("What a funny night-time! (%d)", dummy);
-		else
-			msg_format("It is night.");
-	}
-	else
-	/* day */
+	/* Find this time */
+	while (!my_fgets(fff, buf, 1024))
 	{
-		if (hour <= 0)
+		/* Ignore comments */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Ignore invalid lines */
+		if (buf[1] != ':') continue;
+
+		/* Process 'Start' */
+		if (buf[0] == 'S')
 		{
-			hour12 = 12 - (hour * -1);
+			/* Extract the starting time */
+			start = atoi(buf + 2);
+
+			/* Assume valid for an hour */
+			end = start + 59;
+
+			/* Next... */
+			continue;
 		}
-		else
+
+		/* Process 'End' */
+		if (buf[0] == 'E')
 		{
-			hour12 = hour;
+			/* Extract the ending time */
+			end = atoi(buf + 2);
+
+			/* Next... */
+			continue;
 		}
 
-		if (hour >= 0) morning = FALSE;
-		else morning = TRUE;
+		/* Ignore incorrect range */
+		if ((start > full) || (full > end)) continue;
 
-		msg_format("%d:%02d %s, day %d.", hour12, minute, (morning? "AM" : "PM"),
-			turn / (10L * TOWN_DAWN) + 1);
+		/* Process 'Description' */
+		if (buf[0] == 'D')
+		{
+			num++;
 
-		if (dummy < 5)
-			msg_print("Morning has broken...");
-		else if (dummy < 25)
-			msg_print("It is early morning.");
-		else if (dummy < 50)
-			msg_print("It is late morning.");
-		else if (dummy == 50)
-			msg_print("It is noon.");
-		else if (dummy < 65)
-			msg_print("It is early afternoon.");
-		else if (dummy < 85)
-			msg_print("It is late afternoon.");
-		else if (dummy < 95)
-			msg_print("It is early evening.");
-		else if (dummy < 101)
-			msg_print("The sun is setting.");
-		else
-			msg_format("What a strange daytime! (%d)", dummy);
+			/* Apply the randomizer */
+			if (!rand_int(num)) strcpy(desc, buf + 2);
+
+			/* Next... */
+			continue;
+		}
 	}
 
-	/* Show the turn-number */
-	msg_format("Current turn: %d.", turn);
+	/* Message */
+	msg_print(desc);
+
+	/* Close the file */
+	my_fclose(fff);
 }
+

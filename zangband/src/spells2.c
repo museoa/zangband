@@ -3674,18 +3674,53 @@ bool activate_ty_curse(bool stop_ty)
 {
 	int     i = 0;
 
+	int flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
+
+	/* Nothing summoned yet */
+	int count = 0;
+
 	do
 	{
-		switch (randint(27))
+		switch (randint(34))
 		{
+		case 28: case 29:
+			if (!count)
+			{
+				msg_print("The ground trembles...");
+				earthquake(py, px, 5 + rand_int(10));
+				if (randint(6) != 1) break;
+			}
+		case 30: case 31:
+			if (!count)
+			{
+				msg_print("A portal opens to a plane of raw mana!");
+				destroy_area(py, px, 20, TRUE);
+				project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
+				if (randint(6) != 1) break;
+			}
+		case 32: case 33:
+			if (!count)
+		{
+				msg_print("Space warps about you!");
+				teleport_player(damroll(10, 10));
+				if (randint(6) != 1) break;
+			}
+		case 34:
+			msg_print("You feel a surge of energy!");
+			wall_breaker();
+			if (!rand_int(7))
+			{
+				project(1, 7, py, px, 50, GF_KILL_WALL, flg);
+			}
+			if (randint(6) != 1) break;
 		case 1: case 2: case 3: case 16: case 17:
 			aggravate_monsters(1);
 			if (randint(6) != 1) break;
 		case 4: case 5: case 6:
-			activate_hi_summon();
+			count += activate_hi_summon();
 			if (randint(6) != 1) break;
 		case 7: case 8: case 9: case 18:
-			(void)summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
+			count += summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
 			if (randint(6) != 1) break;
 		case 10: case 11: case 12:
 			msg_print("You feel your life draining away...");
@@ -3719,7 +3754,7 @@ bool activate_ty_curse(bool stop_ty)
 			 */
 			if ((dun_level > 65) && !stop_ty)
 			{
-				summon_cyber();
+				count += summon_cyber();
 				stop_ty = TRUE;
 				break;
 			}
@@ -3743,70 +3778,76 @@ bool activate_ty_curse(bool stop_ty)
 }
 
 
-void activate_hi_summon(void)
+int activate_hi_summon(void)
 {
 	int i;
+	int count = 0;
 
 	for (i = 0; i < (randint(9) + (dun_level / 40)); i++)
 	{
 		switch (randint(26) + (dun_level / 20))
 		{
 			case 1: case 2:
-				(void)summon_specific(py, px, dun_level, SUMMON_ANT, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_ANT, TRUE, FALSE, FALSE);
 				break;
 			case 3: case 4:
-				(void)summon_specific(py, px, dun_level, SUMMON_SPIDER, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_SPIDER, TRUE, FALSE, FALSE);
 				break;
 			case 5: case 6:
-				(void)summon_specific(py, px, dun_level, SUMMON_HOUND, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_HOUND, TRUE, FALSE, FALSE);
 				break;
 			case 7: case 8:
-				(void)summon_specific(py, px, dun_level, SUMMON_HYDRA, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_HYDRA, TRUE, FALSE, FALSE);
 				break;
 			case 9: case 10:
-				(void)summon_specific(py, px, dun_level, SUMMON_ANGEL, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_ANGEL, TRUE, FALSE, FALSE);
 				break;
 			case 11: case 12:
-				(void)summon_specific(py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 13: case 14:
-				(void)summon_specific(py, px, dun_level, SUMMON_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 15: case 16:
-				(void)summon_specific(py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				break;
 			case 17:
-				(void)summon_specific(py, px, dun_level, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
 				break;
 			case 18: case 19:
-				(void)summon_specific(py, px, dun_level, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
 				break;
 			case 20: case 21:
-				(void)summon_specific(py, px, dun_level, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 22: case 23:
-				(void)summon_specific(py, px, dun_level, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, dun_level, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 24: case 25:
-				(void)summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
 				break;
 			default:
-				(void)summon_specific(py, px,(((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px,(((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
 		}
 	}
+
+	return count;
 }
 
 
 /* ToDo: check */
-void summon_cyber(void)
+int summon_cyber(void)
 {
 	int i;
 	int max_cyber = (dun_level / 50) + randint(6);
+	int count = 0;
 
 	for (i = 0; i < max_cyber; i++)
 	{
-		(void)summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
+		count += summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
 	}
+
+	return count;
 }
 
 

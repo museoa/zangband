@@ -13129,3 +13129,19 @@ D:disrupted, the Pattern damaged, and all the shadow is being absorbed by
 D:the Serpent. Unless it is stopped, the word as we know it will come to 
 D:an end, all order reverting to Primal Chaos.
 
+N:863:Quantum dot
+G:,:v
+I:110:4d2:20:100:0
+W:20:2:0:50
+B:SPORE:LOSE_ALL:2d4
+B:SPORE:UN_POWER:2d4
+B:SPORE:CONFUSE:2d4
+B:SPORE:TERRIFY:2d4
+F:NEVER_MOVE | 
+F:STUPID | WEIRD_MIND | ATTR_MULTI | ATTR_ANY | SHAPECHANGER | QUANTUM | 
+F:ELDRITCH_HORROR | MULTIPLY | FRIENDS | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | DROP_CORPSE
+F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN
+S:1_IN_2 |
+S:BLINK | MIND_BLAST
+D:It is there and it is not. 

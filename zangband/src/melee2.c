@@ -1659,6 +1659,45 @@ static void process_monster(int m_idx)
 	bool            did_kill_wall;
 	bool            gets_angry = FALSE;
 
+	/* Quantum monsters are odd */
+	if (r_ptr->flags2 & (RF2_QUANTUM))
+	{
+		/* Sometimes skip move */
+		if (!rand_int(2)) return;
+
+		/* Sometimes die */
+		if (!rand_int((m_idx % 100) + 10) && !(r_ptr->flags1 & RF1_QUESTOR))
+		{
+			bool sad = FALSE;
+
+			if (is_pet(m_ptr) && !(m_ptr->ml))
+				sad = TRUE;
+
+			if (m_ptr->ml)
+			{
+				char m_name[80];
+
+				/* Acquire the monster name */
+				monster_desc(m_name, m_ptr, 0);
+
+				/* Oops */
+				msg_format("%^s disappears!", m_name);
+			}
+
+			/* Generate treasure, etc */
+			monster_death(m_idx);
+
+			/* Delete the monster */
+			delete_monster_idx(m_idx);
+
+			if (sad)
+			{
+				msg_print("You feel sad for a moment.");
+			}
+
+			return;
+		}
+	}
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)
@@ -1667,6 +1706,9 @@ static void process_monster(int m_idx)
 
 		/* Hack -- handle non-aggravation */
 		if (!p_ptr->aggravate) notice = rand_int(1024);
+
+		/* Nightmare monsters are more alert */
+		if (ironman_nightmare) notice /= 2;
 
 		/* Hack -- See if monster "notices" player */
 		if ((notice * notice * notice) <= noise)
@@ -2723,6 +2765,7 @@ void process_monsters(void)
 	byte    old_r_cast_inate = 0;
 	byte    old_r_cast_spell = 0;
 
+	int speed;
 
 	/* Memorize old race */
 	old_monster_race_idx = p_ptr->monster_race_idx;
@@ -2787,9 +2830,15 @@ void process_monsters(void)
 			continue;
 		}
 
+		speed = m_ptr->mspeed;
 
-		/* Obtain the energy boost */
-		e = extract_energy[m_ptr->mspeed];
+		/* Monsters move quickly in Nightmare mode */
+		if (ironman_nightmare)
+		{
+			speed = MIN(199, m_ptr->mspeed + 5);
+		}
+
+		e = extract_energy[speed];
 
 		/* Give this monster some energy */
 		m_ptr->energy += e;

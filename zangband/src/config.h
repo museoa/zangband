@@ -11,6 +11,16 @@
  * included in all such copies.
  */
 
+/* Allow debug commands */
+#if 1
+# define USE_DEBUG
+#endif
+
+/* Allow various special stuff (sound, graphics, etc.) */
+#if 0
+# define USE_SPECIAL
+#endif
+
 
 /*
  * Look through the following lines, and where a comment includes the
@@ -176,6 +186,8 @@
  */
 /*#define ALLOW_BORG*/
 
+#ifdef USE_DEBUG
+
 /*
  * OPTION: Hack -- Compile in support for "Wizard Commands"
  */
@@ -185,6 +197,8 @@
  * OPTION: Hack -- Compile in support for "Spoiler Generation"
  */
 #define ALLOW_SPOILERS
+
+#endif /* USE_DEBUG */
 
 /*
  * OPTION: Allow "do_cmd_colors" at run-time
@@ -348,7 +362,7 @@
  */
 /* #define WDT_TRACK_OPTIONS */
 
-
+#ifdef USE_SPECIAL
 
 /*
  * OPTION: Allow the use of "sound" in various places.
@@ -360,6 +374,12 @@
  */
 #define USE_GRAPHICS
 
+/*
+ * OPTION: Allow the use of "music" in various places
+ */
+#define USE_MUSIC
+
+#endif /* USE_SPECIAL */
 
 /*
  * OPTION: Hack -- Macintosh stuff

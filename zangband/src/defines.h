@@ -2593,7 +2593,7 @@
 #define RF2_BRAIN_5         0x10000000
 #define RF2_BRAIN_6         0x20000000
 #define RF2_BRAIN_7         0x40000000
-#define RF2_BRAIN_8         0x80000000
+#define RF2_QUANTUM         0x80000000  /* Monster has quantum behavior */
 
 /*
  * New monster race bit flags

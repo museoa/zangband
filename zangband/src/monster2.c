@@ -527,8 +527,16 @@ s16b get_mon_num(int level)
 	/* Boost the level */
 	if (level > 0)
 	{
+		/* Nightmare mode allows more out-of depth monsters */
+		if (ironman_nightmare && !rand_int(NASTY_MON))
+		{
+			/* What a bizarre calculation */
+			level = 1 + (level * MAX_DEPTH / randint(MAX_DEPTH));
+		}
+		else
+		{
 		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0)
+			if (!rand_int(NASTY_MON))
 		{
 			/* Pick a level bonus */
 			int d = level / 4 + 2;
@@ -538,7 +546,7 @@ s16b get_mon_num(int level)
 		}
 
 		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0)
+			if (!rand_int(NASTY_MON))
 		{
 			/* Pick a level bonus */
 			int d = level / 4 + 2;
@@ -546,6 +554,7 @@ s16b get_mon_num(int level)
 			/* Boost the level */
 			level += ((d < 5) ? d : 5);
 		}
+	}
 	}
 
 
@@ -1526,8 +1535,9 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		return (FALSE);
 	}
 
-	/* Depth monsters may NOT be created out of depth */
-	if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (dun_level < r_ptr->level))
+	/* Depth monsters may NOT be created out of depth, unless in Nightmare mode */
+	if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (dun_level < r_ptr->level) &&
+		 (!ironman_nightmare || (r_ptr->flags1 & (RF1_QUESTOR))))
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -1617,7 +1627,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	m_ptr->csleep = 0;
 
 	/* Enforce sleeping if needed */
-	if (slp && r_ptr->sleep)
+	if (slp && r_ptr->sleep && !ironman_nightmare)
 	{
 		int val = r_ptr->sleep;
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
@@ -1631,6 +1641,14 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	else
 	{
 		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
+	}
+
+	/* Monsters have double hitpoints in Nightmare mode */
+	if (ironman_nightmare)
+	{
+		u32b hp = m_ptr->maxhp * 2L;
+
+		m_ptr->maxhp = MIN(30000, hp);
 	}
 
 	/* And start out fully healthy */
@@ -1652,8 +1670,14 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	/* Give a random starting energy */
 	m_ptr->energy = (byte)rand_int(100);
 
-	/* Force monster to wait for player */
-	if (r_ptr->flags1 & RF1_FORCE_SLEEP)
+	/* Nightmare monsters are more prepared */
+	if (ironman_nightmare)
+	{
+		m_ptr->energy *= 2;
+	}
+
+	/* Force monster to wait for player, unless in Nightmare mode */
+	if ((r_ptr->flags1 & RF1_FORCE_SLEEP) && !ironman_nightmare)
 	{
 		/* Monster is still being nice */
 		m_ptr->mflag |= (MFLAG_NICE);

@@ -2716,6 +2716,11 @@ errr file_character(cptr name, bool full)
 	else
 		fprintf(fff, "\n Hard Quests:        OFF");
 
+	if (ironman_nightmare)
+		fprintf(fff, "\n Nightmare Mode:     ON");
+	else
+		fprintf(fff, "\n Nightmare Mode:     OFF");
+
 	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_dlv,
 		50 * p_ptr->max_dlv);
 

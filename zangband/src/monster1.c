@@ -106,7 +106,7 @@ static bool know_damage(int r_idx, int i)
  */
 static void roff_aux(int r_idx, int remem)
 {
-	monster_race    *r_ptr;
+	monster_race    *r_ptr = &r_info[r_idx];
 
 	bool            old = FALSE;
 	bool            sin = FALSE;
@@ -116,6 +116,8 @@ static void roff_aux(int r_idx, int remem)
 	cptr            p, q;
 
 	int             msex = 0;
+
+	int speed = (ironman_nightmare) ? r_ptr->speed + 5 : r_ptr->speed;
 
 	bool            breath = FALSE;
 	bool            magic = FALSE;
@@ -149,10 +151,6 @@ static void roff_aux(int r_idx, int remem)
 	roff_s = NULL;
 
 #endif
-
-
-	/* Access the race and lore */
-	r_ptr = &r_info[r_idx];
 
 
 	/* Cheat -- Know everything */
@@ -247,6 +245,9 @@ static void roff_aux(int r_idx, int remem)
 		if (r_ptr->flags3 & RF3_GOOD)     flags3 |= (RF3_GOOD);
 		if (r_ptr->flags3 & RF3_ANIMAL)   flags3 |= (RF3_ANIMAL);
 		if (r_ptr->flags3 & RF3_AMBERITE) flags3 |= (RF3_AMBERITE);
+
+		/* Know 'quantum' flag */
+		if (r_ptr->flags2 & RF2_QUANTUM)  flags2 |= (RF2_QUANTUM);
 
 		/* Know "forced" flags */
 		if (r_ptr->flags1 & RF1_FORCE_DEPTH) flags1 |= (RF1_FORCE_DEPTH);
@@ -485,20 +486,20 @@ static void roff_aux(int r_idx, int remem)
 			roff(" erratically");
 
 			/* Hack -- Occasional conjunction */
-			if (r_ptr->speed != 110) roff(", and");
+			if (speed != 110) roff(", and");
 		}
 
 		/* Speed */
-		if (r_ptr->speed > 110)
+		if (speed > 110)
 		{
-			if (r_ptr->speed > 130) roff(" incredibly");
-			else if (r_ptr->speed > 120) roff(" very");
+			if (speed > 130) roff(" incredibly");
+			else if (speed > 120) roff(" very");
 			roff(" quickly");
 		}
-		else if (r_ptr->speed < 110)
+		else if (speed < 110)
 		{
-			if (r_ptr->speed < 90) roff(" incredibly");
-			else if (r_ptr->speed < 100) roff(" very");
+			if (speed < 90) roff(" incredibly");
+			else if (speed < 100) roff(" very");
 			roff(" slowly");
 		}
 		else
@@ -560,6 +561,7 @@ static void roff_aux(int r_idx, int remem)
 		else if (flags3 & RF3_TROLL)    roff(" troll");
 		else if (flags3 & RF3_ORC)      roff(" orc");
 		else if (flags3 & RF3_AMBERITE) roff(" Amberite");
+		else if (flags2 & RF2_QUANTUM)  roff(" quantum creature");
 		else                            roff(" creature");
 
 		/* Group some variables */

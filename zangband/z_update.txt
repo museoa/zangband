@@ -3,6 +3,7 @@ standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
 ZAngband 2.3.0
+-New ironman option: Nightmare mode.  It isn't even remotely fair.
 -Maximize mode, preserve mode, and the autoroller are now specified in
  the startup-options.
 -The number of spellpoints gained by casting 'Omnicide' is now resticted

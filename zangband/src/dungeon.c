@@ -1134,6 +1134,59 @@ static void process_world(void)
 		}
 	}
 
+	/* Nightmare mode activates the TY_CURSE at midnight */
+	if (ironman_nightmare)
+	{
+		s32b len = 10L * TOWN_DAWN;
+		s32b tick = turn % len + len / 4;
+
+		int hour = (24 * tick / len) % 24;
+		int min = (1440 * tick / len) % 60;
+		int prev_min = (1440 * (tick - 10) / len) % 60;
+
+		/* Require exact minute */
+		if (min != prev_min)
+		{
+			/* Every 15 minutes after 11:00 pm */
+			if ((hour == 23) && !(min % 15))
+			{
+				/* Disturbing */
+				disturb(0, 0);
+
+				switch (min / 15)
+				{
+					case 0:
+					{
+						msg_print("You hear a distant bell toll ominously.");
+						break;
+					}
+					case 1:
+					{
+						msg_print("A distant bell sounds twice.");
+						break;
+					}
+					case 2:
+	{
+						msg_print("A distant bell sounds three times.");
+						break;
+					}
+					case 3:
+					{
+						msg_print("A distant bell tolls four times.");
+						break;
+					}
+				}
+			}
+
+			/* TY_CURSE activates at mignight! */
+			if (!hour && !min)
+			{
+				disturb(1, 0);
+				msg_print("A distant bell tolls many times, fading into an deathly silence.");
+		activate_ty_curse(FALSE);
+	}
+		}
+	}
 
 	/* Take damage from cuts */
 	if (p_ptr->cut && !p_ptr->invuln)
@@ -3498,18 +3551,18 @@ static void dungeon(void)
 	}
 
 
-	/* Choose a panel row */
-	panel_row = ((py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
-	if (panel_row > max_panel_rows) panel_row = max_panel_rows;
-	else if (panel_row < 0) panel_row = 0;
+	/* Verify the panel */
+	verify_panel();
 
-	/* Choose a panel col */
-	panel_col = ((px - SCREEN_WID / 4) / (SCREEN_WID / 2));
-	if (panel_col > max_panel_cols) panel_col = max_panel_cols;
-	else if (panel_col < 0) panel_col = 0;
-
-	/* Recalculate the boundaries */
+	/* Validate the panel */
+	if (center_player)
+	{
+		panel_bounds_center();
+	}
+	else
+	{
 	panel_bounds();
+	}
 
 
 	/* Flush messages */
@@ -3903,8 +3956,8 @@ void play_game(bool new_game)
 		    (p_ptr->prace == RACE_ZOMBIE) ||
 		    (p_ptr->prace == RACE_SPECTRE))
 		{
-			/* Undead start at midnight */
-			turn = (30L * TOWN_DAWN) / 4;
+			/* Undead start just after midnight */
+			turn = (30L * TOWN_DAWN) / 4 + 1;
 		}
 		else
 		{

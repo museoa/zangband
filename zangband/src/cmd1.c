@@ -1104,7 +1104,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
-	if (test_hit_norm(chance, r_ptr->ac, m_ptr->ml))
+	if ((!(r_ptr->flags2 & (RF2_QUANTUM)) || !rand_int(2)) && test_hit_norm(chance, r_ptr->ac, m_ptr->ml))
 	{
 		/* Sound */
 		sound(SOUND_HIT);
