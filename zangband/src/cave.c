@@ -3232,27 +3232,15 @@ void update_view(void)
 						{
 							/* Mark as "CAVE_LITE" */
 							info |= (CAVE_LITE);
-
-							c_ptr->info = info;
-						
-							/* Hack - lite the spot */
-							lite_spot(y, x);
-						}
-						else
-						{
-							/* Mark as "CAVE_LITE" */
-							info |= (CAVE_LITE);
+							
+							/* Clear the 'do not update flag' */
+							info &= ~(CAVE_TEMP);
 						}
 					}
 					else if (info & CAVE_LITE)
 					{
 						/* Clear the flag, and then redraw */
-						info &= ~(CAVE_LITE);
-
-						c_ptr->info = info;
-						
-						/* Hack - lite the spot */
-						lite_spot(y, x);
+						info &= ~(CAVE_LITE | CAVE_TEMP);
 					}
 
 					/* Memorize? */
@@ -3317,16 +3305,14 @@ void update_view(void)
 						{
 							/* Mark as "CAVE_LITE" */
 							info |= (CAVE_LITE | CAVE_MARK);
-
-							c_ptr->info = info;
-						
-							/* Hack - lite the spot */
-							lite_spot(y, x);
+														
+							/* Clear the 'do not update flag' */
+							info &= ~(CAVE_TEMP);
 						}
 						else
 						{
-							/* Mark as "CAVE_LITE" */
-							info |= (CAVE_LITE | CAVE_MARK);
+							/* Mark as "CAVE_MARK" */
+							info |= (CAVE_MARK);
 						}
 					}
 					else 
@@ -3334,12 +3320,7 @@ void update_view(void)
 						if (info & CAVE_LITE)
 						{
 							/* Clear the flag, and then redraw */
-							info &= ~(CAVE_LITE);
-	
-							c_ptr->info = info;
-							
-							/* Hack - lite the spot */
-							lite_spot(y, x);
+							info &= ~(CAVE_LITE | CAVE_TEMP);
 						}
 
 						/* Perma-lit grids */
