@@ -1162,21 +1162,22 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Hallucinatory monster */
 				image_monster(&a, &c);
 			}
-		}
+		
 	
-		/* Hack -- fake monochrome */
-		if (fake_monochrome)
-		{
-			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-			else if (p_ptr->wraith_form) a = TERM_L_DARK;
+			/* Hack -- fake monochrome */
+			if (fake_monochrome)
+			{
+				if (p_ptr->invuln || !use_color) a = TERM_WHITE;
+				else if (p_ptr->wraith_form) a = TERM_L_DARK;
+			}
+
+			/* Save the info */
+			(*ap) = a;
+			(*cp) = c;
+
+			/* Done */
+			return;
 		}
-
-		/* Save the info */
-		(*ap) = a;
-		(*cp) = c;
-
-		/* Done */
-		return;	
 	}
 
 	/* Fields */
