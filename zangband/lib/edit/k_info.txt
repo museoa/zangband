@@ -2229,7 +2229,7 @@ W:2:0:4:100
 A:2/16:65/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	ident + PROJECT= inc_fast(rand_range(15, 40))
+L:USE:	ident = inc_fast(rand_range(15, 40))
 L:SMASH:project(who, 2, x, y, 0, GF_OLD_SPEED,
 L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
