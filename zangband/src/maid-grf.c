@@ -2964,8 +2964,8 @@ void lite_spot(int x, int y)
 void move_cursor_relative(int x, int y)
 {
 	/* Real coordinates convert to screen positions */
-	x -= p_ptr->panel_y1 - ROW_MAP;
-	y -= p_ptr->panel_x1 - COL_MAP;
+	x -= p_ptr->panel_x1 - COL_MAP;
+	y -= p_ptr->panel_y1 - ROW_MAP;
 
 	/* Go there */
 	Term_gotoxy(x, y);
