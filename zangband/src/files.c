@@ -2095,7 +2095,7 @@ static void display_player_flag_info(void)
 							TR_IM_COLD,
 							TR_HURT_COLD);
 	display_player_flag_aux2(col, row++, "Poison:", TR_RES_POIS,
-	                                                TR_IM_DARK);
+							TR_IM_POIS);
 	display_player_flag_aux(col, row++, "Fear  :",  TR_RES_FEAR);
 	display_player_flag_aux3(col, row++, "Light :", TR_RES_LITE,
 							TR_IM_LITE,
