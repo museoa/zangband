@@ -362,7 +362,7 @@ G:+:U
 W:100:2:0
 I:NO_LOOK | MERGE
 D:0:0:0:0:0:0:0:0
-F:10,field_action_door_unlock
+F:10,field_action_door_unlock | 11,field_action_door_gf
 F:15,field_action_delete | 16,field_action_interact_open
 F:17,field_action_door_lock_monster
 
@@ -372,6 +372,6 @@ G:+:U
 W:100:2:0
 I:NO_LOOK | MERGE
 D:15:1:0:0:0:0:0:0
-F:10,field_action_door_bash
+F:10,field_action_door_bash | 11,field_action_door_gf
 F:15,field_action_delete | 16,field_action_interact_disarm
 F:17,field_action_door_jam_monster
