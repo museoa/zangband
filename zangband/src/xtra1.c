@@ -2589,9 +2589,9 @@ static void calc_bonuses(void)
 		p_ptr->dis_ac += o_ptr->ac;
 
 		/* Apply bonuses to stats */
-		for (j = 0; j < 6; j++)
+		for (j = 0; j < A_MAX; j++)
 		{
-			p_ptr->stat[j].add += b.stat[6];
+			p_ptr->stat[j].add += b.stat[j];
 		}
 		
 		p_ptr->sp_bonus += b.sp_bonus;
