@@ -409,7 +409,7 @@ N:35:Armoury
 G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:5:20:0:100:0:0:0
+D:1:5:30:0:100:0:0:0
 F:2,field_action_door_store
 F:19,field_action_isarmour_tester
 
@@ -902,7 +902,7 @@ N:90:Clothes Store
 G:0:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:1:20:0:80:0:20:8
+D:0:1:20:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isclothes_tester
 
@@ -911,7 +911,7 @@ N:91:Expensive Clothes Store
 G:0:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:0:50:0:80:0:20:24
+D:0:0:50:0:100:0:0:24
 F:2,field_action_door_store
 F:19,field_action_isclothes_tester
 
