@@ -2885,7 +2885,7 @@ static void setup_menus(void)
 #endif /* USE_GRAPHICS */
 
 #ifdef USE_SOUND
-	if (initialized && inkey_flag)
+	if (initialized && p_ptr->inkey_flag)
 	{
 		/* Menu "Options", Item "Sound" */
 		EnableMenuItem(hm, IDM_OPTIONS_SOUND, MF_ENABLED);
