@@ -879,7 +879,7 @@ static void roff_aux(int r_idx, int remem)
 	/* Describe special abilities. */
 	if (flags2 & RF2_INVISIBLE)
 	{
-		c_roff(TERM_WHITE, format("%^s is invisible.  ", wd_he[msex]));
+		c_roff(TERM_L_BLUE, format("%^s is invisible.  ", wd_he[msex]));
 	}
 	if (flags2 & RF2_COLD_BLOOD)
 	{
@@ -897,7 +897,7 @@ static void roff_aux(int r_idx, int remem)
 	}
 	if (flags2 & RF2_MULTIPLY)
 	{
-		c_roff(TERM_WHITE, format("%^s breeds explosively.  ", wd_he[msex]));
+		c_roff(TERM_L_UMBER, format("%^s breeds explosively.  ", wd_he[msex]));
 	}
 	if (flags2 & RF2_REGENERATE)
 	{
