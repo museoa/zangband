@@ -5154,7 +5154,7 @@ room_type room_list[ROOM_TYPES] =
 	{3,		build_type17, RT_RUIN},	/* Triangles */
 	{5,		build_type18, RT_BUILDING},	/* Chambers */
 	{5,		build_type19, RT_STRANGE},	/* Channel */
-	{5,		build_type20, RT_ANIMAL | RT_RUIN},	/* Collapsed */
+	{1,		build_type20, RT_ANIMAL | RT_RUIN},	/* Collapsed */
 	{10,	build_type21, RT_CRYPT},	/* Crypt II */
 	{10,	build_type22, RT_COMPLEX},	/* Very large pillared chamber */
 	{3,		build_type23, RT_SIMPLE},	/* Semicircle */

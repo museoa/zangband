@@ -1220,7 +1220,7 @@ static const dun_gen_type dungeons[] =
 		FEAT_PEBBLES,
 		LQ_WATER | LQ_LAVA | LQ_SWAMP},
 
-	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 0, 1,
+	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 10, 1,
 		RT_COMPLEX | RT_CRYPT,
 		FEAT_FLOOR_TILE,
 		LQ_WATER | LQ_SWAMP},
@@ -1230,7 +1230,7 @@ static const dun_gen_type dungeons[] =
 		FEAT_DIRT,
 		LQ_WATER | LQ_ACID | LQ_LAVA | LQ_MUD},
 
-	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 0, 1,
+	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 40, 1,
 		RT_COMPLEX | RT_DENSE | RT_SIMPLE | RT_RVAULT,
 		FEAT_SAND,
 		LQ_ACID | LQ_LAVA},
