@@ -1493,139 +1493,28 @@ static void process_world(void)
 
 
 	/*** Timeout Various Things ***/
-
-	/* Hack -- Hallucinating */
-	if (p_ptr->image)
-	{
-		(void)set_image(p_ptr->image - 1);
-	}
-
-	/* Blindness */
-	if (p_ptr->blind)
-	{
-		(void)set_blind(p_ptr->blind - 1);
-	}
-
-	/* Times see-invisible */
-	if (p_ptr->tim_invis)
-	{
-		(void)set_tim_invis(p_ptr->tim_invis - 1);
-	}
-
-	/* Timed esp */
-	if (p_ptr->tim_esp)
-	{
-		(void)set_tim_esp(p_ptr->tim_esp - 1);
-	}
-
-	/* Timed infra-vision */
-	if (p_ptr->tim_infra)
-	{
-		(void)set_tim_infra(p_ptr->tim_infra - 1);
-	}
-
-	/* Paralysis */
-	if (p_ptr->paralyzed)
-	{
-		(void)set_paralyzed(p_ptr->paralyzed - 1);
-	}
-
-	/* Confusion */
-	if (p_ptr->confused)
-	{
-		(void)set_confused(p_ptr->confused - 1);
-	}
-
-	/* Afraid */
-	if (p_ptr->afraid)
-	{
-		(void)set_afraid(p_ptr->afraid - 1);
-	}
-
-	/* Fast */
-	if (p_ptr->fast)
-	{
-		(void)set_fast(p_ptr->fast - 1);
-	}
-
-	/* Slow */
-	if (p_ptr->slow)
-	{
-		(void)set_slow(p_ptr->slow - 1);
-	}
-
-	/* Protection from evil */
-	if (p_ptr->protevil)
-	{
-		(void)set_protevil(p_ptr->protevil - 1);
-	}
-
-	/* Invulnerability */
-	if (p_ptr->invuln)
-	{
-		(void)set_invuln(p_ptr->invuln - 1);
-	}
-
-	/* Wraith form */
-	if (p_ptr->wraith_form)
-	{
-		(void)set_wraith_form(p_ptr->wraith_form - 1);
-	}
-
-	/* Heroism */
-	if (p_ptr->hero)
-	{
-		(void)set_hero(p_ptr->hero - 1);
-	}
-
-	/* Super Heroism */
-	if (p_ptr->shero)
-	{
-		(void)set_shero(p_ptr->shero - 1);
-	}
-
-	/* Blessed */
-	if (p_ptr->blessed)
-	{
-		(void)set_blessed(p_ptr->blessed - 1);
-	}
-
-	/* Shield */
-	if (p_ptr->shield)
-	{
-		(void)set_shield(p_ptr->shield - 1);
-	}
-
-	/* Oppose Acid */
-	if (p_ptr->oppose_acid)
-	{
-		(void)set_oppose_acid(p_ptr->oppose_acid - 1);
-	}
-
-	/* Oppose Lightning */
-	if (p_ptr->oppose_elec)
-	{
-		(void)set_oppose_elec(p_ptr->oppose_elec - 1);
-	}
-
-	/* Oppose Fire */
-	if (p_ptr->oppose_fire)
-	{
-		(void)set_oppose_fire(p_ptr->oppose_fire - 1);
-	}
-
-	/* Oppose Cold */
-	if (p_ptr->oppose_cold)
-	{
-		(void)set_oppose_cold(p_ptr->oppose_cold - 1);
-
-	}
-
-	/* Oppose Poison */
-	if (p_ptr->oppose_pois)
-	{
-		(void)set_oppose_pois(p_ptr->oppose_pois - 1);
-	}
+	if (p_ptr->image)		(void)set_image(p_ptr->image - 1);
+	if (p_ptr->blind)		(void)set_blind(p_ptr->blind - 1);
+	if (p_ptr->tim_invis)	(void)set_tim_invis(p_ptr->tim_invis - 1);
+	if (p_ptr->tim_esp)		(void)set_tim_esp(p_ptr->tim_esp - 1);
+	if (p_ptr->tim_infra)	(void)set_tim_infra(p_ptr->tim_infra - 1);
+	if (p_ptr->paralyzed)	(void)set_paralyzed(p_ptr->paralyzed - 1);
+	if (p_ptr->confused)	(void)set_confused(p_ptr->confused - 1);
+	if (p_ptr->afraid)		(void)set_afraid(p_ptr->afraid - 1);
+	if (p_ptr->fast)		(void)set_fast(p_ptr->fast - 1);
+	if (p_ptr->slow)		(void)set_slow(p_ptr->slow - 1);
+	if (p_ptr->protevil)	(void)set_protevil(p_ptr->protevil - 1);
+	if (p_ptr->invuln)		(void)set_invuln(p_ptr->invuln - 1);
+	if (p_ptr->wraith_form)	(void)set_wraith_form(p_ptr->wraith_form - 1);
+	if (p_ptr->hero)		(void)set_hero(p_ptr->hero - 1);
+	if (p_ptr->shero)		(void)set_shero(p_ptr->shero - 1);
+	if (p_ptr->blessed)		(void)set_blessed(p_ptr->blessed - 1);
+	if (p_ptr->shield)		(void)set_shield(p_ptr->shield - 1);
+	if (p_ptr->oppose_acid)	(void)set_oppose_acid(p_ptr->oppose_acid - 1);
+	if (p_ptr->oppose_elec)	(void)set_oppose_elec(p_ptr->oppose_elec - 1);
+	if (p_ptr->oppose_fire)	(void)set_oppose_fire(p_ptr->oppose_fire - 1);
+	if (p_ptr->oppose_cold)	(void)set_oppose_cold(p_ptr->oppose_cold - 1);
+	if (p_ptr->oppose_pois)	(void)set_oppose_pois(p_ptr->oppose_pois - 1);
 
 
 	/*** Poison and Stun and Cut ***/
