@@ -394,7 +394,7 @@ static void DrawIconSpec(IconSpec *iconSpecPtr)
 	/* Not an ascii-type icon */
 	else
 	{
-		srcPtr = iconDataPtr->icon_data + iconSpecPtr->index * ICON_LENGTH;
+		srcPtr = iconDataPtr->icon_data + iconSpecPtr->index * g_icon_length;
 	
 		/* Transparent */
 		if (iconDataPtr->rle_data)

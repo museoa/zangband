@@ -18,6 +18,18 @@ t_assign_group g_assign[ASSIGN_MAX];
 t_assign_icon g_assign_none;
 t_grid *g_grid[MAX_HGT] = {0};
 
+t_icon_data *g_icon_data; /* Array of icon types */
+int g_icon_data_count = 0; /* Number of icon types */
+Tcl_HashTable g_icon_table; /* Hash table for icon types */
+long g_icon_length = 0; /* Length in bytes of one icon */
+int g_icon_size = 0; /* Icon dimensions (16, 24 or 32) */
+int g_icon_depth = 0; /* Icon depth (8, 16 or 24 bpp) */
+t_ascii *g_ascii; /* Array of ascii info */
+int g_ascii_count;  /* Number of elems in g_ascii[] array */
+int g_pixel_size; /* Num bytes per pixel (1, 2, 3 or 4) */
+int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
+
+
 int *g_background = NULL;
 
 t_assign_icon *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
@@ -357,7 +369,7 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 		/* Tint */
 		if (t)
 		{
-			for (i = 0; i < ICON_LENGTH; i++)
+			for (i = 0; i < g_icon_length; i++)
 			{
 				*b++ = (*(t + *bg++) & *mk++) | *fg++;
 			}
@@ -366,7 +378,7 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 		/* No tint */
 		else
 		{
-			for (i = 0; i < ICON_LENGTH; i++)
+			for (i = 0; i < g_icon_length; i++)
 			{
 				*b++ = (*bg++ & *mk++) | *fg++;
 			}
@@ -379,7 +391,7 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 		/* Tint */
 		if (t)
 		{
-			for (i = 0; i < ICON_LENGTH; i++)
+			for (i = 0; i < g_icon_length; i++)
 			{
 				*b++ = *(t + *bg++);
 			}
@@ -397,7 +409,7 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 	}
 
 	/* Return the address of the buffer we wrote into */
-	return b - ICON_LENGTH;
+	return (b - g_icon_length);
 }
 
 
@@ -554,17 +566,6 @@ char *assign_print2(char *buf, int assignType)
 char *assign_print_object(char *buf, object_type *o_ptr)
 {
 	t_assign_icon assign;
-	get_object_assign(&assign, o_ptr);
-	return AssignToString_Icon(buf, &assign);
-}
-
-/*
- * Get the assignment for the given object. Handle "empty" objects and
- * resolve alternate assignments.
- */
-void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr)
-{
-	t_assign_icon assign;
 
 	if (o_ptr->k_idx)
 	{
@@ -580,16 +581,14 @@ void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr)
 		assign.index = 0;
 		assign.ascii = -1;
 	}
-
-	(*assignPtr) = assign;
+	
+	return AssignToString_Icon(buf, &assign);
 }
-
 
 /* (assign) types */
 static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
-	int i;
 	Tcl_Obj *listObjPtr;
 
 	/* Hack - ignore parameters */
@@ -599,11 +598,8 @@ static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int ob
 
 	listObjPtr = Tcl_NewListObj(0, NULL);
 	
-	for (i = 0; i < ASSIGN_TYPE_MAX; i++)
-	{
-		Tcl_ListObjAppendElement(interp, listObjPtr,
-			Tcl_NewStringObj(keyword_assign_type[i], -1));
-	}
+	Tcl_ListObjAppendElement(interp, listObjPtr,
+		Tcl_NewStringObj(keyword_assign_type[0], -1));
 
 	Tcl_SetObjResult(interp, listObjPtr);
 
@@ -687,10 +683,10 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "none";
 	icon_data_ptr->icon_count = 1;
-	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
+	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
-	for (i = 0; i < ICON_LENGTH; i++)
+	for (i = 0; i < g_icon_length; i++)
 	{
 		icon_data_ptr->icon_data[i] = 0x00;
 	}
@@ -713,10 +709,10 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "blank";
 	icon_data_ptr->icon_count = 1;
-	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
+	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
-	for (i = 0; i < ICON_LENGTH; i++)
+	for (i = 0; i < g_icon_length; i++)
 	{
 		if (g_icon_depth != 8)
 			icon_data_ptr->icon_data[i] = 0; /* Black (RGB 0,0,0) */
@@ -741,7 +737,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "default";
 	icon_data_ptr->icon_count = 1;
-	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
+	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	n = 0, y2 = 0;
@@ -899,17 +895,6 @@ int PixelPtrToLong(IconPtr p, int bypp);
 void PixelLongToPtr(IconPtr dst, int pixel, int bypp);
 
 static int init_ascii_data(Tcl_Interp *interp, t_icon_data *icon_data_ptr);
-
-t_icon_data *g_icon_data; /* Array of icon types */
-int g_icon_data_count = 0; /* Number of icon types */
-Tcl_HashTable g_icon_table; /* Hash table for icon types */
-long g_icon_length = 0; /* Length in bytes of one icon */
-int g_icon_size = 0; /* Icon dimensions (16, 24 or 32) */
-int g_icon_depth = 0; /* Icon depth (8, 16 or 24 bpp) */
-t_ascii *g_ascii; /* Array of ascii info */
-int g_ascii_count;  /* Number of elems in g_ascii[] array */
-int g_pixel_size; /* Num bytes per pixel (1, 2, 3 or 4) */
-int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
 
 /* Hack -- Standard 16 "term" colors. User should be able to change */
 IconValue g_term_palette[16] = {255, 0, 250, 17, 217, 196, 199, 101, 129,
@@ -1864,7 +1849,7 @@ static int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 		goto noread;
 	}
 
-	if ((statBuf.st_size % ICON_LENGTH) != 0)
+	if ((statBuf.st_size % g_icon_length) != 0)
 	{
 		Tcl_AppendResult(interp, "bad size on icon file \"", fileName,
 			"\"", NULL);
@@ -1894,7 +1879,7 @@ static int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 	Tcl_DStringFree(&temp);
 
 	(*iconData) = (IconPtr) fileBuf;
-	(*iconCount) = statBuf.st_size / ICON_LENGTH;
+	(*iconCount) = statBuf.st_size / g_icon_length;
 
 	return TCL_OK;
 

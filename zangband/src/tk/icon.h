@@ -19,11 +19,9 @@ typedef struct IconSpec {
 	int ascii;
 } IconSpec;
 
-extern long g_icon_length; /* size x size x pixel_size */
 extern int g_icon_size; /* 16, 24 or 32 */
 extern int g_icon_depth; /* 8, 16 or 24 */
-extern int g_icon_pixels; /* size x size */
-extern int g_pixel_size; /* 1, 2, 3 or 4 */
+extern long g_icon_length;
 
 #define ICON_LENGTH_16 256L
 #define ICON_LENGTH_24 576L
@@ -65,13 +63,11 @@ typedef struct t_icon_data {
 
 extern t_icon_data *g_icon_data; /* Array of icon types */
 extern int g_icon_data_count; /* Number of icon types */
-extern Tcl_HashTable g_icon_table; /* Hash table for icon types */
 
 typedef struct t_ascii {
 	int color[2]; /* Foreground/Background palette index */
 } t_ascii;
 
-extern t_ascii *g_ascii; /* Array of "ascii" icon info */
 extern int g_ascii_count; /* Number of elements in g_ascii[] array */
 
 extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
@@ -123,13 +119,6 @@ extern void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 #define ASSIGN_ARTIFACT 5
 #define ASSIGN_MAX 6
 
-/*
- * Constants for t_assign.assignType.
- */
-#define ASSIGN_TYPE_ICON 0
-#define ASSIGN_TYPE_MAX 1
-
-
 /* One assigned icon */
 typedef struct t_assign_icon {
 	int type;
@@ -146,14 +135,6 @@ typedef struct t_assign_group {
 	int count; /* Number of elements in array */
 	t_assign_icon *assign; /* Array of iassignments */
 } t_assign_group;
-
-extern t_assign_group g_assign[ASSIGN_MAX];
-extern t_assign_icon g_assign_none;
-
-extern int *g_image_object;
-
-/* Feature index for masked features */
-extern int *g_background;
 
 /* Layers of feature icons */
 enum {
@@ -190,13 +171,10 @@ extern IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t,
 
 extern unsigned char *g_palette_rgb;
 
-extern int *g_image_monster;
-
 extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr);
 extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
 extern char *AssignToString_Icon(char *buf, t_assign_icon *assign);
 extern char *assign_print2(char *buf, int assignType);
 extern char *assign_print_object(char *buf, object_type *o_ptr);
-extern void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr);
 
 #endif /* _INCLUDE_ICON_H_ */
