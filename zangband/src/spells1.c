@@ -2457,7 +2457,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & (RF4_BR_LITE))
 			{
 				note = " resists.";
-				dam *= 2; dam /= (randint(6)+6);
+				dam *= 2; dam /= (randint(6) + 6);
 			}
 			else if (r_ptr->flags3 & (RF3_HURT_LITE))
 			{
@@ -2481,7 +2481,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			    (r_ptr->flags3 & RF3_HURT_LITE))
 			{
 				note = " resists.";
-				dam *= 2; dam /= (randint(6)+6);
+				dam *= 2; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -3264,7 +3264,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			t_x = m_list[who].fx;
 		}
 
-		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
+		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP | PROJECT_KILL));
 
 		disturb(1, 0);
 		return TRUE;
@@ -3865,7 +3865,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 
 		case GF_OLD_SLEEP:
 		{
-			if (p_ptr->free_act)  break;
+			if (p_ptr->free_act) break;
 			if (fuzzy) msg_print("You fall asleep!");
 
 			if (ironman_nightmare)

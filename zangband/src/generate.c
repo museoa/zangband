@@ -376,7 +376,7 @@ static bool cave_gen(void)
 	bool destroyed = FALSE;
 	bool empty_level = FALSE;
 	bool cavern = FALSE;
-	int laketype =0;
+	int laketype = 0;
 
 
 	dun_data dun_body;

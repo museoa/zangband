@@ -1747,7 +1747,7 @@ static void do_cmd_use_staff_aux(int item)
 			{
 				attempts = 1000;
 
-				while(attempts--)
+				while (attempts--)
 				{
 					scatter(&y, &x, py, px, 4, 0);
 
@@ -3086,7 +3086,7 @@ static void do_cmd_activate_aux(int item)
 				{
 					attempts = 1000;
 
-					while(attempts--)
+					while (attempts--)
 					{
 						scatter(&y, &x, py, px, 4, 0);
 
@@ -3165,13 +3165,8 @@ static void do_cmd_activate_aux(int item)
 			case ART_DOR:
 			case ART_TERROR:
 			{
-#if 0
-				for (i = 0; i < 8; i++) fear_monster(ddd[i], (p_ptr->lev)+10);
-#else
 				turn_monsters(40 + p_ptr->lev);
-#endif
 				o_ptr->timeout = 3 * (p_ptr->lev + 10);
-
 				break;
 			}
 

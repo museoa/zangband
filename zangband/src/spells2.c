@@ -3948,7 +3948,7 @@ int activate_hi_summon(void)
 				count += summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
 				break;
 			default:
-				count += summon_specific(py, px,(((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
+				count += summon_specific(py, px, (((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
 		}
 	}
 
@@ -3980,7 +3980,7 @@ void wall_breaker(void)
 
 	if (randint(80 + p_ptr->lev) < 70)
 	{
-		while(attempts--)
+		while (attempts--)
 		{
 			scatter(&y, &x, py, px, 4, 0);
 
@@ -4000,7 +4000,7 @@ void wall_breaker(void)
 
 		for (i = 0; i < num; i++)
 		{
-			while(1)
+			while (1)
 			{
 				scatter(&y, &x, py, px, 4, 0);
 

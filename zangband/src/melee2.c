@@ -787,8 +787,8 @@ static bool get_moves(int m_idx, int *mm)
 			}
 
 			/* Not in a room and strong player */
-			if ((room <= (8 * (p_ptr->chp + p_ptr->csp))/
-			 (p_ptr->mhp + p_ptr->msp)) && (room != 7))
+			if ((room <= (8 * (p_ptr->chp + p_ptr->csp)) /
+			    (p_ptr->mhp + p_ptr->msp)) && (room != 7))
 			{
 				/* Find hiding place */
 				if (find_hiding(m_idx, &y, &x)) done = TRUE;
@@ -1384,7 +1384,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			case 0:
 				{
 					damage = 0;
-					pt  = 0;
+					pt = 0;
 					break;
 				}
 

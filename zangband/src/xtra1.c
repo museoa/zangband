@@ -144,7 +144,7 @@ static void prt_stat(int stat)
 	}
 }
 
-static int bar_count=0;
+static int bar_count = 0;
 
 void clear_status_bar(void)
 {
@@ -178,24 +178,24 @@ void show_status_bar(cptr letter, byte *colour, int num)
 		if (bar_count + 12 < num)
 		{
 			/* Simple case - all in a row */
-			for (i =0;i<12;i++)
+			for (i = 0; i < 12; i++)
 			{
-				Term_putch(COL_STATBAR+i,ROW_STATBAR, colour[i+bar_count],
-					letter[i+bar_count]);
+				Term_putch(COL_STATBAR + i, ROW_STATBAR,
+				           colour[i + bar_count], letter[i + bar_count]);
 			}
 		}
 		else
 		{
-			/*Split over boundary*/
-			for (i=0;i<num-bar_count;i++)
+			/* Split over boundary */
+			for (i = 0; i < num - bar_count; i++)
 			{
-				Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i+bar_count],
-					letter[i+bar_count]);
+				Term_putch(COL_STATBAR + i, ROW_STATBAR,
+				           colour[i + bar_count], letter[i + bar_count]);
 			}
-			for (i=0;i<12+bar_count-num;i++)
+			for (i = 0; i < 12 + bar_count - num; i++)
 			{
-				Term_putch(COL_STATBAR+i+num-bar_count, ROW_STATBAR,
-					colour[i],letter[i]);
+				Term_putch(COL_STATBAR + i + num - bar_count, ROW_STATBAR,
+					colour[i], letter[i]);
 			}
 		}
 	}
@@ -208,7 +208,7 @@ void show_status_bar(cptr letter, byte *colour, int num)
 
 static void prt_status(void)
 {
-	int num=0;
+	int num = 0;
 	char letter[30];
 	byte colour[30];
 
@@ -217,202 +217,203 @@ static void prt_status(void)
 	/* Hack -- Hallucinating */
 	if (p_ptr->image)
 	{
-		letter[num]='H';
-		colour[num]=TERM_VIOLET;
+		letter[num] = 'H';
+		colour[num] = TERM_VIOLET;
 		num++;
 	}
 
 	/* Blindness */
 	if (p_ptr->blind)
 	{
-		letter[num]='B';
-		colour[num]=TERM_L_DARK;
+		letter[num] = 'B';
+		colour[num] = TERM_L_DARK;
 		num++;
 	}
 
 	/* Times see-invisible */
 	if (p_ptr->tim_invis)
 	{
-		letter[num]='I';
-		colour[num]=TERM_L_BLUE;
+		letter[num] = 'I';
+		colour[num] = TERM_L_BLUE;
 		num++;
 	}
 
 	/* Timed esp */
 	if (p_ptr->tim_esp)
 	{
-		letter[num]='E';
-		colour[num]=TERM_ORANGE;
+		letter[num] = 'E';
+		colour[num] = TERM_ORANGE;
 		num++;
 	}
 
 	/* Timed infra-vision */
 	if (p_ptr->tim_infra)
 	{
-		letter[num]='I';
-		colour[num]=TERM_L_RED;
+		letter[num] = 'I';
+		colour[num] = TERM_L_RED;
 		num++;
 	}
 
 	/* Paralysis */
 	if (p_ptr->paralyzed)
 	{
-		letter[num]='P';
-		colour[num]=TERM_RED;
+		letter[num] = 'P';
+		colour[num] = TERM_RED;
 		num++;
 	}
 
 	/* Confusion */
 	if (p_ptr->confused)
 	{
-		letter[num]='C';
-		colour[num]=TERM_VIOLET;
+		letter[num] = 'C';
+		colour[num] = TERM_VIOLET;
 		num++;
 	}
 
 	/* Afraid */
 	if (p_ptr->afraid)
 	{
-		letter[num]='A';
-		colour[num]=TERM_YELLOW;
+		letter[num] = 'A';
+		colour[num] = TERM_YELLOW;
 		num++;
 	}
 
 	/* Fast */
 	if (p_ptr->fast)
 	{
-		letter[num]='S';
-		colour[num]=TERM_GREEN;
+		letter[num] = 'S';
+		colour[num] = TERM_GREEN;
 		num++;
 	}
 
 	/* Slow */
 	if (p_ptr->slow)
 	{
-		letter[num]='S';
-		colour[num]=TERM_RED;
+		letter[num] = 'S';
+		colour[num] = TERM_RED;
 		num++;
 	}
 
 	/* Protection from evil */
 	if (p_ptr->protevil)
 	{
-		letter[num]='E';
-		colour[num]=TERM_L_DARK;
+		letter[num] = 'E';
+		colour[num] = TERM_L_DARK;
 		num++;
 	}
 
 	/* Invulnerability */
 	if (p_ptr->invuln)
 	{
-		letter[num]='I';
-		colour[num]=TERM_YELLOW;
+		letter[num] = 'I';
+		colour[num] = TERM_YELLOW;
 		num++;
 	}
 
 	/* Wraith form */
 	if (p_ptr->wraith_form)
 	{
-		letter[num]='W';
-		colour[num]=TERM_L_DARK;
+		letter[num] = 'W';
+		colour[num] = TERM_L_DARK;
 		num++;
 	}
 
 	/* Heroism */
 	if (p_ptr->hero)
 	{
-		letter[num]='H';
-		colour[num]=TERM_WHITE;
+		letter[num] = 'H';
+		colour[num] = TERM_WHITE;
 		num++;
 	}
 
-	/* Super Heroism / berserk*/
+	/* Super Heroism / berserk */
 	if (p_ptr->shero)
 	{
-		letter[num]='B';
-		colour[num]=TERM_RED;
+		letter[num] = 'B';
+		colour[num] = TERM_RED;
 		num++;
 	}
 
 	/* Blessed */
 	if (p_ptr->blessed)
 	{
-		letter[num]='B';
-		colour[num]=TERM_WHITE;
+		letter[num] = 'B';
+		colour[num] = TERM_WHITE;
 		num++;
 	}
 
 	/* Shield */
 	if (p_ptr->shield)
 	{
-		letter[num]='S';
-		colour[num]=TERM_WHITE;
+		letter[num] = 'S';
+		colour[num] = TERM_WHITE;
 		num++;
 	}
 
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)
 	{
-		letter[num]='A';
-		colour[num]=TERM_GREEN;
+		letter[num] = 'A';
+		colour[num] = TERM_GREEN;
 		num++;
 	}
 
 	/* Oppose Lightning */
 	if (p_ptr->oppose_elec)
 	{
-		letter[num]='E';
-		colour[num]=TERM_BLUE;
+		letter[num] = 'E';
+		colour[num] = TERM_BLUE;
 		num++;
 	}
 
 	/* Oppose Fire */
 	if (p_ptr->oppose_fire)
 	{
-		letter[num]='F';
-		colour[num]=TERM_RED;
+		letter[num] = 'F';
+		colour[num] = TERM_RED;
 		num++;
 	}
 
 	/* Oppose Cold */
 	if (p_ptr->oppose_cold)
 	{
-		letter[num]='C';
-		colour[num]=TERM_WHITE;
+		letter[num] = 'C';
+		colour[num] = TERM_WHITE;
 		num++;
 	}
 
 	/* Oppose Poison */
 	if (p_ptr->oppose_pois)
 	{
-		letter[num]='P';
-		colour[num]=TERM_GREEN;
+		letter[num] = 'P';
+		colour[num] = TERM_GREEN;
 		num++;
 	}
 
 	/* Word of Recall */
 	if (p_ptr->word_recall)
 	{
-		letter[num]='W';
-		colour[num]=TERM_WHITE;
+		letter[num] = 'W';
+		colour[num] = TERM_WHITE;
 		num++;
 	}
 
 	/* Confusing Hands */
 	if (p_ptr->confusing)
 	{
-		letter[num]='C';
-		colour[num]=TERM_RED;
+		letter[num] = 'C';
+		colour[num] = TERM_RED;
 		num++;
 	}
 
 	if (num)
 	{
-		/*Display the status bar if there are flags set*/
-		show_status_bar(letter,colour,num);
+		/* Display the status bar if there are flags set */
+		show_status_bar(letter, colour, num);
 	}
 	else clear_status_bar();
 }
+
 
 /*
  * Prints "title", including "wizard" or "winner" as needed.
@@ -1646,10 +1647,10 @@ static void calc_spells(void)
 		if (j >= 99) break;
 
 		/* Access the spell */
-		if (j<32)
+		if (j < 32)
 			s_ptr = &mp_ptr->info[use_realm1][j];
 		else
-			s_ptr = &mp_ptr->info[use_realm2][j%32];
+			s_ptr = &mp_ptr->info[use_realm2][j % 32];
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->slevel > p_ptr->lev) continue;
@@ -1700,10 +1701,10 @@ static void calc_spells(void)
 	for (j = 0; j < 64; j++)
 	{
 		/* Access the spell */
-		if (j<32)
+		if (j < 32)
 			s_ptr = &mp_ptr->info[use_realm1][j];
 		else
-			s_ptr = &mp_ptr->info[use_realm2][j%32];
+			s_ptr = &mp_ptr->info[use_realm2][j % 32];
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->slevel > p_ptr->lev) continue;
@@ -1722,11 +1723,11 @@ static void calc_spells(void)
 
 	if (p_ptr->realm2 == REALM_NONE)
 	{
-		if (k>32) k = 32;
+		if (k > 32) k = 32;
 	}
 	else
 	{
-		if (k>64) k = 64;
+		if (k > 64) k = 64;
 	}
 
 	/* Cannot learn more spells than exist */
@@ -2588,10 +2589,10 @@ void calc_bonuses(void)
 			p_ptr->resist_lite = TRUE;
 
 			/* Sprites become faster */
-			p_ptr->pspeed += (p_ptr->lev) / 10;
+			p_ptr->pspeed += p_ptr->lev / 10;
 			break;
 		case RACE_BEASTMAN:
-			p_ptr->resist_conf  = TRUE;
+			p_ptr->resist_conf = TRUE;
 			p_ptr->resist_sound = TRUE;
 			break;
 		default:
@@ -3389,7 +3390,7 @@ void calc_bonuses(void)
 
 			/* Monk */
 			case CLASS_MONK:
-				num = (p_ptr->lev<40?2:3); wgt = 40; mul = 4; break;
+				num = ((p_ptr->lev < 40) ? 2 : 3); wgt = 40; mul = 4; break;
 		}
 
 		/* Enforce a minimum "weight" (tenth pounds) */

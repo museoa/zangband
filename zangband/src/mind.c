@@ -278,9 +278,9 @@ static int get_mindcraft_power(int *sn)
  */
 static bool cast_mindcrafter_spell(int spell)
 {
-	int             b = 0;
-	int             dir;
-	int             plev = p_ptr->lev;
+	int b = 0;
+	int dir;
+	int plev = p_ptr->lev;
 
 
 	/* spell code */
@@ -296,7 +296,8 @@ static bool cast_mindcrafter_spell(int spell)
 		{
 			b = detect_monsters_normal();
 			if (plev > 14) b |= detect_monsters_invis();
-			if (plev > 4)  {
+			if (plev > 4)
+			{
 				b |= detect_traps();
 				b |= detect_doors();
 			}

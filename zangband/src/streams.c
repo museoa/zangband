@@ -55,7 +55,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 		if (dx != 0)
 		{
 			/* perturbation perpendicular to path */
-			changey=randint(abs(dx)) * 2 - abs(dx);
+			changey = randint(abs(dx)) * 2 - abs(dx);
 		}
 		else
 		{
@@ -126,7 +126,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 					}
 				}
 
-				done=TRUE;
+				done = TRUE;
 			}
 		}
 	}
@@ -278,19 +278,19 @@ void place_trees(int x, int y)
 	int i, j;
 
 	/* place trees/ rubble in ovalish distribution*/
-	for (i=x-3; i<x+4; i++)
+	for (i = x - 3; i < x + 4; i++)
 	{
-		for (j=y-3; j<y+4; j++)
+		for (j = y - 3; j < y + 4; j++)
 		{
 			/* Want square to be in the circle and accessable.*/
-			if (in_bounds(j, i) && (distance(j, i, y, x) < 4) && (!cave_perma_bold(j, i)))
+			if (in_bounds(j, i) && (distance(j, i, y, x) < 4) && !cave_perma_bold(j, i))
 			{
 				/*
 				 * Clear previous contents, add feature
 				 * The border mainly gets trees, while the center gets rubble */
 				if ((distance(j, i, y, x) > 1) || (randint(100) < 25))
 				{
-					if (randint(100)<75)
+					if (randint(100) < 75)
 						cave[j][i].feat = FEAT_TREES;
 				}
 				else
@@ -299,16 +299,16 @@ void place_trees(int x, int y)
 				}
 
 				/* Light area since is open above */
-				cave[j][i].info|=CAVE_GLOW;
+				cave[j][i].info |= CAVE_GLOW;
 			}
 		}
 	}
 
 	/* No up stairs in ironman mode */
-	if ((!ironman_downward) && (randint(3) == 1))
+	if (!ironman_downward && (randint(3) == 1))
 	{
 		/* up stair */
-		cave[y][x].feat=FEAT_LESS;
+		cave[y][x].feat = FEAT_LESS;
 	}
 }
 
@@ -329,8 +329,8 @@ void destroy_level(void)
 	for (n = 0; n < randint(5); n++)
 	{
 		/* Pick an epi-center */
-		x1 = rand_range(5, cur_wid-1 - 5);
-		y1 = rand_range(5, cur_hgt-1 - 5);
+		x1 = rand_range(5, cur_wid - 1 - 5);
+		y1 = rand_range(5, cur_hgt - 1 - 5);
 
 		/* Big area of affect */
 		for (y = (y1 - 15); y <= (y1 + 15); y++)

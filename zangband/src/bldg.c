@@ -472,7 +472,7 @@ static bool gamble_comm(int cmd)
 					odds = 1;
 					roll1 = randint(6);
 					roll2 = randint(6);
-					roll3 = roll1 +  roll2;
+					roll3 = roll1 + roll2;
 					choice = roll3;
 					sprintf(tmp_str, "First roll: %d %d    Total: %d", roll1,
 						 roll2, roll3);
@@ -488,7 +488,7 @@ static bool gamble_comm(int cmd)
 							msg_print(NULL);
 							roll1 = randint(6);
 							roll2 = randint(6);
-							roll3 = roll1 +  roll2;
+							roll3 = roll1 + roll2;
 
 							sprintf(tmp_str, "Roll result: %d %d   Total:     %d",
 								 roll1, roll2, roll3);
@@ -889,7 +889,7 @@ static bool inn_comm(int cmd)
 						get_mon_num_prep(get_nightmare, NULL);
 
 						/* Have some nightmares */
-						while(1)
+						while (1)
 						{
 							have_nightmare(get_mon_num(MAX_DEPTH));
 
@@ -1220,7 +1220,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 
 	c_put_str(TERM_YELLOW, "Possible Damage:", row+5, col);
 
-	dambonus=o_ptr->to_d + p_ptr->to_d;
+	dambonus = o_ptr->to_d + p_ptr->to_d;
 
 	if (dambonus > 0)
 		mindam = (100 + deadliness_conversion[dambonus]);

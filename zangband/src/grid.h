@@ -16,11 +16,11 @@
 
 /* Macros */
 
-#define set_cave_feat(Y,X,F)    (cave[(Y)][(X)].feat  = (F))
+#define set_cave_feat(Y,X,F)    (cave[(Y)][(X)].feat = (F))
 #define add_cave_info(Y,X,I)    (cave[(Y)][(X)].info |= (I))
 
 /* This should not be used */
-/*#define set_cave_info(Y,X,I)    (cave[(Y)][(X)].info  = (I))*/
+/*#define set_cave_info(Y,X,I)    (cave[(Y)][(X)].info = (I)) */
 
 #define place_rubble(Y,X)       set_cave_feat(Y,X,FEAT_RUBBLE)
 #define place_up_stairs(Y,X)    set_cave_feat(Y,X,FEAT_LESS)

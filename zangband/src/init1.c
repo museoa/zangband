@@ -1315,7 +1315,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			k_ptr->ds = hd2;
 			k_ptr->to_h = th;
 			k_ptr->to_d = td;
-			k_ptr->to_a =  ta;
+			k_ptr->to_a = ta;
 
 			/* Next... */
 			continue;
@@ -1610,7 +1610,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_ptr->ds = hd2;
 			a_ptr->to_h = th;
 			a_ptr->to_d = td;
-			a_ptr->to_a =  ta;
+			a_ptr->to_a = ta;
 
 			/* Next... */
 			continue;
@@ -2990,7 +2990,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				q_ptr->k_idx   = atoi(zz[8]);
 
 				if (num > 9)
-					q_ptr->flags  = atoi(zz[9]);
+					q_ptr->flags = atoi(zz[9]);
 
 				r_ptr = &r_info[q_ptr->r_idx];
 				if (r_ptr->flags1 & RF1_UNIQUE)

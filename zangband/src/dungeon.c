@@ -2240,7 +2240,7 @@ static void process_world(void)
 		if (!p_ptr->word_recall)
 		{
 			/* Disturbing! */
-  			disturb(0, 0);
+			disturb(0, 0);
 
 			/* Determine the level */
 			if (dun_level || p_ptr->inside_quest)

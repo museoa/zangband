@@ -1117,7 +1117,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							int n =  strlen(image_monster_hack_ibm);
+							int n = strlen(image_monster_hack_ibm);
 							(*cp) = (image_monster_hack_ibm[rand_int(n)]);
 
 							/* Random color */

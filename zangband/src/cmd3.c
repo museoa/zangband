@@ -597,7 +597,7 @@ void do_cmd_destroy(void)
 			s32b tester_exp = p_ptr->max_exp / 20;
 			if (tester_exp > 10000) tester_exp = 10000;
 			if (o_ptr->sval < 3) tester_exp /= 4;
-			if (tester_exp<1) tester_exp = 1;
+			if (tester_exp < 1) tester_exp = 1;
 
 			msg_print("You feel more experienced.");
 			gain_exp(tester_exp * amt);
@@ -1483,7 +1483,8 @@ void do_cmd_query_symbol(void)
 	/* Restore */
 	prt(buf, 0, 0);
 
-	why=2;
+	why = 2;
+
 	/* Select the sort method */
 	ang_sort_comp = ang_sort_comp_hook;
 	ang_sort_swap = ang_sort_swap_hook;

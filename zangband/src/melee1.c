@@ -1278,7 +1278,7 @@ bool make_attack_normal(int m_idx)
 						}
 					}
 
-					/* Damage CON (10% chance)*/
+					/* Damage CON (10% chance) */
 					if (randint(100) < 11)
 					{
 						/* 1% chance for perm. damage */

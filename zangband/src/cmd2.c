@@ -511,7 +511,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 		for (i = 0; i < num; i++)
 		{
-			if (randint(100)<dun_level)
+			if (randint(100) < dun_level)
 				activate_hi_summon();
 			else
 				(void)summon_specific(y, x, dun_level, 0, TRUE, FALSE, FALSE);
@@ -2646,7 +2646,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	int bonus, chance;
 	int cur_dis, visible;
 
-	int sleeping_bonus=0;
+	int sleeping_bonus = 0;
 	int chance2;
 
 	object_type forge;
@@ -2728,7 +2728,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_SLING:
 		{
 			tmul = 2;
-			energy_use=50;
+			energy_use = 50;
 			break;
 		}
 
@@ -2736,7 +2736,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_SHORT_BOW:
 		{
 			tmul = 2;
-			energy_use=100;
+			energy_use = 100;
 			break;
 		}
 
@@ -2752,7 +2752,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* weak players cannot use a longbow well */
 				tmul = 2;
 			}
-			energy_use=100;
+			energy_use = 100;
 			break;
 		}
 
@@ -2760,7 +2760,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_LIGHT_XBOW:
 		{
 			tmul = 4;
-			energy_use=120;
+			energy_use = 120;
 			break;
 		}
 
@@ -2785,7 +2785,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	if (p_ptr->xtra_might) tmul++;
 
 	/* Base range */
-	tdis =  5 * tmul;
+	tdis = 5 * tmul;
 
 	/* Take a (partial) turn */
 	energy_use = (energy_use / thits);

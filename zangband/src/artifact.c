@@ -1318,7 +1318,7 @@ static void get_random_name(char *return_name, byte tval, int power)
 	{
 		cptr filename;
 
-		switch ((bool)(tval>=TV_BOOTS))
+		switch ((bool)(tval >= TV_BOOTS))
 		{
 			case 1:
 				switch (power)

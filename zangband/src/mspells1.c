@@ -898,7 +898,7 @@ bool make_attack_spell(int m_idx)
 	}
 	else
 	{
-		if (rand_int(100) >=  chance) return (FALSE);
+		if (rand_int(100) >= chance) return (FALSE);
 
 		/* Sometimes forbid inate attacks (breaths) */
 		if (rand_int(100) >= (chance * 2)) no_inate = TRUE;

@@ -1678,7 +1678,8 @@ bool artifact_scroll(void)
 		if (o_ptr->number > 1)
 		{
 			msg_print("Not enough enough energy to enchant more than one object!");
-			msg_format("%d of your %s %s destroyed!",(o_ptr->number)-1, o_name, (o_ptr->number>2?"were":"was"));
+			msg_format("%d of your %s %s destroyed!", (o_ptr->number) - 1,
+			           o_name, ((o_ptr->number > 2) ? "were" : "was"));
 			o_ptr->number = 1;
 		}
 		okay = create_artifact(o_ptr, TRUE);

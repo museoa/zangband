@@ -2125,7 +2125,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 						o_ptr->name2 = EGO_DF;
 						if (randint(3) == 1)
 							o_ptr->art_flags2 |= TR2_RES_POIS;
-						random_resistance(o_ptr, FALSE, randint(22)+16);
+						random_resistance(o_ptr, FALSE, randint(22) + 16);
 						break;
 					}
 
@@ -3936,21 +3936,19 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 			case EGO_HA:
 			{
 				o_ptr->xtra1 = EGO_XTRA_SUSTAIN;
+
 				if (randint(4) == 1)
 				{
 					o_ptr->art_flags1 |= TR1_BLOWS;
-					if (o_ptr->pval>2)
-					{
-						o_ptr->pval-=2;
-					}
+
+					if (o_ptr->pval > 2) o_ptr->pval -= 2;
+
 					/* tone down number of attacks*/
-					if (o_ptr->pval>0)
+					if (o_ptr->pval > 0)
 					{
-						o_ptr->pval-=(o_ptr->dd)/2;
-						if (o_ptr->pval<1)
-						{
-							o_ptr->pval=1;
-						}
+						o_ptr->pval -= o_ptr->dd / 2;
+
+						if (o_ptr->pval < 1) o_ptr->pval = 1;
 					}
 				}
 				break;
@@ -3980,14 +3978,13 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 			case EGO_ATTACKS:
 			{
 				o_ptr->art_flags1 |= TR1_BLOWS;
+
 				/* tone down number of attacks*/
-				if (o_ptr->pval>0)
+				if (o_ptr->pval > 0)
 				{
-					o_ptr->pval-=(o_ptr->dd)/2;
-					if (o_ptr->pval<1)
-					{
-						o_ptr->pval=1;
-					}
+					o_ptr->pval -= o_ptr->dd / 2;
+
+					if (o_ptr->pval < 1) o_ptr->pval = 1;
 				}
 				break;
 			}
@@ -3997,14 +3994,13 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 				if (randint(3) == 1)
 				{
 					o_ptr->art_flags1 |= TR1_BLOWS;
+
 					/* tone down number of attacks*/
-					if (o_ptr->pval>0)
+					if (o_ptr->pval > 0)
 					{
-						o_ptr->pval-=(o_ptr->dd)/2;
-						if (o_ptr->pval<1)
-						{
-							o_ptr->pval=1;
-						}
+						o_ptr->pval -= o_ptr->dd / 2;
+
+						if (o_ptr->pval < 1) o_ptr->pval = 1;
 					}
 				}
 				break;

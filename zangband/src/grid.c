@@ -753,7 +753,7 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 
 		dy = 0;
 		dx = 0;
-		while ((i>0) && (cave[*y + dy][*x + dx].feat == FEAT_WALL_SOLID))
+		while ((i > 0) && (cave[*y + dy][*x + dx].feat == FEAT_WALL_SOLID))
 		{
 			dy = rand_int(3) - 1;
 			dx = rand_int(3) - 1;

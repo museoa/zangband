@@ -2480,7 +2480,7 @@ void do_cmd_feeling(void)
 	}
 
 	/* Display the feeling */
-	if (turn-old_turn>=1000)
+	if (turn - old_turn >= 1000)
 	{
 		msg_print(do_cmd_feeling_text[feeling]);
 	}
