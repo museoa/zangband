@@ -1001,7 +1001,7 @@ static void process_world(void)
 			}
 
 			/* Update the monsters */
-			p_ptr->update |= (PU_MONSTERS);
+			p_ptr->update |= (PU_MONSTERS | PU_VIEW);
 
 			/* Redraw map */
 			p_ptr->redraw |= (PR_MAP);
