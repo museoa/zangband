@@ -9973,15 +9973,14 @@ static int borg_defend_aux_prot_evil(int p1)
 {
 	int p2;
 	int fail_allowed;
-	bool pfe_spell = FALSE;
+
+	/* Get the allowed fail_rate */
+	fail_allowed = borg_fail_allowed(p1);
 
 	if (borg_simulate)
 	{
 		/* if already protected */
 		if (borg_prot_from_evil || FLAG(bp_ptr, TR_SLAY_EVIL)) return (0);
-
-		/* Get the allowed fail_rate */
-		fail_allowed = borg_fail_allowed(p1);
 
 		/* Is the spell available? */
 		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed) ||
@@ -10148,8 +10147,8 @@ static int borg_defend_aux_hero(int p1)
 			!borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed) &&
 			!borg_racial_check(RACE_HALF_TROLL, TRUE) &&
 			!borg_racial_check(RACE_BARBARIAN, TRUE) &&
-			!borg_mutation_check(MUT1_BERSERK, TRUE) ||
-			!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
+			!borg_mutation_check(MUT1_BERSERK, TRUE) &&
+			!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) &&
 			!borg_slot(TV_POTION, SV_POTION_HEROISM)) return (0);
 
 		/* if we are in some danger but not much, go for a quick bless */
@@ -10174,6 +10173,8 @@ static int borg_defend_aux_hero(int p1)
 		borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
 		borg_quaff_potion(SV_POTION_HEROISM))
 		return 1;
+
+	return 0;
 }
 
 
@@ -10553,7 +10554,7 @@ static int borg_defend_aux_mass_genocide(int p1)
 static int borg_defend_aux_genocide(int p1, int *genocide_target)
 {
 	int i, p, u, b_i = 0;
-	int p2;
+	int p2 = p1;
 	int threat = 0;
 	int max = 1;
 
@@ -10915,7 +10916,7 @@ static int borg_defend_aux_destruction(int p1)
 
 		/* Try not to cast this against uniques */
 		/* Don't cast it on a quest level */
-		if (borg_fighting_unique && p1 < avoidance * 5 ||
+		if ((borg_fighting_unique && p1 < avoidance * 5) ||
 			borg_fighting_unique >= BORG_QUESTOR) return (0);
 
 		/* Simulation */
@@ -10946,7 +10947,7 @@ static int borg_defend_aux_banishment(int p1)
 			!borg_spell_okay_fail(REALM_TRUMP, 1, 7, fail_allowed)) return (0);
 
 		/* reset initial danger */
-		p1 = 1;
+		p1 = p2 = 1;
 
 		/* Two passes to determine exact danger */
 		for (i = 0; i < borg_beam_n; i++)
@@ -11340,7 +11341,7 @@ static int borg_defend_aux(int what, int p1, int *key)
 	return (0);
 }
 
-bool borg_refresh_goi(void)
+static bool borg_refresh_goi(void)
 {
 	int p;
 	map_block *mb_ptr = map_loc(c_x, c_y);

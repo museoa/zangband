@@ -1683,7 +1683,7 @@ byte borg_spell_mana(int realm, int book, int spell)
 }
 
 /* Combines the legality check with the cost */
-bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
+static bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
 {
 	/* Is this spell castable with the fail_check? */
 	if (!borg_spell_legal_fail(realm, book, spell, fail)) return (FALSE);
