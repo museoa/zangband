@@ -231,7 +231,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	if (p_ptr->prace == RACE_SKELETON)
 	{
 		msg_print("Some of the fluid falls through your jaws!");
-		(void)potion_smash_effect(0, p_ptr->py, p_ptr->px, o_ptr->k_idx);
+		(void)potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr->k_idx);
 	}
 
 	/* Combine / Reorder the pack (later) */

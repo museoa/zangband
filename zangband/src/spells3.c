@@ -2800,7 +2800,7 @@ bool bless_weapon(void)
  *          the potion was in her inventory);
  *    k_idx --- type of object.
  */
-bool potion_smash_effect(int who, int y, int x, int k_idx)
+bool potion_smash_effect(int who, int x, int y, int k_idx)
 {
 	int     radius = 2;
 	int     dt = 0;
@@ -3766,7 +3766,7 @@ int inven_damage(inven_func typ, int perc)
 					int px = p_ptr->px;
 					int py = p_ptr->py;
 
-					(void)potion_smash_effect(0, py, px, o_ptr->k_idx);
+					(void)potion_smash_effect(0, px, py, o_ptr->k_idx);
 				}
 
 				/* Reduce the charges of rods/wands */

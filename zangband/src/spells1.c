@@ -865,7 +865,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)
 				{
-					(void)potion_smash_effect(who, y, x, k_idx);
+					(void)potion_smash_effect(who, x, y, k_idx);
 				}
 
 				/* Redraw */
