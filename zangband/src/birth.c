@@ -1879,12 +1879,88 @@ static void player_outfit(void)
 	}
 }
 
+/*
+ * Player sex
+ */
+static bool get_player_sex(void)
+{
+	char p2 = ')';
+	char buf[80];
+	cptr str;
+	char ch;
+	int k, n;
+	
+	/* Extra info */
+	Term_putstr(5, 15, -1, TERM_WHITE,
+		"Your 'sex' does not have any significant gameplay effects.");
+
+	/* Prompt for "Sex" */
+	for (n = 0; n < MAX_SEXES; n++)
+	{
+		/* Analyze */
+		p_ptr->psex = n;
+		sp_ptr = &sex_info[p_ptr->psex];
+		str = sp_ptr->title;
+
+		/* Display */
+		sprintf(buf, "%c%c %s", I2A(n), p2, str);
+		put_str(buf, 21 + (n/5), 2 + 15 * (n%5));
+	}
+
+	/* Choose */
+	while (1)
+	{
+		sprintf(buf, "Choose a sex (%c-%c), * for random, or = for options: ",
+		        I2A(0), I2A(n-1));
+		put_str(buf, 20, 2);
+		ch = inkey();
+		if (ch == 'Q')
+		{
+			remove_loc();
+			quit(NULL);
+		}
+
+		if (ch == 'S') return (FALSE);
+
+		if (ch == ESCAPE) ch = '*';
+		if (ch == '*')
+		{
+			k = randint0(MAX_SEXES);
+			break;
+		}
+
+		k = (islower(ch) ? A2I(ch) : -1);
+		if ((k >= 0) && (k < n)) break;
+		if (ch == '?')
+		{
+			screen_save();
+			(void)show_file("charattr.txt#TheSexes", NULL, 0, 0);
+			screen_load();
+		}
+		else if (ch == '=')
+		{
+			screen_save();
+			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+			screen_load();
+		}
+		else bell();
+	}
+
+	/* Set sex */
+	p_ptr->psex = k;
+	sp_ptr = &sex_info[p_ptr->psex];
+
+	/* Sex */
+	put_str("Sex         :", 3, 1);
+	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
+
+	return (TRUE);
+}
+
 
 /*
  * Player race
  */
-
-
 static byte get_sub_race(int group)
 {
   int k, n;
@@ -2088,7 +2164,7 @@ static bool get_player_race(void)
 	c_put_str(TERM_L_BLUE, str, 4, 15);
 
 	/* Success */
-	return TRUE;
+	return (TRUE);
 }
 
 
@@ -2176,151 +2252,22 @@ static bool get_player_class(void)
 	/* Clean up */
 	clear_from(15);
 
-	return TRUE;
+	return (TRUE);
 }
 
-
 /*
- * Helper function for 'player_birth()'.
- *
- * This function allows the player to select a sex, race, and class, and
- * modify options (including the birth options).
- *
- * Taken from V 2.9.0
+ * Quests
  */
-static bool player_birth_aux_1(void)
+static bool get_player_quests(void)
 {
-	int i, j, v;
-
-	int level;
-
-	char p2 = ')';
-
 	char inp[80];
-
-
-#ifdef USE_SCRIPT
-
-	int result;
-
-	/* Generate the player */
-	result = player_birth_callback();
-
-	/* Restart ? */
-	if (result == -1) return FALSE;
-
-#else /* USE_SCRIPT */
-
-	char buf[80];
-	cptr str;
-	char ch;
-	int k, n;
-
-	/*** Instructions ***/
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Display some helpful information */
-	Term_putstr(5, 10, -1, TERM_WHITE,
-	            "Please answer the following questions.  Most of the questions");
-	Term_putstr(5, 11, -1, TERM_WHITE,
-	            "display a set of standard answers, and many will also accept");
-	Term_putstr(5, 12, -1, TERM_WHITE,
-	            "some special responses, including 'Q' to quit, 'S' to restart,");
-	Term_putstr(5, 13, -1, TERM_WHITE,
-	            "and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
-
-
-	/*** Player sex ***/
-
-	/* Extra info */
-	Term_putstr(5, 15, -1, TERM_WHITE,
-		"Your 'sex' does not have any significant gameplay effects.");
-
-	/* Prompt for "Sex" */
-	for (n = 0; n < MAX_SEXES; n++)
-	{
-		/* Analyze */
-		p_ptr->psex = n;
-		sp_ptr = &sex_info[p_ptr->psex];
-		str = sp_ptr->title;
-
-		/* Display */
-		sprintf(buf, "%c%c %s", I2A(n), p2, str);
-		put_str(buf, 21 + (n/5), 2 + 15 * (n%5));
-	}
-
-	/* Choose */
-	while (1)
-	{
-		sprintf(buf, "Choose a sex (%c-%c), * for random, or = for options: ",
-		        I2A(0), I2A(n-1));
-		put_str(buf, 20, 2);
-		ch = inkey();
-		if (ch == 'Q')
-		{
-			remove_loc();
-			quit(NULL);
-		}
-
-		if (ch == 'S') return (FALSE);
-
-		if (ch == ESCAPE) ch = '*';
-		if (ch == '*')
-		{
-			k = randint0(MAX_SEXES);
-			break;
-		}
-
-		k = (islower(ch) ? A2I(ch) : -1);
-		if ((k >= 0) && (k < n)) break;
-		if (ch == '?')
-		{
-			screen_save();
-			(void)show_file("charattr.txt#TheSexes", NULL, 0, 0);
-			screen_load();
-		}
-		else if (ch == '=')
-		{
-			screen_save();
-			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-			screen_load();
-		}
-		else bell();
-	}
-
-	/* Set sex */
-	p_ptr->psex = k;
-	sp_ptr = &sex_info[p_ptr->psex];
-
-	/* Sex */
-	put_str("Sex         :", 3, 1);
-	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
-
-	/* Clean up */
-	clear_from(15);
-
-	/* Choose the players race */
-	if (!get_player_race()) return FALSE;
-
-	/* Clean up */
-	clear_from(15);
-
-	/* Choose the players class */
-	if (!get_player_class()) return FALSE;
-
-	/* Clean up */
-	clear_from(15);
-
-	/* Choose the magic realms */
-	if (!get_player_realms()) return FALSE;
-
-#endif /* USE_SCRIPT */
-
-	/* Clear */
-	clear_from(20);
-
+	
+	monster_race *r_ptr, *quest_r_ptr;
+	quest_type *q_ptr;
+	
+	int	r_idx;
+	int	i, j, v, level;
+	
 	/*** User enters number of quests ***/
 	/* Heino Vander Sanden and Jimmy De Laet */
 
@@ -2369,9 +2316,6 @@ static bool player_birth_aux_1(void)
 		break;
 	}
 
-	/* Clear */
-	clear_from(15);
-
 	/* Init the random quests */
 	p_ptr->inside_quest = MIN_RANDOM_QUEST;
 	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
@@ -2383,10 +2327,7 @@ static bool player_birth_aux_1(void)
 	/* Generate quests */
 	for (i = MIN_RANDOM_QUEST + v - 1; i >= MIN_RANDOM_QUEST; i--)
 	{
-		quest_type      *q_ptr = &quest[i];
-		monster_race    *r_ptr;
-		monster_race    *quest_r_ptr;
-		int             r_idx;
+		q_ptr = &quest[i];
 
 		q_ptr->status = QUEST_STATUS_TAKEN;
 
@@ -2453,8 +2394,76 @@ static bool player_birth_aux_1(void)
 	quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
 	p_ptr->inside_quest = 0;
 
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for 'player_birth()'.
+ *
+ * This function allows the player to select a sex, race, and class, and
+ * modify options (including the birth options).
+ *
+ * Taken from V 2.9.0
+ */
+static bool player_birth_aux_1(void)
+{
+#ifdef USE_SCRIPT
+
+	int result;
+
+	/* Generate the player */
+	result = player_birth_callback();
+
+	/* Restart ? */
+	if (result == -1) return FALSE;
+
+#else /* USE_SCRIPT */
+
+	/*** Instructions ***/
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Display some helpful information */
+	Term_putstr(5, 10, -1, TERM_WHITE,
+	            "Please answer the following questions.  Most of the questions");
+	Term_putstr(5, 11, -1, TERM_WHITE,
+	            "display a set of standard answers, and many will also accept");
+	Term_putstr(5, 12, -1, TERM_WHITE,
+	            "some special responses, including 'Q' to quit, 'S' to restart,");
+	Term_putstr(5, 13, -1, TERM_WHITE,
+	            "and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
+
+	if (!get_player_sex()) return (FALSE);
+
+	/* Clean up */
+	clear_from(15);
+
+	/* Choose the players race */
+	if (!get_player_race()) return (FALSE);
+
+	/* Clean up */
+	clear_from(15);
+
+	/* Choose the players class */
+	if (!get_player_class()) return (FALSE);
+
+	/* Clean up */
+	clear_from(15);
+
+	/* Choose the magic realms */
+	if (!get_player_realms()) return (FALSE);
+	
 	/* Clear */
-	clear_from(14);
+	clear_from(20);
+
+	if(!get_player_quests()) return (FALSE);
+
+#endif /* USE_SCRIPT */
+
+	/* Clear */
+	clear_from(15);
 
 	/* Done */
 	return (TRUE);
