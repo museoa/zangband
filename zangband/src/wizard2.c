@@ -927,8 +927,15 @@ static void wiz_reroll_item(object_type *o_ptr)
 		if (o_list_ptr)
 		{
 			/* Delete the object */
-			delete_held_object(o_list_ptr, o_ptr);
-
+			if (floor_item(o_ptr))
+			{
+				delete_dungeon_object(o_ptr);
+			}
+			else
+			{
+				delete_held_object(o_list_ptr, o_ptr);
+			}
+			
 			/* Add the new object to the list */
 			add_object_list(o_list_ptr, o_ptr);
 		}

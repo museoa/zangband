@@ -69,7 +69,7 @@ void delete_held_object(s16b *o_idx_ptr, object_type *o_ptr)
 
 	/* Wipe the object */
 	object_wipe(o_ptr);
-	;
+	
 	/* Count objects */
 	o_cnt--;
 }
@@ -5158,13 +5158,16 @@ void item_optimize(object_type *o_ptr)
 	else
 	{
 		/* Delete the object */
-		delete_held_object(list, o_ptr);
-
-		/* The item is in the pack */
 		if (list == &p_ptr->inventory)
 		{
+			delete_held_object(list, o_ptr);
+			
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
+		}
+		else
+		{
+			delete_dungeon_object(o_ptr);
 		}
 	}
 
@@ -5334,6 +5337,12 @@ object_type *inven_carry(object_type *o_ptr)
 	/* Paranoia */
 	if (get_list_length(p_ptr->inventory) > INVEN_PACK) return (NULL);
 
+	/* Increase the weight */
+	p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
+
+	/* Add the item to the pack */
+	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
+	
 	/* Now held */
 	o_ptr->held = TRUE;
 
@@ -5345,12 +5354,6 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* No longer marked */
 	o_ptr->info &= ~(OB_SEEN);
-
-	/* Increase the weight */
-	p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
-
-	/* Add the item to the pack */
-	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
 
 	/* Reorder the pack */
 	reorder_pack_aux(&o_ptr);
