@@ -1059,10 +1059,10 @@ void brand_weapon(int brand_type)
 		p_ptr->update |= (PU_MANA);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 		
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Notice changes */
+		notice_item();
 	}
 }
 
@@ -1346,8 +1346,8 @@ void identify_pack(void)
 	}
 	OBJ_ITT_END;
 	
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Notice changes */
+	notice_inven();
 }
 
 /*
@@ -1408,12 +1408,9 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 
 	/* Recalculate the bonuses */
 	p_ptr->update |= (PU_BONUS);
-
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP | PW_INVEN);
+	
+	/* Notice changes */
+	notice_item();
 
 	return (TRUE);
 }
@@ -1775,11 +1772,11 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
+	
+	/* Notice changes */
+	notice_item();
 
 	/* Success */
 	return (TRUE);
@@ -1988,10 +1985,10 @@ static void bad_luck(object_type *o_ptr)
 		p_ptr->update |= (PU_MANA);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 		
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Notice changes */
+		notice_item();
 	}
 }
 
@@ -2046,11 +2043,11 @@ void identify_item(object_type *o_ptr)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
+	
+	/* Notice changes */
+	notice_item();	
 }
 
 
@@ -2530,11 +2527,8 @@ bool recharge(int power)
 		}
 	}
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Notice changes */
+	notice_inven();
 
 	/* Something was done */
 	return (TRUE);
@@ -4099,10 +4093,10 @@ bool curse_armor(void)
 		p_ptr->update |= (PU_MANA);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 		
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Notice changes */
+		notice_item();
 	}
 
 	return (TRUE);
@@ -4162,10 +4156,10 @@ bool curse_weapon(void)
 		p_ptr->update |= (PU_MANA);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 		
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Notice changes */
+		notice_item();
 	}
 
 	/* Notice */
@@ -4204,8 +4198,8 @@ bool brand_bolts(void)
 		/* Enchant */
 		(void)enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
 		
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Notice changes */
+		notice_inven();
 
 		/* Notice */
 		return (TRUE);

@@ -4931,11 +4931,8 @@ object_type *inven_carry(object_type *o_ptr)
 	/* Recalculate bonuses and weight */
 	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
-	/* Combine and Reorder pack */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Notice changes */
+	notice_inven();
 
 	/* Return the new item */
 	return (o_ptr);
@@ -5144,14 +5141,11 @@ bool can_player_destroy_object(object_type *o_ptr)
 			/* We have "felt" it (again) */
 			o_ptr->info |= (OB_SENSE);
 
-			/* Combine the pack */
-			p_ptr->notice |= (PN_COMBINE);
-
 			/* Redraw equippy chars */
 			p_ptr->redraw |= (PR_EQUIPPY);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			
+			/* Notice changes */
+			notice_item();
 		}
 		
 		/* Done */

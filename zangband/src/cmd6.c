@@ -69,10 +69,7 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 
 	/* Eat the food */
 	(void)use_object(o_ptr, &ident, FALSE);
-
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
+	
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
@@ -91,10 +88,12 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 	}
+	
+	/* Notice changes */
+	notice_item();	
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
+	p_ptr->window |= (PW_PLAYER);
 
 	/* Food can feed the player */
 	if (p_ptr->rp.prace == RACE_VAMPIRE)
@@ -204,9 +203,6 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 		(void)potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr);
 	}
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
@@ -226,8 +222,11 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 	}
 
+	/* Notice changes */
+	notice_item();
+
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
 
 	/* Potions can feed the player */
 	switch (p_ptr->rp.prace)
@@ -300,9 +299,6 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	/* Hack - the scroll may already be destroyed by its effect */
 	if (o_ptr->k_idx)
 	{
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		if (!(object_aware_p(o_ptr)))
 		{
 			chg_virtue(V_PATIENCE, -1);
@@ -321,9 +317,12 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 			object_aware(o_ptr);
 			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 		}
+		
+		/* Notice changes */
+		notice_item();
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 
 
 		/* Hack -- allow certain scrolls to be "preserved" */
@@ -438,11 +437,11 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		msgf("The staff has no charges left.");
 		o_ptr->info |= (OB_EMPTY);
 
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
+		
+		/* Notice changes */
+		notice_item();
 
 		return;
 	}
@@ -463,9 +462,6 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 			chg_virtue(V_CHANCE, 1);
 		}
 
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		/* Tried the item */
 		object_tried(o_ptr);
 
@@ -475,9 +471,12 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 			object_aware(o_ptr);
 			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 		}
+		
+		/* Notice changes */
+		notice_item();
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 
 
 		/* Hack -- some uses are "free" */
@@ -587,11 +586,11 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 		msgf("The wand has no charges left.");
 		o_ptr->info |= (OB_EMPTY);
 
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
+		
+		/* Notice changes */
+		notice_item();
 
 		return;
 	}
@@ -641,9 +640,6 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 	/* Hack - wands may destroy themselves if activated on the ground */
 	if (o_ptr->k_idx)
 	{
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		/* Mark it as tried */
 		object_tried(o_ptr);
 
@@ -655,9 +651,12 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 			object_aware(o_ptr);
 			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 		}
+		
+		/* Notice changes */
+		notice_item();
 
 		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 
 		/* Hack -- some uses are "free" */
 		if (!use_charge) return;
@@ -792,9 +791,6 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	/* Zap the rod */
 	use_charge = use_object(o_ptr, &ident, dir);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
@@ -810,9 +806,12 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 	}
+	
+	/* Notice changes */
+	notice_item();
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
 
 	/* Hack -- deal with cancelled zap */
 	if (!use_charge)

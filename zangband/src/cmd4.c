@@ -33,9 +33,6 @@ void do_cmd_redraw(void)
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
-	/* Combine and Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Update torch */
 	p_ptr->update |= (PU_TORCH);
 
@@ -100,9 +97,6 @@ void resize_map(void)
 	/* Reset the panels */
 	map_panel_size();
 	verify_panel();
-
-	/* Combine and Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Update torch */
 	p_ptr->update |= (PU_TORCH);

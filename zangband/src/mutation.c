@@ -1210,8 +1210,8 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			p_ptr->csp = p_ptr->msp;
 		}
 
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		p_ptr->window |= (PW_INVEN);
+		/* Notice changes */
+		notice_inven();
 	}
 
 	else if (mut_ptr->which == MUT1_WEIGH_MAG)

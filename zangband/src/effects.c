@@ -2987,11 +2987,11 @@ bool lose_all_info(void)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
+
+	/* Notice changes */
+	notice_item();
 
 	/* Mega-Hack -- Forget the map */
 	wiz_dark();
@@ -3417,6 +3417,36 @@ void make_noise(byte amount)
 
 	/* Save the new noise level */
 	p_ptr->state.noise_level = (byte)total;
+}
+
+/*
+ * Various notice 'blah' functions
+ */
+void notice_inven(void)
+{
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
+}
+
+void notice_equip(void)
+{
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_EQUIP);
+}
+
+void notice_item(void)
+{
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 

@@ -1493,11 +1493,8 @@ void building_recharge(s32b cost)
 			   ((o_ptr->number > 1) ? "were" : "was"), price);
 	message_flush();
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Notice changes */
+	notice_inven();
 
 	/* Pay the price */
 	p_ptr->au -= price;

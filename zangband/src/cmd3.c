@@ -561,12 +561,9 @@ void do_cmd_uninscribe(void)
 
     /* Remove the incription */
     quark_remove(&o_ptr->inscription);
-
-	/* Combine the pack */
-	p_ptr->notice |= (PN_COMBINE);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	
+	/* Notice changes */
+	notice_item();
 
 	make_noise(2);
 }
@@ -613,11 +610,8 @@ void do_cmd_inscribe(void)
         quark_remove(&o_ptr->inscription);
 		o_ptr->inscription = quark_add(out_val);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Notice changes */
+		notice_item();
 
 		make_noise(2);
 	}
@@ -705,14 +699,11 @@ static void do_cmd_refill_lamp(void)
 		o_ptr->timeout = 0;
 	}
 
-	/* Combine the pack */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	
+	/* Notice changes */
+	notice_item();
 }
 
 

@@ -1689,11 +1689,8 @@ void drain_magic(void)
 
 			o_ptr->pval = 0;
 
-			/* Combine / Reorder the pack */
-			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN);
+			/* Notice changes */
+			notice_inven();
 		}
 	}
 	OBJ_ITT_END;

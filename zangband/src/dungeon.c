@@ -251,11 +251,8 @@ void sense_item(object_type *o_ptr, bool heavy, bool wield, bool msg)
 	/* Set the "inscription" */
 	o_ptr->feeling = feel;
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Notice changes */
+	notice_item();
 }
 
 
@@ -824,11 +821,11 @@ bool psychometry(void)
 	/* "Inscribe" it */
 	o_ptr->feeling = feel;
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER);
+	
+	/* Notice changes */
+	notice_item();
 
 	/* Something happened */
 	return (TRUE);
@@ -1710,11 +1707,8 @@ static void process_world(void)
 			{
 				recharged_notice(o_ptr);
 
-				/* Combine pack */
-				p_ptr->notice |= (PN_COMBINE);
-
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN);
+				/* Notice changes */
+				notice_inven();
 			}
 		}
 	}
@@ -2957,7 +2951,7 @@ static void evolve_dungeon(void)
 	character_xtra = TRUE;
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+	p_ptr->window |= (PW_SPELL | PW_PLAYER);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_MONSTER | PW_MESSAGE | PW_VISIBLE);
@@ -2992,8 +2986,8 @@ static void evolve_dungeon(void)
 	/* Update stuff */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
-	/* Combine / Reorder the pack */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Notice changes */
+	notice_item();
 
 	/* Notice stuff */
 	notice_stuff();
