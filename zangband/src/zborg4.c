@@ -1076,7 +1076,7 @@ static void borg_notice_enchant(void)
 		if (l_ptr->to_h < 15) my_need_enchant_to_h = TRUE;
 
 		/* Can we use a to_dam */
-		if (l_ptr->to_h < 25) my_need_enchant_to_d = TRUE;
+		if (l_ptr->to_d < 25) my_need_enchant_to_d = TRUE;
 	}
 
 	/* Hack -- enchant all the equipment (armor) */
@@ -1657,7 +1657,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 	{
 		case SV_ROD_IDENTIFY:
 		{
-			if (bp_ptr->skill_dev - k_ptr->level > 7)
+			if (borg_use_item_fail(l_ptr, TRUE))
 			{
 				bp_ptr->able.id += number * 100;
 			}
@@ -1671,7 +1671,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_RECALL:
 		{
 			/* Don't count on it if I suck at activations */
-			if (bp_ptr->skill_dev - k_ptr->level > 1)
+			if (borg_use_item_fail(l_ptr, FALSE))
 			{
 				bp_ptr->recall += number * 100;
 			}
@@ -1701,7 +1701,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_SPEED:
 		{
 			/* Don't count on it if I suck at activations */
-			if (bp_ptr->skill_dev - k_ptr->level > 7)
+			if (borg_use_item_fail(l_ptr, FALSE))
 			{
 				bp_ptr->able.speed += number * 100;
 			}
@@ -1727,7 +1727,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_HEALING:
 		{
 			/* Don't count on it if I suck at activations */
-			if (bp_ptr->skill_dev - k_ptr->level > 7)
+			if (borg_use_item_fail(l_ptr, FALSE))
 			{
 				bp_ptr->able.heal += number;
 				amt_rod_heal += number;
@@ -1738,7 +1738,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_CURING:
 		{
 			/* Don't count on it if I suck at activations */
-			if (bp_ptr->skill_dev - k_ptr->level > 7)
+			if (borg_use_item_fail(l_ptr, FALSE))
 			{
 				bp_ptr->able.ccw += number;
 			}
@@ -2154,13 +2154,16 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Hack -- ignore invalid missiles */
 			if (l_ptr->tval != my_ammo_tval) break;
 
+			/* Ignore bad missiles */
+			if (l_ptr->to_h < -5) break;
+
 			/* Count them */
 			bp_ptr->able.missile += number;
 
 			/* Enchant missiles if have lots of cash */
 			if (bp_ptr->lev > 35)
 			{
-				if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) && number >= 5)
+				if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) && number >= 5)
 				{
 					if (l_ptr->to_h < 8)
 					{
@@ -2347,44 +2350,44 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "identify" -> infinite identifies */
-	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
-		borg_spell_legal(REALM_ARCANE, 3, 2) ||
-		borg_mindcr_legal(MIND_PSYCHOMETRY, 25))
+	if (borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) ||
+		borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) ||
+		borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 25, 60))
 	{
 		bp_ptr->able.id += 1000;
 	}
 
 	/* Handle "*identify*" -> infinite *identifies* */
-	if (borg_spell_legal(REALM_SORCERY, 1, 7) ||
-		borg_spell_legal(REALM_NATURE, 2, 5) ||
-		borg_spell_legal(REALM_DEATH, 3, 2) ||
-		borg_spell_legal(REALM_TRUMP, 3, 1) ||
-		borg_spell_legal(REALM_LIFE, 3, 5))
+	if (borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) ||
+		borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) ||
+		borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) ||
+		borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) ||
+		borg_spell_legal_fail(REALM_LIFE, 3, 5, 60))
 	{
 		bp_ptr->able.id += 1000;
 		bp_ptr->able.star_id += 1000;
 	}
 
 	/* Handle "remove_curse" -> infinite remove curses */
-	if (borg_spell_legal(REALM_LIFE, 1, 0))
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 0, 60))
 	{
 		bp_ptr->able.remove_curse += 1000;
 	}
 
 	/* Handle "*remove_curse*" -> infinite *remove curses* */
-	if (borg_spell_legal(REALM_LIFE, 2, 1))
+	if (borg_spell_legal_fail(REALM_LIFE, 2, 1, 60))
 	{
 		bp_ptr->able.remove_curse += 1000;
 		bp_ptr->able.star_remove_curse += 1000;
 	}
 
 	/* Handle "detect traps, doors, stairs" */
-	if (borg_spell_legal(REALM_LIFE, 0, 5) ||
-		borg_spell_legal(REALM_SORCERY, 0, 2) ||
-		borg_spell_legal(REALM_ARCANE, 1, 0) ||
-		borg_spell_legal(REALM_NATURE, 1, 2) ||
-		borg_spell_legal(REALM_NATURE, 0, 2) ||
-		borg_mindcr_legal(MIND_PRECOGNIT, 2) ||
+	if (borg_spell_legal_fail(REALM_LIFE, 0, 5, 60) ||
+		borg_spell_legal_fail(REALM_SORCERY, 0, 2, 60) ||
+		borg_spell_legal_fail(REALM_ARCANE, 1, 0, 60) ||
+		borg_spell_legal_fail(REALM_NATURE, 1, 2, 60) ||
+		borg_spell_legal_fail(REALM_NATURE, 0, 2, 60) ||
+		borg_mindcr_legal_fail(MIND_PRECOGNIT, 2, 60) ||
 		borg_racial_check(RACE_DWARF, TRUE) ||
 		borg_racial_check(RACE_NIBELUNG, TRUE))
 	{
@@ -2393,18 +2396,18 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "detect evil & monsters" */
-	if (borg_spell_legal(REALM_LIFE, 0, 0) ||
-		borg_spell_legal(REALM_SORCERY, 0, 0) ||
-		borg_spell_legal(REALM_NATURE, 0, 0) ||
-		borg_spell_legal(REALM_DEATH, 0, 0) ||
-		borg_spell_legal(REALM_DEATH, 0, 2) ||
-		borg_mindcr_legal(MIND_PRECOGNIT, 1))
+	if (borg_spell_legal_fail(REALM_LIFE, 0, 0, 60) ||
+		borg_spell_legal_fail(REALM_SORCERY, 0, 0, 60) ||
+		borg_spell_legal_fail(REALM_NATURE, 0, 0, 60) ||
+		borg_spell_legal_fail(REALM_DEATH, 0, 0, 60) ||
+		borg_spell_legal_fail(REALM_DEATH, 0, 2, 60) ||
+		borg_mindcr_legal_fail(MIND_PRECOGNIT, 1, 60))
 	{
 		bp_ptr->able.det_evil += 1000;
 	}
 
 	/* Handle "detection" */
-	if (borg_mindcr_legal(MIND_PRECOGNIT, 30))
+	if (borg_mindcr_legal_fail(MIND_PRECOGNIT, 30, 60))
 	{
 		bp_ptr->able.det_door += 1000;
 		bp_ptr->able.det_trap += 1000;
@@ -2412,26 +2415,26 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "magic mapping" */
-	if (borg_spell_legal(REALM_SORCERY, 1, 0) ||
-		borg_spell_legal(REALM_NATURE, 1, 2) ||
-		borg_mindcr_legal(MIND_PRECOGNIT, 20))
+	if (borg_spell_legal_fail(REALM_SORCERY, 1, 0, 60) ||
+		borg_spell_legal_fail(REALM_NATURE, 1, 2, 60) ||
+		borg_mindcr_legal_fail(MIND_PRECOGNIT, 20, 60))
 	{
 		bp_ptr->able.magic_map += 1000;
 	}
 
 	/* Handle "light" */
-	if (borg_spell_legal(REALM_LIFE, 0, 4) ||
-		borg_spell_legal(REALM_SORCERY, 0, 3) ||
-		borg_spell_legal(REALM_NATURE, 0, 4) ||
-		borg_spell_legal(REALM_CHAOS, 0, 2) ||
-		borg_spell_legal(REALM_ARCANE, 0, 5) ||
+	if (borg_spell_legal_fail(REALM_LIFE, 0, 4, 60) ||
+		borg_spell_legal_fail(REALM_SORCERY, 0, 3, 60) ||
+		borg_spell_legal_fail(REALM_NATURE, 0, 4, 60) ||
+		borg_spell_legal_fail(REALM_CHAOS, 0, 2, 60) ||
+		borg_spell_legal_fail(REALM_ARCANE, 0, 5, 60) ||
 		borg_mutation_check(MUT1_ILLUMINE, TRUE))
 	{
 		bp_ptr->able.lite += 1000;
 	}
 
 	/* Handle "protection from evil" */
-	if (borg_spell_legal(REALM_LIFE, 1, 5))
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 5, 40))
 	{
 		bp_ptr->able.pfe += 1000;
 	}
@@ -2446,8 +2449,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "rune of protection" glyph" */
-	if (borg_spell_legal(REALM_LIFE, 1, 7) ||
-		borg_spell_legal(REALM_LIFE, 2, 7))
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 7, 20) ||
+		borg_spell_legal_fail(REALM_LIFE, 2, 7, 20))
 	{
 		bp_ptr->able.glyph += 1000;
 	}
@@ -2515,36 +2518,37 @@ static void borg_notice_aux2(void)
 	}
 
 	/* speed spells */
-	if (borg_spell_legal(REALM_SORCERY, 1, 5) ||
-		borg_spell_legal(REALM_DEATH, 2, 3) ||
-		borg_mindcr_legal(MIND_ADRENALINE, 35))
+	if (borg_spell_legal_fail(REALM_SORCERY, 1, 5, 40) ||
+		borg_spell_legal_fail(REALM_DEATH, 2, 3, 40) ||
+		borg_mindcr_legal_fail(MIND_ADRENALINE, 35, 40))
 	{
 		bp_ptr->able.speed += 1000;
 	}
 
 	/* berserk spells */
-	if (borg_spell_legal(REALM_DEATH, 2, 0) ||
-		borg_mindcr_legal(MIND_ADRENALINE, 35))
+	if (borg_spell_legal_fail(REALM_DEATH, 2, 0, 40) ||
+		borg_mindcr_legal_fail(MIND_ADRENALINE, 35, 40) ||
+		borg_mutation_check(MUT1_BERSERK, TRUE))
 	{
 		bp_ptr->able.berserk += 1000;
 	}
 
 	/* Handle "heal" */
-	if (borg_spell_legal(REALM_LIFE, 1, 6) ||
-		borg_spell_legal(REALM_NATURE, 1, 7))
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 6, 5) ||
+		borg_spell_legal_fail(REALM_NATURE, 1, 7, 5))
 	{
 		bp_ptr->able.heal += 1000;
 	}
 
 	/* Handle big healing spell */
-	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5))
+	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 2))
 	{
 		bp_ptr->able.easy_heal += 1000;
 	}
 
 	/* Handle "fix exp" */
-	if (borg_spell_legal(REALM_LIFE, 3, 3) ||
-		borg_spell_legal(REALM_DEATH, 1, 7) ||
+	if (borg_spell_legal_fail(REALM_LIFE, 3, 3, 60) ||
+		borg_spell_legal_fail(REALM_DEATH, 1, 7, 60) ||
 		borg_racial_check(RACE_SKELETON, FALSE) ||
 		borg_racial_check(RACE_ZOMBIE, FALSE))
 	{
@@ -2552,8 +2556,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "recharge" */
-	if (borg_spell_legal(REALM_ARCANE, 3, 0) ||
-		borg_spell_legal(REALM_SORCERY, 0, 7))
+	if (borg_spell_legal_fail(REALM_ARCANE, 3, 0, 60) ||
+		borg_spell_legal_fail(REALM_SORCERY, 0, 7, 60))
 	{
 		bp_ptr->able.recharge += 1000;
 	}
@@ -2588,9 +2592,6 @@ static void borg_notice_aux2(void)
 	/* Add star_healing and life potions into easy_heal */
 	bp_ptr->able.easy_heal = amt_star_heal + amt_life;
 
-	/* If weak, do not count food spells */
-	if (bp_ptr->status.weak && (bp_ptr->food >= 1000))
-		bp_ptr->food -= 1000;
 
 	/*
 	 * Correct bp_ptr->encumber from total weight to the degree
@@ -2615,6 +2616,8 @@ static void borg_notice_aux2(void)
 void borg_update_frame(void)
 {
 	int i;
+
+	dun_type *d_ptr = dungeon();
 
 	s32b len = 10L * TOWN_DAWN;
 	s32b tick = turn % len + len / 4;
@@ -2748,17 +2751,8 @@ void borg_update_frame(void)
 	/* If this is the first borg run then avoid reinitialization */
 	if (old_depth == 128) old_depth = bp_ptr->depth;
 
-	/* Guess max depth */
-	if (bp_ptr->depth)
-	{
-		/* If the borg is in the dungeon then that is the depth */
-		bp_ptr->max_depth = bp_ptr->depth;
-	}
-	else
-	{
-		/* Otherwise make up something so the borg uses recall scrolls */
-		bp_ptr->max_depth = bp_ptr->lev / 2;
-	}
+	/* How deep can the borg expect to go down here?  */
+	bp_ptr->max_depth = (d_ptr) ? MAX(bp_ptr->depth, d_ptr->recall_depth) : 0;
 
 	/* Hack -- Realms */
 	bp_ptr->realm1 = p_ptr->spell.r[0].realm;
@@ -3582,27 +3576,30 @@ static void borg_notice_home_spells(void)
 	}
 
 	/* Handle "identify" -> infinite identifies */
-	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
-		borg_spell_legal(REALM_ARCANE, 3, 2) ||
-		borg_mindcr_legal(MIND_PSYCHOMETRY, 25))
+	if (borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) ||
+		borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) ||
+		borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 25, 60) ||
+		borg_equips_rod_fail(SV_ROD_IDENTIFY))
 	{
 		num_ident += 1000;
 	}
 	/* Handle "*identify*" -> infinite *identifies* */
-	if (borg_spell_legal(REALM_NATURE, 2, 5) ||
-		borg_spell_legal(REALM_SORCERY, 1, 7) ||
-		borg_spell_legal(REALM_DEATH, 3, 2) ||
-		borg_spell_legal(REALM_TRUMP, 3, 1) ||
-		borg_spell_legal(REALM_LIFE, 3, 5))
+	if (borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) ||
+		borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) ||
+		borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) ||
+		borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) ||
+		borg_spell_legal_fail(REALM_LIFE, 3, 5, 60))
 	{
 		num_ident += 1000;
 		num_star_ident += 1000;
 	}
+
 	/* Handle "*remove curse*" -> infinite *remove curses* */
-	if (borg_spell_legal(REALM_LIFE, 2, 1))
+	if (borg_spell_legal_fail(REALM_LIFE, 2, 1, 40))
 	{
 		num_star_remove_curse += 1000;
 	}
+
 	/* Handle "enchant weapon" */
 	if (borg_spell_legal_fail(REALM_SORCERY, 3, 4, 40))
 	{
@@ -3611,14 +3608,14 @@ static void borg_notice_home_spells(void)
 	}
 
 	/* apw Handle "protection from evil" */
-	if (borg_spell_legal(REALM_LIFE, 1, 5))
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 5, 40))
 	{
 		num_pfe += 1000;
 	}
 
 	/* apw Handle "rune of protection" glyph */
-	if (borg_spell_legal(REALM_LIFE, 1, 7) ||
-		borg_spell_legal(REALM_LIFE, 2, 7))
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 7, 40) ||
+		borg_spell_legal_fail(REALM_LIFE, 2, 7, 40))
 	{
 		num_glyph += 1000;
 	}
@@ -3629,7 +3626,8 @@ static void borg_notice_home_spells(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		borg_mutation_check(MUT1_RECALL, TRUE))
+		borg_mutation_check(MUT1_RECALL, TRUE) ||
+		borg_equips_rod_fail(SV_ROD_RECALL))
 	{
 		num_recall += 1000;
 	}
