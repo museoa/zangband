@@ -448,8 +448,8 @@ P:0:5d8:0:0:0
 F:SLAY_UNDEAD | SHOW_MODS
 
 N:58:& Lucerne Hammer~
-G:\:B
-I:21:10:0
+G:/:B
+I:22:12:0
 W:10:0:120:376
 A:10/1
 P:0:2d5:0:0:0
