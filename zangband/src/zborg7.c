@@ -665,8 +665,6 @@ bool borg_check_lite(void)
 		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
 			borg_activate_artifact(ART_ELENDIL, FALSE) ||
 			borg_activate_artifact(ART_THRAIN, FALSE) ||
-			borg_activate_rand_art(ACT_LIGHT) ||
-			borg_activate_rand_art(ACT_MAP_LIGHT) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
@@ -795,8 +793,6 @@ bool borg_check_lite_only(void)
 		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
 			borg_activate_artifact(ART_ELENDIL, FALSE) ||
 			borg_activate_artifact(ART_THRAIN, FALSE) ||
-			borg_activate_rand_art(ACT_LIGHT) ||
-			borg_activate_rand_art(ACT_MAP_LIGHT) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
@@ -2166,7 +2162,6 @@ bool borg_test_stuff(void)
 	{
 		/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
 		if (borg_activate_artifact(ART_ERIRIL, FALSE) ||
-			borg_activate_rand_art(ACT_ID_PLAIN) ||
 			borg_zap_rod(SV_ROD_IDENTIFY) ||
 			borg_spell(REALM_ARCANE, 3, 2) ||
 			borg_spell(REALM_SORCERY, 1, 1) ||
