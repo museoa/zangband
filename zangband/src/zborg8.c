@@ -278,7 +278,9 @@ static void borg_think_shop_buy(int item)
 	list_item *l_ptr = &cur_list[item];
 
 	byte t_a;
-	char buf[1];
+	char buf[2];
+	
+	buf[2] = '\0';
 
 	/* Grab the page number of the screen*/
 	if (0 == borg_what_text(26, 5, 1, &t_a, buf))
