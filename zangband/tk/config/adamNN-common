@@ -10,14 +10,6 @@
 # included in all such copies.
 #
 
-# Set up the special town layout.
-
-# The "town" icon type
-NSConfig::CreateIconType town town[icon size].gif "" [icon size]
-
-# The "town" layout file
-NSConfig::ShareConfigFile town town
-
 
 # Assign ascii-type icons to everything because not everything has an icon.
 NSConfig::SourceOne classic-common
