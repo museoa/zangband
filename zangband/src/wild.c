@@ -100,8 +100,8 @@ static void day_night(void)
 		{
 			/* Light or darken wilderness block */
 			light_dark_block(wild_grid.block_ptr[y][x],
-			 (byte) x + wild_grid.x_min / 16,
-			  (byte) y + wild_grid.y_min / 16);
+			 (byte)(x + wild_grid.x_min / 16),
+			  (byte)(y + wild_grid.y_min / 16));
 		}
 	}
 }
