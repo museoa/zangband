@@ -3582,6 +3582,12 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
+				case SV_AMULET_PROT_UNDEAD:
+				{
+					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
+					break;
+				}
+
 				case SV_AMULET_NO_MAGIC:
 				case SV_AMULET_NO_TELE:
 				{

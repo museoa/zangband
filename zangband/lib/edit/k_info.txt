@@ -4303,7 +4303,32 @@ W:13:0:2:150
 A:13/2
 F:STEALTH | INFRA
 
-# 585-589 are unused
+N:585:Fate
+G:=:d
+I:45:53:0
+W:15:0:2:200
+A:15/5:30/5
+F:STRANGE_LUCK
+
+# 586 are unused
+
+##### New amulets #####
+
+N:587:Protection from Evil
+G:":d
+I:40:16:0
+W:35:0:3:500
+A:35/2
+F:SLAY_EVIL | EASY_KNOW
+
+N:588:Protection from Undead
+G:":d
+I:40:17:4
+W:35:0:3:500
+A:35/2
+F:SLAY_UNDEAD | WIS
+
+# 589 is unused
 
 ##### New weapon types #####
 N:590:& Elfblade~
@@ -4316,8 +4341,15 @@ P:0:4d4:0:0:0
 N:591:& Whip~ of Entanglement
 G:\:D
 I:21:21:0
-W:5:0:30:350
+W:20:0:30:350
 A:20/5
 P:0:1d6:0:0:0
 F:SLAY_ANIMAL | SHOW_MODS
 
+N:592:& Psiblade~
+G:|:B
+I:23:33:0
+W:50:0:120:1400
+A:50/4
+P:0:3d4:0:0:0
+F:PSI_CRIT | LITE | SHOW_MODS

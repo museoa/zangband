@@ -16,8 +16,8 @@
 /*
  * Max sizes of the following arrays
  */
-#define MAX_ROCKS      68		/* Used with rings (min 51) */
-#define MAX_AMULETS    17		/* Used with amulets (min 16) */
+#define MAX_ROCKS      68		/* Used with rings (min 54) */
+#define MAX_AMULETS    22		/* Used with amulets (min 18) */
 #define MAX_WOODS      32		/* Used with staffs (min 30) */
 #define MAX_METALS     39		/* Used with wands/rods (min 30/29) */
 #define MAX_COLORS     66		/* Used with potions (min 64) */
@@ -74,8 +74,9 @@ static cptr amulet_adj[MAX_AMULETS] =
 {
 	"Amber", "Driftwood", "Coral", "Agate", "Ivory",
 	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
-	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
-	"Copper", "Rosetted"
+	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver", 
+	"Copper", "Rosetted", "Spiral", "Star", "Square", 
+	"Hexagonal", "Steel"
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -83,7 +84,8 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
 	TERM_L_DARK, TERM_WHITE, TERM_L_UMBER, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
-	TERM_L_UMBER, TERM_VIOLET	/* Hack */
+	TERM_L_UMBER, TERM_VIOLET, TERM_VIOLET, TERM_YELLOW, TERM_L_UMBER,
+	TERM_L_DARK, TERM_WHITE
 };
 
 

@@ -1564,7 +1564,7 @@
 #define EGO_SLAYING             49
 #define EGO_AGILITY             50
 #define EGO_POWER               51
-/* xxx */
+#define EGO_GHOUL_TOUCH         52
 /* xxx */
 #define EGO_WEAKNESS            54
 #define EGO_CLUMSINESS          55
@@ -1920,6 +1920,7 @@
 #define SV_BLADE_OF_CHAOS               30
 #define SV_DIAMOND_EDGE                 31
 #define SV_ELFBLADE                     32
+#define SV_PSIBLADE                     33
 
 /* The "sval" codes for TV_SHIELD */
 #define SV_SMALL_LEATHER_SHIELD          2
@@ -2035,6 +2036,8 @@
 #define SV_AMULET_NO_MAGIC              13
 #define SV_AMULET_NO_TELE               14
 #define SV_AMULET_RESISTANCE            15
+#define SV_AMULET_PROT_EVIL             16
+#define SV_AMULET_PROT_UNDEAD           17
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0
@@ -2089,6 +2092,7 @@
 #define SV_RING_ELEMENTS				50
 #define SV_RING_RES_FIRE_COLD           51
 #define SV_RING_CAT                     52
+#define SV_RING_FATE                    53
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS                0
