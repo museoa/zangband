@@ -106,7 +106,7 @@ also allows us to make use of sourceforge.net's excellent utilities
 including bug tracking, 3rd-party patch submission, mailing lists, etc.
 If you want to follow zangband's development closely, you should get
 a user account with sourceforge and visit our project site located at
-http://sourcefoge.net/projetcs/zangband/ frequently.
+http://sourceforge.net/projects/zangband/ frequently.
 
 --- FTP Sites ---
 
