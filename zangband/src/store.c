@@ -1694,7 +1694,7 @@ static void store_sell(int *store_top)
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Not right type of item? */
-		if (!item_tester_hook(o_ptr))
+		if (item_tester_hook && !item_tester_hook(o_ptr))
 		{
 			/* Hack - cannot sell item */
 			o_ptr->temp_cost = 0;
