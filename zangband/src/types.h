@@ -1787,3 +1787,13 @@ struct mutation_type
 	int chance;	/* Chance of occuring (random mutations) / 100 */
 
 };
+
+
+/*
+ * A function pointer used in displaying menus
+ *
+ * The function takes a string representing the option chosen,
+ * and will return TRUE if the selection works, and FALSE
+ * if the menu should stay up.
+ */
+typedef bool (*menu_select_type) (cptr option);

@@ -331,6 +331,115 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	return (choice);
 }
 
+
+
+
+/*
+ * Display a menu, and get a choice.
+ * Return false if escape is pressed.
+ *
+ * 'num' is the number of options.
+ * 'options' are the corresponding strings to print.
+ * 'cmd' is an array of functions to call - one
+ *       for each option.
+ * 'select' shows the default/current option.
+ *       If negative, it is ignored.
+ */
+bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
+{
+	int i;
+	bool flag;
+	int ask = 0;
+	char choice;
+	byte x = 0;
+	char prompt[160];
+	char buf[160];
+
+	/* Build a prompt */
+	(void)strnfmt(prompt, 78, "(Command (a-%c), ESC=exit) Select a command: ",
+				  I2A(num - 1));
+
+	/* Save the screen */
+	Term_save();
+
+	/* Border on top of menu */
+	clear_row(1);
+    
+	/* Show the list */
+	for (i = 0; i < num; i++)
+	{
+		prtf(x, i + 2, "%c%c) %s", (i == select) ? '*' : ' ', I2A(i),
+				options[i]);
+	}
+
+	/* Border below menu */
+	clear_row(num + 1);
+    
+	/* Nothing selected yet */
+	flag = FALSE;
+	
+	/* Get a command from the user */
+	while (get_com(prompt, &choice))
+	{
+		if (choice == '\r')
+		{
+			/* Default options */
+        	if (num == 1)
+        	{
+				choice = 1;
+            }
+            else
+			{
+				choice = select;
+			}
+		}
+		else if (isalpha(choice))
+		{
+			/* Note verify */
+			ask = (isupper(choice));
+
+			/* Lowercase */
+			if (ask) choice = tolower(choice);
+
+			/* Extract request */
+			i = (islower(choice) ? A2I(choice) : -1);
+		}
+
+		/* Totally Illegal */
+		if ((i < 0) || (i > num))
+		{
+			bell("Illegal command!");
+			continue;
+		}
+
+		/* Verify it */
+		if (ask)
+		{
+			/* Prompt */
+			(void)strnfmt(buf, 78, "Use %s? ", options[i]);
+
+			/* Belay that order */
+			if (!get_check(buf)) continue;
+		}
+
+		/* Call the function */
+		if (cmd[i](options[i]))
+		{
+			/* Success! */
+			flag = TRUE;
+			
+			/* Stop the loop */
+			break;
+		}
+	}
+
+	/* Restore the screen */
+	Term_load();
+	
+	return (flag);
+}
+
+
 /*
  * Flush the screen, make a noise
  */
