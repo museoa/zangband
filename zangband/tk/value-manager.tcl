@@ -44,80 +44,9 @@ proc NSValueManager::InitModule {} {
 	# These are the default values. The tk/config/value file is sourced
 	# below to set user-defined values.
 	
-	Manage healthBarBD [palette set 220]
-	Manage healthBarBD2 145
-	Manage healthBarBL [palette set 35]
-	Manage healthBarBL2 170
-	Manage healthBarDone [palette set 71]
-	Manage healthBarDone2 145
-	Manage healthBarToDo [palette set 129]
-	Manage healthBarToDo2 145
-
-	Manage healthNameBD [palette set 252]
-	Manage healthNameBD2 145
-	Manage healthNameBG [palette set 252]
-	Manage healthNameBG2 145
-	Manage healthNameBL [palette set 252]
-	Manage healthNameBL2 145
-	Manage healthNameText [palette set 0]
-	Manage healthNameText2 180
-
-	Manage friendBarBD [palette set 212]
-	Manage friendBarBD2 145
-	Manage friendBarBL [palette set 192]
-	Manage friendBarBL2 145
-	Manage friendBarDone [palette set 198]
-	Manage friendBarDone2 160
-	Manage friendBarToDo [palette set 129]
-	Manage friendBarToDo2 145
 	Manage listBG [palette set 253]
 	Manage listHilite [palette set 158]
 	Manage listInactive [palette set 249]
-
-	Manage statusGoodBD [palette set 230]
-	Manage statusGoodBD2 145
-	Manage statusGoodBG [palette set 197]
-	Manage statusGoodBG2 145
-	Manage statusGoodBL [palette set 191]
-	Manage statusGoodBL2 145
-	Manage statusGoodText [palette set 0]
-	Manage statusGoodText2 180
-
-	Manage statusInfoBD [palette set 240]
-	Manage statusInfoBD2 145
-	Manage statusInfoBG [palette set 212]
-	Manage statusInfoBG2 145
-	Manage statusInfoBL [palette set 210]
-	Manage statusInfoBL2 170
-	Manage statusInfoText [palette set 0]
-	Manage statusInfoText2 180
-
-	Manage statusBadBD [palette set 220]
-	Manage statusBadBD2 145
-	Manage statusBadBG [palette set 107]
-	Manage statusBadBG2 145
-	Manage statusBadBL [palette set 71]
-	Manage statusBadBL2 170
-	Manage statusBadText [palette set 0]
-	Manage statusBadText2 180
-
-	Manage targetBD [palette set 220]
-	Manage targetBD2 145
-	Manage targetBG [palette set 71]
-	Manage targetBG2 145
-	Manage targetBL [palette set 35]
-	Manage targetBL2 170
-	Manage targetText [palette set 0]
-	Manage targetText2 180
-
-	Manage target2BD [palette set 253]
-	Manage target2BD2 145
-	Manage target2BG [palette set 129]
-	Manage target2BG2 145
-	Manage target2BL [palette set 0]
-	Manage target2BL2 145
-	Manage target2Text [palette set 0]
-	Manage target2Text2 180
 
 	# These are the standard Angband terminal colors mapped to
 	# entries in our 256-color palette. They can be accessed via
