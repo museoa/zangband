@@ -1019,13 +1019,17 @@ static bool level_gen(cptr *why)
 		if (cheat_room)
 		  msg_print("A 'small' dungeon level.");
 
-		do
+		while (TRUE)
 		{
 			level_height = randint(MAX_HGT / BLOCK_HGT);
 			level_width = randint(MAX_WID / BLOCK_WID);
+			
+			/* Exit if larger than one screen, but less than normal dungeon */
+			if ((level_height < (MAX_HGT / BLOCK_HGT)) &&
+				(level_height >= (22 / BLOCK_HGT)) &&
+				(level_width < (MAX_WID / BLOCK_WID)) &&
+				(level_width >= (66 / BLOCK_WID))) break;
 		}
-		while ((level_height == MAX_HGT / BLOCK_HGT) &&
-			   (level_width == MAX_WID / BLOCK_WID));
 
 		cur_hgt = level_height * BLOCK_HGT;
 		cur_wid = level_width * BLOCK_WID;
