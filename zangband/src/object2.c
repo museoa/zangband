@@ -1432,8 +1432,8 @@ void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt)
 				/* Split the charges evenly - then move the "used ones" */
 				q_ptr->pval = new_charges - o_ptr->ac;
 
-				o_ptr->ac = 0;
 				q_ptr->ac = o_ptr->ac;
+				o_ptr->ac = 0;
 			}
 		}
 		else
