@@ -844,7 +844,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
-			info[i++] = "It provides light (radius 3) forever.";
+			info[i++] = "It provides light (radius 3).";
 		}
 		else if (o_ptr->sval == SV_LITE_LANTERN)
 		{
