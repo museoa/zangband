@@ -2911,7 +2911,8 @@ static void do_cmd_activate_aux(int item)
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)
+		||((o_ptr->ident & IDENT_CURSED)&&(randint(3)!=1)))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to activate it properly.");
