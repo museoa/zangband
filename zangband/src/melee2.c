@@ -398,7 +398,7 @@ static int mon_will_run(int m_idx)
  * being close enough to chase directly.  I have no idea what will
  * happen if you combine "smell" with low "aaf" values.
  */
-static void get_moves_aux(int m_idx, int *yp, int *xp)
+static void get_moves_aux(int m_idx, int *xp, int *yp)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -477,7 +477,7 @@ static void get_moves_aux(int m_idx, int *yp, int *xp)
 * but instead of heading directly for it, the monster should "swerve"
 * around the player so that he has a smaller chance of getting hit.
 */
-static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
+static bool get_fear_moves_aux(int m_idx, int *xp, int *yp)
 {
 	int y, x, y1, x1, fy, fx, px, py, gy = 0, gx = 0;
 	int when = 0, score = -1;
@@ -708,7 +708,7 @@ static sint *dist_offsets_x[10] =
 *
 * Return TRUE if a safe location is available.
 */
-static bool find_safety(int m_idx, int *yp, int *xp)
+static bool find_safety(int m_idx, int *xp, int *yp)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -810,7 +810,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
  *
  * Return TRUE if a good location is available.
  */
-static bool find_hiding(int m_idx, int *yp, int *xp)
+static bool find_hiding(int m_idx, int *xp, int *yp)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -906,7 +906,7 @@ static bool get_moves(int m_idx, int *mm)
 	cave_type	*c_ptr;
 
 	/* Flow towards the player */
-	(void)get_moves_aux(m_idx, &y2, &x2);
+	(void)get_moves_aux(m_idx, &x2, &y2);
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -949,7 +949,7 @@ static bool get_moves(int m_idx, int *mm)
 			    (p_ptr->mhp + p_ptr->msp))
 			{
 				/* Find hiding place */
-				if (find_hiding(m_idx, &y, &x)) done = TRUE;
+				if (find_hiding(m_idx, &x, &y)) done = TRUE;
 			}
 		}
 
@@ -1008,7 +1008,7 @@ static bool get_moves(int m_idx, int *mm)
 		if (!done && will_run)
 		{
 			/* Try to find safe place */
-			if (!find_safety(m_idx, &y, &x))
+			if (!find_safety(m_idx, &x, &y))
 			{
 				/* This is not a very "smart" method XXX XXX */
 				y = (-y);
@@ -1017,7 +1017,7 @@ static bool get_moves(int m_idx, int *mm)
 			else
 			{
 				/* Adjust movement */
-				(void)get_fear_moves_aux(m_idx, &y, &x);
+				(void)get_fear_moves_aux(m_idx, &x, &y);
 			}
 		}
 	}

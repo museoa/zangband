@@ -49,9 +49,6 @@ static int monster_critical(int dice, int sides, int dam)
 }
 
 
-
-
-
 /*
  * Determine if a monster attack against the player succeeds.
  * Always miss 5% of the time, Always hit 5% of the time.
