@@ -825,8 +825,7 @@ static s32b object_value_base(object_type *o_ptr)
 
 		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
-			return (r_info[o_ptr->pval].level *
-			        r_info[o_ptr->pval].level * 5L);
+			return (500L);
 	}
 
 	/* Paranoia -- Oops */
@@ -1422,9 +1421,6 @@ void reduce_charges(object_type *o_ptr, int amt)
  */
 bool object_similar(object_type *o_ptr, object_type *j_ptr)
 {
-	int total = o_ptr->number + j_ptr->number;
-
-
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
 
@@ -1537,9 +1533,6 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 			/* Require identical "pval" code */
 			if (o_ptr->pval != j_ptr->pval) return (FALSE);
 
-			/* Hack -- Never stack recharging items */
-			if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
-
 			/* Require identical "values" */
 			if (o_ptr->ac != j_ptr->ac) return (FALSE);
 			if (o_ptr->dd != j_ptr->dd) return (FALSE);
@@ -1560,7 +1553,6 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 		}
 	}
 
-
 	/* Hack -- Identical flags! */
 	if ((o_ptr->flags1 != j_ptr->flags1) ||
 	    (o_ptr->flags2 != j_ptr->flags2) ||
@@ -1573,6 +1565,8 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- Require identical "broken" status */
 	if (broken_p(o_ptr) != broken_p(j_ptr)) return (FALSE);
 
+	/* Need to be identical ego items or artifacts */
+	if (o_ptr->xtra_name != j_ptr->xtra_name) return (FALSE);
 
 	/* Hack -- require semi-matching "inscriptions" */
 	if (o_ptr->inscription && j_ptr->inscription &&
@@ -1587,7 +1581,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 
 
 	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return (FALSE);
+	if (o_ptr->number + j_ptr->number >= MAX_STACK_SIZE) return (FALSE);
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -2119,7 +2113,7 @@ bool make_artifact(object_type *o_ptr)
 	/* Moria had no artifacts */
 	if (ironman_moria) return (FALSE);
 
-	/* No artifacts in the town */
+	/* No artifacts in the town  Why???  (There is a wildernes...) */
 	if (!p_ptr->depth) return (FALSE);
 
 	/* Check the artifact list */
@@ -2180,7 +2174,7 @@ bool make_artifact(object_type *o_ptr)
 		o_ptr->to_d = a_ptr->to_d;
 		o_ptr->weight = a_ptr->weight;
 
-		/* Mega-Hack -- set activation */
+		/* Mega-Hack XXX XXX -- set activation */
 		o_ptr->activate = i + 128;
 
 		/* Do not make another one */
