@@ -674,7 +674,7 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 	byte summon[96], summon_num = 0;
 	byte tactic[96], tactic_num = 0;
 	byte annoy[96], annoy_num = 0;
-        byte invul[96], invul_num = 0;
+	byte invul[96], invul_num = 0;
 	byte haste[96], haste_num = 0;
 	byte heal[96], heal_num = 0;
 

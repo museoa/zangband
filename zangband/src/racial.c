@@ -326,7 +326,7 @@ static void cmd_racial_power_aux(s32b command)
 		case RACE_KOBOLD:
 			if (racial_aux(12, 8, A_DEX, 14))
 			{
-				if(!get_aim_dir(&dir)) break;
+				if (!get_aim_dir(&dir)) break;
 				msg_print("You throw a dart of poison.");
 				fire_bolt(GF_POIS, dir, plev);
 			}

@@ -801,7 +801,8 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
 
 	/* Laterns are okay */
 	if ((o_ptr->tval == TV_LITE) &&
-	    (o_ptr->sval == SV_LITE_LANTERN)) return (TRUE);
+	    (o_ptr->sval == SV_LITE_LANTERN) &&
+	    (o_ptr->pval > 0)) return (TRUE);
 
 	/* Assume not okay */
 	return (FALSE);
@@ -825,8 +826,8 @@ static void do_cmd_refill_lamp(void)
 	item_tester_hook = item_tester_refill_lantern;
 
 	/* Get an item */
-	q = "Refill with which flask? ";
-	s = "You have no flasks of oil.";
+	q = "Refill with which source of oil? ";
+	s = "You have no sources of oil.";
 	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
 
 	/* Get the item (in the pack) */

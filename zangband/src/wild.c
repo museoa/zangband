@@ -623,7 +623,7 @@ void wilderness_gen(void)
 	bool daytime;
 	cave_type *c_ptr;
 
-   	/* Big town */
+	/* Big town */
 	cur_hgt = MAX_HGT;
 	cur_wid = MAX_WID;
 

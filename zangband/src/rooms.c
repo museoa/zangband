@@ -148,7 +148,7 @@ static void check_room_boundary(int x1, int y1, int x2, int y2)
 	if (count <= 2) return;
 
 
-    /* Tunnel around the room so to prevent problems with caves */
+	/* Tunnel around the room so to prevent problems with caves */
 	for (y = y1; y <= y2; y++)
 	{
 		for (x = x1; x <= x2; x++)
@@ -1434,7 +1434,7 @@ static void build_type5(int by0, int bx0)
 	monster_hook_type vault_monster_hook;
 
 	/* Try to allocate space for room. */
-   	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
 
 
 	/* Large room */
@@ -1689,7 +1689,7 @@ static void build_type6(int by0, int bx0)
 
 
 	/* Try to allocate space for room. */
-   	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
 
 
 	/* Large room */
@@ -3781,29 +3781,33 @@ static void r_visit(int y1, int x1, int y2, int x2,
 		switch (adj[i])
 		{
 			case 0:
-                        /* (0,+) - check for bottom boundary */
-                        if ( node / m < n - 1 && visited[node + m] == 0 ) {
+				/* (0,+) - check for bottom boundary */
+				if ((node / m < n - 1) && (visited[node + m] == 0))
+				{
 					cave_set_feat(y + 1, x, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node + m, dir, visited);
 				}
 				break;
 			case 1:
-                        /* (0,-) - check for top boundary */
-                        if ( node / m > 0 && visited[node - m] == 0 ) {
+				/* (0,-) - check for top boundary */
+				if ((node / m > 0) && (visited[node - m] == 0))
+				{
 					cave_set_feat(y - 1, x, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node - m, dir, visited);
 				}
 				break;
 			case 2:
-                        /* (+,0) - check for right boundary */
-                        if ( node % m < m - 1 && visited[node + 1] == 0 ) {
+				/* (+,0) - check for right boundary */
+				if ((node % m < m - 1) && (visited[node + 1] == 0))
+				{
 					cave_set_feat(y, x + 1, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node + 1, dir, visited);
 				}
 				break;
 			case 3:
-                        /* (-,0) - check for left boundary */
-                        if ( node % m > 0 && visited[node - 1] == 0 ) {
+				/* (-,0) - check for left boundary */
+				if ((node % m > 0) && (visited[node - 1] == 0))
+				{
 					cave_set_feat(y, x - 1, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node - 1, dir, visited);
 				}
@@ -3882,7 +3886,8 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
  {
  	int dy, dx;
  	int y1, x1, y2, x2, y, x, total;
-    int i, m, n, num_vertices, *visited;
+	int i, m, n, num_vertices;
+	int *visited;
 
  	if (cheat_room) msg_print("Mini Checker Board Vault");
 
@@ -3953,10 +3958,10 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 		cave[y2 + 1][x1 + x].feat = FEAT_WALL_OUTER;
 	}
 
-    /* Fill with monsters and treasure, highest difficulty*/
+	/* Fill with monsters and treasure, highest difficulty*/
 	fill_treasure(x1, x2, y1, y2, 10);
 
-    /* rnfree( visited, num_vertices * sizeof(int));*/
+	/* rnfree( visited, num_vertices * sizeof(int));*/
 	free(visited);
 }
 
@@ -3972,7 +3977,7 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 {
 	int xsize, ysize;
 	int x, y;
-    int choice;
+	int choice;
 
 	/* Temp variables */
 	int t1, t2, t3, t4;
@@ -4266,7 +4271,8 @@ static int dist2 (int x1, int y1, int x2, int y2, int h1, int h2, int h3, int h4
 	/* h1-h4 are constants that describe the metric */
 	if (dx>=2 * dy) return (dx+(dy * h1)/h2);
 	if (dy>=2 * dx) return (dy+(dx * h1)/h2);
-    return (((dx + dy)*128)/181+(dx * dx/(dy * h3)+dy * dy/(dx * h3))*h4);
+	return (((dx + dy) * 128) / 181 +
+	        (dx * dx / (dy * h3) + dy * dy / (dx * h3)) * h4);
 	/* 128/181 is approx. 1/sqrt(2) */
 }
 

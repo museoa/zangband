@@ -872,8 +872,8 @@ static void process_world(void)
 	object_kind *k_ptr;
 
 	/* Announce the level feeling */
-	if ((turn-old_turn==1000) && (dun_level)) do_cmd_feeling();
-		
+	if ((turn - old_turn == 1000) && (dun_level)) do_cmd_feeling();
+
 
 	/* Every 10 game turns */
 	if (turn % 10) return;
@@ -1601,9 +1601,7 @@ static void process_world(void)
 		(void)set_cut(p_ptr->cut - adjust);
 	}
 
-	
-	
-	
+
 	/*** Process Light ***/
 
 	/* Check for light being wielded */
@@ -2237,7 +2235,7 @@ static void process_world(void)
 		p_ptr->word_recall--;
 
 		p_ptr->redraw |= (PR_STATUS);
-		
+
 		/* Activate the recall */
 		if (!p_ptr->word_recall)
 		{
@@ -3198,17 +3196,16 @@ static void process_player(void)
 		hack_mutation = FALSE;
 	}
 
-	
-	if ((p_ptr->pspeed>199)||(p_ptr->pspeed<0))
-		{
+	if ((p_ptr->pspeed > 199) || (p_ptr->pspeed < 0))
+	{
 		/* player has speed outside range of table : punish him/her */
 		p_ptr->energy += 0;
-		}
+	}
 	else
-		{
+	{
 		/* Give the player some energy */
 		p_ptr->energy += extract_energy[p_ptr->pspeed];
-		}
+	}
 
 	/* No turn yet */
 	if (p_ptr->energy < 100) return;

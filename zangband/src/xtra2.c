@@ -389,7 +389,7 @@ void monster_death(int m_idx)
 					if (!p_ptr->inside_quest)
 						create_stairs = TRUE;
 
-					if (!quest[i].flags & QUEST_FLAG_SILENT)
+					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
 						msg_print(NULL);
@@ -417,7 +417,7 @@ void monster_death(int m_idx)
 					 /* completed quest */
 					quest[i].status = QUEST_STATUS_COMPLETED;
 
-					if (!quest[i].flags & QUEST_FLAG_SILENT)
+					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
 						msg_print(NULL);
@@ -456,7 +456,7 @@ void monster_death(int m_idx)
 	/* Drop a dead corpse? */
 	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 4) == 1) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
-        (r_ptr->flags9 & RF9_DROP_SKELETON)))
+	    (r_ptr->flags9 & RF9_DROP_SKELETON)))
 	{
 		/* Assume skeleton */
 		bool corpse = FALSE;

@@ -215,7 +215,7 @@ bool set_afraid(int v)
 
 	/* Use the value */
 	p_ptr->afraid = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -268,7 +268,7 @@ bool set_paralyzed(int v)
 
 	/* Use the value */
 	p_ptr->paralyzed = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -323,7 +323,7 @@ bool set_image(int v)
 
 	/* Use the value */
 	p_ptr->image = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -382,7 +382,7 @@ bool set_fast(int v)
 
 	/* Use the value */
 	p_ptr->fast = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -435,7 +435,7 @@ bool set_slow(int v)
 
 	/* Use the value */
 	p_ptr->slow = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -450,7 +450,7 @@ bool set_slow(int v)
 
 	/* Handle stuff */
 	handle_stuff();
-	
+
 	/* Result */
 	return (TRUE);
 }
@@ -488,7 +488,7 @@ bool set_shield(int v)
 
 	/* Use the value */
 	p_ptr->shield = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -500,7 +500,7 @@ bool set_shield(int v)
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
-	
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -542,7 +542,7 @@ bool set_blessed(int v)
 
 	/* Use the value */
 	p_ptr->blessed = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -595,7 +595,7 @@ bool set_hero(int v)
 
 	/* Use the value */
 	p_ptr->hero = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -651,7 +651,7 @@ bool set_shero(int v)
 
 	/* Use the value */
 	p_ptr->shero = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -707,7 +707,7 @@ bool set_protevil(int v)
 
 	/* Use the value */
 	p_ptr->protevil = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -716,7 +716,7 @@ bool set_protevil(int v)
 
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
-	
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -774,7 +774,7 @@ bool set_wraith_form(int v)
 
 	/* Use the value */
 	p_ptr->wraith_form = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -846,7 +846,7 @@ bool set_invuln(int v)
 
 	/* Use the value */
 	p_ptr->invuln = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -899,7 +899,7 @@ bool set_tim_esp(int v)
 
 	/* Use the value */
 	p_ptr->tim_esp = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -955,7 +955,7 @@ bool set_tim_invis(int v)
 
 	/* Use the value */
 	p_ptr->tim_invis = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -1011,7 +1011,7 @@ bool set_tim_infra(int v)
 
 	/* Use the value */
 	p_ptr->tim_infra = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -1067,7 +1067,7 @@ bool set_oppose_acid(int v)
 
 	/* Use the value */
 	p_ptr->oppose_acid = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -1117,7 +1117,7 @@ bool set_oppose_elec(int v)
 
 	/* Use the value */
 	p_ptr->oppose_elec = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -1167,7 +1167,7 @@ bool set_oppose_fire(int v)
 
 	/* Use the value */
 	p_ptr->oppose_fire = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -1217,7 +1217,7 @@ bool set_oppose_cold(int v)
 
 	/* Use the value */
 	p_ptr->oppose_cold = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 
@@ -1267,7 +1267,7 @@ bool set_oppose_pois(int v)
 
 	/* Use the value */
 	p_ptr->oppose_pois = v;
-	
+
 	/* Redraw status bar*/
 	p_ptr->redraw |= (PR_STATUS);
 

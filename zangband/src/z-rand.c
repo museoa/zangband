@@ -368,7 +368,7 @@ static bool qrand_table[256] =
 	FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE,
 	FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE,
 	FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE,
-	
+
 	FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE,
 	TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE,
 	FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE,
@@ -377,7 +377,7 @@ static bool qrand_table[256] =
 	TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
 	TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE,
 	FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
-	
+
 	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
 	FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE,
 	FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE,
@@ -386,7 +386,7 @@ static bool qrand_table[256] =
 	TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE,
 	FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE,
 	FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE,
-	
+
 	TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE,
 	FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
 	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE,
@@ -398,25 +398,24 @@ static bool qrand_table[256] =
 };
 
 /*
-* This is an ultra-quick "random" bool generator.
-* The bools have a 50% chance of being true or false.
-* This routine is designed to be used in LOS code + other
-* time critical routines where the small period is not
-* important.
-*/
-
+ * This is an ultra-quick "random" bool generator.
+ * The bools have a 50% chance of being true or false.
+ * This routine is designed to be used in LOS code + other
+ * time critical routines where the small period is not
+ * important.
+ */
 bool quick_rand(void)
 {
 	return qrand_table[quick_rand_place++];
 }
 
-/*
-* This function adds a new random bool to the table.
-* This is done to reduce the effect of the tables small size.
-*  (Called once every 10 turns in dungeon.c)
-*/
 
+/*
+ * This function adds a new random bool to the table.
+ * This is done to reduce the effect of the tables small size.
+ *  (Called once every 10 turns in dungeon.c)
+ */
 void quick_rand_add(void)
 {
-	qrand_table[quick_rand_place++]=(randint(2)==1);
+	qrand_table[quick_rand_place++] = (randint(2) == 1);
 }

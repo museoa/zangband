@@ -1484,11 +1484,11 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			case SV_SLING:
 			power = 2;
 			break;
-			
+
 			case SV_SHORT_BOW:
 			power = 2;
 			break;
-			
+
 			case SV_LONG_BOW:
 			if (p_ptr->stat_use[A_STR] >= 16)
 			{
@@ -1500,15 +1500,15 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 				power = 2;
 			}
 			break;
-			
+
 			case SV_LIGHT_XBOW:
 			power = 4;
 			break;
-			
+
 			case SV_HEAVY_XBOW:
 			power = 5;
 			break;
-			
+
 			default:
 			msg_print("Unknown firing multiplier.");
 			power = 0;

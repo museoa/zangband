@@ -155,31 +155,30 @@ void clear_status_bar(void)
 void show_status_bar(cptr letter, byte *colour, int num)
 {
 	int i;
-		
-	if (num<=12)
+
+	if (num <= 12)
 	{
 		/* Reset everything */
-		bar_count=0;
+		bar_count = 0;
 		clear_status_bar();
-		
-		/*Display the flags */
-		for (i=0;i<num;i++)
+
+		/* Display the flags */
+		for (i = 0; i < num; i++)
 		{
-			Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i], letter[i]);
+			Term_putch(COL_STATBAR + i, ROW_STATBAR, colour[i], letter[i]);
 		}
 	}
 	else
 	{
 		/* increment the count (scroll the flags) */
 		bar_count++;
-		
-		if (bar_count>=num) bar_count=0;
-		
-		
-		if (bar_count+12<num)
+
+		if (bar_count >= num) bar_count = 0;
+
+		if (bar_count + 12 < num)
 		{
-			/*Simple case - all in a row*/
-			for (i=0;i<12;i++)
+			/* Simple case - all in a row */
+			for (i =0;i<12;i++)
 			{
 				Term_putch(COL_STATBAR+i,ROW_STATBAR, colour[i+bar_count],
 					letter[i+bar_count]);
@@ -195,9 +194,9 @@ void show_status_bar(cptr letter, byte *colour, int num)
 			}
 			for (i=0;i<12+bar_count-num;i++)
 			{
-				Term_putch(COL_STATBAR+i+num-bar_count, ROW_STATBAR, 
+				Term_putch(COL_STATBAR+i+num-bar_count, ROW_STATBAR,
 					colour[i],letter[i]);
-			}		
+			}
 		}
 	}
 }
@@ -212,8 +211,8 @@ static void prt_status(void)
 	int num=0;
 	char letter[30];
 	byte colour[30];
-	
-	/* Collate active flags */ 
+
+	/* Collate active flags */
 
 	/* Hack -- Hallucinating */
 	if (p_ptr->image)
@@ -390,7 +389,7 @@ static void prt_status(void)
 		colour[num]=TERM_GREEN;
 		num++;
 	}
-	
+
 	/* Word of Recall */
 	if (p_ptr->word_recall)
 	{
@@ -398,7 +397,7 @@ static void prt_status(void)
 		colour[num]=TERM_WHITE;
 		num++;
 	}
-	
+
 	/* Confusing Hands */
 	if (p_ptr->confusing)
 	{
@@ -406,7 +405,7 @@ static void prt_status(void)
 		colour[num]=TERM_RED;
 		num++;
 	}
-	
+
 	if (num)
 	{
 		/*Display the status bar if there are flags set*/
@@ -2069,7 +2068,7 @@ static int weight_limit(void)
 /* Calculate all class-based bonuses and penalties to melee Skill.  Oangband
  * recognizes that it takes a great deal of training to get critical hits with
  * a large, heavy weapon - training that many classes simply do not have the
- * time or inclination for.  -LM- 
+ * time or inclination for.  -LM-
  */
 sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
 {
@@ -2131,7 +2130,7 @@ sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
 			break;
 		}
 
-		/* Ranger.  Can use 12 lb weapons without penalty at level 1, and 25 lb 
+		/* Ranger.  Can use 12 lb weapons without penalty at level 1, and 25 lb
 		*weapons without penalty at 50th level. */
 		case CLASS_RANGER:
 		{
@@ -2152,7 +2151,7 @@ sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
 			if (add_skill < -10) add_skill = -10;
 
 			/* Paladin penalty for non-blessed edged weapons. */
-			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) 
+			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				&& ((!p_ptr->bless_blade)))
 			{
 				add_skill -= 4 + p_ptr->lev / 3;
@@ -3338,7 +3337,7 @@ void calc_bonuses(void)
 
 		/* Heavy weapon */
 		p_ptr->heavy_wield = TRUE;
-		
+
 		/* The player gets to swing a heavy weapon only once. -LM- */
 		p_ptr->num_blow = 1;
 	}

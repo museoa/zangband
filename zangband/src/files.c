@@ -1372,14 +1372,14 @@ static void display_player_abilities(void)
 
 	/*rescale*/
 	avgdam /= 200;
-	
-	/* normal players get two 1d1 punches */
-	if ((!o_ptr->k_idx)&&(!(p_ptr->pclass == CLASS_MONK))) avgdam = 2;
 
-	if (avgdam==0)
-	{		
-		if ((p_ptr->pclass == CLASS_MONK)&&(!o_ptr->k_idx))
-			desc= "Special";
+	/* normal players get two 1d1 punches */
+	if ((!o_ptr->k_idx) && (!(p_ptr->pclass == CLASS_MONK))) avgdam = 2;
+
+	if (avgdam == 0)
+	{
+		if ((p_ptr->pclass == CLASS_MONK) && (!o_ptr->k_idx))
+			desc = "Special";
 		else
 			desc = "nil!";
 	}
@@ -2852,7 +2852,7 @@ errr file_character(cptr name, bool full)
 	char		o_name[80];
 	char		buf[1024];
 
-   	int msg_max = message_num();
+	int msg_max = message_num();
 
 
 	/* Drop priv's */
@@ -3173,7 +3173,7 @@ errr file_character(cptr name, bool full)
 		}
 	}
 
-	
+
 	fprintf(fff, "  [Message Log (last %d messages)]\n\n", msg_max);
 
 	for (i = msg_max - 1; i >= 0; i--)
@@ -3679,7 +3679,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			int key = -1;
 
 			if (isdigit(k)) key = D2I(k);
-			else if isalpha(k) key = k - 'A' + 10;
+			else if (isalpha(k)) key = k - 'A' + 10;
 
 			if ((key > -1) && hook[key][0])
 			{
@@ -4044,27 +4044,27 @@ void do_cmd_save_and_exit(void)
 }
 
 
-/* 
+/*
  * How much valuable stuff do we carry. Returns total cost of all found
  * items currently in equipment (ie. those that haven't been storebought
  * or started with)
  */
- 
+
 static long equip_value(void)
 {
 	object_type *o_ptr;
 	long total = 0L;
 	int i;
-	
+
 	for (i = 1; i < INVEN_TOTAL; i++)
 	{
 	    o_ptr = &inventory[i];
-	    
+
 		 if (o_ptr->ident & IDENT_STOREB) continue;
 		 if (!(o_ptr->ident & IDENT_KNOWN)) continue;
 	    total += object_value(o_ptr);
 	}
-	
+
 	return (total);
 
 }
@@ -4088,18 +4088,18 @@ long total_points(void)
 	if (empty_levels)    mult += 10;
 	if (smart_learn) mult += 20;
 	if (smart_cheat) mult += 20;
-	
+
 	if (mult < 5) mult = 5; /* At least 5% of the original score */
 
 	temp = p_ptr->max_exp + (100 * p_ptr->max_dlv);
-	
+
 	temp = (temp * mult / race_info[p_ptr->prace].r_exp);
 
 	temp += (long)(equip_value() / 10);
-	
+
 	if (ironman_downward) temp *= 2;
-	
-	return (temp);   
+
+	return (temp);
 }
 
 

@@ -56,7 +56,7 @@ extern int dun_tun_jct;
 #define DUN_WAT_DEN	15	/* Density of rivers */
 #define DUN_WAT_RNG	2	/* Width of rivers */
 #define DUN_STR_WAT	3	/* Max number of rivers */
-#define DUN_WAT_CHG	50	/* 1 in 50 chance of junction in river */ 
+#define DUN_WAT_CHG	50	/* 1 in 50 chance of junction in river */
 
 /*
  * Dungeon treausre allocation values

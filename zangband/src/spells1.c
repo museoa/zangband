@@ -3993,14 +3993,14 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
 	int ny = x2 - x1;
 	int nx = y1 - y2;
 
-   /* Length of N */
+	/* Length of N */
 	int d = distance(y1, x1, y2, x2);
 
 	/* Component of P on N */
 	d = ((d) ? ((py * ny + px * nx) / d) : 0);
 
-   /* Absolute value */
-   return((d >= 0) ? d : 0 - d);
+	/* Absolute value */
+	return ((d >= 0) ? d : 0 - d);
 }
 
 
@@ -4369,7 +4369,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	gm[1] = grids;
 
 	dist_hack = dist;
-   dist = path_n;
+	dist = path_n;
 
 	/* If we found a "target", explode there */
 	if (dist <= MAX_RANGE)

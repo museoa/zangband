@@ -2647,7 +2647,7 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	wall = (!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr));
+	wall = (!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr));
 
 
 	/* Check the "ease" of visibility */
@@ -2887,19 +2887,19 @@ void update_view(void)
 	/* Scan south-east */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y+d][x+d];
+		c_ptr = &cave[y + d][x + d];
 		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y+d, x+d);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		cave_view_hack(c_ptr, y + d, x + d);
+		if ((!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Scan south-west */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y+d][x-d];
+		c_ptr = &cave[y + d][x - d];
 		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y+d, x-d);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		cave_view_hack(c_ptr, y + d, x - d);
+		if ((!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Scan north-east */

@@ -1455,7 +1455,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 			if ((!(o_ptr->ident & (IDENT_EMPTY)) &&
 				!object_known_p(o_ptr)) ||
 				(!(j_ptr->ident & (IDENT_EMPTY)) &&
-				!object_known_p(j_ptr))) return(0);
+				!object_known_p(j_ptr))) return (0);
 
 			/* Require identical charges, since staffs are bulky. */
 			if (o_ptr->pval != j_ptr->pval) return (0);
@@ -1471,7 +1471,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 			if ((!(o_ptr->ident & (IDENT_EMPTY)) &&
 				!object_known_p(o_ptr)) ||
 				(!(j_ptr->ident & (IDENT_EMPTY)) &&
-				!object_known_p(j_ptr))) return(0);
+				!object_known_p(j_ptr))) return (0);
 
 			/* Wand charges combine in O&ZAngband.  */
 
@@ -2255,7 +2255,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 
 					case 29: case 30:
 					{
-						o_ptr->name2 = EGO_ATTACKS;						
+						o_ptr->name2 = EGO_ATTACKS;
 						break;
 					}
 
@@ -2336,7 +2336,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 						else /* Hafted */
 						{
 							o_ptr->name2 = EGO_EARTHQUAKES;
-							o_ptr->pval = m_bonus(3, level);					
+							o_ptr->pval = m_bonus(3, level);
 						}
 					}
 				}
@@ -3112,7 +3112,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 			/* Analyze */
 			switch (o_ptr->sval)
 			{
-				
+
 				case SV_RING_ATTACKS:
 				{
 					/* Rarely have a ring +2*/
@@ -3140,7 +3140,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 					break;
 				}
-				
+
 				/* Strength, Constitution, Dexterity, Intelligence */
 				case SV_RING_STR:
 				case SV_RING_CON:
@@ -3202,7 +3202,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_LORDLY:
 				{
 					if (randint(7)==1)
-					{ 
+					{
 						/* Randart ring */
 						create_artifact(o_ptr, FALSE);
 					}
@@ -3457,16 +3457,16 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						}
 					}
 					else
-					{					
+					{
 						o_ptr->pval = randint(5) + m_bonus(5, level);
 						o_ptr->to_a = randint(5) + m_bonus(5, level);
 
 						if (randint(3) == 1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
-					
+
 						/* Boost the rating */
 						rating += 25;
 					}
-					
+
 					/* Mention the item */
 					if (cheat_peek) object_mention(o_ptr);
 
@@ -3927,7 +3927,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 			/* Hack -- obtain pval */
 			if (e_ptr->max_pval) o_ptr->pval += randint(e_ptr->max_pval);
 		}
-		
+
 		/* Hack -- extra powers */
 		switch (o_ptr->name2)
 		{
@@ -3937,7 +3937,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 				o_ptr->xtra1 = EGO_XTRA_SUSTAIN;
 				if (randint(4) == 1)
 				{
-					o_ptr->art_flags1 |= TR1_BLOWS;				
+					o_ptr->art_flags1 |= TR1_BLOWS;
 					if (o_ptr->pval>2)
 					{
 						o_ptr->pval-=2;
@@ -3975,7 +3975,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 				if (randint(7) == 1) o_ptr->xtra1 = EGO_XTRA_ABILITY;
 				break;
 			}
-			
+
 			case EGO_ATTACKS:
 			{
 				o_ptr->art_flags1 |= TR1_BLOWS;
@@ -4005,7 +4005,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 							o_ptr->pval=1;
 						}
 					}
-				}			
+				}
 				break;
 			}
 
@@ -4041,8 +4041,6 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 		/* Randomize the "xtra" power */
 		if (o_ptr->xtra1 && !o_ptr->art_name)
 			o_ptr->xtra2 = randint(256);
-
-		
 
 		/* Hack -- apply rating bonus */
 		rating += e_ptr->rating;

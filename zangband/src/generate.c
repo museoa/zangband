@@ -574,7 +574,7 @@ static bool cave_gen(void)
 		k = randint(100);
 
 		/* No caves when a cavern exists: they look bad */
-		if ((k<dun_level)&&(!cavern)&&(!empty_level)&&(laketype == 0))
+		if ((k < dun_level) && (!cavern) && (!empty_level) && (laketype == 0))
 		{
 			/* Type 9 -- Fractal cave */
 			if (room_build(y, x, 9)) continue;
@@ -588,9 +588,9 @@ static bool cave_gen(void)
 	/* Make a hole in the dungeon roof sometimes at level 1 */
 	if (dun_level == 1)
 	{
-		while (randint(DUN_MOS_DEN)==1)
+		while (randint(DUN_MOS_DEN) == 1)
 		{
-			place_trees(randint(cur_wid-2),randint(cur_hgt-2));
+			place_trees(randint(cur_wid - 2), randint(cur_hgt - 2));
 	}
 	}
 
@@ -598,10 +598,10 @@ static bool cave_gen(void)
 	if (destroyed) destroy_level();
 
 	/* Hack -- Add some rivers */
-	if((randint(3)==1)&&(randint(dun_level)>5))
+	if ((randint(3) == 1) && (randint(dun_level) > 5))
 	{
 	 	/* Choose water or lava */
-		if (randint(MAX_DEPTH)-1 > dun_level)
+		if (randint(MAX_DEPTH) - 1 > dun_level)
 		{
 			feat1 = FEAT_DEEP_WATER;
 			feat2 = FEAT_SHAL_WATER;
@@ -614,9 +614,9 @@ static bool cave_gen(void)
 
 
 	 	/* Only add river if matches lake type or if have no lake at all */
-	 	if (((laketype == 1)&&(feat1 == FEAT_DEEP_LAVA))||
-	 		((laketype == 2)&&(feat1 == FEAT_DEEP_WATER))||
-			(laketype == 0))
+	 	if (((laketype == 1) && (feat1 == FEAT_DEEP_LAVA)) ||
+	 	    ((laketype == 2) && (feat1 == FEAT_DEEP_WATER)) ||
+		     (laketype == 0))
 	 	{
 			add_river(feat1, feat2);
 		}

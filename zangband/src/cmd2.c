@@ -627,21 +627,20 @@ static bool is_closed(int feat)
  */
 static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
 {
-	int d, count;
+	int d;
 	int xx, yy;
-	/* Count how many matches */
-	count = 0;
+	int count = 0; /* Count how many matches */
 
 	/* Check around (and under) the character */
 	for (d = 0; d < 9; d++)
 	{
 		/* if not searching under player continue */
-		if ((d==8)&& (!under)) continue;
-		
+		if ((d == 8) && !under) continue;
+
 		/* Extract adjacent (legal) location */
 		yy = py + ddy_ddd[d];
 		xx = px + ddx_ddd[d];
-		
+
 		/* Must have knowledge */
 		if (!(cave[yy][xx].info & (CAVE_MARK))) continue;
 
@@ -3144,14 +3143,14 @@ void do_cmd_throw_aux(int mult)
 
 	/* Max distance of 10-18 */
 	if (tdis > mul) tdis = mul;
-	
-	/* Chance of hitting.  Other thrown objects are easier to use, but 
-	 * only throwing weapons take advantage of bonuses to Skill from 
+
+	/* Chance of hitting.  Other thrown objects are easier to use, but
+	 * only throwing weapons take advantage of bonuses to Skill from
 	 * other items. -LM-
 	 */
-	if (f2 & (TR2_THROW)) chance = ((p_ptr->skill_tht) + 
+	if (f2 & (TR2_THROW)) chance = ((p_ptr->skill_tht) +
 		((p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ));
-	else chance = ((3 * p_ptr->skill_tht / 2) + 
+	else chance = ((3 * p_ptr->skill_tht / 2) +
 		(q_ptr->to_h * BTH_PLUS_ADJ));
 
 
@@ -3267,7 +3266,7 @@ void do_cmd_throw_aux(int mult)
 
 				/* Get "the monster" or "it" */
 				monster_desc(m_name, m_ptr, 0);
-				
+
 				/* Handle visible monster */
 				if (visible)
 				{
@@ -3283,17 +3282,17 @@ void do_cmd_throw_aux(int mult)
 
 
 				/* The basic damage-determination formula is the same in
-				 * throwing as it is in melee (apart from the thrown weapon 
-				 * multiplier, and the ignoring of non-object bonuses to 
-				 * Deadliness for objects that are not thrown weapons).  See 
+				 * throwing as it is in melee (apart from the thrown weapon
+				 * multiplier, and the ignoring of non-object bonuses to
+				 * Deadliness for objects that are not thrown weapons).  See
 				 * formula "py_attack" in "cmd1.c" for more details. -LM-
 				 */
 
 				tdam = q_ptr->dd;
 
-				/* Multiply the number of damage dice by the throwing weapon 
-				 * multiplier, if applicable.  This is not the prettiest 
-				 * equation, but it does at least try to keep throwing 
+				/* Multiply the number of damage dice by the throwing weapon
+				 * multiplier, if applicable.  This is not the prettiest
+				 * equation, but it does at least try to keep throwing
 				 * weapons competitive.
 				 */
 				if (f2 & (TR2_THROW))
@@ -3301,11 +3300,10 @@ void do_cmd_throw_aux(int mult)
 					tdam *= 4 + p_ptr->lev / 6;
 				}
 
-				
 				/* multiply by slays or brands. (10x inflation) */
-				tdam = tot_dam_aux(q_ptr,tdam, m_ptr);
+				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
 
-				/* Only allow critical hits if the object is a throwing 
+				/* Only allow critical hits if the object is a throwing
 				 * weapon.  Otherwise, grant the default multiplier.
 				 * (10x inflation)
 				 */
@@ -3319,23 +3317,23 @@ void do_cmd_throw_aux(int mult)
 				if (f2 & (TR2_THROW))
 				{
 					if (total_deadliness > 0)
-						tdam *= (100 + 
-						deadliness_conversion[total_deadliness]);
+						tdam *= (100 +
+						    deadliness_conversion[total_deadliness]);
 					else if (total_deadliness > -31)
-						tdam *= (100 - 
-						deadliness_conversion[ABS(total_deadliness)]);
+						tdam *= (100 -
+						    deadliness_conversion[ABS(total_deadliness)]);
 					else
 						tdam = 0;
 				}
 
-				else 
+				else
 				{
 					if (q_ptr->to_d > 0)
-						tdam *= (100 + 
-						deadliness_conversion[q_ptr->to_d]);
+						tdam *= (100 +
+						    deadliness_conversion[q_ptr->to_d]);
 					else if (q_ptr->to_d > -31)
-						tdam *= (100 - 
-						deadliness_conversion[ABS(q_ptr->to_d)]);
+						tdam *= (100 -
+						     deadliness_conversion[ABS(q_ptr->to_d)]);
 					else
 						tdam = 0;
 				}
@@ -3347,12 +3345,12 @@ void do_cmd_throw_aux(int mult)
 				tdam_remainder = tdam % 10000;
 
 
-				/* Calculate and combine the damages of the whole and 
+				/* Calculate and combine the damages of the whole and
 				 * fractional dice.
 				 */
-				tdam = damroll(tdam_whole, q_ptr->ds) + 
+				tdam = damroll(tdam_whole, q_ptr->ds) +
 					(tdam_remainder * damroll(1, q_ptr->ds) / 10000);
-				
+
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
 

@@ -655,7 +655,7 @@ void have_nightmare(int r_idx)
 
 	if (saving_throw(p_ptr->skill_sav * 100 / power))
 	{
-   	msg_format("%^s chases you through your dreams.", m_name);
+		msg_format("%^s chases you through your dreams.", m_name);
 
 		/* Safe */
 		return;
@@ -1120,10 +1120,10 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
 	char tmp_str[80];
 	long maxdam,mindam;
 	int dambonus;
-	
+
 	int intmaxdam, intmindam;
-	
-	dambonus=o_ptr->to_d + p_ptr->to_d;
+
+	dambonus = o_ptr->to_d + p_ptr->to_d;
 
 	if (dambonus > 0)
 		mindam = (100 + deadliness_conversion[dambonus]);
@@ -1131,15 +1131,15 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
 		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
 	else
 		mindam = 0;
-	
+
 	/* Effect of damage dice */
 	maxdam = mindam*(o_ptr->ds*o_ptr->dd);
 	mindam *= o_ptr->ds;
-	
+
 	/* number of blows */
 	maxdam *= numblows;
 	mindam *= numblows;
-	
+
 	/*rescale*/
 	intmaxdam = maxdam/100;
 	intmindam = mindam/100;
@@ -1219,7 +1219,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 	put_str(tmp_str, row+3, col);
 
 	c_put_str(TERM_YELLOW, "Possible Damage:", row+5, col);
-	
+
 	dambonus=o_ptr->to_d + p_ptr->to_d;
 
 	if (dambonus > 0)
@@ -1228,7 +1228,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
 	else
 		mindam = 0;
-	
+
 	/* Effect of damage dice */
 	maxdam = mindam*(o_ptr->ds*o_ptr->dd);
 	mindam *= o_ptr->ds;
@@ -1236,7 +1236,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 	/* rescale */
 	intmaxdam=maxdam/100;
 	intmindam=mindam/100;
-	
+
 	/* Damage for one blow (if it hits) */
 	sprintf(tmp_str, "One Strike: %d-%d damage",intmindam,intmaxdam);
 	put_str(tmp_str, row+6, col+1);
@@ -1244,7 +1244,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 	/* rescale */
 	intmaxdam=(maxdam*p_ptr->num_blow)/100;
 	intmindam=(mindam*p_ptr->num_blow)/100;
-	
+
 	/* Damage for the complete attack (if all blows hit) */
 	sprintf(tmp_str, "One Attack: %d-%d damage",intmindam,intmaxdam);
 	put_str(tmp_str, row+7, col+1);
@@ -1779,6 +1779,10 @@ static void bldg_process_command(building_type *bldg, int i)
 				break;
 			case BACT_IDENTS: /* needs work */
 				identify_pack();
+
+				/* Combine / Reorder the pack (later) */
+				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
 				msg_print("Your posessions have been identified.");
 				msg_print(NULL);
 				paid = TRUE;
@@ -2001,7 +2005,7 @@ void do_cmd_bldg(void)
 	Term_clear();
 
 	/* Update the visuals */
-	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_BONUS);
+	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_BONUS | PU_LITE);
 
 	/* Redraw entire screen */
 	p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_EQUIPPY | PR_MAP);

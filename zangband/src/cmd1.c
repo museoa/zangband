@@ -50,7 +50,7 @@
 *  - done
 * Weapon Master
 *  - done (but the formulae need to be checked.)
-* 
+*
 * Shops - item prices may need to change to reflect their altered value to
 *      the player.
 *  - Not sure this is important. The whole store value system may need to be
@@ -2414,13 +2414,12 @@ void move_player(int dir, int do_pickup)
 	/* Hack -- attack monsters */
 	if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x) || p_can_pass_walls))
 	{
-
 		/* Attack -- only if we can see it OR it is not in a wall */
 		if (!is_hostile(m_ptr) &&
 		    !(p_ptr->confused || p_ptr->image || !m_ptr->ml || p_ptr->stun ||
 		    ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)) &&
 		    (pattern_seq(py, px, y, x)) &&
-		    ((cave_floor_bold(y, x)) || (p_can_pass_walls)))
+		    ((cave_floor_bold(y, x)) || p_can_pass_walls))
 		{
 			m_ptr->csleep = 0;
 
@@ -2541,8 +2540,7 @@ void move_player(int dir, int do_pickup)
 #endif /* ALLOW_EASY_DISARM -- TNB */
 
 	/* Player can not walk through "walls" unless in wraith form...*/
-	else if ((!cave_floor_bold(y, x)) &&
-		(!p_can_pass_walls))
+	else if (!cave_floor_bold(y, x) && !p_can_pass_walls)
 	{
 		oktomove = FALSE;
 
@@ -2599,9 +2597,7 @@ void move_player(int dir, int do_pickup)
 			else if (c_ptr->feat < FEAT_SECRET)
 			{
 #ifdef ALLOW_EASY_OPEN
-
 				if (easy_open && easy_open_door(y, x)) return;
-
 #endif /* ALLOW_EASY_OPEN */
 
 				msg_print("There is a closed door blocking your way.");

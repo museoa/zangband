@@ -1477,7 +1477,6 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 			{
 				o_ptr->pval = 1;
 			}
-				
 		}
 		else
 		{
@@ -2312,9 +2311,9 @@ bool activate_random_artifact(object_type * o_ptr)
 			}
 
 			msg_print("It glows soft white...");
-			
+
 			p_ptr->redraw |= (PR_STATUS);
-			
+
 			if (!p_ptr->word_recall)
 			{
 				p_ptr->word_recall = randint(20) + 15;

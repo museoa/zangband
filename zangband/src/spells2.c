@@ -1022,7 +1022,7 @@ void self_knowledge(void)
 		{
 			info[i++] = "Your weapon is a great bane of dragons.";
 		}
-		
+
 		if (f2 & (TR2_THROW))
 		{
 			info[i++] = "Your weapon can be thrown well.";
@@ -1187,7 +1187,7 @@ void report_magics(void)
 	if (p_ptr->word_recall)
 	{
 		info2[i]  = report_magics_aux(p_ptr->word_recall);
-		info[i++] = "You waiting to be recalled";
+		info[i++] = "You are waiting to be recalled";
 	}
 	if (p_ptr->oppose_acid)
 	{
@@ -2978,7 +2978,7 @@ static void cave_temp_room_lite(void)
 		{
 			int y = temp_y[i]+ ddy_cdd[j];
 			int x = temp_x[i]+ ddx_cdd[j];
-			
+
 			cave_type *c_ptr = &cave[y][x];
 
 			/* Verify */
@@ -3007,7 +3007,7 @@ static void cave_temp_room_lite(void)
 
 				/* Stupid monsters rarely wake up */
 				if (r_ptr->flags2 & (RF2_STUPID)) chance = 10;
-	
+
 				/* Smart monsters always wake up */
 				if (r_ptr->flags2 & (RF2_SMART)) chance = 100;
 
@@ -3067,12 +3067,12 @@ static void cave_temp_room_unlite(void)
 		{
 			int y = temp_y[i]+ ddy_cdd[j];
 			int x = temp_x[i]+ ddx_cdd[j];
-			
+
 			cave_type *c_ptr = &cave[y][x];
 
 			/* Verify */
 			if (!in_bounds2(y, x)) continue;
-			
+
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
 
@@ -3100,7 +3100,7 @@ static void cave_temp_room_unlite(void)
 			lite_spot(y, x);
 		}
 	}
-	
+
 	/* None left */
 	temp_n = 0;
 }
@@ -3176,10 +3176,10 @@ static void cave_temp_room_aux(int y, int x)
 
 	/* Do not exceed the maximum spell range */
 	if (distance(py, px, y, x) > MAX_RANGE) return;
-	
+
 	/* Verify */
 	if (!in_bounds(y, x)) return;
-	
+
 	/* If a wall, exit */
 	if (!cave_floor_bold(y, x)) return;
 
@@ -3187,7 +3187,7 @@ static void cave_temp_room_aux(int y, int x)
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
 #endif
-	
+
 	/* Verify this grid */
 	/*
 	* The reason why it is ==6 instead of >5 is that 8 is impossible
@@ -3196,7 +3196,7 @@ static void cave_temp_room_aux(int y, int x)
 	* checkboard interesting rooms, so that the boundary is lit
 	* properly.
 	* This leaves only a check for 6 bounding walls!
-	*/	
+	*/
 	if ((next_to_walls_adj(y, x) == 6) && (next_to_open(y, x) <= 1)) return;
 
 	/* Paranoia -- verify space */

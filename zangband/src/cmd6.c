@@ -550,7 +550,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!p_ptr->free_act)
 			{
-         	msg_print("You fall asleep.");
+				msg_print("You fall asleep.");
 
 				if (ironman_nightmare)
 				{
@@ -1657,6 +1657,10 @@ static void do_cmd_use_staff_aux(int item)
 		if (flush_failure) flush();
 		msg_print("The staff has no charges left.");
 		o_ptr->ident |= (IDENT_EMPTY);
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
 		return;
 	}
 
@@ -1741,7 +1745,7 @@ static void do_cmd_use_staff_aux(int item)
 			}
 			for (k = 0; k < num; k++)
 			{
-         	attempts = 1000;
+				attempts = 1000;
 
 				while(attempts--)
 				{
@@ -2106,6 +2110,10 @@ static void do_cmd_aim_wand_aux(int item)
 		if (flush_failure) flush();
 		msg_print("The wand has no charges left.");
 		o_ptr->ident |= (IDENT_EMPTY);
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
 		return;
 	}
 
@@ -3076,7 +3084,7 @@ static void do_cmd_activate_aux(int item)
 
 				for (k = 0; k < num; k++)
 				{
-            	attempts = 1000;
+					attempts = 1000;
 
 					while(attempts--)
 					{
