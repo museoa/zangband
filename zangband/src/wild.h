@@ -95,17 +95,11 @@ struct wild_building_type
 
 
 /* Externs */
+extern void init_vanilla_town(void);
+extern void init_towns(int xx, int yy);
 
-extern int wild_stairs_x;
-extern int wild_stairs_y;
-extern wild_building_type	wild_build[MAX_CITY_BUILD];
-extern byte build_x[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
-extern byte build_y[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
-
-extern byte fill_town_driver(void);
 extern void clear_temp_block(void);
 extern void set_temp_corner_val(u16b val);
 extern void set_temp_mid(u16b val);
 extern void frac_block(void);
-extern void draw_city(u16b town_num);
-extern void van_town_gen(u16b town_num);
+/* extern void van_town_gen(u16b town_num); */
