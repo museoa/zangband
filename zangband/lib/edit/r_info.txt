@@ -13311,3 +13311,15 @@ F:RAND_50 | RAND_25 | CAN_SWIM |
 F:STUPID | WEIRD_MIND | MULTIPLY | BASH_DOOR | 
 F:ANIMAL | HURT_LITE | NO_FEAR
 D:A seething mass of thick, glowing worms.
+
+N:873:Auto-mobile
+G:g:R
+I:130:80d10:10:110:12
+W:45:5:0:1400
+B:BUTT:HURT:8d3
+B:CRUSH:HURT:8d7
+F:FORCE_SLEEP | FORCE_MAXHP | RES_TELE | KILL_BODY | KILL_ITEM | 
+F:EMPTY_MIND | BASH_DOOR | IM_COLD | IM_ELEC | IM_POIS
+F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | WILD_WASTE
+D:It is a streamlined metal demon, moving under its own power to crush you.
+D:  It rumbles hungrily.
