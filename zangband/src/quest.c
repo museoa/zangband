@@ -1339,7 +1339,9 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	
 	/* Save the quest data */
 	q_ptr->data.fit.a_idx = a_idx;
-	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level, TRUE);
+
+	/* Boost the level to make this quest harder. */
+	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level * MAX_DEPTH / 100, TRUE);
 	
 	/* Where is it? */
 	pl_ptr = &place[q_ptr->data.fit.place];
@@ -1359,15 +1361,49 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 }
 
 
-/* Supply an artifact-idx that has not been found yet */
+
+
+/* This function returns TRUE if nr1 and nr2 share a divider > 1 */
+static bool share_divider(int nr1, int nr2)
+{
+	int i;
+
+	/* make sure that nr2 is larger/equal to nr1 */
+	if (nr1 > nr2)
+	{
+		/* swap them */
+		i = nr1;
+		nr1 = nr2;
+		nr2 = i;
+	}
+
+	/* Try all the numbers between 2 and nr1 */
+	for (i = 2; i <= nr1; i++)
+	{
+		/* if i can divide both nr1 and nr2 they share a divider */
+		if (!(nr1 % i) && !(nr2 % i)) return (TRUE);
+	}
+
+	/* The greatest common denominator of nr1 and nr2 is 1. */
+	return (FALSE);
+}
+
+
+/*
+ * Supply an artifact-idx that has not been found yet.  Do this on a weighted
+ * basis.  The product of the artifact's depth and level should be lower than
+ * some random number.  This ensures that low depth/level artifacts are more
+ * easily chosen
+ */
 static u16b find_random_artifact(void)
 {
 	u16b a_idx;
-	int count = 0;
+	int min = 999999, max = 0;
+	int rand, step;
 
 	artifact_type *a_ptr;
 
-
+	/* Loop through the artifacts */
 	for (a_idx = 0; a_idx < z_info->a_max; a_idx++)
 	{
 		a_ptr = &a_info[a_idx];
@@ -1381,38 +1417,50 @@ static u16b find_random_artifact(void)
 		/* No quest items */
 		if (FLAG(a_ptr, TR_QUESTITEM)) continue;
 
-		/* count the remaining artifacts */
-		count++;
+		/* keep track of the lowest level * rarity */
+		min = MIN(min, a_ptr->level * a_ptr->rarity);
+
+		/* keep track of the highest level * rarity */
+		max = MAX(max, a_ptr->level * a_ptr->rarity);
 	}
 
 	/* All the artifacts have been found! */
-	if (!count) return (0);
+	if (!max) return (0);
 
-	/* Get a random */
-	count = randint1(count);
+	/* Find the selection condition */
+	rand = rand_range(min, max);
 
-	for (a_idx = 0; a_idx < z_info->a_max; a_idx++)
+	/*
+	 * Select a step to go through the artifact array. That step should not
+	 * share a divider with z_info->a_max to ensure that all artifacts are
+	 * tried.  (basic group theory)
+	 */
+	do step = randint(z_info->a_max);
+	while (share_divider(step, z_info->a_max));
+
+	/* Randomly loop through the artifacts */
+	do
 	{
+		/* Finf the next artifact */
+		a_idx = (a_idx + step) % z_info->a_max;
+	
+		/* Make a pointer to the artifact */
 		a_ptr = &a_info[a_idx];
 
 		/* Skip "empty" artifacts */
 		if (!a_ptr->name) continue;
-			
+
 		/* Cannot make an artifact twice */
 		if (a_ptr->cur_num) continue;
 
 		/* No quest items */
 		if (FLAG(a_ptr, TR_QUESTITEM)) continue;
 
-		/* subtract the artifacts that are not needed */
-		count--;
-
-		/* deliver the countth artifact */
-		if (!count) return (a_idx);
+		/* deliver this artifact maybe */
+		if (a_ptr->level * a_ptr->rarity <= rand) return (a_idx);
 	}
-
-	/* How is this possible? */
-	return (0);
+	/* No termnation needed because there is a garantee to find an artifact */
+	while (TRUE);
 }
 
 static bool request_find_item(int dummy)
