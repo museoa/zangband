@@ -707,7 +707,7 @@ static int count_chests(int *x, int *y, bool trapped)
 /*
  * Convert an adjacent location to a direction.
  */
-static int coords_to_dir(int y, int x)
+static int coords_to_dir(int x, int y)
 {
 	int d[3][3] = { {7, 4, 1}, {8, 5, 2}, {9, 6, 3} };
 	int dy = y - p_ptr->py;
@@ -839,7 +839,7 @@ void do_cmd_open(void)
 		/* See if only one target */
 		if ((num_doors + num_chests) == 1)
 		{
-			p_ptr->command_dir = coords_to_dir(y, x);
+			p_ptr->command_dir = coords_to_dir(x, y);
 		}
 	}
 
@@ -991,7 +991,7 @@ void do_cmd_close(void)
 		/* Count open doors */
 		if (count_doors(&x, &y, is_open, FALSE) == 1)
 		{
-			p_ptr->command_dir = coords_to_dir(y, x);
+			p_ptr->command_dir = coords_to_dir(x, y);
 		}
 	}
 
@@ -1694,7 +1694,7 @@ void do_cmd_disarm(void)
 		{
 			bool too_many = (num_traps + num_chests > 1);
 
-			if (!too_many) p_ptr->command_dir = coords_to_dir(y, x);
+			if (!too_many) p_ptr->command_dir = coords_to_dir(x, y);
 		}
 	}
 
