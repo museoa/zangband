@@ -2,7 +2,8 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl Initialize autoconf - look for the existance of a file to make sure
 dnl the source distribution is installed correctly.
-AC_INIT(src/main.c)
+AC_INIT
+AC_CONFIG_SRCDIR([src/main.c])
 
 dnl write the resulting #defines into a header file
 AC_CONFIG_HEADERS([src/autoconf.h])
@@ -28,7 +29,7 @@ AC_ARG_WITH(tkdir,
                           is in a different place from tcl directory
 						  and is not auto-detected properly])
 
-AC_LANG_C
+AC_LANG([C])
 
 basedir=`pwd`
 
@@ -107,10 +108,9 @@ else
   if test "$GTK" != "false"; then
      CFLAGS="$CFLAGS `gtk-config --cflags`"
      LIBS="$LIBS `gtk-config --libs`"
-	 AC_TRY_COMPILE([#include "gtk/gtk.h"],[GtkWidget x;],
-     [
+	 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gtk/gtk.h"]], [[GtkWidget x;]])],[
 	   AC_DEFINE(USE_GTK, 1, [Gtk port])
-     ])
+     ],[])
   fi
   
   
@@ -203,17 +203,18 @@ else
     [CPPFLAGS="-I$BASE_TK_DIR/tk-private/generic $CPPFLAGS"],
   	[])
   
-  AC_TRY_COMPILE([#include "tcl.h"],[Tcl_Obj x;],
-  [
-	AC_CHECK_HEADER(tkInt.h,,[AC_MSG_ERROR(Can't find tkInt.h)])
-    AC_CHECK_HEADER(tkCanvas.h,,[AC_MSG_ERROR(Can't find tkCanvas.h)])
-	
-	TK_PORT="y"
-	AC_SUBST(TK_PORT)
-	AC_DEFINE(USE_TNB, 1, [Tk port])
-	AC_DEFINE(PLATFORM_X11, 1, [Force use of X11 version of tk port])
-  ]
-  ,[AC_MSG_WARN(Can't compile tk port)])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "tcl.h"]], [[Tcl_Obj x;]])],[
+  dnl Check a couple of headers, and if they exist enable the tk port.
+	AC_CHECK_HEADER(tkInt.h,
+		[AC_CHECK_HEADER(tkCanvas.h,
+			TK_PORT="y"
+			AC_SUBST(TK_PORT)
+			AC_DEFINE(USE_TNB, 1, [Tk port])
+			AC_DEFINE(PLATFORM_X11, 1, [Force use of X11 version of tk port])
+		
+			,[AC_MSG_WARN(Can't find tkCanvas.h)])]
+		,[AC_MSG_WARN(Can't find tkInt.h)])]
+	,[AC_MSG_WARN(Can't compile tk port)])
 fi
 
 dnl Virtual Console port support.
@@ -278,4 +279,5 @@ AC_CHECK_CC_OPT(-Wundef)
 AC_CHECK_CC_OPT(-Wnested-externs)
 
 
-AC_OUTPUT(makefile)
+AC_CONFIG_FILES([makefile])
+AC_OUTPUT

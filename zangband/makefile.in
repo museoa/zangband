@@ -18,6 +18,9 @@ CPPFLAGS := @CPPFLAGS@
 LIBS := @LIBS@
 LDFLAGS := @LDFLAGS@
 
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
 DESTDIR = @DEFAULT_PATH@
 GAMEGROUP = @GAMEGROUP@
 
@@ -37,14 +40,21 @@ files = angdos.cfg readme z_faq.txt z_update.txt
 # The executable itself
 files += zangband
 
-extra_files = acconfig.h
 clean-files = zangband
+distclean-files = *.bak gmon.out config.log config.status
+
+##
+## Default target
+##
+## Compile zangband.
+##
+default: zangband
 
 dirs := lib src
 dirlist := lib
 include $(scandir)
 
-INSTALL =
+INSTALL = cp zangband $(bindir)/zangband
 
 ##
 ## Default target
@@ -61,6 +71,7 @@ makefile: configure makefile.in
 	./configure
 
 configure: configure.in
+	aclocal
 	autoheader
 	autoconf
 
@@ -79,6 +90,9 @@ install: install-files zangband
 clean:
 	-rm -f $(clean-files)
 
+distclean: clean
+	-rm -f $(distclean-files)
+	
 test:
 	@echo I will build:
 	@echo $(objs-y)
@@ -89,4 +103,4 @@ test:
 	@echo I will install:
 	@echo $(dirlist) $(files) $(INSTALL)
 
-.PHONY: makedirs install-files install clean test
+.PHONY: makedirs install-files install clean distclean test
