@@ -1011,6 +1011,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
 
+		/* When the player kills a Nazgul, it stays dead */
+		if (r_ptr->flags3 & RF3_UNIQUE_7) r_ptr->max_num--;
+
 		/* Recall even invisible uniques or winners */
 		if (m_ptr->ml || (r_ptr->flags1 & RF1_UNIQUE))
 		{
