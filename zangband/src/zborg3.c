@@ -1465,7 +1465,7 @@ bool borg_activate_artifact(int name1, bool secondary)
 		 * of the resists that go with the artifact.
 		 * Lights dont need *id* just regular id.
 		 */
-		if ((i != EQUIP_LITE) && !(l_ptr->info & OB_MENTAL))
+		if ((i != EQUIP_LITE) && !borg_obj_known_full(l_ptr))
 		{
 			borg_note(format("# %s must be *ID*'d before activation.",
 							 l_ptr->o_name));
@@ -1525,7 +1525,7 @@ bool borg_equips_dragon(int drag_sval)
 	if (l_ptr->timeout) return (FALSE);
 
 	/* Make Sure Mail is IDed */
-	if (!(l_ptr->info & OB_KNOWN)) return (FALSE);
+	if (!borg_obj_known_p(l_ptr)) return (FALSE);
 
 	/* check on fail rate
 	 * The fail check is automatic for dragon armor.  It is an attack
@@ -1577,7 +1577,7 @@ bool borg_activate_dragon(int drag_sval)
 	if (l_ptr->timeout) return (FALSE);
 
 	/* apw Make Sure Mail is IDed */
-	if (!(l_ptr->info & OB_KNOWN)) return (FALSE);
+	if (!borg_obj_known_p(l_ptr)) return (FALSE);
 
 	/* Log the message */
 	borg_note(format("# Activating dragon scale %s.", l_ptr->o_name));

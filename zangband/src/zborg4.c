@@ -1274,7 +1274,7 @@ static void borg_notice_enchant(void)
 		if (!l_ptr) continue;
 
 		/* Skip "unknown" items */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* Enchant all weapons (to hit) */
 		if ((borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1315,7 +1315,7 @@ static void borg_notice_enchant(void)
 		if (!l_ptr) continue;
 
 		/* Skip "unknown" items */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* Note need for enchantment */
 		if ((borg_spell_okay_fail(REALM_SORCERY, 3, 5, 40) ||
@@ -2872,8 +2872,10 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 			}
 
 			/* Does only one have an xtra name? */
-			if ((l_ptr->xtra_name == NULL) !=
-				(w_ptr->xtra_name == NULL)) continue;
+			if ((l_ptr->xtra_name == NULL) != (w_ptr->xtra_name == NULL))
+			{
+				continue;
+			}
 
 			/* Do the xtra names match? */
 			if ((l_ptr->xtra_name == w_ptr->xtra_name) ||

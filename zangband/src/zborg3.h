@@ -14,7 +14,26 @@
 
 #include "zborg1.h"
 
+/*
+ * Determine if a given inventory item is "known"
+ * Test One -- Check for special "known" tag
+ * Test Two -- Check for "Easy Know" + "Aware"
+ */
+#define borg_obj_known_p(T) \
+    (((T)->info & (OB_KNOWN)) || \
+     ((T)->k_idx && k_info[(T)->k_idx].easy_know))
 
+/*
+ * Is the object fully known?
+ */
+#define borg_obj_known_full(T) \
+	((T)->info & (OB_MENTAL))
+
+/*
+ * Is the object an ego item or artifact?
+ */
+#define borg_obj_is_ego_art(T) \
+	((T)->xtra_name && (*(T)->xtra_name))
 
 
 /*

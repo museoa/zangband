@@ -193,7 +193,7 @@ bool borg_item_icky(list_item *l_ptr)
 		l_ptr = &equipment[slot];
 
 		/* Is my item an ego or artifact? */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name) return (TRUE);
+		if (borg_obj_is_ego_art(l_ptr)) return (TRUE);
 	}
 	/* Assume not icky, I should have extra ID for the item */
 	return (FALSE);
@@ -905,7 +905,7 @@ static bool borg_enchant_to_a(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* Obtain the bonus */
 		a = l_ptr->to_a;
@@ -977,7 +977,7 @@ static bool borg_enchant_to_h(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* Obtain the bonus */
 		a = l_ptr->to_h;
@@ -1013,7 +1013,7 @@ static bool borg_enchant_to_h(void)
 			if (l_ptr->number < 5) continue;
 
 			/* Skip non-identified items  */
-			if (!(l_ptr->info & OB_KNOWN)) continue;
+			if (!borg_obj_known_p(l_ptr)) continue;
 
 			/* Make sure it is the right type if missile */
 			if (l_ptr->tval != my_ammo_tval) continue;
@@ -1102,7 +1102,7 @@ static bool borg_enchant_to_d(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* Obtain the bonus */
 		a = l_ptr->to_d;
@@ -1138,7 +1138,7 @@ static bool borg_enchant_to_d(void)
 			if (l_ptr->number < 5) continue;
 
 			/* Skip non-identified items  */
-			if (!(l_ptr->info & OB_KNOWN)) continue;
+			if (!borg_obj_known_p(l_ptr)) continue;
 
 			/* Make sure it is the right type if missile */
 			if (l_ptr->tval != my_ammo_tval) continue;
@@ -1284,7 +1284,7 @@ bool borg_recharging(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* assume we can't charge it. */
 		charge = FALSE;
@@ -1564,7 +1564,7 @@ bool borg_crush_junk(void)
 		if (l_ptr->tval >= TV_FIGURINE)
 		{
 			/* unknown? */
-			if (!(l_ptr->info & OB_KNOWN) &&
+			if (!borg_obj_known_p(l_ptr) &&
 				!strstr(l_ptr->o_name, "{average")) continue;
 
 			/* Pretend one item isn't there */
@@ -1622,8 +1622,8 @@ bool borg_crush_junk(void)
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
 		/* hack check anything interesting */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name &&
-			!(l_ptr->info & OB_MENTAL)) continue;
+		if (borg_obj_is_ego_art(l_ptr) &&
+			!borg_obj_known_full(l_ptr)) continue;
 
 		/* Message */
 		borg_note(format("# Junking junk (valued at %d)", value));
@@ -1691,8 +1691,8 @@ bool borg_crush_hole(void)
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
 		/* Hack -- skip artifacts and ego items not fully identified */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name &&
-			!(l_ptr->info & OB_MENTAL)) continue;
+		if (borg_obj_is_ego_art(l_ptr) &&
+			!borg_obj_known_full(l_ptr)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -1801,11 +1801,11 @@ bool borg_crush_slow(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Skip "good" unknown items (unless "icky") */
-		if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) continue;
+		if (!borg_obj_known_p(l_ptr) && !borg_item_icky(l_ptr)) continue;
 
 		/* Hack -- Skip artifacts */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name &&
-			!(l_ptr->info & OB_MENTAL)) continue;
+		if (borg_obj_is_ego_art(l_ptr) &&
+			!borg_obj_known_full(l_ptr)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -1922,13 +1922,13 @@ bool borg_test_stuff(bool star_id)
 		/* Skip known items */
 		if (!star_id)
 		{
-			if (l_ptr->info & OB_KNOWN) continue;
+			if (borg_obj_known_p(l_ptr)) continue;
 		}
 		else
 		{
 			/* go ahead and check egos and artifacts */
-			if (l_ptr->info & OB_MENTAL) continue;
-			if (!(l_ptr->xtra_name && *l_ptr->xtra_name)) continue;
+			if (borg_obj_known_full(l_ptr)) continue;
+			if (!borg_obj_is_ego_art(l_ptr)) continue;
 		}
 
 		/* Track it */
@@ -1946,12 +1946,12 @@ bool borg_test_stuff(bool star_id)
 		/* Skip known items */
 		if (!star_id)
 		{
-			if (l_ptr->info & OB_KNOWN) continue;
+			if (borg_obj_known_p(l_ptr)) continue;
 		}
 		else
 		{
-			if (l_ptr->info & OB_MENTAL) continue;
-			if (l_ptr->xtra_name && *l_ptr->xtra_name) break;
+			if (borg_obj_known_full(l_ptr)) continue;
+			if (borg_obj_is_ego_art(l_ptr)) break;
 		}
 
 		/* Assume nothing */
@@ -2222,7 +2222,7 @@ static bool borg_wear_rings(void)
 
 		/* skip artifact rings not star id'd  */
 		if ((l_ptr->kn_flags3 & TR3_INSTA_ART) &&
-			!(l_ptr->info & OB_MENTAL)) continue;
+			!borg_obj_known_full(l_ptr)) continue;
 
 		/* Where does it go */
 		slot = borg_wield_slot(l_ptr);
@@ -2344,7 +2344,7 @@ bool borg_remove_stuff(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Require "known" (or average, good, etc) */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average") &&
 			!strstr(l_ptr->o_name, "{good") &&
 			!strstr(l_ptr->o_name, "{excellent") &&
@@ -2450,15 +2450,14 @@ bool borg_wear_stuff(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Require "known" (or average, good, etc) */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average") &&
 			!strstr(l_ptr->o_name, "{good") &&
 			!strstr(l_ptr->o_name, "{excellent") &&
 			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* apw do not wear not *id* artifacts */
-		if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name &&
-			*l_ptr->xtra_name) continue;
+		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
 
 		/* skip it if it has not been decursed */
 		if ((l_ptr->kn_flags3 & TR3_CURSED) ||
@@ -2749,7 +2748,7 @@ static int borg_count_sell(void)
 
 		/* Skip cheap "known" (or "average") items */
 		if ((price * l_ptr->number < greed) &&
-			((l_ptr->info & OB_KNOWN) ||
+			(borg_obj_known_p(l_ptr) ||
 			 strstr(l_ptr->o_name, "{average"))) continue;
 
 		/* Count remaining items */

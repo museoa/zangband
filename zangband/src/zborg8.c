@@ -76,8 +76,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			/* Staffs and Wands */
 
 			/* Require knowledge */
-			if (!(l_ptr->info & OB_KNOWN) ||
-				!(q_ptr->info & OB_KNOWN)) return (FALSE);
+			if (!borg_obj_known_p(l_ptr) ||
+				!borg_obj_known_p(q_ptr)) return (FALSE);
 
 			/* Fall through */
 		}
@@ -120,8 +120,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			/* Rings, Amulets, Lites */
 
 			/* Require full knowledge of both items */
-			if (!(l_ptr->info & OB_KNOWN) ||
-				!(q_ptr->info & OB_KNOWN)) return (FALSE);
+			if (!borg_obj_known_p(l_ptr) ||
+				!borg_obj_known_p(q_ptr)) return (FALSE);
 
 			/* Fall through */
 		}
@@ -141,7 +141,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			if (l_ptr->pval != q_ptr->pval) return (FALSE);
 
 			/* Hack -- "artifact" or "ego" items don't stack */
-			if (l_ptr->xtra_name && *l_ptr->xtra_name) return (FALSE);
+			if (borg_obj_is_ego_art(l_ptr)) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
 			if (l_ptr->kn_flags1 || q_ptr->kn_flags1) return (FALSE);
@@ -165,7 +165,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			/* Various */
 
 			/* Require knowledge */
-			if ((!(l_ptr->info & OB_KNOWN) || !(q_ptr->info & OB_KNOWN)))
+			if ((!borg_obj_known_p(l_ptr) || !borg_obj_known_p(q_ptr)))
 				return (FALSE);
 
 			/* Probably okay */
@@ -175,7 +175,10 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 
 
 	/* Hack -- Require identical "broken" status */
-	if ((l_ptr->info & OB_MENTAL) != (q_ptr->info & OB_MENTAL)) return (FALSE);
+	if (borg_obj_known_full(l_ptr) != borg_obj_known_full(q_ptr))
+	{
+		return (FALSE);
+	}
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -345,14 +348,13 @@ static int borg_think_home_sell_aux2(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Require "known" */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/*
 		 * Do not dump stuff at home that is not fully id'd and should be
 		 * This is good with random artifacts.
 		 */
-		if (!(l_ptr->info & OB_MENTAL) &&
-			l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
 
 		/* Can we merge with other items in the home? */
 		q_ptr = borg_can_merge_home(l_ptr);
@@ -412,14 +414,13 @@ static int borg_think_home_sell_aux2(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Require "known" */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
+		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/*
 		 * Do not dump stuff at home that is not fully id'd and should be
 		 * This is good with random artifacts.
 		 */
-		if (!(l_ptr->info & OB_MENTAL) &&
-			l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
 
 		if (l_ptr->number == 1)
 		{
@@ -547,7 +548,7 @@ static bool borg_good_sell(list_item *l_ptr)
 			if (strstr(l_ptr->o_name, "{average")) break;
 
 			/* Only sell "known" items (unless "icky") */
-			if (!(l_ptr->info & OB_KNOWN) &&
+			if (!borg_obj_known_p(l_ptr) &&
 				!borg_item_icky(l_ptr)) return (FALSE);
 
 			break;
@@ -555,7 +556,7 @@ static bool borg_good_sell(list_item *l_ptr)
 	}
 
 	/* Do not sell stuff that is not fully id'd and should be  */
-	if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name && *l_ptr->xtra_name)
+	if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr))
 	{
 		/* For now check all artifacts */
 		return (FALSE);

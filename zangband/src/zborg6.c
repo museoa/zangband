@@ -5696,13 +5696,13 @@ static int borg_attack_aux_launch(void)
 		list_item *l_ptr = &inventory[k];
 
 		/* Skip Ego branded items--they are looked at later */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+		if (borg_obj_is_ego_art(l_ptr)) continue;
 
 		/* Skip bad missiles */
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average") &&
+		if (!borg_obj_known_p(l_ptr) && !strstr(l_ptr->o_name, "{average") &&
 			!strstr(l_ptr->o_name, "{good") &&
 			!strstr(l_ptr->o_name, "{excellent")) continue;
 
@@ -5781,7 +5781,7 @@ static int borg_attack_aux_launch_seeker(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -5854,7 +5854,7 @@ static int borg_attack_aux_launch_flame(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -5930,7 +5930,7 @@ static int borg_attack_aux_launch_frost(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -6005,7 +6005,7 @@ static int borg_attack_aux_launch_animal(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -6080,7 +6080,7 @@ static int borg_attack_aux_launch_evil(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -6156,7 +6156,7 @@ static int borg_attack_aux_launch_dragon(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -6232,7 +6232,7 @@ static int borg_attack_aux_launch_wounding(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
@@ -6307,7 +6307,7 @@ static int borg_attack_aux_object(void)
 		list_item *l_ptr = &inventory[k];
 
 		/* Skip un-identified, non-average, objects */
-		if (!(l_ptr->info & OB_KNOWN) &&
+		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Skip "equipment" items (not ammo) */
