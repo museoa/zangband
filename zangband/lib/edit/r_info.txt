@@ -3276,17 +3276,20 @@ F:EVIL | GIANT
 D:A massive orc-like figure with black skin and powerful arms.
 
 N:263:Dweller on the threshold
-G:Y:s
-I:110:22d8:30:15:20
-W:15:5:0:50
+G:P:v
+I:110:22d8:30:15:0
+W:15:5:0:100
 B:GAZE:PARALYZE
-B:GAZE:TERRIFY
-B:GAZE:CONFUSE
+B:CLAW:UN_POWER:3d5
+B:CLAW:FIRE:3d5
+B:BITE:UN_BONUS:2d5
 F:NEVER_MOVE | DROP_60 | EVIL | DEMON | DROP_CORPSE
-F:IM_POIS | IM_COLD |IM_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
+F:IM_POIS | IM_COLD | IM_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
+F:RES_DISE
 S:1_IN_6
-S:BO_ACID | S_MONSTER | SCARE | DRAIN_MANA
-D:A gorilla-shaped arcane guardian with an appetite for mages.
+S:BO_ACID | CONFUSE | DRAIN_MANA
+D:A creature like a giant purple Buddha with lots of teeth.
+D:  It eats sorcerors.
 
 N:264:Half-orc
 G:o:s
