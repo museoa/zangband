@@ -1012,10 +1012,10 @@ static bool borg_think_shop_sell(void)
 	/* Sell something if requested */
 	if ((goal_shop == shop_num) && (goal_item >= 0))
 	{
-		borg_item *item = &borg_items[goal_item];
+		list_item *l_ptr = &cur_list[goal_item];
 
 		/* Log */
-		borg_note(format("# Selling %s", item->desc));
+		borg_note(format("# Selling %s", l_ptr->o_name));
 
 		/* Buy an item */
 		borg_keypress('s');
@@ -1049,24 +1049,13 @@ static bool borg_think_shop_buy(void)
 	/* Buy something if requested */
 	if ((goal_shop == shop_num) && (goal_ware >= 0))
 	{
-		borg_shop *shop = &borg_shops[goal_shop];
-
-		borg_item *item = &shop->ware[goal_ware];
-
-		/* Paranoid */
-		if (item->tval == 0)
-		{
-			/* The purchase is complete */
-			goal_shop = goal_ware = -1;
-
-			return (FALSE);
-		}
+		list_item *l_ptr = &cur_list[goal_ware];
 
 		/* go to correct Page */
-		if ((goal_ware / 12) != shop->page) borg_keypress(' ');
+		if (goal_ware / 12) borg_keypress(' ');
 
 		/* Log */
-		borg_note(format("# Buying %s (%i gold).", item->desc, item->cost));
+		borg_note(format("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost));
 
 		/* Buy an item */
 		borg_keypress('p');
@@ -1083,16 +1072,8 @@ static bool borg_think_shop_buy(void)
 		/* The purchase is complete */
 		goal_shop = goal_ware = -1;
 
-		/*
-		 * It is easier for the borg to wear the Equip if he exits
-		 * the shop after buying it, even though there may be a few
-		 * more items he'd like to buy.
-		 */
-		if (borg_wield_slot(l_ptr) >= INVEN_WIELD || item->tval == TV_FOOD)
-		{
-			/* leave the store */
-			borg_keypress(ESCAPE);
-		}
+		/* Hack - Leave the store */
+		borg_keypress(ESCAPE);
 
 		/* Success */
 		return (TRUE);
@@ -1113,9 +1094,6 @@ static bool borg_choose_shop(void)
 	/* Must be in town */
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
 
-	/* If poisoned or bleeding -- flow to temple */
-	if (borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) goal_shop = 3;
-
 	/* Must have visited all shops first---complete information */
 	for (i = 0; i < (track_shop_num); i++)
 	{
@@ -1126,44 +1104,33 @@ static bool borg_choose_shop(void)
 	}
 
 	/* if we are already flowing toward a shop do not check again... */
-	if (goal_shop != -1)
-		return TRUE;
+	if (goal_shop != -1) return TRUE;
 
 	/* Assume no important shop */
 	goal_shop = goal_ware = goal_item = -1;
 
-#if 0
 	/* Step 1 -- Sell items to the home */
 	if (borg_think_home_sell_aux()) return (TRUE);
-#endif /* 0 */
 
 	/* Step 2 -- Sell items to the shops */
 	if (borg_think_shop_sell_aux()) return (TRUE);
 
-
 	/* Step 3 -- Buy items from the shops (for the player) */
 	if (borg_think_shop_buy_aux()) return (TRUE);
 
-#if 0
 	/* Step 4 -- Buy items from the home (for the player) */
 	if (borg_think_home_buy_aux()) return (TRUE);
-#endif /* 0 */
 
-	/* get rid of junk from home first.  That way the home is 'uncluttered' */
-	/* before you buy stuff for it.  This will prevent the problem where an */
-	/* item has become a negative value and swapping in a '0' gain item */
-	/* (like pottery) is better. */
+	/*
+	 * Get rid of junk from home first.  That way the home is 'uncluttered'
+	 * before you buy stuff for it.
+	 */
 
-#if 0
 	/* Step 5 -- Grab items from the home (for the shops) */
 	if (borg_think_home_grab_aux()) return (TRUE);
-#endif /* 0 */
 
-#if 0
 	/* Step 6 -- Buy items from the shops (for the home) */
 	if (borg_think_shop_grab_aux()) return (TRUE);
-
-#endif /* 0 */
 
 	/* Failure */
 	return (FALSE);
@@ -1175,7 +1142,7 @@ static bool borg_choose_shop(void)
  */
 bool borg_think_store(void)
 {
-	/* update all my equipment and swap items */
+	/* Update all my equipment and swap items */
 	borg_notice();
 
 	/* Stamp the shop with a time stamp */
@@ -1576,7 +1543,7 @@ bool borg_think_dungeon(void)
 		if (!goal_recalling && borg_zap_rod(SV_ROD_RECALL)) return (TRUE);
 
 		/* Test for stairs */
-		if (map_loc(c_x, c_y).feat == FEAT_LESS)
+		if (map_loc(c_x, c_y)->feat == FEAT_LESS)
 		{
 			borg_keypress('<');
 		}
