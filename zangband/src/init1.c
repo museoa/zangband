@@ -950,9 +950,6 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			/* Advance the index */
 			f_head->name_size += strlen(s);
 
-			/* Default "mimic" */
-			f_ptr->mimic = i;
-
 			/* Next... */
 			continue;
 		}
@@ -986,24 +983,6 @@ errr init_f_info_txt(FILE *fp, char *buf)
 		}
 
 #endif
-
-
-		/* Process 'M' for "Mimic" (one line only) */
-		if (buf[0] == 'M')
-		{
-			int mimic;
-
-			/* Scan for the values */
-			if (1 != sscanf(buf+2, "%d",
-				&mimic)) return (PARSE_ERROR_GENERIC);
-
-			/* Save the values */
-			f_ptr->mimic = mimic;
-
-			/* Next... */
-			continue;
-		}
-
 
 		/* Process 'G' for "Graphics" (one line only) */
 		if (buf[0] == 'G')
