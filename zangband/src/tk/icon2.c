@@ -12,64 +12,7 @@
 
 #include "tnb.h"
 #include "icon.h"
-/* #include "widget.h" */
 
-static char *AssignToString_Flavor(char *buf, t_assign *assignPtr)
-{
-	(void) sprintf(buf, "flavor %s %d",
-		g_flavor[assignPtr->flavor.group].desc,
-		assignPtr->flavor.index);
-	return buf;
-}
-
-static int StringToAssign_Flavor(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
-{
-	char option[64], flavorName[64];
-	int group, index;
-	Tcl_HashEntry *hPtr;
-
-	if (sscanf(desc, "%s %s %d", option, flavorName, &index) != 3)
-	{
-		Tcl_SetResult(interp, format("malformed assignment \"%s\"",
-			desc), TCL_VOLATILE);
-		return TCL_ERROR;
-	}
-
-	/* Lookup the flavor by name */
-	hPtr = Tcl_FindHashEntry(&g_flavor_table, flavorName);
-
-	/* The flavor was not found */
-	if (hPtr == NULL)
-	{
-		/* Set the error */
-		Tcl_SetResult(interp, format("unknown flavor \"%s\"", flavorName),
-			TCL_VOLATILE);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the g_flavor[] index */
-	group = (int) Tcl_GetHashValue(hPtr);
-
-	/* Verify the flavor index */
-	if ((index < 0) || (index >= g_flavor[group].count))
-	{
-		/* Set the error */
-		Tcl_SetResult(interp,
-			format("bad flavor index \"%d\": must be from 0 to %d",
-			index, g_flavor[group].count - 1), TCL_VOLATILE);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	assignPtr->assignType = ASSIGN_TYPE_FLAVOR;
-	assignPtr->flavor.group = group;
-	assignPtr->flavor.index = index;
-
-	return TCL_OK;
-}
 
 static char *AssignToString_Icon(char *buf, t_assign *assign)
 {
@@ -118,12 +61,11 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, cptr des
 }
 
 
-cptr keyword_assign_type[] = {"flavor", "icon", NULL};
+cptr keyword_assign_type[] = {"icon", NULL};
 
 /* char* -> t_assign */
 typedef char *(*AssignToStringProc)(char *buf, t_assign *assign);
 AssignToStringProc gAssignToStringProc[ASSIGN_TYPE_MAX] = {
-	AssignToString_Flavor,
 	AssignToString_Icon
 
 };
@@ -131,7 +73,6 @@ AssignToStringProc gAssignToStringProc[ASSIGN_TYPE_MAX] = {
 /* t_assign -> char* */
 typedef int (*StringToAssignProc)(Tcl_Interp *interp, t_assign *assignPtr, cptr desc);
 StringToAssignProc gStringToAssignProc[ASSIGN_TYPE_MAX] = {
-	StringToAssign_Flavor,
 	StringToAssign_Icon
 };
 
@@ -468,129 +409,6 @@ static int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int ob
 	return TCL_OK;;
 }
 
-/* (flavor) assign $group $index ?-type $type -index $index -ascii $ascii? */
-static int
-objcmd_flavor_assign(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	char *flavorName;
-	int flavor, flavorIndex;
-	IconSpec iconSpec;
-	Tcl_HashEntry *hPtr;
-
-	/* Get the specified flavor name */
-	flavorName = Tcl_GetStringFromObj(objV[1], NULL);
-
-	/* Lookup the flavor by name */
-	hPtr = Tcl_FindHashEntry(&g_flavor_table, flavorName);
-
-	/* The flavor was not found */
-	if (hPtr == NULL)
-	{
-		/* Set the error */
-		Tcl_SetResult(interp, format("unknown flavor \"%s\"", flavorName),
-			TCL_VOLATILE);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the g_flavor[] index */
-	flavor = (int) Tcl_GetHashValue(hPtr);
-
-	/* Get the desired flavor index */
-	if (Tcl_GetIntFromObj(interp, objV[2], &flavorIndex) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the flavor index */
-	if ((flavorIndex < 0) || (flavorIndex >= g_flavor[flavor].count))
-	{
-		/* Set the error */
-		Tcl_SetResult(interp, format("bad flavor index \"%d\": must be from 0 to %d",
-			flavorIndex, g_flavor[flavor].count - 1), TCL_VOLATILE);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Return icon assigned to that flavor index */
-	if (objC == 3)
-	{
-		iconSpec = g_flavor[flavor].icon[flavorIndex];
-		if (iconSpec.ascii == -1)
-		{
-			Tcl_SetResult(interp, format("%s %d",
-				g_icon_data[iconSpec.type].desc, iconSpec.index),
-				TCL_VOLATILE);
-		}
-		else
-		{
-			Tcl_SetResult(interp, format("%s %d %d",
-				g_icon_data[iconSpec.type].desc, iconSpec.index,
-				iconSpec.ascii), TCL_VOLATILE);
-		}
-
-		/* Success */
-		return TCL_OK;
-	}
-
-	if (Icon_ParseArgs(interp, objc, objv, infoCmd->depth + 3, &iconSpec)
-		!= TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Finally, assign the icon */
-	g_flavor[flavor].icon[flavorIndex] = iconSpec;
-
-	/* Success */
-	return TCL_OK;
-}
-
-/* (flavor) count $group */
-static int
-objcmd_flavor_count(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-/*	int objC = objc - infoCmd->depth; */
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	char *flavorName;
-	int flavor;
-	Tcl_HashEntry *hPtr;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	/* Get the specified flavor name */
-	flavorName = Tcl_GetStringFromObj(objV[1], NULL);
-
-	/* Lookup the flavor by name */
-	hPtr = Tcl_FindHashEntry(&g_flavor_table, flavorName);
-
-	/* The flavor was not found */
-	if (hPtr == NULL)
-	{
-		/* Set the error */
-		Tcl_SetResult(interp, format("unknown flavor \"%s\"", flavorName),
-			TCL_VOLATILE);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the g_flavor[] index */
-	flavor = (int) Tcl_GetHashValue(hPtr);
-
-	Tcl_SetObjResult(interp, Tcl_NewIntObj(g_flavor[flavor].count));
-
-	return TCL_OK;
-}
 
 
 CommandInit assignCmdInit[] = {
@@ -602,9 +420,6 @@ CommandInit assignCmdInit[] = {
 		{1, "assign", 3, 0, "group effect ?args ...?", objcmd_effect_assign, (ClientData) 0},
 		{1, "groups", 1, 1, NULL, objcmd_effect_groups, (ClientData) 0},
 		{1, "names", 2, 2, "group", objcmd_effect_names, (ClientData) 0},
-	{0, "flavor", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "assign", 3, 0, "flavorName flavorIndex ?args ...?", objcmd_flavor_assign, (ClientData) 0},
-		{1, "count", 2, 2, "flavorName", objcmd_flavor_count, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 

@@ -126,9 +126,8 @@ extern void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 /*
  * Constants for t_assign.assignType.
  */
-#define ASSIGN_TYPE_FLAVOR 0
-#define ASSIGN_TYPE_ICON 1
-#define ASSIGN_TYPE_MAX 2
+#define ASSIGN_TYPE_ICON 0
+#define ASSIGN_TYPE_MAX 1
 
 /* One assigned alternate */
 typedef struct t_assign_alternate {
@@ -197,22 +196,6 @@ typedef struct t_display {
 	IconSpec bg[ICON_LAYER_MAX]; /* Background (when typeFG is masked) */
 } t_display;
 
-/*
- * TYPE_FLAVOR refers to one of the predefined flavor types, which
- * are themselves defined by the structure below.
- */
-typedef struct t_flavor {
-	cptr desc; /* Keyword for this flavor (potion, ring, mushroom) */
-	int tval; /* Object tval flavor applies to */
-	int count; /* Number of assignments */
-	int *sorted; /* Map unsorted index to assignment index */
-	IconSpec *icon; /* Assignments */
-	byte *color; /* TERM_XXX colors */
-} t_flavor;
-
-extern t_flavor *g_flavor; /* Array of flavor types */
-extern int g_flavor_count; /* Number of flavors */
-extern Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
 
 /* g_effect[EFFECT_SPELL_BALL/BOLT].icon index */
 enum {

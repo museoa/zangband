@@ -110,9 +110,6 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 #define FLAVOR_WAND 6
 #define FLAVOR_MAX 7
 
-extern void angtk_flavor_init(int *max, byte **attr);
-extern void angtk_flavor_swap(int n, int a, int b);
-
 /* Constants for t_grid.dark */
 #define GRID_LITE_TORCH 0
 #define GRID_LITE_NORMAL 1

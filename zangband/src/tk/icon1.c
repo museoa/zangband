@@ -18,9 +18,6 @@ t_assign_group g_assign[ASSIGN_MAX];
 t_assign g_assign_none;
 t_grid *g_grid[MAX_HGT] = {0};
 
-t_flavor *g_flavor = NULL; /* Array of flavor types */
-int g_flavor_count = 0; /* Number of flavors */
-Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
 t_effect *g_effect; /* Array of effect icon info */
 int *g_background = NULL;
 
@@ -181,27 +178,10 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 		/*
 		 * Now we have the assignment for the character, monster, or object.
-		 * The assignment may be TYPE_FLAVOR, which we
-		 * must resolve into a "real" icon type and
-		 * index (for example, the current frame of a sprite).
 		 */
 	
 		switch (assign.assignType)
-		{	
-			/* Resolve flavor */
-			case ASSIGN_TYPE_FLAVOR:
-			{
-				/* Access the flavor */
-				t_flavor *flavor = &g_flavor[assign.flavor.group];
-		
-				/* Get the flavor index */
-				int index = flavor->sorted[assign.flavor.index];
-		
-				/* Get the icon */
-				iconSpec = flavor->icon[index];
-				break;
-			}
-	
+		{		
 			/* Resolve icon */
 			case ASSIGN_TYPE_ICON:
 			{
@@ -340,19 +320,6 @@ void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_
 {
 	switch (assignPtr->assignType)
 	{
-		case ASSIGN_TYPE_FLAVOR:
-		{
-			t_flavor *flavorPtr = &g_flavor[assignPtr->flavor.group];
-			int index = flavorPtr->sorted[assignPtr->flavor.index];
-			(*iconOut) = flavorPtr->icon[index];
-#if 0
-			iconOut->type = flavorPtr->icon[index].type;
-			iconOut->index = flavorPtr->icon[index].index;
-			iconOut->ascii = flavorPtr->icon[index].ascii;
-#endif
-			break;
-		}
-
 		case ASSIGN_TYPE_ICON:
 			iconOut->type = assignPtr->icon.type;
 			iconOut->index = assignPtr->icon.index;
@@ -516,63 +483,4 @@ void angtk_image_reset(void)
 	}
 }
 
-void angtk_flavor_swap(int n, int a, int b)
-{
-	int tmp;
-
-	tmp = g_flavor[n].sorted[a];
-	g_flavor[n].sorted[a] = g_flavor[n].sorted[b];
-	g_flavor[n].sorted[b] = tmp;
-}
-
-static int init_flavor_aux(int n, cptr desc, int tval, int count,
-	byte *color)
-{
-	Tcl_HashEntry *hPtr;
-	t_flavor flavor;
-	int i, dummy;
-	IconSpec defaultIcon = {ICON_TYPE_DEFAULT, 0, -1};
-
-	flavor.desc = string_make(desc);
-	flavor.tval = tval;
-	flavor.count = count;
-	C_MAKE(flavor.sorted, count, int);
-	C_MAKE(flavor.icon, count, IconSpec);
-	C_MAKE(flavor.color, count, byte);
-
-	for (i = 0; i < count; i++)
-	{
-		flavor.sorted[i] = i;
-		flavor.color[i] = color[i];
-		flavor.icon[i] = defaultIcon;
-	}
-
-	hPtr = Tcl_CreateHashEntry(&g_flavor_table, desc, &dummy);
-	Tcl_SetHashValue(hPtr, (ClientData) n);
-	g_flavor[n++] = flavor;
-
-	return n;
-}
-
-void angtk_flavor_init(int *max, byte **attr)
-{
-	int n = 0;
-
-	C_MAKE(g_flavor, FLAVOR_MAX, t_flavor);
-	g_flavor_count = FLAVOR_MAX;
-
-	/*
-	 * This table maps a flavor name to an index in the g_flavor[] array.
-	 */
-	Tcl_InitHashTable(&g_flavor_table, TCL_STRING_KEYS);
-
-	/* Note: indexes are hard-coded by flavor_init() */
-	n = init_flavor_aux(n, "amulet", TV_AMULET, max[n], attr[n]);
-	n = init_flavor_aux(n, "mushroom", TV_FOOD,  max[n], attr[n]);
-	n = init_flavor_aux(n, "potion", TV_POTION,  max[n], attr[n]);
-	n = init_flavor_aux(n, "ring", TV_RING,  max[n], attr[n]);
-	n = init_flavor_aux(n, "rod", TV_ROD,  max[n], attr[n]);
-	n = init_flavor_aux(n, "staff", TV_STAFF,  max[n], attr[n]);
-	(void) init_flavor_aux(n, "wand", TV_WAND,  max[n], attr[n]);
-}
 
