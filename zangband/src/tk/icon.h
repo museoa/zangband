@@ -174,11 +174,6 @@ typedef struct t_assign_group {
 extern t_assign_group g_assign[ASSIGN_MAX];
 extern t_assign g_assign_none;
 
-/* Constants for g_feat_lite[] */
-#define FT_LIGHT_NONE 0 /* Always use 1 icon, no tinting */
-
-extern int *g_feat_lite;
-
 extern int *g_image_object;
 
 /* Feature index for masked features */

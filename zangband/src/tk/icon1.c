@@ -24,7 +24,6 @@ Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
 t_alternate *g_alternate; /* Array of alternate icon info */
 int g_alternate_count;  /* Number of elems in g_alternate[] array */
 t_effect *g_effect; /* Array of effect icon info */
-int *g_feat_lite = NULL;
 int *g_background = NULL;
 
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
@@ -511,7 +510,6 @@ void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_
 void init_palette(void)
 {
 	char path[1024], path2[1024];
-	int i;
 
 	/*
 	 * The colors in this 256-color palette are indexed by each byte

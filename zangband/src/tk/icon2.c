@@ -1375,12 +1375,6 @@ void init_icons(int size, int depth)
 	}
 
 	/*
-	 * A feature can use lighting in one of three ways:
-	 * (1) FT_LIGHT_NONE means ignore lighting
-	 */
-	C_MAKE(g_feat_lite, z_info->f_max, int);
-
-	/*
 	 * When a feature is masked, or a masked icon is drawn on
 	 * a feature, we may use the icon assigned to a different feature
 	 * as the background.
@@ -1392,7 +1386,6 @@ void init_icons(int size, int depth)
 	{
 		g_assign[ASSIGN_FEATURE].assign[i] = assign;
 		g_background[i] = i;
-		g_feat_lite[i] = FT_LIGHT_NONE;
 	}
 	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].icon.type = ICON_TYPE_NONE;
 
