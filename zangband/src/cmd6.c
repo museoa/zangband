@@ -168,6 +168,8 @@ static void do_cmd_eat_food_aux(int item)
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
+
+	make_noise(1);
 }
 
 
@@ -293,6 +295,8 @@ static void do_cmd_quaff_potion_aux(int item)
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
+
+	make_noise(1);
 }
 
 
@@ -788,6 +792,8 @@ static void do_cmd_read_scroll_aux(int item)
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
+
+	make_noise(1);
 }
 
 
@@ -1269,6 +1275,8 @@ static void do_cmd_use_staff_aux(int item)
 	{
 		floor_item_charges(0 - item);
 	}
+
+	make_noise(1);
 }
 
 
@@ -1664,6 +1672,8 @@ static void do_cmd_aim_wand_aux(int item)
 	{
 		floor_item_charges(0 - item);
 	}
+
+	make_noise(1);
 }
 
 
@@ -2026,6 +2036,8 @@ static void do_cmd_zap_rod_aux(int item)
 		o_ptr->timeout -= k_ptr->pval;
 		return;
 	}
+
+	make_noise(1);
 }
 
 
@@ -2216,6 +2228,8 @@ static void do_cmd_activate_aux(int item)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+		make_noise(3);
+		
 		/* Success */
 		return;
 	}
@@ -2361,6 +2375,8 @@ static void do_cmd_activate_aux(int item)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+		make_noise(4);
+		
 		/* Success */
 		return;
 	}
@@ -2400,6 +2416,8 @@ static void do_cmd_activate_aux(int item)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+		make_noise(2);
+		
 		/* Success */
 		return;
 	}

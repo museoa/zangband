@@ -1158,6 +1158,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 			default:
 				*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 		}
+		
+		make_noise(4);
 
 		touch_zap_player(m_ptr);
 	}
@@ -1274,6 +1276,8 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint1(60))
 			*blows -= randint1(*blows);
 	}
+
+	make_noise(4);
 
 	/* Monster is not dead */
 	return (FALSE);
@@ -1926,6 +1930,8 @@ void py_attack(int y, int x)
 					}
 				}
 			}
+		
+			make_noise(4);
 		}
 
 		/* Player misses */
@@ -2574,43 +2580,7 @@ void move_player(int dir, int do_pickup)
 		/* Handle "objects" */
 		carry(do_pickup != always_pickup);
 
-#if 0
-
-		/* Handle quest areas -KMW- */
-		else if (area(y,x)->feat == FEAT_QUEST_ENTER)
-		{
-			/* Disturb */
-			disturb(FALSE);
-
-			/* Hack -- Enter quest level */
-			p_ptr->command_new = '[';
-		}
-
-		else if (area(y,x)->feat == FEAT_QUEST_EXIT)
-		{
-			if (quest[p_ptr->inside_quest].type == QUEST_TYPE_FIND_EXIT)
-			{
-				quest[p_ptr->inside_quest].status = QUEST_STATUS_COMPLETED;
-				msg_print("You accomplished your quest!");
-				message_flush();
-			}
-
-			leaving_quest = p_ptr->inside_quest;
-
-			/* Leaving an 'only once' quest marks it as failed */
-			if (leaving_quest &&
-				(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-				(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-			{
-				quest[leaving_quest].status = QUEST_STATUS_FAILED;
-			}
-
-			p_ptr->inside_quest = area(y,x)->special;
-			p_ptr->depth = 0;
-			p_ptr->leaving = TRUE;
-		}
-#endif
-
+		make_noise(2);
 	}
 }
 

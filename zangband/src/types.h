@@ -1502,6 +1502,7 @@ struct player_type
 	
 	u16b max_seen_r_idx;	/* Most powerful monster visible */
 	bool monk_armour_stat;	/* Status of monk armour */
+	byte noise_level;		/* Amount of noise since last update */
 };
 
 

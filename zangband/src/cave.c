@@ -4257,8 +4257,7 @@ static void mon_lite_hack(int y, int x)
 /*
  * Update squares illuminated by monsters.
  *
- * Hack - use the CAVE_ROOM flag (renamed to be CAVE_MNLT) to
- * denote squares illuminated by monsters.
+ * Use the CAVE_MNLT flag to denote squares illuminated by monsters.
  *
  * The CAVE_TEMP flag is used to store the state during the
  * updating.  Only squares in view of the player, whose state
@@ -4636,7 +4635,6 @@ void forget_flow(void)
 static u16b flow_x = 0;
 static u16b flow_y = 0;
 
-
 /*
  * Hack -- fill in the "cost" field of every grid that the player
  * can "reach" with the number of steps needed to reach that grid.
@@ -4670,10 +4668,12 @@ void update_flow(void)
 	/* The last way-point is on the map */
 	if (in_bounds2(flow_y, flow_x))
 	{
-		/* The way point is in sight - do not update.  (Speedup) */
-		if (area(flow_y, flow_x)->player & (GRID_VIEW)) return;
-	}
-
+		/* Check to see if the player is too close and in los */
+		if ((distance(px, py, flow_x, flow_y) < FLOW_DIST_MAX)
+			&& (area(flow_y, flow_x)->player & (GRID_VIEW))
+			&& (p_ptr->noise_level < MONSTER_FLOW_DEPTH / 4)) return;
+	}	
+	
 	/* Save player position */
 	flow_y = py;
 	flow_x = px;
@@ -4704,8 +4704,15 @@ void update_flow(void)
 	c_ptr->when = flow_n;
 
 	/* Save the flow cost */
-	c_ptr->cost = 0;
+	c_ptr->cost = p_ptr->noise_level;
+	p_ptr->noise_level = 0;
 
+	/* Paranoia - not too much noise */
+	if (c_ptr->cost > MONSTER_FLOW_DEPTH)
+	{
+		c_ptr->cost = MONSTER_FLOW_DEPTH;
+	}
+	
 	/* Enqueue that entry */
 	temp_y[0] = py;
 	temp_x[0] = px;
@@ -4722,10 +4729,10 @@ void update_flow(void)
 		if (++flow_head == TEMP_MAX) flow_head = 0;
 
 		/* Child cost */
-		n = area(ty, tx)->cost + 1;
+		n = area(ty, tx)->cost - 1;
 
-		/* Hack -- Limit flow depth */
-		if (n == MONSTER_FLOW_DEPTH) continue;
+		/* Hack -- Limit flow depth to noise level */
+		if (n == 0) continue;
 
 		/* Add the "children" */
 		for (d = 0; d < 8; d++)
@@ -4748,13 +4755,18 @@ void update_flow(void)
 			/* Ignore all "walls" except doors + terrain */
 			if ((feat & 0x20) && (feat != FEAT_CLOSED) &&
 				 ((feat & 0x60) != 0x60)) continue;
+			
+			/*
+			 * Hack - do not overwrite loud sounds with quiet ones,
+			 * unless some time has passed
+			 */
+			if (c_ptr->cost + c_ptr->when > n + flow_n) continue;
 
 			/* Save the time-stamp */
 			c_ptr->when = flow_n;
 
 			/* Save the flow cost */
 			c_ptr->cost = n;
-
 
 			/* Enqueue that entry */
 			temp_y[flow_tail] = y;

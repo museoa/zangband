@@ -984,6 +984,7 @@ extern bool lose_all_info(void);
 extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
 extern void do_poly_self(void);
+extern void make_noise(byte amount);
 
 
 /* xtra2.c */

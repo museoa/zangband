@@ -288,6 +288,8 @@ void do_cmd_wield(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	make_noise(1);
 }
 
 
@@ -339,6 +341,8 @@ void do_cmd_takeoff(void)
 	(void)inven_takeoff(item, 255);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
+
+	make_noise(1);
 }
 
 
@@ -400,6 +404,8 @@ void do_cmd_drop(void)
 	inven_drop(item, amt);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
+
+	make_noise(1);
 }
 
 
@@ -502,6 +508,8 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 
 	if (o_ptr->to_a != 0 || o_ptr->to_d != 0 || o_ptr->to_h != 0)
 		chg_virtue(V_HARMONY, 1);
+	
+	make_noise(1);
 	
 	/* We destroyed the item(s) */
 	return (TRUE);
@@ -701,6 +709,8 @@ void do_cmd_uninscribe(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+	make_noise(2);
 }
 
 
@@ -764,6 +774,8 @@ void do_cmd_inscribe(void)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	
+		make_noise(2);
 	}
 }
 
@@ -1165,7 +1177,7 @@ static cptr ident_info[] =
 	"-:A wand (or rod)",
 	".:Floor",
 	"/:A polearm (Axe/Pike/etc)",
-	/* "0:unused", */
+	/* "0:unused", XXX XXX XXX out of date */
 	"1:Entrance to General Store",
 	"2:Entrance to Armory",
 	"3:Entrance to Weaponsmith",

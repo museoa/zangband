@@ -288,24 +288,6 @@ void do_cmd_browse(void)
 		return;
 	}
 
-#if 0
-
-	/* No lite */
-	if (p_ptr->blind || no_lite())
-	{
-		msg_print("You cannot see!");
-		return;
-	}
-
-	/* Confused */
-	if (p_ptr->confused)
-	{
-		msg_print("You are too confused!");
-		return;
-	}
-
-#endif
-
 	/* Restrict choices to "useful" books */
 	item_tester_tval = mp_ptr->spell_book;
 
@@ -509,6 +491,9 @@ void do_cmd_study(void)
 
 	/* Redraw Study Status */
 	p_ptr->redraw |= (PR_STUDY);
+
+	/* Talking to yourself... */
+	make_noise(1);
 }
 
 
@@ -837,6 +822,8 @@ static bool cast_life_spell(int spell)
 		message_flush();
 	}
 
+	make_noise(2);
+
 	return TRUE;
 }
 
@@ -972,6 +959,8 @@ static bool cast_sorcery_spell(int spell)
 		msg_format("You cast an unknown Sorcery spell: %d.", spell);
 		message_flush();
 	}
+
+	make_noise(2);
 
 	return TRUE;
 }
@@ -1162,6 +1151,8 @@ static bool cast_nature_spell(int spell)
 
 	if (no_trump)
 		msg_print("No animals arrive.");
+
+	make_noise(2);
 
 	return TRUE;
 }
@@ -1438,6 +1429,8 @@ static bool cast_chaos_spell(int spell)
 		msg_format("You cast an unknown Chaos spell: %d.", spell);
 		message_flush();
 	}
+
+	make_noise(2);
 
 	return TRUE;
 }
@@ -1846,6 +1839,8 @@ static bool cast_death_spell(int spell)
 		msg_format("You cast an unknown Death spell: %d.", spell);
 		message_flush();
 	}
+
+	make_noise(2);
 
 	return TRUE;
 }
@@ -2482,6 +2477,8 @@ static bool cast_trump_spell(int spell, bool success)
 		msg_print("Nobody answers to your Trump call.");
 	}
 
+	make_noise(2);
+
 	return TRUE;
 }
 
@@ -2629,6 +2626,8 @@ static bool cast_arcane_spell(int spell)
 		msg_format("You cast an unknown Arcane spell: %d.", spell);
 		message_flush();
 	}
+
+	make_noise(2);
 
 	return TRUE;
 }

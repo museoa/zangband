@@ -23,53 +23,8 @@ void do_cmd_go_up(void)
 
 	/* Player grid */
 	c_ptr = area(p_ptr->py, p_ptr->px);
-#if 0
-	/* Quest up stairs */
-	if (c_ptr->feat == FEAT_QUEST_UP)
-	{
-		/* Success */
-		msg_print("You enter the up staircase.");
 
-		leaving_quest = p_ptr->inside_quest;
-		p_ptr->inside_quest = c_ptr->special;
-
-		/* Leaving an 'only once' quest marks it as failed */
-		if (leaving_quest &&
-			(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-			(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-		{
-			quest[leaving_quest].status = QUEST_STATUS_FAILED;
-		}
-
-		/* Activate the quest */
-		if (!quest[p_ptr->inside_quest].status)
-		{
-			quest[p_ptr->inside_quest].status = QUEST_STATUS_TAKEN;
-		}
-
-		/* Leaving a quest */
-		if (!p_ptr->inside_quest)
-		{
-			p_ptr->depth = 0;
-		}
-
-		/* Leaving */
-		p_ptr->leaving = TRUE;
-	
-		/*
-		 * Hack XXX XXX Take some time
-		 *
-		 * This will need to be rethought in multiplayer
-		 */
-		turn += 100;
-	}
-
-	/* Normal up stairs */
-	else if (c_ptr->feat == FEAT_LESS)
-#else /* 0 */
 	if (c_ptr->feat == FEAT_LESS)
-
-#endif /* 0 */
 	{
 		if (!p_ptr->depth)
 		{
@@ -101,25 +56,6 @@ void do_cmd_go_up(void)
 			message(MSG_STAIRS, 0, "You enter a maze of up staircases.");
 
 			if (autosave_l) do_cmd_save_game(TRUE);
-
-#if 0
-
-			if (p_ptr->inside_quest)
-			{
-				p_ptr->depth = 1;
-				leaving_quest = p_ptr->inside_quest;
-
-				/* Leaving an 'only once' quest marks it as failed */
-				if (leaving_quest &&
-					(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-					(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-				{
-					quest[leaving_quest].status = QUEST_STATUS_FAILED;
-				}
-
-				p_ptr->inside_quest = c_ptr->special;
-			}
-#endif /* 0 */
 
 			/* Create a way back */
 			p_ptr->create_down_stair = TRUE;
@@ -157,46 +93,7 @@ void do_cmd_go_down(void)
 	/* Player grid */
 	c_ptr = area(p_ptr->py, p_ptr->px);
 
-#if 0
-
-	/* Quest down stairs */
-	if (c_ptr->feat == FEAT_QUEST_DOWN)
-	{
-		msg_print("You enter the down staircase.");
-
-		leaving_quest = p_ptr->inside_quest;
-
-		/* Leaving an 'only once' quest marks it as failed */
-		if (leaving_quest &&
-			(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-			(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-		{
-			quest[leaving_quest].status = QUEST_STATUS_FAILED;
-		}
-
-		p_ptr->inside_quest = c_ptr->special;
-
-		/* Activate the quest */
-		if (!quest[p_ptr->inside_quest].status)
-		{
-			quest[p_ptr->inside_quest].status = QUEST_STATUS_TAKEN;
-		}
-
-		/* Leaving a quest */
-		if (!p_ptr->inside_quest)
-		{
-			p_ptr->depth = 0;
-		}
-
-		/* Leaving */
-		p_ptr->leaving = TRUE;
-	}
-	/* Verify stairs */
-	else if (c_ptr->feat != FEAT_MORE)
-#else /* 0 */
 	if (c_ptr->feat != FEAT_MORE)
-#endif /* 0 */
-
 	{
 		msg_print("I see no down staircase here.");
 		return;
@@ -499,6 +396,8 @@ static void chest_death(int y, int x, s16b o_idx)
 
 	/* Known */
 	object_known(o_ptr);
+
+	make_noise(2);
 }
 
 
@@ -582,6 +481,8 @@ static void chest_trap(int y, int x, s16b o_idx)
 		sound(SOUND_EXPLODE);
 		take_hit(damroll(5, 8), "an exploding chest");
 	}
+
+	make_noise(2);
 }
 
 
@@ -897,6 +798,8 @@ bool do_cmd_open_aux(int y, int x)
 
 		/* Sound */
 		sound(SOUND_OPENDOOR);
+	
+		make_noise(3);
 	}
 
 	/* Done - no more to try. */
@@ -1056,6 +959,8 @@ static bool do_cmd_close_aux(int y, int x)
 
 		/* Sound */
 		sound(SOUND_SHUTDOOR);
+	
+		make_noise(3);
 	}
 
 	/* Result */
@@ -1472,6 +1377,8 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 	}
 
+	make_noise(4);
+	
 	/* Result */
 	return (more);
 }
@@ -2102,12 +2009,14 @@ void do_cmd_spike(void)
 			inven_item_optimize(item);
 		}
 	}
+
+	make_noise(4);
 }
 
 
 
 /*
- * Support code for the "Walk" and "Jump" commands
+ * Support code for the "Walk" command
  */
 void do_cmd_walk(int pickup)
 {
@@ -2219,37 +2128,6 @@ void do_cmd_stay(int pickup)
 	 * Fields you are standing on may do something.
 	 */
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
-
-#if 0
-
-	/* Exit a quest if reach the quest exit */
-	else if (c_ptr->feat == FEAT_QUEST_EXIT)
-	{
-		int q_index = p_ptr->inside_quest;
-
-		/* Was quest completed? */
-		if (quest[q_index].type == QUEST_TYPE_FIND_EXIT)
-		{
-			quest[q_index].status = QUEST_STATUS_COMPLETED;
-			msg_print("You accomplished your quest!");
-			message_flush();
-		}
-
-		leaving_quest = p_ptr->inside_quest;
-
-		/* Leaving an 'only once' quest marks it as failed */
-		if (leaving_quest &&
-			(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-			(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-		{
-			quest[leaving_quest].status = QUEST_STATUS_FAILED;
-		}
-
-		p_ptr->inside_quest = area(p_ptr->py, p_ptr->px)->special;
-		p_ptr->depth = 0;
-		p_ptr->leaving = TRUE;
-	}
-#endif /* 0 */
 }
 
 
@@ -2892,6 +2770,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	/* Drop (or break) near that location */
 	(void)drop_near(i_ptr, j, y, x);
+
+	make_noise(3);
 }
 
 
@@ -3375,6 +3255,8 @@ void do_cmd_throw_aux(int mult)
 	(void)drop_near(q_ptr, breakage, y, x);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
+
+	make_noise(3);
 }
 
 

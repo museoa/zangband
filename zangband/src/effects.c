@@ -2777,3 +2777,26 @@ void lose_exp(s32b amount)
 	/* Check Experience */
 	check_experience();
 }
+
+/*
+ * Make some noise
+ */
+void make_noise(byte amount)
+{
+	int total = amount + p_ptr->noise_level;
+	
+	/* Paranoia (watching for overflow) */
+	if (total > MONSTER_FLOW_DEPTH)
+	{
+		total = MONSTER_FLOW_DEPTH;
+	}
+	
+	/* Update the flow if this gets too high */
+	if (total >= 3 * MONSTER_FLOW_DEPTH / 4)
+	{
+		p_ptr->update |= PU_FLOW;
+	}
+	
+	/* Save the new noise level */
+	p_ptr->noise_level = (byte) total;
+}

@@ -709,9 +709,14 @@
 
 
 /*
+ * Max distance the player can be before we redo the flow data
+ */
+#define FLOW_DIST_MAX	10
+
+/*
  * Maximum flow depth when using "MONSTER_FLOW"
  */
-#define MONSTER_FLOW_DEPTH 32
+#define MONSTER_FLOW_DEPTH 40
 
 
 /*
