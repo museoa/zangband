@@ -48,6 +48,7 @@ extern s32b borg_power_home(void);
 extern int  borg_notice_enchant_ac(void);
 extern int  borg_notice_enchant_hit(bool *inven);
 extern int  borg_notice_enchant_dam(bool *inven);
+extern int  borg_notice_create_artifact(bool *b_inven);
 
 
 /*

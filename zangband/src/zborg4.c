@@ -1197,6 +1197,153 @@ int borg_notice_enchant_dam(bool *inven)
 }
 
 
+static s16b borg_notice_artify_item(list_item *l_ptr)
+{
+	s16b value = 0;
+
+	list_item *q_ptr;
+
+	/* Just making sure */
+	if (!l_ptr) return (-1);
+
+	/* There can be only one */
+	if (l_ptr->number != 1) return (-1);
+
+	/* It needs to be identified already */
+	if (!borg_obj_known_p(l_ptr)) return (-1);
+
+	/* No double features */
+	if (borg_obj_is_ego_art(l_ptr)) return (-1);
+
+	/* The values have a factor to compare bows with armours or weapons */
+	switch (l_ptr->tval)
+	{
+		case TV_BOW:
+		{
+			/* Value of the multiplier */
+			switch (k_info[l_ptr->k_idx].sval)
+			{
+				case SV_HEAVY_XBOW: value += 2;
+				case SV_LIGHT_XBOW: value += 2;
+				case SV_LONG_BOW:   value += 2;
+				case SV_SHORT_BOW:
+				case SV_SLING:		value += 4;
+			}
+
+			break;
+		}
+
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		{
+			/* Product of the hit dice */
+			value = (l_ptr->dd * l_ptr->ds + 4) * 2 / 5;
+
+			break;
+		}
+
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		{
+			/* Armour count */
+			value = l_ptr->ac;
+
+			break;
+		}
+
+		/* Aim for a high base ac */
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		{
+			/* Armour count */
+			value = (l_ptr->ac + 4) / 5;
+
+			break;
+		}
+
+		default: return (-1);
+	}
+
+	/* Check out the future slot */
+	q_ptr = &equipment[borg_wield_slot(l_ptr)];
+
+	if (q_ptr)
+	{
+		/* Boost the value if the current slot is taken by a non-artifact */
+		if (!KN_FLAG(q_ptr, TR_INSTA_ART)) value *= 10;
+
+		/* Boost the value if the current slot is taken by a non-ego */
+		if (!borg_obj_is_ego_art(q_ptr)) value *=10;
+	}
+
+	/* Tell the result */
+	return (value);
+}
+
+
+/* Report which item should be artified */
+int borg_notice_create_artifact(bool *b_inven)
+{
+	bool inven;
+	int i, slot = -1;
+	int v = 0, b_v = 0;
+
+	list_item *l_ptr;
+
+	/* Initialize */
+	*b_inven = FALSE;
+
+	/* Does the borg have the scroll? */
+	if (!borg_read_scroll_fail(SV_SCROLL_ARTIFACT)) return (-1);
+
+	/* don't bother if the level is too low */
+	if (bp_ptr->lev < 15) return (-1);
+
+	/* Do it at town level in order to check shops first */
+	if (bp_ptr->depth) return (-1);
+
+	/* Check the available items */
+	for (i = 0; i < equip_num + inven_num; i++)
+	{
+		/* Set flag */
+		inven = i >= equip_num;
+
+		/* Get an item */
+		if (inven)
+			l_ptr = &inventory[i - equip_num];
+		else
+			l_ptr = look_up_equip_slot(i);
+
+		/* Is it really an item? */
+		if (!l_ptr) continue;
+
+		/* Now assign value */
+		v = borg_notice_artify_item(l_ptr);
+
+		/* Is it better than before? */
+		if (v <= b_v) continue;
+
+		/* Remember the best item */
+		*b_inven = inven;
+		b_v = v;
+
+		/* Which slot is that? */
+		if (inven)
+			slot = i - equip_num;
+		else
+			slot = i;
+	}
+
+	/* Report whatever */
+	return (slot);
+}
+
+
 /*
  * Notice changes in lighting
  */
@@ -1771,6 +1918,11 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 			bp_ptr->able.mass_genocide += number;
 			break;
 		}
+		case SV_SCROLL_ARTIFACT:
+		{
+			bp_ptr->able.artifact += number;
+			break;
+		}
 	}
 }
 
@@ -2186,7 +2338,6 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			break;
 		}
 
-
 		case TV_FOOD:
 		{
 			/* Food */
@@ -2256,15 +2407,23 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			break;
 		}
 
+		case TV_BOW:
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
 		{
-			/* Weapons */
+			/* Can the borg make a better artifact of this item? */
+			bp_ptr->able.artify_item = MAX(bp_ptr->able.artify_item,
+										   borg_notice_artify_item(l_ptr));
 
-			/* These items are checked a bit later in a sub routine
-			 * to notice the flags.  It is done outside this switch.
-			 */
 			break;
 		}
 

@@ -3966,6 +3966,12 @@ static s32b borg_power_aux4(void)
 	/* Reward enchant weapon to damage */
 	value += amt_enchant_to_d * 109L;
 
+	/* Reward a scroll of artifact creation */
+	value += bp_ptr->able.artifact * 100000;
+
+	/* Reward having an item to use that artifact scroll on */
+	value += bp_ptr->able.artify_item * 1000 * bp_ptr->able.artifact;
+
 	/*** Hack -- books ***/
 
 	/* Reward books */

@@ -1346,6 +1346,59 @@ static bool borg_enchant_to_w(void)
 }
 
 
+/* Handle the use of a scroll of artifact creation */
+static bool borg_enchant_artifact(void)
+{
+	int i, slot = -1;
+	bool inven;
+	list_item *l_ptr;
+
+	slot = borg_notice_create_artifact(&inven);
+
+	/* Do we have a winner? */
+	if (slot == -1) return (FALSE);
+
+	/* Tell the world */
+	if (inven)
+		borg_note_fmt("# Creating an artifact from %s (%c)",
+					  inventory[slot].o_name, I2A(slot));
+	else
+		borg_note_fmt("# Creating an artifact from %s (%c)",
+					  equipment[slot].o_name, I2A(slot));
+
+	/* Read the scroll */
+	(void)borg_read_scroll(SV_SCROLL_ARTIFACT);
+
+	/* if the item is in the equipment */
+	if (!inven)
+	{
+		/* Check if the scrolls heads towards the inventory */
+		for (i = 0; i < inven_num; i++)
+		{
+			l_ptr = &inventory[i];
+		
+			/* Is this item is artifactable? */
+			if (l_ptr->tval < TV_BOW ||
+				l_ptr->tval > TV_DRAG_ARMOR) continue;
+
+			/* switch to equipment */
+			borg_keypress('/');
+
+			break;
+		}
+	}
+
+	/* Choose that item */
+	borg_keypress(I2A(slot));
+
+	/* Complete sequence */
+	borg_keypresses(" Borg Artifact\r");
+
+	/* Success */
+	return (TRUE);
+}
+
+
 /* Find out if the borg wears a cursed item */
 bool borg_wears_cursed(bool heavy)
 {
@@ -1441,16 +1494,16 @@ bool borg_enchanting(void)
 	/* Forbid blind/confused */
 	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and finish the job later */
+	/* One time only */
+	if (borg_decurse()) return (TRUE);
+	if (borg_star_decurse()) return (TRUE);
+	if (borg_enchant_artifact()) return (TRUE);
+
+	/* Prevent casting a spell over and over */
 	if ((borg_t - borg_began > 150 && bp_ptr->depth) ||
 		(borg_t - borg_began > 350 && !bp_ptr->depth)) return (FALSE);
 
-	/* Remove Curses */
-	if (borg_decurse()) return (TRUE);
-	if (borg_star_decurse()) return (TRUE);
-
-	/* Enchant things */
+	/* Maybe with spell */
 	if (borg_enchant_to_a()) return (TRUE);
 	if (borg_enchant_to_d()) return (TRUE);
 	if (borg_enchant_to_h()) return (TRUE);
@@ -1794,13 +1847,8 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	/* Destroy that item */
 	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
-		/* Is the Sorcery Alchemy spell available? */
-		if (borg_spell_okay_fail(REALM_SORCERY, 3, 6, 40))
-		{
-			/* Convert the object to money! */
-			borg_spell(REALM_SORCERY, 3, 6);
-		}
-		else
+		/* Convert the object to money! */
+		if (!borg_spell(REALM_SORCERY, 3, 6))
 		{
 			/* Try the mutation to gain money */
 			if (!borg_mutation(MUT1_MIDAS_TCH))
