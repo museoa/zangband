@@ -13,33 +13,6 @@
 #	This is the first file sourced during program initialization. It is 
 #	sourced before init_angband() is called.
 
-# variant --
-#
-#	Return 1 if we are playing any of the given variants.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc variant {args} {
-
-	global Angband
-
-	foreach name $args {
-		if {$::DEBUG} {
-			set variantList [list ZANGBANDTK]
-			if {[lsearch -exact $variantList $name] == -1} {
-				tk_messageBox -message "unknown variant \"$name\""
-			}
-		}
-		if {[string equal $name $Angband(variant)]} {
-			return 1
-		}
-	}
-	return 0
-}
 
 # Global --
 #
@@ -140,12 +113,12 @@ proc Source {args} {
 
 	global Angband
 
-	set path [eval file join [list $Angband(dir,common,tk)] $args]
-	if {![file exists $path]} {
-		error "file not found:\n$path"
+	set path [eval file join [list $Angband(dirTk)] $args]
+	if {![file exists $args]} {
+		error "file not found:\n$args"
 	}
 	if {[Global tclCompiler]} {
-		set path [TbcCompile $path]
+		set path [TbcCompile $args]
 	}
 	uplevel #0 source $path
 
@@ -949,11 +922,11 @@ proc NSInitStartup::InitStartup {} {
 	global DEBUG
 		
 	# The tk directory
-	set Angband(dirTK) [angband game directory ANGBAND_DIR_TK]
-	set Angband(dirTK) [LongName $Angband(dirTK)]
+	set Angband(dirTk) [angband game tkdir]
+	set Angband(dirTk) [LongName $Angband(dirTk)]
 
 	# The msgs directory (message catalog)
-	set Angband(dirTk,msgs) [file join $Angband(dirTk) msgs]
+	set Angband(dirTk,msgs) [list [file join $Angband(dirTk) msgs]]
 	
 	# List of object tval's.
 	set Angband(tval) [angband info tval]
@@ -969,11 +942,6 @@ proc NSInitStartup::InitStartup {} {
 			error "unknown platform \"$::tcl_platform(platform)\""
 		}
 	}
-
-	# Tell Tcl where to find our packages. Make sure Tcl loads packages from
-	# our CommonTk\lib directory before looking anywhere else, in case external
-	# packages with the same name exist.
-	set auto_path [concat [list [file join $Angband(dir,common,tk) lib]] $auto_path]
 	
 	# This call makes sure Tcl reads in info about all available packages.
 	# Without this call, the "package names" command returns an empty list.
@@ -982,12 +950,6 @@ proc NSInitStartup::InitStartup {} {
 	
 	### Use "file attributes $path -longname" instead!
 	# package require Cxrlwin
-
-	# Work around a bug on Windows 95.
-	if {[string equal [angband system osversion] "Windows 95"]} {
-		load [file join $Angband(dir,common) lib \
-			tk_chooseDirectory tk_chooseDirectory.dll]
-	}
 
 	# If the Tcl compiler (from TclPro) is available, use it
 	Global tclCompiler [expr {[lsearch -exact [package names] compiler] != -1}]
@@ -999,12 +961,12 @@ Global tclCompiler 0
 	if {$Angband(platform) == "windows"} {
 		# Set the default window icon
 		if {[string compare 8.3.3 [info patchlevel]] >= 0} {
-			wm iconbitmap . -default [file join $Angband(dir,common,tk) image angbandtk.ico]
+			wm iconbitmap . -default [file join $Angband(dirTk) image angbandtk.ico]
 		}
 	}
 
 	# Development debug support
-	set path [file join $Angband(dir,common,tk) errorInfo.tcl]
+	set path [file join $Angband(dirTk) errorInfo.tcl]
 	if {[file exists $path]} {
 	
 		set DEBUG 1

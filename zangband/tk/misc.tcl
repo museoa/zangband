@@ -480,7 +480,7 @@ proc Path {args} {
 
 # PathTk --
 #
-#	Create a path relative to Angband(dirTK)
+#	Create a path relative to Angband(dirTk)
 #
 # Arguments:
 #	arg1					about arg1
@@ -492,7 +492,7 @@ proc PathTk {args} {
 
 	global Angband
 
-	return [eval file join [list $Angband(dirTK)] $args]
+	return [eval file join [list $Angband(dirTk)] $args]
 }
 
 # AddStyle --
