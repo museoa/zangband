@@ -5970,6 +5970,7 @@ void do_cmd_borg(void)
             for (i = 0; i < 250; i++)
             {
                 int n = 0;
+				map_block *mb_ptr;
 
                 /* Scan map */
                 for (y = w_y; y < w_y + SCREEN_HGT; y++)
@@ -5977,9 +5978,11 @@ void do_cmd_borg(void)
                     for (x = w_x; x < w_x + SCREEN_WID; x++)
                     {
                         byte a = TERM_RED;
+						
+						mb_ptr = map_loc(x, y);
 
                         /* Verify flow cost */
-                        if (borg_data_flow->data[y][x] != i) continue;
+                        if (mb_ptr->flow != i) continue;
 
                         /* Display */
                         print_rel('*', a, y, x);
@@ -6020,10 +6023,12 @@ void do_cmd_borg(void)
 			        int i, b_i = -1;
 
 			        int c, b_c;
+					
+					map_block *mb_ptr = map_loc(c_x, c_y);
 
 
 			        /* Flow cost of current grid */
-			        b_c = borg_data_flow->data[c_y][c_x] * 10;
+			        b_c = mb_ptr->flow * 10;
 
 			        /* Prevent loops */
 			        b_c = b_c - 5;
@@ -6037,9 +6042,11 @@ void do_cmd_borg(void)
 
 			            /* Access the grid */
 			            ag = &borg_grids[y][x];
+						
+						mb_ptr = map_loc(x, y);
 
 			            /* Flow cost at that grid */
-			            c = borg_data_flow->data[y][x] * 10;
+			            c = mb_ptr->flow * 10;
 
 			            /* Never backtrack */
 			            if (c > b_c) continue;

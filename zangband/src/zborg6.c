@@ -315,6 +315,10 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
     int n, o = 0;
     int x1, y1;
     int x, y;
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
+	
+	int player_cost = mb_ptr->cost;
 
 
     /* Now process the queue */
@@ -327,15 +331,16 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
         /* Circular queue -- dequeue the next entry */
         if (++flow_tail == AUTO_FLOW_MAX) flow_tail = 0;
 
-
+		mb_ptr = map_loc(x1, y1);
+	
         /* Cost (one per movement grid) */
-        n = borg_data_cost->data[y1][x1] + 1;
+        n = mb_ptr->cost + 1;
 
         /* New depth */
         if (n > o)
         {
             /* Optimize (if requested) */
-            if (optimize && (n > borg_data_cost->data[c_y][c_x])) break;
+            if (optimize && (n > player_cost)) break;
 
             /* Limit depth */
             if (n > depth) break;
@@ -359,14 +364,13 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
 
             /* only on legal grids */
             if (!in_bounds(y,x)) continue;
-
-            /* Skip "reached" grids */
-            if (borg_data_cost->data[y][x] <= n) continue;
-
-
-            /* Access the grid */
+			
+			/* Access the grid */
             ag = &borg_grids[y][x];
 			mb_ptr = map_loc(x, y);
+
+            /* Skip "reached" grids */
+            if (mb_ptr->cost <= n) continue;
 
             /* Avoid "wall" grids (not doors) unless tunneling*/
             if (!tunneling &&
@@ -397,7 +401,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
             if ((avoid || borg_desperate) && (mb_ptr->terrain == FEAT_NONE)) continue;
 
             /* Avoid Monsters if Desprerate */
-            if (borg_desperate && (ag->kill)) continue;
+            if (borg_desperate && (mb_ptr->monster)) continue;
 
 #if 0
             /* Avoid Traps if low level-- unless brave or scaryguy. */
@@ -445,7 +449,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
 
 
             /* Save the flow cost */
-            borg_data_cost->data[y][x] = n;
+            mb_ptr->cost = n;
 
             /* Enqueue that entry */
             borg_flow_x[flow_head] = x;
@@ -502,11 +506,11 @@ static void borg_flow_enqueue_grid(int y, int x)
 
 
     /* Only enqueue a grid once */
-    if (!borg_data_cost->data[y][x]) return;
+    if (mb_ptr->cost == 1) return;
 
 
     /* Save the flow cost (zero) */
-    borg_data_cost->data[y][x] = 0;
+    mb_ptr->cost = 1;
 
     /* Enqueue that entry */
     borg_flow_y[flow_head] = y;
@@ -12885,18 +12889,25 @@ bool borg_twitchy(void)
 static bool borg_flow_commit(cptr who, int why)
 {
     int cost;
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Cost of current grid */
-    cost = borg_data_cost->data[c_y][c_x];
+    cost = mb_ptr->cost;
 
     /* Verify the total "cost" */
     if (cost >= 250) return (FALSE);
 
     /* Message */
     if (who) borg_note(format("# Flowing toward %s at cost %d", who, cost));
-
-    /* Obtain the "flow" information */
-    COPY(borg_data_flow, borg_data_cost, borg_data);
+	
+	/* Itterate over all grids */
+	MAP_ITT_START(mb_ptr)
+	{
+		/* Obtain the "flow" information */
+		mb_ptr->flow = mb_ptr->cost;
+	}
+	MAP_ITT_END;
 
     /* Save the goal type */
     goal = why;
@@ -12937,6 +12948,8 @@ bool borg_flow_old(int why)
     int x, y;
 
     borg_grid *ag;
+	
+	map_block *mb_ptr;
 
     /* Continue */
     if (goal == why)
@@ -12946,9 +12959,11 @@ bool borg_flow_old(int why)
         int i, b_i = -1;
 
         int c, b_c;
+		
+		mb_ptr = map_loc(c_x, c_y);
 
         /* Flow cost of current grid */
-        b_c = borg_data_flow->data[c_y][c_x] * 10;
+        b_c = mb_ptr->flow * 10;
 
         /* Prevent loops */
         b_c = b_c - 5;
@@ -12963,9 +12978,11 @@ bool borg_flow_old(int why)
 
             /* Access the grid */
             ag = &borg_grids[y][x];
+			
+			mb_ptr = map_loc(x, y);
 
             /* Flow cost at that grid */
-            c = borg_data_flow->data[y][x] * 10;
+            c = mb_ptr->flow * 10;
 
             /* Never backtrack */
             if (c > b_c) continue;
@@ -14342,7 +14359,7 @@ extern void borg_flow_direct(int y, int x)
 
 
     /* Save the flow cost (zero) */
-    borg_data_cost->data[y][x] = 0;
+    mb_ptr->cost = 1;
 
 
     /* Save "origin" */
@@ -14440,10 +14457,10 @@ extern void borg_flow_direct(int y, int x)
         }
 
         /* Abort "pointless" paths if possible */
-        if (borg_data_cost->data[y][x] <= n) break;
+        if (mb_ptr->cost <= n) break;
 
         /* Save the new flow cost */
-        borg_data_cost->data[y][x] = n;
+        mb_ptr->cost = n;
     }
 
 }
@@ -14460,10 +14477,10 @@ extern void borg_flow_direct_dig(int y, int x)
     int shift;
 
     borg_grid *ag;
-	map_block *mb_ptr;
+	map_block *mb_ptr = map_loc(x, y);
 
     /* Save the flow cost (zero) */
-    borg_data_cost->data[y][x] = 0;
+    mb_ptr->cost = 0;
 
 
     /* Save "origin" */
@@ -14540,10 +14557,10 @@ extern void borg_flow_direct_dig(int y, int x)
         }
 
         /* Abort "pointless" paths if possible */
-        if (borg_data_cost->data[y][x] <= n) break;
+        if (mb_ptr->cost <= n) break;
 
         /* Save the new flow cost */
-        borg_data_cost->data[y][x] = n;
+        mb_ptr->cost = n;
     }
 }
 
@@ -15225,7 +15242,7 @@ bool borg_flow_spastic(bool bored)
             if (!borg_cave_floor_grid(mb_ptr)) continue;
 
             /* Acquire the cost */
-            cost = borg_data_cost->data[y][x];
+            cost = mb_ptr->cost;
 
             /* Skip "unreachable" grids */
             if (cost >= 250) continue;

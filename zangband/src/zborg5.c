@@ -2772,7 +2772,7 @@ static void borg_update_map(void)
             if (old_wall != new_wall)
             {
                 /* Remove this grid from any flow */
-                if (new_wall) borg_data_flow->data[y][x] = 255;
+                if (new_wall) mb_ptr->flow = 255;
 
                 /* Remove this grid from any flow */
                 mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);

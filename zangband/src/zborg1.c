@@ -1051,15 +1051,6 @@ int flow_tail = 0;
 
 
 /*
- * Some variables
- */
-
-borg_data *borg_data_cost;  /* Current "cost" data */
-
-borg_data *borg_data_flow;  /* Constant "flow" data */
-
-
-/*
  * Strategy flags -- recalculate things
  */
 
@@ -2365,14 +2356,6 @@ void borg_init_1(void)
         C_MAKE(borg_grids[y], AUTO_MAX_X, borg_grid);
     }
 
-
-    /*** Grid data ***/
-
-    /* Allocate */
-    MAKE(borg_data_cost, borg_data);
-
-    /* Allocate */
-    MAKE(borg_data_flow, borg_data);
 
     /*** Very special "tracking" array ***/
 
