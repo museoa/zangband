@@ -1451,7 +1451,7 @@ static bool wr_savefile_new(void)
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
 		wr_string(message_str((s16b)i));
-		wr_byte(message_color((s16b)i));
+		wr_byte(message_type((s16b)i));
 	}
 
 
