@@ -1824,46 +1824,45 @@ static void display_player_flag_info(void)
 	/*** Set 2 ***/
 
 	row = 11;
-	col = 24;
+	col = 25;
 
-	display_player_equippy(row++, col + 8);
+	display_player_equippy(row++, col + 10);
 
-	c_put_str(TERM_WHITE, "abcdefghijkl@", row++, col + 8);
+	c_put_str(TERM_WHITE, "abcdefghijkl@", row++, col + 10);
 
-	display_player_flag_aux(row++, col, "Speed :", 1, TR1_SPEED, 0);
-	display_player_flag_aux(row++, col, "Reflct:", 2, TR2_REFLECT, 0);
-	display_player_flag_aux(row++, col, "AuFire:", 3, TR3_SH_FIRE, 0);
-	display_player_flag_aux(row++, col, "AuElec:", 3, TR3_SH_ELEC, 0);
-	display_player_flag_aux(row++, col, "NoTele:", 3, TR3_NO_TELE, 0);
-	display_player_flag_aux(row++, col, "NoMag :", 3, TR3_NO_MAGIC, 0);
-	display_player_flag_aux(row++, col, "Wraith:", 3, TR3_WRAITH, 0);
-	display_player_flag_aux(row++, col, "Drain :", 3, TR3_DRAIN_EXP, 0);
-	display_player_flag_aux(row++, col, "Wraith:", 3, TR3_WRAITH, 0);
-	display_player_flag_aux(row++, col, "Tport :", 3, TR3_TELEPORT, 0);
+	display_player_flag_aux(row++, col, "Speed   :", 1, TR1_SPEED, 0);
+	display_player_flag_aux(row++, col, "Reflect :", 2, TR2_REFLECT, 0);
+	display_player_flag_aux(row++, col, "AuraFire:", 3, TR3_SH_FIRE, 0);
+	display_player_flag_aux(row++, col, "AuraElec:", 3, TR3_SH_ELEC, 0);
+	display_player_flag_aux(row++, col, "NoTelprt:", 3, TR3_NO_TELE, 0);
+	display_player_flag_aux(row++, col, "No Magic:", 3, TR3_NO_MAGIC, 0);
+	display_player_flag_aux(row++, col, "Wraithfm:", 3, TR3_WRAITH, 0);
+	display_player_flag_aux(row++, col, "DrainExp:", 3, TR3_DRAIN_EXP, 0);
+	display_player_flag_aux(row++, col, "Teleport:", 3, TR3_TELEPORT, 0);
 
 
 	/*** Set 3 ***/
 
 	row = 11;
-	col = 48;
+	col = 52;
 
-	display_player_equippy(row++, col + 15);
+	display_player_equippy(row++, col + 11);
 
-	c_put_str(TERM_WHITE, "abcdefghijkl@", row++, col + 15);
+	c_put_str(TERM_WHITE, "abcdefghijkl@", row++, col + 11);
 
-	display_player_flag_aux(row++, col, "Free Action  :", 2, TR2_FREE_ACT, 0);
-	display_player_flag_aux(row++, col, "See Invisible:", 3, TR3_SEE_INVIS, 0);
-	display_player_flag_aux(row++, col, "Hold Life    :", 2, TR2_HOLD_LIFE, 0);
-	display_player_flag_aux(row++, col, "Telepathy    :", 3, TR3_TELEPATHY, 0);
-	display_player_flag_aux(row++, col, "Slow Digest  :", 3, TR3_SLOW_DIGEST, 0);
-	display_player_flag_aux(row++, col, "Regeneration :", 3, TR3_REGEN, 0);
-	display_player_flag_aux(row++, col, "Levitation   :", 3, TR3_FEATHER, 0);
-	display_player_flag_aux(row++, col, "Perm. Light  :", 3, TR3_LITE, 0);
-	display_player_flag_aux(row++, col, "Aggravate    :", 3, TR3_AGGRAVATE, 0);
-	display_player_flag_aux(row++, col, "Evil Curse   :", 3, TR3_TY_CURSE, 0);
+	display_player_flag_aux(row++, col, "Free Actn:", 2, TR2_FREE_ACT, 0);
+	display_player_flag_aux(row++, col, "SeeInvis.:", 3, TR3_SEE_INVIS, 0);
+	display_player_flag_aux(row++, col, "Hold Life:", 2, TR2_HOLD_LIFE, 0);
+	display_player_flag_aux(row++, col, "Telepathy:", 3, TR3_TELEPATHY, 0);
+	display_player_flag_aux(row++, col, "SlwDigstn:", 3, TR3_SLOW_DIGEST, 0);
+	display_player_flag_aux(row++, col, "Regen.   :", 3, TR3_REGEN, 0);
+	display_player_flag_aux(row++, col, "Levitate :", 3, TR3_FEATHER, 0);
+	display_player_flag_aux(row++, col, "PermLite :", 3, TR3_LITE, 0);
+	display_player_flag_aux(row++, col, "Aggravate:", 3, TR3_AGGRAVATE, 0);
+	display_player_flag_aux(row++, col, "EvilCurse:", 3, TR3_TY_CURSE, 0);
 }
 
-
+#if 0
 /*
  * Special display, part 2a
  */
@@ -1895,6 +1894,7 @@ static void display_player_misc_info(void)
 	c_put_str(TERM_L_BLUE, buf, 8, 13);
 }
 
+#endif 0
 
 /*
  * Special display, part 2b
@@ -2154,6 +2154,7 @@ static void display_player_stat_info(void)
 	}
 }
 
+#if 0
 
 /*
  * Object flag names
@@ -2446,7 +2447,7 @@ static void display_player_ben_one(int mode)
 		}
 	}
 }
-
+#endif 0
 
 #define COL_NAME			0
 #define WID_NAME			11
@@ -2841,7 +2842,7 @@ void do_cmd_character(void)
  */
 errr file_character(cptr name, bool full)
 {
-	int			i, j, x, y;
+	int	  	i,j, x, y;
 	byte		a;
 	char		c;
 	cptr		paren = ")";
@@ -2851,7 +2852,7 @@ errr file_character(cptr name, bool full)
 	char		o_name[80];
 	char		buf[1024];
 
-   int msg_max = message_num();
+   	int msg_max = message_num();
 
 
 	/* Drop priv's */
@@ -2910,7 +2911,7 @@ errr file_character(cptr name, bool full)
 #endif
 
 	/* Display player */
-	display_player(i);
+	display_player(0);
 
 	/* Dump part of the screen */
 	for (y = 2; y < 22; y++)
@@ -3035,7 +3036,7 @@ errr file_character(cptr name, bool full)
 		display_player(2);
 
 		/* Dump first column */
-		for (y = 7; y < 23; y++)
+		for (y = 5; y < 23; y++)
 		{
 			for (x = 0; x < 21; x++)
 			{
@@ -3044,28 +3045,28 @@ errr file_character(cptr name, bool full)
 			}
 
 			buf[x] = '\0';
-			fprintf(fff, "        %s\n", buf);
+			fprintf(fff, "%s\n", buf);
 		}
 
 		/* Dump second column */
-		for (y = 13; y < 23; y++)
+		for (y = 11; y < 22; y++)
 		{
-			for (x = 0; x < 22; x++)
+			for (x = 0; x < 23; x++)
 			{
-				(void)(Term_what(x + 23, y, &a, &c));
+				(void)(Term_what(x + 25, y, &a, &c));
 				buf[x] = c;
 			}
 
 			buf[x] = '\0';
-			fprintf(fff, "       %s\n", buf);
+			fprintf(fff, "%s\n", buf);
 		}
 
 		/* Dump third column */
-		for (y = 13; y < 23; y++)
+		for (y = 11; y < 23; y++)
 		{
-			for (x = 0; x < 29; x++)
+			for (x = 0; x < 24; x++)
 			{
-				(void)(Term_what(x + 47, y, &a, &c));
+				(void)(Term_what(x + 52, y, &a, &c));
 				buf[x] = c;
 			}
 
