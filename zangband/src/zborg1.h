@@ -223,46 +223,6 @@ struct borg_kill
  */
 #define AUTO_ROOMS  (MAX_X * MAX_Y / 8)
 
-/*
- * Forward declare
- */
-typedef struct borg_grid borg_grid;
-
-/*
- * A grid in the dungeon.  Several bytes.
- *
- * There is a set of eight bit flags (see below) called "info".
- *
- * There is a terrain feature type, which may be incorrect.  It is
- * more or less based on the standard "feature" values, but some of
- * the legal values are never used, such as "secret door", and others
- * are used in bizarre ways, such as "invisible trap".
- *
- * There is an object index into the "object tracking" array.
- *
- * There is a monster index into the "monster tracking" array.
- *
- * There is a byte "hmmm" which is currently unused.
- *
- * There is a byte "xtra" which tracks how much "searching" has been done
- * in the grid or in any grid next to the grid.
- *
- * To perform "navigation" from one place to another, the "flow" routines
- * are used, which place "cost" information into the "cost" fields.  Then,
- * if the path is clear, the "cost" information is copied into the "flow"
- * fields, which are used for the actual navigation.  This allows multiple
- * routines to check for "possible" flowing, without hurting the current
- * flow, which may have taken a long time to construct.  We also assume
- * that the Borg never needs to follow a path longer than 250 grids long.
- * Note that the "cost" fields have been moved into external arrays.
- *
- * Hack -- note that the "char" zero will often crash the system!
- */
-struct borg_grid
-{
-    /byte kill;      /* Monster index */
-};
-
 
 
 /*** Some macros ***/
@@ -1234,13 +1194,6 @@ extern s16b *borg_race_death;
 extern bool borg_is_take[256];      /* Symbol may be an object */
 
 extern bool borg_is_kill[256];      /* Symbol may be a monster */
-
-
-/*
- * Current "grid" list
- */
-
-extern borg_grid *borg_grids[MAX_HGT];   /* Current "grid list" */
 
 
 

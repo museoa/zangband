@@ -387,8 +387,7 @@ bool borg_check_lite(void)
 
     int q_x, q_y;
 
-    borg_grid *ag;
-	map_block *mb_ptr;
+ 	map_block *mb_ptr;
 
 
     bool do_lite;
@@ -615,9 +614,6 @@ bool borg_check_lite(void)
     /* Start */
     do_lite = FALSE;
 
-    /* Get central grid */
-    ag = &borg_grids[c_y][c_x];
-
     corners = 0;
     floors = 0;
 
@@ -734,7 +730,6 @@ bool borg_check_lite_only(void)
 
     int q_x, q_y;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
 
@@ -762,9 +757,6 @@ bool borg_check_lite_only(void)
 
     /* Start */
     do_lite = FALSE;
-
-    /* Get central grid */
-    ag = &borg_grids[c_y][c_x];
 
     corners = 0;
     floors = 0;

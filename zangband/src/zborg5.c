@@ -877,7 +877,6 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 {
     int d;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     borg_kill *kill = &borg_kills[i];
@@ -893,7 +892,6 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 
 
     /* Access the grid */
-    ag = &borg_grids[y][x];
 	mb_ptr = map_loc(x, y);
 
     /* Line of sight */
@@ -962,7 +960,6 @@ static void borg_follow_kill(int i)
     int dx, b_dx = 0;
     int dy, b_dy = 0;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     borg_kill *kill = &borg_kills[i];
@@ -1041,8 +1038,7 @@ static void borg_follow_kill(int i)
         y = oy + dy;
 
         /* Access the grid */
-        ag = &borg_grids[y][x];
-		mb_ptr = map_loc(x, y);
+ 		mb_ptr = map_loc(x, y);
 
         /* Skip known walls and doors */
         if (!borg_cave_floor_grid(mb_ptr)) continue;
@@ -1073,7 +1069,6 @@ static void borg_follow_kill(int i)
     y = oy + b_dy;
 
     /* Access the grid */
-    ag = &borg_grids[y][x];
 	mb_ptr = map_loc(x, y);
 
     /* Avoid walls and doors */
@@ -2423,8 +2418,6 @@ static void borg_update_map(void)
 {
     int i, x, y, dx, dy;
 
-    borg_grid *ag;
-
 	map_block *mb_ptr;
 
     byte t_a;
@@ -2473,9 +2466,6 @@ static void borg_update_map(void)
 #endif /* ALLOW_BORG_GRAPHICS */
 
             /* Get the borg_grid */
-            ag = &borg_grids[y][x];
-
-			/* Get the Game Grid */
    			mb_ptr = map_loc(x, y);
 
             /* Notice the player */
@@ -2488,7 +2478,6 @@ static void borg_update_map(void)
                 /* Hack -- white */
                 t_a = TERM_WHITE;
 
-                /* mark the borg_grid if stair under me */
                 /* I might be standing on a stair */
                 if (borg_on_dnstairs)
                 {

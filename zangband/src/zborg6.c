@@ -354,8 +354,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
         {
             int old_head;
 
-            borg_grid *ag;
-			map_block *mb_ptr;
+ 			map_block *mb_ptr;
 
 
             /* Neighbor grid */
@@ -366,7 +365,6 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
             if (!in_bounds(y,x)) continue;
 			
 			/* Access the grid */
-            ag = &borg_grids[y][x];
 			mb_ptr = map_loc(x, y);
 
             /* Skip "reached" grids */
@@ -1006,8 +1004,7 @@ bool borg_lite_beam(bool simulation)
     int dir = 5;
     bool spell_ok = FALSE;
 
-    borg_grid *ag = &borg_grids[c_y][c_x];
-	map_block *mb_ptr = map_loc(c_x, c_y);
+ 	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Hack -- weak/dark is very unhappy */
     if (borg_skill[BI_ISWEAK] || borg_skill[BI_CUR_LITE] == 0) return (FALSE);
@@ -1028,8 +1025,8 @@ bool borg_lite_beam(bool simulation)
 
     /* Torch */
     case 1:
-        ag = &borg_grids[c_y- (borg_skill[BI_CUR_LITE] +1)][c_x];
-        if (borg_cave_floor_bold(c_y - 1,c_x) &&
+        mb_ptr = map_loc(c_x, c_y - (borg_skill[BI_CUR_LITE] +1));
+        if (borg_cave_floor_bold(c_y - 1, c_x) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
@@ -1038,7 +1035,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Lantern */
     case 2:
-        ag = &borg_grids[c_y- (borg_skill[BI_CUR_LITE] +1)][c_x];
+        mb_ptr = map_loc(c_x, c_y - (borg_skill[BI_CUR_LITE] +1));
         if (borg_cave_floor_bold(c_y - 1,c_x) &&
         borg_cave_floor_bold(c_y - 2,c_x) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
@@ -1049,8 +1046,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Artifact */
     case 3:
-        ag = &borg_grids[c_y- (borg_skill[BI_CUR_LITE] +1)][c_x];
-
+        mb_ptr = map_loc(c_x, c_y- (borg_skill[BI_CUR_LITE] +1));
         if (borg_cave_floor_bold(c_y - 1,c_x) &&
         borg_cave_floor_bold(c_y - 2,c_x) &&
         borg_cave_floor_bold(c_y - 3,c_x) &&
@@ -1066,7 +1062,7 @@ bool borg_lite_beam(bool simulation)
     switch (borg_skill[BI_CUR_LITE])
     {
     case 1:
-        ag = &borg_grids[c_y + (borg_skill[BI_CUR_LITE] +1)][c_x];
+        mb_ptr = map_loc(c_x, c_y + (borg_skill[BI_CUR_LITE] +1));
         if (borg_cave_floor_bold(c_y + 1,c_x) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
@@ -1076,7 +1072,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Lantern */
     case 2:
-        ag = &borg_grids[c_y + (borg_skill[BI_CUR_LITE] +1)][c_x];
+        mb_ptr = map_loc(c_x, c_y + (borg_skill[BI_CUR_LITE] +1));
         if (borg_cave_floor_bold(c_y + 1,c_x) &&
         borg_cave_floor_bold(c_y + 2,c_x) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
@@ -1087,7 +1083,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Artifact */
     case 3:
-        ag = &borg_grids[c_y + (borg_skill[BI_CUR_LITE] +1)][c_x];
+        mb_ptr = map_loc(c_x, c_y + (borg_skill[BI_CUR_LITE] +1));
         if (borg_cave_floor_bold(c_y + 1,c_x) &&
         borg_cave_floor_bold(c_y + 2,c_x) &&
         borg_cave_floor_bold(c_y + 3,c_x) &&
@@ -1104,7 +1100,7 @@ bool borg_lite_beam(bool simulation)
     {
     /* Torch */
     case 1:
-        ag = &borg_grids[c_y][c_x+(borg_skill[BI_CUR_LITE] +1)];
+        mb_ptr = map_loc(c_x+(borg_skill[BI_CUR_LITE] +1), c_y);
         if (borg_cave_floor_bold(c_y ,c_x +1) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
@@ -1114,7 +1110,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Lantern */
     case 2:
-        ag = &borg_grids[c_y][c_x+(borg_skill[BI_CUR_LITE] +1)];
+        mb_ptr = map_loc(c_x+(borg_skill[BI_CUR_LITE] +1), c_y);
         if (borg_cave_floor_bold(c_y ,c_x + 1) &&
         borg_cave_floor_bold(c_y,c_x + 2) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
@@ -1125,7 +1121,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Artifact */
     case 3:
-        ag = &borg_grids[c_y][c_x+(borg_skill[BI_CUR_LITE] +1)];
+        mb_ptr = map_loc(c_x+(borg_skill[BI_CUR_LITE] +1), c_y);
         if (borg_cave_floor_bold(c_y ,c_x + 1) &&
         borg_cave_floor_bold(c_y ,c_x + 2) &&
         borg_cave_floor_bold(c_y ,c_x + 3) &&
@@ -1142,7 +1138,7 @@ bool borg_lite_beam(bool simulation)
     {
     /* Torch */
     case 1:
-        ag = &borg_grids[c_y][c_x-(borg_skill[BI_CUR_LITE] +1)];
+        mb_ptr = map_loc(c_x-(borg_skill[BI_CUR_LITE] +1), c_y);
         if (borg_cave_floor_bold(c_y ,c_x -1) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
@@ -1152,7 +1148,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Lantern */
     case 2:
-        ag = &borg_grids[c_y][c_x-(borg_skill[BI_CUR_LITE] +1)];
+        mb_ptr = map_loc(c_x-(borg_skill[BI_CUR_LITE] +1), c_y);
         if (borg_cave_floor_bold(c_y ,c_x - 1) &&
         borg_cave_floor_bold(c_y,c_x - 2) &&
         !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
@@ -1163,7 +1159,7 @@ bool borg_lite_beam(bool simulation)
         }
     /* Artifact */
     case 3:
-        ag = &borg_grids[c_y][c_x-(borg_skill[BI_CUR_LITE] +1)];
+        mb_ptr = map_loc(c_x-(borg_skill[BI_CUR_LITE] +1), c_y);
         if (borg_cave_floor_bold(c_y ,c_x - 1) &&
         borg_cave_floor_bold(c_y ,c_x - 2) &&
         borg_cave_floor_bold(c_y ,c_x - 3) &&
@@ -1372,8 +1368,7 @@ bool borg_caution_phase(int emergency, int turns)
     int dis = 10;
     int min;
 
-    borg_grid *ag= &borg_grids[c_y][c_x];
-	map_block *mb_ptr = map_loc(c_x, c_y);
+ 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Define minimal distance */
 	min =  dis / 2;
@@ -1396,7 +1391,7 @@ bool borg_caution_phase(int emergency, int turns)
 			if (!map_in_bounds(x, y)) continue;
 
             /* Access */
-            ag = &borg_grids[y][x];
+ 			mb_ptr = map_loc(x, y);
 
             /* If low level, unknown squares are scary */
             if (mb_ptr->terrain == FEAT_NONE && borg_skill[BI_MAXHP] < 30) break;
@@ -1466,7 +1461,6 @@ static bool borg_dim_door(int emergency, int p1)
 	int b_y = -1, b_x = -1, b_p = p1;
     int dis = borg_skill[BI_CLEVEL] + 2;
 
-    borg_grid *ag= &borg_grids[c_y][c_x];
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Scan every grid in landing zone */
@@ -1480,7 +1474,7 @@ static bool borg_dim_door(int emergency, int p1)
 			if ((x == c_x) && (y == c_y)) continue;
 
             /* Access */
-            ag = &borg_grids[y][x];
+			mb_ptr = map_loc(x, y);
 
 			/* Verify distance again */
 			if (distance(y, x, c_y, c_x) > borg_skill[BI_CLEVEL] + 2) continue;
@@ -4256,7 +4250,6 @@ extern int borg_attack_aux_thrust(void)
     int i, b_i = -1;
     int d, b_d = -1;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     borg_kill *kill;
@@ -4275,7 +4268,6 @@ extern int borg_attack_aux_thrust(void)
         if (distance(c_y, c_x, y, x) > 1) continue;
 
         /* Acquire grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Calculate "average" damage */
@@ -4331,8 +4323,6 @@ extern int borg_attack_aux_thrust(void)
     /* Save the location */
     g_x = borg_temp_x[b_i];
     g_y = borg_temp_y[b_i];
-
-    ag = &borg_grids[g_y][g_x];
 	
 	mb_ptr = map_loc(g_x, g_y);
     kill= &borg_kills[mb_ptr->kill];
@@ -4365,13 +4355,11 @@ bool borg_target(int y, int x)
 {
     int x1, y1, x2, y2;
 
-    borg_grid *ag;
     map_block *mb_ptr;
 	
 	borg_kill *kill;
 
-    ag = &borg_grids[y][x];
-	mb_ptr = map_loc(x, y);
+ 	mb_ptr = map_loc(x, y);
 	
     kill = &borg_kills[mb_ptr->kill];
 
@@ -5277,7 +5265,6 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
     int r, n;
 
     map_block *mb_ptr;
-	borg_grid *ag;
 	
     monster_race *r_ptr;
 
@@ -5307,7 +5294,6 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
 		
         r_ptr = &r_info[mb_ptr->monster];
 
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Stop at walls */
@@ -5505,8 +5491,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
         y = borg_temp_y[i];
 
         /* Get the grid */
-        ag = &borg_grids[y][x];
-		mb_ptr = map_loc(x, y);
+ 		mb_ptr = map_loc(x, y);
 
         /* Check distance */
         r = distance(y2, x2, y, x);
@@ -6993,7 +6978,6 @@ static int borg_attack_aux_nature_whirlwind(void)
 
 	int dam = 0;
 
-	borg_grid *ag;
 	map_block *mb_ptr;
 
 	if (!borg_spell_fail(REALM_NATURE, 3, 1, 20)) return 0;
@@ -7004,7 +6988,6 @@ static int borg_attack_aux_nature_whirlwind(void)
 		y = c_y + ddy[dir];
 		x = c_x + ddx[dir];
 
-		ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
 		/* is ther ea kill next to me */
@@ -7119,7 +7102,6 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
     int i, b_i = -1;
     int d, b_d = -1;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     borg_kill *kill;
@@ -7145,7 +7127,6 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
         if (distance(c_y, c_x, y, x) > 1) continue;
 
         /* Acquire grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Obtain the monster */
@@ -7215,7 +7196,6 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
     g_x = borg_temp_x[b_i];
     g_y = borg_temp_y[b_i];
 
-    ag = &borg_grids[g_y][g_x];
 	mb_ptr = map_loc(g_x, g_y);
 	
     kill= &borg_kills[mb_ptr->kill];
@@ -8326,7 +8306,6 @@ bool borg_attack(bool boosted_bravery)
     int n, b_n = 0;
     int g, b_g = -1;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Nobody around */
@@ -8384,7 +8363,6 @@ bool borg_attack(bool boosted_bravery)
         y = kill->y;
 
         /* Get grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Never shoot through walls */
@@ -9551,8 +9529,7 @@ static int borg_defend_aux_true_warding( int p1)
     int glyph_bad =0;
     int glyph_x, glyph_y,x,y;
 
-    borg_grid *ag;
-	map_block *mb_ptr;
+ 	map_block *mb_ptr;
 
     /* any summoners near?*/
     if (!borg_fighting_summoner) return (0);
@@ -9582,7 +9559,6 @@ static int borg_defend_aux_true_warding( int p1)
             x = glyph_x + c_x;
             y = glyph_y + c_y;
 
-            ag = &borg_grids[y][x];
 			mb_ptr = map_loc(x, y);
 
             /* track spaces already protected */
@@ -9652,7 +9628,6 @@ static int borg_defend_aux_create_walls( int p1)
     int wall_bad =0;
     int wall_x, wall_y,x,y;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* any summoners near?*/
@@ -9684,7 +9659,6 @@ static int borg_defend_aux_create_walls( int p1)
             x = wall_x + c_x;
             y = wall_y + c_y;
 
-            ag = &borg_grids[y][x];
 			mb_ptr = map_loc(x, y);
 			
             /* track spaces already protected */
@@ -9756,8 +9730,7 @@ static int borg_defend_aux_mass_genocide(void)
 {
     int p1= 0, hit = 0, i= 0,p2;
     int b_p =0, p;
-
-    borg_grid *ag;
+	
     borg_kill *kill;
     monster_race *r_ptr;
 
@@ -9781,8 +9754,6 @@ static int borg_defend_aux_mass_genocide(void)
         /* Monster */
         kill = &borg_kills[i];
         r_ptr = &r_info[kill->r_idx];
-
-        ag= &borg_grids[kill->y][kill->x];
 
         /* Skip dead monsters */
         if (!kill->r_idx) continue;
@@ -9867,8 +9838,6 @@ static int borg_defend_aux_genocide(void)
     char genocide_target= (char)0;
     int b_threat_id = (char)0;
 
-    borg_grid *ag;
-
     bool genocide_spell = FALSE;
     int fail_allowed = 39;
 
@@ -9929,8 +9898,6 @@ static int borg_defend_aux_genocide(void)
         /* Monster */
         kill = &borg_kills[i];
         r_ptr = &r_info[kill->r_idx];
-
-        ag= &borg_grids[kill->y][kill->x];
 
         /* Our char of the monster */
         u = r_ptr->d_char;
@@ -10154,7 +10121,6 @@ static int borg_defend_aux_earthquake(void)
     int door_bad = 0;
     int door_x, door_y, x, y;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Obtain initial danger */
@@ -10177,8 +10143,7 @@ static int borg_defend_aux_earthquake(void)
             x = door_x + c_x;
             y = door_y + c_y;
 
-            ag = &borg_grids[y][x];
-			mb_ptr = map_loc(x, y);
+ 			mb_ptr = map_loc(x, y);
 
             /* track spaces already protected */
             if ( /*(mb_ptr->terrain == FEAT_GLYPH) || */mb_ptr->monster ||
@@ -10288,13 +10253,12 @@ static int borg_defend_aux_destruction(void)
     /* oops it did not work */
     return (0);
 }
+
 static int borg_defend_aux_banishment( int p1)
 {
     int p2 = 0;
     int fail_allowed = 15;
     int i;
-
-    borg_grid *ag;
 
     /* Only tell away if scared */
     if ( p1 < avoidance * 12/10)
@@ -10321,8 +10285,6 @@ static int borg_defend_aux_banishment( int p1)
         kill = &borg_kills[i];
         r_ptr = &r_info[kill->r_idx];
 
-        ag= &borg_grids[kill->y][kill->x];
-
         /* Skip dead monsters */
         if (!kill->r_idx) continue;
 
@@ -10345,8 +10307,6 @@ static int borg_defend_aux_banishment( int p1)
         /* Monster */
         kill = &borg_kills[i];
         r_ptr = &r_info[kill->r_idx];
-
-        ag= &borg_grids[kill->y][kill->x];
 
         /* Skip dead monsters */
         if (!kill->r_idx) continue;
@@ -11628,7 +11588,6 @@ static int borg_perma_aux_glyph(void)
     int i, wall_y, wall_x, wall_count = 0, y,x;
     int fail_allowed = 20;
 
-    borg_grid *ag = &borg_grids[c_y][c_x];
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* check to make sure a summoner is near */
@@ -11666,7 +11625,7 @@ static int borg_perma_aux_glyph(void)
             x = wall_x + c_x;
             y = wall_y + c_y;
 
-            ag = &borg_grids[y][x];
+ 			mb_ptr = map_loc(x, y);
 
             /* track adjacent walls */
             if ( /* (mb_ptr->terrain == FEAT_GLYPH) || */
@@ -12396,7 +12355,6 @@ bool borg_recover(void)
  */
 static bool borg_play_step(int y2, int x2)
 {
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     int dir, x, y, ox, oy, i;
@@ -12418,7 +12376,6 @@ static bool borg_play_step(int y2, int x2)
         	    if ((oy+c_y == y2) && (ox+c_x == x2)) continue;
 
         	    /* Acquire location */
-        	    ag = &borg_grids[oy+c_y][ox+c_x];
 				mb_ptr = map_loc(ox + c_x, oy + c_y);
 
         	    /* skip non open doors */
@@ -12488,8 +12445,7 @@ static bool borg_play_step(int y2, int x2)
     y = c_y + ddy[dir];
 
     /* Access the grid we are stepping on */
-    ag = &borg_grids[y][x];
-	mb_ptr = map_loc(x, y);
+ 	mb_ptr = map_loc(x, y);
 
     /* Hack -- set goal */
     g_x = x;
@@ -12947,8 +12903,6 @@ bool borg_flow_old(int why)
 {
     int x, y;
 
-    borg_grid *ag;
-	
 	map_block *mb_ptr;
 
     /* Continue */
@@ -12977,9 +12931,7 @@ bool borg_flow_old(int why)
             y = c_y + ddy_ddd[i];
 
             /* Access the grid */
-            ag = &borg_grids[y][x];
-			
-			mb_ptr = map_loc(x, y);
+ 			mb_ptr = map_loc(x, y);
 
             /* Flow cost at that grid */
             c = mb_ptr->flow * 10;
@@ -13567,7 +13519,6 @@ bool borg_flow_kill_corridor(bool viewable)
     {
         for (o_y = -1; o_y <= 1; o_y++)
         {
-            borg_grid *ag;
 			map_block *mb_ptr;
 
             /* Check grids near monster */
@@ -13579,7 +13530,6 @@ bool borg_flow_kill_corridor(bool viewable)
 			if (!map_in_bounds(m_x - 2, m_y - 2)) continue;
 			
 			/* get the grid */
-            ag = &borg_grids[m_y][m_x];
 			mb_ptr = map_loc(m_x, m_y);
 
             /* Can't tunnel a non wall or permawall*/
@@ -13615,7 +13565,7 @@ bool borg_flow_kill_corridor(bool viewable)
                 for (f_y = -1; f_y <= 1; f_y++)
                 {
                     /* grid the grid */
-                    ag = &borg_grids[m_y+f_y][m_x+f_x];
+					mb_ptr = map_loc(m_x + f_x, m_y + f_y);
 
                     /* check if this neighbor is a floor */
                     if (mb_ptr->terrain == FEAT_FLOOR ||
@@ -13676,8 +13626,7 @@ bool borg_flow_kill(bool viewable, int nearness)
     int hall_y, hall_x, hall_walls = 0;
     bool skip_monster = FALSE;
 
-    borg_grid *ag;
-	map_block *mb_ptr;
+ 	map_block *mb_ptr;
 
     /* Efficiency -- Nothing to kill */
     if (!borg_kills_cnt) return (FALSE);
@@ -13702,7 +13651,6 @@ bool borg_flow_kill(bool viewable, int nearness)
             x = hall_x + c_x;
             y = hall_y + c_y;
 
-            ag = &borg_grids[y][x];
 			mb_ptr = map_loc(x, y);
 
             /* track walls */
@@ -13771,7 +13719,6 @@ bool borg_flow_kill(bool viewable, int nearness)
         y = kill->y;
 
         /* Get the grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Require line of sight if requested */
@@ -13807,7 +13754,7 @@ bool borg_flow_kill(bool viewable, int nearness)
             {
                 for (hall_y = -1; hall_y <= 1; hall_y++)
                 {
-                    ag = &borg_grids[hall_y + y][hall_x + x];
+ 					mb_ptr = map_loc(hall_x + x, hall_y + y);
 
                     /* track walls */
                     if (/* (mb_ptr->terrain == FEAT_GLYPH) ||
@@ -13903,7 +13850,6 @@ bool borg_flow_take(bool viewable, int nearness)
     int i, x, y;
     int b_stair = -1, j, b_j = -1;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Efficiency -- Nothing to take */
@@ -13974,7 +13920,6 @@ bool borg_flow_take(bool viewable, int nearness)
         if (item_bad) continue;
 
         /* Get the grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Require line of sight if requested */
@@ -14033,15 +13978,12 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
     int ox, i;
     int j, b_j;
 
-
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Have the borg so some Searching */
     borg_needs_searching = TRUE;
 
-    /* Get the borg_grid */
-    ag = &borg_grids[y][x];
+    /* Get the grid */
 	mb_ptr = map_loc(x, y);
 
     /* Skip ones that make me wander too far */
@@ -14118,7 +14060,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
                 {
 
                     /* Acquire location */
-                    ag = &borg_grids[oy+y][ox+x];
+ 					mb_ptr = map_loc(ox + x, oy + y);
 
                     /* skip non perma grids wall */
                     if (mb_ptr->terrain != FEAT_PERM_INNER) continue;
@@ -14147,9 +14089,9 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
                 }
             }
         }
-    /* not adjacent to a GCV,  Restore Grid */
-    ag = &borg_grids[y][x];
-
+		
+	    /* not adjacent to a GCV,  Restore Grid */
+		mb_ptr = map_loc(x, y);
     }
 
     /* Explore "rubble" */
@@ -14172,7 +14114,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
                 for (oy = -1; oy <= 1; oy++)
                 {
                     /* Acquire location */
-                    ag = &borg_grids[oy+y][ox+x];
+					mb_ptr = map_loc(ox + x, oy + y);
 
                     /* look for Unknown grid */
                     if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
@@ -14256,7 +14198,6 @@ static bool borg_flow_dark_reachable(int y, int x)
 {
     int j;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Scan neighbors */
@@ -14266,7 +14207,6 @@ static bool borg_flow_dark_reachable(int y, int x)
         int x2 = x + ddx_ddd[j];
 
         /* Get the grid */
-        ag = &borg_grids[y2][x2];
 		mb_ptr = map_loc(x2, y2);
 
 
@@ -14321,7 +14261,6 @@ extern void borg_flow_direct(int y, int x)
 
     int shift;
 
-    borg_grid *ag;
 	map_block *mb_ptr = map_loc(x, y);
 
     /* Avoid icky grids */
@@ -14399,7 +14338,6 @@ extern void borg_flow_direct(int y, int x)
 
 
         /* Access the grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
 		/* Floors are ok */
@@ -14464,7 +14402,6 @@ extern void borg_flow_direct_dig(int y, int x)
 
     int shift;
 
-    borg_grid *ag;
 	map_block *mb_ptr = map_loc(x, y);
 
     /* Save the flow cost (zero) */
@@ -14520,7 +14457,6 @@ extern void borg_flow_direct_dig(int y, int x)
 
 
         /* Access the grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
 
@@ -14699,7 +14635,6 @@ static bool borg_flow_dark_2(void)
 
     int x, y;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Hack -- not in town */
@@ -14725,7 +14660,6 @@ static bool borg_flow_dark_2(void)
 		if (!map_in_bounds(x, y)) continue;
 
         /* Acquire grid */
-        ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
 
         /* Require unknown */
@@ -15113,7 +15047,6 @@ bool borg_flow_spastic(bool bored)
     int j, b_j = 1;
     int b_stair = -1;
 
-    borg_grid *ag;
 	map_block *mb_ptr;
 
     /* Hack -- not in town */
@@ -15320,10 +15253,6 @@ bool borg_flow_spastic(bool bored)
 
     /* Hack -- Nothing found */
     if (b_v < 0) return (FALSE);
-
-
-    /* Access grid */
-    ag = &borg_grids[b_y][b_x];
 
     /* Memorize */
     spastic_x = b_x;

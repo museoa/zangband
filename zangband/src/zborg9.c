@@ -4348,9 +4348,6 @@ void borg_write_map(bool ask)
         {
             char ch;
 
-		    cave_type   *c_ptr = &cave[i][j];
-
-            borg_grid *ag = &borg_grids[i][j];
 			mb_ptr = map_loc(j, i);
 
             m_idx = c_ptr->m_idx;
@@ -5797,8 +5794,6 @@ void do_cmd_borg(void)
                 {
                     byte a = TERM_RED;
 
-                    borg_grid *ag = &borg_grids[y][x];
-
                     /* Given mask, show only those grids */
                     if (mask && !(ag->info & mask)) continue;
 
@@ -6009,7 +6004,6 @@ void do_cmd_borg(void)
 			    int x, y;
 				int o;
 				int false_y, false_x;
-			    borg_grid *ag;
 
 				false_y = c_y;
 				false_x = c_x;
@@ -6040,8 +6034,6 @@ void do_cmd_borg(void)
 			            y = false_y + ddy_ddd[i];
 
 			            /* Access the grid */
-			            ag = &borg_grids[y][x];
-						
 						mb_ptr = map_loc(x, y);
 
 			            /* Flow cost at that grid */

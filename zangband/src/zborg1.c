@@ -983,13 +983,6 @@ bool borg_is_kill[256];     /* Symbol may be a monster */
 
 
 /*
- * The current map
- */
-
-borg_grid *borg_grids[MAX_HGT];  /* The grids */
-
-
-/*
  * Maintain a set of grids marked as "BORG_LITE"
  */
 
@@ -2338,24 +2331,13 @@ borg_calc_formula(int *formula)
  */
 void borg_init_1(void)
 {
-    int i, y;
+    int i;
 
     /* Allocate the "keypress queue" */
     C_MAKE(borg_key_queue, KEY_SIZE, char);
 
     /* Prapare a local random number seed */
 	if (!borg_rand_local) borg_rand_local = randint0(0x10000000);
-
-
-    /*** Grids ***/
-
-    /* Make each row of grids */
-    for (y = 0; y < MAX_HGT; y++)
-    {
-        /* Make each row */
-        C_MAKE(borg_grids[y], MAX_HGT, borg_grid);
-    }
-
 
     /*** Very special "tracking" array ***/
 
