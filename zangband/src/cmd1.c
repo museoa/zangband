@@ -11,6 +11,8 @@
  */
 
 #include "angband.h"
+#include "script.h"
+
 #define MAX_VAMPIRIC_DRAIN 100
 
 /*
@@ -1434,11 +1436,10 @@ void py_attack(int x, int y)
 	bool fear = FALSE;
 	bool mdeath = FALSE;
 
-	int chaos_effect = 0;
 	bool do_quake = FALSE;
 	bool drain_msg = TRUE;
 	int drain_result = 0, drain_heal = 0;
-	int drain_left = MAX_VAMPIRIC_DRAIN;
+	int drain_total = 0;
 	s16b ghoul_paral = -1;
 	bool ghoul_hack = FALSE;
 	bool no_extra = FALSE;
@@ -1594,6 +1595,11 @@ void py_attack(int x, int y)
 		if (test_hit_combat(chance + sleeping_bonus,
 							r_ptr->ac + terrain_bonus, m_ptr->ml))
 		{
+			int drain_power = 0;
+			bool do_poly = FALSE;
+			bool do_tele = FALSE;
+			bool do_conf = FALSE;
+
 			/* Sound */
 			sound(SOUND_HIT);
 
@@ -1608,39 +1614,45 @@ void py_attack(int x, int y)
 				if (randint1(5) < 3)
 				{
 					/* Vampiric (20%) */
-					chaos_effect = 1;
+					if (monster_living(r_ptr))
+						drain_power = 4;
+					else
+						drain_power = 0;
 				}
 				else if (one_in_(250))
 				{
 					/* Quake (0.12%) */
-					chaos_effect = 2;
+					do_quake = TRUE;
 				}
 				else if (!one_in_(10))
 				{
 					/* Confusion (26.892%) */
-					chaos_effect = 3;
+					do_conf = TRUE;
 				}
 				else if (one_in_(2))
 				{
 					/* Teleport away (1.494%) */
-					chaos_effect = 4;
+					do_tele = TRUE;
 				}
 				else
 				{
 					/* Polymorph (1.494%) */
-					chaos_effect = 5;
+					do_poly = TRUE;
 				}
 			}
 
 			/* Vampiric drain */
-			if ((o_ptr->flags1 & TR1_VAMPIRIC) || (chaos_effect == 1))
+			if (o_ptr->flags1 & TR1_VAMPIRIC)
 			{
 				/* Only drain "living" monsters */
 				if (monster_living(r_ptr))
-					drain_result = m_ptr->hp;
+					drain_power = 4;
 				else
-					drain_result = 0;
+					drain_power = 0;
 			}
+
+			/* Save current hp */
+			drain_result = m_ptr->hp;
 
 			/* Ghoul paralysis */
 			if ((ghoul_paral > -1) && !(r_ptr->flags3 & RF3_NO_SLEEP) &&
@@ -1659,6 +1671,8 @@ void py_attack(int x, int y)
 			/* Handle normal weapon */
 			else if (o_ptr->k_idx)
 			{
+				int vorpal_chance = (o_ptr->flags1 & TR1_VORPAL) ? 2 : 0;
+
 				/* base damage dice. */
 				k = o_ptr->ds;
 
@@ -1686,9 +1700,17 @@ void py_attack(int x, int y)
 				/* Add in extra effect due to slays */
 				k += (slay - 10);
 
+				/* Apply scripted effects */
+				apply_object_trigger(TRIGGER_HIT, o_ptr, "p:iiiibbbb", 
+					LUA_MONSTER_NAMED(m_ptr, "monster"), LUA_RETURN(k), 
+					LUA_RETURN(ghoul_paral), LUA_RETURN(drain_power),
+					LUA_RETURN(vorpal_chance), LUA_RETURN(do_quake),
+					LUA_RETURN(do_conf), LUA_RETURN(do_tele),
+					LUA_RETURN(do_poly));
+
 				/* hack -- check for earthquake. */
-				if (((p_ptr->flags1 & (TR1_IMPACT)) &&
-					((k > 50) || one_in_(7))) || (chaos_effect == 2))
+				if ((p_ptr->flags1 & (TR1_IMPACT)) &&
+					((k > 50) || one_in_(7)))
 				{
 					do_quake = TRUE;
 				}
@@ -1697,9 +1719,7 @@ void py_attack(int x, int y)
 				 * All of these artifact-specific effects
 				 * should be pythonized.
 				 */
-				if ((o_ptr->flags1 & TR1_VORPAL) &&
-					(one_in_((o_ptr->activate == ART_VORPAL_BLADE)
-							 ? 3 : 6)))
+				if (vorpal_chance && one_in_(3 * vorpal_chance))
 				{
 					/*
 					 * The vorpal blade does average:
@@ -1712,10 +1732,9 @@ void py_attack(int x, int y)
 					 */
 					int mult = 2;
 
-					int inc_chance =
-						(o_ptr->activate == ART_VORPAL_BLADE) ? 2 : 4;
+					int inc_chance = 2 * vorpal_chance;
 
-					if (o_ptr->activate == ART_VORPAL_BLADE)
+					if (vorpal_chance < 2)
 					{
 						msgf("Your Vorpal Blade goes snicker-snack!");
 					}
@@ -1829,32 +1848,33 @@ void py_attack(int x, int y)
 			 * Are we draining it?  A little note: If the monster is
 			 * dead, the drain does not work...
 			 */
-			if (drain_result)
+			if (drain_power)
 			{
+				int max_drain = drain_power * (MAX_VAMPIRIC_DRAIN / 4);
+				int drain_left;
+
 				/* Calculate the difference */
 				drain_result -= m_ptr->hp;
 
 				/* Did we really hurt it? */
 				if (drain_result > 0)
 				{
-					drain_heal = damroll(4, drain_result / 6);
+					drain_heal = damroll(drain_power, drain_result / 6);
+					drain_left = max_drain - drain_total;
 
 					if (cheat_xtra)
 					{
 						msgf("Draining left: %d", drain_left);
 					}
 
-					if (drain_left)
+					if (drain_left > 0)
 					{
-						if (drain_heal < drain_left)
-						{
-							drain_left -= drain_heal;
-						}
-						else
-						{
+						/* Cap life gain */
+						if (drain_heal > drain_left)
 							drain_heal = drain_left;
-							drain_left = 0;
-						}
+
+						/* Add to total */
+						drain_total += drain_heal;
 
 						if (drain_msg)
 						{
@@ -1870,7 +1890,7 @@ void py_attack(int x, int y)
 			}
 
 			/* Confusion attack */
-			if (p_ptr->state.confusing || (chaos_effect == 3))
+			if (p_ptr->state.confusing || do_conf)
 			{
 				/* Cancel glowing hands */
 				if (p_ptr->state.confusing)
@@ -1900,7 +1920,7 @@ void py_attack(int x, int y)
 					m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 				}
 			}
-			else if (chaos_effect == 4)
+			else if (do_tele)
 			{
 				bool resists_tele = FALSE;
 
@@ -1928,7 +1948,7 @@ void py_attack(int x, int y)
 					no_extra = TRUE;
 				}
 			}
-			else if ((chaos_effect == 5) && cave_floor_grid(c_ptr) &&
+			else if (do_poly && cave_floor_grid(c_ptr) &&
 					 (randint1(90) > r_ptr->level))
 			{
 				if (!(r_ptr->flags1 & RF1_UNIQUE) &&
@@ -2011,7 +2031,7 @@ void py_attack(int x, int y)
 		flee_message(m_name, m_ptr->r_idx);
 	}
 
-	if (drain_left != MAX_VAMPIRIC_DRAIN)
+	if (drain_total > 0)
 	{
 		if (one_in_(4)) chg_virtue(V_VITALITY, 1);
 	}

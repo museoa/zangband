@@ -1274,6 +1274,7 @@ P:0:4d5:32:32:0
 F:VORPAL | SLAY_EVIL |
 F:FREE_ACT | LITE | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
 F:INSTA_ART
+L:HIT:	vorpal_chance = 1
 
 # The Beaked Axe of Theoden
 
