@@ -446,7 +446,7 @@ bool projectable(int x1, int y1, int x2, int y2)
 	coord grid_g[512];
 
 	/* Check the projection path */
-	grid_n = project_path(grid_g, y1, x1, y2, x2, 0);
+	grid_n = project_path(grid_g, x1, y1, x2, y2, 0);
 
 	/* No grid is ever projectable from itself */
 	if (!grid_n) return (FALSE);
@@ -523,7 +523,7 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
  * This algorithm is the same as that used by "los_general()", however
  * the grids are saved along the path.
  */
-sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
+sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg)
 {
 	int y, x, sx, sy, dx, dy;
 

@@ -389,7 +389,7 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friendly)
 	if (ironman_los)
 	{
 		/* Check the projection path - endpoints reversed */
-		grid_n = project_path(grid_g, y2, x2, y1, x1, flg);
+		grid_n = project_path(grid_g, x2, y2, x1, y1, flg);
 		
 		/* No grid is ever projectable from itself */
 		if (!grid_n) return (FALSE);
@@ -401,7 +401,7 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friendly)
 	else
 	{
 		/* Check the projection path */
-		grid_n = project_path(grid_g, y1, x1, y2, x2, flg);
+		grid_n = project_path(grid_g, x1, y1, x2, y2, flg);
 		
 		/* No grid is ever projectable from itself */
 		if (!grid_n) return (FALSE);

@@ -4165,7 +4165,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	}
 	
 	/* Calculate the projection path */
-	path_n = project_path(path_g, y1, x1, y2, x2, flg);
+	path_n = project_path(path_g, x1, y1, x2, y2, flg);
 	
 	/* Do we need to invert the path? */
 	if (ironman_los && !jump && (who > 0))
