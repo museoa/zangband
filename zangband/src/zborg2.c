@@ -955,6 +955,47 @@ static bool los_general(int x1, int y1, int x2, int y2, map_hook_type mb_hook)
 }
 
 
+/*
+ * Hack - a function to pass to los_general() used
+ * to simulate the old los()
+ */
+static bool map_stop_wall(map_block *mb_ptr)
+{
+	/* Is it passable? */
+	if (borg_cave_los_grid(mb_ptr)) return (FALSE);
+
+	/* Seems ok */
+	return (TRUE);
+}
+
+/*
+ * Slow, but simple LOS routine.  This works in the same way as
+ * the view code, so that if something is in view, los() behaves
+ * as expected.
+ *
+ * The old routine was fast, but did not behave in the right way.
+ * This new routine does not need to be fast, because it isn't
+ * called in time-critical code.
+ *
+ *
+ * It works by trying all slopes that connect (x1,y1) with (x2,y2)
+ * If a wall is found, then it back-tracks to the 'best' square
+ * to check next.  There may be cases where it checks the same
+ * square multiple times, but a simple algorithm is much cleaner.
+ *
+ * Note that "line of sight" is not "reflexive" in all cases.
+ *
+ * Use the "projectable()" routine to test "spell/missile line of sight".
+ *
+ * Use the "update_view()" function to determine player line-of-sight.
+ */
+bool borg_los(int x1, int y1, int x2, int y2)
+{
+	return (los_general(x1, y1, x2, y2, map_stop_wall));
+}
+
+
+
 /* Slope and square used by mmove2 */
 static int mmove_slope;
 static int mmove_sq;
@@ -1385,26 +1426,6 @@ void borgmove2(int *py, int *px, int y1, int x1, int y2, int x2)
 			}
 		}
 	}
-}
-
-
-
-
-/*
- * A simple, fast, integer-based line-of-sight algorithm.
- *
- * See "los()" in "cave.c" for complete documentation
- */
-bool borg_los(int y1, int x1, int y2, int x2)
-{
-
-/* this routine is seriously flawed.  For the time being replace this with
- * the function borg_projectable().  It is slightly better.
- */
-
-	if (borg_projectable(y1, x1, y2, x2)) return (TRUE);
-	return (FALSE);
-
 }
 
 /*

@@ -745,7 +745,7 @@ static bool borg_surrounded(void)
 		if (d > 3) continue;
 
 		/* if he cant see me then forget it. */
-		if (!borg_los(c_y, c_x, y9, x9)) continue;
+		if (!borg_los(c_x, c_y, x9, y9)) continue;
 
 		/* if asleep, don't consider this one */
 		if (kill->m_flags & MONST_ASLEEP) continue;
@@ -3465,7 +3465,7 @@ bool borg_caution(void)
 				if (borg_cave_wall_grid(mb_ptr)) break;
 
 				/* Require line of sight */
-				if (!borg_los(y1, x1, y2, x2)) break;
+				if (!borg_los(x1, y1, x2, y2)) break;
 
 				/* Check danger of that spot (over time) */
 				if (!borg_surround &&
@@ -5644,7 +5644,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
 		if (r > rad) continue;
 
 		/* Never pass through walls */
-		if (!borg_los(y2, x2, y, x)) continue;
+		if (!borg_los(x2, y2, x, y)) continue;
 
 		/*  dispel spells should hurt the same no matter the rad: make r= y  and x */
 		if (rad == MAX_SIGHT) r = 0;
@@ -12435,10 +12435,10 @@ bool borg_check_rest(void)
 
 
 		/* should check LOS... monster to me */
-		if (borg_los(y9, x9, c_y, c_x)) return FALSE;
+		if (borg_los(x9, y9, c_x, c_y)) return FALSE;
 
 		/* should check LOS... me to monster */
-		if (borg_los(c_y, c_x, y9, x9)) return FALSE;
+		if (borg_los(c_x, c_y, x9, y9)) return FALSE;
 
 		/* Perhaps borg should check and see if the previous grid was los */
 
