@@ -5050,6 +5050,13 @@ s16b inven_carry(object_type *o_ptr)
 				if (o_ptr->pval > j_ptr->pval) continue;
 			}
 
+			/* Lites sort by decreasing fuel */
+			if (o_ptr->tval == TV_LITE)
+			{
+				if (o_ptr->pval > j_ptr->pval) break;
+				if (o_ptr->pval < j_ptr->pval) continue;
+			}
+
 			/* Determine the "value" of the pack item */
 			j_value = object_value(j_ptr);
 
