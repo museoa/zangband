@@ -2067,13 +2067,13 @@ void lite_spot(int x, int y)
 	{
 		byte a;
 		char c;
+		
+		cave_type *c_ptr = area(x, y);
+		pcave_type *pc_ptr = parea(x, y);
 
 #ifdef USE_TRANSPARENCY
 		byte ta;
 		char tc;
-		
-		cave_type *c_ptr = area(x, y);
-		pcave_type *pc_ptr = parea(x, y);
 
 		/* Examine the grid */
 		map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
