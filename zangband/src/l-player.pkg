@@ -395,3 +395,4 @@ extern bool restore_level(void);
 extern bool player_res(u32b flag);
 extern void have_nightmare(void);
 extern void do_cmd_save_game(int is_autosave);
+extern void disturb(bool stop_search);

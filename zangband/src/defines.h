@@ -5035,17 +5035,6 @@ extern int PlayerUID;
 #define DECL_FIELD_ACTION(N) \
 	extern bool field_action_##N (field_type *f_ptr, va_list vp)
 
-
-/*
- * Monster enter grid test flags
- */
-#define MEG_DO_MOVE			0x01	/* Do move */
-#define MEG_OPEN			0x02	/* Opened a door */
-#define MEG_BASH			0x04	/* Bashed a door */
-#define MEG_FORCE			0x08	/* Forced a rune */
-#define MEG_DO_TURN			0x10	/* Take turn */
-
-
 /*
  * Player displays
  */

@@ -1458,107 +1458,6 @@ bool field_action_delete(field_type *f_ptr, va_list vp)
 }
 
 
-/*
- * The function that now controls the glyph of warding rune.
- */
-bool field_action_glyph_warding(field_type *f_ptr, va_list vp)
-{
-	/* Look at input data */
-	monster_type *m_ptr = va_arg(vp, monster_type *);
-    byte *flags = va_arg(vp, byte *);
-
-	monster_race *r_ptr;
-
-	/* Hack: No monster - just test for existance of glyph */
-	if (!m_ptr)
-	{
-		/* Monsters cannot be generated / teleported onto glyph */
-		*flags &= ~(MEG_DO_MOVE);
-
-		/* Done */
-		return (FALSE);
-	}
-
-	/* Take turn */
-	*flags |= MEG_DO_TURN;
-
-	/* Get race */
-	r_ptr = &r_info[m_ptr->r_idx];
-
-	if ((*flags & (MEG_DO_MOVE))
-		&& !FLAG(r_ptr, RF_NEVER_BLOW)
-		&& (randint1(BREAK_GLYPH) < r_ptr->level))
-	{
-		/* Describe observable breakage */
-		if (field_visible(f_ptr))
-		{
-			msgf("The rune of protection is broken!");
-		}
-
-		/* Destroyed the rune */
-		*flags |= MEG_FORCE;
-
-		/* Delete ourself */
-		return (TRUE);
-	}
-	else
-	{
-		/* No move allowed */
-		*flags &= ~(MEG_DO_MOVE);
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-/*
- * The function that now controls the exploding rune spell.
- */
-bool field_action_glyph_explode(field_type *f_ptr, va_list vp)
-{
-	/* Look at input data */
-	monster_type *m_ptr = va_arg(vp, monster_type *);
-	byte *flags = va_arg(vp, byte *);
-
-	monster_race *r_ptr;
-
-	/* Take turn */
-	*flags |= MEG_DO_TURN;
-
-	/* Get race */
-	r_ptr = &r_info[m_ptr->r_idx];
-
-	if ((*flags & (MEG_DO_MOVE))
-		&& !FLAG(r_ptr, RF_NEVER_BLOW)
-		&& (randint1(BREAK_MINOR_GLYPH) < r_ptr->level))
-	{
-		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
-		{
-			msgf("The rune explodes!");
-			(void)fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)),
-							2);
-		}
-		else
-			msgf("An explosive rune was disarmed.");
-
-		/* Forced a rune */
-		*flags |= MEG_FORCE;
-
-		/* Delete the field */
-		return (TRUE);
-	}
-	else
-	{
-		/* No move allowed */
-		*flags &= ~(MEG_DO_MOVE);
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
 void set_corpse_size(field_type *f_ptr, int size)
 {
 	/* Initialise the graphic */
@@ -2813,106 +2712,16 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 }
 
 
-bool field_action_door_lock_monster(field_type *f_ptr, va_list vp)
+/*
+ * Can the given monster race open the locked/jammed door.
+ *
+ * Used to be (randint0(m_ptr->hp) > power * power)
+ * Now just uses average hp (from full to wounded) so
+ * we don't have to export the monster internals to lua.
+ */
+bool monster_can_open(monster_race *r_ptr, int power)
 {
-	monster_type *m_ptr = va_arg(vp, monster_type *);
-	byte *flags = va_arg(vp, byte *);
-
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	if (!(*flags & (MEG_DO_MOVE)))
-	{
-		/* Monster cannot open the door */
-
-		/* Done */
-		return (FALSE);
-	}
-
-	/* Use move to try to open the door */
-	*flags &= ~(MEG_DO_MOVE);
-	*flags |= MEG_DO_TURN;
-
-	/* Locked doors */
-	if (FLAG(r_ptr, RF_OPEN_DOOR) &&
-		(!is_pet(m_ptr) || p_ptr->pet_open_doors))
-	{
-		/* Attempt to Unlock */
-		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
-		{
-			/* Open the door */
-			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
-
-			/* Record the fact that we opened the door */
-			*flags |= (MEG_OPEN);
-
-			/* Delete the field */
-			return (TRUE);
-		}
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_door_jam_monster(field_type *f_ptr, va_list vp)
-{
-	monster_type *m_ptr = va_arg(vp, monster_type *);
-	byte *flags = va_arg(vp, byte *);
-	
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	if (!(*flags & (MEG_DO_MOVE)))
-	{
-		/* Monster cannot open the door */
-
-		/* Done */
-		return (FALSE);
-	}
-
-	/* Take turn */
-	*flags |= MEG_DO_TURN;
-
-	/* Stuck Door */
-	if (FLAG(r_ptr, RF_BASH_DOOR) &&
-		(!is_pet(m_ptr) || p_ptr->pet_open_doors))
-	{
-		/* Attempt to Bash */
-		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
-		{
-			/* Message */
-			msgf("You hear a door burst open!");
-
-			/* Disturb (sometimes) */
-			if (disturb_minor) disturb(FALSE);
-
-			/* Break down the door */
-			if (randint0(100) < 50)
-			{
-				cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_BROKEN);
-			}
-
-			/* Open the door */
-			else
-			{
-				cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
-			}
-
-			/* Monster bashed the door */
-			*flags |= (MEG_BASH);
-
-			/* Hack - fall into door */
-
-			/* Delete the field */
-			return (TRUE);
-		}
-	}
-
-	/* Cannot move */
-	*flags &= ~(MEG_DO_MOVE);
-
-	/* Done */
-	return (FALSE);
+	return (randint0(r_ptr->hdice * r_ptr->hside / 4) > power * power);
 }
 
 

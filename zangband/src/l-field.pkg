@@ -9,6 +9,9 @@ typedef int sint;
 #define ACT_DISARM		1
 #define ACT_OPEN		2
 
+#define BREAK_GLYPH             550	/* Rune of protection resistance */
+#define BREAK_MINOR_GLYPH       99	/* For explosive runes */
+
 /*
  * The field structure.
  *

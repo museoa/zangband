@@ -6848,12 +6848,6 @@ const field_action f_action[] =
 	
 	/* Delete the field */
 	{field_action_delete, "field_action_delete"},
-	
-	/* Glyph of warding function */
-	{field_action_glyph_warding, "field_action_glyph_warding"},
-	
-	/* Explosive rune function */
-	{field_action_glyph_explode, "field_action_glyph_explode"},
 		
 	/* Trapdoor */
 	{field_action_hit_trap_door, "field_action_hit_trap_door"},
@@ -6932,12 +6926,6 @@ const field_action f_action[] =
 	
 	/* Lose Memory Trap */
 	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"},
-	
-	/* Monster attemts to enter locked door */
-	{field_action_door_lock_monster, "field_action_door_lock_monster"},
-	
-	/* Monster attemts to enter jammed door */
-	{field_action_door_jam_monster, "field_action_door_jam_monster"},
 		
 	/* Stores open when walked on */
 	{field_action_door_store, "field_action_door_store"},

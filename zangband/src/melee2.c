@@ -2173,8 +2173,6 @@ static void take_move(int m_idx, int *mm)
 
 	char m_name[80];
 
-	byte flags;
-
 	/* Assume nothing */
 	bool do_turn = FALSE;
 	bool do_move = TRUE;
@@ -2292,38 +2290,32 @@ static void take_move(int m_idx, int *mm)
 			do_move = FALSE;
 		}
 
-		/* 
-		 * Test for fields that will not allow this
-		 * specific monster to pass.  (i.e. Glyph of warding)
-		 */
-
-		/* Set up flags */
-		flags = 0x00;
-		if (do_move)
-        {
-        	flags = MEG_DO_MOVE;
-		}
-        else
-        {
-        	flags = 0x00;
-        }
-        
 		/* Call the hook */
-		field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST, m_ptr, &flags);
-
-		/* Get result */
-		if (flags & (MEG_DO_MOVE))
-		{
-			do_move = TRUE;
-		}
-		else
-		{
-			do_move = FALSE;
-		}
+		field_script(c_ptr, FIELD_ACT_MON_ENTER_TEST, "ibb:bbbb",
+			 LUA_VAR_NAMED(m_ptr->r_idx, "r_idx"),
+			 LUA_VAR_NAMED(see_grid, "visible"),
+			 LUA_VAR_NAMED((!is_pet(m_ptr) || p_ptr->pet_open_doors), "allow_open"),
+			 LUA_RETURN(do_move), LUA_RETURN(did_open_door),
+			 LUA_RETURN(do_turn), LUA_RETURN(did_bash_door));
 		
-		if (flags & (MEG_OPEN)) did_open_door = TRUE;
-		if (flags & (MEG_BASH)) did_bash_door = TRUE;
-		if (flags & (MEG_DO_TURN)) do_turn = TRUE;
+		/* Open / bash doors */
+		if (did_open_door)
+		{
+			cave_set_feat(nx, ny, FEAT_OPEN);
+		}
+		else if (did_bash_door)
+		{
+			if (one_in_(2))
+			{
+				cave_set_feat(nx, ny, FEAT_BROKEN);
+			}
+
+			/* Open the door */
+			else
+			{
+				cave_set_feat(nx, ny, FEAT_OPEN);
+			}
+		}
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
