@@ -5,7 +5,7 @@ dnl the source distribution is installed correctly.
 AC_INIT(src/main.c)
 
 dnl write the resulting #defines into a header file
-AM_CONFIG_HEADER(src/autoconf.h)
+AC_CONFIG_HEADERS(src/autoconf.h)
 
 AC_ARG_WITH(setgid,
 [  --with-setgid=NAME      setgid usage: install angband as group NAME],
@@ -56,11 +56,11 @@ sys/time.h termio.h unistd.h)
 
 dnl Checks for libraries.
 
-AC_CYGWIN
-AC_MINGW32
-AC_EXEEXT
-
-AM_CONDITIONAL(CYGWIN, test "$CYGWIN" = "yes")
+AC_CANONICAL_HOST
+case $host_os in
+  *cygwin* ) CYGWIN=yes;;
+         * ) CYGWIN=no;;
+esac
 
 if test "$CYGWIN" = "yes"; then
   AC_DEFINE(WINDOWS, 1, [WIN32 port])
