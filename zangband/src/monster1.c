@@ -1831,25 +1831,30 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 /*
  * Check if two monsters are enemies
  */
-bool are_enemies(monster_type *m_ptr1, monster_type *m_ptr2)
+bool are_enemies(monster_type *m_ptr, monster_type *n_ptr)
 {
-	monster_race *r_ptr1 = &r_info[m_ptr1->r_idx];
-	monster_race *r_ptr2 = &r_info[m_ptr2->r_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *s_ptr = &r_info[n_ptr->r_idx];
 
-	/* Pet vs. normal */
-	if ((is_pet(m_ptr1) && !is_friendly(m_ptr2)) ||
-	    (is_pet(m_ptr2) && !is_friendly(m_ptr1)))
+	/* Friendly vs. opposite aligned normal or pet */
+	if (((r_ptr->flags3 & RF3_EVIL) &&
+		  (s_ptr->flags3 & RF3_GOOD)) ||
+		 ((r_ptr->flags3 & RF3_GOOD) &&
+		  (s_ptr->flags3 & RF3_EVIL)))
 	{
 		return TRUE;
 	}
 
-	/* Friendly vs. opposite aligned normal or pet */
-	if (((r_ptr1->flags3 & RF3_EVIL) &&
-	     (r_ptr2->flags3 & RF3_GOOD)) ||
-	    ((r_ptr1->flags3 & RF3_GOOD) &&
-	     (r_ptr2->flags3 & RF3_EVIL)))
+	/* Pet vs. non-pet */
+	if (is_pet(m_ptr) != is_pet(n_ptr))
 	{
-			return TRUE;
+		return TRUE;
+	}
+
+	/* Friendly vs. non-friendly */
+	if (is_friendly(m_ptr) != is_friendly(n_ptr))
+	{
+		return TRUE;
 	}
 
 	/* Default */
