@@ -333,7 +333,7 @@ static t_field struct_player_type[] =
 { FIELD_DESC(csp_frac, player_type), FLD_INT16U, EDIT_NO},
 
 { FIELD_DESC(max_plv, player_type), FLD_INT16, EDIT_NO},
-{ FIELD_DESC(max_dlv, player_type), FLD_INT16, EDIT_NO},
+{ FIELD_DESC(max_depth, player_type), FLD_INT16, EDIT_NO},
 
 { FIELD_DESC(stat_max, player_type), FLD_CALLBACK, EDIT_CALLBACK, FIELD_SIZE(stat_max, player_type), 0, struct_get_player_type_stat},
 { FIELD_DESC(stat_cur, player_type), FLD_CALLBACK, EDIT_CALLBACK, FIELD_SIZE(stat_cur, player_type), 0, struct_get_player_type_stat},

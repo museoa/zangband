@@ -306,14 +306,14 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 		case IDX_DAY: /* day */
 		{
-			Tcl_SetStringObj(resultPtr, (!dun_level && g_daytime) ?
+			Tcl_SetStringObj(resultPtr, (!p_ptr->depth && g_daytime) ?
 				"day" : "night", -1);
 			break;
 		}
 	
 		case IDX_WILD_NAME: /* wild_name */
 			if (!character_dungeon) goto not_exists;
-			if (!dun_level)
+			if (!p_ptr->depth)
 			{
 				if (p_ptr->town_num)
 				{

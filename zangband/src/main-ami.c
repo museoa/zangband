@@ -4131,7 +4131,7 @@ static void amiga_map( void )
 
 #ifdef ZANGBAND
 	/* In the dungeon */
-	if (dun_level)
+	if (p_ptr->depth)
 	{
 		/* Calculate offset values */
 		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * max_wid )) / 2;

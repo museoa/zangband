@@ -197,7 +197,7 @@ void map_symbol_set(int y, int x)
 /* ExWidget.symbolProc() */
 int map_symbol_proc(Widget *widgetPtr, int y, int x)
 {
-	int night = (dun_level || !g_daytime);
+	int night = (p_ptr->depth || !g_daytime);
 	int symbol = -1;
 
 	if (in_bounds2(y, x))

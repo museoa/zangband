@@ -1823,7 +1823,7 @@ static void bldg_process_command(building_type * bldg, int i)
 			if (amt > 0)
 			{
 				p_ptr->word_recall = 1;
-				p_ptr->max_dlv = amt;
+				p_ptr->max_depth = amt;
 				msg_print("The air about you becomes charged...");
 				paid = TRUE;
 				p_ptr->redraw |= (PR_STATUS);

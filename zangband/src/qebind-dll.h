@@ -28,7 +28,7 @@ int debug_bindings;
 
 int QE_BindInit(Tcl_Interp *interp);
 extern QE_BindingTable QE_CreateBindingTable(Tcl_Interp *interp);
-void QE_InstallEvent(char *name, int type, QE_ExpandProc expand);
+void QE_InstallEvent(cptr name, int type, QE_ExpandProc expand);
 void QE_InstallDetail(char *name, int eventType, int code);
 extern void QE_FindDetail(int eventType, int code);
 extern int QE_CreateBinding(QE_BindingTable bindingTable,
@@ -42,7 +42,7 @@ extern int QE_GetAllBindings(QE_BindingTable bindingTable,
 int QE_BindEvent(QE_BindingTable bindingTable, QE_Event *eventPtr);
 void QE_ExpandDouble(double number, Tcl_DString *result);
 void QE_ExpandNumber(long number, Tcl_DString *result);
-void QE_ExpandString(char *string, Tcl_DString *result);
+void QE_ExpandString(cptr string, Tcl_DString *result);
 void QE_ExpandUnknown(char which, Tcl_DString *result);
 extern int QE_BindCmd(ClientData clientData, Tcl_Interp *interp, int argc,
 	char **argv);

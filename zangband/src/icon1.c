@@ -289,7 +289,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	int dark = gridPtr->dark;
 
 	/* Determine if there is daylight in the town */
-	int daytime = !dun_level && g_daytime;
+	int daytime = !p_ptr->depth && g_daytime;
 
 	int layer;
 

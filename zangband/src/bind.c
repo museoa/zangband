@@ -80,7 +80,7 @@ cptr keyword_track[] = {"health", "race", "object", "inventory", "equipment",
 	"grid", "message", NULL};
 
 typedef struct EventInfo {
-	char *name; /* Name of event (ex "Stat", "Position") */
+	cptr name; /* Name of event (ex "Stat", "Position") */
 	int type; /* Event type (ex Stat, Position) */
 	QE_ExpandProc expand; /* Callback to expand % in scripts */
 	cptr *detail; /* Array of detail names, or NULL */
@@ -105,13 +105,13 @@ static EventInfo eventArray[] = {
 	{"Setting", EVENT_SETTING, ExpandSetting, NULL},
 	{"Dungeon", EVENT_DUNGEON, ExpandDungeon, keyword_dungeon},
 	{"Keymap", EVENT_KEYMAP, ExpandKeymap, NULL},
-	{NULL, 0}
+	{NULL, 0, NULL, NULL}
 };
 
 /*
  * Wrapper around QE_ExpandString().
  */
-void ExtToUtf_ExpandString(char *extString, Tcl_DString *result)
+static void ExtToUtf_ExpandString(char *extString, Tcl_DString *result)
 {
 	char *utfString;
 	Tcl_DString utfDString;
@@ -160,7 +160,7 @@ static void ExpandChoose(char which, ClientData object, QE_Event *eventPtr,
 		case 'o': /* other */
 			if (eventPtr->detail == KEYWORD_CHOOSE_ITEM + 1)
 			{
-				static char *s[] = {"inventory", "equipment", "floor", NULL};
+				static cptr s[] = {"inventory", "equipment", "floor", NULL};
 				QE_ExpandString(s[clientData->other], result);
 			}
 			else
@@ -210,7 +210,7 @@ static void ExpandDungeon(char which, ClientData object, QE_Event *eventPtr,
 	switch (which)
 	{
 		case 'c': /* depth */
-			QE_ExpandNumber(dun_level, result);
+			QE_ExpandNumber(p_ptr->depth, result);
 			break;
 		
 		default:
@@ -251,6 +251,9 @@ static void ExpandGeneric(char which, ClientData object, QE_Event *eventPtr,
 static void ExpandKeymap(char which, ClientData object, QE_Event *eventPtr,
 	Tcl_DString *result)
 {
+	/* Hack - ignore parameter */
+	(void) object;
+
 	switch (which)
 	{
 		case 'c': /* ch */
@@ -358,11 +361,11 @@ static void ExpandPy(char which, ClientData object, QE_Event *eventPtr,
 			switch (which)
 			{
 				case 'c': /* current */
-					QE_ExpandNumber(dun_level, result);
+					QE_ExpandNumber(p_ptr->depth, result);
 					return;
 		
 				case 'm': /* max_depth */
-					QE_ExpandNumber(p_ptr->max_dlv, result);
+					QE_ExpandNumber(p_ptr->max_depth, result);
 					return;
 			}
 			break;
@@ -400,7 +403,7 @@ static void ExpandPy(char which, ClientData object, QE_Event *eventPtr,
 					return;
 
 				case 'm': /* max_lev */
-					QE_ExpandNumber(p_ptr->max_dlv, result);
+					QE_ExpandNumber(p_ptr->max_depth, result);
 					return;
 			}
 			break;
@@ -510,13 +513,13 @@ static void ExpandTarget(char which, ClientData object, QE_Event *eventPtr,
 	switch (which)
 	{
 		case 'w': /* who */
-			QE_ExpandNumber(target_who, result);
+			QE_ExpandNumber(p_ptr->target_who, result);
 			break;
 
 		case 'r': /* r_idx */
-			if (target_who > 0)
+			if (p_ptr->target_who > 0)
 			{
-				monster_type *m_ptr = &m_list[target_who];
+				monster_type *m_ptr = &m_list[p_ptr->target_who];
 				QE_ExpandNumber(m_ptr->r_idx, result);
 			}
 			else
@@ -526,11 +529,11 @@ static void ExpandTarget(char which, ClientData object, QE_Event *eventPtr,
 			break;
 
 		case 'y': /* y */
-			QE_ExpandNumber(target_row, result);
+			QE_ExpandNumber(p_ptr->target_row, result);
 			break;
 
 		case 'x': /* x */
-			QE_ExpandNumber(target_col, result);
+			QE_ExpandNumber(p_ptr->target_col, result);
 			break;
 
 		case 'v': /* visibility */

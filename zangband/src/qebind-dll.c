@@ -151,7 +151,7 @@ int QE_BindInit(Tcl_Interp *interp)
 	return TCL_OK;
 }
 
-void QE_InstallEvent(char *name, int type, QE_ExpandProc expand)
+void QE_InstallEvent(cptr name, int type, QE_ExpandProc expand)
 {
 	Tcl_HashEntry *hPtr;
 	EventInfo *valuePtr;
@@ -746,7 +746,7 @@ void QE_ExpandNumber(long number, Tcl_DString *result)
 	QE_ExpandString(numStorage, result);
 }
 
-void QE_ExpandString(char *string, Tcl_DString *result)
+void QE_ExpandString(cptr string, Tcl_DString *result)
 {
 	int length, spaceNeeded, cvtFlags;
 

@@ -1249,7 +1249,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 	    case IDX_DEPTH: /* depth */
-			Tcl_SetIntObj(resultPtr, dun_level);
+			Tcl_SetIntObj(resultPtr, p_ptr->depth);
 			break; 
 
 		case IDX_DIED_FROM: /* died_from */
@@ -1316,7 +1316,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 	    case IDX_MAX_DEPTH: /* max_depth */
-			Tcl_SetIntObj(resultPtr, p_ptr->max_dlv);
+			Tcl_SetIntObj(resultPtr, p_ptr->max_depth);
 			break; 
 
  		case IDX_NAME: /* name */
