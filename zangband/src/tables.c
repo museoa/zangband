@@ -6308,7 +6308,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  1, "easy_open",				"Automatically open doors" },
 	{TRUE,  1, "easy_disarm",			"Automatically disarm traps" },
 	{FALSE, 1, "easy_floor",			"Display floor stacks in a list" },
-	{FALSE, 1, "use_command",			"Allow unified use command" },
+	{TRUE,  0, NULL,					"Number 169" },
 	{FALSE, 5, "center_player",			"Always center on the player (*slow*)" },
 	{FALSE, 5, "avoid_center",			"Avoid centering while running" },
 	{TRUE,  0, NULL,					"Number 172" },

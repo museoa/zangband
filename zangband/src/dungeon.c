@@ -2346,14 +2346,7 @@ static void process_command(void)
 		case 'z':
 		{
 			/* Zap a rod */
-			if (use_command && rogue_like_commands)
-			{
-				do_cmd_use();
-			}
-			else
-			{
-				do_cmd_zap_rod();
-			}
+			do_cmd_zap_rod();
 			break;
 		}
 
@@ -2374,14 +2367,7 @@ static void process_command(void)
 		case 'u':
 		{
 			/* Use a staff */
-			if (use_command && !rogue_like_commands)
-			{
-				do_cmd_use();
-			}
-			else
-			{
-				do_cmd_use_staff();
-			}
+			do_cmd_use_staff();
 			break;
 		}
 

@@ -3743,7 +3743,7 @@
 #define easy_open				p_ptr->options[150]
 #define easy_disarm				p_ptr->options[151]
 #define easy_floor				p_ptr->options[152]
-#define use_command				p_ptr->options[153]
+/* {TRUE,  0, NULL,					"Number 169" }, p_ptr->options[153] */
 #define center_player			p_ptr->options[154]
 #define avoid_center			p_ptr->options[155]
 /* {TRUE,  0, NULL,					"Number 172" }, p_ptr->options[156] */
