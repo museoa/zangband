@@ -591,8 +591,8 @@ static void init_towns(void)
 	while (town_count < max_towns)
 	{
 		/* Get random position */
-		x = randint1(max_wild);
-		y = randint1(max_wild);
+		x = randint0(max_wild);
+		y = randint0(max_wild);
 
 		/* See if space is free */
 		if (!town_blank(x, y, TOWN_WID / 16 + 1, TOWN_HGT / 16 + 1)) continue;
