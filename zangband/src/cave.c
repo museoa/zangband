@@ -2138,7 +2138,7 @@ void do_cmd_view_map(void)
 		display_map(&cy, &cx);
 
 		/* Wait for it */
-		put_str("Hit any key to continue", 23, 35);
+		put_str("Hit any key to continue", map_hgt + 1, 35);
 
 		/* Hilite the player */
 		move_cursor(cy, cx);
