@@ -1889,15 +1889,6 @@ errr init_w_info(void)
 	C_MAKE(wild_gen_data, max_w_block, wild_gen_data_type);
 	C_MAKE(wild_temp_dist, max_wild_size, byte);
 	
-	/*
-	 * Hack XXX XXXX
-	 * Make wild_gen_data start at one rather than zero.
-	 * This is done to make the type==0 case a flag to indicate
-	 * an "unused" node.  (Needed because the whole of the
-	 * parameter space is empty on the decision trees creation.
-	 */
-	 wild_gen_data--;
-	
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */

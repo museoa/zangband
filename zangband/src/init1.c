@@ -2506,7 +2506,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 			
 			/* Check to see if there is room in array */
-			if (i >= max_w_block) return (7);
+			if (i > max_w_block - 1) return (7);
 			
 			/* Save the index */
 			error_idx = i;
