@@ -1933,7 +1933,7 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	}
 
 	/* Free the strings */
-	C_KILL(strings, num, cptr);
+	C_KILL((void*)strings, num, char*);
 
 	/* Return the value from the list */
 	return (choice);
