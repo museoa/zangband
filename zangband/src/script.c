@@ -522,13 +522,16 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 	else
 		return;
 	
+	debug_lua_stack();
+	
 	/* Save parameter so recursion works. */
 	lua_getglobal (L, "object");
 	if (tolua_istype(L, -1, tolua_tag(L, "object_type"), 0))
 	{
 		q_ptr = tolua_getuserdata(L, -1, NULL);
 	}
-	
+	lua_pop(L,1);
+
 	/* Set parameters (really global) */
 	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
 	lua_setglobal(L, "object");
@@ -540,11 +543,11 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 
 	/* End the Varargs Stuff */
 	va_end(vp);
-
+	
 	/* Restore global so recursion works*/
 	tolua_pushusertype(L, q_ptr, tolua_tag(L,"object_type"));
 	lua_setglobal(L, "object");
-		
+	
 	/* Paranoia */
 	if (!success)
 	{
@@ -834,4 +837,16 @@ bool script_do_file(cptr filename)
 bool player_res(u32b flag)
 {
 	return ((p_ptr->flags[1] & flag) ? TRUE : FALSE);
+}
+
+/*
+ * Debug lua stack overflow
+ */
+#include "lua/lstate.h"
+void debug_lua_stack(void)
+{
+	/* Need interpreter */
+	if (!L) return;
+	
+	msgf("Current stack depth: %d", L->stack_last - L->top);
 }

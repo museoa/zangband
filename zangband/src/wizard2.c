@@ -1651,6 +1651,13 @@ void do_cmd_debug(void)
 			self_knowledge();
 			break;
 		}
+		
+		case 'K':
+		{
+			/* Debug lua stack depth */
+			debug_lua_stack();
+			break;
+		}
 
 		case 'l':
 		{
