@@ -1340,8 +1340,8 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
 	}
 
-	put_fstr(0, 1, "%s %s, offer :  %ld",
-				  (buy) ? "Buying" : "Selling", o_name, (long)price);
+	put_fstr(0, 1, "%s %s", (buy) ? "Buying" : "Selling", o_name);
+	put_fstr(0, 2, "Offer :  %ld", (long)price);
 
 	/* Ask the user for a response */
 	if (!get_check("Do you want to %s it? ", (buy) ? "buy" : "sell")) return (FALSE);
@@ -2465,8 +2465,8 @@ void do_cmd_store(const field_type *f1_ptr)
 	/* Interact with player */
 	while (!leave_store)
 	{
-		/* Hack -- Clear line 1 */
-		clear_row(1);
+		/* Hack -- Clear lines 1 and 2 */
+		clear_region(0, 1, 2);
 
 		/* Hack -- Check the charisma */
 		tmp_chr = p_ptr->stat_use[A_CHR];
