@@ -995,7 +995,7 @@ extern void do_poly_self(void);
 
 /* xtra2.c */
 extern void check_experience(void);
-extern void monster_death(int m_idx);
+extern bool monster_death(int m_idx);
 extern bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note);
 extern void panel_center(void);
 extern bool change_panel(int dy, int dx);
