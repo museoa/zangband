@@ -984,8 +984,11 @@ void do_cmd_options(void)
 		/* Cheating */
 		prt("(C) Cheating Options", 16, 5);
 
+		/* Dump Options */
+		prt("(|) Dump Options to a Pref File", 18, 5);
+
 		/* Prompt */
-		prt("Command: ", 18, 0);
+		prt("Command: ", 20, 0);
 
 		/* Get command */
 		k = inkey();
@@ -1054,6 +1057,7 @@ void do_cmd_options(void)
 			}
 
 			/* Cheating Options */
+			case 'c':
 			case 'C':
 			{
 				/* Spawn */
