@@ -103,14 +103,24 @@ else
   AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW, 1, [XAW port]) LIBS="$LIBS -lXaw"])
   
   dnl Check for the gtk widget set
-  AC_CHECK_PROG(GTK, gtk-config, "true", "false")
+  AC_CHECK_PROG(GTK_OLD, pkg-config, "true", "false")
   
-  if test "$GTK" != "false"; then
-     CFLAGS="$CFLAGS `gtk-config --cflags`"
-     LIBS="$LIBS `gtk-config --libs`"
+  if test "$GTK_NEW" != "false"; then
+     CFLAGS="$CFLAGS `pkg-config --cflags gtk+`"
+     LIBS="$LIBS `pkg-config --libs gtk+`"
 	 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gtk/gtk.h"]], [[GtkWidget x;]])],[
 	   AC_DEFINE(USE_GTK, 1, [Gtk port])
      ],[])
+  else
+     AC_CHECK_PROG(GTK_OLD, gtk-config, "true", "false")
+  
+     if test "$GTK_OLD" != "false"; then
+        CFLAGS="$CFLAGS `gtk-config --cflags`"
+        LIBS="$LIBS `gtk-config --libs`"
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gtk/gtk.h"]], [[GtkWidget x;]])],[
+   	   AC_DEFINE(USE_GTK, 1, [Gtk port])
+     ],[])
+	 fi
   fi
   
   if test "$with_tcltk" != no; then
