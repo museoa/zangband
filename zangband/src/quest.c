@@ -259,6 +259,12 @@ void get_player_quests(void)
 	
 	/* Reset number of quests */
 	q_max = 1;
+	
+	/* Clear all the quests */
+	for (i = 0; i < z_info->q_max; i++)
+	{
+		quest_wipe(i);
+	}
 
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
