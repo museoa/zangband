@@ -1670,12 +1670,12 @@ static bool get_player_sex(void)
 	int k, n;
 	
 	/* Extra info */
-	Term_putstr(2, QUESTION_ROW, -1, TERM_WHITE,
+	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
 		"Your 'sex' does not have any significant gameplay effects.");
 
 	sprintf(buf, "Choose a sex (%c-%c), * for random, or = for options: ",
 		        I2A(0), I2A(MAX_SEXES-1));
-	put_str(buf, QUESTION_ROW + 1, 2);
+	put_str(buf, QUESTION_ROW + 1, 5);
 
 	/* Prompt for "Sex" */
 	for (n = 0; n < MAX_SEXES; n++)
@@ -1997,10 +1997,12 @@ static bool get_player_race(void)
 	cptr races[MAX_RACES];
 
 	/* Extra info */
-	Term_putstr(2, QUESTION_ROW, -1, TERM_WHITE,
+	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
 		"Your 'race' determines various intrinsic factors and bonuses.");
-	Term_putstr(2, QUESTION_ROW + 1, -1, TERM_WHITE,
-		"             (Q, S, Esc, *, ?, =, Enter, Dir)");
+	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
+		"Use movement keys to scroll the menu.  Part of it is off-screen.");
+	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
+		"Use enter to select.  Other commands: (Q, S, Esc, *, ?, =)");
 
 	/* Tablulate races */
 	for (i = 0; i < MAX_RACES; i++)
@@ -2047,9 +2049,9 @@ static bool get_player_class(void)
 	
 
 	/* Extra info */
-	Term_putstr(2, QUESTION_ROW, -1, TERM_WHITE,
+	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
 		"Your 'class' determines various intrinsic abilities and bonuses.");
-	Term_putstr(2, QUESTION_ROW + 1, -1, TERM_WHITE,
+	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
 	    "Any entries in parentheses should only be used by advanced players.");
 
 	/* Tablulate races */
