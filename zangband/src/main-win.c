@@ -2871,12 +2871,6 @@ static void init_windows(void)
 	 * Reset map size if required
 	 */
 
-	/* Mega-Hack -- no panel yet */
-	panel_row_min = 0;
-	panel_row_max = 0;
-	panel_col_min = 0;
-	panel_col_max = 0;
-
 	/* Reset the panels */
 	map_panel_size();
 
