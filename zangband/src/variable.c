@@ -937,6 +937,7 @@ bool use_command;
 bool center_player;
 bool avoid_center;
 
+bool pillar_tunnels;
 
 
 /*

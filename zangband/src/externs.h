@@ -254,6 +254,7 @@ extern bool equippy_chars;
 extern bool use_command;
 extern bool center_player;
 extern bool avoid_center;
+extern bool pillar_tunnels;
 extern byte hitpoint_warn;
 extern byte delay_factor;
 extern s16b autosave_freq;

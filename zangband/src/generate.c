@@ -449,8 +449,8 @@ static bool cave_gen(void)
 		}
 	}
 
-	if ((dun_level>DUN_CAVERN)&& (!(empty_level))
-			&& (laketype == 0)&& (!(destroyed))&&(randint(200)<dun_level))
+	if ((dun_level>DUN_CAVERN) && (!(empty_level))
+			&& (laketype == 0) && (!(destroyed))&&(randint(200)<dun_level))
 	{
 		cavern=TRUE;
 
@@ -696,7 +696,7 @@ static bool cave_gen(void)
 		dun->wall_n = 0;
 
 		/* Connect the room to the previous room */
-		if((randint(20)>dun_level)&&(randint(100)<25))
+		if (pillar_tunnels && (randint(20)>dun_level)&&(randint(100)<25))
 		{
 			/* make catacomb-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3,30);
@@ -709,7 +709,7 @@ static bool cave_gen(void)
 		else
 		{
 			/* make normal tunnel */
-		build_tunnel(dun->cent[i].y, dun->cent[i].x, y, x);
+			build_tunnel(dun->cent[i].y, dun->cent[i].x, y, x);
 		}
 
 		/* Turn the tunnel into corridor */

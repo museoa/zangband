@@ -6208,6 +6208,9 @@ option_type option_info[] =
 	{ &avoid_center,                FALSE,  5, 5, 12,
 	"avoid_center",                 "Avoid centering while running" },
 
+	{ &pillar_tunnels,				  FALSE,  5, 5, 13,
+	"pillar_tunnels",					  "Allow pillared tunnels in the dungeon" },
+
 	{ &vanilla_town,                FALSE, 6,6,0,
 	"vanilla_town",                 "Use 'vanilla' town without quests and wilderness" },
 
