@@ -1839,7 +1839,7 @@ void do_cmd_alter(void)
 			py_attack(y, x);
 		}
 
-		if (field_hook_find(&c_ptr->fld_idx,
+		else if (field_hook_find(&c_ptr->fld_idx,
 			 FIELD_ACT_INTERACT_TEST, (void *) &action))
 		{
 			switch (action)
