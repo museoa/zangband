@@ -1430,7 +1430,7 @@ static void store_height(int x, int y, int val)
  *    small values are good for smooth walls.
  *  size=length of the side of the square cave system.
  */
-void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug, int cutoff)
+void generate_hmap(int x0, int y0, int xsiz, int ysiz, int grd, int roug, int cutoff)
 {
 	int xhsize, yhsize, xsize, ysize, maxsize;
 
@@ -1629,7 +1629,7 @@ void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug, int cu
 }
 
 
-static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3,
+static bool hack_isnt_wall(int x, int y, int c1, int c2, int c3,
 	 int feat1, int feat2, int feat3)
 {
 	cave_type *c_ptr = &cave[y][x];
@@ -1698,7 +1698,7 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3,
  * This routine is similar to the method used to update the monster flow
  * information.  It uses the temp grids as a circular queue.
  */
-static void cave_fill(int y, int x)
+static void cave_fill(int x, int y)
 {
 	int i, j, d;
 	int ty, tx;
@@ -1741,7 +1741,7 @@ static void cave_fill(int y, int x)
 				&& (j > fill_data.ymin) && (j < fill_data.ymax))
 			{
 				/* If not a wall or floor done before */
-				if (hack_isnt_wall(j, i,
+				if (hack_isnt_wall(i, j,
 					fill_data.c1, fill_data.c2, fill_data.c3,
 					fill_data.feat1, fill_data.feat2, fill_data.feat3))
 		 		{
@@ -1775,7 +1775,7 @@ static void cave_fill(int y, int x)
 }
 
 
-bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff,
+bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
 	 bool light)
 {
 	int x, y, i, xhsize, yhsize;
@@ -1806,7 +1806,7 @@ bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff,
 	/* number of filled squares */
 	fill_data.amount = 0;
 
-	cave_fill(y0, x0);
+	cave_fill(x0, y0);
 
 	/* if tally too small, try again */
 	if (fill_data.amount < 10)
@@ -1940,7 +1940,7 @@ bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff,
 }
 
 
-bool generate_lake(int y0, int x0, int xsize, int ysize,
+bool generate_lake(int x0, int y0, int xsize, int ysize,
 	 int c1, int c2, int c3, int type)
 {
 	int x, y, xhsize, yhsize;
@@ -2080,7 +2080,7 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 	/* select region connected to center of cave system
 	* this gets rid of alot of isolated one-sqaures that
 	* can make teleport traps instadeaths... */
-	cave_fill(y0, x0);
+	cave_fill(x0, y0);
 
 	/* if tally too small, try again */
 	if (fill_data.amount < 3)

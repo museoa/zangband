@@ -465,10 +465,10 @@ void build_cavern(void)
 		cutoff = xsize / 2;
 
 		 /* make it */
-		generate_hmap(y0 + 1, x0 + 1, xsize, ysize, grd, roug, cutoff);
+		generate_hmap(x0 + 1, y0 + 1, xsize, ysize, grd, roug, cutoff);
 
 		/* Convert to normal format+ clean up */
-		done = generate_lake(y0 + 1, x0 + 1, xsize, ysize,
+		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize,
 			 cutoff, cutoff, cutoff, LAKE_CAVERN);
 	}
 }
@@ -518,9 +518,9 @@ void build_lake(int type)
 		c2 = (c1 + c3) / 2;
 
 		/* make it */
-		generate_hmap(y0 + 1, x0 + 1, xsize, ysize, grd, roug, c3);
+		generate_hmap(x0 + 1, y0 + 1, xsize, ysize, grd, roug, c3);
 
 		/* Convert to normal format+ clean up */
-		done = generate_lake(y0 + 1, x0 + 1, xsize, ysize, c1, c2, c3, type);
+		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize, c1, c2, c3, type);
 	}
 }

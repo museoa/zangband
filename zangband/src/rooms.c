@@ -2221,10 +2221,10 @@ static void build_type9(int by0, int bx0)
 		         randint1(xsize / 4) + randint1(ysize / 4);
 
 		/* make it */
-		generate_hmap(y0, x0, xsize, ysize, grd, roug, cutoff);
+		generate_hmap(x0, y0, xsize, ysize, grd, roug, cutoff);
 
 		/* Convert to normal format + clean up */
-		done = generate_fracave(y0, x0, xsize, ysize, cutoff, light);
+		done = generate_fracave(x0, y0, xsize, ysize, cutoff, light);
 	}
 }
 
@@ -2677,10 +2677,10 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 		         randint1(xsize / 4) + randint1(ysize / 4);
 
 		/* make it */
-		generate_hmap(y0, x0, xsize, ysize, grd, roug, cutoff);
+		generate_hmap(x0, y0, xsize, ysize, grd, roug, cutoff);
 
 		/* Convert to normal format+ clean up */
-		done = generate_fracave(y0, x0, xsize, ysize, cutoff, FALSE);
+		done = generate_fracave(x0, y0, xsize, ysize, cutoff, FALSE);
 	}
 
 	/* Set vault flags */
@@ -3411,10 +3411,10 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 		c2 = (c1 + c3) / 2;
 
 		/* make it */
-		generate_hmap(y0, x0, xsize, ysize, grd, roug, c3);
+		generate_hmap(x0, y0, xsize, ysize, grd, roug, c3);
 
 		/* Convert to normal format + clean up */
-		done = generate_lake(y0, x0, xsize, ysize, c1, c2, c3, type);
+		done = generate_lake(x0, y0, xsize, ysize, c1, c2, c3, type);
 	}
 
 	/* Set icky flag because is a vault */
@@ -3775,10 +3775,10 @@ static void build_type13(int by0, int bx0)
 		c2 = (c1 + c3) / 2;
 
 		/* make it */
-		generate_hmap(y0, x0, xsize, ysize, grd, roug, c3);
+		generate_hmap(x0, y0, xsize, ysize, grd, roug, c3);
 
 		/* Convert to normal format + clean up */
-		done = generate_lake(y0, x0, xsize, ysize, c1, c2, c3, type);
+		done = generate_lake(x0, y0, xsize, ysize, c1, c2, c3, type);
 	}
 		 
 	/* Make inner passage */
