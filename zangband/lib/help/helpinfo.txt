@@ -1,7 +1,8 @@
 === Online Help Commands===
 
 Esc    : Leave the online help system.
-?      : Return to the previous help file or menu.
+?      : Get help for the online help (this file).
+<      : Return to the previous help file or menu.
 Space  : Advance one page (wraps to the start at the end of the file).
 Return : Advance one line (wraps to the start at the end of the file).
 (-)    : Back-up half a page.
@@ -9,11 +10,12 @@ Return : Advance one line (wraps to the start at the end of the file).
 (%)    : Jump to a specific file (defaults to "help.hlp").
 (=)    : Hilite lines containing a string (case sensitive).
 (/)    : Search for a string (use Slash + Return to continue a search).
-[0..9] : Press the indicated number to activate a link.
+(|)    : Save the current document to a file.
+[0..9] [a..z] [A..Z] : Press the indicated number to activate a link.
 
 Hint: Use Pound + Zero + Return + Slash + Return to restart a search.
 
 --
 Original   : (??)
 Updated    : Zangband DevTeam
-Last update: November 16, 1999
+Last update: November 22, 1999
