@@ -1609,6 +1609,7 @@ bool borg_flow_shop_entry(int i)
  * spot next to a monster.  It fails if the new position is next to a monster.
  * The method to find out if there is a monster is taken from borg_temp_fill.
  */
+static
 bool borg_aim_ball(int x, int y)
 {
 	int i, dx, dy;
