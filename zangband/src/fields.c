@@ -923,12 +923,14 @@ bool field_detect_type(s16b fld_idx, byte typ)
 		f_ptr = &fld_list[fld_idx];
 
 		/* Is it the correct type + invisible? */
-		if ((t_info[f_ptr->t_idx].type == typ)
-			 && (!(f_ptr->info & FIELD_INFO_VIS)))
+		if (t_info[f_ptr->t_idx].type == typ)
 		{
-			/* Now is visible + known */
-			f_ptr->info |= (FIELD_INFO_VIS | FIELD_INFO_MARK);
-			
+			if(!(f_ptr->info & FIELD_INFO_VIS))
+			{
+				/* Now is visible + known */
+				f_ptr->info |= (FIELD_INFO_VIS | FIELD_INFO_MARK);
+			}
+
 			/* We found something */
 			flag = TRUE;
 		}
