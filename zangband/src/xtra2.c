@@ -216,6 +216,7 @@ bool monster_death(int m_idx, bool explode)
 	int force_coin = get_coin_type(r_ptr);
 
 	object_type *q_ptr;
+	field_type *f_ptr;
 
 	int level;
 
@@ -463,21 +464,23 @@ bool monster_death(int m_idx, bool explode)
 			if (corpse)
 			{
 				/* Make a corpse */
-				if (place_field(x, y, FT_CORPSE))
+				f_ptr = place_field(x, y, FT_CORPSE);
+				
+				if (f_ptr)
 				{
 					/* Initialise it */
-					(void)field_hook_single(&fld_list[*hack_fld_ptr],
-											FIELD_ACT_INIT, m_ptr);
+					(void)field_hook_single(f_ptr, FIELD_ACT_INIT, m_ptr);
 				}
 			}
 			else
 			{
 				/* Make a skeleton */
-				if (place_field(x, y, FT_SKELETON))
+				f_ptr = place_field(x, y, FT_SKELETON);
+				
+				if (f_ptr)
 				{
 					/* Initialise it */
-					(void)field_hook_single(&fld_list[*hack_fld_ptr],
-											FIELD_ACT_INIT, m_ptr);
+					(void)field_hook_single(f_ptr, FIELD_ACT_INIT, m_ptr);
 				}
 			}
 

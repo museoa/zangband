@@ -729,9 +729,6 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 			*fld_idx2 = new_idx;
 		}
 
-		/* Hack - save the location */
-		hack_fld_ptr = fld_idx2;
-
 		return (new_idx);
 	}
 }
@@ -999,7 +996,7 @@ u16b fields_have_flags(s16b fld_idx, u16b info)
 /*
  * Place a field of a given type on a square
  */
-s16b place_field(int x, int y, s16b t_idx)
+field_type *place_field(int x, int y, s16b t_idx)
 {
 	field_type *f_ptr;
 
@@ -1011,7 +1008,7 @@ s16b place_field(int x, int y, s16b t_idx)
 	field_type *ft_ptr = &temp_field;
 
 	/* Paranoia */
-	if ((t_idx <= 0) || (t_idx >= z_info->t_max)) return (0);
+	if ((t_idx <= 0) || (t_idx >= z_info->t_max)) return (NULL);
 
 	/* Make the field */
 	field_prep(ft_ptr, t_idx);
@@ -1023,7 +1020,7 @@ s16b place_field(int x, int y, s16b t_idx)
 	fld_idx = field_add(ft_ptr, fld_ptr);
 
 	/* Paranoia */
-	if (!fld_idx) return (0);
+	if (!fld_idx) return (NULL);
 
 	/* Get new field */
 	f_ptr = &fld_list[fld_idx];
@@ -1035,7 +1032,7 @@ s16b place_field(int x, int y, s16b t_idx)
 	/* Region */
 	f_ptr->region = cur_region;
 
-	return (fld_idx);
+	return (f_ptr);
 }
 
 
@@ -1976,6 +1973,8 @@ void place_trap(int x, int y)
 
 	field_trap_type *n_ptr = trap_num;
 
+	field_type *f_ptr;
+
 	/* Paranoia -- verify location */
 	if (!in_bounds2(x, y)) return;
 
@@ -2038,11 +2037,13 @@ void place_trap(int x, int y)
 		break;
 	}
 
+	f_ptr = place_field(x, y, t_idx);
+	
 	/* Activate the trap */
-	if (place_field(x, y, t_idx))
+	if (f_ptr)
 	{
 		/* Initialise it */
-		(void)field_hook_single(&fld_list[*hack_fld_ptr], FIELD_ACT_INIT);
+		(void)field_hook_single(f_ptr, FIELD_ACT_INIT);
 	}
 }
 
@@ -3111,8 +3112,6 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	cave_type *c_ptr = area(x, y);
 	field_type *f_ptr = field_is_type(c_ptr, FTYPE_DOOR);
 
-	s16b fld_idx = 0;
-
 	int old_power = 0;
 
 	/* Hack - Make a closed door on the square */
@@ -3149,15 +3148,15 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	if (jam)
 	{
 		/* Add a jammed door field */
-		fld_idx = place_field(x, y, FT_JAM_DOOR);
+		f_ptr = place_field(x, y, FT_JAM_DOOR);
 	}
 	else
 	{
 		/* Add a locked door field */
-		fld_idx = place_field(x, y, FT_LOCK_DOOR);
+		f_ptr = place_field(x, y, FT_LOCK_DOOR);
 	}
 
-	if (!fld_idx)
+	if (!f_ptr)
 	{
 		msgf("Cannot make door! Too many fields.");
 		return;
@@ -3170,7 +3169,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	 * Hack - note that hack_fld_ptr is a global that is overwritten
 	 * by the place_field() function.
 	 */
-	(void)field_hook_single(&fld_list[*hack_fld_ptr], FIELD_ACT_INIT, power);
+	(void)field_hook_single(f_ptr, FIELD_ACT_INIT, power);
 }
 
 /*
