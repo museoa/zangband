@@ -285,7 +285,7 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_XXX4X4 */
+			/* RF4_ROCKET */
 			case 96+3:
 			{
 				if (known)

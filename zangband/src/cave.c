@@ -983,6 +983,124 @@ static void image_random(byte *ap, char *cp)
 	}
 }
 
+/*
+ * Table of the GF type for each breath
+ */
+static int breath_gf[32] =
+{
+	GF_NONE,	/* RF4_SHRIEK */
+	GF_NONE,	/* RF4_ELDRITCH_HORROR */
+	GF_NONE,	/* RF4_XXX3X4 */
+	GF_NONE,	/* RF4_ROCKET */
+	GF_NONE,	/* RF4_ARROW_1 */
+	GF_NONE,	/* RF4_ARROW_2 */
+	GF_NONE,	/* RF4_ARROW_3 */
+	GF_NONE,	/* RF4_ARROW_4 */
+	GF_ACID,	/* RF4_BR_ACID */
+	GF_ELEC,	/* RF4_BR_ELEC */
+	GF_FIRE,	/* RF4_BR_FIRE */
+	GF_COLD,	/* RF4_BR_COLD */
+	GF_POIS,	/* RF4_BR_POIS */
+	GF_NETHER,	/* RF4_BR_NETH */
+	GF_LITE,	/* RF4_BR_LITE */
+	GF_DARK,	/* RF4_BR_DARK */
+	GF_CONFUSION,	/* RF4_BR_CONF */
+	GF_SOUND,	/* RF4_BR_SOUN */
+	GF_CHAOS,	/*RF4_BR_CHAO */
+	GF_DISENCHANT,	/* RF4_BR_DISE */
+	GF_NEXUS,	/* RF4_BR_NEXU */
+	GF_TIME,	/* RF4_BR_TIME */
+	GF_INERTIA,	/* RF4_BR_INER */
+	GF_GRAVITY,	/* RF4_BR_GRAV */
+	GF_SHARDS,	/* RF4_BR_SHAR */
+	GF_PLASMA,	/* RF4_BR_PLAS */
+	GF_FORCE,	/* RF4_BR_WALL */
+	GF_MANA,	/* RF4_BR_MANA */
+	GF_NONE,	/* RF4_BA_NUKE */
+	GF_NUKE,	/* RF4_BR_NUKE */
+	GF_NONE,	/* RF4_BA_CHAO */
+	GF_DISINTEGRATE /* RF4_BR_DISI */
+};
+
+
+/*
+ * Hack -- Get colour based on breaths of monster
+ *
+ * (This may be a little slow....
+ */
+static byte breath_attr(monster_race *r_ptr)
+{
+	/* Mask out the breath flags */
+	u32b flags = r_ptr->flags4 & RF4_BREATHS;
+	u32b mask;
+	
+	/* See if we breathe anything at all */
+	if (flags)
+	{
+		byte a;
+		char c;
+
+		cptr s;
+		
+		int i;
+		int prob = 1;
+		int choice = 0;
+		
+		/* Pick breath */
+		for (i = 8, mask = 256; i < 32; i++, mask+=mask)
+		{
+			if (flags & mask)
+			{
+				/* See if we choose this spell */
+				if (one_in_(prob)) choice = i;
+				
+				/* Decrease probability of picking next 'spell' */
+				prob++;
+			}
+		}
+
+		/* Paranoia */		
+		if (choice)
+		{
+			/* Lookup the default colors for this type */
+			s = gf_color[breath_gf[choice]];
+
+			/* Oops */
+			if (!s) return (TERM_WHITE);
+
+			/* Pick a random color */
+			c = s[randint0(strlen(s))];
+
+			/* Lookup this color */
+			a = strchr(color_char, c) - color_char;
+
+			/*
+			 * Invalid color (note check for < 0 removed, gave a silly
+			 * warning because bytes are always >= 0 -- RG)
+			 */
+			if (a > 15) return (TERM_WHITE);
+
+			/* Use this color */
+			return (a);
+		}
+	}
+	
+	/* Just do any of 7 colours */
+	switch (randint1(7))
+	{
+		case 1: return(TERM_RED);
+		case 2: return(TERM_L_RED);
+		case 3: return(TERM_WHITE);
+		case 4: return(TERM_L_GREEN);
+		case 5: return(TERM_BLUE);
+		case 6: return(TERM_L_DARK);
+		case 7: return(TERM_GREEN);
+	}
+
+	/* For the compilers... */
+	return (TERM_WHITE);
+}
+
 
 /*
  * The 16x16 tile of the terrain supports lighting
@@ -1618,29 +1736,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Multi-hued attr */
 				if (r_ptr->flags2 & RF2_ATTR_ANY)
 					a = randint1(15);
-				else switch (randint1(7))
+				else
 				{
-					case 1:
-						a = TERM_RED;
-						break;
-					case 2:
-						a = TERM_L_RED;
-						break;
-					case 3:
-						a = TERM_WHITE;
-						break;
-					case 4:
-						a = TERM_L_GREEN;
-						break;
-					case 5:
-						a = TERM_BLUE;
-						break;
-					case 6:
-						a = TERM_L_DARK;
-						break;
-					case 7:
-						a = TERM_GREEN;
-						break;
+					/* Pick colour based on breaths */
+					a = breath_attr(r_ptr);
 				}
 			}
 			/* Mimics' colors vary */

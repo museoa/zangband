@@ -2546,6 +2546,7 @@
 /*
  * Spell types used by project(), and related functions.
  */
+#define GF_NONE			0
 #define GF_ELEC         1
 #define GF_POIS         2
 #define GF_ACID         3
@@ -3419,6 +3420,17 @@
 
 #define RF6_INNATE_MASK \
 	(0L)
+
+
+/*
+ * Breath mask
+ */
+#define RF4_BREATHS \
+	(RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | \
+	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
+	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
+	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
+	 RF4_BR_NUKE | RF4_BR_DISI)
 
 /*** Option Definitions ***/
 
