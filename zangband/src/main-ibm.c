@@ -1368,8 +1368,8 @@ errr init_ibm(void)
 
 #endif /* USE_CONIO */
 
-	/* Use "white space" to erase */
-	t->attr_blank = TERM_WHITE;
+	/* Use "black space" to erase */
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 	/* Prepare the init/nuke hooks */

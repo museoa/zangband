@@ -2674,8 +2674,8 @@ static void term_data_link(term_data *td)
 	/* Use "Term_pict" for "graphic" data */
 	t->higher_pict = TRUE;
 
-	/* Erase with "white space" */
-	t->attr_blank = TERM_WHITE;
+	/* Erase with "black space" */
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 #if 0

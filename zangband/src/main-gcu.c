@@ -923,8 +923,8 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x)
 	/* Avoid bottom right corner */
 	t->icky_corner = TRUE;
 
-	/* Erase with "white space" */
-	t->attr_blank = TERM_WHITE;
+	/* Erase with "black space" */
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 	/* Set some hooks */

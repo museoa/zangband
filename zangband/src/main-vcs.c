@@ -445,7 +445,7 @@ static void term_data_link(int x0,int y0,int x1,int y1)
 	t->never_bored = TRUE;
 	t->never_frosh = TRUE;
 
-	t->attr_blank = TERM_WHITE;
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 	/* Prepare the init/nuke hooks */

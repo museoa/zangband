@@ -3143,7 +3143,7 @@ static void term_data_link(term_data *td, int k)
 	term_init(t, 80, 24, k);
 
 	/* Set flags and hooks */
-	t->attr_blank = TERM_WHITE;
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 	/* Experiment (FS mode requires them) */

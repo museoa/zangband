@@ -622,7 +622,7 @@ static void term_data_link(int i)
 	/* This may make things slightly more efficient. */
 	/* td->t->never_frosh = TRUE; */
 
-	/* Erase with "white space" XXX XXX XXX */
+	/* Erase with "white space" (use if don't have Term_wipe_xxx) XXX XXX XXX */
 	/* td->t->attr_blank = TERM_WHITE; */
 	/* td->t->char_blank = ' '; */
 

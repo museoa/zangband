@@ -2943,8 +2943,8 @@ static void term_data_link(int i)
 	/* Use a "software" cursor */
 	td->t->soft_cursor = TRUE;
 
-	/* Erase with "white space" */
-	td->t->attr_blank = TERM_WHITE;
+	/* Erase with "black space" */
+	td->t->attr_blank = TERM_DARK;
 	td->t->char_blank = ' ';
 
 	/* Prepare the init/nuke hooks */

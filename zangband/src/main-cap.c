@@ -1037,8 +1037,8 @@ errr init_cap(void)
 	/* Avoid the bottom right corner */
 	t->icky_corner = TRUE;
 
-	/* Erase with "white space" */
-	t->attr_blank = TERM_WHITE;
+	/* Erase with "black space" */
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 	/* Set some hooks */

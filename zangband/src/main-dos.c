@@ -1269,8 +1269,8 @@ static void term_data_link(term_data *td)
 	/* Ignore the "TERM_XTRA_FROSH" action */
 	t->never_frosh = TRUE;
 
-	/* Erase with "white space" */
-	t->attr_blank = TERM_WHITE;
+	/* Erase with "black space" */
+	t->attr_blank = TERM_DARK;
 	t->char_blank = ' ';
 
 	/* Prepare the init/nuke hooks */
