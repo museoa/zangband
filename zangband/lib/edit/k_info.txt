@@ -4430,7 +4430,7 @@ A:75/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:MAKE:	if one_in_(3) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
-L:MAKE:	if one_in_(5) then add_obj_flag(object, 1, TR1_RES_POIS) end
+L:MAKE:	if one_in_(5) then set_obj_flag(object, 1, TR1_RES_POIS) end
 
 ##### New arms #####
 
@@ -4895,7 +4895,7 @@ W:13:0:2:150
 A:13/2
 F:STEALTH | INFRA
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
-L:MAKE:	if one_in_(3) then add_obj_flag(object, 1, TR1_SUST_DEX) end
+L:MAKE:	if one_in_(3) then set_obj_flag(object, 1, TR1_SUST_DEX) end
 L:MAKE:	allow_curse = TRUE
 
 N:585:Fate
