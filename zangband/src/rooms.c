@@ -4753,6 +4753,8 @@ static void build_type22(int bx0, int by0)
  */
 static void build_type23(int bx0, int by0)
 {
+#if 0
+
 	int rad, x, y, x0, y0;
 	int light = FALSE;
 
@@ -4840,6 +4842,8 @@ static void build_type23(int bx0, int by0)
 	
 	/* Find visible outer walls and set to be FEAT_OUTER */
 	add_outer_wall(x0, y0, light, x0 - rad, y0 - rad, x0 + rad, y0 + rad);
+
+#endif /* 0 */
 }
 
 
@@ -5134,59 +5138,72 @@ struct room_type
 {
 	const int depth;	/* Minimum depth */
 	const room_build_type build_func;	/* Function to build room */
+	const u16b flags;
 };
 
 
-room_type room_list[ROOM_TYPES + 1] =
+room_type room_list[ROOM_TYPES] =
 {
-	{0,		NULL},			/* Nothing */
-	{1,		build_type1},	/* Simple Rectangle */
-	{1,		build_type2},	/* Overlapping */
-	{3,		build_type3},	/* Crossed */
-	{3,		build_type4},	/* Large nested */
-	{10,	build_type5},	/* Monster nest */
-	{10,	build_type6},	/* Monster pit */
-	{10,	build_type7},	/* Small vault */
-	{20,	build_type8},	/* Large vault */
-	{5,		build_type9},	/* Fractal cave */
-	{10,	build_type10},	/* Random vault */
-	{3,		build_type11},	/* Circle */
-	{10,	build_type12},	/* Crypt I */
-	{5,		build_type13},	/* Large with fractal feature */
-	{3,		build_type14},	/* Large with walls */
-	{3,		build_type15},	/* Parallelogram */
-	{3,		build_type16},	/* Rectangle minus inverse overlapping */
-	{3,		build_type17},	/* Triangles */
-	{5,		build_type18},	/* Chambers */
-	{5,		build_type19},	/* Channel */
-	{5,		build_type20},	/* Collapsed */
-	{10,	build_type21},	/* Crypt II */
-	{10,	build_type22},	/* Very large pillared chamber */
-	{3,		build_type23},	/* Semicircle */
-	{3,		build_type24},	/* Hourglass */
-	{3,		build_type25}	/* Connected rooms */
+	{1,		build_type1, RT_ANIMAL | RT_BUILDING},	/* Simple Rectangle */
+	{1,		build_type2, RT_SIMPLE | RT_CRYPT},	/* Overlapping */
+	{3,		build_type3, RT_SIMPLE},	/* Crossed */
+	{3,		build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
+	{10,	build_type5, RT_ANIMAL | RT_CROWDED},	/* Monster nest */
+	{10,	build_type6, RT_DENSE | RT_CROWDED},	/* Monster pit */
+	{10,	build_type7, RT_DENSE},	/* Small vault */
+	{20,	build_type8, RT_DENSE},	/* Large vault */
+	{5,		build_type9, RT_NATURAL},	/* Fractal cave */
+	{10,	build_type10, RT_RVAULT},	/* Random vault */
+	{3,		build_type11, RT_NATURAL | RT_SIMPLE},	/* Circle */
+	{10,	build_type12, RT_CRYPT},	/* Crypt I */
+	{5,		build_type13, RT_NATURAL},	/* Large with fractal feature */
+	{3,		build_type14, RT_COMPLEX},	/* Large with walls */
+	{3,		build_type15, RT_STRANGE},	/* Parallelogram */
+	{3,		build_type16, RT_NATURAL},	/* Rectangle minus inverse overlapping */
+	{3,		build_type17, RT_RUIN},	/* Triangles */
+	{5,		build_type18, RT_BUILDING},	/* Chambers */
+	{5,		build_type19, RT_STRANGE},	/* Channel */
+	{5,		build_type20, RT_ANIMAL | RT_RUIN},	/* Collapsed */
+	{10,	build_type21, RT_CRYPT},	/* Crypt II */
+	{10,	build_type22, RT_COMPLEX},	/* Very large pillared chamber */
+	{3,		build_type23, RT_SIMPLE},	/* Semicircle */
+	{3,		build_type24, RT_COMPLEX},	/* Hourglass */
+	{3,		build_type25, RT_BUILDING}	/* Connected rooms */
 };
 
 
 /*
- * Attempt to build a room of the given type at the given block
+ * Select a room type, and then attempt to build a it at the given block
  *
  * Note that we restrict the number of "crowded" rooms to reduce
  * the chance of overflowing the monster list during level creation.
  */
-bool room_build(int bx0, int by0, int typ)
+bool room_build(void)
 {
-	/* Paranoia */
-	if ((typ > ROOM_TYPES) || (typ < 1)) return (FALSE);
+	int x, y;
 
+	int type;
+	
+	/* Find a room type for this dungeon */
+	do
+	{
+		/* Select room type at random */
+		type = randint(ROOM_TYPES);
+	}
+	while (!(dun->room_types & room_list[type].flags));
+	
 	/* Restrict level */
-	if ((p_ptr->depth < room_list[typ].depth) && !ironman_rooms) return (FALSE);
+	if ((p_ptr->depth < room_list[type].depth) && !ironman_rooms) return (FALSE);
 
 	/* Restrict "crowded" rooms */
-	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);
+	if ((dun->crowded >= 2) && (room_list[type].flags & RT_CROWDED)) return (FALSE);
 	
-	/* Build a room */
-	room_list[typ].build_func(bx0, by0);
+	/* Pick a block for the room */
+	x = randint0(dun->col_rooms);
+	y = randint0(dun->row_rooms);
+	
+	/* Build a room at a random position */
+	room_list[type].build_func(x, y);
 
 	return (TRUE);
 }

@@ -147,6 +147,9 @@ struct dun_data
 	/* Hack -- there is a pit/nest on this level */
 	int crowded;
 	
+	/* Room types allowed */
+	u16b room_types;
+	
 	/* Liquid type for lakes/ rivers etc. */
 	byte feat_shal_liquid;
 	byte feat_deep_liquid;
@@ -168,6 +171,19 @@ extern dun_data *dun;
 
 #define LQ_MAX		5
 
+/* Room types */
+#define RT_CROWDED		0x0001
+#define RT_NATURAL		0x0002
+#define RT_ANIMAL		0x0004
+#define RT_COMPLEX		0x0008
+#define RT_DENSE		0x0010
+#define RT_RUIN			0x0020
+#define RT_SIMPLE		0x0040
+#define RT_BUILDING		0x0080
+#define RT_CRYPT		0x0100
+#define RT_RVAULT		0x0200
+#define RT_STRANGE		0x0400
+
 
 /* Type holding dungeon type information */
 typedef struct dun_gen_type dun_gen_type;
@@ -178,6 +194,9 @@ struct dun_gen_type
 	u32b habitat;
 	int level;
 	int chance;
+	
+	/* Rooms */
+	u16b rooms;
 	
 	/* Floor terrain type */
 	byte floor;
