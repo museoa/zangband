@@ -1698,9 +1698,12 @@ static void do_cmd_use_staff_aux(int item)
 		msg_print("The staff has no charges left.");
 		o_ptr->ident |= (IDENT_EMPTY);
 
-		/* Combine / Reorder the pack (later) */
+		/* Combine / Reorder the pack */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
+		
+		/* Notice the changes */
+		notice_stuff();
+		
 		return;
 	}
 
@@ -2165,8 +2168,11 @@ static void do_cmd_aim_wand_aux(int item)
 		msg_print("The wand has no charges left.");
 		o_ptr->ident |= (IDENT_EMPTY);
 
-		/* Combine / Reorder the pack (later) */
+		/* Combine / Reorder the pack */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+		/* Notice changes */
+		notice_stuff();
 
 		return;
 	}
