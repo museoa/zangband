@@ -111,15 +111,11 @@ typedef struct player_type
 	s16b px;			/* Player location */
 	s16b py;			/* Player location */
 
-	s16b oldpy;			/* Previous player location -KMW- */
-	s16b oldpx;			/* Previous player location -KMW- */
-
 	byte psex;			/* Sex index */
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
 	byte realm1;		/* First magic realm */
 	byte realm2;		/* Second magic realm */
-	byte oops;			/* Unused */
 
 	byte hitdie;		/* Hit dice (sides) */
 	u16b expfact;		/* Experience factor
@@ -138,18 +134,14 @@ typedef struct player_type
 	s16b depth;			/* Cur depth */
 
 	s16b max_lev;		/* Max level */
-	s16b lev;			/* Cur level */
+	%name (level) s16b lev;			/* Cur level */
 
 	s32b max_exp;		/* Max experience */
 	s32b exp;			/* Cur experience */
 	u16b exp_frac;		/* Cur exp frac (times 2^16) */
 
 	s16b town_num;		/* Current town number */
-	s16b arena_number;	/* monster number in arena -KMW- */
-	s16b inside_arena;	/* Is character inside arena? */
 	s16b inside_quest;	/* Inside quest level */
-
-	s16b rewards[MAX_BACT];	/* Status of rewards in town */
 
 	s32b wilderness_x;	/* Coordinates in the wilderness */
 	s32b wilderness_y;
@@ -251,10 +243,6 @@ typedef struct player_type
 	bool playing;		/* True if player is playing */
 
 	bool leaving;		/* True if player is leaving */
-	bool leaving_dungeon;	/* True if player is leaving the dungeon */
-
-	byte exit_bldg;		/* Goal obtained in arena? -KMW- */
-	byte leftbldg;		/* did we just leave a special area? -KMW- */
 
 	bool create_up_stair;	/* Create up stair on next level */
 	bool create_down_stair;	/* Create down stair on next level */
@@ -305,19 +293,6 @@ typedef struct player_type
 
 	s16b new_spells;		/* Number of spells available */
 
-	s16b old_spells;
-
-	bool old_cumber_armor;
-	bool old_cumber_glove;
-	bool old_heavy_wield;
-	bool old_heavy_shoot;
-	bool old_icky_wield;
-
-	s16b old_lite;		/* Old radius of lite (if any) */
-	s16b old_view;		/* Old radius of view (if any) */
-
-	s16b old_food_aux;	/* Old value of food */
-
 	bool cumber_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;		/* Heavy weapon */
@@ -337,7 +312,7 @@ typedef struct player_type
 	/*** Extracted fields ***/
 
 	s16b stat_add[A_MAX];	/* Equipment stat bonuses */
-	s16b stat_ind[A_MAX];	/* Indexes into stat tables */
+	//s16b stat_ind[A_MAX];	/* Indexes into stat tables */
 
 	bool immune_acid;		/* Immunity to acid */
 	bool immune_elec;		/* Immunity to lightning */
@@ -424,8 +399,6 @@ typedef struct player_type
 	s16b num_blow;		/* Number of blows */
 	s16b num_fire;		/* Number of shots */
 
-	byte tval_xtra;		/* Correct xtra tval */
-
 	byte ammo_mult;		/* Ammo multiplier */
 
 	byte ammo_tval;		/* Ammo variety */
@@ -442,7 +415,12 @@ typedef struct player_type
 
 %addmethods player_type
 {
-	int stat_cur_get(int index)
+	int get_stat_ind(int index)
+	{
+		return p_ptr->stat_ind[index];
+	}
+
+	int get_stat_cur(int index)
 	{
 		return p_ptr->stat_cur[index];
 	}
@@ -465,13 +443,6 @@ typedef struct player_type
 	void carry(object_type *o_ptr)
 	{
 		inven_carry(o_ptr);
-	}
-
-	/* Places the player in the dungeon */
-	/* Returns -1 on success and 0 on failure */
-	s16b place(int y, int x)
-	{
-		return player_place(y, x);
 	}
 
 	void teleport(int dis)
@@ -756,6 +727,11 @@ typedef struct player_type
 #define A_DEX   3
 #define A_CON   4
 #define A_CHR   5
+
+/*
+ * Total number of stats.
+ */
+#define A_MAX	6
 
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)

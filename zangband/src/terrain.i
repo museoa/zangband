@@ -23,12 +23,6 @@ struct feature_type
 	u32b name;			/* Name (offset) */
 	u32b text;			/* Text (offset) */
 
-	byte mimic;			/* Feature to mimic */
-
-	byte extra;			/* Extra byte (unused) */
-
-	s16b unused;		/* Extra bytes (unused) */
-
 	byte d_attr;		/* Default feature attribute */
 	char d_char;		/* Default feature character */
 

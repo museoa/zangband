@@ -769,17 +769,6 @@ static byte choose_realm(byte choices)
  */
 static bool get_player_realms(void)
 {
-#ifdef USE_SCRIPT
-	int result = get_player_realms_callback();
-
-	if (result == -1)
-		/* Restart */
-		return FALSE;
-	else if (result == 1)
-		/* Success */
-		return TRUE;
-#endif /* USE_SCRIPT */
-
 	/* Select the first realm */
 	p_ptr->realm1 = choose_realm(realm_choices1[p_ptr->pclass]);
 
@@ -1900,17 +1889,6 @@ static bool get_player_race(void)
 	char    buf[80];
 
 
-#ifdef USE_SCRIPT
-	int result = get_player_race_callback();
-
-	if (result == -1)
-		/* Restart */
-		return FALSE;
-	else if (result == 1)
-		/* Success */
-		return TRUE;
-#endif /* USE_SCRIPT */
-
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
 		"Your 'race' determines various intrinsic factors and bonuses.");
@@ -2022,17 +2000,6 @@ static bool get_player_class(void)
 	cptr    str;
 
 
-#ifdef USE_SCRIPT
-	int result = get_player_class_callback();
-
-	if (result == -1)
-		/* Restart */
-		return FALSE;
-	else if (result == 1)
-		/* Success */
-		return TRUE;
-#endif /* USE_SCRIPT */
-
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
 		"Your 'class' determines various intrinsic abilities and bonuses.");
@@ -2132,9 +2099,18 @@ static bool player_birth_aux_1(void)
 	char buf[80];
 	char inp[80];
 
+
 #ifdef USE_SCRIPT
+
 	int result;
-#endif /* USE_SCRIPT */
+
+	/* Generate the player */
+	result = player_birth_callback();
+
+	/* Restart ? */
+	if (result == -1) return FALSE;
+
+#else /* USE_SCRIPT */
 
 	/*** Instructions ***/
 
@@ -2151,20 +2127,6 @@ static bool player_birth_aux_1(void)
 	Term_putstr(5, 13, -1, TERM_WHITE,
 	            "and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
 
-
-#ifdef USE_SCRIPT
-	/*
-	 * Ask for the world
-	 */
-	result = get_world_callback();
-
-	if (result == -1)
-		/* Restart */
-		return FALSE;
-
-	/* Clean up */
-	clear_from(15);
-#endif /* USE_SCRIPT */
 
 	/*** Player sex ***/
 
@@ -2250,6 +2212,8 @@ static bool player_birth_aux_1(void)
 	/* Choose the magic realms */
 	if (!get_player_realms()) return FALSE;
 
+#endif /* USE_SCRIPT */
+
 	/* Clear */
 	clear_from(20);
 
@@ -2270,7 +2234,6 @@ static bool player_birth_aux_1(void)
 	/* Ask the number of additional quests */
 	while (TRUE)
 	{
-
 		put_str(format("Number of additional quests? (<%u) ", MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 2), 20, 2);
 
 		/* Get a the number of additional quest */

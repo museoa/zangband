@@ -304,6 +304,40 @@ bool use_skill_callback(void)
 }
 
 
+bool process_command_callback(char command)
+{
+	PyObject *func, *arglist;
+	PyObject *result;
+	bool res = FALSE;
+
+	/* Get the Python object */
+	func = python_callbacks[PROCESS_COMMAND_EVENT];
+
+	/* Callback installed */
+	if (func)
+	{
+		/* Build the argument-list */
+		arglist = Py_BuildValue("(c)", command);
+
+		/* Call the object with the correct arguments */
+		result = PyEval_CallObject(func, arglist);
+
+		/* Free the arguments */
+		Py_DECREF(arglist);
+
+		if (result && PyInt_Check(result) && PyInt_AsLong(result))
+		{
+			res = TRUE;
+		}
+
+		/* Free the result */
+		Py_XDECREF(result);
+	}
+
+	return res;
+}
+
+
 bool cmd_go_up_callback(void)
 {
 	PyObject *func, *arglist;
@@ -338,14 +372,14 @@ bool cmd_go_up_callback(void)
 }
 
 
-long get_world_callback(void)
+long player_birth_callback(void)
 {
 	PyObject *func, *arglist;
 	PyObject *result;
 	long res = 0;
 
 	/* Get the Python object */
-	func = python_callbacks[GET_WORLD_EVENT];
+	func = python_callbacks[PLAYER_BIRTH_EVENT];
 
 	/* Callback installed */
 	if (func)
@@ -371,107 +405,6 @@ long get_world_callback(void)
 	return res;
 }
 
-
-long get_player_class_callback(void)
-{
-	PyObject *func, *arglist;
-	PyObject *result;
-	long res = 0;
-
-	/* Get the Python object */
-	func = python_callbacks[GET_PLAYER_CLASS_EVENT];
-
-	/* Callback installed */
-	if (func)
-	{
-		/* Build the argument-list */
-		arglist = Py_BuildValue("(())");
-
-		/* Call the object with the correct arguments */
-		result = PyEval_CallObject(func, arglist);
-
-		/* Free the arguments */
-		Py_DECREF(arglist);
-
-		if (result && PyInt_Check(result))
-		{
-			res = PyInt_AsLong(result);
-		}
-
-		/* Free the result */
-		Py_XDECREF(result);
-	}
-
-	return res;
-}
-
-
-long get_player_realms_callback(void)
-{
-	PyObject *func, *arglist;
-	PyObject *result;
-	long res = 0;
-
-	/* Get the Python object */
-	func = python_callbacks[GET_PLAYER_REALMS_EVENT];
-
-	/* Callback installed */
-	if (func)
-	{
-		/* Build the argument-list */
-		arglist = Py_BuildValue("(())");
-
-		/* Call the object with the correct arguments */
-		result = PyEval_CallObject(func, arglist);
-
-		/* Free the arguments */
-		Py_DECREF(arglist);
-
-		if (result && PyInt_Check(result))
-		{
-			res = PyInt_AsLong(result);
-		}
-
-		/* Free the result */
-		Py_XDECREF(result);
-	}
-
-	return res;
-}
-
-
-long get_player_race_callback(void)
-{
-	PyObject *func, *arglist;
-	PyObject *result;
-	long res = 0;
-
-	/* Get the Python object */
-	func = python_callbacks[GET_PLAYER_RACE_EVENT];
-
-	/* Callback installed */
-	if (func)
-	{
-		/* Build the argument-list */
-		arglist = Py_BuildValue("(())");
-
-		/* Call the object with the correct arguments */
-		result = PyEval_CallObject(func, arglist);
-
-		/* Free the arguments */
-		Py_DECREF(arglist);
-
-		if (result && PyInt_Check(result))
-		{
-			res = PyInt_AsLong(result);
-		}
-
-		/* Free the result */
-		Py_XDECREF(result);
-	}
-
-	return res;
-}
 
 cptr get_script_window_line(int line)
 {

@@ -2138,6 +2138,11 @@ static void process_command(void)
 	/* Handle repeating the last command */
 	repeat_check();
 
+#ifdef USE_SCRIPT
+	if (process_command_callback(p_ptr->command_cmd))
+		return;
+#endif /* USE_SCRIPT */
+
 	/* Parse the command */
 	switch (p_ptr->command_cmd)
 	{

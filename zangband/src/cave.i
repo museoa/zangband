@@ -88,8 +88,6 @@ struct cave_type
 
 	s16b m_idx;		/* Monster in this grid */
 
-	byte mimic;		/* Feature to mimic */
-
 #ifdef MONSTER_FLOW
 
 	byte cost;		/* Hack -- cost of flowing */
@@ -111,7 +109,6 @@ cave_type *tile(int y, int x);
 s16b object_level;		/* Current object creation level */
 s16b monster_level;		/* Current monster creation level */
 s16b base_level;        /* Base dungeon level */
-s16b dun_level;         /* Base dungeon level */
 
 
 /*
@@ -133,3 +130,7 @@ struct vault_type
 	byte wid;			/* Vault width */
 };
 
+
+extern void map_area(void);
+extern void wiz_lite(void);
+extern void wiz_dark(void);

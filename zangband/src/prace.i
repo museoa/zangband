@@ -13,11 +13,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-%typemap(memberin) cptr title
-{
-	$target = string_make($source);
-}
-
 
 /*
  * Player racial info
@@ -26,7 +21,7 @@ struct player_race
 {
 	cptr title;			/* Type of race */
 
-	s16b r_adj[6];		/* Racial stat bonuses */
+	s16b r_adj[A_MAX];		/* Racial stat bonuses */
 
 	s16b r_dis;			/* disarming */
 	s16b r_dev;			/* magic devices */
@@ -78,6 +73,34 @@ struct player_race
 		void set_r_adj(int i, s16b val)
 		{
 			self->r_adj[i] = val;
+		}
+	}
+};
+
+
+/*
+ * Player sex info
+ */
+
+typedef struct player_sex player_sex;
+
+struct player_sex
+{
+	cptr title;			/* Type of sex */
+
+	cptr winner;		/* Name of winner */
+
+	%addmethods
+	{
+		player_sex(void)
+		{
+			sp_ptr = (player_sex*)malloc(sizeof(player_sex));
+			return sp_ptr;
+		}
+
+		~player_sex(void)
+		{
+			free(self);
 		}
 	}
 };
