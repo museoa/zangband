@@ -1076,6 +1076,7 @@ F:AGGRAVATE | CURSED | HEAVY_CURSE | SHOW_MODS | INSTA_ART
 
 # The Broad Sword 'Arunruth' -> 'Grayswandir'
 
+# Unique power: Damage increases +1 per 200' of depth
 N:72:'Grayswandir'
 I:23:11:4
 W:35:45:50:125000
@@ -1086,6 +1087,7 @@ F:RES_CHAOS | RES_NETHER | HOLD_LIFE | RES_FEAR |
 F:RES_COLD | BRAND_COLD |
 F:SLAY_DEMON | SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD |
 F:SLOW_DIGEST | SHOW_MODS | HIDE_TYPE | BLESSED | INSTA_ART
+L:HIT:	dam = dam + player.depth / 4
 
 
 # The Broad Sword 'Glamdring'
