@@ -6141,8 +6141,11 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  0, NULL,					"Number 221" },
 	{TRUE,  0, NULL,					"Number 222" },
 	{TRUE,  0, NULL,					"Number 223" },
-
-	{FALSE, 8, "destroy_worthless",		"Auto-destroy known worthless items" },	
+#if 0
+	{FALSE, 8, "destroy_worthless",		"Auto-destroy known worthless items" },
+#else /* 0 */
+	{FALSE, 0, NULL,					"Auto-destroy known worthless items" },
+#endif /* 0 */
 	{FALSE, 8, "monster_light",			"Allow monsters to carry lights" },
 	{TRUE,  0, NULL,					"Turn on muliplayer client - server code" },
 	{TRUE,  0, NULL,					"Number 227" },
