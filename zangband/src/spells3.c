@@ -2085,6 +2085,24 @@ void identify_item(object_type *o_ptr)
 }
 
 
+static bool item_tester_unknown(object_type *o_ptr)
+{
+	if (object_known_p(o_ptr))
+		return FALSE;
+	else
+		return TRUE;
+}
+
+
+static bool item_tester_unknown_star(object_type *o_ptr)
+{
+	if (o_ptr->ident & IDENT_MENTAL)
+		return FALSE;
+	else
+		return TRUE;
+}
+
+
 /*
  * Identify an object in the inventory (or on the floor)
  * This routine does *not* automatically combine objects.
@@ -2097,6 +2115,8 @@ bool ident_spell(void)
 	char            o_name[80];
 	cptr            q, s;
 
+	/* Only un-id'ed items */
+	item_tester_hook = item_tester_unknown;
 
 	/* Get an item */
 	q = "Identify which item? ";
@@ -2248,6 +2268,8 @@ bool identify_fully(void)
 	char            o_name[80];
 	cptr            q, s;
 
+	/* Only un-*id*'ed items */
+	item_tester_hook = item_tester_unknown_star;
 
 	/* Get an item */
 	q = "Identify which item? ";
