@@ -49,7 +49,7 @@ void check_experience(void)
 
 	/* Handle stuff */
 	handle_stuff();
-
+ 
 
 	/* Lose levels while possible */
 	while ((p_ptr->lev > 1) &&
@@ -77,10 +77,24 @@ void check_experience(void)
 	while ((p_ptr->lev < PY_MAX_LEVEL) &&
 	       (p_ptr->exp >= (player_exp[p_ptr->lev-1] * p_ptr->expfact / 100L)))
 	{
+                
 		/* Gain a level */
 		p_ptr->lev++;
 		lite_spot(py, px);
 
+                /* If auto-note taking enabled, write a note to the file. 
+                 * Only write this note when the level is gained for the first
+                 * time.
+                 */
+                if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_plv))
+                {
+                  char note[80];
+
+		  sprintf(note, "Reached level %d", p_ptr->lev);
+
+		  add_note(note, 'L');
+
+                }
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv)
 		{
@@ -106,18 +120,7 @@ void check_experience(void)
 
 		/* Message */
 		msg_format("Welcome to level %d.", p_ptr->lev);
-
-                /* If auto-note taking enabled, write a note to the file. */
-                if (take_notes && auto_notes) {
-
-                  char note[80];
-
-		  sprintf(note, "Reached level %d", p_ptr->lev);
-
-		  add_note(note, 'L');
-
-                }
-
+              
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
