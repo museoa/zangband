@@ -1871,7 +1871,9 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	
 	/* Bounds checking */
 	if (y2 >= Term->hgt) y2 = Term->hgt - 1;
-	if (x2 >= Term->wid) x2 = Term->wid - 1; 
+	if (x2 >= Term->wid) x2 = Term->wid - 1;
+	if (y1 < 0) y1 = 0;
+	if (x1 < 0) x1 = 0;
 	
 	/* Set y limits */
 	Term->y1 = y1;
