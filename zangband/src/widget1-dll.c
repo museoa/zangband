@@ -16,7 +16,7 @@
 #include "util-dll.h"
 #include "plat-dll.h"
 #include "icon-dll.h"
-#include "widget-dll.h"
+#include "widget.h"
 
 cptr keyword_widget_style[] = {
 	"icon", "map", NULL

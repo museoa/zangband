@@ -12,7 +12,7 @@
 
 #include "tnb.h"
 #include "util-dll.h"
-#include "widget-dll.h"
+#include "widget.h"
 #include "plat-dll.h"
 
 typedef unsigned char IconValue, *IconPtr;

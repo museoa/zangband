@@ -14,7 +14,7 @@
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
 #include "icon-dll.h"
-#include "widget-dll.h"
+#include "widget.h"
 #include "map-dll.h"
 
 #include <limits.h>
