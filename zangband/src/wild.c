@@ -411,7 +411,13 @@ static void overlay_town(byte y, byte x, u16b w_town, blk_ptr block_ptr)
 /*
  * Initialise the town structures
  * At the moment there is only one town generator
- * and one town.
+ * and four towns.
+ *
+ * The four towns are right next to each other. This is
+ * a test of the speed of the switching mechanism.
+ * Hopefully it will be fast enough so that towns can be placed
+ * anywhere in the wilderness.  It will also be possible to
+ * have *HUGE* towns (cities) composed of smaller parts.
  */
 static void init_towns(void)
 {
@@ -419,20 +425,23 @@ static void init_towns(void)
 	u16b town_num;
 
 	town_num = 1;
-
-	strcpy(town[town_num].name, "This is a town.");
-	town[town_num].seed = rand_int(0x10000000);
-	town[town_num].numstores = 9;
-	town[town_num].type = 1;
-	town[town_num].x = 32;
-	town[town_num].y = 32;
-
-	/* Place town on wilderness */
-	for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
+	for (town_num = 1; town_num <= 4; town_num++)
 	{
-		for (i = 0; i < (SCREEN_WID / 16 +1); i++)
+		strcpy(town[town_num].name, "town");
+		town[town_num].seed = rand_int(0x10000000);
+		town[town_num].numstores = 9;
+		town[town_num].type = 1;
+		town[town_num].x = 32 + ((town_num - 1) % 2) * (SCREEN_WID / 16 + 1);
+		town[town_num].y = 32 + ((town_num - 1) / 2) * (SCREEN_HGT / 16 + 1);
+
+		/* Place town on wilderness */
+		for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
 		{
-			wild[town[town_num].y + j][town[town_num].x + i].done.town = 1;
+			for (i = 0; i < (SCREEN_WID / 16 +1); i++)
+			{
+				wild[town[town_num].y + j][town[town_num].x + i]
+					.done.town = town_num;
+			}
 		}
 	}
 
