@@ -915,6 +915,13 @@ static void rd_store(int town_num, int store_num)
 
 			/* Read the item */
             rd_item(q_ptr);
+
+            /* Ignore the item */
+            /*
+             * Doing the obvious thing by trying to add the item to the
+             * shop's stock won't work, because objects are loaded after
+             * stores are. This means the contents of the home are lost.
+             */
 		}
 	}
 	else
