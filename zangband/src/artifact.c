@@ -28,6 +28,7 @@
 
 static void random_plus(object_type *o_ptr)
 {
+  bad_type:
 	switch (randint1(o_ptr->tval < TV_BOOTS ? 24 : 20))
 	{
 		case 1:  case 2:
@@ -68,13 +69,9 @@ static void random_plus(object_type *o_ptr)
 			break;
 		case 23:  case 24:
 			if (o_ptr->tval == TV_BOW)
-			{
-				SET_FLAG(o_ptr, TR_DEX);
-			}
-			else
-			{
-				SET_FLAG(o_ptr, TR_BLOWS);
-			}
+				goto bad_type;
+
+			SET_FLAG(o_ptr, TR_BLOWS);
 			break;
 	}
 }
@@ -82,6 +79,7 @@ static void random_plus(object_type *o_ptr)
 
 static void random_resistance(object_type *o_ptr, int specific)
 {
+  bad_type:
 	switch (specific ? specific : randint1(42))
 	{
 		case 1:
@@ -195,11 +193,13 @@ static void random_resistance(object_type *o_ptr, int specific)
 			break;
 		/* Note: SH_ACID is deliberately omitted here */
 		case 42:
-			if (o_ptr->tval == TV_SHIELD || o_ptr->tval == TV_CLOAK ||
-				o_ptr->tval == TV_HELM || o_ptr->tval == TV_HARD_ARMOR)
-				SET_FLAG(o_ptr, TR_REFLECT);
-			else
-				SET_FLAG(o_ptr, TR_RES_FEAR);
+			if (o_ptr->tval != TV_SHIELD && o_ptr->tval != TV_CLOAK &&
+				o_ptr->tval != TV_HELM && o_ptr->tval != TV_HARD_ARMOR)
+			{
+				goto bad_type;
+			}
+				
+			SET_FLAG(o_ptr, TR_REFLECT);
 			break;
 	}
 }
@@ -208,7 +208,8 @@ static void random_resistance(object_type *o_ptr, int specific)
 
 static void random_misc(object_type *o_ptr)
 {
-	switch (randint1(38))
+  bad_type:
+	switch (randint1(39))
 	{
 		case 1:
 			SET_FLAG(o_ptr, TR_SUST_STR);
@@ -245,11 +246,10 @@ static void random_misc(object_type *o_ptr)
 			SET_FLAG(o_ptr, TR_FEATHER);
 			break;
 		case 15:
-			if (o_ptr->tval == TV_GLOVES)
-				SET_FLAG(o_ptr, TR_GHOUL_TOUCH);
-			else
-				SET_FLAG(o_ptr, TR_SEE_INVIS);
+			if (o_ptr->tval != TV_GLOVES)
+				goto bad_type;
 
+			SET_FLAG(o_ptr, TR_GHOUL_TOUCH);
 			break;
 		case 16:
 		case 17:
@@ -272,15 +272,8 @@ static void random_misc(object_type *o_ptr)
 		case 24:
 		case 25:
 		case 26:
-			if (o_ptr->tval >= TV_BOOTS && o_ptr->tval < TV_LITE)
-			{
-				SET_FLAG(o_ptr, TR_SLOW_DIGEST);
-			}
-			else
-			{
-				SET_FLAG(o_ptr, TR_SHOW_MODS);
-				o_ptr->to_a = (s16b)rand_range(5, 15);
-			}
+			SET_FLAG(o_ptr, TR_SHOW_MODS);
+			o_ptr->to_a += (s16b)rand_range(5, 15);
 			break;
 		case 27:
 		case 28:
@@ -322,6 +315,12 @@ static void random_misc(object_type *o_ptr)
 			break;
 		case 38:
 			SET_FLAG(o_ptr, TR_LUCK_10);
+			break;
+		case 39:
+			if (o_ptr->tval != TV_BOOTS)
+				goto bad_type;
+
+			SET_FLAG(o_ptr, TR_WILD_WALK);
 			break;
 	}
 }
@@ -410,12 +409,17 @@ static void random_slay(object_type *o_ptr)
 	/* Bows get special treatment */
 	if (o_ptr->tval == TV_BOW)
 	{
-		switch (randint1(6))
+		switch (randint1(12))
 		{
 			case 1:
 			case 2:
 			case 3:
+			case 4:
+			case 5:
 				SET_FLAG(o_ptr, TR_XTRA_MIGHT);
+				break;
+			case 6:
+				SET_FLAG(o_ptr, TR_WILD_SHOT);
 				break;
 			default:
 				SET_FLAG(o_ptr, TR_XTRA_SHOTS);
