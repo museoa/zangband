@@ -795,10 +795,10 @@ void do_cmd_knowledge_mutations(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Mutations", 0, 0);
+	(void)show_file(file_name, "Mutations", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -878,7 +878,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		msg_print("You spit acid...");
 		if (get_aim_dir(&dir))
 		{
-			(void) fire_ball(GF_ACID, dir, lvl, 1 + (lvl / 30));
+			(void)fire_ball(GF_ACID, dir, lvl, 1 + (lvl / 30));
 		}
 	}
 
@@ -887,7 +887,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		msg_print("You breathe fire...");
 		if (get_aim_dir(&dir))
 		{
-			(void) fire_ball(GF_FIRE, dir, lvl * 2, 1 + (lvl / 20));
+			(void)fire_ball(GF_FIRE, dir, lvl * 2, 1 + (lvl / 20));
 		}
 	}
 
@@ -896,7 +896,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		msg_print("Your eyes look mesmerizing...");
 		if (get_aim_dir(&dir))
 		{
-			(void) charm_monster(dir, lvl);
+			(void)charm_monster(dir, lvl);
 		}
 	}
 
@@ -919,7 +919,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		msg_print("You concentrate...");
 		if (get_aim_dir(&dir))
 		{
-			(void) fire_bolt(GF_PSI, dir, damroll(3 + ((lvl - 1) / 5), 3));
+			(void)fire_bolt(GF_PSI, dir, damroll(3 + ((lvl - 1) / 5), 3));
 		}
 		else
 		{
@@ -931,7 +931,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 	else if (mut_ptr->which == MUT1_RADIATION)
 	{
 		msg_print("Radiation flows from your body!");
-		(void) fire_ball(GF_NUKE, 0, (lvl * 2), 3 + (lvl / 20));
+		(void)fire_ball(GF_NUKE, 0, (lvl * 2), 3 + (lvl / 20));
 	}
 
 	else if (mut_ptr->which == MUT1_VAMPIRISM)
@@ -974,7 +974,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			/* But if we ARE Gorged,  it won't cure us */
 			dummy = p_ptr->food + MIN(5000, 100 * dummy);
 			if (p_ptr->food < PY_FOOD_MAX)	/* Not gorged already */
-				(void) set_food(dummy >= PY_FOOD_MAX ? PY_FOOD_MAX - 1 : dummy);
+				(void)set_food(dummy >= PY_FOOD_MAX ? PY_FOOD_MAX - 1 : dummy);
 		}
 		else
 			msg_print("Yechh. That tastes foul.");
@@ -982,12 +982,12 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT1_SMELL_MET)
 	{
-		(void) detect_treasure();
+		(void)detect_treasure();
 	}
 
 	else if (mut_ptr->which == MUT1_SMELL_MON)
 	{
-		(void) detect_monsters_normal();
+		(void)detect_monsters_normal();
 	}
 
 	else if (mut_ptr->which == MUT1_BLINK)
@@ -1035,20 +1035,20 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		{
 			if ((c_ptr->feat >= FEAT_CLOSED) && (c_ptr->feat <= FEAT_RUBBLE))
 			{
-				(void) set_food(p_ptr->food + 3000);
+				(void)set_food(p_ptr->food + 3000);
 			}
 			else if ((c_ptr->feat >= FEAT_MAGMA) &&
 					 (c_ptr->feat <= FEAT_QUARTZ_K))
 			{
-				(void) set_food(p_ptr->food + 5000);
+				(void)set_food(p_ptr->food + 5000);
 			}
 			else
 			{
 				msg_print("This granite is very filling!");
-				(void) set_food(p_ptr->food + 10000);
+				(void)set_food(p_ptr->food + 10000);
 			}
 		}
-		(void) wall_to_mud(dir);
+		(void)wall_to_mud(dir);
 
 		/* Save old location */
 		oy = py;
@@ -1090,19 +1090,19 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 	{
 		if (get_aim_dir(&dir))
 		{
-			(void) teleport_swap(dir);
+			(void)teleport_swap(dir);
 		}
 	}
 
 	else if (mut_ptr->which == MUT1_SHRIEK)
 	{
-		(void) fire_ball(GF_SOUND, 0, 2 * lvl, 8);
-		(void) aggravate_monsters(0);
+		(void)fire_ball(GF_SOUND, 0, 2 * lvl, 8);
+		(void)aggravate_monsters(0);
 	}
 
 	else if (mut_ptr->which == MUT1_ILLUMINE)
 	{
-		(void) lite_area(damroll(2, (lvl / 2)), (lvl / 10) + 1);
+		(void)lite_area(damroll(2, (lvl / 2)), (lvl / 10) + 1);
 	}
 
 	else if (mut_ptr->which == MUT1_DET_CURSE)
@@ -1124,11 +1124,11 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 	{
 		if (!p_ptr->shero)
 		{
-			(void) hp_player(30);
+			(void)hp_player(30);
 		}
 
-		(void) set_shero(p_ptr->shero + rand_range(25, 50));
-		(void) set_afraid(0);
+		(void)set_shero(p_ptr->shero + rand_range(25, 50));
+		(void)set_afraid(0);
 	}
 
 	else if (mut_ptr->which == MUT1_POLYMORPH)
@@ -1138,7 +1138,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT1_MIDAS_TCH)
 	{
-		(void) alchemy();
+		(void)alchemy();
 	}
 
 	/* Summon pet molds around the player */
@@ -1148,8 +1148,8 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 		for (i = 0; i < 8; i++)
 		{
-			(void) summon_specific(-1, px, py, lvl, SUMMON_BIZARRE1, FALSE,
-								   TRUE, TRUE);
+			(void)summon_specific(-1, px, py, lvl, SUMMON_BIZARRE1, FALSE,
+								  TRUE, TRUE);
 		}
 	}
 
@@ -1160,34 +1160,34 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 		if (randint0(5) < num)
 		{
-			(void) set_oppose_acid(p_ptr->oppose_acid + dur);
+			(void)set_oppose_acid(p_ptr->oppose_acid + dur);
 			num--;
 		}
 		if (randint0(4) < num)
 		{
-			(void) set_oppose_elec(p_ptr->oppose_elec + dur);
+			(void)set_oppose_elec(p_ptr->oppose_elec + dur);
 			num--;
 		}
 		if (randint0(3) < num)
 		{
-			(void) set_oppose_fire(p_ptr->oppose_fire + dur);
+			(void)set_oppose_fire(p_ptr->oppose_fire + dur);
 			num--;
 		}
 		if (randint0(2) < num)
 		{
-			(void) set_oppose_cold(p_ptr->oppose_cold + dur);
+			(void)set_oppose_cold(p_ptr->oppose_cold + dur);
 			num--;
 		}
 		if (num)
 		{
-			(void) set_oppose_pois(p_ptr->oppose_pois + dur);
+			(void)set_oppose_pois(p_ptr->oppose_pois + dur);
 			num--;
 		}
 	}
 
 	else if (mut_ptr->which == MUT1_EARTHQUAKE)
 	{
-		(void) earthquake(px, py, 10);
+		(void)earthquake(px, py, 10);
 	}
 
 	else if (mut_ptr->which == MUT1_EAT_MAGIC)
@@ -1286,15 +1286,15 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT1_DAZZLE)
 	{
-		(void) stun_monsters(lvl * 4);
-		(void) confuse_monsters(lvl * 4);
-		(void) turn_monsters(lvl * 4);
+		(void)stun_monsters(lvl * 4);
+		(void)confuse_monsters(lvl * 4);
+		(void)turn_monsters(lvl * 4);
 	}
 
 	else if (mut_ptr->which == MUT1_LASER_EYE)
 	{
 		if (get_aim_dir(&dir))
-			(void) fire_beam(GF_LITE, dir, 2 * lvl);
+			(void)fire_beam(GF_LITE, dir, 2 * lvl);
 	}
 
 	else if (mut_ptr->which == MUT1_RECALL)
@@ -1359,7 +1359,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			msg_print("You wave your hands in the air.");
 			return;
 		}
-		(void) fire_bolt(GF_COLD, dir, 2 * lvl);
+		(void)fire_bolt(GF_COLD, dir, 2 * lvl);
 	}
 
 	/* Gives a multiplier of 2 at first, up to 3 at level 30 */
@@ -1382,7 +1382,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("RAAAAGHH!");
 		msg_print("You feel a fit of rage coming over you!");
-		(void) set_shero(p_ptr->shero + 10 + randint1(p_ptr->lev));
+		(void)set_shero(p_ptr->shero + 10 + randint1(p_ptr->lev));
 	}
 
 	else if (mut_ptr->which == MUT2_COWARDICE)
@@ -1391,7 +1391,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			msg_print("It's so dark... so scary!");
-			(void) set_afraid(p_ptr->afraid + rand_range(13, 40));
+			(void)set_afraid(p_ptr->afraid + rand_range(13, 40));
 		}
 	}
 
@@ -1420,7 +1420,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 		if (!p_ptr->resist_confu)
 		{
-			(void) set_confused(p_ptr->confused + rand_range(15, 35));
+			(void)set_confused(p_ptr->confused + rand_range(15, 35));
 		}
 
 		if (!p_ptr->resist_chaos)
@@ -1428,7 +1428,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			if (one_in_(20))
 			{
 				message_flush();
-				if (one_in_(3)) (void) lose_all_info();
+				if (one_in_(3)) (void)lose_all_info();
 				else
 					wiz_dark();
 				teleport_player(100);
@@ -1441,7 +1441,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 				if (one_in_(3))
 				{
 					msg_print("Thishcischs GooDSChtuff!");
-					(void) set_image(p_ptr->image + rand_range(150, 300));
+					(void)set_image(p_ptr->image + rand_range(150, 300));
 				}
 			}
 		}
@@ -1453,7 +1453,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
-			(void) set_image(p_ptr->image + rand_range(20, 70));
+			(void)set_image(p_ptr->image + rand_range(20, 70));
 		}
 	}
 
@@ -1463,7 +1463,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 		msg_print("BRRAAAP! Oops.");
 		message_flush();
-		(void) fire_ball(GF_POIS, 0, p_ptr->lev, 3);
+		(void)fire_ball(GF_POIS, 0, p_ptr->lev, 3);
 	}
 
 	else if ((mut_ptr->which == MUT2_PROD_MANA) && !p_ptr->anti_magic)
@@ -1473,8 +1473,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		msg_print("Magical energy flows through you! You must release it!");
 		flush();
 		message_flush();
-		(void) get_hack_dir(&dire);
-		(void) fire_ball(GF_MANA, dire, p_ptr->lev * 2, 3);
+		(void)get_hack_dir(&dire);
+		(void)fire_ball(GF_MANA, dire, p_ptr->lev * 2, 3);
 	}
 
 	else if ((mut_ptr->which == MUT2_ATT_DEMON) && !p_ptr->anti_magic)
@@ -1497,11 +1497,11 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			msg_print("You feel less energetic.");
 			if (p_ptr->fast > 0)
 			{
-				(void) set_fast(0);
+				(void)set_fast(0);
 			}
 			else
 			{
-				(void) set_slow(p_ptr->slow + rand_range(10, 40));
+				(void)set_slow(p_ptr->slow + rand_range(10, 40));
 			}
 		}
 		else
@@ -1509,11 +1509,11 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			msg_print("You feel more energetic.");
 			if (p_ptr->slow > 0)
 			{
-				(void) set_slow(0);
+				(void)set_slow(0);
 			}
 			else
 			{
-				(void) set_fast(p_ptr->fast + rand_range(10, 40));
+				(void)set_fast(p_ptr->fast + rand_range(10, 40));
 			}
 		}
 		message_flush();
@@ -1523,7 +1523,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		disturb(FALSE);
 		msg_print("You suddenly feel almost lonely.");
-		(void) banish_monsters(100);
+		(void)banish_monsters(100);
 		message_flush();
 	}
 
@@ -1538,7 +1538,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		/* Absorb light from the current possition */
 		if (c_ptr->info & CAVE_GLOW)
 		{
-			(void) hp_player(10);
+			(void)hp_player(10);
 		}
 
 		o_ptr = &inventory[INVEN_LITE];
@@ -1550,7 +1550,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			if (!(o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->timeout > 0))
 			{
 				/* Heal the player a bit */
-				(void) hp_player(o_ptr->timeout / 20);
+				(void)hp_player(o_ptr->timeout / 20);
 
 				/* Decrease life-span of lite */
 				o_ptr->timeout /= 2;
@@ -1566,7 +1566,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		 * Unlite the area (radius 10) around player and
 		 * do 50 points damage to every affected monster
 		 */
-		(void) unlite_area(50, 10);
+		(void)unlite_area(50, 10);
 	}
 
 	else if ((mut_ptr->which == MUT2_ATT_ANIMAL) && !p_ptr->anti_magic)
@@ -1586,7 +1586,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You feel the world warping around you!");
 		message_flush();
-		(void) fire_ball(GF_CHAOS, 0, p_ptr->lev, 8);
+		(void)fire_ball(GF_CHAOS, 0, p_ptr->lev, 8);
 	}
 
 	else if (mut_ptr->which == MUT2_NORMALITY)
@@ -1602,8 +1602,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You feel insubstantial!");
 		message_flush();
-		(void) set_wraith_form(p_ptr->wraith_form +
-							   rand_range(p_ptr->lev / 2, p_ptr->lev));
+		(void)set_wraith_form(p_ptr->wraith_form +
+							  rand_range(p_ptr->lev / 2, p_ptr->lev));
 	}
 
 	else if (mut_ptr->which == MUT2_POLY_WOUND)
@@ -1647,9 +1647,9 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			msg_print("You can feel yourself wasting away!");
 			message_flush();
 #if 0
-			(void) dec_stat(which_stat, rand_range(6, 12), one_in_(3));
+			(void)dec_stat(which_stat, rand_range(6, 12), one_in_(3));
 #else
-			(void) dec_stat(which_stat, rand_range(6, 12), 0);
+			(void)dec_stat(which_stat, rand_range(6, 12), 0);
 #endif
 		}
 	}
@@ -1671,12 +1671,12 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		if (p_ptr->tim_esp > 0)
 		{
 			msg_print("Your mind feels cloudy!");
-			(void) set_tim_esp(0);
+			(void)set_tim_esp(0);
 		}
 		else
 		{
 			msg_print("Your mind expands!");
-			(void) set_tim_esp(p_ptr->lev);
+			(void)set_tim_esp(p_ptr->lev);
 		}
 	}
 
@@ -1685,7 +1685,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("Your stomach roils, and you lose your lunch!");
 		message_flush();
-		(void) set_food(PY_FOOD_WEAK);
+		(void)set_food(PY_FOOD_WEAK);
 	}
 
 	else if ((mut_ptr->which == MUT2_WALK_SHAD) && !p_ptr->anti_magic)
@@ -1731,7 +1731,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You feel invincible!");
 		message_flush();
-		(void) set_invuln(p_ptr->invuln + rand_range(8, 16));
+		(void)set_invuln(p_ptr->invuln + rand_range(8, 16));
 	}
 
 	else if (mut_ptr->which == MUT2_SP_TO_HP)
@@ -1747,7 +1747,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 				healing = wounds;
 			}
 
-			(void) hp_player(healing);
+			(void)hp_player(healing);
 			p_ptr->csp -= healing;
 		}
 	}

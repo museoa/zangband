@@ -466,7 +466,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 			}
 
 			/* Generate treasure */
-			(void) monster_death(m_idx, TRUE);
+			(void)monster_death(m_idx, TRUE);
 
 			/* Delete the monster */
 			delete_monster_idx(m_idx);
@@ -1728,7 +1728,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				if (see_either) disturb(TRUE);
 				explode = TRUE;
 			}
-			
+
 			/* Get action + touch flag */
 			act = rbm_info[method].action;
 			touched = rbm_info[method].touched;
@@ -1774,12 +1774,12 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 				if ((p_ptr->image) && one_in_(3))
 				{
-					(void) strfmt(temp, "%s %s.",
-								  silly_attacks[randint0(MAX_SILLY_ATTACK)],
-								  t_name);
+					(void)strfmt(temp, "%s %s.",
+								 silly_attacks[randint0(MAX_SILLY_ATTACK)],
+								 t_name);
 				}
 				else
-					(void) strfmt(temp, act, t_name);
+					(void)strfmt(temp, act, t_name);
 
 				msg_format("%^s %s", m_name, temp);
 			}
@@ -1901,7 +1901,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				{
 					if (damage > 23)
 					{
-						(void) earthquake(m_ptr->fx, m_ptr->fy, 8);
+						(void)earthquake(m_ptr->fx, m_ptr->fy, 8);
 					}
 					break;
 				}
@@ -1937,9 +1937,9 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				/* Do damage if not exploding */
 				if (!explode)
 				{
-					(void) project(m_idx, 0, t_ptr->fx, t_ptr->fy,
-								   (pt == GF_OLD_SLEEP ? r_ptr->level : damage),
-								   pt, PROJECT_KILL | PROJECT_STOP);
+					(void)project(m_idx, 0, t_ptr->fx, t_ptr->fy,
+								  (pt == GF_OLD_SLEEP ? r_ptr->level : damage),
+								  pt, PROJECT_KILL | PROJECT_STOP);
 				}
 
 				if (heal_effect)
@@ -1979,10 +1979,10 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_FIRE;
 						}
-						(void) project(t_idx, 0, m_ptr->fx, m_ptr->fy,
-									   damroll(1 + ((tr_ptr->level) / 26),
-											   1 + ((tr_ptr->level) / 17)),
-									   GF_FIRE, PROJECT_KILL | PROJECT_STOP);
+						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
+									  damroll(1 + ((tr_ptr->level) / 26),
+											  1 + ((tr_ptr->level) / 17)),
+									  GF_FIRE, PROJECT_KILL | PROJECT_STOP);
 					}
 
 					/* Aura cold */
@@ -1996,10 +1996,10 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags3 |= RF3_AURA_COLD;
 						}
-						(void) project(t_idx, 0, m_ptr->fx, m_ptr->fy,
-									   damroll(1 + ((tr_ptr->level) / 26),
-											   1 + ((tr_ptr->level) / 17)),
-									   GF_COLD, PROJECT_KILL | PROJECT_STOP);
+						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
+									  damroll(1 + ((tr_ptr->level) / 26),
+											  1 + ((tr_ptr->level) / 17)),
+									  GF_COLD, PROJECT_KILL | PROJECT_STOP);
 					}
 
 					/* Aura elec */
@@ -2013,10 +2013,10 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_ELEC;
 						}
-						(void) project(t_idx, 0, m_ptr->fx, m_ptr->fy,
-									   damroll(1 + ((tr_ptr->level) / 26),
-											   1 + ((tr_ptr->level) / 17)),
-									   GF_ELEC, PROJECT_KILL | PROJECT_STOP);
+						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
+									  damroll(1 + ((tr_ptr->level) / 26),
+											  1 + ((tr_ptr->level) / 17)),
+									  GF_ELEC, PROJECT_KILL | PROJECT_STOP);
 					}
 
 				}
@@ -2096,7 +2096,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			p_ptr->mon_fight = TRUE;
 		}
 
-		(void) teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+		(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 	}
 
 	return TRUE;
@@ -2261,7 +2261,7 @@ static void take_move(int m_idx, int *mm)
 
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				   (vptr) &mon_enter_test);
+				   (vptr)&mon_enter_test);
 
 		/* Get result */
 		if (mon_enter_test.flags & (MEG_DO_MOVE)) do_move = TRUE;
@@ -2309,7 +2309,7 @@ static void take_move(int m_idx, int *mm)
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px))
 		{
 			/* Do the attack */
-			(void) make_attack_normal(m_idx);
+			(void)make_attack_normal(m_idx);
 
 			/* Do not move */
 			do_move = FALSE;
@@ -2422,8 +2422,7 @@ static void take_move(int m_idx, int *mm)
 			}
 
 			/* Process fields under the monster. */
-			field_hook(&old_ptr->fld_idx,
-					   FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
+			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr)m_ptr);
 
 			/* Hack -- Update the old location */
 			old_ptr->m_idx = c_ptr->m_idx;
@@ -2453,8 +2452,7 @@ static void take_move(int m_idx, int *mm)
 			update_mon(m_idx, TRUE);
 
 			/* Process fields under the monster. */
-			field_hook(&old_ptr->fld_idx,
-					   FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
+			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
 
 			/* Redraw the old grid */
 			lite_spot(ox, oy);
@@ -2731,7 +2729,7 @@ static void process_monster(int m_idx)
 			}
 
 			/* Generate treasure, etc */
-			(void) monster_death(m_idx, TRUE);
+			(void)monster_death(m_idx, TRUE);
 
 			/* Delete the monster */
 			delete_monster_idx(m_idx);
@@ -2753,7 +2751,7 @@ static void process_monster(int m_idx)
 	c_ptr = area(ox, oy);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (vptr) m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (vptr)m_ptr);
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)
@@ -3134,7 +3132,7 @@ static void process_monster(int m_idx)
 				}
 
 				/* Find the player */
-				(void) get_moves(m_idx, mm);
+				(void)get_moves(m_idx, mm);
 
 				/* Restore the leash */
 				p_ptr->pet_follow_distance = dis;
@@ -3162,7 +3160,7 @@ static void process_monster(int m_idx)
 	else if (stupid_monsters)
 	{
 		/* Logical moves */
-		(void) get_moves(m_idx, mm);
+		(void)get_moves(m_idx, mm);
 	}
 	else
 	{

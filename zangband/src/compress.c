@@ -222,7 +222,7 @@ static byte rerase_block_bit(block_handle *h_ptr)
 		if (input_byte == -1) input_byte = 0;
 
 		/* Read a new byte */
-		current_byte = (byte) input_byte;
+		current_byte = (byte)input_byte;
 
 		current_bit = 8;
 	}
@@ -397,7 +397,7 @@ static void rle_blocks_encode(block_handle *h1_ptr)
 		/* No match - keep looping */
 		if (new_symbol != symbol)
 		{
-			symbol = (byte) new_symbol;
+			symbol = (byte)new_symbol;
 			continue;
 		}
 
@@ -427,7 +427,7 @@ static void rle_blocks_encode(block_handle *h1_ptr)
 		if (new_symbol == -1) break;
 
 		/* Go back to looping */
-		symbol = (byte) new_symbol;
+		symbol = (byte)new_symbol;
 	}
 }
 
@@ -631,14 +631,14 @@ static void arth_symbol_encode(block_handle *h_ptr, u16b *prob_table,
 	/*
 	 * How large is the current range of possibilities?
 	 */
-	u32b range = (u32b) (bound2 - bound1) + 1;
+	u32b range = (u32b)(bound2 - bound1) + 1;
 
 	/*
 	 * Rescale the bounds
 	 */
-	bound2 = (u16b) ((range * prob_table[symbol + 1]) / prob_table[256]
-					 - 1 + bound1);
-	bound1 += (u16b) ((range * prob_table[symbol]) / prob_table[256]);
+	bound2 = (u16b)((range * prob_table[symbol + 1]) / prob_table[256]
+					- 1 + bound1);
+	bound1 += (u16b)((range * prob_table[symbol]) / prob_table[256]);
 
 	/* Prune as many bits as possible */
 	while (TRUE)
@@ -704,12 +704,12 @@ static void arth_symbol_encode(block_handle *h_ptr, u16b *prob_table,
 static byte remove_symbol(u16b *code, u16b *prob_table, block_handle *h_ptr)
 {
 	/* How large is the current range of possibilities? */
-	u32b range = (u32b) (bound2 - bound1) + 1;
+	u32b range = (u32b)(bound2 - bound1) + 1;
 
 	byte symbol = 0;
 
-	u32b temp = (u32b) (*code - bound1) + 1;
-	u16b count = (u16b) ((temp * prob_table[256] - 1) / range);
+	u32b temp = (u32b)(*code - bound1) + 1;
+	u16b count = (u16b)((temp * prob_table[256] - 1) / range);
 
 	int i;
 
@@ -726,9 +726,9 @@ static byte remove_symbol(u16b *code, u16b *prob_table, block_handle *h_ptr)
 	/*
 	 * Rescale the bounds
 	 */
-	bound2 = (u16b) ((range * prob_table[symbol + 1]) / prob_table[256]
-					 - 1 + bound1);
-	bound1 += (u16b) ((range * (prob_table[symbol])) / prob_table[256]);
+	bound2 = (u16b)((range * prob_table[symbol + 1]) / prob_table[256]
+					- 1 + bound1);
+	bound1 += (u16b)((range * (prob_table[symbol])) / prob_table[256]);
 
 	/* Try to remove as many bits as possible */
 	while (TRUE)
@@ -1180,7 +1180,7 @@ static s32b *sort_string(byte *string, s32b len)
 	/* Get the sub-totals of the buckets */
 	for (i = 0; i < len; i++)
 	{
-		counts[(int) string[i]]++;
+		counts[(int)string[i]]++;
 	}
 
 	/* Work out the partial regions */
@@ -1549,7 +1549,7 @@ static errr write_file(block_handle *h_ptr, cptr name)
 	while (b_ptr)
 	{
 		/* Write out the data */
-		if (write(fd, b_ptr->block_data, b_ptr->size) != (s32b) b_ptr->size)
+		if (write(fd, b_ptr->block_data, b_ptr->size) != (s32b)b_ptr->size)
 		{
 			return (1);
 		}
@@ -1578,27 +1578,27 @@ void test_compress_module(void)
 	char buf[1024];
 
 	/* Build the filename */
-	(void) path_build(buf, 1024, ANGBAND_DIR, infile);
+	(void)path_build(buf, 1024, ANGBAND_DIR, infile);
 
-	(void) read_file(h_ptr, buf);
+	(void)read_file(h_ptr, buf);
 
 	bw_blocks_trans(h_ptr);
 
 	arth_blocks_encode(h_ptr);
 
 	/* Build the filename */
-	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
+	(void)path_build(buf, 1024, ANGBAND_DIR, outfile);
 
-	(void) write_file(h_ptr, buf);
+	(void)write_file(h_ptr, buf);
 
 	arth_blocks_decode(h_ptr);
 
 	ibw_blocks_trans(h_ptr);
 
 	/* Build the filename */
-	(void) path_build(buf, 1024, ANGBAND_DIR, outfile2);
+	(void)path_build(buf, 1024, ANGBAND_DIR, outfile2);
 
-	(void) write_file(h_ptr, buf);
+	(void)write_file(h_ptr, buf);
 
 	/* Done */
 	delete_handle(h_ptr);

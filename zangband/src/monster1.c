@@ -348,13 +348,13 @@ static void roff_aux(int r_idx, int remem)
 		pos += r_head->name_size;
 
 		/* Seek */
-		(void) fd_seek(fd, pos);
+		(void)fd_seek(fd, pos);
 
 		/* Read a chunk of data */
-		(void) fd_read(fd, buf, 2048);
+		(void)fd_read(fd, buf, 2048);
 
 		/* Close it */
-		(void) fd_close(fd);
+		(void)fd_close(fd);
 	}
 
 #else
@@ -523,11 +523,11 @@ static void roff_aux(int r_idx, int remem)
 			/* calculate the fractional exp part scaled by 100, */
 			/* must use long arithmetic to avoid overflow */
 			new_exp_frac =
-				(((long) new_exp_frac + 0x10000L / 500) * 100) / 0x10000L;
+				(((long)new_exp_frac + 0x10000L / 500) * 100) / 0x10000L;
 
 			/* Mention the experience */
 			c_roff(TERM_WHITE, format(" is worth %ld.%02ld point%s",
-									  (long) new_exp, (long) new_exp_frac,
+									  (long)new_exp, (long)new_exp_frac,
 									  (((new_exp == 1)
 										&& (new_exp_frac == 0)) ? "" : "s")));
 
@@ -546,7 +546,7 @@ static void roff_aux(int r_idx, int remem)
 
 			/* Mention the dependance on the player's level */
 			c_roff(TERM_WHITE, format(" for a%s %lu%s level character.  ",
-									  q, (long) i, p));
+									  q, (long)i, p));
 		}
 	}
 
@@ -1036,7 +1036,7 @@ static void roff_aux(int r_idx, int remem)
 
 
 	/* Do we know how aware it is? */
-	if ((((int) r_ptr->r_wake * (int) r_ptr->r_wake) > r_ptr->sleep) ||
+	if ((((int)r_ptr->r_wake * (int)r_ptr->r_wake) > r_ptr->sleep) ||
 		(r_ptr->r_ignore == MAX_UCHAR) ||
 		((r_ptr->sleep == 0) && ((r_ptr->r_tkills >= 10) || cheat_know)))
 	{

@@ -496,9 +496,9 @@ static void prt_exp(void)
 		else
 		{
 			/* Print the amount of experience to go until the next level */
-			(void) sprintf(out_val, "%8ld",
-						   (long) (player_exp[p_ptr->lev - 1] * p_ptr->expfact /
-								   100L) - (long) p_ptr->exp);
+			(void)sprintf(out_val, "%8ld",
+						  (long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact /
+								 100L) - (long)p_ptr->exp);
 
 			c_put_str(attr, out_val, COL_EXP + 4, ROW_EXP);
 		}
@@ -506,7 +506,7 @@ static void prt_exp(void)
 	else
 	{
 		/* Use the 'old' experience display */
-		(void) sprintf(out_val, "%8ld", (long) p_ptr->exp);
+		(void)sprintf(out_val, "%8ld", (long)p_ptr->exp);
 
 		c_put_str(attr, out_val, COL_EXP + 4, ROW_EXP);
 	}
@@ -521,7 +521,7 @@ static void prt_gold(void)
 	char tmp[32];
 
 	put_str("AU ", COL_GOLD, ROW_GOLD);
-	sprintf(tmp, "%9ld", (long) p_ptr->au);
+	sprintf(tmp, "%9ld", (long)p_ptr->au);
 	c_put_str(TERM_L_GREEN, tmp, COL_GOLD + 3, ROW_GOLD);
 }
 
@@ -676,11 +676,11 @@ static void prt_depth(void)
 	}
 	else if (depth_in_feet)
 	{
-		(void) sprintf(depths, "%d ft", p_ptr->depth * 50);
+		(void)sprintf(depths, "%d ft", p_ptr->depth * 50);
 	}
 	else
 	{
-		(void) sprintf(depths, "Lev %d", p_ptr->depth);
+		(void)sprintf(depths, "Lev %d", p_ptr->depth);
 	}
 
 	/* Right-Adjust the "depth", and clear old values */
@@ -876,11 +876,11 @@ static void prt_state(void)
 	{
 		if (p_ptr->command_rep > 999)
 		{
-			(void) sprintf(text, "C%3d00", p_ptr->command_rep / 100);
+			(void)sprintf(text, "C%3d00", p_ptr->command_rep / 100);
 		}
 		else
 		{
-			(void) sprintf(text, "C  %3d", p_ptr->command_rep);
+			(void)sprintf(text, "C  %3d", p_ptr->command_rep);
 		}
 	}
 
@@ -1369,16 +1369,16 @@ static void fix_message(void)
 		/* Dump messages */
 		for (i = 0; i < h; i++)
 		{
-			byte attr = message_color((s16b) i);
+			byte attr = message_color((s16b)i);
 
 			/* Hack -- fake monochrome */
 			if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 			/* Dump the message on the appropriate line */
-			Term_putstr(0, (h - 1) - i, -1, attr, message_str((s16b) i));
+			Term_putstr(0, (h - 1) - i, -1, attr, message_str((s16b)i));
 
 			/* Cursor */
-			(void) Term_locate(&x, &y);
+			(void)Term_locate(&x, &y);
 
 			/* Clear to end of line */
 			Term_erase(x, y, 255);
@@ -2041,7 +2041,7 @@ static void calc_hitpoints(void)
 	int bonus, mhp;
 
 	/* Un-inflate "half-hitpoint bonus per level" value */
-	bonus = ((int) (adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
+	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
 
 	/* Calculate hitpoints */
 	mhp = p_ptr->player_hp[p_ptr->lev - 1] + (bonus * p_ptr->lev / 2);
@@ -3268,14 +3268,14 @@ static void calc_bonuses(void)
 
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->to_a += ((int) (adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_d += ((int) (adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->to_h += ((int) (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 
 	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->dis_to_a += ((int) (adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->dis_to_d += ((int) (adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->dis_to_h += ((int) (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 
 
 	/* Redraw armor (if needed) */

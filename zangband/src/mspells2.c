@@ -32,7 +32,7 @@ static void monst_breath_monst(int m_idx, int x, int y, int typ, int dam_hp,
 	/* Handle breath attacks */
 	if (breath) rad = 0 - rad;
 
-	(void) project(m_idx, rad, x, y, dam_hp, typ, flg);
+	(void)project(m_idx, rad, x, y, dam_hp, typ, flg);
 }
 
 
@@ -45,7 +45,7 @@ static void monst_bolt_monst(int m_idx, int x, int y, int typ, int dam_hp)
 {
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
-	(void) project(m_idx, 0, x, y, dam_hp, typ, flg);
+	(void)project(m_idx, 0, x, y, dam_hp, typ, flg);
 }
 
 
@@ -1609,7 +1609,7 @@ bool monst_spell_monst(int m_idx)
 						msg_format("%^s is blasted by psionic energy.", t_name);
 					}
 
-					t_ptr->confused += (byte) rand_range(4, 8);
+					t_ptr->confused += (byte)rand_range(4, 8);
 
 					mon_take_hit_mon(t_idx, damroll(8, 8), &fear,
 									 " collapses, a mindless husk.");
@@ -1652,9 +1652,9 @@ bool monst_spell_monst(int m_idx)
 						msg_format("%^s is blasted by psionic energy.", t_name);
 					}
 
-					t_ptr->confused += (byte) rand_range(4, 8);
-					t_ptr->mspeed -= (byte) rand_range(4, 8);
-					t_ptr->stunned += (byte) rand_range(4, 8);
+					t_ptr->confused += (byte)rand_range(4, 8);
+					t_ptr->mspeed -= (byte)rand_range(4, 8);
+					t_ptr->stunned += (byte)rand_range(4, 8);
 
 					mon_take_hit_mon(t_idx, damroll(12, 15), &fear,
 									 " collapses, a mindless husk.");
@@ -2047,7 +2047,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (!t_ptr->monfear) fear = TRUE;
 
-					t_ptr->monfear += (byte) rand_range(4, 8);
+					t_ptr->monfear += (byte)rand_range(4, 8);
 				}
 
 				wake_up = TRUE;
@@ -2085,7 +2085,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s is blinded!", t_name);
 
-					t_ptr->confused += (byte) rand_range(12, 16);
+					t_ptr->confused += (byte)rand_range(12, 16);
 				}
 
 				wake_up = TRUE;
@@ -2124,7 +2124,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s seems confused.", t_name);
 
-					t_ptr->confused += (byte) rand_range(12, 16);
+					t_ptr->confused += (byte)rand_range(12, 16);
 				}
 
 				wake_up = TRUE;
@@ -2198,7 +2198,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s is paralyzed!", t_name);
 
-					t_ptr->stunned += (byte) rand_range(4, 8);
+					t_ptr->stunned += (byte)rand_range(4, 8);
 				}
 
 				wake_up = TRUE;
@@ -2267,7 +2267,7 @@ bool monst_spell_monst(int m_idx)
 						(tr_ptr->level + rand_range(10, 30)))
 					{
 						t_ptr->hp = t_ptr->hp -
-							(((s32b) (rand_range(65, 90) * t_ptr->hp)) / 100);
+							(((s32b)(rand_range(65, 90) * t_ptr->hp)) / 100);
 
 						if (t_ptr->hp < 1) t_ptr->hp = 1;
 					}
@@ -2367,7 +2367,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (!m_ptr->invulner) m_ptr->invulner = (byte) rand_range(4, 8);
+				if (!m_ptr->invulner) m_ptr->invulner = (byte)rand_range(4, 8);
 
 				break;
 			}
@@ -2380,7 +2380,7 @@ bool monst_spell_monst(int m_idx)
 					msg_format("%^s blinks away.", m_name);
 				}
 
-				(void) teleport_away(m_idx, 10);
+				(void)teleport_away(m_idx, 10);
 
 				break;
 			}
@@ -2393,7 +2393,7 @@ bool monst_spell_monst(int m_idx)
 					msg_format("%^s teleports away.", m_name);
 				}
 
-				(void) teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+				(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 
 				break;
 			}
@@ -2461,7 +2461,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (!resists_tele)
 				{
-					(void) teleport_away(t_idx, MAX_SIGHT * 2 + 5);
+					(void)teleport_away(t_idx, MAX_SIGHT * 2 + 5);
 				}
 
 				break;
@@ -2502,8 +2502,8 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				(void) project(m_idx, 3, x, y, 0, GF_DARK_WEAK,
-							   PROJECT_GRID | PROJECT_KILL);
+				(void)project(m_idx, 3, x, y, 0, GF_DARK_WEAK,
+							  PROJECT_GRID | PROJECT_KILL);
 
 				unlite_room(x, y);
 
@@ -2530,7 +2530,7 @@ bool monst_spell_monst(int m_idx)
 			{
 				/* RF6_RAISE_DEAD */
 				if (raise_dead
-					(m_ptr->fx, m_ptr->fy, (bool) (!is_hostile(m_ptr))) && known
+					(m_ptr->fx, m_ptr->fy, (bool)(!is_hostile(m_ptr))) && known
 					&& see_m)
 				{
 					msg_format("%^s mutters quietly.", m_name);

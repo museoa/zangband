@@ -226,25 +226,25 @@ static void rd_byte(byte *ip)
 static void rd_u16b(u16b *ip)
 {
 	(*ip) = sf_get();
-	(*ip) |= ((u16b) (sf_get()) << 8);
+	(*ip) |= ((u16b)(sf_get()) << 8);
 }
 
 static void rd_s16b(s16b *ip)
 {
-	rd_u16b((u16b *) ip);
+	rd_u16b((u16b *)ip);
 }
 
 static void rd_u32b(u32b *ip)
 {
 	(*ip) = sf_get();
-	(*ip) |= ((u32b) (sf_get()) << 8);
-	(*ip) |= ((u32b) (sf_get()) << 16);
-	(*ip) |= ((u32b) (sf_get()) << 24);
+	(*ip) |= ((u32b)(sf_get()) << 8);
+	(*ip) |= ((u32b)(sf_get()) << 16);
+	(*ip) |= ((u32b)(sf_get()) << 24);
 }
 
 static void rd_s32b(s32b *ip)
 {
-	rd_u32b((u32b *) ip);
+	rd_u32b((u32b *)ip);
 }
 
 
@@ -899,7 +899,7 @@ static void rd_store(int town_num, int store_num)
 	 */
 	if (num)
 	{
-		(void) allocate_store(st_ptr);
+		(void)allocate_store(st_ptr);
 	}
 
 	/* Read the items */
@@ -1329,7 +1329,7 @@ static void rd_extra(void)
 	rd_byte(&tmp8u);			/* oops */
 	rd_byte(&tmp8u);			/* oops */
 	rd_byte(&tmp8u);			/* oops */
-	rd_byte((byte *) &p_ptr->searching);
+	rd_byte((byte *)&p_ptr->searching);
 	rd_byte(&tmp8u);
 	rd_byte(&tmp8u);
 	rd_byte(&tmp8u);
@@ -1373,7 +1373,7 @@ static void rd_extra(void)
 	if (sf_version > 17)
 	{
 		/* Get trap detection status */
-		rd_byte((byte *) &player_detected);
+		rd_byte((byte *)&player_detected);
 
 		/* oops */
 		strip_bytes(4);
@@ -2007,7 +2007,7 @@ static void load_wild_data(void)
 
 				/* Places */
 				rd_u16b(&tmp_u16b);
-				wild[j][i].done.place = (byte) tmp_u16b;
+				wild[j][i].done.place = (byte)tmp_u16b;
 
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
@@ -2137,7 +2137,7 @@ static errr rd_dungeon(void)
 		change_level(1);
 
 		/* Get the new region */
-		dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt, REGION_CAVE);
+		dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
 		incref_region(cur_region);
 
 		/* Load dungeon map */
@@ -2166,8 +2166,8 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 
 			/* Get the new region */
-			dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt,
-												   REGION_CAVE);
+			dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt,
+												  REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2219,8 +2219,8 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 
 			/* Get the new region */
-			dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt,
-												   REGION_CAVE);
+			dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt,
+												  REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2259,8 +2259,8 @@ static errr rd_dungeon(void)
 		if (p_ptr->depth)
 		{
 			/* Get the new region */
-			dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt,
-												   REGION_CAVE);
+			dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt,
+												  REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2888,10 +2888,10 @@ static errr rd_savefile_new_aux(void)
 		if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
 		{
 			/* "Hard quests" flag */
-			rd_byte((byte *) &ironman_hard_quests);
+			rd_byte((byte *)&ironman_hard_quests);
 
 			/* Inverted "Wilderness" flag */
-			rd_byte((byte *) &vanilla_town);
+			rd_byte((byte *)&vanilla_town);
 			vanilla_town = !vanilla_town;
 		}
 
@@ -2899,8 +2899,8 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&p_ptr->wilderness_x);
 		rd_s32b(&p_ptr->wilderness_y);
 
-		tempx = (int) p_ptr->wilderness_x / 16;
-		tempy = (int) p_ptr->wilderness_y / 16;
+		tempx = (int)p_ptr->wilderness_x / 16;
+		tempy = (int)p_ptr->wilderness_y / 16;
 
 		/* Get corner of visible region */
 		shift_in_bounds(&tempx, &tempy);
@@ -2997,7 +2997,7 @@ static errr rd_savefile_new_aux(void)
 	 */
 	if (sf_version < 30)
 	{
-		(void) get_player_quests();
+		(void)get_player_quests();
 	}
 
 	if (arg_fiddle) note("Loaded Quests");
@@ -3195,7 +3195,7 @@ static errr rd_savefile_new_aux(void)
 			rd_u16b(&tmp16u);
 
 			/* Hack.... used to be a u16b, but only ever used a bytes worth */
-			pl_ptr->type = (byte) tmp16u;
+			pl_ptr->type = (byte)tmp16u;
 
 			if (sf_version > 21)
 			{

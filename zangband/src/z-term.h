@@ -208,23 +208,23 @@ struct term
 	void (*init_hook) (term *t);
 	void (*nuke_hook) (term *t);
 
-	  errr(*user_hook) (int n);
+	errr (*user_hook) (int n);
 
-	  errr(*xtra_hook) (int n, int v);
+	errr (*xtra_hook) (int n, int v);
 
-	  errr(*curs_hook) (int x, int y);
+	errr (*curs_hook) (int x, int y);
 
-	  errr(*wipe_hook) (int x, int y, int n);
+	errr (*wipe_hook) (int x, int y, int n);
 
-	  errr(*text_hook) (int x, int y, int n, byte a, cptr s);
+	errr (*text_hook) (int x, int y, int n, byte a, cptr s);
 
 	void (*resize_hook) (void);
 
 #ifdef USE_TRANSPARENCY
-	  errr(*pict_hook) (int x, int y, int n, const byte *ap, const char *cp,
-						const byte *tap, const char *tcp);
+	errr (*pict_hook) (int x, int y, int n, const byte *ap, const char *cp,
+					   const byte *tap, const char *tcp);
 #else  /* USE_TRANSPARENCY */
-	  errr(*pict_hook) (int x, int y, int n, const byte *ap, const char *cp);
+	errr (*pict_hook) (int x, int y, int n, const byte *ap, const char *cp);
 #endif /* USE_TRANSPARENCY */
 
 };

@@ -455,7 +455,7 @@ errr process_pref_file_command(char *buf)
 	{
 		if (tokenize(buf + 2, 3, zz, TOKENIZE_CHECKQUOTE) == 3)
 		{
-			j = (byte) strtol(zz[0], NULL, 0);
+			j = (byte)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
 			if ((j < 0) || (j >= 256)) return (1);
@@ -491,7 +491,7 @@ errr process_pref_file_command(char *buf)
 	{
 		if (tokenize(buf + 2, 2, zz, TOKENIZE_CHECKQUOTE) == 2)
 		{
-			j = (byte) strtol(zz[0], NULL, 0) % 128;
+			j = (byte)strtol(zz[0], NULL, 0) % 128;
 			n1 = strtol(zz[1], NULL, 0);
 			if ((j < 0) || (j >= 128)) return (1);
 			if (n1) tval_to_attr[j] = n1;
@@ -531,7 +531,7 @@ errr process_pref_file_command(char *buf)
 
 		text_to_ascii(tmp, zz[1]);
 		if (!tmp[0] || tmp[1]) return (1);
-		i = (byte) (tmp[0]);
+		i = (byte)(tmp[0]);
 
 		string_free(keymap_act[mode][i]);
 
@@ -546,12 +546,12 @@ errr process_pref_file_command(char *buf)
 	{
 		if (tokenize(buf + 2, 5, zz, TOKENIZE_CHECKQUOTE) == 5)
 		{
-			i = (byte) strtol(zz[0], NULL, 0);
+			i = (byte)strtol(zz[0], NULL, 0);
 			if ((i < 0) || (i >= 256)) return (1);
-			angband_color_table[i][0] = (byte) strtol(zz[1], NULL, 0);
-			angband_color_table[i][1] = (byte) strtol(zz[2], NULL, 0);
-			angband_color_table[i][2] = (byte) strtol(zz[3], NULL, 0);
-			angband_color_table[i][3] = (byte) strtol(zz[4], NULL, 0);
+			angband_color_table[i][0] = (byte)strtol(zz[1], NULL, 0);
+			angband_color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
+			angband_color_table[i][2] = (byte)strtol(zz[3], NULL, 0);
+			angband_color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
 			return (0);
 		}
 	}
@@ -653,14 +653,14 @@ errr process_pref_file_command(char *buf)
 	{
 		if (tokenize(buf + 2, 2, zz, TOKENIZE_CHECKQUOTE) == 2)
 		{
-			u16b type = (u16b) strtol(zz[0], NULL, 0);
+			u16b type = (u16b)strtol(zz[0], NULL, 0);
 			int color = color_char_to_attr(zz[1][0]);
 
 			/* Ignore illegal color */
 			if (color < 0) return (1);
 
 			/* Store the color */
-			return (message_color_define(type, (byte) color));
+			return (message_color_define(type, (byte)color));
 		}
 	}
 
@@ -981,7 +981,7 @@ static errr process_pref_file_aux(cptr name)
 		if (buf[0] == '%')
 		{
 			/* Process that file if allowed */
-			(void) process_pref_file(buf + 2);
+			(void)process_pref_file(buf + 2);
 
 			/* Continue */
 			continue;
@@ -1213,8 +1213,8 @@ errr check_load(void)
 	/* Check the load */
 	if (0 == rstat("localhost", &st))
 	{
-		long val1 = (long) (st.avenrun[2]);
-		long val2 = (long) (check_load_value) * FSCALE;
+		long val1 = (long)(st.avenrun[2]);
+		long val2 = (long)(check_load_value) * FSCALE;
 
 		/* Check for violation */
 		if (val1 >= val2) return (1);
@@ -1256,7 +1256,7 @@ errr check_load_init(void)
 	check_load_value = 100;
 
 	/* Get the host name */
-	(void) gethostname(thishost, (sizeof thishost) - 1);
+	(void)gethostname(thishost, (sizeof thishost) - 1);
 
 	/* Parse it */
 	while (0 == my_fgets(fp, buf, 1024))
@@ -1300,7 +1300,7 @@ static void prt_num(cptr header, s32b num, int col, int row, byte color,
 	char out_val[32];
 	put_str(header, col, row);
 	put_str("   ", col + len, row);
-	(void) sprintf(out_val, "%*ld", wid, (long) num);
+	(void)sprintf(out_val, "%*ld", wid, (long)num);
 	c_put_str(color, out_val, col + len + 3, row);
 }
 
@@ -1400,7 +1400,7 @@ static void likert(int x, int y, char *desc)
 		default:
 		{
 			likert_color = TERM_VIOLET;
-			sprintf(desc, "Amber [%d]", (int) ((((x / y) - 17) * 5) / 2));
+			sprintf(desc, "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
 			return;
 		}
 	}
@@ -1579,7 +1579,7 @@ static void display_player_abilities(void)
 	}
 	else
 	{
-		sprintf(desc, "%d", (int) avgdam);
+		sprintf(desc, "%d", (int)avgdam);
 	}
 
 	put_str(desc, COL_SKILLS3 + WID_SKILLS, 18);
@@ -2076,11 +2076,11 @@ static void display_player_misc_info(void)
 	put_str("Hits(Max) :", 1, 7);
 	put_str("Mana(Max) :", 1, 8);
 
-	(void) sprintf(buf, "%d", (int) p_ptr->lev);
+	(void)sprintf(buf, "%d", (int)p_ptr->lev);
 	c_put_str(TERM_L_BLUE, buf, 13, 6);
-	(void) sprintf(buf, "%d(%d)", (int) p_ptr->chp, (int) p_ptr->mhp);
+	(void)sprintf(buf, "%d(%d)", (int)p_ptr->chp, (int)p_ptr->mhp);
 	c_put_str(TERM_L_BLUE, buf, 13, 7);
-	(void) sprintf(buf, "%d(%d)", (int) p_ptr->csp, (int) p_ptr->msp);
+	(void)sprintf(buf, "%d(%d)", (int)p_ptr->csp, (int)p_ptr->msp);
 	c_put_str(TERM_L_BLUE, buf, 13, 8);
 }
 
@@ -2156,11 +2156,11 @@ static void display_player_stat_info(void)
 		c_put_str(TERM_BLUE, buf, stat_col + 5, row + i);
 
 		/* Race, class, and equipment modifiers */
-		(void) sprintf(buf, "%3d", (int) rp_ptr->r_adj[i]);
+		(void)sprintf(buf, "%3d", (int)rp_ptr->r_adj[i]);
 		c_put_str(TERM_L_BLUE, buf, stat_col + 12, row + i);
-		(void) sprintf(buf, "%3d", (int) cp_ptr->c_adj[i]);
+		(void)sprintf(buf, "%3d", (int)cp_ptr->c_adj[i]);
 		c_put_str(TERM_L_BLUE, buf, stat_col + 16, row + i);
-		(void) sprintf(buf, "%3d", (int) e_adj);
+		(void)sprintf(buf, "%3d", (int)e_adj);
 		c_put_str(TERM_L_BLUE, buf, stat_col + 20, row + i);
 
 		/* Actual maximal modified value */
@@ -2402,10 +2402,10 @@ static void display_player_top(void)
 	}
 
 	/* Age, Height, Weight, Social */
-	prt_num("Age         ", (int) p_ptr->age, COL_AGE, 2, TERM_L_BLUE, 3);
-	prt_num("Height      ", (int) p_ptr->ht, COL_AGE, 3, TERM_L_BLUE, 3);
-	prt_num("Weight      ", (int) p_ptr->wt, COL_AGE, 4, TERM_L_BLUE, 3);
-	prt_num("Social Class", (int) p_ptr->sc, COL_AGE, 5, TERM_L_BLUE, 3);
+	prt_num("Age         ", (int)p_ptr->age, COL_AGE, 2, TERM_L_BLUE, 3);
+	prt_num("Height      ", (int)p_ptr->ht, COL_AGE, 3, TERM_L_BLUE, 3);
+	prt_num("Weight      ", (int)p_ptr->wt, COL_AGE, 4, TERM_L_BLUE, 3);
+	prt_num("Social Class", (int)p_ptr->sc, COL_AGE, 5, TERM_L_BLUE, 3);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2487,7 +2487,7 @@ static void display_player_middle(void)
 
 	/*** Level, experience, gold ***/
 
-	prt_num("Level      ", (int) p_ptr->lev, COL_VALUE, 9, TERM_L_GREEN, 9);
+	prt_num("Level      ", (int)p_ptr->lev, COL_VALUE, 9, TERM_L_GREEN, 9);
 
 	if (p_ptr->exp >= p_ptr->max_exp)
 	{
@@ -2510,14 +2510,14 @@ static void display_player_middle(void)
 	{
 		/* Print the amount of xp until next level */
 		prt_num("Exp to Adv.",
-				(long) (player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L
-						- (long) p_ptr->exp), COL_VALUE, 12, TERM_L_GREEN, 9);
+				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L
+					   - (long)p_ptr->exp), COL_VALUE, 12, TERM_L_GREEN, 9);
 	}
 	else
 	{
 		/* Print the total xp required for next level */
 		prt_num("Exp to Adv.",
-				(long) (player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
+				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
 				COL_VALUE, 12, TERM_L_GREEN, 9);
 	}
 
@@ -2694,7 +2694,7 @@ void do_cmd_character(void)
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{
-					(void) file_character(tmp, TRUE);
+					(void)file_character(tmp, TRUE);
 				}
 			}
 		}
@@ -2767,10 +2767,10 @@ errr file_character(cptr name, bool full)
 		char out_val[160];
 
 		/* Close the file */
-		(void) fd_close(fd);
+		(void)fd_close(fd);
 
 		/* Build query */
-		(void) sprintf(out_val, "Replace existing file %s? ", buf);
+		(void)sprintf(out_val, "Replace existing file %s? ", buf);
 
 		/* Ask */
 		if (get_check(out_val)) fd = -1;
@@ -2803,7 +2803,7 @@ errr file_character(cptr name, bool full)
 		for (x = 0; x < 79; x++)
 		{
 			/* Get the attr/char */
-			(void) (Term_what(x, y, &a, &c));
+			(void)(Term_what(x, y, &a, &c));
 
 			/* Dump it */
 			buf[x] = c;
@@ -2829,7 +2829,7 @@ errr file_character(cptr name, bool full)
 		for (x = 0; x < 79; x++)
 		{
 			/* Get the attr/char */
-			(void) (Term_what(x, y, &a, &c));
+			(void)(Term_what(x, y, &a, &c));
 
 			/* Dump it */
 			buf[x] = c;
@@ -2917,7 +2917,7 @@ errr file_character(cptr name, bool full)
 		{
 			for (x = 0; x < 21; x++)
 			{
-				(void) (Term_what(x, y, &a, &c));
+				(void)(Term_what(x, y, &a, &c));
 				buf[x] = c;
 			}
 
@@ -2933,7 +2933,7 @@ errr file_character(cptr name, bool full)
 		{
 			for (x = 0; x < 23; x++)
 			{
-				(void) (Term_what(x + 25, y, &a, &c));
+				(void)(Term_what(x + 25, y, &a, &c));
 				buf[x] = c;
 			}
 
@@ -2949,7 +2949,7 @@ errr file_character(cptr name, bool full)
 		{
 			for (x = 0; x < 24; x++)
 			{
-				(void) (Term_what(x + 52, y, &a, &c));
+				(void)(Term_what(x + 52, y, &a, &c));
 				buf[x] = c;
 			}
 
@@ -3060,7 +3060,7 @@ errr file_character(cptr name, bool full)
 
 	for (i = msg_max - 1; i >= 0; i--)
 	{
-		fprintf(fff, "%s\n", message_str((s16b) i));
+		fprintf(fff, "%s\n", message_str((s16b)i));
 	}
 	fprintf(fff, "\n\n");
 
@@ -3453,7 +3453,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		{
 			/* Get "shower" */
 			prt("Show: ", 0, hgt - 1);
-			(void) askfor_aux(shower, 80);
+			(void)askfor_aux(shower, 80);
 		}
 
 		/* Hack -- try finding */
@@ -3619,7 +3619,7 @@ void do_cmd_help(void)
 	screen_save();
 
 	/* Peruse the main help file */
-	(void) show_file("help.hlp", NULL, 0, 0);
+	(void)show_file("help.hlp", NULL, 0, 0);
 
 	/* Load screen */
 	screen_load();
@@ -3714,15 +3714,15 @@ void process_player_name(bool sf)
 
 #ifdef SAVEFILE_USE_UID
 		/* Rename the savefile, using the player_uid and player_base */
-		(void) sprintf(temp, "%d.%s", player_uid, player_base);
+		(void)sprintf(temp, "%d.%s", player_uid, player_base);
 #else
 		/* Rename the savefile, using the player_base */
-		(void) sprintf(temp, "%s", player_base);
+		(void)sprintf(temp, "%s", player_base);
 #endif
 
 #ifdef VM
 		/* Hack -- support "flat directory" usage on VM/ESA */
-		(void) sprintf(temp, "%s.sv", player_base);
+		(void)sprintf(temp, "%s.sv", player_base);
 #endif /* VM */
 
 		/* Build the filename */
@@ -3845,7 +3845,7 @@ void do_cmd_suicide(void)
 	p_ptr->leaving = TRUE;
 
 	/* Cause of death */
-	(void) strcpy(p_ptr->died_from, "Quitting");
+	(void)strcpy(p_ptr->died_from, "Quitting");
 }
 
 
@@ -3878,7 +3878,7 @@ void do_cmd_save_game(int is_autosave)
 	Term_fresh();
 
 	/* The player is not dead */
-	(void) strcpy(p_ptr->died_from, "(saved)");
+	(void)strcpy(p_ptr->died_from, "(saved)");
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
@@ -3908,7 +3908,7 @@ void do_cmd_save_game(int is_autosave)
 	prt("", 0, 0);
 
 	/* Note that the player is not dead */
-	(void) strcpy(p_ptr->died_from, "(alive and well)");
+	(void)strcpy(p_ptr->died_from, "(alive and well)");
 }
 
 
@@ -3938,7 +3938,7 @@ static void center_string(char *buf, cptr str)
 	j = 15 - i / 2;
 
 	/* Mega-Hack */
-	(void) sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
+	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
 }
 
 
@@ -4096,19 +4096,19 @@ static void print_tomb(void)
 		center_string(buf, cp_ptr->title);
 		put_str(buf, 11, 10);
 
-		(void) sprintf(tmp, "Level: %d", (int) p_ptr->lev);
+		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
 		put_str(buf, 11, 11);
 
-		(void) sprintf(tmp, "Exp: %ld", (long) p_ptr->exp);
+		(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
 		center_string(buf, tmp);
 		put_str(buf, 11, 12);
 
-		(void) sprintf(tmp, "AU: %ld", (long) p_ptr->au);
+		(void)sprintf(tmp, "AU: %ld", (long)p_ptr->au);
 		center_string(buf, tmp);
 		put_str(buf, 11, 13);
 
-		(void) sprintf(tmp, "Killed on Level %d", p_ptr->depth);
+		(void)sprintf(tmp, "Killed on Level %d", p_ptr->depth);
 		center_string(buf, tmp);
 		put_str(buf, 11, 14);
 
@@ -4117,16 +4117,16 @@ static void print_tomb(void)
 		{
 			strncpy(dummy, p_ptr->died_from, 24);
 			dummy[24] = '\0';
-			(void) sprintf(tmp, "by %s.", dummy);
+			(void)sprintf(tmp, "by %s.", dummy);
 		}
 		else
-			(void) sprintf(tmp, "by %s.", p_ptr->died_from);
+			(void)sprintf(tmp, "by %s.", p_ptr->died_from);
 
 		center_string(buf, tmp);
 		put_str(buf, 11, 15);
 
 
-		(void) sprintf(tmp, "%-.24s", ctime(&ct));
+		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
 		put_str(buf, 11, 17);
 	}
@@ -4334,7 +4334,7 @@ static void close_game_handle_death(void)
 		time_t ct = time((time_t *) NULL);
 
 		/* Get the date */
-		(void) strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+		(void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
 
 		/* Create string */
 		sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
@@ -4418,7 +4418,7 @@ static void close_game_handle_death(void)
 				if (!tmp[0]) continue;
 
 				/* Dump a character file */
-				(void) file_character(tmp, FALSE);
+				(void)file_character(tmp, FALSE);
 
 				break;
 			}
@@ -4508,7 +4508,7 @@ void close_game(void)
 
 
 	/* Shut the high score file */
-	(void) fd_close(highscore_fd);
+	(void)fd_close(highscore_fd);
 
 	/* Forget the high score fd */
 	highscore_fd = -1;
@@ -4551,7 +4551,7 @@ void exit_game_panic(void)
 	signals_ignore_tstp();
 
 	/* Indicate panic save */
-	(void) strcpy(p_ptr->died_from, "(panic save)");
+	(void)strcpy(p_ptr->died_from, "(panic save)");
 
 	/* Panic save, or get worried */
 	if (!save_player()) quit("panic save failed!");
@@ -4699,7 +4699,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 static void handle_signal_suspend(int sig)
 {
 	/* Disable handler */
-	(void) signal(sig, SIG_IGN);
+	(void)signal(sig, SIG_IGN);
 
 #ifdef SIGSTOP
 
@@ -4710,7 +4710,7 @@ static void handle_signal_suspend(int sig)
 	Term_xtra(TERM_XTRA_ALIVE, 0);
 
 	/* Suspend ourself */
-	(void) kill(0, SIGSTOP);
+	(void)kill(0, SIGSTOP);
 
 	/* Resume the "Term" */
 	Term_xtra(TERM_XTRA_ALIVE, 1);
@@ -4724,7 +4724,7 @@ static void handle_signal_suspend(int sig)
 #endif
 
 	/* Restore handler */
-	(void) signal(sig, handle_signal_suspend);
+	(void)signal(sig, handle_signal_suspend);
 }
 
 
@@ -4745,7 +4745,7 @@ static void handle_signal_suspend(int sig)
 static void handle_signal_simple(int sig)
 {
 	/* Disable handler */
-	(void) signal(sig, SIG_IGN);
+	(void)signal(sig, SIG_IGN);
 
 
 	/* Nothing to save, just quit */
@@ -4760,7 +4760,7 @@ static void handle_signal_simple(int sig)
 	if (p_ptr->is_dead)
 	{
 		/* Mark the savefile */
-		(void) strcpy(p_ptr->died_from, "Abortion");
+		(void)strcpy(p_ptr->died_from, "Abortion");
 
 		/* Close stuff */
 		close_game();
@@ -4773,7 +4773,7 @@ static void handle_signal_simple(int sig)
 	else if (signal_count >= 5)
 	{
 		/* Cause of "death" */
-		(void) strcpy(p_ptr->died_from, "Interrupting");
+		(void)strcpy(p_ptr->died_from, "Interrupting");
 
 		/* Stop playing */
 		p_ptr->playing = FALSE;
@@ -4815,7 +4815,7 @@ static void handle_signal_simple(int sig)
 	}
 
 	/* Restore handler */
-	(void) signal(sig, handle_signal_simple);
+	(void)signal(sig, handle_signal_simple);
 }
 
 
@@ -4825,7 +4825,7 @@ static void handle_signal_simple(int sig)
 static void handle_signal_abort(int sig)
 {
 	/* Disable handler */
-	(void) signal(sig, SIG_IGN);
+	(void)signal(sig, SIG_IGN);
 
 
 	/* Nothing to save, just quit */
@@ -4849,7 +4849,7 @@ static void handle_signal_abort(int sig)
 	p_ptr->panic_save = 1;
 
 	/* Panic save */
-	(void) strcpy(p_ptr->died_from, "(panic save)");
+	(void)strcpy(p_ptr->died_from, "(panic save)");
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
@@ -4883,7 +4883,7 @@ void signals_ignore_tstp(void)
 {
 
 #ifdef SIGTSTP
-	(void) signal(SIGTSTP, SIG_IGN);
+	(void)signal(SIGTSTP, SIG_IGN);
 #endif
 
 }
@@ -4895,7 +4895,7 @@ void signals_handle_tstp(void)
 {
 
 #ifdef SIGTSTP
-	(void) signal(SIGTSTP, handle_signal_suspend);
+	(void)signal(SIGTSTP, handle_signal_suspend);
 #endif
 
 }
@@ -4908,78 +4908,78 @@ void signals_init(void)
 {
 
 #ifdef SIGHUP
-	(void) signal(SIGHUP, SIG_IGN);
+	(void)signal(SIGHUP, SIG_IGN);
 #endif
 
 
 #ifdef SIGTSTP
-	(void) signal(SIGTSTP, handle_signal_suspend);
+	(void)signal(SIGTSTP, handle_signal_suspend);
 #endif
 
 
 #ifdef SIGINT
-	(void) signal(SIGINT, handle_signal_simple);
+	(void)signal(SIGINT, handle_signal_simple);
 #endif
 
 #ifdef SIGQUIT
-	(void) signal(SIGQUIT, handle_signal_simple);
+	(void)signal(SIGQUIT, handle_signal_simple);
 #endif
 
 
 #ifdef SIGFPE
-	(void) signal(SIGFPE, handle_signal_abort);
+	(void)signal(SIGFPE, handle_signal_abort);
 #endif
 
 #ifdef SIGILL
-	(void) signal(SIGILL, handle_signal_abort);
+	(void)signal(SIGILL, handle_signal_abort);
 #endif
 
 #ifdef SIGTRAP
-	(void) signal(SIGTRAP, handle_signal_abort);
+	(void)signal(SIGTRAP, handle_signal_abort);
 #endif
 
 #ifdef SIGIOT
-	(void) signal(SIGIOT, handle_signal_abort);
+	(void)signal(SIGIOT, handle_signal_abort);
 #endif
 
 #ifdef SIGKILL
-	(void) signal(SIGKILL, handle_signal_abort);
+	(void)signal(SIGKILL, handle_signal_abort);
 #endif
 
 #ifdef SIGBUS
-	(void) signal(SIGBUS, handle_signal_abort);
+	(void)signal(SIGBUS, handle_signal_abort);
 #endif
 
 #ifdef SIGSEGV
-	(void) signal(SIGSEGV, handle_signal_abort);
+	(void)signal(SIGSEGV, handle_signal_abort);
 #endif
 
 #ifdef SIGTERM
-	(void) signal(SIGTERM, handle_signal_abort);
+	(void)signal(SIGTERM, handle_signal_abort);
 #endif
 
 #ifdef SIGPIPE
-	(void) signal(SIGPIPE, handle_signal_abort);
+	(void)signal(SIGPIPE, handle_signal_abort);
 #endif
 
 #ifdef SIGEMT
-	(void) signal(SIGEMT, handle_signal_abort);
+	(void)signal(SIGEMT, handle_signal_abort);
 #endif
 
 #ifdef SIGDANGER
-	(void) signal(SIGDANGER, handle_signal_abort);
+	(void)signal(SIGDANGER, handle_signal_abort);
 #endif
 
 #ifdef SIGSYS
-	(void) signal(SIGSYS, handle_signal_abort);
+	(void)signal(SIGSYS, handle_signal_abort);
 #endif
 
 #ifdef SIGXCPU
-	(void) signal(SIGXCPU, handle_signal_abort);
+	(void)signal(SIGXCPU, handle_signal_abort);
 #endif
 
 #ifdef SIGPWR
-	(void) signal(SIGPWR, handle_signal_abort);
+	(void)signal(SIGPWR, handle_signal_abort);
 #endif
 
 }

@@ -781,7 +781,7 @@ static u32b add_name(header *head, cptr buf)
 errr parse_z_info(char *buf, header *head)
 {
 	/* Unused parameter */
-	(void) head;
+	(void)head;
 
 	/* Hack - Verify 'M:x:' format */
 	if (buf[0] != 'M') return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
@@ -2000,9 +2000,9 @@ errr parse_r_info(char *buf, header *head)
 						&magic)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
-		r_ptr->obj_drop.treasure = (byte) treasure;
-		r_ptr->obj_drop.combat = (byte) combat;
-		r_ptr->obj_drop.magic = (byte) magic;
+		r_ptr->obj_drop.treasure = (byte)treasure;
+		r_ptr->obj_drop.combat = (byte)combat;
+		r_ptr->obj_drop.magic = (byte)magic;
 
 		/* 
 		 * Since monsters do not drop junk,
@@ -2253,7 +2253,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 				|| (tmp < 0)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the value */
-			w_ptr->feat = (byte) tmp;
+			w_ptr->feat = (byte)tmp;
 
 			/* Next... */
 			continue;
@@ -2353,7 +2353,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			if (i == 1)
 			{
 				/* Initialise */
-				(void) init_choice_tree(&bound, i);
+				(void)init_choice_tree(&bound, i);
 			}
 			else
 			{
@@ -2575,9 +2575,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 							&counter)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the values */
-			t_ptr->priority = (byte) priority;
-			t_ptr->type = (byte) type;
-			t_ptr->count_init = (s16b) counter;
+			t_ptr->priority = (byte)priority;
+			t_ptr->type = (byte)type;
+			t_ptr->count_init = (s16b)counter;
 
 			/* Next... */
 			continue;

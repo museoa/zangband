@@ -1457,15 +1457,15 @@ void test_decision_tree(void)
 	/* get parameters */
 	msg_print("Type in hgt");
 
-	hgt = (byte) get_quantity(NULL, 255);
+	hgt = (byte)get_quantity(NULL, 255);
 
 	msg_print("Type in pop");
 
-	pop = (byte) get_quantity(NULL, 255);
+	pop = (byte)get_quantity(NULL, 255);
 
 	msg_print("Type in law");
 
-	law = (byte) get_quantity(NULL, 255);
+	law = (byte)get_quantity(NULL, 255);
 
 	/* Get value from decision tree */
 	type = get_gen_type(hgt, pop, law);
@@ -2054,8 +2054,8 @@ static void create_roads(void)
  */
 static bool ang_sort_comp_height(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b *) (u);
-	s16b *y = (s16b *) (v);
+	s16b *x = (s16b *)(u);
+	s16b *y = (s16b *)(v);
 
 	int ha, hb;
 
@@ -2076,8 +2076,8 @@ static bool ang_sort_comp_height(vptr u, vptr v, int a, int b)
  */
 static void ang_sort_swap_height(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b *) (u);
-	s16b *y = (s16b *) (v);
+	s16b *x = (s16b *)(u);
+	s16b *y = (s16b *)(v);
 
 	s16b temp;
 
@@ -2190,12 +2190,12 @@ static void create_rivers(void)
 		r1 = ((i % RIVER_NUM) * max_wild) / RIVER_NUM;
 		r2 = r1 + (max_wild / RIVER_NUM);
 
-		temp_y[i] = (s16b) rand_range(r1, r2);
+		temp_y[i] = (s16b)rand_range(r1, r2);
 
 		r1 = ((i / RIVER_NUM) * max_wild) / RIVER_NUM;;
 		r2 = r1 + (max_wild / RIVER_NUM);
 
-		temp_x[i] = (s16b) rand_range(r1, r2);
+		temp_x[i] = (s16b)rand_range(r1, r2);
 	}
 
 	temp_n = river_start;
@@ -2995,8 +2995,8 @@ static void create_law_map(u16b sea)
  */
 static void wild_done(void)
 {
-	p_ptr->px = (s16b) p_ptr->wilderness_x;
-	p_ptr->py = (s16b) p_ptr->wilderness_y;
+	p_ptr->px = (s16b)p_ptr->wilderness_x;
+	p_ptr->py = (s16b)p_ptr->wilderness_y;
 
 	map_panel_size();
 
@@ -3134,7 +3134,7 @@ static void wipe_wilderness(void)
 		}
 
 		/* Wipe the place */
-		(void) WIPE(pl_ptr, place_type);
+		(void)WIPE(pl_ptr, place_type);
 	}
 
 	/* Wipe the wild info */
@@ -3145,7 +3145,7 @@ static void wipe_wilderness(void)
 			w_ptr = &wild[j][i];
 
 			/* Wipe the block */
-			(void) WIPE(w_ptr, wild_type);
+			(void)WIPE(w_ptr, wild_type);
 		}
 	}
 }
@@ -3207,7 +3207,7 @@ static void create_wild_info(int *bestx, int *besty)
 	/*
 	 * The sea covers 1/SEA_FRACTION of the wilderness
 	 */
-	sea_level = (byte) (hgt_scale / SEA_FRACTION);
+	sea_level = (byte)(hgt_scale / SEA_FRACTION);
 
 	hgt_min *= 16;
 
@@ -3289,9 +3289,9 @@ static void create_wild_info(int *bestx, int *besty)
 			 * in the union.  (Want to scale values to be 0 - 255)
 			 */
 
-			hgt = (byte) ((w_ptr->gen.hgt_map - hgt_min) * 16 / hgt_scale);
-			pop = (byte) ((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
-			law = (byte) ((w_ptr->gen.law_map - law_min) * 16 / law_scale);
+			hgt = (byte)((w_ptr->gen.hgt_map - hgt_min) * 16 / hgt_scale);
+			pop = (byte)((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
+			law = (byte)((w_ptr->gen.law_map - law_min) * 16 / law_scale);
 
 			/*
 			 * Go to transition data structure

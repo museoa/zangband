@@ -920,9 +920,9 @@ static void get_extra(void)
 
 #ifdef SHOW_LIFE_RATE
 
-	percent = (int) (((long) p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
-					 (2 * p_ptr->hitdie +
-					  ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
+	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
+					(2 * p_ptr->hitdie +
+					 ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 	msg_format("Current Life Rating is %d/100.", percent);
 	message_flush();
@@ -1125,10 +1125,10 @@ static void get_history(void)
 		while ((chart != bg[i].chart) || (roll > bg[i].roll)) i++;
 
 		/* Acquire the textual history */
-		(void) strcat(buf, bg[i].info);
+		(void)strcat(buf, bg[i].info);
 
 		/* Add in the social class */
-		social_class += (int) (bg[i].bonus) - 50;
+		social_class += (int)(bg[i].bonus) - 50;
 
 		/* Enter the next chart */
 		chart = bg[i].next;
@@ -1205,18 +1205,18 @@ static void get_ahw(void)
 	if (p_ptr->psex == SEX_MALE)
 	{
 		p_ptr->ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
-		h_percent = (int) (p_ptr->ht) * 100 / (int) (rp_ptr->m_b_ht);
-		p_ptr->wt = Rand_normal((int) (rp_ptr->m_b_wt) * h_percent / 100,
-								(int) (rp_ptr->m_m_wt) * h_percent / 300);
+		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->m_b_ht);
+		p_ptr->wt = Rand_normal((int)(rp_ptr->m_b_wt) * h_percent / 100,
+								(int)(rp_ptr->m_m_wt) * h_percent / 300);
 	}
 	/* Calculate the height/weight for females */
 	else if (p_ptr->psex == SEX_FEMALE)
 	{
 		p_ptr->ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
 
-		h_percent = (int) (p_ptr->ht) * 100 / (int) (rp_ptr->f_b_ht);
-		p_ptr->wt = Rand_normal((int) (rp_ptr->f_b_wt) * h_percent / 100,
-								(int) (rp_ptr->f_m_wt) * h_percent / 300);
+		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->f_b_ht);
+		p_ptr->wt = Rand_normal((int)(rp_ptr->f_b_wt) * h_percent / 100,
+								(int)(rp_ptr->f_m_wt) * h_percent / 300);
 	}
 }
 
@@ -1271,7 +1271,7 @@ static void player_wipe(void)
 	pwild = p_ptr->pwild;
 
 	/* Hack -- zero the struct */
-	(void) WIPE(p_ptr, player_type);
+	(void)WIPE(p_ptr, player_type);
 
 	/* Hack -- Restore the cave and wilderness arrays */
 	C_COPY(p_ptr->pcave, pcave, MAX_HGT, pcave_type *);
@@ -1460,14 +1460,14 @@ static void player_outfit(void)
 			/* Scrolls of satisfy hunger */
 			object_prep(q_ptr,
 						lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
-			q_ptr->number = (byte) rand_range(2, 5);
+			q_ptr->number = (byte)rand_range(2, 5);
 			object_aware(q_ptr);
 			object_known(q_ptr);
 
 			/* These objects are "storebought" */
 			q_ptr->ident |= IDENT_STOREB;
 
-			(void) inven_carry(q_ptr);
+			(void)inven_carry(q_ptr);
 
 			break;
 		}
@@ -1475,11 +1475,11 @@ static void player_outfit(void)
 		{
 			/* Food rations */
 			object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-			q_ptr->number = (byte) rand_range(3, 7);
+			q_ptr->number = (byte)rand_range(3, 7);
 			object_aware(q_ptr);
 			object_known(q_ptr);
 
-			(void) inven_carry(q_ptr);
+			(void)inven_carry(q_ptr);
 		}
 	}
 
@@ -1491,7 +1491,7 @@ static void player_outfit(void)
 		/* Hack -- Give the player scrolls of DARKNESS! */
 		object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
 
-		q_ptr->number = (byte) rand_range(2, 5);
+		q_ptr->number = (byte)rand_range(2, 5);
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1499,18 +1499,18 @@ static void player_outfit(void)
 		/* These objects are "storebought" */
 		q_ptr->ident |= IDENT_STOREB;
 
-		(void) inven_carry(q_ptr);
+		(void)inven_carry(q_ptr);
 	}
 	else
 	{
 		/* Hack -- Give the player some torches */
 		object_prep(q_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
-		q_ptr->number = (byte) rand_range(3, 7);
+		q_ptr->number = (byte)rand_range(3, 7);
 		q_ptr->timeout = rand_range(3, 7) * 500;
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-		(void) inven_carry(q_ptr);
+		(void)inven_carry(q_ptr);
 	}
 
 	/* Get local object */
@@ -1520,7 +1520,7 @@ static void player_outfit(void)
 	{
 		/* Hack -- Give the player some arrows */
 		object_prep(q_ptr, lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
-		q_ptr->number = (byte) rand_range(15, 20);
+		q_ptr->number = (byte)rand_range(15, 20);
 
 		/* These objects are "storebought" */
 		q_ptr->ident |= IDENT_STOREB;
@@ -1528,7 +1528,7 @@ static void player_outfit(void)
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-		(void) inven_carry(q_ptr);
+		(void)inven_carry(q_ptr);
 
 		/* Hack -- Give the player some arrows */
 		object_prep(q_ptr, lookup_kind(TV_BOW, SV_SHORT_BOW));
@@ -1539,14 +1539,14 @@ static void player_outfit(void)
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-		(void) inven_carry(q_ptr);
+		(void)inven_carry(q_ptr);
 	}
 	else if (p_ptr->pclass == CLASS_HIGH_MAGE)
 	{
 		/* Hack -- Give the player some arrows */
 		object_prep(q_ptr, lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
 		q_ptr->number = 1;
-		q_ptr->pval = (byte) rand_range(25, 30);
+		q_ptr->pval = (byte)rand_range(25, 30);
 
 		/* These objects are "storebought" */
 		q_ptr->ident |= IDENT_STOREB;
@@ -1554,7 +1554,7 @@ static void player_outfit(void)
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-		(void) inven_carry(q_ptr);
+		(void)inven_carry(q_ptr);
 	}
 
 	/* Hack -- Give the player three useful objects */
@@ -1594,7 +1594,7 @@ static void player_outfit(void)
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-		(void) inven_carry(q_ptr);
+		(void)inven_carry(q_ptr);
 	}
 }
 
@@ -1731,7 +1731,7 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		else if (c == '?')
 		{
 			screen_save();
-			(void) show_file(helpfile, NULL, 0, 0);
+			(void)show_file(helpfile, NULL, 0, 0);
 			screen_load();
 		}
 		else if (c == '=')
@@ -1830,10 +1830,10 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
  */
 static bool ang_sort_comp_hook_string(const vptr u, const vptr v, int a, int b)
 {
-	cptr *x = (cptr *) (u);
+	cptr *x = (cptr *)(u);
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 
 	return (strcmp(x[a], x[b]) <= 0);
 }
@@ -1846,12 +1846,12 @@ static bool ang_sort_comp_hook_string(const vptr u, const vptr v, int a, int b)
  */
 static void ang_sort_swap_hook_string(const vptr u, const vptr v, int a, int b)
 {
-	cptr *x = (cptr *) (u);
+	cptr *x = (cptr *)(u);
 
 	cptr temp;
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 
 	/* Swap */
 	temp = x[a];
@@ -1883,7 +1883,7 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	ang_sort_swap = ang_sort_swap_hook_string;
 
 	/* Sort the (unique) slopes */
-	ang_sort((void *) strings, NULL, num);
+	ang_sort((void *)strings, NULL, num);
 
 	/* Get the choice */
 	choice = get_player_choice(strings, num, col, wid, helpfile, hook);
@@ -1901,7 +1901,7 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	}
 
 	/* Free the strings */
-	FREE((void *) strings);
+	FREE((void *)strings);
 
 	/* Return the value from the list */
 	return (choice);
@@ -2353,7 +2353,7 @@ static bool player_birth_aux_2(void)
 	get_history();
 
 	/* Hack -- get a chaos patron even if you are not a chaos warrior */
-	p_ptr->chaos_patron = (s16b) randint0(MAX_PATRON);
+	p_ptr->chaos_patron = (s16b)randint0(MAX_PATRON);
 
 	p_ptr->muta1 = 0;
 	p_ptr->muta2 = 0;
@@ -2956,7 +2956,7 @@ static bool player_birth_aux_3(void)
 		get_money();
 
 		/* Hack -- get a chaos patron even if you are not a chaos warrior */
-		p_ptr->chaos_patron = (s16b) randint0(MAX_PATRON);
+		p_ptr->chaos_patron = (s16b)randint0(MAX_PATRON);
 
 		p_ptr->muta1 = 0;
 		p_ptr->muta2 = 0;
@@ -3021,7 +3021,7 @@ static bool player_birth_aux_3(void)
 			if (ch == '?')
 			{
 				screen_save();
-				(void) show_file("birth.txt#CharDisplay", NULL, 0, 0);
+				(void)show_file("birth.txt#CharDisplay", NULL, 0, 0);
 				screen_load();
 				continue;
 			}

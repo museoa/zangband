@@ -152,7 +152,7 @@ void check_experience(void)
 		if (level_mutation)
 		{
 			msg_print("You feel different...");
-			(void) gain_mutation(0);
+			(void)gain_mutation(0);
 			level_mutation = FALSE;
 		}
 	}
@@ -418,7 +418,7 @@ bool monster_death(int m_idx, bool explode)
 				}
 			}
 
-			(void) project(m_idx, 3, x, y, damage, typ, flg);
+			(void)project(m_idx, 3, x, y, damage, typ, flg);
 			break;
 		}
 	}
@@ -426,17 +426,17 @@ bool monster_death(int m_idx, bool explode)
 	/* Complete quests */
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
-		trigger_quest_complete(QX_KILL_UNIQUE, (vptr) m_ptr);
+		trigger_quest_complete(QX_KILL_UNIQUE, (vptr)m_ptr);
 	}
 	else
 	{
-		trigger_quest_complete(QX_KILL_MONST, (vptr) m_ptr);
+		trigger_quest_complete(QX_KILL_MONST, (vptr)m_ptr);
 	}
 
 	/* Hack XXX XXX - trigger on killing winner */
 	if ((m_ptr->r_idx == QW_OBERON) || (m_ptr->r_idx == QW_SERPENT))
 	{
-		trigger_quest_complete(QX_KILL_WINNER, (vptr) m_ptr);
+		trigger_quest_complete(QX_KILL_WINNER, (vptr)m_ptr);
 	}
 
 
@@ -489,8 +489,8 @@ bool monster_death(int m_idx, bool explode)
 				if (place_field(x, y, FT_CORPSE))
 				{
 					/* Initialise it */
-					(void) field_hook_single(hack_fld_ptr,
-											 FIELD_ACT_INIT, m_ptr);
+					(void)field_hook_single(hack_fld_ptr,
+											FIELD_ACT_INIT, m_ptr);
 				}
 			}
 			else
@@ -499,8 +499,8 @@ bool monster_death(int m_idx, bool explode)
 				if (place_field(x, y, FT_SKELETON))
 				{
 					/* Initialise it */
-					(void) field_hook_single(hack_fld_ptr,
-											 FIELD_ACT_INIT, m_ptr);
+					(void)field_hook_single(hack_fld_ptr,
+											FIELD_ACT_INIT, m_ptr);
 				}
 			}
 
@@ -548,7 +548,7 @@ bool monster_death(int m_idx, bool explode)
 			q_ptr->flags3 |= (TR3_AGGRAVATE);
 
 		/* Drop it in the dungeon */
-		(void) drop_near(q_ptr, -1, x, y);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/*
@@ -608,7 +608,7 @@ bool monster_death(int m_idx, bool explode)
 	else if (strstr((r_name + r_ptr->name), "Unmaker") && explode)
 	{
 		u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-		(void) project(m_idx, 6, x, y, 100, GF_CHAOS, flg);
+		(void)project(m_idx, 6, x, y, 100, GF_CHAOS, flg);
 	}
 
 	/* Bloodletters of Khorne may drop a blade of chaos */
@@ -624,7 +624,7 @@ bool monster_death(int m_idx, bool explode)
 		apply_magic(q_ptr, object_level, 0, 0);
 
 		/* Drop it in the dungeon */
-		(void) drop_near(q_ptr, -1, x, y);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Mega^2-hack -- Get a t-shirt from our first Greater Hell-beast kill */
@@ -646,7 +646,7 @@ bool monster_death(int m_idx, bool explode)
 						  TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 
 		/* Drop it in the dungeon */
-		(void) drop_near(q_ptr, -1, x, y);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Mega-Hack -- drop "winner" treasures */
@@ -809,7 +809,7 @@ bool monster_death(int m_idx, bool explode)
 		}
 
 		/* Drop it in the dungeon */
-		(void) drop_near(q_ptr, -1, x, y);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Take note of any dropped treasure */
@@ -839,7 +839,7 @@ bool monster_death(int m_idx, bool explode)
 int mon_damage_mod(const monster_type *m_ptr, int dam, int type)
 {
 	/* Hack - ignore type for now */
-	(void) type;
+	(void)type;
 
 	if (m_ptr->invulner && !one_in_(PENETRATE_INVULNERABILITY))
 		return (0);
@@ -861,10 +861,10 @@ void exp_for_kill(const monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 		exp = r_ptr->mexp;
 
 		/* calculate the integer exp part */
-		*new_exp = ((long) exp / div);
+		*new_exp = ((long)exp / div);
 
 		/* Handle fractional experience */
-		*new_exp_frac = ((long) (exp % div) * 0x10000L / div);
+		*new_exp_frac = ((long)(exp % div) * 0x10000L / div);
 	}
 	else
 	{
@@ -1099,11 +1099,11 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		if (new_exp_frac >= 0x10000L)
 		{
 			new_exp++;
-			p_ptr->exp_frac = (u16b) (new_exp_frac - 0x10000L);
+			p_ptr->exp_frac = (u16b)(new_exp_frac - 0x10000L);
 		}
 		else
 		{
-			p_ptr->exp_frac = (u16b) new_exp_frac;
+			p_ptr->exp_frac = (u16b)new_exp_frac;
 		}
 
 		/* Gain experience */
@@ -1325,7 +1325,7 @@ void verify_panel(void)
 	/* Hack - in vanilla town mode - do not move the screen */
 	if (vanilla_town && (!p_ptr->depth))
 	{
-		(void) change_panel(0, 0);
+		(void)change_panel(0, 0);
 		return;
 	}
 
@@ -1442,7 +1442,7 @@ void panel_center(void)
 	/* Hack - in vanilla town mode - do not move the screen */
 	if (vanilla_town && (!p_ptr->depth))
 	{
-		(void) change_panel(0, 0);
+		(void)change_panel(0, 0);
 		return;
 	}
 
@@ -1781,8 +1781,8 @@ static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	s16b *x = (s16b *) (u);
-	s16b *y = (s16b *) (v);
+	s16b *x = (s16b *)(u);
+	s16b *y = (s16b *)(v);
 
 	int da, db, kx, ky;
 
@@ -1821,8 +1821,8 @@ static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
  */
 static void ang_sort_swap_distance(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b *) (u);
-	s16b *y = (s16b *) (v);
+	s16b *x = (s16b *)(u);
+	s16b *y = (s16b *)(v);
 
 	s16b temp;
 
@@ -2365,7 +2365,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						prt("Hit any key to continue", 0, 0);
 
 						/* Wait */
-						(void) inkey();
+						(void)inkey();
 
 						/* Load screen */
 						screen_load();
@@ -2453,8 +2453,8 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				if (t_ptr->action[FIELD_ACT_LOOK])
 				{
 					/* Get the name */
-					(void) field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
-											 (vptr) fld_name);
+					(void)field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
+											(vptr)fld_name);
 
 					/* Point to it */
 					name = fld_name;
@@ -3333,7 +3333,7 @@ void gain_level_reward(int chosen_reward)
 	{
 		msg_format("%^s rewards you with a mutation!",
 				   chaos_patrons[p_ptr->chaos_patron]);
-		(void) gain_mutation(0);
+		(void)gain_mutation(0);
 		return;
 	}
 
@@ -3485,12 +3485,12 @@ void gain_level_reward(int chosen_reward)
 			q_ptr->to_h = 3 + randint1(p_ptr->depth) % 10;
 			q_ptr->to_d = 3 + randint1(p_ptr->depth) % 10;
 
-			(void) random_resistance(q_ptr, rand_range(5, 38), 0);
+			(void)random_resistance(q_ptr, rand_range(5, 38), 0);
 
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
 
 			/* Drop it in the dungeon */
-			(void) drop_near(q_ptr, -1, px, py);
+			(void)drop_near(q_ptr, -1, px, py);
 			break;
 		}
 		case REW_GOOD_OBS:
@@ -3514,7 +3514,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s thunders:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou art growing arrogant, mortal.'");
-			(void) activate_ty_curse(FALSE, &count);
+			(void)activate_ty_curse(FALSE, &count);
 			break;
 		}
 		case REW_SUMMON_M:
@@ -3524,8 +3524,8 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'My pets, destroy the arrogant mortal!'");
 			for (i = 0; i < rand_range(2, 6); i++)
 			{
-				(void) summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE,
-									   FALSE);
+				(void)summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE,
+									  FALSE);
 			}
 			break;
 		}
@@ -3534,7 +3534,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou needst worthier opponents!'");
-			(void) activate_hi_summon();
+			(void)activate_hi_summon();
 			break;
 		}
 		case REW_DO_HAVOC:
@@ -3551,9 +3551,9 @@ void gain_level_reward(int chosen_reward)
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Stay, mortal, and let me mold thee.'");
 			if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
-				(void) do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
+				(void)do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
-				(void) do_inc_stat(randint0(A_MAX));
+				(void)do_inc_stat(randint0(A_MAX));
 			break;
 		}
 		case REW_LOSE_ABL:
@@ -3562,9 +3562,9 @@ void gain_level_reward(int chosen_reward)
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'I grow tired of thee, mortal.'");
 			if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
-				(void) do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
+				(void)do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
-				(void) do_dec_stat(randint0(A_MAX));
+				(void)do_dec_stat(randint0(A_MAX));
 			break;
 		}
 		case REW_RUIN_ABL:
@@ -3575,7 +3575,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("You feel less powerful!");
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void) dec_stat(i, rand_range(10, 25), TRUE);
+				(void)dec_stat(i, rand_range(10, 25), TRUE);
 			}
 			break;
 		}
@@ -3593,7 +3593,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'Receive this modest gift from me!'");
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void) do_inc_stat(i);
+				(void)do_inc_stat(i);
 			}
 			break;
 		}
@@ -3602,7 +3602,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Suffer, pathetic fool!'");
-			(void) fire_ball(GF_DISINTEGRATE, 0, p_ptr->lev * 4, 4);
+			(void)fire_ball(GF_DISINTEGRATE, 0, p_ptr->lev * 4, 4);
 			take_hit(p_ptr->lev * 4, wrath_reason);
 			break;
 		}
@@ -3611,22 +3611,22 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Rise, my servant!'");
-			(void) restore_level();
-			(void) set_poisoned(0);
-			(void) set_blind(0);
-			(void) set_confused(0);
-			(void) set_image(0);
-			(void) set_stun(0);
-			(void) set_cut(0);
+			(void)restore_level();
+			(void)set_poisoned(0);
+			(void)set_blind(0);
+			(void)set_confused(0);
+			(void)set_image(0);
+			(void)set_stun(0);
+			(void)set_cut(0);
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void) do_res_stat(i);
+				(void)do_res_stat(i);
 			}
 
 			/* Recalculate max. hitpoints */
 			update_stuff();
 
-			(void) hp_player(5000);
+			(void)hp_player(5000);
 			break;
 		}
 		case REW_CURSE_WP:
@@ -3634,7 +3634,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou reliest too much on thy weapon.'");
-			(void) curse_weapon();
+			(void)curse_weapon();
 			break;
 		}
 		case REW_CURSE_AR:
@@ -3642,7 +3642,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou reliest too much on thine equipment.'");
-			(void) curse_armor();
+			(void)curse_armor();
 			break;
 		}
 		case REW_PISS_OFF:
@@ -3654,21 +3654,21 @@ void gain_level_reward(int chosen_reward)
 			{
 				case 1:
 				{
-					(void) activate_ty_curse(FALSE, &count);
+					(void)activate_ty_curse(FALSE, &count);
 					break;
 				}
 				case 2:
-					(void) activate_hi_summon();
+					(void)activate_hi_summon();
 					break;
 				case 3:
-					if (one_in_(2)) (void) curse_weapon();
+					if (one_in_(2)) (void)curse_weapon();
 					else
-						(void) curse_armor();
+						(void)curse_armor();
 					break;
 				default:
 					for (i = 0; i < A_MAX; i++)
 					{
-						(void) dec_stat(i, rand_range(10, 25), TRUE);
+						(void)dec_stat(i, rand_range(10, 25), TRUE);
 					}
 			}
 			break;
@@ -3683,14 +3683,14 @@ void gain_level_reward(int chosen_reward)
 
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void) dec_stat(i, rand_range(10, 25), FALSE);
+				(void)dec_stat(i, rand_range(10, 25), FALSE);
 			}
 
-			(void) activate_hi_summon();
-			(void) activate_ty_curse(FALSE, &count);
+			(void)activate_hi_summon();
+			(void)activate_ty_curse(FALSE, &count);
 
-			if (one_in_(2)) (void) curse_weapon();
-			if (one_in_(2)) (void) curse_armor();
+			if (one_in_(2)) (void)curse_weapon();
+			if (one_in_(2)) (void)curse_armor();
 
 			break;
 		}
@@ -3699,7 +3699,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Death and destruction! This pleaseth me!'");
-			(void) destroy_area(px, py, 25);
+			(void)destroy_area(px, py, 25);
 			break;
 		}
 		case REW_GENOCIDE:
@@ -3707,7 +3707,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Let me relieve thee of thine oppressors!'");
-			(void) genocide(FALSE);
+			(void)genocide(FALSE);
 			break;
 		}
 		case REW_MASS_GEN:
@@ -3715,14 +3715,14 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Let me relieve thee of thine oppressors!'");
-			(void) mass_genocide(FALSE);
+			(void)mass_genocide(FALSE);
 			break;
 		}
 		case REW_DISPEL_C:
 		{
 			msg_format("You can feel the power of %s assault your enemies!",
 					   chaos_patrons[p_ptr->chaos_patron]);
-			(void) dispel_monsters(p_ptr->lev * 4);
+			(void)dispel_monsters(p_ptr->lev * 4);
 			break;
 		}
 		case REW_IGNORE:

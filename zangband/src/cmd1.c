@@ -701,7 +701,7 @@ void carry(int pickup)
 		{
 			/* Message */
 			msg_format("You have found %ld gold pieces worth of %s.",
-					   (long) o_ptr->pval, o_name);
+					   (long)o_ptr->pval, o_name);
 
 			sound(SOUND_SELL);
 
@@ -2052,7 +2052,7 @@ void py_attack(int x, int y)
 		int px = p_ptr->px;
 		int py = p_ptr->py;
 
-		(void) earthquake(px, py, 10);
+		(void)earthquake(px, py, 10);
 	}
 }
 
@@ -2470,7 +2470,7 @@ void move_player(int dir, int do_pickup)
 				/* Try to open a door if is there */
 				if (easy_open)
 				{
-					(void) do_cmd_open_aux(x, y);
+					(void)do_cmd_open_aux(x, y);
 					return;
 				}
 
@@ -2488,7 +2488,7 @@ void move_player(int dir, int do_pickup)
 	/* Disarm a visible trap */
 	else if ((do_pickup != easy_disarm) && is_visible_trap(c_ptr))
 	{
-		(void) do_cmd_disarm_aux(c_ptr, dir);
+		(void)do_cmd_disarm_aux(c_ptr, dir);
 		return;
 	}
 

@@ -532,20 +532,20 @@ static bool pattern_effect(void)
 
 	if (c_ptr->feat == FEAT_PATTERN_END)
 	{
-		(void) set_poisoned(0);
-		(void) set_image(0);
-		(void) set_stun(0);
-		(void) set_cut(0);
-		(void) set_blind(0);
-		(void) set_afraid(0);
-		(void) do_res_stat(A_STR);
-		(void) do_res_stat(A_INT);
-		(void) do_res_stat(A_WIS);
-		(void) do_res_stat(A_DEX);
-		(void) do_res_stat(A_CON);
-		(void) do_res_stat(A_CHR);
-		(void) restore_level();
-		(void) hp_player(1000);
+		(void)set_poisoned(0);
+		(void)set_image(0);
+		(void)set_stun(0);
+		(void)set_cut(0);
+		(void)set_blind(0);
+		(void)set_afraid(0);
+		(void)do_res_stat(A_STR);
+		(void)do_res_stat(A_INT);
+		(void)do_res_stat(A_WIS);
+		(void)do_res_stat(A_DEX);
+		(void)do_res_stat(A_CON);
+		(void)do_res_stat(A_CHR);
+		(void)restore_level();
+		(void)hp_player(1000);
 		cave_set_feat(p_ptr->px, p_ptr->py, FEAT_PATTERN_OLD);
 		msg_print("This section of the Pattern looks less powerful.");
 	}
@@ -595,20 +595,20 @@ static void regenhp(int percent)
 	old_chp = p_ptr->chp;
 
 	/* Extract the new hitpoints */
-	new_chp = ((u32b) p_ptr->mhp) * percent + PY_REGEN_HPBASE;
-	p_ptr->chp += (s16b) (new_chp >> 16);	/* div 65536 */
+	new_chp = ((u32b)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
+	p_ptr->chp += (s16b)(new_chp >> 16);	/* div 65536 */
 
 	/* check for overflow */
 	if ((p_ptr->chp < 0) && (old_chp > 0)) p_ptr->chp = MAX_SHORT;
 	new_chp_frac = (new_chp & 0xFFFF) + p_ptr->chp_frac;	/* mod 65536 */
 	if (new_chp_frac >= 0x10000L)
 	{
-		p_ptr->chp_frac = (u16b) (new_chp_frac - 0x10000L);
+		p_ptr->chp_frac = (u16b)(new_chp_frac - 0x10000L);
 		p_ptr->chp++;
 	}
 	else
 	{
-		p_ptr->chp_frac = (u16b) new_chp_frac;
+		p_ptr->chp_frac = (u16b)new_chp_frac;
 	}
 
 	/* Fully healed */
@@ -639,8 +639,8 @@ static void regenmana(int percent)
 	int old_csp;
 
 	old_csp = p_ptr->csp;
-	new_mana = ((u32b) p_ptr->msp) * percent + PY_REGEN_MNBASE;
-	p_ptr->csp += (s16b) (new_mana >> 16);	/* div 65536 */
+	new_mana = ((u32b)p_ptr->msp) * percent + PY_REGEN_MNBASE;
+	p_ptr->csp += (s16b)(new_mana >> 16);	/* div 65536 */
 
 	/* check for overflow */
 	if ((p_ptr->csp < 0) && (old_csp > 0))
@@ -650,12 +650,12 @@ static void regenmana(int percent)
 	new_mana_frac = (new_mana & 0xFFFF) + p_ptr->csp_frac;	/* mod 65536 */
 	if (new_mana_frac >= 0x10000L)
 	{
-		p_ptr->csp_frac = (u16b) (new_mana_frac - 0x10000L);
+		p_ptr->csp_frac = (u16b)(new_mana_frac - 0x10000L);
 		p_ptr->csp++;
 	}
 	else
 	{
-		p_ptr->csp_frac = (u16b) (new_mana_frac);
+		p_ptr->csp_frac = (u16b)(new_mana_frac);
 	}
 
 	/* Must set frac to zero even if equal */
@@ -946,7 +946,7 @@ static void process_world(void)
 	/*** Attempt timed autosave ***/
 	if (autosave_t && autosave_freq)
 	{
-		if (!(turn % ((s32b) autosave_freq * 10)))
+		if (!(turn % ((s32b)autosave_freq * 10)))
 			do_cmd_save_game(TRUE);
 	}
 
@@ -1007,7 +1007,7 @@ static void process_world(void)
 	if (one_in_(MAX_M_ALLOC_CHANCE))
 	{
 		/* Make a new monster */
-		(void) alloc_monster(MAX_SIGHT + 5, FALSE);
+		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
 	}
 
 	/* Hack -- Check for creature regeneration */
@@ -1324,7 +1324,7 @@ static void process_world(void)
 				disturb(TRUE);
 				msg_print
 					("A distant bell tolls many times, fading into an deathly silence.");
-				(void) activate_ty_curse(FALSE, &count);
+				(void)activate_ty_curse(FALSE, &count);
 			}
 		}
 	}
@@ -1381,7 +1381,7 @@ static void process_world(void)
 			if (i < 1) i = 1;
 
 			/* Digest some food */
-			(void) set_food(p_ptr->food - i);
+			(void)set_food(p_ptr->food - i);
 		}
 	}
 
@@ -1389,7 +1389,7 @@ static void process_world(void)
 	else
 	{
 		/* Digest a lot of food */
-		(void) set_food(p_ptr->food - 100);
+		(void)set_food(p_ptr->food - 100);
 	}
 
 	/* Starve to death (slowly) */
@@ -1433,7 +1433,7 @@ static void process_world(void)
 				disturb(TRUE);
 
 				/* Hack -- faint (bypass free action) */
-				(void) set_paralyzed(p_ptr->paralyzed + randint1(5));
+				(void)set_paralyzed(p_ptr->paralyzed + randint1(5));
 			}
 		}
 	}
@@ -1503,28 +1503,28 @@ static void process_world(void)
 
 
 	/*** Timeout Various Things ***/
-	if (p_ptr->image) (void) set_image(p_ptr->image - 1);
-	if (p_ptr->blind) (void) set_blind(p_ptr->blind - 1);
-	if (p_ptr->tim_invis) (void) set_tim_invis(p_ptr->tim_invis - 1);
-	if (p_ptr->tim_esp) (void) set_tim_esp(p_ptr->tim_esp - 1);
-	if (p_ptr->tim_infra) (void) set_tim_infra(p_ptr->tim_infra - 1);
-	if (p_ptr->paralyzed) (void) set_paralyzed(p_ptr->paralyzed - 1);
-	if (p_ptr->confused) (void) set_confused(p_ptr->confused - 1);
-	if (p_ptr->afraid) (void) set_afraid(p_ptr->afraid - 1);
-	if (p_ptr->fast) (void) set_fast(p_ptr->fast - 1);
-	if (p_ptr->slow) (void) set_slow(p_ptr->slow - 1);
-	if (p_ptr->protevil) (void) set_protevil(p_ptr->protevil - 1);
-	if (p_ptr->invuln) (void) set_invuln(p_ptr->invuln - 1);
-	if (p_ptr->wraith_form) (void) set_wraith_form(p_ptr->wraith_form - 1);
-	if (p_ptr->hero) (void) set_hero(p_ptr->hero - 1);
-	if (p_ptr->shero) (void) set_shero(p_ptr->shero - 1);
-	if (p_ptr->blessed) (void) set_blessed(p_ptr->blessed - 1);
-	if (p_ptr->shield) (void) set_shield(p_ptr->shield - 1);
-	if (p_ptr->oppose_acid) (void) set_oppose_acid(p_ptr->oppose_acid - 1);
-	if (p_ptr->oppose_elec) (void) set_oppose_elec(p_ptr->oppose_elec - 1);
-	if (p_ptr->oppose_fire) (void) set_oppose_fire(p_ptr->oppose_fire - 1);
-	if (p_ptr->oppose_cold) (void) set_oppose_cold(p_ptr->oppose_cold - 1);
-	if (p_ptr->oppose_pois) (void) set_oppose_pois(p_ptr->oppose_pois - 1);
+	if (p_ptr->image) (void)set_image(p_ptr->image - 1);
+	if (p_ptr->blind) (void)set_blind(p_ptr->blind - 1);
+	if (p_ptr->tim_invis) (void)set_tim_invis(p_ptr->tim_invis - 1);
+	if (p_ptr->tim_esp) (void)set_tim_esp(p_ptr->tim_esp - 1);
+	if (p_ptr->tim_infra) (void)set_tim_infra(p_ptr->tim_infra - 1);
+	if (p_ptr->paralyzed) (void)set_paralyzed(p_ptr->paralyzed - 1);
+	if (p_ptr->confused) (void)set_confused(p_ptr->confused - 1);
+	if (p_ptr->afraid) (void)set_afraid(p_ptr->afraid - 1);
+	if (p_ptr->fast) (void)set_fast(p_ptr->fast - 1);
+	if (p_ptr->slow) (void)set_slow(p_ptr->slow - 1);
+	if (p_ptr->protevil) (void)set_protevil(p_ptr->protevil - 1);
+	if (p_ptr->invuln) (void)set_invuln(p_ptr->invuln - 1);
+	if (p_ptr->wraith_form) (void)set_wraith_form(p_ptr->wraith_form - 1);
+	if (p_ptr->hero) (void)set_hero(p_ptr->hero - 1);
+	if (p_ptr->shero) (void)set_shero(p_ptr->shero - 1);
+	if (p_ptr->blessed) (void)set_blessed(p_ptr->blessed - 1);
+	if (p_ptr->shield) (void)set_shield(p_ptr->shield - 1);
+	if (p_ptr->oppose_acid) (void)set_oppose_acid(p_ptr->oppose_acid - 1);
+	if (p_ptr->oppose_elec) (void)set_oppose_elec(p_ptr->oppose_elec - 1);
+	if (p_ptr->oppose_fire) (void)set_oppose_fire(p_ptr->oppose_fire - 1);
+	if (p_ptr->oppose_cold) (void)set_oppose_cold(p_ptr->oppose_cold - 1);
+	if (p_ptr->oppose_pois) (void)set_oppose_pois(p_ptr->oppose_pois - 1);
 
 
 	/*** Poison and Stun and Cut ***/
@@ -1535,7 +1535,7 @@ static void process_world(void)
 		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
 
 		/* Apply some healing */
-		(void) set_poisoned(p_ptr->poisoned - adjust);
+		(void)set_poisoned(p_ptr->poisoned - adjust);
 	}
 
 	/* Stun */
@@ -1544,7 +1544,7 @@ static void process_world(void)
 		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
 
 		/* Apply some healing */
-		(void) set_stun(p_ptr->stun - adjust);
+		(void)set_stun(p_ptr->stun - adjust);
 	}
 
 	/* Cut */
@@ -1556,7 +1556,7 @@ static void process_world(void)
 		if (p_ptr->cut > 1000) adjust = 0;
 
 		/* Apply some healing */
-		(void) set_cut(p_ptr->cut - adjust);
+		(void)set_cut(p_ptr->cut - adjust);
 	}
 
 	/*** Process mutation effects ***/
@@ -1616,7 +1616,7 @@ static void process_world(void)
 		{
 			int count = 0;
 
-			(void) activate_ty_curse(FALSE, &count);
+			(void)activate_ty_curse(FALSE, &count);
 		}
 
 		/* Make a chainsword noise */
@@ -1768,7 +1768,7 @@ static void process_world(void)
 		if (o_ptr->held_m_idx) continue;
 
 		field_hook(&area(o_ptr->ix, o_ptr->iy)->fld_idx,
-				   FIELD_ACT_OBJECT_ON, (vptr) o_ptr);
+				   FIELD_ACT_OBJECT_ON, (vptr)o_ptr);
 
 		if (!o_ptr->timeout) continue;
 
@@ -2458,7 +2458,7 @@ static void process_command(void)
 		case '!':
 		{
 			/* Hack -- User interface */
-			(void) Term_user(0);
+			(void)Term_user(0);
 			break;
 		}
 
@@ -2638,7 +2638,7 @@ static void process_player(void)
 	if (hack_mutation)
 	{
 		msg_print("You feel different!");
-		(void) gain_mutation(0);
+		(void)gain_mutation(0);
 		hack_mutation = FALSE;
 	}
 
@@ -2742,7 +2742,7 @@ static void process_player(void)
 			msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 			/* Drop it (carefully) near the player */
-			(void) drop_near(o_ptr, 0, p_ptr->px, p_ptr->py);
+			(void)drop_near(o_ptr, 0, p_ptr->px, p_ptr->py);
 
 			/* Modify, Describe, Optimize */
 			inven_item_increase(item, -255);
@@ -3298,19 +3298,19 @@ static void load_all_pref_files(void)
 	sprintf(buf, "%s.prf", rp_ptr->title);
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "class" pref file */
 	sprintf(buf, "%s.prf", cp_ptr->title);
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", player_base);
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "realm 1" pref file */
 	if (p_ptr->realm1 != REALM_NONE)
@@ -3318,7 +3318,7 @@ static void load_all_pref_files(void)
 		sprintf(buf, "%s.prf", realm_names[p_ptr->realm1]);
 
 		/* Process that file */
-		(void) process_pref_file(buf);
+		(void)process_pref_file(buf);
 	}
 
 	/* Access the "realm 2" pref file */
@@ -3327,7 +3327,7 @@ static void load_all_pref_files(void)
 		sprintf(buf, "%s.prf", realm_names[p_ptr->realm2]);
 
 		/* Process that file */
-		(void) process_pref_file(buf);
+		(void)process_pref_file(buf);
 	}
 }
 
@@ -3379,7 +3379,7 @@ void play_game(bool new_game)
 	}
 
 	/* Hack -- turn off the cursor */
-	(void) Term_set_cursor(0);
+	(void)Term_set_cursor(0);
 
 	/*
 	 * Initialize wilderness info
@@ -3626,17 +3626,17 @@ void play_game(bool new_game)
 				p_ptr->csp_frac = 0;
 
 				/* Hack -- Healing */
-				(void) set_blind(0);
-				(void) set_confused(0);
-				(void) set_poisoned(0);
-				(void) set_afraid(0);
-				(void) set_paralyzed(0);
-				(void) set_image(0);
-				(void) set_stun(0);
-				(void) set_cut(0);
+				(void)set_blind(0);
+				(void)set_confused(0);
+				(void)set_poisoned(0);
+				(void)set_afraid(0);
+				(void)set_paralyzed(0);
+				(void)set_image(0);
+				(void)set_stun(0);
+				(void)set_cut(0);
 
 				/* Hack"-- Prevent starvation */
-				(void) set_food(PY_FOOD_MAX - 1);
+				(void)set_food(PY_FOOD_MAX - 1);
 
 				/* Hack -- cancel recall */
 				if (p_ptr->word_recall)
@@ -3651,7 +3651,7 @@ void play_game(bool new_game)
 				}
 
 				/* Note cause of death XXX XXX XXX */
-				(void) strcpy(p_ptr->died_from, "Cheating death");
+				(void)strcpy(p_ptr->died_from, "Cheating death");
 
 				/* Do not die */
 				p_ptr->is_dead = FALSE;

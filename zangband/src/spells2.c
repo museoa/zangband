@@ -49,9 +49,9 @@ void self_knowledge(void)
 	strcpy(Dummy, "");
 	strcpy(Liferating, "");
 
-	percent = (int) (((long) p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
-					 (2 * p_ptr->hitdie +
-					  ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
+	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
+					(2 * p_ptr->hitdie +
+					 ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 	sprintf(Liferating, "Your current Life Rating is %d/100.", percent);
 	info[i++] = Liferating;
@@ -600,14 +600,14 @@ void self_knowledge(void)
 		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
-			(void) inkey();
+			(void)inkey();
 			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Pause */
 	prt("[Press any key to continue]", 13, k);
-	(void) inkey();
+	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -786,14 +786,14 @@ void report_magics(void)
 		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
-			(void) inkey();
+			(void)inkey();
 			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Pause */
 	prt("[Press any key to continue]", 13, k);
-	(void) inkey();
+	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -866,7 +866,7 @@ void create_closed_door(int x, int y)
 	{
 		/* Create invisible wall */
 		cave_set_feat(x, y, FEAT_FLOOR);
-		(void) place_field(x, y, FT_WALL_INVIS);
+		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
 
@@ -1933,7 +1933,7 @@ bool raise_dead(int x, int y, bool pet)
 		c_ptr = area(fx, fy);
 
 		/* Raise Corpses / Skeletons */
-		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (vptr) &pet))
+		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (vptr)&pet))
 		{
 			if (player_has_los_grid(parea(fx, fy))) obvious = TRUE;
 		}
@@ -2022,7 +2022,7 @@ bool genocide(int player_cast)
 #endif /* 0 */
 
 	/* Mega-Hack -- Get a monster symbol */
-	(void) (get_com("Choose a monster race (by symbol) to genocide: ", &typ));
+	(void)(get_com("Choose a monster race (by symbol) to genocide: ", &typ));
 
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < m_max; i++)
@@ -2358,7 +2358,7 @@ bool destroy_area(int x1, int y1, int r)
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
 			/* Become blind */
-			(void) set_blind(p_ptr->blind + rand_range(10, 20));
+			(void)set_blind(p_ptr->blind + rand_range(10, 20));
 		}
 	}
 
@@ -2540,14 +2540,14 @@ bool earthquake(int cx, int cy, int r)
 				{
 					msg_print("You are bashed by rubble!");
 					damage = damroll(10, 4);
-					(void) set_stun(p_ptr->stun + randint1(50));
+					(void)set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 				case 3:
 				{
 					msg_print("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
-					(void) set_stun(p_ptr->stun + randint1(50));
+					(void)set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 			}
@@ -2675,7 +2675,7 @@ bool earthquake(int cx, int cy, int r)
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
 									   FIELD_ACT_MON_ENTER_TEST,
-									   (vptr) &mon_enter_test);
+									   (vptr)&mon_enter_test);
 
 							/* Get result */
 							if (!(mon_enter_test.flags & MEG_DO_MOVE)) continue;
@@ -3232,7 +3232,7 @@ bool lite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void) project(0, rad, p_ptr->px, p_ptr->py, dam, GF_LITE_WEAK, flg);
+	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_LITE_WEAK, flg);
 
 	/* Lite up the room */
 	lite_room(p_ptr->px, p_ptr->py);
@@ -3257,7 +3257,7 @@ bool unlite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void) project(0, rad, p_ptr->px, p_ptr->py, dam, GF_DARK_WEAK, flg);
+	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_DARK_WEAK, flg);
 
 	/* Lite up the room */
 	unlite_room(p_ptr->px, p_ptr->py);
@@ -3404,7 +3404,7 @@ bool teleport_swap(int dir)
 
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
-			   FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
+			   FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();
@@ -3727,23 +3727,23 @@ void call_chaos(void)
 			if (dummy - 5)
 			{
 				if (line_chaos)
-					(void) fire_beam(Chaos_type, dummy, 75);
+					(void)fire_beam(Chaos_type, dummy, 75);
 				else
-					(void) fire_ball(Chaos_type, dummy, 75, 2);
+					(void)fire_ball(Chaos_type, dummy, 75, 2);
 			}
 		}
 	}
 	else if (one_in_(3))
 	{
-		(void) fire_ball(Chaos_type, 0, 300, 8);
+		(void)fire_ball(Chaos_type, 0, 300, 8);
 	}
 	else
 	{
 		if (!get_aim_dir(&dir)) return;
 		if (line_chaos)
-			(void) fire_beam(Chaos_type, dir, 150);
+			(void)fire_beam(Chaos_type, dir, 150);
 		else
-			(void) fire_ball(Chaos_type, dir, 150, 3 + (plev / 35));
+			(void)fire_ball(Chaos_type, dir, 150, 3 + (plev / 35));
 	}
 }
 
@@ -3769,7 +3769,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("The ground trembles...");
-					(void) earthquake(px, py, rand_range(5, 15));
+					(void)earthquake(px, py, rand_range(5, 15));
 					if (!one_in_(6)) break;
 				}
 
@@ -3780,7 +3780,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("A portal opens to a plane of raw mana!");
-					(void) destroy_area(px, py, 20);
+					(void)destroy_area(px, py, 20);
 					project(1, 3, px, py, damroll(10, 5), GF_MANA, flg);
 					if (!one_in_(6)) break;
 				}
@@ -3805,7 +3805,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				wall_breaker();
 				if (one_in_(7))
 				{
-					(void) project(1, 7, px, py, 50, GF_KILL_WALL, flg);
+					(void)project(1, 7, px, py, 50, GF_KILL_WALL, flg);
 				}
 				if (!one_in_(6)) break;
 
@@ -3854,11 +3854,11 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msg_print("You feel like a statue!");
 					if (p_ptr->free_act)
 					{
-						(void) set_paralyzed(p_ptr->paralyzed + randint1(3));
+						(void)set_paralyzed(p_ptr->paralyzed + randint1(3));
 					}
 					else
 					{
-						(void) set_paralyzed(p_ptr->paralyzed + randint1(13));
+						(void)set_paralyzed(p_ptr->paralyzed + randint1(13));
 					}
 					stop_ty = TRUE;
 				}
@@ -3868,7 +3868,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 21:  case 22:  case 23:
 			{
-				(void) do_dec_stat(randint0(6));
+				(void)do_dec_stat(randint0(6));
 				if (!one_in_(6)) break;
 
 				/* Fall through */
@@ -3876,7 +3876,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			case 24:
 			{
 				msg_print("Huh? Who am I? What am I doing here?");
-				(void) lose_all_info();
+				(void)lose_all_info();
 				if (!one_in_(6)) break;
 
 				/* Fall through */
@@ -3904,7 +3904,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				{
 					do
 					{
-						(void) do_dec_stat(stat);
+						(void)do_dec_stat(stat);
 					}
 					while (one_in_(2));
 
@@ -4081,13 +4081,13 @@ void wall_breaker(void)
 			if ((y != py) || (x != px)) break;
 		}
 
-		(void) project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
-					   (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
-						PROJECT_ITEM | PROJECT_KILL));
+		(void)project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
+					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+					   PROJECT_ITEM | PROJECT_KILL));
 	}
 	else if (randint1(100) > 30)
 	{
-		(void) earthquake(px, py, 1);
+		(void)earthquake(px, py, 1);
 	}
 	else
 	{
@@ -4102,9 +4102,9 @@ void wall_breaker(void)
 				if ((y != py) || (x != px)) break;
 			}
 
-			(void) project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
-						   (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
-							PROJECT_ITEM | PROJECT_KILL));
+			(void)project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
+						  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+						   PROJECT_ITEM | PROJECT_KILL));
 		}
 	}
 }
@@ -4248,9 +4248,9 @@ bool starlite(void)
 			if ((y != p_ptr->py) || (x != p_ptr->px)) break;
 		}
 
-		(void) project(0, 0, x, y, damroll(6, 8), GF_LITE_WEAK,
-					   (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
-						PROJECT_KILL));
+		(void)project(0, 0, x, y, damroll(6, 8), GF_LITE_WEAK,
+					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+					   PROJECT_KILL));
 	}
 
 	return (TRUE);

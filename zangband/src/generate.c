@@ -277,7 +277,7 @@ static void alloc_object(int set, int typ, int num)
 			{
 				/* Create invisible wall */
 				set_feat_grid(c_ptr, FEAT_FLOOR);
-				(void) place_field(x, y, FT_WALL_INVIS);
+				(void)place_field(x, y, FT_WALL_INVIS);
 				break;
 			}
 		}
@@ -739,7 +739,7 @@ static bool cave_gen(void)
 		if ((randint1(20) > p_ptr->depth) && one_in_(4))
 		{
 			/* make catacomb-like tunnel */
-			(void) build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
+			(void)build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
 		}
 		else if (randint1(p_ptr->depth) > 50)
 #else
@@ -747,7 +747,7 @@ static bool cave_gen(void)
 #endif /* PILLAR_TUNNELS */
 		{
 			/* make cave-like tunnel */
-			(void) build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 2, 2);
+			(void)build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 2, 2);
 		}
 		else
 		{
@@ -870,7 +870,7 @@ static bool cave_gen(void)
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)
 	{
-		(void) alloc_monster(0, TRUE);
+		(void)alloc_monster(0, TRUE);
 	}
 
 	/* Place some traps in the dungeon */
@@ -1021,8 +1021,8 @@ static bool level_gen(cptr *why)
 	}
 
 	/* Get the new region */
-	dun_ptr->region = (s16b) create_region(p_ptr->max_wid, p_ptr->max_hgt,
-										   REGION_CAVE);
+	dun_ptr->region = (s16b)create_region(p_ptr->max_wid, p_ptr->max_hgt,
+										  REGION_CAVE);
 
 	/* Grab the reference to it */
 	incref_region(cur_region);
@@ -1110,7 +1110,7 @@ void del_region(int rg_idx)
 
 	/* Free the region + info */
 	KILL(rg_list[rg_idx]);
-	(void) WIPE(&ri_list[rg_idx], region_info);
+	(void)WIPE(&ri_list[rg_idx], region_info);
 
 	/* Decrement counter */
 	rg_cnt--;

@@ -373,22 +373,22 @@ bool make_attack_normal(int m_idx)
 				/* Hack -- Next attack */
 				continue;
 			}
-			
-			
+
+
 			/* Get action */
 			act = format(rbm_info[method].action, "you");
-			
+
 			/* Get flag status */
 			touched = rbm_info[method].touched;
 			do_cut = rbm_info[method].cut;
 			do_stun = rbm_info[method].stun;
-			
+
 			/* Play the sound */
 			if (rbm_info[method].sound)
 			{
 				sound(rbm_info[method].sound);
 			}
-			
+
 			/* Special cases */
 			if (method == RBM_EXPLODE)
 			{
@@ -607,7 +607,7 @@ bool make_attack_normal(int m_idx)
 							{
 								msg_print("Your purse feels lighter.");
 								msg_format("%ld coins were stolen!",
-										   (long) gold);
+										   (long)gold);
 
 								chg_virtue(V_SACRIFICE, 1);
 							}
@@ -792,7 +792,7 @@ bool make_attack_normal(int m_idx)
 							(!(o_ptr->flags3 & TR3_INSTA_ART)))
 						{
 							/* Reduce fuel */
-							o_ptr->pval -= (s16b) rand_range(250, 500);
+							o_ptr->pval -= (s16b)rand_range(250, 500);
 							if (o_ptr->pval < 1) o_ptr->pval = 1;
 
 							/* Notice */
@@ -1078,7 +1078,7 @@ bool make_attack_normal(int m_idx)
 						/* Radius 8 earthquake centered at the monster */
 						if (damage > 23)
 						{
-							(void) earthquake(m_ptr->fx, m_ptr->fy, 8);
+							(void)earthquake(m_ptr->fx, m_ptr->fy, 8);
 						}
 
 						break;
@@ -1098,9 +1098,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d =
-								damroll(10,
-										6) +
+							s32b d = damroll(10,
+											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
@@ -1130,9 +1129,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d =
-								damroll(20,
-										6) +
+							s32b d = damroll(20,
+											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
@@ -1162,9 +1160,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d =
-								damroll(40,
-										6) +
+							s32b d = damroll(40,
+											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
@@ -1194,9 +1191,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d =
-								damroll(80,
-										6) +
+							s32b d = damroll(80,
+											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
@@ -1335,9 +1331,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d =
-								damroll(60,
-										6) +
+							s32b d = damroll(60,
+											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
@@ -1451,7 +1446,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the cut */
-				if (k) (void) set_cut(p_ptr->cut + k);
+				if (k) (void)set_cut(p_ptr->cut + k);
 			}
 
 			/* Handle stun */
@@ -1506,7 +1501,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the stun */
-				if (k) (void) set_stun(p_ptr->stun + k);
+				if (k) (void)set_stun(p_ptr->stun + k);
 			}
 
 			if (explode)
@@ -1640,7 +1635,7 @@ bool make_attack_normal(int m_idx)
 	if (blinked && alive)
 	{
 		msg_print("The thief flees laughing!");
-		(void) teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+		(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 	}
 
 

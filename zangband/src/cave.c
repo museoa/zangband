@@ -1284,7 +1284,7 @@ static void variable_player_graph(byte *a, char *c)
 		{
 			if (use_graphics)
 			{
-				if (p_ptr->psex == SEX_FEMALE) *c = (char) 242;
+				if (p_ptr->psex == SEX_FEMALE) *c = (char)242;
 				switch (p_ptr->pclass)
 				{
 					case CLASS_PALADIN:
@@ -2075,7 +2075,7 @@ void display_dungeon(void)
 			{
 				c_ptr = area(x, y);
 				pc_ptr = parea(x, y);
-				
+
 #ifdef TERM_USE_MAP
 				/* Tell the world about this square */
 				Term_write_map(x, y, c_ptr, pc_ptr);
@@ -2132,10 +2132,10 @@ void lite_spot(int x, int y)
 {
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
-	
+
 	/* Paranoia */
 	if (!character_dungeon) return;
-	
+
 	if (in_boundsp(x, y))
 	{
 		/* Get location */
@@ -2146,7 +2146,7 @@ void lite_spot(int x, int y)
 		/* Tell the world about this square */
 		Term_write_map(x, y, c_ptr, pc_ptr);
 #endif /* TERM_USE_MAP */
-		
+
 		/* Redraw if on screen */
 		if (panel_contains(x, y))
 		{
@@ -2216,10 +2216,10 @@ void prt_map(void)
 	hgt -= ROW_MAP + 1;
 
 	/* Access the cursor state */
-	(void) Term_get_cursor(&v);
+	(void)Term_get_cursor(&v);
 
 	/* Hide the cursor */
-	(void) Term_set_cursor(0);
+	(void)Term_set_cursor(0);
 
 
 	/* Get bounds */
@@ -2277,9 +2277,9 @@ void prt_map(void)
 		for (x = xmin; x <= xmax; x++)
 		{
 			c_ptr = area(x, y);
-			
+
 			pc_ptr = parea(x, y);
-			
+
 #ifdef TERM_USE_MAP
 			/* Tell the world about this square */
 			Term_write_map(x, y, c_ptr, pc_ptr);
@@ -2335,7 +2335,7 @@ void prt_map(void)
 #endif /* USE_TRANSPARENCY */
 
 	/* Restore the cursor */
-	(void) Term_set_cursor(v);
+	(void)Term_set_cursor(v);
 }
 
 
@@ -2848,7 +2848,7 @@ void do_cmd_view_map(void)
 		Term_gotoxy(cx, cy);
 
 		/* Get any key */
-		(void) inkey();
+		(void)inkey();
 	}
 	else
 	{
@@ -3234,10 +3234,10 @@ struct vinfo_hack
  */
 static bool ang_sort_comp_hook_s32b(const vptr u, const vptr v, int a, int b)
 {
-	s32b *x = (s32b *) (u);
+	s32b *x = (s32b *)(u);
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 
 	return (x[a] <= x[b]);
 }
@@ -3250,12 +3250,12 @@ static bool ang_sort_comp_hook_s32b(const vptr u, const vptr v, int a, int b)
  */
 static void ang_sort_swap_hook_s32b(const vptr u, const vptr v, int a, int b)
 {
-	s32b *x = (s32b *) (u);
+	s32b *x = (s32b *)(u);
 
 	s32b temp;
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 
 	/* Swap */
 	temp = x[a];
@@ -3415,7 +3415,7 @@ errr vinfo_init(void)
 
 
 	/* Clear the counters for each slope */
-	(void) C_WIPE(slope_count, VINFO_MAX_SLOPES, int);
+	(void)C_WIPE(slope_count, VINFO_MAX_SLOPES, int);
 
 	/* Enqueue player grid */
 	queue[queue_tail++] = &vinfo[0];

@@ -52,9 +52,9 @@ void do_cmd_rerate(void)
 			(p_ptr->player_hp[PY_MAX_LEVEL - 1] <= max_value)) break;
 	}
 
-	percent = (int) (((long) p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
-					 (2 * p_ptr->hitdie +
-					  ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
+	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
+					(2 * p_ptr->hitdie +
+					 ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 
 	/* Update and redraw hitpoints */
@@ -98,7 +98,7 @@ static void do_cmd_wiz_hack_ben(void)
 {
 	/* Oops */
 	msg_print("Oops.");
-	(void) probing();
+	(void)probing();
 }
 
 
@@ -130,7 +130,7 @@ static void do_cmd_summon_horde(void)
 		if ((wy == py) && (wx == px)) break;
 	}
 
-	(void) alloc_horde(wx, wy);
+	(void)alloc_horde(wx, wy);
 }
 
 #endif /* MONSTER_HORDES */
@@ -180,9 +180,9 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	u16b home = k_info[kind].level;
 
 	/* Wipe the tables */
-	(void) C_WIPE(rarity, MAX_DEPTH, u32b);
-	(void) C_WIPE(total, MAX_DEPTH, u32b);
-	(void) C_WIPE(display, 20, u32b);
+	(void)C_WIPE(rarity, MAX_DEPTH, u32b);
+	(void)C_WIPE(total, MAX_DEPTH, u32b);
+	(void)C_WIPE(display, 20, u32b);
 
 	message_flush();
 	prt("Calculating probability distribution - please wait.", 0, 0);
@@ -330,7 +330,7 @@ static void do_cmd_wiz_change_aux(void)
 
 
 	/* Default */
-	sprintf(tmp_val, "%ld", (long) (p_ptr->au));
+	sprintf(tmp_val, "%ld", (long)(p_ptr->au));
 
 	/* Query */
 	if (!get_string("Gold: ", tmp_val, 10)) return;
@@ -346,7 +346,7 @@ static void do_cmd_wiz_change_aux(void)
 
 
 	/* Default */
-	sprintf(tmp_val, "%ld", (long) (p_ptr->max_exp));
+	sprintf(tmp_val, "%ld", (long)(p_ptr->max_exp));
 
 	/* Query */
 	if (!get_string("Experience: ", tmp_val, 10)) return;
@@ -542,7 +542,7 @@ static void wiz_display_item(const object_type *o_ptr)
 			   o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d), j, 6);
 
 	prt(format("activate = %-4d  cost = %ld",
-			   o_ptr->activate, (long) object_value(o_ptr)), j, 7);
+			   o_ptr->activate, (long)object_value(o_ptr)), j, 7);
 
 	prt(format("ident = %04x  timeout = %-d",
 			   o_ptr->ident, o_ptr->timeout), j, 8);
@@ -798,7 +798,7 @@ static void wiz_tweak_item(object_type *o_ptr)
 	wiz_display_item(o_ptr);
 
 	p = "Enter new 'activate' setting: ";
-	sprintf(tmp_val, "%d", (int) o_ptr->activate);
+	sprintf(tmp_val, "%d", (int)o_ptr->activate);
 	if (!get_string(p, tmp_val, 6)) return;
 	o_ptr->activate = atoi(tmp_val);
 	wiz_display_item(o_ptr);
@@ -894,7 +894,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				object_prep(q_ptr, o_ptr->k_idx);
 
 				/* Make a random artifact */
-				(void) create_artifact(q_ptr, FALSE);
+				(void)create_artifact(q_ptr, FALSE);
 				break;
 			}
 		}
@@ -938,7 +938,7 @@ static void wiz_statistics(object_type *o_ptr)
 	cptr p = "Enter number of items to roll: ";
 	char tmp_val[80];
 
-	sprintf(tmp_val, "%ld", (long) test_roll);
+	sprintf(tmp_val, "%ld", (long)test_roll);
 	if (get_string(p, tmp_val, 11)) test_roll = atol(tmp_val);
 	test_roll = MAX(1, test_roll);
 
@@ -964,7 +964,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 	tmp_qnt = o_ptr->number;
 
 	/* Default */
-	sprintf(tmp_val, "%d", (int) o_ptr->number);
+	sprintf(tmp_val, "%d", (int)o_ptr->number);
 
 	/* Query */
 	if (get_string("Quantity: ", tmp_val, 3))
@@ -1156,18 +1156,18 @@ static void wiz_create_item(void)
 static void do_cmd_wiz_cure_all(void)
 {
 	/* Remove curses */
-	(void) remove_all_curse();
+	(void)remove_all_curse();
 
 	/* Restore stats */
-	(void) res_stat(A_STR);
-	(void) res_stat(A_INT);
-	(void) res_stat(A_WIS);
-	(void) res_stat(A_CON);
-	(void) res_stat(A_DEX);
-	(void) res_stat(A_CHR);
+	(void)res_stat(A_STR);
+	(void)res_stat(A_INT);
+	(void)res_stat(A_WIS);
+	(void)res_stat(A_CON);
+	(void)res_stat(A_DEX);
+	(void)res_stat(A_CHR);
 
 	/* Restore the level */
-	(void) restore_level();
+	(void)restore_level();
 
 	/* Heal the player */
 	p_ptr->chp = p_ptr->mhp;
@@ -1178,18 +1178,18 @@ static void do_cmd_wiz_cure_all(void)
 	p_ptr->csp_frac = 0;
 
 	/* Cure stuff */
-	(void) set_blind(0);
-	(void) set_confused(0);
-	(void) set_poisoned(0);
-	(void) set_afraid(0);
-	(void) set_paralyzed(0);
-	(void) set_image(0);
-	(void) set_stun(0);
-	(void) set_cut(0);
-	(void) set_slow(0);
+	(void)set_blind(0);
+	(void)set_confused(0);
+	(void)set_poisoned(0);
+	(void)set_afraid(0);
+	(void)set_paralyzed(0);
+	(void)set_image(0);
+	(void)set_stun(0);
+	(void)set_cut(0);
+	(void)set_slow(0);
 
 	/* No longer hungry */
-	(void) set_food(PY_FOOD_MAX - 1);
+	(void)set_food(PY_FOOD_MAX - 1);
 
 	/* Redraw everything */
 	do_cmd_redraw();
@@ -1283,7 +1283,7 @@ static void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-		(void) summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+		(void)summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 	}
 }
 
@@ -1339,7 +1339,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
  */
 static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
-	(void) summon_named_creature(p_ptr->px, p_ptr->py, r_idx, slp, TRUE, TRUE);
+	(void)summon_named_creature(p_ptr->px, p_ptr->py, r_idx, slp, TRUE, TRUE);
 }
 
 
@@ -1694,7 +1694,7 @@ void do_cmd_debug(void)
 
 
 	/* Get a "debug command" */
-	(void) get_com("Debug Command: ", &cmd);
+	(void)get_com("Debug Command: ", &cmd);
 
 	/* Analyze the command */
 	switch (cmd)
@@ -1729,7 +1729,7 @@ void do_cmd_debug(void)
 		{
 			/* Hack -- Help */
 			screen_save();
-			(void) show_file("wizard.txt", NULL, 0, 0);
+			(void)show_file("wizard.txt", NULL, 0, 0);
 			screen_load();
 			break;
 		}
@@ -1772,7 +1772,7 @@ void do_cmd_debug(void)
 		case 'd':
 		{
 			/* Detect everything */
-			(void) detect_all();
+			(void)detect_all();
 			break;
 		}
 
@@ -1786,7 +1786,7 @@ void do_cmd_debug(void)
 		case 'f':
 		{
 			/* View item info */
-			(void) identify_fully();
+			(void)identify_fully();
 			break;
 		}
 
@@ -1823,14 +1823,14 @@ void do_cmd_debug(void)
 		case 'i':
 		{
 			/* Identify */
-			(void) ident_spell();
+			(void)ident_spell();
 			break;
 		}
 
 		case 'I':
 		{
 			/* Fields Integrity */
-			(void) test_field_data_integrity();
+			(void)test_field_data_integrity();
 			break;
 		}
 
@@ -1865,7 +1865,7 @@ void do_cmd_debug(void)
 		case 'L':
 		{
 			/* Lose Mutation */
-			(void) lose_mutation(p_ptr->command_arg);
+			(void)lose_mutation(p_ptr->command_arg);
 			break;
 		}
 
@@ -1879,14 +1879,14 @@ void do_cmd_debug(void)
 		case 'M':
 		{
 			/* Gain Mutation */
-			(void) gain_mutation(p_ptr->command_arg);
+			(void)gain_mutation(p_ptr->command_arg);
 			break;
 		}
 
 		case 'r':
 		{
 			/* Specific reward */
-			(void) gain_level_reward(p_ptr->command_arg);
+			(void)gain_level_reward(p_ptr->command_arg);
 			break;
 		}
 

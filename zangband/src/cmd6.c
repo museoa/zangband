@@ -81,7 +81,7 @@ static void do_cmd_eat_food_aux(int item)
 	ident = FALSE;
 
 	/* Eat the food */
-	(void) use_object(o_ptr, &ident);
+	(void)use_object(o_ptr, &ident);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -113,7 +113,7 @@ static void do_cmd_eat_food_aux(int item)
 	if (p_ptr->prace == RACE_VAMPIRE)
 	{
 		/* Reduced nutritional benefit */
-		(void) set_food(p_ptr->food + (o_ptr->pval / 10));
+		(void)set_food(p_ptr->food + (o_ptr->pval / 10));
 		msg_print
 			("Mere victuals hold scant sustenance for a being such as yourself.");
 		if (p_ptr->food < PY_FOOD_ALERT)	/* Hungry */
@@ -133,7 +133,7 @@ static void do_cmd_eat_food_aux(int item)
 			object_prep(q_ptr, lookup_kind(o_ptr->tval, o_ptr->sval));
 
 			/* Drop the object from heaven */
-			(void) drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+			(void)drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
 		}
 		else
 		{
@@ -145,11 +145,11 @@ static void do_cmd_eat_food_aux(int item)
 			 (p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_GHOUL))
 	{
 		msg_print("The food of mortals is poor sustenance for you.");
-		(void) set_food(p_ptr->food + ((o_ptr->pval) / 20));
+		(void)set_food(p_ptr->food + ((o_ptr->pval) / 20));
 	}
 	else
 	{
-		(void) set_food(p_ptr->food + o_ptr->pval);
+		(void)set_food(p_ptr->food + o_ptr->pval);
 	}
 
 	/* Destroy a food in the pack */
@@ -226,12 +226,12 @@ static void do_cmd_quaff_potion_aux(int item)
 	ident = FALSE;
 
 	/* Quaff the potion */
-	(void) use_object(o_ptr, &ident);
+	(void)use_object(o_ptr, &ident);
 
 	if (p_ptr->prace == RACE_SKELETON)
 	{
 		msg_print("Some of the fluid falls through your jaws!");
-		(void) potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr->k_idx);
+		(void)potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr->k_idx);
 	}
 
 	/* Combine / Reorder the pack (later) */
@@ -263,7 +263,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	switch (p_ptr->prace)
 	{
 		case RACE_VAMPIRE:
-			(void) set_food(p_ptr->food + (o_ptr->pval / 10));
+			(void)set_food(p_ptr->food + (o_ptr->pval / 10));
 			break;
 		case RACE_SKELETON:
 			/* Do nothing */
@@ -272,10 +272,10 @@ static void do_cmd_quaff_potion_aux(int item)
 		case RACE_ZOMBIE:
 		case RACE_SPECTRE:
 		case RACE_GHOUL:
-			(void) set_food(p_ptr->food + ((o_ptr->pval) / 20));
+			(void)set_food(p_ptr->food + ((o_ptr->pval) / 20));
 			break;
 		default:
-			(void) set_food(p_ptr->food + o_ptr->pval);
+			(void)set_food(p_ptr->food + o_ptr->pval);
 	}
 
 	/* Reduce and describe inventory */
@@ -929,7 +929,7 @@ static void do_cmd_zap_rod_aux(int item)
 			}
 			else
 			{
-				(void) set_fast(p_ptr->fast + 5);
+				(void)set_fast(p_ptr->fast + 5);
 			}
 			break;
 		}
@@ -955,7 +955,7 @@ static void do_cmd_zap_rod_aux(int item)
 		case SV_ROD_LITE:
 		{
 			msg_print("A line of blue shimmering light appears.");
-			(void) lite_line(dir);
+			(void)lite_line(dir);
 			ident = TRUE;
 			break;
 		}
@@ -1135,12 +1135,12 @@ void ring_of_power(int dir)
 			sound(SOUND_EVIL);
 
 			/* Decrease all stats (permanently) */
-			(void) dec_stat(A_STR, 50, TRUE);
-			(void) dec_stat(A_INT, 50, TRUE);
-			(void) dec_stat(A_WIS, 50, TRUE);
-			(void) dec_stat(A_DEX, 50, TRUE);
-			(void) dec_stat(A_CON, 50, TRUE);
-			(void) dec_stat(A_CHR, 50, TRUE);
+			(void)dec_stat(A_STR, 50, TRUE);
+			(void)dec_stat(A_INT, 50, TRUE);
+			(void)dec_stat(A_WIS, 50, TRUE);
+			(void)dec_stat(A_DEX, 50, TRUE);
+			(void)dec_stat(A_CON, 50, TRUE);
+			(void)dec_stat(A_CHR, 50, TRUE);
 
 			/* Lose some experience (permanently) */
 			p_ptr->exp -= (p_ptr->exp / 4);
@@ -1156,7 +1156,7 @@ void ring_of_power(int dir)
 			msg_print("You are surrounded by a powerful aura.");
 
 			/* Dispel monsters */
-			(void) dispel_monsters(1000);
+			(void)dispel_monsters(1000);
 			break;
 		}
 
@@ -1165,7 +1165,7 @@ void ring_of_power(int dir)
 		case 6:
 		{
 			/* Mana Ball */
-			(void) fire_ball(GF_MANA, dir, 300, 3);
+			(void)fire_ball(GF_MANA, dir, 300, 3);
 			break;
 		}
 
@@ -1175,7 +1175,7 @@ void ring_of_power(int dir)
 		case 10:
 		{
 			/* Mana Bolt */
-			(void) fire_bolt(GF_MANA, dir, 250);
+			(void)fire_bolt(GF_MANA, dir, 250);
 			break;
 		}
 	}
@@ -1256,7 +1256,7 @@ static void do_cmd_activate_aux(int item)
 
 	if (o_ptr->activate)
 	{
-		(void) activate_effect(o_ptr);
+		(void)activate_effect(o_ptr);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -1279,40 +1279,40 @@ static void do_cmd_activate_aux(int item)
 			case SV_DRAGON_BLUE:
 			{
 				msg_print("You breathe lightning.");
-				(void) fire_ball(GF_ELEC, dir, 330, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_ELEC, dir, 330, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
 			case SV_DRAGON_WHITE:
 			{
 				msg_print("You breathe frost.");
-				(void) fire_ball(GF_COLD, dir, 370, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_COLD, dir, 370, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
 			case SV_DRAGON_BLACK:
 			{
 				msg_print("You breathe acid.");
-				(void) fire_ball(GF_ACID, dir, 430, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_ACID, dir, 430, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
 			case SV_DRAGON_GREEN:
 			{
 				msg_print("You breathe poison gas.");
-				(void) fire_ball(GF_POIS, dir, 500, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_POIS, dir, 500, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
 			case SV_DRAGON_RED:
 			{
 				msg_print("You breathe fire.");
-				(void) fire_ball(GF_FIRE, dir, 670, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_FIRE, dir, 670, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -1324,28 +1324,28 @@ static void do_cmd_activate_aux(int item)
 							((chance == 2) ? "frost" :
 							 ((chance == 3) ? "acid" :
 							  ((chance == 4) ? "poison gas" : "fire")))));
-				(void) fire_ball(((chance == 1) ? GF_ELEC :
-								  ((chance == 2) ? GF_COLD :
-								   ((chance == 3) ? GF_ACID :
-									((chance == 4) ? GF_POIS : GF_FIRE)))),
-								 dir, 840, 2);
-				o_ptr->timeout = (s16b) rand_range(25, 50);
+				(void)fire_ball(((chance == 1) ? GF_ELEC :
+								 ((chance == 2) ? GF_COLD :
+								  ((chance == 3) ? GF_ACID :
+								   ((chance == 4) ? GF_POIS : GF_FIRE)))),
+								dir, 840, 2);
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 
 			case SV_DRAGON_BRONZE:
 			{
 				msg_print("You breathe confusion.");
-				(void) fire_ball(GF_CONFUSION, dir, 400, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_CONFUSION, dir, 400, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
 			case SV_DRAGON_GOLD:
 			{
 				msg_print("You breathe sound.");
-				(void) fire_ball(GF_SOUND, dir, 430, 2);
-				o_ptr->timeout = (s16b) rand_range(50, 100);
+				(void)fire_ball(GF_SOUND, dir, 430, 2);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -1354,9 +1354,9 @@ static void do_cmd_activate_aux(int item)
 				chance = randint0(2);
 				msg_format("You breathe %s.",
 						   ((chance == 1 ? "chaos" : "disenchantment")));
-				(void) fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT),
-								 dir, 740, 2);
-				o_ptr->timeout = (s16b) rand_range(30, 60);
+				(void)fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT),
+								dir, 740, 2);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -1365,9 +1365,9 @@ static void do_cmd_activate_aux(int item)
 				chance = randint0(2);
 				msg_format("You breathe %s.",
 						   ((chance == 1 ? "sound" : "shards")));
-				(void) fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS),
-								 dir, 750, 2);
-				o_ptr->timeout = (s16b) rand_range(30, 60);
+				(void)fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS),
+								dir, 750, 2);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -1378,11 +1378,11 @@ static void do_cmd_activate_aux(int item)
 						   ((chance == 1) ? "chaos" :
 							((chance == 2) ? "disenchantment" :
 							 ((chance == 3) ? "sound" : "shards"))));
-				(void) fire_ball(((chance == 1) ? GF_CHAOS :
-								  ((chance == 2) ? GF_DISENCHANT :
-								   ((chance == 3) ? GF_SOUND : GF_SHARDS))),
-								 dir, 840, 2);
-				o_ptr->timeout = (s16b) rand_range(30, 60);
+				(void)fire_ball(((chance == 1) ? GF_CHAOS :
+								 ((chance == 2) ? GF_DISENCHANT :
+								  ((chance == 3) ? GF_SOUND : GF_SHARDS))),
+								dir, 840, 2);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -1391,17 +1391,16 @@ static void do_cmd_activate_aux(int item)
 				chance = randint0(2);
 				msg_format("You breathe %s.",
 						   ((chance == 0 ? "light" : "darkness")));
-				(void) fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 670,
-								 2);
-				o_ptr->timeout = (s16b) rand_range(30, 60);
+				(void)fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 670, 2);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
 			case SV_DRAGON_POWER:
 			{
 				msg_print("You breathe the elements.");
-				(void) fire_ball(GF_MISSILE, dir, 1000, 3);
-				o_ptr->timeout = (s16b) rand_range(30, 60);
+				(void)fire_ball(GF_MISSILE, dir, 1000, 3);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 		}
@@ -1424,25 +1423,25 @@ static void do_cmd_activate_aux(int item)
 		{
 			case SV_RING_ACID:
 			{
-				(void) fire_ball(GF_ACID, dir, 100, 2);
-				(void) set_oppose_acid(p_ptr->oppose_acid + rand_range(20, 40));
-				o_ptr->timeout = (s16b) rand_range(25, 50);
+				(void)fire_ball(GF_ACID, dir, 100, 2);
+				(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(20, 40));
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 
 			case SV_RING_ICE:
 			{
-				(void) fire_ball(GF_COLD, dir, 100, 2);
-				(void) set_oppose_cold(p_ptr->oppose_cold + rand_range(20, 40));
-				o_ptr->timeout = (s16b) rand_range(25, 50);
+				(void)fire_ball(GF_COLD, dir, 100, 2);
+				(void)set_oppose_cold(p_ptr->oppose_cold + rand_range(20, 40));
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 
 			case SV_RING_FLAMES:
 			{
-				(void) fire_ball(GF_FIRE, dir, 100, 2);
-				(void) set_oppose_fire(p_ptr->oppose_fire + rand_range(20, 40));
-				o_ptr->timeout = (s16b) rand_range(25, 50);
+				(void)fire_ball(GF_FIRE, dir, 100, 2);
+				(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(20, 40));
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 		}

@@ -164,7 +164,7 @@ static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, vptr arg)
 
 
 	/* Unused parameter */
-	(void) fmt;
+	(void)fmt;
 
 	/* Pointer display */
 	sprintf(tmp, "<<%p>>", arg);
@@ -594,7 +594,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				arg = va_arg(vp, vptr);
 
 				/* Format the "user data" */
-				(void) vstrnfmt_aux(tmp, 1000, aux, arg);
+				(void)vstrnfmt_aux(tmp, 1000, aux, arg);
 
 				/* Done */
 				break;

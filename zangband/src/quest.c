@@ -196,14 +196,14 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	{
 
 		/* XXX XXX Create quest name */
-		(void) strnfmt(q_ptr->name, 60, "Kill %d %s on level %d.",
-					   (int) num, r_name + r_ptr->name, (int) level);
+		(void)strnfmt(q_ptr->name, 60, "Kill %d %s on level %d.",
+					  (int)num, r_name + r_ptr->name, (int)level);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void) strnfmt(q_ptr->name, 60, "Kill %s on level %d.",
-					   (int) r_name + r_ptr->name, (int) level);
+		(void)strnfmt(q_ptr->name, 60, "Kill %s on level %d.",
+					  (int)r_name + r_ptr->name, (int)level);
 	}
 
 	/* Save the quest data */
@@ -377,7 +377,7 @@ void get_player_quests(void)
 		}
 		else
 		{
-			num = 5 + (s16b) randint0(level / 3 + 5) / r_ptr->rarity;
+			num = 5 + (s16b)randint0(level / 3 + 5) / r_ptr->rarity;
 		}
 
 		/* Create the quest */
@@ -639,7 +639,7 @@ static void quest_reward(int num, int x, int y)
 	object_type forge, *o_ptr;
 
 	/* Ignore num for now */
-	(void) num;
+	(void)num;
 
 	while (TRUE)
 	{
@@ -653,12 +653,12 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			(void) make_object(o_ptr, 30, dun_theme);
+			(void)make_object(o_ptr, 30, dun_theme);
 		}
 		else
 		{
 			/* Make a good object */
-			(void) make_object(o_ptr, 15, dun_theme);
+			(void)make_object(o_ptr, 15, dun_theme);
 		}
 
 		/* We need a 'good' item - so check the price */
@@ -669,7 +669,7 @@ static void quest_reward(int num, int x, int y)
 
 
 	/* Drop it in the dungeon */
-	(void) drop_near(o_ptr, -1, x, y);
+	(void)drop_near(o_ptr, -1, x, y);
 }
 
 
@@ -683,7 +683,7 @@ void trigger_quest_create(byte c_type, vptr data)
 	cave_type *c_ptr;
 
 	/* Ignore data - it may be unused */
-	(void) data;
+	(void)data;
 
 	for (i = 0; i < q_max; i++)
 	{
@@ -819,7 +819,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 			case QX_KILL_MONST:
 			case QX_KILL_UNIQUE:
 			{
-				monster_type *m_ptr = ((monster_type *) data);
+				monster_type *m_ptr = ((monster_type *)data);
 
 				if (q_ptr->data.dun.r_idx == m_ptr->r_idx)
 				{
@@ -850,7 +850,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 
 			case QX_KILL_WINNER:
 			{
-				monster_type *m_ptr = ((monster_type *) data);
+				monster_type *m_ptr = ((monster_type *)data);
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				if (q_ptr->data.dun.r_idx == m_ptr->r_idx)
@@ -1116,14 +1116,14 @@ void do_cmd_knowledge_quests(void)
 
 						strnfmt(tmp_str, 256,
 								"%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n\n",
-								q_ptr->name, (int) q_ptr->data.dun.level,
-								(int) q_ptr->data.dun.max_num, name,
-								(int) q_ptr->data.dun.cur_num);
+								q_ptr->name, (int)q_ptr->data.dun.level,
+								(int)q_ptr->data.dun.max_num, name,
+								(int)q_ptr->data.dun.cur_num);
 					}
 					else
 					{
 						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n",
-								q_ptr->name, (int) q_ptr->data.dun.level, name);
+								q_ptr->name, (int)q_ptr->data.dun.level, name);
 					}
 				}
 				else
@@ -1131,7 +1131,7 @@ void do_cmd_knowledge_quests(void)
 					/* Assume we've completed it for now */
 					strnfmt(tmp_str, 256,
 							"%s (Completed on dungeon level %d). \n",
-							q_ptr->name, (int) q_ptr->data.dun.level, name);
+							q_ptr->name, (int)q_ptr->data.dun.level, name);
 				}
 
 				break;
@@ -1168,10 +1168,10 @@ void do_cmd_knowledge_quests(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Quest status", 0, 0);
+	(void)show_file(file_name, "Quest status", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -1513,7 +1513,7 @@ bool create_quest(int x, int y, int place_num)
 			 * Add quest to wilderness
 			 * Note: only 255 can be stored currently.
 			 */
-			w_ptr->trans.place = (byte) place_num;
+			w_ptr->trans.place = (byte)place_num;
 
 			/* Increment "active block" counter */
 			pl_ptr->data++;
@@ -1533,8 +1533,8 @@ bool create_quest(int x, int y, int place_num)
 	q_ptr->x_type = QX_WILD_ENTER;
 
 	/* XXX XXX Create quest name */
-	(void) strnfmt(q_ptr->name, 60, "Defeat the %s camp.",
-				   camp_types[qtype].name);
+	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp.",
+				  camp_types[qtype].name);
 
 	/* Save the quest data */
 	q_ptr->data.wld.place = place_num;
@@ -1574,9 +1574,9 @@ void draw_quest(u16b place_num)
 	if (pl_ptr->region) quit("Quest already has region during creation.");
 
 	/* Get region */
-	pl_ptr->region = (s16b) create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
-										  pl_ptr->ysize * WILD_BLOCK_SIZE,
-										  REGION_NULL);
+	pl_ptr->region = (s16b)create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
+										 pl_ptr->ysize * WILD_BLOCK_SIZE,
+										 REGION_NULL);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 

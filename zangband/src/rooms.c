@@ -1436,7 +1436,7 @@ static void build_type5(int bx0, int by0)
 			int r_idx = what[randint0(64)];
 
 			/* Place that "random" monster (no groups) */
-			(void) place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE);
+			(void)place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE);
 		}
 	}
 }
@@ -1628,73 +1628,73 @@ static void build_type6(int bx0, int by0)
 	/* Top and bottom rows */
 	for (x = xval - 9; x <= xval + 9; x++)
 	{
-		(void) place_monster_aux(x, yval - 2, what[0],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(x, yval + 2, what[0],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(x, yval - 2, what[0],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(x, yval + 2, what[0],
+								FALSE, FALSE, FALSE, FALSE);
 	}
 
 	/* Middle columns */
 	for (y = yval - 1; y <= yval + 1; y++)
 	{
-		(void) place_monster_aux(xval - 9, y, what[0],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 9, y, what[0],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 9, y, what[0],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 9, y, what[0],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 8, y, what[1],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 8, y, what[1],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 8, y, what[1],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 8, y, what[1],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 7, y, what[1],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 7, y, what[1],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 7, y, what[1],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 7, y, what[1],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 6, y, what[2],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 6, y, what[2],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 6, y, what[2],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 6, y, what[2],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 5, y, what[2],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 5, y, what[2],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 5, y, what[2],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 5, y, what[2],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 4, y, what[3],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 4, y, what[3],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 4, y, what[3],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 4, y, what[3],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 3, y, what[3],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 3, y, what[3],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 3, y, what[3],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 3, y, what[3],
+								FALSE, FALSE, FALSE, FALSE);
 
-		(void) place_monster_aux(xval - 2, y, what[4],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(xval + 2, y, what[4],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval - 2, y, what[4],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(xval + 2, y, what[4],
+								FALSE, FALSE, FALSE, FALSE);
 	}
 
 	/* Above/Below the center monster */
 	for (x = xval - 1; x <= xval + 1; x++)
 	{
-		(void) place_monster_aux(x, yval + 1, what[5],
-								 FALSE, FALSE, FALSE, FALSE);
-		(void) place_monster_aux(x, yval - 1, what[5],
-								 FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(x, yval + 1, what[5],
+								FALSE, FALSE, FALSE, FALSE);
+		(void)place_monster_aux(x, yval - 1, what[5],
+								FALSE, FALSE, FALSE, FALSE);
 	}
 
 	/* Next to the center monster */
-	(void) place_monster_aux(xval + 1, yval, what[6],
-							 FALSE, FALSE, FALSE, FALSE);
-	(void) place_monster_aux(xval - 1, yval, what[6],
-							 FALSE, FALSE, FALSE, FALSE);
+	(void)place_monster_aux(xval + 1, yval, what[6],
+							FALSE, FALSE, FALSE, FALSE);
+	(void)place_monster_aux(xval - 1, yval, what[6],
+							FALSE, FALSE, FALSE, FALSE);
 
 	/* Center monster */
-	(void) place_monster_aux(xval, yval, what[7], FALSE, FALSE, FALSE, FALSE);
+	(void)place_monster_aux(xval, yval, what[7], FALSE, FALSE, FALSE, FALSE);
 }
 
 
@@ -1919,7 +1919,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				{
 					/* Monster */
 					monster_level = base_level + 4;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					break;
 				}
@@ -1928,7 +1928,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				{
 					/* Meaner monster */
 					monster_level = base_level + 8;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					break;
 				}
@@ -1937,7 +1937,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				{
 					/* Meaner monster, plus treasure */
 					monster_level = base_level + 6;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					object_level = base_level + 6;
 					place_object(x, y, TRUE, FALSE);
@@ -1949,7 +1949,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				{
 					/* Nasty monster and treasure */
 					monster_level = base_level + 25;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					object_level = base_level + 20;
 					place_object(x, y, TRUE, TRUE);
@@ -1963,7 +1963,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 					if (randint0(100) < 50)
 					{
 						monster_level = base_level + 3;
-						(void) place_monster(x, y, TRUE, TRUE);
+						(void)place_monster(x, y, TRUE, TRUE);
 						monster_level = base_level;
 					}
 					if (randint0(100) < 50)
@@ -2317,7 +2317,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 			 * Thing added based on distance to center of vault
 			 * Difficulty is 1-easy to 10-hard
 			 */
-			value = ((((s32b) (distance(cx, cy, x, y))) * 100) / size) +
+			value = ((((s32b)(distance(cx, cy, x, y))) * 100) / size) +
 				randint1(10) - difficulty;
 
 			/* hack- empty square part of the time */
@@ -2335,7 +2335,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				{
 					/* Meanest monster + treasure */
 					monster_level = base_level + 25;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					object_level = base_level + 25;
 					place_object(x, y, TRUE, FALSE);
@@ -2345,7 +2345,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				{
 					/* Mean monster + treasure */
 					monster_level = base_level + 15;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					object_level = base_level + 10;
 					place_object(x, y, TRUE, FALSE);
@@ -2355,7 +2355,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				{
 					/* Monster */
 					monster_level = base_level + 6;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 				}
 				else if (value < 17)
@@ -2385,7 +2385,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				{
 					/* Monster and trap */
 					monster_level = base_level + 5;
-					(void) place_monster(x, y, TRUE, TRUE);
+					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					place_trap(x, y);
 				}
@@ -2395,7 +2395,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 					if (randint0(100) < 50)
 					{
 						monster_level = base_level + 3;
-						(void) place_monster(x, y, TRUE, TRUE);
+						(void)place_monster(x, y, TRUE, TRUE);
 						monster_level = base_level;
 					}
 					if (randint0(100) < 50)
@@ -2417,7 +2417,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 					/* 20% monster, 40% trap, 20% object, 20% blank space */
 					if (randint0(100) < 20)
 					{
-						(void) place_monster(x, y, TRUE, TRUE);
+						(void)place_monster(x, y, TRUE, TRUE);
 					}
 					else if (randint0(100) < 50)
 					{
@@ -2469,8 +2469,8 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	{
 		/* Uniqueness check removed */
 
-		center[i].x = (u16b) rand_range(1, xsize - 2);
-		center[i].y = (u16b) rand_range(1, ysize - 2);
+		center[i].x = (u16b)rand_range(1, xsize - 2);
+		center[i].y = (u16b)rand_range(1, ysize - 2);
 	}
 
 	/* Set vault flags */
@@ -3965,8 +3965,8 @@ static void build_type15(int bx0, int by0)
 	bool light, type;
 
 	/* Get size + shape */
-	h = (u16b) rand_range(6, 15);
-	w = (u16b) rand_range(11, 22);
+	h = (u16b)rand_range(6, 15);
+	w = (u16b)rand_range(11, 22);
 
 
 	/* Try to allocate space for room. */

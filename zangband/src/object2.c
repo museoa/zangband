@@ -686,7 +686,7 @@ errr get_obj_store_prep(void)
 		f_o_t.result = FALSE;
 
 		/* Will the store !not! buy this item? */
-		field_hook(fld_ptr, FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
+		field_hook(fld_ptr, FIELD_ACT_STORE_ACT1, (vptr)&f_o_t);
 
 		/* We don't want this item type? */
 		if (f_o_t.result == TRUE)
@@ -700,7 +700,7 @@ errr get_obj_store_prep(void)
 		f_o_t.result = TRUE;
 
 		/* Will the store buy this item? */
-		field_hook(fld_ptr, FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
+		field_hook(fld_ptr, FIELD_ACT_STORE_ACT2, (vptr)&f_o_t);
 
 		/* We don't want this item type? */
 		if (f_o_t.result == FALSE)
@@ -1808,7 +1808,7 @@ s16b lookup_kind(int tval, int sval)
 void object_wipe(object_type *o_ptr)
 {
 	/* Wipe the structure */
-	(void) WIPE(o_ptr, object_type);
+	(void)WIPE(o_ptr, object_type);
 }
 
 
@@ -2128,7 +2128,7 @@ static byte get_ego_num(int level)
 	}
 
 	/* Result */
-	return ((byte) (table[i].index));
+	return ((byte)(table[i].index));
 }
 
 
@@ -2391,7 +2391,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Hack -- Horrible digging bonus */
-				o_ptr->pval = 0 - (s16b) (rand_range(2, 7));
+				o_ptr->pval = 0 - (s16b)(rand_range(2, 7));
 			}
 
 			break;
@@ -2408,7 +2408,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(40))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2448,14 +2448,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 						add_ego_power(EGO_XTRA_SUSTAIN, o_ptr);
 						break;
 					}
 
 					case EGO_SLAY_DRAGON:
 					{
-						(void) random_resistance(o_ptr, rand_range(5, 16), 0);
+						(void)random_resistance(o_ptr, rand_range(5, 16), 0);
 
 						break;
 					}
@@ -2467,8 +2467,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						(void) random_resistance(o_ptr, rand_range(5, 16), 0);
-						(void) random_resistance(o_ptr, rand_range(5, 18), 0);
+						(void)random_resistance(o_ptr, rand_range(5, 16), 0);
+						(void)random_resistance(o_ptr, rand_range(5, 18), 0);
 
 						break;
 					}
@@ -2504,7 +2504,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_CHAOTIC:
 					{
-						(void) random_resistance(o_ptr, rand_range(5, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(5, 38), 0);
 
 						break;
 					}
@@ -2535,7 +2535,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 						}
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 
 						break;
 					}
@@ -2556,7 +2556,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_FEAR;
 						}
 
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 
 						break;
 					}
@@ -2637,7 +2637,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(21))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2651,7 +2651,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_EXTRA_MIGHT)
 				{
-					(void) random_resistance(o_ptr, rand_range(5, 38), 0);
+					(void)random_resistance(o_ptr, rand_range(5, 38), 0);
 				}
 			}
 
@@ -2715,9 +2715,9 @@ static void dragon_resist(object_type *o_ptr)
 	do
 	{
 		if (one_in_(4))
-			(void) random_resistance(o_ptr, rand_range(5, 18), 0);
+			(void)random_resistance(o_ptr, rand_range(5, 18), 0);
 		else
-			(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+			(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 	}
 	while (one_in_(2));
 }
@@ -2789,7 +2789,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(21))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2826,7 +2826,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 
 						break;
 					}
@@ -2864,7 +2864,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Roll for random artifact */
 					if (one_in_(21))
 					{
-						(void) create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 
 						break;
 					}
@@ -2878,7 +2878,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Extra powers */
 					if (ego == EGO_ENDURANCE)
 					{
-						(void) random_resistance(o_ptr, rand_range(5, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(5, 38), 0);
 
 						if (one_in_(4))
 						{
@@ -2898,7 +2898,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2912,7 +2912,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_POWER)
 				{
-					(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+					(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 				}
 			}
 
@@ -2937,7 +2937,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2953,7 +2953,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					if (one_in_(2))
 					{
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 					}
 				}
 			}
@@ -2979,7 +2979,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2995,20 +2995,20 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					case EGO_MAGI:
 					{
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 						add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 
 						break;
 					}
 					case EGO_MIGHT:
 					{
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 
 						break;
 					}
 					case EGO_LORDLINESS:
 					{
-						(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 
 						break;
 					}
@@ -3056,7 +3056,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Roll for a random artifacts */
 					if (one_in_(20))
 					{
-						(void) create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 
 						break;
 					}
@@ -3104,7 +3104,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					(void) create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -3267,14 +3267,14 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (one_in_(7))
 					{
 						/* Randart ring */
-						(void) create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 					}
 					else
 					{
 						do
 						{
-							(void) random_resistance(o_ptr, rand_range(19, 38),
-													 0);
+							(void)random_resistance(o_ptr, rand_range(19, 38),
+													0);
 						}
 						while (one_in_(4));
 
@@ -3493,7 +3493,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				{
 					if (one_in_(3))
 					{
-						(void) random_resistance(o_ptr, rand_range(5, 38), 0);
+						(void)random_resistance(o_ptr, rand_range(5, 38), 0);
 					}
 
 					if (one_in_(5))
@@ -3530,7 +3530,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (one_in_(7))
 					{
 						/* Randart amulet */
-						(void) create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 
 						if (o_ptr->pval == 0)
 						{
@@ -3737,7 +3737,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 			o_ptr->pval = randint1(obj_level);
 
 			/* Never exceed "difficulty" of 55 to 59 */
-			if (o_ptr->pval > 55) o_ptr->pval = (byte) rand_range(55, 60);
+			if (o_ptr->pval > 55) o_ptr->pval = (byte)rand_range(55, 60);
 
 			break;
 		}
@@ -4251,7 +4251,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			o_ptr->number = (byte) damroll(6, 7);
+			o_ptr->number = (byte)damroll(6, 7);
 		}
 			break;
 
@@ -4260,7 +4260,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 			if (o_ptr->sval < SV_FOOD_BISCUIT)
 			{
 				/* mushrooms appear in clumps */
-				o_ptr->number = (byte) randint1(6);
+				o_ptr->number = (byte)randint1(6);
 			}
 		}
 	}
@@ -4325,7 +4325,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	}
 
 	/* Drop the object at the square */
-	(void) drop_near(q_ptr, -1, x, y);
+	(void)drop_near(q_ptr, -1, x, y);
 }
 
 
@@ -4363,7 +4363,7 @@ void place_object(int x, int y, bool good, bool great)
 	object_wipe(q_ptr);
 
 	/* Make an object (if possible) */
-	if (!make_object(q_ptr, (u16b) ((good ? 15 : 0) + (great ? 15 : 0)),
+	if (!make_object(q_ptr, (u16b)((good ? 15 : 0) + (great ? 15 : 0)),
 					 dun_theme))
 	{
 		return;
@@ -4883,7 +4883,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 
 	/* Fields may interact with an object in some way */
 	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP,
-			   (vptr) &o_list[o_idx]);
+			   (vptr)&o_list[o_idx]);
 
 	/* XXX XXX XXX */
 
@@ -4942,7 +4942,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 		}
 
 		/* Drop the object */
-		(void) drop_near(i_ptr, -1, x1, y1);
+		(void)drop_near(i_ptr, -1, x1, y1);
 	}
 }
 
@@ -5542,7 +5542,7 @@ void inven_drop(int item, int amt)
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 	/* Drop it near the player */
-	(void) drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
+	(void)drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
 
 	/* Modify, Describe, Optimize */
 	inven_item_increase(item, -amt);

@@ -80,7 +80,7 @@ void plog(cptr str)
 
 	/* Just do a labeled fprintf to stderr */
 	else
-		(void) (fprintf(stderr, "%s: %s\n", argv0 ? argv0 : "?", str));
+		(void)(fprintf(stderr, "%s: %s\n", argv0 ? argv0 : "?", str));
 }
 
 
@@ -102,16 +102,16 @@ void quit(cptr str)
 	if (quit_aux) (*quit_aux) (str);
 
 	/* Success */
-	if (!str) (void) (exit(0));
+	if (!str) (void)(exit(0));
 
 	/* Extract a "special error code" */
-	if ((str[0] == '-') || (str[0] == '+')) (void) (exit(atoi(str)));
+	if ((str[0] == '-') || (str[0] == '+')) (void)(exit(atoi(str)));
 
 	/* Send the string to plog() */
 	plog(str);
 
 	/* Failure */
-	(void) (exit(EXIT_FAILURE));
+	(void)(exit(EXIT_FAILURE));
 }
 
 

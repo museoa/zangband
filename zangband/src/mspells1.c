@@ -337,7 +337,7 @@ static bool summon_possible(int x1, int y1)
 
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-					   (vptr) &mon_enter_test);
+					   (vptr)&mon_enter_test);
 
 			/* Get result */
 			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) return (FALSE);
@@ -428,7 +428,7 @@ static void bolt(int m_idx, int typ, int dam_hp)
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
 	/* Target the player with a bolt attack */
-	(void) project(m_idx, 0, px, py, dam_hp, typ, flg);
+	(void)project(m_idx, 0, px, py, dam_hp, typ, flg);
 }
 
 
@@ -454,7 +454,7 @@ static void breath(int m_idx, int typ, int dam_hp, int rad, bool breath)
 	if (breath) rad = 0 - rad;
 
 	/* Target the player with a ball attack */
-	(void) project(m_idx, rad, px, py, dam_hp, typ, flg);
+	(void)project(m_idx, rad, px, py, dam_hp, typ, flg);
 }
 
 
@@ -1485,12 +1485,12 @@ bool make_attack_spell(int m_idx)
 
 				if (!p_ptr->resist_confu)
 				{
-					(void) set_confused(p_ptr->confused + rand_range(4, 8));
+					(void)set_confused(p_ptr->confused + rand_range(4, 8));
 				}
 
 				if (!p_ptr->resist_chaos && one_in_(3))
 				{
-					(void) set_image(p_ptr->image + rand_range(150, 400));
+					(void)set_image(p_ptr->image + rand_range(150, 400));
 				}
 
 				take_hit(damroll(8, 8), ddesc);
@@ -1522,26 +1522,26 @@ bool make_attack_spell(int m_idx)
 				take_hit(damroll(12, 15), ddesc);
 				if (!p_ptr->resist_blind)
 				{
-					(void) set_blind(p_ptr->blind + rand_range(8, 16));
+					(void)set_blind(p_ptr->blind + rand_range(8, 16));
 				}
 				if (!p_ptr->resist_confu)
 				{
-					(void) set_confused(p_ptr->confused + rand_range(4, 8));
+					(void)set_confused(p_ptr->confused + rand_range(4, 8));
 				}
 				if (!p_ptr->free_act)
 				{
-					(void) set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
+					(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 				}
-				(void) set_slow(p_ptr->slow + rand_range(4, 8));
+				(void)set_slow(p_ptr->slow + rand_range(4, 8));
 
 				while (randint0(100) > p_ptr->skill_sav)
-					(void) do_dec_stat(A_INT);
+					(void)do_dec_stat(A_INT);
 				while (randint0(100) > p_ptr->skill_sav)
-					(void) do_dec_stat(A_WIS);
+					(void)do_dec_stat(A_WIS);
 
 				if (!p_ptr->resist_chaos)
 				{
-					(void) set_image(p_ptr->image + rand_range(150, 400));
+					(void)set_image(p_ptr->image + rand_range(150, 400));
 				}
 			}
 			break;
@@ -1623,7 +1623,7 @@ bool make_attack_spell(int m_idx)
 			else
 			{
 				take_hit(damroll(15, 15), ddesc);
-				(void) set_cut(p_ptr->cut + damroll(10, 10));
+				(void)set_cut(p_ptr->cut + damroll(10, 10));
 			}
 			break;
 		}
@@ -1780,7 +1780,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void) set_afraid(p_ptr->afraid + rand_range(4, 8));
+				(void)set_afraid(p_ptr->afraid + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
 			break;
@@ -1804,7 +1804,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void) set_blind(rand_range(12, 16));
+				(void)set_blind(rand_range(12, 16));
 			}
 			update_smart_learn(m_idx, DRS_BLIND);
 			break;
@@ -1829,7 +1829,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void) set_confused(p_ptr->confused + rand_range(4, 8));
+				(void)set_confused(p_ptr->confused + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
@@ -1851,7 +1851,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void) set_slow(p_ptr->slow + rand_range(4, 8));
+				(void)set_slow(p_ptr->slow + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1875,7 +1875,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void) set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
+				(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1922,8 +1922,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				int dummy =
-					(((s32b) (rand_range(65, 90) * (p_ptr->chp))) / 100);
+				int dummy = (((s32b)(rand_range(65, 90) * (p_ptr->chp))) / 100);
 				msg_print("Your feel your life fade away!");
 				take_hit(dummy, m_name);
 				curse_equipment(100, 20);
@@ -2013,7 +2012,7 @@ bool make_attack_spell(int m_idx)
 			}
 
 			if (!(m_ptr->invulner))
-				m_ptr->invulner = (byte) rand_range(4, 8);
+				m_ptr->invulner = (byte)rand_range(4, 8);
 
 			break;
 		}
@@ -2023,7 +2022,7 @@ bool make_attack_spell(int m_idx)
 			/* RF6_BLINK */
 			disturb(TRUE);
 			msg_format("%^s blinks away.", m_name);
-			(void) teleport_away(m_idx, 10);
+			(void)teleport_away(m_idx, 10);
 			break;
 		}
 
@@ -2032,7 +2031,7 @@ bool make_attack_spell(int m_idx)
 			/* RF6_TPORT */
 			disturb(TRUE);
 			msg_format("%^s teleports away.", m_name);
-			(void) teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+			(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 			break;
 		}
 
@@ -2106,7 +2105,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else
 				msg_format("%^s gestures in shadow.", m_name);
-			(void) unlite_area(0, 3);
+			(void)unlite_area(0, 3);
 			break;
 		}
 
@@ -2119,7 +2118,7 @@ bool make_attack_spell(int m_idx)
 								  m_name);
 			else
 				msg_format("%^s casts a spell and cackles evilly.", m_name);
-			(void) trap_creation();
+			(void)trap_creation();
 			break;
 		}
 
@@ -2147,7 +2146,7 @@ bool make_attack_spell(int m_idx)
 			disturb(TRUE);
 			msg_format("%^s mutters quietly.", m_name);
 
-			(void) raise_dead(m_ptr->fx, m_ptr->fy, FALSE);
+			(void)raise_dead(m_ptr->fx, m_ptr->fy, FALSE);
 			break;
 		}
 
@@ -2182,7 +2181,7 @@ bool make_attack_spell(int m_idx)
 			else
 				msg_format("%^s magically summons Cyberdemons!", m_name);
 			if (blind && count) msg_print("You hear heavy steps nearby.");
-			(void) summon_cyber(m_idx, x, y);
+			(void)summon_cyber(m_idx, x, y);
 			break;
 		}
 

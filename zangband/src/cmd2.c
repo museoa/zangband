@@ -379,7 +379,7 @@ static void chest_death(int x, int y, s16b o_idx)
 		}
 
 		/* Drop it in the dungeon */
-		(void) drop_near(q_ptr, -1, x, y);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Reset the object level */
@@ -425,7 +425,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 	{
 		msg_print("A small needle has pricked you!");
 		take_hit(damroll(1, 4), "a poison needle");
-		(void) do_dec_stat(A_STR);
+		(void)do_dec_stat(A_STR);
 	}
 
 	/* Lose constitution */
@@ -433,7 +433,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 	{
 		msg_print("A small needle has pricked you!");
 		take_hit(damroll(1, 4), "a poison needle");
-		(void) do_dec_stat(A_CON);
+		(void)do_dec_stat(A_CON);
 	}
 
 	/* Poison */
@@ -442,7 +442,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 		msg_print("A puff of green gas surrounds you!");
 		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 		{
-			(void) set_poisoned(p_ptr->poisoned + rand_range(10, 30));
+			(void)set_poisoned(p_ptr->poisoned + rand_range(10, 30));
 		}
 	}
 
@@ -453,7 +453,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 
 		if (!p_ptr->free_act)
 		{
-			(void) set_paralyzed(p_ptr->paralyzed + rand_range(10, 30));
+			(void)set_paralyzed(p_ptr->paralyzed + rand_range(10, 30));
 		}
 	}
 
@@ -466,10 +466,10 @@ static void chest_trap(int x, int y, s16b o_idx)
 		for (i = 0; i < num; i++)
 		{
 			if (randint1(100) < p_ptr->depth)
-				(void) activate_hi_summon();
+				(void)activate_hi_summon();
 			else
-				(void) summon_specific(0, x, y, p_ptr->depth, 0, TRUE, FALSE,
-									   FALSE);
+				(void)summon_specific(0, x, y, p_ptr->depth, 0, TRUE, FALSE,
+									  FALSE);
 		}
 	}
 
@@ -770,7 +770,7 @@ bool do_cmd_open_aux(int x, int y)
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Success? */
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &i))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&i))
 		{
 			/* Sound */
 			sound(SOUND_OPENDOOR);
@@ -1092,7 +1092,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	int dig = p_ptr->skill_dig;
 
 	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
-									FIELD_ACT_INTERACT_TEST, (vptr) &action);
+									FIELD_ACT_INTERACT_TEST, (vptr)&action);
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -1112,7 +1112,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	if (*fld_ptr && (action == 0))
 	{
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &dig))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&dig))
 		{
 			/* Finished tunneling */
 			return (FALSE);
@@ -1595,7 +1595,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &i))
+	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
@@ -1802,7 +1802,7 @@ void do_cmd_alter(void)
 		}
 
 		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
-								  (vptr) &action))
+								  (vptr)&action))
 		{
 			switch (action)
 			{
@@ -2743,7 +2743,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	j = (hit_body ? breakage_chance(i_ptr) : 0);
 
 	/* Drop (or break) near that location */
-	(void) drop_near(i_ptr, j, x, y);
+	(void)drop_near(i_ptr, j, x, y);
 
 	make_noise(3);
 }
@@ -3229,7 +3229,7 @@ void do_cmd_throw_aux(int mult)
 	}
 
 	/* Drop (or break) near that location */
-	(void) drop_near(q_ptr, breakage, x, y);
+	(void)drop_near(q_ptr, breakage, x, y);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 

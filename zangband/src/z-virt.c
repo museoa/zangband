@@ -32,7 +32,7 @@ vptr rnfree(vptr p)
 	if (rnfree_aux) return ((*rnfree_aux) (p));
 
 	/* Use "free" */
-	free((char *) (p));
+	free((char *)(p));
 
 	/* Done */
 	return (NULL);
@@ -59,7 +59,7 @@ vptr rpanic(huge len)
 	core("Out of Memory!");
 
 	/* Paranoia */
-	return ((vptr) (NULL));
+	return ((vptr)(NULL));
 }
 
 
@@ -77,14 +77,14 @@ vptr ralloc(huge len)
 	vptr mem;
 
 	/* Allow allocation of "zero bytes" */
-	if (len == 0) return ((vptr) (NULL));
+	if (len == 0) return ((vptr)(NULL));
 
 	/* Use the aux function if set */
 	if (ralloc_aux) mem = (*ralloc_aux) (len);
 
 	/* Use malloc() to allocate some memory */
 	else
-		mem = ((vptr) (malloc((size_t) (len))));
+		mem = ((vptr)(malloc((size_t) (len))));
 
 	/* We were able to acquire memory */
 	if (!mem) mem = rpanic(len);
@@ -112,7 +112,7 @@ cptr string_make(cptr str)
 	while (str[len++]) /* loop */ ;
 
 	/* Allocate space for the string */
-	s = res = (char *) (ralloc(len));
+	s = res = (char *)(ralloc(len));
 
 	/* Copy the string (with terminator) */
 	while ((*s++ = *t++) != 0) /* loop */ ;
@@ -132,7 +132,7 @@ errr string_free(cptr str)
 	if (!str) return (0);
 
 	/* Kill the buffer of chars we must have allocated above */
-	rnfree((vptr) str);
+	rnfree((vptr)str);
 
 	/* Success */
 	return (0);

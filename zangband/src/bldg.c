@@ -100,11 +100,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void) set_confused(p_ptr->confused + rand_range(4, 8));
+			(void)set_confused(p_ptr->confused + rand_range(4, 8));
 		}
 		if (!p_ptr->resist_chaos && one_in_(3))
 		{
-			(void) set_image(p_ptr->image + rand_range(250, 400));
+			(void)set_image(p_ptr->image + rand_range(250, 400));
 		}
 		return;
 	}
@@ -112,8 +112,8 @@ void have_nightmare(int r_idx)
 	/* Lose int & wis */
 	if (!saving_throw(p_ptr->skill_sav * 100 / power))
 	{
-		(void) do_dec_stat(A_INT);
-		(void) do_dec_stat(A_WIS);
+		(void)do_dec_stat(A_INT);
+		(void)do_dec_stat(A_WIS);
 		return;
 	}
 
@@ -122,23 +122,23 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void) set_confused(p_ptr->confused + rand_range(4, 8));
+			(void)set_confused(p_ptr->confused + rand_range(4, 8));
 		}
 		if (!p_ptr->free_act)
 		{
-			(void) set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
+			(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 		}
 		while (!saving_throw(p_ptr->skill_sav))
 		{
-			(void) do_dec_stat(A_INT);
+			(void)do_dec_stat(A_INT);
 		}
 		while (!saving_throw(p_ptr->skill_sav))
 		{
-			(void) do_dec_stat(A_WIS);
+			(void)do_dec_stat(A_WIS);
 		}
 		if (!p_ptr->resist_chaos)
 		{
-			(void) set_image(p_ptr->image + rand_range(250, 400));
+			(void)set_image(p_ptr->image + rand_range(250, 400));
 		}
 		return;
 	}
@@ -272,7 +272,7 @@ static void building_prt_gold(void)
 
 	prt("Gold Remaining: ", 40, 23);
 
-	sprintf(tmp_str, "%9ld", (long) p_ptr->au);
+	sprintf(tmp_str, "%9ld", (long)p_ptr->au);
 	prt(tmp_str, 55, 23);
 }
 
@@ -308,7 +308,7 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 
 	/* Display building-specific information */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT1, (vptr) &factor);
+			   FIELD_ACT_STORE_ACT1, (vptr)&factor);
 
 	prt(" ESC) Exit building", 0, 23);
 
@@ -469,7 +469,7 @@ static s32b gamble_init(void)
 	}
 
 	/* Strip spaces */
-	for (p = out_val; *p == ' '; p++);
+	for (p = out_val; *p == ' '; p++) ;
 
 	/* Get the wager */
 	wager = atol(p);
@@ -576,7 +576,7 @@ void gamble_help(void)
 	screen_save();
 
 	/* Peruse the gambling help file */
-	(void) show_file("gambling.txt", NULL, 0, 0);
+	(void)show_file("gambling.txt", NULL, 0, 0);
 
 	screen_load();
 }
@@ -850,8 +850,8 @@ bool inn_rest(void)
 	}
 
 	/* Normally heal the player */
-	(void) set_blind(0);
-	(void) set_confused(0);
+	(void)set_blind(0);
+	(void)set_confused(0);
 	p_ptr->stun = 0;
 	p_ptr->csp = p_ptr->msp;
 
@@ -885,7 +885,7 @@ static void town_history(void)
 	screen_save();
 
 	/* Peruse the building help file */
-	(void) show_file("bldg.txt", NULL, 0, 0);
+	(void)show_file("bldg.txt", NULL, 0, 0);
 
 	/* Load screen */
 	screen_load();
@@ -1105,7 +1105,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Print the weapons base damage dice and blows */
 	sprintf(tmp_str, "Dice: %dd%d    Number of Blows: %d",
-			(int) o_ptr->dd, (int) o_ptr->ds, p_ptr->num_blow);
+			(int)o_ptr->dd, (int)o_ptr->ds, p_ptr->num_blow);
 	put_str(tmp_str, WEP_MAST_COL1, 10);
 
 	/* Print hit probabilities */
@@ -1673,7 +1673,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	factor = ((factor + 100) * bo_ptr->inflate) / 400;
 
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT2, (vptr) &factor);
+			   FIELD_ACT_STORE_ACT2, (vptr)&factor);
 
 	/* Hack XXX XXX, factor is returned as 2 if we want a redraw */
 	if (factor == 2)
@@ -1838,7 +1838,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 		case '!':
 		{
 			/* Hack -- User interface */
-			(void) Term_user(0);
+			(void)Term_user(0);
 			break;
 		}
 
@@ -2073,7 +2073,7 @@ void build_init(int town_num, int build_num, byte build_type)
 	store_type *st_ptr = &place[town_num].store[build_num];
 
 	/* Pick an owner */
-	st_ptr->owner = (byte) randint0(MAX_B_OWN);
+	st_ptr->owner = (byte)randint0(MAX_B_OWN);
 
 	/* Set the type */
 	st_ptr->type = build_type;

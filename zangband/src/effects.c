@@ -1416,16 +1416,16 @@ bool set_stun(int v)
 			msg_print("A vicious blow hits your head.");
 			if (one_in_(3))
 			{
-				if (!p_ptr->sustain_int) (void) do_dec_stat(A_INT);
-				if (!p_ptr->sustain_wis) (void) do_dec_stat(A_WIS);
+				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
+				if (!p_ptr->sustain_wis) (void)do_dec_stat(A_WIS);
 			}
 			else if (one_in_(2))
 			{
-				if (!p_ptr->sustain_int) (void) do_dec_stat(A_INT);
+				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
 			}
 			else
 			{
-				if (!p_ptr->sustain_wis) (void) do_dec_stat(A_WIS);
+				if (!p_ptr->sustain_wis) (void)do_dec_stat(A_WIS);
 			}
 		}
 
@@ -1656,7 +1656,7 @@ bool set_cut(int v)
 			{
 				msg_print("You have been horribly scarred.");
 
-				(void) do_dec_stat(A_CHR);
+				(void)do_dec_stat(A_CHR);
 			}
 		}
 	}
@@ -2475,16 +2475,16 @@ void do_poly_wounds(void)
 	if (!(wounds || hit_p || Nasty_effect)) return;
 
 	msg_print("Your wounds are polymorphed into less serious ones.");
-	(void) hp_player(change);
+	(void)hp_player(change);
 	if (Nasty_effect)
 	{
 		msg_print("A new wound was created!");
 		take_hit(change / 2, "a polymorphed wound");
-		(void) set_cut(change);
+		(void)set_cut(change);
 	}
 	else
 	{
-		(void) set_cut(p_ptr->cut - (change / 2));
+		(void)set_cut(p_ptr->cut - (change / 2));
 	}
 }
 
@@ -2535,14 +2535,14 @@ void do_poly_self(void)
 			{
 				if (one_in_(2))
 				{
-					(void) dec_stat(tmp, rand_range(6, 12), one_in_(3));
+					(void)dec_stat(tmp, rand_range(6, 12), one_in_(3));
 					power -= 1;
 				}
 				tmp++;
 			}
 
 			/* Deformities are discriminated against! */
-			(void) dec_stat(A_CHR, randint1(6), TRUE);
+			(void)dec_stat(A_CHR, randint1(6), TRUE);
 
 			if (effect_msg[0])
 			{
@@ -2638,7 +2638,7 @@ void do_poly_self(void)
 		msg_print("Your internal organs are rearranged!");
 		while (tmp < A_MAX)
 		{
-			(void) dec_stat(tmp, rand_range(6, 12), one_in_(3));
+			(void)dec_stat(tmp, rand_range(6, 12), one_in_(3));
 			tmp++;
 		}
 		if (one_in_(6))
@@ -2659,7 +2659,7 @@ void do_poly_self(void)
 	while ((power > randint0(15)) && one_in_(3))
 	{
 		power -= 7;
-		(void) gain_mutation(0);
+		(void)gain_mutation(0);
 	}
 
 	if (power > randint0(5))
@@ -2770,7 +2770,7 @@ void take_hit(int damage, cptr hit_from)
 		}
 
 		/* Note cause of death */
-		(void) strcpy(p_ptr->died_from, hit_from);
+		(void)strcpy(p_ptr->died_from, hit_from);
 
 		if (p_ptr->image) strcat(p_ptr->died_from, "(?)");
 
@@ -2862,5 +2862,5 @@ void make_noise(byte amount)
 	}
 
 	/* Save the new noise level */
-	p_ptr->noise_level = (byte) total;
+	p_ptr->noise_level = (byte)total;
 }

@@ -183,7 +183,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 		case TV_ARROW:
 		{
 			/* Ammo */
-			sprintf(dam, "%dd%d", (int) q_ptr->dd, (int) q_ptr->ds);
+			sprintf(dam, "%dd%d", (int)q_ptr->dd, (int)q_ptr->ds);
 			break;
 		}
 
@@ -193,7 +193,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 		case TV_DIGGING:
 		{
 			/* Weapons */
-			sprintf(dam, "%dd%d", (int) q_ptr->dd, (int) q_ptr->ds);
+			sprintf(dam, "%dd%d", (int)q_ptr->dd, (int)q_ptr->ds);
 			break;
 		}
 
@@ -305,7 +305,7 @@ static void spoil_obj_desc(cptr fname)
 
 				/* Dump it */
 				fprintf(fff, "     %-45s%8s%7s%5d%9ld\n",
-						buf, dam, wgt, e, (long) (v));
+						buf, dam, wgt, e, (long)(v));
 			}
 
 			/* Start a new set */
@@ -1402,10 +1402,10 @@ static void spoil_mon_desc(cptr fname)
 
 
 		/* Level */
-		sprintf(lev, "%d", (int) r_ptr->level);
+		sprintf(lev, "%d", (int)r_ptr->level);
 
 		/* Rarity */
-		sprintf(rar, "%d", (int) r_ptr->rarity);
+		sprintf(rar, "%d", (int)r_ptr->rarity);
 
 		/* Speed */
 		if (r_ptr->speed >= 110)
@@ -1423,16 +1423,16 @@ static void spoil_mon_desc(cptr fname)
 		/* Hitpoints */
 		if ((r_ptr->flags1 & (RF1_FORCE_MAXHP)) || (r_ptr->hside == 1))
 		{
-			sprintf(hp, "%d", (int) r_ptr->hdice * r_ptr->hside);
+			sprintf(hp, "%d", (int)r_ptr->hdice * r_ptr->hside);
 		}
 		else
 		{
-			sprintf(hp, "%dd%d", (int) r_ptr->hdice, (int) r_ptr->hside);
+			sprintf(hp, "%dd%d", (int)r_ptr->hdice, (int)r_ptr->hside);
 		}
 
 
 		/* Experience */
-		sprintf(exp, "%ld", (long) (r_ptr->mexp));
+		sprintf(exp, "%ld", (long)(r_ptr->mexp));
 
 		/* Hack -- use visual instead */
 		sprintf(exp, "%s '%c'", attr_to_text(r_ptr->d_attr), r_ptr->d_char);
@@ -1667,11 +1667,11 @@ static void spoil_mon_info(cptr fname)
 		spoil_out(buf);
 
 		/* Level */
-		sprintf(buf, "Lev:%d  ", (int) r_ptr->level);
+		sprintf(buf, "Lev:%d  ", (int)r_ptr->level);
 		spoil_out(buf);
 
 		/* Rarity */
-		sprintf(buf, "Rar:%d  ", (int) r_ptr->rarity);
+		sprintf(buf, "Rar:%d  ", (int)r_ptr->rarity);
 		spoil_out(buf);
 
 		/* Speed */
@@ -1688,11 +1688,11 @@ static void spoil_mon_info(cptr fname)
 		/* Hitpoints */
 		if ((flags1 & (RF1_FORCE_MAXHP)) || (r_ptr->hside == 1))
 		{
-			sprintf(buf, "Hp:%d  ", ((int) r_ptr->hdice) * r_ptr->hside);
+			sprintf(buf, "Hp:%d  ", ((int)r_ptr->hdice) * r_ptr->hside);
 		}
 		else
 		{
-			sprintf(buf, "Hp:%dd%d  ", (int) r_ptr->hdice, (int) r_ptr->hside);
+			sprintf(buf, "Hp:%dd%d  ", (int)r_ptr->hdice, (int)r_ptr->hside);
 		}
 		spoil_out(buf);
 
@@ -1701,7 +1701,7 @@ static void spoil_mon_info(cptr fname)
 		spoil_out(buf);
 
 		/* Experience */
-		sprintf(buf, "Exp:%ld\n", (long) (r_ptr->mexp));
+		sprintf(buf, "Exp:%ld\n", (long)(r_ptr->mexp));
 		spoil_out(buf);
 
 
@@ -2410,11 +2410,11 @@ static void spoil_mon_info(cptr fname)
 				{
 					spoil_out(" with damage");
 					if (r_ptr->blow[j].d_side == 1)
-						sprintf(buf, " %d", (int) r_ptr->blow[j].d_dice);
+						sprintf(buf, " %d", (int)r_ptr->blow[j].d_dice);
 					else
 						sprintf(buf, " %dd%d",
-								(int) r_ptr->blow[j].d_dice,
-								(int) r_ptr->blow[j].d_side);
+								(int)r_ptr->blow[j].d_dice,
+								(int)r_ptr->blow[j].d_side);
 					spoil_out(buf);
 				}
 			}
@@ -2534,7 +2534,7 @@ static void spoil_mutation(cptr fname)
 			sprintf(buf, "- Activation: %s \n", mut_ptr->name);
 			spoil_out(buf);
 
-			sprintf(buf, "- Min. level: %d \n", (int) mut_ptr->level);
+			sprintf(buf, "- Min. level: %d \n", (int)mut_ptr->level);
 			spoil_out(buf);
 
 			sprintf(buf, "- HP/SP Cost: %d \n", mut_ptr->cost);
@@ -2626,7 +2626,7 @@ static void spoil_rac_pow(cptr fname)
 		sprintf(buf, "- Activation: %s \n", mut_ptr->name);
 		spoil_out(buf);
 
-		sprintf(buf, "- Min. level: %d \n", (int) mut_ptr->level);
+		sprintf(buf, "- Min. level: %d \n", (int)mut_ptr->level);
 		spoil_out(buf);
 
 		sprintf(buf, "- HP/SP Cost: %d \n", mut_ptr->cost);

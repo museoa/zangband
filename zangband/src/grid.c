@@ -128,7 +128,7 @@ void place_random_door(int x, int y)
 	{
 		/* Create invisible wall */
 		set_feat_grid(c_ptr, FEAT_FLOOR);
-		(void) place_field(x, y, FT_WALL_INVIS);
+		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
 
@@ -175,7 +175,7 @@ void place_closed_door(int x, int y)
 	{
 		/* Create invisible wall */
 		set_feat_bold(x, y, FEAT_FLOOR);
-		(void) place_field(x, y, FT_WALL_INVIS);
+		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
 
@@ -349,7 +349,7 @@ void vault_monsters(int x1, int y1, int num)
 
 			/* Place the monster (allow groups) */
 			monster_level = base_level + 2;
-			(void) place_monster(x, y, TRUE, TRUE);
+			(void)place_monster(x, y, TRUE, TRUE);
 			monster_level = base_level;
 
 			/* Have placed a monster */
@@ -1042,19 +1042,19 @@ static void create_cata_tunnel(int x, int y)
 	/* Build tunnel */
 	x1 = x - 1;
 	y1 = y;
-	(void) set_tunnel(&x1, &y1, FALSE);
+	(void)set_tunnel(&x1, &y1, FALSE);
 
 	x1 = x + 1;
 	y1 = y;
-	(void) set_tunnel(&x1, &y1, FALSE);
+	(void)set_tunnel(&x1, &y1, FALSE);
 
 	x1 = x;
 	y1 = y - 1;
-	(void) set_tunnel(&x1, &y1, FALSE);
+	(void)set_tunnel(&x1, &y1, FALSE);
 
 	x1 = x;
 	y1 = y + 1;
-	(void) set_tunnel(&x1, &y1, FALSE);
+	(void)set_tunnel(&x1, &y1, FALSE);
 }
 
 
@@ -1326,7 +1326,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 		if (firstsuccede)
 		{
 			/* only do this if the first half has worked */
-			(void) set_tunnel(&x3, &y3, TRUE);
+			(void)set_tunnel(&x3, &y3, TRUE);
 		}
 
 		/* return value calculated above */
@@ -1505,7 +1505,7 @@ void generate_hmap(int x0, int y0, int xsiz, int ysiz, int grd, int roug,
 	{
 		for (j = 0; j <= ysize; j++)
 		{
-			c_ptr = cave_p((int) fill_data.xmin + i, (int) fill_data.ymin + j);
+			c_ptr = cave_p((int)fill_data.xmin + i, (int)fill_data.ymin + j);
 
 			/* 255 is a flag for "not done yet" */
 			c_ptr->feat = 255;

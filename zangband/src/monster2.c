@@ -144,7 +144,7 @@ void delete_monster_idx(int i)
 
 
 	/* Wipe the Monster */
-	(void) WIPE(m_ptr, monster_type);
+	(void)WIPE(m_ptr, monster_type);
 
 	/* Count monsters */
 	m_cnt--;
@@ -228,7 +228,7 @@ static void compact_monsters_aux(int i1, int i2)
 	COPY(&m_list[i2], &m_list[i1], monster_type);
 
 	/* Wipe the hole */
-	(void) WIPE(&m_list[i1], monster_type);
+	(void)WIPE(&m_list[i1], monster_type);
 }
 
 
@@ -365,7 +365,7 @@ void wipe_m_list(void)
 		}
 
 		/* Wipe the Monster */
-		(void) WIPE(m_ptr, monster_type);
+		(void)WIPE(m_ptr, monster_type);
 	}
 
 	/* Reset "m_max" */
@@ -924,7 +924,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		}
 
 		/* Copy the result */
-		(void) strcpy(desc, res);
+		(void)strcpy(desc, res);
 	}
 
 
@@ -946,7 +946,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		if ((r_ptr->flags1 & RF1_UNIQUE) && !p_ptr->image)
 		{
 			/* Start with the name (thus nominative and objective) */
-			(void) strcpy(desc, name);
+			(void)strcpy(desc, name);
 		}
 
 		/* It could be an indefinite monster */
@@ -955,8 +955,8 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 			/* XXX Check plurality for "some" */
 
 			/* Indefinite monsters need an indefinite article */
-			(void) strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-			(void) strcat(desc, name);
+			(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
+			(void)strcat(desc, name);
 		}
 
 		/* It could be a normal, definite, monster */
@@ -964,11 +964,11 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		{
 			/* Definite monsters need a definite article */
 			if (is_pet(m_ptr))
-				(void) strcpy(desc, "your ");
+				(void)strcpy(desc, "your ");
 			else
-				(void) strcpy(desc, "the ");
+				(void)strcpy(desc, "the ");
 
-			(void) strcat(desc, name);
+			(void)strcat(desc, name);
 		}
 
 		/* Handle the Possessive as a special afterthought */
@@ -977,7 +977,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
-			(void) strcat(desc, "'s");
+			(void)strcat(desc, "'s");
 		}
 	}
 }
@@ -1547,7 +1547,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 
 	/* Call the hook */
 	field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-			   (vptr) &mon_enter_test);
+			   (vptr)&mon_enter_test);
 
 	/* Get result */
 	if (!(mon_enter_test.flags & (MEG_DO_MOVE))) return (FALSE);
@@ -1655,7 +1655,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	{
 		u32b hp = m_ptr->maxhp * 2L;
 
-		m_ptr->maxhp = (s16b) MIN(30000, hp);
+		m_ptr->maxhp = (s16b)MIN(30000, hp);
 	}
 
 	/* And start out fully healthy */
@@ -1675,7 +1675,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 
 
 	/* Give a random starting energy */
-	m_ptr->energy = (byte) randint0(100);
+	m_ptr->energy = (byte)randint0(100);
 
 	/* Nightmare monsters are more prepared */
 	if (ironman_nightmare)
@@ -1919,7 +1919,7 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 	if (r_ptr->flags1 & (RF1_FRIENDS))
 	{
 		/* Attempt to place a group */
-		(void) place_monster_group(x, y, r_idx, slp, friendly, pet);
+		(void)place_monster_group(x, y, r_idx, slp, friendly, pet);
 	}
 
 
@@ -1957,14 +1957,14 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 			if (!z) break;
 
 			/* Place a single escort */
-			(void) place_monster_one(nx, ny, z, slp, friendly, pet);
+			(void)place_monster_one(nx, ny, z, slp, friendly, pet);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
 				(r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
-				(void) place_monster_group(nx, ny, z, slp, friendly, pet);
+				(void)place_monster_group(nx, ny, z, slp, friendly, pet);
 			}
 		}
 	}
@@ -2049,8 +2049,8 @@ bool alloc_horde(int x, int y)
 	{
 		scatter(&cx, &cy, x, y, 5);
 
-		(void) summon_specific(m_idx, cx, cy, p_ptr->depth + 5, SUMMON_KIN,
-							   TRUE, FALSE, FALSE);
+		(void)summon_specific(m_idx, cx, cy, p_ptr->depth + 5, SUMMON_KIN,
+							  TRUE, FALSE, FALSE);
 
 		y = cy;
 		x = cx;
@@ -2482,7 +2482,7 @@ bool summon_specific(int who, int x1, int y1, int lev, int type,
 
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				   (vptr) &mon_enter_test);
+				   (vptr)&mon_enter_test);
 
 		/* Get result */
 		if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
@@ -2644,10 +2644,10 @@ void message_pain(int m_idx, int dam)
 	}
 
 	/* Note -- subtle fix -CFT */
-	newhp = (long) (m_ptr->hp);
-	oldhp = newhp + (long) (dam);
+	newhp = (long)(m_ptr->hp);
+	oldhp = newhp + (long)(dam);
 	tmp = (newhp * 100L) / oldhp;
-	percentage = (int) (tmp);
+	percentage = (int)(tmp);
 
 
 	/* Mushrooms, Eyes, Jellies, Molds, Vortices, Worms, Quylthulgs */
@@ -3091,7 +3091,7 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 		delete_object_idx(this_o_idx);
 
 		/* Drop it */
-		(void) drop_near(q_ptr, -1, m_ptr->fx, m_ptr->fy);
+		(void)drop_near(q_ptr, -1, m_ptr->fx, m_ptr->fy);
 	}
 
 	/* Forget objects */

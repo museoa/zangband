@@ -225,7 +225,7 @@ void do_cmd_wield(void)
 	if (o_ptr->k_idx)
 	{
 		/* Take off existing item */
-		(void) inven_takeoff(slot, 255);
+		(void)inven_takeoff(slot, 255);
 	}
 
 	/* Wear the new stuff */
@@ -345,7 +345,7 @@ void do_cmd_takeoff(void)
 	p_ptr->energy_use = 50;
 
 	/* Take off the item */
-	(void) inven_takeoff(item, 255);
+	(void)inven_takeoff(item, 255);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 
@@ -1274,9 +1274,9 @@ static cptr ident_info[] =
  */
 bool ang_sort_comp_hook(const vptr u, const vptr v, int a, int b)
 {
-	u16b *who = (u16b *) (u);
+	u16b *who = (u16b *)(u);
 
-	u16b *why = (u16b *) (v);
+	u16b *why = (u16b *)(v);
 
 	int w1 = who[a];
 	int w2 = who[b];
@@ -1349,12 +1349,12 @@ bool ang_sort_comp_hook(const vptr u, const vptr v, int a, int b)
  */
 void ang_sort_swap_hook(const vptr u, const vptr v, int a, int b)
 {
-	u16b *who = (u16b *) (u);
+	u16b *who = (u16b *)(u);
 
 	u16b holder;
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 
 	/* Swap */
 	holder = who[a];

@@ -488,7 +488,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			if (!cave_floor_grid(c_ptr)) break;
 
 			/* Add the glyph here as a field */
-			(void) place_field(x, y, FT_GLYPH_WARDING);
+			(void)place_field(x, y, FT_GLYPH_WARDING);
 
 			/* Notice it */
 			note_spot(x, y);
@@ -853,7 +853,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)
 				{
-					(void) potion_smash_effect(who, x, y, k_idx);
+					(void)potion_smash_effect(who, x, y, k_idx);
 				}
 
 				/* Redraw */
@@ -1517,26 +1517,25 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 							switch (randint1(4))
 							{
 								case 1:
-									(void) set_confused(p_ptr->confused + 3 +
-														randint1(dam));
+									(void)set_confused(p_ptr->confused + 3 +
+													   randint1(dam));
 									break;
 								case 2:
-									(void) set_stun(p_ptr->stun +
-													randint1(dam));
+									(void)set_stun(p_ptr->stun + randint1(dam));
 									break;
 								case 3:
 								{
 									if (r_ptr->flags3 & RF3_NO_FEAR)
 										note = " is unaffected.";
 									else
-										(void) set_afraid(p_ptr->afraid + 3 +
-														  randint1(dam));
+										(void)set_afraid(p_ptr->afraid + 3 +
+														 randint1(dam));
 									break;
 								}
 								default:
 									if (!p_ptr->free_act)
-										(void) set_paralyzed(p_ptr->paralyzed +
-															 randint1(dam));
+										(void)set_paralyzed(p_ptr->paralyzed +
+															randint1(dam));
 									break;
 							}
 						}
@@ -1700,17 +1699,17 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 						switch (randint1(4))
 						{
 							case 1:
-								(void) set_stun(p_ptr->stun + dam / 2);
+								(void)set_stun(p_ptr->stun + dam / 2);
 								break;
 							case 2:
-								(void) set_confused(p_ptr->confused + dam / 2);
+								(void)set_confused(p_ptr->confused + dam / 2);
 								break;
 							default:
 							{
 								if (r_ptr->flags3 & RF3_NO_FEAR)
 									note = " is unaffected.";
 								else
-									(void) set_afraid(p_ptr->afraid + dam);
+									(void)set_afraid(p_ptr->afraid + dam);
 							}
 						}
 					}
@@ -1821,7 +1820,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				if (hp > 100) hp = 100;
 
 				/* Give the player the hit points */
-				(void) hp_player(hp);
+				(void)hp_player(hp);
 			}
 
 			break;
@@ -2805,7 +2804,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 		chg_virtue(V_VALOUR, -1);
 
 		/* Teleport */
-		(void) teleport_away(c_ptr->m_idx, do_dist);
+		(void)teleport_away(c_ptr->m_idx, do_dist);
 
 		/* Hack -- get new location */
 		y = m_ptr->fy;
@@ -2937,7 +2936,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				mon_d_head = old_m_d_head;
 
 				/* Hack XXX Die, but do not explode and call project() */
-				(void) monster_death(c_ptr->m_idx, FALSE);
+				(void)monster_death(c_ptr->m_idx, FALSE);
 
 				/* Delete the monster */
 				delete_monster_idx(c_ptr->m_idx);
@@ -3161,7 +3160,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			t_x = m_list[who].fx;
 		}
 
-		(void) project(0, 0, t_x, t_y, dam, typ, (PROJECT_STOP | PROJECT_KILL));
+		(void)project(0, 0, t_x, t_y, dam, typ, (PROJECT_STOP | PROJECT_KILL));
 
 		disturb(TRUE);
 		return TRUE;
@@ -3234,14 +3233,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if ((!(p_ptr->oppose_pois || p_ptr->resist_pois)) &&
 				one_in_(HURT_CHANCE))
 			{
-				(void) do_dec_stat(A_CON);
+				(void)do_dec_stat(A_CON);
 			}
 
 			take_hit(dam, killer);
 
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				(void) set_poisoned(p_ptr->poisoned + randint0(dam) + 10);
+				(void)set_poisoned(p_ptr->poisoned + randint0(dam) + 10);
 			}
 			break;
 		}
@@ -3255,7 +3254,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			take_hit(dam, killer);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				(void) set_poisoned(p_ptr->poisoned + randint0(dam) + 10);
+				(void)set_poisoned(p_ptr->poisoned + randint0(dam) + 10);
 
 				if (one_in_(5))
 				{
@@ -3268,7 +3267,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 				if (one_in_(6))
 				{
-					(void) inven_damage(set_acid_destroy, 2);
+					(void)inven_damage(set_acid_destroy, 2);
 				}
 			}
 			break;
@@ -3322,14 +3321,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 			if (!p_ptr->resist_sound)
 			{
-				(void) set_stun(p_ptr->stun +
-								randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
+				(void)set_stun(p_ptr->stun +
+							   randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
 			}
 
 			if (!(p_ptr->resist_fire ||
 				  p_ptr->oppose_fire || p_ptr->immune_fire))
 			{
-				(void) inven_damage(set_acid_destroy, 3);
+				(void)inven_damage(set_acid_destroy, 3);
 			}
 
 			break;
@@ -3367,7 +3366,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (p_ptr->prace == RACE_SPECTRE)
 			{
 				msg_print("You feel invigorated!");
-				(void) hp_player(dam / 4);
+				(void)hp_player(dam / 4);
 			}
 			else
 			{
@@ -3383,16 +3382,16 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something wet!");
 			if (!p_ptr->resist_sound)
 			{
-				(void) set_stun(p_ptr->stun + randint1(40));
+				(void)set_stun(p_ptr->stun + randint1(40));
 			}
 			if (!p_ptr->resist_confu)
 			{
-				(void) set_confused(p_ptr->confused + rand_range(5, 10));
+				(void)set_confused(p_ptr->confused + rand_range(5, 10));
 			}
 
 			if (one_in_(5))
 			{
-				(void) inven_damage(set_cold_destroy, 3);
+				(void)inven_damage(set_cold_destroy, 3);
 			}
 
 			take_hit(dam, killer);
@@ -3410,15 +3409,15 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!p_ptr->resist_confu)
 			{
-				(void) set_confused(p_ptr->confused + rand_range(20, 30));
+				(void)set_confused(p_ptr->confused + rand_range(20, 30));
 			}
 			if (!p_ptr->resist_chaos)
 			{
-				(void) set_image(p_ptr->image + randint1(10));
+				(void)set_image(p_ptr->image + randint1(10));
 				if (one_in_(3))
 				{
 					msg_print("Your body is twisted by chaos!");
-					(void) gain_mutation(0);
+					(void)gain_mutation(0);
 				}
 			}
 			if (!p_ptr->resist_nethr && !p_ptr->resist_chaos)
@@ -3440,8 +3439,8 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!p_ptr->resist_chaos || one_in_(9))
 			{
-				(void) inven_damage(set_elec_destroy, 2);
-				(void) inven_damage(set_fire_destroy, 2);
+				(void)inven_damage(set_elec_destroy, 2);
+				(void)inven_damage(set_fire_destroy, 2);
 			}
 			take_hit(dam, killer);
 			break;
@@ -3458,12 +3457,12 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void) set_cut(p_ptr->cut + dam);
+				(void)set_cut(p_ptr->cut + dam);
 			}
 
 			if (!p_ptr->resist_shard || one_in_(13))
 			{
-				(void) inven_damage(set_cold_destroy, 2);
+				(void)inven_damage(set_cold_destroy, 2);
 			}
 
 			take_hit(dam, killer);
@@ -3481,13 +3480,13 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void) set_stun(p_ptr->stun +
-								randint1((dam > 90) ? 35 : (dam / 3 + 5)));
+				(void)set_stun(p_ptr->stun +
+							   randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
 
 			if (!p_ptr->resist_sound || one_in_(13))
 			{
-				(void) inven_damage(set_cold_destroy, 2);
+				(void)inven_damage(set_cold_destroy, 2);
 			}
 
 			take_hit(dam, killer);
@@ -3505,7 +3504,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!p_ptr->resist_confu)
 			{
-				(void) set_confused(p_ptr->confused + rand_range(10, 30));
+				(void)set_confused(p_ptr->confused + rand_range(10, 30));
 			}
 			take_hit(dam, killer);
 			break;
@@ -3522,7 +3521,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void) apply_disenchant();
+				(void)apply_disenchant();
 			}
 			take_hit(dam, killer);
 			break;
@@ -3551,7 +3550,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by kinetic force!");
 			if (!p_ptr->resist_sound)
 			{
-				(void) set_stun(p_ptr->stun + randint1(20));
+				(void)set_stun(p_ptr->stun + randint1(20));
 			}
 			take_hit(dam, killer);
 			break;
@@ -3563,7 +3562,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("There is an explosion!");
 			if (!p_ptr->resist_sound)
 			{
-				(void) set_stun(p_ptr->stun + randint1(20));
+				(void)set_stun(p_ptr->stun + randint1(20));
 			}
 			if (p_ptr->resist_shard)
 			{
@@ -3571,12 +3570,12 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void) set_cut(p_ptr->cut + (dam / 2));
+				(void)set_cut(p_ptr->cut + (dam / 2));
 			}
 
 			if (!p_ptr->resist_shard || one_in_(12))
 			{
-				(void) inven_damage(set_cold_destroy, 3);
+				(void)inven_damage(set_cold_destroy, 3);
 			}
 
 			take_hit(dam, killer);
@@ -3587,7 +3586,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Inertia -- slowness */
 			if (fuzzy) msg_print("You are hit by something slow!");
-			(void) set_slow(p_ptr->slow + rand_range(4, 8));
+			(void)set_slow(p_ptr->slow + rand_range(4, 8));
 			take_hit(dam, killer);
 			break;
 		}
@@ -3603,7 +3602,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else if (!blind && !p_ptr->resist_blind)
 			{
-				(void) set_blind(p_ptr->blind + rand_range(2, 7));
+				(void)set_blind(p_ptr->blind + rand_range(2, 7));
 			}
 			if (p_ptr->prace == RACE_VAMPIRE)
 			{
@@ -3640,9 +3639,9 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else if (!blind && !p_ptr->resist_blind)
 			{
-				(void) set_blind(p_ptr->blind + rand_range(2, 7));
+				(void)set_blind(p_ptr->blind + rand_range(2, 7));
 			}
-			if (p_ptr->wraith_form) (void) hp_player(dam);
+			if (p_ptr->wraith_form) (void)hp_player(dam);
 			else
 				take_hit(dam, killer);
 			break;
@@ -3737,11 +3736,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			msg_print("Gravity warps around you.");
 			teleport_player(5);
 			if (!p_ptr->ffall)
-				(void) set_slow(p_ptr->slow + rand_range(4, 8));
+				(void)set_slow(p_ptr->slow + rand_range(4, 8));
 			if (!(p_ptr->resist_sound || p_ptr->ffall))
 			{
-				(void) set_stun(p_ptr->stun +
-								randint1((dam > 90) ? 35 : (dam / 3 + 5)));
+				(void)set_stun(p_ptr->stun +
+							   randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
 			if (p_ptr->ffall)
 			{
@@ -3750,7 +3749,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 			if (!p_ptr->ffall || one_in_(13))
 			{
-				(void) inven_damage(set_cold_destroy, 2);
+				(void)inven_damage(set_cold_destroy, 2);
 			}
 
 			take_hit(dam, killer);
@@ -3768,7 +3767,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_OLD_HEAL:
 		{
 			if (fuzzy) msg_print("You are hit by something invigorating!");
-			(void) hp_player(dam);
+			(void)hp_player(dam);
 			dam = 0;
 			break;
 		}
@@ -3776,7 +3775,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_OLD_SPEED:
 		{
 			if (fuzzy) msg_print("You are hit by something!");
-			(void) set_fast(p_ptr->fast + randint1(5));
+			(void)set_fast(p_ptr->fast + randint1(5));
 			dam = 0;
 			break;
 		}
@@ -3784,7 +3783,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_OLD_SLOW:
 		{
 			if (fuzzy) msg_print("You are hit by something slow!");
-			(void) set_slow(p_ptr->slow + rand_range(4, 8));
+			(void)set_slow(p_ptr->slow + rand_range(4, 8));
 			break;
 		}
 
@@ -3807,7 +3806,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				get_mon_num_prep(NULL, NULL);
 			}
 
-			(void) set_paralyzed(p_ptr->paralyzed + dam);
+			(void)set_paralyzed(p_ptr->paralyzed + dam);
 			dam = 0;
 			break;
 		}
@@ -3827,9 +3826,9 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			take_hit(dam, killer);
 			if (!p_ptr->resist_shard || one_in_(13))
 			{
-				if (!p_ptr->immune_fire) (void) inven_damage(set_fire_destroy,
-															 2);
-				(void) inven_damage(set_cold_destroy, 2);
+				if (!p_ptr->immune_fire) (void)inven_damage(set_fire_destroy,
+															2);
+				(void)inven_damage(set_cold_destroy, 2);
 			}
 
 			break;
@@ -3842,17 +3841,17 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			cold_dam(dam, killer);
 			if (!p_ptr->resist_shard)
 			{
-				(void) set_cut(p_ptr->cut + damroll(5, 8));
+				(void)set_cut(p_ptr->cut + damroll(5, 8));
 			}
 			if (!p_ptr->resist_sound)
 			{
-				(void) set_stun(p_ptr->stun + randint1(15));
+				(void)set_stun(p_ptr->stun + randint1(15));
 			}
 
 			if ((!(p_ptr->resist_cold || p_ptr->oppose_cold)) || one_in_(12))
 			{
-				if (!p_ptr->immune_cold) (void) inven_damage(set_cold_destroy,
-															 3);
+				if (!p_ptr->immune_cold) (void)inven_damage(set_cold_destroy,
+															3);
 			}
 
 			break;
@@ -4607,7 +4606,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 				/* Affect fields on the grid */
 				field_hook(&area(x, y)->fld_idx,
-						   FIELD_ACT_MAGIC_TARGET, (vptr) &f_m_t);
+						   FIELD_ACT_MAGIC_TARGET, (vptr)&f_m_t);
 
 				/* Restore notice variable */
 				notice = f_m_t.notice;
@@ -4627,7 +4626,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 				/* Affect fields on the grid */
 				field_hook(&area(x, y)->fld_idx,
-						   FIELD_ACT_MAGIC_TARGET, (vptr) &f_m_t);
+						   FIELD_ACT_MAGIC_TARGET, (vptr)&f_m_t);
 
 				/* Restore notice variable */
 				notice = f_m_t.notice;
@@ -4744,8 +4743,8 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 					}
 
 					/* Recursion... */
-					(void) project(area(x, y)->m_idx, 0, t_x, t_y, dam, typ,
-								   flg);
+					(void)project(area(x, y)->m_idx, 0, t_x, t_y, dam, typ,
+								  flg);
 				}
 				else
 				{
@@ -4827,7 +4826,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		while (mon_d_tail != mon_d_head)
 		{
 			/* Generate treasure, etc */
-			(void) monster_death(mon_d_m_idx[mon_d_tail], TRUE);
+			(void)monster_death(mon_d_m_idx[mon_d_tail], TRUE);
 
 			/* Delete the monster */
 			delete_monster_idx(mon_d_m_idx[mon_d_tail]);

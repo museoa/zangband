@@ -79,14 +79,14 @@ void reset_visuals(void)
 	if (use_graphics)
 	{
 		/* Process "graf.prf" */
-		(void) process_pref_file("graf.prf");
+		(void)process_pref_file("graf.prf");
 	}
 
 	/* Normal symbols */
 	else
 	{
 		/* Process "font.prf" */
-		(void) process_pref_file("font.prf");
+		(void)process_pref_file("font.prf");
 	}
 
 	/* Reset the fake monochrome flag */
@@ -1424,14 +1424,14 @@ bool identify_fully_aux(const object_type *o_ptr)
 		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
-			(void) inkey();
+			(void)inkey();
 			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Wait for it */
 	prt("[Press any key to continue]", 15, k);
-	(void) inkey();
+	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -2217,7 +2217,7 @@ static bool item_is_recharging(object_type *o_ptr)
 			return (TRUE);
 		}
 	}
-	
+
 	return (FALSE);
 }
 
@@ -2472,7 +2472,7 @@ void show_inven(void)
 		/* Grey out charging items */
 		if (item_is_recharging(o_ptr)) out_color[k] = TERM_L_DARK;
 
-		(void) strcpy(out_desc[k], o_name);
+		(void)strcpy(out_desc[k], o_name);
 
 		/* Find the predicted "line length" */
 		l = strlen(out_desc[k]) + 5;
@@ -2536,7 +2536,7 @@ void show_inven(void)
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void) sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
@@ -2613,7 +2613,7 @@ void show_equip(void)
 			out_color[k] = TERM_WHITE;
 		}
 
-		(void) strcpy(out_desc[k], o_name);
+		(void)strcpy(out_desc[k], o_name);
 
 		/* Extract the maximal length (see below) */
 		l = strlen(out_desc[k]) + (2 + 3);
@@ -2678,7 +2678,7 @@ void show_equip(void)
 		if (show_labels)
 		{
 			/* Mention the use */
-			(void) sprintf(tmp_val, "%-14s: ", mention_use(i));
+			(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
 			put_str(tmp_val, col + 5, j + 1);
 
 			/* Display the entry itself */
@@ -2696,7 +2696,7 @@ void show_equip(void)
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void) sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
+			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
@@ -2773,7 +2773,7 @@ static bool verify(cptr prompt, int item)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Prompt */
-	(void) sprintf(out_val, "%s %s? ", prompt, o_name);
+	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
 
 	/* Query */
 	return (get_check(out_val));
@@ -2998,7 +2998,7 @@ void show_floor(int x, int y)
 	if (show_weights) lim -= 9;
 
 	/* Scan for objects in the grid, using item_tester_okay() */
-	(void) scan_floor(floor_list, &floor_num, x, y, 0x01);
+	(void)scan_floor(floor_list, &floor_num, x, y, 0x01);
 
 	/* Display the inventory */
 	for (k = 0, i = 0; i < floor_num; i++)
@@ -3244,7 +3244,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	if (floor)
 	{
 		/* Scan all objects in the grid */
-		(void) scan_floor(floor_list, &floor_num, px, py, 0x01);
+		(void)scan_floor(floor_list, &floor_num, px, py, 0x01);
 	}
 
 	/* Accept inventory */

@@ -30,7 +30,7 @@ static void quit_hook(cptr s)
 	int j;
 
 	/* Unused parameter */
-	(void) s;
+	(void)s;
 
 	/* Scan windows */
 	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--)
@@ -409,7 +409,7 @@ int main(int argc, char *argv[])
 #ifdef SET_UID
 
 	/* Default permissions on files */
-	(void) umask(022);
+	(void)umask(022);
 
 #ifdef SECURE
 	/* Authenticate */
@@ -645,7 +645,7 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-gtk.c" support */
 	if (!done && (!mstr || (streq(mstr, "gtk"))))
 	{
-		if (0 == init_gtk((unsigned char *) &new_game, argc, argv))
+		if (0 == init_gtk((unsigned char *)&new_game, argc, argv))
 		{
 			done = TRUE;
 		}

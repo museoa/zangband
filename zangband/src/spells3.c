@@ -107,7 +107,7 @@ bool teleport_away(int m_idx, int dis)
 
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-					   (vptr) &mon_enter_test);
+					   (vptr)&mon_enter_test);
 
 			/* Get result */
 			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
@@ -136,7 +136,7 @@ bool teleport_away(int m_idx, int dis)
 	sound(SOUND_TPOTHER);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr)m_ptr);
 
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
@@ -152,7 +152,7 @@ bool teleport_away(int m_idx, int dis)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -247,7 +247,7 @@ void teleport_to_player(int m_idx)
 
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-					   (vptr) &mon_enter_test);
+					   (vptr)&mon_enter_test);
 
 			/* Get result */
 			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
@@ -285,7 +285,7 @@ void teleport_to_player(int m_idx)
 	sound(SOUND_TPOTHER);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr)m_ptr);
 
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
@@ -301,7 +301,7 @@ void teleport_to_player(int m_idx)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -1073,7 +1073,7 @@ void brand_weapon(int brand_type)
 
 		msg_format("Your %s %s", o_name, act);
 
-		(void) enchant(o_ptr, rand_range(4, 6), ENCH_TOHIT | ENCH_TODAM);
+		(void)enchant(o_ptr, rand_range(4, 6), ENCH_TOHIT | ENCH_TODAM);
 	}
 	else
 	{
@@ -1115,17 +1115,17 @@ void call_the_(void)
 	{
 		for (i = 1; i < 10; i++)
 		{
-			if (i != 5) (void) fire_ball(GF_ROCKET, i, 175, 2);
+			if (i != 5) (void)fire_ball(GF_ROCKET, i, 175, 2);
 		}
 
 		for (i = 1; i < 10; i++)
 		{
-			if (i != 5) (void) fire_ball(GF_MANA, i, 175, 3);
+			if (i != 5) (void)fire_ball(GF_MANA, i, 175, 3);
 		}
 
 		for (i = 1; i < 10; i++)
 		{
-			if (i != 5) (void) fire_ball(GF_NUKE, i, 175, 4);
+			if (i != 5) (void)fire_ball(GF_NUKE, i, 175, 4);
 		}
 	}
 	else
@@ -1309,7 +1309,7 @@ bool warding_glyph(void)
 	}
 
 	/* Add the glyph here as a field */
-	(void) place_field(px, py, FT_GLYPH_WARDING);
+	(void)place_field(px, py, FT_GLYPH_WARDING);
 
 	/* Notice it */
 	note_spot(px, py);
@@ -1343,7 +1343,7 @@ bool explosive_rune(void)
 	}
 
 	/* Add the glyph here as a field */
-	(void) place_field(px, py, FT_GLYPH_EXPLODE);
+	(void)place_field(px, py, FT_GLYPH_EXPLODE);
 
 	/* Notice it */
 	note_spot(px, py);
@@ -2011,9 +2011,9 @@ static void bad_luck(object_type *o_ptr)
 	if (one_in_(666) && (!is_art || one_in_(3)))
 	{
 		/* Blast it */
-		if (o_ptr->to_a) o_ptr->to_a = 0 - (s16b) rand_range(5, 10);
-		if (o_ptr->to_h) o_ptr->to_h = 0 - (s16b) rand_range(5, 10);
-		if (o_ptr->to_d) o_ptr->to_d = 0 - (s16b) rand_range(5, 10);
+		if (o_ptr->to_a) o_ptr->to_a = 0 - (s16b)rand_range(5, 10);
+		if (o_ptr->to_h) o_ptr->to_h = 0 - (s16b)rand_range(5, 10);
+		if (o_ptr->to_d) o_ptr->to_d = 0 - (s16b)rand_range(5, 10);
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
@@ -2347,7 +2347,7 @@ bool identify_fully(void)
 	}
 
 	/* Describe it fully */
-	(void) identify_fully_aux(o_ptr);
+	(void)identify_fully_aux(o_ptr);
 
 	/* Success */
 	return (TRUE);
@@ -3029,8 +3029,8 @@ bool potion_smash_effect(int who, int x, int y, int k_idx)
 		}
 	}
 
-	(void) project(who, radius, x, y, dam, dt,
-				   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
+	(void)project(who, radius, x, y, dam, dt,
+				  (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
 
 	/* An identification was made */
 	if (ident && !(k_ptr->aware))
@@ -4027,7 +4027,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s", I2A(i), spell_names[realm][spell],	/* realm, spell */
-				(int) s_ptr->slevel, (int) s_ptr->smana,
+				(int)s_ptr->slevel, (int)s_ptr->smana,
 				spell_chance(spell, realm), comment);
 		c_prt(line_attr, out_val, x, y + i + 1);
 	}
@@ -4298,7 +4298,7 @@ int inven_damage(inven_func typ, int perc)
 					int px = p_ptr->px;
 					int py = p_ptr->py;
 
-					(void) potion_smash_effect(0, px, py, o_ptr->k_idx);
+					(void)potion_smash_effect(0, px, py, o_ptr->k_idx);
 				}
 
 				/* Reduce the charges of rods/wands */
@@ -4424,7 +4424,7 @@ void acid_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) && one_in_(HURT_CHANCE))
-		(void) do_dec_stat(A_CHR);
+		(void)do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
 	if (minus_ac()) dam = (dam + 1) / 2;
@@ -4434,7 +4434,7 @@ void acid_dam(int dam, cptr kb_str)
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid))
-		(void) inven_damage(set_acid_destroy, inv);
+		(void)inven_damage(set_acid_destroy, inv);
 }
 
 
@@ -4456,14 +4456,14 @@ void elec_dam(int dam, cptr kb_str)
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) && one_in_(HURT_CHANCE))
-		(void) do_dec_stat(A_DEX);
+		(void)do_dec_stat(A_DEX);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
-		(void) inven_damage(set_elec_destroy, inv);
+		(void)inven_damage(set_elec_destroy, inv);
 }
 
 
@@ -4485,14 +4485,14 @@ void fire_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) && one_in_(HURT_CHANCE))
-		(void) do_dec_stat(A_STR);
+		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire))
-		(void) inven_damage(set_fire_destroy, inv);
+		(void)inven_damage(set_fire_destroy, inv);
 }
 
 
@@ -4514,14 +4514,14 @@ void cold_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) && one_in_(HURT_CHANCE))
-		(void) do_dec_stat(A_STR);
+		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold))
-		(void) inven_damage(set_cold_destroy, inv);
+		(void)inven_damage(set_cold_destroy, inv);
 }
 
 
@@ -4612,7 +4612,7 @@ bool curse_armor(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Blast the armor */
-		o_ptr->to_a = 0 - (s16b) rand_range(5, 10);
+		o_ptr->to_a = 0 - (s16b)rand_range(5, 10);
 		o_ptr->to_h = 0;
 		o_ptr->to_d = 0;
 		o_ptr->ac = 0;
@@ -4681,8 +4681,8 @@ bool curse_weapon(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Shatter the weapon */
-		o_ptr->to_h = 0 - (s16b) rand_range(5, 10);
-		o_ptr->to_d = 0 - (s16b) rand_range(5, 10);
+		o_ptr->to_h = 0 - (s16b)rand_range(5, 10);
+		o_ptr->to_d = 0 - (s16b)rand_range(5, 10);
 		o_ptr->to_a = 0;
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
@@ -4745,7 +4745,7 @@ bool brand_bolts(void)
 		add_ego_flags(o_ptr, EGO_FLAME);
 
 		/* Enchant */
-		(void) enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
+		(void)enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
 
 		/* Notice */
 		return (TRUE);
@@ -4845,8 +4845,8 @@ bool polymorph_monster(int x, int y)
 			monster_terrain_sensitive = FALSE;
 
 			/* Placing the new monster failed */
-			(void) place_monster_aux(x, y, old_r_idx, FALSE, FALSE, friendly,
-									 pet);
+			(void)place_monster_aux(x, y, old_r_idx, FALSE, FALSE, friendly,
+									pet);
 
 			monster_terrain_sensitive = TRUE;
 		}
@@ -4993,11 +4993,11 @@ void sanity_blast(const monster_type *m_ptr)
 		if ((!p_ptr->resist_fear) || one_in_(5))
 		{
 			/* Get afraid, even if have resist fear! */
-			(void) set_afraid(p_ptr->afraid + rand_range(10, 20));
+			(void)set_afraid(p_ptr->afraid + rand_range(10, 20));
 		}
 		if (!p_ptr->resist_chaos)
 		{
-			(void) set_image(p_ptr->image + rand_range(150, 400));
+			(void)set_image(p_ptr->image + rand_range(150, 400));
 		}
 		return;
 	}

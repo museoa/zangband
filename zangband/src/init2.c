@@ -348,7 +348,7 @@ static errr init_info_raw(int fd, header *head)
 
 
 	/* Read and verify the header */
-	if (fd_read(fd, (char *) (&test), sizeof(header)) ||
+	if (fd_read(fd, (char *)(&test), sizeof(header)) ||
 		(test.v_major != head->v_major) ||
 		(test.v_minor != head->v_minor) ||
 		(test.v_patch != head->v_patch) ||
@@ -583,7 +583,7 @@ static errr init_info(cptr filename, header *head,
 		if (fd >= 0)
 		{
 			/* Dump it */
-			fd_write(fd, (cptr) head, head->head_size);
+			fd_write(fd, (cptr)head, head->head_size);
 
 			/* Dump the "*_info" array */
 			fd_write(fd, head->info_ptr, head->info_size);
@@ -681,7 +681,7 @@ static errr init_z_info(void)
 
 #endif /* ALLOW_TEMPLATES */
 
-	return init_info("misc", &z_head, (void *) &z_info, NULL, NULL);
+	return init_info("misc", &z_head, (void *)&z_info, NULL, NULL);
 }
 
 
@@ -701,7 +701,7 @@ static errr init_f_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("f_info", &f_head,
-					 (void *) &f_info, (void *) &f_name, (void *) &f_text);
+					 (void *)&f_info, (void *)&f_name, (void *)&f_text);
 }
 
 
@@ -722,7 +722,7 @@ static errr init_k_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("k_info", &k_head,
-					 (void *) &k_info, (void *) &k_name, (void *) &k_text);
+					 (void *)&k_info, (void *)&k_name, (void *)&k_text);
 }
 
 
@@ -743,7 +743,7 @@ static errr init_a_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("a_info", &a_head,
-					 (void *) &a_info, (void *) &a_name, (void *) &a_text);
+					 (void *)&a_info, (void *)&a_name, (void *)&a_text);
 }
 
 
@@ -764,7 +764,7 @@ static errr init_e_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("e_info", &e_head,
-					 (void *) &e_info, (void *) &e_name, (void *) &e_text);
+					 (void *)&e_info, (void *)&e_name, (void *)&e_text);
 }
 
 
@@ -785,7 +785,7 @@ static errr init_r_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("r_info", &r_head,
-					 (void *) &r_info, (void *) &r_name, (void *) &r_text);
+					 (void *)&r_info, (void *)&r_name, (void *)&r_text);
 }
 
 
@@ -806,7 +806,7 @@ static errr init_v_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("v_info", &v_head,
-					 (void *) &v_info, (void *) &v_name, (void *) &v_text);
+					 (void *)&v_info, (void *)&v_name, (void *)&v_text);
 }
 
 
@@ -953,14 +953,14 @@ static errr init_other(void)
 
 
 	/* Clear the spell colour strings */
-	(void) C_WIPE(gf_color, MAX_GF, cptr);
+	(void)C_WIPE(gf_color, MAX_GF, cptr);
 
 
 	/* Initialize the "quark" package */
-	(void) quarks_init();
+	(void)quarks_init();
 
 	/* Initialize the "message" package */
-	(void) messages_init();
+	(void)messages_init();
 
 
 	/*** Prepare region list ***/
@@ -1037,7 +1037,7 @@ static errr init_other(void)
 	/*** Prepare "vinfo" array ***/
 
 	/* Used by "update_view()" */
-	(void) vinfo_init();
+	(void)vinfo_init();
 
 
 	/*** Prepare entity arrays ***/
@@ -1098,7 +1098,7 @@ static errr init_other(void)
 	/*** Pre-allocate space for the "format()" buffer ***/
 
 	/* Hack -- Just call the "format()" function */
-	(void) format("%s (%s).", "Steven Fuerst", MAINTAINER);
+	(void)format("%s (%s).", "Steven Fuerst", MAINTAINER);
 
 
 	/* Success */
@@ -1122,10 +1122,10 @@ static errr init_alloc(void)
 	/*** Analyze monster allocation info ***/
 
 	/* Clear the "aux" array */
-	(void) C_WIPE(&aux, MAX_DEPTH, s16b);
+	(void)C_WIPE(&aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	(void) C_WIPE(&num, MAX_DEPTH, s16b);
+	(void)C_WIPE(&num, MAX_DEPTH, s16b);
 
 	/* Size of "alloc_race_table" */
 	alloc_race_size = 0;
@@ -1202,7 +1202,7 @@ static errr init_alloc(void)
 	}
 
 	/* Init "alloc_kind_table" and "alloc_ego_table" */
-	(void) init_object_alloc();
+	(void)init_object_alloc();
 
 	/* Success */
 	return (0);
@@ -1326,7 +1326,7 @@ void init_angband(void)
 	}
 
 	/* Close it */
-	(void) fd_close(fd);
+	(void)fd_close(fd);
 
 
 	/*** Display the "news" file ***/
@@ -1397,7 +1397,7 @@ void init_angband(void)
 	}
 
 	/* Close it */
-	(void) fd_close(fd);
+	(void)fd_close(fd);
 
 
 	/*** Initialize some arrays ***/
@@ -1456,25 +1456,25 @@ void init_angband(void)
 	strcpy(buf, "pref.prf");
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "user" pref file */
 	sprintf(buf, "user.prf");
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "basic" system pref file */
 	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "user" system pref file */
 	sprintf(buf, "user-%s.prf", ANGBAND_SYS);
 
 	/* Process that file */
-	(void) process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Initialise the fake monochrome flag */
 	fake_monochrome = (!use_graphics
@@ -1498,8 +1498,8 @@ void cleanup_angband(void)
 		string_free(macro__act[i]);
 	}
 
-	FREE((void *) macro__pat);
-	FREE((void *) macro__act);
+	FREE((void *)macro__pat);
+	FREE((void *)macro__act);
 
 	/* Free the keymaps */
 	for (i = 0; i < KEYMAP_MODES; ++i)

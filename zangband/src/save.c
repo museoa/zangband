@@ -98,16 +98,16 @@ static errr wr_block(void)
 	byte fake[4];
 
 	/* Save the type and size */
-	fake[0] = (byte) (data_type);
-	fake[1] = (byte) (data_type >> 8);
-	fake[2] = (byte) (data_size);
-	fake[3] = (byte) (data_size >> 8);
+	fake[0] = (byte)(data_type);
+	fake[1] = (byte)(data_type >> 8);
+	fake[2] = (byte)(data_size);
+	fake[3] = (byte)(data_size >> 8);
 
 	/* Dump the head */
-	err = fd_write(data_fd, (char *) &fake, 4);
+	err = fd_write(data_fd, (char *)&fake, 4);
 
 	/* Dump the actual data */
-	err = fd_write(data_fd, (char *) data_head, data_size);
+	err = fd_write(data_fd, (char *)data_head, data_size);
 
 	/* XXX XXX XXX */
 	fake[0] = 0;
@@ -116,7 +116,7 @@ static errr wr_block(void)
 	fake[3] = 0;
 
 	/* Dump the tail */
-	err = fd_write(data_fd, (char *) &fake, 4);
+	err = fd_write(data_fd, (char *)&fake, 4);
 
 	/* Hack -- reset */
 	data_next = data_head;
@@ -143,7 +143,7 @@ static void put_byte(byte v)
  */
 static void put_char(char v)
 {
-	put_byte((byte) (v));
+	put_byte((byte)(v));
 }
 
 /*
@@ -151,8 +151,8 @@ static void put_char(char v)
  */
 static void put_u16b(u16b v)
 {
-	*data_next++ = (byte) (v);
-	*data_next++ = (byte) (v >> 8);
+	*data_next++ = (byte)(v);
+	*data_next++ = (byte)(v >> 8);
 }
 
 /*
@@ -160,7 +160,7 @@ static void put_u16b(u16b v)
  */
 static void put_s16b(s16b v)
 {
-	put_u16b((u16b) (v));
+	put_u16b((u16b)(v));
 }
 
 /*
@@ -168,10 +168,10 @@ static void put_s16b(s16b v)
  */
 static void put_u32b(u32b v)
 {
-	*data_next++ = (byte) (v);
-	*data_next++ = (byte) (v >> 8);
-	*data_next++ = (byte) (v >> 16);
-	*data_next++ = (byte) (v >> 24);
+	*data_next++ = (byte)(v);
+	*data_next++ = (byte)(v >> 8);
+	*data_next++ = (byte)(v >> 16);
+	*data_next++ = (byte)(v >> 24);
 }
 
 /*
@@ -179,7 +179,7 @@ static void put_u32b(u32b v)
  */
 static void put_s32b(s32b v)
 {
-	put_u32b((u32b) (v));
+	put_u32b((u32b)(v));
 }
 
 /*
@@ -187,7 +187,7 @@ static void put_s32b(s32b v)
  */
 static void put_string(char *str)
 {
-	while ((*data_next++ = *str++) != '\0');
+	while ((*data_next++ = *str++) != '\0') ;
 }
 
 
@@ -230,14 +230,14 @@ static errr wr_savefile(void)
 	data_fd = -1;
 
 	/* Dump the version */
-	fake[0] = (byte) (FAKE_VER_MAJOR);
-	fake[1] = (byte) (FAKE_VER_MINOR);
-	fake[2] = (byte) (FAKE_VER_PATCH);
-	fake[3] = (byte) (VERSION_EXTRA);
+	fake[0] = (byte)(FAKE_VER_MAJOR);
+	fake[1] = (byte)(FAKE_VER_MINOR);
+	fake[2] = (byte)(FAKE_VER_PATCH);
+	fake[3] = (byte)(VERSION_EXTRA);
 
 
 	/* Dump the data */
-	err = fd_write(data_fd, (char *) &fake, 4);
+	err = fd_write(data_fd, (char *)&fake, 4);
 
 
 	/* Make array XXX XXX XXX */
@@ -289,20 +289,20 @@ static errr rd_block(void)
 	byte fake[4];
 
 	/* Read the head data */
-	err = fd_read(data_fd, (char *) &fake, 4);
+	err = fd_read(data_fd, (char *)&fake, 4);
 
 	/* Extract the type and size */
-	data_type = (fake[0] | ((u16b) fake[1] << 8));
-	data_size = (fake[2] | ((u16b) fake[3] << 8));
+	data_type = (fake[0] | ((u16b)fake[1] << 8));
+	data_size = (fake[2] | ((u16b)fake[3] << 8));
 
 	/* Wipe the data block */
 	C_WIPE(data_head, 65535, byte);
 
 	/* Read the actual data */
-	err = fd_read(data_fd, (char *) data_head, data_size);
+	err = fd_read(data_fd, (char *)data_head, data_size);
 
 	/* Read the tail data */
-	err = fd_read(data_fd, (char *) &fake, 4);
+	err = fd_read(data_fd, (char *)&fake, 4);
 
 	/* XXX XXX XXX Verify */
 
@@ -329,7 +329,7 @@ static void get_byte(byte *ip)
  */
 static void get_char(char *ip)
 {
-	get_byte((byte *) ip);
+	get_byte((byte *)ip);
 }
 
 /*
@@ -348,7 +348,7 @@ static void get_u16b(u16b *ip)
  */
 static void get_s16b(s16b *ip)
 {
-	get_u16b((u16b *) ip);
+	get_u16b((u16b *)ip);
 }
 
 /*
@@ -369,7 +369,7 @@ static void get_u32b(u32b *ip)
  */
 static void get_s32b(s32b *ip)
 {
-	get_u32b((u32b *) ip);
+	get_u32b((u32b *)ip);
 }
 
 
@@ -391,7 +391,7 @@ static errr rd_savefile(void)
 	if (data_fd < 0) return (1);
 
 	/* Strip the first four bytes (see below) */
-	if (fd_read(data_fd, (char *) (fake), 4)) return (1);
+	if (fd_read(data_fd, (char *)(fake), 4)) return (1);
 
 
 	/* Make array XXX XXX XXX */
@@ -468,7 +468,7 @@ static void sf_put(byte v)
 {
 	/* Encode the value, write a character */
 	xor_byte ^= v;
-	(void) putc((int) xor_byte, fff);
+	(void)putc((int)xor_byte, fff);
 
 	/* Maintain the checksum info */
 	v_stamp += v;
@@ -482,26 +482,26 @@ static void wr_byte(byte v)
 
 static void wr_u16b(u16b v)
 {
-	sf_put((byte) (v & 0xFF));
-	sf_put((byte) ((v >> 8) & 0xFF));
+	sf_put((byte)(v & 0xFF));
+	sf_put((byte)((v >> 8) & 0xFF));
 }
 
 static void wr_s16b(s16b v)
 {
-	wr_u16b((u16b) v);
+	wr_u16b((u16b)v);
 }
 
 static void wr_u32b(u32b v)
 {
-	sf_put((byte) (v & 0xFF));
-	sf_put((byte) ((v >> 8) & 0xFF));
-	sf_put((byte) ((v >> 16) & 0xFF));
-	sf_put((byte) ((v >> 24) & 0xFF));
+	sf_put((byte)(v & 0xFF));
+	sf_put((byte)((v >> 8) & 0xFF));
+	sf_put((byte)((v >> 16) & 0xFF));
+	sf_put((byte)((v >> 24) & 0xFF));
 }
 
 static void wr_s32b(s32b v)
 {
-	wr_u32b((u32b) v);
+	wr_u32b((u32b)v);
 }
 
 static void wr_string(cptr str)
@@ -1101,8 +1101,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* If the run is broken, or too full, flush it  */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte) count);
-				wr_byte((byte) prev_char);
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1118,8 +1118,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte) count);
-		wr_byte((byte) prev_char);
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
 	}
 
 
@@ -1141,8 +1141,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* If the run is broken, or too full, flush it  */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte) count);
-				wr_byte((byte) prev_char);
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1158,8 +1158,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte) count);
-		wr_byte((byte) prev_char);
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
 	}
 
 
@@ -1181,8 +1181,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* If the run is broken, or too full, flush it  */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte) count);
-				wr_byte((byte) prev_char);
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1198,8 +1198,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte) count);
-		wr_byte((byte) prev_char);
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
 	}
 
 
@@ -1224,8 +1224,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte) count);
-				wr_byte((byte) prev_char);
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1241,8 +1241,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte) count);
-		wr_byte((byte) prev_char);
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
 	}
 }
 
@@ -1429,7 +1429,7 @@ static bool wr_savefile_new(void)
 	wr_byte(FAKE_VER_PATCH);
 	xor_byte = 0;
 
-	tmp8u = (byte) randint0(256);
+	tmp8u = (byte)randint0(256);
 	wr_byte(tmp8u);
 
 
@@ -1475,8 +1475,8 @@ static bool wr_savefile_new(void)
 	/* Dump the messages and colors (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
-		wr_string(message_str((s16b) i));
-		wr_byte(message_color((s16b) i));
+		wr_string(message_str((s16b)i));
+		wr_byte(message_color((s16b)i));
 	}
 
 
@@ -1561,8 +1561,8 @@ static bool wr_savefile_new(void)
 	wr_s32b(p_ptr->wilderness_x);
 	wr_s32b(p_ptr->wilderness_y);
 
-	wr_s32b((s32b) max_wild);
-	wr_s32b((s32b) max_wild);
+	wr_s32b((s32b)max_wild);
+	wr_s32b((s32b)max_wild);
 
 	/* Hack -- Dump the artifacts */
 	tmp16u = z_info->a_max;
@@ -1613,7 +1613,7 @@ static bool wr_savefile_new(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Dump index */
-		wr_u16b((u16b) i);
+		wr_u16b((u16b)i);
 
 		/* Dump object */
 		wr_item(o_ptr);
@@ -1740,7 +1740,7 @@ static bool save_player_aux(char *name)
 	if (fd >= 0)
 	{
 		/* Close the "fd" */
-		(void) fd_close(fd);
+		(void)fd_close(fd);
 
 		/* Grab permissions */
 		safe_setuid_grab();
@@ -1765,7 +1765,7 @@ static bool save_player_aux(char *name)
 		safe_setuid_grab();
 
 		/* Remove "broken" files */
-		if (!ok) (void) fd_kill(name);
+		if (!ok) (void)fd_kill(name);
 
 		/* Drop permissions */
 		safe_setuid_drop();
@@ -1820,7 +1820,7 @@ bool save_player(void)
 	safe_setuid_grab();
 
 	/* Remove it */
-	(void) fd_kill(safe);
+	(void)fd_kill(safe);
 
 	/* Drop permissions */
 	safe_setuid_drop();
@@ -1844,16 +1844,16 @@ bool save_player(void)
 		safe_setuid_grab();
 
 		/* Remove it */
-		(void) fd_kill(temp);
+		(void)fd_kill(temp);
 
 		/* Preserve old savefile */
-		(void) fd_move(savefile, temp);
+		(void)fd_move(savefile, temp);
 
 		/* Activate new savefile */
-		(void) fd_move(safe, savefile);
+		(void)fd_move(safe, savefile);
 
 		/* Remove preserved savefile */
-		(void) fd_kill(temp);
+		(void)fd_kill(temp);
 
 		/* Drop permissions */
 		safe_setuid_drop();
@@ -1962,7 +1962,7 @@ bool load_player(void)
 	}
 
 	/* Close the file */
-	(void) fd_close(fd);
+	(void)fd_close(fd);
 
 
 #ifdef VERIFY_SAVEFILE
@@ -2049,7 +2049,7 @@ bool load_player(void)
 		safe_setuid_grab();
 
 		/* Get the timestamp */
-		(void) fstat(fd, &statbuf);
+		(void)fstat(fd, &statbuf);
 
 		/* Drop permissions */
 		safe_setuid_drop();
@@ -2057,13 +2057,13 @@ bool load_player(void)
 #endif
 
 		/* Read the first four bytes */
-		if (fd_read(fd, (char *) (vvv), 4)) err = -1;
+		if (fd_read(fd, (char *)(vvv), 4)) err = -1;
 
 		/* What */
 		if (err) what = "Cannot read savefile";
 
 		/* Close the file */
-		(void) fd_close(fd);
+		(void)fd_close(fd);
 	}
 
 	/* Process file */
@@ -2203,7 +2203,7 @@ bool load_player(void)
 		if (p_ptr->chp >= 0)
 		{
 			/* Reset cause of death */
-			(void) strcpy(p_ptr->died_from, "(alive and well)");
+			(void)strcpy(p_ptr->died_from, "(alive and well)");
 		}
 
 		/* Success */

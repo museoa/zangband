@@ -74,14 +74,14 @@ object_kind *k_info_add(object_kind *k_info_entry)
 
 		/* Reallocate the extra memory */
 		k_info =
-			(object_kind *) realloc(k_info, k_info_size * sizeof(object_kind));
+			(object_kind *)realloc(k_info, k_info_size * sizeof(object_kind));
 
 		/* Failure */
 		if (!k_info) quit("Out of memory!");
 
 		/* Wipe the new memory */
-		(void) C_WIPE(&k_info[(k_info_size - K_INFO_RESIZE)], K_INFO_RESIZE,
-					  object_kind);
+		(void)C_WIPE(&k_info[(k_info_size - K_INFO_RESIZE)], K_INFO_RESIZE,
+					 object_kind);
 	}
 
 	/* Increase the maximum index of the array */
@@ -111,10 +111,10 @@ errr init_object_alloc(void)
 	/*** Analyze object allocation info ***/
 
 	/* Clear the "aux" array */
-	(void) C_WIPE(aux, MAX_DEPTH, s16b);
+	(void)C_WIPE(aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	(void) C_WIPE(num, MAX_DEPTH, s16b);
+	(void)C_WIPE(num, MAX_DEPTH, s16b);
 
 	/* Free the old "alloc_kind_table" (if it exists) */
 	if (alloc_kind_table)
@@ -200,8 +200,8 @@ errr init_object_alloc(void)
 	}
 
 	/* Clear the temp arrays */
-	(void) C_WIPE(aux, MAX_DEPTH, s16b);
-	(void) C_WIPE(num, MAX_DEPTH, s16b);
+	(void)C_WIPE(aux, MAX_DEPTH, s16b);
+	(void)C_WIPE(num, MAX_DEPTH, s16b);
 
 	/* Free the old ego item allocation table (if it exists) */
 	if (alloc_ego_table)
@@ -281,7 +281,7 @@ errr init_object_alloc(void)
 byte get_object_level(const object_type *o_ptr)
 {
 #if 0
-	return (byte) get_object_level_callback(o_ptr);
+	return (byte)get_object_level_callback(o_ptr);
 #else
 	return k_info[o_ptr->k_idx].level;
 #endif

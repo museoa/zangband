@@ -871,9 +871,9 @@ struct rbm_type
 {
 	cptr name;
 	cptr action;
-	
+
 	u16b sound;
-	
+
 	bool touched;
 	bool cut;
 	bool stun;

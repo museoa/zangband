@@ -516,7 +516,7 @@
 #ifdef ALLOW_BORG
 # ifdef USE_GRAPHICS
 #  define ALLOW_BORG_GRAPHICS
-# endif /* USE_GRAPHICS */
+# endif	/* USE_GRAPHICS */
 #endif /* ALLOW_BORG */
 
 

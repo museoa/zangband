@@ -161,8 +161,8 @@ static int get_mindcraft_power(int *sn)
 	}
 
 	/* Build a prompt (accept all spells) */
-	(void) strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) Use which %s? ",
-				   p, I2A(0), I2A(num - 1), p);
+	(void)strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) Use which %s? ",
+				  p, I2A(0), I2A(num - 1), p);
 
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
@@ -275,7 +275,7 @@ static int get_mindcraft_power(int *sn)
 			char tmp_val[160];
 
 			/* Prompt */
-			(void) strnfmt(tmp_val, 78, "Use %s? ", mindcraft_powers[i].name);
+			(void)strnfmt(tmp_val, 78, "Use %s? ", mindcraft_powers[i].name);
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -327,13 +327,12 @@ static bool cast_mindcrafter_spell(int spell)
 			if (!get_aim_dir(&dir)) return FALSE;
 
 			if (randint1(100) < plev * 2)
-				(void) fire_beam(GF_PSI, dir,
-								 damroll(3 + ((plev - 1) / 4),
-										 (3 + plev / 15)));
+				(void)fire_beam(GF_PSI, dir,
+								damroll(3 + ((plev - 1) / 4), (3 + plev / 15)));
 			else
-				(void) fire_ball(GF_PSI, dir,
-								 damroll(3 + ((plev - 1) / 4), (3 + plev / 15)),
-								 0);
+				(void)fire_ball(GF_PSI, dir,
+								damroll(3 + ((plev - 1) / 4), (3 + plev / 15)),
+								0);
 			break;
 		case MINDCRAFT_PRECOGNITION:
 			if (plev > 44)
@@ -360,7 +359,7 @@ static bool cast_mindcrafter_spell(int spell)
 
 			if ((plev > 24) && (plev < 40))
 			{
-				(void) set_tim_esp(p_ptr->tim_esp + plev);
+				(void)set_tim_esp(p_ptr->tim_esp + plev);
 			}
 
 			if (!b) msg_print("You feel safe.");
@@ -379,7 +378,7 @@ static bool cast_mindcrafter_spell(int spell)
 			break;
 		case MINDCRAFT_MAJOR_DISPLACEMENT:
 			/* Major displace */
-			if (plev > 29) (void) banish_monsters(plev);
+			if (plev > 29) (void)banish_monsters(plev);
 
 			teleport_player(plev * 5);
 			break;
@@ -389,28 +388,28 @@ static bool cast_mindcrafter_spell(int spell)
 			{
 				if (!get_aim_dir(&dir)) return FALSE;
 
-				(void) fire_ball(GF_DOMINATION, dir, plev, 0);
+				(void)fire_ball(GF_DOMINATION, dir, plev, 0);
 			}
 			else
 			{
-				(void) charm_monsters(plev * 2);
+				(void)charm_monsters(plev * 2);
 			}
 			break;
 		case MINDCRAFT_PULVERISE:
 			/* Fist of Force  ---  not 'true' TK */
 			if (!get_aim_dir(&dir)) return FALSE;
 
-			(void) fire_ball(GF_SOUND, dir, damroll(8 + ((plev - 5) / 4), 8),
-							 (plev > 20 ? (plev - 20) / 8 + 1 : 0));
+			(void)fire_ball(GF_SOUND, dir, damroll(8 + ((plev - 5) / 4), 8),
+							(plev > 20 ? (plev - 20) / 8 + 1 : 0));
 			break;
 		case MINDCRAFT_CHARACTER_ARMOUR:
 			/* Character Armour */
-			(void) set_shield(p_ptr->shield + plev);
-			if (plev > 14) (void) set_oppose_acid(p_ptr->oppose_acid + plev);
-			if (plev > 19) (void) set_oppose_fire(p_ptr->oppose_fire + plev);
-			if (plev > 24) (void) set_oppose_cold(p_ptr->oppose_cold + plev);
-			if (plev > 29) (void) set_oppose_elec(p_ptr->oppose_elec + plev);
-			if (plev > 34) (void) set_oppose_pois(p_ptr->oppose_pois + plev);
+			(void)set_shield(p_ptr->shield + plev);
+			if (plev > 14) (void)set_oppose_acid(p_ptr->oppose_acid + plev);
+			if (plev > 19) (void)set_oppose_fire(p_ptr->oppose_fire + plev);
+			if (plev > 24) (void)set_oppose_cold(p_ptr->oppose_cold + plev);
+			if (plev > 29) (void)set_oppose_elec(p_ptr->oppose_elec + plev);
+			if (plev > 34) (void)set_oppose_pois(p_ptr->oppose_pois + plev);
 			break;
 		case MINDCRAFT_PSYCHOMETRY:
 			/* Psychometry */
@@ -422,15 +421,15 @@ static bool cast_mindcrafter_spell(int spell)
 			/* Mindwave */
 			msg_print("Mind-warping forces emanate from your brain!");
 			if (plev < 25)
-				(void) project(0, 2 + plev / 10, p_ptr->px, p_ptr->py,
-							   (plev * 3) / 2, GF_PSI, PROJECT_KILL);
+				(void)project(0, 2 + plev / 10, p_ptr->px, p_ptr->py,
+							  (plev * 3) / 2, GF_PSI, PROJECT_KILL);
 			else
-				(void) mindblast_monsters(plev * ((plev - 5) / 10 + 1));
+				(void)mindblast_monsters(plev * ((plev - 5) / 10 + 1));
 			break;
 		case MINDCRAFT_ADRENALINE_CHANNELING:
 			/* Adrenaline */
-			(void) set_afraid(0);
-			(void) set_stun(0);
+			(void)set_afraid(0);
+			(void)set_stun(0);
 
 			/*
 			 * Only heal when Adrenalin Channeling is not active. We check
@@ -438,23 +437,23 @@ static bool cast_mindcrafter_spell(int spell)
 			 */
 			if (!p_ptr->fast || !(p_ptr->hero || p_ptr->shero))
 			{
-				(void) hp_player(plev);
+				(void)hp_player(plev);
 			}
 
 			b = 10 + randint1((plev * 3) / 2);
 			if (plev < 35)
-				(void) set_hero(p_ptr->hero + b);
+				(void)set_hero(p_ptr->hero + b);
 			else
-				(void) set_shero(p_ptr->shero + b);
+				(void)set_shero(p_ptr->shero + b);
 
 			if (!p_ptr->fast)
 			{
 				/* Haste */
-				(void) set_fast(b);
+				(void)set_fast(b);
 			}
 			else
 			{
-				(void) set_fast(p_ptr->fast + b);
+				(void)set_fast(p_ptr->fast + b);
 			}
 			break;
 		case MINDCRAFT_PSYCHIC_DRAIN:
@@ -471,9 +470,9 @@ static bool cast_mindcrafter_spell(int spell)
 			/* Telekinesis */
 			msg_print
 				("A wave of pure physical force radiates out from your body!");
-			(void) project(0, 3 + plev / 10, p_ptr->px, p_ptr->py,
-						   plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS,
-						   PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID);
+			(void)project(0, 3 + plev / 10, p_ptr->px, p_ptr->py,
+						  plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS,
+						  PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID);
 			break;
 		default:
 			msg_print("Unknown Mindcrafter power!");
@@ -563,31 +562,31 @@ void do_cmd_mindcraft(void)
 			if (b < 5)
 			{
 				msg_print("Oh, no! Your mind has gone blank!");
-				(void) lose_all_info();
+				(void)lose_all_info();
 			}
 			else if (b < 15)
 			{
 				msg_print("Weird visions seem to dance before your eyes...");
-				(void) set_image(p_ptr->image + rand_range(5, 15));
+				(void)set_image(p_ptr->image + rand_range(5, 15));
 			}
 			else if (b < 45)
 			{
 				msg_print("Your brain is addled!");
-				(void) set_confused(p_ptr->confused + randint1(8));
+				(void)set_confused(p_ptr->confused + randint1(8));
 			}
 			else if (b < 90)
 			{
-				(void) set_stun(p_ptr->stun + randint1(8));
+				(void)set_stun(p_ptr->stun + randint1(8));
 			}
 			else
 			{
 				/* Mana storm */
 				msg_print
 					("Your mind unleashes its power in an uncontrollable storm!");
-				(void) project(1, 2 + plev / 10, p_ptr->px, p_ptr->py, plev * 2,
-							   GF_MANA,
-							   PROJECT_JUMP | PROJECT_KILL | PROJECT_GRID |
-							   PROJECT_ITEM);
+				(void)project(1, 2 + plev / 10, p_ptr->px, p_ptr->py, plev * 2,
+							  GF_MANA,
+							  PROJECT_JUMP | PROJECT_KILL | PROJECT_GRID |
+							  PROJECT_ITEM);
 				p_ptr->csp = MAX(0, p_ptr->csp - plev * MAX(1, plev / 10));
 			}
 		}
@@ -628,7 +627,7 @@ void do_cmd_mindcraft(void)
 		msg_print("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-		(void) set_paralyzed(p_ptr->paralyzed + randint1(5 * oops + 1));
+		(void)set_paralyzed(p_ptr->paralyzed + randint1(5 * oops + 1));
 
 		/* Damage WIS (possibly permanently) */
 		if (randint0(100) < 50)
@@ -639,7 +638,7 @@ void do_cmd_mindcraft(void)
 			msg_print("You have damaged your mind!");
 
 			/* Reduce constitution */
-			(void) dec_stat(A_WIS, rand_range(15, 25), perm);
+			(void)dec_stat(A_WIS, rand_range(15, 25), perm);
 		}
 	}
 

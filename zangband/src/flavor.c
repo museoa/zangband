@@ -121,7 +121,7 @@ static cptr wand_adj[MAX_METALS] =
 	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
 	"Zirconium", "Zinc", "Aluminium-Plated", "Copper-Plated", "Gold-Plated",
 	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated",
-		"Zinc-Plated",
+	"Zinc-Plated",
 	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
 	"Platinum", "Lead", "Lead-Plated", "Ivory", "Adamantite",
 	"Uridium", "Long", "Short", "Hexagonal"
@@ -352,7 +352,7 @@ void get_table_name(char *out_string, bool quotes)
 
 		while (testcounter--)
 		{
-			(void) get_rnd_line("elvish.txt", 0, Syllable);
+			(void)get_rnd_line("elvish.txt", 0, Syllable);
 			strcat(out_string, Syllable);
 		}
 	}
@@ -1755,7 +1755,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 		strcpy(tmp_val2, quark_str(o_ptr->inscription));
 
-		for (; *tmp && (*tmp != '#'); tmp++);
+		for (; *tmp && (*tmp != '#'); tmp++) ;
 
 		*tmp = '\0';
 	}
@@ -1787,7 +1787,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Note the discount, if any */
 	else if (o_ptr->discount)
 	{
-		(void) object_desc_num(tmp_val2, o_ptr->discount);
+		(void)object_desc_num(tmp_val2, o_ptr->discount);
 		strcat(tmp_val2, "% off");
 	}
 
@@ -1816,7 +1816,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Here's where we dump the built string into buf. */
 	tmp_val[size - 1] = '\0';
 	t = tmp_val;
-	while ((*(buf++) = *(t++)));	/* copy the string over */
+	while ((*(buf++) = *(t++))) ;	/* copy the string over */
 }
 
 

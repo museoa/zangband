@@ -29,7 +29,7 @@ static int highscore_seek(int i)
 static errr highscore_read(high_score *score)
 {
 	/* Read the record, note failure */
-	return (fd_read(highscore_fd, (char *) (score), sizeof(high_score)));
+	return (fd_read(highscore_fd, (char *)(score), sizeof(high_score)));
 }
 
 
@@ -39,7 +39,7 @@ static errr highscore_read(high_score *score)
 static int highscore_write(const high_score *score)
 {
 	/* Write the record, note failure */
-	return (fd_write(highscore_fd, (char *) (score), sizeof(high_score)));
+	return (fd_write(highscore_fd, (char *)(score), sizeof(high_score)));
 }
 
 
@@ -372,7 +372,7 @@ void display_scores(int from, int to)
 	display_scores_aux(from, to, -1, NULL);
 
 	/* Shut the high score file */
-	(void) fd_close(highscore_fd);
+	(void)fd_close(highscore_fd);
 
 	/* Forget the high score fd */
 	highscore_fd = -1;
@@ -463,31 +463,31 @@ void enter_score(void)
 
 
 	/* Clear the record */
-	(void) WIPE(&the_score, high_score);
+	(void)WIPE(&the_score, high_score);
 
 	/* Save the version */
 	sprintf(the_score.what, "%u.%u.%u",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%9lu", (unsigned long) total_points());
+	sprintf(the_score.pts, "%9lu", (unsigned long)total_points());
 	the_score.pts[9] = '\0';
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%9lu", (unsigned long) p_ptr->au);
+	sprintf(the_score.gold, "%9lu", (unsigned long)p_ptr->au);
 	the_score.gold[9] = '\0';
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%9lu", (unsigned long) turn);
+	sprintf(the_score.turns, "%9lu", (unsigned long)turn);
 	the_score.turns[9] = '\0';
 
 #ifdef HIGHSCORE_DATE_HACK
 	/* Save the date in a hacked up form (9 chars) */
-	(void) sprintf(the_score.day, "%-.6s %-.2s", ctime(&ct) + 4,
-				   ctime(&ct) + 22);
+	(void)sprintf(the_score.day, "%-.6s %-.2s", ctime(&ct) + 4,
+				  ctime(&ct) + 22);
 #else  /* HIGHSCORE_DATE_HACK */
 	/* Get the date with a 4-digit year */
-	(void) strftime(long_day, 11, "%m/%d/%Y", localtime(&ct));
+	(void)strftime(long_day, 11, "%m/%d/%Y", localtime(&ct));
 
 	/* Remove the century */
 	i = 7;
@@ -501,7 +501,7 @@ void enter_score(void)
 	}
 
 	/* Save the date in standard form (8 chars) */
-	(void) strnfmt(the_score.day, 9, "%s", long_day);
+	(void)strnfmt(the_score.day, 9, "%s", long_day);
 #endif /* HIGHSCORE_DATE_HACK */
 
 	/* Save the player name (15 chars) */
@@ -510,8 +510,8 @@ void enter_score(void)
 	/* Save the player info XXX XXX XXX */
 	sprintf(the_score.uid, "%7u", (uint) player_uid);
 	sprintf(the_score.sex, "%c", (p_ptr->psex ? 'm' : 'f'));
-	sprintf(the_score.p_r, "%2d", (int) p_ptr->prace);
-	sprintf(the_score.p_c, "%2d", (int) p_ptr->pclass);
+	sprintf(the_score.p_r, "%2d", (int)p_ptr->prace);
+	sprintf(the_score.p_c, "%2d", (int)p_ptr->pclass);
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
@@ -606,13 +606,13 @@ void predict_score(void)
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%9lu", (unsigned long) total_points());
+	sprintf(the_score.pts, "%9lu", (unsigned long)total_points());
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%9lu", (unsigned long) p_ptr->au);
+	sprintf(the_score.gold, "%9lu", (unsigned long)p_ptr->au);
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%9lu", (unsigned long) turn);
+	sprintf(the_score.turns, "%9lu", (unsigned long)turn);
 
 	/* Hack -- no time needed */
 	strcpy(the_score.day, "TODAY");
@@ -623,8 +623,8 @@ void predict_score(void)
 	/* Save the player info XXX XXX XXX */
 	sprintf(the_score.uid, "%7u", (uint) player_uid);
 	sprintf(the_score.sex, "%c", (p_ptr->psex ? 'm' : 'f'));
-	sprintf(the_score.p_r, "%2d", (int) p_ptr->prace);
-	sprintf(the_score.p_c, "%2d", (int) p_ptr->pclass);
+	sprintf(the_score.p_r, "%2d", (int)p_ptr->prace);
+	sprintf(the_score.p_c, "%2d", (int)p_ptr->pclass);
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
@@ -706,7 +706,7 @@ void show_highclass(void)
 			player_name, race_info[p_ptr->prace].title, p_ptr->lev);
 	prt(out_val, 0, m + 8);
 
-	(void) fd_close(highscore_fd);
+	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
 	msg_print("Hit any key to continue");
 	message_flush();
@@ -781,7 +781,7 @@ void race_score(int race_num)
 		prt(out_val, 0, m + 8);
 	}
 
-	(void) fd_close(highscore_fd);
+	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
 }
 
@@ -814,7 +814,7 @@ void kingly(void)
 	p_ptr->depth = 0;
 
 	/* Fake death */
-	(void) strcpy(p_ptr->died_from, "Ripe Old Age");
+	(void)strcpy(p_ptr->died_from, "Ripe Old Age");
 
 	/* Restore the experience */
 	p_ptr->exp = p_ptr->max_exp;

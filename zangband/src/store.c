@@ -141,7 +141,7 @@ static void say_comment_2(s32b value, int annoyed)
 	char tmp_val[80];
 
 	/* Prepare a string to insert */
-	sprintf(tmp_val, "%ld", (long) value);
+	sprintf(tmp_val, "%ld", (long)value);
 
 	/* Final offer */
 	if (annoyed > 0)
@@ -167,7 +167,7 @@ static void say_comment_3(s32b value, int annoyed)
 	char tmp_val[80];
 
 	/* Prepare a string to insert */
-	sprintf(tmp_val, "%ld", (long) value);
+	sprintf(tmp_val, "%ld", (long)value);
 
 	/* Final offer */
 	if (annoyed > 0)
@@ -770,7 +770,7 @@ static bool store_will_stock(object_type *o_ptr)
 
 	/* Will the store !not! buy this item? */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
+			   FIELD_ACT_STORE_ACT1, (vptr)&f_o_t);
 
 	/* We don't want this item type? */
 	if (f_o_t.result == TRUE) return (FALSE);
@@ -780,7 +780,7 @@ static bool store_will_stock(object_type *o_ptr)
 
 	/* Will the store buy this item? */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
+			   FIELD_ACT_STORE_ACT2, (vptr)&f_o_t);
 
 	/* Finally check to see if we will buy the item */
 	return (f_o_t.result && store_will_buy(o_ptr));
@@ -1192,7 +1192,7 @@ static void store_create(void)
 		mass_produce(q_ptr);
 
 		/* Attempt to carry the (known) item */
-		(void) store_carry(q_ptr);
+		(void)store_carry(q_ptr);
 
 		/* Definitely done */
 		break;
@@ -1291,7 +1291,7 @@ static void display_entry(int pos)
 	i = (pos % 12);
 
 	/* Label it, clear the line --(-- */
-	(void) sprintf(out_val, "%c) ", I2A(i));
+	(void)sprintf(out_val, "%c) ", I2A(i));
 	prt(out_val, 0, i + 6);
 
 	/* Show_store_graph perm on. */
@@ -1324,7 +1324,7 @@ static void display_entry(int pos)
 		{
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
-			(void) sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
+			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
 			put_str(out_val, wid - 12, i + 6);
 		}
 	}
@@ -1347,7 +1347,7 @@ static void display_entry(int pos)
 		{
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
-			(void) sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
+			(void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
 			put_str(out_val, wid - 19, i + 6);
 		}
 
@@ -1358,7 +1358,7 @@ static void display_entry(int pos)
 			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
 			/* Actually draw the price (not fixed) */
-			(void) sprintf(out_val, "%9ld F", (long) x);
+			(void)sprintf(out_val, "%9ld F", (long)x);
 			put_str(out_val, wid - 12, i + 6);
 		}
 
@@ -1372,7 +1372,7 @@ static void display_entry(int pos)
 			if (!noneedtobargain(x)) x += x / 10;
 
 			/* Actually draw the price (with tax) */
-			(void) sprintf(out_val, "%9ld  ", (long) x);
+			(void)sprintf(out_val, "%9ld  ", (long)x);
 			put_str(out_val, wid - 12, i + 6);
 		}
 
@@ -1383,7 +1383,7 @@ static void display_entry(int pos)
 			x = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
 
 			/* Actually draw the price (not fixed) */
-			(void) sprintf(out_val, "%9ld  ", (long) x);
+			(void)sprintf(out_val, "%9ld  ", (long)x);
 			put_str(out_val, wid - 12, i + 6);
 		}
 	}
@@ -1435,7 +1435,7 @@ static void store_prt_gold(void)
 
 	prt("Gold Remaining: ", 53, 19);
 
-	sprintf(out_val, "%9ld", (long) p_ptr->au);
+	sprintf(out_val, "%9ld", (long)p_ptr->au);
 	prt(out_val, 68, 19);
 }
 
@@ -1480,7 +1480,7 @@ static void display_store(int store_top)
 		put_str(buf, 5, 3);
 
 		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld)", store_name, (long) (ot_ptr->max_cost) * 100);
+		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
 		prt(buf, 45, 3);
 
 		/* Label the item descriptions */
@@ -1608,7 +1608,7 @@ static void store_shuffle(store_type *st_ptr)
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner;)
 	{
-		st_ptr->owner = (byte) randint0(MAX_OWNERS);
+		st_ptr->owner = (byte)randint0(MAX_OWNERS);
 	}
 
 	/* Reset the owner data */
@@ -1674,8 +1674,8 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	*com_val = (-1);
 
 	/* Build the prompt */
-	(void) sprintf(out_val, "(Items %c-%c, ESC to exit) %s",
-				   I2A(i), I2A(j), pmt);
+	(void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s",
+				  I2A(i), I2A(j), pmt);
 
 	/* Ask until done */
 	while (TRUE)
@@ -1808,13 +1808,13 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
 	/* Old (negative) increment, and not final */
 	else if (last_inc < 0)
 	{
-		sprintf(buf, "%s [-%ld] ", pmt, (long) (ABS(last_inc)));
+		sprintf(buf, "%s [-%ld] ", pmt, (long)(ABS(last_inc)));
 	}
 
 	/* Old (positive) increment, and not final */
 	else if (last_inc > 0)
 	{
-		sprintf(buf, "%s [+%ld] ", pmt, (long) (ABS(last_inc)));
+		sprintf(buf, "%s [+%ld] ", pmt, (long)(ABS(last_inc)));
 	}
 
 	/* Normal haggle */
@@ -2000,7 +2000,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	/* Mega-Hack -- artificial "last offer" value */
 	last_offer = object_value(o_ptr) * o_ptr->number;
-	last_offer = last_offer * (200 - (int) (ot_ptr->max_inflate)) / 100L;
+	last_offer = last_offer * (200 - (int)(ot_ptr->max_inflate)) / 100L;
 	if (last_offer <= 0) last_offer = 1;
 
 	/* No offer yet */
@@ -2016,7 +2016,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 		while (!flag && loop_flag)
 		{
-			(void) sprintf(out_val, "%s :  %ld", pmt, (long) cur_ask);
+			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 			put_str(out_val, 0, 1);
 			cancel = receive_offer("What do you offer? ", &offer, last_offer,
 								   1, cur_ask, final);
@@ -2072,7 +2072,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 				annoyed++;
 				if (annoyed > 3)
 				{
-					(void) (increase_insults());
+					(void)(increase_insults());
 					cancel = TRUE;
 					flag = TRUE;
 				}
@@ -2088,8 +2088,8 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 				last_offer = offer;
 				allow_inc = TRUE;
 				prt("", 0, 1);
-				(void) sprintf(out_val, "Your last offer: %ld",
-							   (long) last_offer);
+				(void)sprintf(out_val, "Your last offer: %ld",
+							  (long)last_offer);
 				put_str(out_val, 39, 1);
 				say_comment_2(cur_ask, annoyed);
 			}
@@ -2136,7 +2136,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	noneed = noneedtobargain(final_ask);
 
 	/* Get the owner's payout limit */
-	purse = (s32b) (ot_ptr->max_cost) * 100;
+	purse = (s32b)(ot_ptr->max_cost) * 100;
 
 	/* No need to haggle */
 	if (noneed || auto_haggle || (final_ask >= purse))
@@ -2207,7 +2207,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 		{
 			loop_flag = TRUE;
 
-			(void) sprintf(out_val, "%s :  %ld", pmt, (long) cur_ask);
+			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 			put_str(out_val, 0, 1);
 			cancel = receive_offer("What price do you ask? ", &offer,
 								   last_offer, -1, cur_ask, final);
@@ -2267,7 +2267,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 				if (annoyed > 3)
 				{
 					flag = TRUE;
-					(void) (increase_insults());
+					(void)(increase_insults());
 				}
 			}
 			else if (offer <= cur_ask)
@@ -2281,7 +2281,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 				last_offer = offer;
 				allow_inc = TRUE;
 				prt("", 0, 1);
-				(void) sprintf(out_val, "Your last bid %ld", (long) last_offer);
+				(void)sprintf(out_val, "Your last bid %ld", (long)last_offer);
 				put_str(out_val, 39, 1);
 				say_comment_3(cur_ask, annoyed);
 			}
@@ -2387,7 +2387,7 @@ static void store_purchase(int *store_top)
 		/* Hack -- note cost of "fixed" items */
 		if (!(st_ptr->type == BUILD_STORE_HOME) && (o_ptr->ident & IDENT_FIXED))
 		{
-			msg_format("That costs %ld gold per item.", (long) (best));
+			msg_format("That costs %ld gold per item.", (long)(best));
 		}
 
 		/* Get a quantity */
@@ -2484,7 +2484,7 @@ static void store_purchase(int *store_top)
 				object_desc(o_name, j_ptr, TRUE, 3, 256);
 
 				/* Message */
-				msg_format("You bought %s for %ld gold.", o_name, (long) price);
+				msg_format("You bought %s for %ld gold.", o_name, (long)price);
 
 				/* Erase the inscription */
 				j_ptr->inscription = 0;
@@ -2827,7 +2827,7 @@ static void store_sell(int *store_top)
 			object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 			/* Describe the result (in message buffer) */
-			msg_format("You sold %s for %ld gold.", o_name, (long) price);
+			msg_format("You sold %s for %ld gold.", o_name, (long)price);
 
 			if (!((q_ptr->tval == TV_FIGURINE) && (value > 0)))
 			{
@@ -3158,7 +3158,7 @@ static void store_process_command(int *store_top)
 		case '!':
 		{
 			/* Hack -- User interface */
-			(void) Term_user(0);
+			(void)Term_user(0);
 			break;
 		}
 
@@ -3682,7 +3682,7 @@ void store_init(int town_num, int store_num, byte store_type)
 	st_ptr = &place[town_num].store[store_num];
 
 	/* Pick an owner */
-	st_ptr->owner = (byte) randint0(MAX_OWNERS);
+	st_ptr->owner = (byte)randint0(MAX_OWNERS);
 
 	/* Do not allocate the stock yet. */
 	st_ptr->stock = NULL;

@@ -75,7 +75,7 @@ void user_name(char *buf, int id)
 	if ((pw = getpwuid(id)))
 	{
 		/* Get the first 15 characters of the user name */
-		(void) strncpy(buf, pw->pw_name, 16);
+		(void)strncpy(buf, pw->pw_name, 16);
 		buf[15] = '\0';
 
 #ifdef CAPITALIZE_USER_NAME
@@ -196,10 +196,10 @@ errr path_parse(char *buf, int max, cptr file)
 	if (!pw) return (1);
 
 	/* Make use of the info */
-	(void) strncpy(buf, pw->pw_dir, max);
+	(void)strncpy(buf, pw->pw_dir, max);
 
 	/* Append the rest of the filename, if any */
-	if (s) (void) strncat(buf, s, max);
+	if (s) (void)strncat(buf, s, max);
 
 	/* Success */
 	return (0);
@@ -218,7 +218,7 @@ errr path_parse(char *buf, int max, cptr file)
 errr path_parse(char *buf, int max, cptr file)
 {
 	/* Accept the filename */
-	(void) strnfmt(buf, max, "%s", file);
+	(void)strnfmt(buf, max, "%s", file);
 
 	/* Success */
 	return (0);
@@ -251,7 +251,7 @@ static errr path_temp(char *buf, int max)
 	if (!s) return (-1);
 
 	/* Format to length */
-	(void) strnfmt(buf, max, "%s", s);
+	(void)strnfmt(buf, max, "%s", s);
 
 	/* Success */
 	return (0);
@@ -279,28 +279,28 @@ void path_build(char *buf, int max, cptr path, cptr file)
 	if (file[0] == '~')
 	{
 		/* Use the file itself */
-		(void) strnfmt(buf, max, "%s", file);
+		(void)strnfmt(buf, max, "%s", file);
 	}
 
 	/* Absolute file, on "normal" systems */
 	else if (prefix(file, PATH_SEP) && !streq(PATH_SEP, ""))
 	{
 		/* Use the file itself */
-		(void) strnfmt(buf, max, "%s", file);
+		(void)strnfmt(buf, max, "%s", file);
 	}
 
 	/* No path given */
 	else if (!path[0])
 	{
 		/* Use the file itself */
-		(void) strnfmt(buf, max, "%s", file);
+		(void)strnfmt(buf, max, "%s", file);
 	}
 
 	/* Path and File */
 	else
 	{
 		/* Build the new path */
-		(void) strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
+		(void)strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
 	}
 }
 
@@ -329,7 +329,7 @@ void my_fclose(FILE *fff)
 	if (!fff) return;
 
 	/* Close, check for error */
-	(void) fclose(fff);
+	(void)fclose(fff);
 }
 
 
@@ -443,10 +443,10 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 errr my_fputs(FILE *fff, cptr buf, huge n)
 {
 	/* Unused parameter */
-	(void) n;
+	(void)n;
 
 	/* Dump, ignore errors */
-	(void) fprintf(fff, "%s\n", buf);
+	(void)fprintf(fff, "%s\n", buf);
 
 	/* Success */
 	return (0);
@@ -509,7 +509,7 @@ errr fd_kill(cptr file)
 	if (path_parse(buf, 1024, file)) return (-1);
 
 	/* Remove */
-	(void) remove(buf);
+	(void)remove(buf);
 
 	/* Assume success XXX XXX XXX */
 	return (0);
@@ -531,7 +531,7 @@ errr fd_move(cptr file, cptr what)
 	if (path_parse(aux, 1024, what)) return (-1);
 
 	/* Rename */
-	(void) rename(buf, aux);
+	(void)rename(buf, aux);
 
 	/* Assume success XXX XXX XXX */
 	return (0);
@@ -586,7 +586,7 @@ int fd_make(cptr file, int mode)
 	/* if (fd_close(fd_open(file, O_RDONLY | O_BINARY))) return (1); */
 
 	/* Mega-Hack -- Create the file */
-	(void) my_fclose(my_fopen(file, "wb"));
+	(void)my_fclose(my_fopen(file, "wb"));
 
 	/* Re-open the file for writing */
 	return (open(buf, O_WRONLY | O_BINARY, mode));
@@ -661,7 +661,7 @@ errr fd_lock(int fd, int what)
 	if (what == F_UNLCK)
 	{
 		/* Unlock it, Ignore errors */
-		(void) flock(fd, LOCK_UN);
+		(void)flock(fd, LOCK_UN);
 	}
 
 	/* Lock */
@@ -750,7 +750,7 @@ errr fd_read(int fd, char *buf, huge n)
 #endif
 
 	/* Read the final piece */
-	if (read(fd, buf, n) != (int) n) return (1);
+	if (read(fd, buf, n) != (int)n) return (1);
 
 	/* Success */
 	return (0);
@@ -783,7 +783,7 @@ errr fd_write(int fd, cptr buf, huge n)
 #endif
 
 	/* Write the final piece */
-	if (write(fd, buf, n) != (int) n) return (1);
+	if (write(fd, buf, n) != (int)n) return (1);
 
 	/* Success */
 	return (0);
@@ -799,7 +799,7 @@ errr fd_close(int fd)
 	if (fd < 0) return (-1);
 
 	/* Close */
-	(void) close(fd);
+	(void)close(fd);
 
 	/* XXX XXX XXX */
 	return (0);
@@ -939,7 +939,7 @@ void ascii_to_text(char *buf, cptr str)
 	/* Analyze the "ascii" string */
 	while (*str)
 	{
-		byte i = (byte) (*str++);
+		byte i = (byte)(*str++);
 
 		if (i == ESCAPE)
 		{
@@ -1029,7 +1029,7 @@ sint macro_find_exact(cptr pat)
 	int i;
 
 	/* Nothing possible */
-	if (!macro__use[(byte) (pat[0])])
+	if (!macro__use[(byte)(pat[0])])
 	{
 		return (-1);
 	}
@@ -1057,7 +1057,7 @@ static sint macro_find_check(cptr pat)
 	int i;
 
 	/* Nothing possible */
-	if (!macro__use[(byte) (pat[0])])
+	if (!macro__use[(byte)(pat[0])])
 	{
 		return (-1);
 	}
@@ -1085,7 +1085,7 @@ static sint macro_find_maybe(cptr pat)
 	int i;
 
 	/* Nothing possible */
-	if (!macro__use[(byte) (pat[0])])
+	if (!macro__use[(byte)(pat[0])])
 	{
 		return (-1);
 	}
@@ -1116,7 +1116,7 @@ static sint macro_find_ready(cptr pat)
 	int i, t, n = -1, s = -1;
 
 	/* Nothing possible */
-	if (!macro__use[(byte) (pat[0])])
+	if (!macro__use[(byte)(pat[0])])
 	{
 		return (-1);
 	}
@@ -1189,7 +1189,7 @@ void macro_add(cptr pat, cptr act)
 	macro__act[n] = string_make(act);
 
 	/* Efficiency */
-	macro__use[(byte) (pat[0])] = TRUE;
+	macro__use[(byte)(pat[0])] = TRUE;
 }
 
 /* This is never used. */
@@ -1276,7 +1276,7 @@ static char inkey_aux(void)
 
 
 	/* Wait for a keypress */
-	(void) (Term_inkey(&ch, TRUE, TRUE));
+	(void)(Term_inkey(&ch, TRUE, TRUE));
 
 
 	/* End "macro action" */
@@ -1353,7 +1353,7 @@ static char inkey_aux(void)
 		}
 
 		/* Wait for (and remove) a pending key */
-		(void) Term_inkey(&ch, TRUE, TRUE);
+		(void)Term_inkey(&ch, TRUE, TRUE);
 
 		/* Return the key */
 		return (ch);
@@ -1541,13 +1541,13 @@ char inkey(void)
 
 
 	/* Access cursor state */
-	(void) Term_get_cursor(&v);
+	(void)Term_get_cursor(&v);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
 	if (!inkey_scan && (!inkey_flag || hilite_player || character_icky))
 	{
 		/* Show the cursor */
-		(void) Term_set_cursor(1);
+		(void)Term_set_cursor(1);
 	}
 
 
@@ -1697,7 +1697,7 @@ char inkey(void)
 
 
 	/* Restore the cursor */
-	(void) Term_set_cursor(v);
+	(void)Term_set_cursor(v);
 
 
 	/* Cancel the various "global parameters" */
@@ -1771,12 +1771,12 @@ void sound(int val)
  */
 static bool ang_sort_comp_quark(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b *) (u);
-	
+	s16b *x = (s16b *)(u);
+
 	u16b qa, qb;
-	
+
 	/* Hack - ignore unused parameter */
-	(void) v;
+	(void)v;
 
 	/* Get ages */
 	qa = quark__use[x[a]];
@@ -1795,12 +1795,12 @@ static bool ang_sort_comp_quark(vptr u, vptr v, int a, int b)
  */
 static void ang_sort_swap_quark(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b *) (u);
+	s16b *x = (s16b *)(u);
 
 	s16b temp;
-	
+
 	/* Hack - ignore unused parameter */
-	(void) v;
+	(void)v;
 
 	/* Swap "x" */
 	temp = x[a];
@@ -1814,34 +1814,34 @@ static void ang_sort_swap_quark(vptr u, vptr v, int a, int b)
 static s16b compact_quarks(void)
 {
 	s16b i, empty = 1;
-	
+
 	s16b *quark_locat;
 
 	/* Make array used to sort quark ages */
 	C_MAKE(quark_locat, quark__num, s16b);
-	
+
 	/* Fill in the array with the "order" of each quark */
 	for (i = 0; i < quark__num; i++)
 	{
 		quark_locat[i] = i;
 	}
-	
+
 	/* Set the sort hooks */
 	ang_sort_comp = ang_sort_comp_quark;
 	ang_sort_swap = ang_sort_swap_quark;
-	
+
 	/* Sort quarks - and get order location of each quark */
 	ang_sort(quark_locat, NULL, quark__num);
-	
+
 	for (i = 1; i < quark__num; i++)
 	{
 		/* Set quark timer to be location order */
 		quark__use[i] = quark_locat[i];
-		
+
 		/* Find minimally used quark */
 		if (quark__use[i] == 1) empty = i;
 	}
-	
+
 	/* Set timer to be greater than any value so far */
 	quark__tim = quark__num + 1;
 
@@ -1911,7 +1911,7 @@ cptr quark_str(s16b i)
 	/* Compact from time to time */
 	if (quark__tim > QUARK_COMPACT)
 	{
-		(void) compact_quarks();
+		(void)compact_quarks();
 	}
 
 	/* Return the quark */
@@ -1948,8 +1948,8 @@ errr quarks_free(void)
 	}
 
 	/* Free the list of "quarks" */
-	FREE((void *) quark__use);
-	FREE((void *) quark__str);
+	FREE((void *)quark__use);
+	FREE((void *)quark__str);
 
 	/* Success */
 	return (0);
@@ -2188,7 +2188,7 @@ void message_add(cptr str, u16b type)
 		strcpy(buf, old);
 
 		/* Find multiple */
-		for (t = buf; *t && (*t != '<'); t++);
+		for (t = buf; *t && (*t != '<'); t++) ;
 
 		if (*t)
 		{
@@ -2386,7 +2386,7 @@ errr messages_init(void)
 	C_MAKE(message__type, MESSAGE_MAX, u16b);
 
 	/* Init the message colors to white */
-	(void) C_BSET(message__color, TERM_WHITE, MSG_MAX, byte);
+	(void)C_BSET(message__color, TERM_WHITE, MSG_MAX, byte);
 
 	/* Hack -- No messages yet */
 	message__tail = MESSAGE_BUF;
@@ -2610,7 +2610,7 @@ void msg_format(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void) vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -2628,7 +2628,7 @@ void msg_format(cptr fmt, ...)
 void message(u16b message_type, s16b extra, cptr message)
 {
 	/* Unused parameter */
-	(void) extra;
+	(void)extra;
 
 	sound(message_type);
 
@@ -2652,7 +2652,7 @@ void message_format(u16b message_type, s16b extra, cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void) vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -2812,10 +2812,10 @@ void c_roff(byte a, cptr str)
 
 
 	/* Obtain the size */
-	(void) Term_get_size(&w, &h);
+	(void)Term_get_size(&w, &h);
 
 	/* Obtain the cursor */
-	(void) Term_locate(&x, &y);
+	(void)Term_locate(&x, &y);
 
 	/* Process the string */
 	for (s = str; *s; s++)
@@ -2853,7 +2853,7 @@ void c_roff(byte a, cptr str)
 				for (i = w - 2; i >= 0; i--)
 				{
 					/* Grab existing attr/char */
-					(void) Term_what(i, y, &av[i], &cv[i]);
+					(void)Term_what(i, y, &av[i], &cv[i]);
 
 					/* Break on space */
 					if (cv[i] == ' ') break;
@@ -2950,7 +2950,7 @@ bool askfor_aux(char *buf, int len)
 	bool done = FALSE;
 
 	/* Locate the cursor */
-	(void) Term_locate(&x, &y);
+	(void)Term_locate(&x, &y);
 
 
 	/* Paranoia -- check len */
@@ -3087,7 +3087,7 @@ bool get_check(cptr prompt)
 	message_flush();
 
 	/* Hack -- Build a "useful" prompt */
-	(void) strnfmt(buf, 78, "%.70s[y/n] ", prompt);
+	(void)strnfmt(buf, 78, "%.70s[y/n] ", prompt);
 
 	/* Prompt for it */
 	prt(buf, 0, 0);
@@ -3307,7 +3307,7 @@ void request_command(int shopping)
 			message_flush();
 
 			/* Use auto-command */
-			cmd = (char) p_ptr->command_new;
+			cmd = (char)p_ptr->command_new;
 
 			/* Forget it */
 			p_ptr->command_new = 0;
@@ -3431,7 +3431,7 @@ void request_command(int shopping)
 		if (cmd == '\\')
 		{
 			/* Get a real command */
-			(void) get_com("Command: ", &cmd);
+			(void)get_com("Command: ", &cmd);
 
 			/* Hack -- bypass keymaps */
 			if (!inkey_next) inkey_next = "";
@@ -3447,13 +3447,13 @@ void request_command(int shopping)
 
 
 		/* Look up applicable keymap */
-		act = keymap_act[mode][(byte) (cmd)];
+		act = keymap_act[mode][(byte)(cmd)];
 
 		/* Apply keymap if not inside a keymap already */
 		if (act && !inkey_next)
 		{
 			/* Install the keymap (limited buffer size) */
-			(void) strnfmt(request_command_buffer, 256, "%s", act);
+			(void)strnfmt(request_command_buffer, 256, "%s", act);
 
 			/* Start using the buffer */
 			inkey_next = request_command_buffer;
@@ -3686,11 +3686,11 @@ int get_keymap_dir(char ch)
 	{
 		if (rogue_like_commands)
 		{
-			act = keymap_act[KEYMAP_MODE_ROGUE][(byte) ch];
+			act = keymap_act[KEYMAP_MODE_ROGUE][(byte)ch];
 		}
 		else
 		{
-			act = keymap_act[KEYMAP_MODE_ORIG][(byte) ch];
+			act = keymap_act[KEYMAP_MODE_ORIG][(byte)ch];
 		}
 
 		if (act)
@@ -3805,35 +3805,35 @@ byte gamma_table[256];
 static const s16b gamma_helper[256] =
 {
 	0, -1420, -1242, -1138, -1065, -1007, -961, -921, -887, -857, -830, -806,
-		-783, -762, -744, -726,
+	-783, -762, -744, -726,
 	-710, -694, -679, -666, -652, -640, -628, -617, -606, -596, -586, -576,
-		-567, -577, -549, -541,
+	-567, -577, -549, -541,
 	-532, -525, -517, -509, -502, -495, -488, -482, -475, -469, -463, -457,
-		-451, -455, -439, -434,
+	-451, -455, -439, -434,
 	-429, -423, -418, -413, -408, -403, -398, -394, -389, -385, -380, -376,
-		-371, -367, -363, -359,
+	-371, -367, -363, -359,
 	-355, -351, -347, -343, -339, -336, -332, -328, -325, -321, -318, -314,
-		-311, -308, -304, -301,
+	-311, -308, -304, -301,
 	-298, -295, -291, -288, -285, -282, -279, -276, -273, -271, -268, -265,
-		-262, -259, -257, -254,
+	-262, -259, -257, -254,
 	-251, -248, -246, -243, -241, -238, -236, -233, -231, -228, -226, -223,
-		-221, -219, -216, -214,
+	-221, -219, -216, -214,
 	-212, -209, -207, -205, -203, -200, -198, -196, -194, -192, -190, -188,
-		-186, -184, -182, -180,
+	-186, -184, -182, -180,
 	-178, -176, -174, -172, -170, -168, -166, -164, -162, -160, -158, -156,
-		-155, -153, -151, -149,
+	-155, -153, -151, -149,
 	-147, -146, -144, -142, -140, -139, -137, -135, -134, -132, -130, -128,
-		-127, -125, -124, -122,
+	-127, -125, -124, -122,
 	-120, -119, -117, -116, -114, -112, -111, -109, -108, -106, -105, -103,
-		-102, -100, -99, -97,
+	-102, -100, -99, -97,
 	-96, -95, -93, -92, -90, -89, -87, -86, -85, -83, -82, -80, -79, -78, -76,
-		-75,
+	-75,
 	-74, -72, -71, -70, -68, -67, -66, -65, -63, -62, -61, -59, -58, -57, -56,
-		-54,
+	-54,
 	-53, -52, -51, -50, -48, -47, -46, -45, -44, -42, -41, -40, -39, -38, -37,
-		-35,
+	-35,
 	-34, -33, -32, -31, -30, -29, -27, -26, -25, -24, -23, -22, -21, -20, -19,
-		-18,
+	-18,
 	-17, -16, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1
 };
 
@@ -3891,7 +3891,7 @@ void build_gamma_table(int gamma)
 
 		n = 1;
 		value = 256 * 256;
-		diff = ((long) gamma_helper[i]) * (gamma - 256);
+		diff = ((long)gamma_helper[i]) * (gamma - 256);
 
 		while (diff)
 		{
@@ -3926,7 +3926,7 @@ void build_gamma_table(int gamma)
 		 * Store the value in the table so that the
 		 * floating point pow function isn't needed.
 		 */
-		gamma_table[i] = ((long) (value / 256) * i) / 256;
+		gamma_table[i] = ((long)(value / 256) * i) / 256;
 	}
 }
 

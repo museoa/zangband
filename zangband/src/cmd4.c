@@ -228,14 +228,14 @@ void do_cmd_messages(void)
 		/* Dump messages */
 		for (j = 0; (j < hgt - 4) && (i + j < n); j++)
 		{
-			cptr msg = message_str((s16b) (i + j));
-			byte attr = message_color((s16b) (i + j));
+			cptr msg = message_str((s16b)(i + j));
+			byte attr = message_color((s16b)(i + j));
 
 			/* Hack -- fake monochrome */
 			if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 			/* Apply horizontal scroll */
-			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
+			msg = ((int)strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
 			Term_putstr(0, hgt - 3 - j, -1, attr, msg);
@@ -610,10 +610,10 @@ static void do_cmd_options_cheat(cptr info)
 
 static const cheat_option_type autosave_info[2] =
 {
-	{(bool *) (&autosave_l), 0x0001,
+	{(bool *)(&autosave_l), 0x0001,
 	 "autosave_l", "Autosave when entering new levels"},
 
-	{(bool *) (&autosave_t), 0x0002,
+	{(bool *)(&autosave_t), 0x0002,
 	 "autosave_t", "Timed autosave"},
 };
 
@@ -856,7 +856,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			case '?':
 			{
 				sprintf(buf, "option.txt#%s", option_info[opt[k]].o_text);
-				(void) show_file(buf, NULL, 0, 0);
+				(void)show_file(buf, NULL, 0, 0);
 				Term_clear();
 				break;
 			}
@@ -1372,7 +1372,7 @@ void do_cmd_pref(void)
 	if (!get_string("Pref: ", buf, 80)) return;
 
 	/* Process that pref command */
-	(void) process_pref_file_command(buf);
+	(void)process_pref_file_command(buf);
 }
 
 
@@ -1737,7 +1737,7 @@ void do_cmd_macros(void)
 			if (!askfor_aux(tmp, 80)) continue;
 
 			/* Dump the macros */
-			(void) macro_dump(tmp);
+			(void)macro_dump(tmp);
 
 			/* Prompt */
 			msg_print("Appended macros.");
@@ -1854,7 +1854,7 @@ void do_cmd_macros(void)
 			if (!askfor_aux(tmp, 80)) continue;
 
 			/* Dump the macros */
-			(void) keymap_dump(tmp);
+			(void)keymap_dump(tmp);
 
 			/* Prompt */
 			msg_print("Appended keymaps.");
@@ -1875,7 +1875,7 @@ void do_cmd_macros(void)
 			do_cmd_macro_aux_keymap(buf);
 
 			/* Look up the keymap */
-			act = keymap_act[mode][(byte) (buf[0])];
+			act = keymap_act[mode][(byte)(buf[0])];
 
 			/* Nothing found */
 			if (!act)
@@ -1929,10 +1929,10 @@ void do_cmd_macros(void)
 				text_to_ascii(macro__buf, tmp);
 
 				/* Free old keymap */
-				string_free(keymap_act[mode][(byte) (buf[0])]);
+				string_free(keymap_act[mode][(byte)(buf[0])]);
 
 				/* Make new keymap */
-				keymap_act[mode][(byte) (buf[0])] = string_make(macro__buf);
+				keymap_act[mode][(byte)(buf[0])] = string_make(macro__buf);
 
 				/* Prompt */
 				msg_print("Added a keymap.");
@@ -1952,10 +1952,10 @@ void do_cmd_macros(void)
 			do_cmd_macro_aux_keymap(buf);
 
 			/* Free old keymap */
-			string_free(keymap_act[mode][(byte) (buf[0])]);
+			string_free(keymap_act[mode][(byte)(buf[0])]);
 
 			/* Make new keymap */
-			keymap_act[mode][(byte) (buf[0])] = NULL;
+			keymap_act[mode][(byte)(buf[0])] = NULL;
 
 			/* Prompt */
 			msg_print("Removed a keymap.");
@@ -2068,7 +2068,7 @@ void do_cmd_visuals(void)
 			if (!askfor_aux(tmp, 70)) continue;
 
 			/* Process the given filename */
-			(void) process_pref_file(tmp);
+			(void)process_pref_file(tmp);
 		}
 
 #ifdef ALLOW_VISUALS
@@ -2337,10 +2337,10 @@ void do_cmd_visuals(void)
 				/* Analyze */
 				if (i == 'n') r = (r + z_info->r_max + 1) % z_info->r_max;
 				if (i == 'N') r = (r + z_info->r_max - 1) % z_info->r_max;
-				if (i == 'a') r_ptr->x_attr = (byte) (ca + 1);
-				if (i == 'A') r_ptr->x_attr = (byte) (ca - 1);
-				if (i == 'c') r_ptr->x_char = (byte) (cc + 1);
-				if (i == 'C') r_ptr->x_char = (byte) (cc - 1);
+				if (i == 'a') r_ptr->x_attr = (byte)(ca + 1);
+				if (i == 'A') r_ptr->x_attr = (byte)(ca - 1);
+				if (i == 'c') r_ptr->x_char = (byte)(cc + 1);
+				if (i == 'C') r_ptr->x_char = (byte)(cc - 1);
 			}
 		}
 
@@ -2357,10 +2357,10 @@ void do_cmd_visuals(void)
 			{
 				object_kind *k_ptr = &k_info[k];
 
-				byte da = (byte) k_ptr->d_attr;
-				char dc = (byte) k_ptr->d_char;
-				byte ca = (byte) k_ptr->x_attr;
-				char cc = (byte) k_ptr->x_char;
+				byte da = (byte)k_ptr->d_attr;
+				char dc = (byte)k_ptr->d_char;
+				byte ca = (byte)k_ptr->x_attr;
+				char cc = (byte)k_ptr->x_char;
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
@@ -2391,10 +2391,10 @@ void do_cmd_visuals(void)
 				/* Analyze */
 				if (i == 'n') k = (k + z_info->k_max + 1) % z_info->k_max;
 				if (i == 'N') k = (k + z_info->k_max - 1) % z_info->k_max;
-				if (i == 'a') k_info[k].x_attr = (byte) (ca + 1);
-				if (i == 'A') k_info[k].x_attr = (byte) (ca - 1);
-				if (i == 'c') k_info[k].x_char = (byte) (cc + 1);
-				if (i == 'C') k_info[k].x_char = (byte) (cc - 1);
+				if (i == 'a') k_info[k].x_attr = (byte)(ca + 1);
+				if (i == 'A') k_info[k].x_attr = (byte)(ca - 1);
+				if (i == 'c') k_info[k].x_char = (byte)(cc + 1);
+				if (i == 'C') k_info[k].x_char = (byte)(cc - 1);
 			}
 		}
 
@@ -2411,10 +2411,10 @@ void do_cmd_visuals(void)
 			{
 				feature_type *f_ptr = &f_info[f];
 
-				byte da = (byte) f_ptr->d_attr;
-				char dc = (byte) f_ptr->d_char;
-				byte ca = (byte) f_ptr->x_attr;
-				char cc = (byte) f_ptr->x_char;
+				byte da = (byte)f_ptr->d_attr;
+				char dc = (byte)f_ptr->d_char;
+				byte ca = (byte)f_ptr->x_attr;
+				char cc = (byte)f_ptr->x_char;
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
@@ -2445,10 +2445,10 @@ void do_cmd_visuals(void)
 				/* Analyze */
 				if (i == 'n') f = (f + z_info->f_max + 1) % z_info->f_max;
 				if (i == 'N') f = (f + z_info->f_max - 1) % z_info->f_max;
-				if (i == 'a') f_info[f].x_attr = (byte) (ca + 1);
-				if (i == 'A') f_info[f].x_attr = (byte) (ca - 1);
-				if (i == 'c') f_info[f].x_char = (byte) (cc + 1);
-				if (i == 'C') f_info[f].x_char = (byte) (cc - 1);
+				if (i == 'a') f_info[f].x_attr = (byte)(ca + 1);
+				if (i == 'A') f_info[f].x_attr = (byte)(ca - 1);
+				if (i == 'c') f_info[f].x_char = (byte)(cc + 1);
+				if (i == 'C') f_info[f].x_char = (byte)(cc - 1);
 			}
 		}
 
@@ -2465,10 +2465,10 @@ void do_cmd_visuals(void)
 			{
 				field_thaum *t_ptr = &t_info[f];
 
-				byte da = (byte) t_ptr->d_attr;
-				char dc = (byte) t_ptr->d_char;
-				byte ca = (byte) t_ptr->f_attr;
-				char cc = (byte) t_ptr->f_char;
+				byte da = (byte)t_ptr->d_attr;
+				char dc = (byte)t_ptr->d_char;
+				byte ca = (byte)t_ptr->f_attr;
+				char cc = (byte)t_ptr->f_char;
 
 				/* Label the object */
 				Term_putstr(5, 17, -1, TERM_WHITE,
@@ -2499,10 +2499,10 @@ void do_cmd_visuals(void)
 				/* Analyze */
 				if (i == 'n') f = (f + z_info->t_max + 1) % z_info->t_max;
 				if (i == 'N') f = (f + z_info->t_max - 1) % z_info->t_max;
-				if (i == 'a') t_info[f].f_attr = (byte) (ca + 1);
-				if (i == 'A') t_info[f].f_attr = (byte) (ca - 1);
-				if (i == 'c') t_info[f].f_char = (byte) (cc + 1);
-				if (i == 'C') t_info[f].f_char = (byte) (cc - 1);
+				if (i == 'a') t_info[f].f_attr = (byte)(ca + 1);
+				if (i == 'A') t_info[f].f_attr = (byte)(ca - 1);
+				if (i == 'c') t_info[f].f_char = (byte)(cc + 1);
+				if (i == 'C') t_info[f].f_char = (byte)(cc - 1);
 			}
 		}
 
@@ -2597,7 +2597,7 @@ void do_cmd_colors(void)
 			if (!askfor_aux(tmp, 70)) continue;
 
 			/* Process the given filename */
-			(void) process_pref_file(tmp);
+			(void)process_pref_file(tmp);
 
 			/* Mega-Hack -- react to changes */
 			Term_xtra(TERM_XTRA_REACT, 0);
@@ -2723,24 +2723,24 @@ void do_cmd_colors(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') a = (byte) (a + 1);
-				if (i == 'N') a = (byte) (a - 1);
+				if (i == 'n') a = (byte)(a + 1);
+				if (i == 'N') a = (byte)(a - 1);
 				if (i == 'k') angband_color_table[a][0] =
-						(byte) (angband_color_table[a][0] + 1);
+						(byte)(angband_color_table[a][0] + 1);
 				if (i == 'K') angband_color_table[a][0] =
-						(byte) (angband_color_table[a][0] - 1);
+						(byte)(angband_color_table[a][0] - 1);
 				if (i == 'r') angband_color_table[a][1] =
-						(byte) (angband_color_table[a][1] + 1);
+						(byte)(angband_color_table[a][1] + 1);
 				if (i == 'R') angband_color_table[a][1] =
-						(byte) (angband_color_table[a][1] - 1);
+						(byte)(angband_color_table[a][1] - 1);
 				if (i == 'g') angband_color_table[a][2] =
-						(byte) (angband_color_table[a][2] + 1);
+						(byte)(angband_color_table[a][2] + 1);
 				if (i == 'G') angband_color_table[a][2] =
-						(byte) (angband_color_table[a][2] - 1);
+						(byte)(angband_color_table[a][2] - 1);
 				if (i == 'b') angband_color_table[a][3] =
-						(byte) (angband_color_table[a][3] + 1);
+						(byte)(angband_color_table[a][3] + 1);
 				if (i == 'B') angband_color_table[a][3] =
-						(byte) (angband_color_table[a][3] - 1);
+						(byte)(angband_color_table[a][3] - 1);
 
 				/* Hack -- react to changes */
 				Term_xtra(TERM_XTRA_REACT, 0);
@@ -2939,7 +2939,7 @@ void do_cmd_load_screen(void)
 		for (x = 0; x < 79; x++)
 		{
 			/* Get the attr/char */
-			(void) (Term_what(x, y, &a, &c));
+			(void)(Term_what(x, y, &a, &c));
 
 			/* Look up the attr */
 			for (i = 0; i < 16; i++)
@@ -3030,7 +3030,7 @@ void do_cmd_save_screen(void)
 			for (x = 0; x < 79; x++)
 			{
 				/* Get the attr/char */
-				(void) (Term_what(x, y, &a, &c));
+				(void)(Term_what(x, y, &a, &c));
 
 				/* Dump it */
 				buf[x] = c;
@@ -3054,7 +3054,7 @@ void do_cmd_save_screen(void)
 			for (x = 0; x < 79; x++)
 			{
 				/* Get the attr/char */
-				(void) (Term_what(x, y, &a, &c));
+				(void)(Term_what(x, y, &a, &c));
 
 				/* Dump it */
 				buf[x] = color_char[a & 0x0F];
@@ -3168,10 +3168,10 @@ static void do_cmd_knowledge_uniques(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Known Uniques", 0, 0);
+	(void)show_file(file_name, "Known Uniques", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -3357,10 +3357,10 @@ static void do_cmd_knowledge_pets(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Current Pets", 0, 0);
+	(void)show_file(file_name, "Current Pets", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -3544,10 +3544,10 @@ static void do_cmd_knowledge_kill_count(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Kill Count", 0, 0);
+	(void)show_file(file_name, "Kill Count", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -3603,10 +3603,10 @@ static void do_cmd_knowledge_objects(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Known Objects", 0, 0);
+	(void)show_file(file_name, "Known Objects", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -3632,10 +3632,10 @@ static void do_cmd_knowledge_virtues(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void) show_file(file_name, "Virtues", 0, 0);
+	(void)show_file(file_name, "Virtues", 0, 0);
 
 	/* Remove the file */
-	(void) fd_kill(file_name);
+	(void)fd_kill(file_name);
 }
 
 
@@ -3648,7 +3648,7 @@ static void do_cmd_knowledge_notes(void)
 
 	strncpy(fname, notes_file(), 1024);
 
-	(void) show_file(fname, "Notes", 0, 0);
+	(void)show_file(fname, "Notes", 0, 0);
 }
 
 

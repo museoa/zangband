@@ -88,12 +88,12 @@ static void eat_corpse(void)
 			if (f_ptr->t_idx == FT_CORPSE)
 			{
 				msg_print("The corpse tastes delicious!");
-				(void) set_food(p_ptr->food + 2000);
+				(void)set_food(p_ptr->food + 2000);
 			}
 			else
 			{
 				msg_print("The bones taste delicious!");
-				(void) set_food(p_ptr->food + 1000);
+				(void)set_food(p_ptr->food + 1000);
 			}
 
 			/* Sound */
@@ -179,7 +179,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	}
 	else
 	{
-		p_ptr->csp -= (s16b) rand_range(cost / 2, cost);
+		p_ptr->csp -= (s16b)rand_range(cost / 2, cost);
 	}
 
 
@@ -213,9 +213,9 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_DWARF:
 			{
 				msg_print("You examine your surroundings.");
-				(void) detect_traps();
-				(void) detect_doors();
-				(void) detect_stairs();
+				(void)detect_traps();
+				(void)detect_doors();
+				(void)detect_stairs();
 				break;
 			}
 
@@ -231,7 +231,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				object_prep(q_ptr, 21);
 
 				/* Drop the object from heaven */
-				(void) drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+				(void)drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
 				msg_print("You cook some food.");
 
 				break;
@@ -247,7 +247,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_HALF_ORC:
 			{
 				msg_print("You play tough.");
-				(void) set_afraid(0);
+				(void)set_afraid(0);
 				break;
 			}
 
@@ -256,10 +256,10 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				msg_print("RAAAGH!");
 				if (!p_ptr->shero)
 				{
-					(void) hp_player(30);
+					(void)hp_player(30);
 				}
-				(void) set_afraid(0);
-				(void) set_shero(p_ptr->shero + 10 + randint1(plev));
+				(void)set_afraid(0);
+				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
 
 				break;
 			}
@@ -271,19 +271,19 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				{
 					msg_print
 						("You picture the Pattern in your mind and walk it...");
-					(void) set_poisoned(0);
-					(void) set_image(0);
-					(void) set_stun(0);
-					(void) set_cut(0);
-					(void) set_blind(0);
-					(void) set_afraid(0);
-					(void) do_res_stat(A_STR);
-					(void) do_res_stat(A_INT);
-					(void) do_res_stat(A_WIS);
-					(void) do_res_stat(A_DEX);
-					(void) do_res_stat(A_CON);
-					(void) do_res_stat(A_CHR);
-					(void) restore_level();
+					(void)set_poisoned(0);
+					(void)set_image(0);
+					(void)set_stun(0);
+					(void)set_cut(0);
+					(void)set_blind(0);
+					(void)set_afraid(0);
+					(void)do_res_stat(A_STR);
+					(void)do_res_stat(A_INT);
+					(void)do_res_stat(A_WIS);
+					(void)do_res_stat(A_DEX);
+					(void)do_res_stat(A_CON);
+					(void)do_res_stat(A_CHR);
+					(void)restore_level();
 				}
 
 				else if (mut_ptr->level == 30)
@@ -312,18 +312,18 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				msg_print("Raaagh!");
 				if (!p_ptr->shero)
 				{
-					(void) hp_player(30);
+					(void)hp_player(30);
 				}
 
-				(void) set_afraid(0);
-				(void) set_shero(p_ptr->shero + 10 + randint1(plev));
+				(void)set_afraid(0);
+				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
 				break;
 			}
 
 			case RACE_HALF_OGRE:
 			{
 				msg_print("You carefully set an explosive rune...");
-				(void) explosive_rune();
+				(void)explosive_rune();
 				break;
 			}
 
@@ -331,14 +331,14 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				if (!get_aim_dir(&dir)) break;
 				msg_print("You bash at a stone wall.");
-				(void) wall_to_mud(dir);
+				(void)wall_to_mud(dir);
 				break;
 			}
 
 			case RACE_HALF_TITAN:
 			{
 				msg_print("You examine your foes...");
-				(void) probing();
+				(void)probing();
 				break;
 			}
 
@@ -346,7 +346,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				if (!get_aim_dir(&dir)) break;
 				msg_print("You throw a huge boulder.");
-				(void) fire_bolt(GF_MISSILE, dir, (3 * plev) / 2);
+				(void)fire_bolt(GF_MISSILE, dir, (3 * plev) / 2);
 				break;
 			}
 
@@ -354,7 +354,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				if (!get_aim_dir(&dir)) break;
 				msg_print("You make a horrible scream!");
-				(void) fear_monster(dir, plev);
+				(void)fear_monster(dir, plev);
 				break;
 			}
 
@@ -363,9 +363,9 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				if (!get_aim_dir(&dir)) break;
 				msg_print("You spit acid.");
 				if (plev < 25)
-					(void) fire_bolt(GF_ACID, dir, plev);
+					(void)fire_bolt(GF_ACID, dir, plev);
 				else
-					(void) fire_ball(GF_ACID, dir, plev, 2);
+					(void)fire_ball(GF_ACID, dir, plev, 2);
 				break;
 			}
 
@@ -373,16 +373,16 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				if (!get_aim_dir(&dir)) break;
 				msg_print("You throw a dart of poison.");
-				(void) fire_bolt(GF_POIS, dir, plev);
+				(void)fire_bolt(GF_POIS, dir, plev);
 				break;
 			}
 
 			case RACE_NIBELUNG:
 			{
 				msg_print("You examine your surroundings.");
-				(void) detect_traps();
-				(void) detect_doors();
-				(void) detect_stairs();
+				(void)detect_traps();
+				(void)detect_doors();
+				(void)detect_stairs();
 				break;
 			}
 
@@ -390,8 +390,8 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				if (!get_aim_dir(&dir)) break;
 				msg_print("You cast a magic missile.");
-				(void) fire_bolt_or_beam(10, GF_MISSILE, dir,
-										 damroll(3 + ((plev - 1) / 5), 4));
+				(void)fire_bolt_or_beam(10, GF_MISSILE, dir,
+										damroll(3 + ((plev - 1) / 5), 4));
 				break;
 			}
 
@@ -497,7 +497,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 				if (!get_aim_dir(&dir)) break;
 				msg_format("You breathe %s.", Type_desc);
-				(void) fire_ball(Type, dir, plev * 2, (plev / 15) + 1);
+				(void)fire_ball(Type, dir, plev * 2, (plev / 15) + 1);
 				break;
 			}
 
@@ -507,7 +507,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				else
 				{
 					msg_print("You concentrate and your eyes glow red...");
-					(void) fire_bolt(GF_PSI, dir, plev);
+					(void)fire_bolt(GF_PSI, dir, plev);
 				}
 
 				break;
@@ -519,19 +519,19 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				if (plev >= 30)
 				{
 					msg_print("You cast a ball of fire.");
-					(void) fire_ball(GF_FIRE, dir, plev, 2);
+					(void)fire_ball(GF_FIRE, dir, plev, 2);
 				}
 				else
 				{
 					msg_print("You cast a bolt of fire.");
-					(void) fire_bolt(GF_FIRE, dir, plev);
+					(void)fire_bolt(GF_FIRE, dir, plev);
 				}
 				break;
 			}
 
 			case RACE_GOLEM:
 			{
-				(void) set_shield(p_ptr->shield + rand_range(30, 50));
+				(void)set_shield(p_ptr->shield + rand_range(30, 50));
 				break;
 			}
 
@@ -539,7 +539,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_ZOMBIE:
 			{
 				msg_print("You attempt to restore your lost energies.");
-				(void) restore_level();
+				(void)restore_level();
 				break;
 			}
 
@@ -574,8 +574,8 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					/* But if we ARE Gorged,  it won't cure us */
 					dummy = p_ptr->food + MIN(5000, 100 * dummy);
 					if (p_ptr->food < PY_FOOD_MAX)	/* Not gorged already */
-						(void) set_food(dummy >=
-										PY_FOOD_MAX ? PY_FOOD_MAX - 1 : dummy);
+						(void)set_food(dummy >=
+									   PY_FOOD_MAX ? PY_FOOD_MAX - 1 : dummy);
 				}
 				else
 					msg_print("Yechh. That tastes foul.");
@@ -586,7 +586,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				msg_print("You emit an eldritch howl!");
 				if (!get_aim_dir(&dir)) break;
-				(void) fear_monster(dir, plev);
+				(void)fear_monster(dir, plev);
 				break;
 			}
 
@@ -594,9 +594,9 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			{
 				msg_print("You throw some magic dust...");
 				if (plev < 25)
-					(void) sleep_monsters_touch();
+					(void)sleep_monsters_touch();
 				else
-					(void) sleep_monsters();
+					(void)sleep_monsters();
 				break;
 			}
 			case RACE_GHOUL:
@@ -604,7 +604,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				if (mut_ptr->level == 30)
 				{
 					/* Sense living */
-					(void) detect_monsters_living();
+					(void)detect_monsters_living();
 				}
 				else
 				{
@@ -722,9 +722,9 @@ void do_cmd_racial_power(void)
 	redraw = FALSE;
 
 	/* Build a prompt */
-	(void) strnfmt(out_val, 78,
-				   "(Powers %c-%c, *=List, ESC=exit) Use which power? ", I2A(0),
-				   (num <= 26) ? I2A(num - 1) : '0' + num - 27);
+	(void)strnfmt(out_val, 78,
+				  "(Powers %c-%c, *=List, ESC=exit) Use which power? ", I2A(0),
+				  (num <= 26) ? I2A(num - 1) : '0' + num - 27);
 
 	if (!repeat_pull(&i) || i < 0 || i >= num)
 	{
@@ -828,7 +828,7 @@ void do_cmd_racial_power(void)
 				char tmp_val[160];
 
 				/* Prompt */
-				(void) strnfmt(tmp_val, 78, "Use %s? ", power_desc[i].name);
+				(void)strnfmt(tmp_val, 78, "Use %s? ", power_desc[i].name);
 
 				/* Belay that order */
 				if (!get_check(tmp_val)) continue;
