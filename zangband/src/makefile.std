@@ -389,7 +389,7 @@ depend:
 ##
 
 $(LUA)tolua$(EXEC): $(TOLUAOBJS)
-	$(CC) -o $(LUA)tolua $(TOLUAOBJS) $(LDFLAGS) $(LIBS)
+	$(CC) -o $(LUA)tolua$(EXEC) $(TOLUAOBJS) $(LDFLAGS) $(LIBS)
 
 ##
 ## Low-level Headers
