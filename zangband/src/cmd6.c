@@ -515,23 +515,27 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CONFUSION: /* Booze */
 		{
-			if (!((p_ptr->resist_conf) || (p_ptr->resist_chaos)))
+			if (!p_ptr->resist_conf)
 			{
 				if (set_confused(p_ptr->confused + rand_int(20) + 15))
 				{
 					ident = TRUE;
 				}
-				if (randint(2) == 1)
+			}
+
+			if (!p_ptr->resist_chaos)
+			{
+				if (one_in_(2))
 				{
 					if (set_image(p_ptr->image + rand_int(150) + 150))
 					{
 						ident = TRUE;
 					}
 				}
-				if (randint(13) == 1)
+				if (one_in_(13))
 				{
 					ident = TRUE;
-					if (randint(3) == 1) lose_all_info();
+					if (one_in_(3)) lose_all_info();
 					else wiz_dark();
 					teleport_player(100);
 					wiz_dark();

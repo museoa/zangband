@@ -330,10 +330,6 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 			}
 		}
 	}
-
-	/* Hack - Chaos resistance provides resist confusion */
-	if ((*f2) & TR2_RES_CHAOS)
-		(*f2) |= TR2_RES_CONF;
 }
 
 

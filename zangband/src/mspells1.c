@@ -269,8 +269,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 
 	if (smart & (SM_RES_CHAOS))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_CONF);
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_CONF);
 		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_CHAO);
 		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BA_CHAO);
 	}
@@ -1610,7 +1608,7 @@ bool make_attack_spell(int m_idx)
 					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
 				}
 
-				if ((!p_ptr->resist_chaos) && (randint(3) == 1))
+				if (!p_ptr->resist_chaos && one_in_(3))
 				{
 					(void)set_image(p_ptr->image + rand_int(250) + 150);
 				}

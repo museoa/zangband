@@ -1601,16 +1601,24 @@ static void process_world(void)
 
 		if ((p_ptr->muta2 & MUT2_ALCOHOL) && (randint(6400) == 321))
 		{
-			if (!(p_ptr->resist_chaos || p_ptr->resist_conf))
+			if (!p_ptr->resist_conf && !p_ptr->resist_chaos)
 			{
 				disturb(0, 0);
 				p_ptr->redraw |= PR_EXTRA;
 				msg_print("You feel a SSSCHtupor cOmINg over yOu... *HIC*!");
+			}
 
-				if (randint(20) == 1)
+			if (!p_ptr->resist_conf)
+			{
+				(void)set_confused(p_ptr->confused + rand_int(20) + 15);
+			}
+
+			if (!p_ptr->resist_chaos)
+			{
+				if (one_in_(20))
 				{
 					msg_print(NULL);
-					if (randint(3) == 1) lose_all_info();
+					if (one_in_(3)) lose_all_info();
 					else wiz_dark();
 					teleport_player(100);
 					wiz_dark();
@@ -1619,12 +1627,7 @@ static void process_world(void)
 				}
 				else
 				{
-					if (!p_ptr->resist_conf)
-					{
-						(void)set_confused(p_ptr->confused + rand_int(20) + 15);
-					}
-
-					if ((randint(3) == 1) && !p_ptr->resist_chaos)
+					if (one_in_(3))
 					{
 						msg_print("Thishcischs GooDSChtuff!");
 						(void)set_image(p_ptr->image + rand_int(150) + 150);

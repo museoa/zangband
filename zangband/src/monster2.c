@@ -1020,7 +1020,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		{
 			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
 		}
-		if ((!p_ptr->resist_chaos) && (randint(3) == 1))
+		if (!p_ptr->resist_chaos && one_in_(3))
 		{
 			(void)set_image(p_ptr->image + rand_int(250) + 150);
 		}
