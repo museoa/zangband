@@ -7,17 +7,14 @@ AC_INIT(src/main.c)
 dnl write the resulting #defines into a header file
 AM_CONFIG_HEADER(src/autoconf.h)
 
-AM_INIT_AUTOMAKE(zangband, 2.7.2)
-
 AC_ARG_WITH(setgid,
 [  --with-setgid=NAME      setgid usage: install angband as group NAME],
 [case "${withval}" in
-  no) GAMEGROUP="";;
+  no) GAMEGROUP="games";;
   yes) AC_MSG_ERROR(missing argument for --with-setgid);;
   *) GAMEGROUP="$withval";;
 esac])
 AC_SUBST(GAMEGROUP)
-AM_CONDITIONAL(SET_GID, test "$GAMEGROUP" != "")
 
 AC_LANG_C
 
@@ -30,7 +27,7 @@ else
   game_datadir="$basedir/lib/"
   bindir="$basedir"
 fi
-AC_DEFINE_UNQUOTED(DEFAULT_PATH, "$game_datadir")
+AC_DEFINE_UNQUOTED(DEFAULT_PATH, "$game_datadir", [Default path to game])
 DEFAULT_PATH="$game_datadir"
 AC_SUBST(DEFAULT_PATH)
 
@@ -53,18 +50,18 @@ AC_EXEEXT
 AM_CONDITIONAL(CYGWIN, test "$CYGWIN" = "yes")
 
 if test "$CYGWIN" = "yes"; then
-  AC_DEFINE(WINDOWS)
+  AC_DEFINE(WINDOWS, 1, [WIN32 port])
   LIBS="$LIBS -lwinmm"
   LDFLAGS="$LDFLAGS -s -mwindows -e _mainCRTStartup"
   ANGBAND_OBJS="readdib.o angband.res"
   AC_SUBST(ANGBAND_OBJS)
 else
   dnl Check for ncurses, curses, or termcap
-  AC_CHECK_LIB(ncurses, initscr, [AC_DEFINE(USE_GCU) AC_DEFINE(USE_NCURSES) LIBS="$LIBS -lncurses"])
+  AC_CHECK_LIB(ncurses, initscr, [AC_DEFINE(USE_GCU, 1, [GCU port]) AC_DEFINE(USE_NCURSES, 1, [Using ncurses]) LIBS="$LIBS -lncurses"])
   if test "$ac_cv_lib_ncurses_initscr" != yes; then
-    AC_CHECK_LIB(curses, initscr, [AC_DEFINE(USE_GCU) LIBS="$LIBS -lcurses"])
+    AC_CHECK_LIB(curses, initscr, [AC_DEFINE(USE_GCU, 1) LIBS="$LIBS -lcurses"])
     if test "$ac_cv_lib_curses_initscr" != yes; then
-      AC_CHECK_LIB(termcap, tgetent, [AC_DEFINE(USE_CAP) LIBS="$LIBS -ltermcap"])
+      AC_CHECK_LIB(termcap, tgetent, [AC_DEFINE(USE_CAP, 1, [CAP port]) LIBS="$LIBS -ltermcap"])
     fi
   fi
 
@@ -73,8 +70,8 @@ else
 
   if test "$no_x" != "yes"; then
     LIBS="$LIBS -lX11"
-    AC_DEFINE(USE_X11)
-    AC_DEFINE(USE_XPJ)
+    AC_DEFINE(USE_X11, 1, [X11 port])
+    AC_DEFINE(USE_XPJ, 1, [XPJ port])
     ANGBAND_OBJS="maid-x11.o"
     AC_SUBST(ANGBAND_OBJS)
   fi
@@ -84,7 +81,7 @@ else
   LDFLAGS="$X_LIBS $LDFLAGS"
 
   dnl Check for the Athena widget set
-  AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW) LIBS="$LIBS -lXaw"])
+  AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW, 1, [XAW port]) LIBS="$LIBS -lXaw"])
 fi
 
 AC_HEADER_STDC
@@ -105,4 +102,4 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gethostname mkdir select strstr strtol usleep mkstemp)
 
-AC_OUTPUT(Makefile src/makefile src/lua/makefile lib/Makefile lib/apex/Makefile lib/bone/Makefile lib/data/Makefile lib/edit/Makefile lib/file/Makefile lib/help/Makefile lib/info/Makefile lib/pref/Makefile lib/save/Makefile lib/script/Makefile lib/user/Makefile lib/xtra/Makefile)
+AC_OUTPUT(makefile)
