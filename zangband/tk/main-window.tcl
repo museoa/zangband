@@ -2203,19 +2203,16 @@ proc NSMainWindow::StatusText {oop text} {
 
 proc NSMainWindow::DisplayDepth {label depth} {
 
-	if {[angband player inside_arena]} {
-		set depthStr [mc Arena]
-	} elseif {[angband player inside_quest]} {
-		set depthStr [mc Quest]
-	} elseif {$depth == 0} {
+	if {$depth == 0} {
 		set depthStr [angband cave wild_name]
-	} else
+	} else {
 		set depthStr [format [mc "Level %d"] $depth]
 	}
 	$label configure -text $depthStr
 
 	return
 }
+
 
 # NSMainWindow::Bind_Py_level --
 #
