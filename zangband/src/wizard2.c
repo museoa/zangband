@@ -617,13 +617,13 @@ static int wiz_create_itemtype(void)
 	if (!get_com("Get what type of object? ", &ch)) return (0);
 
 	/* Analyze choice */
-	for (num = -1; num < max_num; num++)
+	for (num = 0; num < max_num; num++)
 	{
 		if (listsym[num] == ch) break;
 	}
 
 	/* Bail out if choice is illegal */
-	if ((num < 0) || (num >= max_num)) return (0);
+	if (num >= max_num) return (0);
 
 	/* Base object type chosen, fill in tval */
 	tval = tvals[num].tval;
@@ -666,13 +666,13 @@ static int wiz_create_itemtype(void)
 	if (!get_com(format("What Kind of %s? ", tval_desc), &ch)) return (0);
 
 	/* Analyze choice */
-	for (num = -1; num < max_num; num++)
+	for (num = 0; num < max_num; num++)
 	{
 		if (listsym[num] == ch) break;
 	}
 
 	/* Bail out if choice is "illegal" */
-	if ((num < 0) || (num >= max_num)) return (0);
+	if (num >= max_num) return (0);
 
 	/* And return successful */
 	return (choice[num]);
