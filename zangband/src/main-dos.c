@@ -168,6 +168,13 @@ static term_data data[MAX_TERM_DATA];
 #ifdef USE_GRAPHICS
 
 /*
+ * Available graphic modes
+ */
+#define GRAPHICS_NONE       0
+#define GRAPHICS_ORIGINAL   1
+#define GRAPHICS_ADAM_BOLT  2
+
+/*
  * Are graphics already initialized ?
  */
 static bool graphics_initialized = FALSE;
@@ -765,6 +772,9 @@ static errr Term_user_dos(int n)
 
 	char section[80];
 
+	/* Unused parameter */
+	(void)n;
+
 	/* Interact */
 	while (1)
 	{
@@ -1262,6 +1272,9 @@ static errr Term_pict_dos(int x, int y, int n, const byte *ap, const char *cp)
  */
 static void Term_init_dos(term *t)
 {
+	/* Unused parameter */
+	(void)t;
+
 	/* XXX Nothing */
 }
 
@@ -1352,6 +1365,10 @@ static void term_data_link(term_data *td)
 static void dos_quit_hook(cptr str)
 {
 	int i;
+
+
+	/* Unused parameter */
+	(void)str;
 
 	/* Destroy windows */
 	for (i = MAX_TERM_DATA - 1; i >= 0; i--)
@@ -1949,7 +1966,7 @@ static bool init_sound(void)
 		for (i = 1; i < SOUND_MAX; i++)
 		{
 			/* Get the sample names */
-			argv = get_config_argv(section, angband_sound_name[i], &sample_count[i]);
+			argv = get_config_argv(section, (char *)angband_sound_name[i], &sample_count[i]);
 
 			/* Limit the number of samples */
 			if (sample_count[i] > SAMPLE_MAX) sample_count[i] = SAMPLE_MAX;
@@ -2080,6 +2097,13 @@ static void play_song(void)
 
 /*
  * Attempt to initialize this file
+ *
+ * Hack -- we assume that "blank space" should be "white space"
+ * (and not "black space" which might make more sense).
+ *
+ * Note the use of "((x << 2) | (x >> 4))" to "expand" a 6 bit value
+ * into an 8 bit value, without losing much precision, by using the 2
+ * most significant bits as the least significant bits in the new value.
  *
  * We should attempt to "share" bitmaps (and fonts) between windows
  * with the same "tile" size.  XXX XXX XXX
@@ -2231,4 +2255,3 @@ errr init_dos(void)
 }
 
 #endif /* USE_DOS */
-
