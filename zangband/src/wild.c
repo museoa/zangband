@@ -193,6 +193,8 @@ static void place_building(int x, int y, blk_ptr block_ptr)
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
+	int i, j;
+	
 	/*
 	 * Since only grass has been "turned on", this function
 	 * is rather simple at the moment.
@@ -200,9 +202,15 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	 * terrain type.
 	 * Even later - most of this will be table driven.
 	 */
-	 
+	 	
+	/* Hack -- Use the "simple" RNG */
+	Rand_quick = TRUE;
+
+	/* Hack -- Induce consistant wilderness blocks */
+	Rand_value = wild_grid.wild_seed + x + y*WILD_SIZE;
+		
 	/* Generate a terrain block*/
-	int i, j;
+	
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -272,6 +280,9 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	#ifdef USE_SCRIPT
 	if (generate_wilderness_callback(y, x)) return;
 	#endif /* USE_SCRIPT */
+	
+	/* Hack -- Use the "complex" RNG */
+	Rand_quick = FALSE;
 }
 
 
@@ -434,6 +445,9 @@ void create_wilderness(void)
 	
 	/* A dodgy town */
 	wild[32][32].done.town = 1;
+	
+	/* Refresh random number seed */
+	wild_grid.wild_seed = rand_int(0x10000000);
 	
 	/* Allocate blocks around player */
 	move_wild();

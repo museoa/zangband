@@ -519,6 +519,8 @@ struct wild_grid_type
 	
 	int y_min;
 	int x_min;
+	
+	u32b wild_seed;
 };
 
 
