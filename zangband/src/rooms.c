@@ -4776,7 +4776,104 @@ static void build_type22(int bx0, int by0)
 	}
 }
 
-#define ROOM_TYPES	22
+/*
+ * Type 23 -- Semicircular room.
+ */
+static void build_type23(int bx0, int by0)
+{
+	int rad, x, y, x0, y0;
+	int light = FALSE;
+
+	int xs, xe;
+	int ys, ye;
+
+	/* Occasional light */
+	if (randint1(p_ptr->depth) <= 15) light = TRUE;
+	
+	rad = rand_range(2, 9);
+
+	/* Get orientation */
+	if (one_in_(2))
+	{
+		/* Allocate in room_map.  If will not fit, exit */
+		if (!room_alloc(rad + 1, rad * 2 + 1, FALSE, bx0, by0, &x0, &y0))
+			return;
+		
+		/* Flip left or right? */
+		if (one_in_(2))
+		{
+			xs = x0;
+			xe = x0 + rad;
+		}
+		else
+		{
+			xs = x0 - rad;
+			xe = x0;
+		}
+		
+		/* Make semicircular floor */
+		for (x = xs; x <= xe; x++)
+		{
+			for (y = y0 - rad; y <= y0 + rad; y++)
+			{
+				if (distance(x0, y0, x, y) <= rad - 1)
+				{
+					/* inside- so is floor */
+					set_feat_bold(x, y, FEAT_FLOOR);
+				}
+					else if (distance(x0, y0, x, y) <= rad + 1)
+				{
+					/* make granite outside so arena works */
+					set_feat_bold(x, y, FEAT_WALL_EXTRA);
+				}
+			}
+		}
+	}
+	else
+	{
+		/* Allocate in room_map.  If will not fit, exit */
+		if (!room_alloc(rad * 2 + 1, rad + 1, FALSE, bx0, by0, &x0, &y0))
+			return;
+		
+		/* Flip up or down? */
+		if (one_in_(2))
+		{
+			ys = y0;
+			ye = y0 + rad;
+		}
+		else
+		{
+			ys = y0 - rad;
+			ye = y0;
+		}
+	
+		/* Make semicircular floor */
+		for (x = x0 - rad; x <= x0 + rad; x++)
+		{
+			for (y = ys; y <= ye; y++)
+			{
+				if (distance(x0, y0, x, y) <= rad - 1)
+				{
+					/* inside- so is floor */
+					set_feat_bold(x, y, FEAT_FLOOR);
+				}
+				else if (distance(x0, y0, x, y) <= rad + 1)
+				{
+					/* make granite outside so arena works */
+					set_feat_bold(x, y, FEAT_WALL_EXTRA);
+				}
+			}
+		}
+	}
+	
+	/* Find visible outer walls and set to be FEAT_OUTER */
+	add_outer_wall(x0, y0, light, x0 - rad, y0 - rad, x0 + rad, y0 + rad);
+}
+
+
+
+
+#define ROOM_TYPES	23
 
 typedef void (*room_build_type)(int, int);
 
@@ -4803,7 +4900,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type19,
 	build_type20,
 	build_type21,
-	build_type22
+	build_type22,
+	build_type23
 };
 
 
