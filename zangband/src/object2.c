@@ -1577,15 +1577,7 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 			/* Assume okay */
 			break;
 		}
-
-		case TV_LITE:
-		{
-			/* Hack - Require identical fuel levels */
-			if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
-
-			/* Fall through */
-		}
-
+		
 		case TV_BOW:
 		case TV_DIGGING:
 		case TV_HAFTED:
@@ -1603,6 +1595,14 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		{
 			/* Weapons and Armor stack if throwable */
 			if (!(o_ptr->flags2 & (TR2_THROW))) return (FALSE);
+
+			/* Fall through */
+		}
+
+		case TV_LITE:
+		{
+			/* Hack - Require identical fuel levels / timeouts */
+			if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
 
 			/* Fall through */
 		}
