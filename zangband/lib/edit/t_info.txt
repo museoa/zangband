@@ -772,6 +772,7 @@ G:1:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:10:0:50:0:50:0
+L:SBINIT:place_sb(rand_range(105, 109), rand_range(2, 10))
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_weapon_armour(object)
 
@@ -781,6 +782,7 @@ G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:5:30:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 115), rand_range(5, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_armour(object)
 
@@ -790,6 +792,7 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:5:20:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 115), rand_range(5, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon(object)
 
@@ -799,6 +802,7 @@ G:6:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:5:20:33:33:34:0:1
+L:SBINIT:place_sb(rand_range(107, 110), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -808,6 +812,7 @@ G:6:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:5:30:0:0:100:0:0
+L:SBINIT:place_sb(rand_range(110, 115), rand_range(10, 15) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -817,6 +822,7 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:20:40:0:0:100:0:0
+L:SBINIT:place_sb(rand_range(110, 113), rand_range(15, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -826,6 +832,7 @@ G:1:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:20:50:25:25:25:25:16
+L:SBINIT:place_sb(150, rand_range(20, 30) * 10)
 L:PENTER:do_cmd_store(field)
 
 # Home
@@ -834,6 +841,7 @@ G:8:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:7:0:0:100:100:100:100:0
+L:SBINIT:place_sb(100, 0)
 L:PENTER:do_cmd_store(field)
 
 # Book Store
@@ -842,6 +850,7 @@ G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:20:40:0:0:100:0:8
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_is_book(object)
 
@@ -851,6 +860,7 @@ G:7:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Examine Weapons (".. factor * 3 .."gp)")
 L:BUILD2:local cost
@@ -870,6 +880,7 @@ G:7:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("R) Recharge Items",
 L:BUILD1:					"I) Identify Items (".. factor * 5 .."gp)")
@@ -894,6 +905,7 @@ G:7:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Enchant Weapons (".. factor * 5 .."gp)")
 L:BUILD2:if (command == 'E') then
@@ -907,6 +919,7 @@ G:7:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Enchant Armour (".. factor * 5 .."gp)")
 L:BUILD2:if (command == 'E') then
@@ -920,6 +933,7 @@ G:9:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Expose yourself to raw chaos (".. 50 * factor * (count_mutations() + 1).."gp)")
 L:BUILD2:local cost
@@ -943,6 +957,7 @@ G:9:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Examine Map (".. factor * 5 .."gp)")
 L:BUILD2:local cost
@@ -962,6 +977,7 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon(object)
 
@@ -971,6 +987,7 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:75:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon(object)
 
@@ -980,6 +997,7 @@ G:3:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(125, 150), rand_range(5, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon(object)
 
@@ -989,6 +1007,7 @@ G:3:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
+L:SBINIT:place_sb(rand_range(125, 150), rand_range(5, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon(object)
 
@@ -998,6 +1017,7 @@ G:3:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(125, 130), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon(object)
 
@@ -1007,6 +1027,7 @@ G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:50:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_armour(object)
 
@@ -1016,6 +1037,7 @@ G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:75:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_armour(object)
 
@@ -1025,6 +1047,7 @@ G:2:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:75:127:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(125, 150), rand_range(5, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_armour(object)
 
@@ -1034,6 +1057,7 @@ G:2:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:42
+L:SBINIT:place_sb(rand_range(125, 150), rand_range(5, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_armour(object)
 
@@ -1043,6 +1067,7 @@ G:2:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(125, 150), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_armour(object)
 
@@ -1052,6 +1077,7 @@ G:3:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:20:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
@@ -1061,6 +1087,7 @@ G:3:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
@@ -1070,6 +1097,7 @@ G:3:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:40:75:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
@@ -1079,6 +1107,7 @@ G:3:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
@@ -1088,6 +1117,7 @@ G:3:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
@@ -1097,6 +1127,7 @@ G:3:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
@@ -1106,6 +1137,7 @@ G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:1:30:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
@@ -1115,6 +1147,7 @@ G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:50:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
@@ -1124,6 +1157,7 @@ G:2:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:30:75:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
@@ -1133,6 +1167,7 @@ G:2:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:75:127:0:100:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
@@ -1142,6 +1177,7 @@ G:2:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:26
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
@@ -1151,6 +1187,7 @@ G:2:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
@@ -1160,6 +1197,7 @@ G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:20:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_nonsword(object)
 
@@ -1169,6 +1207,7 @@ G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_nonsword(object)
 
@@ -1178,6 +1217,7 @@ G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:75:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_nonsword(object)
 
@@ -1187,6 +1227,7 @@ G:3:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_nonsword(object)
 
@@ -1196,6 +1237,7 @@ G:3:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_nonsword(object)
 
@@ -1205,6 +1247,7 @@ G:3:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_nonsword(object)
 
@@ -1214,6 +1257,7 @@ G:3:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:50:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(105, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_ammo(object)
 
@@ -1223,6 +1267,7 @@ G:3:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_ammo(object)
 
@@ -1232,6 +1277,7 @@ G:3:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_ammo(object)
 
@@ -1241,6 +1287,7 @@ G:3:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:50:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_fletcher(object)
 
@@ -1250,6 +1297,7 @@ G:3:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_fletcher(object)
 
@@ -1259,6 +1307,7 @@ G:3:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_fletcher(object)
 
@@ -1268,6 +1317,7 @@ G:3:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_fletcher(object)
 
@@ -1277,6 +1327,7 @@ G:0:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:20:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon_armour(object)
 
@@ -1286,6 +1337,7 @@ G:0:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon_armour(object)
 
@@ -1295,6 +1347,7 @@ G:0:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:40:75:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon_armour(object)
 
@@ -1304,6 +1357,7 @@ G:0:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon_armour(object)
 
@@ -1313,6 +1367,7 @@ G:0:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:5:95:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon_armour(object)
 
@@ -1322,6 +1377,7 @@ G:0:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_weapon_armour(object)
 
@@ -1331,6 +1387,7 @@ G:2:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:1:20:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_soft_armour(object)
 
@@ -1340,6 +1397,7 @@ G:2:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:50:0:100:0:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_soft_armour(object)
 
@@ -1349,6 +1407,7 @@ G:2:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:1:30:0:100:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
@@ -1358,6 +1417,7 @@ G:2:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:60:20:80:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
@@ -1367,6 +1427,7 @@ G:2:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:75:20:80:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
@@ -1376,6 +1437,7 @@ G:2:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:75:127:20:80:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
@@ -1385,6 +1447,7 @@ G:2:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:20:80:0:0:26
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
@@ -1394,6 +1457,7 @@ G:2:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(10, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
@@ -1403,6 +1467,7 @@ G:2:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:1:50:50:50:0:0:8
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_helm(object)
 
@@ -1412,6 +1477,7 @@ G:2:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:50:100:50:50:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_helm(object)
 
@@ -1421,6 +1487,7 @@ G:2:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:50:50:0:0:42
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_helm(object)
 
@@ -1430,6 +1497,7 @@ G:2:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:100:50:50:0:0:62
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_helm(object)
 
@@ -1439,6 +1507,7 @@ G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:1:30:100:0:0:0:8
+L:SBINIT:place_sb(rand_range(120, 130), rand_range(20, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_jewel(object)
 
@@ -1448,6 +1517,7 @@ G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:20:50:100:0:0:0:8
+L:SBINIT:place_sb(rand_range(120, 130), rand_range(20, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_jewel(object)
 
@@ -1457,6 +1527,7 @@ G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:40:70:100:0:0:0:24
+L:SBINIT:place_sb(rand_range(120, 130), rand_range(20, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_jewel(object)
 
@@ -1466,6 +1537,7 @@ G:5:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:60:90:100:0:0:0:40
+L:SBINIT:place_sb(rand_range(130, 140), rand_range(20, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_jewel(object)
 
@@ -1475,6 +1547,7 @@ G:5:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:80:120:100:0:0:0:56
+L:SBINIT:place_sb(rand_range(140, 150), rand_range(20, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_jewel(object)
 
@@ -1484,6 +1557,7 @@ G:5:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:1:50:100:0:0:0:8
+L:SBINIT:place_sb(rand_range(105, 115), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_STATUE)
 
@@ -1493,6 +1567,7 @@ G:5:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:100:0:0:0:8
+L:SBINIT:place_sb(rand_range(105, 115), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_STATUE)
 
@@ -1502,6 +1577,7 @@ G:5:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:26:26:100:0:0:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_FIGURINE)
 
@@ -1511,6 +1587,7 @@ G:5:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:50:90:100:0:0:0:16
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_FIGURINE)
 
@@ -1520,6 +1597,7 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:1:30:0:0:100:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -1529,6 +1607,7 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:20:40:0:0:100:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -1538,6 +1617,7 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:40:70:0:0:100:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -1547,6 +1627,7 @@ G:5:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:60:90:0:0:100:0:40
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -1556,6 +1637,7 @@ G:5:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:80:120:0:0:100:0:56
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -1565,6 +1647,7 @@ G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:1:30:0:0:100:0:0
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
@@ -1574,6 +1657,7 @@ G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:20:50:0:0:100:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
@@ -1583,6 +1667,7 @@ G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:40:70:0:0:100:0:24
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
@@ -1592,6 +1677,7 @@ G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:60:90:0:0:100:0:40
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
@@ -1601,6 +1687,7 @@ G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:80:120:0:0:100:0:56
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
@@ -1610,6 +1697,7 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:1:20:0:0:100:0:8
+L:SBINIT:place_sb(rand_range(120, 125), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_recharge(object)
 
@@ -1619,6 +1707,7 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:20:40:0:0:100:0:8
+L:SBINIT:place_sb(rand_range(120, 125), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_recharge(object)
 
@@ -1628,6 +1717,7 @@ G:6:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:40:60:0:0:100:0:24
+L:SBINIT:place_sb(rand_range(120, 125), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_recharge(object)
 
@@ -1637,6 +1727,7 @@ G:6:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:60:90:0:0:100:0:40
+L:SBINIT:place_sb(rand_range(120, 125), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_recharge(object)
 
@@ -1646,6 +1737,7 @@ G:6:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:80:120:0:0:100:0:56
+L:SBINIT:place_sb(rand_range(120, 125), rand_range(10, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_recharge(object)
 
@@ -1655,6 +1747,7 @@ G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:20:120:0:0:100:0:56
+L:SBINIT:place_sb(rand_range(120, 150), rand_range(20, 30) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_is_book(object)
 
@@ -1664,6 +1757,7 @@ G:6:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:20:50:33:33:34:0:1
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 20) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -1673,6 +1767,7 @@ G:6:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:50:75:33:33:34:0:17
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -1682,6 +1777,7 @@ G:6:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:75:100:33:33:34:0:57
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -1691,6 +1787,7 @@ G:1:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:9:0:20:40:30:0
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = FALSE
 L:STORE1:-- This leaves the store with scrolls, tools, ammo, and diggers (by elimination)
@@ -1705,6 +1802,7 @@ G:1:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:20:0:10:40:50:0
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = FALSE
 L:STORE1:-- This leaves the store with scrolls, tools, ammo, and diggers (by elimination)
@@ -1719,6 +1817,7 @@ G:1:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:40:80:25:25:25:25:32
+L:SBINIT:place_sb(150, rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 
 # Black Market
@@ -1727,6 +1826,7 @@ G:1:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:60:100:25:25:25:25:56
+L:SBINIT:place_sb(150, rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 
 # Alchemy Shop
@@ -1735,6 +1835,7 @@ G:6:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:20:60:0:0:100:0:8
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -1744,6 +1845,7 @@ G:6:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:50:80:0:0:100:0:40
+L:SBINIT:place_sb(rand_range(110, 125), rand_range(5, 25) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = item_tester_hook_recharge(object)
 
@@ -1753,6 +1855,7 @@ G:1:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:5:30:10:10:50:8
+L:SBINIT:place_sb(rand_range(105, 108), rand_range(2, 10) * 10)
 L:PENTER:do_cmd_store(field)
 
 # Food store
@@ -1761,6 +1864,7 @@ G:0:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:25:0:0:0:100:8
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_FOOD)
 
@@ -1770,6 +1874,7 @@ G:9:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("R) Read about monsters (".. 100 * factor .."gp)")
 L:BUILD2:local cost
@@ -1789,6 +1894,7 @@ G:0:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:7:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("H) Help",
 L:BUILD1:					"I) In Between",
@@ -1818,6 +1924,7 @@ G:0:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Eat (".. factor / 20 .."gp)",
 L:BUILD1:					"R) Rest (".. factor / 4 .."gp)")
@@ -1847,6 +1954,7 @@ G:9:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:9:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("R) Restore Stats (".. 20 * factor .."gp)")
 L:BUILD2:local cost
@@ -1866,6 +1974,7 @@ G:1:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:5:30:25:25:25:25:16
+L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 15) * 10)
 L:PENTER:do_cmd_store(field)
 
 # Teleport
@@ -1874,6 +1983,7 @@ G:9:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_magetower(factor, TRUE)
 L:BUILD2:local cost
@@ -1895,6 +2005,7 @@ G:9:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_magetower(factor, TRUE)
 L:BUILD2:local cost
@@ -1916,6 +2027,7 @@ G:0:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:if (build_has_quest() == TRUE) then
 L:BUILD1:	building_options("R) Request Reward")
@@ -1933,6 +2045,7 @@ G:0:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:if (build_has_quest() == TRUE) then
 L:BUILD1:	building_options("R) Request Reward")
