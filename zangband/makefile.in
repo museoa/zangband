@@ -1,0 +1,84 @@
+##
+## This makefile will hopefully replace the old ways of
+## building zangband.  Using automake is crufty, and using
+## makefile.std doesn't quite cover all the nice things
+## that autoconf does.
+##
+##
+##
+## Please do not edit "makefile", as it is auto-generated
+## by ./configure from makefile.in  Edit makefile.in instead.
+##
+
+
+CFLAGS := @CFLAGS@ @DEFS@
+CPPFLAGS := @CPPFLAGS@
+LIBS := @LIBS@
+LDFLAGS := @LDFLAGS@
+
+DESTDIR = @DESTDIR@
+GAMEGROUP = @GAMEGROUP@
+
+bindir = @bindir@
+datadir = @datadir@
+
+#DESTDIR = datadir
+
+
+##
+## Default target
+##
+## Make sure the makefile is up to date first,
+## then compile zangband.
+##
+default: makefile
+	$(MAKE) zangband
+
+##
+## Hack - make sure the build system is consistant.
+##
+makefile: configure makefile.in
+	./configure
+
+configure: configure.in
+	autoheader
+	autoconf
+
+subdir = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+scandir = $(addprefix $(subdir),$(addsuffix /makefile.zb,$(dirs)))
+
+files = angdos.cfg readme z_faq.txt z_update.txt
+extra_files = acconfig.h
+
+dirs := lib src
+dirlist := lib
+include $(scandir)
+
+INSTALL = mkdir $(DESTDIR)
+
+makedirs:
+	mkdir $(dirlist)
+
+install-files: makedirs
+	for i in $(files) ; do \
+	    cp $$i $(DESTDIR)$$i; \
+	done
+
+install: install-files zangband
+	$(INSTALL)
+
+zangband: $(objs-y)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
+
+clean:
+	-rm -f $(clean-files)
+
+test:
+	@echo I will build:
+	@echo $(objs-y)
+	@echo
+	@echo I will clean:
+	@echo $(clean-files)
+	@echo
+	@echo I will install:
+	@echo $(dirlist) $(files) $(INSTALL)
