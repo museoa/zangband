@@ -27,6 +27,7 @@ ZAngband 2.6.0:
 - The rare book store now stocks more normal books, and less dungeon ones.
 - Nightmare mode is slightly harder.
 - Fixed problem with the xaw port not reading font information in .Xdefaults.
+- Moved the pref files to the pref directory.
 
 ZAngband 2.5.6:
 - Shifted store names over so that the long ones fit along with the
