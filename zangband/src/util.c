@@ -55,13 +55,13 @@ int usleep(huge usecs)
 
 # endif
 
-
 /*
-* Hack -- External functions
-*/
+ * Hack -- External functions
+ */
+#ifndef	_PWD_H
 extern struct passwd *getpwuid();
 extern struct passwd *getpwnam();
-
+#endif /* _PWD_H */
 
 /*
  * Find a default user name from the system.
