@@ -1087,7 +1087,3 @@ extern bool get_object_tried(const object_type *o_ptr);
 extern bool object_is_potion(const object_type *o_ptr);
 extern errr init_object_alloc(void);
 extern void k_info_reset(void);
-
-/* script.c */
-extern bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
-		cptr var1, int val1, cptr var2, int val2, cptr var3, int val3);
