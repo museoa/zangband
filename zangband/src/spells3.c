@@ -2274,7 +2274,7 @@ bool identify_fully(void)
 
 	/* Get an item */
 	q = "Identify which item? ";
-	s = "You have nothing to identify.";
+	s = "You have nothing to *identify*.";
 
 	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
 
