@@ -6837,52 +6837,6 @@ const rbm_type rbm_info[MAX_RBM] =
 	}
 };
 
-/* Field function's + names */
-const field_action f_action[] =
-{
-	/* Null - Do absolutely nothing */
-	{NULL, "nothing"}, 
-
-	/* Weaponmaster part 2 */
-	{field_action_weaponmaster2, "field_action_weaponmaster2"},
-	
-	/* Recharge items part 2 */
-	{field_action_recharge2, "field_action_recharge2"},
-	
-	/* Enchant weapons part 2 */
-	{field_action_weaponplus2, "field_action_weaponplus2"},
-	
-	/* Enchant armour part 2 */
-	{field_action_armourplus2, "field_action_armourplus2"},
-	
-	/* Mutatalist part 2 */
-	{field_action_mutate2, "field_action_mutate2"},
-	
-	/* Map maker part 2 */
-	{field_action_buymap2, "field_action_buymap2"},
-	
-	/* Librry part 2 */
-	{field_action_library2, "field_action_library2"},
-	
-	/* Casino part 2 */
-	{field_action_casino2, "field_action_casino2"},
-	
-	/* Inn part 2 */
-	{field_action_inn2, "field_action_inn2"},
-	
-	/* Healer part 2 */
-    {field_action_healer2, "field_action_healer2"},
-
-    /* Mage Tower part 2 */
-    {field_action_magetower2, "field_action_magetower2"},
-	
-	/* Castle quest-giver part 2 */
-	{field_action_castlequest2, "field_action_castlequest2"},
-
-	/* Done */
-	{NULL, NULL}
-};
-
 /*
  * The mutations:
  *

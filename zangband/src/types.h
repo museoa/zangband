@@ -860,19 +860,6 @@ struct rbm_type
 };
 
 
-/* Forward declare */
-typedef struct field_type field_type;
-
-/*
- * A function pointer to an action.  The function takes two values:
- * 1) a pointer to the field that is undergoing the action.
- * 2) a pointer to the list of 
- * The function returns a bool saying whether or not to delete the field.
- */
-typedef bool (*field_action_type) (field_type *f_ptr, va_list vp);
-
-
-
 /*
  * The thaumaturgical list of fields.
  *
@@ -901,8 +888,6 @@ struct field_thaum
 
 	s16b count_init;	/* Counter for timed effects */
 
-	field_action_type func[FIELD_ACTION_MAX];	/* Function indexs for the actions */
-	
 	s16b action[FIELD_ACTION_MAX];	/* Action scripts */
 
 	/* Storage space for the actions to interact with. */
@@ -922,6 +907,7 @@ struct field_thaum
  * The new building / store code will use this structure.
  *
  */
+typedef struct field_type field_type;
 struct field_type
 {
 	byte f_attr;	/* attribute */
@@ -944,20 +930,6 @@ struct field_type
 	s16b region;	/* Region */
 
 	byte priority;	/* LOS priority higher = more visible */
-};
-
-
-/*
- * This is the type of the array that is used to parse t_info.txt
- * It contains the functions fields call + the names of those functions.
- */
-
-typedef struct field_action field_action;
-
-struct field_action
-{
-	field_action_type action;	/* The function to call */
-	cptr func;	/* The name of the function */
 };
 
 

@@ -279,16 +279,14 @@ static void building_prt_gold(void)
 }
 
 /* Does the player have enough gold for this action? */
-bool test_gold(s32b *cost)
+bool test_gold(s32b cost)
 {
-	if (p_ptr->au < *cost)
+	if (p_ptr->au < cost)
 	{
 		/* Player does not have enough gold */
 
-		msgf("You need %ld gold to do this!", (long)*cost);
+		msgf("You need %ld gold to do this!", (long)cost);
 		message_flush();
-
-		*cost = 0;
 
 		return (FALSE);
 	}
@@ -309,13 +307,32 @@ bool build_has_quest(void)
 	return (FALSE);
 }
 
+void build_cmd_quest(int level)
+{
+	quest_type *q_ptr = lookup_quest_building(build_ptr);
+
+	/* Do we already have a quest? */
+	if (q_ptr)
+	{
+		/* Give reward? */
+		reward_quest(q_ptr);
+	}
+	else
+	{
+		/* Make a new quest */
+		request_quest(build_ptr, level);
+	}
+	
+	/* Display messages */
+	message_flush();
+}
 
 /*
  * Display a building.
  */
-void display_build(field_type *f_ptr, const store_type *b_ptr)
+void display_build(field_type *f_ptr)
 {
-	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
+	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][build_ptr->owner];
 
 	int factor;
 
@@ -331,9 +348,6 @@ void display_build(field_type *f_ptr, const store_type *b_ptr)
 	Term_clear();
 	prtf(1, 2, "%s (%s) %s", owner_name, race_name, build_name);
 	prtf(0, 19, "You may:");
-
-	/* Save building pointer for lua hook */
-	build_ptr = b_ptr;
 
 	/* Display building-specific information */
 	(void) field_script_single(f_ptr, FIELD_ACT_BUILD_ACT1, "i", LUA_VAR(factor));
@@ -1200,13 +1214,24 @@ bool compare_weapons(void)
 /*
  * Enchant item
  */
-bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
+bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap)
 {
 	bool okay = FALSE;
 	object_type *o_ptr;
 	cptr q, s;
 	int maxenchant = (p_ptr->lev / 5);
 	int maxenchant_d = (p_ptr->lev / 3);
+
+	if (weap)
+	{
+		/* Select weapons */
+		item_tester_hook = item_tester_hook_melee_weapon;
+	}
+	else
+	{
+		/* Select armour */
+		item_tester_hook = item_tester_hook_armour;
+	}
 
     clear_region(0, 5, 18);
     
@@ -1552,10 +1577,31 @@ static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost,
 	return max_link;
 }
 
+/*
+ * Record that the player has visited a magetower
+ * and paid for the privelidge of being able to
+ * teleport there from another magetower
+ */
+void record_aura(void)
+{
+	store_type *b_ptr = get_current_store();
+
+	if (!b_ptr->data)
+	{
+		/*
+		 * Hack XXX - save the fact we have "noticed" this tower
+		 * in this variable, which later will have to be removed
+		 * from store_type anyway.
+		 */
+		b_ptr->data = 1;
+		
+		msgf("The portal keeper notes your aura.");
+	}
+}
+
+
 bool building_magetower(int factor, bool display)
 {
-	store_type *st_ptr;
-
 	int link_p[24], link_w[24];
 	int max_link = 0;
 	int i;
@@ -1564,19 +1610,13 @@ bool building_magetower(int factor, bool display)
 
 	char out_val[160];
 
-	/* Save the store pointer */
-	st_ptr = get_current_store();
-
-	/* Paranoia */
-	if (!st_ptr) return (FALSE);
-
 	/* Collect links */
 	max_link = collect_magetower_links(24, link_p, link_w, cost, factor);
 
 	if (display)
 	{
 		/* Haven't been here before? */
-		if (!st_ptr->data)
+		if (!build_ptr->data)
 		{
 			put_fstr(35, 18, CLR_YELLOW " R) Record aura (%dgp)", factor * 5);
 		}
@@ -1621,7 +1661,7 @@ bool building_magetower(int factor, bool display)
 
 			k = (islower(command) ? A2I(command) : -1);
 
-			if ((k >= 0) && (k < max_link) && test_gold(&cost[k]))
+			if ((k >= 0) && (k < max_link) && test_gold(cost[k]))
 			{
 				place_type *pl_ptr2 = &place[link_p[k]];
 				store_type *st_ptr2 = &pl_ptr2->store[link_w[k]];
@@ -1671,22 +1711,29 @@ bool building_magetower(int factor, bool display)
 }
 
 
-static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
+static bool process_build_hook(field_type *f_ptr)
 {
-	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
+	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][build_ptr->owner];
 
 	int factor;
+	
+	bool done = FALSE;
 
 	/* The charisma factor */
 	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
 	factor = ((factor + 200) * bo_ptr->inflate) / 400;
 
-	field_hook(area(p_ptr->px, p_ptr->py),
-			   FIELD_ACT_BUILD_ACT2, &factor, b_ptr);
+	field_script_single(f_ptr, FIELD_ACT_BUILD_ACT2, "ii:b",
+						LUA_VAR(factor),
+						LUA_VAR_NAMED(p_ptr->cmd.cmd, "command"),
+						LUA_VAR(done));
+	
+	/* Redraw screen */
+	display_build(f_ptr);
 
 	/* Did we do anything? */
-	return (factor);
+	return (done);
 }
 
 
@@ -1702,7 +1749,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
  * people use the roguelike keyset and press a 'direction' key
  * which also corresponds to a building command.
  */
-static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
+static bool build_process_command(field_type *f_ptr)
 {
 	/* Hack - Get a command */
 	p_ptr->cmd.cmd = inkey();
@@ -1711,7 +1758,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 	repeat_check();
 
 	/* Process the building-specific commands */
-	if (process_build_hook(f_ptr, b_ptr)) return (FALSE);
+	if (process_build_hook(f_ptr)) return (FALSE);
 
 	/* Parse the command */
 	switch (p_ptr->cmd.cmd)
@@ -1726,7 +1773,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 		{
 			/* Redraw */
 			do_cmd_redraw();
-			display_build(f_ptr, b_ptr);
+			display_build(f_ptr);
 			break;
 		}
 
@@ -1766,7 +1813,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 		{
 			/* Character description */
 			do_cmd_character();
-			display_build(f_ptr, b_ptr);
+			display_build(f_ptr);
 			break;
 		}
 
@@ -1895,6 +1942,9 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Paranoia */
 	if (!b_ptr) return;
 	
+	/* Save building pointer for lua hook */
+	build_ptr = b_ptr;
+	
 	/* Some quests are finished by finding a building */
 	trigger_quest_complete(QX_FIND_SHOP, (vptr)b_ptr);
 	
@@ -1914,7 +1964,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	p_ptr->cmd.new = 0;
 
 	/* Display the building */
-	display_build(f_ptr, b_ptr);
+	display_build(f_ptr);
 
 	/* Interact with player */
 	while (!leave_build)
@@ -1931,7 +1981,7 @@ void do_cmd_bldg(field_type *f_ptr)
 		building_prt_gold();
 
 		/* Process the command */
-		leave_build = build_process_command(f_ptr, b_ptr);
+		leave_build = build_process_command(f_ptr);
 
 		if (force_build_exit)
 		{

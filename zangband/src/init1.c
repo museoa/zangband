@@ -2688,68 +2688,6 @@ static errr grab_one_info_flag(field_thaum *t_ptr, cptr what)
 }
 
 /*
- * Grab one field action flag from a textual string
- */
-static errr grab_one_action_flag(field_thaum *t_ptr, char *what)
-{
-	int i, location;
-
-	char *t;
-
-	t = what;
-
-	/* Split the string into two bits using the comma seperator */
-	while (!((*t == '\0') || (*t == ',')))
-	{
-		/* Increment the pointer */
-		t++;
-	}
-
-	/* t should point to a comma, or to a NULL */
-	if (!(*t))
-	{
-		/* The string had no comma */
-		return (PARSE_ERROR_GENERIC);
-	}
-
-	/*
-	 * Hack - convert the comma to a zero
-	 * so 'what' is just the location string.
-	 */
-	*t = 0;
-
-	/* Move over one character to point to the function name */
-	t++;
-
-	/* Get location */
-	location = atoi(what);
-
-	/* Bounds checking */
-	if ((location < 0) || (location >= FIELD_ACTION_MAX) || !(*t))
-	{
-		/* error */
-		return (PARSE_ERROR_GENERIC);
-	}
-
-	/* Check flags */
-	for (i = 0; f_action[i].func; i++)
-	{
-		if (streq(t, f_action[i].func))
-		{
-			t_ptr->func[location] = f_action[i].action;
-			return (0);
-		}
-	}
-
-	/* Oops */
-	msgf("Unknown field info-flag '%s'.", t);
-
-	/* Error */
-	return (PARSE_ERROR_GENERIC);
-}
-
-
-/*
  * Initialize the field "thaumatergical" arrays,
  *  by parsing an ascii "template" file
  */
@@ -2920,36 +2858,6 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			t_ptr->data_init[5] = d5;
 			t_ptr->data_init[6] = d6;
 			t_ptr->data_init[7] = d7;
-
-			/* Next... */
-			continue;
-		}
-
-
-		/* Process 'F' for "Field action Functions" (multiple lines) */
-		if (buf[0] == 'F')
-		{
-			/* Parse every entry */
-			for (s = buf + 2; *s;)
-			{
-				/* Find the end of this entry */
-				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
-
-				/* Nuke and skip any dividers */
-				if (*t)
-				{
-					*t++ = '\0';
-					while (*t == ' ' || *t == '|') t++;
-				}
-
-				/* Parse this entry */
-				if (0 !=
-					grab_one_action_flag(t_ptr,
-										 s)) return (PARSE_ERROR_INVALID_FLAG);
-
-				/* Start the next entry */
-				s = t;
-			}
 
 			/* Next... */
 			continue;

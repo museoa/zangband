@@ -1345,6 +1345,9 @@ void identify_pack(void)
 		identify_item(o_ptr);
 	}
 	OBJ_ITT_END;
+	
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 }
 
 /*
