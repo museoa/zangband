@@ -2595,8 +2595,14 @@ static void process_monster(int m_idx)
 			/* Do not move in any case. */
 			do_move = FALSE;
 			
-			/* The door was opened */
+			/* The door was opened */ 
 			did_open_door = TRUE;
+		}
+		else if (((c_ptr->feat == FEAT_CLOSED) || (c_ptr->feat == FEAT_SECRET))
+			 && !did_pass_wall)
+		{
+			/* Monsters cannot walk through closed doors */
+			do_move = FALSE;
 		}
 
 		/* The player is in the way.  Attack him. */
