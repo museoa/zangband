@@ -827,12 +827,18 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 	char tc;
 
 	int x2, y2;
-	int k,l;
+	int k, l;
 
 	guint32 pixel, blank;
+	
 #endif /* USE_TRANSPARENCY */
 
 	term_data *td = (term_data*)(Term->data);
+
+#ifdef USE_TRANSPARENCY	
+	/* Mega Hack^2 - assume the top left corner is "black" */
+	blank = gdk_image_get_pixel(td->tiles, 0, td->font_hgt * 6);
+#endif /* USE_TRANSPARENCY */
 	
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
@@ -872,9 +878,6 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 		}
 		else
 		{
-			/* Mega Hack^2 - assume the top left corner is "black" */
-			blank = gdk_image_get_pixel(td->tiles, 0, td->font_hgt * 6);
-			
 			for (k = 0; k < td->font_wid; k++)
 			{
 				for (l = 0; l < td->font_hgt; l++)
@@ -893,7 +896,6 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 
 
 			/* Draw to screen */
-
 			gdk_draw_image(td->pixmap, td->gc, td->temp,
 				 0, 0, x, y,
 				 td->font_wid, td->font_hgt);
@@ -2706,7 +2708,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 #ifdef USE_GRAPHICS
 
 	/* Set graphics mode */
-	set_graph_mode(arg_graphics);
+	set_graph_mode(graphmode);
 
 #endif /* USE_GRAPHICS */
 		
