@@ -2723,7 +2723,7 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
  * is the randint0(3) below; it governs the relative density of
  * twists and turns in the labyrinth: smaller number, more twists.
  */
-static void r_visit(int y1, int x1, int y2, int x2,
+static void r_visit(int x1, int y1, int x2, int y2,
                     int node, int dir, int *visited)
 {
 	int i, j, m, n, temp, x, y, adj[4];
@@ -2790,7 +2790,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				if ((node / m < n - 1) && (visited[node + m] == 0))
 				{
 					cave_set_feat(x, y + 1, FEAT_FLOOR);
-					r_visit(y1, x1, y2, x2, node + m, dir, visited);
+					r_visit(x1, y1, x2, y2, node + m, dir, visited);
 				}
 				break;
 			}
@@ -2801,7 +2801,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				if ((node / m > 0) && (visited[node - m] == 0))
 				{
 					cave_set_feat(x, y - 1, FEAT_FLOOR);
-					r_visit(y1, x1, y2, x2, node - m, dir, visited);
+					r_visit(x1, y1, x2, y2, node - m, dir, visited);
 				}
 				break;
 			}
@@ -2812,7 +2812,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				if ((node % m < m - 1) && (visited[node + 1] == 0))
 				{
 					cave_set_feat(x + 1, y, FEAT_FLOOR);
-					r_visit(y1, x1, y2, x2, node + 1, dir, visited);
+					r_visit(x1, y1, x2, y2, node + 1, dir, visited);
 				}
 				break;
 			}
@@ -2823,7 +2823,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				if ((node % m > 0) && (visited[node - 1] == 0))
 				{
 					cave_set_feat(x - 1, y, FEAT_FLOOR);
-					r_visit(y1, x1, y2, x2, node - 1, dir, visited);
+					r_visit(x1, y1, x2, y2, node - 1, dir, visited);
 				}
 			}
 		}
@@ -2866,7 +2866,7 @@ static void build_maze_vault(int x0, int y0, int xsize, int ysize)
 	C_MAKE(visited, num_vertices, int);
 
 	/* traverse the graph to create a spaning tree, pick a random root */
-	r_visit(y1, x1, y2, x2, randint0(num_vertices), 0, visited);
+	r_visit(x1, y1, x2, y2, randint0(num_vertices), 0, visited);
 
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(x1, y1, x2, y2, randint1(5));
@@ -2918,7 +2918,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	C_MAKE(visited, num_vertices, int);
 
 	/* traverse the graph to create a spannng tree, pick a random root */
-	r_visit(y1, x1, y2, x2, randint0(num_vertices), 0, visited);
+	r_visit(x1, y1, x2, y2, randint0(num_vertices), 0, visited);
 
 	/* Make it look like a checker board vault */
 	for (x = x1; x <= x2; x++)
