@@ -6123,6 +6123,514 @@ static PyObject *_wrap_player_type_hp_player(PyObject *self, PyObject *args) {
     return _resultobj;
 }
 
+static bool  player_type_set_blind(player_type *self,int  v) {
+		return set_blind(v);
+	}
+static PyObject *_wrap_player_type_set_blind(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_blind",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_blind(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_confused(player_type *self,int  v) {
+		return set_confused(v);
+	}
+static PyObject *_wrap_player_type_set_confused(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_confused",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_confused(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_poisoned(player_type *self,int  v) {
+		return set_poisoned(v);
+	}
+static PyObject *_wrap_player_type_set_poisoned(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_poisoned",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_poisoned(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_paralyzed(player_type *self,int  v) {
+		return set_paralyzed(v);
+	}
+static PyObject *_wrap_player_type_set_paralyzed(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_paralyzed",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_paralyzed(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_image(player_type *self,int  v) {
+		return set_image(v);
+	}
+static PyObject *_wrap_player_type_set_image(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_image",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_image(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_fast(player_type *self,int  v) {
+		return set_fast(v);
+	}
+static PyObject *_wrap_player_type_set_fast(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_fast",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_fast(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_slow(player_type *self,int  v) {
+		return set_slow(v);
+	}
+static PyObject *_wrap_player_type_set_slow(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_slow",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_slow(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_shield(player_type *self,int  v) {
+		return set_shield(v);
+	}
+static PyObject *_wrap_player_type_set_shield(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_shield",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_shield(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_blessed(player_type *self,int  v) {
+		return set_blessed(v);
+	}
+static PyObject *_wrap_player_type_set_blessed(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_blessed",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_blessed(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_hero(player_type *self,int  v) {
+		return set_hero(v);
+	}
+static PyObject *_wrap_player_type_set_hero(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_hero",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_hero(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_protevil(player_type *self,int  v) {
+		return set_protevil(v);
+	}
+static PyObject *_wrap_player_type_set_protevil(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_protevil",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_protevil(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_invuln(player_type *self,int  v) {
+		return set_invuln(v);
+	}
+static PyObject *_wrap_player_type_set_invuln(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_invuln",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_invuln(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_tim_invis(player_type *self,int  v) {
+		return set_tim_invis(v);
+	}
+static PyObject *_wrap_player_type_set_tim_invis(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_tim_invis",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_tim_invis(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_tim_infra(player_type *self,int  v) {
+		return set_tim_infra(v);
+	}
+static PyObject *_wrap_player_type_set_tim_infra(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_tim_infra",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_tim_infra(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_oppose_acid(player_type *self,int  v) {
+		return set_oppose_acid(v);
+	}
+static PyObject *_wrap_player_type_set_oppose_acid(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_oppose_acid",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_oppose_acid(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_oppose_elec(player_type *self,int  v) {
+		return set_oppose_elec(v);
+	}
+static PyObject *_wrap_player_type_set_oppose_elec(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_oppose_elec",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_oppose_elec(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_oppose_fire(player_type *self,int  v) {
+		return set_oppose_fire(v);
+	}
+static PyObject *_wrap_player_type_set_oppose_fire(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_oppose_fire",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_oppose_fire(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_oppose_cold(player_type *self,int  v) {
+		return set_oppose_cold(v);
+	}
+static PyObject *_wrap_player_type_set_oppose_cold(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_oppose_cold",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_oppose_cold(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_oppose_pois(player_type *self,int  v) {
+		return set_oppose_pois(v);
+	}
+static PyObject *_wrap_player_type_set_oppose_pois(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_oppose_pois",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_oppose_pois(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_stun(player_type *self,int  v) {
+		return set_stun(v);
+	}
+static PyObject *_wrap_player_type_set_stun(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_stun",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_stun(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_cut(player_type *self,int  v) {
+		return set_cut(v);
+	}
+static PyObject *_wrap_player_type_set_cut(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_cut",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_cut(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_food(player_type *self,int  v) {
+		return set_food(v);
+	}
+static PyObject *_wrap_player_type_set_food(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_food",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_food(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_inc_stat(player_type *self,int  stat) {
+		return inc_stat(stat);
+	}
+static PyObject *_wrap_player_type_inc_stat(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_inc_stat",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_inc_stat(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_dec_stat(player_type *self,int  stat,int  amount,int  permanent) {
+		return dec_stat(stat, amount, permanent);
+	}
+static PyObject *_wrap_player_type_dec_stat(PyObject *self, PyObject *args) {
+    int  _arg1,_arg2,_arg3;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oiii:player_type_dec_stat",&_argo0,&_arg1,&_arg2,&_arg3)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_dec_stat(_arg0,_arg1,_arg2,_arg3);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_res_stat(player_type *self,int  stat) {
+		return res_stat(stat);
+	}
+static PyObject *_wrap_player_type_res_stat(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_res_stat",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_res_stat(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_do_dec_stat(player_type *self,int  stat) {
+		return do_dec_stat(stat);
+	}
+static PyObject *_wrap_player_type_do_dec_stat(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_do_dec_stat",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_do_dec_stat(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_do_res_stat(player_type *self,int  stat) {
+		return do_res_stat(stat);
+	}
+static PyObject *_wrap_player_type_do_res_stat(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_do_res_stat",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_do_res_stat(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_do_inc_stat(player_type *self,int  stat) {
+		return do_inc_stat(stat);
+	}
+static PyObject *_wrap_player_type_do_inc_stat(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_do_inc_stat",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_do_inc_stat(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_restore_level(player_type *self) {
+		return restore_level();
+	}
+static PyObject *_wrap_player_type_restore_level(PyObject *self, PyObject *args) {
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"O:player_type_restore_level",&_argo0)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_restore_level(_arg0);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_lose_all_info(player_type *self) {
+		return lose_all_info();
+	}
+static PyObject *_wrap_player_type_lose_all_info(PyObject *self, PyObject *args) {
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"O:player_type_lose_all_info",&_argo0)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_lose_all_info(_arg0);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
 static void  player_type_gain_exp(player_type *self,s32b  amount) {
 		gain_exp(amount);
 	}
@@ -6140,8 +6648,73 @@ static PyObject *_wrap_player_type_gain_exp(PyObject *self, PyObject *args) {
     return _resultobj;
 }
 
+static void  player_type_lose_exp(player_type *self,s32b  amount) {
+		lose_exp(amount);
+	}
+static PyObject *_wrap_player_type_lose_exp(PyObject *self, PyObject *args) {
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    s32b  _arg1;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_lose_exp",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    player_type_lose_exp(_arg0,_arg1);
+    Py_INCREF(Py_None);
+    _resultobj = Py_None;
+    return _resultobj;
+}
+
+static void  player_type_do_poly_self(player_type *self) {
+		do_poly_self();
+	}
+static PyObject *_wrap_player_type_do_poly_self(PyObject *self, PyObject *args) {
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    self = self;
+    if(!PyArg_ParseTuple(args,"O:player_type_do_poly_self",&_argo0)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    player_type_do_poly_self(_arg0);
+    Py_INCREF(Py_None);
+    _resultobj = Py_None;
+    return _resultobj;
+}
+
 static PyMethodDef playercMethods[] = {
+	 { "player_type_do_poly_self", _wrap_player_type_do_poly_self, METH_VARARGS },
+	 { "player_type_lose_exp", _wrap_player_type_lose_exp, METH_VARARGS },
 	 { "player_type_gain_exp", _wrap_player_type_gain_exp, METH_VARARGS },
+	 { "player_type_lose_all_info", _wrap_player_type_lose_all_info, METH_VARARGS },
+	 { "player_type_restore_level", _wrap_player_type_restore_level, METH_VARARGS },
+	 { "player_type_do_inc_stat", _wrap_player_type_do_inc_stat, METH_VARARGS },
+	 { "player_type_do_res_stat", _wrap_player_type_do_res_stat, METH_VARARGS },
+	 { "player_type_do_dec_stat", _wrap_player_type_do_dec_stat, METH_VARARGS },
+	 { "player_type_res_stat", _wrap_player_type_res_stat, METH_VARARGS },
+	 { "player_type_dec_stat", _wrap_player_type_dec_stat, METH_VARARGS },
+	 { "player_type_inc_stat", _wrap_player_type_inc_stat, METH_VARARGS },
+	 { "player_type_set_food", _wrap_player_type_set_food, METH_VARARGS },
+	 { "player_type_set_cut", _wrap_player_type_set_cut, METH_VARARGS },
+	 { "player_type_set_stun", _wrap_player_type_set_stun, METH_VARARGS },
+	 { "player_type_set_oppose_pois", _wrap_player_type_set_oppose_pois, METH_VARARGS },
+	 { "player_type_set_oppose_cold", _wrap_player_type_set_oppose_cold, METH_VARARGS },
+	 { "player_type_set_oppose_fire", _wrap_player_type_set_oppose_fire, METH_VARARGS },
+	 { "player_type_set_oppose_elec", _wrap_player_type_set_oppose_elec, METH_VARARGS },
+	 { "player_type_set_oppose_acid", _wrap_player_type_set_oppose_acid, METH_VARARGS },
+	 { "player_type_set_tim_infra", _wrap_player_type_set_tim_infra, METH_VARARGS },
+	 { "player_type_set_tim_invis", _wrap_player_type_set_tim_invis, METH_VARARGS },
+	 { "player_type_set_invuln", _wrap_player_type_set_invuln, METH_VARARGS },
+	 { "player_type_set_protevil", _wrap_player_type_set_protevil, METH_VARARGS },
+	 { "player_type_set_hero", _wrap_player_type_set_hero, METH_VARARGS },
+	 { "player_type_set_blessed", _wrap_player_type_set_blessed, METH_VARARGS },
+	 { "player_type_set_shield", _wrap_player_type_set_shield, METH_VARARGS },
+	 { "player_type_set_slow", _wrap_player_type_set_slow, METH_VARARGS },
+	 { "player_type_set_fast", _wrap_player_type_set_fast, METH_VARARGS },
+	 { "player_type_set_image", _wrap_player_type_set_image, METH_VARARGS },
+	 { "player_type_set_paralyzed", _wrap_player_type_set_paralyzed, METH_VARARGS },
+	 { "player_type_set_poisoned", _wrap_player_type_set_poisoned, METH_VARARGS },
+	 { "player_type_set_confused", _wrap_player_type_set_confused, METH_VARARGS },
+	 { "player_type_set_blind", _wrap_player_type_set_blind, METH_VARARGS },
 	 { "player_type_hp_player", _wrap_player_type_hp_player, METH_VARARGS },
 	 { "player_type_set_shero", _wrap_player_type_set_shero, METH_VARARGS },
 	 { "player_type_set_afraid", _wrap_player_type_set_afraid, METH_VARARGS },

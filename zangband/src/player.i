@@ -1,4 +1,4 @@
-     %module player
+%module player
 
 %{
 
@@ -518,46 +518,170 @@ typedef struct player_type
 		return hp_player(num);
 	}
 
-/*
-	bool set_blind(int v);
-	bool set_confused(int v);
-	bool set_poisoned(int v);
-	bool set_paralyzed(int v);
-	bool set_image(int v);
-	bool set_fast(int v);
-	bool set_slow(int v);
-	bool set_shield(int v);
-	bool set_blessed(int v);
-	bool set_hero(int v);
-	bool set_protevil(int v);
-	bool set_invuln(int v);
-	bool set_tim_invis(int v);
-	bool set_tim_infra(int v);
-	bool set_oppose_acid(int v);
-	bool set_oppose_elec(int v);
-	bool set_oppose_fire(int v);
-	bool set_oppose_cold(int v);
-	bool set_oppose_pois(int v);
-	bool set_stun(int v);
-	bool set_cut(int v);
-	bool set_food(int v);
-	bool inc_stat(int stat);
-	bool dec_stat(int stat, int amount, int permanent);
-	bool res_stat(int stat);
-	bool do_dec_stat(int stat);
-	bool do_res_stat(int stat);
-	bool do_inc_stat(int stat);
-	bool restore_level(void);
-	bool lose_all_info(void);
-*/
+	bool set_blind(int v)
+	{
+		return set_blind(v);
+	}
+
+	bool set_confused(int v)
+	{
+		return set_confused(v);
+	}
+
+	bool set_poisoned(int v)
+	{
+		return set_poisoned(v);
+	}
+
+	bool set_paralyzed(int v)
+	{
+		return set_paralyzed(v);
+	}
+
+	bool set_image(int v)
+	{
+		return set_image(v);
+	}
+
+	bool set_fast(int v)
+	{
+		return set_fast(v);
+	}
+
+	bool set_slow(int v)
+	{
+		return set_slow(v);
+	}
+
+	bool set_shield(int v)
+	{
+		return set_shield(v);
+	}
+
+	bool set_blessed(int v)
+	{
+		return set_blessed(v);
+	}
+
+	bool set_hero(int v)
+	{
+		return set_hero(v);
+	}
+
+	bool set_protevil(int v)
+	{
+		return set_protevil(v);
+	}
+
+	bool set_invuln(int v)
+	{
+		return set_invuln(v);
+	}
+
+	bool set_tim_invis(int v)
+	{
+		return set_tim_invis(v);
+	}
+
+	bool set_tim_infra(int v)
+	{
+		return set_tim_infra(v);
+	}
+
+	bool set_oppose_acid(int v)
+	{
+		return set_oppose_acid(v);
+	}
+
+	bool set_oppose_elec(int v)
+	{
+		return set_oppose_elec(v);
+	}
+
+	bool set_oppose_fire(int v)
+	{
+		return set_oppose_fire(v);
+	}
+
+	bool set_oppose_cold(int v)
+	{
+		return set_oppose_cold(v);
+	}
+
+	bool set_oppose_pois(int v)
+	{
+		return set_oppose_pois(v);
+	}
+
+	bool set_stun(int v)
+	{
+		return set_stun(v);
+	}
+
+	bool set_cut(int v)
+	{
+		return set_cut(v);
+	}
+
+	bool set_food(int v)
+	{
+		return set_food(v);
+	}
+
+	bool inc_stat(int stat)
+	{
+		return inc_stat(stat);
+	}
+
+	bool dec_stat(int stat, int amount, int permanent)
+	{
+		return dec_stat(stat, amount, permanent);
+	}
+
+	bool res_stat(int stat)
+	{
+		return res_stat(stat);
+	}
+
+	bool do_dec_stat(int stat)
+	{
+		return do_dec_stat(stat);
+	}
+
+	bool do_res_stat(int stat)
+	{
+		return do_res_stat(stat);
+	}
+
+	bool do_inc_stat(int stat)
+	{
+		return do_inc_stat(stat);
+	}
+
+	bool restore_level(void)
+	{
+		return restore_level();
+	}
+
+	bool lose_all_info(void)
+	{
+		return lose_all_info();
+	}
+
 	void gain_exp(s32b amount)
 	{
 		gain_exp(amount);
 	}
-/*
-	void lose_exp(s32b amount);
-	void do_poly_self(void);
-*/
+
+	void lose_exp(s32b amount)
+	{
+		lose_exp(amount);
+	}
+
+	void do_poly_self(void)
+	{
+		do_poly_self();
+	}
 }
 
 
