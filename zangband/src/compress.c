@@ -647,12 +647,12 @@ static void arth_symbol_encode(block_handle *h_ptr, u16b *prob_table,
 		if ((bound1 & HI_BIT_16) == (bound2 & HI_BIT_16))
 		{
 			/* Output the bit */
-			write_block_bit(h_ptr, bound1 & HI_BIT_16);
+			write_block_bit(h_ptr, (u16b) (bound1 & HI_BIT_16));
 
 			/* Output the overflow bits in a run */
 			for (; run_bits > 0; run_bits--)
 			{
-				write_block_bit(h_ptr, !(bound1 & HI_BIT_16));
+				write_block_bit(h_ptr, (u16b) (!(bound1 & HI_BIT_16)));
 			}
 		}
 
@@ -776,7 +776,7 @@ static byte remove_symbol(u16b *code, u16b *prob_table, block_handle *h_ptr)
 static void flush_arith(block_handle *h_ptr)
 {
 	/* Output the second highest bit */
-	write_block_bit(h_ptr, bound1 & NEXT_BIT_16);
+	write_block_bit(h_ptr, (u16b) (bound1 & NEXT_BIT_16));
 
 	/*
 	 * Increment the number of overflow bits,
@@ -786,7 +786,7 @@ static void flush_arith(block_handle *h_ptr)
 	 */
 	for (run_bits++; run_bits > 0; run_bits--)
 	{
-		write_block_bit(h_ptr, !(bound1 & NEXT_BIT_16));
+		write_block_bit(h_ptr, (u16b) (!(bound1 & NEXT_BIT_16)));
 	}
 
 	/* Write out the final byte, if required */
@@ -824,10 +824,10 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	}
 
 	/* Write the size to the file */
-	write_block_byte(h1_ptr, size & 0xFF);
-	write_block_byte(h1_ptr, (size >> 8) & 0xFF);
-	write_block_byte(h1_ptr, (size >> 16) & 0xFF);
-	write_block_byte(h1_ptr, (size >> 24) & 0xFF);
+	write_block_byte(h1_ptr, (byte) (size & 0xFF));
+	write_block_byte(h1_ptr, (byte) ((size >> 8) & 0xFF));
+	write_block_byte(h1_ptr, (byte) ((size >> 16) & 0xFF));
+	write_block_byte(h1_ptr, (byte) ((size >> 24) & 0xFF));
 
 	/*
 	 * Init the encoder.
@@ -861,10 +861,10 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 		}
 
 		/* Encode it */
-		arth_symbol_encode(h1_ptr, prob_table, symbol);
+		arth_symbol_encode(h1_ptr, prob_table, (byte) symbol);
 
 		/* Update probability table */
-		calc_prob_mtf(symbol, prob_table);
+		calc_prob_mtf((byte) symbol, prob_table);
 	}
 }
 
@@ -1304,16 +1304,16 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	}
 
 	/* Write the size to the file */
-	write_block_byte(h2_ptr, size & 0xFF);
-	write_block_byte(h2_ptr, (size >> 8) & 0xFF);
-	write_block_byte(h2_ptr, (size >> 16) & 0xFF);
-	write_block_byte(h2_ptr, (size >> 24) & 0xFF);
+	write_block_byte(h2_ptr, (byte) (size & 0xFF));
+	write_block_byte(h2_ptr, (byte) ((size >> 8) & 0xFF));
+	write_block_byte(h2_ptr, (byte) ((size >> 16) & 0xFF));
+	write_block_byte(h2_ptr, (byte) ((size >> 24) & 0xFF));
 
 	/* Write the transformation number to the file */
-	write_block_byte(h2_ptr, transform & 0xFF);
-	write_block_byte(h2_ptr, (transform >> 8) & 0xFF);
-	write_block_byte(h2_ptr, (transform >> 16) & 0xFF);
-	write_block_byte(h2_ptr, (transform >> 24) & 0xFF);
+	write_block_byte(h2_ptr, (byte) (transform & 0xFF));
+	write_block_byte(h2_ptr, (byte) ((transform >> 8) & 0xFF));
+	write_block_byte(h2_ptr, (byte) ((transform >> 16) & 0xFF));
+	write_block_byte(h2_ptr, (byte) ((transform >> 24) & 0xFF));
 
 	string_len = size;
 
@@ -1440,7 +1440,7 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 
 		/* Get the symbol */
 		symbol = transform & 0xFF;
-		write_block_byte(h2_ptr, symbol);
+		write_block_byte(h2_ptr, (byte) symbol);
 
 		/* Get the new point in the temp array */
 		transform /= 256;
