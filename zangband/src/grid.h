@@ -16,16 +16,19 @@
 
 /* Macros */
 
-#define set_cave_feat(X,Y,Z)    (cave[(X)][(Y)].feat = (Z))
-#define set_cave_info(X,Y,Z)    (cave[(X)][(Y)].info = (Z))
+#define set_cave_feat(Y,X,F)    (cave[(Y)][(X)].feat  = (F))
+#define add_cave_info(Y,X,I)    (cave[(Y)][(X)].info |= (I))
 
-#define place_rubble(X,Y)       set_cave_feat(X,Y,FEAT_RUBBLE)
-#define place_up_stairs(X,Y)    set_cave_feat(X,Y,FEAT_LESS)
-#define place_down_stairs(X,Y)  set_cave_feat(X,Y,FEAT_MORE)
-#define place_locked_door(X,Y)  set_cave_feat(X,Y,FEAT_DOOR_HEAD+randint(7))
-#define place_secret_door(X,Y)  set_cave_feat(X,Y,FEAT_SECRET)
-#define place_inner_wall(X,Y)   set_cave_feat(X,Y,FEAT_WALL_INNER)
-#define place_outer_wall(X,Y)   set_cave_feat(X,Y,FEAT_WALL_OUTER)
+/* This should not be used */
+/*#define set_cave_info(Y,X,I)    (cave[(Y)][(X)].info  = (I))*/
+
+#define place_rubble(Y,X)       set_cave_feat(Y,X,FEAT_RUBBLE)
+#define place_up_stairs(Y,X)    set_cave_feat(Y,X,FEAT_LESS)
+#define place_down_stairs(Y,X)  set_cave_feat(Y,X,FEAT_MORE)
+#define place_locked_door(Y,X)  set_cave_feat(Y,X,FEAT_DOOR_HEAD+randint(7))
+#define place_secret_door(Y,X)  set_cave_feat(Y,X,FEAT_SECRET)
+#define place_inner_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_INNER)
+#define place_outer_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_OUTER)
 
 /* Externs */
 
@@ -46,3 +49,4 @@ extern void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2);
 
 extern void rand_dir(int *rdir, int *cdir);
 extern void build_tunnel(int row1, int col1, int row2, int col2);
+

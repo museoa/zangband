@@ -178,8 +178,8 @@ void place_floor(int x1, int x2, int y1, int y2, bool light)
 		for (x = x1 - 1; x <= x2 + 1; x++)
 		{
 			set_cave_feat(y,x,FEAT_FLOOR);
-			set_cave_info(y,x,CAVE_ROOM);
-			if (light) set_cave_info(y,x,CAVE_GLOW);
+			add_cave_info(y,x,CAVE_ROOM);
+			if (light) add_cave_info(y,x,CAVE_GLOW);
 		}
 	}	
 }
