@@ -826,10 +826,6 @@ static void borg_follow_kill(int i)
 	/* Update the grids */
 	mb_ptr->kill = 0;
 
-	/* Save the old Location */
-	kill->ox = ox;
-	kill->oy = oy;
-
 	/* Save the Location */
 	kill->x = ox + b_dx;
 	kill->y = oy + b_dy;
@@ -905,10 +901,10 @@ static int borg_new_kill(int r_idx, int y, int x)
 	kill->r_idx = r_idx;
 
 	/* Location */
-	kill->ox = kill->x = x;
-	kill->oy = kill->y = y;
+	kill->x = x;
+	kill->y = y;
 
-	mb_ptr = map_loc(kill->x, kill->y);
+	mb_ptr = map_loc(x, y);
 
 	/* Update the grids */
 	mb_ptr->kill = n;
@@ -920,15 +916,15 @@ static int borg_new_kill(int r_idx, int y, int x)
 	borg_update_kill(n);
 
 	/* Danger of this monster to its grid (used later) */
-	p = borg_danger(kill->y, kill->x, 1, FALSE);
+	p = borg_danger(y, x, 1, FALSE);
 
 	/* Note */
 	borg_note(format("# Creating a monster '%s' at (%d,%d) danger %d",
-					 (r_name + r_info[kill->r_idx].name), kill->y, kill->x, p));
+					 (r_name + r_info[kill->r_idx].name), y, x, p));
 
 #if 0
 	/* Add some regional fear (2%) due to this monster */
-	borg_fear_grid(NULL, kill->y, kill->x, p * 2 / 100, TRUE);
+	borg_fear_grid(NULL, y, x, p * 2 / 100, TRUE);
 #endif
 
 	/* Recalculate danger */
@@ -1035,10 +1031,6 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
 
 			/* Update the grids */
 			mb_ptr->kill = 0;
-
-			/* Save the old Location */
-			kill->ox = kill->x;
-			kill->oy = kill->y;
 
 			/* Save the Location */
 			kill->x = x;
@@ -2750,7 +2742,6 @@ void borg_update(void)
 
 		/* Clear flags */
 		kill->seen = FALSE;
-		kill->used = FALSE;
 
 		/* Skip recently seen monsters */
 		if (borg_t - kill->when < 2000) continue;

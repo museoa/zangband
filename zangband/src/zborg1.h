@@ -153,13 +153,12 @@ typedef struct borg_kill borg_kill;
 struct borg_kill
 {
 	s16b r_idx;	/* Race index */
+	
+	u16b next_kill;	/* Next kill in this list */
 
 	bool seen;	/* Assigned motion */
-	bool used;	/* Assigned message */
 
 	byte x, y;	/* Location */
-
-	byte ox, oy;	/* Old location */
 
 	byte speed;	/* Estimated speed */
 	byte moves;	/* Estimates moves */
