@@ -1625,7 +1625,7 @@ static void break_curse(object_type *o_ptr)
  */
 bool enchant(object_type *o_ptr, int n, int eflag)
 {
-	int     i, chance, prob;
+	int     i, chance, prob, change;
 	bool    res = FALSE;
 	bool    a = ((o_ptr->flags3 & TR3_INSTA_ART) ? TRUE : FALSE);
 	bool    force = (eflag & ENCH_FORCE);
@@ -1657,7 +1657,12 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
-				o_ptr->to_h++;
+				/* The amount you enchant varys */
+				if ((o_ptr->to_h > 7) || force) change = 1;
+				else if (o_ptr->to_h > 4) change = randint1(2);
+				else change = randint1(3);
+			
+				o_ptr->to_h += change;
 				res = TRUE;
 
 				/* only when you get it above -1 -CFT */
@@ -1675,7 +1680,12 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
-				o_ptr->to_d++;
+				/* The amount you enchant varys */
+				if ((o_ptr->to_h > 7) || force) change = 1;
+				else if (o_ptr->to_h > 4) change = randint1(2);
+				else change = randint1(3);
+				
+				o_ptr->to_d += change;
 				res = TRUE;
 
 				/* only when you get it above -1 -CFT */
@@ -1693,7 +1703,12 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
-				o_ptr->to_a++;
+				/* The amount you enchant varys */
+				if ((o_ptr->to_h > 7) || force) change = 1;
+				else if (o_ptr->to_h > 4) change = randint1(2);
+				else change = randint1(3);
+				
+				o_ptr->to_a += change;
 				res = TRUE;
 
 				/* only when you get it above -1 -CFT */
