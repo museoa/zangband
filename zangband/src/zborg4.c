@@ -1,4 +1,4 @@
-/* File: borg4.c */
+/* File: zborg4.c */
 /*  Purpose: Notice and Power code for the Borg -BEN- */
 
 #include "angband.h"
@@ -1072,7 +1072,7 @@ int borg_notice_enchant_ac(void)
 		best = l_ptr->to_a;
 	}
 
-	return (best);
+	return (b_i);
 }
 
 
