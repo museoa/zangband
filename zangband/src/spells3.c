@@ -928,7 +928,7 @@ void phlogiston(void)
 {
 	int max_flog;
 	object_type *o_ptr = &p_ptr->equipment[EQUIP_LITE];
-	cptr lite_item;
+	cptr lite_item = NULL;
 
 
 	/* It's a lamp */
