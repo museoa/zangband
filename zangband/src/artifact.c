@@ -24,10 +24,6 @@
 /* Chance of getting a 'high' immunity rather than resist (1 in 12) */
 #define HI_IM_LUCK	12
 
-/*
- * Bias luck needs to be higher than weird luck,
- * since it is usually tested several times...
- */
 #define ACTIVATION_CHANCE 3
 
 static void random_plus(object_type *o_ptr)
