@@ -940,23 +940,24 @@ void report_magics(void)
 }
 
 
+
 /*
- * Detect all traps in range
+ * Detect things on a square.
+ *
+ * The location (x,y) is passed to the tester function pointer.
+ *
+ * This is an "engine" function that does all the work, and
+ * prevents a huge amount of code duplication.
  */
-bool detect_traps(void)
+static bool detect_sq_aux(bool tester(int x, int y), cptr msg)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
-
+	
 	int x, y;
+	
 	bool detect = FALSE;
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
-	/* Have detected traps on this level */
-	p_ptr->detected = TRUE;
-
-
+	
 	/* Scan a radius MAX_DETECT circle */
 	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
 	{
@@ -965,31 +966,49 @@ bool detect_traps(void)
 			if (!in_bounds2(x, y)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-			/* Access the grid */
-			c_ptr = area(x, y);
-			pc_ptr = parea(x, y);
-
-			/* Detect traps */
-			if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
-			{
-				/* Obvious */
-				detect = TRUE;
-			}
-
-			/* Save the 'detected' status for this square */
-			pc_ptr->player |= GRID_DTCT;
+			
+			/* Detect something? */
+			if (tester(x, y)) detect = TRUE;
 		}
 	}
-
-	/* Describe */
+	
 	if (detect)
 	{
-		msgf("You sense the presence of traps!");
+		/* Describe */
+		msgf(msg);
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 	}
-
-	/* Result */
+	
 	return (detect);
+}
+
+
+/* Test for the existance of traps here */
+static bool trap_tester(int x, int y)
+{
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
+	
+	/* Save the 'detected' status for this square */
+	pc_ptr->player |= GRID_DTCT;
+
+	/* Detect traps */
+	return (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP));
+}
+
+
+/*
+ * Detect all traps in range
+ */
+bool detect_traps(void)
+{
+	/* Have detected traps on this level */
+	p_ptr->detected = TRUE;
+	
+	/* Detect them */
+	return(detect_sq_aux(trap_tester, "You sense the presence of traps!"));
 }
 
 
@@ -1035,6 +1054,35 @@ void create_closed_door(int x, int y)
 	}
 }
 
+/* Test for the existance of doors here */
+static bool door_tester(int x, int y)
+{
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
+	
+	/* Detect secret doors */
+	if (c_ptr->feat == FEAT_SECRET)
+	{
+		/* Pick a door */
+		create_closed_door(x, y);
+	}
+
+	/* Detect doors */
+	if ((c_ptr->feat == FEAT_CLOSED) || (c_ptr->feat == FEAT_OPEN) ||
+		(c_ptr->feat == FEAT_BROKEN))
+	{
+		/* Hack -- Memorize */
+		remember_grid(c_ptr, pc_ptr);
+
+		/* Redraw */
+		lite_spot(x, y);
+
+		/* Obvious */
+		return (TRUE);
+	}
+	
+	return (FALSE);
+}
 
 
 /*
@@ -1042,118 +1090,62 @@ void create_closed_door(int x, int y)
  */
 bool detect_doors(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int y, x;
-
-	bool detect = FALSE;
-
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
-	/* Scan a radius MAX_DETECT circle */
-	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
-	{
-		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
-		{
-			if (!in_boundsp(x, y)) continue;
-
-			if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-			c_ptr = area(x, y);
-			pc_ptr = parea(x, y);
-
-			/* Detect secret doors */
-			if (c_ptr->feat == FEAT_SECRET)
-			{
-				/* Pick a door */
-				create_closed_door(x, y);
-			}
-
-			/* Detect doors */
-			if ((c_ptr->feat == FEAT_CLOSED) ||
-				(c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_BROKEN))
-			{
-				/* Hack -- Memorize */
-				remember_grid(c_ptr, pc_ptr);
-
-				/* Redraw */
-				lite_spot(x, y);
-
-				/* Obvious */
-				detect = TRUE;
-			}
-		}
-	}
-
-	/* Describe */
-	if (detect)
-	{
-		msgf("You sense the presence of doors!");
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (detect);
+	return (detect_sq_aux(door_tester, "You sense the presence of doors!"));
 }
 
+
+
+/* Test for the existance of stairs here */
+static bool stair_tester(int x, int y)
+{
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
+	
+	/* Detect stairs */
+	if ((c_ptr->feat == FEAT_LESS) || (c_ptr->feat == FEAT_MORE))
+	{
+		/* Hack -- Memorize */
+		remember_grid(c_ptr, pc_ptr);
+
+		/* Redraw */
+		lite_spot(x, y);
+
+		/* Obvious */
+		return (TRUE);
+	}
+
+	return (FALSE);
+}
 
 /*
  * Detect all stairs in range
  */
 bool detect_stairs(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
+	return (detect_sq_aux(stair_tester, "You sense the presence of stairs!"));
+}
 
-	int y, x;
 
-	bool detect = FALSE;
-
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
-	/* Scan a radiuc MAX_DETECT circle */
-	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
-	{
-		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
-		{
-			if (!in_boundsp(x, y)) continue;
-
-			if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-			c_ptr = area(x, y);
-			pc_ptr = parea(x, y);
-
-			/* Detect stairs */
-			if ((c_ptr->feat == FEAT_LESS) || (c_ptr->feat == FEAT_MORE))
-			{
-				/* Hack -- Memorize */
-				remember_grid(c_ptr, pc_ptr);
-
-				/* Redraw */
-				lite_spot(x, y);
-
-				/* Obvious */
-				detect = TRUE;
-			}
-		}
-	}
-
-	/* Describe */
-	if (detect)
-	{
-		msgf("You sense the presence of stairs!");
-	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+/* Test for the existance of treasure here */
+static bool treasure_tester(int x, int y)
+{
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
 	
-	/* Result */
-	return (detect);
+	/* Magma/Quartz + Known Gold */
+	if ((c_ptr->feat == FEAT_MAGMA_K) || (c_ptr->feat == FEAT_QUARTZ_K))
+	{
+		/* Hack -- Memorize */
+		remember_grid(c_ptr, pc_ptr);
+
+		/* Redraw */
+		lite_spot(x, y);
+
+		/* Detect */
+		return (TRUE);
+	}
+
+	return (FALSE);
 }
 
 
@@ -1162,56 +1154,77 @@ bool detect_stairs(void)
  */
 bool detect_treasure(void)
 {
+	return (detect_sq_aux(treasure_tester,
+			"You sense the presence of buried treasure!"));
+}
+
+
+/*
+ * Detect objects with a given property.
+ *
+ * The object o_ptr is passed to the tester function pointer.
+ *
+ * This is an "engine" function that does all the work, and
+ * prevents a huge amount of code duplication.
+ */
+static bool detect_obj_aux(bool tester(const object_type *o_ptr), cptr msg)
+{
 	int px = p_ptr->px;
 	int py = p_ptr->py;
-
-	int y, x;
-
+	
+	int x, y, i;
+	
 	bool detect = FALSE;
-
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
-	/* Scan a radius MAX_DETECT circle */
-	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
+	
+	/* Scan objects */
+	for (i = 1; i < o_max; i++)
 	{
-		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
+		object_type *o_ptr = &o_list[i];
+
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Skip held objects */
+		if (!(o_ptr->ix || o_ptr->iy)) continue;
+
+		/* Location */
+		y = o_ptr->iy;
+		x = o_ptr->ix;
+
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
+
+		/* Detect */
+		if (tester(o_ptr))
 		{
-			if (!in_boundsp(x, y)) continue;
+			/* Detect */
+			detect = TRUE;
+			
+			/* Hack -- memorize it */
+			o_ptr->info |= OB_SEEN;
 
-			if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-			c_ptr = area(x, y);
-			pc_ptr = parea(x, y);
-
-			/* Magma/Quartz + Known Gold */
-			if ((c_ptr->feat == FEAT_MAGMA_K) || (c_ptr->feat == FEAT_QUARTZ_K))
-			{
-				/* Hack -- Memorize */
-				remember_grid(c_ptr, pc_ptr);
-
-				/* Redraw */
-				lite_spot(x, y);
-
-				/* Detect */
-				detect = TRUE;
-			}
+			/* Redraw */
+			lite_spot(x, y);
 		}
 	}
-
-	/* Describe */
+	
 	if (detect)
 	{
-		msgf("You sense the presence of buried treasure!");
+		/* Describe */
+		msgf(msg);
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 	}
 	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
 	return (detect);
 }
 
+/*  Gold item? */ 
+static bool gold_tester(const object_type *o_ptr)
+{
+	/* Detect "gold" objects */
+	return (o_ptr->tval == TV_GOLD);
+}
 
 
 /*
@@ -1219,168 +1232,35 @@ bool detect_treasure(void)
  */
 bool detect_objects_gold(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-
-	bool detect = FALSE;
-
-
-	/* Scan objects */
-	for (i = 1; i < o_max; i++)
-	{
-		object_type *o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Skip held objects */
-		if (!(o_ptr->ix || o_ptr->iy)) continue;
-
-		/* Location */
-		y = o_ptr->iy;
-		x = o_ptr->ix;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect "gold" objects */
-		if (o_ptr->tval == TV_GOLD)
-		{
-			/* Hack -- memorize it */
-			o_ptr->info |= OB_SEEN;
-
-			/* Redraw */
-			lite_spot(x, y);
-
-			/* Detect */
-			detect = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (detect)
-	{
-		msgf("You sense the presence of treasure!");
-	}
-
-	if (detect_monsters_string("$"))
-	{
-		detect = TRUE;
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (detect);
+	return (detect_obj_aux(gold_tester,
+				"You sense the presence of treasure!") ||
+			detect_monsters_string("$"));
 }
 
+/* Real nongold item? */
+static bool nongold_tester(const object_type *o_ptr)
+{
+	return (o_ptr->tval != TV_GOLD);
+}
 
 /*
  * Detect all "normal" objects in range
  */
 bool detect_objects_normal(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-
-	bool detect = FALSE;
-
-
-	/* Scan objects */
-	for (i = 1; i < o_max; i++)
-	{
-		object_type *o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Skip held objects */
-		if (!(o_ptr->ix || o_ptr->iy)) continue;
-
-		/* Location */
-		y = o_ptr->iy;
-		x = o_ptr->ix;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect "real" objects */
-		if (o_ptr->tval != TV_GOLD)
-		{
-			/* Hack -- memorize it */
-			o_ptr->info |= OB_SEEN;
-
-			/* Redraw */
-			lite_spot(x, y);
-
-			/* Detect */
-			detect = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (detect)
-	{
-		msgf("You sense the presence of objects!");
-	}
-
-	if (detect_monsters_string("!=?|"))
-	{
-		detect = TRUE;
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (detect);
+	return (detect_obj_aux(nongold_tester,
+				"You sense the presence of objects!") ||
+			detect_monsters_string("!=?|"));
 }
 
 
-/*
- * Detect all "magic" objects in range.
- *
- * This will light up all spaces with "magic" items, including artifacts,
- * ego-items, potions, scrolls, books, rods, wands, staves, amulets, rings,
- * and "enchanted" items of the "good" variety.
- *
- * It can probably be argued that this function is now too powerful.
- */
-bool detect_objects_magic(void)
+static bool magic_tester(const object_type *o_ptr)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
+	/* Examine the tval */
+	int	tv = o_ptr->tval;
 
-	int i, y, x, tv;
-
-	bool detect = FALSE;
-
-
-	/* Scan all objects */
-	for (i = 1; i < o_max; i++)
-	{
-		object_type *o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Skip held objects */
-		if (!(o_ptr->ix || o_ptr->iy)) continue;
-
-		/* Location */
-		y = o_ptr->iy;
-		x = o_ptr->ix;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Examine the tval */
-		tv = o_ptr->tval;
-
-		/* Artifacts, misc magic items, or enchanted wearables */
-		if (o_ptr->xtra_name ||
+	/* Artifacts, misc magic items, or enchanted wearables */
+	return	(o_ptr->xtra_name ||
 			(tv == TV_AMULET) ||
 			(tv == TV_RING) ||
 			(tv == TV_STAFF) ||
@@ -1395,51 +1275,49 @@ bool detect_objects_magic(void)
 			(tv == TV_DEATH_BOOK) ||
 			(tv == TV_TRUMP_BOOK) ||
 			(tv == TV_ARCANE_BOOK) ||
-			((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
-		{
-			/* Memorize the item */
-			o_ptr->info |= OB_SEEN;
+			((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)));
+}
 
-			/* Redraw */
-			lite_spot(x, y);
-
-			/* Detect */
-			detect = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (detect)
-	{
-		msgf("You sense the presence of magic objects!");
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Return result */
-	return (detect);
+/*
+ * Detect all "magic" objects in range.
+ *
+ * This will light up all spaces with "magic" items, including artifacts,
+ * ego-items, potions, scrolls, books, rods, wands, staves, amulets, rings,
+ * and "enchanted" items of the "good" variety.
+ *
+ * It can probably be argued that this function is now too powerful.
+ */
+bool detect_objects_magic(void)
+{
+	return (detect_obj_aux(magic_tester,
+			"You sense the presence of magic objects!"));
 }
 
 
 /*
- * Detect all "normal" monsters in range
+ * Detect monster with a given property.
+ *
+ * The monster m_ptr is passed to the tester function pointer,
+ * along with the pointer to the extra parameters.
+ *
+ * This is an "engine" function that does all the work, and
+ * prevents a huge amount of code duplication.
  */
-bool detect_monsters_normal(void)
+static bool detect_mon_aux(bool tester(const monster_type *m_ptr, va_list *vp), cptr msg, ...)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
-
-	int i, y, x;
-
-	bool flag = FALSE;
-
-
+	
+	int x, y, i;
+	
+	bool detect = FALSE;
+	
+	va_list vp;
+	
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -1452,11 +1330,20 @@ bool detect_monsters_normal(void)
 
 		/* Do not detect mimics */
 		if (m_ptr->smart & (SM_MIMIC)) continue;
+		
+		/* Begin the Varargs Stuff */
+		va_start(vp, msg);
 
-		/* Detect all non-invisible monsters */
-		if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
-			(p_ptr->flags3 & (TR3_SEE_INVIS)) || p_ptr->tim.invis)
+		/* Detect monsters satisfying restriction */
+		if (tester(m_ptr, &vp))
 		{
+			/* Update monster recall window */
+			if (p_ptr->monster_race_idx == m_ptr->r_idx)
+			{
+				/* Window stuff */
+				p_ptr->window |= (PW_MONSTER);
+			}
+			
 			/* Repair visibility later */
 			repair_monsters = TRUE;
 
@@ -1467,355 +1354,192 @@ bool detect_monsters_normal(void)
 			update_mon(i, FALSE);
 
 			/* Detect */
-			flag = TRUE;
+			detect = TRUE;
 		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msgf("You sense the presence of monsters!");
+		
+		/* End the Varargs Stuff */
+		va_end(vp);
 	}
 	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	if (detect)
+	{
+		/* Describe */
+		msgf(msg);
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+	}
+	
+	return (detect);
 }
 
+
+/* Normal monster? */
+static bool norm_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Ignore parameter */
+	(void) vp;
+
+	/* Do not detect mimics */
+	if (m_ptr->smart & (SM_MIMIC)) return (FALSE);
+	
+	/* Detect all non-invisible monsters */
+	if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
+		(p_ptr->flags3 & (TR3_SEE_INVIS)) || p_ptr->tim.invis) return (TRUE);
+		
+	return (FALSE);
+}
+
+
+/*
+ * Detect all "normal" monsters in range
+ */
+bool detect_monsters_normal(void)
+{
+	return (detect_mon_aux(norm_mon_tester,
+			"You sense the presence of monsters!"));
+}
+
+
+/* Invisible monster? */
+static bool invis_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Ignore parameter */
+	(void) vp;
+	
+	/* Detect invisible monsters */
+	return ((r_ptr->flags2 & RF2_INVISIBLE) ? TRUE : FALSE);
+}
 
 /*
  * Detect all "invisible" monsters in range
  */
 bool detect_monsters_invis(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-	bool flag = FALSE;
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect invisible monsters */
-		if (r_ptr->flags2 & RF2_INVISIBLE)
-		{
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msgf("You sense the presence of invisible creatures!");
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	return (detect_mon_aux(invis_mon_tester,
+			"You sense the presence of invisible creatures!"));
 }
 
 
+/* Evil monster? */
+static bool evil_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Ignore parameter */
+	(void) vp;
+	
+	/* Detect evil monsters */
+	if (r_ptr->flags2 & RF2_INVISIBLE)
+	{
+		/* Take note that they are evil */
+		r_ptr->r_flags3 |= (RF3_EVIL);
+		
+		return (TRUE);
+	}
+	
+	return (FALSE);
+}
 
 /*
  * Detect all "evil" monsters in range
  */
 bool detect_monsters_evil(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-	bool flag = FALSE;
-
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect evil monsters */
-		if (r_ptr->flags3 & RF3_EVIL)
-		{
-			/* Take note that they are evil */
-			r_ptr->r_flags3 |= (RF3_EVIL);
-
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msgf("You sense the presence of evil creatures!");
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	return (detect_mon_aux(evil_mon_tester,
+			"You sense the presence of evil creatures!"));
 }
 
+/* Nonliving monster? */
+static bool nonlive_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Ignore parameter */
+	(void) vp;
+	
+	/* Not living? */
+	return (!monster_living(r_ptr));
+}
 
 /*
  * Detect all "nonliving", "undead" or "demonic" monsters in range
  */
 bool detect_monsters_nonliving(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-	bool flag = FALSE;
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		/* Only detect monsters in range */
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect non-living monsters */
-		if (!monster_living(r_ptr))
-		{
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msgf("You sense the presence of unnatural beings!");
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	return (detect_mon_aux(nonlive_mon_tester,
+			"You sense the presence of unnatural beings!"));
 }
 
+/* Living monster? */
+static bool live_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Ignore parameter */
+	(void) vp;
+	
+	/* Not living? */
+	return (monster_living(r_ptr));
+}
 
 /*
  * Detect all "living" monsters in range
  */
 bool detect_monsters_living(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-	bool flag = FALSE;
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		/* Only detect monsters in range */
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect living monsters */
-		if (monster_living(r_ptr))
-		{
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msgf("You sense the presence of natural beings!");
-	}
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	return (detect_mon_aux(live_mon_tester,
+			"You sense the presence of natural beings!"));
 }
 
+
+/* Is a monster in the list of races? */
+static bool race_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	cptr match;
+
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Get string to compare with */
+	match = va_arg(*vp, cptr);
+	
+	/* Detect monsters with the same symbol */
+	return(strchr(match, r_ptr->d_char) ? TRUE : FALSE);
+}
 
 /*
  * Detect all (string) monsters in range
  */
 bool detect_monsters_string(cptr match)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
+	return (detect_mon_aux(race_mon_tester,
+			"You sense the presence of monsters!", match));
+}
 
-	int i, y, x;
-	bool flag = FALSE;
+/* Generic monster tester */
+static bool flag_mon_tester(const monster_type *m_ptr, va_list *vp)
+{
+	u32b flag;
 
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Get flags to compare with - note that ints may be 16bit... */
+	flag = va_arg(*vp, int);
+	flag += ((u32b) va_arg(*vp, int)) << 16;
+	
+	if (r_ptr->flags3 & (flag))
 	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect monsters with the same symbol */
-		if (strchr(match, r_ptr->d_char))
-		{
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msgf("You sense the presence of monsters!");
+		/* Take note that they are something */
+		r_ptr->r_flags3 |= (flag);
+		
+		return (TRUE);
 	}
 	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	return (FALSE);
 }
 
 
@@ -1824,79 +1548,24 @@ bool detect_monsters_string(cptr match)
  */
 bool detect_monsters_xxx(u32b match_flag)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int i, y, x;
-	bool flag = FALSE;
-	cptr desc_monsters = "weird monsters";
-
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect evil monsters */
-		if (r_ptr->flags3 & (match_flag))
-		{
-			/* Take note that they are something */
-			r_ptr->r_flags3 |= (match_flag);
-
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
+	cptr desc_monsters;
 
 	/* Describe */
-	if (flag)
+	switch (match_flag)
 	{
-		switch (match_flag)
-		{
-			case RF3_DEMON:
-				desc_monsters = "demons";
-				break;
-			case RF3_UNDEAD:
-				desc_monsters = "the undead";
-				break;
-		}
-
-		/* Describe result */
-		msgf("You sense the presence of %s!", desc_monsters);
-		message_flush();
+		case RF3_DEMON:
+			desc_monsters = "You sense the presence of demons!";
+			break;
+		case RF3_UNDEAD:
+			desc_monsters = "You sense the presence of the undead!";
+			break;
+		default:
+			desc_monsters = "You sense the presence of weird monsters!";
 	}
 	
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Result */
-	return (flag);
+	/* Result (note that ints might only be 16bit...) */
+	return (detect_mon_aux(flag_mon_tester, desc_monsters,
+						(int) (match_flag & 0xFFFF), (int) (match_flag >> 16)));
 }
 
 
