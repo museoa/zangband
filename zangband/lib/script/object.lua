@@ -590,6 +590,132 @@ function read_scroll(object)
 end
 
 
+function use_staff(object)
+	local ident = FALSE
+
+	local sval = object.sval
+
+	if sval == SV_STAFF_DARKNESS then
+		if not player.resist_blind and not player.resist_dark then
+			if set_blind(player.blind + rand_range(4, 8)) then ident = TRUE end
+		end
+		if unlite_area(10, 3) then ident = TRUE end
+	elseif sval == SV_STAFF_SLOWNESS then
+		if set_slow(player.slow + rand_range(15, 45)) then ident = TRUE end
+	elseif sval == SV_STAFF_HASTE_MONSTERS then
+		if speed_monsters() then ident = TRUE end
+	elseif sval == SV_STAFF_SUMMONING then
+		for k = 0, randint1(4) do
+			if summon_specific(0, player.py, player.px, player.depth, 0, TRUE, FALSE, FALSE) then
+				ident = TRUE
+			end
+		end
+	elseif sval == SV_STAFF_TELEPORTATION then
+		teleport_player(100)
+		ident = TRUE
+	elseif sval == SV_STAFF_IDENTIFY then
+		if not ident_spell() then use_charge = FALSE end
+		ident = TRUE
+	elseif sval == SV_STAFF_REMOVE_CURSE then
+		if remove_curse() then
+			if not player.blind then
+				msg_print("The staff glows blue for a moment...")
+			end
+			ident = TRUE
+		end
+	elseif sval == SV_STAFF_STARLITE then
+		if not player.blind then
+			msg_print("The end of the staff glows brightly...")
+		end
+		starlite()
+		ident = TRUE
+	elseif sval == SV_STAFF_LITE then
+		if lite_area(damroll(2, 8), 2) then ident = TRUE end
+	elseif sval == SV_STAFF_MAPPING then
+		map_area()
+		ident = TRUE
+	elseif sval == SV_STAFF_DETECT_GOLD then
+		if detect_treasure() then ident = TRUE end
+		if detect_objects_gold() then ident = TRUE end
+	elseif sval == SV_STAFF_DETECT_ITEM then
+		if detect_objects_normal() then ident = TRUE end
+	elseif sval == SV_STAFF_DETECT_TRAP then
+		if detect_traps() then ident = TRUE end
+	elseif sval == SV_STAFF_DETECT_DOOR then
+		if detect_doors() then ident = TRUE end
+		if detect_stairs() then ident = TRUE end
+	elseif sval == SV_STAFF_DETECT_INVIS then
+		if detect_monsters_invis() then ident = TRUE end
+	elseif sval == SV_STAFF_DETECT_EVIL then
+		if detect_monsters_evil() then ident = TRUE end
+	elseif sval == SV_STAFF_CURE_LIGHT then
+		if hp_player(50) then ident = TRUE end
+	elseif sval == SV_STAFF_CURING then
+		if hp_player(150) then ident = TRUE end
+		if set_blind(0) then ident = TRUE end
+		if set_poisoned(0) then ident = TRUE end
+		if set_confused(0) then ident = TRUE end
+		if set_stun(0) then ident = TRUE end
+		if set_cut(0) then ident = TRUE end
+		if set_image(0) then ident = TRUE end
+	elseif sval == SV_STAFF_HEALING then
+		if hp_player(300) then ident = TRUE end
+		if set_stun(0) then ident = TRUE end
+		if set_cut(0) then ident = TRUE end
+	elseif sval == SV_STAFF_THE_MAGI then
+		if do_res_stat(A_INT) then ident = TRUE end
+		if player.csp < player.msp then
+			player.csp = player.msp
+			player.csp_frac = 0
+			msg_print("Your feel your head clear.")
+			player.redraw = bOr(player.redraw, PR_MANA)
+			player.window = bOr(player.window, PW_PLAYER)
+			player.window = bOr(player.window, PW_SPELL)
+			ident = TRUE
+		end
+	elseif sval == SV_STAFF_SLEEP_MONSTERS then
+		if sleep_monsters() then ident = TRUE end
+	elseif sval == SV_STAFF_SLOW_MONSTERS then
+		if slow_monsters() then ident = TRUE end
+	elseif sval == SV_STAFF_SPEED then
+		if not player.fast then
+			if set_fast(rand_range(15, 45)) then ident = TRUE end
+		else
+			set_fast(player.fast + 5)
+		end
+	elseif sval == SV_STAFF_PROBING then
+		probing()
+		ident = TRUE
+	elseif sval == SV_STAFF_DISPEL_EVIL then
+		if dispel_evil(60) then ident = TRUE end
+	elseif sval == SV_STAFF_POWER then
+		if dispel_monsters(300) then ident = TRUE end
+	elseif sval == SV_STAFF_HOLINESS then
+		if dispel_evil(300) then ident = TRUE end
+		local k = 3 * player.lev
+		if set_protevil(player.protevil + randint1(25) + k) then ident = TRUE end
+		if set_poisoned(0) then ident = TRUE end
+		if set_afraid(0) then ident = TRUE end
+		if hp_player(50) then ident = TRUE end
+		if set_stun(0) then ident = TRUE end
+		if set_cut(0) then ident = TRUE end
+	elseif sval == SV_STAFF_GENOCIDE then
+		genocide(TRUE)
+		ident = TRUE
+	elseif sval == SV_STAFF_EARTHQUAKES then
+		if earthquake(player.py, player.px, 10) then
+			ident = TRUE
+		else
+			msg_print("The dungeon trembles.")
+		end
+	elseif sval == SV_STAFF_DESTRUCTION then
+		if destroy_area(player.py, player.px, 15) then ident = TRUE end
+	end
+
+	return ident, use_charge
+end
+
+
 function use_object_hook(object)
 	local ident = FALSE
 	local used = FALSE
@@ -600,6 +726,8 @@ function use_object_hook(object)
 		ident, used = quaff_potion(object)
 	elseif object.tval == TV_SCROLL then
 		ident, used = read_scroll(object)
+	elseif object.tval == TV_STAFF then
+		ident, used = use_staff(object)
 	end
 
 	return ident, used
