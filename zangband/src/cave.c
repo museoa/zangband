@@ -1510,7 +1510,7 @@ void display_dungeon(void)
 void lite_spot(int y, int x)
 {
 	/* Redraw if on screen */
-	if (panel_contains(y, x) && in_bounds(y, x))
+	if (panel_contains(y, x) && in_bounds2(y, x))
 	{
 		byte a;
 		char c;
