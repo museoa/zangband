@@ -3586,7 +3586,7 @@
 #define disturb_minor			p_ptr->options[24]
 #define disturb_other			p_ptr->options[25]
 #define disturb_traps			p_ptr->options[26]
-#define alert_failure			p_ptr->options[27]
+/* {TRUE,  0, NULL,					"Number 27" }, p_ptr->options[27] */
 #define last_words				p_ptr->options[28]
 #define speak_unique			p_ptr->options[29]
 #define small_levels			svr_ptr->options[0]
