@@ -2789,6 +2789,9 @@ errr file_character(cptr name, bool full)
 			buf[x] = c;
 		}
 
+		/* End the string */
+		buf[x] = '\0';
+
 		/* Kill trailing spaces */
 		while ((x > 0) && (buf[x-1] == ' ')) buf[--x] = '\0';
 
@@ -2811,6 +2814,9 @@ errr file_character(cptr name, bool full)
 			/* Dump it */
 			buf[x] = c;
 		}
+
+		/* End the string */
+		buf[x] = '\0';
 
 		/* Kill trailing spaces */
 		while ((x > 0) && (buf[x-1] == ' ')) buf[--x] = '\0';
