@@ -3060,8 +3060,8 @@ static void calc_bonuses(void)
 	/* Apply Skill -- Extract noise from stealth */
 	p_ptr->noise = (1L << (30 - p_ptr->skills[SKILL_STL]));
 
-	if ((FLAG(p_ptr, TR_NO_MAGIC)) && (p_ptr->skills[SKILL_SAV] < p_ptr->lev + 85))
-		 p_ptr->skills[SKILL_SAV] = p_ptr->lev + 85;
+	if ((FLAG(p_ptr, TR_NO_MAGIC)) && (p_ptr->skills[SKILL_SAV] < p_ptr->lev * 2 + 85))
+		 p_ptr->skills[SKILL_SAV] = p_ptr->lev * 2 + 85;
 
 	/* Assume not heavy */
 	p_ptr->state.heavy_wield = FALSE;
@@ -3745,5 +3745,5 @@ void change_stuff(void)
  */
 bool player_save(int power)
 {
-	return saving_throw(p_ptr->skills[SKILL_SAV] + p_ptr->lev - power);
+	return saving_throw(p_ptr->skills[SKILL_SAV] + power);
 }
