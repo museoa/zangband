@@ -294,17 +294,10 @@ bool borg_check_lite(void)
 	bool do_evil;
 
 
-
-	/* Never in town */
-	if (!bp_ptr->depth) return (FALSE);
-
 	/* Never when comprimised, save your mana */
 	if (bp_ptr->status.blind || bp_ptr->status.confused ||
 		bp_ptr->status.image || bp_ptr->status.poisoned ||
 		bp_ptr->status.cut || bp_ptr->status.weak) return (FALSE);
-
-	/* XXX XXX XXX Dark */
-
 
 	/* Start */
 	do_trap = FALSE;
