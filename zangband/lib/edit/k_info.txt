@@ -4759,7 +4759,7 @@ G:!:y
 I:39:3:0
 W:30:50:5:20000
 P:0:1d1:0:0:0
-F:INSTA_ART
+F:INSTA_ART | LITE
 
 N:565:& Diamond Edge~
 G:|:w
