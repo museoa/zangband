@@ -53,8 +53,8 @@ if test "$CYGWIN" = "yes"; then
   AC_DEFINE(WINDOWS, 1, [WIN32 port])
   LIBS="$LIBS -lwinmm"
   LDFLAGS="$LDFLAGS -s -mwindows -e _mainCRTStartup"
-  ANGBAND_OBJS="readdib.o angband.res"
-  AC_SUBST(ANGBAND_OBJS)
+  cygwin="y"
+  AC_SUBST(cygwin)
 else
   dnl Check for ncurses, curses, or termcap
   AC_CHECK_LIB(ncurses, initscr, [AC_DEFINE(USE_GCU, 1, [GCU port]) AC_DEFINE(USE_NCURSES, 1, [Using ncurses]) LIBS="$LIBS -lncurses"])
@@ -72,8 +72,6 @@ else
     LIBS="$LIBS -lX11"
     AC_DEFINE(USE_X11, 1, [X11 port])
     AC_DEFINE(USE_XPJ, 1, [XPJ port])
-    ANGBAND_OBJS="maid-x11.o"
-    AC_SUBST(ANGBAND_OBJS)
   fi
 
   LIBS="$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS $LIBS"

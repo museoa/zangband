@@ -24,6 +24,8 @@ datadir = @datadir@
 
 #DESTDIR = datadir
 
+cygwin = @cygwin@
+
 
 ##
 ## Default target
