@@ -12,11 +12,11 @@
 
 #include "angband.h"
 #include "util-dll.h"
+#include "tcltk.h"
 
 #ifdef PLATFORM_WIN
 #include <windows.h>
 #include <tk.h>
-#include "tcltk.h"
 
 #define ALLOW_TK_CONSOLE
 
@@ -199,7 +199,6 @@ void TclTk_Exit(Tcl_Interp *interp)
 
 #ifdef PLATFORM_X11
 #include <unistd.h>
-#include "tcltk.h"
 
 typedef struct ThreadSpecificData {
     Tcl_Interp *interp;         /* Interpreter for this thread. */

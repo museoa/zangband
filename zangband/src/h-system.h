@@ -195,6 +195,11 @@ extern errr init_vcs(int argc, char **argv);
 extern cptr help_vcs[];
 #endif
 
+#ifdef USE_TNB
+extern errr init_tnb(int argc, char **argv);
+extern cptr help_tnb[];
+#endif
+
 /*
  * Type used to access a module
  */

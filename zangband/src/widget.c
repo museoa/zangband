@@ -12,7 +12,6 @@
 
 #include "angband.h"
 #include "tnb.h"
-#include <tcl.h>
 #include "interp.h"
 #include "util-dll.h"
 #include "plat-dll.h"

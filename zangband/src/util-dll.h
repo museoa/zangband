@@ -13,8 +13,6 @@
 #ifndef _INCLUDE_UTILDLL_H_
 #define _INCLUDE_UTILDLL_H_
 
-#include <tk.h>
-
 /* Hack - prevent warnings from tk headers */
 #if defined errno
 #	undef errno

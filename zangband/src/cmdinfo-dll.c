@@ -10,8 +10,8 @@
  * included in all such copies.
  */
 
-#include <tcl.h>
 #include "angband.h"
+#include "tnb.h"
 #include "cmdinfo-dll.h"
 
 int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc,

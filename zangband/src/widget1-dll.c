@@ -14,16 +14,6 @@
 
 #include "angband.h"
 
-/* Hack - prevent warnings from tk headers */
-#if defined errno
-#	undef errno
-#	define errno errno_hack
-#endif /* errno */
-
-#define HAVE_LIMITS_H
-#define HAVE_UNISTD_H
-#define _TCLINTDECLS
-#include <tkInt.h>
 #include "util-dll.h"
 #include "plat-dll.h"
 #include "icon-dll.h"

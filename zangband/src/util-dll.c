@@ -11,7 +11,7 @@
  */
 
 #include "angband.h"
-#include <tcl.h>
+#include "tnb.h"
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
 #include "plat-dll.h"

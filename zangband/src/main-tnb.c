@@ -13,10 +13,15 @@
 #include "angband.h"
 #ifdef USE_TNB
 
-#include <tcl.h>
 #include "tnb.h"
 #include "interp.h"
 #include "tcltk.h"
+
+cptr help_tnb[] =
+{
+	"To use tk/tcl port",
+	NULL
+};
 
 #ifdef PLATFORM_WIN
 #include <windows.h>

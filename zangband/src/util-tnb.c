@@ -15,7 +15,7 @@
 #include "interp.h"
 #include "util-dll.h"
 #include <tkFont.h>
-#include "tkMenu.h"
+#include <tkMenu.h>
 /*
  * Return a "standardized" string describing a font.
  */

@@ -14,6 +14,7 @@
 #define _INCLUDE_TNB_H_
 
 #include <tk.h>
+#include <tcl.h>
 
 #if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
 #error "You must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
@@ -279,7 +280,7 @@ extern int map_symbol_feature(int f_idx);
 
 /* setting.c */
 extern void init_settings(void);
-extern void *g_setting;
+extern struct SettingGroup_ *g_setting;
 
 /* struct.c */
 extern void init_struct(void);

@@ -10,7 +10,6 @@
  * included in all such copies.
  */
 
-#include <tcl.h>
 #include "angband.h"
 #include "tnb.h"
 #include "interp.h"
