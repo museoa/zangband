@@ -581,6 +581,12 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 		
+		case BUILD_RECHARGE:
+		{
+			field = FT_BUILD_RECHARGE;
+			break;
+		}
+		
 		default:
 		{
 			/* Hack - nothing here? */
@@ -605,28 +611,68 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	int xx, yy;
 	
 	store_type *st_ptr = &town[town_num].store[store];
+	
+	bool on_screen;
 
 	/* Save location */
 	xx = x;
 	yy = y;
 	
-	if (!get_city_block_locat(&xx, &yy)) return;
-
+	/* Get coords */
+	on_screen = get_city_block_locat(&xx, &yy);
+	
 	/* What are we drawing? */
 	if (build_is_store(st_ptr->type))
 	{
-		/* Draw the store */
-		draw_store(xx + 4, yy + 4, st_ptr, x, y);
+		if (on_screen)
+		{
+			/* Draw the store */
+			draw_store(xx + 4, yy + 4, st_ptr, x, y);
+		}
+		else
+		{
+			/* 
+			 * XXX XXX XXX Hack - cycle RNG
+			 * (The RNG must be in a consistant state no matter
+			 * whether the building is on the screen or not.
+			 */
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+		}
 	}
 	else if (build_is_general(st_ptr->type))
 	{
-		/* Draw the general feature */
-		draw_general(xx + 4, yy + 4, st_ptr, x, y);
+		if (on_screen)
+		{
+			/* Draw the general feature */
+			draw_general(xx + 4, yy + 4, st_ptr, x, y);
+		}
 	}
 	else
 	{
-		/* Hack - Draw the "normal" building */
-		draw_store(xx + 4, yy + 4, st_ptr, x, y);
+		if (on_screen)
+		{
+			/* Hack - Draw the "normal" building */
+			draw_store(xx + 4, yy + 4, st_ptr, x, y);
+		}
+		else
+		{
+			/* 
+			 * XXX XXX XXX Hack - cycle RNG
+			 * (The RNG must be in a consistant state no matter
+			 * whether the building is on the screen or not.
+			 */
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+			(void) randint0(1);
+		}
 	}
 }
 

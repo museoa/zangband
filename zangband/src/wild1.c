@@ -62,7 +62,7 @@ static void place_player_start(u32b *x, u32b *y, u16b this_town)
 	
 	int count = 0;
 	
-	while (count < 1000) 
+	while (count < 10000) 
 	{
 		/* Hack - Find a place for the player */
 		i = randint1(127);
@@ -74,7 +74,7 @@ static void place_player_start(u32b *x, u32b *y, u16b this_town)
 		count++;
 	}
 	
-	if (count > 999)
+	if (count > 9999)
 	{
 		/* Try to look for an "open spot" */
 		
