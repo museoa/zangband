@@ -567,13 +567,6 @@ extern s16b my_need_enchant_to_d;	/* Need some enchantment */
 
 
 /*
- * Hack -- basic "power"
- */
-
-extern s32b my_power;
-
-
-/*
  * Various "amounts" (for the player)
  */
 

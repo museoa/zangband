@@ -247,12 +247,6 @@ s16b my_need_enchant_to_a;	/* Need some enchantment */
 s16b my_need_enchant_to_h;	/* Need some enchantment */
 s16b my_need_enchant_to_d;	/* Need some enchantment */
 
-/*
- * Hack -- basic "power"
- */
-
-s32b my_power;
-
 
 /*
  * Various "amounts" (for the player)

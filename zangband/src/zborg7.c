@@ -1478,6 +1478,7 @@ bool borg_crush_junk(void)
 	bool fix = FALSE;
 	s32b p;
 	s32b value;
+	s32b my_power = borg_power();
 
 	/* Hack -- no need */
 	if (!borg_do_crush_junk) return (FALSE);
@@ -1512,55 +1513,6 @@ bool borg_crush_junk(void)
 			/* unknown? */
 			if (!(l_ptr->info & OB_KNOWN) &&
 				!strstr(l_ptr->o_name, "{average")) continue;
-
-#if 0
-
-			/* skip items that are 'valuable'.  This is level dependent */
-			/* try to make the borg junk +1,+1 dagger at level 40 */
-
-			/* if the item gives a bonus to a stat, boost its value */
-			if ((l_ptr->flags1 & TR1_STR) ||
-				(l_ptr->flags1 & TR1_INT) ||
-				(l_ptr->flags1 & TR1_WIS) ||
-				(l_ptr->flags1 & TR1_DEX) || (l_ptr->flags1 & TR1_CON))
-			{
-				value += 2000L;
-			}
-
-			/* Get sval */
-			sval = k_info[l_ptr->k_idx].sval;
-
-			/* Keep some stuff */
-			if (((l_ptr->tval == TV_POTION &&
-				  sval == SV_POTION_RESTORE_MANA) &&
-				 (borg_skill[BI_MAXSP] >= 1)) || (l_ptr->tval == TV_POTION &&
-												  (sval ==
-												   SV_POTION_HEALING)) ||
-				(l_ptr->tval == TV_POTION &&
-				 sval == SV_POTION_STAR_HEALING) ||
-				(l_ptr->tval == TV_POTION && sval == SV_POTION_LIFE) ||
-				(l_ptr->tval == TV_POTION && sval == SV_POTION_SPEED) ||
-				(l_ptr->tval == TV_ROD && sval == SV_ROD_DRAIN_LIFE) ||
-				(l_ptr->tval == TV_ROD &&
-				 (sval == SV_ROD_HEALING || sval == SV_ROD_MAPPING)
-				 && borg_class == CLASS_WARRIOR) || (l_ptr->tval == TV_STAFF &&
-													 sval ==
-													 SV_STAFF_DISPEL_EVIL) ||
-				(l_ptr->tval == TV_STAFF && sval == SV_STAFF_POWER) ||
-				(l_ptr->tval == TV_STAFF && sval == SV_STAFF_HOLINESS) ||
-				(l_ptr->tval == TV_WAND && sval == SV_WAND_DRAIN_LIFE) ||
-				(l_ptr->tval == TV_WAND && sval == SV_WAND_ANNIHILATION) ||
-				(l_ptr->tval == TV_SCROLL &&
-				 sval == SV_SCROLL_TELEPORT_LEVEL &&
-				 borg_skill[BI_ATELEPORTLVL] < 1000) ||
-				(l_ptr->tval == TV_SCROLL &&
-				 sval == SV_SCROLL_PROTECTION_FROM_EVIL))
-			{
-				value += 5000L;
-			}
-
-
-#endif /* 0 */
 
 			/* Pretend item isn't there */
 			l_ptr->treat_as = TREAT_AS_SWAP;
@@ -1885,7 +1837,7 @@ bool borg_crush_slow(void)
 	if (fix) borg_notice();
 
 	/* Destroy "useless" things */
-	if ((b_i >= 0) && (b_p >= (my_power)))
+	if ((b_i >= 0) && (b_p >= borg_power()))
 	{
 		list_item *l_ptr = &inventory[b_i];
 
@@ -2247,7 +2199,7 @@ static bool borg_wear_rings(void)
 {
 	int slot;
 
-	s32b p, b_p = my_power;
+	s32b p, b_p = borg_power();
 
 	int i, b_i = -1;
 
@@ -2329,7 +2281,7 @@ static bool borg_wear_rings(void)
 	if (fix) borg_notice();
 
 	/* No item */
-	if ((b_i >= 0) && (b_p > my_power))
+	if ((b_i >= 0) && (b_p > borg_power()))
 	{
 		/* Get the item */
 		l_ptr = &inventory[b_i];
@@ -2568,14 +2520,14 @@ bool borg_wear_stuff(void)
 	if (fix) borg_notice();
 
 	/* No item */
-	if ((b_i >= 0) && (b_p > my_power))
+	if ((b_i >= 0) && (b_p > borg_power()))
 	{
 		/* Get the item */
 		l_ptr = &inventory[b_i];
 
 		/* Log */
-		borg_note(format("# Wearing %s.  Old Power (%ld) New Power (%ld)",
-						 l_ptr->o_name, my_power, b_p));
+		borg_note(format("# Wearing %s. New Power (%ld)",
+						 l_ptr->o_name, b_p));
 
 		/* Wear it */
 		borg_keypress('w');
@@ -2757,7 +2709,7 @@ bool borg_best_stuff(void)
 #endif
 
 	/* Evaluate the inventory */
-	value = my_power;
+	value = borg_power();
 
 	/* Determine the best possible equipment */
 	(void)borg_best_stuff_aux(0, test, best, &value);

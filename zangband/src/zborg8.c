@@ -427,11 +427,8 @@ static bool borg_think_home_sell_aux(void)
  *
  * XXX XXX XXX Consider use of "icky" test on items
  */
-static bool borg_good_sell(list_item *l_ptr, int who)
+static bool borg_good_sell(list_item *l_ptr)
 {
-	/* Ignore store parameter - stores do not work properly yet. */
-	(void)who;
-
 	/* Never sell worthless items */
 	if (l_ptr->cost <= 0) return (FALSE);
 
@@ -495,18 +492,8 @@ static bool borg_good_sell(list_item *l_ptr, int who)
 		return (FALSE);
 	}
 
-
-
-#if 0
-	/* Switch on the store */
-	switch (who + 1)
-	{
-			/* Empty */
-	}
-#endif /* 0 */
-
-	/* Assume not */
-	return (FALSE);
+	/* Assume we can */
+	return (TRUE);
 }
 
 
@@ -516,8 +503,6 @@ static bool borg_good_sell(list_item *l_ptr, int who)
  */
 static bool borg_think_shop_sell_aux(void)
 {
-	int icky = STORE_INVEN_MAX - 1;
-
 	int k, b_k = -1;
 	int i, b_i = -1;
 	s32b p, b_p = 0L;
@@ -526,32 +511,24 @@ static bool borg_think_shop_sell_aux(void)
 
 	bool fix = FALSE;
 
-
 	/* Evaluate */
-	b_p = my_power;
-
+	b_p = borg_power();
+	
 	/* Check each shop */
 	for (k = 0; k < (track_shop_num); k++)
 	{
-		/* Hack -- Skip "full" shops */
-		if (borg_shops[k].ware[icky].iqty) continue;
-
+		
 #if 0
 		/* skip the home */
 		if (k == BORG_HOME) continue;
 #endif
-
-		/* Save the store hole */
-		COPY(&safe_shops[k].ware[icky], &borg_shops[k].ware[icky], borg_item);
-
-
 		/* Sell stuff */
 		for (i = 0; i < inven_num; i++)
 		{
 			list_item *l_ptr = &inventory[i];
 
 			/* Skip "bad" sales */
-			if (!borg_good_sell(l_ptr, k)) continue;
+			if (!borg_good_sell(l_ptr)) continue;
 
 			/* Give the item to the shop */
 			if (l_ptr->number == 1)
@@ -562,16 +539,6 @@ static bool borg_think_shop_sell_aux(void)
 			{
 				l_ptr->treat_as = TREAT_AS_LESS;
 			}
-#if 0
-			/* Give the item to the shop */
-			COPY(&borg_shops[k].ware[icky], &safe_items[i], borg_item);
-
-			/* get the quantity */
-			qty = 1;
-
-			/* Give a single item */
-			borg_shops[k].ware[icky].iqty = qty;
-#endif /* 0 */
 
 			/* Fix later */
 			fix = TRUE;
@@ -604,10 +571,6 @@ static bool borg_think_shop_sell_aux(void)
 			b_p = p;
 			b_c = c;
 		}
-#if 0
-		/* Restore the store hole */
-		COPY(&borg_shops[k].ware[icky], &safe_shops[k].ware[icky], borg_item);
-#endif /* 0 */
 	}
 
 	/* Examine the inventory */
@@ -650,7 +613,7 @@ static bool borg_think_shop_buy_aux(void)
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
 
 	/* Extract the "power" */
-	b_p = my_power;
+	b_p = borg_power();
 
 	/* Check the shops */
 	for (k = 0; k < (track_shop_num); k++)
@@ -828,7 +791,7 @@ static bool borg_think_home_buy_aux(void)
 
 
 	/* Extract the "power" */
-	b_p = my_power;
+	b_p = borg_power();
 
 	/* Scan the home */
 	for (n = 0; n < STORE_INVEN_MAX; n++)
@@ -934,7 +897,7 @@ static bool borg_think_home_buy_aux(void)
 
 			}
 
-			else				/* non rings */
+			else
 			{
 
 				/* do not consider if my current item is cursed */
@@ -964,8 +927,8 @@ static bool borg_think_home_buy_aux(void)
 
 				/* Restore old item */
 				COPY(&borg_items[slot], &safe_items[slot], borg_item);
-			}					/* non rings */
-		}						/* equip */
+			}
+		}
 
 		/* Consider new inventory */
 		else
@@ -1005,7 +968,7 @@ static bool borg_think_home_buy_aux(void)
 	if (fix) borg_notice();
 
 	/* Buy something */
-	if ((b_n >= 0) && (b_p > my_power))
+	if ((b_n >= 0) && (b_p > borg_power()))
 	{
 		/* Go to the home */
 		goal_shop = BORG_HOME;

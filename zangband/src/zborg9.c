@@ -494,9 +494,6 @@ static bool borg_think(void)
 		/* Examine the inventory */
 		borg_notice();
 
-		/* Evaluate the current world */
-		my_power = borg_power();
-
 		/* Hack -- allow user abort */
 		if (borg_cancel) return (TRUE);
 
@@ -547,9 +544,6 @@ static bool borg_think(void)
 
 	/* Extract some "hidden" variables */
 	borg_hidden();
-
-	/* Evaluate the current world */
-	my_power = borg_power();
 
 	/* Hack -- allow user abort */
 	if (borg_cancel) return (TRUE);
