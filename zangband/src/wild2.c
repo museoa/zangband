@@ -653,6 +653,8 @@ void draw_city(u16b town_num)
 
 	bool city_block;
 
+	town_type *t_ptr = &town[town_num];
+
 	/* Place transparent area */
 	for (j = 0; j < MAX_HGT; j++)
 	{
@@ -808,6 +810,18 @@ void draw_city(u16b town_num)
 					{
 						generate_fill(y + 3, x + 3, y + 7, x + 4,
 							FEAT_PERM_SOLID);
+					}
+					
+					/* Draw gates if visible */
+					for (k = 0; k < MAX_GATES; k++)
+					{
+						if ((t_ptr->gates_x[k] == i) &&
+							 (t_ptr->gates_y[k] == j))
+						{
+							/* Draw an empty square */
+							generate_fill(y + 3, x + 3, y + 4, x + 4, 
+								FEAT_FLOOR);
+						}
 					}
 				}
 			}

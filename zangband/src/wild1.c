@@ -156,11 +156,14 @@ static bool create_city(int x, int y, int town_num)
 	int count = 0;	
 	int build_num = 0;
 	u16b building;
+	byte gate_value[MAX_GATES];
+	byte gate_num[MAX_GATES];
 
 	bool city_block;
 	u32b rng_seed_save;
 
 	wild_gen2_type *w_ptr;
+	town_type *t_ptr = &town[town_num];
 
 	u16b build[MAX_CITY_BUILD];
 	u16b build_list[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
@@ -170,20 +173,20 @@ static bool create_city(int x, int y, int town_num)
 	(void) C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
 	
 	/* Add town */
-	strcpy(town[town_num].name, "town");
-	town[town_num].seed = randint0(0x10000000);
+	strcpy(t_ptr->name, "town");
+	t_ptr->seed = randint0(0x10000000);
 	
-	town[town_num].type = 2;
-	town[town_num].x = x;
-	town[town_num].y = y;
+	t_ptr->type = 2;
+	t_ptr->x = x;
+	t_ptr->y = y;
 
-	town[town_num].pop = pop;
+	t_ptr->pop = pop;
 	
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = town[town_num].seed;
+	Rand_value = t_ptr->seed;
 	
 	/* We don't have to save this in the town structure */
 	magic = randint0(256);
@@ -305,12 +308,30 @@ static bool create_city(int x, int y, int town_num)
 		}
 	}
 	
-
-	/* Link wilderness to the new city */
+	/* Clear the gates locations */
+	(void) C_WIPE(t_ptr->gates_x, MAX_GATES, byte);
+	(void) C_WIPE(t_ptr->gates_y, MAX_GATES, byte);	
+	(void) C_WIPE(gate_num, MAX_GATES, byte);
+	
+	
+	/* Initialise min and max values */
+	gate_value[0] = 0;
+	gate_value[1] = 255;
+	gate_value[2] = 0;
+	gate_value[3] = 255;
+	
+	/* Hack - save seed of rng */
+	rng_seed_save = Rand_value;
+	
+	/*
+	 * Link wilderness to the new city
+	 * and find position of town gates.
+	 */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
+			/* Is it a city block? */
 			if (town_block[j][i])
 			{
 				w_ptr =	&wild[y + j / 2][x + i / 2].trans;
@@ -323,12 +344,85 @@ static bool create_city(int x, int y, int town_num)
 				
 				/* Hack - make a flat area around the town */
 				w_ptr->info |= WILD_INFO_ROAD;
+				
+				/* Right gate */
+				if (gate_value[0] < i)
+				{
+					/* save it */
+					gate_value[0] = i;
+					gate_num[0] = 2;
+					t_ptr->gates_x[0] = i;
+					t_ptr->gates_y[0] = j;
+				}
+				else if ((gate_value[0] == i) && (randint0(gate_num[0]) == 0))
+				{
+					/* save it */
+					gate_value[0] = i;
+					gate_num[0]++;
+					t_ptr->gates_x[0] = i;
+					t_ptr->gates_y[0] = j;
+				}
+				
+				/* Left gate */
+				if (gate_value[1] > i)
+				{
+					/* save it */
+					gate_value[1] = i;
+					gate_num[1] = 2;
+					t_ptr->gates_x[1] = i;
+					t_ptr->gates_y[1] = j;
+				}
+				else if ((gate_value[1] == i) && (randint0(gate_num[1]) == 0))
+				{
+					/* save it */
+					gate_value[1] = i;
+					gate_num[1]++;
+					t_ptr->gates_x[1] = i;
+					t_ptr->gates_y[1] = j;
+				}
+				
+				/* Bottom gate */
+				if (gate_value[2] < j)
+				{
+					/* save it */
+					gate_value[2] = j;
+					gate_num[2] = 2;
+					t_ptr->gates_x[2] = i;
+					t_ptr->gates_y[2] = j;
+				}
+				else if ((gate_value[2] == j) && (randint0(gate_num[2]) == 0))
+				{
+					/* save it */
+					gate_value[2] = j;
+					gate_num[2]++;
+					t_ptr->gates_x[2] = i;
+					t_ptr->gates_y[2] = j;
+				}
+				
+				/* Top gate */
+				if (gate_value[3] > j)
+				{
+					/* save it */
+					gate_value[3] = j;
+					gate_num[3] = 2;
+					t_ptr->gates_x[3] = i;
+					t_ptr->gates_y[3] = j;
+				}
+				else if ((gate_value[3] == j) && (randint0(gate_num[3]) == 0))
+				{
+					/* save it */
+					gate_value[3] = j;
+					gate_num[3]++;
+					t_ptr->gates_x[3] = i;
+					t_ptr->gates_y[3] = j;
+				}
 			}
 		}
 	}
+		
+	/* Restore the old seed */
+	Rand_value = rng_seed_save;
 	
-	/* Store location of gates */
-
 	/* Scan blocks in a random order */
 	while(count)
 	{
@@ -383,8 +477,8 @@ static bool create_city(int x, int y, int town_num)
 	 */
 	
 	/* Allocate the stores */
-	C_MAKE(town[town_count].store, build_num, store_type);
-	town[town_num].numstores = build_num;
+	C_MAKE(t_ptr->store, build_num, store_type);
+	t_ptr->numstores = build_num;
 
 	/* Initialise the stores */
 	for (i = 0; i < build_num; i++)

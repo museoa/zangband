@@ -46,6 +46,7 @@
 /* Maximum number of "building" types in a city */
 #define MAX_CITY_BUILD			12
 
+
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
 
 /* This will be removed later. */

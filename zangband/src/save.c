@@ -1619,6 +1619,17 @@ static bool wr_savefile_new(void)
 		/* Type */
 		wr_u16b(town[i].type);
 		wr_byte(town[i].pop);
+		
+		/* Gates */
+		wr_byte(town[i].gates_x[0]);
+		wr_byte(town[i].gates_x[1]);
+		wr_byte(town[i].gates_x[2]);
+		wr_byte(town[i].gates_x[3]);
+		
+		wr_byte(town[i].gates_y[0]);
+		wr_byte(town[i].gates_y[1]);
+		wr_byte(town[i].gates_y[2]);
+		wr_byte(town[i].gates_y[3]);
 
 		/* Location */
 		wr_byte(town[i].x);

@@ -33,7 +33,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 22
+#define SAVEFILE_VERSION 23
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -108,6 +108,11 @@
 
 #define QUEST_OBERON         8
 #define QUEST_SERPENT        9
+
+
+
+/* Number of gates in the city */
+#define MAX_GATES				4
 
 
 /* The store types */

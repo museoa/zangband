@@ -1684,6 +1684,9 @@ struct town_type
 	byte		y;
 	
 	byte		pop;		/* population density (from wilderness) */
+	
+	byte		gates_x[MAX_GATES];	/* Position of the town gates */
+	byte		gates_y[MAX_GATES];
 };
 
 /* Dungeons */

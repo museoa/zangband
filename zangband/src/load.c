@@ -1915,7 +1915,7 @@ static void load_wild_data(void)
 }
 
 /* The version when the format of the wilderness last changed */
-#define VERSION_CHANGE_WILD		22
+#define VERSION_CHANGE_WILD		23
 
 
 /*
@@ -3052,6 +3052,20 @@ static errr rd_savefile_new_aux(void)
 			if (sf_version > 21)
 			{
 				rd_byte(&town[i].pop);
+			}
+
+			/* Gates */
+			if (sf_version > 22)
+			{
+				rd_byte(&town[i].gates_x[0]);
+				rd_byte(&town[i].gates_x[1]);
+				rd_byte(&town[i].gates_x[2]);
+				rd_byte(&town[i].gates_x[3]);
+				
+				rd_byte(&town[i].gates_y[0]);
+				rd_byte(&town[i].gates_y[1]);
+				rd_byte(&town[i].gates_y[2]);
+				rd_byte(&town[i].gates_y[3]);
 			}
 
 			/* Locatation */
