@@ -100,6 +100,19 @@ end
 
 
 --
+--	Attempt to disarm a trap
+--
+function trap_disarm(level)
+	power = power - level
+	
+	-- Always have a small chance of success
+	if (power < 2) then power = 2 end
+	
+	-- Delete the trap if successful
+	if (randint0(100) < power) then deleteme() end
+end
+
+--
 --	Traps interact with magic
 --
 function trap_gf()
