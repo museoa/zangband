@@ -130,7 +130,6 @@
 /*
  * Object information
  */
-
 typedef struct borg_take borg_take;
 
 struct borg_take
@@ -148,7 +147,6 @@ struct borg_take
 /*
  * Monster information
  */
-
 typedef struct borg_kill borg_kill;
 
 struct borg_kill
@@ -173,7 +171,6 @@ struct borg_kill
 /*
  * A store
  */
-
 typedef struct borg_shop borg_shop;
 
 struct borg_shop
@@ -209,25 +206,23 @@ extern int *borg_skill;
 extern int size_obj;
 
 
+/*
+ * Borg-player information
+ */
+typedef struct borg_player borg_player;
 
-#define BI_STR		0
-#define BI_INT		1
-#define BI_WIS		2
-#define BI_DEX		3
-#define BI_CON		4
-#define BI_CHR		5
-#define BI_CSTR		6
-#define BI_CINT		7
-#define BI_CWIS		8
-#define BI_CDEX		9
-#define BI_CCON		10
-#define BI_CCHR		11
-#define BI_SSTR		12
-#define BI_SINT		13
-#define BI_SWIS		14
-#define BI_SDEX		15
-#define BI_SCON		16
-#define BI_SCHR		17
+struct borg_player
+{
+	/* sustains */
+	bool sust[A_MAX];
+
+	int intmana;
+	int wismana;
+};
+
+extern borg_player *bp_ptr;
+
+
 #define BI_INTMANA	18
 #define BI_WISMANA	19
 #define BI_LITE		20

@@ -328,7 +328,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				if (borg_skill[BI_SSTR]) break;
+				if (bp_ptr->sust[A_STR]) break;
 				if (borg_stat[A_STR] <= 3) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
@@ -346,7 +346,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				if (borg_skill[BI_SDEX]) break;
+				if (bp_ptr->sust[A_DEX]) break;
 				if (borg_stat[A_DEX] <= 3) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
@@ -364,7 +364,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				if (borg_skill[BI_SCON]) break;
+				if (bp_ptr->sust[A_CON]) break;
 				if (borg_stat[A_CON] <= 3) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				if (!borg_full_damage)
@@ -383,7 +383,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				if (borg_skill[BI_SINT]) break;
+				if (bp_ptr->sust[A_INT]) break;
 				if (borg_stat[A_INT] <= 3) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
@@ -401,7 +401,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				if (borg_skill[BI_SWIS]) break;
+				if (bp_ptr->sust[A_WIS]) break;
 				if (borg_stat[A_WIS] <= 3) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
@@ -419,7 +419,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				if (borg_skill[BI_SCHR]) break;
+				if (bp_ptr->sust[A_CHR]) break;
 				if (borg_stat[A_CHR] <= 3) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 50;
@@ -534,7 +534,7 @@ static int borg_danger_aux1(int r_idx)
 					z = 0;
 				if (!borg_skill[BI_RPOIS] && !my_oppose_pois) z += 50;
 				/* there is a 10% chance to suffer CON loss */
-				if (!borg_skill[BI_SCON]) z += 50;
+				if (!bp_ptr->sust[A_CON]) z += 50;
 				if (!borg_full_damage)
 					z += 50;
 				if ((pfe) && !borg_attacking)
@@ -3331,16 +3331,16 @@ static s32b borg_power_aux3(void)
 	if (borg_skill[BI_REFLECT]) value += 2000L;
 
 	/* Sustain flags */
-	if (borg_skill[BI_SSTR]) value += 50L;
-	if (borg_skill[BI_SINT]) value += 50L;
-	if (borg_skill[BI_SWIS]) value += 50L;
-	if (borg_skill[BI_SCON]) value += 50L;
-	if (borg_skill[BI_SDEX]) value += 50L;
+	if (bp_ptr->sust[A_STR]) value += 50L;
+	if (bp_ptr->sust[A_INT]) value += 50L;
+	if (bp_ptr->sust[A_WIS]) value += 50L;
+	if (bp_ptr->sust[A_CON]) value += 50L;
+	if (bp_ptr->sust[A_DEX]) value += 50L;
 	/* boost for getting them all */
-	if (borg_skill[BI_SSTR] &&
-		borg_skill[BI_SINT] &&
-		borg_skill[BI_SWIS] &&
-		borg_skill[BI_SDEX] && borg_skill[BI_SCON]) value += 1000L;
+	if (bp_ptr->sust[A_STR] &&
+		bp_ptr->sust[A_INT] &&
+		bp_ptr->sust[A_WIS] &&
+		bp_ptr->sust[A_DEX] && bp_ptr->sust[A_CON]) value += 1000L;
 
 
 	/*** XXX XXX XXX Reward "necessary" flags ***/

@@ -3042,32 +3042,32 @@ void borg_status(void)
 			/* Sustains */
 			Term_putstr(19, 0, -1, TERM_WHITE, "Sustains");
 
-			if (borg_skill[BI_SSTR]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_STR]) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(21, 1, -1, attr, "STR");
 
-			if (borg_skill[BI_SINT]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_INT]) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(21, 2, -1, attr, "INT");
 
-			if (borg_skill[BI_SWIS]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_WIS]) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(21, 3, -1, attr, "WIS");
 
-			if (borg_skill[BI_SDEX]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_DEX]) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(21, 4, -1, attr, "DEX");
 
-			if (borg_skill[BI_SCON]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_CON]) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(21, 5, -1, attr, "CON");
 
-			if (borg_skill[BI_SCHR]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_CHR]) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(21, 6, -1, attr, "CHR");

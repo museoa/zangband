@@ -390,12 +390,12 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_REFLECT)) borg_skill[BI_REFLECT] = TRUE;
 
 	/* Sustain flags */
-	if (f2 & (TR2_SUST_STR)) borg_skill[BI_SSTR] = TRUE;
-	if (f2 & (TR2_SUST_INT)) borg_skill[BI_SINT] = TRUE;
-	if (f2 & (TR2_SUST_WIS)) borg_skill[BI_SWIS] = TRUE;
-	if (f2 & (TR2_SUST_DEX)) borg_skill[BI_SDEX] = TRUE;
-	if (f2 & (TR2_SUST_CON)) borg_skill[BI_SCON] = TRUE;
-	if (f2 & (TR2_SUST_CHR)) borg_skill[BI_SCHR] = TRUE;
+	if (f2 & (TR2_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
+	if (f2 & (TR2_SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
+	if (f2 & (TR2_SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
+	if (f2 & (TR2_SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
+	if (f2 & (TR2_SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
+	if (f2 & (TR2_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
 
 	/* Hack -- Reward High Level Warriors with Res Fear */
 	if (borg_class == CLASS_WARRIOR)
@@ -620,12 +620,12 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (l_ptr->kn_flags2 & TR2_RES_FEAR) borg_skill[BI_RFEAR] = TRUE;
 
 		/* Sustain flags */
-		if (l_ptr->kn_flags2 & TR2_SUST_STR) borg_skill[BI_SSTR] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_INT) borg_skill[BI_SINT] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_WIS) borg_skill[BI_SWIS] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_DEX) borg_skill[BI_SDEX] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_CON) borg_skill[BI_SCON] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_CHR) borg_skill[BI_SCHR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_STR) bp_ptr->sust[A_STR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_INT) bp_ptr->sust[A_INT] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_WIS) bp_ptr->sust[A_WIS] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_DEX) bp_ptr->sust[A_DEX] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_CON) bp_ptr->sust[A_CON] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_CHR) bp_ptr->sust[A_CHR] = TRUE;
 
 		/* Modify the base armor class */
 		borg_skill[BI_ARMOR] += l_ptr->ac;
@@ -687,8 +687,6 @@ static void borg_notice_stats(void)
 			my_stat_ind[i] = 37;
 		else
 			my_stat_ind[i] = p_ptr->stat_ind[i];
-		borg_skill[BI_STR + i] = my_stat_ind[i];
-		borg_skill[BI_CSTR + i] = borg_stat[i];
 	}
 
 
@@ -794,7 +792,7 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 			case SV_LONG_BOW:
 			{
 				my_ammo_tval = TV_ARROW;
-				if (borg_skill[BI_CSTR] >= 16)
+				if (borg_stat[A_STR] >= 16)
 				{
 					if (extra_might)
 					{
@@ -3345,14 +3343,14 @@ static void borg_notice_home_spells(void)
 static void borg_notice_home_player(void)
 {
 	u32b f1, f2, f3;
+	
+	int i;
 
 	/* Hack -- No need for stat repair */
-	if (borg_skill[BI_SSTR]) num_fix_stat[A_STR] += 1000;
-	if (borg_skill[BI_SINT]) num_fix_stat[A_INT] += 1000;
-	if (borg_skill[BI_SWIS]) num_fix_stat[A_WIS] += 1000;
-	if (borg_skill[BI_SDEX]) num_fix_stat[A_DEX] += 1000;
-	if (borg_skill[BI_SCON]) num_fix_stat[A_CON] += 1000;
-	if (borg_skill[BI_SCHR]) num_fix_stat[A_CHR] += 1000;
+	for (i = 0; i < A_MAX; i++)
+	{
+		if (bp_ptr->sust[i]) num_fix_stat[i] += 1000;
+	}
 
 	/* Extract the player flags */
 	player_flags(&f1, &f2, &f3);

@@ -58,6 +58,8 @@ int *borg_skill;
 int size_class;
 int size_obj;
 
+borg_player *bp_ptr;
+
 /*
  * Some variables
  */
@@ -1113,9 +1115,8 @@ void borg_update_frame(void)
 	{
 		borg_skill[BI_ISFIXSTR + i] =
 			p_ptr->stat_cur[A_STR + i] < p_ptr->stat_max[A_STR + i];
-		borg_skill[BI_CSTR + i] = p_ptr->stat_cur[A_STR + i];
-		borg_stat[i] = p_ptr->stat_cur[i];
 
+		borg_stat[i] = p_ptr->stat_cur[i];
 	}
 
 	/* Hack -- Access max depth */
@@ -1220,6 +1221,9 @@ void borg_init_1(void)
 
 	/* Array of monsters */
 	C_MAKE(borg_kills, BORG_KILLS_MAX, borg_kill);
+	
+	/* Struct for the player information */
+	MAKE(bp_ptr, borg_player);
 }
 
 

@@ -13244,7 +13244,7 @@ bool borg_flow_kill_corridor(bool viewable)
 	if (borg_kills_summoner == -1) return (FALSE);
 
 	/* Do not dig when weak. It takes too long */
-	if (borg_skill[BI_STR] < 17) return (FALSE);
+	if (my_stat_ind[A_STR] < 17) return (FALSE);
 
 	/* Do not dig when confused */
 	if (borg_skill[BI_ISCONFUSED]) return (FALSE);
