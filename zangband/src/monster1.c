@@ -1751,3 +1751,82 @@ bool monster_living(const monster_race *r_ptr)
 		return TRUE;
 }
 
+/*
+ * Shimmer monsters
+ */
+void change_shimmer(void)
+{
+	int i;
+	
+	monster_type *m_ptr;
+	monster_race *r_ptr;
+
+	/* Shimmer multi-hued monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		/* Access monster */
+		m_ptr = &m_list[i];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Access the monster race */
+		r_ptr = &r_info[m_ptr->r_idx];
+
+		/* Skip non-multi-hued monsters */
+		if (!FLAG(r_ptr, RF_ATTR_MULTI)) continue;
+
+		/* Reset the shimmer flag */
+		p_ptr->change |= PC_SHIMMER;
+
+		/* Redraw regardless */
+		lite_spot(m_ptr->fx, m_ptr->fy);
+	}
+}
+
+/*
+ * Repair monsters after detection.
+ */
+void change_repair(void)
+{
+	int i;
+
+	monster_type *m_ptr;
+	
+	/* Rotate detection flags */
+	for (i = 1; i < m_max; i++)
+	{
+		/* Access monster */
+		m_ptr = &m_list[i];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Nice monsters get mean */
+		m_ptr->mflag &= ~(MFLAG_NICE);
+
+		/* Handle memorized monsters */
+		if (m_ptr->mflag & MFLAG_MARK)
+		{
+			/* Maintain detection */
+			if (m_ptr->mflag & MFLAG_SHOW)
+			{
+				/* Forget flag */
+				m_ptr->mflag &= ~(MFLAG_SHOW);
+
+				/* Still need repairs */
+				p_ptr->change |= (PC_REPAIR);
+			}
+
+			/* Remove detection */
+			else
+			{
+				/* Forget flag */
+				m_ptr->mflag &= ~(MFLAG_MARK);
+
+				/* Update the monster */
+				update_mon(i, FALSE);
+			}
+		}
+	}
+}

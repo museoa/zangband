@@ -90,10 +90,6 @@ bool use_transparency = FALSE;	/* Use transparent tiles */
 
 s16b signal_count;	/* Hack -- Count interupts */
 
-bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
-
-bool repair_monsters;	/* Hack -- optimize detect monsters */
-
 /* Is this needed? */
 bool hack_mutation;
 

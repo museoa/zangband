@@ -1344,7 +1344,7 @@ static bool detect_mon_aux(bool tester(const monster_type *m_ptr, vptr data), cp
 			}
 			
 			/* Repair visibility later */
-			repair_monsters = TRUE;
+			p_ptr->change |= (PC_REPAIR);
 
 			/* Hack -- Detect monster */
 			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);

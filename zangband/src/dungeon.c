@@ -2594,8 +2594,6 @@ static void process_command(void)
  */
 static void process_player(void)
 {
-	int i;
-
 	if (hack_mutation)
 	{
 		msgf("You feel different!");
@@ -2794,86 +2792,6 @@ static void process_player(void)
 
 			/* Hack -- constant hallucination */
 			if (p_ptr->tim.image) p_ptr->redraw |= (PR_MAP);
-
-
-			/* Shimmer monsters if needed */
-			if (shimmer_monsters)
-			{
-				/* Clear the flag */
-				shimmer_monsters = FALSE;
-
-				/* Shimmer multi-hued monsters */
-				for (i = 1; i < m_max; i++)
-				{
-					monster_type *m_ptr;
-					monster_race *r_ptr;
-
-					/* Access monster */
-					m_ptr = &m_list[i];
-
-					/* Skip dead monsters */
-					if (!m_ptr->r_idx) continue;
-
-					/* Access the monster race */
-					r_ptr = &r_info[m_ptr->r_idx];
-
-					/* Skip non-multi-hued monsters */
-					if (!FLAG(r_ptr, RF_ATTR_MULTI)) continue;
-
-					/* Reset the flag */
-					shimmer_monsters = TRUE;
-
-					/* Redraw regardless */
-					lite_spot(m_ptr->fx, m_ptr->fy);
-				}
-			}
-
-
-			/* Handle monster detection */
-			if (repair_monsters)
-			{
-				/* Reset the flag */
-				repair_monsters = FALSE;
-
-				/* Rotate detection flags */
-				for (i = 1; i < m_max; i++)
-				{
-					monster_type *m_ptr;
-
-					/* Access monster */
-					m_ptr = &m_list[i];
-
-					/* Skip dead monsters */
-					if (!m_ptr->r_idx) continue;
-
-					/* Nice monsters get mean */
-					m_ptr->mflag &= ~(MFLAG_NICE);
-
-					/* Handle memorized monsters */
-					if (m_ptr->mflag & MFLAG_MARK)
-					{
-						/* Maintain detection */
-						if (m_ptr->mflag & MFLAG_SHOW)
-						{
-							/* Forget flag */
-							m_ptr->mflag &= ~(MFLAG_SHOW);
-
-							/* Still need repairs */
-							repair_monsters = TRUE;
-						}
-
-						/* Remove detection */
-						else
-						{
-							/* Forget flag */
-							m_ptr->mflag &= ~(MFLAG_MARK);
-
-							/* Update the monster */
-							update_mon(i, FALSE);
-						}
-					}
-				}
-			}
 		}
 
 
@@ -2977,9 +2895,8 @@ static void evolve_dungeon(void)
 	health_track(0);
 
 
-	/* Check visual effects */
-	shimmer_monsters = TRUE;
-	repair_monsters = TRUE;
+	/* Check visual effects.  Should this be here? */
+	p_ptr->change |= (PC_SHIMMER | PC_REPAIR);
 
 	/* Disturb */
 	disturb(TRUE);

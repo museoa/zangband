@@ -3104,7 +3104,7 @@ void wiz_lite(void)
 		if (!m_ptr->r_idx) continue;
 
 		/* Repair visibility later */
-		repair_monsters = TRUE;
+		p_ptr->change |= (PC_REPAIR);
 
 		/* Hack -- Detect monster */
 		m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);

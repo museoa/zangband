@@ -3704,8 +3704,27 @@ void change_stuff(void)
 	/* Nothing to do */
 	if (!p_ptr->change) return;
 
+	/* Redraw screen after a wiz_lite() */
 	if (p_ptr->change & (PC_WIZ_LITE))
 	{
+		p_ptr->change &= ~(PC_WIZ_LITE);
+	
 		change_wiz_lite();
+	}
+	
+	/* Shimmer monsters */
+	if (p_ptr->change & (PC_SHIMMER))
+	{
+		p_ptr->change &= ~(PC_SHIMMER);
+		
+		change_shimmer();
+	}
+	
+	/* Repair monsters */
+	if (p_ptr->change & (PC_REPAIR))
+	{
+		p_ptr->change &= ~(PC_REPAIR);
+		
+		change_repair();
 	}
 }

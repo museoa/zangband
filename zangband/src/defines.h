@@ -2580,6 +2580,8 @@
  * Bit flags for the "p_ptr->change" variable
  */
 #define PC_WIZ_LITE		0x00000001L	/* Redraw map after a wiz_lite() */
+#define PC_SHIMMER		0x00000002L /* Shimmer monsters */
+#define PC_REPAIR		0x00000004L	/* Repair monsters */
 
 
 /*

@@ -1891,7 +1891,7 @@ monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly
 		m_ptr->mflag |= (MFLAG_NICE);
 
 		/* Must repair monsters */
-		repair_monsters = TRUE;
+		p_ptr->change |= (PC_REPAIR);
 	}
 
 	/* Hack -- see "process_monsters()" */
@@ -1921,7 +1921,7 @@ monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly
 
 
 	/* Hack -- Notice new multi-hued monsters */
-	if (FLAG(r_ptr, RF_ATTR_MULTI)) shimmer_monsters = TRUE;
+	if (FLAG(r_ptr, RF_ATTR_MULTI)) p_ptr->change |= (PC_SHIMMER);
 
 	/* Success */
 	return (m_ptr);

@@ -115,8 +115,6 @@ extern bool use_sound;
 extern byte use_graphics;
 extern bool use_transparency;
 extern s16b signal_count;
-extern bool shimmer_monsters;
-extern bool repair_monsters;
 extern s16b o_max;
 extern s16b o_cnt;
 extern s16b m_max;
@@ -530,6 +528,8 @@ extern void set_hostile(monster_type *m_ptr);
 extern void anger_monster(monster_type *m_ptr);
 extern bool are_enemies(const monster_type *m_ptr1, const monster_type *m_ptr2);
 extern bool monster_living(const monster_race *r_ptr);
+extern void change_shimmer(void);
+extern void change_repair(void);
 
 /* flavor.c */
 extern void get_table_name(char *out_string, bool quotes);
