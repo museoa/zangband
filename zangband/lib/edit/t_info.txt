@@ -463,5 +463,21 @@ N:44:Zymurgist
 G:+:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:1:1:0:0:0:0:0
+D:1:1:4:0:0:0:0:0
+F:2,field_action_door_build
+
+# Magesmith (weapon)
+N:45:Magesmith (weapons)
+G:+:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:5:0:0:0:0:0:0
+F:2,field_action_door_build
+
+# Magesmith (armour)
+N:46:Magesmith (armor)
+G:+:s
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:3:5:0:0:0:0:0:0
 F:2,field_action_door_build
