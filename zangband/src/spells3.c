@@ -1785,7 +1785,6 @@ bool mundane_spell(void)
 {
 	int             item;
 	object_type     *o_ptr;
-	char            o_name[80];
 	cptr            q, s;
 
 

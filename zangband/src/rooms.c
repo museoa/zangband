@@ -123,7 +123,7 @@ static void build_type1(int yval, int xval)
 
 /* Do a part in an aux function, so that it can be re-used */
 static void build_type2_aux(int x1a, int x2a, int y1a, int y2a,
-							int x1b, int x2b, int y1b, int y2b, int light)
+							int x1b, int x2b, int y1b, int y2b, bool light)
 {
 	int x, y;
 	

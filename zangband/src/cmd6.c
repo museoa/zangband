@@ -2870,7 +2870,7 @@ void ring_of_power(int dir)
  */
 static void do_cmd_activate_aux(int item)
 {
-	int         i, k, dir, lev, chance;
+	int         k, dir, lev, chance;
 	object_type *o_ptr;
 
 

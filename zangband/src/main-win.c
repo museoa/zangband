@@ -249,7 +249,7 @@
  * HTML-Help requires htmlhelp.h and htmlhelp.lib from Microsoft's
  * HTML Workshop < http://www.microsoft.com/workshop/author/htmlhelp/ >.
  */
-#define HTML_HELP
+/* #define HTML_HELP */
 #ifdef HTML_HELP
 #include <htmlhelp.h>
 #endif /* HTML_HELP */

@@ -3183,7 +3183,8 @@ void do_cmd_throw_aux(int mult)
 	{
 		j = 100;
 
-		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE, !(q_ptr->ident & IDENT_CURSED))))
+		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE,
+		      (bool)!(q_ptr->ident & IDENT_CURSED))))
 			msg_print("The Figurine writhes and then shatters.");
 		else if (q_ptr->ident & IDENT_CURSED)
 			msg_print("You have a bad feeling about this.");
