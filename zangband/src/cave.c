@@ -12,6 +12,7 @@
 
 
 #include "angband.h"
+#include "wild.h"
 
 
 /*
@@ -2585,35 +2586,20 @@ void display_map(int *cx, int *cy)
 					feat = FEAT_DEEP_LAVA;
 				}
 
-				/* Get attr / char pair for wilderness block type */
-				ma[j + 1][i + 1] = f_info[feat].x_attr;
-				mc[j + 1][i + 1] = f_info[feat].x_char;
-
-#ifdef USE_TRANSPARENCY
-				if (f_info[feat].w_attr)
-				{
-					mta[j + 1][i + 1] = f_info[feat].w_attr;
-					mtc[j + 1][i + 1] = f_info[feat].w_char;
-				}
-				else
-				{
-					mta[j + 1][i + 1] = ma[j + 1][i + 1];
-					mtc[j + 1][i + 1] = mc[j + 1][i + 1];
-				}
-#endif /* USE_TRANSPARENCY */
-
 				/* This is a nasty hack */
 
 				/* Add in effects of roads */
 				if ((w_info & (WILD_INFO_ROAD)) && road)
 				{
 					ma[j + 1][i + 1] = TERM_UMBER;
-					mc[j + 1][i + 1] = '+';
+                    mc[j + 1][i + 1] = '+';
+                    feat = FEAT_NONE;
 				}
 				else if ((w_info & (WILD_INFO_TRACK)) && road)
 				{
 					ma[j + 1][i + 1] = TERM_L_UMBER;
-					mc[j + 1][i + 1] = '+';
+                    mc[j + 1][i + 1] = '+';
+                    feat = FEAT_NONE;
 				}
 
 				/* Hack - draw places */
@@ -2628,23 +2614,51 @@ void display_map(int *cx, int *cy)
 					if (place[twn].quest_num)
 					{
 						/* Quests are red */
-						ma[j + 1][i + 1] = TERM_RED;
+                        ma[j + 1][i + 1] = TERM_RED;
+                        mc[j + 1][i + 1] = '0' + twn % 10;
+                        feat = FEAT_NONE;
 					}
-					else
+					else if (place[twn].type != TOWN_FARM)
 					{
 						/* Towns are white */
-						ma[j + 1][i + 1] = TERM_WHITE;
-					}
-
-					mc[j + 1][i + 1] = '0' + twn % 10;
+                        ma[j + 1][i + 1] = TERM_WHITE;
+                        mc[j + 1][i + 1] = '0' + twn % 10;
+                        feat = FEAT_NONE;
+                    }
+                    else
+                    {
+                        /* Farms look like grass */
+                        feat = FEAT_GRASS;
+                    }
 				}
 
 				/* Finally show position of player */
 				if ((i + x == px / 16) && (j + y == py / 16))
 				{
 					ma[j + 1][i + 1] = TERM_WHITE;
-					mc[j + 1][i + 1] = '@';
-				}
+                    mc[j + 1][i + 1] = '@';
+                    feat = FEAT_NONE;
+                }
+
+                if (feat)
+                {
+                    /* Get attr / char pair for wilderness block type */
+                    ma[j + 1][i + 1] = f_info[feat].x_attr;
+                    mc[j + 1][i + 1] = f_info[feat].x_char;
+
+#ifdef USE_TRANSPARENCY
+                    if (f_info[feat].w_attr)
+                    {
+                        mta[j + 1][i + 1] = f_info[feat].w_attr;
+                        mtc[j + 1][i + 1] = f_info[feat].w_char;
+                    }
+                    else
+                    {
+                        mta[j + 1][i + 1] = ma[j + 1][i + 1];
+                        mtc[j + 1][i + 1] = mc[j + 1][i + 1];
+                    }
+#endif /* USE_TRANSPARENCY */
+                }
 			}
 		}
 	}

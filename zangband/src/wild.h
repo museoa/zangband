@@ -38,6 +38,9 @@
 /* Fraction of towns that are not quests: default is (1/2) */
 #define TOWN_FRACTION	2
 
+/* Fraction of towns that are farms: default is (1/8) */
+#define FARM_FRACTION   8
+
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
 
@@ -57,6 +60,7 @@
 #define TOWN_OLD		1
 #define TOWN_FRACT		2
 #define TOWN_QUEST		3
+#define TOWN_FARM       4
 
 /* Town monster types */
 #define TOWN_MONST_VILLAGER		1

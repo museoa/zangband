@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "wild.h"
 
 
 /*
@@ -2007,9 +2008,13 @@ monster_hook_type get_monster_hook2(int x, int y)
 	}
 
 	if (w_ptr->place)
-	{
-		/* Have a place. Hack - use town hook. */
-		wild_mon_hook = &monster_town;
+    {
+        if (place[w_ptr->place].type == TOWN_OLD ||
+            place[w_ptr->place].type == TOWN_FRACT)
+        {
+            /* Have a place. Hack - use town hook. */
+            wild_mon_hook = &monster_town;
+        }
 	}
 
 	/* Set the monster list */
