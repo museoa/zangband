@@ -11851,36 +11851,37 @@ bool borg_recover(void)
 
 	/*** Handle annoying situations ***/
 	
-	if (!bp_ptr->britelite)
+	/* Refuel torch, excluding Torch of Everburning */
+	if ((!bp_ptr->britelite) &&
+		(equipment[EQUIP_LITE].tval == TV_LITE) &&
+		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_TORCH))
 	{
-		/* Refuel current torch */
-		if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
-			(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_TORCH))
+		/* Refuel the torch if needed */
+		if (equipment[EQUIP_LITE].timeout < 250)
 		{
-			/* Refuel the torch if needed */
-			if (equipment[EQUIP_LITE].timeout < 250)
-			{
-				if (borg_refuel_torch()) return (TRUE);
+			if (borg_refuel_torch()) return (TRUE);
 
-				/* Take note */
-				borg_note_fmt("# Need to refuel but cant!", p);
+			/* Take note */
+			borg_note_fmt("# Need to refuel but can't!", p);
 
-				/* Allow Pets to Roam so we dont hit them in the dark. */
-				p_ptr->pet_follow_distance = PET_STAY_AWAY;
-			}
+			/* Allow Pets to Roam so we dont hit them in the dark. */
+			p_ptr->pet_follow_distance = PET_STAY_AWAY;
 		}
-
-		/* Refuel current lantern */
-		if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
-			(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_LANTERN))
+	}
+	
+	/* Refuel current lantern, including Lanterns of Everburning */
+	if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
+		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_LANTERN))
+	{
+		/* Refuel the lantern if needed */
+		if (equipment[EQUIP_LITE].timeout < 500)
 		{
-			/* Refuel the lantern if needed */
-			if (equipment[EQUIP_LITE].timeout < 500)
+			if (borg_refuel_lantern()) return (TRUE);
+		
+			if (!bp_ptr->britelite)	
 			{
-				if (borg_refuel_lantern()) return (TRUE);
-
 				/* Take note */
-				borg_note_fmt("# Need to refuel but cant!", p);
+				borg_note_fmt("# Need to refuel but can't!", p);
 				
 				/* Allow Pets to Roam so we dont hit them in the dark. */
 				p_ptr->pet_follow_distance = PET_STAY_AWAY;
