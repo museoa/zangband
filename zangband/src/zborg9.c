@@ -1854,13 +1854,13 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
+	/* Recognize starving */
 	if (prefix(msg, "You faint from the lack of food."))
 	{
 		borg_note("# I need to eat.");
 
 		return;
 	}
-
 
 	/* Feelings about the level */
 	for (i = 0; prefix_feeling[i]; i++)
