@@ -19,8 +19,6 @@
  */
 void do_cmd_inven(void)
 {
-	char out_val[160];
-
 	/* Save screen */
 	screen_save();
 

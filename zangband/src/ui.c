@@ -493,23 +493,33 @@ void prtf(int col, int row, cptr str, ...)
  * calls to this function will work correctly.
  *
  * Once this function has been called, the cursor should not be moved
- * until all the related "c_roff()" calls to the window are complete.
+ * until all the related "roff()" calls to the window are complete.
  *
  * This function will correctly handle any width up to the maximum legal
  * value of 256, though it works best for a standard 80 character width.
  */
-void c_roff(byte a, cptr str)
+void roff(cptr str, ...)
 {
 	int x, y;
 
 	int w, h;
 
 	cptr s;
+	
+	byte a = TERM_WHITE;
+	
+	va_list vp;
 
+	char buf[1024];
 
-	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) a = TERM_WHITE;
+	/* Begin the Varargs Stuff */
+	va_start(vp, str);
 
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, str, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Obtain the size */
 	(void)Term_get_size(&w, &h);
@@ -518,7 +528,7 @@ void c_roff(byte a, cptr str)
 	(void)Term_locate(&x, &y);
 
 	/* Process the string */
-	for (s = str; *s; s++)
+	for (s = buf; *s; s++)
 	{
 		char ch;
 
@@ -533,6 +543,31 @@ void c_roff(byte a, cptr str)
 			Term_erase(x, y, 255);
 
 			continue;
+		}
+		
+		/* Does this character match the escape code? */
+		if (*s == 1)
+		{
+			/* Scan the next character */
+			s++;
+			
+			/* Is it a colour specifier? */
+			if ((*s >= 'A') && (*s <= 'P'))
+			{
+				/*
+				 * Save the new colour
+				 *
+				 * Hack - this depends on ASCII symbols
+				 */
+				a = *s - 'A';
+				s++;
+				
+				/* Paranoia: no more in string? */
+				if (!(*s)) return;
+				
+				/* Hack -- fake monochrome */
+				if (!use_color || ironman_moria) a = TERM_WHITE;
+			}
 		}
 
 		/* Clean up the char */
@@ -593,15 +628,6 @@ void c_roff(byte a, cptr str)
 		/* Advance */
 		if (++x > w) x = w;
 	}
-}
-
-/*
- * As above, but in "white"
- */
-void roff(cptr str)
-{
-	/* Spawn */
-	c_roff(TERM_WHITE, str);
 }
 
 

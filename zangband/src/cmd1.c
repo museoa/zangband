@@ -739,7 +739,6 @@ void carry(int pickup)
 				if (carry_query_flag)
 				{
 					int i;
-					char out_val[160];
 
 					/* Paranoia XXX XXX XXX */
 					message_flush();
@@ -861,7 +860,6 @@ void carry(int pickup)
 		if (carry_query_flag)
 		{
 			int i;
-			char out_val[160];
 
 			/* Paranoia XXX XXX XXX */
 			message_flush();

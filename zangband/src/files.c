@@ -4078,7 +4078,6 @@ static void show_info(void)
 				/* Home -- if anything there */
 				if (st_ptr->stock)
 				{
-					char tmp_val[10];
 					char o_name[256];
 
 					/* Initialise counter */

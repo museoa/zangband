@@ -2075,8 +2075,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 	int query;
 
-	char out_val[512];
-
 	char o_name[256];
 
 	object_type *o_ptr;

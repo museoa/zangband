@@ -665,7 +665,6 @@ static cptr report_magic_durations[] =
 void report_magics(void)
 {
 	int i = 0, j, k;
-	char Dummy[80];
 	cptr info[128];
 	int info2[128];
 
