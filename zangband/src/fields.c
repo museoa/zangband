@@ -3574,13 +3574,11 @@ void field_action_weaponmaster2(s16b *field_ptr, vptr input)
 	{
 		cost = f_ptr->data[1] * *factor;
 				
-		if (test_gold(&cost))
+		if (test_gold(&cost) && compare_weapons())
 		{
-			compare_weapons();
+			/* Subtract off cost */
+			p_ptr->au -= cost;
 		}
-		
-		/* Subtract off cost */
-		p_ptr->au -= cost;
 		
 		/* Hack, use factor as a return value */	
 		*factor = TRUE;

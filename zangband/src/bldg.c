@@ -1068,6 +1068,10 @@ static void town_history(void)
 
 #endif /* 0 */
 
+
+#define WEP_MAST_COL1	2
+#define WEP_MAST_COL2	45
+
 /*
  * Display the damage figure of an object
  * (used by compare_weapon_aux1)
@@ -1076,7 +1080,7 @@ static void town_history(void)
  * the current +dam of the player.
  */
 static void compare_weapon_aux2(object_type *o_ptr, int numblows,
-	 int r, int c, cptr attr, byte color, byte slay)
+	 int r, cptr attr, byte color, byte slay)
 {
 	char tmp_str[80];
 	long maxdam, mindam;
@@ -1104,13 +1108,13 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
 	intmindam = mindam / 100;
 
 	/* Print the intro text */
-	c_put_str(color, attr, r, c);
+	c_put_str(color, attr, r, WEP_MAST_COL2);
 
 	/* Calculate the min and max damage figures */
-	sprintf(tmp_str, "Attack: %d-%d damage", intmindam, intmaxdam);
+	sprintf(tmp_str, " %d-%d damage", intmindam, intmaxdam);
 
 	/* Print the damage */
-	put_str(tmp_str, r, c + 8);
+	put_str(tmp_str, r, WEP_MAST_COL2 + 8);
 }
 
 
@@ -1120,28 +1124,142 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
  * Only accurate for the current weapon, because it includes
  * the current number of blows for the player.
  */
-static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
+static void compare_weapon_aux1(object_type *o_ptr)
 {
+	int r = 10;
+	
 	u32b f1, f2, f3;
 
 	/* Get the flags of the weapon */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Print the relevant lines */
-	if (f1 & TR1_SLAY_ANIMAL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Animals:", TERM_YELLOW, 17);
-	if (f1 & TR1_SLAY_EVIL)   compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Evil:", TERM_YELLOW, 15);
-	if (f1 & TR1_SLAY_UNDEAD) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Undead:", TERM_YELLOW, 20);
-	if (f1 & TR1_SLAY_DEMON)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Demons:", TERM_YELLOW, 20);
-	if (f1 & TR1_SLAY_ORC)    compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Orcs:", TERM_YELLOW, 20);
-	if (f1 & TR1_SLAY_TROLL)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Trolls:", TERM_YELLOW, 20);
-	if (f1 & TR1_SLAY_GIANT)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Giants:", TERM_YELLOW, 20);
-	if (f1 & TR1_SLAY_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Dragons:", TERM_YELLOW, 20);
-	if (f1 & TR1_KILL_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Dragons:", TERM_YELLOW, 30);
-	if (f1 & TR1_BRAND_ACID)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Acid:", TERM_RED, 20);
-	if (f1 & TR1_BRAND_ELEC)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Elec:", TERM_RED, 20);
-	if (f1 & TR1_BRAND_FIRE)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Fire:", TERM_RED, 20);
-	if (f1 & TR1_BRAND_COLD)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Cold:", TERM_RED, 20);
-	if (f1 & TR1_BRAND_POIS)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, "Poison:", TERM_RED, 20);
+	if (f1 & TR1_SLAY_ANIMAL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+	 	"Animals:", TERM_YELLOW, 17);
+	if (f1 & TR1_SLAY_EVIL)   compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+		"Evil:", TERM_YELLOW, 15);
+	if (f1 & TR1_SLAY_UNDEAD) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Undead:", TERM_YELLOW, 20);
+	if (f1 & TR1_SLAY_DEMON)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Demons:", TERM_YELLOW, 20);
+	if (f1 & TR1_SLAY_ORC)    compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Orcs:", TERM_YELLOW, 20);
+	if (f1 & TR1_SLAY_TROLL)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Trolls:", TERM_YELLOW, 20);
+	if (f1 & TR1_SLAY_GIANT)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Giants:", TERM_YELLOW, 20);
+	if (f1 & TR1_SLAY_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 	
+		"Dragons:", TERM_YELLOW, 20);
+	if (f1 & TR1_KILL_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Dragons:", TERM_YELLOW, 30);
+	if (f1 & TR1_BRAND_ACID)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Acid:", TERM_RED, 20);
+	if (f1 & TR1_BRAND_ELEC)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Elec:", TERM_RED, 20);
+	if (f1 & TR1_BRAND_FIRE)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Fire:", TERM_RED, 20);
+	if (f1 & TR1_BRAND_COLD)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Cold:", TERM_RED, 20);
+	if (f1 & TR1_BRAND_POIS)  compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, 
+		"Poison:", TERM_RED, 20);
+}
+
+
+/*
+ * Calculate the probability of successful hit for a weapon and certain AC
+ *
+ * Only accurate for the current weapon, because it includes
+ * player's +to_hit.
+ */
+static int hit_prob(int to_h, int ac)
+{
+		int chance = p_ptr->skill_thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
+		int prob = 0;
+		
+		if (chance > 0 && ac < chance) prob = (100 * (chance - ac) / chance);
+		return (5 + 95 * prob / 100);
+}
+
+/*
+ * Calculate the probability randint1(x)+randint1(100) < r
+ * in unit of 1/(100*x) 	r>100 is assumed
+ */
+static int critical_prob_aux(int x, int r)
+{
+	/*
+	 * Ex. r=130 x=60
+	 * x
+	 * 6******.... \
+	 * 5*******... n 
+	 * 4********.. | 
+	 * 3*********. /
+	 * 2**********
+	 * 1**********  
+	 *  1234567890
+	 */
+	int n = x + 1 - (r - 100);
+
+	if (n <= 0) return(100 * x);
+
+	if (n <= 100) return (100 * x - n * (n - 1) / 2);
+
+	/*
+	 *  Ex. r=130 x=150
+	 *  #(o) = 100*(100-1)/2
+	 *  #(.) = 100*(n-100) 
+	 *
+	 * x
+	 * 5oooooooooo \
+	 * 4.ooooooooo |
+	 * 3..oooooooo |
+	 * 2...ooooooo |
+	 * 1*...oooooo |
+	 * 0**...ooooo n
+	 * 9***...oooo |
+	 * 8****...ooo |
+	 * 7*****...oo |
+	 * 6******...o |
+	 * 5*******... |
+	 * 4********.. |
+	 * 3*********. /
+	 * 2**********
+	 * 1**********  
+	 *  1234567890
+	 */
+	 
+	return (100 * x - 100 * (100 - 1) / 2 - (n - 100) * 100);
+}
+
+/*
+ * Calculate the probability of critical hit for a weapon 
+ *
+ * Only accurate for the current weapon, because it includes
+ * player's +to_hit.
+ */
+static int critical_prob(int to_h, int r1, int r2)
+{
+	int prob1, prob2;
+	int chance = p_ptr->skill_thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
+
+	if (chance <= 0) return(0);
+	
+	prob1 = critical_prob_aux(chance, r1);
+	
+	if (r2 == 0)
+	{
+		prob2 = 100 * chance;
+	}
+	else
+	{
+		prob2 = critical_prob_aux(chance, r2); 
+	}
+	/*
+	 *  		chance  	 prob2 - prob1
+	 *   100 *  ------	*  --------------- 
+	 *		  200+chance    100 * chance 
+	 */
+	 
+	 return (chance * (prob2 - prob1) * 100 / ((chance + 200) * chance * 100)); 
 }
 
 
@@ -1151,7 +1269,7 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
  * Only accurate for the current weapon, because it includes
  * various info about the player's +to_dam and number of blows.
  */
-static void list_weapon(object_type *o_ptr, int row, int col)
+static void list_weapon(object_type *o_ptr)
 {
 	char o_name[80];
 	char tmp_str[80];
@@ -1161,23 +1279,59 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 
 	int intmaxdam, intmindam;
 
+	/* Modification to the critical multiplier */
+	int mult_crit = 120 / (o_ptr->dd * (o_ptr->ds + 1));
+	
+	/* Bounds checking */      
+	if (mult_crit > 20) mult_crit = 20;
+	if (mult_crit < 10) mult_crit = 10;
+
+
 	/* Print the weapon name */
 	object_desc(o_name, o_ptr, TRUE, 0);
-	c_put_str(TERM_YELLOW, o_name, row, col);
+	c_put_str(TERM_L_BLUE, o_name, 6, WEP_MAST_COL1);
 
 	/* Print to_hit and to_dam of the weapon */
 	sprintf(tmp_str, "To Hit: %d  Deadliness: %d", o_ptr->to_h, o_ptr->to_d);
-	put_str(tmp_str, row+1, col);
+	put_str(tmp_str, 8, WEP_MAST_COL1);
 
-	/* Print the weapons base damage dice */
-	sprintf(tmp_str, "Dice: %d   Sides: %d", o_ptr->dd, o_ptr->ds);
-	put_str(tmp_str, row+2, col);
+	/* Print the weapons base damage dice and blows */
+	sprintf(tmp_str, "Dice: %dd%d    Number of Blows: %d",
+		 o_ptr->dd, o_ptr->ds, p_ptr->num_blow);
+	put_str(tmp_str, 10, WEP_MAST_COL1);
 
-	/* Print the player's number of blows */
-	sprintf(tmp_str, "Number of Blows: %d", p_ptr->num_blow);
-	put_str(tmp_str, row+3, col);
-
-	c_put_str(TERM_YELLOW, "Possible Damage:", row+5, col);
+	/* Print hit probabilities */
+	sprintf(tmp_str, "Enemy AC:  Low   Medium  High");
+	put_str(tmp_str, 12, WEP_MAST_COL1);
+	
+	sprintf(tmp_str, "Hit Prob:  %2d%% %2d%% %2d%% %2d%% %2d%%", 
+		hit_prob(o_ptr->to_h, 25), hit_prob(o_ptr->to_h, 50),
+		hit_prob(o_ptr->to_h, 75), hit_prob(o_ptr->to_h, 100),
+		hit_prob(o_ptr->to_h, 200));
+	put_str(tmp_str, 13, WEP_MAST_COL1);
+	
+	/* Print critical hit probabilities */
+	sprintf(tmp_str, "Critical: 1.0 %1d.%1d %1d.%1d %1d.%1d %1d.%1d %1d.%1d %1d.%1d",
+		mult_crit * 15 / 100, (mult_crit * 15 / 10) % 10, 
+		mult_crit * 17 / 100, (mult_crit * 17 / 10) % 10, 
+		mult_crit * 20 / 100, (mult_crit * 20 / 10) % 10, 
+		mult_crit * 23 / 100, (mult_crit * 23 / 10) % 10, 
+		mult_crit * 27 / 100, (mult_crit * 27 / 10) % 10, 
+		mult_crit * 32 / 100, (mult_crit * 32 / 10) % 10);
+	put_str(tmp_str, 15, WEP_MAST_COL1);
+	
+	sprintf(tmp_str, "          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
+		100 - critical_prob(o_ptr->to_h, 0, 0),
+		critical_prob(o_ptr->to_h, 0, 100),
+		critical_prob(o_ptr->to_h, 100, 160),
+		critical_prob(o_ptr->to_h, 160, 210),
+		critical_prob(o_ptr->to_h, 210, 250),
+		critical_prob(o_ptr->to_h, 250, 280),
+		critical_prob(o_ptr->to_h, 280, 0));
+  
+	put_str(tmp_str, 16, WEP_MAST_COL1);
+	
+	c_put_str(TERM_L_BLUE, "Possible Damage:", 6, WEP_MAST_COL2);
 
 	dambonus = o_ptr->to_d + p_ptr->to_d;
 
@@ -1193,7 +1347,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 
 	/* Damage for one blow (if it hits) */
 	sprintf(tmp_str, "One Strike: %d-%d damage", intmindam, intmaxdam);
-	put_str(tmp_str, row+6, col+1);
+	put_str(tmp_str, 7, WEP_MAST_COL2);
 
 	/* rescale */
 	intmaxdam = (maxdam * p_ptr->num_blow) / 100;
@@ -1201,7 +1355,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 
 	/* Damage for the complete attack (if all blows hit) */
 	sprintf(tmp_str, "One Attack: %d-%d damage", intmindam, intmaxdam);
-	put_str(tmp_str, row+7, col+1);
+	put_str(tmp_str, 8, WEP_MAST_COL2);
 }
 
 
@@ -1211,80 +1365,45 @@ static void list_weapon(object_type *o_ptr, int row, int col)
  * Copies the weapons to compare into the weapon-slot and
  * compares the values for both weapons.
  */
-void compare_weapons(void)
+bool compare_weapons(void)
 {
-	int item, item2;
-	object_type *o1_ptr, *o2_ptr;
-	object_type orig_weapon;
-	object_type *i_ptr;
-	cptr q, s;
-	int row = 6;
+	object_type *o_ptr;
 
 	/* Clear the screen */
 	clear_bldg(6, 18);
 
-	/* Store copy of original wielded weapon */
-	i_ptr = &inventory[INVEN_WIELD];
-	object_copy(&orig_weapon, i_ptr);
+	/* Point to wielded weapon */
+	o_ptr = &inventory[INVEN_WIELD];
+	
+	/* Check to see if we have one */
+	if (!o_ptr->k_idx)
+	{
+		msg_print("You need to wield a weapon.");
+		return (FALSE);
+	}
 
-	/* Only compare melee weapons */
-	item_tester_hook = item_tester_hook_melee_weapon;
+	put_str("Based on your current abilities, here is what your weapon will do", 4, 2);
 
-	/* Get the first weapon */
-	q = "What is your first weapon? ";
-	s = "You have nothing to compare.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN))) return;
+	/* *Identify* the weapon for the player */
+	o_ptr->ident |= IDENT_MENTAL;
+	
+	/* Save all the known flags */
+	o_ptr->kn_flags1 = o_ptr->flags1;
+	o_ptr->kn_flags2 = o_ptr->flags2;
+	o_ptr->kn_flags3 = o_ptr->flags3;
+	
+	/* Erase the "feeling" */
+	o_ptr->feeling = FEEL_NONE;
 
-	/* Get the item (in the pack) */
-	o1_ptr = &inventory[item];
-
-	/* Only compare melee weapons */
-	item_tester_hook = item_tester_hook_melee_weapon;
-
-	/* Get the second weapon */
-	q = "What is your second weapon? ";
-	s = "You have nothing to compare.";
-	if (!get_item(&item2, q, s, (USE_EQUIP | USE_INVEN))) return;
-
-	/* Get the item (in the pack) */
-	o2_ptr = &inventory[item2];
-
-	put_str("Based on your current abilities, here is what your weapons will do", 4, 2);
-
-	/* Copy first weapon into the weapon slot (if it's not already there) */
-	if (o1_ptr != i_ptr)
-		object_copy(i_ptr, o1_ptr);
-
-	/* Get the new values */
-	calc_bonuses();
 
 	/* List the new values */
-	list_weapon(o1_ptr, row, 2);
-	compare_weapon_aux1(o1_ptr, 2, row + 8);
-
-	/* Copy second weapon into the weapon slot (if it's not already there) */
-	if (o2_ptr != i_ptr)
-		object_copy(i_ptr, o2_ptr);
-	else
-		object_copy(i_ptr, &orig_weapon);
-
-	/* Get the new values */
-	calc_bonuses();
-
-	/* List the new values */
-	list_weapon(o2_ptr, row, 40);
-	compare_weapon_aux1(o2_ptr, 40, row + 8);
-
-	/* Copy back the original weapon into the weapon slot */
-	object_copy(i_ptr, &orig_weapon);
-
-	/* Reset the values for the old weapon */
-	calc_bonuses();
+	list_weapon(o_ptr);
+	compare_weapon_aux1(o_ptr);
 
 	put_str("(Only highest damage applies per monster. Special damage not cumulative.)", 20, 0);
 
 	/* Done */
-	return;
+	return (TRUE);
 }
 
 

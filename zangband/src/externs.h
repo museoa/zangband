@@ -879,7 +879,7 @@ extern void store_init(int town_num, int store_num, byte store_type);
 extern bool get_nightmare(int r_idx);
 extern void have_nightmare(int r_idx);
 extern void do_cmd_bldg(field_type *f_ptr);
-extern void compare_weapons(void);
+extern bool compare_weapons(void);
 extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac);
 extern void building_recharge(s32b cost);
 extern void do_cmd_quest(void);
