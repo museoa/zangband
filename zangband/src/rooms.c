@@ -3951,7 +3951,7 @@ static void build_type15(int bx0, int by0)
  * Note that we restrict the number of "crowded" rooms to reduce
  * the chance of overflowing the monster list during level creation.
  */
-bool room_build(int by0, int bx0, int typ)
+bool room_build(int bx0, int by0, int typ)
 {
 	/* Restrict level */
 	if ((p_ptr->depth < roomdep[typ]) && !ironman_rooms) return (FALSE);

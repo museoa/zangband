@@ -544,14 +544,14 @@ static bool cave_gen(void)
 				 (randint0(DUN_UNUSUAL) < p_ptr->depth))
 			{
 #ifdef FORCE_V_IDX
-				if (room_build(y, x, 8)) continue;
+				if (room_build(x, y, 8)) continue;
 #else
 				/* Type 8 -- Greater vault (10%) */
 				if (k < 10)
 				{
 					if (max_vault_ok > 1)
 					{
-						if (room_build(y, x, 8)) continue;
+						if (room_build(x, y, 8)) continue;
 					}
 					else
 					{
@@ -564,7 +564,7 @@ static bool cave_gen(void)
 				{
 					if (max_vault_ok > 0)
 					{
-						if (room_build(y, x, 7)) continue;
+						if (room_build(x, y, 7)) continue;
 					}
 					else
 					{
@@ -574,17 +574,17 @@ static bool cave_gen(void)
 
 
 				/* Type 5 -- Monster nest (8%) */
-				if ((k < 31) && room_build(y, x, 5)) continue;
+				if ((k < 31) && room_build(x, y, 5)) continue;
 
 				/* Type 6 -- Monster pit (5%) */
-				if ((k < 36) && room_build(y, x, 6)) continue;
+				if ((k < 36) && room_build(x, y, 6)) continue;
 				
 				/* Type 10 -- Random vault (11%) */
 				if (k < 47)
 				{
 					if (max_vault_ok > 0)
 					{
-						if (room_build(y, x, 10)) continue;
+						if (room_build(x, y, 10)) continue;
 					}
 					else
 					{
@@ -596,28 +596,28 @@ static bool cave_gen(void)
 			}
 
 			/* Type 4 -- Large room (15%) */
-			if ((k < 15) && room_build(y, x, 4)) continue;
+			if ((k < 15) && room_build(x, y, 4)) continue;
 
 			/* Type 14 -- Large room (10%) */
-			if ((k < 25) && room_build(y, x, 14)) continue;
+			if ((k < 25) && room_build(x, y, 14)) continue;
 			
 			/* Type 13 -- Large Feature room (5%) */
-			if ((k < 30) && room_build(y, x, 13)) continue;
+			if ((k < 30) && room_build(x, y, 13)) continue;
 			
 			/* Type 3 -- Cross room (20%) */
-			if ((k < 50) && room_build(y, x, 3)) continue;
+			if ((k < 50) && room_build(x, y, 3)) continue;
 
 			/* Type 2 -- Overlapping (25%) */
-			if ((k < 75) && room_build(y, x, 2)) continue;
+			if ((k < 75) && room_build(x, y, 2)) continue;
 			
 			/* Type 11 -- Parallelagram (5%) */
-			if ((k < 80) && room_build(y, x, 15)) continue;
+			if ((k < 80) && room_build(x, y, 15)) continue;
 
 			/* Type 11 -- Circular (5%) */
-			if ((k < 85) && room_build(y, x, 11)) continue;
+			if ((k < 85) && room_build(x, y, 11)) continue;
 
 			/* Type 12 -- Crypt (15%) */
-			if ((k < 100) && room_build(y, x, 12)) continue;
+			if ((k < 100) && room_build(x, y, 12)) continue;
 		}
 
 		/* The deeper you are, the more cavelike the rooms are */
@@ -627,12 +627,12 @@ static bool cave_gen(void)
 		if ((k < p_ptr->depth) && (!cavern) && (!empty_level) && (laketype == 0))
 		{
 			/* Type 9 -- Fractal cave */
-			if (room_build(y, x, 9)) continue;
+			if (room_build(x, y, 9)) continue;
 		}
 		else
 		{
 			/* Attempt a "trivial" room */
-			if (room_build(y, x, 1)) continue;
+			if (room_build(x, y, 1)) continue;
 		}
 	}
 
