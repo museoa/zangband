@@ -1798,11 +1798,11 @@ struct mutation_type
 	cptr lose_text;		/* Text displayed on losing the mutation */
 
 	char name[40];		/* Short description (activatable mutations) */
-	int level;			/* Minimum level (activatable mutations) */
 	int cost;			/* Mana/HP Cost (activatable mutations) */
 	int stat;			/* Stat dependency (activatable mutations) */
 	int diff;			/* Difficulty (activatable mutations) */
 	int chance;			/* Chance of occuring (random mutations) / 100 */
+	byte level;			/* Minimum level (activatable mutations) */
 };
 
 
