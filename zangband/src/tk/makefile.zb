@@ -1,0 +1,21 @@
+##
+## The tk port
+##
+
+TKOBJS = $(addprefix src/tk/,\
+			canv.ocmdinfo.o icon.o \
+			describe.o interp.o plat.o \
+			widget.o tk-util.o tcltk.o)
+
+objs-$(TK_PORT) += $(TKOBJS)
+
+##
+## Extra dependancies for the tk port
+##
+$(TKOBJS): $(INCS) src/tk/tnb.h
+src/main-tnb.o: src/tk/tnb.h
+
+src/tk/canv.o src/tk/icon.o src/tk/interp.o: src/tk/icon.h
+
+
+clean-files += src/tk/*.bak src/tk/*.o
