@@ -1737,7 +1737,7 @@ static void process_world(void)
 		{
 			bool pet = (randint(6) == 1);
 
-			if (summon_specific(-1, py, px,
+			if (summon_specific((pet ? -1 : 0), py, px,
 					 dun_level, SUMMON_DEMON, TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a demon!");
@@ -1833,7 +1833,7 @@ static void process_world(void)
 		{
 			bool pet = (randint(3) == 1);
 
-			if (summon_specific(-1, py, px, dun_level, SUMMON_ANIMAL,
+			if (summon_specific((pet ? -1 : 0), py, px, dun_level, SUMMON_ANIMAL,
 				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted an animal!");
@@ -1908,7 +1908,7 @@ static void process_world(void)
 		{
 			bool pet = (randint(5) == 1);
 
-			if (summon_specific(-1, py, px, dun_level, SUMMON_DRAGON,
+			if (summon_specific((pet ? -1 : 0), py, px, dun_level, SUMMON_DRAGON,
 				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a dragon!");
@@ -3795,12 +3795,6 @@ static void dungeon(void)
 
 		/* Hack -- Notice death or departure */
 		if (!alive || death) break;
-
-		total_friends = 0;
-		total_friend_levels = 0;
-
-		/* Clear monster fighting indicators */
-		mon_fight = FALSE;
 
 		/* Process all of the monsters */
 		process_monsters();

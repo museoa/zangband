@@ -395,7 +395,7 @@ void dump_virtues(FILE * OutFile)
                    v_name);
                 else if (tester < -20)
                   fprintf(OutFile, "You have sinned against %s.",
-                   v_name);
+						 v_name);
                 else if (tester < 0)
                   fprintf(OutFile, "You have strayed from the path of %s.",
                    v_name);
@@ -422,9 +422,9 @@ void dump_virtues(FILE * OutFile)
                    v_name);
 
             fprintf(OutFile, "\n");
-        }
+		  }
 
-
+	if (wizard) fprintf(OutFile, "Your overall alignment is %d.\n", p_ptr->align);
 }
 
 

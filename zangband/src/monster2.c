@@ -2138,6 +2138,16 @@ static bool summon_specific_okay(int r_idx)
 			return FALSE;
 		}
 	}
+	/* Use the player's alignment */
+	else if (summon_specific_who < 0)
+	{
+		/* Do not summon enemies of the pets */
+		if (((p_ptr->align < 0) && (r_ptr->flags3 & RF3_GOOD)) ||
+			 ((p_ptr->align > 0) && (r_ptr->flags3 & RF3_EVIL)))
+		{
+			return FALSE;
+		}
+	}
 
 	/* Hack -- no specific type specified */
 	if (!summon_specific_type) return (TRUE);

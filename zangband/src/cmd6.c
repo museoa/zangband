@@ -1190,7 +1190,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				if (summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1202,7 +1202,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				if (summon_specific(-1, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}
@@ -1753,7 +1753,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			for (k = 0; k < randint(4); k++)
 			{
-				if (summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE))
+				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE))
 				{
 					ident = TRUE;
 				}

@@ -1406,7 +1406,7 @@ static void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-		(void)summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+		(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 	}
 }
 
@@ -1595,6 +1595,11 @@ void do_cmd_debug(void)
 		/* Cure all maladies */
 		case 'a':
 		do_cmd_wiz_cure_all();
+		break;
+
+		/* Know alignment */
+		case 'A':
+		msg_format("Your alignment is %d.", p_ptr->align);
 		break;
 
 		/* Teleport to target */

@@ -2891,6 +2891,16 @@ void process_monsters(void)
 
 	int speed;
 
+	s32b old_friend_align = friend_align;
+
+	/* Clear some variables */
+	total_friends = 0;
+	total_friend_levels = 0;
+	friend_align = 0;
+
+	/* Clear monster fighting indicator */
+	mon_fight = FALSE;
+
 	/* Memorize old race */
 	old_monster_race_idx = p_ptr->monster_race_idx;
 
@@ -2929,6 +2939,7 @@ void process_monsters(void)
 	{
 		/* Access the monster */
 		m_ptr = &m_list[i];
+		r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
@@ -2940,9 +2951,18 @@ void process_monsters(void)
 		if (is_pet(m_ptr))
 		{
 			total_friends++;
-			total_friend_levels += r_info[m_ptr->r_idx].level;
-		}
+			total_friend_levels += r_ptr->level;
 
+			/* Determine pet alignment */
+			if (r_ptr->flags3 & RF3_GOOD)
+			{
+				friend_align += r_ptr->level;
+			}
+			else if (r_ptr->flags3 & RF3_EVIL)
+			{
+				friend_align -= r_ptr->level;
+			}
+		}
 
 		/* Handle "fresh" monsters */
 		if (m_ptr->mflag & MFLAG_BORN)
@@ -2978,9 +2998,6 @@ void process_monsters(void)
 		/* Hack -- Require proximity */
 		if (m_ptr->cdis >= 100) continue;
 
-
-		/* Access the race */
-		r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Access the location */
 		fx = m_ptr->fx;
@@ -3063,4 +3080,6 @@ void process_monsters(void)
 			p_ptr->window |= (PW_MONSTER);
 		}
 	}
+
+	if (old_friend_align != friend_align) p_ptr->update |= (PU_BONUS);
 }

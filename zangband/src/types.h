@@ -1199,6 +1199,8 @@ struct player_type
 	bool leaving;			/* True if player is leaving */
 
 	bool leaving_dungeon;	/* True if player is leaving the dungeon */
+
+	s32b align;				/* Good/evil/neutral */
 };
 
 

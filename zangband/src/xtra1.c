@@ -2428,7 +2428,6 @@ void calc_bonuses(void)
 	p_ptr->immune_cold = FALSE;
 
 
-
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = rp_ptr->infra;
 
@@ -3535,7 +3534,7 @@ void calc_bonuses(void)
 
 	/* Priest weapon penalty for non-blessed edged weapons */
 	if ((p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
-	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
+		 ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
 	{
 		/* Reduce the real bonuses */
 		p_ptr->to_h -= 2;
@@ -3685,7 +3684,7 @@ void calc_bonuses(void)
 		if (monk_heavy_armor())
 		{
 			msg_print("The weight of your armor disrupts your balance.");
-			#ifdef AVATAR            
+			#ifdef AVATAR
 			if (hack_mind)
 			{
 				chg_virtue(V_HARMONY, -1);
@@ -3694,9 +3693,19 @@ void calc_bonuses(void)
 		}
 		else
 			msg_print("You regain your balance.");
-		
+
 		monk_notify_aux = monk_armour_aux;
 	}
+
+	p_ptr->align = friend_align;
+
+#ifdef AVATAR
+	/* Determine player alignment */
+	for (i = 0; i < 8; i++)
+	{
+		p_ptr->align += p_ptr->virtues[i];
+	}
+#endif
 }
 
 

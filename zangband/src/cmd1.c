@@ -942,7 +942,7 @@ static void hit_trap(void)
 			num = 2 + randint(3);
 			for (i = 0; i < num; i++)
 			{
-				(void)summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 			}
 
 			if (dun_level > randint(100)) /* No nasty effect for low levels */

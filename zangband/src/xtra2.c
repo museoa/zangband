@@ -564,6 +564,7 @@ void monster_death(int m_idx)
 		{
 			int wy = y, wx = x;
 			int attempts = 100;
+			bool pet = is_pet(m_ptr);
 
 			do
 			{
@@ -573,7 +574,8 @@ void monster_death(int m_idx)
 
 			if (attempts > 0)
 			{
-				if (summon_specific(-1, wy, wx, 100, SUMMON_DAWN, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
+				if (summon_specific((pet ? -1 : 0), wy, wx, 100, SUMMON_DAWN,
+										  FALSE, is_friendly(m_ptr), pet))
 				{
 					if (player_can_see_bold(wy, wx))
 						msg_print("A new warrior steps forth!");
@@ -590,8 +592,10 @@ void monster_death(int m_idx)
 		for (i = 0; i < 2; i++)
 		{
 			int wy = y, wx = x;
+			bool pet = is_pet(m_ptr);
 
-			if (summon_specific(-1, wy, wx, 100, SUMMON_BLUE_HORROR, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
+			if (summon_specific((pet ? -1 : 0), wy, wx, 100, SUMMON_BLUE_HORROR,
+									  FALSE, is_friendly(m_ptr), pet))
 			{
 				if (player_can_see_bold(wy, wx))
 					notice = TRUE;
@@ -3262,7 +3266,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'My pets, destroy the arrogant mortal!'");
 			for (dummy = 0; dummy < randint(5) + 1; dummy++)
 			{
-				(void)summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 			}
 			break;
 		case REW_H_SUMMON:
