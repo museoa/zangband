@@ -65,7 +65,7 @@ function wand_of_wonder(dir)
 		if wall_to_mud(dir) then ident = TRUE end
 	elseif sval == SV_WAND_LITE then
 		msgf("A line of blue shimmering light appears.")
-		lite_line(dir)
+		lite_line(dir, damroll(6, 8))
 		ident = TRUE
 	elseif sval == SV_WAND_SLEEP_MONSTER then
 		if sleep_monster(dir) then ident = TRUE end

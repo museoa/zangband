@@ -3304,10 +3304,10 @@ bool fire_bolt_or_beam(int prob, int typ, int dir, int dam)
 /*
  * Some of the old functions
  */
-bool lite_line(int dir)
+bool lite_line(int dir, int dam)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
-	return (project_hook(GF_LITE_WEAK, dir, damroll(6, 8), flg));
+	return (project_hook(GF_LITE_WEAK, dir, dam, flg));
 }
 
 /* Drain life from monster, and do not give it to the player */

@@ -975,7 +975,7 @@ static bool cast_nature_spell(int spell)
 		case 12:				/* Ray of Sunlight */
 			if (!get_aim_dir(&dir)) return FALSE;
 			msgf("A line of sunlight appears.");
-			(void)lite_line(dir);
+			(void)lite_line(dir, damroll(6, 8));
 			break;
 		case 13:				/* Entangle */
 			(void)slow_monsters();
@@ -1162,7 +1162,7 @@ static bool cast_chaos_spell(int spell)
 			else if (die < 41) (void)confuse_monster(dir, plev);
 			else if (die < 46) (void)fire_ball(GF_POIS, dir, 20 + (plev / 2),
 											   3);
-			else if (die < 51) (void)lite_line(dir);
+			else if (die < 51) (void)lite_line(dir, damroll(6, 8));
 			else if (die < 56)
 				(void)fire_bolt_or_beam(beam - 10, GF_ELEC, dir,
 										damroll(3 + ((plev - 5) / 4), 8));
@@ -1538,7 +1538,7 @@ static bool cast_death_spell(int spell)
 			}
 			else if (die < 51)
 			{
-				(void)lite_line(dir);
+				(void)lite_line(dir, damroll(6, 8));
 			}
 			else if (die < 56)
 			{
@@ -2550,7 +2550,7 @@ static bool cast_arcane_spell(int spell)
 			if (!get_aim_dir(&dir)) return FALSE;
 
 			msgf("A line of light appears.");
-			(void)lite_line(dir);
+			(void)lite_line(dir, damroll(6, 8));
 			break;
 		case 22:				/* Satisfy Hunger */
 			(void)set_food(PY_FOOD_MAX - 1);

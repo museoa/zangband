@@ -2667,7 +2667,7 @@ W:3:0:10:200
 A:5/1
 P:0:1d1:0:0:0
 L:USE:	msgf("A line of blue shimmering light appears.")
-L:USE:	lite_line(dir)
+L:USE:	lite_line(dir, damroll(6, 8))
 L:USE:	ident = TRUE
 D:This wand creates a line of light that deals 6d8 damage to 
 D:susceptible monsters.
@@ -3523,7 +3523,7 @@ A:9/2:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	msgf("A line of blue shimmering light appears.")
-L:USE:	lite_line(dir); ident = TRUE
+L:USE:	lite_line(dir, damroll(6, 8)); ident = TRUE
 D:This rod creates a line of light that deals 6d8 damage to vulnerable 
 D:monsters.
 

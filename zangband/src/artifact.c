@@ -834,9 +834,9 @@ static const struct randart_activation randart_activations[] =
 	},
 	{
 		"A line of sunlight appears.",
-		"beam of sunlight",
-		"lite_line(dir)",
-		100, TRUE, 500, 0, 0
+		"beam of sunlight (%sd8)",
+		"lite_line(dir, damroll(%s, 8))",
+		100, TRUE, 100, 10, 4	/* lev / 10 + 4 */
 	},
 	{
 		"The %v glow extremely brightly...",
@@ -1406,7 +1406,8 @@ static void misc_activation_power(object_type *o_ptr, int level, cptr fix_power)
 	/* Sometimes make the activation dependent on the player's level */
 	if (one_in_(10) && act->dice >= 100 && act->bonus == 0)
 	{
-		int mult = act->dice * rand_range(50, 150) / 10000;
+		/* Deeper items may give better multipliers */
+		int mult = act->dice * rand_range(50, 100 + 2 * rlev) / 10000;
 		if (mult < 1) mult = 1;
 
 		if (mult > 1)
@@ -1424,7 +1425,7 @@ static void misc_activation_power(object_type *o_ptr, int level, cptr fix_power)
 		strnfmt(desc, 256, act->desc, dice_desc);
 		strnfmt(effect, 256, act->effect, dice);
 
-		/* Assume plev 30 */
+		/* Assume plev 30 for power calculation */
 		pp = act->pp * mult * 30;
 	}
 	else

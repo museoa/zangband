@@ -708,7 +708,7 @@ extern bool fire_bolt(int typ, int dir, int dam);
 extern void call_chaos(void);
 extern bool fire_beam(int typ, int dir, int dam);
 extern bool fire_bolt_or_beam(int prob, int typ, int dir, int dam);
-extern bool lite_line(int dir);
+extern bool lite_line(int dir, int dam);
 extern bool drain_life(int dir, int dam);
 extern bool drain_gain_life(int dor, int dam);
 extern bool death_ray(int dir, int plev);
