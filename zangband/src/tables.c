@@ -6171,7 +6171,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 3, "auto_scum",				"Auto-scum for good levels" },
 	{FALSE, 1, "stack_allow_items",		"Allow weapons and armor to stack" },
 	{TRUE,  1, "stack_allow_wands",		"Allow wands/staffs/rods to stack" },
-	{TRUE,  1, "expand_look",			"Expand the power of the look command" },
+	{TRUE,  0, NULL,				"Number 36" },
 	{TRUE,  1, "expand_list",			"Expand the power of the list commands" },
 	{TRUE,  3, "view_perma_grids",		"Map remembers all perma-lit grids" },
 	{FALSE, 3, "view_torch_grids",		"Map remembers all torch-lit grids" },
