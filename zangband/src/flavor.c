@@ -116,10 +116,10 @@ static byte staff_col[MAX_WOODS] =
  */
 static cptr wand_adj[MAX_METALS] =
 {
-	"Aluminum", "Cast Iron", "Chromium", "Copper", "Gold",
+	"Aluminium", "Cast Iron", "Chromium", "Copper", "Gold",
 	"Iron", "Magnesium", "Molybdenum", "Nickel", "Rusty",
 	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
-	"Zirconium", "Zinc", "Aluminum-Plated", "Copper-Plated", "Gold-Plated",
+	"Zirconium", "Zinc", "Aluminium-Plated", "Copper-Plated", "Gold-Plated",
 	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated", "Zinc-Plated",
 	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
 	"Platinum", "Lead", "Lead-Plated", "Ivory", "Adamantite",
