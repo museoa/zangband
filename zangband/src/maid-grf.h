@@ -50,7 +50,7 @@
  * Make an iterator, so we can scan the map quickly
  */
 #define MAP_ITT_START(M) \
-	{ \
+	do { \
 		int _map_count;\
 		\
 		for (_map_count = 0; _map_count < MAP_CACHE; _map_count++) \
@@ -73,7 +73,7 @@
 				} \
 			} \
 		} \
-	}
+	} while (0)
 
 /* Macro to extract location during iteration */
 #define MAP_GET_LOC(X, Y)\

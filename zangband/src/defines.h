@@ -3917,7 +3917,7 @@
  * Iterate over the objects in a list
  */
 #define OBJ_ITT_START(OSTART, O) \
-	{ \
+	do { \
 		s16b _this_o_idx, _next_o_idx = 0; \
 		\
 		for ( _this_o_idx = (OSTART); _this_o_idx; _this_o_idx = _next_o_idx) \
@@ -3928,7 +3928,7 @@
 
 #define OBJ_ITT_END \
 		} \
-	}
+	} while (0)
 
 
 /*

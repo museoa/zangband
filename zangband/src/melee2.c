@@ -2606,8 +2606,8 @@ static void take_move(int m_idx, int *mm)
 						delete_dungeon_object(o_ptr);
 					}
 				}
-				OBJ_ITT_END;
 			}
+  			OBJ_ITT_END;
 		}
 
 		/* Stop when done */
