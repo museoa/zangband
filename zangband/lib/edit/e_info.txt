@@ -166,10 +166,19 @@ C:0:0:5:0
 F:REFLECT
 F:IGNORE_ELEC | IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE
 
-# 22 (unused)
+### More Lites ###
 
-# 23 (unused)
+N:22:of Radiance
+X:29:13
+W:20:10:0:800
+C:0:0:0:6
+F:RES_DARK | CHR
 
+N:23:of Gondor
+X:29:18
+W:30:10:0:2000
+C:0:0:0:3
+F:LITE | RES_FEAR | STR
 
 ### Crowns and Helms ###
 
