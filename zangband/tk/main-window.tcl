@@ -698,7 +698,7 @@ if 0 {
 	lappend entries [list -type command -label [mc Tips] -identifier E_TIPS]
 	lappend entries [list -type separator]
 	lappend entries [list -type command \
-		-label ["About ZAngband..."] -identifier E_ABOUT]
+		-label "About ZAngband..." -identifier E_ABOUT]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_HELP $entries
 	
