@@ -71,17 +71,15 @@ void output_note(char *final_note)
 void add_note(char *note, char code)
 {
 	char buf[80];
-	char final_note[80];
+	char final_note[255];
 	char long_day[25];
 	time_t ct = time((time_t*)NULL);
 	char depths[32];
 
-	/* Get the first 60 chars - so do not have an overflow */
-	strcpy(buf, "");
-	strncpy(buf, note, 60);
+	/* Get the first 60 chars and null-terminate */
+	(void)strnfmt(buf, 60, "%s", note);
 
 	/* Get depth */
-
 	if (!dun_level)
 	{
 		strcpy(depths, "  Town");
@@ -95,7 +93,7 @@ void add_note(char *note, char code)
 		sprintf(depths, "Lev%3d", dun_level);
 	}
 
-	/* Get date and time */
+	/* Get the time */
 	strftime(long_day, 10, "%H:%M:%S", localtime(&ct));
 
 	/* Make note */
@@ -107,7 +105,9 @@ void add_note(char *note, char code)
 }
 
 
-/* Add note to file using type specified by note_number */
+/*
+ * Add note to file using type specified by note_number
+ */
 void add_note_type(int note_number)
 {
 	char long_day[30];
