@@ -3430,6 +3430,9 @@ static void calc_bonuses(void)
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
 	p_ptr->skill_thb += add_special_missile_skill(p_ptr->pclass);
+	
+	/* Examine the "main weapon" */
+	o_ptr = &inventory[INVEN_WIELD];
 
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
 	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr);
@@ -3517,10 +3520,6 @@ static void calc_bonuses(void)
 	p_ptr->noise = (1L << (30 - p_ptr->skill_stl));
 
 	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
-
-
-	/* Examine the "main weapon" */
-	o_ptr = &inventory[INVEN_WIELD];
 
 	/* Assume not heavy */
 	p_ptr->heavy_wield = FALSE;
