@@ -28,30 +28,6 @@
 #define ROAD_MIN		3
 
 
-
-/* List of building types */
-#define	BUILD_STORE_GENERAL		0
-#define BUILD_STORE_ARMOURY		1
-#define BUILD_STORE_WEAPON		2
-#define BUILD_STORE_TEMPLE		3
-#define BUILD_STORE_ALCHEMIST	4
-#define BUILD_STORE_MAGIC		5
-#define BUILD_STORE_BLACK		6
-#define BUILD_STORE_HOME		7
-#define BUILD_STORE_BOOK		8
-#define BUILD_STAIRS			9
-#define BUILD_WEAPONMASTER		10
-#define BUILD_RECHARGE			11
-#define BUILD_PLUS_WEAPON		12
-#define BUILD_PLUS_ARMOUR		13
-#define BUILD_MUTATE			14
-#define BUILD_NONE				15
-#define BUILD_BLANK				16
-
-/* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			17
-
-
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
 
 /* This will be removed later. */

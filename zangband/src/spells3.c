@@ -696,8 +696,39 @@ void recall_player(int turns)
 		msg_print("Nothing happens.");
 		return;
 	}
+	
+	/* Hack - no recalling in the middle of the wilderness */
+	if ((!p_ptr->depth) && (!p_ptr->town_num))
+	{
+		msg_print("Nothing happens.");
+		return;
+	}
+	
+	/* Cannot recall in towns with no dungeon */
+	if ((!vanilla_town) && (!p_ptr->depth))
+	{
+		bool found = FALSE;
+		int i;
+		
+		/* Look for stairs */
+		for (i = 0; i < town[p_ptr->town_num].numstores; i++)
+		{
+			if (town[p_ptr->town_num].store[i].type == BUILD_STAIRS)
+			{
+				found = TRUE;
+				break;
+			}
+		}
+		
+		if (!found)
+		{
+			msg_print("Nothing happens.");
+			return;
+		}
+	}
 
-	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth) && !p_ptr->inside_quest)
+	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth) &&
+		 !p_ptr->inside_quest)
 	{
 		if (get_check("Reset recall depth? "))
 			p_ptr->max_depth = p_ptr->depth;
