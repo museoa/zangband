@@ -762,7 +762,7 @@ void borg_oops(cptr what)
 
 	/* Stop processing */
 	borg_active = FALSE;
-	
+
 	/* Format the string */
 	(void)strnfmt(buf, 1024, "# Aborting (%s).", what);
 

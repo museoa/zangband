@@ -3614,9 +3614,9 @@ static s32b borg_power_aux4(void)
 
 	for (k = 0; k < 25 && k < borg_skill[BI_FOOD]; k++) value += 10000L;
 	for (; k < 35 && k < borg_skill[BI_FOOD]; k++) value += 200L;
-	
+
 	/* borg_note_fmt("# Have food: %d (value now : %ld)", borg_skill[BI_FOOD], (long) value); */
-	
+
 	if (borg_skill[BI_REG] && !borg_skill[BI_SDIG])
 	{
 		for (k = 0; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;

@@ -804,7 +804,7 @@ static bool borg_surrounded(void)
 	if (monsters > safe_grids)
 	{
 		borg_note_fmt("# Possibility of being surrounded (%d/%d)",
-						 monsters, safe_grids);
+					  monsters, safe_grids);
 
 		/* The borg can get trapped by breeders by continueing to flee
 		 * into a dead-end.  So he needs to be able to trump this
@@ -1442,8 +1442,7 @@ static bool borg_dim_door(int emergency, int p1)
 
 	/* Dimension Door report */
 	borg_note_fmt
-			  ("# Dim Door: Safest grid: (%d, %d) with %d Danger", b_y, b_x,
-			   b_p);
+		("# Dim Door: Safest grid: (%d, %d) with %d Danger", b_y, b_x, b_p);
 	dim_door_y = b_y;
 	dim_door_x = b_x;
 
@@ -2185,8 +2184,7 @@ static bool borg_heal(int danger)
 		else
 		{
 			/* Must have been a dark room */
-			borg_note_fmt
-					  ("# Lighted the darkened room instead of resting.");
+			borg_note_fmt("# Lighted the darkened room instead of resting.");
 			return (TRUE);
 		}
 	}
@@ -2842,15 +2840,15 @@ bool borg_caution(void)
 	{
 		/* Describe (briefly) the current situation */
 		borg_note_fmt
-				  ("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
-				   c_y, c_x, borg_skill[BI_CDEPTH], borg_skill[BI_CLEVEL],
-				   borg_skill[BI_CURHP], borg_skill[BI_MAXHP],
-				   borg_skill[BI_CURSP], borg_skill[BI_MAXSP], p);
+			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
+			 c_y, c_x, borg_skill[BI_CDEPTH], borg_skill[BI_CLEVEL],
+			 borg_skill[BI_CURHP], borg_skill[BI_MAXHP],
+			 borg_skill[BI_CURSP], borg_skill[BI_MAXSP], p);
 		if (borg_goi)
 		{
 			borg_note_fmt
-					  ("# Protected by GOI (borg turns:%d; game turns:%d)",
-					   borg_goi / borg_game_ratio, p_ptr->invuln);
+				("# Protected by GOI (borg turns:%d; game turns:%d)",
+				 borg_goi / borg_game_ratio, p_ptr->invuln);
 		}
 		if (borg_shield)
 		{
@@ -2996,8 +2994,7 @@ bool borg_caution(void)
 		{
 			/* Note */
 			borg_note_fmt
-					  ("# Leaving (restock) %s",
-					   borg_restock(borg_skill[BI_CDEPTH]));
+				("# Leaving (restock) %s", borg_restock(borg_skill[BI_CDEPTH]));
 
 			/* Start leaving */
 			goal_leaving = TRUE;
@@ -3007,8 +3004,7 @@ bool borg_caution(void)
 		{
 			/* Flee */
 			borg_note_fmt
-					  ("# Fleeing (restock) %s",
-					   borg_restock(borg_skill[BI_CDEPTH]));
+				("# Fleeing (restock) %s", borg_restock(borg_skill[BI_CDEPTH]));
 
 			/* Start fleeing */
 			goal_fleeing = TRUE;
@@ -3475,9 +3471,8 @@ bool borg_caution(void)
 
 			/* Note */
 			borg_note_fmt
-					  ("# Retreating to %d,%d (distance %d) via %d,%d (%d > %d)",
-					   b_y, b_x, b_r, g_y, g_x, p,
-					   borg_danger(g_x, g_y, 2, TRUE));
+				("# Retreating to %d,%d (distance %d) via %d,%d (%d > %d)",
+				 b_y, b_x, b_r, g_y, g_x, p, borg_danger(g_x, g_y, 2, TRUE));
 
 			/* Strategic retreat */
 			borg_keypress(I2D(b_d));
@@ -3594,7 +3589,7 @@ bool borg_caution(void)
 
 			/* Note */
 			borg_note_fmt("# Backing up to %d,%d (%d > %d)",
-							 g_x, g_y, p, borg_danger(g_x, g_y, 2, TRUE));
+						  g_x, g_y, p, borg_danger(g_x, g_y, 2, TRUE));
 
 			/* Back away from danger */
 			borg_keypress(I2D(ddd[b_i]));
@@ -4253,10 +4248,10 @@ int borg_attack_aux_thrust(void)
 
 	/* Note */
 	borg_note_fmt
-			  ("# Facing %s at (%d,%d).",
-			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
+		("# Facing %s at (%d,%d).",
+		 (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
 	borg_note_fmt
-			  ("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name);
+		("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name);
 
 	/* Get a direction for attacking */
 	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
@@ -4292,7 +4287,7 @@ static bool borg_target(int x, int y)
 	if (mb_ptr->monster)
 	{
 		borg_note_fmt("# Targeting %s.",
-						 (r_name + r_info[mb_ptr->monster].name));
+					  (r_name + r_info[mb_ptr->monster].name));
 	}
 	else
 	{
@@ -5865,8 +5860,7 @@ static int borg_attack_aux_launch_flame(void)
 
 
 	/* Do it */
-	borg_note_fmt("# Firing flame branded missile '%s'",
-					 inventory[b_k].o_name);
+	borg_note_fmt("# Firing flame branded missile '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -5940,8 +5934,7 @@ static int borg_attack_aux_launch_frost(void)
 
 
 	/* Do it */
-	borg_note_fmt("# Firing frost branded missile '%s'",
-					 inventory[b_k].o_name);
+	borg_note_fmt("# Firing frost branded missile '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6091,8 +6084,7 @@ static int borg_attack_aux_launch_evil(void)
 
 
 	/* Do it */
-	borg_note_fmt("# Firing evil branded missile '%s'",
-					 inventory[b_k].o_name);
+	borg_note_fmt("# Firing evil branded missile '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6168,7 +6160,7 @@ static int borg_attack_aux_launch_dragon(void)
 
 	/* Do it */
 	borg_note_fmt("# Firing dragon branded missile '%s'",
-					 inventory[b_k].o_name);
+				  inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6244,7 +6236,7 @@ static int borg_attack_aux_launch_wounding(void)
 
 	/* Do it */
 	borg_note_fmt("# Firing wounding branded missile '%s'",
-					 inventory[b_k].o_name);
+				  inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -7066,8 +7058,8 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 
 	/* Note */
 	borg_note_fmt
-			  ("# Facing %s at (%d,%d).",
-			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
+		("# Facing %s at (%d,%d).",
+		 (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
 	borg_note_fmt("# Attacking with Racial Attack '%d'", b_d);
 
 	/* Get a direction for attacking */
@@ -10110,9 +10102,8 @@ static int borg_defend_aux_genocide(void)
 		if (b_threat_id)
 		{
 			borg_note_fmt
-					  ("# Race '%c' is a real threat with total danger %d from %d individuals.",
-					   b_threat_id, b_threat[b_threat_id],
-					   b_threat_num[b_threat_id]);
+				("# Race '%c' is a real threat with total danger %d from %d individuals.",
+				 b_threat_id, b_threat[b_threat_id], b_threat_num[b_threat_id]);
 		}
 
 		/* Genociding this race would reduce the danger of the level */
@@ -10148,8 +10139,7 @@ static int borg_defend_aux_genocide(void)
 		if (borg_simulate) return (p1 - p2);
 
 		borg_note_fmt
-				  ("# Genociding race '%c' (%d)", genocide_target,
-				   genocide_target);
+			("# Genociding race '%c' (%d)", genocide_target, genocide_target);
 
 		/* do it! ---use scrolls first since they clutter inventory */
 		if (borg_read_scroll(SV_SCROLL_GENOCIDE) ||
@@ -10850,8 +10840,8 @@ bool borg_defend(int p1)
 			if (borg_spell(REALM_ARCANE, 3, 7) || borg_spell(REALM_LIFE, 3, 7))
 			{
 				borg_note_fmt
-						  ("# refreshing GOI.  borg_goi=%d, p_ptr->invuln=%d, (ratio=%d)",
-						   borg_goi, p_ptr->invuln, borg_game_ratio);
+					("# refreshing GOI.  borg_goi=%d, p_ptr->invuln=%d, (ratio=%d)",
+					 borg_goi, p_ptr->invuln, borg_game_ratio);
 				borg_attempting_refresh = TRUE;
 				borg_goi = 12000;
 				return (TRUE);
@@ -11821,8 +11811,7 @@ bool borg_perma_spell()
 	}
 
 	/* Note */
-	borg_note_fmt
-			  ("# Performing perma-spell type %d with value %d", b_g, b_n);
+	borg_note_fmt("# Performing perma-spell type %d with value %d", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
@@ -12458,7 +12447,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Message */
 		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
-						 r_name + r_info[mb_ptr->monster].name, x, y);
+					  r_name + r_info[mb_ptr->monster].name, x, y);
 
 		/* Walk into it */
 		if (my_no_alter)
@@ -12481,7 +12470,7 @@ static bool borg_play_step(int y2, int x2)
 		/*** Handle other takes ***/
 		/* Message */
 		borg_note_fmt("# Walking onto a '%s' at (%d,%d)",
-						 k_name + k_info[mb_ptr->object].name, x, y);
+					  k_name + k_info[mb_ptr->object].name, x, y);
 
 		/* Walk onto it */
 		borg_keypress(I2D(dir));

@@ -600,7 +600,7 @@ static bool borg_think_shop_sell_aux(int shop)
 
 		/* Evaluate the inventory with this item gone */
 		p = borg_power();
-		
+
 		/* Hack - it is good to sell unknown stuff */
 		if (!l_ptr->k_idx)
 		{
@@ -611,11 +611,11 @@ static bool borg_think_shop_sell_aux(int shop)
 		}
 		else
 		{
-		
+
 			/* Mega-hack, only sell un-identified stuff for now */
 			continue;
 		}
-		
+
 		/* Restore the item */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -927,6 +927,7 @@ static bool borg_think_home_buy_aux(void)
 	/* Nope */
 	return (FALSE);
 }
+
 #if 0
 
 /*
@@ -1007,7 +1008,7 @@ static bool borg_think_shop_grab_aux(int shop)
 
 		/* Buy that item */
 		borg_think_shop_buy(b_n);
-		
+
 		/* Hack - get out of the store */
 		borg_keypress(ESCAPE);
 
@@ -1169,7 +1170,7 @@ bool borg_think_store(void)
 
 	/* Remove "useless" equipment */
 	if (borg_remove_stuff()) return (TRUE);
-	
+
 	/* Wear good stuff */
 	if (borg_wear_stuff()) return (TRUE);
 
@@ -1851,7 +1852,7 @@ bool borg_think_dungeon(void)
 
 		/* Note */
 		borg_note_fmt("# Boosting bravery (1) from %d to %d!",
-						 avoidance, borg_skill[BI_CURHP] * 2);
+					  avoidance, borg_skill[BI_CURHP] * 2);
 
 		/* Hack -- ignore some danger */
 		avoidance = (borg_skill[BI_CURHP] * 2);
@@ -1905,7 +1906,7 @@ bool borg_think_dungeon(void)
 
 		/* Note */
 		borg_note_fmt("# Boosting bravery (2) from %d to %d!",
-						 avoidance, borg_skill[BI_MAXHP] * 4);
+					  avoidance, borg_skill[BI_MAXHP] * 4);
 
 		/* Hack -- ignore some danger */
 		avoidance = (borg_skill[BI_MAXHP] * 4);
@@ -1933,7 +1934,7 @@ bool borg_think_dungeon(void)
 
 		/* Note */
 		borg_note_fmt("# Boosting bravery (3) from %d to %d!",
-						 avoidance, 30000);
+					  avoidance, 30000);
 
 		/* Hack -- ignore some danger */
 		avoidance = 30000;

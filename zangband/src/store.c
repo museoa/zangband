@@ -188,7 +188,7 @@ static s32b price_item(object_type *o_ptr, bool flip)
 	s32b price;
 
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-	
+
 	int greed = ot_ptr->min_inflate;
 
 	/* Get the value of one of the items */
@@ -2415,7 +2415,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	int tmp_chr;
 	int i;
 	int store_top;
-	
+
 	object_type *o_ptr;
 
 	/* Hack - save f1_ptr for later */
@@ -2521,7 +2521,7 @@ void do_cmd_store(const field_type *f1_ptr)
 		{
 			Term_write_list(st_ptr->stock, LIST_STORE);
 		}
-		
+
 		/* What can we sell? */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
@@ -2577,11 +2577,11 @@ void do_cmd_store(const field_type *f1_ptr)
 
 		/* Send information */
 		Term_write_list(p_ptr->inventory, LIST_INVEN);
-	
+
 		/* Reset tester hook */
 		item_tester_hook = NULL;
-		
-		
+
+
 
 		/* Basic commands */
 		prt(" ESC) Exit from Building.", 0, 22);

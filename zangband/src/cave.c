@@ -2467,9 +2467,6 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
 
-	/* Tell the world about this square */
-	Term_write_map(x, y, c_ptr, pc_ptr);
-
 	/* Get terrain feature */
 	feat = pc_ptr->feat;
 	f_ptr = &f_info[feat];

@@ -1928,10 +1928,10 @@ static void borg_notice_inven_item(list_item *l_ptr)
 
 	/* Keep track of weight */
 	borg_skill[BI_WEIGHT] += l_ptr->weight * number;
-	
+
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
-	
+
 	/* Keep track of (base) value */
 	borg_skill[BI_VALUE] += k_ptr->cost * number;
 
@@ -2193,7 +2193,7 @@ static void borg_notice_inven(void)
 
 			/* Hack - assume we get one item */
 			l_ptr->number = 1;
-			
+
 			/* Hack - fix the treat_as value */
 			l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2202,7 +2202,7 @@ static void borg_notice_inven(void)
 
 			/* Restore number */
 			l_ptr->number = num;
-			
+
 			/* Restore treat_as value */
 			l_ptr->treat_as = TREAT_AS_LESS;
 
@@ -2238,7 +2238,7 @@ static void borg_notice_inven(void)
 
 					/* Hack - assume we get one item */
 					l_ptr->number = 1;
-					
+
 					/* Hack - fix the treat_as value */
 					l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2247,7 +2247,7 @@ static void borg_notice_inven(void)
 
 					/* Restore number */
 					l_ptr->number = num;
-					
+
 					/* Restore treat_as value */
 					l_ptr->treat_as = TREAT_AS_LESS;
 

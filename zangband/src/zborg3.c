@@ -1468,7 +1468,7 @@ bool borg_activate_artifact(int name1, bool secondary)
 		if ((i != EQUIP_LITE) && !borg_obj_known_full(l_ptr))
 		{
 			borg_note_fmt("# %s must be *ID*'d before activation.",
-							 l_ptr->o_name);
+						  l_ptr->o_name);
 			return (FALSE);
 		}
 
@@ -1781,8 +1781,7 @@ bool borg_spell(int realm, int book, int what)
 
 		/* Report a little bit */
 		borg_note_fmt
-				  ("# Targetting Landing Zone (%d,%d)", dim_door_x,
-				   dim_door_y);
+			("# Targetting Landing Zone (%d,%d)", dim_door_x, dim_door_y);
 
 		/* Determine "path" */
 		x1 = c_x;
@@ -1962,7 +1961,7 @@ bool borg_mindcr(int spell, int level)
 
 	/* Debugging Info */
 	borg_note_fmt
-			  ("# Casting %s (spell: %d, level: %d).", as->name, spell, level);
+		("# Casting %s (spell: %d, level: %d).", as->name, spell, level);
 
 	/* Cast a spell */
 	borg_keypress('m');
@@ -1978,8 +1977,7 @@ bool borg_mindcr(int spell, int level)
 
 		/* Report a little bit */
 		borg_note_fmt
-				  ("# Targetting Landing Zone (%d,%d)", dim_door_x,
-				   dim_door_y);
+			("# Targetting Landing Zone (%d,%d)", dim_door_x, dim_door_y);
 
 		/* Determine "path" */
 		x1 = c_x;

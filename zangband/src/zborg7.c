@@ -1478,7 +1478,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	borg_note_fmt("# Destroying %s.", l_ptr->o_name);
 
 	borg_keypress('0');
-	
+
 	/* Get string corresponding to number */
 	(void)strnfmt(buf, 4, "%d", number);
 	borg_keypresses(buf);
@@ -1505,8 +1505,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 			bad_obj_x[a] = c_x;
 			bad_obj_y[a] = c_y;
 			borg_note_fmt
-					  ("# Crappy artifact at %d,%d", bad_obj_x[a],
-					   bad_obj_y[a]);
+				("# Crappy artifact at %d,%d", bad_obj_x[a], bad_obj_y[a]);
 			break;
 		}
 	}
@@ -1532,10 +1531,10 @@ bool borg_crush_junk(void)
 	s32b p;
 	s32b value;
 	s32b my_power;
-	
+
 	/* Hack -- no need */
 	if (!borg_do_crush_junk) return (FALSE);
-	
+
 	/* No crush if even slightly dangerous */
 	if (borg_danger(c_x, c_y, 1, TRUE) >
 		borg_skill[BI_CURHP] / 10) return (FALSE);
@@ -1544,9 +1543,9 @@ bool borg_crush_junk(void)
 	borg_notice();
 
 	my_power = borg_power();
-	
+
 	/* Include the effects of value of items */
-	my_power += (long) borg_skill[BI_VALUE];
+	my_power += (long)borg_skill[BI_VALUE];
 
 	/* Destroy actual "junk" items */
 	for (i = 0; i < inven_num; i++)
@@ -1571,8 +1570,8 @@ bool borg_crush_junk(void)
 			/* unknown? */
 			if (!borg_obj_known_p(l_ptr) &&
 				!(strstr(l_ptr->o_name, "{average") ||
-				strstr(l_ptr->o_name, "{cursed") ||
-				strstr(l_ptr->o_name, "{bad"))) continue;
+				  strstr(l_ptr->o_name, "{cursed") ||
+				  strstr(l_ptr->o_name, "{bad"))) continue;
 
 			/* Pretend one item isn't there */
 			l_ptr->treat_as = TREAT_AS_LESS;
@@ -1585,10 +1584,10 @@ bool borg_crush_junk(void)
 
 			/* Evaluate the inventory */
 			p = borg_power();
-			
+
 			/* Include the effects of value of items */
 			p += borg_skill[BI_VALUE];
-			
+
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -1905,7 +1904,7 @@ bool borg_test_stuff(bool star_id)
 {
 	int i, b_i = -1;
 	s32b v, b_v = -1;
-	
+
 	list_item *l_ptr;
 
 	bool inven = FALSE;
@@ -2057,17 +2056,21 @@ bool borg_test_stuff(bool star_id)
 		{
 			l_ptr = &equipment[b_i];
 		}
-	
-	
+
+
 		if (star_id)
 		{
-			borg_oops_fmt("# Sorry - I cannot id anything yet.  Can you *id* the %s, and then restart me.", l_ptr->o_name);
+			borg_oops_fmt
+				("# Sorry - I cannot id anything yet.  Can you *id* the %s, and then restart me.",
+				 l_ptr->o_name);
 		}
 		else
 		{
-			borg_oops_fmt("# Sorry - I cannot id anything yet.  Can you identify the %s, and then restart me.", l_ptr->o_name);
+			borg_oops_fmt
+				("# Sorry - I cannot id anything yet.  Can you identify the %s, and then restart me.",
+				 l_ptr->o_name);
 		}
-		
+
 #if 0
 		if (inven)
 		{
@@ -2946,8 +2949,7 @@ bool borg_leave_level(bool bored)
 					cptr reason = borg_prepared(borg_skill[BI_MAXDEPTH]);
 					borg_slow_return = TRUE;
 					borg_note_fmt
-							  ("# Way too scary to recall down there!   %s",
-							   reason);
+						("# Way too scary to recall down there!   %s", reason);
 					borg_slow_return = FALSE;
 				}
 				else
@@ -2998,8 +3000,7 @@ bool borg_leave_level(bool bored)
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH] + 1);
 		g = -1;
 		borg_slow_return = TRUE;
-		borg_note_fmt("# heading up (bored and unable to dive: %s)",
-						 reason);
+		borg_note_fmt("# heading up (bored and unable to dive: %s)", reason);
 		borg_slow_return = FALSE;
 	}
 
@@ -3022,7 +3023,7 @@ bool borg_leave_level(bool bored)
 			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
 			borg_note_fmt("# returning to town to restock(too deep: %s)",
-							 reason);
+						  reason);
 			goal_rising = TRUE;
 		}
 

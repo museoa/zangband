@@ -1532,7 +1532,7 @@ static void borg_delete_take(int i)
 
 	/* Note */
 	borg_note_fmt("# Forgetting an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), take->x, take->y);
+				  (k_name + k_info[take->k_idx].name), take->x, take->y);
 
 	/* Kill the object */
 	WIPE(take, borg_take);
@@ -1675,7 +1675,7 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 
 	/* Note */
 	borg_note_fmt("# Creating an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), x, y);
+				  (k_name + k_info[take->k_idx].name), x, y);
 
 	/* Wipe goals */
 	goal = 0;
@@ -1721,18 +1721,18 @@ void borg_delete_kill(int who, cptr reason)
 
 	/* Paranoia -- Already wiped */
 	if (!kill->r_idx) return;
-	
+
 	if (map_in_bounds(kill->x, kill->y))
 	{
 		map_block *mb_ptr = map_loc(kill->x, kill->y);
-		
+
 		if (mb_ptr->kill == who) mb_ptr->kill = 0;
 	}
 
 	/* Note */
 	borg_note_fmt("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
-					 (r_name + r_info[kill->r_idx].name), who,
-					 kill->x, kill->y, reason);
+				  (r_name + r_info[kill->r_idx].name), who,
+				  kill->x, kill->y, reason);
 
 	/* Kill the monster */
 	WIPE(kill, borg_kill);
@@ -1789,11 +1789,11 @@ static void borg_merge_kill(int who)
 
 	/* Paranoia -- Already wiped */
 	if (!kill->r_idx) return;
-	
+
 	if (map_in_bounds(kill->x, kill->y))
 	{
 		map_block *mb_ptr = map_loc(kill->x, kill->y);
-		
+
 		if (mb_ptr->kill == who) mb_ptr->kill = 0;
 	}
 
@@ -1821,7 +1821,7 @@ static void borg_wipe_mon(byte type)
 		if (kill->type == type)
 		{
 			borg_note_fmt("Destroying kill %d in MOVED list in wipe_mon", i);
-		
+
 			borg_merge_kill(i);
 		}
 	}
@@ -1841,7 +1841,7 @@ static void borg_append_mon_list(byte type1, byte type2)
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
 		kill = &borg_kills[i];
-		
+
 		/* Paranoia */
 		if (!kill->r_idx) continue;
 
@@ -1928,7 +1928,7 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 
 	/* Note */
 	borg_note_fmt("# Creating a monster '%s' (%d) at (%d, %d)",
-					 (r_name + r_info[kill->r_idx].name), n, x, y);
+				  (r_name + r_info[kill->r_idx].name), n, x, y);
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
@@ -2058,18 +2058,19 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 
 			/* Too far away */
 			if (d > dist) continue;
-			
+
 			/* Note */
-			borg_note_fmt("# Tracking monster (%d) from (%d,%d) to (%d) (%d,%d)",
-							 i, x, y, j, kill2->x, kill2->y);
-			
+			borg_note_fmt
+				("# Tracking monster (%d) from (%d,%d) to (%d) (%d,%d)", i, x,
+				 y, j, kill2->x, kill2->y);
+
 			/* Change the location of the old one */
 			kill1->x = kill2->x;
 			kill1->y = kill2->y;
 
 			/* Remove the new monster */
 			borg_merge_kill(j);
-			
+
 			x = kill1->x;
 			y = kill1->y;
 
@@ -2116,9 +2117,10 @@ static bool remove_bad_kills(u16b who)
 		(map_loc(ox, oy)->monster != kill->r_idx))
 	{
 		char buf[100];
-		
-		(void)strnfmt(buf, 100, "vanished : %d, %d",map_loc(ox, oy)->monster, kill->r_idx);
-		
+
+		(void)strnfmt(buf, 100, "vanished : %d, %d", map_loc(ox, oy)->monster,
+					  kill->r_idx);
+
 		borg_delete_kill(who, buf);
 		return (TRUE);
 	}
@@ -2233,7 +2235,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 	/* Note */
 	borg_note_fmt("# There is a monster '%s' within %d grids of %d,%d",
-					 (r_name + r_ptr->name), r, x, y);
+				  (r_name + r_ptr->name), r, x, y);
 
 	/* Hack -- count racial appearances */
 	if (borg_race_count[r_idx] < MAX_SHORT) borg_race_count[r_idx]++;
@@ -2288,8 +2290,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 		/* Note */
 		borg_note_fmt("# Matched a monster '%s' at (%d,%d)",
-						 (r_name + r_info[kill->r_idx].name),
-						 kill->x, kill->y);
+					  (r_name + r_info[kill->r_idx].name), kill->x, kill->y);
 
 
 		/* Index */
@@ -2301,7 +2302,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 	/* Note */
 	borg_note_fmt("# Ignoring a monster '%s' near (%d,%d)",
-					 (r_name + r_ptr->name), x, y);
+				  (r_name + r_ptr->name), x, y);
 
 	/* Oops */
 	/* this is the case where we know the name of the monster */
@@ -2329,7 +2330,7 @@ static void borg_count_death(cptr what)
 
 	/* Paranoia */
 	if (!r_idx) return;
-	
+
 	if (r_info[r_idx].flags1 & RF1_UNIQUE)
 	{
 		/* Reset unique on level flag */
@@ -2496,7 +2497,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		if (mb_ptr->kill && (map->monster == mb_ptr->monster))
 		{
 			kill = &borg_kills[mb_ptr->kill];
-			
+
 			if (kill->type != BORG_MON_NEW)
 			{
 				/* Remove it from the old list. */
@@ -2532,7 +2533,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		{
 			/* Check */
 			borg_kill *kill = &borg_kills[mb_ptr->kill];
-			
+
 			if (kill->type != BORG_MON_NEW)
 			{
 				if ((kill->x == x) && (kill->y == y))
@@ -2545,7 +2546,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 				}
 				else
 				{
-					borg_note_fmt("Strange kill %d at (%d,%d)", mb_ptr->kill, kill->x, kill->y);
+					borg_note_fmt("Strange kill %d at (%d,%d)", mb_ptr->kill,
+								  kill->x, kill->y);
 				}
 			}
 
@@ -2568,7 +2570,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 				((bt_ptr->k_idx != map->object) && !map->unknown))
 			{
 				borg_note_fmt("# The object %d is different! (%d,%d)",
-								 mb_ptr->take, bt_ptr->k_idx, map->object);
+							  mb_ptr->take, bt_ptr->k_idx, map->object);
 
 				/* The object is different- delete it */
 				borg_delete_take(mb_ptr->take);
@@ -2915,8 +2917,8 @@ static void borg_fear_grid(cptr who, int x, int y, uint k, bool seen_guy)
 	else
 	{
 		borg_note_fmt
-				  ("# Fearing grid (%d,%d) value %d because of a non-LOS %s", x,
-				   y, k, who);
+			("# Fearing grid (%d,%d) value %d because of a non-LOS %s", x,
+			 y, k, who);
 	}
 
 	/* Current region */
@@ -3758,7 +3760,7 @@ void borg_update(void)
 	cptr msg;
 
 	cptr what;
-	
+
 	/*** Update the map ***/
 
 	/* Update the map */
@@ -3876,7 +3878,7 @@ void borg_update(void)
 			borg_count_death(what);
 
 			borg_msg_use[i] = 2;
-			
+
 			/* Shooting through darkness worked */
 			if (successful_target < 0) successful_target = 2;
 		}
@@ -4018,7 +4020,7 @@ void borg_update(void)
 		else if (prefix(msg, "KILL:"))
 		{
 			borg_count_death(what);
-			
+
 			borg_msg_use[i] = 3;
 
 			/* Shooting through darkness worked */
@@ -4043,7 +4045,7 @@ void borg_update(void)
 		else if (prefix(msg, "DIED:"))
 		{
 			borg_count_death(what);
-			
+
 			borg_msg_use[i] = 3;
 
 			/* Shooting through darkness worked */

@@ -2626,7 +2626,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 
 				/* Modify the damage */
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
-					
+
 				/* Drop (or break) near that location (i_ptr is now invalid) */
 				drop_near(i_ptr, breakage_chance(i_ptr), x, y);
 
@@ -2821,7 +2821,7 @@ void do_cmd_throw_aux(int mult)
 
 	u32b f1, f2, f3;
 	cptr q, s;
-	
+
 	bool potion;
 
 	cave_type *c_ptr;
@@ -3121,7 +3121,7 @@ void do_cmd_throw_aux(int mult)
 
 				/* Remember if the object is a potion or not */
 				potion = object_is_potion(q_ptr);
-				
+
 				/* The item hits the monster (q_ptr is now invalid) */
 				throw_item_effect(q_ptr, TRUE, FALSE, x, y);
 
