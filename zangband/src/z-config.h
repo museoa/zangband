@@ -612,11 +612,9 @@
 /*
  * Check the modification time of *_info.raw files
  * (by Keldon Jones)
- * This doesn't work on the mac.
  */
-#ifndef MACINTOSH
-	#define CHECK_MODIFICATION_TIME
-#endif /* MACINTOSH */
+#define CHECK_MODIFICATION_TIME
+
 /*
  * Use the new sorting routines for creation
  * of the monster allocation table
