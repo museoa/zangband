@@ -892,9 +892,93 @@ bool inn_rest(void)
 	return (TRUE);
 }
 
+/*
+ * Calculate the probability of successful hit for a weapon and certain AC
+ *
+ * Only accurate for the current weapon, because it includes
+ * player's +to_hit.
+ */
+static int hit_prob(int to_h, int ac)
+{
+	int chance = p_ptr->skills[SKILL_THN] + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
+	int prob = 0;
+
+	if (chance > 0 && ac < chance) prob = (100 * (chance - ac) / chance);
+	return (5 + 95 * prob / 100);
+}
+
 
 #define WEP_MAST_COL1	2
 #define WEP_MAST_COL2	45
+
+/* Show how much damage a player does without a weapon */
+static bool compare_weaponless(void)
+{
+	int i;
+	int intmaxdam = 0, intmindam = 10;
+	int num_blow = (p_ptr->lev < 7 ? 1 : p_ptr->lev / 7);
+
+	if (p_ptr->rp.pclass != CLASS_MONK)
+	{
+		if (p_ptr->rp.prace == RACE_GHOUL)
+		{
+			/* Claw */
+			msgf("Maybe you will paralyze your foes with your claws.");
+		}
+		else
+		{
+			/* Just punching */
+			msgf("You can do little damage with your fists.");
+		}
+
+		/* Free of charge */
+		return (FALSE);
+	}
+
+	/* State the obvious */
+	msgf("Monks without a weapon use martial arts.");
+
+	/* Need more room on the screen so clear a part of it */
+	if (p_ptr->lev >= 45) clear_region(0, 15, 21);
+
+	/* Show the list of attacks */
+	put_fstr(WEP_MAST_COL1, 4, CLR_L_BLUE "Possible Attacks:");
+
+	for (i = 0; i < MAX_MA && ma_blows[i].min_level < p_ptr->lev; i++)
+	{
+		const martial_arts *ma_ptr = &ma_blows[i];
+
+		intmaxdam = ma_ptr->dd * ma_ptr->ds;
+		intmindam = MIN(intmindam, ma_ptr->dd);
+
+		/* Show a line from the table */
+		put_fstr(WEP_MAST_COL1, i + 5, "%s (%dd%d)",
+				 format(ma_ptr->desc, "a monster"),
+				 ma_ptr->dd, ma_ptr->ds);
+	}
+
+	put_fstr(WEP_MAST_COL2, 4, CLR_L_BLUE "Possible Damage:");
+
+	/* Damage for one blow (if it hits) */
+	put_fstr(WEP_MAST_COL2, 5, "One Strike: %d-%d damage", intmindam, intmaxdam);
+
+	/* The whole attack */
+	intmindam *= p_ptr->num_blow;
+	intmaxdam *= p_ptr->num_blow;
+
+	/* Damage for the complete attack (if all blows hit) */
+	put_fstr(WEP_MAST_COL2, 6, "One Attack: %d-%d damage", intmindam, intmaxdam);
+
+	/* Print hit probabilities */
+	put_fstr(WEP_MAST_COL2, 8, "Enemy AC:  Low   Medium  High \n"
+							   "Hit Prob:  %2d%% %2d%% %2d%% %2d%% %2d%%",
+			hit_prob(0, 25), hit_prob(0, 50), hit_prob(0, 75), hit_prob(0, 100),
+			hit_prob(0, 200));
+
+	/* This info costs money */
+	return (TRUE);
+}
+
 
 /*
  * Display the damage figure of an object
@@ -1019,22 +1103,6 @@ static void compare_weapon_aux1(const object_type *o_ptr)
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Poison:", 20);
 	}
-}
-
-
-/*
- * Calculate the probability of successful hit for a weapon and certain AC
- *
- * Only accurate for the current weapon, because it includes
- * player's +to_hit.
- */
-static int hit_prob(int to_h, int ac)
-{
-	int chance = p_ptr->skills[SKILL_THN] + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
-	int prob = 0;
-
-	if (chance > 0 && ac < chance) prob = (100 * (chance - ac) / chance);
-	return (5 + 95 * prob / 100);
 }
 
 
@@ -1179,6 +1247,7 @@ static void list_weapon(const object_type *o_ptr)
 bool compare_weapons(void)
 {
 	object_type *o_ptr;
+	bool result = TRUE;;
 
 	/* Clear the screen */
     clear_region(0, 6, 18);
@@ -1187,40 +1256,42 @@ bool compare_weapons(void)
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Check to see if we have one */
-	if (!o_ptr->k_idx)
+	if (o_ptr->k_idx)
 	{
-		msgf("You need to wield a weapon.");
-		return (FALSE);
+		/* Identify the weapon */
+		identify_item(o_ptr);
+		object_mental(o_ptr);
+
+		/* Save all the known flags */
+		o_ptr->kn_flags[0] = o_ptr->flags[0];
+		o_ptr->kn_flags[1] = o_ptr->flags[1];
+		o_ptr->kn_flags[2] = o_ptr->flags[2];
+		o_ptr->kn_flags[3] = o_ptr->flags[3];
+
+		/* Erase the "feeling" */
+		o_ptr->feeling = FEEL_NONE;
+
+
+		/* List the new values */
+		list_weapon(o_ptr);
+		compare_weapon_aux1(o_ptr);
+
+		put_fstr(0, 19,
+				"(Only highest damage applies per monster. Special damage not cumulative.)");
+
+		msgf("Based on your current abilities, here is what your weapon will do:");
 	}
-
-	/* Identify the weapon */
-	identify_item(o_ptr);
-	object_mental(o_ptr);
-
-	/* Save all the known flags */
-	o_ptr->kn_flags[0] = o_ptr->flags[0];
-	o_ptr->kn_flags[1] = o_ptr->flags[1];
-	o_ptr->kn_flags[2] = o_ptr->flags[2];
-	o_ptr->kn_flags[3] = o_ptr->flags[3];
-
-	/* Erase the "feeling" */
-	o_ptr->feeling = FEEL_NONE;
-
-
-	/* List the new values */
-	list_weapon(o_ptr);
-	compare_weapon_aux1(o_ptr);
-
-	put_fstr(0, 19,
-			"(Only highest damage applies per monster. Special damage not cumulative.)");
-
-	msgf("Based on your current abilities, here is what your weapon will do: ");
+	else
+	{
+		/* Bare hands */
+		result = compare_weaponless();
+	}
 
 	/* Give the player a chance to see it all */
 	if (auto_more) (void)inkey();
 
 	/* Done */
-	return (TRUE);
+	return (result);
 }
 
 
@@ -1793,6 +1864,12 @@ static bool build_process_command(const field_type *f_ptr)
 				/* Hack -- Unknown command */
 				msgf("That command does not work in buildings.");
 			}
+			else
+			{
+				/* Why this is neeed so often I don't know */
+				message_flush();
+			}
+
 			break;
 		}
 	}
