@@ -716,6 +716,11 @@
 #define MAX_RANGE       18      /* Maximum range (spells, etc) < MAX_SIGHT */
 
 
+/*
+ * Maximum flow depth when using "MONSTER_FLOW"
+ */
+#define MONSTER_FLOW_DEPTH 32
+
 
 /*
  * There is a 1/160 chance per round of creating a new monster
@@ -3470,8 +3475,8 @@
 #define view_torch_grids		p_ptr->options[32]
 #define dungeon_align			svr_ptr->options[7]
 #define dungeon_stair			svr_ptr->options[8]
-#define	flow_by_sound			svr_ptr->options[9]
-#define flow_by_smell			svr_ptr->options[10]
+/* {TRUE,  0, NULL,					"Number 42" }, svr_ptr->options[9] */
+/* {TRUE,  0, NULL,					"Number 43" }, svr_ptr->options[10] */
 /* {TRUE,  0, NULL,					"Number 44" }, svr_ptr->options[11] */
 /* {TRUE,  0, NULL,					"Number 45" }, svr_ptr->options[12] */
 #define smart_learn				svr_ptr->options[13]

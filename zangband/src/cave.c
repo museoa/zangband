@@ -4422,9 +4422,6 @@ static int flow_n = 0;
  */
 void forget_flow(void)
 {
-
-#ifdef MONSTER_FLOW
-
 	int x, y;
 
 	/* Nothing to forget */
@@ -4443,13 +4440,8 @@ void forget_flow(void)
 
 	/* Start over */
 	flow_n = 0;
-
-#endif /* MONSTER_FLOW */
-
 }
 
-
-#ifdef MONSTER_FLOW
 
 /*
  * Hack - speed up the update_flow algorithm by only doing
@@ -4458,9 +4450,6 @@ void forget_flow(void)
  */
 static u16b flow_x = 0;
 static u16b flow_y = 0;
-
-
-#endif /* MONSTER_FLOW */
 
 
 /*
@@ -4478,9 +4467,6 @@ static u16b flow_y = 0;
  */
 void update_flow(void)
 {
-
-#ifdef MONSTER_FLOW
-
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
@@ -4492,9 +4478,6 @@ void update_flow(void)
 
 	cave_type *c_ptr;
 	byte feat;
-
-	/* Hack -- disabled */
-	if (!flow_by_sound) return;
 
 	/* Paranoia -- make sure the array is empty */
 	if (temp_n) return;
@@ -4599,9 +4582,6 @@ void update_flow(void)
 			if (flow_tail == flow_head) flow_tail = old_head;
 		}
 	}
-
-#endif /* MONSTER_FLOW */
-
 }
 
 

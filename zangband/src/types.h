@@ -497,12 +497,8 @@ struct cave_type
 
 	s16b fld_idx;		/* Field in this grid */
 
-#ifdef MONSTER_FLOW
-
 	byte cost;		/* Hack -- cost of flowing */
 	byte when;		/* Hack -- when cost was computed */
-
-#endif /* MONSTER_FLOW */
 };
 
 

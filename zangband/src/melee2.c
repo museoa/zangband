@@ -252,8 +252,6 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		}
 	}
 
-#ifdef ALLOW_FEAR
-
 	/* Mega-Hack -- Pain cancels fear */
 	if (m_ptr->monfear && (dam > 0))
 	{
@@ -302,8 +300,6 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		}
 	}
 
-#endif /* ALLOW_FEAR */
-
 	/* Not dead yet */
 	return;
 }
@@ -326,16 +322,12 @@ static int mon_will_run(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-#ifdef ALLOW_TERROR
-
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	u16b p_lev, m_lev;
 	u16b p_chp, p_mhp;
 	u16b m_chp, m_mhp;
 	u32b p_val, m_val;
-
-#endif
 
 	/* Friends can be commanded to avoid the player */
 	if (is_pet(m_ptr))
@@ -350,8 +342,6 @@ static int mon_will_run(int m_idx)
 
 	/* All "afraid" monsters will run away */
 	if (m_ptr->monfear) return (TRUE);
-
-#ifdef ALLOW_TERROR
 
 	/* Nearby monsters will not become terrified */
 	if (m_ptr->cdis <= 5) return (FALSE);
@@ -381,16 +371,10 @@ static int mon_will_run(int m_idx)
 	/* Strong players scare strong monsters */
 	if (p_val * m_mhp > m_val * p_mhp) return (TRUE);
 
-#endif
-
 	/* Assume no terror */
 	return (FALSE);
 }
 
-
-
-
-#ifdef MONSTER_FLOW
 
 /*
  * Choose the "best" direction for "flowing"
@@ -414,7 +398,7 @@ static int mon_will_run(int m_idx)
  * being close enough to chase directly.  I have no idea what will
  * happen if you combine "smell" with low "aaf" values.
  */
-static bool get_moves_aux(int m_idx, int *yp, int *xp)
+static void get_moves_aux(int m_idx, int *yp, int *xp)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -425,40 +409,34 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	/* Monster flowing disabled */
-	if (!flow_by_sound) return (FALSE);
-
+	
 	/* Monster can go through rocks */
-	if (r_ptr->flags2 & RF2_PASS_WALL) return (FALSE);
-	if (r_ptr->flags2 & RF2_KILL_WALL) return (FALSE);
+	if (r_ptr->flags2 & RF2_PASS_WALL) return;
+	if (r_ptr->flags2 & RF2_KILL_WALL) return;
 
 	/* Monster location */
 	y1 = m_ptr->fy;
 	x1 = m_ptr->fx;
 
 	/* Monster grid */
-	c_ptr = area(y1,x1);
+	c_ptr = area(y1, x1);
 
 	/* The player is not currently near the monster grid */
 	if (c_ptr->when < area(py, px)->when)
 	{
 		/* The player has never been near the monster grid */
-		if (!c_ptr->when) return (FALSE);
-
-		/* The monster is not allowed to track the player */
-		if (!flow_by_smell) return (FALSE);
+		if (!c_ptr->when) return;
 	}
 
 	/* Non-pets are too far away to notice the player */
 	if (!is_pet(m_ptr))
 	{
-		if (c_ptr->cost > MONSTER_FLOW_DEPTH) return (FALSE);
-		if (c_ptr->cost > r_ptr->aaf) return (FALSE);
+		if (c_ptr->cost > MONSTER_FLOW_DEPTH) return;
+		if (c_ptr->cost > r_ptr->aaf) return;
 	}
 
-	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_grid(c_ptr)) return (FALSE);
+	/* Hack XXX XXX -- Player can see us, run towards him */
+	if (player_has_los_grid(c_ptr)) return;
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -468,7 +446,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		x = x1 + ddx_ddd[i];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(y, x)) continue;
+		if (!in_bounds2(y, x)) return;
 
 		c_ptr = area(y, x);
 
@@ -489,12 +467,6 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		(*yp) = py + 16 * ddy_ddd[i];
 		(*xp) = px + 16 * ddx_ddd[i];
 	}
-
-	/* No legal move (?) */
-	if (!when) return (FALSE);
-
-	/* Success */
-	return (TRUE);
 }
 
 
@@ -513,9 +485,6 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	/* Monster flowing disabled */
-	if (!flow_by_sound) return (FALSE);
 
 	/* Player location */
 	py = p_ptr->py;
@@ -590,7 +559,6 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 	return (TRUE);
 }
 
-#endif /* MONSTER_FLOW */
 
 /*
  * Hack -- Precompute a bunch of calls to distance() in find_safety() and
@@ -781,15 +749,11 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 			/* Skip locations in a wall */
 			if (!cave_floor_grid(c_ptr)) continue;
 
-			/* Check for "availability" (if monsters can flow) */
-			if (flow_by_sound)
-				{
-				/* Ignore grids very far from the player */
-				if (c_ptr->when < area(py, px)->when) continue;
+			/* Ignore grids very far from the player */
+			if (c_ptr->when < area(py, px)->when) continue;
 
-				/* Ignore too-distant grids */
-				if (c_ptr->cost > area(fy, fx)->cost + 2 * d) continue;
-			}
+			/* Ignore too-distant grids */
+			if (c_ptr->cost > area(fy, fx)->cost + 2 * d) continue;
 
 			/* Check for absence of shot (more or less) */
 			if (clean_shot(fy, fx, y, x, FALSE))
@@ -937,14 +901,8 @@ static bool get_moves(int m_idx, int *mm)
 	bool         will_run = mon_will_run(m_idx);
 	cave_type	*c_ptr;
 
-#ifdef MONSTER_FLOW
 	/* Flow towards the player */
-	if (flow_by_sound)
-	{
-		/* Flow towards the player */
-		(void)get_moves_aux(m_idx, &y2, &x2);
-	}
-#endif
+	(void)get_moves_aux(m_idx, &y2, &x2);
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -1052,12 +1010,8 @@ static bool get_moves(int m_idx, int *mm)
 			}
 			else
 			{
-				/* Attempt to avoid the player */
-				if (flow_by_sound)
-				{
-					/* Adjust movement */
-					(void)get_fear_moves_aux(m_idx, &y, &x);
-				}
+				/* Adjust movement */
+				(void)get_fear_moves_aux(m_idx, &y, &x);
 			}
 		}
 	}
@@ -3194,19 +3148,17 @@ void process_monsters(int min_energy)
 			test = TRUE;
 		}
 
-#ifdef MONSTER_FLOW
-		/* Hack -- Monsters can "smell" the player from far away */
-		/* Note that most monsters have "aaf" of "20" or so */
-		else if (flow_by_sound &&
-			(area(p_ptr->py, p_ptr->px)->when == c_ptr->when) &&
+		/* 
+		 * Hack -- Monsters can "smell" the player from far away
+		 * Note that most monsters have "aaf" of "20" or so
+		 */
+		else if ((area(p_ptr->py, p_ptr->px)->when == c_ptr->when) &&
 			(c_ptr->cost < MONSTER_FLOW_DEPTH) &&
 			(c_ptr->cost < r_ptr->aaf))
 		{
 			/* We can "smell" the player */
 			test = TRUE;
 		}
-#endif /* MONSTER_FLOW */
-
 
 		/* Do nothing */
 		if (!test) continue;

@@ -1178,7 +1178,11 @@ void generate_cave(void)
 		o_max = 1;
 		m_max = 1;
 
-		/* Start with a blank cave */
+		/* 
+		 * Start with a blank cave
+		 *
+		 * XXX XXX Would C_WIPE be faster and cleaner?
+		 */
 		for (y = 0; y < MAX_HGT; y++)
 		{
 			for (x = 0; x < MAX_WID; x++)
@@ -1198,11 +1202,9 @@ void generate_cave(void)
 				/* No fields */
 				cave[y][x].fld_idx = 0;
 
-#ifdef MONSTER_FLOW
 				/* No flow */
 				cave[y][x].cost = 0;
 				cave[y][x].when = 0;
-#endif /* MONSTER_FLOW */
 			}
 		}
 

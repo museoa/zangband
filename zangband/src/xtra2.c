@@ -1298,9 +1298,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		return (TRUE);
 	}
 
-
-#ifdef ALLOW_FEAR
-
 	/* Mega-Hack -- Pain cancels fear */
 	if (m_ptr->monfear && (dam > 0))
 	{
@@ -1348,9 +1345,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			                   20 : ((11 - percentage) * 5)));
 		}
 	}
-
-#endif
-
 
 	/* Not dead yet */
 	return (FALSE);
