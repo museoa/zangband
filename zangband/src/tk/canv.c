@@ -30,7 +30,6 @@ struct WidgetItem  {
 	int gwidth, gheight;
 	XColor *borderColor;
 	int borderWidth;
-	int borderDist;
 };
 
 static int Assign_ParseProc _ANSI_ARGS_((
@@ -67,8 +66,6 @@ static Tk_ConfigSpec configSpecs[] = {
     {TK_CONFIG_COLOR, (char *) "-bordercolor", NULL, NULL,
 	 "Yellow", Tk_Offset(WidgetItem, borderColor),
 	 TK_CONFIG_DONT_SET_DEFAULT | TK_CONFIG_NULL_OK, NULL},
-    {TK_CONFIG_INT, (char *) "-borderdistance", NULL, NULL,
-	 "1", Tk_Offset(WidgetItem, borderDist), 0, NULL},
     {TK_CONFIG_INT, (char *) "-borderwidth", NULL, NULL,
 	 "2", Tk_Offset(WidgetItem, borderWidth), 0, NULL},
     {TK_CONFIG_CUSTOM, (char *) "-assign", NULL, NULL,
@@ -171,7 +168,6 @@ CreateWidget(
 	widgetPtr->anchor = TK_ANCHOR_NW;
 	widgetPtr->borderColor = NULL;
 	widgetPtr->borderWidth = 0;
-	widgetPtr->borderDist = 0;
 
     /*
      * Process the arguments to fill in the item record.
@@ -346,7 +342,7 @@ ComputeWidgetBbox(
 
 	if (widgetPtr->borderColor && widgetPtr->borderWidth)
 	{
-		borderSize = widgetPtr->borderWidth + widgetPtr->borderDist;
+		borderSize = widgetPtr->borderWidth + 1;
 	}
 
     widgetPtr->header.x1 = x - borderSize;
@@ -425,7 +421,7 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 
 	if (widgetPtr->borderColor && widgetPtr->borderWidth)
 	{
-		borderSize = widgetPtr->borderWidth + widgetPtr->borderDist;
+		borderSize = widgetPtr->borderWidth + 1;
 	}
 
 
