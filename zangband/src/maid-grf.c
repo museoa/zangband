@@ -740,7 +740,7 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 {
 	cptr banner;
 	cptr place_dir;
-	int i, banner_len;
+	int i;
 
 	bool visited_town = FALSE;
 	bool home_in_town = FALSE;
@@ -751,10 +751,9 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 	{
 		/* Upper banner */
 		banner = pl_ptr->name;
-		banner_len = strlen(banner);
 
 		/* Display town name */
-		put_fstr(1 + (wid - banner_len) / 2, 0, banner);
+		put_fstr(1 + (wid - strlen(banner)) / 2, 0, banner);
 
 		/* Find out if there are homes or castles here */
 		for (i = 0; i < pl_ptr->numstores; i++)
@@ -819,32 +818,27 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 			/* Fetch closest known town and direction */
 			banner = describe_quest_location(&place_dir,
 							pl_ptr->x, pl_ptr->y, TRUE);
-			banner_len = strlen(banner) +
-							 strlen(place_dir) + 19;
 
-			/* Is this dungeon guarded? */
+			/* Did the player go into the dungeon? */
 			if (pl_ptr->dungeon->recall_depth == 0)
 			{
-				/* Show where the dungeon is */
-				put_fstr((wid - banner_len) / 2, 0,
-					"Guarded dungeon %s of %s.", place_dir, banner);
+				/* It is still guarded by monsters */
+				banner = format("Guarded dungeon %s of %s.", place_dir, banner);
 			}
 			else
 			{
-				/* Show where the dungeon is */
-				put_fstr((wid - banner_len - 2) / 2, 0,
-					"Unguarded dungeon %s of %s.", place_dir, banner);
+				/* No monsters to guard it */
+				banner = format("Unguarded dungeon %s of %s.", place_dir, banner);
 			}
 		}
 		else
 		{
 			/* Fetch wilderness quest name */
 			banner = quest[pl_ptr->quest_num].name;
-			banner_len = strlen(banner);
-
-			/* Display wilderness quest name */
-			put_fstr(1 + (wid - banner_len) / 2, 0, banner);
 		}
+
+		/* Display wilderness quest name */
+		put_fstr((wid - strlen(banner)) / 2, 0, banner);
 	}
 }
 
