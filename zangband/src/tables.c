@@ -1991,7 +1991,7 @@ player_class class_info[MAX_CLASS] =
 	{
 		"Mindcrafter",
 		{-1, 0, 3, -1, -1, 2},   /* note: spell stat is Wis */
-		30, 30, 30, 3,  22, 16, 10, 10,
+		30, 30, 30, 3,  22, 16, 15, 15,
 		10, 10, 10, 0,   0,  0, 30, 20,
 		2, 25, 20
 	},
