@@ -377,7 +377,7 @@ void do_cmd_read_scroll(void)
 static void do_cmd_use_staff_aux(object_type *o_ptr)
 {
 	int chance, lev;
-    bool ident, use_charge;
+	bool ident, use_charge;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))

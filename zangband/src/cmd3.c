@@ -131,7 +131,7 @@ void do_cmd_wield(void)
 
 	object_type *q_ptr;
 
-    object_type *o_ptr;
+	object_type *o_ptr;
 
 	cptr act;
 
@@ -153,7 +153,7 @@ void do_cmd_wield(void)
 
 	/* Check the slot */
 	slot = wield_slot(q_ptr);
-	
+
 	/* Access the wield slot */
 	o_ptr = &p_ptr->equipment[slot];
 
@@ -187,7 +187,7 @@ void do_cmd_wield(void)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
-	
+
 	/* Take off existing item */
 	if (o_ptr->k_idx)
 	{
@@ -209,7 +209,7 @@ void do_cmd_wield(void)
 
 	/* Forget Region */
 	o_ptr->region = 0;
-	
+
 	/* Now no longer allocated in o_list[] */
 	o_ptr->allocated = FALSE;
 

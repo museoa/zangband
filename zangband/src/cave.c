@@ -4138,7 +4138,7 @@ static void mon_lite_hack(int x, int y)
 {
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
-	
+
 	int dx1, dy1, dx2, dy2;
 
 	/* Out of bounds */
@@ -4155,7 +4155,7 @@ static void mon_lite_hack(int x, int y)
 	dy1 = p_ptr->py - y;
 	dx2 = mon_lite_mx - x;
 	dy2 = mon_lite_my - y;
-	
+
 	/*
 	 * Use a dot product to determine angle of illumination
 	 *
@@ -4164,7 +4164,7 @@ static void mon_lite_hack(int x, int y)
 	 * if we cannot see it.)
 	 */
 	if (!cave_los_grid(c_ptr) && ((dx1 * dx2 + dy1 * dy2) < 0)) return;
-	
+
 	/* Save this square */
 	if (temp_n < TEMP_MAX)
 	{
@@ -4285,7 +4285,7 @@ void update_mon_lite(void)
 		/* Access the location */
 		fx = m_ptr->fx;
 		fy = m_ptr->fy;
-		
+
 		/* Save information */
 		mon_lite_mx = fx;
 		mon_lite_my = fy;
@@ -4814,7 +4814,7 @@ void map_area(void)
 void wiz_lite(void)
 {
 	int i, y, x;
-	
+
 	object_type *o_ptr;
 
 	chg_virtue(V_KNOWLEDGE, 1);
@@ -4852,9 +4852,9 @@ void wiz_lite(void)
 				/* Memorize the grid */
 				remember_grid(c_ptr, pc_ptr);
 			}
-			
+
 			/* Remember items on the grid */
-			OBJ_ITT_START(c_ptr->o_idx, o_ptr)
+			OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 			{
 				/* Memorize */
 				o_ptr->info |= OB_SEEN;
@@ -4889,20 +4889,20 @@ void wiz_dark(void)
 		{
 			cave_type *c_ptr = area(x, y);
 			pcave_type *pc_ptr = parea(x, y);
-			
+
 			object_type *o_ptr;
 
 			/* Process the grid */
 			forget_grid(pc_ptr);
-			
+
 			/* Forget items on the grid */
-			OBJ_ITT_START(c_ptr->o_idx, o_ptr)
+			OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 			{
 				/* Forget the object */
 				o_ptr->info &= ~(OB_SEEN);
 			}
 			OBJ_ITT_END;
-			
+
 		}
 	}
 

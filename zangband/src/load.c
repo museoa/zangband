@@ -913,7 +913,7 @@ static void rd_store(int town_num, int store_num)
 
 		/* Read the item */
 		rd_item(q_ptr);
-		
+
 		/* Hack - item is not allocated in o_list[] (yet) */
 		q_ptr->allocated = FALSE;
 
@@ -1383,7 +1383,7 @@ static errr rd_inventory(void)
 
 		/* Read the item */
 		rd_item(q_ptr);
-		
+
 		/* Hack - assume not allocated in o_list[] */
 		q_ptr->allocated = FALSE;
 
@@ -2001,7 +2001,7 @@ static errr rd_dungeon(void)
 	cave_type *c_ptr;
 	u16b dun_level_backup, px_back, py_back;
 
-    bool ignore_stuff = FALSE;
+	bool ignore_stuff = FALSE;
 
 	s16b cur_wid, cur_hgt;
 
@@ -2248,11 +2248,11 @@ static errr rd_dungeon(void)
 
 	/* Verify maximum */
 	if (limit > z_info->o_max)
-    {
+	{
 		note(format("Too many (%d) object entries!", limit));
 		return (151);
 	}
-	
+
 	/*
 	 * No objects yet
 	 */
@@ -2268,27 +2268,28 @@ static errr rd_dungeon(void)
 
 		/* Read the item */
 		rd_item(o_ptr);
-		
+
 		/* Hack - import player inventory properly */
 		o_ptr->allocated = TRUE;
-		
+
 		/* Real item? */
 		if (o_ptr->k_idx)
 		{
 			/* Count objects */
 			o_cnt++;
-		
+
 			/* Dungeon items */
 			if (!ignore_stuff && (o_ptr->ix || o_ptr->iy))
 			{
-	            if (!in_bounds(o_ptr->ix, o_ptr->iy))
-    	        {
+				if (!in_bounds(o_ptr->ix, o_ptr->iy))
+				{
 					note(format
-						 ("Object placement error (%d,%d)", o_ptr->ix, o_ptr->iy));
+						 ("Object placement error (%d,%d)", o_ptr->ix,
+						  o_ptr->iy));
 					return (152);
 				}
-	
-    	        /* Access the item location */
+
+				/* Access the item location */
 				c_ptr = area(o_ptr->ix, o_ptr->iy);
 
 				/*
@@ -2307,7 +2308,7 @@ static errr rd_dungeon(void)
 			}
 		}
 	}
-	
+
 	/* Expand object array */
 	o_max++;
 
@@ -2373,7 +2374,7 @@ static errr rd_dungeon(void)
 			}
 
 			if (!in_bounds(m_ptr->fx, m_ptr->fy))
-            {
+			{
 				note(format
 					 ("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy));
 				return (162);

@@ -166,7 +166,7 @@ void delete_object_list(s16b *o_idx_ptr)
  */
 void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
-    object_type *o_ptr, *q_ptr;
+	object_type *o_ptr, *q_ptr;
 
 	/* Drop objects being carried */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
@@ -316,7 +316,7 @@ void compact_objects(int size)
 	for (i = o_max - 1; i >= 1; i--)
 	{
 		object_type *o_ptr = &o_list[i];
-		
+
 		/* Stop when we get to an object */
 		if (o_ptr->k_idx) break;
 
@@ -438,8 +438,8 @@ static s16b o_pop(void)
 {
 	/* Wrap counter */
 	if (o_cur > o_max) o_cur = 1;
-	
-	
+
+
 	/*
 	 * If the number remaining is less than one third of the
 	 * total number of allocated objects, then add a new object
@@ -478,13 +478,13 @@ static s16b o_pop(void)
 		{
 			/* Increment counter */
 			o_cur++;
-			
+
 			/* Wrap counter */
-            if (o_cur >= o_max) o_cur = 1;
-			
+			if (o_cur >= o_max) o_cur = 1;
+
 			continue;
 		}
-		
+
 		/* Count objects */
 		o_cnt++;
 
@@ -528,7 +528,7 @@ object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr)
 	/* Add to the list */
 	j_ptr->next_o_idx = *o_idx_ptr;
 	*o_idx_ptr = o_idx;
-	
+
 	/* Now held */
 	j_ptr->allocated = TRUE;
 
@@ -1785,7 +1785,7 @@ void object_copy(object_type *o_ptr, const object_type *j_ptr)
  */
 object_type *object_prep(int k_idx)
 {
-    object_type *o_ptr = &temp_object;
+	object_type *o_ptr = &temp_object;
 
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -4353,7 +4353,7 @@ void place_object(int x, int y, bool good, bool great)
 
 		/* Region */
 		o_ptr->region = cur_region;
-		
+
 		/* Is allocated */
 		o_ptr->allocated = TRUE;
 
@@ -4464,7 +4464,7 @@ void place_gold(int x, int y)
 
 		/* Region */
 		o_ptr->region = cur_region;
-		
+
 		/* Is allocated */
 		o_ptr->allocated = TRUE;
 
@@ -4900,8 +4900,8 @@ s16b *look_up_list(object_type *o_ptr)
 	{
 		if (o_ptr == j_ptr) return (&c_ptr->o_idx);
 	}
-    OBJ_ITT_END;
-	
+	OBJ_ITT_END;
+
 	/* Failure - the object is inconsistant */
 	quit("Failed to look up object.");
 	return (NULL);
@@ -5178,7 +5178,7 @@ void item_increase(object_type *o_ptr, int num)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
-	
+
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
 }
@@ -5387,8 +5387,8 @@ object_type *inven_takeoff(object_type *o_ptr)
 	int item;
 
 	char o_name[256];
-    object_type *q_ptr;
- 
+	object_type *q_ptr;
+
 	cptr act;
 
 	/* Split item */
@@ -5445,8 +5445,8 @@ object_type *inven_takeoff(object_type *o_ptr)
  */
 void inven_drop(object_type *o_ptr, int amt)
 {
-    object_type *q_ptr;
- 
+	object_type *q_ptr;
+
 	char o_name[256];
 
 	int slot;

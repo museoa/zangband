@@ -677,13 +677,13 @@ bool make_attack_normal(int m_idx)
 									   o_name);
 
 							chg_virtue(V_SACRIFICE, 1);
-							
+
 							/* Split object */
 							o_ptr = item_split(o_ptr, 1);
-							
+
 							/* Forget mark */
 							o_ptr->info &= ~(OB_SEEN);
-							
+
 							/* Give to the monster */
 							o_ptr = add_object_list(&m_ptr->hold_o_idx, o_ptr);
 
@@ -705,7 +705,7 @@ bool make_attack_normal(int m_idx)
 					case RBE_EAT_FOOD:
 					{
 						char o_name[256];
-					
+
 						/* Take some damage */
 						take_hit(damage, ddesc);
 

@@ -2750,7 +2750,7 @@ void do_cmd_throw_aux(int mult)
 
 	object_type *q_ptr;
 
-    object_type *o_ptr;
+	object_type *o_ptr;
 
 	bool hit_body = FALSE;
 	bool hit_wall = FALSE;
