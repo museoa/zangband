@@ -336,6 +336,8 @@ bool good_item_flag;		/* True if "Artifact" on this level */
 
 bool closing_flag;		/* Dungeon is closing */
 
+bool fake_monochrome;	/* Use fake monochrome for effects */
+
 
 /*
  * Dungeon size info

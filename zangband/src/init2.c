@@ -3263,6 +3263,9 @@ void init_angband(void)
 	/* Process that file */
 	process_pref_file(buf);
 
+	/* Initialise the fake monochrome flag */
+	fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm")) ? TRUE:FALSE;
+	
 	/* Done */
 	note("[Initialization complete]");
 }

@@ -265,6 +265,7 @@ extern byte feeling;
 extern s16b rating;
 extern bool good_item_flag;
 extern bool closing_flag;
+extern bool fake_monochrome;
 extern s16b max_panel_rows, max_panel_cols;
 extern s16b panel_row_min, panel_row_max;
 extern s16b panel_col_min, panel_col_max;
