@@ -236,6 +236,5 @@ $(LUAWSRCS): %.c: %.pkg src/lua/tolua $(TOLUALUAOBJS)
 
 # List of makefiles in other build system so we can test them
 makefiles := $(addprefix src/,\
-				makefile.bcc makefile.ros makefile.std \
-				makefile.wat makefile.win)
+				makefile.bcc makefile.ros makefile.std)
 
