@@ -2449,6 +2449,61 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 }
 
 /*
+ * Make wilderness generation type 2
+ *
+ * Make a uniform field from the feature in data[0]
+ * Next, add the lower probability features in data[2], [4] etc.
+ * using the probabilities in data[1], [3] etc.
+ * Use feat = 0 to mark the end of the list of features.
+ *
+ * This uses a different probability function than type 1.
+ * (It is cumulative.)
+ *
+ * This is good for making "flat density" regions like grasslands etc.
+ */
+static void make_wild_02(blk_ptr block_ptr, byte *data)
+{
+	int i, j, k;
+	byte new_feat, feat;
+	
+	for(i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for(j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			/* Init. counter */
+			k = 0;
+			
+			/* Hack - if first feature is zero - use grass */
+			feat = FEAT_GRASS;
+			
+			while(1)
+			{
+				/* Get feature */
+				new_feat = data[k * 2];
+				
+				/* End of list? */
+				if (new_feat == 0) break;
+				
+				/* Use new feature */
+				feat = new_feat;
+				
+				/* Done counting? */
+				if (k == 4) break;
+				
+				/* Stop if chance fails */
+				if (rand_int(data[k * 2 + 1])) break;
+				
+				/* Increment counter + loop */
+				k++;
+			}
+			
+			/* Store feature in block */
+			block_ptr[j][i].feat = feat;
+		}
+	}
+}
+
+/*
  * The function that picks a "blending feature" for wild. gen. type 1
  */
 static void blend_wild_01(cave_type *c_ptr, byte data[8])
@@ -2457,6 +2512,16 @@ static void blend_wild_01(cave_type *c_ptr, byte data[8])
 	c_ptr->feat = pick_feat(data[0], data[2], data[4], data[6],
 		data[1], data[3], data[5], data[7], 128);
 }
+
+/*
+ * The function that picks a "blending feature" for wild. gen. type 2
+ */
+static void blend_wild_02(cave_type *c_ptr, byte data[8])
+{	
+	/* Store the most likely terrain feature */ 
+	c_ptr->feat = data[0];
+}
+
 
 /* 
  * Blend a block based on the adjacent blocks
@@ -2537,13 +2602,13 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 			switch (g_type)
 			{
 				case 1:
-					/* Only one type at the moment. */
-			
 					/* Fractal plasma with weighted terrain probabilites */
-					blend_wild_01(&block_ptr[j][i],
-						 wild_gen_data[w_type].data);
-				break;
-		
+					blend_wild_01(&block_ptr[j][i], wild_gen_data[w_type].data);
+					break;
+				case 2:
+					/* Simple weighted probabilities on flat distribution */
+					blend_wild_02(&block_ptr[j][i], wild_gen_data[w_type].data);
+					break;
 				default:
 					quit("Illegal wilderness block type.");
 			}
@@ -2591,11 +2656,14 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		switch (gen_type)
 		{
 			case 1:
-				/* Only one type at the moment. */
-			
 				/* Fractal plasma with weighted terrain probabilites */
 				make_wild_01(block_ptr, wild_gen_data[w_type].data);
-			break;
+				break;
+			
+			case 2:
+				/* Uniform field + rare "out-crops" */
+				make_wild_02(block_ptr, wild_gen_data[w_type].data);			
+				break;
 		
 			default:
 				quit("Illegal wilderness block type.");
