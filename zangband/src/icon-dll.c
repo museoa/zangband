@@ -9,11 +9,7 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
-
-#include <ctype.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/stat.h>
+#include "angband.h"
 #include "icon-dll.h"
 #include "util-dll.h"
 #include "plat-dll.h"
@@ -26,41 +22,6 @@
 
 int PixelPtrToLong(IconPtr p, int bypp);
 void PixelLongToPtr(IconPtr dst, int pixel, int bypp);
-
-static char *format TCL_VARARGS_DEF(char *, arg1)
-{
-    static char buf[512];
-    va_list argList;
-    char *format;
-
-    format = TCL_VARARGS_START(char *, arg1, argList);
-    vsprintf(buf, format, argList);
-    va_end(argList);
-
-    return buf;
-}
-
-static char *string_make(char *str)
-{
-	int len = 0;
-	char *t = str;
-	char *s, *res;
-
-	/* Simple sillyness */
-	if (!str) return (str);
-
-	/* Get the number of chars in the string, including terminator */
-	while (str[len++]) /* loop */;
-
-	/* Allocate space for the string */
-	s = res = (char*)(Tcl_Alloc(len));
-
-	/* Copy the string (with terminator) */
-	while ((*s++ = *t++) != 0) /* loop */;
-
-	/* Return the allocated, initialized, string */
-	return (res);
-}
 
 extern int objcmd_makeicon _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
@@ -98,7 +59,7 @@ unsigned long g_term_colormap[16];
 
 #define BUFLEN 16384
 
-int CompressIconFile(Tcl_Interp *interp, char *fileName, t_icon_data *idp)
+static int CompressIconFile(Tcl_Interp *interp, char *fileName, t_icon_data *idp)
 {
 	gzFile out;
 	long sum = 0, dataSize;
@@ -111,7 +72,7 @@ int CompressIconFile(Tcl_Interp *interp, char *fileName, t_icon_data *idp)
 		return TCL_ERROR;
 	}
 
-	if (gzwrite(out, "tnbz", 4) != 4)
+	if (gzwrite(out, (char *) "tnbz", 4) != 4)
 	{
 		Tcl_AppendResult(interp, "error writing header", NULL);
 		result = TCL_ERROR;
@@ -186,7 +147,7 @@ cleanup:
 	return result;
 }
 
-int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
+static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 	int *iconCount)
 {
 	gzFile in;
@@ -629,7 +590,7 @@ static int CountBits(unsigned long mask)
 	return n;
 }
 
-void InitRGBInfo(Tcl_Interp *interp)
+static void InitRGBInfo(Tcl_Interp *interp)
 {
 	Tk_Window tkwin = Tk_MainWindow(interp);
 	Visual *visual = Tk_Visual(tkwin);
@@ -656,7 +617,7 @@ void InitRGBInfo(Tcl_Interp *interp)
 	g_rgbi.extra = ~(g_rgbi.red_mask | g_rgbi.green_mask | g_rgbi.blue_mask);
 }
 
-void GetPix8(unsigned char *p, int *r, int *g, int *b)
+static void GetPix8(unsigned char *p, int *r, int *g, int *b)
 {
 	unsigned char *rgbPtr = &g_palette_rgb[*p * 3]; /* FIXME: colormap */
 	*r = *rgbPtr++;
@@ -664,7 +625,7 @@ void GetPix8(unsigned char *p, int *r, int *g, int *b)
 	*b = *rgbPtr++;
 }
 
-void SetPix8(unsigned char *p, int r, int g, int b)
+static void SetPix8(unsigned char *p, int r, int g, int b)
 {
 	/* NOTE: Not Colormap */
 	*p = Palette_RGB2Index(r, g, b);
@@ -687,7 +648,7 @@ void SetPix16(unsigned char *p, int r, int g, int b)
 	*((unsigned short *) p) = g_rgbi.extra | r2 | g2 | b2;
 }
 
-void GetPix24(unsigned char *p, int *r, int *g, int *b)
+static void GetPix24(unsigned char *p, int *r, int *g, int *b)
 {
 	*b = *p++;
 	*g = *p++;
@@ -695,7 +656,7 @@ void GetPix24(unsigned char *p, int *r, int *g, int *b)
 }
 
 #if 1
-void SetPix24(unsigned char *p, int r, int g, int b)
+static void SetPix24(unsigned char *p, int r, int g, int b)
 {
 	*p++ = b;
 	*p++ = g;
@@ -725,7 +686,7 @@ void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp)
 	}
 }
 
-void PixelPtrToRGB(IconPtr src, int *r, int *g, int *b, int bypp)
+static void PixelPtrToRGB(IconPtr src, int *r, int *g, int *b, int bypp)
 {
 	switch (bypp)
 	{
@@ -782,13 +743,6 @@ int PixelPtrToLong(IconPtr p, int bypp)
 	return 0;
 }
 
-int RGBToPixelLong(int r, int g, int b, int bypp)
-{
-	unsigned char p[4];
-	PixelSet_RGB(p, r, g, b, bypp);
-	return PixelPtrToLong(p, bypp);
-}
-
 int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr)
 {
@@ -801,6 +755,9 @@ int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 	int numCol, numRow;
 	int iconW = iconDataPtr->width;
 	int pixelSize = iconDataPtr->bypp;
+
+	/* Hack - ignore parameter */
+	(void) interp;
 
 	/* Get info about the image */
 	(void) Tk_PhotoGetImage(photoH, &photoBlock);
@@ -951,7 +908,7 @@ int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 	return TCL_OK;
 }
 
-int WriteIconFile(Tcl_Interp *interp, char *utfFileName, t_icon_data *idp)
+static int WriteIconFile(Tcl_Interp *interp, char *utfFileName, t_icon_data *idp)
 {
 #ifdef USE_COMPRESS
 
@@ -1032,7 +989,7 @@ error:
  * read in. The icon data files are created with an external program
  * "makeicon".
  */
-int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
+static int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 	int *iconCount)
 {
 #ifdef USE_COMPRESS
@@ -1393,17 +1350,16 @@ int g_ascii_delay = 1000;
 /* The current character for shapechanging ascii configurations */
 int g_ascii_char = 0;
 
-int
-objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static char *cmdOption[] = {"count", "create", "font", "index",
+	static cptr cmdOption[] = {"count", "create", "font", "index",
 		"delay", "configure", "isascii", NULL};
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
-	static char *configSwitch[] = {"-background", "-foreground", "-mode",
+	static cptr configSwitch[] = {"-background", "-foreground", "-mode",
 		NULL};
-	static char *asciiMode[] = {"normal", "attr_multi", "shapechanger",
+	static cptr asciiMode[] = {"normal", "attr_multi", "shapechanger",
 		NULL};
 
 	char d_char, *t;
@@ -1415,15 +1371,18 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 	t_ascii *ascii_ptr;
 	int i;
 	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
 	/* Required number of arguments */
     if (objc < 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option ?arg ...?");
 		return TCL_ERROR;
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objv[1], cmdOption, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objv[1], (char **) cmdOption, (char *) "option", 0, 
 		&index) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -1452,8 +1411,8 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 			/* Scan all option/value pairs */
 			while (objc > 1)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
-					"switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
+					(char *) "switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -1480,8 +1439,8 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 						break;
 						
 					case 2: /* -mode */
-					    if (Tcl_GetIndexFromObj(interp, objPtr[1], asciiMode,
-							"mode", 0, &mode) != TCL_OK)
+					    if (Tcl_GetIndexFromObj(interp, objPtr[1], (char **) asciiMode,
+							(char *) "mode", 0, &mode) != TCL_OK)
 						{
 							return TCL_ERROR;
 					    }
@@ -1515,7 +1474,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 
 			if (objc < 3)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type");
 				return TCL_ERROR;
 			}
 
@@ -1576,7 +1535,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 
 			if (objc != 4)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type char");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type char");
 				return TCL_ERROR;
 			}
 
@@ -1639,7 +1598,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 
 			if (objc < 2)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "?delay?");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "?delay?");
 				return TCL_ERROR;
 			}
 
@@ -1662,7 +1621,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 
 			if (objc < 4)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "index option ?value?");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "index option ?value?");
 				return TCL_ERROR;
 			}
 
@@ -1692,8 +1651,8 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 			/* Return the value of a single option */
 			if (objc == 4)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objv[3], configSwitch,
-					"switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objv[3], (char **) configSwitch,
+					(char *) "switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -1709,7 +1668,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 						
 					case 2: /* -mode */
 						Tcl_SetStringObj(resultPtr,
-							asciiMode[ascii_ptr->mode], -1);
+							(char *) asciiMode[ascii_ptr->mode], -1);
 					    break;
 				}
 
@@ -1724,8 +1683,8 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 			/* Scan all option/value pairs */
 			while (objc > 1)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
-					"switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
+					(char *) "switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -1750,8 +1709,8 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 						break;
 						
 					case 2: /* -mode */
-					    if (Tcl_GetIndexFromObj(interp, objPtr[1], asciiMode,
-							"mode", 0, &index) != TCL_OK)
+					    if (Tcl_GetIndexFromObj(interp, objPtr[1], (char **) asciiMode,
+							(char *) "mode", 0, &index) != TCL_OK)
 						{
 							return TCL_ERROR;
 					    }
@@ -1770,7 +1729,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
 
 			if (objc < 3)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type");
 				return TCL_ERROR;
 			}
 
@@ -1800,8 +1759,7 @@ objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv
  * Widget_Photo() routine and lets us set a label widget with a picture
  * of any icon.
  */
-int
-objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tk_PhotoHandle photoH;
 	Tk_PhotoImageBlock photoBlock;
@@ -1813,12 +1771,15 @@ objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	unsigned char *photoData;
 	unsigned char *srcPtr = NULL, *dstPtr;
 	unsigned char *dataPtr, *maskPtr = NULL;
+	
+	/* Hack - ignore unused parameter */
+	(void) dummy;
 
 	/* Required number of arguments */
     if (objc < 3)
     {
 		Tcl_WrongNumArgs(interp, 2, objv,
-			"imageName -type iconType -index iconIndex");
+			(char *) "imageName -type iconType -index iconIndex");
 		return TCL_ERROR;
     }
 
@@ -2122,7 +2083,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 			/* Apply gamma-correction */
 			while (1)
 			{
-				unsigned int trans, opaq;
+				int trans, opaq;
 				trans = rlePtr[0];
 				opaq = rlePtr[1];
 				if (!trans && !opaq)
@@ -2177,18 +2138,20 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
  * objcmd_icon_dark --
  * (icon) dark $type $index ?$gamma $gamma?
  */
-int
-objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	int index, g1, g2, i;
 	t_icon_data *iconDataPtr;
 	double gamma[2];
 	char buf[64];
 
+	/* Ignore parameter */
+	(void) dummy;
+
 	/* Required number of arguments */
     if (objc != 4 && objc != 6)
     {
-		Tcl_WrongNumArgs(interp, 2, objv, "$type $index ?$gamma $gamma?");
+		Tcl_WrongNumArgs(interp, 2, objv, (char *) "$type $index ?$gamma $gamma?");
 		return TCL_ERROR;
     }
 
@@ -2282,25 +2245,28 @@ objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
  *	(icon) dynamic copy $type $index -type -index -ascii
  *	(icon) dynamic count $type ?$size?
  */
-int
-objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
+								 Tcl_Obj *CONST objv[])
 {
-	static char *cmdOption[] = {"blank", "copy", "count", NULL};
+	static cptr cmdOption[] = {"blank", "copy", "count", NULL};
 	enum {IDX_BLANK, IDX_COPY, IDX_COUNT} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
 	t_icon_data *iconDataPtr;
 
+	/* Ignore parameter */
+	(void) dummy;
+
 	/* Required number of arguments */
     if (objc < 3)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "option type ?arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option type ?arg ...?");
 		return TCL_ERROR;
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objv[1], cmdOption, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objv[1], (char **) cmdOption, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -2537,10 +2503,9 @@ objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 /*
  * objcmd_icon --
  */
-int
-objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static char *cmdOption[] = {"createtype", "count",
+	static cptr cmdOption[] = {"createtype", "count",
 		"gettypes", "validate", "size", "ascii",
 		"gamma", "photo", "makeicon", "depth", "dump",
 		"rle", "height", "width", "dynamic", "duplicate",
@@ -2561,17 +2526,17 @@ objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
 	Tcl_HashEntry *hPtr;
 	int i;
 	t_icon_data iconData, *iconDataPtr;
-	IconSpec iconSpec = {-1, -1, -1};
+	IconSpec iconSpec = {-1, -1, -1, 0};
 
 	/* Required number of arguments */
     if (objc < 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option ?arg ...?");
 		return TCL_ERROR;
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objv[1], cmdOption, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objv[1], (char **) cmdOption, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -2584,7 +2549,7 @@ objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
 			{
 wrongCreateArgs:
 				Tcl_WrongNumArgs(interp, 2, objv,
-					"typeName -file fileName ?-maskfile fileName?");
+					(char *) "typeName -file fileName ?-maskfile fileName?");
 				return TCL_ERROR;
 			}
 
@@ -2622,11 +2587,11 @@ wrongCreateArgs:
 			/* Scan all option/value pairs */
 			while (objc > 1)
 			{
-				static char *createSwitch[] = {"-charset", "-file", "-font",
+				static cptr createSwitch[] = {"-charset", "-file", "-font",
 					"-height", "-width", "-dynamic", NULL};
 
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], createSwitch,
-					"switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) createSwitch,
+					(char *) "switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -2785,7 +2750,7 @@ wrongCreateArgs:
 		case IDX_COUNT: /* count */
 			if (objc != 3)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "typeName");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "typeName");
 				return TCL_ERROR;
 			}
 
@@ -2825,7 +2790,7 @@ wrongCreateArgs:
 			if (objc < 6)
 			{
 				Tcl_WrongNumArgs(interp, 2, objv,
-					"-type iconType -index iconIndex ?-ascii asciiIndex?");
+					(char *) "-type iconType -index iconIndex ?-ascii asciiIndex?");
 				return TCL_ERROR;
 			}
 			if (Icon_ParseArgs(interp, objc, objv, 2, &iconSpec) != TCL_OK)
@@ -2849,7 +2814,7 @@ wrongCreateArgs:
 
 			if (objc < 4 || objc > 5)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type gamma ?index?");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type gamma ?index?");
 				return TCL_ERROR;
 			}
 
@@ -2900,7 +2865,7 @@ wrongCreateArgs:
 					/* Apply gamma-correction */
 					while (1)
 					{
-						unsigned int trans, opaq;
+						int trans, opaq;
 						trans = rlePtr[0];
 						opaq = rlePtr[1];
 						if (!trans && !opaq)
@@ -3055,7 +3020,7 @@ wrongCreateArgs:
 
 			if (objc != 5)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type index count");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type index count");
 				return TCL_ERROR;
 			}
 		
@@ -3114,7 +3079,7 @@ wrongCreateArgs:
 
 			if (objc != 4)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type index");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type index");
 				return TCL_ERROR;
 			}
 
@@ -3144,12 +3109,12 @@ wrongCreateArgs:
 
 		case IDX_FLAGS: /* flags */
 		{
-			static char *flags[] = {"left", "right", "isohack", NULL};
+			static cptr flags[] = {"left", "right", "isohack", NULL};
 			int flag;
 			
 			if (objc < 4 || objc > 6)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type index ?flag? ?boolean?");
+				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type index ?flag? ?boolean?");
 				return TCL_ERROR;
 			}
 		
@@ -3172,7 +3137,7 @@ wrongCreateArgs:
 				break;
 			}
 
-		    if (Tcl_GetIndexFromObj(interp, objv[4], flags, "flag", 0, 
+		    if (Tcl_GetIndexFromObj(interp, objv[4], (char **) flags, (char *) "flag", 0, 
 				(int *) &flag) != TCL_OK)
 			{
 				return TCL_ERROR;
@@ -3195,17 +3160,17 @@ wrongCreateArgs:
 
 		case IDX_STYLE: /* style */
 		{
-			static char *keyword_icon_style[] = {"icon", "iso", NULL};
+			static cptr keyword_icon_style[] = {"icon", "iso", NULL};
 			if (objc == 3)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objv[2], keyword_icon_style,
-			    	"style", 0, &g_icon_style) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objv[2], (char **) keyword_icon_style,
+			    	(char *) "style", 0, &g_icon_style) != TCL_OK)
 				{
 					return TCL_ERROR;
 				}
 				break;
 			}
-			Tcl_SetResult(interp, keyword_icon_style[g_icon_style],
+			Tcl_SetResult(interp, (char *) keyword_icon_style[g_icon_style],
 				TCL_STATIC);
 			break;
 		}
@@ -3220,20 +3185,23 @@ wrongCreateArgs:
  *
  * makeicon ?-makemask? ?-scaleup? ?--? iconSize imageFile dataFile
  */
-int
-objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+int objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *CONST *objPtr;
 	char buf[1024];
 	int index;
 
 	Tk_PhotoHandle photoH = NULL;
-	char *imageFile = NULL, *dataFile = NULL, *imageName = "MakeIconImage";
+	char *imageFile = NULL, *dataFile = NULL;
+	char *imageName = (char *) "MakeIconImage";
 	int imageW, imageH;
 	int length;
 	t_icon_data iconData;
 	XColor *xColorPtr = NULL;
 	int result = TCL_ERROR;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	iconData.icon_data = NULL;
 	iconData.depth = g_icon_depth;
@@ -3247,12 +3215,12 @@ objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST o
 	/* Scan arguments for options */
 	while (objc > 0)
 	{
-		static char *switches[] = {"-datafile", "-iconheight", "-iconwidth",
+		static cptr switches[] = {"-datafile", "-iconheight", "-iconwidth",
 			"-imagefile", "-imageheight", "-imagewidth", "-transparent", NULL};
 		int n = 2;
 
 		/* Get the sub-option */
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], switches, "switch",
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) switches, (char *) "switch",
 			0, &index) != TCL_OK)
 		{
 			goto error;
@@ -3338,7 +3306,7 @@ objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST o
 	/* FIXME */
 	if ((imageW != iconData.width) && (imageW != 16))
 	{
-		Tcl_SetResult(interp, "can only scale a 16x16 image", TCL_STATIC);
+		Tcl_SetResult(interp, (char *) "can only scale a 16x16 image", TCL_STATIC);
 		goto error;
 	}
 
@@ -3537,10 +3505,10 @@ int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
 
 	while (objc > 1)
 	{
-		static char *assignSwitch[] = {"-ascii", "-index", "-type", NULL};
+		static cptr assignSwitch[] = {"-ascii", "-index", "-type", NULL};
 
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], assignSwitch,
-			"switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) assignSwitch,
+			(char *) "switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -3576,7 +3544,7 @@ int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
 	{
 		/* Set the error */
 		Tcl_WrongNumArgs(interp, offset, objv,
-			"-type iconType -index iconIndex ?-ascii asciiIndex?");
+			(char *) "-type iconType -index iconIndex ?-ascii asciiIndex?");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -3749,7 +3717,7 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 	 */
 	Tcl_InitHashTable(&g_icon_table, TCL_STRING_KEYS);
 
-	Tcl_CreateObjCommand(interp, "icon", objcmd_icon, NULL, NULL);
+	Tcl_CreateObjCommand(interp, (char *) "icon", objcmd_icon, NULL, NULL);
 	
 	return TCL_OK;
 }
@@ -3757,6 +3725,9 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 void Icon_Exit(Tcl_Interp *interp)
 {
 	int i, j;
+
+	/* Hack - ignore parameter */
+	(void) interp;
 
 	if (g_icon_size == 0) return;
 
