@@ -739,7 +739,7 @@ static int borg_guess_race_name(cptr who)
         borg_note(format("# Assuming player ghost (%s)", who));
 
         /* Oops */
-        return (z_info->r_max-1);
+        return (z_info->r_max);
     }
 
     /* Hack -- handle "offscreen" */
@@ -814,7 +814,7 @@ static int borg_guess_race_name(cptr who)
     borg_note(format("# Assuming player ghost (%s)", who));
 
     /* Oops */
-    return (z_info->r_max-1);
+    return (z_info->r_max);
 }
 
 /*
@@ -1645,7 +1645,7 @@ static bool observe_kill_move(int y, int x, int d, byte a, char c, bool flag)
                 r_idx = borg_guess_race(a, c, TRUE, y , x);
 
                 /* Handle failure */
-                if (r_idx == z_info->r_max - 1) continue;
+                if (r_idx == z_info->r_max) continue;
 
                 /* Note */
                 borg_note(format("# Flickering monster '%s' at (%d,%d)",
@@ -2757,7 +2757,7 @@ static void borg_forget_map(void)
             ag->feat = FEAT_NONE;
 
             /* Hack -- prepare the town */
-            if (!borg_skill[BI_CDEPTH]) ag->feat = FEAT_FLOOR;
+            /* if (!borg_skill[BI_CDEPTH]) ag->feat = FEAT_FLOOR; */
         }
     }
 
@@ -4358,7 +4358,7 @@ void borg_update(void)
          * This check will cheat to see if uniques are dead.
          */
          /*Extract dead uniques */
-        for (i = 1; i < z_info->r_max-1; i++)
+        for (i = 1; i < z_info->r_max; i++)
         {
             monster_race *r_ptr = &r_info[i];
 
@@ -5067,7 +5067,7 @@ void borg_init_5(void)
     size = 0;
 
     /* Collect "unique" monsters */
-    for (i = 1; i < z_info->r_max-1; i++)
+    for (i = 1; i < z_info->r_max; i++)
     {
         monster_race *r_ptr = &r_info[i];
 
@@ -5108,7 +5108,7 @@ void borg_init_5(void)
     size = 0;
 
     /* Collect "normal" monsters */
-    for (i = 1; i < z_info->r_max-1; i++)
+    for (i = 1; i < z_info->r_max; i++)
     {
         monster_race *r_ptr = &r_info[i];
 

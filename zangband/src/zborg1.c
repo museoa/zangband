@@ -2358,14 +2358,11 @@ void borg_init_1(void)
 {
     int i, x, y;
 
-
     /* Allocate the "keypress queue" */
     C_MAKE(borg_key_queue, KEY_SIZE, char);
 
-
     /* Prapare a local random number seed */
-if (!borg_rand_local)
-    borg_rand_local = rand_int(0x10000000);
+	if (!borg_rand_local) borg_rand_local = rand_int(0x10000000);
 
 
     /*** Grids ***/
@@ -2479,7 +2476,7 @@ if (!borg_rand_local)
     C_MAKE(borg_kills, 256, borg_kill);
 
     /* Scan the monsters */
-    for (i = 1; i < z_info->r_max - 1; i++)
+    for (i = 1; i < z_info->r_max; i++)
     {
         monster_race *r_ptr = &r_info[i];
 
@@ -2509,7 +2506,7 @@ if (!borg_rand_local)
     /*** XXX XXX XXX Hack -- Cheat ***/
 
     /* Hack -- Extract dead uniques */
-    for (i = 1; i < z_info->r_max-1; i++)
+    for (i = 1; i < z_info->r_max; i++)
     {
         monster_race *r_ptr = &r_info[i];
 

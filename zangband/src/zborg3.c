@@ -3623,10 +3623,14 @@ void borg_init_3(void)
 
     int size = 0;
 
-    s16b what[523]; /* 512->523 */
-    cptr text[523]; /* 512->523 */
+    s16b *what;
+    cptr *text;
 
     char buf[256];
+
+	/* Create buffers */
+	C_MAKE(what, z_info->k_max + z_info->a_max, s16b);
+	C_MAKE(text, z_info->k_max + z_info->a_max, cptr);
 
 
     /*** Item/Ware arrays ***/
@@ -3860,6 +3864,10 @@ void borg_init_3(void)
     /* Save the entries */
     for (i = 0; i < size; i++) borg_artego_text[i] = text[i];
     for (i = 0; i < size; i++) borg_artego_what[i] = what[i];
+
+	/* Clean up */
+	FREE(what);
+	FREE(text);
 }
 
 cptr borg_prt_item(int item)

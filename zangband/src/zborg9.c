@@ -3241,7 +3241,8 @@ static void init_borg_txt_file(void)
         n_pwr[i] = 0;
     }
     C_MAKE(borg_has, size_obj, int);
-    /* make some shortcut pointers into the array */
+    
+	/* make some shortcut pointers into the array */
     borg_has_on = borg_has + z_info->k_max;
     borg_artifact = borg_has_on + z_info->k_max;
     borg_skill = borg_artifact + z_info->k_max;

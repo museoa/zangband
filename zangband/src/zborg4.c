@@ -9645,7 +9645,7 @@ cptr borg_prepared(int depth)
 
           /* BIG HACK, should check to make sure he has seen the unique. */
           /* !FIX change this to use the 'list of uniques (|) command AJG */
-          for (i = 1; i < z_info->r_max-1; i++)
+          for (i = 1; i < z_info->r_max; i++)
           {
               /* If any have been killed it is not a live unique */
               if (borg_race_death[i] != 0) continue;
@@ -9701,7 +9701,7 @@ cptr borg_prepared(int depth)
 
           /* BIG HACK, should check to make sure he has seen the unique. */
           /* !FIX change this to use the 'list of uniques (|) command AJG */
-          for (i = 1; i < z_info->r_max-1; i++)
+          for (i = 1; i < z_info->r_max; i++)
           {
               /* If any have been killed it is not a live unique */
               if (borg_race_death[i] != 0) continue;
