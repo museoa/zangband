@@ -3361,7 +3361,7 @@ F:RES_DISE
 S:1_IN_6
 S:BO_ACID | CONF | DRAIN_MANA
 D:A creature like a giant purple Buddha with lots of teeth.
-D:It cleans them with the bones of sorcerors.
+D: It cleans them with the bones of sorcerors.
 
 N:264:Half-orc
 G:o:s
