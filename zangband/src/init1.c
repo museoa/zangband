@@ -395,7 +395,7 @@ static cptr r_info_flags7[] =
  */
 static cptr r_info_flags8[] =
 {
-	"DUNGEON",
+	"WILD_ONLY",
 	"WILD_TOWN",
 	"XXX8X02",
 	"WILD_SHORE",
@@ -2416,6 +2416,9 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 	for (i = 1; i < max_r_idx; i++)
 	{
+		/* Invert flag WILD_ONLY <-> RF8_DUNGEON */
+		r_info[i].flags8 ^= 1L;
+
 		/* WILD_TOO without any other wilderness flags enables all flags */
 		if ((r_info[i].flags8 & RF8_WILD_TOO) && !(r_info[i].flags8 & 0x7FFFFFFE))
 			r_info[i].flags8 = 0x0463;
