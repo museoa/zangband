@@ -105,8 +105,6 @@ struct Widget
 
     /* WIDGET_STYLE_ISO */
 	int *yp, *xp;				/* Pixel offsets of each tile */
-	/* int *yo, *xo;*/				/* Cave coord offsets of each tile */
-	int centerTile;				/* Center tile */
 	int y0, x0;					/* Cave location of top-left (tile 0) */
 	int cLeft, cRight, rTop, rBottom;
 	int ignoreLeft, ignoreRight;

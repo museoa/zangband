@@ -351,16 +351,9 @@ proc NSWidget::Size {oop _height _width} {
 
 	set widget [Info $oop widget]
 
-	if {[$widget cget -style] == "iso"} {
-		scan [$widget isoinfo] "%d %d %d %d %d %d %d %d %d %d" \
-			rc cc rTop rBottom cLeft cRight igTop igBot igLef igRig
-		set height [expr {($rTop + $rBottom - $igTop - $igBot) * 2 + 1}]
-		set width [expr {($cLeft + $cRight - $igLef - $igRig) * 2 + 1}]
-	} else {
-		scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
-		set height [expr {$y_max - $y_min + 1}]
-		set width [expr {$x_max - $x_min + 1}]
-	}
+	scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
+	set height [expr {$y_max - $y_min + 1}]
+	set width [expr {$x_max - $x_min + 1}]
 
 	return
 }
@@ -459,10 +452,6 @@ proc NSWidget::IsoOffset {oop} {
 proc NSWidget::yview {oop cmd args} {
 
 	set widget [Info $oop widget]
-if {[$widget cget -style] == "iso"} {
-	eval yview_iso $oop $cmd $args
-	return
-}
 
 	scan [$widget center] "%d %d" oy ox
 
@@ -528,80 +517,6 @@ if {[$widget cget -style] == "iso"} {
 
 set DY 0
 
-proc NSWidget::yview_iso {oop cmd args} {
-
-	set widget [Info $oop widget]
-
-	scan [$widget center] "%d %d" oy ox
-
-	CaveToIso $oop oy ox
-
-	scan [$widget isoinfo] "%d %d %d %d %d %d %d %d %d %d" \
-		rc cc rTop rBottom cLeft cRight igTop igBot igLef igRig
-
-	Size $oop height width
-	CaveSize $oop caveHgt caveWid
-
-	switch $cmd {
-
-		moveto {
-			set fraction [lindex $args 0]
-			if {$fraction > 1.0} {
-				set fraction 1.0
-			} elseif {$fraction < 0} {
-				set fraction 0
-			}
-			set top [expr {int($fraction * double($caveHgt) + 0.5)}]
-			if {$caveHgt > $height} {
-#				incr top -1
-			}
-			set ny [expr {$top + ($rTop - $igTop) * 2}]
-
-			if {$height & 1} {
-				if {$ny & 1} { incr ny -1 }
-			} else {
-				if {!($ny & 1)} { incr ny -1 }
-			}
-		}
-
-		scroll {
-
-			set number [lindex $args 0]
-			set what [lindex $args 1]
-
-			switch $what {
-
-				units {
-					set ny [expr {$oy + $number * 2}]
-				}
-
-				pages {
-					set pageSize [expr {$height - 10}]
-					set ny [expr {$oy + $number * $pageSize}]
-				}
-			}
-		}
-	}
-
-#	set ny [ConstrainCenter $ny $caveHgt $height]
-
-	# Do nothing if position unchanged
-	if {$oy == $ny} return
-
-	set y $ny
-	set x $ox
-	IsoToCave $oop y x
-	
-	$widget center $y $x
-
-	set command [Info $oop yviewCmd]
-	if {[string length $command]} {
-		uplevel #0 $command
-	}
-
-	return
-}
-
 # NSWidget::xview --
 #
 #	Typical xview command
@@ -615,10 +530,6 @@ proc NSWidget::yview_iso {oop cmd args} {
 proc NSWidget::xview {oop cmd args} {
 
 	set widget [Info $oop widget]
-if {[$widget cget -style] == "iso"} {
-	eval xview_iso $oop $cmd $args
-	return
-}
 
 	scan [$widget center] "%d %d" oy ox
 
@@ -684,76 +595,6 @@ if {[$widget cget -style] == "iso"} {
 
 set DX 0
 set DX2 0
-
-proc NSWidget::xview_iso {oop cmd args} {
-
-	set widget [Info $oop widget]
-
-	scan [$widget center] "%d %d" oy ox
-	scan [$widget isoinfo] "%d %d %d %d %d %d %d %d %d %d" \
-		rc cc rTop rBottom cLeft cRight igTop igBot igLef igRig
-	Size $oop height width
-	CaveSize $oop caveHgt caveWid
-
-	CaveToIso $oop oy ox
-
-	switch $cmd {
-
-		moveto {
-			set fraction [lindex $args 0]
-			if {$fraction > 1.0} {
-				set fraction 1.0
-			} elseif {$fraction < 0} {
-				set fraction 0
-			}
-			set left [expr {int($fraction * double($caveWid) + 0.5)}]
-			if {$caveWid > $width} {
-#				incr left -1
-			}
-			set nx [expr {$left + ($cLeft - $igLef) * 2}]
-
-			# height is odd, x must be even
-			# height is even, x must be odd
-			if {$height & 1} {
-				if {$nx & 1} { incr nx -1 }
-			} else {
-				if {!($nx & 1)} { incr nx -1 }
-			}
-		}
-
-		scroll {
-
-			set number [lindex $args 0]
-			set what [lindex $args 1]
-
-			switch $what {
-
-				units {
-					set nx [expr {$ox + $number * 2}]
-				}
-
-				pages {
-					set pageSize [expr {$width - 10}]
-					set nx [expr {$ox + $number * $pageSize}]
-				}
-			}
-		}
-	}
-	
-#	set nx [ConstrainCenter $nx $caveWid $width]
-
-	# Do nothing if position unchanged
-	if {$ox == $nx} return
-	IsoToCave $oop oy nx
-	$widget center $oy $nx
-
-	set command [Info $oop xviewCmd]
-	if {[string length $command]} {
-		uplevel #0 $command
-	}
-
-	return
-}
 
 # NSWidget::TrackPress --
 #

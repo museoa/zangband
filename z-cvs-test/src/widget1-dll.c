@@ -402,11 +402,11 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 {
 	static char *commandNames[] = {"caveyx", "center", "cget", "configure",
 		"coloralloc", "colorderef", "create", "itemcget", "itemconfigure",
-		"photo", "wipe", "bounds", "isoinfo", "visible", "wipespot",
+		"photo", "wipe", "bounds", "visible", "wipespot",
 		"hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CGET, IDX_CONFIGURE,
 		IDX_COLORALLOC, IDX_COLORDEREF, IDX_CREATE, IDX_ITEMCGET, IDX_ITEMCONFIGURE,
-		IDX_PHOTO, IDX_WIPE, IDX_BOUNDS, IDX_ISOINFO, IDX_VISIBLE,
+		IDX_PHOTO, IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE,
 		IDX_WIPESPOT, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
@@ -729,21 +729,6 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			(void) sprintf(buf, "%d %d %d %d",
 				widgetPtr->y_min, widgetPtr->x_min,
 				widgetPtr->y_max - 1, widgetPtr->x_max - 1);
-			Tcl_SetStringObj(Tcl_GetObjResult(interp), buf, -1);
-			break;
-		}
-
-		case IDX_ISOINFO: /* isoinfo */
-		{
-			char buf[32];
-			(void) sprintf(buf, "%d %d %d %d %d %d %d %d %d %d",
-				widgetPtr->rc,
-				widgetPtr->cc,
-				widgetPtr->rTop, widgetPtr->rBottom,
-				widgetPtr->cLeft, widgetPtr->cRight,
-				widgetPtr->ignoreTop, widgetPtr->ignoreBottom,
-				widgetPtr->ignoreLeft, widgetPtr->ignoreRight
-				);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buf, -1);
 			break;
 		}
