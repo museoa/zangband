@@ -3397,8 +3397,10 @@ static void add_outer_wall(int x, int y, int light,
 
 	c_ptr = cave_p(x, y);
 
-	/* hack- check to see if square has been visited before
-	   * if so, then exit (use room flag to do this) */
+	/*
+	 * Hack- check to see if square has been visited before
+	 * if so, then exit (use room flag to do this)
+	 */
 	if (c_ptr->info & CAVE_ROOM) return;
 
 	/* set room flag */
@@ -4203,6 +4205,137 @@ static void build_type15(int bx0, int by0)
 
 
 /*
+ * Type 16 -- Rectangular room with chunks removed
+ */
+static void build_type16(int bx0, int by0)
+{
+	int xval, yval;
+	int y1, x1, y2, x2;
+	int tx1 = 0, tx2 = 0, ty1 = 0, ty2 = 0;
+	bool light;
+
+	int num, i;
+	
+	int xsize, ysize;
+	
+	/* Pick a room size */
+	y1 = randint1(4);
+	x1 = randint1(11);
+	y2 = randint1(3);
+	x2 = randint1(11);
+
+	xsize = x1 + x2 + 1;
+	ysize = y1 + y2 + 1;
+
+	/* Try to allocate space for room.  If fails, exit */
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, bx0, by0, &xval, &yval))
+		return;
+
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+
+
+	/* Get corner values */
+	y1 = yval - ysize / 2;
+	x1 = xval - xsize / 2;
+	y2 = yval + (ysize - 1) / 2;
+	x2 = xval + (xsize - 1) / 2;
+
+	/* Generate inner floors */
+	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+
+	/* Fill boundary with random rectangles */
+
+	/* Determine number of sections to use */
+	num = rand_range(1, 2);
+
+	/* Make num rooms */
+	for (i = 0; i < num; i++)
+	{
+		/* Determine "default" extents of filled region */
+	
+		switch (randint1(4))
+		{
+			case 1:
+			{
+				/* Top Left */
+				tx1 = x1;
+				tx2 = rand_range((x1 + xval) / 2, xval - 1);
+				ty1 = y1;
+				ty2 = rand_range((y1 + yval) / 2, yval - 1);
+
+				break;
+			}
+			
+			case 2:
+			{
+				/* Bottom Left */
+				tx1 = x1;
+				tx2 = rand_range((x1 + xval) / 2, xval - 1);
+				ty1 = rand_range(yval + 1, (yval + y2) / 2);
+				ty2 = y2;
+			
+				break;
+			}
+		
+			case 3:
+			{
+				/* Top Right */
+				tx1 = rand_range(xval + 1, (xval + x2) / 2);
+				tx2 = x2;
+				ty1 = y1;
+				ty2 = rand_range((y1 + yval) / 2, yval - 1);
+
+				break;
+			}
+			
+			case 4:
+			{
+				/* Bottom Right */
+				tx1 = rand_range(xval + 1, (xval + x2) / 2);
+				tx2 = x2;
+				ty1 = rand_range(yval + 1, (yval + y2) / 2);
+				ty2 = y2;
+
+				break;
+			}
+		}
+	
+		/* Create regions */
+		generate_fill(tx1, ty1, tx2, ty2, FEAT_WALL_EXTRA);
+	}
+	
+	/* Find visible outer walls and set to be FEAT_OUTER */
+	add_outer_wall(xval, yval, light, x1 - 1, y1 - 1, x2 + 1, y2 + 1);
+}
+
+
+#define ROOM_TYPES	16
+
+typedef void (*room_build_type)(int, int);
+
+room_build_type room_list[ROOM_TYPES] =
+{
+	build_type1,
+	build_type2,
+	build_type3,
+	build_type4,
+	build_type5,
+	build_type6,
+	build_type7,
+	build_type8,
+	build_type9,
+	build_type10,
+	build_type11,
+	build_type12,
+	build_type13,
+	build_type14,
+	build_type15,
+	build_type16
+};
+
+
+/*
  * Attempt to build a room of the given type at the given block
  *
  * Note that we restrict the number of "crowded" rooms to reduce
@@ -4210,97 +4343,17 @@ static void build_type15(int bx0, int by0)
  */
 bool room_build(int bx0, int by0, int typ)
 {
+	/* Paranoia */
+	if ((typ > ROOM_TYPES) || (typ < 1)) return (FALSE);
+
 	/* Restrict level */
 	if ((p_ptr->depth < roomdep[typ]) && !ironman_rooms) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);
-
+	
 	/* Build a room */
-	switch (typ)
-	{
-		case 15:
-		{
-			build_type15(bx0, by0);
-			break;
-		}
-		case 14:
-		{
-			build_type14(bx0, by0);
-			break;
-		}
-		case 13:
-		{
-			build_type13(bx0, by0);
-			break;
-		}
-		case 12:
-		{
-			build_type12(bx0, by0);
-			break;
-		}
-		case 11:
-		{
-			build_type11(bx0, by0);
-			break;
-		}
-		case 10:
-		{
-			build_type10(bx0, by0);
-			break;
-		}
-		case 9:
-		{
-			build_type9(bx0, by0);
-			break;
-		}
-		case 8:
-		{
-			build_type8(bx0, by0);
-			break;
-		}
-		case 7:
-		{
-			build_type7(bx0, by0);
-			break;
-		}
-		case 6:
-		{
-			build_type6(bx0, by0);
-			break;
-		}
-		case 5:
-		{
-			build_type5(bx0, by0);
-			break;
-		}
-		case 4:
-		{
-			build_type4(bx0, by0);
-			break;
-		}
-		case 3:
-		{
-			build_type3(bx0, by0);
-			break;
-		}
-		case 2:
-		{
-			build_type2(bx0, by0);
-			break;
-		}
-		case 1:
-		{
-			build_type1(bx0, by0);
-			break;
-		}
-
-		default:
-		{
-			/* Paranoia */
-			return (FALSE);
-		}
-	}
+	room_list[typ - 1](bx0, by0);
 
 	return (TRUE);
 }

@@ -593,13 +593,16 @@ static bool cave_gen(void)
 			/* Type 2 -- Overlapping (25%) */
 			if ((k < 75) && room_build(x, y, 2)) continue;
 
-			/* Type 11 -- Parallelogram (5%) */
+			/* Type 15 -- Parallelogram (5%) */
 			if ((k < 80) && room_build(x, y, 15)) continue;
 
 			/* Type 11 -- Circular (5%) */
 			if ((k < 85) && room_build(x, y, 11)) continue;
+			
+			/* Type 16 -- Inverse Overlay (5%) */
+			if ((k < 90) && room_build(x, y, 15)) continue;
 
-			/* Type 12 -- Crypt (15%) */
+			/* Type 12 -- Crypt (10%) */
 			if ((k < 100) && room_build(x, y, 12)) continue;
 		}
 
