@@ -22,7 +22,7 @@
 
 /* 4k for each block_type */
 #define BLOCK_DATA_SIZE ((int)(4096 - sizeof(u16b) - sizeof(void *)))
-
+ 
 #define HI_BIT_16		0x8000
 #define NEXT_BIT_16		0x4000
 #define ALL_BITS		0xFFFF
@@ -46,7 +46,7 @@ struct block_type
 	block_type *b_next;
 	
 	/* Size of used region in this block */
-	u16b size;
+	u32b size;
 	
 	/* Data in this block */
 	byte block_data[BLOCK_DATA_SIZE];
@@ -68,7 +68,6 @@ struct block_handle
 };
 
 static block_type *free_list = NULL;
-static block_type *used_list = NULL;
 
 static block_type* new_block(void)
 {
@@ -259,15 +258,12 @@ static void flush_bits(block_handle *h_ptr)
  */
 static void clean_blocks(block_type *b_ptr)
 {
-	int i = 0, j = 0;
+	u32b i = 0, j = 0;
 	block_type* next_ptr = b_ptr;
 	
 	/* While there are blocks to do */
 	while (next_ptr)
 	{
-		/* Note inline versions of read and write block_byte for speed */
-		
-		
 		/* End of write block? */
 		if (i >= BLOCK_DATA_SIZE)
 		{
@@ -852,97 +848,214 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	}
 }
 
-/* Macro for finding character in string at specified location */
+/* Macro for finding something mod(len), but faster. */
 #define GET_LOCATE(X)	((((X)) < string_len) ? ((X)) : ((X) - string_len))
 
-static int string_len = 0;
+#define SWAP(p, q)	\
+	(tmp = string_start[p],\
+	 string_start[p] = string_start[q],\
+	 string_start[q] = tmp)
+
+
+static int string_sort_depth;
+static s32b string_len;
+static s32b *string_group;
+static s32b *string_start;
 
 /*
- * Sorting hook -- comp function -- by "string"
+ * Sort the groups using a recursive three-way quicksort.
  *
- * We use "u" to point to an array of indexes into a
- * string.
- * "v" is the location of the string.
+ * (The numbers are sorted in-place)
+ *
+ * The range goes from s1 to s2 - 1.
  */
-static bool ang_sort_comp_string(vptr u, vptr v, int a, int b)
+static void sort_split(s32b s1, s32b s2)
 {
-	int *x = (int*)(u);
-	byte *s = (byte*) v;
+	s32b pa, pb, pc, pd, pl, gs, ge, j;
+	u32b f, v, tmp;
+	
+	/*
+	 * Get the pivot
+	 *
+	 * I'm lazy - pick the middle value.
+	 */
+	v = string_group[GET_LOCATE(string_start[(s1 + s2)/2] + string_sort_depth)];
 
-	int size, p1 = x[a], p2 = x[b];
-	bool result;
+	/* Initialise */
+	pa = s1;
+	pb = s1;
+	pc = s2 - 1;
+	pd = s2 - 1;
 	
-	/* Work out how far we can scan before going off of the end */
-	size = string_len - MAX(p1, p2);
+	while (TRUE)
+	{
+		/*
+		 * Scan upwards, storing values equal to the key at
+		 * the front, and values below the key after that.
+		 *
+		 * If we run out of room, or find a value above the
+		 * cutoff, we stop.
+		 */ 
+		while (pb <= pc)
+		{
+			/* Get sort 'key' */
+			f = string_group[GET_LOCATE(string_start[pb] + string_sort_depth)];
+			
+			/* Exit on keys that are too large */
+			if (f > v) break;
+			
+			if (f == v)
+			{
+				/* Store keys equal to the pivot at the front */
+				SWAP(pa, pb);
+				pa++;
+			}
+			
+			pb++;
+		}
+		
+		/*
+		 * Scan downwards, storing values equal to the key at
+		 * the back, and values above the key before that.
+		 *
+		 * If we run out of room, or find a value below the
+		 * cutoff, we stop.
+		 */
+		while (pb <= pc)
+		{
+			/* Get sort 'key' */
+			f = string_group[GET_LOCATE(string_start[pc] + string_sort_depth)];
+			
+			/* Exit on keys that are too small */
+			if (f < v) break;
+			
+			if (f == v)
+			{
+				/* Store keys equal to the pivot at the back */
+				SWAP(pc, pd);
+				pd--;
+			}
+			
+			pc--;
+		}
 	
-	/* Compare the first length of string */
-	result = memcmp(&s[p1], &s[p2], size);
+		/* The two scanned boundaries meet? */
+		if (pb > pc) break;
+		
+		/*
+		 * Swap the values at pb and pc because we
+		 * know the value at pc is on the 'low' side
+		 */
+		SWAP(pb, pc);
+		pb++;
+		pc--;
+	}
+	
+	/* Get the point that the middle group starts */
+	gs = s1 + pb - pa;
+	
+	/* Copy all the 'equal' keys from the front to the middle */
+	ge = gs;
+	for (pl = s1; pl < pa; pl++)
+	{
+		/* Copy to the middle */
+		SWAP(pl, ge);
+		ge++;
+	}
 
-	if (result) return (result);
-
-	p1 = GET_LOCATE(p1 + size);
-	p2 = GET_LOCATE(p2 + size);
+	/* Copy all the 'equal' keys from the back to the middle */
+	for (pl = pd + 1; pl < s2; pl++)
+	{
+		SWAP(pl, ge);
+		ge++;
+	}
+		
+	/* If the 'smaller' side of the tree exists, sort it */
+	if (pb != pa) sort_split(s1, gs);
 	
-	/* Work out how far we can scan before going off of the end */
-	size = string_len - MAX(p1, p2);
+	/* Sorted group? */
+	if (gs == ge - 1)
+	{
+		string_group[string_start[gs]] = ge;
+		
+		/* The sorted group is one long at this stage */ 
+		string_start[gs] = -1;
+	}
+	else
+	{
+		/* Save the new group number */
+		for (j = gs; j < ge; j++)
+		{
+			string_group[string_start[j]] = ge;
+		}
+	}
 	
-	/* Compare the first length of string */
-	result = memcmp(&s[p1], &s[p2], size);
-
-	if (result) return (result);
-	
-	p1 = GET_LOCATE(p1 + size);
-	p2 = GET_LOCATE(p2 + size);
-	
-	/* Scan the remaining region */
-	size = x[a] - p1;
-	
-	/* Compare the first length of string */
-	return (memcmp(&s[p1], &s[p2], size));
+	/* If the 'larger' side of the tree exists, sort it */
+	if (pd != pc) sort_split(ge, s2);
 }
 
-
 /*
- * Sorting hook -- swap function -- by "wilderness height"
+ * Sort a string, using the algorithm from Larsson and Sadakane
+ * from their paper, "A Faster Suffix Sort"
  *
- * We use "u" to point to an array of indexes into a
- * string
- */
-static void ang_sort_swap_string(vptr u, vptr v, int a, int b)
-{
-	int *x = (int*)(u);
-
-	int temp;
-
-	/* Ignore v */
-	(void) v;
-	
-	/* Swap "x" */
-	temp = x[a];
-	x[a] = x[b];
-	x[b] = temp;
-}
-
-
-/*
- * Sort a string, using the simple angband sorting algorithm
+ * This has a worst-case time of O(nlog(n)), and a 'typical' type
+ * of marginally slower than O(n)
  *
- * This has a worst-case time of O(n^2log(n))
- * We avoid that by doing a RLE before calling this routine.
+ * This returns a list of the indecies to the start of each string,
+ * in sorted order.  This must be C_KILLed in the caller.
  */
-static void sort_string(int *s_ptr, byte *string, int len)
+static s32b *sort_string(byte *string, s32b len)
 {
-	byte symbol;
-	int i;
+	s32b s;
+	s32b i, j, gl;
 	
-	int counts[256];
-	int positions[256];
+	u32b counts[256];
+	s32b positions[256];
 
+	u32b location;
+
+	/*
+	 * Pointers to the start of each string.
+	 * This is the thing that is eventually returned as sorted.
+	 *
+	 * start[0] is the index to the start of
+	 * the 'smallest' string.
+	 *
+	 * Note, this array is used to store data so that the
+	 * groups can be traversed in linear time.  This overwrites
+	 * the 'proper' data that should be here.  This is undone at
+	 * the end, where the information from group[] is used to
+	 * reconstitute the information required.
+	 */
+	s32b *start;
+
+	/*
+	 * This is the inverse of start_ptr[], the 'position' of
+	 * each string in the (semi)sorted set of strings.
+	 *
+	 * group[0] is the index of the string starting at zero
+	 * in the list of sorted strings.
+	 *
+	 * The group is the index of the _last_ string in the group + 1.
+	 * ie. start[f]... start[g - 1] corresponds to group[start[i]] = g,
+	 * when i lies between f and g - 1.
+	 */
+	s32b *group;
+
+	/* Create the arrays */
+	C_MAKE(start, len, s32b);
+	C_MAKE(group, len, s32b);
+	
+	/*
+	 * Save globals
+	 */
 	string_len = len;
+	string_group = group;
+	string_start = start;
 	
-	/* Do one level of radix sort to speed everything up */
-	
-	C_WIPE(counts, 256, int);
+	/* Do a radix sort to speed everything up */
+#if 0	
+	C_WIPE(counts, 256, u32b);
 	
 	/* Get the sub-totals of the buckets */
 	for (i = 0; i < len; i++)
@@ -957,48 +1070,122 @@ static void sort_string(int *s_ptr, byte *string, int len)
 		positions[i + 1] = positions[i] + counts[i];
 	}
 	
+	/*
+	 * Initialise the groups
+	 */
+	for (i = 0; i < 256; i++)
+	{
+		 for (j = positions[i]; j < positions[i + 1]; j++)
+		 {
+		 	group[j] = positions[i + 1];
+		 }
+	}
+	
 	/* Output the semi-sorted pointers */
 	for (i = 0; i < len; i++)
 	{
-		symbol = string[i];
+		location = positions[string[i]]++;
 		
-		s_ptr[positions[symbol]++] = i;
+		start[i] = location;
+	}
+#else /* 0 */
+
+	/* Initialize */
+	for (i = 0; i < len; i++)
+	{
+		start[i] = i;
+		group[i] = string[i];
 	}
 	
+	string_sort_depth = 0;
+	sort_split(0, len);
+#endif /* 0 */
+	/* Start with one symbol sorted */ 
+	string_sort_depth = 1;
 
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_string;
-	ang_sort_swap = ang_sort_swap_string;
+	/* While the sorted group is less than the total */
+	while (-start[0] < len)
+	{
+		/* Negated length of sorted groups */
+		gl = 0;
+		
+		/* Start at first position in array */
+		i = 0;
+		
+		while (TRUE)
+		{
+			/* Look at where we are */
+			s = start[i];
+			
+			if (s < 0)
+			{
+				/* Skip over sorted section */
+				i -= s;
+				gl += s;
+			}
+			else
+			{
+				if (gl)
+				{
+					/* Combine sorted groups */
+					start[i + gl] = gl;
+					gl = 0;
+				}
+				
+				/* sort from i to group[s] */
+				sort_split(i, group[s]);
+				i = group[s];
+			}
+			
+			/* Stop if have scanned everything */
+			if (i >= len) break;
+		}
+		
+		/* Does array end with a sorted group? */
+		if (gl)
+		{
+			/* combine the group */
+			start[i + gl] = gl;
+		}
+	
+		/* Double the number of sorted symbols per pass */
+		string_sort_depth *= 2;
+	}
 
-	/* Sort positions by height of wilderness */
-	ang_sort(s_ptr, string, len);
+	/* Reconstruct the suffix array from the inverse */
+	for (i = 0; i < len; i++)
+	{
+		start[group[i] - 1] = i;
+	}
+
+	/* Clean up */
+	C_KILL(group, len, s32b);
+	
+	return (start);
 }
 
+
 /*
- * Do the Block Wheeler transform on the data.
+ * Do the Burrows Wheeler transform on the data.
  *
  * Reading h1_ptr, writing to h2_ptr;
  */
 static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 {
-	int *offsets;
+	s32b *offsets;
 	block_type *b_ptr = h1_ptr->b_ptr;
 	byte *data = b_ptr->block_data;
 	
-	int size = h1_ptr->b_ptr->size, transform = 0;
-	int i, j;
+	u32b size = h1_ptr->b_ptr->size, transform = 0;
+	u32b i, j;
 	
-	
-	/* Create the offset array */
-	C_MAKE(offsets, BLOCK_DATA_SIZE, int);
-
 	/* Sort the block, filling the offset array */
-	sort_string(offsets, data, size);
+	offsets = sort_string(data, size);
 
 	/* Record location of original string in sorted list */
 	for (i = 0; i < size; i++)
 	{
-		if (!offsets[i])
+		if (offsets[i] == 1)
 		{
 			transform = i;
 			break;
@@ -1020,76 +1207,111 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	/* Write the transformed block */
 	for (i = 0; i < size; i++)
 	{
-		j = offsets[i] - 1;
-		if (j == -1) j = size - 1;
-		
+		if (offsets[i] == 0)
+		{
+			j = size - 1;
+		}
+		else
+		{
+			j = offsets[i] - 1;
+		}
+	
 		write_block_byte(h2_ptr, data[j]);
 	}
 
 	/* Cleanup */
-	C_KILL(offsets, BLOCK_DATA_SIZE, int);
+	C_KILL(offsets, BLOCK_DATA_SIZE, s32b);
+	
+	/* Change block, deleting old one */
+	h1_ptr->b_ptr = del_block(h1_ptr->b_ptr);
 }
 
 /*
- * Do the Inverse Block Wheeler transform on the data.
+ * Driver routine for block transform
+ * This routine transforms every block in a stream,
+ * and then returns the transformed stream
+ */
+static void bw_blocks_trans(block_handle *h1_ptr)
+{
+	block_handle handle, *h2_ptr = &handle;
+	block_type *b_ptr;
+	
+	/* Swap the block streams the two handles refer to */
+	b_ptr = h1_ptr->bf_ptr;
+	h1_ptr->bf_ptr = new_block();
+	h2_ptr->bf_ptr = b_ptr;
+	
+	/* Move the read/write head to the start of the stream */
+	h1_ptr->counter = 0;
+	h2_ptr->counter = 0;
+	h1_ptr->b_ptr = h1_ptr->bf_ptr;
+	h2_ptr->b_ptr = b_ptr;
+	
+	/* While there are blocks to do */
+	while (h2_ptr->b_ptr)
+	{
+		/* Transform block */
+		bw_block_trans(h2_ptr, h1_ptr);
+	}
+}
+
+/*
+ * Do the Inverse Burrows Wheeler transform on the data.
+ *
+ * Use the algorithm 'mergedTL' used in bzip2, by Julian Seward
  *
  * Reading h1_ptr, writing to h2_ptr
  */
 static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 {
-	int size, transform;
-	int i;
-	int counts[256];
-	int symbol, total;
+	s32b size, transform, symbol, i;
+	u32b counts[257];
 
 	u32b *temp, t;
 	
 	/* Get the data size, and transformation number */
-	size = rerase_block_byte(h2_ptr);
-	size |= (rerase_block_byte(h2_ptr) << 8);
-	size |= (rerase_block_byte(h2_ptr) << 16);
-	size |= (rerase_block_byte(h2_ptr) << 24);
+	size = rerase_block_byte(h1_ptr);
 	
-	transform = rerase_block_byte(h2_ptr);
-	transform |= (rerase_block_byte(h2_ptr) << 8);
-	transform |= (rerase_block_byte(h2_ptr) << 16);
-	transform |= (rerase_block_byte(h2_ptr) << 24);
+	/* Paranoia */
+	if (size == -1) return;
+	
+	size |= (rerase_block_byte(h1_ptr) << 8);
+	size |= (rerase_block_byte(h1_ptr) << 16);
+	size |= (rerase_block_byte(h1_ptr) << 24);
+	
+	transform = rerase_block_byte(h1_ptr);
+	transform |= (rerase_block_byte(h1_ptr) << 8);
+	transform |= (rerase_block_byte(h1_ptr) << 16);
+	transform |= (rerase_block_byte(h1_ptr) << 24);
 
 	C_MAKE(temp, size, u32b);
-	C_WIPE(counts, 256, int);
+	C_WIPE(counts, 257, u32b);
 
-	/*
-	 * Get the transformation vector, and put it in temp
-	 * Note that we store the symbol there as well.
-	 * This works so long as the maximum block size is
-	 * less than 2^24 bytes.
-	 *
-	 * Doing this saves on cache misses, and makes the
-	 * inverse transformation much quicker with large
-	 * block sizes.
-	 */
+	/* Initialise counts */
 	for (i = 0; i < size; i++)
 	{
-		symbol = rerase_block_byte(h2_ptr);
+		symbol = rerase_block_byte(h1_ptr);
 		
 		/* Paranoia */
 		if (symbol == -1) return;
-	
-		/* Store the symbol + relative offset in temp */
-		temp[i] = symbol + counts[symbol] * 256;
 		
-		/* Increment the count */
-		counts[symbol]++;
+		/*
+		 * Get the transformation vector, and put it in temp
+		 * Note that we store the symbol there as well.
+		 * This works so long as the maximum block size is
+		 * less than 2^24 bytes.
+		 *
+		 * Doing this saves on cache misses, and makes the
+		 * inverse transformation much quicker with large
+		 * block sizes.
+		 */
+		temp[i] = 256 * (counts[symbol + 1]++) + symbol;
 	}
 	
-	/* Get cumulative counts */
-	total = 0;
-	for (i = 0; i < 256; i++)
+	/* Cumulatise counts */
+	for (i = 2; i < 256; i++)
 	{
-		/* Replace with cumulative counts */
-		symbol = counts[i];
-		counts[i] = total;
-		total += symbol;
+		counts[i] += counts[i - 1];
 	}
 	
 	for (i = 0; i < size; i++)
@@ -1099,7 +1321,7 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 		
 		/* Get the symbol */
 		symbol = t & 0xFF;
-		write_block_byte(h1_ptr, symbol);
+		write_block_byte(h2_ptr, symbol);
 		
 		/* Get the new point in the temp array */
 		transform  = t / 256 + counts[symbol];
@@ -1109,6 +1331,35 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	C_KILL(temp, size, u32b);
 }
 
+
+/*
+ * Driver routine for the inverse block transform
+ * This routine transforms every block in a stream,
+ * and then returns the transformed stream
+ */
+static void ibw_blocks_trans(block_handle *h1_ptr)
+{
+	block_handle handle, *h2_ptr = &handle;
+	block_type *b_ptr;
+	
+	/* Swap the block streams the two handles refer to */
+	b_ptr = h1_ptr->bf_ptr;
+	h1_ptr->bf_ptr = new_block();
+	h2_ptr->bf_ptr = b_ptr;
+	
+	/* Move the read/write head to the start of the stream */
+	h1_ptr->counter = 0;
+	h2_ptr->counter = 0;
+	h1_ptr->b_ptr = h1_ptr->bf_ptr;
+	h2_ptr->b_ptr = b_ptr;
+	
+	/* While there are blocks to do */
+	while (h2_ptr->b_ptr)
+	{
+		/* Inverse transform the block */
+		ibw_block_trans(h2_ptr, h1_ptr);
+	}
+}
 
 /* Data modeling */
 
@@ -1291,7 +1542,7 @@ static errr write_file(block_handle *h_ptr, cptr name)
 	while (b_ptr)
 	{
 		/* Write out the data */
-		if (write(fd, b_ptr->block_data, b_ptr->size) != b_ptr->size)
+		if (write(fd, b_ptr->block_data, b_ptr->size) != (s32b) b_ptr->size)
 		{
 			return (1);
 		}
@@ -1315,7 +1566,7 @@ void test_compress_module(void)
 {
 	block_handle handle, *h_ptr = &handle;
 	cptr infile = "test"; 
-	cptr outfile =  "arth";
+	cptr outfile =  "bwt";
 	cptr outfile2 = "result";
 	char buf[1024];
 	
@@ -1324,19 +1575,14 @@ void test_compress_module(void)
 	
 	(void) read_file(h_ptr, buf);
 	
-	/* Use the "simple" compression model */
-	init_simple_model();
-	
-	/* compress the file with rle */
-	arth_blocks_encode(h_ptr);
+	bw_blocks_trans(h_ptr);
 	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
 
 	(void) write_file(h_ptr, buf);
 	
-	/* decompress the file with rle */
-	arth_blocks_decode(h_ptr);
+	ibw_blocks_trans(h_ptr);
 	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile2);
