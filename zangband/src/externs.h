@@ -47,6 +47,7 @@ extern byte adj_con_mhp[];
 extern byte blows_table[12][12];
 extern owner_type owners[MAX_STORES][MAX_OWNERS];
 extern b_own_type b_owners[MAX_BLDG][MAX_B_OWN];
+extern byte rgold_adj[MAX_RACES][MAX_RACES];
 extern byte extract_energy[200];
 extern s32b player_exp[PY_MAX_LEVEL];
 extern player_sex sex_info[MAX_SEXES];

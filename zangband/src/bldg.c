@@ -447,9 +447,19 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 	
 	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
+	int factor;
+	
 	cptr build_name = t_info[f_ptr->t_idx].name;
 	cptr owner_name = (bo_ptr->owner_name);
 	cptr race_name = race_info[bo_ptr->owner_race].title;
+	
+	/* Compute the racial factor */
+	factor = rgold_adj[bo_ptr->owner_race][p_ptr->prace];
+
+	/* Add in the charisma factor */
+	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+	
+	factor = ((300 - factor) * bo_ptr->inflate) / 100;
 
 	Term_clear();
 	sprintf(tmp_str, "%s (%s) %s", owner_name, race_name, build_name);
@@ -465,7 +475,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_WEAPONMASTER:
 		{
 			sprintf(tmp_str, " E) Examine Weapons (%dgp)",
-				 f_ptr->data[1] * bo_ptr->inflate);
+				 f_ptr->data[1] * factor);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
@@ -475,7 +485,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 			sprintf(tmp_str, " R) Recharge Items");
 			c_put_str(TERM_YELLOW, tmp_str, 19, 0);
 			sprintf(tmp_str, " I) Identify Items (%dgp)",
-			f_ptr->data[2] * bo_ptr->inflate);
+			f_ptr->data[2] * factor);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
@@ -483,7 +493,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_PLUS_WEAPON:
 		{
 			sprintf(tmp_str, " E) Enchant Weapons (%dgp)",
-				 f_ptr->data[1] * bo_ptr->inflate);
+				 f_ptr->data[1] * factor);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
@@ -491,7 +501,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_PLUS_ARMOUR:
 		{
 			sprintf(tmp_str, " E) Enchant Armour (%dgp)",
-				 f_ptr->data[1] * bo_ptr->inflate);
+				 f_ptr->data[1] * factor);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
@@ -499,7 +509,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_MUTATE:
 		{
 			sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
-				 f_ptr->data[1] * bo_ptr->inflate * (count_mutations() + 1));
+				 f_ptr->data[1] * factor * (count_mutations() + 1));
 			c_put_str(TERM_YELLOW, tmp_str, 19, 30);
 			break;
 		}
@@ -507,7 +517,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_MAP:
 		{
 			sprintf(tmp_str, " E) Examine Map (%dgp)",
-				 f_ptr->data[1] * bo_ptr->inflate);
+				 f_ptr->data[1] * factor);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
@@ -1915,13 +1925,23 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	
 	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
+	int		factor;
+	
+	/* Compute the racial factor */
+	factor = rgold_adj[bo_ptr->owner_race][p_ptr->prace];
+
+	/* Add in the charisma factor */
+	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+	
+	factor = ((300 - factor) * bo_ptr->inflate) / 100;
+	
 	switch (f_ptr->data[0])
 	{
 		case BLDG_WEAPONMASTER:
 		{
 			if (p_ptr->command_cmd == 'E')
 			{
-				cost = f_ptr->data[1] * bo_ptr->inflate;
+				cost = f_ptr->data[1] * factor;
 				
 				if (test_gold(&cost))
 				{
@@ -1938,14 +1958,14 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 		{
 			if (p_ptr->command_cmd == 'R')
 			{
-				building_recharge(f_ptr->data[1] * bo_ptr->inflate);
+				building_recharge(f_ptr->data[1] * factor);
 				
 				done = TRUE;
 			}
 			
 			if (p_ptr->command_cmd == 'I')
 			{
-				cost = f_ptr->data[2] * bo_ptr->inflate;
+				cost = f_ptr->data[2] * factor;
 				
 				if (test_gold(&cost))
 				{
@@ -1970,7 +1990,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 			{
 				item_tester_hook = item_tester_hook_melee_weapon;
 				
-				enchant_item(f_ptr->data[1] * bo_ptr->inflate, 1, 1, 0);
+				enchant_item(f_ptr->data[1] * factor, 1, 1, 0);
 				
 				done = TRUE;
 			}		
@@ -1984,7 +2004,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 			{
 				item_tester_hook = item_tester_hook_armour;
 				
-				enchant_item(f_ptr->data[1] * bo_ptr->inflate, 0, 0, 1);
+				enchant_item(f_ptr->data[1] * factor, 0, 0, 1);
 				
 				done = TRUE;
 			}
@@ -1996,7 +2016,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 		{
 			if (p_ptr->command_cmd == 'E')
 			{
-				cost = f_ptr->data[1] * bo_ptr->inflate * (count_mutations()+1);
+				cost = f_ptr->data[1] * factor * (count_mutations()+1);
 				
 				if (test_gold(&cost))
 				{
@@ -2026,7 +2046,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 		{
 			if (p_ptr->command_cmd == 'E')
 			{
-				cost = f_ptr->data[1] * bo_ptr->inflate;
+				cost = f_ptr->data[1] * factor;
 				
 				if (test_gold(&cost))
 				{
