@@ -369,15 +369,15 @@ proc NSMainWindow::InitWindow {oop} {
 	
 	# This is a large monitor
 	if {[winfo screenwidth .] >= 800} {
-		set width [expr {16 * 80}]
+		set width [expr {12 * 80}]
 		set height [expr {16 * 24}]
-		set font {Times 13 bold}
+		set font {Times 12}
 
 	# This is a small monitor
 	} else {
-		set width [expr {16 * 80}]
+		set width [expr {12 * 80}]
 		set height [expr {16 * 24}]
-		set font {Times 13}
+		set font {Times 12}
 	}
 	
 	set term .term
@@ -392,7 +392,7 @@ proc NSMainWindow::InitWindow {oop} {
 	# Do stuff when window closes
 	wm protocol $term WM_DELETE_WINDOW "NSTerm::Close $oop"
 	
-	set termId [NSObject::New NSTerm .term $width $height $gsize $gsize $font]
+	set termId [NSObject::New NSTerm .term $width $height 12 16 $font]
 			
 	update
 	
