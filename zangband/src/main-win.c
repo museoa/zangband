@@ -4637,7 +4637,7 @@ static void init_stuff(void)
 
 		GetPrivateProfileString("Angband", "AngbandPath", "", tmp, 1024, path);
 
-		sprintf(path, "%sangband.ini", tmp);
+		sprintf(path, "%szangband.ini", tmp);
 	}
 
 #endif /* USE_SAVER */
