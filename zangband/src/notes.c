@@ -26,7 +26,7 @@ cptr notes_file(void)
 	 * Hack -- extract first 8 characters of name and
 	 * Create the file name from the character's name plus .txt
 	 */
-	(void)strnfmt(fname, 15, "%8s.txt", player_base);
+	(void)strnfmt(fname, 15, "%.8s.txt", player_base);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, fname);
 
