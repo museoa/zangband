@@ -350,9 +350,9 @@ void do_cmd_toggle_search(void)
  */
 static s16b chest_check(int y, int x)
 {
-	cave_type *c_ptr = area(y,x);
+	cave_type *c_ptr = area(y, x);
 
-	s16b this_o_idx, next_o_idx = 0;
+	s16b this_o_idx, next_o_idx;
 
 
 	/* Scan all objects in the grid */
@@ -1239,7 +1239,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if ((c_ptr->feat >= FEAT_MAGMA) &&
 	    (c_ptr->feat <= FEAT_QUARTZ_K))
 	{
-		bool okay = FALSE;
+		bool okay;
 		bool gold = FALSE;
 		bool hard = FALSE;
 
@@ -2562,7 +2562,7 @@ static sint critical_shot(int chance, int sleeping_bonus,
 	char o_name[], char m_name[], int visible)
 {
 	int i, k;
-	int mult_a_crit = 10;
+	int mult_a_crit;
 
 	if (!visible)
 	{
@@ -2677,21 +2677,27 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	int dir;
 	int j, y, x, ny, nx, ty, tx;
 
-	long tdam;
-	int tdam_remainder, tdam_whole;
-	int total_deadliness;
-
-	int tdis, thits, tmul;
-	int bonus, chance;
-	int cur_dis, visible;
+	int armour, bonus, chance, total_deadliness;
 
 	int sleeping_bonus = 0;
-	int chance2;
+	int terrain_bonus = 0;
 
-	object_type forge;
-	object_type *q_ptr;
+	long tdam;
+	int tdam_remainder, tdam_whole;
+
+	/* Assume no weapon of velocity or accuracy bonus. */
+	int special_dam = 0;
+	int special_hit = 0;
 
 	object_type *o_ptr;
+
+	int tdis, thits, tmul;
+	int cur_dis, visible;
+
+	int chance2;
+
+	object_type *i_ptr;
+	object_type object_type_body;
 
 	bool hit_body = FALSE;
 
@@ -2699,6 +2705,24 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	char m_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
+
+
+	/* Missile launchers of Velocity and Accuracy sometimes "supercharge" */
+	if ((j_ptr->name2 == EGO_VELOCITY) || (j_ptr->name2 == EGO_ACCURACY))
+	{
+		/* Occasional boost to shot. */
+		if (randint(16) == 1)
+		{
+			if (j_ptr->name2 == EGO_VELOCITY) special_dam = TRUE;
+			else if (j_ptr->name2 == EGO_ACCURACY) special_hit = TRUE;
+
+			/* Describe the object */
+			object_desc(o_name, j_ptr, FALSE, 0);
+
+			/* Let player know that weapon is activated. */
+			msg_format("You feel your %s tremble in your hand.", o_name);
+		}
+	}
 
 	/* Access the item (if in the pack) */
 	if (item >= 0)
@@ -2710,19 +2734,20 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		o_ptr = &o_list[0 - item];
 	}
 
-
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir)) return;
 
-
 	/* Get local object */
-	q_ptr = &forge;
+	i_ptr = &object_type_body;
 
 	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
+	object_copy(i_ptr, o_ptr);
+
+	/* sum all the applicable additions to Deadliness. */
+	total_deadliness = p_ptr->to_d + i_ptr->to_d + j_ptr->to_d;
 
 	/* Single object */
-	q_ptr->number = 1;
+	i_ptr->number = 1;
 
 	/* Reduce and describe inventory */
 	if (item >= 0)
@@ -2739,22 +2764,17 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		floor_item_optimize(0 - item);
 	}
 
-
 	/* Sound */
 	sound(SOUND_SHOOT);
 
 	/* Describe the object */
-	object_desc(o_name, q_ptr, FALSE, 3);
+	object_desc(o_name, i_ptr, FALSE, 3);
 
 	/* Use the proper number of shots */
 	thits = p_ptr->num_fire;
 
-	/* Actually "fire" the object */
-	bonus = (p_ptr->to_h + q_ptr->to_h + j_ptr->to_h);
-
-	/* sum all the applicable additions to Deadliness. */
-	total_deadliness = p_ptr->to_d + q_ptr->to_d + j_ptr->to_d;
-
+	/* Actually "fire" the object. */
+	bonus = (p_ptr->to_h + i_ptr->to_h + j_ptr->to_h);
 	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
 	/* Assume a base multiplier */
@@ -2829,14 +2849,30 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Take a (partial) turn */
 	energy_use = (energy_use / thits);
 
+	/* Fire ammo of backbiting, and it will turn on you. -LM- */
+	if (i_ptr->name2 == EGO_BACKBITING)
+	{
+		/* Message. */
+		msg_print("Your missile turns in midair and strikes you!");
+
+		/* Calculate damage. */
+		tdam = damroll(tmul * 4, i_ptr->ds);
+
+		/* Inflict both normal and wound damage. */
+		take_hit(tdam, "ammo of backbiting.");
+		set_cut(randint(tdam * 3));
+
+		/* That ends that shot! */
+		return;
+	}
 
 	/* Start at the player */
 	y = py;
 	x = px;
 
 	/* Predict the "target" location */
-	tx = px + 99 * ddx[dir];
 	ty = py + 99 * ddy[dir];
+	tx = px + 99 * ddx[dir];
 
 	/* Check for "target request" */
 	if ((dir == 5) && target_okay())
@@ -2871,8 +2907,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* The player can see the (on screen) missile */
 		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
-			char c = object_char(q_ptr);
-			byte a = object_attr(q_ptr);
+			char c = object_char(i_ptr);
+			byte a = object_attr(i_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
 			print_rel(c, a, ny, nx);
@@ -2896,7 +2932,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 
 		/* Monster here, Try to hit it */
-		if (area(y,x)->m_idx)
+		if (area(y, x)->m_idx)
 		{
 			cave_type *c_ptr = area(y,x);
 
@@ -2915,9 +2951,34 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			if ((m_ptr->csleep) && (visible))
 				sleeping_bonus = 5 + p_ptr->lev / 5;
 
+			/* Monsters in rubble can take advantage of cover. -LM- */
+			if (area(y, x)->feat == FEAT_RUBBLE)
+			{
+				terrain_bonus = r_ptr->ac / 5 + 5;
+			}
+			/*
+			 * Monsters in trees can take advantage of cover,
+			 * except from rangers.
+			 */
+			else if ((area(y, x)->feat == FEAT_TREES) && 
+					 (p_ptr->pclass == CLASS_RANGER))
+			{
+				terrain_bonus = r_ptr->ac / 5 + 5;
+			}
+			/* Monsters in water are vulnerable. -LM- */
+			else if (area(y, x)->feat == FEAT_DEEP_WATER)
+			{
+				terrain_bonus -= r_ptr->ac / 4;
+			}
+
+			/* Get effective armour class of monster. */
+			armour = r_ptr->ac + terrain_bonus;
+
+			/* Weapons of velocity sometimes almost negate monster armour. */
+			if (special_hit) armour /= 3;
+
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis+sleeping_bonus
-					, r_ptr->ac, m_ptr->ml))
+			if (test_hit_fire(chance2 + sleeping_bonus, armour, m_ptr->ml))
 			{
 				bool fear = FALSE;
 
@@ -2950,14 +3011,14 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 */
 
 				/* Base damage dice. */
-				tdam = q_ptr->dd;
+				tdam = i_ptr->dd;
 
 				/* Multiply by the missile weapon multiplier. */
 				tdam *= tmul;
 
 
 				/* multiply by slays or brands. (10x inflation) */
-				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
+				tdam = tot_dam_aux(i_ptr, tdam, m_ptr);
 
 				/* multiply by critical shot. (10x inflation) + level damage bonus*/
 				tdam *= critical_shot(chance2, sleeping_bonus,
@@ -2986,6 +3047,12 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 */
 				tdam = damroll(tdam_whole, o_ptr->ds) +
 					(tdam_remainder * damroll(1, o_ptr->ds) / 10000);
+
+				/* If a weapon of velocity activates, increase damage. */
+				if (special_dam)
+				{
+					tdam += 15;
+				}
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
@@ -3038,10 +3105,10 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	}
 
 	/* Chance of breakage (during attacks) */
-	j = (hit_body ? breakage_chance(q_ptr) : 0);
+	j = (hit_body ? breakage_chance(i_ptr) : 0);
 
 	/* Drop (or break) near that location */
-	(void)drop_near(q_ptr, j, y, x);
+	(void)drop_near(i_ptr, j, y, x);
 }
 
 
@@ -3280,16 +3347,30 @@ void do_cmd_throw_aux(int mult)
 			chance2 = chance - distance(py, px, y, x);
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
-			if (area(y,x)->feat == FEAT_RUBBLE)
+			if (area(y, x)->feat == FEAT_RUBBLE)
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
+			}
+			/*
+			 * Monsters in trees can take advantage of cover,
+			 * except from rangers.
+			 */
+			else if ((area(y, x)->feat == FEAT_TREES) && 
+			         (p_ptr->pclass == CLASS_RANGER))
+			{
+				terrain_bonus = r_ptr->ac / 5 + 5;
+			}
+			/* Monsters in water are vulnerable. -LM- */
+			else if (area(y, x)->feat == FEAT_DEEP_WATER)
+			{
+				terrain_bonus -= r_ptr->ac / 4;
 			}
 
 			/* Note the collision */
 			hit_body = TRUE;
 
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, r_ptr->ac, m_ptr->ml))
+			if (test_hit_fire(chance - cur_dis, r_ptr->ac + terrain_bonus, m_ptr->ml))
 			{
 				bool fear = FALSE;
 

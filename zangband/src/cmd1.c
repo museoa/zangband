@@ -1497,6 +1497,20 @@ void py_attack(int y, int x)
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
+	/*
+	 * Monsters in trees can take advantage of cover,
+	 * except from rangers.
+	 */
+	else if ((area(y, x)->feat == FEAT_TREES) && 
+	         (p_ptr->pclass == CLASS_RANGER))
+	{
+		terrain_bonus = r_ptr->ac / 7 + 5;
+	}
+	/* Monsters in water are vulnerable. -LM- */
+	else if (area(y, x)->feat == FEAT_DEEP_WATER)
+	{
+		terrain_bonus -= r_ptr->ac / 5;
+	}
 
 	/**** The monster bashing code. -LM- ****/
 
@@ -1564,7 +1578,7 @@ void py_attack(int y, int x)
 		}
 
 		/* Damage, check for fear and death. */
-		if (mon_take_hit(area(y,x)->m_idx, bash_dam, &fear, NULL))
+		if (mon_take_hit(area(y, x)->m_idx, bash_dam, &fear, NULL))
 		{
 			/* Fight's over. */
 			return;
@@ -1613,9 +1627,9 @@ void py_attack(int y, int x)
 	while (num++ < blows)
 	{
 		/* Test for hit */
-		if (test_hit_combat(chance+ sleeping_bonus, r_ptr->ac+ terrain_bonus, m_ptr->ml))
+		if (test_hit_combat(chance + sleeping_bonus,
+		                    r_ptr->ac + terrain_bonus, m_ptr->ml))
 		{
-
 			/* Sound */
 			sound(SOUND_HIT);
 
