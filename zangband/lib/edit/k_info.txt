@@ -737,6 +737,7 @@ I:19:12:0
 W:5:0:30:50
 A:5/1:60/1
 F:SHOW_MODS
+D:Just anout anyone can shoot an arrow with a bow.
 
 N:74:& Long Bow~
 G:}:U
@@ -744,6 +745,7 @@ I:19:13:0
 W:17:0:40:120
 A:17/1:70/1
 F:SHOW_MODS
+D:The arrows leave the long bow for the most damage.
 
 N:75:& Light Crossbow~
 G:}:s
@@ -751,6 +753,7 @@ I:19:23:0
 W:26:0:60:140
 A:26/1:80/1
 F:SHOW_MODS
+D:Slower but deadlier than bows.
 
 N:76:& Heavy Crossbow~
 G:}:s
@@ -758,6 +761,7 @@ I:19:24:0
 W:52:0:100:300
 A:52/1:90/1
 F:SHOW_MODS
+D:One shot can take of small fry.
 
 N:77:& Sling~
 G:}:u
@@ -765,6 +769,7 @@ I:19:2:0
 W:1:0:5:5
 A:1/1:50/1
 F:SHOW_MODS
+D:Small enough for kids to handle.
 
 
 ##### Missiles #####
@@ -776,6 +781,7 @@ W:10:0:2:5
 A:10/20:17/2:43/2
 P:0:1d12:0:0:0
 F:SHOW_MODS
+D:Standard issue.
 
 N:79:& Seeker Arrow~
 G:{:G
@@ -784,6 +790,7 @@ W:50:0:2:50
 A:50/20:80/2:90/1:105/1
 P:0:1d20:0:0:0
 F:SHOW_MODS
+D:This arrow has a superior flight.
 
 N:80:& Bolt~
 G:{:s
@@ -792,6 +799,7 @@ W:5:0:3:5
 A:5/1:43/2:70/2
 P:0:1d10:0:0:0
 F:SHOW_MODS
+D:Standard issue.
 
 N:81:& Seeker Bolt~
 G:{:B
@@ -800,6 +808,7 @@ W:60:0:3:75
 A:60/40:90/4:100/4
 P:0:1d20:0:0:0
 F:SHOW_MODS
+D:This bolt is the best.
 
 N:82:& Rounded Pebble~
 G:{:s
@@ -808,6 +817,7 @@ W:0:0:6:1
 A:0/1:5/1
 P:0:2d2:0:0:0
 F:SHOW_MODS
+D:Heavy and easy to break.  You can do better.
 
 N:83:& Iron Shot~
 G:{:s
@@ -816,6 +826,7 @@ W:10:0:8:2
 A:10/1:17/1
 P:0:4d2:0:0:0
 F:SHOW_MODS
+D:Standard issue.
 
 ##### Shovels and Picks #####
 
@@ -1211,6 +1222,7 @@ A:52/1
 F:STR | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you strong.
 
 N:133:Dexterity
 G:=:d
@@ -1220,6 +1232,7 @@ A:52/1
 F:DEX | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you feel limber.
 
 N:134:Constitution
 G:=:d
@@ -1229,6 +1242,7 @@ A:52/1
 F:CON | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you feel healthy.
 
 N:135:Intelligence
 G:=:d
@@ -1238,6 +1252,7 @@ A:52/1
 F:INT | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you feel smart.
 
 # Ring of speed costs 5000 + value of bonus
 N:136:Speed
@@ -1251,6 +1266,7 @@ L:MAKE:	object.pval = randint1(object.pval / 2) + m_bonus(object.pval, level)
 L:MAKE:	while (one_in_(2) ~= 0) do object.pval = object.pval + 1 end
 L:MAKE:	allow_curse = TRUE
 L:MAKE:	rating_boost = 25
+D:Just looking at this ring makes you feel quick.
 
 N:137:Sensing
 G:=:d
@@ -1260,6 +1276,7 @@ A:9/2
 F:SENSE | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you feel aware.
 
 N:138:Teleportation
 G:=:d
@@ -1267,6 +1284,7 @@ I:45:4:0
 W:9:0:2:125
 A:9/2
 F:CURSED | TELEPORT | EASY_KNOW
+D:Just looking at this ring makes you want to jump.
 
 N:139:Slow Digestion
 G:=:d
@@ -1274,6 +1292,7 @@ I:45:6:0
 W:9:0:2:125
 A:9/2
 F:SLOW_DIGEST | EASY_KNOW
+D:Just looking at this ring makes you feel full.
 
 N:140:Resist Fire
 G:=:d
@@ -1281,6 +1300,7 @@ I:45:8:0
 W:17:0:2:250
 A:17/2
 F:RES_FIRE | IGNORE_FIRE | EASY_KNOW
+D:Just looking at this ring makes you feel warm.
 
 N:141:Resist Cold
 G:=:d
@@ -1288,6 +1308,7 @@ I:45:9:0
 W:17:0:2:250
 A:17/2
 F:RES_COLD | IGNORE_COLD | EASY_KNOW
+D:Just looking at this ring makes you feel cold.
 
 N:142:Levitation
 G:=:d
@@ -1295,6 +1316,7 @@ I:45:7:0
 W:9:0:2:125
 A:9/2
 F:FEATHER | EASY_KNOW
+D:Just looking at this ring makes you feel up in the air.
 
 N:143:Poison Immunity
 G:=:d
@@ -1302,6 +1324,7 @@ I:45:20:0
 W:60:0:2:5000
 A:50/8:85/2
 F:IM_POIS | EASY_KNOW
+D:Just looking at this ring makes you feel poisonous.
 
 N:144:Free Action
 G:=:d
@@ -1309,6 +1332,7 @@ I:45:21:0
 W:25:0:2:500
 A:25/2
 F:FREE_ACT | EASY_KNOW
+D:Just looking at this ring makes you feel unhindered.
 
 N:145:Weakness
 G:=:d
@@ -1317,6 +1341,7 @@ W:9:0:2:0
 A:9/2
 F:CURSED | STR | HIDE_TYPE
 L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
+D:Just looking at this ring makes you feel like a weakling.
 
 N:146:Flames
 G:=:d
@@ -1374,6 +1399,7 @@ A:75/2
 F:CURSED | TELEPORT | WIS | CHR | HIDE_TYPE
 L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
 L:MAKE:	object.to_a = -(5 + m_bonus(10, level))
+D:Just looking at this ring makes you feel in trouble.
 
 N:150:Stupidity
 G:=:d
@@ -1382,6 +1408,7 @@ W:9:0:2:0
 A:9/2
 F:CURSED | INT | HIDE_TYPE
 L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
+D:Just looking at this ring makes you feel like a dummy.
 
 # The value of a ring of combat is in the bonuses
 N:151:Combat
@@ -1391,6 +1418,7 @@ W:35:0:2:100
 A:35/1
 L:MAKE:	object.to_d = rand_range(5, 13) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you feel damaging.
 
 # The value of a ring of skill is in the bonuses
 N:152:Skill
@@ -1400,6 +1428,7 @@ W:35:0:2:100
 A:35/1
 L:MAKE:	object.to_h = rand_range(5, 13) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you spoil for a fight.
 
 # The value of a ring of protection is in the bonuses
 N:153:Protection
@@ -1409,6 +1438,7 @@ W:17:0:2:100
 A:17/2
 L:MAKE:	object.to_a = rand_range(5, 13) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
+D:Just looking at this ring makes you feel protected.
 
 N:154:Aggravate Monster
 G:=:d
@@ -1416,6 +1446,7 @@ I:45:1:0
 W:9:0:2:0
 A:9/3
 F:CURSED | AGGRAVATE | EASY_KNOW
+D:Just looking at this ring makes you feel like waking up the neighbourhood.
 
 N:155:See Invisible
 G:=:d
@@ -1423,6 +1454,7 @@ I:45:22:0
 W:30:0:2:250
 A:30/3:52/1
 F:SEE_INVIS | EASY_KNOW
+D:You can only just see this ring.
 
 N:156:Sustain Strength
 G:=:d
@@ -1430,6 +1462,7 @@ I:45:10:0
 W:20:0:2:100
 A:20/8:52/8
 F:SUST_STR | EASY_KNOW
+D:With this ring old age will not wear out your strength.
 
 N:157:Sustain Intelligence
 G:=:d
@@ -1437,6 +1470,7 @@ I:45:11:0
 W:20:0:2:100
 A:20/8:52/8
 F:SUST_INT | EASY_KNOW
+D:With this ring old age will not wear out your intelligence.
 
 N:158:Sustain Wisdom
 G:=:d
@@ -1444,6 +1478,7 @@ I:45:12:0
 W:20:0:2:100
 A:20/8:52/8
 F:SUST_WIS | EASY_KNOW
+D:With this ring old age will not wear out your wisdom.
 
 N:159:Sustain Constitution
 G:=:d
@@ -1451,6 +1486,7 @@ I:45:13:0
 W:20:0:2:100
 A:20/8:52/8
 F:SUST_CON | EASY_KNOW
+D:With this ring old age will not wear out your health.
 
 N:160:Sustain Dexterity
 G:=:d
@@ -1458,6 +1494,7 @@ I:45:14:0
 W:20:0:2:100
 A:20/8:52/8
 F:SUST_DEX | EASY_KNOW
+D:With this ring old age will not wear out your dextrousness.
 
 N:161:Sustain Charisma
 G:=:d
@@ -1465,6 +1502,7 @@ I:45:15:0
 W:20:0:2:100
 A:20/16:52/16
 F:SUST_CHR | EASY_KNOW
+D:With this ring old age will not wear out your good looks.
 
 # The value of a ring of slaying is in the bonuses
 N:162:Slaying
@@ -1476,6 +1514,7 @@ F:SHOW_MODS
 L:MAKE:	object.to_d = randint1(7) + m_bonus(10, level)
 L:MAKE:	object.to_h = randint1(7) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
+D:With this ring you wil be an allround fighter.
 
 ##### Amulets #####
 
@@ -1487,6 +1526,7 @@ A:35/2:85/1
 F:INT | WIS | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:With this amulet you feel o so smart.
 
 N:164:Charisma
 G:":d
@@ -1496,6 +1536,7 @@ A:20/2
 F:CHR | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:With this amulet you feel o so cute.
 
 N:165:Sensing
 G:":d
@@ -1505,6 +1546,7 @@ A:12/2
 F:SENSE | HIDE_TYPE
 L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:With this amulet you feel aware of traps.
 
 N:166:Teleportation
 G:":d
@@ -1512,6 +1554,7 @@ I:40:1:0
 W:26:0:3:125
 A:26/2
 F:CURSED | TELEPORT | EASY_KNOW
+D:With this amulet you can go anywhere.
 
 N:167:Slow Digestion
 G:":d
@@ -1519,6 +1562,7 @@ I:40:3:0
 W:26:0:3:125
 A:26/2
 F:SLOW_DIGEST | EASY_KNOW
+D:With this amulet you will not feel hungry too often.
 
 N:168:Resist Acid
 G:":d
@@ -1526,6 +1570,8 @@ I:40:4:0
 W:35:0:3:250
 A:35/2
 F:RES_ACID | IGNORE_ACID | EASY_KNOW
+D:With this amulet you feel uncorrosive.
+
 
 N:169:Berserk Strength
 G:":d
@@ -1562,6 +1608,7 @@ L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
 L:MAKE:	object.to_a = randint1(5) + m_bonus(5, level)
 L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 2, TR2_SLOW_DIGEST) end
 L:MAKE:	rating_boost = 25
+D:With this amulet you will not be tricked often.
 
 N:172:Destruction
 G:":d
@@ -1573,6 +1620,7 @@ F:CURSED | HEAVY_CURSE | STR | INT | WIS | DEX | CON | CHR |
 F:TY_CURSE | NO_TELE | NO_MAGIC | REGEN | HIDE_TYPE
 L:MAKE:	object.pval = -(randint1(5) + m_bonus(-(object.pval), level))
 L:MAKE:	object.to_a = -(randint1(5) + m_bonus(5, level))
+D:With this amulet you feel like a disaster.
 
 
 ##### Scrolls #####
@@ -1831,6 +1879,7 @@ W:35:0:4:20
 A:35/5:52/3:75/1
 P:0:1d16:0:0:0
 F:SHOW_MODS
+D:An arrow with detailed work on it.
 
 N:196:& Mithril Shot~
 G:{:B
@@ -1839,6 +1888,7 @@ W:43:0:8:15
 A:43/3:75/2
 P:0:6d2:0:0:0
 F:SHOW_MODS
+D:Nice and shiny, these deliver the goods.
 
 ##### Additional scrolls #####
 
@@ -2762,7 +2812,6 @@ A:4/2
 P:0:1d1:0:0:0
 L:USE:	ident = slow_monster(dir)
 D:This wand permanently decreases a monster's speed.  
-D:It won't work on a monster that's already slowed.
 
 N:278:Confuse Monster
 G:-:d
@@ -2915,6 +2964,7 @@ W:5:0:1:1
 A:5/2:10/2
 P:0:1d8:0:0:0
 F:SHOW_MODS
+D:Yes, it is an arrow.  Surely you can do better.
 
 ##### Additional wands #####
 
@@ -3391,6 +3441,7 @@ I:7:1:0
 W:9:0:250:20
 A:9/1
 P:0:2d3:0:0:0
+D:It just may contain some gold and items.  Open it and find out.
 
 N:339:& Large wooden chest~
 G:&:U
@@ -3398,6 +3449,7 @@ I:7:5:0
 W:26:0:500:200
 A:26/1
 P:0:2d5:0:0:0
+D:Maybe there still is something in it.  Open it and find out.
 
 N:340:& Small iron chest~
 G:&:D
@@ -3405,6 +3457,7 @@ I:7:2:0
 W:43:0:300:200
 A:43/1
 P:0:2d4:0:0:0
+D:It just may contain some gold and items.  Open it and find out.
 
 N:341:& Large iron chest~
 G:&:s
@@ -3412,6 +3465,7 @@ I:7:6:0
 W:61:0:1000:500
 A:61/1
 P:0:2d6:0:0:0
+D:Maybe there still is something in it.  Open it and find out.
 
 N:342:& Small steel chest~
 G:&:s
@@ -3419,6 +3473,7 @@ I:7:3:0
 W:70:0:500:500
 A:70/1
 P:0:2d4:0:0:0
+D:It just may contain some gold and items.  Open it and find out.
 
 N:343:& Large steel chest~
 G:&:W
@@ -3426,6 +3481,7 @@ I:7:7:0
 W:80:0:1000:1000
 A:80/1
 P:0:2d6:0:0:0
+D:Maybe there still is something in it.  Open it and find out.
 
 N:344:& Ruined chest~
 G:&:u
@@ -3453,6 +3509,7 @@ W:1:0:30:2
 A:1/1:10/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:With its light you can ward off the dark.
 
 N:347:& Brass Lantern~
 G:~:U
@@ -3461,6 +3518,7 @@ W:5:0:50:150
 A:5/1:15/1:25/1
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE
+D:If it has oil in it a lantern burns more brightly than a torch.
 
 N:348:& Flask~ of oil
 G:!:y
@@ -3469,6 +3527,8 @@ W:1:0:10:3
 A:1/1:7/1:15/1
 P:0:2d6:0:0:0
 F:EASY_KNOW
+D:Empty this flask in a lantern to keep it fueled.
+D:Or throw it to a monster which doesn't like fire.
 
 N:349:& Empty Bottle~
 G:!:w
@@ -3477,6 +3537,7 @@ W:0:0:2:1
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:It is empty, very empty indeed.
 
 ##### Here are the Rods #####
 
@@ -3896,6 +3957,7 @@ W:0:0:5:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:Not enough to assemble a pot.
 
 N:390:& Broken Stick~
 G:~:r
@@ -3904,6 +3966,7 @@ W:0:0:3:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:Not even big enough for a dog to fetch.
 
 ##### Skeletons #####
 
@@ -3914,6 +3977,7 @@ W:0:0:1:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:Something tampled onthis skull.
 
 N:392:& Broken Bone~
 G:~:w
@@ -3922,6 +3986,7 @@ W:0:0:2:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:Something sucked out the marrow.
 
 N:393:& Canine Skeleton~
 G:~:w
@@ -3930,6 +3995,7 @@ W:1:0:10:0
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:No more sun for this doggie.
 
 N:394:& Rodent Skeleton~
 G:~:w
@@ -3938,6 +4004,7 @@ W:1:0:10:0
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:You can find plenty of these.
 
 N:395:& Human Skeleton~
 G:~:w
@@ -4220,6 +4287,7 @@ W:80:0:50:10000
 A:80/20:105/20
 P:8:1d3:0:0:10
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD
+D:Made from dragon bones it retains some magical properities.
 
 N:414:& Dragon Shield~
 G:[:G
@@ -4228,6 +4296,7 @@ W:80:0:100:10000
 A:80/20:105/20
 P:11:1d7:0:0:10
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD
+D:Made from dragon bones it retains some magical properities.
 
 ##### Extra potions #####
 
@@ -4394,6 +4463,7 @@ I:45:38:0
 W:17:0:2:250 
 A:17/2
 F:RES_FEAR | EASY_KNOW
+D:With this ring no foe is scary.
 
 N:426:Light and Darkness Resistance
 G:=:d
@@ -4401,6 +4471,7 @@ I:45:39:0
 W:52:0:2:1500
 A:52/2
 F:RES_LITE | RES_DARK | EASY_KNOW
+D:Is the colour of this ring light or dark?  You can not make up your mind.
 
 N:427:Nether Resistance
 G:=:d
@@ -4408,6 +4479,7 @@ I:45:40:0
 W:60:0:2:3500
 A:60/2
 F:RES_NETHER | HOLD_LIFE | EASY_KNOW
+D:With this ring the netherworld has no hold on you.
 
 N:428:Nexus Resistance
 G:=:d
@@ -4415,6 +4487,7 @@ I:45:41:0
 W:42:0:2:750
 A:42/2
 F:RES_NEXUS | EASY_KNOW
+D:With this ring you will not be warped about.
 
 N:429:Sound Resistance
 G:=:d
@@ -4422,6 +4495,7 @@ I:45:42:0
 W:45:0:2:750
 A:45/2
 F:RES_SOUND | EASY_KNOW
+D:With this ring you can listen to loud music.
 
 N:430:Confusion Resistance
 G:=:d
@@ -4429,6 +4503,7 @@ I:45:43:0
 W:39:0:2:750
 A:39/2
 F:RES_CONF | EASY_KNOW
+D:With this ring your mind will not be tricked.
 
 N:431:Shard Resistance
 G:=:d
@@ -4436,6 +4511,7 @@ I:45:44:0
 W:43:0:2:750
 A:43/2
 F:RES_SHARDS | EASY_KNOW
+D:With this ring your skin becomes like a hide.
 
 N:432:Disenchantment Resistance
 G:=:d
@@ -4443,6 +4519,7 @@ I:45:45:0
 W:100:0:2:750
 A:100/10
 F:RES_DISEN | EASY_KNOW
+D:With this ring your equipment remains polished.
 
 N:433:Chaos Resistance
 G:=:d
@@ -4450,6 +4527,7 @@ I:45:46:0
 W:75:0:2:750
 A:75/2
 F:RES_CHAOS | RES_CONF | EASY_KNOW
+D:With this ring you have a grip.
 
 N:434:Blindness Resistance
 G:=:d
@@ -4457,6 +4535,7 @@ I:45:47:0
 W:20:0:2:750
 A:20/4
 F:RES_BLIND | EASY_KNOW
+D:This ring keeps your eyes open.
 
 N:435:Lordly Protection
 G:=:d
@@ -4468,6 +4547,7 @@ L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	while (one_in_(4) ~= 0) do add_ego_power(EGO_XTRA_HI_RESIST, object) end
 L:MAKE:	object.to_a = rand_range(10, 15) + m_bonus(10, level)
 L:MAKE:	rating_boost = 5
+D:A ring that clearly was meant for some powerful lord.
 
 # This is worth 2500 + the value of the plusses
 N:436:Extra Attacks
@@ -4478,6 +4558,7 @@ A:75/8:100/2
 F:BLOWS
 L:MAKE:	if (one_in_(7) ~= 0) then object.pval = 2 end
 L:MAKE:	allow_curse = TRUE
+D:This ring swings about.
 
 N:437:Cure Light Wounds
 G:!:d
@@ -4845,6 +4926,7 @@ W:85:0:3:2700
 A:85/4
 F:REFLECT | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+D:Wearing this amulet you feel you can evade any bolt.
 
 #521 and 522 cannot have EASY_KNOW because they may be cursed
 
@@ -4856,6 +4938,7 @@ A:85/4
 F:NO_MAGIC
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:MAKE:	allow_curse = TRUE
+D:With this amulet magic is not your worry.
 
 N:522:Anti-Teleportation
 G:":d
@@ -4865,6 +4948,7 @@ A:52/4
 F:NO_TELE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:MAKE:	allow_curse = TRUE
+D:With this amulet you stay firmly rooted.
 
 #523 cannot have EASY_KNOW because it can get random resistances
 
@@ -4877,6 +4961,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:MAKE:	if (one_in_(3) ~= 0) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
 L:MAKE:	if (one_in_(5) ~= 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
+D:With this amulet you confront the elements confidently.
 
 ##### New arms #####
 
@@ -5190,6 +5275,7 @@ W:30:50:5:20000
 P:0:1d1:0:0:0
 F:INSTA_ART | LITE
 
+
 N:565:& Diamond Edge~
 G:|:w
 I:23:31:0
@@ -5197,6 +5283,7 @@ W:120:0:150:20000
 A:100/16
 P:0:7d5:0:0:0
 F:SHOW_MODS | VORPAL 
+D:You don't dare testing this blade on your fingernail, it is so sharp.
 
 N:566:Mundanity
 G:?:d
@@ -5206,6 +5293,7 @@ A:23/10:63/10
 F:EASY_KNOW
 L:USE:	result = mundane_spell()
 L:USE:	ident = TRUE
+D:Your objects seem very ordinary all of a sudden.
 
 N:567:& Magical Figurine~ of #
 G:`:g
@@ -5214,6 +5302,7 @@ W:50:0:50:100
 A:26/6:52/3:90/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:This small statuette seems to move.
 
 N:568:& Wooden Statue~ of #
 G:`:u
@@ -5222,6 +5311,7 @@ W:5:0:200:75
 A:9/3
 P:0:1d2:0:0:0
 F:EASY_KNOW
+D:An unpolished statue made of wood.
 
 N:569:& Clay Statue~ of #
 G:`:U
@@ -5230,6 +5320,7 @@ W:5:0:500:50
 A:17/3
 P:0:1d3:0:0:0
 F:EASY_KNOW
+D:A hardbaked status made of clay.
 
 N:570:& Stone Statue~ of #
 G:`:s
@@ -5238,6 +5329,7 @@ W:5:0:500:100
 A:26/3
 P:0:2d3:0:0:0
 F:EASY_KNOW
+D:This status has been cut out of a rock.
 
 N:571:& Iron Statue~ of #
 G:`:D
@@ -5246,6 +5338,7 @@ W:5:0:500:200
 A:35/3
 P:0:2d4:0:0:0
 F:EASY_KNOW
+D:This statue was poured from molten iron.
 
 N:572:& Copper Statue~ of #
 G:`:o
@@ -5254,6 +5347,7 @@ W:20:0:500:500
 A:43/3
 P:0:2d4:0:0:0
 F:EASY_KNOW
+D:This copper statue needs polishing.
 
 N:573:& Silver Statue~ of #
 G:`:W
@@ -5262,6 +5356,7 @@ W:32:0:500:1000
 A:52/3
 P:0:2d4:0:0:0
 F:EASY_KNOW
+D:This silver statue needs varnishing.
 
 N:574:& Golden Statue~ of #
 G:`:y
@@ -5270,6 +5365,7 @@ W:50:0:500:2500
 A:63/3
 P:0:2d4:0:0:0
 F:EASY_KNOW
+D:This golden statue needs polishing.
 
 N:575:& Ivory Statue~ of #
 G:`:w
@@ -5278,6 +5374,7 @@ W:40:0:500:2000
 A:70/3
 P:0:1d4:0:0:0
 F:EASY_KNOW
+D:This ivory statue needs cleaning.
 
 N:576:& Mithril Statue~ of #
 G:`:B
@@ -5286,6 +5383,7 @@ W:70:0:500:10000
 A:95/3
 P:0:2d5:0:0:0
 F:EASY_KNOW
+D:This mithril statue needs polishing.
 
 N:577:& Ornate Statue~ of #
 G:`:v
@@ -5294,6 +5392,7 @@ W:60:0:500:5000
 A:80/3
 P:0:2d4:0:0:0
 F:EASY_KNOW
+D:This ornate statue needs dusting.
 
 #N:578:& Skeleton~
 #G:~:w
@@ -5325,6 +5424,7 @@ W:43:0:3:25
 A:43/2:70/2
 P:0:1d15:0:0:0
 F:SHOW_MODS
+D:This bolt will not fall apart upon hitting the target.
 
 ##### New artifact ring #####
 
@@ -5344,6 +5444,7 @@ I:45:51:0
 W:21:0:2:850
 A:21/4
 F:RES_FIRE | RES_COLD | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
+D:Your finger alternates between hot and cold.
 
 N:584:the Cat
 G:=:d
@@ -5354,6 +5455,7 @@ F:STEALTH | INFRA
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_SUST_DEX) end
 L:MAKE:	allow_curse = TRUE
+D:A ring for the inobtrusive.
 
 # This is cheaper than it should be
 N:585:Fate
@@ -5362,6 +5464,7 @@ I:45:53:0
 W:15:0:2:500
 A:15/5:30/5
 F:STRANGE_LUCK
+D:Odd things happen to the wearer of this ring.
 
 N:586:Wizardry
 G:=:d
@@ -5371,6 +5474,7 @@ A:75/2
 F:SP
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
+D:Wearing this ring seems to clarify your mind.
 
 ##### New amulets #####
 
@@ -5380,6 +5484,7 @@ I:40:16:0
 W:35:0:3:750
 A:35/2
 F:SLAY_EVIL | EASY_KNOW
+D:This amulet boosts your skills against the powers of evil.
 
 N:588:Protection from Undead
 G:":d
@@ -5388,6 +5493,7 @@ W:35:0:3:750
 A:35/2
 F:SLAY_UNDEAD | WIS
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+D:This amulet boosts your skills against the powers of the undead.
 
 N:589:Luck
 G:":d
@@ -5396,6 +5502,7 @@ W:50:0:3:1500
 A:50/1
 F:LUCK_10
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+D:This lucky amulet boosts your confidence.
 
 ##### New weapon types #####
 N:590:& Elfblade~
@@ -5404,6 +5511,7 @@ I:23:32:0
 W:90:0:140:15000
 A:70/20:90/20
 P:0:4d4:0:0:0
+D:You can tell by the Elvish runes that this blade is favored by Elves.
 
 N:591:& Whip~ of Entanglement
 G:\:D
@@ -5412,6 +5520,7 @@ W:20:0:30:350
 A:20/5
 P:0:1d6:0:0:0
 F:SLAY_ANIMAL | SHOW_MODS
+D:A whip to handle animals with.
 
 N:592:& Psiblade~
 G:|:B
@@ -5448,11 +5557,11 @@ L:MAKE:	object.to_a = object.to_a + randint1(10) + m_bonus(10, level)
 # Amulet of Sustenance
 
 N:595:Sustenance
-G:=:d
+G:":d
 I:40:19:0
 W:12:0:3:300
 A:12/5
 F:EASY_KNOW
-D:It prevents hunger.
+D:With this amulet you will never be hungry again..
 L:TIMED: if player.food < PY_FOOD_FULL + 500 then set_food(player.food + 10) end
 
