@@ -1597,11 +1597,11 @@ bool building_magetower(bool display)
 {
 	store_type *st_ptr;
    
-    int link_p[12], link_w[12];
+    int link_p[24], link_w[24];
     int max_link = 0;
 	int i;
 	
-	s32b cost[12];
+	s32b cost[24];
 	
 	char out_val[160];
 	
@@ -1613,22 +1613,25 @@ bool building_magetower(bool display)
 	if (!st_ptr) return (FALSE);
 
     /* Collect links */
-    max_link = collect_magetower_links(12, link_p, link_w, cost);
+    max_link = collect_magetower_links(24, link_p, link_w, cost);
 
     if (display)
     {
         for (i = 0; i < max_link; i++)
         {
+            int row = i % 12 + 4;
+            int col = (i / 12) * 40;
+
             /* Label it, clear the line --(-- */
             (void)sprintf(out_val, "%c) ", I2A(i));
-            prt(out_val, 0, i + 4);
+            prt(out_val, col, row);
 
             /* Print place name */
-            prt(place[link_p[i]].name, 3, i + 4);
+            prt(place[link_p[i]].name, col + 3, row);
 			
 			/* Print cost */
 			(void)sprintf(out_val, "%ld au", (long) cost[i]);
-            prt(out_val, 30, i + 4);
+            prt(out_val, col + 30, row);
         }
     }
     else
