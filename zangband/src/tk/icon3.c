@@ -152,7 +152,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 	int *iconCount)
 {
 	gzFile in;
-	char *buf = NULL;
+	byte *buf = NULL;
 	char header[4];
 	int len;
 	int err;
@@ -227,7 +227,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 		goto error;
 	}
 	
-	buf = Tcl_Alloc(size);
+	C_MAKE(buf, size, byte);
 
 	while (sum < size)
 	{
@@ -255,7 +255,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 	/* gzclose() fails sometimes, even though the whole file was read */
 	if ((gzclose(in) != Z_OK) && 0)
 	{
-		Tcl_Free(buf);
+		FREE(buf);
 		(void) gzerror(in, &err);
 		Tcl_AppendResult(interp, format("gzclose() failed: err %d", err),
 			NULL);
@@ -271,8 +271,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 	return TCL_OK;
 
 error:
-	if (buf)
-		Tcl_Free(buf);
+	if (buf) FREE(buf);
 	if (gzclose(in) != Z_OK)
 	{
 	}
@@ -516,9 +515,7 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 	total = 0;
 
 	/* x, y, width, height for each icon */
-	iconDataPtr->rle_bounds =
-		(unsigned char *) Tcl_Alloc(sizeof(unsigned char) *
-		iconDataPtr->icon_count * 4);
+	C_MAKE(iconDataPtr->rle_bounds, iconDataPtr->icon_count * 4, byte);
 
 	for (i = 0; i < iconDataPtr->icon_count; i++)
 	{
@@ -543,11 +540,9 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 	else
 		slop = iconDataPtr->height * 2;
 
-	iconDataPtr->rle_data = (IconPtr) Tcl_Alloc(total + slop);
-	iconDataPtr->rle_offset =
-		(long *) Tcl_Alloc(sizeof(long) * iconDataPtr->icon_count);
-	iconDataPtr->rle_len =
-		(int *) Tcl_Alloc(sizeof(int) * iconDataPtr->icon_count);
+	C_MAKE(iconDataPtr->rle_data, total + slop, byte);
+	C_MAKE(iconDataPtr->rle_offset, iconDataPtr->icon_count, long);
+	C_MAKE(iconDataPtr->rle_len, iconDataPtr->icon_count, int);
 
 	total = 0;
 
@@ -570,7 +565,7 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 		total += len;
 	}
 
-	Tcl_Free((char *) iconDataPtr->icon_data);
+	FREE(iconDataPtr->icon_data);
 	iconDataPtr->icon_data = NULL;
 }
 
@@ -733,7 +728,7 @@ int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 
 	/* Allocate icon buffer */
 	dataSize = iconDataPtr->icon_count * iconDataPtr->length;
-	iconDataPtr->icon_data = (unsigned char *) Tcl_Alloc(dataSize);
+	C_MAKE(iconDataPtr->icon_data, dataSize, byte);
 
 	if (pixelSize == 1)
 	{
@@ -938,10 +933,8 @@ nowrite:
 		"\": ", Tcl_PosixError(interp), NULL);
 
 error:
-	if (fileBuf != NULL)
-	{
-		Tcl_Free(fileBuf);
-	}
+	if (fileBuf) FREE(fileBuf);
+	
 	Tcl_DStringFree(&temp);
 	return TCL_ERROR;
 
@@ -1012,7 +1005,7 @@ static int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 
 	(void) Tcl_SetChannelOption(interp, chan, "-translation", "binary");
 
-	fileBuf = Tcl_Alloc(statBuf.st_size);
+	C_MAKE(fileBuf, statBuf.st_size, byte);
 	if (Tcl_Read(chan, fileBuf, statBuf.st_size) < 0)
 	{
 		Tcl_Close(interp, chan);
@@ -1034,10 +1027,8 @@ noread:
 		"\": ", Tcl_PosixError(interp), NULL);
 
 error:
-	if (fileBuf != NULL)
-	{
-		Tcl_Free(fileBuf);
-	}
+	if (fileBuf) FREE(fileBuf);
+
 	Tcl_DStringFree(&temp);
 	return TCL_ERROR;
 
@@ -1798,7 +1789,7 @@ error:
 	if (xColorPtr)
 		Tk_FreeColor(xColorPtr);
 	if (iconData.icon_data)
-		Tcl_Free((char *) iconData.icon_data);
+		FREE(iconData.icon_data);
 	if (photoH)
 	{
 		length = sprintf(buf, "image delete %s", imageName);
@@ -2009,8 +2000,7 @@ wrongCreateArgs:
 					 * The char_table is used to remember
 					 * which characters each icon represents.
 					 */
-					iconData.char_table = (int *)
-						Tcl_Alloc(sizeof(int) * iconData.icon_count);
+					C_MAKE(iconData.char_table, iconData.icon_count, int);
 
 					/* Check each icon */
 					for (i = 0; i < iconData.icon_count; i++)
@@ -2027,8 +2017,7 @@ wrongCreateArgs:
 				}
 
 				/* Allocate the icon data buffer */
-				iconData.icon_data = (IconPtr) Tcl_Alloc(iconData.icon_count *
-					iconData.length);
+				C_MAKE(iconData.icon_data, iconData.icon_count * iconData.length, byte);
 
 				/* Set the icon data using the desired font */
 				if (init_ascii_data(interp, &iconData) != TCL_OK)
@@ -2581,11 +2570,11 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 	 * icon. Icon types are defined through the "icon createtype"
 	 * command.
 	 */
-	g_icon_data = Array_New(1, sizeof(t_icon_data));
+	MAKE(g_icon_data, t_icon_data);
 	g_icon_data_count = 0;
 
 	/* Array of ascii configurations */
-	g_ascii = Array_New(1, sizeof(t_ascii));
+	MAKE(g_ascii, t_ascii);
 	g_ascii_count = 0;
 
 	/*
@@ -2620,14 +2609,14 @@ void Icon_Exit(void)
 
 		/* Help the memory debugger */
 		if (iconDataPtr->icon_data)
-			Tcl_Free((char *) iconDataPtr->icon_data);
+			FREE(iconDataPtr->icon_data);
 
 		/* Help the memory debugger */
 		if (iconDataPtr->rle_data)
 		{
-			Tcl_Free((void *) iconDataPtr->rle_offset);
-			Tcl_Free((void *) iconDataPtr->rle_len);
-			Tcl_Free((void *) iconDataPtr->rle_bounds);
+			FREE(iconDataPtr->rle_offset);
+			FREE(iconDataPtr->rle_len);
+			FREE(iconDataPtr->rle_bounds);
 		}
 	}
 }

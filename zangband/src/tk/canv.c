@@ -767,8 +767,10 @@ static char *Assign_PrintProc(ClientData clientData, Tk_Window tkwin,
 				 char *widgRec, int offset, Tcl_FreeProc **freeProcPtr)
 {
 /*	WidgetItem *itemPtr = (WidgetItem *) widgRec; */
-	char *buf = Tcl_Alloc(128);
+	char *buf;
 	
+	C_MAKE(buf, 128, char);
+		
 	/* Hack - ignore unused parameters */
 	(void) tkwin;
 	(void) clientData;

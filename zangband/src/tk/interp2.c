@@ -267,10 +267,10 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				goto bad_index;
 			}
 
-			buffer = Tcl_Alloc(5 * 1024L);
+			C_MAKE(buffer, 5 * 1024L, char);
 			length = angtk_describe_object(o_ptr, buffer, FALSE);
 			Tcl_SetObjResult(interp, ExtToUtf_NewStringObj(buffer, length));
-			Tcl_Free(buffer);
+			FREE(buffer);
 			break;
 	}
 

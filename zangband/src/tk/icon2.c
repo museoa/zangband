@@ -634,7 +634,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "none";
 	icon_data_ptr->icon_count = 1;
-	icon_data_ptr->icon_data = (IconPtr) Tcl_Alloc(ICON_LENGTH);
+	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	for (i = 0; i < ICON_LENGTH; i++)
@@ -660,7 +660,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "blank";
 	icon_data_ptr->icon_count = 1;
-	icon_data_ptr->icon_data = (IconPtr) Tcl_Alloc(ICON_LENGTH);
+	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	for (i = 0; i < ICON_LENGTH; i++)
@@ -688,7 +688,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "default";
 	icon_data_ptr->icon_count = 1;
-	icon_data_ptr->icon_data = (IconPtr) Tcl_Alloc(ICON_LENGTH);
+	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	n = 0, y2 = 0;
@@ -810,8 +810,7 @@ void init_icons(int size, int depth)
 	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].icon.type = ICON_TYPE_NONE;
 
 	/* Array of effect info */
-	g_effect = Array_New(EFFECT_MAX, sizeof(t_effect));
-
+	C_MAKE(g_effect, EFFECT_MAX, t_effect);
 	C_MAKE(g_effect[EFFECT_SPELL_BALL].icon, EFFECT_SPELL_MAX, IconSpec);
 	C_MAKE(g_effect[EFFECT_SPELL_BOLT].icon, EFFECT_SPELL_MAX, IconSpec);
 	C_MAKE(g_effect[EFFECT_AMMO].icon, EFFECT_AMMO_MAX, IconSpec);

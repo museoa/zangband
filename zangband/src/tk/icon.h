@@ -30,7 +30,6 @@ extern int g_pixel_size; /* 1, 2, 3 or 4 */
 #define ICON_LENGTH_32 1024L
 #define ICON_LENGTH_MAX (ICON_LENGTH_32 * 4)
 #define ICON_LENGTH g_icon_length
-#define ICON_PIXELS g_icon_pixels
 
 typedef unsigned char IconValue;
 typedef unsigned char IconData[ICON_LENGTH_MAX];

@@ -438,7 +438,7 @@ static int WidgetColor_Init(Tcl_Interp *interp)
 	/* Hack - ignore parameter */
 	(void) interp;
 
-	g_widget_color = Array_New(1, sizeof(t_widget_color *));
+	MAKE(g_widget_color, t_widget_color *);
 	g_widget_color_count = 0;
 	return TCL_OK;
 }
@@ -510,14 +510,12 @@ static void Widget_Calc(Widget *widgetPtr)
 	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
 
 	if (widgetPtr->info)
-		Tcl_Free((char *) widgetPtr->info);
+		FREE(widgetPtr->info);
 	if (widgetPtr->invalid)
-		Tcl_Free((char *) widgetPtr->invalid);
+		FREE(widgetPtr->invalid);
 
-	widgetPtr->info = (short *) Tcl_Alloc(sizeof(short) *
-		widgetPtr->rc * widgetPtr->cc);
-	widgetPtr->invalid = (int *) Tcl_Alloc(sizeof(int) *
-		widgetPtr->rc * widgetPtr->cc);
+	C_MAKE(widgetPtr->info, widgetPtr->rc * widgetPtr->cc, short);
+	C_MAKE(widgetPtr->invalid, widgetPtr->rc * widgetPtr->cc, int);
 	widgetPtr->invalidCnt = 0;
 
 	for (i = 0; i < widgetPtr->rc * widgetPtr->cc; i++)
@@ -968,7 +966,7 @@ static t_widget_color *WidgetColor_Alloc(int color, int opacity)
 	if (!(color_ptr = WidgetColor_FindFree()))
 	{
 		/* Allocate a struct */
-		color_ptr = (t_widget_color *) Tcl_Alloc(sizeof(t_widget_color));
+		MAKE(color_ptr, t_widget_color);
 
 		/* Append pointer to the global array */
 		g_widget_color = Array_Insert(g_widget_color,
@@ -1440,9 +1438,9 @@ static void Widget_Destroy(Widget *widgetPtr)
 		widgetPtr->tkwin);
 
 	if (widgetPtr->info)
-		Tcl_Free((void *) widgetPtr->info);
+		FREE(widgetPtr->info);
 	if (widgetPtr->invalid)
-		Tcl_Free((void *) widgetPtr->invalid);
+		FREE(widgetPtr->invalid);
 
 	widgetPtr->tkwin = NULL;
 

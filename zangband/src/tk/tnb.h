@@ -284,7 +284,6 @@ extern RGBInfo g_rgbi;
 
 extern void SetPix16(unsigned char *p, int r, int g, int b);
 
-extern void *Array_New(int count, int elem_size);
 extern void *Array_Append(void *array_ptr, int *count, int elem_size,
 	void *elem_ptr);
 extern void *Array_Insert(void *array_ptr, int *count, int elem_size,

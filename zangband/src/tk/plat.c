@@ -37,13 +37,12 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	unsigned char *rgb;
 	int i;
 
-	platData = (struct PlatBitmap *) Tcl_Alloc(sizeof(struct PlatBitmap));
+	MAKE(platData, PlatBitmap);
 
 	if (depth == 8)
 	{
 		/* Allocate temp storage */
-		infoPtr = (BITMAPINFO *) Tcl_Alloc(sizeof(BITMAPINFOHEADER) + 
-			256 * sizeof(RGBQUAD));
+		C_MAKE(infoPtr, sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD), byte);
 	
 		/* Set header fields */
 		infoPtr->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -82,7 +81,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	else
 	{
 		/* Allocate temp storage */
-		infoPtr = (BITMAPINFO *) Tcl_Alloc(sizeof(BITMAPINFO));
+		MAKE(infoPtr, BITMAPINFO);
 	
 		/* Set header fields */
 		infoPtr->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -105,7 +104,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	}
 	
 	/* Free temp storage */
-	Tcl_Free((char *) infoPtr);
+	FREE(infoPtr);
 
 	bitmapPtr->pixelSize = bitmapPtr->depth / 8;
 	bitmapPtr->pitch = bitmapPtr->width * bitmapPtr->pixelSize;
@@ -128,7 +127,7 @@ void Bitmap_Delete(BitmapPtr bitmapPtr)
 
 	DeleteObject(platData->hbm);
 
-	Tcl_Free((char *) platData);
+	FREE(platData);
 	bitmapPtr->platData = NULL;
 }
 
@@ -199,7 +198,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	Visual *visual = DefaultVisual(display, screenNum);
 	int ret, anyError;
 
-	platData = (struct PlatBitmap *) Tcl_Alloc(sizeof(struct PlatBitmap));
+	MAKE(platData, struct PlatBitmap);
 
 	/* Verify shared-memory pixmaps are available */
 	{
@@ -302,7 +301,7 @@ void Bitmap_Delete(BitmapPtr bitmapPtr)
 	shmdt(platData->shminfo.shmaddr);
 	shmctl(platData->shminfo.shmid, IPC_RMID, 0);
 
-	Tcl_Free((char *) platData);
+	FREE(platData);
 	bitmapPtr->platData = NULL;
 }
 

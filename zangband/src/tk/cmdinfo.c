@@ -55,8 +55,12 @@ void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd)
 	
 	if ((count + 1) >= alloc)
 	{
-		CommandInfo **info = (CommandInfo **) Tcl_Alloc(sizeof(CommandInfo *) * (alloc + 5));
-		cptr *name = (cptr *) Tcl_Alloc(sizeof(char *) * (alloc + 5 + 1));
+		CommandInfo **info;
+		cptr *name;
+		
+		C_MAKE(info, alloc + 5, CommandInfo*);
+		C_MAKE(name, alloc + 5 + 1, cptr);
+		
 		if (infoCmd->subCmd.count)
 		{
 			for (i = 0; i < count; i++)
@@ -64,8 +68,8 @@ void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd)
 				name[i] = infoCmd->subCmd.name[i];
 				info[i] = infoCmd->subCmd.info[i];
 			}
-			Tcl_Free((char *) infoCmd->subCmd.name);
-			Tcl_Free((char *) infoCmd->subCmd.info);
+			FREE(infoCmd->subCmd.name);
+			FREE(infoCmd->subCmd.info);
 		}
 		infoCmd->subCmd.name = name;
 		infoCmd->subCmd.info = info;
@@ -82,7 +86,8 @@ CommandInfo *CommandInfo_New(CommandInit *init)
 {
 	CommandInfo *infoCmd;
 
-	infoCmd = (CommandInfo *) Tcl_Alloc(sizeof(CommandInfo));
+	MAKE(infoCmd, CommandInfo);
+
 	infoCmd->name = init->name;
 	infoCmd->minArgs = init->minArgs;
 	infoCmd->maxArgs = init->maxArgs;

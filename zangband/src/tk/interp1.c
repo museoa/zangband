@@ -112,13 +112,13 @@ static void init_tval_hash(void)
 	Tcl_HashEntry *hPtr;
 
 	/* Allocate the g_tval_str hash table */
-	g_tval_str = (Tcl_HashTable *) Tcl_Alloc(sizeof(Tcl_HashTable));
+	MAKE(g_tval_str, Tcl_HashTable);
 
 	/* Initialize the g_tval_str hash table. */
 	Tcl_InitHashTable(g_tval_str, TCL_STRING_KEYS);
 
 	/* Allocate the g_tval_const hash table */
-	g_tval_const = (Tcl_HashTable *) Tcl_Alloc(sizeof(Tcl_HashTable));
+	MAKE(g_tval_const, Tcl_HashTable);
 
 	/* Initialize the g_tval_const hash table. */
 	Tcl_InitHashTable(g_tval_const, TCL_ONE_WORD_KEYS);

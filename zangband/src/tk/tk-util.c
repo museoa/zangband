@@ -50,15 +50,6 @@ unsigned char g_colormap2palette[256];
 unsigned char g_palette2colormap[256];
 
 /*
- * Allocate a new array
- */
-void *Array_New(int count, int elem_size)
-{
-	char *p = Tcl_Alloc(count * elem_size);
-	return (void *) p;
-}
-
-/*
  * Append an element to an array
  */
 void *Array_Append(void *array_ptr, int *count, int elem_size,
