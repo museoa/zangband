@@ -10,7 +10,7 @@
  * included in all such copies.
  */
 
-#include <string.h>
+#include "angband.h"
 #include <tcl.h>
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
@@ -23,7 +23,7 @@ int g_struct_count;
 Tcl_HashTable g_struct_hash;
 static int initialized = 0;
 
-Tcl_Obj *Struct_FieldToObj(Tcl_Interp *interp, t_field *info, void *data,
+static Tcl_Obj *Struct_FieldToObj(Tcl_Interp *interp, t_field *info, void *data,
 	int elemIndex)
 {
 	char buf[512];
@@ -152,8 +152,8 @@ Tcl_Obj *Struct_FieldToObj(Tcl_Interp *interp, t_field *info, void *data,
 }
 
 /* set_info_string */
-int Struct_ObjToField(Tcl_Interp *interp, Tcl_Obj *objPtr, t_field *info,
-	void *data, int index)
+static int Struct_ObjToField(Tcl_Interp *interp, Tcl_Obj *objPtr, t_field *info,
+	void *data)
 {
 	char *t;
 	int intValue, type;
@@ -240,13 +240,13 @@ int Struct_ObjToField(Tcl_Interp *interp, Tcl_Obj *objPtr, t_field *info,
 
 		case FLD_INDEX8:
 			if (Tcl_GetIndexFromObj(interp, objPtr, (char **) info->data,
-				"option", 0, &intValue) != TCL_OK) break;
+				(char *) "option", 0, &intValue) != TCL_OK) break;
 			*(unsigned char *) data = intValue;
 			return TCL_OK;
 
 		case FLD_INDEX16:
 			if (Tcl_GetIndexFromObj(interp, objPtr, (char **) info->data,
-				"option", 0, &intValue) != TCL_OK) break;
+				(char *) "option", 0, &intValue) != TCL_OK) break;
 			*(unsigned short *) data = intValue;
 			return TCL_OK;
 	}
@@ -255,7 +255,7 @@ int Struct_ObjToField(Tcl_Interp *interp, Tcl_Obj *objPtr, t_field *info,
 }
 
 /* info_to_list */
-Tcl_Obj *Struct_ToList(Tcl_Interp *interp, t_field info[], void *data,
+static Tcl_Obj *Struct_ToList(Tcl_Interp *interp, t_field info[], void *data,
 	int elemIndex)
 {
 	Tcl_Obj *listObjPtr;
@@ -281,7 +281,7 @@ Tcl_Obj *Struct_ToList(Tcl_Interp *interp, t_field info[], void *data,
 }
 
 /* info_2_hash */
-int Struct_ToHash(t_field *info, Tcl_HashTable **tablePtrPtr)
+static int Struct_ToHash(t_field *info, Tcl_HashTable **tablePtrPtr)
 {
 	Tcl_HashTable *tablePtr;
 	Tcl_HashEntry *hPtr;
@@ -426,6 +426,9 @@ int Struct_AddType(Tcl_Interp *interp, StructType *data)
 	Tcl_HashEntry *hPtr;
 	int i, j, new;
 
+	/* Hack - ignore parameter */
+	(void) interp;
+
 	g_struct = Array_Insert(g_struct, &g_struct_count, sizeof(StructType),
 		g_struct_count);
 	typePtr = &g_struct[g_struct_count - 1];
@@ -502,7 +505,7 @@ int Struct_Find(Tcl_Interp *interp, StructType *typePtr, int objc,
 	Tcl_Obj *listObjPtr, *objPtr;
 	unsigned char *elem;
 
-	static char *fieldOp[] = {"==", "!=", "&", "!&", NULL};
+	static cptr fieldOp[] = {"==", "!=", "&", "!&", NULL};
 
 	/* Default to searching forwards */
 	int forwards = 1, backwards = 0;
@@ -533,12 +536,12 @@ int Struct_Find(Tcl_Interp *interp, StructType *typePtr, int objc,
 	/* Scan arguments for options */
 	for (i = 0; i < objC; )
 	{
-		static char *findOption[] = {"-backwards", "-forwards", "-index",
+		static cptr findOption[] = {"-backwards", "-forwards", "-index",
 			"-limit", "-field", NULL};
 		int index;
 		
 		/* Try a standard option */
-	    if (Tcl_GetIndexFromObj(interp, objV[i], findOption, "option",
+	    if (Tcl_GetIndexFromObj(interp, objV[i], (char **) findOption, (char *) "option",
 			0, &index) == TCL_OK)
 		{
 			switch (index)
@@ -590,8 +593,8 @@ int Struct_Find(Tcl_Interp *interp, StructType *typePtr, int objc,
 					}
 					match_field[request_field] = j;
 					
-				    if (Tcl_GetIndexFromObj(interp, objV[i+2], fieldOp,
-				    	"op", 0, &index) != TCL_OK)
+				    if (Tcl_GetIndexFromObj(interp, objV[i+2], (char **) fieldOp,
+				    	(char *) "op", 0, &index) != TCL_OK)
 				    {
 						return TCL_ERROR;
 				    }
@@ -775,6 +778,9 @@ int Struct_Flags(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 	char errorMsg[512];
 	Tcl_Obj *listObjPtr;
 	long flags;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Point to the array element */
 	elem = typePtr->elem + typePtr->elem_size *elemIndex;
@@ -897,7 +903,7 @@ int Struct_Set(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 		if (objC == 2)
 		{
 			if (Struct_ObjToField(interp, objV[1], &typePtr->info[fieldIndex],
-				elem, elemIndex) != TCL_OK)
+				elem) != TCL_OK)
 			{
 				Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
 					"invalid field data \"", Tcl_GetString(objV[1]), "\"",
@@ -1000,6 +1006,9 @@ static int objcmd_max(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	StructType *typePtr;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Get the array info */
 	if (Struct_GetTypeFromObj(interp, &typePtr, objV[1]) != TCL_OK)
