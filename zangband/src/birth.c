@@ -2216,13 +2216,13 @@ static bool player_birth_aux_1(void)
 	while (1)
 	{
 		sprintf(buf, "Choose a sex (%c-%c, or * for random): ",
-		        I2A(0), I2A(n-1));
+			I2A(0), I2A(n-1));
 		put_str(buf, 20, 2);
 		ch = inkey();
-		if (ch == 'Q') 
-                {
-		   remove_loc();
-		   quit(NULL);
+		if (ch == 'Q')
+		{
+			remove_loc();
+			quit(NULL);
 		}
 
 		if (ch == 'S') return (FALSE);
@@ -2230,9 +2230,10 @@ static bool player_birth_aux_1(void)
 		if (ch == ESCAPE) ch = '*';
 		if (ch == '*') 
 		{
-		    k = rand_int(MAX_SEXES);
-		    break;
-                }
+			k = rand_int(MAX_SEXES);
+			break;
+		}
+		
 		k = (islower(ch) ? A2I(ch) : -1);
 		if ((k >= 0) && (k < n)) break;
 		if (ch == '?') do_cmd_help();
@@ -2981,19 +2982,16 @@ static bool player_birth_aux(void)
 
 	/* Point based */
 	if (point_based)
-	  {
-
-              if (!player_birth_aux_2()) return FALSE;
-
-	  }
+	{
+		if (!player_birth_aux_2()) return FALSE;
+	}
 
 	/* Auto-roll */
 	else
-	  {
-
-	     if (!player_birth_aux_3()) return FALSE;
-
-	  }
+	{
+		if (!player_birth_aux_3()) return FALSE;
+	}
+	
 	/* Get a name, prepare savefile */
 	get_character_name();
 
@@ -3035,8 +3033,6 @@ void player_birth(void)
 		/* Roll up a new character */
 		if (player_birth_aux()) break;
 	}
-
-
 	
 	/* Create a note file if that option is set */
 	if (take_notes)

@@ -3614,13 +3614,11 @@ static void do_cmd_knowledge_quests(void)
 
 void do_cmd_knowledge_notes(void)
 {
-
         char fname[80];
 
 	strcpy(fname, notes_file());
 
 	show_file(fname, "Notes", 0, 0);
-
 }
 
 

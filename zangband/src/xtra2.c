@@ -413,11 +413,11 @@ void monster_death(int m_idx)
 					/* Take note */
 					if (auto_notes) 
 					{
-					  char note[80];
+						char note[80];
 
-					  sprintf(note, "Finished quest: %d %s", quest[i].max_num, (r_name + r_info[quest[i].r_idx].name));
+						sprintf(note, "Finished quest: %d %s", quest[i].max_num, (r_name + r_info[quest[i].r_idx].name));
 
-					  add_note(note, 'Q');
+						add_note(note, 'Q');
 
 					}
 					    
