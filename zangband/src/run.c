@@ -235,6 +235,29 @@ static const struct
 	u32b remove_mask;
 } run_checks[] = {
 
+/*
+ * If the player starts out by moving into a branch corridor:
+ *
+ * ###    ###
+ * b.@ -> b..
+ * #.#    #@#
+ * #a#    #a#
+ *
+ * we should realize that the player means to continue to the square marked
+ * 'a', and we should ignore the possibility of moving to 'b' instead.
+ *
+ * To recognize this, we check for the presence of a floor tile that the
+ * player might have come from next to, and remove any moves that would
+ * result in "doubling back".
+ *
+ * This test is done *before* removing impossible moves, because
+ * we need to know which direction the player came from.
+ */
+{TEST_FLOOR,  0, -1, RUN_S, RUN_NE | RUN_NW},
+{TEST_FLOOR,  1,  0, RUN_W, RUN_NE | RUN_SE},
+{TEST_FLOOR,  0,  1, RUN_N, RUN_SE | RUN_SW},
+{TEST_FLOOR, -1,  0, RUN_E, RUN_NW | RUN_SW},
+
 /* Eliminate impossible moves */
 {TEST_WALL, -2, -2, 0,        RUN_NW_NW},
 {TEST_WALL, -1, -2, 0,        RUN_NW_N | RUN_N_NW},
@@ -328,26 +351,6 @@ static const struct
 {TEST_NONE,  0,  0, RUN_SE_S, RUN_S_SE},
 {TEST_NONE,  0,  0, RUN_SW_S, RUN_S_SW},
 {TEST_NONE,  0,  0, RUN_SW_W, RUN_W_SW},
-
-/*
- * If the player starts out by moving into a branch corridor:
- *
- * ###    ###
- * b.@ -> b..
- * #.#    #@#
- * #a#    #a#
- *
- * we should realize that the player means to continue to the square marked
- * 'a', and we should ignore the possibility of moving to 'b' instead.
- *
- * To recognize this, we check for the presence of a floor tile that the
- * player might have come from next to, and remove any moves that would
- * result in "doubling back".
- */
-{TEST_FLOOR,  0, -1, RUN_SW | RUN_S | RUN_SE, RUN_NE | RUN_NW},
-{TEST_FLOOR,  1,  0, RUN_NW | RUN_W | RUN_SW, RUN_NE | RUN_SE},
-{TEST_FLOOR,  0,  1, RUN_NW | RUN_N | RUN_NE, RUN_SE | RUN_SW},
-{TEST_FLOOR, -1,  0, RUN_SE | RUN_E | RUN_NE, RUN_NW | RUN_SW}
 };
 
 static const u32b valid_dir_mask[10] = {
