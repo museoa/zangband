@@ -660,10 +660,10 @@ bool borg_check_lite(void)
 				mb_ptr = map_loc(x, y);
 
                 /* Location must be a lit floor */
-                if (mb_ptr->info & MAP_SEEN) floors++;
+                if (mb_ptr->flags & MAP_SEEN) floors++;
 
                 /* Location must not be glowing */
-                if (mb_ptr->info & MAP_GLOW) floors--;
+                if (mb_ptr->flags & MAP_GLOW) floors--;
 
                 /* Location must not be a wall/door */
                 if (!borg_cave_floor_grid(ag)) floors--;
@@ -809,10 +809,10 @@ bool borg_check_lite_only(void)
 				mb_ptr = map_loc(x, y);
 
                 /* Location must be a lit floor */
-                if (mb_ptr->info & MAP_SEEN) floors++;
+                if (mb_ptr->flags & MAP_SEEN) floors++;
 
                 /* Location must not be glowing */
-                if (mb_ptr->info & MAP_GLOW) floors--;
+                if (mb_ptr->flags & MAP_GLOW) floors--;
 
                 /* Location must not be a wall/door */
                 if (!borg_cave_floor_grid(ag)) floors--;

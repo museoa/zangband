@@ -8449,7 +8449,7 @@ enum
 static int borg_defend_aux_bless( int p1 )
 {
     int fail_allowed = 10;
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* already blessed */
     if (borg_bless)
@@ -8459,7 +8459,7 @@ static int borg_defend_aux_bless( int p1 )
     if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (0);
 
     /* Dark */
-    if (!(ag->info & BORG_GLOW) && borg_skill[BI_CUR_LITE] == 0) return (0);
+    if (!(mb_ptr->flags & MAP_GLOW) && borg_skill[BI_CUR_LITE] == 0) return (0);
 
 
     /* no spell */
@@ -9133,7 +9133,8 @@ static int borg_defend_aux_prot_evil( int p1)
     int p2 = 0;
     int fail_allowed = 39;
     bool pfe_spell = FALSE;
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 
     /* if already protected */
@@ -9158,7 +9159,7 @@ static int borg_defend_aux_prot_evil( int p1)
 
     if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] || borg_skill[BI_ISIMAGE])
         pfe_spell = FALSE;
-    if (!(ag->info & BORG_GLOW) && borg_skill[BI_CUR_LITE] == 0) pfe_spell = FALSE;
+    if (!(mb_ptr->flags & MAP_GLOW) && borg_skill[BI_CUR_LITE] == 0) pfe_spell = FALSE;
 
     if (borg_equips_artifact(ART_CARLAMMAS,INVEN_NECK)) pfe_spell = TRUE;
 
@@ -9398,6 +9399,7 @@ static int borg_defend_aux_glyph( int p1)
     bool glyph_spell = FALSE;
 
     borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* He should not cast it while on an object.
      * I have addressed this inadequately in borg9.c when dealing with
@@ -9440,7 +9442,7 @@ static int borg_defend_aux_glyph( int p1)
 
     if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] || borg_skill[BI_ISIMAGE]) && glyph_spell)
         glyph_spell = FALSE;
-    if (!(ag->info & BORG_GLOW) && borg_skill[BI_CUR_LITE] == 0) glyph_spell = FALSE;
+    if (!(mb_ptr->flags & MAP_GLOW) && borg_skill[BI_CUR_LITE] == 0) glyph_spell = FALSE;
 
 
     if (!glyph_spell) return (0);
@@ -10340,7 +10342,7 @@ static int borg_defend_aux_banishment( int p1)
 static int borg_defend_aux_inviso(int p1)
 {
     int fail_allowed = 25;
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 
     /* no need */
@@ -10364,7 +10366,7 @@ static int borg_defend_aux_inviso(int p1)
         return (0);
 
     /* Darkness */
-    if (!(ag->info & BORG_GLOW) && !borg_skill[BI_CUR_LITE]) return (0);
+    if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (0);
 
     /* No real value known, but lets cast it to find the bad guys. */
     if (borg_simulate) return (10);
@@ -13193,10 +13195,10 @@ bool borg_flow_light(int why)
     {
         for (x = w_x; x < w_x + SCREEN_WID; x++)
         {
-            borg_grid *ag = &borg_grids[y][x];
+            map_block *mb_ptr = map_loc(x, y);
 
             /* Not a perma-lit, and not our spot. */
-            if (!(ag->info & BORG_GLOW)) continue;
+            if (!(mb_ptr->flags & MAP_GLOW)) continue;
 
             /* keep count */
             borg_glow_y[borg_glow_n] = y;

@@ -913,7 +913,7 @@ static bool borg_follow_kill_aux(int i, int y, int x)
     if (ag->info & BORG_VIEW)
     {
         /* Use "illumination" */
-        if (mb_ptr->info & (MAP_SEEN))
+        if (mb_ptr->flags & MAP_SEEN)
         {
             /* We can see invisible */
             if (borg_skill[BI_SINV] || borg_see_inv) return (TRUE);
@@ -2577,15 +2577,6 @@ static void borg_update_map(void)
             /* AJG Adjust for funky graphics */
             switch (Get_f_info_number[t_c])
 			{
-                /* Darkness */
-                case FEAT_NONE:
-                {
-                    /* The grid is not lit */
-                    ag->info &= ~BORG_GLOW;
-
-                    /* Done */
-                    break;
-                }
 
                 /* Floors */
                 case FEAT_FLOOR:

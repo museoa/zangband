@@ -1776,7 +1776,7 @@ bool borg_quaff_unknown(void)
 bool borg_read_unknown(void)
 {
     int i, n = -1;
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Scan the pack */
     for (i = 0; i < INVEN_PACK; i++)
@@ -1801,7 +1801,7 @@ bool borg_read_unknown(void)
     if (n < 0) return (FALSE);
 
     /* Not when dark */
-    if (!(ag->info & BORG_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+    if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
     /* Blind or Confused */
     if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
@@ -1905,10 +1905,10 @@ bool borg_use_unknown(void)
 bool borg_read_scroll(int sval)
 {
     int i;
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Dark */
-    if (!(ag->info & BORG_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+    if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
     /* Blind or Confused */
     if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
@@ -2458,10 +2458,10 @@ bool borg_spell_okay(int realm, int book, int what)
 
     borg_magic *as = &borg_magics[realm][book][what];
 
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Dark */
-    if (!(ag->info & BORG_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+    if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
     /* Define reserve_mana for each class */
     if (borg_skill[BI_REALM1] == REALM_SORCERY) reserve_mana = 6;
@@ -2683,10 +2683,10 @@ bool borg_mindcr_okay(int spell, int level)
 
     borg_mind *as = &borg_minds[spell];
 
-    borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Dark */
-    if (!(ag->info & BORG_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+    if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
     /* Define reserve_mana for Displacement */
     if (borg_skill[BI_CLEVEL] >= 3) reserve_mana = 2;
