@@ -5150,7 +5150,7 @@ room_type room_list[ROOM_TYPES] =
 	{5,		build_type13, RT_NATURAL},	/* Large with fractal feature */
 	{3,		build_type14, RT_COMPLEX},	/* Large with walls */
 	{3,		build_type15, RT_STRANGE},	/* Parallelogram */
-	{3,		build_type16, RT_NATURAL},	/* Rectangle minus inverse overlapping */
+	{3,		build_type16, RT_RUIN | RT_NATURAL},	/* Rectangle minus inverse overlap */
 	{3,		build_type17, RT_RUIN},	/* Triangles */
 	{5,		build_type18, RT_BUILDING},	/* Chambers */
 	{5,		build_type19, RT_STRANGE},	/* Channel */
