@@ -3054,7 +3054,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
  * Hack -- note special "pval boost" code for ring of speed
  * Hack -- note that some items must be cursed (or blessed)
  */
-static void a_m_aux_3(object_type *o_ptr, int level, int lev_dif, byte flags)
+static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 {
 	if ((flags & OC_FORCE_GOOD) && (randint0(100) < 50))
 	{
@@ -3470,7 +3470,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int lev_dif, byte flags)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, int level, int lev_dif, byte flags)
+static void a_m_aux_4(object_type *o_ptr, byte flags)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -3757,13 +3757,13 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 		case TV_RING:
 		case TV_AMULET:
 		{
-			a_m_aux_3(o_ptr, lev, lev_dif, flags);
+			a_m_aux_3(o_ptr, lev, flags);
 			break;
 		}
 
 		default:
 		{
-			a_m_aux_4(o_ptr, lev, lev_dif, flags);
+			a_m_aux_4(o_ptr, flags);
 			break;
 		}
 	}
