@@ -3491,19 +3491,18 @@ void calc_bonuses(void)
 	/* Different calculation for monks with empty hands */
 	else if (p_ptr->pclass == CLASS_MONK && monk_empty_hands())
 	{
-		p_ptr->num_blow = 0;
+		p_ptr->num_blow = 2;
 
-		if (p_ptr->lev >  9) p_ptr->num_blow++;
-		if (p_ptr->lev > 19) p_ptr->num_blow++;
-		if (p_ptr->lev > 29) p_ptr->num_blow++;
+		if (p_ptr->lev >  4) p_ptr->num_blow++;
+		if (p_ptr->lev > 9) p_ptr->num_blow++;
+		if (p_ptr->lev > 14) p_ptr->num_blow++;
+		if (p_ptr->lev > 24) p_ptr->num_blow++;
 		if (p_ptr->lev > 34) p_ptr->num_blow++;
-		if (p_ptr->lev > 39) p_ptr->num_blow++;
 		if (p_ptr->lev > 44) p_ptr->num_blow++;
-		if (p_ptr->lev > 49) p_ptr->num_blow++;
 
 		if (monk_heavy_armor()) p_ptr->num_blow /= 2;
 
-		p_ptr->num_blow += 1 + extra_blows;
+		p_ptr->num_blow += extra_blows;
 
 		if (!monk_heavy_armor())
 		{
@@ -3591,13 +3590,13 @@ void calc_bonuses(void)
 	p_ptr->skill_fos += (cp_ptr->x_fos * p_ptr->lev / 10);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-	p_ptr->skill_thn += (cp_ptr->x_thn * p_ptr->lev / 10);
+	p_ptr->skill_thn += (cp_ptr->x_thn * p_ptr->lev / 50);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	p_ptr->skill_thb += (cp_ptr->x_thb * p_ptr->lev / 10);
+	p_ptr->skill_thb += (cp_ptr->x_thb * p_ptr->lev / 50);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
-	p_ptr->skill_tht += (cp_ptr->x_thb * p_ptr->lev / 10);
+	p_ptr->skill_tht += (cp_ptr->x_thb * p_ptr->lev / 50);
 
 
 	/* Limit Skill -- stealth from 0 to 30 */
