@@ -2521,9 +2521,6 @@ void borg_init_9(void)
 	/* The borg doesn't understand speaking uniques */
 	speak_unique = FALSE;
 
-	/* Efficiency */
-	avoid_abort = TRUE;
-
 	/* Hack -- notice "command" mode */
 	hilite_player = FALSE;
 

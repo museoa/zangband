@@ -3612,7 +3612,7 @@
 /* {TRUE,  0, NULL,					"Number 47" }, svr_ptr->options[14] */
 /* {TRUE,  0, NULL,					"Number 48" }, p_ptr->options[33] */
 /* {TRUE,  0, NULL,					"Number 49" }, p_ptr->options[34] */
-#define avoid_abort				p_ptr->options[35]
+/* {TRUE,  0, NULL,					"Number 50" }, p_ptr->options[35] */
 #define avoid_other				p_ptr->options[36]
 #define flush_failure			p_ptr->options[37]
 #define flush_disturb			p_ptr->options[38]

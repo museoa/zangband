@@ -2656,30 +2656,27 @@ static void process_player(void)
 		}
 	}
 
-	/* Handle "abort" */
-	if (!avoid_abort)
+	/*** Handle "abort" ***/
+	
+	/* Check for "player abort" */
+	if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
 	{
-		/* Check for "player abort" */
-		if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
+		/* Do not wait */
+		p_ptr->inkey_scan = TRUE;
+
+		/* Check for a key */
+		if (inkey())
 		{
-			/* Do not wait */
-			p_ptr->inkey_scan = TRUE;
+			/* Flush input */
+			flush();
 
-			/* Check for a key */
-			if (inkey())
-			{
-				/* Flush input */
-				flush();
+			/* Disturb */
+			disturb(FALSE);
 
-				/* Disturb */
-				disturb(FALSE);
-
-				/* Hack -- Show a Message */
-				msg_print("Cancelled.");
-			}
+			/* Hack -- Show a Message */
+			msg_print("Cancelled.");
 		}
 	}
-
 
 	/*** Handle actual user input ***/
 
