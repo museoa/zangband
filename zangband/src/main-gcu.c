@@ -845,7 +845,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
 		/* Special characters? */
 		if (use_blocks)
 		{
-			
+#ifdef ACS_CKBOARD
 			/* Determine picture to use */
 			if (s[i] == '#')
 			{
@@ -859,8 +859,11 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
 			}
 			else
 			{
-			        pic = s[i];
+				pic = s[i];
 			}
+#else /* ACS_CKBOARD */
+			pic = s[i];
+#endif /* ACS_CKBOARD */
 
 			/* Draw the picture */
 			waddch(td->win, pic);
@@ -1152,7 +1155,5 @@ errr init_gcu(void)
 	return (0);
 }
 
-
 #endif /* USE_GCU */
-
 
