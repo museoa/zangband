@@ -2740,7 +2740,7 @@ bool bless_weapon(void)
  *          (Not anymore -- I changed this; TY)
  *    y, x  --- coordinates of the potion (or player if
  *          the potion was in her inventory);
- *    o_ptr --- pointer to the potion object.
+ *    k_idx --- type of object.
  */
 bool potion_smash_effect(int who, int y, int x, int k_idx)
 {
@@ -2891,6 +2891,9 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 		k_ptr->aware = TRUE;
 		gain_exp((k_ptr->level + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 	return angry;
 }
