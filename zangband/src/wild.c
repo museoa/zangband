@@ -456,6 +456,44 @@ static void overlay_town(byte y, byte x, u16b w_town, blk_ptr block_ptr)
 	}
 }
 
+/*
+ * Look to see if a wilderness block is able to have
+ * a town overlayed on top.
+ */
+static bool town_blank(int x, int y, int xsize, int ysize)
+{
+	int i, j;
+	wild_done_type *w_ptr;
+	
+	for(i = x; i < x + xsize; i++)
+	{
+		for(j = y; j < y + ysize; j++)
+		{ 
+			/* Hack - Not next to boundary */
+			if ((x <= 0) || (x >= max_wild - 1) || (y <= 0) || (y >= max_wild - 1))
+			{
+				return(FALSE);
+			}
+			
+			w_ptr = &wild[j][i].done;
+			
+			/* No town already */
+			if (w_ptr->town) return(FALSE);
+
+			/* No water or lava */
+			if (w_ptr->info & (WILD_INFO_RIVER | WILD_INFO_LAVA)) return(FALSE);
+	
+			/* No Ocean */
+			if (w_ptr->wild >= WILD_SEA) return(FALSE);
+		}
+	}
+
+	/* Ok then */
+	return(TRUE);
+}
+
+
+
 
 /*
  * Initialise the town structures
@@ -470,36 +508,53 @@ static void overlay_town(byte y, byte x, u16b w_town, blk_ptr block_ptr)
  */
 static void init_towns(void)
 {
-	int i, j;
-	u16b town_num;
+	int i, j, k;
+	int x, y;
 
+	/* No towns yet */
+	town_count = 0;
 
-	for (town_num = 1; town_num <= 4; town_num++)
+	/*
+	 * Hack - Try to add max_towns towns.
+	 * (Although will only get ~3/4 of these)
+	 */ 
+	for (k = 0; k < max_towns; k++)
 	{
-		strcpy(town[town_num].name, "town");
-		town[town_num].seed = rand_int(0x10000000);
-		town[town_num].numstores = 9;
-		town[town_num].type = 1;
-		town[town_num].x = max_wild / 2 + ((town_num - 1) % 2) * (SCREEN_WID / 16 + 1);
-		town[town_num].y = max_wild / 2 + ((town_num - 1) / 2) * (SCREEN_HGT / 16 + 1);
+		/* Get random position */
+		x = randint(max_wild);
+		y = randint(max_wild);
+		
+		/* See if space is free */
+		if (!town_blank(x, y, SCREEN_WID / 16 +1, SCREEN_HGT / 16 + 1)) continue;
+	
+		/* Add town */
+		strcpy(town[town_count].name, "town");
+		town[town_count].seed = rand_int(0x10000000);
+		town[town_count].numstores = 9;
+		town[town_count].type = 1;
+		town[town_count].x = x;
+		town[town_count].y = y;
 
 		/* Place town on wilderness */
 		for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
 		{
 			for (i = 0; i < (SCREEN_WID / 16 +1); i++)
 			{
-				wild[town[town_num].y + j][town[town_num].x + i]
-					.done.town = town_num;
+				wild[town[town_count].y + j][town[town_count].x + i]
+					.done.town = town_count;
 			}
 		}
-	}
+		
+		/* Increase number of towns */
+		town_count++;
+	} 
 
 	/* No current town in cave[][] */
 	cur_town = 0;
 	
 	/* Hack - Reset player position to just next to town 1 */
-	p_ptr->wilderness_x = town[1].x * 16 - 1;
-	p_ptr->wilderness_y = town[1].y * 16 - 1;
+	p_ptr->wilderness_x = town[1].x * 16;
+	p_ptr->wilderness_y = town[1].y * 16;
 }
 
 /* Place a single town in the middle of the tiny wilderness */
@@ -530,6 +585,9 @@ static void init_vanilla_town(void)
 	/* Hack - Reset player position to just next to town 1 */
 	p_ptr->wilderness_x = town[1].x * 16 - 1;
 	p_ptr->wilderness_y = town[1].y * 16 - 1;
+	
+	/* One town */
+	town_count = 1;
 }
 
 /*

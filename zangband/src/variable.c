@@ -693,6 +693,11 @@ monster_type *m_list;
 u16b max_towns;
 
 /*
+ * Number of towns used.
+ */
+u16b town_count;
+
+/*
  * The towns [max_towns]
  */
 town_type *town;

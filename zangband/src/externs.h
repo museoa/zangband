@@ -333,6 +333,7 @@ extern byte *wild_temp_dist;
 extern object_type *o_list;
 extern monster_type *m_list;
 extern u16b max_towns;
+extern u16b town_count;
 extern town_type *town;
 extern object_type *inventory;
 extern s16b alloc_kind_size;

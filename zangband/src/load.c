@@ -2967,7 +2967,6 @@ static errr rd_dungeon(void)
 static errr rd_savefile_new_aux(void)
 {
 	int i, j;
-	int town_count;
 
 	byte tmp8u;
 	u16b tmp16u;
@@ -3691,6 +3690,13 @@ static errr rd_savefile_new_aux(void)
 		town_count = 2;
 	}
 
+	/* Paranoia */
+	if (town_count > max_towns)
+	{
+		note("Error - increase number of towns in misc.txt");
+			return (33);
+	}
+	
 	/* Empty the store stock cache */
 	store_cache_num = 0;
 

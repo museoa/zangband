@@ -1578,11 +1578,11 @@ static bool wr_savefile_new(void)
 	wr_u16b(0xFFFF);
 
 	/* Note the towns */
-	tmp16u = max_towns;
+	tmp16u = town_count;
 	wr_u16b(tmp16u);
 
 	/* Dump the town data */
-	for (i = 1; i < max_towns; i++)
+	for (i = 1; i < town_count; i++)
 	{
 		/* RNG seed */
 		wr_u32b(town[i].seed);
