@@ -808,14 +808,12 @@ static void wiz_tweak_item(object_type *o_ptr)
 /*
  * Apply magic to an item or turn it into an artifact. -Bernd-
  */
-static bool wiz_reroll_item(object_type *o_ptr)
+static object_type *wiz_reroll_item(object_type *o_ptr)
 {
-    return (TRUE);
-#if 0 /* XXX This code is broken -RML- */
     char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return(TRUE);
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return(o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
@@ -832,11 +830,10 @@ static bool wiz_reroll_item(object_type *o_ptr)
 			{
 				a_info[o_ptr->activate - 128].cur_num = 0;
 				o_ptr->activate = 0;
-				o_ptr->xtra_name = 0;
 			}
 
 			/* Done */
-			return (FALSE);
+			return (NULL);
 		}
 
 		/* Create/change it! */
@@ -847,7 +844,6 @@ static bool wiz_reroll_item(object_type *o_ptr)
 		{
 			a_info[o_ptr->activate - 128].cur_num = 0;
 			o_ptr->activate = 0;
-			o_ptr->xtra_name = 0;
 
 			/* Remove the artifact flag */
 			o_ptr->flags3 &= ~(TR3_INSTA_ART);
@@ -886,14 +882,6 @@ static bool wiz_reroll_item(object_type *o_ptr)
 			}
 		}
     }
-
-    /* XXX We somehow need to copy the object being played with back.
-     The only way to do this seems to be using swap_objects. But this doesn't
-     really matter until we find some way to keep the copy of the object
-     being played with safe even as functions that may clobber the temp
-     object are called.
-     (This is the point where being able to create a local buffer object
-     would be really useful...) -RML- */
 	
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -905,8 +893,7 @@ static bool wiz_reroll_item(object_type *o_ptr)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 	
 	/* Success */
-    return (TRUE);
-#endif
+    return (o_ptr);
 }
 
 
@@ -1017,11 +1004,6 @@ static void do_cmd_wiz_play(void)
 	while (TRUE)
 	{
         /* Display the item */
-        /* XXX wiz_display_item will use the temp buffer, which is currently
-         holding o_ptr. I don't really understand the interactions but the
-         net effect is that the item's quarks get erased. This is the same
-         problem as with wiz_reroll_item, other than only trying to keep
-         three temp objects at once. -RML- */
 		wiz_display_item(o_ptr);
 
 		/* Get choice */
@@ -1063,13 +1045,10 @@ static void do_cmd_wiz_play(void)
 
 		if (ch == 'r' || ch == 'r')
         {
-            /* XXX wiz_reroll_item makes use of the temp buffer object, which
-             we are currently holding. It seems like changes made in
-             wiz_reroll_item will be passed back in the temp buffer object,
-             rather than in the object passed as an argument, which only
-             works because we always use the temp buffer object as the
-             argument. I can't tell if this is deliberate. -RML- */
-			if (!wiz_reroll_item(o_ptr))
+			o_ptr = wiz_reroll_item(o_ptr);
+		
+			/* Failure - get old item */
+			if (!o_ptr)
 			{
 				/* Restore old item */
 				o_ptr = object_dup(q_ptr);
