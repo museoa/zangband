@@ -418,7 +418,6 @@ DECLARE_TK_HOOK(ARRAY_max);
 DECLARE_TK_HOOK(ARRAY_set);
 DECLARE_TK_HOOK(fontdesc);
 DECLARE_TK_HOOK(menuentrystate);
-DECLARE_TK_HOOK(photo_get);
 DECLARE_TK_HOOK(photo_mask);
 DECLARE_TK_HOOK(equipinfo);
 DECLARE_TK_HOOK(inveninfo);

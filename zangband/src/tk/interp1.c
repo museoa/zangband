@@ -2246,7 +2246,6 @@ static CommandInit commandInit[] = {
 		{1, "mindcraft", 0, 0, NULL, objcmd_mindcraft, (ClientData) 0},
 		{1, "power", 0, 0, NULL, objcmd_power, (ClientData) 0},
 	{0, "menuentrystate", 0, 0, NULL, objcmd_menuentrystate, (ClientData) 0},
-	{0, "photoget", 0, 0, NULL, objcmd_photo_get, (ClientData) 0},
 	{0, "photomask", 2, 3, "imageDst ?imageMask?", objcmd_photo_mask, (ClientData) 0},
 	{0, "fontdesc", 2, 2, "font", objcmd_fontdesc, (ClientData) 0},
 	{0, "term_window", 0, 0, NULL, NULL, (ClientData) 0},

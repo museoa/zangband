@@ -1130,64 +1130,6 @@ typedef struct PhotoMaster {
 				 * associated with this master. */
 } PhotoMaster;
 
-/*
- * photoget $imageName $x $y
- * Like "$imageName get $x $y" but returns empty list on transparency.
- */
-int
-objcmd_photo_get(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Tk_PhotoHandle photoH;
-	char *imageName;
-	int y, x;
-	PhotoMaster *masterPtr;
-	unsigned char *pixelPtr;
-
-	/* Hack - ignore unused parameter */
-	(void) dummy;
-
-	/* Required number of arguments */
-    if (objc != 4)
-    {
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "imageName x y");
-		return TCL_ERROR;
-    }
-
-	/* Get the name of the Tk photo image. It must already exist */
-	imageName = Tcl_GetStringFromObj(objv[1], NULL);
-
-	/* Lookup the photo by name */
-	photoH = Tk_FindPhoto(interp, imageName);
-
-	/* The photo was not found */
-	if (photoH == NULL)
-	{
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	masterPtr = (PhotoMaster *) photoH;
-
-	if (Tcl_GetIntFromObj(interp, objv[2], &x) != TCL_OK ||
-		Tcl_GetIntFromObj(interp, objv[3], &y) != TCL_OK)
-		return TCL_ERROR;
-
-	if ((x < 0) || (x >= masterPtr->width)
-		|| (y < 0) || (y >= masterPtr->height))
-	{
-	    Tcl_AppendResult(interp, "coordinates out of range", NULL);
-	    return TCL_ERROR;
-	}
-
-	if (TkRectInRegion(masterPtr->validRegion, x, y, 1, 1))
-	{
-		pixelPtr = masterPtr->pix24 + (y * masterPtr->width + x) * 3;
-		Tcl_SetStringObj(Tcl_GetObjResult(interp), format("%d %d %d",
-			pixelPtr[0], pixelPtr[1], pixelPtr[2]), -1);
-	}
-	
-	return TCL_OK;
-}
 
 /*
  * photomask $image ?$imageMask?
