@@ -66,17 +66,17 @@ proc NSHelp::InitModule {} {
 
 	if {![ImageExists Image_BackDisabled]} {
 		image create photo Image_BackDisabled
-		DisableImage Image_Back Image_BackDisabled
+#		DisableImage Image_Back Image_BackDisabled
 	}
 	
 	if {![ImageExists Image_NextDisabled]} {
 		image create photo Image_NextDisabled
-		DisableImage Image_Next Image_NextDisabled
+#		DisableImage Image_Next Image_NextDisabled
 	}
 	
 	if {![ImageExists Image_RefreshDisabled]} {
 		image create photo Image_RefreshDisabled
-		DisableImage Image_Refresh Image_RefreshDisabled
+#		DisableImage Image_Refresh Image_RefreshDisabled
 	}
 
 	set Image(nextId) 0

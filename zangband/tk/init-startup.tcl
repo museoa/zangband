@@ -1166,40 +1166,6 @@ proc init_askfor_display {} {
 	return $win
 }
 
-
-proc DisableImage {source dest} {
-
-	set iw [image width $source]
-	set ih [image height $source]
-
-	set dot [list [list white]]
-	for {set y 0 ; set y2 1} {$y < $ih} {incr y ; incr y2} {
-		for {set x 0 ; set x2 1} {$x < $iw} {incr x ; incr x2} {
-			if {[scan [photoget $source $x $y] "%d %d %d" r g b] == 3} {
-				$dest put $dot -to $x2 $y2
-			}
-		}
-	}
-
-	if {[Platform unix]} {
-		set color [Global SystemButtonShadow]
-	}
-	if {[Platform windows]} {
-		scan [angband system color SystemButtonShadow] \
-			"%d %d %d" red green blue
-		set color [format #%02x%02x%02x $red $green $blue]
-	}
-	set dot [list [list $color]]
-	for {set y 0} {$y < $ih} {incr y} {
-		for {set x 0} {$x < $iw} {incr x} {
-			if {[scan [photoget $source $x $y] "%d %d %d" r g b] == 3} {
-				$dest put $dot -to $x $y
-			}
-		}
-	}
-	return
-}
-
 proc Win98MenuCmd {button} {
 
 	set canvas [$button info canvas]
