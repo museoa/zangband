@@ -2496,7 +2496,7 @@ void do_poly_self(void)
 		}
 		while ((new_race == p_ptr->prace) && (expfact > goalexpfact));
 
-		if (effect_msg[0])
+		if (!effect_msg[0])
 		{
 			msg_format("You turn into a%s %s!",
 			    (((new_race == RACE_AMBERITE) ||
