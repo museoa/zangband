@@ -2169,15 +2169,6 @@ static void process_monster(int m_idx)
 	if (!is_hostile(m_ptr) && p_ptr->aggravate)
 		gets_angry = TRUE;
 
-#if 0  /* No need to check this _every_ turn for every monster. */
-
-	/* Paranoia... no pet uniques outside wizard mode -- TY */
-	if (is_pet(m_ptr) && !wizard &&
-	    (r_ptr->flags1 & RF1_UNIQUE))
-		gets_angry = TRUE;
-
-#endif /* 0 */
-
 	if (gets_angry)
 	{
 		char m_name[80];

@@ -123,7 +123,7 @@ bool make_attack_normal(int m_idx)
 	int ap_cnt;
 
 	int i, k, tmp, ac, rlev;
-	int do_cut, do_stun;
+	bool do_cut, do_stun;
 
 	s32b gold;
 
@@ -259,7 +259,7 @@ bool make_attack_normal(int m_idx)
 
 
 			/* Assume no cut or stun */
-			do_cut = do_stun = 0;
+			do_cut = do_stun = FALSE;
 
 			/* Describe the attack method */
 			switch (method)
@@ -267,8 +267,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_HIT:
 				{
 					act = "hits you.";
-					do_cut = do_stun = 1;
-					touched = TRUE;
+					do_cut = do_stun = touched = TRUE;
 					sound(SOUND_HIT);
 					break;
 				}
@@ -284,8 +283,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_PUNCH:
 				{
 					act = "punches you.";
-					touched = TRUE;
-					do_stun = 1;
+					do_stun = touched = TRUE;
 					sound(SOUND_HIT);
 					break;
 				}
@@ -293,8 +291,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_KICK:
 				{
 					act = "kicks you.";
-					touched = TRUE;
-					do_stun = 1;
+					do_stun = touched = TRUE;
 					sound(SOUND_HIT);
 					break;
 				}
@@ -302,8 +299,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_CLAW:
 				{
 					act = "claws you.";
-					touched = TRUE;
-					do_cut = 1;
+					do_cut = touched = TRUE;
 					sound(SOUND_CLAW);
 					break;
 				}
@@ -311,8 +307,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_BITE:
 				{
 					act = "bites you.";
-					do_cut = 1;
-					touched = TRUE;
+					do_cut = touched = TRUE;
 					sound(SOUND_BITE);
 					break;
 				}
@@ -334,8 +329,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_BUTT:
 				{
 					act = "butts you.";
-					do_stun = 1;
-					touched = TRUE;
+					do_stun = touched = TRUE;
 					sound(SOUND_HIT);
 					break;
 				}
@@ -343,8 +337,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_CRUSH:
 				{
 					act = "crushes you.";
-					do_stun = 1;
-					touched = TRUE;
+					do_stun = touched = TRUE;
 					sound(SOUND_CRUSH);
 					break;
 				}
@@ -1407,13 +1400,13 @@ bool make_attack_normal(int m_idx)
 				/* Cancel cut */
 				if (randint0(100) < 50)
 				{
-					do_cut = 0;
+					do_cut = FALSE;
 				}
 
 				/* Cancel stun */
 				else
 				{
-					do_stun = 0;
+					do_stun = FALSE;
 				}
 			}
 
