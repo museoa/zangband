@@ -248,4 +248,6 @@ extern void screen_load(void);
 extern void clear_from(int row);
 extern void pause_line(int row);
 extern void request_command(bool shopping);
+extern bool get_check(cptr prompt);
+extern errr get_rnd_line(cptr file_name, int entry, char *output);
 

@@ -413,4 +413,4 @@ extern bool item_tester_hook_is_book(const object_type *o_ptr);
 extern void add_ego_flags(object_type *o_ptr, byte ego);
 extern void add_ego_power(int power, object_type *o_ptr);
 extern void acquirement(int x1, int y1, int num, bool great, bool known);
-
+extern void ring_of_power(int dir);

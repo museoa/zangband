@@ -109,7 +109,6 @@ typedef int errr;
 /***** Functions *****/
 
 /* spells1.c */
-extern void take_hit(int damage, cptr kb_str);
 extern bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg);
 
 /* spells2.c */

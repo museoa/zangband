@@ -409,6 +409,9 @@ extern const player_class *cp_ptr;
 extern const player_magic *mp_ptr;
 extern player_type *p_ptr @ player;
 
+/* Hack - options */
+extern bool ironman_nightmare;
+extern byte autosave_l;
 
 /***** Functions *****/
 
@@ -468,3 +471,5 @@ extern bool res_stat(int stat);
 extern bool lose_all_info(void);
 extern bool restore_level(void);
 extern bool player_res(u32b flag);
+extern void have_nightmare(void);
+extern void do_cmd_save_game(int is_autosave);
