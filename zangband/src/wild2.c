@@ -4091,7 +4091,7 @@ void move_wild(void)
 	pl_ptr = &place[p_ptr->place_num];
 
 	/* Check for wilderness quests */
-	if (pl_ptr->quest_num)
+	if ((pl_ptr->quest_num) && !(w_ptr->info & WILD_INFO_DONE))
 	{
 		q_ptr = &quest[pl_ptr->quest_num];
 
