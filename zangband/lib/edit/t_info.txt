@@ -47,15 +47,25 @@
 
 ##### Something special #####
 
-# test
-N:0:something
+# Nothing
+N:0:Nothing
 G:@:w
 W:0:0:0
 D:0:0:0:0:0:0:0:0
 
-N:1:& trap~
+# Invisible Wall
+N:1:& blank~
+G:.:w
+W:0:4:0
+I:FEAT | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
+D:0:0:0:0:0:0:0:0
+F:12,field_action_compact_basic
+
+# Trap
+N:2:& trap~
 G:^:w
 W:240:1:0
-I:FEAT | VIS
+I:FEAT
 D:0:0:0:0:0:0:0:0
+F:0,field_action_nothing | 13,field_action_nothing
 F:0,field_action_nothing | 13,field_action_nothing
