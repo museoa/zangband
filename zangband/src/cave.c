@@ -1035,6 +1035,16 @@ void map_info(int y, int x, byte *ap, char *cp)
 				(*ap) = a;
 			}
 
+			/* Mimics' colors vary */
+			else if (strchr("\"!=", c) && !(r_ptr->flags1 & RF1_UNIQUE))
+			{
+				/* Use char */
+				(*cp) = c;
+
+				/* Use semi-random attr */
+				(*ap) = c_ptr->m_idx % 16 + 1;
+			}
+
 			/* Special attr/char codes */
 			else if ((a & 0x80) && (c & 0x80))
 			{
