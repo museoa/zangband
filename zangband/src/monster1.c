@@ -1556,7 +1556,7 @@ void display_visible(void)
 		}
 		
 		/* Append count */
-		c_roff(TERM_WHITE, format("[%d]",r_ptr->r_see));
+		Term_addstr(-1, TERM_WHITE, format("[%d]",r_ptr->r_see));
 		
 		/* Look for the next one */
 		while (i > 0)
