@@ -2611,8 +2611,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	/* Take a (partial) turn - note strange formula. */
 	
-	/* The real number of shots per round is (2 + n)/2 */
-	energy_use = (2 * energy_use / (2 + thits));
+	/* The real number of shots per round is (1 + n)/2 */
+	energy_use = (2 * energy_use / (1 + thits));
 
 	/* Fire ammo of backbiting, and it will turn on you. -LM- */
 	if (i_ptr->name2 == EGO_BACKBITING)
