@@ -1748,3 +1748,15 @@ W:25:20:30:28000
 P:0:0d0:35:15:0
 F:DEX | SENSE | INFRA | SUST_DEX | RES_BLIND | HIDE_TYPE | SHOW_MODS | 
 F:LITE | SEE_INVIS | XTRA_MIGHT | XTRA_SHOTS | INSTA_ART
+
+# The Cloak 'Soulless One'
+
+N:128:'Soulless One'
+I:35:1:4
+W:45:40:10:20000
+P:1:0d0:0:0:25
+F:STEALTH | RES_DARK | RES_NEXUS | DRAIN_EXP | DRAIN_STATS | PASS_WALL |
+F:CURSED | AUTO_CURSE | INSTA_ART
+D:This cloak looks ordinary, but you have a strange feeling that 
+D:there is something very wrong about it.
+
