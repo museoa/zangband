@@ -2027,41 +2027,33 @@ static void borg_notice_weapon_swap(void)
 	s32b b_v = 0L;
 
 	int dam, damage;
-	borg_item *item;
+	list_item *l_ptr;
 
 	weapon_swap = 0;
 
 	/*** Process the inventory ***/
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		item = &borg_items[i];
+		l_ptr = &inventory[i];
 
 		/* reset counter */
 		v = -1L;
 		dam = 0;
 		damage = 0;
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
-		/* Hack -- skip un-aware items */
-		if (!item->kind) continue;
-
-		/* Dont carry swaps until dlevel 50.  They are heavy.
-		 * Unless the item is a digger, then carry it */
-		if (borg_skill[BI_MAXDEPTH] < 54 && item->tval != TV_DIGGING) continue;
+		/* Dont carry swaps until dlevel 50.  They are heavy. */
+		if (borg_skill[BI_MAXDEPTH] < 54 && l_ptr->tval != TV_DIGGING) continue;
 
 		/* priest weapon penalty for non-blessed edged weapons */
 		if (borg_class == CLASS_PRIEST &&
-			(item->tval == TV_SWORD || item->tval == TV_POLEARM) &&
-			(!(item->flags3 & TR3_BLESSED))) continue;
-/* Monks and weapons */
-		/* Require ID, "known" (or average, good, etc) */
-		if (!item->able &&
-			!strstr(item->desc, "{good") &&
-			!strstr(item->desc, "{excellent") &&
-			!strstr(item->desc, "{terrible") &&
-			!strstr(item->desc, "{special")) continue;
+			(l_ptr->tval == TV_SWORD || l_ptr->tval == TV_POLEARM) &&
+			(!(l_ptr->kn_flags3 & TR3_BLESSED))) continue;
+
+		/* Require ID */
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Clear all the swap weapon flags as I look at each one. */
 		weapon_swap_digger = 0;
@@ -2112,7 +2104,7 @@ static void borg_notice_weapon_swap(void)
 		decurse_weapon_swap = -1;
 
 		/* Analyze the item */
-		switch (item->tval)
+		switch (l_ptr->tval)
 		{
 			case TV_HAFTED:
 			case TV_POLEARM:
@@ -2122,138 +2114,137 @@ static void borg_notice_weapon_swap(void)
 				/* Weapons */
 
 				/* Digging */
-				if (item->flags1 & TR1_TUNNEL)
+				if (l_ptr->kn_flags1 & TR1_TUNNEL)
 				{
-					/* Don't notice digger if we can turn stone to mud,
+					/*
+					 * Don't notice digger if we can turn stone to mud,
 					 * or I am using one.
 					 */
-					/* Hack -- ignore worthless ones (including cursed) */
-					if (item->value <= 0) break;
-					if (item->cursed) break;
 					if (!borg_spell_okay_fail(REALM_ARCANE, 2, 4, 40) &&
 						!borg_spell_okay_fail(REALM_CHAOS, 0, 6, 40) &&
 						!borg_racial_check(RACE_HALF_GIANT, TRUE) &&
-						!(borg_items[INVEN_WIELD].flags1 & TR1_TUNNEL))
-						weapon_swap_digger = item->pval;
+						!(equipment[EQUIP_WIELD].kn_flags1 & TR1_TUNNEL))
+						weapon_swap_digger = l_ptr->pval;
 				}
 
 				/* various slays */
-				if (item->flags1 & TR1_SLAY_ANIMAL) weapon_swap_slay_animal =
+				if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) weapon_swap_slay_animal =
 						TRUE;
-				if (item->flags1 & TR1_SLAY_EVIL) weapon_swap_slay_evil = TRUE;
-				if (item->flags1 & TR1_SLAY_UNDEAD) weapon_swap_slay_undead =
+				if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) weapon_swap_slay_evil = TRUE;
+				if (l_ptr->kn_flags1 & TR1_SLAY_UNDEAD) weapon_swap_slay_undead =
 						TRUE;
-				if (item->flags1 & TR1_SLAY_DEMON) weapon_swap_slay_demon =
+				if (l_ptr->kn_flags1 & TR1_SLAY_DEMON) weapon_swap_slay_demon =
 						TRUE;
-				if (item->flags1 & TR1_SLAY_ORC) weapon_swap_slay_orc = TRUE;
-				if (item->flags1 & TR1_SLAY_TROLL) weapon_swap_slay_troll =
+				if (l_ptr->kn_flags1 & TR1_SLAY_ORC) weapon_swap_slay_orc = TRUE;
+				if (l_ptr->kn_flags1 & TR1_SLAY_TROLL) weapon_swap_slay_troll =
 						TRUE;
-				if (item->flags1 & TR1_SLAY_GIANT) weapon_swap_slay_giant =
+				if (l_ptr->kn_flags1 & TR1_SLAY_GIANT) weapon_swap_slay_giant =
 						TRUE;
-				if (item->flags1 & TR1_SLAY_DRAGON) weapon_swap_slay_dragon =
+				if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) weapon_swap_slay_dragon =
 						TRUE;
-				if (item->flags1 & TR1_KILL_DRAGON) weapon_swap_kill_dragon =
+				if (l_ptr->kn_flags1 & TR1_KILL_DRAGON) weapon_swap_kill_dragon =
 						TRUE;
-				if (item->flags1 & TR1_IMPACT) weapon_swap_impact = TRUE;
-				if (item->flags1 & TR1_BRAND_ACID) weapon_swap_brand_acid =
+				if (l_ptr->kn_flags1 & TR1_IMPACT) weapon_swap_impact = TRUE;
+				if (l_ptr->kn_flags1 & TR1_BRAND_ACID) weapon_swap_brand_acid =
 						TRUE;
-				if (item->flags1 & TR1_BRAND_ELEC) weapon_swap_brand_elec =
+				if (l_ptr->kn_flags1 & TR1_BRAND_ELEC) weapon_swap_brand_elec =
 						TRUE;
-				if (item->flags1 & TR1_BRAND_FIRE) weapon_swap_brand_fire =
+				if (l_ptr->kn_flags1 & TR1_BRAND_FIRE) weapon_swap_brand_fire =
 						TRUE;
-				if (item->flags1 & TR1_BRAND_COLD) weapon_swap_brand_cold =
+				if (l_ptr->kn_flags1 & TR1_BRAND_COLD) weapon_swap_brand_cold =
 						TRUE;
 
 				/* Affect infravision */
-				if (item->flags1 & TR1_INFRA) weapon_swap_see_infra +=
-						item->pval;
+				if (l_ptr->kn_flags1 & TR1_INFRA) weapon_swap_see_infra +=
+						l_ptr->pval;
 
 				/* Affect speed */
 
 				/* Various flags */
-				if (item->flags3 & TR3_SLOW_DIGEST) weapon_swap_slow_digest =
+				if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) weapon_swap_slow_digest =
 						TRUE;
-				if (item->flags3 & TR3_AGGRAVATE) weapon_swap_aggravate = TRUE;
-				if (item->flags3 & TR3_TELEPORT) weapon_swap_teleport = TRUE;
-				if (item->flags3 & TR3_REGEN) weapon_swap_regenerate = TRUE;
-				if (item->flags3 & TR3_TELEPATHY) weapon_swap_telepathy = TRUE;
-				if (item->flags3 & TR3_LITE) weapon_swap_lite = TRUE;
-				if (item->flags3 & TR3_SEE_INVIS) weapon_swap_see_invis = TRUE;
-				if (item->flags3 & TR3_FEATHER) weapon_swap_ffall = TRUE;
-				if (item->flags2 & TR2_FREE_ACT) weapon_swap_free_act = TRUE;
-				if (item->flags2 & TR2_HOLD_LIFE) weapon_swap_hold_life = TRUE;
+				if (l_ptr->kn_flags3 & TR3_AGGRAVATE) weapon_swap_aggravate = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPORT) weapon_swap_teleport = TRUE;
+				if (l_ptr->kn_flags3 & TR3_REGEN) weapon_swap_regenerate = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPATHY) weapon_swap_telepathy = TRUE;
+				if (l_ptr->kn_flags3 & TR3_LITE) weapon_swap_lite = TRUE;
+				if (l_ptr->kn_flags3 & TR3_SEE_INVIS) weapon_swap_see_invis = TRUE;
+				if (l_ptr->kn_flags3 & TR3_FEATHER) weapon_swap_ffall = TRUE;
+				if (l_ptr->kn_flags2 & TR2_FREE_ACT) weapon_swap_free_act = TRUE;
+				if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) weapon_swap_hold_life = TRUE;
 
 				/* Immunity flags */
-				/* if you are immune you automaticly resist */
-				if (item->flags2 & TR2_IM_FIRE)
+				if (l_ptr->kn_flags2 & TR2_IM_FIRE)
 				{
 					weapon_swap_immune_fire = TRUE;
 					weapon_swap_resist_fire = TRUE;
 				}
-				if (item->flags2 & TR2_IM_ACID)
+				if (l_ptr->kn_flags2 & TR2_IM_ACID)
 				{
 					weapon_swap_immune_acid = TRUE;
 					weapon_swap_resist_acid = TRUE;
 				}
-				if (item->flags2 & TR2_IM_COLD)
+				if (l_ptr->kn_flags2 & TR2_IM_COLD)
 				{
 					weapon_swap_immune_cold = TRUE;
 					weapon_swap_resist_cold = TRUE;
 				}
-				if (item->flags2 & TR2_IM_ELEC)
+				if (l_ptr->kn_flags2 & TR2_IM_ELEC)
 				{
 					weapon_swap_immune_elec = TRUE;
 					weapon_swap_resist_elec = TRUE;
 				}
 
 				/* Resistance flags */
-				if (item->flags2 & TR2_RES_ACID) weapon_swap_resist_acid = TRUE;
-				if (item->flags2 & TR2_RES_ELEC) weapon_swap_resist_elec = TRUE;
-				if (item->flags2 & TR2_RES_FIRE) weapon_swap_resist_fire = TRUE;
-				if (item->flags2 & TR2_RES_COLD) weapon_swap_resist_cold = TRUE;
-				if (item->flags2 & TR2_RES_POIS) weapon_swap_resist_pois = TRUE;
-				if (item->flags2 & TR2_RES_CONF) weapon_swap_resist_conf = TRUE;
-				if (item->flags2 & TR2_RES_SOUND) weapon_swap_resist_sound =
+				if (l_ptr->kn_flags2 & TR2_RES_ACID) weapon_swap_resist_acid = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_ELEC) weapon_swap_resist_elec = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_FIRE) weapon_swap_resist_fire = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_COLD) weapon_swap_resist_cold = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_POIS) weapon_swap_resist_pois = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_CONF) weapon_swap_resist_conf = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_SOUND) weapon_swap_resist_sound =
 						TRUE;
-				if (item->flags2 & TR2_RES_LITE) weapon_swap_resist_lite = TRUE;
-				if (item->flags2 & TR2_RES_DARK) weapon_swap_resist_dark = TRUE;
-				if (item->flags2 & TR2_RES_CHAOS) weapon_swap_resist_chaos =
+				if (l_ptr->kn_flags2 & TR2_RES_LITE) weapon_swap_resist_lite = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_DARK) weapon_swap_resist_dark = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_CHAOS) weapon_swap_resist_chaos =
 						TRUE;
-				if (item->flags2 & TR2_RES_DISEN) weapon_swap_resist_disen =
+				if (l_ptr->kn_flags2 & TR2_RES_DISEN) weapon_swap_resist_disen =
 						TRUE;
-				if (item->flags2 & TR2_RES_SHARDS) weapon_swap_resist_shard =
+				if (l_ptr->kn_flags2 & TR2_RES_SHARDS) weapon_swap_resist_shard =
 						TRUE;
-				if (item->flags2 & TR2_RES_NEXUS) weapon_swap_resist_nexus =
+				if (l_ptr->kn_flags2 & TR2_RES_NEXUS) weapon_swap_resist_nexus =
 						TRUE;
-				if (item->flags2 & TR2_RES_BLIND) weapon_swap_resist_blind =
+				if (l_ptr->kn_flags2 & TR2_RES_BLIND) weapon_swap_resist_blind =
 						TRUE;
-				if (item->flags2 & TR2_RES_NETHER) weapon_swap_resist_neth =
+				if (l_ptr->kn_flags2 & TR2_RES_NETHER) weapon_swap_resist_neth =
 						TRUE;
 
-				if (item->cursed) decurse_weapon_swap = 0;
-				if (item->flags3 & TR3_HEAVY_CURSE) decurse_weapon_swap = 1;
+				if (l_ptr->kn_flags3 & TR3_CURSED) decurse_weapon_swap = 0;
+				if (l_ptr->kn_flags3 & TR3_HEAVY_CURSE) decurse_weapon_swap = 1;
 
 				/* Sustain flags */
 
 				/* calculating the value of the swap weapon. */
-				damage = (item->dd * (item->ds) * 25L);
+				damage = (l_ptr->dd * (l_ptr->ds) * 25L);
 
 				/* Reward "damage" and increased blows per round */
 				v += damage * (borg_skill[BI_BLOWS] + 1);
 
 				/* Reward "bonus to hit" */
-				v += ((borg_skill[BI_TOHIT] + item->to_h) * 25L);
+				v += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 25L);
 
 				/* Reward "bonus to dam" */
-				v += ((borg_skill[BI_TODAM] + item->to_d) * 30L);
+				v += ((borg_skill[BI_TODAM] + l_ptr->to_d) * 30L);
 
 				dam = damage * borg_skill[BI_BLOWS];
 
 				/* assume 2x base damage for x% of creatures */
 				dam = damage * 2 * borg_skill[BI_BLOWS];
+				
 				/* rewared SAnimal if no electric brand */
 				if (!borg_skill[BI_WS_ANIMAL] && !borg_skill[BI_WB_ELEC] &&
 					weapon_swap_slay_animal) v += (dam * 2) / 2;
+				
 				if (!borg_skill[BI_WS_EVIL] &&
 					weapon_swap_slay_evil) v += (dam * 7) / 2;
 
@@ -2265,7 +2256,6 @@ static void borg_notice_weapon_swap(void)
 					weapon_swap_slay_orc) v += (dam * 1) / 2;
 				if (!borg_skill[BI_WS_TROLL] &&
 					weapon_swap_slay_troll) v += (dam * 2) / 2;
-
 				if (!borg_skill[BI_WS_UNDEAD] &&
 					weapon_swap_slay_undead) v += (dam * 5) / 2;
 				if (!borg_skill[BI_WS_DEMON] &&
@@ -2373,20 +2363,12 @@ static void borg_notice_weapon_swap(void)
 
 
 				/*  Mega-Hack -- resists (level 60) */
-				/* its possible that he will get a sword and a cloak
-				 * both with the same high resist and keep each based
-				 * on that resist.  We want him to check to see
-				 * that the other swap does not already have the high resist.
-				 */
 				if (!borg_skill[BI_RNTHR] && (borg_skill[BI_MAXDEPTH] + 1 >= 55)
 					&& weapon_swap_resist_neth) v += 100000L;
 				if (!borg_skill[BI_RKAOS] && (borg_skill[BI_MAXDEPTH] + 1 >= 60)
 					&& weapon_swap_resist_chaos) v += 100000L;
 				if (!borg_skill[BI_RDIS] && (borg_skill[BI_MAXDEPTH] + 1 >= 60)
 					&& weapon_swap_resist_disen) v += 100000L;
-
-				/* some artifacts would make good back ups for their activation */
-
 
 				/* skip usless ones */
 				if (v <= 1000) continue;
@@ -2406,12 +2388,14 @@ static void borg_notice_weapon_swap(void)
 	weapon_swap_value = b_v;
 	weapon_swap = b_i;
 
-	/* Now that we know who the best swap is lets set our swap
+	/*
+	 * Now that we know who the best swap is lets set our swap
 	 * flags and get a move on
 	 */
+	
 	/*** Process the best inven item ***/
 
-	item = &borg_items[b_i];
+	l_ptr = &inventory[b_i];
 
 	/* Clear all the swap weapon flags as I look at each one. */
 	weapon_swap_slay_animal = FALSE;
@@ -2468,106 +2452,102 @@ static void borg_notice_weapon_swap(void)
 	if ((borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
 		 amt_enchant_weapon >= 1))
 	{
-		if (item->to_h < 10)
+		if (l_ptr->to_h < 10)
 		{
-			enchant_weapon_swap_to_h += (10 - item->to_h);
+			enchant_weapon_swap_to_h += (10 - l_ptr->to_h);
 		}
 
 		/* Enchant my swap (to damage) */
-		if (item->to_d < 10)
+		if (l_ptr->to_d < 10)
 		{
-			enchant_weapon_swap_to_d += (10 - item->to_d);
+			enchant_weapon_swap_to_d += (10 - l_ptr->to_d);
 		}
 	}
 	else
 	{
-		if (item->to_h < 8)
+		if (l_ptr->to_h < 8)
 		{
-			enchant_weapon_swap_to_h += (8 - item->to_h);
+			enchant_weapon_swap_to_h += (8 - l_ptr->to_h);
 		}
 
 		/* Enchant my swap (to damage) */
-		if (item->to_d < 8)
+		if (l_ptr->to_d < 8)
 		{
-			enchant_weapon_swap_to_d += (8 - item->to_d);
+			enchant_weapon_swap_to_d += (8 - l_ptr->to_d);
 		}
 	}
 
 	/* various slays */
-	if (item->flags1 & TR1_SLAY_ANIMAL) weapon_swap_slay_animal = TRUE;
-	if (item->flags1 & TR1_SLAY_EVIL) weapon_swap_slay_evil = TRUE;
-	if (item->flags1 & TR1_SLAY_UNDEAD) weapon_swap_slay_undead = TRUE;
-	if (item->flags1 & TR1_SLAY_DEMON) weapon_swap_slay_demon = TRUE;
-	if (item->flags1 & TR1_SLAY_ORC) weapon_swap_slay_orc = TRUE;
-	if (item->flags1 & TR1_SLAY_TROLL) weapon_swap_slay_troll = TRUE;
-	if (item->flags1 & TR1_SLAY_GIANT) weapon_swap_slay_giant = TRUE;
-	if (item->flags1 & TR1_SLAY_DRAGON) weapon_swap_slay_dragon = TRUE;
-	if (item->flags1 & TR1_KILL_DRAGON) weapon_swap_kill_dragon = TRUE;
-	if (item->flags1 & TR1_IMPACT) weapon_swap_impact = TRUE;
-	if (item->flags1 & TR1_BRAND_ACID) weapon_swap_brand_acid = TRUE;
-	if (item->flags1 & TR1_BRAND_ELEC) weapon_swap_brand_elec = TRUE;
-	if (item->flags1 & TR1_BRAND_FIRE) weapon_swap_brand_fire = TRUE;
-	if (item->flags1 & TR1_BRAND_COLD) weapon_swap_brand_cold = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) weapon_swap_slay_animal = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) weapon_swap_slay_evil = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_UNDEAD) weapon_swap_slay_undead = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_DEMON) weapon_swap_slay_demon = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_ORC) weapon_swap_slay_orc = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_TROLL) weapon_swap_slay_troll = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_GIANT) weapon_swap_slay_giant = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) weapon_swap_slay_dragon = TRUE;
+	if (l_ptr->kn_flags1 & TR1_KILL_DRAGON) weapon_swap_kill_dragon = TRUE;
+	if (l_ptr->kn_flags1 & TR1_IMPACT) weapon_swap_impact = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_ACID) weapon_swap_brand_acid = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_ELEC) weapon_swap_brand_elec = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_FIRE) weapon_swap_brand_fire = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_COLD) weapon_swap_brand_cold = TRUE;
 
 	/* Affect infravision */
-	if (item->flags1 & TR1_INFRA) weapon_swap_see_infra += item->pval;
-	/* Affect various skills */
-	/* Affect speed */
+	if (l_ptr->kn_flags1 & TR1_INFRA) weapon_swap_see_infra += l_ptr->pval;
 
 	/* Various flags */
-	if (item->flags3 & TR3_SLOW_DIGEST) weapon_swap_slow_digest = TRUE;
-	if (item->flags3 & TR3_AGGRAVATE) weapon_swap_aggravate = TRUE;
-	if (item->flags3 & TR3_TELEPORT) weapon_swap_teleport = TRUE;
-	if (item->flags3 & TR3_REGEN) weapon_swap_regenerate = TRUE;
-	if (item->flags3 & TR3_TELEPATHY) weapon_swap_telepathy = TRUE;
-	if (item->flags3 & TR3_LITE) weapon_swap_lite = TRUE;
-	if (item->flags3 & TR3_SEE_INVIS) weapon_swap_see_invis = TRUE;
-	if (item->flags3 & TR3_FEATHER) weapon_swap_ffall = TRUE;
-	if (item->flags2 & TR2_FREE_ACT) weapon_swap_free_act = TRUE;
-	if (item->flags2 & TR2_HOLD_LIFE) weapon_swap_hold_life = TRUE;
+	if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) weapon_swap_slow_digest = TRUE;
+	if (l_ptr->kn_flags3 & TR3_AGGRAVATE) weapon_swap_aggravate = TRUE;
+	if (l_ptr->kn_flags3 & TR3_TELEPORT) weapon_swap_teleport = TRUE;
+	if (l_ptr->kn_flags3 & TR3_REGEN) weapon_swap_regenerate = TRUE;
+	if (l_ptr->kn_flags3 & TR3_TELEPATHY) weapon_swap_telepathy = TRUE;
+	if (l_ptr->kn_flags3 & TR3_LITE) weapon_swap_lite = TRUE;
+	if (l_ptr->kn_flags3 & TR3_SEE_INVIS) weapon_swap_see_invis = TRUE;
+	if (l_ptr->kn_flags3 & TR3_FEATHER) weapon_swap_ffall = TRUE;
+	if (l_ptr->kn_flags2 & TR2_FREE_ACT) weapon_swap_free_act = TRUE;
+	if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) weapon_swap_hold_life = TRUE;
 
 	/* Immunity flags */
-	/* if you are immune you automaticly resist */
-	if (item->flags2 & TR2_IM_FIRE)
+	if (l_ptr->kn_flags2 & TR2_IM_FIRE)
 	{
 		weapon_swap_immune_fire = TRUE;
 		weapon_swap_resist_fire = TRUE;
 	}
-	if (item->flags2 & TR2_IM_ACID)
+	if (l_ptr->kn_flags2 & TR2_IM_ACID)
 	{
 		weapon_swap_immune_acid = TRUE;
 		weapon_swap_resist_acid = TRUE;
 	}
-	if (item->flags2 & TR2_IM_COLD)
+	if (l_ptr->kn_flags2 & TR2_IM_COLD)
 	{
 		weapon_swap_immune_cold = TRUE;
 		weapon_swap_resist_cold = TRUE;
 	}
-	if (item->flags2 & TR2_IM_ELEC)
+	if (l_ptr->kn_flags2 & TR2_IM_ELEC)
 	{
 		weapon_swap_immune_elec = TRUE;
 		weapon_swap_resist_elec = TRUE;
 	}
 
 	/* Resistance flags */
-	if (item->flags2 & TR2_RES_ACID) weapon_swap_resist_acid = TRUE;
-	if (item->flags2 & TR2_RES_ELEC) weapon_swap_resist_elec = TRUE;
-	if (item->flags2 & TR2_RES_FIRE) weapon_swap_resist_fire = TRUE;
-	if (item->flags2 & TR2_RES_COLD) weapon_swap_resist_cold = TRUE;
-	if (item->flags2 & TR2_RES_POIS) weapon_swap_resist_pois = TRUE;
-	if (item->flags2 & TR2_RES_CONF) weapon_swap_resist_conf = TRUE;
-	if (item->flags2 & TR2_RES_SOUND) weapon_swap_resist_sound = TRUE;
-	if (item->flags2 & TR2_RES_LITE) weapon_swap_resist_lite = TRUE;
-	if (item->flags2 & TR2_RES_DARK) weapon_swap_resist_dark = TRUE;
-	if (item->flags2 & TR2_RES_CHAOS) weapon_swap_resist_chaos = TRUE;
-	if (item->flags2 & TR2_RES_DISEN) weapon_swap_resist_disen = TRUE;
-	if (item->flags2 & TR2_RES_SHARDS) weapon_swap_resist_shard = TRUE;
-	if (item->flags2 & TR2_RES_NEXUS) weapon_swap_resist_nexus = TRUE;
-	if (item->flags2 & TR2_RES_BLIND) weapon_swap_resist_blind = TRUE;
-	if (item->flags2 & TR2_RES_NETHER) weapon_swap_resist_neth = TRUE;
-	if (item->cursed) decurse_weapon_swap = 0;
-	if (item->flags3 & TR3_HEAVY_CURSE) decurse_weapon_swap = 1;
-
+	if (l_ptr->kn_flags2 & TR2_RES_ACID) weapon_swap_resist_acid = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_ELEC) weapon_swap_resist_elec = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_FIRE) weapon_swap_resist_fire = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_COLD) weapon_swap_resist_cold = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_POIS) weapon_swap_resist_pois = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_CONF) weapon_swap_resist_conf = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_SOUND) weapon_swap_resist_sound = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_LITE) weapon_swap_resist_lite = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_DARK) weapon_swap_resist_dark = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_CHAOS) weapon_swap_resist_chaos = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_DISEN) weapon_swap_resist_disen = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_SHARDS) weapon_swap_resist_shard = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_NEXUS) weapon_swap_resist_nexus = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_BLIND) weapon_swap_resist_blind = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_NETHER) weapon_swap_resist_neth = TRUE;
+	if (l_ptr->kn_flags3 & TR3_CURSED) decurse_weapon_swap = 0;
+	if (l_ptr->kn_flags3 & TR3_HEAVY_CURSE) decurse_weapon_swap = 1;
 }
 
 /*
