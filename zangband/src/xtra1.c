@@ -2875,13 +2875,6 @@ static void calc_bonuses(void)
 		}
 	}
 
-	/* Apply the racial modifiers */
-	for (i = 0; i < A_MAX; i++)
-	{
-		/* Modify the stats for "race" */
-		p_ptr->stat_add[i] += (rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
-	}
-
 
 	/* Effects of constantly acting mutations */
 	if (p_ptr->muta3)

@@ -2143,10 +2143,6 @@ static void display_player_stat_info(void)
 		if ((p_ptr->stat_max[i] > 18) && (p_ptr->stat_top[i] <= 18))
 			e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i] - 18) / 10 - 19;
 
-		/* Deduct class and race bonuses */
-		e_adj -= rp_ptr->r_adj[i];
-		e_adj -= cp_ptr->c_adj[i];
-
 		/* Reduced name of stat */
 		c_put_str(TERM_WHITE, stat_names_reduced[i], stat_col, row + i);
 

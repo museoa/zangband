@@ -746,6 +746,56 @@ static void load_prev_data(void)
 }
 
 
+static int adjust_stat(int value, int amount)
+{
+    int i;
+
+    /* Negative amounts */
+    if (amount < 0)
+    {
+        /* Apply penalty */
+        for (i = 0; i < (0 - amount); i++)
+        {
+            if (value >= 18+10)
+            {
+                value -= 10;
+            }
+            else if (value > 18)
+            {
+                value = 18;
+            }
+            else
+            {
+                value--;
+            }
+        }
+    }
+
+    /* Positive amounts */
+    else if (amount > 0)
+    {
+        /* Apply reward */
+        for (i = 0; i < amount; i++)
+        {
+            if (value < 18)
+            {
+                value++;
+            }
+            else
+            {
+                value += rand_range(5, 15);
+            }
+        }
+    }
+
+    /* Cap value */
+    if (value > 18+100)
+        value = 18+100;
+
+    /* Return the result */
+    return (value);
+}
+
 /*
  * Roll for a characters stats
  *
@@ -784,17 +834,14 @@ static void get_stats(void)
 		/* Extract 5 + 1d3 + 1d4 + 1d5 */
 		j = 5 + dice[3 * i] + dice[3 * i + 1] + dice[3 * i + 2];
 
-		/* Save that value */
-		p_ptr->stat_max[i] = j;
-
 		/* Obtain a "bonus" for "race" and "class" */
-		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+        bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+
+        /* Apply the bonus to the stat (somewhat randomly) */
+        stat_use[i] = adjust_stat(j, bonus);
 
 		/* Start fully healed */
-		p_ptr->stat_cur[i] = p_ptr->stat_max[i];
-
-		/* Efficiency -- Apply the racial/class bonuses */
-		stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
+		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
 	}
 }
 
