@@ -1788,6 +1788,8 @@ static void calc_mana(void)
 	msp = adj_mag_mana[p_ptr->stat_ind[mp_ptr->spell_stat]] * levels / 2;
 
 	/* Hack - the weak spellcasters get half as much mana (rounded up) in Oangband. */
+	/* But this is not Oangband... */
+#if 0
 	switch (p_ptr->pclass)
 	{
 		case CLASS_ROGUE:
@@ -1804,8 +1806,8 @@ static void calc_mana(void)
 			break;
 		}
 	}
-	
-	
+#endif
+
 	/* Hack -- usually add one mana */
 	if (msp) msp++;
 
@@ -1829,8 +1831,8 @@ static void calc_mana(void)
 
 		/* Normal gloves hurt mage-type spells */
 		if (o_ptr->k_idx &&
-		    !(f2 & (TR2_FREE_ACT)) &&
-		    !((f1 & (TR1_DEX)) && (o_ptr->pval > 0)))
+			 !(f2 & (TR2_FREE_ACT)) &&
+			 !((f1 & (TR1_DEX)) && (o_ptr->pval > 0)))
 		{
 			/* Encumbered */
 			p_ptr->cumber_glove = TRUE;
@@ -1865,7 +1867,7 @@ static void calc_mana(void)
 		/* Subtract a percentage of maximum mana. */
 		switch (p_ptr->pclass)
 		{
-			/* For these classes, mana is halved if armour 
+			/* For these classes, mana is halved if armour
 			 * is 30 pounds over their weight limit. */
 			case CLASS_MAGE:
 			case CLASS_HIGH_MAGE:
