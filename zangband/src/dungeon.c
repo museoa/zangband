@@ -1219,7 +1219,8 @@ static void process_world(void)
 		}
 	}
 
-	else if ((c_ptr->feat == FEAT_DEEP_WATER) && !p_ptr->ffall)
+	else if (((c_ptr->feat == FEAT_DEEP_WATER) ||
+		(c_ptr->feat == FEAT_OCEAN_WATER)) && !p_ptr->ffall)
 	{
 		if (p_ptr->total_weight > ((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2))
 		{
