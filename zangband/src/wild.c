@@ -606,10 +606,9 @@ static void init_towns(void)
 	town_value = 256;
 
 	/*
-	 * Hack - Try to add max_towns towns.
-	 * (Although will only get ~3/4 of these)
+	 * Try to add max_towns towns.
 	 */
-	while (town_count < max_towns / 2)
+	while (town_count < max_towns)
 	{
 		/* Get random position */
 		x = randint(max_wild);
