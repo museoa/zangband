@@ -288,41 +288,41 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 
 	/* Read the scroll */
 	used_up = use_object(o_ptr, &ident);
-
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	if (!(object_aware_p(o_ptr)))
-	{
-		chg_virtue(V_PATIENCE, -1);
-		chg_virtue(V_CHANCE, 1);
-	}
-
-	/* The item was tried */
-	object_tried(o_ptr);
-
-	/* An identification was made */
-	if (ident && !object_aware_p(o_ptr))
-	{
-		/* Object level */
-		int lev = get_object_level(o_ptr);
-
-		object_aware(o_ptr);
-		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
-	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
-
-	/* Hack -- allow certain scrolls to be "preserved" */
-	if (!used_up) return;
-
-	sound(SOUND_SCROLL);
 	
 	/* Hack - the scroll may already be destroyed by its effect */
 	if (o_ptr->k_idx)
 	{
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+		if (!(object_aware_p(o_ptr)))
+		{
+			chg_virtue(V_PATIENCE, -1);
+			chg_virtue(V_CHANCE, 1);
+		}
+
+		/* The item was tried */
+		object_tried(o_ptr);
+
+		/* An identification was made */
+		if (ident && !object_aware_p(o_ptr))
+		{
+			/* Object level */
+			int lev = get_object_level(o_ptr);
+
+			object_aware(o_ptr);
+			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
+		}
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+
+		/* Hack -- allow certain scrolls to be "preserved" */
+		if (!used_up) return;
+
+		sound(SOUND_SCROLL);
+	
 		/* Destroy a scroll */
 		item_increase(o_ptr, -1);
 	}
@@ -445,70 +445,74 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 
 	/* Use the staff */
 	use_charge = use_object(o_ptr, &ident);
-
-	if (!(object_aware_p(o_ptr)))
+	
+	/* Hack - the staff may destroy itself when activated on the ground */
+	if (o_ptr->k_idx)
 	{
-		chg_virtue(V_PATIENCE, -1);
-		chg_virtue(V_CHANCE, 1);
-	}
-
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Tried the item */
-	object_tried(o_ptr);
-
-	/* An identification was made */
-	if (ident && !object_aware_p(o_ptr))
-	{
-		object_aware(o_ptr);
-		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
-	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
-
-	/* Hack -- some uses are "free" */
-	if (!use_charge) return;
-
-	/* XXX Hack -- unstack if necessary */
-	if (o_ptr->number > 1)
-	{
-		/* Split object */
-		o_ptr = item_split(o_ptr, 1);
-
-		/* Use a single charge */
-		o_ptr->pval--;
-
-		/* Unstack the used item */
-		o_ptr = inven_carry(o_ptr);
-
-		/* Notice weight changes */
-		p_ptr->update |= PU_WEIGHT;
-
-		/* Paranoia */
-		if (!o_ptr)
+		if (!(object_aware_p(o_ptr)))
 		{
-			msg_print("Too many dungeon objects - staff lost!");
-
-			make_noise(1);
-
-			/* Exit */
-			return;
+			chg_virtue(V_PATIENCE, -1);
+			chg_virtue(V_CHANCE, 1);
 		}
 
-		/* Message */
-		msg_print("You unstack your staff.");
-	}
-	else
-	{
-		/* Use a single charge */
-		o_ptr->pval--;
-	}
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Describe charges in the pack */
-	if (o_ptr) item_charges(o_ptr);
+		/* Tried the item */
+		object_tried(o_ptr);
+
+		/* An identification was made */
+		if (ident && !object_aware_p(o_ptr))
+		{
+			object_aware(o_ptr);
+			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
+		}
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+
+		/* Hack -- some uses are "free" */
+		if (!use_charge) return;
+
+		/* XXX Hack -- unstack if necessary */
+		if (o_ptr->number > 1)
+		{
+			/* Split object */
+			o_ptr = item_split(o_ptr, 1);
+
+			/* Use a single charge */
+			o_ptr->pval--;
+
+			/* Unstack the used item */
+			o_ptr = inven_carry(o_ptr);
+
+			/* Notice weight changes */
+			p_ptr->update |= PU_WEIGHT;
+
+			/* Paranoia */
+			if (!o_ptr)
+			{
+				msg_print("Too many dungeon objects - staff lost!");
+
+				make_noise(1);
+
+				/* Exit */
+				return;
+			}
+
+			/* Message */
+			msg_print("You unstack your staff.");
+		}
+		else
+		{
+			/* Use a single charge */
+			o_ptr->pval--;
+		}
+
+		/* Describe charges in the pack */
+		if (o_ptr) item_charges(o_ptr);
+	}
 
 	make_noise(1);
 }
@@ -587,34 +591,38 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 
 	/* Aim the wand */
 	use_charge = use_object(o_ptr, &ident);
-
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Mark it as tried */
-	object_tried(o_ptr);
-
-	/* Apply identification */
-	if (ident && !object_aware_p(o_ptr))
+	
+	/* Hack - wands may destroy themselves if activated on the ground */
+	if (o_ptr->k_idx)
 	{
-		int lev = get_object_level(o_ptr);
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-		object_aware(o_ptr);
-		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
+		/* Mark it as tried */
+		object_tried(o_ptr);
+
+		/* Apply identification */
+		if (ident && !object_aware_p(o_ptr))
+		{
+			int lev = get_object_level(o_ptr);
+
+			object_aware(o_ptr);
+			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
+		}
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+		/* Hack -- some uses are "free" */
+		if (!use_charge) return;
+
+		/* Use a single charge */
+		o_ptr->pval--;
+		o_ptr->ac++;
+
+		/* Describe the charges */
+		item_charges(o_ptr);
 	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
-	/* Hack -- some uses are "free" */
-	if (!use_charge) return;
-
-	/* Use a single charge */
-	o_ptr->pval--;
-	o_ptr->ac++;
-
-	/* Describe the charges */
-	item_charges(o_ptr);
 
 	make_noise(1);
 }
