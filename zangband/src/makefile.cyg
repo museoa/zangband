@@ -160,20 +160,16 @@ INCS		= \
 
 default:	zangband
 
-install:	zangband movebin cleanobjs
-
-# movebin:
-#		copy zangband.exe ..
-#		del zangband.exe
+install:	zangband movebin
 
 movebin:
-		mv -f zangband.exe ../zangband.exe
+	mv -f zangband.exe ../zangband.exe
 
 cleanobjs:
-		rm -f $(EXOBJS)
+	rm -f $(EXOBJS)
 
 cleanbin:
-		rm -f zangband
+	rm -f zangband
 
 clean:	cleanobjs cleanbin
 
