@@ -2637,6 +2637,13 @@ void display_map(int *cx, int *cy)
 	int hgt, wid, yrat, xrat, xfactor, yfactor;
 	
 	place_type *pl_ptr;
+	
+		
+	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		Term_bigregion(-1, -1, -1);
+	}
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -2644,7 +2651,7 @@ void display_map(int *cx, int *cy)
 	wid -= 2;
 	
 	/* Paranoia */
-	if ((hgt < 5) || (wid < 3))
+	if ((hgt < 3) || (wid < 3))
 	{
 		/*
 		 * Need to place the player...
@@ -2653,13 +2660,6 @@ void display_map(int *cx, int *cy)
 		(*cy) = ROW_MAP;
 		(*cx) = COL_MAP;
 		return;
-	}
-	
-	/* Bigtile whole screen */
-	if (use_bigtile)
-	{
-		wid /= 2;
-		Term_bigregion(1, 1, hgt);
 	}
 
 	/* Allocate the maps */
@@ -2971,9 +2971,6 @@ void display_map(int *cx, int *cy)
 	FREE(mta);
 	FREE(mtc);
 	FREE(mp);
-	
-	/* XXX XXX Hack - Revert bigtile mode */
-	if (use_bigtile) map_panel_size();
 }
 
 
