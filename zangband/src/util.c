@@ -19,7 +19,7 @@
 char *memset(char *s, int c, huge n)
 {
 	char *t;
-	for (t = s; len--; ) *t++ = c;
+	for (t = s; n--; ) *t++ = c;
 	return (s);
 }
 
