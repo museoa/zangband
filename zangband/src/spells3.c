@@ -678,6 +678,8 @@ void teleport_player_level(void)
 
 bool check_down_wild(void)
 {
+	place_type *pl_ptr;
+
 	/* Can always recall from dungeon */
 	if (p_ptr->depth) return (TRUE);
 
@@ -691,10 +693,19 @@ bool check_down_wild(void)
 	/* Cannot recall in towns with no dungeon */
 	if (!vanilla_town)
 	{
+		pl_ptr = &place[p_ptr->place_num];
+	
 		/* Look for dungeon */
-		if (!place[p_ptr->place_num].dungeon)
+		if (!pl_ptr->dungeon)
 		{
 			msgf("Nothing happens.");
+			return (FALSE);
+		}
+		
+		/* Else we must have been down before */
+		if (!pl_ptr->dungeon->recall_depth)
+		{
+			msgf("You need to visit the dungeon first.");
 			return (FALSE);
 		}
 	}
