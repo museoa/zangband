@@ -1193,16 +1193,7 @@ void generate_cave(void)
 #endif /* MONSTER_FLOW */
 			}
 		}
-#if 0
-		/* Mega-Hack -- no player yet */
-		px = py = 0;
 
-		/* Mega-Hack -- no panel yet */
-		panel_row_min = 0;
-		panel_row_max = 0;
-		panel_col_min = 0;
-		panel_col_max = 0;
-#endif 0
 		/* Set the base level */
 		base_level = dun_level;
 

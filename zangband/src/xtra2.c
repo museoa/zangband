@@ -2451,7 +2451,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 			name = f_name + f_info[feat].name;
 
-			#if 0
+#if 0
 			/* Hack -- special handling for quest entrances */
 			if (feat == FEAT_QUEST_ENTER)
 			{
@@ -2469,7 +2469,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				/* Reset the old quest number */
 				p_ptr->inside_quest = old_quest;
 			}
-			#endif
+#endif
 
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";

@@ -1479,47 +1479,6 @@ static void get_money(void)
 }
 
 
-
-#if 0
-/*
- * Display stat values, subset of "put_stats()"
- *
- * See 'display_player()' for screen layout constraints.
- */
-static void birth_put_stats(void)
-{
-	int i, p;
-	int col = 42;
-	byte attr;
-	char buf[80];
-
-
-	/* Put the stats (and percents) */
-	for (i = 0; i < A_MAX; i++)
-	{
-		/* Put the stat */
-		cnv_stat(stat_use[i], buf);
-		c_put_str(TERM_L_GREEN, buf, 3+i, col+24);
-
-		/* Put the percent */
-		if (stat_match[i])
-		{
-			p = 1000L * stat_match[i] / auto_round;
-			attr = (p < 100) ? TERM_YELLOW : TERM_L_GREEN;
-			sprintf(buf, "%3d.%d%%", p/10, p%10);
-			c_put_str(attr, buf, 3+i, col+13);
-		}
-
-		/* Never happened */
-		else
-		{
-			c_put_str(TERM_RED, "(NONE)", 3+i, col+13);
-		}
-	}
-}
-
-#endif /* 0 */
-
 /*
  * Clear all the global "character" data
  */
@@ -2142,9 +2101,6 @@ static bool player_birth_aux_1(void)
 
 	char ch;
 
-#if 0
-	char p1 = '(';
-#endif
 	char p2 = ')';
 
 	char buf[80];
@@ -2554,14 +2510,6 @@ static bool player_birth_aux_2(void)
 
 		/* Done */
 		if (ch == ESCAPE) break;
-
-#if 0
-		/* Increase mode */
-		if (ch == 'h')
-		{
-			mode = (mode + 1) % DISPLAY_PLAYER_MAX;
-		}
-#endif
 
 		/* Prev stat */
 		if (ch == '8')

@@ -2966,10 +2966,6 @@ static void do_cmd_knowledge_artifacts(void)
 {
 	int i, k, z;
 
-#if 0
-	int x, y;
-#endif
-
 	FILE *fff;
 
 	char file_name[1024];
@@ -3005,42 +3001,6 @@ static void do_cmd_knowledge_artifacts(void)
 		/* Assume okay */
 		okay[k] = TRUE;
 	}
-
-
-#if 0
-	/* Check the dungeon */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
-		{
-			cave_type *c_ptr = area(y,x);
-
-			s16b this_o_idx, next_o_idx = 0;
-
-			/* Scan all objects in the grid */
-			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-			{
-				object_type *o_ptr;
-
-				/* Acquire object */
-				o_ptr = &o_list[this_o_idx];
-
-				/* Acquire next object */
-				next_o_idx = o_ptr->next_o_idx;
-
-				/* Ignore non-artifacts */
-				if (!artifact_p(o_ptr)) continue;
-
-				/* Ignore known items */
-				if (object_known_p(o_ptr)) continue;
-
-				/* Note the artifact */
-				okay[o_ptr->name1] = FALSE;
-			}
-		}
-	}
-
-#endif
 
 	/* Check the dungeon */
 

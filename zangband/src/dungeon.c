@@ -4157,11 +4157,6 @@ void play_game(bool new_game)
 		quit("main window is too small");
 	}
 
-#if 0
-	/* Forbid resizing */
-	Term->fixed_shape = TRUE;
-#endif /* 0 */
-
 	/* Hack -- turn off the cursor */
 	(void)Term_set_cursor(0);
 

@@ -92,18 +92,12 @@ void do_cmd_go_up(void)
 
 		if (go_up)
 		{
-
-#if 0
 	/*
 	 * I'm experimenting without this... otherwise the monsters get to
 	 * act first when we go up stairs, theoretically resulting in a possible
 	 * insta-death.
 	 */
-			/* Hack -- take a turn */
-			energy_use = 100;
-#else
 			energy_use = 0;
-#endif
 
 			/* Success */
 			msg_print("You enter a maze of up staircases.");
@@ -242,13 +236,7 @@ void do_cmd_go_down(void)
 
 		if (go_down)
 		{
-
-#if 0
-			/* Hack -- take a turn */
-			energy_use = 100;
-#else
 			energy_use = 0;
-#endif
 
 			if (fall_trap)
 				msg_print("You deliberately jump through the trap door.");
