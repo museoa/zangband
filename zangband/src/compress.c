@@ -1578,7 +1578,7 @@ void test_compress_module(void)
 	char buf[1024];
 
 	/* Build the filename */
-	(void)path_make(buf, ANGBAND_DIR, infile);
+	path_make(buf, ANGBAND_DIR, infile);
 
 	(void)read_file(h_ptr, buf);
 
@@ -1587,7 +1587,7 @@ void test_compress_module(void)
 	arth_blocks_encode(h_ptr);
 
 	/* Build the filename */
-	(void)path_make(buf, ANGBAND_DIR, outfile);
+	path_make(buf, ANGBAND_DIR, outfile);
 
 	(void)write_file(h_ptr, buf);
 
@@ -1596,7 +1596,7 @@ void test_compress_module(void)
 	ibw_blocks_trans(h_ptr);
 
 	/* Build the filename */
-	(void)path_make(buf, ANGBAND_DIR, outfile2);
+	path_make(buf, ANGBAND_DIR, outfile2);
 
 	(void)write_file(h_ptr, buf);
 
