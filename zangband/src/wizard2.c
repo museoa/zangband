@@ -688,9 +688,6 @@ static void wiz_tweak_item(object_type *o_ptr)
 	char tmp_val[80];
 
 
-	/* Hack -- leave artifacts alone */
-	if (artifact_p(o_ptr) || o_ptr->art_name) return;
-
 	p = "Enter new 'pval' setting: ";
 	sprintf(tmp_val, "%d", o_ptr->pval);
 	if (!get_string(p, tmp_val, 5)) return;
@@ -713,6 +710,12 @@ static void wiz_tweak_item(object_type *o_ptr)
 	sprintf(tmp_val, "%d", o_ptr->to_d);
 	if (!get_string(p, tmp_val, 5)) return;
 	o_ptr->to_d = atoi(tmp_val);
+	wiz_display_item(o_ptr);
+
+	p = "Enter new 'xtra2' setting: ";
+	sprintf(tmp_val, "%d", o_ptr->xtra2);
+	if (!get_string(p, tmp_val, 5)) return;
+	o_ptr->xtra2 = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 }
 
