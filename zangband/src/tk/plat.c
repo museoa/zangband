@@ -647,7 +647,7 @@ BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
 /*
  * Load a font
  */
-BitmapPtr Text_font_load(Tcl_Interp *interp, cptr name, int size)
+BitmapPtr Font_Load(Tcl_Interp *interp, cptr name, int size)
 {
 	BitmapPtr bitmapPtr;
 	

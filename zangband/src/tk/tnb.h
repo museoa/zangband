@@ -55,6 +55,8 @@ extern int tnb_tile_x;
 extern int tnb_tile_y;
 
 extern char tnb_tile_file[1024];
+extern char tnb_font_file[1024];
+extern int tnb_font_size;
 
 extern void tnb_get_term(int x, int y, byte *attr, char *c);
 
@@ -74,7 +76,7 @@ typedef struct BitmapType {
 extern void *Plat_PaletteInit(unsigned char *rgb);
 extern int Plat_XColor2Pixel(XColor *xColorPtr);
 extern void Plat_SyncDisplay(Display *display);
-extern BitmapPtr Text_font_load(Tcl_Interp *interp, cptr name, int size);
+extern BitmapPtr Font_Load(Tcl_Interp *interp, cptr name, int size);
 
 extern void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
 extern void Bitmap_Delete(BitmapPtr bitmapPtr);

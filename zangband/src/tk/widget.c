@@ -29,9 +29,7 @@ struct Widget
     int height;					/* # of rows */
 	
 	BitmapPtr tiles;			/* The graphical tiles */
-	
-	Tk_Font font;
-	int font_y;
+	BitmapPtr font;				/* A dodgy 16x16 font */
 
     int oldWidth, oldHeight;	/* To notice changes */
 
@@ -476,21 +474,10 @@ static void Widget_WorldChanged(ClientData instanceData)
 		gcValues.foreground = 0xFFFFFF;
 		gcValues.function = GXcopy;
 		gcValues.graphics_exposures = False;
-		gcValues.font = Tk_FontId(widgetPtr->font);
 		widgetPtr->gc = Tk_GetGC(tkwin, GCForeground | GCFunction | 
-									 GCGraphicsExposures | GCFont, &gcValues);
+									 GCGraphicsExposures, &gcValues);
     }
 	
-	if (!widgetPtr->font_y)
-	{
-		Tk_FontMetrics fm;
-
-		/* Get info about the font */
-		Tk_GetFontMetrics(widgetPtr->font, &fm);
-		
-		widgetPtr->font_y = /* (widgetPtr->gheight - fm.linespace) / 2*/ + fm.ascent;
-	}
-
 	/* Size changed */
 	if ((widgetPtr->width != widgetPtr->oldWidth) ||
 		(widgetPtr->height != widgetPtr->oldHeight) ||
@@ -1006,7 +993,7 @@ static void Widget_Destroy(Widget *widgetPtr)
 	widgetPtr->tkwin = NULL;
 	
 	/* Free the font, if any */
-	if (widgetPtr->font) Tk_FreeFont(widgetPtr->font);
+	if (widgetPtr->font) Bitmap_Delete(widgetPtr->font);
 	
 	/* Free the callbacks */
 	del_callback(CALL_MAP_INFO, widgetPtr);
@@ -1084,8 +1071,6 @@ static Tk_OptionSpec optionSpecs[20] = {
     (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
     (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
-	{TK_OPTION_FONT, (char *) "-font", NULL, NULL,
-	(char *) "{MS Sans Serif} 8", -1, Tk_Offset(Widget, font), 0, 0, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -1219,6 +1204,10 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	
 	/* Load the tiles */
 	widgetPtr->tiles = Bitmap_Load(g_interp, tnb_tile_file);
+	
+	/* Load the font */
+	widgetPtr->font = Font_Load(g_interp, tnb_font_file, tnb_font_size);
+	
 	
 	/* Hack - initialise the hooks into the overhead map code */
 
