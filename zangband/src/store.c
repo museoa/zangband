@@ -1119,7 +1119,7 @@ static void display_entry(int pos)
 		}
 
 		/* Display a "taxed" cost */
-		
+
 		/* Extract the "minimum" price */
 		x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
@@ -1487,7 +1487,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
 	put_str(out_val, 0, 1);
-	
+
 	/* Get value */
 	return (get_haggle("Do you want to buy it? ", price, ask));
 }
@@ -1503,7 +1503,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	/* Get the owner's payout limit */
 	s32b purse = (s32b)(ot_ptr->max_cost) * 100;
-	
+
 	*price = 0;
 
 	/* No reason to haggle */
@@ -1530,7 +1530,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
 	put_str(out_val, 0, 1);
-	
+
 	/* Get value */
 	return (get_haggle("Do you want to sell it? ", price, ask));
 }

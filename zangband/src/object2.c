@@ -4779,7 +4779,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	if (!done)
 	{
 		o_idx = o_pop();
-		
+
 		/* Failure */
 		if (!o_idx)
 		{
@@ -4792,9 +4792,9 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			/* Failure */
 			return;
 		}
-		
+
 		o_ptr = &o_list[o_idx];
-		
+
 		/* Structure copy */
 		object_copy(o_ptr, j_ptr);
 
@@ -4829,8 +4829,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Fields may interact with an object in some way */
-	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP,
-			   (vptr) o_ptr);
+	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP, (vptr)o_ptr);
 }
 
 

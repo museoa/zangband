@@ -3561,8 +3561,7 @@ bool borg_remove_stuff(void)
 			!strstr(item->desc, "{special")) continue;
 
 		/* skip it if it has not been decursed */
-		if ((item->cursed) ||
-			(item->flags3 & TR3_HEAVY_CURSE)) continue;
+		if ((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE)) continue;
 
 
 		/* Save the hole */
@@ -3706,7 +3705,7 @@ bool borg_wear_stuff(void)
 
 		/* skip it if it has not been decursed, unless the One Ring */
 		if (((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE))	/* &&
-																										   (item->name1 != ART_POWER) */ ) continue;
+																	   (item->name1 != ART_POWER) */ ) continue;
 
 		/* Where does it go */
 		slot = borg_wield_slot(item);
@@ -4049,8 +4048,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 		if (!item->value) continue;
 
 		/* Skip it if it has not been decursed */
-		if ((item->cursed) ||
-			(item->flags3 & TR3_HEAVY_CURSE)) continue;
+		if ((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Make sure it goes in this slot, special consideration
 		 * for checking rings

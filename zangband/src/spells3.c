@@ -2271,7 +2271,7 @@ bool mundane_spell(void)
 		o_ptr->timeout = o_ptr->pval * o_ptr->number;
 		o_ptr->pval = k_ptr->pval * o_ptr->number;
 	}
-	
+
 	/* Initialise cost */
 	o_ptr->cost = k_ptr->cost;
 

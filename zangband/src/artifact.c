@@ -1875,23 +1875,23 @@ bool activate_effect(object_type *o_ptr)
 				break;
 			}
 
-            case ART_KERI:
+			case ART_KERI:
 			{
 				object_type *q_ptr;
 				object_type forge;
 
 				msg_print("Your rag feels warm for a moment...");
 
-                /* Get local object */
+				/* Get local object */
 				q_ptr = &forge;
 
 				/* Create the food ration */
 				object_prep(q_ptr, 21);
 
 				/* Drop the object from heaven */
-                drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+				drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
 
-                o_ptr->timeout = 100;
+				o_ptr->timeout = 100;
 
 				break;
 			}
