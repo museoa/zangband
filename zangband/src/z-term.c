@@ -1983,6 +1983,14 @@ void Term_load(void)
 	/* Pop off window from the list */
 	if (Term->scr->next)
 	{
+		/* Hack - is bigtile not on? */
+		if ((Term->scr->big_x1 == -1) && (Term->scr->next->big_x1 != -1))
+		{
+			/* Erase term so boundaries are cleared properly. */
+			Term_clear();
+			Term_redraw();
+		}
+		
 		/* Save pointer to old window */
 		tmp = Term->scr;
 		
