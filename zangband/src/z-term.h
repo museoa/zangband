@@ -26,6 +26,8 @@
  *	- Array[h*w] -- Attribute array
  *	- Array[h*w] -- Character array
  *
+ *  - Pointer to the next window in the stack.
+ *
  * Note that the attr/char pair at (x,y) is a[y][x]/c[y][x]
  * and that the row of attr/chars at (0,y) is a[y]/c[y]
  */
@@ -48,6 +50,8 @@ struct term_win
 
 	byte *vta;
 	char *vtc;
+	
+	term_win *next;
 };
 
 
@@ -132,8 +136,6 @@ struct term_win
  *	- Displayed screen image
  *	- Requested screen image
  *
- *	- Memorized screen image
- *
  *
  *	- Hook for init-ing the term
  *	- Hook for nuke-ing the term
@@ -197,8 +199,6 @@ struct term
 
 	term_win *old;
 	term_win *scr;
-
-	term_win *mem;
 
 	void (*init_hook) (term *t);
 	void (*nuke_hook) (term *t);

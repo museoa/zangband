@@ -437,7 +437,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 	message_flush();
 
 	/* Save the screen */
-	Term_save();
+	screen_save();
     
 	/* Show the list */
 	cnt = show_menu(num, options, select, scroll, disp, prompt);
@@ -451,7 +451,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 		}
 		
 		/* Restore the screen */
-		Term_load();
+		screen_load();
 		return (FALSE);
 	}
    
@@ -462,7 +462,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 		if (choice == ESCAPE)
         {
 			/* Restore the screen */
-			Term_load();
+			screen_load();
         	return (FALSE);
         }
     
@@ -540,8 +540,8 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 				show_file(options[select].help, NULL, 0, 0);
 				
 				/* Clear the screen */
-				Term_load();
-				Term_save();
+				screen_load();
+				screen_save();
 				
 				/* Show the list */
 				show_menu(num, options, select, scroll, disp, prompt);
@@ -582,41 +582,36 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 						if (!get_check("Use %s? ", options[j].text)) continue;
 					}
 					
-					/* Hack - clear the screen */
+					/* Hack - restore the screen */
 					if (options[j].flags & MN_CLEAR)
 					{
-						Term_load();
-						Term_save();
+						screen_load();
+						screen_save();
 					}
 				
 					if (options[j].action(j))
 					{
 						/* Restore the screen */
-						Term_load();
+						screen_load();
 	
 						/* Success */
 						return (TRUE);
 					}
-					else
+										
+					/*
+					 * Select this option for next time
+					 * if had a previous selection.
+					 */
+					if ((select >= 0) && (options[j].flags & MN_SELECT))
 					{
-						/*
-						 * Select this option for next time
-						 * if had a previous selection.
-						 */
-						if ((select >= 0) && (options[j].flags & MN_SELECT))
-						{
-							select = j;
-						}
-						
-						/* Show any outstanding messages */
-						message_flush();
-						
-						/* Show the list */
-						show_menu(num, options, select, scroll, disp, prompt);
-						
-						/* Get a new command */
-						break;
+						select = j;
 					}
+						
+					/* Show the list */
+					show_menu(num, options, select, scroll, disp, prompt);
+						
+					/* Get a new command */
+					break;
 				}
 				
 				/* Decrement count until reach selected option */
@@ -712,7 +707,7 @@ void screen_save(void)
 	message_flush();
 
 	/* Save the screen (if legal) */
-	if (screen_depth++ == 0) Term_save();
+	/* if (screen_depth++ == 0) */ Term_save();
 
 	/* Increase "icky" depth */
 	character_icky++;
@@ -730,7 +725,7 @@ void screen_load(void)
 	message_flush();
 
 	/* Load the screen (if legal) */
-	if (--screen_depth == 0) Term_load();
+	/* if (--screen_depth == 0) */ Term_load();
 
 	/* Decrease "icky" depth */
 	character_icky--;
