@@ -13324,7 +13324,7 @@ S:1_IN_3 |
 S:SHRIEK | BR_SOUN | BR_LITE | BR_INER | BR_TIME | BR_SHAR | 
 S:BR_PLAS | BR_MANA | BR_DISI | DRAIN_MANA | HEAL | HASTE |
 S:TELE_AWAY | BLINK | TPORT | FORGET | 
-S:S_MONSTERS | S_HI_DRAGON | S_AMBERITES | S_CYBER | S_UNIQUE
+S:S_MONSTERS | S_HI_DRAGON | S_AMBERITES | S_UNIQUE
 D:The Unicorn of Order, who once stole an eye from the great Serpent 
 D:of chaos, is watching the events unfold with growing distress. It 
 D:regards you as a mortal meddling in the affairs of immortals, and 
