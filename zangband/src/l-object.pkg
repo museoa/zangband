@@ -319,6 +319,18 @@ struct object_type
 };
 
 
+struct bonuses_type
+{
+	int stat[6];
+	int sp_bonus;
+	int skills[MAX_SKILL];
+	int see_infra;
+	int pspeed;
+	int extra_blows;
+	int extra_shots;
+};
+
+
 /***** Functions *****/
 
 extern bool item_tester_hook_weapon(const object_type *o_ptr);

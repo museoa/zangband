@@ -912,6 +912,8 @@ extern void window_stuff(void);
 extern void handle_stuff(void);
 extern void change_stuff(void);
 bool player_save(int power);
+extern void object_bonuses(const object_type *o_ptr, bonuses_type *b);
+extern void object_bonuses_known(const object_type *o_ptr, bonuses_type *b);
 
 
 /* effects.c */

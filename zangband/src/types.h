@@ -1872,3 +1872,19 @@ struct menu_type
 	byte flags;					/* Flags controling option behaviour */
 };
 
+
+/*
+ * Object bonuses to various stuff
+ */
+typedef struct bonuses_type bonuses_type;
+
+struct bonuses_type
+{
+	int stat[6];
+	int sp_bonus;
+	int skills[MAX_SKILL];
+	int see_infra;
+	int pspeed;
+	int extra_blows;
+	int extra_shots;
+};

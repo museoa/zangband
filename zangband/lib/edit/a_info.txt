@@ -692,7 +692,7 @@ L:USE:	sleep_monsters_touch()
 L:USE:	object.timeout = 55
 L:DESC:	return "sleep nearby monsters every 55 turns"
 # Also apply 1/2 the armor bonus to stealth
-L:BONUS:	player.skills[SKILL_STL] = player.skills[SKILL_STL] + object.to_a / 2
+L:BONUS:	b.skills[SKILL_STL] = b.skills[SKILL_STL] + object.to_a / 2
 D:This fine cloak of dark cloth allows its wearer to blend 
 D:perfectly with the shadows.
 
@@ -1789,7 +1789,7 @@ F:VORPAL | LUCK_10 | BLESSED | FREE_ACT | LITE | INSTA_ART
 # Luck bonus depending on enchantment - normally an extra +13,
 # but it will go down if the luck blade is disenchanted, and up
 # if it is enchanted more.
-L:BONUS:	player.skills[SKILL_SAV] = player.skills[SKILL_SAV] + (object.to_h + object.to_d) / 2
+L:BONUS:	b.skills[SKILL_SAV] = b.skills[SKILL_SAV] + (object.to_h + object.to_d) / 2
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 D:A sword said to grant incredible luck to its wielder.
 

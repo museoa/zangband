@@ -191,8 +191,9 @@ cptr item_activation(const object_type *o_ptr)
 static void roff_obj_aux(const object_type *o_ptr)
 {
 	object_kind *k_ptr;
+	bonuses_type b;
 	
-	int n;
+	int i, n;
 
 	object_flags oflags;
 	object_flags *of_ptr = &oflags;
@@ -204,6 +205,9 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Extract the flags */
 	object_flags_known(o_ptr, of_ptr);
+
+	/* Extract the bonuses */
+	object_bonuses_known(o_ptr, &b);
 
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
@@ -261,53 +265,61 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* And then describe it fully */
 
-	/* Collect stat boosts */
-	vn = 0;
-	/* All stats is handled specially */
-	if ((of_ptr->flags[0] & TR0_STAT_MASK) == TR0_STAT_MASK)
-		vp[vn++] = "all your stats";
-	else
+	for (i = 99; i >= -99; i--)
 	{
-		if (FLAG(of_ptr, TR_STR)) vp[vn++] = "strength";
-		if (FLAG(of_ptr, TR_INT)) vp[vn++] = "intelligence";
-		if (FLAG(of_ptr, TR_WIS)) vp[vn++] = "wisdom";
-		if (FLAG(of_ptr, TR_DEX)) vp[vn++] = "dexterity";
-		if (FLAG(of_ptr, TR_CON)) vp[vn++] = "constitution";
-		if (FLAG(of_ptr, TR_CHR)) vp[vn++] = "charisma";
-	}
+		if (!i) continue;
+	
+		/* Collect stat boosts */
+		vn = 0;
 
-	if (FLAG(of_ptr, TR_SPEED))   vp[vn++] = "speed";
-	if (FLAG(of_ptr, TR_STEALTH)) vp[vn++] = "stealth";
-	if (FLAG(of_ptr, TR_SEARCH))  vp[vn++] = "perception";
-	if (FLAG(of_ptr, TR_TUNNEL))  vp[vn++] = "ability to dig";
+		if (b.stat[A_STR] == i) vp[vn++] = "strength";
+		if (b.stat[A_INT] == i) vp[vn++] = "intelligence";
+		if (b.stat[A_WIS] == i) vp[vn++] = "wisdom";
+		if (b.stat[A_DEX] == i) vp[vn++] = "dexterity";
+		if (b.stat[A_CON] == i) vp[vn++] = "constitution";
+		if (b.stat[A_CHR] == i) vp[vn++] = "charisma";
 
-	/* Describe stat boosts */
-	if (vn > 0)
-	{
-		if (o_ptr->pval > 0)
-			roff("It increases ");
-		else
-			roff("It decreases ");
-
-		/* Omit "your" for "all stats" */
-		if (strncmp(vp[0], "all ", 4) != 0)
-			roff("your ");
-
-		/* Scan */
-		for (n = 0; n < vn; n++)
+		/* All stats is handled specially */
+		if (vn == 6)
 		{
-			if (n > 0 && n == vn - 1) roff(" and ");
-			else if (n > 0)  roff(", ");
-
-			roff(CLR_L_GREEN "%s", vp[n]);
+			vn = 0;
+			vp[vn++] = "all your stats";
 		}
 
-		roff(" by %+i.  ", o_ptr->pval);
+		if (b.pspeed == i)   vp[vn++] = "speed";
+		if (b.skills[SKILL_STL] == i) vp[vn++] = "stealth";
+		if (b.skills[SKILL_SNS] / 5 == i)  vp[vn++] = "perception";
+		if (b.skills[SKILL_DIG] / 20 == i)  vp[vn++] = "ability to dig";
+		if (b.skills[SKILL_SAV] == i) vp[vn++] = "saving throws";
+
+		/* Describe stat boosts */
+		if (vn > 0)
+		{
+			if (i > 0)
+				roff("It increases ");
+			else
+				roff("It decreases ");
+
+			/* Omit "your" for "all stats" */
+			if (strncmp(vp[0], "all ", 4) != 0)
+				roff("your ");
+
+			/* Scan */
+			for (n = 0; n < vn; n++)
+			{
+				if (n > 0 && n == vn - 1) roff(" and ");
+				else if (n > 0)  roff(", ");
+
+				roff(CLR_L_GREEN "%s", vp[n]);
+			}
+
+			roff(" by %+i.  ", i);
+		}
 	}
 
-	if (FLAG(of_ptr, TR_SP))
+	if (b.sp_bonus)
 	{
-		if (o_ptr->pval > 0)
+		if (b.sp_bonus > 0)
 		{
 			roff("It increases your ");
 		}
@@ -315,22 +327,22 @@ static void roff_obj_aux(const object_type *o_ptr)
 		{
 			roff("It decreases your ");
 		}
-		roff(CLR_L_GREEN "maximum sp" CLR_DEFAULT " by %i per level.  ", o_ptr->pval);
+		roff(CLR_L_GREEN "maximum sp" CLR_DEFAULT " by %i per level.  ", b.sp_bonus);
 	}
 
-	if (FLAG(of_ptr, TR_INFRA))
+	if (b.see_infra)
 	{
-		if (o_ptr->pval > 0)
+		if (b.see_infra > 0)
 		{
 			roff("It increases your ");
 			roff(CLR_L_GREEN "infravision");
-			roff(" by %i feet.  ", o_ptr->pval * 10);
+			roff(" by %i feet.  ", b.see_infra * 10);
 		}
 		else
 		{
 			roff("It decreases your ");
 			roff(CLR_L_GREEN "infravision");
-			roff(" by %i feet.  ", -o_ptr->pval * 10);
+			roff(" by %i feet.  ", -b.see_infra * 10);
 		}
 	}
 
@@ -341,17 +353,30 @@ static void roff_obj_aux(const object_type *o_ptr)
 			k_ptr->dd, k_ptr->ds);
 	}
 
-	if (FLAG(of_ptr, TR_BLOWS))
+	if (b.extra_blows)
 	{
-		if (o_ptr->pval > 0)
+		if (b.extra_blows > 0)
 		{
-			roff("It provides %i extra ", o_ptr->pval);
+			roff("It provides %i extra ", b.extra_blows);
 		}
 		else
 		{
-			roff("It provides %i fewer ", -o_ptr->pval);
+			roff("It provides %i fewer ", -b.extra_blows);
 		}
 		roff(CLR_L_GREEN "blows per turn" CLR_DEFAULT ".  ");
+	}
+
+	if (b.extra_shots)
+	{
+		if (b.extra_shots > 0)
+		{
+			roff("It provides %i extra ", b.extra_shots);
+		}
+		else
+		{
+			roff("It provides %i fewer ", -b.extra_shots);
+		}
+		roff(CLR_L_GREEN "shots per turn" CLR_DEFAULT ".  ");
 	}
 
 	/* Collect brands */
@@ -576,7 +601,6 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (FLAG(of_ptr, TR_SLOW_DIGEST)) vp[vn++] = "slows your metabolism";
 	if (FLAG(of_ptr, TR_REGEN))       vp[vn++] = "speeds your regenerative powers";
 	if (FLAG(of_ptr, TR_REFLECT))     vp[vn++] = "reflects bolts and arrows";
-	if (FLAG(of_ptr, TR_LUCK_10))       vp[vn++] = "increases your saving throws";
 	if (FLAG(of_ptr, TR_WILD_WALK))     vp[vn++] = "allows you to walk the wild unhindered";
 	if (FLAG(of_ptr, TR_MUTATE))        vp[vn++] = "causes mutations";
 	if (FLAG(of_ptr, TR_PATRON))        vp[vn++] = "attracts the attention of chaos gods";
@@ -629,10 +653,6 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (FLAG(of_ptr, TR_XTRA_MIGHT))
 	{
 		roff("It fires missiles with " CLR_GREEN "extra might" CLR_DEFAULT ".  ");
-	}
-	if (FLAG(of_ptr, TR_XTRA_SHOTS))
-	{
-		roff("It fires missiles " CLR_GREEN "excessively fast" CLR_DEFAULT ".  ");
 	}
 
 	/* Collect curses */
