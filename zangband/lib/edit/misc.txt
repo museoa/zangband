@@ -8,7 +8,7 @@ M:T:6
 M:Q:100
 
 # Maximum size of the wilderness
-M:WS:65
+M:WS:129
 
 # Maximum number of nodes in the wilderness decision tree
 M:WN:200

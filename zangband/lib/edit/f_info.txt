@@ -89,7 +89,7 @@ N:10:wet mud
 G:.:u
 
 N:11:dry mud
-G:.:D
+G:.:d
 
 N:12:tiled floor
 G:.:r
@@ -98,7 +98,7 @@ N:13:wooden floor
 G:.:s
 
 N:14:pebbles
-G:.:b
+G:.:d
 
 N:15:solidified lava
 G:::D
@@ -451,10 +451,10 @@ N:84:shallow water
 G:~:B
 
 N:85:deep lava
-G:~:r
+G:~:R
 
 N:86:shallow lava
-G:~:U
+G:~:r
 
 N:87:dark pit
 G:#:D
@@ -532,7 +532,7 @@ N:129:dead bush
 G:%:s
 
 N:130:long grass
-G:%:U
+G:;:U
 
 #rock on general terrain
 
