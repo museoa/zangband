@@ -62,3 +62,83 @@ function corpse_type(c)
 	if c == ',' then return 6 end
 	return 3;
 end
+
+
+--
+--	Traps interact with magic
+--
+function trap_gf()
+	local power
+	local j
+	if (type == GF_KILL_TRAP) or (type == GF_KILL_DOOR) then
+		power = field.data[0]
+		j = dam - power
+		
+		-- Always have a small chance of success
+		if j < 2 then j = 2 end
+	
+		if randint0(100) < j then
+			-- Success
+			
+			-- Check for LOS
+			if known == TRUE then
+				notice = TRUE
+				
+				msgf("There is a bright flash of light!")
+			end
+			
+			-- Delete the field
+			deleteme()
+		end
+	end
+end
+
+
+--
+--	Doors interact with magic
+--
+function door_gf()
+	if type == GF_KILL_WALL then
+
+		-- Delete the field
+		deleteme()
+
+	elseif type == GF_KILL_DOOR then
+		
+		-- Check for LOS
+		if known == TRUE then
+			msgf("There is a bright flash of light!")
+			notice = TRUE
+		end
+		
+		-- Delete the field
+		deleteme()
+	elseif type == GF_KILL_TRAP then
+	
+		-- Unlock the door
+		if known == TRUE then
+			msgf("Click!")
+			notice = TRUE
+		end
+		
+		-- Delete the field
+		deleteme()
+	end
+end
+
+
+--
+--	Walls interact with magic
+--
+function wall_gf()
+	if type == GF_KILL_WALL then
+
+		-- Check for LOS
+		if known == TRUE then
+			notice = TRUE
+		end
+		
+		-- Delete the field
+		deleteme()	
+	end
+end
