@@ -4097,7 +4097,7 @@ static void init_stuff(void)
 	ANGBAND_DIR_XTRA_MUSIC = string_make(path);
 
 	/* Validate the "music" directory */
-	validate_dir(ANGBAND_DIR_XTRA_MUSIC);
+	validate_dir(ANGBAND_DIR_XTRA_MUSIC, FALSE);
 
 #endif /* USE_MUSIC */
 
