@@ -377,7 +377,7 @@ static void do_cmd_wiz_change_aux(void)
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Default */
-		sprintf(tmp_val, "%d", p_ptr->stat_max[i]);
+		strnfmt(tmp_val, 160, "%d", p_ptr->stat_max[i]);
 
 		/* Query */
 		if (!get_string(tmp_val, 4, "%s (3-118): ", stat_names[i])) return;
@@ -395,7 +395,7 @@ static void do_cmd_wiz_change_aux(void)
 
 
 	/* Default */
-	sprintf(tmp_val, "%ld", (long)(p_ptr->au));
+	strnfmt(tmp_val, 160, "%ld", (long)(p_ptr->au));
 
 	/* Query */
 	if (!get_string(tmp_val, 10, "Gold: ")) return;
@@ -411,7 +411,7 @@ static void do_cmd_wiz_change_aux(void)
 
 
 	/* Default */
-	sprintf(tmp_val, "%ld", (long)(p_ptr->max_exp));
+	strnfmt(tmp_val, 160, "%ld", (long)(p_ptr->max_exp));
 
 	/* Query */
 	if (!get_string(tmp_val, 10, "Experience: ")) return;
@@ -880,27 +880,27 @@ static void wiz_tweak_item(object_type *o_ptr)
 	char tmp_val[80];
 
 
-	sprintf(tmp_val, "%d", o_ptr->pval);
+	strnfmt(tmp_val, 80, "%d", o_ptr->pval);
 	if (!get_string(tmp_val, 6, "Enter new 'pval' setting: ")) return;
 	o_ptr->pval = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 
-	sprintf(tmp_val, "%d", o_ptr->to_a);
+	strnfmt(tmp_val, 80, "%d", o_ptr->to_a);
 	if (!get_string(tmp_val, 6, "Enter new 'to_a' setting: ")) return;
 	o_ptr->to_a = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 
-	sprintf(tmp_val, "%d", o_ptr->to_h);
+	strnfmt(tmp_val, 80, "%d", o_ptr->to_h);
 	if (!get_string(tmp_val, 6, "Enter new 'to_h' setting: ")) return;
 	o_ptr->to_h = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 
-	sprintf(tmp_val, "%d", o_ptr->to_d);
+	strnfmt(tmp_val, 80, "%d", o_ptr->to_d);
 	if (!get_string(tmp_val, 6, "Enter new 'to_d' setting: ")) return;
 	o_ptr->to_d = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 
-	sprintf(tmp_val, "%d", (int)o_ptr->activate);
+	strnfmt(tmp_val, 80, "%d", (int)o_ptr->activate);
 	if (!get_string(tmp_val, 6, "Enter new 'activate' setting: ")) return;
 	o_ptr->activate = atoi(tmp_val);
 	wiz_display_item(o_ptr);
@@ -1014,7 +1014,7 @@ static void wiz_statistics(object_type *o_ptr)
 
 	char tmp_val[80];
 
-	sprintf(tmp_val, "%ld", (long)test_roll);
+	strnfmt(tmp_val, 80, "%ld", (long)test_roll);
 	if (get_string(tmp_val, 11, "Enter number of items to roll: "))
 	{
 		test_roll = atol(tmp_val);
@@ -1045,7 +1045,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 	tmp_qnt = o_ptr->number;
 
 	/* Default */
-	sprintf(tmp_val, "%d", (int)o_ptr->number);
+	strnfmt(tmp_val, 100, "%d", (int)o_ptr->number);
 
 	/* Query */
 	if (get_string(tmp_val, 3, "Quantity: "))
@@ -1267,7 +1267,7 @@ static void do_cmd_wiz_jump(void)
 		char tmp_val[160];
 
 		/* Default */
-		sprintf(tmp_val, "%d", p_ptr->depth);
+		strnfmt(tmp_val, 160, "%d", p_ptr->depth);
 
 		/* Ask for a level */
 		if (!get_string(tmp_val, 11, "Jump to level (0-%d): ",

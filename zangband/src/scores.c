@@ -303,7 +303,7 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			for (aged = the_score.turns; isspace(*aged); aged++) /* loop */ ;
 
 			/* Dump some info */
-			sprintf(out_val, "%3d.%9s  %s the %s %s, Level %d",
+			strnfmt(out_val, 256, "%3d.%9s  %s the %s %s, Level %d",
 					place, the_score.pts, the_score.who,
 					race_info[pr].title, class_info[pc].title, clev);
 
@@ -317,14 +317,14 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			if (cdun)
 			{
 				/* Another line of info */
-				sprintf(out_val, "               Killed by %s on %s %d",
+				strnfmt(out_val, 256, "               Killed by %s on %s %d",
 						the_score.how, "Dungeon Level", cdun);
 
 			}
 			else
 			{
 				/* Died outside */
-				sprintf(out_val,
+				strnfmt(out_val, 256,
 						"               Killed by %s in the outside world.",
 						the_score.how);
 			}
@@ -473,24 +473,24 @@ void enter_score(void)
 	(void)WIPE(&the_score, high_score);
 
 	/* Save the version */
-	sprintf(the_score.what, "%u.%u.%u",
+	strnfmt(the_score.what, 8, "%u.%u.%u",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%9lu", (unsigned long)total_points());
+	strnfmt(the_score.pts, 10, "%9lu", (unsigned long)total_points());
 	the_score.pts[9] = '\0';
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%9lu", (unsigned long)p_ptr->au);
+	strnfmt(the_score.gold, 10, "%9lu", (unsigned long)p_ptr->au);
 	the_score.gold[9] = '\0';
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%9lu", (unsigned long)turn);
+	strnfmt(the_score.turns, 10, "%9lu", (unsigned long)turn);
 	the_score.turns[9] = '\0';
 
 #ifdef HIGHSCORE_DATE_HACK
 	/* Save the date in a hacked up form (9 chars) */
-	(void)sprintf(the_score.day, "%-.6s %-.2s", ctime(&ct) + 4,
+	(void)strnfmt(the_score.day, 10, "%-.6s %-.2s", ctime(&ct) + 4,
 				  ctime(&ct) + 22);
 #else  /* HIGHSCORE_DATE_HACK */
 	/* Get the date with a 4-digit year */
@@ -512,22 +512,22 @@ void enter_score(void)
 #endif /* HIGHSCORE_DATE_HACK */
 
 	/* Save the player name (15 chars) */
-	sprintf(the_score.who, "%-.15s", player_name);
+	strnfmt(the_score.who, 16, "%-.15s", player_name);
 
 	/* Save the player info XXX XXX XXX */
-	sprintf(the_score.uid, "%7u", (uint)player_uid);
-	sprintf(the_score.sex, "%c", (p_ptr->psex ? 'm' : 'f'));
-	sprintf(the_score.p_r, "%2d", (int)p_ptr->prace);
-	sprintf(the_score.p_c, "%2d", (int)p_ptr->pclass);
+	strnfmt(the_score.uid, 8, "%7u", (uint)player_uid);
+	strnfmt(the_score.sex, 2, "%c", (p_ptr->psex ? 'm' : 'f'));
+	strnfmt(the_score.p_r, 3, "%2d", (int)p_ptr->prace);
+	strnfmt(the_score.p_c, 3, "%2d", (int)p_ptr->pclass);
 
 	/* Save the level and such */
-	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
-	sprintf(the_score.cur_dun, "%3d", p_ptr->depth);
-	sprintf(the_score.max_lev, "%3d", p_ptr->max_lev);
-	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
+	strnfmt(the_score.cur_lev, 4, "%3d", p_ptr->lev);
+	strnfmt(the_score.cur_dun, 4, "%3d", p_ptr->depth);
+	strnfmt(the_score.max_lev, 4, "%3d", p_ptr->max_lev);
+	strnfmt(the_score.max_dun, 4, "%3d", p_ptr->max_depth);
 
 	/* Save the cause of death (31 chars) */
-	sprintf(the_score.how, "%-.31s", p_ptr->died_from);
+	strnfmt(the_score.how, 32, "%-.31s", p_ptr->died_from);
 
 	/* Grab permissions */
 	safe_setuid_grab();
@@ -609,35 +609,35 @@ void predict_score(void)
 
 
 	/* Save the version */
-	sprintf(the_score.what, "%u.%u.%u",
+	strnfmt(the_score.what, 8, "%u.%u.%u",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%9lu", (unsigned long)total_points());
+	strnfmt(the_score.pts, 10, "%9lu", (unsigned long)total_points());
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%9lu", (unsigned long)p_ptr->au);
+	strnfmt(the_score.gold, 10, "%9lu", (unsigned long)p_ptr->au);
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%9lu", (unsigned long)turn);
+	strnfmt(the_score.turns, 10, "%9lu", (unsigned long)turn);
 
 	/* Hack -- no time needed */
 	strcpy(the_score.day, "TODAY");
 
 	/* Save the player name (15 chars) */
-	sprintf(the_score.who, "%-.15s", player_name);
+	strnfmt(the_score.who, 16, "%-.15s", player_name);
 
 	/* Save the player info XXX XXX XXX */
-	sprintf(the_score.uid, "%7u", (uint)player_uid);
-	sprintf(the_score.sex, "%c", (p_ptr->psex ? 'm' : 'f'));
-	sprintf(the_score.p_r, "%2d", (int)p_ptr->prace);
-	sprintf(the_score.p_c, "%2d", (int)p_ptr->pclass);
+	strnfmt(the_score.uid, 8, "%7u", (uint)player_uid);
+	strnfmt(the_score.sex, 2, "%c", (p_ptr->psex ? 'm' : 'f'));
+	strnfmt(the_score.p_r, 3, "%2d", (int)p_ptr->prace);
+	strnfmt(the_score.p_c, 3, "%2d", (int)p_ptr->pclass);
 
 	/* Save the level and such */
-	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
-	sprintf(the_score.cur_dun, "%3d", p_ptr->depth);
-	sprintf(the_score.max_lev, "%3d", p_ptr->max_lev);
-	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
+	strnfmt(the_score.cur_lev, 4, "%3d", p_ptr->lev);
+	strnfmt(the_score.cur_dun, 4, "%3d", p_ptr->depth);
+	strnfmt(the_score.max_lev, 4, "%3d", p_ptr->max_lev);
+	strnfmt(the_score.max_dun, 4, "%3d", p_ptr->max_depth);
 
 	/* Hack -- no cause of death */
 	strcpy(the_score.how, "nobody (yet!)");

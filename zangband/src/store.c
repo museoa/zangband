@@ -1290,7 +1290,7 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 	*com_val = (-1);
 
 	/* Build the prompt */
-	(void)sprintf(out_val, "(Items a-%c, ESC to exit) %s",
+	strnfmt(out_val, 160, "(Items a-%c, ESC to exit) %s",
 				  I2A(maxobj - 1), pmt);
 
 	/* Ask until done */
@@ -1390,11 +1390,11 @@ static void store_purchase(int *store_top)
 	/* Prompt */
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
-		sprintf(out_val, "Which item do you want to take? ");
+		strnfmt(out_val, 160, "Which item do you want to take? ");
 	}
 	else
 	{
-		sprintf(out_val, "Which item are you interested in? ");
+		strnfmt(out_val, 160, "Which item are you interested in? ");
 	}
 
 	/* Get the item number to be bought */
@@ -1924,7 +1924,7 @@ static void store_examine(int store_top)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	sprintf(out_val, "Which item do you want to examine? ");
+	strnfmt(out_val, 160, "Which item do you want to examine? ");
 
 	/* Get the item number to be examined */
 	if (!get_stock(&item, out_val, i)) return;

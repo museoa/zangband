@@ -53,7 +53,7 @@ void self_knowledge(void)
 					(2 * p_ptr->hitdie +
 					 ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
-	sprintf(Liferating, "Your current Life Rating is %d/100.", percent);
+	strnfmt(Liferating, 80, "Your current Life Rating is %d/100.", percent);
 	info[i++] = Liferating;
 
 	chg_virtue(V_KNOWLEDGE, 1);
@@ -86,44 +86,44 @@ void self_knowledge(void)
 
 		strcpy(virt_name, virtue[(p_ptr->vir_types[v_nr]) - 1]);
 
-		sprintf(vir_desc, "Oops. No info about %s.", virt_name);
+		strnfmt(vir_desc, 80, "Oops. No info about %s.", virt_name);
 		if (tester < -100)
-			sprintf(vir_desc, "You are the polar opposite of %s (%d).",
+			strnfmt(vir_desc, 80, "You are the polar opposite of %s (%d).",
 					virt_name, tester);
 		else if (tester < -80)
-			sprintf(vir_desc, "You are an arch-enemy of %s (%d).",
+			strnfmt(vir_desc, 80, "You are an arch-enemy of %s (%d).",
 					virt_name, tester);
 		else if (tester < -60)
-			sprintf(vir_desc, "You are a bitter enemy of %s (%d).",
+			strnfmt(vir_desc, 80, "You are a bitter enemy of %s (%d).",
 					virt_name, tester);
 		else if (tester < -40)
-			sprintf(vir_desc, "You are an enemy of %s (%d).",
+			strnfmt(vir_desc, 80, "You are an enemy of %s (%d).",
 					virt_name, tester);
 		else if (tester < -20)
-			sprintf(vir_desc, "You have sinned against %s (%d).",
+			strnfmt(vir_desc, 80, "You have sinned against %s (%d).",
 					virt_name, tester);
 		else if (tester < 0)
-			sprintf(vir_desc, "You have strayed from the path of %s (%d).",
+			strnfmt(vir_desc, 80, "You have strayed from the path of %s (%d).",
 					virt_name, tester);
 		else if (tester == 0)
-			sprintf(vir_desc, "You are neutral to %s (%d).", virt_name, tester);
+			strnfmt(vir_desc, 80, "You are neutral to %s (%d).", virt_name, tester);
 		else if (tester < 20)
-			sprintf(vir_desc, "You are somewhat virtuous in %s (%d).",
+			strnfmt(vir_desc, 80, "You are somewhat virtuous in %s (%d).",
 					virt_name, tester);
 		else if (tester < 40)
-			sprintf(vir_desc, "You are virtuous in %s (%d).",
+			strnfmt(vir_desc, 80, "You are virtuous in %s (%d).",
 					virt_name, tester);
 		else if (tester < 60)
-			sprintf(vir_desc, "You are very virtuous in %s (%d).",
+			strnfmt(vir_desc, 80, "You are very virtuous in %s (%d).",
 					virt_name, tester);
 		else if (tester < 80)
-			sprintf(vir_desc, "You are a champion of %s (%d).",
+			strnfmt(vir_desc, 80, "You are a champion of %s (%d).",
 					virt_name, tester);
 		else if (tester < 100)
-			sprintf(vir_desc, "You are a great champion of %s (%d).",
+			strnfmt(vir_desc, 80, "You are a great champion of %s (%d).",
 					virt_name, tester);
 		else
-			sprintf(vir_desc, "You are the living embodiment of %s (%d).",
+			strnfmt(vir_desc, 80, "You are the living embodiment of %s (%d).",
 					virt_name, tester);
 
 		strcpy(v_string[v_nr], vir_desc);

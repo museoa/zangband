@@ -1668,7 +1668,7 @@ static void class_aux_hook(cptr c_str)
 		if (streq(c_str, class_info[class_idx].title)) break;
 
 		/* Also test for titles in parentheses */
-		sprintf(s, "(%s)", class_info[class_idx].title);
+		strnfmt(s, 128, "(%s)", class_info[class_idx].title);
 		if (streq(c_str, s)) break;
 	}
 
@@ -1716,11 +1716,11 @@ static bool get_player_class(void)
 		/* Analyze */
 		if (!(rp_ptr->choice & (1L << i)))
 		{
-			sprintf(buf, "(%s)", class_info[i].title);
+			strnfmt(buf, 80, "(%s)", class_info[i].title);
 		}
 		else
 		{
-			sprintf(buf, "%s", class_info[i].title);
+			strnfmt(buf, 80, "%s", class_info[i].title);
 		}
 
 		/* Save the string */
@@ -2188,7 +2188,7 @@ static bool player_birth_aux_3(void)
 				Term_gotoxy(10, 16 + i);
 
 				/* Default */
-				sprintf(inp, "%i", def_weight);
+				strnfmt(inp, 80, "%i", def_weight);
 
 				/* Get a response (or escape) */
 				if (!askfor_aux(inp, 9)) inp[0] = '\0';

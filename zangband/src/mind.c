@@ -40,7 +40,7 @@ void mindcraft_info(char *p, int power)
 	{
 		case MINDCRAFT_NEURAL_BLAST:
 		{
-			sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 4), 3 + plev / 15);
+			strnfmt(p, 80, " dam %dd%d", 3 + ((plev - 1) / 4), 3 + plev / 15);
 			break;
 		}
 		case MINDCRAFT_PRECOGNITION:
@@ -49,12 +49,12 @@ void mindcraft_info(char *p, int power)
 		}
 		case MINDCRAFT_MINOR_DISPLACEMENT:
 		{
-			sprintf(p, " range %d", (plev < 40 ? 10 : plev + 2));
+			strnfmt(p, 80, " range %d", (plev < 40 ? 10 : plev + 2));
 			break;
 		}
 		case MINDCRAFT_MAJOR_DISPLACEMENT:
 		{
-			sprintf(p, " range %d", plev * 5);
+			strnfmt(p, 80, " range %d", plev * 5);
 			break;
 		}
 		case MINDCRAFT_DOMINATION:
@@ -63,12 +63,12 @@ void mindcraft_info(char *p, int power)
 		}
 		case MINDCRAFT_PULVERISE:
 		{
-			sprintf(p, " dam %dd8", 8 + ((plev - 5) / 4));
+			strnfmt(p, 80, " dam %dd8", 8 + ((plev - 5) / 4));
 			break;
 		}
 		case MINDCRAFT_CHARACTER_ARMOUR:
 		{
-			sprintf(p, " dur %d", plev);
+			strnfmt(p, 80, " dur %d", plev);
 			break;
 		}
 		case MINDCRAFT_PSYCHOMETRY:
@@ -77,22 +77,22 @@ void mindcraft_info(char *p, int power)
 		}
 		case MINDCRAFT_MIND_WAVE:
 		{
-			sprintf(p, " dam %d", plev * ((plev - 5) / 10 + 1));
+			strnfmt(p, 80, " dam %d", plev * ((plev - 5) / 10 + 1));
 			break;
 		}
 		case MINDCRAFT_ADRENALINE_CHANNELING:
 		{
-			sprintf(p, " dur 11-%d", plev + plev / 2 + 10);
+			strnfmt(p, 80, " dur 11-%d", plev + plev / 2 + 10);
 			break;
 		}
 		case MINDCRAFT_PSYCHIC_DRAIN:
 		{
-			sprintf(p, " dam %dd6", plev / 2);
+			strnfmt(p, 80, " dam %dd6", plev / 2);
 			break;
 		}
 		case MINDCRAFT_TELEKINETIC_WAVE:
 		{
-			sprintf(p, " dam %d", plev * (plev > 39 ? 4 : 3));
+			strnfmt(p, 80, " dam %d", plev * (plev > 39 ? 4 : 3));
 			break;
 		}
 	}

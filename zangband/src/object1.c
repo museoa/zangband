@@ -2989,7 +2989,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 			show_list(p_ptr->inventory);
 
 			/* Begin the prompt */
-			sprintf(out_val, "Inven:");
+			strnfmt(out_val, 160, "Inven:");
 
 			/* Append */
 			if (equip) strcat(out_val, " / for Equip,");
@@ -3025,7 +3025,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 			show_equip();
 
 			/* Begin the prompt */
-			sprintf(out_val, "Equip:");
+			strnfmt(out_val, 160, "Equip:");
 
 			/* Append */
 			if (inven) strcat(out_val, " / for Inven,");
@@ -3049,7 +3049,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 				show_list(c_ptr->o_idx);
 
 				/* Begin the prompt */
-				sprintf(out_val, "Floor:");
+				strnfmt(out_val, 160, "Floor:");
 
 				/* Append */
 				if (inven)
@@ -3064,7 +3064,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 			else
 			{
 				/* Begin the prompt */
-				sprintf(out_val, "Top item on floor: '-'");
+				strnfmt(out_val, 160, "Top item on floor: '-'");
 			}
 
 			break;

@@ -95,12 +95,12 @@ int get_player_choice(cptr *choices, int num, int col, int wid,
 		{
 			if (i + top < 26)
 			{
-				sprintf(buf, "%c) %s", I2A(i + top), choices[i + top]);
+				strnfmt(buf, 80, "%c) %s", I2A(i + top), choices[i + top]);
 			}
 			else
 			{
 				/* ToDo: Fix the ASCII dependency */
-				sprintf(buf, "%c) %s", 'A' + (i + top - 26), choices[i + top]);
+				strnfmt(buf, 80, "%c) %s", 'A' + (i + top - 26), choices[i + top]);
 			}
 
 			/* Clear */
@@ -1483,7 +1483,7 @@ s16b get_quantity(cptr prompt, int max)
 	if (!prompt)
 	{
 		/* Build a prompt */
-		sprintf(tmp, "Quantity (1-%d): ", max);
+		strnfmt(tmp, 80, "Quantity (1-%d): ", max);
 
 		/* Use that prompt */
 		prompt = tmp;
@@ -1494,7 +1494,7 @@ s16b get_quantity(cptr prompt, int max)
 	amt = 1;
 
 	/* Build the default */
-	sprintf(buf, "%d", amt);
+	strnfmt(buf, 80, "%d", amt);
 
 	/* Ask for a quantity */
 	if (!get_string(buf, 7, prompt)) return (0);

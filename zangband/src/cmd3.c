@@ -57,8 +57,6 @@ void do_cmd_inven(void)
  */
 void do_cmd_equip(void)
 {
-	char out_val[160];
-
 	/* Save the screen */
 	screen_save();
 
@@ -70,13 +68,6 @@ void do_cmd_equip(void)
 
 	/* Hack -- undo the hack above */
 	item_tester_full = FALSE;
-
-	/* Build a prompt */
-	sprintf(out_val,
-			"Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",
-			p_ptr->total_weight / 10, p_ptr->total_weight % 10,
-			(p_ptr->total_weight * 100) /
-			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a command */
 	prtf(0, 0, "Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",
@@ -919,13 +910,13 @@ void do_cmd_locate(void)
 		}
 		else
 		{
-			sprintf(tmp_val, "%s%s of",
+			strnfmt(tmp_val, 80, "%s%s of",
 					((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
 					((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
 		}
 
 		/* Prepare to ask which way to look */
-		sprintf(out_val,
+		strnfmt(out_val, 160,
 				"Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction?",
 				y2 / (hgt / 2), y2 % (hgt / 2),
 				x2 / (wid / 2), x2 % (wid / 2), tmp_val);

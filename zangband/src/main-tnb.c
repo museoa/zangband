@@ -492,7 +492,7 @@ static void init_stuff(char **argv)
 	/* Save the application directory */
 	ANGBAND_DIR_ROOT = string_make(path);
 	
-	(void) sprintf(path, "%s%s%s", ANGBAND_DIR_ROOT, PATH_SEP, "tk");
+	(void) strnfmt(path, 1024, "%s%s%s", ANGBAND_DIR_ROOT, PATH_SEP, "tk");
 	ANGBAND_DIR_COMMON_TK = string_make(path);
 
 	/* Append "lib" directory to pathname */

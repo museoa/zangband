@@ -458,7 +458,7 @@ static void pattern_teleport(void)
 			max_level = 100;
 
 		/* Default */
-		sprintf(tmp_val, "%d", p_ptr->depth);
+		strnfmt(tmp_val, 160, "%d", p_ptr->depth);
 
 		/* Ask for a level */
 		if (!get_string(tmp_val, 11, "Teleport to level (%d-%d): ",
@@ -1066,7 +1066,7 @@ static void process_world(void)
 			/* Get an object description */
 			object_desc(o_name, o_ptr, TRUE, 0, 256);
 
-			sprintf(ouch, "wielding %s", o_name);
+			strnfmt(ouch, 280, "wielding %s", o_name);
 			if (!p_ptr->invuln) take_hit(1, ouch);
 		}
 	}
@@ -3241,19 +3241,19 @@ static void load_all_pref_files(void)
 	char buf[1024];
 
 	/* Access the "race" pref file */
-	sprintf(buf, "%s.prf", rp_ptr->title);
+	strnfmt(buf, 1024, "%s.prf", rp_ptr->title);
 
 	/* Process that file */
 	(void)process_pref_file(buf);
 
 	/* Access the "class" pref file */
-	sprintf(buf, "%s.prf", cp_ptr->title);
+	strnfmt(buf, 1024, "%s.prf", cp_ptr->title);
 
 	/* Process that file */
 	(void)process_pref_file(buf);
 
 	/* Access the "character" pref file */
-	sprintf(buf, "%s.prf", player_base);
+	strnfmt(buf, 1024, "%s.prf", player_base);
 
 	/* Process that file */
 	(void)process_pref_file(buf);
@@ -3261,7 +3261,7 @@ static void load_all_pref_files(void)
 	/* Access the "realm 1" pref file */
 	if (p_ptr->realm1 != REALM_NONE)
 	{
-		sprintf(buf, "%s.prf", realm_names[p_ptr->realm1]);
+		strnfmt(buf, 1024, "%s.prf", realm_names[p_ptr->realm1]);
 
 		/* Process that file */
 		(void)process_pref_file(buf);
@@ -3270,7 +3270,7 @@ static void load_all_pref_files(void)
 	/* Access the "realm 2" pref file */
 	if (p_ptr->realm2 != REALM_NONE)
 	{
-		sprintf(buf, "%s.prf", realm_names[p_ptr->realm2]);
+		strnfmt(buf, 1024, "%s.prf", realm_names[p_ptr->realm2]);
 
 		/* Process that file */
 		(void)process_pref_file(buf);

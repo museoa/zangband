@@ -3086,7 +3086,7 @@ void display_spell_list(void)
 			}
 
 			/* Dump the spell --(-- */
-			sprintf(out_val, "%c/%c) %s", I2A(n / 8), I2A(n % 8), name);
+			strnfmt(out_val, 160, "%c/%c) %s", I2A(n / 8), I2A(n % 8), name);
 
 			max_wid = MAX(max_wid, strlen(out_val) + 1);
 
@@ -3255,7 +3255,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 4:
 					{
-						sprintf(p, " dam 2d%d", (plev / 2));
+						strnfmt(p, 80, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 6:
@@ -3276,12 +3276,12 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 12:
 					{
-						sprintf(p, " dam %d+3d6", plev + orb);
+						strnfmt(p, 80, " dam %d+3d6", plev + orb);
 						break;
 					}
 					case 13:
 					{
-						sprintf(p, " dur %d+d25", 3 * plev);
+						strnfmt(p, 80, " dur %d+d25", 3 * plev);
 						break;
 					}
 					case 14:
@@ -3291,22 +3291,22 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 16:
 					{
-						sprintf(p, " dam %d+%d", plev, plev);
+						strnfmt(p, 80, " dam %d+%d", plev, plev);
 						break;
 					}
 					case 18:
 					{
-						sprintf(p, " dam %d+%d", 3 * plev, 3 * plev);
+						strnfmt(p, 80, " dam %d+%d", 3 * plev, 3 * plev);
 						break;
 					}
 					case 20:
 					{
-						sprintf(p, " dam %d", 4 * plev);
+						strnfmt(p, 80, " dam %d", 4 * plev);
 						break;
 					}
 					case 22:
 					{
-						sprintf(p, " d %d/h 1000", 4 * plev);
+						strnfmt(p, 80, " d %d/h 1000", 4 * plev);
 						break;
 					}
 					case 24:
@@ -3328,7 +3328,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 30:
 					{
-						sprintf(p, " h300/d%d+388", plev * 4);
+						strnfmt(p, 80, " h300/d%d+388", plev * 4);
 						break;
 					}
 					case 31:
@@ -3353,22 +3353,22 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 3:
 					{
-						sprintf(p, " dam 2d%d", (plev / 2));
+						strnfmt(p, 80, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 5:
 					{
-						sprintf(p, " range %d", plev * 5);
+						strnfmt(p, 80, " range %d", plev * 5);
 						break;
 					}
 					case 13:
 					{
-						sprintf(p, " dur %d+d%d", plev, plev + 20);
+						strnfmt(p, 80, " dur %d+d%d", plev, plev + 20);
 						break;
 					}
 					case 19:
 					{
-						sprintf(p, " range %d", plev + 2);
+						strnfmt(p, 80, " range %d", plev + 2);
 						break;
 					}
 					case 20:
@@ -3384,12 +3384,12 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 25:
 					{
-						sprintf(p, " max wgt %d", plev * 15 / 10);
+						strnfmt(p, 80, " max wgt %d", plev * 15 / 10);
 						break;
 					}
 					case 26:
 					{
-						sprintf(p, " dam %d+7d7", plev / 2);
+						strnfmt(p, 80, " dam %d+7d7", plev / 2);
 						break;
 					}
 					case 27:
@@ -3420,7 +3420,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 4:
 					{
-						sprintf(p, " dam 2d%d", (plev / 2));
+						strnfmt(p, 80, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 6:
@@ -3431,12 +3431,12 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 9:
 					{
-						sprintf(p, " dam %dd8", (3 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (3 + ((plev - 5) / 4)));
 						break;
 					}
 					case 11:
 					{
-						sprintf(p, " dam %dd8", (5 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (5 + ((plev - 5) / 4)));
 						break;
 					}
 					case 12:
@@ -3468,17 +3468,17 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 26:
 					{
-						sprintf(p, " dam %d", 70 + plev);
+						strnfmt(p, 80, " dam %d", 70 + plev);
 						break;
 					}
 					case 27:
 					{
-						sprintf(p, " dam %d", 90 + plev);
+						strnfmt(p, 80, " dam %d", 90 + plev);
 						break;
 					}
 					case 28:
 					{
-						sprintf(p, " dam %d", 100 + plev);
+						strnfmt(p, 80, " dam %d", 100 + plev);
 						break;
 					}
 					case 29:
@@ -3488,7 +3488,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 31:
 					{
-						sprintf(p, " dam %d+%d", 4 * plev, (100 + plev) / 2);
+						strnfmt(p, 80, " dam %d+%d", 4 * plev, (100 + plev) / 2);
 						break;
 					}
 				}
@@ -3502,17 +3502,17 @@ void spell_info(char *p, int spell, int realm)
 				{
 					case 0:
 					{
-						sprintf(p, " dam %dd4", 3 + ((plev - 1) / 5));
+						strnfmt(p, 80, " dam %dd4", 3 + ((plev - 1) / 5));
 						break;
 					}
 					case 2:
 					{
-						sprintf(p, " dam 2d%d", (plev / 2));
+						strnfmt(p, 80, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 4:
 					{
-						sprintf(p, " dam %d+3d5", plev + (plev /
+						strnfmt(p, 80, " dam %d+3d5", plev + (plev /
 														  (((p_ptr->pclass ==
 															 CLASS_MAGE)
 															|| (p_ptr->pclass ==
@@ -3522,17 +3522,17 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 5:
 					{
-						sprintf(p, " dam %dd8", (8 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (8 + ((plev - 5) / 4)));
 						break;
 					}
 					case 6:
 					{
-						sprintf(p, " dam %dd8", (8 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (8 + ((plev - 5) / 4)));
 						break;
 					}
 					case 7:
 					{
-						sprintf(p, " range %d", plev * 5);
+						strnfmt(p, 80, " range %d", plev * 5);
 						break;
 					}
 					case 8:
@@ -3542,52 +3542,52 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 9:
 					{
-						sprintf(p, " dam %dd8", (10 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (10 + ((plev - 5) / 4)));
 						break;
 					}
 					case 10:
 					{
-						sprintf(p, " dam %d", (45 + plev) / 2);
+						strnfmt(p, 80, " dam %d", (45 + plev) / 2);
 						break;
 					}
 					case 11:
 					{
-						sprintf(p, " dam %dd8", (11 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (11 + ((plev - 5) / 4)));
 						break;
 					}
 					case 12:
 					{
-						sprintf(p, " dam %d", 55 + plev);
+						strnfmt(p, 80, " dam %d", 55 + plev);
 						break;
 					}
 					case 15:
 					{
-						sprintf(p, " dam %d", 66 + plev);
+						strnfmt(p, 80, " dam %d", 66 + plev);
 						break;
 					}
 					case 17:
 					{
-						sprintf(p, " dam %dd8", (5 + (plev / 10)));
+						strnfmt(p, 80, " dam %dd8", (5 + (plev / 10)));
 						break;
 					}
 					case 19:
 					{
-						sprintf(p, " dam %d", 80 + plev);
+						strnfmt(p, 80, " dam %d", 80 + plev);
 						break;
 					}
 					case 24:
 					{
-						sprintf(p, " dam %dd8", (9 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (9 + ((plev - 5) / 4)));
 						break;
 					}
 					case 25:
 					{
-						sprintf(p, " dam %d each", (3 * plev) / 2);
+						strnfmt(p, 80, " dam %d each", (3 * plev) / 2);
 						break;
 					}
 					case 26:
 					{
-						sprintf(p, " dam %d", 75 + plev);
+						strnfmt(p, 80, " dam %d", 75 + plev);
 						break;
 					}
 					case 27:
@@ -3597,17 +3597,17 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 28:
 					{
-						sprintf(p, " dam %d", 120 + plev);
+						strnfmt(p, 80, " dam %d", 120 + plev);
 						break;
 					}
 					case 29:
 					{
-						sprintf(p, " dam %d", 300 + (plev * 2));
+						strnfmt(p, 80, " dam %d", 300 + (plev * 2));
 						break;
 					}
 					case 30:
 					{
-						sprintf(p, " dam %d", p_ptr->chp);
+						strnfmt(p, 80, " dam %d", p_ptr->chp);
 						break;
 					}
 					case 31:
@@ -3626,23 +3626,23 @@ void spell_info(char *p, int spell, int realm)
 				{
 					case 1:
 					{
-						sprintf(p, " dam %dd3", (3 + ((plev - 1) / 5)));
+						strnfmt(p, 80, " dam %dd3", (3 + ((plev - 1) / 5)));
 						break;
 					}
 					case 3:
 					{
-						sprintf(p, " dam %d", 10 + (plev / 2));
+						strnfmt(p, 80, " dam %d", 10 + (plev / 2));
 						break;
 					}
 					case 5:
 					{
 						/* Actually rand_range(20,40) */
-						sprintf(p, " dur 20+d20");
+						strnfmt(p, 80, " dur 20+d20");
 						break;
 					}
 					case 8:
 					{
-						sprintf(p, " dam %d+3d6", plev +
+						strnfmt(p, 80, " dam %d+3d6", plev +
 								(plev / (((p_ptr->pclass == CLASS_MAGE) ||
 										  (p_ptr->pclass ==
 										   CLASS_HIGH_MAGE)) ? 2 : 4)));
@@ -3650,17 +3650,17 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 9:
 					{
-						sprintf(p, " dam %dd8", (6 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (6 + ((plev - 5) / 4)));
 						break;
 					}
 					case 11:
 					{
-						sprintf(p, " dm %d+%d*d15", plev, MAX(1, plev / 10));
+						strnfmt(p, 80, " dm %d+%d*d15", plev, MAX(1, plev / 10));
 						break;
 					}
 					case 13:
 					{
-						sprintf(p, " dam %d", 4 * plev);
+						strnfmt(p, 80, " dam %d", 4 * plev);
 						break;
 					}
 					case 16:
@@ -3676,7 +3676,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 18:
 					{
-						sprintf(p, " dam %dd8", (4 + ((plev - 5) / 4)));
+						strnfmt(p, 80, " dam %dd8", (4 + ((plev - 5) / 4)));
 						break;
 					}
 					case 19:
@@ -3697,12 +3697,12 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 27:
 					{
-						sprintf(p, " dam %d", plev * 3);
+						strnfmt(p, 80, " dam %d", plev * 3);
 						break;
 					}
 					case 28:
 					{
-						sprintf(p, " dam %d", plev * 4);
+						strnfmt(p, 80, " dam %d", plev * 4);
 						break;
 					}
 					case 29:
@@ -3713,7 +3713,7 @@ void spell_info(char *p, int spell, int realm)
 					case 31:
 					{
 						/* Actually rand_range(plev/2,plev) */
-						sprintf(p, " dur %d+d%d", (plev / 2), (plev / 2));
+						strnfmt(p, 80, " dur %d+d%d", (plev / 2), (plev / 2));
 						break;
 					}
 				}
@@ -3732,7 +3732,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 1:
 					{
-						sprintf(p, " dam %dd3", 3 + ((plev - 1) / 5));
+						strnfmt(p, 80, " dam %dd3", 3 + ((plev - 1) / 5));
 						break;
 					}
 					case 2:
@@ -3742,12 +3742,12 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 4:
 					{
-						sprintf(p, " range %d", plev * 4);
+						strnfmt(p, 80, " range %d", plev * 4);
 						break;
 					}
 					case 5:
 					{
-						sprintf(p, " range %d", plev + 2);
+						strnfmt(p, 80, " range %d", plev + 2);
 						break;
 					}
 					case 6:
@@ -3758,7 +3758,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 8:
 					{
-						sprintf(p, " max wgt %d", plev * 15 / 10);
+						strnfmt(p, 80, " max wgt %d", plev * 15 / 10);
 						break;
 					}
 					case 14:
@@ -3768,7 +3768,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 22:
 					{
-						sprintf(p, " dam %d", plev * 3);
+						strnfmt(p, 80, " dam %d", plev * 3);
 						/* break; */
 					}
 				}
@@ -3782,7 +3782,7 @@ void spell_info(char *p, int spell, int realm)
 				{
 					case 0:
 					{
-						sprintf(p, " dam %dd3", 3 + ((plev - 1) / 5));
+						strnfmt(p, 80, " dam %dd3", 3 + ((plev - 1) / 5));
 						break;
 					}
 					case 4:
@@ -3792,7 +3792,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 5:
 					{
-						sprintf(p, " dam 2d%d", plev / 2);
+						strnfmt(p, 80, " dam 2d%d", plev / 2);
 						break;
 					}
 					case 7:
@@ -3816,7 +3816,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 19:
 					{
-						sprintf(p, " range %d", plev * 5);
+						strnfmt(p, 80, " range %d", plev * 5);
 						break;
 					}
 					case 21:
@@ -3832,7 +3832,7 @@ void spell_info(char *p, int spell, int realm)
 					}
 					case 28:
 					{
-						sprintf(p, " dam %d", 75 + plev);
+						strnfmt(p, 80, " dam %d", 75 + plev);
 						break;
 					}
 					case 30:
@@ -3852,7 +3852,7 @@ void spell_info(char *p, int spell, int realm)
 
 			default:
 			{
-				sprintf(p, "Unknown type: %d.", realm);
+				strnfmt(p, 80, "Unknown type: %d.", realm);
 			}
 		}
 	}

@@ -2029,7 +2029,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 			{
 				/* Default */
-				sprintf(tmp_val, "%d", MAX(p_ptr->depth, 1));
+				strnfmt(tmp_val, 160, "%d", MAX(p_ptr->depth, 1));
 
 				/* Ask for a level */
 				if (get_string(tmp_val, 11, "Reset to which level (1-%d): ",

@@ -31,7 +31,7 @@ void have_nightmare(int r_idx)
 	if (!(r_ptr->flags1 & RF1_UNIQUE))
 	{
 		/* Describe it */
-		sprintf(m_name, "%s %s", (is_a_vowel(desc[0]) ? "an" : "a"), desc);
+		strnfmt(m_name, 80, "%s %s", (is_a_vowel(desc[0]) ? "an" : "a"), desc);
 
 		if (r_ptr->flags1 & RF1_FRIENDS)
 		{
@@ -41,7 +41,7 @@ void have_nightmare(int r_idx)
 	else
 	{
 		/* Describe it */
-		sprintf(m_name, "%s", desc);
+		strnfmt(m_name, 80, "%s", desc);
 
 		power *= 2;
 	}
@@ -717,7 +717,6 @@ void gamble_dice_slots(void)
 	{ "Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry" };
 
 	s32b wager = gamble_init();
-	char tmp_str[80];
 
 	int roll1, roll2, choice;
 	int odds;
@@ -739,8 +738,6 @@ void gamble_dice_slots(void)
 		choice = randint1(6);
 
 		/* Show the result */
-		sprintf(tmp_str, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
-				fruit[choice - 1]);
 		prtf(37, 15, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
 				fruit[choice - 1]);
 		prtf(2, 7, "/--------------------------\\");
@@ -1534,14 +1531,12 @@ bool building_magetower(int factor, bool display)
 			int col = (i / 12) * 40;
 
 			/* Label it, clear the line --(-- */
-			(void)sprintf(out_val, "%c) ", I2A(i));
 			prtf(col, row, "%c) ", I2A(i));
 
 			/* Print place name */
 			prtf(col + 3, row, place[link_p[i]].name);
 
 			/* Print cost */
-			(void)sprintf(out_val, "%ld au", (long)cost[i]);
 			prtf(col + 30, row, "%ld au", (long)cost[i]);
 		}
 	}
@@ -1556,7 +1551,7 @@ bool building_magetower(int factor, bool display)
 		}
 
 		/* Build the prompt */
-		(void)sprintf(out_val, "(Towns %c-%c, ESC to exit)",
+		strnfmt(out_val, 160, "(Towns %c-%c, ESC to exit)",
 					  I2A(0), I2A(max_link - 1));
 
 		while (TRUE)

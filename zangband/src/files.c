@@ -1380,7 +1380,7 @@ static void likert(int x, int y, char *desc)
 		}
 		default:
 		{
-			sprintf(desc, CLR_VIOLET "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
+			strnfmt(desc, 20, CLR_VIOLET "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
 			return;
 		}
 	}
@@ -2569,7 +2569,7 @@ void do_cmd_character(void)
 		/* File dump */
 		else if (c == 'f')
 		{
-			sprintf(tmp, "%s.txt", player_base);
+			strnfmt(tmp, 160, "%s.txt", player_base);
 			if (get_string(tmp, 80, "File name: "))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
@@ -3080,7 +3080,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	if (!fff)
 	{
 		/* Caption */
-		sprintf(caption, "Help file '%s'", name);
+		strnfmt(caption, 128, "Help file '%s'", name);
 
 		/* Build the filename */
 		path_build(path, 1024, ANGBAND_DIR_HELP, name);
@@ -3093,7 +3093,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	if (!fff)
 	{
 		/* Caption */
-		sprintf(caption, "Info file '%s'", name);
+		strnfmt(caption, 128, "Info file '%s'", name);
 
 		/* Build the filename */
 		path_build(path, 1024, ANGBAND_DIR_INFO, name);
@@ -3593,15 +3593,15 @@ void process_player_name(bool sf)
 
 #ifdef SAVEFILE_USE_UID
 		/* Rename the savefile, using the player_uid and player_base */
-		(void)sprintf(temp, "%d.%s", player_uid, player_base);
+		strnfmt(temp, 128, "%d.%s", player_uid, player_base);
 #else
 		/* Rename the savefile, using the player_base */
-		(void)sprintf(temp, "%s", player_base);
+		strnfmt(temp, 128, "%s", player_base);
 #endif
 
 #ifdef VM
 		/* Hack -- support "flat directory" usage on VM/ESA */
-		(void)sprintf(temp, "%s.sv", player_base);
+		strnfmt(temp, 128, "%s.sv", player_base);
 #endif /* VM */
 
 		/* Build the filename */
@@ -3814,7 +3814,7 @@ static void center_string(char *buf, cptr str)
 	j = 15 - i / 2;
 
 	/* Mega-Hack */
-	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
+	strnfmt(buf, 1024, "%*s%s%*s", j, "", str, 31 - i - j, "");
 }
 
 
@@ -3904,19 +3904,19 @@ static void print_tomb(void)
 		center_string(buf, cp_ptr->title);
 		put_fstr(11, 10, buf);
 
-		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
+		strnfmt(tmp, 160, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
 		put_fstr(11, 11, buf);
 
-		(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
+		strnfmt(tmp, 160, "Exp: %ld", (long)p_ptr->exp);
 		center_string(buf, tmp);
 		put_fstr(11, 12, buf);
 
-		(void)sprintf(tmp, "AU: %ld", (long)p_ptr->au);
+		strnfmt(tmp, 160, "AU: %ld", (long)p_ptr->au);
 		center_string(buf, tmp);
 		put_fstr(11, 13, buf);
 
-		(void)sprintf(tmp, "Killed on Level %d", p_ptr->depth);
+		strnfmt(tmp, 160, "Killed on Level %d", p_ptr->depth);
 		center_string(buf, tmp);
 		put_fstr(11, 14, buf);
 
@@ -3925,16 +3925,16 @@ static void print_tomb(void)
 		{
 			strncpy(dummy, p_ptr->died_from, 24);
 			dummy[24] = '\0';
-			(void)sprintf(tmp, "by %s.", dummy);
+			strnfmt(tmp, 160, "by %s.", dummy);
 		}
 		else
-			(void)sprintf(tmp, "by %s.", p_ptr->died_from);
+			strnfmt(tmp, 160, "by %s.", p_ptr->died_from);
 
 		center_string(buf, tmp);
 		put_fstr(11, 15, buf);
 
 
-		(void)sprintf(tmp, "%-.24s", ctime(&ct));
+		strnfmt(tmp, 160, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
 		put_fstr(11, 17, buf);
 	}

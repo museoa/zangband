@@ -2182,7 +2182,7 @@ void message_add(cptr str, u16b type)
 			str = w;
 
 			/* Write it out */
-			sprintf(w, "%s <%dx>", buf, j);
+			strnfmt(w, 1024, "%s <%dx>", buf, j);
 
 			/* Message length */
 			n = strlen(str);

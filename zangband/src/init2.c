@@ -206,45 +206,6 @@ void init_file_paths(char *path)
 	ANGBAND_DIR_XTRA = string_make(path);
 
 #endif /* VM */
-
-
-#ifdef NeXT
-
-	/* Allow "fat binary" usage with NeXT */
-	if (TRUE)
-	{
-		cptr next = NULL;
-
-# if defined(m68k)
-		next = "m68k";
-# endif
-
-# if defined(i386)
-		next = "i386";
-# endif
-
-# if defined(sparc)
-		next = "sparc";
-# endif
-
-# if defined(hppa)
-		next = "hppa";
-# endif
-
-		/* Use special directory */
-		if (next)
-		{
-			/* Forget the old path name */
-			string_free(ANGBAND_DIR_DATA);
-
-			/* Build a new path name */
-			sprintf(tail, "data-%s", next);
-			ANGBAND_DIR_DATA = string_make(path);
-		}
-	}
-
-#endif /* NeXT */
-
 }
 
 
@@ -557,13 +518,8 @@ static errr init_info(cptr filename, header *head,
 			/* Failure */
 			if (fd < 0)
 			{
-				char why[1024];
-
-				/* Message */
-				sprintf(why, "Cannot create the '%s' file!", buf);
-
 				/* Crash and burn */
-				quit(why);
+				quit_fmt("Cannot create the '%s' file!", buf);
 			}
 		}
 
@@ -1312,7 +1268,7 @@ void init_angband(void)
 		char why[1024];
 
 		/* Message */
-		sprintf(why, "Cannot access the '%s' file!", buf);
+		strnfmt(why, 1024, "Cannot access the '%s' file!", buf);
 
 		/* Crash and burn */
 		init_angband_aux(why);
@@ -1382,7 +1338,7 @@ void init_angband(void)
 			char why[1024];
 
 			/* Message */
-			sprintf(why, "Cannot create the '%s' file!", buf);
+			strnfmt(why, 1024, "Cannot create the '%s' file!", buf);
 
 			/* Crash and burn */
 			init_angband_aux(why);
@@ -1455,19 +1411,19 @@ void init_angband(void)
 	(void)process_pref_file(buf);
 
 	/* Access the "user" pref file */
-	sprintf(buf, "user.prf");
+	strcpy(buf, "user.prf");
 
 	/* Process that file */
 	(void)process_pref_file(buf);
 
 	/* Access the "basic" system pref file */
-	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+	strnfmt(buf, 1024, "pref-%s.prf", ANGBAND_SYS);
 
 	/* Process that file */
 	(void)process_pref_file(buf);
 
 	/* Access the "user" system pref file */
-	sprintf(buf, "user-%s.prf", ANGBAND_SYS);
+	strnfmt(buf, 1024, "user-%s.prf", ANGBAND_SYS);
 
 	/* Process that file */
 	(void)process_pref_file(buf);

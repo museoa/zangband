@@ -893,7 +893,7 @@ errr init_ami( void )
 		/* Check if the public screen is large enough */
 		if ( pw < maxw || ph < maxh )
 		{
-			sprintf( tmpstr, "Public screen is too small for window (%d x %d).", maxw, maxh );
+			strnfmt( tmpstr, 256, "Public screen is too small for window (%d x %d).", maxw, maxh );
 			FAIL( tmpstr );
 		}
 
@@ -1842,13 +1842,13 @@ static void request_font( char *str )
 						ASLFO_FixedWidthOnly, TRUE,
 						ASLFO_Screen, (use_pub ? pubscr : amiscr),
 						TAG_DONE, TAG_DONE ))
-					sprintf( str, "%s/%d", req->fo_Attr.ta_Name, req->fo_Attr.ta_YSize );
+					strnfmt( str, 128, "%s/%d", req->fo_Attr.ta_Name, req->fo_Attr.ta_YSize );
 			}
 			else
 				if ( AslRequestTags( req,
 						ASLFO_FixedWidthOnly, TRUE,
 						TAG_DONE, TAG_DONE ))
-					sprintf( str, "%s/%d", req->fo_Attr.ta_Name, req->fo_Attr.ta_YSize );
+					strnfmt( str, 128, "%s/%d", req->fo_Attr.ta_Name, req->fo_Attr.ta_YSize );
 			FreeAslRequest( req );
 		}
 	}
@@ -1870,7 +1870,7 @@ static void request_mode( char *str )
 			if( AslRequestTags( req, TAG_DONE ))
 			{
 				/* Store font name and size */
-				sprintf( str, "0x%X", req->sm_DisplayID );
+				strnfmt( str, 200, "0x%X", req->sm_DisplayID );
 			}
 			/* Free requester */
 			FreeAslRequest( req );
@@ -2302,7 +2302,7 @@ static char *handle_font(struct term_data *td, char *fontname)
 		/* Find font name/size delimiter */
 		if (( s = strchr( fontname, '/' )) == NULL )
 		{
-			sprintf(error,"PREFS: Illegal font specification: '%s'.\n", fontname );
+			strnfmt(error, 128, "PREFS: Illegal font specification: '%s'.\n", fontname );
 			return error;
 		}
 
@@ -2361,7 +2361,7 @@ static char *handle_font(struct term_data *td, char *fontname)
 			scrattr = NULL;
 
 			/* Output error message */
-			sprintf(error, "PREFS:Unable to open font '%s/%d'.\n", fontname, fsize );
+			strnfmt(error, 128, "PREFS:Unable to open font '%s/%d'.\n", fontname, fsize );
 			return error;
 		}
 	}
@@ -3019,22 +3019,22 @@ int amiga_tomb( void )
 
 	tomb_str( 9, (char *)cp_ptr->title );
 
-	sprintf( tmp, "Level: %d", (int)p_ptr->lev );
+	strnfmt( tmp, 160, "Level: %d", (int)p_ptr->lev );
 	tomb_str( 10, tmp );
 
-	sprintf( tmp, "Exp: %ld", (long)p_ptr->exp );
+	strnfmt( tmp, 160, "Exp: %ld", (long)p_ptr->exp );
 	tomb_str( 11, tmp );
 
-	sprintf( tmp, "AU: %ld", (long)p_ptr->au );
+	strnfmt( tmp, 160, "AU: %ld", (long)p_ptr->au );
 	tomb_str( 12, tmp );
 
-	sprintf( tmp, "Killed on Level %d", p_ptr->depth );
+	strnfmt( tmp, 160, "Killed on Level %d", p_ptr->depth );
 	tomb_str( 13, tmp );
 
-	sprintf( tmp, "by %s", p_ptr->died_from );
+	strnfmt( tmp, 160, "by %s", p_ptr->died_from );
 	tomb_str( 14, tmp );
 
-	sprintf( tmp, "%-.24s", ctime(&ct));
+	strnfmt( tmp, 160, "%-.24s", ctime(&ct));
 	tomb_str( 16, tmp );
 
 	return( TRUE );
@@ -4528,7 +4528,7 @@ int init_sound( void )
 			if (!(f = fopen(tmp, "r")))
 			{
 				if (use_angsound)
-					sprintf(tmp, "AngSound:%s",snd->Name);
+					strnfmt(tmp, MAX_PATH_LENGTH, "AngSound:%s",snd->Name);
 			}
 				else
 			fclose(f);
@@ -4644,7 +4644,7 @@ static void play_sound( int v )
 			if (!(f = fopen(tmp, "r")))
 			{
 				if (use_angsound)
-					sprintf(tmp, "AngSound:%s",snd->Name);
+					strnfmt(tmp, MAX_PATH_LENGTH, "AngSound:%s",snd->Name);
 			}
 				else
 			fclose(f);
@@ -5190,7 +5190,7 @@ void amiga_hs_to_ascii(void)
 
 	/* Print header, and underline it*/
 
-	sprintf(temp,"Highscore file for %s",VARIANT);
+	strnfmt(temp, 200, "Highscore file for %s",VARIANT);
 	fprintf(d,"%s\n",temp);
 	temp[ i = strlen(temp) ] = 0;
 	while (i)
@@ -5220,19 +5220,19 @@ void amiga_hs_to_ascii(void)
 	/* Reconfigure Date */
 	if ((*when == '@') && strlen(when) == 9)
 	{
-		sprintf(date_temp, "%.2s-%.2s-%.4s", 
+		strnfmt(date_temp, 15, "%.2s-%.2s-%.4s", 
 			when+7, when+5, when+1);
 	}
 	else
 	{
-		sprintf(date_temp, "%.2s-%.2s-20%.2s",
+		strnfmt(date_temp, 15, "%.2s-%.2s-20%.2s",
 			when+3, when, when+6);
 	}
 	when = date_temp;
 
 
 	/* Dump some info */
-	sprintf(temp, "%3d.%9s  %s the %s %s, Level %d",
+	strnfmt(temp, 200, "%3d.%9s  %s the %s %s, Level %d",
 	        i + 1, h.pts, h.who,
 	        race_info[pr].title, class_info[pc].title,
 	        clev);
@@ -5240,11 +5240,11 @@ void amiga_hs_to_ascii(void)
 	/* Dump the first line */
 	fprintf(d, "%s\n",temp);
 
-		sprintf(temp, "               Killed by %s on %s %d",
+		strnfmt(temp, 200, "               Killed by %s on %s %d",
 		    h.how, "Dungeon Level", cdun);
 
 			if (!cdun) /* -KMW- */
-				sprintf(temp, "               Killed by %s in the Town",
+				strnfmt(temp, 200, "               Killed by %s in the Town",
 				    h.how);
 
 	/* Append a "maximum level" */
@@ -5254,7 +5254,7 @@ void amiga_hs_to_ascii(void)
 	fprintf(d, "%s\n",temp);
 
 	/* And still another line of info */
-	sprintf(temp,
+	strnfmt(temp, 200,
 	       "               (Date %s, Gold %s, Turn %s).",
 			        when, gold, aged);
 

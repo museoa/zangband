@@ -862,7 +862,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 			if (!(r_ptr->flags1 & RF1_UNIQUE))
 			{
-				sprintf(tmp_val2, "%s%s",
+				strnfmt(tmp_val2, 256, "%s%s",
 						(is_a_vowel(*tmp) ? "an " : "a "), tmp);
 
 				modstr = tmp_val2;

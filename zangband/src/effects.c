@@ -2523,13 +2523,13 @@ void do_poly_self(void)
 			{
 				p_ptr->psex = SEX_FEMALE;
 				sp_ptr = &sex_info[p_ptr->psex];
-				sprintf(effect_msg, "female ");
+				strnfmt(effect_msg, 80, "female ");
 			}
 			else
 			{
 				p_ptr->psex = SEX_MALE;
 				sp_ptr = &sex_info[p_ptr->psex];
-				sprintf(effect_msg, "male ");
+				strnfmt(effect_msg, 80, "male ");
 			}
 		}
 
@@ -2555,13 +2555,11 @@ void do_poly_self(void)
 
 			if (effect_msg[0])
 			{
-				char tmp_msg[10];
-				sprintf(tmp_msg, "%s ", effect_msg);
-				sprintf(effect_msg, "deformed %s ", tmp_msg);
+				strnfmt(effect_msg, 80, "deformed %s ", effect_msg);
 			}
 			else
 			{
-				sprintf(effect_msg, "deformed ");
+				strnfmt(effect_msg, 80, "deformed ");
 			}
 		}
 

@@ -3264,7 +3264,7 @@ void gain_level_reward(int chosen_reward)
 	type--;
 
 
-	sprintf(wrath_reason, "the Wrath of %s",
+	strnfmt(wrath_reason, 32, "the Wrath of %s",
 			chaos_patrons[p_ptr->chaos_patron]);
 
 	effect = chaos_rewards[p_ptr->chaos_patron][type];

@@ -955,7 +955,7 @@ static errr Term_user_dos(int n)
 				while (1)
 				{
 					/* Section name */
-					sprintf(section, "Mode-%d", i);
+					strnfmt(section, 80, "Mode-%d", i);
 
 					/* Get new values or end the list */
 					if (!(w = get_config_int(section, "screen_wid", 0)) || (i == 16)) break;
@@ -1632,7 +1632,7 @@ static bool init_windows(void)
 	char buf[128];
 
 	/* Section name */
-	sprintf(section, "Mode-%d", resolution);
+	strnfmt(section, 80, "Mode-%d", resolution);
 
 	/* Get number of windows */
 	num_windows = get_config_int(section, "num_windows", 1);
@@ -1647,7 +1647,7 @@ static bool init_windows(void)
 		WIPE(td, term_data);
 
 		/* Section name */
-		sprintf(section, "Term-%d-%d", resolution, i);
+		strnfmt(section, 80, "Term-%d-%d", resolution, i);
 
 		/* Term number */
 		td->number = i;
@@ -1786,7 +1786,7 @@ static bool init_graphics(void)
 	if (!graphics_initialized)
 	{
 		/* Section name */
-		sprintf(section, "Mode-%d", resolution);
+		strnfmt(section, 80, "Mode-%d", resolution);
 
 		/* Get bitmap tile size */
 		bitmap_wid = get_config_int(section, "bitmap_wid", 8);
@@ -2109,7 +2109,7 @@ errr init_dos(void)
 	resolution = get_config_int(section, "Resolution", 1);
 
 	/* Section name */
-	sprintf(section, "Mode-%d", resolution);
+	strnfmt(section, 80, "Mode-%d", resolution);
 
 	/* Get the screen dimensions */
 	screen_wid = get_config_int(section, "screen_wid", 640);

@@ -508,7 +508,7 @@ errr init_vcs(int argc,char **argv)
 		fprintf(stderr,"can't find my tty\n");
 		return 1;
 	}
-	sprintf(buf,"/dev/vcsa%i",i);
+	strnfmt(buf, 256, "/dev/vcsa%i",i);
 	fd_vcsa=open(buf,O_RDWR);
 	if (fd_vcsa==-1)
 	{
