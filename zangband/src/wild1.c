@@ -819,7 +819,7 @@ static void init_towns(int xx, int yy)
 		}
 	}
 	
-	/* Hack - add a supplies store to the starting town */
+	/* Hack - the starting town uses pre-defined stores */
 	for (i = 0; i < town[best_town].numstores; i++)
 	{
 		if (i == 0)
