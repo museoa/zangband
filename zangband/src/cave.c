@@ -2079,9 +2079,13 @@ void display_map(int *cy, int *cx)
 void do_cmd_view_map(void)
 {
 	int cy, cx;
+	int wid, hgt;
 
 	/* No overhead map in vanilla town mode. */
 	if (!dun_level && vanilla_town) return;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Save the screen */
 	screen_save();
@@ -2107,7 +2111,7 @@ void do_cmd_view_map(void)
 		display_map(&cy, &cx);
 
 		/* Wait for it */
-		put_str("Hit any key to continue", map_hgt + 1, 35);
+		put_str("Hit any key to continue", hgt - 1, COL_MAP + (wid - COL_MAP) / 2 - 11);
 
 		/* Hilite the player */
 		move_cursor(cy, cx);
@@ -2138,7 +2142,8 @@ void do_cmd_view_map(void)
 			display_map(&cy, &cx);
 
 			/* Wait for it */
-			put_str("Move around, or hit any other key to continue.", map_hgt + 1, (14 + map_wid) / 2 + 15);
+			put_str("Move around, or hit any other key to continue.",
+			        hgt - 1, COL_MAP + (wid - COL_MAP) / 2 - 23);
 
 			/* Hilite the player */
 			move_cursor(cy, cx);

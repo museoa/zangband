@@ -622,7 +622,7 @@ static void prt_depth(void)
 	}
 
 	/* Right-Adjust the "depth", and clear old values */
-	prt(format("%7s", depths), map_hgt + 1, COL_DEPTH);
+	prt(format("%7s", depths), Term->hgt - 1, COL_DEPTH);
 }
 
 
@@ -634,37 +634,37 @@ static void prt_hunger(void)
 	/* Fainting / Starving */
 	if (p_ptr->food < PY_FOOD_FAINT)
 	{
-		c_put_str(TERM_RED, "Weak  ", map_hgt + 1, COL_HUNGRY);
+		c_put_str(TERM_RED, "Weak  ", Term->hgt - 1, COL_HUNGRY);
 	}
 
 	/* Weak */
 	else if (p_ptr->food < PY_FOOD_WEAK)
 	{
-		c_put_str(TERM_ORANGE, "Weak  ", map_hgt + 1, COL_HUNGRY);
+		c_put_str(TERM_ORANGE, "Weak  ", Term->hgt - 1, COL_HUNGRY);
 	}
 
 	/* Hungry */
 	else if (p_ptr->food < PY_FOOD_ALERT)
 	{
-		c_put_str(TERM_YELLOW, "Hungry", map_hgt + 1, COL_HUNGRY);
+		c_put_str(TERM_YELLOW, "Hungry", Term->hgt - 1, COL_HUNGRY);
 	}
 
 	/* Normal */
 	else if (p_ptr->food < PY_FOOD_FULL)
 	{
-		c_put_str(TERM_L_GREEN, "      ", map_hgt + 1, COL_HUNGRY);
+		c_put_str(TERM_L_GREEN, "      ", Term->hgt - 1, COL_HUNGRY);
 	}
 
 	/* Full */
 	else if (p_ptr->food < PY_FOOD_MAX)
 	{
-		c_put_str(TERM_L_GREEN, "Full  ", map_hgt + 1, COL_HUNGRY);
+		c_put_str(TERM_L_GREEN, "Full  ", Term->hgt - 1, COL_HUNGRY);
 	}
 
 	/* Gorged */
 	else
 	{
-		c_put_str(TERM_GREEN, "Gorged", map_hgt + 1, COL_HUNGRY);
+		c_put_str(TERM_GREEN, "Gorged", Term->hgt - 1, COL_HUNGRY);
 	}
 }
 
@@ -676,11 +676,11 @@ static void prt_blind(void)
 {
 	if (p_ptr->blind)
 	{
-		c_put_str(TERM_ORANGE, "Blind", map_hgt + 1, COL_BLIND);
+		c_put_str(TERM_ORANGE, "Blind", Term->hgt - 1, COL_BLIND);
 	}
 	else
 	{
-		put_str("     ", map_hgt + 1, COL_BLIND);
+		put_str("     ", Term->hgt - 1, COL_BLIND);
 	}
 }
 
@@ -692,11 +692,11 @@ static void prt_confused(void)
 {
 	if (p_ptr->confused)
 	{
-		c_put_str(TERM_ORANGE, "Confused", map_hgt + 1, COL_CONFUSED);
+		c_put_str(TERM_ORANGE, "Confused", Term->hgt - 1, COL_CONFUSED);
 	}
 	else
 	{
-		put_str("        ", map_hgt + 1, COL_CONFUSED);
+		put_str("        ", Term->hgt - 1, COL_CONFUSED);
 	}
 }
 
@@ -708,11 +708,11 @@ static void prt_afraid(void)
 {
 	if (p_ptr->afraid)
 	{
-		c_put_str(TERM_ORANGE, "Afraid", map_hgt + 1, COL_AFRAID);
+		c_put_str(TERM_ORANGE, "Afraid", Term->hgt - 1, COL_AFRAID);
 	}
 	else
 	{
-		put_str("      ", map_hgt + 1, COL_AFRAID);
+		put_str("      ", Term->hgt - 1, COL_AFRAID);
 	}
 }
 
@@ -724,11 +724,11 @@ static void prt_poisoned(void)
 {
 	if (p_ptr->poisoned)
 	{
-		c_put_str(TERM_ORANGE, "Poisoned", map_hgt + 1, COL_POISONED);
+		c_put_str(TERM_ORANGE, "Poisoned", Term->hgt - 1, COL_POISONED);
 	}
 	else
 	{
-		put_str("        ", map_hgt + 1, COL_POISONED);
+		put_str("        ", Term->hgt - 1, COL_POISONED);
 	}
 }
 
@@ -845,7 +845,7 @@ static void prt_state(void)
 	}
 
 	/* Display the info (or blanks) */
-	c_put_str(attr, text, map_hgt + 1, COL_STATE);
+	c_put_str(attr, text, Term->hgt - 1, COL_STATE);
 }
 
 
@@ -877,7 +877,7 @@ static void prt_speed(void)
 	}
 
 	/* Display the speed */
-	c_put_str(attr, format("%-14s", buf), map_hgt + 1, COL_SPEED);
+	c_put_str(attr, format("%-14s", buf), Term->hgt - 1, COL_SPEED);
 }
 
 
@@ -885,11 +885,11 @@ static void prt_study(void)
 {
 	if (p_ptr->new_spells)
 	{
-		put_str("Study", map_hgt + 1, 64);
+		put_str("Study", Term->hgt - 1, 64);
 	}
 	else
 	{
-		put_str("     ", map_hgt + 1, COL_STUDY);
+		put_str("     ", Term->hgt - 1, COL_STUDY);
 	}
 }
 
