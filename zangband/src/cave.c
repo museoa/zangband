@@ -1835,7 +1835,6 @@ static byte priority_table[][2] =
 	{ FEAT_SHAL_LAVA, 20 },
 	{ FEAT_DIRT, 6 },
 	{ FEAT_GRASS, 6 },
-	{ FEAT_DARK_PIT, 20 },
 	{ FEAT_TREES, 6 },
 	{ FEAT_MOUNTAIN, 20 },
 

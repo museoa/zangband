@@ -948,7 +948,7 @@
 #define FEAT_SHAL_WATER         0x54
 #define FEAT_DEEP_LAVA          0x55
 #define FEAT_SHAL_LAVA          0x56
-#define FEAT_DARK_PIT           0x57
+/* #define FEAT_DARK_PIT           0x57 Now is a field */
 #define FEAT_DIRT               0x58
 #define FEAT_GRASS              0x59
 
@@ -962,34 +962,34 @@
 #define FEAT_TREE_WATER		0x5F
 
 /* Terrain semi-transparent*/
-#define FEAT_TREES              0x60
-#define FEAT_MOUNTAIN           0x61
+#define FEAT_TREES          0x60
+#define FEAT_MOUNTAIN       0x61
 #define FEAT_SNOW_MOUNTAIN	0x62
 #define FEAT_BOULDER		0x63
 #define FEAT_PINE_TREE		0x64
 #define FEAT_SNOW_TREE		0x65
 #define FEAT_OBELISK		0x66
-#define FEAT_PILLAR		0x67
+#define FEAT_PILLAR         0x67
 
 /* Feature 0x68 - 0x6F unused */
 
 /* Impassible terrains */
-#define FEAT_FENCE		0x70
-#define FEAT_WELL		0x71
-#define FEAT_FOUNTAIN		0x72
-#define FEAT_JUNGLE		0x73
+#define FEAT_FENCE		    0x70
+#define FEAT_WELL		    0x71
+#define FEAT_FOUNTAIN       0x72
+#define FEAT_JUNGLE		    0x73
 /* Buildings - removed (replaced with fields) */
 
 /* Slow "floor" terrains */
 
-#define FEAT_BUSH		0x80
+#define FEAT_BUSH		    0x80
 #define FEAT_DEAD_BUSH		0x81
 #define FEAT_GRASS_LONG		0x82
 #define FEAT_ROCK_GEN		0x83
 #define FEAT_ROCK_SNOW		0x84
 #define FEAT_TREE_GEN		0x85
 #define FEAT_TREE_SNOW		0x86
-#define FEAT_SNOW		0x87
+#define FEAT_SNOW		    0x87
 #define FEAT_DEEP_SWAMP		0x88
 #define FEAT_SHAL_SWAMP		0x89
 

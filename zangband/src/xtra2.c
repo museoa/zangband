@@ -1968,7 +1968,6 @@ static bool target_set_accept(int y, int x)
 		if (c_ptr->feat == FEAT_SHAL_WATER) return (TRUE);
 		if (c_ptr->feat == FEAT_DEEP_LAVA) return (TRUE);
 		if (c_ptr->feat == FEAT_SHAL_LAVA) return (TRUE);
-		if (c_ptr->feat == FEAT_DARK_PIT) return (TRUE);
 	}
 
 	/* Nope */

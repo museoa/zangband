@@ -1984,59 +1984,6 @@ void py_attack(int y, int x)
 }
 
 
-static bool player_can_enter(byte feature)
-{
-	bool pass_wall;
-
-	/* Player can not walk through "walls" unless in Shadow Form */
-	if (p_ptr->wraith_form || p_ptr->pass_wall)
-		pass_wall = TRUE;
-	else
-		pass_wall = FALSE;
-
-
-	switch (feature)
-	{
-		case FEAT_DARK_PIT:
-		{
-			if (p_ptr->ffall)
-				return (TRUE);
-			else
-				return (FALSE);
-		}
-
-		case FEAT_RUBBLE:
-		case FEAT_MAGMA:
-		case FEAT_QUARTZ:
-		case FEAT_MAGMA_H:
-		case FEAT_QUARTZ_H:
-		case FEAT_MAGMA_K:
-		case FEAT_QUARTZ_K:
-		case FEAT_WALL_EXTRA:
-		case FEAT_WALL_INNER:
-		case FEAT_WALL_OUTER:
-		case FEAT_WALL_SOLID:
-		case FEAT_FENCE:
-		case FEAT_WELL:
-		case FEAT_FOUNTAIN:
-		case FEAT_JUNGLE:
-		{
-			return (pass_wall);
-		}
-
-		case FEAT_PERM_EXTRA:
-		case FEAT_PERM_INNER:
-		case FEAT_PERM_OUTER:
-		case FEAT_PERM_SOLID:
-		{
-			return (FALSE);
-		}
-	}
-
-	return (TRUE);
-}
-
-
 static void summon_pattern_vortex(int y, int x)
 {
 	int i;
@@ -2072,9 +2019,6 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 {
 	if (!pattern_tile(c_y, c_x) && !pattern_tile(n_y, n_x))
 		return TRUE;
-
-	/* Ignore illegal moves */
-	if (!player_can_enter(area(n_y,n_x)->feat)) return FALSE;
 
 	if (area(n_y,n_x)->feat == FEAT_PATTERN_START)
 	{
@@ -2349,13 +2293,6 @@ void move_player(int dir, int do_pickup)
 			py_attack(y, x);
 			oktomove = FALSE;
 		}
-	}
-
-	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->ffall)
-	{
-		msg_print("You can't cross the chasm.");
-		running = 0;
-		oktomove = FALSE;
 	}
 	
 	/* Fields can block movement */
