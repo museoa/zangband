@@ -786,19 +786,12 @@ proc NSMainWindow::InitMenus {oop} {
 	lappend entries [list -type command -label [mc Sprite] -identifier E_PREF_SPRITE]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_PREFERENCES $entries
 
-	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_PHOTO
-	set entries {}
-	lappend entries [list -type command -label [mc photo-new] -identifier E_PHOTO_NEW]
-	lappend entries [list -type command -label [mc photo-open] -identifier E_PHOTO_OPEN]
-	NSMenu::MenuInsertEntries $mbarId -end MENU_PHOTO $entries
-
 	set entries {}
 	lappend entries [list -type command -label [mc "Character Info"] -identifier E_OTHER_INFO]
 	lappend entries [list -type command -label [mc Feeling] -identifier E_OTHER_FEELING]
 	lappend entries [list -type command -label [mc "High Scores"] -identifier E_OTHER_SCORE]
 	lappend entries [list -type command -label [mc Knowledge] -identifier E_OTHER_KNOWLEDGE]
 	lappend entries [list -type command -label [mc "Message History"] -identifier E_OTHER_MESSAGES]
-	lappend entries [list -type cascade -menu MENU_PHOTO -label [mc Photo] -identifier M_PHOTO]
 	lappend entries [list -type cascade -menu MENU_PREFERENCES -label [mc Preferences] -identifier M_PREFERENCES]
 	lappend entries [list -type command -label [mc "Quest Status"] -identifier E_OTHER_QUEST]
 	lappend entries [list -type command -label [mc "Time Of Day"] -identifier E_OTHER_TIME]
@@ -920,7 +913,6 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 	lappend identList M_PREFERENCES E_PREF_ASSIGN E_PREF_COLOR \
 		E_PREF_FONT E_PREF_KEYMAP E_PREF_SPRITE \
 		E_PREF_ALTERNATE
-	lappend identList M_PHOTO E_PHOTO_NEW E_PHOTO_OPEN
 
 	if {[file exists [Path borg borg.tcl]]} {
 		lappend identList E_PREF_BORG
@@ -1085,17 +1077,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_PREF_SQUELCH {
 			NSModule::LoadIfNeeded NSSquelch
 			NSWindowManager::Display squelch
-		}
-
-		E_PHOTO_NEW {
-			NSModule::LoadIfNeeded NSPhotoWindow
-			set photoId [NSObject::New NSPhotoWindow]
-			NSPhotoWindow::New $photoId [Global main,widget]
-		}
-		E_PHOTO_OPEN {
-			NSModule::LoadIfNeeded NSPhotoWindow
-			set photoId [NSObject::New NSPhotoWindow]
-			after 1 NSPhotoWindow::Open $photoId
 		}
 
 		E_OTHER_INFO {DoUnderlyingCommand C}

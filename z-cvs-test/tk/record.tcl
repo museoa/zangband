@@ -78,8 +78,6 @@ proc NSRecord::NSRecord {oop} {
 
 	Info $oop temp,dump ""
 	Info $oop temp,message ""
-	Info $oop temp,photo ""
-	Info $oop temp,photoText ""
 
 	Info $oop record ""
 	Info $oop imageName ""
@@ -224,33 +222,6 @@ proc NSRecord::InitWindow {oop} {
 	Info $oop xscroll $frame.xscroll
 	Info $oop yscroll $frame.yscroll
 
-	#
-	# Canvas. This is used to display the photo image, if any.
-	# The scroll behaviour is desireable over that of the Text
-	# widget, plus the Text widget takes some time to create
-	# the image instance each time.
-	#
-
-	# Photo canvas
-	NSModule::LoadIfNeeded NSPhoto
-	set photoId [NSObject::New NSPhoto $frame]
-	NSPhoto::Info $photoId examineCmd \
-		"NSRecord::ExamineCmd $oop"
-	set canvas [NSPhoto::Info $photoId canvas]
-	$canvas configure -background Black -yscrollincrement 1 \
-		-xscrollincrement 1 -cursor fleur
-	Info $oop photoId $photoId
-
-	# Scroll the preview image when the mouse is dragged
-	$canvas bind image <ButtonPress-1> "
-		set NSRecord::Priv(image,x) %x
-		set NSRecord::Priv(image,y) %y
-	"
-	$canvas bind image <Button1-Motion> \
-		"NSRecord::ImageDrag $oop %x %y"
-
-	Info $oop canvas $canvas
-
 	# Statusbar
 	MakeStatusBar $win.statusBar 20
 
@@ -266,16 +237,6 @@ proc NSRecord::InitWindow {oop} {
 		-row 0 -column 1 -rowspan 1 -columnspan 1 -sticky ns
 	grid $frame.xscroll \
 		-row 1 -column 0 -rowspan 1 -columnspan 1 -sticky ew
-
-	# Swap the canvas/text as needed
-	grid $canvas \
-		-row 0 -column 0 -rowspan 1 -columnspan 1 -sticky news
-	grid remove $canvas
-
-	# This is to avoid an annoying flicker when swapping the text
-	# and canvas.
-#	grid [frame $frame.background -borderwidth 0 -background Black] \
-#		-row 0 -column 0 -rowspan 1 -columnspan 1 -sticky news
 
 	# Window geometry
 	grid rowconfigure $win 0 -weight 0
@@ -297,7 +258,6 @@ proc NSRecord::InitWindow {oop} {
 
 	NSTabs::Add $tabsId [mc Dump]
 	NSTabs::Add $tabsId [mc Messages]
-	NSTabs::Add $tabsId [mc Photo]
 	
 	return
 }
@@ -399,7 +359,6 @@ proc NSRecord::MenuSelect {oop menuId index ident} {
 			switch -- [Info $oop display,what] {
 				dump {set string "character dump"}
 				message {set string "message log"}
-				photo {set string "photo image"}
 			}
 			set desc "Saves the displayed $string to a new file."
 		}
@@ -467,10 +426,7 @@ proc NSRecord::DisplayCmd {oop message first args} {
 				set entryList [Info $oop display,entry]
 				if {[llength $entryList]} {
 					set entry [lindex $entryList 0]
-					if {[string equal $entry photo]} {
-					} else {
-						SetDisplay $oop $entry
-					}
+					SetDisplay $oop $entry
 				}
 			}
 		}
@@ -478,9 +434,7 @@ proc NSRecord::DisplayCmd {oop message first args} {
 			set entryList [Info $oop display,entry]
 			if {[llength $entryList]} {
 				set entry [lindex $entryList 0]
-				if {[string equal $entry photo]} {
-					SetDisplay $oop photo
-				}
+				SetDisplay $oop message
 			}
 			set widget [Info $oop [Info $oop display,widget]]
 			eval [Info $oop xscroll] set [$widget xview]
@@ -626,16 +580,14 @@ proc NSRecord::SetRecord {oop record} {
 	$zipCmd read $archive
 	set i 0
 	set entryList [$zipCmd glob]
-	foreach entry [list dump.txt message.txt photo.gif photo.txt] \
-			info [list dump message photo photoText] \
-			title [list Dump Messages Photo PhotoText] {
+	foreach entry [list dump.txt message.txt] \
+			info [list dump message] \
+			title [list Dump Messages] {
 			
 		if {[lsearch -exact $entryList $entry] == -1} continue
 		set tempFile [NSUtils::TempFileName $Angband(dir)]
 		$zipCmd extract $entry $tempFile
 		Info $oop temp,$info $tempFile
-
-		if {[string equal $entry photo.txt]} continue
 
 		NSTabs::Add $tabsId [mc $title]
 		lappend tabList $info
@@ -739,32 +691,6 @@ proc NSRecord::SetDisplay {oop display} {
 			eval [Info $oop xscroll] set [$text xview]
 			eval [Info $oop yscroll] set [$text yview]
 		}
-		photo {
-			$text delete 1.0 end
-			SetDisplayAux $oop canvas
-			update
-			set tempFile [Info $oop temp,photo]
-			if {[string length $tempFile]} {
-				set imageName [Info $oop imageName]
-				if {![string length $imageName]} {
-					StatusBar $oop [mc "Reading image file..."] 0
-					update idletasks
-					set imageName Image_Record$oop
-					image create photo $imageName -file $tempFile -gamma 0.9
-					Info $oop imageName $imageName
-					$canvas itemconfigure image -image $imageName
-					$canvas configure -scrollregion [$canvas bbox image]
-					StatusBar $oop [mc "Done."] 1
-				}
-			}
-			eval [Info $oop xscroll] set [$canvas xview]
-			eval [Info $oop yscroll] set [$canvas yview]
-
-			set tempFile [Info $oop temp,photoText]
-			if {[string length $tempFile]} {
-				NSPhoto::ReadPhotoText [Info $oop photoId] $tempFile
-			}
-		}
 	}
 
 	Info $oop display,what $display
@@ -776,58 +702,6 @@ proc NSRecord::SetDisplay {oop display} {
 		NSTabs::Smaller $tabsId $current
 		NSTabs::Bigger $tabsId $tabId
 		NSTabs::Info $tabsId current $tabId
-	}
-
-	return
-}
-
-# NSRecord::ImageDrag --
-#
-#	Handles <Button1-Motion> events in the photo image. This allows
-#	the user to scroll the image by clicking and dragging the mouse.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecord::ImageDrag {oop x y} {
-
-	variable Priv
-
-	# Get the canvas
-	set canvas [Info $oop canvas]
-
-	# Calculate the distance the pointer moved
-	set dx [expr {$x - $Priv(image,x)}]
-	set dy [expr {$y - $Priv(image,y)}]
-
-	# Require minimum movement
-	if {abs($dx) < 5} {
-		set dx 0
-	}
-	if {abs($dy) < 5} {
-		set dy 0
-	}
-
-	# Scroll the canvas
-	set bbox [$canvas bbox all]
-	set width [expr {[lindex $bbox 2] - [lindex $bbox 0]}]
-	if {$width > [winfo width $canvas]} {
-		$canvas xview scroll -$dx units
-	}
-	set height [expr {[lindex $bbox 3] - [lindex $bbox 1]}]
-	if {$height > [winfo height $canvas]} {
-		$canvas yview scroll -$dy units
-	}
-
-	# Remember the current pointer position
-	if {$dx} {
-		set Priv(image,x) $x
-	}
-	if {$dy} {
-		set Priv(image,y) $y
 	}
 
 	return
@@ -850,7 +724,7 @@ proc NSRecord::RemoveTemps {oop} {
 	# Reset the canvas image so our image instance is deleted below
 	$canvas itemconfigure image -image Image_Empty
 
-	foreach name [list dump message photo photoText] {
+	foreach name [list dump message] {
 		set path [Info $oop temp,$name]
 		if {[file exists $path]} {
 			file delete $path
@@ -1037,37 +911,6 @@ proc NSRecord::MatchRecordsToScores {scoreList} {
 	return $result
 }
 
-# NSRecord::ExamineCmd --
-#
-#	Describe what is at the given cave location.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecord::ExamineCmd {oop photoId y x} {
-
-	global NSPhoto
-	
-	if {[info exists NSPhoto($photoId,examine,$y,$x)]} {
-		StatusBar $oop [NSPhoto::Info $photoId examine,$y,$x] 0
-		switch -- [NSPhoto::Info $photoId what,$y,$x] {
-			monster {
-				NSRecall::RecallMonster [NSPhoto::Info $photoId idx,$y,$x]
-			}
-			object {
-				NSRecall::RecallObjectKind [NSPhoto::Info $photoId idx,$y,$x]
-			}
-		}
-	} else {
-		StatusBar $oop "" 0
-	}
-
-	return
-}
-
 # NSRecord::SaveAs --
 #
 #	Save part of the character record to a new file.
@@ -1102,10 +945,6 @@ proc NSRecord::SaveAs {oop} {
 		}
 		message {
 			set path [tk_getSaveFile -initialfile $charName.msg \
-				-initialdir $Angband(dir) -parent $win]
-		}
-		photo {
-			set path [tk_getSaveFile -initialfile $charName.gif \
 				-initialdir $Angband(dir) -parent $win]
 		}
 	}

@@ -341,11 +341,6 @@ proc NSTomb::TombWindow {} {
 	# Hack -- Quit without saving
 	bind $win <KeyPress-a> {AbortGame}
 
-bind $win <KeyPress-p> {
-	NSModule::LoadIfNeeded NSPhotoWindow
-	NSObject::New NSPhotoWindow [Global main,widget]
-}
-
 	# Set a grab on the window and claim the focus
 	NSUtils::GrabSave $win
 	focus $win.continue

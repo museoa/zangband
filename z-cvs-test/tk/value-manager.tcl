@@ -213,7 +213,6 @@ if 1 {
 
 	Manage record,dump 1
 	Manage record,message 1
-	Manage record,photo 1
 
 	Manage bigmap,scale 4
 	Manage micromap,scale 4

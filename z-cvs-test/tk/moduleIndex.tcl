@@ -39,8 +39,6 @@ if {[string equal [angband player class] Mindcrafter]} {
 }
 IndexOne NSPets pets.tcl
 IndexOne NSPower power.tcl
-IndexOne NSPhoto photo.tcl
-IndexOne NSPhotoWindow photo-window.tcl
 IndexOne NSPlayerFlags player-flags.tcl
 IndexOne NSRecord record.tcl
 IndexOne NSRecall recall.tcl

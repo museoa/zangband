@@ -40,13 +40,6 @@ proc angband_close_game {} {
 		Config::CharIcon::Write
 
 		NSValueManager::CloseModule
-		
-		if {[info exists ::Global(photoText)]} {
-			set tempFile [Global photoText]
-			if {[string length $tempFile] && [file exists $tempFile]} {
-				file delete $tempFile
-			}
-		}
 
 	} result]} {
 		set message "An error occured during shutdown:\n    $result"
@@ -799,14 +792,6 @@ proc angband_borg {command} {
 			# Choose a new icon
 			if {[Global autoAssign]} {
 				AutoAssignCharacterIcon
-			}
-
-			# Clean up temp files
-			if {[info exists ::Global(photoText)]} {
-				set tempFile [Global photoText]
-				if {[string length $tempFile] && [file exists $tempFile]} {
-					file delete $tempFile
-				}
 			}
 		}
 	}

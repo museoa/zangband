@@ -374,14 +374,6 @@ proc AbortGame {} {
 		angband_close_game
 	}
 
-	# In any event, delete the temp photo.txt
-	if {[info exists ::Global(photoText)]} {
-		set tempFile [Global photoText]
-		if {[string length $tempFile] && [file exists $tempFile]} {
-			file delete $tempFile
-		}
-	}
-
 	# Bye!
 	angband game abort -noask
 	
