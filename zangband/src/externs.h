@@ -620,6 +620,7 @@ extern void item_describe(object_type *o_ptr);
 extern void item_describe_faux(object_type *o_ptr);
 extern object_type *item_split(object_type *o_ptr, int num);
 extern void item_increase(object_type *o_ptr, int num);
+extern void item_increase_silent(object_type *o_ptr, int num);
 extern bool inven_carry_okay(const object_type *o_ptr);
 extern object_type *reorder_objects_aux(object_type *q_ptr,
 										object_comp comp_func, u16b o_idx);

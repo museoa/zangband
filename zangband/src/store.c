@@ -808,7 +808,7 @@ static void store_delete(void)
 	}
 
 	/* Actually destroy (part of) the item */
-	item_increase(o_ptr, -num);
+	item_increase_silent(o_ptr, -num);
 }
 
 
@@ -1569,7 +1569,7 @@ static void store_purchase(void)
 			i = get_list_length(st_ptr->stock);
 
 			/* Remove the bought items from the store */
-			item_increase(o_ptr, -amt);
+			item_increase_silent(o_ptr, -amt);
 
 			/* Store is empty */
 			if (!st_ptr->stock)

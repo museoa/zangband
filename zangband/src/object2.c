@@ -4617,6 +4617,7 @@ void item_charges(object_type *o_ptr)
 static void item_describe_aux(object_type *o_ptr, bool back_step)
 {
 	char o_name[256];
+	char lab[40] = "";
 
 	int item;
 
@@ -4627,7 +4628,7 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
-	
+
 	if (o_ptr->number <= 0)
 	{
 		if (!list)
@@ -4661,25 +4662,33 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 			/* Item is in the equipment */
 			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-			if (show_labels)
-				msgf("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
-			else
-				msgf("%s (%c).", o_name, I2A(item));
+			if (show_labels) strnfmt(lab, 40, "%^s: ", describe_use(item));
+
+			msgf("%s%s (%c).", lab, o_name, I2A(item));
 		}
 		else if (list == &p_ptr->inventory)
 		{
 			/* Get number of item in inventory */
 			item = get_item_position(p_ptr->inventory, o_ptr);
 
+			if (show_labels) strnfmt(lab, 40, "In your pack: ");
+
 			/* Hack to get that letter correct in case a scroll disappears */
 			if (back_step)
-				msgf("In your pack: %s (%c).", o_name, I2A(item - 1));
+				msgf("%s%s (%c).", lab, o_name, I2A(item - 1));
 			else
-				msgf("In your pack: %s (%c).", o_name, I2A(item));
+				msgf("%s%s (%c).", lab, o_name, I2A(item));
 		}
 		else if (list == &c_ptr->o_idx)
 		{
 			msgf("On the ground: %s.", o_name);
+		}
+		/* Then it is in the shop */
+		else
+		{
+			if (show_labels) strnfmt(lab, 40, "In the shop: ");
+
+			msgf("%s%s", lab, o_name);
 		}
 	}
 }
@@ -4826,7 +4835,7 @@ object_type *item_split(object_type *o_ptr, int num)
 /*
  * Increase the "number" of an item in the inventory
  */
-void item_increase(object_type *o_ptr, int num)
+static void item_increase_aux(object_type *o_ptr, int num, bool silent)
 {
 	/* Apply */
 	num += o_ptr->number;
@@ -4854,10 +4863,27 @@ void item_increase(object_type *o_ptr, int num)
 		notice_item();
 	}
 
-	item_describe(o_ptr);
+	/* The shop upkeeping shouldn't be mentioned */
+	if (!silent) item_describe(o_ptr);
+
 	item_optimize(o_ptr);
 }
 
+/*
+ * Increase the "number" of an item in the inventory
+ */
+void item_increase(object_type *o_ptr, int num)
+{
+	item_increase_aux(o_ptr, num, FALSE);
+}
+
+/*
+ * Increase the "number" of an item in the inventory without a message
+ */
+void item_increase_silent(object_type *o_ptr, int num)
+{
+	item_increase_aux(o_ptr, num, TRUE);
+}
 
 /*
  * Check if we have space for an item in the pack without overflow
