@@ -215,7 +215,7 @@ static void init_masks(Tcl_Interp *interp)
 /*
  * Find a location on the bitmaps
  */
-static byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
+byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
 {
 	return (bitmap_ptr->pixelPtr + x * bitmap_ptr->pixelSize + y * bitmap_ptr->pitch);
 }

@@ -21,6 +21,9 @@
 
 #include <tkWinInt.h>
 
+/* HPALETTE in windows headers */
+extern void *Palette_GetHPal(void);
+
 struct PlatBitmap
 {
 	HBITMAP hbm; /* Bitmap */
@@ -636,6 +639,162 @@ BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
 	}
 	
 	FREE(data);
+	
+	return (bitmapPtr);
+}
+
+
+/*
+ * Load a font
+ */
+BitmapPtr Text_font_load(Tcl_Interp *interp, cptr name, int size)
+{
+	BitmapPtr bitmapPtr;
+	
+	FILE *fp;
+	
+	int i, j, k, m;
+	
+	int num = 0, error_idx = -1;
+	
+	char buf[1024];
+	char line[16];
+	
+	byte *pixel;
+	
+	/* Open the BMP file */
+	fp = fopen(name, "r");
+
+	/* No such file */
+	if (fp == NULL)
+	{
+		return (NULL);
+	}
+	
+	/* Create bitmap for font */
+	MAKE(bitmapPtr, BitmapType);
+	
+	/* Want a 8bit bitmap */
+	bitmapPtr->depth = 8;
+	
+	/* 128 characters */
+	bitmapPtr->width = 128 * size;
+	bitmapPtr->height = size;
+	
+	/* Actually allocate the bitmap */
+	Bitmap_New(interp, bitmapPtr);
+	
+	
+	/* Paraonia */
+	if (!bitmapPtr)
+	{
+		fclose(fp);
+		return (NULL);
+	}
+		/* Reset the counters for use in parsing the font data */
+	i = 0;
+	j = 16;
+	
+	/* Process the file */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Count lines */
+		num++;
+
+		/* Skip "empty" lines */
+		if (!buf[0]) continue;
+
+		/* Skip "blank" lines */
+		if (isspace(buf[0])) continue;
+
+		/* Skip comments */
+		if (buf[0] == '#') continue;
+
+		/* Look at the line */
+		
+		/* Verify correct "colon" format */
+		if (buf[1] != ':')
+		{
+			quit_fmt("Incorrect font file format on line %d", num);
+		}
+
+		/* Get number */
+		if (buf[0] == 'N')
+		{
+			/* Get the index */
+			i = atoi(buf+2);
+		
+			/* Verify information */
+			if (i <= error_idx)
+			{
+				quit_fmt("Incorrect font file numbering on line %d", num);
+			}
+
+			error_idx = i;
+			
+			/* Verify information */
+			if (i >= 128)
+			{
+				quit_fmt("Incorrect font file numbering on line %d", num);
+			}
+			
+			/* Verify information */
+			if (j != size)
+			{
+				quit_fmt("Incorrect font size on line %d", num);
+			}
+			
+			/* Start from the top */
+			j = 0;
+		}
+		
+		/* Get font data */
+		if (buf[0] == 'F')
+		{
+			/* Verify information */
+			if (j >= size)
+			{
+				quit_fmt("Incorrect font size length on line %d", num);
+			}
+			
+			if (((int) strlen(buf)) != size + 2)
+			{
+				quit_fmt("Incorrect font size width on line %d", num);
+			}
+			
+			/* Create the line */
+			for (k = 0; k < size; k++)
+			{
+				line[k] = buf[k + 2];
+			}
+			
+			/* Copy it to the bitmap */
+			for (m = 0; m < size; m++)
+			{
+				pixel = get_icon_ptr(bitmapPtr, i * size + m, j);
+			
+				if (line[m] == '*')
+				{
+					/* Coloured pixel */
+					*pixel = 255;
+				}
+				else
+				{
+					/* Blank pixel */
+					*pixel = 0;
+				}
+			}
+			
+			/* Next line of the character */
+			j++;
+		}
+	}
+
+	/* Close the file */
+	my_fclose(fp);
+
+	/* Paranoia - does the file end early? */
+	if ((i != 127) || (j != size)) return (NULL);
 	
 	return (bitmapPtr);
 }

@@ -58,6 +58,28 @@ extern char tnb_tile_file[1024];
 
 extern void tnb_get_term(int x, int y, byte *attr, char *c);
 
+/* plat.c */
+
+typedef struct BitmapType {
+	unsigned char *pixelPtr; /* Address of top-left pixel */
+	int width; /* Width in pixels */
+	int height; /* Height in pixels */
+	int depth; /* 8, 16 or 24 */
+	int pitch; /* Address difference between vertically adjacent pixels */
+	int pixelSize; /* Address difference between horizontally adjacent pixels */
+    Pixmap pixmap;
+    void *platData; /* Platform-specific info */
+} BitmapType, *BitmapPtr;
+
+extern void *Plat_PaletteInit(unsigned char *rgb);
+extern int Plat_XColor2Pixel(XColor *xColorPtr);
+extern void Plat_SyncDisplay(Display *display);
+extern BitmapPtr Text_font_load(Tcl_Interp *interp, cptr name, int size);
+
+extern void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
+extern void Bitmap_Delete(BitmapPtr bitmapPtr);
+extern BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name);
+
 /* term.c */
 extern errr Term_xtra_tnb_react(void);
 extern errr Term_wipe_tnb(int x, int y, int n);
@@ -67,6 +89,7 @@ extern errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp,
 extern errr Term_xtra_tnb_clear(void);
 
 /* canv-widget.c */
+extern byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y);
 extern int CanvasWidget_Init(Tcl_Interp *interp);
 
 
@@ -186,9 +209,6 @@ extern int g_colormap_white, g_colormap_black;
 extern unsigned char g_palette2colormap[256];
 
 extern int Palette_Init(Tcl_Interp *interp);
-#ifdef PLATFORM_WIN
-/* HPALETTE */ extern void *Palette_GetHPal(void);
-#endif /* PLATFORM_WIN */
 extern unsigned char *Palette_GetRGB(void);
 extern void Palette_ResetHash(void);
 extern int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
@@ -217,36 +237,10 @@ extern void *Array_Insert(void *array_ptr, int *count, int elem_size,
 extern void *Array_Delete(void *array_ptr, int *count, int elem_size,
 	int index);
 
-typedef struct BitmapType {
-	unsigned char *pixelPtr; /* Address of top-left pixel */
-	int width; /* Width in pixels */
-	int height; /* Height in pixels */
-	int depth; /* 8, 16 or 24 */
-	int pitch; /* Address difference between vertically adjacent pixels */
-	int pixelSize; /* Address difference between horizontally adjacent pixels */
-    Pixmap pixmap;
-    void *platData; /* Platform-specific info */
-} BitmapType, *BitmapPtr;
-
-extern void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
-extern void Bitmap_Delete(BitmapPtr bitmapPtr);
-extern BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name);
-
-#ifdef PLATFORM_WINxxx
-extern HFONT TkToWinFont(Tk_Font tkFont);
-#endif /* PLATFORM_WIN */
-
 extern Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
 extern void ExtToUtf_SetResult(Tcl_Interp *interp, cptr string);
 extern char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
 	Tcl_DString *extDStringPtr);
-
-
-/* plat.c */
-extern void *Plat_PaletteInit(unsigned char *rgb);
-extern int Plat_XColor2Pixel(XColor *xColorPtr);
-extern void Plat_SyncDisplay(Display *display);
-
 
 
 /* Make a tk hook function called 'objcmd_name' */
