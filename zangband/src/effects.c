@@ -1526,26 +1526,23 @@ bool inc_oppose_pois(int v)
  * XXX XXX Should these "magic numbers" have #defines?
  */
 
-static int resist_table[20] = {
-3, 4, 5, 7, 8, 9, 11, 15, 
-19, 22, 33, 44, 55, 66, 77, 88, 
-100, 133, 166, 200};
+static int resist_table[12] = {3, 5, 7, 11, 16, 22, 33, 50, 66, 100, 150, 200};
 
 /*
  * Acid resist level
  */
 int res_acid_lvl(void)
 {
-	byte level = 16;
+	int level = 9;
 	
 	if (FLAG(p_ptr, TR_IM_ACID)) return (0);
 	
-	if (FLAG(p_ptr, TR_RES_ACID))  level -= 6;
-	if (p_ptr->tim.oppose_acid)    level -= 6;
-	if (FLAG(p_ptr, TR_HURT_ACID)) level += 3;
+	if (FLAG(p_ptr, TR_RES_ACID))  level -= 3;
+	if (p_ptr->tim.oppose_acid)    level -= 3;
+	if (FLAG(p_ptr, TR_HURT_ACID)) level += 2;
 
 	if (level < 0)  level = 0;
-	if (level > 19) level = 19;
+	if (level > 11) level = 11;
 	
 	return resist_table[level];;
 }
@@ -1555,16 +1552,16 @@ int res_acid_lvl(void)
  */
 int res_elec_lvl(void)
 {
-	byte level = 16;
+	int level = 9;
 	
 	if (FLAG(p_ptr, TR_IM_ELEC)) return (0);
 	
-	if (FLAG(p_ptr, TR_RES_ELEC))  level -= 6;
-	if (p_ptr->tim.oppose_elec)    level -= 6;
-	if (FLAG(p_ptr, TR_HURT_ELEC)) level += 3;
+	if (FLAG(p_ptr, TR_RES_ELEC))  level -= 3;
+	if (p_ptr->tim.oppose_elec)    level -= 3;
+	if (FLAG(p_ptr, TR_HURT_ELEC)) level += 2;
 
 	if (level < 0)  level = 0;
-	if (level > 19) level = 19;
+	if (level > 11) level = 11;
 	
 	return resist_table[level];;
 }
@@ -1574,16 +1571,16 @@ int res_elec_lvl(void)
  */
 int res_fire_lvl(void)
 {
-	byte level = 16;
+	int level = 9;
 	
 	if (FLAG(p_ptr, TR_IM_FIRE)) return (0);
 
-	if (FLAG(p_ptr, TR_RES_FIRE))  level -= 6;
-	if (p_ptr->tim.oppose_fire)    level -= 6;
-	if (FLAG(p_ptr, TR_HURT_FIRE)) level += 3;
+	if (FLAG(p_ptr, TR_RES_FIRE))  level -= 3;
+	if (p_ptr->tim.oppose_fire)    level -= 3;
+	if (FLAG(p_ptr, TR_HURT_FIRE)) level += 2;
 
 	if (level < 0)  level = 0;
-	if (level > 19) level = 19;
+	if (level > 11) level = 11;
 	
 	return resist_table[level];;
 }
@@ -1593,16 +1590,16 @@ int res_fire_lvl(void)
  */
 int res_cold_lvl(void)
 {
-	byte level = 16;
+	int level = 9;
 	
 	if (FLAG(p_ptr, TR_IM_COLD)) return (0);
 	
-	if (FLAG(p_ptr, TR_RES_COLD))  level -= 6;
-	if (p_ptr->tim.oppose_cold)    level -= 6;
-	if (FLAG(p_ptr, TR_HURT_COLD)) level += 3;
+	if (FLAG(p_ptr, TR_RES_COLD))  level -= 3;
+	if (p_ptr->tim.oppose_cold)    level -= 3;
+	if (FLAG(p_ptr, TR_HURT_COLD)) level += 2;
 
 	if (level < 0)  level = 0;
-	if (level > 19) level = 19;
+	if (level > 11) level = 11;
 	
 	return resist_table[level];;
 }
@@ -1612,15 +1609,15 @@ int res_cold_lvl(void)
  */
 int res_pois_lvl(void)
 {
-	byte level = 16;
+	int level = 9;
 	
 	if (FLAG(p_ptr, TR_IM_POIS)) return (0);
 
-	if (FLAG(p_ptr, TR_RES_POIS)) level -= 6;
-	if (p_ptr->tim.oppose_pois)   level -= 6;
+	if (FLAG(p_ptr, TR_RES_POIS)) level -= 3;
+	if (p_ptr->tim.oppose_pois)   level -= 3;
 
 	if (level < 0)  level = 0;
-	if (level > 19) level = 19;
+	if (level > 11) level = 11;
 	
 	return resist_table[level];;
 }
