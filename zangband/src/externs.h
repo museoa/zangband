@@ -370,6 +370,7 @@ extern void object_kind_track(int k_idx);
 extern void disturb(int stop_search, int flush_output);
 
 /* cmd1.c */
+extern int deadliness_calc(int attack_power);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
 extern s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr);

@@ -1441,13 +1441,8 @@ static void display_player_abilities(void)
 
 	put_str("Avg.Dam./Rnd:", 18, COL_SKILLS3);
 
-
-	if (dambonus > 0)
-		avgdam = (100 + deadliness_conversion[dambonus]);
-	else if (dambonus > -31)
-		avgdam = (100 - deadliness_conversion[ABS(dambonus)]);
-	else
-		avgdam = 0;
+	/* Deadliness conversion table */
+	avgdam = deadliness_calc(dambonus);
 
 	/* Effect of damage dice x2 */
 	avgdam *= damdice * (damsides + 1);
@@ -2365,19 +2360,7 @@ static void display_player_middle(void)
 	if (object_known_p(o_ptr)) show_todam += o_ptr->to_d;
 
 	/* convert to oangband "deadliness" */
-	if (show_todam > 0)
-	{
-		percentdam = (100 + deadliness_conversion[show_todam]);
-	}
-	else if (show_todam > -31)
-	{
-		percentdam = (100 - deadliness_conversion[ABS(show_todam)]);
-	}
-	else
-	{
-		percentdam = 0;
-	}
-
+	percentdam = deadliness_calc(show_todam);
 
 	/*** Bonuses ***/
 

@@ -1531,12 +1531,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		dd = o_ptr->dd;
 		ds = o_ptr->ds;
 
-		if (db > 0)
-			avgdam = (100 + deadliness_conversion[db]);
-		else if (db > -31)
-			avgdam = (100 - deadliness_conversion[ABS(db)]);
-		else
-			avgdam = 0;
+		avgdam = deadliness_calc(db);
 
 		/* effect of damage dice x2 */
 		avgdam *= dd * (ds + 1);

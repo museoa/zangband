@@ -2809,14 +2809,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				if (total_deadliness > 0)
-					tdam *= (100 +
-					deadliness_conversion[total_deadliness]);
-				else if (total_deadliness > -31)
-					tdam *= (100 -
-					deadliness_conversion[ABS(total_deadliness)]);
-				else
-					tdam = 0;
+				tdam *= deadliness_calc(total_deadliness);
 
 				/* Get the whole number of dice by deflating the result. */
 				tdam_whole = tdam / 10000;
@@ -3242,26 +3235,11 @@ void do_cmd_throw_aux(int mult)
 				 */
 				if (f2 & (TR2_THROW))
 				{
-					if (total_deadliness > 0)
-						tdam *= (100 +
-						    deadliness_conversion[total_deadliness]);
-					else if (total_deadliness > -31)
-						tdam *= (100 -
-						    deadliness_conversion[ABS(total_deadliness)]);
-					else
-						tdam = 0;
+					tdam *= deadliness_calc(total_deadliness);
 				}
-
 				else
 				{
-					if (q_ptr->to_d > 0)
-						tdam *= (100 +
-						    deadliness_conversion[q_ptr->to_d]);
-					else if (q_ptr->to_d > -31)
-						tdam *= (100 -
-						     deadliness_conversion[ABS(q_ptr->to_d)]);
-					else
-						tdam = 0;
+					tdam *= deadliness_calc(q_ptr->to_d);
 				}
 
 				/* Get the whole number of dice by deflating the result. */

@@ -1125,12 +1125,7 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
 
 	dambonus = o_ptr->to_d + p_ptr->to_d;
 
-	if (dambonus > 0)
-		mindam = (100 + deadliness_conversion[dambonus]);
-	else if (dambonus > -31)
-		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
-	else
-		mindam = 0;
+	mindam = deadliness_calc(dambonus);
 	
 	/* Include effects of slaying bonus */
 	mindam = (mindam * slay) / 10;
@@ -1225,12 +1220,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 
 	dambonus = o_ptr->to_d + p_ptr->to_d;
 
-	if (dambonus > 0)
-		mindam = (100 + deadliness_conversion[dambonus]);
-	else if (dambonus > -31)
-		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
-	else
-		mindam = 0;
+	mindam = deadliness_calc(dambonus);
 
 	/* Effect of damage dice */
 	maxdam = mindam * (o_ptr->ds * o_ptr->dd);

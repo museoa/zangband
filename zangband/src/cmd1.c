@@ -13,8 +13,38 @@
 #include "angband.h"
 #define MAX_VAMPIRIC_DRAIN 100
 
-
-
+/*
+ * Calculate the deadliness based on the attack power.
+ * This function takes into account bounds checking,
+ * and then just looks at the deadliness_conversion
+ * table in tables.c
+ *
+ * This number is 'inflated' by 100 from the eventual
+ * multiplier to the damage dealt.
+ */
+int deadliness_calc(int attack_power)
+{
+	if (attack_power > 255)
+	{
+		/* Really high deadliness */
+		return (355);
+	}
+	
+	if (attack_power > 0)
+	{
+		/* Normal deadliness */
+		return (100 + deadliness_conversion[attack_power]);
+	}
+	
+	if (attack_power > -31)
+	{
+		/* Cursed items */
+		return (100 - deadliness_conversion[ABS(attack_power)]);
+	}
+	
+	/* Really powerful minus yields zero damage */
+	return (0);
+}
 
 
 /*
@@ -1621,9 +1651,6 @@ void py_attack(int y, int x)
 	/* Initialize. */
 	total_deadliness = p_ptr->to_d + o_ptr->to_d;
 
-	/* Paranoia.  Ensure legal table access. */
-	if (total_deadliness > 150) total_deadliness = 150;
-
 	/* Calculate the "attack quality".  As BTH_PLUS_ADJ has been reduced
 	 * to 1, base skill and modifiers to skill are given equal weight. -LM-
 	 */
@@ -1714,12 +1741,7 @@ void py_attack(int y, int x)
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				if (total_deadliness > 0)
-					k *= (100 + deadliness_conversion[total_deadliness]);
-				else if (total_deadliness > -31)
-					k *= (100 - deadliness_conversion[ABS(total_deadliness)]);
-				else
-					k = 0;
+				k *= deadliness_calc(total_deadliness);
 
 				/* Get the whole number of dice by deflating the result. */
 				k_whole = k / 10000;
