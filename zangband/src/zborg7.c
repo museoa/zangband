@@ -679,7 +679,8 @@ bool borg_check_lite(void)
 			borg_spell(REALM_CHAOS, 0, 2) ||
 			borg_spell(REALM_NATURE, 0, 4) ||
 			borg_spell(REALM_SORCERY, 0, 3) ||
-			borg_spell(REALM_LIFE, 0, 4))
+			borg_spell(REALM_LIFE, 0, 4) ||
+			borg_mutation(MUT1_ILLUMINE))
 		{
 			borg_note("# Illuminating the room");
 
@@ -807,7 +808,8 @@ bool borg_check_lite_only(void)
 			borg_spell(REALM_CHAOS, 0, 2) ||
 			borg_spell(REALM_NATURE, 0, 4) ||
 			borg_spell(REALM_SORCERY, 0, 3) ||
-			borg_spell(REALM_LIFE, 0, 4))
+			borg_spell(REALM_LIFE, 0, 4) ||
+			borg_mutation(MUT1_ILLUMINE))
 		{
 			borg_note("# Illuminating the room prior to resting");
 
@@ -1549,12 +1551,6 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	}
 
 	borg_keypress(I2A(slot));
-
-	/* Default is one item */
-	/* if ((l_ptr->number > 1) && (number > 1)) borg_keypress('\r'); */
-
-	/* Verify destruction */
-	/* borg_keypress('y'); */
 }
 
 /*
@@ -2758,7 +2754,7 @@ bool borg_unwear_stuff(void)
 		l_ptr = &equipment[slot];
 
 		/* Skip empty slots */
-		if (!l_ptr) continue;
+		if (!l_ptr->k_idx) continue;
 
 		/* skip it if it has not been decursed */
 		if (KN_FLAG(l_ptr, TR_CURSED) ||
@@ -2791,11 +2787,11 @@ bool borg_unwear_stuff(void)
 	if (b_slot == -1) return (FALSE);
 
 	/* Say you take it off */
-	borg_note_fmt("# Taking off a %s", l_ptr->o_name);
+	borg_note_fmt("# Taking off a %s", equipment[b_slot].o_name);
 
 	/* Take it off */
 	borg_keypress('t');
-	borg_keypress(I2A(slot));
+	borg_keypress(I2A(b_slot));
 
 	/* Success */
 	return (TRUE);

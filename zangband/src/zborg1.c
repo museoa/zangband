@@ -252,7 +252,6 @@ bool my_need_enchant_to_d;	/* Need some enchantment */
  * Various "amounts" (for the player)
  */
 
-s16b amt_phase;
 s16b amt_food_scroll;
 s16b amt_food_hical;
 s16b amt_food_lowcal;
@@ -260,6 +259,9 @@ s16b amt_food_lowcal;
 s16b amt_slow_poison;
 s16b amt_cure_confusion;
 s16b amt_cure_blind;
+s16b amt_star_heal;
+s16b amt_life;
+s16b amt_rod_heal;
 
 s16b amt_book[8][4];	/* [realm][sval] */
 

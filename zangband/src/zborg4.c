@@ -42,9 +42,7 @@ int num_fix_stat[7];	/* #7 is to fix all stats */
 int num_fix_exp;
 int num_mana;
 int num_heal;
-int num_heal_true;
 int num_ez_heal;
-int num_ez_heal_true;
 int num_pfe;
 int num_glyph;
 int num_mass_genocide;
@@ -1369,9 +1367,13 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 			break;
 		}
 		case SV_POTION_STAR_HEALING:
+		{
+			amt_star_heal += number;
+			break;
+		}
 		case SV_POTION_LIFE:
 		{
-			bp_ptr->able.easy_heal += number;
+			amt_life += number;
 			break;
 		}
 		case SV_POTION_CURE_CRITICAL:
@@ -1479,6 +1481,11 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 			bp_ptr->able.speed += number;
 			break;
 		}
+		case SV_POTION_BERSERK_STRENGTH:
+		{
+			bp_ptr->able.berserk += number;
+			break;
+		}
 		case SV_POTION_POISON:
 		{
 			bp_ptr->able.poison += number;
@@ -1541,7 +1548,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_PHASE_DOOR:
 		{
-			amt_phase += number;
+			bp_ptr->able.phase += number;
 			break;
 		}
 		case SV_SCROLL_TELEPORT:
@@ -1662,10 +1669,6 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			{
 				bp_ptr->recall += number * 100;
 			}
-			else
-			{
-				bp_ptr->recall += number;
-			}
 			break;
 		}
 
@@ -1717,15 +1720,11 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 
 		case SV_ROD_HEALING:
 		{
-			/* only +2 per rod because of long charge time. */
 			/* Don't count on it if I suck at activations */
 			if (bp_ptr->skill_dev - k_ptr->level > 7)
 			{
-				bp_ptr->able.heal += number * 2;
-			}
-			else
-			{
 				bp_ptr->able.heal += number;
+				amt_rod_heal += number;
 			}
 			break;
 		}
@@ -2317,7 +2316,6 @@ static void borg_notice_aux2(void)
 
 
 	/* Reset basic */
-	amt_phase = 0;
 	amt_food_scroll = 0;
 	amt_food_hical = 0;
 	amt_food_lowcal = 0;
@@ -2326,6 +2324,9 @@ static void borg_notice_aux2(void)
 	amt_slow_poison = 0;
 	amt_cure_confusion = 0;
 	amt_cure_blind = 0;
+	amt_star_heal = 0;
+	amt_life = 0;
+	amt_rod_heal = 0;
 
 	/* Reset books */
 	for (i = 0; i < MAX_REALM; i++)
@@ -2471,7 +2472,8 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_SORCERY, 0, 3) ||
 		borg_spell_legal(REALM_NATURE, 0, 4) ||
 		borg_spell_legal(REALM_CHAOS, 0, 2) ||
-		borg_spell_legal(REALM_ARCANE, 0, 5))
+		borg_spell_legal(REALM_ARCANE, 0, 5) ||
+		borg_mutation_check(MUT1_ILLUMINE, TRUE))
 	{
 		bp_ptr->able.lite += 1000;
 	}
@@ -2515,10 +2517,7 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		((bp_ptr->depth == 100) &&
-		 (borg_spell_legal(REALM_LIFE, 3, 6) ||
-		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
-		  borg_spell_legal(REALM_TRUMP, 1, 6))))
+		borg_mutation_check(MUT1_RECALL, TRUE))
 	{
 		bp_ptr->recall += 1000;
 	}
@@ -2531,13 +2530,23 @@ static void borg_notice_aux2(void)
 		bp_ptr->able.teleport_level += 1000;
 	}
 
+	/* Handle phase door */
+	if (borg_spell_legal_fail(REALM_SORCERY, 0, 1, 40) ||
+		borg_spell_legal_fail(REALM_ARCANE, 0, 4, 40) ||
+		borg_spell_legal_fail(REALM_TRUMP, 0, 0, 40) ||
+		borg_mutation_check(MUT1_BLINK, TRUE))
+	{
+		bp_ptr->able.phase += 1000;
+	}
+
 	/* Handle teleport spell carefully */
-	if ((borg_spell_okay_fail(REALM_ARCANE, 2, 3, 5) ||
+	if (((borg_spell_okay_fail(REALM_ARCANE, 2, 3, 5) ||
 		 borg_spell_okay_fail(REALM_LIFE, 4, 1, 5) ||
 		 borg_spell_okay_fail(REALM_TRUMP, 0, 4, 5) ||
 		 borg_spell_okay_fail(REALM_CHAOS, 0, 7, 5) ||
 		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5)) &&
-		(FLAG(bp_ptr, TR_RES_BLIND)) && (FLAG(bp_ptr, TR_RES_CONF)))
+		 FLAG(bp_ptr, TR_RES_BLIND) && FLAG(bp_ptr, TR_RES_CONF)) ||
+		borg_mutation_check(MUT1_VTELEPORT, TRUE))
 	{
 		bp_ptr->able.teleport += 1000;
 	}
@@ -2550,11 +2559,24 @@ static void borg_notice_aux2(void)
 		bp_ptr->able.speed += 1000;
 	}
 
+	/* berserk spells */
+	if (borg_spell_legal(REALM_DEATH, 2, 0) ||
+		borg_mindcr_legal(MIND_ADRENALINE, 35))
+	{
+		bp_ptr->able.berserk += 1000;
+	}
+
 	/* Handle "heal" */
 	if (borg_spell_legal(REALM_LIFE, 1, 6) ||
 		borg_spell_legal(REALM_NATURE, 1, 7))
 	{
 		bp_ptr->able.heal += 1000;
+	}
+
+	/* Handle big healing spell */
+	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5))
+	{
+		bp_ptr->able.easy_heal += 1000;
 	}
 
 	/* Handle "fix exp" */
@@ -2613,6 +2635,9 @@ static void borg_notice_aux2(void)
 	 * Correct the high and low calorie foods for the correct
 	 * races.
 	 */
+
+	/* Add star_healing and life potions into easy_heal */
+	bp_ptr->able.easy_heal = amt_star_heal + amt_life;
 
 	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
@@ -2958,8 +2983,6 @@ static void borg_notice_home_clear(void)
 	num_mana = 0;
 	num_heal = 0;
 	num_ez_heal = 0;
-	num_ez_heal_true = 0;
-	num_heal_true = 0;
 
 
 	/* Reset missiles */
@@ -3405,21 +3428,18 @@ static void borg_notice_home_potion(list_item *l_ptr)
 		case SV_POTION_HEALING:
 		{
 			num_heal += l_ptr->number;
-			num_heal_true += l_ptr->number;
 			break;
 		}
 
 		case SV_POTION_STAR_HEALING:
 		{
 			num_ez_heal += l_ptr->number;
-			num_ez_heal_true += l_ptr->number;
 			break;
 		}
 
 		case SV_POTION_LIFE:
 		{
 			num_ez_heal += l_ptr->number;
-			num_ez_heal_true += l_ptr->number;
 			break;
 		}
 
@@ -3598,7 +3618,8 @@ static void borg_notice_home_spells(void)
 	/* Handle recall */
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
-		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40))
+		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
+		borg_mutation_check(MUT1_RECALL, TRUE))
 	{
 		num_recall += 1000;
 	}
@@ -4556,8 +4577,12 @@ static s32b borg_power_home_aux2(void)
 	value += 100 * MIN_FLOOR(num_teleport_level, 20, 99);
 
 	/* Collect Speed */
-	value += 5000 * MIN(num_speed, 20);
-	value += 500 * MIN_FLOOR(num_speed, 20, 99);
+	value += 4000 * MIN(num_speed, 20);
+	value += 400 * MIN_FLOOR(num_speed, 20, 99);
+
+	/* Collect Berserk */
+	value += 400 * MIN(num_berserk, 20);
+	value += 40 * MIN_FLOOR(num_berserk, 20, 99);
 
 	/* Collect Invuln Potions (As if you'd ever find 99 potions) */
 	value += 5000 * MIN(num_goi_pot, 99);

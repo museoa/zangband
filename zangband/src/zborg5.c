@@ -3629,7 +3629,7 @@ static s32b borg_power_aux3(void)
 static s32b borg_power_aux4(void)
 {
 	int book, realm;
-	int food_max;
+	int max_carry;
 
 	s32b value = 0L;
 
@@ -3649,27 +3649,27 @@ static s32b borg_power_aux4(void)
 	if ((FLAG(bp_ptr, TR_REGEN)) && !(FLAG(bp_ptr, TR_SLOW_DIGEST)))
 	{
 		/* take more food */
-		food_max = 50;
+		max_carry = 50;
 	}
 	else
-		food_max = 35;
+		max_carry = 35;
 
 	/* if hungry, food is THE top priority */
 	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && bp_ptr->food)
 		value += 100000;
 
-	/* Give the best value for scrolls of satisfy hunger */
+	/* Take some food along */
 	value += 10000 * MIN(bp_ptr->food, 25);
-	value += 1000 * MIN_FLOOR(bp_ptr->food, 25, food_max);
+	value += 1000 * MIN_FLOOR(bp_ptr->food, 25, max_carry);
 
 	/* If you can digest food */
 	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
 		/* Prefer to buy HiCalorie foods over LowCalorie */
-		value += 20 * MIN(5 * amt_food_hical, food_max);
+		value += 20 * MIN(5 * amt_food_hical, max_carry);
 
 		/* Prefer to buy scrolls over foodstuffs */
-		value += 50 * MIN(5 * amt_food_scroll, food_max);
+		value += 50 * MIN(5 * amt_food_scroll, max_carry);
 	}
 
 	/* Reward throwing potions of poison for low level borgs */
@@ -3729,8 +3729,8 @@ static s32b borg_power_aux4(void)
 	value += 5000 * MIN_FLOOR(bp_ptr->recall, 3, 7);
 
 	/* first phase door is very important */
-	value += 50000 * MIN(amt_phase, 1);
-	value += 5000 * MIN_FLOOR(amt_phase, 1, 15);
+	value += 50000 * MIN(bp_ptr->able.phase, 1);
+	value += 5000 * MIN_FLOOR(bp_ptr->able.phase, 1, 15);
 
 	/* Reward escape */
 	value += 10000 * MIN(bp_ptr->able.escape, 5);
@@ -3748,35 +3748,40 @@ static s32b borg_power_aux4(void)
 	/* Reward teleport */
 	value += 10000 * MIN(bp_ptr->able.teleport, 10);
 
-	/* Rod of healing */
-	value += 20000 * MIN(borg_has[374], 4);
-
-	/* Potion of *Healing* */
-	value += 10000 * MIN(borg_has[419], 2);
-
-	if (borg_has[419] == 0)
+	/* If the borg has lots of hitpoints */
+	if (bp_ptr->mhp > 800)
 	{
-		/* Potion of life */
-		value += 10000 * MIN(borg_has[420], 2);
+		/* Carry some big healers:  Potion of *Healing* or Life */
+		value += 10000 * MIN(bp_ptr->able.easy_heal, 2);
+
+		/* Prefer to take *healing* over life */
+		value += 50 * MIN(amt_star_heal, 2);
+
+		if (bp_ptr->lev == 50)
+		{
+			/* Carry more */
+			value += 10000 * MIN_FLOOR(bp_ptr->able.easy_heal, 2, 10);
+			value += 50 * MIN_FLOOR(amt_star_heal, 2, 10);
+		}
 	}
 
-	/* Potion of Healing */
-	if (borg_class == CLASS_WARRIOR || borg_class == CLASS_ROGUE)
+	/* If the borg has a reliable healing spell */
+	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5) ||
+		borg_spell_legal_fail(REALM_LIFE, 1, 6, 5) ||
+		borg_spell_legal_fail(REALM_NATURE, 1, 6, 5))
+	{
+		/* Still take some potions along */
+		value += 2000 * MIN(bp_ptr->able.heal, 10);
+	}
+	/* This borg needs potions to heal */
+	else
 	{
 		/* Reward healing */
 		value += 8000 * MIN(bp_ptr->able.heal, 15);
 	}
-	else if (borg_class == CLASS_RANGER || borg_class == CLASS_PALADIN ||
-			 borg_class == CLASS_MAGE)
-	{
-		/* Reward healing */
-		value += 4000 * MIN(bp_ptr->able.heal, 10);
-	}
-	else if (borg_class == CLASS_PRIEST)
-	{
-		/* Reward heal */
-		value += 2000 * MIN(bp_ptr->able.heal, 5);
-	}
+
+	/* Rods of Healing are preferred to potions */
+	value += 50 * MIN(amt_rod_heal, 10);
 
 	/* Restore Mana */
 	if (bp_ptr->msp > 100)
@@ -3870,6 +3875,10 @@ static s32b borg_power_aux4(void)
 
 	/* Reward speed potions/staves */
 	value += 5000 * MIN(bp_ptr->able.speed, 20);
+
+	/* Reward berserk strength */
+	value += 500 * MIN(bp_ptr->able.berserk, 5);
+	value += 50 * MIN_FLOOR(bp_ptr->able.berserk, 5, 10);
 
 	/* Reward Recharge ability */
 	value += 200 * MIN(bp_ptr->able.recharge, 5);
@@ -4119,7 +4128,7 @@ cptr borg_restock(int depth)
 	/*** Level 10 - 19  ***/
 
 	/* Must have "phase" */
-	if (amt_phase < 1) return ("rs phase");
+	if (bp_ptr->able.phase < 1) return ("rs phase");
 
 	/* Must have "cure" */
 	if ((bp_ptr->max_lev < 30) &&
@@ -4147,7 +4156,7 @@ cptr borg_restock(int depth)
 	/*** Level 46 - 99  ***/
 
 	/* Must have "Heal" */
-	if (bp_ptr->able.heal + borg_has[374] + bp_ptr->able.easy_heal < 1)
+	if (bp_ptr->able.heal + amt_rod_heal + bp_ptr->able.easy_heal < 1)
 		return ("rs heal");
 
 	/* Assume happy at level 99 */

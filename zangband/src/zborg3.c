@@ -1877,8 +1877,13 @@ bool borg_spell_okay(int realm, int book, int what)
  */
 static int borg_spell_fail_rate(int realm, int book, int what)
 {
-	int chance, minfail;
+	int chance, minfail, stat, power;
+
+	list_item *l_ptr;
 	borg_magic *as = &borg_magics[realm][book][what];
+
+	/* Warriors can't cast spells */
+	if (borg_class == CLASS_WARRIOR) return (100);
 
 	/* Access the spell  */
 	chance = as->sfail;
@@ -1886,32 +1891,92 @@ static int borg_spell_fail_rate(int realm, int book, int what)
 	/* Reduce failure rate by "effective" level adjustment */
 	chance -= 3 * (bp_ptr->lev - as->level);
 
+	/* Is the borg an INT user? */
+	if (bp_ptr->intmana)
+	{
+		/* Get the value of INT */
+		stat = my_stat_ind[A_INT];
+	}
+	/* Is the borg a WIS user? */
+	else if (bp_ptr->wismana)
+	{
+		/* Get the value of WIS */
+		stat = my_stat_ind[A_WIS];
+	}
+	else
+	{
+		/* Inconcievable! */
+		borg_oops("A spellcaster that doesn't need INT or WIS!");
+
+		/* fail the spell */
+		return (100);
+	}
+
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[my_stat_ind[A_INT]] - 1);
+	chance -= 3 * (adj_mag_stat[stat] - 1);
+
+	/* Collect the spell cost */
+	power = as->power;
+
+	/* Failure rate goes up if there is not enough mana */
+	if (power > bp_ptr->csp) chance += 5 * (power - bp_ptr->csp);
+	
+	/* Some mutations increase spell failure */
+	if (bp_ptr->muta3 & MUT3_MAGIC_RES ||
+		bp_ptr->muta1 & MUT1_EAT_MAGIC) chance += 5;
+
+	/*
+	 * What realm is that????
+	 * spell_chance in spells3.c has the -1 here, but I got confused with
+	 * the -1 that are in the calls to spell_chance too.  I am guessing it
+	 * refers here to REALM_DEATH that already has a banish.
+	 */
+/*	if (realm == REALM_DEATH - 1 &&*/
+	if (realm == REALM_DEATH &&
+		bp_ptr->muta1 & MUT1_BANISH) chance += 10;
+
+	/* Squeeeeeek */
+	if (bp_ptr->muta3 & MUT3_SILLY_VOI) chance += as->level;
 
 	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[my_stat_ind[A_INT]];
+	minfail = adj_mag_fail[stat];
 
 	/* Non mage characters never get too good */
-	if (borg_class != CLASS_MAGE)
+	if (borg_class != CLASS_MAGE &&
+		borg_class != CLASS_PRIEST &&
+		borg_class != CLASS_HIGH_MAGE &&
+		borg_class != CLASS_MINDCRAFTER)
 	{
-		if (minfail < 5) minfail = 5;
+		/* For these the minfail is at least 5% */
+		minfail = MAX(5, minfail);
+	}
+
+	/* If the borg is a priest with an non-blessed edged weapon */
+	if (borg_class == CLASS_PRIEST)
+	{
+		l_ptr = &equipment[EQUIP_WIELD];
+
+		if (l_ptr &&
+			(l_ptr->tval == TV_SWORD || l_ptr->tval == TV_POLEARM) &&
+			!KN_FLAG(l_ptr, TR_BLESSED))
+		{
+			/* Penalize this edgy priest */
+			chance += 25;
+		}
 	}
 
 	/* Minimum failure rate */
-	if (chance < minfail) chance = minfail;
+	chance = MAX(chance, minfail);
 
 	/* Stunning makes spells harder */
 	if (bp_ptr->status.heavy_stun) chance += 25;
 	if (bp_ptr->status.stun) chance += 15;
 
 	/* Always a 5 percent chance of working */
-	if (chance > 95) chance = 95;
+	chance = MIN(chance, 95);
 
 	/* Return the chance */
 	return (chance);
-
-
 }
 
 /*
@@ -2075,19 +2140,21 @@ static int borg_mindcr_fail_rate(int spell, int level)
 	/* Reduce failure rate by INT/WIS adjustment */
 	chance -= 3 * (adj_mag_stat[my_stat_ind[A_WIS]] - 1);
 
+	/* If there is not enough mana the fail rate plummets */
+	if (as->power > bp_ptr->csp) chance += 5 * (as->power - bp_ptr->csp);
+	
 	/* Extract the minimum failure rate */
 	minfail = adj_mag_fail[my_stat_ind[A_WIS]];
 
-
 	/* Minimum failure rate */
-	if (chance < minfail) chance = minfail;
+	chance = MAX(chance, minfail);
 
 	/* Stunning makes spells harder */
 	if (bp_ptr->status.heavy_stun) chance += 25;
 	if (bp_ptr->status.stun) chance += 15;
 
 	/* Always a 5 percent chance of working */
-	if (chance > 95) chance = 95;
+	chance = MIN(chance, 95);
 
 	/* Return the chance */
 	return (chance);

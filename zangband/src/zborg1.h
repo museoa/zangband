@@ -218,6 +218,7 @@ typedef struct borg_ability borg_ability;
 
 struct borg_ability
 {
+	s16b phase;
 	s16b teleport;
 	s16b teleport_level;
 	s16b escape;
@@ -227,6 +228,7 @@ struct borg_ability
 	s16b easy_heal;
 	s16b id;
 	s16b star_id;
+	s16b berserk;
 	s16b speed;
 
 	s16b staff_magi;
@@ -563,7 +565,6 @@ extern bool my_need_enchant_to_d;	/* Need some enchantment */
  * Various "amounts" (for the player)
  */
 
-extern s16b amt_phase;
 extern s16b amt_food_scroll;
 extern s16b amt_food_hical;
 extern s16b amt_food_lowcal;
@@ -571,6 +572,9 @@ extern s16b amt_food_lowcal;
 extern s16b amt_slow_poison;
 extern s16b amt_cure_confusion;
 extern s16b amt_cure_blind;
+extern s16b amt_star_heal;
+extern s16b amt_life;
+extern s16b amt_rod_heal;
 
 extern s16b amt_book[8][4];	/* [realm][sval] */
 

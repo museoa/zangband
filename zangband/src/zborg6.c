@@ -669,8 +669,8 @@ bool borg_recall(void)
 			borg_spell_fail(REALM_SORCERY, 2, 7, 60) ||
 			borg_spell_fail(REALM_ARCANE, 3, 6, 60) ||
 			borg_spell_fail(REALM_TRUMP, 1, 6, 60) ||
-			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL) ||
-			borg_mutation(MUT1_RECALL))
+			borg_mutation(MUT1_RECALL) ||
+			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL))
 		{
 			/* Press another ESC to avoid the recall reset */
 			borg_keypress(ESCAPE);
@@ -1424,6 +1424,15 @@ static bool borg_dim_door(int emergency, int p1)
 	return (TRUE);
 }
 
+
+/* Just in case the key changes again */
+void borg_press_faint_accept(void)
+{
+	borg_keypress(' ');
+	borg_keypress('n');
+}
+
+
 /*
  * Try to phase door or teleport
  * b_q is the danger of the least dangerious square around us.
@@ -1537,23 +1546,31 @@ static bool borg_escape(int b_q)
 		/* try to teleport, get far away from here */
 		if (borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
 			borg_activate_artifact(ART_COLANNON, FALSE) ||
-			borg_read_scroll(SV_SCROLL_TELEPORT) ||
-			borg_spell(REALM_ARCANE, 2, 3) ||
+			borg_read_scroll(SV_SCROLL_TELEPORT))
+		{
+			/* Flee! */
+			borg_note("# Danger Level 1.1  Critical Attempt");
+			return (TRUE);
+		}
+
+		if (borg_spell(REALM_ARCANE, 2, 3) ||
 			borg_spell(REALM_TRUMP, 0, 4) ||
-			borg_spell(REALM_CHAOS, 0, 7) || borg_spell(REALM_SORCERY, 0, 5))
+			borg_spell(REALM_CHAOS, 0, 7) ||
+			borg_spell(REALM_SORCERY, 0, 5))
 		{
 			/* verify use of spell */
-			/* borg_keypress('y');  */
+			borg_press_faint_accept();
 
 			/* Flee! */
 			borg_note("# Danger Level 1.1  Critical Attempt");
 			return (TRUE);
 		}
 
+
 		/* emergency phase spell */
 		if (borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			(amt_phase && borg_caution_phase(80, 5) &&
-			 (borg_read_scroll(SV_SCROLL_PHASE_DOOR))) ||
+			(bp_ptr->able.phase && borg_caution_phase(80, 5) &&
+			(borg_read_scroll(SV_SCROLL_PHASE_DOOR))) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT_LEVEL))
 		{
 			/* Flee! */
@@ -1569,7 +1586,7 @@ static bool borg_escape(int b_q)
 			 borg_spell_fail(REALM_TRUMP, 0, 0, 15)))
 		{
 			/* verify use of spell */
-			borg_keypress('y');
+			borg_press_faint_accept();
 
 			/* Flee! */
 			borg_note("# Danger Level 1.3  Critical Attempt");
@@ -1625,7 +1642,7 @@ static bool borg_escape(int b_q)
 			return (TRUE);
 		}
 		/* Phase door, if useful */
-		if (amt_phase && borg_caution_phase(50, 2) &&
+		if (bp_ptr->able.phase && borg_caution_phase(50, 2) &&
 			(borg_read_scroll(SV_SCROLL_PHASE_DOOR) ||
 			 borg_spell(REALM_ARCANE, 0, 4) ||
 			 borg_spell(REALM_SORCERY, 0, 1) ||
@@ -1658,7 +1675,7 @@ static bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* Phase door, if useful */
-			(amt_phase && borg_caution_phase(25, 2) &&
+			(bp_ptr->able.phase && borg_caution_phase(25, 2) &&
 			 (borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -1695,7 +1712,7 @@ static bool borg_escape(int b_q)
 			return (TRUE);
 		}
 		/* Phase door, if useful */
-		if (amt_phase && borg_caution_phase(65, 2) &&
+		if (bp_ptr->able.phase && borg_caution_phase(65, 2) &&
 			(borg_spell_fail(REALM_ARCANE, 2, 3, allow_fail) ||
 			 borg_spell_fail(REALM_TRUMP, 0, 4, allow_fail) ||
 			 borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
@@ -1755,7 +1772,7 @@ static bool borg_escape(int b_q)
 			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
-			(amt_phase && borg_caution_phase(20, 2) &&
+			(bp_ptr->able.phase && borg_caution_phase(20, 2) &&
 			 (borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -1814,7 +1831,7 @@ static bool borg_escape(int b_q)
 		}
 		/* Emergency Phase door if a weak mage */
 		if ((borg_class == CLASS_MAGE && bp_ptr->lev <= 35) &&
-			amt_phase && borg_caution_phase(65, 2) &&
+			bp_ptr->able.phase && borg_caution_phase(65, 2) &&
 			(borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			 borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			 borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -1844,7 +1861,7 @@ static bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* Phase Door */
-			(amt_phase && borg_caution_phase(20, 2) &&
+			(bp_ptr->able.phase && borg_caution_phase(20, 2) &&
 			 (borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -1901,7 +1918,7 @@ static bool borg_escape(int b_q)
 		}
 		/* Emergency Phase door if a weak mage */
 		if ((borg_class == CLASS_MAGE && bp_ptr->lev <= 8) &&
-			amt_phase && borg_caution_phase(65, 2) &&
+			bp_ptr->able.phase && borg_caution_phase(65, 2) &&
 			(borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			 borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			 borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -1932,7 +1949,7 @@ static bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* Phase Door */
-			(amt_phase && borg_caution_phase(20, 2) &&
+			(bp_ptr->able.phase && borg_caution_phase(20, 2) &&
 			 (borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -2501,7 +2518,7 @@ static bool borg_heal(int danger)
 			borg_spell(REALM_NATURE, 0, 7))
 		{
 			/* verify use of spell */
-			/* borg_keypress('y'); */
+			borg_press_faint_accept();
 
 			/* Flee! */
 			borg_note("# Emergency Cure Poison! Gasp!!!....");
@@ -2597,7 +2614,7 @@ static bool borg_heal(int danger)
 
 		{
 			/* verify use of spell */
-			/* borg_keypress('y'); */
+			borg_press_faint_accept();
 
 			/* Flee! */
 			borg_note("# Emergency Wound Patch! Gasp!!!....");
@@ -7142,8 +7159,7 @@ static int borg_attack_mindcrafter_reserve(bool faint, int *b_spell)
 	if (faint)
 	{
 		/* confirm the spell use */
-		borg_keypress(' ');
-		borg_keypress('n');
+		borg_press_faint_accept();
 	}
 
 	/* Get the right amount of mana */
@@ -8205,6 +8221,8 @@ static int borg_death_damage_monster(int book, int spell)
 					/* Choose optimal location-- */
 					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
+
+				default: return (0);
 			}
 		}
 		default:
@@ -8665,8 +8683,7 @@ static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 	if (faint)
 	{
 		/* confirm the spell use */
-		borg_keypress(' ');
-		borg_keypress('n');
+		borg_press_faint_accept();
 	}
 
 	/* Get the right amount of mana */
@@ -9610,7 +9627,7 @@ static int borg_defend_aux_goi_pot(int p1)
 		return (0);
 
 	/* have some in inven? */
-	if (borg_has[238] == 0) return (0);
+	if (!borg_slot(TV_POTION, SV_POTION_INVULNERABILITY)) return (0);
 
 	/* pretend we are protected and look again */
 	borg_goi = 100;
@@ -10224,8 +10241,8 @@ static int borg_defend_aux_hero(int p1)
 		if (borg_simulate) return (1);
 
 		/* do it! */
-		if (borg_spell(REALM_LIFE, 2, 0) ||
-			borg_spell(REALM_DEATH, 3, 0) ||
+		if (borg_spell(REALM_LIFE, 3, 0) ||
+			borg_spell(REALM_DEATH, 2, 0) ||
 			borg_mindcr(MIND_ADRENALINE, 23) ||
 			borg_racial(RACE_HALF_TROLL) ||
 			borg_racial(RACE_BARBARIAN) ||
@@ -12174,53 +12191,59 @@ static int borg_perma_aux_prot_evil(void)
  */
 static int borg_perma_aux_hero(void)
 {
-	int fail_allowed = 5, cost;
+	int fail_allowed = 5;
+	int priority = 2, cost;
 
-	borg_magic *as = &borg_magics[0][0][0];
-
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	/* already blessed */
-	if (borg_hero || borg_berserk)
-		return (0);
-
-	/* Cant when Blind */
-	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
-
-	/* XXX Dark */
-
-	if (!borg_spell_okay_fail(REALM_LIFE, 3, 0, fail_allowed) &&
-		!borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	if (borg_spell_legal_fail(REALM_LIFE, 3, 0, fail_allowed))
+	/* Is this for real */
+	if (borg_simulate)
 	{
-		as = &borg_magics[REALM_LIFE][3][0];
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already blessed */
+		if (borg_hero || borg_berserk)
+			return (0);
+
+		/* Can the borg cast the death berserk spell? */
+		if (borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_magics[REALM_DEATH][2][0].power;
+		}
+		/* Can the borg cast the mindcrafter adrenaline spell? */
+		else if (borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_ADRENALINE].power;
+		}
+		/* Can the borg cast the life hero spell? */
+		else if (borg_spell_okay_fail(REALM_LIFE, 3, 0, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_magics[REALM_LIFE][3][0].power;
+
+			/* Reassign the importance */
+			priority = 1;
+		}
+		else
+		{
+			/* No hero or berserk available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if ((unique_on_level && cost >= bp_ptr->csp / 7) ||
+			(!unique_on_level && cost >= bp_ptr->csp / 10)) return (0);
+
+		/* hero/berserk has a low priority */
+		return (priority);
 	}
-	else if (borg_spell_legal_fail(REALM_DEATH, 2, 0, fail_allowed))
-	{
-		as = &borg_magics[REALM_DEATH][2][0];
-	}
 
-	cost = as->power;
-
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	/* hero is a low priority */
-	if (borg_simulate) return (1);
-
-	/* do it! */
-	if (borg_spell(REALM_LIFE, 7, 0) || borg_spell(REALM_DEATH, 7, 0))
-		return 1;
-
-
-	return (0);
+	/* Do it!  (We know one of these will succeed) */
+	return (borg_spell(REALM_DEATH, 2, 0) ||
+		borg_mindcr(MIND_ADRENALINE, 23) ||
+		borg_spell(REALM_LIFE, 3, 0));
 }
 
 /*
@@ -12228,43 +12251,8 @@ static int borg_perma_aux_hero(void)
  */
 static int borg_perma_aux_berserk(void)
 {
-	int fail_allowed = 5, cost;
-
-	borg_magic *as;
-
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	/* already blessed */
-	if (borg_hero || borg_berserk)
-		return (0);
-
-	/* Cant when Blind */
-	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
-
-	/* XXX Dark */
-
-	if (!borg_spell_okay_fail(REALM_DEATH, 2, 2, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_DEATH][2][2];
-	cost = as->power;
-
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	/* Berserk is a low priority */
-	if (borg_simulate) return (2);
-
-	/* do it! */
-	if (borg_spell(REALM_DEATH, 2, 2))
-		return 2;
-
-
+	if (!borg_simulate) borg_oops("Inconceivable!");
+	
 	return (0);
 }
 
@@ -12509,10 +12497,7 @@ bool borg_perma_spell()
 	}
 
 	/* Nothing good */
-	if (b_n <= 0)
-	{
-		return (FALSE);
-	}
+	if (b_n <= 0) return (FALSE);
 
 	/* Note */
 	borg_note_fmt("# Performing perma-spell type %d with value %d", b_g, b_n);
@@ -12522,9 +12507,9 @@ bool borg_perma_spell()
 
 	/* Instantiate */
 	(void)borg_perma_aux(b_g);
+
 	/* Success */
 	return (TRUE);
-
 }
 
 /*
@@ -12953,38 +12938,29 @@ bool borg_recover(void)
 	/* If Fleeing, then do not rest */
 	if (goal_fleeing) return (FALSE);
 
-	/* Hack -- Rest to recharge Rods of Healing or Recall */
-	if (borg_has[374] || borg_has[354])
+	/* Step 1.  Recharge just 1 rod. */
+	if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
+		 borg_slot(TV_ROD, SV_ROD_HEALING)->timeout) ||
+		(borg_slot(TV_ROD, SV_ROD_RECALL) &&
+		 borg_slot(TV_ROD, SV_ROD_RECALL)->timeout))
 	{
-		/* Step 1.  Recharge just 1 rod. */
-		if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
-			 borg_slot(TV_ROD, SV_ROD_HEALING)->timeout) ||
-			(borg_slot(TV_ROD, SV_ROD_RECALL) &&
-			 borg_slot(TV_ROD, SV_ROD_RECALL)->timeout))
+		/* Rest until at least one recharges */
+		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
+			borg_check_rest())
 		{
-			/* Mages can cast the recharge spell */
+			/* Take note */
+			borg_note("# Resting to recharge a rod...");
 
+			/* Rest until done */
+			borg_keypress('R');
+			borg_keypress('1');
+			borg_keypress('0');
+			borg_keypress('0');
+			borg_keypress('\n');
 
-
-			/* Rest until at least one recharges */
-			if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
-				!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
-				borg_check_rest() && !borg_spell_okay(REALM_SORCERY, 0, 7) &&
-				!borg_spell_okay(REALM_CHAOS, 2, 2))
-			{
-				/* Take note */
-				borg_note("# Resting to recharge a rod...");
-
-				/* Rest until done */
-				borg_keypress('R');
-				borg_keypress('1');
-				borg_keypress('0');
-				borg_keypress('0');
-				borg_keypress('\n');
-
-				/* Done */
-				return (TRUE);
-			}
+			/* Done */
+			return (TRUE);
 		}
 	}
 
@@ -13338,7 +13314,7 @@ bool borg_twitchy(void)
 	borg_note("# Twitchy!");
 
 	/* try to phase out of it */
-	if (amt_phase && borg_caution_phase(15, 2) &&
+	if (bp_ptr->able.phase && borg_caution_phase(15, 2) &&
 		(borg_spell_fail(REALM_ARCANE, 0, 4, 40) ||
 		 borg_spell_fail(REALM_SORCERY, 0, 1, 40) ||
 		 borg_spell_fail(REALM_TRUMP, 0, 0, 40) ||

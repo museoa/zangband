@@ -1852,7 +1852,7 @@ bool borg_think_dungeon(void)
 		borg_note("# Considering Phase (twitchy)");
 
 		/* Phase */
-		if (amt_phase && borg_caution_phase(15, 2) &&
+		if (bp_ptr->able.phase && borg_caution_phase(15, 2) &&
 			(borg_spell(REALM_SORCERY, 0, 1) ||
 			 borg_spell(REALM_TRUMP, 0, 0) ||
 			 borg_spell(REALM_ARCANE, 0, 4) ||
