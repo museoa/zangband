@@ -1535,25 +1535,31 @@ bool init_places(int xx, int yy)
 static void town_gen_hack(u16b town_num)
 {
 	int y, x, k, n, xx, yy;
-	int rooms[MAX_STORES];
+	
+	/* Add an extra column to make it symmetrical */
+	int rooms[MAX_STORES + 3];
 	byte feat;
 
 	cave_type *c_ptr;
 
 	/* Prepare an array of "remaining stores", and count them */
-	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
+	for (n = 0; n < MAX_STORES + 3; n++) rooms[n] = n;
 
 	/* Place three rows of stores */
 	for (y = 0; y < 3; y++)
 	{
-		/* Place three stores per row */
-		for (x = 0; x < 3; x++)
+		/* Place four stores per row */
+		for (x = 0; x < 4; x++)
 		{
 			/* Pick a random unplaced store */
 			k = ((n <= 1) ? 0 : randint0(n));
 
-			/* Build that store at the proper location */
-			build_store(x, y, &place[town_num].store[rooms[k]]);
+			/* Only build real stores */
+			if (rooms[k] < MAX_STORES)
+			{
+				/* Build that store at the proper location */
+				build_store(x, y, &place[town_num].store[rooms[k]]);
+			}
 
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
