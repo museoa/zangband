@@ -1408,7 +1408,7 @@ static void borg_near_monster_type(int dist)
 
 		}
 
-
+#if 0
 		/*** Scan for Scary Guys ***/
 
 		/* run from certain scaries */
@@ -1466,7 +1466,7 @@ TRUE;
 		/* Chaos and Confusion are really bad */
 		if ((!borg_skill[BI_SRKAOS] && !borg_skill[BI_SRCONF]) &&
 			(strstr(r_name + r_ptr->name, "Chaos"))) scaryguy_on_level = TRUE;
-
+#endif /* 0 */
 
 		/*** Scan for Summoners ***/
 
@@ -14809,6 +14809,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 	/* Have the borg so some Searching */
 	borg_needs_searching = TRUE;
 
+#if 0
 	/* Skip ones that make me wander too far */
 	if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
 	{
@@ -14820,7 +14821,8 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 		/* skip far away grids while I am close to stair */
 		if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
 			j >= borg_skill[BI_CLEVEL] * 5 + 9) return (FALSE);
-	}
+    }
+#endif /* 0 */
 
 	/* Bounds checking */
 	if (!map_in_bounds(x, y)) return (TRUE);
@@ -14865,8 +14867,9 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 		/* Okay */
 		return (TRUE);
-	}
+    }
 
+#if 0
 	/* "Vaults" Explore non perma-walls adjacent to a perma wall */
 	if (mb_ptr->terrain == FEAT_WALL_EXTRA || mb_ptr->terrain == FEAT_MAGMA ||
 		mb_ptr->terrain == FEAT_QUARTZ)
@@ -14921,7 +14924,8 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 		/* not adjacent to a GCV,  Restore Grid */
 		mb_ptr = map_loc(x, y);
-	}
+    }
+#endif /* 0 */
 
 	/* Explore "rubble" */
 	if (mb_ptr->terrain == FEAT_RUBBLE)

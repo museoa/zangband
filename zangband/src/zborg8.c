@@ -2765,10 +2765,14 @@ bool borg_think_dungeon(void)
 	 */
 	if (borg_skill[BI_CDEPTH] &&
 		(time_this_panel >= 300 && time_this_panel <= 303))
-	{
+    {
+        borg_oops("bouncing borg");
+#if 0
 		/* Clear goals, start flow over */
-		goal = 0;
-	}
+        goal = 0;
+#endif /* 0 */
+    }
+#if 0
 	if (borg_skill[BI_CDEPTH] &&
 		(time_this_panel >= 400 && time_this_panel <= 405))
 	{
@@ -2806,7 +2810,8 @@ bool borg_think_dungeon(void)
 			goal_fleeing = TRUE;
 		}
 
-	}
+    }
+#endif /* 0 */
 
 	/* Avoid the burning sun */
 	if (borg_skill[BI_FEAR_LITE] &&
@@ -2909,6 +2914,7 @@ bool borg_think_dungeon(void)
 		borg_danger_wipe = TRUE;
 	}
 
+#if 0
 	/* Keep borg on a short leash */
 	if (track_less_num &&
 		(borg_skill[BI_MAXHP] < 30 || borg_skill[BI_CLEVEL] < 10) && !goal_less)
@@ -2945,7 +2951,8 @@ bool borg_think_dungeon(void)
 			}
 
 		}
-	}
+    }
+#endif /* 0 */
 
 	/*** crucial goals ***/
 
@@ -3240,7 +3247,7 @@ bool borg_think_dungeon(void)
 	if (borg_flow_old(GOAL_TAKE)) return (TRUE);
 
 	/* Find a (viewable) object */
-	if (borg_flow_take(TRUE, 250)) return (TRUE);
+    if (borg_flow_take(TRUE, 250)) return (TRUE);
 
 
 	/*** Leave the level XXX XXX XXX ***/
@@ -3289,6 +3296,7 @@ bool borg_think_dungeon(void)
 
 	/*** Explore the dungeon ***/
 
+#if 0
 	if (vault_on_level)
 	{
 
@@ -3301,6 +3309,13 @@ bool borg_think_dungeon(void)
 		/* Explore close interesting grids */
 		if (borg_flow_dark(TRUE)) return (TRUE);
 	}
+#endif /* 0 */
+
+    /* Chase close monsters */
+    if (borg_flow_kill(FALSE, 35)) return (TRUE);
+
+    /* Chase close objects */
+    if (borg_flow_take(FALSE, 35)) return (TRUE);
 
 	/* Chase old monsters */
 	if (borg_flow_kill(FALSE, 250)) return (TRUE);
@@ -3311,6 +3326,7 @@ bool borg_think_dungeon(void)
 	/* Explore interesting grids */
 	if (borg_flow_dark(TRUE)) return (TRUE);
 
+    /* Possibly leave the level (not bored) */
   	if (borg_leave_level(FALSE)) return (TRUE);
 
 	/* Explore interesting grids */
@@ -3345,6 +3361,7 @@ bool borg_think_dungeon(void)
 	/* Recharge items before leaving the level */
 	if (borg_wear_recharge()) return (TRUE);
 
+    /* Leave the level (bored) */
    	if (borg_leave_level(TRUE)) return (TRUE);
 
 
