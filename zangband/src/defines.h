@@ -4143,6 +4143,9 @@ extern int PlayerUID;
 #define CLR_DEFAULT		"$R"
 
 
+/*
+ * Raw message types
+ */
 #define MSG_GENERIC          0
 #define MSG_HIT              1
 #define MSG_MISS             2
@@ -4175,6 +4178,49 @@ extern int PlayerUID;
 #define MSG_HITPOINT_WARN   29
 
 #define MSG_MAX             30
+
+/*
+ * 'Magic' macro that changes the default message type.
+ * It uses the '%S' directive to parse the format string
+ * following this...
+ */
+#define MESSAGE_TYPE (T)	"%r%v%S", set_message_type, (T),
+
+/*
+ * Message types used for msgf()  (See util.c)
+ */
+#define MSGT_GENERIC		 MESSAGE_TYPE(0)
+#define MSGT_HIT             MESSAGE_TYPE(1)
+#define MSGT_MISS            MESSAGE_TYPE(2)
+#define MSGT_FLEE            MESSAGE_TYPE(3)
+#define MSGT_DROP            MESSAGE_TYPE(4)
+#define MSGT_KILL            MESSAGE_TYPE(5)
+#define MSGT_LEVEL           MESSAGE_TYPE(6)
+#define MSGT_DEATH           MESSAGE_TYPE(7)
+#define MSGT_STUDY           MESSAGE_TYPE(8)
+#define MSGT_TELEPORT        MESSAGE_TYPE(9)
+#define MSGT_SHOOT           MESSAGE_TYPE(10)
+#define MSGT_QUAFF           MESSAGE_TYPE(11)
+#define MSGT_ZAP             MESSAGE_TYPE(12)
+#define MSGT_WALK            MESSAGE_TYPE(13)
+#define MSGT_TPOTHER         MESSAGE_TYPE(14)
+#define MSGT_HITWALL         MESSAGE_TYPE(15)
+#define MSGT_EAT             MESSAGE_TYPE(16)
+#define MSGT_STORE1          MESSAGE_TYPE(17)
+#define MSGT_STORE2          MESSAGE_TYPE(18)
+#define MSGT_STORE3          MESSAGE_TYPE(19)
+#define MSGT_STORE4          MESSAGE_TYPE(20)
+#define MSGT_DIG             MESSAGE_TYPE(21)
+#define MSGT_OPENDOOR        MESSAGE_TYPE(22)
+#define MSGT_SHUTDOOR        MESSAGE_TYPE(23)
+#define MSGT_TPLEVEL         MESSAGE_TYPE(24)
+#define MSGT_BELL            MESSAGE_TYPE(25)
+#define MSGT_NOTHING_TO_OPEN MESSAGE_TYPE(26)
+#define MSGT_LOCKPICK_FAIL   MESSAGE_TYPE(27)
+#define MSGT_STAIRS          MESSAGE_TYPE(28)
+#define MSGT_HITPOINT_WARN   MESSAGE_TYPE(29)
+
+
 
 
 /*** Sound constants ***/

@@ -2584,6 +2584,67 @@ void msg_format(cptr fmt, ...)
 }
 
 
+static int current_message_type = MSG_GENERIC;
+
+/*
+ * Change the message type
+ */
+uint set_message_type(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	/* Unused parameters */
+	(void)fmt;
+	(void)max;
+	
+	/* Hack - zero length string */
+	buf[0] = '\0';
+    
+    /* Get the argument - and set the message type */
+	current_message_type = va_arg(*vp, int);
+	
+	/* Zero length string */
+	return (0);
+}
+
+/*
+ * Display a formatted message, using "vstrnfmt()" and "msg_print()".
+ */
+void msgf(cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+	
+	/* Set the message type */
+	current_message_type = MSG_GENERIC;
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+	
+	sound(current_message_type);
+	
+	/* Display */
+	msg_print_aux(current_message_type, buf);
+}
+
+/*
+ * Process a message effect
+ *
+ * (The "extra" parameter is currently unused)
+ */
+void msg_effect(u16b type, s16b extra)
+{
+	/* Unused parameters */
+	(void)type;
+	(void)extra;
+}
+
+
 /*
  * Display a message and play the associated sound.
  *
