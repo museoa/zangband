@@ -26,11 +26,14 @@
 /*
  * Calculate the direction to the next enemy
  */
-static void get_enemy_dir(monster_type *m_ptr, int *mm)
+static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 {
 	int i;
 	int x, y;
 	int t_idx;
+
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
 	monster_type *t_ptr;
 	monster_race *tr_ptr;
 
@@ -47,14 +50,31 @@ static void get_enemy_dir(monster_type *m_ptr, int *mm)
 		/* Paranoia -- Skip dead monsters */
 		if (!t_ptr->r_idx) continue;
 
+		/* Hack -- only fight away from player */
+		if (p_ptr->pet_follow_distance < 0)
+		{
+			/* No fighting near player */
+			if (t_ptr->cdis <= (0 - p_ptr->pet_follow_distance))
+			{
+				continue;
+			}
+		}
 		/* Hack -- no fighting away from player */
-		if (t_ptr->cdis > p_ptr->pet_follow_distance) continue;
+		else if ((m_ptr->cdis < t_ptr->cdis) &&
+					(t_ptr->cdis > p_ptr->pet_follow_distance))
+		{
+			continue;
+		}
 
 		/* Monster must be 'an enemy' */
 		if (!are_enemies(m_ptr, t_ptr)) continue;
 
-		/* Monster must be projectable */
-		if (!projectable(m_ptr->fy, m_ptr->fx, t_ptr->fy, t_ptr->fx)) continue;
+		/* Monster must be projectable if we can't pass through walls */
+		if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
+			!projectable(m_ptr->fy, m_ptr->fx, t_ptr->fy, t_ptr->fx))
+		{
+			continue;
+		}
 
 		/* OK -- we've got a target */
 		y = t_ptr->fy;
@@ -121,8 +141,12 @@ static void get_enemy_dir(monster_type *m_ptr, int *mm)
 			mm[2] = 2;
 		}
 
-		break;
+		/* Found a monster */
+		return TRUE;
 	}
+
+	/* No monster found */
+	return FALSE;
 }
 
 
@@ -305,11 +329,16 @@ static int mon_will_run(int m_idx)
 
 #endif
 
+	/* Friends can be commanded to avoid the player */
+	if (is_pet(m_ptr))
+	{
+		/* Are we trying to avoid the player? */
+		return ((p_ptr->pet_follow_distance < 0) &&
+				  (m_ptr->cdis <= (0 - p_ptr->pet_follow_distance)));
+	}
+
 	/* Keep monsters from running too far away */
 	if (m_ptr->cdis > MAX_SIGHT + 5) return (FALSE);
-
-	/* Pets don't run away */
-	if (is_pet(m_ptr)) return (FALSE);
 
 	/* All "afraid" monsters will run away */
 	if (m_ptr->monfear) return (TRUE);
@@ -2112,12 +2141,47 @@ static void process_monster(int m_idx)
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 	}
+
 	/* Pets will follow the player */
-	else if (is_pet(m_ptr) &&
-	         (m_ptr->cdis > p_ptr->pet_follow_distance))
+	else if (is_pet(m_ptr))
 	{
-		get_moves(m_idx, mm);
+		/* Are we trying to avoid the player? */
+		bool avoid = ((p_ptr->pet_follow_distance < 0) &&
+						  (m_ptr->cdis <= (0 - p_ptr->pet_follow_distance)));
+
+		/* Do we want to find the player? */
+		bool lonely = (!avoid && (m_ptr->cdis > p_ptr->pet_follow_distance));
+
+		/* Should we find the player if we can't find a monster? */
+		bool distant = (m_ptr->cdis > PET_SEEK_DIST);
+
+		/* by default, move randomly */
+		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+
+		/* Look for an enemy */
+		if (!get_enemy_dir(m_ptr, mm))
+		{
+			/* Find the player if necessary */
+			if (avoid || lonely || distant)
+			{
+				/* Remember the leash length */
+				int dis = p_ptr->pet_follow_distance;
+
+				/* Hack -- adjust follow distance temporarily */
+				if (p_ptr->pet_follow_distance > PET_SEEK_DIST)
+				{
+					p_ptr->pet_follow_distance = PET_SEEK_DIST;
+				}
+
+				/* Find the player */
+				get_moves(m_idx, mm);
+
+				/* Restore the leash */
+				p_ptr->pet_follow_distance = dis;
+			}
+		}
 	}
+
 	/* Friendly monster movement */
 	else if (!is_hostile(m_ptr))
 	{
@@ -2300,12 +2364,6 @@ static void process_monster(int m_idx)
 
 				/* Door power */
 				k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-#if 0
-				/* XXX XXX XXX Old test (pval 10 to 20) */
-				if (randint((m_ptr->hp + 1) * (50 + o_ptr->pval)) <
-					40 * (m_ptr->hp - 10 - o_ptr->pval));
-#endif
 
 				/* Attempt to Bash XXX XXX XXX */
 				if (rand_int(m_ptr->hp / 10) > k)
@@ -2586,10 +2644,8 @@ static void process_monster(int m_idx)
 				if (o_ptr->tval == TV_GOLD) continue;
 
 				/* Take or Kill objects on the floor */
-				if (((r_ptr->flags2 & RF2_TAKE_ITEM) &&
-				      (!is_pet(m_ptr) || p_ptr->pet_pickup_items)) ||
-				     ((r_ptr->flags2 & RF2_KILL_ITEM) &&
-				      !is_pet(m_ptr)))
+				if ((r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&
+					 (!is_pet(m_ptr) || p_ptr->pet_pickup_items))
 				{
 					u32b f1, f2, f3;
 
@@ -2623,7 +2679,7 @@ static void process_monster(int m_idx)
 						(o_ptr->art_name))
 					{
 						/* Only give a message for "take_item" */
-						if (r_ptr->flags2 & RF2_TAKE_ITEM)
+						if ((r_ptr->flags2 & (RF2_TAKE_ITEM)) && (r_ptr->flags2 & (RF2_STUPID)))
 						{
 							/* Take note */
 							did_take_item = TRUE;
@@ -2681,8 +2737,8 @@ static void process_monster(int m_idx)
 						}
 					}
 
-					/* Destroy the item */
-					else
+					/* Destroy the item if not a pet */
+					else if (!is_pet(m_ptr))
 					{
 						/* Take note */
 						did_kill_item = TRUE;
@@ -2691,7 +2747,7 @@ static void process_monster(int m_idx)
 						if (player_has_los_bold(ny, nx))
 						{
 							/* Dump a message */
-							msg_format("%^s crushes %s.", m_name, o_name);
+							msg_format("%^s destroys %s.", m_name, o_name);
 						}
 
 						/* Delete the object */
