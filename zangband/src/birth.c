@@ -445,7 +445,7 @@ static hist_type bg[] =
 
 	{"a Necromancer.  ", 30, 108, 62, 50 },
 	{"a Wizard.  ", 50, 108, 62, 50 },
-	{"a restless spirit.  ",60, 108, 62, 50 },
+	{"a restless spirit.  ", 60, 108, 62, 50 },
 	{"an Evil Priest.  ", 70, 108, 62, 50 },
 	{"a pact with the demons.  ", 80, 108, 62, 50 },
 	{"a curse.  ", 95, 108, 62, 30 },

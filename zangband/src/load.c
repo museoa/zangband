@@ -3198,8 +3198,7 @@ static errr rd_savefile_new_aux(void)
 		for (i = MIN_RANDOM_QUEST + v - 1; i >= MIN_RANDOM_QUEST; i--)
 		{
 			quest_type *q_ptr = &quest[i];
-
-			monster_race *r_ptr;
+			monster_race *r_ptr = NULL;
 
 			q_ptr->status = QUEST_STATUS_TAKEN;
 

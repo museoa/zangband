@@ -845,17 +845,17 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	char            tmp_val2[90];
 
 	u32b            f1, f2, f3;
-	
+
 	object_type	*bow_ptr;
-	
+
 	/* describe what type of ammo item is. (0=none)*/
-	byte		ammotype=0;
-	
+	byte		ammotype = 0;
+
 	/* damage dice, damage sides, damage bonus, energy */
-	int		dd,ds,db,energy_use;
+	int		dd, ds, db, energy_use;
 	int		tmul;
-	long		avgdam;
-	
+	long	avgdam;
+
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -1480,15 +1480,15 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		t = object_desc_chr(t, 'd');
 		t = object_desc_num(t, o_ptr->ds);
 		t = object_desc_chr(t, p2);
-		
+
 		/* Set ammotype - used later to show avg damages */
-		if (o_ptr->tval==TV_SHOT)
-			ammotype=1;	
-		if (o_ptr->tval==TV_ARROW)
-			ammotype=2;
-		if (o_ptr->tval==TV_BOLT)
-			ammotype=3;
-		
+		if (o_ptr->tval == TV_SHOT)
+			ammotype = 1;
+		if (o_ptr->tval == TV_ARROW)
+			ammotype = 2;
+		if (o_ptr->tval == TV_BOLT)
+			ammotype = 3;
+
 		/* All done */
 		break;
 
@@ -1579,52 +1579,49 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, p2);
 		}
 	}
-	
-	bow_ptr=&inventory[INVEN_BOW];
-	
+
+	bow_ptr = &inventory[INVEN_BOW];
+
 	/* if have a firing weapon + ammo matches bow*/
-	if ((bow_ptr->k_idx) && 	
-		
-		(((bow_ptr->sval==SV_SLING) && (ammotype==1)) ||
-		
-		 (((bow_ptr->sval==SV_SHORT_BOW)
-		|| (bow_ptr->sval==SV_LONG_BOW)) && (ammotype==2)) ||
-		
-		(((bow_ptr->sval==SV_LIGHT_XBOW)
-		|| (bow_ptr->sval==SV_HEAVY_XBOW)) && (ammotype==3))))
+	if (bow_ptr->k_idx &&
+	    (((bow_ptr->sval == SV_SLING) && (ammotype == 1)) ||
+		 (((bow_ptr->sval == SV_SHORT_BOW) ||
+	     (bow_ptr->sval == SV_LONG_BOW)) && (ammotype == 2)) ||
+	     (((bow_ptr->sval == SV_LIGHT_XBOW) ||
+	     (bow_ptr->sval == SV_HEAVY_XBOW)) && (ammotype == 3))))
 	{
 		/* See if the bow is "known" - then set damage bonus*/
 		if (object_known_p(bow_ptr))
 		{
-			db=bow_ptr->to_d;		
+			db = bow_ptr->to_d;
 		}
 		else
 		{
-			db=0;
+			db = 0;
 		}
-		
+
 		/* effect of player */
-		db+=p_ptr->dis_to_d;
-		
+		db += p_ptr->dis_to_d;
+
 		/* effect of ammo */
 		if (known) db += o_ptr->to_d;
-		
+
 		dd = o_ptr->dd;
 		ds = o_ptr->ds;
-		
+
 		if (db > 0)
 			avgdam = (100 + deadliness_conversion[db]);
 		else if (db > -31)
 			avgdam = (100 - deadliness_conversion[ABS(db)]);
 		else
 			avgdam = 0;
-		
+
 		/* effect of damage dice x2 */
-		avgdam *= dd*(ds+1);
-		
+		avgdam *= dd * (ds + 1);
+
 		/* Stop compiler warnings */
-		energy_use=100;
-		tmul=1;
+		energy_use = 100;
+		tmul = 1;
 
 		/* Analyze the launcher */
 		switch (bow_ptr->sval)
@@ -1685,40 +1682,37 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 			}
 		}
-		
+
 		/* Get extra "power" from "extra might" */
 		if (p_ptr->xtra_might) tmul++;
-		
+
 		/* launcher multiplier */
 		avgdam *= tmul;
-		
-			
+
 		/* display (shot damage/ avg damage) */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
 		t = object_desc_num(t, avgdam / 200);
 		t = object_desc_chr(t, '/');
-		
-		tmul=p_ptr->num_fire;
-		if (tmul==0)
+
+		tmul = p_ptr->num_fire;
+		if (tmul == 0)
 		{
 			t = object_desc_chr(t, '0');
 		}
-		else		
+		else
 		{
 			/* calc effects of energy */
 			avgdam *= p_ptr->num_fire;
-			
-			/*rescale */
-			avgdam /= 2*energy_use;
-			t = object_desc_num(t,avgdam);
+
+			/* rescale */
+			avgdam /= 2 * energy_use;
+			t = object_desc_num(t, avgdam);
 		}
-			
+
 		t = object_desc_chr(t, p2);
 	}
 
-	
-	
 	/* Add the armor bonuses */
 	if (known)
 	{

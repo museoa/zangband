@@ -1389,7 +1389,7 @@
 #define TV_CHEST         7      /* Chests ('~') */
 #define TV_FIGURINE      8      /* Magical figurines */
 #define TV_STATUE        9      /* Statue, what a silly object... */
-#define TV_CORPSE			10      /* Corpses and Skeletons, specific */
+#define TV_CORPSE       10      /* Corpses and Skeletons, specific */
 #define TV_SHOT         16      /* Ammo for slings */
 #define TV_ARROW        17      /* Ammo for bows */
 #define TV_BOLT         18      /* Ammo for x-bows */

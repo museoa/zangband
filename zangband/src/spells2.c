@@ -40,18 +40,18 @@ void self_knowledge(void)
 	cptr info[200];
 
 	int plev = p_ptr->lev;
-	
+
 	int percent;
 
 	strcpy(Dummy, "");
-	
+
 	percent = (int)(((long)player_hp[PY_MAX_LEVEL - 1] * 200L) /
 		(2 * p_ptr->hitdie +
 		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 	sprintf(Dummy, "Your current Life Rating is %d/100.", percent);
 	info[i++] = Dummy;
-	
+
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
 	{
@@ -2978,7 +2978,7 @@ bool earthquake(int cy, int cx, int r)
  */
 static void cave_temp_room_lite(void)
 {
-	int i,j;
+	int i, j;
 
 	/* Clear them all */
 	for (i = 0; i < temp_n; i++)
@@ -3067,7 +3067,7 @@ static void cave_temp_room_lite(void)
  */
 static void cave_temp_room_unlite(void)
 {
-	int i,j;
+	int i, j;
 
 	/* Clear them all */
 	for (i = 0; i < temp_n; i++)

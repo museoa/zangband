@@ -2894,7 +2894,7 @@ static void do_cmd_knowledge_uniques(void)
 	}
 
 	/* Nothing to recall */
-	if (!n) 
+	if (!n)
 	{
 		/* No monsters to recall */
 		msg_print("No known uniques.");
@@ -2920,10 +2920,10 @@ static void do_cmd_knowledge_uniques(void)
 	{
 		monster_race *r_ptr = &r_info[who[i]];
 		bool dead = (r_ptr->max_num == 0);
-		
+
 		/* Print a message */
 		fprintf(fff, "     %s is %s\n",(r_name + r_ptr->name),
-			(dead ? "dead" : "alive"));		
+			(dead ? "dead" : "alive"));
 	}
 
 	/* Close the file */
@@ -3138,7 +3138,7 @@ static void do_cmd_knowledge_kill_count(void)
 	char file_name[1024];
 
 	s32b Total = 0;
-	
+
 	int i, n;
 
 	u16b	why = 2;
@@ -3160,7 +3160,7 @@ static void do_cmd_knowledge_kill_count(void)
 	}
 
 	/* Nothing to recall */
-	if (!n) 
+	if (!n)
 	{
 		/* No monsters to recall */
 		msg_print("No known monsters!");

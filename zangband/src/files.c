@@ -1370,10 +1370,10 @@ static void display_player_abilities(void)
 
 	/* number of blows */
 	avgdam *= blows;
-	
+
 	/*rescale*/
 	avgdam /= 200;
-	
+
 	/* see if have a weapon with extra power*/
 	if (o_ptr->k_idx)
 	{

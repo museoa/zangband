@@ -3455,8 +3455,7 @@ void calc_bonuses(void)
 	else if (!o_ptr->k_idx) p_ptr->num_blow = 2;
 
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
-	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass,o_ptr->weight,
-	 o_ptr);
+	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr->weight, o_ptr);
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;

@@ -3317,17 +3317,17 @@ void gain_level_reward(int chosen_reward)
 				chaos_patrons[p_ptr->chaos_patron]);
 			break;
 		case REW_SER_DEMO:
-			msg_format("%s rewards you with a demonic servant!",chaos_patrons[p_ptr->chaos_patron]);
+			msg_format("%s rewards you with a demonic servant!", chaos_patrons[p_ptr->chaos_patron]);
 			if (!summon_specific(py, px, dun_level, SUMMON_DEMON, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_MONS:
-			msg_format("%s rewards you with a servant!",chaos_patrons[p_ptr->chaos_patron]);
+			msg_format("%s rewards you with a servant!", chaos_patrons[p_ptr->chaos_patron]);
 			if (!summon_specific(py, px, dun_level, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_UNDE:
-			msg_format("%s rewards you with an undead servant!",chaos_patrons[p_ptr->chaos_patron]);
+			msg_format("%s rewards you with an undead servant!", chaos_patrons[p_ptr->chaos_patron]);
 			if (!summon_specific(py, px, dun_level, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;

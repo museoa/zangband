@@ -78,7 +78,6 @@ static void build_small_room(int x0, int y0)
 }
 
 
-
 /*
  * This function tunnels around a room if
  * it will cut off part of a cave system.
@@ -176,7 +175,7 @@ static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx, in
 	/* Calculate number of room_map squares to allocate */
 
 	/* temp is total number along width */
-	temp= ((x - 1) / BLOCK_WID) + 1;
+	temp = ((x - 1) / BLOCK_WID) + 1;
 
 	/* bx2 = ending block */
 	bx2 = temp / 2 + bx0;
@@ -986,10 +985,10 @@ static void build_type4(int by0, int bx0)
 				}
 
 				/* Close off the left/right edges */
-			c_ptr = &cave[yval][xval - 5];
-			c_ptr->feat = FEAT_WALL_INNER;
-			c_ptr = &cave[yval][xval + 5];
-			c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr = &cave[yval][xval - 5];
+				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr = &cave[yval][xval + 5];
+				c_ptr->feat = FEAT_WALL_INNER;
 
 				/* Secret doors (random top/bottom) */
 				place_secret_door(yval - 3 + (randint(2) * 2), xval - 3);
@@ -1026,8 +1025,8 @@ static void build_type4(int by0, int bx0)
 				{
 					if (0x1 & (x + y))
 					{
-					c_ptr = &cave[y][x];
-					c_ptr->feat = FEAT_WALL_INNER;
+						c_ptr = &cave[y][x];
+						c_ptr->feat = FEAT_WALL_INNER;
 					}
 				}
 			}
@@ -1816,7 +1815,6 @@ static void build_type6(int by0, int bx0)
 		}
 	}
 
-
 	/* Dragon pit */
 	else if (tmp < 80)
 	{
@@ -2074,7 +2072,7 @@ static void coord_trans(int *x, int *y, int xoffset, int yoffset, int transno)
 	if (transno / 4)
 	{
 		/* Reflect depending on status of 3rd bit. */
-		*x= -(*x);
+		*x = -(*x);
 	}
 
 	/* Add offsets so vault stays in the first quadrant */
@@ -2101,23 +2099,23 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 	{
 		for (dx = 0; dx < xmax; dx++, t++)
 		{
-			/* prevent loop counter from being overwritten*/
+			/* prevent loop counter from being overwritten */
 			i = dx;
 			j = dy;
 
-			/* Flip / rotate*/
+			/* Flip / rotate */
 			coord_trans(&i, &j, xoffset, yoffset, transno);
 
 			/* Extract the location */
 			if (transno%2)
 			{
-				/* no swap of x/y*/
+				/* no swap of x/y */
 				x = xval - (xmax / 2) + i;
 				y = yval - (ymax / 2) + j;
 			}
 			else
 			{
-				/* swap of x/y*/
+				/* swap of x/y */
 				x = xval - (ymax / 2) + i;
 				y = yval - (xmax / 2) + j;
 			}
@@ -2191,7 +2189,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 			coord_trans(&i, &j, xoffset, yoffset, transno);
 
 			/* Extract the location */
-			if (transno%2)
+			if (transno % 2)
 			{
 				/* no swap of x/y*/
 				x = xval - (xmax / 2) + i;
@@ -2316,11 +2314,12 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
  */
 static void build_type7(int by0, int bx0)
 {
-	vault_type	*v_ptr;
-	int dummy = 0, xval, yval;
+	vault_type *v_ptr = NULL;
+	int dummy = 0;
 	int x, y;
-	int transno;
+	int xval, yval;
 	int xoffset, yoffset;
+	int transno;
 
 	/* Pick a lesser vault */
 	while (dummy < SAFE_MAX_ATTEMPTS)
@@ -2334,27 +2333,27 @@ static void build_type7(int by0, int bx0)
 		if (v_ptr->typ == 7) break;
 	}
 
-	/* pick type of transformation (0-7)*/
+	/* pick type of transformation (0-7) */
 	transno = rand_int(8);
 
 	/* calculate offsets */
 	x = v_ptr->wid;
 	y = v_ptr->hgt;
 
-	coord_trans(&x, &y, 0,0, transno);
+	coord_trans(&x, &y, 0, 0, transno);
 
-	if (x<0)
+	if (x < 0)
 	{
-		xoffset= -x - 1;
+		xoffset = -x - 1;
 	}
 	else
 	{
 		xoffset = 0;
 	}
 
-	if (y<0)
+	if (y < 0)
 	{
-		yoffset= -y - 1;
+		yoffset = -y - 1;
 	}
 	else
 	{
@@ -2362,7 +2361,7 @@ static void build_type7(int by0, int bx0)
 	}
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(abs(x), abs(y),FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(abs(x), abs(y), FALSE, by0, bx0, &xval, &yval)) return;
 
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
@@ -2401,8 +2400,9 @@ static void build_type7(int by0, int bx0)
  */
 static void build_type8(int by0, int bx0)
 {
-	vault_type	*v_ptr;
-	int dummy = 0, xval, yval;
+	vault_type *v_ptr = NULL;
+	int dummy = 0;
+	int xval, yval;
 	int x, y;
 	int transno;
 	int xoffset, yoffset;
@@ -2419,14 +2419,14 @@ static void build_type8(int by0, int bx0)
 		if (v_ptr->typ == 8) break;
 	}
 
-	/* pick type of transformation (0-7)*/
+	/* pick type of transformation (0-7) */
 	transno = rand_int(8);
 
 	/* calculate offsets */
 	x = v_ptr->wid;
 	y = v_ptr->hgt;
 
-	coord_trans(&x, &y, 0,0, transno);
+	coord_trans(&x, &y, 0, 0, transno);
 
 	if (x < 0)
 	{
@@ -2447,7 +2447,7 @@ static void build_type8(int by0, int bx0)
 	}
 
 	/* Try to allocate space for room.  If fails, exit*/
-	if (!room_alloc(abs(x),abs(y),FALSE, by0, bx0, &xval, &yval))return;
+	if (!room_alloc(abs(x), abs(y), FALSE, by0, bx0, &xval, &yval)) return;
 
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
@@ -2542,17 +2542,16 @@ static void store_height(int x, int y, int x0, int y0,
 
 
 /*
-*  Note that this uses the cave.feat array in a very hackish way
-*  the values are first set to zero, and then each array location
-*  is used as a "heightmap"
-*  The heightmap then needs to be converted back into the "feat" format.
-*
-*  grd=level at which fractal turns on.  smaller gives more mazelike caves
-*  roug=roughness level.  16=normal.  higher values make things more convoluted
-*    small values are good for smooth walls.
-*  size=length of the side of the square cave system.
-*/
-
+ *  Note that this uses the cave.feat array in a very hackish way
+ *  the values are first set to zero, and then each array location
+ *  is used as a "heightmap"
+ *  The heightmap then needs to be converted back into the "feat" format.
+ *
+ *  grd=level at which fractal turns on.  smaller gives more mazelike caves
+ *  roug=roughness level.  16=normal.  higher values make things more convoluted
+ *    small values are good for smooth walls.
+ *  size=length of the side of the square cave system.
+ */
 static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug, int cutoff)
 {
 	int xhsize, yhsize, xsize, ysize, maxsize;
@@ -2560,21 +2559,21 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	/* fixed point variables- these are stored as 256 x normal value
 	* this gives 8 binary places of fractional part + 8 places of normal part*/
 
-	u16b xstep, xhstep, ystep, yhstep, i,j, diagsize, xxsize, yysize;
+	u16b xstep, xhstep, ystep, yhstep, i, j, diagsize, xxsize, yysize;
 
 	/* redefine size so can change the value if out of range */
 	xsize = xsiz;
 	ysize = ysiz;
 
 	/* Paranoia about size of the system of caves*/
-	if (xsize>254) xsize = 254;
-	if (xsize<4) xsize = 4;
-	if (ysize>254) ysize = 254;
-	if (ysize<4) ysize = 4;
+	if (xsize > 254) xsize = 254;
+	if (xsize < 4) xsize = 4;
+	if (ysize > 254) ysize = 254;
+	if (ysize < 4) ysize = 4;
 
 	/* get offsets to middle of array*/
-	xhsize = xsize/2;
-	yhsize = ysize/2;
+	xhsize = xsize / 2;
+	yhsize = ysize / 2;
 
 	/* fix rounding problem */
 	xsize = xhsize * 2;
@@ -2588,12 +2587,12 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	diagsize = 362;
 
 	/* maximum of xsize and ysize*/
-	maxsize=(xsize>ysize)?xsize:ysize;
+	maxsize = (xsize > ysize) ? xsize : ysize;
 
 	/* Clear the section */
-	for (i = 0; i<=xsize; i++)
+	for (i = 0; i <= xsize; i++)
 	{
-		for (j = 0; j<=ysize; j++)
+		for (j = 0; j <= ysize; j++)
 		{/* 255 is a flag for "not done yet" */
 			cave[(int)(y0 - yhsize + j)][(int)(x0 - xhsize + i)].feat = 255;
 			/* Clear icky flag because may be redoing the cave */
@@ -2604,11 +2603,11 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	/* Set the corner values just in case grd>size. */
 	store_height(0, 0, x0, y0, maxsize, xhsize, yhsize, cutoff);
 	store_height(0, ysize, x0, y0, maxsize, xhsize, yhsize, cutoff);
-	store_height(xsize, 0,x0, y0, maxsize, xhsize, yhsize, cutoff);
+	store_height(xsize, 0, x0, y0, maxsize, xhsize, yhsize, cutoff);
 	store_height(xsize, ysize, x0, y0, maxsize, xhsize, yhsize, cutoff);
 
 	/* Set the middle square to be an open area. */
-	store_height(xhsize, yhsize, x0, y0, 0,xhsize, yhsize, cutoff);
+	store_height(xhsize, yhsize, x0, y0, 0, xhsize, yhsize, cutoff);
 
 	/* Initialize the step sizes */
 	xstep = xhstep = xsize * 256;
@@ -2651,14 +2650,14 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 
 
 		/* middle left to right.*/
-		for (j = yhstep; j<=yysize - yhstep; j+=ystep)
+		for (j = yhstep; j <= yysize - yhstep; j += ystep)
 		{
-			for (i = 0; i<=xxsize; i+=xstep)
+			for (i = 0; i <= xxsize; i += xstep)
 		   	{
-				if (xhstep/256>grd)
+				if (xhstep / 256 > grd)
 				{
 					/* If greater than 'grid' level then is random */
-					store_height(i/256, j/256, x0, y0, randint(maxsize),xhsize, yhsize, cutoff);
+					store_height(i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				}
 		   		else
 				{
@@ -2672,36 +2671,39 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 		}
 
 		/* center.*/
-		for (i = xhstep; i<=xxsize - xhstep; i+=xstep)
+		for (i = xhstep; i <= xxsize - xhstep; i += xstep)
 		{
-			for (j = yhstep; j<=yysize - yhstep; j+=ystep)
+			for (j = yhstep; j <= yysize - yhstep; j += ystep)
 			{
-			   	if (xhstep/256>grd)
+			   	if (xhstep / 256 > grd)
 				{
 					/* If greater than 'grid' level then is random */
-					store_height(i/256, j/256, x0, y0, randint(maxsize),xhsize, yhsize, cutoff);
+					store_height(i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				}
 		   		else
 				{
 				/* average over all four corners + scale by diagsize to
-				*reduce the effect of the square grid on the shape of the fractal */
-				store_height(i/256, j/256, x0, y0,
-				(cave[y0 - yhsize+(j - yhstep)/256][x0 - xhsize+(i - xhstep)/256].feat
-				+cave[y0 - yhsize+(j + yhstep)/256][x0 - xhsize+(i - xhstep)/256].feat
-				+cave[y0 - yhsize+(j - yhstep)/256][x0 - xhsize+(i + xhstep)/256].feat
-				+cave[y0 - yhsize+(j + yhstep)/256][x0 - xhsize+(i + xhstep)/256].feat)/4
-				+(randint(xstep/256)-xhstep/256)*(diagsize/16)/256 * roug, xhsize, yhsize, cutoff);
+				 * reduce the effect of the square grid on the shape of the fractal */
+				store_height(i/  256, j / 256, x0, y0,
+				(cave[y0 - yhsize + (j - yhstep) / 256][x0 - xhsize + (i - xhstep) / 256].feat
+				+ cave[y0 - yhsize + (j + yhstep) / 256][x0 - xhsize + (i - xhstep) / 256].feat
+				+ cave[y0 - yhsize + (j - yhstep) / 256][x0 - xhsize + (i + xhstep) / 256].feat
+				+ cave[y0 - yhsize + (j + yhstep) / 256][x0 - xhsize + (i + xhstep) / 256].feat) / 4
+				+ (randint(xstep / 256) - xhstep / 256) * (diagsize / 16) / 256 * roug, xhsize, yhsize, cutoff);
 				}
 			}
 		}
 	}
 }
 
+
 static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int feat2, int feat3)
 {
-/* function used to convert from height-map back to the
-*  normal angband cave format*/
-	if (cave[y][x].info&CAVE_ICKY)
+	/*
+	 * function used to convert from height-map back to the
+	 *  normal angband cave format
+	 */
+	if (cave[y][x].info & CAVE_ICKY)
 	{
 		/* already done */
 		return FALSE;
@@ -2710,26 +2712,27 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int 
 	{
 		/* Show that have looked at this square */
 		cave[y][x].info|= (CAVE_ICKY);
-		/* Use cutoffs c1-c3 to allocate regions of floor /water/ lava etc. */
-		if (cave[y][x].feat<=c1)
-			{
 
-			/* 25% of the time use the other tile : it looks better this way*/
-			if (randint(100)<75)
-			{
-				cave[y][x].feat = feat1;
-				return TRUE;
-			}
-			else
-			{
-				cave[y][x].feat = feat2;
-				return TRUE;
-			}
-		}
-		else if (cave[y][x].feat<=c2)
+		/* Use cutoffs c1-c3 to allocate regions of floor /water/ lava etc. */
+		if (cave[y][x].feat <= c1)
 		{
-			/* 25% of the time use the other tile : it looks better this way*/
-			if (randint(100)<75)
+
+			/* 25% of the time use the other tile : it looks better this way */
+			if (randint(100) < 75)
+			{
+				cave[y][x].feat = feat1;
+				return TRUE;
+			}
+			else
+			{
+				cave[y][x].feat = feat2;
+				return TRUE;
+			}
+		}
+		else if (cave[y][x].feat <= c2)
+		{
+			/* 25% of the time use the other tile : it looks better this way */
+			if (randint(100) < 75)
 			{
 				cave[y][x].feat = feat2;
 				return TRUE;
@@ -2740,7 +2743,7 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int 
 				return TRUE;
 			}
 		}
-		else if (cave[y][x].feat<=c3)
+		else if (cave[y][x].feat <= c3)
 		{
 			cave[y][x].feat = feat3;
 			return TRUE;
@@ -2748,7 +2751,7 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int 
 		/* if greater than cutoff then is a wall */
 		else
 		{
-				cave[y][x].feat = FEAT_WALL_OUTER;
+			cave[y][x].feat = FEAT_WALL_OUTER;
 			return FALSE;
 		}
 	}
@@ -2764,16 +2767,17 @@ static void fill_hack(int y0, int x0, int y, int x,
 					  int feat1, int feat2, int feat3, int *amount)
 {
 	int i, j;
+
 	/* check 8 neighbours +self (self is caught in the isnt_wall function) */
-	for (i=-1; i<=1; i++)
+	for (i = -1; i <= 1; i++)
 	{
-		for (j=-1; j<=1; j++)
+		for (j = -1; j <= 1; j++)
 		{
 			/* If within bounds */
 			if ((x + i > 0) && (x + i < xsize) && (y + j > 0) && (y + j < ysize))
 			{
 				/* If not a wall or floor done before */
-				if (hack_isnt_wall(y + j+y0 - ysize / 2, x + i+x0 - xsize/2,
+				if (hack_isnt_wall(y + j + y0 - ysize / 2, x + i + x0 - xsize / 2,
 				      c1, c2, c3, feat1, feat2, feat3))
 		 		{
 					/* then fill from the new point*/
@@ -2787,7 +2791,7 @@ static void fill_hack(int y0, int x0, int y, int x,
 			else
 			{
 				/* affect boundary */
-				cave[y0 + y+j - ysize / 2][x0 + x+i - xsize / 2].info|=CAVE_ICKY;
+				cave[y0 + y + j - ysize / 2][x0 + x + i - xsize / 2].info |= CAVE_ICKY;
 			}
 		}
 	}
@@ -2796,7 +2800,7 @@ static void fill_hack(int y0, int x0, int y, int x,
 
 static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, bool light, bool room)
 {
-	int x, y,i, amount, xhsize, yhsize;
+	int x, y, i, amount, xhsize, yhsize;
 
 	/* offsets to middle from corner*/
 	xhsize = xsize / 2;
@@ -2808,10 +2812,11 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 	/* select region connected to center of cave system
 	* this gets rid of alot of isolated one-sqaures that
 	* can make teleport traps instadeaths... */
-	fill_hack(y0, x0, yhsize, xhsize, xsize, ysize, cutoff, 0,0, FEAT_FLOOR, FEAT_FLOOR, FEAT_FLOOR, &amount);
+	fill_hack(y0, x0, yhsize, xhsize, xsize, ysize, cutoff, 0, 0,
+	          FEAT_FLOOR, FEAT_FLOOR, FEAT_FLOOR, &amount);
 
 	/* if tally too small, try again*/
-	if (amount<10)
+	if (amount < 10)
 	{
 		/* too small -clear area and try again later*/
 		for (x = 0; x <= xsize; ++x)
@@ -2828,10 +2833,10 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 	/* Do boundarys- check to see if they are next to a filled region
 	*If not then they are set to normal granite
 	*If so then they are marked as room walls. */
-	for (i = 0; i<=xsize;++i)
+	for (i = 0; i <= xsize; ++i)
 		{
 			/* top boundary */
-			if ((cave[0 + y0 - yhsize][i + x0 - xhsize].info&CAVE_ICKY) && (room))
+			if ((cave[0 + y0 - yhsize][i + x0 - xhsize].info & CAVE_ICKY) && (room))
 			{
 				/* Next to a 'filled' region?-set to be room walls */
 				cave[y0 + 0 - yhsize][x0 + i - xhsize].feat = FEAT_WALL_OUTER;
@@ -2846,7 +2851,7 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 			}
 
 			/* bottom boundary */
-			if ((cave[ysize + y0 - yhsize][i + x0 - xhsize].info&CAVE_ICKY) && (room))
+			if ((cave[ysize + y0 - yhsize][i + x0 - xhsize].info & CAVE_ICKY) && (room))
 			{
 				/* Next to a 'filled' region?-set to be room walls */
 				cave[y0 + ysize - yhsize][x0 + i - xhsize].feat = FEAT_WALL_OUTER;
@@ -2906,9 +2911,9 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 
 
 	/* Do the rest: convert back to the normal format*/
-	for (x = 1; x<xsize;++x)
+	for (x = 1; x < xsize; ++x)
 	{
-		for (y = 1; y<ysize;++y)
+		for (y = 1; y < ysize; ++y)
 		{
 			if ((cave[y0 + y - yhsize][x0 + x - xhsize].feat == FEAT_FLOOR) &&
 			    (cave[y0 + y - yhsize][x0 + x - xhsize].info & CAVE_ICKY))
@@ -2916,16 +2921,17 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 			{
 				/* Clear the icky flag in the filled region*/
 				cave[y0 + y - yhsize][x0 + x - xhsize].info &= ~CAVE_ICKY;
+
 				/* Set appropriate flags */
-				if (light) cave[y0 + y - yhsize][x0 + x - xhsize].info|=(CAVE_GLOW);
-				if (room) cave[y0 + y - yhsize][x0 + x - xhsize].info|=(CAVE_ROOM);
+				if (light) cave[y0 + y - yhsize][x0 + x - xhsize].info |= (CAVE_GLOW);
+				if (room) cave[y0 + y - yhsize][x0 + x - xhsize].info |= (CAVE_ROOM);
 			}
 			else if ((cave[y0 + y - yhsize][x0 + x - xhsize].feat == FEAT_WALL_OUTER) &&
 			         (cave[y0 + y - yhsize][x0 + x - xhsize].info & CAVE_ICKY))
 			{
 				/* Walls */
 				cave[y0 + y - yhsize][x0 + x - xhsize].info &= ~(CAVE_ICKY);
-				if (light) cave[y0 + y - yhsize][x0 + x - xhsize].info|=(CAVE_GLOW);
+				if (light) cave[y0 + y - yhsize][x0 + x - xhsize].info |= (CAVE_GLOW);
 				if (room)
 				{
 					cave[y0 + y - yhsize][x0 + x - xhsize].info |= (CAVE_ROOM);
@@ -2968,8 +2974,8 @@ static void build_type9(int by0, int bx0)
 	bool done, light, room;
 
 	/* get size: note 'Evenness'*/
-	xsize = randint(22)*2 + 6;
-	ysize = randint(15)*2 + 6;
+	xsize = randint(22) * 2 + 6;
+	ysize = randint(15) * 2 + 6;
 
 	/* Try to allocate space for room.  If fails, exit*/
 	if (room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0) == FALSE)return;
@@ -2984,19 +2990,20 @@ static void build_type9(int by0, int bx0)
 		/* Note: size must be even or there are rounding problems
 		* This causes the tunnels not to connect properly to the room */
 
-		/* testing values for these parameters feel free to adjust*/
+		/* testing values for these parameters feel free to adjust */
 		grd = 1<<(rand_int(4));
 
 		/* want average of about 16 */
-		roug = randint(8)*randint(4);
+		roug = randint(8) * randint(4);
 
 		/* about size/2 */
-		cutoff = randint(xsize/4)+randint(ysize/4)+randint(xsize/4)+randint(ysize/4);
+		cutoff = randint(xsize / 4) + randint(ysize / 4) +
+		         randint(xsize / 4) + randint(ysize / 4);
 
 		/* make it */
 		generate_hmap(y0, x0, xsize, ysize, grd, roug, cutoff);
 
-		/* Convert to normal format+ clean up*/
+		/* Convert to normal format+ clean up */
 		done = generate_fracave(y0, x0, xsize, ysize, cutoff, light, room);
 	}
 }
@@ -3016,8 +3023,8 @@ void build_cavern(void)
 	/* Make a cave the size of the dungeon */
 	xsize = cur_wid - 1;
 	ysize = cur_hgt - 1;
-	x0 = xsize/2;
-	y0 = ysize/2;
+	x0 = xsize / 2;
+	y0 = ysize / 2;
 
 	/* Paranoia: make size even */
 	xsize = x0 * 2;
@@ -3025,76 +3032,76 @@ void build_cavern(void)
 
 	while (!done)
 	{
-		/* testing values for these parameters: feel free to adjust*/
-		grd = randint(4)+4;
+		/* testing values for these parameters: feel free to adjust */
+		grd = randint(4) + 4;
 
 		/* want average of about 16 */
-		roug = randint(8)*randint(4);
+		roug = randint(8) * randint(4);
 
 		/* about size/2 */
-		cutoff = xsize/2;
+		cutoff = xsize / 2;
 
 		 /* make it */
 		generate_hmap(y0 + 1, x0 + 1, xsize, ysize, grd, roug, cutoff);
 
-		/* Convert to normal format+ clean up*/
+		/* Convert to normal format+ clean up */
 		done = generate_fracave(y0 + 1, x0 + 1, xsize, ysize, cutoff, light, FALSE);
 	}
 }
 
 static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, int c3, int type)
 {
-	int x, y,i, amount, xhsize, yhsize;
+	int x, y, i, amount, xhsize, yhsize;
 	int feat1, feat2, feat3;
 
-	/* offsets to middle from corner*/
-	xhsize = xsize/2;
-	yhsize = ysize/2;
+	/* offsets to middle from corner */
+	xhsize = xsize / 2;
+	yhsize = ysize / 2;
 
 	/* Get features based on type */
 	switch (type)
 	{
 		case 1: {
-				/* Lava*/
-				feat1= FEAT_DEEP_LAVA;
-				feat2= FEAT_SHAL_LAVA;
-				feat3= FEAT_FLOOR;
+				/* Lava */
+				feat1 = FEAT_DEEP_LAVA;
+				feat2 = FEAT_SHAL_LAVA;
+				feat3 = FEAT_FLOOR;
 				}; break;
 		case 2:{
-				/* Water*/
-				feat1= FEAT_DEEP_WATER;
-				feat2= FEAT_SHAL_WATER;
-				feat3= FEAT_FLOOR;
+				/* Water */
+				feat1 = FEAT_DEEP_WATER;
+				feat2 = FEAT_SHAL_WATER;
+				feat3 = FEAT_FLOOR;
 				}; break;
 		case 3: {
-				/* Collapsed cave*/
-				feat1= FEAT_FLOOR;
-				feat2= FEAT_FLOOR;
-				feat3= FEAT_RUBBLE;
+				/* Collapsed cave */
+				feat1 = FEAT_FLOOR;
+				feat2 = FEAT_FLOOR;
+				feat3 = FEAT_RUBBLE;
 				}; break;
 		case 4: {
-				/* Earth vault*/
-				feat1= FEAT_RUBBLE;
-				feat2= FEAT_FLOOR;
-				feat3= FEAT_RUBBLE;
+				/* Earth vault */
+				feat1 = FEAT_RUBBLE;
+				feat2 = FEAT_FLOOR;
+				feat3 = FEAT_RUBBLE;
 				}; break;
 		case 5: {
 				/* Air vault*/
-				feat1= FEAT_FLOOR;
-				feat2= FEAT_TREES;
-				feat3= FEAT_FLOOR;
+				feat1 = FEAT_FLOOR;
+				feat2 = FEAT_TREES;
+				feat3 = FEAT_FLOOR;
 				}; break;
 		case 6: {
-				/* Water vault*/
-				feat1= FEAT_SHAL_WATER;
-				feat2= FEAT_DEEP_WATER;
-				feat3= FEAT_SHAL_WATER;
+				/* Water vault */
+				feat1 = FEAT_SHAL_WATER;
+				feat2 = FEAT_DEEP_WATER;
+				feat3 = FEAT_SHAL_WATER;
 				}; break;
 		case 7: {
-				/* Fire Vault*/
-				feat1= FEAT_SHAL_LAVA;
-				feat2= FEAT_DEEP_LAVA;
-				feat3= FEAT_SHAL_LAVA;
+				/* Fire Vault */
+				feat1 = FEAT_SHAL_LAVA;
+				feat2 = FEAT_DEEP_LAVA;
+				feat3 = FEAT_SHAL_LAVA;
 				}; break;
 
 		/* Paranoia */
@@ -3109,10 +3116,10 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 	* can make teleport traps instadeaths... */
 	fill_hack(y0, x0, yhsize, xhsize, xsize, ysize, c1, c2, c3, feat1, feat2, feat3, &amount);
 
-	/* if tally too small, try again*/
+	/* if tally too small, try again */
 	if (amount < 10)
 	{
-		/* too small -clear area and try again later*/
+		/* too small -clear area and try again later */
 		for (x = 0; x <= xsize; ++x)
 		{
 			for (y = 0; y <= ysize; ++y)
@@ -3125,38 +3132,36 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 	}
 
 	/* Do boundarys- set to normal granite */
-	for (i = 0; i<=xsize;++i)
+	for (i = 0; i <= xsize; ++i)
 	{
 		cave[y0 + 0 - yhsize][x0 + i - xhsize].feat = FEAT_WALL_EXTRA;
 		cave[y0 + ysize - yhsize][x0 + i - xhsize].feat = FEAT_WALL_EXTRA;
 
 		/* clear the icky flag-don't need it any more */
-
 		cave[y0 + 0 - yhsize][x0 + i - xhsize].info &= ~(CAVE_ICKY);
 		cave[y0 + ysize - yhsize][x0 + i - xhsize].info &= ~(CAVE_ICKY);
 	}
 
 	/* Do the left and right boundaries minus the corners (done above) */
 
-	for (i = 1; i<ysize;++i)
+	for (i = 1; i < ysize; ++i)
 	{
 		cave[y0 + i - yhsize][x0 + 0 - xhsize].feat = FEAT_WALL_EXTRA;
 		cave[y0 + i - yhsize][x0 + xsize - xhsize].feat = FEAT_WALL_EXTRA;
 
 		/* clear icky flag -done with it */
-
-		cave[y0 + i - yhsize][x0 + 0 - xhsize].info&= ~(CAVE_ICKY);
-		cave[y0 + i - yhsize][x0 + xsize - xhsize].info&= ~(CAVE_ICKY);
+		cave[y0 + i - yhsize][x0 + 0 - xhsize].info &= ~(CAVE_ICKY);
+		cave[y0 + i - yhsize][x0 + xsize - xhsize].info &= ~(CAVE_ICKY);
 	}
 
 
 	/* Do the rest: convert back to the normal format*/
-	for (x = 1; x<xsize;++x)
+	for (x = 1; x < xsize; ++x)
 	{
-		for (y = 1; y<ysize;++y)
+		for (y = 1; y < ysize; ++y)
 		{
 			/* Fill unconnected regions with granite */
-			if ((!(cave[y0 + y - yhsize][x0 + x - xhsize].info&CAVE_ICKY)) ||
+			if ((!(cave[y0 + y - yhsize][x0 + x - xhsize].info & CAVE_ICKY)) ||
 				(cave[y0 + y - yhsize][x0 + x - xhsize].feat == FEAT_WALL_OUTER))
 				cave[y0 + y - yhsize][x0 + x - xhsize].feat = FEAT_WALL_EXTRA;
 
@@ -3168,13 +3173,14 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 				(cave[y0 + y - yhsize][x0 + x - xhsize].feat == FEAT_SHAL_LAVA) ||
 				(cave[y0 + y - yhsize][x0 + x - xhsize].feat == FEAT_TREES))
 			{
-				cave[y0 + y - yhsize][x0 + x - xhsize].info|=CAVE_GLOW;
+				cave[y0 + y - yhsize][x0 + x - xhsize].info |= CAVE_GLOW;
 			}
 		}
 	}
 
 	return TRUE;
 }
+
 
 /* makes a lake/ collapsed cave system in the center of the dungeon */
 
@@ -3187,8 +3193,8 @@ void build_lake(int type)
 	/* Make the size of the dungeon */
 	xsize = cur_wid - 1;
 	ysize = cur_hgt - 1;
-	x0 = xsize/2;
-	y0 = ysize/2;
+	x0 = xsize / 2;
+	y0 = ysize / 2;
 
 	/* Paranoia: make size even */
 	xsize = x0 * 2;
@@ -3196,21 +3202,21 @@ void build_lake(int type)
 
 	while (!done)
 	{
-		/* testing values for these parameters: feel free to adjust*/
-		grd = randint(3)+4;
+		/* testing values for these parameters: feel free to adjust */
+		grd = randint(3) + 4;
 
 		/* want average of about 16 */
-		roug = randint(8)*randint(4);
+		roug = randint(8) * randint(4);
 
-		/* Make up size of various componants*/
+		/* Make up size of various componants */
 		/* Floor */
-		c3 = 2 * xsize/3;
+		c3 = 2 * xsize / 3;
 
 		/* Deep water/lava*/
-		c1 = rand_int(c3/2)+rand_int(c3/2)-5;
+		c1 = rand_int(c3 / 2) + rand_int(c3 / 2) - 5;
 
 		/* Shallow boundary*/
-		c2=(c1 + c3)/2;
+		c2 = (c1 + c3) / 2;
 
 		/* make it */
 		generate_hmap(y0 + 1, x0 + 1, xsize, ysize, grd, roug, c3);
@@ -3253,13 +3259,13 @@ static void add_door(int x, int y)
 
 
 	/* look at:
-	*  x#x
-	*  .#.
-	*  x#x
-	*
-	*  where x = don't care
-	*  .=floor, #=wall
-	*/
+	 *  x#x
+	 *  .#.
+	 *  x#x
+	 *
+	 *  where x = don't care
+	 *  .=floor, #=wall
+	 */
 	if ((cave[y - 1][x].feat == FEAT_WALL_OUTER) &&
 	    (cave[y + 1][x].feat == FEAT_WALL_OUTER) &&
 	    (cave[y][x - 1].feat == FEAT_FLOOR) &&
@@ -3268,7 +3274,7 @@ static void add_door(int x, int y)
 		/* secret door*/
 		place_secret_door(y, x);
 
-		/* set boundarys so don't get wide doors*/
+		/* set boundarys so don't get wide doors */
 		cave[y - 1][x].feat = FEAT_WALL_SOLID;
 		cave[y + 1][x].feat = FEAT_WALL_SOLID;
 	}
@@ -3280,14 +3286,14 @@ static void add_door(int x, int y)
  */
 static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 {
-	int x, y,cx, cy, size;
+	int x, y, cx, cy, size;
 	s32b value;
 
 	/* center of room:*/
-	cx=(x1 + x2) / 2;
-	cy=(y1 + y2) / 2;
+	cx = (x1 + x2) / 2;
+	cy = (y1 + y2) / 2;
 
-	/* Rough measure of size of vault= sum of lengths of sides*/
+	/* Rough measure of size of vault= sum of lengths of sides */
 	size = abs(x2 - x1) + abs(y2 - y1);
 
 	for (x = x1; x <= x2; x++)
@@ -3295,10 +3301,10 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 		for (y = y1; y <= y2; y++)
 		{
 			/* Thing added based on distance to center of vault
-			* Difficulty is 1-easy to 10-hard*/
-			value=((((s32b)(distance(cx, cy, x,y))) * 100) / size) + randint(10) - difficulty;
+			 * Difficulty is 1-easy to 10-hard */
+			value = ((((s32b)(distance(cx, cy, x, y))) * 100) / size) + randint(10) - difficulty;
 
-			/* hack- empty square part of the time*/
+			/* hack- empty square part of the time */
 			if ((randint(100) - difficulty * 3) > 50) value = 20;
 
 			 /* if floor, shallow water and lava*/
@@ -3306,7 +3312,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 			    (cave[y][x].feat == FEAT_SHAL_WATER) ||
 			    (cave[y][x].feat == FEAT_SHAL_LAVA))
 			{
-				/* The smaller 'value' is, the better the stuff*/
+				/* The smaller 'value' is, the better the stuff */
 				if (value < 0)
 				{
 					/* Meanest monster + treasure*/
@@ -3334,7 +3340,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 					place_monster(y, x, TRUE, TRUE);
 					monster_level = base_level;
 				}
-				else if (value<17)
+				else if (value < 17)
 				{
 					/* Intentional Blank space */
 
@@ -3343,7 +3349,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 					* +this is used in the hack above to lower
 					* the density of stuff in the vault)*/
 				}
-				else if (value<23)
+				else if (value < 23)
 				{
 					/* Object or trap*/
 					if (rand_int(100) < 25)
@@ -3355,15 +3361,15 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 						place_trap(y, x);
 					}
 				}
-				else if (value<30)
-				{
-					/* Monster and trap*/
+				else if (value < 30)
+				{ 
+					/* Monster and trap */
 					monster_level = base_level + 5;
 					place_monster(y, x, TRUE, TRUE);
 					monster_level = base_level;
 					place_trap(y, x);
 				}
-				else if (value<40)
+				else if (value < 40)
 				{
 					/* Monster or object*/
 					if (rand_int(100) < 50)
@@ -3379,27 +3385,27 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 						object_level = base_level;
 					}
 				}
-				else if (value<50)
+				else if (value < 50)
 				{
-					/* Trap*/
+					/* Trap */
 					place_trap(y, x);
 				}
 				else
 				{
-					/* Various Stuff*/
+					/* Various Stuff */
 
-					/* 20% monster, 40% trap, 20% object, 20% blank space*/
-					if (rand_int(100)<20)
+					/* 20% monster, 40% trap, 20% object, 20% blank space */
+					if (rand_int(100) < 20)
 					{
 						place_monster(y, x, TRUE, TRUE);
 					}
-					else if (rand_int(100)<50)
+					else if (rand_int(100) < 50)
 					{
 						place_trap(y, x);
 					}
-					else if (rand_int(100)<50)
+					else if (rand_int(100) < 50)
 					{
-						place_object(y, x,FALSE, FALSE);
+						place_object(y, x, FALSE, FALSE);
 					}
 				}
 
@@ -3422,18 +3428,18 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
  */
 static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 {
-	#define BUBBLENUM 10		/* number of bubbles*/
+	#define BUBBLENUM 10		/* number of bubbles */
 
-	/* array of center points of bubbles*/
+	/* array of center points of bubbles */
 	coord center[BUBBLENUM];
 
-	int i, j,x, y,xhsize, yhsize;
+	int i, j, x, y, xhsize, yhsize;
 	u16b min1, min2, temp;
 	bool done;
 
-	/* Offset from center to top left hand corner*/
-	xhsize = xsize/2;
-	yhsize = ysize/2;
+	/* Offset from center to top left hand corner */
+	xhsize = xsize / 2;
+	yhsize = ysize / 2;
 
 	if (cheat_room) msg_print("Bubble Vault");
 
@@ -3444,7 +3450,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	{
 		done = FALSE;
 
-		/* get center and check to see if it is unique*/
+		/* get center and check to see if it is unique */
 		while (!done)
 		{
 			done = TRUE;
@@ -3452,7 +3458,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 			x = randint(xsize - 2) + 1;
 			y = randint(ysize - 2) + 1;
 
-			for (j = 0; j<i; j++);
+			for (j = 0; j < i; j++);
 			{
 				/* rough test to see if there is an overlap*/
 				if ((x == center[j].x) || (y == center[j].y)) done = FALSE;
@@ -3465,58 +3471,58 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 
 
 	/* Top and bottom boundaries*/
-	for (i = 0; i<=xsize; i++)
+	for (i = 0; i <= xsize; i++)
 	{
 		cave[y0 - yhsize + 0][x0 - xhsize + i].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + 0][x0 - xhsize + i].info|=(CAVE_ROOM | CAVE_ICKY);
+		cave[y0 - yhsize + 0][x0 - xhsize + i].info |= (CAVE_ROOM | CAVE_ICKY);
 		cave[y0 - yhsize + ysize][x0 - xhsize + i].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + ysize][x0 - xhsize + i].info|=(CAVE_ROOM | CAVE_ICKY);
+		cave[y0 - yhsize + ysize][x0 - xhsize + i].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
 	/* Left and right boundaries*/
-	for (i = 1; i<ysize; i++)
+	for (i = 1; i < ysize; i++)
 	{
 		cave[y0 - yhsize + i][x0 - xhsize + 0].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + i][x0 - xhsize + 0].info|=(CAVE_ROOM | CAVE_ICKY);
+		cave[y0 - yhsize + i][x0 - xhsize + 0].info |= (CAVE_ROOM | CAVE_ICKY);
 		cave[y0 - yhsize + i][x0 - xhsize + xsize].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + i][x0 - xhsize + xsize].info|=(CAVE_ROOM | CAVE_ICKY);
+		cave[y0 - yhsize + i][x0 - xhsize + xsize].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
-	/* Fill in middle with bubbles*/
-	for (x = 1; x<xsize; x++)
+	/* Fill in middle with bubbles */
+	for (x = 1; x < xsize; x++)
 	{
-		for (y = 1; y<ysize; y++)
+		for (y = 1; y < ysize; y++)
 		{
-			/* Get distances to two closest centers*/
+			/* Get distances to two closest centers */
 
 			/* initialize*/
-			min1 = distance(x, y,center[0].x, center[0].y);
-			min2 = distance(x, y,center[1].x, center[1].y);
-			if (min1>min2)
+			min1 = distance(x, y, center[0].x, center[0].y);
+			min2 = distance(x, y, center[1].x, center[1].y);
+			if (min1 > min2)
 			{
-				/* swap if in wrong order*/
+				/* swap if in wrong order */
 				temp = min1;
 				min1 = min2;
 				min2 = temp;
 			}
 
 			/* Scan the rest*/
-			for (i = 2; i<BUBBLENUM; i++)
+			for (i = 2; i < BUBBLENUM; i++)
 			{
-				temp = distance(x, y,center[i].x, center[i].y);
-				if (temp<min1)
+				temp = distance(x, y, center[i].x, center[i].y);
+				if (temp < min1)
 				{
-					/* smallest*/
+					/* smallest */
 					min2 = min1;
 					min1 = temp;
 				}
-				else if (temp<min2)
+				else if (temp < min2)
 				{
-					/* second smallest*/
+					/* second smallest */
 				 	min2 = temp;
 				}
 			}
-			if (((min2 - min1)<=2) && (!(min1<3)))
+			if (((min2 - min1) <= 2) && (!(min1 < 3)))
 			{
 				/* Boundary at midpoint+ not at inner region of bubble*/
 				cave[y0 - yhsize + y][x0 - xhsize + x].feat = FEAT_WALL_OUTER;
@@ -3528,19 +3534,19 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 			}
 
 			/* clean up rest of flags*/
-			cave[y0 - yhsize + y][x0 - xhsize + x].info|=(CAVE_ROOM | CAVE_ICKY);
+			cave[y0 - yhsize + y][x0 - xhsize + x].info |= (CAVE_ROOM | CAVE_ICKY);
 		}
 
 	}
 
 	/* Try to add some random doors*/
-	for (i = 0; i<500; i++)
+	for (i = 0; i < 500; i++)
 	{
 		x = randint(xsize - 2)-xhsize + x0 + 1;
 		y = randint(ysize - 2)-yhsize + y0 + 1;
 		add_door(x, y);
 	}
-	/* Fill with monsters and treasure, low difficulty*/
+	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1, y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
 }
 
@@ -3553,7 +3559,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
  */
 static void build_room(int x1, int x2, int y1, int y2)
 {
-	int x, y,i, xsize, ysize, temp;
+	int x, y, i, xsize, ysize, temp;
 
 	/* Check if rectangle has no width*/
 	if ((x1 == x2) || (y1 == y2)) return;
@@ -3561,7 +3567,7 @@ static void build_room(int x1, int x2, int y1, int y2)
 	/* initialize*/
 	if (x1 > x2)
 	{
-		/* Swap boundaries if in wrong order*/
+		/* Swap boundaries if in wrong order */
 		temp = x1;
 		x1 = x2;
 		x2 = temp;
@@ -3569,7 +3575,7 @@ static void build_room(int x1, int x2, int y1, int y2)
 
 	if (y1 > y2)
 	{
-		/* Swap boundaries if in wrong order*/
+		/* Swap boundaries if in wrong order */
 		temp = y1;
 		y1 = y2;
 		y2 = temp;
@@ -3590,7 +3596,7 @@ static void build_room(int x1, int x2, int y1, int y2)
 	}
 
 	/* Left and right boundaries*/
-	for (i = 1; i<ysize; i++)
+	for (i = 1; i < ysize; i++)
 	{
 		cave[y1 + i][x1].feat = FEAT_WALL_OUTER;
 		cave[y1 + i][x1].info|=(CAVE_ROOM | CAVE_ICKY);
@@ -3599,81 +3605,81 @@ static void build_room(int x1, int x2, int y1, int y2)
 	}
 
 	/* Middle*/
-	for (x = 1; x<xsize; x++)
+	for (x = 1; x < xsize; x++)
 	{
-		for (y = 1; y<ysize; y++)
+		for (y = 1; y < ysize; y++)
 		{
 			if (cave[y1 + y][x1 + x].feat == FEAT_WALL_EXTRA)
 			{
 				/* clear the untouched region*/
 				cave[y1 + y][x1 + x].feat = FEAT_FLOOR;
-				cave[y1 + y][x1 + x].info|=(CAVE_ROOM | CAVE_ICKY);
+				cave[y1 + y][x1 + x].info |= (CAVE_ROOM | CAVE_ICKY);
 			}
 			else
 			{
 				/* make it a room- but don't touch*/
-				cave[y1 + y][x1 + x].info|=(CAVE_ROOM | CAVE_ICKY);
+				cave[y1 + y][x1 + x].info |= (CAVE_ROOM | CAVE_ICKY);
 			}
 		}
 	}
 }
 
 
-/* Create a random vault that looks like a collection of overlapping rooms*/
+/* Create a random vault that looks like a collection of overlapping rooms */
 
 static void build_room_vault(int x0, int y0, int xsize, int ysize)
 {
 	int i, x1, x2, y1, y2, xhsize, yhsize;
 
-	/* get offset from center*/
-	xhsize = xsize/2;
-	yhsize = ysize/2;
+	/* get offset from center */
+	xhsize = xsize / 2;
+	yhsize = ysize / 2;
 
 	if (cheat_room) msg_print("Room Vault");
 
-	/* fill area so don't get problems with arena levels*/
-	for (x1 = 0; x1<=xsize; x1++)
+	/* fill area so don't get problems with arena levels */
+	for (x1 = 0; x1 <= xsize; x1++)
 	{
-		for (y1 = 0; y1<=ysize; y1++)
+		for (y1 = 0; y1 <= ysize; y1++)
 		{
 			cave[y0 - yhsize + y1][x0 - xhsize + x1].feat = FEAT_WALL_EXTRA;
-			cave[y0 - yhsize + y1][x0 - xhsize + x1].info&=(~CAVE_ICKY);
+			cave[y0 - yhsize + y1][x0 - xhsize + x1].info &= (~CAVE_ICKY);
 		}
 	}
 
 	/* add ten random rooms*/
 	for (i = 0; i<10; i++)
 	{
-		x1 = randint(xhsize)*2 + x0 - xhsize;
-		x2 = randint(xhsize)*2 + x0 - xhsize;
-		y1 = randint(yhsize)*2 + y0 - yhsize;
-		y2 = randint(yhsize)*2 + y0 - yhsize;
+		x1 = randint(xhsize) * 2 + x0 - xhsize;
+		x2 = randint(xhsize) * 2 + x0 - xhsize;
+		y1 = randint(yhsize) * 2 + y0 - yhsize;
+		y2 = randint(yhsize) * 2 + y0 - yhsize;
 		build_room(x1, x2, y1, y2);
 	}
 
 	/* Add some random doors*/
-	for (i = 0; i<500; i++)
+	for (i = 0; i < 500; i++)
 	{
-		x1 = randint(xsize - 2)-xhsize + x0 + 1;
-		y1 = randint(ysize - 2)-yhsize + y0 + 1;
+		x1 = randint(xsize - 2) - xhsize + x0 + 1;
+		y1 = randint(ysize - 2) - yhsize + y0 + 1;
 		add_door(x1, y1);
 	}
 
-	/* Fill with monsters and treasure, high difficulty*/
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1, y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5)+5);
+	/* Fill with monsters and treasure, high difficulty */
+	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1, y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5) + 5);
 }
 
 
-/* Create a random vault out of a fractal cave*/
+/* Create a random vault out of a fractal cave */
 
 static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 {
-	int grd, roug, cutoff, xhsize, yhsize, xsize, ysize, x,y;
+	int grd, roug, cutoff, xhsize, yhsize, xsize, ysize, x, y;
 	bool done, light, room;
 
-	/* round to make sizes even*/
-	xhsize = xsiz/2;
-	yhsize = ysiz/2;
+	/* round to make sizes even */
+	xhsize = xsiz / 2;
+	yhsize = ysiz / 2;
 	xsize = xhsize * 2;
 	ysize = yhsize * 2;
 
@@ -3688,10 +3694,11 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 		grd = 1<<rand_int(4);
 
 		/* want average of about 16 */
-		roug = randint(8)*randint(4);
+		roug = randint(8) * randint(4);
 
 		/* about size/2 */
-		cutoff = randint(xsize/4)+randint(ysize/4)+randint(xsize/4)+randint(ysize/4);
+		cutoff = randint(xsize / 4) + randint(ysize / 4) +
+		         randint(xsize / 4) + randint(ysize / 4);
 
 		/* make it */
 		generate_hmap(y0, x0, xsize, ysize, grd, roug, cutoff);
@@ -3702,12 +3709,12 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 
 	/* Set icky flag because is a vault*/
 	for (x = 0; x<=xsize; x++)
-		{
+	{
 		for (y = 0; y<=ysize; y++)
-			{
-			cave[y0 - yhsize + y][x0 - xhsize + x].info|=CAVE_ICKY;
-			}
+		{
+			cave[y0 - yhsize + y][x0 - xhsize + x].info |= CAVE_ICKY;
 		}
+	}
 
 	/* Fill with monsters and treasure, low difficulty*/
 	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1, y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
@@ -3892,8 +3899,8 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
  	if (cheat_room) msg_print("Mini Checker Board Vault");
 
  	/* Pick a random room size */
-	dy = ysize/2 - 1;
-	dx = xsize/2 - 1;
+	dy = ysize / 2 - 1;
+	dx = xsize / 2 - 1;
 
 	y1 = y0 - dy;
  	x1 = x0 - dx;
@@ -3929,13 +3936,13 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	r_visit(y1, x1, y2, x2, rand_int(num_vertices), 0, visited);
 
 	/* Make it look like a checker board vault*/
-	for (x = x1; x<=x2; x++)
+	for (x = x1; x <= x2; x++)
 	{
-		for (y = y1; y<=y2; y++)
+		for (y = y1; y <= y2; y++)
 		{
 			total = x - x1 + y - y1;
 			/* If total is odd- and is a floor then make a wall */
-			if ((total%2 == 1) && (cave[y][x].feat == FEAT_FLOOR))
+			if ((total % 2 == 1) && (cave[y][x].feat == FEAT_FLOOR))
 			{
 				cave[y][x].feat = FEAT_WALL_INNER;
 			}
@@ -3946,22 +3953,22 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	if (randint(2) == 1)
 	{
 		/* left and right */
-		y = randint(dy)+dy/2;
+		y = randint(dy) + dy / 2;
 		cave[y1 + y][x1 - 1].feat = FEAT_WALL_OUTER;
 		cave[y1 + y][x2 + 1].feat = FEAT_WALL_OUTER;
 	}
 	else
 	{
 		/* top and bottom */
-		x = randint(dx)+dx/2;
+		x = randint(dx) + dx / 2;
 		cave[y1 - 1][x1 + x].feat = FEAT_WALL_OUTER;
 		cave[y2 + 1][x1 + x].feat = FEAT_WALL_OUTER;
 	}
 
-	/* Fill with monsters and treasure, highest difficulty*/
+	/* Fill with monsters and treasure, highest difficulty */
 	fill_treasure(x1, x2, y1, y2, 10);
 
-	/* rnfree(visited, num_vertices * sizeof(int));*/
+	/* rnfree(visited, num_vertices * sizeof(int)); */
 	free(visited);
 }
 
@@ -3995,23 +4002,23 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 		if (power<10)
 		{
 			/* Make rooms + subdivide */
-			if ((randint(10)>2) && (xsize<8) && (ysize<8))
+			if ((randint(10) > 2) && (xsize < 8) && (ysize < 8))
 			{
 				choice = 4;
 			}
 			else
 			{
-				choice = randint(2)+1;
+				choice = randint(2) + 1;
 			}
 		}
 		else
 		{
 			/* Mostly subdivide */
-			choice = randint(3)+1;
+			choice = randint(3) + 1;
 		}
 	}
 
-	/* Based on the choice made above, do something*/
+	/* Based on the choice made above, do something */
 
 	switch (choice)
 	{
@@ -4019,15 +4026,15 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 		{
 			/* Outer walls */
 
-			/* top and bottom*/
-			for (x = x1; x<=x2; x++)
+			/* top and bottom */
+			for (x = x1; x <= x2; x++)
 			{
 				cave[y1][x].feat = FEAT_WALL_OUTER;
 				cave[y2][x].feat = FEAT_WALL_OUTER;
 			}
 
-			/* left and right*/
-			for (y = y1 + 1; y<y2; y++)
+			/* left and right */
+			for (y = y1 + 1; y < y2; y++)
 			{
 				cave[y][x1].feat = FEAT_WALL_OUTER;
 				cave[y][x2].feat = FEAT_WALL_OUTER;
@@ -4037,23 +4044,23 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			if (randint(2) == 1)
 			{
 				/* left and right */
-				y = randint(ysize)+y1;
+				y = randint(ysize) + y1;
 				cave[y][x1].feat = FEAT_FLOOR;
 				cave[y][x2].feat = FEAT_FLOOR;
 			}
 			else
 			{
 				/* top and bottom */
-				x = randint(xsize)+x1;
+				x = randint(xsize) + x1;
 				cave[y1][x].feat = FEAT_FLOOR;
 				cave[y2][x].feat = FEAT_FLOOR;
 			}
 
 			/* Select size of keep*/
-			t1 = randint(ysize/3)+y1;
-			t2 = y2 - randint(ysize/3);
-			t3 = randint(xsize/3)+x1;
-			t4 = x2 - randint(xsize/3);
+			t1 = randint(ysize / 3) + y1;
+			t2 = y2 - randint(ysize / 3);
+			t3 = randint(xsize / 3) + x1;
+			t4 = x2 - randint(xsize / 3);
 
 			/* Do outside areas*/
 
@@ -4109,7 +4116,7 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			}
 
 			/* Make a door*/
-			y = randint(ysize - 3)+y1 + 1;
+			y = randint(ysize - 3) + y1 + 1;
 
 			if (randint(2) == 1)
 			{
@@ -4121,6 +4128,7 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 				/* right */
 				cave[y][x2 - 1].feat = FEAT_FLOOR;
 			}
+
 			/* Build the room*/
 			build_recursive_room(x1 + 2, y1 + 2, x2 - 2, y2 - 2, power + 3);
 			break;
@@ -4129,19 +4137,20 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 		{
 			/* Try and divide vertically */
 
-			if (xsize<3)
+			if (xsize < 3)
 			{
 				/* Too small*/
-				for (y = y1; y<y2; y++)
+				for (y = y1; y < y2; y++)
 				{
-					for (x = x1; x<x2; x++)
+					for (x = x1; x < x2; x++)
 					{
 						cave[y][x].feat = FEAT_WALL_INNER;
 					}
 				}
 				return;
 			}
-			t1 = randint(xsize - 2)+x1 + 1;
+
+			t1 = randint(xsize - 2) + x1 + 1;
 			build_recursive_room(x1, y1, t1, y2, power - 2);
 			build_recursive_room(t1 + 1, y1, x2, y2, power - 2);
 			break;
@@ -4149,19 +4158,20 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 		case 3:
 		{
 			/* Try and divide horizontally */
-			if (ysize<3)
+			if (ysize < 3)
 			{
 				/* Too small*/
-				for (y = y1; y<y2; y++)
+				for (y = y1; y < y2; y++)
 				{
-					for (x = x1; x<x2; x++)
+					for (x = x1; x < x2; x++)
 					{
 						cave[y][x].feat = FEAT_WALL_INNER;
 					}
 				}
 				return;
 			}
-			t1 = randint(ysize - 2)+y1 + 1;
+
+			t1 = randint(ysize - 2) + y1 + 1;
 			build_recursive_room(x1, y1, x2, t1, power - 2);
 			build_recursive_room(x1, t1 + 1, x2, y2, power - 2);
 			break;
@@ -4182,9 +4192,10 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
 	int dy, dx;
 	int y1, x1, y2, x2;
 	int y, x;
+
 	/* Pick a random room size */
-	dy = ysize/2 - 1;
-	dx = xsize/2 - 1;
+	dy = ysize / 2 - 1;
+	dx = xsize / 2 - 1;
 
 	y1 = y0 - dy;
  	x1 = x0 - dx;
@@ -4200,14 +4211,14 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
 		{
 			cave[y][x].info |= (CAVE_ROOM | CAVE_ICKY);
 			/* Make everything a floor */
-			cave[y][x].feat =FEAT_FLOOR;
+			cave[y][x].feat = FEAT_FLOOR;
 		}
 	}
 
 	/* Make the castle */
 	build_recursive_room(x1, y1, x2, y2, randint(5));
 
-	/* Fill with monsters and treasure, low difficulty*/
+	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(x1, x2, y1, y2, randint(3));
 }
 
@@ -4217,7 +4228,8 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
  * Note: no range checking is done so must be inside dungeon
  * This routine also stomps on doors
  */
-static void add_outer_wall(int x, int y, int light, int x1, int y1, int x2, int y2)
+static void add_outer_wall(int x, int y, int light,
+                           int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
@@ -4225,55 +4237,54 @@ static void add_outer_wall(int x, int y, int light, int x1, int y1, int x2, int 
 
 	/* hack- check to see if square has been visited before
 	* if so, then exit (use room flag to do this) */
-	if (cave[y][x].info&CAVE_ROOM) return;
+	if (cave[y][x].info & CAVE_ROOM) return;
 
 	/* set room flag */
-	cave[y][x].info|=CAVE_ROOM;
-
-	
+	cave[y][x].info |= CAVE_ROOM;
 
 	if (cave[y][x].feat == FEAT_FLOOR)
 	{
-		for (i=-1; i<=1; i++)
+		for (i = -1; i <= 1; i++)
 		{
-			for (j=-1; j<=1; j++)
+			for (j = -1; j <= 1; j++)
 			{
-				if ((x + i>=x1) && (x + i<=x2) && (y + j>=y1) && (y + j<=y2))
-				{	
+				if ((x + i >= x1) && (x + i <= x2) &&
+				    (y + j >= y1) && (y + j <= y2))
+				{
 					add_outer_wall(x + i, y + j, light, x1, y1, x2, y2);
-					if (light == TRUE) cave[y][x].info|=CAVE_GLOW;
+					if (light == TRUE) cave[y][x].info |= CAVE_GLOW;
 				}
 			}
 		}
 	}
 	else if (cave[y][x].feat == FEAT_WALL_EXTRA)
 	{
-		/* Set bounding walls*/
+		/* Set bounding walls */
 		cave[y][x].feat = FEAT_WALL_OUTER;
-
 	}
 }
+
 
 /*
  * Hacked distance formula - gives the 'wrong' answer.
  * Used to build crypts
  */
-static int dist2 (int x1, int y1, int x2, int y2, int h1, int h2, int h3, int h4)
+static int dist2(int x1, int y1, int x2, int y2, int h1, int h2, int h3, int h4)
 {
 	int dx, dy;
 	dx = abs(x2 - x1);
 	dy = abs(y2 - y1);
 
 	/* Basically this works by taking the normal pythagorean formula
-	* and using an expansion to express this in a way without the
-	* square root.  This approximate formula is then perturbed to give
-	* the distorted results.  (I found this by making a mistake when I was
-	* trying to fix the circular rooms.)
-	*/
+	 * and using an expansion to express this in a way without the
+	 * square root.  This approximate formula is then perturbed to give
+	 * the distorted results.  (I found this by making a mistake when I was
+	 * trying to fix the circular rooms.)
+	 */
 
 	/* h1-h4 are constants that describe the metric */
-	if (dx>=2 * dy) return (dx+(dy * h1)/h2);
-	if (dy>=2 * dx) return (dy+(dx * h1)/h2);
+	if (dx >= 2 * dy) return (dx + (dy * h1) / h2);
+	if (dy >= 2 * dx) return (dy + (dx * h1) / h2);
 	return (((dx + dy) * 128) / 181 +
 	        (dx * dx / (dy * h3) + dy * dy / (dx * h3)) * h4);
 	/* 128/181 is approx. 1/sqrt(2) */
@@ -4291,21 +4302,21 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 
 	/* Make a random metric */
 	int h1, h2, h3, h4;
-	h1 = randint(32)-16;
+	h1 = randint(32) - 16;
 	h2 = randint(16);
 	h3 = randint(32);
-	h4 = randint(32)-16;
+	h4 = randint(32) - 16;
 
 	if (cheat_room) msg_print("Target Vault");
 
 	/* work out outer radius */
-	if (xsize>ysize)
+	if (xsize > ysize)
 	{
-		rad = ysize/2;
+		rad = ysize / 2;
 	}
 	else
 	{
-		rad = xsize/2;
+		rad = xsize / 2;
 	}
 
 	/* Make floor */
@@ -4319,7 +4330,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 			/* Vault - so is "icky" */
 			cave[y][x].info |= CAVE_ICKY;
 
-			if (dist2(y0, x0, y, x, h1, h2, h3, h4)<=rad - 1)
+			if (dist2(y0, x0, y, x, h1, h2, h3, h4) <= rad - 1)
 			{
 				/* inside- so is floor */
 				cave[y][x].feat = FEAT_FLOOR;
@@ -4331,7 +4342,8 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 			}
 
 			/* proper boundary for arena*/
-			if (((y + rad) == y0) || ((y - rad) == y0) || ((x + rad) == x0) || ((x - rad) == x0))
+			if (((y + rad) == y0) || ((y - rad) == y0) ||
+			    ((x + rad) == x0) || ((x - rad) == x0))
 			{
 				cave[y][x].feat = FEAT_WALL_EXTRA;
 			}
@@ -4339,14 +4351,15 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 	/* Find visible outer walls and set to be FEAT_OUTER */
-	add_outer_wall(x0, y0, FALSE, x0 - rad - 1, y0 - rad - 1, x0 + rad + 1, y0 + rad + 1);
+	add_outer_wall(x0, y0, FALSE, x0 - rad - 1, y0 - rad - 1,
+	               x0 + rad + 1, y0 + rad + 1);
 
 	/* Add inner wall */
-	for (x = x0 - rad/2; x <= x0 + rad/2; x++)
+	for (x = x0 - rad / 2; x <= x0 + rad / 2; x++)
 	{
-		for (y = y0 - rad/2; y <= y0 + rad/2; y++)
+		for (y = y0 - rad / 2; y <= y0 + rad / 2; y++)
 		{
-			if (dist2(y0, x0, y, x, h1, h2, h3, h4) == rad/2)
+			if (dist2(y0, x0, y, x, h1, h2, h3, h4) == rad / 2)
 			{
 				/* Make an internal wall */
 				cave[y][x].feat = FEAT_WALL_INNER;
@@ -4355,13 +4368,12 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 	/* Add perpendicular walls */
-
-	for (x = x0 - rad; x<=x0 + rad; x++)
+	for (x = x0 - rad; x <= x0 + rad; x++)
 	{
 		cave[y0][x].feat = FEAT_WALL_INNER;
 	}
 
-	for (y = y0 - rad; y<=y0 + rad; y++)
+	for (y = y0 - rad; y <= y0 + rad; y++)
 	{
 		cave[y][x0].feat = FEAT_WALL_INNER;
 	}
@@ -4383,8 +4395,8 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 
 	/* Add doors to vault */
 	/* get two distances so can place doors relative to centre */
-	x=(rad - 2)/4 + 1;
-	y = rad/2 + x;
+	x = (rad - 2) / 4 + 1;
+	y = rad / 2 + x;
 
 	add_door(x0 + x, y0);
 	add_door(x0 + y, y0);
@@ -4396,7 +4408,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	add_door(x0, y0 - y);
 
 	/* Fill with stuff - medium difficulty */
-	fill_treasure(x0 - rad, x0 + rad, y0 - rad, y0 + rad, randint(3)+3);
+	fill_treasure(x0 - rad, x0 + rad, y0 - rad, y0 + rad, randint(3) + 3);
 }
 
 
@@ -4410,84 +4422,85 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 {
 	int grd, roug;
-
 	int c1, c2, c3;
 	bool done = FALSE;
-
-	int xsize, ysize, xhsize, yhsize, x,y, i;
+	int xsize, ysize, xhsize, yhsize, x, y, i;
 	int type;
+
 
 	if (cheat_room) msg_print("Elemental Vault");
 
-	/* round to make sizes even*/
-	xhsize = xsiz/2;
-	yhsize = ysiz/2;
+	/* round to make sizes even */
+	xhsize = xsiz / 2;
+	yhsize = ysiz / 2;
 	xsize = xhsize * 2;
 	ysize = yhsize * 2;
 
-	if (dun_level<25)
+	if (dun_level < 25)
 	{
-		/* Earth vault  (Rubble)*/
+		/* Earth vault  (Rubble) */
 		type = 4;
 	}
-	else if (dun_level<50)
+	else if (dun_level < 50)
 	{
-		/* Air vault (Trees)*/
+		/* Air vault (Trees) */
 		type = 5;
 	}
-	else if (dun_level<75)
+	else if (dun_level < 75)
 	{
-		/* Water vault (shallow water)*/
+		/* Water vault (shallow water) */
 		type = 6;
 	}
 	else
 	{
-		/* Fire vault (shallow lava)*/
+		/* Fire vault (shallow lava) */
 		type = 7;
 	}
 
 	while (!done)
 	{
-		/* testing values for these parameters: feel free to adjust*/
+		/* testing values for these parameters: feel free to adjust */
 		grd = 1<<(rand_int(3));
 
 		/* want average of about 16 */
-		roug = randint(8)*randint(4);
+		roug = randint(8) * randint(4);
 
-		/* Make up size of various componants*/
+		/* Make up size of various componants */
 		/* Floor */
-		c3 = 2 * xsize/3;
+		c3 = 2 * xsize / 3;
 
-		/* Deep water/lava*/
-		c1 = rand_int(c3/2)+rand_int(c3/2)-5;
+		/* Deep water/lava */
+		c1 = rand_int(c3 / 2) + rand_int(c3 / 2) - 5;
 
-		/* Shallow boundary*/
-		c2=(c1 + c3)/2;
+		/* Shallow boundary */
+		c2 = (c1 + c3) / 2;
 
 		/* make it */
 		generate_hmap(y0, x0, xsize, ysize, grd, roug, c3);
 
-		/* Convert to normal format+ clean up*/
+		/* Convert to normal format+ clean up */
 		done = generate_lake(y0, x0, xsize, ysize, c1, c2, c3, type);
 	}
 
-	/* Set icky flag because is a vault*/
-	for (x = 0; x<=xsize; x++)
+	/* Set icky flag because is a vault */
+	for (x = 0; x <= xsize; x++)
 	{
-		for (y = 0; y<=ysize; y++)
+		for (y = 0; y <= ysize; y++)
 		{
 			cave[y0 - yhsize + y][x0 - xhsize + x].info|=CAVE_ICKY;
 		}
 	}
 
 	/* make a few rooms in the vault */
-	for (i = 1; i<=(xsize * ysize)/50; i++)
+	for (i = 1; i <= (xsize * ysize) / 50; i++)
 	{
-		build_small_room(x0 + rand_int(xsize - 4)-xsize/2 + 2, y0 + rand_int(ysize - 4)-ysize/2 + 2);
+		build_small_room(x0 + rand_int(xsize - 4)-xsize/2 + 2,
+		                 y0 + rand_int(ysize - 4) - ysize / 2 + 2);
 	}
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1, y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
+	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
+	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
 }
 
 
@@ -4500,13 +4513,13 @@ static void build_type10(int by0, int bx0)
 
 	/* Get size */
 	/* big enough to look good, small enough to be fairly common.*/
-	xsize = randint(22)+22;
-	ysize = randint(11)+11;
+	xsize = randint(22) + 22;
+	ysize = randint(11) + 11;
 
 	/* Allocate in room_map.  If will not fit, exit*/
 	if (room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0) == FALSE) return;
 
-	/* Boost the rating- higher than lesser vaults and lower than greater vaults*/
+	/* Boost the rating- higher than lesser vaults and lower than greater vaults */
 	rating += 10;
 
 	/* (Sometimes) Cause a special feeling */
@@ -4528,7 +4541,7 @@ static void build_type10(int by0, int bx0)
 		case 5: build_mini_c_vault(x0, y0, xsize, ysize); break;
 		case 6: build_castle_vault(x0, y0, xsize, ysize); break;
 		case 7: build_target_vault(x0, y0, xsize, ysize); break;
-		case 8: build_elemental_vault(x0, y0, xsize, ysize);break;
+		case 8: build_elemental_vault(x0, y0, xsize, ysize); break;
 		/* I know how to add a few more... give me some time.*/
 
 		/* Paranoia */
@@ -4616,12 +4629,12 @@ static void build_type12(int by0, int bx0)
 			/* clear room flag*/
 			cave[y][x].info &= ~(CAVE_ROOM);
 
-			if (dist2(y0, x0, y, x, h1, h2, h3, h4)<=rad - 1)
+			if (dist2(y0, x0, y, x, h1, h2, h3, h4) <= rad - 1)
 			{
 				/* inside- so is floor */
 				cave[y][x].feat = FEAT_FLOOR;
 			}
-			else if (distance(y0, x0, y,x)<3)
+			else if (distance(y0, x0, y, x) < 3)
 			{
 				cave[y][x].feat = FEAT_FLOOR;
 			}
@@ -4632,7 +4645,8 @@ static void build_type12(int by0, int bx0)
 			}
 
 			/* proper boundary for arena*/
-			if (((y + rad) == y0) || ((y - rad) == y0) || ((x + rad) == x0) || ((x - rad) == x0))
+			if (((y + rad) == y0) || ((y - rad) == y0) ||
+			    ((x + rad) == x0) || ((x - rad) == x0))
 			{
 				cave[y][x].feat = FEAT_WALL_EXTRA;
 			}
@@ -4684,7 +4698,7 @@ bool room_build(int by0, int bx0, int typ)
 	if ((dun_level < roomdep[typ]) && !ironman_rooms) return (FALSE);
 
 	/* Restrict "crowded" rooms */
-	if ((dun->crowded>=2) && ((typ == 5) || (typ == 6))) return (FALSE);
+	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);
 
 	/* Build a room */
 	switch (typ)

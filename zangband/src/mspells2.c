@@ -507,7 +507,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_COLD,
-					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0, TRUE);
 				break;
 			}
 
@@ -538,7 +538,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_POIS,
-					((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -570,7 +570,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_NETHER,
-					((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -602,7 +602,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_LITE,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -634,7 +634,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_DARK,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -666,7 +666,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_CONFUSION,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -698,7 +698,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_SOUND,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -730,7 +730,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_CHAOS,
-					((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -762,7 +762,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_DISENCHANT,
-					((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -794,7 +794,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_NEXUS,
-					((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -826,7 +826,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_TIME,
-					((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -858,7 +858,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_INERTIA,
-					((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -890,7 +890,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_GRAVITY,
-					((m_ptr->hp / 3) > 200 ? 200 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 200 ? 200 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -922,7 +922,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_SHARDS,
-					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -954,7 +954,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_PLASMA,
-					((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), 0, TRUE);
 
 				break;
 			}
@@ -986,7 +986,8 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_FORCE,
-					((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)),0, TRUE);
+					((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), 0, TRUE);
+
 				break;
 			}
 
@@ -1017,7 +1018,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_MANA,
-					((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -1079,7 +1080,8 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_NUKE,
-					((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), 0, TRUE);
+
 				break;
 			}
 
@@ -1140,7 +1142,8 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_DISINTEGRATE,
-					((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), 0, TRUE);
+
 				break;
 			}
 

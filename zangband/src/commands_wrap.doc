@@ -105,9 +105,6 @@ do_cmd_query_symbol()
 do_cmd_redraw()
         [ returns void  ]
 
-do_cmd_change_name()
-        [ returns void  ]
-
 do_cmd_message_one()
         [ returns void  ]
 
