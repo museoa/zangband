@@ -770,7 +770,16 @@ void bell(cptr reason)
 	Term_fresh();
 
 	/* Hack -- memorize the reason if possible */
-	if (character_generated && reason) message_add(reason, MSG_BELL);
+	if (character_generated && reason)
+	{
+		message_add(reason, MSG_BELL);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_MESSAGE);
+
+		/* Force window redraw */
+		window_stuff();
+	}
 
 	/* Make a bell noise (if allowed) */
 	if (ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
