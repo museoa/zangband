@@ -28,6 +28,7 @@ borg_shop *borg_shops;	/* Current "shops" */
  * Remember items in the home.  (Only one home at a time)
  */
 list_item *borg_home;
+int home_num;
 
 /*
  * Locate the store doors

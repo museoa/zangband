@@ -122,7 +122,13 @@ void borg_list_info(byte list_type)
 			/* Clear the goal */
 			goal = 0;
 			
-			/* Save items for later? ... */
+			/* Save items for later... */
+			
+			/* Number of items */
+			home_num = cur_num;
+			
+			/* copy into the borg-home */
+			C_COPY(borg_home, cur_list, cur_num, list_item);
 			
 			break;
 		}
@@ -2328,13 +2334,12 @@ void borg_notice(void)
 	borg_notice_aux2();
 }
 
-#if 0
+
 /*
  * Helper function -- notice the home equipment
  */
-static void borg_notice_home_aux1(borg_item *in_item, bool no_items)
+static void borg_notice_home_aux1(void)
 {
-
 	int i, ii;
 
 	/*** Reset counters ***/
@@ -2427,8 +2432,8 @@ static void borg_notice_home_aux1(borg_item *in_item, bool no_items)
 	num_mana = 0;
 	num_heal = 0;
 	num_ez_heal = 0;
-	if (!in_item && !no_items) num_ez_heal_true = 0;
-	if (!in_item && !no_items) num_heal_true = 0;
+	num_ez_heal_true = 0;
+	num_heal_true = 0;
 
 
 	/* Reset missiles */
@@ -2462,7 +2467,6 @@ static void borg_notice_home_aux1(borg_item *in_item, bool no_items)
 
 	num_duplicate_items = 0;
 }
-#endif /* 0 */
 
 #if 0
 /*
@@ -2516,7 +2520,7 @@ static void borg_notice_home_dupe(borg_item *item, bool check_sval, int i)
 /*
  * Helper function -- notice the home inventory
  */
-static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
+static void borg_notice_home_aux2(void)
 {
 	int i;
 
@@ -2531,15 +2535,10 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 	/* Scan the home */
 	for (i = 0; i < (STORE_INVEN_MAX + (INVEN_TOTAL - INVEN_WIELD)); i++)
 	{
-		if (no_items) break;
-
-		if (!in_item)
-			if (i < STORE_INVEN_MAX)
-				item = &shop->ware[i];
-			else
-				item = &borg_items[((i - STORE_INVEN_MAX) + INVEN_WIELD)];
+		if (i < STORE_INVEN_MAX)
+			item = &shop->ware[i];
 		else
-			item = in_item;
+			item = &borg_items[((i - STORE_INVEN_MAX) + INVEN_WIELD)];
 
 		/* Skip empty items */
 		if (!item->iqty)
@@ -3158,23 +3157,21 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 					case SV_POTION_HEALING:
 					{
 						num_heal += item->iqty;
-						if (!in_item && !no_items) num_heal_true += item->iqty;
+						num_heal_true += item->iqty;
 						break;
 					}
 
 					case SV_POTION_STAR_HEALING:
 					{
 						num_ez_heal += item->iqty;
-						if (!in_item &&
-							!no_items) num_ez_heal_true += item->iqty;
+						num_ez_heal_true += item->iqty;
 						break;
 					}
 
 					case SV_POTION_LIFE:
 					{
 						num_ez_heal += item->iqty;
-						if (!in_item &&
-							!no_items) num_ez_heal_true += item->iqty;
+						num_ez_heal_true += item->iqty;
 						break;
 					}
 
@@ -3367,9 +3364,6 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 				break;
 			}
 		}
-
-		/* if only doing one item, break. */
-		if (in_item) break;
 	}
 
 
@@ -3496,24 +3490,15 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 
 /*
  * Extract the bonuses for items in the home.
- *
- * l_ptr is passed in if you want to pretend that l_ptr is
- *          the only item in the home.
- * no_items is passed in as TRUE if you want to pretend that the
- *          home is empty.
  */
-void borg_notice_home(list_item *l_ptr, bool no_items)
+void borg_notice_home(void)
 {
-	/* Hack - ignore parameters */
-	(void)l_ptr;
-	(void)no_items;
-
 #if 0
 	/* Notice the home equipment */
-	borg_notice_home_aux1(l_ptr, no_items);
+	borg_notice_home_aux1(void);
 
 	/* Notice the home inventory */
-	borg_notice_home_aux2(l_ptr, no_items);
+	borg_notice_home_aux2(void);
 #endif /* 0 */
 }
 

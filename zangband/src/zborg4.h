@@ -31,7 +31,7 @@ extern void borg_list_info(byte list_type);
 
 /* Borg functions */
 extern void borg_notice(void);
-extern void borg_notice_home(list_item *l_ptr, bool no_items);
+extern void borg_notice_home(void);
 extern s32b borg_power(void);
 extern s32b borg_power_home(void);
 extern int borg_danger_aux(int x, int y, int c, int i, bool average);

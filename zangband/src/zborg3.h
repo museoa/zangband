@@ -139,6 +139,7 @@ struct borg_mind
 extern borg_shop *borg_shops;	/* Current "shops" */
 
 extern list_item *borg_home;	/* Current home items - (only remember one.) */
+extern int home_num;	/* Number of items in the home */
 
 /*
  * Number of allocated stores...

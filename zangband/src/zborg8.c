@@ -257,7 +257,7 @@ static void borg_think_home_sell_aux2_slow(int n, int start_i)
 		s32b home_power;
 
 		/* Examine the home  */
-		borg_notice_home(NULL, FALSE);
+		borg_notice_home();
 
 		/* Evaluate the home */
 		home_power = borg_power_home();
@@ -378,7 +378,7 @@ static void borg_think_home_sell_aux2_fast(int n, int start_i)
 
 	/* get the starting best (current) */
 	/* Examine the home  */
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Evaluate the home  */
 	*b_home_power = borg_power_home();
@@ -444,7 +444,7 @@ static void borg_think_home_sell_aux2_fast(int n, int start_i)
 
 			/* Test to see if this is a good substitution. */
 			/* Examine the home  */
-			borg_notice_home(NULL, FALSE);
+			borg_notice_home();
 
 			/* Evaluate the home  */
 			home_power = borg_power_home();
@@ -501,10 +501,6 @@ static void borg_think_home_sell_aux3()
 	borg_notice();
 	power = borg_power();
 
-	/* get what an empty home would have for power */
-	borg_notice_home(NULL, TRUE);
-	borg_empty_home_power = borg_power_home();
-
 	/* go through the inventory and eliminate items that either  */
 	/* 1) will not increase the power of an empty house. */
 	/* 2) will reduce borg_power if given to home */
@@ -519,16 +515,6 @@ static void borg_think_home_sell_aux3()
 		/* if there is no item here, go to next slot */
 		if (!borg_items[i].iqty)
 			continue;
-
-
-		/* 1) eliminate garbage items (items that add nothing to an */
-		/*     empty house) */
-		borg_notice_home(l_ptr, FALSE);
-		if (borg_power_home() <= borg_empty_home_power)
-		{
-			safe_items[i].iqty = 0;
-			continue;
-		}
 
 		/* 2) will reduce borg_power if given to home */
 		while (borg_items[i].iqty)
@@ -645,7 +631,7 @@ static bool borg_think_home_sell_aux(bool save_best)
 	}
 
 	borg_notice();
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Drop stuff that will stack in the home */
 	for (i = 0; i < STORE_INVEN_MAX; i++)
@@ -719,7 +705,7 @@ static bool borg_think_home_sell_aux(bool save_best)
 	}
 
 	/* Return our num_ counts to normal */
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Assume not */
 	return (FALSE);
@@ -1378,10 +1364,6 @@ static bool borg_think_shop_grab_aux(void)
 	s32b c, b_c = 0L;
 	s32b borg_empty_home_power;
 
-	/* get what an empty home would have for power */
-	borg_notice_home(NULL, TRUE);
-	borg_empty_home_power = borg_power_home();
-
 	b_home_power = &s;
 
 	/* Require two empty slots */
@@ -1389,7 +1371,7 @@ static bool borg_think_shop_grab_aux(void)
 	if (borg_items[INVEN_PACK - 2].iqty) return (FALSE);
 
 	/* Examine the home */
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Evaluate the home */
 	b_s = borg_power_home();
@@ -1429,10 +1411,6 @@ static bool borg_think_shop_grab_aux(void)
 			/* Give a single item */
 			borg_items[INVEN_PACK - 2].iqty = qty;
 
-			/* make sure this item would help an empty home */
-			borg_notice_home(&borg_shops[k].ware[n], FALSE);
-			if (borg_empty_home_power >= borg_power_home()) continue;
-
 			/* optimize the home inventory */
 			if (!borg_think_home_sell_aux(TRUE)) continue;
 
@@ -1461,7 +1439,7 @@ static bool borg_think_shop_grab_aux(void)
 	borg_items[INVEN_PACK - 2].iqty = 0;
 
 	/* Examine the real home */
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Evaluate the home */
 	s = borg_power_home();
@@ -1505,7 +1483,7 @@ static bool borg_think_home_grab_aux(void)
 
 
 	/* Examine the home */
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Evaluate the home */
 	b_s = borg_power_home();
@@ -1535,7 +1513,7 @@ static bool borg_think_home_grab_aux(void)
 		borg_shops[BORG_HOME].ware[n].iqty -= qty;
 
 		/* Examine the home */
-		borg_notice_home(NULL, FALSE);
+		borg_notice_home();
 
 		/* Evaluate the home */
 		s = borg_power_home();
@@ -1553,7 +1531,7 @@ static bool borg_think_home_grab_aux(void)
 	}
 
 	/* Examine the home */
-	borg_notice_home(NULL, FALSE);
+	borg_notice_home();
 
 	/* Evaluate the home */
 	s = borg_power_home();
