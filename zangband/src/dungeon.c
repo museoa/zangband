@@ -4067,7 +4067,13 @@ void play_game(bool new_game)
 	/* Hack -- turn off the cursor */
 	(void)Term_set_cursor(0);
 
+	/*
+	 * Initialize wilderness info
+	 * This needs to be done before old savefiles are loaded.
+	 */
+	if (init_w_info()) quit("Cannot initialize wilderness");
 
+	
 	/* Attempt to load */
 	if (!load_player())
 	{
@@ -4138,6 +4144,8 @@ void play_game(bool new_game)
 			}
 		}
 	}
+<<<<<<< dungeon.c
+=======
 
 	/* Hack - if note file exists, load it */
 	if (!new_game && take_notes)
@@ -4163,20 +4171,28 @@ void play_game(bool new_game)
 	/* Roll new character */
 	if (new_game)
 	{
-		/* The dungeon is not ready */
-		character_dungeon = FALSE;
+		/* Create a new wilderness for the player */
+		create_wilderness();
 
 		/* Start in town */
-		dun_level = 0;
 		p_ptr->inside_quest = 0;
 		p_ptr->inside_arena = 0;
-
-
+		dun_level = 0;
+		
+		/* Make the function pointers point the the correct data type */
+		change_level(0);
+						
+		/* Add monsters to the wilderness */
+		repopulate_wilderness();
+		
+		/* The dungeon is ready */
+		character_dungeon = TRUE;
+		
 		/* Hack -- seed for flavors */
 		seed_flavor = rand_int(0x10000000);
 
-		/* Hack -- seed for town layout */
-		seed_town = rand_int(0x10000000);
+		/* Hack -- seed for town layout (not used an more) */
+		seed_town = 0;
 
 		/* Roll up a new character */
 		player_birth();
@@ -4194,6 +4210,28 @@ void play_game(bool new_game)
 		{
 			turn = 1;
 		}
+	}
+	
+	/* Hack - if note file exists, load it */
+	if (!new_game && take_notes) {
+
+   	  char long_day[30];
+ 	  time_t ct = time((time_t*)NULL);
+	  FILE *fff;
+ 
+  	  /* Open file */
+          fff = my_fopen(notes_file(), "a");
+  
+  	  /* Get the date */
+  	  strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+  
+  	  /* Add in continuation info */
+  	  fprintf(fff, "================================================\n");
+  	  fprintf(fff, "New session start: %s\n\n", long_day);
+  
+          /* Close file */
+          my_fclose(fff);
+  	  
 	}
 
 	/* Flash a message */
@@ -4247,9 +4285,6 @@ void play_game(bool new_game)
 
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
-
-	/* Initialize vault info */
-	if (init_w_info(new_game)) quit("Cannot initialize wilderness");
 
 
 	/* Generate a dungeon level if needed */

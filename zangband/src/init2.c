@@ -1874,7 +1874,7 @@ errr init_v_info(void)
  * "wild_gen_data" array.
  *
  */
-errr init_w_info(bool new_game)
+errr init_w_info(void)
 {
 	errr err;
 
@@ -1940,20 +1940,6 @@ errr init_w_info(bool new_game)
 	 */
 	wild_gen_data[0].w_attr = TERM_GREEN;
 	wild_gen_data[0].w_char = '.';
-	
-	/* Create the random wilderness */
-	if (new_game)
-	{
-		create_wilderness();
-
-		dun_level = 0;
-		
-		/* Make the function pointers point the the correct data type */
-		change_level(0);
-				
-		/* Add monsters to the wilderness */
-		repopulate_wilderness();
-	}
 		
 	/* Success */
 	return(0);

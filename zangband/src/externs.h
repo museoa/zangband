@@ -624,7 +624,7 @@ extern errr process_dungeon_file(cptr name, int ymin, int xmin, int ymax, int xm
 /* init2.c */
 extern cptr err_str[PARSE_ERROR_MAX];
 extern errr init_v_info(void);
-extern errr init_w_info(bool new_game);
+extern errr init_w_info(void);
 extern void init_file_paths(char *path);
 extern void init_angband(void);
 extern errr init_buildings(void);
