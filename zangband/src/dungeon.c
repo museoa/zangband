@@ -279,7 +279,7 @@ static void sense_inventory(void)
 
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
-
+	
 	/* Analyze the class */
 	switch (p_ptr->pclass)
 	{
@@ -287,7 +287,6 @@ static void sense_inventory(void)
 		{
 			/* Good (heavy) sensing */
 			difficulty = 9000L;
-			heavy = TRUE;
 
 			/* Done */
 			break;
@@ -298,7 +297,6 @@ static void sense_inventory(void)
 		{
 			/* Very bad (light) sensing */
 			difficulty = 240000L;
-			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -308,7 +306,6 @@ static void sense_inventory(void)
 		{
 			/* Good (light) sensing */
 			difficulty = 10000L;
-			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -318,7 +315,6 @@ static void sense_inventory(void)
 		{
 			/* Okay sensing */
 			difficulty = 20000L;
-			heavy = TRUE;
 
 			/* Done */
 			break;
@@ -328,7 +324,6 @@ static void sense_inventory(void)
 		{
 			/* Bad (heavy) sensing */
 			difficulty = 95000L;
-			heavy = TRUE;
 
 			/* Done */
 			break;
@@ -338,7 +333,6 @@ static void sense_inventory(void)
 		{
 			/* Bad (heavy) sensing */
 			difficulty = 77777L;
-			heavy = TRUE;
 
 			/* Done */
 			break;
@@ -348,7 +342,6 @@ static void sense_inventory(void)
 		{
 			/* Bad sensing */
 			difficulty = 75000L;
-			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -358,8 +351,7 @@ static void sense_inventory(void)
 		{
 			/* Bad sensing */
 			difficulty = 55000L;
-			heavy = FALSE;
-
+	
 			/* Done */
 			break;
 		}
@@ -368,7 +360,6 @@ static void sense_inventory(void)
 		{
 			/* Bad (heavy) sensing */
 			difficulty = 80000L;
-			heavy = TRUE;
 
 			/* Done */
 			break;
@@ -388,7 +379,6 @@ static void sense_inventory(void)
 		{
 			/* Paranoia */
 			difficulty = 0;
-			heavy = FALSE;
 		}
 	}
 
@@ -406,7 +396,9 @@ static void sense_inventory(void)
 
 	/* Does it work? */
 	if (!(one_in_(difficulty))) return;
-
+	
+	/* Heavy sensing? */
+	heavy = class_info[p_ptr->pclass].heavy_sense;
 
 	/*** Sense everything ***/
 

@@ -1220,6 +1220,7 @@ struct player_class
 	s16b c_exp;	/* Class experience factor */
 
 	byte pet_upkeep_div;	/* Pet upkeep divider */
+	bool heavy_sense;
 };
 
 
