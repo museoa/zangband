@@ -1507,8 +1507,6 @@ bool borg_think_store(void)
 	/* Clear goal */
 	goal = GOAL_NONE;
 
-	if (goal == GOAL_NONE) 	borg_note("Null at think_store");
-
 	/* Retrieve the correct place */
 	for (i = 0; i < borg_shop_num; i++)
 	{

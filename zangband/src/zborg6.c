@@ -1998,7 +1998,7 @@ bool borg_waits_daylight(void)
 	goal_shop = b_i;
 
 	/* Go to that inn */
-	if (b_i != -1 && borg_flow_shop_entry(b_i))
+	if (b_i != -1 && borg_flow_shop_entry(b_i) || borg_gold > 25)
 	{
 		borg_note("# Looking for a place to spend the night.");
 
