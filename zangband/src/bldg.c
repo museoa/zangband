@@ -433,10 +433,10 @@ static void building_prt_gold(void)
 {
 	char tmp_str[80];
 
-	prt("Gold Remaining: ", 23, 53);
+	prt("Gold Remaining: ", 23, 40);
 
 	sprintf(tmp_str, "%9ld", (long)p_ptr->au);
-	prt(tmp_str, 23, 68);
+	prt(tmp_str, 23, 55);
 }
 
 
@@ -467,14 +467,14 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 	sprintf(tmp_str, "%s (%s) %s", owner_name, race_name, build_name);
 	prt(tmp_str, 2, 1);
 	prt("You may:", 19, 0);
-
-
-	prt(" ESC) Exit building", 23, 0);
-
+	
+	
 	/* Display building-specific information */
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
 		 FIELD_ACT_STORE_ACT1, (vptr) &factor);
-
+		 
+	prt(" ESC) Exit building", 23, 0);
+		 
 	/* Show your gold */
 	building_prt_gold();
 }
@@ -1382,7 +1382,7 @@ bool compare_weapons(void)
 		return (FALSE);
 	}
 
-	put_str("Based on your current abilities, here is what your weapon will do", 4, 2);
+	put_str("Based on your current abilities, here is what your weapon will do:", 4, 2);
 
 	/* *Identify* the weapon for the player */
 	o_ptr->ident |= IDENT_MENTAL;
@@ -2260,8 +2260,11 @@ void do_cmd_bldg(field_type *f_ptr)
 		clear_from(21);
 
 		/* Basic commands */
-		prt(" ESC) Exit from Building.", 22, 0);
-		
+		prt(" ESC) Exit building", 23, 0);
+		 
+		/* Show your gold */
+		building_prt_gold();
+	
 		/* Get a command */
 		request_command(FALSE);
 
