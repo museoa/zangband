@@ -1919,9 +1919,9 @@ static void bad_luck(object_type *o_ptr)
 	if (one_in_(666) && (!is_art || one_in_(3)))
 	{
 		/* Blast it */
-		if (o_ptr->to_a) o_ptr->to_a = 0 - rand_range(5, 10);
-		if (o_ptr->to_h) o_ptr->to_h = 0 - rand_range(5, 10);
-		if (o_ptr->to_d) o_ptr->to_d = 0 - rand_range(5, 10);
+		if (o_ptr->to_a) o_ptr->to_a = 0 - (s16b)rand_range(5, 10);
+		if (o_ptr->to_h) o_ptr->to_h = 0 - (s16b)rand_range(5, 10);
+		if (o_ptr->to_d) o_ptr->to_d = 0 - (s16b)rand_range(5, 10);
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
@@ -3991,7 +3991,7 @@ bool curse_armor(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Blast the armor */
-		o_ptr->to_a = 0 - rand_range(5, 10);
+		o_ptr->to_a = 0 - (s16b)rand_range(5, 10);
 		o_ptr->to_h = 0;
 		o_ptr->to_d = 0;
 		o_ptr->ac = 0;
@@ -4060,8 +4060,8 @@ bool curse_weapon(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Shatter the weapon */
-		o_ptr->to_h = 0 - rand_range(5, 10);
-		o_ptr->to_d = 0 - rand_range(5, 10);
+		o_ptr->to_h = 0 - (s16b)rand_range(5, 10);
+		o_ptr->to_d = 0 - (s16b)rand_range(5, 10);
 		o_ptr->to_a = 0;
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;

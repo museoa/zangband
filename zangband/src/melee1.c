@@ -818,7 +818,7 @@ bool make_attack_normal(int m_idx)
 							 (!(o_ptr->flags3 & TR3_INSTA_ART)))
 						{
 							/* Reduce fuel */
-							o_ptr->pval -= rand_range(250, 500);
+							o_ptr->pval -= (s16b)rand_range(250, 500);
 							if (o_ptr->pval < 1) o_ptr->pval = 1;
 
 							/* Notice */

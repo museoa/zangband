@@ -2279,7 +2279,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Hack -- Horrible digging bonus */
-				o_ptr->pval = 0 - (rand_range(2, 7));
+				o_ptr->pval = 0 - (s16b)(rand_range(2, 7));
 			}
 
 			break;

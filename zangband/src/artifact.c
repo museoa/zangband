@@ -756,15 +756,15 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 			else
 			{
 				o_ptr->flags3 |= TR3_SHOW_MODS;
-				o_ptr->to_a = rand_range(5, 15);
+				o_ptr->to_a = (s16b)rand_range(5, 15);
 			}
 			break;
 		case 27:
 		case 28:
 		case 29:
 			o_ptr->flags3 |= TR3_SHOW_MODS;
-			o_ptr->to_h += rand_range(5, 15);
-			o_ptr->to_d += rand_range(5, 15);
+			o_ptr->to_h += (s16b)rand_range(5, 15);
+			o_ptr->to_d += (s16b)rand_range(5, 15);
 			break;
 		case 30:
 			o_ptr->flags3 |= TR3_NO_MAGIC;
@@ -1641,7 +1641,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msg_print("The phial wells with clear light...");
 				lite_area(damroll(2, 15), 3);
-				o_ptr->timeout = rand_range(10, 20);
+				o_ptr->timeout = (s16b)rand_range(10, 20);
 				break;
 			}
 
@@ -1650,7 +1650,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("The star shines brightly...");
 				map_area();
 				lite_area(damroll(2, 15), 3);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -1669,7 +1669,7 @@ bool activate_effect(object_type *o_ptr)
 					word_of_recall();
 				}
 
-				o_ptr->timeout = rand_range(20, 40);
+				o_ptr->timeout = (s16b)rand_range(20, 40);
 				break;
 			}
 
@@ -1678,7 +1678,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
 				(void)set_protevil(p_ptr->protevil + randint1(25) + k);
-				o_ptr->timeout = rand_range(225, 450);
+				o_ptr->timeout = (s16b)rand_range(225, 450);
 				break;
 			}
 
@@ -1686,7 +1686,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msg_print("The amulet floods the area with goodness...");
 				dispel_evil(p_ptr->lev * 5);
-				o_ptr->timeout = rand_range(300, 600);
+				o_ptr->timeout = (s16b)rand_range(300, 600);
 				break;
 			}
 
@@ -1695,7 +1695,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("You order Frakir to strangle your opponent.");
 				if (!get_aim_dir(&dir)) return FALSE;
 				if (drain_life(dir, 200))
-				o_ptr->timeout = rand_range(100, 200);
+				o_ptr->timeout = (s16b)rand_range(100, 200);
 				break;
 			}
 
@@ -1710,7 +1710,7 @@ bool activate_effect(object_type *o_ptr)
 				{
 					(void)set_fast(p_ptr->fast + 5);
 				}
-				o_ptr->timeout = rand_range(150, 300);
+				o_ptr->timeout = (s16b)rand_range(150, 300);
 				break;
 			}
 
@@ -1719,7 +1719,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("The ring glows deep red...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_ball(GF_FIRE, dir, 250, 3);
-				o_ptr->timeout = rand_range(225, 450);
+				o_ptr->timeout = (s16b)rand_range(225, 450);
 				break;
 			}
 
@@ -1728,7 +1728,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("The ring glows bright white...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_ball(GF_COLD, dir, 400, 3);
-				o_ptr->timeout = rand_range(325, 650);
+				o_ptr->timeout = (s16b)rand_range(325, 650);
 				break;
 			}
 
@@ -1737,7 +1737,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("The ring glows deep blue...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_ball(GF_ELEC, dir, 500, 3);
-				o_ptr->timeout = rand_range(425, 850);
+				o_ptr->timeout = (s16b)rand_range(425, 850);
 				break;
 			}
 
@@ -1746,7 +1746,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("The ring glows intensely black...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				ring_of_power(dir);
-				o_ptr->timeout = rand_range(450, 900);
+				o_ptr->timeout = (s16b)rand_range(450, 900);
 				break;
 			}
 
@@ -1856,7 +1856,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your helm glows bright white...");
 				msg_print("An image forms in your mind...");
 				detect_all();
-				o_ptr->timeout = rand_range(55, 110);
+				o_ptr->timeout = (s16b)rand_range(55, 110);
 				break;
 			}
 
@@ -1928,7 +1928,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your gauntlets are covered in fire...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_FIRE, dir, damroll(11, 8));
-				o_ptr->timeout = rand_range(8, 16);
+				o_ptr->timeout = (s16b)rand_range(8, 16);
 				break;
 			}
 
@@ -1937,7 +1937,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your gauntlets are covered in frost...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_COLD, dir, damroll(8, 8));
-				o_ptr->timeout = rand_range(7, 14);
+				o_ptr->timeout = (s16b)rand_range(7, 14);
 				break;
 			}
 
@@ -1946,7 +1946,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your gauntlets are covered in sparks...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_ELEC, dir, damroll(6, 8));
-				o_ptr->timeout = rand_range(6, 12);
+				o_ptr->timeout = (s16b)rand_range(6, 12);
 				break;
 			}
 
@@ -1955,7 +1955,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your gauntlets are covered in acid...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_ACID, dir, damroll(8, 8));
-				o_ptr->timeout = rand_range(5, 10);
+				o_ptr->timeout = (s16b)rand_range(5, 10);
 				break;
 			}
 
@@ -1964,7 +1964,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your cesti grows magical spikes...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_ARROW, dir, 250);
-				o_ptr->timeout = rand_range(90, 180);
+				o_ptr->timeout = (s16b)rand_range(90, 180);
 				break;
 			}
 
@@ -1997,7 +1997,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your dagger is covered in fire...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_FIRE, dir, damroll(11, 8));
-				o_ptr->timeout = rand_range(8, 16);
+				o_ptr->timeout = (s16b)rand_range(8, 16);
 				break;
 			}
 
@@ -2006,7 +2006,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_COLD, dir, damroll(8, 8));
-				o_ptr->timeout = rand_range(7, 14);
+				o_ptr->timeout = (s16b)rand_range(7, 14);
 				break;
 			}
 
@@ -2015,7 +2015,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your dagger is covered in sparks...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_bolt(GF_ELEC, dir, damroll(6, 8));
-				o_ptr->timeout = rand_range(6, 12);
+				o_ptr->timeout = (s16b)rand_range(6, 12);
 				break;
 			}
 
@@ -2024,7 +2024,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your dagger throbs deep green...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_ball(GF_POIS, dir, 25, 3);
-				o_ptr->timeout = rand_range(4, 8);
+				o_ptr->timeout = (s16b)rand_range(4, 8);
 				break;
 			}
 
@@ -2033,7 +2033,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_ball(GF_COLD, dir, 100, 2);
-				o_ptr->timeout = rand_range(5, 10);
+				o_ptr->timeout = (s16b)rand_range(5, 10);
 				break;
 			}
 
@@ -2076,7 +2076,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msg_print("You summon the Legion of the Dawn.");
 				(void)summon_specific(-1, py, px, p_ptr->depth, SUMMON_DAWN, TRUE, TRUE, TRUE);
-				o_ptr->timeout = rand_range(500, 1000);
+				o_ptr->timeout = (s16b)rand_range(500, 1000);
 				break;
 			}
 
@@ -2129,7 +2129,7 @@ bool activate_effect(object_type *o_ptr)
 				msg_print("Your battle axe radiates deep purple...");
 				hp_player(100);
 				(void)set_cut((p_ptr->cut / 2) - 50);
-				o_ptr->timeout = rand_range(3, 6);
+				o_ptr->timeout = (s16b)rand_range(3, 6);
 				break;
 			}
 
@@ -2181,7 +2181,7 @@ bool activate_effect(object_type *o_ptr)
 				{
 					(void)set_fast(p_ptr->fast + 5);
 				}
-				o_ptr->timeout = rand_range(100, 200);
+				o_ptr->timeout = (s16b)rand_range(100, 200);
 				break;
 			}
 
@@ -2251,7 +2251,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It throbs deep green...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_ball(GF_POIS, dir, 25, 3);
-			o_ptr->timeout = rand_range(4, 8);
+			o_ptr->timeout = (s16b)rand_range(4, 8);
 			break;
 		}
 
@@ -2260,7 +2260,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It is covered in sparks...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_bolt(GF_ELEC, dir, damroll(6, 8));
-			o_ptr->timeout = rand_range(6, 12);
+			o_ptr->timeout = (s16b)rand_range(6, 12);
 			break;
 		}
 
@@ -2269,7 +2269,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It is covered in acid...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_bolt(GF_ACID, dir, damroll(8, 8));
-			o_ptr->timeout = rand_range(5, 10);
+			o_ptr->timeout = (s16b)rand_range(5, 10);
 			break;
 		}
 
@@ -2278,7 +2278,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It is covered in frost...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_bolt(GF_COLD, dir, damroll(9, 8));
-			o_ptr->timeout = rand_range(7, 14);
+			o_ptr->timeout = (s16b)rand_range(7, 14);
 			break;
 		}
 
@@ -2287,7 +2287,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It is covered in fire...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_bolt(GF_FIRE, dir, damroll(11, 8));
-			o_ptr->timeout = rand_range(8, 16);
+			o_ptr->timeout = (s16b)rand_range(8, 16);
 			break;
 		}
 
@@ -2314,7 +2314,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It glows black...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			if (drain_life(dir, 200))
-			o_ptr->timeout = rand_range(100, 200);
+			o_ptr->timeout = (s16b)rand_range(100, 200);
 			break;
 		}
 
@@ -2361,7 +2361,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It grows magical spikes...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_bolt(GF_ARROW, dir, 250);
-			o_ptr->timeout = rand_range(90, 180);
+			o_ptr->timeout = (s16b)rand_range(90, 180);
 			break;
 		}
 
@@ -2370,7 +2370,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It glows deep red...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_ball(GF_FIRE, dir, 250, 3);
-			o_ptr->timeout = rand_range(225, 450);
+			o_ptr->timeout = (s16b)rand_range(225, 450);
 			break;
 		}
 
@@ -2379,7 +2379,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It glows bright white...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_ball(GF_COLD, dir, 400, 3);
-			o_ptr->timeout = rand_range(325, 650);
+			o_ptr->timeout = (s16b)rand_range(325, 650);
 			break;
 		}
 
@@ -2388,7 +2388,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It glows deep blue...");
 			if (!get_aim_dir(&dir)) return FALSE;
 			fire_ball(GF_ELEC, dir, 500, 3);
-			o_ptr->timeout = rand_range(425, 850);
+			o_ptr->timeout = (s16b)rand_range(425, 850);
 			break;
 		}
 
@@ -2455,7 +2455,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msg_print("It floods the area with goodness...");
 			dispel_evil(p_ptr->lev * 5);
-			o_ptr->timeout = rand_range(300, 600);
+			o_ptr->timeout = (s16b)rand_range(300, 600);
 			break;
 		}
 
@@ -2463,7 +2463,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msg_print("It floods the area with evil...");
 			dispel_good(p_ptr->lev * 5);
-			o_ptr->timeout = rand_range(300, 600);
+			o_ptr->timeout = (s16b)rand_range(300, 600);
 			break;
 		}
 
@@ -2523,7 +2523,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msg_print("The power of the artifact banishes evil!");
 			}
-			o_ptr->timeout = rand_range(250, 500);
+			o_ptr->timeout = (s16b)rand_range(250, 500);
 			break;
 		}
 
@@ -2586,7 +2586,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUMMON_ANIMAL:
 		{
 			(void)summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
-			o_ptr->timeout = rand_range(200, 500);
+			o_ptr->timeout = (s16b)rand_range(200, 500);
 			break;
 		}
 
@@ -2594,7 +2594,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msg_print("You summon a phantasmal servant.");
 			(void)summon_specific(-1, py, px, p_ptr->depth, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
-			o_ptr->timeout = rand_range(200, 400);
+			o_ptr->timeout = (s16b)rand_range(200, 400);
 			break;
 		}
 
@@ -2631,7 +2631,7 @@ bool activate_effect(object_type *o_ptr)
 					msg_print("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
 			}
 
-			o_ptr->timeout = rand_range(666, 1000);
+			o_ptr->timeout = (s16b)rand_range(666, 1000);
 			break;
 		}
 
@@ -2662,7 +2662,7 @@ bool activate_effect(object_type *o_ptr)
 					msg_print("'The dead arise... to punish you for disturbing them!'");
 			}
 
-			o_ptr->timeout = rand_range(666, 1000);
+			o_ptr->timeout = (s16b)rand_range(666, 1000);
 			break;
 		}
 
@@ -2681,7 +2681,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It radiates deep purple...");
 			hp_player(75);
 			(void)set_cut((p_ptr->cut / 2) - 50);
-			o_ptr->timeout = rand_range(3, 6);
+			o_ptr->timeout = (s16b)rand_range(3, 6);
 			break;
 		}
 
@@ -2749,7 +2749,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			(void)set_shero(p_ptr->shero + rand_range(50, 100));
 			(void)set_blessed(p_ptr->blessed + rand_range(50, 100));
-			o_ptr->timeout = rand_range(100, 200);
+			o_ptr->timeout = (s16b)rand_range(100, 200);
 			break;
 		}
 
@@ -2758,7 +2758,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It lets out a shrill wail...");
 			k = 3 * p_ptr->lev;
 			(void)set_protevil(p_ptr->protevil + randint1(25) + k);
-			o_ptr->timeout = rand_range(225, 450);
+			o_ptr->timeout = (s16b)rand_range(225, 450);
 			break;
 		}
 
@@ -2800,7 +2800,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				(void)set_fast(p_ptr->fast + 5);
 			}
-			o_ptr->timeout = rand_range(200, 400);
+			o_ptr->timeout = (s16b)rand_range(200, 400);
 			break;
 		}
 
@@ -2822,7 +2822,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msg_print("It twists space around you...");
 			teleport_player(100);
-			o_ptr->timeout = rand_range(50, 100);
+			o_ptr->timeout = (s16b)rand_range(50, 100);
 			break;
 		}
 
@@ -2832,7 +2832,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msg_print("It wells with clear light...");
 			lite_area(damroll(2, 15), 3);
-			o_ptr->timeout = rand_range(10, 20);
+			o_ptr->timeout = (s16b)rand_range(10, 20);
 			break;
 		}
 
@@ -2841,7 +2841,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It shines brightly...");
 			map_area();
 			lite_area(damroll(2, 15), 3);
-			o_ptr->timeout = rand_range(50, 100);
+			o_ptr->timeout = (s16b)rand_range(50, 100);
 			break;
 		}
 
@@ -2850,7 +2850,7 @@ bool activate_effect(object_type *o_ptr)
 			msg_print("It glows bright white...");
 			msg_print("An image forms in your mind...");
 			detect_all();
-			o_ptr->timeout = rand_range(55, 110);
+			o_ptr->timeout = (s16b)rand_range(55, 110);
 			break;
 		}
 

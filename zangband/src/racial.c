@@ -121,7 +121,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	}
 	else
 	{
-		p_ptr->csp -= rand_range(cost / 2, cost);
+		p_ptr->csp -= (s16b)rand_range(cost / 2, cost);
 	}
 
 

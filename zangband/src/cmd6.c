@@ -3051,7 +3051,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe lightning.");
 				fire_ball(GF_ELEC, dir, 330, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3059,7 +3059,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe frost.");
 				fire_ball(GF_COLD, dir, 370, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3067,7 +3067,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe acid.");
 				fire_ball(GF_ACID, dir, 430, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3075,7 +3075,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe poison gas.");
 				fire_ball(GF_POIS, dir, 500, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3083,7 +3083,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe fire.");
 				fire_ball(GF_FIRE, dir, 670, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3100,7 +3100,7 @@ static void do_cmd_activate_aux(int item)
 				            ((chance == 3) ? GF_ACID :
 				             ((chance == 4) ? GF_POIS : GF_FIRE)))),
 				          dir, 840, 2);
-				o_ptr->timeout = rand_range(25, 50);
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 
@@ -3108,7 +3108,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe confusion.");
 				fire_ball(GF_CONFUSION, dir, 400, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3116,7 +3116,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe sound.");
 				fire_ball(GF_SOUND, dir, 430, 2);
-				o_ptr->timeout = rand_range(50, 100);
+				o_ptr->timeout = (s16b)rand_range(50, 100);
 				break;
 			}
 
@@ -3127,7 +3127,7 @@ static void do_cmd_activate_aux(int item)
 				           ((chance == 1 ? "chaos" : "disenchantment")));
 				fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT),
 				          dir, 740, 2);
-				o_ptr->timeout = rand_range(30, 60);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -3138,7 +3138,7 @@ static void do_cmd_activate_aux(int item)
 				           ((chance == 1 ? "sound" : "shards")));
 				fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS),
 				          dir, 750, 2);
-				o_ptr->timeout = rand_range(30, 60);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -3153,7 +3153,7 @@ static void do_cmd_activate_aux(int item)
 				           ((chance == 2) ? GF_DISENCHANT :
 				            ((chance == 3) ? GF_SOUND : GF_SHARDS))),
 				          dir, 840, 2);
-				o_ptr->timeout = rand_range(30, 60);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -3163,7 +3163,7 @@ static void do_cmd_activate_aux(int item)
 				msg_format("You breathe %s.",
 				           ((chance == 0 ? "light" : "darkness")));
 				fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 670, 2);
-				o_ptr->timeout = rand_range(30, 60);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 
@@ -3171,7 +3171,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe the elements.");
 				fire_ball(GF_MISSILE, dir, 1000, 3);
-				o_ptr->timeout = rand_range(30, 60);
+				o_ptr->timeout = (s16b)rand_range(30, 60);
 				break;
 			}
 		}
@@ -3194,7 +3194,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				fire_ball(GF_ACID, dir, 100, 2);
 				(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(20, 40));
-				o_ptr->timeout = rand_range(25, 50);
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 
@@ -3202,7 +3202,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				fire_ball(GF_COLD, dir, 100, 2);
 				(void)set_oppose_cold(p_ptr->oppose_cold + rand_range(20, 40));
-				o_ptr->timeout = rand_range(25, 50);
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 
@@ -3210,7 +3210,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				fire_ball(GF_FIRE, dir, 100, 2);
 				(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(20, 40));
-				o_ptr->timeout = rand_range(25, 50);
+				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
 		}

@@ -1518,7 +1518,7 @@ bool monst_spell_monst(int m_idx)
 						msg_format("%^s is blasted by psionic energy.", t_name);
 					}
 
-					t_ptr->confused += rand_range(4, 8);
+					t_ptr->confused += (byte)rand_range(4, 8);
 
 					mon_take_hit_mon(t_idx, damroll(8, 8), &fear, " collapses, a mindless husk.");
 				}
@@ -1560,9 +1560,9 @@ bool monst_spell_monst(int m_idx)
 						msg_format("%^s is blasted by psionic energy.", t_name);
 					}
 
-					t_ptr->confused += rand_range(4, 8);
-					t_ptr->mspeed -= rand_range(4, 8);
-					t_ptr->stunned += rand_range(4, 8);
+					t_ptr->confused += (byte)rand_range(4, 8);
+					t_ptr->mspeed -= (byte)rand_range(4, 8);
+					t_ptr->stunned += (byte)rand_range(4, 8);
 
 					mon_take_hit_mon(t_idx, damroll(12, 15), &fear, " collapses, a mindless husk.");
 				}
@@ -1932,7 +1932,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (!t_ptr->monfear) fear = TRUE;
 
-					t_ptr->monfear += rand_range(4, 8);
+					t_ptr->monfear += (byte)rand_range(4, 8);
 				}
 
 				wake_up = TRUE;
@@ -2076,7 +2076,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s is paralyzed!", t_name);
 
-					t_ptr->stunned += rand_range(4, 8);
+					t_ptr->stunned += (byte)rand_range(4, 8);
 				}
 
 				wake_up = TRUE;
@@ -2241,7 +2241,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (!m_ptr->invulner) m_ptr->invulner = rand_range(4, 8);
+				if (!m_ptr->invulner) m_ptr->invulner = (byte)rand_range(4, 8);
 
 				break;
 			}

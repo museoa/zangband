@@ -2010,7 +2010,7 @@ bool make_attack_spell(int m_idx)
 			}
 
 			if (!(m_ptr->invulner))
-				m_ptr->invulner = rand_range(4, 8);
+				m_ptr->invulner = (byte)rand_range(4, 8);
 
 			break;
 		}
