@@ -889,6 +889,24 @@ errr init_t_info(void)
 	return (0);
 }
 
+/*
+ * The list of available format functions
+ *
+ * (They should be in order of most-called
+ *  through to least-called.)
+ */
+static vstrnfmt_aux_func my_format_functions[8] =
+{
+	object_fmt,
+	object_store_fmt,
+	monster_fmt,
+	stat_format,
+	center_string,
+	likert,
+	binary_fmt,
+	NULL
+};
+
 
 /*
  * Initialize some other arrays
@@ -896,6 +914,15 @@ errr init_t_info(void)
 static errr init_other(void)
 {
 	int i, j, k, n;
+	
+	/*** Pre-allocate space for the "format()" buffer ***/
+
+	/* Hack -- Just call the "format()" function */
+	(void)format("%s (%s).", "Steven Fuerst", MAINTAINER);
+	
+	/* Initialise the "%v" user-defined format function list */ 
+	register_format_funcs(my_format_functions);
+	
 
 	/*** Prepare the various "bizarre" arrays ***/
 
@@ -1042,12 +1069,6 @@ static errr init_other(void)
 
 	/* Allocate the towns */
 	C_MAKE(place, z_info->wp_max, place_type);
-
-
-	/*** Pre-allocate space for the "format()" buffer ***/
-
-	/* Hack -- Just call the "format()" function */
-	(void)format("%s (%s).", "Steven Fuerst", MAINTAINER);
 
 
 	/* Success */

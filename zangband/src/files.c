@@ -1318,7 +1318,7 @@ static void prt_num(cptr header, s32b num, int col, int row, cptr color,
  * Where x is the first parameter in the list,
  * and y is the second.
  */
-static void likert(char *buf, uint max, cptr fmt, va_list *vp)
+void likert(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	cptr desc;
 	
@@ -3822,7 +3822,7 @@ void do_cmd_save_and_exit(void)
  * This is treated as a format string - so may contain
  * other commands etc...
  */
-static void center_string(char *buf, uint max, cptr fmt, va_list *vp)
+void center_string(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	int i, j;
 

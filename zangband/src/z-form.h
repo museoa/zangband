@@ -25,7 +25,16 @@
  */
 
 
+/*
+ * The "type" of the "user defined print routine" function pointers
+ */
+typedef void (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
+
+
 /**** Available Functions ****/
+
+/* Register table of user format functions */
+extern void register_format_funcs(vstrnfmt_aux_func *table);
 
 /* Format arguments into given bounded-length buffer */
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp);

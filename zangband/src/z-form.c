@@ -128,12 +128,22 @@
 
 
 
+/*
+ * The array of available user print functions.
+ *
+ * The last entry must be NULL.
+ */
+static vstrnfmt_aux_func *vfmt_table = NULL;
 
 
 /*
- * The "type" of the "user defined print routine" pointer
+ * Register a table of user format functions
  */
-typedef void (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
+void register_format_funcs(vstrnfmt_aux_func *table)
+{
+	/* Save for later */
+	vfmt_table = table;
+}
 
 
 /*
@@ -491,13 +501,38 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 
 			case 'v':
 			{
-				vstrnfmt_aux_func tmp_func;
+				vstrnfmt_aux_func call_func;
+				vstrnfmt_aux_func *tmp_func;
 			
 				/* Extract the function to call */
-				tmp_func = va_arg(*vp, vstrnfmt_aux_func);
-			
-				/* Format the "user data" */
-				tmp_func(tmp, 1000, aux, vp);
+				call_func = va_arg(*vp, vstrnfmt_aux_func);
+				
+				/* Test to see if this is a valid function */
+				if (vfmt_table)
+				{
+					for (tmp_func = vfmt_table; *tmp_func; tmp_func++)
+					{
+						if (*tmp_func == call_func)
+						{
+							/* A match! - so we call this routine */
+							
+							/* Format the "user data" */
+							call_func(tmp, 1000, aux, vp);
+							
+							break;
+						}
+					}
+					
+					/* No Match? */
+					if (!(*tmp_func))
+					{
+						quit("Invalid %v call due to invalid function");
+					}
+				}
+				else
+				{
+					quit("Invalid %v call due to uninitialised function table");
+				}
 
 				/* Done */
 				break;
