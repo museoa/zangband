@@ -996,7 +996,7 @@ static void get_questinfo(int questnum)
 	}
 }
 
-#endif 0
+#endif
 
 #if 0
 
@@ -1745,11 +1745,11 @@ static void bldg_process_command(building_type *bldg, int i)
 			case BACT_RACE_LEGENDS:
 				race_legends();
 				break;
-			#if 0
+#if 0
 			case BACT_QUEST:
 				castle_quest();
 				break;
-			#endif 0
+#endif
 			case BACT_KING_LEGENDS:
 			case BACT_ARENA_LEGENDS:
 			case BACT_LEGENDS:

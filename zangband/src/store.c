@@ -4053,7 +4053,7 @@ void store_init(int town_num, int store_num)
 
 		object_wipe(&st_ptr->stock[k]);
 	}
-#endif 0
+#endif
 }
 
 

@@ -2819,7 +2819,7 @@ void move_player(int dir, int do_pickup)
 			p_ptr->leaving = TRUE;
 		}
 
-#endif 0
+#endif
 
 		/* Discover invisible traps */
 		else if (c_ptr->feat == FEAT_INVIS)

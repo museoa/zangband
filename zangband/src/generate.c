@@ -1076,7 +1076,7 @@ static void quest_gen(void)
 	process_dungeon_file("q_info.txt", 0, 0, MAX_HGT, MAX_WID);
 }
 
-#endif 0
+#endif
 
 /* Make a real level */
 static bool level_gen(cptr *why)

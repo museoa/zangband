@@ -1914,7 +1914,7 @@ static void display_player_misc_info(void)
 	c_put_str(TERM_L_BLUE, buf, 8, 13);
 }
 
-#endif 0
+#endif
 
 /*
  * Special display, part 2b
@@ -2467,7 +2467,7 @@ static void display_player_ben_one(int mode)
 		}
 	}
 }
-#endif 0
+#endif
 
 #define COL_NAME			0
 #define WID_NAME			11

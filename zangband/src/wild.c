@@ -56,7 +56,7 @@
 			}
 		}
 	}
-#endif 0
+#endif
 
 
 /* Town currently stored in cave[][] */

@@ -1014,7 +1014,7 @@ static void process_world(void)
 		}
 	}
 
-#endif 0
+#endif
 
 	/* Set back the rewards once a day */
 	if (!(turn % (10L * STORE_TURNS)))
