@@ -3525,82 +3525,125 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 
 		case TV_FIGURINE:
 		{
+			int i = 1;
+			int check;
 
-			int tester = 1;
-			int depth_check = 0;
-			int attempts = 256;
-	
+			monster_race *r_ptr;
+
 			/* Pick a random non-unique monster race */
+			while (1)
+			{
+				i = randint(max_r_idx - 1);
 
-			do {
-				tester = randint(max_r_idx-1);			
-				if (dun_level < r_info[tester].level)
-					depth_check = r_info[tester].level - dun_level;
-				else 
-					depth_check = 1;
+				r_ptr = &r_info[i];
 
-			   } while (((r_info[tester].flags1 & RF1_UNIQUE)
-					 || (randint(depth_check)!=1))					 
-					 && attempts--);
+				check = (dun_level < r_ptr->level) ? (r_ptr->level - dun_level) : 0;
+
+				/* Ignore dead monsters */
+				if (!r_ptr->rarity) continue;
+
+				/* No uniques */
+				if (r_ptr->flags1 & RF1_UNIQUE) continue;
+
+				/* Prefer less out-of-depth monsters */
+				if (rand_int(check)) continue;
+
+				break;
+			}
+
+			o_ptr->pval = i;
 
 			/* Some figurines are cursed */
-			if (randint(6)==1) 
-			{
-				o_ptr->ident |= IDENT_CURSED;
-				if (cheat_peek)
-					msg_print("Cursed");
-			}
-			
-			if (cheat_peek)
-				msg_format("Figurine, depth +%d", depth_check-1);
+			if (one_in_(6)) o_ptr->ident |= IDENT_CURSED;
 
-			o_ptr->pval = tester;
+			if (cheat_peek)
+			{
+				msg_format("Figurine of %s, depth +%d%s",
+							  r_name + r_ptr->name, check - 1,
+							  !(o_ptr->ident & IDENT_CURSED) ? "" : " {cursed}");
+			}
 
 			break;
 		}
 
 		case TV_CORPSE:
 		{
+			int i = 1;
+			int check;
 
-			int tester = 1;
-			int depth_check = 0;
-			int attempts = 256;
-			u32b to_match = 0;
+			u32b match = 0;
+
+			monster_race *r_ptr;
 
 			if (o_ptr->sval == SV_SKELETON)
-				to_match = RF9_DROP_SKELETON;
-			else
-				to_match = RF9_DROP_CORPSE;
-			
+			{
+				match = RF9_DROP_SKELETON;
+			}
+			else if (o_ptr->sval == SV_CORPSE)
+			{
+				match = RF9_DROP_CORPSE;
+			}
+
 			/* Pick a random non-unique monster race */
+			while (1)
+			{
+				i = randint(max_r_idx - 1);
 
-			do {
-				tester = randint(max_r_idx-1);			
-				if (dun_level < r_info[tester].level)
-					depth_check = r_info[tester].level - dun_level;
-				else 
-					depth_check = 1;
+				r_ptr = &r_info[i];
 
-			   } while (((r_info[tester].flags1 & RF1_UNIQUE)
-					 || (randint(depth_check)!=1)
-					 || !(r_info[tester].flags9 & to_match))
-					 && attempts--);
+				check = (dun_level < r_ptr->level) ? (r_ptr->level - dun_level) : 0;
+
+				/* Ignore dead monsters */
+				if (!r_ptr->rarity) continue;
+
+				/* Ignore corpseless monsters */
+				if (!(r_ptr->flags9 & match)) continue;
+
+				/* No uniques */
+				if (r_ptr->flags1 & RF1_UNIQUE) continue;
+
+				/* Prefer less out-of-depth monsters */
+				if (rand_int(check)) continue;
+
+				break;
+			}
+
+			o_ptr->pval = i;
 
 			if (cheat_peek)
-				msg_format("Corpse, depth +%d", depth_check-1);
-
-			o_ptr->pval = tester;
+			{
+				msg_format("Corpse of %s, depth +%d",
+							  r_name + r_ptr->name, check - 1);
+			}
 
 			break;
 		}
 
 		case TV_STATUE:
 		{
+			int i = 1;
 
-			o_ptr->pval = randint(max_r_idx-1);
-			
+			monster_race *r_ptr;
+
+			/* Pick a random monster race */
+			while (1)
+			{
+				i = randint(max_r_idx - 1);
+
+				r_ptr = &r_info[i];
+
+				/* Ignore dead monsters */
+				if (!r_ptr->rarity) continue;
+
+				break;
+			}
+
+			o_ptr->pval = i;
+
 			if (cheat_peek)
-				msg_print("A Statue");
+			{
+				msg_format("Statue of %s", r_name + r_ptr->name);
+			}
 
 			break;
 		}
