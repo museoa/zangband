@@ -3434,15 +3434,7 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 	
 	if (f_m_t->typ == GF_KILL_WALL)
 	{
-		/* Destroy the door */
-		if (f_m_t->known)
-		{
-			msg_print("The door turns into mud!");
-			f_m_t->notice = TRUE;
-		}
-
-		/* Destroy the feature */
-		cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_FLOOR);
+		/* Hack - no message */
 
 		/* Delete the field */
 		return (TRUE);

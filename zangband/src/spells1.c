@@ -415,7 +415,9 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			}
 
 			/* Destroy doors (and secret doors) */
-			else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_SECRET))
+			else if ((c_ptr->feat == FEAT_OPEN)
+			 || (c_ptr->feat == FEAT_SECRET)
+			 || (c_ptr->feat == FEAT_CLOSED))
 			{
 				/* Destroy the feature */
 				cave_set_feat(x, y, FEAT_FLOOR);
