@@ -958,11 +958,8 @@ void field_destroy_type(s16b fld_idx, byte typ)
 	s16b *fld_ptr;
 
 	/* While the field exists */
-	while (fld_idx)
+	FLD_ITT_START (fld_idx, f_ptr)
 	{
-		/* Get field */
-		f_ptr = &fld_list[fld_idx];
-
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ)
 		{
@@ -975,12 +972,8 @@ void field_destroy_type(s16b fld_idx, byte typ)
 				delete_field_ptr(fld_ptr);
 			}
 		}
-		else
-		{
-			/* If not, get next one. */
-			fld_idx = f_ptr->next_f_idx;
-		}
 	}
+	FLD_ITT_END;
 }
 
 
