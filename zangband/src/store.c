@@ -1322,25 +1322,7 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 	return (TRUE);
 }
 
-/*
- * Get a haggle
- */
-static int get_haggle(cptr pmt, s32b *poffer, s32b price)
-{
-	/* Paranoia XXX XXX XXX */
-	message_flush();
-
-	/* Ask the user for a response */
-	if (!get_check(pmt)) return (FALSE);
-
-	/* Accept current price */
-	*poffer = price;
-
-	/* Success */
-	return (TRUE);
-}
-
-static bool purchase_haggle(object_type *o_ptr, s32b *price)
+static bool store_buy_item(object_type *o_ptr, s32b *price)
 {
 	char out_val[160];
 
@@ -1356,12 +1338,18 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
 	put_str(out_val, 0, 1);
+	
+	/* Ask the user for a response */
+	if (!get_check("Do you want to buy it? ")) return (FALSE);
+	
+	/* Save price */
+	*price = ask;
 
-	/* Get value */
-	return (get_haggle("Do you want to buy it? ", price, ask));
+	/* Did sell item */
+	return (TRUE);
 }
 
-static bool sell_haggle(object_type *o_ptr, s32b *price)
+static bool store_sell_item(object_type *o_ptr, s32b *price)
 {
 	char out_val[160];
 
@@ -1377,9 +1365,15 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
 	put_str(out_val, 0, 1);
-
-	/* Get value */
-	return (get_haggle("Do you want to sell it? ", price, ask));
+	
+	/* Ask the user for a response */
+	if (!get_check("Do you want to sell it? ")) return (FALSE);
+	
+	/* Save price */
+	*price = ask;
+	
+	/* Did buy item */
+	return (TRUE);
 }
 
 
@@ -1507,7 +1501,7 @@ static void store_purchase(int *store_top)
 		message_flush();
 
 		/* Player wants it */
-		if (purchase_haggle(j_ptr, &price))
+		if (store_buy_item(j_ptr, &price))
 		{
 			/* Player can afford it */
 			if (p_ptr->au >= price)
@@ -1836,7 +1830,7 @@ static void store_sell(int *store_top)
 		message_flush();
 
 		/* Sold... */
-		if (sell_haggle(q_ptr, &price))
+		if (store_sell_item(q_ptr, &price))
 		{
 			/* Say "okay" */
 			say_comment_1();
