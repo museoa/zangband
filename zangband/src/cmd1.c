@@ -514,7 +514,7 @@ void search(void)
 				ty = y;
 
 				/* Count number of visible traps next to player */
-				old_count = count_traps(&ty, &tx, TRUE);
+				old_count = count_traps(&tx, &ty, TRUE);
 
 				/* Look for invisible traps */
 				if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
@@ -524,7 +524,7 @@ void search(void)
 					ty = y;
 										
 					/* See if the number of known traps has changed */
-					if (old_count != count_traps(&ty, &tx, TRUE))
+					if (old_count != count_traps(&tx, &ty, TRUE))
 					{
 						/* Message */
 						msg_print("You have found a trap.");

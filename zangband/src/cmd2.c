@@ -580,7 +580,7 @@ static bool is_closed(int feat)
 /*
  * Return the number of traps around (or under) the character.
  */
-int count_traps(int *y, int *x, bool under)
+int count_traps(int *x, int *y, bool under)
 {
 	int d;
 	int xx, yy;
@@ -1684,7 +1684,7 @@ void do_cmd_disarm(void)
 		int num_traps, num_chests;
 
 		/* Count visible traps */
-		num_traps = count_traps(&y, &x, TRUE);
+		num_traps = count_traps(&x, &y, TRUE);
 
 		/* Count chests (trapped) */
 		num_chests = count_chests(&y, &x, TRUE);
