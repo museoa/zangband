@@ -674,8 +674,8 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		"blows_per_round", "icon", "died_from",
 		"exp", "food", "gold", "height", "history", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "name", "position",
-		"race", "sex", "shots_per_round", "social_class", "spell_book",
-		"stat", "status", "title", "to_dam", "to_hit", "weight",
+		"sex", "shots_per_round", "social_class", "spell_book",
+		"status", "title", "to_dam", "to_hit", "weight",
 		"total_weight", "preserve", "base_name",
 		"is_dead", "turn", "max_level", "disturb", "new_spells",
 		"command_rep", "running", "prayer_or_spell", "health_who",
@@ -686,8 +686,8 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_DIED_FROM,
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_NAME, IDX_POSITION,
-		IDX_RACE, IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
-		IDX_STAT, IDX_STATUS, IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
+		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
+		IDX_STATUS, IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
 		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME,
 		IDX_IS_DEAD, IDX_TURN, IDX_MAX_LEVEL, IDX_DISTURB, IDX_NEW_SPELLS,
 		IDX_COMMAND_REP, IDX_RUNNING, IDX_PRAYER_OR_SPELL, IDX_HEALTH_WHO,
@@ -700,7 +700,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	cptr cstr;
 	object_type *o_ptr;
 	int i, tmp;
-	int stat_add[6];
 	long expadv;
 	double pct;
 	char buf[512];
@@ -892,10 +891,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				-1);
 			break;
 
-		case IDX_RACE: /* race */
-			Tcl_SetStringObj(resultPtr, (char *) rp_ptr->title, -1);
-			break;
-
 		case IDX_SEX: /* sex */
 			Tcl_SetStringObj(resultPtr, (char *) sp_ptr->title, -1);
 			break;
@@ -928,75 +923,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					Tcl_NewStringObj((char *) cstr, -1));
 			}
 			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
-		case IDX_STAT: /* stat */
-		    if (objC != 4)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "stat varName");
-				return TCL_ERROR;
-		    }
-		    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_stat,
-		    	(char *) "statName", 0, &index) != TCL_OK)
-			{
-				return TCL_ERROR;
-		    }
-			t = Tcl_GetStringFromObj(objV[3], NULL);
-			if (SetArrayValueLong(t, "use", p_ptr->stat_use[index])
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "top", p_ptr->stat_top[index])
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "max", p_ptr->stat_max[index])
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "race", rp_ptr->r_adj[index])
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "class", cp_ptr->c_adj[index])
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* stat_add[] is not for equipment only in ZAngband */
-			for (i = 0; i < 6; i++) stat_add[i] = 0;
-
-			for (i = 0; i < EQUIP_MAX; i++)
-			{
-				object_type *o_ptr = &p_ptr->equipment[i];
-				u32b f1, f2, f3;
-
-				/* Skip non-objects */
-				if (!o_ptr->k_idx) continue;
-		
-				/* Extract the item flags */
-				object_flags(o_ptr, &f1, &f2, &f3);
-		
-				/* Affect stats */
-				if (f1 & (TR1_STR)) stat_add[A_STR] += o_ptr->pval;
-				if (f1 & (TR1_INT)) stat_add[A_INT] += o_ptr->pval;
-				if (f1 & (TR1_WIS)) stat_add[A_WIS] += o_ptr->pval;
-				if (f1 & (TR1_DEX)) stat_add[A_DEX] += o_ptr->pval;
-				if (f1 & (TR1_CON)) stat_add[A_CON] += o_ptr->pval;
-				if (f1 & (TR1_CHR)) stat_add[A_CHR] += o_ptr->pval;
-			}
-
-			if (SetArrayValueLong(t, "equip", stat_add[index])
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
 			break;
 
 		case IDX_STATUS: /* status */
