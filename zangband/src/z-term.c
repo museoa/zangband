@@ -1866,27 +1866,27 @@ errr Term_redraw(void)
 errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
 	int i, j;
-	
+
 	char *c_ptr;
-	
+
 	/* Bounds checking */
 	if (y2 >= Term->hgt) y2 = Term->hgt - 1;
 	if (x2 >= Term->wid) x2 = Term->wid - 1;
 	if (y1 < 0) y1 = 0;
 	if (x1 < 0) x1 = 0;
-	
+
 	/* Set y limits */
 	Term->y1 = y1;
 	Term->y2 = y2;
-	
+
 	/* Set the x limits */
 	for (i = Term->y1; i <= Term->y2; i++)
 	{
 		Term->x1[i] = x1;
 		Term->x2[i] = x2;
-		
+
 		c_ptr = Term->old->c[i];
-		
+
 		/* Clear the section so it is redrawn */
 		for (j = x1; j <= x2; j++)
 		{
@@ -1899,7 +1899,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	Term_fresh();
 
 	/* Success */
-	return(0);
+	return (0);
 }
 
 

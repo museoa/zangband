@@ -751,7 +751,7 @@ struct object_type
 	s16b next_o_idx;	/* Next object in stack (if any) */
 
 	s16b held_m_idx;	/* Monster holding us (if any) */
-	
+
 #ifdef USE_SCRIPT
 	PyObject *python;
 #endif /* USE_SCRIPT */
@@ -867,20 +867,20 @@ struct field_thaum
 {
 	byte f_attr;			/* attribute */
 	char f_char;			/* character */
-	
+
 	byte priority;			/* LOS priority higher = more visible */
-	
+
 	byte type;			/* Type of field */
-	
+
 	s16b count_init;		/* Counter for timed effects */
 
 	field_action_type action[FIELD_ACTION_MAX]; /* Function indexs for the actions */
-	
+
 	/* Storage space for the actions to interact with. */
 	byte data_init[8];
-	
+
 	u16b info;			/* Information flags */
-	
+
 	char *name;			/* The name of the field */
 };
 
@@ -905,28 +905,28 @@ struct field_thaum
  * way.
  */
 struct field_type
-{	
+{
 	byte f_attr;			/* attribute */
 	char f_char;			/* character */
-	
+
 	s16b t_idx;			/* field type index */
 
 	s16b fy;			/* Y location on map */
 	s16b fx;			/* X location on map */
 
 	s16b next_f_idx;		/* Pointer to next field in list */
-	
+
 	u16b info;			/* quick access flags */
-	
-	
+
+
 	s16b counter;			/* Counter for timed effects */
-	
-	
+
+
 	/* Storage space for the actions to interact with. */
-	byte data[8];			
-	
+	byte data[8];
+
 	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
-	
+
 	byte priority;			/* LOS priority higher = more visible */
 };
 

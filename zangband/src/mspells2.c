@@ -2402,7 +2402,7 @@ bool monst_spell_monst(int m_idx)
 			{
 				if (raise_dead(m_ptr->fy, m_ptr->fx, !is_hostile(m_ptr)) && known && see_m)
 				{
-					msg_format("%^s mutters quietly.", m_name);				
+					msg_format("%^s mutters quietly.", m_name);
 				}
 				break;
 			}

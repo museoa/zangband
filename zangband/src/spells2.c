@@ -1335,7 +1335,7 @@ bool detect_traps(void)
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
-			
+
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			/* Access the grid */
@@ -1393,7 +1393,7 @@ bool detect_doors(void)
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
-			
+
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			c_ptr = area(y,x);
@@ -1502,7 +1502,7 @@ bool detect_treasure(void)
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
-			
+
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			c_ptr = area(y,x);
@@ -1570,12 +1570,12 @@ bool detect_objects_gold(void)
 		x = o_ptr->ix;
 
 		/* Only detect nearby objects */
-#if 0		
+#if 0
 		if (!panel_contains(y, x)) continue;
 #endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
-		
+
 		/* Detect "gold" objects */
 		if (o_ptr->tval == TV_GOLD)
 		{
@@ -1632,12 +1632,12 @@ bool detect_objects_normal(void)
 		x = o_ptr->ix;
 
 		/* Only detect nearby objects */
-#if 0		
+#if 0
 		if (!panel_contains(y, x)) continue;
 #endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
-		
+
 		/* Detect "real" objects */
 		if (o_ptr->tval != TV_GOLD)
 		{
@@ -1700,7 +1700,7 @@ bool detect_objects_magic(void)
 		x = o_ptr->ix;
 
 		/* Only detect nearby objects */
-#if 0		
+#if 0
 		if (!panel_contains(y, x)) continue;
 #endif /* 0 */
 
@@ -1837,7 +1837,7 @@ bool detect_monsters_invis(void)
 #endif /* 0 */
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
-		
+
 		/* Detect invisible monsters */
 		if (r_ptr->flags2 & RF2_INVISIBLE)
 		{
@@ -1901,7 +1901,7 @@ bool detect_monsters_evil(void)
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
 #endif /* 0 */
-		
+
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect evil monsters */
@@ -1971,7 +1971,7 @@ bool detect_monsters_string(cptr Match)
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
 #endif /* 0 */
-		
+
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect monsters with the same symbol */
@@ -2282,7 +2282,7 @@ bool raise_dead(int y, int x, bool pet)
 {
 	s16b i;
 	int ix, iy;
-	
+
 	bool    obvious = FALSE;
 	monster_type *m_ptr;
 
@@ -2300,29 +2300,29 @@ bool raise_dead(int y, int x, bool pet)
 
 		/* Require line of sight */
 		if (!los(iy, ix, y, x)) continue;
-		
+
 		if (player_has_los_grid(area(iy, ix))) obvious = TRUE;
-		
+
 		/* Make a monster nearby if possible */
 		if (summon_named_creature(o_ptr->iy, o_ptr->ix,
 			o_ptr->pval, FALSE, FALSE, pet))
 		{
-			/* Get pointer monster if successful */ 
+			/* Get pointer monster if successful */
 			m_ptr = &m_list[hack_m_idx_ii];
-						
+
 			if (player_can_see_bold(m_ptr->fy, m_ptr->fx))
 			{
 				msg_format("The %s rises.");
 			}
-						
+
 			/* Set the cloned flag, so no treasure is dropped */
 			m_ptr->smart |= SM_CLONED;
 		}
-		
-		/* The corpse/skeleton is destroyed */			
+
+		/* The corpse/skeleton is destroyed */
 		floor_item_increase(i, -1);
 		floor_item_optimize(i);
-				
+
 		/* Hack, decrease counter properly */
 		i--;
 	}
@@ -4323,10 +4323,10 @@ bool detect_monsters_nonliving(void)
 		x = m_ptr->fx;
 
 		/* Only detect nearby monsters */
-#if 0		
+#if 0
 		if (!panel_contains(y, x)) continue;
 #endif /* 0 */
-	
+
 		/* Only detect monsters in range */
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 

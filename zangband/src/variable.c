@@ -696,7 +696,7 @@ monster_type *m_list;
  * The array of fields [max_fld_idx]
  */
 field_type *fld_list;
- 
+
 
 
 /*

@@ -51,8 +51,8 @@
  * Internal probability routine
  */
 
-#define int_outof(dumb,prob) \
-	(randint((dumb)?((prob) / 2):(prob)) < 100) 
+#define int_outof(dumb, prob) \
+	(randint((dumb) ? ((prob) / 2) : (prob)) < 100)
 
 /*
  * Remove the "bad" spells from a spell list
@@ -132,7 +132,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	/* Nothing known */
 	if (!smart) return;
 
-	/* 
+	/*
 	 * Hack - some of the RNG calls have been removed from the
 	 * earlier code.  This should speed it up.
 	 */
@@ -218,7 +218,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	{
 		f4 &= ~(RF4_BR_POIS);
 		f5 &= ~(RF5_BA_POIS);
-		
+
 		if (rand_int(2))
 		{
 			f4 &= ~(RF4_BA_NUKE | RF4_BR_NUKE);
@@ -259,7 +259,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	if ((smart & (SM_RES_CONF)) && (int_outof(is_dumb, 100)))
 	{
 		f5 &= ~(RF5_CONF);
-		
+
 		if (rand_int(2))
 		{
 			f4 &= ~(RF4_BR_CONF);
@@ -298,8 +298,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	if ((smart & (SM_RES_SHARD)) && (int_outof(is_dumb, 50)))
 	{
 		f4 &= ~(RF4_BR_SHAR);
-		
-		if(rand_int(2))
+
+		if (rand_int(2))
 		{
 			f4 &= ~(RF4_ROCKET);
 		}
@@ -351,17 +351,17 @@ static bool summon_possible(int y1, int x1)
 	for (dy = -2; dy <= 2; dy++)
 	{
 		for (dx = -2; dx <= 2; dx++)
-		{			
+		{
 			/* Only check a circular area */
 			if ((abs(dx) == 2) && (abs(dy) == 2)) continue;
-			
+
 			/* Get square */
 			x = x1 + dx;
 			y = y1 + dy;
 
 			/* Ignore illegal locations */
 			if (!in_bounds(y, x)) continue;
-			
+
 			/* Access Grid */
 			c_ptr = area(y, x);
 
@@ -535,7 +535,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 	bool has_escape, has_attack, has_summon, has_tactic;
 	bool has_annoy, has_invul, has_haste, has_heal;
-	
+
 	int num = 0;
 	byte spells[96];
 
@@ -569,7 +569,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		has_heal = ((f4 & (RF4_HEAL_MASK)) ||
 		            (f5 & (RF5_HEAL_MASK)) ||
 		            (f6 & (RF6_HEAL_MASK)));
-	
+
 		/*** Try to pick an appropriate spell type ***/
 
 		/* Hurt badly or afraid, attempt to flee */
@@ -667,7 +667,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 			f5_mask = (RF5_ANNOY_MASK);
 			f6_mask = (RF6_ANNOY_MASK);
 		}
-		
+
 		/* Else choose no spell (The masks default to this.) */
 
 		/* Keep only the interesting spells */
@@ -677,8 +677,8 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Anything left? */
 		if (!(f4 || f5 || f6)) return (0);
-	}		
-	
+	}
+
 	/* Extract the "innate" spells */
 	for (i = 0; i < 32; i++)
 	{
@@ -2121,8 +2121,8 @@ bool make_attack_spell(int m_idx)
 		case 160+15:
 		{
 			disturb(1, 0);
-			msg_format("%^s mutters quietly.", m_name);		
-			
+			msg_format("%^s mutters quietly.", m_name);
+
 			raise_dead(m_ptr->fy, m_ptr->fx, FALSE);
 			break;
 		}

@@ -1035,13 +1035,13 @@ static void rd_field(field_type *f_ptr)
 	/* Location */
 	rd_s16b(&f_ptr->fy);
 	rd_s16b(&f_ptr->fx);
-	
+
 	/* Info flags */
 	rd_u16b(&f_ptr->info);
-	
+
 	/* Counter */
 	rd_s16b(&f_ptr->counter);
-	
+
 	/* Data */
 	for (i = 0; i < 8; i++)
 	{
@@ -2996,7 +2996,7 @@ static errr rd_dungeon(void)
 
 	if (sf_version > 11)
 	{
-	
+
 		/*** Fields ***/
 
 		/* Read the field count */
@@ -3036,14 +3036,14 @@ static errr rd_dungeon(void)
 			{
 				/* Add it to the list */
 				fld_idx = f_pop();
-		
-				if(fld_idx)
-				{	
+
+				if (fld_idx)
+				{
 					/* Move field to list */
 					field_copy(f_ptr, &fld_list[fld_idx]);
 				}
 			}
-			
+
 			/* Oops */
 			if (i != fld_idx)
 			{
@@ -3052,8 +3052,8 @@ static errr rd_dungeon(void)
 			}
 		}
 	}
-	
-	
+
+
 	/*** Success ***/
 
 	/* Regenerate the dungeon for old savefiles and corrupted panic-saves */

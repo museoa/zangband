@@ -178,16 +178,16 @@ static bool alloc_stairs(int feat, int num, int walls)
 			{
 				/* Placed at least one. */
 				if(i > 0) return TRUE;
-				
+
 				/* Couldn't place any stairs */
 				return FALSE;
 			}
-			
+
 			/* Require fewer walls */
 			walls--;
 		}
 	}
-	
+
 	/* Done */
 	return TRUE;
 }
@@ -533,8 +533,8 @@ static bool cave_gen(void)
 			k = rand_int(100);
 
 			/* Attempt a very unusual room */
-			if((ironman_rooms && (rand_int(DUN_UNUSUAL) < dun_level * 2))
-				 || (rand_int(DUN_UNUSUAL) < dun_level))
+			if ((ironman_rooms && (rand_int(DUN_UNUSUAL) < dun_level * 2)) ||
+				 (rand_int(DUN_UNUSUAL) < dun_level))
 			{
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
@@ -988,7 +988,7 @@ void map_panel_size(void)
 {
 	/* Only if the map exists */
 	if (!character_dungeon) return;
-	
+
 	/* reset panels */
 	if (dun_level)
 	{
@@ -997,12 +997,12 @@ void map_panel_size(void)
 		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
 	}
 	else
-	{	
+	{
 		/* Determine number of panels (wilderness) */
 		max_panel_rows = (max_wild * 16 / map_hgt) * 2;
 		max_panel_cols = (max_wild * 16 / map_wid) * 2;
 	}
-		
+
 	/* Assume illegal panel */
 	panel_row = max_panel_rows;
 	panel_col = max_panel_cols;
@@ -1261,7 +1261,7 @@ void generate_cave(void)
 
 		/* Wipe the monsters */
 		wipe_m_list();
-		
+
 		/* Wipe the fields */
 		wipe_f_list();
 	}

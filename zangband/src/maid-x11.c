@@ -90,9 +90,9 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 	{
 		cptr str = getenv("ANGBAND_X11_GAMMA");
 		if (str != NULL) gamma = atoi(str);
-		
+
 		gamma_table_ready = TRUE;
-		
+
 		/* Only need to build the table if gamma exists */
 		if (gamma) build_gamma_table(gamma);
 	}
@@ -108,7 +108,7 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 #endif /* SUPPORT_GAMMA */
 
 	/* Build the color */
-	
+
 	xcolour.red = red * 255;
 	xcolour.green = green * 255;
 	xcolour.blue = blue * 255;
@@ -242,7 +242,7 @@ static XImage *ReadBMP(Display *dpy, char *Name)
 		RGBQUAD clrg;
 
 		fread(&clrg, 4, 1, f);
-		
+
 		/* Analyze the color */
 		clr_pixels[i] = create_pixel(dpy, clrg.r, clrg.g, clrg.b);
 	}

@@ -1393,7 +1393,7 @@ bool set_stun(int v)
 			break;
 		}
 
-		/* 
+		/*
 		 * XXX XXX Hack -
 		 * Mindcrafters cannot get this effect when
 		 * casting a spell.  It really doesn't make sense.
@@ -1403,7 +1403,7 @@ bool set_stun(int v)
 		 * explained away by their "superior mental skills" or
 		 * something...
 		 */
-		if ((randint(1000) < v || randint(16) == 1) && 
+		if ((randint(1000) < v || randint(16) == 1) &&
 		 (!(p_ptr->pclass == CLASS_MINDCRAFTER)))
 		{
 			msg_print("A vicious blow hits your head.");

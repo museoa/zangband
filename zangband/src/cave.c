@@ -1958,7 +1958,7 @@ void display_map(int *cy, int *cx)
 
 	int yrat = cur_hgt / map_hgt;
 	int xrat = cur_wid / map_wid;
-	
+
 	/* Take care of rounding */
 	if (cur_hgt % map_hgt) yrat++;
 	if (cur_wid % map_wid) xrat++;
@@ -1970,12 +1970,12 @@ void display_map(int *cy, int *cx)
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
 	view_granite_lite = FALSE;
-	
+
 	/* Allocate the maps */
 	C_MAKE(ma, (map_hgt + 2), byte_ptr);
 	C_MAKE(mc, (map_hgt + 2), char_ptr);
 	C_MAKE(mp, (map_hgt + 2), byte_ptr);
-	
+
 	/* Allocate and wipe each line map */
 	for (i = 0; i < (map_hgt + 2); i++)
 	{
@@ -2013,7 +2013,7 @@ void display_map(int *cy, int *cx)
 
 		y = y - map_hgt / 2;
 		if (y < 0) y = 0;
-		
+
 		/* Player location in wilderness */
 		(*cy) += py / 16 - y + 1 + ROW_MAP;
 		(*cx) += px / 16 - x + 1 + COL_MAP;
@@ -2032,7 +2032,7 @@ void display_map(int *cy, int *cx)
 				w_type = wild[j + y][i + x].done.wild;
 
 				/* Get attr / char pair for wilderness block type */
-				
+
 				/* Add in effects of sea / roads */
 				if (w_type >= WILD_SEA)
 				{
@@ -2075,11 +2075,11 @@ void display_map(int *cy, int *cx)
 		}
 	}
 	else
-	{		
+	{
 		/* Player location in dungeon */
 		(*cy) = py / yrat + 1 + ROW_MAP;
 		(*cx) = px / xrat + 1 + COL_MAP;
-		
+
 		/* Fill in the map of dungeon */
 		for (i = 0; i < cur_wid; ++i)
 		{
@@ -2166,9 +2166,9 @@ void display_map(int *cy, int *cx)
 	/* Restore lighting effects */
 	view_special_lite = old_view_special_lite;
 	view_granite_lite = old_view_granite_lite;
-	
-	
-	
+
+
+
 	/* Free each line map */
 	for (i = 0; i < (map_hgt + 2); i++)
 	{
@@ -2177,7 +2177,7 @@ void display_map(int *cy, int *cx)
 		C_FREE(mc[i], (map_wid + 2), char);
 		C_FREE(mp[i], (map_wid + 2), byte);
 	}
-	
+
 	/* Free the maps */
 	C_FREE(ma, (map_hgt + 2), byte_ptr);
 	C_FREE(mc, (map_hgt + 2), char_ptr);
@@ -2208,15 +2208,15 @@ void do_cmd_view_map(void)
 
 	/* Clear the screen */
 	Term_clear();
-	
-	if(dun_level)
+
+	if (dun_level)
 	{
 		/* In the dungeon - All we have to do is display the map */
-		
+
 		/* No offset from player */
 		cx = 0;
 		cy = 0;
-		
+
 		/* Display the map */
 		display_map(&cy, &cx);
 
@@ -2233,39 +2233,39 @@ void do_cmd_view_map(void)
 	{
 		/* Offset from player */
 		int x, y;
-		
+
 		/* Direction */
 		int d;
-		
+
 		/* No offset yet */
 		x = 0;
 		y = 0;
-		
+
 		/* In the wilderness - Display the map + move it around */
-		
-		while(TRUE)
+
+		while (TRUE)
 		{
 			/* Reset offset of map */
 			cx = x;
 			cy = y;
-			
+
 			display_map(&cy, &cx);
-			
+
 			/* Wait for it */
 			put_str("Move around, or hit any other key to continue.", map_hgt + 1, (14 + map_wid) / 2 + 15);
-			
+
 			/* Hilite the player */
 			move_cursor(cy, cx);
-			
+
 			/* Get a response */
 			d = get_keymap_dir(inkey());
-			
+
 			/* Done if not a direction */
 			if (!d) break;
-			
+
 			x += ddx[d];
 			y += ddy[d];
-			
+
 			/* Bounds checking */
 			if (x + px / 16 < 0) x = -px / 16;
 			if (y + py / 16 < 0) y = -py / 16;
@@ -2859,7 +2859,7 @@ void forget_view(void)
 	{
 		int y = view_y[i];
 		int x = view_x[i];
-		
+
 		/* Only lite the spot if is on the panel (can change due to resizing */
 		if (!panel_contains(y, x)) continue;
 
@@ -2868,7 +2868,7 @@ void forget_view(void)
 
 		/* Forget that the grid is viewable */
 		c_ptr->info &= ~(CAVE_VIEW);
-		
+
 		/* Update the screen */
 		lite_spot(y, x);
 	}

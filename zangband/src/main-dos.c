@@ -1634,7 +1634,7 @@ static bool init_windows(void)
 	char filename[1024];
 
 	char buf[128];
-	
+
 	int rows;
 	int cols;
 
@@ -1666,16 +1666,16 @@ static bool init_windows(void)
 		/* Rows and cols of term */
 		rows = get_config_int(section, "rows", 24);
 		cols = get_config_int(section, "cols", 80);
-		
-		/* Paranoia */		
+
+		/* Paranoia */
 		if (rows > 256) rows = 256;
 		if (cols > 256) cols = 256;
-		
+
 		/* The main window must be at least 80x24 */
 		if (i == 0)
 		{
 			if (rows < 24) rows = 24;
-			if (cols < 80) cols = 80; 
+			if (cols < 80) cols = 80;
 		}
 		else
 		{
@@ -1683,7 +1683,7 @@ static bool init_windows(void)
 			if (rows < 1) rows = 1;
 			if (cols < 1) cols = 1;
 		}
-		
+
 		/* Configure the term */
 		td->rows = rows;
 		td->cols = cols;
@@ -1739,23 +1739,23 @@ static bool init_windows(void)
 		/* Link the term */
 		term_data_link(td);
 		angband_term[i] = &td->t;
-		
+
 		/* Reset map size if required */
 		if (i == 0)
-		{				
+		{
 			/* Recalculate map size */
 			map_hgt = rows - 2;
 			map_wid = cols - 14;
-				
+
 			/* Mega-Hack -- no panel yet */
 			panel_row_min = 0;
 			panel_row_max = 0;
 			panel_col_min = 0;
 			panel_col_max = 0;
-				
+
 			/* Reset the panels */
 			map_panel_size();
-				
+
 			verify_panel();
 		}
 	}

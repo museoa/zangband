@@ -1949,7 +1949,7 @@ void do_cmd_debug(void)
 		case '=':
 		output_monster_matlab();
 		break;
-#endif  /* MATLAB */
+#endif /* MATLAB */
 
 		/* Hack -- Help */
 		case '?':

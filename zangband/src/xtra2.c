@@ -491,7 +491,7 @@ void monster_death(int m_idx)
 
 #ifdef USE_CORPSES
 	/* Drop a dead corpse? */
-	
+
 	/* Hack: Do not drop a corpse in a random quest.  (reward is set) */
 	if (((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
@@ -530,8 +530,8 @@ void monster_death(int m_idx)
 		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
 
 		q_ptr->pval = m_ptr->r_idx;
-		
-		if(ironman_nightmare)
+
+		if (ironman_nightmare)
 		{
 			q_ptr->timeout = CORPSE_NIGHTMARE;
 		}
@@ -1977,7 +1977,7 @@ static void target_set_prepare(int mode)
 
 			/* Require target_able monsters for "TARGET_KILL" */
 			if ((mode & (TARGET_KILL)) && !target_able(c_ptr->m_idx)) continue;
-			
+
 			/* Require hostile creatures if "TARGET_HOST" is used */
 			if ((mode & (TARGET_HOST)) && !is_hostile(&m_list[c_ptr->m_idx])) continue;
 
@@ -2979,16 +2979,16 @@ bool get_aim_dir(int *dp)
 	char	command;
 
 	cptr	p;
-	
+
 	/* Initialize */
 	*dp = 0;
-	
+
 	/* Global direction */
 	dir = command_dir;
-	
+
 	/* Hack -- auto-target if requested */
 	if (use_old_target && target_okay()) dir = 5;
-	
+
 #ifdef ALLOW_REPEAT /* TNB */
 
 	if (repeat_pull(dp))

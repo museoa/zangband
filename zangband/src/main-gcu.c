@@ -38,7 +38,7 @@
  * This file will attempt to redefine the screen colors to conform to
  * standard Angband colors.  It will only do so if the terminal type
  * indicates that it can do so.  See the page:
- * 
+ *
  *     http://www.umr.edu/~keldon/ang-patch/ncurses_color.html
  *
  * for information on this.
@@ -926,23 +926,23 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
 
 	/* Activate it */
 	Term_activate(t);
-	
+
 	/* Reset map size if required */
 	if (i == 0)
-	{				
+	{
 		/* Recalculate map size */
 		map_hgt = rows - 2;
 		map_wid = cols - 14;
-				
+
 		/* Mega-Hack -- no panel yet */
 		panel_row_min = 0;
 		panel_row_max = 0;
 		panel_col_min = 0;
 		panel_col_max = 0;
-				
+
 		/* Reset the panels */
 		map_panel_size();
-				
+
 		verify_panel();
 	}
 
@@ -985,7 +985,7 @@ errr init_gcu(int argc, char *argv[])
 #ifdef USE_GRAPHICS
 	/* Set graphics flag */
 	use_graphics = FALSE;
-	
+
 	/* Use the graphical wall tiles? */
 	use_blocks = arg_graphics;
 #endif
@@ -1087,7 +1087,7 @@ errr init_gcu(int argc, char *argv[])
 	for (i = 0; i < num_term; i++)
 	{
 		int rows, cols, y, x;
-		
+
 		/* Hack - the main window is huge */
 		cols = 80 + (COLS - 80) * 1 / 4;
 		rows = 24 + (LINES - 24) / 2;

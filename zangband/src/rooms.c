@@ -2578,7 +2578,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	u16b xstep, xhstep, ystep, yhstep;
 	u16b xstep2, xhstep2, ystep2, yhstep2;
 	u16b i, j, ii, jj, diagsize, xxsize, yysize;
-	
+
 	/* Cache for speed */
 	u16b xm, xp, ym, yp;
 
@@ -2605,10 +2605,10 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	fill_data.ymin = y0 - yhsize;
 	fill_data.xmax = x0 + xhsize;
 	fill_data.ymax = y0 + yhsize;
-	
+
 	/* Store cutoff in global for quick access */
 	fill_data.c1 = cutoff;
-	
+
 	/*
 	* Scale factor for middle points:
 	* About sqrt(2) * 256 - correct for a square lattice
@@ -2657,11 +2657,11 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 		xhstep /= 2;
 		ystep = yhstep;
 		yhstep /= 2;
-		
+
 		/* cache well used values */
 		xstep2 = xstep / 256;
 		ystep2 = ystep / 256;
-		
+
 		xhstep2 = xhstep / 256;
 		yhstep2 = yhstep / 256;
 
@@ -2673,10 +2673,10 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				/* cache often used values */
 				ii = i / 256 + fill_data.xmin;
 				jj = j / 256 + fill_data.ymin;
-				
+
 				/* Test square */
 				if (cave[jj][ii].feat == 255)
-				{				
+				{
 					if (xhstep2 > grd)
 					{
 						/* If greater than 'grid' level then is random */
@@ -2703,7 +2703,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				/* cache often used values */
 				ii = i / 256 + fill_data.xmin;
 				jj = j / 256 + fill_data.ymin;
-				
+
 				/* Test square */
 				if (cave[jj][ii].feat == 255)
 				{
@@ -2732,10 +2732,10 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 			   	/* cache often used values */
 				ii = i / 256 + fill_data.xmin;
 				jj = j / 256 + fill_data.ymin;
-				
+
 				/* Test square */
 				if (cave[jj][ii].feat == 255)
-				{				
+				{
 					if (xhstep2 > grd)
 					{
 						/* If greater than 'grid' level then is random */
@@ -2747,12 +2747,12 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 						xm = fill_data.xmin + (i - xhstep) / 256;
 						xp = fill_data.xmin + (i + xhstep) / 256;
 						ym = fill_data.ymin + (j - yhstep) / 256;
-						yp = fill_data.ymin + (j + yhstep) / 256;					
-					
-						/* 
+						yp = fill_data.ymin + (j + yhstep) / 256;
+
+						/*
 						 * Average over all four corners + scale by diagsize to
 						 * reduce the effect of the square grid on the shape of the fractal
-						 */				
+						 */
 						store_height(ii, jj,
 							(cave[ym][xm].feat + cave[yp][xm].feat
 							+ cave[ym][xp].feat + cave[yp][xp].feat) / 4
@@ -2872,7 +2872,7 @@ static void fill_hack(byte y, byte x)
 static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, bool light, bool room)
 {
 	int x, y, i, xhsize, yhsize;
-	
+
 
 	/* offsets to middle from corner */
 	xhsize = xsize / 2;
@@ -3199,7 +3199,7 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 	 * this gets rid of alot of isolated one-sqaures that
 	 * can make teleport traps instadeaths...
 	 */
-	
+
 	/* cutoffs */
 	fill_data.c1 = c1;
 	fill_data.c2 = c2;

@@ -665,7 +665,7 @@ static void wr_monster(monster_type *m_ptr)
 static void wr_field(field_type *f_ptr)
 {
 	int i;
-	
+
 	wr_s16b(f_ptr->t_idx);
 
 	/* Location */
@@ -674,10 +674,10 @@ static void wr_field(field_type *f_ptr)
 
 	/* Info flags */
 	wr_u16b(f_ptr->info);
-	
+
 	/* Counter */
 	wr_s16b(f_ptr->counter);
-	
+
 	/* Data */
 	for (i = 0; i < 8; i++)
 	{
@@ -1401,10 +1401,10 @@ static void wr_dungeon(void)
 
 	/* Compact the objects */
 	compact_objects(0);
-	
+
 	/* Compact the monsters */
 	compact_monsters(0);
-	
+
 	/* Compact the fields */
 	compact_fields(0);
 
@@ -1437,7 +1437,7 @@ static void wr_dungeon(void)
 		/* Dump it */
 		wr_monster(m_ptr);
 	}
-	
+
 	/*** Dump the fields ***/
 
 	/* Total fields */

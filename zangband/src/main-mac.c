@@ -665,7 +665,7 @@ static void term_data_color(term_data *td, int a)
 		color.red = (rv | (rv << 8));
 		color.green = (gv | (gv << 8));
 		color.blue = (bv | (bv << 8));
-	
+
 		/* Activate the color */
 		RGBForeColor(&color);
 
@@ -973,7 +973,7 @@ static OSErr BenSWCreateGWorldFromPict(
 	OffsetRect(&pictRect, -pictRect.left, -pictRect.top);
 
 	/* Create a GWorld */
-	err = NewGWorld(&tempGWorld, depth, &pictRect, nil, 
+	err = NewGWorld(&tempGWorld, depth, &pictRect, nil,
 					theGDH, noNewDevice);
 
 	/* Success */
@@ -999,7 +999,7 @@ static OSErr BenSWCreateGWorldFromPict(
 
 	/* Restore GWorld */
 	SetGWorld(saveGWorld, saveGDevice);
-	
+
 	/* Success */
 	return (0);
 }
@@ -1011,7 +1011,7 @@ static OSErr BenSWCreateGWorldFromPict(
 static errr globe_init(void)
 {
 	OSErr err;
-	
+
 	GWorldPtr tempPictGWorldP;
 
 	PicHandle newPictH;
@@ -1083,7 +1083,7 @@ static errr globe_nuke(void)
 		frameP = NULL;
 	}
 
-	/* Flush events */	
+	/* Flush events */
 	FlushEvents(everyEvent, 0);
 
 	/* Success */
@@ -1162,7 +1162,7 @@ static void Term_init_mac(term *t)
 		/* Obtain the rect */
 		tempRect = td->w->portRect;
 
-		/* Obtain the global rect */	
+		/* Obtain the global rect */
 		globalRect = tempRect;
 		LocalToGlobal((Point*)&globalRect.top);
 		LocalToGlobal((Point*)&globalRect.bottom);
@@ -1253,7 +1253,7 @@ static errr Term_xtra_mac_react(void)
 #ifdef ANGBAND_LITE_MAC
 
 	/* Nothing */
-	
+
 #else /* ANGBAND_LITE_MAC */
 
 	/* Handle sound */
@@ -2513,7 +2513,7 @@ static void init_menubar(void)
 	for (i = 8; i <= 32; i += ((i / 16) + 1))
 	{
 		Str15 buf;
-		
+
 		/* Textual size */
 		sprintf((char*)buf + 1, "%d", i);
 		buf[0] = strlen((char*)buf + 1);
@@ -2533,7 +2533,7 @@ static void init_menubar(void)
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
 		Str15 buf;
-		
+
 		/* Describe the item */
 		sprintf((char*)buf + 1, "%.15s", angband_term_name[i]);
 		buf[0] = strlen((char*)buf + 1);
@@ -2570,7 +2570,7 @@ static void init_menubar(void)
 	for (i = 4; i <= 32; i++)
 	{
 		Str15 buf;
-		
+
 		/* Textual size */
 		sprintf((char*)buf + 1, "%d", i);
 		buf[0] = strlen((char*)buf + 1);
@@ -2764,7 +2764,7 @@ static void setup_menus(void)
 		DisableItem(m, i);
 		CheckItem(m, i, FALSE);
 	}
-	
+
 	/* Active window */
 	if (td)
 	{
@@ -3240,7 +3240,7 @@ static void menu(long mc)
 			/* Mapped */
 			td->mapped = TRUE;
 
-			/* Link */	
+			/* Link */
 			term_data_link(i);
 
 			/* Mapped (?) */
@@ -3828,7 +3828,7 @@ static bool CheckEvents(bool wait)
 					int x, y;
 
 					term *old = Term;
-					
+
 					bool redraw_it = TRUE;
 
 					/* Oops */
@@ -3865,36 +3865,36 @@ static bool CheckEvents(bool wait)
 
 					/* Resize and Redraw */
 					term_data_resize(td);
-					
+
 					/* Reset map size if required */
 					if (window == 0)
-					{				
+					{
 						/* Recalculate map size */
 						map_hgt = td->rows - 2;
 						map_wid = td->cols - 14;
-				
+
 						/* Mega-Hack -- no panel yet */
 						panel_row_min = 0;
 						panel_row_max = 0;
 						panel_col_min = 0;
 						panel_col_max = 0;
-				
+
 						/* Reset the panels */
 						map_panel_size();
-				
+
 						verify_panel();
 					}
-						
+
 					/* Only redraw if everything is initialised */
 					if (character_dungeon && redraw_it)
-					{			
+					{
 						/* Activate term zero for the redraw */
 						Term_activate(&data[0].t);
-				
+
 						/* redraw */
 						do_cmd_redraw_term(window);
 					}
-					
+
 					term_data_redraw(td);
 
 					/* Restore */
@@ -4282,7 +4282,7 @@ int main(void)
 # if defined(powerc) || defined(__powerc)
 
 	/* Assume System 7 */
-	
+
 	/* Assume Color Quickdraw */
 
 # else

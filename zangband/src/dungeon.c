@@ -2159,7 +2159,7 @@ static void process_world(void)
 	{
 		/* Get the object */
 		o_ptr = &inventory[i];
-		
+
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
@@ -2269,21 +2269,21 @@ static void process_world(void)
 				j++;
 			}
 		}
-		
+
 		/* Should corpses decay when carried? */
 		else if (o_ptr->tval == TV_CORPSE )
 		{
 			/* Decrease counter */
 			o_ptr->timeout--;
-			
+
 			/* Notice changes */
 			if (!o_ptr->timeout)
-			{	
+			{
 				char o_name[80];
 
 				/* Describe the object */
 				object_desc(o_name, o_ptr, FALSE, 0);
-				
+
 				if (ironman_nightmare)
 				{
 					/* Make a monster nearby if possible */
@@ -2291,28 +2291,28 @@ static void process_world(void)
 						 o_ptr->pval, FALSE, FALSE, FALSE))
 					{
 						msg_format("The %s rises.", o_name);
-						
+
 						/* Set the cloned flag, so no treasure is dropped */
 						m_list[hack_m_idx_ii].smart |= SM_CLONED;
 					}
 				}
 				else
-				{			
+				{
 					/* Let player know what happened. */
 					msg_format("The %s decays.", o_name);
 				}
-				
+
 				/* The corpse/skeleton is destroyed */
 				inven_item_increase(i, -1);
 				inven_item_describe(i);
 				inven_item_optimize(i);
-				
+
 				/* Hack- everything is shifted up */
 				i--;
-				
+
 				/* Notice something */
 				j++;
-			}	
+			}
 		}
 	}
 
@@ -2340,7 +2340,7 @@ static void process_world(void)
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
-		
+
 		if (!o_ptr->timeout) continue;
 
 		/* Recharge rods on the ground.  No messages. */
@@ -2356,10 +2356,10 @@ static void process_world(void)
 		{
 			/* Decrease counter */
 			o_ptr->timeout--;
-			
+
 			/* Notice changes */
 			if (!o_ptr->timeout)
-			{	
+			{
 				if (ironman_nightmare)
 				{
 					/* Make a monster nearby if possible */
@@ -2367,19 +2367,19 @@ static void process_world(void)
 						 o_ptr->pval, FALSE, FALSE, FALSE))
 					{
 						monster_type *m_ptr = &m_list[hack_m_idx_ii];
-						
+
 						if (player_can_see_bold(m_ptr->fy, m_ptr->fx))
 						{
 							msg_format("The %s rises.");
 						}
-						
+
 						/* Set the cloned flag, so no treasure is dropped */
 						m_ptr->smart |= SM_CLONED;
 					}
 				}
-				
+
 				/* Assume that no corpse is in a monsters inventory. */
-				
+
 				/* The corpse/skeleton is destroyed */
 				floor_item_increase(i, -1);
 				floor_item_optimize(i);
@@ -3749,7 +3749,7 @@ static void process_energy(void)
 			process_player();
 		}
 	}
-	
+
 	/* Process the fields */
 	process_fields();
 }
@@ -3984,7 +3984,7 @@ static void dungeon(void)
 		/* Hack -- Compress the object list occasionally */
 		if (o_cnt + 32 < o_max) compact_objects(0);
 
-		
+
 		/* Hack -- Compact the field list occasionally */
 		if (fld_cnt + 32 > max_fld_idx) compact_fields(64);
 
@@ -4513,9 +4513,9 @@ void play_game(bool new_game)
 				/* Do not die */
 				death = FALSE;
 
-				dun_level = 0;				
+				dun_level = 0;
 				change_level(dun_level);
-				
+
 				p_ptr->inside_arena = 0;
 				leaving_quest = 0;
 				p_ptr->inside_quest = 0;

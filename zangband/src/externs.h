@@ -543,7 +543,7 @@ extern bool research_mon(void);
 
 /* cmd4.c */
 extern void do_cmd_redraw(void);
-extern void do_cmd_redraw_term(void);
+extern void do_cmd_redraw_term(int window);
 extern void do_cmd_message_one(void);
 extern void do_cmd_messages(void);
 extern void do_cmd_options_aux(int page, cptr info);

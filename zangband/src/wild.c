@@ -2248,7 +2248,7 @@ static void del_block(blk_ptr block_ptr)
 
 			/* Delete objects on the square */
 			delete_object_location(&block_ptr[y][x]);
-			
+
 			/* Delete fields on the square */
 			delete_field_aux(&block_ptr[y][x].fld_idx);
 		}
@@ -2646,13 +2646,13 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 {
 	int i, j, ii, jj;
 	cave_type *c_ptr;
-	
+
 	/* Only draw if road is on the sqaure */
 	if (!(wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD))) return;
-	
+
 	/* Clear the temporary block */
 	clear_temp_block();
-	
+
 	/* Set the corner + side + middle values depending on road status */
 	for (i = x - 1; i <= x + 1; i++)
 	{
@@ -2660,18 +2660,18 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 		{
 			ii = ((1 + i - x) * WILD_BLOCK_SIZE) / 2;
 			jj = ((1 + j - y) * WILD_BLOCK_SIZE) / 2;
-			
+
 			temp_block[jj][ii] = WILD_BLOCK_SIZE * 60;
-			
+
 			/* Bounds checking */
 			if ((i < 0) || (j < 0) || (i >= max_wild) || (j >= max_wild)) continue;
-			
+
 			/* Is it a track? */
 			if (wild[j][i].done.info & WILD_INFO_TRACK)
 			{
 				temp_block[jj][ii] = WILD_BLOCK_SIZE * 180;
 			}
-			
+
 			/* Is it a road? */
 			if (wild[j][i].done.info & WILD_INFO_ROAD)
 			{
@@ -2682,18 +2682,18 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 
 	/* Build the fractal */
 	frac_block();
-	
+
 	/* Copy the result over the block */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
-			/* Is it a road square? */			
+			/* Is it a road square? */
 			if (temp_block[j][i] >= WILD_BLOCK_SIZE * 160)
 			{
 				/* Point to square */
-				c_ptr = &block_ptr[j][i]; 
-			
+				c_ptr = &block_ptr[j][i];
+
 				if ((c_ptr->feat == FEAT_SHAL_WATER) ||
 					(c_ptr->feat == FEAT_DEEP_WATER))
 				{
@@ -2714,8 +2714,8 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 						c_ptr->feat = FEAT_PEBBLES;
 					}
 				}
-			}		
-		}	
+			}
+		}
 	}
 }
 
@@ -3249,10 +3249,10 @@ static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 		}
 
 		/* Add roads */
-#if 0		
+#if 0
 		make_wild_road(block_ptr, x, y);
 #endif /* 0 */
-		
+
 		/* Add lava (Not Done) */
 	}
 	/* Hack -- Use the "complex" RNG */
@@ -3577,10 +3577,10 @@ struct road_type
 	/* location of point */
 	s16b x;
 	s16b y;
-	
+
 	/* Number of connections */
 	byte connect;
-	
+
 	coord con_pts[4];
 };
 
@@ -3606,56 +3606,56 @@ static void add_road_wild(s32b ny, s32b nx)
 		/* Make a road */
 		wild[ny][nx].done.info |= WILD_INFO_ROAD;
 	}
-}	
+}
 
 static void create_roads(void)
 {
 	/* Number of iterations to do */
 	u32b n = max_wild * max_wild / 20;
-	
+
 	/* Save maximum number of points possible */
 	u32b points = n;
-	
+
 	bool flag;
-	
+
 	s16b i, j, best_point;
-	
+
 	s32b x, y;
 	s32b ny, nx, dx, dy;
-	
+
 	s32b dist, min_dist;
-	
+
 	road_type *r_ptr, *j_ptr, *n_ptr;
-	
+
 	/* Current maximum number of points in the road point array */
 	u16b road_pt_max = 0;
-	
+
 	/* Make Road Array */
-	C_MAKE(road_pt, points, road_type);	
-	
+	C_MAKE(road_pt, points, road_type);
+
 	/* Create starting points from towns */
 	for (i = 1; i < town_count; i++)
 	{
-		/* 
+		/*
 		 * This is a huge hack now.
 		 * Later - this should look up the town's type
 		 * to see how big it is, and where the entrances
 		 * are.
 		 */
-		
+
 		x = town[i].x;
 		y = town[i].y;
-		
+
 		/* Towns are two wide, and four high */
-		
+
 		/* Get new point */
 		r_ptr = &road_pt[road_pt_max];
-		
+
 		switch (rand_int(4))
 		{
 			case 0:
 				r_ptr->x = x;
-				r_ptr->y = y;			
+				r_ptr->y = y;
 			break;
 			case 1:
 				r_ptr->x = x + 1;
@@ -3670,60 +3670,60 @@ static void create_roads(void)
 				r_ptr->y = y;
 			break;
 		}
-		
+
 		r_ptr->connect = 0;
-			
+
 		/* Add the extra point */
 		road_pt_max++;
 	}
-	
+
 	/* The main loop */
 	while ((road_pt_max > 5) && (n > 0))
 	{
 		/* Decrement counter */
 		n--;
-		
-		/* 
+
+		/*
 		 * Pick 6 points, with the chance of keeping
 		 * a point dependant on how many connections it has.
 		 * (A quick way of picking a "good" point.)
 		 */
-		 
+
 		/* Get a random starting point */
 		r_ptr = &road_pt[rand_int(road_pt_max)];
-		
+
 		for (i = 0; i < 5; i++)
 		{
 			/* Get a new point */
 			j_ptr =  &road_pt[rand_int(road_pt_max)];
-			
+
 			/* Chance to keep based on # of connections */
 			if (j_ptr->connect < randint(6)) r_ptr = j_ptr;
 		}
-		
+
  		/* Initialise variables */
 		min_dist = max_wild * max_wild * 2;
 		best_point = -1;
-		
+
 		/* Find the closest point to the chosen one. */
 		for (i = 0; i < road_pt_max; i++)
 		{
 			/* Get a new point */
 			j_ptr =  &road_pt[i];
-			
+
 			/* Not same point as chosen one. */
 			if (j_ptr == r_ptr) continue;
-			
+
 			x = j_ptr->x - r_ptr->x;
 			y = j_ptr->y - r_ptr->y;
-			
+
 			dist = x*x + y*y;
-			
+
 			/* Is it closer? */
 			if (dist < min_dist)
 			{
 				flag = TRUE;
-				
+
 				if (r_ptr->connect)
 				{
 					/* It is already connected to this point? */
@@ -3736,7 +3736,7 @@ static void create_roads(void)
 						}
 					}
 				}
-				
+
 				/* See if both are at the same town */
 				if ((wild[r_ptr->y][r_ptr->x].done.town) &&
 					((wild[j_ptr->y][j_ptr->x].done.town) ==
@@ -3744,58 +3744,58 @@ static void create_roads(void)
 				{
 					flag = FALSE;
 				}
-				
+
 				/* If not connected, record it. */
 				if (flag)
 				{
 					min_dist = dist;
 					best_point = i;
-				}				
+				}
 			}
 		}
-		
-		/* Paranioa */		
+
+		/* Paranioa */
 		if (best_point == -1) continue;
-		
+
 		/* Point to best point */
 		j_ptr = &road_pt[best_point];
-		
+
 		/* If is close, connect the two points */
 		if (min_dist < 400)
 		{
 			/* Recalculate distance exactly */
 			dist = distance(j_ptr->y, j_ptr->x, r_ptr->y, r_ptr->x);
-			
+
 			/* Connect by line */
 			for (i = 1; i < dist; i++)
 			{
 				x = j_ptr->x + i * (r_ptr->x - j_ptr->x) / dist;
 				y = j_ptr->y + i * (r_ptr->y - j_ptr->y) / dist;
-			
+
 				/* Add the road to the wilderness */
 				add_road_wild(y, x);
 			}
-			
+
 			/* Add connection information */
 			i = j_ptr->connect;
-			
+
 			j_ptr->con_pts[i].x = r_ptr->x;
 			j_ptr->con_pts[i].y = r_ptr->y;
 			j_ptr->connect++;
-			
+
 			i = r_ptr->connect;
-			
+
 			r_ptr->con_pts[i].x = j_ptr->x;
 			r_ptr->con_pts[i].y = j_ptr->y;
 			r_ptr->connect++;
-			
-			/* 
+
+			/*
 			 * Chance to remove points based on # of connections.
 			 * Note that we have to check to see if the points are
 			 * last in the list because that is a special case.
 			 * (Making the second pointer invalid is bad.)
 			 */
-			
+
 			/* See if want to delete j_ptr */
 			if (((!wild[j_ptr->y][j_ptr->x].done.town)
 				 && (j_ptr->connect > rand_int(3) + 1)) || (j_ptr->connect >= 4))
@@ -3805,45 +3805,45 @@ static void create_roads(void)
 				{
 					/* Structure Copy */
 					*j_ptr = *r_ptr;
-					
+
 					/* move r_ptr */
 					r_ptr = j_ptr;
-					
+
 				}
 				else
 				{
 					/* Structure Copy */
 					*j_ptr = road_pt[road_pt_max - 1];
 				}
-				
+
 				/* Decrease maximum */
 				road_pt_max--;
 			}
-			
+
 			/* See if want to delete r_ptr */
 			if (((!wild[r_ptr->y][r_ptr->x].done.town)
 				 && (r_ptr->connect > rand_int(3) + 1)) || (r_ptr->connect >= 4))
 			{
 				/* Structure Copy */
 				*r_ptr = road_pt[road_pt_max - 1];
-				
+
 				/* decrease maximum */
 				road_pt_max--;
 			}
-			
+
 			/* Done for this set */
 			continue;
 		}
-		
+
 		/* Hack to reduce overdraw */
 		/*if (min_dist * 2 > n) continue;*/
-		
-		
+
+
 		/* Get shifts */
 		dx = abs(r_ptr->x - j_ptr->x);
 		dy = abs(r_ptr->y - j_ptr->y);
-		
-		if (dx > 0) 
+
+		if (dx > 0)
 		{
 			ny = randint(dx) - dx / 2;
 		}
@@ -3851,7 +3851,7 @@ static void create_roads(void)
 		{
 			ny = 0;
 		}
-		
+
 		if (dy > 0)
 		{
 			nx = randint(dy) - dy / 2;
@@ -3864,25 +3864,25 @@ static void create_roads(void)
 		/* Get new point */
 		nx += (r_ptr->x + j_ptr->x)/2;
 		ny += (r_ptr->y + j_ptr->y)/2;
-		
+
 		/* Bounds checking */
 		if (nx < 0) nx = 0;
 		if (nx >= max_wild) nx = max_wild - 1;
 		if (ny < 0) ny = 0;
 		if (ny >= max_wild) ny = max_wild - 1;
-		
+
 		/* Inside sea? */
 		if (wild[ny][nx].done.wild >= WILD_SEA) continue;
-		
+
 		/* Inside river? */
 		if (wild[ny][nx].done.info & WILD_INFO_RIVER) continue;
-	
+
 		/* Chance to add based on strength of monsters */
 		/*if (wild[ny][nx].done.mon_gen > (randint(40) + 20)) continue;*/
-		
+
 		/* write to point */
-		
-		/* 
+
+		/*
 		 * If the list is too big,
 		 *  pick a the point to replace randomly.
 		 */
@@ -3890,30 +3890,30 @@ static void create_roads(void)
 		{
 			/* Get a random point in the list */
 			n_ptr = &road_pt[rand_int(road_pt_max)];
-			
+
 			while ((n_ptr == r_ptr) || (n_ptr == j_ptr))
 			{
 				/* Get a random point in the list */
 				n_ptr = &road_pt[rand_int(road_pt_max)];
-			}	
+			}
 		}
 		else
 		{
 			/* Expand list, and get new point on end */
 			n_ptr = &road_pt[road_pt_max];
-			
+
 			road_pt_max++;
 		}
-		
+
 		/* Add the point */
 		n_ptr->x = nx;
 		n_ptr->y = ny;
 		n_ptr->connect = 0;
-		
+
 		/* Add the road to the wilderness */
 		add_road_wild(ny, nx);
 	}
-	
+
 	/* Done with array */
 	C_KILL(road_pt, points, road_type);
 }
@@ -4671,19 +4671,19 @@ static void wild_done(void)
 
 	wild_grid.x = max_wild + 1;
 	wild_grid.y = max_wild + 1;
-	
+
 	/* hack */
 	dun_level = 1;
-	
+
 	/* Change to the wilderness - but do not light anything yet.*/
 	change_level(0);
-	
+
 	/* Change back to inside wilderness */
-	dun_level = 0;	
+	dun_level = 0;
 
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);
-	
+
 	/* Make the wilderness block cache. */
 	move_wild();
 }
@@ -4913,11 +4913,11 @@ void create_wilderness(void)
 	C_FREE(wild_choice_tree, max_w_node, wild_choice_tree_type);
 	C_FREE(wild_temp_dist, max_wild, byte);
 #endif
-	
+
 	/* A dodgy town generation routine */
 	init_towns();
 
-#if 0	
+#if 0
 	/* Connect the towns with roads */
 	create_roads();
 #endif /* 0 */

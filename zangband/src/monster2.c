@@ -465,7 +465,7 @@ errr get_mon_num_prep(monster_hook_type monster_hook,
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Accept monsters which pass the restriction, if any */
-		
+
 		/*
 		 * Hack - check for silly monsters here.
 		 * This makes more sense then adding the test to every
@@ -938,10 +938,10 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 void sanity_blast(monster_type *m_ptr, bool necro)
 {
 #if 0
-	/* This variable is only needed for the (disabled) 
+	/* This variable is only needed for the (disabled)
 	insanity mutations */
 	bool happened = FALSE;
-#endif 
+#endif
 
 	int power = 100;
 
@@ -1057,7 +1057,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 	}
 
 	/* Permanent stat drains *REMOVED* completely. They sucked. --ty */
-	else 
+	else
 	{
 		if (lose_all_info())
 			msg_print("You forget everything in your utmost terror!");

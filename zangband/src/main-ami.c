@@ -4187,14 +4187,14 @@ static void amiga_map( void )
 		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * MAX_WID )) / 2;
 		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * MAX_HGT )) / 2;
 	}
-#else	
+#else
 
 	/* Calculate offset values */
 	td->map_x = (( td->fw * 80 ) - ( td->mpt_w * cur_wid )) / 2;
 	td->map_y = (( td->fh * 24 ) - ( td->mpt_h * cur_hgt )) / 2;
-	
-#endif	
-	
+
+#endif
+
 	if (td->map_x < 0)
 		td->map_x = 0;
 	if (td->map_y < 0)
@@ -4203,7 +4203,7 @@ static void amiga_map( void )
 	/* In the dungeon */
 	if (dun_level)
 	{
-#endif	
+#endif
 		/* Draw all "interesting" features */
 		for ( i = 0; i < cur_wid; i++ )
 		{
@@ -4235,7 +4235,7 @@ static void amiga_map( void )
 					map_info( j, i, &ta, (char *) &tc );
 #endif
 				}
-	
+
 				/* Ignore non-graphics */
 				if ( ta & 0x80 )
 				{
@@ -4248,7 +4248,7 @@ static void amiga_map( void )
 						ta = get_p_attr();
 						tc = get_p_char();
 					}
-	
+
 					/* Put the graphics to the screen */
 					put_gfx_map( td, i, j, tc, ta );
 				}
@@ -4259,13 +4259,13 @@ static void amiga_map( void )
 	else
 	{
 		/* The player is in the wilderness */
-		
-		/* Work out offset of corner of dungeon-sized segment of the wilderness */ 
+
+		/* Work out offset of corner of dungeon-sized segment of the wilderness */
 		int xoffset, yoffset;
-		
+
 		xoffset = (wild_grid.x_min + wild_grid.x_max - WILD_GRID_SIZE * 16) / 2;
 		yoffset = (wild_grid.y_min + wild_grid.y_max - MAX_HGT) / 2;
-		
+
 		/* Draw all "interesting" features */
 		for ( i = xoffset; i < xoffset + WILD_GRID_SIZE * 16; i++ )
 		{
@@ -4287,7 +4287,7 @@ static void amiga_map( void )
 					map_info( j, i, &ta, (char *) &tc );
 #endif
 				}
-	
+
 				/* Ignore non-graphics */
 				if ( ta & 0x80 )
 				{
@@ -4300,7 +4300,7 @@ static void amiga_map( void )
 						ta = get_p_attr();
 						tc = get_p_char();
 					}
-	
+
 					/* Put the graphics to the screen */
 					put_gfx_map( td, i - xoffset, j - yoffset, tc, ta );
 				}

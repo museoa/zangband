@@ -1059,20 +1059,20 @@ errr init_cap(void)
 
 	/* Activate it */
 	Term_activate(term_screen);
-	
+
 	/* Recalculate map size */
 	map_hgt = rows - 2;
 	map_wid = cols - 14;
-				
+
 	/* Mega-Hack -- no panel yet */
 	panel_row_min = 0;
 	panel_row_max = 0;
 	panel_col_min = 0;
 	panel_col_max = 0;
-				
+
 	/* Reset the panels */
 	map_panel_size();
-				
+
 	verify_panel();
 
 	/* Success */

@@ -316,7 +316,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if ((c_ptr->m_idx != 0) && (n > 0))
 			{
 				if (flg & (PROJECT_STOP)) break;
-				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;		
+				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;
 			}
 
 			/* Slant */
@@ -386,7 +386,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if ((c_ptr->m_idx != 0) && (n > 0))
 			{
 				if (flg & (PROJECT_STOP)) break;
-				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;		
+				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;
 			}
 
 			/* Slant */
@@ -450,7 +450,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if ((c_ptr->m_idx != 0) && (n > 0))
 			{
 				if (flg & (PROJECT_STOP)) break;
-				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;		
+				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;
 			}
 
 			/* Advance (Y) */

@@ -85,17 +85,17 @@ void do_cmd_redraw(void)
 	}
 }
 
-/* 
+
+/*
  * Redraw the current term.
  *
  * This is used when the map is resized.
  */
-
 void do_cmd_redraw_term(int window)
 {
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
-	
+
 	/* The main window */
 	if (window == 0)
 	{
@@ -123,14 +123,14 @@ void do_cmd_redraw_term(int window)
 	else
 	{
 		/* Other windows */
-		
+
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
 	}
-	
+
 	/* Hack -- update */
 	handle_stuff();
 

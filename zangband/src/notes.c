@@ -29,7 +29,7 @@ cptr notes_file(void)
 
 	/* Create the file name from the character's name plus .txt */
 	(void)strnfmt(fname, 15, "%s.txt", base_name);
-	
+
 	path_build(buf, 500, ANGBAND_DIR_SAVE, fname);
 
 	/* return the filename */

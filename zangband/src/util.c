@@ -3704,49 +3704,49 @@ static s16b gamma_helper[256] =
 };
 
 
-/* 
+/*
  * Build the gamma table so that floating point isn't needed.
- * 
+ *
  * Note gamma goes from 0->256.  The old value of 100 is now 128.
  */
 void build_gamma_table(int gamma)
 {
 	int i, n;
-	
+
 	/*
 	 * value is the current sum.
 	 * diff is the new term to add to the series.
 	 */
 	long value, diff;
-	
+
 	/* Hack - convergence is bad in these cases. */
 	gamma_table[0] = 0;
 	gamma_table[255] = 255;
-	
+
 	for (i = 1; i < 255; i++)
 	{
-		/* 
+		/*
 		 * Initialise the Taylor series
 		 *
 		 * value and diff have been scaled by 256
 		 */
-		
+
 		n = 1;
 		value = 256 * 256;
 		diff = ((long)gamma_helper[i]) * (gamma - 256);
-		
+
 		while (diff)
 		{
 			value += diff;
 			n++;
-			
-			
+
+
 			/*
 			 * Use the following identiy to calculate the gamma table.
 			 * exp(x) = 1 + x + x^2/2 + x^3/(2*3) + x^4/(2*3*4) +...
 			 *
 			 * n is the current term number.
-			 * 
+			 *
 			 * The gamma_helper array contains a table of
 			 * ln(x/256) * 256
 			 * This is used because a^b = exp(b*ln(a))
@@ -3763,8 +3763,8 @@ void build_gamma_table(int gamma)
 			 */
 			diff = (((diff / 256) * gamma_helper[i]) * (gamma - 256)) / (256 * n);
 		}
-		
-		/* 
+
+		/*
 		 * Store the value in the table so that the
 		 * floating point pow function isn't needed .
 		 */

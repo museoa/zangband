@@ -1346,7 +1346,7 @@ static void fix_overhead(void)
 		/* No offset from player */
 		cx = 0;
 		cy = 0;
-		
+
 		/* Redraw map */
 		display_map(&cy, &cx);
 
@@ -2445,7 +2445,7 @@ void calc_bonuses(void)
 						p_ptr->pspeed += (p_ptr->lev) / 10;
 
 				/* Free action if unencumbered at level 25 */
-				if  ((p_ptr->lev > 24) && !monk_heavy_armor())
+				if ((p_ptr->lev > 24) && !monk_heavy_armor())
 					p_ptr->free_act = TRUE;
 				break;
 		}

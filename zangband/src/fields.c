@@ -27,10 +27,10 @@ void excise_field_idx(int fld_idx)
 
 	/* Field */
 	field_type *j_ptr = &fld_list[fld_idx];
-	
+
 	int y = j_ptr->fy;
 	int x = j_ptr->fx;
-	
+
 
 	/* Exit if is a "dummy" object */
 	if ((x == 0) && (y == 0)) return;
@@ -42,7 +42,7 @@ void excise_field_idx(int fld_idx)
 	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
 	{
 		field_type *f_ptr;
-		
+
 		/* Acquire field */
 		f_ptr = &fld_list[this_f_idx];
 
@@ -93,14 +93,14 @@ void delete_field_idx(int fld_idx)
 {
 	/* Field */
 	field_type *j_ptr = &fld_list[fld_idx];
-	
+
 	/* Dungeon floor */
 	int y, x;
 
 	/* Location */
 	y = j_ptr->fy;
 	x = j_ptr->fx;
-	
+
 	/* Excise */
 	excise_field_idx(fld_idx);
 
@@ -126,9 +126,9 @@ void delete_field_idx(int fld_idx)
  * Deletes the list of fields attached to something.
  */
 void delete_field_aux(s16b *fld_idx_ptr)
-{	
+{
 	s16b this_f_idx, next_f_idx = 0;
-	
+
 	/* Scan all fields in the grid */
 	for (this_f_idx = *fld_idx_ptr; this_f_idx; this_f_idx = next_f_idx)
 	{
@@ -150,7 +150,7 @@ void delete_field_aux(s16b *fld_idx_ptr)
 		/* Count fields */
 		fld_cnt--;
 	}
-	
+
 	/* Nothing left */
 	*fld_idx_ptr = 0;
 }
@@ -194,7 +194,7 @@ static void compact_fields_aux(int i1, int i2)
 	cave_type *c_ptr;
 
 	field_type *f_ptr;
-	
+
 	int y, x;
 
 
@@ -226,12 +226,12 @@ static void compact_fields_aux(int i1, int i2)
 	/* Acquire location */
 	y = f_ptr->fy;
 	x = f_ptr->fx;
-	
+
 	/* If the square exists */
-	if((y) && (x))
+	if ((y) && (x))
 	{
 		/* Acquire grid */
-		c_ptr = area(y,x);
+		c_ptr = area(y, x);
 
 		/* Repair grid */
 		if (c_ptr->fld_idx == i1)
@@ -271,7 +271,7 @@ void compact_fields(int size)
 	int i, y, x, num, cnt;
 
 	int cur_lev, cur_dis, chance;
-	
+
 	int dummy;
 
 
@@ -313,7 +313,7 @@ void compact_fields(int size)
 
 			/* Hack -- High level fields start out "immune" */
 			if (fld_level > cur_lev) continue;
-	
+
 			/* Get the location */
 			y = f_ptr->fy;
 			x = f_ptr->fx;
@@ -323,9 +323,9 @@ void compact_fields(int size)
 
 			/* Saving throw */
 			chance = 90;
-			
+
 			/* Only compact permanent fields in an emergency. */
-			/* Add code here. #####*/
+			/* Add code here. ##### */
 
 			/* Apply the saving throw */
 			if (rand_int(100) < chance) continue;
@@ -369,9 +369,9 @@ void compact_fields(int size)
 void wipe_f_list(void)
 {
 	int i;
-	
+
 	cave_type *c_ptr;
-	
+
 	int y, x;
 
 	/* Delete the existing fields */
@@ -381,11 +381,11 @@ void wipe_f_list(void)
 
 		/* Skip dead objects */
 		if (!f_ptr->t_idx) continue;
-		
+
 		/* Access location */
 		y = f_ptr->fy;
 		x = f_ptr->fx;
-			
+
 		/* If exists at a square */
 		if ((y) && (x))
 		{
@@ -501,55 +501,55 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 {
 	s16b fld_idx = *fld_idx2;
 	s16b new_idx;
-	
+
 	/* Add to a list of fields */
 	while ((*fld_idx2) && (fld_list[*fld_idx2].priority > f_ptr->priority))
-	{				
+	{
 		/* Save old field number */
 		fld_idx = *fld_idx2;
-		
+
 		/* Get next field in the list */
 		fld_idx2 = &(fld_list[*fld_idx2].next_f_idx);
 	}
-	
+
 	/* An Empty list is easy */
 	if (!(*fld_idx2))
 	{
 		new_idx = f_pop();
-		
-		if(!new_idx) return (0);
-		
+
+		if (!new_idx) return (0);
+
 		/* Store into location */
 		*fld_idx2 = new_idx;
-		
+
 		/* Move field to location */
 		field_copy(f_ptr, &fld_list[new_idx]);
-		
-		return (new_idx);		
+
+		return (new_idx);
 	}
-	
+
 	/* Bump a node out of the way */
 	else
 	{
-		/* 
+		/*
 		 * fld_idx points to node before this one.
 		 * *fld_idx2 points to the node after this one.
 		 */
-		
+
 		/* The next node */
 		f_ptr->next_f_idx = *fld_idx2;
-		
+
 		/* Get new node in list */
 		new_idx = f_pop();
-		
-		if(!new_idx) return(0);
-		
+
+		if (!new_idx) return (0);
+
 		/* Make node before this one, point to this one. */
 		fld_list[fld_idx].next_f_idx = new_idx;
-		
+
 		/* Move field to location */
 		field_copy(f_ptr, &fld_list[new_idx]);
-		
+
 		return (new_idx);
 	}
 }
@@ -567,22 +567,22 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 void field_sort_priority(s16b *fld_idx_ptr)
 {
 	s16b *i_ptr, *j_ptr;
-	
+
 	s16b temp;
 	bool swapped = TRUE;
-	
+
 	/* Paranoia - exit if list is empty */
 	if (!(*fld_idx_ptr)) return;
-	
+
 	/* Keep scanning until no more changes */
 	while (swapped)
 	{
 		/* Initialize */
 		i_ptr = fld_idx_ptr;
 		j_ptr = &(fld_list[*i_ptr].next_f_idx);
-		
+
 		swapped = FALSE;
-		
+
 		/* Scan the list until the end */
 		while (*j_ptr)
 		{
@@ -595,7 +595,7 @@ void field_sort_priority(s16b *fld_idx_ptr)
 				*j_ptr = temp;
 				swapped = TRUE;
 			}
-			
+
 			/* Advance the pointers */
 			i_ptr = j_ptr;
 			j_ptr = &(fld_list[*j_ptr].next_f_idx);
@@ -617,31 +617,31 @@ void field_prep(field_type *f_ptr, int t_idx)
 
 	/* Save the kind index */
 	f_ptr->t_idx = t_idx;
-	
+
 	/* Get pointer to thaum type. */
 	t_ptr = &t_info[t_idx];
-	
+
 	/* What it looks like */
 	f_ptr->f_attr = t_ptr->f_attr;
 	f_ptr->f_char = t_ptr->f_char;
-	
+
 	f_ptr->priority = t_ptr->priority;
 	f_ptr->counter = t_ptr->count_init;
 	f_ptr->info = t_ptr->info;
-	
+
 	for (i = 0; i < 8; i++)
 	{
 		/* Store the value */
 		f_ptr->data[i] = t_ptr->data_init[i];
-			
+
 		/* Randomize some of them */
 		if ((i < 4) && (t_ptr->info & FIELD_INFO_RAND))
 		{
 			f_ptr->data[i] = rand_int(f_ptr->data[i]);
 		}
 	}
-	
-	
+
+
 	/* create actions */
 	for (i = 0; i < FIELD_ACTION_MAX; i++)
 	{
@@ -650,14 +650,14 @@ void field_prep(field_type *f_ptr, int t_idx)
 	}
 }
 
-/* 
+/*
  * See if a field of a particular type is on a square.
  * (eg. call with (c_ptr->fld_idx, FTYPE_TRAP) to get traps)
  */
 bool field_is_type(s16b fld_idx, byte typ)
 {
 	field_type *f_ptr;
-	
+
 	/* While the field exists */
 	while (fld_idx)
 	{
@@ -666,11 +666,11 @@ bool field_is_type(s16b fld_idx, byte typ)
 
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ) return TRUE;
-		
+
 		/* If not, get next one. */
 		fld_idx = f_ptr->next_f_idx;
 	}
-	
+
 	/* Didn't find anything */
 	return FALSE;
 }
@@ -682,38 +682,38 @@ bool field_is_type(s16b fld_idx, byte typ)
 s16b place_field(int y, int x, s16b t_idx)
 {
 	field_type *f_ptr;
-	
+
 	s16b fld_idx;
-	
+
 	field_type temp_field;
-	field_type *ft_ptr = &temp_field; 
-		
+	field_type *ft_ptr = &temp_field;
+
 	/* Clean the temporary field */
 	field_wipe(ft_ptr);
-	
+
 	/* Make the field */
 	field_prep(ft_ptr, t_idx);
-	
+
 	/* Place it */
-	fld_idx = field_add(ft_ptr, &(area(y, x)->fld_idx));	
-	
+	fld_idx = field_add(ft_ptr, &(area(y, x)->fld_idx));
+
 	/* Paranoia */
-	if(!fld_idx) return (0);
-	
+	if (!fld_idx) return (0);
+
 	/* Get new field */
 	f_ptr = &fld_list[fld_idx];
-	
+
 	/* Connect to ground */
 	f_ptr->fy = y;
 	f_ptr->fx = x;
-	
-	return(fld_idx);
+
+	return (fld_idx);
 }
 
 /*
  * Find the connection to the cave array for the field
  * fld_list[fld_idx].
- * 
+ *
  * This is used so that an arbitrary field can be deleted.
  * This routine is fairly fast if there are not too many fields
  * on a square at one time.
@@ -726,24 +726,24 @@ s16b place_field(int y, int x, s16b t_idx)
 s16b *field_find(s16b fld_idx)
 {
 	field_type *f_ptr;
-	
+
 	/* pointer to a field index in a list. */
 	s16b *location;
-	
+
 	/* Point to the field */
 	f_ptr = &fld_list[fld_idx];
-	
+
 	location = &(area(f_ptr->fy, f_ptr->fx)->fld_idx);
-	
+
 	while (*location != fld_idx)
 	{
 		/* Paranoia: Is the list broken? */
 		if (!(*location)) return (location);
-		
+
 		/* Get the next field in the chain */
 		location = &(fld_list[*location].next_f_idx);
 	}
-	
+
 	/* Found a pointer to our field */
 	return (location);
 }
@@ -758,20 +758,20 @@ s16b *field_find(s16b fld_idx)
 void field_hook(s16b *field_ptr, int action, void *action_struct)
 {
 	field_type *f_ptr;
-	
+
 	while (*field_ptr)
 	{
 		/* Point to the field */
 		f_ptr = &fld_list[*field_ptr];
-		
+
 		/* Is there a function to call? */
-		if(f_ptr->action[action])
-		{		
+		if (f_ptr->action[action])
+		{
 			/* Call the action function */
 			f_ptr->action[action](field_ptr, action_struct);
 		}
-		
-		/* 
+
+		/*
 		 * Hack - the action function must change *field_ptr
 		 * to point to the next field.
 		 *
@@ -787,23 +787,23 @@ void process_fields(void)
 	s16b fld_idx;
 	field_type *f_ptr;
 	int dummy;
-	
+
 	for (fld_idx = 0; fld_idx < fld_max; fld_idx++)
-	{		
+	{
 		/* Point to field */
 		f_ptr = &fld_list[fld_idx];
-		
+
 		/* No dead fields */
 		if (!f_ptr->t_idx) continue;
-		
+
 		/* If it is a temporary field */
 		if (f_ptr->info & FIELD_INFO_TEMP)
 		{
 			/* Decrement counter */
 			f_ptr->counter--;
-			
+
 			/* If at bottom */
-			if(!f_ptr->counter)
+			if (!f_ptr->counter)
 			{
 				/* Call completion routine */
 				field_hook(field_find(fld_idx), FIELD_ACT_EXIT, (void *) &dummy);
@@ -812,7 +812,7 @@ void process_fields(void)
 				continue;
 			}
 		}
-		
+
 		/* If acts every turn */
 		field_hook(field_find(fld_idx), FIELD_ACT_ALWAYS, (void *) &dummy);
 	}
@@ -830,9 +830,9 @@ void test_field_data_integtrity(void)
 	int i, j;
 	cave_type *c_ptr;
 	field_type *f_ptr;
-	
+
 	s16b fld_idx;
-	
+
 	int xmin, xmax, ymin, ymax;
 
 	/* Test cave data structure first */
@@ -845,14 +845,14 @@ void test_field_data_integtrity(void)
 		ymax = cur_hgt;
 	}
 	else
-	/* In wilderness */	
+	/* In wilderness */
 	{
 		xmin = wild_grid.x_min;
 		ymin = wild_grid.y_min;
 		xmax = wild_grid.x_max;
 		ymax = wild_grid.y_max;
 	}
-	
+
 	/* Test cave data structure */
 	for (i = xmin; i < xmax; i++)
 	{
@@ -860,34 +860,34 @@ void test_field_data_integtrity(void)
 		{
 			/* Point to location */
 			c_ptr = area(j, i);
-				
+
 			fld_idx = c_ptr->fld_idx;
-			
+
 			/* Want a field */
 			while (fld_idx)
 			{
 				f_ptr = &fld_list[fld_idx];
-				
+
 				/* Dead field? */
 				if (!f_ptr->t_idx)
 				{
 					msg_print("Dead Field");
 				}
-				
+
 				if (fld_idx > fld_max)
 				{
 					msg_print("Field index inconsistancy.");
 				}
-				
+
 				if ((f_ptr->fy != j) || (f_ptr->fx != i))
 				{
 					msg_print("Field location inconsistancy.");
 					msg_format("Field x, cave x,%d,%d",f_ptr->fx, i);
 					msg_format("Field y, cave y,%d,%d",f_ptr->fy, j);
 				}
-				
+
 				fld_idx = f_ptr->next_f_idx;
-			}			
+			}
 		}
 	}
 }
@@ -898,12 +898,12 @@ void test_field_data_integtrity(void)
 void field_action_nothing(s16b *field_ptr, void *nothing)
 {
 	field_type *f_ptr;
-	
+
 	/* Point to the field */
 	f_ptr = &fld_list[*field_ptr];
-	
+
 	/* Action: Do nothing at all */
-	
+
 	/* Update *field_ptr to point to the next field in the list */
 	field_ptr = &(f_ptr->next_f_idx);
 	return;
@@ -913,15 +913,15 @@ void field_action_nothing(s16b *field_ptr, void *nothing)
 void field_action_delete(s16b *field_ptr, void *nothing)
 {
 	field_type *f_ptr;
-	
+
 	/* Point to the field */
 	f_ptr = &fld_list[*field_ptr];
-	
+
 	/* Action: Do nothing at all */
-	
+
 	/* Delete the field */
 	delete_field_aux(field_ptr);
-	
+
 	/* Note that *field_ptr does not need to be updated */
 	return;
 }

@@ -626,7 +626,7 @@ static cptr t_info_flags[] =
 	"XXX14"
 };
 
- 
+
 
 /*
  * Convert a "color letter" into an "actual" color
@@ -2718,35 +2718,35 @@ static errr grab_one_action_flag(field_thaum *t_ptr, char *what)
 	int i, location;
 
 	char *t;
-	
+
 	t = what;
 
-	/* Split the string into two bits using the comma seperator */	
-	while(!((*t=='\0') || (*t==',')))
+	/* Split the string into two bits using the comma seperator */
+	while (!((*t == '\0') || (*t == ',')))
 	{
 		/* Increment the pointer */
 		t++;
 	}
-	
+
 	/* t should point to a comma, or to a NULL */
 	if (!(*t))
 	{
 		/* The string had no comma */
-		return(1);	
+		return (1);
 	}
-	
-	/* 
+
+	/*
 	 * Hack - convert the comma to a zero
 	 * so 'what' is just the location string.
 	 */
 	*t = 0;
-	
+
 	/* Move over one character to point to the function name */
 	t++;
 
 	/* Get location */
 	location = atoi(what);
-	
+
 	/* Bounds checking */
 	if ((location < 0) || (location >= FIELD_ACTION_MAX) || !(*t))
 	{
@@ -2791,7 +2791,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 	/* The last index used */
 	error_idx = -1;
 
-	
+
 
 	/* Parse */
 	while (0 == my_fgets(fp, buf, 1024))
@@ -2810,7 +2810,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		{
 			/* Length of name string */
 			u16b length;
-			
+
 			/* Get the index */
 			i = atoi(buf+2);
 
@@ -2825,8 +2825,8 @@ errr init_t_info_txt(FILE *fp, char *buf)
 
 			/* point to new position in array */
 			t_ptr = &t_info[i];
-			
-			
+
+
 			/* Find the colon before the name */
 			s = strchr(buf+2, ':');
 
@@ -2844,14 +2844,14 @@ errr init_t_info_txt(FILE *fp, char *buf)
 
 			/* Make some room */
 			C_MAKE(t, length, char);
-			
-			if (!t) return(7); /* Out of memory */
-			
+
+			if (!t) return (7); /* Out of memory */
+
 			/* Add the name */
 			t_ptr->name = strcpy(t, s);
 			continue;
 		}
-		
+
 		/* Process 'G' for "Graphics" (one line only) */
 		if (buf[0] == 'G')
 		{
@@ -2875,7 +2875,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
-		
+
 		/* Process 'W' for extra information (one line only) */
 		if (buf[0] == 'W')
 		{
@@ -2893,7 +2893,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
-		
+
 		/* Process 'I' for "Info Flags" (multiple lines) */
 		if (buf[0] == 'I')
 		{
@@ -2920,7 +2920,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
-		
+
 		/* Process 'D' for "Data" (one line only) */
 		if (buf[0] == 'D')
 		{
@@ -2944,8 +2944,8 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
-		
-		
+
+
 		/* Process 'F' for "Field action Functions" (multiple lines) */
 		if (buf[0] == 'F')
 		{
@@ -2972,11 +2972,11 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
-		
-		
+
+
 		/* Oops */
 		return (6);
-	
+
 	}
 
 	/* Success */
@@ -3509,9 +3509,9 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 			}
 
 			/* Terrain special */
-			
-			
-			/* 
+
+
+			/*
 			 * Look into this later - you must create a field
 			 * before you place it somewhere.
 			 */
@@ -3669,7 +3669,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 	{
 		if (tokenize(buf+2, 2, zz, 0) == 2)
 		{
-			
+
 
 			/* Maximum quests */
 			if (zz[0][0] == 'Q')
@@ -3724,13 +3724,13 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 			{
 				max_m_idx = atoi(zz[1]);
 			}
-			
+
 			/* Maximum t_idx */
 			else if (zz[0][0] == 'T')
 			{
 				max_t_idx = atoi(zz[1]);
 			}
-			
+
 			/* Maximum fld_idx */
 			else if (zz[0][0] == 'D')
 			{
@@ -3751,7 +3751,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				/* Maximum wild gen types */
 				if (zz[0][1] == 'T')
 					max_w_block = atoi(zz[1]);
-				
+
 				/* Maximum towns */
 				if (zz[0][1] == 'P')
 					max_towns = atoi(zz[1]);

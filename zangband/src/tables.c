@@ -6137,7 +6137,7 @@ option_type option_info[] =
 
 	{ &stupid_monsters,             FALSE, 6, 5, 2,
 	"stupid_monsters",              "Monsters behave stupidly" },
-	
+
 	{ &silly_monsters,             TRUE, 6, 6, 17,
 	"silly_monsters",              "Allow silly monsters" },
 
@@ -6492,10 +6492,10 @@ cptr silly_attacks[MAX_SILLY_ATTACK] =
 };
 
 /* Field function's + names */
-field_action f_action[FIELD_ACTION_TYPES] = 
+field_action f_action[FIELD_ACTION_TYPES] =
 {
-	{NULL, "nothing"}, /* Null - Do absolutely nothing*/
-	{field_action_nothing, "field_action_nothing"},  /* Test - Do absolutely nothing*/
+	{NULL, "nothing"}, /* Null - Do absolutely nothing */
+	{field_action_nothing, "field_action_nothing"},  /* Test - Do absolutely nothing */
 	{field_action_delete, "field_action_delete"} /* Delete the field */
 };
 

@@ -742,7 +742,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 
 	sint *y_offsets;
 	sint *x_offsets;
-	
+
 	cave_type *c_ptr;
 
 	/* Start with adjacent locations, spread further */
@@ -751,7 +751,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 		/* Get the lists of points with a distance d from (fx, fy) */
 		y_offsets = dist_offsets_y[d];
 		x_offsets = dist_offsets_x[d];
-		
+
 		/* Check the locations */
 		for (i = 0, dx = x_offsets[0], dy = y_offsets[0];
 		     dx != 0 || dy != 0;
@@ -759,7 +759,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 		{
 			y = fy + dy;
 			x = fx + dx;
-			
+
 			/* Skip illegal locations */
 			if (!in_bounds(y, x)) continue;
 
@@ -777,11 +777,11 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				/* Ignore too-distant grids */
 				if (c_ptr->cost > area(fy,fx)->cost + 2 * d) continue;
 			}
-			
+
 			/* Check for absence of shot (more or less) */
 			if (clean_shot(fy, fx, y, x, FALSE))
 			{
-							
+
 				/* Calculate distance from player */
 				dis = distance(y, x, py, px);
 
@@ -815,11 +815,11 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 	}
 
 	/* No safe place */
-	
+
 	/* Save farthest location from player in LOS of monster */
 	(*yp) = fy - gy;
 	(*xp) = fx - gx;
-	
+
 	/* Hack - return TRUE anyway. */
 	return (TRUE);
 }
@@ -844,7 +844,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 	int gy = 0, gx = 0, gdis = 999;
 
 	sint *y_offsets, *x_offsets;
-	
+
 	cave_type *c_ptr;
 
 	/* Start with adjacent locations, spread further */
@@ -861,7 +861,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 		{
 			y = fy + dy;
 			x = fx + dx;
-			
+
 			/* Skip illegal locations */
 			if (!in_bounds(y, x)) continue;
 
@@ -948,11 +948,11 @@ static bool get_moves(int m_idx, int *mm)
 			{
 				int x = px + ddx_ddd[i];
 				int y = py + ddy_ddd[i];
-				
+
 				cave_type *c_ptr;
 
 				if (!in_bounds2(y, x)) continue;
-				
+
 				c_ptr = area(y, x);
 
 				/* Check grid */
@@ -1317,7 +1317,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		/* Stop attacking if the target dies! */
 		if (t_ptr->fx != x_saver || t_ptr->fy != y_saver)
 			break;
-		
+
 		/* Stop attacking if the aggressor dies (fire sheath etc.) */
 		if (m_ptr->hp < 0) return TRUE;
 
@@ -2143,12 +2143,12 @@ static void process_monster(int m_idx)
 		gets_angry = TRUE;
 
 #if 0  /* No need to check this _every_ turn for every monster. */
-	
+
 	/* Paranoia... no pet uniques outside wizard mode -- TY */
 	if (is_pet(m_ptr) && !wizard &&
 	    (r_ptr->flags1 & RF1_UNIQUE))
 		gets_angry = TRUE;
-	
+
 #endif /* 0 */
 
 	if (gets_angry)
@@ -3142,7 +3142,7 @@ void process_monsters(int min_energy)
 
 	/* Hack -- calculate the "player noise" */
 	noise = (1L << (30 - p_ptr->skill_stl));
-	
+
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--)
 	{

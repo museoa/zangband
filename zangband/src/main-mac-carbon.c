@@ -182,7 +182,7 @@
 
 #endif
 
- 
+
 #ifdef ANGBAND_LITE_MAC
 
 /*
@@ -417,20 +417,20 @@ AEEventHandlerUPP AEH_Open_UPP;
 static void local_to_global( Rect *r )
 {
 	Point		temp;
-	
+
 	temp.h = r->left;
 	temp.v = r->top;
-	
+
 	LocalToGlobal( &temp );
-	
+
 	r->left = temp.h;
 	r->top = temp.v;
-	
+
 	temp.h = r->right;
 	temp.v = r->bottom;
-	
+
 	LocalToGlobal( &temp );
-	
+
 	r->right = temp.h;
 	r->bottom = temp.v;
 }
@@ -438,20 +438,20 @@ static void local_to_global( Rect *r )
 static void global_to_local( Rect *r )
 {
 	Point		temp;
-	
+
 	temp.h = r->left;
 	temp.v = r->top;
-	
+
 	GlobalToLocal( &temp );
-	
+
 	r->left = temp.h;
 	r->top = temp.v;
-	
+
 	temp.h = r->right;
 	temp.v = r->bottom;
-	
+
 	GlobalToLocal( &temp );
-	
+
 	r->right = temp.h;
 	r->bottom = temp.v;
 }
@@ -562,19 +562,19 @@ static OSType GetProcessSignature( void )
 	ProcessSerialNumber		thePSN;
 	ProcessInfoRec			info;
 	OSErr					err;
-	
+
 	thePSN.highLongOfPSN = 0;
 	thePSN.lowLongOfPSN  = kCurrentProcess;
-	
+
 	info.processInfoLength	= sizeof(ProcessInfoRec);
 	info.processName		= nil;
 	info.processAppSpec		= nil;
-		
+
 	err = GetProcessInformation(&thePSN, &info);
-	
+
 	if( err != noErr )
 		quit( "Internal System Error.  Process Information could not be found." );
-	
+
 	return info.processSignature;
 }
 
@@ -584,9 +584,9 @@ static OSErr ChooseFile( StringPtr filename, OSType *typelist, long typeCount )
 	NavDialogOptions	dialogOptions;
 	NavTypeListHandle	navTypeList = NULL;
 	OSErr				err;
-	
+
 	err = NavGetDefaultDialogOptions( &dialogOptions );
-	
+
 	if( err == noErr )
 	{
 		if( typeCount > 0 )
@@ -594,26 +594,26 @@ static OSErr ChooseFile( StringPtr filename, OSType *typelist, long typeCount )
 			navTypeList = (NavTypeListHandle)NewHandle( sizeof(NavTypeList) + (sizeof(OSType)*(typeCount-1)) );
 			if( navTypeList == NULL )
 				quit( "Could not allocate memory for navigation file filter list." );
-			
+
 			/* populate the navtypelist object */
 			{
 				NavTypeListPtr	typesP = (NavTypeListPtr) *((Handle) navTypeList);
 				OSType	signature = GetProcessSignature();
-			
+
 				typesP->componentSignature	= signature;
 				typesP->reserved			= 0;
 				typesP->osTypeCount			= typeCount;
-				
+
 				BlockMoveData(typelist, typesP->osType,
 										(Size) (sizeof(OSType) * typeCount));
 			}
 		}
-							
+
 		err = NavChooseFile( NULL, &reply, &dialogOptions, NULL, NULL, NULL, navTypeList, NULL );
 		if( reply.validRecord && err == noErr )
 		{
 			FSSpec		finalFSSpec;
-			
+
 			long		index;
 			long		count;
 			/* we are ready to open the document(s), grab information about each file for opening: */
@@ -628,7 +628,7 @@ static OSErr ChooseFile( StringPtr filename, OSType *typelist, long typeCount )
 				{
 					Handle		pathH;
 					short		length;
-					
+
 					err = FSpGetFullPath( &finalFSSpec, &length, &pathH );
 					if( err == noErr )
 					{
@@ -636,22 +636,22 @@ static OSErr ChooseFile( StringPtr filename, OSType *typelist, long typeCount )
 						BlockMove( *pathH, filename, length );
 						filename[length] = 0x00;
 						HUnlock(pathH);
-						
+
 						DisposeHandle( pathH );
 					}
-					
-					
+
+
 				}
 			}
 		}
-		
+
 		if( navTypeList != NULL )
 		{
 			DisposeHandle( (Handle)navTypeList );
 			navTypeList = NULL;
 		}
 	}
-	
+
 	return err;
 }
 
@@ -731,7 +731,7 @@ static void term_data_color(term_data *td, int a)
 		color.red = (rv | (rv << 8));
 		color.green = (gv | (gv << 8));
 		color.blue = (bv | (bv << 8));
-	
+
 		/* Activate the color */
 		RGBForeColor(&color);
 
@@ -807,12 +807,12 @@ static void term_data_check_size(term_data *td)
 {
 	BitMap		screen;
 
-#ifdef TARGET_CARBON						
+#ifdef TARGET_CARBON
 	GetQDGlobalsScreenBits( &screen );
 #else
 	screen = qd.screenBits;
-#endif	
-		
+#endif
+
 	/* Minimal window size */
 	if (td == &data[0])
 	{
@@ -992,11 +992,11 @@ struct FrameRec
 	GWorldPtr 		framePort;
 	PixMapHandle 	framePixHndl;
 	PixMapPtr 		framePix;
-	
+
 	GWorldPtr		maskPort;
 	PixMapHandle	maskPixHndl;
 	PixMapPtr		maskPix;
-	
+
 	GWorldPtr		bufferPort;
 	PixMapHandle	bufferPixHndl;
 	PixMapPtr		bufferPix;
@@ -1020,13 +1020,13 @@ static void BenSWLockFrame(FrameRec *srcFrameP)
 	HLockHi((Handle)pixMapH);
 	srcFrameP->framePixHndl = pixMapH;
 	srcFrameP->framePix = (PixMapPtr)*(Handle)pixMapH;
-	
+
 	pixMapH = GetGWorldPixMap(srcFrameP->maskPort);
 	(void)LockPixels(pixMapH);
 	HLockHi((Handle)pixMapH);
 	srcFrameP->maskPixHndl = pixMapH;
 	srcFrameP->maskPix = (PixMapPtr)*(Handle)pixMapH;
-	
+
 	pixMapH = GetGWorldPixMap(srcFrameP->bufferPort);
 	(void)LockPixels(pixMapH);
 	HLockHi((Handle)pixMapH);
@@ -1047,7 +1047,7 @@ static void BenSWUnlockFrame(FrameRec *srcFrameP)
 	}
 
 	srcFrameP->framePix = NULL;
-	
+
 	if (srcFrameP->maskPort != NULL)
 	{
 		HUnlock((Handle)srcFrameP->maskPixHndl);
@@ -1055,7 +1055,7 @@ static void BenSWUnlockFrame(FrameRec *srcFrameP)
 	}
 
 	srcFrameP->maskPix = NULL;
-	
+
 	if (srcFrameP->bufferPort != NULL)
 	{
 		HUnlock((Handle)srcFrameP->bufferPixHndl);
@@ -1085,7 +1085,7 @@ static OSErr BenSWCreateGWorldFromPict(
 
 	{
 		tempGWorld = NULL;
-		
+
 		/* Reset */
 		*pictGWorld = NULL;
 
@@ -1100,7 +1100,7 @@ static OSErr BenSWCreateGWorldFromPict(
 		OffsetRect(&pictRect, -pictRect.left, -pictRect.top);
 
 		/* Create a GWorld */
-		err = NewGWorld(&tempGWorld, depth, &pictRect, nil, 
+		err = NewGWorld(&tempGWorld, depth, &pictRect, nil,
 						theGDH, noNewDevice);
 
 		/* Success */
@@ -1127,10 +1127,10 @@ static OSErr BenSWCreateGWorldFromPict(
 		/* Restore GWorld */
 		SetGWorld(saveGWorld, saveGDevice);
 	}
-	
+
 	{
 		tempGWorld = NULL;
-		
+
 		/* Reset */
 		*maskGWorld = NULL;
 
@@ -1145,7 +1145,7 @@ static OSErr BenSWCreateGWorldFromPict(
 		OffsetRect(&pictRect, -pictRect.left, -pictRect.top);
 
 		/* Create a GWorld */
-		err = NewGWorld(&tempGWorld, depth, &pictRect, nil, 
+		err = NewGWorld(&tempGWorld, depth, &pictRect, nil,
 						theGDH, noNewDevice);
 
 		/* Success */
@@ -1172,10 +1172,10 @@ static OSErr BenSWCreateGWorldFromPict(
 		/* Restore GWorld */
 		SetGWorld(saveGWorld, saveGDevice);
 	}
-	
+
 	{
 		tempGWorld = NULL;
-		
+
 		/* Reset */
 		*bufferGWorld = NULL;
 
@@ -1190,11 +1190,11 @@ static OSErr BenSWCreateGWorldFromPict(
 		pictRect.right = td->r.right - td->r.left;
 		pictRect.top = 0;
 		pictRect.bottom = td->tile_hgt;
-		
+
 		/* OffsetRect(&pictRect, -pictRect.left, -pictRect.top); */
 
 		/* Create a GWorld */
-		err = NewGWorld(&tempGWorld, depth, &pictRect, nil, 
+		err = NewGWorld(&tempGWorld, depth, &pictRect, nil,
 						theGDH, noNewDevice);
 
 		/* Success */
@@ -1206,8 +1206,8 @@ static OSErr BenSWCreateGWorldFromPict(
 		/* Save pointer */
 		*bufferGWorld = tempGWorld;
 	}
-	
-	
+
+
 	/* Success */
 	return (0);
 }
@@ -1219,7 +1219,7 @@ static OSErr BenSWCreateGWorldFromPict(
 static errr globe_init(term_data *td)
 {
 	OSErr err;
-	
+
 	GWorldPtr tempPictGWorldP;
 	GWorldPtr tempPictMaskGWorldP;
 	GWorldPtr tempPictBufferGWorldP;
@@ -1242,7 +1242,7 @@ static errr globe_init(term_data *td)
 	if (err == noErr)
 	{
 		/* Create GWorld */
-		err = BenSWCreateGWorldFromPict( &tempPictGWorldP, 
+		err = BenSWCreateGWorldFromPict( &tempPictGWorldP,
 										&tempPictMaskGWorldP,
 										&tempPictBufferGWorldP,
 										newPictH,
@@ -1252,7 +1252,7 @@ static errr globe_init(term_data *td)
 		/* Release resource */
 		ReleaseResource((Handle)newPictH);
 		ReleaseResource((Handle)newMaskH);
-		
+
 		/* Error */
 		if (err == noErr)
 		{
@@ -1275,7 +1275,7 @@ static errr globe_init(term_data *td)
 			}
 		}
 	}
-	
+
 
 	/* Result */
 	return (err);
@@ -1304,9 +1304,9 @@ static errr globe_nuke(void)
 		/* Forget */
 		frameP = NULL;
 	}
-	
 
-	/* Flush events */	
+
+	/* Flush events */
 	FlushEvents(everyEvent, 0);
 
 	/* Success */
@@ -1414,14 +1414,14 @@ static void Term_init_mac(term *t)
 #endif /* ANGBAND_LITE_MAC */
 	{
 		Rect		portRect;
-		
+
 #ifdef TARGET_CARBON
 		GetWindowBounds( (WindowRef)td->w, kWindowContentRgn, &portRect );
 		global_to_local( &portRect );
 #else
 		portRect = td->w->portRect;
 #endif
-		
+
 		/* Clip to the window */
 		ClipRect(&portRect);
 
@@ -1488,7 +1488,7 @@ static errr Term_xtra_mac_react(void)
 #ifdef ANGBAND_LITE_MAC
 
 	/* Nothing */
-	
+
 #else /* ANGBAND_LITE_MAC */
 
 	/* Handle sound */
@@ -1626,14 +1626,14 @@ static errr Term_xtra_mac(int n, int v)
 						}
 						/*
 						if( !found )
-						{ 
-							
+						{
+
 							SndPlay( 0L, (SndListHandle)handle, false );
 						}
 						*/
 					}
 				}
-	            
+
 				/* Unlock and release */
 				HUnlock(handle);
 				ReleaseResource(handle);
@@ -1689,14 +1689,14 @@ static errr Term_xtra_mac(int n, int v)
 		case TERM_XTRA_CLEAR:
 		{
 			Rect		portRect;
-			
+
 #ifdef TARGET_CARBON
 			GetWindowBounds( (WindowRef)td->w, kWindowContentRgn, &portRect );
 			global_to_local( &portRect );
 #else
 			portRect = td->w->portRect;
 #endif
-			
+
 			/* No clipping XXX XXX XXX */
 			ClipRect(&portRect);
 
@@ -1852,10 +1852,10 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 	term_data *td = (term_data*)(Term->data);
 	GDHandle saveGDevice;
 	GWorldPtr saveGWorld;
-	
+
 	/* Save GWorld */
 	GetGWorld(&saveGWorld, &saveGDevice);
-		
+
 	if( n > 0 )
 	{
 		/* Destination rectangle */
@@ -1863,30 +1863,30 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 		r2.right = r2.left + td->tile_wid;
 		r2.top = 0;
 		r2.bottom = r2.top + td->tile_hgt;
-	
+
 		/* Activate */
 		SetGWorld(frameP->bufferPort, nil);
-		
+
 		/* Instantiate font */
 		TextFont(td->font_id);
 		TextSize(td->font_size);
 		TextFace(td->font_face);
-		
+
 		/* Restore colors */
 		BackColor(blackColor);
 		ForeColor(whiteColor);
-		
+
 #ifdef TARGET_CARBON
 		{
 			Rect		portRect;
-			
+
 			GetPortBounds( frameP->bufferPort, &portRect );
 			EraseRect( &portRect );
 		}
 #else
 		EraseRect( &td->w->portRect );
 #endif
-		
+
 		use_buffer = true;
 	}
 	else
@@ -1896,12 +1896,12 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 		r2.right = r2.left + td->tile_wid;
 		r2.top = y * td->tile_hgt + td->size_oh1;
 		r2.bottom = r2.top + td->tile_hgt;
-		
+
 		/* no buffering, so we use the normal current port */
-		
+
 		use_buffer = false;
 	}
-		
+
 	/* Scan the input */
 	for (i = 0; i < n; i++)
 	{
@@ -1909,7 +1909,7 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 
 		byte a = ap[i];
 		char c = cp[i];
-		
+
 #ifdef USE_TRANSPARENCY
 		byte ta = tap[i];
 		char tc = tcp[i];
@@ -1927,7 +1927,7 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 		{
 			int col, row;
 			Rect r1;
-			
+
 #ifdef USE_TRANSPARENCY
 			int terrain_col, terrain_row;
 			Rect terrain_rect;
@@ -1941,7 +1941,7 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 			terrain_row = ((byte)ta & 0x7F) % kPictRows;
 			terrain_col = ((byte)tc & 0x7F) % kPictCols;
 #endif
-			
+
 			/* Source rectangle */
 			r1.left = col * kGrafWidth;
 			r1.top = row * kGrafHeight;
@@ -1957,7 +1957,7 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 			{
 				BitMapPtr	srcBitMap = (BitMapPtr)(frameP->framePix);
 				BitMapPtr	destBitMap;
-				
+
 #ifdef TARGET_CARBON
 				if( use_buffer )
 				{
@@ -1983,21 +1983,21 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 				terrain_rect.top = terrain_row * kGrafHeight;
 				terrain_rect.right = terrain_rect.left + kGrafWidth;
 				terrain_rect.bottom = terrain_rect.top + kGrafHeight;
-				
+
 				/* draw terrain */
 				CopyBits( srcBitMap, destBitMap, &terrain_rect, &r2, srcCopy, NULL );
-				
+
 				/* draw transparent tile */
 				BackColor(blackColor);
 				CopyBits( srcBitMap, destBitMap, &r1, &r2, transparent, NULL );
 			}
-			
+
 #else /* Do not allow terrain */
-			
+
 			{
 				BitMapPtr	srcBitMap = (BitMapPtr)(frameP->framePix);
 				BitMapPtr	destBitMap;
-				
+
 #ifdef TARGET_CARBON
 				if( use_buffer )
 				{
@@ -2065,7 +2065,7 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 		r2.left += td->tile_wid;
 		r2.right += td->tile_wid;
 	}
-	
+
 	if( use_buffer )
 	{
 		/* Now we blast the buffer pixmap onto the screen in the right place */
@@ -2077,32 +2077,32 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
 #endif
 		Rect		srcRect;
 		Rect		destRect;
-		
-		
+
+
 		srcRect.left = x * td->tile_wid + td->size_ow1;
 		srcRect.top = 0;
 		srcRect.right = srcRect.left + (td->tile_wid * n);
 		srcRect.bottom = td->tile_hgt;
-		
+
 		destRect.left = x * td->tile_wid + td->size_ow1;
 		destRect.right = destRect.left + (td->tile_wid * n);
 		destRect.top = y * td->tile_hgt + td->size_oh1;
 		destRect.bottom = destRect.top + td->tile_hgt;
-		
+
 		/* Restore GWorld */
 		SetGWorld(saveGWorld, saveGDevice);
-		
+
 		/* Hardwire CopyBits */
 		BackColor(whiteColor);
 		ForeColor(blackColor);
-		
+
 		CopyBits( srcBitMap, destBitMap, &srcRect, &destRect, srcCopy, NULL );
 
 		/* Restore colors */
 		BackColor(blackColor);
 		ForeColor(whiteColor);
 	}
-	
+
 	/* Success */
 	return (0);
 }
@@ -2183,14 +2183,14 @@ static void SetupAppDir(void)
 	Str255 myName;
 	FSSpec mySpec;
 	char errString[255];
-	
+
 	err = GetCurrentProcess( &psn );
 	if( err == noErr )
 	{
 		info.processInfoLength = sizeof(ProcessInfoRec);
 		info.processName = myName;
 		info.processAppSpec = &mySpec;
-		
+
 		err = GetProcessInformation( &psn, &info );
 		if( err == noErr )
 		{
@@ -2198,7 +2198,7 @@ static void SetupAppDir(void)
 			app_dir = info.processAppSpec->parID;
 		}
 	}
-	
+
 	/* Set the current working directory to that location */
 	err = HSetVol(NULL, app_vol, app_dir);
 	if (err != noErr)
@@ -2496,7 +2496,7 @@ static void init_windows(void)
 
 #endif /* USE_SFL_CODE */
 
-	
+
 
 	/* Load preferences */
 	if (fff)
@@ -2590,7 +2590,7 @@ static void save_pref_file(void)
 
 #endif /* USE_SFL_CODE */
 
-	
+
 
 	/* Save preferences */
 	if (fff)
@@ -2725,11 +2725,11 @@ static void do_menu_file_open(bool all)
 	}
 
 	/* Window location */
-#ifdef TARGET_CARBON						
+#ifdef TARGET_CARBON
 	GetQDGlobalsScreenBits( &screen );
 #else
 	screen = qd.screenBits;
-#endif	
+#endif
 
 	topleft.h = (screen.bounds.left+screen.bounds.right)/2-344/2;
 	topleft.v = (2*screen.bounds.top+screen.bounds.bottom)/3-188/2;
@@ -2746,7 +2746,7 @@ static void do_menu_file_open(bool all)
 	{
 		OSType	types[1];
 		types[0] = 'SAVE';
-		
+
 		err = ChooseFile( savefile, types, 1 );
 	}
 
@@ -2873,7 +2873,7 @@ static void init_menubar(void)
 
 	/* Make the fake window */
 	/* tmpw = GetNewCWindow( 128, NULL, -1 ); */
-	
+
 	tmpw = NewWindow(0, &r, "\p", false, documentProc, 0, 0, 0);
 
 	/* Activate the "fake" window */
@@ -2940,7 +2940,7 @@ static void init_menubar(void)
 	for (i = 8; i <= 32; i += ((i / 16) + 1))
 	{
 		Str15 buf;
-		
+
 		/* Textual size */
 		sprintf((char*)buf + 1, "%d", i);
 		buf[0] = strlen((char*)buf + 1);
@@ -2960,7 +2960,7 @@ static void init_menubar(void)
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
 		Str15 buf;
-		
+
 		/* Describe the item */
 		sprintf((char*)buf + 1, "%.15s", angband_term_name[i]);
 		buf[0] = strlen((char*)buf + 1);
@@ -2997,7 +2997,7 @@ static void init_menubar(void)
 	for (i = 4; i <= 32; i++)
 	{
 		Str15 buf;
-		
+
 		/* Textual size */
 		sprintf((char*)buf + 1, "%d", i);
 		buf[0] = strlen((char*)buf + 1);
@@ -3191,7 +3191,7 @@ static void setup_menus(void)
 		DisableMenuItem(m, i);
 		CheckMenuItem(m, i, FALSE);
 	}
-	
+
 	/* Active window */
 	if (td)
 	{
@@ -3383,12 +3383,12 @@ static void menu(long mc)
 				short item_hit;
 				BitMap screen;
 
-#ifdef TARGET_CARBON						
+#ifdef TARGET_CARBON
 				GetQDGlobalsScreenBits( &screen );
 #else
 				screen = qd.screenBits;
-#endif	
-				
+#endif
+
 				dialog=GetNewDialog(128, 0, (WindowPtr)-1);
 
 #ifdef TARGET_CARBON
@@ -3397,7 +3397,7 @@ static void menu(long mc)
 				r = dialog->portRect;
 				local_to_global( &r );
 #endif
-				
+
 				center_rect(&r, &screen.bounds);
 				MoveWindow(dialog, r.left, r.top, 1);
 				ShowWindow(dialog);
@@ -3406,7 +3406,7 @@ static void menu(long mc)
 				break;
 			}
 
-			
+
 #ifdef TARGET_CARBON
 #else
 			/* Desk accessory */
@@ -3483,16 +3483,16 @@ static void menu(long mc)
 						short item_hit;
 						BitMap screen;
 
-#ifdef TARGET_CARBON						
+#ifdef TARGET_CARBON
 						GetQDGlobalsScreenBits( &screen );
 #else
 						screen = qd.screenBits;
-#endif	
+#endif
 						/* Get the "alert" info */
 						alert = (AlertTHndl)GetResource('ALRT', 130);
 
 						/* Center the "alert" rectangle */
-						
+
 						center_rect(&(*alert)->boundsRect,
 						            &screen.bounds);
 
@@ -3691,7 +3691,7 @@ static void menu(long mc)
 			/* Mapped */
 			td->mapped = TRUE;
 
-			/* Link */	
+			/* Link */
 			term_data_link(i);
 
 			/* Mapped (?) */
@@ -4229,15 +4229,15 @@ static bool CheckEvents(bool wait)
 					WindowPtr old_win;
 
 					BitMap screen;
-					
+
 					Rect portRect;
-					
-#ifdef TARGET_CARBON						
+
+#ifdef TARGET_CARBON
 					GetQDGlobalsScreenBits( &screen );
 #else
 					screen = qd.screenBits;
-#endif	
-					
+#endif
+
 					r = screen.bounds;
 					r.top += 20; /* GetMBarHeight() XXX XXX XXX */
 					InsetRect(&r, 4, 4);
@@ -4297,7 +4297,7 @@ static bool CheckEvents(bool wait)
 				case inGrow:
 				{
 					int x, y;
-					
+
 					bool redraw_it = TRUE;
 
 					term *old = Term;
@@ -4336,36 +4336,36 @@ static bool CheckEvents(bool wait)
 
 					/* Resize and Redraw */
 					term_data_resize(td);
-					
+
 					/* Reset map size if required */
 					if (window == 0)
-					{				
+					{
 						/* Recalculate map size */
 						map_hgt = td->rows - 2;
 						map_wid = td->cols - 14;
-				
+
 						/* Mega-Hack -- no panel yet */
 						panel_row_min = 0;
 						panel_row_max = 0;
 						panel_col_min = 0;
 						panel_col_max = 0;
-				
+
 						/* Reset the panels */
 						map_panel_size();
-				
+
 						verify_panel();
 					}
-						
+
 					/* Only redraw if everything is initialised */
 					if (character_dungeon && redraw_it)
-					{			
+					{
 						/* Activate term zero for the redraw */
 						Term_activate(&data[0].t);
-				
+
 						/* redraw */
 						do_cmd_redraw_term(window);
 					}
-					
+
 					term_data_redraw(td);
 
 					/* Restore */
@@ -4389,7 +4389,7 @@ static bool CheckEvents(bool wait)
 		case diskEvt:
 		{
 			/* check for error when mounting the disk */
-			
+
 #ifdef TARGET_CARBON
 #else
 			if (HiWord(event.message) != noErr)
@@ -4416,11 +4416,11 @@ static bool CheckEvents(bool wait)
 				if (event.message & resumeFlag)
 				{
 					SetPort( FrontWindow() );
-					
+
 #ifdef TARGET_CARBON
 					{
 						Cursor	arrow;
-					
+
 						GetQDGlobalsArrow( &arrow );
 						SetCursor(&arrow);
 					}
@@ -4649,11 +4649,11 @@ static void init_stuff(void)
 	r.bottom = 188;
 
 	/* Center it */
-#ifdef TARGET_CARBON						
+#ifdef TARGET_CARBON
 	GetQDGlobalsScreenBits( &screen );
 #else
 	screen = qd.screenBits;
-#endif	
+#endif
 
 	center_rect(&r, &screen.bounds);
 
@@ -4667,7 +4667,7 @@ static void init_stuff(void)
 		short		length;
 		Handle		pathH;
 		OSErr		err;
-		
+
 		err = GetFullPath( app_vol, app_dir, "\p:lib", &length, &pathH );
 		if( err == noErr )
 		{
@@ -4675,7 +4675,7 @@ static void init_stuff(void)
 			BlockMove( *pathH, path, length );
 			path[length] = 0x00;
 			HUnlock( pathH );
-		
+
 			DisposeHandle( pathH );
 		}
 	}
@@ -4685,7 +4685,7 @@ static void init_stuff(void)
 	while (1)
 	{
 		OSType		types[3];
-		
+
 		/* Prepare the paths */
 		init_file_paths(path);
 
@@ -4716,9 +4716,9 @@ static void init_stuff(void)
 		/* Get any file */
 		{
 			OSErr		err;
-			
+
 			err = ChooseFile( path, types, 3 );
-			
+
 			if( err != noErr )
 			{
 				quit(NULL);
@@ -4792,7 +4792,7 @@ int main(void)
 # if defined(powerc) || defined(__powerc)
 
 	/* Assume System 7 */
-	
+
 	/* Assume Color Quickdraw */
 
 # else

@@ -1268,7 +1268,7 @@ static cptr likert(int x, int y)
 
 /* Monk average attack damage - only used here, so not in tables.c */
 int monk_avg_damage[PY_MAX_LEVEL+1] =
-{ 
+{
 	0,
 	250, 275, 299, 299, 306, 309, 321, 325, 328, 332,
 	347, 353, 375, 450, 463, 507, 523, 537, 551, 575,
@@ -1312,7 +1312,7 @@ static void display_player_abilities(void)
 	o_ptr = &inventory[INVEN_BOW];
 	tmp = p_ptr->to_h + o_ptr->to_h;
 	xthb = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
-	
+
 	/* If the player is wielding one? */
 	if (o_ptr->k_idx)
 	{
@@ -1339,7 +1339,7 @@ static void display_player_abilities(void)
 				energy_fire = 100;
 				break;
 			}
-		
+
 			/* Light Crossbow and Bolt */
 			case SV_LIGHT_XBOW:
 			{
@@ -1349,7 +1349,7 @@ static void display_player_abilities(void)
 
 			/* Heavy Crossbow and Bolt */
 			case SV_HEAVY_XBOW:
-			{		
+			{
 				if (p_ptr->stat_use[A_DEX] >= 16)
 				{
 					energy_fire = 150;
@@ -1429,7 +1429,7 @@ static void display_player_abilities(void)
 		put_str(format("%d+%d", p_ptr->num_blow, muta_att), 16, COL_SKILLS3 + WID_SKILLS);
 
 	put_str("Shots/Round :", 17, COL_SKILLS3);
-	
+
 	/* Calculate shots (rounded) */
 	put_str(format("%d.%d", shots, shot_frac), 17, COL_SKILLS3 + WID_SKILLS);
 
@@ -4141,7 +4141,7 @@ void do_cmd_save_game(int is_autosave)
 
 	/* Refresh */
 	Term_fresh();
-	
+
 	/* Clear messages. */
 	msg_print(NULL);
 

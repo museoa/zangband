@@ -2462,7 +2462,7 @@ static void windows_map_aux(void)
 
 	td->map_tile_wid = (td->tile_wid * td->cols) / DUNGEON_WID;
 	td->map_tile_hgt = (td->tile_hgt * td->rows) / DUNGEON_HGT;
-	
+
 	min_x = 0;
 	min_y = 0;
 	max_x = DUNGEON_WID;
@@ -3540,7 +3540,7 @@ void handle_wm_paint(HWND hWnd)
 
 	/* Acquire proper "term_data" info */
 	td = (term_data *)GetWindowLong(hWnd, 0);
-	
+
 	BeginPaint(hWnd, &ps);
 
 	if (td->map_active)

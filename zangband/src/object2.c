@@ -1486,7 +1486,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 		case TV_FIGURINE:
 		case TV_CORPSE:
 		{
-			/* Never okay */			
+			/* Never okay */
 			return (0);
 		}
 
