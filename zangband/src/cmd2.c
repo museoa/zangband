@@ -1422,6 +1422,19 @@ void do_cmd_tunnel(void)
 		y = py + ddy[dir];
 		x = px + ddx[dir];
 
+		/* Cannot escape the wilderness by tunneling */
+		if (!in_bounds2(y, x))
+		{
+			/* Message */
+			msg_print("You cannot tunnel outside the wilderness.");
+			
+			/* Do not repeat */			
+			disturb(0, 0);
+			
+			/* exit */
+			return;
+		}
+		
 		/* Get grid */
 		c_ptr = area(y,x);
 
@@ -2897,6 +2910,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		nx = x;
 		mmove2(&ny, &nx, py, px, ty, tx);
 
+		/* Stopped by wilderness boundary */
+		if (!in_bounds2(ny, nx)) break;
+		
 		/* Stopped by walls/doors */
 		if (!cave_floor_bold(ny, nx)) break;
 
@@ -3295,6 +3311,13 @@ void do_cmd_throw_aux(int mult)
 		nx = x;
 		mmove2(&ny, &nx, py, px, ty, tx);
 
+		/* Stopped by wilderness boundary */
+		if (!in_bounds2(ny, nx))
+		{
+			hit_wall = TRUE;
+			break;
+		}		
+		
 		/* Stopped by walls/doors */
 		if (!cave_floor_bold(ny, nx))
 		{

@@ -3343,8 +3343,7 @@ static void update_flow_aux(int y, int x, int n)
 	cave_type *c_ptr;
 
 	int old_head = flow_head;
-
-
+	
 	/* Get the grid */
 	c_ptr = area(y,x);
 
@@ -3813,7 +3812,7 @@ bool projectable(int y1, int x1, int y2, int x2)
 	int y, x;
 
 	int grid_n = 0;
-	u16b grid_g[512];
+	coord grid_g[512];
 
 	/* Check the projection path */
 	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
@@ -3822,8 +3821,8 @@ bool projectable(int y1, int x1, int y2, int x2)
 	if (!grid_n) return (FALSE);
 
 	/* Final grid */
-	y = GRID_Y(grid_g[grid_n - 1]);
-	x = GRID_X(grid_g[grid_n - 1]);
+	y = grid_g[grid_n - 1].y;
+	x = grid_g[grid_n - 1].x;
 
 	/* May not end in an unrequested grid */
 	if ((y != y2) || (x != x2)) return (FALSE);

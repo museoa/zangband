@@ -473,6 +473,18 @@ struct cave_type
 };
 
 
+/*
+ * Simple structure to hold a map location
+ */
+typedef struct coord coord;
+
+struct coord
+{
+	u16b y;
+	u16b x;
+};
+
+
 /* 
  * Pointer to a 16x16 block of cave grids.
  * The grids are allocated and deallocated in large

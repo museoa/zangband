@@ -395,7 +395,7 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 {
 	int i, y, x;
 	int grid_n;
-	u16b grid_g[512];
+	coord grid_g[512];
 
 
 	/* Check the projection path */
@@ -405,16 +405,16 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 	if (!grid_n) return (FALSE);
 
 	/* Final grid */
-	y = GRID_Y(grid_g[grid_n-1]);
-	x = GRID_X(grid_g[grid_n-1]);
+	y = grid_g[grid_n-1].y;
+	x = grid_g[grid_n-1].x;
 
 	/* May not end in an unrequested grid */
 	if ((y != y2) || (x != x2)) return (FALSE);
 
 	for (i = 0; i < grid_n; i++)
 	{
-		y = GRID_Y(grid_g[i]);
-		x = GRID_X(grid_g[i]);
+		y = grid_g[i].y;
+		x = grid_g[i].x;
 
 		if ((area(y,x)->m_idx > 0) && !((y == y2) && (x == x2)))
 		{

@@ -214,7 +214,7 @@ u16b bolt_pict(int y, int x, int ny, int nx, int typ)
  * This algorithm is similar to, but slightly different from, the one used
  * by "update_view_los()", and very different from the one used by "los()".
  */
-sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
+sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 {
 	int y, x;
 
@@ -289,8 +289,10 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 		/* Create the projection path */
 		while (1)
 		{
-			/* Save grid */
-			gp[n++] = GRID(y, x);
+			/* Save grid */			
+			gp[n].x = x;
+			gp[n].y = y;
+			n++;
 
 			/* Hack -- Check maximum range */
 			if ((n + (k >> 1)) >= range) break;
@@ -301,6 +303,9 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 				if ((x == x2) && (y == y2)) break;
 			}
 
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) break;
+			
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_bold(y, x)) break;
 
@@ -351,8 +356,10 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 		/* Create the projection path */
 		while (1)
 		{
-			/* Save grid */
-			gp[n++] = GRID(y, x);
+			/* Save grid */			
+			gp[n].x = x;
+			gp[n].y = y;
+			n++;
 
 			/* Hack -- Check maximum range */
 			if ((n + (k >> 1)) >= range) break;
@@ -363,6 +370,9 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 				if ((x == x2) && (y == y2)) break;
 			}
 
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) break;
+			
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_bold(y, x)) break;
 
@@ -408,7 +418,9 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 		while (1)
 		{
 			/* Save grid */
-			gp[n++] = GRID(y, x);
+			gp[n].x = x;
+			gp[n].y = y;
+			n++;
 
 			/* Hack -- Check maximum range */
 			if ((n + (n >> 1)) >= range) break;
@@ -419,6 +431,9 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 				if ((x == x2) && (y == y2)) break;
 			}
 
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) break;
+			
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_bold(y, x)) break;
 
@@ -4494,7 +4509,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	int path_n = 0;
 
 	/* Actual grids in the "path" */
-	u16b path_g[512];
+	coord path_g[512];
 
 	/* Number of grids in the "blast area" (including the "beam" path) */
 	int grids = 0;
@@ -4603,8 +4618,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		int oy = y;
 		int ox = x;
 
-		int ny = GRID_Y(path_g[i]);
-		int nx = GRID_X(path_g[i]);
+		int ny = path_g[i].y;
+		int nx = path_g[i].x;
 
 		/* Hack -- Balls explode before reaching walls */
 		if (!cave_floor_bold(ny, nx) && (rad > 0)) break;

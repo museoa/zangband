@@ -110,17 +110,6 @@ extern int dun_tun_jct;
 #define TUNN_MAX	900
 
 
-/*
- * Simple structure to hold a map location
- */
-typedef struct coord coord;
-
-struct coord
-{
-	byte y;
-	byte x;
-};
-
 
 
 /*

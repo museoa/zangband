@@ -548,6 +548,9 @@ void search(void)
 			/* Sometimes, notice things */
 			if (rand_int(100) < chance)
 			{
+				/* do not search outside the wilderness */
+				if (!in_bounds2(y,x)) return;
+				
 				/* Access the grid */
 				c_ptr = area(y,x);
 
