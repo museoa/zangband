@@ -4267,4 +4267,19 @@ I:45:50:0
 W:100:0:2:300000
 F:INSTA_ART
 
+##### New rings #####
+
+N:583:Resist Fire and Cold
+G:=:d
+I:45:51:0
+W:21:0:2:450
+A:21/8
+F:RES_FIRE | RES_COLD | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
+
+N:584:the Cat
+G:=:d
+I:45:52:4
+W:5:0:2:150
+A:13/8
+F:STEALTH | INFRA
 

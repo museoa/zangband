@@ -2066,6 +2066,8 @@
 #define SV_RING_LORDLY                  48
 #define SV_RING_ATTACKS                 49
 #define SV_RING_ELEMENTS				50
+#define SV_RING_RES_FIRE_COLD           51
+#define SV_RING_CAT                     52
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS                0
