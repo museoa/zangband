@@ -1120,6 +1120,7 @@ static void load_font(term_data *td, cptr fontname)
 
 	/* Load font */
 	td->font = gdk_font_load(fontname);
+	td->fontname = fontname;
 
 	if (td->font)
 	{
