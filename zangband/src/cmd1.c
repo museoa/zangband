@@ -1478,13 +1478,12 @@ void py_attack(int y, int x)
 	bool            fear = FALSE;
 	bool            mdeath = FALSE;
 
-	bool            vorpal_cut = FALSE;
 	int             chaos_effect = 0;
 	bool            do_quake = FALSE;
 	bool            drain_msg = TRUE;
 	int             drain_result = 0, drain_heal = 0;
 	int             drain_left = MAX_VAMPIRIC_DRAIN;
-	u32b            f1, f2, f3; /* A massive hack -- life-draining weapons */
+	u32b            f1, f2, f3;
 	bool            no_extra = FALSE;
 
 
@@ -1677,10 +1676,6 @@ void py_attack(int y, int x)
 					drain_result = 0;
 			}
 
-			if ((f1 & TR1_VORPAL) && (one_in_((o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 3 : 6)))
-				vorpal_cut = TRUE;
-			else vorpal_cut = FALSE;
-
 			/* Monk attack? */
 			if ((p_ptr->pclass == CLASS_MONK) &&
 				 (!(inventory[INVEN_WIELD].k_idx)))
@@ -1736,7 +1731,9 @@ void py_attack(int y, int x)
 				 * All of these artifact-specific effects
 				 * should be pythonized.
 				 */
-				if (vorpal_cut)
+				 if ((f1 & TR1_VORPAL) &&
+				  (one_in_((o_ptr->activate + 128 == ART_VORPAL_BLADE)
+				  	 ? 3 : 6)))
 				{
 					/*
 					 * The vorpal blade does average:
@@ -2792,9 +2789,9 @@ static int see_nothing(int dir, int y, int x)
  * stop at 1. Another run right and down will enter the corridor
  * and make the corner, stopping at the 2.
  *
- * #@x    1
+ * #@x       1
  * ########### ######
- * 2        #
+ * 2           #
  * #############
  * #
  *
