@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "util-dll.h"
 #include "qebind-dll.h"
 #include "icon.h"
 

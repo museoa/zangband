@@ -12,7 +12,6 @@
 
 #include "tnb.h"
 #include "struct-dll.h"
-#include "util-dll.h"
 #include "icon.h"
 
 static Tcl_Obj *struct_get_ARRAY_tval(Tcl_Interp *interp, t_field *info,

@@ -11,12 +11,8 @@
  */
 
 #include "tnb.h"
-#include "util-dll.h"
 #include "widget.h"
 #include "plat-dll.h"
-
-typedef unsigned char IconValue, *IconPtr;
-
 
 #define XSetRect(r,x1,y1,w,h) (*r).x=x1,(*r).y=y1,(*r).width=w,(*r).height=h
 

@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "util-dll.h"
 #include "plat-dll.h"
 #include "icon.h"
 #include "widget.h"

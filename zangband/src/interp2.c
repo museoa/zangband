@@ -13,7 +13,6 @@
 #include "tnb.h"
 #include "cmdinfo-dll.h"
 #include "struct-dll.h"
-#include "util-dll.h"
 #include "icon.h"
 
 

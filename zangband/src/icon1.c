@@ -12,7 +12,6 @@
 
 #include "tnb.h"
 #include "cmdinfo-dll.h"
-#include "util-dll.h"
 #include "icon.h"
 
 unsigned char *g_palette_rgb;

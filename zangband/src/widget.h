@@ -10,6 +10,8 @@
  * included in all such copies.
  */
 
+#include "icon.h"
+
 typedef struct Widget Widget;
 typedef void Widget_CenterProc(Widget *widgetPtr, int y, int x);
 typedef void Widget_ChangedProc(Widget *widgetPtr);

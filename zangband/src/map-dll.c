@@ -12,7 +12,6 @@
 
 #include "tnb.h"
 #include "cmdinfo-dll.h"
-#include "util-dll.h"
 #include "icon-dll.h"
 #include "widget.h"
 #include "map-dll.h"

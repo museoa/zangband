@@ -13,7 +13,6 @@
 /* Why did I call it "Widget"? Why? WHY?! Aargh! */
 
 #include "tnb.h"
-#include "util-dll.h"
 #include "plat-dll.h"
 #include "icon-dll.h"
 #include "widget.h"
