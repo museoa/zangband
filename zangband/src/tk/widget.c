@@ -32,7 +32,7 @@ struct Widget
 #define WIDGET_REDRAW 0x0001
 #define WIDGET_DELETED 0x0002
 #define WIDGET_EXPOSE 0x0004
-#define WIDGET_NO_UPDATE 0x0084
+#define WIDGET_NO_UPDATE 0x0008
 #define WIDGET_WIPE 0x0010
 	int flags;                  /* Misc flags */
 
@@ -387,9 +387,6 @@ static void widget_draw_all(Widget *widgetPtr)
 	widgetPtr->dy = widgetPtr->by;
 	widgetPtr->dw = widgetPtr->width;
 	widgetPtr->dh = widgetPtr->height;
-	
-		
-	Widget_EventuallyRedraw(widgetPtr);
 }
 
 
@@ -708,6 +705,11 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	int dl = widgetPtr->dx, dt = widgetPtr->dy;
 	int dr = widgetPtr->dw + dl - 1, db = widgetPtr->dh + dt - 1;
 	int x = map->x, y = map->y;
+	
+	mb_ptr->a = map->a;
+	mb_ptr->c = map->c;
+	mb_ptr->ta = map->ta;
+	mb_ptr->tc = map->tc;
 
 	if (widgetPtr->flags & WIDGET_WIPE) return;
 
@@ -718,11 +720,6 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	/* Bitmap coords */
 	xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
 	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
-	
-	mb_ptr->a = map->a;
-	mb_ptr->c = map->c;
-	mb_ptr->ta = map->ta;
-	mb_ptr->tc = map->tc;
 		
 	/* Draw stuff at this location */
 	DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
