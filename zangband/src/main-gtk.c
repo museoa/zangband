@@ -87,7 +87,7 @@ static bool gtk_newgame;
 /*
  * Number of active terms
  */
-static int num_term = MAX_TERM_DATA;
+static int num_term = 3;
 
 
 #ifdef SUPPORT_GAMMA
