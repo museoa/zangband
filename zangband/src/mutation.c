@@ -1839,10 +1839,22 @@ void mutation_power_aux(u32b power)
 				int x, y, dummy;
 				cave_type *c_ptr;
 
+				/* Handle player fear */
+				if (p_ptr->afraid)
+				{
+					/* Message */
+					msg_print("You are too afraid!");
+					return;
+				}
+			
 				/* Only works on adjacent monsters */
-				if (!get_rep_dir(&dir)) break;
+				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
+				/* paranoia */
+				if(!in_bounds2(y, x)) return;
+				
 				c_ptr = area(y,x);
 
 				if (!(c_ptr->m_idx))
@@ -1905,6 +1917,9 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) break;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
+				/* paranoia */
+				if(!in_bounds2(y, x)) return;
 				
 				c_ptr = area(y,x);
 				if (cave_floor_grid(c_ptr))
@@ -2175,6 +2190,10 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
+				/* paranoia */
+				if(!in_bounds2(y, x)) return;
+				
 				if (area(y,x)->m_idx)
 				{
 					py_attack(y, x);
@@ -2246,6 +2265,10 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
+				/* paranoia */
+				if(!in_bounds2(y, x)) return;
+				
 				c_ptr = area(y,x);
 
 				if (!c_ptr->m_idx)
@@ -2281,6 +2304,10 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
+				/* paranoia */
+				if(!in_bounds2(y, x)) return;
+				
 				c_ptr = area(y,x);
 
 				if (!c_ptr->m_idx)
