@@ -2103,36 +2103,6 @@ static void frac_block(void)
 	}
 }
 
-/*
- * This function copies the fractal height map in temp_block
- * to a normal wilderness block.  The height map is modified
- * via a simple function to make terrain. XXX XXX XXX
- */
-
-static void copy_block(blk_ptr block_ptr)
-{
-	int i, j, element;
-
-	for (j = 0; j < WILD_BLOCK_SIZE; j++)
-	{
-		for (i = 0; i < WILD_BLOCK_SIZE; i++)
-		{
-			element = temp_block[j][i];
-			if (element < WILD_BLOCK_SIZE * 128)
-			{
-				/* Grass */
-				block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
-				block_ptr[j][i].feat = FEAT_GRASS;
-			}
-			else
-			{
-				/* Trees */
-				block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
-				block_ptr[j][i].feat = FEAT_TREES;
-			}
-		}
-	}
-}
 
 /*
  * This function picks a terrain feature from a list of four
@@ -2212,9 +2182,31 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 	if (choice < c3) return(feat3);
 	
 	return(feat4);
-	
-
 }
+
+/*
+ * This function creates the sea based on the number in sea_type.
+ * The higher the number - the greater the chance of deeper water.
+ *
+ * Note WILD_SEA and above generation types are reserved for use
+ * with this function.
+ */
+
+static void make_wild_sea(blk_ptr block_ptr,int sea_type)
+{
+	int i, j;
+
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			block_ptr[j][i].feat = pick_feat(FEAT_SHAL_WATER, FEAT_DEEP_WATER,
+					FEAT_OCEAN_WATER, FEAT_NONE, 0, 5, 10, 20, sea_type);
+			block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
+		}
+	}
+}
+
 
 /*
  * Make wilderness generation type 1
@@ -2278,28 +2270,34 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Get wilderness type */
 	w_type = wild[y][x].done.wild;
 	
-	/* Get generation type */
-	gen_type = wild_gen_data[w_type].gen_routine;
-	
-	
-	/* Based on type - choose wilderness block generation function */
-	switch (gen_type)
+	/* Create sea terrains if type >= WILD_SEA */
+	if (w_type >= WILD_SEA)
 	{
-		case 1:
-			/* Only one type at the moment. */
-			
-			/* Fractal plasma with weighted terrain probabilites */
-			make_wild_01(block_ptr, wild_gen_data[w_type].data);
-		break;
-		
-		default:
-			quit("Illegal wilderness block type.");
+		make_wild_sea(block_ptr, w_type - WILD_SEA);
 	}
-
+	else
+	{
+		/* Get generation type */
+		gen_type = wild_gen_data[w_type].gen_routine;
 	
-	/* Add roads / river / lava (Not done)*/
+		/* Based on type - choose wilderness block generation function */
+		switch (gen_type)
+		{
+			case 1:
+				/* Only one type at the moment. */
+			
+				/* Fractal plasma with weighted terrain probabilites */
+				make_wild_01(block_ptr, wild_gen_data[w_type].data);
+			break;
+		
+			default:
+				quit("Illegal wilderness block type.");
+		}
+	
+	
+		/* Add roads / river / lava (Not done)*/
 
-
+	}
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
 
@@ -3102,9 +3100,11 @@ void create_wilderness(void)
 			break;
 		}
 	}
-	
+		
 	/* The sea covers 1/3 of the wilderness */
 	sea_level = hgt_min + (hgt_max - hgt_min) / 3;
+	
+	msg_format("min, max, sea %d,%d,%d", hgt_min, hgt_max, sea_level);
 	
 	/* create "population density" information */
 	create_pop_map(sea_level);
@@ -3161,9 +3161,17 @@ void create_wilderness(void)
 	{
 		for (j = 0; j < max_wild; j++)
 		{
-			/* All grass */
-			wild[j][i].done.wild = 1;
-
+			if (wild[j][i].gen.hgt_map < sea_level * 16)			
+			{
+				wild[j][i].done.wild = 65535 - 
+					((long) wild[j][i].gen.hgt_map * 4) / sea_level;
+			}
+			else
+			{
+				/* Just type one for now. */
+				wild[j][i].done.wild = 1;
+			}
+			
 			/* No town yet */
 			wild[j][i].done.town = 0;
 

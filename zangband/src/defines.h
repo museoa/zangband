@@ -129,6 +129,8 @@
 /* number of wilderness blocks in cache */
 #define WILD_BLOCKS	WILD_GRID_SIZE * WILD_GRID_SIZE
 
+/* start of the sea types = 2^16 - 65*/
+#define WILD_SEA	65471
 
 /*
  * Quest constants
