@@ -372,8 +372,7 @@ moving around in it). However, this penalty is small enough for all but
 the youngest of characters to ignore. 
 
 Rings of Combat or Skill have a single (+y) or (+x). When worn, they
-affect your deadliness and skill in melee battle respectively. They do
-not affect missile combat. 
+affect your deadliness and skill in melee battle respectively.
 
 [a, +b]. This is the item's base armor class and magical bonus to
 armor. The higher, the better. While theoretically, a weapon could
@@ -410,7 +409,20 @@ monster, X number of Y-sided dice are rolled. This number represents
 the amount of damage you do to the monster before magical bonuses, 
 slays, brands, criticals, etc are applied. A Longsword, for example,
 rolls 2 five-sided dice (2d5) when you hit a monster.
- 
+
+Ammunition, as well as having the normal weapon information, also 
+shows how much damage they will do per shot and per round.  This
+information will only be displayed if you have the proper shooting
+weapon.  (Your melee weapon's average damage is displayed on the info-
+screen.)  The format of this is:
+
+An arrow (3d5) (+0, +0) (26/26)
+
+The first number is the average damage per shot, and the second is
+average damage per round.  The two numbers can differ because the
+shooting weapons have differing energy requirements per shot (unlike
+melee weapons.)
+
 === On Slays ===
 
 Many weapons you find in the dungeon are considered to be particularly
