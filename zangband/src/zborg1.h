@@ -137,11 +137,7 @@ struct borg_take
 {
 	s16b k_idx;	/* Kind index */
 
-	bool seen;	/* Assigned motion */
-
 	byte x, y;	/* Location */
-
-	s16b when;	/* When last seen */
 	
 	char unknown;	/* Unknown type */
 };
