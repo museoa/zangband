@@ -489,43 +489,12 @@ bool monster_death(int m_idx, bool explode)
 	/* Drop objects being carried */
 	drop_object_list(&m_ptr->hold_o_idx, m_ptr->fx, m_ptr->fy);
 
-	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-	if (strstr((r_name + r_ptr->name), "Stormbringer"))
-	{
-		/* Prepare to make the Stormbringer */
-		q_ptr = object_prep(lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
-
-		/* Mega-Hack -- Name the sword */
-		q_ptr->xtra_name = quark_add("'Stormbringer'");
-		q_ptr->to_h = 16;
-		q_ptr->to_d = 16;
-		q_ptr->ds = 6;
-		q_ptr->dd = 6;
-		q_ptr->pval = 2;
-
-		q_ptr->flags[0] |= (TR0_VAMPIRIC | TR0_STR | TR0_CON);
-		q_ptr->flags[1] |= (TR1_FREE_ACT | TR1_HOLD_LIFE | TR1_RES_NEXUS | TR1_RES_CHAOS | TR1_RES_NETHER | TR1_RES_CONF)	/* No longer resist_disen */;
-		q_ptr->flags[2] |= (TR2_IGNORE_ACID | TR2_IGNORE_ELEC |
-						  TR2_IGNORE_FIRE | TR2_IGNORE_COLD |
-						  TR2_INSTA_ART | TR2_CURSED | TR2_HEAVY_CURSE);
-
-		/* Just to be sure */
-		SET_FLAG(q_ptr, TR_NO_TELE)	/* How's that for a downside? */;
-
-		if (one_in_(2))
-			SET_FLAG(q_ptr, TR_DRAIN_EXP);
-		else
-			SET_FLAG(q_ptr, TR_AGGRAVATE);
-
-		/* Drop it in the dungeon */
-		drop_near(q_ptr, -1, x, y);
-	}
 
 	/*
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
 	 * spawn another in the fallen one's place!
 	 */
-	else if (strstr((r_name + r_ptr->name), "the Dawn"))
+	if (strstr((r_name + r_ptr->name), "the Dawn"))
 	{
 		if (!one_in_(20))
 		{
@@ -623,6 +592,14 @@ bool monster_death(int m_idx, bool explode)
 
 			/* Make Crown of Morgoth */
 			create_named_art(ART_MORGOTH, x, y);
+		}
+		else if (strstr((r_name + r_ptr->name), "Stormbringer"))
+		{
+			/* Create the artifact */
+			create_named_art(ART_STORMBRINGER, x, y);
+
+			/* The artifact has been created */
+			a_info[ART_STORMBRINGER].cur_num = 1;
 		}
 		else
 		{

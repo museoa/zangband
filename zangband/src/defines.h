@@ -1565,6 +1565,9 @@
 #define ART_MARKSMAN			127
 
 
+/* New artifacts */
+#define ART_STORMBRINGER		130
+
 
 /*** Ego-Item indexes (see "lib/edit/e_info.txt") ***/
 
