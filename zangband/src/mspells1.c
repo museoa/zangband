@@ -362,9 +362,6 @@ static bool summon_possible(int y1, int x1)
 			/* Access Grid */
 			c_ptr = area(y, x);
 
-			/* Hack: no summon on glyph of warding */
-			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
-
 			/* ...nor on the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;

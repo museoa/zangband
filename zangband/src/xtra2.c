@@ -1948,9 +1948,6 @@ static bool target_set_accept(int y, int x)
 	/* Interesting memorized features */
 	if (c_ptr->info & (CAVE_MARK))
 	{
-		/* Notice glyphs */
-		if (c_ptr->feat == FEAT_MINOR_GLYPH) return (TRUE);
-
 		/* Notice the Pattern */
 		if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
 		    (c_ptr->feat >= FEAT_PATTERN_START))
@@ -2489,7 +2486,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			if (feat == FEAT_NONE) name = "unknown grid";
 
 			/* Pick a prefix */
-			if (*s2 && ((feat >= FEAT_MINOR_GLYPH) &&
+			if (*s2 && ((feat >= FEAT_PATTERN_START) &&
 			   (feat <= FEAT_PATTERN_XTRA2)))
 			{
 				s2 = "on ";

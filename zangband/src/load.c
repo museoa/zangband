@@ -2546,6 +2546,16 @@ static errr rd_dungeon_aux(void)
 					/* Add the glyph here as a field */
 					(void) place_field(y, x, FT_GLYPH_WARDING);
 				}
+				
+				/* Explosive Rune */
+				if (c_ptr->feat == 0x40)
+				{
+					/* Get rid of it */
+					c_ptr->feat = FEAT_NONE;
+					
+					/* Add the glyph here as a field */
+					(void) place_field(y, x, FT_GLYPH_EXPLODE);
+				}
 			}
 
 			/* Hack -- convert nothing-ness into floors */

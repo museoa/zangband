@@ -6501,6 +6501,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	{field_action_compact_basic, "field_action_compact_basic"},
 	
 	/* Glyph of warding function */
-	{field_action_glyph_warding, "field_action_glyph_warding"}
+	{field_action_glyph_warding, "field_action_glyph_warding"},
+	
+	/* Explosive rune function */
+	{field_action_glyph_explode, "field_action_glyph_explode"}
 };
 

@@ -1180,3 +1180,65 @@ void field_action_glyph_warding(s16b *field_ptr, void *mon_enter_test)
 	/* Done */
 	return;
 }
+
+/* The function that now controls the exploding rune spell . */
+void field_action_glyph_explode(s16b *field_ptr, void *mon_enter_test)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look at input data */
+	field_mon_test *mon_enter = (field_mon_test *) mon_enter_test;
+
+	monster_type *m_ptr = mon_enter->m_ptr;
+	
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	bool do_move = mon_enter->do_move;
+	
+	/* Hack: No monster - just test for existance of glyph */
+	if (!m_ptr)
+	{
+		/* Monsters cannot be generated / teleported onto glyph */
+		mon_enter->do_move = FALSE;
+		
+		/* Update *field_ptr to point to the next field in the list */
+		field_ptr = &(f_ptr->next_f_idx);
+		
+		/* Done */
+		return;
+	}
+	
+	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
+		(randint(BREAK_GLYPH) < r_ptr->level)) 
+	{
+		if (f_ptr->fy == py && f_ptr->fx == px)
+		{
+			msg_print("The rune explodes!");
+			fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
+		}
+		else
+			msg_print("An explosive rune was disarmed.");
+		
+		/* Delete the field */
+		delete_field_aux(field_ptr);
+			
+		/* Note that *field_ptr does not need to be updated */
+
+		/* Allow movement */
+		do_move = TRUE;
+	}
+	else
+	{
+		/* No move allowed */
+		do_move = FALSE;
+			
+		/* Update *field_ptr to point to the next field in the list */
+		field_ptr = &(f_ptr->next_f_idx);
+	}
+
+	/* Save result */
+	mon_enter->do_move = do_move;
+	
+	/* Done */
+	return;
+}

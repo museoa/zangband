@@ -2621,39 +2621,6 @@ static void process_monster(int m_idx)
 			}
 		}
 
-		if (do_move && (c_ptr->feat == FEAT_MINOR_GLYPH) &&
-		         !(r_ptr->flags1 & RF1_NEVER_BLOW))
-		{
-			/* Assume no move allowed */
-			do_move = FALSE;
-
-			/* Break the ward */
-			if (randint(BREAK_MINOR_GLYPH) < r_ptr->level)
-			{
-				/* Describe observable breakage */
-				if (c_ptr->info & CAVE_MARK)
-				{
-					if (ny == py && nx == px)
-					{
-						msg_print("The rune explodes!");
-						fire_ball(GF_MANA, 0,
-							2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
-					}
-					else
-						msg_print("An explosive rune was disarmed.");
-				}
-
-				/* Forget the rune */
-				c_ptr->info &= ~(CAVE_MARK);
-
-				/* Break the rune */
-				cave_set_feat(ny, nx, FEAT_FLOOR);
-
-				/* Allow movement */
-				do_move = TRUE;
-			}
-		}
-
 		/* Some monsters never attack */
 		if (do_move && (ny == py) && (nx == px) &&
 			(r_ptr->flags1 & RF1_NEVER_BLOW))

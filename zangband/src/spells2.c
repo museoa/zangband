@@ -3006,9 +3006,6 @@ bool earthquake(int cy, int cx, int r)
 							/* Get result */
 							if(!mon_enter_test.do_move) continue;
 
-							/* Hack -- no safety on glyph of warding */
-							if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
-
 							/* ... nor on the Pattern */
 							if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
 							    (c_ptr->feat >= FEAT_PATTERN_START))

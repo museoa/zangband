@@ -3597,7 +3597,7 @@ void map_area(void)
 			/* All non-walls are "checked" */
 			if ((c_ptr->feat < FEAT_SECRET) ||
 			    (c_ptr->feat == FEAT_RUBBLE) ||
-				 ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
+				 ((c_ptr->feat >= FEAT_PATTERN_START) &&
 				  (c_ptr->feat != FEAT_TRAP_TRAPS)))
 			{
 				/* Memorize normal features */

@@ -1456,7 +1456,7 @@ void do_cmd_tunnel(void)
 		}
 
 		/* No tunnelling through air */
-		else if (cave_floor_grid(c_ptr) || ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
+		else if (cave_floor_grid(c_ptr) || ((c_ptr->feat >= FEAT_PATTERN_START) &&
 		    (c_ptr->feat <= FEAT_PATTERN_XTRA2)))
 		{
 			/* Message */
@@ -2125,7 +2125,7 @@ void do_cmd_alter(void)
 
 		/* Tunnel through walls */
 		else if (((c_ptr->feat >= FEAT_SECRET) &&
-		          (c_ptr->feat < FEAT_MINOR_GLYPH)) ||
+		          (c_ptr->feat <= FEAT_PERM_SOLID)) ||
 		         ((c_ptr->feat == FEAT_TREES) ||
 		          (c_ptr->feat == FEAT_MOUNTAIN) ||
 			  (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
@@ -2139,7 +2139,7 @@ void do_cmd_alter(void)
 
 		/* Bash jammed doors */
 		else if ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x08) &&
-		         (c_ptr->feat < FEAT_MINOR_GLYPH))
+		         (c_ptr->feat <= FEAT_PERM_SOLID))
 		{
 			/* Tunnel */
 			more = do_cmd_bash_aux(y, x, dir);
@@ -2147,7 +2147,7 @@ void do_cmd_alter(void)
 
 		/* Open closed doors */
 		else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		         (c_ptr->feat < FEAT_MINOR_GLYPH))
+		         (c_ptr->feat <= FEAT_PERM_SOLID))
 		{
 			/* Tunnel */
 			more = do_cmd_open_aux(y, x);

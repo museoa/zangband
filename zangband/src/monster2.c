@@ -1514,9 +1514,6 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		 ((c_ptr->feat & 0x60) == 0x60)) &&
 		 (!((c_ptr->m_idx) || (c_ptr == area(py, px)))))) return FALSE;
 
-	/* Hack -- no creation on glyph of warding */
-	if (c_ptr->feat == FEAT_MINOR_GLYPH) return (FALSE);
-
 	/* Nor on the Pattern */
 	if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 	    (c_ptr->feat <= FEAT_PATTERN_XTRA2))
@@ -2471,6 +2468,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 {
 	int i, x, y, r_idx;
 	cave_type *c_ptr;
+	field_mon_test	mon_enter_test;
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
@@ -2488,13 +2486,30 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 		c_ptr = area(y, x);
 		if (!cave_empty_grid(c_ptr)) continue;
 
-		/* Hack -- no summon on glyph of warding */
-		if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
-
 		/* ... nor on the Pattern */
 		if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 			 (c_ptr->feat <= FEAT_PATTERN_XTRA2))
 			continue;
+		
+		/* Check for a field that blocks movement */
+		if (fields_have_flags(c_ptr->fld_idx,
+			FIELD_INFO_NO_ENTER)) continue;
+							
+		/* 
+		 * Test for fields that will not allow this
+		 * specific monster to pass. (i.e. Glyph of warding)
+		 */
+		 
+		/* Initialise info to pass to action functions */
+		mon_enter_test.m_ptr = NULL;
+		mon_enter_test.do_move = TRUE;
+		
+		/* Call the hook */
+		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, 
+			 (void *) &mon_enter_test);
+			 
+		/* Get result */
+		if(!mon_enter_test.do_move) continue;
 
 		/* Okay */
 		break;

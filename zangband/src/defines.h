@@ -917,7 +917,7 @@
 #define FEAT_PERM_SOLID         0x3F
 
 /* Glyph */
-#define FEAT_MINOR_GLYPH        0x40
+/* #define FEAT_MINOR_GLYPH        0x40 Now is a field */
 
 /* Pattern */
 #define FEAT_PATTERN_START      0x41
@@ -999,6 +999,7 @@
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
 #define FT_WALL_INVIS		0x0001
 #define FT_GLYPH_WARDING	0x0002
+#define FT_GLYPH_EXPLODE	0x0003
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
