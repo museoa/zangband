@@ -1422,7 +1422,7 @@ F:STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE |
 F:SLAY_EVIL | BRAND_COLD | SLAY_UNDEAD |
 F:SLAY_ORC | FREE_ACT | IM_COLD | SEE_INVIS | ACTIVATE |
 F:BLESSED | SHOW_MODS | INSTA_ART
-L:USE:	msgf("Your %s lets out a long, shrill note...")
+L:USE:	msgf("Your great axe lets out a long, shrill note...")
 L:USE:	mass_genocide()
 L:USE:	object.timeout = 1000
 L:DESC:	return "mass genocide every 1000 turns"

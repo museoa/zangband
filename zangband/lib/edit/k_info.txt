@@ -3671,13 +3671,13 @@ L:USE:	local success; local dir; success, dir = get_aim_dir()
 L:USE:	if not success then return end
 L:USE:	local chance = randint1(5)
 L:USE:	local damtype; local damname
-L:USE:	if     chance == 1 then damtype = GF_ELEC, damname = "lightning"
-L:USE:	elseif chance == 2 then damtype = GF_COLD, damname = "frost"
-L:USE:	elseif chance == 3 then damtype = GF_ACID, damname = "acid"
-L:USE:	elseif chance == 4 then damtype = GF_FIRE, damname = "fire"
-L:USE:  else                    damtype = GF_POIS, damname = "poison gas"
+L:USE:	if     chance == 1 then damtype = GF_ELEC; damname = "lightning"
+L:USE:	elseif chance == 2 then damtype = GF_COLD; damname = "frost"
+L:USE:	elseif chance == 3 then damtype = GF_ACID; damname = "acid"
+L:USE:	elseif chance == 4 then damtype = GF_FIRE; damname = "fire"
+L:USE:  else                    damtype = GF_POIS; damname = "poison gas"
 L:USE:  end
-L:USE:	msgf("You breathe %s.", damname)
+L:USE:	msgf("You breathe "..damname..".")
 L:USE:	fire_ball(damtype, dir, 840, 2)
 L:USE:	object.timeout = rand_range(25, 50)
 L:DESC:	return "breathe multi-hued (840) every 25-50 turns"
@@ -3694,8 +3694,8 @@ L:USE:	local success; local dir; success, dir = get_aim_dir()
 L:USE:	if not success then return end
 L:USE:	local chance = randint1(2)
 L:USE:	local damtype; local damname
-L:USE:	if chance == 1 then damtype = GF_LITE, damname = "light"
-L:USE:  else                damtype = GF_DARK, damname = "darkness"
+L:USE:	if chance == 1 then damtype = GF_LITE; damname = "light"
+L:USE:  else                damtype = GF_DARK; damname = "darkness"
 L:USE:  end
 L:USE:	fire_ball(damtype, dir, 670, 2)
 L:USE:	object.timeout = rand_range(30, 60)
@@ -3713,8 +3713,8 @@ L:USE:	local success; local dir; success, dir = get_aim_dir()
 L:USE:	if not success then return end
 L:USE:	local chance = randint1(2)
 L:USE:	local damtype; local damname
-L:USE:	if chance == 1 then damtype = GF_SOUND, damname = "sound"
-L:USE:  else                damtype = GF_SHARDS, damname = "shards"
+L:USE:	if chance == 1 then damtype = GF_SOUND; damname = "sound"
+L:USE:  else                damtype = GF_SHARDS; damname = "shards"
 L:USE:  end
 L:USE:	fire_ball(damtype, dir, 750, 2)
 L:USE:	object.timeout = rand_range(30, 60)
@@ -3762,8 +3762,8 @@ L:USE:	local success; local dir; success, dir = get_aim_dir()
 L:USE:	if not success then return end
 L:USE:	local chance = randint1(2)
 L:USE:	local damtype; local damname
-L:USE:	if chance == 1 then damtype = GF_CHAOS, damname = "chaos"
-L:USE:  else                damtype = GF_DISENCHANT, damname = "disenchantment"
+L:USE:	if chance == 1 then damtype = GF_CHAOS; damname = "chaos"
+L:USE:  else                damtype = GF_DISENCHANT; damname = "disenchantment"
 L:USE:  end
 L:USE:	fire_ball(damtype, dir, 740, 2)
 L:USE:	object.timeout = rand_range(30, 60)
@@ -3781,12 +3781,12 @@ L:USE:	local success; local dir; success, dir = get_aim_dir()
 L:USE:	if not success then return end
 L:USE:	local chance = randint1(4)
 L:USE:	local damtype; local damname
-L:USE:	if     chance == 1 then damtype = GF_SOUND, damname = "sound"
-L:USE:	elseif chance == 2 then damtype = GF_SHARDS, damname = "shards"
-L:USE:	elseif chance == 3 then damtype = GF_CHAOS, damname = "chaos"
-L:USE:  else                    damtype = GF_DISENCHANT, damname = "disenchantment"
+L:USE:	if     chance == 1 then damtype = GF_SOUND; damname = "sound"
+L:USE:	elseif chance == 2 then damtype = GF_SHARDS; damname = "shards"
+L:USE:	elseif chance == 3 then damtype = GF_CHAOS; damname = "chaos"
+L:USE:  else                    damtype = GF_DISENCHANT; damname = "disenchantment"
 L:USE:  end
-L:USE:	msgf("You breathe %s.", damname)
+L:USE:	msgf("You breathe "..damname..".")
 L:USE:	fire_ball(damtype, dir, 840, 2)
 L:USE:	object.timeout = rand_range(30, 60)
 L:DESC:	return "breathe balance (840) every 30-60 turns"
