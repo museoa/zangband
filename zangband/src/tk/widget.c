@@ -555,6 +555,25 @@ errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
 	return 0;
 }
 
+/*
+ * Draw the cursor as a rectangle.
+ */
+errr Term_curs_tnb(int x, int y)
+{
+	/* Paranoia */
+	if (!tnb_term) return (1);
+	
+	/* Draw the rectangle */
+	XDrawRectangle(tnb_term->display,
+			tnb_term->bitmap->pixmap,
+			tnb_term->gc,
+			(x - tnb_term->x_min) * tnb_term->gwidth,
+			(y - tnb_term->y_min) * tnb_term->gheight,
+			tnb_term->gwidth - 1, tnb_term->gheight - 1);
+
+	/* Success */
+	return (0);
+}
 
 /*
  * Redraw everything.

@@ -82,12 +82,13 @@ extern void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
 extern void Bitmap_Delete(BitmapPtr bitmapPtr);
 extern BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name);
 
-/* term.c */
+/* Widget.c */
 extern errr Term_xtra_tnb_react(void);
 extern errr Term_wipe_tnb(int x, int y, int n);
 extern errr Term_text_tnb(int x, int y, int n, byte a, const char *s);
 extern errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp,
 						  const byte *tap, const char *tcp);
+extern errr Term_curs_tnb(int x, int y);
 extern errr Term_xtra_tnb_clear(void);
 
 /* canv-widget.c */
