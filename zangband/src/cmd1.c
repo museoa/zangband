@@ -1982,12 +1982,7 @@ void py_attack(int x, int y)
 	/* Hack -- delay fear messages */
 	else if (fear && m_ptr->ml)
 	{
-		/* Sound */
-		sound(SOUND_FLEE);
-
-		/* Message */
-		msgf(MSGT_FLEE, "%^s flees in terror!", m_name);
-		msg_effect(MSG_FLEE, m_ptr->r_idx);
+		flee_message(m_name, m_ptr->r_idx);
 	}
 
 	if (drain_left != MAX_VAMPIRIC_DRAIN)

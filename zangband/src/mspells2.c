@@ -3071,7 +3071,7 @@ bool monst_spell_monst(int m_idx)
 
 		if (fear && see_t)
 		{
-			msgf("%^s flees in terror!", t_name);
+			flee_message(t_name, t_ptr->r_idx);
 		}
 
 		/* Remember what the monster did, if we saw it */

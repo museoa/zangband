@@ -107,6 +107,24 @@ static cptr desc_moan[] =
 	"mumbles something about mushrooms."
 };
 
+/*
+ * The monster wants to flee so print a message.
+ */
+void flee_message(cptr m_name, u16b r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+	
+	/* Immobile monsters can never flee */
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) return;
+	
+	/* Sound */
+	sound(SOUND_FLEE);
+
+	/* Message */
+	msgf(MSGT_FLEE, "%^s flees in terror!", m_name);
+	msg_effect(MSG_FLEE, r_idx);
+}
+
 
 /*
  * Attack the player via physical attacks.
@@ -1597,8 +1615,7 @@ bool make_attack_normal(int m_idx)
 
 	if (alive && visible && fear)
 	{
-		sound(SOUND_FLEE);
-		msgf("%^s flees in terror!", m_name);
+		flee_message(m_name, m_ptr->r_idx);
 	}
 
 	/* Assume we attacked */

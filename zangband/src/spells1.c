@@ -3030,12 +3030,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			/* Take note */
 			if ((fear || do_fear) && (m_ptr->ml))
 			{
-				/* Sound */
-				sound(SOUND_FLEE);
-
-				/* Message */
-				msgf(MSGT_FLEE, "%^s flees in terror!", m_name);
-				msg_effect(MSG_FLEE, m_ptr->r_idx);
+				flee_message(m_name, m_ptr->r_idx);
 			}
 
 			/* Hack -- handle sleep */

@@ -2651,12 +2651,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						/* Sound */
-						sound(SOUND_FLEE);
-
-						/* Message */
-						msgf(MSGT_FLEE, "%^s flees in terror!", m_name);
-						msg_effect(MSG_FLEE, m_ptr->r_idx);
+						flee_message(m_name, m_ptr->r_idx);
 					}
 				}
 			}
@@ -3132,12 +3127,7 @@ void do_cmd_throw_aux(int mult)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						/* Sound */
-						sound(SOUND_FLEE);
-
-						/* Message */
-						msgf(MSGT_FLEE, "%^s flees in terror!", m_name);
-						msg_effect(MSG_FLEE, m_ptr->r_idx);
+						flee_message(m_name, m_ptr->r_idx);
 					}
 				}
 			}

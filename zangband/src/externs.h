@@ -495,6 +495,7 @@ extern errr rd_savefile_new(void);
 
 /* melee1.c */
 /* melee2.c */
+extern void flee_message(cptr m_name, u16b r_idx);
 extern bool make_attack_normal(int m_idx);
 extern bool make_attack_spell(int m_idx);
 extern void process_monsters(int min_energy);
