@@ -1378,6 +1378,7 @@ static void roff_top(int r_idx)
  *   ^A (all monsters)
  *   ^U (all unique monsters)
  *   ^N (all non-unique monsters)
+ *   ^M (case insensitive name search)
  *
  * The responses may be sorted in several ways, see below.
  *
@@ -1398,6 +1399,8 @@ void do_cmd_query_symbol(void)
 	u16b	why = 0;
 	u16b	*who;
 
+	char    temp1[80] = "\0";
+	char    temp2[80] = "\0";
 
 	/* Get a character, or abort */
 	if (!get_com("Enter character to be identified: ", &sym)) return;
@@ -1424,6 +1427,12 @@ void do_cmd_query_symbol(void)
 		all = norm = TRUE;
 		strcpy(buf, "Non-unique monster list.");
 	}
+        else if (sym == KTRL('M'))
+        {
+                all = TRUE;
+                if (!get_string("Name:",temp1, 70)) temp1[0] = 0;
+                else sprintf(buf, "Monsters with a name \"%s\"", temp1);
+        }
 	else if (ident_info[i])
 	{
 		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
@@ -1453,8 +1462,27 @@ void do_cmd_query_symbol(void)
 		/* Require unique monsters if needed */
 		if (uniq && !(r_ptr->flags1 & (RF1_UNIQUE))) continue;
 
+		/* Collect monsters with a name temp1 */
+                if (temp1[0])
+		{
+		  int xx;
+
+		  for (xx=0; temp1[xx] && xx<80; xx++)
+		  {
+		      if (isupper(temp1[xx])) temp1[xx]=tolower(temp1[xx]);
+		  }
+		  strcpy(temp2, r_name + r_ptr->name);
+
+		  for (xx=0; temp2[xx] && xx<80; xx++)
+		  {
+                      if (isupper(temp2[xx])) temp2[xx]=tolower(temp2[xx]);
+		  }
+		  
+		  if (strstr(temp2, temp1)) who[n++]=i;
+                }
+
 		/* Collect "appropriate" monsters */
-		if (all || (r_ptr->d_char == sym)) who[n++] = i;
+		else if (all || (r_ptr->d_char == sym)) who[n++] = i;
 	}
 
 	/* Nothing to recall */
