@@ -126,6 +126,7 @@ extern s16b cur_hgt;
 extern s16b cur_wid;
 extern s16b dun_level;
 extern s16b num_repro;
+extern bool mon_fight;
 extern s16b object_level;
 extern s16b monster_level;
 extern s16b base_level;
@@ -637,7 +638,6 @@ extern void display_roff(int r_idx);
 extern void create_name(int type, char *name);
 
 /* monster2.c */
-extern bool mon_fight;
 extern cptr horror_desc[MAX_SAN_HORROR];
 extern cptr funny_desc[MAX_SAN_FUNNY];
 extern cptr funny_comments[MAX_SAN_COMMENT];

@@ -23,10 +23,6 @@
 #define CYBERNOISE 20
 
 
-/* Monster fighting indicator */
-bool mon_fight = FALSE;
-
-
 /*
  * Calculate the direction to the next enemy
  */
@@ -2044,7 +2040,6 @@ static void process_monster(int m_idx)
 	    (randint(CYBERNOISE) == 1) &&
 	    !m_ptr->ml && (m_ptr->cdis <= MAX_SIGHT))
 	{
-		disturb(FALSE, FALSE);
 		msg_print("You hear heavy steps.");
 	}
 
@@ -2896,9 +2891,6 @@ void process_monsters(void)
 
 	int speed;
 
-	/* Clear monster fighting indicators */
-	mon_fight = FALSE;
-
 	/* Memorize old race */
 	old_monster_race_idx = p_ptr->monster_race_idx;
 
@@ -3070,10 +3062,5 @@ void process_monsters(void)
 			/* Window stuff */
 			p_ptr->window |= (PW_MONSTER);
 		}
-	}
-
-	if (mon_fight)
-	{
-		msg_print("You hear noise.");
 	}
 }

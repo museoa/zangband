@@ -922,6 +922,10 @@ static void process_world(void)
 			do_cmd_save_game(TRUE);
 	}
 
+	if (mon_fight)
+	{
+		msg_print("You hear noise.");
+	}
 
 	/*** Handle the wilderness/town (sunshine) ***/
 
@@ -3794,6 +3798,9 @@ static void dungeon(void)
 
 		total_friends = 0;
 		total_friend_levels = 0;
+
+		/* Clear monster fighting indicators */
+		mon_fight = FALSE;
 
 		/* Process all of the monsters */
 		process_monsters();
