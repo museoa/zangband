@@ -2647,7 +2647,7 @@ static void msg_print_aux(u16b type, cptr msg)
 }
 
 
-static int current_message_type = MSG_GENERIC;
+static u16b current_message_type = MSG_GENERIC;
 
 /*
  * Change the message type, and parse the following
