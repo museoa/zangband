@@ -178,7 +178,6 @@ extern bool borg_resurrect;	/* Continous play mode */
 extern bool borg_cancel;	/* Being cancelled */
 
 extern char genocide_target;	/* Identity of the poor unsuspecting soul */
-extern int zap_slot;	/* to avoid a nasty game bug with amnesia */
 extern bool borg_casted_glyph;	/* we dont have a launch messages anymore */
 extern int borg_stop_dlevel;
 extern int borg_stop_clevel;

@@ -1343,31 +1343,6 @@ static void borg_parse_aux(cptr msg, int len)
 
 	}
 
-	/* A bug in the 280 game fails to inscribe {empty} on a staff-wand after
-	 * being hit by amnesia (if the item had a sale inscription).
-	 * So we will try to use the wand, see that it is empty then inscribe
-	 * it ourselves.
-	 */
-	if (prefix(msg, "The wand has no charges left") ||
-		prefix(msg, "The staff has no charges left"))
-	{
-		/* make the inscription */
-#if 0
-		/* not needed in 285,  the game bug was fixed. */
-		borg_keypress('{');
-		borg_keypress(I2A(zap_slot));
-
-		/* "you inscribe the " */
-		borg_keypress('e');
-		borg_keypress('m');
-		borg_keypress('p');
-		borg_keypress('t');
-		borg_keypress('y');
-		borg_keypress('\n');
-
-		/* done */
-#endif
-	}
 	/* amnesia attacks, re-id wands, staves, equipment. */
 	if (prefix(msg, "Your memories fade"))
 	{

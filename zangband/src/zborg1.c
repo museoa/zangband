@@ -78,7 +78,6 @@ bool borg_resurrect = FALSE;	/* continous play mode */
 bool borg_cancel;	/* Being cancelled */
 
 char genocide_target;	/* identity of the poor unsuspecting soul */
-int zap_slot;	/* slot of a wand/staff---to avoid a game bug */
 bool borg_casted_glyph;	/* because we dont have a launch anymore */
 int borg_stop_dlevel = -1;
 int borg_stop_clevel = -1;

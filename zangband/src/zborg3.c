@@ -1272,15 +1272,12 @@ bool borg_aim_wand(int sval)
 	/* No charges */
 	if (!l_ptr->pval) return (FALSE);
 
-	/* record the address to avoid certain bugs with inscriptions&amnesia */
-	zap_slot = look_up_index(l_ptr);
-
 	/* Log the message */
 	borg_note(format("# Aiming %s.", l_ptr->o_name));
 
 	/* Perform the action */
 	borg_keypress('a');
-	borg_keypress(I2A(zap_slot));
+	borg_keypress(I2A(look_up_index(l_ptr)));
 
 	/* Success */
 	return (TRUE);
@@ -1303,15 +1300,12 @@ bool borg_use_staff(int sval)
 	/* No charges */
 	if (!l_ptr->pval) return (FALSE);
 
-	/* record the address to avoid certain bugs with inscriptions&amnesia */
-	zap_slot = look_up_index(l_ptr);
-
 	/* Log the message */
 	borg_note(format("# Using %s.", l_ptr->o_name));
 
 	/* Perform the action */
 	borg_keypress('u');
-	borg_keypress(I2A(zap_slot));
+	borg_keypress(I2A(look_up_index(l_ptr)));
 
 	/* Success */
 	return (TRUE);
@@ -1369,16 +1363,12 @@ bool borg_use_staff_fail(int sval)
 		/* We might have a slight chance, or we cannot not read */
 	}
 
-
-	/* record the address to avoid certain bugs with inscriptions&amnesia */
-	zap_slot = look_up_index(l_ptr);
-
 	/* Log the message */
 	borg_note(format("# Using %s.", l_ptr->o_name));
 
 	/* Perform the action */
 	borg_keypress('u');
-	borg_keypress(I2A(zap_slot));
+	borg_keypress(I2A(look_up_index(l_ptr)));
 
 	/* Success */
 	return (TRUE);
