@@ -832,27 +832,22 @@ field_type *field_is_type(const cave_type *c_ptr, byte typ)
  * Return the first known field of the requested type
  * in the list.
  */
-s16b *field_first_known(s16b *fld_ptr, byte typ)
+field_type *field_first_known(const cave_type *c_ptr, byte typ)
 {
 	field_type *f_ptr;
 
 	/* While the field exists */
-	while (*fld_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
-		/* Get field */
-		f_ptr = &fld_list[*fld_ptr];
-
 		/* Is it known to be the correct type? */
 		if ((t_info[f_ptr->t_idx].type == typ) &&
 			((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
-			 (FIELD_INFO_MARK | FIELD_INFO_VIS))) break;
-
-		/* If not, get next one. */
-		fld_ptr = &f_ptr->next_f_idx;
+			 (FIELD_INFO_MARK | FIELD_INFO_VIS))) return (f_ptr);
 	}
+	FLD_ITT_END;
 
-	/* Return Result */
-	return (fld_ptr);
+	/* Nothing found */
+	return (NULL);
 }
 
 

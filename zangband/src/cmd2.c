@@ -1519,17 +1519,16 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 
 	field_type *f_ptr;
 	field_thaum *t_ptr;
-	s16b *fld_ptr;
 
 	bool more = FALSE;
 
 	int xp;
 
 	/* Get trap */
-	fld_ptr = field_first_known(&c_ptr->fld_idx, FTYPE_TRAP);
+	f_ptr = field_first_known(c_ptr, FTYPE_TRAP);
 
 	/* This should never happen - no trap here to disarm */
-	if (!(*fld_ptr))
+	if (!f_ptr)
 	{
 		msgf("Error condition:  Trying to disarm a non-existant trap.");
 		return (FALSE);
@@ -1537,9 +1536,6 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
-
-	/* Point to field */
-	f_ptr = &fld_list[*fld_ptr];
 
 	/* Get amount of xp for a successful disarm */
 	xp = f_ptr->data[0] * f_ptr->data[0];
@@ -1555,7 +1551,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(&fld_list[*fld_ptr], FIELD_ACT_INTERACT, i))
+	if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, i))
 	{
 		/* Message */
 		msgf("You have disarmed the %s.", t_ptr->name);

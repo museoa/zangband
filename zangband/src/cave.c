@@ -92,7 +92,7 @@ bool is_trap(const cave_type *c_ptr)
 bool is_visible_trap(const cave_type *c_ptr)
 {
 	/* We assume field_first_known does not alter the data in c_ptr */
-	return (*field_first_known((s16b *)&c_ptr->fld_idx, FTYPE_TRAP) != 0);
+	return (field_first_known(c_ptr, FTYPE_TRAP) != 0);
 }
 
 
