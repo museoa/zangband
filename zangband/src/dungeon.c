@@ -43,6 +43,7 @@ static byte value_check_aux1(object_type *o_ptr)
 		{
 			return FEEL_TAINTED;
 		}
+
 		/* Normal */
 		return FEEL_EXCELLENT;
 	}
@@ -62,9 +63,9 @@ static byte value_check_aux1(object_type *o_ptr)
 	
 	/* Cursed items */
 	if (cursed_p(o_ptr)) return FEEL_CURSED;
-	
-	/* Bad  bonus */
-	if ((o_ptr->to_a < 0) || (o_ptr->to_h + o_ptr->to_d < 0)) return FEEL_BAD;
+
+	/* Worthless is "bad" */
+	if (!object_value(o_ptr)) return FEEL_BAD;
 
 	/* Default to "average" */
 	return FEEL_AVERAGE;
@@ -93,12 +94,9 @@ static byte value_check_aux2(object_type *o_ptr)
 
 	/* Good weapon bonuses */
 	if (o_ptr->to_h + o_ptr->to_d > 0) return FEEL_GOOD;
-	
-	/* Bad armor bonus */
-	if (o_ptr->to_a < 0) return FEEL_BAD;
 
-	/* Bad weapon bonuses */
-	if (o_ptr->to_h + o_ptr->to_d < 0) return FEEL_BAD;
+	/* Worthless is "bad" */
+	if (!object_value(o_ptr)) return FEEL_BAD;
 
 	/* No feeling */
 	return FEEL_NONE;
