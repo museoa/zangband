@@ -694,6 +694,9 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* See if the object is "known" */
 	if (object_known_p(o_ptr)) known = TRUE;
 
+	/* Artifacts are not "aware' unless "known" */
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && !known) aware = FALSE;
+
 	/* Extract default "base" string */
 	basenm = get_object_name(o_ptr);
 
@@ -780,8 +783,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Amulets (including a few "Specials") */
 
 			/* Known artifacts */
-			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware &&
-				(o_ptr->activate > 128)) break;
+			if ((k_ptr->flags3 & TR3_INSTA_ART) && aware) break;
 
 			/* Color the object */
 			modstr = amulet_adj[o_ptr->sval];
@@ -799,8 +801,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Rings (including a few "Specials") */
 
 			/* Known artifacts */
-			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware &&
-				(o_ptr->activate > 128)) break;
+			if ((k_ptr->flags3 & TR3_INSTA_ART) && aware) break;
 
 			/* Color the object */
 			modstr = ring_adj[o_ptr->sval];

@@ -2329,7 +2329,8 @@ static object_type *make_artifact(void)
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* XXX XXX Enforce minimum "object" level (loosely) */
-		if (k_info[k_idx].level > base_level())
+		if (!(k_info[k_idx].flags3 & TR3_INSTA_ART) &&
+				k_info[k_idx].level > base_level())
 		{
 			/* Acquire the "out-of-depth factor" */
 			int d = (k_info[k_idx].level - base_level()) * 5;
@@ -2397,6 +2398,54 @@ static object_type *make_artifact(void)
 	return (NULL);
 }
 
+/*
+ * Mega-Hack -- Attempt to create a "special" randart.
+ */
+static object_type *make_special_randart(void)
+{
+	int i;
+	int k_idx = 0;
+
+	object_type *o_ptr;
+
+	/* Check the artifact list */
+	for (i = 1; i <= MAX_ART_SPECIAL; i++)
+	{
+		artifact_type *a_ptr = &a_info[i];
+
+		/* Skip "empty" artifacts */
+		if (!a_ptr->name) continue;
+
+		/* Find the base object */
+		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+
+		/* Skip "forbidden" artifacts */
+		if (!k_info[k_idx].extra) continue;
+		
+		/* Enforce minimum "object" level (loosely) */
+		if (k_info[k_idx].level > base_level())
+		{
+			/* Acquire the "out-of-depth factor" */
+			int d = (k_info[k_idx].level - base_level()) * 2;
+
+			/* Roll for out-of-depth creation */
+			if (!one_in_(d)) continue;
+		}
+
+		/* Enforce "object rarity" */
+		if (!one_in_(k_info[k_idx].extra)) continue;
+
+		/* Assign the template */
+		o_ptr = object_prep(k_idx);
+
+		/* Create using the object kind's depth */
+		create_artifact(o_ptr, k_info[k_idx].level, FALSE);
+
+		return (o_ptr);
+	}
+
+	return (NULL);
+}
 
 /*
  * Apply magic to an item known to be a "weapon"
@@ -4335,7 +4384,16 @@ object_type *make_object(int level, int delta_level, obj_theme *theme)
 	/* Make an artifact */
 	if (one_in_(prob))
 	{
+		/* Try for a fixed art */
 		o_ptr = make_artifact();
+
+		if (o_ptr) return (o_ptr);
+	}
+
+	if (one_in_(prob * 2))
+	{
+		/* Try for a special randart */
+		o_ptr = make_special_randart();
 
 		if (o_ptr) return (o_ptr);
 	}

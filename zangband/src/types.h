@@ -165,7 +165,7 @@ struct object_kind
 
 	byte level;	/* Level */
 
-	byte extra;	/* Unused for now */
+	byte extra;	/* Rarity (for special randarts) */
 
 	byte d_attr;	/* Default object attribute */
 	char d_char;	/* Default object character */

@@ -1335,6 +1335,9 @@
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
+/* The maximum "special" artifact index */
+#define MAX_ART_SPECIAL          15
+
 /* Lites */
 #define ART_GALADRIEL            1
 #define ART_ELENDIL              2
