@@ -49,6 +49,9 @@ struct block_handle
 	/* Pointer to a block */
 	block_type *b_ptr;
 	
+	/* Pointer to the first block */
+	block_type *bf_ptr;
+	
 	/* Position of read/write head */
 	u32b counter;
 };
@@ -75,6 +78,9 @@ static block_type* new_block(void)
 	
 	/* Update the free list */
 	free_list = free_list->b_next;
+	
+	/* Terminate the block */
+	temp_ptr->b_next = NULL;
 
 	/* Return a pointer to the block */
 	return (temp_ptr);
@@ -121,6 +127,9 @@ static int read_block_byte(block_handle *h_ptr)
 /* Read a byte from the stream of blocks - erasing as we go*/
 static int rerase_block_byte(block_handle *h_ptr)
 {
+	/* End of the stream */
+	if (!h_ptr->b_ptr) return (-1);
+	
 	/* End of block? */
 	if (h_ptr->counter >= h_ptr->b_ptr->size)
 	{
@@ -334,6 +343,8 @@ static void cln_blocks(block_type *b_ptr)
 		b_ptr = del_block(b_ptr);
 	}
 	
+	b_ptr->b_next = NULL;
+	
 	/* Delete the extra blocks in the free list */
 	while (free_list)
 	{
@@ -353,7 +364,7 @@ static void cln_blocks(block_type *b_ptr)
  */
 static void delete_handle(block_handle *h_ptr)
 {
-	block_type *b_ptr = h_ptr->b_ptr;
+	block_type *b_ptr = h_ptr->bf_ptr;
 	
 	while (b_ptr)
 	{
@@ -363,6 +374,10 @@ static void delete_handle(block_handle *h_ptr)
 
 	/* Reset counter */
 	h_ptr->counter = 0;
+	
+	/* Reset the pointers */
+	h_ptr->bf_ptr = NULL;
+	h_ptr->b_ptr = NULL;
 }
 
 
@@ -374,20 +389,25 @@ static void rle_blocks_encode(block_handle *h1_ptr)
 	block_handle handle, *h2_ptr = &handle;
 	block_type *b_ptr;
 	int count = 0;
-	byte symbol = 0;
+	byte symbol;
 	int new_symbol;
 
 	/* Swap the block streams the two handles refer to */
-	b_ptr = h1_ptr->b_ptr;
-	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr;
+	b_ptr = h1_ptr->bf_ptr;
+	h1_ptr->bf_ptr = new_block();
+	h2_ptr->bf_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
 	h2_ptr->counter = 0;
-		
+	h1_ptr->b_ptr = h1_ptr->bf_ptr;
+	h2_ptr->b_ptr = b_ptr;
+	
 	/* Paranoia */
 	if (!h2_ptr->b_ptr) return;
+	
+	/* Get first symbol */
+	symbol = rerase_block_byte(h2_ptr);
 	
 	/* While we have blocks to do */
 	while (TRUE)
@@ -451,23 +471,31 @@ static void rle_blocks_decode(block_handle *h1_ptr)
 	block_type *b_ptr;
 	
 	int count = 0;
-	int symbol = 0, new_symbol;
+	int symbol, new_symbol;
 
 	/* Swap the block streams the two handles refer to */
-	b_ptr = h1_ptr->b_ptr;
-	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr;
+	b_ptr = h1_ptr->bf_ptr;
+	h1_ptr->bf_ptr = new_block();
+	h2_ptr->bf_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
 	h2_ptr->counter = 0;
+	h1_ptr->b_ptr = h1_ptr->bf_ptr;
+	h2_ptr->b_ptr = b_ptr;
 		
 	/* Paranoia */
 	if (!h2_ptr->b_ptr) return;
 	
+	/* Get first symbol */
+	symbol = rerase_block_byte(h2_ptr);
+	
 	/* While we have blocks to do */
 	while (TRUE)
 	{
+		/* Paranoia - stop at end of file */
+		if (symbol == -1) break;
+		
 		/* Output the old symbol */
 		write_block_byte(h1_ptr, symbol);
 		
@@ -646,9 +674,7 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 	byte b1 = 0, b2 = 255;
 	int test = (b1 + b2) / 2;
 	u32b tv = prob_table[test];
-	
-	
-	
+		
 	/*
 	 * Use a binary chop algorithm to find
 	 * the symbol that best-matches the code
@@ -768,13 +794,15 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	u32b size = 0, prob_table[256];
 	
 	/* Swap the block streams the two handles refer to */
-	b_ptr = h1_ptr->b_ptr;
-	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr;
+	b_ptr = h1_ptr->bf_ptr;
+	h1_ptr->bf_ptr = new_block();
+	h2_ptr->bf_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
 	h2_ptr->counter = 0;
+	h1_ptr->b_ptr = h1_ptr->bf_ptr;
+	h2_ptr->b_ptr = b_ptr;
 		
 	/* Get size of the encoded stream */
 	while (b_ptr)
@@ -842,14 +870,16 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	byte symbol;
 	
 	/* Swap the block streams the two handles refer to */
-	b_ptr = h1_ptr->b_ptr;
-	h1_ptr->b_ptr = new_block();
-	h2_ptr->b_ptr = b_ptr;
+	b_ptr = h1_ptr->bf_ptr;
+	h1_ptr->bf_ptr = new_block();
+	h2_ptr->bf_ptr = b_ptr;
 	
 	/* Move the read/write head to the start of the stream */
 	h1_ptr->counter = 0;
 	h2_ptr->counter = 0;
-		
+	h1_ptr->b_ptr = h1_ptr->bf_ptr;
+	h2_ptr->b_ptr = b_ptr;
+	
 	/*
 	 * Init the decoder.
 	 *
@@ -1175,16 +1205,17 @@ static errr read_file(block_handle *h_ptr, cptr name)
 	
 	block_type *b_ptr;
 	
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+	
 	/* Open the file */
 	fd = fd_open(name, O_RDONLY);
-
-	/* No such file */
-	if (fd < 0) return (-1);
 	
 	/* Get a new block */
-	h_ptr->b_ptr = new_block();
+	h_ptr->bf_ptr = new_block();
 
-	b_ptr = h_ptr->b_ptr;
+	b_ptr = h_ptr->bf_ptr;
+	h_ptr->b_ptr = b_ptr;
 
 	/* Process the file */
 	while (TRUE)
@@ -1214,15 +1245,26 @@ static errr write_file(block_handle *h_ptr, cptr name)
 {
 	int fd;
 	
+	int mode = 0644;
+	
 	block_type *b_ptr;
 	
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+	
+	/* Drop priv's */
+	safe_setuid_drop();
+	
 	/* Open the file */
-	fd = fd_open(name, O_WRONLY);
+	fd = fd_make(name, mode);
+	
+	/* Grab priv's */
+	safe_setuid_grab();
 
 	/* No such file */
 	if (fd < 0) return (-1);
 
-	b_ptr = h_ptr->b_ptr;
+	b_ptr = h_ptr->bf_ptr;
 
 	/* Process the file */
 	while (b_ptr)
@@ -1252,7 +1294,8 @@ void test_compress_module(void)
 {
 	block_handle handle, *h_ptr = &handle;
 	cptr infile = "test"; 
-	cptr outfile =  "result";
+	cptr outfile =  "rle";
+	cptr outfile2 = "result";
 	char buf[1024];
 	
 	/* Build the filename */
@@ -1260,9 +1303,22 @@ void test_compress_module(void)
 	
 	(void) read_file(h_ptr, buf);
 	
+	/* compress the file with rle */
+	rle_blocks_encode(h_ptr);
+	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
 
 	(void) write_file(h_ptr, buf);
+	
+	/* decompress the file with rle */
+	rle_blocks_decode(h_ptr);
+	
+	/* Build the filename */
+	(void) path_build(buf, 1024, ANGBAND_DIR, outfile2);
 
+	(void) write_file(h_ptr, buf);
+	
+	/* Done */
+	delete_handle(h_ptr);
 }
