@@ -3819,7 +3819,6 @@
 #define term_screen     (angband_term[0])
 
 
-#ifndef SCRIPT_OBJ_KIND
 /*
  * Determine if a given inventory item is "aware"
  */
@@ -3862,56 +3861,6 @@
 	((k_info[(T)->k_idx].flavor) ? \
 	 (misc_to_char[k_info[(T)->k_idx].flavor]) : \
 	 (k_info[(T)->k_idx].x_char))
-
-
-#else  /* SCRIPT_OBJ_KIND */
-
-
-/*
- * Determine if a given inventory item is "aware"
- */
-#define object_aware_p(T) \
-    ((T)->aware)
-
-/*
- * Determine if a given inventory item is "tried"
- */
-#define object_tried_p(T) \
-    ((T)->tried)
-
-
-/*
- * Determine if a given inventory item is "known"
- * Test One -- Check for special "known" tag
- * Test Two -- Check for "Easy Know" + "Aware"
- */
-#define object_known_p(T) \
-    (((T)->ident & (IDENT_KNOWN)) || \
-     ((T)->easy_know && (T)->aware))
-
-
-/*
- * Return the "attr" for a given item.
- * Use "flavor" if available.
- * Default to user definitions.
- */
-#define object_attr(T) \
-	(((T)->flavor) ? \
-	 (misc_to_attr[(T)->flavor]) : \
-	 ((T)->x_attr))
-
-/*
- * Return the "char" for a given item.
- * Use "flavor" if available.
- * Default to user definitions.
- */
-#define object_char(T) \
-	(((T)->flavor) ? \
-	 (misc_to_char[(T)->flavor]) : \
-	 ((T)->x_char))
-
-#endif /* SCRIPT_OBJ_KIND */
-
 
 
 /*

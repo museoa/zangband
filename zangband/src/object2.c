@@ -837,13 +837,8 @@ void object_known(object_type *o_ptr)
  */
 void object_aware(object_type *o_ptr)
 {
-#ifndef SCRIPT_OBJ_KIND
 	/* Fully aware of the effects */
 	k_info[o_ptr->k_idx].aware = TRUE;
-#else  /* SCRIPT_OBJ_KIND */
-	/* Fully aware of the effects */
-	o_ptr->aware = TRUE;
-#endif /* SCRIPT_OBJ_KIND */
 }
 
 
@@ -852,12 +847,8 @@ void object_aware(object_type *o_ptr)
  */
 void object_tried(object_type *o_ptr)
 {
-#ifndef SCRIPT_OBJ_KIND
 	/* Mark it as tried (even if "aware") */
 	k_info[o_ptr->k_idx].tried = TRUE;
-#else  /* SCRIPT_OBJ_KIND */
-	o_ptr->tried = TRUE;
-#endif /* SCRIPT_OBJ_KIND */
 }
 
 
