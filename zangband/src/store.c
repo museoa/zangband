@@ -3322,7 +3322,7 @@ static void store_process_command(void)
 		/* Character description */
 		case 'C':
 		{
-			do_cmd_change_name();
+			do_cmd_character();
 			display_store();
 			break;
 		}

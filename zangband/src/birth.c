@@ -2677,8 +2677,7 @@ static bool player_birth_aux(void)
 	/*** Finish up ***/
 
 	/* Get a name, recolor it, prepare savefile */
-
-	get_name();
+	change_player_name();
 
 
 	/* Prompt for it */
