@@ -690,7 +690,13 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 		/* Make node before this one, point to this one. */
 		if (fld_idx)
 		{
+			/* If a previous node exists */
 			fld_list[fld_idx].next_f_idx = new_idx;
+		}
+		else
+		{
+			/* No old node - just link directly */
+			*fld_idx2 = new_idx;
 		}
 		
 		/* Hack - save the location */
