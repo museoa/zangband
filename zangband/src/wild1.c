@@ -70,11 +70,11 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 				abs(magic - wild_build[i].magic) +
 				abs(law - wild_build[i].law) + 1;
 		
-		/* calculate probability based on location */
-		total = MAX_SHORT / total;
+		/* Effect due to total count */
+		total += build[i] * 200;
 		
-		/* All have equal prob. + effect due to total count */
-		wild_build[i].gen = ((u16b) total) + build[i] * 50;
+		/* calculate probability based on location */
+		wild_build[i].gen = ((u16b) MAX_SHORT / total);
 	}
 	
 	/* Hack - Dungeons are not in large cities */
