@@ -1573,6 +1573,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		o_ptr->kn_flags1 = o_ptr->flags1;
 		o_ptr->kn_flags2 = o_ptr->flags2;
 		o_ptr->kn_flags3 = o_ptr->flags3;
+		o_ptr->kn_flags4 = o_ptr->flags4;
 	}
 	else
 	{
@@ -3194,6 +3195,7 @@ void create_named_art(int a_idx, int x, int y)
 	q_ptr->flags1 |= a_ptr->flags1;
 	q_ptr->flags2 |= a_ptr->flags2;
 	q_ptr->flags3 |= a_ptr->flags3;
+	q_ptr->flags4 |= a_ptr->flags4;
 
 	/* Extract the fields */
 	q_ptr->pval = a_ptr->pval;

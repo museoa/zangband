@@ -581,10 +581,10 @@ static void learn_map(void)
 static void wiz_display_item(const object_type *o_ptr)
 {
 	int j = 13;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Clear the screen */
     clear_region(13 - 2, 1, 23);

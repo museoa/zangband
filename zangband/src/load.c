@@ -380,6 +380,10 @@ static void rd_item(object_type *o_ptr)
 	rd_u32b(&o_ptr->flags1);
 	rd_u32b(&o_ptr->flags2);
 	rd_u32b(&o_ptr->flags3);
+	if (sf_version < 41)
+		o_ptr->flags4 = 0;
+	else
+		rd_u32b(&o_ptr->flags4);
 
 	/* Lites changed in [Z] 2.6.0 */
 	if ((sf_version < 25) && (o_ptr->tval == TV_LITE))
@@ -503,6 +507,10 @@ static void rd_item(object_type *o_ptr)
 		rd_u32b(&o_ptr->kn_flags1);
 		rd_u32b(&o_ptr->kn_flags2);
 		rd_u32b(&o_ptr->kn_flags3);
+		if (sf_version < 41)
+			o_ptr->kn_flags4 = 0;
+		else
+			rd_u32b(&o_ptr->kn_flags4);
 
 		/* 
 		 * XXX Some older buggy versions set TR3_PERMA_CURSE
@@ -544,6 +552,7 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->flags1 = k_ptr->flags1;
 		o_ptr->flags2 = k_ptr->flags2;
 		o_ptr->flags3 = k_ptr->flags3;
+		o_ptr->flags4 = k_ptr->flags4;
 
 		/* All done */
 		return;
@@ -613,6 +622,7 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->flags1 |= a_ptr->flags1;
 			o_ptr->flags2 |= a_ptr->flags2;
 			o_ptr->flags3 |= a_ptr->flags3;
+			o_ptr->flags4 |= a_ptr->flags4;
 
 			/* Mega-Hack -- set activation */
 			o_ptr->activate = name1 + 128;
@@ -657,6 +667,7 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->kn_flags1 = o_ptr->flags1;
 			o_ptr->kn_flags2 = o_ptr->flags2;
 			o_ptr->kn_flags3 = o_ptr->flags3;
+			o_ptr->kn_flags4 = o_ptr->flags4;
 		}
 	}
 

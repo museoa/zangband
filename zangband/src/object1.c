@@ -101,7 +101,7 @@ void reset_visuals(void)
 /*
  * Obtain the "flags" for an item
  */
-void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 {
 	const object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -109,6 +109,7 @@ void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) = k_ptr->flags1 | o_ptr->flags1;
 	(*f2) = k_ptr->flags2 | o_ptr->flags2;
 	(*f3) = k_ptr->flags3 | o_ptr->flags3;
+	(*f4) = k_ptr->flags4 | o_ptr->flags4;
 
 	/* Remove the Moria flags */
 	if (ironman_moria)
@@ -116,6 +117,7 @@ void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f1) &= TR1_MORIA_MASK;
 		(*f2) &= TR2_MORIA_MASK;
 		(*f3) &= TR3_MORIA_MASK;
+		(*f4) = 0;
 	}
 }
 
@@ -123,7 +125,7 @@ void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 /*
  * Obtain the "flags" for an item which are known to the player
  */
-void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 {
 	const object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -144,6 +146,7 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) = k_ptr->flags1;
 	(*f2) = k_ptr->flags2;
 	(*f3) = k_ptr->flags3;
+	(*f4) = k_ptr->flags4;
 
 	/* Show modifications to stats */
 	(*f1) |= (o_ptr->flags1 &
@@ -156,6 +159,7 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) |= o_ptr->kn_flags1;
 	(*f2) |= o_ptr->kn_flags2;
 	(*f3) |= o_ptr->kn_flags3;
+	(*f4) |= o_ptr->kn_flags4;
 
 	/* We now now whether or not it is an artifact */
 	if (o_ptr->flags3 & TR3_INSTA_ART)
@@ -169,6 +173,7 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f1) &= TR1_MORIA_MASK;
 		(*f2) &= TR2_MORIA_MASK;
 		(*f3) &= TR3_MORIA_MASK;
+		(*f4) = 0;
 	}
 }
 
@@ -179,10 +184,10 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
  */
 cptr item_activation(const object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Require activation ability */
 	if (!(f3 & (TR3_ACTIVATE))) return ("nothing");
@@ -834,7 +839,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 {
 	int i = 0, j, k;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	cptr info[128], reclaim[128], temp;
 	int num_reclaim = 0;
@@ -842,7 +847,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	int wid, hgt;
 
 	/* Extract the flags */
-	object_flags_known(o_ptr, &f1, &f2, &f3);
+	object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
@@ -2099,8 +2104,8 @@ bool item_tester_hook_tval(const object_type *o_ptr)
 
 bool item_tester_hook_is_blessed(const object_type *o_ptr)
 {
-	u32b f1, f2, f3;
-	object_flags_known(o_ptr, &f1, &f2, &f3);
+	u32b f1, f2, f3, f4;
+	object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Is it blessed? */
 	if (f3 & TR3_BLESSED) return (TRUE);

@@ -2517,14 +2517,14 @@ static void take_move(int m_idx, int *mm)
 				if ((r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&
 					(!is_pet(m_ptr) || p_ptr->pet_pickup_items))
 				{
-					u32b f1, f2, f3;
+					u32b f1, f2, f3, f4;
 
 					u32b flg3 = 0L;
 
 					char o_name[256];
 
 					/* Extract some flags */
-					object_flags(o_ptr, &f1, &f2, &f3);
+					object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 					/* Acquire the object name */
 					object_desc(o_name, o_ptr, TRUE, 3, 256);

@@ -586,7 +586,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(x, y);
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	char o_name[256];
 
@@ -613,7 +613,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 		/* Reset the state */
 		is_art = FALSE;

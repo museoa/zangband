@@ -449,7 +449,7 @@ extern void print_equippy(void);
 extern errr check_time_init(void);
 extern errr check_load_init(void);
 extern void likert(char *buf, uint max, cptr fmt, va_list *vp);
-extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
+extern void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4);
 extern errr check_time(void);
 extern errr check_load(void);
 extern bool show_file(cptr name, cptr what, int line, int mode);
@@ -586,9 +586,9 @@ extern void object_store_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 
 extern void reset_visuals(void);
 extern void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2,
-						 u32b *f3);
+						 u32b *f3, u32b *f4);
 extern void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2,
-							   u32b *f3);
+							   u32b *f3, u32b *f4);
 extern bool identify_fully_aux(const object_type *o_ptr);
 extern s16b wield_slot(const object_type *o_ptr);
 extern cptr mention_use(int i);

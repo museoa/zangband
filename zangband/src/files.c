@@ -1435,7 +1435,7 @@ static void display_player_abilities(void)
 	int xthn, xthb;
 	int muta_att = 0;
 	long avgdam;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	int energy_fire;
 	int shots, shot_frac;
 
@@ -1525,7 +1525,7 @@ static void display_player_abilities(void)
 	if (o_ptr->k_idx)
 	{
 		/* Is there a vorpal effect we know about? */
-		object_flags(o_ptr, &f1, &f2, &f3);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4);
 		if (object_known_p(o_ptr) &&
 			(o_ptr->activate - 128 == ART_VORPAL_BLADE))
 		{
@@ -1565,10 +1565,10 @@ static void display_player_abilities(void)
 /*
  * Obtain the "flags" for the player as if he was an item
  */
-void player_flags(u32b *f1, u32b *f2, u32b *f3)
+void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 {
 	/* Clear */
-	(*f1) = (*f2) = (*f3) = 0L;
+	(*f1) = (*f2) = (*f3) = (*f4) = 0L;
 
 	/* Classes */
 	switch (p_ptr->pclass)
@@ -1898,7 +1898,7 @@ static void display_player_flag_aux(int col, int row,
                                     cptr header, int n, u32b flag1, u32b flag2)
 {
 	int i;
-	u32b f[3];
+	u32b f[4];
 
 
 	/* Header */
@@ -1917,7 +1917,7 @@ static void display_player_flag_aux(int col, int row,
 		o_ptr = &p_ptr->equipment[i];
 
 		/* Known flags */
-		object_flags_known(o_ptr, &f[0], &f[1], &f[2]);
+		object_flags_known(o_ptr, &f[0], &f[1], &f[2], &f[3]);
 
 		/* Default */
 		put_fstr(col, row, CLR_SLATE ".");
@@ -1931,7 +1931,7 @@ static void display_player_flag_aux(int col, int row,
 	}
 
 	/* Player flags */
-	player_flags(&f[0], &f[1], &f[2]);
+	player_flags(&f[0], &f[1], &f[2], &f[3]);
 
 	/* Default */
 	put_fstr(col, row, CLR_SLATE ".");
@@ -2043,7 +2043,7 @@ static void display_player_stat_info(void)
 	int row, col;
 
 	object_type *o_ptr;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	s16b k_idx;
 
 	byte a;
@@ -2121,7 +2121,7 @@ static void display_player_stat_info(void)
 		k_idx = o_ptr->k_idx;
 
 		/* Acquire "known" flags */
-		object_flags_known(o_ptr, &f1, &f2, &f3);
+		object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
 
 		/* Initialize color based of sign of pval. */
 		for (stat = 0; stat < A_MAX; stat++)
@@ -2183,7 +2183,7 @@ static void display_player_stat_info(void)
 	}
 
 	/* Player flags */
-	player_flags(&f1, &f2, &f3);
+	player_flags(&f1, &f2, &f3, &f4);
 
 	/* Check stats */
 	for (stat = 0; stat < A_MAX; stat++)
@@ -4031,6 +4031,7 @@ static void show_info(void)
 		o_ptr->kn_flags1 = o_ptr->flags1;
 		o_ptr->kn_flags2 = o_ptr->flags2;
 		o_ptr->kn_flags3 = o_ptr->flags3;
+		o_ptr->kn_flags4 = o_ptr->flags4;
 	}
 
 	/* Hack -- Know everything in the inventory */
@@ -4045,6 +4046,7 @@ static void show_info(void)
 		o_ptr->kn_flags1 = o_ptr->flags1;
 		o_ptr->kn_flags2 = o_ptr->flags2;
 		o_ptr->kn_flags3 = o_ptr->flags3;
+		o_ptr->kn_flags4 = o_ptr->flags4;
 	}
 	OBJ_ITT_END;
 
@@ -4068,6 +4070,7 @@ static void show_info(void)
 					o_ptr->kn_flags1 = o_ptr->flags1;
 					o_ptr->kn_flags2 = o_ptr->flags2;
 					o_ptr->kn_flags3 = o_ptr->flags3;
+					o_ptr->kn_flags4 = o_ptr->flags4;
 				}
 				OBJ_ITT_END;
 			}

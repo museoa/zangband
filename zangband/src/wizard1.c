@@ -728,7 +728,7 @@ static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 	const u32b all_stats = (TR1_STR | TR1_INT | TR1_WIS |
 							TR1_DEX | TR1_CON | TR1_CHR);
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	cptr *affects_list;
 
@@ -741,7 +741,7 @@ static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 	}
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	affects_list = p_ptr->pval_affects;
 
@@ -774,9 +774,9 @@ static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 /* Note the slaying specialties of a weapon */
 static void analyze_slay(const object_type *o_ptr, cptr *slay_list)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	slay_list = spoiler_flag_aux(f1, slay_flags_desc, slay_list,
 								 N_ELEMENTS(slay_flags_desc));
@@ -788,9 +788,9 @@ static void analyze_slay(const object_type *o_ptr, cptr *slay_list)
 /* Note an object's elemental brands */
 static void analyze_brand(const object_type *o_ptr, cptr *brand_list)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	brand_list = spoiler_flag_aux(f1, brand_flags_desc, brand_list,
 								  N_ELEMENTS(brand_flags_desc));
@@ -803,9 +803,9 @@ static void analyze_brand(const object_type *o_ptr, cptr *brand_list)
 /* Note the resistances granted by an object */
 static void analyze_resist(const object_type *o_ptr, cptr *resist_list)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	resist_list = spoiler_flag_aux(f2, resist_flags_desc,
 								   resist_list, N_ELEMENTS(resist_flags_desc));
@@ -818,9 +818,9 @@ static void analyze_resist(const object_type *o_ptr, cptr *resist_list)
 /* Note the immunities granted by an object */
 static void analyze_immune(const object_type *o_ptr, cptr *immune_list)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	immune_list = spoiler_flag_aux(f2, immune_flags_desc,
 								   immune_list, N_ELEMENTS(immune_flags_desc));
@@ -836,9 +836,9 @@ static void analyze_sustains(const object_type *o_ptr, cptr *sustain_list)
 	const u32b all_sustains = (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS |
 							   TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Simplify things if an item sustains all stats */
 	if ((f2 & all_sustains) == all_sustains)
@@ -865,9 +865,9 @@ static void analyze_sustains(const object_type *o_ptr, cptr *sustain_list)
  */
 static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	misc_list = spoiler_flag_aux(f2, misc_flags2_desc, misc_list,
 								 N_ELEMENTS(misc_flags2_desc));
@@ -1184,6 +1184,7 @@ static object_type *make_fake_artifact(int a_idx)
 	o_ptr->flags1 |= a_ptr->flags1;
 	o_ptr->flags2 |= a_ptr->flags2;
 	o_ptr->flags3 |= a_ptr->flags3;
+	o_ptr->flags4 |= a_ptr->flags4;
 
 	/* Set the fields */
 	o_ptr->pval = a_ptr->pval;

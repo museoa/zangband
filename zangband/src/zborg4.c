@@ -289,7 +289,7 @@ void borg_list_info(byte list_type, vptr dummy)
  */
 static void borg_notice_player(void)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	/* Recalc some Variables */
 	bp_ptr->ac = 0;
@@ -331,11 +331,12 @@ static void borg_notice_player(void)
 	/* Racial Skills */
 
 	/* Extract the player flags */
-	player_flags(&f1, &f2, &f3);
+	player_flags(&f1, &f2, &f3, &f4);
 
 	bp_ptr->flags1 |= f1;
 	bp_ptr->flags2 |= f2;
 	bp_ptr->flags3 |= f3;
+	/* XXX XXX XXX Don't handle flags4 yet */
 
 	/* Sustain flags */
 	if (f2 & (TR2_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
@@ -3324,7 +3325,7 @@ static void borg_notice_home_spells(void)
  */
 static void borg_notice_home_player(void)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	int i;
 
@@ -3335,7 +3336,7 @@ static void borg_notice_home_player(void)
 	}
 
 	/* Extract the player flags */
-	player_flags(&f1, &f2, &f3);
+	player_flags(&f1, &f2, &f3, &f4);
 
 	/* Good flags */
 	if (f3 & (TR3_SLOW_DIGEST)) num_slow_digest = TRUE;

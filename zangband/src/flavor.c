@@ -673,7 +673,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 	cptr s;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	object_type *bow_ptr;
 
@@ -689,7 +689,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	monster_race *r_ptr = &r_info[o_ptr->pval];
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* See if the object is "aware" */
 	if (object_aware_p(o_ptr)) aware = TRUE;

@@ -611,6 +611,42 @@ static cptr k_info_flags3[] =
 	"PERMA_CURSE"
 };
 
+static cptr k_info_flags4[] =
+{
+	"PROT_ANIMAL",
+	"PROT_EVIL",
+	"PROT_UNDEAD",
+	"PROT_DEMON",
+	"PROT_ORC",
+	"PROT_TROLL",
+	"PROT_GIANT",
+	"PROT_DRAGON",
+	"IM_LITE",
+	"IM_DARK",
+	"SH_ACID",
+	"SH_COLD",
+	"MUTATE",
+	"PATRON",
+	"STRANGE_LUCK",
+	"XXX16",
+	"PARA_TOUCH",
+	"PSI_CRIT",
+	"XXX19",
+	"XXX20",
+	"HURT_ACID",
+	"HURT_ELEC",
+	"HURT_FIRE",
+	"HURT_COLD",
+	"HURT_LITE",
+	"HURT_DARK",
+	"XXX27",
+	"XXX28",
+	"AUTO_CURSE",
+	"DRAIN_STATS",
+	"CANT_EAT",
+	"SLOW_HEAL"
+};
+
 /*
  * Wilderness Flags
  */
@@ -1285,6 +1321,9 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 	if (grab_one_flag(&k_ptr->flags3, k_info_flags3, what) == 0)
 		return (0);
 
+	if (grab_one_flag(&k_ptr->flags4, k_info_flags4, what) == 0)
+		return (0);
+
 	/* Oops */
 	msgf("Unknown object flag '%s'.", what);
 
@@ -1519,6 +1558,9 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 	if (grab_one_flag(&a_ptr->flags3, k_info_flags3, what) == 0)
 		return (0);
 
+	if (grab_one_flag(&a_ptr->flags4, k_info_flags4, what) == 0)
+		return (0);
+
 	/* Oops */
 	msgf("Unknown artifact flag '%s'.", what);
 
@@ -1690,6 +1732,9 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what)
 		return (0);
 
 	if (grab_one_flag(&e_ptr->flags3, k_info_flags3, what) == 0)
+		return (0);
+
+	if (grab_one_flag(&e_ptr->flags4, k_info_flags4, what) == 0)
 		return (0);
 
 	/* Oops */

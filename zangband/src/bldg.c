@@ -905,10 +905,10 @@ static void compare_weapon_aux1(const object_type *o_ptr)
 {
 	int r = 10;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	/* Get the flags of the weapon */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Print the relevant lines */
 	if (f1 & TR1_SLAY_ANIMAL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
@@ -1124,6 +1124,7 @@ bool compare_weapons(void)
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;
 	o_ptr->kn_flags3 = o_ptr->flags3;
+	o_ptr->kn_flags4 = o_ptr->flags4;
 
 	/* Erase the "feeling" */
 	o_ptr->feeling = FEEL_NONE;

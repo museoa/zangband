@@ -1410,7 +1410,7 @@ void identify_pack(void)
  */
 static bool uncurse_item(object_type *o_ptr, bool all)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	
 	bool heavy;
 
@@ -1418,7 +1418,7 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	if (!cursed_p(o_ptr)) return (FALSE);
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Heavily Cursed Items need a special spell */
 	if (!all && (f3 & TR3_HEAVY_CURSE))
@@ -1670,10 +1670,10 @@ void stair_creation(void)
  */
 static void break_curse(object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	if (cursed_p(o_ptr) && !(f3 & TR3_PERMA_CURSE) && (randint0(100) < 25))
 	{
@@ -2037,6 +2037,7 @@ static void bad_luck(object_type *o_ptr)
 		o_ptr->flags1 = 0;
 		o_ptr->flags2 = 0;
 		o_ptr->flags3 = 0;
+		o_ptr->flags4 = 0;
 
 		add_ego_flags(o_ptr, EGO_BLASTED);
 
@@ -2230,6 +2231,7 @@ bool mundane_spell(void)
 	o_ptr->flags1 = k_ptr->flags1;
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
+	o_ptr->flags4 = k_ptr->flags4;
 
 	/* For rod-stacking */
 	if (o_ptr->tval == TV_ROD)
@@ -2276,6 +2278,7 @@ bool identify_fully(void)
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;
 	o_ptr->kn_flags3 = o_ptr->flags3;
+	o_ptr->kn_flags4 = o_ptr->flags4;
 
 	/* Handle stuff */
 	handle_stuff();
@@ -2596,7 +2599,7 @@ bool recharge(int power)
 bool bless_weapon(void)
 {
 	object_type *o_ptr;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	char o_name[256];
 	cptr q, s;
 
@@ -2616,7 +2619,7 @@ bool bless_weapon(void)
 	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	if (cursed_p(o_ptr))
 	{
@@ -4074,9 +4077,9 @@ bool hates_cold(const object_type *o_ptr)
  */
 int set_acid_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	if (!hates_acid(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 	if (f3 & TR3_IGNORE_ACID) return (FALSE);
 	return (TRUE);
 }
@@ -4087,9 +4090,9 @@ int set_acid_destroy(object_type *o_ptr)
  */
 int set_elec_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	if (!hates_elec(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 	if (f3 & TR3_IGNORE_ELEC) return (FALSE);
 	return (TRUE);
 }
@@ -4100,9 +4103,9 @@ int set_elec_destroy(object_type *o_ptr)
  */
 int set_fire_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	if (!hates_fire(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 	if (f3 & TR3_IGNORE_FIRE) return (FALSE);
 	return (TRUE);
 }
@@ -4113,9 +4116,9 @@ int set_fire_destroy(object_type *o_ptr)
  */
 int set_cold_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	if (!hates_cold(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 	if (f3 & TR3_IGNORE_COLD) return (FALSE);
 	return (TRUE);
 }
@@ -4208,7 +4211,7 @@ int inven_damage(inven_func typ, int perc)
 static int minus_ac(void)
 {
 	object_type *o_ptr = NULL;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	char o_name[256];
 
 
@@ -4258,7 +4261,7 @@ static int minus_ac(void)
 	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Object resists */
 	if (f3 & TR3_IGNORE_ACID)
@@ -4495,6 +4498,7 @@ bool curse_armor(void)
 		o_ptr->flags1 = 0;
 		o_ptr->flags2 = 0;
 		o_ptr->flags3 = 0;
+		o_ptr->flags4 = 0;
 
 		/* Lose your feeling */
 		o_ptr->feeling = FEEL_NONE;
@@ -4561,6 +4565,7 @@ bool curse_weapon(void)
 		o_ptr->flags1 = 0;
 		o_ptr->flags2 = 0;
 		o_ptr->flags3 = 0;
+		o_ptr->flags4 = 0;
 		
 		/* Lose your feeling */
 		o_ptr->feeling = FEEL_NONE;

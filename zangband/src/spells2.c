@@ -33,7 +33,7 @@ void self_knowledge(void)
 	int v_nr;
 	char v_string[8][128];
 
-	u32b f1 = 0L, f2 = 0L, f3 = 0L;
+	u32b f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L;
 
 	object_type *o_ptr;
 	const mutation_type *mut_ptr;
@@ -62,7 +62,7 @@ void self_knowledge(void)
 	/* Acquire item flags from equipment */
 	for (k = 0; k < EQUIP_MAX; k++)
 	{
-		u32b t1, t2, t3;
+		u32b t1, t2, t3, t4;
 
 		o_ptr = &p_ptr->equipment[k];
 
@@ -70,12 +70,13 @@ void self_knowledge(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Extract the flags */
-		object_flags(o_ptr, &t1, &t2, &t3);
+		object_flags(o_ptr, &t1, &t2, &t3, &t4);
 
 		/* Extract flags */
 		f1 |= t1;
 		f2 |= t2;
 		f3 |= t3;
+		f4 |= t4;
 	}
 
 	for (v_nr = 0; v_nr < MAX_PLAYER_VIRTUES; v_nr++)

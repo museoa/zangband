@@ -966,9 +966,9 @@ static s32b bonus_value(s32b x)
 s32b flag_cost(const object_type *o_ptr, int plusses)
 {
 	s32b total = 0;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	if (f1 & TR1_STR) total += (500 * plusses);
 	if (f1 & TR1_INT) total += (500 * plusses);
@@ -1183,7 +1183,7 @@ s32b object_value_real(const object_type *o_ptr)
 {
 	s32b value;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -1194,7 +1194,7 @@ s32b object_value_real(const object_type *o_ptr)
 	if (!value) return (0L);
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Mega Hack - extra price due to some flags... */
 
@@ -1698,7 +1698,9 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 
 	/* Hack -- Identical flags! */
 	if ((o_ptr->flags1 != j_ptr->flags1) ||
-		(o_ptr->flags2 != j_ptr->flags2) || (o_ptr->flags3 != j_ptr->flags3))
+		(o_ptr->flags2 != j_ptr->flags2) || 
+		(o_ptr->flags3 != j_ptr->flags3) ||
+		(o_ptr->flags4 != j_ptr->flags4))
 		return (FALSE);
 
 	/* Hack -- Require identical "cursed" status */
@@ -1751,6 +1753,7 @@ void object_absorb(object_type *o_ptr, const object_type *j_ptr)
 	o_ptr->kn_flags1 |= j_ptr->kn_flags1;
 	o_ptr->kn_flags2 |= j_ptr->kn_flags2;
 	o_ptr->kn_flags3 |= j_ptr->kn_flags3;
+	o_ptr->kn_flags4 |= j_ptr->kn_flags4;
 
 	/* Hack -- blend "inscriptions" */
     if (j_ptr->inscription)
@@ -1913,6 +1916,7 @@ object_type *object_prep(int k_idx)
 	o_ptr->flags1 = k_ptr->flags1;
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
+	o_ptr->flags4 = k_ptr->flags4;
 
 	return (o_ptr);
 }
@@ -2230,11 +2234,13 @@ void add_ego_flags(object_type *o_ptr, byte ego)
 	o_ptr->flags1 |= e_ptr->flags1;
 	o_ptr->flags2 |= e_ptr->flags2;
 	o_ptr->flags3 |= e_ptr->flags3;
+	o_ptr->flags4 |= e_ptr->flags4;
 
 	/* Save all the known ego flags */
 	o_ptr->kn_flags1 = e_ptr->flags1;
 	o_ptr->kn_flags2 = e_ptr->flags2;
 	o_ptr->kn_flags3 = e_ptr->flags3;
+	o_ptr->kn_flags4 = e_ptr->flags4;
 
 	/* Save the inscription */
 	o_ptr->xtra_name = quark_add(e_name + e_ptr->name);
@@ -2312,6 +2318,7 @@ static object_type *make_artifact(void)
 		o_ptr->flags1 |= a_ptr->flags1;
 		o_ptr->flags2 |= a_ptr->flags2;
 		o_ptr->flags3 |= a_ptr->flags3;
+		o_ptr->flags4 |= a_ptr->flags4;
 
 		/* Set the fields */
 		o_ptr->pval = a_ptr->pval;

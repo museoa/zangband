@@ -884,7 +884,7 @@ static void process_world(void)
 	u16b x, y;
 
 	object_type *o_ptr;
-	u32b f1 = 0, f2 = 0, f3 = 0;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0;
 	int temp;
 	object_kind *k_ptr;
 	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
@@ -1587,7 +1587,7 @@ static void process_world(void)
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		object_flags(o_ptr, &f1, &f2, &f3);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 		/* TY Curse */
 		if ((f3 & TR3_TY_CURSE) && one_in_(TY_CURSE_CHANCE))

@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 40
+#define SAVEFILE_VERSION 41
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -2946,6 +2946,40 @@
 #define TR3_CURSED              0x20000000L	/* Item is Cursed */
 #define TR3_HEAVY_CURSE         0x40000000L	/* Item is Heavily Cursed */
 #define TR3_PERMA_CURSE         0x80000000L	/* Item is Perma Cursed */
+
+
+#define TR4_PROT_ANIMAL         0x00000001L
+#define TR4_PROT_EVIL           0x00000002L
+#define TR4_PROT_UNDEAD         0x00000004L
+#define TR4_PROT_DEMON          0x00000008L
+#define TR4_PROT_ORC            0x00000010L
+#define TR4_PROT_TROLL          0x00000020L
+#define TR4_PROT_GIANT          0x00000040L
+#define TR4_PROT_DRAGON         0x00000080L
+#define TR4_IM_LITE             0x00000100L
+#define TR4_IM_DARK             0x00000200L
+#define TR4_SH_ACID             0x00000400L
+#define TR4_SH_COLD             0x00000800L
+#define TR4_MUTATE              0x00001000L
+#define TR4_PATRON              0x00002000L
+#define TR4_STRANGE_LUCK        0x00004000L
+#define TR4_XXX16               0x00008000L
+#define TR4_PARA_TOUCH          0x00010000L
+#define TR4_PSI_CRIT            0x00020000L
+#define TR4_XXX19               0x00040000L
+#define TR4_XXX20               0x00080000L
+#define TR4_HURT_ACID           0x00100000L
+#define TR4_HURT_ELEC           0x00200000L
+#define TR4_HURT_FIRE           0x00400000L
+#define TR4_HURT_COLD           0x00800000L
+#define TR4_HURT_LITE           0x01000000L
+#define TR4_HURT_DARK           0x02000000L
+#define TR4_XXX27               0x04000000L
+#define TR4_XXX28               0x08000000L
+#define TR4_AUTO_CURSE          0x10000000L
+#define TR4_DRAIN_STATS         0x20000000L
+#define TR4_CANT_EAT            0x40000000L
+#define TR4_SLOW_HEAL           0x80000000L
 
 
 /*

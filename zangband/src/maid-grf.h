@@ -231,6 +231,7 @@ struct term_list
 	u32b kn_flags1;	/* Known Flags, set 1 */
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
+	u32b kn_flags4; /* Known Flags, set 4 */
 
 	s32b cost;	/* Object "base cost" */
 
@@ -265,6 +266,7 @@ struct list_item
 	u32b kn_flags1;	/* Known Flags, set 1 */
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
+	u32b kn_flags4; /* Known Flags, set 4 */
 
 	s32b cost;	/* Object "base cost" */
 

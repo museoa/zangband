@@ -1128,7 +1128,8 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr, bool in_store)
 {
 	/* Known flags */
 	object_flags_known(o_ptr, &l_ptr->kn_flags1,
-					   &l_ptr->kn_flags2, &l_ptr->kn_flags3);
+					   &l_ptr->kn_flags2, &l_ptr->kn_flags3,
+					   &l_ptr->kn_flags4);
 
 	/* Type of object */
 	if (object_aware_p(o_ptr) || in_store)

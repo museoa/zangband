@@ -2808,7 +2808,7 @@ void do_cmd_throw_aux(int mult)
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	cptr q, s;
 
 	bool potion;
@@ -2843,7 +2843,7 @@ void do_cmd_throw_aux(int mult)
 	q_ptr = item_split(o_ptr, 1);
 
 	/* Extract the thrown object's flags. */
-	object_flags(q_ptr, &f1, &f2, &f3);
+	object_flags(q_ptr, &f1, &f2, &f3, &f4);
 
 	/* Description */
 	object_desc(o_name, q_ptr, FALSE, 3, 256);

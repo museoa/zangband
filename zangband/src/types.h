@@ -158,6 +158,7 @@ struct object_kind
 	u32b flags1;	/* Flags, set 1 */
 	u32b flags2;	/* Flags, set 2 */
 	u32b flags3;	/* Flags, set 3 */
+	u32b flags4;    /* Flags, set 4 */
 
 	byte locale[4];	/* Allocation level(s) */
 	byte chance[4];	/* Allocation chance(s) */
@@ -236,6 +237,7 @@ struct artifact_type
 	u32b flags1;	/* Artifact Flags, set 1 */
 	u32b flags2;	/* Artifact Flags, set 2 */
 	u32b flags3;	/* Artifact Flags, set 3 */
+	u32b flags4;    /* Artifact Flags, set 4 */
 
 	byte level;	/* Artifact level */
 	byte rarity;	/* Artifact rarity */
@@ -273,6 +275,7 @@ struct ego_item_type
 	u32b flags1;	/* Ego-Item Flags, set 1 */
 	u32b flags2;	/* Ego-Item Flags, set 2 */
 	u32b flags3;	/* Ego-Item Flags, set 3 */
+	u32b flags4;    /* Ego-Item Flags, set 4 */
 };
 
 
@@ -773,10 +776,12 @@ struct object_type
 	u32b flags1;	/* Flags, set 1 */
 	u32b flags2;	/* Flags, set 2 */
 	u32b flags3;	/* Flags, set 3 */
+	u32b flags4;    /* Flags, set 4 */
 
 	u32b kn_flags1;	/* Known Flags, set 1 */
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
+	u32b kn_flags4; /* Known Flags, set 4 */
 
 	s32b cost;	/* Object "base cost" */
 	s32b temp_cost;	/* Cost including shopkeeper effects */
