@@ -177,6 +177,8 @@ struct borg_kill
 	s16b when;	/* When last seen */
 	
 	bool ranged_attack;	/* can attack from a dx */
+	
+	byte m_flags;
 };
 
 

@@ -37,7 +37,7 @@
  * Constants used to describe the state of monsters
  * to users of the overhead map
  */
-#define MONST_AWAKE		0x01
+#define MONST_ASLEEP	0x01
 #define MONST_FRIEND	0x02
 #define MONST_PET		0x04
 #define MONST_CONFUSED	0x08

@@ -478,215 +478,19 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 /*
  * Hack -- Update a "new" monster
  */
-static void borg_update_kill_new(int i)
+static void borg_update_kill(int i)
 {
-	int k = 0;
-	int num = 0;
+	int t, e;
 
-	byte spell[96];
 	borg_kill *kill = &borg_kills[i];
 
 	monster_race *r_ptr = &r_info[kill->r_idx];
+	
+	map_block *mb_ptr;
 
 	/* Extract the monster speed */
 	kill->speed = (r_ptr->speed);
-
-#if 0
-	/* Hack -- assume optimal racial variety */
-	if (!(r_ptr->flags1 & RF1_UNIQUE))
-	{
-		/* Hack -- Assume full speed bonus */
-		kill->speed += (extract_energy[kill->speed] / 10);
-	}
-#endif
-
-
-	/* Extract max hitpoints */
-	/* This is a cheat.  Borg does not look
-	 * at the bar at the bottom and frankly that would take a lot of code.
-	 * It would involve targeting every monster to read their individual bar.
-	 * then keeping track of it.  When the borg has telepathy this would
-	 * cripple him down and be tremendously slow.
-	 *
-	 * This cheat is not too bad.  A human could draw the same info from
-	 * from the screen.
-	 *
-	 * Basically the borg is cheating the real hit points of the monster then
-	 * using that information to calculate the estimated hp of the monster.
-	 * Its the same basic tactict that we would use.
-	 *
-	 * Kill->power is used a lot in borg_danger,
-	 * for calculating damage from breath attacks.
-	 */
-#if 0
-	if (m_ptr->maxhp)
-	{
-		/* Cheat the "percent" of health */
-		pct = 100L * m_ptr->hp / (m_ptr->maxhp > 1) ? m_ptr->maxhp : 1;
-	}
-	else
-	{
-		pct = 100;
-	}
-
-	/* Compute estimated HP based on number of * in monster health bar */
-	kill->power = (m_ptr->maxhp * pct) / 100;
-#endif
-	kill->power = /* m_ptr->hp; */ r_ptr->hdice * r_ptr->hside;
-
-	/* Extract the Invuln */
-	kill->invulner = /* m_ptr->invulner; */ FALSE;
-
-	/* Some monsters never move */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) kill->awake = TRUE;
-#if 0
-	/* Is it sleeping apw */
-	if (m_ptr->csleep == 0) kill->awake = TRUE;
-	else
-		kill->awake = FALSE;
-
-	/* Is it afraid apw */
-	if (m_ptr->monfear == 0) kill->afraid = FALSE;
-	else
-		kill->afraid = TRUE;
-
-	/* Is it confused apw */
-	if (m_ptr->confused == 0) kill->confused = FALSE;
-	else
-		kill->confused = TRUE;
-
-	/* Is it stunned */
-	if (m_ptr->stunned == 0) kill->stunned = FALSE;
-	else
-		kill->stunned = TRUE;
-
-	/* Friendly or pet */
-	if (is_pet(m_ptr)) kill->friendly = TRUE;
-	if (is_friendly(m_ptr)) kill->friendly = TRUE;
-#endif /* 0 */
-
-	/* hack - we cannot access m_ptr */
-	kill->awake = TRUE;
-	kill->afraid = FALSE;
-	kill->confused = FALSE;
-	kill->stunned = FALSE;
-	kill->friendly = FALSE;
-
-	/* Can it attack from a distance? */
-	/* Extract the "inate" spells */
-	for (k = 0; k < 32; k++)
-	{
-		if (r_ptr->flags4 & (1L << k)) spell[num++] = k + 32 * 3;
-	}
-
-	/* Extract the "normal" spells */
-	for (k = 0; k < 32; k++)
-	{
-		if (r_ptr->flags5 & (1L << k)) spell[num++] = k + 32 * 4;
-	}
-
-	/* Extract the "bizarre" spells */
-	for (k = 0; k < 32; k++)
-	{
-		if (r_ptr->flags6 & (1L << k)) spell[num++] = k + 32 * 5;
-	}
-
-	/* to cast or not to cast, that is the question */
-	if (num)
-	{
-		kill->ranged_attack = TRUE;
-	}
-	else
-		kill->ranged_attack = FALSE;
-
-}
-
-
-/*
- * Hack -- Update a "old" monster
- *
- * We round the player speed down, and the monster speed up,
- * and we assume maximum racial speed for each monster.
- */
-static void borg_update_kill_old(int i)
-{
-	int t, e;
-	int k = 0;
-	int num = 0;
-
-	byte spell[96];
-	borg_kill *kill = &borg_kills[i];
-
-	monster_race *r_ptr = &r_info[kill->r_idx];
-
-	/* Extract max hitpoints */
-	/* Extract actual Hitpoints, this is a cheat.  Borg does not look
-	 * at the bar at the bottom and frankly that would take a lot of code.
-	 * It would involve targeting every monster to read their individual bar.
-	 * then keeping track of it.  When the borg has telepathy this would
-	 * cripple him down and be tremendously slow.
-	 *
-	 * This cheat is not too bad.  A human could draw the same info from
-	 * from the screen.
-	 *
-	 * Basically the borg is cheating the real hit points of the monster then
-	 * using that information to calculate the estimated hp of the monster.
-	 * Its the same basic tactict that we would use.
-	 *
-	 * Kill->power is used a lot in borg_danger,
-	 * for calculating damage from breath attacks.
-	 */
-
-#if 0
-	if (m_ptr->maxhp)
-	{
-		/* Cheat the "percent" of health */
-		pct = 100L * m_ptr->hp / (m_ptr->maxhp > 1) ? m_ptr->maxhp : 1;
-	}
-	else
-	{
-		pct = 100;
-	}
-
-	/* Compute estimated HP based on number of * in monster health bar */
-	kill->power = (m_ptr->maxhp * pct) / 100;
-#endif
-	kill->power = /* m_ptr->hp; */ r_ptr->hdice * r_ptr->hside;
-
-#if 0
-	/* Is it sleeping apw */
-	if (m_ptr->csleep == 0) kill->awake = TRUE;
-	else
-		kill->awake = FALSE;
-
-	/* Is it afraid apw */
-	if (m_ptr->monfear == 0) kill->afraid = FALSE;
-	else
-		kill->afraid = TRUE;
-
-	/* Is it confused apw */
-	if (m_ptr->confused == 0) kill->confused = FALSE;
-	else
-		kill->confused = TRUE;
-
-	/* Is it stunned */
-	if (m_ptr->stunned == 0) kill->stunned = FALSE;
-	else
-		kill->stunned = TRUE;
-
-	/* Extract the Invuln */
-	kill->invulner = m_ptr->invulner;
-#endif /* 0 */
-
-	/* Hack - we cannot access m_ptr */
-	kill->awake = TRUE;
-	kill->afraid = FALSE;
-	kill->confused = FALSE;
-	kill->stunned = FALSE;
-
-	/* Extract the monster speed */
-	kill->speed = r_ptr->speed;
-
+	
 	/* Player energy per game turn */
 	e = extract_energy[borg_skill[BI_SPEED]];
 
@@ -698,51 +502,51 @@ static void borg_update_kill_old(int i)
 
 	/* Monster moves (times ten) */
 	kill->moves = (t * e) / 10;
-
-#if 0
-	/* Friendly or pet */
-	if (is_pet(m_ptr)) kill->friendly = TRUE;
-	if (is_friendly(m_ptr)) kill->friendly = TRUE;
-#endif /* 0 */
-
+	
+	/* Assume we don't know */
+	kill->awake = TRUE;
+	kill->afraid = FALSE;
+	kill->confused = FALSE;
+	kill->stunned = FALSE;
 	kill->friendly = FALSE;
-
+	kill->invulner = FALSE;
+	
+	/* Assume no ranged attacks */
+	kill->ranged_attack = FALSE;
 
 	/* Can it attack from a distance? */
-	/* Extract the "inate" spells */
-	for (k = 0; k < 32; k++)
-	{
-		if (r_ptr->flags4 & (1L << k)) spell[num++] = k + 32 * 3;
-	}
-
-	/* Extract the "normal" spells */
-	for (k = 0; k < 32; k++)
-	{
-		if (r_ptr->flags5 & (1L << k)) spell[num++] = k + 32 * 4;
-	}
-
-	/* Extract the "bizarre" spells */
-	for (k = 0; k < 32; k++)
-	{
-		if (r_ptr->flags6 & (1L << k)) spell[num++] = k + 32 * 5;
-	}
-
-	/* to cast or not to cast, that is the question */
-	if (num)
+	if (r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6)
 	{
 		kill->ranged_attack = TRUE;
 	}
-	else
+	
+	/* Get the default power */
+	kill->power = r_ptr->hdice * r_ptr->hside;
+	
+	if (map_in_bounds(kill->x, kill->y))
 	{
-		kill->ranged_attack = FALSE;
+		/* Get grid */
+		mb_ptr = map_loc(kill->x, kill->y);
+		
+		/* Do we know about this monster? */
+		if (mb_ptr->monster == kill->r_idx)
+		{
+			/* Use the known hp */
+			kill->power = kill->power * mb_ptr->m_hp / 10;
+		
+			/* Set the monster flags we know about */
+			if (mb_ptr->m_flags & MONST_ASLEEP) kill->awake = FALSE;
+			if (mb_ptr->m_flags & MONST_FRIEND) kill->friendly = TRUE;
+			if (mb_ptr->m_flags & MONST_PET) kill->friendly = TRUE;
+			if (mb_ptr->m_flags & MONST_CONFUSED) kill->confused = TRUE;
+			if (mb_ptr->m_flags & MONST_FEAR) kill->afraid = TRUE;
+			if (mb_ptr->m_flags & MONST_STUN) kill->stunned = TRUE;
+			if (mb_ptr->m_flags & MONST_INVULN) kill->invulner = TRUE;
+			
+			/* Save the flags */
+			kill->m_flags = mb_ptr->m_flags;
+		}
 	}
-
-	/* Special check on uniques, sometimes the death
-	 * is not caught so he thinks they are still running
-	 * around
-	 */
-	if ((r_ptr->flags1 & RF1_UNIQUE) &&
-		r_ptr->max_num == 0) borg_race_death[i] = 1;
 }
 
 
@@ -1143,10 +947,7 @@ static int borg_new_kill(int r_idx, int y, int x)
 	kill->when = borg_t;
 
 	/* Update the monster */
-	borg_update_kill_new(n);
-
-	/* Update the monster */
-	borg_update_kill_old(n);
+	borg_update_kill(n);
 
 	/* Danger of this monster to its grid (used later) */
 	p = borg_danger(kill->y, kill->x, 1, FALSE);
@@ -1294,7 +1095,7 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
 		kill->when = borg_t;
 
 		/* Update the monster */
-		borg_update_kill_old(i);
+		borg_update_kill(i);
 
 		/* Mark as seen */
 		kill->seen = TRUE;
@@ -2302,10 +2103,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 		kill->r_idx = r_idx;
 
 		/* Update the monster */
-		borg_update_kill_new(b_i);
-
-		/* Update the monster */
-		borg_update_kill_old(b_i);
+		borg_update_kill(b_i);
 
 		/* Recalculate danger */
 		borg_danger_wipe = TRUE;
