@@ -3088,7 +3088,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_ATTACKS:
 				{
 					/* Rarely have a ring +2 */
-					if (one_in_(100))
+					if (one_in_(7))
 					{
 						o_ptr->pval = 2;
 					}
