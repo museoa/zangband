@@ -1053,17 +1053,17 @@ static s32b borg_object_value_known(borg_item *item)
     /* Analyze pval bonus */
     switch (item->tval)
     {
-        /* Wands/Staffs */
         case TV_WAND:
         case TV_STAFF:
         {
+			/* Wands/Staffs */
+			
             /* Pay extra for charges */
             value += ((value / 20) * item->pval);
 
             break;
         }
 
-        /* Wearable items */
         case TV_SHOT:
         case TV_ARROW:
         case TV_BOLT:
@@ -1085,6 +1085,8 @@ static s32b borg_object_value_known(borg_item *item)
         case TV_AMULET:
         case TV_RING:
         {
+			/* Wearable items */
+		
             /* Hack -- Negative "pval" is always bad */
             if (item->pval < 0) return (0L);
 
@@ -1121,10 +1123,11 @@ static s32b borg_object_value_known(borg_item *item)
     /* Analyze the item */
     switch (item->tval)
     {
-        /* Rings/Amulets */
         case TV_RING:
         case TV_AMULET:
         {
+			/* Rings/Amulets */
+		
             /* Hack -- negative bonuses are bad */
             if (item->to_a < 0) return (0L);
             if (item->to_h < 0) return (0L);
@@ -1136,7 +1139,6 @@ static s32b borg_object_value_known(borg_item *item)
             break;
         }
 
-        /* Armor */
         case TV_BOOTS:
         case TV_GLOVES:
         case TV_CLOAK:
@@ -1147,6 +1149,8 @@ static s32b borg_object_value_known(borg_item *item)
         case TV_HARD_ARMOR:
         case TV_DRAG_ARMOR:
         {
+			/* Armor */
+		
             /* Hack -- negative armor bonus */
             if (item->to_a < 0) return (0L);
 
@@ -1155,14 +1159,15 @@ static s32b borg_object_value_known(borg_item *item)
 
             break;
         }
-
-        /* Bows/Weapons */
+		
         case TV_BOW:
         case TV_DIGGING:
         case TV_HAFTED:
         case TV_SWORD:
         case TV_POLEARM:
         {
+			/* Bows/Weapons */
+		
             /* Hack -- negative hit/damage bonuses */
             if (item->to_h + item->to_d < 0) return (0L);
 
@@ -1178,11 +1183,12 @@ static s32b borg_object_value_known(borg_item *item)
             break;
         }
 
-        /* Ammo */
         case TV_SHOT:
         case TV_ARROW:
         case TV_BOLT:
         {
+			/* Ammo */
+		
             /* Hack -- negative hit/damage bonuses */
             if (item->to_h + item->to_d < 0) return (0L);
 
@@ -1356,8 +1362,10 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
         switch (item->tval)
         {
 			case TV_SKELETON:
+			{
 				item->value = 0L;
 				break;
+			}
             case TV_FOOD:
             {
                 item->value = 5L;
@@ -2880,165 +2888,219 @@ bool borg_racial_check(int race, bool check_fail)
  		case RACE_HUMAN:
  		case RACE_HALF_ELF:
  		case RACE_ELF:
+		{
  			lev_req = 99;
  			break;
+		}
  		case RACE_HOBBIT:
+		{
  			lev_req = 15;
 			cost = 10;
 			use_stat = A_INT;
 			diff = 10;
  			break;
+		}
 		case RACE_GNOME:
+		{
  			lev_req = 5;
 			cost = 5 + (borg_skill[BI_CLEVEL] / 5);
 			use_stat = A_INT;
 			diff = 12;
  			break;
+		}
 		case RACE_DWARF:
+		{
  			lev_req = 5;
 			cost = 5;
 			use_stat = A_WIS;
 			diff = 12;
  			break;
+		}
 		case RACE_HALF_ORC:
+		{
  			lev_req = 3;
 			cost = 5;
 			use_stat = A_WIS;
 			diff = ((borg_class == CLASS_WARRIOR) ? 5: 10);
  			break;
+		}
 		case RACE_HALF_TROLL:
+		{
  			lev_req = 10;
 			cost = 12;
 			use_stat = A_WIS;
 			diff = ((borg_class == CLASS_WARRIOR) ? 6: 12);
  			break;
+		}
 		case RACE_AMBERITE: /* not coded yet */
+		{
  			lev_req = 99;
 			cost = 5;
 			use_stat = A_WIS;
 			diff = 50;
  			break;
+		}
 		case RACE_HIGH_ELF:
+		{
   			lev_req = 99;
 			cost = 0;
 			use_stat = A_WIS;
 			diff = 0;
  			break;
+		}
 		case RACE_BARBARIAN:
+		{
  			lev_req = 8;
 			cost = 10;
 			use_stat = A_WIS;
 			diff = ((borg_class == CLASS_WARRIOR) ? 6: 12);
  			break;
+		}
 		case RACE_HALF_OGRE:
+		{
   			lev_req = 25;
 			cost = 35;
 			use_stat = A_STR;
 			diff = 12;
  			break;
+		}
 		case RACE_HALF_GIANT:
+		{
   			lev_req =99; /* no support */
 			cost = 35;
 			use_stat = A_INT;
 			diff = 15;
  			break;
+		}
 		case RACE_HALF_TITAN:
+		{
   			lev_req = 99; /* no support */
 			cost = 20;
 			use_stat = A_INT;
 			diff = 12;
  			break;
+		}
 		case RACE_CYCLOPS:
+		{
  			lev_req = 20;
 			cost = 15;
 			use_stat = A_STR;
 			diff = 12;
  			break;
+		}
 		case RACE_YEEK:
+		{
  			lev_req = 15;
 			cost = 15;
 			use_stat = A_WIS;
 			diff = 10;
  			break;
+		}
 		case RACE_KLACKON:
+		{
  			lev_req = 9;
 			cost = 9;
 			use_stat = A_DEX;
 			diff = 14;
  			break;
+		}
 		case RACE_KOBOLD:
+		{
  			lev_req = 12;
 			cost = 8;
 			use_stat = A_DEX;
 			diff = 14;
  			break;
+		}
  		case RACE_NIBELUNG:
+		{
  			lev_req = 10;
 			cost = 5;
 			use_stat = A_WIS;
 			diff = 10;
  			break;
+		}
 		case RACE_DARK_ELF:
+		{
  			lev_req = 2;
 			cost = 2;
 			use_stat = A_INT;
 			diff = 9;
  			break;
+		}
  		case RACE_DRACONIAN:
+		{
   			lev_req = 1;
 			cost = borg_skill[BI_CLEVEL];
 			use_stat = A_CON;
 			diff = 12;
  			break;
+		}
 		case RACE_MIND_FLAYER:
+		{
  			lev_req = 15;
 			cost = 12;
 			use_stat = A_STR;
 			diff = 15;
  			break;
+		}
  		case RACE_IMP:
+		{
   			lev_req = 9;
 			cost = 15;
 			use_stat = A_WIS;
 			diff = 15;
  			break;
+		}
 		case RACE_GOLEM:
+		{
  			lev_req = 20;
 			cost = 15;
 			use_stat = A_CON;
 			diff = 8;
  			break;
+		}
 		case RACE_SKELETON:
  		case RACE_ZOMBIE:
+		{
  			lev_req = 30;
 			cost = 30;
 			use_stat = A_WIS;
 			diff = 18;
  			break;
+		}
 		case RACE_VAMPIRE:
+		{
  			lev_req = 2;
 			cost = 1 + (borg_skill[BI_CLEVEL] /3);
 			use_stat = A_WIS;
 			diff = 18;
  			break;
+		}
 		case RACE_SPECTRE:
+		{
   			lev_req = 4;
 			cost = 6;
 			use_stat = A_INT;
 			diff = 3;
  			break;
+		}
 		case RACE_SPRITE:
+		{
  			lev_req = 12;
 			cost = 12;
 			use_stat = A_INT;
 			diff = 15;
  			break;
+		}
 		case RACE_BEASTMAN:
+		{
  			lev_req = 99;  /* No ability */
 			cost = 30;
 			use_stat = A_WIS;
 			diff = 18;
  			break;
+		}
 	}
 
 	/* Power is not available yet */
