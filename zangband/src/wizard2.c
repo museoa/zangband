@@ -366,6 +366,57 @@ static void do_cmd_wiz_change(void)
 
 
 /*
+ * Create a feature near the player.
+ */
+static void do_cmd_wiz_feature(int feat)
+{
+	int y, x, d = 3, attempts = 30;
+
+	while (1)
+	{
+		/* Find a location */
+		y = rand_spread(py, d);
+		x = rand_spread(px, d);
+
+		/* Reject illegal grids */
+		if (!in_bounds(y, x)) continue;
+
+		/* Reject the player */
+		if ((y == py) && (x == px)) continue;
+
+		attempts--;
+
+		if (!attempts)
+		{
+			d++;
+			attempts = 8 * d;
+		}
+
+		/* Try to place a new feature */
+		if (cave[y][x].feat == feat) continue;
+
+		/* Okay */
+		break;
+	}
+
+	/* Nuke objects */
+	delete_object_idx(cave[y][x].o_idx);
+
+	/* Nuke monsters */
+	delete_monster_idx(cave[y][x].m_idx);
+
+	/* Forget this grid */
+	cave[y][x].info &= ~(CAVE_MARK);
+
+	/* Place the feature */
+	cave_set_feat(y, x, feat);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+}
+
+
+/*
  * Wizard routines for creating objects		-RAK-
  * And for manipulating them!                   -Bernd-
  *
@@ -1630,6 +1681,11 @@ void do_cmd_debug(void)
 		/* View item info */
 		case 'f':
 		identify_fully();
+		break;
+
+		/* Create feature */
+		case 'F':
+		if (command_arg > 0) do_cmd_wiz_feature(command_arg);
 		break;
 
 		/* Good Objects */

@@ -2696,6 +2696,16 @@ void move_player(int dir, int do_pickup)
 		oktomove = FALSE;
 	}
 
+	/* Hit an invisible wall */
+	else if (c_ptr->feat == FEAT_WALL_INVIS)
+	{
+		oktomove = FALSE;
+
+		disturb(0, 0);
+
+		msg_print("You bump into something.");
+	}
+
 	/* Normal movement */
 	if (oktomove)
 	{
@@ -2765,7 +2775,7 @@ void move_player(int dir, int do_pickup)
 
 		/* Handle "store doors" */
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-		    (c_ptr->feat <= FEAT_SHOP_TAIL))
+			 (c_ptr->feat <= FEAT_SHOP_TAIL))
 		{
 			/* Disturb */
 			disturb(0, 0);

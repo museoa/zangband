@@ -255,6 +255,12 @@ static void alloc_object(int set, int typ, int num)
 				place_object(y, x, FALSE, FALSE);
 				break;
 			}
+
+			case ALLOC_TYP_INVIS:
+			{
+				place_invis_wall(y, x);
+				break;
+			}
 		}
 	}
 }
@@ -897,6 +903,12 @@ static bool cave_gen(void)
 	/* Put some objects/gold in the dungeon */
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3));
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3));
+
+	/* Put some invisible walls in the dungeon for nightmare mode */
+	if (ironman_nightmare)
+	{
+		alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_INVIS, randnor(DUN_AMT_INVIS, 3));
+	}
 
 	if (empty_level && ((randint(DARK_EMPTY) != 1) || (randint(100) > dun_level)))
 	{

@@ -947,6 +947,8 @@
 
 #define FEAT_TRAP_TRAPS         0x5A
 
+#define FEAT_WALL_INVIS			  0x5B
+
 /* Feature 0x5A - 0x5F unused */
 
 /* Terrain */

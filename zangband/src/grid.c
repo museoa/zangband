@@ -106,6 +106,14 @@ void place_random_door(int y, int x)
 {
 	int tmp;
 
+	/* Invisible wall */
+	if (ironman_nightmare && !rand_int(666))
+	{
+		/* Create invisible wall */
+		cave_set_feat(y, x, FEAT_WALL_INVIS);
+		return;
+	}
+
 	/* Choose an object */
 	tmp = rand_int(1000);
 
@@ -141,6 +149,14 @@ void place_random_door(int y, int x)
 void place_closed_door(int y, int x)
 {
 	int tmp;
+
+	/* Invisible wall */
+	if (ironman_nightmare && !rand_int(666))
+	{
+		/* Create invisible wall */
+		cave_set_feat(y, x, FEAT_WALL_INVIS);
+		return;
+	}
 
 	/* Choose an object */
 	tmp = rand_int(400);

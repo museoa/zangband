@@ -460,6 +460,10 @@ G:.:g
 N:90:compact rune
 G:^:D
 
+N:91:invisible wall
+G:.:w
+M:1
+
 N:96:tree
 G:#:G
 

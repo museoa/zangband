@@ -1513,6 +1513,9 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	    (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
 		return (FALSE);
 
+	/* Nor on invisible walls */
+	if (cave[y][x].feat == FEAT_WALL_INVIS) return (FALSE);
+
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
 

@@ -29,6 +29,7 @@
 #define place_secret_door(Y,X)  set_cave_feat(Y,X,FEAT_SECRET)
 #define place_inner_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_INNER)
 #define place_outer_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_OUTER)
+#define place_invis_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_INVIS)
 
 /* Externs */
 

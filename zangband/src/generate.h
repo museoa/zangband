@@ -64,6 +64,7 @@ extern int dun_tun_jct;
 #define DUN_AMT_ROOM	9	/* Amount of objects for rooms */
 #define DUN_AMT_ITEM	3	/* Amount of objects for rooms/corridors */
 #define DUN_AMT_GOLD	3	/* Amount of treasure for rooms/corridors */
+#define DUN_AMT_INVIS 3	/* Amount of invisible walls for rooms/corridors */
 
 /*
  * Hack -- Dungeon allocation "places"
@@ -79,6 +80,7 @@ extern int dun_tun_jct;
 #define ALLOC_TYP_TRAP		3	/* Trap */
 #define ALLOC_TYP_GOLD		4	/* Gold */
 #define ALLOC_TYP_OBJECT	5	/* Object */
+#define ALLOC_TYP_INVIS		6	/* Invisible wall */
 
 
 

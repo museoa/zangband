@@ -2110,7 +2110,7 @@ static void process_monster(int m_idx)
 
 	/* 75% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-	         (r_ptr->flags1 & RF1_RAND_25) &&
+				(r_ptr->flags1 & RF1_RAND_25) &&
 	         (rand_int(100) < 75))
 	{
 		/* Memorize flags */
@@ -2470,6 +2470,13 @@ static void process_monster(int m_idx)
 				/* Allow movement */
 				do_move = TRUE;
 			}
+		}
+
+		/* Invisible wall */
+		if (c_ptr->feat == FEAT_WALL_INVIS)
+		{
+			/* No movement */
+			do_move = FALSE;
 		}
 
 		/* Some monsters never attack */
