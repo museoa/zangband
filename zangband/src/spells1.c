@@ -572,7 +572,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else
 			{
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 			}
 
 			/* Mega-Hack -- Update the monster in the affected grid */
@@ -869,7 +869,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 				}
 
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 			}
 		}
 	}
@@ -3059,7 +3059,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	update_mon(c_ptr->m_idx, FALSE);
 
 	/* Redraw the monster grid */
-	lite_spot(y, x);
+	lite_spot(x, y);
 
 
 	/* Update monster recall window */
@@ -4270,7 +4270,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				Term_xtra(TERM_XTRA_DELAY, msec);
 				
 				/* Show it */
-				lite_spot(y, x);
+				lite_spot(x, y);
 				if (fresh_before) Term_fresh();
 
 				/* Display "beam" grids */
@@ -4525,7 +4525,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				/* Hack -- Erase if needed */
 				if (in_boundsp(y, x) && player_has_los_grid(parea(y, x)))
 				{
-					lite_spot(y, x);
+					lite_spot(x, y);
 				}
 			}
 

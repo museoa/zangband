@@ -899,7 +899,7 @@ bool detect_doors(void)
 				pc_ptr->feat = c_ptr->feat;
 
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 
 				/* Obvious */
 				detect = TRUE;
@@ -953,7 +953,7 @@ bool detect_stairs(void)
 				pc_ptr->feat = c_ptr->feat;
 
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 
 				/* Obvious */
 				detect = TRUE;
@@ -1017,7 +1017,7 @@ bool detect_treasure(void)
 				pc_ptr->feat = c_ptr->feat;
 
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 
 				/* Detect */
 				detect = TRUE;
@@ -1075,7 +1075,7 @@ bool detect_objects_gold(void)
 			o_ptr->marked = TRUE;
 
 			/* Redraw */
-			lite_spot(y, x);
+			lite_spot(x, y);
 
 			/* Detect */
 			detect = TRUE;
@@ -1135,7 +1135,7 @@ bool detect_objects_normal(void)
 			o_ptr->marked = TRUE;
 
 			/* Redraw */
-			lite_spot(y, x);
+			lite_spot(x, y);
 
 			/* Detect */
 			detect = TRUE;
@@ -1219,7 +1219,7 @@ bool detect_objects_magic(void)
 			o_ptr->marked = TRUE;
 
 			/* Redraw */
-			lite_spot(y, x);
+			lite_spot(x, y);
 
 			/* Detect */
 			detect = TRUE;
@@ -2561,10 +2561,10 @@ bool earthquake(int cy, int cx, int r)
 			}
 			
 			/* Redraw the old spot */
-			lite_spot(oy, ox);
+			lite_spot(ox, oy);
 
 			/* Redraw the new spot */
-			lite_spot(py, px);
+			lite_spot(px, py);
 
 			/* Process fields under the player. */
 			field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
@@ -2730,10 +2730,10 @@ bool earthquake(int cy, int cx, int r)
 						update_mon(m_idx, TRUE);
 
 						/* Redraw the old grid */
-						lite_spot(yy, xx);
+						lite_spot(xx, yy);
 
 						/* Redraw the new grid */
-						lite_spot(sy, sx);
+						lite_spot(sx, sy);
 					}
 				}
 			}
@@ -2984,7 +2984,7 @@ static void cave_temp_room_unlite(void)
 			else
 			{
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 			}
 		}
 	}
@@ -3370,10 +3370,10 @@ bool teleport_swap(int dir)
 	update_mon(area(ty, tx)->m_idx, TRUE);
 	
 	/* Redraw the old grid */
-	lite_spot(ty, tx);
+	lite_spot(tx, ty);
 
 	/* Redraw the new grid */
-	lite_spot(py, px);
+	lite_spot(px, py);
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);

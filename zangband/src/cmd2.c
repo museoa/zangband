@@ -2573,7 +2573,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			move_cursor_relative(nx, ny);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(ny, nx);
+			lite_spot(nx, ny);
 			Term_fresh();
 		}
 
@@ -3013,7 +3013,7 @@ void do_cmd_throw_aux(int mult)
 			move_cursor_relative(nx, ny);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(ny, nx);
+			lite_spot(nx, ny);
 			Term_fresh();
 		}
 

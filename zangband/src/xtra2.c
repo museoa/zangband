@@ -51,7 +51,7 @@ void check_experience(void)
 	{
 		/* Lose a level */
 		p_ptr->lev--;
-		lite_spot(p_ptr->py, p_ptr->px);
+		lite_spot(p_ptr->px, p_ptr->py);
 
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
@@ -73,7 +73,7 @@ void check_experience(void)
 	{
 		/* Gain a level */
 		p_ptr->lev++;
-		lite_spot(p_ptr->py, p_ptr->px);
+		lite_spot(p_ptr->px, p_ptr->py);
 
 		/*
 		 * If auto-note taking enabled, write a note to the file.

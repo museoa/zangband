@@ -312,7 +312,7 @@ extern void move_cursor_relative(int col, int row);
 extern void print_rel(char c, byte a, int x, int y);
 extern void note_spot(int x, int y);
 extern void display_dungeon(void);
-extern void lite_spot(int y, int x);
+extern void lite_spot(int x, int y);
 extern void prt_map(void);
 extern void display_map(int *cy, int *cx);
 extern void do_cmd_view_map(void);
@@ -327,7 +327,6 @@ extern void map_area(void);
 extern void wiz_lite(void);
 extern void wiz_dark(void);
 extern void cave_set_feat(int y, int x, int feat);
-
 extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);

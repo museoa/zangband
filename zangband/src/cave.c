@@ -2072,7 +2072,7 @@ void display_dungeon(void)
  *
  * This function should only be called on "legal" grids
  */
-void lite_spot(int y, int x)
+void lite_spot(int x, int y)
 {
 	/* Redraw if on screen */
 	if (panel_contains(y, x) && in_boundsp(y, x))
@@ -3060,7 +3060,7 @@ void forget_view(void)
 		if (!panel_contains(y, x)) continue;
 
 		/* Update the screen */
-		lite_spot(y, x);
+		lite_spot(x, y);
 	}
 
 	/* None left */
@@ -3746,7 +3746,7 @@ void update_view(void)
 	pc_ptr->player = player;
 
 	/* Redraw player*/
-	/*lite_spot(py, px);*/
+	/*lite_spot(px, py);*/
 
 	/* Save in array */
 
@@ -4010,7 +4010,7 @@ void update_view(void)
 			if (!(info & CAVE_TEMP))
 			{
 				/* Redraw */
-				lite_spot(y, x);
+				lite_spot(x, y);
 			}
 		}
 	}
@@ -4050,7 +4050,7 @@ void update_view(void)
 			pc_ptr->player = player;
 			
 			/* Redraw */
-			lite_spot(y, x);
+			lite_spot(x, y);
 		}
 		else
 		{

@@ -1080,8 +1080,8 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			move_wild();
 		}
 		
-		lite_spot(py, px);
-		lite_spot(oy, ox);
+		lite_spot(px, py);
+		lite_spot(ox, oy);
 		
 		/* Process fields under the player. */
 		field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);

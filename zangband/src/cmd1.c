@@ -2389,7 +2389,7 @@ void move_player(int dir, int do_pickup)
 			{
 				msg_print("You feel a closed door blocking your way.");
 				pc_ptr->feat = c_ptr->feat;
-				lite_spot(y, x);
+				lite_spot(x, y);
 			}
 
 			/* Notice things */
@@ -2433,7 +2433,7 @@ void move_player(int dir, int do_pickup)
 		{
 			message(MSG_HITWALL, 0, "You feel something blocking your way.");
 			pc_ptr->feat = c_ptr->feat;
-			lite_spot(y, x);
+			lite_spot(x, y);
 		}
 		/* Notice things */
 		else
@@ -2525,10 +2525,10 @@ void move_player(int dir, int do_pickup)
 		}
 		
 		/* Redraw new spot */
-		lite_spot(y, x);		
+		lite_spot(x, y);		
 
 		/* Redraw old spot */
-		lite_spot(oy, ox);
+		lite_spot(ox, oy);
 		
 		/* Process fields under the player. */
 		field_hook(&area(y, x)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);

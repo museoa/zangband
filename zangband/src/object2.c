@@ -215,7 +215,7 @@ void delete_object(int y, int x)
 	c_ptr->o_idx = 0;
 
 	/* Visual update */
-	lite_spot(y, x);
+	lite_spot(x, y);
 }
 
 

@@ -2732,10 +2732,10 @@ static void process_monster(int m_idx)
 				 FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 			/* Redraw the old grid */
-			lite_spot(oy, ox);
+			lite_spot(ox, oy);
 
 			/* Redraw the new grid */
-			lite_spot(ny, nx);
+			lite_spot(nx, ny);
 
 			/* Possible disturb */
 			if (m_ptr->ml && (disturb_move ||

@@ -2848,7 +2848,7 @@ static void process_player(void)
 					shimmer_monsters = TRUE;
 
 					/* Redraw regardless */
-					lite_spot(m_ptr->fy, m_ptr->fx);
+					lite_spot(m_ptr->fx, m_ptr->fy);
 				}
 			}
 

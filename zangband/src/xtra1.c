@@ -599,7 +599,7 @@ static void prt_hp(void)
 		r_ptr->x_attr = color;
 		
 		/* Show the change */
-		if (character_dungeon) lite_spot(p_ptr->py, p_ptr->px);
+		if (character_dungeon) lite_spot(p_ptr->px, p_ptr->py);
 	}
 #endif /* !VARIABLE_PLAYER_GRAPH */
 }

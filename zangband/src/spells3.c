@@ -157,10 +157,10 @@ bool teleport_away(int m_idx, int dis)
 			 FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 	
 	/* Redraw the old grid */
-	lite_spot(oy, ox);
+	lite_spot(ox, oy);
 
 	/* Redraw the new grid */
-	lite_spot(ny, nx);
+	lite_spot(nx, ny);
 	
 	/* Notice changes in view */
 	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
@@ -308,10 +308,10 @@ void teleport_to_player(int m_idx)
 			 FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 	/* Redraw the old grid */
-	lite_spot(oy, ox);
+	lite_spot(ox, oy);
 
 	/* Redraw the new grid */
-	lite_spot(ny, nx);
+	lite_spot(nx, ny);
 	
 	/* Notice changes in view */
 	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
@@ -452,10 +452,10 @@ void teleport_player(int dis)
 	}
 	
 	/* Redraw the old spot */
-	lite_spot(oy, ox);
+	lite_spot(ox, oy);
 		
 	/* Redraw the new spot */
-	lite_spot(py, px);
+	lite_spot(px, py);
 	
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
@@ -590,10 +590,10 @@ void teleport_player_to(int ny, int nx)
 	}
 	
 	/* Redraw the old spot */
-	lite_spot(oy, ox);
+	lite_spot(ox, oy);
 
 	/* Redraw the new spot */
-	lite_spot(py, px);
+	lite_spot(px, py);
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);

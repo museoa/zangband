@@ -2561,7 +2561,7 @@ void do_poly_self(void)
 		p_ptr->update |= (PU_BONUS);
 
 		handle_stuff();
-		lite_spot(p_ptr->py, p_ptr->px);
+		lite_spot(p_ptr->px, p_ptr->py);
 	}
 
 	if ((power > randint0(30)) && one_in_(6))
