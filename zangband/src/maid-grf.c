@@ -2046,7 +2046,7 @@ static byte breath_attr(const monster_race *r_ptr)
  * when in (semi) graphics mode, where either the monster
  * or the floor it is standing on is non-ascii.
  */
-static void map_mon_info(monster_type *m_ptr, byte *a, char *c)
+static void map_mon_info(monster_type *m_ptr, byte *a, char *c, term_map *map)
 {
 	monster_race *r_ptr;
 	
@@ -2059,6 +2059,24 @@ static void map_mon_info(monster_type *m_ptr, byte *a, char *c)
 	if (m_ptr->ml)
 	{
 		r_ptr = &r_info[m_ptr->r_idx];
+		
+		/* Visible monster */
+		map->monster = m_ptr->r_idx;
+
+		/* Keep this grid */
+		map->flags |= MAP_ONCE;
+
+		/* Get monster information */
+		if (m_ptr->csleep) map->m_flags |= MONST_ASLEEP;
+		if (is_friendly(m_ptr)) map->m_flags |= MONST_FRIEND;
+		if (is_pet(m_ptr)) map->m_flags |= MONST_PET;
+		if (m_ptr->confused) map->m_flags |= MONST_CONFUSED;
+		if (m_ptr->monfear) map->m_flags |= MONST_FEAR;
+		if (m_ptr->stunned) map->m_flags |= MONST_STUN;
+		if (m_ptr->invulner) map->m_flags |= MONST_INVULN;
+
+		/* Get scaled monster hp */
+		map->m_hp = m_ptr->hp * 10 / m_ptr->maxhp;
 			
 		/* Hack -- hallucination */
 		if (p_ptr->tim.image)
@@ -2206,6 +2224,7 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	feature_type *f_ptr;
 
 	object_type *o_ptr;
+	object_kind *k_ptr;
 
 	monster_type *m_ptr;
 
@@ -2324,6 +2343,12 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
 			(FIELD_INFO_MARK | FIELD_INFO_VIS))
 		{
+			/* Remember field type */
+			map->field = fld_ptr->t_idx;
+
+			/* Keep this grid */
+			map->flags |= MAP_ONCE;
+		
 			/* Which display level to use? */
 			if (fld_ptr->info & FIELD_INFO_FEAT)
 			{
@@ -2366,34 +2391,52 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		}
 	}
 	
-	if (!float_field)
+	/* Objects */
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		/* Objects */
-		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
+		/* Memorized objects */
+		if (o_ptr->info & (OB_SEEN))
 		{
-			/* Memorized objects */
-			if (o_ptr->info & (OB_SEEN))
+			k_ptr = &k_info[o_ptr->k_idx];
+
+			/* Flavoured object */
+			if (k_ptr->flavor)
 			{
-				/* Hack -- hallucination */
-				if (halluc)
-				{
-					image_object(&a, &c);
-				}
-				else
-				{
-					/* Normal char */
-					c = object_char(o_ptr);
-
-					/* Normal attr */
-					a = object_attr(o_ptr);
-				}
-
-				/* Done */
-				break;
+				/* Save flavor character */
+				map->unknown = k_ptr->d_char;
 			}
+			else
+			{
+				/* Save object */
+				map->object = o_ptr->k_idx;
+			}
+
+			/* Keep this grid */
+			map->flags |= MAP_ONCE;
+		
+			/* A field is obscuring the view to the object */
+			if (float_field) break;
+			
+			/* Hack -- hallucination */
+			if (halluc)
+			{
+				image_object(&a, &c);
+			}
+			else
+			{
+				/* Normal char */
+				c = object_char(o_ptr);
+
+				/* Normal attr */
+				a = object_attr(o_ptr);
+			}
+
+			/* Done */
+			break;
 		}
-		OBJ_ITT_END;
 	}
+	OBJ_ITT_END;
+		
 	
 	/* Handle monsters */
 	if (c_ptr->m_idx)
@@ -2401,7 +2444,7 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		m_ptr = &m_list[c_ptr->m_idx];
 
 		/* Get monster tile info */
-		map_mon_info(m_ptr, &a, &c);
+		map_mon_info(m_ptr, &a, &c, map);
 	}
 
 	/* Hack -- fake monochrome */
@@ -2452,14 +2495,9 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 	
 	term_map map;
 
-	int fld_idx, next_f_idx;
-
 	monster_type *m_ptr;
-	object_type *o_ptr;
-	field_type *fld_ptr;
 
 	monster_race *r_ptr;
-	object_kind *k_ptr;
 
 	bool visible = pc_ptr->player & GRID_SEEN;
 	bool glow = c_ptr->info & CAVE_GLOW;
@@ -2504,29 +2542,8 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 		{
 			m_ptr = &m_list[c_ptr->m_idx];
 
-			/* Visible monster */
-			if (m_ptr->ml)
-			{
-				map.monster = m_ptr->r_idx;
-
-				/* Keep this grid */
-				map.flags |= MAP_ONCE;
-
-				/* Get monster information */
-				if (m_ptr->csleep) map.m_flags |= MONST_ASLEEP;
-				if (is_friendly(m_ptr)) map.m_flags |= MONST_FRIEND;
-				if (is_pet(m_ptr)) map.m_flags |= MONST_PET;
-				if (m_ptr->confused) map.m_flags |= MONST_CONFUSED;
-				if (m_ptr->monfear) map.m_flags |= MONST_FEAR;
-				if (m_ptr->stunned) map.m_flags |= MONST_STUN;
-				if (m_ptr->invulner) map.m_flags |= MONST_INVULN;
-
-				/* Get scaled monster hp */
-				map.m_hp = m_ptr->hp * 10 / m_ptr->maxhp;
-			}
-
 			/* Mimic in los? */
-			else if (visible)
+			if (visible && !m_ptr->ml)
 			{
 				r_ptr = &r_info[m_ptr->r_idx];
 
@@ -2540,57 +2557,6 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 				}
 			}
 		}
-
-		/* Fields */
-		for (fld_idx = c_ptr->fld_idx; fld_idx; fld_idx = next_f_idx)
-		{
-			/* Acquire field */
-			fld_ptr = &fld_list[fld_idx];
-
-			/* Acquire next field */
-			next_f_idx = fld_ptr->next_f_idx;
-
-			/* Memorized, visible fields */
-			if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
-				(FIELD_INFO_MARK | FIELD_INFO_VIS))
-			{
-				map.field = fld_ptr->t_idx;
-
-				/* Keep this grid */
-				map.flags |= MAP_ONCE;
-
-				/* Stop looking */
-				break;
-			}
-		}
-
-		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
-		{
-			/* Memorized objects */
-			if (o_ptr->info & (OB_SEEN))
-			{
-				k_ptr = &k_info[o_ptr->k_idx];
-
-				/* Flavoured object */
-				if (k_ptr->flavor)
-				{
-					/* Save flavor character */
-					map.unknown = k_ptr->d_char;
-				}
-				else
-				{
-					/* Save object */
-					map.object = o_ptr->k_idx;
-				}
-
-				/* Keep this grid */
-				map.flags |= MAP_ONCE;
-
-				/* Stop looking */
-				break;
-			}
-		}
-		OBJ_ITT_END;
 	}
 	/*
 	 * Can't get much information if hallucinating...
