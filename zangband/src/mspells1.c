@@ -390,7 +390,7 @@ static bool summon_possible(int y1, int x1)
  * no equally friendly monster is
  * between the attacker and target.
  */
-bool clean_shot(int y2, int x2, int y1, int x1, bool friend)
+bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 {
 	/* Must be the same as projectable() */
 
@@ -417,8 +417,7 @@ bool clean_shot(int y2, int x2, int y1, int x1, bool friend)
 		y = GRID_Y(grid_g[i]);
 		x = GRID_X(grid_g[i]);
 
-		if ((cave[y][x].m_idx > 0)
-		    && !(y==y1 && x==x1))
+		if ((cave[y][x].m_idx > 0) && !((y == y2) && (x == x2)))
 		{
 			monster_type *m_ptr = &m_list[cave[y][x].m_idx];
 			if (friend == is_pet(m_ptr))

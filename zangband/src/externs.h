@@ -1071,7 +1071,7 @@ extern void do_poly_wounds(void);
 extern int mon_damage_mod(monster_type *m_ptr, int dam, int type);
 
 /* mspells1.c */
-extern bool clean_shot(int y2, int x2, int y1, int x1, bool friend);
+extern bool clean_shot(int y1, int x1, int y2, int x2, bool friend);
 
 /* mspells2.c */
 extern bool monst_spell_monst(int m_idx);
