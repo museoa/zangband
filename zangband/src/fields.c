@@ -984,17 +984,19 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
  * in the specified list which match the required
  * field type.
  */
-void field_hook_special(s16b *field_ptr, u16b t_idx, void *action_struct)
+void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
 {
 	field_type *f_ptr;
+	field_thaum *t_ptr;
 	
 	while (*field_ptr)
 	{
 		/* Point to the field */
 		f_ptr = &fld_list[*field_ptr];
+		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Check for the right field + existance of a function to call */
-		if ((f_ptr->t_idx == t_idx) && (f_ptr->action[FIELD_ACT_SPECIAL]))
+		if ((t_ptr->type == ftype) && (f_ptr->action[FIELD_ACT_SPECIAL]))
 		{
 			/* Call the action function */
 			f_ptr->action[FIELD_ACT_SPECIAL](field_ptr, action_struct);
@@ -1268,6 +1270,14 @@ void field_action_compact_basic(s16b *field_ptr, void *output)
 			}
 		
 			break;
+		}
+		
+		case FTYPE_CORPSE:
+		{
+			/* Corpses have no real value */
+			*compact_value = f_ptr->counter / 10;
+			
+			break;	
 		}
 	}
 
@@ -1613,7 +1623,7 @@ void place_trap(int y, int x)
 	for (total = 0; TRUE; n_ptr++)
 	{
 		/* Note end */
-		if (!n_ptr->level) break;
+		if (!n_ptr->t_idx) break;
 
 		/* Ignore excessive depth */
 		if (n_ptr->level > dun_level) continue;
@@ -1632,7 +1642,7 @@ void place_trap(int y, int x)
 		for (n_ptr = trap_num, total = 0; TRUE; n_ptr++)
 		{
 			/* Note end - this should never happen */
-			if (!n_ptr->level)
+			if (!n_ptr->t_idx)
 			{
 				/* Go back one */
 				n_ptr--;

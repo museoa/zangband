@@ -2262,11 +2262,8 @@ bool raise_dead(int y, int x, bool pet)
 
 		if (player_has_los_grid(c_ptr)) obvious = TRUE;
 		
-		/* Raise Corpses */
-		field_hook_special(&c_ptr->fld_idx, FT_CORPSE, (void *) &want_pet);
-		
-		/* Raise Skeletons */
-		field_hook_special(&c_ptr->fld_idx, FT_SKELETON, (void *) &want_pet);
+		/* Raise Corpses / Skeletons */
+		field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (void *) &want_pet);
 	}
 
 	/* Result */

@@ -3722,7 +3722,8 @@ extern int PlayerUID;
 #define FTYPE_FEAT		4
 #define FTYPE_QUEST		5
 #define FTYPE_FIELD		6
-#define FTYPE_MISC		7
+#define FTYPE_CORPSE	7
+#define FTYPE_MISC		8
 
 /*
  * Field Actions
