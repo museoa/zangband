@@ -535,7 +535,7 @@ void search(void)
 				old_count = count_traps(&tx, &ty, TRUE);
 
 				/* Look for invisible traps */
-				if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
+				if (field_detect_type(c_ptr, FTYPE_TRAP))
 				{
 					/* Save x and y into temp variables */
 					tx = x;

@@ -2585,7 +2585,7 @@ static errr rd_dungeon(void)
 				c_ptr = area(f_ptr->fx, f_ptr->fy);
 
 				/* Build a stack */
-				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
+				fld_idx = field_add(f_ptr, c_ptr);
 
 				/* Oops */
 				if (i != fld_idx)

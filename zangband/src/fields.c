@@ -598,8 +598,9 @@ void field_copy(field_type *f_ptr, field_type *j_ptr)
  * f_ptr is the field to add.
  * *fld_idx2 is a pointer to the head of the list of fields.
  */
-s16b field_add(field_type *f_ptr, s16b *fld_idx2)
+s16b field_add(field_type *f_ptr, cave_type *c_ptr)
 {
+	s16b *fld_idx2 = &c_ptr->fld_idx;
 	s16b fld_idx = 0;
 	s16b new_idx;
 	field_type *j_ptr = &fld_list[*fld_idx2];
@@ -678,7 +679,7 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 	}
 }
 
-
+#ifdef UNUSED_FUNC
 /*
  * Sort a list of fields so that they are in priority order.
  *
@@ -689,7 +690,7 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
  * This routine is so slow - it should really never be used.
  * If at all possible - use a merge sort based on the above code.
  */
-void field_sort_priority(s16b *fld_idx_ptr)
+static void field_sort_priority(s16b *fld_idx_ptr)
 {
 	s16b *i_ptr, *j_ptr;
 
@@ -727,6 +728,7 @@ void field_sort_priority(s16b *fld_idx_ptr)
 		}
 	}
 }
+#endif /* UNUSED_FUNC */
 
 
 /*
@@ -840,14 +842,14 @@ field_type *field_first_known(const cave_type *c_ptr, byte typ)
  * Return TRUE if a field is "found" that was previously
  * unknown.
  */
-bool field_detect_type(s16b fld_idx, byte typ)
+bool field_detect_type(const cave_type *c_ptr, byte typ)
 {
 	field_type *f_ptr;
 
 	bool flag = FALSE;
 
 	/* Scan the list */
-	FLD_ITT_START (fld_idx, f_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ)
@@ -884,12 +886,12 @@ bool field_detect_type(s16b fld_idx, byte typ)
 /*
  * Destroy all fields of a given type in the list.
  */
-void field_destroy_type(s16b fld_idx, byte typ)
+void field_destroy_type(cave_type *c_ptr, byte typ)
 {
 	field_type *f_ptr;
 
 	/* While the field exists */
-	FLD_ITT_START (fld_idx, f_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ)
@@ -904,7 +906,6 @@ void field_destroy_type(s16b fld_idx, byte typ)
 	}
 	FLD_ITT_END;
 }
-
 
 
 /*
@@ -939,8 +940,6 @@ field_type *place_field(int x, int y, s16b t_idx)
 
 	s16b fld_idx;
 
-	s16b *fld_ptr;
-
 	field_type temp_field;
 	field_type *ft_ptr = &temp_field;
 
@@ -950,11 +949,8 @@ field_type *place_field(int x, int y, s16b t_idx)
 	/* Make the field */
 	field_prep(ft_ptr, t_idx);
 
-	/* Get pointer to field list */
-	fld_ptr = &(area(x, y)->fld_idx);
-
 	/* Place it */
-	fld_idx = field_add(ft_ptr, fld_ptr);
+	fld_idx = field_add(ft_ptr, area(x, y));
 
 	/* Paranoia */
 	if (!fld_idx) return (NULL);

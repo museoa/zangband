@@ -995,7 +995,7 @@ static bool trap_tester(int x, int y)
 	pc_ptr->player |= GRID_DTCT;
 
 	/* Detect traps */
-	return (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP));
+	return (field_detect_type(c_ptr, FTYPE_TRAP));
 }
 
 
