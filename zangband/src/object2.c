@@ -642,10 +642,8 @@ errr get_obj_num_prep(void)
  * a relatively efficient manner.
  *
  * It is more likely to acquire an object of the given level
- * than one of a lower level.  This is done by choosing two objects
+ * than one of a lower level.  This is done by choosing four objects
  * appropriate to the given level and keeping the "hardest" one.
- * This gives a linear probability distribution.  (Quadratic cumulative
- * distribution.)
  *
  * Note that if no objects are "appropriate", then this function will
  * fail, and return zero, but this should *almost* never happen.
@@ -688,16 +686,19 @@ s16b get_obj_num(int level)
 	/* Pick an object */
 	value1 = randint0(total);
 
-	/* Try for a "better" object once */
-	value2 = randint0(total);
-		
-	/* Is it better? */
-	if (value2 > value1)
+	for (i = 0; i < 4; i++)
 	{
-		/* This hack works because the object table is sorted by depth */
-		value1 = value2;
+		/* Try for a "better" object once */
+		value2 = randint0(total);
+		
+		/* Is it better? */
+		if (value2 > value1)
+		{
+			/* This hack works because the object table is sorted by depth */
+			value1 = value2;
+		}
 	}
-
+	
 	/* Find the object */
 	for (i = 0; i < alloc_kind_size; i++)
 	{
@@ -1997,7 +1998,7 @@ bool make_artifact(object_type *o_ptr)
 	if (!dun_level) return (FALSE);
 
 	/* Check the artifact list (just the "specials") */
-	for (i = 0; i < max_a_idx; i++)
+	for (i = 1; i < max_a_idx; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 
@@ -4144,6 +4145,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 {
 	int prob, base;
 	byte obj_level;
+	byte flags;
 	int k_idx;
 
 
@@ -4153,14 +4155,28 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	/* Bounds checking */
 	if (prob < 10) prob = 10;
 
-	/* Base level for the object */
-	base = object_level + delta_level;
-
 	/* "Good Luck" mutation */
 	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !randint0(13))
 	{
 		/* The player is lucky - the item is better than normal */
-		base += 20;
+		delta_level += 20;
+	}
+	
+	/* Base level for the object */
+	base = object_level + delta_level;
+
+	/* Hack - Set flags based on delta_level */
+	if (delta_level > 20)
+	{
+		flags = OC_FORCE_GOOD;
+	}
+	else if (delta_level < -10)
+	{
+		flags = OC_FORCE_BAD;
+	}
+	else
+	{
+		flags = OC_NORMAL;
 	}
 
 	/* Make an artifact */
@@ -4200,8 +4216,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	object_prep(o_ptr, k_idx);
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(o_ptr, object_level, object_level - k_info[k_idx].level,
-		 OC_NORMAL);
+	apply_magic(o_ptr, object_level, object_level - k_info[k_idx].level, flags);
 
 	/* Hack -- generate multiple spikes/missiles/ mushrooms */
 	switch (o_ptr->tval)
