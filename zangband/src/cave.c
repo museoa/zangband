@@ -1339,6 +1339,7 @@ void note_spot(int y, int x)
 	cave_type *c_ptr = area(y,x);
 
 	s16b this_o_idx, next_o_idx = 0;
+	s16b this_f_idx, next_f_idx = 0;
 
 
 	/* Blind players see nothing */
@@ -1365,6 +1366,18 @@ void note_spot(int y, int x)
 
 		/* Memorize objects */
 		o_ptr->marked = TRUE;
+	}
+
+	/* Hack -- memorize fields */
+	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	{
+		field_type *f_ptr = &fld_list[this_f_idx];
+
+		/* Acquire next field */
+		next_f_idx = f_ptr->next_f_idx;
+
+		/* Memorize fields */
+		f_ptr->info |= FIELD_INFO_MARK;
 	}
 
 

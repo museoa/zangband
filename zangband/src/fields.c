@@ -107,6 +107,9 @@ void delete_field_idx(int fld_idx)
 	/* Refuse "illegal" locations */
 	if (in_bounds(y, x))
 	{
+		/* Note the spot */
+		note_spot(y, x);
+		
 		/* Visual update */
 		lite_spot(y, x);
 	}
@@ -171,6 +174,9 @@ void delete_field(int y, int x)
 
 	delete_field_aux(&(c_ptr->fld_idx));
 
+	/* Note the spot */
+	note_spot(y, x);
+	
 	/* Visual update */
 	lite_spot(y, x);
 }
@@ -529,9 +535,15 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 
 		/* Store into location */
 		*fld_idx2 = new_idx;
+		
+		/* Zero end link */
+		f_ptr->next_f_idx = 0;
 
 		/* Move field to location */
-		field_copy(f_ptr, &fld_list[new_idx]);
+		field_copy(&fld_list[new_idx], f_ptr);
+		
+		/* Hack - save the location */
+		hack_fld_ptr = fld_idx2;
 
 		return (new_idx);
 	}
@@ -551,12 +563,15 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 		new_idx = f_pop();
 
 		if (!new_idx) return (0);
+		
+		/* Move field to location */
+		field_copy(&fld_list[new_idx], f_ptr);
 
 		/* Make node before this one, point to this one. */
 		fld_list[fld_idx].next_f_idx = new_idx;
-
-		/* Move field to location */
-		field_copy(f_ptr, &fld_list[new_idx]);
+		
+		/* Hack - save the location */
+		hack_fld_ptr = fld_idx2;
 
 		return (new_idx);
 	}
@@ -656,6 +671,7 @@ void field_prep(field_type *f_ptr, int t_idx)
 		/* copy function pointers */
 		f_ptr->action[i] = t_ptr->action[i];
 	}
+	
 }
 
 /*
@@ -720,18 +736,20 @@ s16b place_field(int y, int x, s16b t_idx)
 	field_type *f_ptr;
 
 	s16b fld_idx;
+	
+	s16b *fld_ptr;
 
 	field_type temp_field;
 	field_type *ft_ptr = &temp_field;
 
-	/* Clean the temporary field */
-	field_wipe(ft_ptr);
-
 	/* Make the field */
 	field_prep(ft_ptr, t_idx);
+	
+	/* Get pointer to field list */
+	fld_ptr = &(area(y, x)->fld_idx);
 
 	/* Place it */
-	fld_idx = field_add(ft_ptr, &(area(y, x)->fld_idx));
+	fld_idx = field_add(ft_ptr, fld_ptr);
 
 	/* Paranoia */
 	if (!fld_idx) return (0);
@@ -741,7 +759,7 @@ s16b place_field(int y, int x, s16b t_idx)
 
 	/* Connect to ground */
 	f_ptr->fy = y;
-	f_ptr->fx = x;
+	f_ptr->fx = x;	
 
 	return (fld_idx);
 }
@@ -875,8 +893,8 @@ void process_fields(void)
 		/* Get pointer to field index */
 		fld_ptr = field_find(fld_idx);
 
-		/* If it is a temporary field */
-		if (f_ptr->info & FIELD_INFO_TEMP)
+		/* If it is a temporary field, count down every 10 turns */
+		if ((f_ptr->info & FIELD_INFO_TEMP) && !(turn % 10))
 		{
 			/* Decrement counter */
 			f_ptr->counter--;
@@ -889,7 +907,6 @@ void process_fields(void)
 				{
 					/* It didn't delete itself - do it now */
 					delete_field_aux(fld_ptr);
-				
 				}
 
 				/* Nothing else to do now */
@@ -982,7 +999,7 @@ void test_field_data_integtrity(void)
 /*
  * The type of the void pointer is:
  *
- * FIELD_ACT_INIT			Not implemented yet.
+ * FIELD_ACT_INIT			Function dependent.  (Be careful)
  * FIELD_ACT_ALWAYS			NULL
  * FIELD_ACT_PLAYER_ENTER	player_type*	(p_ptr)
  * FIELD_ACT_PLAYER_ON		player_type*	(p_ptr)
@@ -1098,7 +1115,7 @@ void field_action_compact_basic(s16b *field_ptr, void *compact_val)
 		case FTYPE_FIELD:
 		{
 			/* Does the field have a counter? */
-			if (f_ptr->counter)
+			if (t_ptr->count_init)
 			{
 				/* Compact fields that are nearly done */
 				*compact_value = 20 + 40 * f_ptr->counter / t_ptr->count_init;
@@ -1240,5 +1257,82 @@ void field_action_glyph_explode(s16b *field_ptr, void *mon_enter_test)
 	mon_enter->do_move = do_move;
 	
 	/* Done */
+	return;
+}
+
+
+/* 
+ * Corpses disappear after the 100 turns...
+ *
+ * In nightmare mode, they reappear as monsters.
+ */
+void field_action_corpse_decay(s16b *field_ptr, void *nothing)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
+	
+	/*
+	 * Data[1] * 256 + Data[2] = r_idx of monster.
+	 */
+	
+	/* Monster race */
+	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
+	
+	if (ironman_nightmare)
+	{
+		/* Make a monster nearby if possible */
+		if (summon_named_creature(f_ptr->fy, f_ptr->fx,
+				 r_idx, FALSE, FALSE, FALSE))
+		{
+			msg_format("The %s rises.", t_ptr->name);
+
+				/* Set the cloned flag, so no treasure is dropped */
+				m_list[hack_m_idx_ii].smart |= SM_CLONED;
+		}
+	}
+	else
+	{
+		/* Let player know what happened. */
+		msg_format("The %s decays.", t_ptr->name);
+	}
+
+
+	/* Delete the field */
+	delete_field_aux(field_ptr);
+
+	/* Note that *field_ptr does not need to be updated */
+	return;
+}
+
+/* Initialise corpse / skeletons */
+void field_action_corpse_init(s16b *field_ptr, void *input)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	monster_type *m_ptr = (monster_type *) input;
+	
+	/*
+	 * Data[1] * 256 + Data[2] = r_idx of monster.
+	 */
+	
+	/* Store the r_idx in the data fields so that the corpse can be raised */
+	f_ptr->data[1] = m_ptr->r_idx / 256;
+	f_ptr->data[2] = m_ptr->r_idx % 256;
+	
+	/* Initialise the name here? */
+	
+	/* Initialise the graphic here? */
+	
+	/* Redraw the square if visible */
+	if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
+	{
+		/* Note the spot */
+		note_spot(f_ptr->fy, f_ptr->fx);
+		
+		lite_spot(f_ptr->fy, f_ptr->fx);
+	}
+	
+	/* Init action functions do not need to change the field_ptr. */
 	return;
 }

@@ -2276,51 +2276,6 @@ static void process_world(void)
 				j++;
 			}
 		}
-
-		/* Should corpses decay when carried? */
-		else if (o_ptr->tval == TV_CORPSE )
-		{
-			/* Decrease counter */
-			o_ptr->timeout--;
-
-			/* Notice changes */
-			if (!o_ptr->timeout)
-			{
-				char o_name[80];
-
-				/* Describe the object */
-				object_desc(o_name, o_ptr, FALSE, 0);
-
-				if (ironman_nightmare)
-				{
-					/* Make a monster nearby if possible */
-					if (summon_named_creature(py, px,
-						 o_ptr->pval, FALSE, FALSE, FALSE))
-					{
-						msg_format("The %s rises.", o_name);
-
-						/* Set the cloned flag, so no treasure is dropped */
-						m_list[hack_m_idx_ii].smart |= SM_CLONED;
-					}
-				}
-				else
-				{
-					/* Let player know what happened. */
-					msg_format("The %s decays.", o_name);
-				}
-
-				/* The corpse/skeleton is destroyed */
-				inven_item_increase(i, -1);
-				inven_item_describe(i);
-				inven_item_optimize(i);
-
-				/* Hack- everything is shifted up */
-				i--;
-
-				/* Notice something */
-				j++;
-			}
-		}
 	}
 
 	/* Notice changes */
@@ -4169,6 +4124,9 @@ void play_game(bool new_game)
 	/* Initialize field info */
 	if (init_t_info()) quit("Cannot initialize fields");
 	
+	/* Reset the visual mappings */
+	reset_visuals();
+	
 	/* Attempt to load */
 	if (!load_player())
 	{
@@ -4324,8 +4282,7 @@ void play_game(bool new_game)
 
 #endif
 
-	/* Reset the visual mappings */
-	reset_visuals();
+	
 
 	/* Load the "pref" files */
 	load_all_pref_files();

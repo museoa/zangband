@@ -1481,9 +1481,8 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 			return (0);
 		}
 
-		/* Figurines and Corpses */
+		/* Figurines */
 		case TV_FIGURINE:
-		case TV_CORPSE:
 		{
 			/* Never okay */
 			return (0);
@@ -3631,59 +3630,6 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 				msg_format("Figurine of %s, depth +%d%s",
 							  r_name + r_ptr->name, check - 1,
 							  !(o_ptr->ident & IDENT_CURSED) ? "" : " {cursed}");
-			}
-
-			break;
-		}
-
-		case TV_CORPSE:
-		{
-			int i = 1;
-			int check;
-
-			u32b match = 0;
-
-			monster_race *r_ptr;
-
-			if (o_ptr->sval == SV_SKELETON)
-			{
-				match = RF9_DROP_SKELETON;
-			}
-			else if (o_ptr->sval == SV_CORPSE)
-			{
-				match = RF9_DROP_CORPSE;
-			}
-
-			/* Pick a random non-unique monster race */
-			while (1)
-			{
-				i = randint(max_r_idx - 1);
-
-				r_ptr = &r_info[i];
-
-				check = (dun_level < r_ptr->level) ? (r_ptr->level - dun_level) : 0;
-
-				/* Ignore dead monsters */
-				if (!r_ptr->rarity) continue;
-
-				/* Ignore corpseless monsters */
-				if (!(r_ptr->flags9 & match)) continue;
-
-				/* No uniques */
-				if (r_ptr->flags1 & RF1_UNIQUE) continue;
-
-				/* Prefer less out-of-depth monsters */
-				if (rand_int(check)) continue;
-
-				break;
-			}
-
-			o_ptr->pval = i;
-
-			if (cheat_peek)
-			{
-				msg_format("Corpse of %s, depth +%d",
-							  r_name + r_ptr->name, check - 1);
 			}
 
 			break;

@@ -529,31 +529,24 @@ void monster_death(int m_idx)
 			}
 		}
 
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Prepare to make a corpse */
-		object_prep(q_ptr, lookup_kind(TV_CORPSE, (corpse ? SV_CORPSE : SV_SKELETON)));
-
-		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
-
-		q_ptr->pval = m_ptr->r_idx;
-
-		if (ironman_nightmare)
+		if (corpse)
 		{
-			q_ptr->timeout = CORPSE_NIGHTMARE;
+			/* Make a corpse */
+			if(place_field(y, x, FT_CORPSE))
+			{
+				/* Initialise it */
+				(void) field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, m_ptr);
+			}
 		}
 		else
 		{
-			q_ptr->timeout = CORPSE_DECAY;
+			/* Make a skeleton */
+			if(place_field(y, x, FT_SKELETON))
+			{
+				/* Initialise it */
+				(void) field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, m_ptr);
+			}		
 		}
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
-		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
 	}
 #endif /* USE_CORPSES */
 
@@ -2385,10 +2378,10 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		/* Scan all fields in the grid */
 		for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
 		{
-			field_type *f_ptr;
+			field_type *f_ptr = &fld_list[this_f_idx];
+			
+			cptr name = t_info[f_ptr->t_idx].name;
 
-			/* Acquire field */
-			f_ptr = &fld_list[this_f_idx];
 
 			/* Acquire next field */
 			next_f_idx = f_ptr->next_f_idx;
@@ -2401,10 +2394,12 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				/* Not boring */
 				boring = FALSE;
+				
+				s3 = is_a_vowel(name[0]) ? "an " : "a ";
 
 				/* Describe the field */
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3,
-					 t_info[f_ptr->t_idx].name, info);
+					 name, info);
 				prt(out_val, 0, 0);
 				move_cursor_relative(y, x);
 				query = inkey();

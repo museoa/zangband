@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 14
+#define SAVEFILE_VERSION 15
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -537,12 +537,6 @@
 #define FUEL_TORCH      5000    /* Maximum amount of fuel in a torch */
 #define FUEL_LAMP       15000   /* Maximum amount of fuel in a lantern */
 
-/*
- * Corpse decay / rising times.
- */
-#define CORPSE_DECAY		100	/* Turns / 10 for a corpse to decay */
-#define CORPSE_NIGHTMARE	100	/* Turns / 10 for a corpse to raise */
-
 
 /*
  * More maximum values
@@ -1000,6 +994,8 @@
 #define FT_WALL_INVIS		0x0001
 #define FT_GLYPH_WARDING	0x0002
 #define FT_GLYPH_EXPLODE	0x0003
+#define FT_CORPSE			0x0004
+#define FT_SKELETON			0x0005
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -1405,7 +1401,7 @@
 #define TV_CHEST         7      /* Chests ('~') */
 #define TV_FIGURINE      8      /* Magical figurines */
 #define TV_STATUE        9      /* Statue, what a silly object... */
-#define TV_CORPSE       10      /* Corpses and Skeletons, specific */
+/*#define TV_CORPSE       10  */    /* Corpses are now fields */
 #define TV_SHOT         16      /* Ammo for slings */
 #define TV_ARROW        17      /* Ammo for bows */
 #define TV_BOLT         18      /* Ammo for x-bows */
@@ -3702,6 +3698,7 @@ extern int PlayerUID;
 #define FTYPE_FEAT		4
 #define FTYPE_QUEST		5
 #define FTYPE_FIELD		6
+#define FTYPE_MISC		7
 
 /*
  * Field Actions
@@ -3728,7 +3725,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  6 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  8 /* Number of FIELD_ACT functions in tables.c */
 
 
 

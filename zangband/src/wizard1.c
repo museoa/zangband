@@ -113,7 +113,6 @@ static grouper group_item[] =
 
 	{ TV_FIGURINE,      "Magical Figurines" },
 	{ TV_STATUE,        "Statues" },
-	{ TV_CORPSE,        "Corpses" },
 
 	{ TV_SPIKE,         "Various" },
 	{ TV_LITE,          NULL },

@@ -706,6 +706,13 @@ static void rd_item(object_type *o_ptr)
 		return;
 	}
 
+	/* Mega-Hack... Corpses became fields */
+	if ((o_ptr->tval == 10) && (sf_version < 15))
+	{
+		/* Hack - get rid of it. */
+		o_ptr->tval = 0;
+		return;
+	}
 
 	/* Repair non "wearable" items */
 	if (!wearable_p(o_ptr))
@@ -1028,9 +1035,14 @@ static void rd_field(field_type *f_ptr)
 {
 	s32b tmp32s;
 	int i;
+	
+	u16b t_idx;
 
 	/* Type */
-	rd_s16b(&f_ptr->t_idx);
+	rd_s16b(&t_idx);
+	
+	/* Prepare the field */
+	field_prep(f_ptr, t_idx);
 
 	/* Location */
 	rd_s16b(&f_ptr->fy);
@@ -2681,30 +2693,34 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 
 		/*** Run length decoding ***/
 
-		/* Load the dungeon data */
-		for (x = xmin, y = ymin; y < ymax; )
+		/* This isn't stored in later versions. */
+		if (sf_version < 15)
 		{
-			/* Grab RLE info */
-			rd_byte(&count);
-			rd_s16b(&tmp16s);
-
-			/* Apply the RLE info */
-			for (i = count; i > 0; i--)
+			/* Load the dungeon data */
+			for (x = xmin, y = ymin; y < ymax; )
 			{
-				/* Access the cave */
-				c_ptr = area(y,x);
+				/* Grab RLE info */
+				rd_byte(&count);
+				rd_s16b(&tmp16s);
 
-				/* Extract field */
-				c_ptr->fld_idx = tmp16s;
-
-				/* Advance/Wrap */
-				if (++x >= xmax)
+				/* Apply the RLE info */
+				for (i = count; i > 0; i--)
 				{
-					/* Wrap */
-					x = xmin;
+					/* Access the cave */
+					c_ptr = area(y,x);
+
+					/* Extract field */
+					c_ptr->fld_idx = 0;
 
 					/* Advance/Wrap */
-					if (++y >= ymax) break;
+					if (++x >= xmax)
+					{
+						/* Wrap */
+						x = xmin;
+
+						/* Advance/Wrap */
+						if (++y >= ymax) break;
+					}
 				}
 			}
 		}
@@ -3068,29 +3084,11 @@ static errr rd_dungeon(void)
 			/* Read the field */
 			rd_field(f_ptr);
 
+			/* Access the fields location */
+			c_ptr = area(f_ptr->fy, f_ptr->fx);
 
-			/* XXX XXX XXX XXX XXX */
-
-			/* If exists at a sqaure */
-			if ((f_ptr->fy) && (f_ptr->fx))
-			{
-				/* Access the fields location */
-				c_ptr = area(f_ptr->fy, f_ptr->fx);
-
-				/* Build a stack */
-				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
-			}
-			else
-			{
-				/* Add it to the list */
-				fld_idx = f_pop();
-
-				if (fld_idx)
-				{
-					/* Move field to list */
-					field_copy(f_ptr, &fld_list[fld_idx]);
-				}
-			}
+			/* Build a stack */
+			fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
 
 			/* Oops */
 			if (i != fld_idx)

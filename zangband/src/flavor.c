@@ -915,24 +915,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 		}
 
-		/* Corpses */
-		case TV_CORPSE:
-		{
-			modstr = r_name + r_ptr->name;
-
-			if (r_ptr->flags1 & RF1_UNIQUE)
-			{
-				sprintf(tmp_val2, "%s %s", basenm, "of #");
-			}
-			else
-			{
-				sprintf(tmp_val2, "& # %s", basenm + 2);
-			}
-
-			basenm = tmp_val2;
-			break;
-		}
-
 		/* Missiles/ Bows/ Weapons */
 		case TV_SHOT:
 		case TV_BOLT:
@@ -1201,12 +1183,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* Hack -- The only one of its kind */
 		else if (known && (artifact_p(o_ptr) || o_ptr->art_name))
-		{
-			t = object_desc_str(t, "The ");
-		}
-
-		/* Unique corpses are unique */
-		else if ((o_ptr->tval == TV_CORPSE) && (r_ptr->flags1 & RF1_UNIQUE))
 		{
 			t = object_desc_str(t, "The ");
 		}

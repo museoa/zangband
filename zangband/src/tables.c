@@ -6504,6 +6504,12 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	{field_action_glyph_warding, "field_action_glyph_warding"},
 	
 	/* Explosive rune function */
-	{field_action_glyph_explode, "field_action_glyph_explode"}
+	{field_action_glyph_explode, "field_action_glyph_explode"},
+	
+	/* Corpse decay function */
+	{field_action_corpse_decay, "field_action_corpse_decay"},
+	
+	/* Corpse init function */
+	{field_action_corpse_init, "field_action_corpse_init"}
 };
 

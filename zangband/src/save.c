@@ -1136,11 +1136,9 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 	int y, x;
 
 	byte tmp8u;
-	u16b tmp16s;
 
 	byte count;
 	byte prev_char;
-	s16b prev_s16b;
 
 	cave_type *c_ptr;
 
@@ -1268,48 +1266,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 		wr_byte((byte)count);
 		wr_byte((byte)prev_char);
 	}
-
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_s16b = 0;
-
-	/* Dump the cave */
-	for (y = ymin; y < ymax; y++)
-	{
-		for (x = xmin; x < xmax; x++)
-		{
-			/* Get the cave */
-			c_ptr = area(y,x);
-
-			/* Extract a byte */
-			tmp16s = c_ptr->fld_idx;
-
-			/* If the run is broken, or too full, flush it */
-			if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
-			{
-				wr_byte((byte)count);
-				wr_u16b(prev_s16b);
-				prev_s16b = tmp16s;
-				count = 1;
-			}
-
-			/* Continue the run */
-			else
-			{
-				count++;
-			}
-		}
-	}
-
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_u16b(prev_s16b);
-	}
+	
 }
 
 /*

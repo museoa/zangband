@@ -163,6 +163,7 @@ extern s16b fld_max;
 extern s16b fld_cnt;
 extern s16b hack_m_idx;
 extern s16b hack_m_idx_ii;
+extern s16b *hack_fld_ptr;
 extern int total_friends;
 extern s32b total_friend_levels;
 extern s32b friend_align;
@@ -1237,7 +1238,8 @@ extern void field_action_delete(s16b *field_ptr, void *nothing);
 extern void field_action_compact_basic(s16b *field_ptr, void *compact_val);
 extern void field_action_glyph_warding(s16b *field_ptr, void *mon_enter_test);
 extern void field_action_glyph_explode(s16b *field_ptr, void *mon_enter_test);
-
+extern void field_action_corpse_decay(s16b *field_ptr, void *nothing);
+extern void field_action_corpse_init(s16b *field_ptr, void *input);
 
 /*
  * Hack -- conditional (or "bizarre") externs
