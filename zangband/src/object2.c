@@ -166,16 +166,19 @@ void delete_object_list(s16b *o_idx_ptr)
  */
 void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
-	object_type *o_ptr, *q_ptr;
+	object_type *o_ptr, *q_ptr = &temp_object;
 
 	/* Drop objects being carried */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
-		/* Get the object */
-		q_ptr = item_split(o_ptr, o_ptr->number);
-
-		/* Drop it */
+		/* Duplicate object */
+		object_copy(q_ptr, o_ptr);
+	
+		/* Drop object */
 		drop_near(q_ptr, -1, x, y);
+		
+		/* Delete held object */
+		delete_held_object(o_idx_ptr, o_ptr);
 	}
 	OBJ_ITT_END;
 
