@@ -648,6 +648,9 @@ static byte special_key_list[] =
 };
 
 
+/* Not used */
+#if 0
+
 /*
  * Hack -- given a pathname, point at the filename
  */
@@ -665,6 +668,7 @@ static cptr extract_file_name(cptr s)
 	return (p+1);
 }
 
+#endif /* 0 */
 
 /*
  * Hack -- given a simple filename, extract the "font size" info
