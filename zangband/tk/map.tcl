@@ -29,15 +29,6 @@ proc NSMap::InitModule {} {
 
 	NSModule::LoadIfNeeded NSWidget
 
-	# Catch missing assignments
-	foreach f_idx [angband f_info find] {
-		if {!$f_idx} continue
-		if {[string equal [symbol assign feature $f_idx] sym.blank]} {
-			set name [angband f_info info $f_idx name]
-			error "feature #$f_idx \"$name\" has map symbol \"sym.blank\""
-		}
-	}
-
 	return
 }
 
