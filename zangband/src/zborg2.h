@@ -38,23 +38,6 @@
    ((borg_cave_floor_grid(C)) || (borg_cave_half_grid(C)))
 
 
-
-/*
- * Determine if a "legal" grid is a "clean" floor grid
- *
- * Line 1 -- forbid non-floors
- * Line 2 -- forbid deep water -KMW-
- * Line 3 -- forbid deep lava -KMW-
- * Line 4 -- forbid normal objects
- */
-#define borg_cave_clean_bold(Y,X) \
-	(((cave[Y][X].feat == FEAT_FLOOR) || \
-	  (cave[Y][X].feat == FEAT_SHAL_WATER) || \
-	  (cave[Y][X].feat == FEAT_SHAL_LAVA) || \
-	  (cave[Y][X].feat == FEAT_GRASS) || \
-	  (cave[Y][X].feat == FEAT_DIRT)) && \
-	  (cave[Y][X].o_idx == 0))
-
 /*
  * Bold version of borg_cave_floor_grid
  */
