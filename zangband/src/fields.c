@@ -1623,7 +1623,7 @@ void place_trap(int y, int x)
 {	
 	u16b t_idx;
 
-	int tmp, total;
+	int tmp, total, i;
 
 	field_trap_type *n_ptr = trap_num;
 
@@ -1650,7 +1650,7 @@ void place_trap(int y, int x)
 		tmp = rand_int(total);
 
 		/* Find this type */
-		for (n_ptr = trap_num, total = 0; TRUE; n_ptr++)
+		for (n_ptr = trap_num, i = 0; TRUE; n_ptr++)
 		{
 			/* Note end - this should never happen */
 			if (!n_ptr->t_idx)
@@ -1666,10 +1666,10 @@ void place_trap(int y, int x)
 			if (n_ptr->level > dun_level) continue;
 
 			/* Count this possibility */
-			total += MAX_DEPTH / (dun_level - n_ptr->level + 15);
+			i += MAX_DEPTH / (dun_level - n_ptr->level + 15);
 
 			/* Found the type */
-			if (tmp < total) break;
+			if (tmp < i) break;
 		}
 
 		t_idx = n_ptr->t_idx;
