@@ -49,11 +49,6 @@ static errr Term_user_tnb(int n)
 	return (0);
 }
 
-static errr Term_xtra_tnb_react(void)
-{
-	return 0;
-}
-
 /*
  * Process at least one event
  */
@@ -363,6 +358,9 @@ int init_tnb(int argc, cptr *argv)
 
 	/* Program is intialized */
 	angtk_angband_initialized();
+	
+	/* Init colours */
+	Term_xtra_tnb_react();
 
 #if 0
 	while (TRUE)

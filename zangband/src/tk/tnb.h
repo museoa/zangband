@@ -59,6 +59,7 @@ extern char tnb_tile_file[1024];
 extern void tnb_get_term(int x, int y, byte *attr, char *c);
 
 /* term.c */
+extern errr Term_xtra_tnb_react(void);
 extern errr Term_wipe_tnb(int x, int y, int n);
 extern errr Term_text_tnb(int x, int y, int n, byte a, const char *s);
 extern errr Term_xtra_tnb_clear(void);

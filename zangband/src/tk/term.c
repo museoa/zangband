@@ -196,6 +196,119 @@ errr Term_wipe_tnb(int x, int y, int n)
 	return (0);
 }
 
+/* Colours for the text */
+static u32b colors[16];
+
+static u16b r16mask = 0, r16shift = 0;
+static u16b g16mask = 0, g16shift = 0;
+static u16b b16mask = 0, b16shift = 0;
+
+static int count_ones(u16b mask)
+{
+	int n;
+
+	for (n = 0; mask != 0; mask &= mask - 1)
+	{
+		n++;
+	}
+	
+	return (n);
+}
+
+
+/* Initialise the 16bit colour masks and shifts */
+static void init_masks(Tcl_Interp *interp)
+{
+	Tk_Window tkwin = Tk_MainWindow(interp);
+	Visual *visual = Tk_Visual(tkwin);
+	
+	int redcount, greencount, bluecount;
+	
+	r16mask = visual->red_mask;
+	g16mask = visual->green_mask;
+	b16mask = visual->blue_mask;
+
+#ifdef PLATFORM_WIN
+	/* XXX Always 5-5-5 */
+	r16mask = 0x7C00;
+	g16mask = 0x03E0;
+	b16mask = 0x001F;
+#endif
+	
+	/* Get red mask and shift */
+	redcount = count_ones(r16mask);
+	greencount = count_ones(g16mask);
+	bluecount = count_ones(b16mask);
+	
+	r16shift = redcount + greencount + bluecount - 8;
+	g16shift = greencount + bluecount - 8;
+	b16shift = 8 - bluecount;
+}
+
+
+static void set_colours(Widget *widgetPtr)
+{
+	int i;
+	
+	int depth = widgetPtr->bitmap->depth;
+	
+	for (i = 0; i < 16; i++)
+	{
+		u32b r, g, b;
+		
+		r = angband_color_table[i][1];
+		g = angband_color_table[i][2];
+		b = angband_color_table[i][3];
+		
+		switch (depth)
+		{
+			case 8:
+			{
+				colors[i] = Palette_RGB2Index(r, g, b);
+		
+				break;
+			}
+		
+			case 16:
+			{
+				u16b p;
+				
+				/* Convert to 16bit colour */
+				
+				p = (r << r16shift) & r16mask;
+				p += (g << g16shift) & g16mask;
+				p += (b >> b16shift) & b16mask;
+				
+				colors[i] = p;
+				
+				break;
+			}
+		
+			case 24:
+			{
+				colors[i] = (r << 16) + (g << 8) + b;
+				
+				break;
+			}
+		}
+	}
+}
+
+
+errr Term_xtra_tnb_react(void)
+{
+	/* Paranoia */
+	if (!tnb_term) return (1);
+
+	/* React to colours */
+	set_colours(tnb_term);
+
+	/* Redraw later */
+	Widget_EventuallyRedraw(tnb_term);
+
+	return 0;
+}
+
 
 /*
  * Draw stuff at this location
@@ -208,6 +321,8 @@ static void DrawIconSpec(int x, int y, byte attr, char c, Widget *widgetPtr)
 	
 	char buf[2];
 	
+    XGCValues gcValues;
+	
 	/* Draw a blank square first */
 	DrawBlank(x, y, widgetPtr);
 	
@@ -217,6 +332,10 @@ static void DrawIconSpec(int x, int y, byte attr, char c, Widget *widgetPtr)
 	/* Make our one-character long string */
 	buf[0] = c;
 	buf[1] = '\0';
+	
+	/* Change the colour */
+	gcValues.foreground = colors[attr];
+	widgetPtr->gc = Tk_GetGC(widgetPtr->tkwin, GCForeground, &gcValues);
 	
 	/* Calculate the width of the character */
 	width = Tk_TextWidth(widgetPtr->font, buf, 1);
@@ -270,7 +389,7 @@ errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
  */
 static void widget_draw_all(Widget *widgetPtr)
 {
-	int y, x, yp, xp;
+	int y, x;
 	
 	byte a;
 	char c;
@@ -1125,6 +1244,9 @@ int init_term(Tcl_Interp *interp)
 {
 	/* Create the "term" interpreter command */
 	Tcl_CreateObjCommand(interp, "term", Widget_ObjCmd, NULL, NULL);
+	
+	/* Initialise palette stuff */
+	if (g_icon_depth == 16) init_masks(interp);
 
 	/* Success */
     return TCL_OK;
