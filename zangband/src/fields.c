@@ -3320,7 +3320,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
 				
 			/* Update view */
-			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
+			if (player_can_see_bold(f_ptr->fx, f_ptr->fy))
 			{
 				p_ptr->update |= (PU_VIEW | PU_FLOW 
 					| PU_MONSTERS | PU_MON_LITE);
@@ -3400,7 +3400,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 			}
 				
 			/* Update view */
-			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
+			if (player_can_see_bold(f_ptr->fx, f_ptr->fy))
 			{
 				p_ptr->update |= (PU_VIEW | PU_FLOW |
 						 PU_MONSTERS | PU_MON_LITE);

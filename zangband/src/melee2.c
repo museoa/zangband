@@ -2498,7 +2498,7 @@ static void process_monster(int m_idx)
 			cave_set_feat(ny, nx, FEAT_FLOOR);
 
 			/* Note changes to viewable region */
-			if (player_can_see_bold(ny, nx))
+			if (player_can_see_bold(nx, ny))
 			{
 				do_view = TRUE;
 				
@@ -2559,7 +2559,7 @@ static void process_monster(int m_idx)
 			cave_set_feat(ny, nx, FEAT_OPEN);
 
 			/* Handle viewable doors */
-			if (player_can_see_bold(ny, nx)) do_view = TRUE;
+			if (player_can_see_bold(nx, ny)) do_view = TRUE;
 			
 			/* Notice the change */
 			note_spot(ny, nx);
@@ -2808,7 +2808,7 @@ static void process_monster(int m_idx)
 							did_take_item = TRUE;
 
 							/* Describe observable situations */
-							if (m_ptr->ml && player_can_see_bold(ny, nx))
+							if (m_ptr->ml && player_can_see_bold(nx, ny))
 							{
 								/* Dump a message */
 								msg_format("%^s tries to pick up %s, but fails.",
@@ -2824,7 +2824,7 @@ static void process_monster(int m_idx)
 						did_take_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_can_see_bold(ny, nx))
+						if (player_can_see_bold(nx, ny))
 						{
 							/* Dump a message */
 							msg_format("%^s picks up %s.", m_name, o_name);
@@ -2856,7 +2856,7 @@ static void process_monster(int m_idx)
 						did_kill_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_can_see_bold(ny, nx))
+						if (player_can_see_bold(nx, ny))
 						{
 							/* Dump a message */
 							msg_format("%^s destroys %s.", m_name, o_name);

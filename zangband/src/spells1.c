@@ -215,7 +215,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 	cave_type       *c_ptr = area(y, x);
 
 	bool obvious = FALSE;
-	bool known = player_can_see_bold(y, x);
+	bool known = player_can_see_bold(x, y);
 
 	/* XXX XXX XXX */
 	who = who ? who : 0;
@@ -544,7 +544,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			note_spot(y, x);
 
 			/* Observe (after lighting) */
-			if (player_can_see_bold(y, x)) obvious = TRUE;
+			if (player_can_see_bold(x, y)) obvious = TRUE;
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */
@@ -613,7 +613,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 	s16b this_o_idx, next_o_idx = 0;
 
 	bool obvious = FALSE;
-	bool known = player_can_see_bold(y, x);
+	bool known = player_can_see_bold(x, y);
 
 	u32b f1, f2, f3;
 
@@ -4569,7 +4569,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				f_m_t.dam = dam;
 				f_m_t.typ = typ;
 				f_m_t.notice = notice;
-				f_m_t.known = player_can_see_bold(y, x);
+				f_m_t.known = player_can_see_bold(x, y);
 				
 				/* Affect fields on the grid */
 				field_hook(&area(y, x)->fld_idx,
@@ -4589,7 +4589,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				f_m_t.dam = dam;
 				f_m_t.typ = typ;
 				f_m_t.notice = notice;
-				f_m_t.known = player_can_see_bold(y, x);
+				f_m_t.known = player_can_see_bold(x, y);
 				
 				/* Affect fields on the grid */
 				field_hook(&area(y, x)->fld_idx,

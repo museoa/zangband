@@ -449,7 +449,7 @@ bool monster_death(int m_idx, bool explode)
 				if (summon_specific((pet ? -1 : 0), wy, wx, 100, SUMMON_DAWN,
 										  FALSE, is_friendly(m_ptr), pet))
 				{
-					if (player_can_see_bold(wy, wx))
+					if (player_can_see_bold(wx, wy))
 						msg_print("A new warrior steps forth!");
 				}
 			}
@@ -469,7 +469,7 @@ bool monster_death(int m_idx, bool explode)
 			if (summon_specific((pet ? -1 : 0), wy, wx, 100, SUMMON_BLUE_HORROR,
 									  FALSE, is_friendly(m_ptr), pet))
 			{
-				if (player_can_see_bold(wy, wx))
+				if (player_can_see_bold(wx, wy))
 					notice = TRUE;
 			}
 		}
@@ -1869,7 +1869,7 @@ static void target_set_prepare(int mode)
 			c_ptr = area(y, x);
 
 			/* Require line of sight, unless "look" is "expanded" */
-			if (!expand_look && !player_can_see_bold(y, x)) continue;
+			if (!expand_look && !player_can_see_bold(x, y)) continue;
 
 			/* Require "interesting" contents */
 			if (!target_set_accept(y, x)) continue;

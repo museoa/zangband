@@ -817,7 +817,7 @@ void scatter(int *xp, int *yp, int x, int y, int d)
  * "glowing" grid.  This prevents the player from being able to "see" the
  * walls of illuminated rooms from a corridor outside the room.
  */
-bool player_can_see_bold(int y, int x)
+bool player_can_see_bold(int x, int y)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;

@@ -1341,7 +1341,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 				place_object(y, x, FALSE, FALSE);
 
 				/* Observe new object */
-				if (player_can_see_bold(y, x))
+				if (player_can_see_bold(x, y))
 				{
 					msg_print("You have found something!");
 				}
@@ -2563,7 +2563,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 
 		/* The player can see the (on screen) missile */
-		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
+		if (panel_contains(ny, nx) && player_can_see_bold(nx, ny))
 		{
 			char c = object_char(i_ptr);
 			byte a = object_attr(i_ptr);
@@ -3003,7 +3003,7 @@ void do_cmd_throw_aux(int mult)
 		cur_dis++;
 
 		/* The player can see the (on screen) missile */
-		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
+		if (panel_contains(ny, nx) && player_can_see_bold(nx, ny))
 		{
 			char c = object_char(q_ptr);
 			byte a = object_attr(q_ptr);

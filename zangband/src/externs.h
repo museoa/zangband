@@ -305,7 +305,7 @@ extern sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg);
 extern bool in_ball_range(int x1, int y1, int x2, int y2);
 extern bool in_disintegration_range(int x1, int y1, int x2, int y2);
 extern void scatter(int *xp, int *yp, int x, int y, int d);
-extern bool player_can_see_bold(int y, int x);
+extern bool player_can_see_bold(int x, int y);
 extern bool cave_valid_grid(const cave_type *c_ptr);
 extern bool no_lite(void);
 extern void move_cursor_relative(int row, int col);
