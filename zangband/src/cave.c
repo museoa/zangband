@@ -1824,6 +1824,8 @@ void prt_map(void)
  * Hack -- priority array (see below)
  *
  * Note that all "walls" always look like "secret doors" (see "map_info()").
+ *
+ * This really needs to be done a better way.
  */
 static const byte priority_table[][2] =
 {
@@ -1903,32 +1905,8 @@ static byte priority(byte a, char c)
 		if ((f_ptr->x_char == c) && (f_ptr->x_attr == a)) return (p1);
 	}
 
-	/* Default */
+	/* Default  (The player /objects/fields?) */
 	return (20);
-}
-
-
-/*
- * Tunnels are important.  (While bare floor is not.)
- */
-static int priority_tunnel(int y, int x)
-{
-	int i, count = 0;
-
-	/* Count number of floors around square */
-	for (i = 1; i < 10; i++)
-	{
-		if (!in_bounds2(y + ddy[i], x + ddx[i])) continue;
-
-		if (cave_floor_grid(&cave[y + ddy[i]][x + ddx[i]]))
-			count++;
-	}
-
-	/* Three or less floor squares - Important */
-	if (count < 4) return (19);
-
-	/* Not important. */
-	return (0);
 }
 
 
@@ -2130,15 +2108,6 @@ void display_map(int *cy, int *cx)
 				x = i * xfactor / xrat + 1;
 				y = j * yfactor / yrat + 1;
 
-				/* Priority zero */
-				tp = 0;
-
-				if (cave_floor_grid(&cave[j][i]))
-				{
-					/* Corridors are important */
-					tp = priority_tunnel(j, i);
-				}
-
 				/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
 				map_info(j, i, &ta, &tc, &ta, &tc);
@@ -2147,7 +2116,7 @@ void display_map(int *cy, int *cx)
 #endif /* USE_TRANSPARENCY */
 
 				/* Extract the priority of that attr/char */
-				tp += priority(ta, tc);
+				tp = priority(ta, tc);
 
 				/* Save "best" */
 				if (mp[y][x] < tp)
