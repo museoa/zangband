@@ -3002,13 +3002,12 @@ bool borg_think_dungeon(void)
 			borg_keypress('\n');
 			return (TRUE);
 		}
-
-		/* wear stuff and see if it glows */
-		if (borg_wear_stuff()) return (TRUE);
-
+		
 		/* attempt to refuel */
 		if (borg_refuel_torch() || borg_refuel_lantern()) return (TRUE);
 
+		/* wear stuff and see if it glows */
+		if (borg_wear_stuff()) return (TRUE);
 
 		/* Can I recall out with a rod */
 		if (!goal_recalling && borg_zap_rod(SV_ROD_RECALL)) return (TRUE);
