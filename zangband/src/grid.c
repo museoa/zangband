@@ -2014,7 +2014,34 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 			feat3 = FEAT_FLOOR;
 			break;
 		}
-
+		
+		case LAKE_RUBBLE:
+		{
+			/* Rubble everywhere */
+			feat1 = FEAT_RUBBLE;
+			feat2 = FEAT_RUBBLE;
+			feat3 = FEAT_FLOOR;
+			break;
+		}
+		
+		case LAKE_SAND:
+		{
+			/* Sand everywhere */
+			feat1 = FEAT_SAND;
+			feat2 = FEAT_SAND;
+			feat3 = FEAT_FLOOR;
+		
+		}
+		
+		case LAKE_ROCK:
+		{
+			/* Rock formation */
+			feat1 = FEAT_WALL_INNER;
+			feat2 = FEAT_WALL_INNER;
+			feat3 = FEAT_FLOOR;
+		
+		}
+		
 		/* Paranoia */
 		default: return FALSE;
 	}

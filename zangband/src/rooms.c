@@ -245,6 +245,9 @@ static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx, in
  *  10 -- random vaults
  *  11 -- circular rooms
  *  12 -- crypts
+ *  13 -- Large with feature
+ *  14 -- Large version 2
+ *  15 -- Parallelagram room
  */
 
 
@@ -3667,14 +3670,12 @@ static void build_type12(int by0, int bx0)
  */
 static void build_type13(int by0, int bx0)
 {
-	int grd, roug, cutoff, xsize, ysize, xhsize, yhsize, y0, x0;
-	int x, y;
+	int grd, roug, xsize, ysize, xhsize, yhsize, y0, x0;
+
+	int c1, c2, c3;
+	int type = LAKE_CAVERN;
 	
-	cave_type *c_ptr;
-	
-	bool done, light;
-	
-	byte feat = FEAT_FLOOR;
+	bool done;
 
 	/* get size: note 'Evenness'*/
 	xsize = randint1(22) * 2 + 6;
@@ -3689,112 +3690,75 @@ static void build_type13(int by0, int bx0)
 	/* Try to allocate space for room.  If fails, exit */
 	if (!room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
 
-	light = done = FALSE;
-
-	if (p_ptr->depth <= randint1(25)) light = TRUE;
-
-	while (!done)
-	{
-		/*
-		 * Note: size must be even or there are rounding problems
-		 * This causes the tunnels not to connect properly to the room
-		 */
-
-		/* testing values for these parameters feel free to adjust */
-		grd = 1 << (randint0(4));
-
-		/* want average of about 16 */
-		roug = randint1(8) * randint1(4);
-
-		/* about size/2 */
-		cutoff = randint1(xsize / 4) + randint1(ysize / 4) +
-		         randint1(xsize / 4) + randint1(ysize / 4);
-
-		/* make it */
-		generate_hmap(y0, x0, xsize, ysize, grd, roug, cutoff);
-
-		/* Convert to normal format + clean up */
-		done = generate_fracave(y0, x0, xsize, ysize, cutoff, light);
-	}
-		 
-	/* Make outer wall */
-	generate_draw(y0 - yhsize , x0 - xhsize,
-		 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1, FEAT_WALL_OUTER);
-		 
-	/* Make inner passage */
-	generate_draw(y0 - yhsize + 1, x0 - xhsize + 1,
-		 y0 - yhsize + ysize - 2, x0 - xhsize + xsize - 2, FEAT_FLOOR);
-		 
-	/* Hack - Use light to denote tile lighting now */
-	light = FALSE;
+	done = FALSE;
 	
-	/* Select type of inner feature */
-	switch (randint0(4))
+	/* Pick the type */	
+	switch (randint0(5))
 	{
 		case 0:
 		{
 			/* Water */
-			feat = FEAT_SHAL_WATER;
+			type = LAKE_WATER;
 			break;
 		}
 		
 		case 1:
 		{
 			/* Lava */
-			feat = FEAT_SHAL_LAVA;
-			
-			/* Lava is usually glowing */
-			light = TRUE;
+			type = LAKE_LAVA;
 			break;
 		}
 		
 		case 2:
 		{
 			/* Rock */
-			feat = FEAT_WALL_INNER;
+			type = FEAT_WALL_INNER;
 			break;
 		}
 		
 		case 3:
 		{
 			/* Rubble - oooh treasure */
-			feat = FEAT_RUBBLE;
+			type = LAKE_RUBBLE;
 			break;
 		}
 		
 		case 4:
 		{
 			/* Sand */
-			feat = FEAT_SAND;
+			type = LAKE_SAND;
 			break;
 		}
 	}
-			 
-	/* Replace inner pattern with chosen feature */
-	
-	/* This creates a "negative" of the original pattern */
-	for (y = y0 - yhsize + 2; y < y0 - yhsize + ysize - 2; y++)
+
+	while (!done)
 	{
-		for (x = x0 - xhsize + 2; x < x0 - xhsize + xsize - 2; x++)
-		{
-			/* point to grid */
-			c_ptr = &cave[y][x];
-			
-			if (c_ptr->feat == FEAT_FLOOR)
-			{
-				/* Replace with feature */
-				c_ptr->feat = feat;
-				
-				/* Lava glows */
-				if (light) c_ptr->info |= CAVE_GLOW;
-			}
-			else
-			{
-				/* Replace the walls with floor */
-				c_ptr->feat = FEAT_FLOOR;
-			}		
-		}
-	}	
+		/* testing values for these parameters: feel free to adjust */
+		grd = 1 << (randint0(4));
+
+		/* want average of about 16 */
+		roug = randint1(8) * randint1(4);
+
+		/* Make up size of various componants */
+		/* Floor */
+		c3 = 2 * xsize / 3;
+
+		/* Deep water/lava */
+		c1 = randint0(c3 / 2) + randint0(c3 / 2) - 5;
+
+		/* Shallow boundary */
+		c2 = (c1 + c3) / 2;
+
+		/* make it */
+		generate_hmap(y0, x0, xsize, ysize, grd, roug, c3);
+
+		/* Convert to normal format + clean up */
+		done = generate_lake(y0, x0, xsize, ysize, c1, c2, c3, type);
+	}
+		 
+	/* Make inner passage */
+	generate_draw(y0 - yhsize + 1, x0 - xhsize + 1,
+		 y0 - yhsize + ysize - 2, x0 - xhsize + xsize - 2, FEAT_FLOOR);
 }
 
 
