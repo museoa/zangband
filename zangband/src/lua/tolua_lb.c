@@ -112,7 +112,7 @@ const char* tolua_type (lua_State* L, int lo)
  return toluaI_tt_getobjtype(L,lo);
 }
 
-int tolua_tag (lua_State* L, char* type)
+int tolua_tag (lua_State* L, const char* type)
 {
  return toluaI_tt_gettag(L,type);
 }

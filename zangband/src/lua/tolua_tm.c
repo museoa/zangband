@@ -40,7 +40,7 @@
 /* internal function prototype */
 static void setmethods (lua_State* L);
 
-static void settag (lua_State* L, int lo, char* tag_registry_field)
+static void settag (lua_State* L, int lo, const char* tag_registry_field)
 {
  toluaI_getregistry(L,tag_registry_field);
  lua_pushvalue(L,lo);
@@ -172,7 +172,7 @@ void toluaI_tm_pushclass (lua_State* L, int lo)
  lua_pop(L,1);
 }
 
-int toluaI_gettag (lua_State* L, char* tagname)
+static int toluaI_gettag (lua_State* L, const char* tagname)
 {
  int tag;
  toluaI_getregistry(L,tagname);

@@ -16,7 +16,7 @@
 #ifndef tolua_rg_h
 #define tolua_rg_h
 
-void toluaI_setregistry (lua_State* L, char* field);
-void toluaI_getregistry (lua_State* L, char* field);
+void toluaI_setregistry (lua_State* L, const char* field);
+void toluaI_getregistry (lua_State* L, const char* field);
 
 #endif

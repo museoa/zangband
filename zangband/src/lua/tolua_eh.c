@@ -35,7 +35,7 @@ void toluaI_eh_set
  toluaI_setregistry(L,"tolua_err_expected");
 }
 
-void tolua_error (lua_State* L, char* msg)
+void tolua_error (lua_State* L, const char* msg)
 {
  if (msg[0]=='#')
  {
