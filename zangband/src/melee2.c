@@ -1827,12 +1827,12 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 				if ((p_ptr->image) && one_in_(3))
 				{
-					(void)strfmt(temp, "%s %s.",
+					strnfmt(temp, 80, "%s %s.",
 								 silly_attacks[randint0(MAX_SILLY_ATTACK)],
 								 t_name);
 				}
 				else
-					(void)strfmt(temp, act, t_name);
+					strnfmt(temp, 80, act, t_name);
 
 				msg_format("%^s %s", m_name, temp);
 			}
