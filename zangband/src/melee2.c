@@ -66,6 +66,12 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 				continue;
 			}
 		}
+		
+		/* Mega Hack - Monster must be close */
+		if (abs(m_ptr->fy - t_ptr->fy) + abs(m_ptr->fx - t_ptr->fx) > 20)
+		{
+			continue;
+		}
 
 		/* Monster must be 'an enemy' */
 		if (!are_enemies(m_ptr, t_ptr)) continue;
