@@ -177,9 +177,6 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 
 	borg_take *take;
 	
-	borg_note("Trying to make object");
-	
-	
 	/* Handle unknown items */
 	if (unknown) k_idx = borg_guess_kidx(unknown);
 	
@@ -2562,9 +2559,9 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		if (mb_ptr->take)
 		{
 			borg_take *bt_ptr = &borg_takes[mb_ptr->take];
-		
-			if (!((bt_ptr->k_idx == map->object) &&
-				(bt_ptr->unknown == map->unknown)))
+			
+			if ((bt_ptr->unknown != map->unknown) ||
+				((bt_ptr->k_idx != map->object) && !map->unknown))
 			{
 				borg_note(format("# The object %d is different! (%d,%d)",
 					mb_ptr->take, bt_ptr->k_idx, map->object));
@@ -2578,8 +2575,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		}
 		else
 		{
-			borg_note("# placing object");
-		
 			/* Make a new object */
 			mb_ptr->take = borg_new_take(map->object, map->unknown, x, y);
 		}
