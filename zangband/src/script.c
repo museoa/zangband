@@ -184,7 +184,7 @@ static int xxx_building_options(lua_State *L)
 	print_building_options(strings, n);
 
 	/* Free saved pointers */
-	FREE(strings);
+	FREE((vptr) strings);
 
 	return 0;
 }
