@@ -11,7 +11,7 @@ ZAngband 2.5.1:
 -Fixed a bug that messed up objects on the floor when rerolling them
  in debug mode.
 -Fixed the vanilla town bug where the stores / home were not saved.
--Fixed a problem withthe 'Cheat Death' option.
+-Fixed a problem with the 'Cheat Death' option.
 -Fixed a buffer-overrun with long notes.
 -Fixed rounding error with fractional monster experience points shown in
  monster memory.
@@ -20,10 +20,10 @@ ZAngband 2.5.1:
 -Fixed a problem with generating full monster spoilers.
 -Fixed some problems with the monster fleeing code.
 -Added some monster AI optimizations from standard Angband.
--Corrected some silly messages when failing trump summonng spells.
+-Corrected some silly messages when failing trump summoning spells.
 -Mindcrafters can no longer get the 'viscous blow' effect when failing
  to use their powers.
--Reduced the multiplier for the throwing mutation it was way too
+-Reduced the multiplier for the throwing mutation.  It was way too
  powerful when combined with some items.
 -Autoscummer cut-offs have been adjusted to reflect the new object and
  monster distributions.
