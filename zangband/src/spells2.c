@@ -3089,6 +3089,62 @@ static void cave_temp_room_unlite(void)
 }
 
 
+/*
+ * Determine how much contiguous open space this grid is next to
+ */
+static int next_to_open(int cy, int cx)
+{
+	int i;
+
+	int y, x;
+
+	int len = 0;
+	int blen = 0;
+
+	for (i = 0; i < 16; i++)
+	{
+		y = cy + ddy_cdd[i % 8];
+		x = cx + ddx_cdd[i % 8];
+
+		/* Found a wall, break the length */
+		if (!cave_floor_bold(y, x))
+		{
+			/* Track best length */
+			if (len > blen)
+			{
+				blen = len;
+			}
+
+			len = 0;
+		}
+		else
+		{
+			len++;
+		}
+	}
+
+	return (MAX(len, blen));
+}
+
+
+static int next_to_walls_adj(int cy, int cx)
+{
+	int i;
+
+	int y, x;
+
+	int c = 0;
+
+	for (i = 0; i < 8; i++)
+	{
+		y = cy + ddy_ddd[i];
+		x = cx + ddx_ddd[i];
+
+		if (!cave_floor_bold(y, x)) c++;
+	}
+
+	return c;
+}
 
 
 /*
@@ -3101,8 +3157,13 @@ static void cave_temp_room_aux(int y, int x)
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
+#if 0
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
+#endif
+
+	/* Verify this grid */
+	if ((next_to_walls_adj(y, x) > 5) && (next_to_open(y, x) <= 1)) return;
 
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
