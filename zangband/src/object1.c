@@ -958,55 +958,55 @@ cptr item_activation(object_type *o_ptr)
 	{
 		case SV_DRAGON_BLUE:
 		{
-			return "breathe lightning (500) every 50+d50 turns";
+			return "breathe lightning (330) every 50+d50 turns";
 		}
 		case SV_DRAGON_WHITE:
 		{
-			return "breathe frost (550) every 50+d50 turns";
+			return "breathe frost (370) every 50+d50 turns";
 		}
 		case SV_DRAGON_BLACK:
 		{
-			return "breathe acid (650) every 50+d50 turns";
+			return "breathe acid (430) every 50+d50 turns";
 		}
 		case SV_DRAGON_GREEN:
 		{
-			return "breathe poison gas (750) every 50+d50 turns";
+			return "breathe poison gas (500) every 50+d50 turns";
 		}
 		case SV_DRAGON_RED:
 		{
-			return "breathe fire (1000) every 50+d50 turns";
+			return "breathe fire (670) every 50+d50 turns";
 		}
 		case SV_DRAGON_MULTIHUED:
 		{
-			return "breathe multi-hued (1250) every 25+d25 turns";
+			return "breathe multi-hued (840) every 25+d25 turns";
 		}
 		case SV_DRAGON_BRONZE:
 		{
-			return "breathe confusion (600) every 50+d50 turns";
+			return "breathe confusion (400) every 50+d50 turns";
 		}
 		case SV_DRAGON_GOLD:
 		{
-			return "breathe sound (650) every 50+d50 turns";
+			return "breathe sound (430) every 50+d50 turns";
 		}
 		case SV_DRAGON_CHAOS:
 		{
-			return "breathe chaos/disenchant (1100) every 30+d30 turns";
+			return "breathe chaos/disenchant (740) every 30+d30 turns";
 		}
 		case SV_DRAGON_LAW:
 		{
-			return "breathe sound/shards (1150) every 30+d30 turns";
+			return "breathe sound/shards (750) every 30+d30 turns";
 		}
 		case SV_DRAGON_BALANCE:
 		{
-			return "breathe balance (1250) every 30+d30 turns";
+			return "breathe balance (850) every 30+d30 turns";
 		}
 		case SV_DRAGON_SHINING:
 		{
-			return "breathe light/darkness (1000) every 30+d30 turns";
+			return "breathe light/darkness (670) every 30+d30 turns";
 		}
 		case SV_DRAGON_POWER:
 		{
-			return "breathe the elements (1500) every 30+d30 turns";
+			return "breathe the elements (1000) every 30+d30 turns";
 		}
 	}
 
