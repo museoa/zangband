@@ -11,7 +11,7 @@
 ##
 ## @configure_input@
 
-CC := @CC@
+CC_AUX := @CC@
 
 CFLAGS := @CFLAGS@ @DEFS@
 CPPFLAGS := @CPPFLAGS@
@@ -34,6 +34,19 @@ CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)lib/\"
 # Rerun configure with previous command line
 #
 CONFIGURE = ./config.status --recheck && ./config.status
+
+#
+# Default verbose settings
+#
+ifdef V
+  ifeq ("$(origin V)", "command line")
+    VERBOSE = $(V)
+  endif
+endif
+ifndef VERBOSE
+  VERBOSE = 0
+endif
+
 
 
 cygwin = @cygwin@
@@ -64,6 +77,16 @@ dirlist := lib
 include $(scandir)
 
 
+ifeq ($(VERBOSE), 0)
+define CC
+	@ echo CC $@
+	@ $(CC_AUX) 
+endef
+else
+CC = $(CC_AUX)
+endif
+
+
 
 ##
 ## Default target
@@ -72,6 +95,12 @@ include $(scandir)
 ##
 zangband: $(objs-y)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
+
+##
+## .c files
+##
+%.o: %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(DEFS) $< -c -o $@ $(DEFS)
 
 ##
 ## Hack - make sure the build system is consistant.

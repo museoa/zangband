@@ -190,8 +190,17 @@ src/zborg9.o: src/zborg9.h src/zborg8.o
 
 LUAWSRCS := $(LUAWOBJS:.o=.c)
 
+ifeq ($(VERBOSE), 0)
+define TOLUA
+	@ echo TOLUA $@
+	@ src/lua/tolua
+endef
+else
+TOLUA = src/lua/tolua
+endif
+
 $(LUAWSRCS): %.c: %.pkg src/lua/tolua
-	src/lua/tolua -n $(subst l-,,$(notdir $*)) -o $@ $<
+	$(TOLUA) -n $(subst l-,,$(notdir $*)) -o $@ $<
 
 clean-files += src/*.bak src/*.o src/l-*.c
 distclean-files += autoconf.h
