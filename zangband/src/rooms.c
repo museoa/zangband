@@ -31,14 +31,15 @@ static s16b roomdep[] =
 	10, /* 6  = Monster pit (33x11) */
 	10, /* 7  = Lesser vault (33x22) */
 	20, /* 8  = Greater vault (66x44) */
-	 5, /* 9  = Fractal cave (42x24) */
+	 5, /* 9  = Fractal cave (52x28) */
 	10, /* 10 = Random vault (44x22) */
 	 3, /* 11 = Circular rooms (22x22) */
 	10, /* 12 = Crypts (22x22) */
-	 5, /* 13 = Large with feature (33x11) */
+	 5, /* 13 = Large with feature (50x36) */
 	 3, /* 14 = Large version 2 (33x11) */
+	 3, /* 15 = Parallelagram room (37x15) */
 };
-
+	
 
 /*
  * This funtion makes a very small room centred at (x0, y0)
@@ -3698,7 +3699,7 @@ static void build_type13(int by0, int bx0)
 		 y0 - yhsize + ysize - 2, x0 - xhsize + xsize - 2, FEAT_FLOOR);
 		 
 	/* Select type of inner feature */
-	switch (rand_int(3))
+	switch (rand_int(4))
 	{
 		case 0:
 		{
@@ -3706,16 +3707,25 @@ static void build_type13(int by0, int bx0)
 			feat = FEAT_SHAL_WATER;
 			break;
 		}
+		
 		case 1:
 		{
 			/* Lava */
 			feat = FEAT_SHAL_LAVA;
 			break;
 		}
+		
 		case 2:
 		{
 			/* Rock */
 			feat = FEAT_WALL_INNER;
+			break;
+		}
+		
+		case 3:
+		{
+			/* Rubble - oooh treasure */
+			feat = FEAT_RUBBLE;
 			break;
 		}
 	}
