@@ -2148,6 +2148,8 @@ static bool player_birth_aux(void)
 
 	bool flag = FALSE;
 	bool prev = FALSE;
+	
+	int level;
 
 	cptr str;
 
@@ -2452,10 +2454,15 @@ static bool player_birth_aux(void)
 			 * Random monster out of depth
 			 * (depending on level + number of quests)
 			 */
-			r_idx = get_mon_num(q_ptr->level * v / 20 + 4 + randint( q_ptr->level * v / 200));
+			level = q_ptr->level * v / 20 + 4 + randint( q_ptr->level * v / 200 + 1);
+			
+			/* Not too easy. */
+			if (level < q_ptr->level + 4) level = q_ptr->level + 4;
+			
+			r_idx = get_mon_num(level);
 			r_ptr = &r_info[r_idx];
 
-			/* Save the index if the monster is deeper than out current monster */
+			/* Save the index if the monster is deeper than current monster */
 			if (!q_ptr->r_idx || (r_info[r_idx].level > r_info[q_ptr->r_idx].level))
 			{
 				q_ptr->r_idx = r_idx;
