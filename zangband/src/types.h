@@ -788,7 +788,7 @@ struct object_type
 
 	byte activate;	/* Activation type */
 	
-	byte ident;		/* Special flags */
+	byte info;		/* Special flags */
 
 	byte marked;	/* Object is marked */
 

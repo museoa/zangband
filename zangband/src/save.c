@@ -548,7 +548,7 @@ static void wr_item(const object_type *o_ptr)
 	wr_byte(o_ptr->dd);
 	wr_byte(o_ptr->ds);
 
-	wr_byte(o_ptr->ident);
+	wr_byte(o_ptr->info);
 
 	wr_byte(o_ptr->marked);
 

@@ -511,7 +511,7 @@ static void do_cmd_use_staff_aux(int item)
 	{
 		if (flush_failure) flush();
 		msg_print("The staff has no charges left.");
-		o_ptr->ident |= (OB_EMPTY);
+		o_ptr->info |= (OB_EMPTY);
 
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);

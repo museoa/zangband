@@ -1407,7 +1407,7 @@ static void player_outfit(void)
 			object_known(q_ptr);
 
 			/* These objects are "storebought" */
-			q_ptr->ident |= OB_STOREB;
+			q_ptr->info |= OB_STOREB;
 
 			(void)inven_carry(q_ptr);
 
@@ -1439,7 +1439,7 @@ static void player_outfit(void)
 		object_known(q_ptr);
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= OB_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		(void)inven_carry(q_ptr);
 	}
@@ -1466,7 +1466,7 @@ static void player_outfit(void)
 		q_ptr->number = (byte)rand_range(15, 20);
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= OB_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1477,7 +1477,7 @@ static void player_outfit(void)
 		object_prep(q_ptr, lookup_kind(TV_BOW, SV_SHORT_BOW));
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= OB_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1492,7 +1492,7 @@ static void player_outfit(void)
 		q_ptr->pval = (byte)rand_range(25, 30);
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= OB_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1532,7 +1532,7 @@ static void player_outfit(void)
 		}
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= OB_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);

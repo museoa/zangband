@@ -2423,13 +2423,13 @@ bool lose_all_info(void)
 		o_ptr->feeling = FEEL_NONE;
 
 		/* Hack -- Clear the "empty" flag */
-		o_ptr->ident &= ~(OB_EMPTY);
+		o_ptr->info &= ~(OB_EMPTY);
 
 		/* Hack -- Clear the "known" flag */
-		o_ptr->ident &= ~(OB_KNOWN);
+		o_ptr->info &= ~(OB_KNOWN);
 
 		/* Hack -- Clear the "felt" flag */
-		o_ptr->ident &= ~(OB_SENSE);
+		o_ptr->info &= ~(OB_SENSE);
 	}
 
 	/* Hack - Remove all knowledge about objects */

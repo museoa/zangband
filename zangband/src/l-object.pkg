@@ -1366,7 +1366,7 @@ struct object_type
 	byte dd;			/* Damage dice/sides */
 	byte ds;
 
-	byte ident;			/* Special flags */
+	byte info;			/* Special flags */
 
 	byte marked;		/* Object is marked */
 

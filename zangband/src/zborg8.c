@@ -119,8 +119,8 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 			/* if (!testing_stack) return (0); */
 
 			/* XXX XXX XXX Require identical "sense" status */
-			/* if ((o_ptr->ident & ID_SENSE) != */
-			/*     (j_ptr->ident & ID_SENSE)) return (0); */
+			/* if ((o_ptr->info & OB_SENSE) != */
+			/*     (j_ptr->info & OB_SENSE)) return (0); */
 
 			/* Fall through */
 		}

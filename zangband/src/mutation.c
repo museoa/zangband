@@ -1234,7 +1234,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			{
 				msg_print("There's no energy there to absorb!");
 			}
-			o_ptr->ident |= OB_EMPTY;
+			o_ptr->info |= OB_EMPTY;
 		}
 
 		if (p_ptr->csp > p_ptr->msp)

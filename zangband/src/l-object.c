@@ -1693,23 +1693,23 @@ static int toluaI_set_object_object_type_ds(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: ident of class  object_type */
-static int toluaI_get_object_object_type_ident(lua_State* tolua_S)
+/* get function: info of class  object_type */
+static int toluaI_get_object_object_type_info(lua_State* tolua_S)
 {
   object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
   if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->ident);
+  tolua_pushnumber(tolua_S,(long)self->info);
  return 1;
 }
 
-/* set function: ident of class  object_type */
-static int toluaI_set_object_object_type_ident(lua_State* tolua_S)
+/* set function: info of class  object_type */
+static int toluaI_set_object_object_type_info(lua_State* tolua_S)
 {
   object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
   if (!self) TOLUA_ERR_SELF;
   if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
    TOLUA_ERR_ASSIGN;
-  self->ident = ((byte)  tolua_getnumber(tolua_S,2,0));
+  self->info = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
 
@@ -5769,7 +5769,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"object_type","timeout",toluaI_get_object_object_type_timeout,toluaI_set_object_object_type_timeout);
  tolua_tablevar(tolua_S,"object_type","dd",toluaI_get_object_object_type_dd,toluaI_set_object_object_type_dd);
  tolua_tablevar(tolua_S,"object_type","ds",toluaI_get_object_object_type_ds,toluaI_set_object_object_type_ds);
- tolua_tablevar(tolua_S,"object_type","ident",toluaI_get_object_object_type_ident,toluaI_set_object_object_type_ident);
+ tolua_tablevar(tolua_S,"object_type","info",toluaI_get_object_object_type_info,toluaI_set_object_object_type_info);
  tolua_tablevar(tolua_S,"object_type","marked",toluaI_get_object_object_type_marked,toluaI_set_object_object_type_marked);
  tolua_tablevar(tolua_S,"object_type","inscription",toluaI_get_object_object_type_inscription,toluaI_set_object_object_type_inscription);
  tolua_tablevar(tolua_S,"object_type","xtra_name",toluaI_get_object_object_type_xtra_name,toluaI_set_object_object_type_xtra_name);

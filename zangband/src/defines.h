@@ -2784,7 +2784,7 @@
 #define OB_DUMMY1    0x02
 #define OB_EMPTY     0x04	/* Item charges are known */
 #define OB_KNOWN     0x08	/* Item abilities are known */
-#define OB_STOREB    0x10	/* Item is storebought !!!! */
+#define OB_STOREB    0x10	/* Item is storebought */
 #define OB_DUMMY2    0x20
 #define OB_DUMMY3    0x40
 #define OB_DUMMY4    0x80
@@ -3841,7 +3841,7 @@
  * Test Two -- Check for "Easy Know" + "Aware"
  */
 #define object_known_p(T) \
-    (((T)->ident & (OB_KNOWN)) || \
+    (((T)->info & (OB_KNOWN)) || \
      (k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware))
 
 /*

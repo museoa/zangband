@@ -1001,7 +1001,7 @@ static void store_create(void)
 		object_known(q_ptr);
 
 		/* Mark it storebought */
-		q_ptr->ident |= OB_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		/* Require valid object */
 		if (!store_will_stock(q_ptr)) continue;
