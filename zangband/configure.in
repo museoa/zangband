@@ -31,19 +31,6 @@ AC_ARG_WITH(tkdir,
 
 AC_LANG([C])
 
-basedir=`pwd`
-
-dnl generate the installation path for the ./lib/ folder
-if test "$GAMEGROUP" != "games"; then
-  game_datadir="$datadir/games/zangband/lib/"
-else
-  game_datadir="./lib/"
-  bindir="$basedir"
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_PATH, "$game_datadir", [Default path to game])
-DEFAULT_PATH="$game_datadir"
-AC_SUBST(DEFAULT_PATH)
-
 dnl Checks for programs.
 AC_PROG_CC(gcc cc egcs)
 

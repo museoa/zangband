@@ -21,13 +21,15 @@ LDFLAGS := @LDFLAGS@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 
-DESTDIR = @DEFAULT_PATH@
-GAMEGROUP = @GAMEGROUP@
 
 bindir = @bindir@
 datadir = @datadir@
 
-#DESTDIR = datadir
+DESTDIR = @datadir@/games/zangband/lib/
+GAMEGROUP = games
+
+CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)\"
+
 
 cygwin = @cygwin@
 TK_PORT = @TK_PORT@
