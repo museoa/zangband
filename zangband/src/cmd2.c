@@ -2603,6 +2603,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	bonus = (p_ptr->to_h + i_ptr->to_h + j_ptr->to_h);
 	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
+	/* Cursed arrows tend not to hit anything */
+	if (cursed_p(i_ptr)) chance = chance / 2;
+	
 	/* Shooter properties */
 	p_ptr->energy_use = p_ptr->bow_energy;
 	tmul = p_ptr->ammo_mult;
