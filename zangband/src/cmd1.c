@@ -1755,7 +1755,7 @@ void py_attack(int y, int x)
 			/* Bare hands and not a monk */
 			else
 			{
-				msg_format("You punch %s", m_name); break;			
+				msg_format("You punch %s.", m_name); break;			
 			}
 
 			/* No negative damage */
