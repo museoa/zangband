@@ -2,7 +2,22 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-Zangband 2.3.4:
+ZAngband 2.3.4c:
+-Fixed a bug that could crash the game when lighting/darkening the
+ dungeon.
+-The mindcrafter 'domination' spell no longer affects quest monsters.
+-Fixed a bug that caused 'time' melee attacks to also cause the effects
+ of vampiric attack.
+-Fixed a bug that caused the arcane spell "Elemental Ball" to always
+ produce an acid ball.
+-Fixed a bug that caused an "invalid command beep" when changing the
+ autosave-frequency.
+-Fixed a bug that gave imps a much too high saving-throw vs. nightmares.
+-Fixed a minor bug in the character-dump routine.
+-Fixed a problem which prevented 'good luck' and 'bad luck' from
+ appearing in the mutations list.
+
+ZAngband 2.3.4:
 -Extended the online helpful system significantly (also added The
  Angband Newbie Guide by Chris Weisiger and amended it somewhat for
  Zangband).
@@ -131,7 +146,7 @@ Zangband 2.3.4:
  transparency, and asynchronous sound effects by Ron Anderson
  <randerso@cais.com> (untested).
 
-Zangband 2.3.3:
+ZAngband 2.3.3:
 -Added magical figurines, statues, and corpses (corpses are turned off
  since they can't be resurrected yet).
 -Added a new scroll 'of mundanity'.
