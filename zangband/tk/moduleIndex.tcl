@@ -14,7 +14,6 @@ IndexOne NSInventory2 inventory2.tcl
 IndexOne NSIconBrowser icon-browser.tcl
 IndexOne NSKeymap keymap.tcl
 IndexOne NSKnowledge knowledge.tcl
-IndexOne NSMacros macros.tcl
 IndexOne NSMap map.tcl
 IndexOne NSMapEditor map-editor.tcl
 IndexOne NSMessageHistory message-history.tcl

@@ -38,7 +38,6 @@ proc NSFont::InitModule {} {
 	lappend Priv(items) choice
 	lappend Priv(items) inventory
 	lappend Priv(items) knowledge
-	lappend Priv(items) macros
 	lappend Priv(items) magic
 	lappend Priv(items) message
 	lappend Priv(items) messages

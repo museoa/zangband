@@ -192,7 +192,6 @@ proc NSValueManager::InitModule {} {
 	Manage font,choice [Global font,sys,normal]
 	Manage font,inventory [Global font,sys,normal]
 	Manage font,knowledge [Global font,sys,normal]
-	Manage font,macros [Global font,fixed,normal]
 	Manage font,magic [Global font,sys,normal]
 	Manage font,message [Global font,sys,normal]
 	Manage font,messages [Global font,sys,normal]

@@ -235,10 +235,6 @@ proc angband_display {window action args} {
 				set window messages
 			}
 
-			macros {
-				NSModule::LoadIfNeeded NSMacros
-			}
-
 			pets {
 				NSModule::LoadIfNeeded NSPets
 			}

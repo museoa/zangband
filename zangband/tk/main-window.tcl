@@ -604,7 +604,6 @@ proc NSMainWindow::InitMenus {oop} {
 	lappend entries [list -type command -label [mc Color] -identifier E_PREF_COLOR]
 	lappend entries [list -type command -label [mc Font] -identifier E_PREF_FONT]
 	lappend entries [list -type command -label [mc Keymap] -identifier E_PREF_KEYMAP]
-	lappend entries [list -type command -label [mc Macros] -identifier E_PREF_MACROS]
 	lappend entries [list -type command -label [mc Options] -identifier E_PREF_OPTIONS]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_PREFERENCES $entries
 
@@ -722,7 +721,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 
 	if {[string equal [angband inkey_flags] INKEY_CMD]} {
 		lappend identList E_GAME_SAVE E_GAME_EXIT E_OTHER_FEELING \
-			E_OTHER_INFO E_OTHER_FILE E_OTHER_KNOWLEDGE E_PREF_MACROS \
+			E_OTHER_INFO E_OTHER_FILE E_OTHER_KNOWLEDGE \
 			E_OTHER_MESSAGES E_PREF_OPTIONS E_HELP \
 			E_OTHER_QUEST E_OTHER_TIME
 	}
@@ -842,7 +841,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 			NSModule::LoadIfNeeded NSColorPreferences
 			NSWindowManager::Display color
 		}
-		E_PREF_MACROS {DoUnderlyingCommand @}
 		E_PREF_OPTIONS {DoUnderlyingCommand =}
 
 		E_OTHER_INFO {DoUnderlyingCommand C}
@@ -1681,7 +1679,6 @@ proc NSMainWindow::SynchMenuAccel {oop force} {
 	lappend data E_OTHER_QUEST ^Q
 	lappend data E_OTHER_TIME ^T
 
-	lappend data E_PREF_MACROS @
 	lappend data E_PREF_OPTIONS =
 	
 	foreach {ident key} $data {
