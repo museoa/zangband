@@ -1681,8 +1681,8 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
 				/* The amount you enchant varys */
-				if ((o_ptr->to_h > 7) || force) change = 1;
-				else if (o_ptr->to_h > 4) change = randint1(2);
+				if ((o_ptr->to_d > 7) || force) change = 1;
+				else if (o_ptr->to_d > 4) change = randint1(2);
 				else change = randint1(3);
 				
 				o_ptr->to_d += change;
@@ -1704,8 +1704,8 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
 				/* The amount you enchant varys */
-				if ((o_ptr->to_h > 7) || force) change = 1;
-				else if (o_ptr->to_h > 4) change = randint1(2);
+				if ((o_ptr->to_a > 7) || force) change = 1;
+				else if (o_ptr->to_a > 4) change = randint1(2);
 				else change = randint1(3);
 				
 				o_ptr->to_a += change;
