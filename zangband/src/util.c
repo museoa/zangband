@@ -2999,7 +2999,7 @@ void request_command(int shopping)
 	}
 
 	/* Hack -- Auto-repeat certain commands */
-	if (always_repeat && (p_ptr->cmd.arg <= 0))
+	if (p_ptr->cmd.arg <= 0)
 	{
 		/* Hack -- auto repeat certain commands */
 		if (strchr("TBDoc+", p_ptr->cmd.cmd))

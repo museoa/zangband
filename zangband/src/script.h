@@ -58,7 +58,7 @@ extern void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format
 /*
  * Callback for using an object
  */
-extern bool use_object(object_type *o_ptr, bool *ident);
+extern bool use_object(object_type *o_ptr, bool *ident, int aim);
 
 /*
  * Debug lua stack depth

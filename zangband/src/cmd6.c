@@ -64,11 +64,11 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
 
-	/* Identity not known yet */
-	ident = FALSE;
+	/* Is Identity known? */
+	ident = object_aware_p(o_ptr);
 
 	/* Eat the food */
-	(void)use_object(o_ptr, &ident);
+	(void)use_object(o_ptr, &ident, FALSE);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -192,11 +192,11 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
 
-	/* Not identified yet */
-	ident = FALSE;
+	/* Is Identity known? */
+	ident = object_aware_p(o_ptr);
 
 	/* Quaff the potion */
-	(void)use_object(o_ptr, &ident);
+	(void)use_object(o_ptr, &ident, FALSE);
 
 	if (p_ptr->rp.prace == RACE_SKELETON)
 	{
@@ -291,11 +291,11 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
 
-	/* Not identified yet */
-	ident = FALSE;
+	/* Is Identity known? */
+	ident = object_aware_p(o_ptr);
 
 	/* Read the scroll */
-	used_up = use_object(o_ptr, &ident);
+	used_up = use_object(o_ptr, &ident, FALSE);
 	
 	/* Hack - the scroll may already be destroyed by its effect */
 	if (o_ptr->k_idx)
@@ -401,8 +401,8 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
 
-	/* Not identified yet */
-	ident = FALSE;
+	/* Is Identity known? */
+	ident = object_aware_p(o_ptr);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);
@@ -452,7 +452,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	sound(SOUND_ZAP);
 
 	/* Use the staff */
-	use_charge = use_object(o_ptr, &ident);
+	use_charge = use_object(o_ptr, &ident, FALSE);
 	
 	/* Hack - the staff may destroy itself when activated on the ground */
 	if (o_ptr->k_idx)
@@ -571,7 +571,7 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 {
 	bool use_charge;
 	int chance, dir, lev;
-	bool ident = TRUE, result = TRUE;
+	bool ident;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -598,6 +598,9 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 
 	/* Allow direction to be cancelled for free */
 	if (!get_aim_dir(&dir)) return;
+	
+	/* Is Identity known? */
+	ident = object_aware_p(o_ptr);
 
 	/* Take a turn */
 	p_ptr->state.energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
@@ -633,9 +636,7 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 	sound(SOUND_ZAP);
 
 	/* Aim the wand */
-	apply_object_trigger(TRIGGER_USE, o_ptr, "i:bb", 
-		LUA_VAR(dir), LUA_RETURN(result), LUA_RETURN(ident));
-	use_charge = result;
+	use_charge = use_object(o_ptr, &ident, dir);
 	
 	/* Hack - wands may destroy themselves if activated on the ground */
 	if (o_ptr->k_idx)
@@ -707,11 +708,11 @@ void do_cmd_aim_wand(void)
  */
 static void do_cmd_zap_rod_aux(object_type *o_ptr)
 {
-	int ident, chance, dir, lev;
+	int chance, dir, lev;
+	bool ident;
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
-	bool result = TRUE;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -751,6 +752,9 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 
 	/* Not identified yet */
 	ident = FALSE;
+	
+	/* Is Identity known? */
+	ident = object_aware_p(o_ptr);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);
@@ -786,9 +790,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	o_ptr->timeout += k_ptr->pval;
 
 	/* Zap the rod */
-	apply_object_trigger(TRIGGER_USE, o_ptr, "i:bb", 
-		LUA_VAR(dir), LUA_RETURN(result), LUA_RETURN(ident));
-	use_charge = result;
+	use_charge = use_object(o_ptr, &ident, dir);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -1004,7 +1006,6 @@ void do_cmd_activate(void)
 {
 	object_type *o_ptr;
 	cptr q, s;
-
 
 	/* Prepare the hook */
 	item_tester_hook = item_tester_hook_activate;

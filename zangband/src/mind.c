@@ -311,7 +311,7 @@ static bool cast_mindcrafter_spell(int spell)
 
 				if (plev > 4)
 				{
-					b |= detect_traps();
+					b |= detect_traps(TRUE);
 					b |= detect_doors();
 				}
 			}

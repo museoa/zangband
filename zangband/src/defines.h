@@ -4101,10 +4101,10 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define carry_query_flag		p_ptr->options[3]
 #define use_old_target			p_ptr->options[4]
 #define always_pickup			p_ptr->options[5]
-#define always_repeat			p_ptr->options[6]
+/* {TRUE,  0, NULL,					"Number 6" }, p_ptr->options[6] */
 #define depth_in_feet			p_ptr->options[7]
 /* {TRUE,  0, NULL,					"Number 8" }, p_ptr->options[8] */
-#define stack_force_costs		p_ptr->options[9]
+/* {FALSE, 0, NULL,					"Number 9" }, p_ptr->options[9] */
 #define show_labels				p_ptr->options[10]
 #define show_weights			p_ptr->options[11]
 #define view_monster_grids		p_ptr->options[12]
@@ -4115,7 +4115,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define find_ignore_doors		p_ptr->options[17]
 #define find_cut				p_ptr->options[18]
 #define find_examine			p_ptr->options[19]
-#define disturb_view                    p_ptr->options[20]
+#define disturb_view			p_ptr->options[20]
 #define disturb_near			p_ptr->options[21]
 #define disturb_panel			p_ptr->options[22]
 #define disturb_state			p_ptr->options[23]
@@ -4126,14 +4126,14 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define last_words				p_ptr->options[28]
 #define speak_unique			p_ptr->options[29]
 #define small_levels			svr_ptr->options[0]
-/* {TRUE,  0, NULL,					"Number 31" }, svr_ptr->options[1] */
+/* {TRUE,  0, NULL,					"Number 31" }, p_ptr->options[30] */
 
 /* Option set 1 */
 
-/* {TRUE,  0, NULL,					"Number 32" }, p_ptr->options[30] */
+/* {TRUE,  0, NULL,					"Number 32" }, svr_ptr->options[1] */
 /* {TRUE,  0, NULL,					"Number 33" }, svr_ptr->options[2] */
 /* {TRUE,  0, NULL,					"Number 34" }, svr_ptr->options[3] */
-#define stack_allow_wands		svr_ptr->options[4]
+/* {TRUE,  0, NULL,					"Number 35" }, svr_ptr->options[4] */
 /* {TRUE, 0, NULL, 					"Number 36" }, svr_ptr->options[5] */
 #define expand_list				svr_ptr->options[6]
 /* {TRUE, 0, NULL, 					"Number 38" }, p_ptr->options[31] */
@@ -4275,7 +4275,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define stupid_monsters			p_ptr->birth[0]
 #define auto_destroy			p_ptr->options[147]
 #define confirm_wear			p_ptr->options[148]
-#define confirm_stairs			p_ptr->options[149]
+/* {FALSE, 0, NULL,					"Number 165" }, p_ptr->options[149] */
 #define easy_open				p_ptr->options[150]
 #define easy_disarm				p_ptr->options[151]
 #define easy_floor				p_ptr->options[152]
@@ -4314,7 +4314,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 /* {TRUE,  0, NULL,					"Number 198" }, p_ptr->birth[6] */
 /* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
 /* {TRUE,  0, NULL,					"Number 200" }, p_ptr->birth[8] */
-#define terrain_streams			p_ptr->birth[9]
+/* {TRUE,  0, NULL,					"Number 201" }, p_ptr->birth[9] */
 /* {TRUE,  0, NULL,					"Number 202" }, p_ptr->birth[10] */
 #define munchkin_death			p_ptr->birth[11]
 /* {TRUE,  0, NULL,					"Number 204" }, p_ptr->birth[12] */

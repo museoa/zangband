@@ -1092,7 +1092,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"detect traps and doors",
-		"detect_traps(); detect_doors(); detect_stairs()",
+		"detect_traps(TRUE); detect_doors(); detect_stairs()",
 		50, FALSE, 1000, 0, 0
 	},
 	{

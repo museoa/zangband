@@ -556,14 +556,14 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 /*
  * Callback for using an object
  */
-bool use_object(object_type *o_ptr, bool *id_return)
+bool use_object(object_type *o_ptr, bool *id_return, int dir)
 {
-	bool result = TRUE, ident = TRUE;
+	bool result = TRUE, ident = *id_return;
 
-	apply_object_trigger(TRIGGER_USE, o_ptr, ":bb",
-			LUA_RETURN(result), LUA_RETURN(ident));
+	apply_object_trigger(TRIGGER_USE, o_ptr, "i:bb",
+			LUA_VAR(dir), LUA_RETURN(result), LUA_RETURN(ident));
 
-	if (id_return) *id_return = ident;
+	*id_return = ident;
 	return result;
 }
 

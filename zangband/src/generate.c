@@ -666,7 +666,7 @@ static bool cave_gen(dun_type *d_ptr)
 	}
 
 	/* Make a lake some of the time */
-	if (one_in_(LAKE_LEVEL) && !empty_level && !destroyed && terrain_streams)
+	if (one_in_(LAKE_LEVEL) && !empty_level && !destroyed)
 	{
 		if (cheat_room) msgf("Lake on the level.");
 		build_lake(dun->feat_deep_liquid, dun->feat_shal_liquid, dun->feat_floor);
@@ -715,7 +715,7 @@ static bool cave_gen(dun_type *d_ptr)
 	}
 
 	/* Make a hole in the dungeon roof sometimes at level 1 */
-	if ((p_ptr->depth == 1) && terrain_streams)
+	if (p_ptr->depth == 1)
 	{
 		while (one_in_(DUN_MOS_DEN))
 		{
@@ -725,7 +725,7 @@ static bool cave_gen(dun_type *d_ptr)
 	}
 
 	/* Hack -- Add some rivers */
-	if (one_in_(3) && (randint1(p_ptr->depth) > 5) && terrain_streams)
+	if (one_in_(3) && (randint1(p_ptr->depth) > 5))
 	{
 		add_river(dun->feat_deep_liquid, dun->feat_shal_liquid);
 	}

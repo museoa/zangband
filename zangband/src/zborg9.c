@@ -2439,8 +2439,8 @@ void borg_init_9(void)
 	/* We must pick items up without verification */
 	carry_query_flag = FALSE;
 
-	/* We repeat by hand */
-	always_repeat = FALSE;
+	/* We repeat by hand: Note this flag has been removed... */
+	/* always_repeat = FALSE; */
 
 	/* We need space */
 	show_labels = FALSE;
@@ -2449,16 +2449,11 @@ void borg_init_9(void)
 	/* We need the dungeon level */
 	depth_in_feet = FALSE;
 
-	/* Allow items to stack */
-	stack_force_costs = TRUE;
-
 	/* Hack - we don't understand this */
 	auto_destroy = FALSE;
 
 	/* Do not confirm actions */
 	confirm_wear = FALSE;
-	confirm_stairs = FALSE;
-
 
 	/* Zangband Commands */
 

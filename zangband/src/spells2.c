@@ -979,7 +979,7 @@ static bool detect_sq_aux(bool tester(int x, int y), cptr msg)
 	if (detect)
 	{
 		/* Describe */
-		msgf(msg);
+		if (msg) msgf(msg);
 		
 		/* Window stuff */
 		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
@@ -1002,17 +1002,32 @@ static bool trap_tester(int x, int y)
 	return (field_detect_type(c_ptr, FTYPE_TRAP));
 }
 
+/* Test for the existance of traps here */
+static bool trap_ident_tester(int x, int y)
+{
+	cave_type *c_ptr = area(x, y);
+	
+	/* Detect traps */
+	return (field_detect_type(c_ptr, FTYPE_TRAP));
+}
+
 
 /*
  * Detect all traps in range
  */
-bool detect_traps(void)
+bool detect_traps(bool ident)
 {
-	/* Have detected traps on this level */
-	p_ptr->state.detected = TRUE;
+	/* The source is identified? */
+	if (ident || detect_sq_aux(trap_ident_tester, NULL))
+	{
+		/* Have detected traps on this level */
+		p_ptr->state.detected = TRUE;
 	
-	/* Detect them */
-	return(detect_sq_aux(trap_tester, "You sense the presence of traps!"));
+		/* Detect them properly now */
+		return(detect_sq_aux(trap_tester, "You sense the presence of traps!"));
+	}
+	
+	return (FALSE);
 }
 
 
@@ -1571,7 +1586,7 @@ bool detect_all(void)
 	bool detect = FALSE;
 
 	/* Detect everything */
-	if (detect_traps()) detect = TRUE;
+	if (detect_traps(TRUE)) detect = TRUE;
 	if (detect_doors()) detect = TRUE;
 	if (detect_stairs()) detect = TRUE;
 	if (detect_treasure()) detect = TRUE;

@@ -2872,10 +2872,6 @@ static errr rd_savefile_new_aux(void)
 	rd_options();
 	if (arg_fiddle) note("Loaded Option Flags");
 
-	/* Switch streams on for old savefiles */
-	if (z_older_than(2, 2, 7))
-		terrain_streams = TRUE;
-
 	/*
 	 * Munchkin players are marked
 	 *

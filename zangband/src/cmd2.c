@@ -18,7 +18,6 @@
  */
 void do_cmd_go_up(void)
 {
-	bool go_up = FALSE;
 	cave_type *c_ptr;
 
 	/* Player grid */
@@ -26,50 +25,30 @@ void do_cmd_go_up(void)
 
 	if (c_ptr->feat == FEAT_LESS)
 	{
-		if (!p_ptr->depth)
-		{
-			go_up = TRUE;
-		}
-		else
-		{
-			if (confirm_stairs)
-			{
-				if (get_check("Really leave the level? "))
-					go_up = TRUE;
-			}
-			else
-			{
-				go_up = TRUE;
-			}
-		}
+		/*
+		 * I'm experimenting without this... otherwise the monsters get to
+		 * act first when we go up stairs, theoretically resulting in a
+		 * possible insta-death.
+		 */
+		p_ptr->state.energy_use = 0;
 
-		if (go_up)
-		{
-			/*
-			 * I'm experimenting without this... otherwise the monsters get to
-			 * act first when we go up stairs, theoretically resulting in a
-			 * possible insta-death.
-			 */
-			p_ptr->state.energy_use = 0;
+		/* Success */
+		msgf(MSGT_STAIRS, "You enter a maze of up staircases.");
 
-			/* Success */
-			msgf(MSGT_STAIRS, "You enter a maze of up staircases.");
+		if (autosave_l) do_cmd_save_game(TRUE);
 
-			if (autosave_l) do_cmd_save_game(TRUE);
+		/* Create a way back */
+		p_ptr->state.create_down_stair = TRUE;
 
-			/* Create a way back */
-			p_ptr->state.create_down_stair = TRUE;
+		/* Go up */
+		move_dun_level(-1);
 
-			/* Go up */
-			move_dun_level(-1);
-
-			/*
-			 * Hack XXX XXX Take some time
-			 *
-			 * This will need to be rethought in multiplayer
-			 */
-			turn += 100;
-		}
+		/*
+		 * Hack XXX XXX Take some time
+		 *
+		 * This will need to be rethought in multiplayer
+		 */
+		turn += 100;
 	}
 	else
 	{
@@ -85,7 +64,6 @@ void do_cmd_go_up(void)
 void do_cmd_go_down(void)
 {
 	cave_type *c_ptr;
-	bool go_down = FALSE;
 
 	/* Player grid */
 	c_ptr = area(p_ptr->px, p_ptr->py);
@@ -97,45 +75,25 @@ void do_cmd_go_down(void)
 	}
 	else
 	{
-		if (!p_ptr->depth)
-		{
-			go_down = TRUE;
-		}
-		else
-		{
-			if (confirm_stairs)
-			{
-				if (get_check("Really leave the level? "))
-					go_down = TRUE;
-			}
-			else
-			{
-				go_down = TRUE;
-			}
-		}
+		p_ptr->state.energy_use = 0;
 
-		if (go_down)
-		{
-			p_ptr->state.energy_use = 0;
+		/* Success */
+		msgf(MSGT_STAIRS, "You enter a maze of down staircases.");
 
-			/* Success */
-			msgf(MSGT_STAIRS, "You enter a maze of down staircases.");
+		if (autosave_l) do_cmd_save_game(TRUE);
 
-			if (autosave_l) do_cmd_save_game(TRUE);
+		/* Create a way back */
+		p_ptr->state.create_up_stair = TRUE;
+		
+		/* Go down */
+		move_dun_level(1);
 
-			/* Create a way back */
-			p_ptr->state.create_up_stair = TRUE;
-			
-			/* Go down */
-			move_dun_level(1);
-
-			/*
-			 * Hack XXX XXX Take some time
-			 *
-			 * This will need to be rethought in multiplayer
-			 */
-			turn += 100;
-		}
+		/*
+		 * Hack XXX XXX Take some time
+		 *
+		 * This will need to be rethought in multiplayer
+		 */
+		turn += 100;
 	}
 }
 
