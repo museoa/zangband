@@ -915,10 +915,6 @@ static void rd_store(int town_num, int store_num)
 
 			/* Read the item */
             rd_item(q_ptr);
-
-            /* Add object to store, if home */
-            if (type == BUILD_STORE_HOME)
-                add_object_list(&st_ptr->stock, q_ptr);
 		}
 	}
 	else
