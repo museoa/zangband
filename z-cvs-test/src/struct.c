@@ -732,7 +732,7 @@ int struct_match_artifact_type(Tcl_Interp *interp, StructType *typePtr,
 
 	if (data->request_known)
 	{
-		if ((ART_CURNUM(a_ptr) != 0) != data->match_known)
+		if ((a_ptr->cur_num != 0) != data->match_known)
 			return 1;
 	}
 	if (data->request_tval)

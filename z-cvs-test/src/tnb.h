@@ -17,8 +17,6 @@
 #error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
 #endif /* */
 
-#define ART_CURNUM(a) a->cur_num
-
 
 #define monster_race_valid(r_idx) ((r_idx >= 0) && (r_idx < max_r_idx))
 
