@@ -11,8 +11,9 @@
  */
 
 #include "tnb.h"
-#include "icon.h"
 #include "../maid-grf.h"
+
+static int widget_icon_depth;
 
 typedef struct Widget Widget;
 
@@ -149,7 +150,7 @@ static void Widget_EventuallyRedraw(Widget *widgetPtr)
 static void DrawBlank(int x, int y, Widget *widgetPtr)
 {
 	BitmapPtr bitmapPtr = widgetPtr->bitmap;
-	IconPtr dstPtr;
+	byte *dstPtr;
 	int y2;
 	int length = widgetPtr->gwidth * bitmapPtr->pixelSize;
 		
@@ -378,9 +379,7 @@ static void Widget_CreateBitmap(Widget *widgetPtr)
 	widgetPtr->bitmap->width = widgetPtr->bw;
 	widgetPtr->bitmap->height = widgetPtr->bh;
 
-	/* widgetPtr->bitmap.depth =
-		((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8); */
-	widgetPtr->bitmap->depth = g_icon_depth;
+	widgetPtr->bitmap->depth = widget_icon_depth;
 	
 	/* Create the bitmap */
 	Bitmap_New(widgetPtr->interp, widgetPtr->bitmap);
@@ -1244,10 +1243,13 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 /*
  * Initialize the Widget package
  */
-int init_widget(Tcl_Interp *interp)
+int init_widget(Tcl_Interp *interp, int g_icon_depth)
 {
 	/* Create the "widget" interpreter command */
 	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
+	
+	/* Save colour depth for later */
+	widget_icon_depth = g_icon_depth;
 	
 	/* Initialise palette stuff */
 	if (g_icon_depth == 16) init_masks(interp);
