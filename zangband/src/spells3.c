@@ -623,26 +623,34 @@ int max_dun_level(void)
 
 /*
  * Fix problems due to dungeons not starting at level 1.
+ *
+ * direction is -1 for going down, and +1 for up.
  */
-void fixup_dun_level(void)
+void move_dun_level(int direction)
 {
 	place_type *pl_ptr = &place[p_ptr->place_num];
 	dun_type *d_ptr = pl_ptr->dungeon;
 	
+	/* Change depth */
+	p_ptr->depth += direction;
+
+	/* Leaving */
+	p_ptr->state.leaving = TRUE;
+		
 	/* Don't need to do anything with the old dungeon */
 	if (vanilla_town) return;
 	
-	/* Out of bounds */
+	/* Out of bounds? */
 	if (p_ptr->depth < d_ptr->min_level)
 	{
 		/* We have just decended - and have to decend more? */
-		if (p_ptr->depth == 1)
+		if (direction == 1)
 		{
 			p_ptr->depth = d_ptr->min_level;
 		}
 		else
 		{
-			/* Assume we are rising from d_ptr->min_level upwards. */
+			/* Go to surface. */
 			p_ptr->depth = 0;
 		}
 	}
@@ -701,10 +709,8 @@ void teleport_player_level(void)
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
-		p_ptr->depth--;
-
-		/* Leaving */
-		p_ptr->state.leaving = TRUE;
+		/* Go down */
+		move_dun_level(-1);
 	}
 	else
 	{
@@ -712,14 +718,9 @@ void teleport_player_level(void)
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
-		p_ptr->depth++;
-
-		/* Leaving */
-		p_ptr->state.leaving = TRUE;
+		/* Go up */
+	    move_dun_level(1);
 	}
-
-	/* Fix dungeon level due to new themed dungeons */
-	fixup_dun_level();
 
 	/* Sound */
 	sound(SOUND_TPLEVEL);

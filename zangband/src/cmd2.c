@@ -60,14 +60,8 @@ void do_cmd_go_up(void)
 			/* Create a way back */
 			p_ptr->state.create_down_stair = TRUE;
 
-			/* New depth */
-			p_ptr->depth--;
-
-			/* Leaving */
-			p_ptr->state.leaving = TRUE;
-			
-			/* Fix dungeon level due to new themed dungeons */
-			fixup_dun_level();
+			/* Go up */
+			move_dun_level(-1);
 
 			/*
 			 * Hack XXX XXX Take some time
@@ -129,17 +123,11 @@ void do_cmd_go_down(void)
 
 			if (autosave_l) do_cmd_save_game(TRUE);
 
-			/* Go down */
-			p_ptr->depth++;
-
-			/* Leaving */
-			p_ptr->state.leaving = TRUE;
-
 			/* Create a way back */
 			p_ptr->state.create_up_stair = TRUE;
 			
-			/* Fix dungeon level due to new themed dungeons */
-			fixup_dun_level();
+			/* Go down */
+			move_dun_level(1);
 
 			/*
 			 * Hack XXX XXX Take some time

@@ -763,7 +763,7 @@ extern void teleport_to_player(int m_idx);
 extern void teleport_player(int dis);
 extern void teleport_player_to(int nx, int ny);
 extern int max_dun_level(void);
-extern void fixup_dun_level(void);
+extern void move_dun_level(int direction);
 extern void teleport_player_level(void);
 extern bool check_down_wild(void);
 extern void recall_player(int turns);

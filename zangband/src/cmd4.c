@@ -99,11 +99,7 @@ void resize_map(void)
 
 	/* Reset the panels */
 	map_panel_size();
-
-	if (character_dungeon)
-	{
-		verify_panel();
-	}
+	verify_panel();
 
 	/* Combine and Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
