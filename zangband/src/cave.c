@@ -240,8 +240,6 @@ bool los(int y1, int x1, int y2, int x2)
 }
 
 
-
-
 /*
  * Calculate incremental motion
  *
@@ -325,17 +323,18 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 		
 				c_ptr = area(yy, xx);
 			
-				if (cave_los_grid(c_ptr))
-				{
-					/* Advance along ray */
-					(*sq)++;
-				}
-				else
+				/* Is the square not occupied by a monster, and passable? */
+				if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
 				{
 					/* Advance to the best position we have not looked at yet */
 					temp = project_data[*slope][*sq].slope;
 					*sq = project_data[*slope][*sq].square;
 					*slope = temp;
+				}
+				else
+				{
+					/* Advance along ray */
+					(*sq)++;
 				}
 			}
 			
@@ -361,17 +360,18 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 		
 				c_ptr = area(yy, xx);
 		
-				if (cave_los_grid(c_ptr))
-				{
-					/* Advance along ray */
-					(*sq)++;
-				}
-				else
+				/* Is the square not occupied by a monster, and passable? */
+				if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
 				{
 					/* Advance to the best position we have not looked at yet */
 					temp = project_data[*slope][*sq].slope;
 					*sq = project_data[*slope][*sq].square;
 					*slope = temp;
+				}
+				else
+				{
+					/* Advance along ray */
+					(*sq)++;
 				}
 			}
 			
@@ -3526,7 +3526,46 @@ errr vinfo_init(void)
 	 * Add in the final information in the projection table.
 	 *
 	 * We need to know where to go to if the current square
-	 * is blocked.  This will be the first slope that does
+	 * is blocked.
+	 *
+	 * This is calculated in the following way:
+	 *
+	 * First, we need to find the first slope that does not
+	 * include the current square.
+	 */
+	 
+#if 0	 
+	/*
+	 * New algorithm???
+	 *
+	 * This slope overlaps the current one up to, but not including
+	 * the current square.  There may be regions of partial match.
+	 *
+	 * Using this information - we scan along this slope, looking
+	 * for the first square in the old slope that is not in this
+	 * new one.
+	 *
+	 * Now - the problem is that the two slopes may match between this
+	 * unmatching square, and the target square.  We prevent this,
+	 * by scanning along the old slope, from this square, to the target
+	 * square, recording the max intercept slope as we go.
+	 *
+	 * We then use this max intercept slope as the one to go to.
+	 * The first square along this third slope that is not along the first
+	 * slope is the square to go to.
+	 *
+	 * The good thing is that the third slope is already calculated by
+	 * earlier squares along this slope.
+	 *
+	 *
+	 *
+	 * What happens if there are 'missing' squares in the thin wedge
+	 * between slopes 2 and 3?
+	 */
+#endif /* 0 */	 
+	 
+	/*
+	 *  This will be the first slope that does
 	 * not contain this square.  The position along that slope
 	 * will be the first square that is not already scanned
 	 * by the current slope.
@@ -3586,6 +3625,32 @@ errr vinfo_init(void)
 
 	/* Kill hack */
 	FREE(hack, vinfo_hack);
+
+#if 0
+	
+	/* Test the view array */
+	
+	/* We are looking for duplicate scans of squares */
+	for (i = 0; i < VINFO_MAX_SLOPES; i++)
+	{
+		for (j = 0; j < slope_count[i]; j++)
+		{
+			m = project_data[i][j].slope;
+			
+			for (x = 0; x < j; x++)
+			{
+				for (y = project_data[i][j].square; y < slope_count[m] - 1; y++)
+				{
+					if ((project_data[i][x].x == project_data[m][y].x) &&
+						(project_data[i][x].y == project_data[m][y].y))
+					{
+						quit_fmt("Match at %d,%d;%d,%d;%d",i,j,x,y,m);
+					}
+				}
+			}
+		}
+	}
+#endif /* 0 */	
 
 	/* Success */
 	return (0);
