@@ -5445,11 +5445,8 @@ object_type *inven_takeoff(object_type *o_ptr)
 
 	cptr act;
 
-	/* Split item */
-	q_ptr = item_split(o_ptr, o_ptr->number);
-
 	/* Describe the object */
-	object_desc(o_name, q_ptr, TRUE, 3, 256);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Look up item number */
 	item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
@@ -5479,13 +5476,13 @@ object_type *inven_takeoff(object_type *o_ptr)
 	}
 
 	/* Carry the object */
-	q_ptr = inven_carry(q_ptr);
-
-	/* Get number of item in inventory */
-	item = get_item_position(p_ptr->inventory, q_ptr);
+	q_ptr = inven_carry(o_ptr);
 
 	/* Message */
 	msg_format("%s %s (%c).", act, o_name, I2A(item));
+	
+	/* Wipe the old object */
+	object_wipe(o_ptr);
 
 	/* Return the item */
 	return (q_ptr);
