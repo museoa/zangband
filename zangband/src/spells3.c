@@ -1791,8 +1791,8 @@ static void bad_luck(object_type *o_ptr)
 		if (o_ptr->to_h) o_ptr->to_h = 0 - randint(5) - randint(5);
 		if (o_ptr->to_d) o_ptr->to_d = 0 - randint(5) - randint(5);
 		o_ptr->ac = 0;
-		o_ptr->dd = 0;
-		o_ptr->ds = 0;
+		o_ptr->dd = 1;
+		o_ptr->ds = 1;
 		o_ptr->art_flags1 = 0;
 		o_ptr->art_flags2 = 0;
 		o_ptr->art_flags3 = 0;
@@ -3760,8 +3760,8 @@ bool curse_armor(void)
 		o_ptr->to_h = 0;
 		o_ptr->to_d = 0;
 		o_ptr->ac = 0;
-		o_ptr->dd = 0;
-		o_ptr->ds = 0;
+		o_ptr->dd = 1;
+		o_ptr->ds = 1;
 		o_ptr->art_flags1 = 0;
 		o_ptr->art_flags2 = 0;
 		o_ptr->art_flags3 = 0;
@@ -3829,8 +3829,8 @@ bool curse_weapon(void)
 		o_ptr->to_d = 0 - randint(5) - randint(5);
 		o_ptr->to_a = 0;
 		o_ptr->ac = 0;
-		o_ptr->dd = 0;
-		o_ptr->ds = 0;
+		o_ptr->dd = 1;
+		o_ptr->ds = 1;
 		o_ptr->art_flags1 = 0;
 		o_ptr->art_flags2 = 0;
 		o_ptr->art_flags3 = 0;

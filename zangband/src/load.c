@@ -172,6 +172,32 @@ static bool wearable_p(object_type *o_ptr)
 
 
 /*
+ * Hack -- determine if an item is a "weapon" (or a missile)
+ */
+static bool is_weapon(object_type *o_ptr)
+{
+	/* Valid "tval" codes */
+	switch (o_ptr->tval)
+	{
+		case TV_SHOT:
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_BOW:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_DIGGING:
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Nope */
+	return (FALSE);
+}
+
+
+/*
  * The following functions are used to load the basic building blocks
  * of savefiles.  They also maintain the "checksum" info for 2.7.0+
  */
@@ -923,6 +949,13 @@ static void rd_item(object_type *o_ptr)
 
 		/* Hack -- apply "uncursed" incription */
 		if (streq(buf, "uncursed")) o_ptr->ident &= ~(IDENT_CURSED);
+	}
+
+	/* Change shattered weapons from 0d0 to 1d1 */
+	if (is_weapon(o_ptr))
+	{
+		if (o_ptr->dd == 0) o_ptr->dd = 1;
+		if (o_ptr->ds == 0) o_ptr->ds = 1;
 	}
 }
 
