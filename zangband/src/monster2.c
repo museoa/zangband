@@ -637,20 +637,23 @@ s16b get_mon_num(int level)
 	}
 
 	/* Find the monster */
-	for (i = 0; i < alloc_kind_size; i++)
+	for (i = 0; i < alloc_race_size; i++)
 	{
 		/* Found the entry */
-		if (value1 < table[i].prob3) break;
+		if (value1 < table[i].prob3)
+		{
+			return (table[i].index);
+		}
 
 		/* Decrement */
-		value1 = value1 - table[i].prob3;
+		value1 -= table[i].prob3;
 	}
+	
+	msg_format("Aborting - Could not generate a monster!!!! %d", total);
 
 	/* Result */
-	return (table[i].index);
+	return (0);
 }
-
-
 
 
 
