@@ -585,28 +585,28 @@ void self_knowledge(void)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prt("", 13, k);
+	for (k = 1; k < 24; k++) prtf(13, k, "");
 
 	/* Label the information */
-	prt("     Your Attributes:", 15, 1);
+	prtf(15, 1, "     Your Attributes:");
 
 	/* We will print on top of the map (column 13) */
 	for (k = 2, j = 0; j < i; j++)
 	{
 		/* Show the info */
-		prt(info[j], 15, k++);
+		prtf(15, k++, info[j]);
 
 		/* Every 20 entries (lines 2 to 21), start over */
 		if ((k == 22) && (j + 1 < i))
 		{
-			prt("-- more --", 15, k);
+			prtf(15, k, "-- more --");
 			(void)inkey();
-			for (; k > 2; k--) prt("", 15, k);
+			for (; k > 2; k--) prtf(15, k, "");
 		}
 	}
 
 	/* Pause */
-	prt("[Press any key to continue]", 13, k);
+	prtf(13, k, "[Press any key to continue]");
 	(void)inkey();
 
 	/* Restore the screen */
@@ -770,29 +770,28 @@ void report_magics(void)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prt("", 13, k);
+	for (k = 1; k < 24; k++) prtf(13, k, "");
 
 	/* Label the information */
-	prt("     Your Current Magic:", 15, 1);
+	prtf(15, 1, "     Your Current Magic:");
 
 	/* We will print on top of the map (column 13) */
 	for (k = 2, j = 0; j < i; j++)
 	{
 		/* Show the info */
-		sprintf(Dummy, "%s %s.", info[j], report_magic_durations[info2[j]]);
-		prt(Dummy, 15, k++);
+		prtf(15, k++, "%s %s.", info[j], report_magic_durations[info2[j]]);
 
 		/* Every 20 entries (lines 2 to 21), start over */
 		if ((k == 22) && (j + 1 < i))
 		{
-			prt("-- more --", 15, k);
+			prtf(15, k, "-- more --");
 			(void)inkey();
-			for (; k > 2; k--) prt("", 15, k);
+			for (; k > 2; k--) prtf(15, k, "");
 		}
 	}
 
 	/* Pause */
-	prt("[Press any key to continue]", 13, k);
+	prtf(13, k, "[Press any key to continue]");
 	(void)inkey();
 
 	/* Restore the screen */

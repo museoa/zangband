@@ -173,8 +173,6 @@ static int get_mindcraft_power(int *sn)
 			/* Show the list */
 			if (!redraw)
 			{
-				char psi_desc[80];
-
 				/* Show list */
 				redraw = TRUE;
 
@@ -182,7 +180,7 @@ static int get_mindcraft_power(int *sn)
 				screen_save();
 
 				/* Display a list of spells */
-				prt("", x, y);
+				prtf(x, y, "");
 				put_fstr(x + 5, y, "Name");
 				put_fstr(x + 35, y, "Lv Mana Fail Info");
 
@@ -226,14 +224,13 @@ static int get_mindcraft_power(int *sn)
 					mindcraft_info(comment, i);
 
 					/* Dump the spell --(-- */
-					sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
+					prtf(x, y + i + 1, "  %c) %-30s%2d %4d %3d%%%s",
 							I2A(i), spell.name,
 							spell.min_lev, spell.mana_cost, chance, comment);
-					prt(psi_desc, x, y + i + 1);
 				}
 
 				/* Clear the bottom line */
-				prt("", x, y + i + 1);
+				prtf(x, y + i + 1, "");
 			}
 
 			/* Hide the list */

@@ -226,7 +226,7 @@ void do_cmd_browse_aux(const object_type *o_ptr)
 	print_spells(spells, num, 20, 1, (o_ptr->tval - TV_BOOKS_MIN));
 
 	/* Clear the top line */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Prompt user */
 	put_fstr(23, 0, "[Press any key to continue]");
@@ -3050,24 +3050,23 @@ void do_cmd_pet(void)
 	/* Save the screen */
 	Term_save();
 
-	prt("", x, y++);
+	prtf(x, y++, "");
 
 	/* Show the list */
 	while (ctr < num)
 	{
-		sprintf(buf, "%s%c) %s", (ctr == mode) ? "*" : " ", I2A(ctr),
+		prtf(x, y + ctr, "%s%c) %s", (ctr == mode) ? "*" : " ", I2A(ctr),
 				power_desc[ctr]);
-		prt(buf, x, y + ctr);
 		ctr++;
 	}
 
 	if (ctr < 17)
 	{
-		prt("", x, y + ctr);
+		prtf(x, y + ctr, "");
 	}
 	else
 	{
-		prt("", x, y + 17);
+		prtf(x, y + 17, "");
 	}
 
 	/* Get a command from the user */

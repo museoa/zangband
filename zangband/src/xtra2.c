@@ -2113,8 +2113,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			cptr name = "something strange";
 
 			/* Display a message */
-			sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
-			prt(out_val, 0, 0);
+			prtf(0, 0, "%s%s%ssomething strange [%s]", s1, s2, s3, name, info);
 			move_cursor_relative(x, y);
 			query = inkey();
 
@@ -2147,8 +2146,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				{
 					/* Describe the object */
 					s3 = "a ";
-					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, m_name, info);
-					prt(out_val, 0, 0);
+					prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, m_name, info);
 					move_cursor_relative(x, y);
 					query = inkey();
 
@@ -2217,12 +2215,10 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 								attitude = " ";
 
 							/* Describe, and prompt for recall */
-							sprintf(out_val, "%s%s%s%s (%s)%s[r,%s]",
+							prtf(0, 0, "%s%s%s%s (%s)%s[r,%s]",
 									s1, s2, s3, m_name,
 									look_mon_desc(c_ptr->m_idx), attitude,
 									info);
-
-							prt(out_val, 0, 0);
 
 							/* Place cursor */
 							move_cursor_relative(x, y);
@@ -2262,9 +2258,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 						/* Describe the object */
-						sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name,
-								info);
-						prt(out_val, 0, 0);
+						prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
 						move_cursor_relative(x, y);
 						query = inkey();
 
@@ -2315,18 +2309,17 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 						/* Message */
-						sprintf(out_val, "%s%s%s%s [%s]",
+						prtf(0, 0, "%s%s%s%s [%s]",
 								s1, s2, s3, o_name, info);
 					}
 					else
 					{
 						/* Message */
-						sprintf(out_val, "%s%s%sa pile of %d items [%c,%s]",
+						prtf(0, 0, "%s%s%sa pile of %d items [%c,%s]",
 								s1, s2, s3, floor_num,
 								rogue_like_commands ? 'x' : 'l', info);
 					}
 
-					prt(out_val, 0, 0);
 					move_cursor_relative(x, y);
 
 					/* Command */
@@ -2343,7 +2336,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						show_list(c_ptr->o_idx);
 
 						/* Prompt */
-						prt("Hit any key to continue", 0, 0);
+						prtf(0, 0, "Hit any key to continue");
 
 						/* Wait */
 						(void)inkey();
@@ -2378,8 +2371,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 				/* Describe the object */
-				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
-				prt(out_val, 0, 0);
+				prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
 				move_cursor_relative(x, y);
 				query = inkey();
 
@@ -2448,8 +2440,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				s3 = is_a_vowel(name[0]) ? "an " : "a ";
 
 				/* Describe the field */
-				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
-				prt(out_val, 0, 0);
+				prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, name, info);
 				move_cursor_relative(x, y);
 				query = inkey();
 
@@ -2528,11 +2519,10 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 			/* Display a message */
 			if (p_ptr->wizard)
-				sprintf(out_val, "%s%s%s%s [%s] (%d:%d)", s1, s2, s3, name,
+				prtf(0, 0, "%s%s%s%s [%s] (%d:%d)", s1, s2, s3, name,
 						info, y, x);
 			else
-				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
-			prt(out_val, 0, 0);
+				prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, name, info);
 			move_cursor_relative(x, y);
 			query = inkey();
 
@@ -3019,7 +3009,7 @@ bool target_set(int mode)
 	temp_n = 0;
 
 	/* Clear the top line */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Recenter the map around the player */
 	verify_panel();

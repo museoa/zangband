@@ -33,14 +33,11 @@ void do_cmd_inven(void)
 	/* Hack -- hide empty slots */
 	item_tester_full = FALSE;
 
-	sprintf(out_val,
-			"Inventory: carrying %d.%d pounds (%d%% of capacity). Command: ",
+	/* Get a command */
+	prtf(0, 0, "Inventory: carrying %d.%d pounds (%d%% of capacity). Command: ",
 			p_ptr->total_weight / 10, p_ptr->total_weight % 10,
 			(p_ptr->total_weight * 100) /
 			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
-
-	/* Get a command */
-	prt(out_val, 0, 0);
 
 	/* Get a new command */
 	p_ptr->command_new = inkey();
@@ -84,7 +81,10 @@ void do_cmd_equip(void)
 			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a command */
-	prt(out_val, 0, 0);
+	prtf(0, 0, "Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",
+			p_ptr->total_weight / 10, p_ptr->total_weight % 10,
+			(p_ptr->total_weight * 100) /
+			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a new command */
 	p_ptr->command_new = inkey();
@@ -1324,7 +1324,7 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Display the result */
-	prt(buf, 0, 0);
+	prtf(0, 0, buf);
 
 	/* Allocate the "who" array */
 	C_MAKE(who, z_info->r_max, u16b);
@@ -1385,7 +1385,7 @@ void do_cmd_query_symbol(void)
 	query = inkey();
 
 	/* Restore */
-	prt(buf, 0, 0);
+	prtf(0, 0, buf);
 
 	why = 2;
 
@@ -1507,7 +1507,7 @@ void do_cmd_query_symbol(void)
 	KILL(who);
 
 	/* Re-display the identity */
-	prt(buf, 0, 0);
+	prtf(0, 0, buf);
 }
 
 
@@ -1519,7 +1519,6 @@ bool research_mon(void)
 {
 	int i, n, r_idx;
 	char sym, query;
-	char buf[128];
 
 	s16b oldkills;
 	byte oldwake;
@@ -1561,15 +1560,12 @@ bool research_mon(void)
 
 	if (ident_info[i])
 	{
-		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
+		prtf(10, 16, "%c - %s.", sym, ident_info[i] + 2);
 	}
 	else
 	{
-		sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
+		prtf(10, 16, "%c - %s.", sym, "Unknown Symbol");
 	}
-
-	/* Display the result */
-	prt(buf, 10, 16);
 
 
 	/* Collect matching monsters */
@@ -1687,10 +1683,6 @@ bool research_mon(void)
 			}
 		}
 	}
-
-
-	/* Re-display the identity */
-	/* prt(buf, 5, 5); */
 
 	cheat_know = oldcheat;
 

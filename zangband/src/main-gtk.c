@@ -2805,7 +2805,7 @@ errr init_gtk(int argc, char **argv, unsigned char *new_game)
 	init_angband();
 	
 	/* Prompt the user */
-	prt("[Choose 'New' or 'Open' from the 'File' menu]", 17, 23);
+	prtf(17, 23, "[Choose 'New' or 'Open' from the 'File' menu]");
 	Term_fresh();
 	
 	while (!game_in_progress)

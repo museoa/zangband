@@ -744,10 +744,8 @@ void carry(int pickup)
 					/* Paranoia XXX XXX XXX */
 					message_flush();
 
-					sprintf(out_val, "Pick up %s? [y/n/k] ", o_name);
-
 					/* Prompt for it */
-					prt(out_val, 0, 0);
+					prtf(0, 0, "Pick up %s? [y/n/k] ", o_name);
 
 					/* Get an acceptable answer */
 					while (TRUE)
@@ -760,7 +758,7 @@ void carry(int pickup)
 					}
 
 					/* Erase the prompt */
-					prt("", 0, 0);
+					prtf(0, 0, "");
 
 					if ((i == 'Y') || (i == 'y'))
 					{
@@ -871,10 +869,8 @@ void carry(int pickup)
 			/* Describe the object */
 			object_desc(o_name, fo_ptr, TRUE, 3, 256);
 
-			sprintf(out_val, "Pick up %s? [y/n/k] ", o_name);
-
 			/* Prompt for it */
-			prt(out_val, 0, 0);
+			prtf(0, 0,"Pick up %s? [y/n/k] ", o_name);
 
 			/* Get an acceptable answer */
 			while (TRUE)
@@ -887,7 +883,7 @@ void carry(int pickup)
 			}
 
 			/* Erase the prompt */
-			prt("", 0, 0);
+			prtf(0, 0, "");
 
 			if ((i == 'Y') || (i == 'y'))
 			{

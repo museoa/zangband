@@ -1250,7 +1250,6 @@ extern void screen_save(void);
 extern void screen_load(void);
 extern void put_fstr(int col, int row, cptr str, ...);
 extern void prtf(int col, int row, cptr str, ...);
-extern void prt(cptr str, int col, int row);
 extern void c_roff(byte attr, cptr str);
 extern void roff(cptr str);
 extern void clear_from(int row);

@@ -481,36 +481,7 @@ void prtf(int col, int row, cptr str, ...)
 
 	/* Display */
 	put_cstr(col, row, buf);
-
 }
-
-
-/*
- * Display a string on the screen using an attribute, and clear
- * to the end of the line.
- */
-static void c_prt(byte attr, cptr str, int col, int row)
-{
-	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) attr = TERM_WHITE;
-
-	/* Clear line, position cursor */
-	Term_erase(col, row, 255);
-
-	/* Dump the attr/text */
-	Term_addstr(-1, attr, str);
-}
-
-
-/*
- * As above, but in "white"
- */
-void prt(cptr str, int col, int row)
-{
-	/* Spawn */
-	c_prt(TERM_WHITE, str, col, row);
-}
-
 
 
 /*
@@ -773,13 +744,13 @@ bool get_string(cptr prompt, char *buf, int len)
 	message_flush();
 
 	/* Display prompt */
-	prt(prompt, 0, 0);
+	prtf(0, 0, prompt);
 
 	/* Ask the user for a string */
 	res = askfor_aux(buf, len);
 
 	/* Clear prompt */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Result */
 	return (res);
@@ -805,11 +776,8 @@ bool get_check(cptr prompt)
 	/* Paranoia XXX XXX XXX */
 	message_flush();
 
-	/* Hack -- Build a "useful" prompt */
-	(void)strnfmt(buf, 78, "%.70s[y/n] ", prompt);
-
 	/* Prompt for it */
-	prt(buf, 0, 0);
+	prtf(0, 0, buf, 78, "%.70s[y/n] ", prompt);
 
 	/* Get an acceptable answer */
 	while (TRUE)
@@ -822,7 +790,7 @@ bool get_check(cptr prompt)
 	}
 
 	/* Erase the prompt */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Normal negation */
 	if ((i != 'Y') && (i != 'y')) return (FALSE);
@@ -845,13 +813,13 @@ bool get_com(cptr prompt, char *command)
 	message_flush();
 
 	/* Display a prompt */
-	prt(prompt, 0, 0);
+	prtf(0, 0, prompt);
 
 	/* Get a key */
 	*command = inkey();
 
 	/* Clear the prompt */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Handle "cancel" */
 	if (*command == ESCAPE) return (FALSE);
@@ -949,10 +917,10 @@ s16b get_quantity(cptr prompt, int max)
 void pause_line(int row)
 {
 	int i;
-	prt("", 0, row);
+	prtf(0, row, "");
 	put_fstr(23, row, "[Press any key to continue]");
 	i = inkey();
-	prt("", 0, row);
+	prtf(0, row, "");
 }
 
 

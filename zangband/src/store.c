@@ -952,7 +952,6 @@ static void display_entry(int pos)
 	s32b x;
 
 	char o_name[256];
-	char out_val[160];
 
 	byte a;
 	char c;
@@ -968,8 +967,7 @@ static void display_entry(int pos)
 	i = (pos % 12);
 
 	/* Label it, clear the line --(-- */
-	(void)sprintf(out_val, "%c) ", I2A(i));
-	prt(out_val, 0, i + 6);
+	prtf(0, i + 6, "%c) ", I2A(i));
 
 	/* Show_store_graph perm on. */
 	a = object_attr(o_ptr);
@@ -1059,7 +1057,7 @@ static void display_inventory(int store_top)
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < 13; i++) prt("", 0, i + 6);
+	for (i = k; i < 13; i++) prtf(0, i + 6, "");
 
 	/* Assume "no current page" */
 	put_fstr( 20, 5, "        ");
@@ -1068,10 +1066,10 @@ static void display_inventory(int store_top)
 	if (stocknum > 12)
 	{
 		/* Show "more" reminder (after the last item) */
-		prt("-more-", 3, k + 6);
+		prtf(3, k + 6, "-more-");
 
 		/* Indicate the "current page" */
-		put_fstr( 20, 5, "(Page %d)", store_top / 12 + 1);
+		put_fstr(20, 5, "(Page %d)", store_top / 12 + 1);
 	}
 }
 
@@ -1081,12 +1079,8 @@ static void display_inventory(int store_top)
  */
 static void store_prt_gold(void)
 {
-	char out_val[64];
-
-	prt("Gold Remaining: ", 53, 19);
-
-	sprintf(out_val, "%9ld", (long)p_ptr->au);
-	prt(out_val, 68, 19);
+	prtf(53, 19, "Gold Remaining: ");
+	prtf(68, 19, "%9ld", (long)p_ptr->au);
 }
 
 
@@ -1334,7 +1328,7 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 	}
 
 	/* Clear the prompt */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Cancel */
 	if (command == ESCAPE) return (FALSE);
@@ -2519,7 +2513,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	while (!leave_store)
 	{
 		/* Hack -- Clear line 1 */
-		prt("", 0, 1);
+		prtf(0, 1, "");
 
 		/* Hack -- Check the charisma */
 		tmp_chr = p_ptr->stat_use[A_CHR];
@@ -2599,33 +2593,33 @@ void do_cmd_store(const field_type *f1_ptr)
 
 
 		/* Basic commands */
-		prt(" ESC) Exit from Building.", 0, 22);
+		prtf(0, 22, " ESC) Exit from Building.");
 
 		/* Browse if necessary */
 		if (get_list_length(st_ptr->stock) > 12)
 		{
-			prt(" SPACE) Next page of stock", 0, 23);
+			prtf(0, 23, " SPACE) Next page of stock");
 		}
 
 		/* Home commands */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
-			prt(" g) Get an item.", 31, 22);
-			prt(" d) Drop an item.", 31, 23);
+			prtf(31, 22, " g) Get an item.");
+			prtf(31, 23, " d) Drop an item.");
 		}
 
 		/* Shop commands XXX XXX XXX */
 		else
 		{
-			prt(" p) Purchase an item.", 31, 22);
-			prt(" s) Sell an item.", 31, 23);
+			prtf(31, 22, " p) Purchase an item.");
+			prtf(31, 23, " s) Sell an item.");
 		}
 
 		/* Add in the eXamine option */
-		prt(" x) eXamine an item.", 56, 22);
+		prtf(56, 22, " x) eXamine an item.");
 
 		/* Prompt */
-		prt("You may: ", 0, 21);
+		prtf(0, 21, "You may: ");
 
 		/* Get a command */
 		request_command(TRUE);

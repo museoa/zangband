@@ -343,9 +343,9 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 
 
 		/* Wait for response */
-		prt("[Press ESC to quit, any other key to continue.]", 17, 23);
+		prtf(17, 23, "[Press ESC to quit, any other key to continue.]");
 		j = inkey();
-		prt("", 0, 23);
+		prtf(0, 23, "");
 
 		/* Hack -- notice Escape */
 		if (j == ESCAPE) break;
@@ -671,7 +671,7 @@ void show_highclass(void)
 	int i = 0, j, m = 0;
 	int pr, pc, clev /*, al */ ;
 	high_score the_score;
-	char buf[1024], out_val[256];
+	char buf[1024];
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
@@ -702,23 +702,21 @@ void show_highclass(void)
 		pc = atoi(the_score.p_c);
 		clev = atoi(the_score.cur_lev);
 
-		sprintf(out_val, "%3d) %s the %s (Level %2d)",
+		prtf(0, m + 7, "%3d) %s the %s (Level %2d)",
 				(m + 1), the_score.who, race_info[pr].title, clev);
-		prt(out_val, 0, m + 7);
 		m++;
 		j++;
 	}
 
-	sprintf(out_val, "You) %s the %s (Level %2d)",
+	prtf(0, m + 8, "You) %s the %s (Level %2d)",
 			player_name, race_info[p_ptr->prace].title, p_ptr->lev);
-	prt(out_val, 0, m + 8);
 
 	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
 	msg_print("Hit any key to continue");
 	message_flush();
 
-	for (j = 5; j < 18; j++) prt("", 0, j);
+	for (j = 5; j < 18; j++) prtf(0, j, "");
 }
 
 
@@ -731,13 +729,12 @@ void race_score(int race_num)
 	int i = 0, j, m = 0;
 	int pr, pc, clev, lastlev;
 	high_score the_score;
-	char buf[1024], out_val[256], tmp_str[80];
+	char buf[1024];
 
 	lastlev = 0;
 
 	/* rr9: TODO - pluralize the race */
-	sprintf(tmp_str, "The Greatest of all the %s", race_info[race_num].title);
-	prt(tmp_str, 15, 5);
+	prtf(15, 5, "The Greatest of all the %s", race_info[race_num].title);
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
@@ -771,9 +768,8 @@ void race_score(int race_num)
 
 		if (pr == race_num)
 		{
-			sprintf(out_val, "%3d) %s the %s (Level %3d)",
+			prtf(0, m + 7, "%3d) %s the %s (Level %3d)",
 					(m + 1), the_score.who, race_info[pr].title, clev);
-			prt(out_val, 0, m + 7);
 			m++;
 			lastlev = clev;
 		}
@@ -783,9 +779,8 @@ void race_score(int race_num)
 	/* add player if qualified */
 	if ((p_ptr->prace == race_num) && (p_ptr->lev >= lastlev))
 	{
-		sprintf(out_val, "You) %s the %s (Level %3d)",
+		prtf(0, m + 8, "You) %s the %s (Level %3d)",
 				player_name, race_info[p_ptr->prace].title, p_ptr->lev);
-		prt(out_val, 0, m + 8);
 	}
 
 	(void)fd_close(highscore_fd);
@@ -807,7 +802,7 @@ void race_legends(void)
 		msg_print("Hit any key to continue");
 		message_flush();
 		for (j = 5; j < 19; j++)
-			prt("", 0, j);
+			prtf(0, j, "");
 	}
 }
 

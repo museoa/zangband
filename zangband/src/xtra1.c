@@ -557,7 +557,7 @@ static void prt_depth(void)
 	}
 
 	/* Right-Adjust the "depth", and clear old values */
-	prt(format("%17s", depths), COL_DEPTH, Term->hgt - 1);
+	prtf(COL_DEPTH, Term->hgt - 1, "%17s", depths);
 }
 
 

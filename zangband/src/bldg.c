@@ -266,18 +266,13 @@ static void clear_bldg(int min_row, int max_row)
 	int i;
 
 	for (i = min_row; i <= max_row; i++)
-		prt("", 0, i);
+		Term_erase(0, i, 255);
 }
 
 
 static void building_prt_gold(void)
 {
-	char tmp_str[80];
-
-	prt("Gold Remaining: ", 40, 23);
-
-	sprintf(tmp_str, "%9ld", (long)p_ptr->au);
-	prt(tmp_str, 55, 23);
+	prtf(40, 23, "Gold Remaining: %9ld", (long)p_ptr->au);
 }
 
 /* Does the player have enough gold for this action? */
@@ -306,8 +301,6 @@ bool test_gold(s32b *cost)
  */
 static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 {
-	char tmp_str[80];
-
 	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 
 	int factor;
@@ -325,16 +318,15 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 	factor = ((factor + 100) * bo_ptr->inflate) / 400;
 
 	Term_clear();
-	sprintf(tmp_str, "%s (%s) %s", owner_name, race_name, build_name);
-	prt(tmp_str, 1, 2);
-	prt("You may:", 0, 19);
+	prtf(1, 2, "%s (%s) %s", owner_name, race_name, build_name);
+	prtf(0, 19, "You may:");
 
 
 	/* Display building-specific information */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
 			   FIELD_ACT_STORE_ACT1, (vptr)&factor);
 
-	prt(" ESC) Exit building", 0, 23);
+	prtf(0, 23, " ESC) Exit building");
 
 	/* Show your gold */
 	building_prt_gold();
@@ -359,7 +351,7 @@ static void display_fruit(int col, int row, int fruit)
 			put_fstr(col, row + 5, CLR_YELLOW "#     # ");
 			put_fstr(col, row + 6, CLR_YELLOW "#    #  ");
 			put_fstr(col, row + 7, CLR_YELLOW ".####   ");
-			prt(" Lemon  ", col, row + 8);
+			put_fstr(col, row + 8, " Lemon  ");
 			break;
 		}
 		case 1:
@@ -373,7 +365,7 @@ static void display_fruit(int col, int row, int fruit)
 			put_fstr(col, row + 5, CLR_ORANGE " #....# ");
 			put_fstr(col, row + 6, CLR_ORANGE "  #..#  ");
 			put_fstr(col, row + 7, CLR_ORANGE "   ##   ");
-			prt(" Orange ", col, row + 8);
+			put_fstr(col, row + 8, " Orange ");
 			break;
 		}
 		case 2:
@@ -387,7 +379,7 @@ static void display_fruit(int col, int row, int fruit)
 			put_fstr(col, row + 5, CLR_SLATE "   ##   ");
 			put_fstr(col, row + 6, CLR_UMBER " ###### ");
 			put_fstr(col, row + 7, CLR_UMBER "   ##   ");
-			prt(" Sword  ", col, row + 8);
+			put_fstr(col, row + 8, " Sword  ");
 			break;
 		}
 		case 3:
@@ -401,7 +393,7 @@ static void display_fruit(int col, int row, int fruit)
 			put_fstr(col, row + 5, CLR_SLATE " #    # ");
 			put_fstr(col, row + 6, CLR_SLATE "  #  #  ");
 			put_fstr(col, row + 7, CLR_SLATE "   ##   ");
-			prt(" Shield ", col, row + 8);
+			put_fstr(col, row + 8, " Shield ");
 			break;
 		}
 		case 4:
@@ -415,7 +407,7 @@ static void display_fruit(int col, int row, int fruit)
 			put_fstr(col, row + 5, CLR_VIOLET " ###### ");
 			put_fstr(col, row + 6, CLR_VIOLET "  ####  ");
 			put_fstr(col, row + 7, CLR_VIOLET "   ##   ");
-			prt("  Plum  ", col, row + 8);
+			put_fstr(col, row + 8, "  Plum  ");
 			break;
 		}
 		case 5:
@@ -429,7 +421,7 @@ static void display_fruit(int col, int row, int fruit)
 			put_fstr(col, row + 5, CLR_RED "#..##..#");
 			put_fstr(col, row + 6, CLR_RED "#..##..#");
 			put_fstr(col, row + 7, CLR_RED " ##  ## ");
-			prt(" Cherry ", col, row + 8);
+			put_fstr(col, row + 8, " Cherry ");
 			break;
 		}
 	}
@@ -519,11 +511,8 @@ static s32b gamble_init(void)
 
 	message_flush();
 
-	sprintf(tmp_str, "Gold before game: %9ld", p_ptr->au);
-	prt(tmp_str, 2, 20);
-
-	sprintf(tmp_str, "Current Wager:    %9ld", wager);
-	prt(tmp_str, 2, 21);
+	prtf(2, 20, "Gold before game: %9ld", p_ptr->au);
+	prtf(2, 21,"Current Wager:    %9ld", wager);
 
 	/* Prevent savefile-scumming of the casino */
 	Rand_quick = TRUE;
@@ -536,26 +525,23 @@ static s32b gamble_init(void)
 
 static bool gamble_again(bool win, int odds, s32b wager)
 {
-	char tmp_str[80];
 	char again;
 
 	if (win)
 	{
-		prt("YOU WON", 37, 16);
+		prtf(37, 16, "YOU WON");
 		p_ptr->au += odds * wager;
-		sprintf(tmp_str, "Payoff: %ld", odds * wager);
-		prt(tmp_str, 37, 17);
+		prtf(37, 17, "Payoff: %ld", odds * wager);
 	}
 	else
 	{
-		prt("You Lost", 37, 16);
+		prtf(37, 16, "You Lost");
 		p_ptr->au -= wager;
-		prt("", 37, 17);
+		prtf(37, 17, "");
 	}
 
-	sprintf(tmp_str, "Current Gold:     %9ld", p_ptr->au);
-	prt(tmp_str, 2, 22);
-	prt("Again(Y/N)?", 37, 18);
+	prtf(2, 22, "Current Gold:     %9ld", p_ptr->au);
+	prtf(37, 18, "Again(Y/N)?");
 	Term_gotoxy(49, 18);
 	again = inkey();
 
@@ -583,7 +569,7 @@ static void gamble_done(void)
 	/* Switch back to complex RNG */
 	Rand_quick = FALSE;
 
-	prt("", 37, 18);
+	prtf(37, 18, "");
 	if (p_ptr->au >= gamble_oldgold)
 		msg_print("You came out a winner! We'll win next time, I'm sure.");
 	else
@@ -642,7 +628,6 @@ void gamble_in_between(void)
 void gamble_craps(void)
 {
 	s32b wager = gamble_init();
-	char tmp_str[80];
 
 	int roll1, roll2, roll3, choice;
 
@@ -679,9 +664,8 @@ void gamble_craps(void)
 				roll2 = randint1(6);
 				roll3 = roll1 + roll2;
 
-				sprintf(tmp_str, "Roll result: %d %d   Total:     %d",
+				prtf(5, 8, "Roll result: %d %d   Total:     %d",
 						roll1, roll2, roll3);
-				prt(tmp_str, 5, 8);
 
 				if (roll3 == choice)
 					win = TRUE;
@@ -703,7 +687,6 @@ void gamble_craps(void)
 void gamble_spin_wheel(void)
 {
 	s32b wager = gamble_init();
-	char tmp_str[80];
 
 	int roll1, choice;
 
@@ -717,18 +700,17 @@ void gamble_spin_wheel(void)
 		win = FALSE;
 
 		put_fstr(2, 5, CLR_GREEN "Wheel");
-		prt("1  2  3  4  5  6  7  8  9 10", 5, 7);
-		prt("--------------------------------", 3, 8);
+		prtf(5, 7, "1  2  3  4  5  6  7  8  9 10");
+		prtf(3, 8, "--------------------------------");
 
 		choice = get_quantity("Pick a number (1-10): ", 10);
 
 		message_flush();
 		roll1 = randint1(10);
-		sprintf(tmp_str, "The wheel spins to a stop and the winner is %d",
+		prtf(3, 13, "The wheel spins to a stop and the winner is %d",
 				roll1);
-		prt(tmp_str, 3, 13);
-		prt("", 0, 9);
-		prt("*", (3 * roll1 + 2), 9);
+		prtf(0, 9, "");
+		prtf((3 * roll1 + 2), 9, "*");
 
 		if (roll1 == choice) win = TRUE;
 
@@ -769,9 +751,10 @@ void gamble_dice_slots(void)
 		/* Show the result */
 		sprintf(tmp_str, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
 				fruit[choice - 1]);
-		prt(tmp_str, 37, 15);
-		prt("/--------------------------\\", 2, 7);
-		prt("\\--------------------------/", 2, 17);
+		prtf(37, 15, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
+				fruit[choice - 1]);
+		prtf(2, 7, "/--------------------------\\");
+		prtf(2, 17, "\\--------------------------/");
 
 		display_fruit(3, 8, roll1 - 1);
 		display_fruit(12, 8, roll2 - 1);
@@ -1224,12 +1207,10 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 
 	clear_bldg(5, 18);
 	if (to_dam)
-		prt(format("  Based on your skill, we can improve up to +%d,+%d%%.", maxenchant, maxenchant_d * 3),
-		0, 5);
+		prtf(0, 5, "  Based on your skill, we can improve up to +%d,+%d%%.", maxenchant, maxenchant_d * 3);
 	else
-		prt(format("  Based on your skill, we can improve up to +%d.", maxenchant),
-		0, 5);
-	prt(format("  The price for the service is %d gold per item.", cost), 0, 7);
+		prtf(0, 5, "  Based on your skill, we can improve up to +%d.", maxenchant);
+	prtf(0, 7, "  The price for the service is %d gold per item.", cost);
 
 	/* Get an item */
 	q = "Improve which item? ";
@@ -1324,7 +1305,7 @@ void building_recharge(s32b cost)
 
 	/* Display some info */
 	clear_bldg(5, 18);
-	prt("  The prices of recharge depend on the type.", 0, 6);
+	prtf(0, 6, "  The prices of recharge depend on the type.");
 
 	/* Only accept legal items */
 	item_tester_hook = item_tester_hook_recharge;
@@ -1599,14 +1580,14 @@ bool building_magetower(int factor, bool display)
 
 			/* Label it, clear the line --(-- */
 			(void)sprintf(out_val, "%c) ", I2A(i));
-			prt(out_val, col, row);
+			prtf(col, row, "%c) ", I2A(i));
 
 			/* Print place name */
-			prt(place[link_p[i]].name, col + 3, row);
+			prtf(col + 3, row, place[link_p[i]].name);
 
 			/* Print cost */
 			(void)sprintf(out_val, "%ld au", (long)cost[i]);
-			prt(out_val, col + 30, row);
+			prtf(col + 30, row, "%ld au", (long)cost[i]);
 		}
 	}
 	else
@@ -2092,13 +2073,13 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Interact with player */
 	while (!leave_build)
 	{
-		prt("", 0, 1);
+		prtf(0, 1, "");
 
 		/* Clear */
 		clear_from(21);
 
 		/* Basic commands */
-		prt(" ESC) Exit building", 0, 23);
+		prtf(0, 23, " ESC) Exit building");
 
 		/* Show your gold */
 		building_prt_gold();

@@ -1423,28 +1423,28 @@ bool identify_fully_aux(const object_type *o_ptr)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < hgt; k++) prt("", 13, k);
+	for (k = 1; k < hgt; k++) prtf(13, k, "");
 
 	/* Label the information */
-	prt("     Item Attributes:", 15, 1);
+	prtf(15, 1, "     Item Attributes:");
 
 	/* We will print on top of the map (column 13) */
 	for (k = 2, j = 0; j < i; j++)
 	{
 		/* Show the info */
-		prt(info[j], 15, k++);
+		prtf(15, k++, info[j]);
 
 		/* Every hgt-2 entries (lines 2 to hgt-3), start over */
 		if ((k == hgt - 2) && (j + 1 < i))
 		{
-			prt("-- more --", 15, k);
+			prtf(15, k, "-- more --");
 			(void)inkey();
-			for (; k > 2; k--) prt("", 15, k);
+			for (; k > 2; k--) prtf(15, k, "");
 		}
 	}
 
 	/* Wait for it */
-	prt("[Press any key to continue]", 15, k);
+	prtf(15, k, "[Press any key to continue]");
 	(void)inkey();
 
 	/* Restore the screen */
@@ -2510,7 +2510,7 @@ void show_list(s16b o_list_ptr)
 		o_ptr = out_object[j];
 
 		/* Clear the line */
-		prt("", col ? col - 2 : col, j + 1);
+		prtf(col ? col - 2 : col, j + 1, "");
 
 		/* Clear the line with the (possibly indented) index */
 		put_fstr(col, j + 1, "%c)", I2A(out_index[j]));
@@ -2545,7 +2545,7 @@ void show_list(s16b o_list_ptr)
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < hgt - 2)) prt("", col ? col - 2 : col, j + 1);
+	if (j && (j < hgt - 2)) prtf(col ? col - 2 : col, j + 1, "");
 }
 
 
@@ -2658,7 +2658,7 @@ void show_equip(void)
 		o_ptr = &p_ptr->equipment[i];
 
 		/* Clear the line */
-		prt("", col ? col - 2 : col, j + 1);
+		prtf(col ? col - 2 : col, j + 1, "");
 
 		/* Clear the line with the (possibly indented) index */
 		put_fstr(col, j + 1,"%c)", I2A(i));
@@ -2713,7 +2713,7 @@ void show_equip(void)
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < hgt - 2)) prt("", col ? col - 2 : col, j + 1);
+	if (j && (j < hgt - 2)) prtf(col ? col - 2 : col, j + 1, "");
 }
 
 
@@ -3106,7 +3106,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 	strcat(out_val, " ESC");
 
 	/* Show the prompt */
-	prt(format("(%s) %s", out_val, pmt), 0, 0);
+	prtf(0, 0, "(%s) %s", out_val, pmt);
 }
 
 /*
@@ -3739,7 +3739,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	window_stuff();
 
 	/* Clear the prompt line */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Save this object */
 	save_object_choice(o_ptr, command_wrk);

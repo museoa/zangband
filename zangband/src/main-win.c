@@ -4907,7 +4907,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	check_for_save_file(lpCmdLine);
 
 	/* Prompt the user */
-	prt("[Choose 'New' or 'Open' from the 'File' menu]", 17, 23);
+	prtf(17, 23, "[Choose 'New' or 'Open' from the 'File' menu]");
 	Term_fresh();
 
 	/* Process messages forever */

@@ -2592,7 +2592,7 @@ static void process_command(void)
 					msg_print(error_m);
 			}
 			else
-				prt("Type '?' for help.", 0, 0);
+				prtf(0, 0, "Type '?' for help.");
 			break;
 		}
 	}
@@ -2778,7 +2778,7 @@ static void process_player(void)
 			msg_flag = FALSE;
 
 			/* Clear the top line */
-			prt("", 0, 0);
+			prtf(0, 0, "");
 
 			/* Process the command */
 			process_command();
@@ -3451,7 +3451,7 @@ void play_game(bool new_game)
 	}
 
 	/* Flash a message */
-	prt("Please wait...", 0, 0);
+	prtf(0, 0, "Please wait...");
 
 	/* Flush the message */
 	Term_fresh();

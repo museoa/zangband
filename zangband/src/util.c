@@ -2766,7 +2766,7 @@ void request_command(int shopping)
 		}
 
 		/* Clear top line */
-		prt("", 0, 0);
+		prtf(0, 0, "");
 
 
 		/* Command Count */
@@ -2778,7 +2778,7 @@ void request_command(int shopping)
 			p_ptr->command_arg = 0;
 
 			/* Begin the input */
-			prt("Count: ", 0, 0);
+			prtf(0, 0, "Count: ");
 
 			/* Get a command count */
 			while (1)
@@ -2793,7 +2793,7 @@ void request_command(int shopping)
 					p_ptr->command_arg = p_ptr->command_arg / 10;
 
 					/* Show current count */
-					prt(format("Count: %d", p_ptr->command_arg), 0, 0);
+					prtf(0, 0, "Count: %d", p_ptr->command_arg);
 				}
 
 				/* Actual numeric data */
@@ -2817,7 +2817,7 @@ void request_command(int shopping)
 					}
 
 					/* Show current count */
-					prt(format("Count: %d", p_ptr->command_arg), 0, 0);
+					prtf(0, 0, "Count: %d", p_ptr->command_arg);
 				}
 
 				/* Exit on "unusable" input */
@@ -2834,7 +2834,7 @@ void request_command(int shopping)
 				p_ptr->command_arg = 99;
 
 				/* Show current count */
-				prt(format("Count: %d", p_ptr->command_arg), 0, 0);
+				prtf(0, 0, "Count: %d", p_ptr->command_arg);
 			}
 
 			/* Hack -- Handle "old_arg" */
@@ -2844,7 +2844,7 @@ void request_command(int shopping)
 				p_ptr->command_arg = old_arg;
 
 				/* Show current count */
-				prt(format("Count: %d", p_ptr->command_arg), 0, 0);
+				prtf(0, 0, "Count: %d", p_ptr->command_arg);
 			}
 
 			/* Hack -- white-space means "enter command now" */
@@ -2981,67 +2981,8 @@ void request_command(int shopping)
 
 
 	/* Hack -- erase the message line. */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 }
-
-
-
-#if 0
-
-/*
- * Replace the first instance of "target" in "buf" with "insert"
- * If "insert" is NULL, just remove the first instance of "target"
- * In either case, return TRUE if "target" is found.
- *
- * XXX Could be made more efficient, especially in the
- * case where "insert" is smaller than "target".
- */
-static bool insert_str(char *buf, cptr target, cptr insert)
-{
-	int i, len;
-	int b_len, t_len, i_len;
-
-	/* Attempt to find the target (modify "buf") */
-	buf = strstr(buf, target);
-
-	/* No target found */
-	if (!buf) return (FALSE);
-
-	/* Be sure we have an insertion string */
-	if (!insert) insert = "";
-
-	/* Extract some lengths */
-	t_len = strlen(target);
-	i_len = strlen(insert);
-	b_len = strlen(buf);
-
-	/* How much "movement" do we need? */
-	len = i_len - t_len;
-
-	/* We need less space (for insert) */
-	if (len < 0)
-	{
-		for (i = t_len; i < b_len; ++i) buf[i + len] = buf[i];
-	}
-
-	/* We need more space (for insert) */
-	else if (len > 0)
-	{
-		for (i = b_len - 1; i >= t_len; --i) buf[i + len] = buf[i];
-	}
-
-	/* If movement occured, we need a new terminator */
-	if (len) buf[b_len + len] = '\0';
-
-	/* Now copy the insertion string */
-	for (i = 0; i < i_len; ++i) buf[i] = insert[i];
-
-	/* Successful operation */
-	return (TRUE);
-}
-
-
-#endif
 
 
 #define REPEAT_MAX		20

@@ -3880,7 +3880,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		msg_print("Warning! print_spells called with null realm");
 
 	/* Title the list */
-	prt("", x, y);
+	prtf(x, y, "");
 	put_fstr(x + 5, y, "Name");
 	put_fstr(x + 35, y, "Lv Mana Fail Info");
 
@@ -3944,7 +3944,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 	}
 
 	/* Clear the bottom line */
-	prt("", x, y + i + 1);
+	prtf(x, y + i + 1, "");
 }
 
 

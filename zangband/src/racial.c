@@ -738,9 +738,9 @@ void do_cmd_racial_power(void)
 
 	/* Print header(s) */
 	if (num < 17)
-		prt("                            Lv Cost Fail", x, y++);
+		prtf(x, y++, "                            Lv Cost Fail");
 	else
-		prt("                            Lv Cost Fail                            Lv Cost Fail", x, y++);
+		prtf(x, y++, "                            Lv Cost Fail                            Lv Cost Fail");
 
 	/* Print list */
 	while (ctr < num)
@@ -753,12 +753,11 @@ void do_cmd_racial_power(void)
 		x1 = ((ctr < 17) ? x : x + 40);
 		y1 = ((ctr < 17) ? y + ctr : y + ctr - 17);
 
-		sprintf(dummy, " %c) %-23.23s %2d %4d %3d%%",
+		prtf(x1, y1, " %c) %-23.23s %2d %4d %3d%%",
 				letter,
 				power_desc[ctr].name,
 				power_desc[ctr].level,
 				power_desc[ctr].cost, power_desc[ctr].fail);
-		prt(dummy, x1, y1);
 		ctr++;
 	}
 

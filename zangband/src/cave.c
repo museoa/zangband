@@ -3006,7 +3006,7 @@ void do_cmd_view_map(void)
 	screen_save();
 
 	/* Note */
-	prt("Please wait...", 0, 0);
+	prtf(0, 0, "Please wait...");
 
 	/* Flush */
 	Term_fresh();

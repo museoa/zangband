@@ -1960,8 +1960,6 @@ static bool player_birth_aux_2(void)
 
 	char ch;
 
-	char buf[80];
-
 	int mode = DISPLAY_PLAYER_STANDARD;
 
 
@@ -2054,10 +2052,8 @@ static bool player_birth_aux_2(void)
 
 
 		/* Prompt XXX XXX XXX */
-		sprintf(buf,
-				"Total Cost %2d/48.  Use 2/8 to move, 4/6 to modify, Enter to accept.",
+		prtf(0, 0, "Total Cost %2d/48.  Use 2/8 to move, 4/6 to modify, Enter to accept.",
 				cost);
-		prt(buf, 0, 0);
 
 		/* Place cursor just after cost of current stat */
 		Term_gotoxy(col + 36, row + stat - 1);
@@ -2509,8 +2505,8 @@ static bool player_birth_aux(void)
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for it */
-	prt("['Ctrl-X' to suicide, 'Del' to start over, or Enter to continue]", 10,
-		23);
+	prtf(10, 23,
+		"['Ctrl-X' to suicide, 'Del' to start over, or Enter to continue]");
 
 	/* Get a key */
 	ch = inkey();

@@ -777,51 +777,35 @@ static errr Term_user_dos(int n)
 		Term_clear();
 
 		/* Print date and time of compilation */
-		prt(format("Compiled: %s %s\n", __TIME__, __DATE__), 45, 1);
+		prtf(45, 1, "Compiled: %s %s\n", __TIME__, __DATE__);
 
 		/* Why are we here */
-		prt("DOS options", 0, 2);
+		prtf(0, 2, "DOS options");
 
 		/* Give some choices */
 #ifdef USE_SOUND
-		prt("(V) Sound Volume", 5, 4);
-		prt("(M) Music Volume", 5, 5);
+		prtf(5, 4, "(V) Sound Volume");
+		prtf(5, 5, "(M) Music Volume");
 #endif /* USE_SOUND */
 
 #ifdef USE_GRAPHICS
 
-		if (arg_graphics)
-		{
-			strcpy(status, "On");
-		}
-		else
-		{
-			strcpy(status, "Off");
-		}
-		prt(format("(G) Graphics : %s", status), 5, 7);
+		prtf(5, 7, "(G) Graphics : %s", arg_graphics ? "On" : "Off");
 
 #endif /* USE_GRAPHICS */
 
 #ifdef USE_SOUND
 
-		if (arg_sound)
-		{
-			strcpy(status, "On");
-		}
-		else
-		{
-			strcpy(status, "Off");
-		}
-		prt(format("(S) Sound/Music : %s", status), 5, 8);
+		prtf(5, 8, "(S) Sound/Music : %s", arg_sound ? "On" : "Off");
 
 #endif /* USE_SOUND */
 
-		prt("(R) Screen resolution", 5, 12);
+		prtf(5, 12, "(R) Screen resolution");
 
-		prt("(W) Save current options", 5, 14);
+		prtf(5, 14, "(W) Save current options");
 
 		/* Prompt */
-		prt("Command: ", 0, 18);
+		prtf(0, 18, "Command: ");
 
 		/* Get command */
 		k = inkey();
@@ -838,13 +822,13 @@ static errr Term_user_dos(int n)
 			case 'v':
 			{
 				/* Prompt */
-				prt("Command: Sound Volume", 0, 18);
+				prtf(0, 18, "Command: Sound Volume");
 
 				/* Get a new value */
 				while (1)
 				{
-					prt(format("Current Volume: %d", digi_volume), 0, 22);
-					prt("Change Volume (+, - or ESC to accept): ", 0, 20);
+					prtf(0, 22, "Current Volume: %d", digi_volume);
+					prtf(0, 20, "Change Volume (+, - or ESC to accept): ");
 					k = inkey();
 					if (k == ESCAPE) break;
 					switch (k)
@@ -877,13 +861,13 @@ static errr Term_user_dos(int n)
 			case 'm':
 			{
 				/* Prompt */
-				prt("Command: Music Volume", 0, 18);
+				prtf(0, 18, "Command: Music Volume");
 
 				/* Get a new value */
 				while (1)
 				{
-					prt(format("Current Volume: %d", midi_volume), 0, 22);
-					prt("Change Volume (+, - or ESC to accept): ", 0, 20);
+					prtf(0, 22, "Current Volume: %d", midi_volume);
+					prtf(0, 20, "Change Volume (+, - or ESC to accept): ");
 					k = inkey();
 					if (k == ESCAPE) break;
 					switch (k)
@@ -964,8 +948,8 @@ static errr Term_user_dos(int n)
 				Term_clear();
 
 				/* Prompt */
-				prt("Command: Screen Resolution", 0, 1);
-				prt(format("Restart %s to get the new screenmode.", VERSION_NAME), 0, 3);
+				prtf(0, 1, "Command: Screen Resolution");
+				prtf(0, 3, "Restart %s to get the new screenmode.", VERSION_NAME);
 
 				/* Get a list of the available presets */
 				while (1)
@@ -981,14 +965,14 @@ static errr Term_user_dos(int n)
 					descr = get_config_string(section, "Description", "");
 
 					/* Print it */
-					prt(format("(%d) %d x %d   %s", i, w, h, descr),0,  4 + i);
+					prtf(0, 4 + i, "(%d) %d x %d   %s", i, w, h, descr);
 
 					/* Next */
 					i++;
 				}
 
 				/* Get a new resolution */
-				prt(format("Screen Resolution : %d", resolution), 0, 20);
+				prtf(0, 20, "Screen Resolution : %d", resolution);
 				k = inkey();
 				if (k == ESCAPE) break;
 				if (isdigit(k)) resolution = D2I(k);
@@ -1008,7 +992,7 @@ static errr Term_user_dos(int n)
 			case 'W':
 			case 'w':
 			{
-				prt("Saving current options", 0, 18);
+				prtf(0, 18, "Saving current options");
 
 #ifdef USE_SOUND
 				set_config_int("sound", "digi_volume", digi_volume);

@@ -270,7 +270,7 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	(void)C_WIPE(display, 20, u32b);
 
 	message_flush();
-	prt("Calculating probability distribution - please wait.", 0, 0);
+	prtf(0, 0, "Calculating probability distribution - please wait.");
 
 	/* Refresh */
 	Term_fresh();
@@ -360,7 +360,7 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	}
 
 	/* Make it look nice */
-	prt(r, col, row);
+	prtf(col, row, r);
 
 	Term_putch(col, row + 2, TERM_WHITE, '6');
 
@@ -370,7 +370,7 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	Term_putch(col, row + 11, TERM_WHITE, 'O');
 	Term_putch(col, row + 12, TERM_WHITE, 'C');
 
-	prt("+", col, row + 21);
+	prtf(col, row + 21, "+");
 }
 
 #endif /* USE_64B */
@@ -618,55 +618,55 @@ static void wiz_display_item(const object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Clear the screen */
-	for (i = 1; i <= 23; i++) prt("", j - 2, i);
+	for (i = 1; i <= 23; i++) prtf(j - 2, i, "");
 
 	/* Describe fully */
 	object_desc_store(buf, o_ptr, TRUE, 3, 256);
 
-	prt(buf, j, 2);
+	prtf(j, 2, buf);
 
-	prt(format("kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
+	prtf(j, 4, "kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
 			   o_ptr->k_idx, get_object_level(o_ptr),
-			   o_ptr->tval, o_ptr->sval), j, 4);
+			   o_ptr->tval, o_ptr->sval);
 
-	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
+	prtf(j, 5, "number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
 			   o_ptr->number, o_ptr->weight,
-			   o_ptr->ac, o_ptr->dd, o_ptr->ds), j, 5);
+			   o_ptr->ac, o_ptr->dd, o_ptr->ds);
 
-	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
-			   o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d), j, 6);
+	prtf(j, 6, "pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
+			   o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
 
-	prt(format("activate = %-4d  cost = %ld",
-			   o_ptr->activate, (long)object_value(o_ptr)), j, 7);
+	prtf(j, 7, "activate = %-4d  cost = %ld",
+			   o_ptr->activate, (long)object_value(o_ptr));
 
-	prt(format("info = %04x  timeout = %-d",
-			   o_ptr->info, o_ptr->timeout), j, 8);
+	prtf(j, 8, "info = %04x  timeout = %-d",
+			   o_ptr->info, o_ptr->timeout);
 
-	prt("+------------FLAGS1------------+", j, 10);
-	prt("AFFECT........SLAY........BRAND.", j, 11);
-	prt("              cvae      xsqpaefc", j, 12);
-	prt("siwdcc  ssidsahanvudotgddhuoclio", j, 13);
-	prt("tnieoh  trnipttmiinmrrnrrraiierl", j, 14);
-	prt("rtsxna..lcfgdkcpmldncltggpksdced", j, 15);
+	prtf(j, 10, "+------------FLAGS1------------+");
+	prtf(j, 11, "AFFECT........SLAY........BRAND.");
+	prtf(j, 12, "              cvae      xsqpaefc");
+	prtf(j, 13, "siwdcc  ssidsahanvudotgddhuoclio");
+	prtf(j, 14, "tnieoh  trnipttmiinmrrnrrraiierl");
+	prtf(j, 15, "rtsxna..lcfgdkcpmldncltggpksdced");
 	prt_binary(f1, j, 16);
 
-	prt("+------------FLAGS2------------+", j, 17);
-	prt("SUST...IMMUN..RESIST............", j, 18);
-	prt("        aefctrpsaefcpfldbc sn   ", j, 19);
-	prt("siwdcc  clioheatcliooeialoshtncd", j, 20);
-	prt("tnieoh  ierlrfraierliatrnnnrhehi", j, 21);
-	prt("rtsxna..dcedwlatdcedsrekdfddrxss", j, 22);
+	prtf(j, 17, "+------------FLAGS2------------+");
+	prtf(j, 18, "SUST...IMMUN..RESIST............");
+	prtf(j, 19, "        aefctrpsaefcpfldbc sn   ");
+	prtf(j, 20, "siwdcc  clioheatcliooeialoshtncd");
+	prtf(j, 21, "tnieoh  ierlrfraierliatrnnnrhehi");
+	prtf(j, 22, "rtsxna..dcedwlatdcedsrekdfddrxss");
 	prt_binary(f2, j, 23);
 
-	prt("+------------FLAGS3------------+", j + 32, 10);
-	prt("fe      ehsi  st    iiiiadta  hp", j + 32, 11);
-	prt("il   n taihnf ee    ggggcregb vr", j + 32, 12);
-	prt("re  no ysdose eld   nnnntalrl ym", j + 32, 13);
-	prt("ec  om cyewta ieirmsrrrriieaeccc", j + 32, 14);
-	prt("aa  ta uktmatlnpgeihaefcvnpvsuuu", j + 32, 15);
-	prt("uu  eg rnyoahivaeggoclioaeoasrrr", j + 32, 16);
-	prt("rr  li sopdretitsehtierltxrtesss", j + 32, 17);
-	prt("aa  ec ewestreshtntsdcedeptedeee", j + 32, 18);
+	prtf(j + 32, 10, "+------------FLAGS3------------+");
+	prtf(j + 32, 11, "fe      ehsi  st    iiiiadta  hp");
+	prtf(j + 32, 12, "il   n taihnf ee    ggggcregb vr");
+	prtf(j + 32, 13, "re  no ysdose eld   nnnntalrl ym");
+	prtf(j + 32, 14, "ec  om cyewta ieirmsrrrriieaeccc");
+	prtf(j + 32, 15, "aa  ta uktmatlnpgeihaefcvnpvsuuu");
+	prtf(j + 32, 16, "uu  eg rnyoahivaeggoclioaeoasrrr");
+	prtf(j + 32, 17, "rr  li sopdretitsehtierltxrtesss");
+	prtf(j + 32, 18, "aa  ec ewestreshtntsdcedeptedeee");
 	prt_binary(f3, j + 32, 19);
 }
 
@@ -787,7 +787,7 @@ static int wiz_create_itemtype(void)
 		row = 2 + (num % 20);
 		col = 30 * (num / 20);
 		ch = listsym[num];
-		prt(format("[%c] %s", ch, tvals[num].desc), col, row);
+		prtf(col, row, "[%c] %s", ch, tvals[num].desc);
 	}
 
 	/* We need to know the maximal possible tval_index */
@@ -832,7 +832,7 @@ static int wiz_create_itemtype(void)
 			strip_name(buf, i);
 
 			/* Print it */
-			prt(format("[%c] %s", ch, buf), col, row);
+			prtf(col, row, "[%c] %s", ch, buf);
 
 			/* Remember the object index */
 			choice[num++] = i;

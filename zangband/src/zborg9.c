@@ -2345,54 +2345,53 @@ static void borg_display_item(list_item *l_ptr)
 	int i, j = 13;
 
 	/* Clear the screen */
-	for (i = 1; i <= 23; i++) prt("", j - 2, i);
+	for (i = 1; i <= 23; i++) prtf(j - 2, i, "");
 
 	/* Describe fully */
-	if (l_ptr->o_name) prt(l_ptr->o_name, j, 2);
+	if (l_ptr->o_name) prtf(j, 2, l_ptr->o_name);
 
-	prt(format("k_idx = %-5d    tval = %-5d ",
-			   l_ptr->k_idx, l_ptr->tval), j, 4);
+	prtf(j, 4, "k_idx = %-5d    tval = %-5d ",
+			   l_ptr->k_idx, l_ptr->tval);
 
-	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
-			   l_ptr->number, l_ptr->weight, l_ptr->ac, l_ptr->dd, l_ptr->ds),
-		j, 5);
+	prtf(j, 5, "number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
+			   l_ptr->number, l_ptr->weight, l_ptr->ac, l_ptr->dd, l_ptr->ds);
 
-	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
-			   l_ptr->pval, l_ptr->to_a, l_ptr->to_h, l_ptr->to_d), j, 6);
+	prtf(j, 6, "pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
+			   l_ptr->pval, l_ptr->to_a, l_ptr->to_h, l_ptr->to_d);
 
 	if (l_ptr->xtra_name)
 	{
-		prt(format("xtra_name = %s", l_ptr->xtra_name), j, 7);
+		prtf(j, 7, "xtra_name = %s", l_ptr->xtra_name);
 	}
 
-	prt(format("info = %d  timeout = %-d", l_ptr->info, l_ptr->timeout), j, 8);
+	prtf(j, 8, "info = %d  timeout = %-d", l_ptr->info, l_ptr->timeout);
 
 
-	prt("+------------FLAGS1------------+", j, 10);
-	prt("AFFECT........SLAY........BRAND.", j, 11);
-	prt("              cvae      xsqpaefc", j, 12);
-	prt("siwdcc  ssidsahanvudotgddhuoclio", j, 13);
-	prt("tnieoh  trnipttmiinmrrnrrraiierl", j, 14);
-	prt("rtsxna..lcfgdkcpmldncltggpksdced", j, 15);
+	prtf(j, 10, "+------------FLAGS1------------+");
+	prtf(j, 11, "AFFECT........SLAY........BRAND.");
+	prtf(j, 12, "              cvae      xsqpaefc");
+	prtf(j, 13, "siwdcc  ssidsahanvudotgddhuoclio");
+	prtf(j, 14, "tnieoh  trnipttmiinmrrnrrraiierl");
+	prtf(j, 15, "rtsxna..lcfgdkcpmldncltggpksdced");
 	borg_prt_binary(l_ptr->kn_flags1, j, 16);
 
-	prt("+------------FLAGS2------------+", j, 17);
-	prt("SUST...IMMUN..RESIST............", j, 18);
-	prt("        aefctrpsaefcpfldbc sn   ", j, 19);
-	prt("siwdcc  clioheatcliooeialoshtncd", j, 20);
-	prt("tnieoh  ierlrfraierliatrnnnrhehi", j, 21);
-	prt("rtsxna..dcedwlatdcedsrekdfddrxss", j, 22);
+	prtf(j, 17, "+------------FLAGS2------------+");
+	prtf(j, 18, "SUST...IMMUN..RESIST............");
+	prtf(j, 19, "        aefctrpsaefcpfldbc sn   ");
+	prtf(j, 20, "siwdcc  clioheatcliooeialoshtncd");
+	prtf(j, 21, "tnieoh  ierlrfraierliatrnnnrhehi");
+	prtf(j, 22, "rtsxna..dcedwlatdcedsrekdfddrxss");
 	borg_prt_binary(l_ptr->kn_flags2, j, 23);
 
-	prt("+------------FLAGS3------------+", j + 32, 10);
-	prt("fe      ehsi  st    iiiiadta  hp", j + 32, 11);
-	prt("il   n taihnf ee    ggggcregb vr", j + 32, 12);
-	prt("re  nowysdose eld   nnnntalrl ym", j + 32, 13);
-	prt("ec  omrcyewta ieirmsrrrriieaeccc", j + 32, 14);
-	prt("aa  taauktmatlnpgeihaefcvnpvsuuu", j + 32, 15);
-	prt("uu  egirnyoahivaeggoclioaeoasrrr", j + 32, 16);
-	prt("rr  litsopdretitsehtierltxrtesss", j + 32, 17);
-	prt("aa  echewestreshtntsdcedeptedeee", j + 32, 18);
+	prtf(j + 32, 10, "+------------FLAGS3------------+");
+	prtf(j + 32, 11, "fe      ehsi  st    iiiiadta  hp");
+	prtf(j + 32, 12, "il   n taihnf ee    ggggcregb vr");
+	prtf(j + 32, 13, "re  nowysdose eld   nnnntalrl ym");
+	prtf(j + 32, 14, "ec  omrcyewta ieirmsrrrriieaeccc");
+	prtf(j + 32, 15, "aa  taauktmatlnpgeihaefcvnpvsuuu");
+	prtf(j + 32, 16, "uu  egirnyoahivaeggoclioaeoasrrr");
+	prtf(j + 32, 17, "rr  litsopdretitsehtierltxrtesss");
+	prtf(j + 32, 18, "aa  echewestreshtntsdcedeptedeee");
 	borg_prt_binary(l_ptr->kn_flags3, j + 32, 19);
 }
 
@@ -2405,7 +2404,7 @@ void borg_init_9(void)
 	/*** Hack -- initialize borg.ini options ***/
 
 	/* Message */
-	prt("Initializing the Borg... (zborg.txt)", 0, 0);
+	prtf(0, 0, "Initializing the Borg... (zborg.txt)");
 
 	/* Hack -- flush it */
 	Term_fresh();
@@ -2415,7 +2414,7 @@ void borg_init_9(void)
 	/*** Hack -- initialize game options ***/
 
 	/* Message */
-	prt("Initializing the Borg... (options)", 0, 0);
+	prtf(0, 0, "Initializing the Borg... (options)");
 
 	/* Hack -- flush it */
 	Term_fresh();
@@ -2469,7 +2468,7 @@ void borg_init_9(void)
 	/*** Various ***/
 
 	/* Message */
-	prt("Initializing the Borg... (various)", 0, 0);
+	prtf(0, 0, "Initializing the Borg... (various)");
 
 	/* Hack -- flush it */
 	Term_fresh();
@@ -2555,11 +2554,8 @@ void borg_init_9(void)
 
 	/*** All done ***/
 
-	/* Done initialization */
-	prt("Initializing the Borg... done.", 0, 0);
-
 	/* Clear line */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Reset the clock */
 	borg_t = 1000;

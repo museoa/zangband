@@ -322,17 +322,17 @@ void do_cmd_script(void)
 	Term_clear();
 
 	/* Ask for a choice */
-	prt("Debug scripts", 0, 2);
+	prtf(0, 2, "Debug scripts");
 
 	/* Give some choices */
-	prt("(1) Execute a script file", 5, 4);
-	prt("(2) Execute a script command", 5, 5);
-	prt("(3) Start tracing scripts", 5, 6);
-	prt("(4) Stop tracing scripts", 5, 7);
-	prt("(5) Re-initialize scripts", 5, 8);
+	prtf(5, 4, "(1) Execute a script file");
+	prtf(5, 5, "(2) Execute a script command");
+	prtf(5, 6, "(3) Start tracing scripts");
+	prtf(5, 7, "(4) Stop tracing scripts");
+	prtf(5, 8, "(5) Re-initialize scripts");
 
 	/* Prompt */
-	prt("Command: ", 0, 15);
+	prtf(0, 15, "Command: ");
 
 	/* Prompt */
 	ch = inkey();
@@ -347,7 +347,7 @@ void do_cmd_script(void)
 			char buf[1024];
 
 			/* Prompt */
-			prt("Lua script: ", 0, 0);
+			prtf(0, 0, "Lua script: ");
 
 			/* Default filename */
 			sprintf(tmp, "test.lua");
@@ -356,7 +356,7 @@ void do_cmd_script(void)
 			if (!askfor_aux(tmp, 80)) break;
 
 			/* Clear the prompt */
-			prt("", 0, 0);
+			prtf(0, 0, "");
 
 			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, tmp);
 
@@ -368,7 +368,7 @@ void do_cmd_script(void)
 		case '2':
 		{
 			/* Prompt */
-			prt("Lua command: ", 0, 0);
+			prtf(0, 0, "Lua command: ");
 
 			/* Empty default */
 			strcpy(tmp, "");
@@ -377,7 +377,7 @@ void do_cmd_script(void)
 			if (!askfor_aux(tmp, 80)) break;
 
 			/* Clear the prompt */
-			prt("", 0, 0);
+			prtf(0, 0, "");
 
 			/* Execute the command */
 			script_do_string(tmp);

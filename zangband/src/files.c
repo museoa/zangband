@@ -3284,8 +3284,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 
 		/* Show a general "title" */
-		prt(format("[%s %s, %s, Line %d/%d]",
-				   VERSION_NAME, VERSION_STRING, caption, line, size), 0, 0);
+		prtf(0, 0, "[%s %s, %s, Line %d/%d]",
+				   VERSION_NAME, VERSION_STRING, caption, line, size);
 
 		/* Prompt -- with menu */
 		if (menu)
@@ -3294,15 +3294,15 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			if (size <= hgt - 4)
 			{
 				/* Wait for it */
-				prt("[Press a Number, or ESC to exit.]", 0, hgt - 1);
+				prtf(0, hgt - 1, "[Press a Number, or ESC to exit.]");
 			}
 
 			/* Prompt -- large files */
 			else
 			{
 				/* Wait for it */
-				prt("[Press a Number, Return, Space, -, =, /, or ESC to exit.]",
-					0, hgt - 1);
+				prtf(0, hgt - 1,
+				"[Press a Number, Return, Space, -, =, /, or ESC to exit.]");
 			}
 		}
 		else
@@ -3311,15 +3311,14 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			if (size <= hgt - 4)
 			{
 				/* Wait for it */
-				prt("[Press ESC to exit.]", 0, hgt - 1);
+				prtf(0, hgt - 1, "[Press ESC to exit.]");
 			}
 
 			/* Prompt -- large files */
 			else
 			{
 				/* Wait for it */
-				prt("[Press Return, Space, -, =, /, or ESC to exit.]", 0,
-					hgt - 1);
+				prtf(0, hgt - 1, "[Press Return, Space, -, =, /, or ESC to exit.]");
 			}
 		}
 
@@ -3341,7 +3340,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '=')
 		{
 			/* Get "shower" */
-			prt("Show: ", 0, hgt - 1);
+			prtf(0, hgt - 1, "Show: ");
 			(void)askfor_aux(shower, 80);
 		}
 
@@ -3349,7 +3348,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '/')
 		{
 			/* Get "finder" */
-			prt("Find: ", 0, hgt - 1);
+			prtf(0, hgt - 1, "Find: ");
 
 			if (askfor_aux(finder, 80))
 			{
@@ -3373,7 +3372,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '#')
 		{
 			char tmp[81];
-			prt("Goto Line: ", 0, hgt - 1);
+			prtf(0, hgt - 1, "Goto Line: ");
 			strcpy(tmp, "0");
 
 			if (askfor_aux(tmp, 80))
@@ -3386,7 +3385,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '%')
 		{
 			char tmp[81];
-			prt("Goto File: ", 0, hgt - 1);
+			prtf(0, hgt - 1, "Goto File: ");
 			strcpy(tmp, "help.hlp");
 
 			if (askfor_aux(tmp, 80))
@@ -3636,7 +3635,7 @@ void change_player_name(void)
 	clear_from(22);
 
 	/* Prompt and ask */
-	prt("[Enter your player's name above, or hit ESCAPE]", 2, 23);
+	prtf(2, 23, "[Enter your player's name above, or hit ESCAPE]");
 
 	/* Ask until happy */
 	while (1)
@@ -3713,10 +3712,10 @@ void do_cmd_suicide(void)
 		if (!p_ptr->noscore)
 		{
 			/* Special Verification for suicide */
-			prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
+			prtf(0, 0, "Please verify SUICIDE by typing the '@' sign: ");
 			flush();
 			i = inkey();
-			prt("", 0, 0);
+			prtf(0, 0, "");
 			if (i != '@') return;
 		}
 	}
@@ -3758,7 +3757,7 @@ void do_cmd_save_game(int is_autosave)
 	handle_stuff();
 
 	/* Message */
-	prt("Saving game...", 0, 0);
+	prtf(0, 0, "Saving game...");
 
 	/* Refresh */
 	Term_fresh();
@@ -3772,13 +3771,13 @@ void do_cmd_save_game(int is_autosave)
 	/* Save the player */
 	if (save_player())
 	{
-		prt("Saving game... done.", 0, 0);
+		prtf(0, 0, "Saving game... done.");
 	}
 
 	/* Save failed (oops) */
 	else
 	{
-		prt("Saving game... failed!", 0, 0);
+		prtf(0, 0, "Saving game... failed!");
 	}
 
 	/* Allow suspend again */
@@ -3791,7 +3790,7 @@ void do_cmd_save_game(int is_autosave)
 	message_flush();
 
 	/* Hack -- erase the message line. */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Note that the player is not dead */
 	(void)strcpy(p_ptr->died_from, "(alive and well)");
@@ -4030,7 +4029,7 @@ static void show_info(void)
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for inventory */
-	prt("Hit any key to see more information (ESC to abort): ", 0, 23);
+	prtf(0, 23, "Hit any key to see more information (ESC to abort): ");
 
 	/* Flush keys */
 	flush();
@@ -4046,7 +4045,7 @@ static void show_info(void)
 	item_tester_full = TRUE;
 	show_equip();
 
-	prt("You are using: -more-", 0, 0);
+	prtf(0, 0, "You are using: -more-");
 
 	/* Flush keys */
 	flush();
@@ -4061,7 +4060,7 @@ static void show_info(void)
 	item_tester_full = TRUE;
 	show_list(p_ptr->inventory);
 
-	prt("You are carrying: -more-", 0, 0);
+	prtf(0, 0, "You are carrying: -more-");
 
 	/* Flush keys */
 	flush();
@@ -4091,22 +4090,19 @@ static void show_info(void)
 					/* Display contents of the home */
 					OBJ_ITT_START (st_ptr->stock, o_ptr)
 					{
-						/* Print header, clear line */
-						sprintf(tmp_val, "%c) ", I2A(j));
-						prt(tmp_val, 4, j + 2);
-
-						/* Display object description */
+						/* Get description */
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
-						put_fstr(7, j + 2, "%s%s",
-								 color_seq[tval_to_attr[o_ptr->tval]], o_name);
+					
+						/* Print header, clear line */
+						prtf(4, j + 2, "%c) %s%s", I2A(j),
+							 color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 						/* Show 12 items at a time */
 						if (j == 12)
 						{
 							/* Caption */
-							prt(format
-								("Your home in %s: -more-", place[i].name), 0,
-								0);
+							prtf(0, 0, "Your home in %s: -more-",
+								 place[i].name);
 
 							/* Flush keys */
 							flush();
@@ -4181,7 +4177,7 @@ static void close_game_handle_death(void)
 	print_tomb();
 
 	/* Describe options */
-	prt("(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit", 0, 22);
+	prtf(0, 23, "(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit");
 
 	/* Flush messages */
 	message_flush();
@@ -4330,7 +4326,7 @@ void close_game(void)
 		}
 
 		/* Prompt for scores XXX XXX XXX */
-		prt("Press Return (or Escape).", 40, 0);
+		prtf(0, 40, "Press Return (or Escape).");
 
 		/* Predict score (or ESCAPE) */
 		if (inkey() != ESCAPE) predict_score();
@@ -4366,7 +4362,7 @@ void exit_game_panic(void)
 	msg_flag = FALSE;
 
 	/* Clear the top line */
-	prt("", 0, 0);
+	prtf(0, 0, "");
 
 	/* Hack -- turn off some things */
 	disturb(TRUE);

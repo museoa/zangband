@@ -2671,18 +2671,18 @@ void do_cmd_spoilers(void)
 		Term_clear();
 
 		/* Info */
-		prt("Create a spoiler file.", 0, 2);
+		prtf(0, 2, "Create a spoiler file.");
 
 		/* Prompt for a file */
-		prt("(1) Brief Object Info (obj-desc.spo)", 5, 5);
-		prt("(2) Brief Artifact Info (artifact.spo)", 5, 6);
-		prt("(3) Brief Monster Info (mon-desc.spo)", 5, 7);
-		prt("(4) Full Monster Info (mon-info.spo)", 5, 8);
-		prt("(5) Brief Mutation Info (mutation.spo)", 5, 9);
-		prt("(6) Brief Racial Powers Info (rac-pow.spo)", 5, 10);
+		prtf(5, 5, "(1) Brief Object Info (obj-desc.spo)");
+		prtf(5, 6, "(2) Brief Artifact Info (artifact.spo)");
+		prtf(5, 7, "(3) Brief Monster Info (mon-desc.spo)");
+		prtf(5, 8, "(4) Full Monster Info (mon-info.spo)");
+		prtf(5, 9, "(5) Brief Mutation Info (mutation.spo)");
+		prtf(5, 10, "(6) Brief Racial Powers Info (rac-pow.spo)");
 
 		/* Prompt */
-		prt("Command: ", 0, 12);
+		prtf(0, 12, "Command: ");
 
 		/* Get a choice */
 		i = inkey();

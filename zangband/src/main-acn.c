@@ -1818,7 +1818,7 @@ int main(int argc, char *argv[])
 	if (argc==1)
 	{
 		/* Prompt the user */
-		prt("[Double-click on a saved game, or choose 'New' from the 'File' menu]", 5, 23);
+		prtf(5, 23, "[Double-click on a saved game, or choose 'New' from the 'File' menu]");
 		Term_fresh();
 	}
 
