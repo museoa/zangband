@@ -1902,6 +1902,10 @@ bool borg_crush_slow(void)
  */
 bool borg_test_stuff(bool star_id)
 {
+	/* Hack - ignore parameter */
+	(void) star_id;
+#if 0
+
 	int i, b_i = -1;
 	s32b v, b_v = -1;
 
@@ -2057,20 +2061,6 @@ bool borg_test_stuff(bool star_id)
 			l_ptr = &equipment[b_i];
 		}
 
-
-		if (star_id)
-		{
-			borg_oops_fmt
-				("# Sorry - I cannot id anything yet.  Can you *id* the %s, and then restart me.",
-				 l_ptr->o_name);
-		}
-		else
-		{
-			borg_oops_fmt
-				("# Sorry - I cannot id anything yet.  Can you identify the %s, and then restart me.",
-				 l_ptr->o_name);
-		}
-
 #if 0
 		if (inven)
 		{
@@ -2203,6 +2193,7 @@ bool borg_test_stuff(bool star_id)
 #endif /* 0 */
 	}
 
+#endif /* 0 */
 	/* Nothing to do */
 	return (FALSE);
 }

@@ -13020,7 +13020,7 @@ bool borg_flow_light(int why)
 	map_block *mb_ptr;
 
 	/* reset counters */
-	borg_glow_n = 0;
+	borg_temp_n = 0;
 	i = 0;
 
 	/* build the glow array */
@@ -13034,23 +13034,23 @@ bool borg_flow_light(int why)
 		MAP_GET_LOC(x, y);
 
 		/* keep count */
-		borg_glow_y[borg_glow_n] = y;
-		borg_glow_x[borg_glow_n] = x;
-		borg_glow_n++;
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_n++;
 	}
 	MAP_ITT_END;
 
 	/* None to flow to */
-	if (!borg_glow_n) return (FALSE);
+	if (!borg_temp_n) return (FALSE);
 
 	/* Clear the flow codes */
 	borg_flow_clear();
 
 	/* Enqueue useful grids */
-	for (i = 0; i < borg_glow_n; i++)
+	for (i = 0; i < borg_temp_n; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(borg_glow_x[i], borg_glow_y[i]);
+		borg_flow_enqueue_grid(borg_temp_x[i], borg_temp_y[i]);
 	}
 
 	/* Spread the flow */

@@ -404,16 +404,6 @@ s16b *borg_race_count;
 
 
 /*
- * Maintain a set of grids marked as "BORG_GLOW"
- */
-
-s16b borg_glow_n = 0;
-
-s16b borg_glow_x[AUTO_LITE_MAX];
-s16b borg_glow_y[AUTO_LITE_MAX];
-
-
-/*
  * Maintain a set of grids marked as "BORG_VIEW"
  */
 

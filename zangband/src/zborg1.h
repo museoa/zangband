@@ -79,11 +79,6 @@
 #define BORG_MAX_DETECT		(MAX_DETECT - 2)
 
 /*
- * Maximum size of the "lite" array
- */
-#define AUTO_LITE_MAX 1536
-
-/*
  * Some assistance with the borg_attack and magic arrows
  */
 #define GF_ARROW_SEEKER  92
@@ -760,14 +755,6 @@ extern borg_kill *borg_kills;
  */
 
 extern s16b *borg_race_count;
-
-
-/*
- * Maintain a set of glow grids (liteable grids)
- */
-extern s16b borg_glow_n;
-extern s16b borg_glow_y[AUTO_LITE_MAX];
-extern s16b borg_glow_x[AUTO_LITE_MAX];
 
 
 /*
