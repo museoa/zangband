@@ -153,7 +153,7 @@ void delete_object_list(s16b *o_idx_ptr)
 		object_wipe(o_ptr);
 
 		/* Count objects */
-		o_cnt--;
+		if (o_cnt) o_cnt--;
 	}
 	OBJ_ITT_END;
 
@@ -443,9 +443,9 @@ static s16b o_pop(void)
 	/*
 	 * If the number remaining is less than one third of the
 	 * total number of allocated objects, then add a new object
-     * to the end of the list.
-     *
-     * We add 1 to o_cnt because object 0 is unusable.
+	 * to the end of the list.
+	 *
+	 * We add 1 to o_cnt because object 0 is unusable.
 	 *
 	 * Feel free to tune this parameter.
 	 */
