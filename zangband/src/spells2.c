@@ -3817,7 +3817,7 @@ bool fear_monster(int dir, int plev)
 bool death_ray(int dir, int plev)
 {
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_DEATH_RAY, dir, plev * 200, flg));
+	return (project_hook(GF_DEATH_RAY, dir, plev * 50, flg));
 }
 
 
@@ -4350,7 +4350,7 @@ bool turn_monsters(int dam)
  */
 bool deathray_monsters(void)
 {
-	return (project_hack(GF_DEATH_RAY, p_ptr->lev * 200));
+	return (project_hack(GF_DEATH_RAY, p_ptr->lev * 50));
 }
 
 

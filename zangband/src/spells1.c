@@ -2151,7 +2151,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			}
 			else if (((r_ptr->flags1 & RF1_UNIQUE) &&
 				 (randint(888) != 666)) ||
-				 (r_ptr->level > randint(dam * 3)))
+				 (r_ptr->level > randint(dam / 10)))
 			{
 				note = " resists!";
 				obvious = FALSE;
