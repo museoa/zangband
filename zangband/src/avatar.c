@@ -223,8 +223,8 @@ void get_virtues(void)
 	case RACE_IMP:
 		p_ptr->vir_types[i++] = V_FAITH;
 		break;
-	case RACE_ZOMBIE: case RACE_SKELETON:
-	case RACE_VAMPIRE: case RACE_SPECTRE:
+	case RACE_ZOMBIE: case RACE_SKELETON: case RACE_VAMPIRE:
+	case RACE_SPECTRE: case RACE_GHOUL:
 		p_ptr->vir_types[i++] = V_UNLIFE;
 		break;
 	case RACE_BEASTMAN:

@@ -347,7 +347,8 @@ static void do_cmd_eat_food_aux(int item)
 	}
 	else if ((p_ptr->prace == RACE_GOLEM) ||
 	         (p_ptr->prace == RACE_ZOMBIE) ||
-	         (p_ptr->prace == RACE_SPECTRE))
+	         (p_ptr->prace == RACE_SPECTRE) ||
+		 (p_ptr->prace == RACE_GHOUL))
 	{
 		msg_print("The food of mortals is poor sustenance for you.");
 		set_food(p_ptr->food + ((o_ptr->pval) / 20));
@@ -1038,6 +1039,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case RACE_GOLEM:
 		case RACE_ZOMBIE:
 		case RACE_SPECTRE:
+	        case RACE_GHOUL:
 			set_food(p_ptr->food + ((o_ptr->pval) / 20));
 			break;
 		default:

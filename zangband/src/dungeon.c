@@ -3641,7 +3641,8 @@ void play_game(bool new_game)
 		if ((p_ptr->prace == RACE_VAMPIRE) ||
 		    (p_ptr->prace == RACE_SKELETON) ||
 		    (p_ptr->prace == RACE_ZOMBIE) ||
-		    (p_ptr->prace == RACE_SPECTRE))
+		    (p_ptr->prace == RACE_SPECTRE) ||
+		    (p_ptr->prace == RACE_GHOUL))
 		{
 			/* Undead start just after midnight */
 			turn = (30L * TOWN_DAWN) / 4 + 1;

@@ -2705,6 +2705,13 @@ static void calc_bonuses(void)
 				p_ptr->resist_confu = TRUE;
 				p_ptr->resist_sound = TRUE;
 				break;
+			case RACE_GHOUL:
+				if (p_ptr->lev > 9) p_ptr->resist_dark = TRUE;
+				p_ptr->hold_life = TRUE;
+				if (p_ptr->lev > 19) p_ptr->resist_nethr = TRUE;
+				p_ptr->resist_cold = TRUE;
+				p_ptr->resist_pois = TRUE;
+				break;
 		}
 	}
 

@@ -540,7 +540,10 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					(void)sleep_monsters();
 				break;
 			}
-
+		        case RACE_GHOUL:
+			{
+			        msg_print("Power not implemented yet. Sorry.");
+			}
 			default:
 				msg_print("This race has no bonus power.");
 				p_ptr->energy_use = 0;

@@ -1763,6 +1763,13 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 		(*f2) |= (TR2_RES_SOUND);
 		(*f2) |= (TR2_RES_CONF);
 		break;
+	case RACE_GHOUL:
+		(*f2) |= (TR2_HOLD_LIFE);
+		if (p_ptr->lev > 9) (*f2) |= (TR2_RES_DARK);
+		if (p_ptr->lev > 19) (*f2) |= (TR2_RES_NETHER);
+		(*f2) |= (TR2_RES_POIS);
+		(*f2) |= (TR2_RES_COLD);
+		break;
 	default:
 		; /* Do nothing */
 	}

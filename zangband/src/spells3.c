@@ -4382,7 +4382,8 @@ void sanity_blast(const monster_type *m_ptr)
 	if (((p_ptr->prace == RACE_SKELETON) ||
 	    (p_ptr->prace == RACE_ZOMBIE) ||
 	    (p_ptr->prace == RACE_VAMPIRE) ||
-	    (p_ptr->prace == RACE_SPECTRE)) &&
+	    (p_ptr->prace == RACE_SPECTRE) ||
+	    (p_ptr->prace == RACE_GHOUL)) &&
 		saving_throw(25 + p_ptr->lev)) return;
 
 	/* Mind blast */

@@ -65,7 +65,7 @@ const sint race_groups [MAX_RACE_GROUPS][MAX_GROUP_INT]=
   {RACE_KLACKON, -1, -1, -1, -1, -1},
   {RACE_SPRITE, RACE_DRACONIAN, RACE_MIND_FLAYER, RACE_BEASTMAN, -1, -1},
   {RACE_GOLEM, -1, -1, -1, -1, -1},
-  {RACE_SKELETON, RACE_ZOMBIE, RACE_VAMPIRE, RACE_SPECTRE, -1, -1},
+  {RACE_SKELETON, RACE_ZOMBIE, RACE_GHOUL, RACE_VAMPIRE, RACE_SPECTRE, -1},
   {RACE_IMP, -1, -1, -1, -1, -1}
 };
 
@@ -1371,6 +1371,12 @@ static void get_history(void)
 			chart = 129;
 			break;
 		}
+          	case RACE_GHOUL:
+		{
+          		/* The same as Zombie, for now */
+			chart = 107;
+			break;
+		}
 		default:
 		{
 			chart = 0;
@@ -1731,6 +1737,7 @@ static void player_outfit(void)
 		case RACE_ZOMBIE:
 		case RACE_VAMPIRE:
 		case RACE_SPECTRE:
+	        case RACE_GHOUL:
 		{
 			/* Scrolls of satisfy hunger */
 			object_prep(q_ptr, lookup_kind(TV_SCROLL,
