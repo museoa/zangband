@@ -1333,6 +1333,15 @@ bool change_panel(int dy, int dx)
 	/* Verify the col */
 	if (x > max_panel_cols * (SCREEN_WID / 2)) x = max_panel_cols * (SCREEN_WID / 2);
 	else if (x < 0) x = 0;
+	
+	/* Verify wilderness */
+	if (!dun_level)
+	{
+		if (y > wild_grid.y_max - SCREEN_HGT) y = wild_grid.y_max - SCREEN_HGT;
+		if (y < wild_grid.y_min) y = wild_grid.y_min;
+		if (x > wild_grid.x_max - SCREEN_WID) x = wild_grid.x_max - SCREEN_WID;
+		if (x < wild_grid.x_min) x = wild_grid.x_min;
+	}
 
 	/* Handle "changes" */
 	if ((y != panel_row_min) || (x != panel_col_min))
