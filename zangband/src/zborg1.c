@@ -730,18 +730,21 @@ void borg_note(cptr what)
 }
 
 
-
-
 /*
  * Abort the Borg, noting the reason
  */
 void borg_oops(cptr what)
 {
+	char buf[1024];
+
 	/* Stop processing */
 	borg_active = FALSE;
+	
+	/* Format the string */
+	(void)strnfmt(buf, 1024, "# Aborting (%s).", what);
 
 	/* Give a warning */
-	borg_note(format("# Aborting (%s).", what));
+	borg_note(buf);
 
 	/* Forget borg keys */
 	borg_flush();
@@ -760,11 +763,16 @@ static s16b borg_key_tail;
  */
 errr borg_keypress(char k)
 {
+	char buf[10];
+
 	/* Hack -- Refuse to enqueue "nul" */
 	if (!k) return (-1);
 
+	/* Format the string */
+	(void)strnfmt(buf, 10, "& Key <%c>", k);
+
 	/* Hack -- note the keypress */
-	if (borg_fff) borg_info(format("& Key <%c>", k));
+	if (borg_fff) borg_info(buf);
 
 	/* Store the char, advance the queue */
 	borg_key_queue[borg_key_head++] = k;
