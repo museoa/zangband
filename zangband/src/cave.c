@@ -2588,40 +2588,51 @@ void update_lite(void)
 	if (p_ptr->cur_lite >= 2)
 	{		
 		/* South of the player */
-		c_ptr = area(py + 1, px);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py + 1, px))
 		{
-			cave_lite_hack(py+2, px);
-			cave_lite_hack(py+2, px+1);
-			cave_lite_hack(py+2, px-1);
+			c_ptr = area(py + 1, px);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py+2, px);
+				cave_lite_hack(py+2, px+1);
+				cave_lite_hack(py+2, px-1);
+			}
 		}
-
 
 		/* North of the player */
-		c_ptr = area(py - 1, px);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py - 1, px))
 		{
-			cave_lite_hack(py-2, px);
-			cave_lite_hack(py-2, px+1);
-			cave_lite_hack(py-2, px-1);
+			c_ptr = area(py - 1, px);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py-2, px);
+				cave_lite_hack(py-2, px+1);
+				cave_lite_hack(py-2, px-1);
+			}
 		}
-
+		
 		/* East of the player */
-		c_ptr = area(py, px + 1);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py, px + 1))
 		{
-			cave_lite_hack(py, px+2);
-			cave_lite_hack(py+1, px+2);
-			cave_lite_hack(py-1, px+2);
+			c_ptr = area(py, px + 1);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py, px+2);
+				cave_lite_hack(py+1, px+2);
+				cave_lite_hack(py-1, px+2);
+			}
 		}
 
 		/* West of the player */
-		c_ptr = area(py, px - 1);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py, px -1))
 		{
-			cave_lite_hack(py, px-2);
-			cave_lite_hack(py+1, px-2);
-			cave_lite_hack(py-1, px-2);
+			c_ptr = area(py, px - 1);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py, px-2);
+				cave_lite_hack(py+1, px-2);
+				cave_lite_hack(py-1, px-2);
+			}
 		}
 	}
 
@@ -2637,33 +2648,45 @@ void update_lite(void)
 		if (p > 5) p = 5;
 
 		/* South-East of the player */
-		c_ptr = area(py + 1, px +1);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py + 1, px + 1))
 		{
-			cave_lite_hack(py+2, px+2);
+			c_ptr = area(py + 1, px + 1);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py+2, px+2);
+			}
 		}
 
 		/* South-West of the player */
-		c_ptr = area(py + 1, px - 1);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py + 1, px - 1))
 		{
-			cave_lite_hack(py+2, px-2);
+			c_ptr = area(py + 1, px - 1);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py+2, px-2);
+			}
 		}
-
+		
 		/* North-East of the player */
-		c_ptr = area(py - 1, px + 1);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py - 1, px + 1))
 		{
-			cave_lite_hack(py-2, px+2);
+			c_ptr = area(py - 1, px + 1);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py-2, px+2);
+			}
 		}
-
+		
 		/* North-West of the player */
-		c_ptr = area(py - 1, px - 1);
-		if (cave_los_grid(c_ptr))
+		if (in_bounds2(py - 1, px - 1))
 		{
-			cave_lite_hack(py-2, px-2);
+			c_ptr = area(py - 1, px - 1);
+			if (cave_los_grid(c_ptr))
+			{
+				cave_lite_hack(py-2, px-2);
+			}
 		}
-
+		
 		/* Maximal north */
 		min_y = py - p;
 		
