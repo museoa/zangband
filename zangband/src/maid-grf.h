@@ -47,7 +47,7 @@
 
 
 /*
- * Make an itterator, so we can scan the map quickly
+ * Make an iterator, so we can scan the map quickly
  */
 #define MAP_ITT_START(M) \
 	{ \

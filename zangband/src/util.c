@@ -2047,7 +2047,7 @@ byte get_msg_type_color(byte a)
 	if (a >= MSG_MAX) return TERM_WHITE;
 
 	/* Return the color */
-	return (message__color[(int) a]);
+	return (message__color[(int)a]);
 }
 
 

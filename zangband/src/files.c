@@ -2866,14 +2866,11 @@ errr file_character(cptr name, bool full)
 	else
 		fprintf(fff, "\n Small Levels:       OFF");
 
-	if (vanilla_town)
-		fprintf(fff, "\n Vanilla Town:       ON");
+	if (vanilla_town) fprintf(fff, "\n Vanilla Town:       ON");
 
-	if (ironman_shops)
-		fprintf(fff, "\n No Shops:           ON");
+	if (ironman_shops) fprintf(fff, "\n No Shops:           ON");
 
-	if (ironman_downward)
-		fprintf(fff, "\n Diving only:        ON");
+	if (ironman_downward) fprintf(fff, "\n Diving only:        ON");
 
 	if (ironman_empty_levels)
 		fprintf(fff, "\n Arena Levels:       ALWAYS");
@@ -2882,17 +2879,14 @@ errr file_character(cptr name, bool full)
 	else
 		fprintf(fff, "\n Arena Levels:       OFF");
 
-	if (ironman_hard_quests)
-		fprintf(fff, "\n Hard Quests:        ON");
-	else
-		fprintf(fff, "\n Hard Quests:        OFF");
+	if (ironman_hard_quests) fprintf(fff, "\n Hard Quests:        ON");
 
 	fprintf(fff, "\n Number of Quests: %d", number_of_quests());
 
-	if (ironman_nightmare)
-		fprintf(fff, "\n Nightmare Mode:     ON");
-	else
-		fprintf(fff, "\n Nightmare Mode:     OFF");
+	if (ironman_nightmare) fprintf(fff, "\n Nightmare Mode:     ON");
+
+	if (ironman_moria) fprintf(fff, "\n Moria Mode:         ON");
+
 
 	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
 			50 * p_ptr->max_depth);
@@ -4283,8 +4277,8 @@ static void show_info(void)
 
 						/* Caption */
 						prt(format
-							("Your home contains (page %d): -more-", k + 1), 0,
-							0);
+							("Your home in %s (page %d): -more-",
+							 place[i].name, k + 1), 0, 0);
 
 						/* Flush keys */
 						flush();

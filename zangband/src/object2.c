@@ -3355,10 +3355,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_CAT:
 				{
 					/* Bonus to searching and infravision */
-                    o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
+					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
-                    /* Sometimes add random sustain */
-                    if (one_in_(3)) o_ptr->flags2 |= TR2_SUST_DEX;
+					/* Sometimes add random sustain */
+					if (one_in_(3)) o_ptr->flags2 |= TR2_SUST_DEX;
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)

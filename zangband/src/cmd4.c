@@ -2671,7 +2671,7 @@ void do_cmd_colors(void)
 			/* Message */
 			msg_print("Dumped color redefinitions.");
 		}
-		
+
 		/* Dump message colors */
 		else if (i == '3')
 		{
@@ -2806,7 +2806,7 @@ void do_cmd_colors(void)
 				Term_redraw();
 			}
 		}
-		
+
 		/* Edit message colors */
 		else if (i == '5')
 		{
@@ -2821,20 +2821,19 @@ void do_cmd_colors(void)
 			{
 				/* Clear */
 				clear_from(12);
-			
+
 				/* Describe the message */
 				Term_putstr(5, 12, -1, TERM_WHITE,
-						format("Message = %d, Type = %s", a, msg_names[a]));
+							format("Message = %d, Type = %s", a, msg_names[a]));
 
 				/* Show current color */
 				color = get_msg_type_color(a);
-				
+
 				/* Paranoia */
 				if (color >= 16) color = 0;
-				
+
 				Term_putstr(5, 14, -1, TERM_WHITE,
-							format("Current color: %c / ",
-							color_char[color]));
+							format("Current color: %c / ", color_char[color]));
 				Term_putstr(24, 14, -1, color, color_names[color]);
 
 				/* Prompt */
@@ -2845,7 +2844,7 @@ void do_cmd_colors(void)
 
 				/* All done */
 				if (i == ESCAPE) break;
-			
+
 				/* Analyze */
 				if (i == 'n') a = (a + MSG_MAX + 1) % MSG_MAX;
 				if (i == 'N') a = (a + MSG_MAX - 1) % MSG_MAX;
