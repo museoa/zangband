@@ -524,8 +524,6 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 	$c bind name <Leave> {
 		%W itemconfigure name -fill [Value TERM_L_BLUE]
 	}
-	$c bind name <ButtonPress-1> \
-		"ChangeCharacterName $parent"
 
 	# Title
 	$c create text 0 0 -font $font -justify left \

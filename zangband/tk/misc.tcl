@@ -217,43 +217,6 @@ proc fmt_wgt {wgt {showUnits 0}} {
 	return $result
 }
 
-# ChangeCharacterName --
-#
-#	Allow the user to change the name of the character.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc ChangeCharacterName {parent} {
-
-	# Ask until a valid name is entered, or cancel
-	while 1 {
-
-		# Ask for a new name
-		set name [NSUtils::StringBox -title "Character Name" \
-			-initial [angband player name] -prompt "Name" \
-			-buttons [list OK Cancel] -parent $parent \
-			-entrywidth 20 -maxlen 15]
-
-		# Validate the name
-		if {[string length $name]} {
-			if {[catch {angband player name $name} result]} {
-				set message "\"$name\" is not a valid character name.\n"
-				append message "The character name must contain no more than 15 characters."
-				tk_messageBox -icon info -title "Invalid Name" \
-					-message $message
-				continue
-			}
-		}
-		break
-	}
-	
-	return
-}
-
 # FileCharacter --
 #
 #	Allow the user to choose a location, and save a character dump.
@@ -325,7 +288,7 @@ proc MessageDumpAux {filePath} {
 		return 1
 	}
 
-	puts $fileId "# Message Dump for [angband player name]\n"
+	puts $fileId "# Message Dump\n"
 	puts $fileId $buffer
 	close $fileId
 

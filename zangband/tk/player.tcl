@@ -200,7 +200,6 @@ proc NSPlayer::InitWindow {oop} {
 		angband keypress %A
 	}
 
-	bind $win <KeyPress-c> "NSPlayer::ChangeName $oop"
 	bind $win <KeyPress-f> "FileCharacter $win"
 	bind $win <KeyPress-h> {
 		angband_display playerflags show
@@ -320,29 +319,6 @@ proc NSPlayer::SetInfo {oop} {
 	return
 }
 
-# NSPlayer::ChangeName --
-#
-#	Allows the user to enter a new character name.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSPlayer::ChangeName {oop} {
-
-	set name [GetName $oop [angband player name] 1]
-	if {![string length $name]} return
-
-	# Change the name
-	angband player name $name
-
-	# Update the display
-	[Info $oop canvas] itemconfigure name -text $name
-
-	return
-}
 
 # NSPlayer::GetName --
 #

@@ -850,7 +850,7 @@ proc NSDebug::debug_hook_character {oop message args} {
 			set canvistId [Info $oop display,canvistId]
 
 			lappend colorList White
-			lappend textList [format "%3d: %s" 0 [angband player name]]
+			lappend textList "Name of player"
 			NSTexist::SetList $canvistId $textList $colorList
 		}
 
