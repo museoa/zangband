@@ -4115,7 +4115,7 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 	/* We only need to do this once */
 	if (st_ptr && !st_ptr->data)
 	{
-		sprintf(tmp_str, " E) Enjoin Location (%dgp)", f_ptr->data[1] * factor);
+		sprintf(tmp_str, " R) Record aura (%dgp)", f_ptr->data[1] * factor);
 		c_put_str(TERM_YELLOW, tmp_str, 35, 18);
 	}
 
@@ -4138,7 +4138,7 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->command_cmd == 'R')
 	{
 		cost = f_ptr->data[1] * *factor;
 
@@ -4163,7 +4163,10 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 		}
 
 		/* Hack, use factor as a return value */
-		*factor = TRUE;
+        *factor = TRUE;
+
+        /* Done */
+        return (FALSE);
 	}
 
 	if (p_ptr->command_cmd == 'T')
