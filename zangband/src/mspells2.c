@@ -2414,7 +2414,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (friendly)
+				if (friendly || pet)
 				{
 					count += summon_specific(y, x, rlev, SUMMON_CYBER, TRUE, TRUE, pet);
 				}
