@@ -2500,6 +2500,8 @@ bool recharge(int power)
 				{
 					o_ptr->ac += o_ptr->pval;
 					o_ptr->pval = 0;
+					
+					reduce_charges(o_ptr, 1);
 				}
 				
 				/* Reduce and describe inventory */
