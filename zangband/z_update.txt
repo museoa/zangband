@@ -100,7 +100,7 @@ Zangband 2.7.3:
 - Fix generation of crossroads in the wilderness.
 - Add support for broken Win 2k, which has problems displaying the
   "centered dot" character.  This is from "danceswithcrows@usa.net"
-   on rec.games.roguelike.angband, and is untested.
+   on rec.games.roguelike.angband.
 - Updated the FAQ.
 - The DOS version can now be compiled with current releases of the
   Allegro library.
@@ -114,7 +114,12 @@ Zangband 2.7.3:
   blank spots for stores, when converting from old savefiles.
 - Display town names on large scale wilderness map when cursor is on
   the towns.
-
+- Add command to display list of stores for the highlighted town on
+  the large scale wilderness map.
+- Removed the view_perma_grids option - it didn't do much.
+- Arena levels only appear in "city" dungeons.
+- Make deep swamp act safer with regards to resist poison.
+- Make the borg_cheat_death option work again.
 
 Zangband 2.7.2:
 - Made the HAVE_MKSTEMP option on by default for the linux ports.
@@ -437,7 +442,6 @@ Zangband 2.7.1:
 - Fixed a problem with the autoconf bootstrap method.
 - Rangers are better, not worse at hitting monsters hiding in trees.	
 - Normal stores can generate good or excellent items again.
-
 
 ZAngband 2.7.0:
 - Removed the python code, and replaced it with scripting using Lua.
