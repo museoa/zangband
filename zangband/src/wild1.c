@@ -3172,8 +3172,8 @@ static void create_wild_info(int *bestx, int *besty)
 	wild_type *w_ptr;
 
 	/* Huge wilderness */
-	max_wild = z_info->ws_max;
-	C_MAKE(wild_temp_dist, z_info->ws_max, byte);
+	max_wild = WILD_SIZE;
+	C_MAKE(wild_temp_dist, WILD_SIZE, byte);
 
 	/* Create "height" information of wilderness */
 	create_hgt_map();

@@ -69,7 +69,6 @@ struct maxima
 	u16b fld_max;	/* Max size for field list */
 	u16b rg_max;	/* Max size for region list */
 
-	u16b ws_max;	/* Max size for wilderness */
 	u16b wn_max;	/* Max size for wilderness tree nodes */
 	u16b wt_max;	/* Max size for wilderness gen types */
 	u16b wp_max;	/* Max places in the wilderness */

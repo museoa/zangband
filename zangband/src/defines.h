@@ -101,6 +101,9 @@
  * Defines used by the wilderness data structures
  */
 
+/* Size of wilderness in blocks */
+#define WILD_SIZE		129
+
 /* Size of blocks - hard coded. (Affects size of towns) */
 #define WILD_BLOCK_SIZE	16
 

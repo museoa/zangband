@@ -2914,18 +2914,18 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&wild_y_size);
 
 		/* Incompatible save files */
-		if ((wild_x_size > z_info->ws_max) || (wild_y_size > z_info->ws_max))
+		if ((wild_x_size > WILD_SIZE) || (wild_y_size > WILD_SIZE))
 		{
 			note(format
 				 ("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
 			return (23);
 		}
 
-		/* Hack - if size is zero - set to z_info->ws_max */
+		/* Hack - if size is zero - set to WILD_SIZE */
 		if ((wild_x_size == 0) && (wild_y_size == 0))
 		{
-			wild_x_size = z_info->ws_max;
-			wild_y_size = z_info->ws_max;
+			wild_x_size = WILD_SIZE;
+			wild_y_size = WILD_SIZE;
 		}
 
 		/* Hack - set size of wilderness to x size only */

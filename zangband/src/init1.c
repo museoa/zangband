@@ -963,20 +963,9 @@ errr parse_z_info(char *buf, header *head)
 		/* Hack - Verify 'M:W:x:' format */
 		if (buf[5] != ':') return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
 
-		/* Process 'S' for "Maximum wilderness size" */
-		if (buf[4] == 'S')
-		{
-			int max;
-
-			/* Scan for the value */
-			if (1 != sscanf(buf + 6, "%d", &max)) return (PARSE_ERROR_GENERIC);
-
-			/* Save the value */
-			z_info->ws_max = max;
-		}
 
 		/* Process 'N' for "Maximum wilderness tree nodes" */
-		else if (buf[4] == 'N')
+		if (buf[4] == 'N')
 		{
 			int max;
 
