@@ -16,7 +16,7 @@ the sections on available commands, before beginning any serious
 adventuring...
 
 
-***** <A>
+***** <DevTeam>
 === The Zangband DevTeam ===
 
 Zangband is currently maintained by a small development team which
@@ -31,7 +31,7 @@ their devious and contrary natures. The DevTeam neither confirms nor
 denies its intention to live up to this perception.
 
 
-***** <B>
+***** <Web>
 === Zangband on the Web ===
 
 
@@ -115,7 +115,7 @@ Most of the DevTeam are regulars and sometimes we're even talking about
 Zangband!!
 
 
-***** <C>
+***** <VersionNumber>
 === Version Numbering System ===
 
 Zangband uses a version numbering system similar to that of Linux. Odd

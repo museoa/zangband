@@ -94,18 +94,19 @@ in a document and may also implement histories to allow 'back' and
 A "tag" is something like a bookmark, it marks a line for reference by
 a hyperlink.  A tag is specified with:
 
-	***** <x>
+	***** <name of the tag>
 
-(where x is a single lower/uppercase letter or digit).
+(the name of the tag can not be longer than 15 characters).
 
 You can then jump to the line marked with the tag with:
 
-	***** [1] target_filename#x
+	***** [1] target_filename#tag_name
 
-This command jumps to the line with the tag 'x' in the file target_file.
-You can jump inside the current file too (just use the filename of
-the current file in the link).
+This command jumps to the line with the tag "tag_name" in the file
+target_file.  You can jump inside the current file too (just use the
+filename of the current file in the link).
 
 -- 
 Original    : Zangband DevTeam
-Last update : December 12, 1999
+Last update : December 19, 1999
+
