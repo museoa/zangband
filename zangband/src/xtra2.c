@@ -2316,8 +2316,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					else
 					{
 						/* Message */
-						sprintf(out_val, "%s%s%sa pile of %d items [l,%s]",
-							s1, s2, s3, floor_num, info);
+						sprintf(out_val, "%s%s%sa pile of %d items [%c,%s]",
+							s1, s2, s3, floor_num, rogue_like_commands ? 'x':'l', info);
 					}
 
 					prt(out_val, 0, 0);
@@ -2327,7 +2327,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					query = inkey();
 
 					/* Display list of items (query == "el", not "won") */
-					if ((floor_num > 1) && (query == 'l'))
+					 if ((floor_num > 1) && (query == (rogue_like_commands ? 'x' : 'l')))
 					{
 						/* Save screen */
 						screen_save();
