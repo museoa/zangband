@@ -596,7 +596,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 		case ACT_BO_COLD_1:
 			text = "The %s is covered in frost...";
 			desc = "frost bolt";
-			effect = "fire_bolt(GF_ACID, dir, dam)";
+			effect = "fire_bolt(GF_COLD, dir, dam)";
 			charge_min = rand_range(4, 8);
 			dice = 1 + level / rand_range(4, 6);
 			sides = 8;
