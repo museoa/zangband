@@ -19,11 +19,6 @@
 #include "icon.h"
 #include "widget.h"
 
-extern void map_draw_all(Widget *widgetPtr);
-extern void map_draw_invalid(Widget *widgetPtr);
-extern int map_symbol_proc(Widget *widgetPtr, int y, int x);
-
-
 /*
  * Invert a grid in the bitmap of a Widget
  */

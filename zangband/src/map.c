@@ -9,10 +9,9 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
-
-#include <tcl.h>
 #include "angband.h"
 #include "tnb.h"
+#include <tcl.h>
 #include "interp.h"
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
@@ -60,17 +59,17 @@ int map_symbol_feature(int f_idx)
 }
 
 /* special pet|dark ?symbol? */
-int objcmd_symbol_special(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_symbol_special(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	static char *option[] = {"blank", "pet", NULL};
+	static cptr option[] = {"blank", "pet", NULL};
 	int special, symbol;
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], option,
-		"special", 0, &special) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) option,
+		(char *) "special", 0, &special) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -95,19 +94,19 @@ int objcmd_symbol_special(ClientData clientData, Tcl_Interp *interp, int objc,
 /*
  * assign $group $member ?$symbol?
  */
-int objcmd_symbol_assign(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_symbol_assign(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	static char *optionAssign[] = {"character", "feature", "monster",
+	static cptr optionAssign[] = {"character", "feature", "monster",
 		"object", NULL};
 	int group, member;
 	int symbol;
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], optionAssign,
-		"group", 0, &group) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) optionAssign,
+		(char *) "group", 0, &group) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -148,12 +147,13 @@ int objcmd_symbol_assign(ClientData clientData, Tcl_Interp *interp, int objc,
  */
 void map_symbol_set(int y, int x)
 {
-	int m_idx, o_idx, f_idx;
+	int m_idx, f_idx;
 	t_grid *gridPtr = &g_grid[y][x];
 	int symbol;
+	object_type *o_ptr;
 
 	m_idx = gridPtr->m_idx;
-	o_idx = gridPtr->o_idx;
+	o_ptr = gridPtr->o_ptr;
 	f_idx = gridPtr->f_idx;
 
 	/* Character */
@@ -170,9 +170,8 @@ void map_symbol_set(int y, int x)
 	}
 
 	/* Object */
-	else if (o_idx)
+	else if (o_ptr)
 	{
-		object_type *o_ptr = &o_list[o_idx];
 		symbol = g_symbol_assign[SYMBOL_ASSIGN_OBJECT].assign[o_ptr->k_idx];
 	}
 
@@ -199,6 +198,9 @@ int map_symbol_proc(Widget *widgetPtr, int y, int x)
 {
 	int night = (p_ptr->depth || !g_daytime);
 	int symbol = -1;
+	
+	/* Hack - ignore parameter */
+	(void) widgetPtr;
 
 	if (in_bounds2(y, x))
 	{
@@ -378,19 +380,19 @@ void init_map(void)
 		(int *) Tcl_Alloc(1 * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_CHARACTER]);
 
-	g_symbol_assign[SYMBOL_ASSIGN_FEATURE].count = max_f_idx;
+	g_symbol_assign[SYMBOL_ASSIGN_FEATURE].count = z_info->f_max;
 	g_symbol_assign[SYMBOL_ASSIGN_FEATURE].assign =
-		(int *) Tcl_Alloc(max_f_idx * sizeof(int));
+		(int *) Tcl_Alloc(z_info->f_max * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_FEATURE]);
 
-	g_symbol_assign[SYMBOL_ASSIGN_MONSTER].count = max_r_idx;
+	g_symbol_assign[SYMBOL_ASSIGN_MONSTER].count = z_info->r_max;
 	g_symbol_assign[SYMBOL_ASSIGN_MONSTER].assign =
-		(int *) Tcl_Alloc(max_r_idx * sizeof(int));
+		(int *) Tcl_Alloc(z_info->r_max * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_MONSTER]);
 
-	g_symbol_assign[SYMBOL_ASSIGN_OBJECT].count = max_k_idx;
+	g_symbol_assign[SYMBOL_ASSIGN_OBJECT].count = z_info->k_max;
 	g_symbol_assign[SYMBOL_ASSIGN_OBJECT].assign =
-		(int *) Tcl_Alloc(max_k_idx * sizeof(int));
+		(int *) Tcl_Alloc(z_info->k_max * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_OBJECT]);
 
 	for (i = 0; i < MAX_HGT; i++)
