@@ -2654,6 +2654,7 @@ bool borg_wear_stuff(void)
 	return (FALSE);
 }
 
+#if 0
 
 /*
  * Hack -- order of the slots
@@ -2710,17 +2711,6 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 		/* Track best */
 		if (p > *vp)
 		{
-
-#if 0
-			/* dump list and power...  for debugging */
-			borg_note(format("Trying Combo (best power %ld)", *vp));
-			borg_note(format("             (borg_power %ld)", p));
-			for (i = 0; i < INVEN_PACK; i++)
-				borg_note(format("inv %d %s.", i, borg_items[i].desc));
-			for (i = 0; borg_best_stuff_order[i] != 255; i++)
-				borg_note(format("stuff %s.",
-								 borg_items[borg_best_stuff_order[i]].desc));
-#endif
 			/* Save the results */
 			for (i = 0; i < n; i++) best[i] = test[i];
 
@@ -2743,76 +2733,60 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 	/* Try other possible objects */
 	for (i = 0; i <
 #if 0
-		 ((shop_num == BORG_HOME) ? (INVEN_PACK + STORE_INVEN_MAX) : INVEN_PACK)
+		 ((shop_num == BORG_HOME) ? (INVEN_PACK + STORE_INVEN_MAX) : inven_num)
 #endif
-		 INVEN_PACK; i++)
+		 inven_num; i++)
 	{
-		borg_item *item;
-#if 0
-		if (i < INVEN_PACK)
-			item = &borg_items[i];
-		else
-			item = &borg_shops[BORG_HOME].ware[i - INVEN_PACK];
-#endif
-		item = &borg_items[i];
+		list_item *l_ptr;
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		l_ptr = &inventory[i]; /* This needs to be fixed */
 
-		/* Require "aware" */
-		if (!item->kind) continue;
+		/* Require item to exist + be aware */
+		if (!l_ptr->k_idx) continue;
 
 		/* Require "known" (or average, good, etc) */
-		if (!item->able &&
-			!strstr(item->desc, "{average") &&
-			!strstr(item->desc, "{good") &&
-			!strstr(item->desc, "{excellent") &&
-			!strstr(item->desc, "{special")) continue;
-
-		/* Hack -- ignore "worthless" items */
-		if (!item->value) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average") &&
+			!strstr(l_ptr->o_name, "{good") &&
+			!strstr(l_ptr->o_name, "{excellent") &&
+			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* Skip it if it has not been decursed */
-		if ((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE)) continue;
+		if ((l_ptr->kn_flags3 & TR3_CURSED) ||
+			(l_ptr->kn_flags3 & TR3_HEAVY_CURSE)) continue;
 
-		/* Make sure it goes in this slot, special consideration
+		/*
+		 * Make sure it goes in this slot, special consideration
 		 * for checking rings
 		 */
 		if (slot != borg_wield_slot(l_ptr)) continue;
 
 		/* Make sure that slot does not have a cursed item */
-		if ((borg_items[slot].cursed) ||
-			(borg_items[slot].flags3 & TR3_HEAVY_CURSE)) continue;
+		if ((equipment[slot].kn_flags & TR3_CURSED) ||
+			(equipment[slot].kn_flags3 & TR3_HEAVY_CURSE)) continue;
 
-		/* Wear the new item */
-		COPY(&borg_items[slot], item, borg_item);
-
-		/* Note the attempt */
-		if (i < INVEN_PACK)
-			test[n] = i;
-		else
-			/* if in home, note by adding 100 to item number. */
-			test[n] = (i - INVEN_PACK) + 100;
-
+		/* Pretend to wear item */
+		l_ptr->treat_as = TREAT_AS_SWAP;
+		equipment[slot].treat_as = TREAT_AS_SWAP;
 
 		/* Evaluate the possible item */
 		borg_best_stuff_aux(n + 1, test, best, vp);
 
 		/* Restore equipment */
-		COPY(&borg_items[slot], &safe_items[slot], borg_item);
+		l_ptr->treat_as = TREAT_AS_NORM;
+		equipment[slot].treat_as = TREAT_AS_NORM;
 	}
 }
 
+#endif /* 0 */
 
 /*
  * Attempt to instantiate the *best* possible equipment.
  */
 bool borg_best_stuff(void)
 {
+	/* Hack - this routine needs to be rewritten */
 #if 0
-	int hole = INVEN_PACK - 1;
-#endif
-
 	int k;
 
 	s32b value;
@@ -2821,7 +2795,7 @@ bool borg_best_stuff(void)
 
 	byte test[12];
 	byte best[12];
-
+	
 	/* Hack -- Initialize */
 	for (k = 0; k < 12; k++)
 	{
@@ -2915,6 +2889,7 @@ bool borg_best_stuff(void)
 #endif /* 0 */
 		}
 	}
+#endif /* 0 */
 
 	/* Nope */
 	return (FALSE);
@@ -3121,23 +3096,23 @@ static int borg_count_sell(void)
 
 
 	/* Count "sellable" items */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip "crappy" items */
-		if (item->value <= 0) continue;
+		if (l_ptr->cost <= 0) continue;
 
 		/* Obtain the base price */
-		price = ((item->value < 30000L) ? item->value : 30000L);
+		price = ((l_ptr->cost < 30000L) ? l_ptr->cost : 30000L);
 
 		/* Skip cheap "known" (or "average") items */
-		if ((price * item->iqty < greed) &&
-			(item->able || strstr(item->desc, "{average"))) continue;
+		if ((price * l_ptr->number < greed) &&
+			((l_ptr->info & OB_KNOWN) ||
+				strstr(l_ptr->o_name, "{average"))) continue;
 
 		/* Count remaining items */
 		k++;
@@ -3164,56 +3139,36 @@ bool borg_wear_recharge(void)
 	if (borg_skill[BI_ISWEAK]) return (FALSE);
 
 	/* Look for an (wearable- non rod) item to recharge */
-	for (i = 0; i < INVEN_TOTAL; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
-		object_type *o_ptr;	/* cheat */
-		o_ptr = &inventory[i];	/* cheat */
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		list_item *l_ptr = &inventory[i];
+		
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* skip items that are charged */
-		if (!item->timeout) continue;
+		if (!l_ptr->timeout) continue;
 
 		/* skip lites */
-		if (item->tval == TV_LITE) continue;
-
-		/* Cheat-- the borg is misreading his equip.
-		 * So this is pulling the info right from the game.
-		 */
-		if (!o_ptr->timeout) continue;
+		if (l_ptr->tval == TV_LITE) continue;
 
 		/* Where does this belong? */
 		slot = borg_wield_slot(l_ptr);
 
 		/* Skip stuff that can't be worn */
-		if (slot < INVEN_WIELD) continue;
+		if (slot < 0) continue;
 
 		/* note this one */
 		b_i = i;
+		
+		break;
 	}
 
-	if (b_i >= INVEN_WIELD)
-	{
-		/* Item is worn, no swap is nec. */
-		borg_note(format
-				  ("# Waiting for '%s' to Recharge.", borg_items[b_i].desc));
-
-		/* Rest for a while */
-		borg_keypress('R');
-		borg_keypress('7');
-		borg_keypress('5');
-		borg_keypress('\n');
-
-		/* done */
-		return (TRUE);
-	}
-	/* Item must be worn to be recharged
+	/*
+	 *Item must be worn to be recharged
 	 * But, none if some equip is cursed
 	 */
-	else if (b_i >= INVEN_WIELD && b_i <= INVEN_PACK && !borg_wearing_cursed)
+	if ((b_i >= 0) && !borg_wearing_cursed)
 	{
 
 		/* wear the item */
@@ -3238,6 +3193,7 @@ bool borg_wear_recharge(void)
 	/* nothing to recharge */
 	return (FALSE);
 }
+
 
 /*
  * Leave the level if necessary (or bored)
