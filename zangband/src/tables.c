@@ -8263,7 +8263,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    "(nothing)",
 	    "Eat corpse/skeleton",
 	    1, 0, A_CON, 0,
+		0
 	}
-
 };    
 
