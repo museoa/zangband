@@ -788,11 +788,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 	/* Is this feature memorized? */
 	if (info & (CAVE_MARK | CAVE_LITE))
 	{
-		/* Apply mimic field to feat */
-		feat = f_info[c_ptr->feat].mimic;
+		feat = c_ptr->feat;
 		
-		/* point to the feat */
-		f_ptr = &f_info[feat];
+		/* point to the feat (mimiced) */
+		f_ptr = &f_info[f_info[feat].mimic];
 			
 		/* Blank attr */
 		a = f_ptr->x_attr;
@@ -804,7 +803,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 		 * Look for more lighting effects.
 		 */
 		if (view_special_lite && !p_ptr->blind
-			 && (cave_floor_grid(c_ptr) || view_granite_lite))
+			 && (!(feat & 0x20) || view_granite_lite))
 		{			
 			/* It's not in view? */
 			if ((!(info & CAVE_VIEW)) && view_bright_lite)
