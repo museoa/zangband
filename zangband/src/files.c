@@ -1477,7 +1477,7 @@ static void display_player_various(void)
 	avgdam /= 200;
 	
 	/* normal players get two 1d1 punches */
-	if ((!o_ptr->k_idx)&&(!(p_ptr->pclass == CLASS_MONK))) avgdam = 1;
+	if ((!o_ptr->k_idx)&&(!(p_ptr->pclass == CLASS_MONK))) avgdam = 2;
 	
 	if (avgdam==0)
 	{		
