@@ -3410,7 +3410,14 @@ void print_spells(byte *spells, int num, int y, int x, int realm)
 		line_attr = TERM_WHITE;
 
 		/* Analyze the spell */
-		if ((realm + 1 == p_ptr->realm1) ?
+		if ((realm + 1 != p_ptr->realm1) && (realm + 1 != p_ptr->realm2))
+		{
+			comment = " uncastable";
+			line_attr = TERM_SLATE;
+		}
+
+		/* We know these books */
+		else if ((realm + 1 == p_ptr->realm1) ?
 		    ((p_ptr->spell_forgotten1 & (1L << spell))) :
 		    ((p_ptr->spell_forgotten2 & (1L << spell))))
 		{
