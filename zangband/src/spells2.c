@@ -1092,6 +1092,9 @@ bool detect_doors(void)
 	{
 		msgf("You sense the presence of doors!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (detect);
@@ -1146,6 +1149,9 @@ bool detect_stairs(void)
 		msgf("You sense the presence of stairs!");
 	}
 
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+	
 	/* Result */
 	return (detect);
 }
@@ -1198,7 +1204,9 @@ bool detect_treasure(void)
 	{
 		msgf("You sense the presence of buried treasure!");
 	}
-
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (detect);
@@ -1260,6 +1268,9 @@ bool detect_objects_gold(void)
 	{
 		detect = TRUE;
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (detect);
@@ -1320,6 +1331,9 @@ bool detect_objects_normal(void)
 	{
 		detect = TRUE;
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (detect);
@@ -1399,6 +1413,9 @@ bool detect_objects_magic(void)
 	{
 		msgf("You sense the presence of magic objects!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Return result */
 	return (detect);
@@ -1460,6 +1477,9 @@ bool detect_monsters_normal(void)
 		/* Describe result */
 		msgf("You sense the presence of monsters!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
@@ -1522,6 +1542,9 @@ bool detect_monsters_invis(void)
 		/* Describe result */
 		msgf("You sense the presence of invisible creatures!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
@@ -1589,6 +1612,9 @@ bool detect_monsters_evil(void)
 		/* Describe result */
 		msgf("You sense the presence of evil creatures!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
@@ -1652,6 +1678,9 @@ bool detect_monsters_nonliving(void)
 		/* Describe result */
 		msgf("You sense the presence of unnatural beings!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
@@ -1715,6 +1744,9 @@ bool detect_monsters_living(void)
 		/* Describe result */
 		msgf("You sense the presence of natural beings!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
@@ -1778,6 +1810,9 @@ bool detect_monsters_string(cptr match)
 		/* Describe result */
 		msgf("You sense the presence of monsters!");
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
@@ -1856,6 +1891,9 @@ bool detect_monsters_xxx(u32b match_flag)
 		msgf("You sense the presence of %s!", desc_monsters);
 		message_flush();
 	}
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Result */
 	return (flag);
