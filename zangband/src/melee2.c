@@ -1007,9 +1007,7 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
         if (m_ptr->cdis < MAX_RANGE / 2 &&
             m_ptr->cdis > 2 &&
             m_ptr->hp < p_ptr->lev * 3 &&
-            ((r_ptr->flags4 & RF4_ATTACK_MASK) ||
-             (r_ptr->flags5 & RF5_ATTACK_MASK) ||
-             (r_ptr->flags6 & RF6_ATTACK_MASK)))
+            (r_ptr->flags7 & RF7_AI_RANGED))
         {
             /* Move directly away from character. */
             *tx = mx + -(px - mx);

@@ -3290,6 +3290,8 @@
 #define RF7_LITE_1			0x00000020	/* Monster carries a small lite */
 #define RF7_LITE_2			0x00000040	/* Monster carries a large lite */
 
+#define RF7_AI_RANGED       0x00010000  /* Monster tries to keep away from player */
+
 /*
  * Monster race wilderness flags
  */
