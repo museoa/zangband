@@ -2140,7 +2140,7 @@
 #define PR_CUT          0x00001000L     /* Display Extra (Cut) */
 #define PR_STUN         0x00002000L     /* Display Extra (Stun) */
 #define PR_HUNGER       0x00004000L     /* Display Extra (Hunger) */
-/* xxx */
+#define PR_STATUS       0x00008000L     /* Display Status Bar */
 #define PR_BLIND        0x00010000L     /* Display Extra (Blind) */
 #define PR_CONFUSED     0x00020000L     /* Display Extra (Confused) */
 #define PR_AFRAID       0x00040000L     /* Display Extra (Afraid) */

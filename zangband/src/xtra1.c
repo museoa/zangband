@@ -144,8 +144,260 @@ static void prt_stat(int stat)
 	}
 }
 
+static int bar_count=0;
+
+void clear_status_bar(void)
+{
+	Term_putstr(COL_STATBAR, ROW_STATBAR, 12, TERM_WHITE, "            ");
+}
 
 
+void show_status_bar(cptr letter, byte *colour, int num)
+{
+	int i;
+		
+	if (num<=12)
+	{
+		/* Reset everything */
+		bar_count=0;
+		clear_status_bar();
+		
+		/*Display the flags */
+		for (i=0;i<num;i++)
+		{
+			Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i], letter[i]);
+		}
+	}
+	else
+	{
+		/* increment offset of scroll every 10 turns*/
+		if (!(turn % 10)) bar_count++;
+		
+		if (bar_count>=num) bar_count=0;
+		
+		
+		if (bar_count+12<num)
+		{
+			/*Simple case - all in a row*/
+			for (i=0;i<12;i++)
+			{
+				Term_putch(COL_STATBAR+i,ROW_STATBAR, colour[i+bar_count],
+					letter[i+bar_count]);
+			}
+		}
+		else
+		{
+			/*Split over boundary*/
+			for (i=0;i<num-bar_count;i++)
+			{
+				Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i+bar_count],
+					letter[i+bar_count]);
+			}
+			for (i=0;i<12+bar_count-num;i++)
+			{
+				Term_putch(COL_STATBAR+i+num-bar_count, ROW_STATBAR, 
+					colour[i],letter[i]);
+			}		
+		}
+	}
+}
+
+
+
+
+/* Show status bar */
+
+static void prt_status(void)
+{
+	int num=0;
+	char letter[30];
+	byte colour[30];
+	
+	/* Collate active flags */ 
+
+	/* Hack -- Hallucinating */
+	if (p_ptr->image)
+	{
+		letter[num]='H';
+		colour[num]=TERM_VIOLET;
+		num++;
+	}
+
+	/* Blindness */
+	if (p_ptr->blind)
+	{
+		letter[num]='B';
+		colour[num]=TERM_L_DARK;
+		num++;
+	}
+
+	/* Times see-invisible */
+	if (p_ptr->tim_invis)
+	{
+		letter[num]='I';
+		colour[num]=TERM_L_BLUE;
+		num++;
+	}
+
+	/* Timed esp */
+	if (p_ptr->tim_esp)
+	{
+		letter[num]='E';
+		colour[num]=TERM_ORANGE;
+		num++;
+	}
+
+	/* Timed infra-vision */
+	if (p_ptr->tim_infra)
+	{
+		letter[num]='I';
+		colour[num]=TERM_L_RED;
+		num++;
+	}
+
+	/* Paralysis */
+	if (p_ptr->paralyzed)
+	{
+		letter[num]='P';
+		colour[num]=TERM_RED;
+		num++;
+	}
+
+	/* Confusion */
+	if (p_ptr->confused)
+	{
+		letter[num]='C';
+		colour[num]=TERM_VIOLET;
+		num++;
+	}
+
+	/* Afraid */
+	if (p_ptr->afraid)
+	{
+		letter[num]='A';
+		colour[num]=TERM_YELLOW;
+		num++;
+	}
+
+	/* Fast */
+	if (p_ptr->fast)
+	{
+		letter[num]='S';
+		colour[num]=TERM_GREEN;
+		num++;
+	}
+
+	/* Slow */
+	if (p_ptr->slow)
+	{
+		letter[num]='S';
+		colour[num]=TERM_RED;
+		num++;
+	}
+
+	/* Protection from evil */
+	if (p_ptr->protevil)
+	{
+		letter[num]='E';
+		colour[num]=TERM_L_DARK;
+		num++;
+	}
+
+	/* Invulnerability */
+	if (p_ptr->invuln)
+	{
+		letter[num]='I';
+		colour[num]=TERM_YELLOW;
+		num++;
+	}
+
+	/* Wraith form */
+	if (p_ptr->wraith_form)
+	{
+		letter[num]='W';
+		colour[num]=TERM_L_DARK;
+		num++;
+	}
+
+	/* Heroism */
+	if (p_ptr->hero)
+	{
+		letter[num]='H';
+		colour[num]=TERM_WHITE;
+		num++;
+	}
+
+	/* Super Heroism */
+	if (p_ptr->shero)
+	{
+		letter[num]='H';
+		colour[num]=TERM_YELLOW;
+		num++;
+	}
+
+	/* Blessed */
+	if (p_ptr->blessed)
+	{
+		letter[num]='B';
+		colour[num]=TERM_WHITE;
+		num++;
+	}
+
+	/* Shield */
+	if (p_ptr->shield)
+	{
+		letter[num]='S';
+		colour[num]=TERM_WHITE;
+		num++;
+	}
+
+	/* Oppose Acid */
+	if (p_ptr->oppose_acid)
+	{
+		letter[num]='A';
+		colour[num]=TERM_GREEN;
+		num++;
+	}
+
+	/* Oppose Lightning */
+	if (p_ptr->oppose_elec)
+	{
+		letter[num]='E';
+		colour[num]=TERM_BLUE;
+		num++;
+	}
+
+	/* Oppose Fire */
+	if (p_ptr->oppose_fire)
+	{
+		letter[num]='F';
+		colour[num]=TERM_RED;
+		num++;
+	}
+
+	/* Oppose Cold */
+	if (p_ptr->oppose_cold)
+	{
+		letter[num]='C';
+		colour[num]=TERM_WHITE;
+		num++;
+	}
+
+	/* Oppose Poison */
+	if (p_ptr->oppose_pois)
+	{
+		letter[num]='P';
+		colour[num]=TERM_GREEN;
+		num++;
+	}
+	
+	if (num)
+	{
+		/*Display the status bar if there are flags set*/
+		show_status_bar(letter,colour,num);
+	}
+	else clear_status_bar();
+}
 
 /*
  * Prints "title", including "wizard" or "winner" as needed.
@@ -815,6 +1067,9 @@ static void prt_frame_basic(void)
 
 	/* All Stats */
 	for (i = 0; i < 6; i++) prt_stat(i);
+
+	/* Status Bar */
+	prt_status();
 
 	/* Armor */
 	prt_ac();
@@ -3516,7 +3771,7 @@ void redraw_stuff(void)
 	if (p_ptr->redraw & (PR_BASIC))
 	{
 		p_ptr->redraw &= ~(PR_BASIC);
-		p_ptr->redraw &= ~(PR_MISC | PR_TITLE | PR_STATS);
+		p_ptr->redraw &= ~(PR_MISC | PR_TITLE | PR_STATS | PR_STATUS);
 		p_ptr->redraw &= ~(PR_LEV | PR_EXP | PR_GOLD);
 		p_ptr->redraw &= ~(PR_ARMOR | PR_HP | PR_MANA);
 		p_ptr->redraw &= ~(PR_DEPTH | PR_HEALTH);
@@ -3563,6 +3818,12 @@ void redraw_stuff(void)
 		prt_stat(A_DEX);
 		prt_stat(A_CON);
 		prt_stat(A_CHR);
+	}
+
+	if (p_ptr->redraw & (PR_STATUS))
+	{
+		p_ptr->redraw &= ~(PR_STATUS);
+		prt_status();
 	}
 
 	if (p_ptr->redraw & (PR_ARMOR))
@@ -3809,58 +4070,3 @@ bool monk_heavy_armor(void)
 }
 
 
-static int bar_count=0;
-
-void show_status_bar(char_ptr letter, byte_ptr colour, int num)
-{
-	int i;
-		
-	if (num<=12)
-	{
-		/* Reset everything */
-		bar_count=0;
-		clear_status_bar();
-		
-		/*Display the flags */
-		for (i=0;i<num;i++)
-		{
-			Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i], letter[i]);
-		}
-	}
-	else
-	{
-		/* increment offset of scroll */
-		bar_count++;
-		if (bar_count>=num) bar_count=0;
-		
-		
-		if (bar_count+12<num)
-		{
-			/*Simple case - all in a row*/
-			for (i=0;i<12;i++)
-			{
-				Term_putch(COL_STATBAR+i,ROW_STATBAR, colour[i+bar_count],
-					letter[i+bar_count]);
-			}
-		}
-		else
-		{
-			/*Split over boundary*/
-			for (i=0;i<num-bar_count;i++)
-			{
-				Term_putch(COL_STATBAR+i, ROW_STATBAR, colour[i+bar_count],
-					letter[i+bar_count]);
-			}
-			for (i=0;i<12+bar_count-num;i++)
-			{
-				Term_putch(COL_STATBAR+i+num-bar_count, ROW_STATBAR, 
-					colour[i],letter[i]);
-			}		
-		}
-	}
-}
-
-void clear_status_bar(void)
-{
-	Term_putstr(COL_STATBAR, ROW_STATBAR, 12, TERM_WHITE, "            ");
-}

@@ -61,7 +61,7 @@ bool set_blind(int v)
 	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS);
 
 	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+	p_ptr->redraw |= (PR_MAP | PR_STATUS);
 
 	/* Redraw the "blind" */
 	p_ptr->redraw |= (PR_BLIND);
@@ -117,7 +117,7 @@ bool set_confused(int v)
 	if (disturb_state) disturb(0, 0);
 
 	/* Redraw the "confused" */
-	p_ptr->redraw |= (PR_CONFUSED);
+	p_ptr->redraw |= (PR_CONFUSED | PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -217,7 +217,7 @@ bool set_afraid(int v)
 	if (disturb_state) disturb(0, 0);
 
 	/* Redraw the "afraid" */
-	p_ptr->redraw |= (PR_AFRAID);
+	p_ptr->redraw |= (PR_AFRAID | PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -267,7 +267,7 @@ bool set_paralyzed(int v)
 	if (disturb_state) disturb(0, 0);
 
 	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
+	p_ptr->redraw |= (PR_STATE | PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -319,7 +319,7 @@ bool set_image(int v)
 	if (disturb_state) disturb(0, 0);
 
 	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+	p_ptr->redraw |= (PR_MAP | PR_STATUS);
 
 	/* Update monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -380,6 +380,9 @@ bool set_fast(int v)
 	/* Handle stuff */
 	handle_stuff();
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Result */
 	return (TRUE);
 }
@@ -430,6 +433,9 @@ bool set_slow(int v)
 	/* Handle stuff */
 	handle_stuff();
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Result */
 	return (TRUE);
 }
@@ -477,6 +483,9 @@ bool set_shield(int v)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+	
 	/* Handle stuff */
 	handle_stuff();
 
@@ -527,6 +536,9 @@ bool set_blessed(int v)
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
+
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -581,6 +593,9 @@ bool set_hero(int v)
 	/* Recalculate hitpoints */
 	p_ptr->update |= (PU_HP);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -634,6 +649,9 @@ bool set_shero(int v)
 	/* Recalculate hitpoints */
 	p_ptr->update |= (PU_HP);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -681,6 +699,9 @@ bool set_protevil(int v)
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+	
 	/* Handle stuff */
 	handle_stuff();
 
@@ -748,8 +769,8 @@ bool set_wraith_form(int v)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-
-
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -820,6 +841,9 @@ bool set_invuln(int v)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -872,6 +896,9 @@ bool set_tim_esp(int v)
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
+
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -926,6 +953,9 @@ bool set_tim_invis(int v)
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -979,6 +1009,9 @@ bool set_tim_infra(int v)
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -1025,6 +1058,9 @@ bool set_oppose_acid(int v)
 
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
+
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1076,6 +1112,9 @@ bool set_oppose_elec(int v)
 	/* Handle stuff */
 	handle_stuff();
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Result */
 	return (TRUE);
 }
@@ -1119,6 +1158,9 @@ bool set_oppose_fire(int v)
 
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
+
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1167,6 +1209,9 @@ bool set_oppose_cold(int v)
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
 
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -1213,6 +1258,9 @@ bool set_oppose_pois(int v)
 
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
+
+	/* Show bar */
+	p_ptr->redraw |= (PR_STATUS);
 
 	/* Handle stuff */
 	handle_stuff();
