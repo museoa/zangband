@@ -399,12 +399,16 @@ void wipe_o_list(void)
 		o_ptr->allocated = FALSE;
 	}
 	
-	/* Save players inventory (only objects in a list to save) */
-	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	/* Only if inventory exists */
+	if (o_list[p_ptr->inventory].k_idx)
 	{
-		o_ptr->allocated = TRUE;
+		/* Save players inventory (only objects in a list to save) */
+		OBJ_ITT_START (p_ptr->inventory, o_ptr)
+		{
+			o_ptr->allocated = TRUE;
+		}
+		OBJ_ITT_END;
 	}
-	OBJ_ITT_END;
 	
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
