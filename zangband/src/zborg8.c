@@ -236,11 +236,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 /*
  * Sell items to the current shop
  */
-static void borg_think_shop_sell(int item, list_item *l_ptr, bool home)
+static void borg_think_shop_sell(int item, list_item *l_ptr)
 {
-	/* Ignore parameter */
-	(void) home;
-
 	/* Log */
 	borg_note_fmt("# Selling %s", l_ptr->o_name);
 
@@ -269,15 +266,12 @@ static void borg_think_shop_sell(int item, list_item *l_ptr, bool home)
 /*
  * Buy items from the current shop
  */
-static void borg_think_shop_buy(int item, bool home)
+static void borg_think_shop_buy(int item)
 {
 	list_item *l_ptr = &cur_list[item];
 
 	byte t_a;
 	char buf[2];
-
-	/* Ignore unused parameter */
-	(void) home;
 
 	/* Keep it small */
 	buf[1] = '\0';
@@ -487,7 +481,7 @@ static bool borg_think_home_sell_aux(void)
 	{
 		goal_shop = home_shop;
 
-		borg_think_shop_sell(index, &inventory[index], TRUE);
+		borg_think_shop_sell(index, &inventory[index]);
 
 		/* We have goal */
 		return (TRUE);
@@ -639,7 +633,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		goal_shop = shop;
 
 		/* Sell that item */
-		borg_think_shop_sell(b_i, &inventory[b_i], FALSE);
+		borg_think_shop_sell(b_i, &inventory[b_i]);
 
 		/* Success */
 		return (TRUE);
@@ -811,7 +805,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		goal_shop = shop;
 
 		/* Buy that item */
-		borg_think_shop_buy(b_n, FALSE);
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
@@ -900,7 +894,7 @@ static bool borg_think_home_buy_aux(void)
 		goal_shop = home_shop;
 
 		/* Buy that item */
-		borg_think_shop_buy(b_n, TRUE);
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
@@ -985,7 +979,7 @@ static bool borg_think_shop_grab_aux(int shop)
 		goal_shop = shop;
 
 		/* Buy that item */
-		borg_think_shop_buy(b_n, FALSE);
+		borg_think_shop_buy(b_n);
 
 		/* Hack - get out of the store */
 		borg_keypress(ESCAPE);
@@ -1045,7 +1039,7 @@ static bool borg_think_home_grab_aux(void)
 		goal_shop = home_shop;
 
 		/* Grab that item */
-		borg_think_shop_buy(b_n, TRUE);
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
