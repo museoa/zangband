@@ -551,67 +551,6 @@ proc default_tval_to_attr {tval} {
 	return [Value $tval]
 }
 
-
-set data {}
-lappend data \
-	"Ancient Dragons" "-d_char D" \
-	"Angelic Beings" "-d_char A" \
-	"Birds" "-d_char B" \
-	"Canines" "-d_char C" \
-	"Creeping Coins" "-d_char $" \
-	"Demihumans" "-d_char h" \
-	"Dragons" "-d_char d" \
-	"Elementals" "-d_char E" \
-	"Elemental Ball" "-d_char *" \
-	"Eyes/Beholders" "-d_char e" \
-	"Felines" "-d_char f" \
-	"Ghosts" "-d_char G" \
-	"Giant Ants" "-d_char a" \
-	"Giant Bats" "-d_char b" \
-	"Giant Centipedes" "-d_char c" \
-	"Giant Dragon Flies" "-d_char F" \
-	"Giants" "-d_char P" \
-	"Golems" "-d_char g" \
-	"Humans" "-d_char p" \
-	"Hybrids" "-d_char H" \
-	"Hydras" "-d_char M" \
-	"Icky Things" "-d_char i" \
-	"Jellies" "-d_char j" \
-	"Killer Beetles" "-d_char K" \
-	"Kobolds" "-d_char k" \
-	"Lichs" "-d_char L" \
-	"Major Demons" "-d_char U" \
-	"Minor Demons" "-d_char u" \
-	"Molds" "-d_char m" \
-	"Multiplying Insects" "-d_char I" \
-	"Mushroom Patches" "-d_char ," \
-	"Nagas" "-d_char n" \
-	"Ogres" "-d_char O" \
-	"Orcs" "-d_char o" \
-	"Quadropeds" "-d_char q" \
-	"Quylthulgs" "-d_char Q" \
-	"Reptiles/Amphibians" "-d_char R" \
-	"Rodents" "-d_char r" \
-	"Scorpions/Spiders" "-d_char S" \
-	"Skeletons" "-d_char s" \
-	"Snakes" "-d_char J" \
-	"Townspeople" "-d_char t" \
-	"Mimics" "-d_char !?=.#|>(+&" \
-	"Trolls" "-d_char T" \
-	"Vampires" "-d_char V" \
-	"Vortices" "-d_char v" \
-	"Aquatic Creatures" "-d_char ~" \
-	"Wights/Wraiths" "-d_char W" \
-	"Worms/Worm Masses" "-d_char w" \
-	"Xorns/Xarens" "-d_char X" \
-	"Yeeks" "-d_char y" \
-	"Yeti" "-d_char Y" \
-	"Zephyr Hounds" "-d_char Z" \
-	"Zombies/Mummies" "-d_char z" \
-	"Uniques" "-unique yes"
-Global groups,r_info $data
-unset data
-
 proc DumpValueManager {} {
 
 	set win .dumpvalue

@@ -588,7 +588,7 @@ proc NSPets::SelectionChanged {oop canvistId select deselect} {
 	set r_idx [lindex [Info $oop r_match] $row]
 	
 	# Display memory for the selected pet
-	NSRecall::RecallMonster $r_idx
+	#NSRecall::RecallMonster $r_idx
 
 	return
 }

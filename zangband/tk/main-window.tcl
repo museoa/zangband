@@ -2253,11 +2253,10 @@ proc NSMainWindow::UpdateHealthWho {oop m_idx friend} {
 		SetProgressColors $friend
 		set Progress(friend) $friend
 	}
-
+	
+if 0 {
 	# Set the progress
 	array set attrib [angband m_list set $m_idx]
-
-if 0 {
 
 	if {$attrib(ml)} {
 		set curhp [expr {($attrib(hp) > 0) ? $attrib(hp) : 0}]
@@ -2265,7 +2264,7 @@ if 0 {
 	} else {
 		set current 0
 	}
-}
+
 	set current 0
 
 	if {$current != $Progress(current)} {
@@ -2280,6 +2279,7 @@ if 0 {
 		$widget itemconfigure $Progress(textId) -text $name
 		set Progress(r_idx) $attrib(r_idx)
 	}
+}
 
 	return
 }

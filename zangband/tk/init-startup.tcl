@@ -285,36 +285,6 @@ proc angband_startup {what} {
 		init_script {
 			set prompt "    script"
 		}
-		init_z_info {
-			set prompt "    array sizes"
-		}
-		init_f_info {
-			set prompt "    features"
-		}
-		init_k_info {
-			set prompt "    objects"
-		}
-		init_a_info {
-			set prompt "    artifacts"
-		}
-		init_e_info {
-			set prompt "    ego-items"
-		}
-		init_r_info {
-			set prompt "    monsters"
-		}
-		init_h_info {
-			set prompt "    histories"
-		}
-		init_p_info {
-			set prompt "    races"
-		}
-		init_b_info {
-			set prompt "    owners"
-		}
-		init_g_info {
-			set prompt "    prices"
-		}
 		init_wilderness {
 			set prompt "    wilderness"
 		}
@@ -326,9 +296,6 @@ proc angband_startup {what} {
 		}
 		init_plots {
 			set prompt "    plots"
-		}
-		init_v_info {
-			set prompt "    vaults"
 		}
 		init_other {
 			set prompt "    other"

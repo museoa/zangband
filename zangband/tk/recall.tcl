@@ -463,66 +463,6 @@ if 0 {
 
 }
 
-# NSRecall::RecallMonster --
-#
-#	Show info about a monster race.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecall::RecallMonster {r_idx} {
-
-	variable Priv
-
-	if {![Value recall,show]} return
-
-	# <Track-race> might pass us zero
-	if {!$r_idx} return
-	
-	# Hack -- Get the object id
-	set oop [Global recall,oop]
-	
-	# If we are in "list mode", don't clobber the text
-	if {[string length [Info $oop hook]]} return
-
-	# Get the memory
-	set memory [angband r_info info $r_idx memory]
-
-	# Don't set the text if it is unchanged... could be bad!
-	if {$Priv(icon,valid) && [string equal $Priv(icon,to) monster] && ($Priv(icon,toindex) == $r_idx)} {
-		if {[string equal $memory [Info $oop monsterMem]]} {
-			return
-		}
-		Info $oop monsterMem $memory
-	}
-
-	# Get the icon
-	set icon [angband r_info info $r_idx icon]
-
-	# Get the name
-	if {![angband r_info info $r_idx unique]} {
-		set name [mc "The "]
-	}
-	append name [angband r_info info $r_idx name]:
-
-	# Get the color
-	set color [Value TERM_L_RED]
-
-	# Set the text
-	SetText $oop $icon $color $name $memory
-
-	# Remember info about the displayed icon
-	set Priv(icon,to) monster
-	set Priv(icon,toindex) $r_idx
-	set Priv(icon,valid) 1
-	set Priv(icon,known) 1
-
-	return
-}
-
 
 # NSRecall::RecallSpell --
 #
