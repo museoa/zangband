@@ -1582,6 +1582,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 				(*f2) |= (TR2_RES_FEAR);
 			break;
 		case CLASS_CHAOS_WARRIOR:
+			(*f2) |= (TR4_PATRON);
 			if (p_ptr->lev > 29)
 				(*f2) |= (TR2_RES_CHAOS);
 			if (p_ptr->lev > 39)
@@ -1726,6 +1727,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= (TR2_FREE_ACT);
 			(*f2) |= (TR2_RES_POIS);
 			(*f3) |= (TR3_SLOW_DIGEST);
+			(*f4) |= (TR4_CANT_EAT);
 			if (p_ptr->lev > 34)
 				(*f2) |= (TR2_HOLD_LIFE);
 			break;
@@ -1734,6 +1736,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= (TR2_RES_SHARDS);
 			(*f2) |= (TR2_HOLD_LIFE);
 			(*f2) |= (TR2_RES_POIS);
+			(*f2) |= (TR4_CANT_EAT);
 			if (p_ptr->lev > 9)
 				(*f2) |= (TR2_RES_COLD);
 			break;
@@ -1743,6 +1746,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= (TR2_RES_NETHER);
 			(*f2) |= (TR2_RES_POIS);
 			(*f3) |= (TR3_SLOW_DIGEST);
+			(*f4) |= (TR4_CANT_EAT);
 			if (p_ptr->lev > 4)
 				(*f2) |= (TR2_RES_COLD);
 			break;
@@ -1753,6 +1757,8 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f3) |= (TR3_LITE);
 			(*f2) |= (TR2_RES_POIS);
 			(*f2) |= (TR2_RES_COLD);
+			(*f4) |= (TR4_IM_DARK);
+			(*f4) |= (TR4_HURT_LITE);
 			break;
 		case RACE_SPECTRE:
 			(*f2) |= (TR2_RES_COLD);
@@ -1761,6 +1767,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= (TR2_RES_NETHER);
 			(*f2) |= (TR2_RES_POIS);
 			(*f3) |= (TR3_SLOW_DIGEST);
+			(*f4) |= (TR4_CANT_EAT);
 			/* XXX pass_wall */
 			if (p_ptr->lev > 34)
 				(*f3) |= TR3_TELEPATHY;
@@ -1774,13 +1781,17 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 		case RACE_BEASTMAN:
 			(*f2) |= (TR2_RES_SOUND);
 			(*f2) |= (TR2_RES_CONF);
+			(*f4) |= (TR4_MUTATE);
 			break;
 		case RACE_GHOUL:
 			(*f2) |= (TR2_HOLD_LIFE);
+			(*f4) |= (TR4_CANT_EAT);
 			if (p_ptr->lev > 9) (*f2) |= (TR2_RES_DARK);
 			if (p_ptr->lev > 19) (*f2) |= (TR2_RES_NETHER);
 			(*f2) |= (TR2_RES_POIS);
 			(*f2) |= (TR2_RES_COLD);
+			if (!p_ptr->equipment[EQUIP_WIELD].k_idx)
+				(*f4) |= (TR4_PARA_TOUCH);
 			break;
 		default:
 			;					/* Do nothing */
@@ -1894,8 +1905,9 @@ void print_equippy(void)
 /*
  * Helper function, see below
  */
-static void display_player_flag_aux(int col, int row,
-                                    cptr header, int n, u32b flag1, u32b flag2)
+static void display_player_flag_aux3(int col, int row,
+                                    cptr header, int n1, u32b flag1, 
+				    int n2, u32b flag2, int n3, u32b flag3)
 {
 	int i;
 	u32b f[4];
@@ -1923,8 +1935,17 @@ static void display_player_flag_aux(int col, int row,
 		put_fstr(col, row, CLR_SLATE ".");
 
 		/* Check flags */
-		if (f[n - 1] & flag1) put_fstr(col, row, "+");
-		if (f[n - 1] & flag2) put_fstr(col, row, "*");
+		if (f[n3 - 1] & flag3)
+		{
+			put_fstr(col, row, CLR_RED "v");
+			if (f[n1 - 1] & flag1) put_fstr(col, row, CLR_RED "+");
+			if (f[n2 - 1] & flag2) put_fstr(col, row, CLR_RED "*");
+		}
+		else
+		{
+			if (f[n1 - 1] & flag1) put_fstr(col, row, "+");
+			if (f[n2 - 1] & flag2) put_fstr(col, row, "*");
+		}
 
 		/* Advance */
 		col++;
@@ -1937,11 +1958,31 @@ static void display_player_flag_aux(int col, int row,
 	put_fstr(col, row, CLR_SLATE ".");
 
 	/* Check flags */
-	if (f[n - 1] & flag1) put_fstr(col, row, "+");
-	if (f[n - 1] & flag2) put_fstr(col, row, "*");
+	if (f[n3 - 1] & flag3)
+	{
+		put_fstr(col, row, CLR_RED "v");
+		if (f[n1 - 1] & flag1) put_fstr(col, row, CLR_RED "+");
+		if (f[n2 - 1] & flag2) put_fstr(col, row, CLR_RED "*");
+	}
+	else
+	{
+		if (f[n1 - 1] & flag1) put_fstr(col, row, "+");
+		if (f[n2 - 1] & flag2) put_fstr(col, row, "*");
+	}
 }
 
+static void display_player_flag_aux2(int col, int row,
+                                    cptr header, int n1, u32b flag1, 
+				    int n2, u32b flag2)
+{
+	display_player_flag_aux3(col, row, header, n1, flag1, n2, flag2, 1, 0);
+}
 
+static void display_player_flag_aux(int col, int row,
+                                    cptr header, int n1, u32b flag1)
+{
+	display_player_flag_aux3(col, row, header, n1, flag1, 1, 0, 1, 0);
+}
 /*
  * Special display, part 1
  */
@@ -1953,55 +1994,77 @@ static void display_player_flag_info(void)
 
 	/*** Set 1 ***/
 
-	row = 5;
+	row = 0;
 	col = 0;
 
 	display_player_equippy(col + 8, row++);
 
 	put_fstr(col + 8, row++, "abcdefghijkl@");
 
-	display_player_flag_aux(col, row++, "Acid  :", 2, TR2_RES_ACID,
-							TR2_IM_ACID);
-	display_player_flag_aux(col, row++, "Elec  :", 2, TR2_RES_ELEC,
-							TR2_IM_ELEC);
-	display_player_flag_aux(col, row++, "Fire  :", 2, TR2_RES_FIRE,
-							TR2_IM_FIRE);
-	display_player_flag_aux(col, row++, "Cold  :", 2, TR2_RES_COLD,
-							TR2_IM_COLD);
-	display_player_flag_aux(col, row++, "Poison:", 2, TR2_RES_POIS, 0);
-	display_player_flag_aux(col, row++, "Fear  :", 2, TR2_RES_FEAR, 0);
-	display_player_flag_aux(col, row++, "Light :", 2, TR2_RES_LITE, 0);
-	display_player_flag_aux(col, row++, "Dark  :", 2, TR2_RES_DARK, 0);
-	display_player_flag_aux(col, row++, "Shard :", 2, TR2_RES_SHARDS, 0);
-	display_player_flag_aux(col, row++, "Blind :", 2, TR2_RES_BLIND, 0);
-	display_player_flag_aux(col, row++, "Conf  :", 2, TR2_RES_CONF, 0);
-	display_player_flag_aux(col, row++, "Sound :", 2, TR2_RES_SOUND, 0);
-	display_player_flag_aux(col, row++, "Nether:", 2, TR2_RES_NETHER, 0);
-	display_player_flag_aux(col, row++, "Nexus :", 2, TR2_RES_NEXUS, 0);
-	display_player_flag_aux(col, row++, "Chaos :", 2, TR2_RES_CHAOS, 0);
-	display_player_flag_aux(col, row++, "Disnch:", 2, TR2_RES_DISEN, 0);
+	display_player_flag_aux3(col, row++, "Acid  :", 2, TR2_RES_ACID,
+							2, TR2_IM_ACID,
+							4, TR4_HURT_ACID);
+	display_player_flag_aux3(col, row++, "Elec  :", 2, TR2_RES_ELEC,
+							2, TR2_IM_ELEC,
+							4, TR4_HURT_ELEC);
+	display_player_flag_aux3(col, row++, "Fire  :", 2, TR2_RES_FIRE,
+							2, TR2_IM_FIRE,
+							4, TR4_HURT_FIRE);
+	display_player_flag_aux3(col, row++, "Cold  :", 2, TR2_RES_COLD,
+							2, TR2_IM_COLD,
+							4, TR4_HURT_COLD);
+	display_player_flag_aux(col, row++, "Poison:", 2, TR2_RES_POIS);
+	display_player_flag_aux(col, row++, "Fear  :", 2, TR2_RES_FEAR);
+	display_player_flag_aux3(col, row++, "Light :", 2, TR2_RES_LITE,
+							4, TR4_IM_LITE,
+							4, TR4_HURT_LITE);
+	display_player_flag_aux3(col, row++, "Dark  :", 2, TR2_RES_DARK,
+							4, TR4_IM_DARK,
+							4, TR4_HURT_DARK);
+	display_player_flag_aux(col, row++, "Shard :", 2, TR2_RES_SHARDS);
+	display_player_flag_aux(col, row++, "Blind :", 2, TR2_RES_BLIND);
+	display_player_flag_aux(col, row++, "Conf  :", 2, TR2_RES_CONF);
+	display_player_flag_aux(col, row++, "Sound :", 2, TR2_RES_SOUND);
+	display_player_flag_aux(col, row++, "Nether:", 2, TR2_RES_NETHER);
+	display_player_flag_aux(col, row++, "Nexus :", 2, TR2_RES_NEXUS);
+	display_player_flag_aux(col, row++, "Chaos :", 2, TR2_RES_CHAOS);
+	display_player_flag_aux(col, row++, "Disnch:", 2, TR2_RES_DISEN);
+	display_player_flag_aux(col, row++, "Animal:", 4, TR4_PROT_ANIMAL);
+	display_player_flag_aux(col, row++, "Evil  :", 4, TR4_PROT_EVIL);
+	display_player_flag_aux(col, row++, "Undead:", 4, TR4_PROT_UNDEAD);
+	display_player_flag_aux(col, row++, "Demon :", 4, TR4_PROT_DEMON);
+	display_player_flag_aux(col, row++, "Orc   :", 4, TR4_PROT_ORC);
+	display_player_flag_aux(col, row++, "Troll :", 4, TR4_PROT_TROLL);
+	/* XXX XXX XXX No room for these two! */
+#if 0
+	display_player_flag_aux(col, row++, "Giant :", 4, TR4_PROT_GIANT);
+	display_player_flag_aux(col, row++, "Dragon:", 4, TR4_PROT_DRAGON);
+#endif
 
 
 	/*** Set 2 ***/
 
-	row = 11;
+	row = 9;
 	col = 25;
 
 	display_player_equippy(col + 10, row++);
 
 	put_fstr(col + 10, row++, "abcdefghijkl@");
 
-	display_player_flag_aux(col, row++, "Speed   :", 1, TR1_SPEED, 0);
-	display_player_flag_aux(col, row++, "Reflect :", 2, TR2_REFLECT, 0);
-	display_player_flag_aux(col, row++, "AuraFire:", 3, TR3_SH_FIRE, 0);
-	display_player_flag_aux(col, row++, "AuraElec:", 3, TR3_SH_ELEC, 0);
-	display_player_flag_aux(col, row++, "NoTelprt:", 3, TR3_NO_TELE, 0);
-	display_player_flag_aux(col, row++, "No Magic:", 3, TR3_NO_MAGIC, 0);
-	display_player_flag_aux(col, row++, "Cursed  :", 3, TR3_CURSED,
-							TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
-	display_player_flag_aux(col, row++, "DrainExp:", 3, TR3_DRAIN_EXP, 0);
-	display_player_flag_aux(col, row++, "Teleport:", 3, TR3_TELEPORT, 0);
+	display_player_flag_aux(col, row++, "Speed   :", 1, TR1_SPEED);
+	display_player_flag_aux(col, row++, "Reflect :", 2, TR2_REFLECT);
+	display_player_flag_aux(col, row++, "AuraAcid:", 4, TR4_SH_ACID);
+	display_player_flag_aux(col, row++, "AuraFire:", 3, TR3_SH_FIRE);
+	display_player_flag_aux(col, row++, "AuraElec:", 3, TR3_SH_ELEC);
+	display_player_flag_aux(col, row++, "AuraCold:", 4, TR4_SH_COLD);
+	display_player_flag_aux(col, row++, "NoTelprt:", 3, TR3_NO_TELE);
+	display_player_flag_aux(col, row++, "No Magic:", 3, TR3_NO_MAGIC);
+	display_player_flag_aux2(col, row++, "Cursed  :", 3, TR3_CURSED,
+							3, TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
+	display_player_flag_aux(col, row++, "DrainExp:", 3, TR3_DRAIN_EXP);
+	display_player_flag_aux(col, row++, "Teleport:", 3, TR3_TELEPORT);
 
+	/* XXX MUTATE, PATRON, STRANGE_LUCK, AUTO_CURSE, DRAIN_STATS, CANT_EAT, SLOW_HEAL */
 
 	/*** Set 3 ***/
 
@@ -2012,16 +2075,16 @@ static void display_player_flag_info(void)
 
 	put_fstr(col + 11, row++, "abcdefghijkl@");
 
-	display_player_flag_aux(col, row++, "Free Actn:", 2, TR2_FREE_ACT, 0);
-	display_player_flag_aux(col, row++, "SeeInvis.:", 3, TR3_SEE_INVIS, 0);
-	display_player_flag_aux(col, row++, "Hold Life:", 2, TR2_HOLD_LIFE, 0);
-	display_player_flag_aux(col, row++, "Telepathy:", 3, TR3_TELEPATHY, 0);
-	display_player_flag_aux(col, row++, "SlwDigstn:", 3, TR3_SLOW_DIGEST, 0);
-	display_player_flag_aux(col, row++, "Regen.   :", 3, TR3_REGEN, 0);
-	display_player_flag_aux(col, row++, "Levitate :", 3, TR3_FEATHER, 0);
-	display_player_flag_aux(col, row++, "PermLite :", 3, TR3_LITE, 0);
-	display_player_flag_aux(col, row++, "Aggravate:", 3, TR3_AGGRAVATE, 0);
-	display_player_flag_aux(col, row++, "EvilCurse:", 3, TR3_TY_CURSE, 0);
+	display_player_flag_aux(col, row++, "Free Actn:", 2, TR2_FREE_ACT);
+	display_player_flag_aux(col, row++, "SeeInvis.:", 3, TR3_SEE_INVIS);
+	display_player_flag_aux(col, row++, "Hold Life:", 2, TR2_HOLD_LIFE);
+	display_player_flag_aux(col, row++, "Telepathy:", 3, TR3_TELEPATHY);
+	display_player_flag_aux(col, row++, "SlwDigstn:", 3, TR3_SLOW_DIGEST);
+	display_player_flag_aux(col, row++, "Regen.   :", 3, TR3_REGEN);
+	display_player_flag_aux(col, row++, "Levitate :", 3, TR3_FEATHER);
+	display_player_flag_aux(col, row++, "PermLite :", 3, TR3_LITE);
+	display_player_flag_aux(col, row++, "Aggravate:", 3, TR3_AGGRAVATE);
+	display_player_flag_aux(col, row++, "EvilCurse:", 3, TR3_TY_CURSE);
 }
 
 
