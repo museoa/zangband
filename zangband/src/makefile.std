@@ -116,7 +116,7 @@ BORGOBJS := \
 ##
 TKOBJS := \
 	tk/canv.o tk/cmdinfo.o \
-	tk/icon1.o tk/icon2.o tk/icon3.o tk/const.o \
+	tk/icon1.o tk/icon2.o tk/icon3.o \
 	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
 	tk/map1.o tk/map2.o \
 	tk/r_info.o tk/widget1.o tk/widget2.o tk/widget3.o \
