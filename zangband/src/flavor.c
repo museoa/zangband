@@ -1441,7 +1441,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Hack -- Rods have a "charging" indicator.  Now that stacks of rods may
 	 * be in any state of charge or discharge, this now includes a number. -LM-
 	 */
-	else if (known && (o_ptr->tval == TV_ROD))
+	else if (o_ptr->tval == TV_ROD)
 	{
 		/* Hack -- Dump " (# charging)" if relevant */
 		if (o_ptr->timeout)
@@ -1520,8 +1520,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	}
 
 	/* Indicate charging objects, but not rods. */
-	if (known && o_ptr->timeout && o_ptr->tval != TV_ROD
-		&& o_ptr->tval != TV_LITE)
+	if (known && o_ptr->timeout && (o_ptr->tval != TV_ROD)
+		&& (o_ptr->tval != TV_LITE))
 	{
 		/* Hack -- Dump " (charging)" if relevant */
 		strnfcat(buf, max, &len, " (charging)");

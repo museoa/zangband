@@ -2222,7 +2222,7 @@ static bool item_is_recharging(object_type *o_ptr)
 	if (o_ptr->timeout &&
 		((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
 	{
-		if (object_known_p(o_ptr) && (o_ptr->tval == TV_ROD))
+		if (o_ptr->tval == TV_ROD)
 		{
 			/* Paranoia. */
 			if (!k_ptr->pval) return (FALSE);
