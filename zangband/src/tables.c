@@ -6167,7 +6167,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  3, "small_levels",			"Allow unusually small dungeon levels" },
 	{TRUE,  3, "empty_levels",			"Allow empty 'arena' levels" },
 
-	{TRUE,  1, "auto_haggle",			"Auto-haggle in stores" },
+	{TRUE,  0, NULL,					"Number 32"},
 	{FALSE, 3, "auto_scum",				"Auto-scum for good levels" },
 	{FALSE, 1, "stack_allow_items",		"Allow weapons and armor to stack" },
 	{TRUE,  1, "stack_allow_wands",		"Allow wands/staffs/rods to stack" },

@@ -3104,9 +3104,6 @@ void borg_init_9(void)
 	/* We repeat by hand */
 	always_repeat = FALSE;
 
-	/* We do not haggle */
-	auto_haggle = TRUE;
-
 	/* We need space */
 	show_labels = FALSE;
 	show_weights = FALSE;

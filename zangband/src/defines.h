@@ -3568,7 +3568,7 @@
 
 /* Option set 1 */
 
-#define auto_haggle				p_ptr->options[30]
+/* {TRUE,  0, NULL,					"Number 30" }, p_ptr->options[30] */
 #define	auto_scum				svr_ptr->options[2]
 #define stack_allow_items		svr_ptr->options[3]
 #define stack_allow_wands		svr_ptr->options[4]
