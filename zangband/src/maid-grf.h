@@ -200,6 +200,8 @@ struct term_list
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
 	
+	s16b timeout;	/* Timeout Counter */
+	
 	s16b pval;	/* Particular value */
 	
 	byte tval;	/* Item type (from kind) */
@@ -232,6 +234,8 @@ struct list_item
 	
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
+	
+	s16b timeout;	/* Timeout Counter */
 	
 	s16b pval;	/* Particular value */
 	byte tval;	/* Item type (from kind) */

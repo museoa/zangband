@@ -311,10 +311,6 @@ extern bool borg_mindcr_legal_fail(int spell, int level, int allow_fail);
 extern bool borg_racial_check(int race, bool check_fail);
 extern bool borg_racial(int race);
 
-/*
- * Cheat/Parse the "equip" and "inven" screens.
- */
-extern void borg_cheat_equip(void);
 
 /*
  * Cheat/Parse the "spell" screen

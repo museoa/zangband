@@ -948,6 +948,9 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 		l_ptr->pval = tl_ptr->pval;
 		l_ptr->tval = tl_ptr->tval;
 		
+		/* Duplicate timeout */
+		l_ptr->timeout = tl_ptr->timeout;
+		
 		/* Duplicate bonuses */
 		l_ptr->to_h = tl_ptr->to_h;
 		l_ptr->to_d = tl_ptr->to_d;
@@ -1073,6 +1076,36 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 	
 	/* Tval */
 	l_ptr->tval = o_ptr->tval;
+	
+	/* Timeout */
+	if (o_ptr->tval == TV_LITE)
+	{
+		/* Lights have "obvious" timeouts */
+		l_ptr->timeout = o_ptr->timeout;
+	}
+	else
+	{
+		/* Rods can charge in piles */
+		if ((o_ptr->number > 1) && (o_ptr->tval == TV_ROD))
+		{
+			int power;
+			object_kind *k_ptr = &k_info[o_ptr->k_idx];
+		
+			/*
+			 * Find out how many rods are charging.
+			 */
+			power = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
+			if (power > o_ptr->number) power = o_ptr->number;
+			
+			/* Hack - Set timeout to number of charging items */
+			l_ptr->timeout = power;
+		}
+		else
+		{
+			/* Are we charging? */
+			l_ptr->timeout = o_ptr->timeout ? 1 : 0;
+		}
+	}
 }
 
 /*

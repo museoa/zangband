@@ -394,19 +394,11 @@ static void borg_hidden(void)
  * functions, which cause an insane amount of "screen flashing".
  *
  * Technically, we should attempt to parse all the messages that
- * indicate that it is necessary to re-parse the equipment, the
- * inventory, or the books, and only set the appropriate flags
- * at that point.  This would not only reduce the potential
- * screen flashing, but would also optimize the code a lot,
- * since the "cheat_inven()" and "cheat_equip()" functions
- * are expensive.  For paranoia, we could always select items
- * and spells using capital letters, and keep a global verification
- * buffer, and induce failure and recheck the inventory/equipment
- * any time we get a mis-match.  We could even do some of the state
- * processing by hand, for example, charge reduction and such.  This
- * might also allow us to keep track of how long we have held objects,
- * especially if we attempt to do "item tracking" in the inventory
- * extraction code.
+ * indicate that it is necessary to re-parse the books, and only
+ * set the appropriate flags at that point.  This would not only
+ * reduce the potential screen flashing, but would also optimize
+ * the code a lot.  For paranoia, we could always select items
+ * and spells using capital letters.
  */
 static bool borg_think(void)
 {
@@ -4627,9 +4619,6 @@ void do_cmd_borg(void)
 			/* Examine the screen */
 			borg_update();
 
-			/* Cheat the "equip" screen */
-			borg_cheat_equip();
-
 			/* Extract some "hidden" variables */
 			borg_hidden();
 
@@ -4710,7 +4699,6 @@ void do_cmd_borg(void)
 			borg_update();
 
 			/* Extract some "hidden" variables */
-			borg_cheat_equip();
 			borg_hidden();
 
 			/* Examine the inventory */
@@ -4750,9 +4738,6 @@ void do_cmd_borg(void)
 			/* Extract some "hidden" variables */
 			borg_hidden();
 
-			/* Cheat the "equip" screen */
-			borg_cheat_equip();
-
 			/* Examine the inventory */
 			borg_notice(TRUE);
 			borg_notice_home(NULL, FALSE);
@@ -4789,9 +4774,6 @@ void do_cmd_borg(void)
 
 			/* Extract some "hidden" variables */
 			borg_hidden();
-
-			/* Cheat the "equip" screen */
-			borg_cheat_equip();
 
 			/* Examine the inventory */
 			borg_notice(TRUE);
@@ -4923,9 +4905,6 @@ void do_cmd_borg(void)
 
 			/* Examine the screen */
 			borg_update();
-
-			/* Cheat the "equip" screen */
-			borg_cheat_equip();
 
 			/* Extract some "hidden" variables */
 			borg_hidden();
