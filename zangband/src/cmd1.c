@@ -544,7 +544,7 @@ void search(void)
 					place_closed_door(y, x);
 					
 					/* Notice + Lite this */
-					note_spot(y, x);
+					note_spot(x, y);
 
 					/* Disturb */
 					disturb(FALSE);

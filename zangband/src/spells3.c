@@ -1221,7 +1221,7 @@ void fetch(int dir, int wgt, bool require_los)
 	msg_format("%^s flies through the air to your feet.", o_name);
 
 	/* Notice the moved object (The player gets redrawn) */
-	note_spot(py, px);
+	note_spot(px, py);
 	
 	/* Redraw the map???  Can we just use lite_spot() a few times? */
 	p_ptr->redraw |= PR_MAP;
@@ -1274,7 +1274,7 @@ bool warding_glyph(void)
 	(void)place_field(py, px, FT_GLYPH_WARDING);
 	
 	/* Notice it */
-	note_spot(py, px);
+	note_spot(px, py);
 
 	return TRUE;
 }
@@ -1308,7 +1308,7 @@ bool explosive_rune(void)
 	(void)place_field(py, px, FT_GLYPH_EXPLODE);
 	
 	/* Notice it */
-	note_spot(py, px);
+	note_spot(px, py);
 
 	return TRUE;
 }
@@ -1607,7 +1607,7 @@ void stair_creation(void)
 	}
 	
 	/* Notice */
-	note_spot (py, px);
+	note_spot(px, py);
 }
 
 

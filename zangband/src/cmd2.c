@@ -794,7 +794,7 @@ bool do_cmd_open_aux(int y, int x)
 		cave_set_feat(y, x, FEAT_OPEN);
 		
 		/* Notice the change */
-		note_spot(y, x);
+		note_spot(x, y);
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -958,7 +958,7 @@ static bool do_cmd_close_aux(int y, int x)
 		cave_set_feat(y, x, FEAT_CLOSED);
 		
 		/* Notice the chance */
-		note_spot(y, x);
+		note_spot(x, y);
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -1075,7 +1075,7 @@ static bool twall(int y, int x, byte feat)
 	cave_set_feat(y, x, feat);
 	
 	/* Notice the chance */
-	note_spot(y, x);
+	note_spot(x, y);
 
 	/* Update some things */
 	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);

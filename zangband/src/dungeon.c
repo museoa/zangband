@@ -489,14 +489,14 @@ static void wreck_the_pattern(void)
 			cave_set_feat(r_y, r_x, FEAT_PATTERN_XTRA2);
 			
 			/* Hack - notice the change */
-			note_spot(r_y, r_x);
+			note_spot(r_x, r_y);
 		}
 	}
 
 	cave_set_feat(py, px, FEAT_PATTERN_XTRA2);
 	
 	/* Hack - notice the change */
-	note_spot(py, px);
+	note_spot(px, py);
 }
 
 

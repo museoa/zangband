@@ -2917,7 +2917,7 @@ static void cave_temp_room_lite(void)
 			}
 
 			/* Note + Redraw */
-			note_spot(y, x);
+			note_spot(x, y);
 		}
 	}
 
@@ -2979,7 +2979,7 @@ static void cave_temp_room_unlite(void)
 				pc_ptr->feat = FEAT_NONE;
 
 				/* Notice + Redraw */
-				note_spot(y, x);
+				note_spot(x, y);
 			}
 			else
 			{

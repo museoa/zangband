@@ -133,7 +133,7 @@ static void notice_field(field_type *f_ptr)
 		if (player_has_los_grid(parea(y, x)))
 		{		
 			/* Note + Lite the spot */
-			note_spot(y, x);
+			note_spot(x, y);
 		}
 	}
 }
@@ -163,7 +163,7 @@ void delete_field_idx(int fld_idx)
 	if (in_boundsp(y, x))
 	{
 		/* Note + Lite the spot */
-		note_spot(y, x);
+		note_spot(x, y);
 	}
 
 	/* Wipe the field */
@@ -200,7 +200,7 @@ void delete_field_ptr(s16b *fld_idx)
 	if (in_boundsp(y, x))
 	{
 		/* Note + Lite the spot */
-		note_spot(y, x);
+		note_spot(x, y);
 	}
 
 	/* Wipe the field */
@@ -259,7 +259,7 @@ void delete_field(int y, int x)
 	if (!in_boundsp(y, x)) return;
 
 	/* Note + Lite the spot */
-	if (character_dungeon) note_spot(y, x);
+	if (character_dungeon) note_spot(x, y);
 }
 
 
@@ -934,7 +934,7 @@ bool field_detect_type(s16b fld_idx, byte typ)
 			flag = TRUE;
 			
 			/* Note + Lite the spot */
-			note_spot(f_ptr->fy, f_ptr->fx);
+			note_spot(f_ptr->fx, f_ptr->fy);
 		}
 
 		/* If not, get next one. */
@@ -3215,7 +3215,7 @@ bool field_action_door_unlock(field_type *f_ptr, vptr input)
 		cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
 		
 		/* Notice the change */
-		note_spot(f_ptr->fy, f_ptr->fx);
+		note_spot(f_ptr->fx, f_ptr->fy);
 		
 		/* Delete the field */
 		return (TRUE);
@@ -3255,7 +3255,7 @@ bool field_action_door_bash(field_type *f_ptr, vptr input)
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
 			
 			/* Notice the change */
-			note_spot(f_ptr->fy, f_ptr->fx);
+			note_spot(f_ptr->fx, f_ptr->fy);
 		}
 
 		/* Open the door */
@@ -3264,7 +3264,7 @@ bool field_action_door_bash(field_type *f_ptr, vptr input)
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
 			
 			/* Notice the change */
-			note_spot(f_ptr->fy, f_ptr->fx);
+			note_spot(f_ptr->fx, f_ptr->fy);
 		}
 		
 		/* Delete the field */
@@ -3326,7 +3326,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 					| PU_MONSTERS | PU_MON_LITE);
 
 				/* Notice the change */
-				note_spot(f_ptr->fy, f_ptr->fx);
+				note_spot(f_ptr->fx, f_ptr->fy);
 			}
 			
 			/* Cannot move */
@@ -3404,8 +3404,9 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 			{
 				p_ptr->update |= (PU_VIEW | PU_FLOW |
 						 PU_MONSTERS | PU_MON_LITE);
+						 
 				/* Notice the change */
-				note_spot(f_ptr->fy, f_ptr->fx);
+				note_spot(f_ptr->fx, f_ptr->fy);
 			}
 			
 			/* Hack -- fall into doorway */

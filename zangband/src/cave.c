@@ -1927,7 +1927,7 @@ void print_rel(char c, byte a, int x, int y)
  * optimized primarily for the most common cases, that is, for the
  * non-marked floor grids.
  */
-void note_spot(int y, int x)
+void note_spot(int x, int y)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -4143,7 +4143,7 @@ void update_mon_lite(void)
 			pc_ptr->player &= ~(GRID_SEEN);
 
 			/* It is now unlit */
-			note_spot(fy, fx);
+			note_spot(fx, fy);
 		}
 
 		/* Clear the lit list */
@@ -4369,7 +4369,7 @@ void update_mon_lite(void)
 				}
 			
 				/* It is now unlit */
-				note_spot(fy, fx);	
+				note_spot(fx, fy);	
 			}
 		}
 	}
@@ -4405,7 +4405,7 @@ void update_mon_lite(void)
 			}
 			
 			/* It is now lit */
-			note_spot(fy, fx);
+			note_spot(fx, fy);
 		}
 		
 		/* Save in the monster lit array */
@@ -4867,7 +4867,7 @@ void cave_set_feat(int y, int x, int feat)
 	c_ptr->feat = feat;
 
 	/* Notice + Redraw */
-	if (character_dungeon) note_spot(y, x);
+	if (character_dungeon) note_spot(x, y);
 }
 
 

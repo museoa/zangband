@@ -1961,7 +1961,7 @@ void light_dark_square(int y, int x, bool daytime)
 	pcave_type *pc_ptr = parea(y, x);
 	
 	/* Hack -- Notice spot */
-	note_spot(y, x);
+	note_spot(x, y);
 	
 	if (daytime)
 	{

@@ -592,7 +592,7 @@ static void create_stairs(int y, int x)
 	cave_set_feat(y, x, FEAT_MORE);
 	
 	/* Notice the change */
-	note_spot(y, x);
+	note_spot(x, y);
 
 	/* Remember to update everything */
 	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);

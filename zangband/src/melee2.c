@@ -2503,7 +2503,7 @@ static void process_monster(int m_idx)
 				do_view = TRUE;
 				
 				/* Forget the wall */
-				note_spot(ny, nx);
+				note_spot(nx, ny);
 			}
 		}
 		
@@ -2562,7 +2562,7 @@ static void process_monster(int m_idx)
 			if (player_can_see_bold(nx, ny)) do_view = TRUE;
 			
 			/* Notice the change */
-			note_spot(ny, nx);
+			note_spot(nx, ny);
 				
 			/* Take a turn */
 			do_turn = TRUE;

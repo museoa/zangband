@@ -4139,7 +4139,7 @@ void place_object(int y, int x, bool good, bool great)
 		c_ptr->o_idx = o_idx;
 
 		/* Notice + Redraw */
-		note_spot(y, x);
+		note_spot(x, y);
 	}
 	else
 	{
@@ -4255,7 +4255,7 @@ void place_gold(int y, int x)
 		c_ptr->o_idx = o_idx;
 
 		/* Notice + Redraw */
-		note_spot(y, x);
+		note_spot(x, y);
 	}
 }
 
@@ -4610,7 +4610,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	}
 
 	/* Note + Redraw the spot */
-	note_spot(by, bx);
+	note_spot(bx, by);
 
 	/* Sound */
 	sound(SOUND_DROP);
