@@ -433,6 +433,40 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	if (fontname == NULL) return;
 
 	load_font(td, fontname);
+	
+	/* Delete the old pixmap */
+	gdk_pixmap_unref(td->pixmap);
+	
+	/* Create a pixmap as buffer for screenupdates */
+	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
+					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
+	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
+	td->gc = gdk_gc_new(td->drawing_area->window);
+	
+	/* Clear the pixmap */
+	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
+		                0, 0,
+		                td->cols * td->font_wid, td->rows * td->font_hgt);
+						
+	/* Copy it to the window */
+	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+	                0, 0, 0, 0,
+					td->cols * td->font_wid, td->rows * td->font_hgt);
+	
+	/* Show the widgets */
+	gtk_widget_show_all(td->window);
+
+	/* Resize the drawing area */
+	gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
+				 td->cols * td->font_wid, td->rows * td->font_hgt);
+	gtk_window_set_default_size(GTK_WINDOW(td->window),
+				 td->cols * td->font_wid, td->rows * td->font_hgt);
+	
+	/* Redraw the term */
+	Term_redraw();
+	
+	/* gtk_window_set_policy(GTK_WINDOW(td->window),
+				  FALSE, TRUE, FALSE); */
 }
 
 
@@ -775,7 +809,9 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
 		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
 				 td->cols * td->font_wid, td->rows * td->font_hgt);
-	
+		gtk_window_set_policy(GTK_WINDOW(td->window), FALSE, TRUE, TRUE);
+		
+		
 		/* Register callbacks */
 		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate",
 					 quit_event_handler, NULL);
@@ -818,6 +854,7 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
 		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
 				 td->cols * td->font_wid, td->rows * td->font_hgt);
+		gtk_window_set_policy(GTK_WINDOW(td->window), TRUE, TRUE, TRUE);
 		
 		/* Register callbacks */
 		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
