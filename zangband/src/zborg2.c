@@ -635,12 +635,6 @@ static errr borg_vinfo_init(void)
  */
 void borg_update_view(void)
 {
-	/* int py = p_ptr->py; */
-	/* int px = p_ptr->px; */
-	
-	int py = c_y;
-    int px = c_x;
-	
 	map_block *mb_ptr;
 
 	byte info;
@@ -669,14 +663,14 @@ void borg_update_view(void)
 	/* Player grid */
 
 	/* Get grid info */
-	mb_ptr = map_loc(px, py);
+	mb_ptr = map_loc(c_x, c_y);
 
 	/* Assume viewable */
 	mb_ptr->info |= (BORG_MAP_VIEW);
 
 	/* Save in array */
-	borg_view_y[view_n] = py;
-	borg_view_x[view_n] = px;
+	borg_view_y[view_n] = c_y;
+	borg_view_x[view_n] = c_x;
 	borg_view_n++;
 
 	/*** Step 2 -- octants ***/
@@ -721,8 +715,8 @@ void borg_update_view(void)
 				(bits3 & (p->bits[3])) || (bits4 & (p->bits[4])))
 			{
 				/* Get location */
-				x = p->grid_x[o2] + px;
-				y = p->grid_y[o2] + py;
+				x = p->grid_x[o2] + c_x;
+				y = p->grid_y[o2] + c_y;
 
 				/* Is it in bounds? */
 				if (!map_in_bounds(x, y))
@@ -806,6 +800,9 @@ void borg_forget_view(void)
     {
         int y = borg_view_y[i];
         int x = borg_view_x[i];
+		
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
 
         /* Access the grid */
         mb_ptr = map_loc(x, y);
@@ -855,6 +852,9 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
     /* Simulate the spell/missile path */
     for (dist = 0; dist <= MAX_RANGE; dist++)
     {
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) break;
+	
         /* Get the grid */
         mb_ptr = map_loc(x, y);
 
@@ -904,6 +904,9 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
     /* Simulate the spell/missile path */
     for (dist = 0; dist <= MAX_RANGE; dist++)
     {
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) break;
+	
         /* Get the grid */
         mb_ptr = map_loc(x, y);
 
@@ -943,6 +946,9 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
     /* Simulate the spell/missile path */
     for (dist = 0; dist <= MAX_RANGE; dist++)
     {
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) break;
+		
         /* Get the grid */
         mb_ptr = map_loc(x, y);
 

@@ -7217,6 +7217,9 @@ static int borg_danger_aux2(int i, bool average)
             /* Acquire location */
             x = spot_x + c_x;
             y = spot_y + c_y;
+			
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
 
 			mb_ptr = map_loc(x, y);
 

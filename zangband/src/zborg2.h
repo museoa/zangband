@@ -40,9 +40,11 @@
 
 /*
  * Bold version of borg_cave_floor_grid
+ * (with bounds checking)
  */
 #define borg_cave_floor_bold(Y, X) \
-    (borg_cave_floor_grid(map_loc((X),(Y))))
+    (map_in_bounds((X),(Y)) && \
+	 borg_cave_floor_grid(map_loc((X),(Y))))
 
 
 /*

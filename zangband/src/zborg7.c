@@ -623,6 +623,9 @@ bool borg_check_lite(void)
         /* Get location */
         x = c_x + ddx_ddd[i];
         y = c_y + ddy_ddd[i];
+		
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
 
         /* Get grid */
 		mb_ptr = map_loc(x, y);
@@ -767,6 +770,9 @@ bool borg_check_lite_only(void)
         /* Get location */
         x = c_x + ddx_ddd[i];
         y = c_y + ddy_ddd[i];
+
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
 
         /* Get grid */
 		mb_ptr = map_loc(x, y);

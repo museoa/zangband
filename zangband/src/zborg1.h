@@ -12,6 +12,7 @@
 
 #ifdef ALLOW_BORG
 
+#define in_bounds(X, Y) crash_me
 
 /*
  * Number of grids in each screen (vertically)

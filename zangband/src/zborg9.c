@@ -4205,6 +4205,9 @@ void borg_write_map(bool ask)
         for (j = 0; j < MAX_WID; j++)
         {
             char ch;
+			
+			/* Bounds checking */
+			if (!map_in_bounds(j, i)) continue;
 
 			mb_ptr = map_loc(j, i);
 
@@ -5586,7 +5589,12 @@ void do_cmd_borg(void)
                 {
                     byte a = TERM_RED;
 
-                    map_block *mb_ptr = map_loc(x, y);
+                    map_block *mb_ptr;
+					
+					/* Bounds checking */
+					if (!map_in_bounds(x, y)) continue;
+					
+					mb_ptr = map_loc(x, y);
 
                     /* show only those grids */
                     if (!(mb_ptr->terrain >= low
@@ -5831,6 +5839,9 @@ void do_cmd_borg(void)
                     {
                         byte a = TERM_RED;
 						
+						/* Bounds checking */
+						if (!map_in_bounds(x, y)) continue;
+						
 						mb_ptr = map_loc(x, y);
 
                         /* Verify flow cost */
@@ -5890,6 +5901,9 @@ void do_cmd_borg(void)
 			            /* Grid in that direction */
 						x = false_x + ddx_ddd[i];
 			            y = false_y + ddy_ddd[i];
+						
+						/* Bounds checking */
+						if (!map_in_bounds(x, y)) continue;
 
 			            /* Access the grid */
 						mb_ptr = map_loc(x, y);

@@ -226,7 +226,13 @@ static bool observe_take_diff(int y, int x)
     int i, k_idx;
 
     borg_take *take;
-	map_block *mb_ptr = map_loc(x, y);
+	map_block *mb_ptr;
+	
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return (FALSE);
+	
+	/* Get grid */
+	mb_ptr = map_loc(x, y);
 
     /* Get the kind */
     k_idx = mb_ptr->object;
@@ -281,6 +287,9 @@ static bool observe_take_move(int y, int x, int d)
 
         /* Too far? */
         if (z > d) continue;
+		
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
 		
 		mb_ptr = map_loc(x, y);
 
@@ -813,10 +822,14 @@ void borg_delete_kill(int i)
     borg_fear_grid(NULL, kill->y, kill->x, -(borg_danger(kill->y,kill->x,1, TRUE)), TRUE);
 #endif
 
-	mb_ptr = map_loc(kill->x, kill->y);
+	/* Bounds checking */
+	if (map_in_bounds(kill->x, kill->y))
+	{
+		mb_ptr = map_loc(kill->x, kill->y);
 
-    /* Update the grids */
-    mb_ptr->kill = 0;
+   		/* Update the grids */
+    	mb_ptr->kill = 0;
+	}
 
     /* save a time stamp of when the last multiplier was killed */
     if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY)
@@ -884,7 +897,9 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 
     /* Too far away */
     if (d > MAX_SIGHT) return (FALSE);
-
+	
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return (FALSE);
 
     /* Access the grid */
 	mb_ptr = map_loc(x, y);
@@ -966,10 +981,10 @@ static void borg_follow_kill(int i)
     ox = kill->x;
     oy = kill->y;
 	
-	mb_ptr = map_loc(ox, oy);
-
-    /* Out of sight */
+	/* Out of sight */
     if (!borg_follow_kill_aux(i, oy, ox)) return;
+	
+	mb_ptr = map_loc(ox, oy);
 
     /* Note */
     borg_note(format("# There was a monster '%s' at (%d,%d)",
@@ -1031,6 +1046,9 @@ static void borg_follow_kill(int i)
         /* Access location */
         x = ox + dx;
         y = oy + dy;
+		
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
 
         /* Access the grid */
  		mb_ptr = map_loc(x, y);
@@ -1115,7 +1133,6 @@ static void borg_follow_kill(int i)
     /* Clear goals */
     goal = 0;
 }
-
 
 
 /*
@@ -1224,7 +1241,13 @@ static bool observe_kill_diff(int y, int x)
     int i, r_idx;
 
     borg_kill *kill;
-	map_block *mb_ptr = map_loc(x, y);
+	map_block *mb_ptr;
+	
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return (FALSE);
+	
+	/* Get grid */
+	mb_ptr = map_loc(x, y);
 
     /* Guess the race */
     r_idx = mb_ptr->monster;
@@ -1258,6 +1281,9 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
     monster_race *r_ptr;
 
 	map_block *mb_ptr;
+	
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return (FALSE);
 
     /* Look at the monsters */
     for (i = 1; i < borg_kills_nxt; i++)
@@ -1273,6 +1299,9 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
         /* Old location */
         ox = kill->x;
         oy = kill->y;
+		
+		/* Bounds checking */
+		if (!map_in_bounds(ox, oy)) continue;
 
         /* Calculate distance */
         z = distance(oy, ox, y, x);
@@ -1945,6 +1974,9 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
                 if (k_ptr->d_attr != r_ptr->d_attr) continue;
             }
         }
+		
+		/* Bounds checking */
+		if (!map_in_bounds(take->x, take->y)) continue;
 
         /* Calculate distance */
         d = distance(take->y, take->x, y, x);
