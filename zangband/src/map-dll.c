@@ -12,7 +12,7 @@
 
 #include "tnb.h"
 #include "cmdinfo-dll.h"
-#include "icon-dll.h"
+#include "icon.h"
 #include "widget.h"
 #include "map-dll.h"
 

@@ -10,7 +10,7 @@
  * included in all such copies.
  */
 #include "tnb.h"
-#include "icon-dll.h"
+#include "icon.h"
 #include "plat-dll.h"
 
 

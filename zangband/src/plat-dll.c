@@ -12,7 +12,7 @@
 
 #include "tnb.h"
 #include "plat-dll.h"
-#include "icon-dll.h"
+#include "icon.h"
 
 #include <limits.h>
 #ifndef USHRT_MAX

@@ -10,7 +10,7 @@
  * included in all such copies.
  */
 
-#include "icon.h"
+#include "icon.h" /* Needed for t_display */
 
 typedef struct Widget Widget;
 typedef void Widget_CenterProc(Widget *widgetPtr, int y, int x);
