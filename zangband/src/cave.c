@@ -771,7 +771,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	s16b this_o_idx, next_o_idx = 0;
 
-	int feat;
+	byte feat;
 
 	byte a;
 	byte c;
