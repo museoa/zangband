@@ -90,6 +90,125 @@ static s16b value_feeling[] =
 
 
 
+/* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
+static int borg_calc_pseudo(void)
+{
+	int difficulty;
+
+	/* Based on race get the basic feel factor. */
+	switch (borg_class)
+	{
+		case CLASS_WARRIOR:
+		{
+			/* Good (heavy) sensing */
+			difficulty = 9000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MAGE:
+		case CLASS_HIGH_MAGE:
+		{
+			/* Very bad (light) sensing */
+			difficulty = 240000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_PRIEST:
+		{
+			/* Good (light) sensing */
+			difficulty = 10000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_ROGUE:
+		{
+			/* Okay sensing */
+			difficulty = 20000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_RANGER:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 95000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_PALADIN:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 77777L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_WARRIOR_MAGE:
+		{
+			/* Bad sensing */
+			difficulty = 75000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MINDCRAFTER:
+		{
+			/* Bad sensing */
+			difficulty = 55000L;
+	
+			/* Done */
+			break;
+		}
+
+		case CLASS_CHAOS_WARRIOR:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 80000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MONK:
+		{
+			/* Okay sensing */
+			difficulty = 20000L;
+
+			/* Done */
+			break;
+		}
+
+		default:
+		{
+			/* Paranoia */
+			difficulty = 0;
+		}
+	}
+
+	/* Factor in the sensing ability */
+	difficulty /= MAX(bp_ptr->skill_sns, 1);
+
+	/* Rescale larger by a facter of 25 */
+	difficulty *= 25;
+
+	/* Sensing gets better as you get more experienced */
+	difficulty /= p_ptr->lev * p_ptr->lev + 40;
+
+	/* Give the answer */
+	return (difficulty);
+}
+
 /*
  * Determine if an item is "probably" worthless
  *
@@ -126,17 +245,14 @@ bool borg_item_icky(list_item *l_ptr)
 	/* if its average, dump it if you want to. */
 	if (strstr(l_ptr->o_name, "{average")) return (TRUE);
 
-	/* things that are good/excellent/special/tainted need ID so are not icky */
+	/* items that are terrible/excellent/special/tainted need ID */
 	if (strstr(l_ptr->o_name, "{special") ||
 		strstr(l_ptr->o_name, "{terrible") ||
 		strstr(l_ptr->o_name, "{excellent") ||
 		strstr(l_ptr->o_name, "{tainted")) return (FALSE);
 
 	/* If your pseudo capabilities are non-existent */
-	if (borg_class == CLASS_PRIEST ||
-		borg_class == CLASS_RANGER ||
-		borg_class == CLASS_MAGE ||
-		bp_ptr->lev < 20)
+	if (borg_calc_pseudo() > 100)
 	{
 
 		/* Swords */
@@ -969,9 +1085,9 @@ static bool borg_enchant_to_a(void)
 	if (b_a >= 15) return (FALSE);
 
 	/* Enchant it */
-	if ((!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 5, 40)) ||
-		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
-		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR))
+	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
+		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR) ||
+		!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 5, 40))
 	{
 		/*
 		 * Find out if the prompt is at Inven or Equip by checking if
@@ -1083,10 +1199,10 @@ static bool borg_enchant_to_h(void)
 	if (b_a >= 15) return (FALSE);
 
 	/* Enchant it */
-	if ((!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 4, 40)) ||
-		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
-		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT))
-	{
+	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
+		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT) ||
+		!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 4, 40))
+		{
 
 		if (inven)
 		{
@@ -1206,9 +1322,9 @@ static bool borg_enchant_to_d(void)
 	if (b_a >= 25) return (FALSE);
 
 	/* Enchant it */
-	if (borg_spell_fail(REALM_SORCERY, 3, 4, 40) ||
-		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
-		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_DAM))
+	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
+		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_DAM) ||
+		borg_spell_fail(REALM_SORCERY, 3, 4, 40))
 	{
 		if (inven)
 		{
@@ -1648,6 +1764,33 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 	return (FALSE);
 }
 
+
+static bool borg_heavy_sense(void)
+{
+	switch(borg_class)
+	{
+		case CLASS_WARRIOR:
+		case CLASS_ROGUE:
+		case CLASS_RANGER:
+		case CLASS_PALADIN:
+		case CLASS_CHAOS_WARRIOR: return (TRUE);
+
+		case CLASS_MAGE:
+		case CLASS_PRIEST:
+		case CLASS_WARRIOR_MAGE:
+		case CLASS_MONK:
+		case CLASS_MINDCRAFTER:
+		case CLASS_HIGH_MAGE: return (FALSE);
+
+		default:
+		{
+			borg_oops("Unknown heavy sense for unknown class.");
+			return (FALSE);
+		}
+	}
+}
+
+
 /*
  * Destroy 'number' items
  */
@@ -2068,17 +2211,23 @@ static bool borg_test_stuff(void)
 			/* Assume nothing */
 			v = -1;
 
-			/* If the borg has unlimited identify then it should identify everything */
+			/* With unlimited identify the borg should identify everything */
 			if (bp_ptr->able.id >= 100) v = 1;
 
-			/* Identify "good" (and "terrible") items */
-			/* weak pseudo id */
+			/* Ignore items that are very likely worth nothing */
+			if (borg_item_icky(l_ptr)) continue;
+
+			/* Identify "good" items for a borg with light pseudo id */
 			if (strstr(l_ptr->o_name, "{good") &&
-				(borg_class == CLASS_MAGE ||
-				borg_class == CLASS_PRIEST ||
-				borg_class == CLASS_RANGER)) v = 10000L;
-			/* heavy pseudo id */
-			else if (strstr(l_ptr->o_name, "{good") && borg_gold < 10000) v = 1000L;
+				!borg_heavy_sense())
+			{
+				v = 10000L;
+			}
+			else if (strstr(l_ptr->o_name, "{good") &&
+				bp_ptr->able.id > 10)
+			{
+				v = 1000L;
+			}
 			else if (strstr(l_ptr->o_name, "{excellent")) v = 20000L;
 			else if (strstr(l_ptr->o_name, "{special")) v = 50000L;
 			else if (strstr(l_ptr->o_name, "{terrible")) v = 50000L;
@@ -2092,7 +2241,6 @@ static bool borg_test_stuff(void)
 					case TV_RING:
 					case TV_AMULET:
 					{
-
 						/* Hack -- reward depth */
 						v += (bp_ptr->max_depth * 5000L);
 
@@ -2101,7 +2249,6 @@ static bool borg_test_stuff(void)
 
 					case TV_ROD:
 					{
-
 						/* Hack -- reward depth */
 						v += (bp_ptr->max_depth * 3000L);
 
@@ -2111,7 +2258,6 @@ static bool borg_test_stuff(void)
 					case TV_WAND:
 					case TV_STAFF:
 					{
-
 						/* Hack -- reward depth */
 						v += (bp_ptr->max_depth * 2000L);
 
@@ -2129,17 +2275,9 @@ static bool borg_test_stuff(void)
 
 					case TV_FOOD:
 					{
-
 						/* Hack -- reward depth */
 						v += (bp_ptr->max_depth * 10L);
 
-						break;
-					}
-					case TV_SHIELD:
-					{
-						/* Hack -- reward depth */
-						v += (bp_ptr->max_depth * 10L);
-		
 						break;
 					}
 				}
@@ -2226,11 +2364,11 @@ static bool borg_test_stuff_star(void)
 	list_item *l_ptr;
 
 	/* Do we have the ability? */
-	if (!borg_spell_legal(REALM_SORCERY, 1, 7) &&
-		!borg_spell_legal(REALM_NATURE, 2, 5) &&
-		!borg_spell_legal(REALM_DEATH, 3, 2) &&
-		!borg_spell_legal(REALM_TRUMP, 3, 1) &&
-		!borg_spell_legal(REALM_LIFE, 3, 5) &&
+	if (!borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) &&
+		!borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) &&
+		!borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) &&
+		!borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) &&
+		!borg_spell_legal_fail(REALM_LIFE, 3, 5, 60) &&
 		!borg_read_scroll_fail(SV_SCROLL_STAR_IDENTIFY)) return (FALSE);
 
 	/* Look for an item to identify (equipment) */
@@ -2328,127 +2466,8 @@ static bool borg_test_stuff_star(void)
 }
 
 
-/* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
-static int borg_calc_pseudo(void)
-{
-	int difficulty;
-
-	/* Based on race get the basic feel factor. */
-	switch (borg_class)
-	{
-		case CLASS_WARRIOR:
-		{
-			/* Good (heavy) sensing */
-			difficulty = 9000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MAGE:
-		case CLASS_HIGH_MAGE:
-		{
-			/* Very bad (light) sensing */
-			difficulty = 240000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_PRIEST:
-		{
-			/* Good (light) sensing */
-			difficulty = 10000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_ROGUE:
-		{
-			/* Okay sensing */
-			difficulty = 20000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_RANGER:
-		{
-			/* Bad (heavy) sensing */
-			difficulty = 95000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_PALADIN:
-		{
-			/* Bad (heavy) sensing */
-			difficulty = 77777L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_WARRIOR_MAGE:
-		{
-			/* Bad sensing */
-			difficulty = 75000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MINDCRAFTER:
-		{
-			/* Bad sensing */
-			difficulty = 55000L;
-	
-			/* Done */
-			break;
-		}
-
-		case CLASS_CHAOS_WARRIOR:
-		{
-			/* Bad (heavy) sensing */
-			difficulty = 80000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MONK:
-		{
-			/* Okay sensing */
-			difficulty = 20000L;
-
-			/* Done */
-			break;
-		}
-
-		default:
-		{
-			/* Paranoia */
-			difficulty = 0;
-		}
-	}
-
-	/* Factor in the sensing ability */
-	difficulty /= MAX(bp_ptr->skill_sns, 1);
-
-	/* Rescale larger by a facter of 25 */
-	difficulty *= 25;
-
-	/* Sensing gets better as you get more experienced */
-	difficulty /= p_ptr->lev * p_ptr->lev + 40;
-
-	/* Give the answer */
-	return (difficulty);
-}
-
 /* 
- * use the Mindcrafter Psychometry power to pseudo-id items
+ * Use the Mindcrafter Psychometry power to pseudo-id items
  * or determine if it is smart to wait it out
  */
 static bool borg_test_stuff_pseudo(void)
@@ -2461,8 +2480,9 @@ static bool borg_test_stuff_pseudo(void)
 	if (!borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 15, 60) ||
 		bp_ptr->lev > 24)
 	{
-		/* Is the pseudo id likely to kick in by itself? */
-		if (borg_calc_pseudo() > 50) return (FALSE);
+		/* Is it heavy pseudo id and likely to kick in by itself? */
+		if (borg_heavy_sense() &&
+			borg_calc_pseudo() > 50) return (FALSE);
 	}
 
 	/* Look for an item to pseudo identify */
@@ -2498,6 +2518,7 @@ static bool borg_test_stuff_pseudo(void)
 	/* Found nothing */
 	if (b_i < 0) return (FALSE);
 
+	/* If you can cast the spell */
 	if (borg_mindcr(MIND_PSYCHOMETRY, 15))
 	{
 		if (b_i >= equip_num)
@@ -2538,7 +2559,7 @@ static bool borg_test_stuff_pseudo(void)
 	}
 
 	/* Make a note */
-	borg_note("# Waiting for psudo id to kick in");
+	borg_note("# Waiting for pseudo id to kick in");
 
 	/* Wait a bit for the pseudo-id to kick in */
 	borg_keypress('0');
