@@ -7,6 +7,21 @@ typedef int errr;
 /***** Constants *****/
 
 /*
+ * Player class constants (hard-coded by save-files, arrays, etc)
+ */
+#define CLASS_WARRIOR            0
+#define CLASS_MAGE               1
+#define CLASS_PRIEST             2
+#define CLASS_ROGUE              3
+#define CLASS_RANGER             4
+#define CLASS_PALADIN            5
+#define CLASS_WARRIOR_MAGE       6
+#define CLASS_CHAOS_WARRIOR      7
+#define CLASS_MONK               8
+#define CLASS_MINDCRAFTER        9
+#define CLASS_HIGH_MAGE         10
+
+/*
  * Indexes of the various "stats" (hard-coded by savefiles, etc).
  */
 #define A_STR	0
