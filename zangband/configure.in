@@ -82,11 +82,39 @@ AC_SEARCH_LIBS([initscr], [ncurses curses],
 AC_SEARCH_LIBS([gtk_init_check], [gtk],
 	AC_DEFINE(USE_GTK, 1, [Use gtk port]))
 
+dnl A function to search for header files
+AC_DEFUN(AC_SEARCH_HEADERS,
+[
+	for search_header in $1
+	do
+        [AC_CHECK_HEADER($search_header,
+		    [$2=`AS_DIRNAME($search_header)`]
+			
+			[if test "$2" != "/usr/include"; then
+			   CPPFLAGS="-I$$2 $CPPFLAGS"
+			fi
+			break]
+			,
+			[])]
+	done
+])
+
 AC_SEARCH_LIBS([Tcl_Init], [tcl84 tcl8.4 tcl83 tcl8.3],
 	AC_SEARCH_LIBS([Tk_Init], [tk84 tk8.4 tk83 tk8.3],
-		TK_PORT="y" ; AC_SUBST(TK_PORT)
-		AC_DEFINE(USE_TNB, 1, [Use tcl/tk port])
-		AC_DEFINE(PLATFORM_X11, 1, [Use tcl/tk port X11 version])))
+	    [AC_SEARCH_HEADERS(/usr/local/include/tcl.h /usr/local/include/tcl/tcl.h /usr/include/tcl.h /usr/include/tcl8.4/tcl.h /usr/local/include/tcl8.4/tcl.h
+		    ,BASE_TCL_DIR)
+		
+		AC_SEARCH_HEADERS("$BASE_TCL_DIR/tk.h" /usr/local/include/tk.h /usr/local/include/tcl/tk.h /usr/include/tk.h /usr/include/tk8.4/tk.h /usr/local/include/tk8.4/tk.h
+		    ,BASE_TK_DIR)
+		
+        dnl Checks for libraries.
+		if test "x$BASE_TCL_DIR" != x && test "x$BASE_TK_DIR" != x; then
+            TK_PORT="y"; AC_SUBST(TK_PORT)
+			AC_DEFINE(USE_TNB, 1, [Use tcl/tk port])
+			AC_DEFINE(PLATFORM_X11, 1, [Use tcl/tk port X11 version])
+	    fi
+		]))
+
 
 # FIXME: Replace `main' with a function in `-lpc':
 AC_CHECK_LIB([pc], [main],
@@ -142,10 +170,6 @@ AC_CHECK_HEADERS([fcntl.h limits.h locale.h memory.h netdb.h stddef.h stdint.h s
 
 AC_CHECK_HEADERS([termios.h], 
 	AC_DEFINE(USE_VCS, 1, [Use termios port]))
-
-AC_CHECK_HEADERS([tcl.h])
-
-AC_CHECK_HEADERS([tkFont.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
