@@ -375,4 +375,3 @@ D:15:1:0:0:0:0:0:0
 F:10,field_action_door_bash
 F:15,field_action_delete | 16,field_action_interact_disarm
 F:17,field_action_door_jam_monster
- 
