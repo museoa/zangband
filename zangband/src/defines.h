@@ -3145,7 +3145,7 @@
  * Some things block LOS half the time.
  */
 #define cave_half_bold(Y,X) \
-	((area(Y,X)->feat & 0x60) && (quick_rand()))
+	(((area(Y,X)->feat & 0x60) == 0x60) && (quick_rand()))
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -3237,7 +3237,7 @@
  * True half the time for trees. (Block line of sight half the time.)
  */
 #define cave_half_grid(C) \
-    (((C)->feat & 0x60) && (quick_rand()))
+    ((((C)->feat & 0x60) == 0x60) && (quick_rand()))
 
 
 /*
