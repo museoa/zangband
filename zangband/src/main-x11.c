@@ -2300,7 +2300,7 @@ errr init_x11(int argc, char *argv[])
 
 	cptr dpy_name = "";
 
-	int num_term = 1;
+	int num_term = 3;
 
 #ifdef USE_GRAPHICS
 
