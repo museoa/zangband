@@ -13,7 +13,7 @@ else
 fi
 
 AC_PREREQ(2.57)
-AC_INIT(ZAngband, 2.7.3, bugs@zangband.org)
+AC_INIT(ZAngband, 2.7.4-cvs, bugs@zangband.org)
 AC_CONFIG_SRCDIR([src/angband.h])
 AC_CONFIG_HEADER([src/autoconf.h])
 
