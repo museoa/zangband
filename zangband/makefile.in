@@ -102,6 +102,8 @@ endif
 ##
 ## Compile zangband.
 ##
+default: zangband .makefiles
+
 zangband: $(objs-y)
 	$(LINK) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
 
@@ -114,7 +116,7 @@ zangband: $(objs-y)
 ##
 ## Hack - make sure the build system is consistant.
 ##
-makefile: configure makefile.in .makefiles
+makefile: configure makefile.in
 	$(CONFIGURE)
 	
 configure: configure.in
