@@ -278,7 +278,7 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 		script = k_text + k_ptr->trigger[trigger_id];
 	else
 	{
-		*ident = FALSE;
+		if (ident) *ident = FALSE;
 		return (FALSE);
 	}
 

@@ -71,8 +71,8 @@ static cptr f_info_flags[] =
 static cptr k_info_triggers[] =
 {
 	"USE",
-	"HIT",
-	"THROW",
+	"XXX1",
+	"BONUS",
 	"SMASH",
 	"DESC",
 	NULL

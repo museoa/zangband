@@ -498,6 +498,7 @@ N:77:(Chaotic)
 X:24:28
 W:0:6:0:1500
 F:CHAOTIC | RES_CHAOS | PATRON | IGNORE_ELEC | IGNORE_ACID | IGNORE_FIRE
+L:BONUS:if player.class == CLASS_CHAOS_WARRIOR then player.sp_bonus = player.sp_bonus + 1 end
 
 N:78:of Sharpness
 X:24:20

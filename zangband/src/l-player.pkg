@@ -296,6 +296,8 @@ struct player_type
 	
 	player_stat stat[A_MAX];	/* The player's stats */
 
+	int sp_bonus;           /* Bonus MP */
+
 	/*** Temporary fields ***/
 
 	s32b align;			/* Good/evil/neutral */

@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 
 /*
@@ -3171,6 +3172,17 @@ static void calc_bonuses(void)
 		}
 	}
 
+	/* Apply special scripts */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		o_ptr = &p_ptr->equipment[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		apply_object_trigger(TRIGGER_BONUS, o_ptr, NULL, 0);
+	}
+		
 	/* Hack -- handle "xtra" mode */
 	if (character_xtra) return;
 
