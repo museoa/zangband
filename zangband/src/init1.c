@@ -628,7 +628,7 @@ static cptr k_info_flags4[] =
 	"MUTATE",
 	"PATRON",
 	"STRANGE_LUCK",
-	"XXX16",
+	"PASS_WALL",
 	"PARA_TOUCH",
 	"PSI_CRIT",
 	"XXX19",

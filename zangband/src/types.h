@@ -1560,8 +1560,6 @@ struct player_type
 	u32b flags4;
 
 	/*** Extracted fields ***/
-	bool pass_wall;	/* Permanent wraithform */
-
 	s16b dis_to_h;	/* Known bonus to hit */
 	s16b dis_to_d;	/* Known bonus to dam */
 	s16b dis_to_a;	/* Known bonus to ac */

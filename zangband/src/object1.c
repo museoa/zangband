@@ -1426,6 +1426,10 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "It warps fate around it.";
 	}
+	if (f4 & TR4_PASS_WALL)
+	{
+		info[i++] = "It allows you to pass through solid rock.";
+	}
 
 	if (f4 & TR4_HURT_ACID)
 	{

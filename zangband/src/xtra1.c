@@ -2384,7 +2384,6 @@ static void calc_bonuses(void)
 	p_ptr->flags2 = 0;
 	p_ptr->flags3 = 0;
 	p_ptr->flags4 = 0;
-	p_ptr->pass_wall = FALSE;
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = rp_ptr->infra;
@@ -2667,7 +2666,7 @@ static void calc_bonuses(void)
 			p_ptr->flags2 |= (TR2_RES_POIS);
 			p_ptr->flags3 |= (TR3_SLOW_DIGEST);
 			p_ptr->flags2 |= (TR2_RES_COLD);
-			p_ptr->pass_wall = TRUE;
+			p_ptr->flags4 |= (TR4_PASS_WALL);;
 			p_ptr->flags4 |= (TR4_CANT_EAT);
 			if (p_ptr->lev > 34) p_ptr->flags3 |= (TR3_TELEPATHY);
 			break;

@@ -1228,13 +1228,14 @@ static void process_world(void)
 	if (cave_wall_grid(c_ptr))
 	{
 		if (!p_ptr->tim.invuln && !p_ptr->tim.wraith_form &&
-			((p_ptr->chp > (p_ptr->lev / 5)) || !p_ptr->pass_wall))
+			((p_ptr->chp > (p_ptr->lev / 5)) || 
+			 !(p_ptr->flags4 & (TR4_PASS_WALL))))
 		{
 			cptr dam_desc;
 
 			cave_no_regen = TRUE;
 
-			if (p_ptr->pass_wall)
+			if (p_ptr->flags4 & (TR4_PASS_WALL))
 			{
 				msgf("Your molecules feel disrupted!");
 				dam_desc = "density";

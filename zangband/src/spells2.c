@@ -296,6 +296,10 @@ void self_knowledge(void)
 	{
 		info[i++] = "Chance is warped around you.";
 	}
+	if (p_ptr->flags4 & (TR4_PASS_WALL))
+	{
+		info[i++] = "You can pass through solid rock.";
+	}
 
 	if ((p_ptr->flags3 & (TR3_REGEN)) && (!(p_ptr->muta3 & MUT3_REGEN)))
 	{

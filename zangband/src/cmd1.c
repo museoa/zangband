@@ -2267,7 +2267,7 @@ void move_player(int dir, int do_pickup)
 
 	/* Player can not walk through "walls"... */
 	/* unless in Shadow Form */
-	if (p_ptr->tim.wraith_form || p_ptr->pass_wall)
+	if (p_ptr->tim.wraith_form || (p_ptr->flags4 & (TR4_PASS_WALL)))
 		p_can_pass_walls = TRUE;
 
 	/* Never walk through permanent features */
