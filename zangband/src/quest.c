@@ -645,6 +645,9 @@ static void create_stairs(int x, int y)
 	int ny, nx;
 
 	cave_type *c_ptr = area(x, y);
+	
+	/* Paranoia - not on deepest dungeon level */
+	if (p_ptr->depth == max_dun_level()) return;
 
 	/* Stagger around */
 	while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
