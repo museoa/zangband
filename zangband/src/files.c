@@ -3221,15 +3221,15 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	/* Save the number of "real" lines */
 	size = next;
 
+	/* Go to the tagged line */
+	if (tag)
+		line = tags[isdigit(tag[0]) ? D2I(tag[0]) : A2I(tag[0]) + 10];
 
 	/* Display the file */
 	while (TRUE)
 	{
 		/* Clear screen */
 		Term_clear();
-
-		if (tag)
-			line = tags[isdigit(tag[0]) ? D2I(tag[0]) : A2I(tag[0]) + 10];
 
 		/* Restart when necessary */
 		if (line >= size) line = 0;
