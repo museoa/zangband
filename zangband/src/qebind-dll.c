@@ -28,8 +28,7 @@
  * string, just like the usual "bind" command. Bindings are not automatically
  * deleted when a widget is destroyed.
  */
-#include <ctype.h>
-#include <string.h>
+#include "angband.h"
 #include <tcl.h>
 #include <tk.h>
 #include "qebind-dll.h"
@@ -79,7 +78,7 @@ typedef struct ObjectTableKey {
 } ObjectTableKey;
  
 typedef struct EventInfo {
-	char *name; /* Name of event (ex "Stat", "Position") */
+	cptr name; /* Name of event (ex "Stat", "Position") */
 	int type; /* Event type (ex EVENT_STAT, EVENT_POSITION) */
 	QE_ExpandProc expand; /* Callback to expand % in scripts */
 } EventInfo;
@@ -131,19 +130,19 @@ int QE_BindInit(Tcl_Interp *interp)
 	 * as ClientData to the command, we are only allowed one binding
 	 * table per interpreter.
 	 */
-	Tcl_CreateCommand(interp, "qebind", QE_BindCmd,
+	Tcl_CreateCommand(interp, (char *) "qebind", QE_BindCmd,
 		(ClientData) bindingTable, NULL);
 
 	/* qeconfigure lets scripts configure bindings */
-	Tcl_CreateObjCommand(interp, "qeconfigure", QE_ConfigureCmd,
+	Tcl_CreateObjCommand(interp, (char *) "qeconfigure", QE_ConfigureCmd,
 		(ClientData) bindingTable, NULL);
 
 	/* qegenerate lets scripts generate events */
-	Tcl_CreateObjCommand(interp, "qegenerate", QE_GenerateCmd,
+	Tcl_CreateObjCommand(interp, (char *) "qegenerate", QE_GenerateCmd,
 		(ClientData) bindingTable, NULL);
 
 	/* qeinstall lets scripts add event types and details */
-	Tcl_CreateObjCommand(interp, "qeinstall", QE_InstallObjCmd,
+	Tcl_CreateObjCommand(interp, (char *) "qeinstall", QE_InstallObjCmd,
 		(ClientData) bindingTable, NULL);
 
 	initialized = 1;
@@ -211,7 +210,7 @@ void QE_InstallDetail(char *name, int eventType, int code)
 	Tcl_SetHashValue(hPtr, (ClientData) valuePtr);
 }
 
-Detail *FindDetail(int eventType, int code)
+static Detail *FindDetail(int eventType, int code)
 {
 	PatternTableKey key;
 	Tcl_HashEntry *hPtr;
@@ -390,11 +389,6 @@ char *QE_GetBinding(QE_BindingTable bindingTable, ClientData object,
 	return valuePtr->command;
 }
 
-int QE_GetAllBindings(QE_BindingTable bindingTable, ClientData object)
-{
-	return TCL_OK;
-}
-
 static void ExpandPercents(ClientData object, char *command, QE_Event *eventPtr,
 	EventInfo *eiPtr, Tcl_DString *result)
 {
@@ -425,7 +419,7 @@ static void ExpandPercents(ClientData object, char *command, QE_Event *eventPtr,
 	}
 }
 
-void BindEvent(BindingTable *bindPtr, QE_Event *eventPtr, int wantDetail,
+static void BindEvent(BindingTable *bindPtr, QE_Event *eventPtr, int wantDetail,
 	EventInfo *eiPtr, Detail *dPtr)
 {
 	Tcl_HashEntry *hPtr;
@@ -514,23 +508,10 @@ void BindEvent(BindingTable *bindPtr, QE_Event *eventPtr, int wantDetail,
 
 		if (code != TCL_OK)
 		{
-#if 0
-			if (code == TCL_CONTINUE)
-			{
-				/* Nothing */
-			}
-			else if (code == TCL_BREAK)
-			{
-				break;
-			}
-			else
-#endif
-			{
-				Tcl_AddErrorInfo(bindPtr->interp,
-					"\n    (command bound to quasi-event)");
-				Tcl_BackgroundError(bindPtr->interp);
-				break;
-			}
+			Tcl_AddErrorInfo(bindPtr->interp,
+				"\n    (command bound to quasi-event)");
+			Tcl_BackgroundError(bindPtr->interp);
+			break;
 		}
 	}
 
@@ -671,7 +652,7 @@ static int ParseEventDescription(Tcl_Interp *interp, char *eventString,
 	/* Terminating > */
 	if (*p != '>')
 	{
-		Tcl_SetStringObj(resultPtr, "missing \">\" in binding", -1);
+		Tcl_SetStringObj(resultPtr, (char *) "missing \">\" in binding", -1);
 		return 0;
 	}
 
@@ -826,10 +807,6 @@ int QE_BindCmd(ClientData clientData, Tcl_Interp *interp, int argc,
 		Tcl_SetStringObj(Tcl_GetObjResult(interp), command, -1);
 
     }
-    else
-    {
-		QE_GetAllBindings(bindingTable, object);
-    }
 
     return TCL_OK;
 }
@@ -902,7 +879,7 @@ QE_GenerateCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	
     if (objc < 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "pattern ?field value ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "pattern ?field value ...?");
 		return TCL_ERROR;
     }
 
@@ -942,7 +919,7 @@ QE_GenerateCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 	if (objc != 0)
 	{
-		Tcl_WrongNumArgs(interp, 2, objv, "pattern ?field value ...?");
+		Tcl_WrongNumArgs(interp, 2, objv, (char *) "pattern ?field value ...?");
 		return TCL_ERROR;
 	}
 
@@ -974,7 +951,7 @@ int
 QE_ConfigureCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     Tk_Window tkwin = Tk_MainWindow(interp);
-	static char *configSwitch[] = {"-active", NULL};
+	static cptr configSwitch[] = {"-active", NULL};
 	Tcl_Obj *CONST *objPtr;
 	BindingTable *bindPtr = (BindingTable *) clientData;
 	BindValue *valuePtr;
@@ -984,7 +961,7 @@ QE_ConfigureCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	
     if (objc < 3)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "window pattern ?option? ?value? ?option value ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "window pattern ?option? ?value? ?option value ...?");
 		return TCL_ERROR;
     }
 
@@ -1018,8 +995,8 @@ QE_ConfigureCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 
 	while (objc > 1)
 	{
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
-			"option", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
+			(char *) "option", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -1107,10 +1084,14 @@ static void Expand_Install(char which, ClientData object, QE_Event *eventPtr,
 int QE_InstallObjCmd(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
-	static char *commandOption[] = {"detail", "event", NULL};
+	static cptr commandOption[] = {"detail", "event", NULL};
 	int index;
+	
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) clientData;
 
-	if (Tcl_GetIndexFromObj(interp, objv[1], commandOption, "option", 0,
+	if (Tcl_GetIndexFromObj(interp, objv[1], (char **) commandOption, (char *) "option", 0,
 		&index) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -1154,7 +1135,7 @@ int QE_InstallObjCmd(ClientData clientData, Tcl_Interp *interp, int objc,
 			if (dPtr)
 			{
 				Tcl_SetStringObj(Tcl_GetObjResult(interp),
-					"detail with that code already exists", -1);
+					(char *) "detail with that code already exists", -1);
 				return TCL_ERROR;
 			}
 

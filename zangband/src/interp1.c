@@ -2574,7 +2574,6 @@ static CommandInit commandInit[] = {
 		{1, "inveninfo", 3, 3, "slot arrayName", objcmd_inveninfo, (ClientData) 0},
 		{1, "init_icons", 3, 3, "size depth", objcmd_init_icons, (ClientData) 0},
 		{1, "floor", 0, 0, NULL, objcmd_floor, (ClientData) 0},
-		{1, "system", 0, 0, NULL, objcmd_system, (ClientData) 0},
 		{1, "keycount", 0, 0, NULL, objcmd_keycount, (ClientData) 0},
 		{1, "mindcraft", 0, 0, NULL, objcmd_mindcraft, (ClientData) 0},
 		{1, "power", 0, 0, NULL, objcmd_power, (ClientData) 0},

@@ -18,9 +18,6 @@
 #include "util-dll.h"
 #include "icon.h"
 
-extern int AngbandTk_CmdChooseFont _ANSI_ARGS_((ClientData clientData,
-	 Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-
 unsigned char *g_palette_rgb;
 t_assign_group g_assign[ASSIGN_MAX];
 t_assign g_assign_none;
@@ -2288,11 +2285,6 @@ void init_icons(int size, int depth)
 		extern CommandInit assignCmdInit[];
 		(void) CommandInfo_Init(g_interp, assignCmdInit, NULL);
 	}
-
-#ifdef PLATFORM_WIN
-	Tcl_CreateObjCommand(g_interp, "tk_chooseFont", AngbandTk_CmdChooseFont,
-		NULL, NULL);
-#endif /* PLATFORM_WIN */
 
 	g_assign_none.assignType = ASSIGN_TYPE_ICON;
 	g_assign_none.icon.type = ICON_TYPE_NONE;

@@ -23,8 +23,8 @@ typedef void (*QE_ExpandProc)(char which, ClientData object, QE_Event *eventPtr,
 	Tcl_DString *result);
 
 typedef struct QE_BindingTable_ *QE_BindingTable;
-QE_BindingTable bindingTable;
-int debug_bindings;
+extern QE_BindingTable bindingTable;
+extern int debug_bindings;
 
 int QE_BindInit(Tcl_Interp *interp);
 extern QE_BindingTable QE_CreateBindingTable(Tcl_Interp *interp);
@@ -37,8 +37,6 @@ extern int QE_DeleteBinding(QE_BindingTable bindingTable,
 	ClientData object, char *eventString);
 extern char *QE_GetBinding(QE_BindingTable bindingTable,
 	ClientData object, char *eventString);
-extern int QE_GetAllBindings(QE_BindingTable bindingTable,
-	ClientData object);
 int QE_BindEvent(QE_BindingTable bindingTable, QE_Event *eventPtr);
 void QE_ExpandDouble(double number, Tcl_DString *result);
 void QE_ExpandNumber(long number, Tcl_DString *result);
