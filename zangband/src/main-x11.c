@@ -28,6 +28,71 @@
  * Most of this file is by Ben Harrison (benh@phial.com).
  */
 
+/*
+ * The following shell script can be used to launch Angband, assuming that
+ * it was extracted into "~/Angband", and compiled using "USE_X11", on a
+ * Linux machine, with a 1280x1024 screen, using 6 windows (with the given
+ * characteristics), with gamma correction of "180" (1 / 1.80), and without
+ * graphics (add "-g" for graphics).  Just copy this comment into a file,
+ * remove the leading " * " characters (and the head/tail of this comment),
+ * and make the file executable.
+ * 
+ *
+ * #!/bin/csh
+ * 
+ * # Describe attempt
+ * echo "Launching angband..."
+ * sleep 2
+ * 
+ * # Main window
+ * setenv ANGBAND_X11_FONT_0 10x20
+ * setenv ANGBAND_X11_AT_X_0 5
+ * setenv ANGBAND_X11_AT_Y_0 510
+ * 
+ * # Message window
+ * setenv ANGBAND_X11_FONT_1 8x13
+ * setenv ANGBAND_X11_AT_X_1 5
+ * setenv ANGBAND_X11_AT_Y_1 22
+ * setenv ANGBAND_X11_ROWS_1 35
+ * 
+ * # Inventory window
+ * setenv ANGBAND_X11_FONT_2 8x13
+ * setenv ANGBAND_X11_AT_X_2 635
+ * setenv ANGBAND_X11_AT_Y_2 182
+ * setenv ANGBAND_X11_ROWS_3 23
+ * 
+ * # Equipment window
+ * setenv ANGBAND_X11_FONT_3 8x13
+ * setenv ANGBAND_X11_AT_X_3 635
+ * setenv ANGBAND_X11_AT_Y_3 22
+ * setenv ANGBAND_X11_ROWS_3 12
+ * 
+ * # Monster recall window
+ * setenv ANGBAND_X11_FONT_4 6x13
+ * setenv ANGBAND_X11_AT_X_4 817
+ * setenv ANGBAND_X11_AT_Y_4 847
+ * setenv ANGBAND_X11_COLS_4 76
+ * setenv ANGBAND_X11_ROWS_4 11
+ * 
+ * # Object recall window
+ * setenv ANGBAND_X11_FONT_5 6x13
+ * setenv ANGBAND_X11_AT_X_5 817
+ * setenv ANGBAND_X11_AT_Y_5 520
+ * setenv ANGBAND_X11_COLS_5 76
+ * setenv ANGBAND_X11_ROWS_5 24
+ * 
+ * # The build directory
+ * cd ~/Angband
+ *
+ * # Gamma correction
+ * setenv ANGBAND_X1_GAMMA 128
+ * 
+ * # Launch Angband
+ * ./src/angband -mx11 -- -n6 &
+ *
+ */
+
+
 
 #include "angband.h"
 

@@ -499,6 +499,11 @@
 #define DEFAULT_X11_FONT_6		"5x8"
 #define DEFAULT_X11_FONT_7		"5x8"
 
+/*
+ * OPTION: Gamma correct X11 colours.
+ */
+
+/* #define SUPPORT_ANGBAND_X11_GAMMA */
 
 /*
  * Hack -- Special "ancient machine" versions
