@@ -292,18 +292,10 @@ extern bool in_disintegration_range(int x1, int y1, int x2, int y2);
 extern void scatter(int *xp, int *yp, int x, int y, int d);
 extern bool player_can_see_bold(int x, int y);
 extern bool cave_valid_grid(const cave_type *c_ptr);
-#ifdef TERM_MAP_INFO
-extern void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
-                     byte *ap, char *cp, byte *tap, char *tcp);
-#endif /* TERM_MAP_INFO */
 extern bool no_lite(void);
 extern void move_cursor_relative(int col, int row);
 extern void print_rel(char c, byte a, int x, int y);
 extern void note_spot(int x, int y);
-extern void display_dungeon(void);
-extern void lite_spot(int x, int y);
-extern void prt_map(void);
-extern void display_map(int *cx, int *cy);
 extern void do_cmd_view_map(void);
 extern void forget_view(void);
 extern errr vinfo_init(void);
@@ -316,10 +308,6 @@ extern void map_area(void);
 extern void wiz_lite(void);
 extern void wiz_dark(void);
 extern void cave_set_feat(int x, int y, int feat);
-extern void health_track(int m_idx);
-extern void monster_race_track(int r_idx);
-extern void object_kind_track(int k_idx);
-extern void disturb(bool stop_search);
 
 /* cmd1.c */
 extern int deadliness_calc(int attack_power);
@@ -967,6 +955,7 @@ extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
 extern void do_poly_self(void);
 extern void make_noise(byte amount);
+extern void disturb(bool stop_search);
 
 
 /* xtra2.c */
@@ -994,6 +983,10 @@ extern void exp_for_kill(const monster_race *r_ptr, s32b *new_exp,
 						 s32b *new_exp_frac);
 extern int stat_cap(int stat);
 extern int adjust_stat(int stat, int value, int amount);
+extern void health_track(int m_idx);
+extern void monster_race_track(int r_idx);
+extern void object_kind_track(int k_idx);
+
 
 /* mspells1.c */
 extern bool clean_shot(int x1, int y1, int x2, int y2, bool friendly);
@@ -1227,6 +1220,10 @@ extern bool do_cmd_knowledge_quests(int dummy);
 /* maid-grf.c */
 extern void init_term_callbacks(void);
 extern void free_term_callbacks(void);
+extern void display_dungeon(void);
+extern void lite_spot(int x, int y);
+extern void prt_map(void);
+extern void display_map(int *cx, int *cy);
 extern void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr);
 extern void Term_erase_map(void);
 extern void Term_move_player(void);
