@@ -1871,6 +1871,15 @@ void anger_monster(monster_type *m_ptr)
  */
 bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 {
+	/* Ocean */
+	if (feat == FEAT_OCEAN_WATER)
+	{
+		if (r_ptr->flags8 & RF8_WILD_OCEAN)
+			return TRUE;
+		else
+			return FALSE;
+	}
+	
 	/* Deep water */
 	if (feat == FEAT_DEEP_WATER)
 	{

@@ -1208,7 +1208,9 @@ void update_mon(int m_idx, bool full)
 	/* Seen by vision */
 	bool easy = FALSE;
 
-
+	/* Exit if monster does not exist. */
+	if(!m_idx) return;
+	
 	/* Compute distance */
 	if (full)
 	{

@@ -2230,19 +2230,19 @@ static void set_temp_mid(u16b val)
 static bool wild_info_bounds(u16b x, u16b y, byte info)
 {
 	int i, x1, y1;
-	bool grad[10], any;
+	bool grad1[10], grad2[10], any;
 
 	/* No flags set yet */
 	any = FALSE;
 	
-	/* Check each orthogonally adjacent square to see if flag is set */
+	/* Check each adjacent square to see if flag is set */
 	for (i = 1; i < 10; i++)
 	{
 		/* Get direction */
 		x1 = x + ddx[i];
 		y1 = y + ddy[i];
 		
-		grad[i] = FALSE;
+		grad1[i] = FALSE;
 		
 		/* Check bounds */
 		if((x1 >= 0) && (x1 < max_wild) && (y1 >= 0) && (y1 < max_wild))
@@ -2251,7 +2251,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 			if (wild[y1][x1].done.info & info)
 			{
 				/* Flag is set */
-				grad[i] = TRUE;
+				grad1[i] = TRUE;
 				any = TRUE;
 			}
 		}
@@ -2263,7 +2263,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 			if (wild[y][x].done.info & info)
 			{
 				/* Flag is set */
-				grad[i] = TRUE;
+				grad1[i] = TRUE;
 				any = TRUE;
 			}
 		}
@@ -2275,14 +2275,65 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 	/* Clear temporary block */
 	clear_temp_block();
 	
+	/* Set grad2[] depending on values of grad1[] */
+	
+	/* If center is set - just copy */
+	if (grad1[5])
+	{
+		for (i = 1; i < 10; i++)
+		{
+			grad2[i] = grad1[i];		
+		}
+	}
+	else
+	{
+		/* Clear grad2[] */
+		for (i = 1; i < 10; i++)
+		{
+			grad2[i] = FALSE;		
+		}
+		
+		/* Copy orthogonal flags */
+		for (i = 1; i < 5; i++)
+		{
+			grad2[i * 2] = grad1[i * 2];
+		}
+		
+		/* Set diagonally adjacent flags depending on values of orthogonal flags. */ 
+	
+		/* Upper left */
+		if (grad1[4] || grad1[8])
+		{
+			grad2[7] = TRUE;
+		}
+	
+		/* Upper right */
+		if (grad1[8] || grad1[6])
+		{
+			grad2[9] = TRUE;
+		}
+		
+		/* Lower right */
+		if (grad1[6] || grad1[2])
+		{
+			grad2[3] = TRUE;
+		}
+		
+		/* Lower left */
+		if (grad1[2] || grad1[4])
+		{
+			grad2[1] = TRUE;
+		}
+	}
+	
 	/* If a flag is set - make that side maximum */
-	for (i = 0; i < 4; i++)
+	for (i = 1; i < 10; i++)
 	{
 		/* Hack - get only orthogonal directions */
-		x1 = (1 + ddx[i * 2 + 2]) * WILD_BLOCK_SIZE / 2;
-		y1 = (1 + ddy[i * 2 + 2]) * WILD_BLOCK_SIZE / 2;
+		x1 = (1 + ddx[i]) * WILD_BLOCK_SIZE / 2;
+		y1 = (1 + ddy[i]) * WILD_BLOCK_SIZE / 2;
 	
-		if (grad[i * 2 + 2])
+		if (grad2[i])
 		{	
 			temp_block[y1][x1] = WILD_BLOCK_SIZE * 256;
 		}
@@ -2290,58 +2341,6 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 		{
 			temp_block[y1][x1] = WILD_BLOCK_SIZE * 64;
 		}
-	}
-	
-	/* Hack - Set corners based on pairs of sides */
-	
-	/* Upper left */
-	if ((grad[4] && grad[8]) || (grad[7] && grad[5]))
-	{
-		temp_block[0][0] = WILD_BLOCK_SIZE * 256;
-	}
-	else
-	{
-		temp_block[0][0] = WILD_BLOCK_SIZE * 64;
-	}
-	
-	/* Lower left */
-	if ((grad[2] && grad[8]) || (grad[1] && grad[5]))
-	{
-		temp_block[WILD_BLOCK_SIZE][0] = WILD_BLOCK_SIZE * 256;
-	}
-	else
-	{
-		temp_block[WILD_BLOCK_SIZE][0] = WILD_BLOCK_SIZE * 64;
-	}
-	
-	/* Upper right */
-	if ((grad[4] && grad[6]) || (grad[9] && grad[5]))
-	{
-		temp_block[0][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 256;
-	}
-	else
-	{
-		temp_block[0][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 64;
-	}
-	
-	/* Lower right */
-	if ((grad[2] && grad[6]) || (grad[3] && grad[5]))
-	{
-		temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 256;
-	}
-	else
-	{
-		temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 64;
-	}
-	
-	/* Set middle based on current square */
-	if (grad[5])
-	{
-		temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = WILD_BLOCK_SIZE * 256;
-	}
-	else
-	{
-		temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = WILD_BLOCK_SIZE * 64;
 	}
 	
 	/* There are flags set */
