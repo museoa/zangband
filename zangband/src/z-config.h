@@ -635,6 +635,11 @@
 /* #define USE_CORPSES */
 
 /*
- * Add caverns and lakes to the dungeon (buggy)
+ * Add caverns and lakes to the dungeon
  */
 #define ALLOW_CAVERNS_AND_LAKES
+
+/*
+ * Add pillar tunnels (Annoying)
+ */
+/* #define PILLAR_TUNNELS */

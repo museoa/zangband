@@ -90,14 +90,11 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	redraw = FALSE;
 
 	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
+	/* Update */
+	p_ptr->window |= (PW_SPELL);
 
-		/* Window stuff */
-		window_stuff();
-	}
+	/* Window stuff */
+	window_stuff();
 
 
 	/* Build a prompt (accept all spells) */
@@ -192,14 +189,11 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 
 
 	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
+	/* Update */
+	p_ptr->window |= (PW_SPELL);
 
-		/* Window stuff */
-		window_stuff();
-	}
+	/* Window stuff */
+	window_stuff();
 
 
 	/* Abort if needed */

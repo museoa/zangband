@@ -1955,6 +1955,8 @@ void show_inven(void)
 	int             out_index[23];
 	byte            out_color[23];
 	char            out_desc[23][80];
+	byte		a;
+	char		c;
 
 
 	/* Starting column */
@@ -1970,7 +1972,7 @@ void show_inven(void)
 	if (show_weights) lim -= 9;
 
 	/* Require space for icon */
-	if (show_inven_graph) lim -= 2;
+	lim -= 2;
 
 	/* Find the "final" slot */
 	for (i = 0; i < INVEN_PACK; i++)
@@ -2017,7 +2019,7 @@ void show_inven(void)
 		if (show_weights) l += 9;
 
 		/* Account for icon if displayed */
-		if (show_inven_graph) l += 2;
+		l += 2;
 
 		/* Maintain the maximum length */
 		if (l > len) len = l;
@@ -2048,21 +2050,17 @@ void show_inven(void)
 		put_str(tmp_val, j + 1, col);
 
 		/* Display graphics for object, if desired */
-		if (show_inven_graph)
-		{
-			byte  a = object_attr(o_ptr);
-			char c = object_char(o_ptr);
+		a = object_attr(o_ptr);
+		c = object_char(o_ptr);
 
 #ifdef AMIGA
-			if (a & 0x80) a |= 0x40;
+		if (a & 0x80) a |= 0x40;
 #endif
 
-			Term_draw(col + 3, j + 1, a, c);
-		}
-
+		Term_draw(col + 3, j + 1, a, c);
 
 		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], j + 1, show_inven_graph ? (col + 5) : (col + 3));
+		c_put_str(out_color[j], out_desc[j], j + 1, (col + 5));
 
 		/* Display the weight if needed */
 		if (show_weights)
@@ -2095,6 +2093,8 @@ void show_equip(void)
 	int             out_index[23];
 	byte            out_color[23];
 	char            out_desc[23][80];
+	byte		a;
+	char		c;
 
 
 	/* Starting column */
@@ -2112,7 +2112,8 @@ void show_equip(void)
 	/* Require space for weight (if needed) */
 	if (show_weights) lim -= 9;
 
-	if (show_equip_graph) lim -= 2;
+	/* Old show_equip_graph option Perm. on. */
+	lim -= 2;
 
 	/* Scan the equipment list */
 	for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2149,7 +2150,8 @@ void show_equip(void)
 		/* Increase length for weight (if needed) */
 		if (show_weights) l += 9;
 
-		if (show_equip_graph) l += 2;
+		/* old show_equip_graph option perm. on. */
+		l += 2;
 
 		/* Maintain the max-length */
 		if (l > len) len = l;
@@ -2179,34 +2181,33 @@ void show_equip(void)
 		/* Clear the line with the (possibly indented) index */
 		put_str(tmp_val, j+1, col);
 
-		if (show_equip_graph)
-		{
-			byte a = object_attr(o_ptr);
-			char c = object_char(o_ptr);
+		/* Show_equip_graph perm. on. */
+		a = object_attr(o_ptr);
+		c = object_char(o_ptr);
 
 #ifdef AMIGA
-			if (a & 0x80) a |= 0x40;
+		if (a & 0x80) a |= 0x40;
 #endif
 
-			Term_draw(col + 3, j + 1, a, c);
-		}
+		Term_draw(col + 3, j + 1, a, c);
+
 
 		/* Use labels */
 		if (show_labels)
 		{
 			/* Mention the use */
 			(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
-			put_str(tmp_val, j+1, show_equip_graph ? col + 5 : col + 3);
+			put_str(tmp_val, j+1, col + 5);
 
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], j+1, show_equip_graph ? col + 21 : col + 19);
+			c_put_str(out_color[j], out_desc[j], j+1, col + 21);
 		}
 
 		/* No labels */
 		else
 		{
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], j+1, show_equip_graph ? col + 5 : col + 3);
+			c_put_str(out_color[j], out_desc[j], j+1, col + 5);
 		}
 
 		/* Display the weight if needed */
@@ -2625,42 +2626,38 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	/* Repeat until done */
 	while (!done)
 	{
-		/* Show choices */
-		if (show_choices)
+		int ni = 0;
+		int ne = 0;
+
+		/* Scan windows */
+		for (j = 0; j < 8; j++)
 		{
-			int ni = 0;
-			int ne = 0;
+			/* Unused */
+			if (!angband_term[j]) continue;
 
-			/* Scan windows */
-			for (j = 0; j < 8; j++)
-			{
-				/* Unused */
-				if (!angband_term[j]) continue;
+			/* Count windows displaying inven */
+			if (window_flag[j] & (PW_INVEN)) ni++;
 
-				/* Count windows displaying inven */
-				if (window_flag[j] & (PW_INVEN)) ni++;
-
-				/* Count windows displaying equip */
-				if (window_flag[j] & (PW_EQUIP)) ne++;
-			}
-
-			/* Toggle if needed */
-			if ((command_wrk && ni && !ne) ||
-			    (!command_wrk && !ni && ne))
-			{
-				/* Toggle */
-				toggle_inven_equip();
-
-				/* Track toggles */
-				toggle = !toggle;
-			}
-
-			/* Update */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-			/* Redraw windows */
-			window_stuff();
+			/* Count windows displaying equip */
+			if (window_flag[j] & (PW_EQUIP)) ne++;
 		}
+
+		/* Toggle if needed */
+		if ((command_wrk && ni && !ne) ||
+		    (!command_wrk && !ni && ne))
+		{
+			/* Toggle */
+			toggle_inven_equip();
+
+			/* Track toggles */
+			toggle = !toggle;
+		}
+
+		/* Update */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Redraw windows */
+		window_stuff();
 
 		/* Inventory screen */
 		if (!command_wrk)
@@ -2991,18 +2988,14 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 
 
 	/* Clean up */
-	if (show_choices)
-	{
-		/* Toggle again if needed */
-		if (toggle) toggle_inven_equip();
+	/* Toggle again if needed */
+	if (toggle) toggle_inven_equip();
 
-		/* Update */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Update */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-		/* Window stuff */
-		window_stuff();
-	}
-
+	/* Window stuff */
+	window_stuff();
 
 	/* Clear the prompt line */
 	prt("", 0, 0);
@@ -3360,42 +3353,38 @@ bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
 	/* Repeat until done */
 	while (!done)
 	{
-		/* Show choices */
-		if (show_choices)
+		int ni = 0;
+		int ne = 0;
+
+		/* Scan windows */
+		for (j = 0; j < 8; j++)
 		{
-			int ni = 0;
-			int ne = 0;
+			/* Unused */
+			if (!angband_term[j]) continue;
 
-			/* Scan windows */
-			for (j = 0; j < 8; j++)
-			{
-				/* Unused */
-				if (!angband_term[j]) continue;
+			/* Count windows displaying inven */
+			if (window_flag[j] & (PW_INVEN)) ni++;
 
-				/* Count windows displaying inven */
-				if (window_flag[j] & (PW_INVEN)) ni++;
-
-				/* Count windows displaying equip */
-				if (window_flag[j] & (PW_EQUIP)) ne++;
-			}
-
-			/* Toggle if needed */
-			if ((command_wrk == (USE_EQUIP) && ni && !ne) ||
-				(command_wrk == (USE_INVEN) && !ni && ne))
-			{
-				/* Toggle */
-				toggle_inven_equip();
-
-				/* Track toggles */
-				toggle = !toggle;
-			}
-
-			/* Update */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-			/* Redraw windows */
-			window_stuff();
+			/* Count windows displaying equip */
+			if (window_flag[j] & (PW_EQUIP)) ne++;
 		}
+
+		/* Toggle if needed */
+		if ((command_wrk == (USE_EQUIP) && ni && !ne) ||
+			(command_wrk == (USE_INVEN) && !ni && ne))
+		{
+			/* Toggle */
+			toggle_inven_equip();
+
+			/* Track toggles */
+			toggle = !toggle;
+		}
+
+		/* Update */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Redraw windows */
+		window_stuff();
 
 		/* Inventory screen */
 		if (command_wrk == (USE_INVEN))
@@ -3838,18 +3827,15 @@ bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
 
 
 	/* Clean up */
-	if (show_choices)
-	{
-		/* Toggle again if needed */
-		if (toggle) toggle_inven_equip();
+	
+	/* Toggle again if needed */
+	if (toggle) toggle_inven_equip();
 
-		/* Update */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Update */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-		/* Window stuff */
-		window_stuff();
-	}
-
+	/* Window stuff */
+	window_stuff();
 
 	/* Clear the prompt line */
 	prt("", 0, 0);

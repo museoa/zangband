@@ -1725,24 +1725,14 @@ static void display_player_equippy(int y, int x)
 		/* Object */
 		o_ptr = &inventory[i];
 
-#if 0
-		/* Skip empty objects */
-		if (!o_ptr->k_idx) continue;
-
-
-		/* Get attr/char for display */
-		a = tval_to_attr[o_ptr->tval & 0x7F];
-		c = tval_to_char[o_ptr->tval & 0x7F];
-#else
 		a = object_attr(o_ptr);
 		c = object_char(o_ptr);
-#endif
 
 		/* No color */
 		if (!use_color) a = TERM_WHITE;
 
 		/* Clear the part of the screen */
-		if (!equippy_chars || !o_ptr->k_idx)
+		if (!o_ptr->k_idx)
 		{
 			c = ' ';
 			a = TERM_DARK;

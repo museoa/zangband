@@ -119,24 +119,9 @@ static void roff_aux(int r_idx, int remem)
 	int             vn = 0;
 	cptr            vp[64];
 	monster_race    save_mem;
-
-
-#if 0
-
-	/* Nothing erased */
-	roff_old = 0;
-
-	/* Reset the row */
-	roff_row = 1;
-
-	/* Reset the pointer */
-	roff_p = roff_buf;
-
-	/* No spaces yet */
-	roff_s = NULL;
-
-#endif
-
+	
+	/* Descriptions */
+	char buf[2048];
 
 	/* Cheat -- Know everything */
 	if (cheat_know)
@@ -239,15 +224,8 @@ static void roff_aux(int r_idx, int remem)
 		if (r_ptr->flags1 & RF1_FORCE_MAXHP) flags1 |= (RF1_FORCE_MAXHP);
 	}
 
-
-	/* Require a flag to show kills */
-	if (!show_details)
-	{
-		/* nothing */
-	}
-
 	/* Treat uniques differently */
-	else if (flags1 & RF1_UNIQUE)
+	if (flags1 & RF1_UNIQUE)
 	{
 		/* Hack -- Determine if the unique is "dead" */
 		bool dead = (r_ptr->max_num == 0) ? TRUE : FALSE;
@@ -335,79 +313,52 @@ static void roff_aux(int r_idx, int remem)
 	}
 
 
-	/* Descriptions */
-	if (show_details)
-	{
-		char buf[2048];
+	
 
 #ifdef DELAY_LOAD_R_TEXT
 
-		int fd;
+	int fd;
 
-		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_DATA, "r_info.raw");
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "r_info.raw");
 
-		/* Open the "raw" file */
-		fd = fd_open(buf, O_RDONLY);
+	/* Open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
 
-		/* Use file */
-		if (fd >= 0)
-		{
-			huge pos;
+	/* Use file */
+	if (fd >= 0)
+	{
+		huge pos;
 
-			/* Starting position */
-			pos = r_ptr->text;
+		/* Starting position */
+		pos = r_ptr->text;
 
-			/* Additional offsets */
-			pos += r_head->head_size;
-			pos += r_head->info_size;
-			pos += r_head->name_size;
+		/* Additional offsets */
+		pos += r_head->head_size;
+		pos += r_head->info_size;
+		pos += r_head->name_size;
 
-#if 0
+		/* Seek */
+		(void)fd_seek(fd, pos);
 
-			/* Maximal length */
-			len = r_head->text_size - r_ptr->text;
+		/* Read a chunk of data */
+		(void)fd_read(fd, buf, 2048);
 
-			/* Actual length */
-			for (i = r_idx+1; i < max_r_idx; i++)
-			{
-				/* Actual length */
-				if (r_info[i].text > r_ptr->text)
-				{
-					/* Extract length */
-					len = r_info[i].text - r_ptr->text;
-
-					/* Done */
-					break;
-				}
-			}
-
-			/* Maximal length */
-			if (len > 2048) len = 2048;
-
-#endif
-
-			/* Seek */
-			(void)fd_seek(fd, pos);
-
-			/* Read a chunk of data */
-			(void)fd_read(fd, buf, 2048);
-
-			/* Close it */
-			(void)fd_close(fd);
-		}
+		/* Close it */
+		(void)fd_close(fd);
+	}
 
 #else
 
-		/* Simple method */
-		strcpy(buf, r_text + r_ptr->text);
+	/* Simple method */
+	strcpy(buf, r_text + r_ptr->text);
 
 #endif
 
-		/* Dump it */
-		roff(buf);
-		roff("  ");
-	}
+	/* Dump it */
+	roff(buf);
+	roff("  ");
+	
 
 
 	/* Nothing yet */

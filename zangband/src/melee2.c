@@ -2666,7 +2666,7 @@ static void process_monster(int m_idx)
 				disturb_near)))
 			{
 				/* Disturb */
-				if (is_hostile(m_ptr) || disturb_pets)
+				if (is_hostile(m_ptr))
 					disturb(0, 0);
 			}
 

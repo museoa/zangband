@@ -698,12 +698,17 @@ static bool cave_gen(void)
 		dun->wall_n = 0;
 
 		/* Connect the room to the previous room */
-		if (pillar_tunnels && (randint(20) > dun_level) && (randint(100) < 25))
+#if PILLAR_TUNNELS		
+		
+		if ((randint(20) > dun_level) && (randint(100) < 25))
 		{
 			/* make catacomb-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
 		}
 		else if (randint(dun_level) > 25)
+#else
+		if (randint(dun_level) > 25)
+#endif /* PILLAR_TUNNELS */
 		{
 			/* make cave-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 2, 2);

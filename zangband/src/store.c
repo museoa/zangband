@@ -14,8 +14,6 @@
 #include "angband.h"
 
 
-#define RUMOR_CHANCE 8
-
 #define MAX_COMMENT_1	6
 
 static cptr comment_1[MAX_COMMENT_1] =
@@ -132,17 +130,7 @@ static cptr comment_6[MAX_COMMENT_6] =
  */
 static void say_comment_1(void)
 {
-	char rumour[1024];
-
 	msg_print(comment_1[rand_int(MAX_COMMENT_1)]);
-
-	if ((randint(RUMOR_CHANCE) == 1) && speak_unique)
-	{
-		msg_print("The shopkeeper whispers something into your ear:");
-
-		if (!get_rnd_line("rumors.txt", 0, rumour))
-			msg_print(rumour);
-	}
 }
 
 
@@ -1617,6 +1605,8 @@ static void display_entry(int pos)
 	char		o_name[80];
 	char		out_val[160];
 
+	byte		a;
+	char		c;
 
 	int maxwid;
 
@@ -1630,18 +1620,16 @@ static void display_entry(int pos)
 	(void)sprintf(out_val, "%c) ", I2A(i));
 	prt(out_val, i+6, 0);
 
-	if (show_store_graph)
-	{
-		byte a = object_attr(o_ptr);
-		char c = object_char(o_ptr);
+	/* Show_store_graph perm on.*/ 
+	a = object_attr(o_ptr);
+	c = object_char(o_ptr);
 
 #ifdef AMIGA
-		if (a & 0x80)
-			a |= 0x40;
+	if (a & 0x80)
+		a |= 0x40;
 #endif
 
-		Term_draw(3, i + 6, a, c);
-	}
+	Term_draw(3, i + 6, a, c);
 
 	/* Describe an item in the home */
 	if (cur_store_num == STORE_HOME)
@@ -1654,7 +1642,7 @@ static void display_entry(int pos)
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3);
 		o_name[maxwid] = '\0';
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, show_store_graph ? 5 : 3);
+		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 5);
 
 		/* Show weights */
 		if (show_weights)
@@ -1678,7 +1666,7 @@ static void display_entry(int pos)
 		/* Describe the object (fully) */
 		object_desc_store(o_name, o_ptr, TRUE, 3);
 		o_name[maxwid] = '\0';
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, show_store_graph ? 5 : 3);
+		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 5);
 
 		/* Show weights */
 		if (show_weights)

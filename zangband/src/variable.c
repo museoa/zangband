@@ -199,16 +199,9 @@ bool stack_force_costs;		/* Merge discounts when stacking */
 
 bool show_labels;			/* Show labels in object listings */
 bool show_weights;			/* Show weights in object listings */
-bool show_choices;			/* Show choices in certain sub-windows */
-bool show_details;			/* Show details in certain sub-windows */
 
 bool ring_bell;				/* Ring the bell (on errors, etc) */
 bool use_color;				/* Use color if possible (slow) */
-
-bool show_inven_graph;		/* Show graphics in inventory */
-bool show_equip_graph;		/* Show graphics in equip list */
-bool show_store_graph;		/* Show graphics in store */
-
 
 
 /* Option Set 2 -- Disturbance */
@@ -225,23 +218,17 @@ bool disturb_state;			/* Disturn whenever player state changes */
 bool disturb_minor;			/* Disturb whenever boring things happen */
 bool disturb_other;			/* Disturb whenever various things happen */
 
-bool alert_hitpoint;		/* Alert user to critical hitpoints */
 bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */
-bool speak_unique;		/* Speaking uniques + shopkeepers */
+bool speak_unique;		/* Speaking uniques */
 bool small_levels;		/* Allow unusually small dungeon levels */
 bool always_small_levels;		/* Use always unusually small dungeon levels */
 bool empty_levels;		/* Allow empty 'arena' levels */
-bool player_symbols;		/* Use varying symbols for the player char */
-bool equippy_chars;		/* Back by popular demand... */
-bool skip_mutations;		/* Skip mutations screen even if we have it */
 bool plain_descriptions;	/* Plain object descriptions */
 bool stupid_monsters;		/* Monsters use old AI */
 bool auto_destroy;		/* Known worthless items are destroyed without confirmation */
 bool confirm_stairs;		/* Prompt before staircases... */
 bool wear_confirm;		/* Confirm before putting on known cursed items */
-bool disturb_pets;		/* Pets moving nearby disturb us */
-
 
 
 /* Option Set 3 -- Game-Play */
@@ -999,7 +986,6 @@ bool easy_floor;
 bool use_command;
 bool center_player;
 bool avoid_center;
-bool pillar_tunnels;
 
 /* Auto-destruction options */
 bool destroy_worthless;
@@ -1126,7 +1112,6 @@ bool ironman_hard_quests;     /* Quest monsters get reinforcements */
 bool ironman_empty_levels;    /* Always create empty 'arena' levels */
 bool terrain_streams;         /* Create terrain 'streamers' in the dungeon */
 bool munchkin_death;          /* Ask for saving death */
-bool munchkin_rings;				/* Allow multiple rings */
 bool ironman_rooms;           /* Always generate very unusual rooms */
 bool ironman_nightmare;			/* Play the game in Nightmare mode */
 bool maximize_mode;

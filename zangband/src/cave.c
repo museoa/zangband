@@ -1219,8 +1219,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 		{
 			if (!streq(ANGBAND_SYS,"ibm"))
 			{
-
-				if (use_graphics && player_symbols)
+				if (use_graphics)
 				{
 					a = BMP_FIRST_PC_CLASS + p_ptr->pclass;
 					c = BMP_FIRST_PC_RACE  + p_ptr->prace;
@@ -1228,7 +1227,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 			else
 			{
-				if (use_graphics && player_symbols)
+				if (use_graphics)
 				{
 					if (p_ptr->psex == SEX_FEMALE) c = (char)242;
 					switch (p_ptr->pclass)

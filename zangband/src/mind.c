@@ -246,14 +246,11 @@ static int get_mindcraft_power(int *sn)
 	if (redraw) screen_load();
 
 	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
+	/* Update */
+	p_ptr->window |= (PW_SPELL);
 
-		/* Window stuff */
-		window_stuff();
-	}
+	/* Window stuff */
+	window_stuff();
 
 	/* Abort if needed */
 	if (!flag) return (FALSE);

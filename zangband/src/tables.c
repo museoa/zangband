@@ -5934,9 +5934,6 @@ option_type option_info[] =
 	{ &ring_bell,                   FALSE, 1, 0, 9,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
 
-	{ &skip_mutations,              TRUE, 1, 0, 10,
-	"skip_mutations",               "Skip mutations in 'C'haracter Display" },
-
 	{ &plain_descriptions,          FALSE, 1, 0, 11,
 	"plain_descriptions",           "Plain object descriptions" },
 
@@ -5991,14 +5988,8 @@ option_type option_info[] =
         { &disturb_other,               TRUE, 2, 1, 9,
 	"disturb_other",                "Disturb whenever random things happen" },
 
-	{ &alert_hitpoint,              TRUE, 2, 1, 10,
-	"alert_hitpoint",               "Alert user to critical hitpoints" },
-
 	{ &alert_failure,               FALSE, 2, 1, 11,
 	"alert_failure",                "Alert user to various failures" },
-
-	{ &disturb_pets,                FALSE, 2, 1, 12,
-	"disturb_pets",                 "Disturb when visible pets move" },
 
 	/*** Game-Play ***/
 
@@ -6114,29 +6105,8 @@ option_type option_info[] =
 	{ &show_weights,                TRUE, 5, 4, 3,
 	"show_weights",                 "Show weights in object listings" },
 
-	{ &show_inven_graph,            TRUE, 5, 4, 4,
-	"show_inven_graph",             "Show graphics in inventory list" },
-
-	{ &show_equip_graph,            TRUE, 5, 4, 5,
-	"show_equip_graph",             "Show graphics in equipment list" },
-
-	{ &show_store_graph,            TRUE, 5, 4, 6,
-	"show_store_graph",             "Show graphics in stores" },
-
-	{ &show_choices,                TRUE, 5, 4, 7,
-	"show_choices",                 "Show choices in certain sub-windows" },
-
-	{ &show_details,                TRUE, 5, 4, 8,
-	"show_details",                 "Show details in certain sub-windows" },
-
 	{ &use_color,                   TRUE, 5, 4, 9,
 	"use_color",                    "Use color if possible (slow)" },
-
-        { &player_symbols,              FALSE, 5, 4, 10,
-	"player_symbols",               "Use special symbols for the player char"},
-
-	{ &equippy_chars,               TRUE, 5, 4, 11,
-	"equippy_chars",                "Display 'equippy' chars" },
 
 #ifdef ALLOW_EASY_FLOOR /* TNB */
 	{ &easy_floor,                  FALSE, 5, 4, 12,
@@ -6152,10 +6122,13 @@ option_type option_info[] =
 	{ &avoid_center,                FALSE, 5, 5, 12,
 	"avoid_center",                 "Avoid centering while running" },
 
-	{ &pillar_tunnels,              FALSE, 5, 5, 13,
-	"pillar_tunnels",               "Allow pillared tunnels in the dungeon" },
+	/* Birth options */
+	
 	{ &vanilla_town,                FALSE, 6, 5, 0,
 	"vanilla_town",                 "Use 'vanilla' town without quests and wilderness" },
+	{ &stupid_monsters,             FALSE, 6, 6, 5,
+	"stupid_monsters",              "Monsters behave stupidly" },
+	
 	{ &ironman_shops,               FALSE, 6, 5, 2,
 	"ironman_shops",                "Stores are permanently closed" },
 
@@ -6179,9 +6152,6 @@ option_type option_info[] =
 
 	{ &munchkin_death,              FALSE, 6, 5, 10,
 	"munchkin_death",               "Ask for saving death" },
-
-	{ &munchkin_rings,              FALSE, 6, 5, 11,
-	"munchkin_rings",               "Allow multiple rings" },
 
 	{ &ironman_rooms,               FALSE, 6, 5, 12,
 	"ironman_rooms",                "Always generate very unusual rooms" },
@@ -6220,9 +6190,6 @@ option_type option_info[] =
 
 	{ &smart_cheat,                 FALSE, 7, 6, 4,
 	"smart_cheat",                  "Monsters exploit players weaknesses" },
-
-        { &stupid_monsters,             FALSE, 7, 6, 5,
-	"stupid_monsters",              "Monsters behave stupidly" },
 
 	/*** Testing options ***/
 
