@@ -2512,8 +2512,8 @@ static bool player_birth_aux(void)
 			/* Break if "happy" */
 			if (accept) break;
 
-			/* Take note every 25 rolls */
-			flag = (!(auto_round % 25L));
+			/* Take note every x rolls */
+			flag = (!(auto_round % AUTOROLLER_STEP));
 
 			/* Update display occasionally */
 			if (flag || (auto_round < last_round + 100))
