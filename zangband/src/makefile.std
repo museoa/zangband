@@ -12,7 +12,7 @@
 #
 #
 # USAGE:  Simply type in "make portname" where portname is the name
-#         of your port.  ie. "make open_bsd".  The default port can
+#         of your port.  ie. "make openbsd".  The default port can
 #         be changed by editing the DEFAULT variable.
 #
 #
@@ -208,7 +208,7 @@ cygwin: angband.res readdib.o
 ## Variation -- OpenBSD 
 ##
 
-openbsd: CFLAGS += -I/usr/x11r6/include  -D"USE_X11" -D"USE_GCU"
+openbsd: CFLAGS += -I/usr/X11R6/include  -D"USE_X11" -D"USE_GCU"
 openbsd: LIBS := -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 ##
