@@ -416,7 +416,7 @@ void put_str(cptr str, int col, int row)
 /*
  * Put a string with control characters at a given location
  */
-void put_cstr(cptr str, int col, int row)
+void put_cstr(int col, int row, cptr str)
 {
 	cptr c = str;
 	
@@ -474,7 +474,7 @@ void put_fstr(int col, int row, cptr str, ...)
 	va_end(vp);
 
 	/* Display */
-	put_cstr(buf, col, row);
+	put_cstr(col, row, buf);
 }
 
 /*

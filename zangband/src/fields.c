@@ -3578,7 +3578,7 @@ bool field_action_recharge1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_cstr(CLR_YELLOW " R) Recharge Items", 35, 19);
+	put_cstr(35, 19, CLR_YELLOW " R) Recharge Items");
 	put_fstr(35, 20, CLR_YELLOW " I) Identify Items (%dgp)", f_ptr->data[2] * factor);
 
 	/* Done */
@@ -3875,11 +3875,11 @@ bool field_action_casino1(field_type *f_ptr, vptr nothing)
 	/* Ignore nothing */
 	(void)nothing;
 
-	put_cstr(CLR_YELLOW " H) Help", 35, 16);
-	put_cstr(CLR_YELLOW " I) In Between", 35, 17);
-	put_cstr(CLR_YELLOW " C) Craps", 35, 18);
-	put_cstr(CLR_YELLOW " S) Spin the wheel", 35, 19);
-	put_cstr(CLR_YELLOW " D) Dice slots", 35, 20);
+	put_cstr(35, 16, CLR_YELLOW " H) Help");
+	put_cstr(35, 17, CLR_YELLOW " I) In Between");
+	put_cstr(35, 18, CLR_YELLOW " C) Craps");
+	put_cstr(35, 19, CLR_YELLOW " S) Spin the wheel");
+	put_cstr(35, 20, CLR_YELLOW " D) Dice slots");
 
 	/* Done */
 	return (FALSE);
