@@ -1027,6 +1027,11 @@ extern int get_keymap_dir(char ch);
 extern void tag_sort(tag_type elements[], int number);
 #endif /* SORT_R_INFO */
 
+#ifdef SUPPORT_GAMMA
+extern byte gamma_table[256];
+extern void build_gamma_table(int gamma);
+#endif /* SUPPORT_GAMMA */
+
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
 extern s16b modify_stat_value(int value, int amount);

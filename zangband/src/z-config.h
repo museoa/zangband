@@ -503,7 +503,7 @@
  * OPTION: Gamma correct X11 colours.
  */
 
-#define SUPPORT_ANGBAND_X11_GAMMA
+#define SUPPORT_GAMMA
 
 /*
  * Hack -- Special "ancient machine" versions
