@@ -1796,6 +1796,9 @@ s16b quark_add(cptr str)
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++)
 	{
+		/* Test refcount */
+		if (!quark__ref[i]) continue;
+
 		/* Check for equality */
 		if (streq(quark__str[i], str))
 		{
