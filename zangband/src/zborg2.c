@@ -4096,7 +4096,7 @@ void borg_update(void)
 			borg_time_town += borg_t - borg_began;
 
 		/* Hack -- Restart the clock */
-		borg_t = 1000;
+		/* borg_t = 1000; */
 
 		/* reset our vault/unique check */
 		vault_on_level = FALSE;
