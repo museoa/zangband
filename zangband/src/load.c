@@ -910,11 +910,11 @@ static void rd_store(int town_num, int store_num)
 			/* Get local object */
 			q_ptr = &forge;
 
-			/* Wipe the object */
-			object_wipe(q_ptr);
-
 			/* Read the item */
 			rd_item(q_ptr);
+
+			/* Wipe the object */
+			object_wipe(q_ptr);
 
 			/* Ignore the item */
 		}
@@ -1379,6 +1379,9 @@ static errr rd_inventory(void)
 {
 	object_type forge;
 	object_type *q_ptr;
+
+	/* Wipe the structure */
+    (void)WIPE(q_ptr, object_type);
 
 	/* Read until done */
 	while (1)

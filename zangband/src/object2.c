@@ -681,8 +681,8 @@ errr get_obj_store_prep(void)
 	/* Get the entry */
 	alloc_entry *table = alloc_kind_table;
 
-	/* Clear the object */
-	object_wipe(o_ptr);
+	/* Wipe the structure */
+	(void)WIPE(o_ptr, object_type);
 
 
 	/* Scan the allocation table */
