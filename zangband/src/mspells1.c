@@ -348,7 +348,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 static bool summon_possible(int y1, int x1)
 {
 	int y, x;
-	
+
 	cave_type *c_ptr;
 
 	/* Start at the player's location, and check 2 grids in each dir */
@@ -364,7 +364,7 @@ static bool summon_possible(int y1, int x1)
 
 			/* Access Grid */
 			c_ptr = area(y, x);
-			
+
 			/* Hack: no summon on glyph of warding */
 			if (c_ptr->feat == FEAT_GLYPH) continue;
 			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
@@ -421,9 +421,9 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 		y = grid_g[i].y;
 		x = grid_g[i].x;
 
-		if ((area(y,x)->m_idx > 0) && !((y == y2) && (x == x2)))
+		if ((area(y, x)->m_idx > 0) && !((y == y2) && (x == x2)))
 		{
-			monster_type *m_ptr = &m_list[area(y,x)->m_idx];
+			monster_type *m_ptr = &m_list[area(y, x)->m_idx];
 			if (friend == is_pet(m_ptr))
 			{
 				return (FALSE);

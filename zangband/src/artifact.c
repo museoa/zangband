@@ -1769,10 +1769,10 @@ bool activate_random_artifact(object_type * o_ptr)
 				{
 					y = py + ddy[dir];
 					x = px + ddx[dir];
-					
+
 					/* paranoia */
 					if (!in_bounds2(y, x)) continue;
-					
+
 					c_ptr = area(y, x);
 
 					/* Get the monster */
@@ -2338,7 +2338,7 @@ bool activate_random_artifact(object_type * o_ptr)
 					msg_print("A tension leaves the air around you...");
 				}
 			}
-			
+
 			o_ptr->timeout = 200;
 			break;
 		}

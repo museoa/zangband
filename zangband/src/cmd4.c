@@ -71,7 +71,7 @@ void do_cmd_redraw(void)
 		/* Dead window */
 		if (!angband_term[j]) continue;
 
-                /* Activate */
+		/* Activate */
 		Term_activate(angband_term[j]);
 
 		/* Redraw */
@@ -884,7 +884,7 @@ void do_cmd_options(void)
 		prt("(4) Efficiency Options", 7, 5);
 		prt("(5) Display Options", 8, 5);
 		prt("(6) Artificial Intelligence Options", 9, 5);
-                prt("(7) Testing Options", 10, 5);
+		prt("(7) Testing Options", 10, 5);
 
 		/* Special choices */
 		prt("(D) Base Delay Factor", 12, 5);
@@ -945,7 +945,7 @@ void do_cmd_options(void)
 			/* Display Options */
 			case '5':
 			{
-                                /* Spawn */
+				/* Spawn */
 				do_cmd_options_aux(5, "Display Options");
 				break;
 			}
@@ -959,14 +959,13 @@ void do_cmd_options(void)
 			}
 
 			/* Testing options (autodestroy) */
-		        case 'T': /* For people who do this by memory */
-                        case '7':
-                        {
-
-                                /* Spawn */
-                                do_cmd_options_aux(8, "Testing Options");
-                                break;
-                        }
+			case 'T': /* For people who do this by memory */
+			case '7':
+			{
+				/* Spawn */
+				do_cmd_options_aux(8, "Testing Options");
+				break;
+			}
 
 			/* Cheating Options */
 			case 'C':
@@ -2443,7 +2442,7 @@ void do_cmd_colors(void)
 
 
 /*
- * Take notes. 
+ * Take notes.
  */
 void do_cmd_note(void)
 {
@@ -2453,7 +2452,7 @@ void do_cmd_note(void)
 	strcpy(buf, "");
 
 	if (!get_string("Note: ", buf, 60)) return;
-	
+
 	/* Ignore empty notes */
 	if (!buf[0] || (buf[0] == ' ')) return;
 
@@ -3004,7 +3003,7 @@ static void do_cmd_knowledge_uniques(void)
 
 		/* XXX XXX Free the "who" array */
 		C_KILL(who, max_r_idx, u16b);
-		
+
 		return;
 	}
 
@@ -3034,7 +3033,7 @@ static void do_cmd_knowledge_uniques(void)
 		bool dead = (r_ptr->max_num == 0);
 
 		/* Print a message */
-		fprintf(fff, "     %s is %s\n",(r_name + r_ptr->name),
+		fprintf(fff, "     %s is %s\n", (r_name + r_ptr->name),
 			(dead ? "dead" : "alive"));
 	}
 
@@ -3284,7 +3283,7 @@ static void do_cmd_knowledge_kill_count(void)
 
 		/* XXX XXX Free the "who" array */
 		C_KILL(who, max_r_idx, u16b);
-		
+
 		return;
 	}
 

@@ -1333,8 +1333,8 @@ bool detect_traps(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			if(!in_bounds2(y, x)) continue;
-			
+			if (!in_bounds2(y, x)) continue;
+
 			/* Access the grid */
 			c_ptr = area(y,x);
 
@@ -1389,8 +1389,8 @@ bool detect_doors(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			if(!in_bounds2(y, x)) continue;
-			
+			if (!in_bounds2(y, x)) continue;
+
 			c_ptr = area(y,x);
 
 			/* Detect secret doors */
@@ -1446,8 +1446,8 @@ bool detect_stairs(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			if(!in_bounds2(y, x)) continue;
-			
+			if (!in_bounds2(y, x)) continue;
+
 			c_ptr = area(y,x);
 
 			/* Detect stairs */
@@ -1494,8 +1494,8 @@ bool detect_treasure(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			if(!in_bounds2(y, x)) continue;
-			
+			if (!in_bounds2(y, x)) continue;
+
 			c_ptr = area(y,x);
 
 			/* Notice embedded gold */
@@ -2101,7 +2101,7 @@ bool project_hack(int typ, int dam)
 		x = m_ptr->fx;
 
 		c_ptr = area(y, x);
-		
+
 		/* Require line of sight */
 		if (!player_has_los_grid(c_ptr)) continue;
 
@@ -2270,7 +2270,7 @@ void aggravate_monsters(int who)
 		}
 
 		c_ptr = area(m_ptr->fy, m_ptr->fx);
-		
+
 		/* Speed up monsters in line of sight */
 		if (player_has_los_grid(c_ptr))
 		{
@@ -2454,7 +2454,7 @@ bool probing(void)
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
-		
+
 		c_ptr = area(m_ptr->fy, m_ptr->fx);
 
 		/* Require line of sight */
@@ -2738,11 +2738,11 @@ bool earthquake(int cy, int cx, int r)
 			y = py + ddy_ddd[i];
 			x = px + ddx_ddd[i];
 
-			if(!in_bounds2(y, x)) continue;
-			
+			if (!in_bounds2(y, x)) continue;
+
 			/* Access the grid */
 			c_ptr = area(y, x);
-			
+
 			/* Skip non-empty grids */
 			if (!cave_empty_grid(c_ptr)) continue;
 
@@ -2861,8 +2861,8 @@ bool earthquake(int cy, int cx, int r)
 			/* Skip unaffected grids */
 			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
-			if(!in_bounds2(yy, xx)) continue;
-			
+			if (!in_bounds2(yy, xx)) continue;
+
 			/* Access the grid */
 			c_ptr = area(yy, xx);
 
@@ -2900,11 +2900,11 @@ bool earthquake(int cy, int cx, int r)
 							y = yy + ddy_ddd[i];
 							x = xx + ddx_ddd[i];
 
-							if(!in_bounds2(y, x)) continue;
-							
+							if (!in_bounds2(y, x)) continue;
+
 							/* Access the grid */
 							c_ptr = area(y, x);
-							
+
 							/* Skip non-empty grids */
 							if (!cave_empty_grid(c_ptr)) continue;
 
@@ -3001,10 +3001,10 @@ bool earthquake(int cy, int cx, int r)
 			/* Skip unaffected grids */
 			if (!map[16+yy-cy][16+xx-cx]) continue;
 
-			if(!in_bounds2(yy, xx)) continue;
-			
+			if (!in_bounds2(yy, xx)) continue;
+
 			/* Access the cave grid */
-			c_ptr = area(yy,xx);
+			c_ptr = area(yy, xx);
 
 			/* Paranoia -- never affect player */
 			if ((yy == py) && (xx == px)) continue;
@@ -3240,7 +3240,7 @@ static int next_to_open(int cy, int cx)
 
 	int len = 0;
 	int blen = 0;
-	
+
 	cave_type *c_ptr;
 
 	for (i = 0; i < 16; i++)
@@ -3248,8 +3248,8 @@ static int next_to_open(int cy, int cx)
 		y = cy + ddy_cdd[i % 8];
 		x = cx + ddx_cdd[i % 8];
 
-		if(!in_bounds2(y, x)) continue;
-		
+		if (!in_bounds2(y, x)) continue;
+
 		c_ptr = area(y, x);
 
 		/* Found a wall, break the length */
@@ -3280,7 +3280,7 @@ static int next_to_walls_adj(int cy, int cx)
 	int y, x;
 
 	int c = 0;
-	
+
 	cave_type *c_ptr;
 
 	for (i = 0; i < 8; i++)
@@ -3288,10 +3288,10 @@ static int next_to_walls_adj(int cy, int cx)
 		y = cy + ddy_ddd[i];
 		x = cx + ddx_ddd[i];
 
-		if(!in_bounds2(y, x)) continue;
-		
+		if (!in_bounds2(y, x)) continue;
+
 		c_ptr = area(y, x);
-		
+
 		if (!cave_floor_grid(c_ptr)) c++;
 	}
 
@@ -3310,7 +3310,7 @@ static void cave_temp_room_aux(int y, int x)
 	if (!in_bounds(y, x)) return;
 
 	/* Get the grid */
-	c_ptr = area(y,x);
+	c_ptr = area(y, x);
 
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
@@ -3353,7 +3353,7 @@ static void cave_temp_room_aux(int y, int x)
 void lite_room(int y1, int x1)
 {
 	int i, x, y;
-	
+
 	cave_type *c_ptr;
 
 	/* Add the initial grid */
@@ -3393,7 +3393,7 @@ void lite_room(int y1, int x1)
 void unlite_room(int y1, int x1)
 {
 	int i, x, y;
-	
+
 	cave_type *c_ptr;
 
 	/* Add the initial grid */
@@ -3528,15 +3528,15 @@ bool teleport_swap(int dir)
 		tx = px + ddx[dir];
 		ty = py + ddy[dir];
 	}
-	
-	if(!in_bounds2(ty, tx))
+
+	if (!in_bounds2(ty, tx))
 	{
 		msg_print("You can't trade places with that!");
 
 		/* Failure */
 		return FALSE;
 	}
-	
+
 	c_ptr = area(ty,tx);
 
 	if (!c_ptr->m_idx)

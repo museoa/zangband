@@ -1846,16 +1846,16 @@ void mutation_power_aux(u32b power)
 					msg_print("You are too afraid!");
 					return;
 				}
-			
+
 				/* Only works on adjacent monsters */
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* paranoia */
-				if(!in_bounds2(y, x)) return;
-				
-				c_ptr = area(y,x);
+				if (!in_bounds2(y, x)) return;
+
+				c_ptr = area(y, x);
 
 				if (!(c_ptr->m_idx))
 				{
@@ -1912,11 +1912,12 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) break;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* paranoia */
-				if(!in_bounds2(y, x)) return;
-				
-				c_ptr = area(y,x);
+				if (!in_bounds2(y, x)) return;
+
+				c_ptr = area(y, x);
+
 				if (cave_floor_grid(c_ptr))
 				{
 					msg_print("You bite into thin air!");
@@ -2185,11 +2186,11 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* paranoia */
-				if(!in_bounds2(y, x)) return;
-				
-				if (area(y,x)->m_idx)
+				if (!in_bounds2(y, x)) return;
+
+				if (area(y, x)->m_idx)
 				{
 					py_attack(y, x);
 					teleport_player(30);
@@ -2260,11 +2261,11 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* paranoia */
-				if(!in_bounds2(y, x)) return;
-				
-				c_ptr = area(y,x);
+				if (!in_bounds2(y, x)) return;
+
+				c_ptr = area(y, x);
 
 				if (!c_ptr->m_idx)
 				{
@@ -2299,11 +2300,11 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* paranoia */
-				if(!in_bounds2(y, x)) return;
-				
-				c_ptr = area(y,x);
+				if (!in_bounds2(y, x)) return;
+
+				c_ptr = area(y, x);
 
 				if (!c_ptr->m_idx)
 				{

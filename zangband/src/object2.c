@@ -873,8 +873,8 @@ static s32b object_value_base(object_type *o_ptr)
 
 		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
-			return (r_info[o_ptr->pval].level 
-				* r_info[o_ptr->pval].level * 5L);
+			return (r_info[o_ptr->pval].level *
+			        r_info[o_ptr->pval].level * 5L);
 	}
 
 	/* Paranoia -- Oops */
@@ -1325,8 +1325,8 @@ s32b object_value_real(object_type *o_ptr)
 		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
 		{
-			value = (r_info[o_ptr->pval].level * 
-				r_info[o_ptr->pval].level * 5L);
+			value = (r_info[o_ptr->pval].level *
+			         r_info[o_ptr->pval].level * 5L);
 			break;
 		}
 	}
@@ -1758,7 +1758,7 @@ s16b lookup_kind(int tval, int sval)
 void object_wipe(object_type *o_ptr)
 {
 	/* Wipe the structure */
-	(void) WIPE(o_ptr, object_type);
+	(void)WIPE(o_ptr, object_type);
 }
 
 
@@ -4307,8 +4307,8 @@ void place_object(int y, int x, bool good, bool great)
 	if (!in_bounds(y, x)) return;
 
 	/* Acquire grid */
-	c_ptr = area(y,x);
-		
+	c_ptr = area(y, x);
+
 	/* Require clean floor space */
 	if (!cave_gen_grid(c_ptr)) return;
 
@@ -4429,7 +4429,7 @@ void place_gold(int y, int x)
 
 	/* Acquire grid */
 	c_ptr = area(y,x);
-	
+
 	/* Require clean floor space */
 	if (!cave_clean_grid(c_ptr)) return;
 
@@ -4945,7 +4945,7 @@ void pick_trap(int y, int x)
 
 		/* Hack -- no trap doors on the deepest level */
 		if (dun_level >= MAX_DEPTH-1) continue;
-		
+
 		break;
 	}
 
@@ -4966,12 +4966,12 @@ void pick_trap(int y, int x)
 void place_trap(int y, int x)
 {
 	cave_type *c_ptr;
-	
+
 	/* Paranoia -- verify location */
 	if (!in_bounds(y, x)) return;
 
 	c_ptr = area(y, x);
-	
+
 	/* Require empty, clean, floor grid */
 	if (!cave_naked_grid(c_ptr)) return;
 

@@ -33,23 +33,17 @@
 /* #define WINDOWS */
 #endif
 
+
 #ifdef USE_IBM
 
-  /*
-   * OPTION: Compile on an IBM (automatic)
-   */
-  #ifndef MSDOS
-    #define MSDOS
-  #endif
+/*
+* OPTION: Compile on an IBM (automatic)
+*/
+#ifndef MSDOS
+	#define MSDOS
+#endif /* MSDOS */
 
-
-  /* Use the new SVGA code */
-  #ifndef USE_IBM_SVGA
-    #define USE_IBM_SVGA
-  #endif
-
-
-#endif
+#endif /* USE_IBM */
 
 /*
  * OPTION: Compile on a SYS III version of UNIX

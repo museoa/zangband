@@ -228,7 +228,7 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 	/* Show modifications to stats */
 	(*f1) |= (o_ptr->art_flags1 &
-		(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR ));
+		(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR));
 
 
 #ifdef SPOIL_ARTIFACTS
@@ -3032,7 +3032,7 @@ bool scan_floor(int *items, int *item_num, int y, int x, int mode)
 	if (!in_bounds(y, x)) return (FALSE);
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = area(y,x)->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(y, x)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -3095,7 +3095,7 @@ void show_floor(int y, int x)
 	if (show_weights) lim -= 9;
 
 	/* Scan for objects in the grid, using item_tester_okay() */
-	(void) scan_floor(floor_list, &floor_num, y, x, 0x01);
+	(void)scan_floor(floor_list, &floor_num, y, x, 0x01);
 
 	/* Display the inventory */
 	for (k = 0, i = 0; i < floor_num; i++)
@@ -3290,7 +3290,7 @@ bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
 	if (floor)
 	{
 		/* Scan all objects in the grid */
-		(void) scan_floor(floor_list, &floor_num, py, px, 0x01);
+		(void)scan_floor(floor_list, &floor_num, py, px, 0x01);
 	}
 
 	/* Accept inventory */
@@ -3827,7 +3827,7 @@ bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
 
 
 	/* Clean up */
-	
+
 	/* Toggle again if needed */
 	if (toggle) toggle_inven_equip();
 
@@ -3894,7 +3894,7 @@ void py_pickup_floor(int pickup)
 		{
 			/* Message */
 			msg_format("You have found %ld gold pieces worth of %s.",
-				(long) o_ptr->pval, o_name);
+				(long)o_ptr->pval, o_name);
 
 			/* Collect the gold */
 			p_ptr->au += o_ptr->pval;
@@ -3921,8 +3921,8 @@ void py_pickup_floor(int pickup)
 			/* Check the next object */
 			continue;
 		}
-		
-		
+
+
 		/* Count non-gold objects that can be picked up. */
 		if (inven_carry_okay(o_ptr))
 		{
@@ -3958,7 +3958,7 @@ void py_pickup_floor(int pickup)
 			if (easy_sense)
 			{
 				/* Sense the object */
-				(void) sense_object(o_ptr);
+				(void)sense_object(o_ptr);
 			}
 
 #endif /* ALLOW_EASY_SENSE */
@@ -3996,7 +3996,7 @@ void py_pickup_floor(int pickup)
 			if (easy_sense)
 			{
 				/* Sense the object */
-				(void) sense_object(o_ptr);
+				(void)sense_object(o_ptr);
 			}
 
 #endif /* ALLOW_EASY_SENSE */
@@ -4036,7 +4036,7 @@ void py_pickup_floor(int pickup)
 			if (easy_sense)
 			{
 				/* Sense the object */
-				(void) sense_object(o_ptr);
+				(void)sense_object(o_ptr);
 			}
 
 #endif /* ALLOW_EASY_SENSE */
@@ -4045,7 +4045,7 @@ void py_pickup_floor(int pickup)
 			object_desc(o_name, o_ptr, TRUE, 3);
 
 			/* Build a prompt */
-			(void) sprintf(out_val, "Pick up %s? ", o_name);
+			(void)sprintf(out_val, "Pick up %s? ", o_name);
 
 			/* Ask the user to confirm */
 			if (!get_check(out_val))
@@ -4083,7 +4083,7 @@ void py_pickup_floor(int pickup)
 				o_ptr = &o_list[floor_list[i]];
 
 				/* Sense the object */
-				(void) sense_object(o_ptr);
+				(void)sense_object(o_ptr);
 			}
 		}
 
@@ -4114,7 +4114,7 @@ void py_pickup_floor(int pickup)
 	if (easy_sense)
 	{
 		/* Sense the object */
-		(void) sense_object(o_ptr);
+		(void)sense_object(o_ptr);
 	}
 
 #endif /* ALLOW_EASY_SENSE */

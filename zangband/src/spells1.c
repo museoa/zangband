@@ -236,7 +236,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 	/* Slope */
 	int m;
 
-	cave_type *c_ptr;	
+	cave_type *c_ptr;
 
 	/* No path necessary (or allowed) */
 	if ((x1 == x2) && (y1 == y2)) return (0);
@@ -290,7 +290,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 		/* Create the projection path */
 		while (1)
 		{
-			/* Save grid */			
+			/* Save grid */
 			gp[n].x = x;
 			gp[n].y = y;
 			n++;
@@ -306,9 +306,9 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 
 			/* Stop if out of bounds */
 			if (!in_bounds(y, x)) break;
-			
+
 			c_ptr = area(y, x);
-			
+
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
@@ -359,7 +359,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 		/* Create the projection path */
 		while (1)
 		{
-			/* Save grid */			
+			/* Save grid */
 			gp[n].x = x;
 			gp[n].y = y;
 			n++;
@@ -375,9 +375,9 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 
 			/* Stop if out of bounds */
 			if (!in_bounds(y, x)) break;
-			
+
 			c_ptr = area(y, x);
-			
+
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
@@ -438,9 +438,9 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 
 			/* Stop if out of bounds */
 			if (!in_bounds(y, x)) break;
-			
+
 			c_ptr = area(y, x);
-			
+
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
@@ -649,7 +649,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 			/* Permanent walls */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA) break;
-			
+
 			/* Terrain */
 			if (c_ptr->feat >= FEAT_TREES)
 			{
@@ -666,7 +666,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_DIRT);
 			}
-			
+
 			/* Granite */
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
@@ -1716,7 +1716,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				}
 
 				/* 2. stun */
-				do_stun = damroll((p_ptr->lev / 10) + 3 , (dam)) + 1;
+				do_stun = damroll((p_ptr->lev / 10) + 3, (dam)) + 1;
 
 				/* Attempt a saving throw */
 				if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
@@ -1934,7 +1934,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (seen) obvious = TRUE;
 			do_dist = 7;
 			/* 1. stun */
-			do_stun = damroll((p_ptr->lev / 10) + 3 , dam) + 1;
+			do_stun = damroll((p_ptr->lev / 10) + 3, dam) + 1;
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
@@ -2114,21 +2114,21 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			else
 			{
 				u16b hp = dam;
-				
+
 				/* Cannot drain more than monsters life */
 				if (m_ptr->hp < dam) hp = m_ptr->hp;
-				
+
 				/* Cannot drain more than 100hp at a time */
 				if (hp > 100) hp = 100;
-				
+
 				/* Give the player the hit points */
 				(void)hp_player(hp);
 			}
 
 			break;
 		}
-		
-		
+
+
 		/* Death Ray */
 		case GF_DEATH_RAY:
 		{
@@ -2274,7 +2274,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				m_ptr->mspeed += (40 - m_ptr->mspeed + r_ptr->speed) / 4;
 			}
-			
+
 			note = " starts moving faster.";
 
 			if (r_ptr->flags1 & RF1_UNIQUE)
@@ -2307,7 +2307,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				if (m_ptr->mspeed > 60)
 				{
 					m_ptr->mspeed -= (40 + m_ptr->mspeed - r_ptr->speed) / 4;
-				
+
 				}
 				note = " starts moving slower.";
 			}
@@ -2525,7 +2525,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		{
 			if (seen) obvious = TRUE;
 
-			do_stun = damroll((p_ptr->lev / 10) + 3 , (dam)) + 1;
+			do_stun = damroll((p_ptr->lev / 10) + 3, (dam)) + 1;
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
@@ -3410,18 +3410,18 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			t_y = m_list[who].fy - 1 + randint(3);
 			t_x = m_list[who].fx - 1 + randint(3);
 			max_attempts--;
-			
-						
+
+
 			/* paranoia */
-			if(!max_attempts) break;
-			
+			if (!max_attempts) break;
+
 			/* not off edge */
-			if(!in_bounds2(t_y, t_x)) continue;
-			
+			if (!in_bounds2(t_y, t_x)) continue;
+
 			c_ptr = area(t_y, t_x);
-			
+
 			/* Hack - exit if can see the reflection */
-			if(player_has_los_grid(c_ptr)) break;
+			if (player_has_los_grid(c_ptr)) break;
 		}
 
 		if (max_attempts < 1)
@@ -4698,7 +4698,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		int nx = path_g[i].x;
 
 		c_ptr = area(ny, nx);
-		
+
 		/* Hack -- Balls explode before reaching walls */
 		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
 
@@ -4717,7 +4717,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		/* Only do visuals if requested */
 		if (!blind && !(flg & (PROJECT_HIDE)))
 		{
-			
+
 			/* Only do visuals if the player can "see" the bolt */
 			if (panel_contains(y, x) && player_has_los_grid(c_ptr))
 			{
@@ -4891,7 +4891,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 							if (!in_disintegration_range(y2, x2, y, x)) continue;
 
 							c_ptr = area(y, x);
-							
+
 							if (cave_valid_grid(c_ptr) &&
 								(c_ptr->feat < FEAT_PATTERN_START ||
 								 c_ptr->feat > FEAT_PATTERN_XTRA2) &&
@@ -4947,7 +4947,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 				x = gx[i];
 
 				c_ptr = area(y, x);
-				
+
 				/* Only do visuals if the player can "see" the blast */
 				if (panel_contains(y, x) && player_has_los_grid(c_ptr))
 				{
@@ -4994,7 +4994,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 				x = gx[i];
 
 				c_ptr = area(y, x);
-				
+
 				/* Hack -- Erase if needed */
 				if (panel_contains(y, x) && player_has_los_grid(c_ptr))
 				{

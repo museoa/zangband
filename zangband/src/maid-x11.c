@@ -465,7 +465,7 @@ static void GetScaledRow(XImage *Im, int x, int y, int iw, int ow,
 				nextBlue  = (pix >> blueShift) & blueMask;
 			}
 			sifrac = cifrac;
-			if (sifrac > 0) 
+			if (sifrac > 0)
 			{
 				redScan[xi]   += nextRed   * sifrac;
 				greenScan[xi] += nextGreen * sifrac;
@@ -536,7 +536,7 @@ static void ScaleIcon(XImage *ImIn, XImage *ImOut,
 	else
 		div = ix;
 
-	if (iy == oy) 
+	if (iy == oy)
 	{
 		/* no scaling needed vertically: */
 		for (yi = 0; yi < oy; yi++)
@@ -707,14 +707,14 @@ static XImage *ResizeImageSmooth(Display *dpy, XImage *Im,
 	    redShift++;
 	    redMask >>= 1;
 	}
-    	greenMask = Im->green_mask;
+	greenMask = Im->green_mask;
 	greenShift = 0;
 	while ((greenMask & 1) == 0)
 	{
 	    greenShift++;
 	    greenMask >>= 1;
 	}
-    	blueMask = Im->blue_mask;
+	blueMask = Im->blue_mask;
 	blueShift = 0;
 	while ((blueMask & 1) == 0)
 	{
@@ -755,7 +755,7 @@ static XImage *ResizeImage(Display *dpy, XImage *Im,
 
 	char *Data;
 
-    	if (smoothRescaling && (ix != ox || iy != oy) && 
+	if (smoothRescaling && (ix != ox || iy != oy) &&
 	    visual->class == TrueColor)
 	{
 	    return ResizeImageSmooth(dpy, Im, ix, iy, ox, oy);
@@ -830,7 +830,7 @@ static XImage *ResizeImage(Display *dpy, XImage *Im,
 		{
 			Ty += *dy1;
 			(*py2)++;
-		}      
+		}
 	}
 
 	return Tmp;

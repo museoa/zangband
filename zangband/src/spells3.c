@@ -77,7 +77,7 @@ bool teleport_away(int m_idx, int dis)
 			if (!in_bounds(ny, nx)) continue;
 
 			c_ptr = area(ny, nx);
-			
+
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
 
@@ -189,7 +189,7 @@ void teleport_to_player(int m_idx)
 			if (!in_bounds(ny, nx)) continue;
 
 			c_ptr = area(ny, nx);
-			
+
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
 
@@ -306,7 +306,7 @@ void teleport_player(int dis)
 			if (!in_bounds(y, x)) continue;
 
 			c_ptr = area(y, x);
-			
+
 			/* Require "naked" floor space or trees */
 			if (!(cave_naked_grid(c_ptr) ||
 			    ((c_ptr->feat & 0x60) == 0x60))) continue;
@@ -366,9 +366,9 @@ void teleport_player(int dis)
 			}
 			else
 			{
-				if(!in_bounds2(oy+yy, ox+xx)) continue;
-				
-				if (area(oy+yy,ox+xx)->m_idx)
+				if (!in_bounds2(oy + yy, ox + xx)) continue;
+
+				if (area(oy + yy, ox + xx)->m_idx)
 				{
 					if ((r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags6 & RF6_TPORT) &&
 					    !(r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags3 & RF3_RES_TELE))
@@ -419,7 +419,7 @@ void teleport_player(int dis)
 void teleport_player_to(int ny, int nx)
 {
 	int y, x, oy, ox, dis = 0, ctr = 0;
-	
+
 	cave_type *c_ptr;
 
 	if (p_ptr->anti_tele)
@@ -966,7 +966,7 @@ void fetch(int dir, int wgt, bool require_los)
 			msg_print("You can't fetch something that far away!");
 			return;
 		}
-		
+
 		c_ptr = area(ty, tx);
 
 		/* We need an item to fetch */
@@ -996,19 +996,19 @@ void fetch(int dir, int wgt, bool require_los)
 		ty = py; /* Where to drop the item */
 		tx = px;
 
-		while(TRUE)
+		while (TRUE)
 		{
 			ty += ddy[dir];
 			tx += ddx[dir];
-			
+
 			/* paranoia */
-			if(!in_bounds2(ty, tx)) continue;
-			
+			if (!in_bounds2(ty, tx)) continue;
+
 			c_ptr = area(ty, tx);
 
 			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
 			    !cave_floor_grid(c_ptr)) return;
-			    
+
 			/* found a spot */
 			if (!c_ptr->o_idx) break;
 		}
@@ -1062,7 +1062,7 @@ void alter_reality(void)
 bool warding_glyph(void)
 {
 	cave_type *c_ptr = area(py, px);
-	
+
 	/* XXX XXX XXX */
 	if (!cave_clean_grid(c_ptr))
 	{
@@ -1083,7 +1083,7 @@ bool warding_glyph(void)
 bool explosive_rune(void)
 {
 	cave_type *c_ptr = area(py, px);
-	
+
 	/* XXX XXX XXX */
 	if (!cave_clean_grid(c_ptr))
 	{
@@ -1341,7 +1341,7 @@ bool alchemy(void)
 void stair_creation(void)
 {
 	cave_type *c_ptr = area(py, px);
-	
+
 	/* XXX XXX XXX */
 	if (!cave_valid_grid(c_ptr))
 	{
@@ -1942,11 +1942,11 @@ bool ident_spell(void)
 		char note[80];
 		char item_name[80];
 		object_desc(item_name, o_ptr, FALSE, 0);
-  	  
+
 		/* Build note and write */
 		sprintf(note, "Found The %s", item_name);
-	   
-		add_note(note, 'A');	
+
+		add_note(note, 'A');
 
 		/* Mark item as found */
 		a_info[o_ptr->name1].cur_num = 2;
@@ -2122,11 +2122,11 @@ bool identify_fully(void)
 		char note[80];
 		char item_name[80];
 		object_desc(item_name, o_ptr, FALSE, 0);
-  	  
+
 		/* Build note and write */
 		sprintf(note, "Found The %s", item_name);
-	   
-		add_note(note, 'A');	
+
+		add_note(note, 'A');
 
 		/* Mark item as found */
 		a_info[o_ptr->name1].cur_num = 2;
@@ -2216,7 +2216,7 @@ bool recharge(int power)
 	/* Get the object kind. */
 	k_ptr = &k_info[o_ptr->k_idx];
 
-	/* 
+	/*
 	 * Extract the object "level"
 	 * (Rescaled due to change in dungeon distribtuion)
 	 */
@@ -4085,7 +4085,7 @@ static s16b poly_r_idx(int r_idx)
 
 bool polymorph_monster(int y, int x)
 {
-	cave_type *c_ptr = area(y,x);
+	cave_type *c_ptr = area(y, x);
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 	bool friendly, pet;
 	bool polymorphed = FALSE;
@@ -4135,13 +4135,13 @@ bool dimension_door(void)
 	int	plev = p_ptr->lev;
 	int	x = 0, y = 0;
 	cave_type *c_ptr;
-	
+
 	if (!tgt_pt(&x, &y)) return FALSE;
 
 	p_ptr->energy -= 60 - plev;
 
 	/* paranoia */
-	if(!in_bounds2(y, x)) return FALSE;
+	if (!in_bounds2(y, x)) return FALSE;
 
 	c_ptr = area(y, x);
 

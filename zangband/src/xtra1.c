@@ -4109,19 +4109,19 @@ bool monk_heavy_armor(void)
 int number_of_quests(void)
 {
 	int i, j;
-	
+
 	/* Clear the counter */
 	i = 0;
-	
+
 	for (j = MIN_RANDOM_QUEST; j < MAX_RANDOM_QUEST; j++)
 	{
 		if (quest[j].status != QUEST_STATUS_UNTAKEN)
 		{
 			/* Increment count of quests taken. */
 			i++;
-		}	
+		}
 	}
-	
+
 	/* Return the number of quests taken */
 	return (i);
 }

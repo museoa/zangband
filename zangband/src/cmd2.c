@@ -654,15 +654,15 @@ static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
 		/* Extract adjacent (legal) location */
 		yy = py + ddy_ddd[d];
 		xx = px + ddx_ddd[d];
-		
+
 		/* paranoia */
-		if(!in_bounds2(yy, xx)) continue;
+		if (!in_bounds2(yy, xx)) continue;
 
 		/* Must have knowledge */
 		if (!(area(yy,xx)->info & (CAVE_MARK))) continue;
 
 		/* Not looking for this feature */
-		if (!((*test)(area(yy,xx)->feat))) continue;
+		if (!((*test)(area(yy, xx)->feat))) continue;
 
 		/* OK */
 		++count;
@@ -912,7 +912,7 @@ void do_cmd_open(void)
 #endif /* USE_SCRIPT */
 
 		/* paranoia */
-		if(!in_bounds2(y, x)) return;
+		if (!in_bounds2(y, x)) return;
 
 		/* Get requested grid */
 		c_ptr = area(y,x);
@@ -1056,11 +1056,11 @@ void do_cmd_close(void)
 		x = px + ddx[dir];
 
 		/* paranoia */
-		if(!in_bounds2(y, x))
+		if (!in_bounds2(y, x))
 		{
 			/* Message */
 			msg_print("You see nothing there to close.");
-			
+
 			disturb(0, 0);
 			return;
 		}
@@ -1107,7 +1107,7 @@ void do_cmd_close(void)
 static bool do_cmd_tunnel_test(int y, int x)
 {
 	cave_type *c_ptr = area(y, x);
-	
+
 	/* Must have knowledge */
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
@@ -1226,7 +1226,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	}
 
 	/* Jungle */
-	else if (c_ptr->feat == FEAT_JUNGLE) 
+	else if (c_ptr->feat == FEAT_JUNGLE)
 	{
 		/* Chop Down */
 		if ((p_ptr->skill_dig > 10 + rand_int(800)) && twall(y, x, FEAT_BUSH))
@@ -1467,14 +1467,14 @@ void do_cmd_tunnel(void)
 		{
 			/* Message */
 			msg_print("You cannot tunnel outside the wilderness.");
-			
-			/* Do not repeat */			
+
+			/* Do not repeat */
 			disturb(0, 0);
-			
+
 			/* exit */
 			return;
 		}
-		
+
 		/* Get grid */
 		c_ptr = area(y,x);
 
@@ -1500,7 +1500,7 @@ void do_cmd_tunnel(void)
 			/* Message */
 			msg_print("You cannot tunnel through that.");
 		}
-		
+
 		/* A monster is in the way */
 		else if (c_ptr->m_idx)
 		{
@@ -1887,13 +1887,13 @@ void do_cmd_disarm(void)
 		/* Get location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
-		
+
 		/* paranoia */
-		if(!in_bounds2(y, x))
+		if (!in_bounds2(y, x))
 		{
 			/* Message */
 			msg_print("You see nothing there to disarm.");
-			
+
 			disturb(0, 0);
 			return;
 		}
@@ -2078,15 +2078,15 @@ void do_cmd_bash(void)
 		/* Bash location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
-		
-		if(!in_bounds2(y, x))
+
+		if (!in_bounds2(y, x))
 		{
 			/* Message */
 			msg_print("You see nothing there to bash.");
-			
+
 			disturb(0, 0);
 			return;
-		
+
 		}
 
 		/* Get grid */
@@ -2164,13 +2164,13 @@ void do_cmd_alter(void)
 		/* Get location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
-		
+
 		/* paranoia */
-		if(!in_bounds2(y, x))
+		if (!in_bounds2(y, x))
 		{
 			/* Oops */
 			msg_print("You attack the empty air.");
-			
+
 			disturb(0, 0);
 			return;
 		}
@@ -2296,16 +2296,16 @@ void do_cmd_spike(void)
 		/* Get location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
-		
+
 		/* paranoia */
 		if (!in_bounds2(y, x))
 		{
 			/* Message */
 			msg_print("You see nothing there to spike.");
-			
+
 			disturb(0, 0);
 			return;
-		
+
 		}
 
 		/* Get grid and contents */
@@ -2804,7 +2804,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	int msec = delay_factor * delay_factor * delay_factor;
 
 	cave_type *c_ptr;
-	
+
 	/* Missile launchers of Velocity and Accuracy sometimes "supercharge" */
 	if ((j_ptr->name2 == EGO_VELOCITY) || (j_ptr->name2 == EGO_ACCURACY))
 	{
@@ -2997,7 +2997,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx)) break;
-		
+
 		/* Stopped by walls/doors */
 		c_ptr = area(ny, nx);
 		if (!cave_floor_grid(c_ptr)) break;
@@ -3060,7 +3060,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			 * Monsters in trees can take advantage of cover,
 			 * except from rangers.
 			 */
-			else if ((c_ptr->feat == FEAT_TREES) && 
+			else if ((c_ptr->feat == FEAT_TREES) &&
 					 (p_ptr->pclass == CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
@@ -3283,7 +3283,7 @@ void do_cmd_throw_aux(int mult)
 
 	u32b f1, f2, f3;
 	cptr q, s;
-	
+
 	cave_type *c_ptr;
 
 
@@ -3301,7 +3301,7 @@ void do_cmd_throw_aux(int mult)
 	{
 		o_ptr = &o_list[0 - item];
 	}
-	
+
 	/* Hack -- Cannot remove cursed items */
 	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
 	{
@@ -3413,8 +3413,8 @@ void do_cmd_throw_aux(int mult)
 		{
 			hit_wall = TRUE;
 			break;
-		}		
-		
+		}
+
 		/* Stopped by walls/doors */
 		c_ptr = area(ny, nx);
 		if (!cave_floor_grid(c_ptr))
@@ -3474,7 +3474,7 @@ void do_cmd_throw_aux(int mult)
 			 * Monsters in trees can take advantage of cover,
 			 * except from rangers.
 			 */
-			else if ((c_ptr->feat == FEAT_TREES) && 
+			else if ((c_ptr->feat == FEAT_TREES) &&
 			         (p_ptr->pclass == CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
@@ -3666,17 +3666,17 @@ void do_cmd_throw_aux(int mult)
 
 			if (potion_smash_effect(0, y, x, q_ptr->k_idx))
 			{
-				monster_type *m_ptr = &m_list[area(y,x)->m_idx];
+				monster_type *m_ptr = &m_list[area(y, x)->m_idx];
 
 				/* ToDo (Robert): fix the invulnerability */
-				if (area(y,x)->m_idx &&
-				    !is_hostile(&m_list[area(y,x)->m_idx]) &&
+				if (area(y, x)->m_idx &&
+				    !is_hostile(&m_list[area(y, x)->m_idx]) &&
 				    !(m_ptr->invulner))
 				{
 					char m_name[80];
-					monster_desc(m_name, &m_list[area(y,x)->m_idx], 0);
+					monster_desc(m_name, &m_list[area(y, x)->m_idx], 0);
 					msg_format("%^s gets angry!", m_name);
-					set_hostile(&m_list[area(y,x)->m_idx]);
+					set_hostile(&m_list[area(y, x)->m_idx]);
 				}
 			}
 
@@ -3690,7 +3690,7 @@ void do_cmd_throw_aux(int mult)
 
 	/* Drop (or break) near that location */
 	(void)drop_near(q_ptr, j, y, x);
-	
+
 	p_ptr->redraw |= (PR_EQUIPPY);
 }
 

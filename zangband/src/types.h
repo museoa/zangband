@@ -485,7 +485,7 @@ struct coord
 };
 
 
-/* 
+/*
  * Pointer to a 16x16 block of cave grids.
  * The grids are allocated and deallocated in large
  * blocks for speed.
@@ -498,7 +498,7 @@ typedef cave_type **blk_ptr;
 typedef cave_type *cave_tp_ptr;
 
 
-/* 
+/*
  * Grid of blocks around the player.
  * This stores important information about what the player can see
  * in the wilderness.  The max/ min vaules are stored for speed of
@@ -536,7 +536,7 @@ struct wild_grid_type
 };
 
 
-/* 
+/*
  * Structure used to generate the wilderness.
  * This stores the "height", "population" and "law" results
  * after the initial plasma fractal routines.
@@ -581,27 +581,27 @@ union wild_type
 
 typedef wild_type *wild_tp_ptr;
 
-/* 
+/*
  * An array of this structure is used to work out what wilderness type
  * is at each 16x16 block.
- */ 
+ */
 typedef struct wild_choice_tree_type wild_choice_tree_type;
 
 struct wild_choice_tree_type
 {
-	/* 
+	/*
 	 * Stores what type of node this is -
 	 * both what type of cutoff (hgt,pop,law)
 	 * and whether the pointers reference
 	 * another tree node- or a wilderness
 	 * generation type.
-	 */	
+	 */
 	byte	info;
-	
+
 	/* cutoff for the split of the virtual BSP tree */
 	byte	cutoff;
-	
-	/* 
+
+	/*
 	 * chance1/(chance1+chance2) = prob. of going down
 	 * the "left" branch.  (This is used when several
 	 * wilderness generation functions inhabit the same
@@ -610,8 +610,8 @@ struct wild_choice_tree_type
 	 */
 	byte	chance1;
 	byte	chance2;
-	
-	/* 
+
+	/*
 	 * These point to the left and right branches of the tree.
 	 * Note - that since these also need to reference a wild.gen.type.
 	 * these are index numbers of the "choice" or "gen" arrays.
@@ -633,13 +633,13 @@ typedef struct wild_bound_box_type wild_bound_box_type;
 struct wild_bound_box_type
 {
 	/* Min and max values for the cuboid in the parameter space */
-	
+
 	byte hgtmin;
 	byte hgtmax;
-	
+
 	byte popmin;
 	byte popmax;
-	
+
 	byte lawmin;
 	byte lawmax;
 };
@@ -658,13 +658,13 @@ struct wild_gen_data_type
 	char	w_char;		/* Default character for overhead map*/
 
 	byte	gen_routine;	/* Generation routine number */
-	
+
 	/*
 	 * Course type - used in plasma fractal routines to make
 	 * adjacent tiles fit togther smoothly.
 	 */
 	byte	rough_type;
-	
+
 	byte	chance;		/* Chance for this type vs others */
 
 	byte	data[8];	/* data for generation routine */

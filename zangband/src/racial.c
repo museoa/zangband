@@ -515,11 +515,11 @@ static void cmd_racial_power_aux(s32b command)
 				if (!get_rep_dir(&dir)) break;   /* was get_aim_dir */
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* Paranoia */
 				if(!in_bounds2(y, x)) break;
-				
-				c_ptr = area(y,x);
+
+				c_ptr = area(y, x);
 
 				if (!c_ptr->m_idx)
 				{

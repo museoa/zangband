@@ -1879,12 +1879,12 @@ errr init_w_info(void)
 	/* General buffer */
 	char buf[1024];
 
-	
+
 	/* Later must add in raw file support later. */
 	C_MAKE(wild_choice_tree, max_w_node, wild_choice_tree_type);
 	C_MAKE(wild_gen_data, max_w_block, wild_gen_data_type);
 	C_MAKE(wild_temp_dist, max_wild_size, byte);
-	
+
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */
@@ -1919,15 +1919,15 @@ errr init_w_info(void)
 		/* Quit */
 		quit("Error in 'w_info.txt' file.");
 	}
-	
-	
-	/* 
+
+
+	/*
 	 * Make wilderness type 0 have a char/attr
 	 * so the overhead map looks good in vanilla town mode.
 	 */
 	wild_gen_data[0].w_attr = TERM_GREEN;
 	wild_gen_data[0].w_char = '.';
-		
+
 	/* Success */
 	return (0);
 }
@@ -2653,7 +2653,7 @@ static errr init_other(void)
 
 	/* Allocate the wilderness itself */
 	C_MAKE(wild, max_wild_size, wild_tp_ptr);
-	
+
 	for (i = 0; i < max_wild_size ; i++)
 	{
 		/* Allocate one row of the wilderness */

@@ -4075,7 +4075,6 @@ void play_game(bool new_game)
 	 */
 	if (init_w_info()) quit("Cannot initialize wilderness");
 
-	
 	/* Attempt to load */
 	if (!load_player())
 	{
@@ -4166,29 +4165,29 @@ void play_game(bool new_game)
 		{
 			turn = 1;
 		}
-		
+
 		dun_level = 0;
-		
+
 		/* Create a new wilderness for the player */
 		create_wilderness();
 
 		/* Start in town */
 		p_ptr->inside_quest = 0;
 		p_ptr->inside_arena = 0;
-						
+
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();
-		
+
 		/* The dungeon is ready */
 		character_dungeon = TRUE;
-		
+
 		/* Hack -- seed for flavors */
 		seed_flavor = rand_int(0x10000000);
 
 		/* Hack -- seed for town layout (not used an more) */
 		seed_town = 0;
 	}
-	
+
 	/* Hack - if note file exists, load it */
 	if (!new_game && take_notes)
 	{

@@ -81,7 +81,7 @@ void check_experience(void)
 		lite_spot(py, px);
 
 		/*
-		 * If auto-note taking enabled, write a note to the file. 
+		 * If auto-note taking enabled, write a note to the file.
 		 * Only write this note when the level is gained for the first time.
 		 */
 		if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_plv))
@@ -411,7 +411,7 @@ void monster_death(int m_idx)
 						create_stairs = TRUE;
 
 					/* Take note */
-					if (auto_notes) 
+					if (auto_notes)
 					{
 						char note[80];
 
@@ -473,13 +473,13 @@ void monster_death(int m_idx)
 
 			/* Stagger */
 			y = ny; x = nx;
-			
+
 			/* paranoia - increment counter */
 			i++;
-			
+
 			/* paranoia */
-			if(!in_bounds(y, x)) continue;
-			
+			if (!in_bounds(y, x)) continue;
+
 			c_ptr = area(y, x);
 		}
 
@@ -975,19 +975,19 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 		return (dam);
 }
 
-/* 
+/*
  * This function calculates the experience gained for killing a monster.
  */
 void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 {
 	s32b div, exp;
-	
+
 	if (r_ptr->mexp)
 	{
 		div = p_ptr->lev * 7;
-		
+
 		exp = r_ptr->mexp * r_ptr->level * 4;
-		
+
 		/* calculate the integer exp part */
 		*new_exp = ((long) exp / div);
 
@@ -997,7 +997,7 @@ void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 	else
 	{
 		*new_exp = 0;
-		*new_exp_frac = 0;	
+		*new_exp_frac = 0;
 	}
 }
 
@@ -1121,7 +1121,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			chg_virtue(V_VITALITY, -2);
 		}
 
-		if ((r_ptr->flags1 & RF1_UNIQUE) & (randint(3)==1))
+		if ((r_ptr->flags1 & RF1_UNIQUE) & (randint(3) == 1))
 			chg_virtue(V_INDIVIDUALISM, -1);
 
 		if ((strstr((r_name + r_ptr->name),"beggar")) ||
@@ -1251,7 +1251,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
 
-		/* 
+		/*
 		 * If the player kills a Unique,
 		 * and the notes options are on, write a note
 		 */
@@ -1264,7 +1264,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 			/* Write note */
 			sprintf(note, "Killed %s", monst);
- 
+
 			add_note(note, 'U');
 		}
 
@@ -1413,7 +1413,7 @@ bool change_panel(int dy, int dx)
 		if (y < wild_grid.y_min) y = wild_grid.y_min;
 		if (x > wild_grid.x_max - SCREEN_WID) x = wild_grid.x_max - SCREEN_WID;
 		if (x < wild_grid.x_min) x = wild_grid.x_min;
-		
+
 		if (vanilla_town)
 		{
 			x = max_wild * 8 - SCREEN_WID / 2 - 15;
@@ -1465,10 +1465,10 @@ void verify_panel(void)
 	/* Hack - in vanilla town mode - do not move the screen */
 	if (vanilla_town && (!dun_level))
 	{
-		(void) change_panel(0, 0);
+		(void)change_panel(0, 0);
 		return;
 	}
-	
+
 	/* Center on player */
 	if (center_player && (!avoid_center || !running))
 	{
@@ -1862,7 +1862,7 @@ static bool target_set_accept(int y, int x)
 	if (!in_bounds2(y, x)) return (FALSE);
 
 	/* Examine the grid */
-	c_ptr = area(y,x);
+	c_ptr = area(y, x);
 
 	/* Visible monsters */
 	if (c_ptr->m_idx)
@@ -2013,7 +2013,7 @@ static void target_set_prepare(int mode)
  */
 static int target_set_aux(int y, int x, int mode, cptr info)
 {
-	cave_type *c_ptr = area(y,x);
+	cave_type *c_ptr = area(y, x);
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -2269,7 +2269,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 						prt("Hit any key to continue", 0, 0);
 
 						/* Wait */
-						(void) inkey();
+						(void)inkey();
 
 						/* Load screen */
 						screen_load();
@@ -2350,15 +2350,15 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		if (boring || (feat > FEAT_INVIS))
 		{
 			cptr name;
-			
-			#if 0
+
+#if 0
 			/* Hack -- special handling for building doors */
 			if ((feat >= FEAT_BLDG_HEAD) && (feat <= FEAT_BLDG_TAIL))
 			{
 				name = building[feat - FEAT_BLDG_HEAD].name;
 			}
-			#endif
-			
+#endif
+
 			name = f_name + f_info[feat].name;
 
 			#if 0
@@ -2401,7 +2401,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				s3 = "the entrance to the ";
 			}
-			else if ((feat == FEAT_FLOOR) || 
+			else if ((feat == FEAT_FLOOR) ||
 					((feat & 0xF8) == 0x08) ||
 					(feat == FEAT_DEEP_WATER) ||
 					(feat == FEAT_SHAL_WATER) ||
@@ -2418,7 +2418,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			else if (feat == FEAT_OCEAN_WATER)
 			{
 				s3 ="the ";
-			} 
+			}
 			else
 			{
 				/* Pick proper indefinite article */
@@ -2529,7 +2529,7 @@ bool target_set(int mode)
 			x = temp_x[m];
 
 			/* Access */
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
 
 			/* Allow target */
 			if (target_able(c_ptr->m_idx))
@@ -2767,7 +2767,7 @@ bool target_set(int mode)
 		else
 		{
 			/* Access */
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
 
 			/* Default prompt */
 			strcpy(info, "q,t,p,m,+,-,<dir>");

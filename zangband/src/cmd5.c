@@ -1095,10 +1095,10 @@ static bool cast_nature_spell(int spell)
 			{
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				
+
 				/* paranoia */
-				if(!in_bounds2(y, x)) continue;
-				c_ptr = area(y,x);
+				if (!in_bounds2(y, x)) continue;
+				c_ptr = area(y, x);
 
 				/* Get the monster */
 				m_ptr = &m_list[c_ptr->m_idx];
@@ -1377,15 +1377,15 @@ static bool cast_chaos_spell(int spell)
 
 					/* Approximate distance */
 					d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
-					
+
 					/* paranoia */
 					if (!in_bounds(y, x)) continue;
-					
+
 					c_ptr = area(y, x);
-					
+
 					/* keep going if not in LOS */
 					if (!player_has_los_grid(c_ptr)) continue;
-					
+
 					/* if close enough - exit */
 					if (d < 6) break;
 				}
@@ -1518,14 +1518,13 @@ static bool cast_death_spell(int spell)
 	case 11: /* Vampiric Drain */
 		if (!get_aim_dir(&dir)) return FALSE;
 
-		dummy = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
+		dummy = plev + randint(plev) * MAX(1, plev / 10);   /* Dmg */
 		if (drain_gain_life(dir, dummy))
 		{
-			/* 
+			/*
 			 * Hack - this only happens when monster is seen to
 			 * be hit.
 			 */
-			
 			chg_virtue(V_SACRIFICE, -1);
 			chg_virtue(V_VITALITY, -1);
 

@@ -612,7 +612,7 @@ static errr Infowin_prepare(Window xid)
 static errr Infowin_init_real(Window xid)
 {
 	/* Wipe it clean */
-	(void) WIPE(Infowin, infowin);
+	(void)WIPE(Infowin, infowin);
 
 	/* Start out non-nukable */
 	Infowin->nuke = 0;
@@ -642,7 +642,7 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h,
 	Window xid;
 
 	/* Wipe it clean */
-	(void) WIPE(Infowin, infowin);
+	(void)WIPE(Infowin, infowin);
 
 
 	/*** Error Check XXX ***/
@@ -967,7 +967,7 @@ static errr Infoclr_init_1(GC gc)
 	infoclr *iclr = Infoclr;
 
 	/* Wipe the iclr clean */
-	(void) WIPE(iclr, infoclr);
+	(void)WIPE(iclr, infoclr);
 
 	/* Assign the GC */
 	iclr->gc = gc;
@@ -1062,7 +1062,7 @@ static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip)
 	/*** Initialize ***/
 
 	/* Wipe the iclr clean */
-	(void) WIPE(iclr, infoclr);
+	(void)WIPE(iclr, infoclr);
 
 	/* Assign the GC */
 	iclr->gc = gc;
@@ -1180,7 +1180,7 @@ static errr Infofnt_prepare(XFontStruct *info)
 static errr Infofnt_init_real(XFontStruct *info)
 {
 	/* Wipe the thing */
-	(void) WIPE(Infofnt, infofnt);
+	(void)WIPE(Infofnt, infofnt);
 
 	/* No nuking */
 	Infofnt->nuke = 0;
@@ -1218,7 +1218,7 @@ static errr Infofnt_init_data(cptr name)
 	/*** Init the font ***/
 
 	/* Wipe the thing */
-	(void) WIPE(Infofnt, infofnt);
+	(void)WIPE(Infofnt, infofnt);
 
 	/* Attempt to prepare it */
 	if (Infofnt_prepare(info))
@@ -1910,12 +1910,12 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
 
 	byte a;
 	char c;
-	
+
 
 #ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
-	
+
 	int x2, y2;
 	int k,l;
 
@@ -1935,23 +1935,23 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
 	{
 		a = *ap++;
 		c = *cp++;
-		
+
 		/* For extra speed - cache these values */
 		x1 = (c&0x7F) * td->fnt->wid;
 		y1 = (a&0x7F) * td->fnt->hgt;
-	
+
 #ifdef USE_TRANSPARENCY
-		
+
 		ta = *tap++;
 		tc = *tcp++;
-		
+
 		/* For extra speed - cache these values */
 		x2 = (tc&0x7F) * td->fnt->wid;
 		y2 = (ta&0x7F) * td->fnt->hgt;
-		
+
 		/* Mega Hack^2 - assume the top left corner is "black" */
 		blank = XGetPixel(td->tiles, 0, td->fnt->hgt * 6);
-		
+
 		for (k = 0; k < td->fnt->wid; k++)
 		{
 			for (l = 0; l < td->fnt->hgt; l++)
@@ -1959,28 +1959,28 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
 				/* If mask set... */
 				if ((pixel = XGetPixel(td->tiles, x1 + k, y1 + l)) == blank)
 				{
-				
+
 					/* Output from the terrain */
 					pixel = XGetPixel(td->tiles, x2 + k, y2 + l);
-				}			
-				
+				}
+
 				/* Store into the temp storage. */
 				XPutPixel(td->TmpImage, k, l, pixel);
 			}
 		}
-		
-		
+
+
 		/* Draw to screen */
-		
+
 		XPutImage(Metadpy->dpy, td->win->win,
 		          clr[0]->gc,
 		          td->TmpImage,
 		          0, 0, x, y,
 		          td->fnt->wid, td->fnt->hgt);
-		
 
-#else /* USE_TRANSPARENCY */		
-		
+
+#else /* USE_TRANSPARENCY */
+
 		/* Draw object / terrain */
 		XPutImage(Metadpy->dpy, td->win->win,
 		          clr[0]->gc,
@@ -1988,11 +1988,11 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
 		          x1, y1,
 		          x, y,
 		          td->fnt->wid, td->fnt->hgt);
-		
-#endif /* USE_TRANSPARENCY */		
-		x += td->fnt->wid;	
+
+#endif /* USE_TRANSPARENCY */
+		x += td->fnt->wid;
 	}
-	
+
 	/* Success */
 	return (0);
 }
@@ -2092,7 +2092,7 @@ static errr term_data_init(term_data *td, int i)
 			{
 				font = DEFAULT_X11_FONT_7;
 			}
-			break;				
+			break;
 			default:
 			{
 				font = DEFAULT_X11_FONT;
@@ -2275,7 +2275,7 @@ errr init_x11(int argc, char *argv[])
 	int pict_hgt = 0;
 
 #ifdef USE_TRANSPARENCY
-	
+
 	char *TmpData;
 #endif /* USE_TRANSPARENCY */
 
@@ -2385,7 +2385,7 @@ errr init_x11(int argc, char *argv[])
 		{
 			/* Use graphics */
 			use_graphics = TRUE;
-			
+
 			use_transparency = TRUE;
 
 			pict_wid = pict_hgt = 16;
@@ -2445,20 +2445,20 @@ errr init_x11(int argc, char *argv[])
 		for (i = 0; i < num_term; i++)
 		{
 			term_data *td = &data[i];
-			
+
 			TmpData = (char *)malloc(td->fnt->wid * td->fnt->hgt
 		 		* DefaultDepth(dpy, DefaultScreen(dpy)) / 8);
-		
+
 			td->TmpImage = XCreateImage(dpy,
 				DefaultVisual(dpy, DefaultScreen(dpy)),
 				DefaultDepth(dpy, DefaultScreen(dpy)),
 				ZPixmap, 0, TmpData,
 				td->fnt->wid, td->fnt->hgt, 8, 0);
-		
+
 		}
-#endif /* USE_TRANSPARENCY */		
-		
-		
+#endif /* USE_TRANSPARENCY */
+
+
 		/* Free tiles_raw? XXX XXX */
 	}
 

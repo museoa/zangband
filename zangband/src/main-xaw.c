@@ -155,13 +155,13 @@ struct AngbandPart
 
 	/* Tiles */
 	XImage *tiles;
-	
+
 #ifdef USE_TRANSPARENCY
 
 	/* Tempory storage for overlaying tiles. */
 	XImage *TmpImage;
 
-#endif	
+#endif
 
 #endif /* USE_GRAPHICS */
 
@@ -401,16 +401,16 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 
 	byte a;
 	char c;
-	
-	#ifdef USE_TRANSPARENCY
+
+#ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
-	
+
 	int x2, y2;
 	int k,l;
 
 	unsigned long pixel, blank;
-	#endif /* USE_TRANSPARENCY */
+#endif /* USE_TRANSPARENCY */
 
 	/* Figure out where to place the text */
 	y = (y * widget->angband.fontheight + widget->angband.internal_border);
@@ -420,24 +420,24 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 	{
 		a = *ap++;
 		c = *cp++;
-		
+
 		/* For extra speed - cache these values */
 		x1 = (c&0x7F) * widget->angband.fontwidth;
 		y1 = (a&0x7F) * widget->angband.fontheight;
-		
+
 #ifdef USE_TRANSPARENCY
-		
+
 		ta = *tap++;
 		tc = *tcp++;
-		
+
 		/* For extra speed - cache these values */
 		x2 = (tc&0x7F) * widget->angband.fontwidth;
 		y2 = (ta&0x7F) * widget->angband.fontheight;
-		
+
 		/* Mega Hack^2 - assume the top left corner is "black" */
 		blank = XGetPixel(widget->angband.tiles,
 			 0, widget->angband.fontheight * 6);
-		
+
 		for (k = 0; k < widget->angband.fontwidth; k++)
 		{
 			for (l = 0; l < widget->angband.fontheight; l++)
@@ -446,21 +446,21 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 				if ((pixel = XGetPixel(widget->angband.tiles,
 					 x1 + k, y1 + l)) == blank)
 				{
-				
+
 					/* Output from the terrain */
 					pixel = XGetPixel(widget->angband.tiles,
 						 x2 + k, y2 + l);
-				}			
-				
+				}
+
 				/* Store into the temp storage. */
 				XPutPixel(widget->angband.TmpImage,
 					 k, l, pixel);
 			}
 		}
-		
-		
+
+
 		/* Draw to screen */
-		
+
 		/* Draw object / terrain */
 		XPutImage(XtDisplay(widget), XtWindow(widget),
 		          widget->angband.gc[0],
@@ -468,10 +468,10 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 		          0, 0,
 		          x, y,
 		          widget->angband.fontwidth,
-		          widget->angband.fontheight);	
+		          widget->angband.fontheight);
 
-#else /* USE_TRANSPARENCY */		
-		
+#else /* USE_TRANSPARENCY */
+
 		/* Draw object / terrain */
 		XPutImage(XtDisplay(widget), XtWindow(widget),
 		          widget->angband.gc[0],
@@ -480,7 +480,7 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 		          x, y,
 		          widget->angband.fontwidth,
 		          widget->angband.fontheight);
-		
+
 #endif /* USE_TRANSPARENCY */
 
 		x += widget->angband.fontwidth;
@@ -1420,7 +1420,7 @@ errr init_xaw(int argc, char *argv[])
 	int pict_hgt = 0;
 
 #ifdef USE_TRANSPARENCY
-	
+
 	char *TmpData;
 #endif /* USE_TRANSPARENCY */
 
@@ -1510,7 +1510,7 @@ errr init_xaw(int argc, char *argv[])
 			use_graphics = TRUE;
 
 			use_transparency = TRUE;
-			
+
 			pict_wid = pict_hgt = 16;
 
 			ANGBAND_GRAF = "new";
@@ -1570,22 +1570,22 @@ errr init_xaw(int argc, char *argv[])
 		for (i = 0; i < num_term; i++)
 		{
 			term_data *td = &data[i];
-			
+
 			TmpData = (char *)malloc(td->widget->angband.fontwidth
 			        * td->widget->angband.fontheight
 		 		* DefaultDepth(dpy, DefaultScreen(dpy)) / 8);
-		
+
 			td->widget->angband.TmpImage = XCreateImage(dpy,
 				DefaultVisual(dpy, DefaultScreen(dpy)),
 				DefaultDepth(dpy, DefaultScreen(dpy)),
 				ZPixmap, 0, TmpData,
 				td->widget->angband.fontwidth,
 			        td->widget->angband.fontheight, 8, 0);
-		
+
 		}
-#endif /* USE_TRANSPARENCY */	
-		
-		
+#endif /* USE_TRANSPARENCY */
+
+
 		/* Free tiles_raw? XXX XXX */
 	}
 

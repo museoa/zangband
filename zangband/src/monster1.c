@@ -119,7 +119,7 @@ static void roff_aux(int r_idx, int remem)
 	int             vn = 0;
 	cptr            vp[64];
 	monster_race    save_mem;
-	
+
 	/* Descriptions */
 	char buf[2048];
 
@@ -313,7 +313,7 @@ static void roff_aux(int r_idx, int remem)
 	}
 
 
-	
+
 
 #ifdef DELAY_LOAD_R_TEXT
 
@@ -358,7 +358,6 @@ static void roff_aux(int r_idx, int remem)
 	/* Dump it */
 	roff(buf);
 	roff("  ");
-	
 
 
 	/* Nothing yet */
@@ -1447,9 +1446,9 @@ static monster_hook_type wild_mon_hook;
 static bool validate_mon_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	/* Want first 8 flags, do not want next 8. */
-	return ((r_ptr->flags8 & 0x000000FF) &&( !(r_ptr->flags8 & 0x0000FF00)));
+	return ((r_ptr->flags8 & 0x000000FF) && (!(r_ptr->flags8 & 0x0000FF00)));
 }
 
 bool monster_quest(int r_idx)
@@ -1569,7 +1568,7 @@ bool monster_acid_dun(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if (!monster_dungeon(r_idx)) return FALSE;
-	
+
 	if (((r_ptr->flags3 & RF3_IM_ACID) ||
 	     (r_ptr->flags7 & RF7_CAN_FLY)))
 		return TRUE;
@@ -1582,7 +1581,7 @@ bool monster_swamp_dun(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if (!monster_dungeon(r_idx)) return FALSE;
-	
+
 	if (((r_ptr->flags3 & RF3_IM_POIS) ||
 	     (r_ptr->flags7 & RF7_CAN_FLY)))
 		return TRUE;
@@ -1596,7 +1595,7 @@ bool monster_deep_water_wild(int r_idx)
 
 	/* Check wilderness flags */
 	if (!wild_mon_hook(r_idx)) return FALSE;
-	
+
 	if (r_ptr->flags7 & RF7_AQUATIC)
 		return TRUE;
 	else
@@ -1607,7 +1606,7 @@ bool monster_deep_water_wild(int r_idx)
 bool monster_shallow_water_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	/* Check wilderness flags */
 	if (!wild_mon_hook(r_idx)) return FALSE;
 
@@ -1621,7 +1620,7 @@ bool monster_shallow_water_wild(int r_idx)
 bool monster_lava_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	/* Check wilderness flags */
 	if (!wild_mon_hook(r_idx)) return FALSE;
 
@@ -1636,7 +1635,7 @@ bool monster_lava_wild(int r_idx)
 bool monster_acid_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	/* Check wilderness flags */
 	if (!wild_mon_hook(r_idx)) return FALSE;
 
@@ -1650,10 +1649,10 @@ bool monster_acid_wild(int r_idx)
 bool monster_swamp_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	/* Check wilderness flags */
 	if (!wild_mon_hook(r_idx)) return FALSE;
-	
+
 	if (((r_ptr->flags3 & RF3_IM_POIS) ||
 	     (r_ptr->flags7 & RF7_CAN_FLY)))
 		return TRUE;
@@ -1669,7 +1668,7 @@ monster_hook_type get_monster_hook(void)
 		/* In dungeon */
 		return &(monster_dungeon);
 	}
-	
+
 	/* Not in dungeon */
 	return NULL;
 }
@@ -1678,17 +1677,16 @@ monster_hook_type get_monster_hook(void)
 monster_hook_type get_monster_hook2(int y, int x)
 {
 	wild_done_type *w_ptr;
-	
+
 	/* In dungeon */
-	
 	if (dun_level)
 	{
 		/* Set the monster list */
-		switch (area(y,x)->feat)
+		switch (area(y, x)->feat)
 		{
 		case FEAT_SHAL_WATER:
 			return &(monster_shallow_water_dun);
-		case FEAT_DEEP_WATER:		
+		case FEAT_DEEP_WATER:
 			return &(monster_deep_water_dun);
 		case FEAT_DEEP_LAVA:
 		case FEAT_SHAL_LAVA:
@@ -1703,16 +1701,16 @@ monster_hook_type get_monster_hook2(int y, int x)
 			return NULL;
 		}
 	}
-	
+
 	/* Point to wilderness block info */
 	w_ptr = &wild[y / 16][x / 16].done;
-	
-	
+
+
 	/* Mega Hack XXX XXX- Set level of monster */
 	/* This breaks summoning level changes. */
 	monster_level = w_ptr->mon_gen;
-	
-	
+
+
 	if (w_ptr->wild > WILD_SEA)
 	{
 		/* Ocean */
@@ -1730,7 +1728,7 @@ monster_hook_type get_monster_hook2(int y, int x)
 		 * into static variable above.
 		 */
 		mon_wild = wild_gen_data[w_ptr->wild].rough_type;
-	
+
 		/* Set wilderness hook */
 		if (mon_wild == 0)
 		{
@@ -1740,18 +1738,18 @@ monster_hook_type get_monster_hook2(int y, int x)
 		else
 		{
 			/* Normal wilderness terrain */
-			wild_mon_hook = &validate_mon_wild;	
+			wild_mon_hook = &validate_mon_wild;
 		}
 	}
-	
+
 	if (w_ptr->town)
 	{
 		/* Have a town */
 		wild_mon_hook = &monster_town;
 	}
-	
+
 	/* Set the monster list */
-	switch (area(y,x)->feat)
+	switch (area(y, x)->feat)
 	{
 	case FEAT_SHAL_WATER:
 		return &(monster_shallow_water_wild);
@@ -1830,7 +1828,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 		else
 			return FALSE;
 	}
-	
+
 	/* Deep water */
 	if (feat == FEAT_DEEP_WATER)
 	{
@@ -1841,7 +1839,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 		else
 			return FALSE;
 	}
-	
+
 	/* Shallow water */
 	if (feat == FEAT_SHAL_WATER)
 	{
@@ -1850,14 +1848,14 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 		else
 			return TRUE;
 	}
-	
+
 	/* Aquatic monster */
 	if ((r_ptr->flags7 & RF7_AQUATIC) &&
-		    !(r_ptr->flags7 & RF7_CAN_FLY))
+	    !(r_ptr->flags7 & RF7_CAN_FLY))
 	{
 		return FALSE;
 	}
-	
+
 	/* Lava */
 	if ((feat == FEAT_SHAL_LAVA) ||
 	    (feat == FEAT_DEEP_LAVA))

@@ -1773,13 +1773,14 @@ static void do_cmd_use_staff_aux(int item)
 			int num = damroll(5, 3);
 			int y, x;
 			int attempts;
-			
+
 			cave_type *c_ptr;
 
 			if (!p_ptr->blind)
 			{
 				msg_print("The end of the staff glows brightly...");
 			}
+
 			for (k = 0; k < num; k++)
 			{
 				attempts = 1000;
@@ -1789,9 +1790,10 @@ static void do_cmd_use_staff_aux(int item)
 					scatter(&y, &x, py, px, 4, 0);
 
 					/* paranoia */
-					if(!in_bounds2(y, x)) continue;
-					
+					if (!in_bounds2(y, x)) continue;
+
 					c_ptr = area(y, x);
+
 					if (!cave_floor_grid(c_ptr)) continue;
 
 					if ((y != py) || (x != px)) break;
@@ -1800,6 +1802,7 @@ static void do_cmd_use_staff_aux(int item)
 				project(0, 0, y, x, damroll(6, 8), GF_LITE_WEAK,
 						  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL));
 			}
+
 			ident = TRUE;
 			break;
 		}
@@ -3165,7 +3168,7 @@ static void do_cmd_activate_aux(int item)
 
 						/* paranoia */
 						if (!in_bounds2(y, x)) continue;
-						
+
 						c_ptr = area(y, x);
 						if (!cave_floor_grid(c_ptr)) continue;
 

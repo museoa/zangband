@@ -3263,7 +3263,7 @@
  */
 #define cave_perma_grid(C) \
 	((((C)->feat >= FEAT_PERM_EXTRA) && \
-	((C)->feat <= FEAT_PERM_SOLID))|| \
+	((C)->feat <= FEAT_PERM_SOLID)) || \
 	(((C)->feat == FEAT_LESS) || \
 	 ((C)->feat == FEAT_MORE)) || \
 	(((C)->feat & 0x70) == 0x70) || \

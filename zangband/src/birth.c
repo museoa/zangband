@@ -1131,10 +1131,10 @@ static void get_extra(void)
 		/* Roll the hitpoint values */
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
-			/* Add in racial hit dice */			
+			/* Add in racial hit dice */
 			j = randint(rp_ptr->r_mhp);
 			player_hp[i] = player_hp[i - 1] + j;
-			
+
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
@@ -1472,7 +1472,7 @@ static void get_money(void)
 	p_ptr->au = gold;
 }
 
- 
+
 
 #if 0
 /*
@@ -1523,7 +1523,7 @@ static void player_wipe(void)
 
 
 	/* Hack -- zero the struct */
-	(void) WIPE(p_ptr, player_type);
+	(void)WIPE(p_ptr, player_type);
 
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)
@@ -2214,12 +2214,12 @@ static bool player_birth_aux_1(void)
 		if (ch == 'S') return (FALSE);
 		k = (islower(ch) ? A2I(ch) : -1);
 		if (ch == ESCAPE) ch = '*';
-		if (ch == '*') 
+		if (ch == '*')
 		{
 			k = rand_int(MAX_SEXES);
 			break;
 		}
-		
+
 		k = (islower(ch) ? A2I(ch) : -1);
 		if ((k >= 0) && (k < n)) break;
 		if (ch == '?') do_cmd_help();
@@ -2275,7 +2275,7 @@ static bool player_birth_aux_1(void)
 
 	Term_putstr(5, 18, -1, TERM_WHITE,
 		"If you want a random number of random quests, just enter *");
-	
+
 	/* Ask the number of additional quests */
 	while (TRUE)
 	{
@@ -2293,7 +2293,7 @@ static bool player_birth_aux_1(void)
 
 			/* Get a response (or escape) */
 			if (!askfor_aux(inp, 2)) inp[0] = '\0';
-			
+
 			/* Check for random number of quests */
 			if (inp[0] == '*')
 			{
@@ -2340,9 +2340,9 @@ static bool player_birth_aux_1(void)
 			 * (depending on level + number of quests)
 			 */
 			level = q_ptr->level + 6 +
-			 randint(q_ptr->level * v / 200 + 1) +
-			  randint(q_ptr->level * v / 200 + 1);
-			
+			        randint(q_ptr->level * v / 200 + 1) +
+			        randint(q_ptr->level * v / 200 + 1);
+
 			r_idx = get_mon_num(level);
 			r_ptr = &r_info[r_idx];
 
@@ -2416,7 +2416,7 @@ static int birth_stat_costs[(18-10)+1] = { 0, 1, 2, 4, 7, 11, 16, 22, 30 };
  * available points, to which race/class modifiers are then applied.
  *
  * Each unused point is converted into 100 gold pieces.
- * 
+ *
  * Taken from V 2.9.0
  */
 static bool player_birth_aux_2(void)
@@ -2605,7 +2605,7 @@ static bool player_birth_aux_3(void)
 
 
 #ifdef ALLOW_AUTOROLLER
-	
+
 	s16b stat_limit[A_MAX];
 
 	s32b stat_match[A_MAX];
@@ -2958,7 +2958,7 @@ static bool player_birth_aux_3(void)
 
 static bool player_birth_aux(void)
 {
-        char ch;
+	char ch;
 
 	/* Ask questions */
 	if (!player_birth_aux_1()) return FALSE;
@@ -2974,7 +2974,7 @@ static bool player_birth_aux(void)
 	{
 		if (!player_birth_aux_3()) return FALSE;
 	}
-	
+
 	/* Get a name, prepare savefile */
 	get_character_name();
 
@@ -3019,7 +3019,7 @@ void player_birth(void)
 		/* Roll up a new character */
 		if (player_birth_aux()) break;
 	}
-	
+
 	/* Create a note file if that option is set */
 	if (take_notes)
 	{

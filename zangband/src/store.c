@@ -287,7 +287,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		msg_print(comment_7b[rand_int(MAX_COMMENT_7B)]);
 
 		chg_virtue(V_JUSTICE, -1);
-		if (randint(4)==1)
+		if (randint(4) == 1)
 			chg_virtue(V_HONOUR, -1);
 
 		/* Sound */
@@ -315,9 +315,9 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7d[rand_int(MAX_COMMENT_7D)]);
 
-		if (randint(2)==1)
+		if (randint(2) == 1)
 			chg_virtue(V_HONOUR, -1);
-		if (randint(4)==1)
+		if (randint(4) == 1)
 			chg_virtue(V_HONOUR, 1);
 
 		if (10 * price < value)
@@ -1620,15 +1620,14 @@ static void display_entry(int pos)
 
 	/* Label it, clear the line --(-- */
 	(void)sprintf(out_val, "%c) ", I2A(i));
-	prt(out_val, i+6, 0);
+	prt(out_val, i + 6, 0);
 
-	/* Show_store_graph perm on. */ 
+	/* Show_store_graph perm on. */
 	a = object_attr(o_ptr);
 	c = object_char(o_ptr);
 
 #ifdef AMIGA
-	if (a & 0x80)
-		a |= 0x40;
+	if (a & 0x80) a |= 0x40;
 #endif
 
 	Term_draw(3, i + 6, a, c);

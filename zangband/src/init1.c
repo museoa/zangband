@@ -2469,18 +2469,18 @@ static errr grab_one_wild_flag(wild_gen_data_type *w_ptr, cptr what)
 errr init_w_info_txt(FILE *fp, char *buf)
 {
 	char *s, *t;
-	
+
 	u16b i = 0;
 
 	/* Bounding box of entry */
 	wild_bound_box_type bound;
-	
+
 	/* Current entry */
 	wild_gen_data_type *w_ptr = NULL;
 
 	/* Just before the first line */
 	error_line = -1;
-	
+
 	/* The last index used */
 	error_idx = -1;
 
@@ -2504,19 +2504,19 @@ errr init_w_info_txt(FILE *fp, char *buf)
 
 			/* Verify information */
 			if (i < error_idx) return (4);
-			
+
 			/* Check to see if there is room in array */
 			if (i > max_w_block - 1) return (7);
-			
+
 			/* Save the index */
 			error_idx = i;
-			
+
 			/* point to new position in array */
 			w_ptr = &wild_gen_data[i];
-			
-			continue;		
+
+			continue;
 		}
-		
+
 		/* Process 'G' for "Graphics" (one line only) */
 		if (buf[0] == 'G')
 		{
@@ -2532,7 +2532,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 
 			/* Paranoia */
 			if (tmp < 0) return (1);
-			
+
 			/* Save the values */
 			w_ptr->w_attr = tmp;
 			w_ptr->w_char = buf[2];
@@ -2549,7 +2549,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'W')
 		{
 			int hgtmin, hgtmax, popmin, popmax, lawmin, lawmax;
-			
+
 
 			/* Scan for the values */
 			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
@@ -2559,10 +2559,10 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			/* Save the values into bounds */
 			bound.hgtmin = hgtmin;
 			bound.hgtmax = hgtmax;
-			
+
 			bound.popmin = popmin;
 			bound.popmax = popmax;
-			
+
 			bound.lawmin = lawmin;
 			bound.lawmax = lawmax;
 
@@ -2633,7 +2633,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			w_ptr->data[5] = d5;
 			w_ptr->data[6] = d6;
 			w_ptr->data[7] = d7;
-			
+
 			/* Initialise if tree is empty */
 			if (i == 1)
 			{
@@ -2647,7 +2647,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 				if (add_node_tree_root(&bound, i) == 0)
 					return (7);
 			}
-			
+
 			/* Next... */
 			continue;
 		}
@@ -3406,11 +3406,11 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				/* Maximum wild_size */
 				if (zz[0][1] == 'S')
 					max_wild_size = atoi(zz[1]);
-				
+
 				/* Maximum wild d_tree nodes */
 				if (zz[0][1] == 'N')
 					max_w_node = atoi(zz[1]);
-				
+
 				/* Maximum wild gen types */
 				if (zz[0][1] == 'T')
 					max_w_block = atoi(zz[1]);

@@ -1710,7 +1710,7 @@ player_race race_info[MAX_RACES] =
 		-6, -8, -6, -2, -1, 5, 13, 2,
 		13, 150,
 		40, 10,
-		100,10, 255, 65,
+		100, 10, 255, 65,
 		80, 10, 240, 64,
 		3,
 		0x011,
@@ -1720,7 +1720,7 @@ player_race race_info[MAX_RACES] =
 		{ 5, 1, 1, -2, 3, 1 },
 		-5, 5, 2, -2, 1, 8, 13, 0,
 		14, 255,
-		100,30,
+		100, 30,
 		111, 11, 255, 86,
 		99, 11, 250, 86,
 		0,
@@ -2507,7 +2507,7 @@ player_magic magic_info[MAX_CLASS] =
 				{ 40, 75, 80, 100 },
 
 				{ 20, 20, 75, 50 },
-				{ 25, 66, 95 , 250 },
+				{ 25, 66, 95, 250 },
 				{ 30, 40, 95, 250 },
 				{ 33, 35, 70, 40 },
 				{ 37, 35, 80, 70 },
@@ -5065,7 +5065,7 @@ player_magic magic_info[MAX_CLASS] =
 				{ 38, 66, 70, 100 },
 
 				{ 16, 16, 65, 50 },
-				{ 22, 60, 85 , 250 },
+				{ 22, 60, 85, 250 },
 				{ 26, 35, 85, 250 },
 				{ 29, 30, 60, 40 },
 				{ 33, 30, 70, 70 },
@@ -5930,7 +5930,7 @@ option_type option_info[] =
 
 	{ &stack_force_costs,           FALSE, 1, 0, 9,
 	"stack_force_costs",            "Merge discounts when stacking" },
-	
+
 	{ &stack_allow_items,           FALSE, 1, 1, 2,
 	"stack_allow_items",            "Allow weapons and armor to stack" },
 
@@ -5964,7 +5964,7 @@ option_type option_info[] =
 
 	{ &auto_haggle,                 TRUE, 1, 1, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
-	
+
 #ifdef ALLOW_EASY_FLOOR /* TNB */
 	{ &easy_floor,                  FALSE, 1, 5, 9,
 	"easy_floor",                   "Display floor stacks in a list" },
@@ -5973,7 +5973,7 @@ option_type option_info[] =
 	{ &use_command,                 FALSE, 1, 5, 10,
 	"use_command",                  "Allow unified use command" },
 
-	
+
 	/*** Disturbance ***/
 
 	{ &find_ignore_stairs,          FALSE, 2, 0, 16,
@@ -6008,7 +6008,7 @@ option_type option_info[] =
 
 	{ &alert_failure,               FALSE, 2, 0, 27,
 	"alert_failure",                "Alert user to various failures" },
-	
+
 	{ &ring_bell,                   FALSE, 2, 0, 14,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
 
@@ -6089,7 +6089,7 @@ option_type option_info[] =
 
 	{ &compress_savefile,           TRUE, 4, 1, 26,
 	"compress_savefile",            "Compress messages in savefiles" },
-	
+
 
 	/*** Display Options ***/
 
@@ -6101,13 +6101,13 @@ option_type option_info[] =
 
 	{ &show_weights,                TRUE, 5, 0, 11,
 	"show_weights",                 "Show weights in object listings" },
-	
+
 	{ &plain_descriptions,          FALSE, 5, 5, 1,
 	"plain_descriptions",           "Plain object descriptions" },
 
 	{ &use_color,                   TRUE, 5, 0, 15,
 	"use_color",                    "Use color if possible (slow)" },
-	
+
 	{ &view_yellow_lite,            FALSE, 5, 1, 28,
 	"view_yellow_lite",             "Use special colors for torch-lit grids" },
 
@@ -6122,7 +6122,7 @@ option_type option_info[] =
 
 	{ &hilite_player,               TRUE, 5, 1, 27,
 	"hilite_player",                "Hilite the player with the cursor" },
-	
+
 	{ &center_player,               FALSE, 5, 5, 11,
 	"center_player",                "Always center on the player (*slow*)" },
 
@@ -6131,13 +6131,13 @@ option_type option_info[] =
 
 
 	/*** Birth options ***/
-	
+
 	{ &vanilla_town,                FALSE, 6, 6, 0,
 	"vanilla_town",                 "Use 'vanilla' town without quests and wilderness" },
 
 	{ &stupid_monsters,             FALSE, 6, 5, 2,
 	"stupid_monsters",              "Monsters behave stupidly" },
-	
+
 	{ &ironman_shops,               FALSE, 6, 6, 2,
 	"ironman_shops",                "Stores are permanently closed" },
 

@@ -1101,7 +1101,7 @@ extern bool set_tim_esp(int v);
 extern bool tgt_pt(int *x, int *y);
 extern void do_poly_wounds(void);
 extern int mon_damage_mod(monster_type *m_ptr, int dam, int type);
-extern void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac); 
+extern void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac);
 
 /* mspells1.c */
 extern bool clean_shot(int y1, int x1, int y2, int x2, bool friend);

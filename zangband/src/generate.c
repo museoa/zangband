@@ -156,7 +156,7 @@ static void alloc_stairs(int feat, int num, int walls)
 
 				/* Access the grid */
 				c_ptr = &cave[y][x];
-				
+
 				/* Require "naked" floor grid */
 				if (!cave_naked_grid(c_ptr)) continue;
 
@@ -202,7 +202,7 @@ static void alloc_object(int set, int typ, int num)
 			/* Location */
 			y = rand_int(cur_hgt);
 			x = rand_int(cur_wid);
-			
+
 			c_ptr = &cave[y][x];
 
 			/* Require "naked" floor grid */
@@ -292,7 +292,7 @@ static int next_to_corr(int y1, int x1)
 
 		/* Access the grid */
 		c_ptr = &cave[y][x];
-		
+
 		/* Skip non floors */
 		if (!cave_floor_grid(c_ptr)) continue;
 
@@ -698,8 +698,8 @@ static bool cave_gen(void)
 		dun->wall_n = 0;
 
 		/* Connect the room to the previous room */
-#if PILLAR_TUNNELS		
-		
+#if PILLAR_TUNNELS
+
 		if ((randint(20) > dun_level) && (randint(100) < 25))
 		{
 			/* make catacomb-like tunnel */
@@ -833,10 +833,10 @@ static bool cave_gen(void)
 						{
 							y = rand_int(cur_hgt);
 							x = rand_int(cur_wid);
-							
+
 							/* Access the grid */
 							c_ptr = &cave[y][x];
-							
+
 							if (!cave_naked_grid(c_ptr)) continue;
 							if (distance(y, x, py, px) < 10) continue;
 							else break;
@@ -931,7 +931,7 @@ static bool cave_gen(void)
 	/* Determine the character location */
 	if (!new_player_spot())
 		return FALSE;
-	
+
 	return TRUE;
 }
 
@@ -1096,7 +1096,7 @@ static bool level_gen(cptr *why)
 {
 	int level_height, level_width;
 
-	if (ironman_small_levels || 
+	if (ironman_small_levels ||
 		((randint(SMALL_LEVEL) == 1) && small_levels))
 	{
 		if (cheat_room)
@@ -1190,26 +1190,26 @@ void generate_cave(void)
 		/* Hack XXX XXX */
 		/* Exit, information is already in other data type. */
 
-		px = (s16b) p_ptr->wilderness_x;
-		py = (s16b) p_ptr->wilderness_y;
+		px = (s16b)p_ptr->wilderness_x;
+		py = (s16b)p_ptr->wilderness_y;
 
 		/* Determine number of panels */
-		max_panel_rows = (max_wild*16 / SCREEN_HGT) * 2;
-		max_panel_cols = (max_wild*16 / SCREEN_WID) * 2;
+		max_panel_rows = (max_wild * 16 / SCREEN_HGT) * 2;
+		max_panel_cols = (max_wild * 16 / SCREEN_WID) * 2;
 
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
 		panel_col = max_panel_cols;
-							
+
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();
-		
+
 		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
-				
+
 		return;
 	}
-	
+
 	/* The dungeon is not ready */
 	character_dungeon = FALSE;
 
@@ -1281,8 +1281,8 @@ void generate_cave(void)
 		if (!generate_level_callback(dun_level))
 #endif /* USE_SCRIPT */
 		{
-			
-#if 0			
+
+#if 0
 			/* Build the arena -KMW- */
 			if (p_ptr->inside_arena)
 			{
@@ -1296,7 +1296,7 @@ void generate_cave(void)
 			{
 				quest_gen();
 			}*/
-#endif			
+#endif
 
 			okay = level_gen(&why);
 

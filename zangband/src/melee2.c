@@ -194,7 +194,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	if (m_ptr->hp < 0)
 	{
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			(r_ptr->flags1 & RF1_QUESTOR) || 
+			(r_ptr->flags1 & RF1_QUESTOR) ||
 			(r_ptr->flags3 & RF3_UNIQUE_7))
 		{
 			m_ptr->hp = 1;
@@ -465,7 +465,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		if (!in_bounds2(y, x)) continue;
 
 		c_ptr = area(y, x);
-		
+
 		/* Ignore illegal locations */
 		if (!c_ptr->when) continue;
 
@@ -552,7 +552,7 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 		dis = distance(y, x, y1, x1);
 
 		/* Score this grid */
-		s = 5000 / (dis + 3) - 500 / (area(y,x)->cost + 1);
+		s = 5000 / (dis + 3) - 500 / (area(y, x)->cost + 1);
 
 		/* No negative scores */
 		if (s < 0) s = 0;
@@ -561,7 +561,7 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 		if (s < score) continue;
 
 		/* Save the score and time */
-		when = area(y,x)->when;
+		when = area(y, x)->when;
 		score = s;
 
 		/* Save the location */
@@ -620,7 +620,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				if (!in_bounds(y, x)) continue;
 
 				c_ptr = area(y, x);
-				
+
 				/* Skip locations in a wall */
 				if (!cave_floor_grid(c_ptr)) continue;
 
@@ -688,7 +688,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 
 	int y, x, d, dis;
 	int gy = 0, gx = 0, gdis = 999, min;
-	
+
 	cave_type *c_ptr;
 
 	/* Closest distance to get */
@@ -706,7 +706,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 				if (!in_bounds(y, x)) continue;
 
 				c_ptr = area(y, x);
-				
+
 				/* Skip locations in a wall */
 				if (!cave_floor_grid(c_ptr)) continue;
 
@@ -797,7 +797,7 @@ static bool get_moves(int m_idx, int *mm)
 				int y = py + ddy_ddd[i];
 
 				if (!in_bounds2(y, x)) continue;
-				
+
 				/* Check grid */
 				if (monster_can_cross_terrain(area(y, x)->feat, r_ptr))
 				{
@@ -838,7 +838,7 @@ static bool get_moves(int m_idx, int *mm)
 				}
 
 				if (!in_bounds2(y2, x2)) continue;
-				
+
 				/* Ignore filled grids */
 				c_ptr = area(y2, x2);
 				if (!cave_empty_grid(c_ptr)) continue;
@@ -2076,7 +2076,7 @@ static void process_monster(int m_idx)
 
 	/* Access that cave grid */
 	c_ptr = area(oy,ox);
-	
+
 	/* Some monsters can speak */
 	if (speak_unique &&
 	    (r_ptr->flags2 & RF2_CAN_SPEAK) &&
@@ -2937,7 +2937,7 @@ void process_monsters(int min_energy)
 	s32b old_friend_align = friend_align;
 
 	cave_type *c_ptr;
-	
+
 	/* Clear some variables */
 	total_friends = 0;
 	total_friend_levels = 0;

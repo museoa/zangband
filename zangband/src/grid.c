@@ -35,7 +35,7 @@ bool new_player_spot(void)
 		x = rand_range(1, cur_wid - 2);
 
 		c_ptr = &cave[y][x];
-		
+
 		/* Must be a "naked" floor grid */
 		if (!cave_naked_grid(c_ptr)) continue;
 
@@ -241,7 +241,7 @@ void vault_objects(int y, int x, int num)
 {
 	int dummy = 0;
 	int i = 0, j = y, k = x;
-	
+
 	cave_type *c_ptr;
 
 
@@ -301,7 +301,7 @@ void vault_trap_aux(int y, int x, int yd, int xd)
 {
 	int count = 0, y1 = y, x1 = x;
 	int dummy = 0;
-	
+
 	cave_type *c_ptr;
 
 	/* Place traps */

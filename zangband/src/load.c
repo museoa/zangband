@@ -1153,7 +1153,7 @@ static errr rd_store(int town_number, int store_number)
 	 */
 	if (num)
 	{
-		(void) allocate_store(st_ptr);
+		(void)allocate_store(st_ptr);
 
 		/* Save store type */
 		st_ptr->type = store_number;
@@ -2435,7 +2435,7 @@ static errr rd_dungeon_aux(void)
 		q_ptr = &forge;
 
 		/* Clear the monster */
-		(void) WIPE(q_ptr, monster_type);
+		(void)WIPE(q_ptr, monster_type);
 
 		/* Read the monster */
 		rd_monster(q_ptr);
@@ -2680,7 +2680,7 @@ static void load_wild_data(void)
 
 				/* Town / Dungeon / Specials */
 				rd_u16b(&tmp_u16b);
-				wild[j][i].done.town = (byte) tmp_u16b;
+				wild[j][i].done.town = (byte)tmp_u16b;
 
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
@@ -2704,7 +2704,7 @@ static void load_wild_data(void)
 
 				/* Monster Gen type */
 				rd_byte(&wild[j][i].done.mon_gen);
-				
+
 				/* Monster Probability */
 				rd_byte(&wild[j][i].done.mon_prob);
 			}
@@ -2770,29 +2770,29 @@ static errr rd_dungeon(void)
 		/* Make the wilderness */
 		dun_level_backup = dun_level;
 		dun_level = 0;
-		
+
 		/* Save player location */
 		px_back = px;
 		py_back = py;
-		
+
 		create_wilderness();
-		
+
 		/* Clear new monsters / objects */
 		wipe_o_list();
 		wipe_m_list();
-		
+
 		/* Hack - do not load data into wilderness */
 		change_level(1);
 
 		dun_level = dun_level_backup;
-		
+
 		/* if in the dungeon - restore the player location */
 		if (dun_level)
 		{
 			px = px_back;
 			py = py_back;
 		}
-		
+
 		/* Load dungeon map */
 		load_map(cur_hgt, 0, cur_wid, 0);
 	}
@@ -2814,7 +2814,7 @@ static errr rd_dungeon(void)
 			/* Load wilderness map */
 			load_map(wild_grid.y_max, wild_grid.y_min,
 			         wild_grid.x_max, wild_grid.x_min);
-				 
+
 			change_level(dun_level);
 		}
 		else
@@ -2971,18 +2971,18 @@ static errr rd_dungeon(void)
 
 	/* Hack - make new level only after objects + monsters are loaded */
 	if (sf_version < 7)
-	{		
+	{
 		/* In the wilderness - old monsters in 'wrong' positions */
 		if (!dun_level)
 		{
 			/* Clear old monsters / objects */
 			wipe_o_list();
-			wipe_m_list();		
-			
+			wipe_m_list();
+
 			/* refresh wilderness */
-			character_dungeon = FALSE;		
+			character_dungeon = FALSE;
 		}
-		
+
 		/* enter the level */
 		change_level(dun_level);
 	}
@@ -3348,11 +3348,11 @@ static errr rd_savefile_new_aux(void)
 
 		/* Hack - if size is zero - set to max_wild_size */
 		if ((wild_x_size == 0) && (wild_y_size == 0))
-		{			
+		{
 			wild_x_size = max_wild_size;
 			wild_y_size = max_wild_size;
 		}
-		
+
 		/* Hack - set size of wilderness to x size only */
 		max_wild = wild_x_size;
 
@@ -3728,7 +3728,7 @@ static errr rd_savefile_new_aux(void)
 		note("Error - increase number of towns in misc.txt");
 			return (33);
 	}
-	
+
 	/* Empty the store stock cache */
 	store_cache_num = 0;
 

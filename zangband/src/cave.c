@@ -567,14 +567,14 @@ static void image_random(byte *ap, char *cp)
  * The 16x16 tile of the terrain supports lighting
  */
 static bool feat_supports_lighting(byte feat)
-{	
+{
 	if ((feat == FEAT_OPEN) ||
 	(feat == FEAT_BROKEN) ||
 	((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)) ||
 	((feat >= FEAT_PATTERN_START) && (feat <= FEAT_PATTERN_XTRA2)) ||
 	((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)))
 		return FALSE;
-	
+
 	return TRUE;
 }
 
@@ -594,46 +594,46 @@ static byte lighting_colours[16][2] =
 
 	/* TERM_WHITE */
 	{TERM_YELLOW, TERM_SLATE},
-	
+
 	/* TERM_SLATE */
 	{TERM_WHITE, TERM_L_DARK},
-	
+
 	/* TERM_ORANGE */
 	{TERM_YELLOW, TERM_UMBER},
-	
+
 	/* TERM_RED */
 	{TERM_L_RED, TERM_UMBER},
-	
+
 	/* TERM_GREEN */
 	{TERM_L_GREEN, TERM_GREEN},
-	
+
 	/* TERM_BLUE */
 	{TERM_L_BLUE, TERM_BLUE},
-	
+
 	/* TERM_UMBER */
 	{TERM_L_UMBER, TERM_RED},
-	
+
 	/* TERM_L_DARK */
 	{TERM_SLATE, TERM_L_DARK},
-	
+
 	/* TERM_L_WHITE */
 	{TERM_WHITE, TERM_SLATE},
-	
+
 	/* TERM_VIOLET */
 	{TERM_L_RED, TERM_BLUE},
-	
+
 	/* TERM_YELLOW */
 	{TERM_L_WHITE, TERM_ORANGE},
-	
+
 	/* TERM_L_RED */
 	{TERM_L_RED, TERM_RED},
-	
+
 	/* TERM_L_GREEN */
 	{TERM_YELLOW, TERM_GREEN},
-	
+
 	/* TERM_L_BLUE */
 	{TERM_SLATE, TERM_BLUE},
-	
+
 	/* TERM_L_UMBER */
 	{TERM_YELLOW, TERM_UMBER}
 };
@@ -781,10 +781,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	/* Feature code */
 	feat = c_ptr->feat;
-	
+
 	/* Apply mimic field */
 	feat = f_info[feat].mimic;
-			
+
 	/* Hack - Non LOS blocking terrains */
 	if (cave_floor_grid(c_ptr))
 	{
@@ -900,13 +900,13 @@ void map_info(int y, int x, byte *ap, char *cp)
 		{
 			/* Access feature */
 			f_ptr = &f_info[feat];
-			
+
 			/* Normal char */
 			c = f_ptr->x_char;
 
 			/* Normal attr */
 			a = f_ptr->x_attr;
-				
+
 			/* Handle "blind" */
 			if (p_ptr->blind)
 			{
@@ -944,7 +944,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 			/* Handle "view_bright_lite" */
 			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
-			
+
 			{
 				/* Not viewable */
 				if (!(c_ptr->info & CAVE_VIEW))
@@ -978,14 +978,14 @@ void map_info(int y, int x, byte *ap, char *cp)
 		{
 			/* Access feature */
 			f_ptr = &f_info[feat];
-				
+
 			/* Handle "blind" */
 			if (!(c_ptr->info & CAVE_MARK))
 			{
 				/* Access darkness */
 				f_ptr = &f_info[FEAT_NONE];
 			}
-			
+
 			/* Normal attr */
 			a = f_ptr->x_attr;
 
@@ -1918,18 +1918,18 @@ static byte priority(byte a, char c)
 	return (20);
 }
 
-/* 
+/*
  * Tunnels are important.  (Whist bare floor is not.)
  */
 static int priority_tunnel(int y, int x)
 {
 	int i, count = 0;
-	
-	/* Count number of floors around square */ 
+
+	/* Count number of floors around square */
 	for (i = 1; i < 10; i++)
 	{
 		if (!in_bounds2(y + ddy[i], x + ddx[i])) continue;
-		
+
 		if (cave_floor_grid(&cave[y + ddy[i]][x + ddx[i]]))
 			count++;
 	}
@@ -1937,8 +1937,8 @@ static int priority_tunnel(int y, int x)
 	/* Three or less floor squares - Important */
 	if (count < 4) return (19);
 
-	/* Not important. */	
-	return (0); 
+	/* Not important. */
+	return (0);
 }
 
 /*
@@ -1962,7 +1962,7 @@ void display_map(int *cy, int *cx)
 	char tc;
 
 	byte tp;
-	
+
 	u16b w_type, town;
 
 	byte ma[SCREEN_HGT + 2][SCREEN_WID + 2];
@@ -1977,7 +1977,7 @@ void display_map(int *cy, int *cx)
 
 	int yrat = cur_hgt / SCREEN_HGT;
 	int xrat = cur_wid / SCREEN_WID;
-	
+
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
 	old_view_granite_lite = view_granite_lite;
@@ -2003,18 +2003,18 @@ void display_map(int *cy, int *cx)
 	if (!dun_level)
 	{
 		/* Plot wilderness */
-		
+
 		/* work out coords of player in wilderness */
 		x = px / 16;
 		y = py / 16;
-		
+
 		/* recenter */
 		x = x - SCREEN_WID / 2;
 		if (x < 0) x = 0;
-		
+
 		y = y - SCREEN_HGT / 2;
 		if (y < 0) y = 0;
-		
+
 		/* Fill in the map */
 		for (i = 0; i < SCREEN_WID; ++i)
 		{
@@ -2025,38 +2025,38 @@ void display_map(int *cy, int *cx)
 
 				/* Only draw blocks that have been seen */
 				if (!(wild[j + y][i + x].done.info & WILD_INFO_SEEN)) continue;
-							
+
 				w_type = wild[j + y][i + x].done.wild;
-				
+
 				/* Get attr / char pair for wilderness block type */
 				if (w_type >= WILD_SEA)
 				{
 					ma[j + 1][i + 1] = TERM_BLUE;
 					mc[j + 1][i + 1] = '~';
-				} 
+				}
 				else
 				{
 					ma[j + 1][i + 1] = wild_gen_data[w_type].w_attr;
 					mc[j + 1][i + 1] = wild_gen_data[w_type].w_char;
 				}
-				
+
 				/* Road / rivers later */
-				
-				
+
+
 				/* Hack - draw towns/specials */
 				/* Eventually will get attr,char from town data structure. */
-				
+
 				town = wild[j + y][i + x].done.town;
-				
+
 				/* If there is a town... */
 				if (town)
 				{
 					/* Hack make a char /attr */
 					ma[j + 1][i + 1] = TERM_WHITE;
 					mc[j + 1][i + 1] = '0' + town % 10;
-				
+
 				}
-				
+
 				/* Finally show position of player */
 				if ((i + x == px / 16) && (j + y == py / 16))
 				{
@@ -2076,10 +2076,10 @@ void display_map(int *cy, int *cx)
 				/* Location */
 				x = i / xrat + 1;
 				y = j / yrat + 1;
-				
+
 				/* Priority zero */
 				tp = 0;
-				
+
 				if (cave_floor_grid(&cave[j][i]))
 				{
 					/* Corridors are important */
@@ -2529,9 +2529,9 @@ void update_lite(void)
 		x = lite_x[i];
 
 		if (!in_bounds2(y,x)) continue;
-		
+
 		c_ptr = area(y, x);
-		
+
 		/* Mark the grid as not "lite" */
 		c_ptr->info &= ~(CAVE_LITE);
 
@@ -2571,7 +2571,7 @@ void update_lite(void)
 
 	/* Radius 2 -- lantern radius */
 	if (p_ptr->cur_lite >= 2)
-	{		
+	{
 		/* South of the player */
 		if (in_bounds2(py + 1, px))
 		{
@@ -2595,7 +2595,7 @@ void update_lite(void)
 				cave_lite_hack(py-2, px-1);
 			}
 		}
-		
+
 		/* East of the player */
 		if (in_bounds2(py, px + 1))
 		{
@@ -2651,7 +2651,7 @@ void update_lite(void)
 				cave_lite_hack(py+2, px-2);
 			}
 		}
-		
+
 		/* North-East of the player */
 		if (in_bounds2(py - 1, px + 1))
 		{
@@ -2661,7 +2661,7 @@ void update_lite(void)
 				cave_lite_hack(py-2, px+2);
 			}
 		}
-		
+
 		/* North-West of the player */
 		if (in_bounds2(py - 1, px - 1))
 		{
@@ -2671,22 +2671,22 @@ void update_lite(void)
 				cave_lite_hack(py-2, px-2);
 			}
 		}
-		
+
 		/* Maximal north */
 		min_y = py - p;
-		
+
 
 		/* Maximal south */
 		max_y = py + p;
-		
+
 
 		/* Maximal west */
 		min_x = px - p;
-		
+
 
 		/* Maximal east */
 		max_x = px + p;
-		
+
 
 		/* Bounds Checking */
 		if (dun_level)
@@ -2695,7 +2695,7 @@ void update_lite(void)
 			if (min_y < 0) min_y = 0;
 			if (max_y > cur_hgt-1) max_y = cur_hgt-1;
 			if (min_x < 0) min_x = 0;
-			if (max_x > cur_wid-1) max_x = cur_wid-1;		
+			if (max_x > cur_wid-1) max_x = cur_wid-1;
 		}
 		else
 		{
@@ -2703,10 +2703,10 @@ void update_lite(void)
 			if (min_y < wild_grid.y_min) min_y = wild_grid.y_min;
 			if (max_y > wild_grid.y_max-1) max_y = wild_grid.y_max-1;
 			if (min_x < wild_grid.x_min) min_x = wild_grid.x_min;
-			if (max_x > wild_grid.x_max-1) max_x = wild_grid.x_max-1;		
+			if (max_x > wild_grid.x_max-1) max_x = wild_grid.x_max-1;
 		}
-		
-		
+
+
 		/* Scan the maximal box */
 		for (y = min_y; y <= max_y; y++)
 		{
@@ -2725,7 +2725,7 @@ void update_lite(void)
 				if (d > p) continue;
 
 				c_ptr = area(y, x);
-				
+
 				/* Viewable, nearby, grids get "torch lit" */
 				if (player_has_los_grid(c_ptr))
 				{
@@ -2762,7 +2762,7 @@ void update_lite(void)
 		x = temp_x[i];
 
 		c_ptr = area(y, x);
-		
+
 		/* No longer in the array */
 		c_ptr->info &= ~(CAVE_TEMP);
 
@@ -3120,7 +3120,7 @@ void update_view(void)
 		x = view_x[n];
 
 		if (!in_bounds2(y, x)) continue;
-		
+
 		/* Access the grid */
 		c_ptr = area(y,x);
 
@@ -3598,7 +3598,7 @@ static void update_flow_aux(int y, int x, int n)
 	cave_type *c_ptr;
 
 	int old_head = flow_head;
-	
+
 	/* Get the grid */
 	c_ptr = area(y,x);
 
@@ -3713,9 +3713,9 @@ void update_flow(void)
 		for (d = 0; d < 8; d++)
 		{
 			/* Add that child if "legal" */
-			if(!in_bounds2(y+ddy_ddd[d], x+ddx_ddd[d])) continue;
-			
-			update_flow_aux(y+ddy_ddd[d], x+ddx_ddd[d], area(y,x)->cost+1);
+			if (!in_bounds2(y + ddy_ddd[d], x + ddx_ddd[d])) continue;
+
+			update_flow_aux(y + ddy_ddd[d], x + ddx_ddd[d], area(y, x)->cost + 1);
 		}
 	}
 

@@ -99,7 +99,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 						if (!in_bounds(ty, tx)) continue;
 
 						c_ptr = &cave[ty][tx];
-						
+
 						if (c_ptr->feat == feat1) continue;
 						if (c_ptr->feat == feat2) continue;
 
@@ -286,7 +286,7 @@ void place_trees(int x, int y)
 		for (j = y - 3; j < y + 4; j++)
 		{
 			c_ptr = &cave[j][i];
-			
+
 			/* Want square to be in the circle and accessable. */
 			if (in_bounds(j, i) && (distance(j, i, y, x) < 4) && !cave_perma_grid(c_ptr))
 			{
@@ -357,7 +357,7 @@ void destroy_level(void)
 
 				/* Access the grid */
 				c_ptr = &cave[y][x];
-				
+
 				/* Destroy valid grids */
 				if (cave_valid_grid(c_ptr))
 				{

@@ -35,10 +35,10 @@ void do_cmd_rerate(void)
 		/* Collect values */
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
-			/* Add in racial hit dice */			
+			/* Add in racial hit dice */
 			j = randint(rp_ptr->r_mhp);
 			player_hp[i] = player_hp[i - 1] + j;
-			
+
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
@@ -107,15 +107,15 @@ static void do_cmd_summon_horde(void)
 	int wy = py, wx = px;
 	int attempts = 1000;
 	cave_type *c_ptr;
-	
+
 
 	while (--attempts)
 	{
 		scatter(&wy, &wx, py, px, 3, 0);
-		
+
 		/* paranoia */
-		if(!in_bounds2(wy, wx)) continue;
-		
+		if (!in_bounds2(wy, wx)) continue;
+
 		c_ptr = area(wy, wx);
 		if (cave_naked_grid(c_ptr)) break;
 	}
@@ -173,9 +173,9 @@ static void prt_alloc(byte tval, byte sval, int row, int col)
 	alloc_entry *table = alloc_kind_table;
 
 	/* Wipe the tables */
-	(void) C_WIPE(rarity, MAX_DEPTH, u32b);
-	(void) C_WIPE(total, MAX_DEPTH, u32b);
-	(void) C_WIPE(display, 20, u32b);
+	(void)C_WIPE(rarity, MAX_DEPTH, u32b);
+	(void)C_WIPE(total, MAX_DEPTH, u32b);
+	(void)C_WIPE(display, 20, u32b);
 
 	/* Scan all entries */
 	for (i = 0; i < MAX_DEPTH; i++)
@@ -407,20 +407,20 @@ static void do_cmd_wiz_feature(int feat)
 		}
 
 		/* Try to place a new feature */
-		if (area(y,x)->feat == feat) continue;
+		if (area(y, x)->feat == feat) continue;
 
 		/* Okay */
 		break;
 	}
 
 	/* Nuke objects */
-	delete_object_idx(area(y,x)->o_idx);
+	delete_object_idx(area(y, x)->o_idx);
 
 	/* Nuke monsters */
-	delete_monster_idx(area(y,x)->m_idx);
+	delete_monster_idx(area(y, x)->m_idx);
 
 	/* Forget this grid */
-	area(y,x)->info &= ~(CAVE_MARK);
+	area(y, x)->info &= ~(CAVE_MARK);
 
 	/* Place the feature */
 	cave_set_feat(y, x, feat);
@@ -438,7 +438,7 @@ void learn_map(void)
 		for (j = 0; j < max_wild; j++)
 		{
 			wild[j][i].done.info |= WILD_INFO_SEEN;
-		}	
+		}
 	}
 }
 
@@ -1496,7 +1496,7 @@ static void do_cmd_wiz_summon(int num)
 static void do_cmd_wiz_named(int r_idx, bool slp)
 {
 	int i, x, y;
-	
+
 	cave_type *c_ptr;
 
 	/* Paranoia */
@@ -1533,7 +1533,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
  */
 static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
-	(void) summon_named_creature(py, px, r_idx, slp, TRUE, TRUE);
+	(void)summon_named_creature(py, px, r_idx, slp, TRUE, TRUE);
 }
 
 
@@ -1649,22 +1649,22 @@ extern void do_cmd_debug(void);
 static void outflagmatlab(u32b flag, FILE *fff)
 {
 	int i, j;
-	
+
 	char buf[3];
-	
+
 	i = 1;
 	for (j = 0; j < 32; j++, i<<=1)
 	{
 		/* If the bit is set */
 		if (flag & i)
 		{
-			sprintf(buf, "1 "); 
+			sprintf(buf, "1 ");
 		}
 		else
 		{
 			sprintf(buf, "0 ");
 		}
-		
+
 		fprintf(fff, buf);
 	}
 	fprintf(fff, "...\n");
@@ -1682,9 +1682,9 @@ static void outflagmatlab(u32b flag, FILE *fff)
 static void outflagmatlab2(u32b flag, FILE *fff, int hp)
 {
 	int i, j;
-	
+
 	char buf[10];
-	
+
 	i = 1;
 	for (j = 0; j < 32; j++, i<<=1)
 	{
@@ -1699,13 +1699,13 @@ static void outflagmatlab2(u32b flag, FILE *fff, int hp)
 			{
 				/* A breath - scale it by the hp */
 				sprintf(buf, "%d ", hp);
-			} 
+			}
 		}
 		else
 		{
 			sprintf(buf, "0 ");
 		}
-		
+
 		fprintf(fff, buf);
 	}
 	fprintf(fff, "...\n");
@@ -1719,29 +1719,29 @@ static void outflagmatlab2(u32b flag, FILE *fff, int hp)
 static void outblowsmatlab(monster_race *r_ptr, char *buf2)
 {
 	int i, effect;
-	int effects[32];	
-	
+	int effects[32];
+
 	/* Clear effects list */
 	for (i = 0; i < 32; i++)
 	{
 		effects[i] = 0;
 	}
-	
+
 	/* For each blow */
 	for (i = 0; i < 4; i++)
 	{
 		/* Only count real blows */
 		if (!r_ptr->blow[i].method) continue;
-		
+
 		/* damage x2 */
 		effect = r_ptr->blow[i].d_dice * (r_ptr->blow[i].d_side + 1);
-		
+
 		/* Count "weird" effects */
 		if (effect == 0) effect = 1;
-		
+
 		effects[r_ptr->blow[i].effect] += effect;
 	}
-	
+
 	/* Output effects list */
 	for (i = 0; i < 32; i++)
 	{
@@ -1764,7 +1764,7 @@ static void outblowsmatlab(monster_race *r_ptr, char *buf2)
  * of new monsters / level is made nice and flat.
  */
 static int monster_power_mat(int level)
-{		
+{
 	if (level < 40) return (35 * level / 4);
 	if (level < 70) return (5 * (level - 40) + 350);
 	return (((level - 70) * 5) / 3 + 500);
@@ -1807,36 +1807,36 @@ void output_monster_matlab(void)
 	char buf[2048], buf2[50];
 	unsigned int hp;
 	FILE *fff;
-	
+
 	/* Create the file name */
 	path_build(buf, 500, ANGBAND_DIR_SAVE, "monmatlb.m");
-	
+
 	/* Drop priv's */
 	safe_setuid_drop();
-	
+
 	/* Open file */
 	fff = my_fopen(buf, "w");
-	
+
 	/* Grab priv's */
 	safe_setuid_grab();
-  
+
 	/* Failure */
 	if (!fff) return;
-	
+
 	/* Add starting stuff */
 	fprintf(fff, "xx=[];\n");
-	
+
 	/* Min and max monsters to output in the matrix */
 	max = max_r_idx;
 	min = 20;
-	
+
 	for (i = min; i < max; i++)
 	{
 		fprintf(fff, "x=[");
-		
+
 		/* Get race */
 		r_ptr =  &r_info[i];
-	
+
 		/* Hitpoints x2 */
 		hp = r_ptr->hdice * (r_ptr->hside + 1);
 		if (r_ptr->flags1 & RF1_FORCE_MAXHP)
@@ -1844,7 +1844,7 @@ void output_monster_matlab(void)
 			/* hp x2 */
 			hp = r_ptr->hdice * r_ptr->hside * 2;
 		}
-	
+
 		/* Output the flags one by one */
 		outflagmatlab(r_ptr->flags1 & ~(0x00000020F), fff);
 		outflagmatlab(r_ptr->flags2, fff);
@@ -1853,55 +1853,55 @@ void output_monster_matlab(void)
 		outflagmatlab2(r_ptr->flags5, fff, r_ptr->level);
 		outflagmatlab2(r_ptr->flags6, fff, r_ptr->level);
 		outflagmatlab2(r_ptr->flags8, fff, r_ptr->level);
-		
+
 		/* Numerical flags */
-		sprintf(buf2, "%d", r_ptr->speed);		
-		
+		sprintf(buf2, "%d", r_ptr->speed);
+
 		sprintf(buf2, "%s %d", buf2, hp);
 		sprintf(buf2, "%s %d", buf2, r_ptr->aaf);
 		sprintf(buf2, "%s %d", buf2, r_ptr->ac);
 		sprintf(buf2, "%s %d", buf2, r_ptr->sleep);
 		sprintf(buf2, "%s %d", buf2, r_ptr->freq_inate + r_ptr->freq_spell);
-		
+
 		/* The blows table */
 		outblowsmatlab(r_ptr, buf2);
 		sprintf(buf2, "%s];\nxx=[xx;x];\n", buf2);
-		
+
 		fprintf(fff, buf2);
 	}
-	
+
 	/* Output the power information */
 	fprintf(fff, "y=[");
-	
+
 	for (i = min; i < max; i++)
 	{
 		/* Get race */
 		r_ptr =  &r_info[i];
-		
+
 		/* Output the level */
 		sprintf(buf2, "%d ",  monster_power_mat(r_ptr->level));
-		
+
 		fprintf(fff, buf2);
-	}	
-	
+	}
+
 	fprintf(fff, "];\n");
 
 	/* Output the XP information */
 	fprintf(fff, "xp=[");
-	
+
 	for (i = min; i < max; i++)
 	{
 		/* Get race */
 		r_ptr =  &r_info[i];
-		
+
 		/* Output the experience for a kill */
 		sprintf(buf2, "%ld ", r_ptr->mexp);
-		
+
 		fprintf(fff, buf2);
-	}	
-	
-	fprintf(fff, "];");	
-	
+	}
+
+	fprintf(fff, "];");
+
 	my_fclose(fff);
 }
 #endif /* MATLAB */
@@ -1944,7 +1944,7 @@ void do_cmd_debug(void)
 		output_monster_matlab();
 		break;
 #endif  /* MATLAB */
-		
+
 		/* Hack -- Help */
 		case '?':
 		do_cmd_help();

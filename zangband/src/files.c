@@ -3957,8 +3957,7 @@ void change_player_name(void)
 
 void get_character_name(void)
 {
-
-        char tmp[16];
+	char tmp[16];
 
 	/* Save the player name */
 	strcpy(tmp, player_name);
@@ -4130,14 +4129,16 @@ long total_points(void)
 	if (preserve_mode) mult -= 10; /* Penalize preserve, maximize modes */
 	if (maximize_mode) mult -= 15;
 	if (stupid_monsters) mult -= 20; /* AI is not that big a deal (yet) */
-	if (vanilla_town)    mult += 5; /* Vanilla town is harder */
+	if (vanilla_town) mult += 5; /* Vanilla town is harder */
 	if (ironman_hard_quests) mult += 10; /* so are hard quests */
-	if (ironman_small_levels) mult += 5; /* not too much of a reward since some people 
-                                               * like playing with this */
-        if (ironman_downward)  mult +=10;
-	if (ironman_empty_levels)    mult += 10;
+
+	/* Not too much of a reward since some people like playing with this. */
+	if (ironman_small_levels) mult += 5;
+
+	if (ironman_downward) mult +=10;
+	if (ironman_empty_levels) mult += 10;
 	if (ironman_nightmare) mult += 20;
-        if (ironman_rooms) mult +=10;
+	if (ironman_rooms) mult +=10;
 
 	if (mult < 5) mult = 5; /* At least 5% of the original score */
 
@@ -4585,7 +4586,7 @@ void close_game(void)
 			time_t ct = time((time_t*)NULL);
 
 			/* Get the date */
-			strftime(long_day, 30, 
+			strftime(long_day, 30,
 				"%Y-%m-%d at %H:%M:%S", localtime(&ct));
 
 			/* Create string */
@@ -4610,7 +4611,7 @@ void close_game(void)
 	{
 		/* Save the game */
 		do_cmd_save_game(FALSE);
-                
+
 		/* If note-taking enabled, write session end to notes file */
 		if (take_notes)
 		{

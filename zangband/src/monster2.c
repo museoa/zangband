@@ -140,7 +140,7 @@ void delete_monster_idx(int i)
 
 
 	/* Wipe the Monster */
-	(void) WIPE(m_ptr, monster_type);
+	(void)WIPE(m_ptr, monster_type);
 
 	/* Count monsters */
 	m_cnt--;
@@ -228,7 +228,7 @@ static void compact_monsters_aux(int i1, int i2)
 	COPY(&m_list[i2], &m_list[i1], monster_type);
 
 	/* Wipe the hole */
-	(void) WIPE(&m_list[i1], monster_type);
+	(void)WIPE(&m_list[i1], monster_type);
 
 #ifdef USE_SCRIPT
 	copy_monster_callback(i1, i2);
@@ -253,7 +253,7 @@ void compact_monsters(int size)
 {
 	int		i, num, cnt;
 	int		cur_lev, cur_dis, chance;
-	
+
 	/* Message (only if compacting) */
 	if (size) msg_print("Compacting monsters...");
 
@@ -315,7 +315,7 @@ void compact_monsters(int size)
 		{
 			delete_monster_idx(i);
 		}
-		
+
 		/* Skip real monsters */
 		if (m_ptr->r_idx) continue;
 
@@ -534,7 +534,7 @@ s16b get_mon_num(int level)
 		{
 			/* Occasional "nasty" monster */
 			if (!rand_int(NASTY_MON))
-			{				
+			{
 				/* Boost the level */
 				level += 7;
 			}
@@ -1208,10 +1208,10 @@ void update_mon(int m_idx, bool full)
 	bool easy = FALSE;
 
 	cave_type *c_ptr;
-	
+
 	/* Exit if monster does not exist. */
 	if (!m_idx) return;
-	
+
 	/* Compute distance */
 	if (full)
 	{
@@ -1503,14 +1503,14 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	/* Verify location */
 	if (!in_bounds2(y, x)) return (FALSE);
 
-	
+
 	/* Access the location */
 	c_ptr = area(y,x);
 
 	/* Require empty space (if not ghostly) */
-	if (!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) || 
+	if (!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) ||
 		cave_floor_grid(c_ptr) ||
-		 ((c_ptr->feat & 0x60) == 0x60)) && 
+		 ((c_ptr->feat & 0x60) == 0x60)) &&
 		 (!((c_ptr->m_idx) || (c_ptr == area(py, px)))))) return FALSE;
 
 	/* Hack -- no creation on glyph of warding */
@@ -1744,7 +1744,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 
 	int hack_y[GROUP_MAX];
 	int hack_x[GROUP_MAX];
-	
+
 	cave_type *c_ptr;
 
 	/* Pick a group size */
@@ -1798,9 +1798,9 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 			int mx, my;
 
 			scatter(&my, &mx, hy, hx, 4, 0);
-			
+
 			/* paranoia */
-			if(!in_bounds2(my, mx)) continue;
+			if (!in_bounds2(my, mx)) continue;
 
 			/* Walls and Monsters block flow */
 			c_ptr = area(my, mx);
@@ -1931,7 +1931,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 			scatter(&ny, &nx, y, x, d, 0);
 
 			/* paranoia */
-			if(!in_bounds2(y, x)) continue;
+			if (!in_bounds2(y, x)) continue;
 
 			/* Require empty grids */
 			c_ptr = area(ny, nx);
@@ -2460,7 +2460,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 
 		/* Pick a location */
 		scatter(&y, &x, y1, x1, d, 0);
-		
+
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
 
@@ -2514,7 +2514,7 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool group_ok, b
 {
 	int i, x, y;
 	bool success = FALSE;
-	
+
 	cave_type *c_ptr;
 
 	/* Paranoia */
@@ -2530,7 +2530,7 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool group_ok, b
 
 		/* Pick a location */
 		scatter(&y, &x, oy, ox, d, 0);
-		
+
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
 
@@ -2562,7 +2562,7 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 	int			i, y, x;
 
 	bool result = FALSE;
-	
+
 	cave_type *c_ptr;
 
 	/* Try up to 18 times */

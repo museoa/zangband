@@ -1310,19 +1310,19 @@ bool set_stun(int v)
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
-	/* 
+	/*
 	 * Golems cannot be stunned when they are being used as a
 	 * "training" class.  However, when they are being used in
 	 * a hard game - they lose this advantage.  (Golems are
 	 * designed for newbies - not scummers.)
 	 */
 	if ((p_ptr->prace == RACE_GOLEM) &&
-	!(ironman_shops || ironman_downward || ironman_hard_quests ||
-	ironman_empty_levels || ironman_rooms || ironman_nightmare))
+	    !(ironman_shops || ironman_downward || ironman_hard_quests ||
+	      ironman_empty_levels || ironman_rooms || ironman_nightmare))
 	{
 		v = 0;
 	}
-	
+
 	/* Knocked out */
 	if (p_ptr->stun > 100)
 	{
