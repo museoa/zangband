@@ -1594,8 +1594,8 @@ I:70:48:0
 W:75:0:5:500
 A:75/1
 F:IGNORE_FIRE | EASY_KNOW
-L:USE:	fire_ball(GF_FIRE, 0, 300, 4)
-L:USE:	if res_fire_lvl() > 3 then take_hit(rand_range(50, 100),
+L:USE:	fire_ball(GF_FIRE, 0, 350, 4)
+L:USE:	if res_fire_lvl() > 3 then take_hit(rand_range(100, 200),
 L:USE:		"a Scroll of Fire") end
 
 N:183:Ice
@@ -1604,8 +1604,8 @@ I:70:49:0
 W:75:0:5:600
 A:75/1
 F:IGNORE_COLD | EASY_KNOW
-L:USE:	fire_ball(GF_FIRE, 0, 350, 4)
-L:USE:	if res_fire_lvl() > 3 then take_hit(rand_range(100, 200),
+L:USE:	fire_ball(GF_COLD, 0, 300, 4)
+L:USE:	if res_fire_lvl() > 3 then take_hit(rand_range(50, 100),
 L:USE:		"a Scroll of Ice") end
 
 N:184:Summon Monster
