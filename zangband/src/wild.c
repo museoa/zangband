@@ -371,8 +371,8 @@ static void town_gen_hack(u16b town_num)
 		y = rand_range(3, SCREEN_HGT - 4);
 		x = rand_range(3, SCREEN_WID - 4);
 
-		/* Require a "naked" floor grid */
-		if (cave[y][x].feat == FEAT_FLOOR) break;
+		/* Require a floor grid */
+		if (cave[y][x].feat == FEAT_PEBBLES) break;
 	}
 
 	/* Clear previous contents, add down stairs */
@@ -416,7 +416,19 @@ static void town_gen(u16b town_num)
 		for (x = 1; x < SCREEN_WID-1; x++)
 		{
 			/* Create empty floor */
-			cave[y][x].feat = FEAT_FLOOR;
+			cave[y][x].feat = FEAT_PEBBLES;
+			
+			/* Create Dirt */
+			if (!rand_int(5))
+			{
+				cave[y][x].feat = FEAT_DIRT;
+			}
+			
+			/* Create see-through terrain */
+			else if (!rand_int(5))
+			{
+				cave[y][x].feat = FEAT_NONE;
+			}
 		}
 	}
 
@@ -4373,9 +4385,9 @@ void create_wilderness(void)
 			/* Mega hack - set monster toughness and density */
 
 			/* Toughness (level 0 - 80) */
-			wild[j][i].done.mon_gen = (256 - law) * 5 / 16;
+			wild[j][i].done.mon_gen = (256 - law) * (256 - law) * 5 / 4096;
 			
-			/* No monsters (probability 1 - 17) */
+			/* No monsters (probability 0 - 16) */
 			wild[j][i].done.mon_prob = pop / 16;
 		}
 	}
