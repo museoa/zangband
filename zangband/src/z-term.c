@@ -1706,6 +1706,8 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
 	int i;
 	
+	term_win *old = Term->old;
+	
 	bool total_erase;
 	
 	x1 = (x1 - 1) / 2;
@@ -1734,14 +1736,18 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	Term_fresh_section();
 	Term->total_erase = FALSE;
 	
-	/* Hack -- clear all "cursor" data */
-	Term->old->cv = 0;
-	Term->old->cu = 0;
-	Term->old->cx = 0;
-	Term->old->cy = 0;
+	if ((old->cx >= x1) && (old->cx <= x2) &&
+		(old->cy >= y1) && (old->cy <= y2))
+	{
+		/* Hack -- clear all "cursor" data */
+		old->cv = 0;
+		old->cu = 0;
+		old->cx = 0;
+		old->cy = 0;
 	
-	/* Redraw cursor */
-	Term_fresh_cursor();
+		/* Redraw cursor */
+		Term_fresh_cursor();
+	}
 
 	/* Actually flush the output */
 	Term_xtra(TERM_XTRA_FRESH, 0);
