@@ -34,7 +34,7 @@ AC_SUBST(DEFAULT_PATH)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_RANLIB
+AC_CHECK_TOOL(RANLIB, ranlib)
 
 dnl -fno-strength-reduce prevents a bug in some versions of gcc
 if test "$GCC" = yes; then
