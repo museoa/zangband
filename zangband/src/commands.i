@@ -49,8 +49,7 @@ extern void do_cmd_query_symbol(void);
 extern void do_cmd_redraw(void);
 extern void do_cmd_message_one(void);
 extern void do_cmd_messages(void);
-extern void do_cmd_options_aux(int page, cptr info);
-extern void do_cmd_options(void);
+extern void do_cmd_options(byte flags);
 extern void do_cmd_pref(void);
 extern void do_cmd_macros(void);
 extern void do_cmd_visuals(void);
@@ -81,8 +80,11 @@ extern void do_cmd_suicide(void);
 extern void do_cmd_save_game(int is_autosave);
 extern void do_cmd_save_and_exit(void);
 extern void do_cmd_racial_power(void);
-extern void do_cmd_store(void);
+extern void do_cmd_store(field_type *f_ptr);
 extern void do_cmd_mindcraft(void);
 extern void do_cmd_knowledge_mutations(void);
 extern bool do_cmd_disarm_aux(cave_type *c_ptr, int dir);
 
+#define OPT_FLAG_BIRTH			0x01
+#define OPT_FLAG_SERVER			0x02
+#define OPT_FLAG_PLAYER			0x04

@@ -287,7 +287,6 @@ extern errr term_init(term *t, int w, int h, int k);
  */
 #define SOUND_MAX 65
 
-extern u32b option_flag[8];
 extern u32b option_mask[8];
 extern u32b window_flag[8];
 extern u32b window_mask[8];
