@@ -53,16 +53,7 @@ extern int g_icon_data_count; /* Number of icon types */
 
 extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
 
-extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
-	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr);
-
 extern int Icon_Init(Tcl_Interp *interp, int size, int depth);
-extern int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr,
-	char *typeName);
-extern int Icon_GetTypeFromObj(Tcl_Interp *interp,
-	t_icon_data **typePtrPtr, Tcl_Obj *objPtr);
-extern int Icon_GetIndexFromObj(Tcl_Interp *interp,
-	int *indexPtr, Tcl_Obj *objPtr, t_icon_data *iconDataPtr);
 
 
 /*

@@ -363,167 +363,45 @@ int PixelPtrToLong(IconPtr p, int bypp)
 	return 0;
 }
 
-int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
-	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr)
+
+static int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr, char *typeName)
 {
-	Tk_PhotoImageBlock photoBlock;
-	int row, col, y, x;
-	int i, r, g, b;
-	int r2 = 0, g2 = 0, b2 = 0;
-	unsigned char *srcPtr, *dstPtr;
-	int dataSize;
-	int numCol, numRow;
-	int iconW = iconDataPtr->width;
-	int pixelSize = iconDataPtr->bypp;
+	Tcl_HashEntry *hPtr;
 
-	/* Hack - ignore parameter */
-	(void) interp;
+	/* Look up the icon type by name */
+	hPtr = Tcl_FindHashEntry(&g_icon_table, typeName);
 
-	/* Get info about the image */
-	(void) Tk_PhotoGetImage(photoH, &photoBlock);
-
-	/* Calculate the number of icons based on image dimensions */
-	numCol = (photoBlock.width / imageW);
-	numRow = (photoBlock.height / imageH);
-	iconDataPtr->icon_count = numCol * numRow;
-
-	/* Allocate icon buffer */
-	dataSize = iconDataPtr->icon_count * iconDataPtr->length;
-	C_MAKE(iconDataPtr->icon_data, dataSize, byte);
-
-	if (pixelSize == 1)
+	/* The icon type was not found */
+	if (hPtr == NULL)
 	{
-		/* Clear the color hash table used by Palette_RGB2Index() */
-		Palette_ResetHash();
+		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
+
+		/* Set the error */
+		Tcl_AppendStringsToObj(resultPtr, "unknown icon type \"",
+			typeName, "\"", NULL);
+
+		/* Failure */
+		return TCL_ERROR;
 	}
 
-	if (xColorPtr)
-	{
-		r2 = ((double) xColorPtr->red / USHRT_MAX) * 255;
-		g2 = ((double) xColorPtr->green / USHRT_MAX) * 255;
-		b2 = ((double) xColorPtr->blue / USHRT_MAX) * 255;
-	}		
+	(*typeIndexPtr) = (int) Tcl_GetHashValue(hPtr);
 
-	dstPtr = iconDataPtr->icon_data;
-	for (row = 0; row < numRow; row++)
+	/* Success */
+	return TCL_OK;
+}
+
+static int Icon_GetTypeFromObj(Tcl_Interp *interp, t_icon_data **typePtrPtr,
+	Tcl_Obj *objPtr)
+{
+	int typeIndex;
+
+	if (Icon_FindTypeByName(interp, &typeIndex, Tcl_GetString(objPtr))
+		!= TCL_OK)
 	{
-		for (col = 0; col < numCol; col++)
-		{
-			srcPtr = photoBlock.pixelPtr +
-				col * imageW * photoBlock.pixelSize +
-				row * imageH * photoBlock.pitch;
-			for (y = 0; y < imageH; y++)
-			{
-				for (x = 0; x < imageW; x++)
-				{
-					r = *(srcPtr + x * photoBlock.pixelSize + photoBlock.offset[0]);
-					g = *(srcPtr + x * photoBlock.pixelSize + photoBlock.offset[1]);
-					b = *(srcPtr + x * photoBlock.pixelSize + photoBlock.offset[2]);
-					if (xColorPtr)
-					{
-						/* Transparent */
-						if ((r == r2) && (g == g2) && (b == b2))
-						{
-							/* Exclude from mask */
-							r = g = b = 0;
-						}
-		
-						/* Opaque */
-						else
-						{
-							/* Include in mask */
-							r = g = b = 0xFF;
-						}
-					}
-					if (imageW != iconW)
-					{
-						if (iconW == 24)
-						{
-							if ((y & 1) && (x & 1))
-							{
-								PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-								dstPtr += pixelSize;
-							}
-							else if (y & 1)
-							{
-								PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-								dstPtr += pixelSize;
-								PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-								dstPtr += pixelSize;
-							}
-							else if (x & 1)
-							{
-								PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-								PixelSet_RGB(dstPtr + iconW * pixelSize, r, g, b, pixelSize);
-								dstPtr += pixelSize;
-							}
-							else
-							{
-								PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-								PixelSet_RGB(dstPtr + pixelSize, r, g, b, pixelSize);
-								PixelSet_RGB(dstPtr + iconW * pixelSize, r, g, b, pixelSize);
-								PixelSet_RGB(dstPtr + (iconW + 1) * pixelSize, r, g, b, pixelSize);
-								dstPtr += 2 * pixelSize;
-							}
-						}
-						if (iconW == 32)
-						{
-							PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-							PixelSet_RGB(dstPtr + pixelSize, r, g, b, pixelSize);
-							PixelSet_RGB(dstPtr + iconW * pixelSize, r, g, b, pixelSize);
-							PixelSet_RGB(dstPtr + (iconW + 1) * pixelSize, r, g, b, pixelSize);
-							dstPtr += 2 * pixelSize;
-						}
-					}
-					else
-					{
-						PixelSet_RGB(dstPtr, r, g, b, pixelSize);
-						dstPtr += pixelSize;
-					}
-				}
-				srcPtr += photoBlock.pitch;
-				if (imageW != iconW)
-				{
-					if (iconW == 24)
-					{
-						if (!(y & 1))
-							dstPtr += iconW * pixelSize;
-					}
-					if (iconW == 32)
-					{
-						dstPtr += iconW * pixelSize;
-					}
-				}
-			}
-		}
+		return TCL_ERROR;
 	}
 
-	/* This step strips off blank icons at the end */
-	{
-		int whiteValue = 0xFF;
-		int emptyIcon = TRUE;
-		int n = iconDataPtr->icon_count - 1;
-
-		if (pixelSize == 1)
-			whiteValue = PALETTE_WHITE;
-		while (emptyIcon)
-		{
-			srcPtr = iconDataPtr->icon_data + n * iconDataPtr->length;
-			for (i = 0; i < iconDataPtr->length; i++)
-			{
-				if (*srcPtr++ != whiteValue)
-				{
-					emptyIcon = FALSE;
-					break;
-				}
-			}
-			if (emptyIcon)
-			{
-				iconDataPtr->icon_count -= 1;
-				n--;
-			}
-		}
-	}
+	(*typePtrPtr) = &g_icon_data[typeIndex];
 
 	return TCL_OK;
 }
@@ -614,73 +492,6 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 	return TCL_OK;
 }
 
-
-int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr, char *typeName)
-{
-	Tcl_HashEntry *hPtr;
-
-	/* Look up the icon type by name */
-	hPtr = Tcl_FindHashEntry(&g_icon_table, typeName);
-
-	/* The icon type was not found */
-	if (hPtr == NULL)
-	{
-		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-		/* Set the error */
-		Tcl_AppendStringsToObj(resultPtr, "unknown icon type \"",
-			typeName, "\"", NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	(*typeIndexPtr) = (int) Tcl_GetHashValue(hPtr);
-
-	/* Success */
-	return TCL_OK;
-}
-
-int Icon_GetTypeFromObj(Tcl_Interp *interp, t_icon_data **typePtrPtr,
-	Tcl_Obj *objPtr)
-{
-	int typeIndex;
-
-	if (Icon_FindTypeByName(interp, &typeIndex, Tcl_GetString(objPtr))
-		!= TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	(*typePtrPtr) = &g_icon_data[typeIndex];
-
-	return TCL_OK;
-}
-
-int Icon_GetIndexFromObj(Tcl_Interp *interp, int *indexPtr,
-	Tcl_Obj *objPtr, t_icon_data *iconDataPtr)
-{
-	int index;
-
-	if (Tcl_GetIntFromObj(interp, objPtr, &index) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	if ((index < 0) || (index >= iconDataPtr->icon_count))
-	{
-		/* Set the error */
-		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			format("bad icon index \"%d\": must be from 0 to %d",
-			index, iconDataPtr->icon_count - 1), -1);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	(*indexPtr) = index;
-
-	return TCL_OK;
-}
 
 /*
  * Initialization.
