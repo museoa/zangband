@@ -375,38 +375,38 @@ void dump_virtues(FILE *OutFile)
 
 		if ((p_ptr->vir_types[v_nr] == 0) ||
 			(p_ptr->vir_types[v_nr] > MAX_VIRTUE))
-			fprintf(OutFile, "Oops. No info about %s.", virt_name);
+			froff(OutFile, "Oops. No info about %s.", virt_name);
 		else if (tester < -100)
-			fprintf(OutFile, "You are the polar opposite of %s.", virt_name);
+			froff(OutFile, "You are the polar opposite of %s.", virt_name);
 		else if (tester < -80)
-			fprintf(OutFile, "You are an arch-enemy of %s.", virt_name);
+			froff(OutFile, "You are an arch-enemy of %s.", virt_name);
 		else if (tester < -60)
-			fprintf(OutFile, "You are a bitter enemy of %s.", virt_name);
+			froff(OutFile, "You are a bitter enemy of %s.", virt_name);
 		else if (tester < -40)
-			fprintf(OutFile, "You are an enemy of %s.", virt_name);
+			froff(OutFile, "You are an enemy of %s.", virt_name);
 		else if (tester < -20)
-			fprintf(OutFile, "You have sinned against %s.", virt_name);
+			froff(OutFile, "You have sinned against %s.", virt_name);
 		else if (tester < 0)
-			fprintf(OutFile, "You have strayed from the path of %s.",
+			froff(OutFile, "You have strayed from the path of %s.",
 					virt_name);
 		else if (tester == 0)
-			fprintf(OutFile, "You are neutral to %s.", virt_name);
+			froff(OutFile, "You are neutral to %s.", virt_name);
 		else if (tester < 20)
-			fprintf(OutFile, "You are somewhat virtuous in %s.", virt_name);
+			froff(OutFile, "You are somewhat virtuous in %s.", virt_name);
 		else if (tester < 40)
-			fprintf(OutFile, "You are virtuous in %s.", virt_name);
+			froff(OutFile, "You are virtuous in %s.", virt_name);
 		else if (tester < 60)
-			fprintf(OutFile, "You are very virtuous in %s.", virt_name);
+			froff(OutFile, "You are very virtuous in %s.", virt_name);
 		else if (tester < 80)
-			fprintf(OutFile, "You are a champion of %s.", virt_name);
+			froff(OutFile, "You are a champion of %s.", virt_name);
 		else if (tester < 100)
-			fprintf(OutFile, "You are a great champion of %s.", virt_name);
+			froff(OutFile, "You are a great champion of %s.", virt_name);
 		else
-			fprintf(OutFile, "You are the living embodiment of %s.", virt_name);
+			froff(OutFile, "You are the living embodiment of %s.", virt_name);
 
-		fprintf(OutFile, "\n");
+		froff(OutFile, "\n");
 	}
 
 	if (p_ptr->state.wizard)
-		fprintf(OutFile, "Your overall alignment is %ld.\n", p_ptr->align);
+		froff(OutFile, "Your overall alignment is %ld.\n", p_ptr->align);
 }

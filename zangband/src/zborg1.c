@@ -578,7 +578,7 @@ void borg_note(cptr what)
 	message_add(what, MSG_GENERIC);
 
 	/* Log the message */
-	if (borg_fff) fprintf(borg_fff, "%s\n", what);
+	if (borg_fff) froff(borg_fff, "%s\n", what);
 
 	/* Mega-Hack -- Check against the search string */
 	if (borg_match[0] && strstr(what, borg_match))
@@ -779,7 +779,7 @@ errr borg_keypress(char k)
 	(void)strnfmt(buf, 10, "& Key <%c>", k);
 
 	/* Hack -- note the keypress */
-	if (borg_fff) fprintf(borg_fff, "%s\n", buf);
+	if (borg_fff) froff(borg_fff, "%s\n", buf);
 
 	/* Store the char, advance the queue */
 	borg_key_queue[borg_key_head++] = k;

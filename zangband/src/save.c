@@ -1983,7 +1983,7 @@ bool load_player(void)
 		safe_setuid_drop();
 
 		/* Dump a line of info */
-		fprintf(fkk, "Lock file for savefile '%s'\n", savefile);
+		froff(fkk, "Lock file for savefile '%s'\n", savefile);
 
 		/* Close the lock file */
 		my_fclose(fkk);

@@ -1249,6 +1249,7 @@ extern void screen_load(void);
 extern void put_fstr(int col, int row, cptr str, ...);
 extern void prtf(int col, int row, cptr str, ...);
 extern void roff(cptr str, ...);
+extern void froff(FILE *fff, cptr str, ...);
 extern void clear_from(int row);
 extern void clear_msg(void);
 extern void clear_row(int row);

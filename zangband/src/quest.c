@@ -1206,7 +1206,7 @@ bool do_cmd_knowledge_quests(int dummy)
 		}
 
 		/* Copy to the file */
-		fprintf(fff, "%s", tmp_str);
+		froff(fff, "%s", tmp_str);
 	}
 
 	/* Close the file */

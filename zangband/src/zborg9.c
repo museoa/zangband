@@ -856,7 +856,7 @@ static void borg_parse_aux(cptr msg, int len)
 	char buf[256];
 
 	/* Log (if needed) */
-	if (borg_fff) fprintf(borg_fff, "& Msg <%s>\n", msg);
+	if (borg_fff) froff(borg_fff, "& Msg <%s>\n", msg);
 
 
 	/* Hack -- Notice death */
@@ -2003,18 +2003,18 @@ static void borg_log_death(void)
 	/* Save the date */
 	strftime(buf, 80, "%Y/%m/%d %H:%M\n", localtime(&death_time));
 
-	fprintf(borg_log_file, buf);
+	froff(borg_log_file, buf);
 
-	fprintf(borg_log_file, "%s the %s %s, Level %d/%d\n", player_name,
+	froff(borg_log_file, "%s the %s %s, Level %d/%d\n", player_name,
 			race_info[p_ptr->rp.prace].title,
 			class_info[p_ptr->rp.pclass].title, p_ptr->lev, p_ptr->max_lev);
 
-	fprintf(borg_log_file, "Exp: %lu  Gold: %lu  Turn: %lu\n",
+	froff(borg_log_file, "Exp: %lu  Gold: %lu  Turn: %lu\n",
 			(long) /* total_points() */ 0, (long)p_ptr->au, (long)turn);
-	fprintf(borg_log_file, "Killed on level: %d (max. %d) by %s\n",
+	froff(borg_log_file, "Killed on level: %d (max. %d) by %s\n",
 			p_ptr->depth, p_ptr->max_depth, p_ptr->state.died_from);
 
-	fprintf(borg_log_file, "----------\n\n");
+	froff(borg_log_file, "----------\n\n");
 
 	my_fclose(borg_log_file);
 }
@@ -2044,7 +2044,7 @@ static void borg_log_death_data(void)
 	(void)time(&death_time);
 
 	/* dump stuff for easy import to database */
-	fprintf(borg_log_file, "%s, %s, %d, %d, %s\n",
+	froff(borg_log_file, "%s, %s, %d, %d, %s\n",
 			race_info[p_ptr->rp.prace].title, class_info[p_ptr->rp.pclass].title,
 			p_ptr->lev, p_ptr->depth, p_ptr->state.died_from);
 

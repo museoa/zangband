@@ -244,13 +244,13 @@ static void spoil_obj_desc(cptr fname)
 
 
 	/* Header */
-	fprintf(fff, "Spoiler File -- Basic Items (%s %s)\n\n\n",
+	froff(fff, "Spoiler File -- Basic Items (%s %s)\n\n\n",
 			VERSION_NAME, VERSION_STRING);
 
 	/* More Header */
-	fprintf(fff, "%-45s     %8s%7s%5s%9s\n",
+	froff(fff, "%-45s     %8s%7s%5s%9s\n",
 			"Description", "Dam/AC", "Wgt", "Lev", "Cost");
-	fprintf(fff, "%-45s     %8s%7s%5s%9s\n",
+	froff(fff, "%-45s     %8s%7s%5s%9s\n",
 			"----------------------------------------",
 			"------", "---", "---", "----");
 
@@ -296,7 +296,7 @@ static void spoil_obj_desc(cptr fname)
 				kind_info(buf, dam, wgt, &e, &v, who[s]);
 
 				/* Dump it */
-				fprintf(fff, "     %-45s%8s%7s%5d%9ld\n",
+				froff(fff, "     %-45s%8s%7s%5d%9ld\n",
 						buf, dam, wgt, e, (long)(v));
 			}
 
@@ -307,7 +307,7 @@ static void spoil_obj_desc(cptr fname)
 			if (!group_item[i].tval) break;
 
 			/* Start a new set */
-			fprintf(fff, "\n\n%s\n\n", group_item[i].name);
+			froff(fff, "\n\n%s\n\n", group_item[i].name);
 		}
 
 		/* Acquire legal item types */
@@ -677,9 +677,9 @@ static void spoiler_blanklines(int n)
  */
 static void spoiler_underline(cptr str)
 {
-	fprintf(fff, "%s\n", str);
+	froff(fff, "%s\n", str);
 	spoiler_out_n_chars(strlen(str), '-');
-	fprintf(fff, "\n");
+	froff(fff, "\n");
 }
 
 
@@ -1056,7 +1056,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 				line[line_len - 2] = '\0';
 
 				/* Write to spoiler file */
-				fprintf(fff, "%s\n", line);
+				froff(fff, "%s\n", line);
 
 				/* Begin new line at primary indention level */
 				strnfmt(line, MAX_LINE_LEN + 1, "%s%s", INDENT1, buf);
@@ -1065,7 +1065,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 			else
 			{
 				/* Write to spoiler file */
-				fprintf(fff, "%s\n", line);
+				froff(fff, "%s\n", line);
 
 				/* Begin new line at secondary indention level */
 				strnfmt(line, MAX_LINE_LEN + 1, "%s%s", INDENT2, buf);
@@ -1079,7 +1079,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 	}
 
 	/* Write what's left to the spoiler file */
-	fprintf(fff, "%s\n", line);
+	froff(fff, "%s\n", line);
 }
 
 
@@ -1093,7 +1093,7 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
 	char buf[80];
 
 	/* Don't indent the first line */
-	fprintf(fff, "%s\n", art_ptr->description);
+	froff(fff, "%s\n", art_ptr->description);
 
 	/* An "empty" pval description indicates that the pval affects nothing */
 	if (pval_ptr->pval_desc[0])
@@ -1121,11 +1121,11 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
 	/* Write out the possible activation at the primary indention level */
 	if (art_ptr->activation)
 	{
-		fprintf(fff, "%sActivates for %s\n", INDENT1, art_ptr->activation);
+		froff(fff, "%sActivates for %s\n", INDENT1, art_ptr->activation);
 	}
 
 	/* End with the miscellaneous facts */
-	fprintf(fff, "%s%s\n\n", INDENT1, art_ptr->misc_desc);
+	froff(fff, "%s%s\n\n", INDENT1, art_ptr->misc_desc);
 }
 
 
@@ -1306,12 +1306,12 @@ static void spoil_mon_desc(cptr fname)
 	}
 
 	/* Dump the header */
-	fprintf(fff, "Monster Spoilers for %s Version %s\n",
+	froff(fff, "Monster Spoilers for %s Version %s\n",
 			VERSION_NAME, VERSION_STRING);
-	fprintf(fff, "-------------------------------------------\n\n");
-	fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
+	froff(fff, "-------------------------------------------\n\n");
+	froff(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
 			"Name", "Lev", "Rar", "Spd", "Hp", "Ac", "Visual Info");
-	fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
+	froff(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
 			"----", "---", "---", "---", "--", "--", "-----------");
 
 
@@ -1394,7 +1394,7 @@ static void spoil_mon_desc(cptr fname)
 		strnfmt(vis, 80, "%s '%c'", attr_to_text(r_ptr->d_attr), r_ptr->d_char);
 
 		/* Dump the info */
-		fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s %s\n",
+		froff(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s %s\n",
 				nam, lev, rar, spd, hp, ac, exp, vis);
 	}
 
@@ -1402,7 +1402,7 @@ static void spoil_mon_desc(cptr fname)
 	KILL(who);
 
 	/* End it */
-	fprintf(fff, "\n");
+	froff(fff, "\n");
 
 	/* Check for errors */
 	if (ferror(fff))
@@ -1464,11 +1464,11 @@ static void spoil_out(cptr fmt, ...)
 	{
 		if (roff_p != roff_buf) roff_p--;
 		while (*roff_p == ' ' && roff_p != roff_buf) roff_p--;
-		if (roff_p == roff_buf) fprintf(fff, "\n");
+		if (roff_p == roff_buf) froff(fff, "\n");
 		else
 		{
 			*(roff_p + 1) = '\0';
-			fprintf(fff, "%s\n\n", roff_buf);
+			froff(fff, "%s\n\n", roff_buf);
 		}
 		roff_p = roff_buf;
 		roff_s = NULL;
@@ -1508,7 +1508,7 @@ static void spoil_out(cptr fmt, ...)
 				*roff_s = '\0';
 				r = roff_s + 1;
 			}
-			fprintf(fff, "%s\n", roff_buf);
+			froff(fff, "%s\n", roff_buf);
 			roff_s = NULL;
 			roff_p = roff_buf;
 			while (*r) *roff_p++ = *r++;

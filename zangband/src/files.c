@@ -2735,7 +2735,6 @@ errr file_character(cptr name, bool full)
 	int fd = -1;
 	FILE *fff = NULL;
 	store_type *st_ptr;
-	char o_name[256];
 	char buf[1024];
 
 	int msg_max = message_num();
@@ -2777,7 +2776,7 @@ errr file_character(cptr name, bool full)
 	}
 
 
-	fprintf(fff, "  [%s %s Character Dump]\n\n", VERSION_NAME, VERSION_STRING);
+	froff(fff, "  [%s %s Character Dump]\n\n", VERSION_NAME, VERSION_STRING);
 
 	/* Display player */
 	display_player(DISPLAY_PLAYER_STANDARD);
@@ -2802,63 +2801,63 @@ errr file_character(cptr name, bool full)
 		while ((x > 0) && (buf[x - 1] == ' ')) buf[--x] = '\0';
 
 		/* End the row */
-		fprintf(fff, "%s\n", buf);
+		froff(fff, "%s\n", buf);
 	}
 
-	fprintf(fff, "\n\n  [Miscellaneous information]\n");
+	froff(fff, "\n\n  [Miscellaneous information]\n");
 
 	if (preserve_mode)
-		fprintf(fff, "\n Preserve Mode:      ON");
+		froff(fff, "\n Preserve Mode:      ON");
 	else
-		fprintf(fff, "\n Preserve Mode:      OFF");
+		froff(fff, "\n Preserve Mode:      OFF");
 
 	if (ironman_autoscum)
-		fprintf(fff, "\n Autoscum:           ON");
+		froff(fff, "\n Autoscum:           ON");
 	else
-		fprintf(fff, "\n Autoscum:           OFF");
+		froff(fff, "\n Autoscum:           OFF");
 
 	if (ironman_small_levels)
-		fprintf(fff, "\n Small Levels:       ALWAYS");
+		froff(fff, "\n Small Levels:       ALWAYS");
 	else if (small_levels)
-		fprintf(fff, "\n Small Levels:       ON");
+		froff(fff, "\n Small Levels:       ON");
 	else
-		fprintf(fff, "\n Small Levels:       OFF");
+		froff(fff, "\n Small Levels:       OFF");
 
-	if (vanilla_town) fprintf(fff, "\n Vanilla Town:       ON");
+	if (vanilla_town) froff(fff, "\n Vanilla Town:       ON");
 
-	if (ironman_shops) fprintf(fff, "\n No Shops:           ON");
+	if (ironman_shops) froff(fff, "\n No Shops:           ON");
 
-	if (ironman_downward) fprintf(fff, "\n Diving only:        ON");
+	if (ironman_downward) froff(fff, "\n Diving only:        ON");
 
 	if (ironman_empty_levels)
-		fprintf(fff, "\n Arena Levels:       ALWAYS");
+		froff(fff, "\n Arena Levels:       ALWAYS");
 	else if (empty_levels)
-		fprintf(fff, "\n Arena Levels:       ENABLED");
+		froff(fff, "\n Arena Levels:       ENABLED");
 	else
-		fprintf(fff, "\n Arena Levels:       OFF");
+		froff(fff, "\n Arena Levels:       OFF");
 
-	if (ironman_hard_quests) fprintf(fff, "\n Hard Quests:        ON");
+	if (ironman_hard_quests) froff(fff, "\n Hard Quests:        ON");
 
-	fprintf(fff, "\n Number of Quests: %d", number_of_quests());
+	froff(fff, "\n Number of Quests: %d", number_of_quests());
 
-	if (ironman_nightmare) fprintf(fff, "\n Nightmare Mode:     ON");
+	if (ironman_nightmare) froff(fff, "\n Nightmare Mode:     ON");
 
-	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
+	froff(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
 			50 * p_ptr->max_depth);
 
 	if (p_ptr->state.noscore)
-		fprintf(fff, "\n You have done something illegal.");
+		froff(fff, "\n You have done something illegal.");
 
 	if (stupid_monsters)
-		fprintf(fff, "\n Your opponents are behaving stupidly.");
+		froff(fff, "\n Your opponents are behaving stupidly.");
 
 	if (munchkin_death)
-		fprintf(fff, "\n You possess munchkinish power over death.");
+		froff(fff, "\n You possess munchkinish power over death.");
 
 	/* Show (known) flags grid */
 	if (full)
 	{
-		fprintf(fff, "\n\n");
+		froff(fff, "\n\n");
 		display_player(DISPLAY_PLAYER_SUMMARY);
 
 		/* Dump first column */
@@ -2871,11 +2870,11 @@ errr file_character(cptr name, bool full)
 			}
 
 			buf[x] = '\0';
-			fprintf(fff, "%s\n", buf);
+			froff(fff, "%s\n", buf);
 		}
 
 		/* New line */
-		fprintf(fff, "\n");
+		froff(fff, "\n");
 
 		/* Dump second column */
 		for (y = 12; y < 22; y++)
@@ -2887,11 +2886,11 @@ errr file_character(cptr name, bool full)
 			}
 
 			buf[x] = '\0';
-			fprintf(fff, "%s\n", buf);
+			froff(fff, "%s\n", buf);
 		}
 
 		/* New line */
-		fprintf(fff, "\n");
+		froff(fff, "\n");
 
 		/* Dump third column */
 		for (y = 12; y < 23; y++)
@@ -2903,7 +2902,7 @@ errr file_character(cptr name, bool full)
 			}
 
 			buf[x] = '\0';
-			fprintf(fff, "%s\n", buf);
+			froff(fff, "%s\n", buf);
 		}
 	}
 
@@ -2926,11 +2925,11 @@ errr file_character(cptr name, bool full)
 		}
 
 		if (Total < 1)
-			fprintf(fff, "\n You have defeated no enemies yet.\n");
+			froff(fff, "\n You have defeated no enemies yet.\n");
 		else if (Total == 1)
-			fprintf(fff, "\n You have defeated one enemy.\n");
+			froff(fff, "\n You have defeated one enemy.\n");
 		else
-			fprintf(fff, "\n You have defeated %lu enemies.\n", Total);
+			froff(fff, "\n You have defeated %lu enemies.\n", Total);
 	}
 
     /* Top kills */
@@ -2956,7 +2955,7 @@ errr file_character(cptr name, bool full)
 
         if (n)
         {
-            fprintf(fff, "\n\n  [Top %i deepest kills]\n\n", n >= 10 ? 10 : n);
+            froff(fff, "\n\n  [Top %i deepest kills]\n\n", n >= 10 ? 10 : n);
 
             why = 2;
         
@@ -2971,7 +2970,7 @@ errr file_character(cptr name, bool full)
             {
                 monster_race *r_ptr = &r_info[who[i]];
 
-                fprintf(fff, "%2i %-36s Level %i (%i')\n", r_ptr->r_pkills,
+                froff(fff, "%2i %-36s Level %i (%i')\n", r_ptr->r_pkills,
                         (r_ptr->name + r_name), r_ptr->level, r_ptr->level * 50);
             }
         }
@@ -2981,42 +2980,40 @@ errr file_character(cptr name, bool full)
     }
 
 #if 0
-	fprintf(fff, "\n\n  [Virtues]\n\n");
+	froff(fff, "\n\n  [Virtues]\n\n");
 	dump_virtues(fff);
 #endif /* 0 */
 
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
-		fprintf(fff, "\n\n  [Mutations]\n\n");
+		froff(fff, "\n\n  [Mutations]\n\n");
 		dump_mutations(fff);
 	}
 
 
 	/* Skip some lines */
-	fprintf(fff, "\n\n");
+	froff(fff, "\n\n");
 
 
 	/* Dump the equipment */
-	fprintf(fff, "  [Character Equipment]\n\n");
+	froff(fff, "  [Character Equipment]\n\n");
 	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		object_desc(o_name, &p_ptr->equipment[i], TRUE, 3, 256);
-		fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
+		froff(fff, "%c%s %v\n", I2A(i), paren,
+				OBJECT_FMT(&p_ptr->equipment[i], TRUE, 3));
 	}
-	fprintf(fff, "\n\n");
+	froff(fff, "\n\n");
 
 
 	/* Dump the inventory */
-	fprintf(fff, "  [Character Inventory]\n\n");
+	froff(fff, "  [Character Inventory]\n\n");
 
 	i = 0;
 
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Dump the inventory slots */
-		object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-		fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
+		froff(fff, "%c%s %v\n", I2A(i), paren, OBJECT_FMT(o_ptr, TRUE, 3));
 
 		/* Count slots */
 		i++;
@@ -3024,7 +3021,7 @@ errr file_character(cptr name, bool full)
 	OBJ_ITT_END;
 
 	/* Add an empty line */
-	fprintf(fff, "\n\n");
+	froff(fff, "\n\n");
 
 	/* Print all homes in the different towns */
 	for (i = 1; i < z_info->wp_max; i++)
@@ -3039,7 +3036,7 @@ errr file_character(cptr name, bool full)
 				if (st_ptr->stock)
 				{
 					/* Header with name of the town */
-					fprintf(fff, "  [Home Inventory - %s]\n\n", place[i].name);
+					froff(fff, "  [Home Inventory - %s]\n\n", place[i].name);
 
 					/* Initialise counter */
 					k = 0;
@@ -3047,8 +3044,8 @@ errr file_character(cptr name, bool full)
 					/* Dump all available items */
 					OBJ_ITT_START (st_ptr->stock, o_ptr)
 					{
-						object_desc(o_name, o_ptr, TRUE, 3, 256);
-						fprintf(fff, "%c%s %s\n", I2A(k), paren, o_name);
+						froff(fff, "%c%s %v\n", I2A(k), paren,
+								OBJECT_FMT(o_ptr, TRUE, 3));
 
 						/* Increment counter */
 						k++;
@@ -3056,7 +3053,7 @@ errr file_character(cptr name, bool full)
 					OBJ_ITT_END;
 
 					/* Add an empty line */
-					fprintf(fff, "\n\n");
+					froff(fff, "\n\n");
 				}
 			}
 		}
@@ -3065,13 +3062,13 @@ errr file_character(cptr name, bool full)
 	if (limit_messages && msg_max > 50)
 		msg_max = 50;
 
-	fprintf(fff, "  [Message Log (last %d messages)]\n\n", msg_max);
+	froff(fff, "  [Message Log (last %d messages)]\n\n", msg_max);
 
 	for (i = msg_max - 1; i >= 0; i--)
 	{
-		fprintf(fff, "%s\n", message_str((s16b)i));
+		froff(fff, "%s\n", message_str((s16b)i));
 	}
-	fprintf(fff, "\n\n");
+	froff(fff, "\n\n");
 
 
 	/* Close it */

@@ -446,7 +446,7 @@ errr my_fputs(FILE *fff, cptr buf, huge n)
 	(void)n;
 
 	/* Dump, ignore errors */
-	(void)fprintf(fff, "%s\n", buf);
+	froff(fff, "%s\n", buf);
 
 	/* Success */
 	return (0);

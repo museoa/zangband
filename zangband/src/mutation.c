@@ -784,7 +784,7 @@ void dump_mutations(FILE *fff)
 
 		if (player_has_mut(i))
 		{
-			fprintf(fff, "%s\n", mut_ptr->desc_text);
+			froff(fff, "%s\n", mut_ptr->desc_text);
 		}
 	}
 }

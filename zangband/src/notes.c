@@ -63,7 +63,7 @@ void output_note(cptr final_note, ...)
 	if (!fff) return;
 
 	/* Add note, and close note file */
-	fprintf(fff, "%s", buf);
+	froff(fff, "%s", buf);
 
 	my_fclose(fff);
 }
