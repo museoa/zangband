@@ -1015,7 +1015,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_CHR)) total += (250 * plusses);
 
 	if ((FLAG(o_ptr, TR_SP)) && (plusses > 0)) total += (2500 * plusses);
-	if (FLAG(o_ptr, TR_CHAOTIC)) total += 1500;
+	if (FLAG(o_ptr, TR_CHAOTIC)) total += 500;
 	if (FLAG(o_ptr, TR_VAMPIRIC)) total += 5000;
 	if (FLAG(o_ptr, TR_STEALTH)) total += (50 * plusses);
 	if (FLAG(o_ptr, TR_SEARCH)) total += (50 * plusses);
@@ -1127,7 +1127,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_PERMA_CURSE)) total -= 15000;
 	if (FLAG(o_ptr, TR_LUCK_10)) total += 3000;
 	if (FLAG(o_ptr, TR_MUTATE)) total += 500;
-	if (FLAG(o_ptr, TR_PATRON)) total += 1500;
+	if (FLAG(o_ptr, TR_PATRON)) total += 500;
 	if (FLAG(o_ptr, TR_STRANGE_LUCK)) total += 2000;
 	if (FLAG(o_ptr, TR_PASS_WALL)) total += 25000;
 	if (FLAG(o_ptr, TR_GHOUL_TOUCH)) total += 750;
