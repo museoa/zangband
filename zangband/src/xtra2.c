@@ -2197,7 +2197,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 							screen_save();
 
 							/* Recall on screen */
-							screen_roff(m_ptr->r_idx, 0);
+							screen_roff_mon(m_ptr->r_idx, 0);
 
 							/* Hack -- Complete the prompt (again) */
 							roff("  [r,%s]", info);

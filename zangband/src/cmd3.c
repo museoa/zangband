@@ -1361,7 +1361,7 @@ void do_cmd_query_symbol(void)
 		handle_stuff();
 
 		/* Hack -- Begin the prompt */
-		roff_top(r_idx);
+		roff_mon_top(r_idx);
 
 		/* Hack -- Complete the prompt */
 		roff(" [(r)ecall, ESC]");
@@ -1376,7 +1376,7 @@ void do_cmd_query_symbol(void)
 				screen_save();
 
 				/* Recall on screen */
-				screen_roff(who[i], 0);
+				screen_roff_mon(who[i], 0);
 
 				/* Hack -- Complete the prompt (again) */
 				roff(" [(r)ecall, ESC]");
@@ -1547,7 +1547,7 @@ bool research_mon(void)
 		handle_stuff();
 
 		/* Hack -- Begin the prompt */
-		roff_top(r_idx);
+		roff_mon_top(r_idx);
 
 		/* Hack -- Complete the prompt */
 		roff(" [(r)ecall, ESC, space to continue]");
@@ -1563,7 +1563,7 @@ bool research_mon(void)
 
 				oldkills = r2_ptr->r_tkills;
 				oldwake = r2_ptr->r_wake;
-				screen_roff(who[i], 1);
+				screen_roff_mon(who[i], 1);
 				r2_ptr->r_tkills = oldkills;
 				r2_ptr->r_wake = oldwake;
 				cheat_know = oldcheat;

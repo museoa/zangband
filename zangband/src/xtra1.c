@@ -1376,7 +1376,7 @@ static void fix_monster(void)
 		Term_activate(angband_term[j]);
 
 		/* Display monster race info */
-		if (p_ptr->monster_race_idx) display_roff(p_ptr->monster_race_idx);
+		if (p_ptr->monster_race_idx) display_roff_mon(p_ptr->monster_race_idx);
 
 		/* Fresh */
 		Term_fresh();

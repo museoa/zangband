@@ -99,7 +99,7 @@ static bool know_damage(int r_idx, int i)
  * left edge of the screen, on a cleared line, in which the recall is
  * to take place.  One extra blank line is left after the recall.
  */
-static void roff_aux(int r_idx, int remem)
+static void roff_mon_aux(int r_idx, int remem)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -1460,7 +1460,7 @@ static void roff_aux(int r_idx, int remem)
 /*
  * Hack -- Display the "name" and "attr/chars" of a monster race
  */
-void roff_top(int r_idx)
+void roff_mon_top(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -1521,7 +1521,7 @@ void roff_top(int r_idx)
 /*
  * Hack -- describe the given monster race at the top of the screen
  */
-void screen_roff(int r_idx, int remember)
+void screen_roff_mon(int r_idx, int remember)
 {
 	/* Flush messages */
 	message_flush();
@@ -1530,10 +1530,10 @@ void screen_roff(int r_idx, int remember)
 	clear_row(1);
 
 	/* Recall monster */
-	roff_aux(r_idx, remember);
+	roff_mon_aux(r_idx, remember);
 
 	/* Describe monster */
-	roff_top(r_idx);
+	roff_mon_top(r_idx);
 }
 
 
@@ -1542,7 +1542,7 @@ void screen_roff(int r_idx, int remember)
 /*
  * Hack -- describe the given monster race in the current "term" window
  */
-void display_roff(int r_idx)
+void display_roff_mon(int r_idx)
 {
 	/* Erase the window */
     clear_from(0);
@@ -1551,10 +1551,10 @@ void display_roff(int r_idx)
 	Term_gotoxy(0, 1);
 
 	/* Recall monster */
-	roff_aux(r_idx, 0);
+	roff_mon_aux(r_idx, 0);
 
 	/* Describe monster */
-	roff_top(r_idx);
+	roff_mon_top(r_idx);
 }
 
 
