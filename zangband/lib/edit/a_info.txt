@@ -1760,3 +1760,13 @@ F:CURSED | AUTO_CURSE | INSTA_ART
 D:This cloak looks ordinary, but you have a strange feeling that 
 D:there is something very wrong about it.
 
+N:129:'Luck Blade'
+I:23:17:0
+W:15:25:130:7000
+P:0:4d5:13:14:0
+F:VORPAL | LUCK_10 | BLESSED | FREE_ACT | LITE | INSTA_ART
+# Luck bonus depending on enchantment - normally an extra +13,
+# but it will go down if the luck blade is disenchanted, and up
+# if it is enchanted more.
+L:BONUS:	player.skill.sav = player.skill.sav + (object.to_h + object.to_d) / 2
+D:A sword said to grant incredible luck to its wearer.
