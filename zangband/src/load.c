@@ -1363,10 +1363,6 @@ static errr rd_inventory(void)
 	/* No weight */
 	p_ptr->total_weight = 0;
 
-	/* No items */
-	p_ptr->inven_cnt = 0;
-	p_ptr->equip_cnt = 0;
-
 	/* Read until done */
 	while (1)
 	{
@@ -1400,9 +1396,6 @@ static errr rd_inventory(void)
 
 				/* Add the weight */
 				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
-
-				/* One more item */
-				p_ptr->equip_cnt++;
 			}
 		}
 		else
@@ -1415,9 +1408,6 @@ static errr rd_inventory(void)
 
 				/* Add the weight */
 				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
-
-				/* One more item */
-				p_ptr->equip_cnt++;
 			}
 
 			/* Carry inventory */
@@ -1428,9 +1418,6 @@ static errr rd_inventory(void)
 
 				/* Add the weight */
 				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
-
-				/* One more item */
-				p_ptr->inven_cnt++;
 			}
 		}
 	}
@@ -2339,7 +2326,7 @@ static errr rd_dungeon(void)
 	}
 	else
 	{
-		/* Delete this code when inven_cnt and total_weight are removed */
+		/* Delete this code when total_weight is removed */
 
 		object_type *o_ptr;
 
@@ -2348,9 +2335,6 @@ static errr rd_dungeon(void)
 		{
 			/* Add the weight */
 			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
-
-			/* One more item */
-			p_ptr->inven_cnt++;
 		}
 		OBJ_ITT_END;
 	}

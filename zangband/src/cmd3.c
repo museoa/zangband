@@ -224,9 +224,6 @@ void do_cmd_wield(void)
 	/* Increase the weight */
 	p_ptr->total_weight += q_ptr->weight;
 
-	/* Increment the equip counter by hand */
-	p_ptr->equip_cnt++;
-
 	/* Where is the item now */
 	if (slot == EQUIP_WIELD)
 	{

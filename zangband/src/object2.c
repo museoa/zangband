@@ -5140,9 +5140,6 @@ void item_optimize(object_type *o_ptr)
 	/* The item is being wielded */
 	if (!list)
 	{
-		/* One less item */
-		p_ptr->equip_cnt--;
-
 		/* Erase the empty slot */
 		object_wipe(o_ptr);
 
@@ -5167,9 +5164,6 @@ void item_optimize(object_type *o_ptr)
 		/* The item is in the pack */
 		if (list == &p_ptr->inventory)
 		{
-			/* One less item */
-			p_ptr->inven_cnt--;
-
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
 		}
@@ -5187,7 +5181,7 @@ bool inven_carry_okay(const object_type *o_ptr)
 	object_type *j_ptr;
 
 	/* Empty slot? */
-	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
+	if (get_list_length(p_ptr->inventory) < INVEN_PACK) return (TRUE);
 
 	/* Similar slot? */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
@@ -5342,7 +5336,7 @@ object_type *inven_carry(object_type *o_ptr)
 	OBJ_ITT_END;
 
 	/* Paranoia */
-	if (p_ptr->inven_cnt > INVEN_PACK) return (NULL);
+	if (get_list_length(p_ptr->inventory) > INVEN_PACK) return (NULL);
 
 	/* Now held */
 	o_ptr->held = TRUE;
@@ -5358,9 +5352,6 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* Increase the weight */
 	p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
-
-	/* Count the items */
-	p_ptr->inven_cnt++;
 
 	/* Add the item to the pack */
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
@@ -5555,9 +5546,6 @@ void combine_pack(void)
 
 				/* Add together the item counts */
 				object_absorb(o_ptr, j_ptr);
-
-				/* One object is gone */
-				p_ptr->inven_cnt--;
 
 				/* Delete the item */
 				delete_held_object(&p_ptr->inventory, j_ptr);

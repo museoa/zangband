@@ -2816,7 +2816,7 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, vptr nothing)
 	msg_print("You fumble with your pack!");
 
 	/* Get the item to drop */
-	item = randint1(p_ptr->inven_cnt);
+	item = randint1(get_list_length(p_ptr->inventory));
 
 	o_ptr = get_list_item(p_ptr->inventory, item);
 

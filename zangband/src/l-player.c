@@ -2831,46 +2831,6 @@ static int toluaI_set_player_player_type_total_weight(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: inven_cnt of class  player_type */
-static int toluaI_get_player_player_type_inven_cnt(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->inven_cnt);
- return 1;
-}
-
-/* set function: inven_cnt of class  player_type */
-static int toluaI_set_player_player_type_inven_cnt(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
-   TOLUA_ERR_ASSIGN;
-  self->inven_cnt = ((s16b)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
-/* get function: equip_cnt of class  player_type */
-static int toluaI_get_player_player_type_equip_cnt(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->equip_cnt);
- return 1;
-}
-
-/* set function: equip_cnt of class  player_type */
-static int toluaI_set_player_player_type_equip_cnt(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
-   TOLUA_ERR_ASSIGN;
-  self->equip_cnt = ((s16b)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
 /* get function: target_set of class  player_type */
 static int toluaI_get_player_player_type_target_set(lua_State* tolua_S)
 {
@@ -6374,8 +6334,6 @@ int tolua_player_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"player_type","create_down_stair",toluaI_get_player_player_type_create_down_stair,toluaI_set_player_player_type_create_down_stair);
  tolua_tablevar(tolua_S,"player_type","align",toluaI_get_player_player_type_align,toluaI_set_player_player_type_align);
  tolua_tablevar(tolua_S,"player_type","total_weight",toluaI_get_player_player_type_total_weight,toluaI_set_player_player_type_total_weight);
- tolua_tablevar(tolua_S,"player_type","inven_cnt",toluaI_get_player_player_type_inven_cnt,toluaI_set_player_player_type_inven_cnt);
- tolua_tablevar(tolua_S,"player_type","equip_cnt",toluaI_get_player_player_type_equip_cnt,toluaI_set_player_player_type_equip_cnt);
  tolua_tablevar(tolua_S,"player_type","target_set",toluaI_get_player_player_type_target_set,toluaI_set_player_player_type_target_set);
  tolua_tablevar(tolua_S,"player_type","target_who",toluaI_get_player_player_type_target_who,toluaI_set_player_player_type_target_who);
  tolua_tablevar(tolua_S,"player_type","target_row",toluaI_get_player_player_type_target_row,toluaI_set_player_player_type_target_row);

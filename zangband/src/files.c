@@ -2997,16 +2997,14 @@ errr file_character(cptr name, bool full)
 
 
 	/* Dump the equipment */
-	if (p_ptr->equip_cnt)
+	fprintf(fff, "  [Character Equipment]\n\n");
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		fprintf(fff, "  [Character Equipment]\n\n");
-		for (i = 0; i < EQUIP_MAX; i++)
-		{
-			object_desc(o_name, &p_ptr->equipment[i], TRUE, 3, 256);
-			fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
-		}
-		fprintf(fff, "\n\n");
+		object_desc(o_name, &p_ptr->equipment[i], TRUE, 3, 256);
+		fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
 	}
+	fprintf(fff, "\n\n");
+	
 
 	/* Dump the inventory */
 	fprintf(fff, "  [Character Inventory]\n\n");
@@ -4223,39 +4221,34 @@ static void show_info(void)
 	if (inkey() == ESCAPE) return;
 
 
-	/* Show equipment and inventory */
-	if (p_ptr->equip_cnt)
-	{
-		Term_clear();
+	/* Show equipment */
+	Term_clear();
 
-		/* Equipment -- if any */
-		item_tester_full = TRUE;
-		show_equip();
+	/* Equipment -- if any */
+	item_tester_full = TRUE;
+	show_equip();
 
-		prt("You are using: -more-", 0, 0);
+	prt("You are using: -more-", 0, 0);
 
-		/* Flush keys */
-		flush();
+	/* Flush keys */
+	flush();
 
-		if (inkey() == ESCAPE) return;
-	}
+	if (inkey() == ESCAPE) return;
+	
 
+	/* Show inventory */
+	Term_clear();
 
-	if (p_ptr->inven_cnt)
-	{
-		Term_clear();
+	/* Inventory -- if any */
+	item_tester_full = TRUE;
+	show_list(p_ptr->inventory);
 
-		/* Inventory -- if any */
-		item_tester_full = TRUE;
-		show_list(p_ptr->inventory);
+	prt("You are carrying: -more-", 0, 0);
 
-		prt("You are carrying: -more-", 0, 0);
+	/* Flush keys */
+	flush();
 
-		/* Flush keys */
-		flush();
-
-		if (inkey() == ESCAPE) return;
-	}
+	if (inkey() == ESCAPE) return;
 
 	for (i = 1; i < z_info->wp_max; i++)
 	{
