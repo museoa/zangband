@@ -62,7 +62,7 @@ objs-y += $(ANGOBJS) $(LUAWOBJS) $(ZUTILOBJS) $(BORGOBJS)
 ## Extra object files depending on the ports
 ##
 
-objs-$(amiga) += sound-ami.o
+objs-$(amiga) += src/sound-ami.o
 
 objs-$(cygwin) += src/angband.res src/readdib.o
 ifeq ($(cygwin),y)
@@ -70,13 +70,13 @@ src/angband.res : src/angband.rc
 	windres $< -O coff -o $@
 endif
 
-objs-$(lcc) += angband.res readdib.o
+objs-$(lcc) += src/angband.res src/readdib.o
 ifeq ($(lcc),y)
 src/angband.res : src/angband.rc
 	$(LCC_PATH)\bin\lrc.exe -I$(LCC_PATH)\include $^
 endif
 
-objs-$(emx) += main-epm.o zangband.a
+objs-$(emx) += src/main-epm.o src/zangband.a
 
 ifeq ($(emx),y)
 
@@ -90,7 +90,7 @@ AR := ar
 src/aclient.exe: src/main-emx.c
 	$(CC) $(CFLAGS) -D__EMX__CLIENT__ -o $@ $< $(LDFLAGS)
 
-src/main-epm.o: main-emx.c
+src/main-epm.o: src/main-emx.c
 	$(CC) $(CFLAGS) -DEMXPM -c -o $@ $<
 
 src/zangband.a: $(OBJS)
@@ -102,7 +102,7 @@ endif
 ## Low-level Headers
 ##
 
-HDRS := $(addprefix src/,\
+HDRS := makefile $(addprefix src/,\
 	autoconf.h h-basic.h h-define.h h-type.h h-system.h h-config.h)
 
 ##
