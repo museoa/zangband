@@ -2270,23 +2270,23 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Forget feature */
 			feat = FEAT_NONE;
 		}
-#if 0
 
 		/* Terrain feature if needed */
 		if (boring || (feat > FEAT_INVIS))
 		{
 			cptr name;
-
+			
+			#if 0
 			/* Hack -- special handling for building doors */
 			if ((feat >= FEAT_BLDG_HEAD) && (feat <= FEAT_BLDG_TAIL))
 			{
 				name = building[feat - FEAT_BLDG_HEAD].name;
 			}
-			else
-			{
-				name = f_name + f_info[feat].name;
-			}
+			#endif
+			
+			name = f_name + f_info[feat].name;
 
+			#if 0
 			/* Hack -- special handling for quest entrances */
 			if (feat == FEAT_QUEST_ENTER)
 			{
@@ -2304,6 +2304,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				/* Reset the old quest number */
 				p_ptr->inside_quest = old_quest;
 			}
+			#endif
 
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";
@@ -2321,14 +2322,9 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			}
 
 			/* Hack -- special introduction for store & building doors -KMW- */
-			if (((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)) ||
-			    ((feat >= FEAT_BLDG_HEAD) && (feat <= FEAT_BLDG_TAIL)))
+			if (((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)))
 			{
 				s3 = "the entrance to the ";
-			}
-			else if (feat == FEAT_QUEST_ENTER)
-			{
-				s3 = "the quest-entrance to the ";
 			}
 			else if ((feat == FEAT_FLOOR) || (feat == FEAT_DIRT))
 			{
@@ -2352,8 +2348,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Always stop at "normal" keys */
 			if ((query != '\r') && (query != '\n') && (query != ' ')) break;
 		}
-
-#endif
 
 		/* Stop on everything but "return" */
 		if ((query != '\r') && (query != '\n')) break;
