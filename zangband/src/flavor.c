@@ -848,6 +848,8 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
+	monster_race *r_ptr = &r_info[o_ptr->pval];
+
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
@@ -882,6 +884,43 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 		}
 
+		/* Figurines/Statues */
+		case TV_FIGURINE:
+		case TV_STATUE:
+		{
+			cptr t = r_name + r_ptr->name;
+
+			if (!(r_ptr->flags1 & RF1_UNIQUE))
+			{
+				sprintf(tmp_val2, "%s%s", (is_a_vowel(*t) ? "an " : "a "), t);
+
+				modstr = tmp_val2;
+			}
+			else
+			{
+				modstr = t;
+			}
+
+			break;
+		}
+
+		/* Corpses */
+		case TV_CORPSE:
+		{
+			modstr = r_name + r_ptr->name;
+
+			if (r_ptr->flags1 & RF1_UNIQUE)
+			{
+				sprintf(tmp_val2, "%s %s", basenm, "of #");
+			}
+			else
+			{
+				sprintf(tmp_val2, "& # %s", basenm + 2);
+			}
+
+			basenm = tmp_val2;
+			break;
+		}
 
 		/* Missiles/ Bows/ Weapons */
 		case TV_SHOT:
@@ -1155,6 +1194,12 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, "The ");
 		}
 
+		/* Unique corpses are unique */
+		else if ((o_ptr->tval == TV_CORPSE) && (r_ptr->flags1 & RF1_UNIQUE))
+		{
+			t = object_desc_str(t, "The ");
+		}
+
 		/* A single one, with a vowel in the modifier */
 		else if ((*s == '#') && (is_a_vowel(modstr[0])))
 		{
@@ -1316,7 +1361,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* No more details wanted */
 	if (mode < 1) goto copyback;
-
 
 	/* Hack -- Chests must be described in detail */
 	if (o_ptr->tval == TV_CHEST)

@@ -279,6 +279,12 @@ static void sense_inventory(void)
 				okay = TRUE;
 				break;
 			}
+			case TV_FIGURINE:
+			{
+				if (!heavy)
+					okay = TRUE;
+				break;
+			}
 		}
 
 		/* Skip non-sense machines */

@@ -808,6 +808,7 @@ static s32b object_value_base(object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
+
 		/* Un-aware Food */
 		case TV_FOOD: return (5L);
 
@@ -831,6 +832,10 @@ static s32b object_value_base(object_type *o_ptr)
 
 		/* Un-aware Amulets */
 		case TV_AMULET: return (45L);
+
+		/* Figurines, relative to monster level */
+		case TV_FIGURINE:
+			return ((r_info[o_ptr->pval].level) * 50L);
 	}
 
 	/* Paranoia -- Oops */
@@ -1266,6 +1271,13 @@ s32b object_value_real(object_type *o_ptr)
 			/* Done */
 			break;
 		}
+
+		/* Figurines, relative to monster level */
+		case TV_FIGURINE:
+		{
+			value = ((r_info[o_ptr->pval].level) * 50L);
+			break;
+		}
 	}
 
 	/* Return the value */
@@ -1408,11 +1420,24 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Analyze the items */
 	switch (o_ptr->tval)
 	{
-		/* Chests */
+		/* Chests and Statues*/
 		case TV_CHEST:
+		case TV_STATUE:
 		{
 			/* Never okay */
 			return (0);
+		}
+
+		/* Figurines and Corpses*/
+		case TV_FIGURINE:
+		case TV_CORPSE:
+		{
+			/* Same monster */
+
+			if (o_ptr->pval != j_ptr->pval) return (0);
+
+			/* Assume okay */
+			break;
 		}
 
 		/* Food and Potions and Scrolls */
@@ -3478,6 +3503,88 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 			break;
 		}
 
+		case TV_FIGURINE:
+		{
+
+			int tester = 1;
+			int depth_check = 0;
+			int attempts = 256;
+	
+			/* Pick a random non-unique monster race */
+
+			do {
+				tester = randint(max_r_idx-1);			
+				if (dun_level < r_info[tester].level)
+					depth_check = r_info[tester].level - dun_level;
+				else 
+					depth_check = 1;
+
+			   } while (((r_info[tester].flags1 & RF1_UNIQUE)
+					 || (randint(depth_check)!=1))					 
+					 && attempts--);
+
+			/* Some figurines are cursed */
+			if (randint(6)==1) 
+			{
+				o_ptr->ident |= IDENT_CURSED;
+				if (cheat_peek)
+					msg_print("Cursed");
+			}
+			
+			if (cheat_peek)
+				msg_format("Figurine, depth +%d", depth_check-1);
+
+			o_ptr->pval = tester;
+
+			break;
+		}
+
+		case TV_CORPSE:
+		{
+
+			int tester = 1;
+			int depth_check = 0;
+			int attempts = 256;
+			u32b to_match = 0;
+
+			if (o_ptr->sval == SV_SKELETON)
+				to_match = RF9_DROP_SKELETON;
+			else
+				to_match = RF9_DROP_CORPSE;
+			
+			/* Pick a random non-unique monster race */
+
+			do {
+				tester = randint(max_r_idx-1);			
+				if (dun_level < r_info[tester].level)
+					depth_check = r_info[tester].level - dun_level;
+				else 
+					depth_check = 1;
+
+			   } while (((r_info[tester].flags1 & RF1_UNIQUE)
+					 || (randint(depth_check)!=1)
+					 || !(r_info[tester].flags9 & to_match))
+					 && attempts--);
+
+			if (cheat_peek)
+				msg_format("Corpse, depth +%d", depth_check-1);
+
+			o_ptr->pval = tester;
+
+			break;
+		}
+
+		case TV_STATUE:
+		{
+
+			o_ptr->pval = randint(max_r_idx-1);
+			
+			if (cheat_peek)
+				msg_print("A Statue");
+
+			break;
+		}
+
 		case TV_CHEST:
 		{
 			byte obj_level = get_object_level(o_ptr);
@@ -3530,8 +3637,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  */
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 {
-	int i, rolls, f1, f2, power;
 
+	int i, rolls, f1, f2, power;
 
 	/* Maximum "level" for various things */
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;

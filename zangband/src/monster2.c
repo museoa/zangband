@@ -2396,6 +2396,40 @@ bool summon_specific(int y1, int x1, int lev, int type, bool group, bool friendl
 	return (TRUE);
 }
 
+/* A "dangerous" function, creates a pet of the specified type */
+bool summon_named_creature (int oy, int ox, int r_idx, bool slp, bool group_ok, bool pet)
+{
+	int i, x, y;
+	bool success = FALSE;
+
+	/* Paranoia */
+	/* if (!r_idx) return; */
+
+	/* Prevent illegal monsters */
+	if (r_idx >= max_r_idx) return FALSE;
+
+	/* Try 10 times */
+	for (i = 0; i < 10; i++)
+	{
+		int d = 1;
+
+		/* Pick a location */
+		scatter(&y, &x, oy, ox, d, 0);
+
+		/* Require empty grids */
+		if (!cave_empty_bold(y, x)) continue;
+
+		/* Place it (allow groups) */
+		if (place_monster_aux(y, x, r_idx, slp, group_ok, FALSE, pet)) 
+		{	
+			success = TRUE;
+			break;
+		}
+	}
+
+	return success;
+}
+
 
 /*
  * Let the given monster attempt to reproduce.

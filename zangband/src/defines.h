@@ -1374,11 +1374,14 @@
  * only armor and weapons and a few other items use any of these flags.
  */
 
-#define TV_SKELETON      1      /* Skeletons ('s') */
+#define TV_SKELETON      1      /* Skeletons ('s'), not specified */
 #define TV_BOTTLE        2      /* Empty bottles ('!') */
 #define TV_JUNK          3      /* Sticks, Pottery, etc ('~') */
 #define TV_SPIKE         5      /* Spikes ('~') */
 #define TV_CHEST         7      /* Chests ('~') */
+#define TV_FIGURINE      8      /* Magical figurines */
+#define TV_STATUE        9      /* Statue, what a silly object... */
+#define TV_CORPSE		10      /* Corpses and Skeletons, specific */
 #define TV_SHOT         16      /* Ammo for slings */
 #define TV_ARROW        17      /* Ammo for bows */
 #define TV_BOLT         18      /* Ammo for x-bows */
@@ -1415,7 +1418,9 @@
 #define TV_ARCANE_BOOK  96
 #define TV_GOLD         100     /* Gold can only be picked up by players */
 
-
+/* The "sval" codes for TV_CORPSE */
+#define SV_SKELETON 				0
+#define SV_CORPSE					1
 
 /* The "sval" codes for TV_SHOT/TV_ARROW/TV_BOLT */
 #define SV_AMMO_LIGHT                    0	/* pebbles */
@@ -2819,8 +2824,14 @@
 #define RF8_XXX8X08             0x00000100
 #define RF8_WILD_MOUNTAIN       0x00000200
 #define RF8_WILD_GRASS          0x00000400
-
 #define RF8_WILD_TOO            0x80000000
+
+/*
+ * Monster drop info
+ */
+
+#define RF9_DROP_CORPSE 	  0x00000001
+#define RF9_DROP_SKELETON       0x00000002
 
 /*
  * Hack -- choose "intelligent" spells when desperate

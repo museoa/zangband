@@ -1038,6 +1038,11 @@ bool identify_fully_aux(object_type *o_ptr)
 		info[i++] = "...if it is being worn.";
 	}
 
+	/* Figurines, a hack */
+	if (o_ptr->tval == TV_FIGURINE)
+	{
+		info[i++] = "It will transform into a pet when thrown.";
+	}
 
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE)

@@ -2964,8 +2964,11 @@ static void store_sell(void)
 			/* Describe the result (in message buffer) */
 			msg_format("You sold %s for %ld gold.", o_name, (long)price);
 
-			/* Analyze the prices (and comment verbally) */
+			if (!((o_ptr->tval == TV_FIGURINE) && (value > 0)))
+			{
+			 /* Analyze the prices (and comment verbally) unless a figurine*/
 			purchase_analyze(price, value, dummy);
+			}
 
 			/*
 			 * Hack -- Allocate charges between those wands or rods sold

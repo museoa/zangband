@@ -452,6 +452,56 @@ void monster_death(int m_idx)
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
 
+	/* Drop a dead corpse? */
+	if ((randint(r_ptr->flags1 & RF1_UNIQUE?1:4)==1) 
+			&& ((r_ptr->flags9 & RF9_DROP_CORPSE) || 
+				(r_ptr->flags9 & RF9_DROP_SKELETON)))
+	{
+
+		/* Assume skeleton */
+		bool corpse = FALSE;
+
+		/* We cannot drop a skeleton? Note, if we are in this check,
+		we *know* we can drop at least a corpse or a skeleton */
+		if (!(r_ptr->flags9 & RF9_DROP_SKELETON))
+			corpse = TRUE;
+
+		/* Else, a corpse is more likely unless we did a "lot" of damage */
+		else if (r_ptr->flags9 & RF9_DROP_CORPSE)
+		{
+			/* Lots of damage in one blow */
+			if ((0-((m_ptr->maxhp)/4))>m_ptr->hp)
+			{
+				if (randint(5)==1)
+					corpse = TRUE;		
+			}
+			else
+			{
+				if (randint(5)!=1)
+					corpse = TRUE;
+			}
+		}
+
+		/* Get local object */
+		q_ptr = &forge;				
+
+		/* Prepare to make a Blade of Chaos */
+		object_prep(q_ptr, lookup_kind(TV_CORPSE, (corpse?SV_CORPSE:SV_SKELETON)));
+
+		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE);
+
+		q_ptr->pval = m_ptr->r_idx;
+
+#ifdef USE_SCRIPT
+		q_ptr->python = object_create_callback(q_ptr);
+#endif /* USE_SCRIPT */
+
+		/* Drop it in the dungeon */
+		(void)drop_near(q_ptr, -1, y, x);
+	}
+
+
+
 	/* Drop objects being carried */
 	monster_drop_carried_objects(m_ptr);
 

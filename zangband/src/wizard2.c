@@ -539,6 +539,9 @@ static tval_desc tvals[] =
 	{ TV_SPIKE,             "Spikes"               },
 	{ TV_DIGGING,           "Digger"               },
 	{ TV_CHEST,             "Chest"                },
+	{ TV_FIGURINE,          "Magical Figurine"     },
+	{ TV_STATUE,            "Statue"               },
+	{ TV_CORPSE,		"Corpse"		     },
 	{ TV_FOOD,              "Food"                 },
 	{ TV_FLASK,             "Flask"                },
 	{ TV_JUNK,              "Junk"                 },
@@ -1427,28 +1430,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
  */
 static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
-	int i, x, y;
-
-	/* Paranoia */
-	/* if (!r_idx) return; */
-
-	/* Prevent illegal monsters */
-	if (r_idx >= max_r_idx) return;
-
-	/* Try 10 times */
-	for (i = 0; i < 10; i++)
-	{
-		int d = 1;
-
-		/* Pick a location */
-		scatter(&y, &x, py, px, d, 0);
-
-		/* Require empty grids */
-		if (!cave_empty_bold(y, x)) continue;
-
-		/* Place it (allow groups) */
-		if (place_monster_aux(y, x, r_idx, slp, TRUE, FALSE, TRUE)) break;
-	}
+	(void) summon_named_creature(py, px, r_idx, slp, TRUE, TRUE);
 }
 
 

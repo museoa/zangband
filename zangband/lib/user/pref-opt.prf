@@ -11,7 +11,7 @@
 
 ##### User-Interface #####
 
-X:rogue_like_commands
+Y:rogue_like_commands
 Y:quick_messages
 Y:other_query_flag
 Y:carry_query_flag
@@ -19,8 +19,8 @@ X:use_old_target
 Y:always_pickup
 Y:always_repeat
 X:depth_in_feet
-X:stack_force_notes
-X:stack_force_costs
+Y:stack_force_notes
+Y:stack_force_costs
 Y:show_labels
 Y:show_weights
 X:show_inven_graph
@@ -48,7 +48,7 @@ X:alert_failure
 
 ##### Game-Play #####
 
-X:auto_haggle
+Y:auto_haggle
 X:auto_scum
 Y:stack_allow_items
 Y:stack_allow_wands
@@ -58,9 +58,9 @@ Y:view_perma_grids
 X:view_torch_grids
 X:dungeon_align
 Y:dungeon_stair
-X:flow_by_sound
-X:flow_by_smell
-X:smart_learn
+Y:flow_by_sound
+Y:flow_by_smell
+Y:smart_learn
 X:smart_cheat
 
 
@@ -95,9 +95,9 @@ Y:empty_levels
 X:player_symbols
 Y:equippy_chars
 X:skip_mutations
-X:plain_descriptions
+Y:plain_descriptions
 X:stupid_monsters
-X:auto_destroy
+Y:auto_destroy
 Y:confirm_wear
 X:confirm_stairs
 X:disturb_pets
@@ -105,7 +105,7 @@ X:easy_open
 X:easy_disarm
 X:easy_floor
 X:use_command
-X:center_player
+Y:center_player
 X:avoid_center
 
 
@@ -124,7 +124,7 @@ Y:autoroller
 X:ironman_shops
 X:ironman_small_levels
 X:ironman_downward
-X:ironman_autoscum
+Y:ironman_autoscum
 X:ironman_hard_quests
 X:ironman_empty_levels
 X:ironman_rooms
@@ -135,7 +135,7 @@ X:ironman_nightmare
 
 X:munchkin_mindcraft
 X:munchkin_death
-X:munchkin_rings
+Y:munchkin_rings
 
 
 ##### Stacking #####

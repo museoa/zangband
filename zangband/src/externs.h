@@ -657,6 +657,7 @@ extern bool place_monster(int y, int x, bool slp, bool grp);
 extern bool alloc_horde(int y, int x);
 extern bool alloc_monster(int dis, bool slp);
 extern bool summon_specific(int y1, int x1, int lev, int type, bool group, bool friendly, bool pet);
+extern bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool group_ok, bool pet);
 extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
 extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pet);

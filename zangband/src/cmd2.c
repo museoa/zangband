@@ -3178,6 +3178,18 @@ void do_cmd_throw_aux(int mult)
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(q_ptr) : 0);
 
+	/* Figurines transform */
+	if ((q_ptr->tval == TV_FIGURINE) && !(p_ptr->inside_arena))
+	{
+		j = 100;
+
+		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE, !(q_ptr->ident & IDENT_CURSED))))
+			msg_print("The Figurine writhes and then shatters.");
+		else if (q_ptr->ident & IDENT_CURSED)
+			msg_print("You have a bad feeling about this.");
+	}
+
+
 	/* Potions smash open */
 	if (object_is_potion(q_ptr))
 	{
