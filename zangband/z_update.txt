@@ -153,7 +153,11 @@ Zangband 2.7.4
 - Improved the error messages given when lua scripts fail.
 - Fix bug in message display when printing strings with embedded
   carriage returns.
-
+- Fix magic mapping to work like it used to.
+- Fix bug causing dropped wands to not remember used charges
+  properly when recombined.
+- Fix out of bounds problem with monster lights when teleporting
+  in the wilderness.
 
 Zangband 2.7.3:
 - Added many new object flags to describe new behaviour.
