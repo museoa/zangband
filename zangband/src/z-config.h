@@ -170,7 +170,7 @@
 /*
  * OPTION: Hack -- Compile in support for "Borg mode"
  */
-/* #define ALLOW_BORG  This is turned off because of the object changes */
+#define ALLOW_BORG
 
 #ifdef USE_DEBUG
 
@@ -562,9 +562,10 @@
 /* #define PILLAR_TUNNELS */
 
 /*
- * Turn on the overhead map support for those ports that need it
+ * Turn on the overhead map support for the borg
  */
 #ifdef ALLOW_BORG
 #define TERM_USE_MAP
 #define TERM_CAVE_MAP
+#define TERM_USE_LIST
 #endif /* ALLOW_BORG */

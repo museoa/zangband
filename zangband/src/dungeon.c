@@ -3557,6 +3557,13 @@ void play_game(bool new_game)
 	/* Window stuff */
 	window_stuff();
 
+	/* Initialise inventory and equipment info for ports */
+#ifdef TERM_USE_LIST
+	Term_write_list(p_ptr->inventory, LIST_INVEN);
+	Term_write_equipment();
+#endif /* TERM_USE_LIST */
+
+
 	/* Process */
 	while (TRUE)
 	{
