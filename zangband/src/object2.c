@@ -5011,7 +5011,7 @@ object_type *inven_takeoff(object_type *o_ptr)
 	p_ptr->redraw |= (PR_EQUIPPY);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
+	p_ptr->window |= (PW_PLAYER | PW_EQUIP);
 
 	/* Return the item */
 	return (q_ptr);
