@@ -920,7 +920,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 	s16b this_o_idx, next_o_idx = 0;
 
 	bool obvious = FALSE;
-	bool known = player_has_los_grid(c_ptr);
+	bool known = player_can_see_bold(y, x);
 
 	u32b f1, f2, f3;
 
