@@ -562,6 +562,7 @@ static bool borg_think(void)
 		}
 		borg_do_star_id = FALSE;
 	}
+
 	/* If king, maybe retire. */
 	if (borg_skill[BI_KING])
 	{
@@ -848,10 +849,13 @@ static bool borg_think(void)
 
 	/* Examine the screen */
 	borg_update();
+
 	/* Extract some "hidden" variables */
 	borg_hidden();
+
 	/* Examine the equipment/inventory */
 	borg_notice(TRUE);
+
 	/* Evaluate the current world */
 	my_power = borg_power();
 

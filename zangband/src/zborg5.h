@@ -30,6 +30,10 @@ extern map_info_hook_type old_info_hook;
 extern void borg_map_info(map_block *mb_ptr, term_map *map);
 
 
+#define WANK_TAKE	1
+#define WANK_KILL	2
+
+
 /*
  * Hack -- monster/object tracking grids
  */
@@ -38,14 +42,14 @@ typedef struct borg_wank borg_wank;
 
 struct borg_wank
 {
+	/* Linked list of wanks */
+	u16b next_wank;
+
+	/* Location */
 	byte x;
 	byte y;
-
-	u16b object;
-	u16b monster;
-
-	bool is_take;
-	bool is_kill;
+	
+	byte type;
 };
 
 

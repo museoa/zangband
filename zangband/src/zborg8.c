@@ -2762,6 +2762,7 @@ bool borg_think_dungeon(void)
 		do_cmd_redraw();
 		my_need_redraw = FALSE;
 	}
+	
 	/* Prevent clock overflow */
 	if (borg_t - borg_began >= 10000)
 	{
@@ -3032,9 +3033,9 @@ bool borg_think_dungeon(void)
 		}
 
 	}
+
 	/* Decrease the amount of time not allowed to retreat */
-	if (borg_no_retreat > 0)
-		borg_no_retreat--;
+	if (borg_no_retreat > 0) borg_no_retreat--;
 
 	/*** Important goals ***/
 
@@ -3063,7 +3064,7 @@ bool borg_think_dungeon(void)
 		if (borg_flow_old(GOAL_TOWN)) return (TRUE);
 
 		/* Try to get to town location (town gate for now) */
-		if (map_loc(c_x, c_y)->terrain == FEAT_MORE
+		if ((map_loc(c_x, c_y)->terrain == FEAT_MORE)
 			&& borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 		/* shop for something that will help us */

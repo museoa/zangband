@@ -14717,6 +14717,7 @@ bool borg_flow_take(bool viewable, int nearness)
 		{
 			/* Check the distance of this 'take' to the stair */
 			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
+			
 			/* skip far away takes while I am close to stair */
 			if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
 				j >= borg_skill[BI_CLEVEL] * 5 + 9) continue;

@@ -2662,7 +2662,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		/* Save some information */
 		wank->x = x;
 		wank->y = y;
-		wank->is_kill = TRUE;
+		wank->type = WANK_KILL;
 	}
 
 	/*
@@ -2682,7 +2682,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		/* Save some information */
 		wank->x = x;
 		wank->y = y;
-		wank->is_take = TRUE;
+		wank->type = WANK_TAKE;
 	}
 
 	/* Analyze terrain */
@@ -3760,7 +3760,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track stationary monsters */
-		if (wank->is_kill && observe_kill_move(wank->y, wank->x, 0, FALSE))
+		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 0, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3772,7 +3772,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track stationary objects */
-		if (wank->is_take && observe_take_move(wank->y, wank->x, 0))
+		if ((wank->type == WANK_TAKE) && observe_take_move(wank->y, wank->x, 0))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3784,7 +3784,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if (wank->is_kill && observe_kill_move(wank->y, wank->x, 1, FALSE))
+		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 1, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3796,7 +3796,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if (wank->is_kill && observe_kill_move(wank->y, wank->x, 2, FALSE))
+		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 2, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3808,7 +3808,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if (wank->is_kill && observe_kill_move(wank->y, wank->x, 3, FALSE))
+		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 3, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3820,7 +3820,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if (wank->is_kill && observe_kill_move(wank->y, wank->x, 3, TRUE))
+		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 3, TRUE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3832,7 +3832,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track new objects */
-		if (wank->is_take && observe_take_diff(wank->y, wank->x))
+		if ((wank->type == WANK_TAKE) && observe_take_diff(wank->y, wank->x))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3844,7 +3844,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track new monsters */
-		if (wank->is_kill && observe_kill_diff(wank->y, wank->x))
+		if ((wank->type == WANK_KILL) && observe_kill_diff(wank->y, wank->x))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -4021,7 +4021,6 @@ void borg_update(void)
 		/* Final message */
 		borg_note(format("# %s (%d)", msg, borg_msg_use[i]));
 	}
-
 
 	/*** Notice missing monsters ***/
 	/* Scan the monster list */
