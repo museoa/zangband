@@ -940,9 +940,9 @@ static bool cast_nature_spell(int spell)
 			(void)charm_animal(dir, plev);
 			break;
 		case 6:				/* Resist Environment */
-			(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
-			(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
-			(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(20, 40));
+			(void)inc_oppose_cold(rand_range(20, 40));
+			(void)inc_oppose_fire(rand_range(20, 40));
+			(void)inc_oppose_elec(rand_range(20, 40));
 			break;
 		case 7:				/* Cure Wounds + Poison */
 			(void)set_cut(0);
@@ -1001,11 +1001,11 @@ static bool cast_nature_spell(int spell)
 			(void)inc_shield(rand_range(30, 50));
 			break;
 		case 19:				/* Resistance True */
-			(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
-			(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(20, 40));
-			(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
-			(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
-			(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(20, 40));
+			(void)inc_oppose_acid(rand_range(20, 40));
+			(void)inc_oppose_elec(rand_range(20, 40));
+			(void)inc_oppose_fire(rand_range(20, 40));
+			(void)inc_oppose_cold(rand_range(20, 40));
+			(void)inc_oppose_pois(rand_range(20, 40));
 			break;
 		case 20:				/* Animal Friendship */
 			(void)charm_animals(plev * 2);
@@ -1434,7 +1434,7 @@ static bool cast_death_spell(int spell)
 			(void)sleep_monster(dir);
 			break;
 		case 5:				/* Resist Poison */
-			(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(20, 40));
+			(void)inc_oppose_pois(rand_range(20, 40));
 			break;
 		case 6:				/* Horrify */
 			if (!get_aim_dir(&dir)) return FALSE;
@@ -2539,16 +2539,16 @@ static bool cast_arcane_spell(int spell)
 			(void)clear_poisoned();
 			break;
 		case 14:				/* Resist Cold */
-			(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
+			(void)inc_oppose_cold(rand_range(20, 40));
 			break;
 		case 15:				/* Resist Fire */
-			(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
+			(void)inc_oppose_fire(rand_range(20, 40));
 			break;
 		case 16:				/* Resist Lightning */
-			(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(20, 40));
+			(void)inc_oppose_elec(rand_range(20, 40));
 			break;
 		case 17:				/* Resist Acid */
-			(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
+			(void)inc_oppose_acid(rand_range(20, 40));
 			break;
 		case 18:				/* Cure Medium Wounds */
 			(void)hp_player(damroll(4, 8));

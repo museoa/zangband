@@ -1520,11 +1520,11 @@ static void process_world(void)
 	if (p_ptr->tim.shero) (void)inc_shero(-1);
 	if (p_ptr->tim.blessed) (void)inc_blessed(-1);
 	if (p_ptr->tim.shield) (void)inc_shield(-1);
-	if (p_ptr->tim.oppose_acid) (void)set_oppose_acid(p_ptr->tim.oppose_acid - 1);
-	if (p_ptr->tim.oppose_elec) (void)set_oppose_elec(p_ptr->tim.oppose_elec - 1);
-	if (p_ptr->tim.oppose_fire) (void)set_oppose_fire(p_ptr->tim.oppose_fire - 1);
-	if (p_ptr->tim.oppose_cold) (void)set_oppose_cold(p_ptr->tim.oppose_cold - 1);
-	if (p_ptr->tim.oppose_pois) (void)set_oppose_pois(p_ptr->tim.oppose_pois - 1);
+	if (p_ptr->tim.oppose_acid) (void)inc_oppose_acid(-1);
+	if (p_ptr->tim.oppose_elec) (void)inc_oppose_elec(-1);
+	if (p_ptr->tim.oppose_fire) (void)inc_oppose_fire(-1);
+	if (p_ptr->tim.oppose_cold) (void)inc_oppose_cold(-1);
+	if (p_ptr->tim.oppose_pois) (void)inc_oppose_pois(-1);
 
 
 	/*** Poison and Stun and Cut ***/

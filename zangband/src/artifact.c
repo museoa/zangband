@@ -1781,11 +1781,11 @@ bool activate_effect(object_type *o_ptr)
 				(void)inc_shero(rand_range(50, 100));
 				(void)hp_player(30);
 				(void)inc_blessed(rand_range(50, 100));
-				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(50, 100));
-				(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(50, 100));
-				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(50, 100));
-				(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(50, 100));
-				(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(50, 100));
+				(void)inc_oppose_acid(rand_range(50, 100));
+				(void)inc_oppose_elec(rand_range(50, 100));
+				(void)inc_oppose_fire(rand_range(50, 100));
+				(void)inc_oppose_cold(rand_range(50, 100));
+				(void)inc_oppose_pois(rand_range(50, 100));
 				o_ptr->timeout = 100;
 				break;
 			}
@@ -1877,11 +1877,11 @@ bool activate_effect(object_type *o_ptr)
 			case ART_COLLUIN:
 			{
 				msgf("Your cloak glows many colours...");
-				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
-				(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(20, 40));
-				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
-				(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
-				(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(20, 40));
+				(void)inc_oppose_acid(rand_range(20, 40));
+				(void)inc_oppose_elec(rand_range(20, 40));
+				(void)inc_oppose_fire(rand_range(20, 40));
+				(void)inc_oppose_cold(rand_range(20, 40));
+				(void)inc_oppose_pois(rand_range(20, 40));
 				o_ptr->timeout = 111;
 				break;
 			}
@@ -2826,11 +2826,11 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_RESIST_ALL:
 		{
 			msgf("The %s glows many colours...", o_name);
-			(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(40, 80));
-			(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(40, 80));
-			(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(40, 80));
-			(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(40, 80));
-			(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(40, 80));
+			(void)inc_oppose_acid(rand_range(40, 80));
+			(void)inc_oppose_elec(rand_range(40, 80));
+			(void)inc_oppose_fire(rand_range(40, 80));
+			(void)inc_oppose_cold(rand_range(40, 80));
+			(void)inc_oppose_pois(rand_range(40, 80));
 			o_ptr->timeout = 200;
 			break;
 		}

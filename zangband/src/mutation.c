@@ -1151,27 +1151,27 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 		if (randint0(5) < num)
 		{
-			(void)set_oppose_acid(p_ptr->tim.oppose_acid + dur);
+			(void)inc_oppose_acid(dur);
 			num--;
 		}
 		if (randint0(4) < num)
 		{
-			(void)set_oppose_elec(p_ptr->tim.oppose_elec + dur);
+			(void)inc_oppose_elec(dur);
 			num--;
 		}
 		if (randint0(3) < num)
 		{
-			(void)set_oppose_fire(p_ptr->tim.oppose_fire + dur);
+			(void)inc_oppose_fire(dur);
 			num--;
 		}
 		if (randint0(2) < num)
 		{
-			(void)set_oppose_cold(p_ptr->tim.oppose_cold + dur);
+			(void)inc_oppose_cold(dur);
 			num--;
 		}
 		if (num)
 		{
-			(void)set_oppose_pois(p_ptr->tim.oppose_pois + dur);
+			(void)inc_oppose_pois(dur);
 			num--;
 		}
 	}

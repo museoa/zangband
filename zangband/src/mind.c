@@ -368,11 +368,11 @@ static bool cast_mindcrafter_spell(int spell)
 		case MINDCRAFT_CHARACTER_ARMOUR:
 			/* Character Armour */
 			(void)inc_shield(plev);
-			if (plev > 14) (void)set_oppose_acid(p_ptr->tim.oppose_acid + plev);
-			if (plev > 19) (void)set_oppose_fire(p_ptr->tim.oppose_fire + plev);
-			if (plev > 24) (void)set_oppose_cold(p_ptr->tim.oppose_cold + plev);
-			if (plev > 29) (void)set_oppose_elec(p_ptr->tim.oppose_elec + plev);
-			if (plev > 34) (void)set_oppose_pois(p_ptr->tim.oppose_pois + plev);
+			if (plev > 14) (void)inc_oppose_acid(plev);
+			if (plev > 19) (void)inc_oppose_fire(plev);
+			if (plev > 24) (void)inc_oppose_cold(plev);
+			if (plev > 29) (void)inc_oppose_elec(plev);
+			if (plev > 34) (void)inc_oppose_pois(plev);
 			break;
 		case MINDCRAFT_PSYCHOMETRY:
 			/* Psychometry */

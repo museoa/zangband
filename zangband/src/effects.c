@@ -1240,11 +1240,14 @@ bool inc_tim_infra(int v)
 
 
 /*
- * Set "p_ptr->oppose_acid", notice observable changes
+ * Increment "p_ptr->oppose_acid", notice observable changes
  */
-bool set_oppose_acid(int v)
+bool inc_oppose_acid(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.oppose_acid;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1290,11 +1293,14 @@ bool set_oppose_acid(int v)
 
 
 /*
- * Set "p_ptr->oppose_elec", notice observable changes
+ * Increment "p_ptr->oppose_elec", notice observable changes
  */
-bool set_oppose_elec(int v)
+bool inc_oppose_elec(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.oppose_elec;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1340,11 +1346,14 @@ bool set_oppose_elec(int v)
 
 
 /*
- * Set "p_ptr->oppose_fire", notice observable changes
+ * Increment "p_ptr->oppose_fire", notice observable changes
  */
-bool set_oppose_fire(int v)
+bool inc_oppose_fire(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.oppose_fire;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1390,11 +1399,14 @@ bool set_oppose_fire(int v)
 
 
 /*
- * Set "p_ptr->oppose_cold", notice observable changes
+ * Increment "p_ptr->oppose_cold", notice observable changes
  */
-bool set_oppose_cold(int v)
+bool inc_oppose_cold(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.oppose_cold;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1440,11 +1452,14 @@ bool set_oppose_cold(int v)
 
 
 /*
- * Set "p_ptr->oppose_pois", notice observable changes
+ * Increment "p_ptr->oppose_pois", notice observable changes
  */
-bool set_oppose_pois(int v)
+bool inc_oppose_pois(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.oppose_pois;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;

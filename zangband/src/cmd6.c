@@ -1315,7 +1315,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 			case SV_RING_ACID:
 			{
 				(void)fire_ball(GF_ACID, dir, 100, 2);
-				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
+				(void)inc_oppose_acid(rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
@@ -1323,7 +1323,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 			case SV_RING_ICE:
 			{
 				(void)fire_ball(GF_COLD, dir, 100, 2);
-				(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
+				(void)inc_oppose_cold(rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
@@ -1331,7 +1331,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 			case SV_RING_FLAMES:
 			{
 				(void)fire_ball(GF_FIRE, dir, 100, 2);
-				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
+				(void)inc_oppose_fire(rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
