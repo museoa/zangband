@@ -2068,15 +2068,17 @@
  *   ITEM: Affect each object in the "blast area" in some way
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
+ *   FRND: Stop if hit a friendly monster / player.
  */
-#define PROJECT_JUMP    0x01
-#define PROJECT_BEAM    0x02
-#define PROJECT_THRU    0x04
-#define PROJECT_STOP    0x08
-#define PROJECT_GRID    0x10
-#define PROJECT_ITEM    0x20
-#define PROJECT_KILL    0x40
-#define PROJECT_HIDE    0x80
+#define PROJECT_JUMP    0x0001
+#define PROJECT_BEAM    0x0002
+#define PROJECT_THRU    0x0004
+#define PROJECT_STOP    0x0008
+#define PROJECT_GRID    0x0010
+#define PROJECT_ITEM    0x0020
+#define PROJECT_KILL    0x0040
+#define PROJECT_HIDE    0x0080
+#define PROJECT_FRND	0x0100
 
 /*
  * Bit flags for the "enchant()" function
@@ -2985,7 +2987,8 @@
 	RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | \
 	RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_SHAR | \
 	RF4_BR_SOUN | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | \
-	RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
+	RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | RF4_BA_NUKE | \
+	RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI)
 
 #define RF5_BALL_MASK \
 	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | \
@@ -3009,6 +3012,88 @@
      RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
      RF6_S_AMBERITES | RF6_S_UNIQUE)
 
+
+/*
+ * Spells that improve the caster's tactical position
+ */
+#define RF4_TACTIC_MASK \
+	(0L)
+
+#define RF5_TACTIC_MASK \
+	(0L)
+
+#define RF6_TACTIC_MASK \
+	(RF6_BLINK)
+
+
+/*
+ * Annoying spells
+ */
+#define RF4_ANNOY_MASK \
+	(RF4_SHRIEK)
+
+#define RF5_ANNOY_MASK \
+	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | \
+	RF5_CAUSE_1 | RF5_CAUSE_2 | RF5_CAUSE_3 | RF5_CAUSE_4 | \
+	RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
+
+#define RF6_ANNOY_MASK \
+	(RF6_TELE_TO | RF6_DARKNESS | RF6_TRAPS | RF6_FORGET)
+
+
+/*
+ * Spells that increase the caster's relative speed
+ */
+#define RF4_HASTE_MASK \
+	(0L)
+
+#define RF5_HASTE_MASK \
+	(RF5_SLOW | RF5_HOLD)
+
+#define RF6_HASTE_MASK \
+	(RF6_HASTE)
+
+/*
+ * Spells that increase the caster's relative speed
+ */
+#define RF4_INVULN_MASK \
+	(0L)
+
+#define RF5_INVULN_MASK \
+	(0L)
+
+#define RF6_INVULN_MASK \
+	(RF6_INVULNER)
+
+/*
+ * Healing spells
+ */
+#define RF4_HEAL_MASK \
+	(0L)
+
+#define RF5_HEAL_MASK \
+	(0L)
+
+#define RF6_HEAL_MASK \
+	(RF6_HEAL)
+
+
+/*
+ * Innate spell-like effects
+ */
+#define RF4_INNATE_MASK \
+	(RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | \
+	 RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | \
+	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
+	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
+	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
+	 RF4_BR_NUKE | RF4_BR_DISI)
+
+#define RF5_INNATE_MASK \
+	(0L)
+
+#define RF6_INNATE_MASK \
+	(0L)
 
 /*** Macro Definitions ***/
 

@@ -214,7 +214,7 @@ u16b bolt_pict(int y, int x, int ny, int nx, int typ)
  * This algorithm is similar to, but slightly different from, the one used
  * by "update_view_los()", and very different from the one used by "los()".
  */
-sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
+sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg)
 {
 	int y, x;
 
@@ -313,9 +313,10 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
-			if (flg & (PROJECT_STOP))
+			if ((c_ptr->m_idx != 0) && (n > 0))
 			{
-				if ((n > 0) && (c_ptr->m_idx != 0)) break;
+				if (flg & (PROJECT_STOP)) break;
+				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;		
 			}
 
 			/* Slant */
@@ -382,9 +383,10 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
-			if (flg & (PROJECT_STOP))
+			if ((c_ptr->m_idx != 0) && (n > 0))
 			{
-				if ((n > 0) && (c_ptr->m_idx != 0)) break;
+				if (flg & (PROJECT_STOP)) break;
+				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;		
 			}
 
 			/* Slant */
@@ -445,9 +447,10 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
-			if (flg & (PROJECT_STOP))
+			if ((c_ptr->m_idx != 0) && (n > 0))
 			{
-				if ((n > 0) && (c_ptr->m_idx != 0)) break;
+				if (flg & (PROJECT_STOP)) break;
+				if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx])) break;		
 			}
 
 			/* Advance (Y) */
@@ -4551,7 +4554,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
  * in the blast radius, in case the "illumination" of the grid was changed,
  * and "update_view()" and "update_monsters()" need to be called.
  */
-bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
+bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 {
 	int i, t, dist;
 

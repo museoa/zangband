@@ -3625,7 +3625,7 @@ bool teleport_swap(int dir)
 /*
  * Hack -- apply a "projection()" in a direction (or at the target)
  */
-bool project_hook(int typ, int dir, int dam, int flg)
+bool project_hook(int typ, int dir, int dam, u16b flg)
 {
 	int tx, ty;
 

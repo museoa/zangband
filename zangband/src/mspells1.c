@@ -47,20 +47,12 @@
  */
 
 
-
 /*
  * Internal probability routine
  */
-static bool int_outof(monster_race *r_ptr, int prob)
-{
-	/* Non-Smart monsters are half as "smart" */
-	if (!(r_ptr->flags2 & RF2_SMART)) prob = prob / 2;
 
-	/* Roll the dice */
-	return (rand_int(100) < prob);
-}
-
-
+#define int_outof(dumb,prob) \
+	(randint((dumb)?((prob) / 2):(prob)) < 100) 
 
 /*
  * Remove the "bad" spells from a spell list
@@ -75,7 +67,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	u32b f6 = (*f6p);
 
 	u32b smart = 0L;
-
+	bool is_dumb = (!(r_ptr->flags2 & RF2_SMART));
 
 	/* Too stupid to know anything */
 	if (r_ptr->flags2 & RF2_STUPID) return;
@@ -140,194 +132,197 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	/* Nothing known */
 	if (!smart) return;
 
+	/* 
+	 * Hack - some of the RNG calls have been removed from the
+	 * earlier code.  This should speed it up.
+	 */
 
-	if (smart & SM_IMM_ACID)
+	if ((smart & SM_IMM_ACID) && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_BR_ACID);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BA_ACID);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_ACID);
+		f4 &= ~(RF4_BR_ACID);
+		f5 &= ~(RF5_BA_ACID | RF5_BO_ACID);
 	}
-	else if ((smart & (SM_OPP_ACID)) && (smart & (SM_RES_ACID)))
+	else if ((smart & (SM_OPP_ACID)) && (smart & (SM_RES_ACID))
+		 && (int_outof(is_dumb, 80)))
 	{
-		if (int_outof(r_ptr, 80)) f4 &= ~(RF4_BR_ACID);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BA_ACID);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BO_ACID);
+		f4 &= ~(RF4_BR_ACID);
+		f5 &= ~(RF5_BA_ACID | RF5_BO_ACID);
 	}
-	else if ((smart & (SM_OPP_ACID)) || (smart & (SM_RES_ACID)))
+	else if (((smart & (SM_OPP_ACID)) || (smart & (SM_RES_ACID)))
+		 && (int_outof(is_dumb, 30)))
 	{
-		if (int_outof(r_ptr, 30)) f4 &= ~(RF4_BR_ACID);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BA_ACID);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BO_ACID);
-	}
-
-
-	if (smart & (SM_IMM_ELEC))
-	{
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_BR_ELEC);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BA_ELEC);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_ELEC);
-	}
-	else if ((smart & (SM_OPP_ELEC)) && (smart & (SM_RES_ELEC)))
-	{
-		if (int_outof(r_ptr, 80)) f4 &= ~(RF4_BR_ELEC);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BA_ELEC);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BO_ELEC);
-	}
-	else if ((smart & (SM_OPP_ELEC)) || (smart & (SM_RES_ELEC)))
-	{
-		if (int_outof(r_ptr, 30)) f4 &= ~(RF4_BR_ELEC);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BA_ELEC);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BO_ELEC);
+		f4 &= ~(RF4_BR_ACID);
+		f5 &= ~(RF5_BA_ACID | RF5_BO_ACID);
 	}
 
 
-	if (smart & (SM_IMM_FIRE))
+	if ((smart & (SM_IMM_ELEC)) && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_BR_FIRE);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BA_FIRE);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_FIRE);
+		f4 &= ~(RF4_BR_ELEC);
+		f5 &= ~(RF5_BA_ELEC | RF5_BO_ELEC);
 	}
-	else if ((smart & (SM_OPP_FIRE)) && (smart & (SM_RES_FIRE)))
+	else if ((smart & (SM_OPP_ELEC)) && (smart & (SM_RES_ELEC))
+		&& (int_outof(is_dumb, 80)))
 	{
-		if (int_outof(r_ptr, 80)) f4 &= ~(RF4_BR_FIRE);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BA_FIRE);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BO_FIRE);
+		f4 &= ~(RF4_BR_ELEC);
+		f5 &= ~(RF5_BA_ELEC | RF5_BO_ELEC);
 	}
-	else if ((smart & (SM_OPP_FIRE)) || (smart & (SM_RES_FIRE)))
+	else if (((smart & (SM_OPP_ELEC)) || (smart & (SM_RES_ELEC)))
+		 && (int_outof(is_dumb, 30)))
 	{
-		if (int_outof(r_ptr, 30)) f4 &= ~(RF4_BR_FIRE);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BA_FIRE);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BO_FIRE);
-	}
-
-
-	if (smart & (SM_IMM_COLD))
-	{
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_BR_COLD);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BA_COLD);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_COLD);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_ICEE);
-	}
-	else if ((smart & (SM_OPP_COLD)) && (smart & (SM_RES_COLD)))
-	{
-		if (int_outof(r_ptr, 80)) f4 &= ~(RF4_BR_COLD);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BA_COLD);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BO_COLD);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BO_ICEE);
-	}
-	else if ((smart & (SM_OPP_COLD)) || (smart & (SM_RES_COLD)))
-	{
-		if (int_outof(r_ptr, 30)) f4 &= ~(RF4_BR_COLD);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BA_COLD);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BO_COLD);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BO_ICEE);
+		f4 &= ~(RF4_BR_ELEC);
+		f5 &= ~(RF5_BA_ELEC | RF5_BO_ELEC);
 	}
 
 
-	if ((smart & (SM_OPP_POIS)) && (smart & (SM_RES_POIS)))
+	if ((smart & (SM_IMM_FIRE)) && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 80)) f4 &= ~(RF4_BR_POIS);
-		if (int_outof(r_ptr, 80)) f5 &= ~(RF5_BA_POIS);
-		if (int_outof(r_ptr, 40)) f4 &= ~(RF4_BA_NUKE);
-		if (int_outof(r_ptr, 40)) f4 &= ~(RF4_BR_NUKE);
+		f4 &= ~(RF4_BR_FIRE);
+		f5 &= ~(RF5_BA_FIRE | RF5_BO_FIRE);
 	}
-	else if ((smart & (SM_OPP_POIS)) || (smart & (SM_RES_POIS)))
+	else if ((smart & (SM_OPP_FIRE)) && (smart & (SM_RES_FIRE))
+		 && (int_outof(is_dumb, 80)))
 	{
-		if (int_outof(r_ptr, 30)) f4 &= ~(RF4_BR_POIS);
-		if (int_outof(r_ptr, 30)) f5 &= ~(RF5_BA_POIS);
+		f4 &= ~(RF4_BR_FIRE);
+		f5 &= ~(RF5_BA_FIRE | RF5_BO_FIRE);
 	}
-
-
-	if (smart & (SM_RES_NETH))
+	else if (((smart & (SM_OPP_FIRE)) || (smart & (SM_RES_FIRE)))
+		 && (int_outof(is_dumb, 30)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_NETH);
-		if (int_outof(r_ptr, 50)) f5 &= ~(RF5_BA_NETH);
-		if (int_outof(r_ptr, 50)) f5 &= ~(RF5_BO_NETH);
+		f4 &= ~(RF4_BR_FIRE);
+		f5 &= ~(RF5_BA_FIRE | RF5_BO_FIRE);
 	}
 
-	if (smart & (SM_RES_LITE))
+
+	if ((smart & (SM_IMM_COLD)) && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_LITE);
+		f4 &= ~(RF4_BR_COLD);
+		f5 &= ~(RF5_BA_COLD | RF5_BO_COLD | RF5_BO_ICEE);
+	}
+	else if ((smart & (SM_OPP_COLD)) && (smart & (SM_RES_COLD))
+		 && (int_outof(is_dumb, 80)))
+	{
+		f4 &= ~(RF4_BR_COLD);
+		f5 &= ~(RF5_BA_COLD | RF5_BO_COLD | RF5_BO_ICEE);
+	}
+	else if (((smart & (SM_OPP_COLD)) || (smart & (SM_RES_COLD)))
+		 && (int_outof(is_dumb, 30)))
+	{
+		f4 &= ~(RF4_BR_COLD);
+		f5 &= ~(RF5_BA_COLD | RF5_BO_COLD | RF5_BO_ICEE);
 	}
 
-	if (smart & (SM_RES_DARK))
+
+	if ((smart & (SM_OPP_POIS)) && (smart & (SM_RES_POIS))
+		 && (int_outof(is_dumb, 80)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_DARK);
-		if (int_outof(r_ptr, 50)) f5 &= ~(RF5_BA_DARK);
+		f4 &= ~(RF4_BR_POIS);
+		f5 &= ~(RF5_BA_POIS);
+		
+		if (rand_int(2))
+		{
+			f4 &= ~(RF4_BA_NUKE | RF4_BR_NUKE);
+		}
+	}
+	else if (((smart & (SM_OPP_POIS)) || (smart & (SM_RES_POIS)))
+		 && (int_outof(is_dumb, 30)))
+	{
+		f4 &= ~(RF4_BR_POIS);
+		f5 &= ~(RF5_BA_POIS);
 	}
 
-	if (smart & (SM_RES_FEAR))
+
+	if ((smart & (SM_RES_NETH)) && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_SCARE);
+		f4 &= ~(RF4_BR_NETH);
+		f5 &= ~(RF5_BA_NETH | RF5_BO_NETH);
 	}
 
-	if (smart & (SM_RES_CONF))
+	if ((f4 & (RF4_BR_LITE)) && (smart & (SM_RES_LITE))
+		 && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_CONF);
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_CONF);
+		f4 &= ~(RF4_BR_LITE);
 	}
 
-	if (smart & (SM_RES_CHAOS))
+	if ((smart & (SM_RES_DARK))&& (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_CHAO);
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BA_CHAO);
+		f4 &= ~(RF4_BR_DARK);
+		f5 &= ~(RF5_BA_DARK);
 	}
 
-	if (smart & (SM_RES_DISEN))
+	if ((f5 & (RF5_SCARE)) && (smart & (SM_RES_FEAR))
+		 && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_BR_DISE);
+		f5 &= ~(RF5_SCARE);
 	}
 
-	if (smart & (SM_RES_BLIND))
+	if ((smart & (SM_RES_CONF)) && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BLIND);
+		f5 &= ~(RF5_CONF);
+		
+		if (rand_int(2))
+		{
+			f4 &= ~(RF4_BR_CONF);
+		}
 	}
 
-	if (smart & (SM_RES_NEXUS))
+	if ((smart & (SM_RES_CHAOS)) && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_NEXU);
-		if (int_outof(r_ptr, 50)) f6 &= ~(RF6_TELE_LEVEL);
+		f4 &= ~(RF4_BR_CHAO | RF4_BA_CHAO);
 	}
 
-	if (smart & (SM_RES_SOUND))
+	if ((f4 & (RF4_BR_DISE)) && (smart & (SM_RES_DISEN))
+		 && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_SOUN);
+		f4 &= ~(RF4_BR_DISE);
 	}
 
-	if (smart & (SM_RES_SHARD))
+	if ((f5 & (RF5_BLIND)) && (smart & (SM_RES_BLIND))
+		 && (int_outof(is_dumb, 100)))
 	{
-		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_SHAR);
-		if (int_outof(r_ptr, 20)) f4 &= ~(RF4_ROCKET);
+		f5 &= ~(RF5_BLIND);
 	}
 
-	if (smart & (SM_IMM_REFLECT))
+	if ((smart & (SM_RES_NEXUS)) && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_COLD);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_FIRE);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_ACID);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_ELEC);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_POIS);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_NETH);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_WATE);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_MANA);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_PLAS);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_BO_ICEE);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_MISSILE);
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_ARROW_1);
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_ARROW_2);
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_ARROW_3);
-		if (int_outof(r_ptr, 100)) f4 &= ~(RF4_ARROW_4);
+		f4 &= ~(RF4_BR_NEXU);
+		f6 &= ~(RF6_TELE_LEVEL);
 	}
 
-	if (smart & (SM_IMM_FREE))
+	if ((f4 & (RF4_BR_SOUN)) && (smart & (SM_RES_SOUND))
+		 && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_HOLD);
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_SLOW);
+		f4 &= ~(RF4_BR_SOUN);
 	}
 
-	if (smart & (SM_IMM_MANA))
+	if ((smart & (SM_RES_SHARD)) && (int_outof(is_dumb, 50)))
 	{
-		if (int_outof(r_ptr, 100)) f5 &= ~(RF5_DRAIN_MANA);
+		f4 &= ~(RF4_BR_SHAR);
+		
+		if(rand_int(2))
+		{
+			f4 &= ~(RF4_ROCKET);
+		}
+	}
+
+	if ((smart & (SM_IMM_REFLECT)) && (int_outof(is_dumb, 100)))
+	{
+		f5 &= ~(RF5_BO_COLD | RF5_BO_FIRE | RF5_BO_ACID
+		 | RF5_BO_ELEC | RF5_BO_POIS | RF5_BO_NETH
+		 | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS
+		 | RF5_BO_ICEE | RF5_MISSILE);
+		f4 &= ~(RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4);
+	}
+
+	if ((smart & (SM_IMM_FREE)) && (int_outof(is_dumb, 100)))
+	{
+		f5 &= ~(RF5_HOLD | RF5_SLOW);
+	}
+
+	if ((f5 & (RF5_DRAIN_MANA)) && (smart & (SM_IMM_MANA))
+		 && (int_outof(is_dumb, 100)))
+	{
+		f5 &= ~(RF5_DRAIN_MANA);
 	}
 
 	/* XXX XXX XXX No spells left? */
@@ -348,20 +343,25 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 static bool summon_possible(int y1, int x1)
 {
 	int y, x;
+	int dy, dx;
 
 	cave_type *c_ptr;
 
 	/* Start at the player's location, and check 2 grids in each dir */
-	for (y = y1 - 2; y <= y1 + 2; y++)
+	for (dy = -2; dy <= 2; dy++)
 	{
-		for (x = x1 - 2; x <= x1 + 2; x++)
-		{
+		for (dx = -2; dx <= 2; dx++)
+		{			
+			/* Only check a circular area */
+			if ((abs(dx) == 2) && (abs(dy) == 2)) continue;
+			
+			/* Get square */
+			x = x1 + dx;
+			y = y1 + dy;
+
 			/* Ignore illegal locations */
 			if (!in_bounds(y, x)) continue;
-
-			/* Only check a circular area */
-			if (distance(y1, x1, y, x) > 2) continue;
-
+			
 			/* Access Grid */
 			c_ptr = area(y, x);
 
@@ -394,47 +394,32 @@ static bool summon_possible(int y1, int x1)
  * return FALSE if a monster is in the way.
  * no equally friendly monster is
  * between the attacker and target.
+ *
+ * This change has been implelemented via a flag - much quicker
+ * and simpler than before.
  */
 /* Must be the same as projectable() */
 bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 {
-	int i, y, x;
 	int grid_n;
 	coord grid_g[512];
 
-
 	/* Check the projection path */
-	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
+	if (friend)
+	{
+		grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, PROJECT_FRND);
+	}
+	else
+	{
+		grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
+	}
 
 	/* No grid is ever projectable from itself */
 	if (!grid_n) return (FALSE);
 
-	/* Final grid */
-	y = grid_g[grid_n-1].y;
-	x = grid_g[grid_n-1].x;
-
 	/* May not end in an unrequested grid */
-	if ((y != y2) || (x != x2)) return (FALSE);
-
-	for (i = 0; i < grid_n; i++)
-	{
-		y = grid_g[i].y;
-		x = grid_g[i].x;
-
-		if ((area(y, x)->m_idx > 0) && !((y == y2) && (x == x2)))
-		{
-			monster_type *m_ptr = &m_list[area(y, x)->m_idx];
-			if (friend == is_pet(m_ptr))
-			{
-				return (FALSE);
-			}
-		}
-		/* Pets may not shoot through the character - TNB */
-		if ((y == py) && (x == px))
-		{
-			if (friend) return (FALSE);
-		}
-	}
+	if ((grid_g[grid_n-1].y != y2) ||
+		 (grid_g[grid_n-1].x != x2)) return (FALSE);
 
 	return (TRUE);
 }
@@ -736,7 +721,7 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 	}
 
 	/* Player is close and we have attack spells, blink away */
-	if ((distance(py, px, m_ptr->fy, m_ptr->fx) < 4) && attack_num && (rand_int(100) < 75))
+	if ((m_ptr->cdis < 4) && attack_num && (rand_int(100) < 75))
 	{
 		/* Choose tactical spell */
 		if (tactic_num) return (tactic[rand_int(tactic_num)]);

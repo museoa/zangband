@@ -114,7 +114,7 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 			mm[2] = 1;
 		}
 		/* North-West */
-		if ((y < 0) && (x < 0))
+		else if ((y < 0) && (x < 0))
 		{
 			mm[0] = 7;
 			mm[1] = 4;
@@ -254,7 +254,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* Mega-Hack -- Pain cancels fear */
 	if (m_ptr->monfear && (dam > 0))
 	{
-		int tmp = randint(dam);
+		int tmp = randint(dam / 4);
 
 		/* Cure a little fear */
 		if (tmp < m_ptr->monfear)
@@ -293,7 +293,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 			(*fear) = TRUE;
 
 			/* XXX XXX XXX Hack -- Add some timed fear */
-			m_ptr->monfear = (randint(10) +
+			m_ptr->monfear += (randint(10) +
 				(((dam >= m_ptr->hp) && (percentage > 7)) ?
 				20 : ((11 - percentage) * 5)));
 		}
@@ -582,6 +582,140 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 
 #endif /* MONSTER_FLOW */
 
+/*
+ * Hack -- Precompute a bunch of calls to distance() in find_safety() and
+ * find_hiding().
+ *
+ * The pair of arrays dist_offsets_y[n] and dist_offsets_x[n] contain the
+ * offsets of all the locations with a distance of n from a central point,
+ * with an offset of (0,0) indicating no more offsets at this distance.
+ *
+ * This is, of course, fairly unreadable, but it eliminates multiple loops
+ * from the previous version.
+ *
+ * It is probably better to replace these arrays with code to compute
+ * the relevant arrays, even if the storage is pre-allocated in hard
+ * coded sizes.  At the very least, code should be included which is
+ * able to generate and dump these arrays (ala "los()").  XXX XXX XXX
+ *
+ * Also, the storage needs could be halved by using bytes.  XXX XXX XXX
+ *
+ * These arrays could be combined into two big arrays, using sub-arrays
+ * to hold the offsets and lengths of each portion of the sub-arrays, and
+ * this could perhaps also be used somehow in the "look" code.  XXX XXX XXX
+ */
+
+
+static sint d_off_y_0[] =
+{ 0 };
+
+static sint d_off_x_0[] =
+{ 0 };
+
+
+static sint d_off_y_1[] =
+{ -1, -1, -1, 0, 0, 1, 1, 1, 0 };
+
+static sint d_off_x_1[] =
+{ -1, 0, 1, -1, 1, -1, 0, 1, 0 };
+
+
+static sint d_off_y_2[] =
+{ -1, -1, -2, -2, -2, 0, 0, 1, 1, 2, 2, 2, 0 };
+
+static sint d_off_x_2[] =
+{ -2, 2, -1, 0, 1, -2, 2, -2, 2, -1, 0, 1, 0 };
+
+
+static sint d_off_y_3[] =
+{ -1, -1, -2, -2, -3, -3, -3, 0, 0, 1, 1, 2, 2,
+  3, 3, 3, 0 };
+
+static sint d_off_x_3[] =
+{ -3, 3, -2, 2, -1, 0, 1, -3, 3, -3, 3, -2, 2,
+  -1, 0, 1, 0 };
+
+
+static sint d_off_y_4[] =
+{ -1, -1, -2, -2, -3, -3, -3, -3, -4, -4, -4, 0,
+  0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 0 };
+
+static sint d_off_x_4[] =
+{ -4, 4, -3, 3, -2, -3, 2, 3, -1, 0, 1, -4, 4,
+  -4, 4, -3, 3, -2, -3, 2, 3, -1, 0, 1, 0 };
+
+
+static sint d_off_y_5[] =
+{ -1, -1, -2, -2, -3, -3, -4, -4, -4, -4, -5, -5,
+  -5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5,
+  5, 0 };
+
+static sint d_off_x_5[] =
+{ -5, 5, -4, 4, -4, 4, -2, -3, 2, 3, -1, 0, 1,
+  -5, 5, -5, 5, -4, 4, -4, 4, -2, -3, 2, 3, -1,
+  0, 1, 0 };
+
+
+static sint d_off_y_6[] =
+{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5,
+  -6, -6, -6, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5,
+  5, 5, 6, 6, 6, 0 };
+
+static sint d_off_x_6[] =
+{ -6, 6, -5, 5, -5, 5, -4, 4, -2, -3, 2, 3, -1,
+  0, 1, -6, 6, -6, 6, -5, 5, -5, 5, -4, 4, -2,
+  -3, 2, 3, -1, 0, 1, 0 };
+
+
+static sint d_off_y_7[] =
+{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5,
+  -6, -6, -6, -6, -7, -7, -7, 0, 0, 1, 1, 2, 2, 3,
+  3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 0 };
+
+static sint d_off_x_7[] =
+{ -7, 7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2,
+  -3, 2, 3, -1, 0, 1, -7, 7, -7, 7, -6, 6, -6,
+  6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
+  1, 0 };
+
+
+static sint d_off_y_8[] =
+{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6,
+  -6, -6, -7, -7, -7, -7, -8, -8, -8, 0, 0, 1, 1,
+  2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
+  8, 8, 8, 0 };
+
+static sint d_off_x_8[] =
+{ -8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4,
+  5, -2, -3, 2, 3, -1, 0, 1, -8, 8, -8, 8, -7,
+  7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3,
+  2, 3, -1, 0, 1, 0 };
+
+
+static sint d_off_y_9[] =
+{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6,
+  -7, -7, -7, -7, -8, -8, -8, -8, -9, -9, -9, 0,
+  0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7,
+  7, 8, 8, 8, 8, 9, 9, 9, 0 };
+
+static sint d_off_x_9[] =
+{ -9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4,
+  -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, -9, 9, -9,
+  9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5,
+  4, 5, -2, -3, 2, 3, -1, 0, 1, 0 };
+
+
+static sint *dist_offsets_y[10] =
+{
+	d_off_y_0, d_off_y_1, d_off_y_2, d_off_y_3, d_off_y_4,
+	d_off_y_5, d_off_y_6, d_off_y_7, d_off_y_8, d_off_y_9
+};
+
+static sint *dist_offsets_x[10] =
+{
+	d_off_x_0, d_off_x_1, d_off_x_2, d_off_x_3, d_off_x_4,
+	d_off_x_5, d_off_x_6, d_off_x_7, d_off_x_8, d_off_x_9
+};
 
 /*
 * Choose a "safe" location near a monster for it to run toward.
@@ -603,53 +737,59 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
-	int y, x, d, dis;
+	int y, x, dy, dx, d, dis, i;
 	int gy = 0, gx = 0, gdis = 0;
 
+	sint *y_offsets;
+	sint *x_offsets;
+	
 	cave_type *c_ptr;
 
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 10; d++)
 	{
-		/* Check nearby locations */
-		for (y = fy - d; y <= fy + d; y++)
+		/* Get the lists of points with a distance d from (fx, fy) */
+		y_offsets = dist_offsets_y[d];
+		x_offsets = dist_offsets_x[d];
+		
+		/* Check the locations */
+		for (i = 0, dx = x_offsets[0], dy = y_offsets[0];
+		     dx != 0 || dy != 0;
+		     i++, dx = x_offsets[i], dy = y_offsets[i])
 		{
-			for (x = fx - d; x <= fx + d; x++)
+			y = fy + dy;
+			x = fx + dx;
+			
+			/* Skip illegal locations */
+			if (!in_bounds(y, x)) continue;
+
+			c_ptr = area(y, x);
+
+			/* Skip locations in a wall */
+			if (!cave_floor_grid(c_ptr)) continue;
+
+			/* Check for "availability" (if monsters can flow) */
+			if (flow_by_sound)
+				{
+				/* Ignore grids very far from the player */
+				if (c_ptr->when < area(py,px)->when) continue;
+
+				/* Ignore too-distant grids */
+				if (c_ptr->cost > area(fy,fx)->cost + 2 * d) continue;
+			}
+
+			/* Check for absence of shot (more or less) */
+			if (!player_can_see_bold(y,x))
 			{
-				/* Skip illegal locations */
-				if (!in_bounds(y, x)) continue;
+				/* Calculate distance from player */
+				dis = distance(y, x, py, px);
 
-				c_ptr = area(y, x);
-
-				/* Skip locations in a wall */
-				if (!cave_floor_grid(c_ptr)) continue;
-
-				/* Check distance */
-				if (distance(y, x, fy, fx) != d) continue;
-
-				/* Check for "availability" (if monsters can flow) */
-				if (flow_by_sound)
+				/* Remember if further than previous */
+				if (dis > gdis)
 				{
-					/* Ignore grids very far from the player */
-					if (c_ptr->when < area(py,px)->when) continue;
-
-					/* Ignore too-distant grids */
-					if (c_ptr->cost > area(fy,fx)->cost + 2 * d) continue;
-				}
-
-				/* Check for absence of shot */
-				if (!projectable(y, x, py, px))
-				{
-					/* Calculate distance from player */
-					dis = distance(y, x, py, px);
-
-					/* Remember if further than previous */
-					if (dis > gdis)
-					{
-						gy = y;
-						gx = x;
-						gdis = dis;
-					}
+					gy = y;
+					gx = x;
+					gdis = dis;
 				}
 			}
 		}
@@ -686,46 +826,48 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
-	int y, x, d, dis;
-	int gy = 0, gx = 0, gdis = 999, min;
+	int y, x, dy, dx, d, dis, i;
+	int gy = 0, gx = 0, gdis = 999;
 
+	sint *y_offsets, *x_offsets;
+	
 	cave_type *c_ptr;
-
-	/* Closest distance to get */
-	min = distance(py, px, fy, fx) * 3 / 4 + 2;
 
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 10; d++)
 	{
-		/* Check nearby locations */
-		for (y = fy - d; y <= fy + d; y++)
+		//* Get the lists of points with a distance d from (fx, fy) */
+		y_offsets = dist_offsets_y[d];
+		x_offsets = dist_offsets_x[d];
+
+		/* Check the locations */
+		for (i = 0, dx = x_offsets[0], dy = y_offsets[0];
+		     dx != 0 || dy != 0;
+		     i++, dx = x_offsets[i], dy = y_offsets[i])
 		{
-			for (x = fx - d; x <= fx + d; x++)
+			y = fy + dy;
+			x = fx + dx;
+			
+			/* Skip illegal locations */
+			if (!in_bounds(y, x)) continue;
+
+			c_ptr = area(y, x);
+
+			/* Skip occupied locations */
+			if (!cave_empty_grid(c_ptr)) continue;
+
+			/* Check for hidden, available grid */
+			if (!player_can_see_bold(y, x) && clean_shot(fy, fx, y, x, FALSE))
 			{
-				/* Skip illegal locations */
-				if (!in_bounds(y, x)) continue;
+				/* Calculate distance from player */
+				dis = distance(y, x, py, px);
 
-				c_ptr = area(y, x);
-
-				/* Skip locations in a wall */
-				if (!cave_floor_grid(c_ptr)) continue;
-
-				/* Check distance */
-				if (distance(y, x, fy, fx) != d) continue;
-
-				/* Check for hidden, available grid */
-				if (!player_can_see_bold(y, x) && clean_shot(fy, fx, y, x, FALSE))
+				/* Remember if closer than previous */
+				if (dis < gdis && dis >= 2)
 				{
-					/* Calculate distance from player */
-					dis = distance(y, x, py, px);
-
-					/* Remember if closer than previous */
-					if (dis < gdis && dis >= min)
-					{
-						gy = y;
-						gx = x;
-						gdis = dis;
-					}
+					gy = y;
+					gx = x;
+					gdis = dis;
 				}
 			}
 		}
@@ -745,9 +887,6 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 	/* No good place */
 	return (FALSE);
 }
-
-
-
 
 
 /*
@@ -795,11 +934,16 @@ static bool get_moves(int m_idx, int *mm)
 			{
 				int x = px + ddx_ddd[i];
 				int y = py + ddy_ddd[i];
+				
+				cave_type *c_ptr;
 
 				if (!in_bounds2(y, x)) continue;
+				
+				c_ptr = area(y, x);
 
 				/* Check grid */
-				if (monster_can_cross_terrain(area(y, x)->feat, r_ptr))
+				if (((cave_floor_grid(c_ptr)) || ((c_ptr->feat & 0x60) == 0x60)) &&
+					 monster_can_cross_terrain(c_ptr->feat, r_ptr))
 				{
 					/* One more room grid */
 					room++;
@@ -807,8 +951,8 @@ static bool get_moves(int m_idx, int *mm)
 			}
 
 			/* Not in a room and strong player */
-			if ((room <= (8 * (p_ptr->chp + p_ptr->csp)) /
-			    (p_ptr->mhp + p_ptr->msp)) && (room != 7))
+			if (room <= (8 * (p_ptr->chp + p_ptr->csp)) /
+			    (p_ptr->mhp + p_ptr->msp))
 			{
 				/* Find hiding place */
 				if (find_hiding(m_idx, &y, &x)) done = TRUE;
@@ -1889,7 +2033,7 @@ static void process_monster(int m_idx)
 		int d = 1;
 
 		/* Make a "saving throw" against stun */
-		if (rand_int(5000) <= r_ptr->level * r_ptr->level)
+		if (rand_int(10000) <= r_ptr->level * r_ptr->level)
 		{
 			/* Recover fully */
 			d = m_ptr->stunned;
@@ -1930,7 +2074,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->confused)
 	{
 		/* Amount of "boldness" */
-		int d = randint(r_ptr->level / 10 + 1);
+		int d = randint(r_ptr->level / 20 + 1);
 
 		/* Still confused */
 		if (m_ptr->confused > d)
@@ -1981,10 +2125,14 @@ static void process_monster(int m_idx)
 	if (!is_hostile(m_ptr) && p_ptr->aggravate)
 		gets_angry = TRUE;
 
+#if 0  /* No need to check this _every_ turn for every monster. */
+	
 	/* Paranoia... no pet uniques outside wizard mode -- TY */
 	if (is_pet(m_ptr) && !wizard &&
 	    (r_ptr->flags1 & RF1_UNIQUE))
 		gets_angry = TRUE;
+	
+#endif /* 0 */
 
 	if (gets_angry)
 	{
@@ -1998,7 +2146,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->monfear)
 	{
 		/* Amount of "boldness" */
-		int d = randint(r_ptr->level / 10 + 1);
+		int d = randint(r_ptr->level / 20 + 1);
 
 		/* Still afraid */
 		if (m_ptr->monfear > d)
@@ -2185,7 +2333,9 @@ static void process_monster(int m_idx)
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 
 		/* Look for an enemy */
+#if 0  /* Hack - Too slow.  Mimic pits are horrible with this on. */
 		get_enemy_dir(m_ptr, mm);
+#endif /* 0 */
 	}
 
 	/* Pets will follow the player */
@@ -2385,12 +2535,6 @@ static void process_monster(int m_idx)
 
 					/* Door power */
 					k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-#if 0
-					/* XXX XXX XXX Old test (pval 10 to 20) */
-					if (randint((m_ptr->hp + 1) * (50 + o_ptr->pval)) <
-						40 * (m_ptr->hp - 10 - o_ptr->pval));
-#endif
 
 					/* Try to unlock it XXX XXX XXX */
 					if (rand_int(m_ptr->hp / 10) > k)
@@ -2608,7 +2752,7 @@ static void process_monster(int m_idx)
 		if (do_move && (r_ptr->flags1 & RF1_NEVER_MOVE))
 		{
 			/* Hack -- memorize lack of attacks */
-			/* if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_MOVE); */
+			if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_MOVE);
 
 			/* Do not move */
 			do_move = FALSE;
@@ -2981,8 +3125,7 @@ void process_monsters(int min_energy)
 
 	/* Hack -- calculate the "player noise" */
 	noise = (1L << (30 - p_ptr->skill_stl));
-
-
+	
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--)
 	{
