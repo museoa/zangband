@@ -3201,7 +3201,7 @@ void do_cmd_throw_aux(int mult)
 	/* Get an item */
 	q = "Throw which item? ";
 	s = "You have nothing to throw.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
 
 	/* Access the item (if in the pack) */
 	if (item >= 0)
@@ -3212,7 +3212,16 @@ void do_cmd_throw_aux(int mult)
 	{
 		o_ptr = &o_list[0 - item];
 	}
+	
+	/* Hack -- Cannot remove cursed items */
+	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
+	{
+		/* Oops */
+		msg_print("Hmmm, it seems to be cursed.");
 
+		/* Nope */
+		return;
+	}
 
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir)) return;
@@ -3593,6 +3602,8 @@ void do_cmd_throw_aux(int mult)
 
 	/* Drop (or break) near that location */
 	(void)drop_near(q_ptr, j, y, x);
+	
+	p_ptr->redraw |= (PR_EQUIPPY);
 }
 
 
