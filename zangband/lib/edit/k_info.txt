@@ -1492,7 +1492,7 @@ F:FREE_ACT | SEE_INVIS | SENSE |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
 L:MAKE:	object.to_a = randint1(5) + m_bonus(5, level)
-L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flags(object, 2, TR2_SLOW_DIGEST) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 2, TR2_SLOW_DIGEST) end
 L:MAKE:	rating_boost = 25
 
 N:172:Destruction
