@@ -1631,7 +1631,7 @@ byte borg_spell_mana(int realm, int book, int spell)
 }
 
 /* Combines the legality check with the cost */
-bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
+static bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
 {
 	/* Is this spell castable with the fail_check? */
 	if (!borg_spell_legal_fail(realm, book, spell, fail)) return (FALSE);
@@ -1734,8 +1734,6 @@ int borg_reserve_mana(void)
  */
 static bool borg_reserve_allow(int realm, int book, int what)
 {
-	borg_magic *as = &borg_magics[realm][book][what];
-
 	/* Are you dipping into reserve mana? */
 	if (bp_ptr->csp - borg_spell_mana(realm, book, what) >= borg_reserve_mana())
 	{
@@ -1887,8 +1885,6 @@ bool borg_spell_legal(int realm, int book, int what)
  */
 bool borg_spell_okay(int realm, int book, int what)
 {
-	borg_magic *as = &borg_magics[realm][book][what];
-
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Dark */

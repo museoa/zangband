@@ -1426,7 +1426,7 @@ static bool borg_dim_door(int emergency, int p1)
 
 
 /* Just in case the key changes again */
-void borg_press_faint_accept(void)
+static void borg_press_faint_accept(void)
 {
 	borg_keypress(' ');
 	borg_keypress('y');
@@ -8473,8 +8473,6 @@ static int borg_attack_spell(int *b_slot, int *b_spell)
 			/* Loop through the spells */
 			for (spell = 0; spell < 8; spell++)
 			{
-				borg_magic *as = &borg_magics[realm][book][spell];
-
 				/* Paranoia */
 				if (randint0(100) < 5) continue;
 
