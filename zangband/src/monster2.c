@@ -115,7 +115,7 @@ void delete_monster_idx(int i)
 
 
 	/* Monster is gone */
-	if (in_bounds(y, x))
+	if (in_bounds2(y, x))
 	{
 		area(y, x)->m_idx = 0;
 	}
@@ -162,7 +162,7 @@ void delete_monster(int y, int x)
 	cave_type *c_ptr;
 
 	/* Paranoia */
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds2(y, x)) return;
 
 	/* Check the grid */
 	c_ptr = area(y,x);
@@ -253,8 +253,7 @@ void compact_monsters(int size)
 {
 	int		i, num, cnt;
 	int		cur_lev, cur_dis, chance;
-
-
+	
 	/* Message (only if compacting) */
 	if (size) msg_print("Compacting monsters...");
 
@@ -311,6 +310,12 @@ void compact_monsters(int size)
 		/* Get the i'th monster */
 		monster_type *m_ptr = &m_list[i];
 
+		/* Hack - kill monsters out of bounds. */
+		if (!in_bounds2(m_ptr->fy, m_ptr->fx))
+		{
+			delete_monster_idx(i);
+		}
+		
 		/* Skip real monsters */
 		if (m_ptr->r_idx) continue;
 
@@ -352,7 +357,7 @@ void wipe_m_list(void)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
-		if (in_bounds(y, x))
+		if (in_bounds2(y, x))
 		{
 			/* Monster is gone */
 			area(y, x)->m_idx = 0;
@@ -1495,7 +1500,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 
 
 	/* Verify location */
-	if (!in_bounds(y, x)) return (FALSE);
+	if (!in_bounds2(y, x)) return (FALSE);
 
 	/* Require empty space (if not ghostly) */
 	if (!cave_empty_bold(y, x) &&

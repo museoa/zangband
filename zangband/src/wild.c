@@ -2128,6 +2128,8 @@ void test_mon_wild_integrity(void)
 			if((m_ptr->fy != j) || (m_ptr->fx != i))
 			{
 				msg_print("Monster location inconsistancy.");
+				msg_format("Monster x, cave x,%d,%d",m_ptr->fx, i);
+				msg_format("Monster y, cave y,%d,%d",m_ptr->fy, j);
 			}
 		}
 	}
@@ -2939,7 +2941,7 @@ static void	fill_grass(blk_ptr block_ptr)
 }
 
 /* Add monsters to the wilderness block */
-static void	add_monsters_block(int x, int y)
+static void add_monsters_block(int x, int y)
 {
 	int i, j, xx, yy;
 	long prob;
@@ -2949,7 +2951,7 @@ static void	add_monsters_block(int x, int y)
 	 * Perhaps this should include the effects of stealth.
 	 */
 		
-	prob = 16384 / (wild[y][x].done.mon_prob + 1);
+	prob = 65536 / (wild[y][x].done.mon_prob + 1);
 		
 	xx = x * 16;
 	yy = y * 16;
@@ -2963,6 +2965,30 @@ static void	add_monsters_block(int x, int y)
 			{
 				(void) place_monster(yy + j, xx + i, FALSE, TRUE);
 			}
+		}
+	}
+}
+
+static void add_monsters(void)
+{	
+	int x, y;
+	
+	/* Add monsters */
+	for (x = 0; x < WILD_GRID_SIZE; x++)
+	{
+		for(y = 0; y < WILD_GRID_SIZE; y++)
+		{
+			/* Only on bounding blocks */
+			if (!((x == 0) || (x == WILD_GRID_SIZE - 1))) continue;
+			if (!((y == 0) || (y == WILD_GRID_SIZE - 1))) continue;
+			
+			/* Set the monster generation level */
+
+			/*Hack - use a number based on "law" statistic */
+			monster_level = wild[y + wild_grid.y][x + wild_grid.x].done.mon_gen;
+	
+			/* Add monsters to block */
+			add_monsters_block(x + wild_grid.x, y + wild_grid.y);
 		}
 	}
 }
@@ -3048,14 +3074,6 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Day / Night - lighten or darken the new block */
 	light_dark_block(block_ptr, x, y);
 
-	/* Set the monster generation level */
-
-	/*Hack - use a number based on "law" statistic */
-	monster_level = wild[y][x].done.mon_gen;
-	
-	/* Add monsters to block */
-	add_monsters_block(x , y);
-
 	/* Set the object generation level */
 
 	/* Hack - set object level to monster level */
@@ -3110,6 +3128,9 @@ static void allocate_all(void)
 			gen_block(x + wild_grid.x, y + wild_grid.y, block_ptr);
 		}
 	}
+	
+	/* Add monsters */
+	add_monsters();
 }
 
 
@@ -3146,6 +3167,9 @@ static void shift_down(void)
 		gen_block(i + wild_grid.x,
 			WILD_GRID_SIZE - 1 + wild_grid.y, block_ptr);
 	}
+	
+	/* Add monsters */
+	add_monsters();
 }
 
 static void shift_up(void)
@@ -3174,6 +3198,9 @@ static void shift_up(void)
 		/* Make the new block */
 		gen_block(i + wild_grid.x, wild_grid.y, block_ptr);
 	}
+	
+	/* Add monsters */
+	add_monsters();
 }
 
 static void shift_right(void)
@@ -3203,6 +3230,9 @@ static void shift_right(void)
 		gen_block(WILD_GRID_SIZE - 1 + wild_grid.x,
 			j + wild_grid.y, block_ptr);
 	}
+	
+	/* Add monsters */
+	add_monsters();
 }
 
 
@@ -3232,6 +3262,9 @@ static void shift_left(void)
 		/* Make the new block */
 		gen_block(wild_grid.x, j + wild_grid.y, block_ptr);
 	}
+	
+	/* Add monsters */
+	add_monsters();
 }
 
 /*
@@ -3245,6 +3278,8 @@ void move_wild(void)
 {
 	int x, y, dx, dy;
 
+	
+	
 	/* Get upper left hand block in grid. */
 
 	/* Divide by 16 to get block from (x,y) coord*/
@@ -3273,7 +3308,7 @@ void move_wild(void)
 	 * If so, the grid doesn't need to move.
 	 */
 	if ((x == wild_grid.x) && (y == wild_grid.y)) return;
-
+	
 	dx = x - wild_grid.x;
 	dy = y - wild_grid.y;
 
