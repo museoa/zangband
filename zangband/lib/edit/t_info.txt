@@ -80,7 +80,7 @@ F:17,field_action_glyph_explode
 N:4:corpse
 G:~:v
 W:50:7:100
-I:TEMP | VIS
+I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init | 1,field_action_corpse_load
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
@@ -90,7 +90,7 @@ F:15,field_action_corpse_raise
 N:5:skeleton
 G:~:w
 W:50:7:100
-I:TEMP | VIS
+I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init | 1,field_action_corpse_load
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
