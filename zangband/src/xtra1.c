@@ -2762,7 +2762,7 @@ static void calc_bonuses(void)
 	/* Temporary infravision boost */
 	if (p_ptr->tim.infra)
 	{
-		p_ptr->see_infra++;
+		p_ptr->see_infra += 3;
 	}
 
 
