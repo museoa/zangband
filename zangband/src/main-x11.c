@@ -1438,7 +1438,7 @@ static errr Infofnt_text_non(int x, int y, int len)
 	/* Just do a Fill Rectangle */
 	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc,
 					x1, y1,
-					x2 - x1, y2 - y1 + Infofnt->hgt);
+					x2 - x1, Infofnt->hgt);
 
 	/* Success */
 	return (0);
