@@ -3157,6 +3157,9 @@ static void cave_temp_room_aux(int y, int x)
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
+	/* Verify */
+	if (!in_bounds(y, x)) return;
+
 #if 0
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
