@@ -13432,3 +13432,17 @@ S:BA_COLD | BO_ICEE | BO_WATE | BA_ELEC
 D:The dungeon shakes as an enormous troll-form thunders into view, hurling 
 D:ice and lightning in every direction.  It is thirty feet tall, has six 
 D:heads, and is enraged at your impudence.
+
+N:878:Bat of Gorgoroth
+G:b:g
+I:120:20d10:20:30:30
+W:28:3:0:200
+B:BITE:POISON:1d10
+B:CLAW:HURT:1d4
+F:DROP_60 | RAND_25 | MOVE_BODY | CAN_FLY | 
+F:BASH_DOOR | MOVE_BODY | FRIENDS | 
+F:ANIMAL | IM_POIS
+S:1_IN_8 | 
+S:SCARE | BR_POIS | BR_DARK
+D:Fed with horrid meats and grown to enormous size, this slavering creature 
+D:seeks livelier prey.
