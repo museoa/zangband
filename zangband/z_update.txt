@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to the
 standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
-Done since 2.3.0:
+ZAngband 2.3.1:
 -Added Tom Morton's 'fake artifact names' patch.  Inscribing "a Foo" with
  "#'Bar'" will display the item as "a Foo 'Bar'".
 -Due to popular demand, multiple rings are supported.  Additional rings 
@@ -29,7 +29,8 @@ Done since 2.3.0:
  to walk them.
 -Added new quests (and changed ones) by Shayne Steele.
 -Changed the rewards for two quests
--Toned down Jack of Shadows, changed the level of Hrus
+-Toned down Jack of Shadows, changed the level of Hrus, Shudde M'Ell.
+ Fixed some monster typos. Added new Revenant monster.
 -Fixed a bug that crashed the ^Q command now and then
 
 ZAngband 2.3.0
