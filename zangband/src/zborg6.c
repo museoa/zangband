@@ -2776,33 +2776,6 @@ bool borg_caution(void)
 	/* Hallucination is nasty */
 	if (borg_skill[BI_ISIMAGE]) nasty = TRUE;
 
-	/* if on level 100 and not ready for Morgoth, run */
-	if (borg_skill[BI_CDEPTH] == 100 && borg_t - borg_began < 10)
-	{
-		if (borg_ready_morgoth == 0 && !borg_skill[BI_KING])
-		{
-			/* teleport level up to 99 to finish uniques */
-			if (borg_spell_fail(REALM_SORCERY, 2, 6, 100) ||
-				borg_spell_fail(REALM_TRUMP, 1, 5, 100) ||
-				borg_spell_fail(REALM_ARCANE, 3, 1, 100) ||
-				borg_read_scroll(SV_SCROLL_TELEPORT_LEVEL))
-			{
-				borg_note("# Rising one dlevel (Not ready for Morgoth)");
-				return (TRUE);
-			}
-
-			/* Start leaving */
-			if (!goal_leaving)
-			{
-				/* Note */
-				borg_note("# Leaving (Not ready for Morgoth now)");
-
-				/* Start leaving */
-				goal_leaving = TRUE;
-			}
-		}
-	}
-
 	/*** Evaluate local danger ***/
 
 	/* am I fighting a unique or a summoner, or scaryguy? */
@@ -2810,10 +2783,11 @@ bool borg_caution(void)
 	borg_surround = borg_surrounded();
 
 
-	/* Only allow three 'escapes' per level unless heading for morogoth
-	   or fighting a unique, then allow 7. */
-	if ((borg_escapes > 3 && !unique_on_level && !borg_ready_morgoth) ||
-		borg_escapes > 7)
+	/*
+	 * Only allow three 'escapes' per level
+	 * unless fighting a unique, then allow 7.
+	 */
+	if ((borg_escapes > 3 && !unique_on_level) || borg_escapes > 7)
 	{
 		/* No leaving if going after questors */
 		if (borg_skill[BI_CDEPTH] <= 98)
@@ -3049,10 +3023,9 @@ bool borg_caution(void)
 	else if (p > (borg_skill[BI_CURHP] * 2))
 	{
 		/* Start fleeing */
-		/* do not flee level if going after Morgoth or fighting a unique */
 		if (!goal_fleeing && !borg_fighting_unique &&
 			(borg_skill[BI_CLEVEL] < 50) && !vault_on_level &&
-			(borg_skill[BI_CDEPTH] < 100) && (borg_ready_morgoth == 1))
+			(borg_skill[BI_CDEPTH] < 100))
 		{
 			/* Note */
 			borg_note("# Fleeing (excessive danger)");
@@ -3085,13 +3058,12 @@ bool borg_caution(void)
 		/* Take next stairs */
 		stair_less = goal_fleeing;
 
-		if (borg_ready_morgoth == 0 && !borg_skill[BI_KING])
-			stair_less = TRUE;
-
 		if (scaryguy_on_level) stair_less = TRUE;
 
-		/* Only go down if fleeing or prepared, but not when starving.
-		 * or lacking on food */
+		/*
+		 * Only go down if fleeing or prepared,
+		 * but not when starving, or lacking food
+		 */
 		stair_more = goal_fleeing;
 		if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 1))
 			stair_more = TRUE;
@@ -7335,8 +7307,12 @@ static int borg_attack_aux(int what)
 				return (borg_attack_aux_spell_dispel
 						(REALM_LIFE, 2, 6, rad, dam, GF_DISP_EVIL));
 			}
-			else				/* If he is not wounded dont cast this, use Disp Evil instead. */
+			else
 			{
+				/*
+				 * If he is not wounded dont cast this,
+				 * use Disp Evil instead.
+				 */
 				dam = ((borg_skill[BI_CLEVEL] * 3) / 2) - 50;
 				return (borg_attack_aux_spell_dispel
 						(REALM_LIFE, 2, 6, rad, dam, GF_DISP_EVIL));
@@ -7348,11 +7324,14 @@ static int borg_attack_aux(int what)
 			/* Spell -- Divine Intervention */
 			dam = borg_skill[BI_CLEVEL] * 4 / 2;
 			rad = MAX_SIGHT + 10;
+
 			/* if hurting, add bonus */
 			if (borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] >= 200) dam =
 					(dam * 12) / 10;
+
 			/* if no speedy, add bonus */
 			if (!borg_speed) dam = (dam * 13) / 10;
+
 			/* bonus for refreshing the speedy */
 			if (borg_speed) dam = (dam * 11) / 10;
 			return (borg_attack_aux_spell_dispel
@@ -8492,6 +8471,7 @@ static int borg_attack_aux(int what)
 
 	}
 
+	borg_oops("# Invalid attack type.");
 
 	/* Oops */
 	return (0);

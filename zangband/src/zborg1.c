@@ -385,14 +385,6 @@ s16b borg_kills_cnt;
 s16b borg_kills_nxt;
 borg_kill *borg_kills;
 
-
-/* a 3 state boolean */
-/*-1 = not checked yet */
-/* 0 = not ready */
-/* 1 = ready */
-int borg_ready_morgoth;
-
-
 /*
  * Hack -- count racial appearances per level
  */

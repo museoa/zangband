@@ -8273,10 +8273,6 @@ int borg_danger(int x, int y, int c, bool average)
  */
 cptr borg_restock(int depth)
 {
-	/* We are now looking at our preparedness */
-	if (-1 == borg_ready_morgoth)
-		borg_ready_morgoth = 0;
-
 	/* Always ready for the town */
 	if (!depth) return ((cptr)NULL);
 
@@ -8383,14 +8379,6 @@ cptr borg_restock(int depth)
  */
 static cptr borg_prepared_aux2(int depth)
 {
-	if (-1 == borg_ready_morgoth)
-		borg_ready_morgoth = 0;
-	if (borg_skill[BI_KING])
-	{
-		borg_ready_morgoth = 1;
-		return ((cptr)NULL);
-	}
-
 	/* Always ready for the town */
 	if (!depth) return ((cptr)NULL);
 
@@ -8928,9 +8916,6 @@ static cptr borg_prepared_aux2(int depth)
 cptr borg_prepared(int depth)
 {
 	cptr reason;
-
-	/* -1 is unknown. */
-	borg_ready_morgoth = -1;
 
 	/* Town and First level */
 	if (depth == 1) return (NULL);

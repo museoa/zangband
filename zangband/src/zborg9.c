@@ -2242,34 +2242,6 @@ static char borg_inkey_hack(int flush_first)
 		return ('n');
 	}
 
-	/* with 292, there is a flush() introduced as it asks for confirmation.
-	 * This flush is messing up the borg.  This will allow the borg to
-	 * work around the flush
-	 * Attempt to catch "Attempt it anyway? [y/n]"
-	 */
-	if (borg_prompt && !p_ptr->inkey_flag &&
-		(y == 0) && (x >= 4) && streq(buf, "Atte"))
-	{
-		/* Return the confirmation */
-		borg_note("# Confirming use of Spell/Prayer.");
-		return ('y');
-	}
-
-	/* with 292, there is a flush() introduced as it asks for confirmation.
-	 * This flush is messing up the borg.  This will allow the borg to
-	 * work around the flush
-	 * This is used only with emergency use of spells like Magic Missile
-	 * Attempt to catch "Direction (5 old target"
-	 */
-	if (borg_prompt && !p_ptr->inkey_flag && borg_confirm_target &&
-		(y == 0) && (x >= 4) && streq(buf, "Dire"))
-	{
-		/* reset the flag */
-		borg_confirm_target = FALSE;
-		/* Return 5 for old target */
-		return ('5');
-	}
-
 	/* Mega-Hack -- Handle death */
 	if (p_ptr->is_dead)
 	{
@@ -2288,12 +2260,14 @@ static char borg_inkey_hack(int flush_first)
 	}
 
 
-	/* Mega-Hack -- Catch "-more-" messages */
-	/* If there is text on the first line... */
-	/* And the game does not want a command... */
-	/* And the cursor is on the top line... */
-	/* And there is text before the cursor... */
-	/* And that text is "-more-" */
+	/* 
+	 * Mega-Hack -- Catch "-more-" messages
+	 * If there is text on the first line...
+	 * And the game does not want a command...
+	 * And the cursor is on the top line...
+	 * And there is text before the cursor...
+	 * And that text is "-more-"
+	 */
 	if (borg_prompt && !p_ptr->inkey_flag &&
 		(y == 0) && (x >= 7) &&
 		(0 == borg_what_text(x - 7, y, 7, &t_a, buf)) &&
@@ -2309,9 +2283,11 @@ static char borg_inkey_hack(int flush_first)
 		return (KTRL('M'));
 	}
 
-	/* Mega-Hack -- catch normal messages */
-	/* If there is text on the first line... */
-	/* And the game wants a command */
+	/*
+	 * Mega-Hack -- catch normal messages
+	 * If there is text on the first line...
+	 * And the game wants a command
+	 */
 	if (borg_prompt && p_ptr->inkey_flag)
 	{
 		/* Get the message(s) */
@@ -2388,9 +2364,8 @@ static char borg_inkey_hack(int flush_first)
 	/* Use the key */
 	if (ch) return (ch);
 
-
 	/* Oops */
-	borg_oops("normal abort");
+	borg_oops("normal abort - out of keys???");
 
 	/* Hack -- Escape */
 	return (ESCAPE);
@@ -4180,10 +4155,6 @@ void do_cmd_borg(void)
 			msg_format("Max Level: %d  Prep'd For: %d  Reason: %s",
 					   borg_skill[BI_MAXDEPTH], i - 1, borg_prepared(i));
 			borg_slow_return = FALSE;
-			if (borg_ready_morgoth == 1)
-			{
-				msg_format("You are ready for the big fight!!");
-			}
 
 			break;
 		}

@@ -706,13 +706,6 @@ extern s16b borg_kills_nxt;
 
 extern borg_kill *borg_kills;
 
-
-/*
- * Hack -- depth readiness
- */
-extern int borg_ready_morgoth;
-
-
 /*
  * Hack -- count racial appearances per level
  */
