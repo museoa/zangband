@@ -3510,8 +3510,8 @@ static s32b borg_power_aux3(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* My realm only */
-		if (realm != borg_skill[BI_REALM1] &&
-			realm != borg_skill[BI_REALM2]) continue;
+		if ((realm != bp_ptr->realm1) &&
+			(realm != bp_ptr->realm2)) continue;
 
 		for (book = 0; book < 4; book++)
 		{
@@ -3903,8 +3903,8 @@ static s32b borg_power_aux4(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* My realm only */
-		if (realm != borg_skill[BI_REALM1] &&
-			realm != borg_skill[BI_REALM2]) continue;
+		if ((realm != bp_ptr->realm1) &&
+			(realm != bp_ptr->realm2)) continue;
 
 		for (book = 0; book < 4; book++)
 		{
@@ -4278,13 +4278,13 @@ static cptr borg_prepared_aux2(int depth)
 
 	if (borg_stat[A_STR] < 16) return ("low STR");
 
-	if ((borg_skill[BI_REALM1] >= REALM_SORCERY ||
-		 borg_skill[BI_REALM2] >= REALM_SORCERY))
+	if ((bp_ptr->realm1 >= REALM_SORCERY ||
+		 bp_ptr->realm2 >= REALM_SORCERY))
 	{
 		if (borg_stat[A_INT] < 16) return ("low INT");
 	}
-	if ((borg_skill[BI_REALM1] == REALM_LIFE ||
-		 borg_skill[BI_REALM2] == REALM_LIFE))
+	if ((bp_ptr->realm1 == REALM_LIFE ||
+		 bp_ptr->realm2 == REALM_LIFE))
 	{
 		if (borg_stat[A_WIS] < 16) return ("low WIS");
 	}
@@ -4308,13 +4308,13 @@ static cptr borg_prepared_aux2(int depth)
 	/* High stats XXX XXX XXX */
 	if (borg_stat[A_STR] < 18 + 40) return ("low STR");
 
-	if ((borg_skill[BI_REALM1] >= REALM_SORCERY ||
-		 borg_skill[BI_REALM2] >= REALM_SORCERY))
+	if ((bp_ptr->realm1 >= REALM_SORCERY ||
+		 bp_ptr->realm2 >= REALM_SORCERY))
 	{
 		if (borg_stat[A_INT] < 18 + 100) return ("low INT");
 	}
-	if ((borg_skill[BI_REALM1] == REALM_LIFE ||
-		 borg_skill[BI_REALM2] == REALM_LIFE))
+	if ((bp_ptr->realm1 == REALM_LIFE ||
+		 bp_ptr->realm2 == REALM_LIFE))
 	{
 		if (borg_stat[A_WIS] < 18 + 100) return ("low WIS");
 	}

@@ -2506,8 +2506,8 @@ bool borg_play_magic(bool bored)
 	for (realm = MAX_REALM; realm > 0; realm--)
 	{
 		/* skip non my realms */
-		if (realm != borg_skill[BI_REALM1] &&
-			realm != borg_skill[BI_REALM2]) continue;
+		if ((realm != bp_ptr->realm1) &&
+			(realm != bp_ptr->realm2)) continue;
 
 
 		/* Check each book (backwards) */
@@ -2592,8 +2592,8 @@ bool borg_play_magic(bool bored)
 		{
 
 			/* Only my realms */
-			if (realm != borg_skill[BI_REALM1] &&
-				realm != borg_skill[BI_REALM2]) continue;
+			if ((realm != bp_ptr->realm1) &&
+				(realm != bp_ptr->realm2)) continue;
 
 			/* Look for the book */
 			inven = borg_book[realm][book];

@@ -1639,8 +1639,8 @@ bool borg_spell_legal(int realm, int book, int what)
 	borg_magic *as = &borg_magics[realm][book][what];
 
 	/* The borg must be able to "cast" spells this realm */
-	if (borg_skill[BI_REALM1] != realm &&
-		borg_skill[BI_REALM2] != realm) return (FALSE);
+	if (bp_ptr->realm1 != realm &&
+		bp_ptr->realm2 != realm) return (FALSE);
 
 	/* Make sure we have this realm book */
 	if (amt_book[realm][book] <= 0) return (FALSE);
@@ -1670,10 +1670,10 @@ bool borg_spell_okay(int realm, int book, int what)
 	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
 	/* Define reserve_mana for each class */
-	if (borg_skill[BI_REALM1] == REALM_SORCERY) reserve_mana = 6;
-	if (borg_skill[BI_REALM1] == REALM_TRUMP) reserve_mana = 6;
-	if (borg_skill[BI_REALM1] == REALM_ARCANE) reserve_mana = 15;
-	if (borg_skill[BI_REALM1] == REALM_CHAOS) reserve_mana = 15;
+	if (bp_ptr->realm1 == REALM_SORCERY) reserve_mana = 6;
+	if (bp_ptr->realm1 == REALM_TRUMP) reserve_mana = 6;
+	if (bp_ptr->realm1 == REALM_ARCANE) reserve_mana = 15;
+	if (bp_ptr->realm1 == REALM_CHAOS) reserve_mana = 15;
 
 	/* Low level spell casters should not worry about this */
 	if (borg_skill[BI_CLEVEL] < 35) reserve_mana = 0;
@@ -2403,7 +2403,7 @@ void borg_cheat_spell(int realm)
 			j = as->cheat;
 
 			/* Note "forgotten" spells */
-			if ((realm == borg_skill[BI_REALM1]) ?
+			if ((realm == bp_ptr->realm1) ?
 				((p_ptr->spell_forgotten1 & (1L << j))) :
 				((p_ptr->spell_forgotten2 & (1L << j))))
 			{
@@ -2419,7 +2419,7 @@ void borg_cheat_spell(int realm)
 			}
 
 			/* Note "unknown" spells */
-			else if (!((realm == borg_skill[BI_REALM1]) ?
+			else if (!((realm == bp_ptr->realm1) ?
 					   (p_ptr->spell_learned1 & (1L << j)) :
 					   (p_ptr->spell_learned2 & (1L << j))))
 			{
@@ -2428,7 +2428,7 @@ void borg_cheat_spell(int realm)
 			}
 
 			/* Note "untried" spells */
-			else if (!((realm == borg_skill[BI_REALM1]) ?
+			else if (!((realm == bp_ptr->realm1) ?
 					   (p_ptr->spell_learned1 & (1L << j)) :
 					   (p_ptr->spell_learned2 & (1L << j))))
 			{
@@ -2486,7 +2486,7 @@ static void prepare_book_info(int realm, int book)
 
 
 	/* Can we use spells/prayers? */
-	if (borg_skill[BI_REALM1] == -1) return;
+	if (!bp_ptr->realm1) return;
 
 
 	/* Extract spells */
@@ -2584,18 +2584,18 @@ void prepare_race_class_info(void)
 	int book;
 
 	/* Hack -- Realms */
-	borg_skill[BI_REALM1] = p_ptr->realm1;
-	borg_skill[BI_REALM2] = p_ptr->realm2;
+	bp_ptr->realm1 = p_ptr->realm1;
+	bp_ptr->realm2 = p_ptr->realm2;
 
 	/* Initialize the various spell arrays by book */
 	for (book = 0; book < 4; book++)
 	{
-		prepare_book_info(borg_skill[BI_REALM1], book);
+		prepare_book_info(bp_ptr->realm1, book);
 	}
 
 	for (book = 0; book < 4; book++)
 	{
-		prepare_book_info(borg_skill[BI_REALM2], book);
+		prepare_book_info(bp_ptr->realm2, book);
 	}
 
 	/* MindCrafters */

@@ -398,8 +398,8 @@ static bool borg_think(void)
 		for (ii = 1; ii < MAX_REALM; ii++)
 		{
 			/* skip non my realms */
-			if (ii != borg_skill[BI_REALM1] &&
-				ii != borg_skill[BI_REALM2]) continue;
+			if ((ii != bp_ptr->realm1) &&
+				(ii != bp_ptr->realm2)) continue;
 
 			for (i = 0; i < inven_num; i++)
 			{
@@ -434,8 +434,8 @@ static bool borg_think(void)
 		borg_do_spell = FALSE;
 
 		/* Cheat that realm */
-		borg_cheat_spell(borg_skill[BI_REALM1]);
-		borg_cheat_spell(borg_skill[BI_REALM2]);
+		borg_cheat_spell(bp_ptr->realm1);
+		borg_cheat_spell(bp_ptr->realm2);
 
 
 		/* Done */
@@ -4187,8 +4187,8 @@ void do_cmd_borg(void)
 				int i = 0, j;
 
 				/* skip wrong realms */
-				if (k != borg_skill[BI_REALM1] &&
-					k != borg_skill[BI_REALM2]) continue;
+				if ((k != bp_ptr->realm1) &&
+					(k != bp_ptr->realm2)) continue;
 
 				ii++;
 
@@ -4205,13 +4205,13 @@ void do_cmd_borg(void)
 					for (j = 0; j < 8; j++)
 					{
 						borg_magic *as =
-							&borg_magics[borg_skill[BI_REALM1]][i][j];
+							&borg_magics[bp_ptr->realm1][i][j];
 						cptr legal = NULL;
 
 						if (as->level < 99)
 						{
 							legal =
-								(borg_spell_legal(borg_skill[BI_REALM1], i, j) ?
+								(borg_spell_legal(bp_ptr->realm1, i, j) ?
 								 "legal" : "Not Legal ");
 						}
 						Term_putstr(1, ii++, -1, TERM_WHITE,

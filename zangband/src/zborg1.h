@@ -229,15 +229,13 @@ struct borg_player
 	/* Spellpoints */
 	int csp;
 	int msp;
+	
+	byte realm1;
+	byte realm2;
 };
 
 extern borg_player *bp_ptr;
 
-
-#define BI_FAIL1	29
-#define BI_FAIL2	30
-#define BI_REALM1	31
-#define BI_REALM2	32
 #define BI_CLEVEL	33
 #define BI_MAXCLEVEL	34
 #define BI_ESP		35

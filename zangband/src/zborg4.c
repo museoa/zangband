@@ -689,18 +689,6 @@ static void borg_notice_stats(void)
 			my_stat_ind[i] = p_ptr->stat_ind[i];
 	}
 
-	/* 'Mana' is actually the 'mana adjustment' */
-	if (bp_ptr->wismana)
-	{
-		borg_skill[BI_FAIL1] = adj_mag_stat[my_stat_ind[A_WIS]];
-		borg_skill[BI_FAIL2] = adj_mag_fail[my_stat_ind[A_WIS]];
-	}
-	if (bp_ptr->intmana)
-	{
-		borg_skill[BI_FAIL1] = adj_mag_stat[my_stat_ind[A_INT]];
-		borg_skill[BI_FAIL2] = adj_mag_fail[my_stat_ind[A_INT]];
-	}
-
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
 	borg_skill[BI_ARMOR] += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
 	borg_skill[BI_TODAM] += ((int)(adj_str_td[my_stat_ind[A_STR]]) - 128);
@@ -1922,56 +1910,56 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		case TV_LIFE_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_LIFE ||
-				borg_skill[BI_REALM2] == REALM_LIFE)
+			if (bp_ptr->realm1 == REALM_LIFE ||
+				bp_ptr->realm2 == REALM_LIFE)
 				amt_book[REALM_LIFE][k_ptr->sval] += number;
 			break;
 		}
 		case TV_SORCERY_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_SORCERY ||
-				borg_skill[BI_REALM2] == REALM_SORCERY)
+			if (bp_ptr->realm1 == REALM_SORCERY ||
+				bp_ptr->realm2 == REALM_SORCERY)
 				amt_book[REALM_SORCERY][k_ptr->sval] += number;
 			break;
 		}
 		case TV_NATURE_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_NATURE ||
-				borg_skill[BI_REALM2] == REALM_NATURE)
+			if (bp_ptr->realm1 == REALM_NATURE ||
+				bp_ptr->realm2 == REALM_NATURE)
 				amt_book[REALM_NATURE][k_ptr->sval] += number;
 			break;
 		}
 		case TV_CHAOS_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_CHAOS ||
-				borg_skill[BI_REALM2] == REALM_CHAOS)
+			if (bp_ptr->realm1 == REALM_CHAOS ||
+				bp_ptr->realm2 == REALM_CHAOS)
 				amt_book[REALM_CHAOS][k_ptr->sval] += number;
 			break;
 		}
 		case TV_DEATH_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_DEATH ||
-				borg_skill[BI_REALM2] == REALM_DEATH)
+			if (bp_ptr->realm1 == REALM_DEATH ||
+				bp_ptr->realm2 == REALM_DEATH)
 				amt_book[REALM_DEATH][k_ptr->sval] += number;
 			break;
 		}
 		case TV_TRUMP_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_TRUMP ||
-				borg_skill[BI_REALM2] == REALM_TRUMP)
+			if (bp_ptr->realm1 == REALM_TRUMP ||
+				bp_ptr->realm2 == REALM_TRUMP)
 				amt_book[REALM_TRUMP][k_ptr->sval] += number;
 			break;
 		}
 		case TV_ARCANE_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_ARCANE ||
-				borg_skill[BI_REALM2] == REALM_ARCANE)
+			if (bp_ptr->realm1 == REALM_ARCANE ||
+				bp_ptr->realm2 == REALM_ARCANE)
 				amt_book[REALM_ARCANE][k_ptr->sval] += number;
 			break;
 		}
@@ -3534,8 +3522,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_LIFE_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_LIFE ||
-				borg_skill[BI_REALM2] == REALM_LIFE)
+			if (bp_ptr->realm1 == REALM_LIFE ||
+				bp_ptr->realm2 == REALM_LIFE)
 				num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3544,8 +3532,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_SORCERY_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_SORCERY ||
-				borg_skill[BI_REALM2] == REALM_SORCERY)
+			if (bp_ptr->realm1 == REALM_SORCERY ||
+				bp_ptr->realm2 == REALM_SORCERY)
 				num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3554,8 +3542,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_NATURE_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_NATURE ||
-				borg_skill[BI_REALM2] == REALM_NATURE)
+			if (bp_ptr->realm1 == REALM_NATURE ||
+				bp_ptr->realm2 == REALM_NATURE)
 				num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3563,8 +3551,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_CHAOS_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_CHAOS ||
-				borg_skill[BI_REALM2] == REALM_CHAOS)
+			if (bp_ptr->realm1 == REALM_CHAOS ||
+				bp_ptr->realm2 == REALM_CHAOS)
 				num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3572,8 +3560,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_DEATH_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_DEATH ||
-				borg_skill[BI_REALM2] == REALM_DEATH)
+			if (bp_ptr->realm1 == REALM_DEATH ||
+				bp_ptr->realm2 == REALM_DEATH)
 				num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3581,8 +3569,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_TRUMP_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_TRUMP ||
-				borg_skill[BI_REALM2] == REALM_TRUMP)
+			if (bp_ptr->realm1 == REALM_TRUMP ||
+				bp_ptr->realm2 == REALM_TRUMP)
 				num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3590,8 +3578,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_ARCANE_BOOK:
 		{
 			/* Count good books */
-			if (borg_skill[BI_REALM1] == REALM_ARCANE ||
-				borg_skill[BI_REALM2] == REALM_ARCANE)
+			if (bp_ptr->realm1 == REALM_ARCANE ||
+				bp_ptr->realm2 == REALM_ARCANE)
 				num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -4297,8 +4285,8 @@ static s32b borg_power_home_aux2(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* Only my realms */
-		if (realm != borg_skill[BI_REALM1] &&
-			realm != borg_skill[BI_REALM2]) continue;
+		if ((realm != bp_ptr->realm1) &&
+			(realm != bp_ptr->realm2)) continue;
 
 		/* Scan Books */
 		for (book = 0; book < 4; book++)

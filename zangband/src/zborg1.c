@@ -1126,8 +1126,8 @@ void borg_update_frame(void)
 	borg_skill[BI_MAXDEPTH] = p_ptr->max_depth;
 
 	/* Hack -- Realms */
-	borg_skill[BI_REALM1] = p_ptr->realm1;
-	borg_skill[BI_REALM2] = p_ptr->realm2;
+	bp_ptr->realm1 = p_ptr->realm1;
+	bp_ptr->realm2 = p_ptr->realm2;
 
 	/* Hack -- Mana increases */
 	switch (borg_class)
