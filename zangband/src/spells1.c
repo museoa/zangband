@@ -578,6 +578,12 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				
 				/* Get rid of attached fields */
 				delete_field_location(c_ptr);
+				
+				/* Note the spot */
+				note_spot(y, x);
+	
+				/* Visual update */
+				lite_spot(y, x);
 			}
 
 			/* Deliberate missing "break;" */
