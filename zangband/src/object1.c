@@ -1756,7 +1756,7 @@ void show_list(s16b o_list_ptr)
 	OBJ_ITT_START (o_list_ptr, o_ptr)
 	{
 		/* Paranoia - don't display too many items */
-		if (k >= INVEN_PACK) break;
+		if (k >= INVEN_PACK - 1) break;
 	
 		i++;
 
