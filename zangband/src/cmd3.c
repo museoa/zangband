@@ -296,8 +296,6 @@ void do_cmd_takeoff(void)
 	/* Take off the item */
 	(void)inven_takeoff(o_ptr);
 
-	p_ptr->redraw |= (PR_EQUIPPY);
-
 	make_noise(1);
 }
 
