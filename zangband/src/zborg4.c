@@ -136,46 +136,12 @@ void borg_list_info(byte list_type)
  */
 
 
-
 /*
- * Helper function -- notice the player equipment
+ * Notice player flags
  */
-static void borg_notice_aux1(void)
+static void borg_notice_player(void)
 {
-	int i, hold;
-
-	int extra_blows = 0;
-
-	int extra_shots = 0;
-	int extra_might = 0;
-	int my_num_fire;
-
-	list_item *l_ptr;
-
 	u32b f1, f2, f3;
-
-
-	/* Recalc some Variables */
-	borg_skill[BI_ARMOR] = 0;
-	borg_skill[BI_SPEED] = 110;
-
-	/* Start with a single blow per turn */
-	borg_skill[BI_BLOWS] = 1;
-
-	/* Start with a single shot per turn */
-	my_num_fire = 1;
-
-	/* Reset the "ammo" tval to darts by default */
-	my_ammo_tval = 0;
-
-	/* Reset the "ammo" sides for darts */
-	my_ammo_sides = 4;
-
-	/* Reset the shooting power */
-	my_ammo_power = 0;
-
-	/* Reset the shooting range */
-	my_ammo_range = 0;
 
 	/* Base infravision (purely racial) */
 	borg_skill[BI_INFRA] = rb_ptr->infra;
@@ -263,12 +229,15 @@ static void borg_notice_aux1(void)
 	if (f2 & (TR2_SUST_DEX)) borg_skill[BI_SDEX] = TRUE;
 	if (f2 & (TR2_SUST_CON)) borg_skill[BI_SCON] = TRUE;
 	if (f2 & (TR2_SUST_CHR)) borg_skill[BI_SCHR] = TRUE;
+}
 
+static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_might)
+{
+	int i;
 
-	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
+	list_item *l_ptr;
 
-	/* Scan the usable inventory */
+	/* Scan the equipment */
 	for (i = 0; i < equip_num; i++)
 	{
 		l_ptr = &equipment[i];
@@ -341,13 +310,13 @@ static void borg_notice_aux1(void)
 		if (l_ptr->kn_flags1 & TR1_SPEED) borg_skill[BI_SPEED] += l_ptr->pval;
 
 		/* Affect blows */
-		if (l_ptr->kn_flags1 & TR1_BLOWS) extra_blows += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_BLOWS) *extra_blows += l_ptr->pval;
 
 		/* Boost shots */
-		if (l_ptr->kn_flags3 & TR3_XTRA_SHOTS) extra_shots++;
+		if (l_ptr->kn_flags3 & TR3_XTRA_SHOTS) (*extra_shots)++;
 
 		/* Boost might */
-		if (l_ptr->kn_flags3 & TR3_XTRA_MIGHT) extra_might++;
+		if (l_ptr->kn_flags3 & TR3_XTRA_MIGHT) (*extra_might)++;
 
 		/* Various flags */
 		if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) borg_skill[BI_SDIG] = TRUE;
@@ -437,6 +406,54 @@ static void borg_notice_aux1(void)
 		borg_skill[BI_TOHIT] += l_ptr->to_h;
 		borg_skill[BI_TODAM] += l_ptr->to_d;
 	}
+}
+
+
+/*
+ * Helper function -- notice the player equipment
+ */
+static void borg_notice_aux1(void)
+{
+	int i, hold;
+
+	int extra_blows = 0;
+
+	int extra_shots = 0;
+	int extra_might = 0;
+	int my_num_fire;
+
+	list_item *l_ptr;
+
+	/* Recalc some Variables */
+	borg_skill[BI_ARMOR] = 0;
+	borg_skill[BI_SPEED] = 110;
+
+	/* Start with a single blow per turn */
+	borg_skill[BI_BLOWS] = 1;
+
+	/* Start with a single shot per turn */
+	my_num_fire = 1;
+
+	/* Reset the "ammo" tval to darts by default */
+	my_ammo_tval = 0;
+
+	/* Reset the "ammo" sides for darts */
+	my_ammo_sides = 4;
+
+	/* Reset the shooting power */
+	my_ammo_power = 0;
+
+	/* Reset the shooting range */
+	my_ammo_range = 0;
+
+	/* Notice player flags */
+	borg_notice_player();
+
+
+	/* Clear the stat modifiers */
+	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
+
+	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
 
 	/* Vampires that do not Resist Light are in trouble */
 	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
