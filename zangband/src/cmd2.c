@@ -762,7 +762,7 @@ bool do_cmd_open_aux(int x, int y)
 	}
 	
 	/* We know about the change */
-	lite_spot(x, y);
+	note_spot(x, y);
 
 	/* Done - no more to try. */
 	return (FALSE);
@@ -923,7 +923,7 @@ static bool do_cmd_close_aux(int x, int y)
 	}
 
 	/* We know about the change */
-	lite_spot(x, y);
+	note_spot(x, y);
 
 	/* Result */
 	return (more);

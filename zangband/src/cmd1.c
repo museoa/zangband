@@ -747,7 +747,7 @@ void carry(int pickup)
 			/* Describe the object */
 			if (!pickup)
 			{
-				msgf("You see %s.", o_name);
+				msgf("You find %s.", o_name);
 			}
 
 			/* Note that the pack is too full */
@@ -836,14 +836,14 @@ void carry(int pickup)
 		if (floor_num == 1)
 		{
 			/* Message */
-			msgf("You see %v.", OBJECT_FMT(fo_ptr, TRUE, 3));
+			msgf("You find %v.", OBJECT_FMT(fo_ptr, TRUE, 3));
 		}
 
 		/* Multiple objects */
 		else
 		{
 			/* Message */
-			msgf("You see a pile of %d items.", floor_num);
+			msgf("You find a pile of %d items.", floor_num);
 		}
 
 		/* Done */
