@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: h-config.h */
 
 #ifndef INCLUDED_H_CONFIG_H

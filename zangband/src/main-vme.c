@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: main-vme.c */
 
 /* Purpose: Support for "Vax Angband" */

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: object1.c */
 
 /* Purpose: Object code, part 1 */

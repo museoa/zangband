@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File z-util.h */
 
 #ifndef INCLUDED_Z_UTIL_H

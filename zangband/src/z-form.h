@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File z-form.h */
 
 #ifndef INCLUDED_Z_FORM_H

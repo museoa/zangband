@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: main-acn.c */
 
 /* Purpose: Support for Acorn RISC OS Angband */

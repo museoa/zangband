@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: main-mac.c */
 
 /* Purpose: Simple support for MACINTOSH Angband */

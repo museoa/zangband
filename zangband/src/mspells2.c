@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: mspells2.c */
 
 /* Purpose: Monster spells (attack monster) */

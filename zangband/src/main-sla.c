@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: main-sla.c */
 
 /* Purpose: Actual Unix "slang" support for Angband */

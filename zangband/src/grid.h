@@ -1,5 +1,4 @@
-/* CVS: Last edit by $Author$ on $Date$
- *
+/*
  * File: grid.h
  * Purpose: header file for grid.c, used only in dungeon generation
  * files (generate.c, rooms.c)

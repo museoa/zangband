@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: h-type.h */
 
 #ifndef INCLUDED_H_TYPE_H

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: angband.h */
 
 /* Main "Angband" header file */
