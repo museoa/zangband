@@ -660,6 +660,9 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 			 *
 			 * This makes "$$" turn into just "$".
 			 */
+			
+			/* Stop if reach null */
+			if (*c == 0) break;
 		}
 		
 		if (*c == '\n')
@@ -820,6 +823,9 @@ void roff(cptr str, ...)
 			 *
 			 * This makes "$$" turn into just "$".
 			 */
+			 
+			 /* Stop if new reach null */
+			if (*s == 0) break;
 		}
 
 		/* Clean up the char */
@@ -980,7 +986,7 @@ bool askfor_aux(char *buf, int len)
 	while (!done)
 	{
 		/* Place cursor */
-		Term_gotoxy(x + k, y);
+		/* Term_gotoxy(x + k, y); */
 
 		/* Get a key */
 		i = inkey();
