@@ -195,38 +195,6 @@ static int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned c
 	return index;
 }
 
-
-/* nearest $color */
-static int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-/*	int objC = objc - infoCmd->depth; */
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	XColor *xColorPtr;
-	int nearest;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	xColorPtr = Tk_AllocColorFromObj(interp, Tk_MainWindow(interp), objV[1]);
-	if (xColorPtr == NULL)
-	{
-		return TCL_ERROR;
-	}
-
-	nearest = Palette_RGB2Index(
-		((double) xColorPtr->red / USHRT_MAX) * 255,
-		((double) xColorPtr->green / USHRT_MAX) * 255,
-		((double) xColorPtr->blue / USHRT_MAX) * 255);
-
-	Tk_FreeColor(xColorPtr);
-
-	Tcl_SetObjResult(interp, Tcl_NewIntObj(nearest));
-
-	return TCL_OK;
-}
-
 /* set $index ?$color? */
 static int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
@@ -253,9 +221,9 @@ static int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int obj
 		{
 			return TCL_ERROR;
 		}
-		g_palette.rgb[i * 3] = ((double) xColorPtr->red / USHRT_MAX) * 255;
-		g_palette.rgb[i * 3 + 1] = ((double) xColorPtr->green / USHRT_MAX) * 255;
-		g_palette.rgb[i * 3 + 2] = ((double) xColorPtr->blue / USHRT_MAX) * 255;
+		g_palette.rgb[i * 3] = xColorPtr->red / 255;
+		g_palette.rgb[i * 3 + 1] = xColorPtr->green / 255;
+		g_palette.rgb[i * 3 + 2] = xColorPtr->blue / 255;
 		Tk_FreeColor(xColorPtr);
 		return TCL_OK;
 	}
@@ -271,7 +239,6 @@ static int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int obj
 
 static CommandInit commandInit[] = {
 	{0, "palette", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "nearest", 2, 2, "color", objcmd_palette_nearest, (ClientData) 0},
 		{1, "set", 2, 3, "?color?", objcmd_palette_set, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, 0}
 };
