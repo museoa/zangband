@@ -5341,7 +5341,13 @@ static bool reorder_pack_comp(const object_type *o1_ptr,
 	/* Unidentified objects always come last */
 	if (!object_known_p(o2_ptr)) return (TRUE);
 	if (!object_known_p(o1_ptr)) return (FALSE);
-
+	
+	/* Lites sort by increasing timeout */
+	if (o1_ptr->tval == TV_LITE)
+	{
+		if (o1_ptr->sval < o2_ptr->sval) return (TRUE);
+		if (o1_ptr->sval > o2_ptr->sval) return (FALSE);
+	}
 
 	/*
 	 * Hack:  otherwise identical rods sort by
@@ -5370,30 +5376,39 @@ object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func,
                                  u16b o_idx)
 {
 	object_type *o_ptr, *j_ptr;
-
-	/* Re-order the pack */
-	OBJ_ITT_START (o_idx, o_ptr)
+	
+	int i;
+	
+	/*
+	 * Hack - Do this twice because we invert the order
+	 * of 'similar' objects on the first pass
+	 */
+	for (i = 0; i < 2; i++)
 	{
-		OBJ_ITT_START (o_ptr->next_o_idx, j_ptr)
+		/* Re-order the pack */
+		OBJ_ITT_START (o_idx, o_ptr)
 		{
-			/* Are they in the right order? */
-			if (comp_func(j_ptr, o_ptr))
+			OBJ_ITT_START (o_ptr->next_o_idx, j_ptr)
 			{
-				/* Are we moving the watched item? */
-				if (q_ptr)
+				/* Are they in the right order? */
+				if (comp_func(j_ptr, o_ptr))
 				{
-					if (q_ptr == o_ptr) q_ptr = j_ptr;
-					else if (q_ptr == j_ptr) q_ptr = o_ptr;
-				}
+					/* Are we moving the watched item? */
+					if (q_ptr)
+					{
+						if (q_ptr == o_ptr) q_ptr = j_ptr;
+						else if (q_ptr == j_ptr) q_ptr = o_ptr;
+					}
 
-				/* Swap the objects */
-				swap_objects(o_ptr, j_ptr);
+					/* Swap the objects */
+					swap_objects(o_ptr, j_ptr);
+				}
 			}
+			OBJ_ITT_END;
 		}
 		OBJ_ITT_END;
 	}
-	OBJ_ITT_END;
-
+	
 	return (q_ptr);
 }
 
