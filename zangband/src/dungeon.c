@@ -1665,10 +1665,6 @@ static void process_world(void)
 
 		/* Apply some healing */
 		(void)set_poisoned(p_ptr->poisoned - adjust);
-		
-		letter[num]='P';
-		colour[num]=TERM_L_GREEN;
-		num++;
 	}
 
 	/* Stun */
@@ -1678,10 +1674,6 @@ static void process_world(void)
 
 		/* Apply some healing */
 		(void)set_stun(p_ptr->stun - adjust);
-		
-		letter[num]='S';
-		colour[num]=TERM_BLUE;
-		num++;
 	}
 
 	/* Cut */
@@ -1694,10 +1686,6 @@ static void process_world(void)
 
 		/* Apply some healing */
 		(void)set_cut(p_ptr->cut - adjust);
-		
-		letter[num]='W';
-		colour[num]=TERM_RED;
-		num++;
 	}
 
 	if (num)
