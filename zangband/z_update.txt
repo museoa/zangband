@@ -2,6 +2,25 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+Changes since 2.5.0
+-Documentation updates.
+-Changed the drive-letters in the Cygwin makefile from d: to c:.
+-Fixed a bug with the Amiga map.
+-Fixed a bug that caused nameless characters to be saved in the wrong
+ directory.
+-Fixed a bug that messed up objects on the floor when rerolling them
+ in debug mode.
+-Fixed the vanilla town bug where the stores / home were not saved.
+-Reduced the multiplier for the throwing mutation it was way too
+ powerful when combined with some items.
+-Changed the prices of a few objects.
+-Added a graphical overhead-map of the current level or wilderness area
+ to the Windows version.
+-Fixed a buffer-overrun with long notes.
+-Stopped pre-emptive tunnel completion when the tunnel meets the caved
+ in regions with trees on first level.
+
+
 ZAngband 2.5.0:
 -Completely reworked the wilderness.  The extended towns and fixed
  quests are not available at the moment.
