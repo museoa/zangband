@@ -1932,9 +1932,9 @@ void show_equip(bool store)
 	object_type *o_ptr;
 
 	char o_name[256];
-	int out_index[23];
-	cptr out_color[23];
-	char out_desc[23][256];
+	int out_index[EQUIP_MAX];
+	cptr out_color[EQUIP_MAX];
+	char out_desc[EQUIP_MAX][256];
 
 	byte a;
 	char c;
@@ -2050,7 +2050,6 @@ void show_equip(bool store)
 		}
 
 		Term_draw(col + 3, j + 1, a, c);
-
 
 		/* Use labels */
 		if (show_labels)
