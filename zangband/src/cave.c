@@ -2488,7 +2488,17 @@ void display_map(int *cx, int *cy)
 	hgt -= 2;
 	wid -= 14;
 
-
+	/* Paranoia */
+	if ((hgt < 3) || (wid < 3))
+	{
+		/*
+		 * Need to place the player...
+		 * This is wrong, but the map is too small anyway.
+		 */
+		(*cy) = ROW_MAP;
+		(*cx) = COL_MAP;
+		return;
+	}
 
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
