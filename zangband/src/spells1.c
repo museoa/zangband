@@ -374,7 +374,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				cave_set_feat(x, y, FEAT_FLOOR);
 				
 				/* Place some gold */
-				place_gold(y, x);
+				place_gold(x, y);
 				
 				/* Message */
 				if (known)

@@ -1501,7 +1501,7 @@ extern byte kind_is_theme(int k_idx);
 extern bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme);
 extern void place_object(int x, int y, bool good, bool great);
 extern bool make_gold(object_type *j_ptr, int coin_type);
-extern void place_gold(int y, int x);
+extern void place_gold(int x, int y);
 extern s16b drop_near(object_type *o_ptr, int chance, int y, int x);
 extern void acquirement(int y1, int x1, int num, bool great, bool known);
 extern cptr item_activation(const object_type *o_ptr);

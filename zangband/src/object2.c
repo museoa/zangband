@@ -4202,7 +4202,7 @@ bool make_gold(object_type *j_ptr, int coin_type)
  *
  * The location must be a legal, clean, floor grid.
  */
-void place_gold(int y, int x)
+void place_gold(int x, int y)
 {
 	s16b o_idx;
 

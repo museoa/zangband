@@ -252,7 +252,7 @@ void vault_objects(int x, int y, int num)
 			/* Place gold */
 			else
 			{
-				place_gold(j, k);
+				place_gold(k, j);
 			}
 
 			/* Placement accomplished */
