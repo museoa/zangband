@@ -1459,7 +1459,7 @@ static void display_player_various(void)
 	else
 		avgdam = 0;
 	/* Effect of damage dice x2 */
-	avgdam *= damdice*(damdice+1);
+	avgdam *= damdice*(damsides+1);
 	
 	/* number of blows */
 	avgdam *= blows;

@@ -1118,14 +1118,37 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
                                 u32b f1, u32b f2, u32b f3, byte color)
 {
 	char tmp_str[80];
+	long maxdam,mindam;
+	int dambonus;
+	
+	int intmaxdam, intmindam;
+	
+	dambonus=o_ptr->to_d + p_ptr->to_d;
+
+	if (dambonus > 0)
+		mindam = (100 + deadliness_conversion[dambonus]);
+	else if (dambonus > -31)
+		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
+	else
+		mindam = 0;
+	
+	/* Effect of damage dice */
+	maxdam = mindam*(o_ptr->ds*o_ptr->dd);
+	mindam *= o_ptr->ds;
+	
+	/* number of blows */
+	maxdam *= numblows;
+	mindam *= numblows;
+	
+	/*rescale*/
+	intmaxdam = maxdam/100;
+	intmindam = mindam/100;
 
 	/* Print the intro text */
 	c_put_str(color, attr, r, c);
 
 	/* Calculate the min and max damage figures */
-	sprintf(tmp_str, "Attack: %d-%d damage",
-	    (numblows * (mult * o_ptr->dd + o_ptr->to_d + p_ptr->to_d)),
-	    (numblows * (mult * o_ptr->ds * o_ptr->dd + o_ptr->to_d + p_ptr->to_d)));
+	sprintf(tmp_str, "Attack: %d-%d damage",intmindam,intmaxdam);
 
 	/* Print the damage */
 	put_str(tmp_str, r, c + 8);
@@ -1174,12 +1197,17 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 	char o_name[80];
 	char tmp_str[80];
 
+	long maxdam,mindam;
+	int dambonus;
+
+	int intmaxdam,intmindam;
+
 	/* Print the weapon name */
 	object_desc(o_name, o_ptr, TRUE, 0);
 	c_put_str(TERM_YELLOW, o_name, row, col);
 
 	/* Print to_hit and to_dam of the weapon */
-	sprintf(tmp_str, "To Hit: %d   To Damage: %d", o_ptr->to_h, o_ptr->to_d);
+	sprintf(tmp_str, "To Hit: %d  Deadliness: %d", o_ptr->to_h, o_ptr->to_d);
 	put_str(tmp_str, row+1, col);
 
 	/* Print the weapons base damage dice */
@@ -1191,17 +1219,34 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 	put_str(tmp_str, row+3, col);
 
 	c_put_str(TERM_YELLOW, "Possible Damage:", row+5, col);
+	
+	dambonus=o_ptr->to_d + p_ptr->to_d;
 
+	if (dambonus > 0)
+		mindam = (100 + deadliness_conversion[dambonus]);
+	else if (dambonus > -31)
+		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
+	else
+		mindam = 0;
+	
+	/* Effect of damage dice */
+	maxdam = mindam*(o_ptr->ds*o_ptr->dd);
+	mindam *= o_ptr->ds;
+
+	/* rescale */
+	intmaxdam=maxdam/100;
+	intmindam=mindam/100;
+	
 	/* Damage for one blow (if it hits) */
-	sprintf(tmp_str, "One Strike: %d-%d damage",
-	    o_ptr->dd + o_ptr->to_d + p_ptr->to_d,
-	    o_ptr->ds * o_ptr->dd + o_ptr->to_d + p_ptr->to_d);
+	sprintf(tmp_str, "One Strike: %d-%d damage",intmindam,intmaxdam);
 	put_str(tmp_str, row+6, col+1);
 
+	/* rescale */
+	intmaxdam=(maxdam*p_ptr->num_blow)/100;
+	intmindam=(mindam*p_ptr->num_blow)/100;
+	
 	/* Damage for the complete attack (if all blows hit) */
-	sprintf(tmp_str, "One Attack: %d-%d damage",
-	    p_ptr->num_blow * (o_ptr->dd + o_ptr->to_d + p_ptr->to_d),
-	    p_ptr->num_blow * (o_ptr->ds * o_ptr->dd + o_ptr->to_d + p_ptr->to_d));
+	sprintf(tmp_str, "One Attack: %d-%d damage",intmindam,intmaxdam);
 	put_str(tmp_str, row+7, col+1);
 }
 
