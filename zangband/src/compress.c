@@ -952,17 +952,34 @@ static void sort_split(s32b s1, s32b s2)
 	}
 	
 	/* Get the point that the middle group starts */
-	gs = s1 + pb - pa;
+	gs = s1 - pa + pb;
 	
 	/* Copy all the 'equal' keys from the front to the middle */
-	ge = gs;
-	for (pl = s1; pl < pa; pl++)
+	
+	
+	if (gs > pa)
 	{
-		/* Copy to the middle */
-		SWAP(pl, ge);
-		ge++;
+		ge = gs;
+		
+		for (pl = s1; pl < pa; pl++)
+		{
+			/* Copy to the middle */
+			SWAP(pl, ge);
+			ge++;
+		}
 	}
-
+	else
+	{
+		ge = pa;
+		
+		for (pl = s1; pl < gs; pl++)
+		{
+			/* Copy to the middle */
+			SWAP(pl, ge);
+			ge++;
+		}
+	}
+	
 	/* Copy all the 'equal' keys from the back to the middle */
 	for (pl = pd + 1; pl < s2; pl++)
 	{
@@ -1006,8 +1023,8 @@ static void sort_split(s32b s1, s32b s2)
  */
 static s32b *sort_string(byte *string, s32b len)
 {
-	s32b s;
-	s32b i, j, gl;
+	s32b s, t;
+	s32b i, gl;
 	
 	u32b counts[256];
 	s32b positions[256];
@@ -1054,7 +1071,7 @@ static s32b *sort_string(byte *string, s32b len)
 	string_start = start;
 	
 	/* Do a radix sort to speed everything up */
-#if 0	
+
 	C_WIPE(counts, 256, u32b);
 	
 	/* Get the sub-totals of the buckets */
@@ -1070,36 +1087,22 @@ static s32b *sort_string(byte *string, s32b len)
 		positions[i + 1] = positions[i] + counts[i];
 	}
 	
-	/*
-	 * Initialise the groups
-	 */
-	for (i = 0; i < 256; i++)
-	{
-		 for (j = positions[i]; j < positions[i + 1]; j++)
-		 {
-		 	group[j] = positions[i + 1];
-		 }
-	}
-	
 	/* Output the semi-sorted pointers */
 	for (i = 0; i < len; i++)
 	{
 		location = positions[string[i]]++;
 		
-		start[i] = location;
-	}
-#else /* 0 */
-
-	/* Initialize */
-	for (i = 0; i < len; i++)
-	{
-		start[i] = i;
-		group[i] = string[i];
+		start[location] = i;
 	}
 	
-	string_sort_depth = 0;
-	sort_split(0, len);
-#endif /* 0 */
+	/*
+	 * Initialise the groups
+	 */
+	for (i = 0; i < len; i++)
+	{
+		 group[start[i]] = positions[string[start[i]]];
+	}
+
 	/* Start with one symbol sorted */ 
 	string_sort_depth = 1;
 
@@ -1132,9 +1135,14 @@ static s32b *sort_string(byte *string, s32b len)
 					gl = 0;
 				}
 				
+				/* Save group in temp variable */
+				t = group[s];
+				
 				/* sort from i to group[s] */
-				sort_split(i, group[s]);
-				i = group[s];
+				sort_split(i, t);
+				
+				/* Skip to next group = value of current group. */
+				i = t;
 			}
 			
 			/* Stop if have scanned everything */
@@ -1185,7 +1193,7 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	/* Record location of original string in sorted list */
 	for (i = 0; i < size; i++)
 	{
-		if (offsets[i] == 1)
+		if (offsets[i] == 0)
 		{
 			transform = i;
 			break;
@@ -1204,6 +1212,8 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	write_block_byte(h2_ptr, (transform >> 16) & 0xFF);
 	write_block_byte(h2_ptr, (transform >> 24) & 0xFF);
 	
+	string_len = size;
+	
 	/* Write the transformed block */
 	for (i = 0; i < size; i++)
 	{
@@ -1215,7 +1225,7 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 		{
 			j = offsets[i] - 1;
 		}
-	
+
 		write_block_byte(h2_ptr, data[j]);
 	}
 
@@ -1265,9 +1275,9 @@ static void bw_blocks_trans(block_handle *h1_ptr)
 static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 {
 	s32b size, transform, symbol, i;
-	u32b counts[257];
+	u32b counts[257], sum, count;
 
-	u32b *temp, t;
+	u32b *temp;
 	
 	/* Get the data size, and transformation number */
 	size = rerase_block_byte(h1_ptr);
@@ -1285,7 +1295,7 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	transform |= (rerase_block_byte(h1_ptr) << 24);
 
 	C_MAKE(temp, size, u32b);
-	C_WIPE(counts, 257, u32b);
+	C_WIPE(counts, 256, u32b);
 
 	/* Initialise counts */
 	for (i = 0; i < size; i++)
@@ -1295,36 +1305,42 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 		/* Paranoia */
 		if (symbol == -1) return;
 		
-		/*
-		 * Get the transformation vector, and put it in temp
-		 * Note that we store the symbol there as well.
-		 * This works so long as the maximum block size is
-		 * less than 2^24 bytes.
-		 *
-		 * Doing this saves on cache misses, and makes the
-		 * inverse transformation much quicker with large
-		 * block sizes.
-		 */
-		temp[i] = 256 * (counts[symbol + 1]++) + symbol;
+		/* Count symbols */
+		counts[symbol]++;
+		
+		/* Save symbol for later */
+		temp[i] = symbol;
 	}
 	
 	/* Cumulatise counts */
-	for (i = 2; i < 256; i++)
+	sum = 0;
+	for (i = 0; i < 256; i++)
 	{
-		counts[i] += counts[i - 1];
+		count = counts[i];
+		counts[i] = sum;
+		sum += count;
+	}
+	
+	/* Make transformation vector */
+	for (i = 0; i < size; i++)
+	{
+		symbol = temp[i] & 0xFF;
+		
+		temp[counts[symbol]] += 256 * i;
+		counts[symbol]++;
 	}
 	
 	for (i = 0; i < size; i++)
 	{
 		/* Get the information */
-		t = temp[transform];
+		transform = temp[transform];
 		
 		/* Get the symbol */
-		symbol = t & 0xFF;
+		symbol = transform & 0xFF;
 		write_block_byte(h2_ptr, symbol);
 		
 		/* Get the new point in the temp array */
-		transform  = t / 256 + counts[symbol];
+		transform /= 256;
 	}
 
 	/* Cleanup */
