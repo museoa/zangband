@@ -75,6 +75,49 @@ function corpse_init()
 	notice_field(field)
 end
 
+--
+--	Corpses Decay
+--
+function corpse_exit()
+	local name
+	local r_idx
+	r_idx = field.data[1] * 256 + field.data[2]
+	
+	race = monst_race(r_idx)
+	name = race.name
+	
+	if (ironman_nightmare == TRUE) then
+
+		-- Summon a monster nearby if possible
+		if (summon_cloned_creature(field.fx, field.fy, race, FALSE)) then
+			if (visible == TRUE) then
+				if (disturb_minor == TRUE) then
+					msgf("The "..name.." rises.")
+				end
+			end
+		else
+			if (visible == TRUE) then
+
+				-- Let the player know what happened
+				if (disturb_minor == TRUE) then
+					msgf("The "..name.." decays.")
+				end
+			end
+		end	
+	else
+		if (visible == TRUE) then
+		
+			-- Let the player know what happened
+			if (disturb_minor == TRUE) then
+				msgf("The "..name.." decays.")
+			end
+		end
+	end
+
+	-- We must delete ourselves - the is an 'exit' script.	
+	deleteme()
+end
+
 
 --
 --	Initialise a field with a counter
