@@ -14,17 +14,6 @@
 
 
 /*
- * Hack -- note that "TERM_MULTI" is now just "TERM_VIOLET".
- * We will have to find a cleaner method for "MULTI_HUED" later.
- * There were only two multi-hued "flavors" (one potion, one food).
- * Plus five multi-hued "base-objects" (3 dragon scales, one blade
- * of chaos, and one something else).  See the SHIMMER_OBJECTS code
- * in "dungeon.c" and the object color extractor in "cave.c".
- */
-#define TERM_MULTI      TERM_VIOLET
-
-
-/*
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      56       /* Used with rings (min 38) */
@@ -217,7 +206,7 @@ static byte potion_col[MAX_COLORS] =
 	TERM_RED, TERM_RED, TERM_L_WHITE, TERM_L_DARK, TERM_ORANGE,
 	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_VIOLET,
 	TERM_L_RED, TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
-	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
+	TERM_VIOLET, TERM_RED, TERM_YELLOW, TERM_YELLOW,
 	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, TERM_WHITE, TERM_L_BLUE
 };
 
@@ -788,8 +777,8 @@ static char *object_desc_int(char *t, sint v)
  * Note that the inscription will be clipped to keep the total description
  * under 79 chars (plus a terminator).
  *
- * Note the use of "object_desc_num()" and "object_desc_int()" as hyper-efficient,
- * portable, versions of some common "sprintf()" commands.
+ * Note the use of "object_desc_num()" and "object_desc_int()" as
+ * hyper-efficient, portable, versions of some common "sprintf()" commands.
  *
  * Note that all ego-items (when known) append an "Ego-Item Name", unless
  * the item is also an artifact, which should NEVER happen.
@@ -1824,12 +1813,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			/* Dump " to infravision" */
 			t = object_desc_str(t, " to infravision");
-		}
-
-		/* Tunneling */
-		else if (f1 & (TR1_TUNNEL))
-		{
-			/* Nothing */
 		}
 
 		/* Finish the display */
