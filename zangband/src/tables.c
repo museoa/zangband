@@ -6497,9 +6497,6 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Delete the field */
 	{field_action_delete, "field_action_delete"},
 	
-	/* Basic compaction chance */ 
-	{field_action_compact_basic, "field_action_compact_basic"},
-	
 	/* Glyph of warding function */
 	{field_action_glyph_warding, "field_action_glyph_warding"},
 	
@@ -6517,6 +6514,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Trap init function */
 	{field_action_trap_init, "field_action_trap_init"},
+	
+	/* Trap disarming function */
+	{field_action_trap_disarm, "field_action_trap_disarm"},
 	
 	/* Trapdoor */
 	{field_action_hit_trap_door, "field_action_hit_trap_door"},

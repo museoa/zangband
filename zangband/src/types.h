@@ -831,7 +831,7 @@ typedef struct field_type field_type;
  * 2) a pointer to a structure cast to void that contains the
  *	information the action needs to complete its job.
  */
-typedef void (*field_action_type)(s16b *field_ptr, void*);
+typedef void (*field_action_type)(s16b **field_ptr, void*);
 
 
 
@@ -973,6 +973,7 @@ struct field_trap_type
 	/* Randomise data[3] */
 	byte rand;
 };
+
 
 /*
  * An entry for the object/monster allocation functions

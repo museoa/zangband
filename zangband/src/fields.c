@@ -125,6 +125,52 @@ void delete_field_idx(int fld_idx)
 	fld_cnt--;
 }
 
+
+/*
+ * Delete a dungeon field
+ *
+ * Handle "lists" of fields correctly.
+ *
+ * Given a pointer to a s16b that points to this fld_idx.
+ */
+void delete_field_ptr(s16b *fld_idx)
+{
+	/* Field */
+	field_type *j_ptr = &fld_list[*fld_idx];
+
+	/* Dungeon floor */
+	int y, x;
+
+	/* Location */
+	y = j_ptr->fy;
+	x = j_ptr->fx;
+	
+	/* Remove from list */
+	*fld_idx = j_ptr->next_f_idx;
+
+	/* Refuse "illegal" locations */
+	if (in_bounds(y, x))
+	{
+		/* Note the spot */
+		note_spot(y, x);
+		
+		/* Visual update */
+		lite_spot(y, x);
+	}
+
+#ifdef USE_SCRIPT
+	field_delete_callback(j_ptr);
+#endif /* USE_SCRIPT */
+
+	/* Wipe the field */
+	field_wipe(j_ptr);
+
+	/* Count fields */
+	fld_cnt--;
+}
+
+
+
 /*
  * Deletes the list of fields attached to something.
  */
@@ -279,6 +325,7 @@ void compact_fields(int size)
 	s16b i;
 	
 	s16b *fld_ptr;
+	field_thaum *t_ptr;
 
 
 	/* Compact */
@@ -313,13 +360,79 @@ void compact_fields(int size)
 
 			/* Skip dead fields */
 			if (!f_ptr->t_idx) continue;
-
-			/* Get pointer to field index */
-			fld_ptr = field_find(i);
-
-			/* Get compaction "value" */
-			(void) field_hook_single(fld_ptr, FIELD_ACT_COMPACT,
-				 (void *) &fld_level);
+			
+			/* Point to the field type */
+			t_ptr = &t_info[f_ptr->t_idx];
+	
+			switch (t_ptr->type)
+			{
+				case FTYPE_NOTHING:
+				{
+					/* This field is dead - get rid of it */
+					fld_level = 0;
+			
+					break;
+				}
+				case FTYPE_TRAP:
+				{
+					/* Traps can be gotten rid of safely */
+					fld_level = 100;
+					
+					break;
+				}
+				case FTYPE_DOOR:
+				{
+					/* Spikes / locked doors can be turned off if required */
+					fld_level = 80;
+		
+					break;
+				}
+				case FTYPE_BUILD:
+				{
+					/* Buildings should not be removed */
+					fld_level = 255;
+		
+					break;
+				}
+				case FTYPE_FEAT:
+				{
+					/* General features are important */
+					fld_level = 250;
+			
+					break;
+				}
+				case FTYPE_QUEST:
+				{
+					/* Quest events can be important */
+					fld_level = 150;
+		
+					break;
+				}
+				case FTYPE_FIELD:
+				{
+					/* Does the field have a counter? */
+					if (t_ptr->count_init)
+					{
+						/* Compact fields that are nearly done */
+						fld_level = 20 + 40 * f_ptr->counter / t_ptr->count_init;
+					}
+					else
+					{
+						/* Permanent magical fields can be gotten rid of */
+						fld_level = 50;
+					}
+		
+					break;
+				}
+		
+				case FTYPE_CORPSE:
+				{
+					/* Corpses have no real value */
+					fld_level = f_ptr->counter / 10;
+			
+					break;	
+				}
+			}
 
 			/* Hack -- High level fields start out "immune" */
 			if (fld_level > cur_lev) continue;
@@ -334,17 +447,16 @@ void compact_fields(int size)
 			/* Saving throw */
 			chance = 90;
 
-			/* Only compact permanent fields in an emergency. */
-			/* Add code here. ##### */
-
 			/* Apply the saving throw */
 			if (rand_int(100) < chance) continue;
+			
+			fld_ptr = field_find(i);
 
 			/* Call completion routine */
 			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, NULL))
 			{
-				/* It didn't delete itself (naughty) so we do it now */
-				delete_field_idx(*fld_ptr);
+				/* It didn't delete itself, so we do it now */
+				delete_field_ptr(fld_ptr);
 			}
 
 			/* Count it */
@@ -789,7 +901,7 @@ void field_destroy_type(s16b fld_idx, byte typ)
 			/* Call completion routine */
 			if (field_hook_single(&fld_idx, FIELD_ACT_EXIT, NULL))
 			{
-				/* It didn't delete itself (naughty) so we do it now */
+				/* It didn't delete itself, so we do it now */
 				delete_field_idx(fld_idx);
 			}
 		}
@@ -911,7 +1023,7 @@ s16b *field_find(s16b fld_idx)
  *
  * This function does not do a list of fields like the one below.
  *
- * It returns FALSE if the field deleted itself, FALSE otherwise.
+ * It returns FALSE if the field deleted itself, TRUE otherwise.
  */
 bool field_hook_single(s16b *field_ptr, int action, void *action_struct)
 {
@@ -923,18 +1035,18 @@ bool field_hook_single(s16b *field_ptr, int action, void *action_struct)
 	if (f_ptr->action[action])
 	{
 		/* Call the action function */
-		f_ptr->action[action](field_ptr, action_struct);
+		f_ptr->action[action](&field_ptr, action_struct);
 	}
 	
 	/* Check for deletion */
-	if (&fld_list[*field_ptr] == f_ptr)
+	if (f_ptr->t_idx)
 	{
 		/* The field is still there */
 		return TRUE;
 	}
 	else
 	{
-		/* The field has moved - assume it has deleted itself */
+		/* The field has deleted itself */
 		return FALSE;
 	}
 }
@@ -960,7 +1072,7 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
 		if (f_ptr->action[action])
 		{
 			/* Call the action function */
-			f_ptr->action[action](field_ptr, action_struct);
+			f_ptr->action[action](&field_ptr, action_struct);
 		}
 		else
 		{
@@ -999,7 +1111,7 @@ void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
 		if ((t_ptr->type == ftype) && (f_ptr->action[FIELD_ACT_SPECIAL]))
 		{
 			/* Call the action function */
-			f_ptr->action[FIELD_ACT_SPECIAL](field_ptr, action_struct);
+			f_ptr->action[FIELD_ACT_SPECIAL](&field_ptr, action_struct);
 		}
 		else
 		{
@@ -1049,7 +1161,7 @@ void process_fields(void)
 				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, NULL));
 				{
 					/* It didn't delete itself - do it now */
-					delete_field_idx(*fld_ptr);
+					delete_field_ptr(fld_ptr);
 				}
 
 				/* Nothing else to do now */
@@ -1164,22 +1276,22 @@ void test_field_data_integtrity(void)
 
 
 /* Simple function that does nothing */
-void field_action_nothing(s16b *field_ptr, void *nothing)
+void field_action_nothing(s16b **field_ptr, void *nothing)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 
 	/* Action: Do nothing at all */
 
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 	return;
 }
 
 /* Simple function that deletes the field */
-void field_action_delete(s16b *field_ptr, void *nothing)
+void field_action_delete(s16b **field_ptr, void *nothing)
 {		
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 
@@ -1187,112 +1299,11 @@ void field_action_delete(s16b *field_ptr, void *nothing)
 	return;
 }
 
-/* 
- * A function that gives "typical" values for field compaction.
- *
- * You may want to make a new function for strange types of fields.
- *
- * Alternatively, this function can be modified.
- *
- * Eventually, if there is only one function, it can be merged into
- * the rest of the compaction code.  This will remove an action type.
- */
-void field_action_compact_basic(s16b *field_ptr, void *output)
-{
-	field_type *f_ptr;
-	field_thaum *t_ptr;
-
-	byte *compact_value = (byte *) output;
-
-	/* Point to the field */
-	f_ptr = &fld_list[*field_ptr];
-	
-	/* Point to the field type */
-	t_ptr = &t_info[f_ptr->t_idx];
-	
-	switch (t_ptr->type)
-	{
-		case FTYPE_NOTHING:
-		{
-			/* This field is dead - get rid of it */
-			*compact_value = 0;
-		
-			break;
-		}
-		case FTYPE_TRAP:
-		{
-			/* Traps can be gotten rid of safely */
-			*compact_value = 100;
-			
-			
-			break;
-		}
-		case FTYPE_DOOR:
-		{
-			/* Spikes / locked doors can be turned off if required */
-			*compact_value = 80;
-		
-			break;
-		}
-		case FTYPE_BUILD:
-		{
-			/* Buildings should not be removed */
-			*compact_value = 255;
-		
-			break;
-		}
-		case FTYPE_FEAT:
-		{
-			/* General features are important */
-			*compact_value = 250;
-			
-			break;
-		}
-		case FTYPE_QUEST:
-		{
-			/* Quest events can be important */
-			*compact_value = 150;
-		
-			break;
-		}
-		case FTYPE_FIELD:
-		{
-			/* Does the field have a counter? */
-			if (t_ptr->count_init)
-			{
-				/* Compact fields that are nearly done */
-				*compact_value = 20 + 40 * f_ptr->counter / t_ptr->count_init;
-			}
-			else
-			{
-				/* Permanent magical fields can be gotten rid of */
-				*compact_value = 50;
-			}
-		
-			break;
-		}
-		
-		case FTYPE_CORPSE:
-		{
-			/* Corpses have no real value */
-			*compact_value = f_ptr->counter / 10;
-			
-			break;	
-		}
-	}
-
-
-	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
-	
-	return;
-}
-
 
 /* The function that now controls the glyph of warding rune. */
-void field_action_glyph_warding(s16b *field_ptr, void *input)
+void field_action_glyph_warding(s16b **field_ptr, void *input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look at input data */
 	field_mon_test *mon_enter = (field_mon_test *) input;
@@ -1310,7 +1321,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 		mon_enter->do_move = FALSE;
 		
 		/* Update *field_ptr to point to the next field in the list */
-		field_ptr = &(f_ptr->next_f_idx);
+		*field_ptr = &(f_ptr->next_f_idx);
 		
 		/* Done */
 		return;
@@ -1326,7 +1337,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 		}
 
 		/* Delete the field */
-		delete_field_idx(*field_ptr);
+		delete_field_ptr(*field_ptr);
 			
 		/* Note that *field_ptr does not need to be updated */
 
@@ -1339,7 +1350,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 		do_move = FALSE;
 			
 		/* Update *field_ptr to point to the next field in the list */
-		field_ptr = &(f_ptr->next_f_idx);
+		*field_ptr = &(f_ptr->next_f_idx);
 	}
 
 	/* Save result */
@@ -1350,9 +1361,9 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 }
 
 /* The function that now controls the exploding rune spell . */
-void field_action_glyph_explode(s16b *field_ptr, void *input)
+void field_action_glyph_explode(s16b **field_ptr, void *input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look at input data */
 	field_mon_test *mon_enter = (field_mon_test *) input;
@@ -1370,7 +1381,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 		mon_enter->do_move = FALSE;
 		
 		/* Update *field_ptr to point to the next field in the list */
-		field_ptr = &(f_ptr->next_f_idx);
+		*field_ptr = &(f_ptr->next_f_idx);
 		
 		/* Done */
 		return;
@@ -1388,7 +1399,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 			msg_print("An explosive rune was disarmed.");
 		
 		/* Delete the field */
-		delete_field_idx(*field_ptr);
+		delete_field_ptr(*field_ptr);
 			
 		/* Note that *field_ptr does not need to be updated */
 
@@ -1401,7 +1412,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 		do_move = FALSE;
 			
 		/* Update *field_ptr to point to the next field in the list */
-		field_ptr = &(f_ptr->next_f_idx);
+		*field_ptr = &(f_ptr->next_f_idx);
 	}
 
 	/* Save result */
@@ -1417,9 +1428,9 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
  *
  * In nightmare mode, they reappear as monsters.
  */
-void field_action_corpse_decay(s16b *field_ptr, void *nothing)
+void field_action_corpse_decay(s16b **field_ptr, void *nothing)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 	
@@ -1456,7 +1467,7 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 
 
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 	return;
@@ -1465,9 +1476,9 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 /* 
  * Special action to raise corpses.
  */
-void field_action_corpse_raise(s16b *field_ptr, void *input)
+void field_action_corpse_raise(s16b **field_ptr, void *input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	bool *want_pet = (bool *) input; 
 	
@@ -1488,7 +1499,7 @@ void field_action_corpse_raise(s16b *field_ptr, void *input)
 	}
 
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 	return;
@@ -1496,9 +1507,9 @@ void field_action_corpse_raise(s16b *field_ptr, void *input)
 
 
 /* Initialise corpse / skeletons */
-void field_action_corpse_init(s16b *field_ptr, void *input)
+void field_action_corpse_init(s16b **field_ptr, void *input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 
 	monster_type *m_ptr = (monster_type *) input;
 	
@@ -1686,9 +1697,9 @@ void place_trap(int y, int x)
 	}
 }
 
-void field_action_trap_init(s16b *field_ptr, void *input)
+void field_action_trap_init(s16b **field_ptr, void *input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 
 	byte *rand = (byte *) input;
 	
@@ -1707,13 +1718,47 @@ void field_action_trap_init(s16b *field_ptr, void *input)
 	return;
 }
 
-void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
+/* Try to disarm a trap - return bool of success or not. */
+void field_action_trap_disarm(s16b **field_ptr, void *input)
+{
+	field_type *f_ptr = &fld_list[**field_ptr];
+	
+	int *disarm = (int *) input;
+	
+	/* Extract trap "power" */
+	int	power = f_ptr->data[0];	
+	
+	/* Extract the difficulty */
+	int j = *disarm - power;
+
+	/* Always have a small chance of success */
+	if (j < 2) j = 2;
+	
+	if (rand_int(100) < j)
+	{
+		/* Success */
+		
+		/* Delete the field */
+		delete_field_ptr(*field_ptr);
+
+		/* Note that *field_ptr does not need to be updated */
+	}
+	else
+	{
+		/* Failure */
+		
+		/* Update *field_ptr to point to the next field in the list */
+		*field_ptr = &(f_ptr->next_f_idx);
+	}
+}
+
+void field_action_hit_trap_door(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
 	cptr name;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -1751,15 +1796,15 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 	}
 
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_pit(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	cptr name;
 	
@@ -1789,15 +1834,15 @@ void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_spike(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	cptr name;
 	
@@ -1841,15 +1886,15 @@ void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_poison_pit(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	cptr name;
 	
@@ -1905,15 +1950,13 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_curse(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
-	
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -1959,15 +2002,15 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 }
 
 
-void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_teleport(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -1986,15 +2029,15 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 	teleport_player(100);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_element(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2056,12 +2099,12 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
-void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_ba_element(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2129,13 +2172,13 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_gas(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2216,13 +2259,13 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_traps(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2244,17 +2287,17 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 		 PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
 	
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 }
 
 
-void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_temp_stat(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2322,15 +2365,15 @@ void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_perm_stat(s16b **field_ptr, void *nothing)
 {	
 	int dam;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2358,13 +2401,13 @@ void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_lose_xp(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2383,12 +2426,12 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 	lose_exp(p_ptr->exp / 5);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
-void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_disenchant(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2407,15 +2450,15 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 	(void) apply_disenchant(0);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_drop_item(s16b **field_ptr, void *nothing)
 {	
 	int item;
 	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2442,13 +2485,13 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_mutate(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2466,13 +2509,13 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 	(void) gain_random_mutation(0);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_new_life(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2496,14 +2539,14 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 }
 
-void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_no_lite(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	object_type *o_ptr;
 	
@@ -2536,13 +2579,13 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	unlite_room(py, px);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_hunger(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 		
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2563,15 +2606,15 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 	(void)set_food(PY_FOOD_WEAK);
 	
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 }
 
 
-void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_no_gold(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 		
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2598,13 +2641,13 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 	p_ptr->window |= (PW_PLAYER);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_haste_mon(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2624,15 +2667,15 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 	(void) speed_monsters();	
 	
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 }
 
 
-void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_raise_mon(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2652,13 +2695,13 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 	(void) raise_dead(py, px, FALSE);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_drain_magic(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	int i, k;
 	object_type *o_ptr;
@@ -2707,13 +2750,13 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_aggravate(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2733,13 +2776,13 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 	aggravate_monsters(0);
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }
 
 
-void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_summon(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2760,15 +2803,15 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 	summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 	
 	/* Delete the field */
-	delete_field_idx(*field_ptr);
+	delete_field_ptr(*field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
 }
 
 
-void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_lose_memory(s16b **field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[**field_ptr];
 	
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -2788,5 +2831,5 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 	lose_all_info();
 	
 	/* Update *field_ptr to point to the next field in the list */
-	field_ptr = &(f_ptr->next_f_idx);
+	*field_ptr = &(f_ptr->next_f_idx);
 }

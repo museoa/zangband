@@ -1719,7 +1719,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 
 bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 {
-	int i, j, power;
+	int i;
 
 	field_type *f_ptr;
 	field_thaum *t_ptr;
@@ -1746,23 +1746,14 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->blind || no_lite()) i = i / 10;
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
-	/* Extract trap "power" */
-	power = f_ptr->data[0];
-
-	/* Extract the difficulty */
-	j = i - power;
-
-	/* Always have a small chance of success */
-	if (j < 2) j = 2;
-
 	/* Success */
-	if (rand_int(100) < j)
+	if (!field_hook_single(&fld_idx, FIELD_ACT_INTERACT, (void *) &i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
 
 		/* Reward */
-		gain_exp(power * power);
+		gain_exp(f_ptr->data[0] * f_ptr->data[0]);
 		
 		/* Call completion routine */
 		if (field_hook_single(&fld_idx, FIELD_ACT_EXIT, NULL))

@@ -3740,7 +3740,7 @@ extern int PlayerUID;
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
 #define FIELD_ACT_INTERACT		10  /* Type-specific interation */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
-#define FIELD_ACT_COMPACT		12	/* Compaction hook */
+#define FIELD_ACT_XXX12			12	
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
 #define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
 #define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
