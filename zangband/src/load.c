@@ -794,6 +794,18 @@ static void rd_item(object_type *o_ptr)
 			}
 		}
 	}
+	
+	/* 
+	 *  Hack - reduce number of attacks from old objects 
+	 *  This changed with the addition of oangband combat.
+	 */
+	if (z_older_than(2, 3, 4))
+	{
+		if ((f1 & (TR1_BLOWS)) && (o_ptr->pval > 2))
+		{
+			o_ptr->pval = 2;
+		}
+	}
 
 	/* Hack -- the "searching" bonuses changed in 2.7.6 */
 	if (older_than(2, 7, 6))
