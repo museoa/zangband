@@ -454,6 +454,7 @@ extern bool my_oppose_acid;
 extern bool my_oppose_pois;
 extern bool my_oppose_elec;
 extern s16b borg_goi;
+extern s16b borg_wraith_form;
 extern s16b borg_inviso;
 extern bool borg_esp;
 extern s16b borg_game_ratio;

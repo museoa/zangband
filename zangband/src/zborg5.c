@@ -3623,9 +3623,18 @@ static s32b borg_power_aux4(void)
 
 	/*** Basic abilities ***/
 
-	/* Reward fuel */
-	for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 6000L;
-	for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 600L;
+	/*
+	 * Reward collecting fuel,
+	 * but not for torches if you wield a torch of 	everburning.
+	 * So if you wield a torch and have a permament light source
+	 * don't count torches.
+	 */
+	if (!(bp_ptr->britelite) ||
+		!(k_info[look_up_equip_slot(EQUIP_LITE)->k_idx].sval == SV_LITE_TORCH))
+	{
+		for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 6000L;
+		for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 600L;
+	}
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */

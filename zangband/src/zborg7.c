@@ -888,7 +888,23 @@ static bool borg_enchant_to_a(void)
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR))
 	{
-		borg_keypress('/');
+		/*
+		 * Find out if the prompt is at Inven or Equip by checking if
+		 * there is armour in the inventory.  If there is then the prompt
+		 * is at Inven and has to be moved to Equip.
+		 */
+		for (i = 0; i < inven_num; i++)
+		{
+			list_item *l_ptr = &inventory[i];
+	
+			/* Is this item is enchantable? */
+			if (l_ptr->tval >= TV_BOOTS && l_ptr->tval <= TV_DRAG_ARMOR)
+			{
+				/* Goto the equipment */
+				borg_keypress('/');
+				break;
+			}
+		}
 
 		/* Choose that item */
 		borg_keypress(I2A(b_i));
@@ -1011,8 +1027,23 @@ static bool borg_enchant_to_h(void)
 		}
 		else
 		{
-			/* Choose from equipment */
-			borg_keypress('/');
+			/*
+			 * Find out if the prompt is at Inven or Equip by checking if
+			 * there is a weapon or ammo in the inventory.  If there is
+			 * then the prompt is at Inven and has to be moved to Equip.
+			 */
+			for (i = 0; i < inven_num; i++)
+			{
+				list_item *l_ptr = &inventory[i];
+
+				/* Is this item is enchantable? */
+				if (l_ptr->tval >= TV_SHOT && l_ptr->tval <= TV_SWORD)
+				{
+					/* Goto the equipment */
+					borg_keypress('/');
+					break;
+				}
+			}
 
 			/* Choose that item */
 			borg_keypress(I2A(b_i));
@@ -1470,6 +1501,40 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	/* borg_keypress('y'); */
 }
 
+/*
+ * Which items can you destroy without identifying
+ * despite their unidentified status.
+ */
+static bool borg_crush_unidentified(list_item* item)
+{
+	switch (item->tval)
+	{
+		case TV_RING:
+		{
+			if (k_info[item->k_idx].sval <= SV_RING_TELEPORTATION) return TRUE;
+			break;
+		}
+		case TV_AMULET:
+		{
+			if (k_info[item->k_idx].sval <= SV_AMULET_TELEPORT) return TRUE;
+			break;
+		}
+		case TV_STAFF:
+		{
+			if (k_info[item->k_idx].sval == SV_STAFF_DARKNESS &&
+				borg_race != RACE_VAMPIRE) return TRUE;
+			if (k_info[item->k_idx].sval >= SV_STAFF_SLOWNESS &&
+				k_info[item->k_idx].sval <= SV_STAFF_SUMMONING) return TRUE;
+			break;
+		}
+		case TV_WAND:
+		{
+			if (k_info[item->k_idx].sval == SV_WAND_CLONE_MONSTER) return TRUE;
+			break;
+		}
+	}
+	return FALSE;
+}
 
 
 /*
@@ -1515,10 +1580,12 @@ bool borg_crush_junk(void)
 		if (l_ptr->tval >= TV_FIGURINE)
 		{
 			/* unknown? */
-			if (!borg_obj_known_p(l_ptr) &&
+			if (!borg_crush_unidentified(l_ptr) &&
+				!borg_obj_known_p(l_ptr) &&
 				!(strstr(l_ptr->o_name, "{average") ||
 				  strstr(l_ptr->o_name, "{cursed") ||
 				  strstr(l_ptr->o_name, "{bad") ||
+				  strstr(l_ptr->o_name, "{dubious") ||
 				  strstr(l_ptr->o_name, "{worthless"))) continue;
 
 			/* Pretend pile isn't there */
@@ -2481,6 +2548,13 @@ bool borg_play_magic(bool bored)
 
 				/* Skip "icky" spells/prayers */
 				if (rate <= 0) continue;
+				
+				/*
+				 * Spells with higher casting cost than max mana
+				 * should be learned last.
+				 */
+				if (as->power > bp_ptr->msp) rate = 1;
+
 
 				/* Skip "worse" spells/prayers */
 				if (rate <= b_rate) continue;

@@ -502,6 +502,26 @@ static bool borg_think(void)
 }
 
 
+/*
+ * Hack -- methods of hitting a monster (order not important).
+ */
+static cptr prefix_hit[] =
+{
+	"You hit ",
+	"You strike ",
+	"You hack at ",
+	"You bash ",
+	"You slash ",
+	"You pound ",
+	"You score ",
+	"You batter ",
+	"You gouge ",
+	"You bludgeon ",
+	"You *smite* ",
+	"You bite ",
+	"You claw ",
+	NULL
+};
 
 /*
  * Hack -- methods of hurting a monster (order not important).
@@ -1065,128 +1085,19 @@ static void borg_parse_aux(cptr msg, int len)
 		borg_dont_react = TRUE;
 	}
 
-
-	/* Hit somebody */
-	if (prefix(msg, "You hit "))
+	/* "You have hit it." (etc) */
+	for (i = 0; prefix_hit[i]; i++)
 	{
-		tmp = strlen("You hit ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
+		/* "You have hit it." (etc) */
+		if (prefix(msg, prefix_hit[i]))
+		{
+			tmp = strlen(prefix_hit[i]);
+			strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
+			strnfmt(buf, 256, "HIT:%^s", who);
+			borg_react(msg, buf);
+			return;
+		}
 	}
-	/* Hit somebody */
-	if (prefix(msg, "You strike "))
-	{
-		tmp = strlen("You strike ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You hack at "))
-	{
-		tmp = strlen("You hack at ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You bash "))
-	{
-		tmp = strlen("You bash ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You slash "))
-	{
-		tmp = strlen("You slash ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You pound "))
-	{
-		tmp = strlen("You pound ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You score "))
-	{
-		tmp = strlen("You score ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You batter "))
-	{
-		tmp = strlen("You batter ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You gouge "))
-	{
-		tmp = strlen("You gouge ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-
-	/* Hit somebody */
-	if (prefix(msg, "You bludgeon "))
-	{
-		tmp = strlen("You bludgeon ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-	/* Hit somebody */
-	if (prefix(msg, "You *smite* "))
-	{
-		tmp = strlen("You *smite* ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-
-	/* Hit somebody */
-	if (prefix(msg, "You bite "))
-	{
-		tmp = strlen("You bite ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-
-	/* Hit somebody */
-	if (prefix(msg, "You claw "))
-	{
-		tmp = strlen("You claw ");
-		strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
-		strnfmt(buf, 256, "HIT:%^s", who);
-		borg_react(msg, buf);
-		return;
-	}
-
 
 	/* Miss somebody */
 	if (prefix(msg, "You miss "))
@@ -1208,6 +1119,14 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
+	/*
+	 * An inventory item was unaffected by an attack.
+	 * It should be filtered out because otherwise the
+	 * item is interpreted as a monster and the game unhooks.
+	 *
+	 * This also filters out messages about pets that are unaffected.
+	 */
+	if (prefix(msg, "Your ") && suffix(msg, "is unaffected!")) return;
 
 	/* "It screams in pain." (etc) */
 	for (i = 0; suffix_pain[i]; i++)
@@ -1589,6 +1508,18 @@ static void borg_parse_aux(cptr msg, int len)
 		borg_berserk = FALSE;
 		return;
 	}
+	
+	/* stone skin */
+	if (prefix(msg, "Your skin turns to stone"))
+	{
+		borg_shield = TRUE;
+		return;
+	}
+	if (prefix(msg, "Your skin returns to normal."))
+	{
+		borg_shield = FALSE;
+		return;
+	}
 
 	/* check for wall blocking but not when confused */
 	if ((prefix(msg, "There is a wall ") && !bp_ptr->status.confused))
@@ -1676,6 +1607,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_oppose_acid = FALSE;
 		return;
 	}
+
 	/* resist electricity */
 	if (prefix(msg, "You feel resistant to electricity!"))
 	{
@@ -1687,6 +1619,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_oppose_elec = FALSE;
 		return;
 	}
+
 	/* resist fire */
 	if (prefix(msg, "You feel resistant to fire!"))
 	{
@@ -1698,6 +1631,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_oppose_fire = FALSE;
 		return;
 	}
+
 	/* resist cold */
 	if (prefix(msg, "You feel resistant to cold!"))
 	{
@@ -1709,6 +1643,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_oppose_cold = FALSE;
 		return;
 	}
+
 	/* resist poison */
 	if (prefix(msg, "You feel resistant to poison!"))
 	{
@@ -1720,6 +1655,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_oppose_pois = FALSE;
 		return;
 	}
+
 	/* GOI! */
 	if (prefix(msg, "You feel invulnerable!"))
 	{
@@ -1731,6 +1667,19 @@ static void borg_parse_aux(cptr msg, int len)
 		borg_goi = 0;
 		return;
 	}
+
+	/* Wraith_form! */
+	if (prefix(msg, "You leave the physical world and turn into a wraith-being!"))
+	{
+		borg_wraith_form = TRUE;
+		return;
+	}
+	if (prefix(msg, "You feel opaque."))
+	{
+		borg_wraith_form = FALSE;
+		return;
+	}
+	
 	/* Telepathy */
 	if (prefix(msg, "You feel your consciousness expand!"))
 	{
@@ -1849,7 +1798,7 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
-	/* Recognize Drownin */
+	/* Recognize Drowning */
 	if (prefix(msg, "You are drowning"))
 	{
 		borg_note("# Help! I can't swim");
@@ -1857,13 +1806,33 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
-	/* Recognize Drownin */
-	if (prefix(msg, "The lava burns you"))
+	/* Recognize Burning */
+	if (prefix(msg, "The lava burns you!") ||
+		prefix(msg, "The heat burns you!"))
 	{
 		borg_note("# Help! I'm burning");
 
 		return;
 	}
+	
+	/* Recognize Acid */
+	if (prefix(msg, "The acid burns you!") ||
+		prefix(msg, "The fumes burn you!"))
+	{
+		borg_note("# Help! I'm corroding");
+
+		return;
+	}
+
+	/* Recognize Poisoning */
+	if (prefix(msg, "The plants poison you!") ||
+		prefix(msg, "The fumes poison you!"))
+	{
+		borg_note("# Help! I'm poisoned");
+
+		return;
+	}
+
 
 	/* Feelings about the level */
 	for (i = 0; prefix_feeling[i]; i++)
@@ -2388,6 +2357,11 @@ static void borg_cheat_temp_bools(void)
 	
 	/* Allowable Cheat -- Obtain "goi" flag */
 	borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
+	
+	/* Allowable Cheat -- Obtain "wraithform" flag */
+	borg_wraith_form = (p_ptr->tim.wraith_form ? 9000 : 0);
+	
+	/* Allowable Cheat -- Obtain "invisibility" flag */
 	borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
 	
 	/* Allowable Cheat -- Obtain "resist" flags */
@@ -2401,6 +2375,7 @@ static void borg_cheat_temp_bools(void)
 	borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
 	borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
 	borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
+	borg_esp = (p_ptr->tim.esp ? TRUE : FALSE);
 }
 
 /*
@@ -3920,6 +3895,9 @@ void do_cmd_borg(void)
 			
 			bool show_inventory = TRUE;
 			char tmp_val[80];
+
+			/* Save the screen */
+			Term_save();
 
 			do
 			{

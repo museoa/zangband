@@ -167,6 +167,7 @@ bool my_oppose_cold;
 bool my_oppose_acid;
 bool my_oppose_pois;
 bool my_oppose_elec;
+s16b borg_wraith_form;
 s16b borg_goi;
 s16b borg_inviso;
 bool borg_esp;

@@ -236,11 +236,11 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 	borg_note_fmt("# Sending key 1");
 	borg_keypress('1');
 
-	/* Buy an item */
+	/* Sell an item */
 	borg_note_fmt("# Sending key s");
 	borg_keypress('s');
 
-	/* Buy the desired item */
+	/* Sell the desired item */
 	borg_note_fmt("# Sending key %c", I2A(item));
 	borg_keypress(I2A(item));
 
@@ -266,8 +266,20 @@ static void borg_think_shop_buy(int item)
 {
 	list_item *l_ptr = &cur_list[item];
 
-	/* go to correct Page */
-	if (item / 12) borg_keypress(' ');
+	byte t_a;
+	char buf[1];
+
+	/* Grab the page number of the screen*/
+	if (0 == borg_what_text(26, 5, 1, &t_a, buf))
+	{
+		/* If you are on the wrong page of the shop */
+		if ((streq(buf, "1") && (item >= (STORE_INVEN_MAX /2))) ||
+			(streq(buf, "2") && (item < (STORE_INVEN_MAX /2))))
+		{
+			/* Goto the other page */
+			borg_keypress(' ');
+		}
+	}
 
 	/* Log */
 	borg_note_fmt("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost);
@@ -280,7 +292,7 @@ static void borg_think_shop_buy(int item)
 	borg_keypress('p');
 
 	/* Buy the desired item */
-	borg_keypress(I2A(item % 12));
+	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
 
 	/* Mega-Hack -- Accept the price */
 	borg_keypress('y');
@@ -288,9 +300,6 @@ static void borg_think_shop_buy(int item)
 	borg_keypress('\r');
 	borg_keypress('\r');
 	borg_keypress('\r');
-	
-	/* go to first Page */
-	if (item / 12) borg_keypress(' ');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
@@ -601,12 +610,6 @@ static bool borg_think_shop_sell_aux(int shop)
 			{
 				p += 100;
 			}
-		}
-		else
-		{
-
-			/* Mega-hack, only sell un-identified stuff for now */
-			continue;
 		}
 
 		/* Restore the item */

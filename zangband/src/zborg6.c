@@ -12409,12 +12409,14 @@ static bool borg_play_step(int y2, int x2)
 		{
 			borg_note("# Unbarring ways");
 			borg_keypress(I2D(dir));
+			mb_ptr->trap = FT_NONE;
 			return (TRUE);
 		}
 		/* allow "destroy doors" */
 		if (borg_spell(REALM_CHAOS, 0, 1))
 		{
 			borg_note("# Unbarring ways");
+			mb_ptr->trap = FT_NONE;
 			return (TRUE);
 		}
 
