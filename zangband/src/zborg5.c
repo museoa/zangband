@@ -151,30 +151,30 @@ static void borg_follow_take(int i)
  */
 static int borg_guess_kidx(int unknown)
 {
-    int k;
+	int k;
 
-    for (k = 1; k < z_info->k_max; k++)
-    {
-        object_kind *k_ptr = &k_info[k];
+	for (k = 1; k < z_info->k_max; k++)
+	{
+		object_kind *k_ptr = &k_info[k];
 
-        /* Skip "empty" items */
-        if (!k_ptr->name) continue;
+		/* Skip "empty" items */
+		if (!k_ptr->name) continue;
 
-        /* Skip identified items */
-        if (k_ptr->aware) continue;
+		/* Skip identified items */
+		if (k_ptr->aware) continue;
 
-        /* Skip items with the wrong symbol */
-        if (unknown != k_ptr->d_char) continue;
+		/* Skip items with the wrong symbol */
+		if (unknown != k_ptr->d_char) continue;
 
-        /* Valueless items are boring */
-        if (k_ptr->cost <= 0) continue;
+		/* Valueless items are boring */
+		if (k_ptr->cost <= 0) continue;
 
-        /* Return the result */
-        return k;
-    }
+		/* Return the result */
+		return k;
+	}
 
-    /* Didn't find anything */
-    return (0);
+	/* Didn't find anything */
+	return (0);
 }
 
 /*
@@ -221,7 +221,7 @@ static int borg_new_take(int k_idx, int y, int x)
 	borg_takes_cnt++;
 
 	/* Obtain the object */
-    take = &borg_takes[n];
+	take = &borg_takes[n];
 
 	/* Save the kind */
 	take->k_idx = k_idx;
@@ -262,15 +262,15 @@ static bool observe_take_diff(int y, int x)
 	/* Get grid */
 	mb_ptr = map_loc(x, y);
 
-    if (mb_ptr->object)
-    {
-        /* Get the kind */
-        k_idx = mb_ptr->object;
-    }
-    else
-    {
-        k_idx = borg_guess_kidx(mb_ptr->unknown);
-    }
+	if (mb_ptr->object)
+	{
+		/* Get the kind */
+		k_idx = mb_ptr->object;
+	}
+	else
+	{
+		k_idx = borg_guess_kidx(mb_ptr->unknown);
+	}
 
 	/* Oops */
 	if (!k_idx) return (FALSE);
@@ -526,7 +526,7 @@ static int borg_guess_race_name(cptr who)
 static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 {
 	int i, j;
-	
+
 	map_block *mb_ptr;
 
 	/* Reduce fear if GOI is on */
@@ -548,17 +548,17 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 	}
 
 	/* Current region */
-	
+
 	for (i = -15; i < 15; i++)
 	{
 		for (j = -15; j < 15; j++)
 		{
 			if (!map_in_bounds(i + x, j + y)) continue;
-			
+
 			mb_ptr = map_loc(i + x, j + y);
-			
+
 			/* Add some fear */
-			mb_ptr->fear += 2 * k /(8 + ABS(i) + ABS(j));
+			mb_ptr->fear += 2 * k / (8 + ABS(i) + ABS(j));
 		}
 	}
 
@@ -2509,19 +2509,19 @@ static void detect_region(byte flag)
 	int x, y;
 
 	map_block *mb_ptr;
-	
+
 	for (x = c_x - BORG_MAX_DETECT; x <= c_x + BORG_MAX_DETECT; x++)
 	{
 		for (y = c_y - BORG_MAX_DETECT; y <= c_y + BORG_MAX_DETECT; y++)
 		{
 			/* bounds checking */
 			if (!map_in_bounds(x, y)) continue;
-			
+
 			/* Check distance */
 			if (distance(c_x, c_y, x, y) > BORG_MAX_DETECT) continue;
-			
+
 			mb_ptr = map_loc(x, y);
-			
+
 			/* Set flag */
 			mb_ptr->detect |= flag;
 		}
@@ -2554,7 +2554,7 @@ static bool borg_handle_self(cptr str)
 	{
 		/* Message */
 		borg_note("# Detected walls");
-		
+
 		/* Mark detected walls */
 		detect_region(BORG_DETECT_WALL);
 	}
@@ -2594,7 +2594,7 @@ static bool borg_handle_self(cptr str)
 	{
 		/* Message */
 		borg_note("# Detected traps, doors & evil");
-		
+
 		/* Mark detected traps + doors + evil */
 		detect_region(BORG_DETECT_TRAP | BORG_DETECT_DOOR | BORG_DETECT_EVIL);
 	}
@@ -2633,17 +2633,17 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	int y = map->y;
 
 	bool old_wall;
-    bool new_wall;
+	bool new_wall;
 
 	/* Save the old "wall" or "door" */
 	old_wall = !borg_cave_floor_grid(mb_ptr);
 
-    /* Don't overwrite known info with unknown */
-    /* XXX This needs fixing */
-    if (map->terrain != FEAT_NONE)
-    {
-        mb_ptr->terrain = map->terrain;
-    }
+	/* Don't overwrite known info with unknown */
+	/* XXX This needs fixing */
+	if (map->terrain != FEAT_NONE)
+	{
+		mb_ptr->terrain = map->terrain;
+	}
 
 	/*
 	 * Examine monsters
@@ -2653,8 +2653,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		borg_wank *wank;
 
 		/* Check for memory overflow */
-        if (borg_wank_num == AUTO_VIEW_MAX)
-            borg_oops("too many objects or monsters");
+		if (borg_wank_num == AUTO_VIEW_MAX)
+			borg_oops("too many objects or monsters");
 
 		/* Access next wank, advance */
 		wank = &borg_wanks[borg_wank_num++];
@@ -2673,8 +2673,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		borg_wank *wank;
 
 		/* Check for memory overflow */
-        if (borg_wank_num == AUTO_VIEW_MAX)
-            borg_oops("too many objects or monsters");
+		if (borg_wank_num == AUTO_VIEW_MAX)
+			borg_oops("too many objects or monsters");
 
 		/* Access next wank, advance */
 		wank = &borg_wanks[borg_wank_num++];
@@ -2788,35 +2788,39 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			break;
 		}
 #endif /* 0 */
-    }
+	}
 
-    if ((map->field >= FT_STORE_GENERAL &&
-         map->field <= FT_STORE_BOOK) ||
-        (map->field >= FT_STORE_WEAPON1 &&
-         map->field <= FT_STORE_FOOD))
-    {
-        /* Check for an existing shop */
-        for (i = 0; i < track_shop_num; i++)
-        {
-            /* Stop if we already knew about this shop */
-            if ((track_shop_x[i] == x) && (track_shop_y[i] == y)) break;
-        }
+	if (map->field)
+	{
+		/* Get field type */
+		field_thaum *t_ptr = t_info[map->field];
 
-        /* Track the newly discovered shop */
-        if ((i == track_shop_num) && (i < track_shop_size))
-        {
-            track_shop_x[i] = x;
-            track_shop_y[i] = y;
-            track_shop_num++;
-        }
-    }
+		/* Is it a store or building? */
+		if (t_ptr->type == FTYPE_BUILD)
+		{
+			/* Check for an existing shop */
+			for (i = 0; i < track_shop_num; i++)
+			{
+				/* Stop if we already knew about this shop */
+				if ((track_shop_x[i] == x) && (track_shop_y[i] == y)) break;
+			}
 
+			/* Track the newly discovered shop */
+			if ((i == track_shop_num) && (i < track_shop_size))
+			{
+				track_shop_x[i] = x;
+				track_shop_y[i] = y;
+				track_shop_num++;
+			}
+		}
 
-    /* Save the new "wall" or "door" */
-    /*
-     * XXX This depends in a very unhealthy way on borg_cave_floor grid
-     * being a macro.
-     */
+	}
+
+	/* Save the new "wall" or "door" */
+	/*
+	 * XXX This depends in a very unhealthy way on borg_cave_floor grid
+	 * being a macro.
+	 */
 	new_wall = !borg_cave_floor_grid(map);
 
 	/* Notice wall changes */
@@ -2845,17 +2849,17 @@ static void borg_forget_map(void)
 {
 	map_block *mb_ptr;
 
-    /* Itterate over the map */
-    MAP_ITT_START (mb_ptr)
-    {
+	/* Itterate over the map */
+	MAP_ITT_START (mb_ptr)
+	{
 		/* Clear flow information */
 		mb_ptr->cost = 255;
 		mb_ptr->flow = 255;
 
 		/* Clear icky + know flag */
 		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
-    }
-    MAP_ITT_END;
+	}
+	MAP_ITT_END;
 
 	/* Forget the view */
 	borg_forget_view();
@@ -3577,11 +3581,11 @@ void borg_update(void)
 
 		/* No known stairs */
 		track_less_num = 0;
-        track_more_num = 0;
+		track_more_num = 0;
 
 #if 0
-        /* No known shops -- do we really need this? XXX */
-        track_shop_num = 0;
+		/* No known shops -- do we really need this? XXX */
+		track_shop_num = 0;
 #endif /* 0 */
 
 		/* No known glyph */
@@ -3654,8 +3658,8 @@ void borg_update(void)
 		borg_times_twitch = 0;
 		borg_escapes = 0;
 
-        /* Check for being in a quest */
-        /* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
+		/* Check for being in a quest */
+		/* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
 	}
 
 	/* Handle old level */
@@ -3687,8 +3691,8 @@ void borg_update(void)
 		if (!(borg_t % 10))
 		{
 			map_block *mb_ptr;
-		
-			MAP_ITT_START(mb_ptr)
+
+			MAP_ITT_START (mb_ptr)
 			{
 				if (mb_ptr->fear) mb_ptr->fear--;
 			}
@@ -3760,7 +3764,8 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track stationary monsters */
-		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 0, FALSE))
+		if ((wank->type == WANK_KILL) &&
+			observe_kill_move(wank->y, wank->x, 0, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3784,7 +3789,8 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 1, FALSE))
+		if ((wank->type == WANK_KILL) &&
+			observe_kill_move(wank->y, wank->x, 1, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3796,7 +3802,8 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 2, FALSE))
+		if ((wank->type == WANK_KILL) &&
+			observe_kill_move(wank->y, wank->x, 2, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3808,7 +3815,8 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 3, FALSE))
+		if ((wank->type == WANK_KILL) &&
+			observe_kill_move(wank->y, wank->x, 3, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3820,7 +3828,8 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) && observe_kill_move(wank->y, wank->x, 3, TRUE))
+		if ((wank->type == WANK_KILL) &&
+			observe_kill_move(wank->y, wank->x, 3, TRUE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
