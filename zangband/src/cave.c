@@ -705,7 +705,7 @@ bool in_ball_range(int y1, int x1, int y2, int x2)
 /*
  * Does the grid stop disintegration?
  */
-bool cave_stop_disintegration(cave_type *c_ptr)
+static bool cave_stop_disintegration(cave_type *c_ptr)
 {
 	/* Some terrain block disintegration */
 	if (((c_ptr->feat >= FEAT_PERM_EXTRA) && 
