@@ -1470,7 +1470,6 @@
 #define SV_BALL_AND_CHAIN                6	/* 2d4  */
 #define SV_JO_STAFF                      7	/* 1d7  */
 #define SV_WAR_HAMMER                    8	/* 3d3  */
-#define SV_LUCERN_HAMMER                10	/* 2d5  */
 #define SV_THREE_PIECE_ROD              11	/* 3d3  */
 #define SV_MORNING_STAR                 12	/* 2d6  */
 #define SV_FLAIL                        13	/* 2d6  */
@@ -1494,6 +1493,7 @@
 #define SV_NAGINATA                      9  /* 2d6 */
 #define SV_BEAKED_AXE                   10	/* 2d6 */
 #define SV_BROAD_AXE                    11	/* 2d6 */
+#define SV_LUCERNE_HAMMER               12	/* 2d5  */
 #define SV_GLAIVE                       13	/* 2d6 */
 #define SV_LAJATANG                     14	/* 2d7 */
 #define SV_HALBERD                      15	/* 3d4 */
