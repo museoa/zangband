@@ -220,10 +220,10 @@ errr path_parse(char *buf, int max, cptr file)
 	if (!pw) return (1);
 
 	/* Make use of the info */
-	(void)strncpy(buf, pw->pw_dir, max);
+	(void)strncpy(buf, pw->pw_dir, max - 1);
 
 	/* Append the rest of the filename, if any */
-	if (s) (void)strncat(buf, s, max);
+	if (s) (void)strncat(buf, s, max - 1);
 
 	/* Success */
 	return (0);

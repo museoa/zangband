@@ -1785,7 +1785,7 @@ bool do_cmd_knowledge_quests(int dummy)
 
 				char level[20];
 
-				strncpy(name, r_name + r_ptr->name, 80);
+				strncpy(name, r_name + r_ptr->name, 79);
 
 				/* In feet, or in levels */
 				if (depth_in_feet)
