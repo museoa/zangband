@@ -3044,11 +3044,7 @@ static void process_player(void)
 					if (!m_ptr->r_idx) continue;
 
 					/* Nice monsters get mean */
-					if (m_ptr->mflag & MFLAG_NICE)
-					{
-						/* Nice monsters get mean */
-						m_ptr->mflag &= ~(MFLAG_NICE);
-					}
+					m_ptr->mflag &= ~(MFLAG_NICE);
 
 					/* Handle memorized monsters */
 					if (m_ptr->mflag & MFLAG_MARK)
@@ -3068,24 +3064,9 @@ static void process_player(void)
 						{
 							/* Forget flag */
 							m_ptr->mflag &= ~(MFLAG_MARK);
-
-							/* Assume invisible */
-							m_ptr->ml = FALSE;
 							
-							/* Paranoia */
-							if (!(m_ptr->smart & SM_MIMIC))
-							{
-								/* Decrement monster visible counter */
-								update_mon_vis(m_ptr->r_idx, -1);
-							}
-
 							/* Update the monster */
 							update_mon(i, FALSE);
-
-							if (p_ptr->health_who == i) p_ptr->redraw |= (PR_HEALTH);
-
-							/* Redraw regardless */
-							lite_spot(m_ptr->fy, m_ptr->fx);
 						}
 					}
 				}
