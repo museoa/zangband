@@ -278,20 +278,10 @@ ConfigureWidget(
 	
     ComputeWidgetBbox(canvas, widgetPtr);
 
-	/* Keep a linked list of WidgetItem's displaying sprites */
+	/* Kill list of sprites... they no longer exist */
 	if (widgetPtr->link.isLinked)
 	{
-		if (!is_sprite(&widgetPtr->assign) && !is_sprite(&widgetPtr->assignbg))
-		{
-			DoubleLink_Unlink(&widgetPtr->link);
-		}
-	}
-	else
-	{
-		if (is_sprite(&widgetPtr->assign) || is_sprite(&widgetPtr->assignbg))
-		{
-			DoubleLink_Link(&widgetPtr->link);
-		}
+		DoubleLink_Unlink(&widgetPtr->link);
 	}
 
     return TCL_OK;

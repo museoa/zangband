@@ -384,8 +384,6 @@ extern unsigned char *g_palette_rgb;
 extern int *g_image_monster;
 
 extern void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_ptr);
-extern int update_sprites(void);
-extern bool is_sprite(t_assign *assignPtr);
 extern int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, char *desc);
 extern char *assign_print(char *buf, t_assign *assignPtr);
 extern char *assign_print2(char *buf, int assignType, int assignIndex);

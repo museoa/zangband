@@ -815,9 +815,6 @@ void angtk_idle(void)
 	DoubleLink *link;
 	int i;
 
-	/* Calculate the current frame for sprites */
-	if (update_sprites() == 0) return;
-
 	for (link = WidgetListMap.head; link; link = link->next)
 	{
 		Widget *widgetPtr = DoubleLink_Data(link, Widget);
