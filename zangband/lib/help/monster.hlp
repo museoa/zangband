@@ -7,8 +7,9 @@ Please choose one of the following online help files:
     (2) Monster Color                (monster.txt#MonsterColors)
     (3) Monster Memory               (monster.txt#MonsterMemory)
     (4) Unique Monsters              (monster.txt#Uniques)
-    (5) Pets                         (monster.txt#Pets)
-    (6) Friendly Monsters            (monster.txt#Friendly)
+    (5) Eldritch Horrors             (monster.txt#EldritchHorror)
+    (6) Pets                         (monster.txt#Pets)
+    (7) Friendly Monsters            (monster.txt#Friendly)
 
     (?) Help System Commands         (helpinfo.txt)
 
@@ -18,5 +19,6 @@ Please choose one of the following online help files:
 ***** [2] monster.txt#MonsterColors
 ***** [3] monster.txt#MonsterMemory
 ***** [4] monster.txt#Uniques
-***** [5] monster.txt#Pets
-***** [6] monster.txt#Friendly
+***** [5] monster.txt#EldritchHorror
+***** [6] monster.txt#Pets
+***** [7] monster.txt#Friendly

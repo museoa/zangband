@@ -140,6 +140,38 @@ is a menu item which allows you to look at which Uniques you have
 met and which of these have been defeated. It is a good idea to
 check this periodically to gauge your progress.
 
+--- Speaking Uniques ---
+
+Occasionally, you will find that a Unique monster will speak to you
+as it approaches. Typically, a monster will shout obscenities and
+challenges to combat but they may also refer to events relating to
+themselves. Zangband has no mechanism to allow you to respond to the
+monsters (other than with violence). You may prevent Unique monsters
+from speaking by changing the approopriate option under the options
+menus.
+
+--- Rewards for Killing Uniques ---
+
+You may also find that occasionally after killing a Unique monster
+that the game will tell you that the Unique was wanted for certain
+crimes and you will be rewarded for killing it. The amount of the
+reward is dependent upon how deep in the dungeon the relevant Unique
+is normally found.
+
+
+*****<EldritchHorror>
+=== Eldritch Horrors ===
+
+Some of the monsters in the dungeons of Zangband are so fearsome to
+look upon that doing so can have serious repurcussions. When you meet
+one of these sanity blasting monsters, one of several nasty things
+may happen to you. These include having your intelligence and/or your
+wisdom temporarily or permanently reduced and becoming confused. In 
+the worst case, your character may become subject to one of a small
+number of mutations affecting your brain such as becoming subject to
+random beserker fits, becoming sporadically scared for no reason or
+becoming moronic.
+
 
 *****<Pets>
 === Pets ===
@@ -202,7 +234,7 @@ not be commanded using the pet commands.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: May 16, 2000
+Last update: May 25, 2000
 
 ***** Begin Hyperlinks
 ***** [1] commdesc.txt#Looking
