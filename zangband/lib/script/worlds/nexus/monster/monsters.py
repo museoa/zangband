@@ -19752,3 +19752,24 @@ an end, all order reverting to Primal Chaos.
 
 monsters.register_race(the_serpent_of_chaos)
 
+class a_plain_gold_ring(monster, spellcaster):
+	name = "a Plain Gold Ring"
+	r_idx = 864
+	ascii = "=", "y"
+	level = 110
+	rarity = 3
+	hp = "160d100"
+	speed = 140
+	aaf = 100
+	ac = 200
+	sleep = 40
+	exp = 50000
+	blows = [('TOUCH', 'BLIND', '5d5'), ('TOUCH', 'UN_BONUS', '10d10'), ('TOUCH', 'LOSE_ALL', '10d10'), ('TOUCH', 'EXP_80', '10d10)]
+	flags = ['UNIQUE', 'FORCE_SLEEP', 'NEVER_MOVE', 'ONLY_ITEM', 'DROP_90', 'DROP_GOOD', 'DROP_GREAT', 'REFLECTING', 'INVISIBLE', 'COLD_BLOOD', 'SMART', 'EMPTY_MIND', 'REGENERATE', 'POWERFUL', 'AURA_FIRE', 'EVIL', 'DEMON', 'NONLIVING', 'IM_ACID', 'IM_ELEC', 'IM_FIRE', 'IM_COLD', 'RES_TELE', 'RES_NETH', 'RES_WATE', 'RES_PLAS', 'RES_NEXU', 'RES_DISE', 'NO_FEAR', 'NO_STUN', 'NO_CONF', 'NO_SLEEP']
+	sfreq = 2
+	sflags = ['1_IN_2', 'BR_NETH', 'BR_TIME', 'BA_MANA', 'BO_MANA', 'HAND_DOOM', 'HEAL', 'S_DEMON', 'S_HI_UNDEAD', 'S_HI_DRAGON']
+	description = """It is a ring of immense power.  You can hardly believe 
+you've finally found the One Ring!
+"""
+
+monsters.register_race(a_plain_gold_ring)
