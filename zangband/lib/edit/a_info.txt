@@ -609,6 +609,7 @@ L:DESC:	return "detection every 55-110 turns"
 
 # The Iron Helm of Gorlim -> Terror Mask (for warriors only...)
 
+# Variable bonus: +1 str per +5 ac
 N:41:'Terror Mask'
 I:32:5:-1
 W:35:5:75:0
@@ -683,6 +684,7 @@ L:DESC:	return "resistance (20-40) every 111 turns"
 
 # The Cloak 'Holcolleth' -> 'Thief's Shadow'
 
+# Variable bonus: +2 stealth, +1 per +2 ac
 N:45:'Thief's Shadow'
 I:35:1:2
 W:9:45:10:13000
@@ -717,6 +719,7 @@ D:protect him from his frequent magical mishaps.
 
 # The Cloak of Thorongil
 
+# Variable bonus: +1 sensing per 10 levels
 N:47:of Thorongil
 I:35:1:0
 W:9:20:10:8000
@@ -757,6 +760,7 @@ L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 # The Shadow Cloak of Tuor
 
+# Variable bonus: +3 dex, +1 per 10 levels; rogues only
 N:50:of Tuor
 I:35:6:4
 W:70:40:5:35000
@@ -774,6 +778,7 @@ D:when worn by a skilled assassin.
 
 # The Set of Leather Gloves 'Cambeleg' -> of the Ogre
 
+# Variable bonus: +1 str and +1 con per +2 ac
 N:52:of the Ogre
 I:31:1:3
 W:17:6:5:5000
@@ -929,6 +934,7 @@ L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 # The Pair of Soft Leather Boots of Bleys
 
+# Variable bonus: +1 speed per 5 levels (rounded up)
 N:63:of Bleys
 I:30:2:4
 W:52:20:20:100000
@@ -962,6 +968,8 @@ F:INSTA_ART
 
 # The Dagger 'Narthanc'
 
+# Variable bonus: +1 str per 5 levels (rounded up)
+# Unique power: Damage increases 10% per level (applied after all other mods)
 N:66:'Narthanc'
 I:23:4:0
 W:7:10:12:4000
@@ -976,11 +984,13 @@ L:USE:	object.timeout = rand_range(8, 16)
 L:DESC:	return "fire bolt(11d8) every 8-16 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:BONUS:	b.stat[A_STR] = (player.lev + 4) / 5
-L:HIT:	dam = dam + (dam * player.lev + randint0(10)) / 10
+L:HIT:	dam = dam + (dam * player.lev) / 10
 
 
 # The Dagger 'Nimthanc'
 
+# Variable bonus: +1 con per 5 levels (rounded up)
+# Unique power: Damage increases 10% per level (applied after all other mods)
 N:67:'Nimthanc'
 I:23:4:0
 W:5:10:12:3500
@@ -994,11 +1004,14 @@ L:USE:	object.timeout = rand_range(7, 14)
 L:DESC:	return "frost bolt (8d8) every 7-14 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:BONUS:	b.stat[A_CON] = (player.lev + 4) / 5
-L:HIT:	dam = dam + (dam * player.lev + randint0(10)) / 10
+L:HIT:	dam = dam + (dam * player.lev) / 10
+
 
 
 # The Dagger 'Dethanc'
 
+# Variable bonus: +1 dex per 5 levels (rounded up)
+# Unique power: Damage increases 10% per level (applied after all other mods)
 N:68:'Dethanc'
 I:23:4:0
 W:9:10:12:5000
@@ -1012,11 +1025,13 @@ L:USE:	object.timeout = rand_range(6, 12)
 L:DESC:	return "lightning bolt (6d8) every 6-12 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:BONUS:	b.stat[A_DEX] = (player.lev + 4) / 5
-L:HIT:	dam = dam + (dam * player.lev + randint0(10)) / 10
+L:HIT:	dam = dam + (dam * player.lev) / 10
+
 
 
 # The Dagger of Rilia
 
+# Variable bonus: +1 int per 10 levels (rounded up)
 N:69:of Rilia
 I:23:4:0
 W:9:40:12:10000
@@ -1262,6 +1277,7 @@ F:SLAY_ORC | SHOW_MODS | INSTA_ART
 
 # The Small Sword 'Sting'
 
+# Dependent power: pval and to-hit doubled for hobbits.
 N:88:'Sting'
 I:23:8:2
 W:35:15:75:50000
@@ -1292,6 +1308,8 @@ L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
 
 # The Short Sword Gilettar -> of Merlin
 
+# Dependent power: +2 sp for mages and high mages
+# Unique power: +1 dam per 10 maximum sp (applied after other bonuses).
 N:90:of Merlin
 I:23:10:2
 W:35:8:80:35000
@@ -1321,6 +1339,7 @@ F:CHAOTIC | VORPAL | BRAND_FIRE | BRAND_POIS | LITE | INSTA_ART
 
 # The Long Sword 'Vorpal Blade'
 
+# Unique power: Increased vorpality
 N:92:'Vorpal Blade'
 I:23:17:2
 W:80:30:150:250000
@@ -1417,6 +1436,7 @@ L:DESC:	return "stone to mud every 5 turns"
 
 # The Spear 'Nimloth' -> Hagen
 
+# Variable bonus: +1 speed per 5 levels (rounded up)
 N:99:of Hagen
 I:22:2:3
 W:26:12:50:30000
@@ -1650,6 +1670,7 @@ L:DESC:	return "fire ball (200), rad. 3, every 100 turns"
 
 # The Scythe of Energy
 
+# Unique power: does double damage when the player is hasted.
 N:116:of Energy
 I:22:17:4
 W:70:25:250:50000
@@ -1820,6 +1841,7 @@ F:CURSED | AUTO_CURSE | INSTA_ART
 D:This cloak looks ordinary, but you have a strange feeling that 
 D:there is something very wrong about it.
 
+# Variable bonus: +10 saves, +1 per +2 to-hit or to-dam
 N:129:'Luck Blade'
 I:23:17:0
 W:20:25:130:10000
