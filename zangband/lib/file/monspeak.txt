@@ -161,13 +161,14 @@ snarls, 'Have you got it -- either of you?'
 
 N:215:Golfimbul, the Hill Orc Chief
 N:260:Ufthak of Cirith Ungol
+N:285:Orc captain
 N:314:Shagrat, the Orc Captain
 N:315:Gorbag, the Orc Captain
 N:330:Bolg, Son of Azog
 N:350:Ugluk, the Uruk
 N:356:Lugdush, the Uruk
 N:373:Azog, King of the Uruk-Hai
-19
+20
 fingers his blade and grins evilly.
 snickers, 'Now, I strike a blow for *our* side!'
 says, 'Orcs don't get no respect... I'm gonna change that!'
@@ -187,6 +188,7 @@ calls you a scum-sucking pig-dog.
 says, 'I shall have my way with your women!'
 says, 'You're not so tough, buttmunch!'
 says, 'Heh-heh, heh-heh, killing people is cool.'
+curses at you in Orcish.
 
 N:382:Mime, the Nibelung
 N:383:Hagen, son of Alberich

@@ -97,6 +97,7 @@ N:140:Lagduf, the Snaga
 N:186:Grishnakh, the Hill Orc
 N:215:Golfimbul, the Hill Orc Chief
 N:260:Ufthak of Cirith Ungol
+N:285:Orc captain
 N:314:Shagrat, the Orc Captain
 N:315:Gorbag, the Orc Captain
 N:330:Bolg, Son of Azog
