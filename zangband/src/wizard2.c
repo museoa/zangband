@@ -459,8 +459,8 @@ static void wiz_display_item(object_type *o_ptr)
 	prt(format("name1 = %-4d  name2 = %-4d  cost = %ld",
 	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr)), 7, j);
 
-	prt(format("ident = %04x  timeout = %-d",
-	           o_ptr->ident, o_ptr->timeout), 8, j);
+	prt(format("ident = %04x  xtra2 = %-4d  timeout = %-d",
+	           o_ptr->ident, o_ptr->xtra2, o_ptr->timeout), 8, j);
 
 	prt("+------------FLAGS1------------+", 10, j);
 	prt("AFFECT........SLAY........BRAND.", 11, j);
