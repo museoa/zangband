@@ -4769,7 +4769,7 @@ void drop_near(const object_type *j_ptr, int chance, int x, int y)
 	if (!done)
 	{
 		/* Add the object to the ground */
-		o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
+		o_ptr = add_object_list(&c_ptr->o_idx, j_ptr);
 
 		/* Success */
 		if (o_ptr)
