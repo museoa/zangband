@@ -11684,7 +11684,7 @@ bool borg_check_rest(void)
 		if (!bp_ptr->depth)
 		{
 			/* Day time */
-			if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
+			if ((bp_ptr->hour >= 5) && (bp_ptr->hour <= 18))
 			{
 				return (FALSE);
 			}

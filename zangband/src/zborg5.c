@@ -3063,9 +3063,8 @@ static s32b borg_power_aux3(void)
 	/* Earthquakes... */
 	if (bp_ptr->flags1 & TR1_IMPACT) value += 5000L;
 
-
 	/* Hack -- It is hard to hold a heavy weapon */
-	if (borg_skill[BI_HEAVYWEPON]) value -= 500000L;
+	if (bp_ptr->status.hvy_weapon) value -= 50000L;
 
 	/*** Analyze bow ***/
 	l_ptr = look_up_equip_slot(EQUIP_BOW);

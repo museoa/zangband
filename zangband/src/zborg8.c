@@ -1362,7 +1362,7 @@ bool borg_think_dungeon(void)
 	/* Avoid the burning sun */
 	if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE) &&
 		!bp_ptr->depth &&
-		(borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
+		(bp_ptr->hour >= 5) && (bp_ptr->hour <= 18))
 	{
 		/* Get out of the Sun */
 		if (!goal_fleeing)

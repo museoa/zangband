@@ -615,8 +615,6 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	/* It is hard to carry a heavy bow */
 	if (hold < l_ptr->weight / 10)
 	{
-		borg_skill[BI_HEAVYBOW] = TRUE;
-
 		/* Hard to wield a heavy bow */
 		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
 	}
@@ -792,10 +790,14 @@ static void borg_notice_weapon(int hold, int extra_blows)
 	/* It is hard to hold a heavy weapon */
 	if (hold < l_ptr->weight / 10)
 	{
-		borg_skill[BI_HEAVYWEPON] = TRUE;
+		bp_ptr->status.hvy_weapon = TRUE;
 
 		/* Hard to wield a heavy weapon */
 		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
+	}
+	else
+	{
+		bp_ptr->status.hvy_weapon = FALSE;
 	}
 
 	/* Normal weapons */

@@ -992,10 +992,8 @@ void borg_update_frame(void)
 	s32b tick = turn % len + len / 4;
 
 	int hour = (24 * tick / len) % 24;
-	int min = (1440 * tick / len) % 60;
 
-	borg_skill[BI_HRTIME] = hour;
-	borg_skill[BI_MNTIME] = min;
+	bp_ptr->hour = hour;
 
 	/* Assume level is fine */
 	bp_ptr->status.fixlvl = FALSE;
@@ -1008,8 +1006,6 @@ void borg_update_frame(void)
 
 	/* cheat the max clevel */
 	bp_ptr->max_lev = p_ptr->max_lev;
-
-
 
 	/* Note "Winner" */
 	bp_ptr->winner = p_ptr->total_winner;

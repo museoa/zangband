@@ -274,6 +274,9 @@ struct borg_status
 	bool fixlvl;
 	bool fixexp;
 	bool fixstat[A_MAX];	/* Fix stats */
+	
+	/* Heavy stuff */
+	bool hvy_weapon;
 };
 
 
@@ -300,6 +303,7 @@ struct borg_player
 	byte cur_lite;	/* Current light radius */
 
 	bool winner;	/* Have we killed the Serpent? */
+	bool hour;		/* Time of day */
 
 	/* Hitpoints */
 	int chp;
@@ -351,9 +355,6 @@ struct borg_player
 
 extern borg_player *bp_ptr;
 
-#
-#define BI_HRTIME	23
-#define BI_MNTIME	24
 
 #define BI_ARMOR	25
 #define BI_TOHIT	26
@@ -367,11 +368,10 @@ extern borg_player *bp_ptr;
 #define BI_WMAXDAM	34
 #define BI_WBASEDAM	35
 #define BI_BMAXDAM	36
-#define BI_HEAVYWEPON	37
-#define BI_HEAVYBOW	38
 
 
-#define BI_MAX		39
+
+#define BI_MAX		37
 
 
 /*
