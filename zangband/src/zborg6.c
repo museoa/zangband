@@ -13981,6 +13981,8 @@ bool borg_flow_town_exit(int why)
 bool borg_flow_light(int why)
 {
 	int y, x, i;
+	
+	map_block *mb_ptr;
 
 
 	/* reset counters */
@@ -13989,26 +13991,21 @@ bool borg_flow_light(int why)
 
 	/* build the glow array */
 	/* Scan map */
-	for (y = w_y; y < w_y + SCREEN_HGT; y++)
+	MAP_ITT_START(mb_ptr)
 	{
-		for (x = w_x; x < w_x + SCREEN_WID; x++)
-		{
-			map_block *mb_ptr;
+		/* Not a perma-lit, and not our spot. */
+		if (!(mb_ptr->flags & MAP_GLOW)) continue;
+			
+		/* Get location */
+		MAP_GET_LOC(x, y);
 
-			/* Bounds checking */
-			if (!map_in_bounds(x, y)) continue;
-
-			mb_ptr = map_loc(x, y);
-
-			/* Not a perma-lit, and not our spot. */
-			if (!(mb_ptr->flags & MAP_GLOW)) continue;
-
-			/* keep count */
-			borg_glow_y[borg_glow_n] = y;
-			borg_glow_x[borg_glow_n] = x;
-			borg_glow_n++;
-		}
+		/* keep count */
+		borg_glow_y[borg_glow_n] = y;
+		borg_glow_x[borg_glow_n] = x;
+		borg_glow_n++;
 	}
+	MAP_ITT_END;
+	
 	/* None to flow to */
 	if (!borg_glow_n) return (FALSE);
 
