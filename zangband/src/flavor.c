@@ -1697,7 +1697,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		else if (f1 & (TR1_SEARCH))
 		{
 			/* Dump " to searching" */
-			t = object_desc_str(t, " to searching");
+			t = object_desc_str(t, " to sensing");
 		}
 
 		/* Infravision */
