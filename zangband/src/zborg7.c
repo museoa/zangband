@@ -2245,7 +2245,7 @@ static bool borg_wear_rings(void)
 			
 			if (l_ptr->number > 1)
 			{
-				l_ptr->treat_as = TREAT_AS_SWAP;
+				l_ptr->treat_as = TREAT_AS_LESS;
 			}
 			else
 			{
@@ -2499,7 +2499,7 @@ bool borg_wear_stuff(void)
 			
 			if (l_ptr->number > 1)
 			{
-				l_ptr->treat_as = TREAT_AS_SWAP;
+				l_ptr->treat_as = TREAT_AS_LESS;
 			}
 			else
 			{
