@@ -18,6 +18,8 @@
 #include "zborg3.h"
 #include "zborg6.h"
 
+/* This value will need to be tweaked */
+#define SHOP_SCAN_THRESHOLD		100
 
 /*
  * Think about the stores

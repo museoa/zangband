@@ -241,6 +241,9 @@ static void borg_think_shop_sell(int item)
 	borg_keypress('\n');
 	borg_keypress('\n');
 	borg_keypress('\n');
+	
+	/* Increment 'use' count */
+	borg_shops[shop_num].u_count++;
 
 	/* The purchase is complete */
 	goal_shop = -1;
@@ -271,6 +274,9 @@ static void borg_think_shop_buy(int item)
 	borg_keypress('\n');
 	borg_keypress('\n');
 	borg_keypress('\n');
+	
+	/* Increment 'use' count */
+	borg_shops[shop_num].u_count++;
 
 	/* The purchase is complete */
 	goal_shop = -1;
@@ -1072,47 +1078,46 @@ static bool borg_think_home_grab_aux(void)
 static bool borg_choose_shop(void)
 {
 	int i;
+	int use, bu = 0;
+	int dist;
+	int time;
 
 	/* Must be in town */
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
 
-	/* Must have visited all shops first---complete information */
-	for (i = 0; i < (track_shop_num); i++)
-	{
-		borg_shop *shop = &borg_shops[i];
-
-		/* Skip "visited" shops */
-		if (!shop->when) return (FALSE);
-	}
-
-	/* if we are already flowing toward a shop do not check again... */
+	/* If we are already flowing toward a shop do not check again... */
 	if (goal_shop != -1) return TRUE;
 
+	/* Find 'best' shop to go to */
+	for (i = 0; i < track_shop_num; i++)
+	{
+		/* Get distance */
+		dist = distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y);
+		
+		/* Get time since last been there */
+		time = borg_t - borg_shops[shop_num].when;
+		
+		/* How useful is this shop? */
+		use = time / (dist * dist + 1);
+		use *= borg_shops[i].b_count / (borg_shops[i].u_count + 1);
+		
+		/* Track most-useful shop */
+		if (use > bu)
+		{
+			goal_shop = i;
+			bu = use;
+		}
+	}
+
+	/* Is it worth our while to continue? */
+	if (bu > SHOP_SCAN_THRESHOLD)
+	{
+		/* Success */
+		return (TRUE);
+	}
+	
 	/* Assume no important shop */
 	goal_shop = -1;
-
-	/* Step 1 -- Sell items to the home */
-	if (borg_think_home_sell_aux()) return (TRUE);
-
-	/* Step 2 -- Sell items to the shops */
-	if (borg_think_shop_sell_aux()) return (TRUE);
-
-	/* Step 3 -- Buy items from the shops (for the player) */
-	if (borg_think_shop_buy_aux()) return (TRUE);
-
-	/* Step 4 -- Buy items from the home (for the player) */
-	if (borg_think_home_buy_aux()) return (TRUE);
-
-	/*
-	 * Get rid of junk from home first.  That way the home is 'uncluttered'
-	 * before you buy stuff for it.
-	 */
-
-	/* Step 5 -- Grab items from the home (for the shops) */
-	if (borg_think_home_grab_aux()) return (TRUE);
-
-	/* Step 6 -- Buy items from the shops (for the home) */
-	if (borg_think_shop_grab_aux()) return (TRUE);
 
 	/* Failure */
 	return (FALSE);
@@ -1129,6 +1134,33 @@ bool borg_think_store(void)
 
 	/* Remove "useless" equipment */
 	if (borg_remove_stuff()) return (TRUE);
+	
+	/* Increment 'been' count */
+	borg_shops[shop_num].b_count++;
+	
+	/* Select what we want to do */
+	if (shop_num == home_shop)
+	{
+		/* Step 1 -- Sell items to the home */
+		if (borg_think_home_sell_aux()) return (TRUE);
+	
+		/* Step 4 -- Buy items from the home (for the player) */
+		if (borg_think_home_buy_aux()) return (TRUE);
+		
+		/* Step 5 -- Grab items from the home (for the shops) */
+		if (borg_think_home_grab_aux()) return (TRUE);
+	}
+	else
+	{
+		/* Step 2 -- Sell items to the shops */
+		if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
+
+		/* Step 3 -- Buy items from the shops (for the player) */
+		if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
+
+		/* Step 6 -- Buy items from the shops (for the home) */
+		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+	}
 
 	/* Choose a shop to visit */
 	if (borg_choose_shop()) return (TRUE);
