@@ -505,8 +505,6 @@ proc NSCharFlagsCanvas::StatusBar_Slot {oop slot} {
 		[Info $oop statusBar] itemconfigure t1 -text $attrib(name)
 	}
 
-	NSRecall::RecallObject equipment $slot
-
 	return
 }
 

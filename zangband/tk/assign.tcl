@@ -2433,12 +2433,6 @@ proc NSAssign::hook_object {oop message args} {
 			return [assign set object $index]
 		}
 
-		select_member {
-			set row [lindex $args 0]
-			set index [lindex [Info $oop member,match] $row]
-			NSRecall::RecallObjectKind $index
-		}
-
 		group_names {
 			set names {}
 			foreach {title findSpec} [Global groups,k_info] {

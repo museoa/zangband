@@ -2440,11 +2440,6 @@ proc NSMainWindow::ExamineLocation {oop y x} {
 			angband player monster_race_idx $r_idx
 			qegenerate <Track-health> -w $m_idx -f $friend
 			NSRecall::RecallMonster $r_idx
-
-		# An object is here
-		} elseif {$o_idx && [angband o_list set $o_idx marked]} {
-
-			NSRecall::RecallObject cave $o_idx
 		}
 	}
 

@@ -1599,15 +1599,6 @@ proc NSMiscWindow::CanvasFeedbackCmd_MiscWindow {info action} {
 	if {[string match INVEN_* $info]} {
 		set canvas [Global misc,canvas]
 		switch -- $action {
-			enter {
-				angband equipment info $info attrib
-				set string "$attrib(char)) $attrib(name)"
-				if {$attrib(known) && $attrib(activate) && !$attrib(timeout)} {
-					append string [mc ". Click to activate."]
-				}
-				NSMainWindow::StatusText [Global main,oop] $string
-				NSRecall::RecallObject equipment $info
-			}
 			press1 {
 				angband equipment info $info attrib
 				if {$attrib(known) && $attrib(activate) && !$attrib(timeout)} {
@@ -1784,10 +1775,6 @@ proc NSMiscWindow::MenuSelect_InventoryPopup {menu} {
 		} else {
 			set item -1
 		}
-	}
-
-	if {$item != -1} {
-		NSRecall::RecallObject $invOrEquip $item
 	}
 	
 	return

@@ -405,15 +405,6 @@ proc NSBookMenu::SetupMenus {oop} {
 
 proc NSBookMenu::MenuSelect {oop bookNum menuId index ident} {
 
-	if {[string equal $index none]} return
-
-	if {!$bookNum} {
-		NSRecall::RecallObjectKind [Info $oop indexToBook,$index]
-	} else {
-		set spellIndex [lindex [angband spell find $bookNum] $index]
-		NSRecall::RecallSpell $bookNum $spellIndex
-	}
-
 	return
 }
 

@@ -478,13 +478,6 @@ proc NSAutobar::EnterButton {oop buttonNum} {
 	set hook [Info $oop button,hook,$buttonNum]
 	set hookArgs [Info $oop button,args,$buttonNum]
 	
-	# Hack -- Recall the book
-	switch -- $hook {
-		spell {
-			NSRecall::RecallObjectKind [lindex $hookArgs 0]
-		}
-	}
-
 	if {[lsearch -exact [angband inkey_flags] INKEY_CMD] == -1} return
 
 	set x [Info $oop button,x,$buttonNum]
@@ -1026,13 +1019,6 @@ proc NSAutobar::hook_item {oop message args} {
 				angband [Info $oop where] info $index attrib
 			}
 			DoUnderlyingCommand [Info $oop cmdChar]$attrib(char)
-		}
-
-		highlight {
-			set row [lindex $args 0]
-			set index [lindex [Info $oop match] $row]
-			NSRecall::RecallObject [Info $oop where] $index
-			angband [Info $oop where] info $index attrib
 		}
 	}
 

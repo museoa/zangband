@@ -34,7 +34,6 @@ proc NSDebugAlloc::InitModule {} {
 	MsgCatInit know
 
 	lappend Priv(hook) alloc_hook_monster [mc Monsters]
-	lappend Priv(hook) alloc_hook_object [mc Objects]
 
 	set Priv(find,string) ""
 	set Priv(find,fromStart) 1
@@ -1120,104 +1119,6 @@ proc NSDebugAlloc::alloc_hook_monster {oop message args} {
 		menu_cmd {
 			switch -- [lindex $args 0] {
 			}
-		}
-	}
-
-	return
-}
-
-proc NSDebugAlloc::alloc_hook_object {oop message args} {
-
-	switch -- $message {
-
-		set_list_group {
-
-			set canvistId [Info $oop group,canvistId]
-
-			# Collect info for each row
-			set itemList {}
-
-			foreach {title findSpec} [Global groups,k_info] {
-
-				# Find the last object in the group
-				set match [eval angband k_info find -limit 1 \
-					-backwards $findSpec]
-
-				# Get the icon
-				set icon [angband k_info info [lindex $match 0] icon]
-
-				# Collect info for each row
-				lappend itemList [list $icon [mc $title]]
-			}
-
-			# Add each row to the list
-			NSCanvist::InsertMany $canvistId end $itemList
-		}
-
-		set_list_member {
-
-			set canvistId [Info $oop member,canvistId]
-
-			set group [lindex $args 0]
-			set findSpec [lindex [Global groups,k_info] [expr {$group * 2 + 1}]]
-
-			# Get a list of objects in the group
-			set match [eval angband k_info find $findSpec]
-
-			# Collect info for each row
-			set itemList {}
-
-			# Add each match to the list
-			foreach index $match {
-
-				# Get the icon
-				set icon [angband k_info info $index icon]
-	
-				# Hack -- object_desc_flavor
-				set name [angband k_info info $index object_desc_flavor]
-
-				# Collect info for each row
-				lappend itemList [list $icon $name]
-			}
-
-			# Add each row to the list
-			NSCanvist::InsertMany $canvistId end $itemList
-
-			# Keep a list of matching indexes
-			Info $oop member,match $match
-		}
-
-		select_member {
-			set row [lindex $args 0]
-			set k_idx [lindex [Info $oop member,match] $row]
-			[Info $oop win].statusBar itemconfigure t2 -text #$k_idx
-			NSRecall::RecallObjectKind $k_idx
-		}
-
-		allocate {
-			set row [Info $oop member,current]
-			set k_idx [lindex [Info $oop member,match] $row]
-			StatusBar $oop "Allocate object #$k_idx" 1
-			debug create_item $k_idx
-			angband keypress " "
-		}
-
-		group_names {
-			set result {}
-			foreach {title findSpec} [Global groups,k_info] {
-				lappend result $title
-			}
-			return $result
-		}
-
-		member_name {
-			return [angband k_info info [lindex $args 0] object_desc]
-		}
-
-		member_list {
-			set group [lindex $args 0]
-			set findSpec [lindex [Global groups,k_info] [expr {$group * 2 + 1}]]
-			return [eval angband k_info find $findSpec]
 		}
 	}
 
