@@ -19,7 +19,7 @@ COMMONOBJS := \
 		qebind-dll.o r_info.o racial.o rooms.o save.o savefile-z.o \
 		scores.o setting.o spells1.o \
 		spells2.o spells3.o store.o streams.o struct.o tables.o \
-		util-tnb.o util.o variable.o widget-iso.o widget.o \
+		util-tnb.o util.o variable.o widget.o \
 		widget1-dll.o widget2-dll.o \
 		wild.o wizard1.o wizard2.o xtra1.o xtra2.o \
 		util-dll.o plat-dll.o memory-dll.o\

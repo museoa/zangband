@@ -106,9 +106,6 @@ struct Widget
     /* WIDGET_STYLE_ISO */
 	int *yp, *xp;				/* Pixel offsets of each tile */
 	int y0, x0;					/* Cave location of top-left (tile 0) */
-	int cLeft, cRight, rTop, rBottom;
-	int ignoreLeft, ignoreRight;
-	int ignoreTop, ignoreBottom;
 	int cx, cy;					/* Offset of bitmap from "canvas" */
 	int ox, oy;					/* testing */
 	int hit, hitx, hity;		/* Highlight */
