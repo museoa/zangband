@@ -2733,7 +2733,7 @@ static void store_purchase(int *store_top, town_type *twn_ptr)
 					}
 
 					/* Start over */
-					store_top = 0;
+					*store_top = 0;
 
 					/* Redraw everything */
 					display_inventory(*store_top);
@@ -2802,7 +2802,7 @@ static void store_purchase(int *store_top, town_type *twn_ptr)
 		else
 		{
 			/* Nothing left */
-			if (st_ptr->stock_num == 0) store_top = 0;
+			if (st_ptr->stock_num == 0) *store_top = 0;
 
 			/* Nothing left on that screen */
 			else if (*store_top >= st_ptr->stock_num) *store_top -= 12;
