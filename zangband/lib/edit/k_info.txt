@@ -1266,7 +1266,6 @@ L:MAKE:	object.pval = randint1(object.pval / 2) + m_bonus(object.pval, level)
 L:MAKE:	while (one_in_(2) ~= 0) do object.pval = object.pval + 1 end
 L:MAKE:	allow_curse = TRUE
 L:MAKE:	rating_boost = 25
-D:Just looking at this ring makes you feel quick.
 
 N:137:Sensing
 G:=:d
@@ -3527,8 +3526,8 @@ W:1:0:10:3
 A:1/1:7/1:15/1
 P:0:2d6:0:0:0
 F:EASY_KNOW
-D:Empty this flask in a lantern to keep it fueled.
-D:Or throw it to a monster which doesn't like fire.
+D:Empty this flask in a lantern to keep it fueled.  
+D:Or throw it at a monster which doesn't like fire.
 
 N:349:& Empty Bottle~
 G:!:w
