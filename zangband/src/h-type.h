@@ -54,9 +54,11 @@ typedef void *vptr;
 typedef const char *cptr;
 
 
-/* A real number */
-typedef double real;
-
+/* Hack -- disallow real numbers by causing compile error */
+#undef double
+#define double floating_point_is_not_allowed;
+#undef float
+#define float floating_point_is_not_allowed;
 
 /*
  * Hack -- prevent problems with non-MACINTOSH
