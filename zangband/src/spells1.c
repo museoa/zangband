@@ -517,9 +517,9 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 
 			/* Notice + Redraw */
 			note_spot(x, y);
-
+			
 			/* Observe (after lighting) */
-			if (known) obvious = TRUE;
+			if (player_can_see_bold(x, y)) obvious = TRUE;
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */
@@ -538,18 +538,9 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 
 			/* Turn off the light. */
 			c_ptr->info &= ~(CAVE_GLOW);
-
-			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat == FEAT_FLOOR)
-			{
-				/* Notice + Redraw */
-				note_spot(x, y);
-			}
-			else
-			{
-				/* Redraw */
-				lite_spot(x, y);
-			}
+			
+			/* Notice + Redraw */
+			note_spot(x, y);
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */

@@ -3112,21 +3112,9 @@ static void cave_temp_room_unlite(void)
 
 			/* Darken the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
-
-			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat == FEAT_FLOOR)
-			{
-				/* Forget the grid */
-				forget_grid(pc_ptr);
-
-				/* Notice + Redraw */
-				note_spot(x, y);
-			}
-			else
-			{
-				/* Redraw */
-				lite_spot(x, y);
-			}
+			
+			/* Notice + Redraw */
+			note_spot(x, y);
 		}
 	}
 
