@@ -2737,6 +2737,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			/* Get effective armour class of monster. */
 			armour = r_ptr->ac + terrain_bonus;
 
+			/* Adjacent monsters are harder to hit */
+			if (cur_dis == 1) armour += armour;
+
 			/* Weapons of velocity sometimes almost negate monster armour. */
 			if (special_hit) armour /= 3;
 
