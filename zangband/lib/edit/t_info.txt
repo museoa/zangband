@@ -1226,7 +1226,7 @@ N:126:Rare Book Store
 G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:8:50:120:0:0:100:0:56
+D:8:20:120:0:0:100:0:56
 F:2,field_action_door_store
 F:19,field_action_isbook_tester
 
