@@ -2566,7 +2566,7 @@ bool earthquake(int cx, int cy, int r)
 			/* Move the player */
 			p_ptr->py = sy;
 			p_ptr->px = sx;
-			
+
 			/* Notice movement */
 			Term_move_player();
 
@@ -3383,7 +3383,7 @@ bool teleport_swap(int dir)
 	/* Move the player */
 	p_ptr->px = tx;
 	p_ptr->py = ty;
-	
+
 	/* Notice movement */
 	Term_move_player();
 

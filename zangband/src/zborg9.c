@@ -410,7 +410,8 @@ static bool borg_think(void)
 					l_ptr->tval != REALM2_BOOK) continue;
 
 				/* Note book locations */
-				borg_book[l_ptr->tval - TV_LIFE_BOOK + 1][k_info[l_ptr->k_idx].sval] = i;
+				borg_book[l_ptr->tval - TV_LIFE_BOOK +
+						  1][k_info[l_ptr->k_idx].sval] = i;
 			}
 		}
 	}
@@ -2408,10 +2409,11 @@ static void borg_display_item(list_item *l_ptr)
 	if (l_ptr->o_name) prt(l_ptr->o_name, j, 2);
 
 	prt(format("k_idx = %-5d    tval = %-5d ",
-			   l_ptr->k_idx,  l_ptr->tval), j, 4);
+			   l_ptr->k_idx, l_ptr->tval), j, 4);
 
 	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
-			   l_ptr->number, l_ptr->weight, l_ptr->ac, l_ptr->dd, l_ptr->ds), j, 5);
+			   l_ptr->number, l_ptr->weight, l_ptr->ac, l_ptr->dd, l_ptr->ds),
+		j, 5);
 
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
 			   l_ptr->pval, l_ptr->to_a, l_ptr->to_h, l_ptr->to_d), j, 6);
@@ -2420,7 +2422,7 @@ static void borg_display_item(list_item *l_ptr)
 	{
 		prt(format("xtra_name = %s", l_ptr->xtra_name), j, 7);
 	}
-	
+
 	prt(format("info = %d  timeout = %-d", l_ptr->info, l_ptr->timeout), j, 8);
 
 
@@ -2501,10 +2503,10 @@ void borg_init_9(void)
 	/* Allow items to stack */
 	stack_force_notes = TRUE;
 	stack_force_costs = TRUE;
-	
+
 	/* Hack - we don't understand this */
 	auto_destroy = FALSE;
-	
+
 	/* Do not confirm actions */
 	confirm_wear = FALSE;
 	confirm_stairs = FALSE;
@@ -2549,7 +2551,7 @@ void borg_init_9(void)
 
 	/* set the continous play mode if the game cheat death is on */
 	if (cheat_live) borg_cheat_death = TRUE;
-	
+
 	/* Initialise player position */
 	map_get_player(&c_x, &c_y);
 
@@ -4074,11 +4076,11 @@ void do_cmd_borg(void)
 			/* Command: Show time */
 			s32b time = borg_t - borg_began;
 
-			msg_format("time: (%d) ", (int) time);
+			msg_format("time: (%d) ", (int)time);
 			time = (borg_time_town + (borg_t - borg_began));
 
-			msg_format("; from town (%d)", (int) time);
-			msg_format("; need inviso (%d)", (int) need_see_inviso);
+			msg_format("; from town (%d)", (int)time);
+			msg_format("; need inviso (%d)", (int)need_see_inviso);
 			break;
 		}
 
@@ -4149,11 +4151,11 @@ void do_cmd_borg(void)
 		{
 			/* Command: Display all known info on item */
 			int n = p_ptr->command_arg - 1;
-			
+
 			/* Paranoia */
 			if (n < 0) n = 0;
 			if (n >= inven_num) break;
-			
+
 			/* Save the screen */
 			Term_save();
 
@@ -4170,13 +4172,13 @@ void do_cmd_borg(void)
 
 			break;
 		}
-		
+
 		case 'e':
 		case 'E':
 		{
 			/* Command: Display all known info on item */
 			int n = p_ptr->command_arg - 1;
-			
+
 			/* Paranoia */
 			if (n < 0) n = 0;
 			if (n >= equip_num) break;
@@ -4196,7 +4198,7 @@ void do_cmd_borg(void)
 
 			break;
 		}
-		
+
 
 		case 'd':
 		case 'D':

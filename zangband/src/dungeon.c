@@ -2734,7 +2734,7 @@ static void process_player(void)
 
 					/* Warning */
 					msg_print("Your pack overflows!");
-					
+
 					/* Drop the excess item(s) */
 					inven_drop(o_ptr, o_ptr->number);
 				}

@@ -1062,7 +1062,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		/* Move the player */
 		p_ptr->py = y;
 		p_ptr->px = x;
-		
+
 		/* Notice movement */
 		Term_move_player();
 

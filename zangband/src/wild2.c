@@ -3133,9 +3133,9 @@ void light_dark_square(int x, int y, bool daytime)
 
 		/* Hack -- Memorize lit grids if allowed */
 		if (view_perma_grids) remember_grid(c_ptr, pc_ptr);
-		
+
 		/* If is daytime - have seen this square */
-		wild[y / 16][x/ 16].done.info |= WILD_INFO_SEEN;
+		wild[y / 16][x / 16].done.info |= WILD_INFO_SEEN;
 	}
 	else
 	{
@@ -3837,7 +3837,7 @@ void change_level(int level)
 		/* In the wilderness */
 		p_ptr->px = (s16b)p_ptr->wilderness_x;
 		p_ptr->py = (s16b)p_ptr->wilderness_y;
-		
+
 		/* Notice player location */
 		Term_move_player();
 

@@ -861,7 +861,7 @@ bool borg_refuel_lantern(void)
 
 	/* None available */
 	if (!l_ptr) return (FALSE);
-	
+
 	/* Need to be wielding a light */
 	if (!equipment[EQUIP_LITE].k_idx)
 	{

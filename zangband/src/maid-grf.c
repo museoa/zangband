@@ -845,7 +845,7 @@ void Term_move_player(void)
 	set_player_location(p_ptr->px, p_ptr->py);
 }
 
-#else /* TERM_USE_MAP */
+#else  /* TERM_USE_MAP */
 
 /*** Make generic do-nothing functions ***/
 
@@ -853,11 +853,11 @@ void Term_move_player(void)
 void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 {
 	/* Ignore all parameters */
-	(void) x;
-	(void) y;
-	(void) c_ptr;
-	(void) pc_ptr;
-	
+	(void)x;
+	(void)y;
+	(void)c_ptr;
+	(void)pc_ptr;
+
 	/* Do nothing */
 }
 
@@ -955,7 +955,7 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 
 	/* Paranoia */
 	if (*l_ptr_ptr) quit("Trying to copy over an allocated list.");
-	
+
 	/* We don't need to make an empty list */
 	if (!num1) return;
 
@@ -1033,7 +1033,7 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 		/* Copy over with the new list */
 		copy_list(l_ptr, num, &equipment, &equip_num);
 	}
-	
+
 	if ((list_type == LIST_STORE) || (list_type == LIST_HOME))
 	{
 		/* Delete the old current list */
@@ -1057,8 +1057,8 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 {
 	/* Known flags */
 	object_flags_known(o_ptr, &l_ptr->kn_flags1,
-							  &l_ptr->kn_flags2, &l_ptr->kn_flags3);
-	
+					   &l_ptr->kn_flags2, &l_ptr->kn_flags3);
+
 	/* Type of object */
 	if (object_aware_p(o_ptr))
 	{
@@ -1228,7 +1228,7 @@ void Term_write_list(s16b o_idx, byte list_type)
 	{
 		/* We have an empty list */
 		save_object_list(NULL, 0, list_type);
-		
+
 		return;
 	}
 
@@ -1279,7 +1279,7 @@ void Term_write_list(s16b o_idx, byte list_type)
 	FREE(list);
 }
 
-#else /* TERM_USE_LIST */
+#else  /* TERM_USE_LIST */
 
 /*** Make generic do-nothing functions ***/
 
@@ -1291,11 +1291,10 @@ void Term_write_equipment(void)
 void Term_write_list(s16b o_idx, byte list_type)
 {
 	/* Ignore parameters */
-	(void) o_idx;
-	(void) list_type;
-	
+	(void)o_idx;
+	(void)list_type;
+
 	/* Do nothing */
 }
 
 #endif /* TERM_USE_LIST */
-

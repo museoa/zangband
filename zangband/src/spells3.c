@@ -433,7 +433,7 @@ void teleport_player(int dis)
 	/* Move the player */
 	p_ptr->py = y;
 	p_ptr->px = x;
-	
+
 	/* Notice movement */
 	Term_move_player();
 
@@ -574,10 +574,10 @@ void teleport_player_to(int nx, int ny)
 	/* Move the player */
 	p_ptr->py = y;
 	p_ptr->px = x;
-	
+
 	/* Notice movement */
 	Term_move_player();
-	
+
 	if (!p_ptr->depth)
 	{
 		/* Scroll wilderness */

@@ -4017,8 +4017,8 @@ s32b borg_power(void)
 	s32b value = 0L;
 
 	/* Process the equipment */
-	value  += borg_power_aux3();
-	
+	value += borg_power_aux3();
+
 	/* Process the inventory */
 	value += borg_power_aux4();
 

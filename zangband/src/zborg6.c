@@ -7212,7 +7212,7 @@ static int borg_attack_aux(int what)
 			/* Object attack */
 			return (borg_attack_aux_object());
 		}
-		
+
 		case BF_THRUST:
 		{
 			/* Physical attack */
@@ -7511,7 +7511,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_spell_dispel
 					(REALM_NATURE, 3, 7, rad, dam, GF_DISINTEGRATE));
 		}
-		
+
 		case BF_TRUMP_MINDBLAST:
 		{
 			/* Spell -- Mind Blast */
@@ -8004,7 +8004,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_FIRE_BALL, rad, dam, GF_FIRE));
 		}
-		
+
 		case BF_ROD_SLOW_MONSTER:
 		{
 			/* Rod -- slow monster */
@@ -8020,7 +8020,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_SLEEP_MONSTER, rad, dam, GF_OLD_SLEEP));
 		}
-		
+
 		case BF_ROD_PESTICIDE:
 		{
 			/* Rod -- Pesticide */
@@ -8085,7 +8085,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_MAGIC_MISSILE, rad, dam, GF_MISSILE));
 		}
-		
+
 		case BF_WAND_COLD_BOLT:
 		{
 			/* Wand -- cold bolt */
@@ -8125,7 +8125,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_SLEEP_MONSTER, rad, dam, GF_OLD_SLEEP));
 		}
-		
+
 		case BF_WAND_CONFUSE_MONSTER:
 		{
 			/* Wand -- conf monster */
@@ -8141,7 +8141,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_FEAR_MONSTER, rad, dam, GF_TURN_ALL));
 		}
-		
+
 		case BF_WAND_ANNIHILATION:
 		{
 			/* Wand -- annihilation */
@@ -8211,7 +8211,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_FIRE_BALL, rad, dam, GF_FIRE));
 		}
-		
+
 		case BF_WAND_WONDER:
 		{
 			/* Wand -- wand of wonder */
@@ -8732,7 +8732,7 @@ static int borg_defend_aux_speed(int p1)
 			}
 		}
 	}
-	
+
 	/* Only cast defence spells if fail rate is not too high */
 	if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
 		borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed) ||
@@ -8788,9 +8788,9 @@ static int borg_defend_aux_speed(int p1)
 	if (((p1 > p2) &&
 		 p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
 		 && (p1 > (avoidance / 5)) && good_speed) ||
-		 	((p1 > p2) &&
-				p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) :
-					 (avoidance / 3)) && (p1 > (avoidance / 7))))
+		((p1 > p2) &&
+		 p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) :
+				(avoidance / 3)) && (p1 > (avoidance / 7))))
 	{
 		/* Simulation */
 		if (borg_simulate) return (p1 - p2 + (borg_goi / 100) * 50);
@@ -8808,7 +8808,7 @@ static int borg_defend_aux_speed(int p1)
 			/* Value */
 			return (p1 - p2 + borg_goi * 50);
 	}
-	
+
 	/* default to can't do it. */
 	return (0);
 }
@@ -10839,7 +10839,7 @@ static int borg_defend_aux(int what, int p1)
 		}
 	}
 
-	borg_oops(format("# Trying invalid BD type. (%d)",what));
+	borg_oops(format("# Trying invalid BD type. (%d)", what));
 
 	return (0);
 }
@@ -10910,7 +10910,7 @@ bool borg_defend(int p1)
 
 	/* Instantiate */
 	(void)borg_defend_aux(b_g, p1);
-	
+
 	/* Success */
 	return (TRUE);
 
@@ -13156,12 +13156,12 @@ bool borg_flow_shop_entry(int i)
 
 	/* Spread the flow */
 	borg_flow_spread(250, TRUE, FALSE, FALSE);
-	
+
 	borg_note("# About to commit flow");
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("shop", GOAL_MISC)) return (FALSE);
-	
+
 	borg_note("# About to take step");
 
 	/* Take one step */

@@ -4089,7 +4089,7 @@ void window_stuff(void)
 		p_ptr->window &= ~(PW_EQUIP);
 		fix_equip();
 	}
-	
+
 	/* Apply usable flags */
 	p_ptr->window &= mask;
 

@@ -50,7 +50,7 @@ bool new_player_spot(void)
 	/* Save the new player grid */
 	p_ptr->py = y;
 	p_ptr->px = x;
-	
+
 	/* Notice player location */
 	Term_move_player();
 

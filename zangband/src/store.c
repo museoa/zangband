@@ -2311,7 +2311,7 @@ static void deallocate_store(void)
 
 	/* Return if there are no stores with stock */
 	if (store_cache_num == 0) return;
-	
+
 	/* No stock in first one? */
 	if (!store_cache[0]->stock)
 	{
@@ -2372,7 +2372,7 @@ bool allocate_store(store_type *st_ptr)
 			break;
 		}
 	}
-	
+
 	/* Did we find it? */
 	if (n != -1)
 	{

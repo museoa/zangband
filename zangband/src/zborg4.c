@@ -183,7 +183,7 @@ void borg_list_info(byte list_type)
 		case LIST_STORE:
 		{
 			/* Notice store inventory changes */
-			
+
 			/* Hack - Memorize player location */
 			map_get_player(&c_x, &c_y);
 
@@ -199,7 +199,7 @@ void borg_list_info(byte list_type)
 					break;
 				}
 			}
-			
+
 			/* Paranoia */
 			if (shop_num == -1) quit("Could not find store!");
 
@@ -212,7 +212,7 @@ void borg_list_info(byte list_type)
 		case LIST_HOME:
 		{
 			/* Notice home inventory changes */
-			
+
 			/* Hack - Memorize player location */
 			map_get_player(&c_x, &c_y);
 
@@ -229,7 +229,7 @@ void borg_list_info(byte list_type)
 					break;
 				}
 			}
-			
+
 			/* Paranoia */
 			if (shop_num == -1) quit("Could not find home!");
 
@@ -450,7 +450,7 @@ list_item *look_up_equip_slot(int slot)
 		/* Optimise common case of empty slot */
 		if (l_ptr->treat_as != TREAT_AS_SWAP) return (NULL);
 	}
-	
+
 	/* Look at current shop */
 	if (use_shop)
 	{
@@ -466,7 +466,7 @@ list_item *look_up_equip_slot(int slot)
 			}
 		}
 	}
-	else	
+	else
 	{
 		/* Otherwise, scan the inventory */
 		for (i = 0; i < inven_num; i++)
@@ -481,7 +481,7 @@ list_item *look_up_equip_slot(int slot)
 			}
 		}
 	}
-	
+
 	/* No match! */
 	return (NULL);
 }
@@ -2084,7 +2084,7 @@ static void borg_notice_inven(void)
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
 		if ((l_ptr->treat_as == TREAT_AS_LESS) && (l_ptr->number == 1))
 		{
-			 continue;
+			continue;
 		}
 
 		/* Unaware item? */
@@ -2112,20 +2112,20 @@ static void borg_notice_inven(void)
 			}
 		}
 	}
-	
+
 	/* Scan home for swapped items */
 	for (i = 0; i < home_num; i++)
 	{
 		l_ptr = &borg_home[i];
-		
+
 		/* Hack - only 'LESS' items are treated as going into inven */
 		if (l_ptr->treat_as == TREAT_AS_LESS)
 		{
 			int num = l_ptr->number;
-				
+
 			/* Hack - assume we get one item */
 			l_ptr->number = 1;
-				
+
 			/* Examine the item */
 			borg_notice_inven_item(l_ptr);
 
@@ -2135,18 +2135,18 @@ static void borg_notice_inven(void)
 			/* Done (Only one extra item) */
 			return;
 		}
-		
+
 		/* Sometimes want to grab a whole pile */
 		if (l_ptr->treat_as == TREAT_AS_SWAP)
 		{
 			/* Examine the item */
 			borg_notice_inven_item(l_ptr);
-			
+
 			/* Done (Only one extra item) */
 			return;
 		}
 	}
-	
+
 	/* Scan current shop? */
 	if (use_shop)
 	{
@@ -2161,10 +2161,10 @@ static void borg_notice_inven(void)
 				if (l_ptr->treat_as == TREAT_AS_LESS)
 				{
 					int num = l_ptr->number;
-				
+
 					/* Hack - assume we get one item */
 					l_ptr->number = 1;
-				
+
 					/* Examine the item */
 					borg_notice_inven_item(l_ptr);
 
@@ -2781,7 +2781,7 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 		else
 			/* Check what the borg has on as well. */
 			w_ptr = &equipment[x - home_num];
-		
+
 		/* Don't count items we are swapping */
 		if (w_ptr->treat_as == TREAT_AS_SWAP) continue;
 
@@ -2801,11 +2801,11 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 				/* Svals don't match when required */
 				continue;
 			}
-			
+
 			/* Does only one have an xtra name? */
 			if ((l_ptr->xtra_name == NULL) !=
 				(w_ptr->xtra_name == NULL)) continue;
-			
+
 			/* Do the xtra names match? */
 			if ((l_ptr->xtra_name == w_ptr->xtra_name) ||
 				(streq(l_ptr->xtra_name, w_ptr->xtra_name)))
@@ -3691,13 +3691,13 @@ static void borg_notice_home_aux(void)
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
-		
+
 		/* Don't count items we are swapping */
 		if (l_ptr->treat_as == TREAT_AS_SWAP) continue;
-		
+
 		/* Save number of items */
 		num = l_ptr->number;
-		
+
 		/* Hack - simulate change in number of items */
 		if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number--;
 		if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
@@ -3707,11 +3707,11 @@ static void borg_notice_home_aux(void)
 
 		/* Notice the item itself */
 		borg_notice_home_item(l_ptr, i);
-		
+
 		/* Hack - revert change in number of items */
 		l_ptr->number = num;
 	}
-	
+
 	/* Scan the inventory for virtual home items */
 	for (i = 0; i < inven_num; i++)
 	{
@@ -3719,27 +3719,27 @@ static void borg_notice_home_aux(void)
 
 		/* Ignore normal items */
 		if (l_ptr->treat_as == TREAT_AS_NORM) continue;
-		
+
 		/* Save number of items */
 		num = l_ptr->number;
-		
+
 		/* Hack - simulate change in number of items */
 		if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number = 1;
 		if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
-		
+
 		/* Notice item flags */
 		borg_notice_home_flags(l_ptr);
 
 		/* Notice the item itself */
 		borg_notice_home_item(l_ptr, home_num + EQUIP_MAX - 1);
-		
+
 		/* Hack - revert change in number of items */
 		l_ptr->number = num;
-	
+
 		/* Hack - assume only one swap at a time */
 		break;
 	}
-	
+
 	/* Scan for virtual home items from stores */
 	if (use_shop)
 	{
@@ -3749,20 +3749,20 @@ static void borg_notice_home_aux(void)
 
 			/* Ignore normal items */
 			if (l_ptr->treat_as == TREAT_AS_NORM) continue;
-		
+
 			/* Save number of items */
 			num = l_ptr->number;
-		
+
 			/* Hack - simulate change in number of items */
 			if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number = 1;
 			if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
-		
+
 			/* Notice item flags */
 			borg_notice_home_flags(l_ptr);
 
 			/* Notice the item itself */
 			borg_notice_home_item(l_ptr, home_num + EQUIP_MAX - 1);
-		
+
 			/* Hack - revert change in number of items */
 			l_ptr->number = num;
 		}

@@ -150,10 +150,10 @@ typedef struct borg_take borg_take;
 struct borg_take
 {
 	s16b k_idx;	/* Kind index */
-	
+
 	/* Location */
 	s16b x;
-	s16b y;	
+	s16b y;
 
 	char unknown;	/* Unknown type */
 };
@@ -171,7 +171,7 @@ struct borg_kill
 
 	s16b power;	/* Estimated hit-points */
 	s32b when;	/* When last seen */
-	
+
 	/* Location */
 	s16b x;
 	s16b y;

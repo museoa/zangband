@@ -1513,9 +1513,6 @@ static int borg_guess_race_name(cptr who)
 }
 
 
-
-
-
 /*
  * Delete an old "object" record
  */
@@ -2184,13 +2181,13 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 	/* Guess the monster race */
 	r_idx = borg_guess_race_name(who);
-	
+
 	/* Paranoia */
 	if (!r_idx)
 	{
 		/* Note */
 		borg_note("# Possible strange monster nearby.");
-		
+
 		/* Ignore */
 		return (0);
 	}
@@ -2686,10 +2683,10 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 				/* Position */
 				borg_shops[i].x = x;
 				borg_shops[i].y = y;
-				
+
 				/* Hack - we have never been here before */
 				borg_shops[i].when = borg_t - 1000;
-				
+
 				/* One more shop */
 				track_shop_num++;
 			}
@@ -4640,8 +4637,8 @@ void borg_init_2(void)
 
 	/* Initialise los information */
 	borg_vinfo_init();
-	
-		/* Allocate temp arrays */
+
+	/* Allocate temp arrays */
 	C_MAKE(what, z_info->r_max, s16b);
 	C_MAKE(text, z_info->r_max, cptr);
 

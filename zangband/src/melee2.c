@@ -563,7 +563,7 @@ static int mon_will_run(monster_type *m_ptr)
 	if (m_ptr->monfear) return (TRUE);
 
 	/* Nearby monsters will not become terrified */
-    if (m_ptr->cdis <= 5) return (FALSE);
+	if (m_ptr->cdis <= 5) return (FALSE);
 
 	/* Examine player power (level) */
 	p_lev = p_ptr->lev;
@@ -992,7 +992,7 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 
-    /* Hack - Monster can go through rocks - head straight for character */
+	/* Hack - Monster can go through rocks - head straight for character */
 	if (r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL))
 	{
 		*tx = px;
@@ -1003,20 +1003,20 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 	/* Can the player see us? - if so run towards him */
 	if (in_boundsp(mx, my) && player_has_los_grid(parea(mx, my)))
 	{
-        /* Spellcasters may try to keep distance between them and the player */
-        if (m_ptr->cdis < MAX_RANGE / 2 &&
-            m_ptr->cdis > 2 &&
-            m_ptr->hp < p_ptr->lev * 3 &&
-            ((r_ptr->flags4 & RF4_ATTACK_MASK) ||
-             (r_ptr->flags5 & RF5_ATTACK_MASK) ||
-             (r_ptr->flags6 & RF6_ATTACK_MASK)))
-        {
-            /* Move directly away from character. */
-            *tx = mx + -(px - mx);
-            *ty = my + -(py - my);
-    
-            return;
-        }
+		/* Spellcasters may try to keep distance between them and the player */
+		if (m_ptr->cdis < MAX_RANGE / 2 &&
+			m_ptr->cdis > 2 &&
+			m_ptr->hp < p_ptr->lev * 3 &&
+			((r_ptr->flags4 & RF4_ATTACK_MASK) ||
+			 (r_ptr->flags5 & RF5_ATTACK_MASK) ||
+			 (r_ptr->flags6 & RF6_ATTACK_MASK)))
+		{
+			/* Move directly away from character. */
+			*tx = mx + -(px - mx);
+			*ty = my + -(py - my);
+
+			return;
+		}
 
 		*tx = px;
 		*ty = py;
@@ -1086,7 +1086,7 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 		/* We're using sound */
 		else
 		{
-            byte cost = c_ptr->cost;
+			byte cost = c_ptr->cost;
 
 			/* Accept louder sounds */
 			if (cost < best_val) continue;
@@ -2731,9 +2731,9 @@ static void process_monster(int m_idx)
 
 	cave_type *c_ptr;
 
-    bool gets_angry = FALSE;
+	bool gets_angry = FALSE;
 
-    int rand_move = 0;
+	int rand_move = 0;
 
 
 	/* Quantum monsters are odd */
@@ -3079,10 +3079,10 @@ static void process_monster(int m_idx)
 
 	/* Hack -- Assume no movement */
 	mm[0] = mm[1] = mm[2] = mm[3] = 0;
-    mm[4] = mm[5] = mm[6] = mm[7] = 0;
+	mm[4] = mm[5] = mm[6] = mm[7] = 0;
 
-    if (r_ptr->flags1 & RF1_RAND_50) rand_move += 50;
-    if (r_ptr->flags1 & RF1_RAND_25) rand_move += 25;
+	if (r_ptr->flags1 & RF1_RAND_50) rand_move += 50;
+	if (r_ptr->flags1 & RF1_RAND_25) rand_move += 25;
 
 	/* Confused -- 100% random */
 	if (m_ptr->confused)
@@ -3095,10 +3095,10 @@ static void process_monster(int m_idx)
 	else if (rand_move && (randint0(100) < rand_move))
 	{
 		/* Memorize flags */
-        if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_50))
-            r_ptr->r_flags1 |= (RF1_RAND_50);
-        if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_25))
-            r_ptr->r_flags1 |= (RF1_RAND_25);
+		if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_50))
+			r_ptr->r_flags1 |= (RF1_RAND_50);
+		if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_25))
+			r_ptr->r_flags1 |= (RF1_RAND_25);
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;

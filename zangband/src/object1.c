@@ -3003,7 +3003,7 @@ static bool toggle_windows(bool toggle, int command_wrk)
  * Show the prompt for items
  */
 static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
-	int command_wrk)
+                             int command_wrk)
 {
 	int i;
 
@@ -3298,13 +3298,13 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	bool allow_equip = FALSE;
 	bool allow_inven = FALSE;
 	bool allow_floor = FALSE;
-	
+
 	int command_wrk;
 
 	bool toggle = FALSE;
 
 	int floor_num;
-	
+
 	/* First Floor item */
 	object_type *fo_ptr;
 
@@ -3331,7 +3331,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 		for (i = 0; i < EQUIP_MAX; i++)
 		{
 			q_ptr = &p_ptr->equipment[i];
-	
+
 			/* Only want valid items */
 			if (q_ptr->k_idx && item_tester_okay(q_ptr))
 			{
@@ -3351,13 +3351,13 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	/* Scan inventory */
 	if (inven)
 	{
-		OBJ_ITT_START(p_ptr->inventory, q_ptr)
+		OBJ_ITT_START (p_ptr->inventory, q_ptr)
 		{
 			/* Only want valid items */
 			if (item_tester_okay(q_ptr))
 			{
 				allow_inven = TRUE;
-				
+
 				break;
 			}
 		}
@@ -3369,7 +3369,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	{
 		/* Warning if needed */
 		if (str) msg_print(str);
-		
+
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
 
@@ -3407,7 +3407,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	{
 		/* Save this object */
 		save_object_choice(o_ptr, command_wrk);
-		
+
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
 
@@ -3529,8 +3529,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				 */
 				else if (floor_num == 1)
 				{
-					if ((command_wrk == (USE_FLOOR))
-						|| (!carry_query_flag))
+					if ((command_wrk == (USE_FLOOR)) || (!carry_query_flag))
 					{
 						/* Allow player to "refuse" certain actions */
 						if (!get_item_allow(fo_ptr))

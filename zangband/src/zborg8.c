@@ -243,7 +243,7 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 	borg_keypress('\n');
 	borg_keypress('\n');
 	borg_keypress('\n');
-	
+
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
 
@@ -279,7 +279,7 @@ static void borg_think_shop_buy(int item)
 	borg_keypress('y');
 	borg_keypress('\n');
 	borg_keypress('\n');
-	
+
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
 
@@ -300,18 +300,18 @@ static void borg_think_shop_buy(int item)
 static list_item *borg_can_merge_home(list_item *l_ptr)
 {
 	int i;
-	
+
 	list_item *q_ptr;
-	
+
 	/* Scan the home for matching items */
 	for (i = 0; i < home_num; i++)
 	{
 		q_ptr = &borg_home[i];
-		
+
 		/* Can they stack? */
 		if (borg_object_similar(l_ptr, q_ptr)) return (q_ptr);
 	}
-	
+
 	/* No match */
 	return (NULL);
 }
@@ -326,20 +326,20 @@ static int borg_think_home_sell_aux2(void)
 	list_item *l_ptr;
 	list_item *q_ptr;
 	int item = -1;
-	
+
 	s32b power;
 	s32b best_power;
-	
+
 	int i;
 
 	/**** Get the starting best (current) ****/
-	
+
 	/* Examine the home  */
 	borg_notice_home();
 
 	/* Evaluate the home  */
 	best_power = borg_power_home() + borg_power();
-	
+
 	/* Try merges */
 	for (i = 0; i < inven_num; i++)
 	{
@@ -360,12 +360,12 @@ static int borg_think_home_sell_aux2(void)
 
 		/* Can we merge with other items in the home? */
 		q_ptr = borg_can_merge_home(l_ptr);
-		
+
 		/* No item to merge with? */
 		if (!q_ptr) continue;
-		
+
 		q_ptr->treat_as = TREAT_AS_MORE;
-		
+
 		if (l_ptr->number == 1)
 		{
 			l_ptr->treat_as = TREAT_AS_SWAP;
@@ -374,12 +374,12 @@ static int borg_think_home_sell_aux2(void)
 		{
 			l_ptr->treat_as = TREAT_AS_LESS;
 		}
-	
+
 		/* Test to see if this is a good move. */
-		
+
 		/* Examine the player */
 		borg_notice();
-		
+
 		/* Examine the home  */
 		borg_notice_home();
 
@@ -403,10 +403,10 @@ static int borg_think_home_sell_aux2(void)
 
 	/* We have an addition? */
 	if (item != -1) return (item);
-	
+
 	/* Do we have enough room to add items? */
 	if (home_num >= STORE_INVEN_MAX - 1) return (-1);
-	
+
 	/* Try additions. */
 	for (i = 0; i < inven_num; i++)
 	{
@@ -433,10 +433,10 @@ static int borg_think_home_sell_aux2(void)
 		{
 			l_ptr->treat_as = TREAT_AS_LESS;
 		}
-		
+
 		/* Examine the player */
 		borg_notice();
-		
+
 		/* Examine the home  */
 		borg_notice_home();
 
@@ -468,7 +468,7 @@ static int borg_think_home_sell_aux2(void)
 static bool borg_think_home_sell_aux(void)
 {
 	int index;
-	
+
 	/* Hack - we need to have visited the home before */
 	if (home_shop == -1) return (FALSE);
 
@@ -478,14 +478,14 @@ static bool borg_think_home_sell_aux(void)
 
 	/* Find best item to give to home. */
 	index = borg_think_home_sell_aux2();
-	
+
 	/* Do we have an item? */
 	if (index != -1)
 	{
 		goal_shop = home_shop;
-		
+
 		borg_think_shop_sell(index, &inventory[index]);
-		
+
 		/* We have goal */
 		return (TRUE);
 	}
@@ -585,7 +585,7 @@ static bool borg_think_shop_sell_aux(int shop)
 
 	/* Evaluate */
 	b_p = borg_power();
-	
+
 	/* Sell stuff */
 	for (i = 0; i < inven_num; i++)
 	{
@@ -662,9 +662,9 @@ static bool borg_think_shop_sell_aux(int shop)
 static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 {
 	list_item *q_ptr = &equipment[slot];
-	
+
 	s32b p;
-	
+
 	/* Paranoia */
 	if ((q_ptr->kn_flags3 & TR3_CURSED) ||
 		(q_ptr->kn_flags3 & TR3_HEAVY_CURSE) ||
@@ -672,31 +672,31 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 	{
 		/* Hack, trying to wield into cursed slot - avoid this */
 		p = borg_power();
-		
+
 		/* Return 'bad' value */
 		return (p - 1);
 	}
-	
+
 	/* Swap items */
 	q_ptr->treat_as = TREAT_AS_SWAP;
 	l_ptr->treat_as = TREAT_AS_SWAP;
 
 	/* Examine the inventory */
 	borg_notice();
-	
+
 	/* Examine the home */
 	if (home) borg_notice_home();
 
 	/* Evaluate the inventory */
 	p = borg_power();
-	
+
 	/* Examine the home */
 	if (home) p += borg_power_home();
 
 	/* Fix items */
 	equipment[slot].treat_as = TREAT_AS_NORM;
 	l_ptr->treat_as = TREAT_AS_NORM;
-	
+
 	/* Return power */
 	return (p);
 }
@@ -721,7 +721,7 @@ static bool borg_think_shop_buy_aux(int shop)
 
 	/* Extract the "power" */
 	b_p = borg_power();
-	
+
 	/* Attempt to use shop items */
 	use_shop = TRUE;
 
@@ -729,7 +729,7 @@ static bool borg_think_shop_buy_aux(int shop)
 	for (n = 0; n < cur_num; n++)
 	{
 		list_item *l_ptr = &cur_list[n];
-		
+
 		/* second check on empty */
 		if (!l_ptr->k_idx) continue;
 
@@ -763,7 +763,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		{
 			/* Hack - use 'INVEN_LESS' to say we want it in the inventory */
 			l_ptr->treat_as = TREAT_AS_LESS;
-		
+
 			/* Fix later */
 			fix = TRUE;
 
@@ -772,7 +772,7 @@ static bool borg_think_shop_buy_aux(int shop)
 
 			/* Evaluate the equipment */
 			p = borg_power();
-			
+
 			/* Fix item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 		}
@@ -794,7 +794,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		b_p = p;
 		b_c = c;
 	}
-	
+
 	/* Use normal items */
 	use_shop = FALSE;
 
@@ -857,7 +857,7 @@ static bool borg_think_home_buy_aux(void)
 			if (slot == EQUIP_LEFT)
 			{
 				/** First Check Left Hand **/
-				
+
 				/* Get power for doing swaps */
 				p_left = borg_think_buy_slot(l_ptr, EQUIP_LEFT, TRUE);
 				p_right = borg_think_buy_slot(l_ptr, EQUIP_RIGHT, TRUE);
@@ -870,7 +870,7 @@ static bool borg_think_home_buy_aux(void)
 				/* Get power for doing swap */
 				p = borg_think_buy_slot(l_ptr, slot, TRUE);
 			}
-			
+
 			/* Fix later */
 			fix = TRUE;
 		}
@@ -886,13 +886,13 @@ static bool borg_think_home_buy_aux(void)
 
 			/* Examine the inventory */
 			borg_notice();
-			
+
 			/* Examine the home */
 			borg_notice_home();
 
 			/* Evaluate the equipment */
 			p = borg_power() + borg_power_home();
-			
+
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 		}
@@ -948,7 +948,7 @@ static bool borg_think_shop_grab_aux(int shop)
 
 	/* Evaluate the home */
 	b_s = borg_power_home();
-	
+
 	/* Use shops */
 	use_shop = TRUE;
 
@@ -962,16 +962,16 @@ static bool borg_think_shop_grab_aux(int shop)
 
 		/* Get a single item */
 		l_ptr->treat_as = TREAT_AS_LESS;
-		
+
 		/* Notice home changes */
 		borg_notice_home();
-		
+
 		/* Evaluate the home */
 		s = borg_power_home();
-		
+
 		/* Restore the item */
 		l_ptr->treat_as = TREAT_AS_NORM;
-			
+
 		/* Obtain the "cost" of the item */
 		c = l_ptr->cost;
 
@@ -989,10 +989,10 @@ static bool borg_think_shop_grab_aux(int shop)
 		b_s = s;
 		b_c = c;
 	}
-	
+
 	/* Restore home */
 	borg_notice_home();
-	
+
 	/* Normal power calculation */
 	use_shop = FALSE;
 
@@ -1038,7 +1038,7 @@ static bool borg_think_home_grab_aux(void)
 
 		/* Remove the item */
 		l_ptr->treat_as = TREAT_AS_SWAP;
-		
+
 		/* Notice the player */
 		borg_notice();
 
@@ -1102,20 +1102,20 @@ static bool borg_choose_shop(void)
 		borg_note(format("# Using previous goal shop: %d", goal_shop));
 		return (TRUE);
 	}
-	
+
 	/* Find 'best' shop to go to */
 	for (i = 0; i < track_shop_num; i++)
 	{
 		/* Get distance */
 		dist = distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y);
-		
+
 		/* Get time since last been there */
 		time = borg_t - borg_shops[i].when;
-		
+
 		/* How useful is this shop? */
 		use = time / (dist + 1);
 		use *= (borg_shops[i].b_count + 1) / (borg_shops[i].u_count + 1);
-		
+
 		/* Track most-useful shop */
 		if (use > bu)
 		{
@@ -1128,15 +1128,15 @@ static bool borg_choose_shop(void)
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
 		/* We want to shop */
-		borg_note(format("# Goal shop: %d, use: %d", goal_shop, (int) bu));
-	
+		borg_note(format("# Goal shop: %d, use: %d", goal_shop, (int)bu));
+
 		/* Success */
 		return (TRUE);
 	}
-	
+
 	/* Assume no important shop */
 	goal_shop = -1;
-	
+
 	/* Let us know what the value is when we fail */
 	borg_note(format("# No more shopping - value: %d", bu));
 
@@ -1162,22 +1162,22 @@ bool borg_think_store(void)
 
 	/* Remove "useless" equipment */
 	if (borg_remove_stuff()) return (TRUE);
-	
+
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
-	
+
 	/* Select what we want to do */
 	if (shop_num == home_shop)
 	{
 		/* Step 1 -- Sell items to the home */
 		if (borg_think_home_sell_aux()) return (TRUE);
-	
+
 		/* Step 4 -- Buy items from the home (for the player) */
 		if (borg_think_home_buy_aux()) return (TRUE);
-		
+
 		/* Step 5 -- Grab items from the home (for the shops) */
 		if (borg_think_home_grab_aux()) return (TRUE);
-		
+
 		borg_note("# Nothing to do at home.");
 	}
 	else
@@ -1190,19 +1190,19 @@ bool borg_think_store(void)
 
 		/* Step 6 -- Buy items from the shops (for the home) */
 		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
-		
+
 		borg_note("# Nothing to do in the store.");
 	}
-	
+
 	/* Leave the store */
 	borg_keypress(ESCAPE);
-	
+
 	/* Assume no important shop */
 	goal_shop = -1;
 
 	/* Choose a shop to visit */
 	if (borg_choose_shop()) return (TRUE);
-	
+
 	/* Assume no important shop */
 	goal_shop = -1;
 
@@ -1778,7 +1778,7 @@ bool borg_think_dungeon(void)
 	{
 		/* Try and visit a shop, if so desired */
 		if (borg_flow_shop_entry(goal_shop)) return (TRUE);
-		
+
 		/* Let us know what the value is when we fail */
 		borg_note("# Failed to get good shop!");
 	}

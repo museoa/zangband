@@ -1213,7 +1213,7 @@ static bool borg_decurse(void)
 	{
 		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
 			!(borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-			 borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
+			  borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
 			&& !borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
 		{
 			return (FALSE);
@@ -1474,7 +1474,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 {
 	/* Message */
 	borg_note(format("# Destroying %s.", l_ptr->o_name));
-	
+
 	borg_keypress('0');
 	borg_keypresses(format("%d", number));
 
@@ -1505,7 +1505,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 			break;
 		}
 	}
-	
+
 	borg_keypress(I2A(slot));
 
 	/* Default is one item */
@@ -1527,10 +1527,10 @@ bool borg_crush_junk(void)
 	s32b p;
 	s32b value;
 	s32b my_power;
-	
+
 	/* Notice changes */
 	borg_notice();
-	
+
 	my_power = borg_power();
 
 	/* Hack -- no need */
@@ -1627,7 +1627,7 @@ bool borg_crush_junk(void)
 
 		/* Message */
 		borg_note(format("# Junking junk (valued at %d)", value));
-		
+
 		/* Destroy the item */
 		borg_destroy_item(l_ptr, i, 1);
 
@@ -1751,7 +1751,7 @@ bool borg_crush_hole(void)
 
 		/* Try to consume the junk */
 		if (borg_consume(l_ptr)) return (TRUE);
-		
+
 		/* Destroy the item */
 		borg_destroy_item(l_ptr, b_i, 1);
 
@@ -1845,10 +1845,10 @@ bool borg_crush_slow(void)
 
 		/* Attempt to consume it */
 		if (borg_consume(l_ptr)) return (TRUE);
-		
+
 		/* Destroy the item */
 		borg_destroy_item(l_ptr, b_i, 1);
-		
+
 		return (TRUE);
 	}
 
@@ -2236,7 +2236,7 @@ static bool borg_wear_rings(void)
 			/* Pretend to move item into equipment slot */
 			equipment[slot].treat_as = TREAT_AS_SWAP;
 			l_ptr->treat_as = TREAT_AS_LESS;
-			
+
 			/* Fix later */
 			fix = TRUE;
 
@@ -2421,18 +2421,18 @@ bool borg_wear_stuff(void)
 	int d;
 
 	s32b p, b_p;
-	
+
 	int i, b_i = -1;
 	int danger;
 
 	list_item *l_ptr;
 
 	bool fix = FALSE;
-	
+
 	borg_notice();
-	
+
 	b_p = borg_power();
-	
+
 	borg_note(format("# Trying to pick best, Old Power (%ld)", b_p));
 
 	/* Require an empty slot */
@@ -2482,10 +2482,10 @@ bool borg_wear_stuff(void)
 			/* Swap items */
 			equipment[slot].treat_as = TREAT_AS_SWAP;
 			l_ptr->treat_as = TREAT_AS_LESS;
-			
+
 			/* Fix later */
 			fix = TRUE;
-			
+
 			/* Examine the inventory */
 			borg_notice();
 
@@ -2521,8 +2521,7 @@ bool borg_wear_stuff(void)
 		l_ptr = &inventory[b_i];
 
 		/* Log */
-		borg_note(format("# Wearing %s. New Power (%ld)",
-						 l_ptr->o_name, b_p));
+		borg_note(format("# Wearing %s. New Power (%ld)", l_ptr->o_name, b_p));
 
 		/* Wear it */
 		borg_keypress('w');
