@@ -2275,6 +2275,23 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				name = f_name + f_info[feat].name;
 			}
 
+			/* Hack -- special handling for quest entrances */
+			if (feat == FEAT_QUEST_ENTER)
+			{
+				/* Set the quest number temporary */
+				int old_quest = p_ptr->inside_quest;
+				p_ptr->inside_quest = c_ptr->special;
+
+				/* Get the quest text */
+				init_flags = INIT_SHOW_TEXT;
+				process_dungeon_file("q_info.txt", 0, 0, 0, 0);
+
+				name = quest[c_ptr->special].name;
+
+				/* Reset the old quest number */
+				p_ptr->inside_quest = old_quest;
+			}
+
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";
 
@@ -2295,6 +2312,10 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			    ((feat >= FEAT_BLDG_HEAD) && (feat <= FEAT_BLDG_TAIL)))
 			{
 				s3 = "the entrance to the ";
+			}
+			else if (feat == FEAT_QUEST_ENTER)
+			{
+				s3 = "the quest-entrance to the ";
 			}
 			else if ((feat == FEAT_FLOOR) || (feat == FEAT_DIRT))
 			{
