@@ -1406,8 +1406,8 @@ void reduce_charges(object_type *o_ptr, int amt)
  * See "object_absorb()" for the actual "absorption" code.
  *
  * If permitted, we allow staffs (if they are known to have equal charges
- * and both are either known or confirmed empty) and wands (if both are
- * either known or confirmed empty) and rods (in all cases) to combine.
+ * and both are either known or confirmed empty) and rods (in all cases)
+ * to combine.
  * Staffs will unstack (if necessary) when they are used, but wands and
  * rods will only unstack if one is dropped. -LM-
  *
@@ -1611,8 +1611,8 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (((o_ptr->ident & IDENT_STOREB) || (j_ptr->ident & IDENT_STOREB)) &&
 	    (!((o_ptr->ident & IDENT_STOREB) && (j_ptr->ident & IDENT_STOREB))))
 	{
-		if (j_ptr->ident & IDENT_STOREB) j_ptr->ident &= 0xEF;
-		if (o_ptr->ident & IDENT_STOREB) o_ptr->ident &= 0xEF;
+		if (j_ptr->ident & IDENT_STOREB) j_ptr->ident &= ~IDENT_STOREB;
+		if (o_ptr->ident & IDENT_STOREB) o_ptr->ident &= ~IDENT_STOREB;
 	}
 
 	/* Hack -- blend "mental" status */
@@ -1643,6 +1643,9 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	{
 		o_ptr->pval += j_ptr->pval;
 		o_ptr->ac += j_ptr->ac;
+		
+		/* Hack XXX XXX - remove {empty} inscription.*/
+		if (o_ptr->pval) o_ptr->ident &= ~(IDENT_EMPTY);
 	}
 }
 
