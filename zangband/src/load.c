@@ -927,6 +927,7 @@ static void rd_lore(int r_idx)
 		rd_u32b(&r_ptr->r_flags[3]);
 		rd_u32b(&r_ptr->r_flags[4]);
 		rd_u32b(&r_ptr->r_flags[5]);
+		if (sf_version > 51) rd_u32b(&r_ptr->r_flags[6]);
 
 
 		/* Read the "Racial" monster limit per level */

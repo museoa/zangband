@@ -1426,7 +1426,8 @@ bool research_mon(void)
 	byte oldwake;
 	bool oldcheat;
 
-	bool notpicked;
+	bool picked = FALSE;
+	bool cost_gold = TRUE;
 
 	bool recall = FALSE;
 
@@ -1481,11 +1482,12 @@ bool research_mon(void)
 		if (r_ptr->d_char == sym) who[n++] = i;
 	}
 
+	/* Back to what it was */
+	cheat_know = oldcheat;
+
 	/* Nothing to recall */
 	if (!n)
 	{
-		cheat_know = oldcheat;
-
 		/* Free the "who" array */
 		KILL(who);
 
@@ -1514,10 +1516,8 @@ bool research_mon(void)
 	/* Start at the end */
 	i = n - 1;
 
-	notpicked = TRUE;
-
 	/* Scan the monster memory */
-	while (notpicked)
+	while (!picked)
 	{
 		/* Extract a race */
 		r_idx = who[i];
@@ -1543,13 +1543,32 @@ bool research_mon(void)
 				/* Recall on screen */
 				r2_ptr = &r_info[r_idx];
 
+				/* Have you researched this monster before? */
+				if (r2_ptr->r_flags[6] & RF6_LIBRARY)
+				{
+					/* Looking up a monster the second time is for free */
+					cost_gold = FALSE;
+				}
+				else
+				{
+					/* This monster has now been researched */
+					r2_ptr->r_flags[6] |= RF6_LIBRARY;
+
+					/* You've seen this monster now (in a book) */
+					if (!r2_ptr->r_sights) r2_ptr->r_sights = 1;
+				}
+
 				oldkills = r2_ptr->r_tkills;
 				oldwake = r2_ptr->r_wake;
+
+				/* Show the monster */
 				screen_roff_mon(who[i], 1);
+
 				r2_ptr->r_tkills = oldkills;
 				r2_ptr->r_wake = oldwake;
-				cheat_know = oldcheat;
-				notpicked = FALSE;
+
+				picked = TRUE;
+
 			}
 
 			/* Command */
@@ -1586,13 +1605,11 @@ bool research_mon(void)
 		}
 	}
 
-	cheat_know = oldcheat;
-
 	/* Free the "who" array */
 	KILL(who);
 
 	/* Restore */
 	screen_load();
 
-	return (!notpicked);
+	return (picked && cost_gold);
 }

@@ -139,6 +139,9 @@ static void roff_mon_aux(int r_idx, int remem)
 	bool old = FALSE;
 	bool sin = FALSE;
 
+	/* Should all knowledge be displayed? */
+	bool know_all = cheat_know || (r_ptr->r_flags[6] & RF6_LIBRARY);
+
 	int m, n, r;
 	cptr p, q;
 
@@ -160,7 +163,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	char buf[2048];
 
 	/* Cheat -- Know everything */
-	if (cheat_know)
+	if (know_all)
 	{
 		/* XXX XXX XXX */
 
@@ -249,7 +252,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	COPY_FLAG(r_ptr, mf_ptr, RF_ESCORTS);
 
 	/* Killing a monster reveals some properties */
-	if (r_ptr->r_tkills || cheat_know)
+	if (r_ptr->r_tkills || know_all)
 	{
 		/* Know "race" flags */
 		COPY_FLAG(r_ptr, mf_ptr, RF_ORC);
@@ -416,11 +419,11 @@ static void roff_mon_aux(int r_idx, int remem)
 		roff("%^s lives in the town", wd_he[msex]);
 		old = TRUE;
 	}
-	else if (r_ptr->r_tkills || cheat_know)
+	else if (r_ptr->r_tkills || know_all)
 	{
 		roff(CLR_SLATE "%^s is ", wd_he[msex]);
 
-		if (r_ptr->r_tkills * r_ptr->rarity >= 30 || cheat_know)
+		if (r_ptr->r_tkills * r_ptr->rarity >= 30 || know_all)
 		{
 			if (r_ptr->rarity < 2)
 				roff(CLR_SLATE "very common");
@@ -546,7 +549,7 @@ static void roff_mon_aux(int r_idx, int remem)
 
 
 	/* Describe experience if known */
-	if (r_ptr->r_tkills || cheat_know)
+	if (r_ptr->r_tkills || know_all)
 	{
 		/* Introduction */
 		if (FLAG(mf_ptr, RF_UNIQUE))
@@ -1090,7 +1093,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	/* Do we know how aware it is? */
 	if ((((int)r_ptr->r_wake * (int)r_ptr->r_wake) > r_ptr->sleep) ||
 		(r_ptr->r_ignore == MAX_UCHAR) ||
-		((r_ptr->sleep == 0) && ((r_ptr->r_tkills >= 10) || cheat_know)))
+		(r_ptr->sleep == 0 && (r_ptr->r_tkills >= 10 || know_all)))
 	{
 		cptr act;
 
@@ -1504,7 +1507,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	roff("\n");
 
 	/* Cheat -- know everything */
-	if ((cheat_know) && (remem == 0))
+	if (know_all && (remem == 0))
 	{
 		/* Hack -- restore memory */
 		COPY(r_ptr, &save_mem, monster_race);

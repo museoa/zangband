@@ -32,7 +32,7 @@
 #define VERSION_NAME "ZAngband"
 
 /* Savefile version */
-#define SAVEFILE_VERSION 51
+#define SAVEFILE_VERSION 52
 
 /* User-visible version */
 #define VER_MAJOR 2
@@ -3503,6 +3503,7 @@
 #define RF6_SILLY			0x00000010	/* Monster is "silly" */
 #define RF6_LITE_1			0x00000020	/* Monster carries a small lite */
 #define RF6_LITE_2			0x00000040	/* Monster carries a large lite */
+#define RF6_LIBRARY			0x00000080  /* Monster has been researched at a library */
 
 /*
  * Monster race wilderness flags
@@ -3979,6 +3980,7 @@
 #define RF_SILLY			   6,  RF6_SILLY     
 #define RF_LITE_1			   6,  RF6_LITE_1    
 #define RF_LITE_2			   6,  RF6_LITE_2    
+#define RF_LIBRARY			   6,  RF6_LIBRARY
 
 /*
  * Monster race wilderness flags
