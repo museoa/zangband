@@ -594,7 +594,7 @@ bool make_attack_normal(int m_idx)
 						/* Saving throw (unless paralyzed) based on dex and level */
 						if (!p_ptr->tim.paralyzed &&
 							(randint0(100) <
-							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+							 (adj_dex_safe[p_ptr->stat[A_DEX].ind] +
 							  p_ptr->lev)))
 						{
 							/* Saving throw message */
@@ -657,7 +657,7 @@ bool make_attack_normal(int m_idx)
 						/* Saving throw (unless paralyzed) based on dex and level */
 						if (!p_ptr->tim.paralyzed &&
 							(randint0(100) <
-							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+							 (adj_dex_safe[p_ptr->stat[A_DEX].ind] +
 							  p_ptr->lev)))
 						{
 							/* Saving throw message */
@@ -1256,10 +1256,10 @@ bool make_attack_normal(int m_idx)
 									 act);
 
                                 /* Note: this is a change from old behavior -RML */
-								p_ptr->stat_cur[stat] =
-									(p_ptr->stat_cur[stat] * 3) / 4;
-								if (p_ptr->stat_cur[stat] <
-									30) p_ptr->stat_cur[stat] = 30;
+								p_ptr->stat[stat].cur =
+									(p_ptr->stat[stat].cur * 3) / 4;
+								if (p_ptr->stat[stat].cur <
+									30) p_ptr->stat[stat].cur = 30;
 								p_ptr->update |= (PU_BONUS);
 								break;
 							}
@@ -1271,10 +1271,10 @@ bool make_attack_normal(int m_idx)
 
 								for (k = 0; k < A_MAX; k++)
 								{
-									p_ptr->stat_cur[k] =
-										(p_ptr->stat_cur[k] * 3) / 4;
-									if (p_ptr->stat_cur[k] <
-										30) p_ptr->stat_cur[k] = 30;
+									p_ptr->stat[k].cur =
+										(p_ptr->stat[k].cur * 3) / 4;
+									if (p_ptr->stat[k].cur <
+										30) p_ptr->stat[k].cur = 30;
 								}
 								p_ptr->update |= (PU_BONUS);
 								break;

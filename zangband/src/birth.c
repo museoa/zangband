@@ -621,7 +621,7 @@ static void save_prev_data(void)
 	/* Save the stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		prev.stat[i] = p_ptr->stat_max[i];
+		prev.stat[i] = p_ptr->stat[i].max;
 	}
 
 	/* Save the history */
@@ -663,7 +663,7 @@ static void load_prev_data(void)
 	/* Save the stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		temp.stat[i] = p_ptr->stat_max[i];
+		temp.stat[i] = p_ptr->stat[i].max;
 	}
 
 	/* Save the history */
@@ -694,8 +694,8 @@ static void load_prev_data(void)
 	/* Load the stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		p_ptr->stat_max[i] = prev.stat[i];
-		p_ptr->stat_cur[i] = prev.stat[i];
+		p_ptr->stat[i].max = prev.stat[i];
+		p_ptr->stat[i].cur = prev.stat[i];
 	}
 
 	/* Load the history */
@@ -791,7 +791,7 @@ static void get_stats(void)
 		stat_use[i] = adjust_stat(i, j * 10, bonus);
 
 		/* Start fully healed */
-		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
+		p_ptr->stat[i].cur = p_ptr->stat[i].max = stat_use[i];
 	}
 }
 
@@ -1995,8 +1995,8 @@ static bool player_birth_aux_2(void)
 			int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 			/* Reset stats */
-			p_ptr->stat_cur[i] = adjust_stat(i, stats[i] * 10, bonus);
-			p_ptr->stat_max[i] = p_ptr->stat_cur[i];
+			p_ptr->stat[i].cur = adjust_stat(i, stats[i] * 10, bonus);
+			p_ptr->stat[i].max = p_ptr->stat[i].cur;
 
 			/* Total cost */
 			cost += birth_stat_costs[stats[i] - 10];
@@ -2097,8 +2097,8 @@ static bool player_birth_aux_2(void)
 		int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 		/* Apply some randomness */
-        p_ptr->stat_cur[i] = adjust_stat(i, stats[i] * 10, bonus);
-		p_ptr->stat_max[i] = p_ptr->stat_cur[i];
+        p_ptr->stat[i].cur = adjust_stat(i, stats[i] * 10, bonus);
+		p_ptr->stat[i].max = p_ptr->stat[i].cur;
 	}
 
 	/* Calculate the bonuses and hitpoints */
@@ -2274,7 +2274,7 @@ static bool player_birth_aux_3(void)
 				cur_score = 0;
 				for (i = 0; i < A_MAX; i++)
 				{
-		   			cur_score += (p_ptr->stat_cur[i]) * stat_weight[i];
+		   			cur_score += (p_ptr->stat[i].cur) * stat_weight[i];
 				}
 
 				/* Compare current score against saved stats */
@@ -2283,7 +2283,7 @@ static bool player_birth_aux_3(void)
 					best_score = cur_score;
 					for (i = 0; i < A_MAX; i++)
 					{
-						stat_save[i] = p_ptr->stat_cur[i];
+						stat_save[i] = p_ptr->stat[i].cur;
 					}
 				}
 
@@ -2324,7 +2324,7 @@ static bool player_birth_aux_3(void)
 			/* Load best stat set rolled */
 			for (i = 0; i < A_MAX; i++)
 			{
-				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_save[i];
+				p_ptr->stat[i].cur = p_ptr->stat[i].max = stat_save[i];
 			}
 		}
 
@@ -2468,8 +2468,8 @@ static bool player_birth_aux(void)
     /* Apply some randomness */
     for (i = 0; i < A_MAX; i++)
     {
-        p_ptr->stat_cur[i] += randint0(10);
-        p_ptr->stat_max[i] = p_ptr->stat_cur[i];
+        p_ptr->stat[i].cur += randint0(10);
+        p_ptr->stat[i].max = p_ptr->stat[i].cur;
     }
 
     /* Calculate the bonuses and hitpoints */

@@ -1399,6 +1399,24 @@ struct player_skill
 };
 
 /*
+ * The player stats
+ */
+typedef struct player_stat player_stat;
+
+struct player_stat
+{
+	s16b max;	/* Current "maximal" stat values */
+	s16b cur;	/* Current "natural" stat values */
+
+	s16b use;	/* Current modified stats */
+	s16b top;	/* Maximal modified stats */
+
+	s16b add;	/* Equipment stat bonuses */
+	s16b ind;	/* Indexes into stat tables */
+};
+
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.
@@ -1449,9 +1467,6 @@ struct player_type
 	s16b csp;	/* Cur mana pts */
 	u16b csp_frac;	/* Cur mana frac (times 2^16) */
 
-	s16b stat_max[A_MAX];	/* Current "maximal" stat values */
-	s16b stat_cur[A_MAX];	/* Current "natural" stat values */
-
 	player_spell spell;	/* Spell information */
 
 	u32b muta1;	/* Mutations */
@@ -1480,7 +1495,9 @@ struct player_type
 	
 	player_skill skill;	/* Player skills */
 	
-	player_command cmd;
+	player_command cmd;	/* The current command status */
+	
+	player_stat stat[A_MAX];	/* The player's stats */
 
 	/*** Pointers to player grid information ***/
 
@@ -1533,13 +1550,7 @@ struct player_type
 	u32b redraw;	/* Normal Redraws (bit flags) */
 	u32b window;	/* Window Redraws (bit flags) */
 
-	s16b stat_use[A_MAX];	/* Current modified stats */
-	s16b stat_top[A_MAX];	/* Maximal modified stats */
-
 	/*** Extracted fields ***/
-
-	s16b stat_add[A_MAX];	/* Equipment stat bonuses */
-	s16b stat_ind[A_MAX];	/* Indexes into stat tables */
 
 	bool immune_acid;	/* Immunity to acid */
 	bool immune_elec;	/* Immunity to lightning */

@@ -35,7 +35,7 @@ void do_cmd_inven(void)
 	prtf(0, 0, "Inventory: carrying %d.%d pounds (%d%% of capacity). Command: ",
 			p_ptr->total_weight / 10, p_ptr->total_weight % 10,
 			(p_ptr->total_weight * 100) /
-			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
+			((adj_str_wgt[p_ptr->stat[A_STR].ind] * 100) / 2));
 
 	/* Get a new command */
 	p_ptr->cmd.new = inkey();
@@ -73,7 +73,7 @@ void do_cmd_equip(void)
 	prtf(0, 0, "Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",
 			p_ptr->total_weight / 10, p_ptr->total_weight % 10,
 			(p_ptr->total_weight * 100) /
-			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
+			((adj_str_wgt[p_ptr->stat[A_STR].ind] * 100) / 2));
 
 	/* Get a new command */
 	p_ptr->cmd.new = inkey();

@@ -3331,7 +3331,7 @@ bool field_action_door_bash(field_type *f_ptr, va_list vp)
 	int jam = va_arg(vp, int);
 
 	/* Extract unjamming "power" */
-	int power = jam / 10 + adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2;
+	int power = jam / 10 + adj_str_wgt[p_ptr->stat[A_STR].ind] / 2;
 
 	if (randint0(power) > f_ptr->counter)
 	{

@@ -377,7 +377,7 @@ static void do_cmd_wiz_change_aux(void)
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Default */
-		strnfmt(tmp_val, 160, "%d", p_ptr->stat_max[i]);
+		strnfmt(tmp_val, 160, "%d", p_ptr->stat[i].max);
 
 		/* Query */
 		if (!get_string(tmp_val, 4, "%s (3-118): ", stat_names[i])) return;
@@ -390,7 +390,7 @@ static void do_cmd_wiz_change_aux(void)
 		else if (tmp_int < 3) tmp_int = 3;
 
 		/* Save it */
-		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = tmp_int;
+		p_ptr->stat[i].cur = p_ptr->stat[i].max = tmp_int;
 	}
 
 

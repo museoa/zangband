@@ -1948,7 +1948,7 @@ bool inc_stat(int stat)
 	int cap = stat_cap(stat);
 
 	/* Then augment the current/max stat */
-	value = p_ptr->stat_cur[stat];
+	value = p_ptr->stat[stat].cur;
 
 	/* Cannot go above limit */
 	if (value < cap)
@@ -1965,12 +1965,12 @@ bool inc_stat(int stat)
         value += gain;
 
         /* Save the new value */
-		p_ptr->stat_cur[stat] = value;
+		p_ptr->stat[stat].cur = value;
 
 		/* Bring up the maximum too */
-		if (value > p_ptr->stat_max[stat])
+		if (value > p_ptr->stat[stat].max)
 		{
-			p_ptr->stat_max[stat] = value;
+			p_ptr->stat[stat].max = value;
 		}
 
 		/* Recalculate bonuses */
@@ -2004,8 +2004,8 @@ bool dec_stat(int stat, int amount, int permanent)
 
 
 	/* Acquire current value */
-	cur = p_ptr->stat_cur[stat];
-	max = p_ptr->stat_max[stat];
+	cur = p_ptr->stat[stat].cur;
+	max = p_ptr->stat[stat].max;
 
 	/* Note when the values are identical */
 	same = (cur == max);
@@ -2050,7 +2050,7 @@ bool dec_stat(int stat, int amount, int permanent)
 		if (cur < 30) cur = 30;
 
 		/* Something happened */
-		if (cur != p_ptr->stat_cur[stat]) res = TRUE;
+		if (cur != p_ptr->stat[stat].cur) res = TRUE;
 	}
 
 	/* Damage "max" value */
@@ -2090,15 +2090,15 @@ bool dec_stat(int stat, int amount, int permanent)
 		if (same || (max < cur)) max = cur;
 
 		/* Something happened */
-		if (max != p_ptr->stat_max[stat]) res = TRUE;
+		if (max != p_ptr->stat[stat].max) res = TRUE;
 	}
 
 	/* Apply changes */
 	if (res)
 	{
 		/* Actually set the stat to its new value. */
-		p_ptr->stat_cur[stat] = cur;
-		p_ptr->stat_max[stat] = max;
+		p_ptr->stat[stat].cur = cur;
+		p_ptr->stat[stat].max = max;
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -2115,10 +2115,10 @@ bool dec_stat(int stat, int amount, int permanent)
 bool res_stat(int stat)
 {
 	/* Restore if needed */
-	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat])
+	if (p_ptr->stat[stat].cur != p_ptr->stat[stat].max)
 	{
 		/* Restore */
-		p_ptr->stat_cur[stat] = p_ptr->stat_max[stat];
+		p_ptr->stat[stat].cur = p_ptr->stat[stat].max;
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -2617,10 +2617,10 @@ void do_poly_self(void)
 			change = rp_ptr->r_adj[i] - race_info[old_race].r_adj[i];
 
 			/* Adjust current stat */
-			p_ptr->stat_cur[i] = adjust_stat(i, p_ptr->stat_cur[i], change);
+			p_ptr->stat[i].cur = adjust_stat(i, p_ptr->stat[i].cur, change);
 
 			/* Adjust maximum stat */
-			p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], change);
+			p_ptr->stat[i].max = adjust_stat(i, p_ptr->stat[i].max, change);
 		}
 
 		/* Experience factor */

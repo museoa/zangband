@@ -1161,7 +1161,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
 	else
 		bash_chance = p_ptr->skill.thn +
-			(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
+			(adj_dex_th[p_ptr->stat[A_DEX].ind]) - 128 +
 			(((p_ptr->rp.pclass == CLASS_WARRIOR) ||
 			  (p_ptr->rp.pclass == CLASS_PALADIN) ||
 			  (p_ptr->rp.pclass == CLASS_WARRIOR_MAGE) ||
@@ -1198,7 +1198,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 		bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
 
 		/* Strength bonus. */
-		bash_dam += (adj_str_td[p_ptr->stat_ind[A_STR]] - 128);
+		bash_dam += (adj_str_td[p_ptr->stat[A_STR].ind] - 128);
 
 		/* Paranoia. */
 		if (bash_dam > 125) bash_dam = 125;
@@ -1239,7 +1239,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 		}
 
 		/* The player will sometimes stumble. */
-		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint1(60))
+		if ((30 + adj_dex_th[p_ptr->stat[A_DEX].ind] - 128) < randint1(60))
 			*blows -= randint1(*blows);
 	}
 

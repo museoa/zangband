@@ -2852,7 +2852,7 @@ void do_cmd_throw_aux(int mult)
 	div = ((q_ptr->weight > 10) ? q_ptr->weight : 10);
 
 	/* Hack -- Distance -- Reward strength, penalize weight */
-	tdis = (adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * mul / div;
+	tdis = (adj_str_blow[p_ptr->stat[A_STR].ind] + 20) * mul / div;
 
 	/* Max distance of 10-18 */
 	if (tdis > mul) tdis = mul;

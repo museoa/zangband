@@ -74,11 +74,11 @@ void stat_format(char *buf, uint max, cptr fmt, va_list *vp)
 static void prt_stat(int stat)
 {
 	/* Display "injured" stat */
-	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
+	if (p_ptr->stat[stat].cur < p_ptr->stat[stat].max)
 	{
 		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_YELLOW " %v",
 				 stat_names_reduced[stat],
-				 stat_format, p_ptr->stat_use[stat]);
+				 stat_format, p_ptr->stat[stat].use);
 	}
 
 	/* Display "healthy" stat */
@@ -86,11 +86,11 @@ static void prt_stat(int stat)
 	{
 		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_L_GREEN " %v",
 				 stat_names[stat],
-				 stat_format, p_ptr->stat_use[stat]);
+				 stat_format, p_ptr->stat[stat].use);
 	}
 
 	/* Indicate natural maximum */
-	if (p_ptr->stat_max[stat] == stat_cap(stat))
+	if (p_ptr->stat[stat].max == stat_cap(stat))
 	{
 		put_fstr(COL_STAT + 3, ROW_STAT + stat, "!");
 	}
@@ -1490,7 +1490,7 @@ static void calc_spells(void)
 
 	/* Extract total allowed spells */
 	num_allowed =
-		(adj_mag_study[p_ptr->stat_ind[mp_ptr->spell_stat]] * levels / 50);
+		(adj_mag_study[p_ptr->stat[mp_ptr->spell_stat].ind] * levels / 50);
 
 
 	/* Assume none known */
@@ -1742,7 +1742,7 @@ static void calc_mana(void)
 	if (levels < 0) levels = 0;
 
 	/* Extract total mana */
-	msp = adj_mag_mana[p_ptr->stat_ind[mp_ptr->spell_stat]] * levels / 25;
+	msp = adj_mag_mana[p_ptr->stat[mp_ptr->spell_stat].ind] * levels / 25;
 
 	/* Hack -- usually add one mana */
 	if (msp) msp++;
@@ -1918,7 +1918,7 @@ static void calc_hitpoints(void)
 	int bonus, mhp;
 
 	/* Un-inflate "half-hitpoint bonus per level" value */
-	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
+	bonus = ((int)(adj_con_mhp[p_ptr->stat[A_CON].ind]) - 128);
 
 	/* Calculate hitpoints */
 	mhp = p_ptr->player_hp[p_ptr->lev - 1] + (bonus * p_ptr->lev / 2);
@@ -2077,7 +2077,7 @@ static int weight_limit(void)
 	int i;
 
 	/* Weight limit based only on strength */
-	i = adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100;
+	i = adj_str_wgt[p_ptr->stat[A_STR].ind] * 100;
 
 	/* Return the result */
 	return (i);
@@ -2353,7 +2353,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Clear the stat modifiers */
-	for (i = 0; i < A_MAX; i++) p_ptr->stat_add[i] = 0;
+	for (i = 0; i < A_MAX; i++) p_ptr->stat[i].add = 0;
 
 
 	/* Clear the Displayed/Real armor class */
@@ -2783,12 +2783,12 @@ static void calc_bonuses(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Affect stats */
-		if (o_ptr->flags1 & (TR1_STR)) p_ptr->stat_add[A_STR] += o_ptr->pval;
-		if (o_ptr->flags1 & (TR1_INT)) p_ptr->stat_add[A_INT] += o_ptr->pval;
-		if (o_ptr->flags1 & (TR1_WIS)) p_ptr->stat_add[A_WIS] += o_ptr->pval;
-		if (o_ptr->flags1 & (TR1_DEX)) p_ptr->stat_add[A_DEX] += o_ptr->pval;
-		if (o_ptr->flags1 & (TR1_CON)) p_ptr->stat_add[A_CON] += o_ptr->pval;
-		if (o_ptr->flags1 & (TR1_CHR)) p_ptr->stat_add[A_CHR] += o_ptr->pval;
+		if (o_ptr->flags1 & (TR1_STR)) p_ptr->stat[A_STR].add += o_ptr->pval;
+		if (o_ptr->flags1 & (TR1_INT)) p_ptr->stat[A_INT].add += o_ptr->pval;
+		if (o_ptr->flags1 & (TR1_WIS)) p_ptr->stat[A_WIS].add += o_ptr->pval;
+		if (o_ptr->flags1 & (TR1_DEX)) p_ptr->stat[A_DEX].add += o_ptr->pval;
+		if (o_ptr->flags1 & (TR1_CON)) p_ptr->stat[A_CON].add += o_ptr->pval;
+		if (o_ptr->flags1 & (TR1_CHR)) p_ptr->stat[A_CHR].add += o_ptr->pval;
 
 		/* Affect stealth */
 		if (o_ptr->flags1 & (TR1_STEALTH)) p_ptr->skill.stl += o_ptr->pval;
@@ -2976,13 +2976,13 @@ static void calc_bonuses(void)
 		int top, use, ind;
 
 		/* Extract the new "stat_use" value for the stat */
-		top = modify_stat_value(p_ptr->stat_max[i], p_ptr->stat_add[i]);
+		top = modify_stat_value(p_ptr->stat[i].max, p_ptr->stat[i].add);
 
 		/* Notice changes */
-		if (p_ptr->stat_top[i] != top)
+		if (p_ptr->stat[i].top != top)
 		{
 			/* Save the new value */
-			p_ptr->stat_top[i] = top;
+			p_ptr->stat[i].top = top;
 
 			/* Redisplay the stats later */
 			p_ptr->redraw |= (PR_STATS);
@@ -2993,7 +2993,7 @@ static void calc_bonuses(void)
 
 
 		/* Extract the new "stat_use" value for the stat */
-		use = modify_stat_value(p_ptr->stat_cur[i], p_ptr->stat_add[i]);
+		use = modify_stat_value(p_ptr->stat[i].cur, p_ptr->stat[i].add);
 
 		if ((i == A_CHR) && (p_ptr->muta3 & MUT3_ILL_NORM))
         {
@@ -3011,10 +3011,10 @@ static void calc_bonuses(void)
 		}
 
 		/* Notice changes */
-		if (p_ptr->stat_use[i] != use)
+		if (p_ptr->stat[i].use != use)
 		{
 			/* Save the new value */
-			p_ptr->stat_use[i] = use;
+			p_ptr->stat[i].use = use;
 
 			/* Redisplay the stats later */
 			p_ptr->redraw |= (PR_STATS);
@@ -3030,10 +3030,10 @@ static void calc_bonuses(void)
             ind = 37;
 
 		/* Notice changes */
-		if (p_ptr->stat_ind[i] != ind)
+		if (p_ptr->stat[i].ind != ind)
 		{
 			/* Save the new index */
-			p_ptr->stat_ind[i] = ind;
+			p_ptr->stat[i].ind = ind;
 
 			/* Change in CON affects Hitpoints */
 			if (i == A_CON)
@@ -3199,14 +3199,14 @@ static void calc_bonuses(void)
 
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat[A_DEX].ind]) - 128);
+	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat[A_STR].ind]) - 128);
+	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat[A_DEX].ind]) - 128);
 
 	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat[A_DEX].ind]) - 128);
+	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat[A_STR].ind]) - 128);
+	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat[A_DEX].ind]) - 128);
 
 
 	/* Redraw armor (if needed) */
@@ -3221,7 +3221,7 @@ static void calc_bonuses(void)
 
 
 	/* Obtain the "hold" value */
-	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
+	hold = adj_str_hold[p_ptr->stat[A_STR].ind];
 
 
 	/* Examine the "current bow" */
@@ -3268,7 +3268,7 @@ static void calc_bonuses(void)
 			{
 				p_ptr->ammo_tval = TV_ARROW;
 
-				if (p_ptr->stat_use[A_STR] >= 16)
+				if (p_ptr->stat[A_STR].use >= 16)
 				{
 					p_ptr->ammo_mult = 3;
 				}
@@ -3295,7 +3295,7 @@ static void calc_bonuses(void)
 				p_ptr->ammo_tval = TV_BOLT;
 
 				p_ptr->ammo_mult = 5;
-				if (p_ptr->stat_use[A_DEX] >= 16)
+				if (p_ptr->stat[A_DEX].use >= 16)
 				{
 					p_ptr->bow_energy = 150;
 				}
@@ -3401,17 +3401,17 @@ static void calc_bonuses(void)
 	p_ptr->skill.stl += 1;
 
 	/* Affect Skill -- disarming (DEX and INT) */
-	p_ptr->skill.dis += adj_dex_dis[p_ptr->stat_ind[A_DEX]];
-	p_ptr->skill.dis += adj_int_dis[p_ptr->stat_ind[A_INT]];
+	p_ptr->skill.dis += adj_dex_dis[p_ptr->stat[A_DEX].ind];
+	p_ptr->skill.dis += adj_int_dis[p_ptr->stat[A_INT].ind];
 
 	/* Affect Skill -- magic devices (INT) */
-	p_ptr->skill.dev += adj_int_dev[p_ptr->stat_ind[A_INT]];
+	p_ptr->skill.dev += adj_int_dev[p_ptr->stat[A_INT].ind];
 
 	/* Affect Skill -- saving throw (WIS) */
-	p_ptr->skill.sav += adj_wis_sav[p_ptr->stat_ind[A_WIS]];
+	p_ptr->skill.sav += adj_wis_sav[p_ptr->stat[A_WIS].ind];
 
 	/* Affect Skill -- digging (STR) */
-	p_ptr->skill.dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
+	p_ptr->skill.dig += adj_str_dig[p_ptr->stat[A_STR].ind];
 
 	/* Affect Skill -- disarming (Level, by Class) */
 	p_ptr->skill.dis += (cp_ptr->x_dis * p_ptr->lev / 10);
@@ -3485,14 +3485,14 @@ static void calc_bonuses(void)
 			effective_weight = (o_ptr->weight < 30 ? 30 : o_ptr->weight);
 
 			/* Compare strength and weapon weight. */
-			str_index = mul * adj_str_blow[p_ptr->stat_ind[A_STR]] /
+			str_index = mul * adj_str_blow[p_ptr->stat[A_STR].ind] /
 				effective_weight;
 
 			/* Maximal value */
 			if (str_index > 11) str_index = 11;
 
 			/* Index by dexterity */
-			dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
+			dex_index = (adj_dex_blow[p_ptr->stat[A_DEX].ind]);
 
 			/* Maximal value */
 			if (dex_index > 11) dex_index = 11;

@@ -1188,8 +1188,8 @@ static void rd_extra(void)
 	rd_s16b(&p_ptr->rp.wt);
 
 	/* Read the stat info */
-	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
-	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_cur[i]);
+	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat[i].max);
+	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat[i].cur);
 
 	/* Fix up stats for old savefiles */
 	if (sf_version < 39)
@@ -1203,25 +1203,25 @@ static void rd_extra(void)
 			int bonus = race_info[p_ptr->rp.prace].r_adj[i] +
 				class_info[p_ptr->rp.pclass].c_adj[i];
 
-			p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], bonus);
+			p_ptr->stat[i].max = adjust_stat(i, p_ptr->stat[i].max, bonus);
 			/* Hack - Restore all stats... */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
+			p_ptr->stat[i].cur = p_ptr->stat[i].max;
 		}
-        }
-        if (sf_version < 40)
-        {
-            for (i = 0; i < 6; i++)
-            {
-                if (p_ptr->stat_max[i] < 18)
-                    p_ptr->stat_max[i] *= 10;
-                else
-                    p_ptr->stat_max[i] += 180-18;
-                if (p_ptr->stat_cur[i] < 18)
-                    p_ptr->stat_cur[i] *= 10;
-                else
-                    p_ptr->stat_cur[i] += 180-18;
-            }
-        }
+    }
+    if (sf_version < 40)
+    {
+    	for (i = 0; i < 6; i++)
+    	{
+    		if (p_ptr->stat[i].max < 18)
+    			p_ptr->stat[i].max *= 10;
+    		else
+    			p_ptr->stat[i].max += 180-18;
+    		if (p_ptr->stat[i].cur < 18)
+    			p_ptr->stat[i].cur *= 10;
+    		else
+    			p_ptr->stat[i].cur += 180-18;
+    	}
+    }
 
 	strip_bytes(24);			/* oops */
 

@@ -301,7 +301,7 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 	factor = rgold_adj[bo_ptr->owner_race][p_ptr->rp.prace];
 
 	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+	factor += adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
 	factor = ((factor + 100) * bo_ptr->inflate) / 400;
 
@@ -1789,7 +1789,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	factor = rgold_adj[bo_ptr->owner_race][p_ptr->rp.prace];
 
 	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+	factor += adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
 	factor = ((factor + 100) * bo_ptr->inflate) / 400;
 

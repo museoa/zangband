@@ -896,10 +896,10 @@ void mutate_player(void)
 	ii = randint0(A_MAX);
 	for (jj = ii; jj == ii; jj = randint0(A_MAX)) /* loop */ ;
 
-	max1 = p_ptr->stat_max[ii];
-	cur1 = p_ptr->stat_cur[ii];
-	max2 = p_ptr->stat_max[jj];
-	cur2 = p_ptr->stat_cur[jj];
+	max1 = p_ptr->stat[ii].max;
+	cur1 = p_ptr->stat[ii].cur;
+	max2 = p_ptr->stat[jj].max;
+	cur2 = p_ptr->stat[jj].cur;
 
 	/* Adjust the swapped stats... */
 	bonus1 = rp_ptr->r_adj[ii] + cp_ptr->c_adj[ii];
@@ -912,10 +912,10 @@ void mutate_player(void)
 	cur1 = max1;
 	cur2 = max2;
 
-	p_ptr->stat_max[ii] = max2;
-	p_ptr->stat_cur[ii] = cur2;
-	p_ptr->stat_max[jj] = max1;
-	p_ptr->stat_cur[jj] = cur1;
+	p_ptr->stat[ii].max = max2;
+	p_ptr->stat[ii].cur = cur2;
+	p_ptr->stat[jj].max = max1;
+	p_ptr->stat[jj].cur = cur1;
 
 	p_ptr->update |= (PU_BONUS);
 }
@@ -2964,7 +2964,7 @@ void display_spell_list(void)
 
 			/* Reduce failure rate by INT/WIS adjustment */
 			chance -=
-				3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
+				3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
 
 			/* Not enough mana to cast */
 			if (spell.mana_cost > p_ptr->csp)
@@ -2974,7 +2974,7 @@ void display_spell_list(void)
 			}
 
 			/* Extract the minimum failure rate */
-			minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
+			minfail = adj_mag_fail[p_ptr->stat[mp_ptr->spell_stat].ind];
 
 			/* Minimum failure rate */
 			if (chance < minfail) chance = minfail;
@@ -3095,7 +3095,7 @@ s16b spell_chance(int spell, int realm)
 	chance -= 3 * (p_ptr->lev - s_ptr->slevel);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
+	chance -= 3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
 
 	/* Not enough mana to cast */
 	if (s_ptr->smana > p_ptr->csp)
@@ -3104,7 +3104,7 @@ s16b spell_chance(int spell, int realm)
 	}
 
 	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
+	minfail = adj_mag_fail[p_ptr->stat[mp_ptr->spell_stat].ind];
 
 	/*
 	 * Non mage/priest characters never get too good

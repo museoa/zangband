@@ -224,6 +224,18 @@ struct player_skill
 	s16b dig; /* Skill: Digging */
 };
 
+struct player_stat
+{
+	s16b max;	/* Current "maximal" stat values */
+	s16b cur;	/* Current "natural" stat values */
+
+	s16b use;	/* Current modified stats */
+	s16b top;	/* Maximal modified stats */
+
+	s16b add;	/* Equipment stat bonuses */
+	s16b ind;	/* Indexes into stat tables */
+};
+
 struct player_type
 {
 	s16b px;			/* Player location */
@@ -254,9 +266,6 @@ struct player_type
 	s16b msp;			/* Max mana pts */
 	s16b csp;			/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
-
-	s16b stat_max[A_MAX];	/* Current "maximal" stat values */
-	s16b stat_cur[A_MAX];	/* Current "natural" stat values */
 	
 	player_spell spell;	/* Spell information */
 	
@@ -284,6 +293,8 @@ struct player_type
 	player_state state;	/* Internal state of the player */
 	
 	player_skill skill;	/* Player skills */
+	
+	player_stat stat[A_MAX];	/* The player's stats */
 
 	/*** Temporary fields ***/
 
@@ -320,13 +331,7 @@ struct player_type
 	u32b redraw;		/* Normal Redraws (bit flags) */
 	u32b window;		/* Window Redraws (bit flags) */
 
-	s16b stat_use[A_MAX];	/* Current modified stats */
-	s16b stat_top[A_MAX];	/* Maximal modified stats */
-
 	/*** Extracted fields ***/
-
-	s16b stat_add[A_MAX];	/* Equipment stat bonuses */
-	s16b stat_ind[A_MAX];	/* Indexes into stat tables */
 
 	bool immune_acid;		/* Immunity to acid */
 	bool immune_elec;		/* Immunity to lightning */

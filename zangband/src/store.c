@@ -202,7 +202,7 @@ static s32b price_item(object_type *o_ptr, bool flip)
 	factor = rgold_adj[ot_ptr->owner_race][p_ptr->rp.prace];
 
 	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+	factor += adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
 
 	/* Shop is buying */
@@ -2480,7 +2480,7 @@ void do_cmd_store(const field_type *f1_ptr)
 		clear_region(0, 1, 2);
 
 		/* Hack -- Check the charisma */
-		tmp_chr = p_ptr->stat_use[A_CHR];
+		tmp_chr = p_ptr->stat[A_CHR].use;
 
 		/* Clear */
 		clear_from(21);
@@ -2611,7 +2611,7 @@ void do_cmd_store(const field_type *f1_ptr)
 		}
 
 		/* Hack -- Redisplay store prices if charisma changes */
-		if (tmp_chr != p_ptr->stat_use[A_CHR])
+		if (tmp_chr != p_ptr->stat[A_CHR].use)
 		{
 			display_inventory(store_top);
 		}

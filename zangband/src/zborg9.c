@@ -327,7 +327,7 @@ static void borg_hidden(void)
 		if (!my_need_stat_check[i]) continue;
 
 		/* Hack - get current internal stat value */
-		my_stat_cur[i] = p_ptr->stat_cur[i];
+		my_stat_cur[i] = p_ptr->stat[i].cur;
 
 		/* Max stat is the max that the cur stat ever is. */
 		if (my_stat_cur[i] > my_stat_max[i])

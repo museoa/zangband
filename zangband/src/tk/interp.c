@@ -450,7 +450,7 @@ static void shots_per_round(int *_shots, int *_shots_frac)
 			}
 			case SV_HEAVY_XBOW:
 			{
-				if (p_ptr->stat_use[A_DEX] >= 16)
+				if (p_ptr->stat[A_DEX].use >= 16)
 				{
 					energy_fire = 150;
 				}
@@ -1507,7 +1507,7 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		case IDX_WEIGHT_LIMIT: /* weight_limit */
 
 			/* Max carrying capacity in 10ths of pounds */
-			i = adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100;
+			i = adj_str_wgt[p_ptr->stat[A_STR].ind] * 100;
 			Tcl_SetIntObj(resultPtr, i);
 			break;
 	}

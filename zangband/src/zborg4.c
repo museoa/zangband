@@ -557,7 +557,7 @@ static void borg_notice_stats(void)
 		if (ind > 37)
 			my_stat_ind[i] = 37;
 		else
-			my_stat_ind[i] = p_ptr->stat_ind[i];
+			my_stat_ind[i] = p_ptr->stat[i].ind;
 	}
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
@@ -2522,9 +2522,9 @@ void borg_update_frame(void)
 	/* Parse stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		bp_ptr->status.fixstat[i] = (p_ptr->stat_cur[i] < p_ptr->stat_max[i]);
+		bp_ptr->status.fixstat[i] = (p_ptr->stat[i].cur < p_ptr->stat[i].max);
 
-		borg_stat[i] = p_ptr->stat_cur[i];
+		borg_stat[i] = p_ptr->stat[i].cur;
 	}
 
 	/* Hack -- Access depth */

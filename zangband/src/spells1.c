@@ -2058,7 +2058,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 		case GF_CHARM:
 		{
 			/* Charm monster */
-			dam += (adj_con_fix[p_ptr->stat_ind[A_CHR]] - 1);
+			dam += (adj_con_fix[p_ptr->stat[A_CHR].ind] - 1);
 
 			if (seen) obvious = TRUE;
 
@@ -3693,9 +3693,9 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 					msgf("You're not as %s as you used to be...", act);
 
-                                        /* Note: this is a change from old behavior -RML */
-					p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
-					if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
+                    /* Note: this is a change from old behavior -RML */
+					p_ptr->stat[k].cur = (p_ptr->stat[k].cur * 3) / 4;
+					if (p_ptr->stat[k].cur < 3) p_ptr->stat[k].cur = 3;
 					p_ptr->update |= (PU_BONUS);
 					break;
 				}
@@ -3706,8 +3706,8 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 					for (k = 0; k < A_MAX; k++)
 					{
-						p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
-						if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
+						p_ptr->stat[k].cur = (p_ptr->stat[k].cur * 3) / 4;
+						if (p_ptr->stat[k].cur < 3) p_ptr->stat[k].cur = 3;
 					}
 					p_ptr->update |= (PU_BONUS);
 					break;

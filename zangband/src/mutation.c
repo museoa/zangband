@@ -1791,61 +1791,61 @@ void mutation_effect(void)
 	/* Hyper Strength */
 	if (p_ptr->muta3 & MUT3_HYPER_STR)
 	{
-		p_ptr->stat_add[A_STR] += 4;
+		p_ptr->stat[A_STR].add += 4;
 	}
 
 	/* Puny */
 	if (p_ptr->muta3 & MUT3_PUNY)
 	{
-		p_ptr->stat_add[A_STR] -= 4;
+		p_ptr->stat[A_STR].add -= 4;
 	}
 
 	/* Living computer */
 	if (p_ptr->muta3 & MUT3_HYPER_INT)
 	{
-		p_ptr->stat_add[A_INT] += 4;
-		p_ptr->stat_add[A_WIS] += 4;
+		p_ptr->stat[A_INT].add += 4;
+		p_ptr->stat[A_WIS].add += 4;
 	}
 
 	/* Moronic */
 	if (p_ptr->muta3 & MUT3_MORONIC)
 	{
-		p_ptr->stat_add[A_INT] -= 4;
-		p_ptr->stat_add[A_WIS] -= 4;
+		p_ptr->stat[A_INT].add -= 4;
+		p_ptr->stat[A_WIS].add -= 4;
 	}
 
 	if (p_ptr->muta3 & MUT3_RESILIENT)
 	{
-		p_ptr->stat_add[A_CON] += 4;
+		p_ptr->stat[A_CON].add += 4;
 	}
 
 	if (p_ptr->muta3 & MUT3_XTRA_FAT)
 	{
-		p_ptr->stat_add[A_CON] += 2;
+		p_ptr->stat[A_CON].add += 2;
 		p_ptr->pspeed -= 2;
 	}
 
 	if (p_ptr->muta3 & MUT3_ALBINO)
 	{
-		p_ptr->stat_add[A_CON] -= 4;
+		p_ptr->stat[A_CON].add -= 4;
 	}
 
 	if (p_ptr->muta3 & MUT3_FLESH_ROT)
 	{
-		p_ptr->stat_add[A_CON] -= 2;
-		p_ptr->stat_add[A_CHR] -= 1;
+		p_ptr->stat[A_CON].add -= 2;
+		p_ptr->stat[A_CHR].add -= 1;
 		p_ptr->regenerate = FALSE;
 		/* Cancel innate regeneration */
 	}
 
 	if (p_ptr->muta3 & MUT3_SILLY_VOI)
 	{
-		p_ptr->stat_add[A_CHR] -= 4;
+		p_ptr->stat[A_CHR].add -= 4;
 	}
 
 	if (p_ptr->muta3 & MUT3_BLANK_FAC)
 	{
-		p_ptr->stat_add[A_CHR] -= 1;
+		p_ptr->stat[A_CHR].add -= 1;
 	}
 
 	if (p_ptr->muta3 & MUT3_XTRA_EYES)
@@ -1892,21 +1892,21 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_WART_SKIN)
 	{
-		p_ptr->stat_add[A_CHR] -= 2;
+		p_ptr->stat[A_CHR].add -= 2;
 		p_ptr->to_a += 5;
 		p_ptr->dis_to_a += 5;
 	}
 
 	if (p_ptr->muta3 & MUT3_SCALES)
 	{
-		p_ptr->stat_add[A_CHR] -= 1;
+		p_ptr->stat[A_CHR].add -= 1;
 		p_ptr->to_a += 10;
 		p_ptr->dis_to_a += 10;
 	}
 
 	if (p_ptr->muta3 & MUT3_IRON_SKIN)
 	{
-		p_ptr->stat_add[A_DEX] -= 1;
+		p_ptr->stat[A_DEX].add -= 1;
 		p_ptr->to_a += 25;
 		p_ptr->dis_to_a += 25;
 	}
@@ -1933,12 +1933,12 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_LIMBER)
 	{
-		p_ptr->stat_add[A_DEX] += 3;
+		p_ptr->stat[A_DEX].add += 3;
 	}
 
 	if (p_ptr->muta3 & MUT3_ARTHRITIS)
 	{
-		p_ptr->stat_add[A_DEX] -= 3;
+		p_ptr->stat[A_DEX].add -= 3;
 	}
 
 	if (p_ptr->muta3 & MUT3_MOTION)
@@ -1949,6 +1949,6 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_ILL_NORM)
 	{
-		p_ptr->stat_add[A_CHR] = 0;
+		p_ptr->stat[A_CHR].add = 0;
 	}
 }

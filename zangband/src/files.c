@@ -2122,15 +2122,15 @@ static void display_player_stat_info(void)
 		e_adj = 0;
 
 		/* Icky formula to deal with the 18 barrier */
-		if ((p_ptr->stat_max[i] > 18) && (p_ptr->stat_top[i] > 18))
-			e_adj = (p_ptr->stat_top[i] - p_ptr->stat_max[i]) / 10;
-		if ((p_ptr->stat_max[i] <= 18) && (p_ptr->stat_top[i] <= 18))
-			e_adj = p_ptr->stat_top[i] - p_ptr->stat_max[i];
-		if ((p_ptr->stat_max[i] <= 18) && (p_ptr->stat_top[i] > 18))
-			e_adj = (p_ptr->stat_top[i] - 18) / 10 - p_ptr->stat_max[i] + 18;
+		if ((p_ptr->stat[i].max > 18) && (p_ptr->stat[i].top > 18))
+			e_adj = (p_ptr->stat[i].top - p_ptr->stat[i].max) / 10;
+		if ((p_ptr->stat[i].max <= 18) && (p_ptr->stat[i].top <= 18))
+			e_adj = p_ptr->stat[i].top - p_ptr->stat[i].max;
+		if ((p_ptr->stat[i].max <= 18) && (p_ptr->stat[i].top > 18))
+			e_adj = (p_ptr->stat[i].top - 18) / 10 - p_ptr->stat[i].max + 18;
 
-		if ((p_ptr->stat_max[i] > 18) && (p_ptr->stat_top[i] <= 18))
-			e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i] - 18) / 10 - 19;
+		if ((p_ptr->stat[i].max > 18) && (p_ptr->stat[i].top <= 18))
+			e_adj = p_ptr->stat[i].top - (p_ptr->stat[i].max - 18) / 10 - 19;
 
 		/* Reduced name of stat */
 		put_fstr(stat_col, row + i, stat_names_reduced[i]);
@@ -2138,7 +2138,7 @@ static void display_player_stat_info(void)
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out */
 		put_fstr(stat_col + 5, row + i, CLR_BLUE "%v",
-				 stat_format, p_ptr->stat_max[i]);
+				 stat_format, p_ptr->stat[i].max);
 
 		/* Race, class, and equipment modifiers */
 		put_fstr(stat_col + 12, row + i, CLR_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
@@ -2147,13 +2147,13 @@ static void display_player_stat_info(void)
 
 		/* Actual maximal modified value */
 		put_fstr(stat_col + 24, row + i, CLR_L_GREEN "%v",
-				 stat_format, p_ptr->stat_top[i]);
+				 stat_format, p_ptr->stat[i].top);
 
 		/* Only display stat_use if not maximal */
-		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
+		if (p_ptr->stat[i].use < p_ptr->stat[i].top)
 		{
 			put_fstr(stat_col + 31, row + i, CLR_YELLOW "%v",
-						 stat_format, p_ptr->stat_use[i]);
+						 stat_format, p_ptr->stat[i].use);
 		}
 	}
 
@@ -2378,18 +2378,18 @@ static void display_player_top(void)
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Special treatment of "injured" stats */
-		if (p_ptr->stat_cur[i] < p_ptr->stat_max[i])
+		if (p_ptr->stat[i].cur < p_ptr->stat[i].max)
 		{
 			/* Use lowercase stat name */
 			put_fstr(COL_STATS, i + 2, stat_names_reduced[i]);
 
 			/* Display the current stat (modified) */
 			put_fstr(COL_STATS + 5, i + 2, CLR_YELLOW "%v",
-					 stat_format, p_ptr->stat_use[i]);
+					 stat_format, p_ptr->stat[i].use);
 
 			/* Display the maximum stat (modified) */
 			put_fstr(COL_STATS + 5 + 7, i + 2, CLR_L_GREEN "%v",
-					 stat_format, p_ptr->stat_top[i]);
+					 stat_format, p_ptr->stat[i].top);
 		}
 
 		/* Normal treatment of "normal" stats */
@@ -2400,7 +2400,7 @@ static void display_player_top(void)
 
 			/* Display the current stat (modified) */
 			put_fstr(COL_STATS + 5, i + 2, CLR_L_GREEN "%v",
-					 stat_format, p_ptr->stat_use[i]);
+					 stat_format, p_ptr->stat[i].use);
 		}
 	}
 }

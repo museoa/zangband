@@ -1768,7 +1768,7 @@ cptr mention_use(int i)
 	{
 		object_type *o_ptr;
 		o_ptr = &p_ptr->equipment[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+		if (adj_str_hold[p_ptr->stat[A_STR].ind] < o_ptr->weight / 10)
 		{
 			p = "Just lifting";
 		}
@@ -1779,7 +1779,7 @@ cptr mention_use(int i)
 	{
 		object_type *o_ptr;
 		o_ptr = &p_ptr->equipment[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+		if (adj_str_hold[p_ptr->stat[A_STR].ind] < o_ptr->weight / 10)
 		{
 			p = "Just holding";
 		}
@@ -1871,7 +1871,7 @@ cptr describe_use(int i)
 	if (i == EQUIP_WIELD)
 	{
 		object_type *o_ptr = &p_ptr->equipment[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+		if (adj_str_hold[p_ptr->stat[A_STR].ind] < o_ptr->weight / 10)
 		{
 			p = "just lifting";
 		}
@@ -1881,7 +1881,7 @@ cptr describe_use(int i)
 	if (i == EQUIP_BOW)
 	{
 		object_type *o_ptr = &p_ptr->equipment[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+		if (adj_str_hold[p_ptr->stat[A_STR].ind] < o_ptr->weight / 10)
 		{
 			p = "just holding";
 		}

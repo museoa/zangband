@@ -1204,7 +1204,7 @@ static void process_world(void)
 			  (c_ptr->feat == FEAT_OCEAN_WATER)) && !p_ptr->ffall)
 	{
 		if (p_ptr->total_weight >
-			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2))
+			((adj_str_wgt[p_ptr->stat[A_STR].ind] * 100) / 2))
 		{
 			/* Take damage */
 			msgf("You are drowning!");
@@ -1509,7 +1509,7 @@ static void process_world(void)
 	/* Poison */
 	if (p_ptr->tim.poisoned)
 	{
-		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
+		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
 		/* Apply some healing */
 		(void)set_poisoned(p_ptr->tim.poisoned - adjust);
@@ -1518,7 +1518,7 @@ static void process_world(void)
 	/* Stun */
 	if (p_ptr->tim.stun)
 	{
-		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
+		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
 		/* Apply some healing */
 		(void)set_stun(p_ptr->tim.stun - adjust);
@@ -1527,7 +1527,7 @@ static void process_world(void)
 	/* Cut */
 	if (p_ptr->tim.cut)
 	{
-		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
+		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
 		/* Hack -- Truly "mortal" wound */
 		if (p_ptr->tim.cut > 1000) adjust = 0;

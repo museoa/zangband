@@ -22,7 +22,7 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
 	int i;
 	int val;
 	int sum = 0;
-    int stat = p_ptr->stat_cur[use_stat];
+    int stat = p_ptr->stat[use_stat].cur;
 
     if (stat <= 180)
         stat /= 10;
@@ -129,7 +129,7 @@ static void eat_corpse(void)
 bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 {
     bool use_hp = FALSE;
-    int stat = p_ptr->stat_cur[use_stat];
+    int stat = p_ptr->stat[use_stat].cur;
 
     if (stat <= 180)
         stat /= 10;
