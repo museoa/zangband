@@ -503,20 +503,20 @@ static void roff_aux(int r_idx, int remem)
 		/* Group some variables */
 		if (TRUE)
 		{
-			long i, j;
+			s32b new_exp, new_exp_frac;
+			int i;
 
-			/* calculate the integer exp part */
-			i = (long)r_ptr->mexp * r_ptr->level / p_ptr->lev;
+			/* Get the xp for a kill */
+			exp_for_kill(r_ptr, &new_exp, &new_exp_frac);
 
 			/* calculate the fractional exp part scaled by 100, */
 			/* must use long arithmetic to avoid overflow  */
-			j = ((((long)r_ptr->mexp * r_ptr->level % p_ptr->lev) *
-			       (long)1000 / p_ptr->lev + 5) / 10);
+			new_exp_frac = (((long)new_exp_frac + 0x10000L / 50) * 100) / 0x10000L;
 
 			/* Mention the experience */
 			roff(format(" is worth %ld.%02ld point%s",
-			            (long)i, (long)j,
-			            (((i == 1) && (j == 0)) ? "" : "s")));
+			            (long)new_exp, (long)new_exp_frac,
+			            (((new_exp == 1) && (new_exp_frac == 0)) ? "" : "s")));
 
 			/* Take account of annoying English */
 			p = "th";
