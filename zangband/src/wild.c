@@ -14,6 +14,10 @@
 
 #include "angband.h"
 
+/* Number of river starting points - must be less than TEMP_MAX */
+#define WILD_RIVER_START	10
+
+
 
 /* Lighten / Darken new block depending on Day/ Night */
 void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
@@ -2012,9 +2016,135 @@ static void set_temp_corner_val(u16b val)
 /* Set the middle of the temporary block to val */
 static void set_temp_mid(u16b val)
 {
-	temp_block[WILD_BLOCK_SIZE / 2 ][WILD_BLOCK_SIZE /2] = val;
+	temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = val;
 }
 
+/*
+ * Initialise the temporary block based on the value of a wilderness
+ * 'info' flag for gradient information.
+ *
+ * This is used for rivers, beaches, lakes etc.
+ */
+static bool wild_info_bounds(u16b x, u16b y, byte info)
+{
+	int i, x1, y1;
+	bool grad[4], any;
+
+	/* No flags set yet */
+	any = FALSE;
+	
+	/* Check each orthogonally adjacent square to see if flag is set */
+	for (i = 0; i < 4; i++)
+	{
+		/* Hack - get only orthogonal directions */
+		x1 = x + ddx[i * 2 + 2];
+		y1 = y + ddy[i * 2 + 2];
+		
+		grad[i] = FALSE;
+		
+		/* Check bounds */
+		if((x1 >= 0) && (x1 < max_wild) && (y1 >= 0) && (y1 < max_wild))
+		{
+			/* Check flag status */
+			if (wild[y1][x1].done.info & info)
+			{
+				/* Flag is set */
+				grad[i] = TRUE;
+				any = TRUE;
+			}
+		}
+		else
+		{
+			/* If out of bounds - use middle square */
+			
+			/* Check flag status */
+			if (wild[y][x].done.info & info)
+			{
+				/* Flag is set */
+				grad[i] = TRUE;
+				any = TRUE;
+			}
+		}
+	}		
+	
+	/* Exit if there are no set flags */
+	if (any == FALSE) return(FALSE);
+	
+	/* Clear temporary block */
+	clear_temp_block();
+	
+	/* If a flag is set - make that side maximum */
+	for (i = 0; i < 4; i++)
+	{
+		/* Hack - get only orthogonal directions */
+		x1 = (1 + ddx[i * 2 + 2]) * WILD_BLOCK_SIZE / 2;
+		y1 = (1 + ddy[i * 2 + 2]) * WILD_BLOCK_SIZE / 2;
+	
+		if (grad[i])
+		{	
+			temp_block[y1][x1] = WILD_BLOCK_SIZE * 256;
+		}
+		else
+		{
+			temp_block[y1][x1] = WILD_BLOCK_SIZE * 64;
+		}
+	}
+	
+	/* Set corners based on pairs of sides */
+	
+	/* Upper left */
+	if (grad[1] && grad[3])
+	{
+		temp_block[0][0] = WILD_BLOCK_SIZE * 256;
+	}
+	else
+	{
+		temp_block[0][0] = WILD_BLOCK_SIZE * 64;
+	}
+	
+	/* Lower left */
+	if (grad[0] && grad[3])
+	{
+		temp_block[WILD_BLOCK_SIZE][0] = WILD_BLOCK_SIZE * 256;
+	}
+	else
+	{
+		temp_block[WILD_BLOCK_SIZE][0] = WILD_BLOCK_SIZE * 64;
+	}
+	
+	/* Upper right */
+	if (grad[1] && grad[2])
+	{
+		temp_block[0][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 256;
+	}
+	else
+	{
+		temp_block[0][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 64;
+	}
+	
+	/* Lower right */
+	if (grad[0] && grad[2])
+	{
+		temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 256;
+	}
+	else
+	{
+		temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 64;
+	}
+	
+	/* Set middle based on current square */
+	if (wild[y][x].done.info & info)
+	{
+		temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = WILD_BLOCK_SIZE * 256;
+	}
+	else
+	{
+		temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = WILD_BLOCK_SIZE * 64;
+	}
+	
+	/* There are flags set */
+	return(TRUE);
+}
 
 /*
 * Explanation of the plasma fractal algorithm:
@@ -2236,6 +2366,48 @@ static void make_wild_sea(blk_ptr block_ptr,int sea_type)
 
 
 /*
+ * Using gradient information given in temp_block,
+ * overlay on top of wilderness block.
+ *
+ * This is used to make rivers, beaches etc.
+ */
+static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
+{
+	int i, j;
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			
+			if (temp_block[j][i] >= WILD_BLOCK_SIZE * 213)
+			{
+				/* 25% of the time use the other tile : it looks better this way */
+				if (randint(100) < 75)
+				{
+					block_ptr[j][i].feat = feat2;
+				}
+				else
+				{
+					block_ptr[j][i].feat = feat1;
+				}
+			}
+			else if (temp_block[j][i] >= WILD_BLOCK_SIZE * 128)
+			{
+				/* 25% of the time use the other tile : it looks better this way */
+				if (randint(100) < 75)
+				{
+					block_ptr[j][i].feat = feat1;
+				}
+				else
+				{
+					block_ptr[j][i].feat = feat2;
+				}
+			}			
+		}
+	}
+}
+
+/*
  * Make wilderness generation type 1
  *
  * Make a plasma fractal.  Convert the heightmap to terrain
@@ -2432,7 +2604,19 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		/* Blend with adjacent terrains */
 		blend_block(x, y, block_ptr, w_type);
 				
-		/* Add roads / river / lava (Not done)*/
+		/* Add water boundary effects.  (Rivers / Ocean)*/
+		if (wild_info_bounds(x, y, WILD_INFO_RIVER))
+		{
+			/* Hack, above function sets bounds */
+			
+			/* Generate plasma factal */
+			frac_block();
+			
+			/* Overlay water */
+			wild_add_gradient(block_ptr, FEAT_SHAL_WATER, FEAT_DEEP_WATER);		
+		}
+		
+		/* Add roads / lava (Not done)*/
 
 	}
 	/* Hack -- Use the "complex" RNG */
@@ -2481,7 +2665,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 
 
 /* Allocate all grids around player */
-void allocate_all(void)
+static void allocate_all(void)
 {
 	int x, y;
 	blk_ptr block_ptr;
@@ -2513,7 +2697,7 @@ void allocate_all(void)
  * done by scrolling the grid of pointers.
  */
 
-void shift_down(void)
+static void shift_down(void)
 {
 	int i, j;
 	blk_ptr block_ptr;
@@ -2542,7 +2726,7 @@ void shift_down(void)
 	}
 }
 
-void shift_up(void)
+static void shift_up(void)
 {
 	int i, j;
 	blk_ptr block_ptr;
@@ -2570,7 +2754,7 @@ void shift_up(void)
 	}
 }
 
-void shift_right(void)
+static void shift_right(void)
 {
 	int i, j;
 	blk_ptr block_ptr;
@@ -2600,7 +2784,7 @@ void shift_right(void)
 }
 
 
-void shift_left(void)
+static void shift_left(void)
 {
 	int i, j;
 	blk_ptr block_ptr;
@@ -2633,7 +2817,7 @@ void shift_left(void)
  * This must be called after the player moves in the wilderness.
  * If the player is just walking around, all that needs to be done is
  * to scroll the grid of pointers - not recalculate them all.
- * However, when the player teleports, things have to stay as is.
+ * However, when the player teleports, all have to ba allocated.
  */
 void move_wild(void)
 {
@@ -2722,6 +2906,246 @@ void move_wild(void)
 		allocate_all();
 	}
 }
+
+/*
+ * Sorting hook -- comp function -- by "wilderness height"
+ *
+ * We use "u" and "v" to point to arrays of "x" and "y" positions,
+ * and sort the arrays by the value in wild[y][x].gen.hgt_map
+ */
+static bool ang_sort_comp_height(vptr u, vptr v, int a, int b)
+{
+	s16b *x = (s16b*)(u);
+	s16b *y = (s16b*)(v);
+
+	int ha, hb;
+	
+	/* Get heights */
+	ha = wild[y[a]][x[a]].gen.hgt_map;
+	hb = wild[y[b]][x[b]].gen.hgt_map;
+
+	/* Compare them */
+	return (ha >= hb);
+}
+
+/*
+ * Sorting hook -- swap function -- by "wilderness height"
+ *
+ * We use "u" and "v" to point to arrays of "x" and "y" positions,
+ * and sort the arrays by the value in wild[y][x].gen.hgt_map
+ */
+static void ang_sort_swap_height(vptr u, vptr v, int a, int b)
+{
+	s16b *x = (s16b*)(u);
+	s16b *y = (s16b*)(v);
+
+	s16b temp;
+
+	/* Swap "x" */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+
+	/* Swap "y" */
+	temp = y[a];
+	y[a] = y[b];
+	y[b] = temp;
+}
+
+/* 
+ * Make river between two points.
+ * Do not change the value of the two points
+ */
+static void link_river(int x1, int x2, int y1, int y2, int sea_level)
+{
+	int x, y, dx, dy, changex, changey;
+	int length, l;
+	
+	length = distance(x1, y1, x2, y2);
+
+	if (length > 4)
+	{
+		/*
+		 * Divide path in half and call routine twice.
+		 * There is a small chance of splitting the river
+		 */
+		dx = (x2 - x1) / 2;
+		dy = (y2 - y1) / 2;
+
+		if (dy != 0)
+		{
+			/* perturbation perpendicular to path */
+			changex = randint(abs(dy)) * 2 - abs(dy);
+		}
+		else
+		{
+			changex = 0;
+		}
+
+		if (dx != 0)
+		{
+			/* perturbation perpendicular to path */
+			changey = randint(abs(dx)) * 2 - abs(dx);
+		}
+		else
+		{
+			changey = 0;
+		}
+
+		/* Check bounds */
+		if ((y1 + dy + changey < 0) || (y1 + dy + changey >= max_wild))
+		{
+			changey = 0;
+		}
+				
+		if ((x1 + dx + changex < 0) || (x1 + dx + changex >= max_wild))
+		{
+			changex = 0;
+		}
+
+		/* construct river out of two smaller ones */
+		link_river(x1, x1 + dx + changex, y1, y1 + dy + changey, sea_level);
+		link_river(x1 + dx + changex, x2, y1 + dy + changey, y2, sea_level);
+	}
+	else
+	{
+		/* Actually build the river */
+		for (l = 0; l < length; l++)
+		{
+			x = x1 + l * (x2 - x1) / length;
+			y = y1 + l * (y2 - y1) / length;
+
+			/* 
+			 * Hack - set height to be sea level.
+			 * This is checked for later, to make ocean boundaries.
+			 * Thus rivers and beaches use the same code.
+			 */
+			wild[y][x].gen.hgt_map = sea_level;
+		}
+	}
+}
+
+/*
+ * Make a few rivers in the wilderness.
+ *
+ * This is done by generating a few random "starting points"
+ * The highest closest points are connected by a fractal line.
+ * This is repeated until the highest point is below sea level.
+ *
+ * Hack - the rivers are denoted by hgt= sea_level
+ * This means that the river and sea boundaries use the same code.
+ */
+
+static void create_rivers(int sea_level)
+{
+	int i, cur_posn, high_posn, dh;
+	int cx, cy, ch;
+	long dist, dx, dy, val, h_val;
+	
+	/* Make some random starting positions */
+	for (i = 0; i < WILD_RIVER_START; i++)
+	{
+		temp_y[i] = rand_int(max_wild);
+		temp_x[i] = rand_int(max_wild);	
+	}
+
+	temp_n = WILD_RIVER_START;
+
+	
+	/* Set the sort hooks */
+	ang_sort_comp = ang_sort_comp_height;
+	ang_sort_swap = ang_sort_swap_height;
+
+	/* Sort positions by height of wilderness */
+	ang_sort(temp_x, temp_y, temp_n);
+
+	/* Start at highest position */
+	cur_posn = 0;
+	
+	cx = temp_x[cur_posn];
+	cy = temp_y[cur_posn];
+	
+	ch = wild[cy][cx].gen.hgt_map;
+
+	/* 
+	 * Link highest position to closest next highest position.
+	 * Stop when all positions above sea level are used, or
+	 * (rarely) if there is only one left in the array.
+	 */
+	while((ch > sea_level) && (temp_n > cur_posn + 1))
+	{
+		/* The highest position is at (0,0) in the array. */
+		
+		/* Find the closest next highest one. */
+		high_posn = cur_posn + 1;
+		
+		/* Distance squared */
+		dy = cy - temp_y[high_posn];
+		dx = cx - temp_x[high_posn]; 
+	
+		dist = dy * dy + dx * dx;
+		
+		/* Change in Height */
+		dh = ch - wild[temp_y[high_posn]][temp_x[high_posn]].gen.hgt_map;
+			
+		if (dist == 0)
+		{
+			/* Overlapping positions */
+			h_val = 0;
+		}
+		else
+		{
+			/* Small val for close high positions */
+			h_val = dh / dist;
+		}
+		
+		/* Check the other positions in the array */
+		for (i = high_posn + 1; i < temp_n; i++)
+		{
+			/* Distance squared */
+			dy = cy - temp_y[i];
+			dx = cx - temp_x[i]; 
+	
+			dist = dy * dy + dx * dx;
+		
+			/* Change in Height */
+			dh = ch - wild[temp_y[i]][temp_x[i]].gen.hgt_map;
+			
+			if (dist == 0)
+			{
+				/* Overlapping positions */
+				val = 0;
+			}
+			else
+			{
+				/* Small val for close high positions */
+				val = dh * dist;
+			}
+		
+			/* Is this position better than previous best? */
+			if (val < h_val)
+			{
+				h_val = val;
+				high_posn = i;
+			}
+		}
+		
+		/* Make river between two points */
+		link_river(cx, temp_x[high_posn], cy, temp_y[high_posn], sea_level);
+		
+		/* Get new highest point */
+		cur_posn++;
+	
+		cx = temp_x[cur_posn];
+		cy = temp_y[cur_posn];
+	
+		ch = wild[cy][cx].gen.hgt_map;		
+	}
+	
+	/* hack - reset viewable grid set. */
+	temp_n = 0;
+}
+
 
 
 
@@ -3216,7 +3640,7 @@ static void create_law_map(u16b sea)
  * Later this will use a fractal method to make the wilderness.
  * Towns / dungeons yet.
  * No monsters yet.
- * No roads/ rivers yet.
+ * No roads yet.
  */
 
 void create_wilderness(void)
@@ -3262,6 +3686,9 @@ void create_wilderness(void)
 	
 	/* Rescale minimum. */
 	sea_level *= 16;
+				
+	/* Add in rivers... */
+	create_rivers(sea_level);
 	
 	/* create "population density" information */
 	create_pop_map(sea_level);
@@ -3330,11 +3757,24 @@ void create_wilderness(void)
 		for (j = 0; j < max_wild; j++)
 		{
 			/* If above sea level - use decision tree to get terrain. */
-			if (wild[j][i].gen.hgt_map < sea_level)			
+			if (wild[j][i].gen.hgt_map <= sea_level)			
 			{
+				/* Height */
+				hgt = wild[j][i].gen.hgt_map;
+				
 				/* Ocean */
-				wild[j][i].done.wild = 65535 - 
-					((long) wild[j][i].gen.hgt_map * 64) / sea_level;
+				wild[j][i].done.wild = 65535 - ((long) hgt * 64) / sea_level;
+					
+				if (hgt > sea_level / 2)
+				{
+					/* Set to be water boundary */
+					wild[j][i].done.info = WILD_INFO_RIVER;
+				}
+				else
+				{
+					/* No rivers / roads / all unknown */
+					wild[j][i].done.info = 0;
+				}
 			}
 			else
 			{
@@ -3350,13 +3790,13 @@ void create_wilderness(void)
 				
 				/* Get wilderness type. */
 				wild[j][i].done.wild = get_gen_type(hgt, pop, law);
+				
+				/* No rivers / roads / all unknown */
+				wild[j][i].done.info = 0;
 			}
 			
 			/* No town yet */
 			wild[j][i].done.town = 0;
-
-			/* No rivers / roads / all unknown */
-			wild[j][i].done.info = 0;
 
 			/* No monsters */
 			wild[j][i].done.mon_gen = 0;
