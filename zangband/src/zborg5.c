@@ -121,30 +121,6 @@ static void borg_delete_take(int i)
 	goal = 0;
 }
 
-/*
- * Attempt to "follow" a missing object
- *
- * This routine is not called when the player is blind or hallucinating.
- *
- * This function just deletes objects which have disappeared.
- *
- * We assume that a monster walking onto an object destroys the object.
- */
-static void borg_follow_take(int i)
-{
-	borg_take *take = &borg_takes[i];
-
-	/* Paranoia */
-	if (!take->k_idx) return;
-
-	/* Note */
-	borg_note(format("# There was an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), take->y, take->x));
-
-	/* Kill the object */
-	borg_delete_take(i);
-}
-
 
 /*
  * Guess the kidx for an unknown item.
@@ -2563,13 +2539,22 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 				borg_delete_take(mb_ptr->take);
 				
 				/* Make a new object */
-				mb_ptr->take = borg_new_take(mb_ptr->object, mb_ptr->unknown, x, y);
+				mb_ptr->take = borg_new_take(map->object, map->unknown, x, y);
 			}
 		}
 		else
 		{
 			/* Make a new object */
-			mb_ptr->take = borg_new_take(mb_ptr->object, mb_ptr->unknown, x, y);
+			mb_ptr->take = borg_new_take(map->object, map->unknown, x, y);
+		}
+	}
+	else
+	{
+		/* Do we think there is an object here that we cannot see? */
+		if (mb_ptr->take && (map->flags & MAP_SEEN))
+		{
+			/* The object is no longer here - delete it */
+			borg_delete_take(mb_ptr->take);
 		}
 	}
 
@@ -2952,29 +2937,6 @@ void borg_update(void)
 
 		/* Kill the monster */
 		borg_delete_kill(i);
-	}
-
-	/* Scan objects */
-	for (i = 1; i < borg_takes_nxt; i++)
-	{
-		borg_take *take = &borg_takes[i];
-
-		/* Skip dead objects */
-		if (!take->k_idx) continue;
-
-		/* Clear flags */
-		take->seen = FALSE;
-
-		/* Skip recently seen objects */
-		if (borg_t - take->when < 2000) continue;
-
-		/* Note */
-		borg_note(format("# Expiring an object '%s' (%d) at (%d,%d)",
-						 (k_name + k_info[take->k_idx].name), take->k_idx,
-						 take->y, take->x));
-
-		/* Kill the object */
-		borg_delete_take(i);
 	}
 
 	/*** Handle messages ***/
@@ -3489,7 +3451,7 @@ void borg_update(void)
 		borg_takes_nxt = 1;
 
 		/* Forget old objects */
-		C_WIPE(borg_takes, 256, borg_take);
+		C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
 
 		/* No monsters here */
 		borg_kills_cnt = 0;
@@ -3913,25 +3875,6 @@ void borg_update(void)
 		borg_follow_kill(i);
 	}
 
-	/*** Notice missing objects ***/
-
-	/* Scan the object list */
-	for (i = 1; i < borg_takes_nxt; i++)
-	{
-		borg_take *take = &borg_takes[i];
-
-		/* Skip dead objects */
-		if (!take->k_idx) continue;
-
-		/* Skip seen objects */
-		if (take->when == borg_t) continue;
-
-		/* Hack -- blind or hallucinating */
-		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE]) continue;
-
-		/* Follow the object */
-		borg_follow_take(i);
-	}
 
 	/*** Various things ***/
 
