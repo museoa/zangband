@@ -2928,7 +2928,20 @@ static void cave_temp_room_lite(void)
 			note_spot(x, y);
 		}
 	}
-
+	
+	/*
+	 * Hack - recalculate the view
+	 *
+	 * The view must be redone afterwards because of the way
+	 * light affects walls.  We simply don't know which squares
+	 * are lit until the effect has completed
+	 */
+	p_ptr->update |= PU_VIEW;
+	
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+	
 	/* None left */
 	temp_n = 0;
 }
@@ -2997,6 +3010,22 @@ static void cave_temp_room_unlite(void)
 		}
 	}
 
+	/*
+	 * Hack - recalculate the view
+	 *
+	 * The view must be redone afterwards because of the way
+	 * light affects walls.  We simply don't know which squares
+	 * are unlit until the effect has completed.
+	 */
+	p_ptr->update |= PU_VIEW;
+	
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+	
+	/* None left */
+	temp_n = 0;
+	
 	/* None left */
 	temp_n = 0;
 }
