@@ -396,7 +396,7 @@ static cptr r_info_flags7[] =
 	"XXX7X13",
 	"XXX7X14",
 	"XXX7X15",
-	"AI_RANGED",
+	"XXX7X16",
 	"XXX7X17",
 	"XXX7X18",
 	"XXX7X19",
