@@ -641,7 +641,6 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 	char b2 = ']';
 
 	char f = ' ';
-        char tmp[8];
 
 	/* Initial */
 	s = (*sp);
@@ -815,29 +814,10 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 				v = cp_ptr->title;
 			}
 
-			/* First realm */
-			else if (streq(b+1, "REALM1"))
-			{
-                                v = realm_names[p_ptr->realm1];
-			}
-
-			/* Second realm */
-			else if (streq(b+1, "REALM2"))
-			{
-				v = realm_names[p_ptr->realm2];
-			}
-
 			/* Player */
 			else if (streq(b+1, "PLAYER"))
 			{
 				v = player_base;
-			}
-
-			/* Level */
-			else if (streq(b+1, "LEVEL"))
-			{
-				sprintf(tmp, "%02d", p_ptr->lev);
-				v = tmp;
 			}
 		}
 
