@@ -91,107 +91,10 @@ set attr(shape,unique) [icon ascii create -foreground [palette set 0] \
 # Attribute characters used by monsters and objects
 # set attrStr "dwsorgbuDWvyRGBU"
 
-# Objects
-set max_k_idx [angband k_info max]
-for {set k_idx 1} {$k_idx < $max_k_idx} {incr k_idx} {
-	set d_char [angband k_info set $k_idx d_char]
-	set d_attr [angband k_info set $k_idx d_attr]
-	set index [icon ascii index ascii $d_char]
-	set ascii [expr {$d_attr + $attr(object)}]
-	assign set object $k_idx "icon ascii $index $ascii"
-}
-
-if 0 {
-# Hack -- Staffs use different icon type
-foreach k_idx [angband k_info find -tval TV_STAFF] {
-	set d_char [angband k_info set $k_idx d_char]
-	set d_attr [angband k_info set $k_idx d_attr]
-	set index [icon ascii index staff $d_char]
-	set ascii [expr {$d_attr + $attr(object)}]
-	assign set object $k_idx "icon staff $index $ascii"
-}
-}
-
-# Monsters
-set max_r_idx [angband r_info max]
-for {set r_idx 1} {$r_idx < $max_r_idx} {incr r_idx} {
-	set d_char [angband r_info set $r_idx d_char]
-	set d_attr [angband r_info set $r_idx d_attr]
-	set index [icon ascii index ascii $d_char]
-	set ascii [expr {$d_attr + $attr(monster)}]
-if {[angband r_info info $r_idx unique]} {
-	set ascii [expr {$d_attr + $attr(monster,unique)}]
-}
-	assign set monster $r_idx "icon ascii $index $ascii"
-}
-
-# Hack -- Some monsters are never seen
-# These "none 0" assignments are never overridden
-foreach r_idx [angband r_info find -flag CHAR_CLEAR -flag ATTR_CLEAR] {
-	assign set monster $r_idx "icon none 0"
-}
-
-# Hack -- Some monsters should look like objects
-foreach r_idx [angband r_info find -d_char "!?=|$,(+"] {
-	set d_char [angband r_info set $r_idx d_char]
-	set d_attr [angband r_info set $r_idx d_attr]
-	set index [icon ascii index ascii $d_char]
-	set ascii [expr {$d_attr + $attr(object)}]
-	assign set monster $r_idx "icon ascii $index $ascii"
-}
-
-# Hack -- Some monsters are multi-hued
-foreach r_idx [angband r_info find -flag ATTR_MULTI] {
-	set d_char [angband r_info set $r_idx d_char]
-	set index [icon ascii index ascii $d_char]
-	assign set monster $r_idx "icon ascii $index $attr(multi)"
-	if {[angband r_info info $r_idx unique]} {
-		assign set monster $r_idx "icon ascii $index $attr(multi,unique)"
-	}
-}
-
-# Hack -- Some monsters are shapechangers
-foreach r_idx [angband r_info find -flag SHAPECHANGER] {
-	set d_char [angband r_info set $r_idx d_char]
-	set index [icon ascii index ascii $d_char]
-	assign set monster $r_idx "icon ascii $index $attr(shape)"
-	if {[angband r_info info $r_idx unique]} {
-		assign set monster $r_idx "icon ascii $index $attr(shape,unique)"
-	}
-}
-
 
 # Object 0 icon used for floor stack, when "easy_floor" option is on
 set index [icon ascii index ascii *]
 assign set object 0 "icon ascii $index $attr(stack)"
 
-# "Space monster" is all black
-set r_idx [angband r_info find -name "Space monster"]
-assign set monster $r_idx "icon blank 0"
-
 
 unset attr
-
-# Since this is often sourced by other icon configurations that are
-# missing object/monster icons, I don't want to provide this command
-# unless it is actually a "classicNN" configuration.
-### This should probably go into config-char.
-if {[string match classic* [Global config,prefix]]} {
-
-	proc AutoAssignCharacterIcon {} {
-	
-		set attrIndex [Global attr,character]
-		
-		set index [icon ascii index ascii @]
-		assign set character 0 "icon ascii $index $attrIndex"
-	
-		# Set the flag to indicate the icon was auto-assigned
-		Global autoAssign 1
-
-		return
-	}
-	
-	AutoAssignCharacterIcon
-
-# classic
-}

@@ -23,40 +23,6 @@ namespace eval ConfigMap {
 # namespace eval ConfigMap
 }
 
-# ConfigMap::DungeonEnter --
-#
-#	Description.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-qebind ConfigMapDungeonEnter <Dungeon-enter> {
-	ConfigMap::DungeonEnter %c
-}
-
-proc ConfigMap::DungeonEnter {depth} {
-
-	variable Detail
-
-	switch -- $Detail {
-		medium -
-		high {
-			if {$depth} {
-				symbol configure sym.downstair -mimic sym.downstair
-				symbol configure sym.permanent -mimic sym.wall0
-			} else {
-				symbol configure sym.downstair -mimic sym.stair
-				symbol configure sym.permanent -mimic sym.permanent
-			}
-		}
-	}
-
-	return
-}
-
 # ConfigMap::Bits --
 #
 #	Description.
