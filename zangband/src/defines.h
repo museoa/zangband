@@ -3933,6 +3933,9 @@
   (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
    ((X) >= panel_col_min) && ((X) <= panel_col_max))
 
+#define floor_grid(F) \
+	(!((F) & 0x20))
+
 /*
  * Determine if a "legal" grid is a "floor" grid
  *
@@ -3946,7 +3949,7 @@
  * -KMW-
  */
 #define cave_floor_grid(C) \
-    (!((C)->feat & 0x20))
+    (floor_grid((C)->feat))
 
 /*
  * True half the time for trees. (Block line of sight half the time.)

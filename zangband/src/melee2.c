@@ -2496,7 +2496,7 @@ static void process_monster(int m_idx)
 			cave_set_feat(nx, ny, FEAT_FLOOR);
 		}
 		
-		else if (c_ptr->feat & 0x20)
+		else if (cave_floor_grid(c_ptr))
 		{
 			/* This monster cannot walk through walls */
 			do_move = FALSE;

@@ -1568,7 +1568,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 	 * extremely important routine is good.)
 	 */
 	if (view_bright_lite && !p_ptr->blind
-		 && (!(feat & 0x20) || (view_granite_lite && !view_torch_grids)))
+		 && (floor_grid(feat) || (view_granite_lite && !view_torch_grids)))
 	{
 		/* It's not in view or no lighting effects? */
 		if (((!(player & (GRID_VIEW))) && view_special_lite)
@@ -4608,7 +4608,7 @@ void update_flow(void)
 			if (c_ptr->when == flow_n) continue;
 
 			/* Ignore all "walls" except doors + terrain */
-			if ((feat & 0x20) && (feat != FEAT_CLOSED) &&
+			if (!floor_grid(feat) && (feat != FEAT_CLOSED) &&
 				 ((feat & 0x60) != 0x60)) continue;
 			
 			/*
@@ -4867,7 +4867,7 @@ void cave_set_feat(int x, int y, int feat)
 	if (cave_floor_grid(c_ptr))
 	{
 		/* Is new eat a wall grid? */
-		if (feat & 0x20)
+		if (!floor_grid(feat))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
@@ -4882,7 +4882,7 @@ void cave_set_feat(int x, int y, int feat)
 	else
 	{
 		/* Is new feat a floor grid? */
-		if (!(feat & 0x20))
+		if (floor_grid(feat))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
