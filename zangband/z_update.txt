@@ -2,6 +2,10 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+Zangband 2.5.4:
+- Added additional context sensitive help for the birth process and for
+  debugging commands.
+
 ZAngband 2.5.3:
 - Added roads between the towns to the wilderness.
 - Added lakes (of various kinds) to the wilderness.
