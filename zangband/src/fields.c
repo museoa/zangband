@@ -134,7 +134,7 @@ void delete_field_ptr(field_type *f_ptr)
 	FLD_ITT_END;
 	
 	/* We shouldn't get here! */
-	quit("Cannot field to delete!");
+	quit("Cannot find field to delete!");
 	return;
 }
 
@@ -644,6 +644,7 @@ s16b field_add(field_type *f_ptr, cave_type *c_ptr)
 	/* If a previous node exists */
 	if (q_ptr)
 	{
+		fld_list[new_idx].next_f_idx = q_ptr->next_f_idx;
 		q_ptr->next_f_idx = new_idx;
 	}
 	else
@@ -1197,7 +1198,9 @@ void test_field_data_integrity(void)
 {
 	int i, j;
 	cave_type *c_ptr;
-	field_type *f_ptr;
+	field_type *f_ptr, *j_ptr;
+	
+	bool found;
 
 	/* Test cave data structure */
 	for (i = p_ptr->min_wid; i < p_ptr->max_wid; i++)
@@ -1230,6 +1233,41 @@ void test_field_data_integrity(void)
 				}
 			}
 			FLD_ITT_END;
+		}
+	}
+	
+	/* Test linkage to cave data structures */
+	for (i = 0; i < fld_max; i++)
+	{
+		f_ptr = &fld_list[i];
+		
+		if (!f_ptr->t_idx) continue;
+		
+		/* Needs to be in bounds */
+		if (!in_bounds2(f_ptr->fx, f_ptr->fy))
+		{
+			msgf("Field out of bounds: %d", i);
+			continue;
+		}
+		
+		c_ptr = area(f_ptr->fx, f_ptr->fy);
+		
+		found = FALSE;
+		
+		/* We need to be in the linked list at the location */
+		FLD_ITT_START (c_ptr->fld_idx, j_ptr)
+		{
+			if (f_ptr == j_ptr)
+			{
+				found = TRUE;
+				break;
+			}
+		}
+		FLD_ITT_END;
+		
+		if (!found)
+		{
+			msgf("Field not linked correctly (%d,%d): %d", f_ptr->fx, f_ptr->fy, i);
 		}
 	}
 }
