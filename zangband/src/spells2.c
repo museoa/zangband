@@ -1259,6 +1259,9 @@ bool detect_monsters_normal(void)
 
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
+		/* Do not detect mimics */
+		if (m_ptr->smart & (SM_MIMIC)) continue;
+		
 		/* Detect all non-invisible monsters */
 		if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
 		    p_ptr->see_inv || p_ptr->tim_invis)
