@@ -304,6 +304,7 @@ static void game_usage(void)
 	puts("  --       Sub options");
 	puts("  -- -d    Set display name");
 	puts("  -- -s    Turn off smoothscaling graphics");
+	puts("  -- -b#   Set tileset bitmap");
 	puts("  -- -n#   Number of terms to use");
 #endif /* USE_XAW */
 	
@@ -312,6 +313,7 @@ static void game_usage(void)
 	puts("  --       Sub options");
 	puts("  -- -d    Set display name");
 	puts("  -- -s    Turn off smoothscaling graphics");
+	puts("  -- -b#   Set tileset bitmap");
 	puts("  -- -n#   Number of terms to use");
 #endif /* USE_X11 */
 	
