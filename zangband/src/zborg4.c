@@ -8554,7 +8554,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	int glyph = 0;
 
 	int fake_speed = borg_skill[BI_SPEED];
-	int monster_speed = kill->speed;
+	int monster_speed = r_ptr->speed;
 	int t, e;
 
 	/* Paranoia */

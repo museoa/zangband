@@ -488,9 +488,6 @@ static void borg_update_kill(int i)
 
 	map_block *mb_ptr;
 
-	/* Extract the monster speed */
-	kill->speed = (r_ptr->speed);
-
 	/* Player energy per game turn */
 	e = extract_energy[borg_skill[BI_SPEED]];
 
@@ -498,7 +495,7 @@ static void borg_update_kill(int i)
 	t = (100 + (e - 1)) / e;
 
 	/* Monster energy per game turn */
-	e = extract_energy[kill->speed];
+	e = extract_energy[r_ptr->speed];
 
 	/* Monster moves (times ten) */
 	kill->moves = (t * e) / 10;

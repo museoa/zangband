@@ -155,16 +155,14 @@ struct borg_kill
 	s16b r_idx;	/* Race index */
 	
 	u16b next_kill;	/* Next kill in this list */
-
-	bool seen;	/* Assigned motion */
-
-	byte x, y;	/* Location */
-
-	byte speed;	/* Estimated speed */
-	byte moves;	/* Estimates moves */
-
+	
 	s16b power;	/* Estimated hit-points */
 	s16b when;	/* When last seen */
+
+	bool seen;	/* Assigned motion */
+	byte moves;	/* Estimates moves */
+
+	byte x, y;	/* Location */
 
 	bool ranged_attack;	/* can attack from a dx */
 

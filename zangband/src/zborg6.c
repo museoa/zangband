@@ -5027,7 +5027,6 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			dam = 0;
 			if (r_ptr->flags3 & RF3_NO_CONF) break;
 			if (r_ptr->flags2 & RF2_MULTIPLY) break;
-			if (kill->speed < r_ptr->speed) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
@@ -5048,7 +5047,6 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_TURN_ALL:
 		{
 			dam = 0;
-			if (kill->speed < r_ptr->speed) break;
 			if (r_ptr->flags3 & RF3_NO_FEAR) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
@@ -5070,7 +5068,6 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_OLD_SLOW:
 		{
 			dam = 0;
-			if (kill->speed < r_ptr->speed) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
@@ -5093,7 +5090,6 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			dam = 0;
 			if (r_ptr->flags3 & RF3_NO_SLEEP) break;
-			if (kill->speed < r_ptr->speed) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
@@ -5131,7 +5127,6 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (r_ptr->flags3 & RF3_UNDEAD)
 			{
 				dam = 0;
-				if (kill->speed < r_ptr->speed) break;
 				if (kill->
 					m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR))
 				  break;
