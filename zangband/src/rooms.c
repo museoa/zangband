@@ -3852,6 +3852,54 @@ static void build_type14(int by0, int bx0)
 	}	
 }
 
+/*
+ * Type 15 -- Parallelagram Shaped Rooms
+ */
+static void build_type15(int by0, int bx0)
+{
+	u16b		h, w;
+	int         y, x, y1, x1, yval, xval;
+	bool        light, type;
+	
+	/* Get size + shape */
+	h = (u16b) rand_range(6, 15);
+	w = (u16b) rand_range(11, 22);
+	
+	
+	/* Try to allocate space for room. */
+	if (!room_alloc(w + h, h, FALSE, by0, bx0, &xval, &yval)) return;
+	
+	/* Choose lite or dark */
+	light = (dun_level <= randint(25));
+
+	/* Get top left corner */
+	x1 = xval - (w + h) / 2;
+	y1 = yval - h / 2;
+	
+	/* Get handedness */
+	type = ((rand_int(2) == 1) ? TRUE : FALSE);
+	
+	/* Fill in floor */
+	for (y = 1; y < h; y++)
+	{
+		for (x = x1; x < x1 + w; x++)
+		{
+			if (type)
+			{
+				/* Sloping down and right */
+				cave[y + y1][x + y].feat = FEAT_FLOOR;
+			}
+			else
+			{
+				/* Sloping up and right */
+				cave[y + y1][x + h - y].feat = FEAT_FLOOR;
+			}
+		}
+	}
+
+	/* Find visible outer walls and set to be FEAT_OUTER */
+	add_outer_wall(xval, yval, light, x1, y1, x1 + h + w, y1 + h);
+}
 
 /*
  * Attempt to build a room of the given type at the given block
@@ -3871,6 +3919,7 @@ bool room_build(int by0, int bx0, int typ)
 	switch (typ)
 	{ 
 		/* Build an appropriate room */
+		case 15: build_type15(by0, bx0); break;
 		case 14: build_type14(by0, bx0); break;
 		case 13: build_type13(by0, bx0); break;
 		case 12: build_type12(by0, bx0); break;
