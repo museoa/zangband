@@ -3090,7 +3090,7 @@ void field_action_door_bash(s16b **field_ptr, void *input)
 	int *jam = (int *) input;
 	
 	/* Extract door "power" */
-	int power = *jam / 2 + adj_str_blow[p_ptr->stat_ind[A_STR]] / 2
+	int power = *jam / 2 + adj_str_blow[p_ptr->stat_ind[A_STR]] / 5
 		 - f_ptr->counter * 2;
 	
 	/* Always have a small chance of success */
