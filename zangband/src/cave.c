@@ -3096,6 +3096,8 @@ void update_view(void)
 		y = view_y[n];
 		x = view_x[n];
 
+		if(!in_bounds2(y,x)) continue;
+		
 		/* Access the grid */
 		c_ptr = area(y,x);
 
