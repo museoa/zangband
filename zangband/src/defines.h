@@ -3976,11 +3976,24 @@
  */
 #define SET_FLAG(ff, i, mask) ((ff)[i] |= (mask))
 #define TEST_FLAG(ff, i, mask) (((ff)[i] & (mask)) != 0)
-#define TR_FLAG(ff, i, flag) TEST_FLAG(ff, i, TR ## i ## _ ## flag)
-#define RF_FLAG(ff, i, flag) TEST_FLAG(ff, i, RF ## i ## _ ## flag)
 
-#define FLAG_AUX(P, TYPE, NUM, F) TYPE ## _ ## FLAG((P)->flags, NUM, F)
+#define TR_TEST_FLAG(ff, i, flag) TEST_FLAG(ff, i, TR ## i ## _ ## flag)
+#define RF_TEST_FLAG(ff, i, flag) TEST_FLAG(ff, i, RF ## i ## _ ## flag)
+
+#define TR_SET_FLAG(ff, i, flag) SET_FLAG(ff, i, TR ## i ## _ ## flag)
+#define RF_SET_FLAG(ff, i, flag) SET_FLAG(ff, i, RF ## i ## _ ## flag)
+
+#define TR_COPY_FLAG(f1, f2, i, flag) \
+	(TR_TEST_FLAG(f1, i, flag) ? TR_SET_FLAG(f2, i, flag) : 0)
+#define RF_COPY_FLAG(f1, f2, i, flag) \
+	(RF_TEST_FLAG(f1, i, flag) ? RF_SET_FLAG(f2, i, flag) : 0)
+
+#define FLAG_AUX(P, TYPE, NUM, F) TYPE ## _ ## TEST_FLAG((P)->flags, NUM, F)
 #define FLAG(P, F) FLAG_AUX(P, F)
+
+#define COPY_FLAG_AUX(P1, P2, TYPE, NUM, F) \
+	TYPE ## _ ## COPY_FLAG((P1)->flags, (P2)->flags, NUM, F)
+#define COPY_FLAG(P1, P2, F) COPY_FLAG_AUX(P1, P2, F)
 
 
 /* Skills */

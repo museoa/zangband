@@ -201,38 +201,38 @@ static void roff_mon_aux(int r_idx, int remem)
 
 
 	/* Assume some "obvious" flags */
-	if (FLAG(r_ptr, RF_UNIQUE)) SET_FLAG(mf_ptr->flags, 0, RF0_UNIQUE);
-	if (FLAG(r_ptr, RF_QUESTOR)) SET_FLAG(mf_ptr->flags, 0, RF0_QUESTOR);
-	if (FLAG(r_ptr, RF_MALE)) SET_FLAG(mf_ptr->flags, 0, RF0_MALE);
-	if (FLAG(r_ptr, RF_FEMALE)) SET_FLAG(mf_ptr->flags, 0, RF0_FEMALE);
+	COPY_FLAG(r_ptr, mf_ptr, RF_UNIQUE);
+	COPY_FLAG(r_ptr, mf_ptr, RF_QUESTOR);
+	COPY_FLAG(r_ptr, mf_ptr, RF_MALE);
+	COPY_FLAG(r_ptr, mf_ptr, RF_FEMALE);
 
 	/* Assume some "creation" flags */
-	if (FLAG(r_ptr, RF_CHAR_MIMIC)) SET_FLAG(mf_ptr->flags, 0, RF0_CHAR_MIMIC);
-	if (FLAG(r_ptr, RF_FRIENDS)) SET_FLAG(mf_ptr->flags, 0, RF0_FRIENDS);
-	if (FLAG(r_ptr, RF_ESCORT)) SET_FLAG(mf_ptr->flags, 0, RF0_ESCORT);
-	if (FLAG(r_ptr, RF_ESCORTS)) SET_FLAG(mf_ptr->flags, 0, RF0_ESCORTS);
+	COPY_FLAG(r_ptr, mf_ptr, RF_CHAR_MIMIC);
+	COPY_FLAG(r_ptr, mf_ptr, RF_FRIENDS);
+	COPY_FLAG(r_ptr, mf_ptr, RF_ESCORT);
+	COPY_FLAG(r_ptr, mf_ptr, RF_ESCORTS);
 
 	/* Killing a monster reveals some properties */
 	if (r_ptr->r_tkills || cheat_know)
 	{
 		/* Know "race" flags */
-		if (FLAG(r_ptr, RF_ORC)) SET_FLAG(mf_ptr->flags, 2, RF2_ORC);
-		if (FLAG(r_ptr, RF_TROLL)) SET_FLAG(mf_ptr->flags, 2, RF2_TROLL);
-		if (FLAG(r_ptr, RF_GIANT)) SET_FLAG(mf_ptr->flags, 2, RF2_GIANT);
-		if (FLAG(r_ptr, RF_DRAGON)) SET_FLAG(mf_ptr->flags, 2, RF2_DRAGON);
-		if (FLAG(r_ptr, RF_DEMON)) SET_FLAG(mf_ptr->flags, 2, RF2_DEMON);
-		if (FLAG(r_ptr, RF_UNDEAD)) SET_FLAG(mf_ptr->flags, 2, RF2_UNDEAD);
-		if (FLAG(r_ptr, RF_EVIL)) SET_FLAG(mf_ptr->flags, 2, RF2_EVIL);
-		if (FLAG(r_ptr, RF_GOOD)) SET_FLAG(mf_ptr->flags, 2, RF2_GOOD);
-		if (FLAG(r_ptr, RF_ANIMAL)) SET_FLAG(mf_ptr->flags, 2, RF2_ANIMAL);
-		if (FLAG(r_ptr, RF_AMBERITE)) SET_FLAG(mf_ptr->flags, 2, RF2_AMBERITE);
+		COPY_FLAG(r_ptr, mf_ptr, RF_ORC);
+		COPY_FLAG(r_ptr, mf_ptr, RF_TROLL);
+		COPY_FLAG(r_ptr, mf_ptr, RF_GIANT);
+		COPY_FLAG(r_ptr, mf_ptr, RF_DRAGON);
+		COPY_FLAG(r_ptr, mf_ptr, RF_DEMON);
+		COPY_FLAG(r_ptr, mf_ptr, RF_UNDEAD);
+		COPY_FLAG(r_ptr, mf_ptr, RF_EVIL);
+		COPY_FLAG(r_ptr, mf_ptr, RF_GOOD);
+		COPY_FLAG(r_ptr, mf_ptr, RF_ANIMAL);
+		COPY_FLAG(r_ptr, mf_ptr, RF_AMBERITE);
 
 		/* Know 'quantum' flag */
-		if (FLAG(r_ptr, RF_QUANTUM)) SET_FLAG(mf_ptr->flags, 1, RF1_QUANTUM);
+		COPY_FLAG(r_ptr, mf_ptr, RF_QUANTUM);
 
 		/* Know "forced" flags */
-		if (FLAG(r_ptr, RF_FORCE_DEPTH)) SET_FLAG(mf_ptr->flags, 0, RF0_FORCE_DEPTH);
-		if (FLAG(r_ptr, RF_FORCE_MAXHP)) SET_FLAG(mf_ptr->flags, 0, RF0_FORCE_MAXHP);
+		COPY_FLAG(r_ptr, mf_ptr, RF_FORCE_DEPTH);
+		COPY_FLAG(r_ptr, mf_ptr, RF_FORCE_MAXHP);
 	}
 
 	/* Treat uniques differently */
