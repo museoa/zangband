@@ -1505,17 +1505,17 @@ static void process_world(void)
 	/*** Timeout Various Things ***/
 	if (p_ptr->tim.image) (void)inc_image(-1);
 	if (p_ptr->tim.blind) (void)inc_blind(-1);
-	if (p_ptr->tim.invis) (void)set_tim_invis(p_ptr->tim.invis - 1);
-	if (p_ptr->tim.esp) (void)set_tim_esp(p_ptr->tim.esp - 1);
-	if (p_ptr->tim.infra) (void)set_tim_infra(p_ptr->tim.infra - 1);
+	if (p_ptr->tim.invis) (void)inc_tim_invis(-1);
+	if (p_ptr->tim.esp) (void)inc_tim_esp(-1);
+	if (p_ptr->tim.infra) (void)inc_tim_infra(-1);
 	if (p_ptr->tim.paralyzed) (void)inc_paralyzed(-1);
 	if (p_ptr->tim.confused) (void)inc_confused(-1);
 	if (p_ptr->tim.afraid) (void)inc_afraid(-1);
 	if (p_ptr->tim.fast) (void)inc_fast(-1);
 	if (p_ptr->tim.slow) (void)inc_slow(-1);
-	if (p_ptr->tim.protevil) (void)set_protevil(p_ptr->tim.protevil - 1);
-	if (p_ptr->tim.invuln) (void)set_invuln(p_ptr->tim.invuln - 1);
-	if (p_ptr->tim.wraith_form) (void)set_wraith_form(p_ptr->tim.wraith_form - 1);
+	if (p_ptr->tim.protevil) (void)inc_protevil(-1);
+	if (p_ptr->tim.invuln) (void)inc_invuln(-1);
+	if (p_ptr->tim.wraith_form) (void)inc_wraith_form(-1);
 	if (p_ptr->tim.hero) (void)inc_hero(-1);
 	if (p_ptr->tim.shero) (void)inc_shero(-1);
 	if (p_ptr->tim.blessed) (void)inc_blessed(-1);

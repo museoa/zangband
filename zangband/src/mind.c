@@ -322,7 +322,7 @@ static bool cast_mindcrafter_spell(int spell)
 
 			if ((plev > 24) && (plev < 40))
 			{
-				(void)set_tim_esp(p_ptr->tim.esp + plev);
+				(void)inc_tim_esp(plev);
 			}
 
 			if (!b) msgf("You feel safe.");

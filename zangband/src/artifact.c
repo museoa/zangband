@@ -1661,7 +1661,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msgf("The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(p_ptr->tim.protevil + randint1(25) + k);
+				(void)inc_protevil(randint1(25) + k);
 				o_ptr->timeout = (s16b)rand_range(225, 450);
 				break;
 			}
@@ -2800,7 +2800,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_ESP:
 		{
 			msgf("The %s enters your thoughts...", o_name);
-			(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
+			(void)inc_tim_esp(rand_range(25, 55));
 			o_ptr->timeout = 200;
 			break;
 		}
@@ -2818,7 +2818,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msgf("The %s lets out a shrill wail...", o_name);
 			k = 3 * p_ptr->lev;
-			(void)set_protevil(p_ptr->tim.protevil + randint1(25) + k);
+			(void)inc_protevil(randint1(25) + k);
 			o_ptr->timeout = (s16b)rand_range(225, 450);
 			break;
 		}
@@ -2854,8 +2854,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_WRAITH:
 		{
 			msgf("The %s fades out...", o_name);
-			(void)set_wraith_form(p_ptr->tim.wraith_form +
-								  rand_range(plev / 2, plev));
+			(void)inc_wraith_form(rand_range(plev / 2, plev));
 			o_ptr->timeout = 1000;
 			break;
 		}
@@ -2864,7 +2863,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msgf("The %s fires a beam of bright white light at you...",
 					   o_name);
-			(void)set_invuln(p_ptr->tim.invuln + rand_range(8, 16));
+			(void)inc_invuln(rand_range(8, 16));
 			o_ptr->timeout = 1000;
 			break;
 		}

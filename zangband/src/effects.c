@@ -842,11 +842,14 @@ bool inc_shero(int v)
 
 
 /*
- * Set "p_ptr->protevil", notice observable changes
+ * Increment "p_ptr->protevil", notice observable changes
  */
-bool set_protevil(int v)
+bool inc_protevil(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.protevil;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -891,11 +894,14 @@ bool set_protevil(int v)
 }
 
 /*
- * Set "p_ptr->wraith_form", notice observable changes
+ * Increment "p_ptr->wraith_form", notice observable changes
  */
-bool set_wraith_form(int v)
+bool inc_wraith_form(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.wraith_form;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -964,11 +970,14 @@ bool set_wraith_form(int v)
 
 
 /*
- * Set "p_ptr->invuln", notice observable changes
+ * Increment "p_ptr->invuln", notice observable changes
  */
-bool set_invuln(int v)
+bool inc_invuln(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.invuln;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1042,7 +1051,7 @@ bool set_invuln(int v)
 /*
  * Set "p_ptr->tim.esp", notice observable changes
  */
-bool set_tim_esp(int v)
+static bool set_tim_esp(int v)
 {
 	bool notice = FALSE;
 
@@ -1094,13 +1103,33 @@ bool set_tim_esp(int v)
 	return (TRUE);
 }
 
+/*
+ * Increase the "esp" counter
+ */
+bool inc_tim_esp(int v)
+{
+	return(set_tim_esp(p_ptr->tim.esp + v));
+}
+
 
 /*
- * Set "p_ptr->tim_invis", notice observable changes
+ * No more "esp"
  */
-bool set_tim_invis(int v)
+bool clear_tim_esp(void)
+{
+	return(set_tim_esp(0));
+}
+
+
+/*
+ * Increment "p_ptr->tim_invis", notice observable changes
+ */
+bool inc_tim_invis(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.invis;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1152,11 +1181,14 @@ bool set_tim_invis(int v)
 
 
 /*
- * Set "p_ptr->tim_infra", notice observable changes
+ * Increment "p_ptr->tim_infra", notice observable changes
  */
-bool set_tim_infra(int v)
+bool inc_tim_infra(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.invuln;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;

@@ -643,7 +643,7 @@ static bool cast_life_spell(int spell)
 			(void)set_cut(0);
 			break;
 		case 11:				/* Sense Unseen */
-			(void)set_tim_invis(p_ptr->tim.invis + rand_range(24, 48));
+			(void)inc_tim_invis(rand_range(24, 48));
 			break;
 		case 12:				/* Orb or Draining */
 			if (!get_aim_dir(&dir)) return FALSE;
@@ -657,7 +657,7 @@ static bool cast_life_spell(int spell)
 
 			break;
 		case 13:				/* Protection from Evil */
-			(void)set_protevil(p_ptr->tim.protevil + randint1(25) + 3 * p_ptr->lev);
+			(void)inc_protevil(randint1(25) + 3 * p_ptr->lev);
 			break;
 		case 14:				/* Healing */
 			(void)hp_player(300);
@@ -748,7 +748,7 @@ static bool cast_life_spell(int spell)
 			(void)clear_afraid();
 			break;
 		case 31:				/* Holy Invulnerability */
-			(void)set_invuln(p_ptr->tim.invuln + rand_range(7, 14));
+			(void)inc_invuln(rand_range(7, 14));
 			break;
 		default:
 			msgf("You cast an unknown Life spell: %d.", spell);
@@ -841,7 +841,7 @@ static bool cast_sorcery_spell(int spell)
 			msgf("You open a dimensional gate. Choose a destination.");
 			return dimension_door();
 		case 20:				/* Sense Minds */
-			(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
+			(void)inc_tim_esp(rand_range(25, 55));
 			break;
 		case 21:				/* Self knowledge */
 			(void)self_knowledge();
@@ -869,7 +869,7 @@ static bool cast_sorcery_spell(int spell)
 			wiz_lite();
 			if (!(p_ptr->flags3 & (TR3_TELEPATHY)))
 			{
-				(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
+				(void)inc_tim_esp(rand_range(25, 55));
 			}
 			break;
 		case 28:				/* Enchant Weapon */
@@ -879,7 +879,7 @@ static bool cast_sorcery_spell(int spell)
 		case 30:				/* Alchemy */
 			return alchemy();
 		case 31:				/* Globe of Invulnerability */
-			(void)set_invuln(p_ptr->tim.invuln + rand_range(8, 16));
+			(void)inc_invuln(rand_range(8, 16));
 			break;
 		default:
 			msgf("You cast an unknown Sorcery spell: %d.", spell);
@@ -1773,8 +1773,7 @@ static bool cast_death_spell(int spell)
 
 			break;
 		case 31:				/* Wraithform */
-			(void)set_wraith_form(p_ptr->tim.wraith_form +
-								  rand_range(plev / 2, plev));
+			(void)inc_wraith_form(rand_range(plev / 2, plev));
 			break;
 		default:
 			msgf("You cast an unknown Death spell: %d.", spell);
@@ -2045,7 +2044,7 @@ static bool cast_trump_spell(int spell, bool success)
 		case 6:				/* Trump Spying */
 			if (success)
 			{
-				(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
+				(void)inc_tim_esp(rand_range(25, 55));
 			}
 			break;
 		case 7:				/* Teleport Away */
@@ -2573,7 +2572,7 @@ static bool cast_arcane_spell(int spell)
 			(void)set_food(PY_FOOD_MAX - 1);
 			break;
 		case 23:				/* See Invisible */
-			(void)set_tim_invis(p_ptr->tim.invis + rand_range(24, 48));
+			(void)inc_tim_invis(rand_range(24, 48));
 			break;
 		case 24:				/* Recharging */
 			return recharge(plev * 4);
@@ -2613,7 +2612,7 @@ static bool cast_arcane_spell(int spell)
 			wiz_lite();
 			if (!(p_ptr->flags3 & (TR3_TELEPATHY)))
 			{
-				(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
+				(void)inc_tim_esp(rand_range(25, 55));
 			}
 			break;
 		default:

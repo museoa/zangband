@@ -1596,8 +1596,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msgf("You feel insubstantial!");
 		message_flush();
-		(void)set_wraith_form(p_ptr->tim.wraith_form +
-							  rand_range(p_ptr->lev / 2, p_ptr->lev));
+		(void)inc_wraith_form(rand_range(p_ptr->lev / 2, p_ptr->lev));
 	}
 
 	else if (mut_ptr->which == MUT2_POLY_WOUND)
@@ -1663,12 +1662,12 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		if (p_ptr->tim.esp > 0)
 		{
 			msgf("Your mind feels cloudy!");
-			(void)set_tim_esp(0);
+			(void)clear_tim_esp();
 		}
 		else
 		{
 			msgf("Your mind expands!");
-			(void)set_tim_esp(p_ptr->lev);
+			(void)inc_tim_esp(p_ptr->lev);
 		}
 	}
 
@@ -1726,7 +1725,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msgf("You feel invincible!");
 		message_flush();
-		(void)set_invuln(p_ptr->tim.invuln + rand_range(8, 16));
+		(void)inc_invuln(rand_range(8, 16));
 	}
 
 	else if (mut_ptr->which == MUT2_SP_TO_HP)
