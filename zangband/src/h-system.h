@@ -197,7 +197,7 @@ extern cptr help_vcs[];
 #endif
 
 #ifdef USE_TNB
-extern errr init_tnb(int argc, char **argv);
+extern errr init_tnb(int argc, cptr *argv);
 extern cptr help_tnb[];
 #endif
 

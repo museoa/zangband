@@ -267,10 +267,10 @@ linux-no-gtk: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
 ## Variation -- tk port to linux
 ##
 linux-tk: CFLAGS += -D"USE_TNB" -D"USE_X11" -D"PLATFORM_X11"\
-				 -I/usr/include/tcl8.3 \
-				 -I/usr/include/tcl8.3/tk-private/unix \
-				 -I/usr/include/tcl8.3/tk-private/generic \
-				 -I/usr/include/tcl8.3/tcl-private/generic \
+				 -I/usr/include/tcl8.4 \
+				 -I/usr/include/tcl8.4/tk-private/unix \
+				 -I/usr/include/tcl8.4/tk-private/generic \
+				 -I/usr/include/tcl8.4/tcl-private/generic \
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations \
 				 -Wno-long-long -Wwrite-strings -Wpointer-arith \
 				 -Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
@@ -278,7 +278,7 @@ linux-tk: CFLAGS += -D"USE_TNB" -D"USE_X11" -D"PLATFORM_X11"\
 				 -Wredundant-decls #-Wunreachable-code
  
 linux-tk: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
-               -lXaw -lXext -lSM -lICE -lXmu -lXt -ltcl8.3 -ltk8.3 -lz
+               -lXaw -lXext -lSM -lICE -lXmu -lXt -ltcl8.4 -ltk8.4 -lz
 linux-tk-objs: $(TKOBJS) $(OBJS)
 	$(MAKE-ZANGBAND)
 linux-tk: linux-tk-objs

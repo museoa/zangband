@@ -43,7 +43,7 @@ static DoubleLinker WidgetItemList;
 
 static int Assign_ParseProc _ANSI_ARGS_((
 			    ClientData clientData, Tcl_Interp *interp,
-			    Tk_Window tkwin, char *value, char *widgRec,
+			    Tk_Window tkwin, cptr value, char *widgRec,
 			    int offset));
 static char *Assign_PrintProc _ANSI_ARGS_((
 			    ClientData clientData, Tk_Window tkwin,
@@ -266,7 +266,7 @@ ConfigureWidget(
 
     tkwin = Tk_CanvasTkwin(canvas);
     if (Tk_ConfigureWidget(interp, tkwin, configSpecs, argc,
-	    (char **) argv, (char *) widgetPtr, flags | TK_CONFIG_OBJS) != TCL_OK)
+	    (cptr *) argv, (char *) widgetPtr, flags | TK_CONFIG_OBJS) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -813,7 +813,7 @@ TranslateWidget(
 }
 
 static int Assign_ParseProc(ClientData clientData, Tcl_Interp *interp,
-	Tk_Window tkwin, char *value, char *widgRec, int offset)
+	Tk_Window tkwin, cptr value, char *widgRec, int offset)
 {
 /*	WidgetItem *itemPtr = (WidgetItem *) widgRec; */
 

@@ -48,9 +48,6 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 
 	Tcl_SetPanicProc(WishPanic);
 
-	/* GDB chokes on this call. Is it safe to remove? */
-/*	setlocale(LC_ALL, "C"); */
-
 	/* This call does nothing on Win32 systems */
 	SetMessageQueue(64);
 
@@ -71,11 +68,13 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	/* According to Hobbs, this should come after Tcl_FindExecutable() */
 	interp = Tcl_CreateInterp();
 
+#ifdef PLATFORM_WIN
 	/* XXX Hack -- When run from a BAT file, the input/output doesn't
 	 * go to the Tk Console. */
 	CloseStdHandle(STD_INPUT_HANDLE);
 	CloseStdHandle(STD_OUTPUT_HANDLE);
 	CloseStdHandle(STD_ERROR_HANDLE);
+#endif /* PLATFORM_WIN */
 	
 #ifdef ALLOW_TK_CONSOLE
 	Tk_InitConsoleChannels(interp);
@@ -213,7 +212,7 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
 			    int mask));
 
 
-Tcl_Interp *TclTk_Init(int argc, char **argv)
+Tcl_Interp *TclTk_Init(int argc, cptr *argv)
 {
 	char *args;
 	char buf[20];
@@ -424,12 +423,12 @@ static void StdinProc(ClientData clientData, int mask)
  */
 static void Prompt(Tcl_Interp *interp, int partial)
 {
-    char *promptCmd;
+    cptr promptCmd;
     int code;
     Tcl_Channel outChannel, errChannel;
 
     promptCmd = Tcl_GetVar(interp,
-	(char *) (partial ? "tcl_prompt2" : "tcl_prompt1"), TCL_GLOBAL_ONLY);
+	(partial ? "tcl_prompt2" : "tcl_prompt1"), TCL_GLOBAL_ONLY);
     if (promptCmd == NULL) {
 defaultPrompt:
 	if (!partial) {

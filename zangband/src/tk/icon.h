@@ -272,7 +272,7 @@ EFFECT_AMMO_MAX
 #define EFFECT_MAX 3
 
 typedef struct t_effect {
-	char **name; /* Keyword for each icon */
+	cptr *name; /* Keyword for each icon */
 	IconSpec *icon; /*  */
 } t_effect;
 
@@ -296,7 +296,7 @@ extern unsigned char *g_palette_rgb;
 extern int *g_image_monster;
 
 extern void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_ptr);
-extern int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, char *desc);
+extern int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, cptr desc);
 extern char *assign_print(char *buf, t_assign *assignPtr);
 extern char *assign_print2(char *buf, int assignType, int assignIndex);
 extern char *assign_print_object(char *buf, object_type *o_ptr);

@@ -728,7 +728,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -744,7 +744,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				return TCL_ERROR;
 		    }
 
-		    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) abilityOptions, (char *) "ability", 0, 
+		    if (Tcl_GetIndexFromObj(interp, objV[2], abilityOptions, "ability", 0, 
 				&index) != TCL_OK)
 			{
 				return TCL_ERROR;
@@ -1500,7 +1500,7 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -1651,7 +1651,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	}
 
 	/* Get the requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
     {
 		return TCL_ERROR;
@@ -1724,7 +1724,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				static cptr cmdOptions[] = {"-known", "-tester", NULL};
 				
 				/* Get the sub-option */
-				if (Tcl_GetIndexFromObj(interp, objV[i], (char **) cmdOptions, (char *) "option",
+				if (Tcl_GetIndexFromObj(interp, objV[i], cmdOptions, "option",
 					0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
@@ -2145,7 +2145,7 @@ void angtk_display_info(char *title, char **info, int count)
 static void HandleError(void)
 {
 	char path[1024];
-	char *errorInfo;
+	cptr errorInfo;
 	FILE *fp;
 
 	/* Dump the stack to errors.txt */
@@ -2153,7 +2153,7 @@ static void HandleError(void)
 	fp = fopen(path, "a");
 	if (fp != NULL)
 	{
-		errorInfo = Tcl_GetVar(g_interp, (char *) "errorInfo", TCL_GLOBAL_ONLY);
+		errorInfo = Tcl_GetVar(g_interp, "errorInfo", TCL_GLOBAL_ONLY);
 		fprintf(fp, "***** (inside HandleError)\n\n%s\n\n", errorInfo);
 		fclose(fp);
 	}

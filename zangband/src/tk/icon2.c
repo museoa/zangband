@@ -22,7 +22,7 @@ static char *AssignToString_Flavor(char *buf, t_assign *assignPtr)
 	return buf;
 }
 
-static int StringToAssign_Flavor(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+static int StringToAssign_Flavor(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
 {
 	char option[64], flavorName[64];
 	int group, index;
@@ -89,7 +89,7 @@ static char *AssignToString_Icon(char *buf, t_assign *assign)
 	return buf;
 }
 
-static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
 {
 	char option[64], typeName[64];
 	IconSpec iconSpec;
@@ -129,13 +129,13 @@ AssignToStringProc gAssignToStringProc[ASSIGN_TYPE_MAX] = {
 };
 
 /* t_assign -> char* */
-typedef int (*StringToAssignProc)(Tcl_Interp *interp, t_assign *assignPtr, char *desc);
+typedef int (*StringToAssignProc)(Tcl_Interp *interp, t_assign *assignPtr, cptr desc);
 StringToAssignProc gStringToAssignProc[ASSIGN_TYPE_MAX] = {
 	StringToAssign_Flavor,
 	StringToAssign_Icon
 };
 
-int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
+int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
 {
 	char option[64];
 	Tcl_Obj *objPtr;
@@ -150,8 +150,8 @@ int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, char *desc)
 	}
 
 	objPtr = Tcl_NewStringObj(option, -1);
-	if (Tcl_GetIndexFromObj(interp, objPtr, (char **) keyword_assign_type,
-		(char *) "option", 0, &assignType) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objPtr, keyword_assign_type,
+		"option", 0, &assignType) != TCL_OK)
 	{
 		Tcl_DecrRefCount(objPtr);
 		return TCL_ERROR;
@@ -343,8 +343,8 @@ static int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int o
 	IconSpec iconSpec;
 
 	/* Get the effect type */
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_effect_group,
-		(char *) "type", 0, &effectType) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objV[1], keyword_effect_group,
+		"type", 0, &effectType) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -354,7 +354,7 @@ static int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int o
 
 	/* Get the effect keyword */
 	if (Tcl_GetIndexFromObj(interp, objV[2], effect_ptr->name,
-		(char *) "effect", 0, &effectIndex) != TCL_OK)
+		"effect", 0, &effectIndex) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -441,8 +441,8 @@ static int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int ob
 	(void) objc;
 
 	/* Get the effect type */
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_effect_group,
-		(char *) "type", 0, &effectType) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objV[1], keyword_effect_group,
+		"type", 0, &effectType) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -816,9 +816,9 @@ void init_icons(int size, int depth)
 	C_MAKE(g_effect[EFFECT_SPELL_BOLT].icon, EFFECT_SPELL_MAX, IconSpec);
 	C_MAKE(g_effect[EFFECT_AMMO].icon, EFFECT_AMMO_MAX, IconSpec);
 
-	g_effect[EFFECT_SPELL_BALL].name = (char **) keyword_effect_spell;
-	g_effect[EFFECT_SPELL_BOLT].name = (char **) keyword_effect_spell;
-	g_effect[EFFECT_AMMO].name = (char **) keyword_effect_ammo;
+	g_effect[EFFECT_SPELL_BALL].name = keyword_effect_spell;
+	g_effect[EFFECT_SPELL_BOLT].name = keyword_effect_spell;
+	g_effect[EFFECT_AMMO].name = keyword_effect_ammo;
 
 	/* Set default icon for each effect */
 	for (i = 0; i < EFFECT_SPELL_MAX; i++)

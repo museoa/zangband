@@ -1309,7 +1309,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objv[1], (char **) cmdOption, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objv[1], cmdOption, "option", 0, 
 		&index) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -1337,8 +1337,8 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			/* Scan all option/value pairs */
 			while (objc > 1)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
-					(char *) "switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
+					"switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -1545,8 +1545,8 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			/* Return the value of a single option */
 			if (objc == 4)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objv[3], (char **) configSwitch,
-					(char *) "switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objv[3], configSwitch,
+					"switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -1572,8 +1572,8 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			/* Scan all option/value pairs */
 			while (objc > 1)
 			{
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) configSwitch,
-					(char *) "switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objPtr[0], configSwitch,
+					"switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -1674,7 +1674,7 @@ static int objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_O
 		int n = 2;
 
 		/* Get the sub-option */
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) switches, (char *) "switch",
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], switches, "switch",
 			0, &index) != TCL_OK)
 		{
 			goto error;
@@ -1844,7 +1844,7 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objv[1], (char **) cmdOption, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objv[1], cmdOption, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -1897,8 +1897,8 @@ wrongCreateArgs:
 				static cptr createSwitch[] = {"-charset", "-file", "-font",
 					"-height", "-width", NULL};
 
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) createSwitch,
-					(char *) "switch", 0, &index) != TCL_OK)
+			    if (Tcl_GetIndexFromObj(interp, objPtr[0], createSwitch,
+					"switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 			    }
@@ -2416,8 +2416,8 @@ int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
 	{
 		static cptr assignSwitch[] = {"-ascii", "-index", "-type", NULL};
 
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) assignSwitch,
-			(char *) "switch", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], assignSwitch,
+			"switch", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }

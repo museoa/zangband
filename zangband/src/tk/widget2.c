@@ -16,10 +16,6 @@
 #include "icon.h"
 #include "widget.h"
 
-cptr keyword_widget_style[] = {
-	"icon", "map", NULL
-};
-
 /*
  * Table specifying legal configuration options for a Widget.
  */
@@ -62,9 +58,10 @@ static void Widget_CreateBitmap(Widget *widgetPtr);
 static void Widget_DeleteBitmap(Widget *widgetPtr);
 
 /* Table of procedures for the "Widget" class */
-TkClassProcs widgetProcs = { 
-	NULL,						/* createProc. */
-	Widget_WorldChanged,				/* geometryProc. */
+Tk_ClassProcs widgetProcs = {
+	sizeof(Tk_ClassProcs),
+	Widget_WorldChanged,			/* geometryProc. */
+	NULL,							/* createProc. */
     NULL							/* modalProc. */ 
 };
 
@@ -289,7 +286,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
     }
 
 	/* Set the class callbacks for the new Widget */
-    TkSetClassProcs(tkwin, &widgetProcs, (ClientData) widgetPtr);
+    Tk_SetClassProcs(tkwin, &widgetProcs, (ClientData) widgetPtr);
 
 	/* Set some fields */
 	widgetPtr->tkwin = tkwin;
@@ -397,8 +394,8 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 		return TCL_ERROR;
 	}
 
-	result = Tcl_GetIndexFromObj(interp, objv[1], (char **) commandNames,
-		(char *) "option", 0, (int *) &option);
+	result = Tcl_GetIndexFromObj(interp, objv[1], commandNames,
+		"option", 0, (int *) &option);
 	if (result != TCL_OK)
 	{
 		return result;

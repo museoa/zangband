@@ -926,7 +926,7 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	}
 
 	/* Get the desired state */
-	if (Tcl_GetIndexFromObj(interp, objv[3], (char **) tkMenuStateStrings, (char *) "state", 0, 
+	if (Tcl_GetIndexFromObj(interp, objv[3], tkMenuStateStrings, "state", 0, 
 		&state) != TCL_OK)
 	{
 		return TCL_ERROR;

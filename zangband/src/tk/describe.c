@@ -662,8 +662,8 @@ objcmd_equipinfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     if (Tcl_GetIntFromObj(interp, objV[1], &i_idx) != TCL_OK)
     {
 		Tcl_ResetResult(interp);
-		if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_slot,
-			(char *) "slot", 0, &i_idx) != TCL_OK)
+		if (Tcl_GetIndexFromObj(interp, objV[1], keyword_slot,
+			"slot", 0, &i_idx) != TCL_OK)
 		{
 			return TCL_ERROR;
 		}

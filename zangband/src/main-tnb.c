@@ -444,7 +444,7 @@ static void hook_quit(cptr str)
 /*
  * Init the tk port
  */
-int init_tnb(int argc, char **argv)
+int init_tnb(int argc, cptr *argv)
 {
 	ANGBAND_DIR_TK = DEFAULT_TK_PATH;
 

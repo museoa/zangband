@@ -21,14 +21,6 @@
 #error "You must define one of PLATFORM_WIN or PLATFORM_X11"
 #endif /* */
 
-#if (TK_MINOR_VERSION != 3)
-#error "(1) You must use tcl/tk version 8.3.3"
-#endif /* */
-#if (TK_RELEASE_SERIAL < 3)
-#error "(2) You must use tcl/tk version 8.3.3"
-#endif /* */
-
-
 /* Hack - prevent warnings from tk headers */
 #if defined errno
 #	undef errno
@@ -75,7 +67,7 @@ typedef struct SubCommandInfo SubCommandInfo;
 struct SubCommandInfo {
 	int alloc;
 	int count;
-	char **name;
+	cptr *name;
 	CommandInfo **info;
 };
 
@@ -237,7 +229,7 @@ extern int SetArrayValueLong(cptr varName, cptr field, long value);
 extern int SetArrayValueString(cptr varName, cptr field, cptr value);
 
 /* tcltk.c */
-extern Tcl_Interp *TclTk_Init(int argc, char **argv);
+extern Tcl_Interp *TclTk_Init(int argc, cptr *argv);
 extern void TclTk_Exit(Tcl_Interp *interp);
 
 /* util-tnb.c */

@@ -47,7 +47,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		return TCL_ERROR;
     }
 
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -138,7 +138,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 		return TCL_ERROR;
 	}
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+	if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -162,7 +162,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 					"-tval", NULL};
 
 				/* Get the sub-option */
-				if (Tcl_GetIndexFromObj(interp, objV[i], (char **) cmdOptions, (char *) "option",
+				if (Tcl_GetIndexFromObj(interp, objV[i], cmdOptions, "option",
 					0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
@@ -328,7 +328,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		return TCL_ERROR;
 	}
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+	if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -342,8 +342,8 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			if (objC == 3)
 			{
 				static cptr abortSwitch[] = {"-noask", NULL};
-				if (Tcl_GetIndexFromObj(interp, objV[2], (char **) abortSwitch,
-					(char *) "switch", 0, &index) != TCL_OK)
+				if (Tcl_GetIndexFromObj(interp, objV[2], abortSwitch,
+					"switch", 0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
 				}
@@ -358,7 +358,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 					-1, TCL_EVAL_GLOBAL);
 				if (result == TCL_OK)
 				{
-					char *s = Tcl_GetStringResult(g_interp);
+					cptr s = Tcl_GetStringResult(g_interp);
 					if (!strcmp(s, "cancel")) break;
 				}
 			}
@@ -494,7 +494,7 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		return TCL_ERROR;
     }
 
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -592,7 +592,7 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		return TCL_ERROR;
     }
 
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOption, (char *) "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOption, "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;

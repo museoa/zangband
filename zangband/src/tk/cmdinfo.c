@@ -56,7 +56,7 @@ void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd)
 	if ((count + 1) >= alloc)
 	{
 		CommandInfo **info = (CommandInfo **) Tcl_Alloc(sizeof(CommandInfo *) * (alloc + 5));
-		char **name = (char **) Tcl_Alloc(sizeof(char *) * (alloc + 5 + 1));
+		cptr *name = (cptr *) Tcl_Alloc(sizeof(char *) * (alloc + 5 + 1));
 		if (infoCmd->subCmd.count)
 		{
 			for (i = 0; i < count; i++)
