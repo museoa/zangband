@@ -45,19 +45,30 @@
 CC := gcc
 
 ##
+## This is the default port to compile
+##
+DEFAULT := linux
+
+##
+## Default Lua location
+##
+
+LUA := lua/
+
+##
 ## Files to compile
 ##
 
-LUAOBJS := \
-  lua/lapi.o lua/ldebug.o lua/lmem.o lua/lstrlib.o lua/lvm.o \
-  lua/tolua_lb.o lua/lauxlib.o lua/ldo.o lua/lobject.o lua/ltable.o \
-  lua/lzio.o lua/tolua_rg.o lua/lbaselib.o lua/lfunc.o lua/lparser.o \
-  lua/ltests.o lua/tolua_bd.o lua/tolua_tm.o lua/lcode.o lua/lgc.o \
-  lua/lstate.o lua/ltm.o lua/tolua_eh.o lua/tolua_tt.o lua/ldblib.o \
-  lua/llex.o lua/lstring.o lua/lundump.o lua/tolua_gp.o
+LUAOBJS = \
+  $(LUA)lapi.o $(LUA)ldebug.o $(LUA)lmem.o $(LUA)lstrlib.o $(LUA)lvm.o \
+  $(LUA)tolua_lb.o $(LUA)lauxlib.o $(LUA)ldo.o $(LUA)lobject.o $(LUA)ltable.o \
+  $(LUA)lzio.o $(LUA)tolua_rg.o $(LUA)lbaselib.o $(LUA)lfunc.o $(LUA)lparser.o \
+  $(LUA)ltests.o $(LUA)tolua_bd.o $(LUA)tolua_tm.o $(LUA)lcode.o $(LUA)lgc.o \
+  $(LUA)lstate.o $(LUA)ltm.o $(LUA)tolua_eh.o $(LUA)tolua_tt.o $(LUA)ldblib.o \
+  $(LUA)llex.o $(LUA)lstring.o $(LUA)lundump.o $(LUA)tolua_gp.o
 
-TOLUAOBJS := \
-  lua/tolua.o lua/tolualua.o lua/liolib.o \
+TOLUAOBJS = \
+  $(LUA)tolua.o $(LUA)tolualua.o $(LUA)liolib.o \
   $(LUAOBJS)
 
 ##
@@ -91,7 +102,7 @@ ANGSRCS := \
 	bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c\
 	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c\
 	main-lsl.c main-vcs.c main-gtk.c main-win.c main.c \
-	$(LUAWSRCS) maid-grf.c main-dos.c
+	$(LUAWSRCS) maid-grf.c main-dos.c main-ibm.c
 
 ANGOBJS := \
 	variable.o tables.o util.o cave.o \
@@ -108,8 +119,7 @@ ANGOBJS := \
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
-	$(LUAWOBJS) maid-grf.o main-dos.o
-	
+	$(LUAWOBJS) maid-grf.o main-dos.o main-ibm.o
 
 ##
 ## The "Utility" files
@@ -132,12 +142,10 @@ BORGOBJS := \
 	zborg6.o zborg7.o zborg8.o zborg9.o \
 
 ##
-## The "source" and "object" files.
+## The list of ports available
 ##
-
-SRCS := $(ANGSRCS) $(ZUTILSRCS) $(BORGSRCS)
-
-OBJS := $(ANGOBJS) $(ZUTILOBJS) $(BORGOBJS) $(LUAOBJS)
+PORTS := default_port linux open_bsd main-cap vt100 solaris sgi dec \
+	isc next aix cygwin dos ibm lcc
 
 ##
 ## Following are some "system" definitions
@@ -178,23 +186,11 @@ CFLAGS := -Wall -O2 -g -pipe
 # CFLAGS := -O1 -g
 
 ##
-## GCC requires other flags
-##
-ifeq (gcc, $(findstring gcc, $(CC)))
-	CFLAGS += -fno-strength-reduce
-endif
-
-##
 ## Hack -- "install" as the fake target
 ## Select the default port to use
 ##
-default_port: linux install
+default_port: $(DEFAULT)
 
-##
-## The list of ports available
-##
-PORTS := linux open_bsd main-cap vt100 solaris sgi dec \
-	isc next aix cygwin dos
 
 ##
 ## Hack - dependancy to get them to compile properly
@@ -208,24 +204,22 @@ INSTALL := cp zangband ..
 
 ##
 ## Hack - default clean action
+##
 CLEAN := \
 	rm -f *.bak *.o; \
 	rm -f ./lua/*.bak ./lua/*.o; \
 	rm -f ./l-*.c; \
 	rm -f ./lua/tolua; \
 	rm -f ./lua/tolua_boot;
-##
-
-##
-## Graphics under X11 in linux.  (Run with the -g option)
-## Note: Get the 16x16.bmp file, and put in [Z]directory/lib/xtra/graf
-##       to get 256 colours.
-##
-
 
 ##
 ## Variation -- All the ports that work in Linux at once.
 ## (Use the -m option to start the one you want.)
+##
+##
+## Graphics under X11 in linux.  (Run with the -g option)
+## Note: Get the 16x16.bmp file, and put in [Z]directory/lib/xtra/graf
+##       to get 256 colours.
 ##
 linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
                  -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
@@ -238,11 +232,12 @@ linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga \
 ##
 ## Variation -- Cygwin
 ##
-cygwin: WRES := windres
 cygwin: CFLAGS += -W -pedantic -mno-cygwin -DWINDOWS
 cygwin: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
-cygwin: OBJS += angband.res readdib.o
-cygwin: INSTALL := "mv -f zangband.exe ../zangband.exe"
+cygwin: ANGOBJS += angband.res readdib.o
+cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
+cygwin: RES := windres
+cygwin: RESCMD = $< -O coff -o $@
 
 ##
 ## Variation -- OpenBSD 
@@ -313,6 +308,47 @@ dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
 dos: CLEAN := del *.o; del lua\*.o; del *.exe; del lua\*.exe;
+dos: LUA := lua\# Dos has different path seperators
+
+##
+## Variation -- Compile using the main-ibm.c port
+##
+ibm: CFLAGS += -DUSE_IBM
+ibm: LIBS := -lpc
+ibm: CLEAN := del *.o; del lua\*.o; del *.exe; del lua\*.exe;
+ibm: LUA := lua\# Dos has different path seperators
+
+##
+## Variation -- Compile using the lcc32 compiler
+##
+lcc: LCC_PATH := C:\lcc
+lcc: CC	:= $(LCC_PATH)\bin\lcc.exe
+lcc: LIBS := $(LCC_PATH)\lib\winmm.lib -I$(LCC_PATH)\include
+lcc: LDFLAGS := -s -subsystem windows
+lcc: RES := $(LCC_PATH)\bin\lrc.exe
+lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
+lcc: ANGOBJS += angband.res readdib.o
+lcc: INSTALL := copy zangband ..\zangband.exe
+lcc: CLEAN := del *.obj; del *.res; del *.exe;
+lcc: LUA := lua\# Dos has different path seperators
+
+##########################################################
+
+##
+## The "source" and "object" files.
+##
+
+
+SRCS += $(ANGSRCS) $(ZUTILSRCS) $(BORGSRCS)
+
+OBJS += $(ANGOBJS) $(ZUTILOBJS) $(BORGOBJS) $(LUAOBJS)
+
+##
+## Hack - GCC requires other flags
+##
+ifeq (gcc, $(findstring gcc, $(CC)))
+	CFLAGS += -fno-strength-reduce
+endif
 
 ##
 ## (Installing is much nicer if you don't use the autoconf generated
@@ -351,8 +387,8 @@ depend:
 ## Lua stuff
 ##
 
-lua/tolua: $(TOLUAOBJS)
-	$(CC) -o lua/tolua $(TOLUAOBJS) $(LDFLAGS) $(LIBS)
+$(LUA)tolua: $(TOLUAOBJS)
+	$(CC) -o $(LUA)tolua $(TOLUAOBJS) $(LDFLAGS) $(LIBS)
 
 ##
 ## Low-level Headers
@@ -388,8 +424,9 @@ grid.o: grid.h generate.h
 rooms.o: grid.h generate.h rooms.h
 streams.o: grid.h generate.h
 maid-grf.o: maid-grf.h
-maid-x11.o: maid-grf.h
 main-gtk.o: maid-grf.h
+maid-x11.o: maid-grf.h
+main-win.o: maid-grf.h
 main-x11.o: maid-grf.h maid-x11.h
 main-xaw.o: maid-grf.h maid-x11.h
 main-xpj.o: maid-grf.h maid-x11.h
@@ -403,7 +440,7 @@ z-term.o: z-term.h z-virt.h
 z-util.o: z-util.h
 z-virt.o: z-virt.h z-util.h
 
-## Each borg file depends on the one before it.
+## Each borg file depends on the ones before it.
 ## Hack - the dependance on the .o files encodes this.
 
 zborg1.o: zborg1.h maid-grf.h
@@ -427,23 +464,21 @@ zborg9.o: zborg9.h zborg8.o
 ##
 
 angband.res : angband.rc
-	$(WRES) $< -O coff -o $@
+	$(RES) $(RESCMD)
 
 
 
 ##
 ## Build wrappers
 ##
-## (This probably should be cleaned up a little.)
-##
 ## $(subst l-,,$*) removes the leading "l-", and
 ## trailing ".c" from the filename.
 ##
 
-$(LUAWSRCS): %.c: %.pkg lua/tolua
+$(LUAWSRCS): %.c: %.pkg $(LUA)tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 ##
 ## Phony targets
 ##
-.PHONY: install clean depend default_port $(PORTS)
+.PHONY: install clean depend $(PORTS)
