@@ -963,16 +963,8 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 		return (dam);
 }
 
-/* This function calculates the experience gained for killing a monster.
- * The formula has the following properties:
- *
- * 1 killed		old value * 4
- * 5 killed		old value * 1
- * 20 killed		~ old value * 1/4
- * 50 killed		~ old value * 1/10
- * 100 killed		~ old value * 1/25
- *
- * This decreases slower than the Rangband version.
+/* 
+ * This function calculates the experience gained for killing a monster.
  */
 void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 {
@@ -980,9 +972,9 @@ void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 	
 	if (r_ptr->mexp)
 	{
-		div = p_ptr->lev * (10 + (5 + r_ptr->r_pkills) * r_ptr->r_pkills);
+		div = p_ptr->lev * 7;
 		
-		exp = r_ptr->mexp * r_ptr->level * (40 + r_ptr->r_pkills);
+		exp = r_ptr->mexp * r_ptr->level * 4;
 		
 		/* calculate the integer exp part */
 		*new_exp = ((long) exp / div);
