@@ -761,7 +761,7 @@ void do_cmd_racial_power(void)
 		racial_menu[i].text = string_make(buf);
 		racial_menu[i].help = NULL;
 		racial_menu[i].action = do_cmd_power_aux;
-		racial_menu[i].flags = MN_ACTIVE;
+		racial_menu[i].flags = MN_ACTIVE | MN_CLEAR;
 	}
 	
 	/* Make sure the menu is terminated */
