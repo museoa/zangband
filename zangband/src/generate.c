@@ -805,7 +805,7 @@ static bool cave_gen(dun_type *d_ptr)
 		 * The more boring the dungeon is right now,
 		 * the more out of depth to pick monsters.
 		 */
-		delta_level = (dun_rating - 100) / 10;
+		delta_level = (100 - dun_rating) / 10;
 		if (delta_level < 0) delta_level = 0;
 		
 		(void)alloc_monster(0, TRUE, delta_level);
