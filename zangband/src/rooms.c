@@ -1568,16 +1568,16 @@ static vault_aux_type *pick_vault_type(vault_aux_type *l_ptr)
 
 static vault_aux_type nest_types[] =
 {
-	{"clone",			vault_aux_clone,		vault_prep_clone,		5,		3},
-	{"jelly",			vault_aux_jelly,		NULL,						5,		6},
-	{"symbol clone",	vault_aux_symbol,		vault_prep_symbol,	25,	3},
-	{"mimic",			vault_aux_mimic,		NULL,						25,	6},
-	{"lovecraftian",	vault_aux_cthulhu,	NULL,						40,	2},
-	{"kennel",			vault_aux_kennel,		NULL,						50,	2},
-	{"animal",			vault_aux_animal,		NULL,						50,	4},
-	{"chapel",			vault_aux_chapel,		NULL,						65,	2},
-	{"undead",			vault_aux_undead,		NULL,						65,	4},
-	{NULL,				NULL,						NULL,						0,		0},
+	{"clone",	vault_aux_clone,	vault_prep_clone,	7,	3},
+	{"jelly",	vault_aux_jelly,	NULL,			7,	6},
+	{"symbol clone",vault_aux_symbol,	vault_prep_symbol,	40,	3},
+	{"mimic",	vault_aux_mimic,	NULL,			45,	6},
+	{"lovecraftian",vault_aux_cthulhu,	NULL,			80,	2},
+	{"kennel",	vault_aux_kennel,	NULL,			50,	2},
+	{"animal",	vault_aux_animal,	NULL,			50,	4},
+	{"chapel",	vault_aux_chapel,	NULL,			90,	2},
+	{"undead",	vault_aux_undead,	NULL,			90,	4},
+	{NULL,		NULL,			NULL,			0,	0},
 };
 
 
@@ -1754,15 +1754,15 @@ static void build_type5(int by0, int bx0)
 
 static vault_aux_type pit_types[] =
 {
-	{"orc",				vault_aux_orc,			NULL,						5,		4},
-	{"troll",			vault_aux_troll,		NULL,						20,	4},
-	{"giant",			vault_aux_giant,		NULL,						40,	4},
-	{"lovecraftian",	vault_aux_cthulhu,	NULL,						40,	4},
-	{"clone",			vault_aux_symbol,		vault_prep_symbol,	55,	3},
-	{"chapel",			vault_aux_chapel,		NULL,						55,	1},
-	{"dragon",			vault_aux_dragon,		vault_prep_dragon,	70,	4},
-	{"demon",			vault_aux_demon,		NULL,             	80,	4},
-	{NULL,				NULL,						NULL,						0,		0},
+	{"orc",		vault_aux_orc,		NULL,			7,	4},
+	{"troll",	vault_aux_troll,	NULL,			35,	4},
+	{"giant",	vault_aux_giant,	NULL,			70,	4},
+	{"lovecraftian",vault_aux_cthulhu,	NULL,			90,	4},
+	{"clone",	vault_aux_symbol,	vault_prep_symbol,	85,	3},
+	{"chapel",	vault_aux_chapel,	NULL,			85,	1},
+	{"dragon",	vault_aux_dragon,	vault_prep_dragon,	80,	4},
+	{"demon",	vault_aux_demon,	NULL,   		90,	4},
+	{NULL,		NULL,			NULL,			0,	0},
 };
 
 
