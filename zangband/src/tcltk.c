@@ -10,11 +10,10 @@
  * included in all such copies.
  */
 
-#ifdef PLATFORM_WIN
+#include "angband.h"
+#include "util-dll.h"
 
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
+#ifdef PLATFORM_WIN
 #include <windows.h>
 #include <tk.h>
 #include "tcltk.h"
@@ -199,10 +198,6 @@ void TclTk_Exit(Tcl_Interp *interp)
 #endif /* PLATFORM_WIN */
 
 #ifdef PLATFORM_X11
-#define HAVE_LIMITS_H
-#define HAVE_UNISTD_H
-#define _TCLINTDECLS
-#include <tkInt.h>
 #include <unistd.h>
 #include "tcltk.h"
 

@@ -15,6 +15,32 @@
 
 #include <tk.h>
 
+/* Hack - prevent warnings from tk headers */
+#if defined errno
+#	undef errno
+#	define errno errno_hack
+#endif /* errno */
+
+#ifdef PLATFORM_WIN
+#	include <windows.h>
+#	include <tkWinInt.h>
+#endif /* PLATFORM_WIN */
+
+#ifdef PLATFORM_X11
+#	define HAVE_LIMITS_H
+#	define HAVE_UNISTD_H
+
+/*
+ * Hack - prevent a huge number of compiler warnings when <tclInt.h
+ * is included indirectly below.
+ */
+#	define _TCLINTDECLS
+#	include <tkInt.h>
+#endif /* PLATFORM_X11 */
+
+
+
+
 extern int g_palette_white, g_palette_black;
 #define PALETTE_WHITE g_palette_white
 #define PALETTE_BLACK g_palette_black

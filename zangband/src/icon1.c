@@ -11,8 +11,6 @@
  */
 #include "angband.h"
 #include "tnb.h"
-#define _TCLINTDECLS
-#include <tclInt.h>
 #include "interp.h"
 #include "cmdinfo-dll.h"
 #include "util-dll.h"

@@ -13,22 +13,7 @@
 #include "angband.h"
 #include "tnb.h"
 #include "interp.h"
-
-/* Hack - prevent warnings from tk headers */
-#if defined errno
-#	undef errno
-#	define errno errno_hack
-#endif /* errno */
-
-#ifdef PLATFORM_WIN
-#include <tkWinInt.h>
-#endif
-#ifdef PLATFORM_X11
-#define HAVE_LIMITS_H
-#define HAVE_UNISTD_H
-#define _TCLINTDECLS
-#include <tkInt.h>
-#endif
+#include "util-dll.h"
 #include <tkFont.h>
 #include "tkMenu.h"
 /*

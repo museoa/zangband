@@ -172,17 +172,6 @@ void *Plat_PaletteInit(unsigned char *rgb)
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-/* Hack - prevent warnings from tk headers */
-#if defined errno
-#	undef errno
-#	define errno errno_hack
-#endif /* errno */
-
-
-#define HAVE_LIMITS_H
-#define HAVE_UNISTD_H
-#define _TCLINTDECLS
-#include <tkInt.h>
 #include <tkIntPlatDecls.h>
 
 #include "tcltk.h"
