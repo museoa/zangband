@@ -204,8 +204,10 @@ static int get_coin_type(const monster_race *r_ptr)
  *
  * Note that monsters can now carry objects, and when a monster dies,
  * it drops all of its objects, which may disappear in crowded rooms.
+ *
+ * Hack - monsters only explode if explode is TRUE.
  */
-bool monster_death(int m_idx)
+bool monster_death(int m_idx, bool explode)
 {
 	int i, j, y, x, ny, nx, i2, j2;
 
@@ -257,7 +259,7 @@ bool monster_death(int m_idx)
 	/* Let monsters explode! */
 	for (i = 0; i < 4; i++)
 	{
-		if (r_ptr->blow[i].method == RBM_EXPLODE)
+		if ((r_ptr->blow[i].method == RBM_EXPLODE) && explode)
 		{
 			u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 			int typ = GF_MISSILE;
@@ -673,7 +675,7 @@ bool monster_death(int m_idx)
 	}
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
-	else if (strstr((r_name + r_ptr->name), "Unmaker"))
+	else if (strstr((r_name + r_ptr->name), "Unmaker") && explode)
 	{
 		u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 		(void)project(m_idx, 6, y, x, 100, GF_CHAOS, flg);
@@ -1231,7 +1233,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		gain_exp(new_exp);
 
 		/* Generate treasure */
-		corpse = monster_death(m_idx);
+		corpse = monster_death(m_idx, TRUE);
 
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;

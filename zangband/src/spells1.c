@@ -3201,14 +3201,36 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		{
 			bool sad = FALSE;
 			
+			s16b old_m_d_head = mon_d_head;
+			
 			if (is_pet(m_ptr) && !(m_ptr->ml))
 				sad = TRUE;
-
-			/* Generate treasure, etc */
-			(void)monster_death(c_ptr->m_idx);
-		
-			/* Delete the monster */
-			delete_monster_idx(c_ptr->m_idx);
+			
+			/* Increase the number of dying monsters */
+			mon_d_head++;
+			
+			/* Go back to the start of the queue */
+			if (mon_d_head >= DEATH_MAX) mon_d_head = 0;
+			
+			if (mon_d_head == mon_d_tail)
+			{
+				/*
+				 * We have greater than the maximum number of monsters dying,
+				 * revert to the old number, and do not queue this one.
+				 */
+				mon_d_head = old_m_d_head;
+				
+				/* Hack XXX Die, but do not explode and call project() */
+				monster_death(c_ptr->m_idx, FALSE);
+				
+				/* Delete the monster */
+				delete_monster_idx(c_ptr->m_idx);
+			}
+			else
+			{
+				/* Queue the monster */
+				mon_d_m_idx[old_m_d_head] = c_ptr->m_idx;
+			}			
 
 			/* Give detailed messages if destroyed */
 			if (known && note)
@@ -4977,6 +4999,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 	cave_type *c_ptr;
 
+	/* Are there no monsters queued to die? */
+	bool mon_explode = (mon_d_head == mon_d_tail) ? TRUE : FALSE;
+	
+	
 	/* Hack -- some weapons always stop at monsters */
 	if (typ == GF_ROCKET) flg |= PROJECT_STOP;
 
@@ -5634,6 +5660,42 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		}
 	}
 
+	if (mon_explode)
+	{
+		/*
+		 * Run through the queue of monsters waiting to die,
+		 * calling monster_death() for each.
+		 *
+		 * This prevents chain reactions of explosions from
+		 * causing a stack smash, by only having one level
+		 * of recursion.
+		 *
+		 * Monster_death() might call project() again - but
+		 * if that happens, then mon_explode is FALSE, and
+		 * it will fall back to us to process the monsters
+		 * killed by that explosion.
+		 */
+	
+		while (mon_d_tail != mon_d_head)
+		{
+			/* Generate treasure, etc */
+			(void)monster_death(mon_d_m_idx[mon_d_tail], TRUE);
+			
+			/* Delete the monster */
+			delete_monster_idx(mon_d_m_idx[mon_d_tail]);
+			
+			/*
+			 * Increase mon_d_tail after the death.
+			 * (This means that mon_explode will be FALSE in other
+			 * calls to this function.)
+			 */
+			mon_d_tail++;
+			
+			/* Cycle back to the start */
+			if (mon_d_tail >= DEATH_MAX) mon_d_tail = 0;
+		}
+	}
+	
 	/* Return "something was noticed" */
 	return (notice);
 }

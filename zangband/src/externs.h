@@ -194,6 +194,9 @@ extern s16b temp_x[TEMP_MAX];
 extern s16b lite_n;
 extern s16b lite_y[LITE_MAX];
 extern s16b lite_x[LITE_MAX];
+extern s16b mon_d_head;
+extern s16b mon_d_tail;
+extern s16b mon_d_m_idx[DEATH_MAX];
 extern s16b macro__num;
 extern cptr *macro__pat;
 extern cptr *macro__act;
@@ -1012,7 +1015,7 @@ extern void do_poly_self(void);
 
 /* xtra2.c */
 extern void check_experience(void);
-extern bool monster_death(int m_idx);
+extern bool monster_death(int m_idx, bool explode);
 extern bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note);
 extern void panel_center(void);
 extern bool change_panel(int dy, int dx);

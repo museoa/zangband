@@ -527,7 +527,7 @@
  * Note that the "view radius" will NEVER exceed 20, and even if the "view"
  * was octagonal, we would never require more than 1520 entries in the array.
  */
-#define VIEW_MAX 1536
+#define VIEW_MAX		1536
 
 /*
  * Maximum size of the "temp" array (see "cave.c")
@@ -538,13 +538,19 @@
  * to calculate monster flow.  The larger size is due to use as a circular
  * queue for the fractal caves patch fill routine.
  */
-#define TEMP_MAX 2000
+#define TEMP_MAX		2000
 
 /*
  * Maximum number of squares lit by monsters.
  * (Note that squares far away from the player do not need to be stored.)
  */
-#define LITE_MAX 2500
+#define LITE_MAX		2500
+
+
+/*
+ * Maximum number of monsters that can be exploding at once.
+ */
+#define DEATH_MAX 100
 
 /*
  * Number of keymap modes
