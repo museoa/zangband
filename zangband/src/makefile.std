@@ -198,7 +198,7 @@ cygwin: ANGOBJS += angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
-cygwin: LUA := lua\\
+cygwin: LUA := $(subst /, \, $(LUA))
 cygwin: EXEC := .exe
 
 ##
@@ -269,7 +269,7 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
-dos: LUA := lua\\
+dos: LUA := $(subst /, \, $(LUA))
 dos: EXEC := .exe
 
 ##
@@ -277,7 +277,7 @@ dos: EXEC := .exe
 ##
 ibm: CFLAGS += -DUSE_IBM
 ibm: LIBS := -lpc
-ibm: LUA := lua\\
+ibm: LUA := $(subst /, \, $(LUA))
 ibm: EXEC := .exe
 
 ##
@@ -291,7 +291,7 @@ lcc: RES := $(LCC_PATH)\bin\lrc.exe
 lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
 lcc: ANGOBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
-lcc: LUA := lua\ # Dos has different path seperators
+lcc: LUA := $(subst /, \, $(LUA))
 lcc: EXEC := .exe
 
 ##
