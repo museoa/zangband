@@ -4176,19 +4176,23 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 /*
  * Extract the bonuses for items in the home.
  *
- * in_item is passed in if you want to pretend that in_item is
+ * l_ptr is passed in if you want to pretend that l_ptr is
  *          the only item in the home.
  * no_items is passed in as TRUE if you want to pretend that the
  *          home is empty.
  */
-void borg_notice_home(borg_item *in_item, bool no_items)
+void borg_notice_home(list_item *l_ptr, bool no_items)
 {
+	/* Hack - ignore parameters */
+	(void) l_ptr;
+	(void) no_items;
+
 #if 0
 	/* Notice the home equipment */
-	borg_notice_home_aux1(in_item, no_items);
+	borg_notice_home_aux1(l_ptr, no_items);
 
 	/* Notice the home inventory */
-	borg_notice_home_aux2(in_item, no_items);
+	borg_notice_home_aux2(l_ptr, no_items);
 #endif /* 0 */
 }
 
@@ -4211,7 +4215,7 @@ static s32b borg_power_aux3(void)
 
 	s32b value = 0L;
 
-	borg_item *item = &borg_items[0];
+	list_item *l_ptr;
 
 
 	/* Obtain the "hold" value (weight limit for weapons) */
@@ -4222,33 +4226,33 @@ static s32b borg_power_aux3(void)
 
 	/* Examine current weapon for non-martial artist */
 	if (borg_class != CLASS_MONK ||
-		(borg_class == CLASS_MONK && borg_items[INVEN_WIELD].iqty))
+		(borg_class == CLASS_MONK && equipment[EQUIP_WIELD].number))
 	{
-		item = &borg_items[INVEN_WIELD];
+		l_ptr = &equipment[EQUIP_WIELD];
 
 		/* Calculate "average" damage per "normal" blow  */
 		/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
-		damage = (item->dd * item->ds * 20L);
+		damage = (l_ptr->dd * l_ptr->ds * 20L);
 
 
 		/* Reward "damage" and increased blows per round */
 		value += damage * (borg_skill[BI_BLOWS] + 1);
 
 		/* Reward "bonus to hit" */
-		if (item->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
-			value += ((borg_skill[BI_TOHIT] + item->to_h) * 30L);
+		if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
+			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 30L);
 		else
 			value += ((borg_skill[BI_TOHIT] + 8) * 30L);
 
 		/* Reward "bonus to dam" */
-		value += ((borg_skill[BI_TODAM] + item->to_d) * 30L);
+		value += ((borg_skill[BI_TODAM] + l_ptr->to_d) * 30L);
 
 		/* extra boost for deep dungeon */
 		if (borg_skill[BI_MAXDEPTH] >= 75)
 		{
-			value += ((borg_skill[BI_TOHIT] + item->to_h) * 15L);
+			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 15L);
 
-			value += item->dd * item->ds * 20L * 2 * borg_skill[BI_BLOWS];
+			value += l_ptr->dd * l_ptr->ds * 20L * 2 * borg_skill[BI_BLOWS];
 		}
 
 		/* assume 2x base damage for x% of creatures */
@@ -4332,19 +4336,14 @@ static s32b borg_power_aux3(void)
 	/* Hack -- It is hard to hold a heavy weapon */
 	if (borg_skill[BI_HEAVYWEPON]) value -= 500000L;
 
-	/* HACK -- Borg worships num_blow, even on broken swords. */
-	/* kind 47 is a broken sword usually 1d2 in damage */
-	if (item->kind == 47 || item->kind == 30 ||
-		item->kind == 390) value -= 5000L;
-
 	/*** Analyze bow ***/
 
 	/* Examine current bow */
-	item = &borg_items[INVEN_BOW];
+	l_ptr = &equipment[EQUIP_BOW];
 
 	/* Calculate "average" damage per "normal" shot (times 2) */
-	if (item->to_d > 8 || borg_skill[BI_CLEVEL] < 25)
-		damage = ((my_ammo_sides) + (item->to_d)) * my_ammo_power;
+	if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 25)
+		damage = ((my_ammo_sides) + (l_ptr->to_d)) * my_ammo_power;
 	else
 		damage = (my_ammo_sides + 8) * my_ammo_power;
 
@@ -4352,15 +4351,15 @@ static s32b borg_power_aux3(void)
 	value += (borg_skill[BI_SHOTS] * damage * 9L);
 
 	/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
-	if (item->sval == SV_SLING && !item->xtra_name && my_stat_ind[A_STR] < 14)
+	if (k_info[l_ptr->k_idx].sval == SV_SLING && !l_ptr->xtra_name && my_stat_ind[A_STR] < 14)
 	{
 		value -= 5000L;
 	}
 
 
 	/* Reward "bonus to hit" */
-	if (item->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
-		value += ((borg_skill[BI_TOHIT] + item->to_h) * 7L);
+	if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
+		value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 7L);
 	else
 		value += ((borg_skill[BI_TOHIT] + 8) * 7L);
 
@@ -4368,17 +4367,17 @@ static s32b borg_power_aux3(void)
 	if (borg_class == CLASS_RANGER && my_ammo_tval == TV_ARROW) value += 30000L;
 
 	/* Hack -- It is hard to hold a heavy weapon */
-	if (hold < item->weight / 10) value -= 500000L;
+	if (hold < l_ptr->weight / 10) value -= 500000L;
 
 
 	/*** apw Analyze dragon armour  ***/
 
 	/* Examine current armor */
-	item = &borg_items[INVEN_BODY];
+	l_ptr = &equipment[EQUIP_BODY];
 
-	if (item->tval == TV_DRAG_ARMOR)
+	if (l_ptr->tval == TV_DRAG_ARMOR)
 	{
-		switch (item->sval)
+		switch (k_info[l_ptr->k_idx].sval)
 		{
 			case SV_DRAGON_BLACK:
 			case SV_DRAGON_BLUE:
@@ -4522,9 +4521,9 @@ my_stat_ind[A_INT] * 35000L;
 
 		value += (my_stat_ind[A_CON] * 150L);
 		/* Hack -- Reward hp bonus */
-		/*         This is a bit wierd because we are not really giving a bonus for */
-		/*         what hp you have, but for the 'bonus' hp you get */
-		/*         getting over 500hp is very important. */
+		/*   This is a bit wierd because we are not really giving a bonus for */
+		/*   what hp you have, but for the 'bonus' hp you get */
+		/*   getting over 500hp is very important. */
 		if (bonus_hp < 500)
 			value += bonus_hp * 350L;
 		else
@@ -4750,23 +4749,23 @@ my_stat_ind[A_INT] * 35000L;
 	/*** Penalize armor weight ***/
 	if (my_stat_ind[A_STR] < 15)
 	{
-		if (borg_items[INVEN_BODY].weight > 200)
-			value -= (borg_items[INVEN_BODY].weight - 200) * 15;
-		if (borg_items[INVEN_HEAD].weight > 30)
+		if (equipment[EQUIP_BODY].weight > 200)
+			value -= (equipment[EQUIP_BODY].weight - 200) * 15;
+		if (equipment[EQUIP_HEAD].weight > 30)
 			value -= 250;
-		if (borg_items[INVEN_ARM].weight > 10)
+		if (equipment[EQUIP_ARM].weight > 10)
 			value -= 250;
-		if (borg_items[INVEN_FEET].weight > 50)
+		if (equipment[EQUIP_FEET].weight > 50)
 			value -= 250;
 	}
 
 	/* Compute the total armor weight */
-	cur_wgt += borg_items[INVEN_BODY].weight;
-	cur_wgt += borg_items[INVEN_HEAD].weight;
-	cur_wgt += borg_items[INVEN_ARM].weight;
-	cur_wgt += borg_items[INVEN_OUTER].weight;
-	cur_wgt += borg_items[INVEN_HANDS].weight;
-	cur_wgt += borg_items[INVEN_FEET].weight;
+	cur_wgt += equipment[EQUIP_BODY].weight;
+	cur_wgt += equipment[EQUIP_HEAD].weight;
+	cur_wgt += equipment[EQUIP_ARM].weight;
+	cur_wgt += equipment[EQUIP_OUTER].weight;
+	cur_wgt += equipment[EQUIP_HANDS].weight;
+	cur_wgt += equipment[EQUIP_FEET].weight;
 
 	/* Determine the weight allowance */
 	max_wgt = mp_ptr->spell_weight;
@@ -4786,12 +4785,12 @@ my_stat_ind[A_INT] * 35000L;
 	/* Hack -- most gloves hurt magic for spell-casters */
 	if (borg_class == CLASS_MAGE)
 	{
-		item = &borg_items[INVEN_HANDS];
+		l_ptr = &equipment[EQUIP_HANDS];
 
 		/* Penalize non-usable gloves */
-		if (item->iqty &&
-			(!(item->flags2 & TR2_FREE_ACT)) &&
-			(!((item->flags1 & TR1_DEX) && (item->pval > 0))))
+		if (l_ptr->number &&
+			(!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
+			(!((l_ptr->kn_flags1 & TR1_DEX) && (l_ptr->pval > 0))))
 		{
 			/* Hack -- Major penalty */
 			value -= 275000L;
@@ -4801,43 +4800,17 @@ my_stat_ind[A_INT] * 35000L;
 	/* apw Hack -- most edged weapons hurt magic for priests */
 	if (borg_class == CLASS_PRIEST)
 	{
-		item = &borg_items[INVEN_WIELD];
+		l_ptr = &equipment[EQUIP_WIELD];
 
 		/* Penalize non-blessed edged weapons */
-		if (((item->tval == TV_SWORD) || (item->tval == TV_POLEARM)) &&
-			(!(item->flags3 & TR3_BLESSED)))
+		if (((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM)) &&
+			(!(l_ptr->kn_flags3 & TR3_BLESSED)))
 		{
 			/* Hack -- Major penalty */
 			value -= 75000L;
 		}
 	}
 
-
-	/* HUGE MEGA MONDO HACK! prepare for the big fight */
-	/* go after Morgoth new priorities. */
-	if ((borg_skill[BI_MAXDEPTH] + 1 == 100 || borg_skill[BI_CDEPTH] == 100) &&
-		(!borg_skill[BI_KING]))
-	{
-		/* protect from stat drain */
-		if (borg_skill[BI_SSTR]) value += 35000L;
-		/* extra bonus for spell casters */
-		if (borg_skill[BI_INTMANA] && borg_skill[BI_SINT]) value += 45000L;
-		/* extra bonus for spell casters */
-		if (borg_skill[BI_WISMANA] && borg_skill[BI_SWIS]) value += 35000L;
-		if (borg_skill[BI_SCON]) value += 55000L;
-		if (borg_skill[BI_SDEX]) value += 15000L;
-		if (borg_skill[BI_WS_EVIL]) value += 15000L;
-
-		/* Another bonus for resist nether, poison and base four */
-		if (borg_skill[BI_RNTHR]) value += 15000L;
-		if (borg_skill[BI_RDIS]) value += 15000L;
-
-		/* to protect against summoned baddies */
-		if (borg_skill[BI_RPOIS]) value += 100000L;
-		if (borg_skill[BI_RFIRE] &&
-			borg_skill[BI_RACID] &&
-			borg_skill[BI_RELEC] && borg_skill[BI_RCOLD]) value += 100000L;
-	}
 	/*** Hack -- books ***/
 
 	/* Reward books */
@@ -4890,31 +4863,31 @@ my_stat_ind[A_INT] * 35000L;
 					for (; k < 3 && k < amt_book[realm][book];
 						 k++) value += 2500L;
 			}
-		}						/* book */
-	}							/* Realm */
+		}
+	}
 
-	/* Reward for activatable Artifacts in inventory */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	/* Reward for wielded artifacts with multiple high resists */
+	for (i = 0; i < equip_num; i++)
 	{
 		int multibonus = 0;
 
-		item = &borg_items[i];
+		l_ptr = &equipment[i];
 
 		/* Skip empty items */
-		if (!item->iqty) continue;
+		if (!l_ptr->number) continue;
 
 		/* Good to have one item with multiple high resists */
-		multibonus = (((item->flags2 & TR2_RES_POIS) != 0) +
-					  ((item->flags2 & TR2_RES_LITE) != 0) +
-					  ((item->flags2 & TR2_RES_DARK) != 0) +
-					  ((item->flags2 & TR2_RES_BLIND) != 0) +
-					  ((item->flags2 & TR2_RES_CONF) != 0) +
-					  ((item->flags2 & TR2_RES_SOUND) != 0) +
-					  ((item->flags2 & TR2_RES_SHARDS) != 0) +
-					  ((item->flags2 & TR2_RES_NEXUS) != 0) +
-					  ((item->flags2 & TR2_RES_NETHER) != 0) +
-					  ((item->flags2 & TR2_RES_CHAOS) != 0) +
-					  ((item->flags2 & TR2_RES_DISEN) != 0));
+		multibonus = (((l_ptr->kn_flags2 & TR2_RES_POIS) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_LITE) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_DARK) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_BLIND) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_CONF) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_SOUND) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_SHARDS) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_NEXUS) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_NETHER) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_CHAOS) != 0) +
+					  ((l_ptr->kn_flags2 & TR2_RES_DISEN) != 0));
 
 		if (multibonus >= 2) value += 15000 * multibonus;
 	}
@@ -4922,7 +4895,6 @@ my_stat_ind[A_INT] * 35000L;
 	/* Result */
 	return (value);
 }
-
 
 
 /*
@@ -5322,10 +5294,6 @@ static s32b borg_power_aux4(void)
 
 	/* Hack -- Restore experience */
 	if (amt_fix_exp) value += 500000;
-	if (borg_equips_artifact(ART_LUTHIEN, INVEN_OUTER))
-	{
-		value -= 500000;
-	}
 
 	/*** Enchantment ***/
 
@@ -5346,10 +5314,10 @@ static s32b borg_power_aux4(void)
 
 	/* Reward carrying a shovel if low level */
 	if (borg_skill[BI_MAXDEPTH] <= 54 &&
-		borg_items[INVEN_WIELD].tval != TV_DIGGING &&
+		equipment[EQUIP_WIELD].tval != TV_DIGGING &&
 		amt_digger == 1) value += 5000L;
 	if (amt_digger > 1 ||
-		borg_items[INVEN_WIELD].tval == TV_DIGGING) value -= 100000L;
+		equipment[EQUIP_WIELD].tval == TV_DIGGING) value -= 100000L;
 
 	/*** Hack -- books ***/
 
@@ -5412,12 +5380,16 @@ static s32b borg_power_aux4(void)
 		value -= (borg_skill[BI_ENCUMBERD] * 500L);
 	}
 
-	/* Reward empty slots (up to 5) */
-	k = 1;
-	for (; k < 6; k++)
-		if (!borg_items[INVEN_PACK - k].iqty)
-			value += 400L;
-
+	/* Reward empty slots */
+	if (INVEN_PACK - inven_num < 5)
+	{
+		value += 400L * (INVEN_PACK - inven_num);
+	}
+	else
+	{
+		value += 400L * 5;
+	}
+	
 	/* Return the value */
 	return (value);
 }
