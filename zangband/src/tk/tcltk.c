@@ -15,11 +15,25 @@
 #ifdef PLATFORM_WIN
 #include <windows.h>
 
-#define ALLOW_TK_CONSOLE
+static void WishPanic TCL_VARARGS_DEF(char *,arg1)
+{
+    va_list argList;
+    char buf[1024];
+    char *format;
+    
+    format = TCL_VARARGS_START(char *,arg1,argList);
+    vsprintf(buf, format, argList);
 
-static void	WishPanic _ANSI_ARGS_(TCL_VARARGS(char *,format));
-
-Tcl_Interp *g_interp = NULL;
+    MessageBeep(MB_ICONEXCLAMATION);
+    MessageBox(NULL, buf, "Fatal Error in Angband",
+	    MB_ICONSTOP | MB_OK | MB_TASKMODAL | MB_SETFOREGROUND);
+#ifdef _MSC_VER
+    _asm {
+        int 3
+    }
+#endif
+    ExitProcess(1);
+}
 
 static void CloseStdHandle(DWORD nStdHandle)
 {
@@ -68,18 +82,12 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	/* According to Hobbs, this should come after Tcl_FindExecutable() */
 	interp = Tcl_CreateInterp();
 
-#ifdef PLATFORM_WIN
 	/* XXX Hack -- When run from a BAT file, the input/output doesn't
 	 * go to the Tk Console. */
 	CloseStdHandle(STD_INPUT_HANDLE);
 	CloseStdHandle(STD_OUTPUT_HANDLE);
 	CloseStdHandle(STD_ERROR_HANDLE);
-#endif /* PLATFORM_WIN */
 	
-#ifdef ALLOW_TK_CONSOLE
-	Tk_InitConsoleChannels(interp);
-#endif /* ALLOW_TK_CONSOLE */
-
 	fileName = NULL;
 	if (argc > 1)
 	{
@@ -133,10 +141,6 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	}
 	Tcl_StaticPackage(interp, "Tk", Tk_Init, Tk_SafeInit);
 
-#ifdef ALLOW_TK_CONSOLE
-	Tk_CreateConsoleWindow(interp);
-#endif /* ALLOW_TK_CONSOLE */
-
 	/* Require the same Tcl version */
 	t = Tcl_GetVar(interp, "tcl_patchLevel", TCL_GLOBAL_ONLY);
 	if (!t || strcmp(t, TCL_PATCH_LEVEL))
@@ -155,39 +159,11 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	
 	Tcl_ResetResult(interp);
 
-	g_interp = interp;
-
 	return interp;
 
 error:
 	WishPanic(interp->result);
 	return NULL;
-}
-
-static void WishPanic TCL_VARARGS_DEF(char *,arg1)
-{
-    va_list argList;
-    char buf[1024];
-    char *format;
-    
-    format = TCL_VARARGS_START(char *,arg1,argList);
-    vsprintf(buf, format, argList);
-
-    MessageBeep(MB_ICONEXCLAMATION);
-    MessageBox(NULL, buf, "Fatal Error in Angband",
-	    MB_ICONSTOP | MB_OK | MB_TASKMODAL | MB_SETFOREGROUND);
-#ifdef _MSC_VER
-    _asm {
-        int 3
-    }
-#endif
-    ExitProcess(1);
-}
-
-void TclTk_Exit(Tcl_Interp *interp)
-{
-	Tcl_DeleteInterp(interp);
-	Tcl_Exit(0);
 }
 
 #endif /* PLATFORM_WIN */
@@ -286,8 +262,6 @@ Tcl_Interp *TclTk_Init(int argc, cptr *argv)
     Tcl_DStringInit(&tsdPtr->line);
 	Tcl_ResetResult(interp);
 
-	g_interp = interp;
-
 	return interp;
 
 error:
@@ -297,11 +271,6 @@ error:
 	return NULL;
 }
 
-void TclTk_Exit(Tcl_Interp *interp)
-{
-	Tcl_DeleteInterp(interp);
-	Tcl_Exit(0);
-}
 
 /*
  *----------------------------------------------------------------------

@@ -431,10 +431,10 @@ static void hook_quit(cptr str)
 {
 	(void) str;
 
-	free_icons();
+	Icon_Exit();
 
-	/* Cleanup Tcl and Tk (this exits via Tcl_Exit()) */
-	/* TclTk_Exit(g_interp); */
+	/* Cleanup Tcl and Tk */
+	Tcl_DeleteInterp(g_interp);
 	
 	cleanup_angband();
 }

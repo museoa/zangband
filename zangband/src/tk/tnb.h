@@ -224,7 +224,6 @@ extern int SetArrayValueString(cptr varName, cptr field, cptr value);
 
 /* tcltk.c */
 extern Tcl_Interp *TclTk_Init(int argc, cptr *argv);
-extern void TclTk_Exit(Tcl_Interp *interp);
 
 /* util-tnb.c */
 extern cptr keyword_term_color[];
