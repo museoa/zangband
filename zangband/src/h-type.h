@@ -138,7 +138,7 @@ typedef unsigned long u32b;
 /* Define this for Microsoft Dev Studio C++ 6.0 */
 #ifdef MSDEV
 
-#define ANG_U64B unsigned __int64b
+#define ANG_U64B unsigned __int64
 #define ANG_S64B __int64
 
 #endif /* MSDEV */
