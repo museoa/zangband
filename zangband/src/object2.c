@@ -3735,6 +3735,15 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 	/* Maximal chance of being "great" */
 	if (f2 > 20) f2 = 20;
 
+	/* "Good Luck" mutation */
+	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !rand_int(13))
+	{
+		/* The player is lucky - the item is better than normal */
+		good = TRUE;
+		
+		if (rand_int(2)) great = TRUE;
+	}
+
 
 	/* Assume normal */
 	power = 0;

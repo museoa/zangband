@@ -1853,33 +1853,6 @@ bool artifact_scroll(void)
 
 
 /*
- * Apply good luck to an object
- */
-static void good_luck(object_type *o_ptr)
-{
-	/* Do not bother with unwieldable items */
-	if (wield_slot(o_ptr) == -1) return;
-	
-	/* Objects become better sometimes */
-	if (!rand_int(13))
-	{
-		int number = o_ptr->number;
-
-		bool great = ego_item_p(o_ptr);
-
-		/* Prepare it */
-		object_prep(o_ptr, o_ptr->k_idx);
-
-		/* Restore the number */
-		o_ptr->number = number;
-
-		/* Apply good magic (allow artifacts, good, great if an ego-item, no curse) */
-		apply_magic(o_ptr, dun_level, TRUE, TRUE, great, FALSE);
-	}
-}
-
-
-/*
  * Apply bad luck to an object
  */
 static void bad_luck(object_type *o_ptr)
@@ -1954,12 +1927,6 @@ static void bad_luck(object_type *o_ptr)
  */
 void identify_item(object_type *o_ptr)
 {
-	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) &&
-		 !artifact_p(o_ptr) && !o_ptr->art_name && !object_known_p(o_ptr))
-	{
-		good_luck(o_ptr);
-	}
-
 	if (p_ptr->muta3 & MUT3_BAD_LUCK)
 	{
 		bad_luck(o_ptr);
