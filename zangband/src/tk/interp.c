@@ -492,7 +492,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	static cptr cmdOptions[] = {"ability", "age", "armor_class",
 		"blows_per_round", "died_from",
 		"exp", "food", "gold", "height", "hitpoints",
-		"infravision", "level", "mana", "max_depth", "position",
+		"infravision", "level", "mana", "position",
 		"sex", "shots_per_round", "social_class",
 		"title", "to_dam", "to_hit", "weight",
 		"total_weight", "preserve", "base_name",
@@ -504,7 +504,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	enum {IDX_ABILITY, IDX_AGE, IDX_ARMOR_CLASS,
 		IDX_BLOWS_PER_ROUND, IDX_DIED_FROM,
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HITPOINTS,
-		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_POSITION,
+		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_POSITION,
 		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS,
 		IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
 		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME,
@@ -652,10 +652,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_SetStringObj(resultPtr,
 				format("%d %d", p_ptr->csp, p_ptr->msp), -1);
 			break;
-
-	    case IDX_MAX_DEPTH: /* max_depth */
-			Tcl_SetIntObj(resultPtr, p_ptr->max_depth);
-			break; 
 
 		case IDX_POSITION: /* position */
 			Tcl_SetStringObj(resultPtr, format("%d %d", p_ptr->py, p_ptr->px),

@@ -3058,8 +3058,8 @@ errr file_character(cptr name, bool full)
 
 	if (ironman_nightmare) froff(fff, "\n Nightmare Mode:     ON");
 
-	froff(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
-			50 * p_ptr->max_depth);
+	froff(fff, "\n Recall Depth:       Level %d (%d')\n",
+		 	max_dun_level_reached(), 50 * max_dun_level_reached());
 
 	if (p_ptr->state.noscore)
 		froff(fff, "\n You have done something illegal.");
