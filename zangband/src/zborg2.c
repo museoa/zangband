@@ -1427,7 +1427,7 @@ static int borg_guess_race_name(cptr who)
 		}
 		else
 		{
-			borg_oops_fmt("# Assuming unknown (%s)", who);
+			borg_note_fmt("# Assuming unknown (%s)", who);
 		}
 
 		/* Oops */
@@ -1511,7 +1511,7 @@ static int borg_guess_race_name(cptr who)
 	}
 	else
 	{
-		borg_oops_fmt("# Assuming unknown (%s)", who);
+		borg_note_fmt("# Assuming unknown (%s)", who);
 	}
  
 	/* Oops */

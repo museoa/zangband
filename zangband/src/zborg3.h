@@ -144,6 +144,7 @@ extern borg_mind borg_minds[MINDCRAFT_MAX];
 extern int borg_wield_slot(list_item *item);
 extern int borg_count(int tval, int sval);
 extern list_item *borg_slot(int tval, int sval);
+extern int borg_slot_from(int tval, int sval, int from);
 extern object_kind *borg_get_kind(int tval, int sval);
 extern int look_up_index(list_item *l_ptr);
 extern bool borg_refuel_torch(void);
@@ -156,6 +157,7 @@ extern bool borg_use_unknown(void);
 extern bool borg_quaff_unknown(void);
 extern bool borg_read_unknown(void);
 extern bool borg_read_scroll(int sval);
+extern bool borg_use_item_fail(list_item *l_ptr, bool risky);
 extern bool borg_equips_rod(int sval);
 extern bool borg_zap_rod(int sval);
 extern bool borg_aim_wand(int sval);
@@ -165,11 +167,9 @@ extern bool borg_use_staff_fail(int sval);
 extern bool borg_equips_staff_fail(int sval);
 extern bool borg_activate_artifact(int name1, bool secondary);	/* apw */
 extern bool borg_activate_rand_art(int effect);
-extern bool borg_activate_dragon(int drag_sval);	/* apw */
-extern bool borg_equips_dragon(int drag_sval);	/* apw */
-extern bool borg_activate_ring(int ring_sval);
-extern bool borg_equips_ring(int ring_sval);
+extern bool borg_check_artifact(list_item *l_ptr, bool real_use);
 
+extern int borg_reserve_mana(void);
 extern bool borg_spell_legal(int realm, int book, int what);
 extern bool borg_spell_okay(int realm, int book, int what);
 extern bool borg_spell(int realm, int book, int what);

@@ -193,8 +193,9 @@ bool borg_item_icky(list_item *l_ptr)
 		l_ptr = &equipment[slot];
 
 		/* Is my item an ego or artifact? */
-		if (l_ptr && borg_obj_is_ego_art(l_ptr)) return (TRUE);
+		if (slot != -1 && borg_obj_is_ego_art(l_ptr)) return (TRUE);
 	}
+
 	/* Assume not icky, I should have extra ID for the item */
 	return (FALSE);
 }
@@ -209,9 +210,9 @@ bool borg_use_things(void)
 
 	/* Quaff experience restoration potion */
 	if (bp_ptr->status.fixexp &&
-		(borg_spell(REALM_LIFE, 3, 3) ||
+		(borg_activate_artifact(ART_LUTHIEN, FALSE) ||
+		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
-		 borg_activate_artifact(ART_LUTHIEN, FALSE) ||
 		 borg_quaff_potion(SV_POTION_RESTORE_EXP)))
 	{
 		return (TRUE);
@@ -340,7 +341,8 @@ bool borg_use_things(void)
 			borg_eat_food(SV_FOOD_RATION) ||
 			borg_spell(REALM_SORCERY, 2, 0) ||
 			borg_spell(REALM_LIFE, 0, 7) ||
-			borg_spell(REALM_ARCANE, 2, 7) || borg_spell(REALM_NATURE, 0, 3))
+			borg_spell(REALM_ARCANE, 2, 7) ||
+			borg_spell(REALM_NATURE, 0, 3))
 		{
 			return (TRUE);
 		}
@@ -477,6 +479,8 @@ bool borg_check_lite(void)
 	{
 		/* Check for traps and doors and evil */
 		if (borg_zap_rod(SV_ROD_DETECTION) ||
+			borg_activate_artifact(ART_HOLHENNETH, FALSE) ||
+			borg_activate_artifact(ART_OLORIN, FALSE) ||
 			borg_spell_fail(REALM_ARCANE, 3, 5, 20) ||
 			borg_spell_fail(REALM_NATURE, 1, 2, 20))
 		{
@@ -498,11 +502,13 @@ bool borg_check_lite(void)
 		 (!when_detect_doors || (borg_t - when_detect_doors >= 5))))
 	{
 		/* Check for traps and doors */
-		if (borg_spell_fail(REALM_LIFE, 0, 5, 20) ||
+		if (borg_activate_artifact(ART_THRAIN, FALSE) ||
+			borg_spell_fail(REALM_LIFE, 0, 5, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 2, 20) ||
 			borg_spell_fail(REALM_ARCANE, 1, 0, 20) ||
 			borg_spell_fail(REALM_NATURE, 1, 2, 20) ||
-			borg_racial(RACE_DWARF) || borg_racial(RACE_NIBELUNG))
+			borg_racial(RACE_DWARF) ||
+			borg_racial(RACE_NIBELUNG))
 		{
 			borg_note("# Checking for traps and doors.");
 
@@ -664,7 +670,6 @@ bool borg_check_lite(void)
 		/* Call light */
 		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
 			borg_activate_artifact(ART_ELENDIL, FALSE) ||
-			borg_activate_artifact(ART_THRAIN, FALSE) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
@@ -691,7 +696,8 @@ bool borg_check_lite(void)
 		/* Wizard lite */
 		if (borg_activate_artifact(ART_THRAIN, FALSE) ||
 			borg_spell(REALM_ARCANE, 3, 7) ||
-			borg_spell(REALM_SORCERY, 3, 3) || borg_spell(REALM_NATURE, 3, 5))
+			borg_spell(REALM_SORCERY, 3, 3) ||
+			borg_spell(REALM_NATURE, 3, 5))
 		{
 			borg_note("# Illuminating the dungeon");
 
@@ -792,7 +798,6 @@ bool borg_check_lite_only(void)
 		/* Call light */
 		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
 			borg_activate_artifact(ART_ELENDIL, FALSE) ||
-			borg_activate_artifact(ART_THRAIN, FALSE) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
@@ -1382,11 +1387,11 @@ bool borg_recharging(void)
 		if (!charge) continue;
 
 		/* Attempt to recharge */
-		if (borg_spell(REALM_SORCERY, 0, 7) ||
+		if (borg_activate_artifact(ART_THINGOL, FALSE) ||
 			borg_spell(REALM_ARCANE, 3, 0) ||
 			borg_spell(REALM_CHAOS, 2, 2) ||
 			borg_read_scroll(SV_SCROLL_RECHARGING) ||
-			borg_activate_artifact(ART_THINGOL, FALSE))
+			borg_spell(REALM_SORCERY, 0, 7))
 		{
 			/* Message */
 			borg_note_fmt("Recharging %s", l_ptr->o_name);
@@ -1540,7 +1545,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	borg_keypresses(buf);
 
 	/* Destroy that item */
-	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
+	if (!(KN_FLAG(l_ptr, TR_INSTA_ART)))
 		borg_keypress('k');
 	else
 	{
@@ -2480,7 +2485,7 @@ static bool borg_wear_rings(void)
 		if (KN_FLAG(l_ptr, TR_CURSED)) continue;
 
 		/* skip artifact rings not star id'd  */
-		if (KN_FLAG(l_ptr, TR_INSTA_ART) &&
+		if ((KN_FLAG(l_ptr, TR_INSTA_ART)) &&
 			!borg_obj_known_full(l_ptr)) continue;
 
 		/* Where does it go */

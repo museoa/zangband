@@ -225,6 +225,7 @@ struct borg_ability
 
 	s16b staff_magi;
 	s16b staff_dest;
+	s16b staff_cool;
 	s16b missile;
 	s16b curepois;
 
@@ -249,6 +250,9 @@ struct borg_ability
 	s16b poison;
 	s16b mana;
 	s16b logrus;
+
+	s16b bolt;
+	s16b ball;
 };
 
 /*
@@ -555,8 +559,6 @@ extern s16b amt_food_hical;
 extern s16b amt_slow_poison;
 extern s16b amt_cure_confusion;
 extern s16b amt_cure_blind;
-
-extern s16b amt_cool_staff;	/* holiness-power staff */
 
 extern s16b amt_book[8][4];	/* [realm][sval] */
 

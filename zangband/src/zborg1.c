@@ -266,8 +266,6 @@ s16b amt_add_stat[6];
 s16b amt_fix_stat[7];	/* #7 is to fix all stats */
 s16b amt_fix_exp;
 
-s16b amt_cool_staff;	/* holiness - power staff */
-
 s16b amt_enchant_to_a;
 s16b amt_enchant_to_d;
 s16b amt_enchant_to_h;

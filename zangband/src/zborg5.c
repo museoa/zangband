@@ -3455,11 +3455,11 @@ static s32b borg_power_aux3(void)
 	/*** Penalize various things ***/
 
 	/* Penalize various flags */
-	if (FLAG(bp_ptr, TR_TELEPORT)) value -= 10000L;
+	if (FLAG(bp_ptr, TR_TELEPORT)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 8000L;
-	if (FLAG(bp_ptr, TR_TY_CURSE)) value -= 100000L;
-	if (FLAG(bp_ptr, TR_NO_TELE)) value -= 10000L;
-	if ((FLAG(bp_ptr, TR_NO_MAGIC)) && bp_ptr->realm2) value -= 100000L;
+	if (FLAG(bp_ptr, TR_TY_CURSE)) value -= 1000000L;
+	if (FLAG(bp_ptr, TR_NO_TELE)) value -= 1000000L;
+	if ((FLAG(bp_ptr, TR_NO_MAGIC)) && bp_ptr->realm1) value -= 1000000L;
 
 	/*** Penalize armor weight ***/
 	if (my_stat_ind[A_STR] < 15)
@@ -3646,9 +3646,10 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* if you can digest food */
-	if ((borg_race <= RACE_IMP) || (borg_race >= RACE_SPRITE))
+	if ((borg_race <= RACE_IMP || borg_race >= RACE_SPRITE) &&
+		borg_race != RACE_GHOUL)
 	{
-		/* Prefere to buy HiCalorie foods over LowCalorie */
+		/* Prefer to buy HiCalorie foods over LowCalorie */
 		if (amt_food_hical <= 5) value += amt_food_hical * 50;
 	}
 
@@ -3888,14 +3889,19 @@ static s32b borg_power_aux4(void)
 
 	/*** Various ***/
 
-	/* These staves are great but do not clutter inven with them */
-	/*  -- Reward carrying a staff of holiness/power */
-	if (amt_cool_staff) value += 2500L;
-	value += amt_cool_staff > 3 ? 1500 : 500 * amt_cool_staff;
+	/* Reward carrying a wand or rod with balls */
+	value += 500 * MIN(bp_ptr->able.ball, 10);
 
-	/*  -- Reward carrying a staff of destruction. */
-	if (borg_has[307]) value += 5000L;
-	value += borg_has[307] > 3 ? 600 : 200 * borg_has[307];
+	/* Reward carrying a wand or rod with bolts */
+	value += 50 * MIN(bp_ptr->able.bolt, 40);
+
+	/*  -- Reward carrying a (empty) staff of destr/holiness/power */
+	if (bp_ptr->able.staff_cool) value += 2000L;
+	if (bp_ptr->able.staff_dest) value += 4800L;
+
+	/*  -- Reward the charges a staff of destr/power/holiness. */
+	value += 500 * MIN(bp_ptr->able.staff_cool, 4);
+	value += 200 * MIN(bp_ptr->able.staff_dest, 4);
 
 	/* Hack -- Reward add stat */
 	if (amt_add_stat[A_STR]) value += 50000;

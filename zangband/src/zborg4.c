@@ -475,12 +475,10 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (KN_FLAG(l_ptr, TR_SEARCH)) bp_ptr->skill_sns += l_ptr->pval * 5;
 
 		/* Affect searching frequency (factor of five) */
-		if (KN_FLAG(l_ptr, TR_SEARCH)) bp_ptr->skill_fos +=
-				(l_ptr->pval * 5);
+		if (KN_FLAG(l_ptr, TR_SEARCH)) bp_ptr->skill_fos += l_ptr->pval * 5;
 
 		/* Affect digging (factor of 20) */
-		if (KN_FLAG(l_ptr, TR_TUNNEL)) bp_ptr->skill_dig +=
-				l_ptr->pval * 20;
+		if (KN_FLAG(l_ptr, TR_TUNNEL)) bp_ptr->skill_dig += l_ptr->pval * 20;
 
 		/* Affect speed */
 		if (KN_FLAG(l_ptr, TR_SPEED)) bp_ptr->speed += l_ptr->pval;
@@ -1755,6 +1753,107 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			}
 			break;
 		}
+
+		case SV_ROD_PESTICIDE:
+		case SV_ROD_FIRE_BALL:
+		case SV_ROD_ACID_BALL:
+		case SV_ROD_ELEC_BALL:
+		case SV_ROD_COLD_BALL:
+		case SV_ROD_HAVOC:
+		{
+			bp_ptr->able.ball += 5 * number;
+			break;
+		}
+
+		case SV_ROD_FIRE_BOLT:
+		case SV_ROD_ACID_BOLT:
+		case SV_ROD_ELEC_BOLT:
+		case SV_ROD_COLD_BOLT:
+		case SV_ROD_DRAIN_LIFE:
+		case SV_ROD_TELEPORT_AWAY:
+		case SV_ROD_LITE:
+		{
+			bp_ptr->able.bolt += 5 * number;
+			break;
+		}
+	}
+}
+
+
+/*
+ * Notice wands
+ * This is a bit crude but I was actually busy with something else
+ */
+static void borg_notice_wands(list_item *l_ptr)
+{
+	int sval = k_info[l_ptr->k_idx].sval;
+
+	switch (sval)
+	{
+		/* Ball Wands */
+		case SV_WAND_ACID_BALL:
+		case SV_WAND_ELEC_BALL:
+		case SV_WAND_FIRE_BALL:
+		case SV_WAND_COLD_BALL:
+		case SV_WAND_ANNIHILATION:
+		case SV_WAND_DRAGON_FIRE:
+		case SV_WAND_DRAGON_COLD:
+		case SV_WAND_DRAGON_BREATH:
+		case SV_WAND_ROCKETS:
+		{
+			/* Is this wand identified? */
+			if (borg_obj_known_p(l_ptr))
+			{
+				/* Count the charges */
+				bp_ptr->able.ball += l_ptr->pval;
+			}
+			else
+			{
+				/* Is this wand known to be empty? */
+				if (!strstr(l_ptr->o_name, "{empty}"))
+				{
+					/* Assume 2 charges for an unid'd wand */
+					bp_ptr->able.ball += 2;
+				}
+			}
+
+			break;
+		}
+
+		/* Bolt wands */
+		case SV_WAND_TELEPORT_AWAY:
+		case SV_WAND_LITE:
+		case SV_WAND_DRAIN_LIFE:
+		case SV_WAND_STINKING_CLOUD:
+		case SV_WAND_MAGIC_MISSILE:
+		case SV_WAND_ACID_BOLT:
+		case SV_WAND_FIRE_BOLT:
+		case SV_WAND_COLD_BOLT:
+		{
+			/* Is this wand identified? */
+			if (borg_obj_known_p(l_ptr))
+			{
+				/* Count the charges */
+				bp_ptr->able.bolt += l_ptr->pval;
+			}
+			else
+			{
+				/* Is this wand known to be empty? */
+				if (!strstr(l_ptr->o_name, "{empty}"))
+				{
+					/* Assume 5 charges for an unid'd wand */
+					bp_ptr->able.bolt += 5;
+				}
+			}
+
+			break;
+		}
+
+		/* Don't bother with keeping the rest of the wands */
+		default:
+		{
+			break;
+		}
 	}
 }
 
@@ -1804,6 +1903,15 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 			bp_ptr->able.remove_curse += number * l_ptr->pval;
 			break;
 		}
+		case SV_STAFF_DESTRUCTION:
+		{
+			bp_ptr->able.staff_dest += number * l_ptr->pval;
+
+			/* Add a token charge to keep the staff */
+			if (!bp_ptr->able.staff_dest) bp_ptr->able.staff_dest = 1;
+
+			break;
+		}
 		case SV_STAFF_THE_MAGI:
 		{
 			bp_ptr->able.staff_magi += number * l_ptr->pval;
@@ -1811,13 +1919,21 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		}
 		case SV_STAFF_POWER:
 		{
-			amt_cool_staff += number;
+			bp_ptr->able.staff_cool += number * l_ptr->pval;
+
+			/* Add a token charge to keep the staff */
+			if (!bp_ptr->able.staff_cool) bp_ptr->able.staff_cool = 1;
+
 			break;
 		}
 		case SV_STAFF_HOLINESS:
 		{
-			amt_cool_staff += number;
+			bp_ptr->able.staff_cool += number * l_ptr->pval;
 			bp_ptr->able.heal += number * l_ptr->pval;
+
+			/* Add a token charge to keep the staff */
+			if (!bp_ptr->able.staff_cool) bp_ptr->able.staff_cool = 1;
+
 			break;
 		}
 		case SV_STAFF_LITE:
@@ -1942,6 +2058,13 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		{
 			/* Rods */
 			borg_notice_rods(l_ptr, number);
+			break;
+		}
+
+		case TV_WAND:
+		{
+			/* Wands */
+			borg_notice_wands(l_ptr);
 			break;
 		}
 
@@ -2250,7 +2373,6 @@ static void borg_notice_aux2(void)
 	amt_fix_stat[6] = 0;
 
 	amt_fix_exp = 0;
-	amt_cool_staff = 0;
 	amt_digger = 0;
 
 	/* Reset enchantment */
@@ -2517,7 +2639,8 @@ static void borg_notice_aux2(void)
 	 * Correct the high and low calorie foods for the correct
 	 * races.
 	 */
-	if ((borg_race <= RACE_IMP) || (borg_race >= RACE_SPRITE))
+	if ((borg_race <= RACE_IMP || borg_race >= RACE_SPRITE) &&
+		borg_race != RACE_GHOUL)
 	{
 		bp_ptr->food += amt_food_hical * 5;
 		if (bp_ptr->food <= 30)
@@ -2694,13 +2817,15 @@ void borg_update_frame(void)
 	if (old_depth == 128) old_depth = bp_ptr->depth;
 
 	/* Guess max depth */
-	if (bp_ptr->depth > bp_ptr->max_depth)
+	if (bp_ptr->depth)
 	{
+		/* If the borg is in the dungeon then that is the depth */
 		bp_ptr->max_depth = bp_ptr->depth;
 	}
 	else
 	{
-		bp_ptr->max_depth = 1;
+		/* Otherwise make up something so the borg uses recall scrolls */
+		bp_ptr->max_depth = bp_ptr->lev / 2;
 	}
 
 	/* Hack -- Realms */
@@ -3795,7 +3920,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 				case SV_FOOD_WAYBREAD:
 				case SV_FOOD_RATION:
 				{
-					if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
+					if ((borg_race <= RACE_IMP || borg_race >= RACE_SPRITE) &&
+						borg_race != RACE_GHOUL)
 					{
 						num_food += l_ptr->number;
 					}

@@ -2423,8 +2423,8 @@ void borg_init_9(void)
 	/* We pick up items when we step on them */
 	always_pickup = TRUE;
 
-	/* We specify targets by hand */
-	use_old_target = FALSE;
+	/* We specify targets before casting the spells */
+	use_old_target = TRUE;
 
 	/* We must pick items up without verification */
 	carry_query_flag = FALSE;
@@ -3984,8 +3984,8 @@ void do_cmd_borg(void)
 
 			if (borg_class == CLASS_MINDCRAFTER)
 			{
-				/* Clear the screen */
-				Term_clear();
+				/* Partly clear the screen */
+				clear_region(0, 1, 14);
 
 				ii = 2;
 
@@ -4020,8 +4020,8 @@ void do_cmd_borg(void)
 				borg_magic *as;
 				int book;
 
-				/* Clear the screen */
-				Term_clear();
+				/* Partly clear the screen */
+				clear_region(0, 1, 12);
 
 				ii = 4;
 	
