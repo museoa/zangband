@@ -3201,6 +3201,9 @@ static void dungeon(void)
 		/* Process all of the monsters */
 		process_monsters(100);
 
+		/* Reset monsters */
+		reset_monsters();
+
 		/* Notice */
 		notice_stuff();
 
