@@ -495,10 +495,10 @@ static int project_m_y;
  */
 static bool project_f(int who, int r, int y, int x, int dam, int typ)
 {
-	cave_type       *c_ptr = area(y,x);
+	cave_type       *c_ptr = area(y, x);
 
 	bool obvious = FALSE;
-	bool known = player_has_los_grid(c_ptr);
+	bool known = player_can_see_bold(y, x);
 
 
 	/* XXX XXX XXX */
