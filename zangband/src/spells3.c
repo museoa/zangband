@@ -1917,6 +1917,7 @@ bool mundane_spell(void)
 {
 	int             item;
 	object_type     *o_ptr;
+	object_kind     *k_ptr;
 	cptr            q, s;
 
 
@@ -1937,11 +1938,67 @@ bool mundane_spell(void)
 		o_ptr = &o_list[0 - item];
 	}
 
+	k_ptr = &k_info[o_ptr->k_idx];
+
 	/* Oops */
 	msg_print("There is a bright flash of light!");
 
-	/* Wipe it clean */
-	object_prep(o_ptr, o_ptr->k_idx);
+	/* No discount */
+	o_ptr->discount = 0;
+
+	/* No extra info */
+	o_ptr->xtra1 = 0;
+	o_ptr->xtra2 = 0;
+
+	/* No artifact name (random artifacts) */
+	o_ptr->art_name = 0;      
+
+	/* Not identified yet */
+	o_ptr->ident = 0;
+
+	/* Erase the inscription */
+	o_ptr->inscription = 0;
+
+	/* Erase the "feeling" */
+	o_ptr->feeling = FEEL_NONE;
+
+	/* Default "pval" */
+	o_ptr->pval = k_ptr->pval;
+
+	/* Default weight */
+	o_ptr->weight = k_ptr->weight;
+
+	/* Default magic */
+	o_ptr->to_h = k_ptr->to_h;
+	o_ptr->to_d = k_ptr->to_d;
+	o_ptr->to_a = k_ptr->to_a;
+
+	/* No longer artifact / ego item */
+	o_ptr->name1 = 0;
+	o_ptr->name2 = 0;
+
+	/* Default power */
+	o_ptr->ac = k_ptr->ac;
+	o_ptr->dd = k_ptr->dd;
+	o_ptr->ds = k_ptr->ds;
+
+	/* No artifact powers */
+	o_ptr->art_flags1 = 0;
+	o_ptr->art_flags2 = 0;
+	o_ptr->art_flags3 = 0;
+
+	/* For rod-stacking */
+	if (o_ptr->tval == TV_ROD)
+	{
+		o_ptr->timeout = o_ptr->pval * o_ptr->number;
+		o_ptr->pval = k_ptr->pval * o_ptr->number;
+	}
+
+	/* Hack -- worthless items are always "broken" */
+	if (get_object_cost(o_ptr) <= 0) o_ptr->ident |= (IDENT_BROKEN);
+
+	/* Hack -- cursed items are always "cursed" */
+	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 
 	/* Something happened */
 	return (TRUE);
