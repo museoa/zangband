@@ -3671,7 +3671,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				if (randint1(3) == 1)
 				{
 					msg_print("Your body is twisted by chaos!");
-					(void)gain_random_mutation(0);
+					(void)gain_mutation(0);
 				}
 			}
 			if (!p_ptr->resist_nethr && !p_ptr->resist_chaos)
@@ -3898,61 +3898,49 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
 			if (fuzzy) msg_print("You are hit by a blast from the past!");
 
-#ifdef MUT3_RES_TIME
-			if (p_ptr->muta3 & MUT3_RES_TIME)
+			switch (randint1(10))
 			{
-				dam *= 4;
-				dam /= (randint1(6) + 6);
-				msg_print("You feel as if time is passing you by.");
-			}
-			else
-			{
-#endif /* MUT3_RES_TIME */
-				switch (randint1(10))
+				case 1: case 2: case 3: case 4: case 5:
 				{
-					case 1: case 2: case 3: case 4: case 5:
+					msg_print("You feel life has clocked back.");
+					lose_exp(100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+					break;
+				}
+
+				case 6: case 7: case 8: case 9:
+				{
+					switch (randint1(6))
 					{
-						msg_print("You feel life has clocked back.");
-						lose_exp(100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
-						break;
+						case 1: k = A_STR; act = "strong"; break;
+						case 2: k = A_INT; act = "bright"; break;
+						case 3: k = A_WIS; act = "wise"; break;
+						case 4: k = A_DEX; act = "agile"; break;
+						case 5: k = A_CON; act = "hale"; break;
+						case 6: k = A_CHR; act = "beautiful"; break;
 					}
 
-					case 6: case 7: case 8: case 9:
+					msg_format("You're not as %s as you used to be...", act);
+
+					p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+					if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
+					p_ptr->update |= (PU_BONUS);
+					break;
+				}
+
+				case 10:
+				{
+					msg_print("You're not as powerful as you used to be...");
+
+					for (k = 0; k < A_MAX; k++)
 					{
-						switch (randint1(6))
-						{
-							case 1: k = A_STR; act = "strong"; break;
-							case 2: k = A_INT; act = "bright"; break;
-							case 3: k = A_WIS; act = "wise"; break;
-							case 4: k = A_DEX; act = "agile"; break;
-							case 5: k = A_CON; act = "hale"; break;
-							case 6: k = A_CHR; act = "beautiful"; break;
-						}
-
-						msg_format("You're not as %s as you used to be...", act);
-
 						p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
 						if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
-						p_ptr->update |= (PU_BONUS);
-						break;
 					}
-
-					case 10:
-					{
-						msg_print("You're not as powerful as you used to be...");
-
-						for (k = 0; k < A_MAX; k++)
-						{
-							p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
-							if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
-						}
-						p_ptr->update |= (PU_BONUS);
-						break;
-					}
+					p_ptr->update |= (PU_BONUS);
+					break;
 				}
-#ifdef MUT3_RES_TIME
 			}
-#endif
+
 			take_hit(dam, killer);
 			break;
 		}

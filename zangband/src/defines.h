@@ -256,6 +256,9 @@
 #define REW_SER_MONS    36
 
 /* Chaos mutations */
+#define MUT_SETS_MAX	 3
+#define MUT_PER_SET		32
+
 
 /* "Activatable" mutations must be in MUT1_* */
 #define MUT1_SPIT_ACID                  0x00000001L
@@ -294,7 +297,7 @@
 /* Randomly activating mutations must be MUT2_* */
 #define MUT2_BERS_RAGE                  0x00000001L
 #define MUT2_COWARDICE                  0x00000002L
-#define MUT2_RTELEPORT                  0x00000004L /* Random teleport, instability */
+#define MUT2_RTELEPORT                  0x00000004L /* Random teleport */
 #define MUT2_ALCOHOL                    0x00000008L
 #define MUT2_HALLU                      0x00000010L
 #define MUT2_FLATULENT                  0x00000020L
@@ -361,6 +364,11 @@
 #define MUT3_VULN_ELEM                  0x20000000L
 #define MUT3_MOTION                     0x40000000L
 #define MUT3_GOOD_LUCK                  0x80000000L
+
+/*
+ * The racial powers
+ */
+#define MAX_RACE_POWERS		26
 
 
 /* Monk martial arts... */

@@ -2706,7 +2706,7 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return;
 		
-	(void)gain_random_mutation(0);
+	(void)gain_mutation(0);
 }
 
 

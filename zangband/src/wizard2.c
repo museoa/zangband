@@ -1906,15 +1906,20 @@ void do_cmd_debug(void)
 		case 'l':
 			do_cmd_wiz_learn();
 			break;
+		
+		/* Lose Mutation */
+		case 'L':
+			(void)lose_mutation(p_ptr->command_arg);
+			break;
 
 		/* Magic Mapping */
 		case 'm':
 			map_area();
 			break;
 
-		/* Mutation */
+		/* Gain Mutation */
 		case 'M':
-			(void)gain_random_mutation(p_ptr->command_arg);
+			(void)gain_mutation(p_ptr->command_arg);
 			break;
 
 		/* Specific reward */

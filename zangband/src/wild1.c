@@ -3652,10 +3652,6 @@ static void wild_done(void)
  *
  * Finally towns are placed.
  *
- * Problem: The towns don't take into account the hpl of the wilderness
- * properly yet.  There may need to be another union to store the information
- * as the wildness is being made...
- *
  * This code is incomplete:
  * No specials yet.
  */

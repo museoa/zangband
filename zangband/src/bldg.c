@@ -2015,7 +2015,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 					}
 					else
 					{
-						(void) gain_random_mutation(0);
+						(void) gain_mutation(0);
 					}
 					
 					/* Display messages */

@@ -151,7 +151,7 @@ void check_experience(void)
 		if (level_mutation)
 		{
 			msg_print("You feel different...");
-			(void)gain_random_mutation(0);
+			(void)gain_mutation(0);
 			level_mutation = FALSE;
 		}
 	}
@@ -3331,7 +3331,7 @@ void gain_level_reward(int chosen_reward)
 	{
 		msg_format("%^s rewards you with a mutation!",
 			chaos_patrons[p_ptr->chaos_patron]);
-		(void)gain_random_mutation(0);
+		(void)gain_mutation(0);
 		return;
 	}
 

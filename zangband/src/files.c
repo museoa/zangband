@@ -1787,23 +1787,6 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 		{
 			(*f2) |= TR2_FREE_ACT;
 		}
-
-#ifdef MUT3_SUS_STATS
-		if (p_ptr->muta3 & MUT3_SUS_STATS)
-		{
-			(*f2) |= TR2_SUST_CON;
-			if (p_ptr->lev > 9)
-				(*f2) |= TR2_SUST_STR;
-			if (p_ptr->lev > 19)
-				(*f2) |= TR2_SUST_DEX;
-			if (p_ptr->lev > 29)
-				(*f2) |= TR2_SUST_WIS;
-			if (p_ptr->lev > 39)
-				(*f2) |= TR2_SUST_INT;
-			if (p_ptr->lev > 49)
-				(*f2) |= TR2_SUST_CHR;
-		}
-#endif /* MUT3_SUS_STATS */
 	}
 
 	/* Remove flags that were not in Moria */

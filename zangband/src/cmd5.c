@@ -608,7 +608,7 @@ static void wild_magic(int spell)
 		case 27:
 		case 28:
 		{
-			(void)gain_random_mutation(0);
+			(void)gain_mutation(0);
 			break;
 		}
 		case 29:
@@ -2330,7 +2330,7 @@ static bool cast_trump_spell(int spell, bool success)
 					dummy = 77;
 
 				/* Gain the mutation */
-				if (gain_random_mutation(dummy))
+				if (gain_mutation(dummy))
 					msg_print("You have turned into a Living Trump.");
 			}
 			break;

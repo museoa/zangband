@@ -74,6 +74,8 @@ extern martial_arts ma_blows[MAX_MA];
 extern cptr game_inscriptions[FEEL_MAX];
 extern cptr silly_attacks[MAX_SILLY_ATTACK];
 extern field_action f_action[FIELD_ACTION_TYPES];
+extern mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET];
+extern mutation_type race_powers[MAX_RACE_POWERS];
 
 /* variable.c */
 extern cptr copyright[5];
@@ -467,6 +469,7 @@ extern void do_cmd_use(void);
 
 /* dungeon.c */
 extern void play_game(bool new_game);
+extern void notice_lite_change(object_type *o_ptr);
 extern bool psychometry(void);
 extern void leave_level(int level);
 extern void enter_level(int level);
@@ -1048,13 +1051,17 @@ extern void mindcraft_info(char *p, int power);
 extern void do_cmd_mindcraft(void);
 
 /* mutation.c */
-extern bool gain_random_mutation(int choose_mut);
+extern bool player_has_mut(int mutation);
+extern bool gain_mutation(int choose_mut);
 extern bool lose_mutation(int choose_mut);
 extern void dump_mutations(FILE *OutFile);
 extern void do_cmd_knowledge_mutations(void);
 extern int count_mutations(void);
 extern int calc_mutant_regenerate_mod(void);
-extern void mutation_power_aux(u32b power);
+extern void mutation_power_aux(mutation_type *mut_ptr);
+extern void mutation_random_aux(mutation_type *mut_ptr);
+extern void mutation_effect(void);
+
 
 /* obj_kind.c */
 extern errr k_info_alloc(void);

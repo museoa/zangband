@@ -1757,3 +1757,28 @@ struct high_score
 
 	char how[32];		/* Method of death (string) */
 };
+
+/*
+ * Struct for mutations and racial powers
+ */
+
+typedef struct mutation_type mutation_type;
+
+struct mutation_type
+{
+	u32b which;			/* Actual mutation (mask) */
+
+	cptr desc_text;		/* Text describing mutation */
+	cptr gain_text;		/* Text displayed on gaining the mutation */
+	cptr lose_text;		/* Text displayed on losing the mutation */
+
+	char name[40];		/* Short description (activatable mutations) */
+	int level;			/* Minimum level (activatable mutations) */
+	int cost;			/* Mana/HP Cost (activatable mutations) */
+	int stat;			/* Stat dependency (activatable mutations) */
+	int diff;			/* Difficulty (activatable mutations) */
+	int chance;			/* Chance of occuring (random mutations) / 100 */
+};
+
+
+
