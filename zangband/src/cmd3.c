@@ -1143,7 +1143,7 @@ static cptr ident_info[] =
 	"#:A wall (or secret door)",
 	"$:Treasure (gold or gems)",
 	"%:A vein (magma or quartz)",
-	/* "&:unused", */
+	"&:A chest",
 	"':An open door",
 	"(:Soft armor",
 	"):A shield",
