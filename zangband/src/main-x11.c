@@ -1831,8 +1831,6 @@ static errr Term_xtra_x11_level(int v)
 static errr Term_xtra_x11_react(void)
 {
 	int i;
-
-	return(0);
 	
 	if (Metadpy->color)
 	{

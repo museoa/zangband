@@ -97,7 +97,7 @@ static s16b gamma_helper[256] =
  * 
  * Note gamma goes from 0->256.  The old value of 100 is now 128.
  */
-static void build_gamma_table(byte gamma)
+static void build_gamma_table(int gamma)
 {
 	int i, n;
 	
@@ -120,8 +120,8 @@ static void build_gamma_table(byte gamma)
 		 */
 		
 		n = 1;
-		value = 1 * 256;
-		diff = ((long) gamma_helper[i]) * gamma;
+		value = 256 * 256;
+		diff = ((long) gamma_helper[i]) *  (gamma - 256);
 		
 		while (diff)
 		{
@@ -149,14 +149,14 @@ static void build_gamma_table(byte gamma)
 			 * divided by 256*256 each itteration, to get back to
 			 * the original power series.
 			 */
-			diff = (((diff * gamma_helper[i]) / 256) * gamma) / ((long)(256 * n));
+			diff = (((diff / 256) * gamma_helper[i]) * (gamma - 256)) / (256 * i);
 		}
 		
 		/* 
 		 * Store the value in the table so that the
 		 * floating point pow function isn't needed .
 		 */
-		gamma_table[i] = value / 256;		
+		gamma_table[i] = ((long)(value / 256) * i) / 256;
 	}
 }
 
