@@ -1310,7 +1310,7 @@ F:2,field_action_door_store
 F:18,field_action_isrecharge_tester
 
 # Junk store
-N:136:Junk Store
+N:136:Flea Market
 G:1:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
@@ -1318,7 +1318,7 @@ D:0:0:5:30:10:10:50:8
 F:2,field_action_door_store
 
 # Food store
-N:137:Food Store
+N:137:Grocer
 G:0:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
