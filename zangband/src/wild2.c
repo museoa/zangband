@@ -2103,8 +2103,11 @@ static bool blank_spot(int x, int y, int xsize, int ysize, int town_num, bool to
 	int dist;
 
 	/* Hack - Population check */
-	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
-
+	if (town_num != 1)
+	{
+		if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
+	}
+	
 	for (i = x - 1; i < x + xsize + 2; i++)
 	{
 		for (j = y - 1; j < y + ysize + 2; j++)
@@ -2345,7 +2348,7 @@ byte the_floor(void)
 }
 
 
-static bool create_towns(int xx, int yy)
+static bool create_towns(int *xx, int *yy)
 {
 	int x, y, i;
 	bool first_try = TRUE;
@@ -2365,11 +2368,8 @@ static bool create_towns(int xx, int yy)
 		if (first_try)
 		{
 			/* Try the "easiest" spot in the wilderness */
-			x = xx;
-			y = yy;
-
-			/* Only try once here */
-			first_try = FALSE;
+			x = *xx;
+			y = *yy;
 		}
 		else
 		{
@@ -2382,10 +2382,25 @@ static bool create_towns(int xx, int yy)
 		 * See if a city will fit.
 		 * (Need a 8x8 block free.)
 		 */
-		if (!blank_spot(x, y, 8, 8, place_count, TRUE)) continue;
+		if (!blank_spot(x, y, 8, 8, place_count, TRUE))
+		{
+			/* Need to make town on easiest place */
+			if (first_try) return (FALSE);
+		
+			continue;
+		}
 
-		/* Generate it */
-		if (!create_city(x, y, place_count)) continue;
+		/* Generate it (could use short-circuit here, but is ugly) */
+		if (!create_city(x, y, place_count))
+		{
+			/* Need to make town on easiest place */
+			if (first_try) return (FALSE);
+		
+			continue;
+		}
+		
+		/* We have a town at the easiest spot */
+		first_try = FALSE;
 		
 		/* get wildernesss + place pointers */
 		w_ptr = &wild[y][x].trans;
@@ -2459,6 +2474,9 @@ static bool create_towns(int xx, int yy)
 
 	/* Hack - No current region */
 	set_region(0);
+	
+	*xx = pl_ptr->x;
+	*yy = pl_ptr->y;
 
 	/* Success */
 	return (TRUE);
@@ -2470,7 +2488,7 @@ static bool create_towns(int xx, int yy)
  * at this location in the wilderness?
  * The lower the score, the better the match.
  */
-static long score_dungeon(const wild_gen2_type *w_ptr, const dun_gen_type *d_ptr)
+static long score_dungeon(const wild_gen2_type *w_ptr, const dun_gen_type *d_ptr, int dist)
 {
 	long score = 0, value;
 	
@@ -2486,12 +2504,16 @@ static long score_dungeon(const wild_gen2_type *w_ptr, const dun_gen_type *d_ptr
 	value = w_ptr->law_map - d_ptr->min_level;
 	score += value * value;
 	
+	/* Near dungeons should be easy */
+	value = dist * d_ptr->min_level;
+	score += value * value;
+		
 	return (score);
 }
 
 
 /* Add in dungeons into the wilderness */
-static void create_dungeons(void)
+static void create_dungeons(int xx, int yy)
 {
 	int i, j;
 	
@@ -2576,7 +2598,8 @@ static void create_dungeons(void)
 			/* Get location */
 			w_ptr = &wild[pl_ptr->y][pl_ptr->x].trans;
 			
-			score = score_dungeon(w_ptr, &dungeons[dungeon_list[i]]);
+			score = score_dungeon(w_ptr, &dungeons[dungeon_list[i]],
+									distance(xx, yy, pl_ptr->x, pl_ptr->y));
 			
 			/* Better dungeon? */
 			if ((best == -1) || (score < best_val))
@@ -2615,7 +2638,7 @@ static void create_dungeons(void)
 /*
  * Place the quests on the wilderness
  */
-static void create_quests(void)
+static void create_quests(int xx, int yy)
 {
 	int x, y;
 
@@ -2630,6 +2653,9 @@ static void create_quests(void)
 		/* Get a random position */
 		x = randint0(max_wild);
 		y = randint0(max_wild);
+		
+		/* Not too close to the starting town */
+		if (distance(xx, yy, x, y) < 20) continue;
 	
 		/* Pick quest size / type */
 		pick_wild_quest(&xsize, &ysize, &flags);
@@ -2660,13 +2686,13 @@ bool init_places(int xx, int yy)
 	place_count = 1;
 	
 	/* Create towns */
-	if (!create_towns(xx, yy)) return (FALSE);
+	if (!create_towns(&xx, &yy)) return (FALSE);
 
 	/* Create dungeons */
-	create_dungeons();
+	create_dungeons(xx, yy);
 	
 	/* Create quests */
-	create_quests();
+	create_quests(xx, yy);
 	
 	/* Hack - set global region back to wilderness value */
 	set_region(0);
