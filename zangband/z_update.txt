@@ -2,6 +2,62 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+
+Changes since the release of 2.3.5:
+-Added an invisible wall for nightmare mode.
+-Made cursed items somewhat easier to activate.
+-Escort monsters now have the same alignment as the monster they are
+ escorting.
+-Pits will no longer contain opposite-aligned creatures.
+-Removed the effect of the virtues on player-summoned monsters.
+-Killing evil angels no longer has the same effect on virtues as
+ killing the good angels.
+-Minor changes to some monsters (including making Cyberdemons stupid).
+-Enhanced the available dialogue for vertain speaking monsters.
+-New monsters, observed melee attacks and graphics to be used when the
+ player is hallucinating.
+-Pets should no longer cast ball spells or breathe at monsters if the
+ player is likely to get caught in the ball/breath.
+-Restored the wizard-mode damage message which will now also display
+ the damage for shield bashes.
+-Coordinates are now diplayed when targetting in wizard mode.
+-Pressing '|' on the options screen will save them to "pref-opt.prf".
+-Enhancements and fixes to ,ain-win.c, main-mac.c, main-mac.new and
+ main-mac-carbon.c.
+-Added makefiles for the Cygwin, LCC-32 and Borland command line
+ compilers.
+-Added some Draconian histories (by who?).
+-Fixed a bug that crashed the game when looking at quest entrances
+ (Note:made obsolete by the wilderness changes).
+-Minor fixes to the combat code.
+-Toned down the damage dice of some artifacts.
+-Tweaked the levels at which monks gain additional attacks.
+-Added a new type of bolt (a "steel bolt"). Some missiles are no
+ longer sold in the stores. Missile rarity tweaked.
+-Fixed the problems with too much or too little speed (patch by
+ Mitsuhiro Itakura).
+-Fixed a bug when using a scroll of mundanity on the floor.
+-Fixed the stack overflow in the dungeon creation routines.
+-Fixed a problem with partial knowledge of stats when identifying
+ Patern Weapons.
+-Fixed a bug that allowed the player to attack monsters in walls
+ without using any energy.
+-Fixed a problem with item activations when wielding them from
+ the ground.
+-Caverns are rarer deeper in the dungeon.
+-Completely reworked the wilderness [Steven to provide details].
+-Store memory allocation is now dynamic.
+-Removed a number of unused variables, intializations and some
+ dead code.
+-Throwing potions at monsters will now identify the potion if the
+ player oberves appropriate effects.
+-Monsters now receive AC bonuses and penalties on certain types of
+ terrain.
+-Updated the FAQ.
+-Fishes are now 'l', trees '%' and watery terrain '~'.
+
+
+
 ZAngband 2.3.5:
 -Cleaned up monster fighting messages.
 -Quest entrances show now the name of the quest.
