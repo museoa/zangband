@@ -3093,10 +3093,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					{
 						o_ptr->pval = 2;
 					}
-					else
-					{
-						o_ptr->pval = 1;
-					}
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)
@@ -3121,7 +3117,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_INT:
 				{
 					/* Stat bonus */
-					o_ptr->pval = 1 + m_bonus(5, level);
+					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)
@@ -3143,7 +3139,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_SPEED:
 				{
 					/* Base speed (1 to 10) */
-					o_ptr->pval = randint1(5) + m_bonus(5, level);
+					o_ptr->pval = randint1(o_ptr->pval / 2) +
+						 m_bonus(o_ptr->pval, level);
 
 					/* Super-charge the ring */
 					while (one_in_(2)) o_ptr->pval++;
@@ -3198,7 +3195,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_SEARCHING:
 				{
 					/* Bonus to searching */
-					o_ptr->pval = 1 + m_bonus(5, level);
+					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)
@@ -3237,7 +3234,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					o_ptr->ident |= (IDENT_CURSED);
 
 					/* Penalize */
-					o_ptr->pval = 0 - (1 + m_bonus(5, level));
+					o_ptr->pval = 0 - (1 + m_bonus(-(o_ptr->pval), level));
 
 					break;
 				}
@@ -3253,7 +3250,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 					/* Penalize */
 					o_ptr->to_a = 0 - (5 + m_bonus(10, level));
-					o_ptr->pval = 0 - (1 + m_bonus(5, level));
+					o_ptr->pval = 0 - (1 + m_bonus(-(o_ptr->pval), level));
 
 					break;
 				}
@@ -3361,7 +3358,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_AMULET_WISDOM:
 				case SV_AMULET_CHARISMA:
 				{
-					o_ptr->pval = 1 + m_bonus(2, level);
+					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)
@@ -3406,7 +3403,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				/* Amulet of searching */
 				case SV_AMULET_SEARCHING:
 				{
-					o_ptr->pval = randint1(5) + m_bonus(5, level);
+					o_ptr->pval = randint1(5) + m_bonus(o_ptr->pval, level);
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)
@@ -3440,7 +3437,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					}
 					else
 					{
-						o_ptr->pval = randint1(5) + m_bonus(5, level);
+						o_ptr->pval = randint1(5) + m_bonus(o_ptr->pval, level);
 						o_ptr->to_a = randint1(5) + m_bonus(5, level);
 
 						if (one_in_(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
@@ -3455,7 +3452,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-				/* Amulet of Doom -- always cursed */
+				/* Amulet of Destruction -- always cursed */
 				case SV_AMULET_DOOM:
 				{
 					/* Broken */
@@ -3465,7 +3462,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					o_ptr->ident |= (IDENT_CURSED);
 
 					/* Penalize */
-					o_ptr->pval = 0 - (randint1(5) + m_bonus(5, level));
+					o_ptr->pval = 0 - (randint1(5) + m_bonus(-(o_ptr->pval), level));
 					o_ptr->to_a = 0 - (randint1(5) + m_bonus(5, level));
 
 					break;
