@@ -322,20 +322,24 @@ static void random_misc(object_type *o_ptr)
 	}
 }
 
-static void random_curse(object_type *o_ptr)
+static void random_curse(object_type *o_ptr, bool evil)
 {
-	switch (randint1(13))
+	switch (randint1(evil ? 26 : 16))
 	{
 		case 1:
+		case 17:
 			o_ptr->flags4 |= TR4_HURT_ACID;
 			break;
 		case 2:
+		case 18:
 			o_ptr->flags4 |= TR4_HURT_ELEC;
 			break;
 		case 3:
+		case 19:
 			o_ptr->flags4 |= TR4_HURT_FIRE;
 			break;
 		case 4:
+		case 20:
 			o_ptr->flags4 |= TR4_HURT_COLD;
 			break;
 		case 5:
@@ -352,6 +356,7 @@ static void random_curse(object_type *o_ptr)
 			o_ptr->flags4 |= TR4_SLOW_HEAL;
 			break;
 		case 10:
+		case 21:
 			o_ptr->flags4 |= TR4_DRAIN_STATS;
 			break;
 		case 11:
@@ -363,19 +368,19 @@ static void random_curse(object_type *o_ptr)
 			o_ptr->flags4 |= TR4_CANT_EAT;
 			break;
 		case 15:
-			o_ptr->flags3 |= TR3_DRAIN_EXP;
-			break;
 		case 16:
-		case 17:
+			o_ptr->flags3 |= TR3_CURSED;
+			break;
+		case 22:
+		case 23:
 			o_ptr->flags3 |= TR3_TELEPORT;
 			break;
-		case 18:
-		case 19:
-			o_ptr->flags4 |= TR4_AUTO_CURSE;
+		case 24:
+			o_ptr->flags3 |= TR3_DRAIN_EXP;
 			break;
-		case 20:
-		case 21:
-			o_ptr->flags4 |= TR4_SLOW_HEAL;
+		case 25:
+		case 26:
+			o_ptr->flags3 |= TR3_TY_CURSE;
 			break;
 	}
 }
@@ -1309,7 +1314,7 @@ static void curse_artifact(object_type *o_ptr)
 	o_ptr->flags3 |= (TR3_HEAVY_CURSE | TR3_CURSED);
 
 	for (i = rand_range(2, 5); i > 0; --i)
-		random_curse(o_ptr);
+		random_curse(o_ptr, TRUE);
 
 	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
 		o_ptr->flags3 |= TR3_NO_MAGIC;
@@ -1478,7 +1483,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	total_flags = flag_cost(o_ptr, o_ptr->pval);
 	if (one_in_(13))
 	{
-		random_curse(o_ptr);
+		random_curse(o_ptr, FALSE);
 		total_flags = flag_cost(o_ptr, o_ptr->pval);
 	}
 
@@ -1487,12 +1492,12 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	{
 		if (total_flags >= target_flags * 2 && one_in_(2))
 		{
-			random_curse(o_ptr);
+			random_curse(o_ptr, FALSE);
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
 		}
 		if (total_flags >= target_flags * 3 && !one_in_(WEIRD_LUCK))
 		{
-			random_curse(o_ptr);
+			random_curse(o_ptr, (one_in_(3) ? TRUE : FALSE));
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
 		}
 	}
