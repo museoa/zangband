@@ -1292,6 +1292,7 @@ static void display_player_abilities(void)
 	int         muta_att = 0;
 	long		avgdam;
 	u32b            f1, f2, f3;
+	int		energy_fire = 100;
 
 	object_type		*o_ptr;
 
@@ -1310,6 +1311,57 @@ static void display_player_abilities(void)
 	o_ptr = &inventory[INVEN_BOW];
 	tmp = p_ptr->to_h + o_ptr->to_h;
 	xthb = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
+	
+	/* If the player is wielding one? */
+	if (o_ptr->k_idx)
+	{
+		/* Analyze the launcher */
+		switch (o_ptr->sval)
+		{
+			/* Sling and ammo */
+			case SV_SLING:
+			{
+				energy_fire = 50;
+				break;
+			}
+
+			/* Short Bow and Arrow */
+			case SV_SHORT_BOW:
+			{
+				energy_fire = 100;
+				break;
+			}
+
+			/* Long Bow and Arrow */
+			case SV_LONG_BOW:
+			{
+				energy_fire = 100;
+				break;
+			}
+		
+			/* Light Crossbow and Bolt */
+			case SV_LIGHT_XBOW:
+			{
+				energy_fire = 120;
+				break;
+			}
+
+			/* Heavy Crossbow and Bolt */
+			case SV_HEAVY_XBOW:
+			{		
+				if (p_ptr->stat_use[A_DEX] >= 16)
+				{
+					energy_fire = 150;
+				}
+				else
+				{
+					/* players with low dex will take longer to load */
+					energy_fire = 200;
+				}
+			}
+			break;
+		}
+	}
 
 
 	/* Average damage per round */
@@ -1373,7 +1425,10 @@ static void display_player_abilities(void)
 		put_str(format("%d+%d", p_ptr->num_blow, muta_att), 16, COL_SKILLS3 + WID_SKILLS);
 
 	put_str("Shots/Round :", 17, COL_SKILLS3);
-	put_str(format("%d", p_ptr->num_fire), 17, COL_SKILLS3 + WID_SKILLS);
+	
+	/* Calculate shots (rounded) */
+	put_str(format("%d", p_ptr->num_fire * 100 + (energy_fire / 2)
+		/ energy_fire), 17, COL_SKILLS3 + WID_SKILLS);
 
 	put_str("Avg.Dam./Rnd:", 18, COL_SKILLS3);
 
