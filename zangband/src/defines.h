@@ -3279,6 +3279,25 @@
     ((cave[Y][X].info & (CAVE_VIEW)) != 0)
 
 
+/*
+ * Is the monster a pet of the player?
+ */
+#define is_pet(T) \
+    ((bool)((T)->smart & SM_PET))
+
+/*
+ * Is the monster friendly toward the player?
+ */
+#define is_friendly(T) \
+    ((bool)((T)->smart & SM_FRIENDLY))
+
+
+/*
+ * Is the monster hostile toward the player?
+ */
+#define is_hostile(T) \
+    ((bool)(!(((T)->smart & SM_PET)) || ((T)->smart & SM_FRIENDLY)))
+
 
 
 /*

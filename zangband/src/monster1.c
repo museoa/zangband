@@ -1719,42 +1719,15 @@ monster_hook_type get_monster_hook2(int y, int x)
 }
 
 
-bool is_friendly(monster_type *m_ptr)
-{
-	if (m_ptr->smart & SM_FRIENDLY)
-		return (TRUE);
-	else
-		return (FALSE);
-}
-
 void set_friendly(monster_type *m_ptr)
 {
 	m_ptr->smart |= SM_FRIENDLY;
-}
-
-bool is_pet(monster_type *m_ptr)
-{
-	if (m_ptr->smart & SM_PET)
-		return (TRUE);
-	else
-		return (FALSE);
 }
 
 
 void set_pet(monster_type *m_ptr)
 {
 	m_ptr->smart |= SM_PET;
-}
-
-/*
- * Is the monster friendly or a pet?
- */
-bool is_hostile(monster_type *m_ptr)
-{
-	if (is_friendly(m_ptr) || is_pet(m_ptr))
-		return (FALSE);
-	else
-		return (TRUE);
 }
 
 
