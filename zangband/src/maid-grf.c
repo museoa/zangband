@@ -788,6 +788,11 @@ void do_cmd_view_map(void)
 
 		/* Direction */
 		int d;
+		
+		wild_done_type *w_ptr;
+		
+		cptr town_name;
+		int town_name_len;
 
 		/* No offset yet */
 		x = 0;
@@ -807,7 +812,19 @@ void do_cmd_view_map(void)
 			put_fstr(COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1,
 						"Move around, or hit any other key to continue.");
 
-			/* Hilite the player */
+			w_ptr = &wild[y + py / WILD_BLOCK_SIZE][x + px / WILD_BLOCK_SIZE].done;
+
+			/* Show the town name, if it exists */
+			if (w_ptr->place)
+			{
+				town_name = place[w_ptr->place].name;
+				town_name_len = strlen(town_name);
+			
+				/* Display it */
+				put_fstr(COL_MAP + (wid - COL_MAP - town_name_len) / 2, 0, town_name);
+			}
+
+			/* Show the cursor */
 			Term_gotoxy(cx, cy);
 
 			/* Draw it */
@@ -1981,8 +1998,6 @@ void prt_map(void)
 	byte *pta;
 	char *ptc;
 	
-	map_block *mb_ptr;
-
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
