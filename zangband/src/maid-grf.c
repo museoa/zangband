@@ -322,10 +322,10 @@ map_info_hook_type set_map_hook(map_info_hook_type hook_func)
 {
 	/* Save the original hook */
 	map_info_hook_type temp = map_info_hook;
-	
+
 	/* Set the hook */
 	map_info_hook = hook_func;
-	
+
 	/* Return the old hook for chaining */
 	return (temp);
 }
@@ -341,10 +341,10 @@ map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func)
 {
 	/* Save the original hook */
 	map_erase_hook_type temp = map_erase_hook;
-	
+
 	/* Set the hook */
 	map_erase_hook = hook_func;
-	
+
 	/* Return the old hook for chaining */
 	return (temp);
 }
@@ -357,16 +357,16 @@ map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func)
 void init_overhead_map(void)
 {
 	int i, j;
-	
+
 	/* Do not initialize twice */
 	if (map_init) return;
-	
+
 	/* Make the list of pointers to blocks */
 	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr);
-	
+
 	/* Refcount for cache blocks */
 	C_MAKE(map_cache_refcount, MAP_CACHE, byte);
-	
+
 	/* Cache block locations */
 	C_MAKE(map_cache_x, MAP_CACHE, int);
 	C_MAKE(map_cache_y, MAP_CACHE, int);
@@ -383,7 +383,7 @@ void init_overhead_map(void)
 			C_MAKE(map_cache[i][j], WILD_BLOCK_SIZE, map_block);
 		}
 	}
-	
+
 	/* Allocate the overhead map itself */
 	C_MAKE(map_grid, WILD_SIZE, int *);
 	C_MAKE(map_refcount, WILD_SIZE, byte *);
@@ -394,7 +394,7 @@ void init_overhead_map(void)
 		C_MAKE(map_grid[i], WILD_SIZE, int);
 		C_MAKE(map_refcount[i], WILD_SIZE, byte);
 	}
-	
+
 	/* The map exists */
 	map_init = TRUE;
 }
@@ -405,13 +405,13 @@ void init_overhead_map(void)
 void del_overhead_map(void)
 {
 	int i, j;
-	
+
 	/* Do not remove twice */
 	if (!map_init) return;
-	
+
 	/* Free refcount for cache blocks */
 	FREE(map_cache_refcount);
-	
+
 	/* Cache block locations */
 	FREE(map_cache_x);
 	FREE(map_cache_y);
@@ -424,25 +424,25 @@ void del_overhead_map(void)
 		{
 			FREE(map_cache[i][j]);
 		}
-		
+
 		/* Free block */
 		FREE(map_cache[i]);
 	}
-	
+
 	/* Free the list of pointers to blocks */
 	FREE(map_cache);
-	
+
 	for (i = 0; i < WILD_SIZE; i++)
 	{
 		/* Free one row of the wilderness */
 		FREE(map_grid[i]);
 		FREE(map_refcount[i]);
 	}
-	
+
 	/* Free the overhead map itself */
 	FREE(map_grid);
 	FREE(map_refcount);
-	
+
 	/* The map no longer exists */
 	map_init = FALSE;
 }
@@ -454,7 +454,7 @@ void del_overhead_map(void)
 static void clear_map(void)
 {
 	int i, j;
-	
+
 	/* Erase the map */
 	for (i = 0; i < WILD_SIZE; i++)
 	{
@@ -462,18 +462,18 @@ static void clear_map(void)
 		{
 			/* Not referenced */
 			map_refcount[i][j] = 0;
-			
+
 			/* Hack - we don't need to do this */
 			/* map_grid[i][j] = -1; */
 		}
 	}
-	
+
 	/* Erase the cache */
 	for (i = 0; i < MAP_CACHE; i++)
 	{
 		map_cache_refcount[i] = 0;
 	}
-	
+
 	/* Player doesn't have a position */
 	player_x = 0;
 	player_y = 0;
@@ -486,16 +486,16 @@ static void clear_map(void)
 static void clear_block(int block)
 {
 	int i, j;
-	
+
 	map_block *mb_ptr;
-	
+
 	/* Wipe each square */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			mb_ptr = &map_cache[block][i][j];
-			
+
 			(void)WIPE(mb_ptr, map_block);
 		}
 	}
@@ -510,22 +510,22 @@ static int get_empty_block(void)
 	int i;
 	int dist, best_dist = 0;
 	int best_block = 0;
-	
+
 	int px, py;
-		
+
 	/* Get player block location */
 	px = player_x / 16;
 	py = player_y / 16;
-	
+
 	/* Scan for a used but out of los block */
 	for (i = 0; i < MAP_CACHE; i++)
 	{
 		/* Get block out of los */
 		if (map_cache_refcount[i]) continue;
-		
+
 		/* Get rough dist from player */
 		dist = ABS(map_cache_x[i] - px) + ABS(map_cache_y[i] - py);
-		
+
 		/* Save furthest block */
 		if (dist > best_dist)
 		{
@@ -533,10 +533,10 @@ static int get_empty_block(void)
 			best_block = i;
 		}
 	}
-	
+
 	/* Erase the block */
 	clear_block(best_block);
-	
+
 	/* Return the furthest unused block from the player */
 	return (best_block);
 }
@@ -547,7 +547,7 @@ static int get_empty_block(void)
  */
 bool map_in_bounds(int x, int y)
 {
-	return (map_refcount[y  / 16][x  / 16] ? TRUE : FALSE);
+	return (map_refcount[y / 16][x / 16] ? TRUE : FALSE);
 }
 
 
@@ -558,21 +558,21 @@ static void save_map_location(int x, int y, term_map *map)
 {
 	map_blk_ptr mbp_ptr;
 	map_block *mb_ptr;
-	
+
 	int x1 = x / WILD_BLOCK_SIZE;
 	int y1 = y / WILD_BLOCK_SIZE;
-	
+
 	int block_num;
-	
+
 	/* Does the location exist? */
 	if (!map_in_bounds(x, y))
 	{
 		/* Create a new block there */
-		block_num = get_empty_block();	
-	
+		block_num = get_empty_block();
+
 		/* Set this block up */
 		map_refcount[y1][x1] = 0;
-		
+
 		mbp_ptr = map_cache[block_num];
 
 		/* Link to the map */
@@ -583,9 +583,9 @@ static void save_map_location(int x, int y, term_map *map)
 		block_num = map_grid[y1][x1];
 		mbp_ptr = map_cache[block_num];
 	}
-	
+
 	mb_ptr = &mbp_ptr[y & 15][x & 15];
-	
+
 	/* Increment refcount depending on visibility */
 	if (map->flags & MAP_SEEN)
 	{
@@ -601,21 +601,22 @@ static void save_map_location(int x, int y, term_map *map)
 		if (mb_ptr->flags & MAP_SEEN)
 		{
 			/* Paranoia */
-			if (!map_cache_refcount[block_num]) quit("Decrementing invalid overhead map loc");
-			
+			if (!map_cache_refcount[block_num])
+				quit("Decrementing invalid overhead map loc");
+
 			map_cache_refcount[block_num]--;
 		}
 	}
-	
+
 	/* Remember info by calling hook */
 	if (map_info_hook)
 	{
 		map_info_hook(mb_ptr, map);
 	}
-	
+
 	/* Save the flags */
 	mb_ptr->flags = map->flags;
-	
+
 	/* XXX XXX Hack */
 	player_x = p_ptr->px;
 	player_y = p_ptr->py;
@@ -628,7 +629,7 @@ static void save_map_location(int x, int y, term_map *map)
 map_block *map_loc(int x, int y)
 {
 	return (&map_cache[map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]]
-				[y & 15][x & 15]);
+			[y & 15][x & 15]);
 }
 
 
@@ -654,7 +655,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 
 	/* Paranoia */
 	if (!map_init) return;
-	
+
 	/* clear map info */
 	(void)WIPE(&map, term_map);
 
@@ -719,7 +720,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	{
 		map.flags = glow ? MAP_GLOW : 0;
 	}
-	
+
 	/* Save location */
 	map.x = x;
 	map.y = y;
@@ -735,10 +736,10 @@ void Term_erase_map(void)
 {
 	/* Paranoia */
 	if (!map_init) return;
-	
+
 	/* Notify erasure of the map */
 	if (map_erase_hook) map_erase_hook();
-	
+
 	/* Actually clear the map */
 	clear_map();
 }

@@ -75,10 +75,10 @@ struct term_map
 	s16b monster;
 	s16b field;
 	byte terrain;
-	
+
 	/* Player-known flags */
 	byte flags;
-	
+
 	/* Location */
 	u16b x;
 	u16b y;
@@ -106,19 +106,19 @@ struct map_block
 
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
-	byte info;		/* info flags */
-	byte xtra;		/* search count */
-	
-	byte flow;		/* "flow" data */
-	byte cost;		/* "cost" data */
-	
-	byte kill;		/* Entry into "kill" list */
+	byte info;	/* info flags */
+	byte xtra;	/* search count */
+
+	byte flow;	/* "flow" data */
+	byte cost;	/* "cost" data */
+
+	byte kill;	/* Entry into "kill" list */
 #endif /* ALLOW_BORG */
 };
 
 typedef map_block **map_blk_ptr;
 
-typedef void (*map_info_hook_type)(map_block *mb_ptr, term_map *map);
+typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map);
 typedef errr (*map_erase_hook_type) (void);
 
 #endif /* TERM_USE_MAP */

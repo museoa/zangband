@@ -101,6 +101,12 @@
 ./anindent load.c
 ./anmerge load.c
 
+./anindent maid-grf.c
+./anmerge maid-grf.c
+
+./anindent maid-grf.h
+./anmerge maid-grf.h
+
 ./anindent main.c
 ./anmerge main.c
 
