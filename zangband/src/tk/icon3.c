@@ -1815,12 +1815,12 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 {
 	static cptr cmdOption[] = {"createtype", "count",
 		"gettypes", "validate", "size", "ascii",
-		"gamma", "makeicon", "depth",
+		"makeicon", "depth",
 		"rle", "height", "width", "duplicate",
 		"transparent", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
-		IDX_GAMMA, IDX_MAKEICON, IDX_DEPTH,
+		IDX_MAKEICON, IDX_DEPTH,
 		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE,
 		IDX_TRANSPARENT} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -2105,100 +2105,6 @@ wrongCreateArgs:
 
 		case IDX_ASCII: /* ascii */
 			return objcmd_ascii(dummy, interp, objc - 1, objv + 1);
-
-		case IDX_GAMMA: /* gamma */
-		{
-			double gamma;
-			int i, j, first, last;
-			TintTable table;
-
-			if (objc < 4 || objc > 5)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type gamma ?index?");
-				return TCL_ERROR;
-			}
-
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the desired gamma value */
-			if (Tcl_GetDoubleFromObj(interp, objv[3], &gamma) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the icon index */
-			if (objc == 5)
-			{
-				if (Tcl_GetIntFromObj(interp, objv[4], &first) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-
-				/* And the first shall be last */
-				last = first;
-			}
-			else
-			{
-				first = 0;
-				last = iconDataPtr->icon_count - 1;
-			}
-
-			/* Aaargh! */
-			if (iconDataPtr->depth != 8)
-				break;
-
-			/* Initialize the 256-color gamma-corrected tint table */
-			Colormap_GammaTable(gamma, table);
-
-			/* Transparent */
-			if (iconDataPtr->rle_data)
-			{
-				for (i = first; i <= last; i++)
-				{
-					IconPtr rlePtr = iconDataPtr->rle_data +
-						iconDataPtr->rle_offset[i];
-
-					/* Apply gamma-correction */
-					while (1)
-					{
-						int trans, opaq;
-						trans = rlePtr[0];
-						opaq = rlePtr[1];
-						if (!trans && !opaq)
-							break;
-						rlePtr += 2;
-						for (j = 0; j < opaq; j++)
-						{
-							rlePtr[j] = table[rlePtr[j]];
-						}
-						rlePtr += opaq;
-					}
-				}
-			}
-
-			/* Unmasked */
-			else
-			{
-				/* Check each icon */
-				for (i = first; i <= last; i++)
-				{
-					/* Access the icon */
-					IconPtr iconPtr = iconDataPtr->icon_data + i * iconDataPtr->length;
-
-					/* Gamma-correct each byte */
-					for (j = 0; j < iconDataPtr->length; j++)
-					{
-						/* Apply gamma-correction */
-						iconPtr[j] = table[iconPtr[j]];
-					}
-				}
-			}
-			break;
-		}
 
 		case IDX_MAKEICON: /* makeicon */
 		{		
@@ -2726,9 +2632,5 @@ void Icon_Exit(Tcl_Interp *interp)
 			Tcl_Free((void *) iconDataPtr->rle_len);
 			Tcl_Free((void *) iconDataPtr->rle_bounds);
 		}
-
-		/* Help the memory debugger */
-		Tcl_Free((void *) iconDataPtr->gamma[0]);
-		Tcl_Free((void *) iconDataPtr->gamma[1]);
 	}
 }

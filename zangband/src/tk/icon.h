@@ -49,7 +49,6 @@ typedef struct t_icon_data {
 	int icon_count; /* Number of icons */
 	Tk_Font font; /* Font for ascii icons */
 	int *char_table; /* Table of chars for ascii icons */
-	unsigned char *gamma[2]; /* Per-icon gamma for dark_data. Value 0-200 */
 
 	IconPtr rle_data; /* Address of RLE data */
 	long *rle_offset; /* Per-icon offset into RLE data */

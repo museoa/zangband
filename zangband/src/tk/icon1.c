@@ -587,7 +587,6 @@ void init_palette(void)
 	{
 		g_darken[i].brightness = 0;
 		g_darken[i].contrast = 0;
-		g_darken[i].gamma = 1.0;
 		Colormap_One2OneTable(g_darken[i].table);
 	}
 	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
