@@ -964,7 +964,7 @@ static void prt_stun(void)
  *
  * The "monster health bar" provides visual feedback on the "health"
  * of the monster currently being "tracked".  There are several ways
- * to "track" a monster, including targetting it, attacking it, and
+ * to "track" a monster, including targeting it, attacking it, and
  * affecting it (and nobody else) with a ranged attack.
  *
  * Display the monster health bar (affectionately known as the

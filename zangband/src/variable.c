@@ -365,7 +365,7 @@ s16b py;
 s16b px;
 
 /*
- * Targetting variables
+ * Targeting variables
  */
 s16b target_who;
 s16b target_col;
