@@ -21,7 +21,12 @@
 #   v = new version number (post-checkin)
 #
 # For example:
-DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
+#DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) | mail scarblac
+
+#CVSROOT $CVSROOT/CVSROOT/syncmail %{sVv} rr9@angband.org
+
+#DEFAULT $CVSROOT/CVSROOT/syncmail %{sVv} zangband-checkins@lists.sourceforge.net
+
