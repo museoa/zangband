@@ -957,7 +957,8 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 	static cptr commandNames[] = {"caveyx", "center", "configure",
 		"wipe", "bounds", "visible", "hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CONFIGURE,
-		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_HITTEST} option;
+		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_HITTEST};
+	int option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
     Tcl_Obj *objPtr;
@@ -973,7 +974,7 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 	}
 
 	result = Tcl_GetIndexFromObj(interp, objv[1], commandNames,
-		"option", 0, (int *) &option);
+		"option", 0, &option);
 	if (result != TCL_OK)
 	{
 		return result;

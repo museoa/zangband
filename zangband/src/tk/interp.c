@@ -512,7 +512,8 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		IDX_COMMAND_REP, IDX_RUNNING, IDX_PRAYER_OR_SPELL, IDX_HEALTH_WHO,
 		IDX_MONSTER_RACE_IDX, IDX_LIFE_RATING,
 		IDX_PETS, IDX_REALM1, IDX_REALM2, IDX_PATRON
-		} option;
+		};
+	int option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -546,7 +547,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 	/* Get requested option */
     if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
+		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -1032,7 +1033,8 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"wild_name", NULL};
-	enum {IDX_WILD_NAME} option;
+	enum {IDX_WILD_NAME};
+	int option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
     if (objC < 2)
@@ -1042,7 +1044,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
     }
 
     if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
+		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -1106,7 +1108,8 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 
 	static cptr cmdOptions[] = {"find", "memory",
 		NULL};
-	enum {IDX_FIND, IDX_MEMORY} option;
+	enum {IDX_FIND, IDX_MEMORY};
+	int option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -1133,7 +1136,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	}
 
 	if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
+		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -1304,7 +1307,8 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"abort", "tkdir" "version", NULL};
-	enum {IDX_ABORT, IDX_TKDIR, IDX_VERSION} option;
+	enum {IDX_ABORT, IDX_TKDIR, IDX_VERSION};
+	int option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -1315,7 +1319,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	}
 
 	if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
+		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -1467,9 +1471,8 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	static cptr cmdOptions[] = {
 		"total_weight", "weight_limit",
 		NULL};
-	enum {
-		IDX_TOTAL_WEIGHT, IDX_WEIGHT_LIMIT
-	} option;
+	enum {IDX_TOTAL_WEIGHT, IDX_WEIGHT_LIMIT};
+	int option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	int i;
@@ -1481,7 +1484,7 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     }
 
     if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
+		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -1566,7 +1569,8 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOption[] = {"color", "count", "get", NULL};
-	enum {IDX_COLOR, IDX_COUNT, IDX_GET} option;
+	enum {IDX_COLOR, IDX_COUNT, IDX_GET};
+	int option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	int i, k;
@@ -1579,7 +1583,7 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
     }
 
     if (Tcl_GetIndexFromObj(interp, objV[1], cmdOption, "option", 0, 
-		(int *) &option) != TCL_OK)
+		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
