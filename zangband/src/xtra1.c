@@ -1506,7 +1506,7 @@ static void calc_spells(void)
 	int			i, j, k, levels;
 	int			num_allowed, num_known;
 
-	magic_type		*s_ptr;
+	const magic_type *s_ptr;
 	int use_realm1 = p_ptr->realm1 - 1;
 	int use_realm2 = p_ptr->realm2 - 1;
 	int which;

@@ -20,7 +20,7 @@
 /*
  * Array of minimum room depths
  */
-static s16b roomdep[] =
+static const s16b roomdep[] =
 {
 	 0, /* 0  = Nothing */
 	 1, /* 1  = Simple (33x11) */
@@ -1265,11 +1265,11 @@ struct vault_aux_type
 };
 
 
-static vault_aux_type *pick_vault_type(vault_aux_type *l_ptr)
+static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
 {
 	int tmp, total;
 
-	vault_aux_type *n_ptr;
+	const vault_aux_type *n_ptr;
 
 	/* Calculate the total possibilities */
 	for (n_ptr = l_ptr, total = 0; TRUE; n_ptr++)
@@ -1307,7 +1307,7 @@ static vault_aux_type *pick_vault_type(vault_aux_type *l_ptr)
 }
 
 
-static vault_aux_type nest_types[] =
+static const vault_aux_type nest_types[] =
 {
 	{"clone",	vault_aux_clone,	vault_prep_clone,	7,	2},
 	{"jelly",	vault_aux_jelly,	NULL,			7,	6},
@@ -1349,7 +1349,7 @@ static void build_type5(int by0, int bx0)
 
 	int align = 0;
 
-	vault_aux_type *n_ptr = pick_vault_type(nest_types);
+	const vault_aux_type *n_ptr = pick_vault_type(nest_types);
 
 	/* Try to allocate space for room. */
 	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
@@ -1453,7 +1453,7 @@ static void build_type5(int by0, int bx0)
 }
 
 
-static vault_aux_type pit_types[] =
+static const vault_aux_type pit_types[] =
 {
 	{"orc",		vault_aux_orc,		NULL,			7,	1},
 	{"troll",	vault_aux_troll,	NULL,			35,	4},
@@ -1512,7 +1512,7 @@ static void build_type6(int by0, int bx0)
 
 	int align = 0;
 
-	vault_aux_type *n_ptr = pick_vault_type(pit_types);
+	const vault_aux_type *n_ptr = pick_vault_type(pit_types);
 
 	/* Try to allocate space for room. */
 	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;

@@ -367,7 +367,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 	int 	adjust;
 	s32b	price;
 
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);
@@ -706,7 +706,7 @@ static bool store_check_num(object_type *o_ptr)
  * Determine if the current store will purchase the given item
  * (Check restriction flags, and object theme)
  */
-static bool store_will_buy(object_type *o_ptr)
+static bool store_will_buy(const object_type *o_ptr)
 {
 	obj_theme theme;
 	
@@ -750,6 +750,7 @@ static bool store_will_buy(object_type *o_ptr)
 	 */
 	return (kind_is_theme(o_ptr->k_idx));
 }
+
 
 /*
  * The player wants to sell something to the store.
@@ -1287,7 +1288,7 @@ static void display_entry(int pos)
 
 	int maxwid;
 	
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
@@ -1454,7 +1455,7 @@ static void display_store(int store_top)
 {
 	char buf[80];
 	
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Clear screen */
 	Term_clear();
@@ -1719,7 +1720,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
  */
 static bool increase_insults(void)
 {
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 	
 	/* Increase insults */
 	st_ptr->insult_cur++;
@@ -1949,7 +1950,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	char		out_val[160];
 
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	*price = 0;
 
@@ -2126,7 +2127,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	cptr    pmt = "Offer";
 	char    out_val[160];
 	
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	*price = 0;	
 
@@ -2321,7 +2322,7 @@ static void store_purchase(int *store_top)
 
 	char out_val[160];
 	
-	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)

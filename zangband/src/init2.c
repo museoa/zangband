@@ -2113,7 +2113,7 @@ static errr init_other(void)
 	message__tail = MESSAGE_BUF;
 
 	/* Clear the spell colour strings */
-	(void) C_WIPE(gf_color, MAX_GF, cptr);
+	(void)C_WIPE(gf_color, MAX_GF, cptr);
 
 
 	/*** Prepare the Player inventory ***/
@@ -2180,10 +2180,10 @@ static errr init_alloc(void)
 	/*** Analyze monster allocation info ***/
 
 	/* Clear the "aux" array */
-	(void) C_WIPE(&aux, MAX_DEPTH, s16b);
+	(void)C_WIPE(&aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	(void) C_WIPE(&num, MAX_DEPTH, s16b);
+	(void)C_WIPE(&num, MAX_DEPTH, s16b);
 
 	/* Size of "alloc_race_table" */
 	alloc_race_size = 0;

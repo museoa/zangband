@@ -164,7 +164,7 @@ void check_experience(void)
  *
  * XXX XXX XXX Note the use of actual "monster names"
  */
-static int get_coin_type(monster_race *r_ptr)
+static int get_coin_type(const monster_race *r_ptr)
 {
 	cptr name = (r_name + r_ptr->name);
 
@@ -965,7 +965,7 @@ bool monster_death(int m_idx)
  *
  * "type" is not yet used and should be 0.
  */
-int mon_damage_mod(monster_type *m_ptr, int dam, int type)
+int mon_damage_mod(const monster_type *m_ptr, int dam, int type)
 {
 	/* Hack - ignore type for now */
 	(void) type;
@@ -979,7 +979,7 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 /*
  * This function calculates the experience gained for killing a monster.
  */
-void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
+void exp_for_kill(const monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 {
 	s32b div, exp;
 
@@ -1564,7 +1564,6 @@ void verify_panel(void)
 /*
  * Center the dungeon display around the player
  */
-
 void panel_center(void)
 {
 	int wid, hgt;
@@ -1772,8 +1771,11 @@ bool target_able(int m_idx)
 	return (TRUE);
 }
 
-/* Hack - function to get object name of mimic */
-static bool mimic_desc(char *m_name, monster_race *r_ptr)
+
+/*
+ * Hack - function to get object name of mimic
+ */
+static bool mimic_desc(char *m_name, const monster_race *r_ptr)
 {
 	/* Hack - look at default character */
 	switch (r_ptr->d_char)

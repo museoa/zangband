@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 
@@ -488,10 +488,9 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define  SWIGTYPE_p_owner_type swig_types[0] 
-#define  SWIGTYPE_p_field_type swig_types[1] 
-#define  SWIGTYPE_p_store_type swig_types[2] 
-#define  SWIGTYPE_p_object_type swig_types[3] 
-static swig_type_info *swig_types[5];
+#define  SWIGTYPE_p_store_type swig_types[1] 
+#define  SWIGTYPE_p_object_type swig_types[2] 
+static swig_type_info *swig_types[4];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -1062,66 +1061,6 @@ static PyObject *_wrap_store_type_y_get(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_store_type_f_ptr_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct store_type *arg0 ;
-    field_type *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"OO:store_type_f_ptr_set",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_store_type,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_field_type,1)) == -1) return NULL;
-    arg0->f_ptr = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_store_type_f_ptr_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct store_type *arg0 ;
-    PyObject * argo0 =0 ;
-    field_type *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:store_type_f_ptr_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_store_type,1)) == -1) return NULL;
-    result = (field_type *) (arg0->f_ptr);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_field_type);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_store_type_info_flags_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct store_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:store_type_info_flags_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_store_type,1)) == -1) return NULL;
-    arg0->info_flags = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_store_type_info_flags_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct store_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:store_type_info_flags_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_store_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->info_flags);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyMethodDef storecMethods[] = {
 	 { "owner_type_owner_name_set", _wrap_owner_type_owner_name_set, METH_VARARGS },
 	 { "owner_type_owner_name_get", _wrap_owner_type_owner_name_get, METH_VARARGS },
@@ -1161,10 +1100,6 @@ static PyMethodDef storecMethods[] = {
 	 { "store_type_x_get", _wrap_store_type_x_get, METH_VARARGS },
 	 { "store_type_y_set", _wrap_store_type_y_set, METH_VARARGS },
 	 { "store_type_y_get", _wrap_store_type_y_get, METH_VARARGS },
-	 { "store_type_f_ptr_set", _wrap_store_type_f_ptr_set, METH_VARARGS },
-	 { "store_type_f_ptr_get", _wrap_store_type_f_ptr_get, METH_VARARGS },
-	 { "store_type_info_flags_set", _wrap_store_type_info_flags_set, METH_VARARGS },
-	 { "store_type_info_flags_get", _wrap_store_type_info_flags_get, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -1175,13 +1110,11 @@ static PyMethodDef storecMethods[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_owner_type[] = {{"_p_owner_type", 0, "struct owner_type *"},{"_p_owner_type"},{0}};
-static swig_type_info _swigt__p_field_type[] = {{"_p_field_type", 0, "field_type *"},{"_p_field_type"},{0}};
 static swig_type_info _swigt__p_store_type[] = {{"_p_store_type", 0, "struct store_type *"},{"_p_store_type"},{0}};
 static swig_type_info _swigt__p_object_type[] = {{"_p_object_type", 0, "object_type *"},{"_p_object_type"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
 _swigt__p_owner_type, 
-_swigt__p_field_type, 
 _swigt__p_store_type, 
 _swigt__p_object_type, 
 0

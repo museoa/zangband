@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 
@@ -521,6 +521,7 @@ cptr get_line(void)
 }
 
 extern cptr get_line();
+extern bool show_file(cptr ,cptr ,int ,int );
 extern errr path_parse(char *,int ,cptr );
 extern errr path_temp(char *,int );
 extern errr path_build(char *,int ,cptr ,cptr );
@@ -622,6 +623,21 @@ static PyObject *_wrap_get_line(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,":get_line")) return NULL;
     result = (cptr )get_line();
     resultobj = PyString_FromString(result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_show_file(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    cptr arg0 ;
+    cptr arg1 ;
+    int arg2 ;
+    int arg3 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"ssii:show_file",&arg0,&arg1,&arg2,&arg3)) return NULL;
+    result = (bool )show_file(arg0,arg1,arg2,arg3);
+    resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
@@ -2211,6 +2227,7 @@ static PyObject *_wrap_inkey_flag_get() {
 
 static PyMethodDef iocMethods[] = {
 	 { "get_line", _wrap_get_line, METH_VARARGS },
+	 { "show_file", _wrap_show_file, METH_VARARGS },
 	 { "path_parse", _wrap_path_parse, METH_VARARGS },
 	 { "path_temp", _wrap_path_temp, METH_VARARGS },
 	 { "path_build", _wrap_path_build, METH_VARARGS },

@@ -165,7 +165,7 @@ static void prt_binary(u32b flags, int row, int col)
  *
  * Use a monte-carlo method to calculate the probabilities.
  */
-static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
+static void prt_alloc(const object_type *o_ptr, int row, int col, u32b monte)
 {
 	u32b i, j;
 	u32b maxd = 1, maxr = 1, maxt = 1;
@@ -428,10 +428,14 @@ static void do_cmd_wiz_feature(int feat)
 	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 }
 
-/* Learn the whole wilderness map */
+
+/*
+ * Learn the whole wilderness map
+ */
 static void learn_map(void)
 {
 	int i, j;
+
 	for (i = 0; i < max_wild; i++)
 	{
 		for (j = 0; j < max_wild; j++)
@@ -440,6 +444,7 @@ static void learn_map(void)
 		}
 	}
 }
+
 
 /*
  * Wizard routines for creating objects		-RAK-
@@ -502,7 +507,7 @@ static void learn_map(void)
  * Originally by David Reeve Sward <sward+@CMU.EDU>
  * Verbose item flags by -Bernd-
  */
-static void wiz_display_item(object_type *o_ptr)
+static void wiz_display_item(const object_type *o_ptr)
 {
 	int i, j = 13;
 	u32b f1, f2, f3;
@@ -577,7 +582,7 @@ typedef struct tval_desc
 /*
  * A list of tvals and their textual names
  */
-static tval_desc tvals[] =
+static const tval_desc tvals[] =
 {
 	{ TV_SWORD,             "Sword"                },
 	{ TV_POLEARM,           "Polearm"              },
@@ -1386,10 +1391,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
  */
 static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
-	(void)summon_named_creature(py, px, r_idx, slp, TRUE, TRUE);
+	(void)summon_named_creature(p_ptr->py, p_ptr->px, r_idx, slp, TRUE, TRUE);
 }
 
 
@@ -2067,4 +2069,3 @@ static int i = 0;
 #endif
 
 #endif
-

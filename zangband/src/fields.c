@@ -2363,13 +2363,13 @@ void field_action_hit_trap_curse(s16b *field_ptr, vptr nothing)
 	/* Blast weapon */
 	else if (p_ptr->depth > randint1(500)) /* No nasty effect for low levels */
 	{
-		(void) curse_weapon();
+		(void)curse_weapon();
 	}
 	
 	/* Blast armour */
 	else if (p_ptr->depth > randint1(500)) /* No nasty effect for low levels */
 	{
-		(void) curse_armor();
+		(void)curse_armor();
 	}
 	
 	/* Delete the field */
@@ -3774,7 +3774,7 @@ void field_action_mutate2(s16b *field_ptr, vptr input)
 			}
 			else
 			{
-				(void) gain_mutation(0);
+				(void)gain_mutation(0);
 			}
 			
 			/* Subtract off cost */

@@ -53,7 +53,6 @@
  * but instead use the "sval" (which is also used to sort the objects).
  */
 
-
 static void do_cmd_eat_food_aux(int item)
 {
 	int ident, lev;
@@ -265,7 +264,6 @@ static void do_cmd_eat_food_aux(int item)
 				if (do_res_stat(A_CHR)) ident = TRUE;
 				break;
 			}
-
 
 			case SV_FOOD_RATION:
 			case SV_FOOD_BISCUIT:
@@ -2857,7 +2855,7 @@ void do_cmd_zap_rod(void)
 /*
  * Hook to determine if an object is activatable
  */
-static bool item_tester_hook_activate(object_type *o_ptr)
+static bool item_tester_hook_activate(const object_type *o_ptr)
 {
 	u32b f1, f2, f3;
 
@@ -3241,7 +3239,7 @@ void do_cmd_activate(void)
 /*
  * Hook to determine if an object is useable
  */
-static bool item_tester_hook_use(object_type *o_ptr)
+static bool item_tester_hook_use(const object_type *o_ptr)
 {
 	u32b f1, f2, f3;
 

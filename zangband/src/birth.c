@@ -95,7 +95,7 @@ struct hist_type
  *
  * XXX XXX XXX This table *must* be correct or drastic errors may occur!
  */
-static hist_type bg[] =
+static const hist_type bg[] =
 {
 	{"You are the illegitimate and unacknowledged child ",   10, 1, 2, 25},
 	{"You are the illegitimate but acknowledged child ",     20, 1, 2, 35},
@@ -1581,7 +1581,7 @@ static void player_wipe(void)
  * Each player starts out with a few items, given as tval/sval pairs.
  * In addition, he always has some food and a few torches.
  */
-static byte player_init[MAX_CLASS][3][2] =
+static const byte player_init[MAX_CLASS][3][2] =
 {
 	{
 		/* Warrior */
@@ -2351,7 +2351,7 @@ static bool player_birth_aux_1(void)
 /*
  * Initial stat costs (initial stats always range from 10 to 18 inclusive).
  */
-static int birth_stat_costs[(18-10)+1] = { 0, 1, 2, 4, 7, 11, 16, 22, 30 };
+static const int birth_stat_costs[(18-10)+1] = { 0, 1, 2, 4, 7, 11, 16, 22, 30 };
 
 
 /*

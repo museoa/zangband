@@ -19,7 +19,7 @@
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
-static byte value_check_aux1(object_type *o_ptr)
+static byte value_check_aux1(const object_type *o_ptr)
 {
 	/* Artifacts */
 	if (o_ptr->flags3 & TR3_INSTA_ART)
@@ -75,7 +75,7 @@ static byte value_check_aux1(object_type *o_ptr)
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
-static byte value_check_aux2(object_type *o_ptr)
+static byte value_check_aux2(const object_type *o_ptr)
 {
 	/* Cursed items (all of them) */
 	if (cursed_p(o_ptr)) return FEEL_CURSED;
@@ -409,10 +409,10 @@ static void sense_inventory(void)
 	}
 }
 
+
 /*
  * Go to any level (ripped off from wiz_jump)
  */
-
 static void pattern_teleport(void)
 {
 	int min_level = 0;
@@ -511,7 +511,9 @@ static void wreck_the_pattern(void)
 }
 
 
-/* Returns TRUE if we are on the Pattern... */
+/*
+ * Returns TRUE if we are on the Pattern...
+ */
 static bool pattern_effect(void)
 {
 	cave_type *c_ptr = area(p_ptr->py, p_ptr->px);
@@ -842,7 +844,7 @@ bool psychometry(void)
  * If player has inscribed the object with "!!", let him know when it's
  * recharged. -LM-
  */
-static void recharged_notice(object_type *o_ptr)
+static void recharged_notice(const object_type *o_ptr)
 {
 	char o_name[80];
 
@@ -895,7 +897,7 @@ static void process_world(void)
 	int temp;
 	object_kind *k_ptr;
 	cave_type *c_ptr = area(p_ptr->py, p_ptr->px);
-	mutation_type *mut_ptr;
+	const mutation_type *mut_ptr;
 
 	/* Announce the level feeling */
 	if ((turn - old_turn == 1000) && (p_ptr->depth)) do_cmd_feeling();
@@ -3103,6 +3105,7 @@ static void process_player(void)
 		if (p_ptr->energy_use) break;
 	}
 }
+
 
 /*
  * Add energy to player and monsters.

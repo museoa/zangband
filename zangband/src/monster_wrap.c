@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 
@@ -492,8 +492,9 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 #define  SWIGTYPE_p_unsigned_char swig_types[2] 
 #define  SWIGTYPE_p_errr swig_types[3] 
 #define  SWIGTYPE_p_monster_race swig_types[4] 
-#define  SWIGTYPE_p_monster_blow swig_types[5] 
-static swig_type_info *swig_types[7];
+#define  SWIGTYPE_p_q_const__monster_race swig_types[5] 
+#define  SWIGTYPE_p_monster_blow swig_types[6] 
+static swig_type_info *swig_types[8];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -513,7 +514,7 @@ static swig_type_info *swig_types[7];
 	{
 		return (&m_list[i]);
 	}
-extern void sanity_blast(monster_type *,bool );
+extern void sanity_blast(monster_type const *,bool );
 extern void delete_monster_idx(int );
 extern void delete_monster(int ,int );
 extern void compact_monsters(int );
@@ -521,7 +522,7 @@ extern void wipe_m_list();
 extern s16b m_pop();
 extern errr get_mon_num_prep(monster_hook_type ,monster_hook_type );
 extern s16b get_mon_num(int );
-extern void monster_desc(char *,monster_type *,int );
+extern void monster_desc(char *,monster_type const *,int );
 extern void lore_do_probe(int );
 extern void lore_treasure(int ,int ,int );
 extern void update_mon(int ,bool );
@@ -547,8 +548,8 @@ extern void set_friendly(monster_type *);
 extern void set_pet(monster_type *);
 extern void set_hostile(monster_type *);
 extern bool monster_can_cross_terrain(byte ,monster_race *);
-extern bool are_enemies(monster_type *,monster_type *);
-extern bool monster_living(monster_race *);
+extern bool are_enemies(monster_type const *,monster_type const *);
+extern bool monster_living(monster_race const *);
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -574,7 +575,7 @@ static PyObject *_wrap_sanity_blast(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"Oi:sanity_blast",&argo0,&tempbool1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_monster_type,1)) == -1) return NULL;
     arg1 = (bool ) tempbool1;
-    sanity_blast(arg0,arg1);
+    sanity_blast((monster_type const *)arg0,arg1);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -679,7 +680,7 @@ static PyObject *_wrap_monster_desc(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"sOi:monster_desc",&arg0,&argo1,&arg2)) return NULL;
     if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_monster_type,1)) == -1) return NULL;
-    monster_desc(arg0,arg1,arg2);
+    monster_desc(arg0,(monster_type const *)arg1,arg2);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -1076,7 +1077,7 @@ static PyObject *_wrap_are_enemies(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"OO:are_enemies",&argo0,&argo1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_monster_type,1)) == -1) return NULL;
     if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_monster_type,1)) == -1) return NULL;
-    result = (bool )are_enemies(arg0,arg1);
+    result = (bool )are_enemies((monster_type const *)arg0,(monster_type const *)arg1);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -1089,8 +1090,8 @@ static PyObject *_wrap_monster_living(PyObject *self, PyObject *args) {
     bool result ;
     
     if(!PyArg_ParseTuple(args,"O:monster_living",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_monster_race,1)) == -1) return NULL;
-    result = (bool )monster_living(arg0);
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_q_const__monster_race,1)) == -1) return NULL;
+    result = (bool )monster_living((monster_race const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3329,6 +3330,7 @@ static swig_type_info _swigt__p_monster_hook_type[] = {{"_p_monster_hook_type", 
 static swig_type_info _swigt__p_unsigned_char[] = {{"_p_unsigned_char", 0, "unsigned char *"},{"_p_unsigned_char"},{0}};
 static swig_type_info _swigt__p_errr[] = {{"_p_errr", 0, "errr *"},{"_p_errr"},{0}};
 static swig_type_info _swigt__p_monster_race[] = {{"_p_monster_race", 0, "struct monster_race *"},{"_p_monster_race"},{0}};
+static swig_type_info _swigt__p_q_const__monster_race[] = {{"_p_q_const__monster_race", 0, "monster_race const *"},{"_p_q_const__monster_race"},{0}};
 static swig_type_info _swigt__p_monster_blow[] = {{"_p_monster_blow", 0, "monster_blow *"},{"_p_monster_blow"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
@@ -3337,6 +3339,7 @@ _swigt__p_monster_hook_type,
 _swigt__p_unsigned_char, 
 _swigt__p_errr, 
 _swigt__p_monster_race, 
+_swigt__p_q_const__monster_race, 
 _swigt__p_monster_blow, 
 0
 };

@@ -87,11 +87,11 @@ void do_cmd_go_up(void)
 
 		if (go_up)
 		{
-	/*
-	 * I'm experimenting without this... otherwise the monsters get to
-	 * act first when we go up stairs, theoretically resulting in a possible
-	 * insta-death.
-	 */
+			/*
+			 * I'm experimenting without this... otherwise the monsters get to
+			 * act first when we go up stairs, theoretically resulting in a possible
+			 * insta-death.
+			 */
 			p_ptr->energy_use = 0;
 
 			/* Success */
@@ -667,6 +667,7 @@ static bool is_open(int feat)
 	return (feat == FEAT_OPEN);
 }
 
+
 /*
  * Return TRUE if the given feature is a closed door
  */
@@ -674,6 +675,7 @@ static bool is_closed(int feat)
 {
 	return (feat == FEAT_CLOSED);
 }
+
 
 /*
  * Return the number of traps around (or under) the character.
@@ -711,6 +713,7 @@ int count_traps(int *y, int *x, bool under)
 	/* All done */
 	return count;
 }
+
 
 /*
  * Return the number of doors around (or under) the character.
@@ -815,6 +818,7 @@ static int coords_to_dir(int y, int x)
 
 	return d[dx + 1][dy + 1];
 }
+
 
 /*
  * Perform the basic "open" command on doors
@@ -1147,10 +1151,6 @@ void do_cmd_close(void)
 }
 
 
-
-
-
-
 /*
  * Tunnel through wall.  Assumes valid location.
  */
@@ -1173,7 +1173,6 @@ static bool twall(int y, int x, byte feat)
 	/* Result */
 	return (TRUE);
 }
-
 
 
 /*

@@ -599,7 +599,7 @@ static bool special_key[256];
  * keys which I do not recognize, but which are listed among keys which we
  * do catch, so they should be harmless to catch.
  */
-static byte special_key_list[] =
+static const byte special_key_list[] =
 {
 	VK_CLEAR,		/* 0x0C (KP<5>) */
 

@@ -779,7 +779,7 @@ bool leave_wilderness_callback(int y, int x)
 }
 
 
-void store_examine_callback(object_type *o_ptr)
+void store_examine_callback(const object_type *o_ptr)
 {
 	PyObject *func, *arglist;
 	PyObject *result;
@@ -1193,7 +1193,7 @@ bool object_eat_callback(object_type *o_ptr)
 }
 
 
-bool object_browse_callback(object_type *o_ptr)
+bool object_browse_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
@@ -1239,7 +1239,7 @@ bool object_cast_callback(object_type *o_ptr)
 }
 
 
-cptr object_save_callback(object_type *o_ptr)
+cptr object_save_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	cptr res = NULL;
@@ -1280,7 +1280,7 @@ void object_delete_callback(object_type *o_ptr)
 }
 
 
-PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr)
+PyObject* object_copy_callback(object_type *o_ptr, const object_type *j_ptr)
 {
 	PyObject *result = NULL;
 
@@ -1302,7 +1302,7 @@ PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr)
 }
 
 
-long get_object_level_callback(object_type *o_ptr)
+long get_object_level_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	long res = 0;
@@ -1325,7 +1325,7 @@ long get_object_level_callback(object_type *o_ptr)
 }
 
 
-long get_object_cost_callback(object_type *o_ptr)
+long get_object_cost_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	long res = 0;
@@ -1348,7 +1348,7 @@ long get_object_cost_callback(object_type *o_ptr)
 }
 
 
-cptr get_object_name_callback(object_type *o_ptr)
+cptr get_object_name_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	cptr res = "test";
@@ -1371,7 +1371,7 @@ cptr get_object_name_callback(object_type *o_ptr)
 }
 
 
-byte get_object_d_attr_callback(object_type *o_ptr)
+byte get_object_d_attr_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	byte res = 0;
@@ -1394,7 +1394,7 @@ byte get_object_d_attr_callback(object_type *o_ptr)
 }
 
 
-byte get_object_x_attr_callback(object_type *o_ptr)
+byte get_object_x_attr_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	byte res = 0;
@@ -1417,7 +1417,7 @@ byte get_object_x_attr_callback(object_type *o_ptr)
 }
 
 
-char get_object_d_char_callback(object_type *o_ptr)
+char get_object_d_char_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	char res = '\0';
@@ -1440,7 +1440,7 @@ char get_object_d_char_callback(object_type *o_ptr)
 }
 
 
-char get_object_x_char_callback(object_type *o_ptr)
+char get_object_x_char_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	char res = '\0';
@@ -1463,7 +1463,7 @@ char get_object_x_char_callback(object_type *o_ptr)
 }
 
 
-bool get_object_aware_callback(object_type *o_ptr)
+bool get_object_aware_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
@@ -1486,7 +1486,7 @@ bool get_object_aware_callback(object_type *o_ptr)
 }
 
 
-bool get_object_tried_callback(object_type *o_ptr)
+bool get_object_tried_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
@@ -1688,7 +1688,7 @@ PyObject* field_copy_callback(field_type *f_ptr, field_type *g_ptr)
 }
 
 
-cptr field_save_callback(field_type *f_ptr)
+cptr field_save_callback(const field_type *f_ptr)
 {
 	PyObject *result;
 	cptr res = NULL;

@@ -6,6 +6,8 @@ import ioc
 
 get_line = ioc.get_line
 
+show_file = ioc.show_file
+
 path_parse = ioc.path_parse
 
 path_temp = ioc.path_temp

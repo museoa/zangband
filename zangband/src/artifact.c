@@ -26,7 +26,7 @@
 #define ACTIVATION_CHANCE 3
 
 
-static void curse_artifact(object_type * o_ptr)
+static void curse_artifact(object_type *o_ptr)
 {
 	if (o_ptr->pval) o_ptr->pval = 0 - (o_ptr->pval + randint1(4));
 	if (o_ptr->to_a) o_ptr->to_a = 0 - (o_ptr->to_a + randint1(4));
@@ -49,7 +49,7 @@ static void curse_artifact(object_type * o_ptr)
 }
 
 
-static int random_plus(object_type * o_ptr, int artifact_bias)
+static int random_plus(object_type *o_ptr, int artifact_bias)
 {
 	switch (artifact_bias)
 	{
@@ -2970,7 +2970,7 @@ bool activate_effect(object_type *o_ptr)
 }
 
 
-void random_artifact_resistance(object_type * o_ptr)
+void random_artifact_resistance(object_type *o_ptr)
 {
 	bool give_resistance = FALSE, give_power = FALSE;
 	
@@ -3060,7 +3060,7 @@ void random_artifact_resistance(object_type * o_ptr)
 
 	if (give_resistance)
 	{
-		(void) random_resistance(o_ptr, rand_range(17, 38), 0);
+		(void)random_resistance(o_ptr, rand_range(17, 38), 0);
 	}
 }
 

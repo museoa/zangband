@@ -394,11 +394,11 @@ static void building_prt_gold(void)
 /*
  * Display a building.
  */
-static void display_build(field_type *f_ptr, store_type *b_ptr)
+static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 {
 	char tmp_str[80];
 	
-	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
+	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
 	int factor;
 	
@@ -511,6 +511,7 @@ static void display_fruit(int row, int col, int fruit)
 /* The amount of gold you have before gambling */
 static s32b gamble_oldgold;
 
+
 /*
  * Initialize gambling by getting bet.
  * Return a wager of zero, if something goes wrong.
@@ -604,6 +605,7 @@ static s32b gamble_init(void)
 	return (wager);
 }
 
+
 static bool gamble_again(bool win, int odds, s32b wager)
 {
 	char tmp_str[80];
@@ -644,7 +646,10 @@ static bool gamble_again(bool win, int odds, s32b wager)
 	return (TRUE);
 }
 
-/* Finished gambling */
+
+/*
+ * Finished gambling
+ */
 static void gamble_done(void)
 {
 	/* Switch back to complex RNG */
@@ -661,6 +666,7 @@ static void gamble_done(void)
 	screen_load();
 }
 
+
 void gamble_help(void)
 {
 	screen_save();
@@ -670,6 +676,7 @@ void gamble_help(void)
 
 	screen_load();
 }
+
 
 void gamble_in_between(void)
 {
@@ -707,6 +714,7 @@ void gamble_in_between(void)
 	
 	gamble_done();
 }
+
 
 void gamble_craps(void)
 {
@@ -770,6 +778,7 @@ void gamble_craps(void)
 	gamble_done();
 }
 
+
 void gamble_spin_wheel(void)
 {
 	s32b wager = gamble_init();
@@ -807,6 +816,7 @@ void gamble_spin_wheel(void)
 	
 	gamble_done();
 }
+
 
 void gamble_dice_slots(void)
 {
@@ -1128,7 +1138,7 @@ static void town_history(void)
  * Only accurate for the current weapon, because it includes
  * the current +dam of the player.
  */
-static void compare_weapon_aux2(object_type *o_ptr, int numblows,
+static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
 	 int r, cptr attr, byte color, byte slay)
 {
 	char tmp_str[80];
@@ -1173,7 +1183,7 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
  * Only accurate for the current weapon, because it includes
  * the current number of blows for the player.
  */
-static void compare_weapon_aux1(object_type *o_ptr)
+static void compare_weapon_aux1(const object_type *o_ptr)
 {
 	int r = 10;
 	
@@ -1229,6 +1239,7 @@ static int hit_prob(int to_h, int ac)
 		return (5 + 95 * prob / 100);
 }
 
+
 /*
  * Calculate the probability randint1(x)+randint1(100) < r
  * in unit of 1/(100*x) 	r>100 is assumed
@@ -1279,6 +1290,7 @@ static int critical_prob_aux(int x, int r)
 	return (100 * x - 100 * (100 - 1) / 2 - (n - 100) * 100);
 }
 
+
 /*
  * Calculate the probability of critical hit for a weapon 
  *
@@ -1318,7 +1330,7 @@ static int critical_prob(int to_h, int r1, int r2)
  * Only accurate for the current weapon, because it includes
  * various info about the player's +to_dam and number of blows.
  */
-static void list_weapon(object_type *o_ptr)
+static void list_weapon(const object_type *o_ptr)
 {
 	char o_name[80];
 	char tmp_str[80];
@@ -1457,7 +1469,6 @@ bool compare_weapons(void)
 	/* Done */
 	return (TRUE);
 }
-
 
 
 /*
@@ -1751,6 +1762,7 @@ void building_recharge(s32b cost)
 	return;
 }
 
+
 bool building_healer(void)
 {
 	bool paid = FALSE;
@@ -1911,7 +1923,7 @@ void do_cmd_quest(void)
 
 static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 {
-	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
+	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
 	int		factor;
 	
@@ -2314,6 +2326,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 }
+
 
 /*
  * Initialize a building

@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 

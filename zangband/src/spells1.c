@@ -797,7 +797,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
 			/* Add the glyph here as a field */
-			(void) place_field(y, x, FT_GLYPH_WARDING);
+			(void)place_field(y, x, FT_GLYPH_WARDING);
 
 			break;
 		}
@@ -3205,7 +3205,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				sad = TRUE;
 
 			/* Generate treasure, etc */
-			(void) monster_death(c_ptr->m_idx);
+			(void)monster_death(c_ptr->m_idx);
 		
 			/* Delete the monster */
 			delete_monster_idx(c_ptr->m_idx);

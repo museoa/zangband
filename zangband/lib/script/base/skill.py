@@ -1,16 +1,7 @@
-#####################################################################
-#
-# base/skill.py
-#
-# Generic code for the player skills
-#
-#####################################################################
+"""Generic code for the player skills"""
 
-
-#####################################################################
-# Base class for the skills
-#####################################################################
 class skill:
+	"""Abstract skill base class"""
 	name = "abstract skill"
 	level = 0
 	mana = 0
@@ -26,10 +17,9 @@ class skill:
 		pass
 
 
-#####################################################################
-# Base class for racial powers
-#####################################################################
 class racial_power(skill):
+	"""Base class for racial powers"""
+
 	name = "abstract racial power"
 	active = 1
 	difficulty = 0
@@ -103,28 +93,18 @@ class racial_power(skill):
 
 
 
-#####################################################################
-#
-# Class for the players skills
-#
-#####################################################################
 class skills:
-	#################################################################
-	# Constructor
-	#################################################################
+	"""Container for the players skills"""
+
 	def __init__(self):
 		self.data = []
 
-	#################################################################
-	# Add a skill
-	#################################################################
 	def append(self, skill):
+		"""Add a skill"""
 		self.data.append(skill)
 
-	#################################################################
-	# Add a list of skills
-	#################################################################
 	def add_skills(self, value):
+		"""Add a list of skills"""
 		self.data = self.data + value
 
 	def __len__(self):

@@ -439,6 +439,7 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friendly)
 	return (TRUE);
 }
 
+
 /*
  * Cast a bolt at the player
  * Stop if we hit a monster

@@ -809,7 +809,7 @@ static char *object_desc_int(char *t, sint v)
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
  */
-void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
+void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 {
 	cptr            basenm, modstr;
 	int             power, indexx;
@@ -1827,33 +1827,49 @@ copyback:
 	while ((*(buf++) = *(t++))); /* copy the string over */
 }
 
+
 /*
  * Hack -- describe an item currently in a store's inventory
  * This allows an item to *look* like the player is "aware" of it
  */
-void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
+void object_desc_store(char *buf, const object_type *o_ptr, int pref, int mode)
 {
+	object_type *i_ptr;
+	object_type object_type_body;
+
+	byte hack_flavor;
+	bool hack_aware;
+
+
+	/* Get local object */
+	i_ptr = &object_type_body;
+
+	/* Copy the object */
+	object_copy(i_ptr, o_ptr);
+
+	/* Save the "flavor" */
+	hack_flavor = k_info[i_ptr->k_idx].flavor;
+
 	/* Save the "aware" flag */
-	bool hack_aware = object_aware_p(o_ptr);
+	hack_aware = k_info[i_ptr->k_idx].aware;
 
-	/* Save the "known" flag */
-	bool hack_known = (o_ptr->ident & (IDENT_KNOWN)) ? TRUE : FALSE;
-
+	/* Clear the flavor */
+	k_info[i_ptr->k_idx].flavor = FALSE;
 
 	/* Set the "known" flag */
-	o_ptr->ident |= (IDENT_KNOWN);
+	i_ptr->ident |= (IDENT_KNOWN);
 
 	/* Force "aware" for description */
-	k_info[o_ptr->k_idx].aware = TRUE;
+	k_info[i_ptr->k_idx].aware = TRUE;
 
 
 	/* Describe the object */
-	object_desc(buf, o_ptr, pref, mode);
+	object_desc(buf, i_ptr, pref, mode);
 
+
+	/* Restore "flavor" value */
+	k_info[i_ptr->k_idx].flavor = hack_flavor;
 
 	/* Restore "aware" flag */
-	k_info[o_ptr->k_idx].aware = hack_aware;
-
-	/* Clear the known flag */
-	if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
+	k_info[i_ptr->k_idx].aware = hack_aware;
 }

@@ -78,8 +78,6 @@ class vault_typePtr(vault_type):
 
 #-------------- FUNCTION WRAPPERS ------------------
 
-load_layout = cavec.load_layout
-
 set_feat = cavec.set_feat
 
 def tile(*args, **kwargs):

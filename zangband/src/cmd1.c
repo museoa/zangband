@@ -266,7 +266,7 @@ static s16b critical_norm(int weight, int plus, int dam)
  * Note that most brands and slays are x2, except Slay Animal (x1.7),
  * Slay Evil (x1.5), and Kill dragon (x3). -SF-
  */
-s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
+s16b tot_dam_aux(const object_type *o_ptr, int tdam, const monster_type *m_ptr)
 {
 	/*
 	 * mult is scaled to be *10 so that the fractional slays can be stored
@@ -1332,7 +1332,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 {
 	int special_effect = 0, stun_effect = 0, times = 0;
-	martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
+	const martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
 	int resist_stun = 0;
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -2417,7 +2417,7 @@ void move_player(int dir, int do_pickup)
 				/* Try to open a door if is there */
 				if (easy_open)
 				{
-					(void) do_cmd_open_aux(y, x);
+					(void)do_cmd_open_aux(y, x);
 					return;
 				} 
 

@@ -416,7 +416,7 @@ bool no_lite(void)
  *
  * Used by destruction spells, and for placing stairs, etc.
  */
-bool cave_valid_grid(cave_type *c_ptr)
+bool cave_valid_grid(const cave_type *c_ptr)
 {
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -530,7 +530,7 @@ static void image_random(byte *ap, char *cp)
 /*
  * The 16x16 tile of the terrain supports lighting
  */
-static bool feat_supports_lighting[256] =
+static const bool feat_supports_lighting[256] =
 {
 	FALSE, TRUE,  TRUE,  TRUE,  FALSE, FALSE, TRUE,  TRUE, /* 0x00 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x08 */
@@ -575,7 +575,7 @@ static bool feat_supports_lighting[256] =
  * At the moment, only the various "floor" tiles are affected.
  */
 
-static byte lighting_colours[16] =
+static const byte lighting_colours[16] =
 {
 	/* TERM_DARK */
 	TERM_L_DARK,
@@ -626,7 +626,7 @@ static byte lighting_colours[16] =
 	TERM_L_UMBER,
 };
 
-static byte darking_colours[16] =
+static const byte darking_colours[16] =
 {
 	/* TERM_DARK */
 	TERM_DARK,
@@ -1490,6 +1490,7 @@ void note_spot(int y, int x)
 	lite_spot(y, x);
 }
 
+
 /*
  * This function is nearly identical to the above one - but since it
  * is used in lighting / darkening the wilderness - it doesn't have to
@@ -1500,7 +1501,6 @@ void note_spot(int y, int x)
  * Also note that FEAT_FLOOR is not common in the wilderness - this means
  * that the optimisations in note_spot() probably are not useful.
  */
-
 void note_wild_spot(cave_type *c_ptr)
 {
 	s16b this_o_idx, next_o_idx = 0;
@@ -1825,7 +1825,7 @@ void prt_map(void)
  *
  * Note that all "walls" always look like "secret doors" (see "map_info()").
  */
-static byte priority_table[][2] =
+static const byte priority_table[][2] =
 {
 	/* Dark */
 	{ FEAT_NONE, 2 },
@@ -1907,6 +1907,7 @@ static byte priority(byte a, char c)
 	return (20);
 }
 
+
 /*
  * Tunnels are important.  (While bare floor is not.)
  */
@@ -1929,6 +1930,7 @@ static int priority_tunnel(int y, int x)
 	/* Not important. */
 	return (0);
 }
+
 
 /*
  * Display a "small-scale" map of the dungeon in the active Term
@@ -2639,8 +2641,8 @@ typedef struct vinfo_hack vinfo_hack;
  *
  *	- Slope range per grid
  */
-struct vinfo_hack {
-
+struct vinfo_hack
+{
 	int num_slopes;
 
 	long slopes[VINFO_MAX_SLOPES];
@@ -2656,7 +2658,7 @@ struct vinfo_hack {
  *
  * We use "u" to point to an array of long integers.
  */
-static bool ang_sort_comp_hook_longs(vptr u, vptr v, int a, int b)
+static bool ang_sort_comp_hook_longs(const vptr u, const vptr v, int a, int b)
 {
 	long *x = (long*)(u);
 
@@ -2672,7 +2674,7 @@ static bool ang_sort_comp_hook_longs(vptr u, vptr v, int a, int b)
  *
  * We use "u" to point to an array of long integers.
  */
-static void ang_sort_swap_hook_longs(vptr u, vptr v, int a, int b)
+static void ang_sort_swap_hook_longs(const vptr u, const vptr v, int a, int b)
 {
 	long *x = (long*)(u);
 
@@ -3786,6 +3788,7 @@ void update_mon_lite(void)
 	temp_n = 0;
 }
 
+
 void clear_mon_lite(void)
 {
 	int i;
@@ -4226,9 +4229,6 @@ void wiz_dark(void)
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 }
-
-
-
 
 
 /*

@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 
@@ -1283,7 +1283,7 @@ bool leave_wilderness_callback(int y, int x)
 }
 
 
-void store_examine_callback(object_type *o_ptr)
+void store_examine_callback(const object_type *o_ptr)
 {
 	PyObject *func, *arglist;
 	PyObject *result;
@@ -1697,7 +1697,7 @@ bool object_eat_callback(object_type *o_ptr)
 }
 
 
-bool object_browse_callback(object_type *o_ptr)
+bool object_browse_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
@@ -1743,7 +1743,7 @@ bool object_cast_callback(object_type *o_ptr)
 }
 
 
-cptr object_save_callback(object_type *o_ptr)
+cptr object_save_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	cptr res = NULL;
@@ -1784,7 +1784,7 @@ void object_delete_callback(object_type *o_ptr)
 }
 
 
-PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr)
+PyObject* object_copy_callback(object_type *o_ptr, const object_type *j_ptr)
 {
 	PyObject *result = NULL;
 
@@ -1806,7 +1806,7 @@ PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr)
 }
 
 
-long get_object_level_callback(object_type *o_ptr)
+long get_object_level_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	long res = 0;
@@ -1829,7 +1829,7 @@ long get_object_level_callback(object_type *o_ptr)
 }
 
 
-long get_object_cost_callback(object_type *o_ptr)
+long get_object_cost_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	long res = 0;
@@ -1852,7 +1852,7 @@ long get_object_cost_callback(object_type *o_ptr)
 }
 
 
-cptr get_object_name_callback(object_type *o_ptr)
+cptr get_object_name_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	cptr res = "test";
@@ -1875,7 +1875,7 @@ cptr get_object_name_callback(object_type *o_ptr)
 }
 
 
-byte get_object_d_attr_callback(object_type *o_ptr)
+byte get_object_d_attr_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	byte res = 0;
@@ -1898,7 +1898,7 @@ byte get_object_d_attr_callback(object_type *o_ptr)
 }
 
 
-byte get_object_x_attr_callback(object_type *o_ptr)
+byte get_object_x_attr_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	byte res = 0;
@@ -1921,7 +1921,7 @@ byte get_object_x_attr_callback(object_type *o_ptr)
 }
 
 
-char get_object_d_char_callback(object_type *o_ptr)
+char get_object_d_char_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	char res = '\0';
@@ -1944,7 +1944,7 @@ char get_object_d_char_callback(object_type *o_ptr)
 }
 
 
-char get_object_x_char_callback(object_type *o_ptr)
+char get_object_x_char_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	char res = '\0';
@@ -1967,7 +1967,7 @@ char get_object_x_char_callback(object_type *o_ptr)
 }
 
 
-bool get_object_aware_callback(object_type *o_ptr)
+bool get_object_aware_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
@@ -1990,7 +1990,7 @@ bool get_object_aware_callback(object_type *o_ptr)
 }
 
 
-bool get_object_tried_callback(object_type *o_ptr)
+bool get_object_tried_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
@@ -2192,7 +2192,7 @@ PyObject* field_copy_callback(field_type *f_ptr, field_type *g_ptr)
 }
 
 
-cptr field_save_callback(field_type *f_ptr)
+cptr field_save_callback(const field_type *f_ptr)
 {
 	PyObject *result;
 	cptr res = NULL;
@@ -2294,7 +2294,7 @@ extern bool wilderness_init_callback();
 extern bool generate_wilderness_callback(int ,int );
 extern bool enter_wilderness_callback(int ,int );
 extern bool leave_wilderness_callback(int ,int );
-extern void store_examine_callback(object_type *);
+extern void store_examine_callback(object_type const *);
 extern bool monster_move_callback(int *,int );
 extern void create_monster_callback(int );
 extern void delete_monster_callback(int );
@@ -2309,25 +2309,25 @@ extern bool destroy_object_callback(object_type *,int );
 extern PyObject *object_create_callback(object_type *);
 extern PyObject *object_load_callback(char *);
 extern bool object_eat_callback(object_type *);
-extern bool object_browse_callback(object_type *);
+extern bool object_browse_callback(object_type const *);
 extern bool object_cast_callback(object_type *);
-extern cptr object_save_callback(object_type *);
+extern cptr object_save_callback(object_type const *);
 extern void object_delete_callback(object_type *);
-extern PyObject *object_copy_callback(object_type *,object_type *);
-extern long get_object_level_callback(object_type *);
-extern long get_object_cost_callback(object_type *);
-extern cptr get_object_name_callback(object_type *);
-extern char get_object_d_char_callback(object_type *);
-extern char get_object_x_char_callback(object_type *);
-extern byte get_object_d_attr_callback(object_type *);
-extern byte get_object_x_attr_callback(object_type *);
-extern bool get_object_aware_callback(object_type *);
-extern bool get_object_tried_callback(object_type *);
+extern PyObject *object_copy_callback(object_type *,object_type const *);
+extern long get_object_level_callback(object_type const *);
+extern long get_object_cost_callback(object_type const *);
+extern cptr get_object_name_callback(object_type const *);
+extern char get_object_d_char_callback(object_type const *);
+extern char get_object_x_char_callback(object_type const *);
+extern byte get_object_d_attr_callback(object_type const *);
+extern byte get_object_x_attr_callback(object_type const *);
+extern bool get_object_aware_callback(object_type const *);
+extern bool get_object_tried_callback(object_type const *);
 extern bool free_object_kind_list_callback();
 extern bool init_object_kind_list_callback();
 extern void field_delete_callback(field_type *);
 extern PyObject *field_copy_callback(field_type *,field_type *);
-extern cptr field_save_callback(field_type *);
+extern cptr field_save_callback(field_type const *);
 extern PyObject *field_load_callback(char *);
 extern bool use_skill_callback();
 extern bool process_command_callback(char );
@@ -2599,7 +2599,7 @@ static PyObject *_wrap_store_examine_callback(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:store_examine_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    store_examine_callback(arg0);
+    store_examine_callback((object_type const *)arg0);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -2800,7 +2800,7 @@ static PyObject *_wrap_object_browse_callback(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:object_browse_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )object_browse_callback(arg0);
+    result = (bool )object_browse_callback((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2829,7 +2829,7 @@ static PyObject *_wrap_object_save_callback(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"O:object_save_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
     result = (cptr *) malloc(sizeof(cptr ));
-    *(result) = object_save_callback(arg0);
+    *(result) = object_save_callback((object_type const *)arg0);
     resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_cptr);
     return resultobj;
 }
@@ -2860,7 +2860,7 @@ static PyObject *_wrap_object_copy_callback(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"OO:object_copy_callback",&argo0,&argo1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
     if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (PyObject *)object_copy_callback(arg0,arg1);
+    result = (PyObject *)object_copy_callback(arg0,(object_type const *)arg1);
     resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_PyObject);
     return resultobj;
 }
@@ -2874,7 +2874,7 @@ static PyObject *_wrap_get_object_level_callback(PyObject *self, PyObject *args)
     
     if(!PyArg_ParseTuple(args,"O:get_object_level_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (long )get_object_level_callback(arg0);
+    result = (long )get_object_level_callback((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2888,7 +2888,7 @@ static PyObject *_wrap_get_object_cost_callback(PyObject *self, PyObject *args) 
     
     if(!PyArg_ParseTuple(args,"O:get_object_cost_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (long )get_object_cost_callback(arg0);
+    result = (long )get_object_cost_callback((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2903,7 +2903,7 @@ static PyObject *_wrap_get_object_name_callback(PyObject *self, PyObject *args) 
     if(!PyArg_ParseTuple(args,"O:get_object_name_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
     result = (cptr *) malloc(sizeof(cptr ));
-    *(result) = get_object_name_callback(arg0);
+    *(result) = get_object_name_callback((object_type const *)arg0);
     resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_cptr);
     return resultobj;
 }
@@ -2917,7 +2917,7 @@ static PyObject *_wrap_get_object_d_char_callback(PyObject *self, PyObject *args
     
     if(!PyArg_ParseTuple(args,"O:get_object_d_char_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (char )get_object_d_char_callback(arg0);
+    result = (char )get_object_d_char_callback((object_type const *)arg0);
     resultobj = Py_BuildValue("c",result);
     return resultobj;
 }
@@ -2931,7 +2931,7 @@ static PyObject *_wrap_get_object_x_char_callback(PyObject *self, PyObject *args
     
     if(!PyArg_ParseTuple(args,"O:get_object_x_char_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (char )get_object_x_char_callback(arg0);
+    result = (char )get_object_x_char_callback((object_type const *)arg0);
     resultobj = Py_BuildValue("c",result);
     return resultobj;
 }
@@ -2946,7 +2946,7 @@ static PyObject *_wrap_get_object_d_attr_callback(PyObject *self, PyObject *args
     if(!PyArg_ParseTuple(args,"O:get_object_d_attr_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
     result = (byte *) malloc(sizeof(byte ));
-    *(result) = get_object_d_attr_callback(arg0);
+    *(result) = get_object_d_attr_callback((object_type const *)arg0);
     resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_byte);
     return resultobj;
 }
@@ -2961,7 +2961,7 @@ static PyObject *_wrap_get_object_x_attr_callback(PyObject *self, PyObject *args
     if(!PyArg_ParseTuple(args,"O:get_object_x_attr_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
     result = (byte *) malloc(sizeof(byte ));
-    *(result) = get_object_x_attr_callback(arg0);
+    *(result) = get_object_x_attr_callback((object_type const *)arg0);
     resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_byte);
     return resultobj;
 }
@@ -2975,7 +2975,7 @@ static PyObject *_wrap_get_object_aware_callback(PyObject *self, PyObject *args)
     
     if(!PyArg_ParseTuple(args,"O:get_object_aware_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )get_object_aware_callback(arg0);
+    result = (bool )get_object_aware_callback((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2989,7 +2989,7 @@ static PyObject *_wrap_get_object_tried_callback(PyObject *self, PyObject *args)
     
     if(!PyArg_ParseTuple(args,"O:get_object_tried_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )get_object_tried_callback(arg0);
+    result = (bool )get_object_tried_callback((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3057,7 +3057,7 @@ static PyObject *_wrap_field_save_callback(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"O:field_save_callback",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_field_type,1)) == -1) return NULL;
     result = (cptr *) malloc(sizeof(cptr ));
-    *(result) = field_save_callback(arg0);
+    *(result) = field_save_callback((field_type const *)arg0);
     resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_cptr);
     return resultobj;
 }

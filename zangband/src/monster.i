@@ -188,7 +188,7 @@ struct monster_race
 };
 
 
-extern void sanity_blast(monster_type *m_ptr, bool necro);
+extern void sanity_blast(const monster_type *m_ptr, bool necro);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);
@@ -196,7 +196,7 @@ extern void wipe_m_list(void);
 extern s16b m_pop(void);
 extern errr get_mon_num_prep(monster_hook_type monster_hook, monster_hook_type monster_hook2);
 extern s16b get_mon_num(int level);
-extern void monster_desc(char *desc, monster_type *m_ptr, int mode);
+extern void monster_desc(char *desc, const monster_type *m_ptr, int mode);
 extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);
 extern void update_mon(int m_idx, bool full);
@@ -224,5 +224,5 @@ extern void set_friendly(monster_type *m_ptr);
 extern void set_pet(monster_type *m_ptr);
 extern void set_hostile(monster_type *m_ptr);
 extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
-extern bool are_enemies(monster_type *m_ptr1, monster_type *m_ptr2);
-extern bool monster_living(monster_race *r_ptr);
+extern bool are_enemies(const monster_type *m_ptr1, const monster_type *m_ptr2);
+extern bool monster_living(const monster_race *r_ptr);

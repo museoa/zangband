@@ -135,7 +135,7 @@ static void note(cptr msg)
 /*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
-static bool wearable_p(object_type *o_ptr)
+static bool wearable_p(const object_type *o_ptr)
 {
 	/* Valid "tval" codes */
 	switch (o_ptr->tval)
@@ -173,7 +173,7 @@ static bool wearable_p(object_type *o_ptr)
 /*
  * Hack -- determine if an item is a "weapon" (or a missile)
  */
-static bool is_weapon(object_type *o_ptr)
+static bool is_weapon(const object_type *o_ptr)
 {
 	/* Valid "tval" codes */
 	switch (o_ptr->tval)

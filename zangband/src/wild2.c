@@ -109,13 +109,13 @@ static void day_night(void)
 
 
 /* Access the old cave array. */
-static cave_type *access_cave(u16b y, u16b x)
+static cave_type *access_cave(int y, int x)
 {
 	return &cave[y][x];
 }
 
 /* Access wilderness */
-static cave_type *access_wild(u16b y, u16b x)
+static cave_type *access_wild(int y, int x)
 {
 	/*
 	 * Divide by 16 to get block.

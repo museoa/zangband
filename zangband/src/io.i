@@ -30,6 +30,7 @@ typedef unsigned int u32b;
 
 extern cptr get_line(void);
 
+extern bool show_file(cptr name, cptr what, int line, int mode);
 
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);

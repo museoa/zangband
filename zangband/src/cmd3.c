@@ -403,7 +403,7 @@ void do_cmd_drop(void)
 }
 
 
-static bool high_level_book(object_type *o_ptr)
+static bool high_level_book(const object_type *o_ptr)
 {
 	if ((o_ptr->tval == TV_LIFE_BOOK) ||
 	    (o_ptr->tval == TV_SORCERY_BOOK) ||
@@ -586,7 +586,7 @@ void do_cmd_destroy(void)
 	p_ptr->energy_use = 0;
 
 	/* Physically try to destroy the item(s) */
-	if	(!destroy_item_aux(o_ptr, amt)) return;
+	if (!destroy_item_aux(o_ptr, amt)) return;
 
 	/* Reduce the charges of rods/wands */
 	reduce_charges(o_ptr, amt);
@@ -778,7 +778,7 @@ void do_cmd_inscribe(void)
 /*
  * An "item_tester_hook" for refilling lanterns
  */
-static bool item_tester_refill_lantern(object_type *o_ptr)
+static bool item_tester_refill_lantern(const object_type *o_ptr)
 {
 	/* Flasks of oil are okay */
 	if (o_ptr->tval == TV_FLASK) return (TRUE);
@@ -887,7 +887,7 @@ static void do_cmd_refill_lamp(void)
 /*
  * An "item_tester_hook" for refilling torches
  */
-static bool item_tester_refill_torch(object_type *o_ptr)
+static bool item_tester_refill_torch(const object_type *o_ptr)
 {
 	/* Torches are okay */
 	if ((o_ptr->tval == TV_LITE) &&
@@ -1251,7 +1251,7 @@ static cptr ident_info[] =
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform on "u".
  */
-bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
+bool ang_sort_comp_hook(const vptr u, const vptr v, int a, int b)
 {
 	u16b *who = (u16b*)(u);
 
@@ -1326,7 +1326,7 @@ bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform.
  */
-void ang_sort_swap_hook(vptr u, vptr v, int a, int b)
+void ang_sort_swap_hook(const vptr u, const vptr v, int a, int b)
 {
 	u16b *who = (u16b*)(u);
 

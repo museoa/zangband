@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 
@@ -634,10 +634,10 @@ extern bool control_one_undead(int ,int );
 extern bool charm_animal(int ,int );
 extern bool mindblast_monsters(int );
 extern void get_table_name(char *);
-extern s32b flag_cost(object_type *,int );
+extern s32b flag_cost(object_type const *,int );
 extern void report_magics();
 extern bool teleport_swap(int );
-extern bool item_tester_hook_recharge(object_type *);
+extern bool item_tester_hook_recharge(object_type const *);
 extern bool project_hook(int ,int ,int ,u16b );
 extern bool project_hack(int ,int );
 extern bool teleport_away(int ,int );
@@ -649,7 +649,7 @@ extern void recall_player(int );
 extern void word_of_recall();
 extern bool apply_disenchant();
 extern void mutate_player();
-extern void apply_nexus(monster_type *);
+extern void apply_nexus(monster_type const *);
 extern void phlogiston();
 extern void brand_weapon(int );
 extern void call_the_();
@@ -662,9 +662,9 @@ extern bool remove_curse();
 extern bool remove_all_curse();
 extern bool alchemy();
 extern void stair_creation();
-extern bool item_tester_hook_weapon(object_type *);
-extern bool item_tester_hook_armour(object_type *);
-extern bool item_tester_hook_weapon_armour(object_type *);
+extern bool item_tester_hook_weapon(object_type const *);
+extern bool item_tester_hook_armour(object_type const *);
+extern bool item_tester_hook_weapon_armour(object_type const *);
 extern bool enchant(object_type *,int ,int );
 extern bool enchant_spell(int ,int ,int );
 extern bool artifact_scroll();
@@ -679,10 +679,10 @@ extern void display_spell_list();
 extern s16b spell_chance(int ,int );
 extern bool spell_okay(int ,bool ,int );
 extern void print_spells(byte *,int ,int ,int ,int );
-extern bool hates_acid(object_type *);
-extern bool hates_elec(object_type *);
-extern bool hates_fire(object_type *);
-extern bool hates_cold(object_type *);
+extern bool hates_acid(object_type const *);
+extern bool hates_elec(object_type const *);
+extern bool hates_fire(object_type const *);
+extern bool hates_cold(object_type const *);
 extern int set_acid_destroy(object_type *);
 extern int set_elec_destroy(object_type *);
 extern int set_fire_destroy(object_type *);
@@ -2240,7 +2240,7 @@ static PyObject *_wrap_flag_cost(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"Oi:flag_cost",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (s32b )flag_cost(arg0,arg1);
+    result = (s32b )flag_cost((object_type const *)arg0,arg1);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2277,7 +2277,7 @@ static PyObject *_wrap_item_tester_hook_recharge(PyObject *self, PyObject *args)
     
     if(!PyArg_ParseTuple(args,"O:item_tester_hook_recharge",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )item_tester_hook_recharge(arg0);
+    result = (bool )item_tester_hook_recharge((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2424,7 +2424,7 @@ static PyObject *_wrap_apply_nexus(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:apply_nexus",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_monster_type,1)) == -1) return NULL;
-    apply_nexus(arg0);
+    apply_nexus((monster_type const *)arg0);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -2577,7 +2577,7 @@ static PyObject *_wrap_item_tester_hook_weapon(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:item_tester_hook_weapon",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )item_tester_hook_weapon(arg0);
+    result = (bool )item_tester_hook_weapon((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2591,7 +2591,7 @@ static PyObject *_wrap_item_tester_hook_armour(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:item_tester_hook_armour",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )item_tester_hook_armour(arg0);
+    result = (bool )item_tester_hook_armour((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2605,7 +2605,7 @@ static PyObject *_wrap_item_tester_hook_weapon_armour(PyObject *self, PyObject *
     
     if(!PyArg_ParseTuple(args,"O:item_tester_hook_weapon_armour",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )item_tester_hook_weapon_armour(arg0);
+    result = (bool )item_tester_hook_weapon_armour((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2803,7 +2803,7 @@ static PyObject *_wrap_hates_acid(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:hates_acid",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )hates_acid(arg0);
+    result = (bool )hates_acid((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2817,7 +2817,7 @@ static PyObject *_wrap_hates_elec(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:hates_elec",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )hates_elec(arg0);
+    result = (bool )hates_elec((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2831,7 +2831,7 @@ static PyObject *_wrap_hates_fire(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:hates_fire",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )hates_fire(arg0);
+    result = (bool )hates_fire((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2845,7 +2845,7 @@ static PyObject *_wrap_hates_cold(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"O:hates_cold",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_object_type,1)) == -1) return NULL;
-    result = (bool )hates_cold(arg0);
+    result = (bool )hates_cold((object_type const *)arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }

@@ -720,7 +720,7 @@ s16b get_mon_num(int level)
  *   0x22 --> Possessive, genderized if visable ("his") or "its"
  *   0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
-void monster_desc(char *desc, monster_type *m_ptr, int mode)
+void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 {
 	cptr            res;
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
@@ -934,7 +934,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 
 
 
-void sanity_blast(monster_type *m_ptr, bool necro)
+void sanity_blast(const monster_type *m_ptr, bool necro)
 {
 #if 0
 	/* This variable is only needed for the (disabled)

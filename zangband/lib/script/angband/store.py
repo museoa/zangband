@@ -58,8 +58,6 @@ class store_type:
         "stock" : storec.store_type_stock_set,
         "x" : storec.store_type_x_set,
         "y" : storec.store_type_y_set,
-        "f_ptr" : storec.store_type_f_ptr_set,
-        "info_flags" : storec.store_type_info_flags_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -79,8 +77,6 @@ class store_type:
         "stock" : storec.store_type_stock_get,
         "x" : storec.store_type_x_get,
         "y" : storec.store_type_y_get,
-        "f_ptr" : storec.store_type_f_ptr_get,
-        "info_flags" : storec.store_type_info_flags_get,
     }
     def __getattr__(self,name):
         method = store_type.__getmethods__.get(name,None)

@@ -199,7 +199,7 @@ typedef struct swig_const_info {
 SWIGEXPORT(PyObject *)        SWIG_newvarlink();
 SWIGEXPORT(void)              SWIG_addvarlink(PyObject *, char *, PyObject *(*)(void), int (*)(PyObject *));
 SWIGEXPORT(int)               SWIG_ConvertPtr(PyObject *, void **, swig_type_info *, int);
-SWIGEXPORT(void)              SWIG_MakePtr(char *c, void *, swig_type_info *);
+SWIGEXPORT(void)              SWIG_MakePtr(char *c, const void *, swig_type_info *);
 SWIGEXPORT(PyObject *)        SWIG_NewPointerObj(void *, swig_type_info *);
 SWIGEXPORT(void)              SWIG_InstallConstants(PyObject *d, swig_const_info constants[]);
 
@@ -408,7 +408,7 @@ type_error:
 
 /* Take a pointer and convert it to a string */
 SWIGRUNTIME(void) 
-SWIG_MakePtr(char *c, void *ptr, swig_type_info *ty) {
+SWIG_MakePtr(char *c, const void *ptr, swig_type_info *ty) {
   static char hex[17] = "0123456789abcdef";
   unsigned long p, s;
   char result[32], *r; 
@@ -487,10 +487,9 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_errr swig_types[0] 
-#define  SWIGTYPE_p_cave_type swig_types[1] 
-#define  SWIGTYPE_p_vault_type swig_types[2] 
-static swig_type_info *swig_types[4];
+#define  SWIGTYPE_p_cave_type swig_types[0] 
+#define  SWIGTYPE_p_vault_type swig_types[1] 
+static swig_type_info *swig_types[3];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -506,12 +505,6 @@ static swig_type_info *swig_types[4];
 #include "angband.h"
 
 
-	errr load_layout(cptr name)
-	{
-		init_flags = INIT_CREATE_DUNGEON | INIT_ASSIGN;
-		return process_dungeon_file(name, 0, 0, MAX_HGT, MAX_WID);
-	}
-
 	cave_type *tile(int y, int x)
 	{
 		return &cave[y][x];
@@ -522,19 +515,6 @@ extern void wiz_dark();
 #ifdef __cplusplus
 extern "C" {
 #endif
-static PyObject *_wrap_load_layout(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    cptr arg0 ;
-    errr *result ;
-    
-    if(!PyArg_ParseTuple(args,"s:load_layout",&arg0)) return NULL;
-    result = (errr *) malloc(sizeof(errr ));
-    *(result) = load_layout(arg0);
-    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_errr);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_set_feat(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     int arg0 ;
@@ -949,7 +929,6 @@ static PyObject *_wrap_vault_type_wid_get(PyObject *self, PyObject *args) {
 
 
 static PyMethodDef cavecMethods[] = {
-	 { "load_layout", _wrap_load_layout, METH_VARARGS },
 	 { "set_feat", _wrap_set_feat, METH_VARARGS },
 	 { "tile", _wrap_tile, METH_VARARGS },
 	 { "map_area", _wrap_map_area, METH_VARARGS },
@@ -984,12 +963,10 @@ static PyMethodDef cavecMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_errr[] = {{"_p_errr", 0, "errr *"},{"_p_errr"},{0}};
 static swig_type_info _swigt__p_cave_type[] = {{"_p_cave_type", 0, "struct cave_type *"},{"_p_cave_type"},{0}};
 static swig_type_info _swigt__p_vault_type[] = {{"_p_vault_type", 0, "struct vault_type *"},{"_p_vault_type"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_errr, 
 _swigt__p_cave_type, 
 _swigt__p_vault_type, 
 0
