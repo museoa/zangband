@@ -276,8 +276,9 @@ shouts: 'Back, over-bold one!'
 whines: 'You swindler, do you seek to vilify me?'
 
 N:517:Jurt the Living Trump
-1
+2
 says: 'Only your death will set things right.'
+says: 'Don't call me clumsy!'
 
 #N:551:Rogrog the Black Troll
 
@@ -285,16 +286,26 @@ N:573:Lord Borel of Hendrake
 3
 says: 'You smile at your own cowardice? Stand and fight, bastard!'
 says: 'I am Borel, Duke of Hendrake, Master of Arms of the Ways of Hendrake.'
-says: 'Oh, basely done! I had hoped better of thee!'
+'I do not want it said that I took unfair advantage of you when I killed you.'
 
 #N:595:Father Dagon
 #N:596:Mother Hydra
-#N:598:Mandor, Master of the Logrus
+
+N:598:Mandor, Master of the Logrus
+2
+'Well, well, well.'
+'It is a great pleasure to fight with such a worthy opponent as you.'
+
 #N:606:Loge, Spirit of Fire
 #N:615:Moire, Queen of Rebma
 #N:616:Kavlax the Many-Headed
 #N:628:Malekith the Accursed
-#N:642:Jasra, Brand's Mistress
+
+N:642:Jasra, Brand's Mistress
+2
+'I will turn you into a coatrack.'
+'I'm a master of the Keep of the Four Worlds!'
+
 #N:651:Strygalldwir
 
 N:654:Judge Fire
@@ -307,8 +318,17 @@ hisses, 'Your crime isssss life.'
 hisses, 'The sssentencce isss death!'
 hisses, 'Your crime issss life. The sssentencce isss death.'
 
-#N:660:Rinaldo, son of Brand
-#N:670:Jack of Shadows
+#Quotes from "A salesman's tale"
+N:660:Rinaldo, son of Brand
+2
+says, 'What's a freezer? Glad you asked. It's a box to store your body!'
+'If you buy a Grand-D machine, I'll throw Werewindle into the bargain.'
+
+N:670:Jack of Shadows
+2
+'The power of shadow is infinite.'
+'With the Key of Kolwynia, I am invincible!'
+
 #N:681:Chaugnar Faugn, Horror from the Hills
 
 N:685:Shoggoth
@@ -338,7 +358,12 @@ says: 'My throat is well made to gulp you down.'
 growls: 'Come here, young braggart.'
 
 #N:713:Fangorn the Treebeard
-#N:715:Glaurung, Father of the Dragons
+
+N:715:Glaurung, Father of the Dragons
+N:766:Ancalagon the Black
+1
+says: 'Thou shalt not escape a doom.'
+
 #N:729:Ulik the Troll
 #N:730:Baphomet the Minotaur Lord
 
@@ -386,7 +411,6 @@ says, 'I shall smite thee with extreme prejudice!'
 says, 'Hope you like eternal damnation!'
 says, 'Verily, it is too late for thee.'
 
-#N:766:Ancalagon the Black
 #N:767:Daoloth, the Render of the Veils
 #N:770:Artsi the Champion of Chaos
 #N:771:Saruman of Many Colours
