@@ -2631,9 +2631,13 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 	
 	msg_print("You suddenly feel very, very hungry!");
 	
-	/* You are very hungry */
-	(void)set_food(PY_FOOD_WEAK);
-	
+	/* Only effect non-starving people */
+	if (p_ptr->food > PY_FOOD_WEAK)
+	{
+		/* You are very hungry */
+		(void)set_food(PY_FOOD_WEAK);
+	}
+		
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
 }
