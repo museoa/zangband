@@ -1446,12 +1446,12 @@ static bool borg_consume(list_item *l_ptr)
 		{
 			/* Check the potion */
 			if (bp_ptr->status.gorged ||
-				sval >= SV_POTION_SLOWNESS &&
-				sval <= SV_POTION_DEATH)
-				{
-					/* probably bad to quaff this */
-					return (FALSE);
-				}
+			    ((sval >= SV_POTION_SLOWNESS) &&
+			     (sval <= SV_POTION_DEATH)))
+			{
+				/* probably bad to quaff this */
+				return (FALSE);
+			}
 
 			/* Try quaffing the potion */
 			if (borg_quaff_potion(sval)) return (TRUE);
@@ -1461,7 +1461,6 @@ static bool borg_consume(list_item *l_ptr)
 
 		case TV_SCROLL:
 		{
-
 			/* Check the scroll */
 			switch (sval)
 			{
@@ -1831,12 +1830,12 @@ static s32b borg_values_money(list_item *l_ptr)
  * If the borg is slowed because of his weight then the borg will attempt
  * to destroy enough items to fix that.
  */
-bool borg_destroy_aux(bool must_destroy)
+static bool borg_destroy_aux(bool must_destroy)
 {
 	int i, b_i = -1;
 	int my_encumber, extra, number = 1;
 	bool destroy_weight;
-	s16b b_w;
+	s16b b_w = 0;
 	s32b value = -1, b_v = 1000L, my_power;
 	list_item *l_ptr;
 
@@ -1934,7 +1933,7 @@ bool borg_destroy_aux(bool must_destroy)
 		}
 
 		/* If the value is the same, take the one with the greater weight */
-		if (value == b_v && l_ptr->weight <= b_w) continue;
+		if ((value == b_v) && (l_ptr->weight <= b_w)) continue;
 
 		/* Maintain the "best" */
 		b_i = i;
@@ -1943,7 +1942,7 @@ bool borg_destroy_aux(bool must_destroy)
 	}
 
 	/* Nothing to destroy */
-	if (b_i < 0)  return (FALSE);
+	if (b_i < 0) return (FALSE);
 
 	/* Reassign the item */
 	l_ptr = &inventory[b_i];
@@ -1965,6 +1964,7 @@ bool borg_destroy_aux(bool must_destroy)
 
 	return (TRUE);
 }
+
 
 /*
  * Catchall procedure for destroying items.  The borg will try to destroy an

@@ -680,8 +680,8 @@ static int borg_danger_aux2(int i, bool average)
 
 			/* Track spaces already protected */
 			if (mb_ptr->monster ||
-				((mb_ptr->feat >= FEAT_CLOSED)
-				 && (mb_ptr->feat <= FEAT_PERM_SOLID)))
+			    ((mb_ptr->feat >= FEAT_CLOSED) &&
+			     (mb_ptr->feat <= FEAT_PERM_SOLID)))
 			{
 				/* Track the safe areas for calculating danger */
 				spot_safe++;
@@ -3591,7 +3591,7 @@ static s32b borg_power_aux4(void)
 	value += 600 * MIN_FLOOR(bp_ptr->able.fuel, 3, 7);
 
 	/* Get the current light source */
-	l_ptr = l_ptr = look_up_equip_slot(EQUIP_LITE);
+	l_ptr = look_up_equip_slot(EQUIP_LITE);
 
 	if (!l_ptr)
 	{
@@ -3793,8 +3793,8 @@ static s32b borg_power_aux4(void)
 
 	/* If the borg has a reliable healing spell */
 	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5) ||
-		borg_spell_legal_fail(REALM_LIFE, 1, 6, 5) ||
-		borg_spell_legal_fail(REALM_NATURE, 1, 6, 5))
+	    borg_spell_legal_fail(REALM_LIFE, 1, 6, 5) ||
+	    borg_spell_legal_fail(REALM_NATURE, 1, 6, 5))
 	{
 		/* Still take some potions along */
 		max_carry = 5;
