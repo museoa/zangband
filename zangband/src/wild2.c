@@ -3298,8 +3298,9 @@ static void del_block(int x, int y)
 		/* Unref quest? */
 		if ((!t_ptr->region) && (t_ptr->quest_num))
 		{
-			/* No longer active */
-			quest[t_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE);
+			/* No longer active or created */
+			quest[t_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE
+				 | QUEST_FLAG_CREATED);
 		}
 	}
 		

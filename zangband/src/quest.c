@@ -541,6 +541,12 @@ void activate_quests(int level)
 		{
 			q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			
+			/* Hack - we notice the dungeon quest */
+			if (q_ptr->status == QUEST_STATUS_UNTAKEN)
+			{
+				q_ptr->status = QUEST_STATUS_TAKEN;
+			}
+			
 			/* Hack - toggle QUESTOR flag */
 			if (q_ptr->type == QUEST_TYPE_DUNGEON)
 			{
@@ -549,7 +555,8 @@ void activate_quests(int level)
 		}
 		else
 		{
-			q_ptr->flags &= ~(QUEST_FLAG_ACTIVE);
+			/* No longer created or active */
+			q_ptr->flags &= ~(QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
 		}
 	}
 }
@@ -752,6 +759,9 @@ void trigger_quest_create(byte c_type, vptr data)
 				}
 			}
 		}
+		
+		/* The quest is created */
+		q_ptr->flags |= QUEST_FLAG_CREATED;
 	}
 }
 
@@ -1081,7 +1091,7 @@ void do_cmd_knowledge_quests(void)
 					{
 						plural_aux(name);
 
-						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n",
+						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n\n",
 							q_ptr->name, (int) q_ptr->data.dun.level,
 							(int) q_ptr->data.dun.max_num, name, (int) q_ptr->data.dun.cur_num);
 					}
@@ -1658,8 +1668,9 @@ void draw_quest(u16b town_num)
 		}
 	}
 	
-	/* Hack - Activate quest */
-	q_ptr->flags |= QUEST_FLAG_ACTIVE;
+	/* Activate quest + create quest */
+	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
+
 	
 	/* Mega-hack Give a message if we "discover" it */
 	quest_discovery();

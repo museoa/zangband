@@ -102,6 +102,7 @@
 #define QUEST_FLAG_ACTIVE		0x01	/* Quest triggers have effect */
 #define QUEST_FLAG_TIME			0x02	/* Quest has timeout */
 #define QUEST_FLAG_ITEM			0x04	/* Player has art. quest item */
+#define QUEST_FLAG_CREATED		0x08	/* Quest is created */
 #define QUEST_FLAG_KNOWN		0x10	/* Player knows about this quest */
 
 /* Helper defines for random quests */
