@@ -2417,8 +2417,8 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	{
 		/* Uniqueness check removed */
 
-		center[i].x = rand_range(1, xsize - 2);
-		center[i].y = rand_range(1, ysize - 2);
+		center[i].x = (u16b) rand_range(1, xsize - 2);
+		center[i].y = (u16b) rand_range(1, ysize - 2);
 	}
 
 	/* Set vault flags */
