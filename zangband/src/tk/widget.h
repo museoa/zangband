@@ -88,9 +88,6 @@ struct Widget
     int gwidth;					/* Source column width */
     int gheight;				/* Source row height */
     int oldGWidth, oldGHeight;	/* To notice changes */
-
-	/* WIDGET_STYLE_MAP */
-	int dirty[4]; /* Dirty rect for map */
 };
 
 /*
@@ -190,9 +187,6 @@ extern WidgetItemType ProgressType;
 extern WidgetItemType TextType;
 extern WidgetItemType CursorType;
 
-extern void map_draw_all(Widget *widgetPtr);
-extern void map_draw_invalid(Widget *widgetPtr);
-extern int map_symbol_proc(Widget *widgetPtr, int y, int x);
 extern int init_widget(Tcl_Interp *interp);
 
 /* Extended Widget record */
@@ -200,10 +194,6 @@ typedef struct ExWidget {
 	Widget widget;
 	IconSpec *effect; /* Per-tile effect icons */
 
-	/* WIDGET_STYLE_ICON */
 	void (*whatToDrawProc)(Widget *widgetPtr, int y, int x, t_display *wtd);
-
-	/* WIDGET_STYLE_MAP */
-	int (*symbolProc)(Widget *widgetPtr, int y, int x); /* For micro-map */
 } ExWidget;
 

@@ -1400,43 +1400,25 @@ if (widgetPtr->flags & WIDGET_WIPE) return;
 	if (col < 0 || col >= cc)
 		return;
 
-	if (widgetPtr->style != WIDGET_STYLE_MAP)
-	{
-		tile = row * cc + col;
-		if (widgetPtr->info[tile] & (WIDGET_INFO_DIRTY | WIDGET_INFO_IGNORE))
-			return;
-		widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
-		widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
-	}
-	else
-	{
-		if (row < widgetPtr->dirty[1])
-			widgetPtr->dirty[1] = row;
-		if (row > widgetPtr->dirty[3])
-			widgetPtr->dirty[3] = row;
-		if (col < widgetPtr->dirty[0])
-			widgetPtr->dirty[0] = col;
-		if (col > widgetPtr->dirty[2])
-			widgetPtr->dirty[2] = col;
-	}
+	tile = row * cc + col;
+	if (widgetPtr->info[tile] & (WIDGET_INFO_DIRTY | WIDGET_INFO_IGNORE))
+		return;
+	widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
+	widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
 }
 
 void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int right)
 {
 	int row, col;
 
-if (widgetPtr->flags & WIDGET_WIPE) return;
+	if (widgetPtr->flags & WIDGET_WIPE) return;
 
-	if (widgetPtr->style != WIDGET_STYLE_MAP)
+	for (row = top; row <= bottom; row++)
 	{
-		for (row = top; row <= bottom; row++)
-			for (col = left; col <= right; col++)
-				Widget_Invalidate(widgetPtr, row, col);
-	}
-	else
-	{
-		Widget_Invalidate(widgetPtr, top, left);
-		Widget_Invalidate(widgetPtr, bottom, right);
+		for (col = left; col <= right; col++)
+		{
+			Widget_Invalidate(widgetPtr, row, col);
+		}
 	}
 }
 

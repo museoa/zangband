@@ -408,23 +408,10 @@ static int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 	/* Hack - ignore unused parameter */
 	(void) interp;
 
-	/* Valid micro-map sizes: 4, 6, 8 */
-	if (widgetPtr->style == WIDGET_STYLE_MAP)
-	{
-		widgetPtr->drawAllProc = map_draw_all;
-		widgetPtr->drawInvalidProc = map_draw_invalid;
-		exPtr->whatToDrawProc = NULL;
-		exPtr->symbolProc = map_symbol_proc;
-	}
-
 	/* Make this Widget draw icons */
-	if (widgetPtr->style == WIDGET_STYLE_ICON)
-	{
-		widgetPtr->drawAllProc = widget_draw_all;
-		widgetPtr->drawInvalidProc = widget_draw_invalid;
-		exPtr->whatToDrawProc = widget_wtd;
-		exPtr->symbolProc = NULL;
-	}
+	widgetPtr->drawAllProc = widget_draw_all;
+	widgetPtr->drawInvalidProc = widget_draw_invalid;
+	exPtr->whatToDrawProc = widget_wtd;
 
 	return TCL_OK;
 }
@@ -444,8 +431,7 @@ static void widget_changed(Widget *widgetPtr)
 		}
 	}
 
-	/*  */
-	if ((widgetPtr->style != WIDGET_STYLE_MAP) && (exPtr->effect == NULL))
+	if (exPtr->effect == NULL)
 	{
 		exPtr->effect = (IconSpec *) Tcl_Alloc(sizeof(IconSpec) * widgetPtr->tc);
 
@@ -484,7 +470,6 @@ static int widget_create(Tcl_Interp *interp, Widget **ptr)
 	widgetPtr->invalidateProc = NULL;
 	widgetPtr->invalidateAreaProc = NULL;
 	exPtr->whatToDrawProc = NULL;
-	exPtr->symbolProc = NULL;
 	exPtr->effect = NULL;
 
 	(*ptr) = widgetPtr;
@@ -610,9 +595,6 @@ static bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
 		widgetPtr = DoubleLink_Data(link, Widget);
 		exPtr = (ExWidget *) widgetPtr;
 
-		/* Don't draw in micro-map */
-		if (widgetPtr->style == WIDGET_STYLE_MAP) continue;
-
 		/* Drawing is disabled */
 		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
 
@@ -649,9 +631,6 @@ void angtk_effect_clear(int y, int x)
 	{
 		widgetPtr = DoubleLink_Data(link, Widget);
 		exPtr = (ExWidget *) widgetPtr;
-
-		/* Don't draw in micro-map */
-		if (widgetPtr->style == WIDGET_STYLE_MAP) continue;
 
 		/* Drawing is disabled */
 		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
@@ -770,9 +749,6 @@ void angtk_lite_spot_real(int y, int x)
 
 	/* Get knowledge about location */
 	get_grid_info(y, x, &g_grid[y][x]);
-
-	/* Update the global array of map symbols */
-	map_symbol_set(y, x);
 
 	/* Check each Widget */
 	for (link = WidgetListMap.head; link; link = link->next)

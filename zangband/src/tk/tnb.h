@@ -236,14 +236,6 @@ extern int SetArrayValueChar(cptr varName, cptr field, char value);
 extern int SetArrayValueLong(cptr varName, cptr field, long value);
 extern int SetArrayValueString(cptr varName, cptr field, cptr value);
 
-/* map.c */
-extern void init_map(void);
-extern void map_symbol_set(int y, int x);
-extern char *map_symbol_name(int symbolIndex);
-extern int map_symbol_feature(int f_idx);
-extern int map_symbol_find(Tcl_Interp *interp, Tcl_Obj *objName,
-	int *symbolIndex);
-
 /* tcltk.c */
 extern Tcl_Interp *TclTk_Init(int argc, char **argv);
 extern void TclTk_Exit(Tcl_Interp *interp);

@@ -2260,8 +2260,6 @@ void angtk_angband_initialized(void)
 		C_MAKE(g_grid[i], MAX_WID, t_grid);
 	}
 
-	init_map();
-
 	/* Program is intialized */
 	if (Tcl_EvalEx(g_interp, (char *) "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
 	{
