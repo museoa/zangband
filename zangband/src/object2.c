@@ -1022,7 +1022,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_INFRA)) total += (30 * plusses);
 	if (FLAG(o_ptr, TR_TUNNEL)) total += (20 * plusses);
 	if ((FLAG(o_ptr, TR_SPEED)) && (plusses > 0)) total += (500 * sqvalue(plusses));
-	if ((FLAG(o_ptr, TR_BLOWS)) && (plusses > 0)) total += (500 * sqvalue(plusses));
+	if ((FLAG(o_ptr, TR_BLOWS)) && (plusses > 0)) total += (2500 * sqvalue(plusses));
 
 	if (FLAG(o_ptr, TR_SLAY_ANIMAL)) total += 750;
 	if (FLAG(o_ptr, TR_SLAY_EVIL))   total += 750;
@@ -1085,8 +1085,8 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 
 	if (FLAG(o_ptr, TR_QUESTITEM)) total += 0;
 	if (FLAG(o_ptr, TR_XXX4)) total += 0;
-	if (FLAG(o_ptr, TR_NO_TELE)) total += 1500;
-	if (FLAG(o_ptr, TR_NO_MAGIC)) total += 1500;
+	if (FLAG(o_ptr, TR_NO_TELE)) total += 2500;
+	if (FLAG(o_ptr, TR_NO_MAGIC)) total += 2500;
 	if (FLAG(o_ptr, TR_TY_CURSE)) total -= 15000;
 	if (FLAG(o_ptr, TR_EASY_KNOW)) total += 0;
 	if (FLAG(o_ptr, TR_HIDE_TYPE)) total += 0;
@@ -1262,8 +1262,12 @@ s32b object_value_real(const object_type *o_ptr)
 			if (o_ptr->to_d < 0) return (0L);
 
 			/* Factor in the bonuses */
-			value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 20 +
-					  bonus_value(o_ptr->to_a * 2) * 10);
+			/*
+			 * Note that combat bonuses on a ring/amulet are worth
+			 * twice what they are on a weapon/armor
+			 */
+			value += (bonus_value(o_ptr->to_h + o_ptr->to_d) * 40 +
+					  bonus_value(o_ptr->to_a * 2) * 20);
 
 			/* Done */
 			break;

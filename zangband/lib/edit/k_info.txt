@@ -1141,6 +1141,12 @@ P:8:1d5:0:0:0
 
 ##### Rings #####
 
+# Note that most rings with a pval-dependent value
+# cost the same as a +1 bonus (higher bonuses
+# increase the cost automatically), and most rings
+# which give a single flag are costed at half the
+# price of the flag.
+
 N:132:Strength
 G:=:d
 I:45:24:5
@@ -1177,10 +1183,11 @@ F:INT | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	allow_curse = TRUE
 
+# Ring of speed costs 5000 + value of bonus
 N:136:Speed
 G:=:d
 I:45:31:10
-W:100:0:2:10000
+W:100:0:2:5500
 A:100/1
 F:SPEED | HIDE_TYPE
 D:This ring almost vibrates with power.
@@ -1201,49 +1208,49 @@ L:MAKE:	allow_curse = TRUE
 N:138:Teleportation
 G:=:d
 I:45:4:0
-W:9:0:2:50
+W:9:0:2:125
 A:9/2
 F:CURSED | TELEPORT | EASY_KNOW
 
 N:139:Slow Digestion
 G:=:d
 I:45:6:0
-W:9:0:2:100
+W:9:0:2:125
 A:9/2
 F:SLOW_DIGEST | EASY_KNOW
 
 N:140:Resist Fire
 G:=:d
 I:45:8:0
-W:17:0:2:200
+W:17:0:2:250
 A:17/2
 F:RES_FIRE | IGNORE_FIRE | EASY_KNOW
 
 N:141:Resist Cold
 G:=:d
 I:45:9:0
-W:17:0:2:200
+W:17:0:2:250
 A:17/2
 F:RES_COLD | IGNORE_COLD | EASY_KNOW
 
 N:142:Levitation
 G:=:d
 I:45:7:0
-W:9:0:2:150
+W:9:0:2:125
 A:9/2
 F:FEATHER | EASY_KNOW
 
-N:143:Poison Resistance
+N:143:Poison Immunity
 G:=:d
 I:45:20:0
-W:60:0:2:16000
+W:60:0:2:5000
 A:50/8:85/2
-F:RES_POIS | EASY_KNOW
+F:IM_POIS | EASY_KNOW
 
 N:144:Free Action
 G:=:d
 I:45:21:0
-W:25:0:2:1500
+W:25:0:2:500
 A:25/2
 F:FREE_ACT | EASY_KNOW
 
@@ -1320,26 +1327,29 @@ A:9/2
 F:CURSED | INT | HIDE_TYPE
 L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
 
+# The value of a ring of combat is in the bonuses
 N:151:Combat
 G:=:d
 I:45:29:0
-W:35:0:2:500
+W:35:0:2:100
 A:35/1
 L:MAKE:	object.to_d = rand_range(5, 13) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
 
+# The value of a ring of skill is in the bonuses
 N:152:Skill
 G:=:d
 I:45:28:0
-W:35:0:2:500
+W:35:0:2:100
 A:35/1
 L:MAKE:	object.to_h = rand_range(5, 13) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
 
+# The value of a ring of protection is in the bonuses
 N:153:Protection
 G:=:d
 I:45:16:0
-W:17:0:2:200
+W:17:0:2:100
 A:17/2
 L:MAKE:	object.to_a = rand_range(5, 13) + m_bonus(10, level)
 L:MAKE:	allow_curse = TRUE
@@ -1354,7 +1364,7 @@ F:CURSED | AGGRAVATE | EASY_KNOW
 N:155:See Invisible
 G:=:d
 I:45:22:0
-W:30:0:2:340
+W:30:0:2:250
 A:30/3:52/1
 F:SEE_INVIS | EASY_KNOW
 
@@ -1396,14 +1406,15 @@ F:SUST_DEX | EASY_KNOW
 N:161:Sustain Charisma
 G:=:d
 I:45:15:0
-W:20:0:2:75
+W:20:0:2:100
 A:20/16:52/16
 F:SUST_CHR | EASY_KNOW
 
+# The value of a ring of slaying is in the bonuses
 N:162:Slaying
 G:=:d
 I:45:30:0
-W:65:0:2:1000
+W:65:0:2:200
 A:65/1
 F:SHOW_MODS
 L:MAKE:	object.to_d = randint1(7) + m_bonus(10, level)
@@ -1415,7 +1426,7 @@ L:MAKE:	allow_curse = TRUE
 N:163:Brilliance
 G:":d
 I:40:6:4
-W:35:0:3:500
+W:35:0:3:1000
 A:35/2:85/1
 F:INT | WIS | HIDE_TYPE
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
@@ -1433,7 +1444,7 @@ L:MAKE:	allow_curse = TRUE
 N:165:Sensing
 G:":d
 I:40:5:5
-W:12:0:3:100
+W:12:0:3:50
 A:12/2
 F:SENSE | HIDE_TYPE
 L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
@@ -1442,28 +1453,28 @@ L:MAKE:	allow_curse = TRUE
 N:166:Teleportation
 G:":d
 I:40:1:0
-W:26:0:3:150
+W:26:0:3:125
 A:26/2
 F:CURSED | TELEPORT | EASY_KNOW
 
 N:167:Slow Digestion
 G:":d
 I:40:3:0
-W:26:0:3:50
+W:26:0:3:125
 A:26/2
 F:SLOW_DIGEST | EASY_KNOW
 
 N:168:Resist Acid
 G:":d
 I:40:4:0
-W:35:0:3:150
+W:35:0:3:250
 A:35/2
 F:RES_ACID | IGNORE_ACID | EASY_KNOW
 
 N:169:Berserk Strength
 G:":d
 I:40:2:0
-W:33:0:3:50
+W:33:0:3:10
 A:33/3
 F:AGGRAVATE
 L:MAKE:	object.to_d = randint1(7) + m_bonus(10, level)
@@ -1482,10 +1493,11 @@ P:15:1d4:-2:0:0
 
 ##### Additional amulets #####
 
+# Amulet of the magi is worth an extra 2000 au for no reason
 N:171:the Magi
 G:":d
 I:40:8:5
-W:75:0:3:5000
+W:75:0:3:3750
 A:75/4:100/3
 P:0:0d0:0:0:3
 F:FREE_ACT | SEE_INVIS | SENSE |
@@ -3957,80 +3969,83 @@ P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
 
+# Additional rings
+
+# This is cheaper than it should be
 N:425:Fear Resistance
 G:=:d
 I:45:38:0
-W:17:0:2:150 
+W:17:0:2:250 
 A:17/2
 F:RES_FEAR | EASY_KNOW
 
 N:426:Light and Darkness Resistance
 G:=:d
 I:45:39:0
-W:52:0:2:1000
+W:52:0:2:1500
 A:52/2
 F:RES_LITE | RES_DARK | EASY_KNOW
 
 N:427:Nether Resistance
 G:=:d
 I:45:40:0
-W:60:0:2:14500
+W:60:0:2:3500
 A:60/2
 F:RES_NETHER | HOLD_LIFE | EASY_KNOW
 
 N:428:Nexus Resistance
 G:=:d
 I:45:41:0
-W:42:0:2:3000
+W:42:0:2:750
 A:42/2
 F:RES_NEXUS | EASY_KNOW
 
 N:429:Sound Resistance
 G:=:d
 I:45:42:0
-W:45:0:2:3000
+W:45:0:2:750
 A:45/2
 F:RES_SOUND | EASY_KNOW
 
 N:430:Confusion Resistance
 G:=:d
 I:45:43:0
-W:39:0:2:5000
+W:39:0:2:750
 A:39/2
 F:RES_CONF | EASY_KNOW
 
 N:431:Shard Resistance
 G:=:d
 I:45:44:0
-W:43:0:2:3000
+W:43:0:2:750
 A:43/2
 F:RES_SHARDS | EASY_KNOW
 
 N:432:Disenchantment Resistance
 G:=:d
 I:45:45:0
-W:100:0:2:15000
+W:100:0:2:750
 A:100/10
 F:RES_DISEN | EASY_KNOW
 
 N:433:Chaos Resistance
 G:=:d
 I:45:46:0
-W:75:0:2:13000
+W:75:0:2:750
 A:75/2
 F:RES_CHAOS | RES_CONF | EASY_KNOW
 
 N:434:Blindness Resistance
 G:=:d
 I:45:47:0
-W:20:0:2:2500
+W:20:0:2:750
 A:20/4
 F:RES_BLIND | EASY_KNOW
 
 N:435:Lordly Protection
 G:=:d
 I:45:48:0
-W:105:0:2:100000
+W:105:0:2:6000
 A:100/5
 F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
@@ -4038,10 +4053,11 @@ L:MAKE:	while (one_in_(4) ~= 0) do add_ego_power(EGO_XTRA_HI_RESIST, object) end
 L:MAKE:	object.to_a = rand_range(10, 15) + m_bonus(10, level)
 L:MAKE:	rating_boost = 5
 
+# This is worth 2500 + the value of the plusses
 N:436:Extra Attacks
 G:=:d
 I:45:49:1
-W:75:0:2:10000
+W:75:0:2:5000
 A:75/8:100/2
 F:BLOWS
 L:MAKE:	if (one_in_(7) ~= 0) then object.pval = 2 end
@@ -4396,7 +4412,7 @@ F:EASY_KNOW
 N:520:Reflection
 G:":d
 I:40:9:0
-W:85:0:3:10000
+W:85:0:3:2700
 A:85/4
 F:REFLECT | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -4406,7 +4422,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 N:521:Anti-Magic
 G:":d
 I:40:13:0
-W:85:0:3:10000
+W:85:0:3:2700
 A:85/4
 F:NO_MAGIC
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -4415,7 +4431,7 @@ L:MAKE:	allow_curse = TRUE
 N:522:Anti-Teleportation
 G:":d
 I:40:14:0
-W:52:0:3:15000
+W:52:0:3:2700
 A:52/4
 F:NO_TELE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -4426,7 +4442,7 @@ L:MAKE:	allow_curse = TRUE
 N:523:Resistance
 G:":d
 I:40:15:0
-W:75:0:3:5000
+W:75:0:3:2200
 A:75/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -4885,31 +4901,32 @@ F:INSTA_ART
 N:583:Resist Fire and Cold
 G:=:d
 I:45:51:0
-W:21:0:2:450
+W:21:0:2:850
 A:21/4
 F:RES_FIRE | RES_COLD | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
 
 N:584:the Cat
 G:=:d
 I:45:52:4
-W:13:0:2:150
+W:13:0:2:80
 A:13/2
 F:STEALTH | INFRA
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_SUST_DEX) end
 L:MAKE:	allow_curse = TRUE
 
+# This is cheaper than it should be
 N:585:Fate
 G:=:d
 I:45:53:0
-W:15:0:2:200
+W:15:0:2:500
 A:15/5:30/5
 F:STRANGE_LUCK
 
 N:586:Wizardry
 G:=:d
 I:45:54:2
-W:60:0:2:5000
+W:60:0:2:2500
 A:75/2
 F:SP
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
@@ -4920,14 +4937,14 @@ L:MAKE:	allow_curse = TRUE
 N:587:Protection from Evil
 G:":d
 I:40:16:0
-W:35:0:3:500
+W:35:0:3:750
 A:35/2
 F:SLAY_EVIL | EASY_KNOW
 
 N:588:Protection from Undead
 G:":d
 I:40:17:4
-W:35:0:3:500
+W:35:0:3:750
 A:35/2
 F:SLAY_UNDEAD | WIS
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
