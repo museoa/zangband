@@ -1329,8 +1329,7 @@ static int WidgetItem_Init(Tcl_Interp *interp)
 	(void) interp;
 
 	/* Add each Widget item type to the global list */
-	typeList = &CursorType;
-	CursorType.nextPtr = NULL;
+	typeList = NULL;
 
 	return TCL_OK;
 }
