@@ -38,10 +38,12 @@ questions and answers.
     3.1.1 Can I play it in the old ASCII-mode?
     3.1.2 Can I use multiple savefiles?
     3.1.3 Why uses the DOS version only 2/3 of the screen?
-  3.2 Windows 95/98/NT
+  3.2 Windows 95/98/NT/XP
     3.2.1 How do I run in the Windows version?
     3.2.2 Why do I get an error message when I try to switch on
           graphics?
+    3.2.3 The screen isn't refreshing properly when I move around,
+	      how can I fix this?
   3.3 Unix
     3.3.1 How do I change the number of terminals used?
 	3.3.2 How do I change the tileset used?
@@ -162,7 +164,7 @@ options menu and press Ctrl-R to redraw the screen.
 
 
 --------------------------------------------------------------------------
-3.2 Windows 95/98/NT
+3.2 Windows 95/98/NT/XP
 --------------------------------------------------------------------------
 
 --------------------------------------------------------------------------
@@ -181,6 +183,13 @@ graphics' error means that you tried to use graphics with a desktop
 set to 256 colors. Switch to high-color or true-color mode to fix
 this problem.
 
+--------------------------------------------------------------------------
+3.2.2 The screen isn't refreshing properly when I move around,
+	  how can I fix this?
+--------------------------------------------------------------------------
+
+Try toggling the "bizzare display" option.  This seems to affect windows
+XP systems mostly.
 
 
 --------------------------------------------------------------------------
