@@ -717,7 +717,7 @@ void set_floor(int x, int y)
  *   FEAT_PERM_OUTER -- outer room walls (perma)
  *   FEAT_PERM_SOLID -- dungeon border (perma)
  */
-void build_tunnel(int row1, int col1, int row2, int col2)
+void build_tunnel(int col1, int row1, int col2, int row2)
 {
 	int y, x;
 	int tmp_row, tmp_col;

@@ -746,7 +746,7 @@ static bool cave_gen(void)
 		else
 		{
 			/* make normal tunnel */
-			build_tunnel(dun->cent[i].y, dun->cent[i].x, y, x);
+			build_tunnel(dun->cent[i].x, dun->cent[i].y, x, y);
 		}
 
 		/* Turn the tunnel into corridor */
