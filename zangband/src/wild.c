@@ -2242,6 +2242,9 @@ static void del_block(blk_ptr block_ptr)
 
 			/* Delete objects on the square */
 			delete_object_location(&block_ptr[y][x]);
+			
+			/* Delete fields on the square */
+			delete_field_aux(&block_ptr[y][x].fld_idx);
 		}
 	}
 }
