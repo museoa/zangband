@@ -557,16 +557,17 @@ static void image_random(byte *ap, char *cp)
 	}
 }
 
-/* Are we using 16x16 tiles ? (Faster than streq("new") etc.)*/
-static bool lighting_effects_on;
+/*
+ * Not using graphical tiles for this feature?
+ */
+#define is_ascii_graphics(C , A) \
+    (!(((C) & 0x80) && ((A) & 0x80)))
 
 /*
  * The 16x16 tile of the terrain supports lighting
  */
 static bool feat_supports_lighting(byte feat)
-{
-	if (!lighting_effects_on) return FALSE;
-	
+{	
 	if ((feat == FEAT_OPEN) ||
 	(feat == FEAT_BROKEN) ||
 	((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)) ||
@@ -785,7 +786,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	feat = f_info[feat].mimic;
 			
 	/* Hack - Non LOS blocking terrains */
-	if (cave_floor_grid(c_ptr) && lighting_effects_on)
+	if (cave_floor_grid(c_ptr))
 	{
 		/* Memorized (or visible) floor */
 		if   ((c_ptr->info & CAVE_MARK) ||
@@ -804,20 +805,20 @@ void map_info(int y, int x, byte *ap, char *cp)
 			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
-			if (view_special_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
+			if (view_special_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
 				{
-					if (use_transparency && feat_supports_lighting(c_ptr->feat))
-					{
-						/* Use a dark tile */
-						c++;
-					}
-					else
+					if (is_ascii_graphics(c,a))
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
+					}
+					else if (use_transparency && feat_supports_lighting(feat))
+					{
+						/* Use a dark tile */
+						c++;
 					}
 				}
 
@@ -827,15 +828,16 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (view_yellow_lite)
 					{
-						if (use_transparency && feat_supports_lighting(c_ptr->feat))
-						{
-							/* Use a brightly lit tile */
-							c += 2;
-						}
-						else
+						if (is_ascii_graphics(c,a))
 						{
 							/* Use lightened colour */
 							a = lighting_colours[a][0];
+						}
+						else if (use_transparency &&
+							 feat_supports_lighting(feat))
+						{
+							/* Use a brightly lit tile */
+							c += 2;
 						}
 					}
 				}
@@ -843,15 +845,15 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Handle "dark" grids */
 				else if (!(c_ptr->info & CAVE_GLOW))
 				{
-					if (use_transparency && feat_supports_lighting(c_ptr->feat))
-					{
-						/* Use a dark tile */
-						c++;
-					}
-					else
+					if (is_ascii_graphics(c,a))
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
+					}
+					else if (use_transparency && feat_supports_lighting(feat))
+					{
+						/* Use a dark tile */
+						c++;
 					}
 				}
 
@@ -861,15 +863,15 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Special flag */
 					if (view_bright_lite)
 					{
-						if (use_transparency && feat_supports_lighting(c_ptr->feat))
-						{
-							/* Use a dark tile */
-							c++;
-						}
-						else
+						if (is_ascii_graphics(c,a))
 						{
 							/* Use darkened colour */
 							a = lighting_colours[a][1];
+						}
+						else if (use_transparency && feat_supports_lighting(feat))
+						{
+							/* Use a dark tile */
+							c++;
 						}
 					}
 				}
@@ -894,7 +896,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	else
 	{
 		/* Memorized grids */
-		if ((c_ptr->info & CAVE_MARK) && (view_granite_lite && lighting_effects_on))
+		if ((c_ptr->info & CAVE_MARK) && view_granite_lite)
 		{
 			/* Access feature */
 			f_ptr = &f_info[feat];
@@ -908,15 +910,15 @@ void map_info(int y, int x, byte *ap, char *cp)
 			/* Handle "blind" */
 			if (p_ptr->blind)
 			{
-				if (use_transparency && feat_supports_lighting(c_ptr->feat))
-				{
-					/* Use a dark tile */
-					c++;
-				}
-				else if (!use_transparency)
+				if (is_ascii_graphics(c,a))
 				{
 					/* Use darkened colour */
 					a = lighting_colours[a][1];
+				}
+				else if (use_transparency && feat_supports_lighting(feat))
+				{
+					/* Use a dark tile */
+					c++;
 				}
 			}
 
@@ -924,73 +926,48 @@ void map_info(int y, int x, byte *ap, char *cp)
 			else if (c_ptr->info & CAVE_LITE)
 			{
 				/* Torch lite */
-				if (view_yellow_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
+				if (view_yellow_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
 				{
-					if (use_transparency && feat_supports_lighting(c_ptr->feat))
-					{
-						/* Use a brightly lit tile */
-						c += 2;
-					}
-					else
+					if (is_ascii_graphics(c,a))
 					{
 						/* Use lightened colour */
 						a = lighting_colours[a][0];
+					}
+					else if (use_transparency &&
+							feat_supports_lighting(c_ptr->feat))
+					{
+						/* Use a brightly lit tile */
+						c += 2;
 					}
 				}
 			}
 
 			/* Handle "view_bright_lite" */
-			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
+			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
+			
 			{
 				/* Not viewable */
 				if (!(c_ptr->info & CAVE_VIEW))
 				{
-					if (use_transparency && feat_supports_lighting(c_ptr->feat))
-					{
-						/* Use a dark tile */
-						c++;
-					}
-					else
+					if (is_ascii_graphics(c,a))
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
+					}
+					else if (use_transparency && feat_supports_lighting(feat))
+					{
+						/* Use a dark tile */
+						c++;
 					}
 				}
 
 				/* Not glowing */
 				else if (!(c_ptr->info & CAVE_GLOW))
 				{
-					if (use_transparency && feat_supports_lighting(c_ptr->feat))
-					{
-						/* Use a lit tile */
-					}
-					else
+					if (is_ascii_graphics(c,a))
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
-					}
-				}
-
-				/* Not glowing correctly */
-				else
-				{
-					int xx, yy;
-
-					/* Hack -- move towards player */
-					yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-					xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
-
-					/* Check for "local" illumination */
-					if (!(area(yy,xx)->info & CAVE_GLOW))
-					{
-						if (use_transparency && feat_supports_lighting(c_ptr->feat))
-						{
-							/* Use a lit tile */
-						}
-						else
-						{
-							/* Use a lit tile */
-						}
 					}
 				}
 			}
@@ -1779,16 +1756,6 @@ void prt_map(void)
 
 	/* Hide the cursor */
 	(void)Term_set_cursor(0);
-
-#ifdef USE_GRAPHICS	
-	/* hack - Adom Bolts 16x16 graphics has lighting effects. */
-	lighting_effects_on = streq(ANGBAND_GRAF, "new");
-#else
-	/* hack - ascii has lighting effects */
-	lighting_effects_on = TRUE;
-#endif /* GRAPHICS */
-
-	
 
 	/* Dump the map */
 	for (y = panel_row_min; y <= panel_row_max; y++)
