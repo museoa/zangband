@@ -14,7 +14,6 @@
 #ifdef USE_TNB
 
 #include "tnb.h"
-#include "interp.h"
 #include "tcltk.h"
 
 cptr help_tnb[] =

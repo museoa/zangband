@@ -10,12 +10,8 @@
  * included in all such copies.
  */
 
-
-
-#include "angband.h"
 #include "tnb.h"
 #include <tkCanvas.h>
-#include "interp.h"
 #include "util-dll.h"
 #include "icon.h"
 #include "plat-dll.h"

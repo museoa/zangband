@@ -12,7 +12,6 @@
 
 #include "angband.h"
 #include "tnb.h"
-#include "interp.h"
 #include "cmdinfo-dll.h"
 
 #undef SHOW_LIFE_RATE

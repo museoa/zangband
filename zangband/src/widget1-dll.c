@@ -12,8 +12,7 @@
 
 /* Why did I call it "Widget"? Why? WHY?! Aargh! */
 
-#include "angband.h"
-
+#include "tnb.h"
 #include "util-dll.h"
 #include "plat-dll.h"
 #include "icon-dll.h"

@@ -15,6 +15,5 @@
 
 Tcl_Interp *TclTk_Init(int argc, char **argv);
 void TclTk_Exit(Tcl_Interp *interp);
-Tcl_Interp *TclTk_Interp(void);
 
 #endif /* INCLUDED_TCLTK_H */

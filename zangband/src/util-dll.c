@@ -10,7 +10,6 @@
  * included in all such copies.
  */
 
-#include "angband.h"
 #include "tnb.h"
 #include "cmdinfo-dll.h"
 #include "util-dll.h"

@@ -28,9 +28,7 @@
  * string, just like the usual "bind" command. Bindings are not automatically
  * deleted when a widget is destroyed.
  */
-#include "angband.h"
-#include <tcl.h>
-#include <tk.h>
+#include "tnb.h"
 #include "qebind-dll.h"
 
 int debug_bindings;

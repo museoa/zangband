@@ -9,9 +9,8 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
-#include "angband.h"
+
 #include "tnb.h"
-#include "interp.h"
 #include "cmdinfo-dll.h"
 
 enum {

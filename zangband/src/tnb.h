@@ -15,6 +15,7 @@
 
 #include <tk.h>
 #include <tcl.h>
+#include "angband.h"
 
 #if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
 #error "You must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
@@ -36,8 +37,15 @@ extern cptr ANGBAND_DIR_TK;
 extern bool check_dir(cptr s);
 extern void validate_file(cptr s, cptr fmt);
 
+extern Tcl_Interp *g_interp;
+
 /* canv-widget.c */
 extern void CanvasWidget_Idle(void);
+extern int CanvasWidget_Init(Tcl_Interp *interp);
+
+/* const.c */
+extern int init_const(Tcl_Interp *interp);
+
 
 /* icon1.c */
 
@@ -136,6 +144,14 @@ extern void angtk_wipe_spot(int y, int x);
 extern void angtk_idle(void);
 
 /* interp1.c */
+typedef struct {
+	cptr key; /* Textual name of TVAL_XXX macro */
+	int value; /* TVAL_XXX constant */
+} t_tval;
+extern t_tval g_tval[];
+extern Tcl_HashTable *g_tval_str;
+extern Tcl_HashTable *g_tval_const;
+
 extern cptr *keyword_gender;
 extern cptr *keyword_race;
 extern cptr *keyword_class;
@@ -155,6 +171,7 @@ extern void angtk_display_info_init(void);
 extern void angtk_display_info_append(cptr s);
 extern void angtk_display_info_done(cptr title);
 extern void angtk_display_info(char *title, char **info, int count);
+extern void angtk_display_info_aux(char *title, Tcl_Obj *listObjPtr);
 extern void angtk_eval(cptr command, ...);
 extern int angtk_eval_file(cptr extFileName);
 extern int angtk_generate(void);
@@ -277,6 +294,9 @@ extern void init_map(void);
 extern void map_symbol_set(int y, int x);
 extern char *map_symbol_name(int symbolIndex);
 extern int map_symbol_feature(int f_idx);
+extern int map_symbol_find(Tcl_Interp *interp, Tcl_Obj *objName,
+	int *symbolIndex);
+
 
 /* setting.c */
 extern void init_settings(void);
@@ -297,5 +317,39 @@ extern void prompt_update(cptr str);
 extern void any_more(cptr prompt);
 
 extern int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value);
+
+/* Make a tk hook function called 'objcmd_name' */
+#define DECLARE_TK_HOOK(N) \
+	extern int objcmd_##N _ANSI_ARGS_((ClientData clientData, \
+		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]))
+
+DECLARE_TK_HOOK(angband);
+DECLARE_TK_HOOK(player);
+DECLARE_TK_HOOK(power);
+DECLARE_TK_HOOK(setting);
+DECLARE_TK_HOOK(spell);
+DECLARE_TK_HOOK(cave);
+DECLARE_TK_HOOK(equipment);
+DECLARE_TK_HOOK(floor);
+DECLARE_TK_HOOK(game);
+DECLARE_TK_HOOK(info);
+DECLARE_TK_HOOK(init_icons);
+DECLARE_TK_HOOK(inkey_flags);
+DECLARE_TK_HOOK(inventory);
+DECLARE_TK_HOOK(keycount);
+DECLARE_TK_HOOK(keypress);
+DECLARE_TK_HOOK(macro);
+DECLARE_TK_HOOK(message);
+DECLARE_TK_HOOK(mindcraft);
+DECLARE_TK_HOOK(ARRAY_find);
+DECLARE_TK_HOOK(ARRAY_info);
+DECLARE_TK_HOOK(ARRAY_max);
+DECLARE_TK_HOOK(ARRAY_set);
+DECLARE_TK_HOOK(fontdesc);
+DECLARE_TK_HOOK(menuentrystate);
+DECLARE_TK_HOOK(photo_get);
+DECLARE_TK_HOOK(photo_mask);
+DECLARE_TK_HOOK(equipinfo);
+DECLARE_TK_HOOK(inveninfo);
 
 #endif /* _INCLUDE_TNB_H_ */

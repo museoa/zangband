@@ -10,7 +10,7 @@
  * included in all such copies.
  */
 
-#include "angband.h"
+#include "tnb.h"
 #include "util-dll.h"
 #include "tcltk.h"
 
@@ -22,8 +22,7 @@
 
 static void		WishPanic _ANSI_ARGS_(TCL_VARARGS(char *,format));
 
-/* The interpreter. The app can call TclTk_Interp() to get it */
-static Tcl_Interp *g_interp = NULL;
+Tcl_Interp *g_interp = NULL;
 
 static void CloseStdHandle(DWORD nStdHandle)
 {
@@ -216,8 +215,6 @@ static void		Prompt _ANSI_ARGS_((Tcl_Interp *interp, int partial));
 static void		StdinProc _ANSI_ARGS_((ClientData clientData,
 			    int mask));
 
-/* The interpreter. The app can call TclTk_Interp() to get it */
-static Tcl_Interp *g_interp = NULL;
 
 Tcl_Interp *TclTk_Init(int argc, char **argv)
 {
@@ -477,8 +474,3 @@ defaultPrompt:
 }
 
 #endif /* PLATFORM_X11 */
-
-Tcl_Interp *TclTk_Interp(void)
-{
-	return g_interp;
-}

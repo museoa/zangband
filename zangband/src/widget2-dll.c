@@ -10,8 +10,7 @@
  * included in all such copies.
  */
 
-#include "angband.h"
-#include <tk.h>
+#include "tnb.h"
 #include "util-dll.h"
 #include "widget-dll.h"
 #include "plat-dll.h"

@@ -15,6 +15,7 @@
 extern void map_draw_all(Widget *widgetPtr);
 extern void map_draw_invalid(Widget *widgetPtr);
 extern int map_symbol_proc(Widget *widgetPtr, int y, int x);
+extern int init_widget(Tcl_Interp *interp);
 
 /* Extended Widget record */
 typedef struct ExWidget {

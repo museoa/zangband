@@ -10,9 +10,7 @@
  * included in all such copies.
  */
 
-#include "angband.h"
 #include "tnb.h"
-#include "interp.h"
 #include "struct-dll.h"
 #include "util-dll.h"
 #include "icon.h"
