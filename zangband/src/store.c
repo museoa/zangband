@@ -329,13 +329,6 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 
 
 
-
-
-/*
- * We store the current "store number" here so everyone can access it
- */
-static int cur_store_num = 7;
-
 /*
  * We store the current "store page" here so everyone can access it
  */
@@ -573,7 +566,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		if (adjust > 100) adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
-		if (cur_store_num == STORE_BLACK)
+		if (st_ptr->type == STORE_BLACK)
 			price = price / 2;
 	}
 
@@ -587,7 +580,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		if (adjust < 100) adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
-		if (cur_store_num == STORE_BLACK)
+		if (st_ptr->type == STORE_BLACK)
 			price = price * 2;
 	}
 
@@ -695,7 +688,7 @@ static void mass_produce(object_type *o_ptr)
 		case TV_WAND:
 		case TV_STAFF:
 		{
-			if ((cur_store_num == STORE_BLACK) && (randint1(3) == 1))
+			if ((st_ptr->type == STORE_BLACK) && (randint1(3) == 1))
 			{
 				if (cost < 1601L) size += damroll(1, 5);
 				else if (cost < 3201L) size += damroll(1, 3);
@@ -853,7 +846,7 @@ static bool store_check_num(object_type *o_ptr)
 	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
 
 	/* The "home" acts like the player */
-	if (cur_store_num == STORE_HOME)
+	if (st_ptr->type == STORE_HOME)
 	{
 		/* Check all the items */
 		for (i = 0; i < st_ptr->stock_num; i++)
@@ -897,16 +890,14 @@ static bool is_blessed(object_type *o_ptr)
 
 /*
  * Determine if the current store will purchase the given item
- *
- * Note that a shop-keeper must refuse to buy "worthless" items
  */
 static bool store_will_buy(object_type *o_ptr)
 {
 	/* Hack -- The Home is simple */
-	if (cur_store_num == STORE_HOME) return (TRUE);
+	if (st_ptr->type == STORE_HOME) return (TRUE);
 
 	/* Switch on the store */
-	switch (cur_store_num)
+	switch (st_ptr->type)
 	{
 		/* General Store */
 		case STORE_GENERAL:
@@ -1080,9 +1071,6 @@ static bool store_will_buy(object_type *o_ptr)
 		}
 	}
 
-	/* XXX XXX XXX Ignore "worthless" items */
-	if (object_value(o_ptr) <= 0) return (FALSE);
-
 	/* Assume okay */
 	return (TRUE);
 }
@@ -1096,7 +1084,7 @@ static bool store_will_buy(object_type *o_ptr)
  *
  * Note that this is a hacked up version of "inven_carry()".
  *
- * Also note that it may not correctly "adapt" to "knowledge" bacoming
+ * Also note that it may not correctly "adapt" to "knowledge" becoming
  * known, the player may have to pick stuff up and drop it again.
  */
 static int home_carry(object_type *o_ptr)
@@ -1462,7 +1450,7 @@ static void store_create(void)
 	for (tries = 0; tries < 4; tries++)
 	{
 		/* Black Market */
-		if (cur_store_num == STORE_BLACK)
+		if (st_ptr->type == STORE_BLACK)
 		{
 			/* Pick a level for object/magic */
 			level = 35 + p_ptr->lev;
@@ -1492,7 +1480,7 @@ static void store_create(void)
 		object_prep(q_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(q_ptr, level, 0, 0);
+		apply_magic(q_ptr, level, 0, OC_NORMAL);
 
 		/* Require valid object */
 		if (!store_will_buy(q_ptr)) continue;
@@ -1515,7 +1503,7 @@ static void store_create(void)
 		if (q_ptr->tval == TV_CHEST) continue;
 
 		/* Prune the black market */
-		if (cur_store_num == STORE_BLACK)
+		if (st_ptr->type == STORE_BLACK)
 		{
 			/* Hack -- No "crappy" items */
 			if (black_market_crap(q_ptr)) continue;
@@ -1646,7 +1634,7 @@ static void display_entry(int pos)
 	Term_draw(3, i + 6, a, c);
 
 	/* Describe an item in the home */
-	if (cur_store_num == STORE_HOME)
+	if (st_ptr->type == STORE_HOME)
 	{
 		maxwid = 75;
 
@@ -1792,7 +1780,7 @@ static void display_store(field_type *f_ptr)
 	Term_clear();
 
 	/* The "Home" is special */
-	if (cur_store_num == STORE_HOME)
+	if (st_ptr->type == STORE_HOME)
 	{
 		/* Put the owner name */
 		put_str("Your Home", 3, 30);
@@ -2520,7 +2508,7 @@ static void store_purchase(void)
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
 	{
-		if (cur_store_num == STORE_HOME)
+		if (st_ptr->type == STORE_HOME)
 			msg_print("Your home is empty.");
 		else
 			msg_print("I am currently out of stock.");
@@ -2535,7 +2523,7 @@ static void store_purchase(void)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (cur_store_num == STORE_HOME)
+	if (st_ptr->type == STORE_HOME)
 	{
 		sprintf(out_val, "Which item do you want to take? ");
 	}
@@ -2582,7 +2570,7 @@ static void store_purchase(void)
 	if (o_ptr->number > 1)
 	{
 		/* Hack -- note cost of "fixed" items */
-		if ((cur_store_num != STORE_HOME) &&
+		if ((st_ptr->type != STORE_HOME) &&
 		    (o_ptr->ident & IDENT_FIXED))
 		{
 			msg_format("That costs %ld gold per item.", (long)(best));
@@ -2618,7 +2606,7 @@ static void store_purchase(void)
 	}
 
 	/* Attempt to buy it */
-	if (cur_store_num != STORE_HOME)
+	if (st_ptr->type != STORE_HOME)
 	{
 		/* Fixed price, quick buy */
 		if (o_ptr->ident & (IDENT_FIXED))
@@ -2661,10 +2649,10 @@ static void store_purchase(void)
 				say_comment_1();
 				
 				/* The black market is illegal! */
-				if (cur_store_num == STORE_BLACK) 
+				if (st_ptr->type == STORE_BLACK) 
 					chg_virtue(V_JUSTICE, -1);
 					
-				if ((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
+				if ((o_ptr->tval == TV_BOTTLE) && (st_ptr->type != STORE_HOME))
 					chg_virtue(V_NATURE, -1);
 
 				/* Make a sound */
@@ -2735,7 +2723,7 @@ static void store_purchase(void)
 						msg_print("The shopkeeper retires.");
 
 						/* Shuffle the store */
-						store_shuffle(cur_store_num);
+						store_shuffle(st_ptr->type);
 					}
 
 					/* Maintain */
@@ -2749,7 +2737,7 @@ static void store_purchase(void)
 					for (i = 0; i < 10; i++)
 					{
 						/* Maintain the store */
-						store_maint(p_ptr->town_num, cur_store_num);
+						store_maint(p_ptr->town_num, st_ptr->type);
 					}
 
 					/* Start over */
@@ -2861,7 +2849,7 @@ static void store_sell(void)
 
 
 	/* Prepare a prompt */
-	if (cur_store_num == STORE_HOME)
+	if (st_ptr->type == STORE_HOME)
 		q = "Drop which item? ";
 	else
 		q = "Sell which item? ";
@@ -2947,7 +2935,7 @@ static void store_sell(void)
 	object_desc(o_name, q_ptr, TRUE, 3);
 
 	/* Remove any inscription, feeling for stores */
-	if (cur_store_num != STORE_HOME)
+	if (st_ptr->type != STORE_HOME)
 	{
 		q_ptr->inscription = 0;
 		q_ptr->feeling = FEEL_NONE;
@@ -2956,7 +2944,7 @@ static void store_sell(void)
 	/* Is there room in the store (or the home?) */
 	if (!store_check_num(q_ptr))
 	{
-		if (cur_store_num == STORE_HOME)
+		if (st_ptr->type == STORE_HOME)
 			msg_print("Your home is full.");
 		else
 			msg_print("I have not the room in my store to keep it.");
@@ -2965,7 +2953,7 @@ static void store_sell(void)
 
 
 	/* Real store */
-	if (cur_store_num != STORE_HOME)
+	if (st_ptr->type != STORE_HOME)
 	{
 		/* Describe the transaction */
 		msg_format("Selling %s (%c).", o_name, index_to_label(item));
@@ -2986,10 +2974,10 @@ static void store_sell(void)
 			/* Make a sound */
 			sound(SOUND_SELL);
 
-			if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
+			if (st_ptr->type == STORE_BLACK) /* The black market is illegal! */
 				chg_virtue(V_JUSTICE, -1);
 
-			if ((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
+			if ((o_ptr->tval == TV_BOTTLE) && (st_ptr->type != STORE_HOME))
 				chg_virtue(V_NATURE, 1);
 
 			/* Be happy */
@@ -3114,7 +3102,7 @@ static void store_examine(void)
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
 	{
-		if (cur_store_num == STORE_HOME)
+		if (st_ptr->type == STORE_HOME)
 			msg_print("Your home is empty.");
 		else
 			msg_print("I am currently out of stock.");
@@ -3607,6 +3595,10 @@ void do_cmd_store(field_type *f_ptr)
 		msg_print("The doors are locked.");
 		return;
 	}
+	
+	/* Save the store and owner pointers */
+	st_ptr = &town[p_ptr->town_num].store[which];
+	ot_ptr = &owners[which][st_ptr->owner];
 
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - town[p_ptr->town_num].store[which].last_visit) /
@@ -3624,15 +3616,15 @@ void do_cmd_store(field_type *f_ptr)
 
 	if (maintain_num)
 	{
+		/* Store the type */
+		town[p_ptr->town_num].store[which].type = which;
+		
 		/* Maintain the store */
 		for (i = 0; i < maintain_num; i++)
 			store_maint(p_ptr->town_num, which);
 
 		/* Save the visit */
 		town[p_ptr->town_num].store[which].last_visit = turn;
-
-		/* Store the type */
-		town[p_ptr->town_num].store[which].type = which;
 	}
 
 	/* Forget the view */
@@ -3651,14 +3643,6 @@ void do_cmd_store(field_type *f_ptr)
 
 	/* No automatic command */
 	p_ptr->command_new = 0;
-
-
-	/* Save the store number */
-	cur_store_num = which;
-
-	/* Save the store and owner pointers */
-	st_ptr = &town[p_ptr->town_num].store[cur_store_num];
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
 
 
 	/* Start at the beginning */
@@ -3693,7 +3677,7 @@ void do_cmd_store(field_type *f_ptr)
 		}
 
 		/* Home commands */
-		if (cur_store_num == STORE_HOME)
+		if (st_ptr->type == STORE_HOME)
 		{
 		   prt(" g) Get an item.", 22, 31);
 		   prt(" d) Drop an item.", 23, 31);
@@ -3735,7 +3719,7 @@ void do_cmd_store(field_type *f_ptr)
 			object_type *o_ptr = &inventory[item];
 
 			/* Hack -- Flee from the store */
-			if (cur_store_num != STORE_HOME)
+			if (st_ptr->type != STORE_HOME)
 			{
 				/* Message */
 				msg_print("Your pack is so full that you flee the store...");
@@ -3858,12 +3842,8 @@ void store_shuffle(int which)
 	/* Ignore home */
 	if (which == STORE_HOME) return;
 
-
-	/* Save the store index */
-	cur_store_num = which;
-
 	/* Activate that store */
-	st_ptr = &town[p_ptr->town_num].store[cur_store_num];
+	st_ptr = &town[p_ptr->town_num].store[which];
 
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner; )
@@ -3872,7 +3852,7 @@ void store_shuffle(int which)
 	}
 
 	/* Activate the new owner */
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[which][st_ptr->owner];
 
 
 	/* Reset the owner data */
@@ -3913,8 +3893,6 @@ void store_maint(int town_num, int store_num)
 	int 		j;
 
 	int 	old_rating = rating;
-
-	cur_store_num = store_num;
 
 	/* Ignore home */
 	if (store_num == STORE_HOME) return;
@@ -3995,11 +3973,8 @@ void store_maint(int town_num, int store_num)
  */
 void store_init(int town_num, int store_num)
 {
-	cur_store_num = store_num;
-
 	/* Activate that store */
 	st_ptr = &town[town_num].store[store_num];
-
 
 	/* Pick an owner */
 	st_ptr->owner = (byte)randint0(MAX_OWNERS);
