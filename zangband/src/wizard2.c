@@ -1170,6 +1170,17 @@ static void do_cmd_wiz_play(void)
 		{
 			wiz_quantity_item(o_ptr);
 		}
+		
+		if (ch == 'l' || ch == 'L')
+		{
+			int i;
+			for (i = 0; i < MAX_TRIGGER; i++)
+			{
+				if (o_ptr->trigger[i])
+					msgf("%i - '%s'. ", i, quark_str(
+							o_ptr->trigger[i]));
+			}
+		}
 	}
 
 	/* Restore the screen */

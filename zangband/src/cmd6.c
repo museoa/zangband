@@ -1131,7 +1131,7 @@ void ring_of_power(int dir)
  */
 static void do_cmd_activate_aux(object_type *o_ptr)
 {
-	int dir, lev, chance;
+	int lev, chance;
 
 	/* Take a turn */
 	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill.dev / 8);
@@ -1193,12 +1193,9 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 		return;
 	}
 
-	/* Get a direction (or abort) */
-	if (!get_aim_dir(&dir)) return;
-
 	/* Activate the object */
 	apply_object_trigger(TRIGGER_USE, o_ptr, NULL, 
-			"dir", dir, NULL, 0, NULL, 0);
+			NULL, 0, NULL, 0, NULL, 0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
