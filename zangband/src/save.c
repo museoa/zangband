@@ -1782,13 +1782,11 @@ bool save_player(void)
 
 
 	/* New savefile */
-	strcpy(safe, savefile);
-	strcat(safe, ".new");
+	strnfmt(safe, 1024, "%s.new", savefile);
 
 #ifdef VM
 	/* Hack -- support "flat directory" usage on VM/ESA */
-	strcpy(safe, savefile);
-	strcat(safe, "n");
+	strnfmt(safe, 1024, "%sn", savefile);
 #endif /* VM */
 
 	/* Grab permissions */
@@ -1806,13 +1804,11 @@ bool save_player(void)
 		char temp[1024];
 
 		/* Old savefile */
-		strcpy(temp, savefile);
-		strcat(temp, ".old");
+		strnfmt(temp, 1024, "%s.old", savefile);
 
 #ifdef VM
 		/* Hack -- support "flat directory" usage on VM/ESA */
-		strcpy(temp, savefile);
-		strcat(temp, "o");
+		strnfmt(temp, 1024, "%so", savefile);
 #endif /* VM */
 
 		/* Grab permissions */
@@ -1839,8 +1835,7 @@ bool save_player(void)
 #ifdef VERIFY_SAVEFILE
 
 		/* Lock on savefile */
-		strcpy(temp, savefile);
-		strcat(temp, ".lok");
+		strnfmt(temp, 1024, "%s.lok", savefile);
 
 		/* Grab permissions */
 		safe_setuid_grab();
@@ -1950,8 +1945,7 @@ bool load_player(void)
 		char temp[1024];
 
 		/* Extract name of lock file */
-		strcpy(temp, savefile);
-		strcat(temp, ".lok");
+		strnfmt(temp, 1024, "%s.lok", savefile);
 
 		/* Grab permissions */
 		safe_setuid_grab();
@@ -2201,8 +2195,7 @@ bool load_player(void)
 		char temp[1024];
 
 		/* Extract name of lock file */
-		strcpy(temp, savefile);
-		strcat(temp, ".lok");
+		strnfmt(temp, 1024, "%s.lok", savefile);
 
 		/* Grab permissions */
 		safe_setuid_grab();
@@ -2245,8 +2238,7 @@ void remove_loc(void)
 #ifdef VERIFY_SAVEFILE
 
 	/* Lock on savefile */
-	strcpy(temp, savefile);
-	strcat(temp, ".lok");
+	strnfmt(temp, 1024, "%s.lok", savefile);
 
 	/* Remove lock file */
 	fd_kill(temp);

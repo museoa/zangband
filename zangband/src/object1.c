@@ -2962,6 +2962,8 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 	char out_val[160];
 
 	object_type *eo_ptr;
+	
+	int len = 0;
 
 	switch (command_wrk)
 	{
@@ -2974,13 +2976,13 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 			show_list(p_ptr->inventory);
 
 			/* Begin the prompt */
-			strnfmt(out_val, 160, "Inven:");
+			len = strnfmt(out_val, 160, "Inven:");
 
 			/* Append */
-			if (equip) strcat(out_val, " / for Equip,");
+			if (equip) strnfcat(out_val, 160, &len, " / for Equip,");
 
 			/* Append */
-			if (floor) strcat(out_val, " - for floor,");
+			if (floor) strnfcat(out_val, 160, &len, " - for floor,");
 
 			break;
 		}
@@ -3010,13 +3012,13 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 			show_equip();
 
 			/* Begin the prompt */
-			strnfmt(out_val, 160, "Equip:");
+			len = strnfmt(out_val, 160, "Equip:");
 
 			/* Append */
-			if (inven) strcat(out_val, " / for Inven,");
+			if (inven) strnfcat(out_val, 160, &len, " / for Inven,");
 
 			/* Append */
-			if (floor) strcat(out_val, " - for floor,");
+			if (floor) strnfcat(out_val, 160, &len, " - for floor,");
 
 			break;
 		}
@@ -3034,33 +3036,30 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
 				show_list(c_ptr->o_idx);
 
 				/* Begin the prompt */
-				strnfmt(out_val, 160, "Floor:");
+				len = strnfmt(out_val, 160, "Floor:");
 
 				/* Append */
 				if (inven)
 				{
-					strcat(out_val, " / for Inven,");
+					strnfcat(out_val, 160, &len, " / for Inven,");
 				}
 				else if (equip)
 				{
-					strcat(out_val, " / for Equip,");
+					strnfcat(out_val, 160, &len, " / for Equip,");
 				}
 			}
 			else
 			{
 				/* Begin the prompt */
-				strnfmt(out_val, 160, "Top item on floor: '-'");
+				len = strnfmt(out_val, 160, "Top item on floor: '-'");
 			}
 
 			break;
 		}
 	}
 
-	/* Finish the prompt */
-	strcat(out_val, " ESC");
-
 	/* Show the prompt */
-	prtf(0, 0, "(%s) %s", out_val, pmt);
+	prtf(0, 0, "(%s ESC) %s", out_val, pmt);
 }
 
 /*

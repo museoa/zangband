@@ -221,7 +221,7 @@ void select_town_name(char *name, int pop)
 		/* Hamlet */
 		if ((len < T_NAME_LEN - 5) && one_in_(2))
 		{
-			strcat(buf, "ville");
+			strnfmt(name, T_NAME_LEN + 1, "%sville", buf);
 		}
 	}
 	else if (pop < T_SIZE_TOWN)
@@ -229,7 +229,7 @@ void select_town_name(char *name, int pop)
 		/* Tiny town */
 		if ((len < T_NAME_LEN - 4) && one_in_(2))
 		{
-			strcat(buf, " Dun");
+			strnfmt(name, T_NAME_LEN + 1, "%s Dun", buf);
 		}
 	}
 	else if (pop < T_SIZE_CITY)
@@ -237,7 +237,7 @@ void select_town_name(char *name, int pop)
 		/* Large Town */
 		if ((len < T_NAME_LEN - 3) && one_in_(2))
 		{
-			strcat(buf, "ton");
+			strnfmt(name, T_NAME_LEN + 1, "%ston", buf);
 		}
 	}
 	else if (pop < T_SIZE_CASTLE)
@@ -245,19 +245,19 @@ void select_town_name(char *name, int pop)
 		/* City */
 		if ((len < T_NAME_LEN - 4) && one_in_(4))
 		{
-			strcat(buf, "ford");
+			strnfmt(name, T_NAME_LEN + 1, "%sford", buf);
 		}
 		else if ((len < T_NAME_LEN - 5) && one_in_(3))
 		{
-			strcat(buf, " City");
+			strnfmt(name, T_NAME_LEN + 1, "%s City", buf);
 		}
 		else if ((len < T_NAME_LEN - 5) && one_in_(2))
 		{
-			strcat(buf, " View");
+			strnfmt(name, T_NAME_LEN + 1, "%s View", buf);
 		}
 		else if ((len < T_NAME_LEN - 5) && one_in_(2))
 		{
-			strcat(buf, " Fort");
+			strnfmt(name, T_NAME_LEN + 1, "%s Fort", buf);
 		}
 	}
 	else
@@ -265,16 +265,13 @@ void select_town_name(char *name, int pop)
 		/* Castle */
 		if ((len < T_NAME_LEN - 7) && one_in_(2))
 		{
-			strcat(buf, " Castle");
+			strnfmt(name, T_NAME_LEN + 1, "%s Castle", buf);
 		}
 		else if ((len < T_NAME_LEN - 5) && one_in_(2))
 		{
-			strcat(buf, " Keep");
+			strnfmt(name, T_NAME_LEN + 1, "%s Keep", buf);
 		}
 	}
-
-	/* Copy into result */
-	strcpy(name, buf);
 }
 
 

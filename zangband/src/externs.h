@@ -501,7 +501,6 @@ extern void roff_top(int r_idx);
 extern void screen_roff(int r_idx, int remember);
 extern void display_roff(int r_idx);
 extern void display_visible(void);
-extern void create_name(int type, char *name);
 
 /* monster2.c */
 extern cptr horror_desc[MAX_SAN_HORROR];

@@ -1030,13 +1030,12 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 	if (*list == NULL) return;
 
 	/* This function always indents */
-	strcpy(line, INDENT1);
+	line_len = strnfmt(line, MAX_LINE_LEN + 1, INDENT1);
 
 	/* Create header (if one was given) */
 	if (header &&(header[0]))
 	{
-		strcat(line, header);
-		strcat(line, " ");
+		strnfcat(line, MAX_LINE_LEN + 1, &line_len, "%s ", header);
 	}
 
 	line_len = strlen(line);
@@ -1068,8 +1067,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 
 		if (line_len + buf_len <= MAX_LINE_LEN)
 		{
-			strcat(line, buf);
-			line_len += buf_len;
+			strnfcat(line, MAX_LINE_LEN + 1, &line_len, buf);
 		}
 
 		/* Apply line wrapping and indention semantics described above */

@@ -2775,6 +2775,8 @@ void take_hit(int damage, cptr hit_from)
 	/* Dead player */
 	if (p_ptr->chp < 0)
 	{
+		int len;
+	
 		/* Sound */
 		sound(SOUND_DEATH);
 
@@ -2793,9 +2795,9 @@ void take_hit(int damage, cptr hit_from)
 		}
 
 		/* Note cause of death */
-		(void)strcpy(p_ptr->died_from, hit_from);
+		len = strnfmt(p_ptr->died_from, 80, hit_from);
 
-		if (p_ptr->image) strcat(p_ptr->died_from, "(?)");
+		if (p_ptr->image) strnfcat(p_ptr->died_from, 80, &len, "(?)");
 
 		/* No longer a winner */
 		p_ptr->total_winner = FALSE;

@@ -214,6 +214,8 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 	high_score the_score;
 
 	char out_val[256];
+	
+	int len;
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return;
@@ -303,12 +305,12 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			for (aged = the_score.turns; isspace(*aged); aged++) /* loop */ ;
 
 			/* Dump some info */
-			strnfmt(out_val, 256, "%3d.%9s  %s the %s %s, Level %d",
+			len = strnfmt(out_val, 256, "%3d.%9s  %s the %s %s, Level %d",
 					place, the_score.pts, the_score.who,
 					race_info[pr].title, class_info[pc].title, clev);
 
 			/* Append a "maximum level" */
-			if (mlev > clev) strcat(out_val, format(" (Max %d)", mlev));
+			if (mlev > clev) strnfcat(out_val, 256, &len, " (Max %d)", mlev);
 
 			/* Dump the first line */
 			put_fstr(0, n * 4 + 2, "%s%s", color_seq[attr], out_val);
@@ -317,20 +319,20 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			if (cdun)
 			{
 				/* Another line of info */
-				strnfmt(out_val, 256, "               Killed by %s on %s %d",
+				len = strnfmt(out_val, 256, "               Killed by %s on %s %d",
 						the_score.how, "Dungeon Level", cdun);
 
 			}
 			else
 			{
 				/* Died outside */
-				strnfmt(out_val, 256,
+				len = strnfmt(out_val, 256,
 						"               Killed by %s in the outside world.",
 						the_score.how);
 			}
 
 			/* Append a "maximum level" */
-			if (mdun > cdun) strcat(out_val, format(" (Max %d)", mdun));
+			if (mdun > cdun) strnfcat(out_val, 256, &len, " (Max %d)", mdun);
 
 			/* Dump the info */
 			put_fstr(0, n * 4 + 3, "%s%s", color_seq[attr], out_val);

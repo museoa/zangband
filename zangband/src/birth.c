@@ -881,6 +881,8 @@ static void get_history(void)
 	char *s, *t;
 
 	char buf[240];
+	
+	int len = 0;
 
 	/* Clear the previous history strings */
 	for (i = 0; i < 4; i++) p_ptr->history[i][0] = '\0';
@@ -1059,12 +1061,11 @@ static void get_history(void)
 		/* Roll for nobility */
 		roll = randint1(100);
 
-
 		/* Access the proper entry in the table */
 		while ((chart != bg[i].chart) || (roll > bg[i].roll)) i++;
 
 		/* Acquire the textual history */
-		(void)strcat(buf, bg[i].info);
+		strnfcat(buf, 1024, &len, "%s", bg[i].info);
 
 		/* Add in the social class */
 		social_class += (int)(bg[i].bonus) - 50;

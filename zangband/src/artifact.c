@@ -1562,9 +1562,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		}
 		else
 		{
-			strcpy(new_name, "'");
-			strcat(new_name, dummy_name);
-			strcat(new_name, "'");
+			strnfmt(new_name, 1024, "'%s'", dummy_name);
 		}
 		/* Identify it fully */
 		object_aware(o_ptr);

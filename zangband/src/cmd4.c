@@ -3420,6 +3420,8 @@ static const cptr plural_table[] =
 
 /*
  * Pluralize a monster name
+ *
+ * (Assume name[] is at least 80 chars long)
  */
 void plural_aux(char *name)
 {
@@ -3433,16 +3435,16 @@ void plural_aux(char *name)
 	if (len > 70) return;
 
 	strcpy(buf, name);
-	tail[0] = '\0';
 
 	/* Total hack - handle Creeping coins */
 	if (len >= 6 && streq(buf + len - 6, " coins"))
 	{
-		strcpy(buf, "piles of ");
-		strcpy(buf + 9, name);
+		strnfmt(buf, 80, "piles of %s", name);
 		strcpy(name, buf);
 		return;
 	}
+	
+	tail[0] = '\0';
 
 	/* Find the trailing part we should ignore, if any */
 	p = strstr(buf, " out ");
@@ -3463,17 +3465,17 @@ void plural_aux(char *name)
 		if ((len >= (int)strlen(plural_table[i])) &&
 			streq(buf + len - strlen(plural_table[i]), plural_table[i]))
 		{
-			strcpy(buf + len - strlen(plural_table[i]), plural_table[i + 1]);
-			break;
+			/* Preterminate string */
+			buf[len - strlen(plural_table[i])] = '\0';
+			
+			/* Pluralise */
+			strnfmt(name, 80, "%s%s%s", buf, plural_table[i + 1], tail);
+			return;
 		}
 	}
-
-	/* Put the tail back on */
-	strcat(buf, tail);
-
-	/* Put it where it's expected */
-	strcpy(name, buf);
-	return;
+	
+	/* Paranoia */
+	quit("Failed to find matching plural in plural_aux()");
 }
 
 

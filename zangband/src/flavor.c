@@ -333,20 +333,21 @@ static bool object_flavor(int k_idx)
 void get_table_name(char *out_string, bool quotes)
 {
 	int testcounter = rand_range(2, 3);
+	
+	int len = 0;
+	
+	/* Empty string */
+	out_string[0] = 0;
 
 	if (quotes)
 	{
-		strcpy(out_string, "'");
-	}
-	else
-	{
-		out_string[0] = 0;
+		strnfcat(out_string, 18, &len, "'");
 	}
 
 	if (one_in_(3))
 	{
 		while (testcounter--)
-			strcat(out_string, syllables[randint0(MAX_SYLLABLES)]);
+			strnfcat(out_string, 18, &len, syllables[randint0(MAX_SYLLABLES)]);
 	}
 	else
 	{
@@ -355,23 +356,19 @@ void get_table_name(char *out_string, bool quotes)
 		while (testcounter--)
 		{
 			(void)get_rnd_line("elvish.txt", 0, Syllable);
-			strcat(out_string, Syllable);
+			strnfcat(out_string, 18, &len, "%s", Syllable);
 		}
 	}
 
 	if (quotes)
 	{
 		out_string[1] = toupper(out_string[1]);
-		strcat(out_string, "'");
+		strnfcat(out_string, 18, &len, "'");
 	}
 	else
 	{
 		out_string[0] = toupper(out_string[0]);
 	}
-
-	out_string[18] = '\0';
-
-	return;
 }
 
 
@@ -521,6 +518,8 @@ void flavor_init(void)
 		while (TRUE)
 		{
 			char buf[80];
+			
+			int buf_len = 0;
 
 			bool okay;
 
@@ -533,6 +532,8 @@ void flavor_init(void)
 				int q, s;
 
 				char tmp[80];
+				
+				int len = 0;
 
 				/* Start a new word */
 				tmp[0] = '\0';
@@ -544,17 +545,14 @@ void flavor_init(void)
 				for (q = 0; q < s; q++)
 				{
 					/* Add the syllable */
-					strcat(tmp, syllables[randint0(MAX_SYLLABLES)]);
+					strnfcat(tmp, 80, &len, syllables[randint0(MAX_SYLLABLES)]);
 				}
 
 				/* Stop before getting too long */
 				if (strlen(buf) + 1 + strlen(tmp) > 15) break;
 
-				/* Add a space */
-				strcat(buf, " ");
-
-				/* Add the word */
-				strcat(buf, tmp);
+				/* Add a space + word */
+				strnfcat(buf, 80, &buf_len, " %s", tmp);
 			}
 
 			/* Save the title */
