@@ -3017,7 +3017,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Extra powers */
-				if (ego == EGO_XTRA_POWER)
+				if (ego == EGO_AMAN)
 				{
 					add_ego_power(EGO_XTRA_POWER, o_ptr);
 				}
