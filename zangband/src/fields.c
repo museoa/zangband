@@ -1146,10 +1146,12 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
  * in the specified list which match the required
  * field type.
  */
-void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
+bool field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
 {
 	field_type *f_ptr;
 	field_thaum *t_ptr;
+	
+	bool deleted = FALSE;
 	
 	while (*field_ptr)
 	{
@@ -1169,6 +1171,10 @@ void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
 				/* Get next field in the list */
 				field_ptr = &f_ptr->next_f_idx;
 			}
+			else
+			{
+				deleted = TRUE;
+			}
 		}
 		else
 		{
@@ -1176,6 +1182,9 @@ void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
 			field_ptr = &f_ptr->next_f_idx;
 		}
 	}
+	
+	/* Was a field deleted? */
+	return (deleted);
 }
 
 
@@ -1995,8 +2004,6 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 		
 		/* Delete the field */
 		delete_field_ptr(field_ptr);
-		
-		msg_print("There is a bright flash of light!");
 	}
 }
 

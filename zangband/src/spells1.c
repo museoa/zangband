@@ -599,7 +599,11 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				}
 
 				/* Disarm all the traps using a "power" of 50 */
-				field_hook_special(&c_ptr->fld_idx, FTYPE_TRAP,(void *) &dam);
+				if (field_hook_special(&c_ptr->fld_idx, FTYPE_TRAP,
+					(void *) &dam))
+				{
+					msg_print("There is a bright flash of light!");
+				}
 			}
 
 			/* Reveal secret doors */
@@ -627,13 +631,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				if (fld_idx)
 				{
 					/* Remove locked doors. */
-					field_hook_special(&c_ptr->fld_idx, FTYPE_DOOR, NULL);
-				
-					/* Check line of sound */
-					if (known)
+					if (field_hook_special(&c_ptr->fld_idx, FTYPE_DOOR, NULL))
 					{
-						msg_print("Click!");
-						obvious = TRUE;
+						/* Check line of sound */
+						if (known)
+						{
+							msg_print("Click!");
+							obvious = TRUE;
+						}
 					}
 				}
 			}
