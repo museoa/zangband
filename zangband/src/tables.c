@@ -6398,8 +6398,8 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 3, "auto_notes",			"Automatically note important events" },
 	{FALSE, 3, "take_notes",			"Allow notes to be appended to a file" },
 	{TRUE,  0, NULL,					"Number 253" },
-	{TRUE,  3, "testing_stack",			"Allow objects to stack on floor" },
-	{TRUE,  3, "testing_carry",			"Allow monsters to carry objects" },
+	{TRUE,  0, NULL,					"Number 254" },
+	{TRUE,  0, NULL,					"Number 255" },
 };
 
 const int birth_options[OPT_BIRTH + 1] =

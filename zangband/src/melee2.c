@@ -2836,34 +2836,23 @@ static void process_monster(int m_idx)
 							msg_format("%^s picks up %s.", m_name, o_name);
 						}
 
-						/* Option */
-						if (testing_carry)
-						{
-							/* Excise the object */
-							excise_object_idx(this_o_idx);
+						/* Excise the object */
+						excise_object_idx(this_o_idx);
 
-							/* Forget mark */
-							o_ptr->marked = FALSE;
+						/* Forget mark */
+						o_ptr->marked = FALSE;
 
-							/* Forget location */
-							o_ptr->iy = o_ptr->ix = 0;
+						/* Forget location */
+						o_ptr->iy = o_ptr->ix = 0;
 
-							/* Memorize monster */
-							o_ptr->held_m_idx = m_idx;
+						/* Memorize monster */
+						o_ptr->held_m_idx = m_idx;
 
-							/* Build a stack */
-							o_ptr->next_o_idx = m_ptr->hold_o_idx;
+						/* Build a stack */
+						o_ptr->next_o_idx = m_ptr->hold_o_idx;
 
-							/* Carry object */
-							m_ptr->hold_o_idx = this_o_idx;
-						}
-
-						/* Nope */
-						else
-						{
-							/* Delete the object */
-							delete_object_idx(this_o_idx);
-						}
+						/* Carry object */
+						m_ptr->hold_o_idx = this_o_idx;
 					}
 
 					/* Destroy the item if not a pet */
