@@ -211,8 +211,6 @@ extern void borg_cheat_spell(int realm);
  */
 extern void prepare_race_class_info(void);
 
-extern void borg_clear_3(void);
-
 /*
  * Initialize this file
  */

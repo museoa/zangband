@@ -2567,29 +2567,8 @@ void prepare_race_class_info(void)
 	}
 }
 
-
-void borg_clear_3(void)
-{
-	KILL(borg_shops);
-	KILL(borg_home);
-}
-
 /*
  * Initialize this file
- *
- * Note that all six artifact "Rings" will parse as "kind 506"
- * (the first artifact ring) and both artifact "Amulets" will
- * parse as "kind 503" (the first of the two artifact amulets),
- * but as long as we use the "name1" field (and not the "kind"
- * or "sval" fields) we should be okay.
- *
- * We sort the two arrays of items names in reverse order, so that
- * we will catch "mace of disruption" before "mace", "Scythe of
- * Slicing" before "Scythe", and for "Ring of XXX" before "Ring".
- *
- * Note that we do not have to parse "plural artifacts" (!)
- *
- * Hack -- This entire routine is a giant hack, but it works
  */
 void borg_init_3(void)
 {
@@ -2597,15 +2576,8 @@ void borg_init_3(void)
 	track_shop_num = 0;
 	track_shop_size = 16;
 
-	/*** Item/Ware arrays ***/
-
 	/* Make the stores in the town */
 	C_MAKE(borg_shops, track_shop_size, borg_shop);
-
-	/*** Item/Ware arrays (simulation) ***/
-
-	/* Make the "safe" inventory array */
-	C_MAKE(borg_home, STORE_INVEN_MAX, list_item);
 }
 
 #else

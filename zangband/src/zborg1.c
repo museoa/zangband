@@ -212,11 +212,6 @@ s16b track_shop_size;
  */
 s16b shop_num = -1;
 
-/*
- * Remember items in the home.  (Only one home at a time)
- */
-list_item *borg_home;
-int home_num;
 
 
 /*

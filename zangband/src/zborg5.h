@@ -18,6 +18,11 @@
 #include "zborg4.h"
 
 
+
+extern s32b borg_power(void);
+extern cptr borg_restock(int depth);
+extern cptr borg_prepared(int depth);
+
 /*
  * Initialize this file
  */

@@ -563,10 +563,6 @@ extern s16b track_shop_num;
 extern s16b track_shop_size;
 
 
-extern list_item *borg_home;	/* Current home items - (only remember one.) */
-extern int home_num;	/* Number of items in the home */
-
-
 /*
  * Other variables
  */
