@@ -3826,24 +3826,6 @@ static void do_cmd_activate_aux(int item)
 		return;
 	}
 
-	else if (o_ptr->tval == TV_STATUE)
-	{
-		msg_print("You rub the statue carefully.");
-
-		if (rand_int(3) ||
-			 (!summon_specific(0, py, px, 100, SUMMON_CYBER, FALSE, FALSE, FALSE) &&
-			  !summon_specific(0, py, px, dun_level, SUMMON_GHB, FALSE, FALSE, FALSE)))
-		{
-			msg_print("After some time, you discover a message on the base:");
-			msg_print("'Try throwing a figurine instead.'");
-		}
-		else
-		{
-			msg_print("You think you have done something wrong.");
-			return;
-		}
-	}
-
 	/* Mistake */
 	msg_print("Oops.  That object cannot be activated.");
 }

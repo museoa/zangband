@@ -3455,15 +3455,6 @@ void do_cmd_throw_aux(int mult)
 		else if (q_ptr->ident & IDENT_CURSED)
 			msg_print("You have a bad feeling about this.");
 	}
-	/* Statues do too! */
-	else if ((q_ptr->tval == TV_STATUE) && !(p_ptr->inside_arena))
-	{
-		if (summon_specific(0, y, x, 100, SUMMON_CYBER, FALSE, FALSE, FALSE) ||
-			 summon_specific(0, y, x, dun_level, SUMMON_GHB, FALSE, FALSE, FALSE))
-		{
-			msg_print("You think you have done something wrong.");
-		}
-	}
 
 	/* Potions smash open */
 	if (object_is_potion(q_ptr))
