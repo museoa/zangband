@@ -1417,15 +1417,25 @@ static void store_purchase(int *store_top)
 
 	/* Determine the "best" price (per item) */
 	best = price_item(j_ptr, FALSE);
-
-	/* Find out how many the player wants */
-	if (o_ptr->number > 1)
+	
+	/*
+	 * Paranoia - you can only buy one weapon / armour item at a time
+	 *
+	 * This prevents the player getting stacks of weapons etc. in
+	 * his pack.  I suppose we could make an extension to
+	 * inven_carry_okay() to do this properly.
+	 */
+	if ((j_ptr->tval < TV_DIGGING) && (j_ptr->tval > TV_DRAG_ARMOR))
 	{
-		/* Get a quantity */
-		amt = get_quantity(NULL, o_ptr->number);
+		/* Find out how many the player wants */
+		if (o_ptr->number > 1)
+		{
+			/* Get a quantity */
+			amt = get_quantity(NULL, o_ptr->number);
 
-		/* Allow user abort */
-		if (amt <= 0) return;
+			/* Allow user abort */
+			if (amt <= 0) return;
+		}
 	}
 
 	/* Get desired object */
@@ -1692,7 +1702,7 @@ static void store_sell(int *store_top)
 	/* Assume one item */
 	amt = 1;
 
-	/* Find out how many the player wants (letter means "all") */
+	/* Find out how many the player wants to sell */
 	if (o_ptr->number > 1)
 	{
 		/* Get a quantity */
