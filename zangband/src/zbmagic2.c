@@ -94,6 +94,14 @@ enum
 };
 
 
+/* Attack styles */
+#define BORG_BOLT		1
+#define BORG_BEAM		2
+#define BORG_BALL		3
+#define BORG_DISPEL		4
+#define BORG_BLAST		5
+#define BORG_TOUCH		6
+
 /* What is the radius of the borg ball attacks? */
 #define BORG_BALL_RAD0	0
 #define BORG_BALL_RAD1	1
@@ -1426,6 +1434,71 @@ static int borg_launch_ball_zero(int dam, int typ, int max)
 }
 
 
+/* Determine the "reward" of casting a ball centered on the player. */
+static int borg_launch_blast(int dam, int typ, int max)
+{
+	int i, r;
+	int x, y;
+	int n = 0;
+
+	map_block *mb_ptr;
+
+	/* Loop through all the ballable monsters in LOS */
+	for (i = 0; i < borg_beam_n; i++)
+	{
+		/* Acquire location */
+		x = borg_beam_x[i];
+		y = borg_beam_y[i];
+
+		/* What is the distance */
+		r = distance(c_x, c_y, x, y);
+
+		/* Maximal distance */
+		if (r > max) continue;
+
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Collect damage */
+		n = borg_launch_aux_hack(mb_ptr->kill, dam / (r + 1), typ);
+
+		/* Does this cost me items? */
+		n += borg_ball_item(mb_ptr, typ);
+	}
+
+	/* Result */
+	return (n);
+}
+
+
+/* Determine the "reward" of an attack on the monsters around the borg */
+static int borg_launch_touch(int dam, int typ)
+{
+	int i;
+	int x, y;
+	int n = 0;
+
+	map_block *mb_ptr;
+
+	/* Loop through all the touchable monsters in LOS */
+	for (i = 0; i < borg_next_n; i++)
+	{
+		/* Acquire location */
+		x = borg_next_x[i];
+		y = borg_next_y[i];
+
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Collect damage */
+		n = borg_launch_aux_hack(mb_ptr->kill, dam, typ);
+	}
+
+	/* Result */
+	return (n);
+}
+
+
 /*
  * Determine the "reward" of casting a ball
  *
@@ -1477,7 +1550,7 @@ static int borg_launch_ball(int rad, int dam, int typ, int max)
 			mb_ptr = map_loc(x1, y1);
 
 			/* Collect damage, lowered by distance */
-			n += borg_launch_aux_hack(mb_ptr->kill, dam / (r +1), typ);
+			n += borg_launch_aux_hack(mb_ptr->kill, dam / (r + 1), typ);
 
 			/* Does this cost me items? */
 			n += borg_ball_item(mb_ptr, typ);
@@ -1496,62 +1569,101 @@ static int borg_launch_ball(int rad, int dam, int typ, int max)
 	return (b_n);
 }
 
+
+/* Whirlwind -- Attacks all adjacent monsters */
+static int borg_attack_whirlwind(void)
+{
+	int y = 0, x = 0;
+	int i;
+	int dam = 0;
+
+	map_block *mb_ptr;
+
+	if (borg_simulate)
+	{
+		/* Scan neighboring grids */
+		for (i = 0; i < borg_next_n; i++)
+		{
+			/* Fetch the coords */
+			y = borg_next_y[i];
+			x = borg_next_x[i];
+
+			/* Fetch the spot on the map */
+			mb_ptr = map_loc(x, y);
+
+			/* is there a kill next to me */
+			if (mb_ptr->kill)
+			{
+				/* Calculate "average" damage */
+				dam += borg_thrust_damage_one(mb_ptr->kill);
+			}
+		}
+
+		/* Return the damage for consideration */
+		return (dam);
+	}
+
+	/* Not supposed to happen */
+	borg_oops("The borg can't cast Whirlwind from here");
+	return (0);
+}
+
+
+/*
+ * This function assumes that the string act contains "rad. xxx" 
+ * and converts xxx to a number
+ */
 static int borg_find_radius(cptr act)
 {
 	char *here;
-	int rad = 0;
 
 	/* Just checking */
 	if (!act) return (0);
-
-	/* A large ball probably has radius 3 */
-	if (strstr(act, "large")) rad = BORG_BALL_RAD3;
-
-	/* Special cases */
-	if (strstr(act, "light area")) rad = BORG_BALL_RAD3;
-	if (strstr(act, "illumination")) rad = BORG_BALL_RAD2;
 
 	/* Find the substring for the radius */
 	here = strstr(act, "rad. ");
 
 	/* If no radius is mentioned give up */
-	if (!here) return (rad);
+	if (!here) return (0);
 
 	/* Jump past the search string */
 	here = here + 5;
 
-	/* As long as the string has digits in it */
-	while (*here - '0' >= 0 && *here - '0' <= 9)
-	{
-		/* create a number */
-		rad = rad * 10 + *here++ - '0';
-	}
-
 	/* Return the radius */
-	return (rad);
+	return (atoi(here));
 }
 
 
+/*
+ * This function assumes that the string act contains "(xxx" or (xdy
+ * and converts xxx or xdy to a number.
+ */
 static int borg_find_damage(cptr act)
 {
 	char *here;
-	int dam = 0, ds = 0;
+	int dam = 0, ds = 0, level = 0;
 
 	/* Just checking */
 	if (!act) return (0);
-
-	/* Special cases */
-	if (strstr(act, "illumination")) dam = 18;
-	if (strstr(act, "call chaos")) dam = 150;
 
 	/* Find the substring for the damage */
 	here = strstr(act, "(");
 
 	/* If no damage is mentioned give up */
-	if (!here) return (dam);
+	if (!here) return (0);
 
 	/* Jump past the search string */
 	here = here + 1;
+
+	/* If the damage is multiplied by level */
+	if (prefix(act, "level * "))
+	{
+		/* Supply the level */
+		level = bp_ptr->lev;
+
+		/* Jump past the substring */
+		act += 8;
+	}
 
 	/* As long as the string has digits in it */
 	while (*here - '0' >= 0 && *here - '0' <= 9)
@@ -1560,18 +1672,17 @@ static int borg_find_damage(cptr act)
 		dam = dam * 10 + *here++ - '0';
 	}
 
+	/* Multiply if necessary */
+	if (level) dam *= level;
+
 	/* Is the damage composed of dd and ds? */
 	if (*here == 'd')
 	{
 		/* Jump past the die */
 		here = here + 1;
 
-		/* As long as the string has digits in it */
-		while (*here - '0' >= 0 && *here - '0' <= 9)
-		{
-			/* create the die */
-			ds = ds * 10 + *here++ - '0';
-		}
+		/* create the die */
+		ds = atoi(here);
 
 		/* calculate the average damage */
 		dam = dam * (ds + 1) / 2;
@@ -1582,176 +1693,317 @@ static int borg_find_damage(cptr act)
 }
 
 
+/* Determine if this activation can do damage */
 static int borg_damage_artifact_monster(cptr act)
 {
 	int rad = 0,
 		gf = 0,
 		dam = 0,
-		type = 0;
+		style = 0;
+	bool stop;
 
-	/* just checking */
-	if (!act) return (0);
-
-	/* Is it a bolt */
-	if (strstr(act, "bolt") ||
-		strstr(act, "arrows") ||
-		strstr(act, "missile") ||
-		strstr(act, "vampiric drain"))
+	/* Go through the string, word for word */
+	while (act)
 	{
-		type = 1;
+		/* Initialize */
+		stop = FALSE;
+
+		/* For efficiency first check the first letter */
+		switch (*act)
+		{
+			case 'a':
+			{
+				if (prefix(act, "acid")) gf = GF_ACID;
+				else if (prefix(act, "arrow"))
+				{
+					style = BORG_BOLT;
+					gf = GF_ARROW;
+				}
+
+				break;
+			}
+			case 'b':
+			{
+				if (prefix(act, "bolt")) style  = BORG_BOLT;
+				else if (prefix(act, "beam")) style  = BORG_BEAM;
+				else if (prefix(act, "ball")) style  = BORG_BALL;
+				else if (prefix(act, "breathe")) style  = BORG_BALL;
+				else if (prefix(act, "blast")) style  = BORG_BLAST;
+				else if (prefix(act, "banish"))
+				{
+					style  = BORG_DISPEL;
+
+					if (prefix(act, "banishment")) gf = GF_AWAY_ALL;
+					else if (prefix(act, "banish evil")) gf = GF_AWAY_EVIL;
+					else if (prefix(act, "banish undead")) gf = GF_AWAY_UNDEAD;
+				}
+
+				break;
+			}
+			case 'c':
+			{
+				if (prefix(act, "cloud")) style  = BORG_BALL;
+				else if (prefix(act, "cold")) gf = GF_COLD;
+				else if (prefix(act, "confusion")) gf = GF_CONFUSION;
+				else if (prefix(act, "confuse")) gf = GF_OLD_CONF;
+				else if (prefix(act, "chaos")) gf = GF_CHAOS;
+				else if (prefix(act, "call"))
+				{
+					style  = BORG_BALL;
+					dam = 150;
+				}
+
+				break;
+			}
+			case 'd':
+			{
+				if (prefix(act, "dark")) gf = GF_DARK;
+				if (prefix(act, "drain life"))
+				{
+					style = BORG_BOLT;
+					gf = GF_OLD_DRAIN;
+				}
+				if (prefix(act, "dispel"))
+				{
+					style = BORG_DISPEL;
+
+					if (prefix(act, "dispel evil")) gf = GF_DISP_EVIL;
+					else if (prefix(act, "dispel good")) gf = GF_DISP_GOOD;
+					else if (prefix(act, "dispel demons")) gf = GF_DISP_DEMON;
+					else if (prefix(act, "dispel living")) gf = GF_DISP_LIVING;
+					else if (prefix(act, "dispel monster")) gf = GF_DISP_ALL;
+				}
+
+				break;
+			}
+			case 'e':
+			{
+				if (prefix(act, "elements")) gf = GF_MISSILE;
+				else if (prefix(act, "every")) stop = TRUE;
+
+				break;
+			}
+			case 'f':
+			{
+				/* Hack to prevent holy/hell fire from being overwritten */
+				if (prefix(act, "fire") && !gf) gf = GF_FIRE;
+				else if (prefix(act, "frost")) gf = GF_COLD;
+				else if (prefix(act, "force")) gf = GF_FORCE;
+
+				break;
+			}
+			case 'g':
+			{
+				if (prefix(act, "gravity")) gf = GF_GRAVITY;
+
+				break;
+			}
+			case 'h':
+			{
+				if (prefix(act, "holy fire")) gf = GF_HOLY_FIRE;
+				else if (prefix(act, "hell fire")) gf = GF_HELL_FIRE;
+
+				break;
+			}
+			case 'i':
+			{
+				if (prefix(act, "inertia")) gf = GF_INERTIA;
+				else if (prefix(act, "ice")) gf = GF_ICE;
+				else if (prefix(act, "illumination"))
+				{
+					style = BORG_DISPEL;
+					gf = GF_LITE_WEAK;
+					dam = 18;
+				}
+
+				break;
+			}
+			case 'l':
+			{
+				if (prefix(act, "large")) rad = BORG_BALL_RAD3;
+				else if (prefix(act, "lightning")) gf = GF_ELEC;
+				else if (prefix(act, "light"))
+				{
+					gf = GF_LITE;
+				
+					if (prefix(act, "light area"))
+					{
+						style = BORG_DISPEL;
+						gf = GF_LITE_WEAK;
+						rad = BORG_BALL_RAD3;
+					}
+				}
+
+				break;
+			}
+			case 'm':
+			{
+				if (prefix(act, "mana")) gf = GF_MANA;
+				else if (prefix(act, "missile"))
+				{
+					style = BORG_BOLT;
+					gf = GF_MISSILE;
+				}
+				/* Hack to prevent overwriting sleep_touch */
+				else if (prefix(act, "monster") && !style)
+				{
+					style = BORG_BOLT;
+
+					if (prefix(act, "monsters")) style = BORG_DISPEL;
+				}
+
+				break;
+			}
+			case 'n':
+			{
+				if (prefix(act, "nether")) gf = GF_NETHER;
+				else if (prefix(act, "nexus")) gf = GF_NEXUS;
+				else if (prefix(act, "nuke")) gf = GF_NUKE;
+
+				break;
+			}
+			case 'p':
+			{
+				if (prefix(act, "poison")) gf = GF_POIS;
+				else if (prefix(act, "plasma")) gf = GF_PLASMA;
+
+				break;
+			}
+			case 'r':
+			{
+				if (prefix(act, "rad.")) rad = borg_find_radius(act);
+				else if (prefix(act, "rocket"))
+				{
+					style = BORG_BALL;
+					gf = GF_ROCKET;
+				}
+
+				break;
+			}
+			case 's':
+			{
+				if (prefix(act, "star")) gf = GF_ELEC;
+				else if (prefix(act, "stinking")) gf = GF_POIS;
+				else if (prefix(act, "shards")) gf = GF_SHARDS;
+				else if (prefix(act, "sound")) gf = GF_SOUND;
+				else if (prefix(act, "sunlight")) gf = GF_LITE_WEAK;
+				else if (prefix(act, "sleep"))
+				{
+					gf = GF_OLD_SLEEP;
+					dam = 20;
+					
+					if (prefix(act, "sleep nearby")) style = BORG_TOUCH;
+				}
+				else if (prefix(act, "slow"))
+				{
+					gf = GF_OLD_SLOW;
+					dam = 20;
+				}
+				if (prefix(act, "strangling"))
+				{
+					style = BORG_BOLT;
+					gf = GF_OLD_DRAIN;
+				}
+				if (prefix(act, "stone to mud"))
+				{
+					style = BORG_BOLT;
+					gf = GF_KILL_WALL;
+				}
+
+				break;
+			}
+			case 't':
+			{
+				if (prefix(act, "time")) gf = GF_TIME;
+				else if (prefix(act, "turns")) stop = TRUE;
+				else if (prefix(act, "teleport away"))
+				{
+					style = BORG_BEAM;
+					gf = GF_AWAY_ALL;
+				}
+
+				break;
+			}
+			case 'v':
+			{
+				if (prefix(act, "vampiric drain"))
+				{
+					style = BORG_BOLT;
+					gf = GF_OLD_DRAIN;
+				}
+
+				break;
+			}
+			case 'w':
+			{
+				if (prefix(act, "water")) gf = GF_WATER;
+				else if (prefix(act, "whirlwind"))
+				{
+					style = BORG_TOUCH;
+					dam = 1;
+					gf = MAX_GF;
+				}
+
+				break;
+			}
+			case '(':
+			{
+				dam = borg_find_damage(act);
+
+				break;
+			}
+			default: break;
+		}
+
+		/* Cut off */
+		if (stop) break;
+
+		/* Skip until next word */
+		while (act && !stop)
+		{
+			/* Stop after a space was read */
+			stop = *act == ' ';
+
+			/* Next letter */
+			act++;
+		}
 	}
-	/* How about a beam */
-	else if (strstr(act, "beam") ||
-			 strstr(act, "teleport away"))
-	{
-		type = 2;
-	}
-	/* How about a ball */
-	else if (strstr(act, "ball") ||
-			 strstr(act, "cloud") ||
-			 strstr(act, "rocket") ||
-			 strstr(act, "call") ||
-			 strstr(act, "breath"))
-	{
-		/* Pick up the radius */
-		rad = borg_find_radius(act);
 
-		/* default to 2 */
-		if (!rad) rad = BORG_BALL_RAD2;
-
-		type = 3;
-	}
-	/* How about a dispel */
-	else if (strstr(act, "dispel") ||
-			 strstr(act, "banish") ||
-			 strstr(act, "illumination") ||
-			 strstr(act, "light area") ||
-			 strstr(act, "monsters") ||
-			 strstr(act, "blast"))
-	{
-		/* Check the radius */
-		rad = borg_find_radius(act);
-
-		/* default to MAX_RANGE */
-		if (!rad) rad = MAX_RANGE;
-
-		type = 4;
-	}
-
-	/* Not a damage activation */
-	if (!type) return (0);
-
-	/* Is it acid damage */
-	if (strstr(act, "acid")) gf = GF_ACID;
-	/* How about fire */
-	else if (strstr(act, "fire")) gf = GF_FIRE;
-	/* How about cold */
-	else if (strstr(act, "cold") ||
-			strstr(act, "frost")) gf = GF_COLD;
-	/* How about lightning */
-	else if (strstr(act, "lightning") ||
-			strstr(act, "star")) gf = GF_ELEC;
-	/* How about poison */
-	else if (strstr(act, "poison") ||
-			strstr(act, "stinking")) gf = GF_POIS;
-	/* How about missile */
-	else if (strstr(act, "missile") ||
-			strstr(act, "elements")) gf = GF_MISSILE;
-	/* How about arrows */
-	else if (strstr(act, "arrow")) gf = GF_ARROW;
-	/* How about sleep */
-	else if (strstr(act, "sleep")) gf = GF_OLD_SLEEP;
-	/* How about slow */
-	else if (strstr(act, "slow")) gf = GF_OLD_SLOW;
-	/* How about teleport away */
-	else if (strstr(act, "teleport away")) gf = GF_AWAY_ALL;
-	/* How about light area */
-	else if (strstr(act, "light area") ||
-			strstr(act, "illumination")) gf = GF_LITE_WEAK;
-	/* How about power */
-	else if (strstr(act, "power")) gf = GF_DISP_ALL;
-	/* How about vampiric drain */
-	else if (strstr(act, "vampiric drain")) gf = GF_OLD_DRAIN;
-	/* How about rocket */
-	else if (strstr(act, "rocket")) gf = GF_ROCKET;
-	/* How about banish evil */
-	else if (strstr(act, "banish evil")) gf = GF_AWAY_EVIL;
-	/* How about banish undead */
-	else if (strstr(act, "banish undead")) gf = GF_AWAY_UNDEAD;
-	/* How about banishment */
-	else if (strstr(act, "banishment")) gf = GF_AWAY_ALL;
-	/* How about dispel evil */
-	else if (strstr(act, "dispel evil")) gf = GF_DISP_EVIL;
-	/* How about dispel good */
-	else if (strstr(act, "dispel good")) gf = GF_DISP_GOOD;
-	/* How about dispel all */
-	else if (strstr(act, "dispel monster")) gf = GF_DISP_ALL;
-	/* How about plasma */
-	else if (strstr(act, "plasma")) gf = GF_PLASMA;
-	/* How about water */
-	else if (strstr(act, "water")) gf = GF_WATER;
-	/* How about light */
-	else if (strstr(act, "light")) gf = GF_LITE;
-	/* How about dark */
-	else if (strstr(act, "dark")) gf = GF_DARK;
-	/* How about shards */
-	else if (strstr(act, "shards")) gf = GF_SHARDS;
-	/* How about sounds */
-	else if (strstr(act, "sound")) gf = GF_SOUND;
-	/* How about confusion */
-	else if (strstr(act, "confusion")) gf = GF_CONFUSION;
-	/* How about force */
-	else if (strstr(act, "force")) gf = GF_FORCE;
-	/* How about inertia */
-	else if (strstr(act, "inertia")) gf = GF_INERTIA;
-	/* How about mana */
-	else if (strstr(act, "mana")) gf = GF_MANA;
-	/* How about ice */
-	else if (strstr(act, "ice")) gf = GF_ICE;
-	/* How about chaos */
-	else if (strstr(act, "chaos")) gf = GF_CHAOS;
-	/* How about nether */
-	else if (strstr(act, "nether")) gf = GF_NETHER;
-	/* How about nexus */
-	else if (strstr(act, "nexus")) gf = GF_NEXUS;
-	/* How about time */
-	else if (strstr(act, "time")) gf = GF_TIME;
-	/* How about gravity */
-	else if (strstr(act, "gravity")) gf = GF_GRAVITY;
-	/* How about nuke */
-	else if (strstr(act, "nuke")) gf = GF_NUKE;
-	/* How about holy fire */
-	else if (strstr(act, "holy fire")) gf = GF_HOLY_FIRE;
-	/* How about hell fire */
-	else if (strstr(act, "hell fire")) gf = GF_HELL_FIRE;
-
-	/* Give up when the damage type is unknown */
-	if (!gf)
-	{
-		borg_oops("What is my damage type? %s", act);
-		return (0);
-	}
-
-	/* How much damage */
-	dam = borg_find_damage(act);
-	
-	/* Give up when the damage is 0 */
-	if (!dam)
-	{
-		borg_oops("What is my damage? %s", act);
-		return (0);
-	}
+	/* Not enough info */
+	if (!style || !dam || !gf) return (0);
 
 	/* Calculate the potential damage */
-	switch (type)
+	switch (style)
 	{
-		case 1: return (borg_launch_bolt(dam, gf, MAX_RANGE));
+		case BORG_BOLT: return (borg_launch_bolt(dam, gf, MAX_RANGE));
 
-		case 2: return (borg_launch_beam(dam, gf, MAX_RANGE));
+		case BORG_BEAM: return (borg_launch_beam(dam, gf, MAX_RANGE));
 
-		case 3: return (borg_launch_ball(rad, dam, gf, MAX_RANGE));
+		case BORG_BALL:
+		{
+			/* Set to default */
+			if (!rad) rad = BORG_BALL_RAD2;
 
-		case 4: return (borg_launch_dispel(dam, gf, rad));
+			return (borg_launch_ball(rad, dam, gf, MAX_RANGE));
+		}
+
+		case BORG_DISPEL:
+		{
+			/* Set to default */
+			if (!rad) rad = MAX_RANGE;
+			
+			return (borg_launch_dispel(dam, gf, rad));
+		}
+
+		case BORG_BLAST: return (borg_launch_blast(dam, gf, rad));
+
+		case BORG_TOUCH:
+		{
+			/* Hacking Whirlwind */
+			if (gf = MAX_GF) return (borg_attack_whirlwind());
+
+			return (borg_launch_touch(dam, gf));
+		}
 
 		default: return (0);
 	}
@@ -3933,48 +4185,6 @@ static int borg_sorcery_damage_monster(int book, int spell)
 			return (0);
 		}
 	}
-}
-
-
-/* Whirlwind--
- * Attacks adjacent monsters
- */
-static int borg_attack_whirlwind(void)
-{
-	int y = 0, x = 0;
-	int i;
-	int dam = 0;
-
-	map_block *mb_ptr;
-
-	if (borg_simulate)
-	{
-		/* Scan neighboring grids */
-		for (i = 0; i < borg_next_n; i++)
-		{
-			/* Fetch the coords */
-			y = borg_next_y[i];
-			x = borg_next_x[i];
-
-			/* Fetch the spot on the map */
-			mb_ptr = map_loc(x, y);
-
-			/* is there a kill next to me */
-			if (mb_ptr->kill)
-			{
-				/* Calculate "average" damage */
-				dam += borg_thrust_damage_one(mb_ptr->kill);
-			}
-
-		}
-
-		/* Return the damage for consideration */
-		return (dam);
-	}
-
-	/* Not supposed to happen */
-	borg_oops("The borg can't cast Whirlwind from here");
-	return (0);
 }
 
 
