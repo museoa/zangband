@@ -1392,7 +1392,7 @@ void generate_cave(void)
 		p_ptr->state.feeling = extract_feeling();
 
 		/* Prevent object over-flow */
-		if (o_max >= z_info->o_max)
+		if (o_cnt + 1 >= z_info->o_max)
 		{
 			/* Message */
 			why = "too many objects";
@@ -1401,7 +1401,7 @@ void generate_cave(void)
 			okay = FALSE;
 		}
 		/* Prevent monster over-flow */
-		else if (m_max >= z_info->m_max)
+		else if (m_cnt + 1 >= z_info->m_max)
 		{
 			/* Message */
 			why = "too many monsters";
