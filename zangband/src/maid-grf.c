@@ -236,8 +236,7 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 	use_graphics = GRAPHICS_NONE;
 	use_transparency = FALSE;
 	
-	if ((graphics == GRAPHICS_ANY)
-			|| (graphics == GRAPHICS_DAVID_GERVAIS))
+	if ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_DAVID_GERVAIS))
 	{
 		/* Try the "32x32.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/32x32.bmp");
@@ -252,11 +251,14 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 		}
 		
 		use_graphics = GRAPHICS_DAVID_GERVAIS;
+		
+		/* Did we change the graphics? */
+		return (old_graphics != use_graphics);
 	}
 	
 	/* We failed, or we want 16x16 graphics */
-	if (!use_graphics && ((graphics == GRAPHICS_ANY)
-			|| (graphics == GRAPHICS_ADAM_BOLT) || (graphics == GRAPHICS_HALF_3D)))
+	if ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ADAM_BOLT) ||
+		 (graphics == GRAPHICS_HALF_3D))
 	{
 		/* Try the "16x16.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
@@ -278,12 +280,14 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 			{
 				use_graphics = GRAPHICS_ADAM_BOLT;
 			}
+			
+			/* Did we change the graphics? */
+			return (old_graphics != use_graphics);
 		}
 	}
 
 	/* We failed, or we want 8x8 graphics */
-	if (!use_graphics
-		&& ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ORIGINAL)))
+	if ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ORIGINAL))
 	{
 		/* Try the "8x8.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
@@ -300,10 +304,7 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 	}
 
 	/* Did we change the graphics? */
-	if (old_graphics == use_graphics) return (FALSE);
-
-	/* Success */
-	return (TRUE);
+	return (old_graphics != use_graphics);
 }
 
 /*
