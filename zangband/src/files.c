@@ -2465,12 +2465,13 @@ static void display_player_skill_info(void)
 
 	put_fstr(skill_col, row - 1, "Skill");
 
-	put_fstr(skill_col, row,     "Stealth:");
-	put_fstr(skill_col, row + 1, "Search :");
-	put_fstr(skill_col, row + 2, "Infra  :");
-	put_fstr(skill_col, row + 3, "Tunnel :");
-	put_fstr(skill_col, row + 4, "Speed  :");
-	put_fstr(skill_col, row + 5, "Blows  :");
+	put_fstr(skill_col, row,     "BonusSP:");
+	put_fstr(skill_col, row + 1, "Stealth:");
+	put_fstr(skill_col, row + 2, "Search :");
+	put_fstr(skill_col, row + 3, "Infra  :");
+	put_fstr(skill_col, row + 4, "Tunnel :");
+	put_fstr(skill_col, row + 5, "Speed  :");
+	put_fstr(skill_col, row + 6, "Blows  :");
 
 	/* Column */
 	col = skill_col + 10;
@@ -2493,14 +2494,14 @@ static void display_player_skill_info(void)
 		object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
 
 		/* Initialize color based of sign of pval. */
-		for (skill = 0; skill < 6; skill++)
+		for (skill = 0; skill < 7; skill++)
 		{
 			/* Default */
 			a = TERM_SLATE;
 			c = '.';
 
 			/* Boost */
-			if (f1 & TR1_STEALTH << skill)
+			if (f1 & TR1_SP << skill)
 			{
 				/* Default */
 				c = '*';
@@ -2540,7 +2541,7 @@ static void display_player_skill_info(void)
 	/* Player flags */
 	player_flags(&f1, &f2, &f3, &f4);
 
-	for (skill = 0; skill < 6; skill++)
+	for (skill = 0; skill < 7; skill++)
 	{
 		int dummy = 0;
 
@@ -2551,7 +2552,7 @@ static void display_player_skill_info(void)
 		if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 		{
 			/* Stealth */
-			if (skill == 0)
+			if (skill == 1)
 			{
 				if (p_ptr->muta1 & MUT1_ILLUMINE) dummy -= 1;
 				if (p_ptr->muta1 & MUT1_DAZZLE) dummy -= 1;
@@ -2559,25 +2560,25 @@ static void display_player_skill_info(void)
 				if (p_ptr->muta3 & MUT3_MOTION) dummy += 1;
 			}
 			/* Search */
-			else if (skill == 1)
+			else if (skill == 2)
 			{
 				if (p_ptr->muta1 & MUT1_LASER_EYE) dummy -= 2;
 				if (p_ptr->muta3 & MUT3_XTRA_EYES) dummy += 3;
 			}
 			/* Infra */
-			else if (skill == 2)
+			else if (skill == 3)
 			{
 				if (p_ptr->muta3 & MUT3_INFRAVIS) dummy += 3;
 			}
 			/* Speed */
-			else if (skill == 4)
+			else if (skill == 5)
 			{
 				if (p_ptr->muta3 & MUT3_XTRA_LEGS) dummy += 3;
 				if (p_ptr->muta3 & MUT3_SHORT_LEG) dummy -= 3;
 			}
 		}
 				
-		if (skill == 4 && (f1 & TR1_SPEED))
+		if (skill == 5 && (f1 & TR1_SPEED))
 		{
 			dummy += p_ptr->lev / 10;
 		}
