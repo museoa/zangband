@@ -930,7 +930,12 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 
 void sanity_blast(monster_type *m_ptr, bool necro)
 {
+
+#if 0
+	/* This variable is only needed for the (disabled) 
+	insanity mutations */
 	bool happened = FALSE;
+#endif 
 	int power = 100;
 
 	if (!necro)
@@ -957,8 +962,6 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 		if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
 			return; /* oops */
-
-
 
 		if (is_pet(m_ptr) && (randint(8) != 1))
 			return; /* Pet eldritch horrors are safe most of the time */
@@ -1047,22 +1050,19 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		return;
 	}
 
-	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Permanent lose int & wis */
-	{
-		if (dec_stat(A_INT, 10, TRUE)) happened = TRUE;
-		if (dec_stat(A_WIS, 10, TRUE)) happened = TRUE;
-		if (happened)
-			msg_print("You feel much less sane than before.");
-		return;
-	}
+	/* Permanent stat drains *REMOVED* completely. They sucked. --ty */
 
-	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Amnesia */
+	else 
+
 	{
 
 		if (lose_all_info())
 			msg_print("You forget everything in your utmost terror!");
 		return;
 	}
+
+#if 0
+/* This used to be the last case.  --ty*/
 
 	/* Else gain permanent insanity */
 	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
@@ -1124,6 +1124,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 				break;
 		}
 	}
+#endif
 
 	p_ptr->update |= PU_BONUS;
 	handle_stuff();
@@ -1364,14 +1365,11 @@ void update_mon(int m_idx, bool full)
 			/* Hack -- Count "fresh" sightings */
 			if (r_ptr->r_sights < MAX_SHORT) r_ptr->r_sights++;
 
-#if 0
 			/* Eldritch Horror */
 			if (r_ptr->flags2 & RF2_ELDRITCH_HORROR)
 			{
 				sanity_blast(m_ptr, FALSE);
 			}
-
-#endif /* 0 */
 
 			/* Disturb on appearance */
 			if (disturb_move)
