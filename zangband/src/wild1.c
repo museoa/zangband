@@ -3935,10 +3935,7 @@ static void wild_done(void)
 	wipe_o_list();
 	wipe_m_list();
 	wipe_f_list();
-
-	/* Clear cache */
-	init_wild_cache();
-
+#if 0
 	/* hack */
 	p_ptr->depth = 1;
 
@@ -3956,6 +3953,19 @@ static void wild_done(void)
 
 	/* Make the wilderness block cache. */
 	move_wild();
+#endif /* 0 */
+
+	/* Refresh random number seed */
+	wild_seed = randint0(0x10000000);
+	
+	/* Not in dungeon yet */
+	character_dungeon = TRUE;
+	
+	/* Change back to inside wilderness */
+	p_ptr->depth = 0;
+
+	/* Change to the wilderness */
+	change_level(0);
 }
 
 
