@@ -129,7 +129,7 @@ void add_note_type(int note_number)
 			
 			if (p_ptr->realm1 != REALM_NONE)
 			{
-				strcat(player, "of ");
+				strcat(player, " of ");
 				strcat(player, realm_names[p_ptr->realm1]);
 			}
 	 		

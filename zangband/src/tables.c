@@ -6044,11 +6044,13 @@ option_type option_info[] =
 	{ &testing_carry,               TRUE, 3, 2, 16,
 	"testing_carry",                "Allow monsters to carry objects" },
 
-        { &auto_notes,                  FALSE, 3, 2, 17,
+        { &take_notes,                  FALSE, 3, 2, 17,
+           "take_notes",                "Allow notes to be appended to a file" },
+
+        { &auto_notes,                  FALSE, 3, 2, 18,
            "auto_notes",                 "Automatically note important events" },
 
-	{ &point_based,                 FALSE, 3, 2, 18,
-	  "point_based",                 "Generate character using a point system" },
+
 
 	/*** Efficiency ***/
 
@@ -6174,8 +6176,8 @@ option_type option_info[] =
 	{ &autoroller,                  TRUE, 6, 5, 16,
 	"autoroller",                   "Specify 'minimal' stats" },
 
-        { &take_notes,                  FALSE, 6, 5, 18,
-           "take_notes",                "Allow notes to be appended to a file" },
+       	{ &point_based,                 FALSE, 6, 5, 17,
+	  "point_based",                 "Generate character using a point system" },
 
 
         /*** Artificial Intelligence Options ***/
