@@ -2099,7 +2099,7 @@ static void borg_parse_aux(cptr msg, int len)
 				(g_y == kill->y && g_x == kill->x))
 			{
 				/* Hack -- kill em */
-				borg_delete_kill(i);
+				borg_delete_kill(i, "oops, spinning");
 			}
 		}
 
@@ -2132,7 +2132,7 @@ static void borg_parse_aux(cptr msg, int len)
 			if (d > 3) continue;
 
 			/* Hack -- kill monsters close to me */
-			borg_delete_kill(i);
+			borg_delete_kill(i, "oops, bad attack");
 		}
 
 		my_no_alter = TRUE;
@@ -2426,7 +2426,7 @@ static void borg_parse_aux(cptr msg, int len)
 			if (d > 12) continue;
 
 			/* Hack -- kill em */
-			borg_delete_kill(i);
+			borg_delete_kill(i, "*destruction*");
 		}
 
 		return;

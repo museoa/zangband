@@ -10518,7 +10518,7 @@ static int borg_defend_aux_genocide(void)
 			if (r_ptr->d_char != genocide_target) continue;
 
 			/* remove this monster */
-			borg_delete_kill(i);
+			borg_delete_kill(i, "genocided");
 		}
 
 		return (p1 - p2);
@@ -10583,7 +10583,7 @@ static int borg_defend_aux_genocide_hounds(void)
 			if (r_ptr->d_char != genocide_target) continue;
 
 			/* remove this monster */
-			borg_delete_kill(i);
+			borg_delete_kill(i, "genocided");
 		}
 
 		return (1);

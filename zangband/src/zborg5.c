@@ -494,7 +494,7 @@ static int get_blank_kill(void)
 	i = randint1(borg_kills_nxt - 1);
 
 	/* Kill it */
-	borg_delete_kill(i);
+	borg_delete_kill(i, "overflow");
 
 	return (i);
 }
@@ -511,8 +511,9 @@ static void borg_merge_kill(int who)
 	if (!kill->r_idx) return;
 
 	/* Note */
-	borg_note(format("# Merging a monster '%s' at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), kill->x, kill->y));
+	borg_note(format("# Merging a monster '%s' (%i) at (%d,%d)",
+                     (r_name + r_info[kill->r_idx].name), who,
+                     kill->x, kill->y));
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
@@ -530,7 +531,7 @@ static void borg_merge_kill(int who)
 /*
  * Delete an old "kill" record
  */
-void borg_delete_kill(int who)
+void borg_delete_kill(int who, cptr reason)
 {
 	borg_kill *kill = &borg_kills[who];
 
@@ -538,8 +539,9 @@ void borg_delete_kill(int who)
 	if (!kill->r_idx) return;
 
 	/* Note */
-	borg_note(format("# Removing a monster '%s' at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), kill->x, kill->y));
+	borg_note(format("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
+                     (r_name + r_info[kill->r_idx].name), who,
+                     kill->x, kill->y, reason));
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
@@ -855,28 +857,28 @@ static bool remove_bad_kills(u16b who)
 	/* Monster is out of bounds */
 	if (!map_in_bounds(ox, oy))
 	{
-		borg_delete_kill(who);
+		borg_delete_kill(who, "out of bounds");
 		return (TRUE);
 	}
 	
 	/* Is the monster underneith us? */
 	if ((c_x == ox) && (c_y == oy))
 	{
-		borg_delete_kill(who);
+		borg_delete_kill(who, "where'd it go?");
 		return (TRUE);
 	}
 	
 	/* Are we supposed to see this, but don't? */
 	if (borg_follow_kill_aux(who, ox, oy))
 	{
-		borg_delete_kill(who);
+		borg_delete_kill(who, "vanished");
 		return (TRUE);
 	}
 	
 	/* We haven't seen it for ages? */
 	if (borg_t - kill->when > 2000)
 	{
-		borg_delete_kill(who);
+		borg_delete_kill(who, "expired");
 		return (TRUE);
 	}
 	
@@ -2626,7 +2628,7 @@ void borg_update(void)
 			{
 				borg_count_death(k);
 
-				borg_delete_kill(k);
+				borg_delete_kill(k, "killed");
 				borg_msg_use[i] = 2;
 				/* reset the panel.  He's on a roll */
 				time_this_panel = 1;
@@ -2642,7 +2644,7 @@ void borg_update(void)
 			/* Attempt to find the monster */
 			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
 			{
-				borg_delete_kill(k);
+				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 2;
 				/* reset the panel.  He's on a roll */
 				time_this_panel = 1;
@@ -2658,7 +2660,7 @@ void borg_update(void)
 			if ((k = borg_locate_kill(what, g_y, g_x, 3)) > 0)
 			{
 				borg_count_death(k);
-				borg_delete_kill(k);
+				borg_delete_kill(k, "died");
 				borg_msg_use[i] = 2;
 				/* reset the panel.  He's on a roll */
 				time_this_panel = 1;
@@ -2783,7 +2785,7 @@ void borg_update(void)
 			if ((k = borg_locate_kill(what, g_y, g_x, 1)) > 0)
 			{
 				borg_count_death(k);
-				borg_delete_kill(k);
+				borg_delete_kill(k, "killed");
 				borg_msg_use[i] = 3;
 				/* reset the panel.  He's on a roll */
 				time_this_panel = 1;
@@ -2798,7 +2800,7 @@ void borg_update(void)
 			/* Attempt to find the monster */
 			if ((k = borg_locate_kill(what, g_y, g_x, 1)) > 0)
 			{
-				borg_delete_kill(k);
+				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 3;
 				/* reset the panel.  He's on a roll */
 				time_this_panel = 1;
@@ -2815,7 +2817,7 @@ void borg_update(void)
 			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
 			{
 				borg_count_death(k);
-				borg_delete_kill(k);
+				borg_delete_kill(k, "died");
 				borg_msg_use[i] = 3;
 				/* reset the panel.  He's on a roll */
 				time_this_panel = 1;
@@ -3243,7 +3245,7 @@ void borg_update(void)
 			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
 			{
 				borg_count_death(k);
-				borg_delete_kill(k);
+				borg_delete_kill(k, "died");
 				borg_msg_use[i] = 4;
 			}
 		}

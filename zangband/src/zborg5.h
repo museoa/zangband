@@ -55,7 +55,7 @@ extern void borg_react(cptr msg, cptr buf);
 /*
  * Monster kill list interface
  */
-extern void borg_delete_kill(int i);
+extern void borg_delete_kill(int i, cptr reason);
 
 
 /*
