@@ -153,6 +153,8 @@ static wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_STORE_BLACK0, BT_STORE, 100, 100, 100, 10},
 	{0, FT_BUILD_MAGETOWER0, BT_BUILD, 100, 150, 100, 6},
 	{0, FT_BUILD_MAGETOWER1, BT_BUILD, 150, 250, 150, 20},
+	{0, FT_BUILD_CASTLE0, BT_BUILD, 100, 150, 150, 10},
+	{0, FT_BUILD_CASTLE1, BT_BUILD, 200, 150, 250, 20},
 };
 
 /* The stores in the starting town */

@@ -332,9 +332,11 @@
 #define BUILD_BLACK0            111
 #define BUILD_MAGETOWER0        112
 #define BUILD_MAGETOWER1        113
+#define BUILD_CASTLE0			114
+#define BUILD_CASTLE1			115
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			114
+#define MAX_CITY_BUILD			116
 
 
 /*
@@ -1401,6 +1403,8 @@
 #define FT_STORE_BLACK0         0x008E
 #define FT_BUILD_MAGETOWER0     0x008F
 #define FT_BUILD_MAGETOWER1     0x0090
+#define FT_BUILD_CASTLE0		0x0091
+#define FT_BUILD_CASTLE1		0x0092
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
