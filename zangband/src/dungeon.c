@@ -2281,13 +2281,16 @@ static void process_world(void)
 			{	
 				char o_name[80];
 
+				/* Describe the object */
+				object_desc(o_name, o_ptr, FALSE, 0);
+				
 				if (ironman_nightmare)
 				{
 					/* Make a monster nearby if possible */
 					if (summon_named_creature(py, px,
 						 o_ptr->pval, FALSE, FALSE, FALSE))
 					{
-						msg_format("The %s rises.");
+						msg_format("The %s rises.", o_name);
 						
 						/* Set the cloned flag, so no treasure is dropped */
 						m_list[hack_m_idx_ii].smart |= SM_CLONED;
@@ -2295,9 +2298,6 @@ static void process_world(void)
 				}
 				else
 				{			
-					/* Describe the object */
-					object_desc(o_name, o_ptr, FALSE, 0);
-					
 					/* Let player know what happened. */
 					msg_format("The %s decays.", o_name);
 				}
