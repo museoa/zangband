@@ -4236,7 +4236,7 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
  * This routine also stomps on doors
  */
 static void add_outer_wall(int x, int y, int light,
-                           int x1, int y1, int x2, int y2)
+									int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
@@ -4256,7 +4256,7 @@ static void add_outer_wall(int x, int y, int light,
 			for (j = -1; j <= 1; j++)
 			{
 				if ((x + i >= x1) && (x + i <= x2) &&
-				    (y + j >= y1) && (y + j <= y2))
+					 (y + j >= y1) && (y + j <= y2))
 				{
 					add_outer_wall(x + i, y + j, light, x1, y1, x2, y2);
 					if (light) cave[y][x].info |= CAVE_GLOW;
@@ -4268,6 +4268,7 @@ static void add_outer_wall(int x, int y, int light,
 	{
 		/* Set bounding walls */
 		cave[y][x].feat = FEAT_WALL_OUTER;
+		if (light == TRUE) cave[y][x].info |= CAVE_GLOW;
 	}
 }
 
