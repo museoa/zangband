@@ -893,8 +893,9 @@ void trigger_quest_create(byte c_type, vptr data)
 			
 				/* Correct dungeon level? */
 				if (p_ptr->depth != pl_ptr->dungeon->max_level) continue;
-				
+
 				display_artifact_quest(q_ptr);
+
 				continue;
 			}
 		}
@@ -1523,7 +1524,7 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 		(void)strnfmt(q_ptr->name, 128, "Kill %s.", mon_race_name(r_ptr));
 	}
 	
-	/* No need to specially create anything */
+	/* We need to place the monster(s) when the dungeon is made */
 	q_ptr->c_type = QC_DUN_MONST;
 
 	/* We need to trigger when the monsters are killed */
@@ -2074,7 +2075,7 @@ bool dump_castle_info(FILE *fff, int town)
 		quest_in_town = TRUE;
 
 		/* Show it */
-		froff(fff, "%s  %s\n", q_ptr->name, quest_status_string(q_ptr));
+		froff(fff, "%s  %s", q_ptr->name, quest_status_string(q_ptr));
 	}
 
 	/* If no quest was issued  */
