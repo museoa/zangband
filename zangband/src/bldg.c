@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: bldg.c */
 
 /*
@@ -521,8 +520,8 @@ static void show_building(building_type* bldg)
 				}
 			}
 
-			sprintf(tmp_str," %c) %s %s", bldg->letters[i], bldg->act_names[i], buff);
-			c_put_str(action_color, tmp_str, 19+(i/2), 35*(i%2));
+			sprintf(tmp_str, " %c) %s %s", bldg->letters[i], bldg->act_names[i], buff);
+			c_put_str(action_color, tmp_str, 19 + (i / 2), 35 * (i % 2));
 		}
 	}
 

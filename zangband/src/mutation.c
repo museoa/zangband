@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: mutation.c */
 
 /* Purpose: Mutation effects (and racial powers) */
@@ -1676,7 +1675,6 @@ void dump_mutations(FILE *OutFile)
 		{
 			fprintf(OutFile, " There is a black aura surrounding you.\n");
 		}
-
 	}
 }
 

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: flavor.c */
 
 /* Purpose: Object flavor code */
@@ -54,9 +53,9 @@ static cptr ring_adj[MAX_ROCKS] =
 	"Obsidian", "Silver", "Tortoise Shell", "Mithril", "Jet",
 	"Engagement", "Adamantite",
 	"Wire", "Dilithium", "Bone", "Wooden",
-	"Spikard", "Serpent",   "Wedding", "Double",
-	"Plain", "Brass",  "Scarab","Shining",
-	"Rusty","Transparent"
+	"Spikard", "Serpent", "Wedding", "Double",
+	"Plain", "Brass",  "Scarab", "Shining",
+	"Rusty", "Transparent"
 };
 
 static byte ring_col[MAX_ROCKS] =
@@ -134,7 +133,7 @@ static cptr wand_adj[MAX_METALS] =
 	"Zirconium", "Zinc", "Aluminum-Plated", "Copper-Plated", "Gold-Plated",
 	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated", "Zinc-Plated",
 	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
-	"Platinum", "Lead","Lead-Plated", "Ivory" , "Adamantite",
+	"Platinum", "Lead", "Lead-Plated", "Ivory", "Adamantite",
 	"Uridium", "Long", "Short", "Hexagonal"
 };
 

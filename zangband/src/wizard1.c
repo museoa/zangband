@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: wizard1.c */
 
 /* Purpose: Spoiler generation -BEN- */
@@ -2206,11 +2205,11 @@ static void spoil_mon_info(cptr fname)
 				case RBM_BUTT:   p = "butt"; break;
 				case RBM_CRUSH:  p = "crush"; break;
 				case RBM_ENGULF: p = "engulf"; break;
-				case RBM_CHARGE: p = "charge";  break;
+				case RBM_CHARGE: p = "charge"; break;
 				case RBM_CRAWL:  p = "crawl on you"; break;
 				case RBM_DROOL:  p = "drool on you"; break;
 				case RBM_SPIT:   p = "spit"; break;
-				case RBM_EXPLODE: p = "explode";  break;
+				case RBM_EXPLODE: p = "explode"; break;
 				case RBM_GAZE:   p = "gaze"; break;
 				case RBM_WAIL:   p = "wail"; break;
 				case RBM_SPORE:  p = "release spores"; break;

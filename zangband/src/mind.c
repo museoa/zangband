@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: mind.c */
 
 /* Purpose: Mindcrafter code */
@@ -16,7 +15,7 @@
 
 mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS] =
 {
-	/* Level gained,  cost,  %fail,  name */
+	/* Level gained, cost, %fail, name */
 	{ 1,   1,  15, "Precognition" },          /* Det. monsters/traps */
 	{ 2,   1,  20, "Neural Blast" },          /* ~MM */
 	{ 3,   2,  25, "Minor Displacement" },    /* Phase door */
@@ -43,14 +42,14 @@ void mindcraft_info(char *p, int power)
 		case 0:  break;
 		case 1:  sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 4), 3 + plev/15); break;
 		case 2:  sprintf(p, " range %d", (plev < 25 ? 10 : plev + 2)); break;
-		case 3:  sprintf(p, " range %d", plev * 5);  break;
+		case 3:  sprintf(p, " range %d", plev * 5); break;
 		case 4:  break;
-		case 5:  sprintf(p, " dam %dd8", 8 + ((plev - 5) / 4));  break;
-		case 6:  sprintf(p, " dur %d", plev);  break;
+		case 5:  sprintf(p, " dam %dd8", 8 + ((plev - 5) / 4)); break;
+		case 6:  sprintf(p, " dur %d", plev); break;
 		case 7:  break;
 		case 8:  sprintf(p, " dam %d", plev * ((plev - 5) / 10 + 1)); break;
-		case 9:  sprintf(p, " dur 11-%d", plev + plev / 2 + 10);  break;
-		case 10: sprintf(p, " dam %dd6", plev / 2);  break;
+		case 9:  sprintf(p, " dur 11-%d", plev + plev / 2 + 10); break;
+		case 10: sprintf(p, " dam %dd6", plev / 2); break;
 		case 11: sprintf(p, " dam %d", plev * (plev > 39 ? 4: 3)); break;
 	}
 }
@@ -117,7 +116,7 @@ static int get_mindcraft_power(int *sn)
 
 	/* Build a prompt (accept all spells) */
 	(void)strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) Use which %s? ",
-	        p, I2A(0), I2A(num - 1), p);
+	              p, I2A(0), I2A(num - 1), p);
 
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
@@ -146,7 +145,7 @@ static int get_mindcraft_power(int *sn)
 				{
 					/* Access the spell */
 					spell = mindcraft_powers[i];
-					if (spell.min_lev > plev)   break;
+					if (spell.min_lev > plev) break;
 
 					chance = spell.fail;
 
@@ -284,7 +283,9 @@ static bool cast_mindcrafter_spell(int spell)
 		if (plev < 30)
 		{
 			b = detect_monsters_normal();
-			if (plev > 14) b |= detect_monsters_invis();
+			if (plev > 14)
+				b |= detect_monsters_invis();
+
 			if (plev > 4)
 			{
 				b |= detect_traps();
@@ -326,6 +327,7 @@ static bool cast_mindcrafter_spell(int spell)
 		/* Major displace */
 		if (plev > 29)
 			banish_monsters(plev);
+
 		teleport_player(plev * 5);
 		break;
 	case 4:
@@ -346,7 +348,7 @@ static bool cast_mindcrafter_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		fire_ball(GF_SOUND, dir, damroll(8 + ((plev - 5) / 4), 8),
-			(plev > 20 ? (plev - 20) / 8 + 1 : 0));
+		          (plev > 20 ? (plev - 20) / 8 + 1 : 0));
 		break;
 	case 6:
 		/* Character Armour */
@@ -368,7 +370,7 @@ static bool cast_mindcrafter_spell(int spell)
 		msg_print("Mind-warping forces emanate from your brain!");
 		if (plev < 25)
 			project(0, 2 + plev / 10, py, px,
-			(plev * 3) / 2, GF_PSI, PROJECT_KILL);
+			        (plev * 3) / 2, GF_PSI, PROJECT_KILL);
 		else
 			(void)mindblast_monsters(plev * ((plev - 5) / 10 + 1));
 		break;
@@ -590,3 +592,4 @@ void do_cmd_mindcraft(void)
 	p_ptr->window |= (PW_PLAYER);
 	p_ptr->window |= (PW_SPELL);
 }
+

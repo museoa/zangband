@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: store.c */
 
 /* Purpose: Store commands */
@@ -3449,6 +3448,7 @@ static void store_process_command(void)
 	}
 }
 
+
 /*
  * Deallocate stores stock.
  *
@@ -3497,6 +3497,7 @@ void deallocate_store(void)
 	/* Decrease number of stores with stock */
 	store_cache_num--;
 }
+
 
 /*
  * Allocate memory for a stores stock.

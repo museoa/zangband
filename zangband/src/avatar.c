@@ -369,44 +369,31 @@ void dump_virtues(FILE * OutFile)
 			(p_ptr->vir_types[v_nr] > MAX_VIRTUE))
 			fprintf(OutFile, "Oops. No info about %s.", v_name);
 		else if (tester < -100)
-			fprintf(OutFile, "You are the polar opposite of %s.",
-			v_name);
+			fprintf(OutFile, "You are the polar opposite of %s.", v_name);
 		else if (tester < -80)
-			fprintf(OutFile, "You are an arch-enemy of %s.",
-			v_name);
+			fprintf(OutFile, "You are an arch-enemy of %s.", v_name);
 		else if (tester < -60)
-			fprintf(OutFile, "You are a bitter enemy of %s.",
-			v_name);
+			fprintf(OutFile, "You are a bitter enemy of %s.", v_name);
 		else if (tester < -40)
-			fprintf(OutFile, "You are an enemy of %s.",
-			v_name);
+			fprintf(OutFile, "You are an enemy of %s.", v_name);
 		else if (tester < -20)
-			fprintf(OutFile, "You have sinned against %s.",
-			v_name);
+			fprintf(OutFile, "You have sinned against %s.", v_name);
 		else if (tester < 0)
-			fprintf(OutFile, "You have strayed from the path of %s.",
-			v_name);
+			fprintf(OutFile, "You have strayed from the path of %s.", v_name);
 		else if (tester == 0)
-			fprintf(OutFile,"You are neutral to %s.",
-			v_name);
+			fprintf(OutFile, "You are neutral to %s.", v_name);
 		else if (tester < 20)
-			fprintf(OutFile,"You are somewhat virtuous in %s.",
-			v_name);
+			fprintf(OutFile, "You are somewhat virtuous in %s.", v_name);
 		else if (tester < 40)
-			fprintf(OutFile,"You are virtuous in %s.",
-			v_name);
+			fprintf(OutFile, "You are virtuous in %s.", v_name);
 		else if (tester < 60)
-			fprintf(OutFile,"You are very virtuous in %s.",
-			v_name);
+			fprintf(OutFile, "You are very virtuous in %s.", v_name);
 		else if (tester < 80)
-			fprintf(OutFile,"You are a champion of %s.",
-			v_name);
+			fprintf(OutFile, "You are a champion of %s.", v_name);
 		else if (tester < 100)
-			fprintf(OutFile,"You are a great champion of %s.",
-			v_name);
+			fprintf(OutFile, "You are a great champion of %s.", v_name);
 		else
-			fprintf(OutFile,"You are the living embodiment of %s.",
-			v_name);
+			fprintf(OutFile, "You are the living embodiment of %s.", v_name);
 
 		fprintf(OutFile, "\n");
 	}

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: cmd6.c */
 
 /* Purpose: Object commands */
@@ -4021,8 +4020,8 @@ void do_cmd_use(void)
 				return;
 			}
 
-		  do_cmd_read_scroll_aux(item);
-		  break;
+			do_cmd_read_scroll_aux(item);
+			break;
 		}
 
 		/* Fire ammo */

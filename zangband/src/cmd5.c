@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: cmd5.c */
 
 /* Purpose: Spell/Prayer commands */
@@ -27,7 +26,7 @@
 static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 {
 	int         i;
-	int         spell = -1;
+	int         spell;
 	int         num = 0;
 	int         ask;
 	byte        spells[64];
@@ -215,15 +214,13 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
  */
 void do_cmd_browse(void)
 {
-	int		item, sval;
-	int		spell = -1;
-	int		num = 0;
-
-	byte		spells[64];
-
+	int item, sval;
+	int spell;
+	int num = 0;
+	byte spells[64];
 	object_type	*o_ptr;
-
 	cptr q, s;
+
 
 	/* Warriors are illiterate */
 	if (!(p_ptr->realm1 || p_ptr->realm2))
@@ -300,7 +297,7 @@ void do_cmd_browse(void)
 	screen_save();
 
 	/* Display the spells */
-	print_spells(spells, num, 1, 20, (o_ptr->tval-90));
+	print_spells(spells, num, 1, 20, (o_ptr->tval - TV_BOOKS_MIN));
 
 	/* Clear the top line */
 	prt("", 0, 0);
@@ -418,7 +415,8 @@ void do_cmd_study(void)
 			{
 				/* Skip non "okay" prayers */
 				if (!spell_okay(spell, FALSE,
-					(increment ? p_ptr->realm2 - 1 : p_ptr->realm1 - 1))) continue;
+					(increment ? p_ptr->realm2 - 1 : p_ptr->realm1 - 1)))
+					continue;
 
 				/* Hack -- Prepare the randomizer */
 				k++;
@@ -799,14 +797,17 @@ static bool cast_life_spell(int spell)
 		summon_specific(-1, py, px, plev, SUMMON_ANGEL, TRUE, TRUE, TRUE);
 		(void)set_shero(p_ptr->shero + randint1(25) + 25);
 		(void)hp_player(300);
+
+		/* Haste */
 		if (!p_ptr->fast)
-		{   /* Haste */
+		{
 			(void)set_fast(randint1(20 + plev) + plev);
 		}
 		else
 		{
 			(void)set_fast(p_ptr->fast + randint1(5));
 		}
+
 		(void)set_afraid(0);
 		break;
 	case 31: /* Holy Invulnerability */
@@ -1080,8 +1081,8 @@ static bool cast_nature_spell(int spell)
 	case 25: /* Whirlwind Attack */
 		{
 			int y = 0, x = 0;
-			cave_type       *c_ptr;
-			monster_type    *m_ptr;
+			cave_type *c_ptr;
+			monster_type *m_ptr;
 
 			for (dir = 0; dir <= 9; dir++)
 			{
@@ -1204,13 +1205,14 @@ static bool cast_chaos_spell(int spell)
 		break;
 	case 8: /* Wonder */
 		{
-		/* This spell should become more useful (more
-		controlled) as the player gains experience levels.
-		Thus, add 1/5 of the player's level to the die roll.
-		This eliminates the worst effects later on, while
-		keeping the results quite random.  It also allows
-			some potent effects only at high level. */
-
+		/*
+		 * This spell should become more useful (more
+		 * controlled) as the player gains experience levels.
+		 * Thus, add 1/5 of the player's level to the die roll.
+		 * This eliminates the worst effects later on, while
+		 * keeping the results quite random.  It also allows
+		 * some potent effects only at high level.
+		 */
 			int die = randint1(100) + plev / 5;
 
 			if (die < 26)
@@ -1225,22 +1227,22 @@ static bool cast_chaos_spell(int spell)
 			else if (die < 31) poly_monster(dir);
 			else if (die < 36)
 				fire_bolt_or_beam(beam - 10, GF_MISSILE, dir,
-				    damroll(3 + ((plev - 1) / 5), 4));
+				                  damroll(3 + ((plev - 1) / 5), 4));
 			else if (die < 41) confuse_monster(dir, plev);
 			else if (die < 46) fire_ball(GF_POIS, dir, 20 + (plev / 2), 3);
 			else if (die < 51) (void)lite_line(dir);
 			else if (die < 56)
 				fire_bolt_or_beam(beam - 10, GF_ELEC, dir,
-				    damroll(3 + ((plev - 5) / 4), 8));
+				                  damroll(3 + ((plev - 5) / 4), 8));
 			else if (die < 61)
 				fire_bolt_or_beam(beam - 10, GF_COLD, dir,
-				    damroll(5 + ((plev - 5) / 4), 8));
+				                  damroll(5 + ((plev - 5) / 4), 8));
 			else if (die < 66)
 				fire_bolt_or_beam(beam, GF_ACID, dir,
-				    damroll(6 + ((plev - 5) / 4), 8));
+				                  damroll(6 + ((plev - 5) / 4), 8));
 			else if (die < 71)
 				fire_bolt_or_beam(beam, GF_FIRE, dir,
-					 damroll(8 + ((plev - 5) / 4), 8));
+				                  damroll(8 + ((plev - 5) / 4), 8));
 			else if (die < 76) drain_life(dir, 75);
 			else if (die < 81) fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
 			else if (die < 86) fire_ball(GF_ACID, dir, 40 + plev, 2);
@@ -1273,7 +1275,7 @@ static bool cast_chaos_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		fire_bolt_or_beam(beam, GF_CHAOS, dir,
-			damroll(10 + ((plev - 5) / 4), 8));
+		                  damroll(10 + ((plev - 5) / 4), 8));
 		break;
 	case 10: /* Sonic Boom */
 		msg_print("BOOM! Shake the room!");
@@ -1444,7 +1446,8 @@ static bool cast_death_spell(int spell)
 			damroll(3 + ((plev - 1) / 5), 3), 0);
 
 		if (randint1(5) == 1)
-		{   /* Special effect first */
+		{
+			/* Special effect first */
 			dummy = randint1(1000);
 			if (dummy == 666)
 				fire_bolt(GF_DEATH_RAY, dir, plev * 50);
@@ -1496,7 +1499,7 @@ static bool cast_death_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		fire_bolt_or_beam(beam, GF_NETHER, dir,
-		    damroll(6 + ((plev - 5) / 4), 8));
+		                  damroll(6 + ((plev - 5) / 4), 8));
 		break;
 	case 10: /* Terror */
 		(void)turn_monsters(30 + plev);
@@ -1517,7 +1520,7 @@ static bool cast_death_spell(int spell)
 			/* Gain nutritional sustenance: 150/hp drained */
 			/* A Food ration gives 5000 food points (by contrast) */
 			/* Don't ever get more than "Full" this way */
-			/* But if we ARE Gorged,  it won't cure us */
+			/* But if we ARE Gorged, it won't cure us */
 			dummy = p_ptr->food + MIN(5000, 100 * dummy);
 			if (p_ptr->food < PY_FOOD_MAX)   /* Not gorged already */
 				(void)set_food(dummy >= PY_FOOD_MAX ? PY_FOOD_MAX - 1 : dummy);
@@ -1778,8 +1781,8 @@ static bool cast_death_spell(int spell)
 							 * program can deduct it properly */
 		for (i = 1; i < m_max; i++)
 		{
-			monster_type    *m_ptr = &m_list[i];
-			monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+			monster_type *m_ptr = &m_list[i];
+			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Paranoia -- Skip dead monsters */
 			if (!m_ptr->r_idx) continue;
@@ -1820,7 +1823,9 @@ static bool cast_death_spell(int spell)
 			Term_xtra(TERM_XTRA_DELAY,
 				delay_factor * delay_factor * delay_factor);
 		}
-		p_ptr->csp += 100;   /* Restore, ready to be deducted properly */
+
+		/* Restore, ready to be deducted properly */
+		p_ptr->csp += 100;
 
 		break;
 	case 31: /* Wraithform */
@@ -1862,8 +1867,8 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 			{
 				if (!get_aim_dir(&dir)) return FALSE;
-				fire_bolt_or_beam(beam-10, GF_PSI, dir,
-				    damroll(3 + ((plev - 1) / 5), 3));
+				fire_bolt_or_beam(beam - 10, GF_PSI, dir,
+				                  damroll(3 + ((plev - 1) / 5), 3));
 			}
 			break;
 		case 2: /* Shuffle */
@@ -2699,7 +2704,7 @@ void do_cmd_cast(void)
 
 	/* Ask for a spell */
 	if (!get_spell(&spell, ((mp_ptr->spell_book == TV_LIFE_BOOK) ? "recite" : "cast"),
-		sval, TRUE, (bool)(increment?TRUE:FALSE)))
+	               sval, TRUE, (bool)(increment ? TRUE : FALSE)))
 	{
 		if (spell == -2)
 			msg_format("You don't know any %ss in that book.", prayer);
@@ -2708,7 +2713,7 @@ void do_cmd_cast(void)
 
 
 	/* Access the spell */
-	use_realm = (increment?p_ptr->realm2:p_ptr->realm1);
+	use_realm = (increment ? p_ptr->realm2 : p_ptr->realm1);
 
 	s_ptr = &mp_ptr->info[use_realm - 1][spell];
 
@@ -2906,25 +2911,23 @@ void do_cmd_pray(void)
  */
 void do_cmd_pet(void)
 {
-	int			i = 0;
-	int			num;
-	int			powers[36];
-	cptr			power_desc[36];
-	bool			flag, redraw;
-	int			ask;
-	char			choice;
-	char			out_val[160];
-	int			pets = 0, pet_ctr;
-	bool			all_pets = FALSE;
-	monster_type	*m_ptr;
-
+	int i = 0;
+	int powers[36];
+	cptr power_desc[36];
+	bool flag, redraw;
+	int ask;
+	char choice;
+	char out_val[160];
+	int pets = 0;
+	int pet_ctr;
+	bool all_pets = FALSE;
+	monster_type *m_ptr;
 	int mode = 0;
-
 	byte y = 1, x = 0;
 	int ctr = 0;
 	char buf[160];
+	int num = 0;
 
-	num = 0;
 
 	/* Calculate pets */
 	/* Process the monsters (backwards) */

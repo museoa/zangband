@@ -678,7 +678,7 @@ static void variable_player_graph(byte *a, char *c)
 {
 	if (!streq(ANGBAND_GRAF, "new"))
 	{
-		if (!streq(ANGBAND_SYS,"ibm"))
+		if (!streq(ANGBAND_SYS, "ibm"))
 		{
 			if (use_graphics)
 			{

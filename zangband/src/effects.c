@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: effects.c */
 
 /* Purpose: effects of various "objects" */
@@ -2467,7 +2466,7 @@ void do_poly_self(void)
 			}
 			else
 			{
-				sprintf(effect_msg,"deformed ");
+				sprintf(effect_msg, "deformed ");
 			}
 		}
 
@@ -2681,7 +2680,7 @@ void take_hit(int damage, cptr hit_from)
 		/* Note cause of death */
 		(void)strcpy(died_from, hit_from);
 
-		if (p_ptr->image) strcat(died_from,"(?)");
+		if (p_ptr->image) strcat(died_from, "(?)");
 
 		/* No longer a winner */
 		total_winner = FALSE;

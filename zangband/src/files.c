@@ -1282,7 +1282,7 @@ static cptr likert(int x, int y)
 		default:
 		{
 			likert_color = TERM_VIOLET;
-			sprintf(dummy,"Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
+			sprintf(dummy, "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
 			return dummy;
 		}
 	}
@@ -2906,28 +2906,20 @@ errr file_character(cptr name, bool full)
 
 			if (r_ptr->flags1 & RF1_UNIQUE)
 			{
-				bool dead = (r_ptr->max_num == 0);
-				if (dead)
-				{
-					Total++;
-				}
+				if (r_ptr->max_num == 0) Total++;
 			}
 			else
 			{
-				s16b This = r_ptr->r_pkills;
-				if (This > 0)
-				{
-					Total += This;
-				}
+				Total += r_ptr->r_pkills;
 			}
 		}
 
 		if (Total < 1)
-			fprintf(fff,"\n You have defeated no enemies yet.\n");
+			fprintf(fff, "\n You have defeated no enemies yet.\n");
 		else if (Total == 1)
-			fprintf(fff,"\n You have defeated one enemy.\n");
+			fprintf(fff, "\n You have defeated one enemy.\n");
 		else
-			fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
+			fprintf(fff, "\n You have defeated %lu enemies.\n", Total);
 	}
 
 	fprintf(fff, "\n\n  [Virtues]\n\n");

@@ -57,10 +57,11 @@ void output_note(char *final_note)
 	if (!fff) return;
 
 	/* Add note, and close note file */
-	fprintf(fff, final_note);
+	fprintf(fff, "%s", final_note);
 
 	my_fclose(fff);
 }
+
 
 /*
  * Add note to file using a string + character symbol
@@ -82,7 +83,7 @@ void add_note(char *note, char code)
 	}
 	else if (depth_in_feet)
 	{
-		strnfmt(depths, 32,"%4dft", dun_level * 50);
+		strnfmt(depths, 32, "%4dft", dun_level * 50);
 	}
  	else
 	{
@@ -122,7 +123,7 @@ void add_note_type(int note_number)
 
 			/* Build the string containing the player information */
 			strnfmt(player, 100, "the %s %s", race_info[p_ptr->prace].title,
-				 class_info[p_ptr->pclass].title);
+			        class_info[p_ptr->pclass].title);
 
 			if (p_ptr->realm1 != REALM_NONE)
 			{
@@ -173,3 +174,4 @@ void add_note_type(int note_number)
 	/* Output the notes to the file */
 	output_note(buf);
 }
+

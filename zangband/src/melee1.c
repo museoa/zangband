@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: melee1.c */
 
 /* Purpose: Monster attacks */
@@ -129,8 +128,6 @@ bool make_attack_normal(int m_idx)
 	s32b gold;
 
 	object_type *o_ptr;
-
-	object_kind *k_ptr;
 
 	char o_name[80];
 
@@ -744,7 +741,6 @@ bool make_attack_normal(int m_idx)
 									 */
 									if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
 									{
-										k_ptr = &k_info[o_ptr->k_idx];
 										j_ptr->pval = o_ptr->pval / o_ptr->number;
 										o_ptr->pval -= j_ptr->pval;
 									}
@@ -794,7 +790,6 @@ bool make_attack_normal(int m_idx)
 										 */
 										if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
 										{
-											k_ptr = &k_info[o_ptr->k_idx];
 											j_ptr->pval = o_ptr->pval / o_ptr->number;
 											o_ptr->pval -= j_ptr->pval;
 										}
@@ -1434,7 +1429,7 @@ bool make_attack_normal(int m_idx)
 			/* Handle cut */
 			if (do_cut)
 			{
-				int k = 0;
+				int k;
 
 				/* Critical hit (zero if non-critical) */
 				tmp = monster_critical(d_dice, d_side, damage);
@@ -1459,7 +1454,7 @@ bool make_attack_normal(int m_idx)
 			/* Handle stun */
 			if (do_stun)
 			{
-				int k = 0;
+				int k;
 
 				/* Critical hit (zero if non-critical) */
 				tmp = monster_critical(d_dice, d_side, damage);

@@ -3470,11 +3470,11 @@ static void do_cmd_knowledge_kill_count(void)
 		}
 
 		if (Total < 1)
-			fprintf(fff,"You have defeated no enemies yet.\n\n");
+			fprintf(fff, "You have defeated no enemies yet.\n\n");
 		else if (Total == 1)
-			fprintf(fff,"You have defeated one enemy.\n\n");
+			fprintf(fff, "You have defeated one enemy.\n\n");
 		else
-			fprintf(fff,"You have defeated %lu enemies.\n\n", Total);
+			fprintf(fff, "You have defeated %lu enemies.\n\n", Total);
 	}
 
 	Total = 0;
@@ -3526,8 +3526,8 @@ static void do_cmd_knowledge_kill_count(void)
 		}
 	}
 
-	fprintf(fff,"----------------------------------------------\n");
-	fprintf(fff,"   Total: %lu creature%s killed.\n",
+	fprintf(fff, "----------------------------------------------\n");
+	fprintf(fff, "   Total: %lu creature%s killed.\n",
 	        Total, (Total == 1 ? "" : "s"));
 
 	/* Free the "who" array */
@@ -3687,7 +3687,7 @@ static void do_cmd_knowledge_quests(void)
 				sprintf(tmp_str, "%s (Danger level: %d)\n",
 					quest[i].name, quest[i].level);
 
-				fprintf(fff, tmp_str);
+				fprintf(fff, "%s", tmp_str);
 
 				j = 0;
 
@@ -3713,13 +3713,13 @@ static void do_cmd_knowledge_quests(void)
 					{
 						plural_aux(name);
 
-						sprintf(rand_tmp_str,"%s (Dungeon level: %d)\n  Kill %d %s, have killed %d.\n",
+						sprintf(rand_tmp_str, "%s (Dungeon level: %d)\n  Kill %d %s, have killed %d.\n",
 							quest[i].name, quest[i].level,
 							quest[i].max_num, name, quest[i].cur_num);
 					}
 					else
 					{
-						sprintf(rand_tmp_str,"%s (Dungeon level: %d)\n  Kill %s.\n",
+						sprintf(rand_tmp_str, "%s (Dungeon level: %d)\n  Kill %s.\n",
 							quest[i].name, quest[i].level, name);
 					}
 				}
@@ -3729,12 +3729,12 @@ static void do_cmd_knowledge_quests(void)
 		{
 			sprintf(tmp_str, "Quest Completed - Unrewarded\n");
 
-			fprintf(fff, tmp_str);
+			fprintf(fff, "%s", tmp_str);
 		}
 	}
 
 	/* Print the current random quest */
-	fprintf(fff, rand_tmp_str);
+	fprintf(fff, "%s", rand_tmp_str);
 
 	/* Close the file */
 	my_fclose(fff);

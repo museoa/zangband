@@ -1,5 +1,4 @@
-/* CVS: Last edit by $Author$ on $Date$ */
-/* File: misc.c */
+/* File: xtra1.c */
 
 /* Purpose: misc code */
 
@@ -60,7 +59,7 @@ void cnv_stat(int val, char *out_val)
  */
 s16b modify_stat_value(int value, int amount)
 {
-	int    i;
+	int i;
 
 	/* Reward */
 	if (amount > 0)
@@ -608,7 +607,10 @@ static void prt_depth(void)
 	else if (!dun_level)
 	{
 		if (p_ptr->town_num)
-			strcpy(depths, town[p_ptr->town_num].name);
+		{
+			strncpy(depths, town[p_ptr->town_num].name, 31);
+			depths[31] = '\0';
+		}
 		else
 			strcpy(depths, "Wilderness");
 	}
@@ -933,7 +935,6 @@ static void prt_cut(void)
 }
 
 
-
 static void prt_stun(void)
 {
 	int s = p_ptr->stun;
@@ -974,7 +975,6 @@ static void prt_stun(void)
  */
 static void health_redraw(void)
 {
-
 	/* Not tracking */
 	if (!p_ptr->health_who)
 	{
@@ -1069,7 +1069,7 @@ static void prt_frame_basic(void)
 	prt_exp();
 
 	/* All Stats */
-	for (i = 0; i < 6; i++) prt_stat(i);
+	for (i = 0; i < A_MAX; i++) prt_stat(i);
 
 	/* Status Bar */
 	prt_status();
@@ -2292,7 +2292,7 @@ void calc_bonuses(void)
 	extra_blows = extra_shots = 0;
 
 	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
+	for (i = 0; i < A_MAX; i++) p_ptr->stat_add[i] = 0;
 
 
 	/* Clear the Displayed/Real armor class */
@@ -2602,7 +2602,7 @@ void calc_bonuses(void)
 	if (maximize_mode)
 	{
 		/* Apply the racial modifiers */
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < A_MAX; i++)
 		{
 			/* Modify the stats for "race" */
 			p_ptr->stat_add[i] += (rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
@@ -2968,7 +2968,7 @@ void calc_bonuses(void)
 	}
 
 	/* Calculate stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		int top, use, ind;
 
@@ -3745,6 +3745,8 @@ void update_stuff(void)
  */
 void redraw_stuff(void)
 {
+	int i;
+
 	/* Redraw stuff */
 	if (!p_ptr->redraw) return;
 
@@ -3818,12 +3820,9 @@ void redraw_stuff(void)
 	if (p_ptr->redraw & (PR_STATS))
 	{
 		p_ptr->redraw &= ~(PR_STATS);
-		prt_stat(A_STR);
-		prt_stat(A_INT);
-		prt_stat(A_WIS);
-		prt_stat(A_DEX);
-		prt_stat(A_CON);
-		prt_stat(A_CHR);
+
+		/* All Stats */
+		for (i = 0; i < A_MAX; i++) prt_stat(i);
 	}
 
 	if (p_ptr->redraw & (PR_STATUS))
@@ -4065,12 +4064,13 @@ bool monk_heavy_armor(void)
 	if (p_ptr->pclass != CLASS_MONK) return FALSE;
 
 	/* Weight the armor */
-	monk_arm_wgt += inventory[INVEN_BODY].weight;
-	monk_arm_wgt += inventory[INVEN_HEAD].weight;
-	monk_arm_wgt += inventory[INVEN_ARM].weight;
+	monk_arm_wgt += inventory[INVEN_BODY ].weight;
+	monk_arm_wgt += inventory[INVEN_HEAD ].weight;
+	monk_arm_wgt += inventory[INVEN_ARM  ].weight;
 	monk_arm_wgt += inventory[INVEN_OUTER].weight;
 	monk_arm_wgt += inventory[INVEN_HANDS].weight;
-	monk_arm_wgt += inventory[INVEN_FEET].weight;
+	monk_arm_wgt += inventory[INVEN_FEET ].weight;
 
 	return (monk_arm_wgt > (100 + (p_ptr->lev * 4)));
 }
+

@@ -1,9 +1,9 @@
-/* File:field.c */
+/* File: fields.c */
 
 /* Purpose: Field code */
 
 /*
- * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+ * Copyright (c) 2000 Steven Fuerst
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
@@ -116,6 +116,7 @@ void excise_field_idx(int fld_idx)
 		prev_f_idx = this_f_idx;
 	}
 }
+
 
 /*
  * Notice changes to a field
@@ -271,6 +272,7 @@ void delete_field(int y, int x)
 	/* Note + Lite the spot */
 	note_spot(y, x);
 }
+
 
 /*
  * Deletes all fields at given location
@@ -633,6 +635,7 @@ s16b f_pop(void)
 	return (0);
 }
 
+
 /*
  * Wipe an field clean.
  */
@@ -641,6 +644,7 @@ void field_wipe(field_type *f_ptr)
 	/* Wipe the structure */
 	(void)WIPE(f_ptr, field_type);
 }
+
 
 /*
  * Prepare a field based on an existing one
@@ -746,6 +750,7 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 	}
 }
 
+
 /*
  * Sort a list of fields so that they are in priority order.
  *
@@ -827,14 +832,12 @@ void field_prep(field_type *f_ptr, s16b t_idx)
 		f_ptr->data[i] = t_ptr->data_init[i];
 	}
 
-
 	/* create actions */
 	for (i = 0; i < FIELD_ACTION_MAX; i++)
 	{
 		/* copy function pointers */
 		f_ptr->action[i] = t_ptr->action[i];
 	}
-	
 }
 
 
@@ -908,9 +911,9 @@ s16b *field_first_known(s16b *fld_ptr, byte typ)
 		f_ptr = &fld_list[*fld_ptr];
 
 		/* Is it known to be the correct type? */
-		if ((t_info[f_ptr->t_idx].type == typ)
-		 && ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS))
-		 	 == (FIELD_INFO_MARK | FIELD_INFO_VIS))) break;
+		if ((t_info[f_ptr->t_idx].type == typ) &&
+		    ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
+		    (FIELD_INFO_MARK | FIELD_INFO_VIS))) break;
 
 		/* If not, get next one. */
 		fld_ptr = &f_ptr->next_f_idx;
@@ -1125,14 +1128,13 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
 			/* Check for no deletion */
 			if (f_ptr->t_idx)
 			{
-				/*  Get next field in the list */
+				/* Get next field in the list */
 				field_ptr = &f_ptr->next_f_idx;
 			}
-			
 		}
 		else
 		{
-			/*  Get next field in the list */
+			/* Get next field in the list */
 			field_ptr = &f_ptr->next_f_idx;
 		}
 	}
@@ -1164,7 +1166,7 @@ void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
 			/* Check for no deletion */
 			if (f_ptr->t_idx)
 			{
-				/*  Get next field in the list */
+				/* Get next field in the list */
 				field_ptr = &f_ptr->next_f_idx;
 			}
 		}
@@ -1253,11 +1255,12 @@ void process_fields(void)
 	}
 }
 
+
 /*
  * "Testing" function, used to find bugs.
  * It will test cave and field data structures.
  * (A similar function was used to detect the
- *  "invisible monster" bug in the wilderness.
+ * "invisible monster" bug in the wilderness).
  */
 void test_field_data_integrity(void)
 {
@@ -1307,6 +1310,7 @@ void test_field_data_integrity(void)
 	}
 }
 
+
 /* Field action functions - later will be implemented in python */
 
 
@@ -1342,6 +1346,7 @@ void field_action_nothing(s16b *field_ptr, void *nothing)
 	return;
 }
 
+
 /* Simple function that deletes the field */
 void field_action_delete(s16b *field_ptr, void *nothing)
 {		
@@ -1353,7 +1358,9 @@ void field_action_delete(s16b *field_ptr, void *nothing)
 }
 
 
-/* The function that now controls the glyph of warding rune. */
+/*
+ * The function that now controls the glyph of warding rune.
+ */
 void field_action_glyph_warding(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1379,7 +1386,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (mon_enter->do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-		(randint1(BREAK_GLYPH) < r_ptr->level)) 
+	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		/* Describe observable breakage */
 		if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_MARK)
@@ -1403,7 +1410,10 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 	return;
 }
 
-/* The function that now controls the exploding rune spell . */
+
+/*
+ * The function that now controls the exploding rune spell.
+ */
 void field_action_glyph_explode(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1431,9 +1441,9 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-		(randint1(BREAK_GLYPH) < r_ptr->level)) 
+	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
-		if (f_ptr->fy == py && f_ptr->fx == px)
+		if ((f_ptr->fy == py) && (f_ptr->fx == px))
 		{
 			msg_print("The rune explodes!");
 			fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
@@ -1513,8 +1523,10 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
+
 	return;
 }
+
 
 /* 
  * Special action to raise corpses.
@@ -1534,17 +1546,18 @@ void field_action_corpse_raise(s16b *field_ptr, void *input)
 
 	/* Make a monster nearby if possible */
 	if (summon_named_creature(f_ptr->fy, f_ptr->fx,
-		 r_idx, FALSE, FALSE, *want_pet))
+	                          r_idx, FALSE, FALSE, *want_pet))
 	{
-
 		/* Set the cloned flag, so no treasure is dropped */
 		m_list[hack_m_idx_ii].smart |= SM_CLONED;
 	}
 
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
+
 	return;
 }
+
 
 /*
  * Hack XXX XXX Convert the char of the monster to a corpse type
@@ -1556,64 +1569,67 @@ static char corpse_type(char feat)
 {
 	switch (feat)
 	{
-		case 'a':return(6);
-		case 'b':return(6);
-		case 'c':return(5);
-		case 'd':return(0);
-		case 'e':return(6);
-		case 'f':return(4);
-		case 'g':return(1);
-		case 'h':return(2);
-		case 'i':return(5);
-		case 'j':return(3);
-		case 'k':return(4);
-		case 'l':return(0);
-		case 'm':return(6);
-		case 'n':return(3);
-		case 'o':return(3);
-		case 'p':return(2);
-		case 'q':return(4);
-		case 'r':return(6);
-		case 's':return(2);
-		case 't':return(2);
-		case 'u':return(3);
-		case 'v':return(4);
-		case 'w':return(5);
-		case 'x':return(5);
-		case 'y':return(4);
-		case 'z':return(3);
-		case 'A':return(2);
-		case 'B':return(5);
-		case 'C':return(5);
-		case 'D':return(0);
-		case 'E':return(3);
-		case 'F':return(4);
-		case 'G':return(3);
-		case 'H':return(2);
-		case 'I':return(6);
-		case 'J':return(5);
-		case 'K':return(3);
-		case 'L':return(1);
-		case 'M':return(1);
-		case 'N':return(3);
-		case 'O':return(1);
-		case 'P':return(0);
-		case 'Q':return(3);
-		case 'R':return(5);
-		case 'S':return(6);
-		case 'T':return(1);
-		case 'U':return(0);
-		case 'V':return(1);
-		case 'W':return(6);
-		case 'X':return(1);
-		case 'Y':return(1);
-		case 'Z':return(5);
-		case ',':return(6);
-		default:return(3);
+		case 'a': return (6);
+		case 'b': return (6);
+		case 'c': return (5);
+		case 'd': return (0);
+		case 'e': return (6);
+		case 'f': return (4);
+		case 'g': return (1);
+		case 'h': return (2);
+		case 'i': return (5);
+		case 'j': return (3);
+		case 'k': return (4);
+		case 'l': return (0);
+		case 'm': return (6);
+		case 'n': return (3);
+		case 'o': return (3);
+		case 'p': return (2);
+		case 'q': return (4);
+		case 'r': return (6);
+		case 's': return (2);
+		case 't': return (2);
+		case 'u': return (3);
+		case 'v': return (4);
+		case 'w': return (5);
+		case 'x': return (5);
+		case 'y': return (4);
+		case 'z': return (3);
+		case 'A': return (2);
+		case 'B': return (5);
+		case 'C': return (5);
+		case 'D': return (0);
+		case 'E': return (3);
+		case 'F': return (4);
+		case 'G': return (3);
+		case 'H': return (2);
+		case 'I': return (6);
+		case 'J': return (5);
+		case 'K': return (3);
+		case 'L': return (1);
+		case 'M': return (1);
+		case 'N': return (3);
+		case 'O': return (1);
+		case 'P': return (0);
+		case 'Q': return (3);
+		case 'R': return (5);
+		case 'S': return (6);
+		case 'T': return (1);
+		case 'U': return (0);
+		case 'V': return (1);
+		case 'W': return (6);
+		case 'X': return (1);
+		case 'Y': return (1);
+		case 'Z': return (5);
+		case ',': return (6);
+		default : return (3);
 	}
 }
 
-/* Initialise a corpse / skeleton after being loaded from a savefile */
+
+/*
+ * Initialise a corpse / skeleton after being loaded from a savefile.
+ */
 void field_action_corpse_load(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1632,7 +1648,9 @@ void field_action_corpse_load(s16b *field_ptr, void *input)
 }
 
 
-/* Initialise corpse / skeletons */
+/*
+ * Initialise corpse / skeletons
+ */
 void field_action_corpse_init(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1662,27 +1680,33 @@ void field_action_corpse_init(s16b *field_ptr, void *input)
 	return;
 }
 
-/* Looking at a corpse tells you what type of monster it was */
+
+/*
+ * Looking at a corpse tells you what type of monster it was
+ */
 void field_action_corpse_look(s16b *field_ptr, void *output)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	char *name = (char *) output;
+	char *name = (char *)output;
 	
 	/* Monster race */
-	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
+	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
 	
-	monster_race	*r_ptr = &r_info[r_idx];
+	monster_race *r_ptr = &r_info[r_idx];
 	
 	/* Copy name to the output string. */
 	(void)strnfmt(name, 40, "%s %s", (r_name + r_ptr->name),
-		 t_info[f_ptr->t_idx].name);
+	              t_info[f_ptr->t_idx].name);
 
 	/* Done */
 	return;
 }
 
-/* Try to tunnel into a wall. */
+
+/*
+ * Try to tunnel into a wall.
+ */
 void field_action_wall_tunnel(s16b *field_ptr, void *input)
 {	
 	int *dig = (int *) input;
@@ -1704,13 +1728,14 @@ void field_action_wall_tunnel(s16b *field_ptr, void *input)
 	}
 }
 
+
 /*
  * The various types of interaction used by
  * the "interact with grid" command.
  */
 void field_action_interact_tunnel(s16b *field_ptr, void *output)
 {
-	int *action = (int *) output;
+	int *action = (int *)output;
 	
 	/* Tunnel flag */
 	*action = 0;
@@ -1721,7 +1746,7 @@ void field_action_interact_tunnel(s16b *field_ptr, void *output)
 
 void field_action_interact_disarm(s16b *field_ptr, void *output)
 {
-	int *action = (int *) output;
+	int *action = (int *)output;
 	
 	/* Disarm flag */
 	*action = 1;
@@ -1729,15 +1754,17 @@ void field_action_interact_disarm(s16b *field_ptr, void *output)
 	return;
 }
 
+
 void field_action_interact_open(s16b *field_ptr, void *output)
 {
-	int *action = (int *) output;
+	int *action = (int *)output;
 	
 	/* Open flag */
 	*action = 2;
 
 	return;
 }
+
 
 /*
  * Traps code.
@@ -1894,7 +1921,10 @@ void place_trap(int y, int x)
 	}
 }
 
-/* Initialise the trap */
+
+/*
+ * Initialise the trap
+ */
 void field_action_trap_init(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1914,7 +1944,10 @@ void field_action_trap_init(s16b *field_ptr, void *input)
 	return;
 }
 
-/* Try to disarm a trap. */
+
+/*
+ * Try to disarm a trap.
+ */
 void field_action_trap_disarm(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1938,6 +1971,7 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 		delete_field_ptr(field_ptr);
 	}
 }
+
 
 /*
  * Common stuff that happens whenever the player
@@ -2236,6 +2270,7 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 	}
 }
 
+
 void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -2361,6 +2396,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 		case 4:
 		{
 			msg_print("A gas of scintillating colors surrounds you!");
+
 			if (!p_ptr->resist_chaos)
 			{
 				(void)set_image(p_ptr->image + randint0(20) + 10);
@@ -2382,8 +2418,8 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 
 	/* Make some new traps */
 	project(0, 1, py, px, 0, GF_MAKE_TRAP,
-		 PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
-	
+	        PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
+
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
 }
@@ -2486,6 +2522,7 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 	lose_exp(p_ptr->exp / 5);
 }
 
+
 void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -2494,7 +2531,7 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 		
 	msg_print("There is a bright flash of light!");
-	(void) apply_disenchant(0);
+	(void)apply_disenchant(0);
 }
 
 
@@ -2527,7 +2564,7 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 		
-	(void) gain_random_mutation(0);
+	(void)gain_random_mutation(0);
 }
 
 
@@ -2549,6 +2586,7 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
 }
+
 
 void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 {	
@@ -2628,7 +2666,7 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 	
 	msg_print("A shrill note sounds!");
 	
-	(void) speed_monsters();	
+	(void)speed_monsters();	
 	
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
@@ -2644,7 +2682,7 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 	
 	msg_print("You smell something musty.");
 	
-	(void) raise_dead(py, px, FALSE);
+	(void)raise_dead(py, px, FALSE);
 }
 
 
@@ -2684,7 +2722,6 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
-
 		}
 	}
 }
@@ -2731,6 +2768,7 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 	
 	lose_all_info();
 }
+
 
 /*
  * Make a locked or jammed door on a square
@@ -2977,7 +3015,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 
 	/* Stuck Door */
 	if ((r_ptr->flags2 & RF2_BASH_DOOR) &&
-			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
+	    (!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Bash */
 		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
@@ -3003,15 +3041,15 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			/* Update view */
 			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
 			{
-				p_ptr->update |= (PU_VIEW | PU_FLOW
-					 | PU_MONSTERS | PU_MON_LITE);
+				p_ptr->update |= (PU_VIEW | PU_FLOW |
+				                  PU_MONSTERS | PU_MON_LITE);
 			}
 			
 			/* Delete the field */
 			delete_field_ptr(field_ptr);
 
 			/* Hack -- fall into doorway */
-			mon_enter->do_move  = TRUE;
+			mon_enter->do_move = TRUE;
 				
 			return;
 		}
@@ -3020,3 +3058,4 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 	/* Cannot move */
 	mon_enter->do_move = FALSE;
 }
+

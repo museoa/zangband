@@ -1664,8 +1664,12 @@ static void outflagmatlab(u32b flag, FILE *fff)
 	char buf[3];
 
 	i = 1;
-	for (j = 0; j < 32; j++, i<<=1)
+
+	for (j = 0; j < 32; j++)
 	{
+		/* Shift the bit */
+		i <<= 1;
+
 		/* If the bit is set */
 		if (flag & i)
 		{
@@ -1676,8 +1680,9 @@ static void outflagmatlab(u32b flag, FILE *fff)
 			sprintf(buf, "0 ");
 		}
 
-		fprintf(fff, buf);
+		fprintf(fff, "%s", buf);
 	}
+
 	fprintf(fff, "...\n");
 }
 
@@ -1717,8 +1722,9 @@ static void outflagmatlab2(u32b flag, FILE *fff, int hp)
 			sprintf(buf, "0 ");
 		}
 
-		fprintf(fff, buf);
+		fprintf(fff, "%s", buf);
 	}
+
 	fprintf(fff, "...\n");
 }
 
@@ -1878,7 +1884,7 @@ void output_monster_matlab(void)
 		outblowsmatlab(r_ptr, buf2);
 		sprintf(buf2, "%s];\nxx=[xx;x];\n", buf2);
 
-		fprintf(fff, buf2);
+		fprintf(fff, "%s", buf2);
 	}
 
 	/* Output the power information */
@@ -1892,7 +1898,7 @@ void output_monster_matlab(void)
 		/* Output the level */
 		sprintf(buf2, "%d ",  monster_power_mat(r_ptr->level));
 
-		fprintf(fff, buf2);
+		fprintf(fff, "%s", buf2);
 	}
 
 	fprintf(fff, "];\n");
@@ -1908,7 +1914,7 @@ void output_monster_matlab(void)
 		/* Output the experience for a kill */
 		sprintf(buf2, "%ld ", r_ptr->mexp);
 
-		fprintf(fff, buf2);
+		fprintf(fff, "%s", buf2);
 	}
 
 	fprintf(fff, "];");
