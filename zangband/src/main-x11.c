@@ -2435,10 +2435,10 @@ errr init_x11(int argc, char *argv[])
 		else
 
 		{
-			/* Try the "8X8.bmp" file */
-			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X8.bmp");
+			/* Try the "8x8.bmp" file */
+			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
 
-			/* Use the "8X8.bmp" file if it exists */
+			/* Use the "8x8.bmp" file if it exists */
 			if (0 == fd_close(fd_open(filename, O_RDONLY)))
 			{
 				/* Use graphics */
