@@ -1389,45 +1389,89 @@ static bool get_moves(int m_idx, int *mm)
 		}
 
 		/* Monster groups try to surround the player */
-		if (!done && (r_ptr->flags1 & RF1_FRIENDS))
+		if (!done && (r_ptr->flags1 & RF1_FRIENDS) && randint0(2) == 0)
 		{
-			int i;
+			int i, i2;
+			int xx2, yy2;
+			int cx = px, cy = py;
+			
+			monster_type *fm_ptr;
+			monster_race *fr_ptr;
 
-			/* Find an empty square near the player to fill */
+			int free_squares = 0;
+
+			/* Count alternate squares we can move to */
 			for (i = 0; i < 8; i++)
 			{
-				/* Pick squares near player (semi-randomly) */
-				xx = px + ddx_ddd[(m_idx + i) & 7];
-				yy = py + ddy_ddd[(m_idx + i) & 7];
+				xx = m_ptr->fx + ddx_ddd[i];
+				yy = m_ptr->fy + ddy_ddd[i];
 
+				/* Require next to player */
+				if (ABS(xx - px) > 1) continue;
+				if (ABS(yy - py) > 1) continue;
 
-				/* Already there? */
-				if ((m_ptr->fy == yy) && (m_ptr->fx == xx))
+				/* Require a square we can move to */
+				if (cave_passable_mon(m_ptr, area(xx, yy)) < 50) continue;
+
+				/* Count this square */
+				free_squares++;
+
+				/* Possibly move here */
+				if (randint0(free_squares) == 0)
 				{
-					/* Attack the player */
-					ty = py;
-					tx = px;
-
-					break;
+					cx = xx;
+					cy = yy;
 				}
-
-				if (!in_bounds2(xx, yy)) continue;
-
-				/* Not on player */
-				if ((yy == py) && (xx == px)) continue;
-
-				/* Ignore filled grids */
-				if (!cave_empty_grid(area(xx, yy))) continue;
-
-				/* Try to fill this hole */
-				tx = xx;
-				ty = yy;
-
-				break;
 			}
 
-			/* Done */
-			done = TRUE;
+			/* Count monsters which are "pushing" */
+			if (free_squares)
+			{
+				for (i = 0; i < 8; i++)
+				{
+					int blocked = TRUE;
+
+					xx = m_ptr->fx + ddx_ddd[i];
+					yy = m_ptr->fy + ddy_ddd[i];
+
+					c_ptr = area(xx, yy);
+
+					/* Must be a monster */
+					if (!c_ptr->m_idx) continue;
+
+					fm_ptr = &m_list[c_ptr->m_idx];
+					fr_ptr = &r_info[fm_ptr->r_idx];
+
+					/* Must be awake and mobile */
+					if (fm_ptr->csleep
+						|| (r_ptr->flags1 & RF1_NEVER_MOVE)) continue;
+
+					/* Check if this monster can move */
+					for (i2 = 0; i2 < 8; i2++)
+					{
+						xx2 = fm_ptr->fx + ddx_ddd[i2];
+						yy2 = fm_ptr->fy + ddy_ddd[i2];
+
+						/* Require next to player */
+						if (ABS(xx2 - px) > 1) continue;
+						if (ABS(yy2 - py) > 1) continue;
+
+						if (cave_passable_mon(fm_ptr, area(xx2, yy2)) >= 50)
+						{
+							blocked = FALSE;
+							break;
+						}
+					}
+
+					if (!blocked) continue;
+					
+					/* If we're blocking something, move to free space */
+					tx = cx;
+					ty = cy;
+					
+					break;
+				}
+			}
 		}
 	}
 
