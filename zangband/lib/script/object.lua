@@ -91,7 +91,7 @@ function eat_food(object)
 			end
 		end
 	elseif object.sval == SV_FOOD_POISON then
-		if not (player.resist_pois or (player.oppose_pois > 0)) then
+		if (res_pois_lvl() ~= 0) then
 			if inc_poisoned(rand_int(10) + 10) then
 				ident = TRUE
 			end
@@ -127,7 +127,7 @@ function quaff_potion(object)
 		inc_paralyzed(4)
 		ident = TRUE
 	elseif object.sval == SV_POTION_POISON then
-		if not (player.resist_pois or (player.oppose_pois > 0)) then
+		if (res_pois_lvl() ~= 0) then
 			if inc_poisoned(rand_range(10, 25)) then
 				ident = TRUE
 			end
@@ -555,13 +555,13 @@ function read_scroll(object)
 	elseif object.sval == SV_SCROLL_FIRE then
 		fire_ball(GF_FIRE, 0, 300, 4)
 		-- Note: "Double" damage since it is centered on the player ...
-		if not ((player.oppose_fire > 0) or player.resist_fire or player.immune_fire) then
+		if (res_fire_lvl() > 3) then
 			take_hit(rand_range(50, 100), "a Scroll of Fire")
 		end
 		ident = TRUE
 	elseif object.sval == SV_SCROLL_ICE then
 		fire_ball(GF_ICE, 0, 350, 4)
-		if not ((player.oppose_cold > 0) or player.resist_cold or player.immune_cold) then
+		if (res_cold_lvl() > 3) then
 			take_hit(rand_range(100, 200), "a Scroll of Ice")
 		end
 		ident = TRUE
