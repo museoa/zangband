@@ -869,8 +869,6 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 	int x = i * 8, y = j * 8;
 	int xx = x, yy = y;
 
-	cave_type *c_ptr;
-
 	/* Draw gates if visible */
 	for (k = 0; k < MAX_GATES; k++)
 	{
@@ -892,13 +890,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Right gate */
-					c_ptr = cave_p(x + 4, y + 3);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
-
-					c_ptr = cave_p(x + 4, y + 4);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
+					make_lockjam_door(x + 4, y + 3, 0, FALSE);
+					make_lockjam_door(x + 4, y + 4, 0, FALSE);
 
 					return;
 				}
@@ -915,13 +908,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Left gate */
-					c_ptr = cave_p(x + 3, y + 3);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
-
-					c_ptr = cave_p(x + 3, y + 4);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
+					make_lockjam_door(x + 3, y + 3, 0, FALSE);
+					make_lockjam_door(x + 3, y + 4, 0, FALSE);
 
 					return;
 				}
@@ -938,13 +926,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Bottom gate */
-					c_ptr = cave_p(x + 3, y + 4);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
-
-					c_ptr = cave_p(x + 4, y + 4);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
+					make_lockjam_door(x + 3, y + 4, 0, FALSE);
+					make_lockjam_door(x + 4, y + 4, 0, FALSE);
 
 					return;
 				}
@@ -961,13 +944,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Top gate */
-					c_ptr = cave_p(x + 3, y + 3);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
-
-					c_ptr = cave_p(x + 4, y + 3);
-					c_ptr->fld_idx = FT_LOCK_DOOR;
-					set_feat_grid(c_ptr, FEAT_CLOSED);
+					make_lockjam_door(x + 3, y + 3, 0, FALSE);
+					make_lockjam_door(x + 4, y + 3, 0, FALSE);
 
 					return;
 				}
@@ -1166,7 +1144,7 @@ void draw_city(place_type *pl_ptr)
 	/* Get region */
 	create_region(pl_ptr, pl_ptr->xsize * WILD_BLOCK_SIZE,
 						pl_ptr->ysize * WILD_BLOCK_SIZE,
-						REGION_NULL);
+						REGION_OVER);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -1427,62 +1405,6 @@ static void open_clearing(int x_max, int y_max)
 
 
 /*
- * Generate helper -- open one side of a rectangle with a door
- *
- * This version places a field type, instead of a field itself
- * so that overlay_place() works.
- */
-static void gen_dun_door(int x1, int y1, int x2, int y2, bool secret)
-{
-	int y0, x0;
-
-	cave_type *c_ptr;
-
-	/* Center */
-	y0 = (y1 + y2) / 2;
-	x0 = (x1 + x2) / 2;
-
-	/* Open random side */
-	switch (randint0(4))
-	{
-		case 0:
-		{
-			y0 = y1;
-			break;
-		}
-		case 1:
-		{
-			x0 = x1;
-			break;
-		}
-		case 2:
-		{
-			y0 = y2;
-			break;
-		}
-		case 3:
-		{
-			x0 = x2;
-			break;
-		}
-	}
-
-	c_ptr = cave_p(x0, y0);
-	
-	if (secret)
-	{
-		set_feat_grid(c_ptr, FEAT_SECRET);
-	}
-	else
-	{
-		/* Add the door */
-		c_ptr->fld_idx = FT_LOCK_DOOR;
-		set_feat_grid(c_ptr, FEAT_CLOSED);
-	}
-}
-
-
-/*
  * Draw 'count' buildings in the given region
  */
 static void make_dun_buildings(int count, int x_max, int y_max)
@@ -1526,7 +1448,7 @@ static void make_dun_buildings(int count, int x_max, int y_max)
 		generate_draw(x, y, x + xwid, y + ywid, FEAT_PERM_OUTER);
 
 		/* Add a door */
-		gen_dun_door(x, y, x + xwid, y + ywid, FALSE);
+		generate_door(x, y, x + xwid, y + ywid, FALSE);
 	
 		out:;
 	}
@@ -1732,15 +1654,15 @@ static void draw_dun_temple(void)
 	generate_draw(x0 + 1, y0 + 1, x0 + x, y0 + y, FEAT_PERM_OUTER);
 	
 	/* Add some doors */
-	gen_dun_door(x0 - x, y0 - y, x0 + x, y0 + y, FALSE);
-	gen_dun_door(x0 - x, y0 - y, x0 - 1, y0 - 1, FALSE);
-	gen_dun_door(x0 - x, y0 - y, x0 - 1, y0 - 1, FALSE);
-	gen_dun_door(x0 + 1, y0 - y, x0 + x, y0 - 1, FALSE);
-	gen_dun_door(x0 + 1, y0 - y, x0 + x, y0 - 1, FALSE);
-	gen_dun_door(x0 - x, y0 + 1, x0 - 1, y0 + y, FALSE);
-	gen_dun_door(x0 - x, y0 + 1, x0 - 1, y0 + y, FALSE);
-	gen_dun_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
-	gen_dun_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
+	generate_door(x0 - x, y0 - y, x0 + x, y0 + y, FALSE);
+	generate_door(x0 - x, y0 - y, x0 - 1, y0 - 1, FALSE);
+	generate_door(x0 - x, y0 - y, x0 - 1, y0 - 1, FALSE);
+	generate_door(x0 + 1, y0 - y, x0 + x, y0 - 1, FALSE);
+	generate_door(x0 + 1, y0 - y, x0 + x, y0 - 1, FALSE);
+	generate_door(x0 - x, y0 + 1, x0 - 1, y0 + y, FALSE);
+	generate_door(x0 - x, y0 + 1, x0 - 1, y0 + y, FALSE);
+	generate_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
+	generate_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
 	
 	/* Add stairs */
 	switch (randint0(4))
@@ -1800,7 +1722,7 @@ static void draw_dun_tower(void)
 		generate_draw(x0 - x, y0 - y, x0 + x, y0 + y, FEAT_PERM_OUTER);
 
 		/* Add a door */
-		gen_dun_door(x0 - x, y0 - y, x0 + x, y0 + y, FALSE);
+		generate_door(x0 - x, y0 - y, x0 + x, y0 + y, FALSE);
 		
 		/* Make smaller room inside */
 		x /= 2;
@@ -1835,7 +1757,7 @@ static void draw_dun_ruin(void)
 	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
 
 	/* Open the inner vault with a door */
-	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
+	generate_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
 
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
@@ -1923,7 +1845,7 @@ static void draw_dun_grave(void)
 	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
 
 	/* Open the inner vault with a secret door */
-	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, TRUE);
+	generate_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, TRUE);
 
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
@@ -1983,7 +1905,7 @@ static void draw_dun_mine(void)
 	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
 
 	/* Add door to the mine */
-	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
+	generate_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
 
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
@@ -2012,7 +1934,7 @@ static void draw_dun_city(void)
 	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
 
 	/* Open the inner vault with a door */
-	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
+	generate_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
 
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
@@ -2040,7 +1962,7 @@ void draw_dungeon(place_type *pl_ptr)
 	/* Get region */;
 	create_region(pl_ptr, pl_ptr->xsize * WILD_BLOCK_SIZE,
 						pl_ptr->ysize * WILD_BLOCK_SIZE,
-						REGION_NULL);
+						REGION_OVER);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -2944,7 +2866,7 @@ void van_town_gen(place_type *pl_ptr)
 	if (pl_ptr->region) quit("Town already has region during creation.");
 
 	/* Get region */
-	create_region(pl_ptr, V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT, REGION_NULL);
+	create_region(pl_ptr, V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT, REGION_OVER);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 

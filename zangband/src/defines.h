@@ -2433,8 +2433,8 @@
  * Region flags
  */
 #define REGION_NULL		0x00
-#define REGION_CAVE		0x01
-#define REGION_DUM1		0x02
+#define REGION_CAVE		0x01	/* Cave region */
+#define REGION_OVER		0x02	/* Overlay region */
 #define REGION_DUM2		0x04
 
 

@@ -922,12 +922,22 @@ field_type *place_field(int x, int y, s16b t_idx)
 	field_type *f_ptr;
 
 	s16b fld_idx;
+	region_info *ri_ptr = &ri_list[cur_region];
 
 	field_type temp_field;
 	field_type *ft_ptr = &temp_field;
 
 	/* Paranoia */
 	if ((t_idx <= 0) || (t_idx >= z_info->t_max)) return (NULL);
+
+	/* Overlay regions are easy - just store the field type for later */
+	if (ri_ptr->flags & REGION_OVER)
+	{
+		cave_data[y][x].fld_idx = t_idx;
+	
+		/* Hack - we didn't actually place a real field */
+		return (NULL);
+	}
 
 	/* Make the field */
 	field_prep(ft_ptr, t_idx);
@@ -3014,12 +3024,32 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, va_list vp)
 void make_lockjam_door(int x, int y, int power, bool jam)
 {
 	cave_type *c_ptr = area(x, y);
-	field_type *f_ptr = field_is_type(c_ptr, FTYPE_DOOR);
+	field_type *f_ptr;
 
 	int old_power = 0;
 
-	/* Hack - Make a closed door on the square */
+	/* Make a closed door on the square */
 	cave_set_feat(x, y, FEAT_CLOSED);
+	
+	/* Overlays are simpler */
+	if (ri_list[cur_region].flags & REGION_OVER)
+	{
+		/* Make a new field */
+		if (jam)
+		{
+			/* Add a jammed door field */
+			(void) place_field(x, y, FT_JAM_DOOR);
+		}
+		else
+		{
+			/* Add a locked door field */
+			(void) place_field(x, y, FT_LOCK_DOOR);
+		}
+
+		return;
+	}
+
+	f_ptr = field_is_type(c_ptr, FTYPE_DOOR);
 
 	/* look for a door field on the square */
 	if (f_ptr)
@@ -3060,9 +3090,11 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 		f_ptr = place_field(x, y, FT_LOCK_DOOR);
 	}
 
+	/* It didn't work for some reason? */
 	if (!f_ptr)
 	{
 		msgf("Cannot make door! Too many fields.");
+		
 		return;
 	}
 
@@ -3070,8 +3102,6 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 
 	/* 
 	 * Initialise it.
-	 * Hack - note that hack_fld_ptr is a global that is overwritten
-	 * by the place_field() function.
 	 */
 	(void)field_hook_single(f_ptr, FIELD_ACT_INIT, power);
 }

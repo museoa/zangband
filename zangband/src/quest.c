@@ -2268,7 +2268,7 @@ void draw_quest(place_type *pl_ptr)
 	/* Get region */
 	create_region(pl_ptr, pl_ptr->xsize * WILD_BLOCK_SIZE,
 						 pl_ptr->ysize * WILD_BLOCK_SIZE,
-						 REGION_NULL);
+						 REGION_OVER);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
