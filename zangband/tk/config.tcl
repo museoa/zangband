@@ -113,7 +113,6 @@ proc NSConfig::Load {} {
 	SourceOne $prefix.cfg
 
 	# These next files are automatically generated at shutdown
-	# Source [Global config,alternate] Config::Alternate
 	# Source [Global config,assign] Config::Assign
 	
 	# Map symbols
@@ -166,7 +165,6 @@ proc NSConfig::SetPrefix {prefix} {
 	Value config,prefix $prefix
 
 	Global config,prefix $prefix
-	Global config,alternate $prefix-alternate
 	Global config,assign $prefix-assign
 	Global config,town $prefix-town
 	Global config,postop $prefix-postop
@@ -187,7 +185,6 @@ proc NSConfig::SetPrefix {prefix} {
 proc NSConfig::ShareConfigFile {which file} {
 
 	switch -- $which {
-		alternate -
 		assign -
 		town {
 			Global config,$which $file
@@ -538,110 +535,6 @@ proc NSConfig::Colormapify {} {
 			}
 		}
 	}
-
-	return
-}
-
-
-# Alternate --
-#
-#	A namespace with commands called when the tk/config/alternate file
-#	is sourced.
-#
-
-namespace eval Config::Alternate {
-
-	variable Priv
-
-# namespace eval Config::Alternate
-}
-
-proc Config::Alternate::Source {path} {
-
-	source $path
-
-	return
-}
-
-proc Config::Alternate::Type {type} {
-
-	variable Priv
-
-	lappend Priv(type) $type
-
-	return
-}
-
-proc Config::Alternate::New {reason} {
-
-	variable Priv
-
-	set Priv(id) [alternate create $reason]
-
-	return
-}
-
-proc Config::Alternate::Ins {typeIndex iconIndex} {
-
-	variable Priv
-
-	set type [lindex $Priv(type) $typeIndex]
-	alternate insert $Priv(id) 1000 -type $type -index $iconIndex
-
-	return
-}
-
-# Config::Alternate::Write --
-#
-#	Writes the tk/config/$prefix-alternate file.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc Config::Alternate::Write {} {
-
-	set tempName [NSUtils::TempFileName [PathTk config]]
-	if {[catch {openlf $tempName} fileId]} {
-		set msg "The following error occurred while attempting to open "
-		append msg "the \"alternate\" file for writing:\n\n$fileId"
-		tk_messageBox -title Oops -message $msg
-		return
-	}
-
-	puts $fileId "# Automatically generated. Do not edit.\n"
-
-	set max [alternate count]
-	if {$max} {
-		set typeList [icon gettypes]
-		set index 0
-		foreach type $typeList {
-			puts $fileId "Type $type"
-			set type2index($type) $index
-			incr index
-		}
-		puts $fileId ""
-	
-		for {set i 0} {$i < $max} {incr i} {
-			puts $fileId "New [alternate configure $i -reason]"
-			foreach frame [alternate get $i] {
-				scan $frame "%s %n" iconType n
-				set extra [string range $frame $n end]
-				puts $fileId "Ins $type2index($iconType) $extra"
-			}
-			puts $fileId ""
-		}
-	}
-
-	close $fileId
-
-	set fileName [NSUtils::ReadLink [PathTk config [Global config,alternate]]]
-	if {[file exists $fileName]} {
-		file rename -force -- $fileName $fileName.bak
-	}
-	file rename -- $tempName $fileName
 
 	return
 }
