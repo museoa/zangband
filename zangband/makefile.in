@@ -101,7 +101,7 @@ zangband: $(objs-y)
 ## Hack - make sure the build system is consistant.
 ##
 makefile: configure makefile.in
-	if [ -f ./config.status ] ; then \
+	if [ -x ./config.status ] ; then \
 	    ./config.status --recheck && ./config.status; \
 	else \
 		./configure; \
@@ -184,13 +184,19 @@ test:
 
 # Hack to remake files depending on DEFAULT_PATH
 .default_path: makefile
-	@if [ ! -r .default_path -o x"$(DESTDIR)" != x`cat .default_path` ]; then \
+	@if [ ! -r .default_path ]; then \
+		echo "$(DESTDIR)" > .default_path; \
+	fi
+	@if [ x"$(DESTDIR)" != x`cat .default_path` ]; then \
 		echo "$(DESTDIR)" > .default_path; \
 	fi
 
 # Hack to remake configure.in if the version number changes
 .version: src/defines.h
-	@if [ ! -r .version -o x"$(VERSION)" != x`cat .version` ]; then \
+	@if [ ! -r .version ]; then \
+		echo "$(VERSION)" > .version; \
+	fi
+	@if [ x"$(VERSION)" != x`cat .version` ]; then \
 		echo "$(VERSION)" > .version; \
 	fi
 

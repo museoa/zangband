@@ -126,7 +126,7 @@ INCS := $(addprefix src/,\
 ## Generic dependancy information
 ##
 
-$(ANGOBJS): $(INCS)
+$(ANGOBJS): $(INCS) .default_path
 $(ZUTILOBJS): $(HDRS)
 $(BORGOBJS): $(INCS)
 $(LUAWOBJS): $(INCS)
@@ -149,8 +149,6 @@ src/grid.o: src/grid.h src/generate.h
 src/rooms.o: src/grid.h src/generate.h src/rooms.h
 src/streams.o: src/grid.h src/generate.h
 $(GRAFPORTS): src/maid-grf.h
-src/main.o: .default_path
-src/main-emx.o: .default_path
 src/main-x11.o: src/maid-x11.h
 src/main-xaw.o: src/maid-x11.h
 src/main-xpj.o: src/maid-x11.h
