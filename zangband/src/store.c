@@ -892,6 +892,7 @@ static void store_create(void)
 
 		/* Mark it storebought */
 		q_ptr->info |= OB_STOREB;
+		q_ptr->info |= OB_NO_EXP;
 
 		/* Require valid object */
 		if (!store_will_stock(q_ptr)) continue;
@@ -1523,6 +1524,8 @@ static void store_purchase(void)
 
 			/* Hack -- buying an item makes you aware of it */
 			object_aware(j_ptr);
+			object_mental(j_ptr);
+			j_ptr->info &= ~(OB_STOREB);
 
 			/* Describe the transaction */
 			msgf("You bought %v for %ld gold.",
