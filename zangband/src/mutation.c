@@ -1392,7 +1392,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT2_RTELEPORT)
 	{
-		if (!p_ptr->resist_nexus && !p_ptr->muta1 & MUT1_VTELEPORT &&
+		if (!p_ptr->resist_nexus && !(p_ptr->muta1 & MUT1_VTELEPORT) &&
 			!p_ptr->anti_tele)
 		{
 			disturb(FALSE);

@@ -47,7 +47,6 @@ int num_ez_heal_true;
 int num_pfe;
 int num_glyph;
 int num_mass_genocide;
-int num_speed;
 int num_goi_pot;
 int num_resist_pot;
 
@@ -2481,13 +2480,17 @@ static void borg_notice_aux2(void)
 	/* No need for experience repair */
 	if (!borg_skill[BI_ISFIXEXP]) amt_fix_exp += 1000;
 
-	/* Correct the high and low calorie foods for the correct
+	/*
+	 * Correct the high and low calorie foods for the correct
 	 * races.
 	 */
-	if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
+	if ((borg_race >= RACE_IMP) && (borg_race >= RACE_SPRITE))
 	{
 		borg_skill[BI_FOOD] += amt_food_hical;
-		if (borg_skill[BI_FOOD] <= 4) borg_skill[BI_FOOD] += amt_food_lowcal;
+		if (borg_skill[BI_FOOD] <= 4)
+		{
+			borg_skill[BI_FOOD] += amt_food_lowcal;
+		}
 	}
 
 	/* If weak, do not count food spells */

@@ -2022,6 +2022,12 @@ static void store_process_command(int *store_top)
 	/* Parse the command */
 	switch (p_ptr->command_cmd)
 	{
+		case '\r':
+		{
+			/* Ignore return */
+			break;
+		}
+		
 		case ESCAPE:
 		{
 			/* Leave */
@@ -2066,17 +2072,12 @@ static void store_process_command(int *store_top)
 			store_sell(store_top);
 			break;
 		}
+		
 
 		case 'x':
 		{
 			/* Examine */
 			store_examine(*store_top);
-			break;
-		}
-
-		case '\r':
-		{
-			/* Ignore return */
 			break;
 		}
 

@@ -1923,7 +1923,7 @@ void print_equippy(void)
  * Helper function, see below
  */
 static void display_player_flag_aux(int col, int row,
-                                    char *header, int n, u32b flag1, u32b flag2)
+                                    cptr header, int n, u32b flag1, u32b flag2)
 {
 	int i;
 	u32b f[3];

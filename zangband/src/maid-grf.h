@@ -266,12 +266,12 @@ extern int **map_grid;
 #endif /* TERM_USE_MAP */
 
 #ifdef TERM_USE_LIST
-list_item *equipment;
-int equip_num;
-list_item *inventory;
-int inven_num;
-list_item *cur_list;
-int cur_num;
+extern list_item *equipment;
+extern int equip_num;
+extern list_item *inventory;
+extern int inven_num;
+extern list_item *cur_list;
+extern int cur_num;
 #endif /* TERM_USE_LIST */
 
 /* Extern Functions */

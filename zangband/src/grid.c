@@ -269,7 +269,8 @@ void vault_objects(int x, int y, int num)
  */
 static void vault_trap_aux(int x, int y, int xd, int yd)
 {
-	int count = 0, y1 = y, x1 = x;
+	int count;
+	int x1 = x, y1 = y;
 	int dummy = 0;
 
 	cave_type *c_ptr;
@@ -303,7 +304,7 @@ static void vault_trap_aux(int x, int y, int xd, int yd)
 		place_trap(x1, y1);
 
 		/* Done */
-		break;
+		return;
 	}
 }
 

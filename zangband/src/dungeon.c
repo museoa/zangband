@@ -1958,11 +1958,6 @@ static bool enter_borg_mode(void)
 	return (TRUE);
 }
 
-/*
- * Hack -- Declare the Ben Borg
- */
-extern void do_cmd_borg(void);
-
 #endif /* ALLOW_BORG */
 
 

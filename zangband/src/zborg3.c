@@ -1436,15 +1436,13 @@ bool borg_equips_staff_fail(int sval)
  */
 bool borg_activate_artifact(int name1, bool secondary)
 {
-	int i;
+	/* int i; */
 
 	/* Hack - ignore unused parameter */
 	(void)name1;
 	(void)secondary;
 
-	/* -RML- We can't recognize artifacts yet... */
-	return (FALSE);
-
+#if 0
 	/* Check the equipment */
 	for (i = 0; i < equip_num; i++)
 	{
@@ -1497,6 +1495,7 @@ bool borg_activate_artifact(int name1, bool secondary)
 		/* Success */
 		return (TRUE);
 	}
+#endif /* 0 */
 
 	/* Oops */
 	return (FALSE);

@@ -1005,7 +1005,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	char m_name[80];
 	int dss, ddd;
-	char *atk_desc;
+	cptr atk_desc;
 
 	switch (attack)
 	{
@@ -1244,7 +1244,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 
 		/* Confusion. */
 		if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6) &&
-			(!r_ptr->flags3 & (RF3_NO_CONF)))
+			!(r_ptr->flags3 & (RF3_NO_CONF)))
 		{
 			msg_format("%^s appears confused.", m_name);
 
@@ -2029,7 +2029,7 @@ static void summon_pattern_vortex(int x, int y)
 				msg_print("You hear a bell chime.");
 			}
 
-			break;
+			return;
 		}
 	}
 }

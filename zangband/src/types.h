@@ -887,6 +887,8 @@ typedef bool (*field_action_type) (field_type *f_ptr, vptr);
 typedef struct field_thaum field_thaum;
 struct field_thaum
 {
+	char *name;	/* The name of the field */
+
 	byte f_attr;	/* attribute */
 	char f_char;	/* character */
 
@@ -906,7 +908,7 @@ struct field_thaum
 
 	u16b info;	/* Information flags */
 
-	char *name;	/* The name of the field */
+	
 };
 
 
@@ -955,7 +957,7 @@ typedef struct field_action field_action;
 struct field_action
 {
 	field_action_type action;	/* The function to call */
-	char *func;	/* The name of the function */
+	cptr func;	/* The name of the function */
 };
 
 
@@ -1697,11 +1699,12 @@ struct store_type
 
 	s32b last_visit;	/* Last visited on this turn */
 
-	byte max_stock;	/* Stock -- Max number of entries */
 	s16b stock;	/* Stock -- list of items in o_list[] */
 
 	u16b x;	/* Location x coord. */
 	u16b y;	/* Location y coord. */
+	
+	byte max_stock;	/* Stock -- Max number of entries */
 };
 
 

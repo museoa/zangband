@@ -3184,7 +3184,7 @@ void borg_log_battle(bool keep_log)
 
 /* for now the log is deactivated */
 	return;
-
+#if 0
 	/* Close the log file */
 	if (!keep_log)
 	{
@@ -3213,6 +3213,7 @@ void borg_log_battle(bool keep_log)
 	/* Hack -- grab permissions */
 	safe_setuid_grab();
 	return;
+#endif /* 0 */
 }
 
 

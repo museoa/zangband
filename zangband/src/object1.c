@@ -1448,17 +1448,13 @@ bool identify_fully_aux(const object_type *o_ptr)
  */
 static object_type *label_to_list(int c, s16b list_start)
 {
-	object_type *o_ptr;
-
 	int i;
 
 	/* Convert */
 	i = (islower(c) ? A2I(c) : -1);
 
-	o_ptr = get_list_item(list_start, i);
-
 	/* Return the item */
-	return (o_ptr);
+	return (get_list_item(list_start, i));
 }
 
 /*

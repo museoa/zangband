@@ -621,7 +621,9 @@ static void save_map_location(int x, int y, term_map *map)
 		{
 			/* Paranoia */
 			if (!map_cache_refcount[block_num])
+			{
 				quit("Decrementing invalid overhead map loc");
+			}
 
 			map_cache_refcount[block_num]--;
 		}

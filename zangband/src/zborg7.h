@@ -28,7 +28,6 @@ extern bool borg_item_icky(list_item *l_ptr);
  */
 extern bool borg_use_things(void);
 extern bool borg_check_lite(void);
-extern bool borg_check_lite_only(void);
 
 extern bool borg_enchanting(void);
 extern bool borg_recharging(void);
