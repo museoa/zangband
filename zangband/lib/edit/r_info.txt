@@ -13219,9 +13219,48 @@ F:NONLIVING | COLD_BLOOD | EMPTY_MIND | REGENERATE | KILL_BODY | AURA_COLD |
 F:EVIL | DEMON | IM_ACID | IM_ELEC | IM_FIRE | IM_COLD | IM_POIS | 
 F:RES_TELE | RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_DISE | 
 F:NO_FEAR | NO_CONF | NO_STUN | NO_SLEEP | 
-F:WILD_WASTE | WILD_SWAMP | WILD_TOO | 
+F:WILD_WASTE | WILD_SWAMP | 
 S:1_IN_5
 S:HEAL | INVULNER
 D:A thing like a massive, jet black oyster with four groping tendrils.
 D:  Born of nether, it need not chase its prey, content to seeth
 D: in the darkness until some unfortunate creature wanders too close.
+
+N:867:Culverin
+G:I:U
+I:110:8d5:20:13:40
+W:8:2:0:25
+F:NEVER_BLOW | RAND_25 | ANIMAL | WILD_WOOD |
+S:1_IN_1
+S:ARROW_3 |
+D:A many legged scuttling thing, it spits pebbles with deadly force.
+
+N:868:Behinder
+G:.:d
+I:125:30d20:10:45:80
+W:30:100:0:900
+B:TOUCH:TERRIFY:5d5
+B:BITE:HURT:8d4
+F:CHAR_CLEAR | CHAR_MULTI | ATTR_CLEAR | FORCE_SLEEP |
+F:SMART | INVISIBLE | COLD_BLOOD | EMPTY_MIND |
+F:ELDRITCH_HORROR | OPEN_DOOR | ANIMAL | NO_FEAR |
+F:NO_STUN | NO_CONF | NO_SLEEP | CAN_SWIM |
+F:WILD_WOOD | WILD_MOUNTAIN |
+D:"The Behinder flung itself on his shoulders. Then I knew why
+D: nobody's supposed to see one. I wish I hadn't. To this day I
+D: can see it, plain as a fence at noon, and fore."
+
+N:869:Boadile
+G:S:g
+I:120:30d10:20:25:30
+W:25:40:0:300
+B:BITE:HURT:2d5
+B:CRUSH:HURT:2d8
+B:CRUSH:HURT:2d8
+F:FORCE_MAXHP | STUPID | COLD_BLOOD | BASH_DOOR |
+F:ANIMAL | RES_WATE | CAN_SWIM | WILD_SHORE |
+F:WILD_OCEAN |
+D:"...Head something like a croc's, only bigger. Around forty
+D: feet long. Able to roll itself into a big beachball with teeth.
+D:  Fast on land or in water - and a hell of a lot of little legs
+D: on each side."
