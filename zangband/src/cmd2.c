@@ -700,7 +700,7 @@ bool do_cmd_open_aux(int x, int y)
 
 	cave_type *c_ptr;
 
-	s16b *fld_ptr;
+	field_type *f_ptr;
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
@@ -716,10 +716,10 @@ bool do_cmd_open_aux(int x, int y)
 	}
 
 	/* Get fields */
-	fld_ptr = field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
+	f_ptr = field_is_type(c_ptr, FTYPE_DOOR);
 
 	/* If the door is locked / jammed */
-	if (*fld_ptr)
+	if (f_ptr)
 	{
 		/* Get the "disarm" factor */
 		i = p_ptr->skills[SKILL_DIS];
@@ -729,7 +729,7 @@ bool do_cmd_open_aux(int x, int y)
 		if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 		/* Success? */
-		if (!field_hook_single(&fld_list[*fld_ptr], FIELD_ACT_INTERACT, i))
+		if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, i))
 		{
 			/* Sound */
 			sound(SOUND_OPENDOOR);

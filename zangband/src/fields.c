@@ -851,27 +851,22 @@ void init_fields(void)
 
 /*
  * See if a field of a particular type is on a square.
- * (eg. call with (&c_ptr->fld_idx, FTYPE_TRAP) to get traps)
+ * (eg. call with (c_ptr, FTYPE_TRAP) to get traps)
  */
-s16b *field_is_type(s16b *fld_ptr, byte typ)
+field_type *field_is_type(const cave_type *c_ptr, byte typ)
 {
 	field_type *f_ptr;
 
 	/* While the field exists */
-	while (*fld_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
-		/* Get field */
-		f_ptr = &fld_list[*fld_ptr];
-
 		/* Is it the correct type? */
-		if (t_info[f_ptr->t_idx].type == typ) break;
-
-		/* If not, get next one. */
-		fld_ptr = &f_ptr->next_f_idx;
+		if (t_info[f_ptr->t_idx].type == typ) return (f_ptr);
 	}
-
-	/* Return result */
-	return (fld_ptr);
+	FLD_ITT_END;
+	
+	/* Nothing found */
+	return (NULL);
 }
 
 
@@ -3114,9 +3109,9 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, va_list vp)
 void make_lockjam_door(int x, int y, int power, bool jam)
 {
 	cave_type *c_ptr = area(x, y);
-	field_type *f_ptr;
+	field_type *f_ptr = field_is_type(c_ptr, FTYPE_DOOR);
 
-	s16b fld_idx = *field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
+	s16b fld_idx = 0;
 
 	int old_power = 0;
 
@@ -3124,11 +3119,8 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	cave_set_feat(x, y, FEAT_CLOSED);
 
 	/* look for a door field on the square */
-	if (fld_idx)
+	if (f_ptr)
 	{
-		/* Point to the field */
-		f_ptr = &fld_list[fld_idx];
-
 		/* There already is a door field here... */
 
 		/* HACK - Look at type */
@@ -3150,7 +3142,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 		old_power = f_ptr->counter;
 
 		/* Get rid of old field */
-		delete_field_idx(fld_idx);
+		delete_field_ptr(field_find(f_ptr));
 	}
 
 	/* Make a new field */

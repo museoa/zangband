@@ -82,7 +82,7 @@ int distance(int x1, int y1, int x2, int y2)
 bool is_trap(const cave_type *c_ptr)
 {
 	/* We assume field_is_type does not alter the data in c_ptr */
-	return (*field_is_type((s16b *)&c_ptr->fld_idx, FTYPE_TRAP) != 0);
+	return (field_is_type(c_ptr, FTYPE_TRAP) != 0);
 }
 
 
