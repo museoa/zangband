@@ -3519,7 +3519,7 @@ void do_cmd_knowledge(void)
 		prt("(7) Display current quests", 10, 5);
 
 		#ifdef AVATAR
-		prt("(8) Display virtues", 10, 5);
+		prt("(8) Display virtues", 11, 5);
 		#endif
   
 		#ifdef AVATAR
