@@ -75,19 +75,6 @@
 #define set_user_inscription(o,q) o->inscription = q
 #define get_user_inscription(o) o->inscription
 
-/*
- * Angband, KAngband and OAngband have monster_lore, while
- * ZAngband has monster_race. In addition, OAngband has
- * removed the "r_" prefix before field names.
- */
-
-#define LORE_NTH(n) r_info[n]
-#define LORE_TYPE monster_race
-#define LF(f) r_##f
-#define DECLARE_LORE(v) LORE_TYPE *v
-#define AT_LORE(n) &LORE_NTH(n)
-
-#define ART_CURNUM(a) a->cur_num
 
 
 /* cmd4.c */
@@ -285,8 +272,6 @@ extern void shots_per_round(int *shots, int *shots_frac);
 extern int target_state;
 extern bool target_vis;
 
-#define PR_POSITION 0x20000000L /* p_ptr->redraw: player position changed */
-#define PR_TARGET 0x40000000L /* p_ptr->redraw: target visibility changed */
 
 /*
  * XXXXX Important!

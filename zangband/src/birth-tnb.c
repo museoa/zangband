@@ -1523,7 +1523,7 @@ static void player_wipe(void)
 	for (i = 0; i < MAX_A_IDX; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
-		ART_CURNUM(a_ptr) = 0;
+		a_ptr->cur_num = 0;
 	}
 
 	/* Reset the objects */
@@ -1546,7 +1546,7 @@ static void player_wipe(void)
 		if (r_ptr->flags3 & RF3_UNIQUE_7)
 			r_ptr->max_num = 7;
 
-		LORE_NTH(i).LF(pkills) = 0;
+		r_info[i].r_pkills = 0;
 	}
 
 	/* Hack -- Well fed player */
