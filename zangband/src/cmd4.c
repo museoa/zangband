@@ -3357,7 +3357,7 @@ static void do_cmd_knowledge_kill_count(void)
 			if (dead)
 			{
 				/* Print a message */
-				fprintf(fff, "     %s\n",
+				fprintf(fff, "%c     %s\n", r_ptr->x_char,
 				    (r_name + r_ptr->name));
 				Total++;
 			}
@@ -3372,11 +3372,11 @@ static void do_cmd_knowledge_kill_count(void)
 				{
 					if (strstr(r_name + r_ptr->name, "coins"))
 					{
-						fprintf(fff, "     1 pile of %s\n", (r_name + r_ptr->name));
+						fprintf(fff, "%c     1 pile of %s\n", r_ptr->x_char, (r_name + r_ptr->name));
 					}
 					else
 					{
-						fprintf(fff, "     1 %s\n", (r_name + r_ptr->name));
+						fprintf(fff, "%c     1 %s\n", r_ptr->x_char, (r_name + r_ptr->name));
 					}
 				}
 				else
@@ -3384,7 +3384,7 @@ static void do_cmd_knowledge_kill_count(void)
 					char ToPlural[80];
 					strcpy(ToPlural, (r_name + r_ptr->name));
 					plural_aux(ToPlural);
-					fprintf(fff, "     %d %s\n", This, ToPlural);
+					fprintf(fff, "%c     %d %s\n", r_ptr->x_char, This, ToPlural);
 				}
 
 				Total += This;
