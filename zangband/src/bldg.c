@@ -343,85 +343,91 @@ static void display_fruit(int col, int row, int fruit)
 		case 0:
 		{
 			/* lemon */
-			put_fstr(col, row, CLR_YELLOW "   ####.");
-			put_fstr(col, row + 1, CLR_YELLOW "  #    #");
-			put_fstr(col, row + 2, CLR_YELLOW " #     #");
-			put_fstr(col, row + 3, CLR_YELLOW "#      #");
-			put_fstr(col, row + 4, CLR_YELLOW "#      #");
-			put_fstr(col, row + 5, CLR_YELLOW "#     # ");
-			put_fstr(col, row + 6, CLR_YELLOW "#    #  ");
-			put_fstr(col, row + 7, CLR_YELLOW ".####   ");
-			put_fstr(col, row + 8, " Lemon  ");
+			put_fstr(col, row, CLR_YELLOW
+							"   ####.\n"
+							"  #    #\n"
+							" #     #\n"
+							"#      #\n"
+							"#      #\n"
+							"#     # \n"
+							"#    #  \n"
+							".####   \n"
+				CLR_WHITE	" Lemon  ");
 			break;
 		}
 		case 1:
 		{
 			/* orange */
-			put_fstr(col, row, CLR_ORANGE "   ##   ");
-			put_fstr(col, row + 1, CLR_ORANGE "  #..#  ");
-			put_fstr(col, row + 2, CLR_ORANGE " #....# ");
-			put_fstr(col, row + 3, CLR_ORANGE "#......#");
-			put_fstr(col, row + 4, CLR_ORANGE "#......#");
-			put_fstr(col, row + 5, CLR_ORANGE " #....# ");
-			put_fstr(col, row + 6, CLR_ORANGE "  #..#  ");
-			put_fstr(col, row + 7, CLR_ORANGE "   ##   ");
-			put_fstr(col, row + 8, " Orange ");
+			put_fstr(col, row, CLR_ORANGE
+							"   ##   \n"
+							"  #..#  \n"
+							" #....# \n"
+							"#......#\n"
+							"#......#\n"
+							" #....# \n"
+							"  #..#  \n"
+							"	##   \n"
+				CLR_WHITE	" Orange ");
 			break;
 		}
 		case 2:
 		{
 			/* sword */
-			put_fstr(col, row, CLR_SLATE "   /\\   ");
-			put_fstr(col, row + 1, CLR_SLATE "   ##   ");
-			put_fstr(col, row + 2, CLR_SLATE "   ##   ");
-			put_fstr(col, row + 3, CLR_SLATE "   ##   ");
-			put_fstr(col, row + 4, CLR_SLATE "   ##   ");
-			put_fstr(col, row + 5, CLR_SLATE "   ##   ");
-			put_fstr(col, row + 6, CLR_UMBER " ###### ");
-			put_fstr(col, row + 7, CLR_UMBER "   ##   ");
-			put_fstr(col, row + 8, " Sword  ");
+			put_fstr(col, row, CLR_SLATE
+							"   /\\   \n"
+							"	##   \n"
+							"	##   \n"
+							"	##   \n"
+							"	##   \n"
+							"	##   \n"
+				CLR_UMBER	" ###### \n"
+				CLR_UMBER	"   ##   \n"
+				CLR_WHITE	" Sword  ");
 			break;
 		}
 		case 3:
 		{
 			/* shield */
-			put_fstr(col, row, CLR_SLATE " ###### ");
-			put_fstr(col, row + 1, CLR_SLATE "#      #");
-			put_fstr(col, row + 2, CLR_SLATE "# ++++ #");
-			put_fstr(col, row + 3, CLR_SLATE "# +==+ #");
-			put_fstr(col, row + 4, CLR_SLATE "#  ++  #");
-			put_fstr(col, row + 5, CLR_SLATE " #    # ");
-			put_fstr(col, row + 6, CLR_SLATE "  #  #  ");
-			put_fstr(col, row + 7, CLR_SLATE "   ##   ");
-			put_fstr(col, row + 8, " Shield ");
+			put_fstr(col, row, CLR_SLATE
+							" ###### \n"
+							"#  	#\n"
+							"# ++++ #\n"
+							"# +==+ #\n"
+							"#  ++  #\n"
+							" #    # \n"
+							"  #  #  \n"
+							"	##   \n"
+				CLR_WHITE	" Shield ");
 			break;
 		}
 		case 4:
 		{
 			/* plum */
-			put_fstr(col, row, CLR_VIOLET "	##   ");
-			put_fstr(col, row + 1, CLR_VIOLET " ###### ");
-			put_fstr(col, row + 2, CLR_VIOLET "########");
-			put_fstr(col, row + 3, CLR_VIOLET "########");
-			put_fstr(col, row + 4, CLR_VIOLET "########");
-			put_fstr(col, row + 5, CLR_VIOLET " ###### ");
-			put_fstr(col, row + 6, CLR_VIOLET "  ####  ");
-			put_fstr(col, row + 7, CLR_VIOLET "   ##   ");
-			put_fstr(col, row + 8, "  Plum  ");
+			put_fstr(col, row, CLR_VIOLET
+							"   ##   \n"
+							" ###### \n"
+							"########\n"
+							"########\n"
+							"########\n"
+							" ###### \n"
+							"  ####  \n"
+							"	##   \n"
+				CLR_WHITE	"  Plum  ");
 			break;
 		}
 		case 5:
 		{
 			/* cherry */
-			put_fstr(col, row, CLR_GREEN " 	 ##");
-			put_fstr(col, row + 1, CLR_RED "   ##" CLR_GREEN "#  ");
-			put_fstr(col, row + 2, CLR_RED "  #..#  ");
-			put_fstr(col, row + 3, CLR_RED "  #..#  ");
-			put_fstr(col, row + 4, CLR_RED " ###### ");
-			put_fstr(col, row + 5, CLR_RED "#..##..#");
-			put_fstr(col, row + 6, CLR_RED "#..##..#");
-			put_fstr(col, row + 7, CLR_RED " ##  ## ");
-			put_fstr(col, row + 8, " Cherry ");
+			put_fstr(col, row, CLR_GREEN
+            				"      ##\n"
+					CLR_RED	"   ##" CLR_GREEN "#  \n"
+					CLR_RED "  #..#  \n"
+							"  #..#  \n"
+							" ###### \n"
+							"#..##..#\n"
+							"#..##..#\n"
+							" ##  ## \n"
+				CLR_WHITE	" Cherry ");
 			break;
 		}
 	}
@@ -511,8 +517,8 @@ static s32b gamble_init(void)
 
 	message_flush();
 
-	prtf(2, 20, "Gold before game: %9ld", p_ptr->au);
-	prtf(2, 21,"Current Wager:    %9ld", wager);
+	prtf(2, 20, "Gold before game: %9ld\n"
+				"Current Wager:    %9ld", p_ptr->au, wager);
 
 	/* Prevent savefile-scumming of the casino */
 	Rand_quick = TRUE;
@@ -529,19 +535,20 @@ static bool gamble_again(bool win, int odds, s32b wager)
 
 	if (win)
 	{
-		prtf(37, 16, "YOU WON");
-		p_ptr->au += odds * wager;
-		prtf(37, 17, "Payoff: %ld", odds * wager);
+		prtf(37, 16, "YOU WON\n"
+					 "Payoff: %ld\n"
+                     "Again(Y/N)?", odds * wager);
+        p_ptr->au += odds * wager;
 	}
 	else
 	{
-		prtf(37, 16, "You Lost");
-		p_ptr->au -= wager;
-		prtf(37, 17, "");
+		prtf(37, 16, "You Lost\n"
+					 "\n"
+                     "Again(Y/N)?");
+        p_ptr->au -= wager;
 	}
 
 	prtf(2, 22, "Current Gold:     %9ld", p_ptr->au);
-	prtf(37, 18, "Again(Y/N)?");
 	Term_gotoxy(49, 18);
 	again = inkey();
 
@@ -863,39 +870,6 @@ bool inn_rest(void)
 }
 
 
-#if 0
-
-/*
- * Share gold for thieves
- */
-static void share_gold(void)
-{
-	int i = (p_ptr->lev * 2) * 10;
-	msg_format("You collect %d gold pieces", i);
-	message_flush();
-	p_ptr->au += i;
-}
-
-
-/*
- * Display town history
- */
-static void town_history(void)
-{
-	/* Save screen */
-	screen_save();
-
-	/* Peruse the building help file */
-	(void)show_file("bldg.txt", NULL, 0, 0);
-
-	/* Load screen */
-	screen_load();
-}
-
-
-#endif /* 0 */
-
-
 #define WEP_MAST_COL1	2
 #define WEP_MAST_COL2	45
 
@@ -907,7 +881,7 @@ static void town_history(void)
  * the current +dam of the player.
  */
 static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
-                                int r, cptr attr, byte color, byte slay)
+                                int r, cptr attr, byte slay)
 {
 	long maxdam, mindam;
 	int dambonus;
@@ -934,7 +908,7 @@ static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
 	intmindam = mindam / 100;
 
 	/* Print the intro text */
-	put_fstr(WEP_MAST_COL2, r, "%s%s", color_seq[color], attr);
+	put_fstr(WEP_MAST_COL2, r, attr);
 
 	/* Print the damage */
 	put_fstr(WEP_MAST_COL2 + 8, r, " %d-%d damage", intmindam, intmaxdam);
@@ -958,33 +932,33 @@ static void compare_weapon_aux1(const object_type *o_ptr)
 
 	/* Print the relevant lines */
 	if (f1 & TR1_SLAY_ANIMAL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  "Animals:", TERM_YELLOW, 17);
+												  CLR_YELLOW "Animals:", 17);
 	if (f1 & TR1_SLAY_EVIL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												"Evil:", TERM_YELLOW, 15);
+												CLR_YELLOW "Evil:", 15);
 	if (f1 & TR1_SLAY_UNDEAD) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  "Undead:", TERM_YELLOW, 20);
+												  CLR_YELLOW "Undead:", 20);
 	if (f1 & TR1_SLAY_DEMON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Demons:", TERM_YELLOW, 20);
+												 CLR_YELLOW "Demons:", 20);
 	if (f1 & TR1_SLAY_ORC) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-											   "Orcs:", TERM_YELLOW, 20);
+											   CLR_YELLOW "Orcs:", 20);
 	if (f1 & TR1_SLAY_TROLL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Trolls:", TERM_YELLOW, 20);
+												 CLR_YELLOW "Trolls:", 20);
 	if (f1 & TR1_SLAY_GIANT) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Giants:", TERM_YELLOW, 20);
+												 CLR_YELLOW "Giants:", 20);
 	if (f1 & TR1_SLAY_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  "Dragons:", TERM_YELLOW, 20);
+												  CLR_YELLOW "Dragons:", 20);
 	if (f1 & TR1_KILL_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  "Dragons:", TERM_YELLOW, 30);
+												  CLR_YELLOW "Dragons:", 30);
 	if (f1 & TR1_BRAND_ACID) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Acid:", TERM_RED, 20);
+												 CLR_RED "Acid:", 20);
 	if (f1 & TR1_BRAND_ELEC) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Elec:", TERM_RED, 20);
+												 CLR_RED "Elec:", 20);
 	if (f1 & TR1_BRAND_FIRE) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Fire:", TERM_RED, 20);
+												 CLR_RED "Fire:", 20);
 	if (f1 & TR1_BRAND_COLD) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Cold:", TERM_RED, 20);
+												 CLR_RED "Cold:", 20);
 	if (f1 & TR1_BRAND_POIS) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 "Poison:", TERM_RED, 20);
+												 CLR_RED "Poison:", 20);
 }
 
 
@@ -1103,17 +1077,15 @@ static void list_weapon(const object_type *o_ptr)
 			(int)o_ptr->dd, (int)o_ptr->ds, p_ptr->num_blow);
 
 	/* Print hit probabilities */
-	put_fstr(WEP_MAST_COL1, 12, "Enemy AC:  Low   Medium  High");
-
-	put_fstr(WEP_MAST_COL1, 13, "Hit Prob:  %2d%% %2d%% %2d%% %2d%% %2d%%",
+	put_fstr(WEP_MAST_COL1, 12, "Enemy AC:  Low   Medium  High \n"
+								"Hit Prob:  %2d%% %2d%% %2d%% %2d%% %2d%%",
 			hit_prob(o_ptr->to_h, 25), hit_prob(o_ptr->to_h, 50),
 			hit_prob(o_ptr->to_h, 75), hit_prob(o_ptr->to_h, 100),
 			hit_prob(o_ptr->to_h, 200));
 
 	/* Print critical hit probabilities */
-	put_fstr(WEP_MAST_COL1, 15, CLR_RED "Critical:" CLR_WHITE " 1.0 1.5 2.0 2.7 3.6 5.0");
-
-	put_fstr(WEP_MAST_COL1, 16, "          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
+	put_fstr(WEP_MAST_COL1, 15, CLR_RED "Critical:" CLR_WHITE " 1.0 1.5 2.0 2.7 3.6 5.0\n"
+										"          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
 			critical_prob(o_ptr->to_h, 0),
 			critical_prob(o_ptr->to_h, 1),
 			critical_prob(o_ptr->to_h, 2),

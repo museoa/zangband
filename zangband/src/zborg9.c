@@ -2367,31 +2367,31 @@ static void borg_display_item(list_item *l_ptr)
 	prtf(j, 8, "info = %d  timeout = %-d", l_ptr->info, l_ptr->timeout);
 
 
-	prtf(j, 10, "+------------FLAGS1------------+");
-	prtf(j, 11, "AFFECT........SLAY........BRAND.");
-	prtf(j, 12, "              cvae      xsqpaefc");
-	prtf(j, 13, "siwdcc  ssidsahanvudotgddhuoclio");
-	prtf(j, 14, "tnieoh  trnipttmiinmrrnrrraiierl");
-	prtf(j, 15, "rtsxna..lcfgdkcpmldncltggpksdced");
+	prtf(j, 10, "+------------FLAGS1------------+\n"
+				"AFFECT........SLAY........BRAND.\n"
+				"              cvae      xsqpaefc\n"
+				"siwdcc  ssidsahanvudotgddhuoclio\n"
+				"tnieoh  trnipttmiinmrrnrrraiierl\n"
+				"rtsxna..lcfgdkcpmldncltggpksdced");
 	borg_prt_binary(l_ptr->kn_flags1, j, 16);
 
-	prtf(j, 17, "+------------FLAGS2------------+");
-	prtf(j, 18, "SUST...IMMUN..RESIST............");
-	prtf(j, 19, "        aefctrpsaefcpfldbc sn   ");
-	prtf(j, 20, "siwdcc  clioheatcliooeialoshtncd");
-	prtf(j, 21, "tnieoh  ierlrfraierliatrnnnrhehi");
-	prtf(j, 22, "rtsxna..dcedwlatdcedsrekdfddrxss");
+	prtf(j, 17, "+------------FLAGS2------------+\n"
+				"SUST...IMMUN..RESIST............\n"
+			    "        aefctrpsaefcpfldbc sn   \n"
+	    		"siwdcc  clioheatcliooeialoshtncd\n"
+			    "tnieoh  ierlrfraierliatrnnnrhehi\n"
+			    "rtsxna..dcedwlatdcedsrekdfddrxss");
 	borg_prt_binary(l_ptr->kn_flags2, j, 23);
 
-	prtf(j + 32, 10, "+------------FLAGS3------------+");
-	prtf(j + 32, 11, "fe      ehsi  st    iiiiadta  hp");
-	prtf(j + 32, 12, "il   n taihnf ee    ggggcregb vr");
-	prtf(j + 32, 13, "re  nowysdose eld   nnnntalrl ym");
-	prtf(j + 32, 14, "ec  omrcyewta ieirmsrrrriieaeccc");
-	prtf(j + 32, 15, "aa  taauktmatlnpgeihaefcvnpvsuuu");
-	prtf(j + 32, 16, "uu  egirnyoahivaeggoclioaeoasrrr");
-	prtf(j + 32, 17, "rr  litsopdretitsehtierltxrtesss");
-	prtf(j + 32, 18, "aa  echewestreshtntsdcedeptedeee");
+	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
+					"fe      ehsi  st    iiiiadta  hp\n"
+				    "il   n taihnf ee    ggggcregb vr\n"
+				    "re  nowysdose eld   nnnntalrl ym\n"
+				    "ec  omrcyewta ieirmsrrrriieaeccc\n"
+				    "aa  taauktmatlnpgeihaefcvnpvsuuu\n"
+				    "uu  egirnyoahivaeggoclioaeoasrrr\n"
+				    "rr  litsopdretitsehtierltxrtesss\n"
+	    			"aa  echewestreshtntsdcedeptedeee");
 	borg_prt_binary(l_ptr->kn_flags3, j + 32, 19);
 }
 
@@ -2754,127 +2754,127 @@ void borg_status_window(void)
 			if (bp_ptr->flags2 & TR2_RES_ACID) attr = CLR_BLUE;
 			if (my_oppose_acid) attr = CLR_GREEN;
 			if (bp_ptr->flags2 & TR2_IM_ACID) attr = CLR_WHITE;
-			put_fstr(1, 1, "%s%s", attr, "Acid");
+			put_fstr(1, 1, "%sAcid", attr);
 
 			attr = CLR_SLATE;
 			if (bp_ptr->flags2 & TR2_RES_ELEC) attr = CLR_BLUE;
 			if (my_oppose_elec) attr = CLR_GREEN;
 			if (bp_ptr->flags2 & TR2_IM_ELEC) attr = CLR_WHITE;
-			put_fstr(1, 2, "%s%s", attr, "Elec");
+			put_fstr(1, 2, "%sElec", attr);
 
 			attr = CLR_SLATE;
 			if (bp_ptr->flags2 & TR2_RES_FIRE) attr = CLR_BLUE;
 			if (my_oppose_fire) attr = CLR_GREEN;
 			if (bp_ptr->flags2 & TR2_IM_FIRE) attr = CLR_WHITE;
-			put_fstr(1, 3, "%s%s", attr, "Fire");
+			put_fstr(1, 3, "%sFire%s", attr);
 
 			attr = CLR_SLATE;
 			if (bp_ptr->flags2 & TR2_RES_COLD) attr = CLR_BLUE;
 			if (my_oppose_cold) attr = CLR_GREEN;
 			if (bp_ptr->flags2 & TR2_IM_COLD) attr = CLR_WHITE;
-			put_fstr(1, 4, "%s%s", attr, "Cold");
+			put_fstr(1, 4, "%sCold", attr);
 
 			/* High resists */
 			attr = CLR_SLATE;
 			if (bp_ptr->flags2 & TR2_RES_POIS) attr = CLR_BLUE;
 			if (my_oppose_pois) attr = CLR_GREEN;
-			put_fstr(1, 5, "%s%s", attr, "Pois");
+			put_fstr(1, 5, "%sPois", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_FEAR) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(1, 6, "%s%s", attr, "Fear");
+			put_fstr(1, 6, "%sFear", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_LITE) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(1, 7, "%s%s", attr, "Lite");
+			put_fstr(1, 7, "%sLite", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_DARK) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(1, 8, "%s%s", attr, "Dark");
+			put_fstr(1, 8, "%sDark", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_BLIND) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 1, "%s%s", attr, "Blind");
+			put_fstr(6, 1, "%sBlind", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_CONF) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 2, "%s%s", attr, "Confu");
+			put_fstr(6, 2, "%sConfu", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_SOUND) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 3, "%s%s", attr, "Sound");
+			put_fstr(6, 3, "%sSound", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_SHARDS) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 4, "%s%s", attr, "Shard");
+			put_fstr(6, 4, "%sShard", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_NEXUS) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 5, "%s%s", attr, "Nexus");
+			put_fstr(6, 5, "%sNexus", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_NETHER) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 6, "%s%s", attr, "Nethr");
+			put_fstr(6, 6, "%sNethr", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_CHAOS) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 7, "%s%s", attr, "Chaos");
+			put_fstr(6, 7, "%sChaos", attr);
 
 			if (bp_ptr->flags2 & TR2_RES_DISEN) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(6, 8, "%s%s", attr, "Disen");
+			put_fstr(6, 8, "%sDisen", attr);
 
 			/* Other abilities */
 			if (bp_ptr->flags3 & TR3_SLOW_DIGEST) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 1, "%s%s", attr, "S.Dig");
+			put_fstr(12, 1, "%sS.Dig", attr);
 
 			if (bp_ptr->flags3 & TR3_FEATHER) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 2, "%s%s", attr, "Feath");
+			put_fstr(12, 2, "%sFeath", attr);
 
 			if (bp_ptr->britelite) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 3, "%s%s", attr, "PLite");
+			put_fstr(12, 3, "%sPLite", attr);
 
 			if (bp_ptr->flags3 & TR3_REGEN) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 4, "%s%s", attr, "Regen");
+			put_fstr(12, 4, "%sRegen", attr);
 
 			if (bp_ptr->flags3 & TR3_TELEPATHY) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 5, "%s%s", attr, "Telep");
+			put_fstr(12, 5, "%sTelep", attr);
 
 			if (bp_ptr->flags3 & TR3_SEE_INVIS) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 6, "%s%s", attr, "Invis");
+			put_fstr(12, 6, "%sInvis", attr);
 
 			if (bp_ptr->flags2 & TR2_FREE_ACT) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 7, "%s%s", attr, "FrAct");
+			put_fstr(12, 7, "%sFrAct", attr);
 
 			if (bp_ptr->flags2 & TR2_HOLD_LIFE) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(12, 8, "%s%s", attr, "HLife");
+			put_fstr(12, 8, "%sHLife", attr);
 
 			/* Display the slays */
 			put_fstr(5, 10, "Weapon Slays:");
@@ -2882,63 +2882,63 @@ void borg_status_window(void)
 			if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(1, 11, "%s%s", attr, "Animal");
+			put_fstr(1, 11, "%sAnimal", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_EVIL) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(8, 11, "%s%s", attr, "Evil");
+			put_fstr(8, 11, "%sEvil", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(15, 11, "%s%s", attr, "Undead");
+			put_fstr(15, 11, "%sUndead", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_DEMON) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(22, 11, "%s%s", attr, "Demon");
+			put_fstr(22, 11, "%sDemon", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_ORC) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(1, 12, "%s%s", attr, "Orc");
+			put_fstr(1, 12, "%sOrc", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_TROLL) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(8, 12, "%s%s", attr, "Troll");
+			put_fstr(8, 12, "%sTroll", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_GIANT) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(15, 12, "%s%s", attr, "Giant");
+			put_fstr(15, 12, "%sGiant", attr);
 
 			if (bp_ptr->flags1 & TR1_SLAY_DRAGON) attr = CLR_BLUE;
 			if (bp_ptr->flags1 & TR1_KILL_DRAGON) attr = CLR_GREEN;
 			else
 				attr = CLR_SLATE;
-			put_fstr(22, 12, "%s%s", attr, "Dragon");
+			put_fstr(22, 12, "%sDragon", attr);
 
 			if (bp_ptr->flags1 & TR1_BRAND_ACID) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(1, 13, "%s%s", attr, "Acid");
+			put_fstr(1, 13, "%sAcid", attr);
 
 			if (bp_ptr->flags1 & TR1_BRAND_COLD) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(8, 13, "%s%s", attr, "Cold");
+			put_fstr(8, 13, "%sCold", attr);
 
 			if (bp_ptr->flags1 & TR1_BRAND_ELEC) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(15, 13, "%s%s", attr, "Elec");
+			put_fstr(15, 13, "%sElec", attr);
 
 			if (bp_ptr->flags1 & TR1_BRAND_FIRE) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(22, 13, "%s%s", attr, "Fire");
+			put_fstr(22, 13, "%sFire", attr);
 
 
 			/* Display the Concerns */
@@ -2947,37 +2947,37 @@ void borg_status_window(void)
 			if (borg_wearing_cursed) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(29, 11, "%s%s", attr, "Cursed");
+			put_fstr(29, 11, "%sCursed", attr);
 
 			if (bp_ptr->status.weak) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(36, 11, "%s%s", attr, "Weak");
+			put_fstr(36, 11, "%sWeak", attr);
 
 			if (bp_ptr->status.poisoned) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(43, 11, "%s%s", attr, "Poison");
+			put_fstr(43, 11, "%sPoison", attr);
 
 			if (bp_ptr->status.cut) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(29, 12, "%s%s", attr, "Cut");
+			put_fstr(29, 12, "%sCut", attr);
 
 			if (bp_ptr->status.stun) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(36, 12, "%s%s", attr, "Stun");
+			put_fstr(36, 12, "%sStun", attr);
 
 			if (bp_ptr->status.confused) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(43, 12, "%s%s", attr, "Confused");
+			put_fstr(43, 12, "%sConfused", attr);
 
 			if (bp_ptr->status.fixexp) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(43, 13, "%s%s", attr, "Exp Drain");
+			put_fstr(43, 13, "%sExp Drain", attr);
 
 			/* Display the Time */
 			put_fstr(60, 10, "Time:");
@@ -2994,32 +2994,32 @@ void borg_status_window(void)
 			if (bp_ptr->sust[A_STR]) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(21, 1, "%s%s", attr, "STR");
+			put_fstr(21, 1, "%sSTR", attr);
 
 			if (bp_ptr->sust[A_INT]) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(21, 2, "%s%s", attr, "INT");
+			put_fstr(21, 2, "%sINT", attr);
 
 			if (bp_ptr->sust[A_WIS]) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(21, 3, "%s%s", attr, "WIS");
+			put_fstr(21, 3, "%sWIS", attr);
 
 			if (bp_ptr->sust[A_DEX]) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(21, 4, "%s%s", attr, "DEX");
+			put_fstr(21, 4, "%sDEX", attr);
 
 			if (bp_ptr->sust[A_CON]) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(21, 5, "%s%s", attr, "CON");
+			put_fstr(21, 5, "%sCON", attr);
 
 			if (bp_ptr->sust[A_CHR]) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(21, 6, "%s%s", attr, "CHR");
+			put_fstr(21, 6, "%sCHR", attr);
 
 
 			/* Temporary effects */
@@ -3028,42 +3028,42 @@ void borg_status_window(void)
 			if (borg_prot_from_evil) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 1, "%s%s", attr, "Prot. Evil");
+			put_fstr(28, 1, "%sProt. Evil", attr);
 
 			if (borg_goi) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 2, "%s%s", attr, "Invulnerable");
+			put_fstr(28, 2, "%sInvulnerable", attr);
 
 			if (borg_hero) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 3, "%s%s", attr, "Heroism");
+			put_fstr(28, 3, "%sHeroism", attr);
 
 			if (borg_berserk) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 4, "%s%s", attr, "Berserk");
+			put_fstr(28, 4, "%sBerserk", attr);
 
 			if (borg_shield) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 5, "%s%s", attr, "Shielded");
+			put_fstr(28, 5, "%sShielded", attr);
 
 			if (borg_bless) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 6, "%s%s", attr, "Blessed");
+			put_fstr(28, 6, "%sBlessed", attr);
 
 			if (borg_speed) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 7, "%s%s", attr, "Fast");
+			put_fstr(28, 7, "%sFast", attr);
 
 			if (borg_inviso) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(28, 8, "%s%s", attr, "Invisible");
+			put_fstr(28, 8, "%sInvisible", attr);
 
 			/* Temporary effects */
 			put_fstr(42, 0, "Level Information");
@@ -3071,20 +3071,19 @@ void borg_status_window(void)
 			if (vault_on_level) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(42, 1, "%s%s", attr, "Vault on level");
+			put_fstr(42, 1, "%sVault on Level", attr);
 
 			if (unique_on_level) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(42, 2, "%s%s", attr, "Unique on level");
+			put_fstr(42, 2, "%sUnique on level", attr);
 			if (unique_on_level) put_fstr(58, 2, "(%s)",																	 r_name + r_info[(int)unique_on_level].name);
 			else
 				put_fstr(58, 2, "                                   ");
 			if (breeder_level) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(42, 4, "%s%s", attr,
-						"Breeder level (close the door, will ye)");
+			put_fstr(42, 4, "%sBreeder level (close the door, will ye)", attr);
 
 			/* level preparedness */
 			put_fstr(42, 6, CLR_SLATE "Reason for not diving:");
@@ -3094,7 +3093,7 @@ void borg_status_window(void)
 			if (goal_fleeing) attr = CLR_WHITE;
 			else
 				attr = CLR_SLATE;
-			put_fstr(42, 7, "%s%s", attr, "Fleeing Level");
+			put_fstr(42, 7, "%sFleeing Level", attr);
 
 			put_fstr(42, 8, CLR_SLATE "Maximal Depth:");
 			put_fstr(56, 8, "%d    ", bp_ptr->max_depth);
@@ -3164,47 +3163,47 @@ void do_cmd_borg(void)
 	/* Simple help */
 	if (cmd == '?')
 	{
-		int i = 2;
-
 		/* Save the screen */
 		Term_save();
 
 		/* Clear the screen */
 		Term_clear();
 
-		i++;
-		put_fstr(2, i, "Command 'z' activates the Borg.");
-		put_fstr(42, i++, "Command 'u' updates the Borg.");
-		put_fstr(2, i++, "Command 'x' steps the Borg.");
-		put_fstr(42, i, "Command 'f' modifies the normal flags.");
-		put_fstr(2, i++, "Command 'c' modifies the cheat flags.");
-		put_fstr(42, i, "Command 'l' activates a log file.");
-		put_fstr(2, i++, "Command 's' activates search mode.");
-		put_fstr(42, i, "Command 'i' displays grid info.");
-		put_fstr(2, i++, "Command 'g' displays grid feature.");
-		put_fstr(42, i, "Command 'a' displays avoidances.");
-		put_fstr(2, i++, "Command 'k' displays monster info.");
-		put_fstr(42, i, "Command 't' displays object info.");
-		put_fstr(2, i++, "Command '%' displays current flow.");
-		put_fstr(42, i, "Command '#' displays danger grid.");
-		put_fstr(2, i++, "Command '_' Regional Fear info.");
-		put_fstr(42, i, "Command 'p' Borg Power.");
-		put_fstr(2, i++, "Command 'R' Respawn Borg.");
-		put_fstr(42, i, "Command '2' level prep info.");
-		put_fstr(2, i++, "Command 'e' Examine Equip Item.");
-		put_fstr(42, i, "Command '!' Time.");
-		put_fstr(2, i++, "Command '@' Borg LOS.");
-		put_fstr(42, i, "Command 'w' My Swap Weapon.");
-		put_fstr(2, i++, "Command 'q' Auto stop on level.");
-		put_fstr(42, i, "Command 'v' Version stamp.");
-		put_fstr(2, i++, "Command 'd' Dump spell info.");
-		put_fstr(42, i, "Command 'h' Borg_Has function.");
-		put_fstr(2, i++, "Command '$' Reload Borg.txt.");
-		put_fstr(42, i, "Command 'y' Last 75 steps.");
-		put_fstr(2, i++, "Command '^' Flow Pathway.");
-		put_fstr(42, i, "Command 'o' Examine Inven Item.");
-
-
+		/* First column */
+		put_fstr(2, 3,
+        			"Command 'z' activates the Borg.\n"
+					"Command 'x' steps the Borg.\n"
+				    "Command 'c' modifies the cheat flags.\n"
+		            "Command 's' activates search mode.\n"
+		            "Command 'g' displays grid feature.\n"
+		            "Command 'k' displays monster info.\n"
+		            "Command '%' displays current flow.\n"
+		            "Command '_' Regional Fear info.\n"
+		            "Command 'R' Respawn Borg.\n"
+        		    "Command 'e' Examine Equip Item.\n"
+		            "Command '@' Borg LOS.\n"
+		            "Command 'q' Auto stop on level.\n"
+		            "Command 'd' Dump spell info.\n"
+		            "Command '$' Reload Borg.txt.\n"
+		            "Command '^' Flow Pathway.");
+        
+        /* Second column */
+        put_fstr(42, 3,
+					"Command 'u' updates the Borg.\n"
+	       			"Command 'f' modifies the normal flags.\n"
+					"Command 'l' activates a log file.\n"
+					"Command 'i' displays grid info.\n"
+				    "Command 'a' displays avoidances.\n"
+				    "Command 't' displays object info.\n"
+				    "Command '#' displays danger grid.\n"
+				    "Command 'p' Borg Power.\n"
+				    "Command '2' level prep info.\n"
+				    "Command '!' Time.\n"
+				    "Command 'w' My Swap Weapon.\n"
+				    "Command 'v' Version stamp.\n"
+				    "Command 'h' Borg_Has function.\n"
+				    "Command 'y' Last 75 steps.\n"
+			    	"Command 'o' Examine Inven Item.");
 
 		/* Prompt for key */
 		msg_print("Commands: ");

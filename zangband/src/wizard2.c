@@ -642,31 +642,31 @@ static void wiz_display_item(const object_type *o_ptr)
 	prtf(j, 8, "info = %04x  timeout = %-d",
 			   o_ptr->info, o_ptr->timeout);
 
-	prtf(j, 10, "+------------FLAGS1------------+");
-	prtf(j, 11, "AFFECT........SLAY........BRAND.");
-	prtf(j, 12, "              cvae      xsqpaefc");
-	prtf(j, 13, "siwdcc  ssidsahanvudotgddhuoclio");
-	prtf(j, 14, "tnieoh  trnipttmiinmrrnrrraiierl");
-	prtf(j, 15, "rtsxna..lcfgdkcpmldncltggpksdced");
+	prtf(j, 10, "+------------FLAGS1------------+\n"
+				"AFFECT........SLAY........BRAND.\n"
+	    		"              cvae      xsqpaefc\n"
+	    		"siwdcc  ssidsahanvudotgddhuoclio\n"
+	    		"tnieoh  trnipttmiinmrrnrrraiierl\n"
+	    		"rtsxna..lcfgdkcpmldncltggpksdced");
 	prt_binary(f1, j, 16);
 
-	prtf(j, 17, "+------------FLAGS2------------+");
-	prtf(j, 18, "SUST...IMMUN..RESIST............");
-	prtf(j, 19, "        aefctrpsaefcpfldbc sn   ");
-	prtf(j, 20, "siwdcc  clioheatcliooeialoshtncd");
-	prtf(j, 21, "tnieoh  ierlrfraierliatrnnnrhehi");
-	prtf(j, 22, "rtsxna..dcedwlatdcedsrekdfddrxss");
+	prtf(j, 17, "+------------FLAGS2------------+\n"
+				"SUST...IMMUN..RESIST............\n"
+	    		"        aefctrpsaefcpfldbc sn   \n"
+	    		"siwdcc  clioheatcliooeialoshtncd\n"
+	    		"tnieoh  ierlrfraierliatrnnnrhehi\n"
+	    		"rtsxna..dcedwlatdcedsrekdfddrxss");
 	prt_binary(f2, j, 23);
 
-	prtf(j + 32, 10, "+------------FLAGS3------------+");
-	prtf(j + 32, 11, "fe      ehsi  st    iiiiadta  hp");
-	prtf(j + 32, 12, "il   n taihnf ee    ggggcregb vr");
-	prtf(j + 32, 13, "re  no ysdose eld   nnnntalrl ym");
-	prtf(j + 32, 14, "ec  om cyewta ieirmsrrrriieaeccc");
-	prtf(j + 32, 15, "aa  ta uktmatlnpgeihaefcvnpvsuuu");
-	prtf(j + 32, 16, "uu  eg rnyoahivaeggoclioaeoasrrr");
-	prtf(j + 32, 17, "rr  li sopdretitsehtierltxrtesss");
-	prtf(j + 32, 18, "aa  ec ewestreshtntsdcedeptedeee");
+	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
+					"fe      ehsi  st    iiiiadta  hp\n"
+				    "il   n taihnf ee    ggggcregb vr\n"
+				    "re  no ysdose eld   nnnntalrl ym\n"
+				    "ec  om cyewta ieirmsrrrriieaeccc\n"
+				    "aa  ta uktmatlnpgeihaefcvnpvsuuu\n"
+				    "uu  eg rnyoahivaeggoclioaeoasrrr\n"
+				    "rr  li sopdretitsehtierltxrtesss\n"
+				    "aa  ec ewestreshtntsdcedeptedeee");
 	prt_binary(f3, j + 32, 19);
 }
 

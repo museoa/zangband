@@ -33,7 +33,6 @@ s16b modify_stat_value(int value, int amount)
 }
 
 
-
 /*
  * Print character info at given row, column in a 13 char field
  */
@@ -45,8 +44,6 @@ static void prt_field(cptr info, int col, int row)
 	/* Dump the info itself */
 	put_fstr(col, row, CLR_L_BLUE "%s", info);
 }
-
-
 
 
 /*

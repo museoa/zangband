@@ -1608,11 +1608,13 @@ static void race_aux_hook(cptr r_str)
 				 stat_names_reduced[i], race_info[race].r_adj[i]);
 	}
 
-	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX, "Hit die: %d ", race_info[race].r_mhp);
-	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 1, "Experience: %2d%%",
-			 race_info[race].r_exp);
-	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 2, "Infravision: %d ft ",
-			 race_info[race].infra * 10);
+	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX,
+				"Hit die: %d \n"
+				"Experience: %2d%% \n"
+				"Infravision: %d ft",
+				race_info[race].r_mhp,
+				race_info[race].r_exp,
+				race_info[race].infra * 10);
 }
 
 
@@ -1690,10 +1692,11 @@ static void class_aux_hook(cptr c_str)
 				class_info[class_idx].c_adj[i]);
 	}
 
-	put_fstr(CLASS_AUX_COL, TABLE_ROW + A_MAX, "Hit die: %d ",
-			 class_info[class_idx].c_mhp);
-	put_fstr(CLASS_AUX_COL, TABLE_ROW + A_MAX + 1, "Experience: %2d%%",
-			 class_info[class_idx].c_exp);
+	put_fstr(CLASS_AUX_COL, TABLE_ROW + A_MAX,
+				"Hit die: %d \n"
+				"Experience: %2d%%",
+			 	class_info[class_idx].c_mhp,
+				class_info[class_idx].c_exp);
 }
 
 
@@ -1709,8 +1712,7 @@ static bool get_player_class(void)
 
 	/* Extra info */
 	put_fstr(QUESTION_COL, QUESTION_ROW,
-				"Your 'class' determines various intrinsic abilities and bonuses.");
-	put_fstr(QUESTION_COL, QUESTION_ROW + 1,
+				"Your 'class' determines various intrinsic abilities and bonuses.\n"
 				"Any entries in parentheses should only be used by advanced players.");
 
 	/* Tabulate classes */
@@ -1796,8 +1798,7 @@ static bool get_player_realms(void)
 
 	/* Extra info */
 	put_fstr(QUESTION_COL, QUESTION_ROW,
-				"Life and Sorcery are protective, Chaos and Death are destructive.");
-	put_fstr(QUESTION_COL, QUESTION_ROW + 1,
+				"Life and Sorcery are protective, Chaos and Death are destructive.\n"
 				"Nature has both defensive and offensive spells.");
 
 	choose = get_player_choice(realms, count, REALM1_COL, 10,
@@ -1865,13 +1866,10 @@ static bool player_birth_aux_1(void)
 
 	/* Display some helpful information */
 	put_fstr(QUESTION_COL, HEADER_ROW,
-				"Please select your character from the menu below.");
-	put_fstr(QUESTION_COL, HEADER_ROW + 2,
-				"Use the movement keys to scroll the menu, 'enter' to select the current");
-	put_fstr(QUESTION_COL, HEADER_ROW + 3,
-				"menu item, '*' for a random menu item, 'ESC' to restart the character");
-	put_fstr(QUESTION_COL, HEADER_ROW + 4,
-				"selection, '=' for the birth options, '?' for help, or 'Ctrl-X' to quit.");
+			"Please select your character from the menu below.\n"
+			"Use the movement keys to scroll the menu, 'enter' to select the current\n"
+			"menu item, '*' for a random menu item, 'ESC' to restart the character\n"
+			"selection, '=' for the birth options, '?' for help, or 'Ctrl-X' to quit.");
 
 	if (!get_player_sex()) return (FALSE);
 
@@ -1898,10 +1896,12 @@ static bool player_birth_aux_1(void)
 
 	/* Display the information so far. */
 	/* Name, Sex, Race, Class */
-	put_fstr(0, 2, "Name     : " CLR_L_BLUE "%s", player_name);
-	put_fstr(0, 3, "Sex      : " CLR_L_BLUE "%s", sp_ptr->title);
-	put_fstr(0, 4, "Race     : " CLR_L_BLUE "%s", rp_ptr->title);
-	put_fstr(0, 5, "Class    : " CLR_L_BLUE "%s", cp_ptr->title);
+	put_fstr(0, 2,
+				"Name     : " CLR_L_BLUE "%s\n"
+				"Sex      : " CLR_L_BLUE "%s\n"
+				"Race     : " CLR_L_BLUE "%s\n"
+				"Class    : " CLR_L_BLUE "%s\n",
+				player_name, sp_ptr->title, rp_ptr->title, cp_ptr->title);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
@@ -2163,10 +2163,8 @@ static bool player_birth_aux_3(void)
 
 		/* Extra info */
 		put_fstr(5, 10,
-					"The auto-roller will generate 500 characters and try to pick");
-		put_fstr(5, 11,
-					"the one with the best stats, according to the weightings you");
-		put_fstr(5, 12,
+					"The auto-roller will generate 500 characters and try to pick\n"
+					"the one with the best stats, according to the weightings you\n"
 					"choose below. Enter a value from 1-100 for each stat.");
 
 		/* Prompt for the stat weights */

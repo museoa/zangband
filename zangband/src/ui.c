@@ -391,12 +391,17 @@ void screen_load(void)
 /*
  * Put a string with control characters at a given location
  */
-static void put_cstr(int col, int row, cptr str)
+static void put_cstr(int col, int row, cptr str, bool clear)
 {
 	cptr c = str;
 	
 	/* Default to white */
 	byte a = TERM_WHITE;
+	
+	int x = col;
+	
+	/* Clear line, position cursor */
+	if (clear) Term_erase(col, row, 255);
 	
 	while (*c)
 	{
@@ -417,19 +422,30 @@ static void put_cstr(int col, int row, cptr str)
 				a = *c - 'A';
 				c++;
 				
-				/* Paranoia: no more in string? */
-				if (!(*c)) return;
-				
 				/* Hack -- fake monochrome */
 				if (!use_color || ironman_moria) a = TERM_WHITE;
+				
+				continue;
 			}
 		}
 		
+		if (*c == '\n')
+		{
+			/* Reset to the 'start' of the next row. */
+			row++;
+			x = col;
+			
+			/* Clear line, position cursor */
+			if (clear) Term_erase(col, row, 255);
+			
+			continue;		
+		}
+		
 		/* Display the character */
-		Term_putch(col, row, a, *c);
+		Term_putch(x, row, a, *c);
 		
 		/* Next position */
-		col++;
+		x++;
 		c++;
 	}
 }
@@ -453,7 +469,7 @@ void put_fstr(int col, int row, cptr str, ...)
 	va_end(vp);
 
 	/* Display */
-	put_cstr(col, row, buf);
+	put_cstr(col, row, buf, FALSE);
 }
 
 
@@ -475,12 +491,9 @@ void prtf(int col, int row, cptr str, ...)
 
 	/* End the Varargs Stuff */
 	va_end(vp);
-	
-	/* Clear line, position cursor */
-	Term_erase(col, row, 255);
 
 	/* Display */
-	put_cstr(col, row, buf);
+	put_cstr(col, row, buf, TRUE);
 }
 
 
