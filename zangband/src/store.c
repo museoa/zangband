@@ -1202,6 +1202,10 @@ static int home_carry(object_type *o_ptr)
 	/* Insert the new item */
 	st_ptr->stock[slot] = *o_ptr;
 
+	#ifdef AVATAR
+	chg_virtue(V_SACRIFICE, -1);
+	#endif
+
 	/* Return the location */
 	return (slot);
 }
@@ -2841,6 +2845,10 @@ static void store_purchase(void)
 
 			/* Redraw everything */
 			display_inventory();
+
+			#ifdef AVATAR
+			chg_virtue(V_SACRIFICE, 1);
+			#endif
 		}
 	}
 
