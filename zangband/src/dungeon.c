@@ -1146,6 +1146,105 @@ static void process_world(void)
 			cave_no_regen = TRUE;
 		}
 	}
+	
+	if ((area(py,px)->feat == FEAT_SHAL_ACID) &&
+		!p_ptr->invuln && !p_ptr->immune_acid && !p_ptr->ffall)
+	{
+		int damage = p_ptr->lev;
+
+		if (p_ptr->resist_acid) damage = damage / 3;
+		if (p_ptr->oppose_acid) damage = damage / 3;
+
+		if (damage)
+		{
+			/* Take damage */
+			msg_print("The acid burns you!");
+			take_hit(damage, "shallow acid");
+			cave_no_regen = TRUE;
+		}
+	}
+
+	else if ((area(py,px)->feat == FEAT_DEEP_ACID) &&
+		!p_ptr->invuln && !p_ptr->immune_acid)
+	{
+		int damage = p_ptr->lev * 2;
+		cptr message;
+		cptr hit_from;
+
+		if (p_ptr->resist_acid) damage = damage / 3;
+		if (p_ptr->oppose_acid) damage = damage / 3;
+
+		if (p_ptr->ffall)
+		{
+			damage = damage / 5;
+
+			message = "The fumes burn you!";
+			hit_from = "flying over deep acid";
+		}
+		else
+		{
+			message = "The acid burns you!";
+			hit_from = "deep acid";
+		}
+
+		if (damage)
+		{
+			/* Take damage */
+			msg_print(message);
+			take_hit(damage, hit_from);
+
+			cave_no_regen = TRUE;
+		}
+	}
+
+	if ((area(py,px)->feat == FEAT_SHAL_SWAMP) &&
+		!p_ptr->invuln && !p_ptr->resist_pois && !p_ptr->ffall)
+	{
+		int damage = p_ptr->lev;
+
+		if (p_ptr->oppose_pois) damage = damage / 3;
+
+		if (damage)
+		{
+			/* Take damage */
+			msg_print("The plants poison you!");
+			take_hit(damage, "swamp");
+			cave_no_regen = TRUE;
+		}
+	}
+
+	else if ((area(py,px)->feat == FEAT_DEEP_SWAMP) &&
+		!p_ptr->invuln)
+	{
+		int damage = p_ptr->lev * 2;
+		cptr message;
+		cptr hit_from;
+
+		if (p_ptr->resist_pois) damage = damage / 3;
+		if (p_ptr->oppose_pois) damage = damage / 3;
+
+		if (p_ptr->ffall)
+		{
+			damage = damage / 5;
+
+			message = "The fumes poison you!";
+			hit_from = "flying over thick swamp";
+		}
+		else
+		{
+			message = "The fumes poison you!";
+			hit_from = "thick swamp";
+		}
+
+		if (damage)
+		{
+			/* Take damage */
+			msg_print(message);
+			take_hit(damage, hit_from);
+
+			cave_no_regen = TRUE;
+		}
+	}
 
 	else if ((area(py,px)->feat == FEAT_DEEP_WATER) && !p_ptr->ffall)
 	{
@@ -1172,7 +1271,7 @@ static void process_world(void)
 		{
 			/* Do nothing */
 		}
-		else if ((area(py, px)->feat & 0x70) == 0x70)
+		else if ((area(py, px)->feat & 0x80) == 0x80)
 		{
 			/* Player can walk through the "slow floor" terrains. */
 			

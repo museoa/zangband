@@ -2137,22 +2137,12 @@ static bool player_can_enter(byte feature)
 
 	switch (feature)
 	{
-		case FEAT_DEEP_WATER:
-		case FEAT_SHAL_LAVA:
-		case FEAT_DEEP_LAVA:
-			return (TRUE);
-
 		case FEAT_DARK_PIT:
 		{
 			if (p_ptr->ffall)
 				return (TRUE);
 			else
 				return (FALSE);
-		}
-
-		case FEAT_TREES:
-		{
-			return (TRUE);
 		}
 
 		case FEAT_RUBBLE:
@@ -2166,11 +2156,15 @@ static bool player_can_enter(byte feature)
 		case FEAT_WALL_INNER:
 		case FEAT_WALL_OUTER:
 		case FEAT_WALL_SOLID:
+		case FEAT_WALL_INVIS:
+		case FEAT_FENCE:
+		case FEAT_WELL:
+		case FEAT_FOUNTAIN:
+		case FEAT_JUNGLE:
 		{
 			return (pass_wall);
 		}
 
-		case FEAT_MOUNTAIN:
 		case FEAT_PERM_EXTRA:
 		case FEAT_PERM_INNER:
 		case FEAT_PERM_OUTER:
@@ -2499,21 +2493,29 @@ void move_player(int dir, int do_pickup)
 		oktomove = FALSE;
 	}
 
-	else if (c_ptr->feat == FEAT_MOUNTAIN)
-	{
-		msg_print("You can't climb the mountains!");
-		running = 0;
-		oktomove = FALSE;
-	}
 	/*
 	 * Player can move through trees and
 	 * has effective -10 speed
 	 * Rangers can move without penality
 	 */
-	else if (c_ptr->feat == FEAT_TREES)
+	else if ((c_ptr->feat == FEAT_TREES) || 
+		(c_ptr->feat == FEAT_PINE_TREE) ||
+		(c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		oktomove = TRUE;
 		if (p_ptr->pclass != CLASS_RANGER) energy_use += 10;
+	}
+	
+	/* Some terrains are hard to move through */
+	
+	else if ((c_ptr->feat == FEAT_MOUNTAIN) || 
+		(c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
+		(c_ptr->feat == FEAT_OBELISK) ||
+		(c_ptr->feat == FEAT_PILLAR) ||
+		(c_ptr->feat == FEAT_BOULDER))
+	{
+		oktomove = TRUE;
+		energy_use += 10;
 	}
 
 	else if ((c_ptr->feat >= FEAT_SAND) && (c_ptr->feat <= FEAT_SOLID_LAVA))
@@ -2524,6 +2526,7 @@ void move_player(int dir, int do_pickup)
 	{
 		oktomove = TRUE;
 	}
+	
 	/* Closed door */
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	         (c_ptr->feat <= FEAT_DOOR_TAIL))
@@ -2886,16 +2889,13 @@ static int see_wall(int dir, int y, int x)
 	if (area(y,x)->feat < FEAT_SECRET) return (FALSE);
 
 	if ((area(y,x)->feat >= FEAT_DEEP_WATER) &&
-	    (area(y,x)->feat <= FEAT_GRASS)) return (FALSE);
+	    (area(y,x)->feat <= FEAT_TRAP_TRAPS)) return (FALSE);
 
 	if ((area(y,x)->feat >= FEAT_SHOP_HEAD) &&
 	    (area(y,x)->feat <= FEAT_SHOP_TAIL)) return (FALSE);
 
-#if 0
-	if ((area(y,x)->feat >= FEAT_BLDG_HEAD) &&
-	    (area(y,x)->feat <= FEAT_BLDG_TAIL)) return (FALSE);
-#endif
-	if (area(y,x)->feat == FEAT_TREES) return (FALSE);
+	if ((area(y,x)->feat >= FEAT_OCEAN_WATER) &&
+	    (area(y,x)->feat <= FEAT_PILLAR)) return (FALSE);
 
 	/* Must be known to the player */
 	if (!(area(y,x)->info & (CAVE_MARK))) return (FALSE);
@@ -3340,7 +3340,17 @@ static bool run_test(void)
 					/* Done */
 					break;
 				}
+				
+				case FEAT_DEEP_ACID:
+				case FEAT_SHAL_ACID:
+				{
+					/* Ignore */
+					if (p_ptr->invuln || p_ptr->immune_acid) notice = FALSE;
 
+					/* Done */
+					break;
+				}
+				
 				case FEAT_DEEP_WATER:
 				{
 					/* Ignore */

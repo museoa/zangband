@@ -3510,7 +3510,7 @@ void map_area(void)
 			if ((c_ptr->feat < FEAT_SECRET) ||
 			    (c_ptr->feat == FEAT_RUBBLE) ||
 				 ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
-				  (c_ptr->feat <= FEAT_TREES) &&
+				  (c_ptr->feat != FEAT_TRAP_TRAPS) &&
 				  (c_ptr->feat != FEAT_WALL_INVIS)))
 			{
 				/* Memorize normal features */

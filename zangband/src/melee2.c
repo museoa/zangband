@@ -2272,8 +2272,20 @@ static void process_monster(int m_idx)
 			do_move = TRUE;
 		}
 
-		/* Hack -- trees are no obstacle */
-		else if (area(ny,nx)->feat == FEAT_TREES)
+		/* Hack -- semi-transparent terrains are no obstacle */
+		else if ((area(py, px)->feat & 0x60) == 0x60)
+		{
+			do_move = TRUE;
+		}
+		
+		/* Hack -- "slow floor" terrains are no obstacle */
+		else if ((area(py, px)->feat & 0x80) == 0x80)
+		{
+			do_move = TRUE;
+		}
+
+		/* Hack -- floors are no obstacle */
+		else if ((area(py, px)->feat & 0xF8) == 0x8)
 		{
 			do_move = TRUE;
 		}

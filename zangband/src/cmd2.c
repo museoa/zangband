@@ -1182,13 +1182,9 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		msg_print("This seems to be permanent rock.");
 	}
 
-	/* No tunnelling through mountains */
-	else if (c_ptr->feat == FEAT_MOUNTAIN)
-	{
-		msg_print("You can't tunnel through that!");
-	}
-
-	else if (c_ptr->feat == FEAT_TREES) /* -KMW- */
+	else if ((c_ptr->feat == FEAT_TREES) ||
+		(c_ptr->feat == FEAT_PINE_TREE) ||
+		(c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		/* Chop Down */
 		if ((p_ptr->skill_dig > 10 + rand_int(400)) && twall(y, x, FEAT_GRASS))
@@ -1212,9 +1208,11 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	}
 
 
-	/* Granite */
-	else if ((c_ptr->feat >= FEAT_WALL_EXTRA) &&
-	         (c_ptr->feat <= FEAT_WALL_SOLID))
+	/* Granite + mountain side */
+	else if (((c_ptr->feat >= FEAT_WALL_EXTRA) &&
+	         (c_ptr->feat <= FEAT_WALL_SOLID)) ||
+		 (c_ptr->feat == FEAT_MOUNTAIN) ||
+		 (c_ptr->feat == FEAT_SNOW_MOUNTAIN))
 	{
 		/* Tunnel */
 		if ((p_ptr->skill_dig > 40 + rand_int(1600)) && twall(y, x, FEAT_FLOOR))
@@ -1454,12 +1452,13 @@ void do_cmd_tunnel(void)
 			msg_print("You cannot tunnel through air.");
 		}
 
-		/* No tunnelling through mountains */
-		else if (c_ptr->feat == FEAT_MOUNTAIN)
+		/* No tunneling through obelisks */
+		else if (c_ptr->feat == FEAT_OBELISK)
 		{
-			msg_print("You can't tunnel through that!");
+			/* Message */
+			msg_print("You cannot tunnel through that.");
 		}
-
+		
 		/* A monster is in the way */
 		else if (c_ptr->m_idx)
 		{
@@ -2121,7 +2120,10 @@ void do_cmd_alter(void)
 		else if (((c_ptr->feat >= FEAT_SECRET) &&
 		          (c_ptr->feat < FEAT_MINOR_GLYPH)) ||
 		         ((c_ptr->feat == FEAT_TREES) ||
-		          (c_ptr->feat == FEAT_MOUNTAIN)))
+		          (c_ptr->feat == FEAT_MOUNTAIN) ||
+			  (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
+			  (c_ptr->feat == FEAT_PINE_TREE) ||
+			  (c_ptr->feat == FEAT_SNOW_TREE)))
 		{
 			/* Tunnel */
 			more = do_cmd_tunnel_aux(y, x);

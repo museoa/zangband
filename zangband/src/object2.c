@@ -4568,8 +4568,11 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			    (c_ptr->feat != FEAT_SHAL_WATER) &&
 			    (c_ptr->feat != FEAT_GRASS) &&
 			    (c_ptr->feat != FEAT_DIRT) &&
+			    (c_ptr->feat != FEAT_SNOW) &&
 			    (c_ptr->feat != FEAT_SHAL_LAVA) &&
-				(c_ptr->feat != FEAT_TREES)) continue;
+			    (c_ptr->feat != FEAT_SHAL_ACID) &&
+			    ((c_ptr->feat & 0xF8) != 0x08) &&
+			    ((c_ptr->feat & 0x80) != 0x80)) continue;
 
 			/* No objects */
 			k = 0;
@@ -4676,7 +4679,11 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		    (c_ptr->feat != FEAT_SHAL_WATER) &&
 		    (c_ptr->feat != FEAT_GRASS) &&
 		    (c_ptr->feat != FEAT_DIRT) &&
-		    (c_ptr->feat != FEAT_SHAL_LAVA)) continue;
+		    (c_ptr->feat != FEAT_SNOW) &&
+		    (c_ptr->feat != FEAT_SHAL_LAVA) &&
+		    (c_ptr->feat != FEAT_SHAL_ACID) &&
+		    ((c_ptr->feat & 0xF8) != 0x08) &&
+		    ((c_ptr->feat & 0x80) != 0x80)) continue;
 
 		/* Bounce to that location */
 		by = ty;

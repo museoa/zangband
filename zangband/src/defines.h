@@ -3163,6 +3163,7 @@
 	  (area(Y,X)->feat == FEAT_GRASS) || \
 	  (area(Y,X)->feat == FEAT_SNOW) || \
 	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
+	  ((area(Y,X)->feat & 0x80) == 0x80) || \
 	  (area(Y,X)->feat == FEAT_DIRT)) && \
 	  (area(Y,X)->o_idx == 0))
 
@@ -3181,6 +3182,7 @@
 	  (area(Y,X)->feat == FEAT_GRASS) || \
 	  (area(Y,X)->feat == FEAT_SNOW) || \
 	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
+	  ((area(Y,X)->feat & 0x80) == 0x80) || \
 	  (area(Y,X)->feat == FEAT_DIRT)) && \
 	  (area(Y,X)->o_idx == 0))
 

@@ -642,7 +642,24 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 			/* Permanent walls */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA) break;
+			
+			/* Terrain */
+			if (c_ptr->feat >= FEAT_TREES)
+			{
+				/* Message */
+				if (known && (c_ptr->info & (CAVE_MARK)))
+				{
+					msg_print("It disappears!");
+					obvious = TRUE;
+				}
 
+				/* Forget the wall */
+				c_ptr->info &= ~(CAVE_MARK);
+
+				/* Destroy the wall */
+				cave_set_feat(y, x, FEAT_DIRT);
+			}
+			
 			/* Granite */
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
@@ -4816,7 +4833,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 								(area(y,x)->feat < FEAT_DEEP_WATER ||
 								 area(y,x)->feat > FEAT_GRASS))
 							{
-								if (area(y,x)->feat == FEAT_TREES)
+								if ((area(y,x)->feat == FEAT_TREES) ||
+									(area(y,x)->feat == FEAT_PINE_TREE) ||
+									(area(y,x)->feat == FEAT_SNOW_TREE))
 									cave_set_feat(y, x, FEAT_GRASS);
 								else
 									cave_set_feat(y, x, FEAT_FLOOR);

@@ -301,7 +301,7 @@ void teleport_player(int dis)
 
 			/* Require "naked" floor space or trees */
 			if (!(cave_naked_bold(y, x) ||
-			    (area(y,x)->feat == FEAT_TREES))) continue;
+			    ((area(y,x)->feat & 0x60) == 0x60))) continue;
 
 			/* No teleporting into vaults and such */
 			if (area(y,x)->info & CAVE_ICKY) continue;
