@@ -2469,9 +2469,13 @@ bool recharge(int power)
 				o_ptr->timeout = (o_ptr->timeout + 100) * 2;
 
 			/* Artifact wands and staffs. */
-			else if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF))
+			else
 			{
-				o_ptr->ac += o_ptr->pval;
+				if (o_ptr->tval == TV_WAND)
+				{
+					o_ptr->ac += o_ptr->pval;
+				}
+			
 				o_ptr->pval = 0;
 			}
 		}
