@@ -2668,6 +2668,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				(feat == FEAT_DEEP_ACID) ||
 				(feat == FEAT_SHAL_ACID) ||
 				(feat == FEAT_JUNGLE) ||
+				(feat == FEAT_SNOW) ||
 				(feat == FEAT_GRASS_LONG))
 			{
 				s3 ="";
