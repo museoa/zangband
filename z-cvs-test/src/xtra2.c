@@ -2873,11 +2873,6 @@ bool target_set(int mode)
 	/* Start near the player */
 	m = 0;
 
-#ifdef PROJECT_HINT
-	if (flag && temp_n)
-		angtk_project_hint(2, 0, temp_y[m], temp_x[m], 0);
-#endif /* PROJECT_HINT */
-
 	/* Interact */
 	while (!done)
 	{
@@ -3034,25 +3029,6 @@ bool target_set(int mode)
 				}
 #endif /* TNB */
 
-#ifdef PROJECT_HINT
-				/* Hack -- Allow targetting by mouse */
-				case '&':
-				{
-					int ty, tx;
-					char ybuf[4] = "", xbuf[4] = "";
-
-					if (!get_string("y: ", ybuf, 3)) break;
-					if (!get_string("x: ", xbuf, 3)) break;
-					ty = atoi(ybuf);
-					tx = atoi(xbuf);
-
-					if (!in_bounds(ty, tx)) break;
-
-					angtk_project_hint(4, 0, ty, tx, 0);
-					break;
-				}
-#endif /* PROJECT_HINT */
-
 				default:
 				{
 					/* Extract the action (if any) */
@@ -3073,11 +3049,6 @@ bool target_set(int mode)
 
 				/* Use that grid */
 				if (i >= 0) m = i;
-
-#ifdef PROJECT_HINT
-				if (i >= 0)
-					angtk_project_hint(2, 0, temp_y[m], temp_x[m], 0);
-#endif /* PROJECT_HINT */
 
 #else /* not 1 -- TNB */
 				/* Modified to scroll to monster */
@@ -3320,25 +3291,6 @@ bool target_set(int mode)
 				}
 #endif /* TNB */
 
-#ifdef PROJECT_HINT
-				/* Hack -- Allow targetting by mouse */
-				case '&':
-				{
-					int ty, tx;
-					char ybuf[4] = "", xbuf[4] = "";
-
-					if (!get_string("y: ", ybuf, 3)) break;
-					if (!get_string("x: ", xbuf, 3)) break;
-					ty = atoi(ybuf);
-					tx = atoi(xbuf);
-
-					if (!in_bounds(ty, tx)) break;
-
-					angtk_project_hint(4, 0, ty, tx, 0);
-					break;
-				}
-#endif /* PROJECT_HINT */
-
 				default:
 				{
 					/* Extract the action (if any) */
@@ -3372,10 +3324,6 @@ bool target_set(int mode)
 					y--;
 				else if (y <= 0)
 					y++;
-
-#ifdef PROJECT_HINT
-				angtk_project_hint(2, 0, y, x, 0);
-#endif /* PROJECT_HINT */
 
 #else /* not 1 -- TNB */
 				/* Do not move horizontally if unnecessary */
@@ -3440,9 +3388,7 @@ bool target_set(int mode)
 #if 1 /* TNB */
 	prompt_erase();
 	Bind_Cursor(KEYWORD_CURSOR_HIDE + 1, 0, 0);
-#ifdef PROJECT_HINT
-	angtk_project_hint(3, 0, 0, 0, 0);
-#endif /* PROJECT_HINT */
+
 	if (target_new >= 0)
 	{
 		target_set_monster(target_new);

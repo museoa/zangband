@@ -1412,9 +1412,6 @@ static bool cast_chaos_spell(int spell)
 			}
 			break;
 		case 4: /* Manaburst */
-#ifdef PROJECT_HINT /* TNB */
-			angtk_project_hint(1, (plev < 30) ? 2 : 3, -1, -1, 0);
-#endif /* PROJECT_HINT */
 			if (!get_aim_dir(&dir))
 				return FALSE;
 
