@@ -1215,7 +1215,7 @@ static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cpt
 	int charge_min;
 
 	/* Don't add a power if there already is one */
-	if (OBJ_FLAG(o_ptr, 2, ACTIVATE))
+	if (FLAG(o_ptr, TR_ACTIVATE))
 		return;
 
 	/* Calculate charge time */
@@ -2376,9 +2376,9 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		total_flags = flag_cost(o_ptr, 1);
 	}
 
-	if (OBJ_FLAG(o_ptr, 0, PVAL_MASK))
+	if (FLAG(o_ptr, TR_PVAL_MASK))
 	{
-		if (OBJ_FLAG(o_ptr, 0, BLOWS))
+		if (FLAG(o_ptr, TR_BLOWS))
 		{
 			if (one_in_(100))
 			{

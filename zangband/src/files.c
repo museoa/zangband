@@ -1531,7 +1531,7 @@ static void display_player_abilities(void)
 			avgdam *= 786;
 			avgdam /= 500;
 		}
-		else if (object_known_p(o_ptr) && (OBJ_FLAG(o_ptr, 0, VORPAL)))
+		else if (object_known_p(o_ptr) && (FLAG(o_ptr, TR_VORPAL)))
 		{
 			/* vorpal flag only */
 			avgdam *= 609;
@@ -1541,7 +1541,7 @@ static void display_player_abilities(void)
 		/* Estimate the effect of increased criticals */
 		/* The average critical does 1.8345 * normal damage... */
 		if (object_known_p(o_ptr) && (p_ptr->msp >= PSI_COST) &&
-				(OBJ_FLAG(o_ptr, 3, PSI_CRIT)))
+				(FLAG(o_ptr, TR_PSI_CRIT)))
 		{
 			avgdam *= 640;
 			avgdam /= 500;
@@ -2581,7 +2581,7 @@ static void display_player_skill_info(void)
 			}
 		}
 				
-		if (skill == 5 && (OBJ_FLAG(&oflags, 0, SPEED)))
+		if (skill == 5 && (FLAG(&oflags, TR_SPEED)))
 		{
 			dummy += p_ptr->lev / 10;
 		}
@@ -2654,7 +2654,7 @@ static void display_player_top(void)
 		put_fstr(COL_NAME + WID_NAME, 7, CLR_L_BLUE "%s",
 				 realm_names[p_ptr->spell.r[1].realm]);
 	}
-	else if (OBJ_FLAG(p_ptr, 3, PATRON))
+	else if (FLAG(p_ptr, TR_PATRON))
 	{
 		put_fstr(COL_NAME, 7, "Patron   : " CLR_L_BLUE "%s",
 					 chaos_patrons[p_ptr->chaos_patron]);

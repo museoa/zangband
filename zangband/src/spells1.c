@@ -614,7 +614,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 		if (o_ptr->number > 1) plural = TRUE;
 
 		/* Check for artifact */
-		if (OBJ_FLAG(o_ptr, 2, INSTA_ART)) is_art = TRUE;
+		if (FLAG(o_ptr, TR_INSTA_ART)) is_art = TRUE;
 
 		/* Analyze the type */
 		switch (typ)
@@ -627,7 +627,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " melt!" : " melts!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_ACID)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_ACID)) ignore = TRUE;
 				}
 				break;
 			}
@@ -640,7 +640,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " are destroyed!" : " is destroyed!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_ELEC)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_ELEC)) ignore = TRUE;
 				}
 				break;
 			}
@@ -653,7 +653,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_FIRE)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_FIRE)) ignore = TRUE;
 				}
 				break;
 			}
@@ -666,7 +666,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				{
 					note_kill = (plural ? " shatter!" : " shatters!");
 					do_kill = TRUE;
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_COLD)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_COLD)) ignore = TRUE;
 				}
 				break;
 			}
@@ -679,14 +679,14 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_FIRE)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_FIRE)) ignore = TRUE;
 				}
 				if (hates_elec(o_ptr))
 				{
 					ignore = FALSE;
 					do_kill = TRUE;
 					note_kill = (plural ? " are destroyed!" : " is destroyed!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_ELEC)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_ELEC)) ignore = TRUE;
 				}
 				break;
 			}
@@ -699,14 +699,14 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_FIRE)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_FIRE)) ignore = TRUE;
 				}
 				if (hates_cold(o_ptr))
 				{
 					ignore = FALSE;
 					do_kill = TRUE;
 					note_kill = (plural ? " shatter!" : " shatters!");
-					if (OBJ_FLAG(o_ptr, 2, IGNORE_COLD)) ignore = TRUE;
+					if (FLAG(o_ptr, TR_IGNORE_COLD)) ignore = TRUE;
 				}
 				break;
 			}
@@ -748,7 +748,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			{
 				do_kill = TRUE;
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
-				if (OBJ_FLAG(o_ptr, 1, RES_CHAOS)) ignore = TRUE;
+				if (FLAG(o_ptr, TR_RES_CHAOS)) ignore = TRUE;
 				break;
 			}
 
@@ -1518,7 +1518,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 									break;
 								}
 								default:
-									if (!(OBJ_FLAG(p_ptr, 1, FREE_ACT)))
+									if (!(FLAG(p_ptr, TR_FREE_ACT)))
 										(void)inc_paralyzed(randint1(dam));
 									break;
 							}
@@ -2072,7 +2072,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
-			else if (OBJ_FLAG(p_ptr, 2, AGGRAVATE))
+			else if (FLAG(p_ptr, TR_AGGRAVATE))
 			{
 				note = " hates you too much!";
 			}
@@ -2106,7 +2106,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
-			else if (OBJ_FLAG(p_ptr, 2, AGGRAVATE))
+			else if (FLAG(p_ptr, TR_AGGRAVATE))
 			{
 				note = " hates you too much!";
 			}
@@ -2144,7 +2144,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
-			else if (OBJ_FLAG(p_ptr, 2, AGGRAVATE))
+			else if (FLAG(p_ptr, TR_AGGRAVATE))
 			{
 				note = " hates you too much!";
 			}
@@ -3103,7 +3103,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 	if (!who) return (FALSE);
 
 
-	if ((OBJ_FLAG(p_ptr, 1, REFLECT)) && !a_rad && !one_in_(10))
+	if ((FLAG(p_ptr, TR_REFLECT)) && !a_rad && !one_in_(10))
 	{
 		int t_y, t_x;
 		int max_attempts = 10;
@@ -3219,7 +3219,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- also poisons / mutates player */
 			if (blind) msgf("You are hit by radiation!");
-			if (OBJ_FLAG(p_ptr, 1, RES_POIS)) dam = (2 * dam + 2) / 5;
+			if (FLAG(p_ptr, TR_RES_POIS)) dam = (2 * dam + 2) / 5;
 			if (p_ptr->tim.oppose_pois) dam = (2 * dam + 2) / 5;
 			take_hit(dam, killer);
 			if (res_pois_lvl())
@@ -3292,7 +3292,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (blind) msgf("You are hit by something *HOT*!");
 			take_hit(dam, killer);
 
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SOUND)))
+			if (!(FLAG(p_ptr, TR_RES_SOUND)))
 			{
 				(void)inc_stun(randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
 			}
@@ -3310,7 +3310,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Nether -- drain experience */
 			if (blind) msgf("You are hit by nether forces!");
 
-			if (OBJ_FLAG(p_ptr, 1, RES_NETHER))
+			if (FLAG(p_ptr, TR_RES_NETHER))
 			{
 				if (p_ptr->rp.prace != RACE_SPECTRE)
 					dam *= 6;
@@ -3318,11 +3318,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				if ((OBJ_FLAG(p_ptr, 1, HOLD_LIFE)) && (randint0(100) < 75))
+				if ((FLAG(p_ptr, TR_HOLD_LIFE)) && (randint0(100) < 75))
 				{
 					msgf("You keep hold of your life force!");
 				}
-				else if (OBJ_FLAG(p_ptr, 1, HOLD_LIFE))
+				else if (FLAG(p_ptr, TR_HOLD_LIFE))
 				{
 					msgf("You feel your life slipping away!");
 					lose_exp(200 + (p_ptr->exp / 1000) * MON_DRAIN_LIFE);
@@ -3351,11 +3351,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Water -- stun/confuse */
 			if (blind) msgf("You are hit by something wet!");
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SOUND)))
+			if (!(FLAG(p_ptr, TR_RES_SOUND)))
 			{
 				(void)inc_stun(randint1(40));
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
+			if (!(FLAG(p_ptr, TR_RES_CONF)))
 			{
 				(void)inc_confused(rand_range(5, 10));
 			}
@@ -3373,16 +3373,16 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Chaos -- many effects */
 			if (blind) msgf("You are hit by a wave of anarchy!");
-			if (OBJ_FLAG(p_ptr, 1, RES_CHAOS))
+			if (FLAG(p_ptr, TR_RES_CHAOS))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
+			if (!(FLAG(p_ptr, TR_RES_CONF)))
 			{
 				(void)inc_confused(rand_range(20, 30));
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)))
+			if (!(FLAG(p_ptr, TR_RES_CHAOS)))
 			{
 				(void)inc_image(randint1(10));
 				if (one_in_(3))
@@ -3391,14 +3391,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 					(void)gain_mutation(0);
 				}
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_NETHER)) &&
-				!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)))
+			if (!(FLAG(p_ptr, TR_RES_NETHER)) &&
+				!(FLAG(p_ptr, TR_RES_CHAOS)))
 			{
-				if ((OBJ_FLAG(p_ptr, 1, HOLD_LIFE)) && (randint0(100) < 75))
+				if ((FLAG(p_ptr, TR_HOLD_LIFE)) && (randint0(100) < 75))
 				{
 					msgf("You keep hold of your life force!");
 				}
-				else if (OBJ_FLAG(p_ptr, 1, HOLD_LIFE))
+				else if (FLAG(p_ptr, TR_HOLD_LIFE))
 				{
 					msgf("You feel your life slipping away!");
 					lose_exp(500 + (p_ptr->exp / 1000) * MON_DRAIN_LIFE);
@@ -3409,7 +3409,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 					lose_exp(5000 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 				}
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)) || one_in_(9))
+			if (!(FLAG(p_ptr, TR_RES_CHAOS)) || one_in_(9))
 			{
 				(void)inven_damage(set_elec_destroy, 2);
 				(void)inven_damage(set_fire_destroy, 2);
@@ -3422,7 +3422,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Shards -- mostly cutting */
 			if (blind) msgf("You are hit by something sharp!");
-			if (OBJ_FLAG(p_ptr, 1, RES_SHARDS))
+			if (FLAG(p_ptr, TR_RES_SHARDS))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
@@ -3432,7 +3432,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				(void)inc_cut(dam);
 			}
 
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SHARDS)) || one_in_(13))
+			if (!(FLAG(p_ptr, TR_RES_SHARDS)) || one_in_(13))
 			{
 				(void)inven_damage(set_cold_destroy, 2);
 			}
@@ -3445,7 +3445,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Sound -- mostly stunning */
 			if (blind) msgf("You are hit by a loud noise!");
-			if (OBJ_FLAG(p_ptr, 1, RES_SOUND))
+			if (FLAG(p_ptr, TR_RES_SOUND))
 			{
 				dam *= 5;
 				dam /= rand_range(7, 12);
@@ -3455,7 +3455,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				(void)inc_stun(randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
 
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SOUND)) || one_in_(13))
+			if (!(FLAG(p_ptr, TR_RES_SOUND)) || one_in_(13))
 			{
 				(void)inven_damage(set_cold_destroy, 2);
 			}
@@ -3468,12 +3468,12 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Pure confusion */
 			if (blind) msgf("You are hit by something puzzling!");
-			if (OBJ_FLAG(p_ptr, 1, RES_CONF))
+			if (FLAG(p_ptr, TR_RES_CONF))
 			{
 				dam *= 5;
 				dam /= rand_range(7, 12);
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
+			if (!(FLAG(p_ptr, TR_RES_CONF)))
 			{
 				(void)inc_confused(rand_range(10, 30));
 			}
@@ -3485,7 +3485,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Disenchantment -- see above */
 			if (blind) msgf("You are hit by something static!");
-			if (OBJ_FLAG(p_ptr, 1, RES_DISEN))
+			if (FLAG(p_ptr, TR_RES_DISEN))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
@@ -3512,7 +3512,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				dam = dam * 4 / 3;
 			}
 
-			if (OBJ_FLAG(p_ptr, 1, RES_NEXUS))
+			if (FLAG(p_ptr, TR_RES_NEXUS))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
@@ -3529,7 +3529,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Force -- mostly stun */
 			if (blind) msgf("You are hit by kinetic force!");
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SOUND)))
+			if (!(FLAG(p_ptr, TR_RES_SOUND)))
 			{
 				(void)inc_stun(randint1(20));
 			}
@@ -3541,11 +3541,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Rocket -- stun, cut */
 			if (blind) msgf("There is an explosion!");
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SOUND)))
+			if (!(FLAG(p_ptr, TR_RES_SOUND)))
 			{
 				(void)inc_stun(randint1(20));
 			}
-			if (OBJ_FLAG(p_ptr, 1, RES_SHARDS))
+			if (FLAG(p_ptr, TR_RES_SHARDS))
 			{
 				dam /= 2;
 			}
@@ -3554,7 +3554,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				(void)inc_cut(dam / 2);
 			}
 
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SHARDS)) || one_in_(12))
+			if (!(FLAG(p_ptr, TR_RES_SHARDS)) || one_in_(12))
 			{
 				(void)inven_damage(set_cold_destroy, 3);
 			}
@@ -3577,20 +3577,20 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Lite -- blinding */
 			if (blind) msgf("You are hit by something!");
 
-			if (OBJ_FLAG(p_ptr, 3, IM_LITE))
+			if (FLAG(p_ptr, TR_IM_LITE))
 			{
 				dam = 0;
 			}
-			else if (OBJ_FLAG(p_ptr, 1, RES_LITE))
+			else if (FLAG(p_ptr, TR_RES_LITE))
 			{
 				dam *= 4;
 				dam /= rand_range(7, 12);
 			}
-			else if (!blind && !(OBJ_FLAG(p_ptr, 1, RES_BLIND)))
+			else if (!blind && !(FLAG(p_ptr, TR_RES_BLIND)))
 			{
 				(void)inc_blind(rand_range(2, 7));
 			}
-			if (OBJ_FLAG(p_ptr, 3, HURT_LITE))
+			if (FLAG(p_ptr, TR_HURT_LITE))
 			{
 				msgf("The light scorches your flesh!");
 				dam *= 2;
@@ -3616,21 +3616,21 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Dark -- blinding */
 			if (blind) msgf("You are hit by something!");
 
-			if (OBJ_FLAG(p_ptr, 3, IM_DARK)) 
+			if (FLAG(p_ptr, TR_IM_DARK)) 
 			{
 				dam = 0;
 			}
-			else if (OBJ_FLAG(p_ptr, 1, RES_DARK))
+			else if (FLAG(p_ptr, TR_RES_DARK))
 			{
 				dam *= 4;
 				dam /= rand_range(7, 12);
 
 			}
-			else if (!blind && !(OBJ_FLAG(p_ptr, 1, RES_BLIND)))
+			else if (!blind && !(FLAG(p_ptr, TR_RES_BLIND)))
 			{
 				(void)inc_blind(rand_range(2, 7));
 			}
-			if (OBJ_FLAG(p_ptr, 3, HURT_DARK))
+			if (FLAG(p_ptr, TR_HURT_DARK))
 			{
 				dam *= 2;
 			}
@@ -3729,19 +3729,19 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (blind) msgf("You are hit by something heavy!");
 			msgf("Gravity warps around you.");
 			teleport_player(5);
-			if (!(OBJ_FLAG(p_ptr, 2, FEATHER)))
+			if (!(FLAG(p_ptr, TR_FEATHER)))
 				(void)inc_slow(rand_range(4, 8));
-			if (!((OBJ_FLAG(p_ptr, 1, RES_SOUND)) ||
-				 (OBJ_FLAG(p_ptr, 2, FEATHER))))
+			if (!((FLAG(p_ptr, TR_RES_SOUND)) ||
+				 (FLAG(p_ptr, TR_FEATHER))))
 			{
 				(void)inc_stun(randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
-			if (OBJ_FLAG(p_ptr, 2, FEATHER))
+			if (FLAG(p_ptr, TR_FEATHER))
 			{
 				dam = (dam * 2) / 3;
 			}
 
-			if (!(OBJ_FLAG(p_ptr, 2, FEATHER)) || one_in_(13))
+			if (!(FLAG(p_ptr, TR_FEATHER)) || one_in_(13))
 			{
 				(void)inven_damage(set_cold_destroy, 2);
 			}
@@ -3783,7 +3783,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 		case GF_OLD_SLEEP:
 		{
-			if (OBJ_FLAG(p_ptr, 1, FREE_ACT)) break;
+			if (FLAG(p_ptr, TR_FREE_ACT)) break;
 			if (blind) msgf("You fall asleep!");
 
 			if (ironman_nightmare)
@@ -3812,9 +3812,9 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Pure damage */
 			if (blind) msgf("Something falls from the sky on you!");
 			take_hit(dam, killer);
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SHARDS)) || one_in_(13))
+			if (!(FLAG(p_ptr, TR_RES_SHARDS)) || one_in_(13))
 			{
-				if (!(OBJ_FLAG(p_ptr, 1, IM_FIRE)))
+				if (!(FLAG(p_ptr, TR_IM_FIRE)))
 				{
 					(void)inven_damage(set_fire_destroy,2);
 				}
@@ -3829,19 +3829,19 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Ice -- cold plus stun plus cuts */
 			if (blind) msgf("You are hit by something sharp and cold!");
 			cold_dam(dam, killer);
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SHARDS)))
+			if (!(FLAG(p_ptr, TR_RES_SHARDS)))
 			{
 				(void)inc_cut(damroll(5, 8));
 			}
-			if (!(OBJ_FLAG(p_ptr, 1, RES_SOUND)))
+			if (!(FLAG(p_ptr, TR_RES_SOUND)))
 			{
 				(void)inc_stun(randint1(15));
 			}
 
-			if (!((OBJ_FLAG(p_ptr, 1, IM_COLD)) || p_ptr->tim.oppose_cold) ||
+			if (!((FLAG(p_ptr, TR_IM_COLD)) || p_ptr->tim.oppose_cold) ||
 				one_in_(12))
 			{
-				if (!(OBJ_FLAG(p_ptr, 1, IM_COLD)))
+				if (!(FLAG(p_ptr, TR_IM_COLD)))
 				{
 					(void)inven_damage(set_cold_destroy, 3);
 				}

@@ -338,7 +338,7 @@ void teleport_player(int dis)
 	bool look = TRUE;
 	cave_type *c_ptr;
 
-	if (OBJ_FLAG(p_ptr, 2, NO_TELE))
+	if (FLAG(p_ptr, TR_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
 		return;
@@ -514,7 +514,7 @@ void teleport_player_to(int nx, int ny)
 	/* No movement at all */
 	if ((ny == py) && (nx == px)) return;
 
-	if (OBJ_FLAG(p_ptr, 2, NO_TELE))
+	if (FLAG(p_ptr, TR_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
 		return;
@@ -624,7 +624,7 @@ void teleport_player_level(void)
 		return;
 	}
 	
-	if (OBJ_FLAG(p_ptr, 2, NO_TELE))
+	if (FLAG(p_ptr, TR_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
 		return;
@@ -835,7 +835,7 @@ bool apply_disenchant(void)
 
 
 	/* Artifacts have 71% chance to resist */
-	if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && (randint0(100) < 71))
+	if ((FLAG(o_ptr, TR_INSTA_ART)) && (randint0(100) < 71))
 	{
 		/* Message */
 		msgf("Your %s (%c) resist%s disenchantment!",
@@ -1253,7 +1253,7 @@ void fetch(int dir, int wgt, bool require_los)
 	 * Hack - do not get artifacts.
 	 * This interacts badly with preserve mode.
 	 */
-	if (OBJ_FLAG(o_ptr, 2, INSTA_ART))
+	if (FLAG(o_ptr, TR_INSTA_ART))
 	{
 		msgf("The object seems to have a will of its own!");
 		return;
@@ -1416,7 +1416,7 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	if (!cursed_p(o_ptr)) return (FALSE);
 
 	/* Heavily Cursed Items need a special spell */
-	if (!all && (OBJ_FLAG(o_ptr, 2, HEAVY_CURSE)))
+	if (!all && (FLAG(o_ptr, TR_HEAVY_CURSE)))
 	{
 		/* Let the player know */
 		o_ptr->kn_flags[2] |= TR2_HEAVY_CURSE;
@@ -1426,7 +1426,7 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	}
 
 	/* Perma-Cursed Items can NEVER be uncursed */
-	if (OBJ_FLAG(o_ptr, 2, PERMA_CURSE)) 
+	if (FLAG(o_ptr, TR_PERMA_CURSE)) 
 	{
 		/* Let the player know */
 		o_ptr->kn_flags[2] |= TR2_PERMA_CURSE;
@@ -1655,7 +1655,7 @@ void stair_creation(void)
  */
 static void break_curse(object_type *o_ptr)
 {
-	if (cursed_p(o_ptr) && !(OBJ_FLAG(o_ptr, 2, PERMA_CURSE))
+	if (cursed_p(o_ptr) && !(FLAG(o_ptr, TR_PERMA_CURSE))
 		 && (randint0(100) < 25))
 	{
 		msgf("The curse is broken!");
@@ -1715,7 +1715,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 {
 	int i, chance, prob, change;
 	bool res = FALSE;
-	bool a = ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) ? TRUE : FALSE);
+	bool a = ((FLAG(o_ptr, TR_INSTA_ART)) ? TRUE : FALSE);
 	bool force = (eflag & ENCH_FORCE);
 
 
@@ -1972,7 +1972,7 @@ bool artifact_scroll(void)
  */
 static void bad_luck(object_type *o_ptr)
 {
-	bool is_art = ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) ? TRUE : FALSE);
+	bool is_art = ((FLAG(o_ptr, TR_INSTA_ART)) ? TRUE : FALSE);
 
 	object_type *q_ptr;
 
@@ -2050,7 +2050,7 @@ void identify_item(object_type *o_ptr)
 
 	if (!object_known_full(o_ptr))
 	{
-		if (OBJ_FLAG(o_ptr, 2, INSTA_ART))
+		if (FLAG(o_ptr, TR_INSTA_ART))
 			chg_virtue(V_KNOWLEDGE, 3);
 		else
 			chg_virtue(V_KNOWLEDGE, 1);
@@ -2436,7 +2436,7 @@ bool recharge(int power)
 	if (fail)
 	{
 		/* Artifacts are never destroyed. */
-		if (OBJ_FLAG(o_ptr, 2, INSTA_ART))
+		if (FLAG(o_ptr, TR_INSTA_ART))
 		{
 			msgf("The recharging backfires - %v is completely drained!",
 					   OBJECT_FMT(o_ptr, TRUE, 0));
@@ -2609,8 +2609,8 @@ bool bless_weapon(void)
 
 	if (cursed_p(o_ptr))
 	{
-		if (((OBJ_FLAG(o_ptr, 2, HEAVY_CURSE)) && (randint1(100) < 33)) ||
-			(OBJ_FLAG(o_ptr, 2, PERMA_CURSE)))
+		if (((FLAG(o_ptr, TR_HEAVY_CURSE)) && (randint1(100) < 33)) ||
+			(FLAG(o_ptr, TR_PERMA_CURSE)))
 		{
 			msgf("The black aura on the %s disrupts the blessing!",
 					   o_name);
@@ -2631,7 +2631,7 @@ bool bless_weapon(void)
 	 * artifact weapon they find. Ego weapons and normal weapons
 	 * can be blessed automatically.
 	 */
-	if (OBJ_FLAG(o_ptr, 2, BLESSED))
+	if (FLAG(o_ptr, TR_BLESSED))
 	{
 		msgf("The %s %s blessed already.", o_name,
 				   ((o_ptr->number > 1) ? "were" : "was"));
@@ -3010,7 +3010,7 @@ int spell_mana(int spell, int realm)
 	smana = s_ptr->smana;
 
 	/* Chaos patrons improve chaos magic */
-	if ((realm == REALM_CHAOS - 1) && (OBJ_FLAG(p_ptr, 3, PATRON)))
+	if ((realm == REALM_CHAOS - 1) && (FLAG(p_ptr, TR_PATRON)))
 	{
 		smana = (smana * 2 + 2) / 3;
 	}
@@ -3944,7 +3944,7 @@ bool hates_cold(const object_type *o_ptr)
 int set_acid_destroy(object_type *o_ptr)
 {
 	if (!hates_acid(o_ptr)) return (FALSE);
-	if (OBJ_FLAG(o_ptr, 2, IGNORE_ACID)) return (FALSE);
+	if (FLAG(o_ptr, TR_IGNORE_ACID)) return (FALSE);
 	return (TRUE);
 }
 
@@ -3955,7 +3955,7 @@ int set_acid_destroy(object_type *o_ptr)
 int set_elec_destroy(object_type *o_ptr)
 {
 	if (!hates_elec(o_ptr)) return (FALSE);
-	if (OBJ_FLAG(o_ptr, 2, IGNORE_ELEC)) return (FALSE);
+	if (FLAG(o_ptr, TR_IGNORE_ELEC)) return (FALSE);
 	return (TRUE);
 }
 
@@ -3966,7 +3966,7 @@ int set_elec_destroy(object_type *o_ptr)
 int set_fire_destroy(object_type *o_ptr)
 {
 	if (!hates_fire(o_ptr)) return (FALSE);
-	if (OBJ_FLAG(o_ptr, 2, IGNORE_FIRE)) return (FALSE);
+	if (FLAG(o_ptr, TR_IGNORE_FIRE)) return (FALSE);
 	return (TRUE);
 }
 
@@ -3977,7 +3977,7 @@ int set_fire_destroy(object_type *o_ptr)
 int set_cold_destroy(object_type *o_ptr)
 {
 	if (!hates_cold(o_ptr)) return (FALSE);
-	if (OBJ_FLAG(o_ptr, 2, IGNORE_COLD)) return (FALSE);
+	if (FLAG(o_ptr, TR_IGNORE_COLD)) return (FALSE);
 	return (TRUE);
 }
 
@@ -4005,7 +4005,7 @@ int inven_damage(inven_func typ, int perc)
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Hack -- for now, skip artifacts */
-		if (OBJ_FLAG(o_ptr, 2, INSTA_ART)) continue;
+		if (FLAG(o_ptr, TR_INSTA_ART)) continue;
 
 		/* Give this item slot a shot at death */
 		if ((*typ) (o_ptr))
@@ -4117,7 +4117,7 @@ bool curse_armor(void)
 	object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 	/* Attempt a saving throw for artifacts */
-	if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && !one_in_(3))
+	if ((FLAG(o_ptr, TR_INSTA_ART)) && !one_in_(3))
 	{
 		/* Cool */
 		msgf("A %s tries to %s, but your %s resists the effects!",
@@ -4187,7 +4187,7 @@ bool curse_weapon(void)
 	object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 	/* Attempt a saving throw */
-	if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && !one_in_(3))
+	if ((FLAG(o_ptr, TR_INSTA_ART)) && !one_in_(3))
 	{
 		/* Cool */
 		msgf("A %s tries to %s, but your %s resists the effects!",
@@ -4508,12 +4508,12 @@ void sanity_blast(const monster_type *m_ptr)
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
 	{
-		if ((!(OBJ_FLAG(p_ptr, 1, RES_FEAR))) || one_in_(5))
+		if ((!(FLAG(p_ptr, TR_RES_FEAR))) || one_in_(5))
 		{
 			/* Get afraid, even if have resist fear! */
 			(void)inc_afraid(rand_range(10, 20));
 		}
-		if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)))
+		if (!(FLAG(p_ptr, TR_RES_CHAOS)))
 		{
 			(void)inc_image(rand_range(150, 400));
 		}

@@ -868,7 +868,7 @@ static bool cast_sorcery_spell(int spell)
 			break;
 		case 27:				/* Clairvoyance */
 			wiz_lite();
-			if (!(OBJ_FLAG(p_ptr, 2, TELEPATHY)))
+			if (!(FLAG(p_ptr, TR_TELEPATHY)))
 			{
 				(void)inc_tim_esp(rand_range(25, 55));
 			}
@@ -927,9 +927,9 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 4:				/* Daylight */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-			if ((OBJ_FLAG(p_ptr, 3, HURT_LITE)) &&
-				!(OBJ_FLAG(p_ptr, 1, RES_LITE)) &&
-				!(OBJ_FLAG(p_ptr, 3, IM_LITE)))
+			if ((FLAG(p_ptr, TR_HURT_LITE)) &&
+				!(FLAG(p_ptr, TR_RES_LITE)) &&
+				!(FLAG(p_ptr, TR_IM_LITE)))
 			{
 				msgf("The daylight scorches your flesh!");
 				take_hit(damroll(2, 2), "daylight");
@@ -1040,9 +1040,9 @@ static bool cast_nature_spell(int spell)
 		case 29:				/* Call Sunlight */
 			(void)fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-			if ((OBJ_FLAG(p_ptr, 3, HURT_LITE)) &&
-				!(OBJ_FLAG(p_ptr, 1, RES_LITE)) &&
-				!(OBJ_FLAG(p_ptr, 3, IM_LITE)))
+			if ((FLAG(p_ptr, TR_HURT_LITE)) &&
+				!(FLAG(p_ptr, TR_RES_LITE)) &&
+				!(FLAG(p_ptr, TR_IM_LITE)))
 			{
 				msgf("The sunlight scorches your flesh!");
 				take_hit(50, "sunlight");
@@ -2594,7 +2594,7 @@ static bool cast_arcane_spell(int spell)
 			break;
 		case 31:				/* Clairvoyance */
 			wiz_lite();
-			if (!(OBJ_FLAG(p_ptr, 2, TELEPATHY)))
+			if (!(FLAG(p_ptr, TR_TELEPATHY)))
 			{
 				(void)inc_tim_esp(rand_range(25, 55));
 			}
@@ -2744,11 +2744,11 @@ void do_cmd_cast(void)
 				/* Mind blast */
 				if (!saving_throw(p_ptr->skills[SKILL_SAV]))
 				{
-					if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
+					if (!(FLAG(p_ptr, TR_RES_CONF)))
 					{
 						(void)inc_confused(rand_range(4, 8));
 					}
-					if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)) && one_in_(3))
+					if (!(FLAG(p_ptr, TR_RES_CHAOS)) && one_in_(3))
 					{
 						(void)inc_image(rand_range(150, 400));
 					}
@@ -2766,7 +2766,7 @@ void do_cmd_cast(void)
 				msgf("It hurts!");
 				take_hit(damroll(o_ptr->sval + 1, 6), "a miscast Death spell");
 				if ((spell > 15) && one_in_(6) &&
-					 !(OBJ_FLAG(p_ptr, 1, HOLD_LIFE)))
+					 !(FLAG(p_ptr, TR_HOLD_LIFE)))
 					lose_exp(spell * 250);
 			}
 		}

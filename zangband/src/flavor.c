@@ -336,7 +336,7 @@ static bool object_easy_know(int i)
 {
 	object_kind *k_ptr = &k_info[i];
 
-	if (OBJ_FLAG(k_ptr, 2, EASY_KNOW)) return (TRUE);
+	if (FLAG(k_ptr, TR_EASY_KNOW)) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
@@ -768,7 +768,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	if (object_known_p(o_ptr)) known = TRUE;
 
 	/* Artifacts are not "aware' unless "known" */
-	if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && !known) aware = FALSE;
+	if ((FLAG(o_ptr, TR_INSTA_ART)) && !known) aware = FALSE;
 
 	/* Extract default "base" string */
 	basenm = get_object_name(o_ptr);
@@ -856,7 +856,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Amulets (including a few "Specials") */
 
 			/* Known artifacts */
-			if ((OBJ_FLAG(k_ptr, 2, INSTA_ART)) && aware) break;
+			if ((FLAG(k_ptr, TR_INSTA_ART)) && aware) break;
 
 			/* Color the object */
 			modstr = amulet_adj[o_ptr->sval];
@@ -874,7 +874,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Rings (including a few "Specials") */
 
 			/* Known artifacts */
-			if ((OBJ_FLAG(k_ptr, 2, INSTA_ART)) && aware) break;
+			if ((FLAG(k_ptr, TR_INSTA_ART)) && aware) break;
 
 			/* Color the object */
 			modstr = ring_adj[o_ptr->sval];
@@ -1079,7 +1079,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && (OBJ_FLAG(o_ptr, 2, INSTA_ART)))
+		else if (known && (FLAG(o_ptr, TR_INSTA_ART)))
 		{
 			strnfcat(buf, max, &len, "The ");
 		}
@@ -1128,7 +1128,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && (OBJ_FLAG(o_ptr, 2, INSTA_ART)))
+		else if (known && (FLAG(o_ptr, TR_INSTA_ART)))
 		{
 			strnfcat(buf, max, &len, "The ");
 		}
@@ -1293,7 +1293,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 
 	/* Display the item like a weapon */
-	if (OBJ_FLAG(o_ptr, 2, SHOW_MODS)) show_weapon = TRUE;
+	if (FLAG(o_ptr, TR_SHOW_MODS)) show_weapon = TRUE;
 
 	/* Display the item like a weapon */
 	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
@@ -1369,7 +1369,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			}
 
 			/* Apply the "Extra Might" flag */
-			if (OBJ_FLAG(o_ptr, 2, XTRA_MIGHT)) power++;
+			if (FLAG(o_ptr, TR_XTRA_MIGHT)) power++;
 
 			/* Append a special "damage" string */
 			strnfcat(buf, max, &len, " (x%d)", power);
@@ -1435,7 +1435,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		tmul = p_ptr->ammo_mult;
 
 		/* Get extra "power" from "extra might" */
-		if (OBJ_FLAG(p_ptr, 2, XTRA_MIGHT)) tmul++;
+		if (FLAG(p_ptr, TR_XTRA_MIGHT)) tmul++;
 
 		/* launcher multiplier */
 		avgdam *= tmul;
@@ -1548,7 +1548,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Hack -- Process Lanterns/Torches */
 	else if (o_ptr->tval == TV_LITE)
 	{
-		if (OBJ_FLAG(o_ptr, 2, LITE))
+		if (FLAG(o_ptr, TR_LITE))
 		{
 			/* Hack - tell us when lites of everburning are "empty" */
 			if ((o_ptr->sval <= SV_LITE_LANTERN) && !o_ptr->timeout)
@@ -1565,26 +1565,26 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 
 	/* Dump "pval" flags for wearable items */
-	if (known && (OBJ_FLAG(o_ptr, 0, PVAL_MASK)))
+	if (known && (FLAG(o_ptr, TR_PVAL_MASK)))
 	{
 		/* Start the display */
 		strnfcat(buf, max, &len, " (%+d", o_ptr->pval);
 
 		/* Do not display the "pval" flags */
-		if (OBJ_FLAG(o_ptr, 2, HIDE_TYPE))
+		if (FLAG(o_ptr, TR_HIDE_TYPE))
 		{
 			/* Nothing */
 		}
 
 		/* Speed */
-		else if (OBJ_FLAG(o_ptr, 0, SPEED))
+		else if (FLAG(o_ptr, TR_SPEED))
 		{
 			/* Dump " to speed" */
 			strnfcat(buf, max, &len, " to speed");
 		}
 
 		/* Attack speed */
-		else if (OBJ_FLAG(o_ptr, 0, BLOWS))
+		else if (FLAG(o_ptr, TR_BLOWS))
 		{
 			if (ABS(o_ptr->pval) == 1)
 			{

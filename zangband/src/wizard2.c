@@ -921,7 +921,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 	char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && o_ptr->activate) 
+	if ((FLAG(o_ptr, TR_INSTA_ART)) && o_ptr->activate) 
 		return (o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
@@ -935,7 +935,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 			("[a]ccept, [w]orthless, [n]ormal, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
-			if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && o_ptr->activate)
+			if ((FLAG(o_ptr, TR_INSTA_ART)) && o_ptr->activate)
 			{
 				a_info[o_ptr->activate].cur_num = 0;
 				o_ptr->activate = 0;
@@ -949,7 +949,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 		if (ch == 'A' || ch == 'a') break;
 
 		/* Preserve wizard-generated artifacts */
-		if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && o_ptr->activate)
+		if ((FLAG(o_ptr, TR_INSTA_ART)) && o_ptr->activate)
 		{
 			a_info[o_ptr->activate].cur_num = 0;
 			o_ptr->activate = 0;
@@ -1051,7 +1051,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 
 
 	/* Never duplicate artifacts */
-	if (OBJ_FLAG(o_ptr, 2, INSTA_ART)) return;
+	if (FLAG(o_ptr, TR_INSTA_ART)) return;
 
 	/* Store old quantity. -LM- */
 	tmp_qnt = o_ptr->number;

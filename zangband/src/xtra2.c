@@ -92,15 +92,15 @@ void check_experience(void)
 			for (vir = 0; vir < MAX_PLAYER_VIRTUES; vir++)
 				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
 
-			if (OBJ_FLAG(p_ptr, 3, MUTATE))
+			if (FLAG(p_ptr, TR_MUTATE))
 			{
 				if (one_in_(5)) level_mutation = TRUE;
 			}
 
 			p_ptr->max_lev = p_ptr->lev;
 
-			if ((OBJ_FLAG(p_ptr, 3, PATRON)) ||
-				(one_in_(7) && (OBJ_FLAG(p_ptr, 3, STRANGE_LUCK))))
+			if ((FLAG(p_ptr, TR_PATRON)) ||
+				(one_in_(7) && (FLAG(p_ptr, TR_STRANGE_LUCK))))
 			{
 				level_reward = TRUE;
 			}
@@ -3266,7 +3266,7 @@ void gain_level_reward(int chosen_reward)
 	else if (!(p_ptr->lev % 14)) nasty_chance = 12;
 
 	/* Strange luck can give chaos rewards from a random patron */
-	if (!(OBJ_FLAG(p_ptr, 3, PATRON)))
+	if (!(FLAG(p_ptr, TR_PATRON)))
 	{
 		nasty_chance *= 2;
 		patron = randint0(MAX_PATRON);

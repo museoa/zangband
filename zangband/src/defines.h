@@ -101,17 +101,6 @@
 
 
 /*
- * Flag manipulation macros
- */
-#define SET_FLAG(ff, i, mask) ((ff)[i] |= (mask))
-#define TEST_FLAG(ff, i, mask) (((ff)[i] & (mask)) != 0)
-#define TR_FLAG(ff, i, flag) TEST_FLAG(ff, i, TR ## i ## _ ## flag)
-#define RF_FLAG(ff, i, flag) TEST_FLAG(ff, i, RF ## i ## _ ## flag)
-
-#define OBJ_FLAG(O, i, flag) TR_FLAG((O)->flags, i, flag)
-#define MON_FLAG(M, i, flag) RF_FLAG((M)->flags, i, flag)
-
-/*
  * Script triggers
  */
 #define MAX_TRIGGER     8
@@ -3022,6 +3011,148 @@
 	 TR2_IGNORE_COLD )
 
 
+
+/* Helpers for the FLAG() macro */
+#define TR_STR				TR,	0,	STR
+#define TR_INT				TR,	0,	INT
+#define TR_WIS  		 	TR, 0,  WIS		  
+#define TR_DEX  		 	TR, 0,  DEX		  
+#define TR_CON  		 	TR, 0,  CON		  
+#define TR_CHR  		 	TR, 0,  CHR 		 
+#define TR_XXX1 		 	TR, 0,  XXX1		 
+#define TR_SP			 	TR, 0,  SP  		 
+#define TR_STEALTH  	 	TR, 0,  STEALTH 	 
+#define TR_SEARCH		 	TR, 0,  SEARCH  	 
+#define TR_INFRA		 	TR, 0,  INFRA		 
+#define TR_TUNNEL		 	TR, 0,  TUNNEL  	 
+#define TR_SPEED		 	TR, 0,  SPEED		 
+#define TR_BLOWS		 	TR, 0,  BLOWS		 
+#define TR_CHAOTIC  	 	TR, 0,  CHAOTIC 	 
+#define TR_VAMPIRIC 	 	TR, 0,  VAMPIRIC	 
+#define TR_SLAY_ANIMAL   	TR, 0,  SLAY_ANIMAL  
+#define TR_SLAY_EVIL	 	TR, 0,  SLAY_EVIL	 
+#define TR_SLAY_UNDEAD   	TR, 0,  SLAY_UNDEAD  
+#define TR_SLAY_DEMON	 	TR, 0,  SLAY_DEMON   
+#define TR_SLAY_ORC 	 	TR, 0,  SLAY_ORC	 
+#define TR_SLAY_TROLL	 	TR, 0,  SLAY_TROLL   
+#define TR_SLAY_GIANT	 	TR, 0,  SLAY_GIANT   
+#define TR_SLAY_DRAGON   	TR, 0,  SLAY_DRAGON  
+#define TR_KILL_DRAGON   	TR, 0,  KILL_DRAGON  
+#define TR_VORPAL		 	TR, 0,  VORPAL  	 
+#define TR_IMPACT		 	TR, 0,  IMPACT  	 
+#define TR_BRAND_POIS	 	TR, 0,  BRAND_POIS   
+#define TR_BRAND_ACID	 	TR, 0,  BRAND_ACID   
+#define TR_BRAND_ELEC	 	TR, 0,  BRAND_ELEC   
+#define TR_BRAND_FIRE	 	TR, 0,  BRAND_FIRE   
+#define TR_BRAND_COLD	 	TR, 0,  BRAND_COLD   
+
+#define TR_SUST_STR 	 	TR, 1,  SUST_STR	 
+#define TR_SUST_INT 	 	TR, 1,  SUST_INT	 
+#define TR_SUST_WIS 	 	TR, 1,  SUST_WIS	 
+#define TR_SUST_DEX 	 	TR, 1,  SUST_DEX	 
+#define TR_SUST_CON 	 	TR, 1,  SUST_CON	 
+#define TR_SUST_CHR 	 	TR, 1,  SUST_CHR	 
+#define TR_XXX2 		 	TR, 1,  XXX2	   
+#define TR_XXX3 		 	TR, 1,  XXX3	   
+#define TR_IM_ACID  	 	TR, 1,  IM_ACID    
+#define TR_IM_ELEC  	 	TR, 1,  IM_ELEC    
+#define TR_IM_FIRE  	 	TR, 1,  IM_FIRE    
+#define TR_IM_COLD  	 	TR, 1,  IM_COLD    
+#define TR_THROW		 	TR, 1,  THROW	   
+#define TR_REFLECT  	 	TR, 1,  REFLECT    
+#define TR_FREE_ACT 	 	TR, 1,  FREE_ACT	 
+#define TR_HOLD_LIFE	 	TR, 1,  HOLD_LIFE	 
+#define TR_RES_ACID 	 	TR, 1,  RES_ACID	 
+#define TR_RES_ELEC 	 	TR, 1,  RES_ELEC	 
+#define TR_RES_FIRE 	 	TR, 1,  RES_FIRE	 
+#define TR_RES_COLD 	 	TR, 1,  RES_COLD	 
+#define TR_RES_POIS 	 	TR, 1,  RES_POIS	 
+#define TR_RES_FEAR 	 	TR, 1,  RES_FEAR	 
+#define TR_RES_LITE 	 	TR, 1,  RES_LITE	 
+#define TR_RES_DARK 	 	TR, 1,  RES_DARK	 
+#define TR_RES_BLIND	 	TR, 1,  RES_BLIND	 
+#define TR_RES_CONF 	 	TR, 1,  RES_CONF	 
+#define TR_RES_SOUND	 	TR, 1,  RES_SOUND	 
+#define TR_RES_SHARDS	 	TR, 1,  RES_SHARDS   
+#define TR_RES_NETHER	 	TR, 1,  RES_NETHER   
+#define TR_RES_NEXUS	 	TR, 1,  RES_NEXUS	 
+#define TR_RES_CHAOS	 	TR, 1,  RES_CHAOS	 
+#define TR_RES_DISEN	 	TR, 1,  RES_DISEN	 
+
+#define TR_SH_FIRE  	 	TR, 2,  SH_FIRE 	 
+#define TR_SH_ELEC  	 	TR, 2,  SH_ELEC 	 
+#define TR_QUESTITEM	 	TR, 2,  QUESTITEM	 
+#define TR_XXX4 		 	TR, 2,  XXX4		 
+#define TR_NO_TELE  	 	TR, 2,  NO_TELE 	 
+#define TR_NO_MAGIC 	 	TR, 2,  NO_MAGIC	 
+#define TR_XXX5 		 	TR, 2,  XXX5		 
+#define TR_TY_CURSE 	 	TR, 2,  TY_CURSE	 
+#define TR_EASY_KNOW	 	TR, 2,  EASY_KNOW	 
+#define TR_HIDE_TYPE	 	TR, 2,  HIDE_TYPE	 
+#define TR_SHOW_MODS	 	TR, 2,  SHOW_MODS	 
+#define TR_INSTA_ART	 	TR, 2,  INSTA_ART	 
+#define TR_FEATHER  	 	TR, 2,  FEATHER 	 
+#define TR_LITE 		 	TR, 2,  LITE		 
+#define TR_SEE_INVIS	 	TR, 2,  SEE_INVIS	 
+#define TR_TELEPATHY	 	TR, 2,  TELEPATHY	 
+#define TR_SLOW_DIGEST   	TR, 2,  SLOW_DIGEST  
+#define TR_REGEN		 	TR, 2,  REGEN		 
+#define TR_XTRA_MIGHT	 	TR, 2,  XTRA_MIGHT   
+#define TR_XTRA_SHOTS	 	TR, 2,  XTRA_SHOTS   
+#define TR_IGNORE_ACID   	TR, 2,  IGNORE_ACID  
+#define TR_IGNORE_ELEC   	TR, 2,  IGNORE_ELEC  
+#define TR_IGNORE_FIRE   	TR, 2,  IGNORE_FIRE  
+#define TR_IGNORE_COLD   	TR, 2,  IGNORE_COLD  
+#define TR_ACTIVATE 	 	TR, 2,  ACTIVATE	 
+#define TR_DRAIN_EXP	 	TR, 2,  DRAIN_EXP	 
+#define TR_TELEPORT 	 	TR, 2,  TELEPORT	 
+#define TR_AGGRAVATE	 	TR, 2,  AGGRAVATE	 
+#define TR_BLESSED  	 	TR, 2,  BLESSED 	 
+#define TR_CURSED		 	TR, 2,  CURSED  	 
+#define TR_HEAVY_CURSE   	TR, 2,  HEAVY_CURSE  
+#define TR_PERMA_CURSE   	TR, 2,  PERMA_CURSE  
+
+
+#define TR_LUCK_10  	 	TR, 3,  LUCK_10 	 
+#define TR_XXX6 		 	TR, 3,  XXX6		 
+#define TR_XXX7 		 	TR, 3,  XXX7		 
+#define TR_XXX8 		 	TR, 3,  XXX8		 
+#define TR_XXX9 		 	TR, 3,  XXX9		 
+#define TR_XXX10 		 	TR, 3,  XXX10		 
+#define TR_XXX11		 	TR, 3,  XXX11	 
+#define TR_XXX12 		 	TR, 3,  XXX12	 
+#define TR_IM_LITE  	 	TR, 3,  IM_LITE 	 
+#define TR_IM_DARK  	 	TR, 3,  IM_DARK 	 
+#define TR_SH_ACID  	 	TR, 3,  SH_ACID 	 
+#define TR_SH_COLD  	 	TR, 3,  SH_COLD 	 
+#define TR_MUTATE		 	TR, 3,  MUTATE  	 
+#define TR_PATRON		 	TR, 3,  PATRON  	 
+#define TR_STRANGE_LUCK  	TR, 3,  STRANGE_LUCK 
+#define TR_PASS_WALL	 	TR, 3,  PASS_WALL	 
+#define TR_GHOUL_TOUCH   	TR, 3,  GHOUL_TOUCH  
+#define TR_PSI_CRIT 	 	TR, 3,  PSI_CRIT	 
+#define TR_RETURN		 	TR, 3,  RETURN  	 
+#define TR_EXPLODE  	 	TR, 3,  EXPLODE 	 
+#define TR_HURT_ACID	 	TR, 3,  HURT_ACID	 
+#define TR_HURT_ELEC	 	TR, 3,  HURT_ELEC	 
+#define TR_HURT_FIRE	 	TR, 3,  HURT_FIRE	 
+#define TR_HURT_COLD	 	TR, 3,  HURT_COLD	 
+#define TR_HURT_LITE	 	TR, 3,  HURT_LITE	 
+#define TR_HURT_DARK	 	TR, 3,  HURT_DARK	 
+#define TR_XXX27		 	TR, 3,  XXX27		 
+#define TR_XXX28		 	TR, 3,  XXX28		 
+#define TR_AUTO_CURSE	 	TR, 3,  AUTO_CURSE   
+#define TR_DRAIN_STATS   	TR, 3,  DRAIN_STATS  
+#define TR_CANT_EAT 	 	TR, 3,  CANT_EAT	 
+#define TR_SLOW_HEAL	 	TR, 3,  SLOW_HEAL	 
+
+
+/* Extra helpers */
+#define TR_PVAL_MASK     	TR,  0,	PVAL_MASK
+#define TR_EASY_MASK    	TR,  0,	EASY_MASK
+#define TR_IGNORE_MASK      TR,  2,	IGNORE_MASK 
+
+
 /*** Monster blow constants ***/
 
 
@@ -3571,6 +3702,289 @@
 	 RF3_BR_CHAO | RF3_BR_DISE | RF3_BR_NEXU | RF3_BR_TIME | RF3_BR_INER | \
 	 RF3_BR_GRAV | RF3_BR_SHAR | RF3_BR_PLAS | RF3_BR_WALL | RF3_BR_MANA | \
 	 RF3_BR_NUKE | RF3_BR_DISI)
+
+
+#define RF_UNIQUE			   RF, 0,  UNIQUE	  
+#define RF_QUESTOR  		   RF, 0,  QUESTOR    
+#define RF_MALE 			   RF, 0,  MALE 	
+#define RF_FEMALE			   RF, 0,  FEMALE	  
+#define RF_CHAR_CLEAR		   RF, 0,  CHAR_CLEAR 
+#define RF_CHAR_MIMIC		   RF, 0,  CHAR_MIMIC 
+#define RF_ATTR_CLEAR		   RF, 0,  ATTR_CLEAR 
+#define RF_ATTR_MULTI		   RF, 0,  ATTR_MULTI 
+#define RF_FORCE_DEPTH  	   RF, 0,  FORCE_DEPTH
+#define RF_FORCE_MAXHP  	   RF, 0,  FORCE_MAXHP
+#define RF_FORCE_SLEEP  	   RF, 0,  FORCE_SLEEP
+#define RF_FORCE_EXTRA  	   RF, 0,  FORCE_EXTRA
+#define RF_XXX_1			   RF, 0,  XXX_1	
+#define RF_FRIENDS  		   RF, 0,  FRIENDS    
+#define RF_ESCORT			   RF, 0,  ESCORT	  
+#define RF_ESCORTS  		   RF, 0,  ESCORTS    
+#define RF_NEVER_BLOW		   RF, 0,  NEVER_BLOW 
+#define RF_NEVER_MOVE		   RF, 0,  NEVER_MOVE 
+#define RF_RAND_25  		   RF, 0,  RAND_25    
+#define RF_RAND_50  		   RF, 0,  RAND_50    
+#define RF_ONLY_GOLD		   RF, 0,  ONLY_GOLD  
+#define RF_ONLY_ITEM		   RF, 0,  ONLY_ITEM  
+#define RF_DROP_60  		   RF, 0,  DROP_60    
+#define RF_DROP_90  		   RF, 0,  DROP_90    
+#define RF_DROP_1D2 		   RF, 0,  DROP_1D2   
+#define RF_DROP_2D2 		   RF, 0,  DROP_2D2   
+#define RF_DROP_3D2 		   RF, 0,  DROP_3D2   
+#define RF_DROP_4D2 		   RF, 0,  DROP_4D2   
+#define RF_DROP_GOOD		   RF, 0,  DROP_GOOD  
+#define RF_DROP_GREAT		   RF, 0,  DROP_GREAT 
+#define RF_DROP_USEFUL  	   RF, 0,  DROP_USEFUL
+#define RF_DROP_CHOSEN  	   RF, 0,  DROP_CHOSEN
+
+/*
+ * New monster race bit flags
+ */
+#define RF_STUPID			   RF, 1,  STUPID		
+#define RF_SMART			   RF, 1,  SMART		
+#define RF_CAN_SPEAK		   RF, 1,  CAN_SPEAK	
+#define RF_REFLECTING		   RF, 1,  REFLECTING	
+#define RF_INVISIBLE		   RF, 1,  INVISIBLE	
+#define RF_COLD_BLOOD		   RF, 1,  COLD_BLOOD	
+#define RF_EMPTY_MIND		   RF, 1,  EMPTY_MIND	
+#define RF_WEIRD_MIND		   RF, 1,  WEIRD_MIND	
+#define RF_MULTIPLY 		   RF, 1,  MULTIPLY 	
+#define RF_REGENERATE		   RF, 1,  REGENERATE	
+#define RF_SHAPECHANGER 	   RF, 1,  SHAPECHANGER    
+#define RF_ATTR_ANY 		   RF, 1,  ATTR_ANY 	
+#define RF_POWERFUL 		   RF, 1,  POWERFUL 	
+#define RF_XXX_2			   RF, 1,  XXX_2		
+#define RF_AURA_FIRE		   RF, 1,  AURA_FIRE	
+#define RF_AURA_ELEC		   RF, 1,  AURA_ELEC	
+#define RF_OPEN_DOOR		   RF, 1,  OPEN_DOOR	
+#define RF_BASH_DOOR		   RF, 1,  BASH_DOOR	
+#define RF_PASS_WALL		   RF, 1,  PASS_WALL	
+#define RF_KILL_WALL		   RF, 1,  KILL_WALL	
+#define RF_MOVE_BODY		   RF, 1,  MOVE_BODY	
+#define RF_KILL_BODY		   RF, 1,  KILL_BODY	
+#define RF_TAKE_ITEM		   RF, 1,  TAKE_ITEM	
+#define RF_KILL_ITEM		   RF, 1,  KILL_ITEM	
+#define RF_BRAIN_1  		   RF, 1,  BRAIN_1  		
+#define RF_BRAIN_2  		   RF, 1,  BRAIN_2  		
+#define RF_BRAIN_3  		   RF, 1,  BRAIN_3  		
+#define RF_BRAIN_4  		   RF, 1,  BRAIN_4  		
+#define RF_BRAIN_5  		   RF, 1,  BRAIN_5  		
+#define RF_BRAIN_6  		   RF, 1,  BRAIN_6  		
+#define RF_BRAIN_7  		   RF, 1,  BRAIN_7  		
+#define RF_QUANTUM  		   RF, 1,  QUANTUM  		
+
+/*
+ * New monster race bit flag
+ */
+#define RF_ORC  			   RF, 2,  ORC  	  
+#define RF_TROLL			   RF, 2,  TROLL	  
+#define RF_GIANT			   RF, 2,  GIANT	  
+#define RF_DRAGON			   RF, 2,  DRAGON	  
+#define RF_DEMON			   RF, 2,  DEMON	  
+#define RF_UNDEAD			   RF, 2,  UNDEAD	  
+#define RF_EVIL 			   RF, 2,  EVIL 	  
+#define RF_ANIMAL			   RF, 2,  ANIMAL	  
+#define RF_AMBERITE 		   RF, 2,  AMBERITE   
+#define RF_GOOD 			   RF, 2,  GOOD 	  
+#define RF_AURA_COLD		   RF, 2,  AURA_COLD  
+#define RF_NONLIVING		   RF, 2,  NONLIVING  
+#define RF_HURT_LITE		   RF, 2,  HURT_LITE  
+#define RF_HURT_ROCK		   RF, 2,  HURT_ROCK  
+#define RF_HURT_FIRE		   RF, 2,  HURT_FIRE  
+#define RF_HURT_COLD		   RF, 2,  HURT_COLD  
+#define RF_IM_ACID  		   RF, 2,  IM_ACID    
+#define RF_IM_ELEC  		   RF, 2,  IM_ELEC    
+#define RF_IM_FIRE  		   RF, 2,  IM_FIRE    
+#define RF_IM_COLD  		   RF, 2,  IM_COLD    
+#define RF_IM_POIS  		   RF, 2,  IM_POIS    
+#define RF_RES_TELE 		   RF, 2,  RES_TELE   
+#define RF_RES_NETH 		   RF, 2,  RES_NETH   
+#define RF_RES_WATE 		   RF, 2,  RES_WATE   
+#define RF_RES_PLAS 		   RF, 2,  RES_PLAS   
+#define RF_RES_NEXU 		   RF, 2,  RES_NEXU   
+#define RF_RES_DISE 		   RF, 2,  RES_DISE   
+#define RF_UNIQUE_7 		   RF, 2,  UNIQUE_7   
+#define RF_NO_FEAR  		   RF, 2,  NO_FEAR    
+#define RF_NO_STUN  		   RF, 2,  NO_STUN    
+#define RF_NO_CONF  		   RF, 2,  NO_CONF    
+#define RF_NO_SLEEP 		   RF, 2,  NO_SLEEP   
+
+/*
+ * New monster race bit flag
+ */
+#define RF_SHRIEK			   RF, 3,  SHRIEK		
+#define RF_ELDRITCH_HORROR     RF, 3,  ELDRITCH_HORROR 
+#define RF_XXX3 			   RF, 3,  XXX3 		
+#define RF_ROCKET			   RF, 3,  ROCKET		
+#define RF_ARROW_1  		   RF, 3,  ARROW_1  	
+#define RF_ARROW_2  		   RF, 3,  ARROW_2  	
+#define RF_ARROW_3  		   RF, 3,  ARROW_3  	
+#define RF_ARROW_4  		   RF, 3,  ARROW_4  	
+#define RF_BR_ACID  		   RF, 3,  BR_ACID  	
+#define RF_BR_ELEC  		   RF, 3,  BR_ELEC  	
+#define RF_BR_FIRE  		   RF, 3,  BR_FIRE  	
+#define RF_BR_COLD  		   RF, 3,  BR_COLD  	
+#define RF_BR_POIS  		   RF, 3,  BR_POIS  	
+#define RF_BR_NETH  		   RF, 3,  BR_NETH  	
+#define RF_BR_LITE  		   RF, 3,  BR_LITE  	
+#define RF_BR_DARK  		   RF, 3,  BR_DARK  	
+#define RF_BR_CONF  		   RF, 3,  BR_CONF  	
+#define RF_BR_SOUN  		   RF, 3,  BR_SOUN  	
+#define RF_BR_CHAO  		   RF, 3,  BR_CHAO  	
+#define RF_BR_DISE  		   RF, 3,  BR_DISE  	
+#define RF_BR_NEXU  		   RF, 3,  BR_NEXU  	
+#define RF_BR_TIME  		   RF, 3,  BR_TIME  	
+#define RF_BR_INER  		   RF, 3,  BR_INER  	
+#define RF_BR_GRAV  		   RF, 3,  BR_GRAV  	
+#define RF_BR_SHAR  		   RF, 3,  BR_SHAR  	
+#define RF_BR_PLAS  		   RF, 3,  BR_PLAS  	
+#define RF_BR_WALL  		   RF, 3,  BR_WALL  	
+#define RF_BR_MANA  		   RF, 3,  BR_MANA  	
+#define RF_BA_NUKE  		   RF, 3,  BA_NUKE  	
+#define RF_BR_NUKE  		   RF, 3,  BR_NUKE  	
+#define RF_BA_CHAO  		   RF, 3,  BA_CHAO  	
+#define RF_BR_DISI  		   RF, 3,  BR_DISI  	
+
+/*
+ * New monster race bit flag
+ */
+#define RF_BA_ACID  		   RF, 4,  BA_ACID    
+#define RF_BA_ELEC  		   RF, 4,  BA_ELEC    
+#define RF_BA_FIRE  		   RF, 4,  BA_FIRE    
+#define RF_BA_COLD  		   RF, 4,  BA_COLD    
+#define RF_BA_POIS  		   RF, 4,  BA_POIS    
+#define RF_BA_NETH  		   RF, 4,  BA_NETH    
+#define RF_BA_WATE  		   RF, 4,  BA_WATE    
+#define RF_BA_MANA  		   RF, 4,  BA_MANA    
+#define RF_BA_DARK  		   RF, 4,  BA_DARK    
+#define RF_DRAIN_MANA		   RF, 4,  DRAIN_MANA 
+#define RF_MIND_BLAST		   RF, 4,  MIND_BLAST 
+#define RF_BRAIN_SMASH  	   RF, 4,  BRAIN_SMASH
+#define RF_CAUSE_1  		   RF, 4,  CAUSE_1    
+#define RF_CAUSE_2  		   RF, 4,  CAUSE_2    
+#define RF_CAUSE_3  		   RF, 4,  CAUSE_3    
+#define RF_CAUSE_4  		   RF, 4,  CAUSE_4    
+#define RF_BO_ACID  		   RF, 4,  BO_ACID    
+#define RF_BO_ELEC  		   RF, 4,  BO_ELEC    
+#define RF_BO_FIRE  		   RF, 4,  BO_FIRE    
+#define RF_BO_COLD  		   RF, 4,  BO_COLD    
+#define RF_BO_POIS  		   RF, 4,  BO_POIS    
+#define RF_BO_NETH  		   RF, 4,  BO_NETH    
+#define RF_BO_WATE  		   RF, 4,  BO_WATE    
+#define RF_BO_MANA  		   RF, 4,  BO_MANA    
+#define RF_BO_PLAS  		   RF, 4,  BO_PLAS    
+#define RF_BO_ICEE  		   RF, 4,  BO_ICEE    
+#define RF_MISSILE  		   RF, 4,  MISSILE    
+#define RF_SCARE			   RF, 4,  SCARE	  
+#define RF_BLIND			   RF, 4,  BLIND	  
+#define RF_CONF 			   RF, 4,  CONF 	  
+#define RF_SLOW 			   RF, 4,  SLOW 	  
+#define RF_HOLD 			   RF, 4,  HOLD 	  
+
+/*
+ * New monster race bit flag
+ */
+#define RF_HASTE			   RF, 5,  HASTE	  
+#define RF_HAND_DOOM		   RF, 5,  HAND_DOOM  
+#define RF_HEAL 			   RF, 5,  HEAL 	  
+#define RF_INVULNER 		   RF, 5,  INVULNER   
+#define RF_BLINK			   RF, 5,  BLINK	  
+#define RF_TPORT			   RF, 5,  TPORT	  
+#define RF_XXX4 			   RF, 5,  XXX4
+#define RF_XXX5 			   RF, 5,  XXX5 	  
+#define RF_TELE_TO  		   RF, 5,  TELE_TO    
+#define RF_TELE_AWAY		   RF, 5,  TELE_AWAY  
+#define RF_TELE_LEVEL		   RF, 5,  TELE_LEVEL 
+#define RF_XXX6 			   RF, 5,  XXX6 	  
+#define RF_DARKNESS 		   RF, 5,  DARKNESS   
+#define RF_TRAPS			   RF, 5,  TRAPS	  
+#define RF_FORGET			   RF, 5,  FORGET	  
+#define RF_RAISE_DEAD		   RF, 5,  RAISE_DEAD 
+#define RF_S_KIN			   RF, 5,  S_KIN	  
+#define RF_S_CYBER  		   RF, 5,  S_CYBER    
+#define RF_S_MONSTER		   RF, 5,  S_MONSTER  
+#define RF_S_MONSTERS		   RF, 5,  S_MONSTERS 
+#define RF_S_ANT			   RF, 5,  S_ANT	  
+#define RF_S_SPIDER 		   RF, 5,  S_SPIDER   
+#define RF_S_HOUND  		   RF, 5,  S_HOUND    
+#define RF_S_HYDRA  		   RF, 5,  S_HYDRA    
+#define RF_S_ANGEL  		   RF, 5,  S_ANGEL    
+#define RF_S_DEMON  		   RF, 5,  S_DEMON    
+#define RF_S_UNDEAD 		   RF, 5,  S_UNDEAD   
+#define RF_S_DRAGON 		   RF, 5,  S_DRAGON   
+#define RF_S_HI_UNDEAD  	   RF, 5,  S_HI_UNDEAD
+#define RF_S_HI_DRAGON  	   RF, 5,  S_HI_DRAGON
+#define RF_S_AMBERITES  	   RF, 5,  S_AMBERITES
+#define RF_S_UNIQUE 		   RF, 5,  S_UNIQUE   
+
+/*
+ * New monster race bit flag
+ */
+#define RF_AQUATIC  		   RF, 6,  AQUATIC   
+#define RF_CAN_SWIM 		   RF, 6,  CAN_SWIM  
+#define RF_CAN_FLY  		   RF, 6,  CAN_FLY   
+#define RF_FRIENDLY 		   RF, 6,  FRIENDLY  
+#define RF_SILLY			   RF, 6,  SILLY     
+#define RF_LITE_1			   RF, 6,  LITE_1    
+#define RF_LITE_2			   RF, 6,  LITE_2    
+
+/*
+ * Monster race wilderness flags
+ */
+#define RF_WILD_FOREST1 	   RF, 7,  WILD_FOREST1   
+#define RF_WILD_FOREST2 	   RF, 7,  WILD_FOREST2   
+#define RF_WILD_MOUNT1  	   RF, 7,  WILD_MOUNT1    
+#define RF_WILD_MOUNT2  	   RF, 7,  WILD_MOUNT2    
+#define RF_WILD_WASTE1  	   RF, 7,  WILD_WASTE1    
+#define RF_WILD_WASTE2  	   RF, 7,  WILD_WASTE2    
+#define RF_WILD_SWAMP1  	   RF, 7,  WILD_SWAMP1    
+#define RF_WILD_SWAMP2  	   RF, 7,  WILD_SWAMP2    
+#define RF_WILD_SHORE		   RF, 7,  WILD_SHORE     
+#define RF_WILD_OCEAN		   RF, 7,  WILD_OCEAN     
+#define RF_WILD_GRASS		   RF, 7,  WILD_GRASS     
+#define RF_WILD_TOWN		   RF, 7,  WILD_TOWN      
+#define RF_DUN_DARKWATER	   RF, 7,  DUN_DARKWATER  
+#define RF_DUN_LAIR 		   RF, 7,  DUN_LAIR   	  
+#define RF_DUN_TEMPLE		   RF, 7,  DUN_TEMPLE     
+#define RF_DUN_TOWER		   RF, 7,  DUN_TOWER      
+#define RF_DUN_RUIN 		   RF, 7,  DUN_RUIN   	  
+#define RF_DUN_GRAVE		   RF, 7,  DUN_GRAVE      
+#define RF_DUN_CAVERN		   RF, 7,  DUN_CAVERN     
+#define RF_DUN_PLANAR		   RF, 7,  DUN_PLANAR     
+#define RF_DUN_HELL 		   RF, 7,  DUN_HELL   	  
+#define RF_DUN_HORROR		   RF, 7,  DUN_HORROR     
+#define RF_DUN_MINE 		   RF, 7,  DUN_MINE   	  
+#define RF_DUN_CITY 		   RF, 7,  DUN_CITY   	  
+#define RF_DUN_XTRA1		   RF, 7,  DUN_XTRA1      
+#define RF_DUN_XTRA2		   RF, 7,  DUN_XTRA2      
+#define RF_DUN_XTRA3		   RF, 7,  DUN_XTRA3      
+#define RF_DUN_XTRA4		   RF, 7,  DUN_XTRA4      
+#define RF_DUN_XTRA5		   RF, 7,  DUN_XTRA5      
+#define RF_DUN_XTRA6		   RF, 7,  DUN_XTRA6      
+#define RF_DUN_XTRA7		   RF, 7,  DUN_XTRA7      
+#define RF_DUN_XTRA8		   RF, 7,  DUN_XTRA8      
+
+
+#define RF_DUNGEON             RF, 7,  DUNGEON
+#define RF_WILD                RF, 7,  WILD
+
+#define RF_DROP_CORPSE         RF, 8,  DROP_CORPSE    
+#define RF_DROP_SKELETON       RF, 8,  DROP_SKELETON  
+
+/*
+ * Flag manipulation macros
+ */
+#define SET_FLAG(ff, i, mask) ((ff)[i] |= (mask))
+#define TEST_FLAG(ff, i, mask) (((ff)[i] & (mask)) != 0)
+#define TR_FLAG(ff, i, flag) TEST_FLAG(ff, i, TR ## i ## _ ## flag)
+#define RF_FLAG(ff, i, flag) TEST_FLAG(ff, i, RF ## i ## _ ## flag)
+
+#define OBJ_FLAG(O, i, flag) TR_FLAG((O)->flags, i, flag)
+#define MON_FLAG(M, i, flag) RF_FLAG((M)->flags, i, flag)
+
+#define FLAG_AUX(P, TYPE, NUM, F) TYPE ## _ ## FLAG((P)->flags, NUM, F)
+#define FLAG(P, F) FLAG_AUX(P, F)
+
 
 /* Skills */
 #define MAX_SKILL	10

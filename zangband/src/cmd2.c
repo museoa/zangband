@@ -402,7 +402,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 	if (trap & (CHEST_POISON))
 	{
 		msgf("A puff of green gas surrounds you!");
-		if (!((OBJ_FLAG(p_ptr, 1, RES_POIS)) || p_ptr->tim.oppose_pois))
+		if (!((FLAG(p_ptr, TR_RES_POIS)) || p_ptr->tim.oppose_pois))
 		{
 			(void)inc_poisoned(rand_range(10, 30));
 		}
@@ -413,7 +413,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 	{
 		msgf("A puff of yellow gas surrounds you!");
 
-		if (!(OBJ_FLAG(p_ptr, 1, FREE_ACT)))
+		if (!(FLAG(p_ptr, TR_FREE_ACT)))
 		{
 			(void)inc_paralyzed(rand_range(10, 30));
 		}
@@ -2271,7 +2271,7 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 		}
 	}
 
-	if ((OBJ_FLAG(o_ptr, 3, RETURN)) && randint0(100) < 95)
+	if ((FLAG(o_ptr, TR_RETURN)) && randint0(100) < 95)
 	{
 		msgf("The %v returns to your hand.", OBJECT_FMT(o_ptr, FALSE, 3));
 
@@ -2281,7 +2281,7 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 	}
 
 	/* Exploding arrows */
-	if ((OBJ_FLAG(o_ptr, 3, EXPLODE)) && hit_body && hit_success)
+	if ((FLAG(o_ptr, TR_EXPLODE)) && hit_body && hit_success)
 	{
 		project(0, 2, x, y, 100, GF_FIRE, (PROJECT_JUMP |
 					PROJECT_ITEM | PROJECT_KILL));
@@ -2466,7 +2466,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	{
 		total_deadliness = p_ptr->to_d + i_ptr->to_d;
 
-		if (OBJ_FLAG(i_ptr, 1, THROW))
+		if (FLAG(i_ptr, TR_THROW))
 			bonus = p_ptr->to_h + i_ptr->to_h;
 		else
 			bonus = i_ptr->to_h;
@@ -2484,13 +2484,13 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 		tmul = p_ptr->ammo_mult;
 
 		/* Get extra "power" from "extra might" */
-		if ((OBJ_FLAG(p_ptr, 2, XTRA_MIGHT))) tmul++;
+		if ((FLAG(p_ptr, TR_XTRA_MIGHT))) tmul++;
 	}
 	else
 	{
 		p_ptr->energy_use = 100;
 
-		if (OBJ_FLAG(i_ptr, 1, THROW))
+		if (FLAG(i_ptr, TR_THROW))
 		{
 			tmul = 5;
 		}
