@@ -549,6 +549,25 @@ static void rd_item(object_type *o_ptr)
 			}
 		}
 
+		/*
+		 * Add appropriate scripts to artifacts that are missing them,
+		 * for older savefiles
+		 */
+		if (o_ptr->activate)
+		{
+			int i;
+
+			for (i = 0; i < MAX_TRIGGER; i++)
+			{
+				if (a_info[o_ptr->activate].trigger[i] &&
+						!o_ptr->trigger[i])
+				{
+					o_ptr->trigger[i] = quark_add(
+						a_text + a_info[o_ptr->activate].trigger[i]);
+				}
+			}
+		}
+
 		/* 
 		 * XXX Some older buggy versions set TR3_PERMA_CURSE
 		 * on items where it shouldn't have been set.

@@ -231,13 +231,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 			case RACE_HOBBIT:
 			{
-				object_type *q_ptr;
-
-				/* Hack - Create the food ration */
-				q_ptr = object_prep(lookup_kind(TV_FOOD, SV_FOOD_RATION));
-
-				/* Drop the object from heaven */
-				drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+				create_food();
 				msgf("You cook some food.");
 
 				break;

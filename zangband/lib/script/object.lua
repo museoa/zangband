@@ -1,20 +1,4 @@
--- Use objects
-
-
--- Helper functions
-function cure_all_mutations()
-	if (player.muta1 ~= 0) or (player.muta2 ~= 0) or (player.muta3 ~= 0) then
-		msgf("You are cured of all mutations.")
-		player.muta1 = 0
-		player.muta2 = 0
-		player.muta3 = 0
-		player.update = bOr(player.update, PU_BONUS)
-		handle_stuff()
-		return TRUE
-	else
-		return FALSE
-	end
-end
+-- Helper functions for complicated object activations
 
 function cure_potion(hp, do_unblind, do_unconfuse, do_unpoison)
 	local ident = FALSE
@@ -52,20 +36,6 @@ function do_dream()
 		-- Remove the monster restriction
 		get_mon_num_prep(NULL, NULL)
 
-		return TRUE
-	else
-		return FALSE
-	end
-end
-
-function restore_mana()
-	if player.csp < player.msp then
-		player.csp = player.msp
-		player.csp_frac = 0
-		msgf("Your feel your head clear.")
-		player.redraw = bOr(player.redraw, PR_MANA)
-		player.window = bOr(player.window, PW_PLAYER)
-		player.window = bOr(player.window, PW_SPELL)
 		return TRUE
 	else
 		return FALSE
@@ -133,19 +103,6 @@ function wand_of_wonder(dir)
 	return ident
 end
 
-function summon_monsters(num, kind)
-	local ident = FALSE
-	
-	for k = 0, num do
-		if summon_specific(0, player.px, player.py, player.depth,
-				kind, TRUE, FALSE, FALSE) then
-			ident = TRUE
-		end
-	end
-
-	return ident
-end
-
 function do_life_potion()
 	msgf("You feel life flow through your body!")
 	restore_level()
@@ -166,5 +123,22 @@ function do_life_potion()
 	update_stuff()
 
 	hp_player(5000)
+end
+
+function werewindle()
+	local i = randint1(13)
+
+	if n <= 5 then
+		teleport_player(10)
+	elseif n <= 10 then
+		teleport_player(222)
+	elseif n <= 12 then
+		stair_creation()
+	else
+		if get_check("Leave this level? ") then
+			if autosave_l then do_cmd_save_game(TRUE) end
+			player.state.leaving = TRUE
+		end
+	end
 end
 

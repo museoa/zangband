@@ -1182,24 +1182,13 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-	if (o_ptr->activate)
-	{
-		(void)activate_effect(o_ptr);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		make_noise(3);
-
-		/* Success */
-		return;
-	}
-
 	/* Activate the object */
 	apply_object_trigger(TRIGGER_USE, o_ptr, ""); 
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+	make_noise(3);
 
 	return;
 

@@ -1172,6 +1172,13 @@ static object_type *make_fake_artifact(int a_idx)
 	/* Mega-Hack -- set activation */
 	o_ptr->activate = a_idx;
 
+	/* Add any special scripts */
+	for (i = 0; i < MAX_TRIGGER; i++)
+	{
+		if (a_ptr->trigger[i])
+			o_ptr->trigger[i] = quark_add(a_text + a_ptr->trigger[i]);
+	}
+		
 	/* Do not make another one */
 	a_ptr->cur_num = 1;
 

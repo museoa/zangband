@@ -746,6 +746,9 @@ extern bool charm_monster(int dir, int plev);
 extern bool control_one_undead(int dir, int plev);
 extern bool charm_animal(int dir, int plev);
 extern bool starlite(void);
+extern bool scatter_ball(int num, int typ, int dam, int rad);
+extern void create_food(void);
+extern void whirlwind_attack(void);
 extern bool mindblast_monsters(int dam);
 extern void report_magics(void);
 extern bool teleport_swap(int dir);
@@ -1002,7 +1005,6 @@ extern bool monst_spell_monst(int m_idx);
 /* artifact.c */
 extern bool create_artifact(object_type *o_ptr, int level, bool a_scroll);
 extern void random_resistance(object_type *o_ptr, int specific);
-extern bool activate_effect(object_type *o_ptr);
 extern void random_artifact_resistance(object_type *o_ptr);
 extern void create_named_art(int a_idx, int x, int y);
 

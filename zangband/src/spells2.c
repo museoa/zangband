@@ -4364,3 +4364,74 @@ bool starlite(void)
 
 	return (TRUE);
 }
+
+
+bool scatter_ball(int num, int type, int dam, int rad)
+{
+	int k;
+	int y, x;
+	int attempts;
+
+	cave_type *c_ptr;
+
+	for (k = 0; k < num; k++)
+	{
+		attempts = 1000;
+
+		while (attempts--)
+		{
+			scatter(&x, &y, p_ptr->px, p_ptr->py, 4);
+
+			/* paranoia */
+			if (!in_bounds2(x, y)) continue;
+
+			c_ptr = area(x, y);
+
+			if (cave_wall_grid(c_ptr)) continue;
+
+			if ((y != p_ptr->py) || (x != p_ptr->px)) break;
+		}
+
+		project(0, rad, x, y, dam, type,
+				(PROJECT_THRU | PROJECT_STOP | PROJECT_GRID |
+				 PROJECT_ITEM | PROJECT_KILL));
+	}
+
+	return (TRUE);
+}
+
+
+void create_food()
+{
+	object_type *q_ptr;
+
+	/* Hack - create a food ration */
+	q_ptr = object_prep(lookup_kind(TV_FOOD, SV_FOOD_RATION));
+
+	/* Drop the object from heaven */
+	drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+}
+
+void whirlwind_attack()
+{
+	int y = 0, x = 0, dir;
+	cave_type *c_ptr;
+	monster_type *m_ptr;
+
+	for (dir = 0; dir <= 9; dir++)
+	{
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
+
+		/* paranoia */
+		if (!in_bounds2(x, y)) return;
+		c_ptr = area(x, y);
+
+		/* Get the monster */
+		m_ptr = &m_list[c_ptr->m_idx];
+
+		/* Hack -- attack monsters */
+		if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
+			py_attack(x, y);
+	}
+}

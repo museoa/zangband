@@ -1022,28 +1022,7 @@ static bool cast_nature_spell(int spell)
 			(void)earthquake(px, py, 10);
 			break;
 		case 25:				/* Whirlwind Attack */
-		{
-			int y = 0, x = 0;
-			cave_type *c_ptr;
-			monster_type *m_ptr;
-
-			for (dir = 0; dir <= 9; dir++)
-			{
-				y = py + ddy[dir];
-				x = px + ddx[dir];
-
-				/* paranoia */
-				if (!in_bounds2(x, y)) continue;
-				c_ptr = area(x, y);
-
-				/* Get the monster */
-				m_ptr = &m_list[c_ptr->m_idx];
-
-				/* Hack -- attack monsters */
-				if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
-					py_attack(x, y);
-			}
-		}
+			whirlwind_attack();
 			break;
 		case 26:				/* Blizzard */
 			if (!get_aim_dir(&dir)) return FALSE;
