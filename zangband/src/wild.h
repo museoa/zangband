@@ -65,6 +65,8 @@ struct wild_building_type
 	byte	pop;
 	byte	magic;
 	byte	law;
+	
+	u16b	rarity;	/* Rarity of store */
 };
 
 
