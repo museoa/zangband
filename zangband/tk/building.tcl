@@ -94,7 +94,7 @@ proc NSBuilding::InitModule {} {
 				[expr {$x + 32}] [expr {$y + 32}]
 
 			# Create the mask by hand, because Tk is too slow
-			photomask $image
+			# photomask $image
 
 			# The image was created
 			set Image($name,exists) 1

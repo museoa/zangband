@@ -32,11 +32,8 @@ proc NSInventory2::InitModule {} {
 	InitImageIfNeeded Image_ButtonOptions button-options.gif
 	InitImageIfNeeded Image_ButtonHelp button-help.gif
 	InitImageIfNeeded Image_Binding dg_binding.gif
-	if {[InitImageIfNeeded Image_Equip dg_equip.gif]} {
-		photomask Image_Equip
-	}
+	InitImageIfNeeded Image_Equip dg_equip.gif
 
-#	NSModule::LoadIfNeeded NSBalloon
 	NSModule::LoadIfNeeded NSStatusBar
 	NSModule::LoadIfNeeded NSToolbar
 
