@@ -20,8 +20,7 @@
 * The Oangband combat system has been partially implemented. -SF-
 * The list of things still to do is:
 *
-* Artifacts - rebalance damage + damage from activations
-*        - The chainsword is the only one that looks too munchkinish...
+* Artifacts - rebalance damage :done + damage from activations: not done
 * RandArts - rebalance (lower number of attacks)
 *  - Number of attacks has now been toned down for the larger weapons.
 * Potions (death, detonations etc.) May need to rebalance
@@ -35,10 +34,9 @@
 *  - Number of attacks for various ego items has been lowered for larger
 *          weapons.
 *     Oangband also has various modifiers for ego items that are not
-*     implemented as yet.  (See ego shooters in [o])
+*     implemented as yet.  (See ego shooters in [o]):  Not likely to be done
 * Class rebalancing
-*     In [o] the weapon proficiancy is level dependant: hasn't been done.
-*     (Need to wait for play-testing race/classes are different in [z].)
+*     In [o] the weapon proficiancy is level dependant: done.
 *  - The number of blows for each class have been changed.
 *
 * Thrown items - done
@@ -1780,6 +1778,18 @@ void py_attack(int y, int x)
 
 				if (vorpal_cut)
 				{
+					/*
+					* The vorpal blade does average:
+					*	(e+2)/3 x normal damage.
+					* A normal weapon with the vorpal flag does average:
+					*   e-3/2 x normal damage.
+					* Note: this has changed from before - the vorpal blade
+					*  has been toned down because of the oangband based
+					*  combat.
+					*/
+					   
+					
+					
 					int mult = 2;
 
 					int inc_chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
@@ -1806,6 +1816,7 @@ void py_attack(int y, int x)
 					while (one_in_(inc_chance))
 					{
 						mult++;
+						inc_chance++;
 					}
 
 					k *= mult;
