@@ -588,10 +588,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 		if (rand_int(100) < j)
 		{
 			msg_print("You have picked the lock.");
-
-			/* Gain experience, but not for the locked doors in town */
-			if (dun_level) gain_exp(1);
-
+			gain_exp(1);
 			flag = TRUE;
 		}
 
@@ -808,8 +805,8 @@ static bool do_cmd_open_aux(int y, int x)
 			/* Sound */
 			sound(SOUND_OPENDOOR);
 
-			/* Experience */
-			gain_exp(1);
+			/* Gain experience, but not for the locked doors in town */
+			if (dun_level) gain_exp(1);
 		}
 
 		/* Failure */
@@ -1581,8 +1578,8 @@ bool easy_open_door(int y, int x)
 			/* Sound */
 			sound(SOUND_OPENDOOR);
 
-			/* Experience */
-			gain_exp(1);
+			/* Gain experience, but not for the locked doors in town */
+			if (dun_level) gain_exp(1);
 		}
 
 		/* Failure */
