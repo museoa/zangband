@@ -2801,7 +2801,7 @@ void borg_update_frame(void)
  * determining a borg value.  This has to be done asap so that these can be
  * used both in the equipment and the inventory appraisal.
  */
-void borg_clear_vars(void)
+static void borg_clear_vars(void)
 {
 	int i, ii;
 

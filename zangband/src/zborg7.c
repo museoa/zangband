@@ -2819,7 +2819,7 @@ static void borg_spell_prevent_learn(void)
 			borg_spell_legal(REALM_ARCANE, 0, 5))
 		{
 			/* Prevent the learning of the second light spell */
-			if (borg_magics[REALM_LIFE][0][4].status == BORG_MAGIC_OKAY);
+			if (borg_magics[REALM_LIFE][0][4].status == BORG_MAGIC_OKAY)
 				borg_magics[REALM_LIFE][0][4].status =  BORG_MAGIC_HIGH;
 			if (borg_magics[REALM_SORCERY][0][3].status == BORG_MAGIC_OKAY)
 				borg_magics[REALM_SORCERY][0][3].status =  BORG_MAGIC_HIGH;
