@@ -38,9 +38,6 @@ class event_class:
 			import traceback
 			traceback.print_exc()
 			print "in event %s while removing hook %s" % (self.method, hook)
-			break
-		else:
-			print "%s is not in event %s" % (hook, self.method)
 
 	# Call the event and process all hooks
 	def __call__(self, args):
