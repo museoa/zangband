@@ -1553,7 +1553,7 @@ void py_attack(int x, int y)
 	 * Monsters in trees can take advantage of cover,
 	 * except from rangers.
 	 */
-	else if ((c_ptr->feat == FEAT_TREES) && (p_ptr->pclass == CLASS_RANGER))
+	else if ((c_ptr->feat == FEAT_TREES) && (p_ptr->pclass != CLASS_RANGER))
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
