@@ -500,8 +500,7 @@ N:77:(Chaotic)
 X:24:28
 W:0:6:0:1500
 F:CHAOTIC | RES_CHAOS | PATRON | IGNORE_ELEC | IGNORE_ACID | IGNORE_FIRE
-# +1 sp/level, chaos warriors only
-L:BONUS:if player.class == CLASS_CHAOS_WARRIOR then player.sp_bonus = player.sp_bonus + 1 end
+L:MAKE:	if player.class == CLASS_CHAOS_WARRIOR then object.flags1 = bOr(object.flags1, TR1_SP) end
 
 N:78:of Sharpness
 X:24:20
