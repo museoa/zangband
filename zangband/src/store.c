@@ -1776,12 +1776,11 @@ static void store_sell(int *store_top)
 			/* Duplicate the object */
 			q_ptr = object_dup(o_ptr);
 			
-			if (o_ptr->tval == TV_WAND)
-			{
-				/* Identify sold item - this will cause awareness of pack item */
-				identify_item(q_ptr);
-			}
-			else
+			/* Identify sold item */
+			identify_item(q_ptr);
+			
+			/* Don't want to let out how many charges on wands */
+			if (o_ptr->tval != TV_WAND)
 			{
 				/* Identify pack item */
 				identify_item(o_ptr);
