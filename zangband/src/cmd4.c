@@ -3900,13 +3900,13 @@ void do_cmd_time(void)
 
 	/* Find the path */
 	if (!randint0(10) || p_ptr->image)
-		{
+	{
 		path_build(buf, 1024, ANGBAND_DIR_FILE, "timefun.txt");
-		}
-		else
-		{
+	}
+	else
+	{
 		path_build(buf, 1024, ANGBAND_DIR_FILE, "timenorm.txt");
-		}
+	}
 
 	/* Open this file */
 	fff = my_fopen(buf, "rt");
@@ -3968,3 +3968,4 @@ void do_cmd_time(void)
 	/* Close the file */
 	my_fclose(fff);
 }
+
