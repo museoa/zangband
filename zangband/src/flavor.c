@@ -334,7 +334,7 @@ static bool object_flavor(int k_idx)
 
 void get_table_name(char *out_string, bool quotes)
 {
-	int testcounter = rand_range(2, 3);
+	int testcounter = 2;
 	
 	int len = 0;
 	
