@@ -4753,13 +4753,10 @@ static void build_type22(int bx0, int by0)
  */
 static void build_type23(int bx0, int by0)
 {
-#if 0
-
 	int rad, x, y, x0, y0;
 	int light = FALSE;
 
-	int xs, xe;
-	int ys, ye;
+	int xc, yc;
 
 	/* Occasional light */
 	if (randint1(p_ptr->depth) <= 15) light = TRUE;
@@ -4776,26 +4773,24 @@ static void build_type23(int bx0, int by0)
 		/* Flip left or right? */
 		if (one_in_(2))
 		{
-			xs = x0;
-			xe = x0 + rad;
+			xc = x0 - rad / 2;
 		}
 		else
 		{
-			xs = x0 - rad;
-			xe = x0;
+			xc = x0 + rad / 2;
 		}
 		
 		/* Make semicircular floor */
-		for (x = xs; x <= xe; x++)
+		for (x = x0 - rad / 2; x <= x0 + rad / 2; x++)
 		{
 			for (y = y0 - rad; y <= y0 + rad; y++)
 			{
-				if (distance(x0, y0, x, y) <= rad - 1)
+				if (distance(xc, y0, x, y) <= rad - 1)
 				{
 					/* inside- so is floor */
 					set_feat_bold(x, y, dun->feat_floor);
 				}
-					else if (distance(x0, y0, x, y) <= rad + 1)
+					else if (distance(xc, y0, x, y) <= rad + 1)
 				{
 					/* make granite outside so arena works */
 					set_feat_bold(x, y, FEAT_WALL_EXTRA);
@@ -4812,26 +4807,24 @@ static void build_type23(int bx0, int by0)
 		/* Flip up or down? */
 		if (one_in_(2))
 		{
-			ys = y0;
-			ye = y0 + rad;
+			yc = y0 - rad / 2;
 		}
 		else
 		{
-			ys = y0 - rad;
-			ye = y0;
+			yc = y0 + rad / 2;
 		}
 	
 		/* Make semicircular floor */
 		for (x = x0 - rad; x <= x0 + rad; x++)
 		{
-			for (y = ys; y <= ye; y++)
+			for (y = y0 - rad / 2; y <= y0 + rad / 2; y++)
 			{
-				if (distance(x0, y0, x, y) <= rad - 1)
+				if (distance(x0, yc, x, y) <= rad - 1)
 				{
 					/* inside- so is floor */
 					set_feat_bold(x, y, dun->feat_floor);
 				}
-				else if (distance(x0, y0, x, y) <= rad + 1)
+				else if (distance(x0, yc, x, y) <= rad + 1)
 				{
 					/* make granite outside so arena works */
 					set_feat_bold(x, y, FEAT_WALL_EXTRA);
@@ -4842,8 +4835,6 @@ static void build_type23(int bx0, int by0)
 	
 	/* Find visible outer walls and set to be FEAT_OUTER */
 	add_outer_wall(x0, y0, light, x0 - rad, y0 - rad, x0 + rad, y0 + rad);
-
-#endif /* 0 */
 }
 
 
