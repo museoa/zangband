@@ -1836,10 +1836,10 @@ static s16b compact_quarks(void)
 	for (i = 1; i < quark__num; i++)
 	{
 		/* Set quark timer to be location order */
-		quark__use[i] = quark_locat[i];
+		quark__use[quark_locat[i]] = i;
 
 		/* Find minimally used quark */
-		if (quark__use[i] == 1) empty = i;
+		if (quark__use[quark_locat[i]] == 1) empty = quark_locat[i];
     }
 
 	/* Set timer to be greater than any value so far */
