@@ -1481,7 +1481,7 @@ void do_cmd_query_symbol(void)
 		else
 			sprintf(buf, "Monsters with a name \"%s\"", temp1);
 	}
-	else if (sym == KTRL('U'))
+	else if (sym == KTRL('K'))
 	{
 		all = killed = TRUE;
 		strcpy(buf, "Killed monster list.");
