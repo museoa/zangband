@@ -2458,7 +2458,11 @@ errr init_x11(int argc, char *argv[])
 			ii = 1;
 			jj = (depth - 1) >> 2;
 			while (jj >>= 1) ii <<= 1;
-			total = td->fnt->wid * td->fnt->hgt * ii;
+
+			/* Pad the scanline to a multiple of 4 bytes */
+			total = td->fnt->wid * ii;
+			total = (total + 3) & ~3;
+			total *= td->fnt->hgt;
 
 
 			TmpData = (char *)malloc(total);
@@ -2466,7 +2470,6 @@ errr init_x11(int argc, char *argv[])
 			td->TmpImage = XCreateImage(dpy,visual,depth,
 				ZPixmap, 0, TmpData,
 				td->fnt->wid, td->fnt->hgt, 32, 0);
-
 		}
 
 		/* Free tiles_raw? XXX XXX */
