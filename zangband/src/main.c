@@ -582,7 +582,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-xaw.c" support */
 	if (!done && (!mstr || (streq(mstr, "xaw"))))
 	{
-		extern errr init_xaw(int, char**);
 		if (0 == init_xaw(argc, argv))
 		{
 			ANGBAND_SYS = "xaw";
@@ -596,7 +595,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-x11.c" support */
 	if (!done && (!mstr || (streq(mstr, "x11"))))
 	{
-		extern errr init_x11(int, char**);
 		if (0 == init_x11(argc, argv))
 		{
 			ANGBAND_SYS = "x11";
@@ -610,7 +608,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-xpj.c" support */
 	if (!done && (!mstr || (streq(mstr, "xpj"))))
 	{
-		extern errr init_xpj(int, char**);
 		if (0 == init_xpj(argc, argv))
 		{
 			ANGBAND_SYS = "xpj";
@@ -624,7 +621,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-gcu.c" support */
 	if (!done && (!mstr || (streq(mstr, "gcu"))))
 	{
-		extern errr init_gcu(void);
 		if (0 == init_gcu())
 		{
 			ANGBAND_SYS = "gcu";
@@ -637,7 +633,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-cap.c" support */
 	if (!done && (!mstr || (streq(mstr, "cap"))))
 	{
-		extern errr init_cap(int, char**);
 		if (0 == init_cap(argc, argv))
 		{
 			ANGBAND_SYS = "cap";
@@ -651,7 +646,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-dos.c" support */
 	if (!done && (!mstr || (streq(mstr, "dos"))))
 	{
-		extern errr init_dos(void);
 		if (0 == init_dos())
 		{
 			ANGBAND_SYS = "dos";
@@ -664,7 +658,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-ibm.c" support */
 	if (!done && (!mstr || (streq(mstr, "ibm"))))
 	{
-		extern errr init_ibm(void);
 		if (0 == init_ibm())
 		{
 			ANGBAND_SYS = "ibm";
@@ -678,7 +671,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-emx.c" support */
 	if (!done && (!mstr || (streq(mstr, "emx"))))
 	{
-		extern errr init_emx(void);
 		if (0 == init_emx())
 		{
 			ANGBAND_SYS = "emx";
@@ -692,7 +684,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-sla.c" support */
 	if (!done && (!mstr || (streq(mstr, "sla"))))
 	{
-		extern errr init_sla(void);
 		if (0 == init_sla())
 		{
 			ANGBAND_SYS = "sla";
@@ -706,7 +697,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-ami.c" support */
 	if (!done && (!mstr || (streq(mstr, "ami"))))
 	{
-		extern errr init_ami(void);
 		if (0 == init_ami())
 		{
 			ANGBAND_SYS = "ami";
@@ -720,7 +710,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-vme.c" support */
 	if (!done && (!mstr || (streq(mstr, "vme"))))
 	{
-		extern errr init_vme(void);
 		if (0 == init_vme())
 		{
 			ANGBAND_SYS = "vme";
@@ -736,7 +725,6 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-lsl.c" support */
 	if (!done && (!mstr || (streq(mstr, "lsl"))))
 	{
-		extern errr init_lsl(void);
 		if (0 == init_lsl())
 		{
 			ANGBAND_SYS = "lsl";

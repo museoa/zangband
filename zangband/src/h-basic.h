@@ -12,11 +12,11 @@
 /* System Configuration */
 #include "h-config.h"
 
-/* System includes/externs */
-#include "h-system.h"
-
 /* Basic types */
 #include "h-type.h"
+
+/* System includes/externs */
+#include "h-system.h"
 
 /* Basic constants and macros */
 #include "h-define.h"
