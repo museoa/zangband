@@ -2580,7 +2580,7 @@ static void take_move(int m_idx, int *mm)
 						excise_object_idx(&c_ptr->o_idx, _this_o_idx);
 
 						/* Forget mark */
-						o_ptr->marked = FALSE;
+						o_ptr->info &= ~(OB_SEEN);
 
 						/* Forget location */
 						o_ptr->iy = o_ptr->ix = 0;

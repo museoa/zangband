@@ -550,8 +550,6 @@ static void wr_item(const object_type *o_ptr)
 
 	wr_byte(o_ptr->info);
 
-	wr_byte(o_ptr->marked);
-
 	wr_u32b(o_ptr->flags1);
 	wr_u32b(o_ptr->flags2);
 	wr_u32b(o_ptr->flags3);

@@ -908,7 +908,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 		q_ptr->iy = o_ptr->iy;
 		q_ptr->ix = o_ptr->ix;
 		q_ptr->next_o_idx = o_ptr->next_o_idx;
-		q_ptr->marked = o_ptr->marked;
 
 		/* Apply changes */
 		object_copy(o_ptr, q_ptr);

@@ -2938,7 +2938,7 @@ bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 		if ((mode & 0x01) && !item_tester_okay(o_ptr)) continue;
 
 		/* Marked */
-		if ((mode & 0x02) && !o_ptr->marked) continue;
+		if ((mode & 0x02) && !(o_ptr->info & OB_SEEN)) continue;
 
 		/* Hack - Accept this item */
 		items[num++] = _this_o_idx;

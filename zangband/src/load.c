@@ -349,9 +349,15 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&old_ds);
 
 	rd_byte(&o_ptr->info);
-
-	rd_byte(&o_ptr->marked);
-
+	
+	if (sf_version < 35)
+	{
+		/* Old "marked" flag */
+		rd_byte(&tmpbyte);
+	
+		if (tmpbyte) o_ptr->info |= OB_SEEN;
+	}
+	
 	/* Old flags */
 	rd_u32b(&o_ptr->flags1);
 	rd_u32b(&o_ptr->flags2);

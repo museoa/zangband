@@ -1932,7 +1932,7 @@ static bool target_set_accept(int x, int y)
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Memorized object */
-		if (o_ptr->marked) return (TRUE);
+		if (o_ptr->info & OB_SEEN) return (TRUE);
 	}
 	OBJ_ITT_END;
 
@@ -2371,7 +2371,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
 			/* Describe it */
-			if (o_ptr->marked)
+			if (o_ptr->info & OB_SEEN)
 			{
 				char o_name[80];
 

@@ -219,9 +219,6 @@ static s16b chest_check(int x, int y)
 	/* Scan all objects in the grid */
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		/* Skip unknown chests XXX XXX */
-		/* if (!o_ptr->marked) continue; */
-
 		/* Check for chest */
 		if (o_ptr->tval == TV_CHEST) return (_this_o_idx);
 	}

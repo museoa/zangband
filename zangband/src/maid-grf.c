@@ -776,7 +776,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
 			/* Memorized objects */
-			if (o_ptr->marked)
+			if (o_ptr->info & (OB_SEEN))
 			{
 				k_ptr = &k_info[o_ptr->k_idx];
 

@@ -3016,7 +3016,7 @@ static bool run_test(void)
 		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
 			/* Visible object */
-			if (o_ptr->marked) return (TRUE);
+			if (o_ptr->info & (OB_SEEN)) return (TRUE);
 		}
 		OBJ_ITT_END;
 

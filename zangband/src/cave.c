@@ -1955,7 +1955,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp,
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Memorized objects */
-		if (o_ptr->marked)
+		if (o_ptr->info & (OB_SEEN))
 		{
 			/* Normal char */
 			c = object_char(o_ptr);
@@ -2105,7 +2105,7 @@ void note_spot(int x, int y)
 		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
 			/* Memorize objects */
-			o_ptr->marked = TRUE;
+			o_ptr->info |= OB_SEEN;
 		}
 		OBJ_ITT_END;
 
@@ -3043,7 +3043,7 @@ void do_cmd_view_map(void)
  * of the memorised grid, in the player information: pcave_type.  This is
  * FEAT_NONE when the player doesn't know anything about the square.
  *
- * Objects are "memorized" in a different way, using a special "marked" flag
+ * Objects are "memorized" in a different way, using a special "OB_SEEN" flag
  * on the object itself, which is set when an object is observed or detected.
  *
  *
@@ -4051,7 +4051,7 @@ void update_view(void)
 			OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 			{
 				/* Memorize objects */
-				o_ptr->marked = TRUE;
+				o_ptr->info |= OB_SEEN;
 			}
 			OBJ_ITT_END;
 
@@ -4822,7 +4822,7 @@ void wiz_lite(void)
 		if (o_ptr->held_m_idx) continue;
 
 		/* Memorize */
-		o_ptr->marked = TRUE;
+		o_ptr->info |= OB_SEEN;
 	}
 
 	/* Detect monsters */
@@ -4903,7 +4903,7 @@ void wiz_dark(void)
 		if (o_ptr->held_m_idx) continue;
 
 		/* Forget the object */
-		o_ptr->marked = FALSE;
+		o_ptr->info &= ~(OB_SEEN);
 	}
 
 	/* Forget all fields */

@@ -785,7 +785,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 						object_known(o_ptr);
 
 						/* Notice */
-						if (known && o_ptr->marked)
+						if (known && (o_ptr->info & OB_SEEN))
 						{
 							msg_print("Click!");
 							obvious = TRUE;
@@ -802,7 +802,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 		if (do_kill)
 		{
 			/* Effect "observed" */
-			if (known && o_ptr->marked)
+			if (known && (o_ptr->info & OB_SEEN))
 			{
 				obvious = TRUE;
 				object_desc(o_name, o_ptr, FALSE, 0, 256);
@@ -812,7 +812,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			if (is_art || ignore)
 			{
 				/* Observe the resist */
-				if (known && o_ptr->marked)
+				if (known && (o_ptr->info & OB_SEEN))
 				{
 					msg_format("The %s %s unaffected!",
 							   o_name, (plural ? "are" : "is"));
@@ -823,7 +823,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			else
 			{
 				/* Describe if needed */
-				if (known && o_ptr->marked && note_kill)
+				if (known && (o_ptr->info & OB_SEEN) && note_kill)
 				{
 					msg_format("The %s%s", o_name, note_kill);
 				}

@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 34
+#define SAVEFILE_VERSION 35
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -2781,7 +2781,7 @@
  * Special Object Flags
  */
 #define OB_SENSE     0x01	/* Item has been "sensed" */
-#define OB_DUMMY1    0x02
+#define OB_SEEN      0x02	/* Item is seen */
 #define OB_EMPTY     0x04	/* Item charges are known */
 #define OB_KNOWN     0x08	/* Item abilities are known */
 #define OB_STOREB    0x10	/* Item is storebought */
