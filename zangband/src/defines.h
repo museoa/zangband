@@ -2997,7 +2997,7 @@
 #define TR3_LUCK_10             0x00000001L
 #define TR3_WILD_SHOT           0x00000002L
 #define TR3_WILD_WALK           0x00000004L
-#define TR3_XXX4                0x00000008L
+#define TR3_EASY_ENCHANT        0x00000008L
 #define TR3_XXX5                0x00000010L
 #define TR3_XXX6                0x00000020L
 #define TR3_XXX7                0x00000040L
@@ -3160,7 +3160,7 @@
 #define TR_LUCK_10  	 	3,  TR3_LUCK_10 	 
 #define TR_WILD_SHOT            3,  TR3_WILD_SHOT
 #define TR_WILD_WALK            3,  TR3_WILD_WALK
-#define TR_XXX6 		 	3,  TR3_XXX6		 
+#define TR_EASY_ENCHANT		3,  TR3_EASY_ENCHANT
 #define TR_XXX7 		 	3,  TR3_XXX7		 
 #define TR_XXX8 		 	3,  TR3_XXX8		 
 #define TR_XXX9 		 	3,  TR3_XXX9		 

@@ -1699,6 +1699,16 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 		prob = prob / 50;
 	}
 
+	/* Some items are easier to enchant */
+	if (FLAG(o_ptr, TR_EASY_ENCHANT))
+	{
+		/* Don't apply artifact failure chance */
+		a = FALSE;
+
+		/* Apply more enchantment attempts */
+		n *= 2;
+	}
+
 	/* Try "n" times */
 	for (i = 0; i < n; i++)
 	{

@@ -591,6 +591,11 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff("Its shots are not hindered by trees.  ");
 	}
 
+	if (FLAG(of_ptr, TR_EASY_ENCHANT))
+	{
+		roff("It is easy to enchant.  ");
+	}
+
 	/* Collect miscellaneous */
 	vn = 0;
 	if (FLAG(of_ptr, TR_XXX7))        vp[vn++] = "renders you XXX7'ed";

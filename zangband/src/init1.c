@@ -634,7 +634,7 @@ static cptr k_info_flags4[] =
 	"LUCK_10",
 	"WILD_SHOT",
 	"WILD_WALK",
-	"XXX4",
+	"EASY_ENCHANT",
 	"XXX5",
 	"XXX6",
 	"XXX7",
