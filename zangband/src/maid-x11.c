@@ -65,8 +65,6 @@
 #define IsSpecialKey(keysym) \
   ((unsigned)(keysym) >= 0xFF00)
 
-/* #define SUPPORT_ANGBAND_X11_GAMMA */
-
 #ifdef SUPPORT_ANGBAND_X11_GAMMA
 
 /* Table of gamma values */
@@ -111,9 +109,8 @@ static void build_gamma_table(byte gamma)
 	
 	/* Hack - convergence is bad in this case. */
 	gamma_table[0] = 0;
-	gamma_table[255] = 255;
 	
-	for(i = 1; i < 255; i++)
+	for(i = 1; i < 256; i++)
 	{
 		/* 
 		 * Initialise the Taylor series
@@ -125,7 +122,7 @@ static void build_gamma_table(byte gamma)
 		value = 255 * 256;
 		diff = ((long) gamma_helper[i]) * gamma;
 		
-		while (diff < -128)
+		while (diff)
 		{
 			value += diff;
 			n++;
@@ -145,7 +142,7 @@ static void build_gamma_table(byte gamma)
 			 * a is i / 256
 			 * b is gamma / 256.
 			 */
-			diff = (((diff * gamma_helper[i]) / 256) * gamma / 256) / ((long)(256 * n));
+			diff = (((diff * gamma_helper[i]) / 256) * gamma) / ((long)(256 * n));
 		}
 		
 		/* 
@@ -168,7 +165,7 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 
 	char cname[8];
 
-	XColor scrn;
+	XColor xcolour;
 
 #ifdef SUPPORT_ANGBAND_X11_GAMMA
 
@@ -193,22 +190,20 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 
 #endif /* SUPPORT_ANGBAND_X11_GAMMA */
 
-	/* Build the color name string */
-	sprintf(cname, "#%02x%02x%02x", red, green, blue);
-
-	/* Attempt to parse 'cname' into 'scrn' */
-	if (!(XParseColor(dpy, cmap, cname, &scrn)))
-	{
-		quit_fmt("Couldn't parse bitmap color '%s'\n", cname);
-	}
+	/* Build the color */
+	
+	xcolour.red = red * 255;
+	xcolour.green = green * 255;
+	xcolour.blue = blue * 255;
+	xcolour.flags = DoRed | DoGreen | DoBlue;
 
 	/* Attempt to Allocate the Parsed color */
-	if (!(XAllocColor(dpy, cmap, &scrn)))
+	if (!(XAllocColor(dpy, cmap, &xcolour)))
 	{
 		quit_fmt("Couldn't allocate bitmap color '%s'\n", cname);
 	}
 
-	return (scrn.pixel);
+	return (xcolour.pixel);
 }
 
 
@@ -330,7 +325,7 @@ static XImage *ReadBMP(Display *dpy, char *Name)
 		RGBQUAD clrg;
 
 		fread(&clrg, 4, 1, f);
-
+		
 		/* Analyze the color */
 		clr_pixels[i] = create_pixel(dpy, clrg.r, clrg.g, clrg.b);
 	}
