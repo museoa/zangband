@@ -2399,7 +2399,7 @@ static char borg_inkey_hack(int flush_first)
 /*
  * Output a long int in binary format.
  */
-static void borg_prt_binary(u32b flags, int row, int col)
+static void borg_prt_binary(u32b flags, int col, int row)
 {
 	int i;
 	u32b bitmask;
@@ -4192,14 +4192,12 @@ void do_cmd_borg(void)
 		case 'O':
 		{
 			/* Command: Display all known info on item */
-			int n;
-
-			/* use this item */
-			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
+			int n = p_ptr->command_arg - 1;
 			
 			/* Paranoia */
+			if (n < 0) n = 0;
 			if (n > inven_num) break;
-
+			
 			/* Save the screen */
 			Term_save();
 
@@ -4221,12 +4219,10 @@ void do_cmd_borg(void)
 		case 'E':
 		{
 			/* Command: Display all known info on item */
-			int n;
-
-			/* use this item */
-			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
+			int n = p_ptr->command_arg - 1;
 			
 			/* Paranoia */
+			if (n < 0) n = 0;
 			if (n > equip_num) break;
 
 			/* Save the screen */
