@@ -4180,7 +4180,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 	path_n = project_path(path_g, x1, y1, x2, y2, flg);
 
 	/* Do we need to invert the path? */
-	if (!jump && (who > 0))
+	if ((path_n > 0) && !jump && (who > 0))
 	{
 		/* Reverse the path */
 		for (i = path_n - 2, j = 0; i > j; i--, j++)
