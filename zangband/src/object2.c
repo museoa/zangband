@@ -5031,6 +5031,9 @@ object_type *inven_takeoff(object_type *o_ptr)
 	{
 		act = "You were wearing";
 	}
+	
+	/* Message */
+	msgf("%s %v (%c).", act, OBJECT_FMT(o_ptr, TRUE, 3), I2A(item));
 
 	/* Carry the object */
 	q_ptr = inven_carry(o_ptr);
@@ -5041,12 +5044,6 @@ object_type *inven_takeoff(object_type *o_ptr)
 		msgf("You cannot take off the item - too many dungeon objects!");
 		return (NULL);
 	}
-	
-	/* Message */
-	msgf("%s %v (%c).", act, OBJECT_FMT(q_ptr, TRUE, 3), I2A(item));
-
-	/* Wipe the old object */
-	object_wipe(o_ptr);
 
 	/* Recalculate bonuses and weight */
 	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
