@@ -1213,6 +1213,9 @@ void generate_cave(void)
 				/* No monsters */
 				cave[y][x].m_idx = 0;
 
+				/* No fields */
+				cave[y][x].fld_idx = 0;
+
 #ifdef MONSTER_FLOW
 				/* No flow */
 				cave[y][x].cost = 0;
