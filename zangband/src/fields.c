@@ -2977,7 +2977,7 @@ void make_lockjam_door(s16b y, s16b x, int power, bool jam)
 		/* There already is a door field here... */
 		
 		/* HACK - Look at type */
-		if (!(f_ptr->t_idx == FT_JAM_DOOR) || (f_ptr->t_idx == FT_LOCK_DOOR))
+		if (!((f_ptr->t_idx == FT_JAM_DOOR) || (f_ptr->t_idx == FT_LOCK_DOOR)))
 		{
 			/* 
 			 * Not a locked door or a jammed door.
