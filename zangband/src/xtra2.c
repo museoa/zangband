@@ -2985,7 +2985,16 @@ bool get_aim_dir(int *dp)
 	char	command;
 
 	cptr	p;
-
+	
+	/* Initialize */
+	*dp = 0
+	
+	/* Global direction */
+	dir = p_ptr->command_dir
+	
+	/* Hack -- auto-target if requested */
+	if (use_old_target && target_okay()) dir = 5;
+	
 #ifdef ALLOW_REPEAT /* TNB */
 
 	if (repeat_pull(dp))
@@ -2995,20 +3004,12 @@ bool get_aim_dir(int *dp)
 		/* Verify */
 		if (!(*dp == 5 && !target_okay()))
 		{
-			return (TRUE);
+			/* Store direction */
+			dir = *dp;
 		}
 	}
 
 #endif /* ALLOW_REPEAT -- TNB */
-
-	/* Initialize */
-	(*dp) = 0;
-
-	/* Global direction */
-	dir = command_dir;
-
-	/* Hack -- auto-target if requested */
-	if (use_old_target && target_okay()) dir = 5;
 
 	/* Ask until satisfied */
 	while (!dir)
@@ -3072,7 +3073,6 @@ bool get_aim_dir(int *dp)
 	/* Check for confusion */
 	if (p_ptr->confused)
 	{
-		/* XXX XXX XXX */
 		/* Random direction */
 		dir = ddd[rand_int(8)];
 	}
@@ -3089,7 +3089,7 @@ bool get_aim_dir(int *dp)
 
 #ifdef ALLOW_REPEAT /* TNB */
 
-	repeat_push(dir);
+	repeat_push(p_ptr->command_dir);
 
 #endif /* ALLOW_REPEAT -- TNB */
 
