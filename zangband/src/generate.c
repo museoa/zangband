@@ -612,9 +612,10 @@ static bool cave_gen(void)
 			if (room_build(y, x, 9)) continue;
 		}
 		else
+		{
 			/* Attempt a "trivial" room */
-		if (room_build(y, x, 1)) continue;
-		continue;
+			if (room_build(y, x, 1)) continue;
+		}
 	}
 
 	/* Make a hole in the dungeon roof sometimes at level 1 */
