@@ -1266,8 +1266,8 @@ F:CURSED | AGGRAVATE | EASY_KNOW
 N:155:See Invisible
 G:=:d
 I:45:22:0
-W:52:0:2:340
-A:52/1
+W:30:0:2:340
+A:30/3:52/1
 F:SEE_INVIS | EASY_KNOW
 
 N:156:Sustain Strength
