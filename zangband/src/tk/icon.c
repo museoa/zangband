@@ -364,61 +364,15 @@ int PixelPtrToLong(IconPtr p, int bypp)
 }
 
 
-static int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr, char *typeName)
-{
-	Tcl_HashEntry *hPtr;
-
-	/* Look up the icon type by name */
-	hPtr = Tcl_FindHashEntry(&g_icon_table, typeName);
-
-	/* The icon type was not found */
-	if (hPtr == NULL)
-	{
-		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-		/* Set the error */
-		Tcl_AppendStringsToObj(resultPtr, "unknown icon type \"",
-			typeName, "\"", NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	(*typeIndexPtr) = (int) Tcl_GetHashValue(hPtr);
-
-	/* Success */
-	return TCL_OK;
-}
-
-static int Icon_GetTypeFromObj(Tcl_Interp *interp, t_icon_data **typePtrPtr,
-	Tcl_Obj *objPtr)
-{
-	int typeIndex;
-
-	if (Icon_FindTypeByName(interp, &typeIndex, Tcl_GetString(objPtr))
-		!= TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	(*typePtrPtr) = &g_icon_data[typeIndex];
-
-	return TCL_OK;
-}
-
-
 /*
  * objcmd_icon --
  */
 static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static cptr cmdOption[] = {"count", "size",
-		"depth", "height", "width", NULL};
-	enum {IDX_COUNT, IDX_SIZE, IDX_DEPTH, IDX_HEIGHT, IDX_WIDTH} option;
+	static cptr cmdOption[] = {"size", NULL};
+	enum {IDX_SIZE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	t_icon_data *iconDataPtr;
-	
 	/* Hack - ignore parameter */
 	(void) dummy;
 	
@@ -437,55 +391,10 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
     }
 
 	switch (option)
-	{
-		case IDX_COUNT: /* count */
-			if (objc != 3)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, "typeName");
-				return TCL_ERROR;
-			}
-
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Return the number of icons */
-			Tcl_SetIntObj(resultPtr, iconDataPtr->icon_count);
-			break;
-			
+	{			
 		case IDX_SIZE: /* size */
 			Tcl_SetIntObj(resultPtr, g_icon_size);
 			break;
-
-		case IDX_DEPTH: /* depth */
-			Tcl_SetIntObj(resultPtr, g_icon_depth);
-			break;
-
-		case IDX_HEIGHT: /* height */
-		{
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			Tcl_SetIntObj(resultPtr, iconDataPtr->height);
-			break;
-		}
-
-		case IDX_WIDTH: /* width */
-		{
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			Tcl_SetIntObj(resultPtr, iconDataPtr->width);
-			break;
-		}
 	}
 
 	/* Success */
