@@ -168,15 +168,15 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	for (i = 0; i < MAX_CITY_BUILD; i++)
 	{
 		/* Work out total effects due to location */
-		total = ABS(pop - wild_build[i].pop) +
+		total = (ABS(pop - wild_build[i].pop) +
 				ABS(magic - wild_build[i].magic) +
-				ABS(law - wild_build[i].law) + 1;
+				ABS(law - wild_build[i].law)) / 5 + 1;
 
 		/* Effect due to rarity */
-		total += wild_build[i].rarity * 5;
+		total += wild_build[i].rarity;
 		
 		/* Effect due to total count */
-		total +=  build[i] * 100;
+		total +=  build[i] * 20;
 
 		/* calculate probability based on location */
 		wild_build[i].gen = ((u16b) MAX_SHORT / total);
