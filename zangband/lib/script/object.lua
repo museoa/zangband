@@ -68,37 +68,37 @@ function eat_food(object)
 		ident = TRUE
 	elseif object.sval == SV_FOOD_PARALYSIS then
 		if not player_res(TR2_FREE_ACT) then
-			if inc_paralyzed(rand_int(10) + 10) then
+			if inc_paralyzed(rand_range(10, 20)) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_HALLUCINATION then
 		if not player_res(TR2_RES_CHAOS) then
-			if inc_image(rand_int(250) + 250) then
+			if inc_image(rand_range(250, 500)) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_CONFUSION then
 		if  not player_res(TR2_RES_CONF) then
-			if inc_confused(rand_int(10) + 10) then
+			if inc_confused(rand_range(10, 20)) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_PARANOIA then
 		if not player_res(TR2_RES_FEAR) then
-			if inc_afraid(rand_int(10) + 10) then
+			if inc_afraid(rand_range(10, 20)) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_POISON then
 		if (res_pois_lvl() ~= 0) then
-			if inc_poisoned(rand_int(10) + 10) then
+			if inc_poisoned(rand_range(10, 20)) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_BLINDNESS then
 		if not player_res(TR2_RES_BLIND) then
-			if inc_blind(rand_int(200) + 200) then
+			if inc_blind(rand_range(200, 400)) then
 				ident = TRUE
 			end
 		end
