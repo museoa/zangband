@@ -1335,15 +1335,6 @@ static void borg_parse_aux(cptr msg, int len)
 					track_glyph_y[i] = 0;
 				}
 				track_glyph_num = 0;
-#if 0
-				/* Check for glyphs under player -- Cheat */
-				if (feat == FEAT_GLYPH || feat == FEAT_MINOR_GLYPH)
-				{
-					track_glyph_x[track_glyph_num] = c_x;
-					track_glyph_y[track_glyph_num] = c_y;
-					track_glyph_num++;
-				}
-#endif /* 0 */
 			}
 
 			return;
@@ -1657,39 +1648,7 @@ static void borg_parse_aux(cptr msg, int len)
 		goal = 0;
 		return;
 	}
-#if 0
-	/* check for mis-alter command.  Sometime induced by never_move guys */
-	if (streq(msg, "You attack the empty air.") && !borg_skill[BI_ISCONFUSED])
-	{
-		int ax, ay, d;
 
-		/* Examine all the monsters */
-		for (i = 1; i < borg_kills_nxt; i++)
-		{
-			borg_kill *kill = &borg_kills[i];
-
-			/* Skip dead monsters */
-			if (!kill->r_idx) continue;
-
-			/* Distance components */
-			ax = (kill->x > c_x) ? (kill->x - c_x) : (c_x - kill->x);
-			ay = (kill->y > c_y) ? (kill->y - c_y) : (c_y - kill->y);
-
-			/* Distance */
-			d = MAX(ax, ay);
-
-			/* Minimal distance */
-			if (d > 3) continue;
-
-			/* Hack -- kill monsters close to me */
-			borg_delete_kill(i, "oops, bad attack");
-		}
-
-		my_no_alter = TRUE;
-		goal = 0;
-		return;
-	}
-#endif /* 0 */
 	/* Feature XXX XXX XXX */
 	if (prefix(msg, "You see nothing there "))
 	{
@@ -1854,16 +1813,6 @@ static void borg_parse_aux(cptr msg, int len)
 
 		/* no known glyphs */
 		track_glyph_num = 0;
-#if 0
-		/* Check for glyphs under player -- Cheat */
-		if (feat == FEAT_GLYPH || feat == FEAT_MINOR_GLYPH)
-		{
-			track_glyph_x[track_glyph_num] = c_x;
-			track_glyph_y[track_glyph_num] = c_y;
-			track_glyph_num++;
-		}
-		return;
-#endif /* 0 */
 	}
 	/* failed glyph spell message */
 	if (prefix(msg, "The object resists the spell"))
@@ -2484,7 +2433,7 @@ static void borg_display_item(list_item *l_ptr)
 	for (i = 1; i <= 23; i++) prt("", j - 2, i);
 
 	/* Describe fully */
-	prt(l_ptr->o_name, j, 2);
+	if (l_ptr->o_name) prt(l_ptr->o_name, j, 2);
 
 	prt(format("k_idx = %-5d    tval = %-5d ",
 			   l_ptr->k_idx,  l_ptr->tval), j, 4);
@@ -2495,10 +2444,12 @@ static void borg_display_item(list_item *l_ptr)
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
 			   l_ptr->pval, l_ptr->to_a, l_ptr->to_h, l_ptr->to_d), j, 6);
 
-	prt(format("xtra_name = %s", l_ptr->xtra_name), j, 7);
-
-	prt(format("info = %d  timeout = %-d",
-			   l_ptr->info, l_ptr->timeout), j, 8);
+	if (l_ptr->xtra_name)
+	{
+		prt(format("xtra_name = %s", l_ptr->xtra_name), j, 7);
+	}
+	
+	prt(format("info = %d  timeout = %-d", l_ptr->info, l_ptr->timeout), j, 8);
 
 
 	prt("+------------FLAGS1------------+", j, 10);
@@ -3356,8 +3307,8 @@ void do_cmd_borg(void)
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command '_' Regional Fear info.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'p' Borg Power.");
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command '1' change max depth.");
-		Term_putstr(42, i++, -1, TERM_WHITE, "Command '2' level prep info.");
-		/*Term_putstr(2, i++, -1, TERM_WHITE, "Command '3' Feature of grid."); */
+		Term_putstr(42, i, -1, TERM_WHITE, "Command '2' level prep info.");
+		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'e' Examine Equip Item.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command '!' Time.");
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command '@' Borg LOS.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'w' My Swap Weapon.");
@@ -4241,26 +4192,13 @@ void do_cmd_borg(void)
 		case 'O':
 		{
 			/* Command: Display all known info on item */
-			int n = 0;
+			int n;
 
 			/* use this item */
 			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
-
-			/* Examine the screen */
-			borg_update();
-
-			/* Extract some "hidden" variables */
-			borg_hidden();
-
-			/* Examine the inventory */
-			borg_notice();
-			borg_notice_home();
-
-			/* Check the power */
-			borg_power();
-
-			/* Examine the screen */
-			borg_update_frame();
+			
+			/* Paranoia */
+			if (n > inven_num) break;
 
 			/* Save the screen */
 			Term_save();
@@ -4278,6 +4216,35 @@ void do_cmd_borg(void)
 
 			break;
 		}
+		
+		case 'e':
+		case 'E':
+		{
+			/* Command: Display all known info on item */
+			int n;
+
+			/* use this item */
+			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
+			
+			/* Paranoia */
+			if (n > equip_num) break;
+
+			/* Save the screen */
+			Term_save();
+
+			/* Display the special screen */
+			borg_display_item(&equipment[n]);
+
+			/* pause for study */
+			msg_format("Borg believes: ");
+			msg_print(NULL);
+
+			/* Restore the screen */
+			Term_load();
+
+			break;
+		}
+		
 
 		case 'd':
 		case 'D':
