@@ -373,11 +373,11 @@ static bool object_flavor(int k_idx)
 
 void get_table_name(char *out_string)
 {
-	int testcounter = randint1(3) + 1;
+	int testcounter = rand_range(1, 4);
 
 	strcpy(out_string, "'");
 
-	if (randint1(3) == 2)
+	if (one_in_(3))
 	{
 		while (testcounter--)
 			strcat(out_string, syllables[randint0(MAX_SYLLABLES)]);
@@ -385,7 +385,7 @@ void get_table_name(char *out_string)
 	else
 	{
 		char Syllable[80];
-		testcounter = randint1(2) + 1;
+		testcounter = rand_range(2, 3);
 		while (testcounter--)
 		{
 			(void)get_rnd_line("elvish.txt", 0, Syllable);
@@ -533,7 +533,7 @@ void flavor_init(void)
 	/* Potions */
 	for (i = 4; i < MAX_COLORS; i++)
 	{
-		j = randint0(MAX_COLORS - 4) + 4;
+		j = rand_range(4, MAX_COLORS);
 		temp_adj = potion_adj[i];
 		potion_adj[i] = potion_adj[j];
 		potion_adj[j] = temp_adj;

@@ -142,7 +142,7 @@ bool monst_spell_monst(int m_idx)
 		f6 = r_ptr->flags6;
 
 		/* Disallow blink unless close */
-		if ((distance(m_ptr->fy, m_ptr->fx, y, x) > 1) || !randint0(3)) f6 &= ~(RF6_BLINK);
+		if ((distance(m_ptr->fy, m_ptr->fx, y, x) > 1) || one_in_(3)) f6 &= ~(RF6_BLINK);
 
 		/* Disallow teleport unless wounded */
 		if (m_ptr->hp > m_ptr->maxhp / 2) f6 &= ~(RF6_TPORT);
@@ -183,8 +183,7 @@ bool monst_spell_monst(int m_idx)
 
 		/* Hack -- allow "desperate" spells */
 		if ((r_ptr->flags2 & RF2_SMART) &&
-			(m_ptr->hp < m_ptr->maxhp / 10) &&
-			(randint0(100) < 50))
+			(m_ptr->hp < m_ptr->maxhp / 10) && one_in_(2))
 		{
 			/* Require intelligent spells */
 			f4 &= (RF4_INT_MASK);
@@ -1519,7 +1518,7 @@ bool monst_spell_monst(int m_idx)
 						msg_format("%^s is blasted by psionic energy.", t_name);
 					}
 
-					t_ptr->confused += randint0(4) + 4;
+					t_ptr->confused += rand_range(4, 8);
 
 					mon_take_hit_mon(t_idx, damroll(8, 8), &fear, " collapses, a mindless husk.");
 				}
@@ -1561,9 +1560,9 @@ bool monst_spell_monst(int m_idx)
 						msg_format("%^s is blasted by psionic energy.", t_name);
 					}
 
-					t_ptr->confused += randint0(4) + 4;
-					t_ptr->mspeed -= randint0(4) + 4;
-					t_ptr->stunned += randint0(4) + 4;
+					t_ptr->confused += rand_range(4, 8);
+					t_ptr->mspeed -= rand_range(4, 8);
+					t_ptr->stunned += rand_range(4, 8);
 
 					mon_take_hit_mon(t_idx, damroll(12, 15), &fear, " collapses, a mindless husk.");
 				}
@@ -1933,7 +1932,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (!t_ptr->monfear) fear = TRUE;
 
-					t_ptr->monfear += randint0(4) + 4;
+					t_ptr->monfear += rand_range(4, 8);
 				}
 
 				wake_up = TRUE;
@@ -1970,7 +1969,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s is blinded!", t_name);
 
-					t_ptr->confused += 12 + (byte)randint0(4);
+					t_ptr->confused += (byte)rand_range(12, 16);
 				}
 
 				wake_up = TRUE;
@@ -2005,7 +2004,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s seems confused.", t_name);
 
-					t_ptr->confused += 12 + (byte)randint0(4);
+					t_ptr->confused += (byte)rand_range(12, 16);
 				}
 
 				wake_up = TRUE;
@@ -2077,7 +2076,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_t) msg_format("%^s is paralyzed!", t_name);
 
-					t_ptr->stunned += randint1(4) + 4;
+					t_ptr->stunned += rand_range(4, 8);
 				}
 
 				wake_up = TRUE;
@@ -2142,10 +2141,10 @@ bool monst_spell_monst(int m_idx)
 				else
 				{
 					if ((r_ptr->level + randint1(20)) >
-						(tr_ptr->level + 10 + randint1(20)))
+						(tr_ptr->level + rand_range(10, 30)))
 					{
 						t_ptr->hp = t_ptr->hp -
-						  (((s32b)((65 + randint1(25)) * t_ptr->hp)) / 100);
+						  (((s32b)(rand_range(65, 90) * t_ptr->hp)) / 100);
 
 						if (t_ptr->hp < 1) t_ptr->hp = 1;
 					}
@@ -2242,7 +2241,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (!m_ptr->invulner) m_ptr->invulner = randint1(4) + 4;
+				if (!m_ptr->invulner) m_ptr->invulner = rand_range(4, 8);
 
 				break;
 			}

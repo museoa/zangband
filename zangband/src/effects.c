@@ -2002,7 +2002,7 @@ bool dec_stat(int stat, int amount, int permanent)
 			if (loss < 1) loss = 1;
 
 			/* Randomize the loss */
-			loss = ((randint1(loss) + loss) * amount) / 100;
+			loss = (rand_range(loss, loss * 2) * amount) / 100;
 
 			/* Maximal loss */
 			if (loss < amount/2) loss = amount/2;
@@ -2044,7 +2044,7 @@ bool dec_stat(int stat, int amount, int permanent)
 			/* and one-half of the stat bonus times the percentage, with a */
 			/* minimum damage of half the percentage. -CWS */
 			loss = (((max-18) / 2 + 1) / 2 + 1);
-			loss = ((randint1(loss) + loss) * amount) / 100;
+			loss = (rand_range(loss, loss * 2) * amount) / 100;
 			if (loss < amount/2) loss = amount/2;
 
 			/* Lose some points */
@@ -2208,7 +2208,7 @@ bool do_dec_stat(int stat)
 	}
 
 	/* Sustain */
-	if (sust && (!ironman_nightmare || randint0(13)))
+	if (sust && !(ironman_nightmare && one_in_(13)))
 	{
 		/* Message */
 		msg_format("You feel %s for a moment, but the feeling passes.",
@@ -2219,7 +2219,7 @@ bool do_dec_stat(int stat)
 	}
 
 	/* Attempt to reduce the stat */
-	if (dec_stat(stat, 10, (ironman_nightmare && !randint0(13))))
+	if (dec_stat(stat, 10, (ironman_nightmare && !one_in_(13))))
 	{
 		/* Message */
 		msg_format("You feel very %s.", desc_stat_neg[stat]);
@@ -2449,7 +2449,7 @@ void do_poly_self(void)
 			{
 				if (one_in_(2))
 				{
-					(void)dec_stat(tmp, randint1(6) + 6, one_in_(3));
+					(void)dec_stat(tmp, rand_range(6, 12), one_in_(3));
 					power -= 1;
 				}
 				tmp++;
@@ -2552,7 +2552,7 @@ void do_poly_self(void)
 		msg_print("Your internal organs are rearranged!");
 		while (tmp < 6)
 		{
-			(void)dec_stat(tmp, randint1(6) + 6, one_in_(3));
+			(void)dec_stat(tmp, rand_range(6, 12), one_in_(3));
 			tmp++;
 		}
 		if (one_in_(6))

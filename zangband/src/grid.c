@@ -93,7 +93,7 @@ void place_random_stairs(int y, int x)
 	if (down_stairs && up_stairs)
 	{
 		/* Choose a staircase randomly */
-		if (randint0(100) < 50)
+		if (one_in_(2))
 			up_stairs = FALSE;
 		else
 			down_stairs = FALSE;
@@ -122,7 +122,7 @@ void place_random_door(int y, int x)
 	delete_field(y, x);
 	
 	/* Invisible wall */
-	if (ironman_nightmare && !randint0(666))
+	if (ironman_nightmare && !one_in_(666))
 	{
 		/* Create invisible wall */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -167,7 +167,7 @@ void place_closed_door(int y, int x)
 	int tmp;
 
 	/* Invisible wall */
-	if (ironman_nightmare && !randint0(666))
+	if (ironman_nightmare && !one_in_(666))
 	{
 		/* Create invisible wall */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -604,7 +604,7 @@ void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2)
 	/* Never move diagonally */
 	if (*rdir && *cdir)
 	{
-		if (randint0(100) < 50)
+		if (one_in_(2))
 			*rdir = 0;
 		else
 			*cdir = 0;

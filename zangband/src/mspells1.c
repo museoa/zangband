@@ -78,7 +78,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	if (smart_learn)
 	{
 		/* Hack -- Occasionally forget player status */
-		if (m_ptr->smart && (randint0(100) < 1)) m_ptr->smart = 0L;
+		if (m_ptr->smart && one_in_(100)) m_ptr->smart = 0L;
 
 		/* Use the memorized flags */
 		smart = m_ptr->smart;
@@ -216,7 +216,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		f4 &= ~(RF4_BR_POIS);
 		f5 &= ~(RF5_BA_POIS);
 
-		if (randint0(2))
+		if (one_in_(2))
 		{
 			f4 &= ~(RF4_BA_NUKE | RF4_BR_NUKE);
 		}
@@ -257,7 +257,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	{
 		f5 &= ~(RF5_CONF);
 
-		if (randint0(2))
+		if (one_in_(2))
 		{
 			f4 &= ~(RF4_BR_CONF);
 		}
@@ -296,7 +296,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	{
 		f4 &= ~(RF4_BR_SHAR);
 
-		if (randint0(2))
+		if (one_in_(2))
 		{
 			f4 &= ~(RF4_ROCKET);
 		}
@@ -596,7 +596,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Hurt badly or afraid, attempt to flee */
 		if (has_escape && ((m_ptr->hp < m_ptr->maxhp / 4) ||
-			 m_ptr->monfear) && (!randint0(2)))
+			 m_ptr->monfear) && one_in_(2))
 		{
 			/* Choose escape spell */
 			f4_mask = (RF4_ESCAPE_MASK);
@@ -605,8 +605,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Still hurt badly, couldn't flee, attempt to heal */
-		else if (has_heal && (m_ptr->hp < m_ptr->maxhp / 4) &&
-			 (!randint0(2)))
+		else if (has_heal && (m_ptr->hp < m_ptr->maxhp / 4) && one_in_(2))
 		{
 			/* Choose heal spell */
 			f4_mask = (RF4_HEAL_MASK);
@@ -635,7 +634,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Summon if possible (sometimes) */
-		else if (has_summon && (randint0(100) < 50))
+		else if (has_summon && one_in_(2))
 		{
 			/* Choose summon spell */
 			f4_mask = (RF4_SUMMON_MASK);
@@ -653,7 +652,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Try another tactical spell (sometimes) */
-		else if (has_tactic && (randint0(100) < 50))
+		else if (has_tactic && one_in_(2))
 		{
 			/* Choose tactic spell */
 			f4_mask = (RF4_TACTIC_MASK);
@@ -662,8 +661,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Cast globe of invulnerability if not already in effect */
-		else if (has_invul && !(m_ptr->invulner)
-			 && (randint0(100) < 50))
+		else if (has_invul && !(m_ptr->invulner) && one_in_(2))
 		{
 			/* Choose Globe of Invulnerability */
 			f4_mask = (RF4_INVULN_MASK);
@@ -871,9 +869,8 @@ bool make_attack_spell(int m_idx)
 	}
 
 	/* Hack -- allow "desperate" spells */
-	if ((r_ptr->flags2 & (RF2_SMART)) &&
-		(m_ptr->hp < m_ptr->maxhp / 10) &&
-		(randint0(100) < 50))
+	if ((r_ptr->flags2 & (RF2_SMART)) && (m_ptr->hp < m_ptr->maxhp / 10) &&
+		 one_in_(2))
 	{
 		/* Require intelligent spells */
 		f4 &= (RF4_INT_MASK);
@@ -1507,12 +1504,12 @@ bool make_attack_spell(int m_idx)
 
 				if (!p_ptr->resist_confu)
 				{
-					(void)set_confused(p_ptr->confused + randint0(4) + 4);
+					(void)set_confused(p_ptr->confused + rand_range(4, 8));
 				}
 
 				if (!p_ptr->resist_chaos && one_in_(3))
 				{
-					(void)set_image(p_ptr->image + randint0(250) + 150);
+					(void)set_image(p_ptr->image + rand_range(150, 400));
 				}
 
 				take_hit(damroll(8, 8), ddesc);
@@ -1544,17 +1541,17 @@ bool make_attack_spell(int m_idx)
 				take_hit(damroll(12, 15), ddesc);
 				if (!p_ptr->resist_blind)
 				{
-					(void)set_blind(p_ptr->blind + 8 + randint0(8));
+					(void)set_blind(p_ptr->blind + rand_range(8, 16));
 				}
 				if (!p_ptr->resist_confu)
 				{
-					(void)set_confused(p_ptr->confused + randint0(4) + 4);
+					(void)set_confused(p_ptr->confused + rand_range(4, 8));
 				}
 				if (!p_ptr->free_act)
 				{
-					(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
+					(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 				}
-				(void)set_slow(p_ptr->slow + randint0(4) + 4);
+				(void)set_slow(p_ptr->slow + rand_range(4, 8));
 
 				while (randint0(100) > p_ptr->skill_sav)
 					(void)do_dec_stat(A_INT);
@@ -1563,7 +1560,7 @@ bool make_attack_spell(int m_idx)
 
 				if (!p_ptr->resist_chaos)
 				{
-					(void)set_image(p_ptr->image + randint0(250) + 150);
+					(void)set_image(p_ptr->image + rand_range(150, 400));
 				}
 			}
 			break;
@@ -1785,7 +1782,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_afraid(p_ptr->afraid + randint0(4) + 4);
+				(void)set_afraid(p_ptr->afraid + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
 			break;
@@ -1808,7 +1805,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_blind(12 + randint0(4));
+				(void)set_blind(rand_range(12, 16));
 			}
 			update_smart_learn(m_idx, DRS_BLIND);
 			break;
@@ -1831,7 +1828,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_confused(p_ptr->confused + randint0(4) + 4);
+				(void)set_confused(p_ptr->confused + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
@@ -1853,7 +1850,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_slow(p_ptr->slow + randint0(4) + 4);
+				(void)set_slow(p_ptr->slow + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1876,7 +1873,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
+				(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1923,7 +1920,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				int dummy = (((s32b) ((65 + randint1(25)) * (p_ptr->chp))) / 100);
+				int dummy = (((s32b) (rand_range(25, 90) * (p_ptr->chp))) / 100);
 				msg_print("Your feel your life fade away!");
 				take_hit(dummy, m_name);
 				curse_equipment(100, 20);
@@ -2013,7 +2010,7 @@ bool make_attack_spell(int m_idx)
 			}
 
 			if (!(m_ptr->invulner))
-				m_ptr->invulner = randint1(4) + 4;
+				m_ptr->invulner = rand_range(4, 8);
 
 			break;
 		}

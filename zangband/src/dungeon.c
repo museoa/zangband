@@ -153,7 +153,7 @@ static void sense_inventory(void)
 			case CLASS_WARRIOR:
 			{
 				/* Good sensing */
-				if (0 != randint0(9000L / (plev * plev + 40))) return;
+				if (!one_in_(9000L / (plev * plev + 40))) return;
 
 				/* Heavy sensing */
 				heavy = TRUE;
@@ -166,7 +166,7 @@ static void sense_inventory(void)
 			case CLASS_HIGH_MAGE:
 			{
 				/* Very bad (light) sensing */
-				if (0 != randint0(240000L / (plev + 5))) return;
+				if (!one_in_(240000L / (plev + 5))) return;
 
 				/* Done */
 				break;
@@ -175,7 +175,7 @@ static void sense_inventory(void)
 			case CLASS_PRIEST:
 			{
 				/* Good (light) sensing */
-				if (0 != randint0(10000L / (plev * plev + 40))) return;
+				if (!one_in_(10000L / (plev * plev + 40))) return;
 
 				/* Done */
 				break;
@@ -184,7 +184,7 @@ static void sense_inventory(void)
 			case CLASS_ROGUE:
 			{
 				/* Okay sensing */
-				if (0 != randint0(20000L / (plev * plev + 40))) return;
+				if (!one_in_(20000L / (plev * plev + 40))) return;
 
 				/* Heavy sensing */
 				heavy = TRUE;
@@ -196,7 +196,7 @@ static void sense_inventory(void)
 			case CLASS_RANGER:
 			{
 				/* Bad sensing */
-				if (0 != randint0(95000L / (plev * plev + 40))) return;
+				if (!one_in_(95000L / (plev * plev + 40))) return;
 
 				/* Changed! */
 				heavy = TRUE;
@@ -208,7 +208,7 @@ static void sense_inventory(void)
 			case CLASS_PALADIN:
 			{
 				/* Bad sensing */
-				if (0 != randint0(77777L / (plev * plev + 40))) return;
+				if (!one_in_(77777L / (plev * plev + 40))) return;
 
 				/* Heavy sensing */
 				heavy = TRUE;
@@ -220,7 +220,7 @@ static void sense_inventory(void)
 			case CLASS_WARRIOR_MAGE:
 			{
 				/* Bad sensing */
-				if (0 != randint0(75000L / (plev * plev + 40))) return;
+				if (!one_in_(75000L / (plev * plev + 40))) return;
 
 				/* Done */
 				break;
@@ -229,7 +229,7 @@ static void sense_inventory(void)
 			case CLASS_MINDCRAFTER:
 			{
 				/* Bad sensing */
-				if (0 != randint0(55000L / (plev * plev + 40))) return;
+				if (!one_in_(55000L / (plev * plev + 40))) return;
 
 				/* Done */
 				break;
@@ -238,7 +238,7 @@ static void sense_inventory(void)
 			case CLASS_CHAOS_WARRIOR:
 			{
 				/* Bad sensing */
-				if (0 != randint0(80000L / (plev * plev + 40))) return;
+				if (!one_in_(80000L / (plev * plev + 40))) return;
 
 				/* Changed! */
 				heavy = TRUE;
@@ -250,7 +250,7 @@ static void sense_inventory(void)
 			case CLASS_MONK:
 			{
 				/* Okay sensing */
-				if (0 != randint0(20000L / (plev * plev + 40))) return;
+				if (!one_in_(20000L / (plev * plev + 40))) return;
 
 				/* Done */
 				break;
@@ -313,10 +313,10 @@ static void sense_inventory(void)
 		if (object_known_p(o_ptr)) continue;
 
 		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) && (0 != randint0(5))) continue;
+		if ((i < INVEN_WIELD) && !one_in_(5)) continue;
 
 		/* Good luck */
-		if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !randint0(13))
+		if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !one_in_(13))
 		{
 			heavy = TRUE;
 		}
@@ -328,7 +328,7 @@ static void sense_inventory(void)
 		if (!feel) continue;
 
 		/* Bad luck */
-		if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !randint0(13))
+		if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !one_in_(13))
 		{
 			switch (feel)
 			{
@@ -344,18 +344,18 @@ static void sense_inventory(void)
 				}
 				case FEEL_CURSED:
 				{
-					feel = randint0(3) ? FEEL_GOOD : FEEL_AVERAGE;
+					feel = one_in_(3) ? FEEL_AVERAGE : FEEL_GOOD;
 					break;
 				}
 				case FEEL_AVERAGE:
 				{
-					feel = randint0(2) ? FEEL_BAD : FEEL_GOOD;
+					feel = one_in_(2) ? FEEL_BAD : FEEL_GOOD;
 					break;
 				}
 				case FEEL_GOOD:
 				case FEEL_BAD:
 				{
-					feel = randint0(3) ? FEEL_CURSED : FEEL_AVERAGE;
+					feel = one_in_(3) ? FEEL_AVERAGE : FEEL_CURSED;
 					break;
 				}
 				case FEEL_EXCELLENT:
@@ -494,7 +494,7 @@ static void wreck_the_pattern(void)
 	if (!p_ptr->invuln)
 		take_hit(damroll(10, 8), "corrupting the Pattern");
 
-	to_ruin = randint1(45) + 35;
+	to_ruin = rand_range(35, 80);
 
 	while (to_ruin--)
 	{
@@ -569,7 +569,7 @@ static bool pattern_effect(void)
 	}
 	else
 	{
-		if ((p_ptr->prace == RACE_AMBERITE) && (randint1(2) != 1))
+		if ((p_ptr->prace == RACE_AMBERITE) && one_in_(2))
 			return TRUE;
 		else if (!p_ptr->invuln)
 			take_hit(damroll(1, 3), "walking the Pattern");
@@ -1444,7 +1444,7 @@ static void process_world(void)
 				disturb(TRUE);
 
 				/* Hack -- faint (bypass free action) */
-				(void)set_paralyzed(p_ptr->paralyzed + 1 + randint0(5));
+				(void)set_paralyzed(p_ptr->paralyzed + randint1(5));
 			}
 		}
 	}
@@ -1779,7 +1779,7 @@ static void process_world(void)
 		 * Hack: Uncursed teleporting items (e.g. Trump Weapons)
 		 * can actually be useful!
 		 */
-		if ((f3 & TR3_TELEPORT) && (randint0(100) < 1))
+		if ((f3 & TR3_TELEPORT) && one_in_(100))
 		{
 			if (cursed_p(o_ptr) && !p_ptr->anti_tele)
 			{
@@ -1970,7 +1970,7 @@ static void process_world(void)
 				if (p_ptr->depth < 1) p_ptr->depth = 1;
 
 				/* Nightmare mode makes recall more dangerous */
-				if (ironman_nightmare && !randint0(666))
+				if (ironman_nightmare && !one_in_(666))
 				{
 					if (p_ptr->depth < 50)
 					{

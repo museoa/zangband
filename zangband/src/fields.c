@@ -2431,7 +2431,7 @@ void field_action_hit_trap_element(s16b *field_ptr, vptr nothing)
 			msg_print("A pungent green gas surrounds you!");
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + randint0(20) + 10);
+				(void)set_poisoned(p_ptr->poisoned + rand_range(10, 30));
 			}
 			break;
 		}
@@ -2493,7 +2493,7 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, vptr nothing)
 			
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + randint0(50) + 100);
+				(void)set_poisoned(p_ptr->poisoned + rand_range(100, 150));
 			}
 			break;
 		}
@@ -2535,7 +2535,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 		case 0:
 		{
 			msg_print("A blue gas surrounds you!");
-			(void)set_slow(p_ptr->slow + randint0(20) + 20);
+			(void)set_slow(p_ptr->slow + rand_range(20, 40));
 		}
 
 		case 1:
@@ -2543,7 +2543,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 			msg_print("A black gas surrounds you!");
 			if (!p_ptr->resist_blind)
 			{
-				(void)set_blind(p_ptr->blind + randint0(50) + 25);
+				(void)set_blind(p_ptr->blind + rand_range(25, 75));
 			}
 			break;
 		}
@@ -2553,7 +2553,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 			msg_print("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_confu)
 			{
-				(void)set_confused(p_ptr->confused + randint0(20) + 10);
+				(void)set_confused(p_ptr->confused + rand_range(10, 30));
 			}
 			break;
 		}
@@ -2578,7 +2578,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 					/* Remove the monster restriction */
 					get_mon_num_prep(NULL, NULL);
 				}
-				(void)set_paralyzed(p_ptr->paralyzed + randint0(10) + 5);
+				(void)set_paralyzed(p_ptr->paralyzed + rand_range(5, 15));
 			}
 			break;
 		}
@@ -2589,7 +2589,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 
 			if (!p_ptr->resist_chaos)
 			{
-				(void)set_image(p_ptr->image + randint0(20) + 10);
+				(void)set_image(p_ptr->image + rand_range(10, 30));
 			}
 			break;
 		}

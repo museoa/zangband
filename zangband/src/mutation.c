@@ -1134,7 +1134,7 @@ void mutation_power_aux(mutation_type *mut_ptr)
 			(void)hp_player(30);
 		}
 		
-		(void)set_shero(p_ptr->shero + randint1(25) + 25);
+		(void)set_shero(p_ptr->shero + rand_range(25, 50));
 		(void)set_afraid(0);
 	}
 
@@ -1162,7 +1162,7 @@ void mutation_power_aux(mutation_type *mut_ptr)
 	else if (mut_ptr->which == MUT1_RESIST)
 	{
 		int num = lvl / 10;
-		int dur = randint1(20) + 20;
+		int dur = rand_range(20, 40);
 
 		if (randint0(5) < num)
 		{
@@ -1263,7 +1263,7 @@ void mutation_power_aux(mutation_type *mut_ptr)
 	else if (mut_ptr->which == MUT1_STERILITY)
 	{
 		msg_print("You suddenly have a headache!");
-		take_hit(randint1(17) + 17, "the strain of forcing abstinence");
+		take_hit(rand_range(17, 34), "the strain of forcing abstinence");
 		num_repro += MAX_REPRO;
 	}
 
@@ -1397,7 +1397,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			msg_print("It's so dark... so scary!");
-			set_afraid(p_ptr->afraid + 13 + randint1(26));
+			set_afraid(p_ptr->afraid + rand_range(13, 40));
 		}
 	}			
 
@@ -1426,7 +1426,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + randint0(20) + 15);
+			(void)set_confused(p_ptr->confused + rand_range(15, 35));
 		}
 
 		if (!p_ptr->resist_chaos)
@@ -1446,7 +1446,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 				if (one_in_(3))
 				{
 					msg_print("Thishcischs GooDSChtuff!");
-					(void)set_image(p_ptr->image + randint0(150) + 150);
+					(void)set_image(p_ptr->image + rand_range(150, 300));
 				}
  			}
 		}
@@ -1458,7 +1458,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
-			(void)set_image(p_ptr->image + randint0(50) + 20);
+			(void)set_image(p_ptr->image + rand_range(20, 70));
 		}
 	}			
 				
@@ -1506,7 +1506,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			}
 			else
 			{
-				set_slow(p_ptr->slow + randint1(30) + 10);
+				set_slow(p_ptr->slow + rand_range(10, 40));
 			}
 		}
 		else
@@ -1518,7 +1518,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			}
 			else
 			{
-				set_fast(p_ptr->fast + randint1(30) + 10);
+				set_fast(p_ptr->fast + rand_range(10, 40));
 			}
 		}
 		msg_print(NULL);
@@ -1607,7 +1607,8 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You feel insubstantial!");
 		msg_print(NULL);
-		set_wraith_form(p_ptr->wraith_form + randint1(p_ptr->lev / 2) + (p_ptr->lev / 2));
+		set_wraith_form(p_ptr->wraith_form +
+			 rand_range(p_ptr->lev / 2, p_ptr->lev));
 	}
 
 	else if (mut_ptr->which == MUT2_POLY_WOUND)
@@ -1651,9 +1652,9 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			msg_print("You can feel yourself wasting away!");
 			msg_print(NULL);
 #if 0
-			(void)dec_stat(which_stat, randint1(6) + 6, one_in_(3));
+			(void)dec_stat(which_stat, rand_range(6, 12), one_in_(3));
 #else
-			(void)dec_stat(which_stat, randint1(6) + 6, 0);
+			(void)dec_stat(which_stat, rand_range(6, 12), 0);
 #endif
 		}
 	}
@@ -1735,7 +1736,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You feel invincible!");
 		msg_print(NULL);
-		(void)set_invuln(p_ptr->invuln + randint1(8) + 8);
+		(void)set_invuln(p_ptr->invuln + rand_range(8, 16));
 	}
 				
 	else if (mut_ptr->which == MUT2_SP_TO_HP)

@@ -116,12 +116,12 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 
 	if (use_hp)
 	{
-		take_hit((cost / 2) + randint1(cost / 2),
+		take_hit(rand_range(cost / 2, cost),
 			"concentrating too hard");
 	}
 	else
 	{
-		p_ptr->csp -= (cost / 2) + randint1(cost / 2);
+		p_ptr->csp -= rand_range(cost / 2, cost);
 	}
 
 
@@ -132,8 +132,8 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	p_ptr->window |= (PW_PLAYER | PW_SPELL);
 
 	/* Success? */
-	if (randint1(p_ptr->stat_cur[use_stat]) >=
-	    ((difficulty / 2) + randint1(difficulty / 2)))
+	if (randint1(p_ptr->stat_cur[use_stat]) >= 
+		rand_range(difficulty / 2, difficulty))
 	{
 		return TRUE;
 	}
@@ -376,7 +376,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 							}
 							break;
 						case CLASS_CHAOS_WARRIOR:
-							if (randint1(3) != 1)
+							if (!one_in_(3))
 							{
 								Type = GF_CONFUSION;
 								Type_desc = "confusion";
@@ -388,7 +388,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 							}
 							break;
 						case CLASS_MONK:
-							if (randint1(3) != 1)
+							if (!one_in_(3))
 							{
 								Type = GF_CONFUSION;
 								Type_desc = "confusion";
@@ -400,7 +400,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 							}
 							break;
 						case CLASS_MINDCRAFTER:
-							if (randint1(3) != 1)
+							if (!one_in_(3))
 							{
 								Type = GF_CONFUSION;
 								Type_desc = "confusion";
@@ -476,7 +476,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 
 			case RACE_GOLEM:
 			{
-				(void)set_shield(p_ptr->shield + randint1(20) + 30);
+				(void)set_shield(p_ptr->shield + rand_range(30, 50));
 				break;
 			}
 

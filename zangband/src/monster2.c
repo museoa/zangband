@@ -543,7 +543,7 @@ s16b get_mon_num(int level)
 	if (level > 0)
 	{
 		/* Nightmare mode allows more out-of depth monsters */
-		if (ironman_nightmare && !randint0(NASTY_MON))
+		if (ironman_nightmare && one_in_(NASTY_MON))
 		{
 			/* What a bizarre calculation */
 			level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
@@ -551,14 +551,14 @@ s16b get_mon_num(int level)
 		else
 		{
 			/* Occasional "nasty" monster */
-			if (!randint0(NASTY_MON))
+			if (one_in_(NASTY_MON))
 			{
 				/* Boost the level */
 				level += 7;
 			}
 
 			/* Occasional "nasty" monster */
-			if (!randint0(NASTY_MON))
+			if (one_in_(NASTY_MON))
 			{
 				/* Boost the level */
 				level += 7;
@@ -966,7 +966,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
 			return; /* oops */
 
-		if (is_pet(m_ptr) && (randint1(8) != 1))
+		if (is_pet(m_ptr) && !one_in_(8))
 			return; /* Pet eldritch horrors are safe most of the time */
 
 		if (saving_throw(p_ptr->skill_sav * 100 / power))
@@ -1016,11 +1016,11 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + randint0(4) + 4);
+			(void)set_confused(p_ptr->confused + rand_range(4, 8));
 		}
 		if (!p_ptr->resist_chaos && one_in_(3))
 		{
-			(void)set_image(p_ptr->image + randint0(250) + 150);
+			(void)set_image(p_ptr->image + rand_range(150, 400));
 		}
 		return;
 	}
@@ -1036,11 +1036,11 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + randint0(4) + 4);
+			(void)set_confused(p_ptr->confused + rand_range(4, 8));
 		}
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
+			(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 		}
 		while (randint0(100) > p_ptr->skill_sav)
 			(void)do_dec_stat(A_INT);
@@ -1048,7 +1048,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 			(void)do_dec_stat(A_WIS);
 		if (!p_ptr->resist_chaos)
 		{
-			(void)set_image(p_ptr->image + randint0(250) + 150);
+			(void)set_image(p_ptr->image + rand_range(150, 400));
 		}
 	}
 
@@ -2110,7 +2110,7 @@ bool alloc_horde(int y, int x)
 
 	summon_kin_type = r_ptr->d_char;
 
-	for (attempts = randint1(10) + 5; attempts; attempts--)
+	for (attempts = rand_range(5, 15); attempts; attempts--)
 	{
 		scatter(&cy, &cx, y, x, 5);
 

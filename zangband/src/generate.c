@@ -651,7 +651,7 @@ static bool cave_gen(void)
 	if (one_in_(3) && (randint1(p_ptr->depth) > 5) && terrain_streams)
 	{
 	 	/* Choose water or lava */
-		if (randint1(MAX_DEPTH * 2) - 1 > p_ptr->depth)
+		if (randint0(MAX_DEPTH * 2) > p_ptr->depth)
 		{
 			feat1 = FEAT_DEEP_WATER;
 			feat2 = FEAT_SHAL_WATER;
@@ -740,7 +740,7 @@ static bool cave_gen(void)
 		/* Connect the room to the previous room */
 #ifdef PILLAR_TUNNELS
 
-		if ((randint1(20) > p_ptr->depth) && (randint1(100) < 25))
+		if ((randint1(20) > p_ptr->depth) && one_in_(4))
 		{
 			/* make catacomb-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
@@ -962,7 +962,7 @@ static bool cave_gen(void)
 		alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_INVIS, randnor(DUN_AMT_INVIS, 3));
 	}
 
-	if (empty_level && ((randint1(DARK_EMPTY) != 1) || (randint1(100) > p_ptr->depth)))
+	if (empty_level && (!one_in_(DARK_EMPTY) || (randint1(100) > p_ptr->depth)))
 	{
 		/* Lite the cave */
 		for (y = min_hgt; y < max_hgt; y++)

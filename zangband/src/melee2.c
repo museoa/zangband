@@ -180,7 +180,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* Wake it up */
 	m_ptr->csleep = 0;
 
-	if (m_ptr->invulner && randint0(PENETRATE_INVULNERABILITY))
+	if (m_ptr->invulner && !one_in_(PENETRATE_INVULNERABILITY))
 	{
 		if (m_ptr->ml)
 		{
@@ -1603,7 +1603,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				if ((p_ptr->image) && one_in_(3))
 				{
 					strfmt(temp, "%s %s.",
-					       silly_attacks[randint1(MAX_SILLY_ATTACK)-1],t_name);
+					       silly_attacks[randint0(MAX_SILLY_ATTACK)],t_name);
 				}
 				else
 					strfmt(temp, act, t_name);
@@ -1986,10 +1986,10 @@ static void process_monster(int m_idx)
 	if (r_ptr->flags2 & (RF2_QUANTUM))
 	{
 		/* Sometimes skip move */
-		if (!randint0(2)) return;
+		if (one_in_(2)) return;
 
 		/* Sometimes die */
-		if (!randint0((m_idx % 100) + 10) && !(r_ptr->flags1 & RF1_QUESTOR))
+		if (one_in_((m_idx % 100) + 10) && !(r_ptr->flags1 & RF1_QUESTOR))
 		{
 			bool sad = FALSE;
 
@@ -2267,7 +2267,7 @@ static void process_monster(int m_idx)
 		}
 
 		/* Hack -- multiply slower in crowded areas */
-		if ((k < 4) && (!k || !randint0(k * MON_MULT_ADJ)))
+		if ((k < 4) && (!k || one_in_(k * MON_MULT_ADJ)))
 		{
 			/* Try to multiply */
 			if (multiply_monster(m_idx, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
@@ -2357,8 +2357,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* 75% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-				(r_ptr->flags1 & RF1_RAND_25) &&
+	else if ((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) &&
 	         (randint0(100) < 75))
 	{
 		/* Memorize flags */
@@ -2370,8 +2369,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* 50% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-				(randint0(100) < 50))
+	else if ((r_ptr->flags1 & RF1_RAND_50) && (randint0(100) < 50))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_50);
@@ -2381,8 +2379,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* 25% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_25) &&
-				(randint0(100) < 25))
+	else if ((r_ptr->flags1 & RF1_RAND_25) && (randint0(100) < 25))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= RF1_RAND_25;

@@ -525,7 +525,7 @@ static void build_type3(int by0, int bx0)
 
 
 	/* Special features (3/4) */
-	switch (randint0(4))
+	switch (randint1(4))
 	{
 		/* Nothing */
 		case 1:
@@ -1989,7 +1989,7 @@ static void build_type7(int by0, int bx0)
 	/* No lesser vault found */
 	if (!v_ptr) return;
 
-	if (!randint0(3))
+	if (!one_in_(3))
 	{
 		/* pick type of transformation (0-7) */
 		transno = randint0(8);
@@ -2086,7 +2086,7 @@ static void build_type8(int by0, int bx0)
 	/* No greater vault found */
 	if (!v_ptr) return;
 
-	if (!randint0(3))
+	if (!one_in_(3))
 	{
 		/* pick type of transformation (0-7) */
 		transno = randint0(8);
@@ -2134,7 +2134,7 @@ static void build_type8(int by0, int bx0)
 
 
 #ifdef FORCE_V_IDX
-	v_ptr = &v_info[76 + randint1(3)];
+	v_ptr = &v_info[rand_range(76, 79)];
 #endif
 
 	/* Message */
@@ -2616,7 +2616,7 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 
 	/* Fill with monsters and treasure, high difficulty */
 	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-		 y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint1(5) + 5);
+		 y0 - yhsize + 1, y0 - yhsize + ysize - 1, rand_range(5, 10));
 }
 
 
@@ -2749,7 +2749,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 		}
 		for (i = 1; i < 4; i++)
 		{
-			j = 1 + randint0(3);
+			j = randint1(3);
 			
 			/* Swap */
 			temp = adj[i];
@@ -3323,7 +3323,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	add_door(x0, y0 - y);
 
 	/* Fill with stuff - medium difficulty */
-	fill_treasure(x0 - rad, x0 + rad, y0 - rad, y0 + rad, randint1(3) + 3);
+	fill_treasure(x0 - rad, x0 + rad, y0 - rad, y0 + rad, rand_range(3, 6));
 }
 
 
@@ -3491,10 +3491,12 @@ static void build_type10(int by0, int bx0)
 {
 	int y0, x0, xsize, ysize, vtype;
 
-	/* Get size */
-	/* big enough to look good, small enough to be fairly common. */
-	xsize = randint1(22) + 22;
-	ysize = randint1(11) + 11;
+	/* 
+	 * Get size
+	 * Big enough to look good, small enough to be fairly common.
+	 */
+	xsize = rand_range(22, 44);
+	ysize = rand_range(11, 22);
 
 	/* Allocate in room_map.  If will not fit, exit */
 	if (!room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
@@ -3657,10 +3659,10 @@ static void build_type12(int by0, int bx0)
 		place_object(y0, x0, FALSE, FALSE);
 
 		/* Let's guard the treasure well */
-		vault_monsters(y0, x0, randint0(2) + 3);
+		vault_monsters(y0, x0, rand_range(2, 4));
 
 		/* Traps naturally */
-		vault_traps(y0, x0, 4, 4, randint0(3) + 2);
+		vault_traps(y0, x0, 4, 4, rand_range(2, 4));
 	}
 }
 

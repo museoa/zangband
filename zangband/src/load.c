@@ -2788,7 +2788,7 @@ static errr rd_savefile_new_aux(void)
 			for (j = 0; j < MAX_TRIES; j++)
 			{
 				/* Random monster 5 - 10 levels out of depth */
-				q_ptr->r_idx = get_mon_num(q_ptr->level + 4 + randint1(6));
+				q_ptr->r_idx = get_mon_num(q_ptr->level + rand_range(4, 10));
 
 				r_ptr = &r_info[q_ptr->r_idx];
 
@@ -2806,7 +2806,7 @@ static errr rd_savefile_new_aux(void)
 			}
 			else
 			{
-				q_ptr->max_num = 5 + (s16b)randint0(q_ptr->level/3 + 5);
+				q_ptr->max_num = (s16b)rand_range(5, q_ptr->level/3 + 10);
 			}
 		}
 

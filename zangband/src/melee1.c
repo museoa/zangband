@@ -36,7 +36,7 @@ static int monster_critical(int dice, int sides, int dam)
 	/* Super-charge */
 	if (dam >= 20)
 	{
-		while (randint0(100) < 2) max++;
+		while (one_in_(50)) max++;
 	}
 
 	/* Critical damage */
@@ -448,7 +448,7 @@ bool make_attack_normal(int m_idx)
 				if ((p_ptr->image) && one_in_(3))
 				{
 					msg_format("%^s %s you.", m_name,
-					           silly_attacks[randint1(MAX_SILLY_ATTACK) - 1]);
+					           silly_attacks[randint0(MAX_SILLY_ATTACK)]);
 				}
 				else
 					msg_format("%^s %s", m_name, act);
@@ -613,7 +613,7 @@ bool make_attack_normal(int m_idx)
 							msg_print("You quickly protect your money pouch!");
 
 							/* Occasional blink anyway */
-							if (randint0(3)) blinked = TRUE;
+							if (!one_in_(3)) blinked = TRUE;
 						}
 
 						/* Eat gold */
@@ -818,7 +818,7 @@ bool make_attack_normal(int m_idx)
 							 (!(o_ptr->flags3 & TR3_INSTA_ART)))
 						{
 							/* Reduce fuel */
-							o_ptr->pval -= (250 + randint1(250));
+							o_ptr->pval -= rand_range(250, 500);
 							if (o_ptr->pval < 1) o_ptr->pval = 1;
 
 							/* Notice */
@@ -1239,7 +1239,7 @@ bool make_attack_normal(int m_idx)
 						}
 
 						/* Damage CON (10% chance) */
-						if (randint1(100) < 11)
+						if (randint0(100) < 10)
 						{
 							/* 1% chance for perm. damage */
 							bool perm = (one_in_(10));
@@ -1384,10 +1384,10 @@ bool make_attack_normal(int m_idx)
 				{
 					case 0: k = 0; break;
 					case 1: k = randint1(5); break;
-					case 2: k = randint1(5) + 5; break;
-					case 3: k = randint1(20) + 20; break;
-					case 4: k = randint1(50) + 50; break;
-					case 5: k = randint1(100) + 100; break;
+					case 2: k = rand_range(5, 10); break;
+					case 3: k = rand_range(20, 40); break;
+					case 4: k = rand_range(50, 100); break;
+					case 5: k = rand_range(100, 200); break;
 					case 6: k = 300; break;
 					default: k = 500; break;
 				}
@@ -1409,10 +1409,10 @@ bool make_attack_normal(int m_idx)
 				{
 					case 0: k = 0; break;
 					case 1: k = randint1(5); break;
-					case 2: k = randint1(10) + 10; break;
-					case 3: k = randint1(20) + 20; break;
-					case 4: k = randint1(30) + 30; break;
-					case 5: k = randint1(40) + 40; break;
+					case 2: k = rand_range(10, 20); break;
+					case 3: k = rand_range(20, 40); break;
+					case 4: k = rand_range(30, 60); break;
+					case 5: k = rand_range(40, 80); break;
 					case 6: k = 100; break;
 					default: k = 200; break;
 				}
