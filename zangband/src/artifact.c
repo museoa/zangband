@@ -572,6 +572,23 @@ static cptr glow_desc[] =
 	"glows", "shines", "pulses", "throbs", "radiates", "sparks"
 };
 
+/*
+ * An activation for random artifacts
+ */
+typedef struct randart_activation randart_activation;
+
+struct randart_activation
+{
+	cptr text;
+	cptr desc;
+	cptr effect;
+	int freq;
+	bool aimed;
+	int pp;
+	int dice;
+	int bonus;
+};
+
 #define SPDICE_MM -1
 
 /*
