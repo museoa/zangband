@@ -711,17 +711,12 @@ proc NSChoiceWindow::GetItemCommand {oop index  _command _label} {
 	
 	switch -glob -- $attrib(tval) {
 		*_BOOK {
+			set label "Browse"
+			set charCmd b
 
-			# See if the character can read this book
-			if {[lsearch -exact [angband player spell_book] $attrib(tval)] != -1} {
-
-				set label "Browse"
-				set charCmd b
-
-				# Hack -- Browse shows all the books
-				set command "DoKeymapCmd {} $charCmd {}"
-				return
-			}
+			# Hack -- Browse shows all the books
+			set command "DoKeymapCmd {} $charCmd {}"
+			return
 		}
 		TV_ARROW -
 		TV_BOLT -
