@@ -5,27 +5,25 @@ code for details. In reversed chronological order (more or less):
 ZAngband 2.5.3:
 - Added roads between the towns to the wilderness.
 - Added lakes (of various kinds) to the wilderness.
-- Enchanted ammo is now worth less.
-- Tweaked the inflated damage dice of weapons.
-- Fixed the bug with monsters without the PASS_WALL flag walking through
-  pillars.
+- Enchanted ammo is now cheaper.
+- Tweaked the enhanced damage dice of weapons.
+- Fixed a bug that allowed monsters to walk through pillars.
 - Fixed a bug with random quest rewards.
 - Fixed a problem with 'Vanila town' mode and the dungeon 'M'ap.
-- Light carried by monsters should no longer be visible of the player
-  is blind.
+- Light carried by monsters is no longer visible if the player is blind.
 - Toned down some of the nastier traps.
-- Improved handling of the bigscreen feature in the windows port.
-- Updated the bigscreen code to be simpler, and much less of a hack.
+- Improved handling of the bigscreen feature in the Windows port.
+- Updated the bigscreen code to be simpler and less "hack'ish".
 - Added some new 16x16 monster and terrain tiles.
 - Reduced DSM breath damage by one-third.
 - You can now press 'S' while choosing your magic realms to restart
   the birth process.
 - *Identifying* a book (or eXamining it in a store) will now print out
-  a list of its spells regardless of the player's realm choices.
-- Amberites can no longer ressurect themselves via their curse.
-- Chopping down trees no longer gives a snow tile.
+  a list of it's spells.
+- Amberites can no longer resurrect themselves via their curse.
+- Chopping down trees no longer creates snow covered terrain.
 - Caverns and lakes in the dungeon are less common.
-- The "bright flash of light" message, only is printed if a trap is
+- The "bright flash of light" message is now only printed if a trap is
   destroyed.
 - Improved the message given when the game is started with the '-?' option.
 - The "fetch" command no longer can get artifacts from afar.
@@ -54,18 +52,18 @@ ZAngband 2.5.3:
 - There are less arrows in a pile.
 - Turned fields on in the wilderness.
 - Implemented stores and buildings as fields.
-- Changed the options code to be more like angband.
+- Changed the options code to be more like Angband.
 - Major cleanup of global variables - most are moved to player_type.
 - Added Ed Cogburn's Tombstone patch.
 - Tweaked the stats or descriptions of many monsters.
-- Removed virtues from the '~' menu.  Option 7 still works though. ;-)
+- Removed virtues from the '~' menu.  Option 7 still works though.
 - Added an ironman_moria option.  The good old days.
 - Mindcrafters start with a dagger instead of a short sword.
 - Swapped first two mindcrafter abilities.
 - Unidentified wands stack now.
 - Using an artifact creation scroll is much less risky.
 - Merged makefile.lsl into makefile.std
-- Added context-sensitive help for the options screen.
+- Added context-sensitive help for the option screen.
 - Randomly sized cities are created in the wilderness.
 - Updated main-mac-carbon.c so that it actually compiles.
 - Rangers get one more extra shot.
