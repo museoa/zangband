@@ -317,7 +317,7 @@ static void prt_status(void)
 	}
 
 	/* Confusing Hands */
-	if (p_ptr->confusing)
+	if (p_ptr->state.confusing)
 	{
 		letter[num] = CLR_RED "C";
 		num++;
@@ -341,13 +341,13 @@ static void prt_title(void)
 	cptr p;
 
 	/* Wizard */
-	if (p_ptr->wizard)
+	if (p_ptr->state.wizard)
 	{
 		p = "[=-WIZARD-=]";
 	}
 
 	/* Winner */
-	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	else if (p_ptr->state.total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		p = "***WINNER***";
 	}
@@ -685,7 +685,7 @@ static void prt_state(void)
 	char text[16];
 
 	/* Resting */
-	if (p_ptr->resting)
+	if (p_ptr->state.resting)
 	{
 		int i;
 
@@ -693,9 +693,9 @@ static void prt_state(void)
 		strcpy(text, "R     ");
 
 		/* Extensive (timed) rest */
-		if (p_ptr->resting >= 1000)
+		if (p_ptr->state.resting >= 1000)
 		{
-			i = p_ptr->resting / 100;
+			i = p_ptr->state.resting / 100;
 			text[5] = '0';
 			text[4] = '0';
 			text[3] = '0' + (i % 10);
@@ -711,9 +711,9 @@ static void prt_state(void)
 		}
 
 		/* Long (timed) rest */
-		else if (p_ptr->resting >= 100)
+		else if (p_ptr->state.resting >= 100)
 		{
-			i = p_ptr->resting;
+			i = p_ptr->state.resting;
 			text[5] = '0' + (i % 10);
 			i = i / 10;
 			text[4] = '0' + (i % 10);
@@ -721,28 +721,28 @@ static void prt_state(void)
 		}
 
 		/* Medium (timed) rest */
-		else if (p_ptr->resting >= 10)
+		else if (p_ptr->state.resting >= 10)
 		{
-			i = p_ptr->resting;
+			i = p_ptr->state.resting;
 			text[5] = '0' + (i % 10);
 			text[4] = '0' + (i / 10);
 		}
 
 		/* Short (timed) rest */
-		else if (p_ptr->resting > 0)
+		else if (p_ptr->state.resting > 0)
 		{
-			i = p_ptr->resting;
+			i = p_ptr->state.resting;
 			text[5] = '0' + (i);
 		}
 
 		/* Rest until healed */
-		else if (p_ptr->resting == -1)
+		else if (p_ptr->state.resting == -1)
 		{
 			text[1] = text[2] = text[3] = text[4] = text[5] = '*';
 		}
 
 		/* Rest until done */
-		else if (p_ptr->resting == -2)
+		else if (p_ptr->state.resting == -2)
 		{
 			text[1] = text[2] = text[3] = text[4] = text[5] = '&';
 		}
@@ -765,7 +765,7 @@ static void prt_state(void)
 	}
 
 	/* Searching */
-	else if (p_ptr->searching)
+	else if (p_ptr->state.searching)
 	{
 		put_fstr(COL_STATE, Term->hgt - 1, "Search");
 	}
@@ -788,7 +788,7 @@ static void prt_speed(void)
 	int i = p_ptr->pspeed;
 
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
-	if (p_ptr->searching) i += 10;
+	if (p_ptr->state.searching) i += 10;
 
 	/* Paralysis */
 	if (p_ptr->tim.paralyzed)
@@ -3192,7 +3192,7 @@ static void calc_bonuses(void)
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
 
 	/* Searching slows the player down */
-	if (p_ptr->searching) p_ptr->pspeed -= 10;
+	if (p_ptr->state.searching) p_ptr->pspeed -= 10;
 
 	/* Display the speed (if needed) */
 	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);

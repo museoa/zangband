@@ -4657,7 +4657,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (p_ptr->wizard) msgf("(breakage)");
+		if (p_ptr->state.wizard) msgf("(breakage)");
 
 		/* Failure */
 		return;
@@ -4770,7 +4770,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (p_ptr->wizard) msgf("(no floor space)");
+		if (p_ptr->state.wizard) msgf("(no floor space)");
 
 		/* Failure */
 		return;
@@ -4837,7 +4837,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			}
 
 			/* Debug */
-			if (p_ptr->wizard) msgf("(contact with lava)");
+			if (p_ptr->state.wizard) msgf("(contact with lava)");
 
 			/* Failure */
 			return;
@@ -4854,7 +4854,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			}
 
 			/* Debug */
-			if (p_ptr->wizard) msgf("(contact with water)");
+			if (p_ptr->state.wizard) msgf("(contact with water)");
 
 			/* Failure */
 			return;
@@ -4889,7 +4889,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 			/* Debug */
-			if (p_ptr->wizard) msgf("(too many objects)");
+			if (p_ptr->state.wizard) msgf("(too many objects)");
 
 			/* Failure */
 			return;

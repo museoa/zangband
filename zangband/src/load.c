@@ -1033,7 +1033,7 @@ static void rd_options(void)
 
 	rd_u16b(&c);
 
-	if (c & 0x0002) p_ptr->wizard = TRUE;
+	if (c & 0x0002) p_ptr->state.wizard = TRUE;
 
 	cheat_peek = (c & 0x0100) ? TRUE : FALSE;
 	cheat_hear = (c & 0x0200) ? TRUE : FALSE;
@@ -1163,7 +1163,7 @@ static void rd_extra(void)
 
 	rd_string(player_name, 32);
 
-	rd_string(p_ptr->died_from, 80);
+	rd_string(p_ptr->state.died_from, 80);
 
 	for (i = 0; i < 4; i++)
 	{
@@ -1343,11 +1343,11 @@ static void rd_extra(void)
 	/* Calc the regeneration modifier for mutations */
 	mutant_regenerate_mod = calc_mutant_regenerate_mod();
 
-	rd_byte(&p_ptr->confusing);
+	rd_byte(&p_ptr->state.confusing);
 	rd_byte(&tmp8u);			/* oops */
 	rd_byte(&tmp8u);			/* oops */
 	rd_byte(&tmp8u);			/* oops */
-	rd_byte((byte *)&p_ptr->searching);
+	rd_byte((byte *)&p_ptr->state.searching);
 	rd_byte(&tmp8u);
 	rd_byte(&tmp8u);
 	rd_byte(&tmp8u);
@@ -1369,14 +1369,14 @@ static void rd_extra(void)
 	}
 
 	/* Special stuff */
-	rd_u16b(&p_ptr->panic_save);
-	rd_u16b(&p_ptr->total_winner);
-	rd_u16b(&p_ptr->noscore);
+	rd_u16b(&p_ptr->state.panic_save);
+	rd_u16b(&p_ptr->state.total_winner);
+	rd_u16b(&p_ptr->state.noscore);
 
 
 	/* Read "death" */
 	rd_byte(&tmp8u);
-	p_ptr->is_dead = tmp8u;
+	p_ptr->state.is_dead = tmp8u;
 
 	/* Read "feeling" */
 	rd_byte(&tmp8u);
@@ -2804,7 +2804,7 @@ static errr rd_savefile_new_aux(void)
 	if (munchkin_death)
 	{
 		/* Mark savefile */
-		p_ptr->noscore |= 0x0001;
+		p_ptr->state.noscore |= 0x0001;
 	}
 
 	/* Then the "messages" */
@@ -3218,7 +3218,7 @@ static errr rd_savefile_new_aux(void)
 	}
 
 	/* I'm not dead yet... */
-	if (!p_ptr->is_dead)
+	if (!p_ptr->state.is_dead)
 	{
 		/* Dead players have no dungeon */
 		note("Restoring Dungeon...");

@@ -872,7 +872,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 					if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
 					{
 						/* Total winner */
-						p_ptr->total_winner = TRUE;
+						p_ptr->state.total_winner = TRUE;
 
 						/* Redraw the "title" */
 						p_ptr->redraw |= (PR_TITLE);

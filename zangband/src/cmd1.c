@@ -1073,7 +1073,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		k = mon_damage_mod(m_ptr, k, 0);
 
 		/* Complex message */
-		if (p_ptr->wizard)
+		if (p_ptr->state.wizard)
 		{
 			msgf("You do %d (out of %d) damage.", k, m_ptr->hp);
 		}
@@ -1208,7 +1208,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 			msgf("WHAMM!");
 
 		/* Complex message */
-		if (p_ptr->wizard)
+		if (p_ptr->state.wizard)
 		{
 			msgf("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
 		}
@@ -1283,7 +1283,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 		{
 			old_ptr = ma_ptr;
 
-			if (p_ptr->wizard && cheat_xtra)
+			if (p_ptr->state.wizard && cheat_xtra)
 			{
 				msgf("Attack re-selected.");
 			}
@@ -1764,7 +1764,7 @@ void py_attack(int x, int y)
 			k = mon_damage_mod(m_ptr, k, 0);
 
 			/* Complex message */
-			if (p_ptr->wizard)
+			if (p_ptr->state.wizard)
 			{
 				msgf("You do %d (out of %d) damage.", k, m_ptr->hp);
 			}
@@ -1839,12 +1839,12 @@ void py_attack(int x, int y)
 			}
 
 			/* Confusion attack */
-			if (p_ptr->confusing || (chaos_effect == 3))
+			if (p_ptr->state.confusing || (chaos_effect == 3))
 			{
 				/* Cancel glowing hands */
-				if (p_ptr->confusing)
+				if (p_ptr->state.confusing)
 				{
-					p_ptr->confusing = FALSE;
+					p_ptr->state.confusing = FALSE;
 					msgf("Your hands stop glowing.");
 					p_ptr->redraw |= (PR_STATUS);
 				}
@@ -2157,7 +2157,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 				}
 				default:
 				{
-					if (p_ptr->wizard)
+					if (p_ptr->state.wizard)
 						msgf("Funny Pattern walking, %d.",
 								   *area(c_x, c_y));
 
@@ -2335,7 +2335,7 @@ void move_player(int dir, int do_pickup)
 	else if (p_cant_pass_fields)
 	{
 		msgf("You can't cross that!");
-		p_ptr->running = 0;
+		p_ptr->state.running = 0;
 		oktomove = FALSE;
 	}
 
@@ -2578,7 +2578,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* Continuous Searching */
-		if (p_ptr->searching)
+		if (p_ptr->state.searching)
 		{
 			search();
 		}
@@ -2821,12 +2821,12 @@ static void run_init(int dir)
 	if (!p_ptr->depth)
 	{
 		/* If in the wilderness - run max 32 squares at a time */
-		p_ptr->running = 32;
+		p_ptr->state.running = 32;
 	}
 	else
 	{
 		/* Large number to prevent infinite loops */
-		p_ptr->running = 1000;
+		p_ptr->state.running = 1000;
 	}
 
 	/* Save the direction */
@@ -3376,7 +3376,7 @@ void run_step(int dir)
 	}
 
 	/* Decrease the run counter */
-	p_ptr->running--;
+	p_ptr->state.running--;
 
 	/* Take time */
 	p_ptr->energy_use = 100;

@@ -768,10 +768,10 @@ bool make_attack_spell(int m_idx)
 	if (!chance) return (FALSE);
 
 	/* Stop if player is dead or gone */
-	if (!p_ptr->playing || p_ptr->is_dead) return (FALSE);
+	if (!p_ptr->state.playing || p_ptr->state.is_dead) return (FALSE);
 
 	/* Stop if player is leaving */
-	if (p_ptr->leaving) return (FALSE);
+	if (p_ptr->state.leaving) return (FALSE);
 
 	/* Only do spells occasionally */
 	if (randint0(100) >= chance) return (FALSE);
@@ -2466,7 +2466,7 @@ bool make_attack_spell(int m_idx)
 
 
 	/* Always take note of monsters that kill you */
-	if (p_ptr->is_dead && (r_ptr->r_deaths < MAX_SHORT))
+	if (p_ptr->state.is_dead && (r_ptr->r_deaths < MAX_SHORT))
 	{
 		r_ptr->r_deaths++;
 	}

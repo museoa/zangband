@@ -3258,7 +3258,7 @@ void process_monsters(int min_energy)
 		r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Handle "leaving" */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 
 		/* Ignore "dead" monsters */
 		if (!m_ptr->r_idx) continue;
@@ -3350,10 +3350,10 @@ void process_monsters(int min_energy)
 		process_monster(i);
 
 		/* Hack -- notice death or departure */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Notice leaving */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 	}
 
 	/* Reset global index */

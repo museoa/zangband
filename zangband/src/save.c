@@ -800,7 +800,7 @@ static void wr_options(void)
 
 	c = 0;
 
-	if (p_ptr->wizard) c |= 0x0002;
+	if (p_ptr->state.wizard) c |= 0x0002;
 
 	if (cheat_peek) c |= 0x0100;
 	if (cheat_hear) c |= 0x0200;
@@ -878,7 +878,7 @@ static void wr_extra(void)
 
 	wr_string(player_name);
 
-	wr_string(p_ptr->died_from);
+	wr_string(p_ptr->state.died_from);
 
 	for (i = 0; i < 4; i++)
 	{
@@ -999,11 +999,11 @@ static void wr_extra(void)
 		wr_s16b(p_ptr->vir_types[i]);
 	}
 
-	wr_byte(p_ptr->confusing);
+	wr_byte(p_ptr->state.confusing);
 	wr_byte(0);					/* oops */
 	wr_byte(0);					/* oops */
 	wr_byte(0);					/* oops */
-	wr_byte(p_ptr->searching);
+	wr_byte(p_ptr->state.searching);
 	wr_byte(0);					/* oops */
 	wr_byte(0);					/* oops */
 	wr_byte(0);					/* oops */
@@ -1022,13 +1022,13 @@ static void wr_extra(void)
 
 
 	/* Special stuff */
-	wr_u16b(p_ptr->panic_save);
-	wr_u16b(p_ptr->total_winner);
-	wr_u16b(p_ptr->noscore);
+	wr_u16b(p_ptr->state.panic_save);
+	wr_u16b(p_ptr->state.total_winner);
+	wr_u16b(p_ptr->state.noscore);
 
 
 	/* Write death */
-	wr_byte(p_ptr->is_dead);
+	wr_byte(p_ptr->state.is_dead);
 
 	/* Write feeling */
 	wr_byte(dun_ptr->feeling);
@@ -1656,7 +1656,7 @@ static bool wr_savefile_new(void)
 	wr_byte(p_ptr->pet_pickup_items);
 
 	/* Player is not dead, write the dungeon */
-	if (!p_ptr->is_dead)
+	if (!p_ptr->state.is_dead)
 	{
 		/* Dump the dungeon */
 		wr_dungeon();
@@ -1907,7 +1907,7 @@ bool load_player(void)
 	turn = 0;
 
 	/* Paranoia */
-	p_ptr->is_dead = FALSE;
+	p_ptr->state.is_dead = FALSE;
 
 
 	/* Allow empty savefile name */
@@ -2142,10 +2142,10 @@ bool load_player(void)
 		}
 
 		/* Player is dead */
-		if (p_ptr->is_dead)
+		if (p_ptr->state.is_dead)
 		{
 			/* Player is no longer "dead" */
-			p_ptr->is_dead = FALSE;
+			p_ptr->state.is_dead = FALSE;
 
 			/* Cheat death */
 			if (arg_wizard)
@@ -2181,7 +2181,7 @@ bool load_player(void)
 		if (p_ptr->chp >= 0)
 		{
 			/* Reset cause of death */
-			(void)strcpy(p_ptr->died_from, "(alive and well)");
+			(void)strcpy(p_ptr->state.died_from, "(alive and well)");
 		}
 
 		/* Success */

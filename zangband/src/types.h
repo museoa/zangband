@@ -1313,6 +1313,36 @@ struct player_timed
 };
 
 /*
+ * The state of the player
+ */
+typedef struct player_state player_state;
+
+struct player_state
+{
+	char died_from[80];	/* Cause of death */
+	
+	s16b resting;	/* Resting counter */
+	s16b running;	/* Running counter */
+
+	byte confusing;	/* Glowing hands */
+	byte searching;	/* Currently searching */
+
+	u16b total_winner;	/* Total winner */
+
+	u16b panic_save;	/* Panic save */
+	u16b noscore;	/* Cheating flags */
+
+	bool is_dead;	/* Player is dead */
+	bool wizard;	/* Player is in wizard mode */
+	
+	bool playing;	/* True if player is playing */
+	bool leaving;	/* True if player is leaving */
+
+	bool create_up_stair;	/* Create up stair on next level */
+	bool create_down_stair;	/* Create down stair on next level */
+};
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.
@@ -1382,24 +1412,14 @@ struct player_type
 
 	s16b player_hp[PY_MAX_LEVEL];	/* HP Array */
 
-	char died_from[80];	/* Cause of death */
 	char history[4][60];	/* Initial history */
 
-	byte confusing;	/* Glowing hands */
-	byte searching;	/* Currently searching */
-
-	u16b total_winner;	/* Total winner */
-
-	u16b panic_save;	/* Panic save */
-	u16b noscore;	/* Cheating flags */
-
-	bool is_dead;	/* Player is dead */
-	bool wizard;	/* Player is in wizard mode */
 	u16b expfact;	/* Experience factor
 					 * Note: was byte, causing overflow for Amberite
 					 * characters (such as Amberite Paladins)
 					 */
 	player_timed tim;	/* Timed effects */
+	player_state state;	/* Internal state of the player */
 
 	/*** Pointers to player grid information ***/
 
@@ -1414,12 +1434,6 @@ struct player_type
 
 	/*** Temporary fields ***/
 
-	bool playing;	/* True if player is playing */
-
-	bool leaving;	/* True if player is leaving */
-
-	bool create_up_stair;	/* Create up stair on next level */
-	bool create_down_stair;	/* Create down stair on next level */
 
 	s32b align;	/* Good/evil/neutral */
 
@@ -1440,9 +1454,6 @@ struct player_type
 	s16b object_kind_idx;	/* Object kind trackee */
 
 	s16b energy_use;	/* Energy use this turn */
-
-	s16b resting;	/* Resting counter */
-	s16b running;	/* Running counter */
 
 	s16b run_cur_dir;	/* Direction we are running */
 	s16b run_old_dir;	/* Direction we came from */

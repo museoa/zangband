@@ -407,6 +407,6 @@ void dump_virtues(FILE *OutFile)
 		fprintf(OutFile, "\n");
 	}
 
-	if (p_ptr->wizard)
+	if (p_ptr->state.wizard)
 		fprintf(OutFile, "Your overall alignment is %ld.\n", p_ptr->align);
 }

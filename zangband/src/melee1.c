@@ -202,10 +202,10 @@ bool make_attack_normal(int m_idx)
 		if (!method) break;
 
 		/* Stop if player is dead or gone */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Handle "leaving" */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 
 		/* Extract the attack "power" */
 		switch (effect)
@@ -1608,7 +1608,7 @@ bool make_attack_normal(int m_idx)
 
 
 	/* Always notice cause of death */
-	if (p_ptr->is_dead && (r_ptr->r_deaths < MAX_SHORT))
+	if (p_ptr->state.is_dead && (r_ptr->r_deaths < MAX_SHORT))
 	{
 		r_ptr->r_deaths++;
 	}

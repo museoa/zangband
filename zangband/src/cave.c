@@ -5198,20 +5198,20 @@ void disturb(bool stop_search)
 	}
 
 	/* Cancel Resting */
-	if (p_ptr->resting)
+	if (p_ptr->state.resting)
 	{
 		/* Cancel */
-		p_ptr->resting = 0;
+		p_ptr->state.resting = 0;
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
 	}
 
 	/* Cancel running */
-	if (p_ptr->running)
+	if (p_ptr->state.running)
 	{
 		/* Cancel */
-		p_ptr->running = 0;
+		p_ptr->state.running = 0;
 
 		/* Check for new panel if appropriate */
 		if (center_player && avoid_center) verify_panel();
@@ -5221,10 +5221,10 @@ void disturb(bool stop_search)
 	}
 
 	/* Cancel searching if requested */
-	if (stop_search && p_ptr->searching)
+	if (stop_search && p_ptr->state.searching)
 	{
 		/* Cancel */
-		p_ptr->searching = FALSE;
+		p_ptr->state.searching = FALSE;
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);

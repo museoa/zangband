@@ -863,7 +863,7 @@ static void borg_parse_aux(cptr msg, int len)
 	if (prefix(msg, "You die."))
 	{
 		/* Abort (unless cheating) */
-		if (!(p_ptr->wizard || cheat_live))
+		if (!(p_ptr->state.wizard || cheat_live))
 		{
 			/* Abort */
 			borg_oops("death");
@@ -2012,7 +2012,7 @@ static void borg_log_death(void)
 	fprintf(borg_log_file, "Exp: %lu  Gold: %lu  Turn: %lu\n",
 			(long) /* total_points() */ 0, (long)p_ptr->au, (long)turn);
 	fprintf(borg_log_file, "Killed on level: %d (max. %d) by %s\n",
-			p_ptr->depth, p_ptr->max_depth, p_ptr->died_from);
+			p_ptr->depth, p_ptr->max_depth, p_ptr->state.died_from);
 
 	fprintf(borg_log_file, "----------\n\n");
 
@@ -2046,7 +2046,7 @@ static void borg_log_death_data(void)
 	/* dump stuff for easy import to database */
 	fprintf(borg_log_file, "%s, %s, %d, %d, %s\n",
 			race_info[p_ptr->rp.prace].title, class_info[p_ptr->rp.pclass].title,
-			p_ptr->lev, p_ptr->depth, p_ptr->died_from);
+			p_ptr->lev, p_ptr->depth, p_ptr->state.died_from);
 
 	my_fclose(borg_log_file);
 }
@@ -2195,7 +2195,7 @@ static char borg_inkey_hack(int flush_first)
 	}
 
 	/* Mega-Hack -- Handle death */
-	if (p_ptr->is_dead)
+	if (p_ptr->state.is_dead)
 	{
 		/* Log death */
 		borg_log_death();
@@ -2271,7 +2271,7 @@ static char borg_inkey_hack(int flush_first)
 	if (ch) return (ch);
 
 	/* Hack - check to see if we are doing a repeated action */
-	if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
+	if (p_ptr->state.running || p_ptr->command_rep || p_ptr->state.resting)
 	{
 		return (0);
 	}

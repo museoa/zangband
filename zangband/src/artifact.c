@@ -2074,7 +2074,7 @@ bool activate_effect(object_type *o_ptr)
 							if (autosave_l) do_cmd_save_game(TRUE);
 
 							/* Leaving */
-							p_ptr->leaving = TRUE;
+							p_ptr->state.leaving = TRUE;
 						}
 				}
 				o_ptr->timeout = 35;

@@ -510,7 +510,7 @@ static bool do_cmd_options_cheat_aux(int option)
 	if (*cheat_info[option].o_var)
 	{
 		/* Turn on the cheating flag */
-		p_ptr->noscore |= cheat_info[option].o_word;
+		p_ptr->state.noscore |= cheat_info[option].o_word;
 	}
 	
 	/* Change the option text */

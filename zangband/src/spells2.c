@@ -252,11 +252,11 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are temporarily incorporeal.";
 	}
-	if (p_ptr->confusing)
+	if (p_ptr->state.confusing)
 	{
 		info[i++] = "Your hands are glowing dull red.";
 	}
-	if (p_ptr->searching)
+	if (p_ptr->state.searching)
 	{
 		info[i++] = "You are looking around very carefully.";
 	}
@@ -865,7 +865,7 @@ void report_magics(void)
 		info2[i] = report_magics_aux(p_ptr->tim.wraith_form);
 		info[i++] = "You are incorporeal";
 	}
-	if (p_ptr->confusing)
+	if (p_ptr->state.confusing)
 	{
 		info2[i] = 7;
 		info[i++] = "Your hands are glowing dull red.";

@@ -58,13 +58,13 @@ void do_cmd_go_up(void)
 			if (autosave_l) do_cmd_save_game(TRUE);
 
 			/* Create a way back */
-			p_ptr->create_down_stair = TRUE;
+			p_ptr->state.create_down_stair = TRUE;
 
 			/* New depth */
 			p_ptr->depth--;
 
 			/* Leaving */
-			p_ptr->leaving = TRUE;
+			p_ptr->state.leaving = TRUE;
 
 			/*
 			 * Hack XXX XXX Take some time
@@ -130,10 +130,10 @@ void do_cmd_go_down(void)
 			p_ptr->depth++;
 
 			/* Leaving */
-			p_ptr->leaving = TRUE;
+			p_ptr->state.leaving = TRUE;
 
 			/* Create a way back */
-			p_ptr->create_up_stair = TRUE;
+			p_ptr->state.create_up_stair = TRUE;
 
 			/*
 			 * Hack XXX XXX Take some time
@@ -179,10 +179,10 @@ void do_cmd_search(void)
 void do_cmd_toggle_search(void)
 {
 	/* Stop searching */
-	if (p_ptr->searching)
+	if (p_ptr->state.searching)
 	{
 		/* Clear the searching flag */
-		p_ptr->searching = FALSE;
+		p_ptr->state.searching = FALSE;
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -195,7 +195,7 @@ void do_cmd_toggle_search(void)
 	else
 	{
 		/* Set the searching flag */
-		p_ptr->searching = TRUE;
+		p_ptr->state.searching = TRUE;
 
 		/* Update stuff */
 		p_ptr->update |= (PU_BONUS);
@@ -2007,7 +2007,7 @@ void do_cmd_run(void)
 	if (get_rep_dir(&dir))
 	{
 		/* Hack -- Set the run counter */
-		p_ptr->running = (p_ptr->command_arg ? p_ptr->command_arg : 1000);
+		p_ptr->state.running = (p_ptr->command_arg ? p_ptr->command_arg : 1000);
 
 		/* First step */
 		run_step(dir);
@@ -2047,7 +2047,7 @@ void do_cmd_stay(int pickup)
 	}
 
 	/* Continuous Searching */
-	if (p_ptr->searching)
+	if (p_ptr->state.searching)
 	{
 		search();
 	}
@@ -2125,10 +2125,10 @@ void do_cmd_rest(void)
 	p_ptr->energy_use = 100;
 
 	/* Save the rest code */
-	p_ptr->resting = p_ptr->command_arg;
+	p_ptr->state.resting = p_ptr->command_arg;
 
 	/* Cancel searching */
-	p_ptr->searching = FALSE;
+	p_ptr->state.searching = FALSE;
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -2627,7 +2627,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 				make_noise(3);
 
 				/* Complex message */
-				if (p_ptr->wizard)
+				if (p_ptr->state.wizard)
 				{
 					msgf("You do %d (out of %d) damage.",
 							   tdam, m_ptr->hp);
@@ -3093,7 +3093,7 @@ void do_cmd_throw_aux(int mult)
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 
 				/* Complex message */
-				if (p_ptr->wizard)
+				if (p_ptr->state.wizard)
 				{
 					msgf("You do %d (out of %d) damage.",
 							   tdam, m_ptr->hp);

@@ -307,7 +307,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 						if (autosave_l) do_cmd_save_game(TRUE);
 
 						/* Leaving */
-						p_ptr->leaving = TRUE;
+						p_ptr->state.leaving = TRUE;
 					}
 				}
 				break;

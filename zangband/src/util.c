@@ -2478,7 +2478,7 @@ static void msg_print_aux(u16b type, cptr msg)
 
 
 	/* Memorize the message (if legal) */
-	if (character_generated && !(p_ptr->is_dead))
+	if (character_generated && !(p_ptr->state.is_dead))
 		message_add(msg, type);
 
 	/* Window stuff */

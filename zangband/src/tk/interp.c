@@ -200,9 +200,9 @@ static cptr state_state(void)
 	}
 
 	/* Resting */
-	else if (p_ptr->resting)
+	else if (p_ptr->state.resting)
 	{
-		int n = p_ptr->resting;
+		int n = p_ptr->state.resting;
 
 		/* Rest until healed */
 		if (n == -1)
@@ -240,7 +240,7 @@ static cptr state_state(void)
 	}
 
 	/* Searching */
-	else if (p_ptr->searching)
+	else if (p_ptr->state.searching)
 	{
 		return "Searching";
 	}
@@ -260,7 +260,7 @@ static cptr state_speed(void)
 	int n = p_ptr->pspeed;
 
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
-	if (p_ptr->searching) n += 10;
+	if (p_ptr->state.searching) n += 10;
 
 	/* Fast */
 	if (n > 110)
@@ -355,13 +355,13 @@ static cptr state_stun(void)
 static cptr state_winner(void)
 {
 	/* Wizard */
-	if (p_ptr->wizard)
+	if (p_ptr->state.wizard)
 	{
 		return "Wizard";
 	}
 
 	/* Winner */
-	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	else if (p_ptr->state.total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		return "Winner";
 	}
@@ -608,12 +608,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		}
 
 		case IDX_DIED_FROM: /* died_from */
-			if (!p_ptr->is_dead)
+			if (!p_ptr->state.is_dead)
 			{
 				Tcl_SetStringObj(resultPtr, "character is not dead", -1);
 				return TCL_ERROR;
 			}
-			ExtToUtf_SetResult(interp, p_ptr->died_from);
+			ExtToUtf_SetResult(interp, p_ptr->state.died_from);
 			break;
 
 		case IDX_EXP: /* exp */
@@ -726,7 +726,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_IS_DEAD: /* is_dead */
-			Tcl_SetBooleanObj(resultPtr, p_ptr->is_dead);
+			Tcl_SetBooleanObj(resultPtr, p_ptr->state.is_dead);
 			break;
 
 		case IDX_TURN: /* turn */
@@ -759,7 +759,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_RUNNING: /* running */
-			Tcl_SetIntObj(resultPtr, p_ptr->running);
+			Tcl_SetIntObj(resultPtr, p_ptr->state.running);
 			break;
 
 		case IDX_PRAYER_OR_SPELL: /* prayer_or_spell */

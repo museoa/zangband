@@ -728,7 +728,7 @@ bool monster_death(int m_idx, bool explode)
 				chance = 50;
 			}
 
-			if ((a_idx > 0) && ((randint1(99) < chance) || (p_ptr->wizard)))
+			if ((a_idx > 0) && ((randint1(99) < chance) || (p_ptr->state.wizard)))
 			{
 				if (a_info[a_idx].cur_num == 0)
 				{
@@ -1334,7 +1334,7 @@ void verify_panel(void)
 	if (max_pcol_min < 0) max_pcol_min = 0;
 
 	/* Center on player */
-	if (center_player && (!avoid_center || !p_ptr->running))
+	if (center_player && (!avoid_center || !p_ptr->state.running))
 	{
 		/* Center vertically */
 		prow_min = y - hgt / 2;
@@ -2492,7 +2492,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			}
 
 			/* Display a message */
-			if (p_ptr->wizard)
+			if (p_ptr->state.wizard)
 				prtf(0, 0, "%s%s%s%s [%s] (%d:%d)", s1, s2, s3, name,
 						info, y, x);
 			else

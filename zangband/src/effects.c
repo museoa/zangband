@@ -2724,7 +2724,7 @@ void take_hit(int damage, cptr hit_from)
 
 
 	/* Paranoia */
-	if (p_ptr->is_dead) return;
+	if (p_ptr->state.is_dead) return;
 
 	/* Disturb */
 	disturb(TRUE);
@@ -2795,18 +2795,18 @@ void take_hit(int damage, cptr hit_from)
 		}
 
 		/* Note cause of death */
-		len = strnfmt(p_ptr->died_from, 80, hit_from);
+		len = strnfmt(p_ptr->state.died_from, 80, hit_from);
 
-		if (p_ptr->tim.image) strnfcat(p_ptr->died_from, 80, &len, "(?)");
+		if (p_ptr->tim.image) strnfcat(p_ptr->state.died_from, 80, &len, "(?)");
 
 		/* No longer a winner */
-		p_ptr->total_winner = FALSE;
+		p_ptr->state.total_winner = FALSE;
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 
 		/* Note death */
-		p_ptr->is_dead = TRUE;
+		p_ptr->state.is_dead = TRUE;
 
 		if (get_check("Dump the screen? "))
 		{

@@ -1510,7 +1510,7 @@ void roff_top(int r_idx)
 	roff("'):");
 
 	/* Wizards get extra info */
-	if (p_ptr->wizard)
+	if (p_ptr->state.wizard)
 	{
 		roff(" (" CLR_L_BLUE "%d)", r_idx);
 	}
@@ -1631,7 +1631,7 @@ void display_visible(void)
 		roff("'):");
 
 		/* Wizards get extra info */
-		if (p_ptr->wizard)
+		if (p_ptr->state.wizard)
 		{
 			roff(" (" CLR_L_BLUE "%d)", i);
 		}

@@ -1285,7 +1285,7 @@ static void do_cmd_wiz_jump(void)
 	p_ptr->depth = p_ptr->command_arg;
 
 	/* Leaving */
-	p_ptr->leaving = TRUE;
+	p_ptr->state.leaving = TRUE;
 }
 
 

@@ -1130,10 +1130,10 @@ static bool cast_chaos_spell(int spell)
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
 			break;
 		case 3:				/* Touch of Confusion */
-			if (!p_ptr->confusing)
+			if (!p_ptr->state.confusing)
 			{
 				msgf("Your hands start glowing.");
-				p_ptr->confusing = TRUE;
+				p_ptr->state.confusing = TRUE;
 				p_ptr->redraw |= (PR_STATUS);
 			}
 			break;

@@ -418,7 +418,7 @@ void enter_score(void)
 
 #ifndef SCORE_WIZARDS
 	/* Wizard-mode pre-empts scoring */
-	if (p_ptr->noscore & 0x003F)
+	if (p_ptr->state.noscore & 0x003F)
 	{
 		msgf("Score not registered for wizards.");
 		message_flush();
@@ -429,7 +429,7 @@ void enter_score(void)
 
 #ifndef SCORE_BORGS
 	/* Borg-mode pre-empts scoring */
-	if (p_ptr->noscore & 0x00C0)
+	if (p_ptr->state.noscore & 0x00C0)
 	{
 		msgf("Score not registered for borgs.");
 		message_flush();
@@ -440,7 +440,7 @@ void enter_score(void)
 
 #ifndef SCORE_CHEATERS
 	/* Cheaters are not scored */
-	if (p_ptr->noscore & 0xFF00)
+	if (p_ptr->state.noscore & 0xFF00)
 	{
 		msgf("Score not registered for cheaters.");
 		message_flush();
@@ -450,7 +450,7 @@ void enter_score(void)
 #endif
 
 	/* Interupted */
-	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting"))
+	if (!p_ptr->state.total_winner && streq(p_ptr->state.died_from, "Interrupting"))
 	{
 		msgf("Score not registered due to interruption.");
 		message_flush();
@@ -459,7 +459,7 @@ void enter_score(void)
 	}
 
 	/* Quitter */
-	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting"))
+	if (!p_ptr->state.total_winner && streq(p_ptr->state.died_from, "Quitting"))
 	{
 		msgf("Score not registered due to quitting.");
 		message_flush();
@@ -526,7 +526,7 @@ void enter_score(void)
 	strnfmt(the_score.max_dun, 4, "%3d", p_ptr->max_depth);
 
 	/* Save the cause of death (31 chars) */
-	strnfmt(the_score.how, 32, "%-.31s", p_ptr->died_from);
+	strnfmt(the_score.how, 32, "%-.31s", p_ptr->state.died_from);
 
 	/* Grab permissions */
 	safe_setuid_grab();
@@ -814,7 +814,7 @@ void kingly(void)
 	p_ptr->depth = 0;
 
 	/* Fake death */
-	(void)strcpy(p_ptr->died_from, "Ripe Old Age");
+	(void)strcpy(p_ptr->state.died_from, "Ripe Old Age");
 
 	/* Restore the experience */
 	p_ptr->exp = p_ptr->max_exp;

@@ -644,7 +644,7 @@ void teleport_player_level(void)
 		p_ptr->depth++;
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 	}
 	else if (is_quest_level(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
@@ -655,7 +655,7 @@ void teleport_player_level(void)
 		p_ptr->depth--;
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 	}
 	else if (one_in_(2))
 	{
@@ -666,7 +666,7 @@ void teleport_player_level(void)
 		p_ptr->depth--;
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 	}
 	else
 	{
@@ -677,7 +677,7 @@ void teleport_player_level(void)
 		p_ptr->depth++;
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 	}
 
 	/* Sound */
@@ -1285,7 +1285,7 @@ void alter_reality(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 	}
 	else
 	{
@@ -3831,7 +3831,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 	cptr comment;
 	char info[80];
 
-	if (((realm <= 0) || (realm >= MAX_REALM)) && p_ptr->wizard)
+	if (((realm <= 0) || (realm >= MAX_REALM)) && p_ptr->state.wizard)
 		msgf("Warning! print_spells called with null realm");
 
 	/* Title the list */

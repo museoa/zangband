@@ -2270,7 +2270,7 @@ bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 	}
 	else
 	{
-		if (!p_ptr->leaving)
+		if (!p_ptr->state.leaving)
 		{
 			msgf("You have fallen through a trap door!");
 			sound(SOUND_FALL);
@@ -2285,7 +2285,7 @@ bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 			p_ptr->depth++;
 
 			/* Leaving */
-			p_ptr->leaving = TRUE;
+			p_ptr->state.leaving = TRUE;
 		}
 	}
 

@@ -2418,7 +2418,7 @@ void borg_update_frame(void)
 	bp_ptr->max_lev = p_ptr->max_lev;
 
 	/* Note "Winner" */
-	bp_ptr->winner = p_ptr->total_winner;
+	bp_ptr->winner = p_ptr->state.total_winner;
 
 	/* Assume experience is fine */
 	bp_ptr->status.fixexp = FALSE;
@@ -2511,7 +2511,7 @@ void borg_update_frame(void)
 	if (p_ptr->tim.stun > 50) bp_ptr->status.heavy_stun = TRUE;
 
 	/* XXX XXX XXX Parse "State" */
-	if (p_ptr->searching) bp_ptr->status.search = TRUE;
+	if (p_ptr->state.searching) bp_ptr->status.search = TRUE;
 
 	/* Check for "Study" */
 	if (p_ptr->new_spells) bp_ptr->status.study = TRUE;

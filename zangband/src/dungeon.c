@@ -484,7 +484,7 @@ static void pattern_teleport(void)
 	p_ptr->depth = p_ptr->command_arg;
 
 	/* Leaving */
-	p_ptr->leaving = TRUE;
+	p_ptr->state.leaving = TRUE;
 }
 
 
@@ -924,10 +924,10 @@ static void process_world(void)
 				msgf("The gates to ANGBAND are now closed.");
 
 				/* Stop playing */
-				p_ptr->playing = FALSE;
+				p_ptr->state.playing = FALSE;
 
 				/* Leaving */
-				p_ptr->leaving = TRUE;
+				p_ptr->state.leaving = TRUE;
 			}
 		}
 	}
@@ -1432,7 +1432,7 @@ static void process_world(void)
 
 
 	/* Searching or Resting */
-	if (p_ptr->searching || p_ptr->resting)
+	if (p_ptr->state.searching || p_ptr->state.resting)
 	{
 		regen_amount = regen_amount * 2;
 	}
@@ -1788,7 +1788,7 @@ static void process_world(void)
 			disturb(FALSE);
 
 			/* Leaving */
-			p_ptr->leaving = TRUE;
+			p_ptr->state.leaving = TRUE;
 
 			/* Determine the level */
 			if (p_ptr->depth)
@@ -1839,9 +1839,9 @@ static bool enter_wizard_mode(void)
 {
 	/* Ask first time */
 #if 0
-	if (!(p_ptr->noscore & 0x0002))
+	if (!(p_ptr->state.noscore & 0x0002))
 #else
-	if (!p_ptr->noscore)
+	if (!p_ptr->state.noscore)
 #endif
 	{
 		/* Mention effects */
@@ -1856,7 +1856,7 @@ static bool enter_wizard_mode(void)
 		}
 
 		/* Mark savefile */
-		p_ptr->noscore |= 0x0002;
+		p_ptr->state.noscore |= 0x0002;
 	}
 
 	/* Success */
@@ -1873,9 +1873,9 @@ static bool enter_debug_mode(void)
 {
 	/* Ask first time */
 #if 0
-	if (!(p_ptr->noscore & 0x0008))
+	if (!(p_ptr->state.noscore & 0x0008))
 #else
-	if (!p_ptr->noscore)
+	if (!p_ptr->state.noscore)
 #endif
 	{
 		/* Mention effects */
@@ -1890,7 +1890,7 @@ static bool enter_debug_mode(void)
 		}
 
 		/* Mark savefile */
-		p_ptr->noscore |= 0x0008;
+		p_ptr->state.noscore |= 0x0008;
 	}
 
 	/* Success */
@@ -1913,7 +1913,7 @@ extern void do_cmd_debug(void);
 static bool enter_borg_mode(void)
 {
 	/* Ask first time */
-	if (!(p_ptr->noscore & 0x0040))
+	if (!(p_ptr->state.noscore & 0x0040))
 	{
 		/* Mention effects */
 		msgf("The borg commands are for debugging and experimenting.");
@@ -1927,7 +1927,7 @@ static bool enter_borg_mode(void)
 		}
 
 		/* Mark savefile */
-		p_ptr->noscore |= 0x0040;
+		p_ptr->state.noscore |= 0x0040;
 	}
 
 	/* Success */
@@ -1970,14 +1970,14 @@ static void process_command(void)
 		case KTRL('W'):
 		{
 			/* Toggle Wizard Mode */
-			if (p_ptr->wizard)
+			if (p_ptr->state.wizard)
 			{
-				p_ptr->wizard = FALSE;
+				p_ptr->state.wizard = FALSE;
 				msgf("Wizard mode off.");
 			}
 			else if (enter_wizard_mode())
 			{
-				p_ptr->wizard = TRUE;
+				p_ptr->state.wizard = TRUE;
 				msgf("Wizard mode on.");
 			}
 
@@ -2591,10 +2591,10 @@ static void process_player(void)
 	/*** Check for interupts ***/
 
 	/* Complete resting */
-	if (p_ptr->resting < 0)
+	if (p_ptr->state.resting < 0)
 	{
 		/* Basic resting */
-		if (p_ptr->resting == -1)
+		if (p_ptr->state.resting == -1)
 		{
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) && (p_ptr->csp >= p_ptr->msp))
@@ -2604,7 +2604,7 @@ static void process_player(void)
 		}
 
 		/* Complete resting */
-		else if (p_ptr->resting == -2)
+		else if (p_ptr->state.resting == -2)
 		{
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) &&
@@ -2623,7 +2623,7 @@ static void process_player(void)
 	/*** Handle "abort" ***/
 
 	/* Check for "player abort" */
-	if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
+	if (p_ptr->state.running || p_ptr->command_rep || p_ptr->state.resting)
 	{
 		/* Do not wait */
 		p_ptr->inkey_scan = TRUE;
@@ -2708,13 +2708,13 @@ static void process_player(void)
 		}
 
 		/* Resting */
-		else if (p_ptr->resting)
+		else if (p_ptr->state.resting)
 		{
 			/* Timed rest */
-			if (p_ptr->resting > 0)
+			if (p_ptr->state.resting > 0)
 			{
 				/* Reduce rest count */
-				p_ptr->resting--;
+				p_ptr->state.resting--;
 
 				/* Redraw the state */
 				p_ptr->redraw |= (PR_STATE);
@@ -2725,7 +2725,7 @@ static void process_player(void)
 		}
 
 		/* Running */
-		else if (p_ptr->running)
+		else if (p_ptr->state.running)
 		{
 			/* Take a step */
 			run_step(0);
@@ -2862,10 +2862,10 @@ static void process_player(void)
 
 
 		/* Hack -- notice death */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Handle "leaving" */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 
 		/* Used up energy for this turn */
 		if (p_ptr->energy_use) break;
@@ -2916,13 +2916,13 @@ static void process_energy(void)
 	}
 
 	/* Can the player move? */
-	while (p_ptr->energy >= 100 && !p_ptr->leaving)
+	while (p_ptr->energy >= 100 && !p_ptr->state.leaving)
 	{
 		/* process monster with even more energy first */
 		process_monsters(p_ptr->energy + 1);
 
 		/* Process the player while still alive */
-		if (!p_ptr->leaving)
+		if (!p_ptr->state.leaving)
 		{
 			process_player();
 		}
@@ -2947,7 +2947,7 @@ static void dungeon(void)
 	base_level = p_ptr->depth;
 
 	/* Not leaving */
-	p_ptr->leaving = FALSE;
+	p_ptr->state.leaving = FALSE;
 
 	/* Reset the "command" vars */
 	p_ptr->command_cmd = 0;
@@ -2986,27 +2986,23 @@ static void dungeon(void)
 	/* No stairs down from Quest */
 	if (is_quest_level(p_ptr->depth))
 	{
-		p_ptr->create_down_stair = FALSE;
+		p_ptr->state.create_down_stair = FALSE;
 	}
 
 	/* Paranoia -- no stairs from town or wilderness */
-	if (!p_ptr->depth) p_ptr->create_down_stair = p_ptr->create_up_stair =
-			FALSE;
+	if (!p_ptr->depth) p_ptr->state.create_down_stair = p_ptr->state.create_up_stair = FALSE;
 
 	/* Option -- no connected stairs */
-	if (!dungeon_stair) p_ptr->create_down_stair = p_ptr->create_up_stair =
-FALSE;
+	if (!dungeon_stair) p_ptr->state.create_down_stair = p_ptr->state.create_up_stair = FALSE;
 
 	/* Nightmare mode is no fun... */
-	if (ironman_nightmare) p_ptr->create_down_stair = p_ptr->create_up_stair =
-			FALSE;
+	if (ironman_nightmare) p_ptr->state.create_down_stair = p_ptr->state.create_up_stair = FALSE;
 
 	/* Option -- no up stairs */
-	if (ironman_downward) p_ptr->create_down_stair = p_ptr->create_up_stair =
-			FALSE;
+	if (ironman_downward) p_ptr->state.create_down_stair = p_ptr->state.create_up_stair = FALSE;
 
 	/* Make a stairway. */
-	if (p_ptr->create_up_stair || p_ptr->create_down_stair)
+	if (p_ptr->state.create_up_stair || p_ptr->state.create_down_stair)
 	{
 		/* Place a stairway */
 		c_ptr = area(p_ptr->px, p_ptr->py);
@@ -3016,7 +3012,7 @@ FALSE;
 			delete_object(p_ptr->px, p_ptr->py);
 
 			/* Make stairs */
-			if (p_ptr->create_down_stair)
+			if (p_ptr->state.create_down_stair)
 			{
 				cave_set_feat(p_ptr->px, p_ptr->py, FEAT_MORE);
 			}
@@ -3027,7 +3023,7 @@ FALSE;
 		}
 
 		/* Cancel the stair request */
-		p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
+		p_ptr->state.create_down_stair = p_ptr->state.create_up_stair = FALSE;
 	}
 
 
@@ -3090,7 +3086,7 @@ FALSE;
 	Term_fresh();
 
 	/* Hack -- notice death or departure */
-	if (!p_ptr->playing || p_ptr->is_dead) return;
+	if (!p_ptr->state.playing || p_ptr->state.is_dead) return;
 
 	/* Print quest message if appropriate */
 	quest_discovery();
@@ -3145,7 +3141,7 @@ FALSE;
 		if (fresh_after) Term_fresh();
 
 		/* Hack -- Notice death or departure */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Process all of the monsters */
 		process_monsters(100);
@@ -3166,19 +3162,19 @@ FALSE;
 		if (fresh_after) Term_fresh();
 
 		/* Hack -- Notice death or departure */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Handle "leaving" */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 
 		/* Process the world */
 		process_world();
 
 		/* Hack -- Notice death or departure */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Handle "leaving" */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 
 		/* Notice */
 		notice_stuff();
@@ -3193,10 +3189,10 @@ FALSE;
 		if (fresh_after) Term_fresh();
 
 		/* Hack -- Notice death or departure */
-		if (!p_ptr->playing || p_ptr->is_dead) break;
+		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Handle "leaving" */
-		if (p_ptr->leaving) break;
+		if (p_ptr->state.leaving) break;
 
 
 		/* Count game turns */
@@ -3415,7 +3411,7 @@ void play_game(bool new_game)
 
 
 	/* Hack -- Enter wizard mode */
-	if (arg_wizard && enter_wizard_mode()) p_ptr->wizard = TRUE;
+	if (arg_wizard && enter_wizard_mode()) p_ptr->state.wizard = TRUE;
 
 	/* Flavor the objects */
 	flavor_init();
@@ -3446,10 +3442,10 @@ void play_game(bool new_game)
 
 
 	/* Start game */
-	p_ptr->playing = TRUE;
+	p_ptr->state.playing = TRUE;
 
 	/* Hack -- Enforce "delayed death" */
-	if (p_ptr->chp < 0) p_ptr->is_dead = TRUE;
+	if (p_ptr->chp < 0) p_ptr->state.is_dead = TRUE;
 
 	/* Resize / init the map */
 	map_panel_size();
@@ -3507,7 +3503,7 @@ void play_game(bool new_game)
 		forget_view();
 
 		/* Handle "quit and save" */
-		if (!p_ptr->playing && !p_ptr->is_dead) break;
+		if (!p_ptr->state.playing && !p_ptr->state.is_dead) break;
 
 		/* Go to the new level */
 		change_level(p_ptr->depth);
@@ -3516,10 +3512,10 @@ void play_game(bool new_game)
 		message_flush();
 
 		/* Accidental Death */
-		if (p_ptr->playing && p_ptr->is_dead)
+		if (p_ptr->state.playing && p_ptr->state.is_dead)
 		{
 			/* Mega-Hack -- Allow player to cheat death */
-			if ((p_ptr->wizard || cheat_live) && !get_check("Die? "))
+			if ((p_ptr->state.wizard || cheat_live) && !get_check("Die? "))
 			{
 				/* Mark social class, reset age, if needed */
 				if (p_ptr->rp.sc) p_ptr->rp.sc = p_ptr->rp.age = 0;
@@ -3528,7 +3524,7 @@ void play_game(bool new_game)
 				p_ptr->rp.age++;
 
 				/* Mark savefile */
-				p_ptr->noscore |= 0x0001;
+				p_ptr->state.noscore |= 0x0001;
 
 				/* Message */
 				msgf("You invoke wizard mode and cheat death.");
@@ -3568,21 +3564,21 @@ void play_game(bool new_game)
 				}
 
 				/* Note cause of death XXX XXX XXX */
-				(void)strcpy(p_ptr->died_from, "Cheating death");
+				(void)strcpy(p_ptr->state.died_from, "Cheating death");
 
 				/* Do not die */
-				p_ptr->is_dead = FALSE;
+				p_ptr->state.is_dead = FALSE;
 
 				p_ptr->depth = 0;
 				change_level(p_ptr->depth);
 
 				/* Leaving */
-				p_ptr->leaving = TRUE;
+				p_ptr->state.leaving = TRUE;
 			}
 		}
 
 		/* Handle "death" */
-		if (p_ptr->is_dead) break;
+		if (p_ptr->state.is_dead) break;
 
 		/* Make a new level */
 		generate_cave();
