@@ -4271,6 +4271,7 @@ void acid_dam(int dam, cptr kb_str)
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_ptr->hurt_acid) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
@@ -4305,6 +4306,7 @@ void elec_dam(int dam, cptr kb_str)
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_ptr->hurt_elec) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->tim.oppose_elec) dam = (dam + 2) / 3;
@@ -4336,6 +4338,7 @@ void fire_dam(int dam, cptr kb_str)
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_ptr->hurt_fire) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
@@ -4367,6 +4370,7 @@ void cold_dam(int dam, cptr kb_str)
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_ptr->hurt_cold) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;

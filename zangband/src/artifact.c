@@ -40,6 +40,10 @@ static void curse_artifact(object_type *o_ptr)
 	if (one_in_(3)) o_ptr->flags3 |= TR3_DRAIN_EXP;
 	if (one_in_(2)) o_ptr->flags3 |= TR3_TELEPORT;
 	else if (one_in_(3)) o_ptr->flags3 |= TR3_NO_TELE;
+	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_ACID;
+	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_ELEC;
+	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_FIRE;
+	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_COLD;
 
 	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
 		o_ptr->flags3 |= TR3_NO_MAGIC;
@@ -314,6 +318,10 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				o_ptr->flags2 |= TR2_RES_FIRE;
 				if (one_in_(2)) return (artifact_bias);
 			}
+			if (one_in_(13))
+			{
+				o_ptr->flags4 |= TR4_HURT_COLD;
+			}
 			if ((o_ptr->tval >= TV_CLOAK) &&
 				(o_ptr->tval <= TV_HARD_ARMOR) &&
 				!(o_ptr->flags3 & TR3_SH_FIRE))
@@ -333,6 +341,10 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 			{
 				o_ptr->flags2 |= TR2_RES_COLD;
 				if (one_in_(2)) return (artifact_bias);
+			}
+			if (one_in_(13))
+			{
+				o_ptr->flags4 |= TR4_HURT_FIRE;
 			}
 			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_COLD))
 			{
@@ -655,7 +667,7 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 			break;
 	}
 
-	switch (randint1(31))
+	switch (randint1(35))
 	{
 		case 1:
 			o_ptr->flags2 |= TR2_SUST_STR;
@@ -768,6 +780,19 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 			break;
 		case 31:
 			o_ptr->flags3 |= TR3_NO_TELE;
+			break;
+		/* Bad flags! */
+		case 32:
+			o_ptr->flags4 |= TR4_HURT_ACID;
+			break;
+		case 33:
+			o_ptr->flags4 |= TR4_HURT_ELEC;
+			break;
+		case 34:
+			o_ptr->flags4 |= TR4_HURT_FIRE;
+			break;
+		case 35:
+			o_ptr->flags4 |= TR4_HURT_COLD;
 			break;
 	}
 
