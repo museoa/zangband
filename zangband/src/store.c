@@ -2654,7 +2654,7 @@ void do_cmd_store(const field_type *f1_ptr)
 /*
  * Initialize a store
  */
-void store_init(int town_num, int store_num, byte store_type)
+void store_init(int town_num, int store_num, byte store)
 {
 	/* Activate that store */
 	st_ptr = &place[town_num].store[store_num];
@@ -2666,7 +2666,7 @@ void store_init(int town_num, int store_num, byte store_type)
 	st_ptr->stock = 0;
 
 	/* Set the store type */
-	st_ptr->type = store_type;
+	st_ptr->type = store;
 
 	/* Initialize the store */
 	st_ptr->data = 0;

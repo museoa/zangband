@@ -136,7 +136,7 @@ static void do_cmd_summon_horde(void)
 #endif /* MONSTER_HORDES */
 
 
-#if USE_64B
+#ifdef USE_64B
 typedef u64b ufix40_24;	/* Fixed point: 40 bits integer 24 bits fractional */
 
 static ufix40_24 pow4(ufix40_24 n)
@@ -998,7 +998,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 }
 
 
-#if USE_64B
+#ifdef USE_64B
 
 /*
  * Redraw the rarity graph with a different number of rolls
@@ -1140,7 +1140,7 @@ static void do_cmd_wiz_play(void)
 			break;
 		}
 
-#if USE_64B
+#ifdef USE_64B
 		if (ch == 's' || ch == 'S')
 		{
 			wiz_statistics(o_ptr);
