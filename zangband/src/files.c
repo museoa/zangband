@@ -4073,6 +4073,9 @@ void do_cmd_save_game(int is_autosave)
 
 	/* Refresh */
 	Term_fresh();
+	
+	/* Clear messages. */
+	msg_print(NULL);
 
 	/* Note that the player is not dead */
 	(void)strcpy(died_from, "(alive and well)");
