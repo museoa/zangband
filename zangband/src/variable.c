@@ -314,8 +314,8 @@ byte hitpoint_warn;		/* Hitpoint warning (0 to 9) */
 
 byte delay_factor;		/* Delay factor (0 to 9) */
 
-bool autosave_l;        /* Autosave before entering new levels */
-bool autosave_t;        /* Timed autosave */
+byte autosave_l;        /* Autosave before entering new levels */
+byte autosave_t;        /* Timed autosave */
 s16b autosave_freq;     /* Autosave frequency */
 
 
@@ -1049,16 +1049,16 @@ bool ironman_shops;           /* Stores are permanently closed */
 bool ironman_small_levels;    /* Always create unusually small dungeon levels */
 bool ironman_downward;        /* Don't allow climbing upwards/recalling */
 bool ironman_autoscum;        /* Permanently enable the autoscummer */
-bool ironman_hard_quests;     /* Quest monsters get reinforcements */
-bool lite_town;               /* Use "lite" town without wilderness */
+byte ironman_hard_quests;     /* Quest monsters get reinforcements */
+byte lite_town;               /* Use "lite" town without wilderness */
 bool ironman_empty_levels;    /* Always create empty 'arena' levels */
 bool terrain_streams;         /* Create terrain 'streamers' in the dungeon */
 bool munchkin_death;          /* Ask for saving death */
 bool munchkin_rings;				/* Allow multiple rings */
 bool ironman_rooms;           /* Always generate very unusual rooms */
 bool ironman_nightmare;			/* Play the game in Nightmare mode */
-bool maximize_mode;
-bool preserve_mode;
+byte maximize_mode;
+byte preserve_mode;
 bool autoroller;
 
 
