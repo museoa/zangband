@@ -888,6 +888,8 @@ void carry(int pickup)
 						{
 							/* Destroy the object */
 							delete_object_idx(this_o_idx);
+							msg_format("You destroy %s.", o_name);
+							sound(SOUND_DESTITEM);
 						}
 					}
 				}
