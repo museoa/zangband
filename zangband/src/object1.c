@@ -126,12 +126,19 @@ void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
 	const object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	
+	bool known = object_known_p(o_ptr);
 
 	/* Clear */
 	(*f1) = (*f2) = (*f3) = 0L;
+	
+	if (cursed_p(o_ptr) && (known || (o_ptr->info & (OB_SENSE))))
+	{
+		(*f3) |= TR3_CURSED;
+	}
 
 	/* Must be identified */
-	if (!object_known_p(o_ptr)) return;
+	if (!known) return;
 
 	/* Base object */
 	(*f1) = k_ptr->flags1;
@@ -149,6 +156,12 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) |= o_ptr->kn_flags1;
 	(*f2) |= o_ptr->kn_flags2;
 	(*f3) |= o_ptr->kn_flags3;
+	
+	/* We now now whether or not it is an artifact */
+	if (o_ptr->flags3 & TR3_INSTA_ART)
+	{
+		(*f3) |= TR3_INSTA_ART;
+	}
 
 	/* Remove the Moria flags */
 	if (ironman_moria)
