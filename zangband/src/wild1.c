@@ -2273,14 +2273,37 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
  */
 static void road_connect(u16b *x, u16b *y, u16b town_num)
 {
-	/* Get town type */
+	town_type *t_ptr = &town[town_num];
+	
+	/* Big distance */
+	int dist = max_wild * 2;
+	int cdist = 0;
+	int k;
+	
+	u16b x1 = *x, y1 = *y;
+	
+	/* Check town type */
+	if (t_ptr->type == 2)
+	{
+		for (k = 0; k < MAX_GATES; k++)
+		{
+			/* Get distance from gate to target square */
+			cdist = distance(x1, y1, t_ptr->x + t_ptr->gates_x[k] / 2,
+				 t_ptr->y + t_ptr->gates_y[k] / 2);
+			
+			if (cdist < dist)
+			{
+				/* save minimal path */
+				dist = cdist;
+				
+				*x = t_ptr->x + t_ptr->gates_x[k] / 2;
+				*y = t_ptr->y + t_ptr->gates_y[k] / 2;
+			}
+		}
 
-	/* Get placement of gates */
-
-	/* Use distance to find closest gate */
-
-	/* Output resulting wilderness square */
-
+		/* Done */
+		return;
+	}
 
 	/* Dodgy hack = just output median town square */
 	*x = town[town_num].x + 2;
