@@ -19,15 +19,6 @@
 #include "util-dll.h"
 #include "icon.h"
 
-extern int objcmd_fontdesc(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
-
-extern int objcmd_menuentrystate(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
-extern int objcmd_photo_get(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
-extern int objcmd_photo_mask(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
 
 /* d_attr characters */
 cptr g_attr_str = "dwsorgbuDWvyRGBU";

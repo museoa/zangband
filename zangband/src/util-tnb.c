@@ -14,13 +14,20 @@
 #include "tnb.h"
 #include "interp.h"
 
+/* Hack - prevent warnings from tk headers */
+#if defined errno
+#	undef errno
+#	define errno errno_hack
+#endif /* errno */
+
 #ifdef PLATFORM_WIN
 #include <tkWinInt.h>
 #endif
 #ifdef PLATFORM_X11
 #define HAVE_LIMITS_H
 #define HAVE_UNISTD_H
-#include <tkUnixInt.h>
+#define _TCLINTDECLS
+#include <tkInt.h>
 #endif
 #include <tkFont.h>
 #include "tkMenu.h"
@@ -32,10 +39,13 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	Tk_Font tkfont;
 	TkFont *fontPtr;
 	char buf[1024];
+
+	/* Hack - ignore unused parameter */
+	(void) dummy;
 	
     if (objc != 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "font");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "font");
 		return TCL_ERROR;
     }
 
@@ -72,7 +82,7 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
  */
 int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static char *tkMenuStateStrings[] = {"active", "normal", "disabled",
+	static cptr tkMenuStateStrings[] = {"active", "normal", "disabled",
 		NULL};
 	Tcl_HashEntry *hashEntryPtr;
 	Tcl_HashTable *menuTablePtr;
@@ -82,10 +92,13 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	char *pathName;
 	int entryIndex, state;
 
+	/* Hack - ignore unused parameter */
+	(void) dummy;
+
 	/* Required number of arguments */
     if ((objc != 3) && (objc != 4))
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "menu index ?state?");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "menu index ?state?");
 		return TCL_ERROR;
     }
 
@@ -117,12 +130,12 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	{
 		mePtr = menuPtr->entries[entryIndex];
 		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			tkMenuStateStrings[mePtr->state], -1);
+			(char *) tkMenuStateStrings[mePtr->state], -1);
 		return TCL_OK;
 	}
 
 	/* Get the desired state */
-	if (Tcl_GetIndexFromObj(interp, objv[3], tkMenuStateStrings, "state", 0, 
+	if (Tcl_GetIndexFromObj(interp, objv[3], (char **) tkMenuStateStrings, (char *) "state", 0, 
 		&state) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -267,10 +280,13 @@ objcmd_photo_get(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	PhotoMaster *masterPtr;
 	unsigned char *pixelPtr;
 
+	/* Hack - ignore unused parameter */
+	(void) dummy;
+
 	/* Required number of arguments */
     if (objc != 4)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, "imageName x y");
+		Tcl_WrongNumArgs(interp, 1, objv, (char *) "imageName x y");
 		return TCL_ERROR;
     }
 
@@ -563,6 +579,9 @@ objcmd_photo_mask(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	masterPtr->validRegion = validRegion;
 	
 #endif /* PLATFORM_X11 */
+
+	/* Hack - Ignore parameter */
+	(void) dummy;
 
 	return TCL_OK;
 }

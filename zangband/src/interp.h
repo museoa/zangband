@@ -94,4 +94,14 @@ extern int map_symbol_find(Tcl_Interp *interp, Tcl_Obj *objName,
 /* widget.c */
 extern int init_widget(Tcl_Interp *interp);
 
+/* util-tnb.c */
+extern int objcmd_fontdesc(ClientData clientData, Tcl_Interp *interp,
+	int objc, Tcl_Obj *CONST objv[]);
+extern int objcmd_menuentrystate(ClientData clientData, Tcl_Interp *interp,
+	int objc, Tcl_Obj *CONST objv[]);
+extern int objcmd_photo_get(ClientData clientData, Tcl_Interp *interp,
+	int objc, Tcl_Obj *CONST objv[]);
+extern int objcmd_photo_mask(ClientData clientData, Tcl_Interp *interp,
+	int objc, Tcl_Obj *CONST objv[]);
+
 #endif /* _INCLUDE_INTERP_H_ */
