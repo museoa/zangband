@@ -31,19 +31,23 @@
 * Ego items.
 *  - Number of attacks for various ego items has been lowered for larger
 *  - weapons.
-*     Oangband also has various modifyers for ego items that are not
+*     Oangband also has various modifiers for ego items that are not
 *     implemented as yet.  (See ego shooters in [o])
-* Class rebalancing - Max blows for mages etc has not be adjusted yet.
+* Class rebalancing
 *     The adjusted weapon proficiancy hasn't been done either.
+*  - The number of blows for each class have been changed.
+*
 * Thrown items - This needs to be converted to the [O] system
 *      At the moment, there needs to be a "throwing item" flag to
 *      properly simulate the characteristics of [O]
 *      The critical hit part of this is broken - waiting so can implement
 *      the [O] version.
-* Shift - C command (normal command set) needs to show proper damages
+* Shift - C command (info screen)
 *      (deadliness instead of + to dam.)
-* Weapon Master  - Need to show proper worth of weapon - I haven't checked
-*      this at all.
+*  - done (but the formula need to be checked.)
+* Weapon Master
+*  - done (but the formulae need to be checked.)
+* 
 * Shops - item prices may need to change to reflect their altered value to
 *      the player.
 *
