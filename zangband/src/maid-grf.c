@@ -380,10 +380,6 @@ static void clear_map(void)
 		/* Flag that the block isn't used */
 		map_cache_x[i] = -1;
 	}
-
-	/* Player doesn't have a position */
-	player_x = 0;
-	player_y = 0;
 }
 
 /*

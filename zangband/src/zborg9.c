@@ -2458,22 +2458,6 @@ static void borg_display_item(list_item *l_ptr)
  */
 void borg_init_9(void)
 {
-	byte *test;
-
-	/* int i; */
-
-	/*** Hack -- verify system ***/
-
-	/* Message */
-	prt("Initializing the Borg... (memory)", 0, 0);
-
-	/* Hack -- flush it */
-	Term_fresh();
-
-	/* Mega-Hack -- verify memory */
-	C_MAKE(test, 400 * 1024L, byte);
-	KILL(test);
-
 	/*** Hack -- initialize borg.ini options ***/
 
 	/* Message */
@@ -2565,6 +2549,9 @@ void borg_init_9(void)
 
 	/* set the continous play mode if the game cheat death is on */
 	if (cheat_live) borg_cheat_death = TRUE;
+	
+	/* Initialise player position */
+	map_get_player(&c_x, &c_y);
 
 	/*** Initialize ***/
 
