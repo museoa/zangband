@@ -4876,7 +4876,9 @@ void map_area(void)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int i, x, y, y1, y2, x1, x2;
+	int i, x, y;
+	int y1, y2, x1, x2;
+	int xx, yy;
 
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
@@ -4888,10 +4890,10 @@ void map_area(void)
 	x2 = px + MAX_DETECT + randint1(20);
 
 	/* Speed -- shrink to fit legal bounds */
-	if (y1 < p_ptr->min_hgt + 1) y1 = p_ptr->min_hgt + 1;
-	if (y2 > p_ptr->max_hgt - 2) y2 = p_ptr->max_hgt - 2;
-	if (x1 < p_ptr->min_wid + 1) x1 = p_ptr->min_wid + 1;
-	if (x2 > p_ptr->max_wid - 2) x2 = p_ptr->max_wid - 2;
+	if (y1 < p_ptr->min_hgt) y1 = p_ptr->min_hgt;
+	if (y2 > p_ptr->max_hgt - 1) y2 = p_ptr->max_hgt - 1;
+	if (x1 < p_ptr->min_wid) x1 = p_ptr->min_wid;
+	if (x2 > p_ptr->max_wid - 1) x2 = p_ptr->max_wid - 1;
 
 	/* Scan that area */
 	for (y = y1; y <= y2; y++)
@@ -4914,8 +4916,13 @@ void map_area(void)
 				/* Memorize known walls */
 				for (i = 0; i < 8; i++)
 				{
-					c_ptr = area(x + ddx_ddd[i], y + ddy_ddd[i]);
-					pc_ptr = parea(x + ddx_ddd[i], y + ddy_ddd[i]);
+					xx = x + ddx_ddd[i];
+					yy = y + ddy_ddd[i];
+					
+					if (!in_boundsp(xx, yy)) continue;
+				
+					c_ptr = area(xx, yy);
+					pc_ptr = parea(xx, yy);
 
 					/* Memorize walls */
 					if (cave_wall_grid(c_ptr))
