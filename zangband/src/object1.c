@@ -3310,12 +3310,12 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	bool toggle = FALSE;
 
 	int floor_num;
-
-	/* The first object on the floor */
+	
+	/* First Floor item */
 	object_type *fo_ptr;
 
-	/* The default equipment item */
-	object_type *eo_ptr;
+	/* Temp item */
+	object_type *q_ptr;
 
 	object_type *o_ptr;
 
@@ -3332,20 +3332,21 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	done = FALSE;
 
 	/* Test for equipment */
-	for (i = 0; i < EQUIP_MAX; i++)
+	if (equip)
 	{
-		eo_ptr = &p_ptr->equipment[i];
-
-		if (eo_ptr->k_idx)
+		for (i = 0; i < EQUIP_MAX; i++)
 		{
-			allow_equip = TRUE;
+			q_ptr = &p_ptr->equipment[i];
+	
+			/* Only want valid items */
+			if (q_ptr->k_idx && item_tester_okay(q_ptr))
+			{
+				allow_equip = TRUE;
 
-			break;
+				break;
+			}
 		}
 	}
-
-	if (!equip) allow_equip = FALSE;
-
 
 	/* Scan all objects in the grid */
 	fo_ptr = test_floor(&floor_num, c_ptr, 0x01);
@@ -3353,14 +3354,33 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	/* Accept floor */
 	if (floor_num && floor) allow_floor = TRUE;
 
-	/* Accept inventory */
-	if (p_ptr->inventory && inven) allow_inven = TRUE;
+	/* Scan inventory */
+	if (inven)
+	{
+		OBJ_ITT_START(p_ptr->inventory, q_ptr)
+		{
+			/* Only want valid items */
+			if (item_tester_okay(q_ptr))
+			{
+				allow_inven = TRUE;
+				
+				break;
+			}
+		}
+		OBJ_ITT_END;
+	}
 
 	/* Require at least one legal choice */
 	if (!allow_inven && !allow_equip && !allow_floor)
 	{
 		/* Warning if needed */
 		if (str) msg_print(str);
+		
+		/* Forget the item_tester_tval restriction */
+		item_tester_tval = 0;
+
+		/* Forget the item_tester_hook restriction */
+		item_tester_hook = NULL;
 
 		/* Done */
 		return (FALSE);
@@ -3400,6 +3420,12 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	{
 		/* Save this object */
 		save_object_choice(o_ptr);
+		
+		/* Forget the item_tester_tval restriction */
+		item_tester_tval = 0;
+
+		/* Forget the item_tester_hook restriction */
+		item_tester_hook = NULL;
 
 		/* Done */
 		return (o_ptr);
@@ -3602,20 +3628,8 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				/* No object selected yet */
 				o_ptr = NULL;
 
-				/* Choose "default" inventory item */
-				if (p_ptr->command_wrk == (USE_INVEN))
-				{
-					o_ptr = &o_list[p_ptr->inventory];
-				}
-
-				/* Choose "default" equipment item */
-				else if (p_ptr->command_wrk == (USE_EQUIP))
-				{
-					o_ptr = eo_ptr;
-				}
-
 				/* Choose "default" floor item */
-				else if (p_ptr->command_wrk == (USE_FLOOR))
+				if (p_ptr->command_wrk == (USE_FLOOR))
 				{
 					if (floor_num == 1)
 					{
