@@ -886,7 +886,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 		{
 			info[i++] = "It is heavily cursed.";
 		}
-		else
+		else if (f3 & TR3_CURSED)
 		{
 			info[i++] = "It is cursed.";
 		}
