@@ -2889,6 +2889,12 @@ static void process_monster(int m_idx)
 		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
 	}
 
+	/* Notice changes in view */
+	if (do_move)
+	{
+		/* Update some things */
+		p_ptr->update |= (PU_MON_LITE);
+	}
 
 	/* Learn things from observable monster */
 	if (m_ptr->ml)

@@ -2668,7 +2668,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 	p_ptr->update |= (PU_UN_VIEW);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -3127,7 +3127,7 @@ bool earthquake(int cy, int cx, int r)
 	p_ptr->update |= (PU_UN_VIEW);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);
@@ -3690,7 +3690,7 @@ bool teleport_swap(int dir)
 	verify_panel();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);

@@ -380,8 +380,14 @@
  * to calculate monster flow.  The larger size is due to use as a circular
  * queue for the fractal caves patch fill routine.
  */
-#define TEMP_MAX 4096
+#define TEMP_MAX 2000
 
+/*
+ * Maximum number of squares lit by monsters.
+ * (Note that squares far away from the player do not need to
+ * be stored.)
+ */
+#define LITE_MAX 2500
 
 /*
  * Number of keymap modes
@@ -2049,7 +2055,8 @@
 #define CAVE_TEMP       0x40    /* temp flag */
 #define CAVE_XTRA       0x80    /* misc flag */
 
-
+/* Hack - reuse CAVE_ROOM */
+#define CAVE_MNLT		0x08	/* Illuminated by monster */
 
 /*
  * Bit flags for the "project()" function
@@ -2167,6 +2174,7 @@
 #define PU_UN_VIEW      0x00010000L     /* Forget view */
 /* xxx (many) */
 #define PU_VIEW         0x00100000L     /* Update view */
+#define PU_MON_LITE		0x00200000L		/* Monster illumination */
 /* xxx */
 #define PU_MONSTERS     0x01000000L     /* Update monsters */
 #define PU_DISTANCE     0x02000000L     /* Update distances */
@@ -2888,6 +2896,8 @@
 #define RF7_CAN_FLY             0x00000004  /* Monster can fly */
 #define RF7_FRIENDLY            0x00000008  /* Monster is friendly */
 #define RF7_SILLY               0x00000010  /* Monster is "silly" */
+#define RF7_LITE_1				0x00000020	/* Monster carries a small lite */
+#define RF7_LITE_2				0x00000040	/* Monster carries a large lite */
 
 /*
  * Monster race wilderness flags

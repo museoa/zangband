@@ -1306,6 +1306,16 @@ void generate_cave(void)
 	
 	/* Verify the panel */
 	verify_panel();
+	
+	/* Remove the CAVE_ROOM flags... reused as CAVE_MNLT */
+	for (x = 0; x < cur_wid; x++)
+	{
+		for(y = 0; y < cur_hgt; y++)
+		{
+			/* Clear the flag */
+			cave[y][x].info &= ~(CAVE_ROOM);
+		}
+	}
 
 	/* Remember when this level was "created" */
 	old_turn = turn;

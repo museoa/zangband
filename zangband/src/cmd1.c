@@ -2558,7 +2558,7 @@ void move_player(int dir, int do_pickup)
 		verify_panel();
 
 		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_FLOW);
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_DISTANCE);

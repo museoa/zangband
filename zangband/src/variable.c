@@ -422,6 +422,14 @@ s16b temp_x[TEMP_MAX];
 
 
 /*
+ * Array of grids for use in monster lighting effects (see "cave.c")
+ */
+s16b lite_n;
+s16b lite_y[LITE_MAX];
+s16b lite_x[LITE_MAX];
+
+
+/*
  * Number of active macros.
  */
 s16b macro__num;

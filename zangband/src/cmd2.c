@@ -1844,7 +1844,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 		move_player(dir, FALSE);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW);
+		p_ptr->update |= (PU_VIEW | PU_MON_LITE);
 		p_ptr->update |= (PU_DISTANCE);
 	}
 
