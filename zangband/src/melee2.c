@@ -445,9 +445,12 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		if (!flow_by_smell) return (FALSE);
 	}
 
-	/* Monster is too far away to notice the player */
-	if (c_ptr->cost > MONSTER_FLOW_DEPTH) return (FALSE);
-	if (c_ptr->cost > r_ptr->aaf) return (FALSE);
+	/* Non-pets are too far away to notice the player */
+	if (!is_pet(m_ptr))
+	{
+		if (c_ptr->cost > MONSTER_FLOW_DEPTH) return (FALSE);
+		if (c_ptr->cost > r_ptr->aaf) return (FALSE);
+	}
 
 	/* Hack -- Player can see us, run towards him */
 	if (player_has_los_bold(y1, x1)) return (FALSE);
@@ -2889,6 +2892,7 @@ void process_monsters(void)
 
 	int speed;
 
+	int old_total_friends = total_friends; 
 	s32b old_friend_align = friend_align;
 
 	/* Clear some variables */
@@ -3004,6 +3008,12 @@ void process_monsters(void)
 
 		/* Assume no move */
 		test = FALSE;
+
+		/* Allow more activity with pets around */
+		if (old_total_friends)
+		{
+			test = TRUE;
+		}
 
 		/* Handle "sensing radius" */
 		if (m_ptr->cdis <= r_ptr->aaf)
