@@ -2796,8 +2796,14 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 				/* Svals don't match when required */
 				continue;
 			}
-
-			if (streq(l_ptr->xtra_name, w_ptr->xtra_name))
+			
+			/* Does only one have an xtra name? */
+			if ((l_ptr->xtra_name == NULL) !=
+				(w_ptr->xtra_name == NULL)) continue;
+			
+			/* Do the xtra names match? */
+			if ((l_ptr->xtra_name == w_ptr->xtra_name) ||
+				(streq(l_ptr->xtra_name, w_ptr->xtra_name)))
 			{
 				/* Count duplicate items */
 				dupe_count++;
