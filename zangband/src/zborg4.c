@@ -1015,7 +1015,6 @@ static void borg_notice_enchant(void)
 	my_need_enchant_to_a = 0;
 	my_need_enchant_to_h = 0;
 	my_need_enchant_to_d = 0;
-	my_need_brand_weapon = 0;
 
 	/* Hack -- enchant all the equipment (weapons) */
 	for (i = 0; i <= EQUIP_BOW; i++)

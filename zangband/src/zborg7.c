@@ -1199,69 +1199,6 @@ static bool borg_enchant_to_d(void)
 	return (FALSE);
 }
 
-/*
- * Brand Bolts
- */
-static bool borg_brand_weapon(void)
-{
-#if 0
-
-	int i, b_i = -1;
-	int a, b_a = 0;
-
-	/* Nothing to brand */
-	if (!my_need_brand_weapon) return (FALSE);
-
-	/* Need "brand" ability */
-	if (!amt_brand_weapon) return (FALSE);
-
-	/* look through inventory for ammo */
-	for (i = 0; i < inven_num; i++)
-	{
-		list_item *l_ptr = &inventory[i];
-
-		/* Only enchant if qty >= 5 */
-		if (l_ptr->number < 5) continue;
-
-		/* Skip non-identified items  */
-		if (!(l_ptr->info & OB_KNOWN)) continue;
-
-		/* Make sure it is the right type if missile */
-		if (l_ptr->tval != TV_BOLT) continue;
-
-		/* Obtain the bonus  */
-		a = l_ptr->to_h;
-
-		/* Skip branded items */
-		if (l_ptr->xtra_name) continue;
-
-		/* Find the most enchanted item */
-		if ((b_i >= 0) && (b_a > a)) continue;
-
-		/* Save the info  */
-		b_i = i;
-		b_a = a;
-	}
-
-	/* Enchant it */
-	if (borg_activate_artifact(ART_BRAND, FALSE))
-	{
-
-
-		/* 291 would like a location of the brand */
-		/* choose the or ammo */
-		{
-			borg_keypress(I2A(b_i));
-		}
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-	/* Nothing to do */
-	return (FALSE);
-}
 
 /*
  * Remove Curse
@@ -1317,7 +1254,6 @@ bool borg_enchanting(void)
 	if (borg_enchant_to_d()) return (TRUE);
 	if (borg_enchant_to_a()) return (TRUE);
 	if (borg_enchant_to_h()) return (TRUE);
-	if (borg_brand_weapon()) return (TRUE);
 
 	/* Nope */
 	return (FALSE);

@@ -577,7 +577,6 @@ extern s16b my_ammo_range;	/* Shooting range   */
 extern s16b my_need_enchant_to_a;	/* Need some enchantment */
 extern s16b my_need_enchant_to_h;	/* Need some enchantment */
 extern s16b my_need_enchant_to_d;	/* Need some enchantment */
-extern s16b my_need_brand_weapon;	/* apw brand bolts */
 
 
 /*

@@ -224,7 +224,7 @@ int g_y;	/* Goal location (Y) */
 int dim_door_y;	/* Safe landing zone for DDoor */
 int dim_door_x;
 
-/* BIG HACK! Assume only 10 cursed artifacts */
+/* BIG HACK! Assume only 50 cursed artifacts */
 int bad_obj_x[50];	/* Dropped cursed artifact at location (X) */
 int bad_obj_y[50];	/* Dropped cursed artifact at location (Y) */
 
@@ -239,7 +239,7 @@ s16b my_stat_ind[6];	/* Current "additions" to stat values */
 bool my_need_stat_check[6];	/* do I need to check my stats? */
 
 s16b my_stat_add[6];	/* additions to stats  This will allow upgrading of */
-					  /* equiptment to allow a ring of int +4 to be traded */
+					  /* equipment to allow a ring of int +4 to be traded */
 					  /* for a ring of int +6 even if maximized to allow a */
 					  /* later swap to be better. */
 
@@ -255,7 +255,6 @@ s16b my_ammo_range;	/* Shooting range */
 s16b my_need_enchant_to_a;	/* Need some enchantment */
 s16b my_need_enchant_to_h;	/* Need some enchantment */
 s16b my_need_enchant_to_d;	/* Need some enchantment */
-s16b my_need_brand_weapon;	/* apw actually brand bolts */
 
 /*
  * Hack -- basic "power"
