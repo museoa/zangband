@@ -2269,8 +2269,6 @@ void angtk_angband_initialized(void)
 
 	init_map();
 
-	init_struct();
-
 	/* Program is intialized */
 	if (Tcl_EvalEx(g_interp, (char *) "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
 	{

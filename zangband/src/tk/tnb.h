@@ -255,9 +255,6 @@ extern int map_symbol_feature(int f_idx);
 extern int map_symbol_find(Tcl_Interp *interp, Tcl_Obj *objName,
 	int *symbolIndex);
 
-/* struct.c */
-extern void init_struct(void);
-
 /* tcltk.c */
 Tcl_Interp *TclTk_Init(int argc, char **argv);
 void TclTk_Exit(Tcl_Interp *interp);
