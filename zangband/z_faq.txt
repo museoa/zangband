@@ -60,7 +60,7 @@ questions and answers.
   5.2 Bugs
     5.2.1 A monster "points at me and curses", and the game crashes!
           What is going on?
-    5.2.1.2 Wait, I have version 2.1.0b and the game *still* crashes 
+    5.2.1.1 Wait, I have version 2.1.0b and the game *still* crashes 
             When a monster "points at me and curses"!
 
 --------------------------------------------------------------------------
