@@ -541,9 +541,6 @@ static cptr sound_file[SOUND_MAX][SAMPLE_MAX];
 #endif /* USE_SOUND */
 
 
-/* Hack - not in [Z] yet */
-bool use_bigtile = FALSE;
-
 /*
  * Full path to ANGBAND.INI
  */
