@@ -304,23 +304,6 @@ static const struct
 {TEST_UNSEEN,  2,  2, RUN_S | RUN_E, RUN_SE_SE},
 {TEST_UNSEEN, -2,  2, RUN_S | RUN_W, RUN_SW_SW},
 
-/* Prefer going straight over zig-zagging */
-{TEST_NONE,  0,  0, RUN_N_N,  RUN_NE_NW | RUN_NW_NE},
-{TEST_NONE,  0,  0, RUN_E_E,  RUN_NE_SE | RUN_SE_NE},
-{TEST_NONE,  0,  0, RUN_S_S,  RUN_SE_SW | RUN_SW_SE},
-{TEST_NONE,  0,  0, RUN_W_W,  RUN_NW_SW | RUN_SW_NW},
-
-/* Prefer moving diagonal then orthagonal over the reverse */
-{TEST_NONE,  0,  0, RUN_NW_W, RUN_W_NW},
-{TEST_NONE,  0,  0, RUN_NW_N, RUN_N_NW},
-{TEST_NONE,  0,  0, RUN_NE_N, RUN_N_NE},
-{TEST_NONE,  0,  0, RUN_NE_E, RUN_E_NE},
-{TEST_NONE,  0,  0, RUN_SE_E, RUN_E_SE},
-{TEST_NONE,  0,  0, RUN_SE_S, RUN_S_SE},
-{TEST_NONE,  0,  0, RUN_SW_S, RUN_S_SW},
-{TEST_NONE,  0,  0, RUN_SW_W, RUN_W_SW},
-
-#if 0
 /*
  * Ensure that the player will take unknown corners by
  * preventing orthagonal moves to unknown squares when
@@ -340,32 +323,46 @@ static const struct
  * is actually a floor square and cutting corners is
  * enabled.
  *
- * XXX This code is disabled because we can't tell the
- * difference between these with just a torch:
+ * We have to be careful that we differentiate between these
+ * two situations:
  *
  * ###       ##
  *  .@  vs   .@
  * #.#       .#
  *
  * The first we should NOT turn because there is obviously
- * a real branch.
- *
- * This problem would go away if we actually memorized
- * floor grids.
+ * a real branch. We handle this by (indirectly) checking
+ * for the presence of a wall in the "unknown" direction,
+ * in this case the wall SWW of the player.
  */
-{TEST_UNSEEN, -1, -2, RUN_NE | RUN_NW, RUN_N_NW},
-{TEST_UNSEEN,  0, -2, RUN_NE | RUN_NW, RUN_N_N},
-{TEST_UNSEEN,  1, -2, RUN_NE | RUN_NW, RUN_N_NE},
-{TEST_UNSEEN,  2, -1, RUN_NE | RUN_SE, RUN_E_NE},
-{TEST_UNSEEN,  2,  0, RUN_NE | RUN_SE, RUN_E_E},
-{TEST_UNSEEN,  2,  1, RUN_NE | RUN_SE, RUN_E_SE},
-{TEST_UNSEEN,  1,  2, RUN_SE | RUN_SW, RUN_S_SE},
-{TEST_UNSEEN,  0,  2, RUN_SE | RUN_SW, RUN_S_S},
-{TEST_UNSEEN, -1,  2, RUN_SE | RUN_SW, RUN_S_SW},
-{TEST_UNSEEN, -2,  1, RUN_NW | RUN_SW, RUN_W_SW},
-{TEST_UNSEEN, -2,  0, RUN_NW | RUN_SW, RUN_W_W},
-{TEST_UNSEEN, -2, -1, RUN_NW | RUN_SW, RUN_W_NW},
-#endif
+{TEST_UNSEEN, -1, -2, RUN_NE_N | RUN_NW_N, RUN_N_NW},
+{TEST_UNSEEN,  0, -2, RUN_NE_N | RUN_NW_N, RUN_N_N},
+{TEST_UNSEEN,  1, -2, RUN_NE_N | RUN_NW_N, RUN_N_NE},
+{TEST_UNSEEN,  2, -1, RUN_NE_E | RUN_SE_E, RUN_E_NE},
+{TEST_UNSEEN,  2,  0, RUN_NE_E | RUN_SE_E, RUN_E_E},
+{TEST_UNSEEN,  2,  1, RUN_NE_E | RUN_SE_E, RUN_E_SE},
+{TEST_UNSEEN,  1,  2, RUN_SE_S | RUN_SW_S, RUN_S_SE},
+{TEST_UNSEEN,  0,  2, RUN_SE_S | RUN_SW_S, RUN_S_S},
+{TEST_UNSEEN, -1,  2, RUN_SE_S | RUN_SW_S, RUN_S_SW},
+{TEST_UNSEEN, -2,  1, RUN_NW_W | RUN_SW_W, RUN_W_SW},
+{TEST_UNSEEN, -2,  0, RUN_NW_W | RUN_SW_W, RUN_W_W},
+{TEST_UNSEEN, -2, -1, RUN_NW_W | RUN_SW_W, RUN_W_NW},
+
+/* Prefer going straight over zig-zagging */
+{TEST_NONE,  0,  0, RUN_N_N,  RUN_NE_NW | RUN_NW_NE},
+{TEST_NONE,  0,  0, RUN_E_E,  RUN_NE_SE | RUN_SE_NE},
+{TEST_NONE,  0,  0, RUN_S_S,  RUN_SE_SW | RUN_SW_SE},
+{TEST_NONE,  0,  0, RUN_W_W,  RUN_NW_SW | RUN_SW_NW},
+
+/* Prefer moving diagonal then orthagonal over the reverse */
+{TEST_NONE,  0,  0, RUN_NW_W, RUN_W_NW},
+{TEST_NONE,  0,  0, RUN_NW_N, RUN_N_NW},
+{TEST_NONE,  0,  0, RUN_NE_N, RUN_N_NE},
+{TEST_NONE,  0,  0, RUN_NE_E, RUN_E_NE},
+{TEST_NONE,  0,  0, RUN_SE_E, RUN_E_SE},
+{TEST_NONE,  0,  0, RUN_SE_S, RUN_S_SE},
+{TEST_NONE,  0,  0, RUN_SW_S, RUN_S_SW},
+{TEST_NONE,  0,  0, RUN_SW_W, RUN_W_SW},
 };
 
 static const u32b valid_dir_mask[10] = {
