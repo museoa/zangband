@@ -512,7 +512,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		for (i = 0; i < num; i++)
 		{
 			if (randint(100) < dun_level)
-				activate_hi_summon();
+				(void)activate_hi_summon();
 			else
 				(void)summon_specific(y, x, dun_level, 0, TRUE, FALSE, FALSE);
 		}
@@ -735,7 +735,7 @@ static int coords_to_dir(int y, int x)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_aux(int y, int x, int dir)
+static bool do_cmd_open_aux(int y, int x)
 {
 	int i, j;
 
@@ -933,7 +933,7 @@ void do_cmd_open(void)
 		else
 		{
 			/* Open the door */
-			more = do_cmd_open_aux(y, x, dir);
+			more = do_cmd_open_aux(y, x);
 		}
 	}
 
@@ -952,7 +952,7 @@ void do_cmd_open(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_close_aux(int y, int x, int dir)
+static bool do_cmd_close_aux(int y, int x)
 {
 	cave_type	*c_ptr;
 
@@ -1062,7 +1062,7 @@ void do_cmd_close(void)
 		else
 		{
 			/* Close the door */
-			more = do_cmd_close_aux(y, x, dir);
+			more = do_cmd_close_aux(y, x);
 		}
 	}
 
@@ -1143,7 +1143,7 @@ static bool twall(int y, int x, byte feat)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_tunnel_aux(int y, int x, int dir)
+static bool do_cmd_tunnel_aux(int y, int x)
 {
 	cave_type *c_ptr;
 
@@ -1454,7 +1454,7 @@ void do_cmd_tunnel(void)
 		else
 		{
 			/* Tunnel through walls */
-			more = do_cmd_tunnel_aux(y, x, dir);
+			more = do_cmd_tunnel_aux(y, x);
 		}
 	}
 
@@ -2101,7 +2101,7 @@ void do_cmd_alter(void)
 		          (c_ptr->feat == FEAT_MOUNTAIN)))
 		{
 			/* Tunnel */
-			more = do_cmd_tunnel_aux(y, x, dir);
+			more = do_cmd_tunnel_aux(y, x);
 		}
 
 		/* Bash jammed doors */
@@ -2117,7 +2117,7 @@ void do_cmd_alter(void)
 		         (c_ptr->feat < FEAT_MINOR_GLYPH))
 		{
 			/* Tunnel */
-			more = do_cmd_open_aux(y, x, dir);
+			more = do_cmd_open_aux(y, x);
 		}
 
 		/* Close open doors */
@@ -2125,7 +2125,7 @@ void do_cmd_alter(void)
 		         (c_ptr->feat == FEAT_BROKEN))
 		{
 			/* Tunnel */
-			more = do_cmd_close_aux(y, x, dir);
+			more = do_cmd_close_aux(y, x);
 		}
 
 		/* Disarm traps */
@@ -2543,10 +2543,11 @@ static int breakage_chance(object_type *o_ptr)
 	}
 }
 
+
 /*
  * Calculation of critical hits for objects fired or thrown by the player. -LM-
  */
-static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
+static sint critical_shot(int chance, int sleeping_bonus,
 	char o_name[], char m_name[], int visible)
 {
 	int i, k;
@@ -2948,7 +2949,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
 
 				/* multiply by critical shot. (10x inflation) + level damage bonus*/
-				tdam *= critical_shot(chance2, sleeping_bonus, FALSE,
+				tdam *= critical_shot(chance2, sleeping_bonus,
 					o_name, m_name, visible);
 
 				/* Convert total Deadliness into a percentage, and apply
@@ -3335,7 +3336,7 @@ void do_cmd_throw_aux(int mult)
 				 * (10x inflation)
 				 */
 				if (f2 & (TR2_THROW)) tdam *= critical_shot
-					(chance2, sleeping_bonus, TRUE, o_name, m_name, visible);
+					(chance2, sleeping_bonus, o_name, m_name, visible);
 				else tdam *= 10;
 
 				/* Convert total or object-only Deadliness into a percen-
