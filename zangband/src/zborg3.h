@@ -18,74 +18,8 @@
 /*
  * Forward declare
  */
-typedef struct borg_item borg_item;
 typedef struct borg_shop borg_shop;
 typedef struct borg_mind borg_mind;
-
-
-/*
- * A structure holding information about an object.  120 bytes.
- *
- * The "iqty" is zero if the object is "missing"
- * The "kind" is zero if the object is "unaware" (or missing)
- * The "able" is zero if the object is "unknown" (or unaware or missing)
- *
- * Note that unaware items will have a "tval" but an invalid "sval".
- */
-struct borg_item
-{
-	char desc[80];	/* Actual Description */
-
-	cptr note;	/* Pointer to tail of 'desc' */
-
-	s16b kind;	/* Kind index */
-
-	bool able;	/* True if item is identified */
-
-	bool fully_identified;	/* True if item is fully identified (AJG) */
-
-	byte tval;	/* Item type */
-	byte sval;	/* Item sub-type */
-	s16b pval;	/* Item extra-info */
-
-	byte discount;	/* Discount */
-
-	byte iqty;	/* Number of items */
-
-	s16b weight;	/* Probable weight */
-
-	u16b xtra_name;	/* Extra Name (Artifacts and ego items) */
-#if 0
-	/*
-	 * These do not exist any more...
-	 * we have to think everything is a randart.
-	 * (Since most ego items have random abilities - this
-	 * isn't too much of a problem.
-	 */
-	int name1;	/* Artifact index (if any) */
-	int name2;	/* Ego-item index (if any) */
-#endif /* 0 */
-	s16b timeout;	/* Timeout counter */
-
-	s16b to_h;	/* Bonus to hit */
-	s16b to_d;	/* Bonus to dam */
-	s16b to_a;	/* Bonus to ac */
-	s16b ac;	/* Armor class */
-	byte dd;	/* Damage dice */
-	byte ds;	/* Damage sides */
-
-	byte level;	/* Level apw */
-
-	s32b cost;	/* Cost (in stores) */
-
-	s32b value;	/* Value (estimated) */
-
-	bool cursed;	/* Item is cursed */
-	u32b flags1;	/* Extracted item flags (set 1) */
-	u32b flags2;	/* Extracted item flags (set 2) */
-	u32b flags3;	/* Extracted item flags (set 3) */
-};
-
 
 /*
  * A store
@@ -103,7 +37,6 @@ struct borg_shop
 	s16b b_count;
 	s16b u_count;
 };
-
 
 
 /*
@@ -205,15 +138,7 @@ struct borg_mind
 
 extern borg_shop *borg_shops;	/* Current "shops" */
 
-
-/*
- * Safety arrays for simulating possible worlds
- */
-
-extern borg_item *safe_home;	/* Safety "home" */
-
-extern borg_shop *safe_shops;	/* Safety "shops" */
-
+extern list_item *borg_home;	/* Current home items - (only remember one.) */
 
 /*
  * Number of allocated stores...
@@ -284,7 +209,6 @@ extern bool borg_equips_staff_fail(int sval);
  * Artifact usage function (by index)
  */
 extern bool borg_activate_artifact(int name1, bool secondary);	/* apw */
-extern bool borg_equips_artifact(int name1, int location);	/* apw */
 extern bool borg_activate_dragon(int drag_sval);	/* apw */
 extern bool borg_equips_dragon(int drag_sval);	/* apw */
 

@@ -24,14 +24,10 @@
  */
 borg_shop *borg_shops;	/* Current "shops" */
 
-
-
 /*
- * Safety arrays for simulating possible worlds
+ * Remember items in the home.  (Only one home at a time)
  */
-borg_item *safe_home;	/* Safety "home stuff" */
-
-borg_shop *safe_shops;	/* Safety "shops" */
+list_item *borg_home;
 
 /*
  * Locate the store doors
@@ -1465,8 +1461,8 @@ bool borg_activate_artifact(int name1, bool secondary)
 	{
 		list_item *l_ptr = &equipment[i];
 
-		/* Skip incorrect artifacts */
-		/* if (item->name1 != name1) continue; */
+		/* Skip non-artifacts */
+		if (!(l_ptr->kn_flags3 & TR3_INSTA_ART)) continue;
 
 		/* Check charge */
 		if (l_ptr->timeout) return (FALSE);
@@ -1488,7 +1484,6 @@ bool borg_activate_artifact(int name1, bool secondary)
 							 l_ptr->o_name));
 			return (FALSE);
 		}
-
 
 		/* Log the message */
 		borg_note(format("# Activating artifact %s.", l_ptr->o_name));
@@ -1516,86 +1511,6 @@ bool borg_activate_artifact(int name1, bool secondary)
 
 	/* Oops */
 	return (FALSE);
-}
-
-
-/*
- * apw Hack -- check and see if borg is wielding an artifact
- */
-bool borg_equips_artifact(int name1, int location)
-{
-	/* Hack - ignore parameters */
-	(void)location;
-	(void)name1;
-
-	/* Hack for [Z] */
-	return (FALSE);
-
-#if 0
-	int i;
-	int lev, chance;
-
-
-
-	/* Check the equipment-- */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
-		borg_item *item = &borg_items[i];
-
-		/* Skip incorrect artifacts */
-		if (item->name1 != name1) continue;
-
-		/* Check charge.  But not on certain ones  Wor, ID, phase, TELEPORT. */
-		/* this is to ensure that his borg_prep code is working ok */
-		if ((name1 != ART_AVAVIR &&
-			 name1 != ART_ERIRIL &&
-			 name1 != ART_BELEGENNON &&
-			 name1 != ART_COLANNON) && (item->timeout)) continue;
-		/*
-		 * Random Artifact must be *ID* to know the activation power.
-		 * The borg will cheat with random artifacts to know if the
-		 * artifact number is activatable, but artifact names and
-		 * types will be scrambled.  So he must first *ID* the artifact
-		 * he must play with the artifact to learn its power, just as
-		 * he plays with magic to gain experience.  But I am not about
-		 * to undertake that coding.  He needs to *ID* it anyway to learn
-		 * of the resists that go with the artifact.
-		 * Lights dont need *id* just regular id.
-		 */
-		if ( /* adult_rand_artifacts */ (item->name1 != ART_GALADRIEL &&
-										 item->name1 != ART_ELENDIL &&
-										 item->name1 != ART_THRAIN) &&
-			(!item->fully_identified))
-		{
-			borg_note(format
-					  ("# %s must be *ID*'d before activation.", item->desc));
-			continue;
-		}
-
-		/* Extract the item level for fail rate check */
-		lev = item->level;
-
-		/* Base chance of success */
-		chance = borg_skill[BI_DEV];
-
-		/* Confusion hurts skill */
-		if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
-
-		/* High level objects are harder */
-		chance = chance - ((lev > 50) ? 50 : lev);
-
-		/* Roll for usage.  Return Fail if greater than 50% fail */
-		if (chance < (USE_DEVICE * 2)) continue;
-
-		/* Success */
-		return (TRUE);
-
-	}
-
-	/* I guess I dont have it, or it is not ready */
-	return (FALSE);
-
-#endif /* 0 */
 }
 
 /*
@@ -2668,8 +2583,7 @@ void prepare_race_class_info(void)
 void borg_clear_3(void)
 {
 	KILL(borg_shops);
-	KILL(safe_home);
-	KILL(safe_shops);
+	KILL(borg_home);
 }
 
 /*
@@ -2703,10 +2617,7 @@ void borg_init_3(void)
 	/*** Item/Ware arrays (simulation) ***/
 
 	/* Make the "safe" inventory array */
-	C_MAKE(safe_home, STORE_INVEN_MAX, borg_item);
-
-	/* Make the "safe" stores in the town */
-	C_MAKE(safe_shops, track_shop_size, borg_shop);
+	C_MAKE(borg_home, STORE_INVEN_MAX, list_item);
 }
 
 #else

@@ -6900,52 +6900,6 @@ static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 	return (b_n);
 }
 
-#if 0
-/*
- * Simulate/Apply the optimal result of ACTIVATING an attack artifact
- *
- */
-static int borg_attack_aux_artifact(int art_name, int art_loc, int rad, int dam,
-                                    int typ)
-{
-	int b_n;
-
-	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
-
-
-	/* Paranoia */
-	if (borg_simulate && (randint0(100) < 5)) return (0);
-
-
-	/* Look for that artifact and to see if it is charged */
-	if (!borg_equips_artifact(art_name, art_loc)) return (0);
-
-	/* Choose optimal location */
-	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-	/* Activate the artifact */
-	(void)borg_activate_artifact(art_name, FALSE);
-
-	/* Use target */
-	if (art_name != ART_INGWE || art_name != ART_RAZORBACK)
-	{
-		borg_keypress('5');
-
-		/* Set our shooting flag */
-		successful_target = -1;
-	}
-
-	/* Value */
-	return (b_n);
-}
-
-#endif /* 0 */
-
 /*
  * Simulate/Apply the optimal result of ACTIVATING a DRAGON ARMOUR
  *
