@@ -86,6 +86,7 @@ class ui_birth:
 
 		if selected:
 			# Display the class name
+			io.put_str("Class       :", 5, 1)
 			io.c_put_str(io.TERM_L_BLUE, selected.name, 5, 15)
 			io.clear_from(15)
 
@@ -113,7 +114,8 @@ class ui_birth:
 
 		if selected:
 			# Display the race name
-			io.c_put_str(io.TERM_L_BLUE, selected.name, 4, 15)
+			io.put_str("Race        :", 3, 1)
+			io.c_put_str(io.TERM_L_BLUE, selected.name, 3, 15)
 			io.clear_from(15)
 
 		# Return the selected race
@@ -135,7 +137,8 @@ class ui_birth:
 
 		if selected:
 			# Display the gender name
-			io.c_put_str(io.TERM_L_BLUE, selected.name, 3, 15)
+			io.put_str("Sex         :", 4, 1)
+			io.c_put_str(io.TERM_L_BLUE, selected.name, 4, 15)
 			io.clear_from(15)
 
 		# Return the selected gender
