@@ -411,13 +411,6 @@ extern int size_obj;
 
 
 /*
- * Hack -- optional cheating flags
- */
-
-extern bool borg_do_star_id;
-
-
-/*
  * Various silly flags
  */
 

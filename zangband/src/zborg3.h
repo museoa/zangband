@@ -253,10 +253,6 @@ extern int borg_wield_slot(borg_item *item);
 extern void borg_item_analyze(borg_item *item, object_type *real_item,
 							  cptr buf);
 
-
-/* look for a *id*'d item */
-extern bool borg_object_star_id(void);
-
 /*
  * Count the items of a given tval/sval
  */

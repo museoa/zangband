@@ -107,9 +107,6 @@ bool borg_confirm_target = FALSE;	/* emergency spell use */
 u32b borg_rand_local;	/* Save personal setting */
 
 
-bool borg_do_star_id;
-
-
 /*
  * Hack -- Time variables
  */

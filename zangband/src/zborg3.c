@@ -832,166 +832,6 @@ int borg_wield_slot(borg_item *item)
 	return (-1);
 }
 
-/*
- * Get the *ID information
- *
- * cheats information from the screen if it is not passed
- * a *real* item.  It is only passed in *real* items if the borg is allowed
- * to 'cheat' for inventory.
- * This function returns TRUE if space needs to be pressed
- */
-static bool borg_object_star_id_aux(borg_item *borg_item)
-{
-	(void)borg_item;
-
-	/* This function doesn't work */
-
-	return (FALSE);
-}
-
-/*
- * Look for an item that needs to be analysed because it has been *ID*d
- *
- * This will go through inventory and look for items that were just*ID*'d
- * and examine them for their bonuses.
- */
-bool borg_object_star_id(void)
-{
-	int i;
-
-	/* look in inventory and equiptment for something to *id* */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-
-		borg_item *item = &borg_items[i];
-
-		if (borg_items[i].needs_I_exam)
-		{
-			if ((borg_cheat_equip && i >= INVEN_WIELD) ||
-				(borg_cheat_inven && i < INVEN_WIELD))
-			{
-				/* cheat to get the information. */
-				borg_object_star_id_aux(&borg_items[i]);
-			}
-
-
-			/* inscribe certain objects */
-			if (!borg_skill[BI_CDEPTH] &&
-				(item->xtra_name) &&
-				(item->note == NULL || streq(item->note, " ")
-				 || streq(item->note, "") || strstr(item->desc, "{uncursed")))
-			{
-				/* make the inscription */
-				borg_keypress('{');
-
-				if (i >= INVEN_WIELD)
-				{
-					borg_keypress('/');
-					borg_keypress(I2A(i - INVEN_WIELD));
-				}
-				else
-				{
-					borg_keypress(I2A(i));
-				}
-
-				if (item->flags1 & TR1_SPEED)
-				{
-					borg_keypresses("Spd");
-				}
-				/* slays and immunities */
-				if (item->flags2 & TR2_RES_POIS)
-				{
-					borg_keypresses("Poisn");
-				}
-				if (item->flags2 & TR2_IM_FIRE)
-				{
-					borg_keypresses("IFir");
-				}
-				if (item->flags2 & TR2_IM_COLD)
-				{
-					borg_keypresses("ICld");
-				}
-				if (item->flags2 & TR2_IM_ACID)
-				{
-					borg_keypresses("IAcd");
-				}
-				if (item->flags2 & TR2_IM_ELEC)
-				{
-					borg_keypresses("IElc");
-				}
-				if (item->flags2 & TR2_RES_LITE)
-				{
-					borg_keypresses("Lite");
-				}
-				if (item->flags2 & TR2_RES_DARK)
-				{
-					borg_keypresses("Dark");
-				}
-				if (item->flags2 & TR2_RES_BLIND)
-				{
-					borg_keypresses("Blnd");
-				}
-				if (item->flags2 & TR2_RES_CONF)
-				{
-					borg_keypresses("Conf");
-				}
-				if (item->flags2 & TR2_RES_SOUND)
-				{
-					borg_keypresses("Sound");
-				}
-				if (item->flags2 & TR2_RES_SHARDS)
-				{
-					borg_keypresses("Shrd");
-				}
-				if (item->flags2 & TR2_RES_NETHER)
-				{
-					borg_keypresses("Nthr");
-				}
-				if (item->flags2 & TR2_RES_NEXUS)
-				{
-					borg_keypresses("Nxs");
-				}
-				if (item->flags2 & TR2_RES_CHAOS)
-				{
-					borg_keypresses("Chaos");
-				}
-				if (item->flags2 & TR2_RES_DISEN)
-				{
-					borg_keypresses("Disn");
-				}
-				if (item->flags3 & TR3_ACTIVATE)
-				{
-					borg_keypresses("Actv");
-				}
-				if (item->flags3 & TR3_TELEPATHY)
-				{
-					borg_keypresses("ESP");
-				}
-				if (item->flags2 & TR2_HOLD_LIFE)
-				{
-					borg_keypresses("HL");
-				}
-				if (item->flags2 & TR2_FREE_ACT)
-				{
-					borg_keypresses("FA");
-				}
-				if (item->flags3 & TR3_SEE_INVIS)
-				{
-					borg_keypresses("SInv");
-				}
-
-				/* end the inscription */
-				borg_keypress('\n');
-
-			}
-
-		}
-
-	}
-	return (FALSE);
-}
-
-
 
 /*
  * Determine the "base price" of a known item (see below)
@@ -3168,7 +3008,6 @@ bool borg_racial_check(int race, bool check_fail)
  */
 bool borg_racial(int race)
 {
-
 	/* Require ability (right now) */
 	if (!borg_racial_check(race, TRUE)) return (FALSE);
 
@@ -3229,7 +3068,6 @@ void borg_cheat_equip(void)
 		{
 			borg_items[i].fully_identified = TRUE;
 			borg_items[i].needs_I_exam = TRUE;
-			borg_do_star_id = TRUE;
 		}
 
 	}
@@ -3275,7 +3113,6 @@ void borg_cheat_inven(void)
 		{
 			borg_items[i].fully_identified = TRUE;
 			borg_items[i].needs_I_exam = TRUE;
-			borg_do_star_id = TRUE;
 		}
 
 		/* Note changed inventory */

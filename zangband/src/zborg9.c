@@ -522,17 +522,6 @@ static bool borg_think(void)
 		return (FALSE);
 	}
 
-	/* check for anything that needs *ID* */
-	if (borg_do_star_id)
-	{
-		if (borg_object_star_id())
-		{
-
-			return (TRUE);
-		}
-		borg_do_star_id = FALSE;
-	}
-
 	/* If king, maybe retire. */
 	if (borg_skill[BI_KING])
 	{
@@ -4715,7 +4704,6 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_object_star_id();
 			borg_notice(TRUE);
 
 			/* Evaluate */
@@ -4797,7 +4785,6 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_object_star_id();
 			borg_notice(TRUE);
 			borg_notice_home(NULL, FALSE);
 
@@ -5017,7 +5004,6 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_object_star_id();
 			borg_notice(TRUE);
 			borg_notice_home(NULL, FALSE);
 			for (; item < to; item++)
