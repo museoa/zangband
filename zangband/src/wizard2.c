@@ -112,6 +112,10 @@ static void do_cmd_summon_horde(void)
 	while (--attempts)
 	{
 		scatter(&wy, &wx, py, px, 3, 0);
+		
+		/* paranoia */
+		if(!in_bounds2(wy, wx)) continue;
+		
 		c_ptr = area(wy, wx);
 		if (cave_naked_grid(c_ptr)) break;
 	}
@@ -1508,6 +1512,9 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 
 		/* Pick a location */
 		scatter(&y, &x, py, px, d, 0);
+
+		/* paranoia */
+		if (!in_bounds2(y, x)) continue;
 
 		/* Require empty grids */
 		c_ptr = area(y, x);
