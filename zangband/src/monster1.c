@@ -1813,9 +1813,12 @@ bool monster_shallow_water_wild(int r_idx)
 bool monster_lava_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
-
-	/* Check wilderness flags */
-	if (!wild_mon_hook(r_idx)) return FALSE;
+	
+	if ((wild_mon_hook) && (wild_mon_hook != monster_lava_wild))
+	{
+		/* Check wilderness flags */
+		if (!wild_mon_hook(r_idx)) return FALSE;
+	}
 
 	if (((r_ptr->flags3 & RF3_IM_FIRE) ||
 		 (r_ptr->flags7 & RF7_CAN_FLY)) && !(r_ptr->flags3 & RF3_AURA_COLD))
@@ -1828,8 +1831,11 @@ bool monster_acid_wild(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	/* Check wilderness flags */
-	if (!wild_mon_hook(r_idx)) return FALSE;
+	if ((wild_mon_hook) && (wild_mon_hook != monster_acid_wild))
+	{
+		/* Check wilderness flags */
+		if (!wild_mon_hook(r_idx)) return FALSE;
+	}
 
 	if (((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags7 & RF7_CAN_FLY)))
 		return TRUE;
