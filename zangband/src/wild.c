@@ -143,6 +143,12 @@ void change_level(int level)
 		in_bounds = in_bounds_wild;
 		in_bounds2 = in_bounds2_wild;
 		area = access_wild;
+		
+		/* 
+		 * Allocate blocks around player - only has effect if
+		 * old game is loaded in the dungeon.
+		 */
+		move_wild();
 	}
 	else
 	{
@@ -1048,10 +1054,3 @@ void create_wilderness(void)
 		move_wild();
 	}
 }
-
-
-
-
-
-
-
