@@ -2114,7 +2114,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the monster attr/char info */
 				fprintf(fff, "R:%d:0x%02X:0x%02X\n\n", i,
-						(uint) (r_ptr->x_attr), (uint) (r_ptr->x_char));
+						(uint)(r_ptr->x_attr), (uint)(r_ptr->x_char));
 			}
 
 			/* All done */
@@ -2168,7 +2168,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the object attr/char info */
 				fprintf(fff, "K:%d:0x%02X:0x%02X\n\n", i,
-						(uint) (k_ptr->x_attr), (uint) (k_ptr->x_char));
+						(uint)(k_ptr->x_attr), (uint)(k_ptr->x_char));
 			}
 
 			/* All done */
@@ -2222,7 +2222,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the feature attr/char info */
 				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-						(uint) (f_ptr->x_attr), (uint) (f_ptr->x_char));
+						(uint)(f_ptr->x_attr), (uint)(f_ptr->x_char));
 			}
 
 			/* All done */
@@ -2276,7 +2276,7 @@ void do_cmd_visuals(void)
 
 				/* Dump the field attr/char info */
 				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-						(uint) (t_ptr->f_attr), (uint) (t_ptr->f_char));
+						(uint)(t_ptr->f_attr), (uint)(t_ptr->f_char));
 			}
 
 			/* All done */
@@ -2657,7 +2657,7 @@ void do_cmd_colors(void)
 
 				/* Dump the monster attr/char info */
 				fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
-						i, (uint) kv, (uint) rv, (uint) gv, (uint) bv);
+						i, (uint)kv, (uint)rv, (uint)gv, (uint)bv);
 			}
 
 			/* All done */

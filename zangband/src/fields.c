@@ -1803,7 +1803,7 @@ bool field_action_wall_tunnel(field_type *f_ptr, vptr input)
  */
 bool field_action_wall_gf(field_type *f_ptr, vptr input)
 {
-	field_magic_target *f_m_t = (field_magic_target *) input;
+	field_magic_target *f_m_t = (field_magic_target *)input;
 
 	/* Hack - ignore 'f_ptr' */
 	(void)f_ptr;
@@ -2127,7 +2127,7 @@ bool field_action_trap_disarm(field_type *f_ptr, vptr input)
  */
 bool field_action_trap_gf(field_type *f_ptr, vptr input)
 {
-	field_magic_target *f_m_t = (field_magic_target *) input;
+	field_magic_target *f_m_t = (field_magic_target *)input;
 
 	/* Destroy traps */
 	if ((f_m_t->typ == GF_KILL_TRAP) || (f_m_t->typ == GF_KILL_DOOR))
@@ -3446,7 +3446,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
  */
 bool field_action_door_gf(field_type *f_ptr, vptr input)
 {
-	field_magic_target *f_m_t = (field_magic_target *) input;
+	field_magic_target *f_m_t = (field_magic_target *)input;
 
 	if (f_m_t->typ == GF_KILL_WALL)
 	{

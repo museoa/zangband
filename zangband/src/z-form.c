@@ -152,7 +152,7 @@
 /*
  * The "type" of the "user defined print routine" pointer
  */
-typedef uint(*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, vptr arg);
+typedef uint (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, vptr arg);
 
 /*
  * The "default" user defined print routine.  Ignore the "fmt" string.

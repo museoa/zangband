@@ -701,7 +701,7 @@ static void spoiler_underline(cptr str)
  *
  * The possibly updated description pointer is returned.
  */
-static cptr *spoiler_flag_aux(const u32b flags, const flag_desc * flag_ptr,
+static cptr *spoiler_flag_aux(const u32b flags, const flag_desc *flag_ptr,
 							  cptr *desc_ptr, const int n_elmnts)
 {
 	int i;
@@ -732,7 +732,7 @@ static void analyze_general(const object_type *o_ptr, char *desc_ptr)
  * List "player traits" altered by an artifact's pval. These include stats,
  * speed, infravision, tunneling, stealth, searching, and extra attacks.
  */
-static void analyze_pval(const object_type *o_ptr, pval_info_type * p_ptr)
+static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 {
 	const u32b all_stats = (TR1_STR | TR1_INT | TR1_WIS |
 							TR1_DEX | TR1_CON | TR1_CHR);
@@ -947,7 +947,7 @@ static void analyze_misc(const object_type *o_ptr, char *misc_desc)
 	a_ptr = &a_info[o_ptr->activate - 128];
 
 	sprintf(misc_desc, "Level %u, Rarity %u, %d.%d lbs, %ld Gold",
-			(uint) a_ptr->level, (uint) a_ptr->rarity,
+			(uint)a_ptr->level, (uint)a_ptr->rarity,
 			a_ptr->weight / 10, a_ptr->weight % 10, a_ptr->cost);
 }
 
@@ -955,7 +955,7 @@ static void analyze_misc(const object_type *o_ptr, char *misc_desc)
 /*
  * Fill in an object description structure for a given object
  */
-static void object_analyze(const object_type *o_ptr, obj_desc_list * desc_ptr)
+static void object_analyze(const object_type *o_ptr, obj_desc_list *desc_ptr)
 {
 	analyze_general(o_ptr, desc_ptr->description);
 
@@ -1129,7 +1129,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 /*
  * Create a spoiler file entry for an artifact
  */
-static void spoiler_print_art(obj_desc_list * art_ptr)
+static void spoiler_print_art(obj_desc_list *art_ptr)
 {
 	pval_info_type *pval_ptr = &art_ptr->pval_info;
 
@@ -2165,7 +2165,7 @@ static void spoil_mon_info(cptr fname)
 			}
 			else
 			{
-				sprintf(buf, " up to %u", (uint) i);
+				sprintf(buf, " up to %u", (uint)i);
 				spoil_out(buf);
 			}
 

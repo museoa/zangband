@@ -1253,7 +1253,7 @@ struct vault_aux_type
 };
 
 
-static const vault_aux_type *pick_vault_type(const vault_aux_type * l_ptr)
+static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
 {
 	int tmp, total;
 

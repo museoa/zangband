@@ -116,7 +116,7 @@ typedef signed short s16b;
 typedef unsigned short u16b;
 
 /* Signed/Unsigned 32 bit value */
-#ifdef L64	/* 64 bit longs */
+#ifdef L64						/* 64 bit longs */
 typedef signed int s32b;
 typedef unsigned int u32b;
 #else
@@ -126,5 +126,3 @@ typedef unsigned long u32b;
 
 
 #endif
-
-

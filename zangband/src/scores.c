@@ -508,7 +508,7 @@ void enter_score(void)
 	sprintf(the_score.who, "%-.15s", player_name);
 
 	/* Save the player info XXX XXX XXX */
-	sprintf(the_score.uid, "%7u", (uint) player_uid);
+	sprintf(the_score.uid, "%7u", (uint)player_uid);
 	sprintf(the_score.sex, "%c", (p_ptr->psex ? 'm' : 'f'));
 	sprintf(the_score.p_r, "%2d", (int)p_ptr->prace);
 	sprintf(the_score.p_c, "%2d", (int)p_ptr->pclass);
@@ -621,7 +621,7 @@ void predict_score(void)
 	sprintf(the_score.who, "%-.15s", player_name);
 
 	/* Save the player info XXX XXX XXX */
-	sprintf(the_score.uid, "%7u", (uint) player_uid);
+	sprintf(the_score.uid, "%7u", (uint)player_uid);
 	sprintf(the_score.sex, "%c", (p_ptr->psex ? 'm' : 'f'));
 	sprintf(the_score.p_r, "%2d", (int)p_ptr->prace);
 	sprintf(the_score.p_c, "%2d", (int)p_ptr->pclass);

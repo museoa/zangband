@@ -1310,7 +1310,7 @@ static bool quest_aux_dragon(int r_idx)
 	return (TRUE);
 }
 
-static int pick_quest_type(quest_aux_type * l_ptr, int level)
+static int pick_quest_type(quest_aux_type *l_ptr, int level)
 {
 	int tmp, total;
 

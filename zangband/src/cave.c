@@ -3268,7 +3268,7 @@ static void ang_sort_swap_hook_s32b(const vptr u, const vptr v, int a, int b)
 /*
  * Save a slope
  */
-static void vinfo_init_aux(vinfo_hack * hack, int x, int y, s32b m)
+static void vinfo_init_aux(vinfo_hack *hack, int x, int y, s32b m)
 {
 	int i;
 
