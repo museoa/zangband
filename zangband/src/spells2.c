@@ -1767,6 +1767,9 @@ bool project_hack(int typ, int dam)
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
+		
+		/* Paranoia */
+		if (!in_boundsp(x, y)) continue;
 
 		/* Require line of sight */
 		if (!player_has_los_grid(parea(x, y))) continue;
