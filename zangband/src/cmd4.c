@@ -773,6 +773,17 @@ static void do_cmd_options_aux(int page, cptr info)
 	}
 
 
+	/* Paranoia */
+	if (n == 0)
+	{
+		/* There are no options */
+		msg_print("There are no available options there at the moment.");
+		msg_print(NULL);
+		
+		/* Bail out */
+		return;
+	}
+
 	/* Clear screen */
 	Term_clear();
 
