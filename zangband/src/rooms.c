@@ -5136,8 +5136,8 @@ struct room_type
 room_type room_list[ROOM_TYPES] =
 {
 	{1,		build_type1, RT_ANIMAL | RT_BUILDING},	/* Simple Rectangle */
-	{1,		build_type2, RT_SIMPLE | RT_CRYPT},	/* Overlapping */
-	{3,		build_type3, RT_SIMPLE},	/* Crossed */
+	{1,		build_type2, RT_FANCY},	/* Overlapping */
+	{3,		build_type3, RT_FANCY},	/* Crossed */
 	{3,		build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
 	{10,	build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
 	{10,	build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
@@ -5145,7 +5145,7 @@ room_type room_list[ROOM_TYPES] =
 	{20,	build_type8, RT_DENSE},	/* Large vault */
 	{5,		build_type9, RT_NATURAL},	/* Fractal cave */
 	{10,	build_type10, RT_RVAULT},	/* Random vault */
-	{3,		build_type11, RT_NATURAL | RT_SIMPLE},	/* Circle */
+	{3,		build_type11, RT_NATURAL | RT_FANCY},	/* Circle */
 	{10,	build_type12, RT_CRYPT},	/* Crypt I */
 	{5,		build_type13, RT_NATURAL},	/* Large with fractal feature */
 	{3,		build_type14, RT_COMPLEX},	/* Large with walls */
@@ -5157,7 +5157,7 @@ room_type room_list[ROOM_TYPES] =
 	{1,		build_type20, RT_ANIMAL | RT_RUIN},	/* Collapsed */
 	{10,	build_type21, RT_CRYPT},	/* Crypt II */
 	{10,	build_type22, RT_COMPLEX},	/* Very large pillared chamber */
-	{3,		build_type23, RT_SIMPLE},	/* Semicircle */
+	{3,		build_type23, RT_FANCY},	/* Semicircle */
 	{3,		build_type24, RT_COMPLEX},	/* Hourglass */
 	{3,		build_type25, RT_BUILDING}	/* Connected rooms */
 };

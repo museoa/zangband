@@ -183,7 +183,7 @@ extern dun_data *dun;
 #define RT_CRYPT		0x0100
 #define RT_RVAULT		0x0200
 #define RT_STRANGE		0x0400
-
+#define RT_FANCY                0x0800
 
 /* Type holding dungeon type information */
 typedef struct dun_gen_type dun_gen_type;
