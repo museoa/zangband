@@ -575,7 +575,7 @@ static void init_towns(void)
 				w_ptr->mon_gen = 0;
 				
 				/* Monsters are fairly common */
-				w_ptr->mon_prob = 32;
+				w_ptr->mon_prob = 16;
 			}
 		}
 		
@@ -3510,7 +3510,7 @@ static void link_river(int x1, int x2, int y1, int y2, int sea_level)
 			 * This is checked for later, to make ocean boundaries.
 			 * Thus rivers and beaches use the same code.
 			 */
-			wild[y][x].gen.hgt_map = sea_level;
+			wild[y][x].gen.hgt_map = 7 * sea_level / 8;
 		}
 	}
 }
@@ -3522,7 +3522,7 @@ static void link_river(int x1, int x2, int y1, int y2, int sea_level)
  * The highest closest points are connected by a fractal line.
  * This is repeated until the highest point is below sea level.
  *
- * Hack - the rivers are denoted by hgt= sea_level
+ * Hack - the rivers are denoted by hgt= sea_level * 7/8
  * This means that the river and sea boundaries use the same code.
  */
 
@@ -4215,7 +4215,7 @@ void create_wilderness(void)
 				wild[j][i].done.mon_gen = 0;
 				
 				/* Monsters are fairly common */
-				wild[j][i].done.mon_prob = 32;
+				wild[j][i].done.mon_prob = 16;
 			}
 		}
 		
