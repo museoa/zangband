@@ -1830,7 +1830,7 @@ static void del_block(int x, int y)
 			delete_object_list(&block_ptr[yy][xx].o_idx);
 
 			/* Delete fields on the square */
-			delete_field_aux(&block_ptr[yy][xx].fld_idx);
+			delete_field_location(&block_ptr[yy][xx]);
 		}
 	}
 

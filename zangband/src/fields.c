@@ -154,36 +154,6 @@ void delete_field_ptr(field_type *f_ptr)
 	fld_cnt--;
 }
 
-/*
- * Deletes the list of fields attached to something.
- */
-void delete_field_aux(s16b *fld_idx_ptr)
-{
-	field_type *f_ptr;
-	
-	/*
-	 * Special exception: if the first field is (nothing),
-	 * just zero the index.
-	 * This happens when loading savefiles.
-	 */
-	if (!fld_list[*fld_idx_ptr].t_idx)
-		*fld_idx_ptr = 0;
-
-	/* Scan all fields in the grid */
-	FLD_ITT_START (*fld_idx_ptr, f_ptr)
-	{
-		/* Wipe the field */
-		field_wipe(f_ptr);
-
-		/* Count fields */
-		fld_cnt--;
-	}
-	FLD_ITT_END;
-
-	/* Nothing left */
-	*fld_idx_ptr = 0;
-}
-
 
 /*
  * Deletes all fields at given location
@@ -198,7 +168,7 @@ void delete_field(int x, int y)
 	/* Grid */
 	c_ptr = area(x, y);
 
-	delete_field_aux(&(c_ptr->fld_idx));
+	delete_field_location(c_ptr);
 
 	/* Paranoia */
 	if (!in_boundsp(x, y)) return;
@@ -213,7 +183,21 @@ void delete_field(int x, int y)
  */
 void delete_field_location(cave_type *c_ptr)
 {
-	delete_field_aux(&c_ptr->fld_idx);
+	field_type *f_ptr;
+	
+	/* Scan all fields in the grid */
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
+	{
+		/* Wipe the field */
+		field_wipe(f_ptr);
+
+		/* Count fields */
+		fld_cnt--;
+	}
+	FLD_ITT_END;
+
+	/* Nothing left */
+	c_ptr->fld_idx = 0;
 }
 
 
