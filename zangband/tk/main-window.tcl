@@ -13,7 +13,6 @@
 namespace eval NSMainWindow {
 
 	variable Priv
-	variable Progress
 	
 	variable tracking 0
 	variable trackId 0
@@ -384,9 +383,6 @@ bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
 
 	# Hack -- Visual feedback of whether the target is set or not.
 	TargetSetup $oop
-
-	# The monster health bar
-	ProgressSetup $widget
 
 	return
 }
@@ -987,19 +983,11 @@ proc NSMainWindow::Close {oop} {
 
 proc NSMainWindow::Configure {oop width height} {
 
-	variable Progress
-
 	set widgetId [Global main,widgetId]
 	set widget [Global main,widget]
 
 	# Resize the main widget
 	if {[NSWidget::Resize $widgetId $width $height]} {
-		
-		# Move the Monster Health Bar
-		set x [expr {$width / 2}]
-		set y [expr {$height - 8}]
-		$widget itemconfigure $Progress(barId) -x $x -y $y
-		$widget itemconfigure $Progress(textId) -x $x -y [expr {$y - 6}]
 
 		# Move the target 'T' item
 		set x [expr {$width - 6}]
@@ -1215,178 +1203,6 @@ proc NSMainWindow::TargetSynch {valueName option visible} {
 	return
 }
 
-# NSMainWindow::ProgressSetup --
-#
-#	Creates a Widget text item (for the monster name) and progress item
-#	(for the monster hit points) in the Main Window.
-#
-# Arguments:
-#	widget					The Widget to create the monster bar in.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::ProgressSetup {widget} {
-
-	variable Progress
-
-	# XXX Mega-Hack XXX
-	# The monster health bar is displayed differently for friendly versus
-	# non-friendly monsters. This is done by using a different set of
-	# colors for each state. We don't want the progress item to repeatedly
-	# allocate and deallocate the colors it uses, so we call the
-	# "$widget coloralloc" command to preallocate each color used by
-	# the progress item.
-	#
-	# When the user chooses new progress item colors via the Color
-	# Preferences Window, we must deallocate those colors previously
-	# pre-allocated, then pre-allocate the new colors.
-	
-	foreach name {BarDone BarToDo BarBL BarBD} {
-	
-		set color [palette nearest [Value health$name]]
-		set opacity [Value health${name}2]
-		$widget coloralloc $color $opacity
-		set Progress(alloc,health$name) [list $color $opacity]
-	
-		set color [palette nearest [Value friend$name]]
-		set opacity [Value friend${name}2]
-		$widget coloralloc $color $opacity
-		set Progress(alloc,friend$name) [list $color $opacity]
-	}
-
-	set width [$widget cget -width]
-	set height [$widget cget -height]
-	set x [expr {$width / 2}]
-	set y [expr {$height - 8}]
-
-	set data {
-		healthBarDone done
-		healthBarToDo todo
-		healthBarBL bevellight
-		healthBarBD beveldark
-		healthBarDone2 done2
-		healthBarToDo2 todo2
-		healthBarBL2 bevellight2
-		healthBarBD2 beveldark2
-	}
-	foreach {name varname} $data {
-		set $varname [Value $name]
-	}
-
-	set Progress(barId) \
-		[$widget create progressbar -x $x -y $y -width 150 -height 6 \
-		-anchor s -done $done -done2 $done2 -todo $todo -todo2 $todo2 \
-		-bevellight $bevellight -bevellight2 $bevellight2 \
-		-beveldark $beveldark -beveldark2 $beveldark2 \
-		-visible no]
-
-	set data {
-		healthNameText fill
-		healthNameBG background
-		healthNameBL bevellight
-		healthNameBD beveldark
-		healthNameText2 fill2
-		healthNameBG2 background2
-		healthNameBL2 bevellight2
-		healthNameBD2 beveldark2
-	}
-	foreach {name varname} $data {
-		set $varname [Value $name]
-	}
-
-	# Get the desired font
-	set font [Value font,monster]
-
-	# Calculate the height of a row
-	set fontHeight [font metrics $font -linespace]
-
-	# Fudge
-	incr fontHeight 1
-
-	# Initial width (will expand automatically)
-	set nameWidth 150
-
-	# Create a widget text item
-	set Progress(textId) [$widget create text -x $x -y [expr {$y - 6}] \
-		-visible no -anchor s -fill $fill -fill2 $fill2 \
-		-background $background -background2 $background2 \
-		-bevellight $bevellight -bevellight2 $bevellight2 \
-		-beveldark $beveldark -beveldark2 $beveldark2 -font $font \
-		-clipx yes -clipy yes -width $nameWidth -height $fontHeight \
-		-bevel yes -expandx yes -expandy yes -padbottom 1]
-	
-	set data [list \
-		healthBarDone -done \
-		healthBarToDo -todo \
-		healthBarBL -bevellight \
-		healthBarBD -beveldark \
-		healthBarDone2 -done2 \
-		healthBarToDo2 -todo2 \
-		healthBarBL2 -bevellight2 \
-		healthBarBD2 -beveldark2 \
-	]
-
-	lappend data \
-		healthNameText -fill \
-		healthNameBG -background \
-		healthNameBL -bevellight \
-		healthNameBD -beveldark \
-		healthNameText2 -fill2 \
-		healthNameBG2 -background2 \
-		healthNameBL2 -bevellight2 \
-		healthNameBD2 -beveldark2 \
-		friendBarDone -done \
-		friendBarToDo -todo \
-		friendBarBL -bevellight \
-		friendBarBD -beveldark \
-		friendBarDone2 -done2 \
-		friendBarToDo2 -todo2 \
-		friendBarBL2 -bevellight2 \
-		friendBarBD2 -beveldark2
-
-	foreach {name option} $data {
-		NSValueManager::AddClient $name \
-			"NSMainWindow::ProgressSynch $name $option"
-	}
-
-	set Progress(visible) 0
-	set Progress(current) 0
-	set Progress(r_idx) 0
-	set Progress(friend) 0
-
-	# Update ourself when the font,monster value changes
-	NSValueManager::AddClient font,monster \
-		"NSMainWindow::ValueChanged_font_monster"
-
-	return
-}
-
-# NSMainWindow::ValueChanged_font_monster --
-#
-#	Called when the font,monster value changes.
-#	Updates the Monster Health Bar.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::ValueChanged_font_monster {} {
-
-	variable Progress
-	
-	# Get the desired font
-	set font [Value font,monster]
-
-	# Change the font. We rely on the -expandy option to resize the
-	# bitmap for us.
-	[Global main,widget] itemconfigure $Progress(textId) -font $font
-
-	return
-}
-
 # NSMainWindow::ValueChanged_font_statusBar --
 #
 #	Called when the font,statusBar value changes.
@@ -1409,74 +1225,6 @@ proc NSMainWindow::ValueChanged_font_statusBar {} {
 	$statusBar.frameLabel.label configure -font $font
 	$statusBar.center configure -font $font
 	$statusBar.depth configure -font $font
-
-	return
-}
-
-# NSMainWindow::ProgressSynch --
-#
-#	Called by NSValueManager when any of the healthName*, healthBar* or
-#	friendBar* values change. Configures the monster health bar colors
-#	as appropriate. Note the ugly song-and-dance number done to control
-#	which colors are pre-allocated.
-#
-# Arguments:
-#	name					The name of the value.
-#	option					Configuration option for the widget item.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::ProgressSynch {name option} {
-
-	variable Progress
-
-	set widget [Global main,widget]
-	set value [Value $name]
-
-	switch -glob $name {
-		healthName* {
-			$widget itemconfigure $Progress(textId) $option $value
-		}
-		healthBar*2 {
-			set name2 [string trimright $name 2]
-			eval $widget colorderef $Progress(alloc,$name2)
-			set color [lindex $Progress(alloc,$name2) 0]
-			set Progress(alloc,$name2) [list $color $value]
-			$widget coloralloc $color $value
-			if {!$Progress(friend)} {
-				$widget itemconfigure $Progress(barId) $option $value
-			}
-		}
-		healthBar* {
-			eval $widget colorderef $Progress(alloc,$name)
-			set opacity [lindex $Progress(alloc,$name) 1]
-			set Progress(alloc,$name) [list [palette nearest $value] $opacity]
-			$widget coloralloc [palette nearest $value] $opacity
-			if {!$Progress(friend)} {
-				$widget itemconfigure $Progress(barId) $option $value
-			}
-		}
-		friendBar*2 {
-			set name2 [string trimright $name 2]
-			eval $widget colorderef $Progress(alloc,$name2)
-			set color [lindex $Progress(alloc,$name2) 0]
-			set Progress(alloc,$name2) [list $color $value]
-			$widget coloralloc $color $value
-			if {$Progress(friend)} {
-				$widget itemconfigure $Progress(barId) $option $value
-			}
-		}
-		friendBar* {
-			eval $widget colorderef $Progress(alloc,$name)
-			set opacity [lindex $Progress(alloc,$name) 1]
-			set Progress(alloc,$name) [list [palette nearest $value] $opacity]
-			$widget coloralloc [palette nearest $value] $opacity
-			if {$Progress(friend)} {
-				$widget itemconfigure $Progress(barId) $option $value
-			}
-		}
-	}
 
 	return
 }
@@ -2117,134 +1865,6 @@ proc NSMainWindow::ButtonPress3 {oop x y X Y} {
 	} elseif {[string equal $flags INKEY_POWER]} {
 		NSRecall::PopupSelect_Power $win.context $X $Y
 	}
-
-	return
-}
-
-# NSMainWindow::UpdateHealthWho --
-#
-#	Called as a qebind <Track-health> script. Hides/shows/updates the
-#	Monster Health Bar.
-#
-# Arguments:
-#	oop						OOP ID of NSMainWindow object.
-#	m_idx					m_list[] index of the tracked monster.
-#	friend					1 if m_idx if a pet.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::UpdateHealthWho {oop m_idx friend} {
-
-	variable Progress
-
-	set widget [Global main,widget]
-	
-	# Hide the bar if visible and not tracking
-	if {$m_idx == 0} {
-		if {$Progress(visible)} {
-			$widget itemconfigure $Progress(barId) -visible no
-			$widget itemconfigure $Progress(textId) -visible no
-			set Progress(visible) 0
-		}
-		return
-	}
-
-	# Show the bar if hidden
-	if {!$Progress(visible)} {
-		$widget itemconfigure $Progress(barId) -visible yes
-		$widget itemconfigure $Progress(textId) -visible yes
-		set Progress(visible) 1
-	}
-
-	# Change colors depending on friend status
-	if {$friend != $Progress(friend)} {
-		SetProgressColors $friend
-		set Progress(friend) $friend
-	}
-	
-if 0 {
-	# Set the progress
-	array set attrib [angband m_list set $m_idx]
-
-	if {$attrib(ml)} {
-		set curhp [expr {($attrib(hp) > 0) ? $attrib(hp) : 0}]
-		set current [expr {int((double($curhp) / $attrib(maxhp)) * 100)}]
-	} else {
-		set current 0
-	}
-
-	set current 0
-
-	if {$current != $Progress(current)} {
-		$widget itemconfigure $Progress(barId) \
-			-current $current -maximum 100
-		set Progress(current) $current
-	}
-
-	# Set the name
-	if {$attrib(r_idx) != $Progress(r_idx)} {
-		set name [angband r_info info $attrib(r_idx) name]
-		$widget itemconfigure $Progress(textId) -text $name
-		set Progress(r_idx) $attrib(r_idx)
-	}
-}
-
-	return
-}
-
-
-# NSMainWindow::SetProgressColors --
-#
-#	Called when the monster health bar goes from friend to non-friend mode.
-#	Updates the monster health bar colors as appropriate.
-#
-# Arguments:
-#	name1					See "trace" manual entry.
-#	name2					See "trace" manual entry.
-#	op						See "trace" manual entry.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::SetProgressColors {friend} {
-
-	variable Progress
-
-	set widget [Global main,widget]
-
-	if {$friend} {
-		set data {
-			friendBarDone done
-			friendBarToDo todo
-			friendBarBL bevellight
-			friendBarBD beveldark
-			friendBarDone2 done2
-			friendBarToDo2 todo2
-			friendBarBL2 bevellight2
-			friendBarBD2 beveldark2
-		}
-	} else {
-		set data {
-			healthBarDone done
-			healthBarToDo todo
-			healthBarBL bevellight
-			healthBarBD beveldark
-			healthBarDone2 done2
-			healthBarToDo2 todo2
-			healthBarBL2 bevellight2
-			healthBarBD2 beveldark2
-		}
-	}
-
-	foreach {name varname} $data {
-		set $varname [Value $name]
-	}
-
-	$widget itemconfigure $Progress(barId) \
-		-done $done -done2 $done2 -todo $todo -todo2 $todo2 \
-		-bevellight $bevellight -bevellight2 $bevellight2 \
-		-beveldark $beveldark -beveldark2 $beveldark2
 
 	return
 }
