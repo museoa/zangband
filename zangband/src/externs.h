@@ -73,6 +73,7 @@ extern const int chaos_rewards[MAX_PATRON][20];
 extern const martial_arts ma_blows[MAX_MA];
 extern cptr game_inscriptions[FEEL_MAX];
 extern cptr silly_attacks[MAX_SILLY_ATTACK];
+extern const rbm_type rbm_info[MAX_RBM];
 extern const field_action f_action[];
 extern const mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET];
 extern const mutation_type race_powers[MAX_RACE_POWERS];

@@ -863,6 +863,23 @@ struct monster_type
 	bool ml;	/* Monster is "visible" */
 };
 
+/*
+ * Monster Race blow-method types
+ */
+typedef struct rbm_type rbm_type;
+struct rbm_type
+{
+	cptr name;
+	cptr action;
+	
+	u16b sound;
+	
+	bool touched;
+	bool cut;
+	bool stun;
+};
+
+
 /* Forward declare */
 typedef struct field_type field_type;
 

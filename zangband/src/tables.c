@@ -6656,6 +6656,136 @@ cptr silly_attacks[MAX_SILLY_ATTACK] =
 	"molests"
 };
 
+
+/* Monster Blow-Method types */
+const rbm_type rbm_info[MAX_RBM] =
+{
+	{
+		NULL, NULL,
+		SOUND_NONE, FALSE, FALSE, FALSE
+	},
+
+	{
+		"hit", "hits %s.",
+		SOUND_HIT, TRUE, TRUE, TRUE
+	},
+
+	{
+		"touch", "touches %s.",
+		SOUND_TOUCH, TRUE, FALSE, FALSE
+	},
+	
+	{
+		"punch", "punches %s.",
+		SOUND_HIT, TRUE, FALSE, TRUE
+	},
+	
+	{
+		"kick", "kicks %s.",
+		SOUND_HIT, TRUE, FALSE, TRUE
+	},
+	
+	{
+		"claw", "claws %s.",
+		SOUND_CLAW, TRUE, TRUE, FALSE
+	},
+	
+	{
+		"bite", "bites %s.",
+		SOUND_BITE, TRUE, TRUE, FALSE
+	},
+	
+	{
+		"sting", "stings %s.",
+		SOUND_STING, TRUE, FALSE, FALSE
+	},
+	
+	{
+		"XXX1","XXX1's %s.",
+		SOUND_NONE, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"butt", "butts %s.",
+		SOUND_HIT, TRUE, FALSE, TRUE
+	},
+	
+	{
+		"crush", "crushes %s.",
+		SOUND_CRUSH, TRUE, FALSE, TRUE
+	},
+	
+	{
+		"engulf", "engulfs %s.",
+		SOUND_CRUSH, TRUE, FALSE, FALSE
+	},
+	
+	{
+		"charge", "charges %s.",
+		SOUND_BUY, TRUE, FALSE, FALSE
+	},
+	
+	{
+		"crawl on you", "crawls on %s.",
+		SOUND_SLIME, TRUE, FALSE, FALSE
+	},
+	
+	{
+		"drool on you", "drools on %s.",
+		SOUND_SLIME, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"spit", "spits on %s.",
+		SOUND_SLIME, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"explode", "explodes.",
+		SOUND_NONE, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"gaze", "gazes at %s.",
+		SOUND_NONE, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"wail", "wails at %s.",
+		SOUND_WAIL, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"release spores", "releases spores at %s.",
+		SOUND_SLIME, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"XXX4", "projects XXX4's at %s.",
+		SOUND_NONE, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"beg", "begs %s for money.",
+		SOUND_MOAN, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"insult", "insults %s.",
+		SOUND_MOAN, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"moan", "moans at %s.",
+		SOUND_MOAN, FALSE, FALSE, FALSE
+	},
+	
+	{
+		"sing", "sings to %s.",
+		SOUND_SHOW, FALSE, FALSE, FALSE
+	}
+};
+
 /* Field function's + names */
 const field_action f_action[] =
 {

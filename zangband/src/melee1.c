@@ -373,192 +373,44 @@ bool make_attack_normal(int m_idx)
 				/* Hack -- Next attack */
 				continue;
 			}
-
-
-			/* Assume no cut or stun */
-			do_cut = do_stun = FALSE;
-
-			/* Describe the attack method */
-			switch (method)
+			
+			
+			/* Get action */
+			act = format(rbm_info[method].action, "you");
+			
+			/* Get flag status */
+			touched = rbm_info[method].touched;
+			do_cut = rbm_info[method].cut;
+			do_stun = rbm_info[method].stun;
+			
+			/* Play the sound */
+			if (rbm_info[method].sound)
 			{
-				case RBM_HIT:
+				sound(rbm_info[method].sound);
+			}
+			
+			/* Special cases */
+			if (method == RBM_EXPLODE)
+			{
+				explode = TRUE;
+			}
+			else if (method == RBM_INSULT)
+			{
+				act = desc_insult[randint0(8)];
+			}
+			else if (method == RBM_MOAN)
+			{
+				act = desc_moan[randint0(4)];
+			}
+			else if (method == RBM_SHOW)
+			{
+				if (one_in_(3))
 				{
-					act = "hits you.";
-					do_cut = do_stun = touched = TRUE;
-					sound(SOUND_HIT);
-					break;
+					act = "sings 'We are a happy family.'";
 				}
-
-				case RBM_TOUCH:
+				else
 				{
-					act = "touches you.";
-					touched = TRUE;
-					sound(SOUND_TOUCH);
-					break;
-				}
-
-				case RBM_PUNCH:
-				{
-					act = "punches you.";
-					do_stun = touched = TRUE;
-					sound(SOUND_HIT);
-					break;
-				}
-
-				case RBM_KICK:
-				{
-					act = "kicks you.";
-					do_stun = touched = TRUE;
-					sound(SOUND_HIT);
-					break;
-				}
-
-				case RBM_CLAW:
-				{
-					act = "claws you.";
-					do_cut = touched = TRUE;
-					sound(SOUND_CLAW);
-					break;
-				}
-
-				case RBM_BITE:
-				{
-					act = "bites you.";
-					do_cut = touched = TRUE;
-					sound(SOUND_BITE);
-					break;
-				}
-
-				case RBM_STING:
-				{
-					act = "stings you.";
-					touched = TRUE;
-					sound(SOUND_STING);
-					break;
-				}
-
-				case RBM_XXX1:
-				{
-					act = "XXX1's you.";
-					break;
-				}
-
-				case RBM_BUTT:
-				{
-					act = "butts you.";
-					do_stun = touched = TRUE;
-					sound(SOUND_HIT);
-					break;
-				}
-
-				case RBM_CRUSH:
-				{
-					act = "crushes you.";
-					do_stun = touched = TRUE;
-					sound(SOUND_CRUSH);
-					break;
-				}
-
-				case RBM_ENGULF:
-				{
-					act = "engulfs you.";
-					touched = TRUE;
-					sound(SOUND_CRUSH);
-					break;
-				}
-
-				case RBM_CHARGE:
-				{
-					act = "charges you.";
-					touched = TRUE;
-					sound(SOUND_BUY);	/* Note! This is "charges", not "charges at". */
-					break;
-				}
-
-				case RBM_CRAWL:
-				{
-					act = "crawls on you.";
-					touched = TRUE;
-					sound(SOUND_SLIME);
-					break;
-				}
-
-				case RBM_DROOL:
-				{
-					act = "drools on you.";
-					sound(SOUND_SLIME);
-					break;
-				}
-
-				case RBM_SPIT:
-				{
-					act = "spits on you.";
-					sound(SOUND_SLIME);
-					break;
-				}
-
-				case RBM_EXPLODE:
-				{
-					act = "explodes.";
-					explode = TRUE;
-					break;
-				}
-
-				case RBM_GAZE:
-				{
-					act = "gazes at you.";
-					break;
-				}
-
-				case RBM_WAIL:
-				{
-					act = "wails at you.";
-					sound(SOUND_WAIL);
-					break;
-				}
-
-				case RBM_SPORE:
-				{
-					act = "releases spores at you.";
-					sound(SOUND_SLIME);
-					break;
-				}
-
-				case RBM_XXX4:
-				{
-					act = "projects XXX4's at you.";
-					break;
-				}
-
-				case RBM_BEG:
-				{
-					act = "begs you for money.";
-					sound(SOUND_MOAN);
-					break;
-				}
-
-				case RBM_INSULT:
-				{
-					act = desc_insult[randint0(8)];
-					sound(SOUND_MOAN);
-					break;
-				}
-
-				case RBM_MOAN:
-				{
-					act = desc_moan[randint0(4)];
-					sound(SOUND_MOAN);
-					break;
-				}
-
-				case RBM_SHOW:
-				{
-					if (one_in_(3))
-						act = "sings 'We are a happy family.'";
-					else
-						act = "sings 'I love you, you love me.'";
-					sound(SOUND_SHOW);
-					break;
+					act = "sings 'I love you, you love me.'";
 				}
 			}
 

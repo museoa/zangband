@@ -2971,6 +2971,7 @@
 #define RBM_MOAN        23
 #define RBM_SHOW        24
 
+#define MAX_RBM			25
 
 /*
  * New monster blow effects
@@ -4156,6 +4157,7 @@ extern int PlayerUID;
  *
  * Some "sound" constants for "Term_xtra(TERM_XTRA_SOUND, val)"
  */
+#define SOUND_NONE		 0
 #define SOUND_HIT        1
 #define SOUND_MISS       2
 #define SOUND_FLEE       3
