@@ -506,9 +506,6 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 	int		i, j, xx, yy;
 	
 	cave_type	*c_ptr;
-	field_type	*f_ptr;
-	
-	u16b	fld_idx;
 
 	/* Find block to copy */
 	xx = (x - town[w_town].x) << 4;
@@ -567,21 +564,9 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FT_TRAP_SUMMON:
 				case FT_TRAP_LOSE_MEMORY:
 				{
-					/* Add a door field */
-					fld_idx =create_field(c_ptr->fld_idx);
-					
 					/* Activate the trap */
-					if (fld_idx)
-					{
-						/* If it was placed properly */
-						block_ptr[j][i].fld_idx = fld_idx;
-		
-						f_ptr = &fld_list[fld_idx];
-						
-						/* Save the location */
-						f_ptr->fx = x * 16 + i;
-						f_ptr->fy = y * 16 + j;
-						
+					if (place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx))
+					{						
 						/* Hack - Initialise it (without "extra" information) */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
 							 FIELD_ACT_INIT, 0);
@@ -594,21 +579,10 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FT_JAM_DOOR:
 				{
 					/* Add a door field */
-					fld_idx =create_field(c_ptr->fld_idx);
-
-					if (fld_idx)
+					if (place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx))
 					{
-						/* If it was placed properly */
-						block_ptr[j][i].fld_idx = fld_idx;
-		
-						f_ptr = &fld_list[fld_idx];
-						
 						/* Add "power" of lock / jam to the field */
-						f_ptr->counter = 9;
-						
-						/* Save the location */
-						f_ptr->fx = x * 16 + i;
-						f_ptr->fy = y * 16 + j;
+						fld_list[block_ptr[j][i].fld_idx].counter = 9;
 					}
 					
 					break;
