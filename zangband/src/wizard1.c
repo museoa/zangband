@@ -1474,9 +1474,15 @@ static cptr wd_lhe[3] =
  * Buffer text to the given file. (-SHAWN-)
  * This is basically c_roff() from mon-desc.c with a few changes.
  */
-static void spoil_out(cptr str)
+static void spoil_out(cptr fmt, ...)
 {
 	cptr r;
+	
+	va_list vp;
+
+	char buf[1024];
+	
+	char *str;
 
 	/* Line buffer */
 	static char roff_buf[256];
@@ -1486,9 +1492,9 @@ static void spoil_out(cptr str)
 
 	/* Last space saved into roff_buf */
 	static char *roff_s = NULL;
-
+	
 	/* Special handling for "new sequence" */
-	if (!str)
+	if (!fmt)
 	{
 		if (roff_p != roff_buf) roff_p--;
 		while (*roff_p == ' ' && roff_p != roff_buf) roff_p--;
@@ -1503,6 +1509,18 @@ static void spoil_out(cptr str)
 		roff_buf[0] = '\0';
 		return;
 	}
+	
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+	
+	/* Start at the head of the buffer */
+	str = buf;
 
 	/* Scan the given string, character at a time */
 	for (; *str; str++)
@@ -1637,63 +1655,52 @@ static void spoil_mon_info(cptr fname)
 		}
 
 		/* Name */
-		strnfmt(buf, 1024, "%s  (", (r_name + r_ptr->name));	/* ---)--- */
-		spoil_out(buf);
+		spoil_out("%s  (", (r_name + r_ptr->name));	/* ---)--- */
 
 		/* Color */
 		spoil_out(attr_to_text(r_ptr->d_attr));
 
 		/* Symbol --(-- */
-		strnfmt(buf, 1024, " '%c')\n", r_ptr->d_char);
-		spoil_out(buf);
+		spoil_out(" '%c')\n", r_ptr->d_char);
 
 
 		/* Indent */
-		strnfmt(buf, 1024, "=== ");
-		spoil_out(buf);
+		spoil_out("=== ");
 
 		/* Number */
-		strnfmt(buf, 1024, "Num:%d  ", who[n]);
-		spoil_out(buf);
+		spoil_out("Num:%d  ", who[n]);
 
 		/* Level */
-		strnfmt(buf, 1024, "Lev:%d  ", (int)r_ptr->level);
-		spoil_out(buf);
+		spoil_out("Lev:%d  ", (int)r_ptr->level);
 
 		/* Rarity */
-		strnfmt(buf, 1024, "Rar:%d  ", (int)r_ptr->rarity);
-		spoil_out(buf);
+		spoil_out("Rar:%d  ", (int)r_ptr->rarity);
 
 		/* Speed */
 		if (r_ptr->speed >= 110)
 		{
-			strnfmt(buf, 1024, "Spd:+%d  ", (r_ptr->speed - 110));
+			spoil_out("Spd:+%d  ", (r_ptr->speed - 110));
 		}
 		else
 		{
-			strnfmt(buf, 1024, "Spd:-%d  ", (110 - r_ptr->speed));
+			spoil_out("Spd:-%d  ", (110 - r_ptr->speed));
 		}
-		spoil_out(buf);
 
 		/* Hitpoints */
 		if ((flags1 & (RF1_FORCE_MAXHP)) || (r_ptr->hside == 1))
 		{
-			strnfmt(buf, 1024, "Hp:%d  ", ((int)r_ptr->hdice) * r_ptr->hside);
+			spoil_out("Hp:%d  ", ((int)r_ptr->hdice) * r_ptr->hside);
 		}
 		else
 		{
-			strnfmt(buf, 1024, "Hp:%dd%d  ", (int)r_ptr->hdice, (int)r_ptr->hside);
+			spoil_out("Hp:%dd%d  ", (int)r_ptr->hdice, (int)r_ptr->hside);
 		}
-		spoil_out(buf);
 
 		/* Armor Class */
-		strnfmt(buf, 1024, "Ac:%d  ", r_ptr->ac);
-		spoil_out(buf);
+		spoil_out("Ac:%d  ", r_ptr->ac);
 
 		/* Experience */
-		strnfmt(buf, 1024, "Exp:%ld\n", (long)(r_ptr->mexp));
-		spoil_out(buf);
-
+		spoil_out("Exp:%ld\n", (long)(r_ptr->mexp));
 
 		/* Describe */
 		spoil_out(r_text + r_ptr->text);
@@ -1745,44 +1752,38 @@ static void spoil_mon_info(cptr fname)
 
 		if (!r_ptr->level || (flags1 & (RF1_FORCE_DEPTH)))
 		{
-			strnfmt(buf, 1024, "%s is never found out of depth.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s is never found out of depth.  ", wd_che[msex]);
 		}
 
 		if (flags1 & (RF1_FORCE_SLEEP))
 		{
-			strnfmt(buf, 1024, "%s is always created sluggish.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s is always created sluggish.  ", wd_che[msex]);
 		}
 
 		if (flags2 & (RF2_AURA_FIRE))
 		{
-			strnfmt(buf, 1024, "%s is surrounded by flames.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s is surrounded by flames.  ", wd_che[msex]);
 		}
 
 		if (flags3 & (RF3_AURA_COLD))
 		{
-			strnfmt(buf, 1024, "%s is surrounded by ice.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s is surrounded by ice.  ", wd_che[msex]);
 		}
 
 		if (flags2 & (RF2_AURA_ELEC))
 		{
-			strnfmt(buf, 1024, "%s is surrounded by electricity.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s is surrounded by electricity.  ", wd_che[msex]);
 		}
 
 		if (flags2 & (RF2_REFLECTING))
 		{
-			strnfmt(buf, 1024, "%s reflects bolt spells.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s reflects bolt spells.  ", wd_che[msex]);
 		}
 
 		if (flags1 & (RF1_ESCORT))
 		{
-			strnfmt(buf, 1024, "%s usually appears with ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s usually appears with ", wd_che[msex]);
+
 			if (flags1 & (RF1_ESCORTS)) spoil_out("escorts.  ");
 			else
 				spoil_out("an escort.  ");
@@ -1790,8 +1791,7 @@ static void spoil_mon_info(cptr fname)
 
 		if (flags1 & (RF1_CHAR_MIMIC))
 		{
-			strnfmt(buf, 1024, "%s is a mimic.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s is a mimic.  ", wd_che[msex]);;
 		}
 
 		/* Collect inate attacks */
@@ -1957,9 +1957,8 @@ static void spoil_mon_info(cptr fname)
 
 		if (breath || magic)
 		{
-			strnfmt(buf, 1024, "; 1 time in %d.  ",
+			spoil_out("; 1 time in %d.  ",
 					200 / (r_ptr->freq_inate + r_ptr->freq_spell));
-			spoil_out(buf);
 		}
 
 		/* Collect special abilities. */
@@ -2124,9 +2123,8 @@ static void spoil_mon_info(cptr fname)
 		else
 			spoil_out(" is ever vigilant for");
 
-		strnfmt(buf, 1024, " intruders, which %s may notice from %d feet.  ",
+		spoil_out(" intruders, which %s may notice from %d feet.  ",
 				wd_lhe[msex], 10 * r_ptr->aaf);
-		spoil_out(buf);
 
 		i = 0;
 		if (flags1 & (RF1_DROP_60)) i += 1;
@@ -2155,8 +2153,7 @@ static void spoil_mon_info(cptr fname)
 			}
 			else
 			{
-				strnfmt(buf, 1024, " up to %u", (uint)i);
-				spoil_out(buf);
+				spoil_out(" up to %u", (uint)i);
 			}
 
 			if (flags1 & (RF1_DROP_GREAT))
@@ -2400,12 +2397,11 @@ static void spoil_mon_info(cptr fname)
 				{
 					spoil_out(" with damage");
 					if (r_ptr->blow[j].d_side == 1)
-						strnfmt(buf, 1024, " %d", (int)r_ptr->blow[j].d_dice);
+						spoil_out(" %d", (int)r_ptr->blow[j].d_dice);
 					else
-						strnfmt(buf, 1024, " %dd%d",
+						spoil_out(" %dd%d",
 								(int)r_ptr->blow[j].d_dice,
 								(int)r_ptr->blow[j].d_side);
-					spoil_out(buf);
 				}
 			}
 
@@ -2418,8 +2414,7 @@ static void spoil_mon_info(cptr fname)
 		}
 		else if (flags1 & (RF1_NEVER_BLOW))
 		{
-			strnfmt(buf, 1024, "%s has no physical attacks.  ", wd_che[msex]);
-			spoil_out(buf);
+			spoil_out("%s has no physical attacks.  ", wd_che[msex]);
 		}
 
 		spoil_out(NULL);
@@ -2515,26 +2510,20 @@ static void spoil_mutation(cptr fname)
 		}
 
 		/* Describe mutation */
-		strnfmt(buf, 1024, "%s \n", mut_ptr->desc_text);
-		spoil_out(buf);
+		spoil_out("%s \n", mut_ptr->desc_text);
 
 		/* Type 1? */
 		if (i < MUT_PER_SET)
 		{
-			strnfmt(buf, 1024, "- Activation: %s \n", mut_ptr->name);
-			spoil_out(buf);
+			spoil_out("- Activation: %s \n", mut_ptr->name);
 
-			strnfmt(buf, 1024, "- Min. level: %d \n", (int)mut_ptr->level);
-			spoil_out(buf);
+			spoil_out("- Min. level: %d \n", (int)mut_ptr->level);
 
-			strnfmt(buf, 1024, "- HP/SP Cost: %d \n", mut_ptr->cost);
-			spoil_out(buf);
+			spoil_out("- HP/SP Cost: %d \n", mut_ptr->cost);
 
-			strnfmt(buf, 1024, "- Statistic : %s \n", long_stat_names[mut_ptr->stat]);
-			spoil_out(buf);
+			spoil_out("- Statistic : %s \n", long_stat_names[mut_ptr->stat]);
 
-			strnfmt(buf, 1024, "- Difficulty: %d \n", mut_ptr->diff);
-			spoil_out(buf);
+			spoil_out("- Difficulty: %d \n", mut_ptr->diff);
 		}
 
 		/* Type 2? */
@@ -2542,8 +2531,7 @@ static void spoil_mutation(cptr fname)
 		{
 			if (mut_ptr->chance > 0)
 			{
-				strnfmt(buf, 1024, "- Chance/turn: 1-in-%d\n", mut_ptr->chance * 100);
-				spoil_out(buf);
+				spoil_out("- Chance/turn: 1-in-%d\n", mut_ptr->chance * 100);
 			}
 		}
 
@@ -2610,23 +2598,17 @@ static void spoil_rac_pow(cptr fname)
 		strnfmt(buf, 1024, "%s", rp_ptr->title);
 		spoiler_underline(buf);
 
-		strnfmt(buf, 1024, "%s \n", mut_ptr->desc_text);
-		spoil_out(buf);
+		spoil_out("%s \n", mut_ptr->desc_text);
 
-		strnfmt(buf, 1024, "- Activation: %s \n", mut_ptr->name);
-		spoil_out(buf);
+		spoil_out("- Activation: %s \n", mut_ptr->name);
 
-		strnfmt(buf, 1024, "- Min. level: %d \n", (int)mut_ptr->level);
-		spoil_out(buf);
+		spoil_out("- Min. level: %d \n", (int)mut_ptr->level);
 
-		strnfmt(buf, 1024, "- HP/SP Cost: %d \n", mut_ptr->cost);
-		spoil_out(buf);
+		spoil_out("- HP/SP Cost: %d \n", mut_ptr->cost);
 
-		strnfmt(buf, 1024, "- Statistic : %3s \n", long_stat_names[mut_ptr->stat]);
-		spoil_out(buf);
+		spoil_out("- Statistic : %3s \n", long_stat_names[mut_ptr->stat]);
 
-		strnfmt(buf, 1024, "- Difficulty: %d \n", mut_ptr->diff);
-		spoil_out(buf);
+		spoil_out("- Difficulty: %d \n", mut_ptr->diff);
 
 		spoiler_blanklines(1);
 	}
