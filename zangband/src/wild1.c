@@ -99,11 +99,78 @@ static void place_player_start(u32b *x, u32b *y, u16b this_town)
 
 
 /* Select a store or building "appropriate" for a given position */
-static u16b select_building(byte level, byte magic, byte law, u16b *build)
+static u16b select_building(byte pop, byte magic, byte law, u16b *build,
+	 int build_num)
 {
-	/* This is really dodgy */
-	int i, count = 0;
+	int i;
 	
+	u16b b_select[MAX_CITY_BUILD];
+
+	s32b total = 0;
+	
+	/* Draw stairs first for small towns */
+	if ((build_num < 10) && (!build[BUILD_STAIRS])) return(BUILD_STAIRS);
+	
+	for (i = 0; i < MAX_CITY_BUILD; i++)
+	{
+		/* All have equal prob. + effect due to total count */
+		b_select[i] = 1 + build[i] * 2;
+	}
+	
+	/* Dungeons are not in large cities */
+	if (build_num > 16) b_select[BUILD_STAIRS] = 0;
+	
+	/* Blank buildings don't exist for small towns */
+	if (build_num < 10)
+	{
+		b_select[BUILD_NONE] = 0;
+		b_select[BUILD_BLANK] = 0;
+	}
+
+	/* Blank buildings are much more common for large towns */
+	if (build_num > 9)
+	{
+		b_select[BUILD_NONE] = 1;
+		b_select[BUILD_BLANK] = 1;
+	}
+	
+	/* Not more that one home */
+	if (build[BUILD_STORE_HOME]) b_select[BUILD_STORE_HOME] = 0;
+
+	/* Some buildings are normally rare */
+	b_select[BUILD_RECHARGE] += 2;
+	b_select[BUILD_PLUS_WEAPON] += 2;
+	b_select[BUILD_PLUS_ARMOUR] += 2;
+	b_select[BUILD_MUTATE] += 4;
+	
+	/* Calculate total */
+	for (i = 0; i < MAX_CITY_BUILD; i++)
+	{
+		if (b_select[i]) total += 256 / b_select[i];
+	}
+
+	/* Pick a building */
+	total = randint0(total);
+	
+	/* Later add checks for silliness */
+	/* (A small town with 5 "homes" would be silly */
+
+
+	/* Find which building we've got */
+	for (i = 0; i < MAX_CITY_BUILD; i++)
+	{
+		if (b_select[i]) total -= 256 / b_select[i];
+		
+		if (total <= 0) return (i);
+	}
+
+
+	/* paranoia - we didn't find it */
+	msg_print("FAILED to generate building!");
+	
+	return(0);
+	
+#if 0	
 	/* Just select the buildings in order... */
 	while (TRUE)
 	{
@@ -114,19 +181,7 @@ static u16b select_building(byte level, byte magic, byte law, u16b *build)
 	
 		count++;
 	}
-	
-	
-	/* Find all acceptable buildings */
-	
-	/* None? */
-	
-	/* Find all semi-acceptable buildings */
-	
-	/* Pick one at random */
-	
-
-	/* Later add checks for silliness */
-	/* (A small town with 5 "homes" would be silly */
+#endif /* 0 */	
 } 
 
 static void general_init(int town_num, int store_num, byte general_type)
@@ -152,11 +207,12 @@ static bool create_city(int x, int y, int town_num)
 {
 	int i, j, k, l;
 	
-	int pop = wild[y][x].trans.pop_map;
+/*	int pop = wild[y][x].trans.pop_map; */
+	int pop = (1 << randint0(7)) + 128;
 	int law = wild[y][x].trans.law_map;
 	int magic, temp;
 	int count = 0;	
-	int build_num = 0;
+	int build_num = 0, build_tot;
 	u16b building;
 	byte gate_value[MAX_GATES];
 	byte gate_num[MAX_GATES];
@@ -425,6 +481,9 @@ static bool create_city(int x, int y, int town_num)
 	/* Restore the old seed */
 	Rand_value = rng_seed_save;
 	
+	/* Save the total number of buildings */
+	build_tot = count;
+	
 	/* Scan blocks in a random order */
 	while(count)
 	{
@@ -460,7 +519,7 @@ static bool create_city(int x, int y, int town_num)
 		 * "place" building, and then record in the
 		 * list of allocated buildings.
 		 */
-		building = select_building((pop + law) / 2, magic, law, build);
+		building = select_building(pop, magic, law, build, build_tot);
 		
 		/* Count number of this type */
 		build[building]++;
