@@ -1502,6 +1502,10 @@ void verify_panel(void)
 
 	max_prow_min = max_panel_rows - hgt;
 	max_pcol_min = max_panel_cols - wid;
+	
+	/* Bounds checking */
+	if (max_prow_min < 0) max_prow_min = 0;
+	if (max_pcol_min < 0) max_pcol_min = 0;
 
 	/* Center on player */
 	if (center_player && (!avoid_center || !running))
