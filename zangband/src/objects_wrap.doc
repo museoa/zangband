@@ -211,7 +211,7 @@ self.marked
         [ Member data: returns byte  ]
         Object is marked 
 
-self.note
+self.inscription
         [ Member data: returns u16b  ]
         Inscription index 
 
