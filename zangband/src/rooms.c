@@ -4326,7 +4326,7 @@ static bool test_tri(int px, int py, int x1, int y1, int x2, int y2, int x3, int
 /*
  * Make sure two squares are connected by floors.
  */
-static void connect(int x1, int y1, int x2, int y2)
+static void connectsq(int x1, int y1, int x2, int y2)
 {
 	int x, y;
 	int l, length = distance(x1, y1, x2, y2);
@@ -4445,12 +4445,12 @@ static void build_type17(int bx0, int by0)
 		}
 		
 		/* Hack - connect to room center */
-		connect(xval, yval, (vx1 + vx2 + vx3) / 3, (vy1 + vy2 + vy3) / 3);
+		connectsq(xval, yval, (vx1 + vx2 + vx3) / 3, (vy1 + vy2 + vy3) / 3);
 		
 		/* Hack - connect vertexes to avoid problems with rounding */
-		connect(vx1, vy1, vx2, vy2);
-		connect(vx1, vy1, vx3, vy3);
-		connect(vx3, vy3, vx2, vy2);
+		connectsq(vx1, vy1, vx2, vy2);
+		connectsq(vx1, vy1, vx3, vy3);
+		connectsq(vx3, vy3, vx2, vy2);
 	}
 	
 	/* Find visible outer walls and set to be FEAT_OUTER */
