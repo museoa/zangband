@@ -2316,7 +2316,7 @@ void show_inven(void)
 		Term_draw(col + 3, j + 1, a, c);
 
 		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], j + 1, (col + 5));
+		c_put_str(out_color[j], out_desc[j], col + 5, j + 1);
 
 		/* Display the weight if needed */
 		if (show_weights)
@@ -2465,14 +2465,14 @@ void show_equip(void)
 			put_str(tmp_val, j+1, col + 5);
 
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], j+1, col + 21);
+			c_put_str(out_color[j], out_desc[j], col + 21, j + 1);
 		}
 
 		/* No labels */
 		else
 		{
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], j+1, col + 5);
+			c_put_str(out_color[j], out_desc[j], col + 5, j + 1);
 		}
 
 		/* Display the weight if needed */
@@ -2835,7 +2835,7 @@ void show_floor(int x, int y)
 		put_str(tmp_val, j + 1, col);
 
 		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
+		c_put_str(out_color[j], out_desc[j], col + 3, j + 1);
 
 		/* Display the weight if needed */
 		if (show_weights)

@@ -2681,7 +2681,7 @@ void screen_load(void)
  * At the given location, using the given attribute, if allowed,
  * add the given string.  Do not clear the line.
  */
-void c_put_str(byte attr, cptr str, int row, int col)
+void c_put_str(byte attr, cptr str, int col, int row)
 {
 	/* Hack -- fake monochrome */
 	if (!use_color || ironman_moria) attr = TERM_WHITE;

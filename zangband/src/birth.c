@@ -2265,19 +2265,19 @@ static bool player_birth_aux_1(void)
 		put_str("Magic    :", 6, 0);
 	}
 
-	c_put_str(TERM_L_BLUE, player_name, 2, 11);
-	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 11);
-	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 11);
-	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 11);
+	c_put_str(TERM_L_BLUE, player_name, 11, 2);
+	c_put_str(TERM_L_BLUE, sp_ptr->title, 11, 3);
+	c_put_str(TERM_L_BLUE, rp_ptr->title, 11, 4);
+	c_put_str(TERM_L_BLUE, cp_ptr->title, 11, 5);
 
 	if (p_ptr->realm1)
 	{
-		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm1], 6, 11);
+		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm1], 11, 6);
 	}
 
 	if (p_ptr->realm2)
 	{
-		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 7, 11);
+		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 11, 7);
 	}
 
 	/* And finally, get the number of random quests */
@@ -2623,23 +2623,23 @@ static bool player_birth_aux_3(void)
 			Term_clear();
 
 			/* Label */
-			put_str(" Limit", 2, col+5);
+			put_str(" Limit", 2, col + 5);
 
 			/* Label */
-			put_str("  Freq", 2, col+13);
+			put_str("  Freq", 2, col + 13);
 
 			/* Label */
-			put_str("  Roll", 2, col+24);
+			put_str("  Roll", 2, col + 24);
 
 			/* Put the minimal stats */
 			for (i = 0; i < A_MAX; i++)
 			{
 				/* Label stats */
-				put_str(stat_names[i], 3+i, col);
+				put_str(stat_names[i], i + 3, col);
 
 				/* Put the stat */
 				cnv_stat(stat_limit[i], buf);
-				c_put_str(TERM_L_BLUE, buf, 3+i, col+5);
+				c_put_str(TERM_L_BLUE, buf, col + 5, i + 3);
 			}
 
 			/* Note when we started */
@@ -2695,7 +2695,7 @@ static bool player_birth_aux_3(void)
 					{
 						/* Put the stat */
 						cnv_stat(stat_use[i], buf);
-						c_put_str(TERM_L_GREEN, buf, 3+i, col+24);
+						c_put_str(TERM_L_GREEN, buf, col + 24, i + 3);
 
 						/* Put the percent */
 						if (stat_match[i])
@@ -2703,13 +2703,13 @@ static bool player_birth_aux_3(void)
 							int p = 1000L * stat_match[i] / auto_round;
 							byte attr = (p < 100) ? TERM_YELLOW : TERM_L_GREEN;
 							sprintf(buf, "%3d.%d%%", p/10, p%10);
-							c_put_str(attr, buf, 3+i, col+13);
+							c_put_str(attr, buf, col + 13, i + 3);
 						}
 
 						/* Never happened */
 						else
 						{
-							c_put_str(TERM_RED, "(NONE)", 3+i, col+13);
+							c_put_str(TERM_RED, "(NONE)", col + 13, i + 3);
 						}
 					}
 

@@ -3565,7 +3565,7 @@ bool field_action_weaponmaster1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
 	/* Done */
 	return (FALSE);
@@ -3611,10 +3611,10 @@ bool field_action_recharge1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " R) Recharge Items");
-	c_put_str(TERM_YELLOW, tmp_str, 19, 0);
+	c_put_str(TERM_YELLOW, tmp_str, 0, 19);
 	sprintf(tmp_str, " I) Identify Items (%dgp)",
 	f_ptr->data[2] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 	
 	/* Done */
 	return (FALSE);
@@ -3675,7 +3675,7 @@ bool field_action_weaponplus1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 	
 	/* Done */
 	return (FALSE);
@@ -3716,7 +3716,7 @@ bool field_action_armourplus1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
 	/* Done */
 	return (FALSE);
@@ -3758,7 +3758,7 @@ bool field_action_mutate1(field_type *f_ptr, vptr input)
 
 	sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
 		 f_ptr->data[1] * factor * (count_mutations() + 1));
-	c_put_str(TERM_YELLOW, tmp_str, 19, 30);
+	c_put_str(TERM_YELLOW, tmp_str, 30, 19);
 
 	/* Done */
 	return (FALSE);
@@ -3821,7 +3821,7 @@ bool field_action_buymap1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
 	/* Done */
 	return (FALSE);
@@ -3873,7 +3873,7 @@ bool field_action_library1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " R) Read about monsters (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
 	/* Done */
 	return (FALSE);
@@ -3923,19 +3923,19 @@ bool field_action_casino1(field_type *f_ptr, vptr nothing)
 	(void) nothing;
 
 	sprintf(tmp_str, " H) Help");
-	c_put_str(TERM_YELLOW, tmp_str, 16, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 16);
 	
 	sprintf(tmp_str, " I) In Between");
-	c_put_str(TERM_YELLOW, tmp_str, 17, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 17);
 	
 	sprintf(tmp_str, " C) Craps");
-	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 18);
 	
 	sprintf(tmp_str, " S) Spin the wheel");
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 	
 	sprintf(tmp_str, " D) Dice slots");
-	c_put_str(TERM_YELLOW, tmp_str, 20, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 20);
 
 	/* Done */
 	return (FALSE);
@@ -4019,10 +4019,10 @@ bool field_action_inn1(field_type *f_ptr, vptr input)
 	int factor = *((int*) input);
 
 	sprintf(tmp_str, " E) Eat (%dgp)", f_ptr->data[1] * factor / 100);
-	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 18);
 	
 	sprintf(tmp_str, " R) Rest (%dgp)", f_ptr->data[1] * factor / 20);
-	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
 	/* Done */
 	return (FALSE);
@@ -4087,7 +4087,7 @@ bool field_action_healer1(field_type *f_ptr, vptr input)
 	int factor = *((int*) input);
 
 	sprintf(tmp_str, " R) Restore Stats (%dgp)", f_ptr->data[1] * factor);
-	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+	c_put_str(TERM_YELLOW, tmp_str, 35, 18);
 
 	/* Done */
 	return (FALSE);

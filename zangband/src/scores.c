@@ -304,7 +304,7 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			if (mlev > clev) strcat(out_val, format(" (Max %d)", mlev));
 
 			/* Dump the first line */
-			c_put_str(attr, out_val, n*4 + 2, 0);
+			c_put_str(attr, out_val, 0, n*4 + 2);
 
 			/* Another line of info */
 			sprintf(out_val, "               Killed by %s on %s %d",
@@ -328,13 +328,13 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			if (mdun > cdun) strcat(out_val, format(" (Max %d)", mdun));
 
 			/* Dump the info */
-			c_put_str(attr, out_val, n*4 + 3, 0);
+			c_put_str(attr, out_val, 0, n*4 + 3);
 
 			/* And still another line of info */
 			sprintf(out_val,
 			        "               (User %s, Date %s, Gold %s, Turn %s).",
 			        user, when, gold, aged);
-			c_put_str(attr, out_val, n*4 + 4, 0);
+			c_put_str(attr, out_val, 0, n*4 + 4);
 		}
 
 
