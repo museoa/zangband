@@ -155,12 +155,12 @@ function restore_all_stats()
 end
 
 function summon_controlled(specific)
-	summon_specific(-1, player.px, player.py, plev, specific, TRUE, TRUE, TRUE)
+	summon_specific(-1, player.px, player.py, player.lev, specific, TRUE, TRUE, TRUE)
 end
 
 function summon_unsafe(specific)
 	if one_in_(3) then
-		if summon_specific(0, player.px, player.py, plev * 3 / 2, specific, TRUE, FALSE, FALSE) then
+		if summon_specific(0, player.px, player.py, player.lev * 3 / 2, specific, TRUE, FALSE, FALSE) then
 			if specific == SUMMON_UNDEAD or specific == SUMMON_HI_UNDEAD then
 				msgf("The dead arise... to punish you for disturbing them!")
 			elseif specific == SUMMON_DEMON then
@@ -170,7 +170,7 @@ function summon_unsafe(specific)
 			end
 		end
 	else
-		summon_specific(-1, player.px, player.py, plev * 3 / 2, specific, TRUE, FALSE, TRUE)
+		summon_specific(-1, player.px, player.py, player.lev * 3 / 2, specific, TRUE, FALSE, TRUE)
 	end
 end
 

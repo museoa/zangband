@@ -412,7 +412,7 @@ P:14:1d4:-2:0:15
 F:STR | CHR | HIDE_TYPE | INSTA_ART
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 L:USE:	msgf("Your armor shines with a brilliant white light.")
-L:USE:	charm_monsters(plev * 2)
+L:USE:	charm_monsters(player.lev * 2)
 L:USE:	object.timeout = 600
 L:DESC:	return "mass charm every 600 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
@@ -460,7 +460,7 @@ L:USE:  local d = randint1(100)
 L:USE:	if d <= 50 then
 L:USE:		inc_blessed(rand_range(25, 50))
 L:USE:	elseif d <= 75 then
-L:USE:		turn_monsters(plev * 4)
+L:USE:		turn_monsters(player.lev * 4)
 L:USE:	else
 L:USE:		summon_controlled(SUMMON_ANGEL)
 L:USE:	end
