@@ -84,41 +84,6 @@ static void notice_field(field_type *f_ptr)
 
 
 /*
- * Find the connection to the cave array for the field.
- *
- * This is used so that an arbitrary field can found.
- * This routine is fairly fast if there are not too many fields
- * on a square at one time.  However - it should only be used
- * by routines in this file.
- */
-static s16b *field_find(field_type *f_ptr)
-{
-	cave_type *c_ptr = area(f_ptr->fx, f_ptr->fy);
-
-	field_type *q_ptr;
-
-	/* pointer to a field index in a list. */
-	s16b *location;
-
-	/* Paranoia */
-	if (f_ptr->region != cur_region) quit("Trying to find unregioned field");
-
-	location = &(c_ptr->fld_idx);
-	q_ptr = &fld_list[*location];
-
-	while (q_ptr != f_ptr)
-	{
-		/* Get the next field in the chain */
-		location = &(q_ptr->next_f_idx);
-		q_ptr = &fld_list[*location];
-	}
-
-	/* Found a pointer to our field */
-	return (location);
-}
-
-
-/*
  * Delete a dungeon field
  *
  * Handle "lists" of fields correctly.
@@ -127,31 +92,55 @@ static s16b *field_find(field_type *f_ptr)
  */
 void delete_field_ptr(field_type *f_ptr)
 {
-	/* Field  index */
-	s16b *fld_idx = field_find(f_ptr);
-
-	/* Dungeon floor */
-	int y, x;
-
-	/* Location */
-	y = f_ptr->fy;
-	x = f_ptr->fx;
-
-	/* Remove from list */
-	*fld_idx = f_ptr->next_f_idx;
-
-	/* Refuse "illegal" locations */
-	if (in_boundsp(x, y))
+	int x = f_ptr->fx;
+	int y = f_ptr->fy;
+	cave_type *c_ptr = area(x, y);
+	field_type *j_ptr;
+	field_type *q_ptr = NULL;
+	
+	/* Paranoia */
+	if (f_ptr->region != cur_region) quit("Trying to find unregioned field");
+	
+	/* Find field to delete */
+	FLD_ITT_START (c_ptr->fld_idx, j_ptr);
 	{
-		/* Note + Lite the spot */
-		note_spot(x, y);
+		/* Found it? */
+		if (j_ptr == f_ptr)
+		{
+			/* Delete it */
+			if (q_ptr)
+			{
+				q_ptr->next_f_idx = f_ptr->next_f_idx;
+			}
+			else
+			{
+				c_ptr->fld_idx = f_ptr->next_f_idx;
+			}
+			
+			/* Refuse "illegal" locations */
+			if (in_boundsp(x, y))
+			{
+				/* Note + Lite the spot */
+				note_spot(x, y);
+			}
+
+			/* Wipe the field */
+			field_wipe(f_ptr);
+
+			/* Count fields */
+			fld_cnt--;
+			
+			return;
+		}
+	
+		/* Remember previous field */
+		q_ptr = j_ptr;
 	}
-
-	/* Wipe the field */
-	field_wipe(f_ptr);
-
-	/* Count fields */
-	fld_cnt--;
+	FLD_ITT_END;
+	
+	/* We shouldn't get here! */
+	quit("Cannot field to delete!");
+	return;
 }
 
 
@@ -622,7 +611,14 @@ s16b field_add(field_type *f_ptr, cave_type *c_ptr)
 			j_ptr->counter = (s16b)counter;
 
 			/* Return index */
-			return (*field_find(j_ptr));
+			if (q_ptr)
+			{
+				return (q_ptr->next_f_idx);
+			}
+			else
+			{
+				return (c_ptr->fld_idx);
+			}
 		}
 		
 		/* Sort in priority order */
