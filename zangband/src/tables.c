@@ -6857,18 +6857,12 @@ const field_action f_action[] =
 	
 	/* Corpse decay function */
 	{field_action_corpse_decay, "field_action_corpse_decay"},
-		
-	/* Corpse init function */
-	{field_action_corpse_init, "field_action_corpse_init"},
-	
+			
 	/* Function returning name of the monster the corpse once was. */
 	{field_action_corpse_look, "field_action_corpse_look"},
 	
 	/* Tunnel into a "standard" wall to pass */
 	{field_action_wall_tunnel, "field_action_wall_tunnel"},
-			
-	/* Trap init function */
-	{field_action_trap_init, "field_action_trap_init"},
 	
 	/* Trap disarming function */
 	{field_action_trap_disarm, "field_action_trap_disarm"},
@@ -6950,9 +6944,6 @@ const field_action f_action[] =
 	
 	/* Lose Memory Trap */
 	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"},
-	
-	/* Initialise a field with a counter */
-	{field_action_counter_init, "field_action_counter_init"},
 	
 	/* Attempt to unlock a door */
 	{field_action_door_unlock, "field_action_door_unlock"},

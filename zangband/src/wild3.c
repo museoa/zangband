@@ -151,7 +151,7 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 						field_type *f_ptr = &fld_list[block_ptr[j][i].fld_idx];
 					
 						/* Initialise it */
-						(void)field_hook_single(f_ptr, FIELD_ACT_INIT);
+						(void)field_script_single(f_ptr, FIELD_ACT_INIT, "");
 					}
 
 					break;
@@ -168,7 +168,8 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 						field_type *f_ptr = &fld_list[block_ptr[j][i].fld_idx];
 					
 						/* Add "power" of lock / jam to the field */
-						(void)field_hook_single(f_ptr, FIELD_ACT_INIT, data);
+						(void)field_script_single(f_ptr, FIELD_ACT_INIT,
+												"i:", LUA_VAR_NAMED(data, "power"));
 					}
 
 					break;

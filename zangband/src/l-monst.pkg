@@ -304,6 +304,8 @@ struct monster_race
 };
 
 
+monster_race *r_info;
+
 /***** Functions *****/
 
 /* monster2.c */

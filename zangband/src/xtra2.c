@@ -469,7 +469,8 @@ bool monster_death(int m_idx, bool explode)
 				if (f_ptr)
 				{
 					/* Initialise it */
-					(void)field_hook_single(f_ptr, FIELD_ACT_INIT, m_ptr);
+					(void)field_script_single(f_ptr, FIELD_ACT_INIT,
+						"i:", LUA_VAR_NAMED(m_ptr->r_idx, "race"));
 				}
 			}
 			else
@@ -480,7 +481,8 @@ bool monster_death(int m_idx, bool explode)
 				if (f_ptr)
 				{
 					/* Initialise it */
-					(void)field_hook_single(f_ptr, FIELD_ACT_INIT, m_ptr);
+					(void)field_script_single(f_ptr, FIELD_ACT_INIT,
+						"i:", LUA_VAR_NAMED(m_ptr->r_idx, "race"));
 				}
 			}
 

@@ -14,6 +14,28 @@
 #include "grid.h"
 #include "script.h"
 
+
+/*
+ * Notice changes to a field
+ */
+void notice_field(field_type *f_ptr)
+{
+	int x = f_ptr->fx;
+	int y = f_ptr->fy;
+
+	/* Refuse "illegal" locations */
+	if (in_boundsp(x, y))
+	{
+		/* Can the player see the square? */
+		if (player_has_los_grid(parea(x, y)))
+		{
+			/* Note + Lite the spot */
+			note_spot(x, y);
+		}
+	}
+}
+
+
 /*
  * Excise a field from a stack
  */
@@ -61,27 +83,6 @@ void excise_field_idx(int fld_idx)
 		j_ptr = q_ptr;
 	}
 	FLD_ITT_END;
-}
-
-
-/*
- * Notice changes to a field
- */
-static void notice_field(field_type *f_ptr)
-{
-	int x = f_ptr->fx;
-	int y = f_ptr->fy;
-
-	/* Refuse "illegal" locations */
-	if (in_boundsp(x, y))
-	{
-		/* Can the player see the square? */
-		if (player_has_los_grid(parea(x, y)))
-		{
-			/* Note + Lite the spot */
-			note_spot(x, y);
-		}
-	}
 }
 
 
@@ -1626,73 +1627,6 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 }
 
 
-/*
- * Hack XXX XXX Convert the char of the monster to a corpse type
- *
- * There are seven sizes of corpses.
- * 0 is large, 6 is small
- */
-static char corpse_type(char feat)
-{
-	switch (feat)
-	{
-		case 'a': return (6);
-		case 'b': return (6);
-		case 'c': return (5);
-		case 'd': return (0);
-		case 'e': return (6);
-		case 'f': return (4);
-		case 'g': return (1);
-		case 'h': return (2);
-		case 'i': return (5);
-		case 'j': return (3);
-		case 'k': return (4);
-		case 'l': return (0);
-		case 'm': return (6);
-		case 'n': return (3);
-		case 'o': return (3);
-		case 'p': return (2);
-		case 'q': return (4);
-		case 'r': return (6);
-		case 's': return (2);
-		case 't': return (2);
-		case 'u': return (3);
-		case 'v': return (4);
-		case 'w': return (5);
-		case 'x': return (5);
-		case 'y': return (4);
-		case 'z': return (3);
-		case 'A': return (2);
-		case 'B': return (5);
-		case 'C': return (5);
-		case 'D': return (0);
-		case 'E': return (3);
-		case 'F': return (4);
-		case 'G': return (3);
-		case 'H': return (2);
-		case 'I': return (6);
-		case 'J': return (5);
-		case 'K': return (3);
-		case 'L': return (1);
-		case 'M': return (1);
-		case 'N': return (3);
-		case 'O': return (1);
-		case 'P': return (0);
-		case 'Q': return (3);
-		case 'R': return (5);
-		case 'S': return (6);
-		case 'T': return (1);
-		case 'U': return (0);
-		case 'V': return (1);
-		case 'W': return (6);
-		case 'X': return (1);
-		case 'Y': return (1);
-		case 'Z': return (5);
-		case ',': return (6);
-		default: return (3);
-	}
-}
-
 void set_corpse_size(field_type *f_ptr, int size)
 {
 	/* Initialise the graphic */
@@ -1706,35 +1640,6 @@ void set_corpse_size(field_type *f_ptr, int size)
 		}
 	}
 }
-
-
-/*
- * Initialise corpse / skeletons
- */
-bool field_action_corpse_init(field_type *f_ptr, va_list vp)
-{
-	monster_type *m_ptr = va_arg(vp, monster_type *);
-
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	/*
-	 * Data[1] * 256 + Data[2] = r_idx of monster.
-	 */
-
-	/* Store the r_idx in the data fields so that the corpse can be raised */
-	f_ptr->data[1] = m_ptr->r_idx / 256;
-	f_ptr->data[2] = m_ptr->r_idx % 256;
-
-	/* Initialise the graphic */
-	set_corpse_size(f_ptr, corpse_type(r_ptr->d_char));
-
-	/* Notice the changes */
-	notice_field(f_ptr);
-
-	/* Done */
-	return (FALSE);
-}
-
 
 /*
  * Looking at a corpse tells you what type of monster it was
@@ -1987,34 +1892,8 @@ void place_trap(int x, int y)
 	if (f_ptr)
 	{
 		/* Initialise it */
-		(void)field_hook_single(f_ptr, FIELD_ACT_INIT);
+		(void)field_script_single(f_ptr, FIELD_ACT_INIT, "");
 	}
-}
-
-
-/*
- * Initialise the trap
- */
-bool field_action_trap_init(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/*
-	 * Data[3] is equal to randint0(rand)
-	 */
-	if (f_ptr->data[3])
-	{
-		/* Some traps use this field to store their sub-type. */
-		f_ptr->data[3] = (byte)randint0(f_ptr->data[3]);
-	}
-
-	/* Initialize the name here? */
-
-	/* Initialize the graphic here? */
-
-	/* Done */
-	return (FALSE);
 }
 
 
@@ -3085,45 +2964,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	/* 
 	 * Initialise it.
 	 */
-	(void)field_hook_single(f_ptr, FIELD_ACT_INIT, power);
-}
-
-/*
- * Initialise a field with a counter
- */
-bool field_action_counter_init(field_type *f_ptr, va_list vp)
-{
-	int value = va_arg(vp, int);
-	int max;
-	int new_value;
-
-	/* 
-	 * Add the value to the counter
-	 * but not if the counter will overflow.
-	 * data[6] and data[7] control the counter maximum.
-	 */
-	max = f_ptr->data[6] * 256 + f_ptr->data[7];
-
-	new_value = f_ptr->counter + value;
-
-	/* Bounds checking */
-	if (new_value > max)
-	{
-		f_ptr->counter = max;
-	}
-	else if (new_value < 0)
-	{
-		/* Hack - we'll decrement next turn */
-		f_ptr->counter = 1;
-	}
-	else
-	{
-		/* Store in the new value */
-		f_ptr->counter = new_value;
-	}
-
-	/* Done */
-	return (FALSE);
+	(void)field_script_single(f_ptr, FIELD_ACT_INIT, "i:", LUA_VAR(power));
 }
 
 

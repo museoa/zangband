@@ -1090,6 +1090,7 @@ extern void add_note(char code, cptr note, ...);
 extern void add_note_type(int note_number);
 
 /* fields.c */
+extern void notice_field(field_type *f_ptr);
 extern void excise_field_idx(int fld_idx);
 extern void delete_field_ptr(field_type *f_ptr);
 extern void delete_field(int x, int y);
@@ -1123,11 +1124,9 @@ DECL_FIELD_ACTION(delete);
 DECL_FIELD_ACTION(glyph_warding);
 DECL_FIELD_ACTION(glyph_explode);
 DECL_FIELD_ACTION(corpse_decay);
-DECL_FIELD_ACTION(corpse_init);
 DECL_FIELD_ACTION(corpse_look);
 DECL_FIELD_ACTION(wall_tunnel);
 extern void place_trap(int x, int y);
-DECL_FIELD_ACTION(trap_init);
 DECL_FIELD_ACTION(trap_disarm);
 DECL_FIELD_ACTION(hit_trap_door);
 DECL_FIELD_ACTION(hit_trap_pit);
@@ -1156,7 +1155,6 @@ DECL_FIELD_ACTION(hit_trap_aggravate);
 DECL_FIELD_ACTION(hit_trap_summon);
 DECL_FIELD_ACTION(hit_trap_lose_memory);
 extern void make_lockjam_door(int x, int y, int power, bool jam);
-DECL_FIELD_ACTION(counter_init);
 DECL_FIELD_ACTION(door_unlock);
 DECL_FIELD_ACTION(door_bash);
 DECL_FIELD_ACTION(door_lock_monster);
