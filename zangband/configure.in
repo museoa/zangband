@@ -131,6 +131,8 @@ else
 	
 	BASE_TK_DIR=$BASE_TCL_DIR
 	
+	CPPFLAGS="-I$BASE_TCL_DIR $CPPFLAGS"
+	
 	AC_CHECK_HEADER(/usr/local/include/tk.h,
 	  [BASE_TK_DIR="/usr/local/include"],
   	  [AC_CHECK_HEADER(/usr/local/include/tcl/tk.h,
@@ -151,6 +153,8 @@ else
   else
     BASE_TCL_DIR="$with_tcltk/include"
     CFLAGS="-L$with_tcltk/lib $CFLAGS"
+	
+	CPPFLAGS="-I$BASE_TCL_DIR $CPPFLAGS"
   fi
 
   if test -n "$with_tkdir"; then
@@ -158,7 +162,7 @@ else
     CFLAGS="-L$with_tkdir/lib $CFLAGS"
   fi
   
-  CPPFLAGS="-I$BASE_TCL_DIR -I$BASE_TK_DIR $CPPFLAGS"
+  CPPFLAGS="-I$BASE_TK_DIR $CPPFLAGS"
   
   dnl Checks for libraries.
   AC_CHECK_HEADER(tcl.h,,[AC_MSG_WARN(Can't find tcl.h)])
