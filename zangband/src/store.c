@@ -1351,10 +1351,6 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	*price = 0;
 
-	/* Message summary */
-	msg_print("You quickly agree upon the price.");
-	message_flush();
-
 	/* Haggle for the whole pile */
 	ask *= o_ptr->number;
 
@@ -1374,29 +1370,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	/* Obtain the starting offer and the final offer */
 	s32b ask = price_item(o_ptr, ot_ptr->min_inflate, TRUE);
 
-	/* Get the owner's payout limit */
-	s32b purse = (s32b)(ot_ptr->max_cost) * 100;
-
 	*price = 0;
-
-	/* No reason to haggle */
-	if (ask >= purse)
-	{
-		/* Message */
-		msg_print("You instantly agree upon the price.");
-		message_flush();
-
-		/* Offer full purse */
-		ask = purse;
-	}
-
-	/* No haggle option */
-	else
-	{
-		/* Message summary */
-		msg_print("You quickly agree upon the price.");
-		message_flush();
-	}
 
 	/* Haggle for the whole pile */
 	ask *= o_ptr->number;
