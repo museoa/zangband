@@ -250,9 +250,9 @@ void do_cmd_browse(void)
 		return;
 	}
 
-	/* Restrict choices to "useful" books */
-	/* item_tester_tval = mp_ptr->spell_book; */
-
+	/* Restrict choices to books */
+	item_tester_hook = item_tester_hook_is_book;
+	
 	/* Get an item */
 	q = "Browse which book? ";
 	s = "You have no books that you can read.";
