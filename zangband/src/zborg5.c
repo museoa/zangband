@@ -1388,69 +1388,110 @@ static int borg_fear_spell(int i)
     /* Check the spell */
     switch (i)
     {
-        case 0:    /* RF4_SHRIEK */
+        case 0:
+		{
+		    /* RF4_SHRIEK */
         p += 10;
         break;
+		}
 
-        case 1:    /* RF4_FAILED spell by monster.  Fear it! */
+        case 1:
+		{
+		    /* RF4_FAILED spell by monster.  Fear it! */
                       /* It could be a unique like Azriel */
         p += borg_skill[BI_CDEPTH];
         break;
+		}
 
-        case 2:    /* RF4_XXX3X4 */
+        case 2:
+		{
+		    /* RF4_XXX3X4 */
         break;
+		}
 
-        case 3:    /* RF4_XXX4X4 */
+        case 3:
+		{
+		    /* RF4_XXX4X4 */
         break;
+		}
 
-        case 4:    /* RF4_ARROW_1 */
+        case 4:
+		{
+		    /* RF4_ARROW_1 */
         z = (1 * 6);
         break;
+		}
 
-        case 5:    /* RF4_ARROW_2 */
+        case 5:
+		{
+		    /* RF4_ARROW_2 */
         z = (3 * 6);
         break;
+		}
 
-        case 6:    /* RF4_ARROW_3 */
+        case 6:
+		{
+		    /* RF4_ARROW_3 */
         z = (5 * 6);
         break;
+		}
 
-        case 7:    /* RF4_ARROW_4 */
+        case 7:
+		{
+		    /* RF4_ARROW_4 */
         z = (7 * 6);
         break;
+		}
 
-        case 8:    /* RF4_BR_ACID */
+        case 8:
+		{
+		    /* RF4_BR_ACID */
         if (borg_skill[BI_IACID]) break;
         z = ouch;
         p += 40;
         break;
+		}
 
-        case 9:    /* RF4_BR_ELEC */
+        case 9:
+		{
+		    /* RF4_BR_ELEC */
         if (borg_skill[BI_IELEC]) break;
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 10:    /* RF4_BR_FIRE */
+        case 10:
+		{
+		    /* RF4_BR_FIRE */
         if (borg_skill[BI_IFIRE]) break;
         z = ouch;
         p += 40;
         break;
+		}
 
-        case 11:    /* RF4_BR_COLD */
+        case 11:
+		{
+		    /* RF4_BR_COLD */
         if (borg_skill[BI_ICOLD]) break;
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 12:    /* RF4_BR_POIS */
+        case 12:
+		{
+		    /* RF4_BR_POIS */
         z = ouch;
         if (borg_skill[BI_RPOIS]) break;
         if (my_oppose_pois) break;
         p += 20;
         break;
+		}
 
-        case 13:    /* RF4_BR_NETH */
+        case 13:
+		{
+		    /* RF4_BR_NETH */
         z = ouch + 100;
         if (borg_skill[BI_RNTHR]) break;
         p += 50;
@@ -1459,34 +1500,49 @@ static int borg_fear_spell(int i)
         if (borg_skill[BI_CLEVEL] >= 50) break;
         p += 150;
         break;
+		}
 
-        case 14:    /* RF4_BR_LITE */
+        case 14:
+		{
+		    /* RF4_BR_LITE */
         z = ouch;
         if (borg_skill[BI_RLITE]) break;
         if (borg_skill[BI_RBLIND]) break;
         p += 20;
         break;
+		}
 
-        case 15:    /* RF4_BR_DARK */
+        case 15:
+		{
+		    /* RF4_BR_DARK */
         z = ouch;
         if (borg_skill[BI_RDARK]) break;
         if (borg_skill[BI_RBLIND]) break;
         p += 20;
         break;
+		}
 
-        case 16:    /* RF4_BR_CONF */
+        case 16:
+		{
+		    /* RF4_BR_CONF */
         z = ouch;
         if (borg_skill[BI_RCONF]) break;
         p += 100;
         break;
+		}
 
-        case 17:    /* RF4_BR_SOUN */
+        case 17:
+		{
+		    /* RF4_BR_SOUN */
         z = ouch;
         if (borg_skill[BI_RSND]) break;
         p += 50;
         break;
+		}
 
-        case 18:    /* RF4_BR_CHAO */
+        case 18:
+		{
+		    /* RF4_BR_CHAO */
         z = ouch;
         if (borg_skill[BI_RKAOS]) break;
         p += 200;
@@ -1496,346 +1552,569 @@ static int borg_fear_spell(int i)
         if (borg_skill[BI_CLEVEL] == 50) break;
         p += 100;
         break;
+		}
 
-        case 19:    /* RF4_BR_DISE */
+        case 19:
+		{
+		    /* RF4_BR_DISE */
         z = ouch;
         if (borg_skill[BI_RDIS]) break;
         p += 500;
         break;
+		}
 
-        case 20:    /* RF4_BR_NEXU */
+        case 20:
+		{
+		    /* RF4_BR_NEXU */
         z = ouch;
         if (borg_skill[BI_RNXUS]) break;
         p += 100;
         break;
+		}
 
-        case 21:    /* RF4_BR_TIME */
+        case 21:
+		{
+		    /* RF4_BR_TIME */
         z = ouch;
         p += 200;
         break;
+		}
 
-        case 22:    /* RF4_BR_INER */
+        case 22:
+		{
+		    /* RF4_BR_INER */
         z = ouch;
         p += 50;
         break;
+		}
 
-        case 23:    /* RF4_BR_GRAV */
+        case 23:
+		{
+		    /* RF4_BR_GRAV */
         z = ouch;
         p += 50;
         if (borg_skill[BI_RSND]) break;
         p += 50;
         break;
+		}
 
-        case 24:    /* RF4_BR_SHAR */
+        case 24:
+		{
+		    /* RF4_BR_SHAR */
         z = ouch;
         if (borg_skill[BI_RSHRD]) break;
         p += 50;
         break;
+		}
 
-        case 25:    /* RF4_BR_PLAS */
+        case 25:
+		{
+		    /* RF4_BR_PLAS */
         z = ouch;
         if (borg_skill[BI_RSND]) break;
         p += 50;
         break;
+		}
 
-        case 26:    /* RF4_BR_WALL */
+        case 26:
+		{
+		    /* RF4_BR_WALL */
         z = ouch;
         if (borg_skill[BI_RSND]) break;
         p += 50;
         break;
+		}
 
-        case 27:    /* RF4_BR_MANA */
+        case 27:
+		{
+		    /* RF4_BR_MANA */
         /* XXX XXX XXX */
         break;
+		}
 
-        case 28:    /* RF4_XXX5X4 */
+        case 28:
+		{
+		    /* RF4_XXX5X4 */
         break;
+		}
 
-        case 29:    /* RF4_XXX6X4 */
+        case 29:
+		{
+		    /* RF4_XXX6X4 */
         break;
+		}
 
-        case 30:    /* RF4_XXX7X4 */
+        case 30:
+		{
+		    /* RF4_XXX7X4 */
         break;
+		}
 
-        case 31:    /* RF4_XXX8X4 */
+        case 31:
+		{
+		    /* RF4_XXX8X4 */
         break;
+		}
 
-        case 32:    /* RF5_BA_ACID */
+        case 32:
+		{
+		    /* RF5_BA_ACID */
         if (borg_skill[BI_IACID]) break;
         z = ouch;
         p += 40;
         break;
+		}
 
-        case 33:    /* RF5_BA_ELEC */
+        case 33:
+		{
+		    /* RF5_BA_ELEC */
         if (borg_skill[BI_IELEC]) break;
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 34:    /* RF5_BA_FIRE */
+        case 34:
+		{
+		    /* RF5_BA_FIRE */
         if (borg_skill[BI_IFIRE]) break;
         z = ouch;
         p += 40;
         break;
+		}
 
-        case 35:    /* RF5_BA_COLD */
+        case 35:
+		{
+		    /* RF5_BA_COLD */
         if (borg_skill[BI_ICOLD]) break;
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 36:    /* RF5_BA_POIS */
+        case 36:
+		{
+		    /* RF5_BA_POIS */
         z = ouch;
         if (borg_skill[BI_RPOIS]) break;
         p += 20;
         break;
+		}
 
-        case 37:    /* RF5_BA_NETH */
+        case 37:
+		{
+		    /* RF5_BA_NETH */
         z = ouch + 100;
         if (borg_skill[BI_RNTHR]) break;
         p += 300;
         break;
+		}
 
-        case 38:    /* RF5_BA_WATE */
+        case 38:
+		{
+		    /* RF5_BA_WATE */
         z = ouch;
         p += 50;
         break;
+		}
 
-        case 39:    /* RF5_BA_MANA */
+        case 39:
+		{
+		    /* RF5_BA_MANA */
         z = ouch;
         break;
+		}
 
-        case 40:    /* RF5_BA_DARK */
+        case 40:
+		{
+		    /* RF5_BA_DARK */
         z = ouch;
         if (borg_skill[BI_RDARK]) break;
         if (borg_skill[BI_RBLIND]) break;
         p += 20;
         break;
+		}
 
-        case 41:    /* RF5_DRAIN_MANA */
+        case 41:
+		{
+		    /* RF5_DRAIN_MANA */
         if (borg_skill[BI_MAXSP]) p += 10;
         break;
+		}
 
-        case 42:    /* RF5_MIND_BLAST */
+        case 42:
+		{
+		    /* RF5_MIND_BLAST */
         z = 20;
         break;
+		}
 
-        case 43:    /* RF5_BRAIN_SMASH */
+        case 43:
+		{
+		    /* RF5_BRAIN_SMASH */
         z = (12 * 15);
         p += 100;
         break;
+		}
 
-        case 44:    /* RF5_CAUSE_1 */
+        case 44:
+		{
+		    /* RF5_CAUSE_1 */
         z = (3 * 8);
         break;
+		}
 
-        case 45:    /* RF5_CAUSE_2 */
+        case 45:
+		{
+		    /* RF5_CAUSE_2 */
         z = (8 * 8);
         break;
+		}
 
-        case 46:    /* RF5_CAUSE_3 */
+        case 46:
+		{
+		    /* RF5_CAUSE_3 */
         z = (10 * 15);
         break;
+		}
 
-        case 47:    /* RF5_CAUSE_4 */
+        case 47:
+		{
+		    /* RF5_CAUSE_4 */
         z = (15 * 15);
         p += 50;
         break;
+		}
 
-        case 48:    /* RF5_BO_ACID */
+        case 48:
+		{
+		    /* RF5_BO_ACID */
         if (borg_skill[BI_IACID]) break;
         z = ouch;
         p += 40;
         break;
+		}
 
-        case 49:    /* RF5_BO_ELEC */
+        case 49:
+		{
+		    /* RF5_BO_ELEC */
         if (borg_skill[BI_IELEC]) break;
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 50:    /* RF5_BO_FIRE */
+        case 50:
+		{
+		    /* RF5_BO_FIRE */
         if (borg_skill[BI_IFIRE]) break;
         z = ouch;
         p += 40;
         break;
+		}
 
-        case 51:    /* RF5_BO_COLD */
+        case 51:
+		{
+		    /* RF5_BO_COLD */
         if (borg_skill[BI_ICOLD]) break;
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 52:    /* RF5_BO_POIS */
+        case 52:
+		{
+		    /* RF5_BO_POIS */
         /* XXX XXX XXX */
         break;
+		}
 
-        case 53:    /* RF5_BO_NETH */
+        case 53:
+		{
+		    /* RF5_BO_NETH */
         z = ouch + 100;
         if (borg_skill[BI_RNTHR]) break;
         p += 200;
         break;
+		}
 
-        case 54:    /* RF5_BO_WATE */
+        case 54:
+		{
+		    /* RF5_BO_WATE */
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 55:    /* RF5_BO_MANA */
+        case 55:
+		{
+		    /* RF5_BO_MANA */
         z = ouch;
         break;
+		}
 
-        case 56:    /* RF5_BO_PLAS */
+        case 56:
+		{
+		    /* RF5_BO_PLAS */
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 57:    /* RF5_BO_ICEE */
+        case 57:
+		{
+		    /* RF5_BO_ICEE */
         z = ouch;
         p += 20;
         break;
+		}
 
-        case 58:    /* RF5_MISSILE */
+        case 58:
+		{
+		    /* RF5_MISSILE */
         z = ouch;
         break;
+		}
 
-        case 59:    /* RF5_SCARE */
+        case 59:
+		{
+		    /* RF5_SCARE */
         p += 10;
         break;
+		}
 
-        case 60:    /* RF5_BLIND */
+        case 60:
+		{
+		    /* RF5_BLIND */
         p += 10;
         break;
+		}
 
-        case 61:    /* RF5_CONF */
+        case 61:
+		{
+		    /* RF5_CONF */
         p += 10;
         break;
+		}
 
-        case 62:    /* RF5_SLOW */
+        case 62:
+		{
+		    /* RF5_SLOW */
         p += 5;
         break;
+		}
 
-        case 63:    /* RF5_HOLD */
+        case 63:
+		{
+		    /* RF5_HOLD */
         p += 20;
         break;
+		}
 
-        case 64:    /* RF6_HASTE */
+        case 64:
+		{
+		    /* RF6_HASTE */
         p += 10+ borg_skill[BI_CDEPTH];
         break;
+		}
 
-        case 65:    /* RF6_XXX1X6 */
+        case 65:
+		{
+		    /* RF6_XXX1X6 */
         break;
+		}
 
-        case 66:    /* RF6_HEAL */
+        case 66:
+		{
+		    /* RF6_HEAL */
         p += 10;
         break;
+		}
 
-        case 67:    /* RF6_XXX2X6 */
+        case 67:
+		{
+		    /* RF6_XXX2X6 */
         break;
+		}
 
-        case 68:    /* RF6_XXX3X6 */
+        case 68:
+		{
+		    /* RF6_XXX3X6 */
         break;
+		}
 
-        case 69:    /* RF6_XXX4X6 */
+        case 69:
+		{
+		    /* RF6_XXX4X6 */
         break;
+		}
 
-        case 70:    /* RF6_TELE_TO */
+        case 70:
+		{
+		    /* RF6_TELE_TO */
         p += 20 + borg_skill[BI_CDEPTH];
         break;
+		}
 
-        case 71:    /* RF6_TELE_AWAY */
+        case 71:
+		{
+		    /* RF6_TELE_AWAY */
         p += 10;
         break;
+		}
 
-        case 72:    /* RF6_TELE_LEVEL */
+        case 72:
+		{
+		    /* RF6_TELE_LEVEL */
         p += 50;
         break;
+		}
 
-        case 73:    /* RF6_XXX5 */
+        case 73:
+		{
+		    /* RF6_XXX5 */
         break;
+		}
 
-        case 74:    /* RF6_DARKNESS */
+        case 74:
+		{
+		    /* RF6_DARKNESS */
         break;
+		}
 
-        case 75:    /* RF6_TRAPS */
+        case 75:
+		{
+		    /* RF6_TRAPS */
         p += 50;
         break;
+		}
 
-        case 76:    /* RF6_FORGET */
+        case 76:
+		{
+		    /* RF6_FORGET */
         /* if you have lots of cash this is not very scary... just re-ID.*/
         if (borg_skill[BI_CLEVEL] < 35)
             p += 500;
         else
             p += 50;
         break;
+		}
 
-        case 77:    /* RF6_XXX6X6 */
+        case 77:
+		{
+		    /* RF6_XXX6X6 */
         break;
+		}
 
-        case 78:    /* RF6_XXX7X6 */
+        case 78:
+		{
+		    /* RF6_XXX7X6 */
         break;
+		}
 
-        case 79:    /* RF6_XXX8X6 */
+        case 79:
+		{
+		    /* RF6_XXX8X6 */
         break;
+		}
 
-        /* Summoning is only as dangerious as the monster that is */
-        /* attually summoned.  This helps borgs kill summoners */
-
-        case 80:    /* RF6_S_MONSTER */
+        case 80:
+		{
+		    /* RF6_S_MONSTER */
         p +=55;
         break;
+		}
 
-        case 81:    /* RF6_S_MONSTERS */
+        case 81:
+		{
+		    /* RF6_S_MONSTERS */
         p += 30;
         break;
+		}
 
-        case 82:    /* RF6_S_ANT */
+        case 82:
+		{
+		    /* RF6_S_ANT */
         p +=15;
         break;
+		}
 
-        case 83:    /* RF6_S_SPIDER */
+        case 83:
+		{
+		    /* RF6_S_SPIDER */
         p +=25;
         break;
+		}
 
-        case 84:    /* RF6_S_HOUND */
+        case 84:
+		{
+		    /* RF6_S_HOUND */
         p +=45;
         break;
+		}
 
-        case 85:    /* RF6_S_HYDRA */
+        case 85:
+		{
+		    /* RF6_S_HYDRA */
         p += 70;
         break;
+		}
 
-        case 86:    /* RF6_S_ANGEL */
+        case 86:
+		{
+		    /* RF6_S_ANGEL */
         p += 80;
         break;
+		}
 
-        case 87:    /* RF6_S_DEMON */
+        case 87:
+		{
+		    /* RF6_S_DEMON */
         p += 80;
         break;
+		}
 
-        case 88:    /* RF6_S_UNDEAD */
+        case 88:
+		{
+		    /* RF6_S_UNDEAD */
         p += 80;
         break;
+		}
 
-        case 89:    /* RF6_S_DRAGON */
+        case 89:
+		{
+		    /* RF6_S_DRAGON */
         p += 80;
         break;
+		}
 
-        case 90:    /* RF6_S_HI_UNDEAD */
+        case 90:
+		{
+		    /* RF6_S_HI_UNDEAD */
         p += 95;
         break;
+		}
 
-        case 91:    /* RF6_S_HI_DRAGON */
+        case 91:
+		{
+		    /* RF6_S_HI_DRAGON */
         p += 95;
         break;
+		}
 
-        case 92:    /* RF6_S_WRAITH */
+        case 92:
+		{
+		    /* RF6_S_WRAITH */
         p += 95;
         break;
+		}
 
-        case 93:    /* RF6_S_UNIQUE */
+        case 93:
+		{
+		    /* RF6_S_UNIQUE */
         p += 50;
         break;
+		}
     }
 
     /* Things which hurt us alot need to be a concern */
