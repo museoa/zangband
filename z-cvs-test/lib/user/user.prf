@@ -40,6 +40,12 @@
 ?:[EQU $SYS acn]
 %:user-acn.prf
 
+?:[EQU $SYS tk-win]
+%:user-tk-win.prf
+
+?:[EQU $SYS tk-x11]
+%:user-tk-x11.prf
+
 ?:1
 
 
