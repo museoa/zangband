@@ -196,5 +196,8 @@ extern errr init_vme(void);
 extern errr init_lsl(void);
 #endif
 
+#ifdef USE_GTK
+extern errr init_gtk(int, char**);
+#endif
 
 #endif /* INCLUDED_H_SYSTEM_H */

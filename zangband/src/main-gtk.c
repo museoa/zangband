@@ -64,7 +64,7 @@ static bool game_in_progress = FALSE;
 /*
  * Number of active terms
  */
-static int num_term;
+static int num_term = MAX_TERM_DATA;
 
 
 /*
@@ -437,6 +437,7 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 {
 	int i, mc, ms, mo, mx;
 
+	char buf[128];
 	char msg[128];
 
 	/* Extract four "modifier flags" */
@@ -483,16 +484,42 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 			Term_keypress('\010');
 			return (TRUE);
 		}
+		
+		case GDK_Shift_L:
+		case GDK_Shift_R:
+		case GDK_Control_L:
+		case GDK_Control_R:
+		case GDK_Caps_Lock:
+		case GDK_Shift_Lock:
+		case GDK_Meta_L:
+		case GDK_Meta_R:
+		case GDK_Alt_L:
+		case GDK_Alt_R:
+		case GDK_Super_L:
+		case GDK_Super_R:
+		case GDK_Hyper_L:
+		case GDK_Hyper_R:
+		{
+			/* Hack - do nothing to control characters */
+			return (TRUE);
+		}
 	}
 
 	/* Build the macro trigger string */
-	sprintf(msg, "%c%s%s%s%s_%s%c", 31,
+	sprintf(msg, "%c%s%s%s%s_%X%c", 31,
 	        mc ? "N" : "", ms ? "S" : "",
 	        mo ? "O" : "", mx ? "M" : "",
-	        gdk_keyval_name(event->keyval), 13);
+	        event->keyval, 13);
 
 	/* Enqueue the "macro trigger" string */
 	for (i = 0; msg[i]; i++) Term_keypress(msg[i]);
+	
+	/* Hack -- auto-define macros as needed */
+	if (event->length && (macro_find_exact(msg) < 0))
+	{
+		/* Create a macro */
+		macro_add(msg, buf);
+	}
 
 	return (TRUE);
 }
@@ -598,14 +625,14 @@ static void init_gtk_window(term_data *td, bool main)
 		gtk_signal_connect(GTK_OBJECT(options_font_item), "activate", change_font_event_handler, td);
 	}
 
-	gtk_signal_connect(GTK_OBJECT(td->window), "delete-event", GTK_SIGNAL_FUNC(delete_event_handler), NULL);
-	gtk_signal_connect(GTK_OBJECT(td->window), "key-press-event", GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
-	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose-event", GTK_SIGNAL_FUNC(expose_event_handler), td);
+	gtk_signal_connect(GTK_OBJECT(td->window), "delete_event", GTK_SIGNAL_FUNC(delete_event_handler), NULL);
+	gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event", GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
+	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event", GTK_SIGNAL_FUNC(expose_event_handler), td);
 
 	if (main)
-		gtk_signal_connect(GTK_OBJECT(td->window), "destroy", GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
+		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event", GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
 	else
-		gtk_signal_connect(GTK_OBJECT(td->window), "destroy", GTK_SIGNAL_FUNC(hide_event_handler), td);
+		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event", GTK_SIGNAL_FUNC(hide_event_handler), td);
 
 	/* Pack widgets */
 	gtk_container_add(GTK_CONTAINER(td->window), box);
@@ -640,7 +667,7 @@ static void init_gtk_window(term_data *td, bool main)
 	td->gc = gdk_gc_new(td->drawing_area->window);
 	
 	/* Clear the pixmap */
-	gdk_draw_rectangle(td->pixmap, td->gc, TRUE,
+	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
 		                0, 0,
 		                td->cols * td->font_wid, td->rows * td->font_hgt);
 }

@@ -640,7 +640,7 @@ int main(int argc, char *argv[])
 		if (0 == init_gtk(argc, argv))
 		{
 			/* Mega-hack */
-			ANGBAND_SYS = "x11";
+			ANGBAND_SYS = "gtk";
 			done = TRUE;
 		}
 	}
