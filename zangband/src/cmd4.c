@@ -4057,7 +4057,7 @@ static void dump_dungeon_info(FILE *fff, int town)
 		if (!depth)
 		{
 			/* It is still guarded by monsters */
-			froff(fff, "  (Guarded)");
+			froff(fff, ", guarded");
 		}
 	}
 
@@ -4067,28 +4067,34 @@ static void dump_dungeon_info(FILE *fff, int town)
 		/* Show the depth reached */
 		if (depth_in_feet)
 		{
-			froff(fff, ", descended to %d feet", depth * 50);
+			if (depth == d_ptr->min_level)
+				froff(fff, ", %d feet", depth * 50);
+			else
+				froff(fff, ", %d - %d feet", d_ptr->min_level * 50, depth * 50);
 		}
 		else
 		{
-			froff(fff, ", descended to level %d", depth);
+			if (depth == d_ptr->min_level)
+				froff(fff, ", level %d", depth);
+			else
+				froff(fff, ", level %d - %d", d_ptr->min_level, depth);
 		}
 
 		/* All the way down? */
 		if (depth == d_ptr->max_level)
 		{
-			froff(fff, " (Bottom)");
+			froff(fff, " (bottom)");
 		}
 	}
 
 	/* Is the player in this dungeon? */
 	if (p_ptr->place_num == town && p_ptr->depth)
 	{
-		froff(fff, " (Current).\n\n");
+		froff(fff, ", current.\n\n\n");
 	}
 	else
 	{
-		froff(fff, ".\n");
+		froff(fff, ".\n\n");
 	}
 }
 
