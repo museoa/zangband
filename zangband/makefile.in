@@ -9,7 +9,7 @@
 ## Please do not edit "makefile", as it is auto-generated
 ## by ./configure from makefile.in  Edit makefile.in instead.
 ##
-# @configure_input@
+## @configure_input@
 
 CC := @CC@
 
@@ -18,7 +18,7 @@ CPPFLAGS := @CPPFLAGS@
 LIBS := @LIBS@
 LDFLAGS := @LDFLAGS@
 
-DESTDIR = @DESTDIR@
+DESTDIR = @DEFAULT_PATH@
 GAMEGROUP = @GAMEGROUP@
 
 bindir = @bindir@

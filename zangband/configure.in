@@ -7,6 +7,9 @@ AC_INIT(src/main.c)
 dnl write the resulting #defines into a header file
 AM_CONFIG_HEADER(src/autoconf.h)
 
+dnl default option
+GAMEGROUP="games"
+
 AC_ARG_WITH(setgid,
 [  --with-setgid=NAME      setgid usage: install angband as group NAME],
 [case "${withval}" in
@@ -30,8 +33,8 @@ AC_LANG_C
 basedir=`pwd`
 
 dnl generate the installation path for the ./lib/ folder
-if test "$GAMEGROUP" != ""; then
-  game_datadir="$datadir/games/$PACKAGE/lib/"
+if test "$GAMEGROUP" != "games"; then
+  game_datadir="$datadir/games/zangband/lib/"
 else
   game_datadir="$basedir/lib/"
   bindir="$basedir"
