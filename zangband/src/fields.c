@@ -468,7 +468,7 @@ void compact_fields(int size)
 			fld_ptr = field_find(f_ptr);
 
 			/* Call completion routine */
-			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT))
+			if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
 			{
 				/* It didn't delete itself, so we do it now */
 				delete_field_ptr(fld_ptr);
@@ -845,7 +845,7 @@ void init_fields(void)
 		f_ptr->f_char = t_ptr->f_char;
 
 		/* Call loading routine */
-		(void)field_hook_single(field_find(f_ptr), FIELD_ACT_LOAD);
+		(void)field_hook_single(f_ptr, FIELD_ACT_LOAD);
 	}
 }
 
@@ -966,7 +966,7 @@ void field_destroy_type(s16b fld_idx, byte typ)
 			fld_ptr = field_find(f_ptr);
 
 			/* Call completion routine */
-			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT))
+			if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
 			{
 				/* It didn't delete itself, so we do it now */
 				delete_field_ptr(fld_ptr);
@@ -1052,12 +1052,11 @@ s16b place_field(int x, int y, s16b t_idx)
  *
  * It returns FALSE if the field deleted itself, TRUE otherwise.
  */
-bool field_hook_single(s16b *fld_ptr, int action, ...)
+bool field_hook_single(field_type *f_ptr, int action, ...)
 {
 	va_list vp;
 
 	/* Point to the field */
-	field_type *f_ptr = &fld_list[*fld_ptr];
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
     
     /* Begin the Varargs Stuff */
@@ -1070,7 +1069,7 @@ bool field_hook_single(s16b *fld_ptr, int action, ...)
 		if (t_ptr->action[action] (f_ptr, vp))
 		{
 			/* The field wants to be deleted */
-			delete_field_ptr(fld_ptr);
+			delete_field_ptr(field_find(f_ptr));
             
             /* End the Varargs Stuff */
 			va_end(vp);
@@ -1292,7 +1291,7 @@ void process_fields(void)
 			if (!f_ptr->counter)
 			{
 				/* Call completion routine */
-				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT))
+				if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
 				{
 					/* It didn't delete itself - do it now */
 					delete_field_ptr(fld_ptr);
@@ -2072,7 +2071,7 @@ void place_trap(int x, int y)
 	if (place_field(x, y, t_idx))
 	{
 		/* Initialise it */
-		(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT);
+		(void)field_hook_single(&fld_list[*hack_fld_ptr], FIELD_ACT_INIT);
 	}
 }
 
@@ -3203,7 +3202,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	 * Hack - note that hack_fld_ptr is a global that is overwritten
 	 * by the place_field() function.
 	 */
-	(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, power);
+	(void)field_hook_single(&fld_list[*hack_fld_ptr], FIELD_ACT_INIT, power);
 }
 
 /*

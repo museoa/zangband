@@ -466,7 +466,7 @@ bool monster_death(int m_idx, bool explode)
 				if (place_field(x, y, FT_CORPSE))
 				{
 					/* Initialise it */
-					(void)field_hook_single(hack_fld_ptr,
+					(void)field_hook_single(&fld_list[*hack_fld_ptr],
 											FIELD_ACT_INIT, m_ptr);
 				}
 			}
@@ -476,7 +476,7 @@ bool monster_death(int m_idx, bool explode)
 				if (place_field(x, y, FT_SKELETON))
 				{
 					/* Initialise it */
-					(void)field_hook_single(hack_fld_ptr,
+					(void)field_hook_single(&fld_list[*hack_fld_ptr],
 											FIELD_ACT_INIT, m_ptr);
 				}
 			}
@@ -2045,8 +2045,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
 
-	s16b *this_f_ptr, *next_f_ptr = NULL;
-
 	cptr s1, s2, s3;
 
 	bool boring;
@@ -2057,7 +2055,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 	int query;
 
 	object_type *o_ptr;
-
+	field_type *f_ptr;
 
 	/* Repeat forever */
 	while (1)
@@ -2362,17 +2360,13 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		OBJ_ITT_END;
 
 		/* Scan all fields in the grid */
-		for (this_f_ptr = &c_ptr->fld_idx; *this_f_ptr; this_f_ptr = next_f_ptr)
+		FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 		{
-			field_type *f_ptr = &fld_list[*this_f_ptr];
 			field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 
 			cptr name = t_ptr->name;
 
 			char fld_name[40];
-
-			/* Acquire next field */
-			next_f_ptr = &f_ptr->next_f_idx;
 
 			/* Do not describe this field */
 			if (f_ptr->info & FIELD_INFO_NO_LOOK) continue;
@@ -2384,7 +2378,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				if (t_ptr->action[FIELD_ACT_LOOK])
 				{
 					/* Get the name */
-					(void)field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
+					(void)field_hook_single(f_ptr, FIELD_ACT_LOOK,
 											fld_name);
 
 					/* Point to it */
@@ -2429,6 +2423,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 			}
 		}
+		FLD_ITT_END;
 
 		/* Sometimes a field stops the feat from being mentioned */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NFT_LOOK))
