@@ -671,6 +671,8 @@ wild_gen_data_type *wild_gen_data;
 /* The decision tree for working out what block type to pick */
 wild_choice_tree_type *wild_choice_tree;
 
+byte *wild_temp_dist;
+
 /*
  * The array of dungeon items [max_o_idx]
  */

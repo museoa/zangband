@@ -1889,7 +1889,7 @@ errr init_w_info(bool new_game)
 	/* Later must add in raw file + misc.txt support. */
 	C_MAKE(wild_choice_tree, 100, wild_choice_tree_type);
 	C_MAKE(wild_gen_data, 27, wild_gen_data_type);
-	
+	C_MAKE(wild_temp_dist, WILD_SIZE, byte);
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */

@@ -268,8 +268,6 @@ static void build_store(int n, int yy, int xx)
 }
 
 
-
-
 /*
  * Generate the "consistent" town features, and place the player
  *
@@ -1932,19 +1930,6 @@ static void del_block(blk_ptr block_ptr)
 }
 
 
-/* Store routine for the fractal cave generator */
-/* this routine probably should be an inline function or a macro. */
-static void store_height(int x, int y, int val)
-{
-	/* only write to points that are "blank" */
-	if (temp_block[y][x] != MAX_SHORT) return;
-
-	/* store the value in height-map format */
-	temp_block[y][x] = val;
-
-	return;
-}
-
 /*
 * Explanation of the plasma fractal algorithm:
 *
@@ -1973,17 +1958,10 @@ static void frac_block(void)
 	/* fixed point variables- these are stored as 256 x normal value
 	* this gives 8 binary places of fractional part + 8 places of normal part*/
 
-	u16b lstep, hstep, i, j, diagsize, size;
+	u16b lstep, hstep, i, j, ii, jj, size;
 
 	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
 	size = WILD_BLOCK_SIZE;
-
-
-	/*
-	 * Scale factor for middle points:
-	 * About sqrt(2) * 256 / 2 - correct for a square lattice.
-	 */
-	diagsize = 181;
 
 	/* Clear the section */
 	for (i = 0; i <= size; i++)
@@ -2001,13 +1979,13 @@ static void frac_block(void)
 	grd = 4 * 256;
 
 	/* Set the corner values just in case grd > size. */
-	store_height(0, 0, cutoff);
-	store_height(0, size, cutoff);
-	store_height(size, 0, cutoff);
-	store_height(size, size, cutoff);
+	temp_block[0][0] = cutoff;
+	temp_block[0][size] = cutoff;
+	temp_block[size][0] = cutoff;
+	temp_block[0][size] = cutoff;
 
 	/* Set the middle square to be an open area. */
-	store_height(size / 2, size / 2, cutoff);
+	temp_block[size / 2][size / 2] = cutoff;
 
 	/* Initialize the step sizes */
 	lstep = hstep = size * 256;
@@ -2028,18 +2006,26 @@ static void frac_block(void)
 		{
 			for (j = 0; j <= size; j += lstep)
 			{
-				if (hstep > grd)
+				/* cache values of i,j divided by 256 */
+				ii = i >> 8;
+				jj = j >> 8;
+				
+				/* only write to points that are "blank" */
+				if (temp_block[jj][ii] == MAX_SHORT)
 				{
-					/* If greater than 'grid' level then is random */
-					store_height(i >> 8, j >> 8, randint(WILD_BLOCK_SIZE * 256));
-				}
-			   	else
-				{
-					/* Average of left and right points +random bit */
-					store_height(i >> 8, j >> 8,
-					((temp_block[j >> 8][(i - hstep) >> 8] +
-					temp_block[j >> 8][(i + hstep) >>8]) >> 1) +
-					((randint(lstep) - hstep) >> 1));
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						temp_block[jj][ii] = randint(WILD_BLOCK_SIZE * 256);
+					}
+			   		else
+					{
+						/* Average of left and right points +random bit */
+						temp_block[jj][ii] =
+						((temp_block[jj][(i - hstep) >> 8] +
+						temp_block[jj][(i + hstep) >>8]) >> 1) +
+						((randint(lstep) - hstep) >> 1);
+					}
 				}
 			}
 		}
@@ -2050,18 +2036,26 @@ static void frac_block(void)
 		{
 			for (i = 0; i <= size; i += lstep)
 		   	{
-				if (hstep > grd)
-				{
-					/* If greater than 'grid' level then is random */
-					store_height(i >> 8, j >> 8, randint(WILD_BLOCK_SIZE * 256));
-				}
-		   		else
-				{
-					/* Average of up and down points +random bit */
-					store_height(i >> 8, j >> 8,
-					((temp_block[(j - hstep) >> 8][i >> 8]
-					+ temp_block[(j + hstep) >> 8][i >> 8]) >> 1)
-					+ ((randint(lstep) - hstep) >> 1));
+				/* cache values of i,j / 256 */
+				ii = i >> 8;
+				jj = j >> 8;
+				
+				/* only write to points that are "blank" */
+				if (temp_block[jj][ii] == MAX_SHORT)
+				{				
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						temp_block[jj][ii] = randint(WILD_BLOCK_SIZE * 256);
+					}
+		   			else
+					{
+						/* Average of up and down points +random bit */
+						temp_block[jj][ii] =
+						((temp_block[(j - hstep) >> 8][ii]
+						+ temp_block[(j + hstep) >> 8][ii]) >> 1)
+						+ ((randint(lstep) - hstep) >> 1);
+					}
 				}
 			}
 		}
@@ -2071,21 +2065,29 @@ static void frac_block(void)
 		{
 			for (j = hstep; j <= size - hstep; j += lstep)
 			{
-			   	if (hstep > grd)
+			   	/* cache values of i,j / 256 */
+				ii = i >> 8;
+				jj = j >> 8;
+				
+				/* only write to points that are "blank" */
+				if (temp_block[jj][ii] == MAX_SHORT)		
 				{
-					/* If greater than 'grid' level then is random */
-					store_height(i >> 8, j >> 8, randint(WILD_BLOCK_SIZE * 256));
-				}
-		   		else
-				{
-					/* average over all four corners + scale by diagsize to
-					 * reduce the effect of the square grid on the shape of the fractal */
-					store_height(i >> 8, j >> 8,
-					((temp_block[(j - hstep) >> 8][(i - hstep) >> 8]
-					+ temp_block[(j + hstep) >> 8][(i - hstep) >> 8]
-					+ temp_block[(j - hstep) >> 8][(i + hstep) >> 8]
-					+ temp_block[(j + hstep) >> 8][(i + hstep) >> 8]) >> 2)
-					+ (((randint(lstep) - hstep) * diagsize) >> 8));
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						temp_block[jj][ii] = randint(WILD_BLOCK_SIZE * 256);
+					}
+		   			else
+					{
+						/* average over all four corners + scale by 181 to
+						 * reduce the effect of the square grid on the shape of the fractal */
+						temp_block[jj][ii] =
+						((temp_block[(j - hstep) >> 8][(i - hstep) >> 8]
+						+ temp_block[(j + hstep) >> 8][(i - hstep) >> 8]
+						+ temp_block[(j - hstep) >> 8][(i + hstep) >> 8]
+						+ temp_block[(j + hstep) >> 8][(i + hstep) >> 8]) >> 2)
+						+ (((randint(lstep) - hstep) * 181) >> 8);
+					}
 				}
 			}
 		}
@@ -2434,8 +2436,477 @@ void move_wild(void)
 
 
 
+/* this routine probably should be an inline function or a macro. */
+static void store_hgtmap(int x, int y, int val)
+{
+	/* Save distribution information */	
+	wild_temp_dist[val] = 1;
+	
+	/* store the value in height-map format */
+	wild[y][x].gen.hgt_map = val;
+
+	return;
+}
+
+/*
+ * This function creates the first of the three parameters used to generate
+ * the wilderness.  This is done by making a plasma fractal.  The distribution
+ * of the values in the height map is stored so that they can be scaled to
+ * generate a wilderness with an even distribution of terrain.
+ */
+static void create_hgt_map(void)
+{
+	int grd;
+
+	/* fixed point variables- these are stored as 16 x normal value
+	* this gives 4 binary places of fractional part + 12 places of normal part*/
+
+	u16b lstep, hstep, i, j, ii, jj, size;
+
+	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
+	size = WILD_SIZE - 1;
+
+	/* Clear the section */
+	for (i = 0; i <= size; i++)
+	{
+		for (j = 0; j <= size; j++)
+		{
+			/* MAX_SHORT is a flag for "not done yet" */
+			wild[j][i].gen.hgt_map = MAX_SHORT;
+		}
+		
+		/* Clear distribution information */
+		wild_temp_dist[i] = 0;
+	}
+
+	grd = 4 * 16;
+
+	/* Set the corner values just in case grd > size. */
+	store_hgtmap(0, 0, rand_int(size));
+	store_hgtmap(size, 0, rand_int(size));
+	store_hgtmap(0, size, rand_int(size));
+	store_hgtmap(size, size, rand_int(size));
+
+	/* Initialize the step sizes */
+	lstep = hstep = size * 16;
+	size = size * 16;
+
+	/*
+	 * Fill in the square with fractal height data -
+	 * like the 'plasma fractal' in fractint.
+	 */
+	while (lstep > 16)
+	{
+		/* Halve the step sizes */
+		lstep = hstep;
+		hstep /= 2;
+
+		/* middle top to bottom.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = 0; j <= size; j += lstep)
+			{
+				/* cache values of i,j divided by 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.hgt_map == MAX_SHORT)
+				{
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_hgtmap(ii, jj, randint(WILD_SIZE * 16));
+					}
+			   		else
+					{
+						/* Average of left and right points +random bit */
+						store_hgtmap(ii, jj,
+						((wild[jj][(i - hstep) >> 4].gen.hgt_map +
+						wild[jj][(i + hstep) >> 4].gen.hgt_map) >> 1) +
+						((randint(lstep) - hstep) >> 1));
+					}
+				}
+			}
+		}
 
 
+		/* middle left to right.*/
+		for (j = hstep; j <= size - hstep; j += lstep)
+		{
+			for (i = 0; i <= size; i += lstep)
+		   	{
+				/* cache values of i,j / 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.hgt_map == MAX_SHORT)
+				{				
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_hgtmap(ii, jj, randint(WILD_SIZE * 16));
+					}
+		   			else
+					{
+						/* Average of up and down points +random bit */
+						store_hgtmap(ii, jj,
+						((wild[(j - hstep) >> 4][ii].gen.hgt_map
+						+ wild[(j + hstep) >> 4][ii].gen.hgt_map) >> 1)
+						+ ((randint(lstep) - hstep) >> 1));
+					}
+				}
+			}
+		}
+
+		/* center.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = hstep; j <= size - hstep; j += lstep)
+			{
+			   	/* cache values of i,j / 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.hgt_map == MAX_SHORT)		
+				{
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_hgtmap(ii, jj, randint(WILD_SIZE * 16));
+					}
+		   			else
+					{
+						/* average over all four corners + scale by 181 to
+						 * reduce the effect of the square grid on the shape of the fractal */
+						store_hgtmap(ii, jj,
+						((wild[(j - hstep) >> 4][(i - hstep) >> 4].gen.hgt_map
+						+ wild[(j + hstep) >> 4][(i - hstep) >> 4].gen.hgt_map
+						+ wild[(j - hstep) >> 4][(i + hstep) >> 4].gen.hgt_map
+						+ wild[(j + hstep) >> 4][(i + hstep) >> 4].gen.hgt_map) >> 2)
+						+ (((randint(lstep) - hstep) * 181) >> 8));
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/* this routine probably should be an inline function or a macro. */
+static void store_popmap(int x, int y, int val, u16b sea)
+{
+	/* Save distribution information (only if not below sea level)*/	
+	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val] = 1;
+	
+	/* store the value in height-map format */
+	wild[y][x].gen.pop_map = val;
+
+	return;
+}
+
+/*
+ * This function creates the second of the three parameters used to generate
+ * the wilderness.  This is done by making a plasma fractal.
+ */
+static void create_pop_map(u16b sea)
+{
+	int grd;
+
+	/* fixed point variables- these are stored as 16 x normal value
+	* this gives 4 binary places of fractional part + 12 places of normal part*/
+
+	u16b lstep, hstep, i, j, ii, jj, size;
+
+	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
+	size = WILD_SIZE - 1;
+
+	/* Clear the section */
+	for (i = 0; i <= size; i++)
+	{
+		for (j = 0; j <= size; j++)
+		{
+			/* MAX_SHORT is a flag for "not done yet" */
+			wild[j][i].gen.pop_map = MAX_SHORT;
+		}
+		
+		/* Clear distribution information */
+		wild_temp_dist[i] = 0;
+	}
+
+	grd = 4 * 16;
+
+	/* Set the corner values just in case grd > size. */
+	store_popmap(0, 0, rand_int(size), sea);
+	store_popmap(size, 0, rand_int(size), sea);
+	store_popmap(0, size, rand_int(size), sea);
+	store_popmap(size, size, rand_int(size), sea);
+
+	/* Initialize the step sizes */
+	lstep = hstep = size * 16;
+	size = size * 16;
+
+	/*
+	 * Fill in the square with fractal height data -
+	 * like the 'plasma fractal' in fractint.
+	 */
+	while (lstep > 16)
+	{
+		/* Halve the step sizes */
+		lstep = hstep;
+		hstep /= 2;
+
+		/* middle top to bottom.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = 0; j <= size; j += lstep)
+			{
+				/* cache values of i,j divided by 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.pop_map == MAX_SHORT)
+				{
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_popmap(ii, jj, randint(WILD_SIZE * 16), sea);
+					}
+			   		else
+					{
+						/* Average of left and right points +random bit */
+						store_popmap(ii, jj,
+						((wild[jj][(i - hstep) >> 4].gen.pop_map +
+						wild[jj][(i + hstep) >> 4].gen.pop_map) >> 1) +
+						((randint(lstep) - hstep) >> 1), sea);
+					}
+				}
+			}
+		}
+
+
+		/* middle left to right.*/
+		for (j = hstep; j <= size - hstep; j += lstep)
+		{
+			for (i = 0; i <= size; i += lstep)
+		   	{
+				/* cache values of i,j / 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.pop_map == MAX_SHORT)
+				{				
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_popmap(ii, jj, randint(WILD_SIZE * 16), sea);
+					}
+		   			else
+					{
+						/* Average of up and down points +random bit */
+						store_popmap(ii, jj,
+						((wild[(j - hstep) >> 4][ii].gen.pop_map
+						+ wild[(j + hstep) >> 4][ii].gen.pop_map) >> 1)
+						+ ((randint(lstep) - hstep) >> 1), sea);
+					}
+				}
+			}
+		}
+
+		/* center.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = hstep; j <= size - hstep; j += lstep)
+			{
+			   	/* cache values of i,j / 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.pop_map == MAX_SHORT)		
+				{
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_popmap(ii, jj, randint(WILD_SIZE * 16), sea);
+					}
+		   			else
+					{
+						/* average over all four corners + scale by 181 to
+						 * reduce the effect of the square grid on the shape of the fractal */
+						store_popmap(ii, jj,
+						((wild[(j - hstep) >> 4][(i - hstep) >> 4].gen.pop_map
+						+ wild[(j + hstep) >> 4][(i - hstep) >> 4].gen.pop_map
+						+ wild[(j - hstep) >> 4][(i + hstep) >> 4].gen.pop_map
+						+ wild[(j + hstep) >> 4][(i + hstep) >> 4].gen.pop_map) >> 2)
+						+ (((randint(lstep) - hstep) * 181) >> 8), sea);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/* this routine probably should be an inline function or a macro. */
+static void store_lawmap(int x, int y, int val, u16b sea)
+{
+	/* Save distribution information (only if not below sea level)*/	
+	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val] = 1;
+	
+	/* store the value in height-map format */
+	wild[y][x].gen.law_map = val;
+
+	return;
+}
+
+/*
+ * This function creates the third of the three parameters used to generate
+ * the wilderness.  This is done by making a plasma fractal.
+ */
+static void create_law_map(u16b sea)
+{
+	int grd;
+
+	/* fixed point variables- these are stored as 16 x normal value
+	* this gives 4 binary places of fractional part + 12 places of normal part*/
+
+	u16b lstep, hstep, i, j, ii, jj, size;
+
+	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
+	size = WILD_SIZE - 1;
+
+	/* Clear the section */
+	for (i = 0; i <= size; i++)
+	{
+		for (j = 0; j <= size; j++)
+		{
+			/* MAX_SHORT is a flag for "not done yet" */
+			wild[j][i].gen.law_map = MAX_SHORT;
+		}
+		
+		/* Clear distribution information */
+		wild_temp_dist[i] = 0;
+	}
+
+	grd = 4 * 16;
+
+	/* Set the corner values just in case grd > size. */
+	store_lawmap(0, 0, rand_int(size), sea);
+	store_lawmap(size, 0, rand_int(size), sea);
+	store_lawmap(0, size, rand_int(size), sea);
+	store_lawmap(size, size, rand_int(size), sea);
+
+	/* Initialize the step sizes */
+	lstep = hstep = size * 16;
+	size = size * 16;
+
+	/*
+	 * Fill in the square with fractal height data -
+	 * like the 'plasma fractal' in fractint.
+	 */
+	while (lstep > 16)
+	{
+		/* Halve the step sizes */
+		lstep = hstep;
+		hstep /= 2;
+
+		/* middle top to bottom.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = 0; j <= size; j += lstep)
+			{
+				/* cache values of i,j divided by 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.law_map == MAX_SHORT)
+				{
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_lawmap(ii, jj, randint(WILD_SIZE * 16), sea);
+					}
+			   		else
+					{
+						/* Average of left and right points +random bit */
+						store_lawmap(ii, jj,
+						((wild[jj][(i - hstep) >> 4].gen.law_map +
+						wild[jj][(i + hstep) >> 4].gen.law_map) >> 1) +
+						((randint(lstep) - hstep) >> 1), sea);
+					}
+				}
+			}
+		}
+
+
+		/* middle left to right.*/
+		for (j = hstep; j <= size - hstep; j += lstep)
+		{
+			for (i = 0; i <= size; i += lstep)
+		   	{
+				/* cache values of i,j / 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.law_map == MAX_SHORT)
+				{				
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_lawmap(ii, jj, randint(WILD_SIZE * 16), sea);
+					}
+		   			else
+					{
+						/* Average of up and down points +random bit */
+						store_lawmap(ii, jj,
+						((wild[(j - hstep) >> 4][ii].gen.law_map
+						+ wild[(j + hstep) >> 4][ii].gen.law_map) >> 1)
+						+ ((randint(lstep) - hstep) >> 1), sea);
+					}
+				}
+			}
+		}
+
+		/* center.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = hstep; j <= size - hstep; j += lstep)
+			{
+			   	/* cache values of i,j / 16 */
+				ii = i >> 4;
+				jj = j >> 4;
+				
+				/* only write to points that are "blank" */
+				if (wild[jj][ii].gen.law_map == MAX_SHORT)
+				{
+					if (hstep > grd)
+					{
+						/* If greater than 'grid' level then is random */
+						store_lawmap(ii, jj, randint(WILD_SIZE * 16), sea);
+					}
+		   			else
+					{
+						/* average over all four corners + scale by 181 to
+						 * reduce the effect of the square grid on the shape of the fractal */
+						store_lawmap(ii, jj,
+						((wild[(j - hstep) >> 4][(i - hstep) >> 4].gen.law_map
+						+ wild[(j + hstep) >> 4][(i - hstep) >> 4].gen.law_map
+						+ wild[(j - hstep) >> 4][(i + hstep) >> 4].gen.law_map
+						+ wild[(j + hstep) >> 4][(i + hstep) >> 4].gen.law_map) >> 2)
+						+ (((randint(lstep) - hstep) * 181) >> 8), sea);
+					}
+				}
+			}
+		}
+	}
+}
 /*
  * Create the wilderness - dodgy function now.  Much to be done.
  * Later this will use a fractal method to make the wilderness.
@@ -2447,7 +2918,88 @@ void move_wild(void)
 void create_wilderness(void)
 {
 	int i,j;
-
+	
+	u16b hgt_min, hgt_max, pop_min, pop_max, law_min, law_max;
+	u16b sea_level;
+	
+	/* Create "height" information of wilderness */
+	create_hgt_map();
+	
+	/* work out extremes of height so it can be scaled. */
+	hgt_min = hgt_max = pop_min = pop_max = law_min = law_max = 0;
+	
+	/* minimum height */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		if (wild_temp_dist != 0)
+		{
+			hgt_min = i;
+			break;
+		}
+	}
+	
+	/* maximum height */
+	for (i = WILD_SIZE - 1; i >= 0; i--)
+	{
+		if (wild_temp_dist != 0)
+		{
+			hgt_max = i;
+			break;
+		}
+	}
+	
+	/* The sea covers 1/3 of the wilderness */
+	sea_level = hgt_min + (hgt_max - hgt_min) / 3;
+	
+	/* create "population density" information */
+	create_pop_map(sea_level);
+	
+	/* work out extremes of population so it can be scaled. */
+	
+	/* minimum population */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		if (wild_temp_dist != 0)
+		{
+			pop_min = i;
+			break;
+		}
+	}
+	
+	/* maximum population */
+	for (i = WILD_SIZE - 1; i >= 0; i--)
+	{
+		if (wild_temp_dist != 0)
+		{
+			pop_max = i;
+			break;
+		}
+	}
+	
+	create_law_map(sea_level);
+	
+	/* work out extremes of "lawfulness" so it can be scaled. */
+	
+	/* minimum lawfulness */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		if (wild_temp_dist != 0)
+		{
+			law_min = i;
+			break;
+		}
+	}
+	
+	/* maximum lawfulness */
+	for (i = WILD_SIZE - 1; i >= 0; i--)
+	{
+		if (wild_temp_dist != 0)
+		{
+			law_max = i;
+			break;
+		}
+	}
+	
 	/* Fill wilderness with grass */
 	/* This will be replaced with a more inteligent routine later */
 	for (i = 0; i < WILD_SIZE; i++)
@@ -2455,7 +3007,7 @@ void create_wilderness(void)
 		for (j = 0; j < WILD_SIZE; j++)
 		{
 			/* All grass */
-			wild[j][i].done.wild = TERRAIN_GRASS;
+			wild[j][i].done.wild = 1;
 
 			/* No town yet */
 			wild[j][i].done.town = 0;

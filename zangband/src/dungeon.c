@@ -4073,6 +4073,7 @@ void play_game(bool new_game)
 	/* Flavor the objects */
 	flavor_init();
 
+	#if 0	
 	/* Initialize the town-buildings if necessary */
 	if (!dun_level && !p_ptr->inside_quest)
 	{
@@ -4080,6 +4081,8 @@ void play_game(bool new_game)
 		init_flags = INIT_ONLY_BUILDINGS;
 		process_dungeon_file("t_info.txt", 0, 0, MAX_HGT, MAX_WID);
 	}
+	
+	#endif
 
 	/* Reset the visual mappings */
 	reset_visuals();

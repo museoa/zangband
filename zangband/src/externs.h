@@ -327,6 +327,7 @@ extern wild_grid_type wild_grid;
 extern wild_type *wild[WILD_SIZE];
 extern wild_gen_data_type *wild_gen_data;
 extern wild_choice_tree_type *wild_choice_tree;
+extern byte *wild_temp_dist;
 extern object_type *o_list;
 extern monster_type *m_list;
 extern u16b max_towns;
