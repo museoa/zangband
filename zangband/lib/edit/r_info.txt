@@ -13499,3 +13499,52 @@ S:HEAL | BLINK | BLIND | CONF | CAUSE_3 | DARKNESS |
 S:ANIM_DEAD | SHRIEK | TELE_AWAY | BA_DARK | DRAIN_MANA |
 S:S_MONSTER | S_UNDEAD | S_DEMON | S_KIN |
 D:A dark elven figure that glows with an inner light.
+
+N:882:Anti-magic hound
+G:Z:v
+I:110:36d10:30:30:0
+W:35:4:0:550
+B:CLAW:HURT:3d3
+B:BITE:UN_BONUS:3d12
+B:CLAW:HURT:3d3
+B:BITE:UN_BONUS:3d12
+F:FORCE_SLEEP | FRIENDS | DROP_SKELETON | DROP_CORPSE
+F:BASH_DOOR | RES_DISE
+F:ANIMAL | NO_CONF | NO_SLEEP
+S:1_IN_5 |
+F:ANIMAL | NO_CONF | NO_SLEEP
+S:1_IN_5 |
+S:BR_DISE
+D:A field of static energy surrounds this hound. Its presence seems 
+D:to dampen all other energies...
+
+N:883:Mana hound
+G:Z:B
+I:130:60d10:30:100:0
+W:51:4:0:4000
+B:BITE:HURT:25d1
+B:BITE:HURT:25d1
+B:BITE:HURT:25d1
+B:CLAW:HURT:3d3
+F:FORCE_SLEEP |
+F:FRIENDS |
+F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
+F:ANIMAL | NO_CONF | NO_SLEEP
+S:1_IN_8 |
+S:BR_MANA
+D:A powerful aura radiates from this canine creature. It feels 
+D:like... magic?
+
+N:884:Vore
+G:S:v
+I:125:35d10:20:30:40
+W:38:2:0:850
+B:CLAW:HURT:4d8
+B:CLAW:HURT:8d4
+F:DROP_90 | DROP_2D2 | DROP_SKELETON | DROP_CORPSE
+F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_ACID | IM_COLD
+F:EVIL
+S:1_IN_5
+S:BO_MANA
+D:A gaunt, vaguely humanoid torso merged with the form of a giant 
+D:spider, ugly as sin. It screams horribly as it charges at you.
