@@ -19,7 +19,7 @@
 /*
  * And now for Intelligent monster attacks (including spells).
  *
- * Original idea and code by "DRS" (David Reeves Sward).
+ * Original idea and code by "DRS" (David Reeve Sward).
  * Major modifications by "BEN" (Ben Harrison).
  *
  * Give monsters more intelligent attack/spell selection based on
