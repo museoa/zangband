@@ -2307,8 +2307,6 @@ bool borg_remove_stuff(void)
 	
 	/* Start with good power */
 	b_p = borg_power();
-	
-	borg_note_fmt("# Removing initial power(%ld).", (long) b_p);
 
 	/* Scan equip */
 	for (i = 0; i < equip_num; i++)
@@ -2330,12 +2328,10 @@ bool borg_remove_stuff(void)
 			(l_ptr->kn_flags3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Take it off */
-		l_ptr->treat_as = TREAT_AS_SWAP;
+		l_ptr->treat_as = TREAT_AS_GONE;
 
 		/* Evaluate the inventory */
 		p = borg_power();
-		
-		borg_note_fmt("# Removing %s - power(%ld).", l_ptr->o_name, (long) p);
 
 		/* Put it back on */
 		l_ptr->treat_as = TREAT_AS_NORM;

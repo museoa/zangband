@@ -2164,7 +2164,8 @@ static void borg_notice_inven(void)
 		/* A known item? */
 		if (l_ptr->k_idx)
 		{
-			if (l_ptr->treat_as == TREAT_AS_SWAP)
+			if ((l_ptr->treat_as == TREAT_AS_SWAP) ||
+				 (l_ptr->treat_as == TREAT_AS_GONE))
 			{
 				/* Examine the item */
 				borg_notice_inven_item(l_ptr);
@@ -2858,7 +2859,7 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 			w_ptr = &borg_home[x];
 		else
 			/* Check what the borg has on as well. */
-			w_ptr = &equipment[x - home_num];
+			w_ptr = look_up_equip_slot(x - home_num);
 
 		/* Don't count items we are swapping */
 		if (w_ptr->treat_as == TREAT_AS_SWAP) continue;
@@ -3767,7 +3768,7 @@ static void borg_notice_home_aux(void)
 		if (i < STORE_INVEN_MAX)
 			l_ptr = &borg_home[i];
 		else
-			l_ptr = &equipment[i - home_num];
+			l_ptr = look_up_equip_slot(i - home_num);
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;

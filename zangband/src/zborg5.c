@@ -4002,13 +4002,9 @@ s32b borg_power(void)
 
 	/* Process the equipment */
 	value += borg_power_aux3();
-	
-	borg_note_fmt("# Equip power %ld", (long) value);
 
 	/* Process the inventory */
 	value += borg_power_aux4();
-	
-	borg_note_fmt("# Inven power %ld", (long) value);
 
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
