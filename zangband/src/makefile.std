@@ -119,8 +119,7 @@ TKOBJS := \
 	tk/icon1.o tk/icon2.o tk/icon3.o tk/const.o \
 	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
 	tk/map1.o tk/map2.o \
-	tk/r_info.o tk/struct1.o tk/struct2.o \
-	tk/widget1.o tk/widget2.o tk/widget3.o \
+	tk/r_info.o tk/widget1.o tk/widget2.o tk/widget3.o \
 	tk/tk-util.o tk/tcltk.o
 
 ##
@@ -641,13 +640,11 @@ tk/canv.o: tk/icon.h
 tk/icon1.o: tk/icon.h
 tk/icon2.o: tk/widget.h tk/icon.h
 tk/icon3.o: tk/icon.h
-tk/interp1.o: tk/struct.h tk/icon.h
-tk/interp2.o: tk/struct.h tk/icon.h
+tk/interp1.o: tk/icon.h
+tk/interp2.o: tk/icon.h
 tk/map1.o: tk/widget.h tk/icon.h tk/map.h
 tk/map2.o: tk/widget.h tk/icon.h tk/map.h
 tk/plat.o: tk/icon.h
-tk/struct1.o: tk/struct.h tk/icon.h
-tk/struct2.o: tk/struct.h
 tk/widget1.o: tk/widget.h tk/icon.h
 tk/widget2.o: tk/widget.h tk/icon.h
 tk/widget3.o: tk/widget.h tk/icon.h
