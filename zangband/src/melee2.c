@@ -2940,8 +2940,6 @@ void process_monsters(int min_energy)
 	byte    old_r_cast_inate = 0;
 	byte    old_r_cast_spell = 0;
 
-	int speed;
-
 	int old_total_friends = total_friends;
 	s32b old_friend_align = friend_align;
 

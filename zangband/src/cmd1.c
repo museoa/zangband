@@ -1415,6 +1415,221 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	}
 }
 
+/**** The monster bashing code. -LM- ****/
+static void monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr, 
+			bool *fear, char *m_name)
+{
+	int bash_chance, bash_quality, bash_dam;
+
+	monster_type    *m_ptr = &m_list[c_ptr->m_idx];
+	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* No shield on arm, no bash.  */
+	if (!inventory[INVEN_ARM].k_idx)
+	{
+		bash_chance = 0;
+	}
+
+	/* Players do not bash if they could otherwise take advantage of special
+	 * bonuses against sleeping monsters, or if the monster is low-level.
+	 */
+	else if ((sleeping_bonus) || (r_ptr->level < p_ptr->lev / 2))
+	{
+		bash_chance = 0;
+	}
+
+	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
+	else bash_chance = p_ptr->skill_thn +
+	                   (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
+	                   (((p_ptr->pclass == CLASS_WARRIOR) ||
+	                     (p_ptr->pclass == CLASS_PALADIN) ||
+	                     (p_ptr->pclass == CLASS_WARRIOR_MAGE) ||
+	                     (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
+
+	/* Players bash more often when they see a real need. */
+	if (bash_chance)
+	{
+		if ((!inventory[INVEN_WIELD].k_idx) && (p_ptr->pclass != CLASS_MONK))
+			bash_chance *= 3;
+		else if ((inventory[INVEN_WIELD].dd * inventory[INVEN_WIELD].ds * (*blows))
+			< (inventory[INVEN_ARM].dd * inventory[INVEN_ARM].ds * 3))
+			bash_chance *= 2;
+	}
+
+	/* Try to get in a shield bash. */
+	if (bash_chance > rand_int(240 + r_ptr->level * 9))
+	{
+		msg_print("You get in a shield bash!");
+
+		/* Calculate attack quality, a mix of momentum and accuracy. */
+		bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) +
+			(p_ptr->total_weight / 80) + (inventory[INVEN_ARM].weight / 3);
+
+		/* Calculate damage.  Big shields are deadly. */
+		bash_dam = damroll(inventory[INVEN_ARM].dd, inventory[INVEN_ARM].ds);
+
+		/* Multiply by quality and experience factors */
+		bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
+
+		/* Strength bonus. */
+		bash_dam += (adj_str_td[p_ptr->stat_ind[A_STR]] - 128);
+
+		/* Paranoia. */
+		if (bash_dam > 125) bash_dam = 125;
+
+		/* Encourage the player to keep wearing that heavy shield. */
+		if (randint(bash_dam) > 30 + randint(bash_dam / 2))
+			msg_print("WHAMM!");
+
+		/* Complex message */
+		if (wizard)
+		{
+			msg_format("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
+		}
+
+		/* Damage, check for fear and death. */
+		if (mon_take_hit(c_ptr->m_idx, bash_dam, fear, NULL))
+		{
+			/* Fight's over. */
+			return;
+		}
+
+		/* Stunning. */
+		if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 8))
+		{
+			msg_format("%^s is stunned.", m_name);
+
+			m_ptr->stunned += rand_int(p_ptr->lev / 5) + 4;
+			if (m_ptr->stunned > 24) m_ptr->stunned = 24;
+		}
+
+		/* Confusion. */
+		if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6) &&
+			(!r_ptr->flags3 & (RF3_NO_CONF)))
+		{
+			msg_format("%^s appears confused.", m_name);
+
+			m_ptr->confused += rand_int(p_ptr->lev / 5) + 4;
+		}
+
+		/* The player will sometimes stumble. */
+		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint(60))
+			*blows -= randint(*blows);
+	}
+}
+
+/*
+ * The monk special attacks and effects.
+ */
+
+static void monk_attack(monster_type *m_ptr, long *k, char *m_name) 
+{
+	int special_effect = 0, stun_effect = 0, times = 0;
+	martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
+	int resist_stun = 0;
+	
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+	if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
+	if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
+	if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
+	if ((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING))
+		resist_stun += 88;
+
+	/* Attempt 'times' */
+	for (times = 0; times < (p_ptr->lev < 7 ? 1 : p_ptr->lev / 7); times++)
+	{
+		do
+		{
+			ma_ptr = &ma_blows[rand_int(MAX_MA)];
+		}
+		while ((ma_ptr->min_level > p_ptr->lev) ||
+			(randint(p_ptr->lev) < ma_ptr->chance));
+
+		/* keep the highest level attack available we found */
+		if ((ma_ptr->min_level > old_ptr->min_level) &&
+			!p_ptr->stun && !p_ptr->confused)
+		{
+			old_ptr = ma_ptr;
+
+			if (wizard && cheat_xtra)
+			{
+				msg_print("Attack re-selected.");
+			}
+		}
+		else
+		{
+			ma_ptr = old_ptr;
+		}
+	}
+
+	*k = damroll(ma_ptr->dd, ma_ptr->ds);
+
+	if (ma_ptr->effect == MA_KNEE)
+	{
+		if (r_ptr->flags1 & RF1_MALE)
+		{
+			msg_format("You hit %s in the groin with your knee!", m_name);
+			sound(SOUND_PAIN);
+			special_effect = MA_KNEE;
+		}
+		else
+			msg_format(ma_ptr->desc, m_name);
+	}
+
+	else if (ma_ptr->effect == MA_SLOW)
+	{
+		if (!((r_ptr->flags1 & RF1_NEVER_MOVE) ||
+			strchr("~#{}.UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
+		{
+			msg_format("You kick %s in the ankle.", m_name);
+			special_effect = MA_SLOW;
+		}
+		else msg_format(ma_ptr->desc, m_name);
+	}
+	else
+	{
+		if (ma_ptr->effect)
+		{
+			stun_effect = (ma_ptr->effect / 2) + randint(ma_ptr->effect / 2);
+		}
+
+		msg_format(ma_ptr->desc, m_name);
+	}
+
+	*k = critical_norm(p_ptr->lev * randint(10), ma_ptr->min_level, *k);
+
+	if ((special_effect == MA_KNEE) && ((*k + p_ptr->to_d) < m_ptr->hp))
+	{
+		msg_format("%^s moans in agony!", m_name);
+		stun_effect = 7 + randint(13);
+		resist_stun /= 3;
+	}
+
+	else if ((special_effect == MA_SLOW) && ((*k + p_ptr->to_d) < m_ptr->hp))
+	{
+		if (!(r_ptr->flags1 & RF1_UNIQUE) &&
+			(randint(p_ptr->lev) > r_ptr->level) &&
+			m_ptr->mspeed > 60)
+		{
+			msg_format("%^s starts limping slower.", m_name);
+			m_ptr->mspeed -= 10;
+		}
+	}
+
+	if (stun_effect && ((*k + p_ptr->to_d) < m_ptr->hp))
+	{
+		if (p_ptr->lev > randint(r_ptr->level + resist_stun + 10))
+		{
+			if (m_ptr->stunned)
+				msg_format("%^s is more stunned.", m_name);
+			else
+				msg_format("%^s is stunned.", m_name);
+
+			m_ptr->stunned += stun_effect;
+		}
+	}
+}
 
 
 /*
@@ -1440,8 +1655,6 @@ void py_attack(int y, int x)
 	int terrain_bonus = 0;
 
 	int bonus, chance, total_deadliness;
-
-	int bash_chance, bash_quality, bash_dam;
 
 	int blows;
 
@@ -1566,101 +1779,8 @@ void py_attack(int y, int x)
 		terrain_bonus -= r_ptr->ac / 5;
 	}
 
-	/**** The monster bashing code. -LM- ****/
-
-	/* No shield on arm, no bash.  */
-	if (!inventory[INVEN_ARM].k_idx)
-	{
-		bash_chance = 0;
-	}
-
-	/* Players do not bash if they could otherwise take advantage of special
-	 * bonuses against sleeping monsters, or if the monster is low-level.
-	 */
-	else if ((sleeping_bonus) || (r_ptr->level < p_ptr->lev / 2))
-	{
-		bash_chance = 0;
-	}
-
-	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
-	else bash_chance = p_ptr->skill_thn +
-	                   (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
-	                   (((p_ptr->pclass == CLASS_WARRIOR) ||
-	                     (p_ptr->pclass == CLASS_PALADIN) ||
-	                     (p_ptr->pclass == CLASS_WARRIOR_MAGE) ||
-	                     (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
-
-	/* Players bash more often when they see a real need. */
-	if (bash_chance)
-	{
-		if ((!inventory[INVEN_WIELD].k_idx) && (p_ptr->pclass != CLASS_MONK))
-			bash_chance *= 3;
-		else if ((inventory[INVEN_WIELD].dd * inventory[INVEN_WIELD].ds * blows)
-			< (inventory[INVEN_ARM].dd * inventory[INVEN_ARM].ds * 3))
-			bash_chance *= 2;
-	}
-
-	/* Try to get in a shield bash. */
-	if (bash_chance > rand_int(240 + r_ptr->level * 9))
-	{
-		msg_print("You get in a shield bash!");
-
-		/* Calculate attack quality, a mix of momentum and accuracy. */
-		bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) +
-			(p_ptr->total_weight / 80) + (inventory[INVEN_ARM].weight / 3);
-
-		/* Calculate damage.  Big shields are deadly. */
-		bash_dam = damroll(inventory[INVEN_ARM].dd, inventory[INVEN_ARM].ds);
-
-		/* Multiply by quality and experience factors */
-		bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
-
-		/* Strength bonus. */
-		bash_dam += (adj_str_td[p_ptr->stat_ind[A_STR]] - 128);
-
-		/* Paranoia. */
-		if (bash_dam > 125) bash_dam = 125;
-
-		/* Encourage the player to keep wearing that heavy shield. */
-		if (randint(bash_dam) > 30 + randint(bash_dam / 2))
-			msg_print("WHAMM!");
-
-		/* Complex message */
-		if (wizard)
-		{
-			msg_format("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
-		}
-
-		/* Damage, check for fear and death. */
-		if (mon_take_hit(c_ptr->m_idx, bash_dam, &fear, NULL))
-		{
-			/* Fight's over. */
-			return;
-		}
-
-		/* Stunning. */
-		if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 8))
-		{
-			msg_format("%^s is stunned.", m_name);
-
-			m_ptr->stunned += rand_int(p_ptr->lev / 5) + 4;
-			if (m_ptr->stunned > 24) m_ptr->stunned = 24;
-		}
-
-		/* Confusion. */
-		if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6) &&
-			(!r_ptr->flags3 & (RF3_NO_CONF)))
-		{
-			msg_format("%^s appears confused.", m_name);
-
-			m_ptr->confused += rand_int(p_ptr->lev / 5) + 4;
-		}
-
-		/* The player will sometimes stumble. */
-		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint(60))
-			blows -= randint(blows);
-	}
-
+	/* Attempt to shield bash the monster */
+	monster_bash(&blows, sleeping_bonus, c_ptr, &fear, m_name);
 
 	/* Access the weapon */
 	o_ptr = &inventory[INVEN_WIELD];
@@ -1741,109 +1861,8 @@ void py_attack(int y, int x)
 
 			if ((p_ptr->pclass == CLASS_MONK) && monk_empty_hands())
 			{
-				int special_effect = 0, stun_effect = 0, times = 0;
-				martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
-				int resist_stun = 0;
-
-				if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
-				if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
-				if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
-				if ((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING))
-					resist_stun += 88;
-
-				/* Attempt 'times' */
-				for (times = 0; times < (p_ptr->lev < 7 ? 1 : p_ptr->lev / 7); times++)
-				{
-					do
-					{
-						ma_ptr = &ma_blows[rand_int(MAX_MA)];
-					}
-					while ((ma_ptr->min_level > p_ptr->lev) ||
-					       (randint(p_ptr->lev) < ma_ptr->chance));
-
-					/* keep the highest level attack available we found */
-					if ((ma_ptr->min_level > old_ptr->min_level) &&
-					    !p_ptr->stun && !p_ptr->confused)
-					{
-						old_ptr = ma_ptr;
-
-						if (wizard && cheat_xtra)
-						{
-							msg_print("Attack re-selected.");
-						}
-					}
-					else
-					{
-						ma_ptr = old_ptr;
-					}
-				}
-
-				k = damroll(ma_ptr->dd, ma_ptr->ds);
-
-				if (ma_ptr->effect == MA_KNEE)
-				{
-					if (r_ptr->flags1 & RF1_MALE)
-					{
-						msg_format("You hit %s in the groin with your knee!", m_name);
-						sound(SOUND_PAIN);
-						special_effect = MA_KNEE;
-					}
-					else
-						msg_format(ma_ptr->desc, m_name);
-				}
-
-				else if (ma_ptr->effect == MA_SLOW)
-				{
-					if (!((r_ptr->flags1 & RF1_NEVER_MOVE) ||
-					    strchr("~#{}.UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
-					{
-						msg_format("You kick %s in the ankle.", m_name);
-						special_effect = MA_SLOW;
-					}
-					else msg_format(ma_ptr->desc, m_name);
-				}
-				else
-				{
-					if (ma_ptr->effect)
-					{
-						stun_effect = (ma_ptr->effect / 2) + randint(ma_ptr->effect / 2);
-					}
-
-					msg_format(ma_ptr->desc, m_name);
-				}
-
-				k = critical_norm(p_ptr->lev * randint(10), ma_ptr->min_level, k);
-
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
-				{
-					msg_format("%^s moans in agony!", m_name);
-					stun_effect = 7 + randint(13);
-					resist_stun /= 3;
-				}
-
-				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d) < m_ptr->hp))
-				{
-					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
-					    (randint(p_ptr->lev) > r_ptr->level) &&
-					    m_ptr->mspeed > 60)
-					{
-						msg_format("%^s starts limping slower.", m_name);
-						m_ptr->mspeed -= 10;
-					}
-				}
-
-				if (stun_effect && ((k + p_ptr->to_d) < m_ptr->hp))
-				{
-					if (p_ptr->lev > randint(r_ptr->level + resist_stun + 10))
-					{
-						if (m_ptr->stunned)
-							msg_format("%^s is more stunned.", m_name);
-						else
-							msg_format("%^s is stunned.", m_name);
-
-						m_ptr->stunned += stun_effect;
-					}
-				}
+				/* Make a special monk attack */
+				monk_attack(m_ptr, &k, m_name);
 			}
 
 			/* Handle normal weapon */
