@@ -132,7 +132,7 @@
 /*
  * Script triggers
  */
-#define MAX_TRIGGER     9
+#define MAX_TRIGGER     10
 
 #define TRIGGER_USE     0
 #define TRIGGER_MAKE    1
@@ -143,6 +143,7 @@
 #define TRIGGER_HIT     6
 #define TRIGGER_ATTACK  7
 #define TRIGGER_ALTER   8
+#define TRIGGER_SPOIL   9
 
 
 /*

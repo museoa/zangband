@@ -651,6 +651,9 @@ typedef struct
 	/* A string describing an artifact's activation */
 	cptr activation;
 
+	/* A string describing miscellaneous powers */
+	cptr special;
+
 	/* "Level 20, Rarity 30, 3.0 lbs, 20000 Gold" */
 	char misc_desc[80];
 }
@@ -948,6 +951,11 @@ static void object_analyze(const object_type *o_ptr, obj_desc_list *desc_ptr)
 		/* Display nothing, if there is no activation */
 		desc_ptr->activation = NULL;
 	}
+
+	desc_ptr->special = "";
+	apply_object_trigger(TRIGGER_SPOIL, (object_type *) o_ptr, ":s", LUA_RETURN_NAMED(desc_ptr->special, "desc"));
+	if (streq("", desc_ptr->special))
+		desc_ptr->special = NULL;
 }
 
 
@@ -1127,6 +1135,11 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
 		froff(fff, "%sActivates for %s\n", INDENT1, art_ptr->activation);
 	}
 
+	if (art_ptr->special)
+	{
+		froff(fff, "%s%s\n", INDENT1, art_ptr->special);
+	}
+
 	/* End with the miscellaneous facts */
 	froff(fff, "%s%s\n\n", INDENT1, art_ptr->misc_desc);
 }
@@ -1188,7 +1201,7 @@ static object_type *make_fake_artifact(int a_idx)
 	o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
 	/* Apply special scripts */
-	apply_object_trigger(TRIGGER_MAKE, o_ptr, "i", "lev", a_ptr->level);
+	/* apply_object_trigger(TRIGGER_MAKE, o_ptr, "i", "lev", a_ptr->level); */
 
 	/* Success */
 	return (o_ptr);

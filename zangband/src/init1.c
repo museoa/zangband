@@ -79,6 +79,7 @@ static cptr k_info_triggers[] =
 	"HIT",
 	"ATTACK",
 	"ALTER",
+	"SPOIL",
 	NULL
 };
 

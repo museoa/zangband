@@ -97,6 +97,7 @@ L:TIMED:	and not player.tim_invuln then
 L:TIMED:		msgf("The Jewel of Judgement drains life from you!")
 L:TIMED:		take_hit(player.lev, "The Jewel of Judgement")
 L:TIMED:	end
+L:SPOIL:	return "Damages player randomly"
 
 
 # The Amulet of Carlammas
@@ -206,6 +207,7 @@ L:USE:	fire_ball(GF_COLD, dir, 400, 3)
 L:USE:	object.timeout = rand_range(325, 650)
 L:DESC:	return "frost ball (400), rad. 3, every 325-650 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 
 
 # The Ring of Power (Vilya)
@@ -226,6 +228,7 @@ L:USE:	fire_ball(GF_ELEC, dir, 500, 3)
 L:USE:	object.timeout = rand_range(425, 850)
 L:DESC:	return "lightning ball (500), rad. 3, every 425-850 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 
 
 # The Ring of Power (The One Ring)
@@ -249,6 +252,7 @@ L:USE:	object.timeout = rand_range(450, 900)
 L:DESC:	return "bizarre things every 450-900 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability & high resist"
 
 
 N:14:of Elemental Mastery
@@ -362,6 +366,7 @@ F:STR | DEX | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_SOUND
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Mithril Chain Mail of Lohengrin -> the Crusader
 
@@ -401,6 +406,7 @@ L:USE:	genocide(TRUE)
 L:USE:	object.timeout = 500
 L:DESC:	return "genocide every 500 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 
 # The Chain Mail of Arvedui -> Command
@@ -417,6 +423,7 @@ L:USE:	object.timeout = 600
 L:DESC:	return "mass charm every 600 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "2 random high resists"
 D:This finely wrought suit of mail seems worthy of a great king. 
 D:Every detail is perfect, and the whole radiates an aura of 
 D:total confidence and power.
@@ -435,6 +442,7 @@ L:USE:	destroy_doors_touch()
 L:USE:	object.timeout = 10
 L:DESC:	return "trap and door destruction every 10 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Metal Scale Mail 'Nemovebla'
 
@@ -467,6 +475,7 @@ L:USE:	end
 L:USE:	object.timeout = 1000
 L:DESC:	return "heavenly blessing and heal (500) every 1000 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 D:According to legend, a celestial maiden was bathing in a stream when 
 D:a man came and took her hagaromo. Unable to return to heaven without 
 D:it, she had no choice but to marry the man and hope to eventually 
@@ -480,6 +489,7 @@ W:35:3:60:25000
 P:11:1d1:-1:0:25
 F:DEX | HIDE_TYPE | RES_ACID | RES_SHARDS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Leather Jacket of Melman
 
@@ -498,6 +508,7 @@ P:5:1d3:0:0:25
 F:STR | CON | HIDE_TYPE | FREE_ACT | IM_ACID | RES_SOUND | RES_CHAOS
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Large Leather Shield of Celegorm
 
@@ -508,6 +519,7 @@ P:6:1d4:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Large Metal Shield of Anarion
 
@@ -518,6 +530,7 @@ P:8:1d5:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SUST_STR | SUST_INT |
 F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 
 # The Hard Leather Cap of Sawall
@@ -551,6 +564,7 @@ F:STR | DEX | CON | HIDE_TYPE |
 F:FREE_ACT | SEE_INVIS | TELEPATHY | CURSED
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 
 # The Hard Leather Cap of Thranduil
 
@@ -561,6 +575,7 @@ P:2:0d0:0:0:10
 F:INT | WIS | HIDE_TYPE | RES_BLIND | TELEPATHY
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Metal Cap of Thengel
 
@@ -631,6 +646,7 @@ L:MAKE:		set_obj_flag(object, 2, TR2_AGGRAVATE)
 L:MAKE:		set_obj_flag(object, 2, TR2_TY_CURSE)
 L:MAKE:	end
 L:BONUS:	b.stat[A_STR] = b.stat[STAT_STR] + object.to_a / 5
+L:SPOIL:	return "Random ability & high resist (warrior); curse, heavy curse, aggravate, ty curse (non-warrior); +1 str / +5 ac"
 
 
 # The Golden Crown of Gondor -> Amber
@@ -650,6 +666,7 @@ L:USE:	object.timeout = 250
 L:DESC:	return "heal (700) every 250 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability & high resist"
 
 # The Filthy Rag of Keri the Humble
 
@@ -694,8 +711,8 @@ L:USE:	msgf("Your cloak glows deep blue...")
 L:USE:	sleep_monsters_touch()
 L:USE:	object.timeout = 55
 L:DESC:	return "sleep nearby monsters every 55 turns"
-# Also apply 1/2 the armor bonus to stealth
 L:BONUS:	b.skills[SKILL_STL] = b.skills[SKILL_STL] + object.to_a / 2
+L:SPOIL:	return "+1 stealth / +2 ac"
 D:This fine cloak of dark cloth allows its wearer to blend 
 D:perfectly with the shadows.
 
@@ -713,6 +730,7 @@ L:USE:	recharge(130)
 L:USE:	object.timeout = 70
 L:DESC:	return "recharge item every 70 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 D:This cloak was created by the gnome Samagar the Scorched to 
 D:protect him from his frequent magical mishaps.
 
@@ -727,6 +745,7 @@ P:1:0d0:0:0:10
 F:FREE_ACT | RES_ACID | SEE_INVIS | INSTA_ART
 L:BONUS:	b.skills[SKILL_SNS] = b.skills[SKILL_SNS] + player.lev / 2
 L:BONUS:	b.skills[SKILL_FOS] = b.skills[SKILL_FOS] + player.lev / 2
+L:SPOIL:	return "+1 sense / 10 levels"
 
 
 # The Cloak 'Colannon'
@@ -756,6 +775,7 @@ L:USE:	restore_level()
 L:USE:	object.timeout = 450
 L:DESC:	return "restore life levels every 450 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 
 # The Shadow Cloak of Tuor
@@ -769,6 +789,7 @@ F:STEALTH | FREE_ACT | IM_ACID | SEE_INVIS | INSTA_ART
 L:BONUS:	if player.rp.pclass == CLASS_ROGUE then
 L:BONUS:		b.stat[A_DEX] = b.stat[STAT_DEX] + 3 + player.lev / 10
 L:BONUS:	end
+L:SPOIL:	return "+3 DEX +1 / 10 levels (rogues)"
 D:This cloak, woven from strands of solid shadow, is particularly dangerous 
 D:when worn by a skilled assassin.
 
@@ -785,6 +806,7 @@ W:17:6:5:5000
 P:1:0d0:6:6:6
 F:STR | CON | HIDE_TYPE | SHOW_MODS | INSTA_ART | EASY_ENCHANT
 L:ALTER:	object.pval = object.to_a / 2
+L:SPOIL:	return "Pval = +1 / +2 ac"
 D:Legend says that these gloves provide their wearer with the 
 D:strength and skill of an ogre.
 
@@ -891,6 +913,7 @@ L:USE:	fire_bolt(GF_ARROW, dir, 250)
 L:USE:	object.timeout = rand_range(90, 180)
 L:DESC:	return "a magical arrow (250) every 90-180 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 
 
 # The Pair of Hard Leather Boots of Feanor
@@ -930,6 +953,7 @@ W:52:25:80:15000
 P:6:1d1:0:0:20
 F:STR | CON | HIDE_TYPE | SPEED | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 
 # The Pair of Soft Leather Boots of Bleys
@@ -939,8 +963,9 @@ N:63:of Bleys
 I:30:2:4
 W:52:20:20:100000
 P:4:1d1:4:4:16
-F:SPEED | DEX | RES_NEXUS | SUST_DEX | FREE_ACT | INSTA_ART
+F:DEX | RES_NEXUS | SUST_DEX | FREE_ACT | INSTA_ART
 L:BONUS:	b.pspeed = (player.lev + 4) / 5
+L:SPOIL:	return "+1 speed / 5 levels"
 D:These ordinary looking boots are said to grow with their wearer.
 
 
@@ -953,6 +978,7 @@ P:0:2d5:12:15:0
 F:INT | DEX | HIDE_TYPE | SPEED |
 F:SLAY_TROLL | SLAY_GIANT | FREE_ACT | SEE_INVIS | SHOW_MODS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Dagger 'Angrist' -> of Caine
@@ -985,6 +1011,7 @@ L:DESC:	return "fire bolt(11d8) every 8-16 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:BONUS:	b.stat[A_STR] = (player.lev + 4) / 5
 L:HIT:	dam = dam + (dam * player.lev) / 10
+L:SPOIL:	return "Random high resist; +1 STR / 5 levels; +10% dam / level"
 
 
 # The Dagger 'Nimthanc'
@@ -1005,6 +1032,7 @@ L:DESC:	return "frost bolt (8d8) every 7-14 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:BONUS:	b.stat[A_CON] = (player.lev + 4) / 5
 L:HIT:	dam = dam + (dam * player.lev) / 10
+L:SPOIL:	return "Random high resist; +1 CON / 5 levels; +10% dam / level"
 
 
 
@@ -1026,6 +1054,7 @@ L:DESC:	return "lightning bolt (6d8) every 6-12 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:BONUS:	b.stat[A_DEX] = (player.lev + 4) / 5
 L:HIT:	dam = dam + (dam * player.lev) / 10
+L:SPOIL:	return "Random high resist; +1 DEX / 5 levels; +10% dam / level"
 
 
 
@@ -1045,6 +1074,7 @@ L:USE:	fire_ball(GF_POIS, dir, 25, 3)
 L:USE:	object.timeout = rand_range(4, 8)
 L:DESC:	return "stinking cloud (25) every 4-8 turns"
 L:BONUS:	b.stat[A_INT] = (player.lev + 9) / 10
+L:SPOIL:	return "+1 INT / 10 levels"
 
 # The Dagger 'Belangil' -> of Fiona
 
@@ -1088,6 +1118,7 @@ F:RES_COLD | BRAND_COLD |
 F:SLAY_DEMON | SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD |
 F:SLOW_DIGEST | SHOW_MODS | HIDE_TYPE | BLESSED | INSTA_ART
 L:HIT:	dam = dam + player.depth / 4
+L:SPOIL:	return "+1 dam / 200'"
 
 
 # The Broad Sword 'Glamdring'
@@ -1100,6 +1131,7 @@ F:SENSE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_ORC | RES_FIRE | RES_LITE | LITE |
 F:SLOW_DIGEST | SHOW_MODS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Broad Sword 'Aeglin' -> 'Nothung'
@@ -1122,6 +1154,7 @@ P:0:2d5:10:15:0
 F:STEALTH | SLAY_EVIL | BRAND_COLD | SLAY_ORC | RES_COLD | LITE |
 F:SLOW_DIGEST | SHOW_MODS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Two-Handed Sword 'Gurthang'
@@ -1134,6 +1167,7 @@ F:STR | HIDE_TYPE |
 F:KILL_DRAGON | SLAY_TROLL | FREE_ACT | SLOW_DIGEST | REGEN | SHOW_MODS
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 # The Two-Handed Sword 'Zarcuthra'
 
@@ -1147,6 +1181,7 @@ F:SLAY_UNDEAD | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | SLAY_ORC |
 F:RES_FIRE | RES_CONF | RES_CHAOS | FREE_ACT | SEE_INVIS | AGGRAVATE |
 F:SHOW_MODS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Two-Handed Sword 'Mormegil' -> Twilight
@@ -1192,6 +1227,7 @@ F:SUST_DEX | SHOW_MODS | SPEED | INSTA_ART
 L:HIT:	if player.rp.pclass == CLASS_WARRIOR then
 L:HIT:		damage = damage * 2
 L:HIT:	end
+L:SPOIL:	return "Double damage (warrior)"
 
 
 # The Long Sword 'Ringil'
@@ -1229,6 +1265,7 @@ L:USE:	fire_ball(GF_FIRE, dir, 150, 2)
 L:USE:	object.timeout = 400
 L:DESC:	return "fire ball (150) every 400 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Long Sword 'Anguirel' -> Werewindle
@@ -1296,6 +1333,7 @@ L:MAKE: if player.rp.prace == RACE_HOBBIT then
 L:MAKE:		object.pval = 4
 L:MAKE:		object.to_h = 14
 L:MAKE:	end
+L:SPOIL:	return "Random high resist; double pval and +skill (hobbit)"
 D:In a human's hands, no more than an enchanted large dagger, but a fearsome weapon 
 D:in the hands of a hobbit.
 
@@ -1310,6 +1348,7 @@ F:SLAY_ANIMAL | SLAY_EVIL | SLAY_UNDEAD | SLAY_DRAGON | SLAY_DEMON |
 F:RES_CHAOS | RES_DISEN | RES_NEXUS | RES_NETHER | HOLD_LIFE |
 F:SHOW_MODS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Short Sword Gilettar -> of Merlin
@@ -1327,6 +1366,7 @@ L:MAKE:	if (player.rp.pclass == CLASS_MAGE) or (player.rp.pclass == CLASS_HIGH_M
 L:MAKE:		set_obj_flag(object, 0, TR0_SP)
 L:MAKE:	end
 L:HIT:	dam = dam + player.msp / 10
+L:SPOIL:	return "+2 sp (mage or high mage); +1 dam / 10 max sp"
 D:This fine sword is most powerful in the hands of a skilled magic user.
 
 
@@ -1354,6 +1394,7 @@ F:VORPAL | SLAY_EVIL |
 F:FREE_ACT | LITE | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
 F:INSTA_ART
 L:HIT:	vorpal_chance = 1
+L:SPOIL:	return "Extra vorpality"
 
 # The Beaked Axe of Theoden
 
@@ -1447,10 +1488,11 @@ N:99:of Hagen
 I:22:2:3
 W:26:12:50:30000
 P:0:1d10:11:13:0
-F:STEALTH | RES_DARK | INFRA | SPEED |
+F:STEALTH | RES_DARK | INFRA |
 F:BRAND_COLD | SLAY_UNDEAD | RES_COLD | SEE_INVIS | SHOW_MODS | THROW
 F:INSTA_ART
 L:BONUS:	b.pspeed = (player.level + 4) / 5
+L:SPOIL:	return "+1 speed / 5 levels"
 
 # The Spear 'Soulsucker'
 
@@ -1566,6 +1608,7 @@ L:USE:	teleport_monster(dir)
 L:USE:	object.timeout = 150
 L:DESC:	return "teleport away every 150 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 
 
 # The Scythe 'Avavir'
@@ -1598,6 +1641,7 @@ L:USE:	summon_specific(-1, player.px, player.py, player.depth, SUMMON_DAWN, TRUE
 L:USE:	object.timeout = rand_range(500, 1000)
 L:DESC:	return "summon the Legion of the Dawn every 500-1000 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 
 # The Mighty Hammer 'Grond'
@@ -1690,6 +1734,7 @@ L:DESC:	return "haste self (20-40) every 100-200 turns"
 L:HIT:	if player.tim.fast > 0 then
 L:HIT:		dam = dam * 2
 L:HIT:	end
+L:SPOIL:	return "Double damage when hasted"
 D:A metal pole tipped with an arc of pure blue energy, the pulses of 
 D:the blade ripping through opponents all the more deadly as you move 
 D:faster.
@@ -1706,6 +1751,7 @@ F:FREE_ACT | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_NEXUS |
 F:SEE_INVIS | SHOW_MODS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability & high resist"
 
 
 # The Quarterstaff 'Nar-i-vagil'
@@ -1751,6 +1797,7 @@ L:USE:	identify_fully()
 L:USE:	object.timeout = 1000
 L:DESC:	return "probing, detection and full id every 1000 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:SPOIL:	return "Random ability"
 
 
 # The Mace of Disruption 'Deathwreaker'
@@ -1781,6 +1828,7 @@ L:USE:	drain_life(dir, 200)
 L:USE:	object.timeout = 70
 L:DESC:	return "drain life (200) every 70 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist"
 
 # The Sling 'Catapult'
 
@@ -1826,6 +1874,7 @@ L:USE:	brand_bolts()
 L:USE:	object.timeout = 999
 L:DESC:	return "fire branding of bolts every 999 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
+L:SPOIL:	return "Random ability or high resist"
 
 # The Short Bow of Marksmanship
 
@@ -1860,6 +1909,7 @@ F:VORPAL | LUCK_10 | BLESSED | FREE_ACT | LITE | INSTA_ART | EASY_ENCHANT
 # if it is enchanted more.
 L:BONUS:	b.skills[SKILL_SAV] = b.skills[SKILL_SAV] + (object.to_h + object.to_d) / 2
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:SPOIL:	return "Random high resist; +1 save / +2 skill or +10% deadliness"
 D:A sword said to grant incredible luck to its wielder.
 
 
@@ -1875,6 +1925,7 @@ L:MAKE:		set_obj_flag(object, 2, TR2_DRAIN_EXP)
 L:MAKE:	else
 L:MAKE:		set_obj_flag(object, 2, TR2_AGGRAVATE)
 L:MAKE:	end
+L:SPOIL:	return "Drain exp or aggravate"
 D:The Stormbringer is now under your control.  It still thrists for souls.
 
 
@@ -1894,6 +1945,7 @@ L:TIMED:	hp_player(2)
 L:HIT:	if player.food < PY_FOOD_ALERT then
 L:HIT:		dam = dam * 3
 L:HIT:	end
+L:SPOIL:	return "Accelerated regen; triple damage when hungry"
 D:This trident has the likeness of a demonic face carved on the hilt.  When 
 D:you are hungry the mouth opens to reveal dozens of sharp teeth.
 
@@ -1909,8 +1961,8 @@ F:HOLD_LIFE | CHR
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
-L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
 L:HIT:	dam = dam + player.au / 100000
+L:SPOIL:	return "Random ability & high resist; +1 dam / 100,000 au"
 D:A metal flail made of pure gold, enchanted to be harder than steel.  
 D:It would look perfect in the center of a huge pile of treasure...
 
@@ -1928,16 +1980,9 @@ F:SUST_STR | SUST_CON | SUST_DEX | SUST_INT | SUST_WIS | SUST_CHR
 F:INSTA_ART
 L:USE:	msgf("Your cloak glows bright green...")
 L:USE:	inc_fast(rand_range(75, 150))
-L:USE:	if player.rp.pclass == CLASS_MONK then
-L:USE:		object.timeout = rand_range(30, 60)
-L:USE:	else
-L:USE:		object.timeout = rand_range(150, 300)
-L:USE:	end
-L:DESC:	if player.rp.pclass == CLASS_MONK then
-L:DESC:		return "haste self (75-150) every 30-60 turns"
-L:DESC:	else
-L:DESC:		return "haste self (75-150) every 150-300 turns"
-L:DESC:	end
+L:USE:	object.timeout = rand_range(150, 300)
+L:DESC:	return "haste self (75-150) every 150-300 turns"
 L:BONUS:	if player.rp.pclass == CLASS_MONK then
 L:BONUS:		b.pspeed = (player.lev + 9) / 10
 L:BONUS:	end
+L:SPOIL:return "Speed +1 / 10 levels (monk)"
