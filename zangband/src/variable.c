@@ -163,6 +163,9 @@ s16b o_cnt = 0;			/* Number of live objects */
 s16b m_max = 1;			/* Number of allocated monsters */
 s16b m_cnt = 0;			/* Number of live monsters */
 
+s16b fld_max = 1;			/* Number of allocated fields */
+s16b fld_cnt = 0;			/* Number of live fields */
+
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
 s16b hack_m_idx_ii = 0;
 bool multi_rew = FALSE;
@@ -225,7 +228,7 @@ bool small_levels;		/* Allow unusually small dungeon levels */
 bool empty_levels;		/* Allow empty 'arena' levels */
 bool plain_descriptions;	/* Plain object descriptions */
 bool stupid_monsters;		/* Monsters use old AI */
-bool silly_monsters;		/* Allow silly monsters to be generated. */
+bool silly_monsters;		/* Allow the silly monsters to be generated */
 bool auto_destroy;		/* Known worthless items are destroyed without confirmation */
 bool confirm_stairs;		/* Prompt before staircases... */
 bool wear_confirm;		/* Confirm before putting on known cursed items */
@@ -686,6 +689,12 @@ object_type *o_list;
  */
 monster_type *m_list;
 
+/*
+ * The array of fields [max_fld_idx]
+ */
+field_type *fld_list;
+ 
+
 
 /*
  * Maximum number of towns
@@ -846,6 +855,10 @@ monster_race *r_info;
 char *r_name;
 char *r_text;
 
+/*
+ * The field thaumatergical array
+ */
+field_thaum *t_info;
 
 /*
  * Hack -- The special Angband "System Suffix"
@@ -1054,6 +1067,17 @@ u16b max_o_idx;
  * Maximum number of monsters in the level
  */
 u16b max_m_idx;
+
+/*
+ * Maximum number of fields on the level
+ */
+u16b max_fld_idx;
+
+/*
+ * Maximum number of field types
+ */
+u16b max_t_idx;
+
 
 /*
  * Maximum size of the wilderness

@@ -2280,7 +2280,7 @@
 #define SUMMON_PHANTOM              47
 #define SUMMON_ELEMENTAL            48
 #define SUMMON_BLUE_HORROR          49
-#define SUMMON_GHB						50
+#define SUMMON_GHB		    50 /* Not actually used */
 
 
 
@@ -3735,7 +3735,7 @@ extern int PlayerUID;
 #define FIELD_INFO_ATTR		0x0004	/* Use attr */
 #define FIELD_INFO_CHAR		0x0008	/* Use char */
 #define FIELD_INFO_RAND		0x0010	/* Randomize first 4 data values */
-#define FIELD_INFO_FLAGS	0x0020	/* Affects targets flags */
+#define FIELD_INFO_DUMMY4	0x0020
 #define FIELD_INFO_DUMMY5	0x0040
 #define FIELD_INFO_DUMMY6	0x0080
 #define FIELD_INFO_DUMMY7	0x0100
@@ -3745,13 +3745,15 @@ extern int PlayerUID;
 #define FIELD_INFO_DUMMY11	0x1000
 #define FIELD_INFO_DUMMY12	0x2000
 #define FIELD_INFO_DUMMY13	0x4000
+#define FIELD_INFO_DUMMY14  0x8000
 
-#define FTYPE_TRAP	1
-#define FTYPE_DOOR	2
-#define FTYPE_BUILD	3
-#define FTYPE_EVENT	4
-#define FTYPE_QUEST	5
-#define FTYPE_FIELD	6
+#define FTYPE_NOTHING	0
+#define FTYPE_TRAP		1
+#define FTYPE_DOOR		2
+#define FTYPE_BUILD		3
+#define FTYPE_EVENT		4
+#define FTYPE_QUEST		5
+#define FTYPE_FIELD		6
 
 /*
  * Field Actions
@@ -3772,6 +3774,10 @@ extern int PlayerUID;
 #define FIELD_ACT_EXIT		13	/* Field is destroyed */
 
 #define FIELD_ACTION_MAX	14	/* The last action + 1 */
+
+
+#define FIELD_ACTION_TYPES  1 /* Number of FIELD_ACT functions */
+
 
 
 /*

@@ -4354,6 +4354,10 @@ void play_game(bool new_game)
 	/* Initialize vault info */
 	if (init_v_info()) quit("Cannot initialize vaults");
 
+	/* Initialize field info */
+	if (init_t_info()) quit("Cannot initialize fields");
+
+
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 

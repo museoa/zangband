@@ -6490,3 +6490,11 @@ cptr silly_attacks[MAX_SILLY_ATTACK] =
 	"disbelieves",
 	"molests"
 };
+
+/* Field function's + names */
+field_action f_action[FIELD_ACTION_TYPES] = 
+{
+	{field_action_nothing, "field_action_nothing"}, /* Null - Do absolutely nothing*/
+	{field_action_nothing, "field_action_nothing2"}  /* Test - Do absolutely nothing*/
+};
+

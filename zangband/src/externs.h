@@ -74,6 +74,7 @@ extern int chaos_rewards[MAX_PATRON][20];
 extern martial_arts ma_blows[MAX_MA];
 extern cptr game_inscriptions[];
 extern cptr silly_attacks[MAX_SILLY_ATTACK];
+extern field_action f_action[FIELD_ACTION_TYPES];
 
 /* variable.c */
 extern cptr copyright[5];
@@ -378,7 +379,6 @@ extern monster_race *r_info;
 extern char *r_name;
 extern char *r_text;
 extern field_thaum *t_info;
-extern field_action_type *f_action;
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_GRAF;
 extern cptr ANGBAND_DIR;
@@ -627,6 +627,7 @@ extern errr init_a_info_txt(FILE *fp, char *buf);
 extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
 extern errr init_w_info_txt(FILE *fp, char *buf);
+extern errr init_t_info_txt(FILE *fp, char *buf);
 extern errr process_dungeon_file(cptr name, int ymin, int xmin, int ymax, int xmax);
 extern void write_r_info_txt(void);
 
@@ -634,6 +635,7 @@ extern void write_r_info_txt(void);
 extern cptr err_str[PARSE_ERROR_MAX];
 extern errr init_v_info(void);
 extern errr init_w_info(void);
+extern errr init_t_info(void);
 extern void init_file_paths(char *path);
 extern void init_angband(void);
 extern errr init_buildings(void);
@@ -1300,3 +1302,4 @@ extern bool field_is_type(s16b fld_idx, byte typ);
 extern s16b place_field(int y, int x, s16b t_idx);
 extern void process_fields(void);
 extern void test_field_data_integtrity(void);
+extern void field_action_nothing(field_type *f_ptr, void *nothing);

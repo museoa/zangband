@@ -1949,10 +1949,9 @@ errr init_t_info(void)
 	/* General buffer */
 	char buf[1024];
 
-
-	/* Later must add in python support later. */
-	C_MAKE(f_action, FIELD_ACTION_MAX, field_action);
-	C_MAKE(f_info, max_fld_idx, field_type);
+	/* Later must add in python support. */
+	C_MAKE(t_info, max_t_idx, field_thaum);
+	C_MAKE(fld_list, max_fld_idx, field_type);
 	
 
 	/*** Load the ascii template file ***/

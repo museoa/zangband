@@ -655,7 +655,7 @@ void field_prep(field_type *f_ptr, int t_idx)
 	for (i = 0; i < FIELD_ACTION_MAX; i++)
 	{
 		/* copy function pointers */
-		f_ptr->action[i] = f_action[i].action;
+		f_ptr->action[i] = f_action[t_ptr->action[i]].action;
 	}
 }
 
@@ -838,3 +838,13 @@ void test_field_data_integtrity(void)
 		}
 	}
 }
+
+/* Field action functions - later will be implemented in python */
+
+/* Simple function that does nothing */
+void field_action_nothing(field_type *f_ptr, void *nothing)
+{
+	/* Do nothing at all */
+	return;
+}
+
