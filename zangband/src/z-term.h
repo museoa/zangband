@@ -14,6 +14,7 @@
 
 #include "h-basic.h"
 
+#include "z-config.h"
 
 
 /*
