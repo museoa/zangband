@@ -920,10 +920,6 @@ bool monster_death(int m_idx, bool explode)
 	/* Reset the object level */
 	object_level = base_level;
 
-#ifdef USE_SCRIPT
-	kill_monster_callback(m_idx);
-#endif /* USE_SCRIPT */
-
 	/* Only process "Quest Monsters" */
 	if (!(r_ptr->flags1 & RF1_QUESTOR)) return (dropped_corpse);
 

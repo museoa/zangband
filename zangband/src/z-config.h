@@ -542,18 +542,9 @@
 /* #define MONK_HACK */
 
 /*
- * Use a scripting language
+ * Use a scripting language (required)
  */
-/* #define USE_SCRIPT */
-
-
-/*
- * Python is statically linked into ZAngband
- */
-#ifdef USE_SCRIPT
-# define STATIC_PYTHON
-/* # define SCRIPT_OBJ_KIND */
-#endif /* USE_SCRIPT */
+#define USE_SCRIPT
 
 /*
  * Monsters can drop corpses when killed

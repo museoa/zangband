@@ -509,16 +509,6 @@ void search(void)
 				/* Access the grid */
 				c_ptr = area(y, x);
 
-#ifdef USE_SCRIPT
-				if (player_search_grid_callback(y, x))
-				{
-					/* Disturb */
-					disturb(FALSE);
-
-					return;
-				}
-#endif /* USE_SCRIPT */
-
 				/* Save x and y into temp variables */
 				tx = x;
 				ty = y;
@@ -2516,13 +2506,6 @@ void move_player(int dir, int do_pickup)
 	if (oktomove)
 	{
 		int oy, ox;
-
-#ifdef USE_SCRIPT
-
-		/* Player movement callback */
-		/* if (player_move_callback(y, x)) return; */
-
-#endif /* USE_SCRIPT */
 
 		/* Save old location */
 		oy = py;

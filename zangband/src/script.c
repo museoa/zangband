@@ -1,152 +1,242 @@
 /* File: script.c */
 
-/* Purpose: Script interface */
-
 #include "angband.h"
-
-#ifdef USE_SCRIPT
-
-#include <Python.h>
 
 #include "script.h"
 
 
-/*
- * Execute a Python script
- */
-errr script_execute(char *name)
-{
-	char buf[1024];
+#ifdef USE_SCRIPT
 
-	if (!name || !*name)
-	{
-		msg_print("Oops!  No script given.");
-		return (1);
-	}
-
-	/* Load a script file */
-	if (name[0] == '@')
-	{
-		FILE *fff;
-		int result;
-
-		/* Skip the '@' */
-		name++;
-
-		/* Either run the specified file or try to start "idle" */
-		if (name[0] != '\0')
-		{
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, name);
-		}
-		else
-		{
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "idle.py");
-		}
-
-		fff = my_fopen(buf, "rw");
-
-		result = PyRun_SimpleFile(fff, buf);
-
-		my_fclose(fff);
-
-		return result;
-	}
-	else
-	{
-		return PyRun_SimpleString(name);
-	}
-
-	return (0);
-}
-
-
-#ifdef STATIC_PYTHON
-extern void initeventc(void);
-extern void initplayerc(void);
-extern void initioc(void);
-extern void initobjectsc(void);
-extern void initcavec(void);
-extern void initmonsterc(void);
-extern void initpclassc(void);
-extern void initpracec(void);
-extern void initterrainc(void);
-extern void initcommandsc(void);
-extern void initrealmsc(void);
-extern void initrandomc(void);
-extern void initspellsc(void);
-extern void initstorec(void);
-extern void initsystemc(void);
-#endif /* STATIC_PYTHON */
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
+#include "lua/tolua.h"
 
 
 /*
- * Initialize the script support
+ * Lua state
  */
-errr init_script(void)
+static lua_State* L = NULL;
+
+
+static int xxx_msg_print(lua_State *L)
+{
+	cptr text = lua_tostring(L, 1);
+	if (text) msg_print(text);
+	lua_pop(L, 1);
+
+	return 0;
+}
+
+
+static int xxx_msg_flush(lua_State *L)
+{
+	message_flush();
+
+	return 0;
+}
+
+
+static int xxx_build_script_path(lua_State *L)
 {
 	char buf[1024];
-	char path[1024];
-	char path1[1024];
-	cptr *program_name = &argv0;
+	cptr filename;
 
-	Py_SetProgramName((char*)argv0);
+	if (!tolua_istype(L, 1, LUA_TSTRING,0))
+		tolua_error(L, "#vinvalid type in variable assignment.");
 
-#ifdef __djgpp__
-	/* Set the enviroment variables */
-	setenv("PYTHONPATH", ANGBAND_DIR_SCRIPT, 1);
-	setenv("PYTHONHOME", ANGBAND_DIR_SCRIPT, 1);
-#endif /* __djgpp__ */
+	filename = tolua_getstring(L, 1, 0);
 
-	/* Initialize the Python interpreter */
-	Py_Initialize();
+	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, filename);
 
-	/* Define sys.argv.  It is up to the application if you
-	   want this; you can also let it undefined (since the Python
-	   code is generally not a main program it has no business
-	   touching sys.argv...) */
-	PySys_SetArgv(1, (char **)program_name);
+	tolua_pushstring(L, buf);
 
-
-	/* Convert the script path to a nice string */
-	ascii_to_text(path, ANGBAND_DIR_SCRIPT);
-
-	/* Build the path to the Python modules */
-	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "python");
-
-	/* Convert the script path to a nice string */
-	ascii_to_text(path1, buf);
-
-	/* Add the "script" directory to the module search path */
-	sprintf(buf, "import sys; sys.path.insert(0, '%s'); sys.path.insert(0, '%s')", path1, path);
-
-	if (PyRun_SimpleString(buf) == 0)
-	{
-		script_init_io();
-
-#ifdef STATIC_PYTHON
-		initeventc();
-		initplayerc();
-		/* initioc(); */
-		initobjectsc();
-		initcavec();
-		initmonsterc();
-		initpclassc();
-		initpracec();
-		initterrainc();
-		initcommandsc();
-		initrealmsc();
-		initrandomc();
-		initspellsc();
-		initstorec();
-		initsystemc();
-#endif /* STATIC_PYTHON */
-
-		if (PyRun_SimpleString("import init") == 0) return 0;
-	}
-
-	return -1;
+	return 1;
 }
+
+
+static int xxx_get_aim_dir(lua_State *L)
+{
+	int dir;
+	bool success;
+
+	success = get_aim_dir(&dir);
+	lua_pushnumber(L, success);
+	lua_pushnumber(L, dir);
+
+	return 2;
+}
+
+
+static int xxx_fire_beam(lua_State *L)
+{
+	int typ, dir, dam;
+	bool result;
+
+	typ = (int)luaL_check_number(L, 1);
+	dir = (int)luaL_check_number(L, 2);
+	dam = (int)luaL_check_number(L, 3);
+	result = fire_beam(typ, dir, dam);
+	lua_pushnumber(L, result);
+
+	return 1;
+}
+
+
+static const struct luaL_reg anglib[] =
+{
+	{"msg_print", xxx_msg_print},
+	{"msg_flush", xxx_msg_flush},
+	{"get_aim_dir", xxx_get_aim_dir},
+	{"fire_beam", xxx_fire_beam},
+	{"build_script_path", xxx_build_script_path},
+};
+
+
+#define DYADIC(name, op) \
+    static int name(lua_State* L) { \
+        lua_pushnumber(L, luaL_check_int(L, 1) op luaL_check_int(L, 2)); \
+		return 1; \
+    }
+
+#define MONADIC(name, op) \
+    static int name(lua_State* L) { \
+        lua_pushnumber(L, op luaL_check_int(L, 1)); \
+		return 1; \
+    }
+
+
+DYADIC(intMod,      % )
+DYADIC(intAnd,      & )
+DYADIC(intOr,       | )
+DYADIC(intXor,      ^ )
+DYADIC(intShiftl,   <<)
+DYADIC(intShiftr,   >>)
+MONADIC(intBitNot,  ~ )
+
+
+static const struct luaL_reg intMathLib[] =
+{
+    {"mod",    intMod    },
+    {"band",   intAnd    },
+    {"bor",    intOr     },
+    {"bxor",   intXor    },
+    {"bnot",   intBitNot },
+    {"shiftl", intShiftl },
+    {"shiftr", intShiftr },
+};
+
+
+/*
+ * Callback for using an object
+ */
+bool use_object(object_type *o_ptr, bool *ident)
+{
+	lua_getglobal(L, "use_object_hook");
+	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
+
+	/* Call the function with 1 argument and 2 results */
+	lua_call(L, 1, 2);
+
+	*ident = tolua_getbool(L, 1, FALSE);
+	return (tolua_getbool(L, 2, FALSE));
+}
+
+
+extern int tolua_player_open(lua_State* tolua_S);
+extern void tolua_player_close(lua_State* tolua_S);
+extern int tolua_object_open(lua_State* tolua_S);
+extern void tolua_object_close(lua_State* tolua_S);
+extern int tolua_monster_open(lua_State* tolua_S);
+extern void tolua_monster_close(lua_State* tolua_S);
+extern int tolua_random_open(lua_State* tolua_S);
+extern void tolua_random_close(lua_State* tolua_S);
+
+
+/*
+ * Initialize scripting support
+ */
+errr script_init(void)
+{
+	char buf[1024];
+
+	/* Start the interpreter with default stack size */
+	L = lua_open(0);
+
+	/* Register the Lua base libraries */
+	lua_baselibopen(L);
+	lua_strlibopen(L);
+	lua_dblibopen(L);
+
+	/* Register library with binary functions */
+	luaL_openl(L, intMathLib);
+
+	/* Register the Angband base library */
+	luaL_openl(L, anglib);
+
+	/* Register various Angband libraries */
+	tolua_player_open(L);
+	tolua_object_open(L);
+	tolua_monster_open(L);
+	tolua_random_open(L);
+
+	/* Initialization code */
+	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");
+	script_do_file(buf);
+
+	return 0;
+}
+
+
+errr script_free(void)
+{
+	lua_close(L);
+
+	return 0;
+}
+
+
+bool script_do_string(cptr script)
+{
+	lua_dostring(L, script);
+
+	return TRUE;
+}
+
+
+bool script_do_file(cptr filename)
+{
+	lua_dofile(L, filename);
+
+	return TRUE;
+}
+
+
+#else /* USE_SCRIPT */
+
+errr script_init(void)
+{
+	return 0;
+}
+
+
+errr script_free(void)
+{
+	return 0;
+}
+
+
+bool script_do_string(cptr script)
+{
+	return FALSE;
+}
+
+
+bool script_do_file(cptr filename)
+{
+	return FALSE;
+}
+
 
 #endif /* USE_SCRIPT */
+

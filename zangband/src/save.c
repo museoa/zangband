@@ -1614,28 +1614,8 @@ static bool wr_savefile_new(void)
 		/* Dump the ghost */
 		wr_ghost();
 
-#ifdef USE_SCRIPT
-		{
-			cptr callbacks = save_game_callback();
-			if (callbacks && *callbacks)
-			{
-				wr_s32b(strlen(callbacks));
-				wr_string(callbacks);
-				string_free(callbacks);
-			}
-			else
-			{
-				/* No scripts */
-				wr_s32b(0);
-			}
-		}
-#else /* USE_SCRIPT */
-
 		/* No scripts */
 		wr_s32b(0);
-
-#endif /* USE_SCRIPT */
-
 	}
 
 

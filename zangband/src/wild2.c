@@ -2336,11 +2336,6 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	object_level = wild[y][x].done.mon_gen;
 
 	/* Add monsters. (Not done) */
-
-
-#ifdef USE_SCRIPT
-	if (generate_wilderness_callback(y, x)) return;
-#endif /* USE_SCRIPT */
 }
 
 

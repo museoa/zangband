@@ -430,13 +430,6 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	
 	object_desc(o_name, o_ptr, TRUE, 3);
 	
-#ifdef USE_SCRIPT
-
-	if (destroy_object_callback(o_ptr, amt)) return (FALSE);
-
-#endif /* USE_SCRIPT */
-
-	
 	/* Can the player destroy the object? */
 	if (!can_player_destroy_object(o_ptr))
 	{

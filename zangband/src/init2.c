@@ -652,13 +652,13 @@ static errr init_info(cptr filename, header *head,
  */
 static errr free_info(header *head)
 {
-	if (head->info_ptr)
+	if (head->info_size)
 		FREE(head->info_ptr);
 
-	if (head->name_ptr)
+	if (head->name_size)
 		FREE(head->name_ptr);
 
-	if (head->text_ptr)
+	if (head->text_size)
 		FREE(head->text_ptr);
 
 	/* Success */
@@ -1401,10 +1401,9 @@ void init_angband(void)
 	note("[Initializing array sizes...]");
 	if (init_z_info()) quit("Cannot initialize sizes");
 
-#ifdef USE_SCRIPT
-	note("[Initializing scripts... ]");
-	if (init_script()) quit("Cannot initialize scripts");
-#endif /* USE_SCRIPT */
+	/* Initialize scripting */
+	note("[Initializing scripts... (scripts)]");
+	if (script_init()) quit("Cannot initialize scripts");
 
 	/* Initialize feature info */
 	note("[Initializing arrays... (features)]");

@@ -1440,40 +1440,31 @@ static void do_cmd_wiz_zap_all(void)
 }
 
 
-#ifdef USE_SCRIPT
-
 /*
- * Hack -- Execute a script function
+ * Hack -- Execute a script file
  */
 static void do_cmd_wiz_script(void)
 {
-	int err;
-	char name[80];
+	char buf[1024];
 
-	/* Get name of script to execute */
-	name[0] = '\0';
+	char tmp[80];
 
-	if (!get_string("Function name: ", name, 80)) return;
+	/* Prompt */
+	prt("Lua script: ", 0, 0);
 
-	/* No name, no execute */
-	if (name[0] == '\0')
-	{
-		msg_print("Cancelled.");
-		return;
-	}
+	/* Default filename */
+	sprintf(tmp, "test.lua");
 
-	/* Execute script */
-	err = script_execute(name);
+	/* Ask for a file */
+	if (!askfor_aux(tmp, 80)) return;
 
-	/* Error */
-	if (err)
-	{
-		msg_print("Failed.");
-		return;
-	}
+	/* Clear the prompt */
+	prt("", 0, 0);
+
+	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, tmp);
+
+	script_do_file(buf);
 }
-
-#endif /* USE_SCRIPT */
 
 
 
@@ -2045,12 +2036,10 @@ void do_cmd_debug(void)
 			do_cmd_wiz_hack_ben();
 		break;
 
-#ifdef USE_SCRIPT
 		/* Hack -- activate a script */
 		case '@':
 			do_cmd_wiz_script();
 		break;
-#endif /* USE_SCRIPT */
 
 		/* Not a Wizard Command */
 		default:

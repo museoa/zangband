@@ -3194,17 +3194,7 @@ static errr rd_savefile_new_aux(void)
 			s32b tmp32s;
 
 			rd_s32b(&tmp32s);
-#ifdef USE_SCRIPT
-			if (tmp32s)
-			{
-				char *callbacks = (char*) malloc(tmp32s + 1);
-				rd_string(callbacks, tmp32s + 1);
-				load_game_callback(callbacks);
-				free(callbacks);
-			}
-#else /* USE_SCRIPT */
 			strip_bytes(tmp32s);
-#endif /* USE_SCRIPT */
 		}
 	}
 

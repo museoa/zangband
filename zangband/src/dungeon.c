@@ -125,136 +125,119 @@ static void sense_inventory(void)
 	object_type *o_ptr;
 	char        o_name[80];
 
-#ifdef USE_SCRIPT
-	int         result;
-#endif /* USE_SCRIPT */
-
 
 	/*** Check for "sensing" ***/
 
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-#ifdef USE_SCRIPT
-
-	result = sense_inventory_callback();
-
-	if (result == -1)
-		heavy = TRUE;
-
-	if (!result)
-
-#endif /* USE_SCRIPT */
-
+	/* Analyze the class */
+	switch (p_ptr->pclass)
 	{
-		/* Analyze the class */
-		switch (p_ptr->pclass)
+		case CLASS_WARRIOR:
 		{
-			case CLASS_WARRIOR:
-			{
-				/* Good sensing */
-				if (!one_in_(9000L / (plev * plev + 40))) return;
+			/* Good sensing */
+			if (!one_in_(9000L / (plev * plev + 40))) return;
 
-				/* Heavy sensing */
-				heavy = TRUE;
+			/* Heavy sensing */
+			heavy = TRUE;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_MAGE:
-			case CLASS_HIGH_MAGE:
-			{
-				/* Very bad (light) sensing */
-				if (!one_in_(240000L / (plev + 5))) return;
+		case CLASS_MAGE:
+		case CLASS_HIGH_MAGE:
+		{
+			/* Very bad (light) sensing */
+			if (!one_in_(240000L / (plev + 5))) return;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_PRIEST:
-			{
-				/* Good (light) sensing */
-				if (!one_in_(10000L / (plev * plev + 40))) return;
+		case CLASS_PRIEST:
+		{
+			/* Good (light) sensing */
+			if (!one_in_(10000L / (plev * plev + 40))) return;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_ROGUE:
-			{
-				/* Okay sensing */
-				if (!one_in_(20000L / (plev * plev + 40))) return;
+		case CLASS_ROGUE:
+		{
+			/* Okay sensing */
+			if (!one_in_(20000L / (plev * plev + 40))) return;
 
-				/* Heavy sensing */
-				heavy = TRUE;
+			/* Heavy sensing */
+			heavy = TRUE;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_RANGER:
-			{
-				/* Bad sensing */
-				if (!one_in_(95000L / (plev * plev + 40))) return;
+		case CLASS_RANGER:
+		{
+			/* Bad sensing */
+			if (!one_in_(95000L / (plev * plev + 40))) return;
 
-				/* Changed! */
-				heavy = TRUE;
+			/* Changed! */
+			heavy = TRUE;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_PALADIN:
-			{
-				/* Bad sensing */
-				if (!one_in_(77777L / (plev * plev + 40))) return;
+		case CLASS_PALADIN:
+		{
+			/* Bad sensing */
+			if (!one_in_(77777L / (plev * plev + 40))) return;
 
-				/* Heavy sensing */
-				heavy = TRUE;
+			/* Heavy sensing */
+			heavy = TRUE;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_WARRIOR_MAGE:
-			{
-				/* Bad sensing */
-				if (!one_in_(75000L / (plev * plev + 40))) return;
+		case CLASS_WARRIOR_MAGE:
+		{
+			/* Bad sensing */
+			if (!one_in_(75000L / (plev * plev + 40))) return;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_MINDCRAFTER:
-			{
-				/* Bad sensing */
-				if (!one_in_(55000L / (plev * plev + 40))) return;
+		case CLASS_MINDCRAFTER:
+		{
+			/* Bad sensing */
+			if (!one_in_(55000L / (plev * plev + 40))) return;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_CHAOS_WARRIOR:
-			{
-				/* Bad sensing */
-				if (!one_in_(80000L / (plev * plev + 40))) return;
+		case CLASS_CHAOS_WARRIOR:
+		{
+			/* Bad sensing */
+			if (!one_in_(80000L / (plev * plev + 40))) return;
 
-				/* Changed! */
-				heavy = TRUE;
+			/* Changed! */
+			heavy = TRUE;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
+		}
 
-			case CLASS_MONK:
-			{
-				/* Okay sensing */
-				if (!one_in_(20000L / (plev * plev + 40))) return;
+		case CLASS_MONK:
+		{
+			/* Okay sensing */
+			if (!one_in_(20000L / (plev * plev + 40))) return;
 
-				/* Done */
-				break;
-			}
+			/* Done */
+			break;
 		}
 	}
 

@@ -1,28 +1,34 @@
-/*
- * File: script.h
- * Purpose: Header file for scripting support
- */
+/* File: script.h */
 
-/*
- * Copyright (c) 2001 Robert Ruehlmann
- *
- * This software may be copied and distributed for educational, research, and
- * not for profit purposes provided that this copyright and statement are
- * included in all such copies.
- */
-
+#ifndef INCLUDED_SCRIPT_H
+#define INCLUDED_SCRIPT_H
 
 #include "angband.h"
 
+/*
+ * Initalize the scripting support
+ */
+extern errr script_init(void);
 
-#ifdef USE_SCRIPT
+/*
+ * Free the resources for the scripting support
+ */
+extern errr script_free(void);
 
-/* Wrappers */
-extern void script_init_io(void);
+/*
+ * Execute a string of scripting code
+ */
+extern bool script_do_string(cptr script);
 
-/* script.c */
-extern errr script_execute(char *name);
-extern errr init_script(void);
+/*
+ * Execute a file with scripting code
+ */
+extern bool script_do_file(cptr filename);
 
-#endif /* USE_SCRIPT */
+/*
+ * Callback for using an object
+ */
+extern bool use_object(object_type *o_ptr, bool *ident);
+
+#endif /* INCLUDED_SCRIPT_H */
 

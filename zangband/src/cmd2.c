@@ -41,10 +41,6 @@ void do_cmd_go_up(void)
 			quest[leaving_quest].status = QUEST_STATUS_FAILED;
 		}
 
-#ifdef USE_SCRIPT
-		/* if (cmd_go_up_callback()) return; */
-#endif /* USE_SCRIPT */
-
 		/* Activate the quest */
 		if (!quest[p_ptr->inside_quest].status)
 		{
@@ -105,10 +101,6 @@ void do_cmd_go_up(void)
 			message(MSG_STAIRS, 0, "You enter a maze of up staircases.");
 
 			if (autosave_l) do_cmd_save_game(TRUE);
-
-#ifdef USE_SCRIPT
-			/* if (cmd_go_up_callback()) return; */
-#endif /* USE_SCRIPT */
 
 #if 0
 
@@ -278,16 +270,6 @@ void do_cmd_search(void)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
-
-#ifdef USE_SCRIPT
-	if (cmd_search_callback(p_ptr->py, p_ptr->px))
-	{
-		/* Disturb */
-		disturb(FALSE);
-
-		return;
-	}
-#endif /* USE_SCRIPT */
 
 	/* Search */
 	search();
@@ -974,15 +956,6 @@ void do_cmd_open(void)
 		/* Get requested location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
-
-#ifdef USE_SCRIPT
-		if (cmd_open_callback(y, x))
-		{
-			/* Don't repeat the action */
-			disturb(FALSE);
-			return;
-		}
-#endif /* USE_SCRIPT */
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) return;

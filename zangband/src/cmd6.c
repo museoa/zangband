@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 
 /*
@@ -55,7 +56,8 @@
 
 static void do_cmd_eat_food_aux(int item)
 {
-	int ident, lev;
+	int lev;
+	bool ident;
 	object_type *o_ptr;
 
 	/* Get the item (in the pack) */
@@ -82,215 +84,8 @@ static void do_cmd_eat_food_aux(int item)
 	/* Object level */
 	lev = get_object_level(o_ptr);
 
-#ifdef USE_SCRIPT
-	eat_callback(o_ptr->sval);
-#endif /* USE_SCRIPT */
-
-	{
-		/* Analyze the food */
-		switch (o_ptr->sval)
-		{
-			case SV_FOOD_POISON:
-			{
-				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-				{
-					if (set_poisoned(p_ptr->poisoned + rand_range(10, 20)))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
-			}
-
-			case SV_FOOD_BLINDNESS:
-			{
-				if (!p_ptr->resist_blind)
-				{
-					if (set_blind(p_ptr->blind + rand_range(200, 400)))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
-			}
-
-			case SV_FOOD_PARANOIA:
-			{
-				if (!p_ptr->resist_fear)
-				{
-					if (set_afraid(p_ptr->afraid + rand_range(10, 20)))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
-			}
-
-			case SV_FOOD_CONFUSION:
-			{
-				if (!p_ptr->resist_confu)
-				{
-					if (set_confused(p_ptr->confused + rand_range(10, 20)))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
-			}
-
-			case SV_FOOD_HALLUCINATION:
-			{
-				if (!p_ptr->resist_chaos)
-				{
-					if (set_image(p_ptr->image + rand_range(250, 500)))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
-			}
-
-			case SV_FOOD_PARALYSIS:
-			{
-				if (!p_ptr->free_act)
-				{
-					if (set_paralyzed(p_ptr->paralyzed + rand_range(10, 20)))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
-			}
-
-			case SV_FOOD_WEAKNESS:
-			{
-				take_hit(damroll(6, 6), "poisonous food");
-				(void)do_dec_stat(A_STR);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_SICKNESS:
-			{
-				take_hit(damroll(6, 6), "poisonous food");
-				(void)do_dec_stat(A_CON);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_STUPIDITY:
-			{
-				take_hit(damroll(8, 8), "poisonous food");
-				(void)do_dec_stat(A_INT);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_NAIVETY:
-			{
-				take_hit(damroll(8, 8), "poisonous food");
-				(void)do_dec_stat(A_WIS);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_UNHEALTH:
-			{
-				take_hit(damroll(10, 10), "poisonous food");
-				(void)do_dec_stat(A_CON);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_DISEASE:
-			{
-				take_hit(damroll(10, 10), "poisonous food");
-				(void)do_dec_stat(A_STR);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_CURE_POISON:
-			{
-				if (set_poisoned(0)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_CURE_BLINDNESS:
-			{
-				if (set_blind(0)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_CURE_PARANOIA:
-			{
-				if (set_afraid(0)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_CURE_CONFUSION:
-			{
-				if (set_confused(0)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_CURE_SERIOUS:
-			{
-				if (hp_player(75)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_RESTORE_STR:
-			{
-				if (do_res_stat(A_STR)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_RESTORE_CON:
-			{
-				if (do_res_stat(A_CON)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_RESTORING:
-			{
-				if (do_res_stat(A_STR)) ident = TRUE;
-				if (do_res_stat(A_INT)) ident = TRUE;
-				if (do_res_stat(A_WIS)) ident = TRUE;
-				if (do_res_stat(A_DEX)) ident = TRUE;
-				if (do_res_stat(A_CON)) ident = TRUE;
-				if (do_res_stat(A_CHR)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_RATION:
-			case SV_FOOD_BISCUIT:
-			case SV_FOOD_JERKY:
-			case SV_FOOD_SLIME_MOLD:
-			{
-				msg_print("That tastes good.");
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_WAYBREAD:
-			{
-				msg_print("That tastes good.");
-				(void)set_poisoned(0);
-				(void)hp_player(damroll(4, 8));
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_PINT_OF_ALE:
-			case SV_FOOD_PINT_OF_WINE:
-			{
-				msg_print("That tastes good.");
-				ident = TRUE;
-				break;
-			}
-		}
-	}
+	/* Eat the food */
+	use_object(o_ptr, &ident);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
