@@ -155,7 +155,10 @@ static char string_buf[200];
  */
 cptr item_activation(const object_type *o_ptr)
 {
-	cptr desc = "";
+	cptr desc = NULL;
+	
+	/* Empty string */
+	string_buf[0] = '\0';
 	
 	/* Require activation ability */
 	if (!(FLAG(o_ptr, TR_ACTIVATE))) return ("nothing");
@@ -163,11 +166,15 @@ cptr item_activation(const object_type *o_ptr)
 	/* Get description and copy to temporary buffer */
 	/* Lua better not try to modify the object ... */
 	apply_object_trigger(TRIGGER_DESC, (object_type *) o_ptr, ":s", LUA_RETURN(desc));
-	strncpy(string_buf, desc, 199);
+	
+	if (desc)
+	{
+		strncpy(string_buf, desc, 199);
 
-	/* Free string allocated to hold return value */
-	string_free(desc);
-
+		/* Free string allocated to hold return value */
+		string_free(desc);
+	}
+	
 	/* Return the description */
 	return string_buf;
 }
