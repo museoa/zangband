@@ -2184,10 +2184,22 @@ void do_cmd_view_map(void)
 			y += ddy[d];
 
 			/* Bounds checking */
-			if (x + px / 16 < 0) x = -px / 16;
-			if (y + py / 16 < 0) y = -py / 16;
-			if (x + px / 16 > max_wild - 2) x = max_wild - px / 16 - 2;
-			if (y + py / 16 > max_wild - 2) y = max_wild - py / 16 - 2;
+			if (x + px / WILD_BLOCK_SIZE < 0)
+			{
+				x = -px / WILD_BLOCK_SIZE;
+			}
+			if (y + py / WILD_BLOCK_SIZE < 0)
+			{
+				y = -py / WILD_BLOCK_SIZE;
+			}
+			if (x + px / WILD_BLOCK_SIZE > max_wild - 2)
+			{
+				x = max_wild - px / WILD_BLOCK_SIZE - 2;
+			}
+			if (y + py / WILD_BLOCK_SIZE > max_wild - 2)
+			{
+				y = max_wild - py / WILD_BLOCK_SIZE - 2;
+			}
 		}
 	}
 
@@ -2217,18 +2229,18 @@ void do_cmd_view_map(void)
  * calculation of "line of sight from the player", and to calculate
  * the "field of torch lite", which, again, once calculated, provides
  * extremely fast calculation of "which grids are lit by the player's
- * lite source".  In addition to marking grids as "GRID_VIEW" and/or
- * "GRID_LITE", as appropriate, these functions maintain an array for
- * each of these two flags, each array containing the locations of all
- * of the grids marked with the appropriate flag, which can be used to
- * very quickly scan through all of the grids in a given set.
+ * lite source".  In addition to marking grids as "CAVE_VIEW" and/or
+ * "CAVE_LITE", as appropriate, these functions maintain an array
+ * containing the locations of all of the grids marked with the
+ * CAVE_VIEW flag, which can be used to very quickly scan through all
+ * of those grids.
  *
  * To allow more "semantically valid" field of view semantics, whenever
  * the field of view (or the set of torch lit grids) changes, all of the
  * grids in the field of view (or the set of torch lit grids) are "drawn"
  * so that changes in the world will become apparent as soon as possible.
  * This has been optimized so that only grids which actually "change" are
- * redrawn, using the "temp" array and the "GRID_TEMP" flag to keep track
+ * redrawn, using the "temp" array and the "CAVE_TEMP" flag to keep track
  * of the grids which are entering or leaving the relevent set of grids.
  *
  * These new methods are so efficient that the old nasty code was removed.
@@ -2236,40 +2248,29 @@ void do_cmd_view_map(void)
  * Note that there is no reason to "update" the "viewable space" unless
  * the player "moves", or walls/doors are created/destroyed, and there
  * is no reason to "update" the "torch lit grids" unless the field of
- * view changes, or the "light radius" changes.  This means that when
- * the player is resting, or digging, or doing anything that does not
- * involve movement or changing the state of the dungeon, there is no
- * need to update the "view" or the "lite" regions, which is nice.
+ * view changes, or the "light radius" changes, or HACK: if the player
+ * becomes blind.  This means that when the player is resting, or digging,
+ * or doing anything that does not involve movement or changing the state
+ * of the dungeon, there is no need to update the "view" or the "lite"
+ * regions, which is nice.
  *
- * Note that the calls to the nasty "los()" function have been reduced
- * to a bare minimum by the use of the new "field of view" calculations.
+ * Note that the calls to the nasty "los()" function have been removed with
+ * regardes to the view/lite code.  This results in a huge speed increase.
  *
- * I wouldn't be surprised if slight modifications to the "update_view()"
- * function would allow us to determine "reverse line-of-sight" as well
- * as "normal line-of-sight", which would allow monsters to use a more
- * "correct" calculation to determine if they can "see" the player.  For
- * now, monsters simply "cheat" somewhat and assume that if the player
- * has "line of sight" to the monster, then the monster can "pretend"
- * that it has "line of sight" to the player.
- *
- *
- * This set of grids is the complete set of all grids which are lit by
- * the players light source, which allows the "player_can_see_bold()"
- * function to work very quickly.
  *
  * Note that every "CAVE_LITE" grid is also a "CAVE_VIEW" grid, and in
- * fact, the player (unless blind) can always "see" all grids which are
- * marked as "CAVE_LITE", unless they are "off screen".
- *
+ * fact, the player can always "see" all grids which are marked as
+ * "CAVE_LITE", unless they are "off screen".
  *
  * The "update_view()" function maintains the "CAVE_VIEW" flag for each
- * grid and maintains an array of all "CAVE_VIEW" grids.
+ * grid and maintains an array of all "CAVE_VIEW" grids.  It also looks
+ * after the "CAVE_LITE" flag, and the memorization of new map sqaures.
  *
  *
  * The current "update_view()" algorithm uses the "CAVE_XTRA" flag as a
- * temporary internal flag to mark those grids which are not only in view,
- * but which are also "easily" in line of sight of the player.  This flag
- * is always cleared when we are done.
+ * temporary internal flag to mark those grids which have been previously
+ * memorized.  This is to prevent blind players from gaining information
+ * about their surroundings.  This flag is always cleared when we are done.
  *
  *
  * The current "update_view()" algorithm uses the
@@ -2279,7 +2280,8 @@ void do_cmd_view_map(void)
  *
  * The "CAVE_TEMP" flag, and the array of "CAVE_TEMP" grids, is also used
  * for various other purposes, such as spreading lite or darkness during
- * "lite_room()" / "unlite_room()", and for calculating monster flow.
+ * "lite_room()" / "unlite_room()", for calculating monster flow, and filling
+ * the fractal caves.
  *
  *
  * Any grid can be marked as "CAVE_GLOW" which means that the grid itself is
@@ -2313,90 +2315,84 @@ void do_cmd_view_map(void)
  * which is observed, and the "view_torch_grids" allows the player to memorize
  * every torch-lit grid.  The player will always memorize important walls,
  * doors, stairs, and other terrain features, as well as any "detected" grids.
+ * Note that currently the processing of the "view_perma_grids" option is
+ * broken.  If it is off, then you can't see floor with the "CAVE_GLOW" flag.
+ * Perhaps the "view_perma_grids" flag, and the "view_torch_grids" flags should
+ * be combined.
  *
  * Note that the new "update_view()" method allows, among other things, a room
  * to be "partially" seen as the player approaches it, with a growing cone of
- * floor appearing as the player gets closer to the door.  Also, by not turning
- * on the "memorize perma-lit grids" option, the player will only "see" those
- * floor grids which are actually in line of sight.
+ * floor appearing as the player gets closer to the door.
  *
  * And my favorite "plus" is that you can now use a special option to draw the
  * "floors" in the "viewable region" brightly (actually, to draw the *other*
  * grids dimly), providing a "pretty" effect as the player runs around, and
  * to efficiently display the "torch lite" in a special color.
  *
+ * Here are some pictures of the legal "light source" radius values, in
+ * which the numbers indicate the "order" in which the grids could have
+ * been calculated, if desired.  Larger radii are possible...
  *
- * Some comments on the "update_view()" algorithm...
  *
- * The algorithm is very fast, since it spreads "obvious" grids very quickly,
- * and only has to call "los()" on the borderline cases.  The major axes/diags
- * even terminate early when they hit walls.  I need to find a quick way
- * to "terminate" the other scans.
+ *       Rad=0     Rad=1      Rad=2        Rad=3
+ *      No-Lite  Torch,etc   Lantern     Artifacts
  *
- * Note that in the worst case (a big empty area with say 5% scattered walls),
- * each of the 1500 or so nearby grids is checked once, most of them getting
- * an "instant" rating, and only a small portion requiring a call to "los()".
+ *                                          333
+ *                             333         43334
+ *                  212       32123       3321233
+ *         @        1@1       31@13       331@133
+ *                  212       32123       3321233
+ *                             333         43334
+ *                                          333
  *
- * The only time that the algorithm appears to be "noticeably" too slow is
- * when running, and this is usually only important in town, since the town
- * provides about the worst scenario possible, with large open regions and
- * a few scattered obstructions.  There is a special "efficiency" option to
- * allow the player to reduce his field of view in town, if needed.
  *
- * In the "best" case (say, a normal stretch of corridor), the algorithm
- * makes one check for each viewable grid, and makes no calls to "los()".
- * So running in corridors is very fast, and if a lot of monsters are
- * nearby, it is much faster than the old methods.
+ * Here is an illustration of the two different "update_view()" algorithms,
+ * in which the grids marked "%" are pillars, and the grids marked "?" are
+ * not in line of sight of the player.
  *
- * Note that resting, most normal commands, and several forms of running,
- * plus all commands executed near large groups of monsters, are strictly
- * more efficient with "update_view()" that with the old "compute los() on
- * demand" method, primarily because once the "field of view" has been
- * calculated, it does not have to be recalculated until the player moves
- * (or a wall or door is created or destroyed).
  *
- * Note that we no longer have to do as many "los()" checks, since once the
- * "view" region has been built, very few things cause it to be "changed"
- * (player movement, and the opening/closing of doors, changes in wall status).
- * Note that door/wall changes are only relevant when the door/wall itself is
- * in the "view" region.
+ *                    Sample situation
  *
- * The algorithm seems to only call "los()" from zero to ten times, usually
- * only when coming down a corridor into a room, or standing in a room, just
- * misaligned with a corridor.  So if, say, there are five "nearby" monsters,
- * we will be reducing the calls to "los()".
+ *                  #####################
+ *                  ############.%.%.%.%#
+ *                  #...@..#####........#
+ *                  #............%.%.%.%#
+ *                  #......#####........#
+ *                  ############........#
+ *                  #####################
  *
- * I am thinking in terms of an algorithm that "walks" from the central point
- * out to the maximal "distance", at each point, determining the "view" code
- * (above).  For each grid not on a major axis or diagonal, the "view" code
- * depends on the "cave_floor_grid()" and "view" of exactly two other grids
- * (the one along the nearest diagonal, and the one next to that one, see
- * "update_view_aux()"...).
  *
- * We "memorize" the viewable space array, so that at the cost of under 3000
- * bytes, we reduce the time taken by "forget_view()" to one assignment for
- * each grid actually in the "viewable space".  And for another 3000 bytes,
- * we prevent "erase + redraw" ineffiencies via the "seen" set.  These bytes
- * are also used by other routines, thus reducing the cost to almost nothing.
+ *          New Algorithm             Old Algorithm
  *
- * A similar thing is done for "forget_lite()" in which case the savings are
- * much less, but save us from doing bizarre maintenance checking.
+ *      ########?????????????    ########?????????????
+ *      #...@..#?????????????    #...@..#?????????????
+ *      #...........?????????    #.........???????????
+ *      #......#####.....????    #......####??????????
+ *      ########?????????...#    ########?????????????
  *
- * In the worst "normal" case (in the middle of the town), the reachable space
- * actually reaches to more than half of the largest possible "circle" of view,
- * or about 800 grids, and in the worse case (in the middle of a dungeon level
- * where all the walls have been removed), the reachable space actually reaches
- * the theoretical maximum size of just under 1500 grids.
+ *      ########?????????????    ########?????????????
+ *      #.@....#?????????????    #.@....#?????????????
+ *      #............%???????    #...........?????????
+ *      #......#####........?    #......#####?????????
+ *      ########??????????..#    ########?????????????
  *
- * Each grid G examines the "state" of two (?) other (adjacent) grids, G1 & G2.
- * If G1 is lite, G is lite.  Else if G2 is lite, G is half.  Else if G1 and G2
- * are both half, G is half.  Else G is dark.  It only takes 2 (or 4) bits to
- * "name" a grid, so (for MAX_RAD of 20) we could use 1600 bytes, and scan the
- * entire possible space (including initialization) in one step per grid.  If
- * we do the "clearing" as a separate step (and use an array of "view" grids),
- * then the clearing will take as many steps as grids that were viewed, and the
- * algorithm will be able to "stop" scanning at various points.
- * Oh, and outside of the "torch radius", only "lite" grids need to be scanned.
+ *      ########?????????????    ########?????%???????
+ *      #......#####........#    #......#####..???????
+ *      #.@..........%???????    #.@..........%???????
+ *      #......#####........#    #......#####..???????
+ *      ########?????????????    ########?????????????
+ *
+ *      ########??????????..#    ########?????????????
+ *      #......#####........?    #......#####?????????
+ *      #............%???????    #...........?????????
+ *      #.@....#?????????????    #.@....#?????????????
+ *      ########?????????????    ########?????????????
+ *
+ *      ########?????????%???    ########?????????????
+ *      #......#####.....????    #......####??????????
+ *      #...........?????????    #.........???????????
+ *      #...@..#?????????????    #...@..#?????????????
+ *      ########?????????????    ########?????????????
  */
 
 
@@ -2983,16 +2979,12 @@ errr vinfo_init(void)
 /*
  * Calculate the complete field of view using a new algorithm
  *
- * If "view_g" and "temp_g" were global pointers to arrays of grids, as
- * opposed to actual arrays of grids, then we could be more efficient by
- * using "pointer swapping".
- *
  *
  * Normally, vision along the major axes is more likely than vision
  * along the diagonal axes, so we check the bits corresponding to
  * the lines of sight near the major axes first.
  *
- * We use the "temp_g" array (and the "CAVE_TEMP" flag) to keep track of
+ * We use the "temp_x/y" arrays (and the "CAVE_TEMP" flag) to keep track of
  * which grids were previously marked "CAVE_VIEW", since only those grids
  * whose "CAVE_VIEW" value changes during this routine must be redrawn.
  *
@@ -3025,7 +3017,7 @@ errr vinfo_init(void)
  * without passing through the corner of a grid in the octant can be "slid"
  * slowly towards the corner of the grid closest to the player, until it
  * either reaches it or until it brushes the corner of another grid which
- * is closer to the player, and in either case, the existanc of a suitable
+ * is closer to the player, and in either case, the existance of a suitable
  * line of sight is thus demonstrated.
  *
  * It turns out that in each octant of the radius 20 "octagon of view",
@@ -3047,7 +3039,7 @@ errr vinfo_init(void)
  * but closer to the player grid (one adjacent, and one diagonal).  For the
  * bit vector, we simply use 4 32-bit integers.  All of the static values
  * which are needed by this function are stored in the large "vinfo" array
- * (above), which is machine generated by another program.  XXX XXX XXX
+ * (above), which is initialised at startup.
  *
  * Hack -- The queue must be able to hold more than VINFO_MAX_GRIDS grids
  * because the grids at the edge of the field of view use "grid zero" as
