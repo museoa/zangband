@@ -52,6 +52,8 @@ Zangband 2.3.4:
   - New critical hit structure.
   - Damage multipliers for slays and brands amended. Slay Evil and Slay
     Animal do x1.7, Kill Dragon x3 and all others x2.
+  - Added the 'THROW' flag to various objects and artifacts. These
+    items will do more damage when thrown.
 -Further amendments and refinements to the dungeon generation code
  including:
   - Rooms of all types can be packed closer together.
@@ -76,6 +78,30 @@ Zangband 2.3.4:
 -Changed the compiler optimization flags for the DOS version to work-
  around a bug in DJGPP that could cause ZAngband to hang when
  compacting items.
+-Artifacts now have a higher activation failure rate when cursed.
+-Fixed a bug that caused thrown/fired objects to look strange with
+ graphics switched on.
+-Added some new vaults by Eric Bock and tweaked a couple of others.
+-Added some more monsters including Storm Trolls and Bats of Gorgoroth
+ from Oangband.
+-Minor changes to certain quests and their rewards.
+-Added a "status bar" that displays certain timed effects under the
+ stats. Timed effects previously already displayed like poison, wounds
+ and stunning remain as they were.
+-Made artifacts 'tweakable' and their activations can now be modified.
+ [Note: include details of how to do this?]
+-Players may now walk the pattern incorrectly but should be cautious
+ doing so.
+-Fixed some problems with the 'easy patch' option.
+-Lice can no longer fly and are no longer denoted by the 'l' character.
+-'Enlightement' will now detect all walls and monsters.
+-Rings of Extra Attacks will now normaly be +1 and occasionally +2.
+ They are also rarer.
+-Removed some items from silly.txt and rumors.txt and added some new
+ entries.
+-Made some changes to enhance compatability with Mac compilers.
+
+
 
 Zangband 2.3.3:
 -Added magical figurines, statues, and corpses (corpses are turned off
