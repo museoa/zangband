@@ -2072,6 +2072,9 @@ static void calc_torch(void)
 		/* Update the monsters */
 		p_ptr->update |= (PU_MONSTERS);
 
+		/* Redraw the map */
+		p_ptr->redraw |= (PR_MAP);
+		
 		/* Remember the old lite */
 		p_ptr->old_lite = p_ptr->cur_lite;
 	}
