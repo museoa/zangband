@@ -482,6 +482,7 @@ bool borg_check_lite(void)
 	{
 		/* Check for traps */
 		if (borg_activate(BORG_ACT_DETECT_EVIL) ||
+			borg_activate(BORG_ACT_DETECT_MONSTERS) ||
 			borg_use_staff(SV_STAFF_DETECT_EVIL) ||
 			borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
 			borg_spell_fail(REALM_ARCANE, 0, 3, 20) ||
