@@ -3616,7 +3616,7 @@ static void create_rivers(int sea_level)
 	long dist, dx, dy, val, h_val;
 
 	/* Number of river starting points. */
-	river_start = (long) max_wild * max_wild / 400;
+	river_start = (long) max_wild * max_wild / 800;
 
 	/* paranoia - bounds checking */
 	if (river_start > TEMP_MAX) river_start = TEMP_MAX;
