@@ -1994,7 +1994,7 @@ L:BUILD2:		record_aura()
 L:BUILD2:		player.au = player.au - cost
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
-L:BUILD2:elseif (command = 'T') then
+L:BUILD2:elseif (command == 'T') then
 L:BUILD2:	building_magetower(factor, FALSE)
 L:BUILD2:	done = TRUE
 L:BUILD2:end
@@ -2016,7 +2016,7 @@ L:BUILD2:		record_aura()
 L:BUILD2:		player.au = player.au - cost
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
-L:BUILD2:elseif (command = 'T') then
+L:BUILD2:elseif (command == 'T') then
 L:BUILD2:	building_magetower(factor, FALSE)
 L:BUILD2:	done = TRUE
 L:BUILD2:end
