@@ -70,8 +70,18 @@ D:0:0:0:0:0:0:0:0
 F:12,field_action_compact_basic
 F:17,field_action_glyph_warding
 
+# Explosive Rune
+N:3:& Explosive Rune~
+G:*:R
+W:100:4:0
+I:FEAT | VIS | NO_OBJECT
+D:0:0:0:0:0:0:0:0
+F:12,field_action_compact_basic
+F:17,field_action_glyph_explode
+
+
 # Trap
-N:3:& trap~
+N:4:& trap~
 G:^:w
 W:240:6:0
 I:FEAT
