@@ -4229,7 +4229,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			o_ptr->number = (byte)damroll(10, 8);
+			o_ptr->number = (byte)damroll(6, 7);
 		}
 		break;
 		
