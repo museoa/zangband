@@ -32,7 +32,6 @@ t_ascii *g_ascii; /* Array of ascii info */
 int g_ascii_count;  /* Number of elems in g_ascii[] array */
 int g_pixel_size; /* Num bytes per pixel (1, 2, 3 or 4) */
 int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
-int g_icon_style; /* ICON_STYLE_xxx */
 
 unsigned char *g_palette_rgb;
 
@@ -2602,14 +2601,14 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 {
 	static cptr cmdOption[] = {"createtype", "count",
 		"gettypes", "validate", "size", "ascii",
-		"gamma", "photo", "makeicon", "depth", "dump",
+		"gamma", "photo", "makeicon", "depth",
 		"rle", "height", "width", "dynamic", "duplicate",
-		"transparent", "dark", "flags", "style", NULL};
+		"transparent", "dark", "flags", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
-		IDX_GAMMA, IDX_PHOTO, IDX_MAKEICON, IDX_DEPTH, IDX_DUMP,
+		IDX_GAMMA, IDX_PHOTO, IDX_MAKEICON, IDX_DEPTH,
 		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DYNAMIC, IDX_DUPLICATE,
-		IDX_TRANSPARENT, IDX_DARK, IDX_FLAGS, IDX_STYLE} option;
+		IDX_TRANSPARENT, IDX_DARK, IDX_FLAGS} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -3007,56 +3006,6 @@ wrongCreateArgs:
 			Tcl_SetIntObj(resultPtr, g_icon_depth);
 			break;
 
-		case IDX_DUMP: /* dump */
-		{
-#if 0
-			int y, x;
-			PixelPtr p;
-
-			if (Icon_ParseArgs(interp, objc, objv, 2, &iconSpec) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Access the icon data */
-			iconDataPtr = &g_icon_data[iconSpec.type];
-
-			if (iconDataPtr->mask_count)
-			{
-				p.pix8 = iconDataPtr->mask_bits +
-					iconDataPtr->mask_table[iconSpec.index] *
-					iconDataPtr->length;
-			}
-			else
-			{
-				p.pix8 = iconDataPtr->icon_data + iconSpec.index
-					* iconDataPtr->length;
-			}
-			for (y = 0; y < iconDataPtr->height; y++)
-			{
-				for (x = 0; x < iconDataPtr->width; x++)
-				{
-					switch (iconDataPtr->depth)
-					{
-						case 8:
-							Tcl_AppendResult(interp, format("%02x ", *p.pix8++), NULL);
-							break;
-						case 16:
-							Tcl_AppendResult(interp, format("%04x ", (int) *p.pix16++), NULL);
-							break;
-						case 24:
-							Tcl_AppendResult(interp, format("%02x%02x%02x ",
-								p.pix8[0], p.pix8[1], p.pix8[2]), NULL);
-							p.pix8 += 3;
-							break;
-					}
-				}
-				Tcl_AppendResult(interp, "\n", NULL);
-			}
-#endif
-			break;
-		}
-
 		case IDX_RLE: /* rle */
 		{
 			XColor *xColorPtr;
@@ -3252,23 +3201,6 @@ wrongCreateArgs:
 			/* Set value of one flag */
 			iconDataPtr->flags[index] |= (1L << flag);
 
-			break;
-		}
-
-		case IDX_STYLE: /* style */
-		{
-			static cptr keyword_icon_style[] = {"icon", "iso", NULL};
-			if (objc == 3)
-			{
-			    if (Tcl_GetIndexFromObj(interp, objv[2], (char **) keyword_icon_style,
-			    	(char *) "style", 0, &g_icon_style) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-				break;
-			}
-			Tcl_SetResult(interp, (char *) keyword_icon_style[g_icon_style],
-				TCL_STATIC);
 			break;
 		}
 	}
@@ -3553,9 +3485,6 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 
 	/* Remember the requested icon depth */
 	g_icon_depth = depth;
-
-	/* Hacks-a-plenty */
-	g_icon_style = ICON_STYLE_ICON;
 
 	if (InitPixelSize(interp) != TCL_OK)
 	{
