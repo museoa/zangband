@@ -968,8 +968,8 @@ static bool dump_info_test(char c, int town)
 
 		case 'h':
 		{
-			for (i = 0; i < place[town].numstores; i++)
 			/* Display the items in the home needs a home */
+			for (i = 0; i < place[town].numstores; i++)
 			{
 				st_ptr = &place[town].store[i];
 
@@ -986,8 +986,8 @@ static bool dump_info_test(char c, int town)
 
 		case 'c':
 		{
-			for (i = 0; i < place[town].numstores; i++)
 			/* Display the items in the home needs a home */
+			for (i = 0; i < place[town].numstores; i++)
 			{
 				st_ptr = &place[town].store[i];
 
@@ -1077,7 +1077,7 @@ static bool do_cmd_view_map_aux(char c, int town)
 static int map_cx = 0;
 static int map_cy = 0;
 
-static void resize_map(void)
+static void resize_big_map(void)
 {
 	int cx, cy;
 	wild_done_type *w_ptr;
@@ -1121,7 +1121,7 @@ void do_cmd_view_map(void)
 	hook = angband_term[0]->resize_hook;
 
 	/* Hack - change the redraw hook so bigscreen works */
-	angband_term[0]->resize_hook = resize_map;
+	angband_term[0]->resize_hook = resize_big_map;
 
 	/* Note */
 	prtf(0, 0, "Please wait...");
