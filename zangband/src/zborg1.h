@@ -88,12 +88,6 @@
 /* the Z randarts are considered #127 by the borg */
 #define ART_RANDART  127
 
-/* Magic Numbers are Evil */
-#define BORG_GSTORE  	0
-#define BORG_TEMPLE  	3
-#define BORG_ALCHEMIST  4
-#define BORG_HOME  		7
-
 
 
 /*
@@ -1037,8 +1031,10 @@ extern FILE *borg_fff;	/* Log file */
  * Locate the store doors
  */
 
-extern byte *track_shop_x;
-extern byte *track_shop_y;
+extern s16b track_shop_num;
+extern s16b track_shop_size;
+extern int *track_shop_x;
+extern int *track_shop_y;
 
 
 /*
@@ -1047,8 +1043,8 @@ extern byte *track_shop_y;
 
 extern s16b track_less_num;
 extern s16b track_less_size;
-extern byte *track_less_x;
-extern byte *track_less_y;
+extern int *track_less_x;
+extern int *track_less_y;
 
 
 /*
@@ -1057,32 +1053,32 @@ extern byte *track_less_y;
 
 extern s16b track_more_num;
 extern s16b track_more_size;
-extern byte *track_more_x;
-extern byte *track_more_y;
+extern int *track_more_x;
+extern int *track_more_y;
 
 /*
  * Track glyphs
  */
 extern s16b track_glyph_num;
 extern s16b track_glyph_size;
-extern byte *track_glyph_x;
-extern byte *track_glyph_y;
+extern int *track_glyph_x;
+extern int *track_glyph_y;
 
 /*
  * Track steps
  */
 extern s16b track_step_num;
 extern s16b track_step_size;
-extern byte *track_step_x;
-extern byte *track_step_y;
+extern int *track_step_x;
+extern int *track_step_y;
 
 /*
  * Track closed doors
  */
 extern s16b track_door_num;
 extern s16b track_door_size;
-extern byte *track_door_x;
-extern byte *track_door_y;
+extern int *track_door_x;
+extern int *track_door_y;
 
 /*
  * The object list.  This list is used to "track" objects.

@@ -3157,6 +3157,7 @@ void borg_notice(bool notice_swap)
 
 }
 
+#if 0
 /*
  * Helper function -- notice the home equipment
  */
@@ -3290,8 +3291,9 @@ static void borg_notice_home_aux1(borg_item *in_item, bool no_items)
 
 	num_duplicate_items = 0;
 }
+#endif /* 0 */
 
-
+#if 0
 /*
  * This checks for duplicate items in the home
  */
@@ -3337,7 +3339,9 @@ static void borg_notice_home_dupe(borg_item *item, bool check_sval, int i)
 	/* Add this items count to the total duplicate count */
 	num_duplicate_items += dupe_count;
 }
+#endif /* 0 */
 
+#if 0
 /*
  * Helper function -- notice the home inventory
  */
@@ -4319,6 +4323,7 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 	if (f2 & (TR2_SUST_CON)) num_sustain_con = TRUE;
 
 }
+#endif /* 0 */
 
 /*
  * Extract the bonuses for items in the home.
@@ -4330,11 +4335,13 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
  */
 void borg_notice_home(borg_item *in_item, bool no_items)
 {
+#if 0
 	/* Notice the home equipment */
 	borg_notice_home_aux1(in_item, no_items);
 
 	/* Notice the home inventory */
 	borg_notice_home_aux2(in_item, no_items);
+#endif /* 0 */
 }
 
 /*
@@ -4700,11 +4707,11 @@ extern s32b borg_power_aux2(void)
 		}
 		/* Sauron is dead -- store them unless I have enough */
 		if (borg_race_death[860] != 0)
-		{
+        {
 			/* Must know exact number of Potions  in home */
-			borg_notice_home(NULL, FALSE);
+            borg_notice_home(NULL, FALSE);
 
-			/* Must scum for more pots */
+            /* Must scum for more pots */
 			if ((num_heal_true + borg_has[242] +
 				 num_ez_heal_true + borg_skill[BI_AEZHEAL] < 45) ||
 				(num_ez_heal_true + borg_skill[BI_AEZHEAL] < 20) ||

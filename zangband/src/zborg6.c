@@ -14058,11 +14058,12 @@ bool borg_flow_shop_visit(void)
 	borg_flow_clear();
 
 	/* Visit the shops */
-	for (i = 0; i < MAX_STORES; i++)
+	for (i = 0; i < track_shop_num; i++)
 	{
 		/* Must not be visited */
 		if (borg_shops[i].when) continue;
 
+#if 0
 		/* if poisoned or bleeding skip non temples */
 		if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
 			(i != BORG_TEMPLE && i != BORG_HOME)) continue;
@@ -14073,7 +14074,8 @@ bool borg_flow_shop_visit(void)
 
 		/* if dark--skip non food places */
 		if (borg_skill[BI_CUR_LITE] == 0 && (i != 0) &&
-			borg_skill[BI_CLEVEL] >= 2) continue;
+            borg_skill[BI_CLEVEL] >= 2) continue;
+#endif
 
 		/* Obtain the location */
 		x = track_shop_x[i];

@@ -583,8 +583,23 @@ static bool borg_think(void)
 	if ((0 == borg_what_text(3, 5, 16, &t_a, buf)) &&
 		(streq(buf, "Item Description")))
 	{
-		/* Assume the Home */
-		shop_num = 7;
+		/* Silly value */
+        shop_num = 0;
+
+        /* Scan for the right shop */
+        for (i = 0; i < track_shop_num; i++)
+        {
+            /*
+             * The turn before moving into the shop we should have been
+             * standing next to it, so check for shops 1 square away.
+             */
+            if (abs(track_shop_x[i] - c_x) <= 1 &&
+                abs(track_shop_y[i] - c_y) <= 1)
+            {
+                shop_num = i;
+                break;
+            }
+        }
 
 		/* Clear the goal (the goal was probably going to a shop) */
 		goal = 0;
@@ -5329,17 +5344,13 @@ void do_cmd_borg(void)
 			break;
         }
 
-#if 0
         case '8':
         {
             /* Command: debug -- show shops */
             int i, n = 0;
 
-            for (i = 0; i < MAX_STORES; i++)
+            for (i = 0; i < track_shop_num; i++)
             {
-                /* Only real shops */
-                if (track_shop_x[i] == 0) continue;
-
                 /* Print */
                 print_rel('*', TERM_RED, track_shop_x[i], track_shop_y[i]);
 
@@ -5355,7 +5366,6 @@ void do_cmd_borg(void)
 			prt_map();
 			break;
         }
-#endif /* 0 */
 
 		case '%':
 		{

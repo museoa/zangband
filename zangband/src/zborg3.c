@@ -3748,7 +3748,7 @@ void borg_init_3(void)
 	C_MAKE(borg_items, INVEN_TOTAL, borg_item);
 
 	/* Make the stores in the town */
-	C_MAKE(borg_shops, MAX_STORES, borg_shop);
+	C_MAKE(borg_shops, track_shop_size, borg_shop);
 
 
 	/*** Item/Ware arrays (simulation) ***/
@@ -3758,7 +3758,7 @@ void borg_init_3(void)
 	C_MAKE(safe_home, STORE_INVEN_MAX, borg_item);
 
 	/* Make the "safe" stores in the town */
-	C_MAKE(safe_shops, MAX_STORES, borg_shop);
+	C_MAKE(safe_shops, track_shop_size, borg_shop);
 
 	/*** Plural Object Templates ***/
 

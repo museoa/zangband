@@ -11,6 +11,7 @@
 #include "zborg4.h"
 #include "zborg5.h"
 
+#include <assert.h>
 
 
 /*
@@ -2787,7 +2788,29 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			break;
 		}
 #endif /* 0 */
-	}
+    }
+
+    if ((map->field >= FT_STORE_GENERAL &&
+         map->field <= FT_STORE_BOOK) ||
+        (map->field >= FT_STORE_WEAPON1 &&
+         map->field <= FT_STORE_FOOD))
+    {
+        /* Check for an existing shop */
+        for (i = 0; i < track_shop_num; i++)
+        {
+            /* Stop if we already knew about this shop */
+            if ((track_shop_x[i] == x) && (track_shop_y[i] == y)) break;
+        }
+
+        /* Track the newly discovered shop */
+        if ((i == track_shop_num) && (i < track_shop_size))
+        {
+            track_shop_x[i] = x;
+            track_shop_y[i] = y;
+            track_shop_num++;
+        }
+    }
+
 
     /* Save the new "wall" or "door" */
     /*
@@ -2822,17 +2845,48 @@ static void borg_forget_map(void)
 {
 	map_block *mb_ptr;
 
-	/* Itterate over the map */
-	MAP_ITT_START (mb_ptr)
+    /* Itterate over the map */
+#if 0
+    MAP_ITT_START (mb_ptr)
+#endif
 	{
+		int _map_count;
+
+		for (_map_count = 0; _map_count < MAP_CACHE; _map_count++)
+		{
+            int _map_i, _map_j;
+
+			if (map_cache_x[_map_count] == -1) continue;
+
+			if (map_grid[map_cache_y[_map_count]][map_cache_x[_map_count]] == -1)
+				 continue;
+
+			for (_map_i = 0; _map_i < WILD_BLOCK_SIZE; _map_i++)
+			{
+				for (_map_j = 0; _map_j < WILD_BLOCK_SIZE; _map_j++)
+				{
+					(mb_ptr) = &map_cache[_map_count][_map_j][_map_i];
+
+    {
 		/* Clear flow information */
 		mb_ptr->cost = 255;
+
+        /* ARRRRGH! */
+        assert(mb_ptr == &map_cache[_map_count][_map_j][_map_i]);
+
 		mb_ptr->flow = 255;
 
 		/* Clear icky + know flag */
 		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+    }
+
+                }
+			}
+		}
 	}
-	MAP_ITT_END;
+#if 0
+    MAP_ITT_END;
+#endif
 
 	/* Forget the view */
 	borg_forget_view();
@@ -2949,69 +3003,6 @@ static void borg_update_map(void)
 		}
 		/* reset the count */
 		track_step_num = 75;
-	}
-}
-
-/* Cheat the feature codes into memory.  Used on Wilderness
- * Levels mostly.
- */
-static void borg_cheat_feats(void)
-{
-	int x, y;
-	int i;
-
-	map_block *mb_ptr;
-
-	/* Currently only cheat towns and wilderness */
-	if (borg_skill[BI_CDEPTH] == 0)
-	{
-		MAP_ITT_START (mb_ptr)
-		{
-			/* Dungeon Stair Location */
-			if (mb_ptr->terrain == FEAT_MORE)
-			{
-				/* Get location */
-				MAP_GET_LOC(x, y);
-
-				/* Check for an existing "down stairs" */
-				for (i = 0; i < track_more_num; i++)
-				{
-					/* We already knew about that one */
-					if ((track_more_x[i] == x) && (track_more_y[i] == y))
-					{
-						break;
-					}
-				}
-
-				/* Track the newly discovered "down stairs" */
-				if ((i == track_more_num) && (i < track_more_size))
-				{
-					track_more_x[i] = x;
-					track_more_y[i] = y;
-					track_more_num++;
-				}
-			}
-
-
-#if 0
-			/* Shop Entry */
-			if (cave[y][x].feat >= FEAT_SHOP_HEAD &&
-				cave[y][x].feat <= FEAT_SHOP_TAIL)
-			{
-				for (i = 0; i < MAX_STORES; i++)
-				{
-					if (cave[y][x].feat == FEAT_SHOP_HEAD + i)
-					{
-						/* Shop Location */
-						track_shop_x[i] = x;
-						track_shop_y[i] = y;
-					}
-				}
-			}
-#endif /* 0 */
-
-		}
-		MAP_ITT_END;
 	}
 }
 
@@ -3588,7 +3579,7 @@ void borg_update(void)
 		when_detect_evil = 0;
 
 		/* Hack -- Clear "shop visit" stamps */
-		for (i = 0; i < (MAX_STORES); i++) borg_shops[i].when = 0;
+		for (i = 0; i < (track_shop_size); i++) borg_shops[i].when = 0;
 
 
 		/* No goal yet */
@@ -3617,7 +3608,12 @@ void borg_update(void)
 
 		/* No known stairs */
 		track_less_num = 0;
-		track_more_num = 0;
+        track_more_num = 0;
+
+#if 0
+        /* No known shops -- do we really need this? XXX */
+        track_shop_num = 0;
+#endif /* 0 */
 
 		/* No known glyph */
 		track_glyph_num = 0;
@@ -3689,11 +3685,8 @@ void borg_update(void)
 		borg_times_twitch = 0;
 		borg_escapes = 0;
 
-		/* Cheat Town(s) / Wilderness / Shop info */
-		borg_cheat_feats();
-
-		/* Check for being in a quest */
-		/* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
+        /* Check for being in a quest */
+        /* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
 	}
 
 	/* Handle old level */

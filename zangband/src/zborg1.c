@@ -847,11 +847,13 @@ FILE *borg_fff = NULL;	/* Log file */
  * Locate the store doors
  */
 
-byte *track_shop_x;
-byte *track_shop_y;
+s16b track_shop_num;
+s16b track_shop_size;
+int *track_shop_x;
+int *track_shop_y;
 
-byte *track_quest_x;
-byte *track_quest_y;
+int *track_quest_x;
+int *track_quest_y;
 
 /*
  * Track "stairs up"
@@ -859,8 +861,8 @@ byte *track_quest_y;
 
 s16b track_less_num;
 s16b track_less_size;
-byte *track_less_x;
-byte *track_less_y;
+int *track_less_x;
+int *track_less_y;
 
 
 /*
@@ -869,32 +871,32 @@ byte *track_less_y;
 
 s16b track_more_num;
 s16b track_more_size;
-byte *track_more_x;
-byte *track_more_y;
+int *track_more_x;
+int *track_more_y;
 
 /*
  * Track glyphs
  */
 s16b track_glyph_num;
 s16b track_glyph_size;
-byte *track_glyph_x;
-byte *track_glyph_y;
+int *track_glyph_x;
+int *track_glyph_y;
 
 /*
  * Track Steps
  */
 s16b track_step_num;
 s16b track_step_size;
-byte *track_step_x;
-byte *track_step_y;
+int *track_step_x;
+int *track_step_y;
 
 /*
  * Track closed doors
  */
 s16b track_door_num;
 s16b track_door_size;
-byte *track_door_x;
-byte *track_door_y;
+int *track_door_x;
+int *track_door_y;
 
 /*
  * The object list.  This list is used to "track" objects.
@@ -2399,41 +2401,43 @@ void borg_init_1(void)
 
 	/*** Very special "tracking" array ***/
 
-	/* Track the shop locations */
-	C_MAKE(track_shop_x, 10, byte);
-	C_MAKE(track_shop_y, 10, byte);
+    /* Track the shop locations */
+    track_shop_num = 0;
+    track_shop_size = 16;
+	C_MAKE(track_shop_x, track_shop_size, int);
+	C_MAKE(track_shop_y, track_shop_size, int);
 
 	/*** Special "tracking" arrays ***/
 
 	/* Track "up" stairs */
 	track_less_num = 0;
 	track_less_size = 16;
-	C_MAKE(track_less_x, track_less_size, byte);
-	C_MAKE(track_less_y, track_less_size, byte);
+	C_MAKE(track_less_x, track_less_size, int);
+	C_MAKE(track_less_y, track_less_size, int);
 
 	/* Track "down" stairs */
 	track_more_num = 0;
 	track_more_size = 16;
-	C_MAKE(track_more_x, track_more_size, byte);
-	C_MAKE(track_more_y, track_more_size, byte);
+	C_MAKE(track_more_x, track_more_size, int);
+	C_MAKE(track_more_y, track_more_size, int);
 
 	/* Track glyphs */
 	track_glyph_num = 0;
 	track_glyph_size = 256;
-	C_MAKE(track_glyph_x, track_glyph_size, byte);
-	C_MAKE(track_glyph_y, track_glyph_size, byte);
+	C_MAKE(track_glyph_x, track_glyph_size, int);
+	C_MAKE(track_glyph_y, track_glyph_size, int);
 
 	/* Track Steps */
 	track_step_num = 0;
 	track_step_size = 256;
-	C_MAKE(track_step_x, track_step_size, byte);
-	C_MAKE(track_step_y, track_step_size, byte);
+	C_MAKE(track_step_x, track_step_size, int);
+	C_MAKE(track_step_y, track_step_size, int);
 
 	/* Track closed doors */
 	track_door_num = 0;
 	track_door_size = 256;
-	C_MAKE(track_door_x, track_door_size, byte);
-	C_MAKE(track_door_y, track_door_size, byte);
+	C_MAKE(track_door_x, track_door_size, int);
+	C_MAKE(track_door_y, track_door_size, int);
 
 	/*** Object tracking ***/
 

@@ -4024,16 +4024,21 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 
 
 	/* Try other possible objects */
-	for (i = 0;
-		 i <
+    for (i = 0; i <
+#if 0
 		 ((shop_num ==
-		   BORG_HOME) ? (INVEN_PACK + STORE_INVEN_MAX) : INVEN_PACK); i++)
+           BORG_HOME) ? (INVEN_PACK + STORE_INVEN_MAX) : INVEN_PACK)
+#endif
+         INVEN_PACK; i++)
 	{
-		borg_item *item;
-		if (i < INVEN_PACK)
+        borg_item *item;
+#if 0
+        if (i < INVEN_PACK)
 			item = &borg_items[i];
 		else
-			item = &borg_shops[BORG_HOME].ware[i - INVEN_PACK];
+            item = &borg_shops[BORG_HOME].ware[i - INVEN_PACK];
+#endif
+        item = &borg_items[i];
 
 		/* Skip empty items */
 		if (!item->iqty) continue;
@@ -4121,6 +4126,7 @@ bool borg_best_stuff(void)
 		COPY(&safe_items[i], &borg_items[i], borg_item);
 	}
 
+#if 0
 	if (shop_num == BORG_HOME)
 	{
 		/* Hack -- Copy all the store slots */
@@ -4129,7 +4135,8 @@ bool borg_best_stuff(void)
 			/* Save the item */
 			COPY(&safe_home[i], &borg_shops[BORG_HOME].ware[i], borg_item);
 		}
-	}
+    }
+#endif
 
 	/* Evaluate the inventory */
 	value = my_power;
@@ -4161,7 +4168,8 @@ bool borg_best_stuff(void)
 			return (TRUE);
 		}
 		else
-		{
+        {
+#if 0
 			borg_item *item;
 
 			/* can't get an item if full. */
@@ -4198,7 +4206,8 @@ bool borg_best_stuff(void)
 			/* tick the clock */
 			time_this_panel++;
 
-			return (TRUE);
+            return (TRUE);
+#endif /* 0 */
 		}
 	}
 

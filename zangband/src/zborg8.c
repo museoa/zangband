@@ -298,6 +298,7 @@ static int borg_min_item_quantity(borg_item *item)
  *   not worth any money, since it may save us money eventually.
  */
 
+#if 0
 /* this optimized the home storage by trying every combination... it was too slow.*/
 /* put this code back when running this on a Cray. */
 static void borg_think_home_sell_aux2_slow(int n, int start_i)
@@ -428,8 +429,10 @@ static void borg_think_home_sell_aux2_slow(int n, int start_i)
 		item->iqty++;
 	}
 }
+#endif /* 0 */
 
 
+#if 0
 /*
  * this will see what single addition/substitution is best for the home.
  * The formula is not as nice as the one above because it will
@@ -560,7 +563,9 @@ static void borg_think_home_sell_aux2_fast(int n, int start_i)
 		}
 	}
 }
+#endif /* 0 */
 
+#if 0
 /* locate useless item */
 static void borg_think_home_sell_aux3()
 {
@@ -624,7 +629,9 @@ static void borg_think_home_sell_aux3()
 		safe_items[i].iqty = num_items_given;
 	}
 }
+#endif /* 0 */
 
+#if 0
 /*
  * Step 1 -- sell "useful" things to the home (for later)
  */
@@ -798,6 +805,7 @@ static bool borg_think_home_sell_aux(bool save_best)
 	/* Assume not */
 	return (FALSE);
 }
+#endif /* 0 */
 
 
 /*
@@ -921,13 +929,15 @@ static bool borg_think_shop_sell_aux(void)
 	b_p = my_power;
 
 	/* Check each shop */
-	for (k = 0; k < (MAX_STORES); k++)
+	for (k = 0; k < (track_shop_num); k++)
 	{
 		/* Hack -- Skip "full" shops */
 		if (borg_shops[k].ware[icky].iqty) continue;
 
+#if 0
 		/* skip the home */
-		if (k == BORG_HOME) continue;
+        if (k == BORG_HOME) continue;
+#endif
 
 		/* Save the store hole */
 		COPY(&safe_shops[k].ware[icky], &borg_shops[k].ware[icky], borg_item);
@@ -1189,10 +1199,12 @@ static bool borg_think_shop_buy_aux(void)
 	b_p = my_power;
 
 	/* Check the shops */
-	for (k = 0; k < (MAX_STORES); k++)
-	{
+	for (k = 0; k < (track_shop_num); k++)
+    {
+#if 0
 		/* Skip home */
-		if (k == BORG_HOME) continue;
+        if (k == BORG_HOME) continue;
+#endif
 
 		/* Scan the wares */
 		for (n = 0; n < STORE_INVEN_MAX; n++)
@@ -1342,6 +1354,7 @@ static bool borg_think_shop_buy_aux(void)
 }
 
 
+#if 0
 /*
  * Step 4 -- buy "useful" things from the home (to be used)
  */
@@ -1593,9 +1606,9 @@ static bool borg_think_home_buy_aux(void)
 	/* Nope */
 	return (FALSE);
 }
+#endif /* 0 */
 
-
-
+#if 0
 /*
  * Step 5 -- buy "interesting" things from a shop (to be used later)
  */
@@ -1632,7 +1645,7 @@ static bool borg_think_shop_grab_aux(void)
 	b_s = borg_power_home();
 
 	/* Check the shops */
-	for (k = 0; k < (MAX_STORES); k++)
+	for (k = 0; k < (track_shop_num); k++)
 	{
 		/* Scan the wares */
 		for (n = 0; n < STORE_INVEN_MAX; n++)
@@ -1642,8 +1655,10 @@ static bool borg_think_shop_grab_aux(void)
 			/* Skip empty items */
 			if (!item->iqty) continue;
 
+#if 0
 			/* skip home */
-			if (k == BORG_HOME) continue;
+            if (k == BORG_HOME) continue;
+#endif
 
 			/* Skip "bad" buys */
 			if (!borg_good_buy(item, k)) continue;
@@ -1672,7 +1687,7 @@ static bool borg_think_shop_grab_aux(void)
 			if (borg_empty_home_power >= borg_power_home()) continue;
 
 			/* optimize the home inventory */
-			if (!borg_think_home_sell_aux(TRUE)) continue;
+            if (!borg_think_home_sell_aux(TRUE)) continue;
 
 			/* Obtain the "cost" of the item */
 			c = item->cost * qty;
@@ -1724,8 +1739,9 @@ static bool borg_think_shop_grab_aux(void)
 	/* Nope */
 	return (FALSE);
 }
+#endif /* 0 */
 
-
+#if 0
 /*
  * Step 6 -- take "useless" things from the home (to be sold)
  */
@@ -1811,7 +1827,9 @@ static bool borg_think_home_grab_aux(void)
 	/* Assume not */
 	return (FALSE);
 }
+#endif /* 0 */
 
+#if 0
 /*
  * Step 7A -- buy "useful" weapons from the home (to be used as a swap)
  */
@@ -1937,7 +1955,9 @@ static bool borg_think_home_buy_swap_weapon(void)
 	/* Nope */
 	return (FALSE);
 }
+#endif /* 0 */
 
+#if 0
 /*
  * Step 7B -- buy "useful" armour from the home (to be used as a swap)
  */
@@ -2060,7 +2080,7 @@ static bool borg_think_home_buy_swap_armour(void)
 	/* Nope */
 	return (FALSE);
 }
-
+#endif /* 0 */
 
 
 
@@ -2082,6 +2102,7 @@ static bool borg_choose_shop(void)
 	/* If poisoned or bleeding -- flow to temple */
 	if (borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) goal_shop = 3;
 
+#if 0
 	/* If Starving  -- flow to food */
 	if (borg_skill[BI_ISWEAK] || (borg_skill[BI_CUR_LITE] == 0 &&
 								  borg_skill[BI_CLEVEL] >= 2))
@@ -2121,10 +2142,11 @@ static bool borg_choose_shop(void)
 			return (TRUE);
 		}
 
-	}
+    }
+#endif /* 0 */
 
 	/* Must have visited all shops first---complete information */
-	for (i = 0; i < (MAX_STORES); i++)
+	for (i = 0; i < (track_shop_num); i++)
 	{
 		borg_shop *shop = &borg_shops[i];
 
@@ -2139,6 +2161,7 @@ static bool borg_choose_shop(void)
 	/* Assume no important shop */
 	goal_shop = goal_ware = goal_item = -1;
 
+#if 0
 	/* Step 1 -- Sell items to the home */
 	if (borg_think_home_sell_aux(FALSE))
 	{
@@ -2153,7 +2176,7 @@ static bool borg_choose_shop(void)
 		/* Success */
 		return (TRUE);
 	}
-
+#endif /* 0 */
 
 	/* Step 2 -- Sell items to the shops */
 	if (borg_think_shop_sell_aux())
@@ -2180,7 +2203,7 @@ static bool borg_choose_shop(void)
 		return (TRUE);
 	}
 
-
+#if 0
 	/* Step 4 -- Buy items from the home (for the player) */
 	if (borg_think_home_buy_aux())
 	{
@@ -2190,13 +2213,15 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-	}
+    }
+#endif /* 0 */
 
 	/* get rid of junk from home first.  That way the home is 'uncluttered' */
 	/* before you buy stuff for it.  This will prevent the problem where an */
 	/* item has become a negative value and swapping in a '0' gain item */
 	/* (like pottery) is better. */
 
+#if 0
 	/* Step 5 -- Grab items from the home (for the shops) */
 	if (borg_think_home_grab_aux())
 	{
@@ -2206,8 +2231,10 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-	}
+    }
+#endif /* 0 */
 
+#if 0
 	/* Step 6 -- Buy items from the shops (for the home) */
 	if (borg_think_shop_grab_aux())
 	{
@@ -2218,7 +2245,10 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-	}
+    }
+#endif /* 0 */
+
+#if 0
 	/* Step 7A -- Buy weapons from the home (as a backup item) */
 	if (borg_uses_swaps && borg_think_home_buy_swap_weapon())
 	{
@@ -2228,7 +2258,10 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-	}
+    }
+#endif /* 0 */
+
+#if 0
 	/* Step 7B -- Buy armour from the home (as a backup item) */
 	if (borg_uses_swaps && borg_think_home_buy_swap_armour())
 	{
@@ -2239,7 +2272,7 @@ static bool borg_choose_shop(void)
 		/* Success */
 		return (TRUE);
 	}
-
+#endif /* 0 */
 
 	/* Failure */
 	return (FALSE);
