@@ -650,9 +650,7 @@ proc NSInitStartup::InitStartup {} {
 	
 	if {$Angband(platform) == "windows"} {
 		# Set the default window icon
-		if {[string compare 8.3.3 [info patchlevel]] >= 0} {
-			wm iconbitmap . -default [file join $Angband(dirTk) image angbandtk.ico]
-		}
+		wm iconbitmap . -default [file join $Angband(dirTk) image angbandtk.ico]
 	}
 
 	# Development debug support

@@ -2221,11 +2221,6 @@ proc NSInventory2::AlwaysOnTop {oop} {
 	if {[info exists ::Windows(inventory)] && [winfo exists [Window inventory]]} {
 		if {$onTop} {
 			wm transient [Window inventory] [Window main]
-
-			# Work around a Tk bug (can't remember actual version)
-			if {[string compare 8.3.3 [info patchlevel]] < 0} {
-				wm withdraw [Window inventory]
-			}
 		} else {
 			wm transient [Window inventory] ""
 		}
