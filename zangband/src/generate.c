@@ -722,7 +722,7 @@ static bool cave_gen(void)
 		dun->wall_n = 0;
 
 		/* Connect the room to the previous room */
-#if PILLAR_TUNNELS
+#ifdef PILLAR_TUNNELS
 
 		if ((randint1(20) > p_ptr->depth) && (randint1(100) < 25))
 		{
