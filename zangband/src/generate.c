@@ -409,8 +409,8 @@ static bool cave_gen(void)
 	/* Global data */
 	dun = &dun_body;
 
-	if (max_panel_rows < 67) max_vault_ok--;
-	if (max_panel_cols < 34) max_vault_ok--;
+	if (max_hgt - min_hgt < 34) max_vault_ok--;
+	if (max_wid - min_wid < 67) max_vault_ok--;
 
 	/* Randomize the dungeon creation values */
 	dun_rooms = rand_range(DUN_ROOMS_MIN, DUN_ROOMS_MAX);
