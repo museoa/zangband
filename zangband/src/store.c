@@ -241,6 +241,9 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 
 	/* Note -- Never become "free" */
 	if (price <= 0L) return (1L);
+	
+	/* Hack - save price for object list code */
+	o_ptr->temp_cost = price;
 
 	/* Return the price */
 	return (price);

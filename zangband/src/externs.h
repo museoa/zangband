@@ -1247,6 +1247,9 @@ extern void do_cmd_knowledge_quests(void);
 /* maid-grf.c */
 extern void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr);
 extern void Term_erase_map(void);
+extern void Term_write_equipment(void);
+extern void Term_write_list(s16b o_idx, byte list_type);
+
 
 /* borg.c */
 extern void do_cmd_borg(void);

@@ -4353,3 +4353,11 @@ extern int PlayerUID;
 #define DISPLAY_PLAYER_SUMMARY		2	/* summary of various things */
 
 #define DISPLAY_PLAYER_MAX		3
+
+/* Types of object list */
+#define LIST_INVEN			1
+#define LIST_EQUIP			2
+#define LIST_FLOOR			3
+#define LIST_STORE_BUY		4
+#define LIST_STORE_SELL		5
+

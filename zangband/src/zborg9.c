@@ -3163,6 +3163,9 @@ void borg_init_9(void)
 	old_info_hook = set_map_hook(borg_map_info);
 	old_erase_hook = set_erase_hook(borg_map_erase);
 
+	/* Save the borg hooks for object lists */
+	old_list_hook = set_list_notice_hook(borg_list_info);
+
 	/*** Redraw ***/
 
 	/* Redraw map */

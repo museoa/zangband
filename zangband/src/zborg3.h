@@ -15,8 +15,6 @@
 #include "zborg1.h"
 
 
-
-
 /*
  * Hack -- location of the "Lv Mana Fail" prompt
  */
@@ -33,7 +31,7 @@ typedef struct borg_item borg_item;
 typedef struct borg_shop borg_shop;
 typedef struct borg_mind borg_mind;
 
-
+extern list_notice_hook_type old_list_hook;
 
 
 /*
