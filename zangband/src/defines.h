@@ -132,9 +132,6 @@
 #define BT_BUILD		2
 
 
-/* Special store type */
-#define STORE_HOME      7
-
 /*
  * Total number of stores in vanilla town (see "store.c", etc)
  */

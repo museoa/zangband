@@ -2936,7 +2936,7 @@ errr file_character(cptr name, bool full)
 		{
 			st_ptr = &town[i].store[j];
 			
-			if (st_ptr->type == STORE_HOME)
+			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Home -- if anything there */
 				if (st_ptr->stock_num)
@@ -4068,7 +4068,7 @@ static void show_info(void)
 		{
 			st_ptr = &town[i].store[j];
 			
-			if (st_ptr->type == STORE_HOME)
+			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Hack -- Know everything in the home */
 				for (k = 0; k < st_ptr->stock_num; k++)
@@ -4151,7 +4151,7 @@ static void show_info(void)
 		{
 			st_ptr = &town[i].store[l];
 			
-			if (st_ptr->type == STORE_HOME)
+			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Home -- if anything there */
 				if (st_ptr->stock_num)
