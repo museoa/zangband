@@ -8,11 +8,13 @@
 #define DUN_DEST    18  /* 1/chance of having a destroyed level */
 #define SMALL_LEVEL 3   /* 1/chance of smaller size (3)*/
 #define EMPTY_LEVEL 15  /* 1/chance of being 'empty' (15)*/
+#define LAKE_LEVEL  7   /* 1/chance of being a lake on the level*/
 #define DARK_EMPTY  5   /* 1/chance of arena level NOT being lit (2)*/
+#define DUN_CAVERN  30	/* 1/chance of having a cavern level */
 
 /* Number of rooms to attempt (was 50) */
 #define DUN_ROOMS_MIN	10
-#define DUN_ROOMS_MAX	50
+#define DUN_ROOMS_MAX	100
 
 /*
  * Dungeon tunnel generation values
@@ -52,9 +54,9 @@ extern int dun_tun_jct;
 #define DUN_MOS_RNG	10	/* Width of moss streamers */
 #define DUN_STR_MOS	2	/* Number of moss streamers */
 #define DUN_WAT_DEN	15	/* Density of rivers */
-#define DUN_WAT_RNG	3	/* Width of rivers */
+#define DUN_WAT_RNG	2	/* Width of rivers */
 #define DUN_STR_WAT	3	/* Max number of rivers */
-
+#define DUN_WAT_CHG	50	/* 1 in 50 chance of junction in river */ 
 
 /*
  * Dungeon treausre allocation values
@@ -114,21 +116,6 @@ struct coord
 	byte x;
 };
 
-
-/*
- * Room type information
- */
-
-typedef struct room_data room_data;
-
-struct room_data
-{
-	/* Required size in blocks */
-	s16b dy1, dy2, dx1, dx2;
-
-	/* Hack -- minimum level */
-	s16b level;
-};
 
 
 /*

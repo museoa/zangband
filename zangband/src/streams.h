@@ -15,11 +15,7 @@
 
 /* Externs */
 
-#if 0
-extern void add_moss(void);
-#endif
-
-extern void add_river(int feat1, int feat2, int depth);
+extern void add_river(int feat1, int feat2);
 extern void build_streamer(int feat, int chance);
-extern void build_streamer2(int feat, bool killwall, bool pool);
+extern void place_trees(int x,int y);
 extern void destroy_level(void);

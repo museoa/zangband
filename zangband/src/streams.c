@@ -19,148 +19,96 @@
 #include "streams.h"
 #include "grid.h"
 
-#if 0
-/* Taken from Eric Bock's RAngband */
+
 /*
- * Places moss through dungeon.
+ * Recursive fractal algorithm to place water through the dungeon.
  */
-void add_moss(void)
-{
-	int i, tx, ty;
-	int y, x, dir;
-
-
-	/* Hack -- Choose starting point */
-	y = rand_spread(cur_hgt / 2, cur_hgt / 2 - 10);
-	x = rand_spread(cur_wid / 2, cur_wid / 2 - 10);
-
-	/* Choose a random compass direction */
-	dir = ddd[rand_int(8)];
-
-	/* Place streamer into dungeon */
-	while (TRUE)
-	{
-		/* One grid per density */
-		for (i = 0; i < DUN_MOS_DEN; i++)
+static void recursive_river(int x1,int y1, int x2, int y2, int feat1, int feat2,int width)
 		{
-			int d = DUN_MOS_RNG;
-
-			/* Pick a nearby grid */
-			while (1)
+	int dx,dy,length,l,x,y;
+	int changex, changey;
+	int ty,tx;
+	bool done;
+	length=distance(x1,y1,x2,y2);
+	if(length>4)
 			{
-				ty = rand_spread(y, d);
-				tx = rand_spread(x, d);
-				if (!in_bounds(ty, tx)) continue;
-				break;
-			}
+		/*Divide path in half and call routine twice.
+		* There is a small chance of splitting the river
+		*/ 
+		dx=(x2-x1)/2;
+		dy=(y2-y1)/2;
 
-			/* Only convert "outer" and "solid" walls and floors */
-			if ((cave[ty][tx].feat != FEAT_WALL_OUTER) &&
-				 (cave[ty][tx].feat != FEAT_WALL_SOLID) &&
-				 (cave[ty][tx].feat != FEAT_FLOOR))
+		if (dy!=0)
 			{
-				continue;
+			/* perturbation perpendicular to path */
+			changex=randint(abs(dy))*2-abs(dy);
 			}
-
-			/* Clear previous contents, add proper moss type */
-			if (cave[ty][tx].feat == FEAT_FLOOR)
-				cave[ty][tx].feat = FEAT_FLOOR_M;
 			else
-				cave[ty][tx].feat = FEAT_WALL_M;
+		{
+			changex=0;
 		}
 
-		/* Advance the streamer */
-		y += ddy[dir];
-		x += ddx[dir];
-
-		/* Stop at dungeon edge */
-		if (!in_bounds(y, x)) break;
+		if (dx!=0)
+		{
+			/* perturbation perpendicular to path */
+			changey=randint(abs(dx))*2-abs(dx);
 	}
+		else
+		{
+			changey=0;
 }
-#endif /* 0 */
 
-
-/*
- * Places water through dungeon.
- */
-void add_river(int feat1, int feat2, int depth)
+		if (!in_bounds(y1+dy+changey,x1+dx+changex))
 {
-	int tx, ty;
-	int y, x, dir, dd, len, wid;
-	int d;
+			changex=0;
+			changey=0;
+		}		
 
-	int ly, lx;
-	int ny, nx;
+		/* construct river out of two smaller ones */
+		recursive_river(x1, y1, x1+dx+changex, y1+dy+changey, feat1, feat2, width);
+		recursive_river(x1+dx+changex, y1+dy+changey, x2, y2, feat1, feat2, width);
 
-	/* Hack -- Choose starting point */
-	ly = y = rand_spread(cur_hgt / 2, cur_hgt / 2 - 10);
-	lx = x = rand_spread(cur_wid / 2, cur_wid / 2 - 10);
-
-	/* Choose a random direction */
-	dd = rand_int(16);
-	dir = cdd[dd / 2];
-
-	wid = randint(DUN_WAT_RNG);
-
-	/* Choose a length */
-	len = rand_int(10) + 5;
-
-	/* Find endpoint */
-	if (dd % 2 == 0)
+		/* Split the river some of the time -junctions look cool */
+		if ((randint(DUN_WAT_CHG)==1)&&(width>0))
 	{
-		ny = y + len * ddy[dir];
-		nx = x + len * ddx[dir];
+			recursive_river(x1+dx+changex, y1+dy+changey, x1+8*(dx+changex),
+			  y1+8*(dy+changey), feat1, feat2, width-1);
+		}
 	}
-	/* Acquire the intermediate direction */
 	else
 	{
-		ny = y + len * (ddy[dir] + ddy_cdd[((dd + 1) / 2) % 8]);
-		nx = x + len * (ddx[dir] + ddx_cdd[((dd + 1) / 2) % 8]);
-	}
-
-	/* Place streamer into dungeon */
-	while (TRUE)
+		/*Actually build the river*/
+		for (l=0;l<length;l++)
 	{
-		for (ty = y - wid - 1; ty <= y + wid + 1; ty++)
+			x=x1+l*(x2-x1)/length;
+			y=y1+l*(y2-y1)/length;
+			done=FALSE;
+			while(!done)
 		{
-			for (tx = x - wid - 1; tx <= x + wid + 1; tx++)
+				for (ty = y - width - 1; ty <= y + width + 1; ty++)
+				{
+					for (tx = x - width - 1; tx <= x + width + 1; tx++)
 			{
 				if (!in_bounds(ty, tx)) continue;
 
-				if (distance(ty, tx, y, x) > rand_spread(wid, 1)) continue;
+						if (cave[ty][tx].feat == feat1) continue;
+						if (cave[ty][tx].feat == feat2) continue;
+			
+						if (distance(ty, tx, y, x) > rand_spread(width, 1)) continue;
 
 				/* Do not convert permanent features */
 				if (cave_perma_bold(ty, tx)) continue;
 
-				/* Find the distance from the center */
-				if (distance(ty, tx, ny, nx) > distance(ly, lx, ny, nx))
-				{
-					/* Beginning of river */
-					d = distance(ty, tx, ly, lx);
-				}
-				else
-				{
-					/* Middle of river */
-					d = dist_to_line(ty, tx, ly, lx, ny, nx);
-				}
-
 				/*
 				 * Clear previous contents, add feature
-				 * The border mainly gets feat2, while the center gets feat1
-				 */
-				if (!wid || ((d > wid * rand_spread(depth, 10) / 100) &&
-					 (rand_int(d * 100 / wid) >= depth)))
-				{
-					set_cave_feat(ty, tx, feat2);
-				}
+						 * The border mainly gets feat2, while the center gets feat1 */
+						if (distance(ty, tx, y, x) > width)
+							cave[ty][tx].feat = feat2;
 				else
-				{
-					set_cave_feat(ty, tx, feat1);
-				}
+							cave[ty][tx].feat = feat1;
 
 				/* Lava terrain glows */
-				if ((feat1 == FEAT_DEEP_LAVA) ||
-				    (feat1 == FEAT_SHAL_LAVA))
+						if ((feat1 == FEAT_DEEP_LAVA) ||  (feat1 == FEAT_SHAL_LAVA))
 				{
 					cave[ty][tx].info |= CAVE_GLOW;
 				}
@@ -169,58 +117,66 @@ void add_river(int feat1, int feat2, int depth)
 				cave[ty][tx].info |= CAVE_ICKY;
 			}
 		}
-
-		/* Advance the streamer */
-		if (dd % 2 == 0)
-		{
-			y += ddy[dir];
-			x += ddx[dir];
-		}
-		/* Acquire the intermediate direction */
-		else
-		{
-			y += ddy[dir] + ddy_cdd[((dd + 1) / 2) % 8];
-			x += ddx[dir] + ddx_cdd[((dd + 1) / 2) % 8];
-		}
-
-		if (len-- == 0)
-		{
-			/* Change direction slowly */
-			dd = rand_spread(dd, 1) % 16;
-			dir = cdd[dd / 2];
-
-			wid = rand_spread(wid, 1);
-
-			depth = rand_spread(depth, 10);
-
-			if (wid < 0) wid = 0;
-			if (wid > DUN_WAT_RNG) wid = DUN_WAT_RNG;
-
-			if (depth < 0) depth = 0;
-			if (depth > 100) depth = 100;
-
-			len = rand_int(10) + 5;
-
-			/* Find starting point */
-			ly = y;
-			lx = x;
-
-			/* Find endpoint */
-			if (dd % 2 == 0)
-			{
-				ny = y + len * ddy[dir];
-				nx = x + len * ddx[dir];
+				done=TRUE;
 			}
-			/* Acquire the intermediate direction */
-			else
-			{
-				ny = y + len * (ddy[dir] + ddy_cdd[((dd + 1) / 2) % 8]);
-				nx = x + len * (ddx[dir] + ddx_cdd[((dd + 1) / 2) % 8]);
-			}
+		}	
+		}
 		}
 
-		/* Stop at dungeon edge */
-		if (!in_bounds(y, x)) break;
+/*
+ * Places water /lava through dungeon.
+ */
+void add_river(int feat1, int feat2)
+		{
+	int y2, x2;
+	int y1=0, x1=0, wid;
+
+
+	/* Hack -- Choose starting point */
+	y2 = randint(cur_hgt /2 -2)+cur_hgt/2;
+	x2 = randint(cur_wid /2 -2)+cur_wid/2;
+
+	/* Hack -- Choose ending point somewhere on boundary */
+	switch(randint(4))
+			{
+		case 1:
+		{
+			/* top boundary */
+			x1=randint(cur_wid-2)+1;
+			y1=1;			
+			break;
+			}
+		case 2:
+			{
+			/* left boundary */
+			x1=1;
+			y1=randint(cur_hgt-2)+1;
+			break;
+		}
+		case 3:
+		{
+			/* right boundary */
+			x1=cur_wid-1;
+			y1=randint(cur_hgt-2)+1;
+			break;
+		}
+		case 4:
+		{
+			/* bottom boundary */
+			x1=randint(cur_wid-2)+1;
+			y1=cur_hgt-1;
+			break;
+			}
+		}
+	wid = randint(DUN_WAT_RNG);
+	recursive_river(x1, y1, x2, y2, feat1, feat2, wid);	
+
+	/* Hack - Save the location as a "room" */
+	if (dun->cent_n < CENT_MAX)
+	{
+		dun->cent[dun->cent_n].y = y2;
+		dun->cent[dun->cent_n].x = x2;
+		dun->cent_n++;
 	}
 }
 
@@ -300,130 +256,46 @@ void build_streamer(int feat, int chance)
 	}
 }
 
-
-
 /*
- * Place streams of water, lava, & trees -KMW-
- * This routine varies the placement based on dungeon level
- * otherwise is similar to build_streamer
+ * Put trees near a hole in the dungeon roof  (rubble on ground + up stairway)
+ * This happens in real world lava tubes.
  */
-void build_streamer2(int feat, bool killwall, bool pool)
-{
-	int i, j, mid, tx, ty;
-	int y, x, dir;
-	int poolsize;
 
-
-	/* Hack -- Choose starting point */
-	y = rand_spread(cur_hgt / 2, 10);
-	x = rand_spread(cur_wid / 2, 15);
-
-	/* Choose a random compass direction */
-	dir = ddd[rand_int(8)];
-
-	if (!pool)
-	{
-		/* Place streamer into dungeon */
-		while (TRUE)
-		{
-			/* One grid per density */
-			for (i = 0; i < (DUN_STR_DWLW + 1); i++)
-			{
-				int d = DUN_STR_WLW;
-
-				/* Pick a nearby grid */
-				while (1)
+void place_trees(int x,int y)
 				{
-					ty = rand_spread(y, d);
-					tx = rand_spread(x, d);
-					if (!in_bounds(ty, tx)) continue;
-					break;
-				}
-
-				/* Only convert non-permanent features */
-				if (killwall)
+	int i,j;
+	/* place trees/ rubble in ovalish distribution*/
+	for (i=x-3;i<x+4;i++)
 				{
-					if (cave[ty][tx].feat >= FEAT_PERM_EXTRA) continue;
-					if (cave[ty][tx].feat == FEAT_LESS) continue;
-					if (cave[ty][tx].feat == FEAT_MORE) continue;
-				}
-				else
-				{
-					if (cave[ty][tx].feat >= FEAT_MAGMA) continue;
-					if (cave[ty][tx].feat == FEAT_LESS) continue;
-					if (cave[ty][tx].feat == FEAT_MORE) continue;
-				}
+		for (j=y-3;j<y+4;j++)
+		{/* Want square to be in the circle and accessable.*/
+		if (in_bounds(j,i)
+			&& (distance(j, i, y, x) < 4)
+			&& (!cave_perma_bold(j, i)))
+			{/*
+			  * Clear previous contents, add feature
+			  * The border mainly gets trees, while the center gets rubble */
+			if ((distance(j, i, y, x) > 1)||(randint(100)<25))
+				{if (randint(100)<75)
+					cave[j][i].feat = FEAT_TREES;
 
-				/* Clear previous contents, add proper vein type */
-				cave[ty][tx].feat = feat;
-			}
-
-			/* Advance the streamer */
-			y += ddy[dir];
-			x += ddx[dir];
-
-			if (randint(20) == 1)
-				dir = ddd[rand_int(8)]; /* change direction */
-
-			/* Stop at dungeon edge */
-			if (!in_bounds(y, x)) break;
-		}
 	}
 	else
-	{
-		/* create pool */
-		poolsize = 5 + randint(10);
-		mid = poolsize / 2;
+				cave[j][i].feat = FEAT_RUBBLE;
 
-		/* One grid per density */
-		for (i = 0; i < poolsize; i++)
-		{
-			for (j = 0; j < poolsize; j++)
-			{
-				tx = x + j;
-				ty = y + i;
-
-				if (!in_bounds(ty, tx)) continue;
-
-				if (i < mid)
-				{
-					if (j < mid)
-					{
-						if ((i + j + 1) < mid)
-							continue;
+			/* Light area since is open above */
+			cave[j][i].info|=CAVE_GLOW;
 					}
-					else if (j > (mid+ i))
-						continue;
 				}
-				else if (j < mid)
-				{
-					if (i > (mid + j))
-						continue;
-				}
-				else if ((i + j) > ((mid * 3)-1))
-					continue;
-
-				/* Only convert non-permanent features */
-				if (killwall)
-				{
-					if (cave[ty][tx].feat >= FEAT_PERM_EXTRA) continue;
-					if (cave[ty][tx].feat == FEAT_LESS) continue;
-					if (cave[ty][tx].feat == FEAT_MORE) continue;
-				}
-				else
-				{
-					if (cave[ty][tx].feat >= FEAT_MAGMA) continue;
-					if (cave[ty][tx].feat == FEAT_LESS) continue;
-					if (cave[ty][tx].feat == FEAT_MORE) continue;
 				}
 
-				/* Clear previous contents, add proper vein type */
-				cave[ty][tx].feat = feat;
-			}
-		}
+	/* No up stairs in ironman mode */
+	if ((!ironman_downward)&&(randint(3)==1))
+				{
+		/* up stair */
+		cave[y][x].feat=FEAT_LESS;
 	}
 }
-
 
 
 /*

@@ -14,4 +14,6 @@
 
 
 /* Externs */
+extern void build_lake(int type);
+extern void build_cavern(void);
 extern bool room_build(int y0, int x0, int typ);
