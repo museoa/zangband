@@ -2218,7 +2218,7 @@ W:5:0:4:5
 A:5/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	ident = res_pois_lvel() ~= 0 and inc_poisoned(rand_range(10, 25))
+L:USE:	ident = res_pois_lvl() ~= 0 and inc_poisoned(rand_range(10, 25))
 L:SMASH:project(who, 2, x, y, damroll(3, 6), GF_POIS,
 L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
