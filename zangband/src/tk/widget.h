@@ -175,7 +175,6 @@ extern void Widget_DrawInvalid(Widget *widgetPtr);
 extern void Widget_EventuallyRedraw(Widget *widgetPtr);
 extern int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr);
 
-extern WidgetItemType TextType;
 extern WidgetItemType CursorType;
 
 extern int init_widget(Tcl_Interp *interp);
@@ -187,6 +186,4 @@ typedef struct ExWidget {
 
 	void (*whatToDrawProc)(Widget *widgetPtr, int y, int x, t_display *wtd);
 } ExWidget;
-
-extern void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr);
 

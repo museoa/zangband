@@ -17,10 +17,33 @@
 
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
+/*
+ * Calculate rows/columns covered in parent Widget.
+ */
+static void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr)
+{
+	int height, width, dy, dx, my;
 
-#define DEF_TERM_FILL ((char *) "Black")
-#define DEF_TERM_BACK ((char *) "White")
-#define DEF_TERM_OPACITY ((char *) "127")
+	/* WindowToBitmap */
+	dy = widgetPtr->by;
+	dx = widgetPtr->bx;
+
+	height = widgetPtr->gheight;
+	width = widgetPtr->gwidth;
+	my = 1;
+	
+	itemPtr->minY = (dy + itemPtr->y1) / height * my;
+	itemPtr->maxY = (dy + itemPtr->y2) / height * my;
+	itemPtr->minX = (dx + itemPtr->x1) / width;
+	itemPtr->maxX = (dx + itemPtr->x2) / width;
+	if (((dy + itemPtr->y2) % height) == 0)
+		itemPtr->maxY -= my;
+	if (((dx + itemPtr->x2) % width) == 0)
+		--itemPtr->maxX;
+}
+
+
+#define DEF_TERM_FILL ((char *) "White")
 
 /*
  * The structure below defines the record for each term item.
