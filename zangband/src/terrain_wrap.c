@@ -564,93 +564,6 @@ static PyObject *_wrap_feature_type_text_get(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_feature_type_mimic_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct feature_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:feature_type_mimic_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_feature_type,1)) == -1) return NULL;
-    arg0->mimic = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_feature_type_mimic_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct feature_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:feature_type_mimic_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_feature_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->mimic);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_feature_type_extra_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct feature_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:feature_type_extra_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_feature_type,1)) == -1) return NULL;
-    arg0->extra = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_feature_type_extra_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct feature_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:feature_type_extra_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_feature_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->extra);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_feature_type_unused_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct feature_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:feature_type_unused_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_feature_type,1)) == -1) return NULL;
-    arg0->unused = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_feature_type_unused_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct feature_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:feature_type_unused_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_feature_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->unused);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_feature_type_d_attr_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     struct feature_type *arg0 ;
@@ -811,12 +724,6 @@ static PyMethodDef terraincMethods[] = {
 	 { "feature_type_name_get", _wrap_feature_type_name_get, METH_VARARGS },
 	 { "feature_type_text_set", _wrap_feature_type_text_set, METH_VARARGS },
 	 { "feature_type_text_get", _wrap_feature_type_text_get, METH_VARARGS },
-	 { "feature_type_mimic_set", _wrap_feature_type_mimic_set, METH_VARARGS },
-	 { "feature_type_mimic_get", _wrap_feature_type_mimic_get, METH_VARARGS },
-	 { "feature_type_extra_set", _wrap_feature_type_extra_set, METH_VARARGS },
-	 { "feature_type_extra_get", _wrap_feature_type_extra_get, METH_VARARGS },
-	 { "feature_type_unused_set", _wrap_feature_type_unused_set, METH_VARARGS },
-	 { "feature_type_unused_get", _wrap_feature_type_unused_get, METH_VARARGS },
 	 { "feature_type_d_attr_set", _wrap_feature_type_d_attr_set, METH_VARARGS },
 	 { "feature_type_d_attr_get", _wrap_feature_type_d_attr_get, METH_VARARGS },
 	 { "feature_type_d_char_set", _wrap_feature_type_d_char_set, METH_VARARGS },

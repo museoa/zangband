@@ -586,64 +586,6 @@ static PyObject *_wrap_player_type_py_get(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_player_type_oldpy_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_oldpy_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->oldpy = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_oldpy_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_oldpy_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->oldpy);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_oldpx_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_oldpx_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->oldpx = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_oldpx_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_oldpx_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->oldpx);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_player_type_psex_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
@@ -784,35 +726,6 @@ static PyObject *_wrap_player_type_realm2_get(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"O:player_type_realm2_get",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
     result = (byte ) (arg0->realm2);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_oops_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:player_type_oops_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->oops = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_oops_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_oops_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->oops);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -1108,13 +1021,13 @@ static PyObject *_wrap_player_type_max_lev_get(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_player_type_lev_set(PyObject *self, PyObject *args) {
+static PyObject *_wrap_player_type_level_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
     s16b arg1 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"Oh:player_type_lev_set",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"Oh:player_type_level_set",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
     arg0->lev = arg1;
     Py_INCREF(Py_None);
@@ -1123,13 +1036,13 @@ static PyObject *_wrap_player_type_lev_set(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_player_type_lev_get(PyObject *self, PyObject *args) {
+static PyObject *_wrap_player_type_level_get(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
     PyObject * argo0 =0 ;
     s16b result ;
     
-    if(!PyArg_ParseTuple(args,"O:player_type_lev_get",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:player_type_level_get",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
     result = (s16b ) (arg0->lev);
     resultobj = PyInt_FromLong((long)result);
@@ -1253,64 +1166,6 @@ static PyObject *_wrap_player_type_town_num_get(PyObject *self, PyObject *args) 
 }
 
 
-static PyObject *_wrap_player_type_arena_number_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_arena_number_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->arena_number = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_arena_number_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_arena_number_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->arena_number);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_inside_arena_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_inside_arena_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->inside_arena = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_inside_arena_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_inside_arena_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->inside_arena);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_player_type_inside_quest_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
@@ -1336,20 +1191,6 @@ static PyObject *_wrap_player_type_inside_quest_get(PyObject *self, PyObject *ar
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
     result = (s16b ) (arg0->inside_quest);
     resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_rewards_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    short *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_rewards_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (short *)(short *) (arg0->rewards);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_short);
     return resultobj;
 }
 
@@ -3334,95 +3175,6 @@ static PyObject *_wrap_player_type_leaving_get(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_player_type_leaving_dungeon_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:player_type_leaving_dungeon_set",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->leaving_dungeon = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_leaving_dungeon_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_leaving_dungeon_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool ) (arg0->leaving_dungeon);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_exit_bldg_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:player_type_exit_bldg_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->exit_bldg = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_exit_bldg_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_exit_bldg_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->exit_bldg);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_leftbldg_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:player_type_leftbldg_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->leftbldg = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_leftbldg_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_leftbldg_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->leftbldg);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_player_type_create_up_stair_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
@@ -4394,277 +4146,6 @@ static PyObject *_wrap_player_type_new_spells_get(PyObject *self, PyObject *args
 }
 
 
-static PyObject *_wrap_player_type_old_spells_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_old_spells_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->old_spells = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_spells_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_spells_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->old_spells);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_cumber_armor_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:player_type_old_cumber_armor_set",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->old_cumber_armor = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_cumber_armor_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_cumber_armor_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool ) (arg0->old_cumber_armor);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_cumber_glove_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:player_type_old_cumber_glove_set",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->old_cumber_glove = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_cumber_glove_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_cumber_glove_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool ) (arg0->old_cumber_glove);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_heavy_wield_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:player_type_old_heavy_wield_set",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->old_heavy_wield = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_heavy_wield_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_heavy_wield_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool ) (arg0->old_heavy_wield);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_heavy_shoot_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:player_type_old_heavy_shoot_set",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->old_heavy_shoot = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_heavy_shoot_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_heavy_shoot_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool ) (arg0->old_heavy_shoot);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_icky_wield_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:player_type_old_icky_wield_set",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->old_icky_wield = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_icky_wield_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_icky_wield_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool ) (arg0->old_icky_wield);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_lite_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_old_lite_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->old_lite = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_lite_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_lite_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->old_lite);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_view_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_old_view_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->old_view = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_view_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_view_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->old_view);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_food_aux_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    s16b arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:player_type_old_food_aux_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->old_food_aux = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_old_food_aux_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_old_food_aux_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b ) (arg0->old_food_aux);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_player_type_cumber_armor_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
@@ -5002,20 +4483,6 @@ static PyObject *_wrap_player_type_stat_add_get(PyObject *self, PyObject *args) 
     if(!PyArg_ParseTuple(args,"O:player_type_stat_add_get",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
     result = (short *)(short *) (arg0->stat_add);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_short);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_stat_ind_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    short *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_stat_ind_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (short *)(short *) (arg0->stat_ind);
     resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_short);
     return resultobj;
 }
@@ -7085,35 +6552,6 @@ static PyObject *_wrap_player_type_num_fire_get(PyObject *self, PyObject *args) 
 }
 
 
-static PyObject *_wrap_player_type_tval_xtra_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:player_type_tval_xtra_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    arg0->tval_xtra = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_type_tval_xtra_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:player_type_tval_xtra_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->tval_xtra);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_player_type_ammo_mult_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
@@ -7288,23 +6726,45 @@ static PyObject *_wrap_player_type_pet_pickup_items_get(PyObject *self, PyObject
 }
 
 
-int  player_type_stat_cur_get(player_type *self,int index) {
+int  player_type_get_stat_ind(player_type *self,int index) {
     {
-        return p_ptr->stat_cur[index];
+        return p_ptr->stat_ind[index];
     }
 }
 
 
-static PyObject *_wrap_player_type_stat_cur_get(PyObject *self, PyObject *args) {
+static PyObject *_wrap_player_type_get_stat_ind(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
     int arg1 ;
     PyObject * argo0 =0 ;
     int result ;
     
-    if(!PyArg_ParseTuple(args,"Oi:player_type_stat_cur_get",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_get_stat_ind",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (int )player_type_stat_cur_get(arg0,arg1);
+    result = (int )player_type_get_stat_ind(arg0,arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+int  player_type_get_stat_cur(player_type *self,int index) {
+    {
+        return p_ptr->stat_cur[index];
+    }
+}
+
+
+static PyObject *_wrap_player_type_get_stat_cur(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    player_type *arg0 ;
+    int arg1 ;
+    PyObject * argo0 =0 ;
+    int result ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:player_type_get_stat_cur",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
+    result = (int )player_type_get_stat_cur(arg0,arg1);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -7397,29 +6857,6 @@ static PyObject *_wrap_player_type_carry(PyObject *self, PyObject *args) {
     player_type_carry(arg0,arg1);
     Py_INCREF(Py_None);
     resultobj = Py_None;
-    return resultobj;
-}
-
-
-s16b  player_type_place(player_type *self,int y,int x) {
-    {
-        return player_place(y, x);
-    }
-}
-
-
-static PyObject *_wrap_player_type_place(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player_type *arg0 ;
-    int arg1 ;
-    int arg2 ;
-    PyObject * argo0 =0 ;
-    s16b result ;
-    
-    if(!PyArg_ParseTuple(args,"Oii:player_type_place",&argo0,&arg1,&arg2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (s16b )player_type_place(arg0,arg1,arg2);
-    resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
@@ -7533,9 +6970,9 @@ static PyObject *_wrap_player_type_word_of_recall(PyObject *self, PyObject *args
 }
 
 
-bool  player_type_disenchant(player_type *self,int mode) {
+bool  player_type_disenchant(player_type *self) {
     {
-        return apply_disenchant(mode);
+        return apply_disenchant();
     }
 }
 
@@ -7543,13 +6980,12 @@ bool  player_type_disenchant(player_type *self,int mode) {
 static PyObject *_wrap_player_type_disenchant(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     player_type *arg0 ;
-    int arg1 ;
     PyObject * argo0 =0 ;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,"Oi:player_type_disenchant",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:player_type_disenchant",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_type,1)) == -1) return NULL;
-    result = (bool )player_type_disenchant(arg0,arg1);
+    result = (bool )player_type_disenchant(arg0);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -8507,10 +7943,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_px_get", _wrap_player_type_px_get, METH_VARARGS },
 	 { "player_type_py_set", _wrap_player_type_py_set, METH_VARARGS },
 	 { "player_type_py_get", _wrap_player_type_py_get, METH_VARARGS },
-	 { "player_type_oldpy_set", _wrap_player_type_oldpy_set, METH_VARARGS },
-	 { "player_type_oldpy_get", _wrap_player_type_oldpy_get, METH_VARARGS },
-	 { "player_type_oldpx_set", _wrap_player_type_oldpx_set, METH_VARARGS },
-	 { "player_type_oldpx_get", _wrap_player_type_oldpx_get, METH_VARARGS },
 	 { "player_type_psex_set", _wrap_player_type_psex_set, METH_VARARGS },
 	 { "player_type_psex_get", _wrap_player_type_psex_get, METH_VARARGS },
 	 { "player_type_prace_set", _wrap_player_type_prace_set, METH_VARARGS },
@@ -8521,8 +7953,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_realm1_get", _wrap_player_type_realm1_get, METH_VARARGS },
 	 { "player_type_realm2_set", _wrap_player_type_realm2_set, METH_VARARGS },
 	 { "player_type_realm2_get", _wrap_player_type_realm2_get, METH_VARARGS },
-	 { "player_type_oops_set", _wrap_player_type_oops_set, METH_VARARGS },
-	 { "player_type_oops_get", _wrap_player_type_oops_get, METH_VARARGS },
 	 { "player_type_hitdie_set", _wrap_player_type_hitdie_set, METH_VARARGS },
 	 { "player_type_hitdie_get", _wrap_player_type_hitdie_get, METH_VARARGS },
 	 { "player_type_expfact_set", _wrap_player_type_expfact_set, METH_VARARGS },
@@ -8543,8 +7973,8 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_depth_get", _wrap_player_type_depth_get, METH_VARARGS },
 	 { "player_type_max_lev_set", _wrap_player_type_max_lev_set, METH_VARARGS },
 	 { "player_type_max_lev_get", _wrap_player_type_max_lev_get, METH_VARARGS },
-	 { "player_type_lev_set", _wrap_player_type_lev_set, METH_VARARGS },
-	 { "player_type_lev_get", _wrap_player_type_lev_get, METH_VARARGS },
+	 { "player_type_level_set", _wrap_player_type_level_set, METH_VARARGS },
+	 { "player_type_level_get", _wrap_player_type_level_get, METH_VARARGS },
 	 { "player_type_max_exp_set", _wrap_player_type_max_exp_set, METH_VARARGS },
 	 { "player_type_max_exp_get", _wrap_player_type_max_exp_get, METH_VARARGS },
 	 { "player_type_exp_set", _wrap_player_type_exp_set, METH_VARARGS },
@@ -8553,13 +7983,8 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_exp_frac_get", _wrap_player_type_exp_frac_get, METH_VARARGS },
 	 { "player_type_town_num_set", _wrap_player_type_town_num_set, METH_VARARGS },
 	 { "player_type_town_num_get", _wrap_player_type_town_num_get, METH_VARARGS },
-	 { "player_type_arena_number_set", _wrap_player_type_arena_number_set, METH_VARARGS },
-	 { "player_type_arena_number_get", _wrap_player_type_arena_number_get, METH_VARARGS },
-	 { "player_type_inside_arena_set", _wrap_player_type_inside_arena_set, METH_VARARGS },
-	 { "player_type_inside_arena_get", _wrap_player_type_inside_arena_get, METH_VARARGS },
 	 { "player_type_inside_quest_set", _wrap_player_type_inside_quest_set, METH_VARARGS },
 	 { "player_type_inside_quest_get", _wrap_player_type_inside_quest_get, METH_VARARGS },
-	 { "player_type_rewards_get", _wrap_player_type_rewards_get, METH_VARARGS },
 	 { "player_type_wilderness_x_set", _wrap_player_type_wilderness_x_set, METH_VARARGS },
 	 { "player_type_wilderness_x_get", _wrap_player_type_wilderness_x_get, METH_VARARGS },
 	 { "player_type_wilderness_y_set", _wrap_player_type_wilderness_y_set, METH_VARARGS },
@@ -8695,12 +8120,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_playing_get", _wrap_player_type_playing_get, METH_VARARGS },
 	 { "player_type_leaving_set", _wrap_player_type_leaving_set, METH_VARARGS },
 	 { "player_type_leaving_get", _wrap_player_type_leaving_get, METH_VARARGS },
-	 { "player_type_leaving_dungeon_set", _wrap_player_type_leaving_dungeon_set, METH_VARARGS },
-	 { "player_type_leaving_dungeon_get", _wrap_player_type_leaving_dungeon_get, METH_VARARGS },
-	 { "player_type_exit_bldg_set", _wrap_player_type_exit_bldg_set, METH_VARARGS },
-	 { "player_type_exit_bldg_get", _wrap_player_type_exit_bldg_get, METH_VARARGS },
-	 { "player_type_leftbldg_set", _wrap_player_type_leftbldg_set, METH_VARARGS },
-	 { "player_type_leftbldg_get", _wrap_player_type_leftbldg_get, METH_VARARGS },
 	 { "player_type_create_up_stair_set", _wrap_player_type_create_up_stair_set, METH_VARARGS },
 	 { "player_type_create_up_stair_get", _wrap_player_type_create_up_stair_get, METH_VARARGS },
 	 { "player_type_create_down_stair_set", _wrap_player_type_create_down_stair_set, METH_VARARGS },
@@ -8767,24 +8186,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_command_new_get", _wrap_player_type_command_new_get, METH_VARARGS },
 	 { "player_type_new_spells_set", _wrap_player_type_new_spells_set, METH_VARARGS },
 	 { "player_type_new_spells_get", _wrap_player_type_new_spells_get, METH_VARARGS },
-	 { "player_type_old_spells_set", _wrap_player_type_old_spells_set, METH_VARARGS },
-	 { "player_type_old_spells_get", _wrap_player_type_old_spells_get, METH_VARARGS },
-	 { "player_type_old_cumber_armor_set", _wrap_player_type_old_cumber_armor_set, METH_VARARGS },
-	 { "player_type_old_cumber_armor_get", _wrap_player_type_old_cumber_armor_get, METH_VARARGS },
-	 { "player_type_old_cumber_glove_set", _wrap_player_type_old_cumber_glove_set, METH_VARARGS },
-	 { "player_type_old_cumber_glove_get", _wrap_player_type_old_cumber_glove_get, METH_VARARGS },
-	 { "player_type_old_heavy_wield_set", _wrap_player_type_old_heavy_wield_set, METH_VARARGS },
-	 { "player_type_old_heavy_wield_get", _wrap_player_type_old_heavy_wield_get, METH_VARARGS },
-	 { "player_type_old_heavy_shoot_set", _wrap_player_type_old_heavy_shoot_set, METH_VARARGS },
-	 { "player_type_old_heavy_shoot_get", _wrap_player_type_old_heavy_shoot_get, METH_VARARGS },
-	 { "player_type_old_icky_wield_set", _wrap_player_type_old_icky_wield_set, METH_VARARGS },
-	 { "player_type_old_icky_wield_get", _wrap_player_type_old_icky_wield_get, METH_VARARGS },
-	 { "player_type_old_lite_set", _wrap_player_type_old_lite_set, METH_VARARGS },
-	 { "player_type_old_lite_get", _wrap_player_type_old_lite_get, METH_VARARGS },
-	 { "player_type_old_view_set", _wrap_player_type_old_view_set, METH_VARARGS },
-	 { "player_type_old_view_get", _wrap_player_type_old_view_get, METH_VARARGS },
-	 { "player_type_old_food_aux_set", _wrap_player_type_old_food_aux_set, METH_VARARGS },
-	 { "player_type_old_food_aux_get", _wrap_player_type_old_food_aux_get, METH_VARARGS },
 	 { "player_type_cumber_armor_set", _wrap_player_type_cumber_armor_set, METH_VARARGS },
 	 { "player_type_cumber_armor_get", _wrap_player_type_cumber_armor_get, METH_VARARGS },
 	 { "player_type_cumber_glove_set", _wrap_player_type_cumber_glove_set, METH_VARARGS },
@@ -8808,7 +8209,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_stat_use_get", _wrap_player_type_stat_use_get, METH_VARARGS },
 	 { "player_type_stat_top_get", _wrap_player_type_stat_top_get, METH_VARARGS },
 	 { "player_type_stat_add_get", _wrap_player_type_stat_add_get, METH_VARARGS },
-	 { "player_type_stat_ind_get", _wrap_player_type_stat_ind_get, METH_VARARGS },
 	 { "player_type_immune_acid_set", _wrap_player_type_immune_acid_set, METH_VARARGS },
 	 { "player_type_immune_acid_get", _wrap_player_type_immune_acid_get, METH_VARARGS },
 	 { "player_type_immune_elec_set", _wrap_player_type_immune_elec_set, METH_VARARGS },
@@ -8945,8 +8345,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_num_blow_get", _wrap_player_type_num_blow_get, METH_VARARGS },
 	 { "player_type_num_fire_set", _wrap_player_type_num_fire_set, METH_VARARGS },
 	 { "player_type_num_fire_get", _wrap_player_type_num_fire_get, METH_VARARGS },
-	 { "player_type_tval_xtra_set", _wrap_player_type_tval_xtra_set, METH_VARARGS },
-	 { "player_type_tval_xtra_get", _wrap_player_type_tval_xtra_get, METH_VARARGS },
 	 { "player_type_ammo_mult_set", _wrap_player_type_ammo_mult_set, METH_VARARGS },
 	 { "player_type_ammo_mult_get", _wrap_player_type_ammo_mult_get, METH_VARARGS },
 	 { "player_type_ammo_tval_set", _wrap_player_type_ammo_tval_set, METH_VARARGS },
@@ -8959,12 +8357,12 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_pet_open_doors_get", _wrap_player_type_pet_open_doors_get, METH_VARARGS },
 	 { "player_type_pet_pickup_items_set", _wrap_player_type_pet_pickup_items_set, METH_VARARGS },
 	 { "player_type_pet_pickup_items_get", _wrap_player_type_pet_pickup_items_get, METH_VARARGS },
-	 { "player_type_stat_cur_get", _wrap_player_type_stat_cur_get, METH_VARARGS },
+	 { "player_type_get_stat_ind", _wrap_player_type_get_stat_ind, METH_VARARGS },
+	 { "player_type_get_stat_cur", _wrap_player_type_get_stat_cur, METH_VARARGS },
 	 { "player_type_inventory", _wrap_player_type_inventory, METH_VARARGS },
 	 { "player_type_inven_item_increase", _wrap_player_type_inven_item_increase, METH_VARARGS },
 	 { "player_type_inven_item_optimize", _wrap_player_type_inven_item_optimize, METH_VARARGS },
 	 { "player_type_carry", _wrap_player_type_carry, METH_VARARGS },
-	 { "player_type_place", _wrap_player_type_place, METH_VARARGS },
 	 { "player_type_teleport", _wrap_player_type_teleport, METH_VARARGS },
 	 { "player_type_teleport_to", _wrap_player_type_teleport_to, METH_VARARGS },
 	 { "player_type_teleport_level", _wrap_player_type_teleport_level, METH_VARARGS },
@@ -9076,6 +8474,7 @@ static swig_const_info swig_const_table[] = {
     { SWIG_PY_INT,     "A_DEX", (long) 3, 0, 0, 0},
     { SWIG_PY_INT,     "A_CON", (long) 4, 0, 0, 0},
     { SWIG_PY_INT,     "A_CHR", (long) 5, 0, 0, 0},
+    { SWIG_PY_INT,     "A_MAX", (long) 6, 0, 0, 0},
     { SWIG_PY_INT,     "SEX_FEMALE", (long) 0, 0, 0, 0},
     { SWIG_PY_INT,     "SEX_MALE", (long) 1, 0, 0, 0},
 {0}};

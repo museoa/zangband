@@ -516,6 +516,9 @@ static swig_type_info *swig_types[4];
 	{
 		return &cave[y][x];
 	}
+extern void map_area();
+extern void wiz_lite();
+extern void wiz_dark();
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -622,24 +625,36 @@ static PyObject *_wrap_base_level_get() {
 }
 
 
-static int _wrap_dun_level_set(PyObject *val) {
-    s16b  tval ;
+static PyObject *_wrap_map_area(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
     
-    tval = (s16b ) PyInt_AsLong(val);
-    if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'dun_level'(s16b )");
-        return 1; 
-    }
-    dun_level = tval;
-    return 0;
+    if(!PyArg_ParseTuple(args,":map_area")) return NULL;
+    map_area();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
 }
 
 
-static PyObject *_wrap_dun_level_get() {
-    PyObject *pyobj;
+static PyObject *_wrap_wiz_lite(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
     
-    pyobj = PyInt_FromLong((long) dun_level);
-    return pyobj;
+    if(!PyArg_ParseTuple(args,":wiz_lite")) return NULL;
+    wiz_lite();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_wiz_dark(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":wiz_dark")) return NULL;
+    wiz_dark();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
 }
 
 
@@ -754,35 +769,6 @@ static PyObject *_wrap_cave_type_m_idx_get(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"O:cave_type_m_idx_get",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_cave_type,1)) == -1) return NULL;
     result = (s16b ) (arg0->m_idx);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_cave_type_mimic_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct cave_type *arg0 ;
-    byte arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:cave_type_mimic_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_cave_type,1)) == -1) return NULL;
-    arg0->mimic = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_cave_type_mimic_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    struct cave_type *arg0 ;
-    PyObject * argo0 =0 ;
-    byte result ;
-    
-    if(!PyArg_ParseTuple(args,"O:cave_type_mimic_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_cave_type,1)) == -1) return NULL;
-    result = (byte ) (arg0->mimic);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -966,6 +952,9 @@ static PyMethodDef cavecMethods[] = {
 	 { "load_layout", _wrap_load_layout, METH_VARARGS },
 	 { "set_feat", _wrap_set_feat, METH_VARARGS },
 	 { "tile", _wrap_tile, METH_VARARGS },
+	 { "map_area", _wrap_map_area, METH_VARARGS },
+	 { "wiz_lite", _wrap_wiz_lite, METH_VARARGS },
+	 { "wiz_dark", _wrap_wiz_dark, METH_VARARGS },
 	 { "cave_type_info_set", _wrap_cave_type_info_set, METH_VARARGS },
 	 { "cave_type_info_get", _wrap_cave_type_info_get, METH_VARARGS },
 	 { "cave_type_feat_set", _wrap_cave_type_feat_set, METH_VARARGS },
@@ -974,8 +963,6 @@ static PyMethodDef cavecMethods[] = {
 	 { "cave_type_o_idx_get", _wrap_cave_type_o_idx_get, METH_VARARGS },
 	 { "cave_type_m_idx_set", _wrap_cave_type_m_idx_set, METH_VARARGS },
 	 { "cave_type_m_idx_get", _wrap_cave_type_m_idx_get, METH_VARARGS },
-	 { "cave_type_mimic_set", _wrap_cave_type_mimic_set, METH_VARARGS },
-	 { "cave_type_mimic_get", _wrap_cave_type_mimic_get, METH_VARARGS },
 	 { "vault_type_name_set", _wrap_vault_type_name_set, METH_VARARGS },
 	 { "vault_type_name_get", _wrap_vault_type_name_get, METH_VARARGS },
 	 { "vault_type_text_set", _wrap_vault_type_text_set, METH_VARARGS },
@@ -1039,7 +1026,6 @@ SWIGEXPORT(void) initcavec(void) {
     SWIG_addvarlink(SWIG_globals,"object_level",_wrap_object_level_get, _wrap_object_level_set);
     SWIG_addvarlink(SWIG_globals,"monster_level",_wrap_monster_level_get, _wrap_monster_level_set);
     SWIG_addvarlink(SWIG_globals,"base_level",_wrap_base_level_get, _wrap_base_level_set);
-    SWIG_addvarlink(SWIG_globals,"dun_level",_wrap_dun_level_get, _wrap_dun_level_set);
     SWIG_InstallConstants(d,swig_const_table);
 }
 

@@ -59,13 +59,15 @@ struct store_type
 
 	s32b last_visit;		/* Last visited on this turn */
 
-	s16b table_num;			/* Table -- Number of entries */
-	s16b table_size;		/* Table -- Total Size of Array */
-	s16b *table;			/* Table -- Legal item kinds */
-
+	byte max_stock;			/* Stock -- Max number of entries */
 	byte stock_num;			/* Stock -- Number of entries */
 	object_type *stock;		/* Stock -- Actual stock items */
 	
 	u16b x;					/* Location x coord. */
 	u16b y;					/* Location y coord. */
+	
+	field_type *f_ptr;		/* Field corresponding to this store */
+	byte	info_flags;		/* Info flags - obtained from the field data[] */
 };
+
+typedef store_type *store_ptr;

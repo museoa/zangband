@@ -489,7 +489,8 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 #define  SWIGTYPE_p_player_race swig_types[0] 
 #define  SWIGTYPE_p_short swig_types[1] 
-static swig_type_info *swig_types[3];
+#define  SWIGTYPE_p_player_sex swig_types[2] 
+static swig_type_info *swig_types[4];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -515,9 +516,7 @@ static PyObject *_wrap_player_race_title_set(PyObject *self, PyObject *args) {
     
     if(!PyArg_ParseTuple(args,"Os:player_race_title_set",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_race,1)) == -1) return NULL;
-    {
-        arg0->title = string_make(arg1);
-    }
+    arg0->title = arg1;
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -1275,6 +1274,104 @@ static PyObject *_wrap_player_race_set_r_adj(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_player_sex_title_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    struct player_sex *arg0 ;
+    cptr arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:player_sex_title_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_sex,1)) == -1) return NULL;
+    arg0->title = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_player_sex_title_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    struct player_sex *arg0 ;
+    PyObject * argo0 =0 ;
+    cptr result ;
+    
+    if(!PyArg_ParseTuple(args,"O:player_sex_title_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_sex,1)) == -1) return NULL;
+    result = (cptr ) (arg0->title);
+    resultobj = PyString_FromString(result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_player_sex_winner_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    struct player_sex *arg0 ;
+    cptr arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:player_sex_winner_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_sex,1)) == -1) return NULL;
+    arg0->winner = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_player_sex_winner_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    struct player_sex *arg0 ;
+    PyObject * argo0 =0 ;
+    cptr result ;
+    
+    if(!PyArg_ParseTuple(args,"O:player_sex_winner_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_sex,1)) == -1) return NULL;
+    result = (cptr ) (arg0->winner);
+    resultobj = PyString_FromString(result);
+    return resultobj;
+}
+
+
+struct player_sex * new_player_sex() {
+    {
+        sp_ptr = (player_sex*)malloc(sizeof(player_sex));
+        return sp_ptr;
+    }
+}
+
+
+static PyObject *_wrap_new_player_sex(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    struct player_sex *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_player_sex")) return NULL;
+    result = (struct player_sex *)new_player_sex();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_player_sex);
+    return resultobj;
+}
+
+
+void  delete_player_sex(struct player_sex *self) {
+    {
+        free(self);
+    }
+}
+
+
+static PyObject *_wrap_delete_player_sex(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    struct player_sex *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_player_sex",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player_sex,1)) == -1) return NULL;
+    delete_player_sex(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyMethodDef pracecMethods[] = {
 	 { "player_race_title_set", _wrap_player_race_title_set, METH_VARARGS },
 	 { "player_race_title_get", _wrap_player_race_title_get, METH_VARARGS },
@@ -1327,6 +1424,12 @@ static PyMethodDef pracecMethods[] = {
 	 { "delete_player_race", _wrap_delete_player_race, METH_VARARGS },
 	 { "player_race_get_r_adj", _wrap_player_race_get_r_adj, METH_VARARGS },
 	 { "player_race_set_r_adj", _wrap_player_race_set_r_adj, METH_VARARGS },
+	 { "player_sex_title_set", _wrap_player_sex_title_set, METH_VARARGS },
+	 { "player_sex_title_get", _wrap_player_sex_title_get, METH_VARARGS },
+	 { "player_sex_winner_set", _wrap_player_sex_winner_set, METH_VARARGS },
+	 { "player_sex_winner_get", _wrap_player_sex_winner_get, METH_VARARGS },
+	 { "new_player_sex", _wrap_new_player_sex, METH_VARARGS },
+	 { "delete_player_sex", _wrap_delete_player_sex, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -1338,10 +1441,12 @@ static PyMethodDef pracecMethods[] = {
 
 static swig_type_info _swigt__p_player_race[] = {{"_p_player_race", 0, "struct player_race *"},{"_p_player_race"},{0}};
 static swig_type_info _swigt__p_short[] = {{"_p_short", 0, "short *"},{"_p_short"},{0}};
+static swig_type_info _swigt__p_player_sex[] = {{"_p_player_sex", 0, "struct player_sex *"},{"_p_player_sex"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
 _swigt__p_player_race, 
 _swigt__p_short, 
+_swigt__p_player_sex, 
 0
 };
 

@@ -534,7 +534,6 @@ extern bool summon_specific(int ,int ,int ,int ,int ,bool ,bool ,bool );
 extern bool multiply_monster(int ,bool ,bool ,bool );
 extern void update_smart_learn(int ,int );
 extern bool place_monster_one(int ,int ,int ,bool ,bool ,bool );
-extern bool player_place(int ,int );
 extern void monster_drop_carried_objects(monster_type *);
 extern bool monster_dungeon(int );
 extern bool monster_quest(int );
@@ -892,19 +891,6 @@ static PyObject *_wrap_place_monster_one(PyObject *self, PyObject *args) {
     arg4 = (bool ) tempbool4;
     arg5 = (bool ) tempbool5;
     result = (bool )place_monster_one(arg0,arg1,arg2,arg3,arg4,arg5);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_player_place(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    int arg1 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"ii:player_place",&arg0,&arg1)) return NULL;
-    result = (bool )player_place(arg0,arg1);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3174,7 +3160,6 @@ static PyMethodDef monstercMethods[] = {
 	 { "multiply_monster", _wrap_multiply_monster, METH_VARARGS },
 	 { "update_smart_learn", _wrap_update_smart_learn, METH_VARARGS },
 	 { "place_monster_one", _wrap_place_monster_one, METH_VARARGS },
-	 { "player_place", _wrap_player_place, METH_VARARGS },
 	 { "monster_drop_carried_objects", _wrap_monster_drop_carried_objects, METH_VARARGS },
 	 { "monster_dungeon", _wrap_monster_dungeon, METH_VARARGS },
 	 { "monster_quest", _wrap_monster_quest, METH_VARARGS },

@@ -148,3 +148,6 @@ do_cmd_disarm_aux = commandsc.do_cmd_disarm_aux
 
 #-------------- VARIABLE WRAPPERS ------------------
 
+OPT_FLAG_BIRTH = commandsc.OPT_FLAG_BIRTH
+OPT_FLAG_SERVER = commandsc.OPT_FLAG_SERVER
+OPT_FLAG_PLAYER = commandsc.OPT_FLAG_PLAYER

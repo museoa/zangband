@@ -605,7 +605,6 @@ extern errr Term_resize(int ,int );
 extern errr Term_activate(term *);
 extern errr term_nuke(term *);
 extern errr term_init(term *,int ,int ,int );
-extern u32b option_flag[8];
 extern u32b option_mask[8];
 extern u32b window_flag[8];
 extern u32b window_mask[8];
@@ -1940,32 +1939,6 @@ static PyObject *_wrap_term_init(PyObject *self, PyObject *args) {
 }
 
 
-static int _wrap_option_flag_set(PyObject *val) {
-    PyErr_SetString(PyExc_TypeError,"Variable option_flag is read-only.");
-    return 1;
-    return 0;
-}
-
-
-static PyObject *_wrap_option_flag_get() {
-    PyObject *pyobj;
-    
-    {
-        PyObject *o;
-        int i;
-        
-        pyobj = PyList_New(8);
-        
-        for (i = 0; i < 8; i++)
-        {
-            o = PyInt_FromLong(option_flag[i]);
-            PyList_SetItem(pyobj, i, o);
-        }
-    }
-    return pyobj;
-}
-
-
 static int _wrap_option_mask_set(PyObject *val) {
     PyErr_SetString(PyExc_TypeError,"Variable option_mask is read-only.");
     return 1;
@@ -2502,7 +2475,6 @@ SWIGEXPORT(void) initioc(void) {
     }
     PyDict_SetItemString(d,"cvar", SWIG_globals);
     SWIG_addvarlink(SWIG_globals,"Term",_wrap_Term_get, _wrap_Term_set);
-    SWIG_addvarlink(SWIG_globals,"option_flag",_wrap_option_flag_get, _wrap_option_flag_set);
     SWIG_addvarlink(SWIG_globals,"option_mask",_wrap_option_mask_get, _wrap_option_mask_set);
     SWIG_addvarlink(SWIG_globals,"window_flag",_wrap_window_flag_get, _wrap_window_flag_set);
     SWIG_addvarlink(SWIG_globals,"window_mask",_wrap_window_mask_get, _wrap_window_mask_set);

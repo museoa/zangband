@@ -470,9 +470,9 @@ typedef struct player_type
 		word_of_recall();
 	}
 
-	bool disenchant(int mode)
+	bool disenchant(void)
 	{
-		return apply_disenchant(mode);
+		return apply_disenchant();
 	}
 
 	void mutate_player(void)

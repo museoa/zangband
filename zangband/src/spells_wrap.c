@@ -582,7 +582,7 @@ extern bool dispel_monsters(int );
 extern bool dispel_living(int );
 extern bool dispel_demons(int );
 extern bool turn_undead();
-extern bool destroy_area(int ,int ,int ,int );
+extern bool destroy_area(int ,int ,int );
 extern bool earthquake(int ,int ,int );
 extern void lite_room(int ,int );
 extern void unlite_room(int ,int );
@@ -647,7 +647,7 @@ extern void teleport_player_to(int ,int );
 extern void teleport_player_level();
 extern void recall_player(int );
 extern void word_of_recall();
-extern bool apply_disenchant(int );
+extern bool apply_disenchant();
 extern void mutate_player();
 extern void apply_nexus(monster_type *);
 extern void phlogiston();
@@ -1588,11 +1588,10 @@ static PyObject *_wrap_destroy_area(PyObject *self, PyObject *args) {
     int arg0 ;
     int arg1 ;
     int arg2 ;
-    int arg3 ;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,"iiii:destroy_area",&arg0,&arg1,&arg2,&arg3)) return NULL;
-    result = (bool )destroy_area(arg0,arg1,arg2,arg3);
+    if(!PyArg_ParseTuple(args,"iii:destroy_area",&arg0,&arg1,&arg2)) return NULL;
+    result = (bool )destroy_area(arg0,arg1,arg2);
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2398,11 +2397,10 @@ static PyObject *_wrap_word_of_recall(PyObject *self, PyObject *args) {
 
 static PyObject *_wrap_apply_disenchant(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    int arg0 ;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,"i:apply_disenchant",&arg0)) return NULL;
-    result = (bool )apply_disenchant(arg0);
+    if(!PyArg_ParseTuple(args,":apply_disenchant")) return NULL;
+    result = (bool )apply_disenchant();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }

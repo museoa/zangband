@@ -487,8 +487,9 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_cave_type swig_types[0] 
-static swig_type_info *swig_types[2];
+#define  SWIGTYPE_p_field_type swig_types[0] 
+#define  SWIGTYPE_p_cave_type swig_types[1] 
+static swig_type_info *swig_types[3];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -538,8 +539,7 @@ extern void do_cmd_query_symbol();
 extern void do_cmd_redraw();
 extern void do_cmd_message_one();
 extern void do_cmd_messages();
-extern void do_cmd_options_aux(int ,cptr );
-extern void do_cmd_options();
+extern void do_cmd_options(byte );
 extern void do_cmd_pref();
 extern void do_cmd_macros();
 extern void do_cmd_visuals();
@@ -570,7 +570,7 @@ extern void do_cmd_suicide();
 extern void do_cmd_save_game(int );
 extern void do_cmd_save_and_exit();
 extern void do_cmd_racial_power();
-extern void do_cmd_store();
+extern void do_cmd_store(field_type *);
 extern void do_cmd_mindcraft();
 extern void do_cmd_knowledge_mutations();
 extern bool do_cmd_disarm_aux(cave_type *,int );
@@ -965,24 +965,12 @@ static PyObject *_wrap_do_cmd_messages(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_do_cmd_options_aux(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    cptr arg1 ;
-    
-    if(!PyArg_ParseTuple(args,"is:do_cmd_options_aux",&arg0,&arg1)) return NULL;
-    do_cmd_options_aux(arg0,arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyObject *_wrap_do_cmd_options(PyObject *self, PyObject *args) {
     PyObject *resultobj;
+    byte arg0 ;
     
-    if(!PyArg_ParseTuple(args,":do_cmd_options")) return NULL;
-    do_cmd_options();
+    if(!PyArg_ParseTuple(args,"b:do_cmd_options",&arg0)) return NULL;
+    do_cmd_options(arg0);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -1322,9 +1310,12 @@ static PyObject *_wrap_do_cmd_racial_power(PyObject *self, PyObject *args) {
 
 static PyObject *_wrap_do_cmd_store(PyObject *self, PyObject *args) {
     PyObject *resultobj;
+    field_type *arg0 ;
+    PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,":do_cmd_store")) return NULL;
-    do_cmd_store();
+    if(!PyArg_ParseTuple(args,"O:do_cmd_store",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_field_type,1)) == -1) return NULL;
+    do_cmd_store(arg0);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -1404,7 +1395,6 @@ static PyMethodDef commandscMethods[] = {
 	 { "do_cmd_redraw", _wrap_do_cmd_redraw, METH_VARARGS },
 	 { "do_cmd_message_one", _wrap_do_cmd_message_one, METH_VARARGS },
 	 { "do_cmd_messages", _wrap_do_cmd_messages, METH_VARARGS },
-	 { "do_cmd_options_aux", _wrap_do_cmd_options_aux, METH_VARARGS },
 	 { "do_cmd_options", _wrap_do_cmd_options, METH_VARARGS },
 	 { "do_cmd_pref", _wrap_do_cmd_pref, METH_VARARGS },
 	 { "do_cmd_macros", _wrap_do_cmd_macros, METH_VARARGS },
@@ -1449,9 +1439,11 @@ static PyMethodDef commandscMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_field_type[] = {{"_p_field_type", 0, "field_type *"},{"_p_field_type"},{0}};
 static swig_type_info _swigt__p_cave_type[] = {{"_p_cave_type", 0, "cave_type *"},{"_p_cave_type"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
+_swigt__p_field_type, 
 _swigt__p_cave_type, 
 0
 };
@@ -1460,6 +1452,9 @@ _swigt__p_cave_type,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
+    { SWIG_PY_INT,     "OPT_FLAG_BIRTH", (long) 0x01, 0, 0, 0},
+    { SWIG_PY_INT,     "OPT_FLAG_SERVER", (long) 0x02, 0, 0, 0},
+    { SWIG_PY_INT,     "OPT_FLAG_PLAYER", (long) 0x04, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;

@@ -53,13 +53,13 @@ class store_type:
         "bad_buy" : storec.store_type_bad_buy_set,
         "store_open" : storec.store_type_store_open_set,
         "last_visit" : storec.store_type_last_visit_set,
-        "table_num" : storec.store_type_table_num_set,
-        "table_size" : storec.store_type_table_size_set,
-        "table" : storec.store_type_table_set,
+        "max_stock" : storec.store_type_max_stock_set,
         "stock_num" : storec.store_type_stock_num_set,
         "stock" : storec.store_type_stock_set,
         "x" : storec.store_type_x_set,
         "y" : storec.store_type_y_set,
+        "f_ptr" : storec.store_type_f_ptr_set,
+        "info_flags" : storec.store_type_info_flags_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -74,13 +74,13 @@ class store_type:
         "bad_buy" : storec.store_type_bad_buy_get,
         "store_open" : storec.store_type_store_open_get,
         "last_visit" : storec.store_type_last_visit_get,
-        "table_num" : storec.store_type_table_num_get,
-        "table_size" : storec.store_type_table_size_get,
-        "table" : storec.store_type_table_get,
+        "max_stock" : storec.store_type_max_stock_get,
         "stock_num" : storec.store_type_stock_num_get,
         "stock" : storec.store_type_stock_get,
         "x" : storec.store_type_x_get,
         "y" : storec.store_type_y_get,
+        "f_ptr" : storec.store_type_f_ptr_get,
+        "info_flags" : storec.store_type_info_flags_get,
     }
     def __getattr__(self,name):
         method = store_type.__getmethods__.get(name,None)
