@@ -333,8 +333,6 @@ int num_enchant_to_h;
 int num_brand_weapon;	/*apw brand bolts */
 int num_genocide;
 
-int num_artifact;
-
 s16b home_slot_free;
 s16b home_damage;
 s16b num_duplicate_items;

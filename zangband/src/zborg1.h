@@ -652,8 +652,6 @@ extern int num_brand_weapon;	/* apw crubragol and bolts */
 extern int num_genocide;
 extern int num_mass_genocide;
 
-extern int num_artifact;
-
 extern s16b home_slot_free;
 extern s16b home_damage;
 extern s16b num_duplicate_items;

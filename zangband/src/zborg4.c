@@ -2336,9 +2336,9 @@ void borg_notice(void)
 
 
 /*
- * Helper function -- notice the home equipment
+ * Helper function -- clear home values
  */
-static void borg_notice_home_aux1(void)
+static void borg_notice_home_clear(void)
 {
 	int i, ii;
 
@@ -2354,8 +2354,6 @@ static void borg_notice_home_aux1(void)
 	num_escape = 0;
 	num_teleport = 0;
 	num_teleport_level = 0;
-
-	num_artifact = 0;
 
 	num_invisible = 0;
 	num_pfe = 0;
@@ -2468,283 +2466,265 @@ static void borg_notice_home_aux1(void)
 	num_duplicate_items = 0;
 }
 
-#if 0
+
 /*
  * This checks for duplicate items in the home
  */
-static void borg_notice_home_dupe(borg_item *item, bool check_sval, int i)
+static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 {
-/* eventually check for power overlap... armor of resistence is same as weak elvenkind.*/
-/*  two armors of elvenkind that resist poison is a dupe.  AJG*/
-
 	int dupe_count, x;
-	borg_item *item2;
+	list_item *w_ptr;
 
-	/* if this is a stack of items then all after the first are a */
-	/* duplicate */
-	dupe_count = item->iqty - 1;
+	dupe_count = l_ptr->number - 1;
 
 	/* Look for other items before this one that are the same */
 	for (x = 0; x < i; x++)
 	{
-		if (x < STORE_INVEN_MAX)
-			item2 = &borg_shops[BORG_HOME].ware[x];
+		if (x < home_num)
+			w_ptr = &borg_home[x];
 		else
 			/* Check what the borg has on as well. */
-			item2 = &borg_items[((x - STORE_INVEN_MAX) + INVEN_WIELD)];
+			w_ptr = &equipment[x - home_num];
 
-		/* if everything matches it is a duplicate item */
-		/* Note that we only check sval on certain items.  This */
-		/* is because, for example, two pairs of dragon armor */
-		/* are not the same unless thier subtype (color) matches */
-		/* but a defender is a defender even if one is a dagger and */
-		/* one is a mace */
-		if ((item->tval == item2->tval) &&
-			(check_sval ? (item->sval == item2->sval) : TRUE) &&
-			(item->xtra_name == item2->xtra_name))
+		/*
+		 * If everything matches it is a duplicate item
+		 * Note that we only check sval on certain items.  This
+		 * is because, for example, two pairs of dragon armor
+		 * are not the same unless their subtype (color) matches
+		 * but a defender is a defender even if one is a dagger and
+		 * one is a mace
+		 */
+		if (l_ptr->tval == w_ptr->tval)
 		{
-			dupe_count++;
+			if (check_sval &&
+				(k_info[l_ptr->k_idx].sval != k_info[w_ptr->k_idx].sval))
+			{
+				/* Svals don't match when required */
+				continue;
+			}
+			
+			if (streq(l_ptr->xtra_name, w_ptr->xtra_name))
+			{
+				/* Count duplicate items */
+				dupe_count++;
+			}
 		}
 	}
 
-	/* there can be one dupe of rings because there are two ring slots. */
-	if (item->tval == TV_RING && dupe_count)
-		dupe_count--;
+	/* There can be one dupe of rings because there are two ring slots. */
+	if (l_ptr->tval == TV_RING && dupe_count) dupe_count--;
 
 	/* Add this items count to the total duplicate count */
 	num_duplicate_items += dupe_count;
 }
-#endif /* 0 */
 
-#if 0
+
 /*
  * Helper function -- notice the home inventory
  */
-static void borg_notice_home_aux2(void)
+static void borg_notice_home_aux(void)
 {
 	int i;
 
-	borg_item *item;
-
-	borg_shop *shop = &borg_shops[BORG_HOME];
+	list_item *l_ptr;
 
 	u32b f1, f2, f3;
 
 	/*** Process the inventory ***/
 
 	/* Scan the home */
-	for (i = 0; i < (STORE_INVEN_MAX + (INVEN_TOTAL - INVEN_WIELD)); i++)
+	for (i = 0; i < (home_num + EQUIP_MAX); i++)
 	{
 		if (i < STORE_INVEN_MAX)
-			item = &shop->ware[i];
+			l_ptr = &borg_home[i];
 		else
-			item = &borg_items[((i - STORE_INVEN_MAX) + INVEN_WIELD)];
+			l_ptr = &equipment[i - home_num];
 
-		/* Skip empty items */
-		if (!item->iqty)
-		{
-			home_slot_free++;
-			continue;
-		}
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
-		/* Hack -- skip un-aware items */
-		if (!item->kind)
+		if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) num_slow_digest += l_ptr->number;
+		if (l_ptr->kn_flags3 & TR3_REGEN) num_regenerate += l_ptr->number;
+		if (l_ptr->kn_flags3 & TR3_TELEPATHY) num_telepathy += l_ptr->number;
+		if (l_ptr->kn_flags3 & TR3_SEE_INVIS) num_see_inv += l_ptr->number;
+		if (l_ptr->kn_flags3 & TR3_FEATHER) num_ffall += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_FREE_ACT) num_free_act += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) num_hold_life += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_IM_FIRE)
 		{
-			home_slot_free++;
-			continue;
+			num_immune_fire += l_ptr->number;
+			num_resist_fire += l_ptr->number;
 		}
-
-		if (item->flags3 & TR3_SLOW_DIGEST) num_slow_digest += item->iqty;
-		if (item->flags3 & TR3_REGEN) num_regenerate += item->iqty;
-		if (item->flags3 & TR3_TELEPATHY) num_telepathy += item->iqty;
-		if (item->flags3 & TR3_SEE_INVIS) num_see_inv += item->iqty;
-		if (item->flags3 & TR3_FEATHER) num_ffall += item->iqty;
-		if (item->flags2 & TR2_FREE_ACT) num_free_act += item->iqty;
-		if (item->flags2 & TR2_HOLD_LIFE) num_hold_life += item->iqty;
-		if (item->flags2 & TR2_IM_FIRE)
+		if (l_ptr->kn_flags2 & TR2_IM_ACID)
 		{
-			num_immune_fire += item->iqty;
-			num_resist_fire += item->iqty;
+			num_immune_acid += l_ptr->number;
+			num_resist_acid += l_ptr->number;
 		}
-		if (item->flags2 & TR2_IM_ACID)
+		if (l_ptr->kn_flags2 & TR2_IM_COLD)
 		{
-			num_immune_acid += item->iqty;
-			num_resist_acid += item->iqty;
+			num_immune_cold += l_ptr->number;
+			num_resist_cold += l_ptr->number;
 		}
-		if (item->flags2 & TR2_IM_COLD)
+		if (l_ptr->kn_flags2 & TR2_IM_ELEC)
 		{
-			num_immune_cold += item->iqty;
-			num_resist_cold += item->iqty;
+			num_immune_elec += l_ptr->number;
+			num_resist_elec += l_ptr->number;
 		}
-		if (item->flags2 & TR2_IM_ELEC)
-		{
-			num_immune_elec += item->iqty;
-			num_resist_elec += item->iqty;
-		}
-		if (item->flags2 & TR2_RES_ACID) num_resist_acid += item->iqty;
-		if (item->flags2 & TR2_RES_ELEC) num_resist_elec += item->iqty;
-		if (item->flags2 & TR2_RES_FIRE) num_resist_fire += item->iqty;
-		if (item->flags2 & TR2_RES_COLD) num_resist_cold += item->iqty;
-		if (item->flags2 & TR2_RES_POIS) num_resist_pois += item->iqty;
-		if (item->flags2 & TR2_RES_SOUND) num_resist_sound += item->iqty;
-		if (item->flags2 & TR2_RES_LITE) num_resist_lite += item->iqty;
-		if (item->flags2 & TR2_RES_DARK) num_resist_dark += item->iqty;
-		if (item->flags2 & TR2_RES_CHAOS) num_resist_chaos += item->iqty;
-		if (item->flags2 & TR2_RES_CONF) num_resist_conf += item->iqty;
-		if (item->flags2 & TR2_RES_DISEN) num_resist_disen += item->iqty;
-		if (item->flags2 & TR2_RES_SHARDS) num_resist_shard += item->iqty;
-		if (item->flags2 & TR2_RES_NEXUS) num_resist_nexus += item->iqty;
-		if (item->flags2 & TR2_RES_BLIND) num_resist_blind += item->iqty;
-		if (item->flags2 & TR2_RES_NETHER) num_resist_neth += item->iqty;
+		if (l_ptr->kn_flags2 & TR2_RES_ACID) num_resist_acid += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_ELEC) num_resist_elec += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_FIRE) num_resist_fire += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_COLD) num_resist_cold += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_POIS) num_resist_pois += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_SOUND) num_resist_sound += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_LITE) num_resist_lite += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_DARK) num_resist_dark += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_CHAOS) num_resist_chaos += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_CONF) num_resist_conf += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_DISEN) num_resist_disen += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_SHARDS) num_resist_shard += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_NEXUS) num_resist_nexus += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_BLIND) num_resist_blind += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_RES_NETHER) num_resist_neth += l_ptr->number;
 
 		/* Count Sustains */
-		if (item->flags2 & TR2_SUST_STR) num_sustain_str += item->iqty;
-		if (item->flags2 & TR2_SUST_INT) num_sustain_str += item->iqty;
-		if (item->flags2 & TR2_SUST_WIS) num_sustain_str += item->iqty;
-		if (item->flags2 & TR2_SUST_DEX) num_sustain_str += item->iqty;
-		if (item->flags2 & TR2_SUST_CON) num_sustain_str += item->iqty;
-		if (item->flags2 & TR2_SUST_STR &&
-			item->flags2 & TR2_SUST_INT &&
-			item->flags2 & TR2_SUST_WIS &&
-			item->flags2 & TR2_SUST_DEX &&
-			item->flags2 & TR2_SUST_CON) num_sustain_all += item->iqty;
+		if (l_ptr->kn_flags2 & TR2_SUST_STR) num_sustain_str += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_SUST_INT) num_sustain_str += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_SUST_WIS) num_sustain_str += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_SUST_DEX) num_sustain_str += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_str += l_ptr->number;
+		if (l_ptr->kn_flags2 & TR2_SUST_STR &&
+			l_ptr->kn_flags2 & TR2_SUST_INT &&
+			l_ptr->kn_flags2 & TR2_SUST_WIS &&
+			l_ptr->kn_flags2 & TR2_SUST_DEX &&
+			l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_all += l_ptr->number;
 
 		/* count up bonus to stats */
-		/* HACK only collect stat rings above +3 */
-		if (item->flags1 & TR1_STR)
+		if (l_ptr->kn_flags1 & TR1_STR)
 		{
-			if (item->tval != TV_RING || item->pval > 3)
-				home_stat_add[A_STR] += item->pval * item->iqty;
+			if (l_ptr->tval != TV_RING)
+				home_stat_add[A_STR] += l_ptr->pval * l_ptr->number;
 		}
-		if (item->flags1 & TR1_INT)
+		if (l_ptr->kn_flags1 & TR1_INT)
 		{
-			if (item->tval != TV_RING || item->pval > 3)
-				home_stat_add[A_INT] += item->pval * item->iqty;
+			if (l_ptr->tval != TV_RING)
+				home_stat_add[A_INT] += l_ptr->pval * l_ptr->number;
 		}
-		if (item->flags1 & TR1_WIS)
+		if (l_ptr->kn_flags1 & TR1_WIS)
 		{
-			if (item->tval != TV_RING || item->pval > 3)
-				home_stat_add[A_WIS] += item->pval * item->iqty;
+			if (l_ptr->tval != TV_RING)
+				home_stat_add[A_WIS] += l_ptr->pval * l_ptr->number;
 		}
-		if (item->flags1 & TR1_DEX)
+		if (l_ptr->kn_flags1 & TR1_DEX)
 		{
-			if (item->tval != TV_RING || item->pval > 3)
-				home_stat_add[A_DEX] += item->pval * item->iqty;
+			if (l_ptr->tval != TV_RING)
+				home_stat_add[A_DEX] += l_ptr->pval * l_ptr->number;
 		}
-		if (item->flags1 & TR1_CON)
+		if (l_ptr->kn_flags1 & TR1_CON)
 		{
-			if (item->tval != TV_RING || item->pval > 3)
-				home_stat_add[A_CON] += item->pval * item->iqty;
+			if (l_ptr->tval != TV_RING)
+				home_stat_add[A_CON] += l_ptr->pval * l_ptr->number;
 		}
-		if (item->flags1 & TR1_CHR)
+		if (l_ptr->kn_flags1 & TR1_CHR)
 		{
-			if (item->tval != TV_RING || item->pval > 3)
-				home_stat_add[A_CHR] += item->pval * item->iqty;
+			if (l_ptr->tval != TV_RING)
+				home_stat_add[A_CHR] += l_ptr->pval * l_ptr->number;
 		}
 
 		/* count up bonus to speed */
-		if (item->flags1 & TR1_SPEED) num_speed += item->pval * item->iqty;
-
-#if 0
-		/* count artifacts */
-		if (item->name1)
-		{
-			num_artifact += item->iqty;
-		}
-#endif /* 0 */
+		if (l_ptr->kn_flags1 & TR1_SPEED) num_speed += l_ptr->pval * l_ptr->number;
 
 		/* Analyze the item */
-		switch (item->tval)
+		switch (l_ptr->tval)
 		{
 			case TV_SOFT_ARMOR:
 			case TV_HARD_ARMOR:
 			{
-				num_armor += item->iqty;
+				num_armor += l_ptr->number;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 				break;
 			}
 
 			case TV_DRAG_ARMOR:
 			{
-				num_armor += item->iqty;
+				num_armor += l_ptr->number;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, TRUE, i);
+				borg_notice_home_dupe(l_ptr, TRUE, i);
 				break;
 			}
 
 			case TV_CLOAK:
 			{
-				num_cloaks += item->iqty;
+				num_cloaks += l_ptr->number;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 
 				break;
 			}
 
 			case TV_SHIELD:
 			{
-				num_shields += item->iqty;
+				num_shields += l_ptr->number;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 				break;
 			}
 
 			case TV_HELM:
 			case TV_CROWN:
 			{
-				num_hats += item->iqty;
+				num_hats += l_ptr->number;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 
 				break;
 			}
 
 			case TV_GLOVES:
 			{
-				num_gloves += item->iqty;
+				num_gloves += l_ptr->number;
 
 				/* most gloves hurt magic for spell-casters */
 				if (borg_skill[BI_INTMANA] && borg_skill[BI_MAXSP] > 3)
 				{
 					/* Penalize non-usable gloves */
-					if (item->iqty &&
-						(!(item->flags2 & TR2_FREE_ACT)) &&
-						(!((item->flags1 & TR1_DEX) && (item->pval > 0))))
+					if (l_ptr->number &&
+						(!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
+						(!((l_ptr->kn_flags1 & TR1_DEX) && (l_ptr->pval > 0))))
 					{
-						num_bad_gloves += item->iqty;
+						num_bad_gloves += l_ptr->number;
 					}
 				}
 
 				/* gloves of slaying give a damage bonus */
-				home_damage += item->to_d * 3;
+				home_damage += l_ptr->to_d * 3;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 
 				break;
 			}
 
 			case TV_LITE:
 			{
-				if (item->xtra_name)
+				if (l_ptr->kn_flags3 & TR3_INSTA_ART)
 				{
-					num_lite += item->iqty;
+					num_lite += l_ptr->number;
 				}
 				break;
 			}
 
 			case TV_BOOTS:
 			{
-				num_boots += item->iqty;
+				num_boots += l_ptr->number;
 
 				/* see if this item is duplicated */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 				break;
 			}
 
@@ -2755,25 +2735,29 @@ static void borg_notice_home_aux2(void)
 			{
 				s16b num_blow;
 
-				num_weapons += item->iqty;
+				num_weapons += l_ptr->number;
+				
 				/* apw most edged weapons hurt magic for priests */
 				if (borg_class == CLASS_PRIEST)
 				{
 					/* Penalize non-blessed edged weapons */
-					if (((item->tval == TV_SWORD) || (item->tval == TV_POLEARM))
-						&& (!(item->flags3 & TR3_BLESSED)))
+					if (((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM))
+						&& (!(l_ptr->kn_flags3 & TR3_BLESSED)))
 					{
-						num_edged_weapon += item->iqty;
+						num_edged_weapon += l_ptr->number;
 					}
 				}
 
 
-				/* NOTE:  This damage does not take slays into account. */
-				/* it is just a rough estimate to make sure the glave of pain */
-				/* is kept if it is found */
-				/* It is hard to hold a heavy weapon */
+				/*
+				 * NOTE:  This damage does not take slays into account.
+				 * It is just a rough estimate to make sure the glave of pain
+				 * is kept if it is found.
+				 * It is hard to hold a heavy weapon.
+				 */
 				num_blow = 1;
-				if (adj_str_hold[my_stat_ind[A_STR]] >= item->weight / 10)
+				
+				if (adj_str_hold[my_stat_ind[A_STR]] >= l_ptr->weight / 10)
 				{
 					int str_index, dex_index;
 					int num = 0, wgt = 0, mul = 0, div = 0;
@@ -2866,7 +2850,7 @@ static void borg_notice_home_aux2(void)
 					}
 
 					/* Enforce a minimum "weight" */
-					div = ((item->weight < wgt) ? wgt : item->weight);
+					div = ((l_ptr->weight < wgt) ? wgt : l_ptr->weight);
 
 					/* Access the strength vs weight */
 					str_index = (adj_str_blow[my_stat_ind[A_STR]] * mul / div);
@@ -2891,51 +2875,51 @@ static void borg_notice_home_aux2(void)
 				/* Require at least one blow */
 				if (num_blow < 1) num_blow = 1;
 
-				if (item->flags1 & TR1_BLOWS)
-					num_blow += item->pval;
-				num_blow *= item->iqty;
-				if (item->to_d > 8 || borg_skill[BI_CLEVEL] < 15)
+				if (l_ptr->kn_flags1 & TR1_BLOWS) num_blow += l_ptr->pval;
+
+				num_blow *= l_ptr->number;
+				if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 15)
 				{
-					home_damage += num_blow * (item->dd * (item->ds) +
+					home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
 											   (borg_skill[BI_TODAM] +
-												item->to_d));
+												l_ptr->to_d));
 				}
 				else
 				{
-					home_damage += num_blow * (item->dd * (item->ds) +
+					home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
 											   (borg_skill[BI_TODAM] + 8));
 				}
 
 				/* see if this item is a duplicate */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 				break;
 			}
 
 			case TV_BOW:
 			{
-				num_bow += item->iqty;
+				num_bow += l_ptr->number;
 
 				/* see if this item is a duplicate */
-				borg_notice_home_dupe(item, FALSE, i);
+				borg_notice_home_dupe(l_ptr, FALSE, i);
 				break;
 			}
 
 			case TV_RING:
 			{
-				num_rings += item->iqty;
+				num_rings += l_ptr->number;
 
 				/* see if this item is a duplicate */
-				borg_notice_home_dupe(item, TRUE, i);
+				borg_notice_home_dupe(l_ptr, TRUE, i);
 
 				break;
 			}
 
 			case TV_AMULET:
 			{
-				num_neck += item->iqty;
+				num_neck += l_ptr->number;
 
 				/* see if this item is a duplicate */
-				borg_notice_home_dupe(item, TRUE, i);
+				borg_notice_home_dupe(l_ptr, TRUE, i);
 				break;
 			}
 
@@ -2944,7 +2928,7 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_LIFE ||
 					borg_skill[BI_REALM2] == REALM_LIFE)
-					num_book[REALM_LIFE][item->sval] += item->iqty;
+					num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
 
@@ -2953,7 +2937,7 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_SORCERY ||
 					borg_skill[BI_REALM2] == REALM_SORCERY)
-					num_book[REALM_SORCERY][item->sval] += item->iqty;
+					num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
 
@@ -2962,7 +2946,7 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_NATURE ||
 					borg_skill[BI_REALM2] == REALM_NATURE)
-					num_book[REALM_NATURE][item->sval] += item->iqty;
+					num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
 			case TV_CHAOS_BOOK:
@@ -2970,7 +2954,7 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_CHAOS ||
 					borg_skill[BI_REALM2] == REALM_CHAOS)
-					num_book[REALM_CHAOS][item->sval] += item->iqty;
+					num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
 			case TV_DEATH_BOOK:
@@ -2978,7 +2962,7 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_DEATH ||
 					borg_skill[BI_REALM2] == REALM_DEATH)
-					num_book[REALM_DEATH][item->sval] += item->iqty;
+					num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
 			case TV_TRUMP_BOOK:
@@ -2986,7 +2970,7 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_TRUMP ||
 					borg_skill[BI_REALM2] == REALM_TRUMP)
-					num_book[REALM_TRUMP][item->sval] += item->iqty;
+					num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
 			case TV_ARCANE_BOOK:
@@ -2994,79 +2978,54 @@ static void borg_notice_home_aux2(void)
 				/* Count good books */
 				if (borg_skill[BI_REALM1] == REALM_ARCANE ||
 					borg_skill[BI_REALM2] == REALM_ARCANE)
-					num_book[REALM_ARCANE][item->sval] += item->iqty;
+					num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
 				break;
 			}
-
-
 
 			case TV_FOOD:
 			{
 				/* Food */
 
 				/* Analyze */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_FOOD_WAYBREAD:
-					{
-						if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
-						{
-							num_food += item->iqty;
-						}
-						break;
-					}
-
 					case SV_FOOD_RATION:
 					{
 						if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
 						{
-							num_food += item->iqty;
+							num_food += l_ptr->number;
 						}
 						break;
 					}
 
 					case SV_FOOD_SLIME_MOLD:
 					{
-						num_mold += item->iqty;
+						num_mold += l_ptr->number;
 						break;
 					}
-
-#if 0
-
-					case SV_FOOD_JERKY:
-					{
-						num_food += item->iqty;
-						break;
-					}
-
-					case SV_FOOD_BISCUIT:
-					{
-						num_food += item->iqty;
-						break;
-					}
-#endif
 
 					case SV_FOOD_RESTORE_STR:
 					{
-						num_fix_stat[A_STR] += item->iqty;
+						num_fix_stat[A_STR] += l_ptr->number;
 						break;
 					}
 
 					case SV_FOOD_RESTORE_CON:
 					{
-						num_fix_stat[A_CON] += item->iqty;
+						num_fix_stat[A_CON] += l_ptr->number;
 						break;
 					}
 
 					case SV_FOOD_RESTORING:
 					{
-						num_fix_stat[A_STR] += item->iqty;
-						num_fix_stat[A_INT] += item->iqty;
-						num_fix_stat[A_WIS] += item->iqty;
-						num_fix_stat[A_DEX] += item->iqty;
-						num_fix_stat[A_CON] += item->iqty;
-						num_fix_stat[A_CHR] += item->iqty;
-						num_fix_stat[6] += item->iqty;
+						num_fix_stat[A_STR] += l_ptr->number;
+						num_fix_stat[A_INT] += l_ptr->number;
+						num_fix_stat[A_WIS] += l_ptr->number;
+						num_fix_stat[A_DEX] += l_ptr->number;
+						num_fix_stat[A_CON] += l_ptr->number;
+						num_fix_stat[A_CHR] += l_ptr->number;
+						num_fix_stat[6] += l_ptr->number;
 						break;
 					}
 				}
@@ -3080,122 +3039,122 @@ static void borg_notice_home_aux2(void)
 				/* Potions */
 
 				/* Analyze */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_POTION_CURE_CRITICAL:
 					{
-						num_cure_critical += item->iqty;
+						num_cure_critical += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_CURE_SERIOUS:
 					{
-						num_cure_serious += item->iqty;
+						num_cure_serious += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RESIST_HEAT:
 					{
-						num_pot_rheat += item->iqty;
+						num_pot_rheat += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RESIST_COLD:
 					{
-						num_pot_rcold += item->iqty;
+						num_pot_rcold += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RES_STR:
 					{
-						num_fix_stat[A_STR] += item->iqty;
+						num_fix_stat[A_STR] += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RES_INT:
 					{
-						num_fix_stat[A_INT] += item->iqty;
+						num_fix_stat[A_INT] += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RES_WIS:
 					{
-						num_fix_stat[A_WIS] += item->iqty;
+						num_fix_stat[A_WIS] += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RES_DEX:
 					{
-						num_fix_stat[A_DEX] += item->iqty;
+						num_fix_stat[A_DEX] += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RES_CON:
 					{
-						num_fix_stat[A_CON] += item->iqty;
+						num_fix_stat[A_CON] += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RES_CHR:
 					{
-						num_fix_stat[A_CHR] += item->iqty;
+						num_fix_stat[A_CHR] += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RESTORE_EXP:
 					{
-						num_fix_exp += item->iqty;
+						num_fix_exp += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RESTORE_MANA:
 					{
-						num_mana += item->iqty;
+						num_mana += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_HEALING:
 					{
-						num_heal += item->iqty;
-						num_heal_true += item->iqty;
+						num_heal += l_ptr->number;
+						num_heal_true += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_STAR_HEALING:
 					{
-						num_ez_heal += item->iqty;
-						num_ez_heal_true += item->iqty;
+						num_ez_heal += l_ptr->number;
+						num_ez_heal_true += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_LIFE:
 					{
-						num_ez_heal += item->iqty;
-						num_ez_heal_true += item->iqty;
+						num_ez_heal += l_ptr->number;
+						num_ez_heal_true += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_BERSERK_STRENGTH:
 					{
-						num_berserk += item->iqty;
+						num_berserk += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_SPEED:
 					{
-						num_speed += item->iqty;
+						num_speed += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_INVULNERABILITY:
 					{
-						num_goi_pot += item->iqty;
+						num_goi_pot += l_ptr->number;
 						break;
 					}
 
 					case SV_POTION_RESISTANCE:
 					{
-						num_resist_pot += item->iqty;
+						num_resist_pot += l_ptr->number;
 						break;
 					}
 				}
@@ -3209,77 +3168,77 @@ static void borg_notice_home_aux2(void)
 				/* Scrolls */
 
 				/* Analyze the scroll */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_SCROLL_IDENTIFY:
 					{
-						num_ident += item->iqty;
+						num_ident += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_STAR_IDENTIFY:
 					{
-						num_star_ident += item->iqty;
+						num_star_ident += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_PHASE_DOOR:
 					{
-						num_phase += item->iqty;
+						num_phase += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_TELEPORT:
 					{
-						num_escape += item->iqty;
+						num_escape += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_WORD_OF_RECALL:
 					{
-						num_recall += item->iqty;
+						num_recall += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_ENCHANT_ARMOR:
 					{
-						num_enchant_to_a += item->iqty;
+						num_enchant_to_a += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 					{
-						num_enchant_to_h += item->iqty;
+						num_enchant_to_h += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 					{
-						num_enchant_to_d += item->iqty;
+						num_enchant_to_d += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_PROTECTION_FROM_EVIL:
 					{
-						num_pfe += item->iqty;
+						num_pfe += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_RUNE_OF_PROTECTION:
 					{
-						num_glyph += item->iqty;
+						num_glyph += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_TELEPORT_LEVEL:
 					{
-						num_teleport_level += item->iqty;
+						num_teleport_level += l_ptr->number;
 						break;
 					}
 
 					case SV_SCROLL_SATISFY_HUNGER:
 					{
-						num_food += item->iqty;
+						num_food += l_ptr->number;
 						break;
 					}
 				}
@@ -3293,17 +3252,17 @@ static void borg_notice_home_aux2(void)
 				/* Rods */
 
 				/* Analyze */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_ROD_IDENTIFY:
 					{
-						num_ident += item->iqty * 100;
+						num_ident += l_ptr->number * 100;
 						break;
 					}
 
 					case SV_ROD_RECALL:
 					{
-						num_recall += item->iqty * 100;
+						num_recall += l_ptr->number * 100;
 						break;
 					}
 				}
@@ -3311,34 +3270,33 @@ static void borg_notice_home_aux2(void)
 				break;
 			}
 
-
-
 			case TV_STAFF:
 			{
 				/* Staffs */
 
-				/* only collect staves with more than 3 charges at high level */
-				if (item->pval <= 3 && borg_skill[BI_CLEVEL] > 30)
+				/* Only collect staves with more than 3 charges at high level */
+				if (l_ptr->pval <= 3 && borg_skill[BI_CLEVEL] > 30)
 					break;
 
 				/* Analyze */
-				switch (item->sval)
+				switch (k_info[l_ptr->k_idx].sval)
 				{
 					case SV_STAFF_IDENTIFY:
 					{
-						num_ident += item->iqty * item->pval;
+						num_ident += l_ptr->number * l_ptr->pval;
 						break;
 					}
 
 					case SV_STAFF_TELEPORTATION:
 					{
-						/* Don't use them deep in the dungeon because the
+						/*
+						 * Don't use them deep in the dungeon because the
 						 * charges will get drained and he wont have any
 						 * scrolls left to read
 						 */
 						if (borg_skill[BI_MAXDEPTH] < 97)
 						{
-							num_teleport += item->iqty * item->pval;
+							num_teleport += l_ptr->number * l_ptr->pval;
 						}
 						break;
 					}
@@ -3347,19 +3305,17 @@ static void borg_notice_home_aux2(void)
 				break;
 			}
 
-				/* Missiles */
 			case TV_SHOT:
 			case TV_ARROW:
 			case TV_BOLT:
 			{
+				/* Missiles */
+			
 				/* Hack -- ignore invalid missiles */
-				if (item->tval != my_ammo_tval) break;
-
-				/* Hack -- ignore worthless missiles */
-				if (item->value <= 0) break;
+				if (l_ptr->tval != my_ammo_tval) break;
 
 				/* Count them */
-				num_missile += item->iqty;
+				num_missile += l_ptr->number;
 
 				break;
 			}
@@ -3368,7 +3324,6 @@ static void borg_notice_home_aux2(void)
 
 
 	/*** Process the Spells and Prayers ***/
-	/* apw, again.  Artifact activation included here */
 
 	/* Handle "satisfy hunger" -> infinite food */
 	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 10) ||
@@ -3411,11 +3366,10 @@ static void borg_notice_home_aux2(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		(borg_skill[BI_CDEPTH] == 100 && (borg_spell_legal(REALM_LIFE, 3, 6) ||
-										  borg_spell_legal(REALM_SORCERY, 2, 7)
-										  || borg_spell_legal(REALM_TRUMP, 1,
-															  6))))
-		/*  Avavir not counted because it may not be charged */
+		(borg_skill[BI_CDEPTH] == 100 &&
+			(borg_spell_legal(REALM_LIFE, 3, 6) ||
+			borg_spell_legal(REALM_SORCERY, 2, 7) ||
+			borg_spell_legal(REALM_TRUMP, 1, 6))))
 	{
 		num_recall += 1000;
 	}
@@ -3486,20 +3440,18 @@ static void borg_notice_home_aux2(void)
 	if (f2 & (TR2_SUST_CON)) num_sustain_con = TRUE;
 
 }
-#endif /* 0 */
+
 
 /*
  * Extract the bonuses for items in the home.
  */
 void borg_notice_home(void)
 {
-#if 0
 	/* Notice the home equipment */
-	borg_notice_home_aux1(void);
+	borg_notice_home_clear();
 
 	/* Notice the home inventory */
-	borg_notice_home_aux2(void);
-#endif /* 0 */
+	borg_notice_home_aux();
 }
 
 
@@ -5002,7 +4954,7 @@ static s32b borg_power_home_aux1(void)
 	value -= num_bad_gloves * 3000L;
 
 	/* do not allow duplication of items. */
-	value -= num_duplicate_items * 50000L;
+	value -= num_duplicate_items * 5000L;
 
 
 	/* Return the value */
@@ -5144,9 +5096,6 @@ static s32b borg_power_home_aux2(void)
 				}
 		}						/* book */
 	}							/* realm */
-
-	/* Reward artifacts in the home */
-	value += num_artifact * 500L;
 
 	/* Return the value */
 	return (value);
