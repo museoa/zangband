@@ -3320,7 +3320,7 @@ static void dungeon(void)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_MONSTER | PW_MESSAGE);
+	p_ptr->window |= (PW_MONSTER | PW_MESSAGE | PW_VISIBLE);
 
 	/* Redraw dungeon */
 	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_EQUIPPY);

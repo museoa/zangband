@@ -357,6 +357,9 @@ void wipe_m_list(void)
 		/* Hack -- Reduce the racial counter */
 		r_ptr->cur_num--;
 
+		/* Clear seen list */
+		r_ptr->r_see = 0;		
+
 		/* Check to see if monster is accessable on map */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
