@@ -2966,6 +2966,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	}
 
 
+	
 	/* Absolutely no effect */
 	if (skipped) return (FALSE);
 
@@ -2991,14 +2992,6 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Extract method of death */
 		note = note_dies;
 	}
-
-	#ifdef AVATAR
-	if (heal_leper)
-	{
-		msg_print("The Mangy looking leper is healed!");
-		delete_monster_idx(c_ptr->m_idx);
-	}
- 	#endif
 
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
 	else if (do_poly && (randint(90) > r_ptr->level))
@@ -3172,6 +3165,14 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		}
 	}
 
+
+	#ifdef AVATAR
+	else if (heal_leper)
+	{
+		msg_print("The Mangy looking leper is healed!");
+		delete_monster_idx(c_ptr->m_idx);
+	}
+ 	#endif
 	/* If the player did it, give him experience, check fear */
 	else
 	{
