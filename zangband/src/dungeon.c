@@ -2496,13 +2496,6 @@ static void process_command(void)
 			break;
 		}
 
-		case KTRL('O'):
-		{
-			/* Show previous message */
-			do_cmd_message_one();
-			break;
-		}
-
 		case KTRL('P'):
 		{
 			/* Show previous messages */

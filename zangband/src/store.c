@@ -2209,13 +2209,6 @@ static void store_process_command(int *store_top)
 			break;
 		}
 
-		case KTRL('O'):
-		{
-			/* Show previous message */
-			do_cmd_message_one();
-			break;
-		}
-
 		case KTRL('P'):
 		{
 			/* Show previous messages */

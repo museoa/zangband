@@ -389,7 +389,6 @@ extern bool research_mon(void);
 extern void do_cmd_redraw(void);
 extern void resize_map(void);
 extern void redraw_window(void);
-extern void do_cmd_message_one(void);
 extern void do_cmd_messages(void);
 extern void init_options(byte flags);
 extern void do_cmd_options(byte flags);

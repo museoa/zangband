@@ -164,16 +164,6 @@ void redraw_window(void)
 
 
 /*
- * Recall the most recent message
- */
-void do_cmd_message_one(void)
-{
-	/* Recall one message XXX XXX XXX */
-	prtf(0, 0, "%s> %s", color_seq[message_color(0)], message_str(0));
-}
-
-
-/*
  * Show previous messages to the user	-BEN-
  *
  * The screen format uses line 0 and 23 for headers and prompts,

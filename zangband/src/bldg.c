@@ -1932,13 +1932,6 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 			break;
 		}
 
-		case KTRL('O'):
-		{
-			/* Show previous message */
-			do_cmd_message_one();
-			break;
-		}
-
 		case KTRL('P'):
 		{
 			/* Show previous messages */
