@@ -95,6 +95,14 @@ void reset_visuals(void)
 
 	/* Fields have to notice the change of visuals. */
 	init_fields();
+	
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+	
+	handle_stuff();
 }
 
 
