@@ -3346,7 +3346,7 @@ void do_cmd_borg(void)
 			{
 				case '.':
 				{
-					feat = FEAT_FLOOR;
+					feat = map_loc(c_x, c_y)->feat;
 					break;
 				}
 				case ',':
