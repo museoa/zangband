@@ -1070,7 +1070,7 @@ static void castle_quest(void)
 /*
  * Print quest status of all active quests
  */
-void do_cmd_knowledge_quests(void)
+bool do_cmd_knowledge_quests(int dummy)
 {
 	FILE *fff;
 	char file_name[1024];
@@ -1079,12 +1079,17 @@ void do_cmd_knowledge_quests(void)
 
 	quest_type *q_ptr;
 	int i;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return (FALSE);
+	
+	screen_save();
 
 	for (i = 0; i < q_max; i++)
 	{
@@ -1177,7 +1182,7 @@ void do_cmd_knowledge_quests(void)
 			default:
 			{
 				/* Paranoia */
-				return;
+				strnfmt(tmp_str, 256, "Invalid quest type!");
 			}
 		}
 
@@ -1193,6 +1198,9 @@ void do_cmd_knowledge_quests(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+	
+	screen_load();
+	return (FALSE);
 }
 
 

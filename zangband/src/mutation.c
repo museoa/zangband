@@ -776,17 +776,21 @@ void dump_mutations(FILE *OutFile)
 /*
  * List mutations we have...
  */
-void do_cmd_knowledge_mutations(void)
+bool do_cmd_knowledge_mutations(int dummy)
 {
 	FILE *fff;
 	char file_name[1024];
-
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, sizeof(file_name));
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return (FALSE);
+
+	screen_save();
 
 	/* Dump the mutations to file */
 	if (fff) dump_mutations(fff);
@@ -799,6 +803,10 @@ void do_cmd_knowledge_mutations(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+
+	screen_load();
+	
+	return (FALSE);
 }
 
 

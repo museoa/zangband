@@ -3302,7 +3302,7 @@ void do_cmd_save_screen(void)
 /*
  * Display known uniques
  */
-static void do_cmd_knowledge_uniques(void)
+static bool do_cmd_knowledge_uniques(int dummy)
 {
 	FILE *fff;
 
@@ -3312,6 +3312,11 @@ static void do_cmd_knowledge_uniques(void)
 
 	u16b why = 2;
 	u16b *who;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
 
 	/* Allocate the "who" array */
 	C_MAKE(who, z_info->r_max, u16b);
@@ -3341,7 +3346,8 @@ static void do_cmd_knowledge_uniques(void)
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		return;
+		screen_load();
+		return (FALSE);
 	}
 
 	/* Select the sort method */
@@ -3360,7 +3366,8 @@ static void do_cmd_knowledge_uniques(void)
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		return;
+		screen_load();
+		return (FALSE);
 	}
 
 	/* Scan the monster races */
@@ -3370,7 +3377,7 @@ static void do_cmd_knowledge_uniques(void)
 		bool dead = (r_ptr->max_num == 0);
 
 		/* Print a message */
-		fprintf(fff, "     %-30s is %s\n", (r_name + r_ptr->name),
+		fprintf(fff, "     %-45s is %s\n", (r_name + r_ptr->name),
 				(dead ? "dead" : "alive"));
 	}
 
@@ -3385,6 +3392,10 @@ static void do_cmd_knowledge_uniques(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+	
+	screen_load();
+	
+	return (FALSE);
 }
 
 static const cptr plural_table[] =
@@ -3475,7 +3486,7 @@ void plural_aux(char *name)
 /*
  * Display current pets
  */
-static void do_cmd_knowledge_pets(void)
+static bool do_cmd_knowledge_pets(int dummy)
 {
 	int i;
 	FILE *fff;
@@ -3485,12 +3496,16 @@ static void do_cmd_knowledge_pets(void)
 	int show_upkeep = 0;
 	char file_name[1024];
 
-
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return (FALSE);
+	
+	screen_save();
 
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--)
@@ -3535,15 +3550,17 @@ static void do_cmd_knowledge_pets(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+
+	screen_load();
+	
+	return (FALSE);
 }
 
 
 /*
  * Total kill count
- *
- * Note that the player ghosts are ignored.  XXX XXX XXX
  */
-static void do_cmd_knowledge_kill_count(void)
+static bool do_cmd_knowledge_kill_count(int dummy)
 {
 	FILE *fff;
 
@@ -3556,6 +3573,11 @@ static void do_cmd_knowledge_kill_count(void)
 
 	u16b why = 2;
 	u16b *who;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
 
 	/* Allocate the "who" array */
 	C_MAKE(who, z_info->r_max, u16b);
@@ -3582,7 +3604,8 @@ static void do_cmd_knowledge_kill_count(void)
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		return;
+		screen_load();
+		return (FALSE);
 	}
 
 	/* Select the sort method */
@@ -3601,7 +3624,8 @@ static void do_cmd_knowledge_kill_count(void)
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		return;
+		screen_load();
+		return (FALSE);
 	}
 
 	{
@@ -3722,13 +3746,17 @@ static void do_cmd_knowledge_kill_count(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+	
+	screen_load();
+	
+	return (FALSE);
 }
 
 
 /*
  * Display known objects
  */
-static void do_cmd_knowledge_objects(void)
+static bool do_cmd_knowledge_objects(int dummy)
 {
 	int k;
 
@@ -3737,13 +3765,17 @@ static void do_cmd_knowledge_objects(void)
 	char o_name[256];
 
 	char file_name[1024];
-
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return (FALSE);
+	
+	screen_save();
 
 	/* Scan the object kinds */
 	for (k = 1; k < z_info->k_max; k++)
@@ -3777,24 +3809,32 @@ static void do_cmd_knowledge_objects(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+
+	screen_load();
+	
+	return (FALSE);
 }
 
 
 /*
  * List virtues & status
  */
-static void do_cmd_knowledge_virtues(void)
+static bool do_cmd_knowledge_virtues(int dummy)
 {
 	FILE *fff;
 
 	char file_name[1024];
-
+	
+	/* Hack -ignore parameter */
+	(void) dummy;
 
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return (FALSE);
+	
+	screen_save();
 
 	dump_virtues(fff);
 
@@ -3806,25 +3846,38 @@ static void do_cmd_knowledge_virtues(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+	
+	screen_load();
+	
+	return (FALSE);
 }
 
 
 /*
  * Print notes file
  */
-static void do_cmd_knowledge_notes(void)
+static bool do_cmd_knowledge_notes(int dummy)
 {
 	char fname[1024];
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	strncpy(fname, notes_file(), 1024);
+	
+	screen_save();
 
 	(void)show_file(fname, "Notes", 0, 0);
+	
+	screen_load();
+	
+	return (FALSE);
 }
 
 /*
  * Display information about wilderness areas
  */
-static void do_cmd_knowledge_wild(void)
+static bool do_cmd_knowledge_wild(int dummy)
 {
 	int k, j;
 
@@ -3839,12 +3892,17 @@ static void do_cmd_knowledge_wild(void)
 	bool stairs_exist = FALSE;
 
 	bool visited = FALSE;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return (FALSE);
+	
+	screen_save();
 
 	/* Cycle through the places */
 	for (k = 1; k < place_count; k++)
@@ -3917,126 +3975,68 @@ static void do_cmd_knowledge_wild(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+	
+	screen_load();
+	
+	return (FALSE);
 }
+
+
+
+static menu_type knowledge_menu[10] =
+{
+	{"Display known uniques", NULL, do_cmd_knowledge_uniques, MN_ACTIVE | MN_CLEAR},
+	{"Display known objects", NULL, do_cmd_knowledge_objects, MN_ACTIVE | MN_CLEAR},
+	{"Display kill count", NULL, do_cmd_knowledge_kill_count, MN_ACTIVE | MN_CLEAR},
+	{"Display mutations", NULL, do_cmd_knowledge_mutations, MN_ACTIVE | MN_CLEAR},
+	{"Display current pets", NULL, do_cmd_knowledge_pets, MN_ACTIVE | MN_CLEAR},
+	{"Display current quests", NULL, do_cmd_knowledge_quests, MN_ACTIVE | MN_CLEAR},
+	{"Display virtues", NULL, do_cmd_knowledge_virtues, MN_ACTIVE | MN_CLEAR},
+	{NULL, NULL, do_cmd_knowledge_notes, MN_ACTIVE | MN_CLEAR},
+	{NULL, NULL, do_cmd_knowledge_wild, MN_ACTIVE | MN_CLEAR},
+	MENU_END
+};
+
 
 /*
  * Interact with "knowledge"
  */
 void do_cmd_knowledge(void)
 {
-	int i;
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
-
-	/* Save the screen */
-	screen_save();
-
-	/* Interact until done */
-	while (1)
+	
+	/* Turn off unavailable options */
+	
+	/* Hack - turn off virtues */
+	knowledge_menu[6].text = "";
+	knowledge_menu[6].flags &= ~(MN_ACTIVE);
+	
+	if (!take_notes)
 	{
-		/* Clear screen */
-		Term_clear();
-
-		/* Ask for a choice */
-		prtf(0, 2, "Display current knowledge");
-
-		/* Give some choices */
-		prtf(5, 4, "(1) Display known uniques");
-		prtf(5, 5, "(2) Display known objects");
-		prtf(5, 6, "(3) Display kill count");
-		prtf(5, 7, "(4) Display mutations");
-		prtf(5, 8, "(5) Display current pets");
-		prtf(5, 9, "(6) Display current quests");
-		/* prtf(10, 5, "(7) Display virtues"); */
-		if (take_notes)
-			prtf(5, 11, "(8) Display notes");
-		if (!vanilla_town)
-			prtf(5, 12, "(9) Display town information");
-
-		/* Prompt */
-		prtf(0, 13, "Command: ");
-
-		/* Prompt */
-		i = inkey();
-
-		/* Done */
-		if (i == ESCAPE) break;
-
-		switch (i)
-		{
-			case '1':
-			{
-				/* Uniques */
-				do_cmd_knowledge_uniques();
-				break;
-			}
-			case '2':
-			{
-				/* Objects */
-				do_cmd_knowledge_objects();
-				break;
-			}
-			case '3':
-			{
-				/* Kill count */
-				do_cmd_knowledge_kill_count();
-				break;
-			}
-			case '4':
-			{
-				/* Mutations */
-				do_cmd_knowledge_mutations();
-				break;
-			}
-			case '5':
-			{
-				/* Pets */
-				do_cmd_knowledge_pets();
-				break;
-			}
-			case '6':
-			{
-				/* Quests */
-				do_cmd_knowledge_quests();
-				break;
-			}
-			case '7':
-			{
-				/* Virtues */
-				do_cmd_knowledge_virtues();
-				break;
-			}
-			case '8':
-			{
-				/* Notes */
-				if (take_notes)
-					do_cmd_knowledge_notes();
-				else
-					bell("You have not turned on note taking!");
-				break;
-			}
-			case '9':
-			{
-				if (!vanilla_town)
-					do_cmd_knowledge_wild();
-				else
-					bell("You do not have a wilderness!");
-				break;
-			}
-			default:
-			{
-				/* Unknown option */
-				bell("Illegal command for knowledge!");
-			}
-		}
-
-		/* Flush messages */
-		message_flush();
+		/* Turn off note taking menu */
+		knowledge_menu[7].text = "";
+		knowledge_menu[7].flags &= ~(MN_ACTIVE);
 	}
-
-	/* Restore the screen */
-	screen_load();
+	else
+	{
+		knowledge_menu[7].text = "Display notes";
+		knowledge_menu[7].flags |= MN_ACTIVE;
+	}
+	
+	if (vanilla_town)
+	{
+		knowledge_menu[8].text = "";
+		knowledge_menu[8].flags &= ~(MN_ACTIVE);
+	}
+	else
+	{
+		knowledge_menu[8].text = "Display town information";
+		knowledge_menu[8].flags |= MN_ACTIVE;
+	}
+	
+	/* Display the menu */
+	display_menu(knowledge_menu, -1, FALSE, NULL, "Display current knowledge");
 }
 
 
@@ -4048,14 +4048,8 @@ void do_cmd_checkquest(void)
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
-	/* Save the screen */
-	screen_save();
-
 	/* Quest info */
-	do_cmd_knowledge_quests();
-
-	/* Restore the screen */
-	screen_load();
+	(void) do_cmd_knowledge_quests(0);
 }
 
 

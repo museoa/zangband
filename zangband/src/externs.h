@@ -1035,7 +1035,7 @@ extern bool player_has_mut(int mutation);
 extern bool gain_mutation(int choose_mut);
 extern bool lose_mutation(int choose_mut);
 extern void dump_mutations(FILE *OutFile);
-extern void do_cmd_knowledge_mutations(void);
+extern bool do_cmd_knowledge_mutations(int dummy);
 extern int count_mutations(void);
 extern int calc_mutant_regenerate_mod(void);
 extern void mutation_power_aux(const mutation_type *mut_ptr);
@@ -1227,7 +1227,7 @@ extern void activate_quests(int level);
 extern int number_of_quests(void);
 extern void trigger_quest_create(byte c_type, vptr data);
 extern void trigger_quest_complete(byte x_type, vptr data);
-extern void do_cmd_knowledge_quests(void);
+extern bool do_cmd_knowledge_quests(int dummy);
 
 /* maid-grf.c */
 extern void init_term_callbacks(void);

@@ -3551,7 +3551,7 @@
 /* Menu terminator */
 #define MENU_END {NULL, NULL, NULL, 0x00}
 
-#define MN_AVAILABLE	0x01	/* Available to choose */
+#define MN_ACTIVE		0x01	/* Available to choose */
 #define MN_SELECT		0x02	/* Can 'select' action */
 #define MN_CLEAR		0x04	/* Clear screen before calling */
 
