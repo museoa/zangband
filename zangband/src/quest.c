@@ -203,7 +203,7 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	{
 		/* XXX XXX Create quest name */
 		(void)strnfmt(q_ptr->name, 60, "Kill %s on level %d.",
-					  (int)r_name + r_ptr->name, (int)level);
+					  r_name + r_ptr->name, (int)level);
 	}
 
 	/* Save the quest data */
