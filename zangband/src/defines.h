@@ -5008,10 +5008,10 @@ extern int PlayerUID;
 #define FIELD_ACT_LOAD			1	/* Loading Initialisation */
 #define FIELD_ACT_PLAYER_ENTER	2	/* Player walks onto square */
 #define FIELD_ACT_PLAYER_ON		3	/* Player is on square */
-#define FIELD_ACT_PLAYER_LEAVE	4	/* Player leaves square */
+#define FIELD_ACT_DUMMY1		4
 #define FIELD_ACT_MONSTER_ENTER	5	/* Monster walks onto square */
 #define FIELD_ACT_MONSTER_ON	6	/* Monster is on square */
-#define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
+#define FIELD_ACT_DUMMY2		7
 #define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
 #define FIELD_ACT_INTERACT		10	/* Type-specific interation */
@@ -5070,6 +5070,6 @@ extern int PlayerUID;
 #define LUA_RETURN_NAMED(A, N) \
 	N, &(A)
 #define LUA_OBJECT(A) \
-	#A, "object_type", (void *)(A)
+	"object", "object_type", (void *)(A)
 #define LUA_OBJECT_NAMED(A, N) \
 	N, "object_type", (void *)(A)

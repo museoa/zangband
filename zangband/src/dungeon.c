@@ -478,8 +478,6 @@ static void pattern_teleport(void)
 	/* Accept request */
 	msgf("You teleport to dungeon level %d.", p_ptr->cmd.arg);
 
-	if (autosave_l) do_cmd_save_game(TRUE);
-
 	/* Change level */
 	p_ptr->depth = p_ptr->cmd.arg;
 
@@ -1226,7 +1224,7 @@ static void process_world(void)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(c_ptr, FIELD_ACT_PLAYER_ON);
+	field_script(c_ptr, FIELD_ACT_PLAYER_ON, "");
 
 	/* Nightmare mode activates the TY_CURSE at midnight */
 	if (ironman_nightmare)
@@ -1740,8 +1738,8 @@ static void process_world(void)
 		/* Exit if not in dungeon */
 		if (!(o_ptr->ix || o_ptr->iy)) continue;
 
-		field_hook(area(o_ptr->ix, o_ptr->iy),
-				   FIELD_ACT_OBJECT_ON, o_ptr);
+		field_script(area(o_ptr->ix, o_ptr->iy),
+				   FIELD_ACT_OBJECT_ON, "p", LUA_OBJECT(o_ptr));
 
 		if (!o_ptr->timeout) continue;
 
@@ -2787,13 +2785,17 @@ static void process_player(void)
 			if (p_ptr->tim.image) p_ptr->redraw |= (PR_MAP);
 		}
 
-
 		/* Hack -- notice death */
 		if (!p_ptr->state.playing || p_ptr->state.is_dead) break;
 
 		/* Handle "leaving" */
-		if (p_ptr->state.leaving) break;
-
+		if (p_ptr->state.leaving)
+		{
+			/* Hack - save game if asked */
+			if (autosave_l) do_cmd_save_game(TRUE);
+		
+			break;
+		}
 		/* Used up energy for this turn */
 		if (p_ptr->state.energy_use) break;
 	}

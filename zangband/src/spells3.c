@@ -113,9 +113,6 @@ bool teleport_away(int m_idx, int dis)
 	/* Sound */
 	sound(SOUND_TPOTHER);
 
-	/* Process fields under the monster. */
-	field_hook(c_ptr, FIELD_ACT_MONSTER_LEAVE, m_ptr);
-
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
 
@@ -130,7 +127,7 @@ bool teleport_away(int m_idx, int dis)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(c_ptr, FIELD_ACT_MONSTER_ENTER, m_ptr);
+	field_script(c_ptr, FIELD_ACT_MONSTER_ENTER, "");
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -250,9 +247,6 @@ void teleport_to_player(int m_idx)
 	/* Sound */
 	sound(SOUND_TPOTHER);
 
-	/* Process fields under the monster. */
-	field_hook(c_ptr, FIELD_ACT_MONSTER_LEAVE, m_ptr);
-
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
 
@@ -267,7 +261,7 @@ void teleport_to_player(int m_idx)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(c_ptr, FIELD_ACT_MONSTER_ENTER, m_ptr);
+	field_script(c_ptr, FIELD_ACT_MONSTER_ENTER, "");
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -391,9 +385,6 @@ void teleport_player(int dis)
 	/* Save old location */
 	oy = py;
 	ox = px;
-
-	/* Process fields under the player. */
-	field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
 
 	/* Move the player */
 	py = y;
@@ -535,9 +526,6 @@ void teleport_player_to(int nx, int ny)
 	/* Save old location */
 	oy = py;
 	ox = px;
-
-	/* Process fields under the player. */
-	field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
 
 	/* Move the player */
 	py = y;

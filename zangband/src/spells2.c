@@ -2393,9 +2393,6 @@ bool earthquake(int cx, int cy, int r)
 			oy = py;
 			ox = px;
 
-			/* Process fields under the player. */
-			field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
-
 			/* Move the player */
 			py = sy;
 			px = sx;
@@ -3163,13 +3160,6 @@ bool teleport_swap(int dir)
 
 	sound(SOUND_TELEPORT);
 
-	/* Process fields under the player. */
-	field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
-
-	/* Process fields under the monster. */
-	field_hook(area(m_ptr->fx, m_ptr->fy),
-			   FIELD_ACT_MONSTER_LEAVE, m_ptr);
-
 	/* Move monster */
 	area(px, py)->m_idx = c_ptr->m_idx;
 
@@ -3215,8 +3205,8 @@ bool teleport_swap(int dir)
 	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
 
 	/* Process fields under the monster. */
-	field_hook(area(m_ptr->fx, m_ptr->fy),
-			   FIELD_ACT_MONSTER_ENTER, m_ptr);
+	field_script(area(m_ptr->fx, m_ptr->fy),
+			   FIELD_ACT_MONSTER_ENTER, "");
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

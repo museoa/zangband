@@ -1111,7 +1111,6 @@ extern u16b fields_have_flags(const cave_type *c_ptr, u16b info);
 extern bool field_detect_type(const cave_type *c_ptr, byte typ);
 extern void field_destroy_type(cave_type *c_ptr, byte typ);
 extern field_type *place_field(int x, int y, s16b t_idx);
-extern bool field_hook_single(field_type *f_ptr, int action, ...);
 extern bool field_script_single(field_type *f_ptr, int action, cptr format, ...);
 extern void field_hook(cave_type *c_ptr, int action, ...);
 extern void field_script(cave_type *c_ptr, int action, cptr format, ...);

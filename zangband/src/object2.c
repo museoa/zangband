@@ -4333,7 +4333,8 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Fields may interact with an object in some way */
-	field_hook(area(bx, by), FIELD_ACT_OBJECT_DROP, o_ptr);
+	field_script(area(bx, by), FIELD_ACT_OBJECT_DROP, "p",
+		 LUA_OBJECT(o_ptr));
 }
 
 

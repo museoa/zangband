@@ -2561,9 +2561,6 @@ void move_player(int dir, int do_pickup)
 		oy = py;
 		ox = px;
 
-		/* Process fields under the player. */
-		field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
-
 		/* Move the player */
 		p_ptr->py = y;
 		p_ptr->px = x;

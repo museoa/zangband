@@ -2463,9 +2463,6 @@ static void take_move(int m_idx, int *mm)
 				update_mon_vis(m_ptr->r_idx, 1);
 			}
 
-			/* Process fields under the monster. */
-			field_hook(old_ptr, FIELD_ACT_MONSTER_LEAVE, m_ptr);
-
 			/* Hack -- Update the old location */
 			old_ptr->m_idx = c_ptr->m_idx;
 
@@ -2494,7 +2491,7 @@ static void take_move(int m_idx, int *mm)
 			update_mon(m_idx, TRUE);
 
 			/* Process fields under the monster. */
-			field_hook(old_ptr, FIELD_ACT_MONSTER_ENTER, m_ptr);
+			field_script(old_ptr, FIELD_ACT_MONSTER_ENTER, "");
 
 			/* Redraw the old grid */
 			lite_spot(ox, oy);
@@ -2762,7 +2759,7 @@ static void process_monster(int m_idx)
 	c_ptr = area(ox, oy);
 
 	/* Process fields under the monster. */
-	field_hook(c_ptr, FIELD_ACT_MONSTER_ON, m_ptr);
+	field_script(c_ptr, FIELD_ACT_MONSTER_ON, "");
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)

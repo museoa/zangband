@@ -1026,9 +1026,6 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		oy = py;
 		ox = px;
 
-		/* Process fields under the player. */
-		field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
-
 		/* Move the player */
 		py = y;
 		px = x;
