@@ -1512,6 +1512,8 @@ bool detect_treasure(void)
 			c_ptr = area(y,x);
 
 			/* Notice embedded gold */
+			
+			/* Does "embeded" gold really exist??? */
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
 			    (c_ptr->feat == FEAT_QUARTZ_H))
 			{

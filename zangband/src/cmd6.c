@@ -1519,7 +1519,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_ARTIFACT:
 		{
-			(void)artifact_scroll();
+			if (!artifact_scroll()) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
