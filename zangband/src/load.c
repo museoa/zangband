@@ -3315,13 +3315,17 @@ static errr rd_savefile_new_aux(void)
 			return (23);
 		}
 
-		/* Load the wilderness seeds */
-		for (i = 0; i < wild_x_size; i++)
+		/* Ignore the seeds from old versions */
+		if (sf_version < 9)
 		{
-			for (j = 0; j < wild_y_size; j++)
+			/* Load the wilderness seeds */
+			for (i = 0; i < wild_x_size; i++)
 			{
-				/* Ignore seeds */
-				rd_u32b(&tmp32u);
+				for (j = 0; j < wild_y_size; j++)
+				{
+					/* Ignore seeds */
+					rd_u32b(&tmp32u);
+				}
 			}
 		}
 	}
