@@ -307,7 +307,7 @@ void init_icons(int size, int depth)
 	if (init_widget(g_interp, g_icon_depth) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
 	
-	if (init_term(g_interp) != TCL_OK)
+	if (init_term(g_interp, g_icon_depth) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
 
 	if (CanvasWidget_Init(g_interp) != TCL_OK)

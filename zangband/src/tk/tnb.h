@@ -272,4 +272,4 @@ DECLARE_TK_HOOK(inveninfo);
 
 
 extern int init_widget(Tcl_Interp *interp, int g_icon_depth);
-extern int init_term(Tcl_Interp *interp);
+extern int init_term(Tcl_Interp *interp, int g_icon_depth);

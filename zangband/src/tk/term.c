@@ -11,7 +11,7 @@
  */
 
 #include "tnb.h"
-#include "icon.h"
+/* #include "icon.h" */
 
 typedef struct Widget Widget;
 
@@ -59,6 +59,9 @@ static void widget_draw_all(Widget *widgetPtr);
 
 /* Hack - have one widget for the current term */
 static Widget *tnb_term;
+
+/* Colour depth */
+static int term_icon_depth;
 
 /*
  * Actually draw stuff into the Widget's display. This routine is
@@ -151,7 +154,7 @@ static void Widget_EventuallyRedraw(Widget *widgetPtr)
 static void DrawBlank(int x, int y, Widget *widgetPtr)
 {
 	BitmapPtr bitmapPtr = widgetPtr->bitmap;
-	IconPtr dstPtr;
+	byte *dstPtr;
 	int y2;
 	int length = widgetPtr->gwidth * bitmapPtr->pixelSize;
 	
@@ -450,9 +453,7 @@ static void Widget_CreateBitmap(Widget *widgetPtr)
 	widgetPtr->bitmap->width = widgetPtr->bw;
 	widgetPtr->bitmap->height = widgetPtr->bh;
 
-	/* widgetPtr->bitmap.depth =
-		((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8); */
-	widgetPtr->bitmap->depth = g_icon_depth;
+	widgetPtr->bitmap->depth = term_icon_depth;
 	
 	/* Create the bitmap */
 	Bitmap_New(widgetPtr->interp, widgetPtr->bitmap);
@@ -1253,13 +1254,16 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 /*
  * Initialize the Term package
  */
-int init_term(Tcl_Interp *interp)
+int init_term(Tcl_Interp *interp, int g_icon_depth)
 {
 	/* Create the "term" interpreter command */
 	Tcl_CreateObjCommand(interp, "term", Widget_ObjCmd, NULL, NULL);
 	
 	/* Initialise palette stuff */
 	if (g_icon_depth == 16) init_masks(interp);
+	
+	/* Save for later */
+	term_icon_depth = g_icon_depth;
 
 	/* Success */
     return TCL_OK;
