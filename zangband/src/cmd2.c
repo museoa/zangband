@@ -210,7 +210,7 @@ void do_cmd_toggle_search(void)
 /*
  * Determine if a grid contains a chest
  */
-static s16b chest_check(int y, int x)
+static s16b chest_check(int x, int y)
 {
 	cave_type *c_ptr = area(y, x);
 
@@ -251,7 +251,7 @@ static s16b chest_check(int y, int x)
  * chest is based on the "power" of the chest, which is in turn based
  * on the level on which the chest is generated.
  */
-static void chest_death(int y, int x, s16b o_idx)
+static void chest_death(int x, int y, s16b o_idx)
 {
 	int number;
 
@@ -407,7 +407,7 @@ static void chest_death(int y, int x, s16b o_idx)
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-static void chest_trap(int y, int x, s16b o_idx)
+static void chest_trap(int x, int y, s16b o_idx)
 {
 	int  i, trap;
 
@@ -493,7 +493,7 @@ static void chest_trap(int y, int x, s16b o_idx)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_chest(int y, int x, s16b o_idx)
+static bool do_cmd_open_chest(int x, int y, s16b o_idx)
 {
 	int i, j;
 
@@ -548,10 +548,10 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 	if (flag)
 	{
 		/* Apply chest traps, if any */
-		chest_trap(y, x, o_idx);
+		chest_trap(x, y, o_idx);
 
 		/* Let the Chest drop items */
-		chest_death(y, x, o_idx);
+		chest_death(x, y, o_idx);
 	}
 
 	/* Result */
@@ -679,7 +679,7 @@ static int count_chests(int *y, int *x, bool trapped)
 		int xx = p_ptr->px + ddx_ddd[d];
 
 		/* No (visible) chest is there */
-		if ((o_idx = chest_check(yy, xx)) == 0) continue;
+		if ((o_idx = chest_check(xx, yy)) == 0) continue;
 
 		/* Grab the object */
 		o_ptr = &o_list[o_idx];
@@ -870,7 +870,7 @@ void do_cmd_open(void)
 		c_ptr = area(y, x);
 
 		/* Check for chest */
-		o_idx = chest_check(y, x);
+		o_idx = chest_check(x, y);
 
 		/* Nothing useful */
 		if (!((c_ptr->feat == FEAT_CLOSED) || o_idx))
@@ -896,7 +896,7 @@ void do_cmd_open(void)
 		else if (o_idx)
 		{
 			/* Open the chest */
-			more = do_cmd_open_chest(y, x, o_idx);
+			more = do_cmd_open_chest(x, y, o_idx);
 		}
 
 		/* Handle doors */
@@ -1568,7 +1568,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 	{
 		msg_print("You set off a trap!");
 		sound(SOUND_FAIL);
-		chest_trap(y, x, o_idx);
+		chest_trap(x, y, o_idx);
 	}
 
 	/* Result */
@@ -1732,7 +1732,7 @@ void do_cmd_disarm(void)
 		c_ptr = area(y,x);
 
 		/* Check for chests */
-		o_idx = chest_check(y, x);
+		o_idx = chest_check(x, y);
 
 		/* Disarm a trap */
 		if (!is_visible_trap(c_ptr) && !o_idx)
