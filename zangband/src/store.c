@@ -181,7 +181,7 @@ static byte info_flags;
  * to adjust (by 200) to extract a usable multiplier.  Note that the
  * "greed" value is always something (?).
  */
-static s32b price_item(object_type *o_ptr, bool flip)
+s32b price_item(object_type *o_ptr, bool flip)
 {
 	int factor;
 	int adjust;
@@ -1339,7 +1339,7 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 	put_fstr(0, 2, "Offer :  %ld", (long)price);
 
 	/* Ask the user for a response */
-	if (get_check(buy ? "Enter to buy. Cancel? ": "Enter to sell. Cancel? "))
+	if (check_transaction && !get_check(buy ? "Buy? ": "Sell? "))
 	{
 		return (FALSE);
 	}
@@ -1677,7 +1677,7 @@ static void store_sell(void)
 	/* Get an item */
 	s = "You have nothing that I want.";
 
-	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN));
+	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_STORE));
 
 	/* Not a valid item */
 	if (!o_ptr) return;
