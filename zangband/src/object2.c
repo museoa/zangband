@@ -4996,7 +4996,7 @@ static s16b *look_up_list(object_type *o_ptr)
 		if (o_ptr == j_ptr) return (&p_ptr->inventory);
 		
 		/* Debug - make sure we don't have a corrupted inventory */
-		if (o_ptr->ix || o_ptr->iy) quit("Corrupted inventory contains dungeon objects!");
+		if (j_ptr->ix || j_ptr->iy) quit("Corrupted inventory contains dungeon objects!");
 	}
 	OBJ_ITT_END;
 
