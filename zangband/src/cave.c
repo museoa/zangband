@@ -800,12 +800,12 @@ void map_info(int y, int x, byte *ap, char *cp)
 			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
-			if (view_special_lite || use_transparency)
+			if (view_special_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
 				{
-					if (use_transparency)
+					if (use_transparency && feat_supports_lighting(c_ptr->feat))
 					{
 						/* Use a dark tile */
 						c++;
@@ -823,7 +823,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (view_yellow_lite)
 					{
-						if (use_transparency)
+						if (use_transparency && feat_supports_lighting(c_ptr->feat))
 						{
 							/* Use a brightly lit tile */
 							c += 2;
@@ -839,7 +839,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Handle "dark" grids */
 				else if (!(c_ptr->info & CAVE_GLOW))
 				{
-					if (use_transparency)
+					if (use_transparency && feat_supports_lighting(c_ptr->feat))
 					{
 						/* Use a dark tile */
 						c++;
@@ -857,7 +857,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Special flag */
 					if (view_bright_lite)
 					{
-						if (use_transparency)
+						if (use_transparency && feat_supports_lighting(c_ptr->feat))
 						{
 							/* Use a dark tile */
 							c++;
@@ -920,7 +920,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			else if (c_ptr->info & CAVE_LITE)
 			{
 				/* Torch lite */
-				if (view_yellow_lite)
+				if (view_yellow_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
 				{
 					if (use_transparency && feat_supports_lighting(c_ptr->feat))
 					{
@@ -936,7 +936,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 
 			/* Handle "view_bright_lite" */
-			else if (view_bright_lite)
+			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
 			{
 				/* Not viewable */
 				if (!(c_ptr->info & CAVE_VIEW))
@@ -1953,7 +1953,7 @@ static int priority_tunnel(int y, int x)
 	}
 
 	/* Three or less floor squares - Important */
-	if (count < 4) return(20);
+	if (count < 4) return(19);
 
 	/* Not important. */	
 	return(0); 

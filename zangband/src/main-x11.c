@@ -2893,6 +2893,9 @@ errr init_x11(int argc, char *argv[])
 		}
 	}
 
+	/* Use transparency */
+	use_transparency = use_graphics;
+
 #endif /* USE_GRAPHICS */
 
 
