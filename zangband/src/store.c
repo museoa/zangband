@@ -842,11 +842,8 @@ static void store_create(void)
 	/* Select items based on "theme" */
 	init_match_theme(theme);
 
-	/* Activate restriction */
-	get_obj_num_hook = kind_is_theme;
-
 	/* Prepare allocation table */
-	get_obj_num_prep();
+	get_obj_num_prep(kind_is_theme);
 
 	/* Limit table with store-only items */
 	get_obj_store_prep();
@@ -922,9 +919,6 @@ static void store_create(void)
 		/* Definitely done */
 		break;
 	}
-
-	/* Clear restriction */
-	get_obj_num_hook = NULL;
 }
 
 /*

@@ -266,7 +266,7 @@ static void alloc_object(int set, int typ, int num)
 
 			case ALLOC_TYP_OBJECT:
 			{
-				place_object(x, y, FALSE, FALSE);
+				place_object(x, y, FALSE, FALSE, 0);
 				break;
 			}
 

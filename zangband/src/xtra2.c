@@ -774,7 +774,7 @@ bool monster_death(int m_idx, bool explode)
             for (i = 0; i < 1000; i++)
             {
                 /* Make an object */
-                q_ptr = make_object(delta_level, r_ptr->obj_drop);
+                q_ptr = make_object(delta_level, &r_ptr->obj_drop);
 
                 if (!q_ptr) continue;
 

@@ -323,11 +323,8 @@ static void chest_death(int x, int y, object_type *o_ptr)
 	/* Select only those types of object */
 	init_match_hook(tval, sval);
 
-	/* Activate restriction */
-	get_obj_num_hook = kind_is_match;
-
 	/* Prepare allocation table */
-	get_obj_num_prep();
+	get_obj_num_prep(kind_is_match);
 
 	/* Small chests often hold "gold" */
 	small_chest = (o_ptr->sval < SV_CHEST_MIN_LARGE);
@@ -355,7 +352,7 @@ static void chest_death(int x, int y, object_type *o_ptr)
 		else
 		{
 			/* Make a good themed object */
-			q_ptr = make_object(15, dun_ptr->theme);
+			q_ptr = make_object(15, NULL);
 			if (!q_ptr) continue;
 		}
 
@@ -365,12 +362,6 @@ static void chest_death(int x, int y, object_type *o_ptr)
 
 	/* Reset the object level */
 	object_level = base_level;
-
-	/* Clear restriction */
-	get_obj_num_hook = NULL;
-
-	/* Prepare allocation table */
-	get_obj_num_prep();
 
 	/* Empty */
 	o_ptr->pval = 0;
@@ -1287,7 +1278,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			if (one_in_(10))
 			{
 				/* Create a simple object */
-				place_object(x, y, FALSE, FALSE);
+				place_object(x, y, FALSE, FALSE, 0);
 
 				/* Observe new object */
 				if (player_can_see_grid(pc_ptr))

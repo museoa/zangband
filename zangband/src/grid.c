@@ -248,7 +248,7 @@ void vault_objects(int x, int y, int num)
 			/* Place an item */
 			if (randint0(100) < 75)
 			{
-				place_object(k, j, FALSE, FALSE);
+				place_object(k, j, FALSE, FALSE, 0);
 			}
 
 			/* Place gold */

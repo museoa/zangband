@@ -636,7 +636,7 @@ void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  */
-void get_obj_num_prep(void)
+void get_obj_num_prep(object_hook_type object_hook)
 {
 	int i;
 
@@ -649,10 +649,10 @@ void get_obj_num_prep(void)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Accept objects which pass the restriction, if any */
-		if (get_obj_num_hook)
+		if (object_hook)
 		{
 			/* Get probability */
-			prob = (*get_obj_num_hook) (table[i].index);
+			prob = (*object_hook) (table[i].index);
 
 			/* Paranoia */
 			if (prob > 100) prob = 100;
@@ -4280,7 +4280,7 @@ byte kind_is_theme(int k_idx)
  *
  * We assume that the given object has been "wiped".
  */
-object_type *make_object(u16b delta_level, obj_theme theme)
+object_type *make_object(u16b delta_level, obj_theme *theme)
 {
 	int prob, base, min_level;
 	byte obj_level;
@@ -4340,8 +4340,8 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 		if (o_ptr) return (o_ptr);
 	}
 
-	/* Is there a restriction already? */
-	if (!get_obj_num_hook)
+	/* Default to themed objects? */
+	if (theme)
 	{
 		while (!k_idx && (count > 0))
 		{
@@ -4349,13 +4349,10 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 			count--;
 
 			/* Select items based on "theme" */
-			init_match_theme(theme);
-
-			/* Activate restriction */
-			get_obj_num_hook = kind_is_theme;
+			init_match_theme(*theme);
 
 			/* Prepare allocation table */
-			get_obj_num_prep();
+			get_obj_num_prep(kind_is_theme);
 
 			/* Pick a random object */
 			k_idx = get_obj_num(base, min_level);
@@ -4363,15 +4360,11 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 			/* Paranoia - try less hard to get something */
 			if (!k_idx) min_level /= 2;
 		}
-
-		/* Clear restriction */
-		get_obj_num_hook = NULL;
-
-		/* Prepare allocation table */
-		get_obj_num_prep();
 	}
 	else
 	{
+		/* We already have a restriction */
+	
 		/* Pick a random object using the current restriction */
 		k_idx = get_obj_num(base, 0);
 	}
@@ -4567,7 +4560,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
  *
  * This routine requires a clean floor grid destination.
  */
-void place_object(int x, int y, bool good, bool great)
+void place_object(int x, int y, bool good, bool great, int delta_level)
 {
 	cave_type *c_ptr;
 
@@ -4585,9 +4578,13 @@ void place_object(int x, int y, bool good, bool great)
 	{
 		return;
 	}
+	
+	object_level = base_level + delta_level;
 
 	/* Make an object (if possible) */
-	o_ptr = make_object((good ? 15 : 0) + (great ? 15 : 0), dun_ptr->theme);
+	o_ptr = make_object((good ? 15 : 0) + (great ? 15 : 0), &dun_ptr->theme);
+	
+	object_level = base_level;
 
 	/* Put it on the ground */
 	(void)put_object(o_ptr, x, y);
@@ -4986,7 +4983,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			if (great)
 			{
 				/* Make a great object (if possible) */
-				o_ptr = make_object(40, theme);
+				o_ptr = make_object(40, &theme);
 
 				/* Paranoia */
 				if (!o_ptr) continue;
@@ -4994,7 +4991,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			else
 			{
 				/* Make a good object (if possible) */
-				o_ptr = make_object(20, theme);
+				o_ptr = make_object(20, &theme);
 
 				/* Paranoia */
 				if (!o_ptr) continue;

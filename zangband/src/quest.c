@@ -688,12 +688,12 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			o_ptr = make_object(30, dun_ptr->theme);
+			o_ptr = make_object(30, &dun_ptr->theme);
 		}
 		else
 		{
 			/* Make a good object */
-			o_ptr = make_object(15, dun_ptr->theme);
+			o_ptr = make_object(15, &dun_ptr->theme);
 		}
 
 		if (!o_ptr) continue;
@@ -1702,11 +1702,8 @@ void draw_quest(u16b place_num)
 
 	init_match_theme(theme);
 
-	/* Activate restriction */
-	get_obj_num_hook = kind_is_theme;
-
 	/* Prepare allocation table */
-	get_obj_num_prep();
+	get_obj_num_prep(kind_is_theme);
 
 	/* Pick number random spots within region */
 	n = (pl_ptr->xsize * pl_ptr->ysize) / 4;
@@ -1766,8 +1763,8 @@ void draw_quest(u16b place_num)
 
 	init_match_theme(theme);
 
-	/* Prepare allocation table */
-	get_obj_num_prep();
+	/* Clear allocation table */
+	get_obj_num_prep(kind_is_theme);
 
 	/* Scatter stuff over the region */
 	for (i = 0; i < pl_ptr->xsize * WILD_BLOCK_SIZE; i++)
@@ -1829,9 +1826,6 @@ void draw_quest(u16b place_num)
 
 	/* Remove the monster restriction */
 	get_mon_num_prep(NULL);
-
-	/* Clear restriction */
-	get_obj_num_hook = NULL;
 
 	/* Hack - Restore levels */
 	object_level = temp_o_level;

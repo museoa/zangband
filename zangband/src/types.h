@@ -1766,6 +1766,7 @@ struct dun_type
 
 /* Various function pointer types */
 typedef bool (*monster_hook_type) (int r_idx);
+typedef byte (*object_hook_type) (int k_idx);
 typedef int (*inven_func) (object_type *);
 typedef bool (*cave_hook_type) (const cave_type *c_ptr);
 typedef bool (*object_comp) (const object_type *, const object_type *);

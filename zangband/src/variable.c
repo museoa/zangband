@@ -762,14 +762,6 @@ void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 
 
 /*
- * Hack -- function hook to restrict "get_obj_num_prep()" function
- */
-byte (*get_obj_num_hook) (int k_idx);
-
-
-/* Get rid of the quest stuff? */
-
-/*
  * Default spell color table (quark index)
  */
 cptr gf_color[MAX_GF];
