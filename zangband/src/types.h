@@ -523,9 +523,9 @@ typedef struct wild_done_type wild_done_type;
 struct wild_done_type
 {
 	u16b	wild;
-	u16b	town;
+	byte	town;
 	byte	info;
-	byte	mon_gen;
+	u16b	mon_gen;
 };
 
 /*
@@ -1339,6 +1339,9 @@ struct town_type
 	u32b        seed;      /* Seed for RNG */
 	store_type	*store;    /* The stores [MAX_STORES] */
 	byte        numstores;
+	u16b 	    type;	/* Type of town / dungeon / special */
+	byte		x;	/* Location mod 16 in wilderness */
+	byte		y;
 };
 
 /* Dungeons */

@@ -1291,13 +1291,13 @@ static void save_wild_data(void)
 			wr_u16b(wild[j][i].done.wild);
 			
 			/* Town / Dungeon / Specials */
-			wr_u16b(wild[j][i].done.town);
+			wr_byte(wild[j][i].done.town);
 			
 			/* Info flag */
 			wr_byte(wild[j][i].done.info);
 			
 			/* Monster Gen type */
-			wr_byte(wild[j][i].done.mon_gen);			
+			wr_u16b(wild[j][i].done.mon_gen);			
 		}	
 	}
 }
@@ -1589,14 +1589,27 @@ static bool wr_savefile_new(void)
 	tmp16u = max_towns;
 	wr_u16b(tmp16u);
 
-	/* Note the stores */
-	tmp16u = MAX_STORES;
-	wr_u16b(tmp16u);
-
-	/* Dump the stores of all towns */
+	/* Dump the town data */
 	for (i = 1; i < max_towns; i++)
 	{
-		for (j = 0; j < MAX_STORES; j++)
+		/* RNG seed */
+		wr_u32b(town[i].seed);
+		
+		/* Number of stores */
+		wr_byte(town[i].numstores);
+		
+		/* Type */
+		wr_u16b(town[i].type);
+		
+		/* Locatation */
+		wr_byte(town[i].x);
+		wr_byte(town[i].y);
+		
+		/* Name */
+		wr_string(town[i].name);
+		
+		/* Dump the stores of all towns */
+		for (j = 0; j < town[i].numstores; j++)
 		{
 			wr_store(&town[i].store[j]);
 		}

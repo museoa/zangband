@@ -59,6 +59,8 @@
 #endif 0
 
 
+/* Town currently stored in cave[][] */
+static u16b cur_town;
 
 
 /* Old in_bounds(2) macros are now functions */
@@ -148,12 +150,297 @@ void change_level(int level)
 		in_bounds = in_bounds_cave;
 		in_bounds2 = in_bounds2_cave;
 		area = access_cave;
+		
+		/* No town stored in cave[][] */
+		cur_town = 0;
 	}	
 } 
  
 
 
+/*
+ * Builds a store at a given pseudo-location
+ *
+ * As of Z 2.3.6 the town is moved back to (0,0) - and is overlayed
+ * on top of the wilderness.
+ *
+ * As of 2.8.1 (?) the town is actually centered in the middle of a
+ * complete level, and thus the top left corner of the town itself
+ * is no longer at (0,0), but rather, at (qy,qx), so the constants
+ * in the comments below should be mentally modified accordingly.
+ *
+ * As of 2.7.4 (?) the stores are placed in a more "user friendly"
+ * configuration, such that the four "center" buildings always
+ * have at least four grids between them, to allow easy running,
+ * and the store doors tend to face the middle of town.
+ *
+ * The stores now lie inside boxes from 3-9 and 12-18 vertically,
+ * and from 7-17, 21-31, 35-45, 49-59.  Note that there are thus
+ * always at least 2 open grids between any disconnected walls.
+ *
+ * Note the use of "town_illuminate()" to handle all "illumination"
+ * and "memorization" issues.
+ */
+static void build_store(int n, int yy, int xx)
+{
+	int y, x, y0, x0, y1, x1, y2, x2, tmp;
 
+	/* Find the "center" of the store */
+	y0 = yy * 9 + 6;
+	x0 = xx * 14 + 12;
+
+	/* Determine the store boundaries */
+	y1 = y0 - randint((yy == 0) ? 3 : 2);
+	y2 = y0 + randint((yy == 1) ? 3 : 2);
+	x1 = x0 - randint(5);
+	x2 = x0 + randint(5);
+
+	/* Build an invulnerable rectangular building */
+	for (y = y1; y <= y2; y++)
+	{
+		for (x = x1; x <= x2; x++)
+		{
+			/* Create the building */
+			cave[y][x].feat = FEAT_PERM_EXTRA;
+		}
+	}
+
+	/* Pick a door direction (S,N,E,W) */
+	tmp = rand_int(4);
+
+	/* Re-roll "annoying" doors */
+	if (((tmp == 0) && (yy == 1)) ||
+	    ((tmp == 1) && (yy == 0)) ||
+	    ((tmp == 2) && (xx == 3)) ||
+	    ((tmp == 3) && (xx == 0)))
+	{
+		/* Pick a new direction */
+		tmp = rand_int(4);
+	}
+
+	/* Extract a "door location" */
+	switch (tmp)
+	{
+		/* Bottom side */
+		case 0:
+		{
+			y = y2;
+			x = rand_range(x1, x2);
+			break;
+		}
+
+		/* Top side */
+		case 1:
+		{
+			y = y1;
+			x = rand_range(x1, x2);
+			break;
+		}
+
+		/* Right side */
+		case 2:
+		{
+			y = rand_range(y1, y2);
+			x = x2;
+			break;
+		}
+
+		/* Left side */
+		default:
+		{
+			y = rand_range(y1, y2);
+			x = x1;
+			break;
+		}
+	}
+
+	/* Clear previous contents, add a store door */
+	cave[y][x].feat = FEAT_SHOP_HEAD + n;
+}
+
+
+
+
+/*
+ * Generate the "consistent" town features, and place the player
+ *
+ * Hack -- play with the R.N.G. to always yield the same town
+ * layout, including the size and shape of the buildings, the
+ * locations of the doorways, and the location of the stairs.
+ */
+static void town_gen_hack(u16b town_num)
+{
+	int y, x, k, n;
+
+	/* This simple routine does not check the type of
+	 * stores town_num wants.
+	 */
+
+	int rooms[MAX_STORES];
+
+
+	/* Hack -- Use the "simple" RNG */
+	Rand_quick = TRUE;
+
+	/* Hack -- Induce consistant town layout */
+	Rand_value = town[town_num].seed;
+
+
+	/* Prepare an Array of "remaining stores", and count them */
+	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
+
+	/* Place two rows of stores */
+	for (y = 0; y < 2; y++)
+	{
+		/* Place four stores per row */
+		for (x = 0; x < 4; x++)
+		{
+			/* Pick a random unplaced store */
+			k = ((n <= 1) ? 0 : rand_int(n));
+
+			/* Build that store at the proper location */
+			build_store(rooms[k], y, x);
+
+			/* Shift the stores down, remove one store */
+			rooms[k] = rooms[--n];
+		}
+	}
+
+
+	/* Place the stairs */
+	while (TRUE)
+	{
+		/* Pick a location at least "three" from the outer walls */
+		y = rand_range(3, SCREEN_HGT - 4);
+		x = rand_range(3, SCREEN_WID - 4);
+
+		/* Require a "naked" floor grid */
+		if (cave[y][x].feat == FEAT_FLOOR) break;
+	}
+
+	/* Clear previous contents, add down stairs */
+	cave[y][x].feat = FEAT_MORE;
+
+	/* Hack -- use the "complex" RNG */
+	Rand_quick = FALSE;
+}
+
+
+
+
+/*
+ * Town logic flow for generation of new town
+ *
+ * We start with a fully wiped cave of normal floors.
+ *
+ * Note that town_gen_hack() plays games with the R.N.G.
+ *
+ * This function does NOT do anything about the owners of the stores,
+ * nor the contents thereof.  It only handles the physical layout.
+ *
+ */
+static void town_gen(u16b town_num)
+{
+	int y, x;
+
+	/* Place transparent area */
+	for (y = 0; y < MAX_HGT; y++)
+	{
+		for (x = 0; x < MAX_WID; x++)
+		{
+			/* Create empty area */
+			cave[y][x].feat = FEAT_NONE;
+		}
+	}
+	
+	/* Place some floors */
+	for (y = 1; y < SCREEN_HGT-1; y++)
+	{
+		for (x = 1; x < SCREEN_WID-1; x++)
+		{
+			/* Create empty floor */
+			cave[y][x].feat = FEAT_FLOOR;
+		}
+	}
+
+	/* Build stuff */
+	town_gen_hack(town_num);
+	
+	/* Town is now built */
+	cur_town = town_num;
+}
+
+/*
+ * Overlay a section of a town onto the wilderness
+ */
+static void overlay_town(byte y, byte x, u16b w_town, blk_ptr block_ptr)
+{
+	int i, j, xx, yy;
+	byte feat;
+	
+	/* Find block to copy */
+	xx = (x - town[w_town].x) << 4;
+	yy = (y - town[w_town].y) << 4;
+
+	/* copy 16x16 block from cave[][] */
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			feat = cave[yy + j][xx + i].feat;
+			if (feat != FEAT_NONE)
+			{
+				/* Only copy if there is something there. */
+				block_ptr[j][i].feat = feat;
+			} 				
+		}	
+	}
+}
+
+
+/* 
+ * Initialise the town structures
+ * At the moment there is only one town generator
+ * and one town.
+ */
+static void init_towns(void)
+{
+	int i, j;
+	u16b town_num;
+
+	town_num = 1;
+	
+	strcpy(town[town_num].name, "This is a town.");
+	town[town_num].seed = rand_int(0x10000000);
+	town[town_num].numstores = 9;
+	town[town_num].type = 1;
+	town[town_num].x = 32;
+	town[town_num].y = 32;
+	
+	/* Place town on wilderness */
+	for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
+	{
+		for (i = 0; i < (SCREEN_WID / 16 +1); i++)
+		{
+			wild[town[town_num].y + j][town[town_num].x + i].done.town = 1;		
+		} 	
+	}
+	
+	/* No current town in cave[][] */
+	cur_town = 0;
+}
+
+
+/* 
+ * Set cur_town = 0
+ * This function exists so that this variable remains hidden.
+ * This is only used after a game is loaded - when cave[][]
+ * is blank.
+ */
+void set_no_town(void)
+{
+	cur_town = 0;
+}
 
 /* Delete a wilderness block */
 static void del_block(blk_ptr block_ptr)
@@ -182,16 +469,6 @@ static void del_block(blk_ptr block_ptr)
 		}	
 	}
 }
-
-static void place_building(int x, int y, blk_ptr block_ptr)
-{
-	block_ptr[y][x].info = CAVE_GLOW|CAVE_MARK;
-	block_ptr[y][x].feat = FEAT_PERM_SOLID;
-}
-
-
-
-
 
 
 /* Store routine for the fractal cave generator */
@@ -389,7 +666,7 @@ static void copy_block(blk_ptr block_ptr)
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
-	int i, j;
+	u16b w_town;
 	
 	/*
 	 * Since only grass has been "turned on", this function
@@ -406,67 +683,34 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	Rand_value = wild_grid.wild_seed + x + y*WILD_SIZE;
 		
 	/* Generate a terrain block*/
-	
-	#if 0
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			/* Make Grass */
-			block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
-			block_ptr[j][i].feat = FEAT_GRASS;
-			
-			/* Note: Fix info flags later. */
-		}	
-	}
-	
-	/* Add a tree so know if movement works properly. */
-	block_ptr[rand_int(WILD_BLOCK_SIZE)]
-	 [rand_int(WILD_BLOCK_SIZE)].feat = FEAT_TREES;
-	#endif 0
 	 	
 	/* Test fractal terrain */
 	/* Note that this is very dodgy at the moment.
-	 * There is no wilderness 
+	 * There is no wilderness */
 	frac_block();
 	copy_block(block_ptr);
 	 	 
 	/* Add roads / river / lava (Not done)*/
 	 
 	 
-	/* Overlay town  (Not done) */
-	 
-	/* Hack - one town at the moment */
-	p_ptr->town_num = 1;
+	/* Overlay town */
+	w_town = wild[y][x].done.town;
 	
-	if (wild[y][x].done.town)
+	/* Is there a town? */
+	if (w_town)
 	{
-		/* Make a dodgy town */
-		for(i = 0; i < 9; i++)
+		/* Is it the right town? */
+		if (cur_town != w_town)
 		{
-			/* Make a building */
-			place_building(1+5*(i/3), 1+5*(i%3), block_ptr);
-			place_building(1+5*(i/3), 2+5*(i%3), block_ptr);
-			place_building(1+5*(i/3), 3+5*(i%3), block_ptr);
-			place_building(2+5*(i/3), 1+5*(i%3), block_ptr);
-			place_building(2+5*(i/3), 2+5*(i%3), block_ptr);
-			place_building(2+5*(i/3), 3+5*(i%3), block_ptr);
-			place_building(3+5*(i/3), 1+5*(i%3), block_ptr);
-			place_building(3+5*(i/3), 3+5*(i%3), block_ptr);
-			block_ptr[2+5*(i%3)][3+5*(i/3)].info = CAVE_GLOW|CAVE_MARK;
-			block_ptr[2+5*(i%3)][3+5*(i/3)].feat = FEAT_SHOP_HEAD + i;
-		
+			/* Make the town */
+			town_gen(w_town);
+			
+			init_buildings();
 		}
 		
-		/* Stairway down */
-		block_ptr[0][0].info = CAVE_GLOW|CAVE_MARK;
-		block_ptr[0][0].feat = FEAT_MORE;	
+		/* overlay town on wilderness */
+		overlay_town(y, x, w_town, block_ptr);		
 	}
-	
-	/* if town changes... */
-	/* Reset the buildings */
-	/* init_buildings(); */
-	
 	 
 	/* Set the monster generation level */
 	
@@ -487,6 +731,8 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
 }
+
+
 
 /* Allocate all grids around player */
 void allocate_all(void)
@@ -657,6 +903,9 @@ void move_wild(void)
 	if (x + WILD_GRID_SIZE > WILD_SIZE) x = WILD_SIZE - WILD_GRID_SIZE;
 	if (y + WILD_GRID_SIZE > WILD_SIZE) y = WILD_SIZE - WILD_GRID_SIZE;
 		
+	/* Hack - set town */
+	p_ptr->town_num = wild[py>>4][px>>4].done.town;
+	
 	/* 
 	 * Hack - check to see if first block is the same.
 	 * If so, the grid doesn't need to move.
@@ -785,7 +1034,7 @@ void create_wilderness(void)
 	wild_grid.y = -1;
 	
 	/* A dodgy town */
-	wild[32][32].done.town = 1;
+	init_towns();
 	
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);

@@ -1231,6 +1231,7 @@ extern void k_info_reset(void);
 
 /* wild.c */
 extern void change_level(int);
+extern void set_no_town(void);
 extern void create_wilderness(void);
 extern void move_wild(void);
 

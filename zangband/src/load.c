@@ -2638,7 +2638,9 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 static void load_wild_data(void)
 {
 	int i, j;
-	
+	u16b tmp_u16b;
+	byte tmp_byte;
+		
 	/* Load bounds */
 	rd_u16b(&wild_grid.y_max);
 	rd_u16b(&wild_grid.x_max);
@@ -2658,17 +2660,39 @@ static void load_wild_data(void)
 	{
 		for (j = 0; j < WILD_SIZE; j++)
 		{
-			/* Terrain */
-			rd_u16b(&wild[j][i].done.wild);
+			if (sf_version < 8)
+			{
+				/* Terrain */
+				rd_u16b(&wild[j][i].done.wild);
 			
-			/* Town / Dungeon / Specials */
-			rd_u16b(&wild[j][i].done.town);
+				/* Town / Dungeon / Specials */
+				rd_u16b(&tmp_u16b);
+				wild[j][i].done.town = tmp_u16b;
+				
+				/* Info flag */
+				rd_byte(&wild[j][i].done.info);
 			
-			/* Info flag */
-			rd_byte(&wild[j][i].done.info);
+				/* Monster Gen type */
+				rd_byte(&tmp_byte);
+				wild[j][i].done.mon_gen = tmp_byte;
+			}
+			else
+			{
+				/* Changed size of data types. */
+				
+				/* Terrain */
+				rd_u16b(&wild[j][i].done.wild);
 			
-			/* Monster Gen type */
-			rd_byte(&wild[j][i].done.mon_gen);			
+				/* Town / Dungeon / Specials */
+				rd_byte(&wild[j][i].done.town);
+			
+				/* Info flag */
+				rd_byte(&wild[j][i].done.info);
+			
+				/* Monster Gen type */
+				rd_u16b(&wild[j][i].done.mon_gen);
+			
+			}			
 		}	
 	}
 	
@@ -2722,6 +2746,7 @@ static errr rd_dungeon(void)
 	rd_s16b(&cur_wid);
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
+
 	
 	/* Old method */
 	if (older_than(2, 8, 0))
@@ -2730,17 +2755,21 @@ static errr rd_dungeon(void)
 	}
 	else if (sf_version<7)
 	{
-		create_wilderness();
-		
 		/* Load dungeon map*/
 		load_map(cur_hgt, 0, cur_wid, 0);
-	
+		
+		create_wilderness();	
 	}
 	else
 	{
 		/* Load wilderness data */	
 		load_wild_data();
-	
+		
+		if (sf_version<8)
+		{
+			create_wilderness();
+		}
+		
 		if(dun_level)
 		{
 			/* Load dungeon map*/
@@ -2758,7 +2787,9 @@ static errr rd_dungeon(void)
 			   wild_grid.x_max, wild_grid.x_min);	
 		}
 	}
-	
+
+	/* There is no town stored in cave[][] */
+	set_no_town();
 	
 	/*** Objects ***/
 
@@ -3627,36 +3658,59 @@ static errr rd_savefile_new_aux(void)
 	/* Empty the store stock cache */
 	store_cache_num = 0;
 
-	/* Read the stores */
-	rd_u16b(&tmp16u);
-	for (i = 1; i < town_count; i++)
+	if (sf_version < 8)
 	{
-		/* HACK - ignore the empty towns */
-		if (z_older_than(2, 2, 3) && (i >= 6))
+		/* Read the stores */
+		rd_u16b(&tmp16u);
+		for (i = 1; i < town_count; i++)
 		{
-			for (j = 0; j < tmp16u; j++)
+			/* HACK - ignore the empty towns */
+			if (z_older_than(2, 2, 3) && (i >= 6))
 			{
-				/* Read the info into the empty town 5 (R'Lyeh) */
-				if (rd_store(5, j)) return (22);
+				for (j = 0; j < tmp16u; j++)
+				{
+					/* Read the info into the empty town 5 (R'Lyeh) */
+					if (rd_store(5, j)) return (22);
+				}
 			}
-		}
-		else
-		{
-			for (j = 0; j < tmp16u; j++)
+			else
 			{
-				if (rd_store(i, j)) return (22);
+				for (j = 0; j < tmp16u; j++)
+				{
+					if (rd_store(i, j)) return (22);
+				}
 			}
 		}
 	}
-
-#if 0
-	if (z_older_than(2, 1, 0))
+	else
 	{
-		msg_print("Reallocating flavours...");
-		flavor_init();
+		/* Get the town data */
+		for (i = 1; i < town_count; i++)
+		{
+			/* RNG seed */
+			rd_u32b(&town[i].seed);
+			
+			/* Number of stores */
+			rd_byte(&town[i].numstores);
+		
+			/* Type */
+			rd_u16b(&town[i].type);
+		
+			/* Locatation */
+			rd_byte(&town[i].x);
+			rd_byte(&town[i].y);
+		
+			/* Name */
+			rd_string(town[i].name, 32);
+		
+			/* Get the stores of all towns */
+			for (j = 0; j < town[i].numstores; j++)
+			{
+				rd_store(i, j);
+			}
+		}
 	}
-#endif
-
+	
 	/* Read the pet command settings */
 	if (sf_version > 2)
 	{
