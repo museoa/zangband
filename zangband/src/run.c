@@ -102,19 +102,17 @@ static int see_interesting(int x, int y)
 		switch (c_ptr->feat)
 		{
 		case FEAT_DEEP_LAVA:
-		case FEAT_SHAL_LAVA:
-
 		case FEAT_DEEP_ACID:
-		case FEAT_SHAL_ACID:
-
 		case FEAT_DEEP_SWAMP:
-		case FEAT_SHAL_SWAMP:
 			return (TRUE);
 
+		case FEAT_SHAL_SWAMP:
+		case FEAT_SHAL_ACID:
+		case FEAT_SHAL_LAVA:
 		/* Water */
 		case FEAT_DEEP_WATER:
 		case FEAT_OCEAN_WATER:
-			/* Levitation makes water boring */
+			/* Levitation makes these feats boring */
 			if (FLAG(p_ptr, TR_FEATHER)) break;
 
 			return (TRUE);
