@@ -115,7 +115,7 @@ N:7:of Edison
 I:39:3:3
 W:35:10:5:20000
 P:0:1d1:0:0:0
-F:INSTA_ART | INFRA | SH_FIRE | SH_ELEC
+F:INSTA_ART | INFRA | SH_FIRE | SH_ELEC | LITE
 
 
 # The Ring of Barahir -> Frakir
