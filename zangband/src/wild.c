@@ -464,16 +464,11 @@ void move_wild(void)
 	dy = y - wild_grid.y;
 	 
 	/* Store in upper left hand corner. */
-	wild_grid.x = x;
 	wild_grid.y = y;
 	 
 	/* Recalculate boundaries */
 	wild_grid.y_max = (y+WILD_GRID_SIZE)<<4;
 	wild_grid.y_min = y<<4;
-	
-	wild_grid.x_max = (x+WILD_GRID_SIZE)<<4;
-	wild_grid.x_min = x<<4;
-	
 	
 	/* Shift in only a small discrepency */
 	if (abs(dy) == 1)
@@ -484,10 +479,25 @@ void move_wild(void)
 	else if (dy)
 	{
 		/* Too large of a shift */
+		
+		/* Store in upper left hand corner. */
+		wild_grid.x = x;
+	 
+		/* Recalculate boundaries */
+		wild_grid.x_max = (x+WILD_GRID_SIZE)<<4;
+		wild_grid.x_min = x<<4;
+		
 		allocate_all();
 		return;
 	}
 	
+	/* Store in upper left hand corner. */
+	wild_grid.x = x;
+	 
+	/* Recalculate boundaries */
+	wild_grid.x_max = (x+WILD_GRID_SIZE)<<4;
+	wild_grid.x_min = x<<4;
+		
 	/* Shift in only a small discrepency */
 	if (abs(dx) == 1)
 	{
