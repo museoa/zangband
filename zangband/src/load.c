@@ -534,6 +534,13 @@ static void rd_item(object_type *o_ptr)
 		else
 			rd_u32b(&o_ptr->kn_flags4);
 
+		/* Remove old randart activations */
+		if (o_ptr->activate && o_ptr->activate < 128)
+		{
+			o_ptr->activate = 0;
+			o_ptr->flags3 &= ~TR3_ACTIVATE;
+		}
+
 		/* 
 		 * XXX Some older buggy versions set TR3_PERMA_CURSE
 		 * on items where it shouldn't have been set.
