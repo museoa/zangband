@@ -85,7 +85,7 @@ ANGSRCS := \
 	bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c\
 	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c\
 	main-lsl.c main-vcs.c main-gtk.c main-win.c main.c \
-	$(LUAWSRCS) maid-grf.c\
+	$(LUAWSRCS) maid-grf.c main-dos.c
 
 ANGOBJS := \
 	variable.o tables.o util.o cave.o \
@@ -102,7 +102,7 @@ ANGOBJS := \
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
-	$(LUAWOBJS) maid-grf.o
+	$(LUAWOBJS) maid-grf.o main-dos.o
 	
 
 ##
@@ -188,7 +188,7 @@ default_port: linux install
 ## The list of ports available
 ##
 PORTS := linux open_bsd main-cap vt100 solaris sgi dec \
-	isc next aix cygwin
+	isc next aix cygwin dos
 
 ##
 ## Hack - dependancy to get them to compile properly
@@ -199,6 +199,16 @@ $(PORTS): install
 ## Hack - default install action
 ##
 INSTALL := cp zangband ..
+
+##
+## Hack - default clean action
+CLEAN := \
+	rm -f *.bak *.o; \
+	rm -f ./lua/*.bak ./lua/*.o; \
+	rm -f ./l-*.c; \
+	rm -f ./lua/tolua; \
+	rm -f ./lua/tolua_boot;
+##
 
 ##
 ## Graphics under X11 in linux.  (Run with the -g option)
@@ -290,6 +300,13 @@ next: LIBS := -lcurses -ltermcap
 aix: CFLAGS += -bnoquiet -D"USE_X11" -D"SYS_V"
 aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 
+##
+## Variation -- Dos using "main-dos.c" and the allegro library
+##
+dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
+dos: LIBS := -lpc -lalleg
+dos: INSTALL := copy zangband ../zangband.exe
+dos: CLEAN := del *.o; del lua\*.o; del *.exe; del lua\*.exe;
 
 ##
 ## (Installing is much nicer if you don't use the autoconf generated
@@ -314,11 +331,7 @@ zangband: $(OBJS)
 ##
 
 clean:
-	-rm -f *.bak *.o
-	-rm -f ./lua/*.bak ./lua/*.o
-	-rm -f ./l-*.c
-	-rm -f ./lua/tolua
-	-rm -f ./lua/tolua_boot
+	-$(CLEAN)
 
 ##
 ## Generate dependencies automatically
