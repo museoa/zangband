@@ -992,7 +992,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CURING:
 		{
-			if (hp_player(50)) ident = TRUE;
+			if (hp_player(150)) ident = TRUE;
 			if (set_blind(0)) ident = TRUE;
 			if (set_poisoned(0)) ident = TRUE;
 			if (set_confused(0)) ident = TRUE;
@@ -1874,6 +1874,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_CURING:
 		{
+			if (hp_player(150)) ident = TRUE;
 			if (set_blind(0)) ident = TRUE;
 			if (set_poisoned(0)) ident = TRUE;
 			if (set_confused(0)) ident = TRUE;
@@ -2653,6 +2654,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_CURING:
 		{
+			if (hp_player(200)) ident = TRUE;
 			if (set_blind(0)) ident = TRUE;
 			if (set_poisoned(0)) ident = TRUE;
 			if (set_confused(0)) ident = TRUE;
