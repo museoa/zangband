@@ -1378,7 +1378,7 @@ static object_type old_inventory[24];
 static errr rd_inventory(void)
 {
 	object_type forge;
-	object_type *q_ptr;
+	object_type *q_ptr = &forge;
 
 	/* Wipe the structure */
     (void)WIPE(q_ptr, object_type);
