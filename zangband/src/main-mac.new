@@ -1170,7 +1170,7 @@ static errr globe_init(void)
 										&tempPictBufferGWorldP,
 										newPictH,
 										newMaskH,
-										&data[0]);   //rftb - main term included.
+										&data[0]);   /* rftb - main term included. */
 
 		/* Release resource */
 		ReleaseResource((Handle)newPictH);
