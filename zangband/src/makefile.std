@@ -37,8 +37,8 @@
 ##
 ## The list of ports available
 ##
-PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         solaris sgi dec isc next aix dos ibm borland gcu
+PORTS := default_port linux linux-svga linux-no-gtk openbsd freebsd main-cap \
+		 vt100 solaris sgi dec isc next aix dos ibm borland gcu
 
 OTHER_PORTS := amiga cygwin emx lcc linux-tk
 
@@ -115,10 +115,10 @@ BORGOBJS := \
 ## The Tk port files
 ##
 TKOBJS := \
-	tk/bind.o tk/canv.o tk/cmdinfo.o \
+	tk/canv.o tk/cmdinfo.o \
 	tk/icon1.o tk/icon2.o tk/icon3.o tk/const.o \
 	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
-	tk/map1.o tk/map2.o tk/qebind.o \
+	tk/map1.o tk/map2.o \
 	tk/r_info.o tk/setting.o tk/struct1.o tk/struct2.o \
 	tk/widget1.o tk/widget2.o tk/widget3.o \
 	tk/tk-util.o tk/tcltk.o
@@ -253,6 +253,19 @@ linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
                -lXaw -lXext -lSM -lICE -lXmu -lXt -lgtk `gtk-config --libs`
 
 ##
+## Variation -- All X11 ports for linux except gtk
+##
+linux-no-gtk: CFLAGS += -D"USE_GCU" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" \
+                 -pedantic -W -Wmissing-prototypes -Wmissing-declarations \
+				 -Wno-long-long -Wwrite-strings -Wpointer-arith \
+				 -Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
+				 -Waggregate-return -Wstrict-prototypes \
+				 -Wredundant-decls #-Wunreachable-code
+ 
+linux-no-gtk: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
+               -lXaw -lXext -lSM -lICE -lXmu -lXt
+
+##
 ## Variation -- tk port to linux
 ##
 linux-tk: CFLAGS += -D"USE_TNB" -D"USE_X11" -D"PLATFORM_X11"\
@@ -278,12 +291,12 @@ linux-tk: linux-tk-objs
 ##
 ## Linux with the (depreciated) svga port.
 ##
-linux_svga: CFLAGS += -Wno-long-long -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
+linux-svga: CFLAGS += -Wno-long-long -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
                  -D"USE_X11" -D"USE_XAW" -D"USE_LSL" \
                   `gtk-config --cflags` -D"USE_GTK" -DHAVE_MKSTEMP\
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations
  
-linux_svga: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl \
+linux-svga: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl \
                     -lvga -lXaw -lXext -lSM -lICE -lXmu -lXt \
 					-lgtk `gtk-config --libs`
 
@@ -624,7 +637,6 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 ## Extra dependancies for the tk port
 ##
 $(TKOBJS): $(INCS) tk/tnb.h
-tk/bind.o: tk/qebind.h tk/icon.h
 tk/canv.o: tk/icon.h
 tk/icon1.o: tk/icon.h
 tk/icon2.o: tk/widget.h tk/icon.h
@@ -634,7 +646,6 @@ tk/interp2.o: tk/struct.h tk/icon.h
 tk/map1.o: tk/widget.h tk/icon.h tk/map.h
 tk/map2.o: tk/widget.h tk/icon.h tk/map.h
 tk/plat.o: tk/icon.h
-tk/qebind.o: tk/qebind.h
 tk/struct1.o: tk/struct.h tk/icon.h
 tk/struct2.o: tk/struct.h
 tk/widget1.o: tk/widget.h tk/icon.h
