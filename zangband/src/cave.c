@@ -521,12 +521,6 @@ static void image_random(byte *ap, char *cp)
 }
 
 /*
- * Not using graphical tiles for this feature?
- */
-#define is_ascii_graphics(C , A) \
-    (!((C) & (A) & 0x80))
-
-/*
  * The 16x16 tile of the terrain supports lighting
  */
 static bool feat_supports_lighting[256] =
@@ -567,64 +561,116 @@ static bool feat_supports_lighting[256] =
 
 
 /*
- * This array lists the effects of "brightness" on various "base" colours.
+ * Two arrays listing the effects of "brightness"
+ * and "darkness" on various "base" colours.
  *
  * This is used to do dynamic lighting effects in ascii :-)
  * At the moment, only the various "floor" tiles are affected.
- *
- * The layout of the array is [x][0] = light and [x][1] = dark.
  */
 
-static byte lighting_colours[16][2] =
+static byte lighting_colours[16] =
 {
 	/* TERM_DARK */
-	{TERM_L_DARK, TERM_DARK},
+	TERM_L_DARK,
 
 	/* TERM_WHITE */
-	{TERM_YELLOW, TERM_SLATE},
+	TERM_YELLOW,
 
 	/* TERM_SLATE */
-	{TERM_WHITE, TERM_L_DARK},
+	TERM_WHITE,
 
 	/* TERM_ORANGE */
-	{TERM_YELLOW, TERM_UMBER},
+	TERM_YELLOW,
 
 	/* TERM_RED */
-	{TERM_RED, TERM_RED},
+	TERM_RED,
 
 	/* TERM_GREEN */
-	{TERM_L_GREEN, TERM_GREEN},
-
+	TERM_L_GREEN,
+	
 	/* TERM_BLUE */
-	{TERM_BLUE, TERM_BLUE},
+	TERM_BLUE,
 
 	/* TERM_UMBER */
-	{TERM_L_UMBER, TERM_RED},
+	TERM_L_UMBER,
 
 	/* TERM_L_DARK */
-	{TERM_SLATE, TERM_L_DARK},
+	TERM_SLATE,
 
 	/* TERM_L_WHITE */
-	{TERM_WHITE, TERM_SLATE},
+	TERM_WHITE,
 
 	/* TERM_VIOLET */
-	{TERM_L_RED, TERM_BLUE},
+	TERM_L_RED,
 
 	/* TERM_YELLOW */
-	{TERM_YELLOW, TERM_ORANGE},
-
+	TERM_YELLOW,
+	
 	/* TERM_L_RED */
-	{TERM_L_RED, TERM_L_RED},
+	TERM_L_RED,
 
 	/* TERM_L_GREEN */
-	{TERM_YELLOW, TERM_GREEN},
+	TERM_YELLOW,
 
 	/* TERM_L_BLUE */
-	{TERM_L_BLUE, TERM_L_BLUE},
+	TERM_L_BLUE,
 
 	/* TERM_L_UMBER */
-	{TERM_L_UMBER, TERM_UMBER}
+	TERM_L_UMBER,
 };
+
+static byte darking_colours[16] =
+{
+	/* TERM_DARK */
+	TERM_DARK,
+
+	/* TERM_WHITE */
+	TERM_SLATE,
+
+	/* TERM_SLATE */
+	TERM_L_DARK,
+
+	/* TERM_ORANGE */
+	TERM_UMBER,
+
+	/* TERM_RED */
+	TERM_RED,
+
+	/* TERM_GREEN */
+	TERM_GREEN,
+
+	/* TERM_BLUE */
+	TERM_BLUE,
+
+	/* TERM_UMBER */
+	TERM_RED,
+
+	/* TERM_L_DARK */
+	TERM_L_DARK,
+
+	/* TERM_L_WHITE */
+	TERM_SLATE,
+
+	/* TERM_VIOLET */
+	TERM_BLUE,
+
+	/* TERM_YELLOW */
+	TERM_ORANGE,
+
+	/* TERM_L_RED */
+	TERM_L_RED,
+
+	/* TERM_L_GREEN */
+	TERM_GREEN,
+
+	/* TERM_L_BLUE */
+	TERM_L_BLUE,
+
+	/* TERM_L_UMBER */
+	TERM_UMBER
+};
+
+
 
 #ifdef VARIABLE_PLAYER_GRAPH
 static void variable_player_graph(byte *a, char *c)
@@ -926,7 +972,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	byte a;
 	byte c;
 
-	bool feat_ascii;
+	bool feat_not_ascii;
 	s16b halluc = p_ptr->image;
 
 	/* Get the cave */
@@ -963,24 +1009,26 @@ void map_info(int y, int x, byte *ap, char *cp)
 			/* It's not in view? */
 			if ((!(info & CAVE_VIEW)) && view_bright_lite)
 			{
-				if (is_ascii_graphics(c, a))
+				/* If is ascii graphics */
+				if (!(a & 0x80))
 				{
 					/* Use darkened colour */
-					a = lighting_colours[a][1];
+					a = darking_colours[a];
 				}
 				else if (use_transparency && feat_supports_lighting[feat])
 				{
 					/* Use a dark tile */
 					c++;
 				}
+				
 			}
 			else if ((info & CAVE_LITE) && view_yellow_lite)
-				{
+			{
 				/* Use the torch effect */
-				if (is_ascii_graphics(c, a))
+				if (!(a & 0x80))
 				{
 					/* Use bright colour */
-					a = lighting_colours[a][0];
+					a = lighting_colours[a];
 				}
 				else if (use_transparency && feat_supports_lighting[feat])
 				{
@@ -1053,22 +1101,22 @@ void map_info(int y, int x, byte *ap, char *cp)
 		{
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-			feat_ascii = is_ascii_graphics(c, a);
+			feat_not_ascii = !(a & 0x80);
 
 			/* Desired attr */
-			if (!((r_ptr->flags1 & (RF1_ATTR_CLEAR)) && feat_ascii))
+			if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
 			{
 				a = r_ptr->x_attr;
 			}
 
 			/* Desired char */
-			if (!((r_ptr->flags1 & (RF1_CHAR_CLEAR)) && feat_ascii))
+			if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
 			{
 				c = r_ptr->x_char;
 			}
 
 			/* Ignore weird codes + graphics */
-			if ((avoid_other) || (!is_ascii_graphics(c, a)))
+			if ((a & 0x80) || (avoid_other))
 			{
 				/* Do nothing */
 			}
