@@ -128,10 +128,9 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 /*
  * Constants for t_assign.assignType.
  */
-#define ASSIGN_TYPE_ALTERNATE 0
-#define ASSIGN_TYPE_FLAVOR 1
-#define ASSIGN_TYPE_ICON 2
-#define ASSIGN_TYPE_MAX 3
+#define ASSIGN_TYPE_FLAVOR 0
+#define ASSIGN_TYPE_ICON 1
+#define ASSIGN_TYPE_MAX 2
 
 /* One assigned alternate */
 typedef struct t_assign_alternate {
@@ -216,24 +215,6 @@ typedef struct t_flavor {
 extern t_flavor *g_flavor; /* Array of flavor types */
 extern int g_flavor_count; /* Number of flavors */
 extern Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
-
-
-/*
- * Constants for t_alternate.reason.
- */
-#define REASON_NONE			0	/* No reason */
-#define REASON_NUMBER		1	/* Use "second" if only one object in stack */
-#define REASON_IDENT		2	/* Use "second" if object identified */
-#define REASON_FEATURE 3 /* Use "second" icon for door/pillar */
-
-typedef struct t_alternate {
-	int reason; /* Reason code */
-	int count; /* Number of icons */
-	IconSpec *icon; /* The icons */
-} t_alternate;
-
-extern t_alternate *g_alternate; /* Array of "alternate" info */
-extern int g_alternate_count; /* Number of elements in g_alternate[] array */
 
 /* g_effect[EFFECT_SPELL_BALL/BOLT].icon index */
 enum {

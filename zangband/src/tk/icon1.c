@@ -21,8 +21,6 @@ int g_grid_xtra_init = 0;
 t_flavor *g_flavor = NULL; /* Array of flavor types */
 int g_flavor_count = 0; /* Number of flavors */
 Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
-t_alternate *g_alternate; /* Array of alternate icon info */
-int g_alternate_count;  /* Number of elems in g_alternate[] array */
 t_effect *g_effect; /* Array of effect icon info */
 int *g_background = NULL;
 
@@ -184,49 +182,13 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 		/*
 		 * Now we have the assignment for the character, monster, or object.
-		 * The assignment may be TYPE_ALTERNATE, or TYPE_FLAVOR, which we
+		 * The assignment may be TYPE_FLAVOR, which we
 		 * must resolve into a "real" icon type and
 		 * index (for example, the current frame of a sprite).
-		 *
-		 * XXX TYPE_ALTERNATE is currently used only for objects and
-		 * features, but feature assignments must already be resolved
-		 * in set_grid_assign(). That's why TYPE_ALTERNATE is only
-		 * checked for objects (see above).
 		 */
 	
 		switch (assign.assignType)
-		{
-			/*
-			 * TYPE_ALTERNATE assignments use one of two icons,
-			 * depending on some property of the object.
-			 */
-			case ASSIGN_TYPE_ALTERNATE:
-			{
-				/* Access the alternate */
-				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-		
-				/* Default to the first frame */
-				int index = 0;
-				
-				switch (alternatePtr->reason)
-				{
-					case REASON_NONE:
-						break;
-		
-					case REASON_NUMBER:
-						if (o_ptr->number == 1) ++index;
-						break;
-					
-					case REASON_IDENT:
-						if (object_known_p(o_ptr)) ++index;
-						break;
-				}
-		
-				/* Get the type and index of the frame */
-				iconSpec = alternatePtr->icon[index];
-				break;
-			}
-	
+		{	
 			/* Resolve flavor */
 			case ASSIGN_TYPE_FLAVOR:
 			{
@@ -325,15 +287,13 @@ void get_display_info(int y, int x, t_display *displayPtr)
 /*
  * This routine determines the icon to use for the given cave
  * location. It is called after the dungeon is created or loaded
- * from the savefile, and whenever a feature changes. It handles
- * the possible TYPE_ALTERNATE assignments used to display doors.
+ * from the savefile, and whenever a feature changes.
  * It handles any special vault icons as well.
  */
 void set_grid_assign(int y, int x)
 {
 	int feat = area(x, y)->feat;
 	t_assign assign;
-	IconSpec iconSpec;
 	int layer;
 
 	/* The dungeon isn't ready yet */
@@ -344,41 +304,6 @@ void set_grid_assign(int y, int x)
 
 	/* Get the assignment for this feature */
 	assign = g_assign[ASSIGN_FEATURE].assign[feat];
-
-	if (assign.assignType == ASSIGN_TYPE_ALTERNATE)
-	{
-		/* This is a door */
-		if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) || (feat == FEAT_CLOSED))
-		{
-			/* The reason must be REASON_FEATURE */
-			t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-
-			/* Index 0 is horizontal door, 1 is vertical door */
-			iconSpec = alternatePtr->icon[0];
-
-			assign.assignType = ASSIGN_TYPE_ICON;
-			assign.icon.type = iconSpec.type;
-			assign.icon.index = iconSpec.index;
-			assign.icon.ascii = iconSpec.ascii;
-		}
-	
-		/* This is a granite wall, or a magma/quartz stream */
-		/* Note: INNER/OUTER/SOLID granite mimics EXTRA */
-		else if ((feat == FEAT_WALL_EXTRA) || (feat == FEAT_MAGMA) ||
-			(feat == FEAT_QUARTZ))
-		{
-			/* The reason must be REASON_FEATURE */
-			t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-	
-			/* Index 0 is normal granite wall, 1 is pillar */
-			iconSpec = alternatePtr->icon[0];
-
-			assign.assignType = ASSIGN_TYPE_ICON;
-			assign.icon.type = iconSpec.type;
-			assign.icon.index = iconSpec.index;
-			assign.icon.ascii = iconSpec.ascii;
-		}
-	}
 
 	/* Remember the icon in the global icon map */
 	g_icon_map[ICON_LAYER_1][y][x] = assign;
@@ -392,40 +317,6 @@ void set_grid_assign(int y, int x)
 
 		feat = g_background[feat];
 		assign = g_assign[ASSIGN_FEATURE].assign[feat];
-
-		if (assign.assignType == ASSIGN_TYPE_ALTERNATE)
-		{
-			/* This is a door */
-			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) || (feat == FEAT_CLOSED))
-			{
-				/* The reason must be REASON_FEATURE */
-				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-	
-				/* Index 0 is horizontal door, 1 is vertical door */
-				iconSpec = alternatePtr->icon[0];
-
-				assign.assignType = ASSIGN_TYPE_ICON;
-				assign.icon.type = iconSpec.type;
-				assign.icon.index = iconSpec.index;
-				assign.icon.ascii = iconSpec.ascii;
-			}
-		
-			/* This is an "inner" granite wall, or a magma/quartz stream */
-			else if ((feat == FEAT_WALL_INNER) || (feat == FEAT_MAGMA) ||
-				(feat == FEAT_QUARTZ))
-			{
-				/* The reason must be REASON_FEATURE */
-				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-		
-				/* Index 0 is normal granite wall, 1 is pillar */
-				iconSpec = alternatePtr->icon[0];
-
-				assign.assignType = ASSIGN_TYPE_ICON;
-				assign.icon.type = iconSpec.type;
-				assign.icon.index = iconSpec.index;
-				assign.icon.ascii = iconSpec.ascii;
-			}
-		}
 
 		/* Swap foreground & background */
 		g_icon_map[ICON_LAYER_1][y][x] = assign;
@@ -450,40 +341,6 @@ void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_
 {
 	switch (assignPtr->assignType)
 	{
-		case ASSIGN_TYPE_ALTERNATE:
-		{
-			t_alternate *alternatePtr = &g_alternate[assignPtr->alternate.index];
-			int index = 1;
-
-			/* An object */
-			if (o_ptr)
-			{
-				switch (alternatePtr->reason)
-				{
-					case REASON_NUMBER:
-						if (o_ptr->number != 1) index = 0;
-						break;
-					
-					case REASON_IDENT:
-						if (!object_known_p(o_ptr)) index = 0;
-						break;
-				}
-			}
-
-			/* XXX Hack -- Vault wants first icon */
-			else if (hack == 1)
-			{
-				index = 0;
-			}
-			(*iconOut) = alternatePtr->icon[index];
-#if 0
-			iconOut->type = alternatePtr->icon[1].type;
-			iconOut->index = alternatePtr->icon[1].index;
-			iconOut->ascii = alternatePtr->icon[1].ascii;
-#endif
-			break;
-		}
-
 		case ASSIGN_TYPE_FLAVOR:
 		{
 			t_flavor *flavorPtr = &g_flavor[assignPtr->flavor.group];
