@@ -90,8 +90,6 @@ s16b max_wid;
 obj_theme dun_theme;	/* Current dungeon object theme */
 s16b num_repro;			/* Current reproducer count */
 
-bool mon_fight;			/* Monster fighting indicator */
-
 s16b object_level;		/* Current object creation level */
 s16b monster_level;		/* Current monster creation level */
 s16b base_level;        /* Base dungeon level */
@@ -943,8 +941,4 @@ bool monster_terrain_sensitive = TRUE;
 
 int mutant_regenerate_mod = 100;
 
-/*
- * A flag for skipping the "--more--" prompt
- */
-bool skip_more = FALSE;
 

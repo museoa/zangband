@@ -221,7 +221,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 				/* Unseen death by normal attack */
 				if (!seen)
 				{
-					mon_fight = TRUE;
+					p_ptr->mon_fight = TRUE;
 				}
 				/* Death by special attack */
 				else if (note)
@@ -1316,7 +1316,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 	if (!see_either && known)
 	{
-		mon_fight = TRUE;
+		p_ptr->mon_fight = TRUE;
 	}
 
 	/* Scan through all four blows */
@@ -1882,7 +1882,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		}
 		else if (known)
 		{
-			mon_fight = TRUE;
+			p_ptr->mon_fight = TRUE;
 		}
 
 		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
@@ -3041,7 +3041,7 @@ void process_monsters(int min_energy)
 	friend_align = 0;
 
 	/* Clear monster fighting indicator */
-	mon_fight = FALSE;
+	p_ptr->mon_fight = FALSE;
 
 	/* Memorize old race */
 	old_monster_race_idx = p_ptr->monster_race_idx;

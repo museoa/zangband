@@ -1505,6 +1505,10 @@ struct player_type
 	/* Options */
 	bool options[OPT_PLAYER];
 	bool birth[OPT_BIRTH];
+	
+	/* Extra player-specific flags */
+	bool skip_more;		/* Skip the --more-- prompt */
+	bool mon_fight;			/* Monster fighting indicator */
 };
 
 

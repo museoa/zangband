@@ -117,7 +117,6 @@ extern s16b min_wid;
 extern s16b max_wid;
 extern obj_theme dun_theme;
 extern s16b num_repro;
-extern bool mon_fight;
 extern s16b object_level;
 extern s16b monster_level;
 extern s16b base_level;
@@ -325,7 +324,6 @@ extern int init_flags;
 extern int highscore_fd;
 extern bool monster_terrain_sensitive;
 extern int mutant_regenerate_mod;
-extern bool skip_more;
 
 /* birth.c */
 extern void player_birth(void);

@@ -2443,7 +2443,7 @@ static void msg_flush(int x)
 	/* Hack -- fake monochrome */
 	if (!use_color || ironman_moria) a = TERM_WHITE;
 
-	if (!skip_more)
+	if (!p_ptr->skip_more)
 	{
 		/* Pause for response */
 		Term_putstr(x, 0, -1, a, "-more-");
@@ -2456,7 +2456,7 @@ static void msg_flush(int x)
                         if (cmd == ESCAPE)
 			{
 				/* Skip all the prompt until player's turn */
-				skip_more = TRUE;	
+				p_ptr->skip_more = TRUE;	
 				break;
 			}
 
@@ -3053,7 +3053,7 @@ bool get_check(cptr prompt)
 	char buf[80];
 
 	/* Do not skip */
-	skip_more = FALSE;
+	p_ptr->skip_more = FALSE;
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
@@ -3292,7 +3292,7 @@ void request_command(int shopping)
 			msg_flag = FALSE;
 
 			/* Reset the skip_more flag */
-			skip_more = FALSE;
+			p_ptr->skip_more = FALSE;
 
 			/* Activate "command mode" */
 			inkey_flag = TRUE;

@@ -2649,7 +2649,7 @@ void take_hit(int damage, cptr hit_from)
 	p_ptr->window |= (PW_PLAYER);
 
 	/* Do not skip the message */
-	skip_more = FALSE;
+	p_ptr->skip_more = FALSE;
 
 	if (pen_invuln)
 		msg_print("The attack penetrates your shield of invulnerability!");

@@ -947,7 +947,7 @@ static void process_world(void)
 			do_cmd_save_game(TRUE);
 	}
 
-	if (mon_fight)
+	if (p_ptr->mon_fight)
 	{
 		msg_print("You hear noise.");
 	}
