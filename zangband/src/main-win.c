@@ -3425,9 +3425,6 @@ static void process_menus(WORD wCmd)
 
 				/* React to changes */
 				Term_xtra_win_react();
-				
-				/* Fields have to notice the change. */
-				init_fields();
 
 				/* Hack -- Force redraw */
 				Term_key_push(KTRL('R'));
@@ -3453,9 +3450,6 @@ static void process_menus(WORD wCmd)
 				/* React to changes */
 				Term_xtra_win_react();
 				
-				/* Fields have to notice the change. */
-				init_fields();
-
 				/* Hack -- Force redraw */
 				Term_key_push(KTRL('R'));
 			}
@@ -3480,9 +3474,6 @@ static void process_menus(WORD wCmd)
 				/* React to changes */
 				Term_xtra_win_react();
 				
-				/* Fields have to notice the change. */
-				init_fields();
-
 				/* Hack -- Force redraw */
 				Term_key_push(KTRL('R'));
 			}
