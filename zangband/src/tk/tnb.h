@@ -126,7 +126,6 @@ extern void angtk_flavor_init(int *max, byte **attr);
 extern void angtk_flavor_swap(int n, int a, int b);
 
 /* Constants for g_feat_flag[] */
-#define FEAT_FLAG_BORING 0x01 /* Feature is optionally memorized */
 #define FEAT_FLAG_TOWN 0x02 /* Feature uses lighting in the town */
 
 extern byte *g_feat_flag;

@@ -142,7 +142,6 @@ void angtk_view_wall(int y, int x, int info, int torch)
 void get_grid_info(int y, int x, t_grid *gridPtr)
 {
 	byte feat;
-	byte info;
 
 	object_type *o_ptr;
 
@@ -178,51 +177,8 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 		return;
 	}
 
-	/* Cave flags */
-	info = area(x, y)->info;
-#if 0
-	/* Boring grids (floors, etc) */
-	if (g_feat_flag[feat] & FEAT_FLAG_BORING)
-	{
-
-		/* Memorized (or seen) floor */
-		if ((info & (CAVE_MARK)) ||
-		    (((info & (CAVE_LITE)) ||
-		      ((info & (CAVE_GLOW)) &&
-		       (info & (CAVE_VIEW)))) &&
-		     !p_ptr->blind))
-		{
-
-			/* Remember the feature index */
-			gridPtr->f_idx = feat;
-		}
-
-		/* Unknown */
-		else
-		{
-			/* Nothing */
-		}
-	}
-
-	/* Interesting grids (non-floors) */
-	else
-	{
-		/* Memorized grids */
-		if (info & (CAVE_MARK))
-		{
-#endif /* 0 */
-			/* Remember the feature index */
-			gridPtr->f_idx = feat;
-#if 0
-		}
-
-		/* Unknown */
-		else
-		{
-			/* Nothing */
-		}
-	}
-#endif /* 0 */
+	/* Remember the feature index */
+	gridPtr->f_idx = parea(x, y)->feat;
 
 	/* Objects */
 	OBJ_ITT_START (area(x, y)->o_idx, o_ptr)
