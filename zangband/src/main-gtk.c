@@ -125,9 +125,10 @@ static infoclr colours[256];
 
 #ifdef USE_GRAPHICS
 static GdkImage *tiles_norm;
-static int tile_size;
+static int xsize;
+static int ysize;
 
-static GdkColor black_pixel;
+static guint32 black_pixel;
 #endif /* USE_GRAPHICS */
 
 /*
@@ -233,6 +234,7 @@ static errr Term_xtra_gtk_react(void)
 	/* Success */
 	return (0);
 }
+
 
 /*
  * Erase the whole term.
@@ -442,7 +444,7 @@ static void ReadBMP(char *Name)
 				gdk_image_destroy(tiles_norm);
 				
 				/* Hack - clear tiles */
-				tile_norm = NULL;
+				tiles_norm = NULL;
 				return;
 			}	
 				
@@ -460,7 +462,7 @@ static void ReadBMP(char *Name)
 					gdk_image_destroy(tiles_norm);
 				
 					/* Hack - clear tiles */
-					tile_norm = NULL;
+					tiles_norm = NULL;
 					return;
 				}	
 							
@@ -475,7 +477,7 @@ static void ReadBMP(char *Name)
 					gdk_image_destroy(tiles_norm);
 				
 					/* Hack - clear tiles */
-					tile_norm = NULL;
+					tiles_norm = NULL;
 					return;
 				}
 				
@@ -495,14 +497,14 @@ static void ReadBMP(char *Name)
 			else
 			{
 				/* Technically 1 bit is legal too */
-				plot_fmt("Illegal biBitCount %d in %s",
+				plog_fmt("Illegal biBitCount %d in %s",
 				         infoheader.biBitCount, Name);
 				{
 					/* Delete reference to image */
 					gdk_image_destroy(tiles_norm);
 				
 					/* Hack - clear tiles */
-					tile_norm = NULL;
+					tiles_norm = NULL;
 					return;
 				}
 			}
@@ -602,8 +604,8 @@ static GdkImage *resize_tiles(int tile_wid, int tile_hgt)
 	int old_hgt = tiles_norm->height;
 
 	/* Get the size of the new image */
-	int new_wid = (old_wid / tile_size) * tile_wid;
-	int new_hgt = (old_hgt / tile_size) * tile_hgt;
+	int new_wid = (old_wid / xsize) * tile_wid;
+	int new_hgt = (old_hgt / ysize) * tile_hgt;
 	
 	GdkImage *new_image = gdk_image_new(GDK_IMAGE_FASTEST,
 						 gdk_visual_get_system(), new_wid, new_hgt);	
@@ -859,12 +861,15 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 		}
 		else
 		{
+			/* Mega Hack^2 - assume the top left corner is "black" */
+			blank = gdk_image_get_pixel(td->tiles, 0, td->font_hgt * 6);
+			
 			for (k = 0; k < td->font_wid; k++)
 			{
 				for (l = 0; l < td->font_hgt; l++)
 				{
 					/* If mask set... */
-					if ((pixel = gdk_image_get_pixel(td->tiles, x1 + k, y1 + l)) == black_pixel)
+					if ((pixel = gdk_image_get_pixel(td->tiles, x1 + k, y1 + l)) == blank)
 					{
 						/* Output from the terrain */
 						pixel = gdk_image_get_pixel(td->tiles, x2 + k, y2 + l);
@@ -991,6 +996,30 @@ static errr Term_xtra_gtk(int n, int v)
 }
 
 /*
+ * Make sure the pixmap is correctly allocated
+ * for the size of the window
+ */
+static void init_pixmap(term_data *td)
+{
+	if (td->pixmap)
+	{
+		/* Delete the old pixmap */
+		gdk_pixmap_unref(td->pixmap);	
+	}
+	
+	/* Create a pixmap as buffer for screenupdates */
+	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
+					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
+	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap",
+			 td->pixmap);
+	
+	/* Clear the pixmap */
+	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
+		                0, 0,
+		                td->cols * td->font_wid, td->rows * td->font_hgt);
+}
+
+/*
  * Display message in a modal dialog
  */
 static void gtk_message(cptr msg)
@@ -1025,95 +1054,38 @@ static void gtk_message(cptr msg)
 }
 
 
-static void save_game_gtk(void)
+static void set_size_hints(term_data *td)
 {
-	if (game_in_progress && character_generated)
+	GdkGeometry win_geom;
+	
+	/* Main window? */
+	if (td == &data[0])
 	{
-		if (!inkey_flag)
-		{
-			plog("You may not do that right now.");
-			return;
-		}
-
-		/* Hack -- Forget messages */
-		msg_flag = FALSE;
-
-		/* Save the game */
-#ifdef ZANGBAND
-		do_cmd_save_game(FALSE);
-#else /* ZANGBAND */
-		do_cmd_save_game();
-#endif /* ZANGBAND */
-	}
-}
-
-static void cleanup_angband (void)
-{
-	/* Do nothing, because zangband doesn't have this yet. */
-}
-
-/*
- * Hook to tell the user something important
- */
-static void hook_plog(cptr str)
-{
-	/* Warning message */
-	gtk_message(str);
-}
-
-/*
- * Quit hook when exiting the game
- */
-static void hook_quit(cptr str)
-{
-	/* Hack - Ignore parameter */
-	(void) str;
-	
-	gtk_exit(0);
-}
-
-
-static void quit_event_handler(GtkButton *was_clicked, gpointer user_data)
-{
-	/* Hack - Ignore parameters */
-	(void) was_clicked;
-	(void) user_data;
-
-	save_game_gtk();
-
-	quit(NULL);
-}
-
-
-static void destroy_event_handler(GtkButton *was_clicked, gpointer user_data)
-{
-	/* Hack - Ignore parameters */
-	(void) was_clicked;
-	(void) user_data;
-	
-	cleanup_angband();
-	
-	quit(NULL);
-}
-
-
-static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
-{
-	/* Hack - Ignore parameters */
-	(void) was_clicked;
-	(void) user_data;
-	
-	if (!game_in_progress)
-	{
-		/* Continue into angband code */
-		game_in_progress = TRUE;
-
-		/* Start a new game */
-		gtk_newgame = TRUE;
+		/* Initialize the geometry information */
+		win_geom.width_inc = td->font_wid;
+		win_geom.height_inc = td->font_hgt;
+		win_geom.min_width = 80 * td->font_wid;
+		win_geom.min_height = 24 * td->font_hgt;
+		win_geom.max_width = 255 * td->font_wid;
+		win_geom.max_height = 255 * td->font_hgt;
+		gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
+					 td->drawing_area, &win_geom,
+					 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
+					 | GDK_HINT_RESIZE_INC);
 	}
 	else
 	{
-		plog("You can't start a new game while you're still playing!");
+		/* Initialize the geometry information */
+		win_geom.width_inc = td->font_wid;
+		win_geom.height_inc = td->font_hgt;
+		win_geom.min_width = 1 * td->font_wid;
+		win_geom.min_height = 1 * td->font_hgt;
+		win_geom.max_width = 255 * td->font_wid;
+		win_geom.max_height = 255 * td->font_hgt;
+		gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
+					 td->drawing_area, &win_geom,
+					 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
+					 | GDK_HINT_RESIZE_INC);
 	}
 }
 
@@ -1145,14 +1117,17 @@ static void load_font(term_data *td, cptr fontname)
 static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 {
 	gchar *fontname;
-	GdkGeometry win_geom;
 	
+	term_data *old_td = (term_data*)(Term->data);
 	term_data *td = gtk_object_get_data(GTK_OBJECT(font_selector), "term_data");
 
 	/* Hack - ignore widget */
 	(void) widget;
 	
 	g_assert(td != NULL);
+	
+	/* Hack -- activate current term */
+	Term_activate(&td->t);
 	
 	/* Retrieve font name from player's selection */
 	fontname = gtk_font_selection_dialog_get_font_name(
@@ -1164,44 +1139,37 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	/* Load font and update font size info */
 	load_font(td, fontname);
 	
-	/* Delete the old pixmap */
-	gdk_pixmap_unref(td->pixmap);
+	/* Hack - Hide the window - finally found the trick... */
+	gtk_widget_hide_all(td->window);
 	
-	/* Note - the font-changing only affects the main window */
 #ifdef USE_GRAPHICS
 
-	/* Need to get a new tile image */	
-	gdk_image_destroy(td->tiles);
+	if (use_graphics)
+	{
+		/* Need to get a new tile image */	
+		gdk_image_destroy(td->tiles);
 	
-	/* Resize tiles */
-	td->tiles = resize_tiles(td->font_wid, td->font_hgt);
+		/* Resize tiles */
+		td->tiles = resize_tiles(td->font_wid, td->font_hgt);
 
 #ifdef USE_TRANSPARENCY
 
-	/* Get a new temp */ 
-	gdk_image_destroy(td->temp);
+		/* Get a new temp */ 
+		gdk_image_destroy(td->temp);
 	
-	/* Initialize the transparency temp storage*/			
-	td->temp = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
-				td->font_wid, td->font_hgt);
+		/* Initialize the transparency temp storage*/			
+		td->temp = gdk_image_new(GDK_IMAGE_FASTEST,
+						gdk_visual_get_system(),
+						td->font_wid, td->font_hgt);
 
 #endif /* USE_TRANSPARENCY */
-#endif /* USE_GRAPHICS */	
+	}
+#endif /* USE_GRAPHICS */
+
+	init_pixmap(td);
 		
-	/* Create a pixmap as buffer for screenupdates */
-	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
-					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
-	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
-	
-	/* Clear the pixmap */
-	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
-		                0, 0,
-		                td->cols * td->font_wid, td->rows * td->font_hgt);
-						
-	/* Copy it to the window */
-	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                0, 0, 0, 0,
-					td->cols * td->font_wid, td->rows * td->font_hgt);
+	/* Recalculate size hints */	
+	set_size_hints(td);
 	
 	/* Show the widgets */
 	gtk_widget_show_all(td->window);
@@ -1212,18 +1180,6 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	gtk_window_set_default_size(GTK_WINDOW(td->window),
 				 td->cols * td->font_wid, td->rows * td->font_hgt);
 	
-	/* Initialize the geometry information */
-	win_geom.width_inc = td->font_wid;
-	win_geom.height_inc = td->font_hgt;
-	win_geom.min_width = 80 * td->font_wid;
-	win_geom.min_height = 24 * td->font_hgt;
-	win_geom.max_width = 255 * td->font_wid;
-	win_geom.max_height = 255 * td->font_hgt;
-	gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
-				 td->drawing_area, &win_geom,
-				 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
-				 | GDK_HINT_RESIZE_INC);
-	
 	/* Redraw the term */
 	Term_redraw();
 	
@@ -1231,6 +1187,9 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
 	                0, 0, 0, 0,
 					td->cols * td->font_wid, td->rows * td->font_hgt);
+	
+	/* Hack -- Activate the old term */
+	Term_activate(&old_td->t);
 }
 
 
@@ -1302,6 +1261,39 @@ static void term_event_handler(GtkWidget *widget, gpointer user_data)
 		gtk_widget_show_all(td->window);
 	}
 }
+
+
+/*
+ * Widget customisation (for drawing area) - "realize" signal
+ *
+ * In this program, called when window containing the drawing
+ * area is shown first time.
+ */
+static void realize_event_handler(GtkWidget *widget, gpointer user_data)
+{
+	term_data *td = (term_data *)user_data;
+	
+	/* Paranoia */
+	g_assert(td->drawing_area->window != 0);
+
+	/* Create graphic context */
+	td->gc = gdk_gc_new(td->drawing_area->window);
+
+	/* Set foreground and background colours - isn't bg used at all? */
+	gdk_gc_set_background(td->gc, &colours[TERM_DARK].pixel);
+	gdk_gc_set_foreground(td->gc, &colours[TERM_WHITE].pixel);
+	
+	/* resize the pixmap */
+	init_pixmap(td);
+	
+
+	/* Clear the window */
+	gdk_draw_rectangle(widget->window, widget->style->black_gc,
+		TRUE, 0, 0,
+		td->cols * td->font_wid,
+		td->rows * td->font_hgt);
+}
+
 
 /*
  * Widget customisation (for drawing area) - "show" signal
@@ -1406,7 +1398,7 @@ static void graf_nuke(void)
 		td = &data[i];
 
 		/* Free previously allocated tiles */
-		if (td->tiles) gdk_rgb_image_destroy(td->tiles);
+		if (td->tiles) gdk_image_destroy(td->tiles);
 
 		/* Forget pointer */
 		td->tiles = NULL;
@@ -1414,7 +1406,7 @@ static void graf_nuke(void)
 # ifdef USE_TRANSPARENCY
 
 		/* Free previously allocated transparency buffer */
-		if (td->temp) gdk_rgb_image_destroy(td->temp);
+		if (td->temp) gdk_image_destroy(td->temp);
 
 		/* Forget stale pointer */
 		td->temp = NULL;
@@ -1434,11 +1426,13 @@ static void graf_init(void)
 	term_data *td;
 	term *t;
 	
+	if (!tiles_norm) quit("Error - no tiles yet!");
+	
 	/* Mega Hack^2 - assume the top left corner is "black" */
-	black_pixel = gdk_image_get_pixel(tiles, 0, tile_size * 6);
+	black_pixel = gdk_image_get_pixel(tiles_norm, 0, ysize * 6);
 	
 	/* Initialize the windows */
-	for (i = 0; i < num_term; i++)
+	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
 		td = &data[i];
 		
@@ -1478,10 +1472,10 @@ static bool set_graph_mode(int graphmode)
 	int old_mode = use_graphics;
 	
 	/* See if can change tiles */
-	if (!pick_graphics(graphmode, &tile_size, filename))
+	if (!pick_graphics(graphmode, &xsize, &ysize, filename))
 	{
 		/* Revert to the old settings */
-		pick_graphics(old_mode, &tile_size, filename);
+		pick_graphics(old_mode, &xsize, &ysize, filename);
 	
 		/* Failed */
 		return FALSE;
@@ -1493,16 +1487,14 @@ static bool set_graph_mode(int graphmode)
 	/* Init the new graphics */
 	graf_init();
 	
-	
-
-
-
 	/* Destroy old tiles */
 	if (tiles_back)
 	{
-		gdk_rgb_image_destroy(tiles_back);
+		gdk_image_destroy(tiles_back);
 	}
 
+	/* Success! */
+	return (TRUE);
 }
 
 
@@ -1517,14 +1509,11 @@ static void change_graf_mode_event_handler(GtkButton *was_clicked,
 	(void) was_clicked;
 	
 	/* Set request according to user selection */
-	if ((int)user_data != graf_mode)
+	if ((int)user_data != use_graphics)
 	{
 		/* Try to set mode */
 		if (set_graph_mode((int)user_data))
 		{
-			/* Change setting */
-			use_graphics = arg_graphics;
-			
 			/* Reset visuals */
 #ifdef ANGBAND_2_8_1
 			reset_visuals();
@@ -1559,20 +1548,6 @@ static void change_trans_mode_event_handler(GtkButton *was_clicked,
 
 #endif /* USE_GRAPHICS */
 
-
-static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event,
-										gpointer user_data)
-{
-	/* Hack - ignore parameters */
-	(void) widget;
-	(void) event;
-	(void) user_data;
-	
-	save_game_gtk();
-
-	/* Don't prevent closure */
-	return (FALSE);
-}
 
 
 static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
@@ -1722,6 +1697,76 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
 }
 
 
+/*
+ * Widget customisation (for drawing area)- handle size allocation requests
+ */
+static void size_allocate_event_handler(GtkWidget *widget, 
+	GtkAllocation *allocation, gpointer user_data)
+{
+	term_data *td = user_data;
+	int old_rows, old_cols;
+	term_data *old_data = (term_data*)(Term->data);
+
+	/* Paranoia */
+	g_return_if_fail(widget != NULL);
+	g_return_if_fail(allocation != NULL);
+	g_return_if_fail(td != NULL);
+
+	/* Remember old values */
+	old_cols = td->cols;
+	old_rows = td->rows;
+
+	/* Update numbers of rows and columns */
+	td->cols = (allocation->width + td->font_wid - 1) / td->font_wid;
+	td->rows = (allocation->height + td->font_hgt - 1) / td->font_hgt;
+
+	/* Adjust size request and set it */
+	allocation->width = td->cols * td->font_wid;
+	allocation->height = td->rows * td->font_hgt;
+	widget->allocation = *allocation;
+	
+	/* Check height and width - and then resize */
+	if ((old_cols != td->cols) || (old_rows != td->rows))
+	{
+		/* Resize pixmap */
+		init_pixmap(td);
+		
+		/* Hack -- activate the Term */
+		Term_activate(&td->t);
+		
+		/* Resize the Term (if needed) */
+		(void)Term_resize(td->cols, td->rows);
+		
+		/* Hack -- Activate the old term */
+		Term_activate(&old_data->t);
+	}
+
+	/* Widget is realized, so we do some drawing works */
+	if (GTK_WIDGET_REALIZED(widget))
+	{
+		/* Copy the data to the window */
+		gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+	                0, 0, 0, 0,
+					td->cols * td->font_wid, td->rows * td->font_hgt);
+		
+		/* Actually handles resizing in Gtk */
+		gdk_window_move_resize(widget->window,
+			allocation->x, allocation->y,
+			allocation->width, allocation->height);
+
+		/* And in the term package */
+		Term_activate(&td->t);
+
+		/* Resize if necessary */
+		if ((td->cols != old_cols) || (td->rows != old_rows))
+			(void)Term_resize(td->cols, td->rows);
+			
+		/* Hack -- Activate the old term */
+		Term_activate(&old_data->t);
+	}
+}
+
+
 static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 				 gpointer user_data)
 {
@@ -1747,15 +1792,8 @@ static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 		td->cols = width;
 		td->rows = height;
 		
-		/* Create a pixmap as buffer for screenupdates */
-		td->pixmap = gdk_pixmap_new(td->drawing_area->window,
-						 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
-		gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
-	
-		/* Clear the pixmap */
-		gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
-			                0, 0,
-		    	            td->cols * td->font_wid, td->rows * td->font_hgt);
+		/* Resize pixmap */
+		init_pixmap(td);
 		
 		/* Copy the data to the window */
 		gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
@@ -1788,6 +1826,113 @@ static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 
 
 /*
+ * Find widget corresponding to path name
+ * return NULL on error
+ */
+static GtkWidget *get_widget_from_path(cptr path)
+{
+	GtkItemFactory *item_factory;
+	GtkWidget *widget;
+
+	/* Paranoia */
+	if (path == NULL) return (NULL);
+
+	/* Look up item factory */
+	item_factory = gtk_item_factory_from_path(path);
+
+	/* Paranoia */
+	g_assert(item_factory != NULL);
+
+	/* Look up widget */
+	widget = gtk_item_factory_get_widget(item_factory, path);
+	
+	if (!widget) plog(path);
+
+	/* Return result */
+	return (widget);
+}
+
+
+/*
+ * Enable/disable a menu item
+ */
+void enable_menu_item(cptr path, bool enabled)
+{
+	GtkWidget *widget;
+
+	/* Access menu item widget */
+	widget = get_widget_from_path(path);
+
+	/* Paranoia */
+	g_assert(widget != NULL);
+	g_assert(GTK_IS_MENU_ITEM(widget));
+
+	/*
+	 * In Gtk's terminology, enabled is sensitive
+	 * and disabled insensitive
+	 */
+	gtk_widget_set_sensitive(widget, enabled);
+}
+
+
+/*
+ * Check/uncheck a menu item. The item should be of the GtkCheckMenuItem type
+ */
+void check_menu_item(cptr path, bool checked)
+{
+	GtkWidget *widget;
+
+	/* Access menu item widget */
+	widget = get_widget_from_path(path);
+
+	/* Paranoia */
+	g_assert(widget != NULL);
+	g_assert(GTK_IS_CHECK_MENU_ITEM(widget));
+
+	/* Put/remove check mark
+	 *
+	 * Mega-Hack -- The function supposed to be used here,
+	 * gtk_check_menu_item_set_active(), emits an "activate" signal
+	 * to the GtkMenuItem class of the widget, as if the menu item
+	 * were selected by user, thereby causing bizarre behaviour.
+	 * XXX XXX XXX
+	 */
+	GTK_CHECK_MENU_ITEM(widget)->active = checked;
+}
+
+
+/*
+ * Update the "File" menu
+ */
+static void file_menu_update_handler(GtkWidget *widget, gpointer user_data)
+{
+	bool save_ok = FALSE;
+	bool quit_ok = FALSE;
+	bool start_ok = !gtk_newgame;
+
+	/* Cave we save/quit now? */
+	if (!character_generated || !game_in_progress)
+	{
+		quit_ok = TRUE;
+	}
+	else
+	{
+		if (inkey_flag && game_in_progress && character_generated)
+		{
+			save_ok = TRUE;
+			quit_ok = TRUE;
+		}
+	}
+
+	/* Enable / disable menu items according to those conditions */
+	enable_menu_item("<Angband>/File/New", start_ok);
+	enable_menu_item("<Angband>/File/Open", start_ok);
+	enable_menu_item("<Angband>/File/Save", save_ok);
+	enable_menu_item("<Angband>/File/Quit", quit_ok);
+}
+
+
+/*
  * Update the "Terms" menu
  */
 static void term_menu_update_handler(GtkWidget *widget, gpointer user_data)
@@ -1799,13 +1944,503 @@ static void term_menu_update_handler(GtkWidget *widget, gpointer user_data)
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
 		/* Build the path name */
-		strnfmt(buf, 64, "<Angband>/Terms/%s", data[i].name);
+		strnfmt(buf, 64, "<Angband>/Terms/%s", angband_term_name);
 
 		/* Update the check mark on the item */
 		check_menu_item(buf, data[i].shown);
 	}
 }
 
+
+/*
+ * Update the "Font" submenu
+ */
+static void font_menu_update_handler(GtkWidget *widget, gpointer user_data)
+{
+	int i;
+	char buf[64];
+
+	/* For each term */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		/* Build the path name */
+		strnfmt(buf, 64, "<Angband>/Options/Font/%s", angband_term_name);
+
+		/* Enable selection if the term is shown */
+		enable_menu_item(buf, data[i].shown);
+	}
+}
+
+
+#ifdef USE_GRAPHICS
+
+/*
+ * Update the "Graphics" submenu
+ */
+static void graf_menu_update_handler(GtkWidget *widget, gpointer user_data)
+{
+	/* Update menu items */
+	check_menu_item(
+		"<Angband>/Options/Graphics/None",
+		(use_graphics == GRAPHICS_NONE));
+	check_menu_item(
+		"<Angband>/Options/Graphics/Old",
+		(use_graphics == GRAPHICS_ORIGINAL));
+	check_menu_item(
+		"<Angband>/Options/Graphics/New",
+		(use_graphics == GRAPHICS_ADAM_BOLT));
+
+# ifdef USE_TRANSPARENCY
+
+	check_menu_item(
+		"<Angband>/Options/Graphics/Transparency",
+		use_transparency);
+
+# endif /* USE_TRANSPARENCY */
+}
+
+#endif /* USE_GRAPHICS */
+
+
+/*
+ * Install callbacks to update menus
+ */
+static void add_menu_update_callbacks(void)
+{
+	GtkWidget *widget;
+
+	/* Access the "File" menu */
+	widget = get_widget_from_path("<Angband>/File");
+
+	/* Paranoia */
+	g_assert(widget != NULL);
+	g_assert(GTK_IS_MENU(widget));
+
+	/* Assign callback */
+	gtk_signal_connect(GTK_OBJECT(widget), "show",
+		GTK_SIGNAL_FUNC(file_menu_update_handler), NULL);
+
+	/* Access the "Terms" menu */
+	widget = get_widget_from_path("<Angband>/Terms");
+
+	/* Paranoia */
+	g_assert(widget != NULL);
+	g_assert(GTK_IS_MENU(widget));
+
+	/* Assign callback */
+	gtk_signal_connect(GTK_OBJECT(widget), "show",
+		GTK_SIGNAL_FUNC(term_menu_update_handler), NULL);
+
+	/* Access the "Font" menu */
+	widget = get_widget_from_path("<Angband>/Options/Font");
+
+	/* Paranoia */
+	g_assert(widget != NULL);
+	g_assert(GTK_IS_MENU(widget));
+
+	/* Assign callback */
+	gtk_signal_connect(GTK_OBJECT(widget), "show",
+		GTK_SIGNAL_FUNC(font_menu_update_handler), NULL);
+
+#ifdef USE_GRAPHICS
+
+	/* Access Graphics menu */
+	widget = get_widget_from_path("<Angband>/Options/Graphics");
+
+	/* Paranoia */
+	g_assert(widget != NULL);
+	g_assert(GTK_IS_MENU(widget));
+
+	/* Assign callback */
+	gtk_signal_connect(GTK_OBJECT(widget), "show",
+		GTK_SIGNAL_FUNC(graf_menu_update_handler), NULL);
+
+#endif /* USE_GRAPHICS */
+}
+
+
+static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
+{
+	/* Hack - Ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+	
+	if (!game_in_progress)
+	{
+		/* Continue into angband code */
+		game_in_progress = TRUE;
+
+		/* Start a new game */
+		gtk_newgame = TRUE;
+	}
+	else
+	{
+		plog("You can't start a new game while you're still playing!");
+	}
+}
+
+
+static void save_game_gtk(void)
+{
+	if (game_in_progress && character_generated)
+	{
+		if (!inkey_flag)
+		{
+			plog("You may not do that right now.");
+			return;
+		}
+
+		/* Hack -- Forget messages */
+		msg_flag = FALSE;
+
+		/* Save the game */
+#ifdef ZANGBAND
+		do_cmd_save_game(FALSE);
+#else /* ZANGBAND */
+		do_cmd_save_game();
+#endif /* ZANGBAND */
+	}
+}
+
+
+/*
+ * Process File-Save menu command
+ */
+static void save_event_handler(GtkButton *was_clicked, gpointer user_data)
+{
+	/* Save current game */
+	save_game_gtk();
+}
+
+
+static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event,
+										gpointer user_data)
+{
+	/* Hack - ignore parameters */
+	(void) widget;
+	(void) event;
+	(void) user_data;
+	
+	save_game_gtk();
+
+	/* Don't prevent closure */
+	return (FALSE);
+}
+
+
+/*
+ * Process File-Quit menu command
+ */
+static void quit_event_handler(GtkButton *was_clicked, gpointer user_data)
+{
+	/* Hack - Ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+
+	save_game_gtk();
+
+	quit(NULL);
+}
+
+
+static void destroy_event_handler(GtkButton *was_clicked, gpointer user_data)
+{
+	/* Hack - Ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+	
+	cleanup_angband();
+	
+	quit(NULL);
+}
+
+
+
+/*
+ * Neater menu code with GtkItemFactory.
+ *
+ * Menu bar of the Angband window
+ *
+ * Entry format: Path, Accelerator, Callback, Callback arg, type
+ * where type is one of:
+ * <Item> - simple item, alias NULL
+ * <Branch> - has submenu
+ * <Separator> - as you read it
+ * <CheckItem> - has a check mark
+ * <ToggleItem> - is a toggle
+ */
+static GtkItemFactoryEntry main_menu_items[] =
+{
+	/* "File" menu */
+	{ "/File", NULL,
+	  NULL, 0, "<Branch>" },
+	{ "/File/New", "<mod1>N",
+	  new_event_handler, 0, NULL },
+	{ "/File/Open", "<mod1>O",
+	  open_event_handler, 0, NULL },
+	{ "/File/sep1", NULL,
+	  NULL, 0, "<Separator>" },
+	{ "/File/Save", "<mod1>S",
+	  save_event_handler, 0, NULL },
+	{ "/File/Quit", "<mod1>Q",
+	  quit_event_handler, 0, NULL },
+
+	/* "Terms" menu */
+	{ "/Terms", NULL,
+	  NULL, 0, "<Branch>" },
+	/* XXX XXX XXX NULL's are replaced by the program */
+	{ NULL, "<mod1>0",
+	  term_event_handler, (guint)&data[0], "<CheckItem>" },
+	{ NULL, "<mod1>1",
+	  term_event_handler, (guint)&data[1], "<CheckItem>" },
+	{ NULL, "<mod1>2",
+	  term_event_handler, (guint)&data[2], "<CheckItem>" },
+	{ NULL, "<mod1>3",
+	  term_event_handler, (guint)&data[3], "<CheckItem>" },
+	{ NULL, "<mod1>4",
+	  term_event_handler, (guint)&data[4], "<CheckItem>" },
+	{ NULL, "<mod1>5",
+	  term_event_handler, (guint)&data[5], "<CheckItem>" },
+	{ NULL, "<mod1>6",
+	  term_event_handler, (guint)&data[6], "<CheckItem>" },
+	{ NULL, "<mod1>7",
+	  term_event_handler, (guint)&data[7], "<CheckItem>" },
+
+	/* "Options" menu */
+	{ "/Options", NULL,
+	  NULL, 0, "<Branch>" },
+
+	/* "Font" submenu */
+	{ "/Options/Font", NULL,
+	  NULL, 0, "<Branch>" },
+	/* XXX XXX XXX Again, NULL's are filled by the program */
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[0], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[1], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[2], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[3], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[4], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[5], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[6], NULL },
+	{ NULL, NULL,
+	  change_font_event_handler, (guint)&data[7], NULL },
+
+#ifdef USE_GRAPHICS
+
+	/* "Graphics" submenu */
+	{ "/Options/Graphics", NULL,
+	  NULL, 0, "<Branch>" },
+	{ "/Options/Graphics/None", NULL,
+	  change_graf_mode_event_handler, GRAPHICS_NONE, "<CheckItem>" },
+	{ "/Options/Graphics/Old", NULL,
+	  change_graf_mode_event_handler, GRAPHICS_ORIGINAL, "<CheckItem>" },
+	{ "/Options/Graphics/New", NULL,
+	  change_graf_mode_event_handler, GRAPHICS_ADAM_BOLT, "<CheckItem>" },
+	{ "/Options/Graphics/sep1", NULL,
+	  NULL, 0, "<Separator>" },
+#ifdef USE_TRANSPARENCY
+	{ "/Options/Graphics/Transparency", NULL,
+	  change_trans_mode_event_handler, 0, "<CheckItem>" },
+#endif /* USE_TRANSPARENCY */
+
+#endif /* USE_GRAPHICS */
+};
+
+
+/*
+ * XXX XXX Fill those NULL's in the menu definition with
+ * angband_term_name[] strings
+ */
+static void setup_menu_paths(void)
+{
+	int i;
+	int nmenu_items = sizeof(main_menu_items) / sizeof(main_menu_items[0]);
+	GtkItemFactoryEntry *term_entry, *font_entry;
+	char buf[64];
+
+	/* Find the "Terms" menu */
+	for (i = 0; i < nmenu_items; i++)
+	{
+		/* Skip NULLs */
+		if (main_menu_items[i].path == NULL) continue;
+
+		/* Find a match */
+		if (streq(main_menu_items[i].path, "/Terms")) break;
+	}
+	g_assert(i < (nmenu_items - MAX_TERM_DATA));
+
+	/* Remember the location */
+	term_entry = &main_menu_items[i + 1];
+
+	/* Find "Font" menu */
+	for (i = 0; i < nmenu_items; i++)
+	{
+		/* Skip NULLs */
+		if (main_menu_items[i].path == NULL) continue;
+
+		/* Find a match */
+		if (streq(main_menu_items[i].path, "/Options/Font")) break;
+	}
+	g_assert(i < (nmenu_items - MAX_TERM_DATA));
+
+	/* Remember the location */
+	font_entry = &main_menu_items[i + 1];
+
+	/* For each terminal */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		/* XXX XXX Build the real path name to the entry */
+		strnfmt(buf, 64, "/Terms/%s", angband_term_name[i]);
+
+		/* XXX XXX Store it in the menu definition */
+		(cptr)term_entry[i].path = string_make(buf);
+
+		/* XXX XXX Build the real path name to the entry */
+		strnfmt(buf, 64, "/Options/Font/%s", angband_term_name[i]);
+
+		/* XXX XXX Store it in the menu definition */
+		(cptr)font_entry[i].path = string_make(buf);
+	}
+}
+
+
+/*
+ * Construct a menu hierarchy using GtkItemFactory, setting up
+ * callbacks and accelerators along the way, and return
+ * a GtkMenuBar widget.
+ */
+GtkWidget *get_main_menu(term_data *td)
+{
+	GtkItemFactory *item_factory;
+	GtkAccelGroup *accel_group;
+	gint nmenu_items = sizeof(main_menu_items) / sizeof(main_menu_items[0]);
+
+
+	/* XXX XXX Setup path names in the "Terms" and "Font" menus */
+	setup_menu_paths();
+
+	/* Allocate an accelerator group */
+	accel_group = gtk_accel_group_new();
+	g_assert(accel_group != NULL);
+
+	/* Initialise the item factory */
+	item_factory = gtk_item_factory_new(
+		GTK_TYPE_MENU_BAR,
+		"<Angband>",
+		accel_group);
+	g_assert(item_factory != NULL);
+
+	/* Generate the menu items */
+	gtk_item_factory_create_items(
+		item_factory,
+		nmenu_items,
+		main_menu_items,
+		NULL);
+
+	/* Attach the new accelerator group to the window */
+	gtk_window_add_accel_group(
+		GTK_WINDOW(td->window),
+		accel_group);
+
+	/* Return the actual menu bar created */
+	return (gtk_item_factory_get_widget(item_factory, "<Angband>"));
+}
+
+
+/*
+ * XXX XXX Free strings allocated by setup_menu_paths()
+ */
+static void free_menu_paths(void)
+{
+	int i;
+	int nmenu_items = sizeof(main_menu_items) / sizeof(main_menu_items[0]);
+	GtkItemFactoryEntry *term_entry, *font_entry;
+
+	/* Find the "Terms" menu */
+	for (i = 0; i < nmenu_items; i++)
+	{
+		/* Skip NULLs */
+		if (main_menu_items[i].path == NULL) continue;
+
+		/* Find a match */
+		if (streq(main_menu_items[i].path, "/Terms")) break;
+	}
+	
+	/* Paranoia */
+	g_assert(i < (nmenu_items - MAX_TERM_DATA));
+
+	/* Remember the location */
+	term_entry = &main_menu_items[i + 1];
+
+	/* Find "Font" menu */
+	for (i = 0; i < nmenu_items; i++)
+	{
+		/* Skip NULLs */
+		if (main_menu_items[i].path == NULL) continue;
+
+		/* Find a match */
+		if (streq(main_menu_items[i].path, "/Options/Font")) break;
+	}
+	
+	/* Paranoia */
+	g_assert(i < (nmenu_items - MAX_TERM_DATA));
+
+	/* Remember the location */
+	font_entry = &main_menu_items[i + 1];
+
+	/* For each terminal */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		/* XXX XXX Free Term menu path */
+		string_free((cptr)term_entry[i].path);
+
+		/* XXX XXX Free Font menu path */
+		string_free((cptr)font_entry[i].path);
+	}
+}
+
+
+/*
+ * Quit hook when exiting the game
+ */
+static void hook_quit(cptr str)
+{
+	/* Hack - Ignore parameter */
+	(void) str;
+	
+	/* Free menu paths dynamically allocated */
+	free_menu_paths();
+	
+	gtk_exit(0);
+}
+
+
+/*
+ * Hook to tell the user something important
+ */
+static void hook_plog(cptr str)
+{
+	/* Warning message */
+	gtk_message(str);
+}
+
+
+/*
+ * Handle destruction of Subwindows
+ */
+static void destroy_sub_event_handler(
+	GtkWidget *window,
+	gpointer user_data)
+{
+	/* Hide the window */
+	gtk_widget_hide_all(window);
+}
 
 
 static errr term_data_init(term_data *td, int i)
@@ -1819,10 +2454,7 @@ static errr term_data_init(term_data *td, int i)
 
 	/* Initialize the term */
 	term_init(t, td->cols, td->rows, 1024);
-
-	/* Store the name of the term */
-	td->name = angband_term_name[i];
-
+	
 	/* Use a "soft" cursor */
 	t->soft_cursor = TRUE;
 
@@ -1834,6 +2466,10 @@ static errr term_data_init(term_data *td, int i)
 	t->text_hook = Term_text_gtk;
     t->wipe_hook = Term_wipe_gtk;
 	t->curs_hook = Term_curs_gtk;
+#ifdef USE_GRAPHICS
+	t->pict_hook = Term_pict_gtk;
+	t->higher_pict = TRUE;
+#endif /* USE_GRAPHICS */
 
 	/* Save the data */
 	t->data = td;
@@ -1853,140 +2489,108 @@ static errr term_data_init(term_data *td, int i)
 
 static void init_gtk_window(term_data *td, int i)
 {
-	bool main_win = (i == 0) ? TRUE : FALSE;
+	GtkWidget *menu_bar, *box;
 	
-	GdkGeometry win_geom;
-	
-	GtkWidget *menu_bar, *file_item, *file_menu, *box;
-	GtkWidget *seperator_item, *file_exit_item, *file_new_item, *file_open_item;
-	GtkWidget *options_item, *options_menu, *options_font_item;
+	bool main_win = (i == 0) ? TRUE : FALSE;		
 
-	/* Create widgets */
+	/* Create window */
 	td->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	box = gtk_vbox_new(FALSE, 0);
-	td->drawing_area = gtk_drawing_area_new();
 
-	/* The main window is special */
+	/* Set title */
+	gtk_window_set_title(GTK_WINDOW(td->window), td->name);
+	
+	/* Create drawing area */
+	td->drawing_area = gtk_drawing_area_new();
+	
+	/* Set the size of the drawing area */
+	gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
+			td->cols * td->font_wid, td->rows * td->font_hgt);
+	
+	/* Set geometry hints */
+	set_size_hints(td);
+	
+	/* Set resize policy */
+	gtk_window_set_policy(GTK_WINDOW(td->window), TRUE, TRUE, TRUE);
+	
+	
+	/* Install window event handlers */
+	gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
+		GTK_SIGNAL_FUNC(delete_event_handler), NULL);
+	gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event",
+		GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
+	
+	/* Destroying the Angband window terminates the game */
 	if (main_win)
 	{
-		/* Create menu */
-		menu_bar = gtk_menu_bar_new();
-		file_item = gtk_menu_item_new_with_label("File");
-		file_menu = gtk_menu_new();
-		file_new_item = gtk_menu_item_new_with_label("New");
-		file_open_item = gtk_menu_item_new_with_label("Open");
-		seperator_item = gtk_menu_item_new();
-		file_exit_item = gtk_menu_item_new_with_label("Exit");
-		options_item = gtk_menu_item_new_with_label("Options");
-		options_menu = gtk_menu_new();
-		options_font_item = gtk_menu_item_new_with_label("Font");
+		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event",
+			GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
+	}
+
+	/* The other windows are just hidden */
+	else
+	{
+		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event",
+			GTK_SIGNAL_FUNC(destroy_sub_event_handler), td);
+	}
 	
-		/* Set attributes */
-		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
-		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
-				 td->cols * td->font_wid, td->rows * td->font_hgt);
-		gtk_window_set_policy(GTK_WINDOW(td->window), TRUE, TRUE, TRUE);
+	/* Install drawing area event handlers */
+	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "realize",
+		GTK_SIGNAL_FUNC(realize_event_handler), (gpointer)td);
+	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "show",
+		GTK_SIGNAL_FUNC(show_event_handler), (gpointer)td);
+	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "hide",
+		GTK_SIGNAL_FUNC(hide_event_handler), (gpointer)td);
+	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "size_allocate",
+		GTK_SIGNAL_FUNC(size_allocate_event_handler), (gpointer)td);
+	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event",
+		GTK_SIGNAL_FUNC(expose_event_handler), (gpointer)td);
+
+	/* Create menu */
+	if (main_win)
+	{
+		/* Build the main menu bar */
+		menu_bar = get_main_menu(td);
+		g_assert(menu_bar != NULL);
+
+		/* Since it's tedious to scatter the menu update code around */
+		add_menu_update_callbacks();
 		
-		/* Initialize the geometry information */
-		win_geom.width_inc = td->font_wid;
-		win_geom.height_inc = td->font_hgt;
-		win_geom.min_width = 80 * td->font_wid;
-		win_geom.min_height = 24 * td->font_hgt;
-		win_geom.max_width = 255 * td->font_wid;
-		win_geom.max_height = 255 * td->font_hgt;
-		gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
-					 td->drawing_area, &win_geom,
-					 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
-					 | GDK_HINT_RESIZE_INC);
-		
-		/* Register callbacks */
-		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate",
-					 quit_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(file_new_item), "activate",
-					 new_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(file_open_item), "activate",
-					 open_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(options_font_item), "activate",
-					 change_font_event_handler, td);
-		
-		/* Register more callbacks */
-		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
-					 GTK_SIGNAL_FUNC(delete_event_handler), NULL);
-		gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event", 
-					 GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
-		gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event",
-					 GTK_SIGNAL_FUNC(expose_event_handler), td);
-		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event", 
-					 GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
-		
-		/* Pack widgets */
+		/* Pack the menu bar together with the main window */
+		/* For vertical placement of the menu bar and the drawing area */
+		box = gtk_vbox_new(FALSE, 0);
+
+		/* Let the window widget own it */
 		gtk_container_add(GTK_CONTAINER(td->window), box);
+		
+		/* The main window has a menu bar */
 		gtk_box_pack_start(GTK_BOX(box), menu_bar, FALSE, FALSE, NO_PADDING);
-		gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
-	
-		/* Pack the menu bar */
-		gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), file_item);
-		gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), options_item);
-		gtk_menu_item_set_submenu(GTK_MENU_ITEM(file_item), file_menu);
-		gtk_menu_item_set_submenu(GTK_MENU_ITEM(options_item), options_menu);
-		gtk_menu_append(GTK_MENU(file_menu), file_new_item);
-		gtk_menu_append(GTK_MENU(file_menu), file_open_item);
-		gtk_menu_append(GTK_MENU(file_menu), seperator_item);
-		gtk_menu_append(GTK_MENU(file_menu), file_exit_item);
-		gtk_menu_append(GTK_MENU(options_menu), options_font_item);
 	}
 	else
 	{
-		/* Set attributes */
-		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
-		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
-				 td->cols * td->font_wid, td->rows * td->font_hgt);
-		gtk_window_set_policy(GTK_WINDOW(td->window), TRUE, TRUE, TRUE);
-		
-		/* Initialize the geometry information */
-		win_geom.width_inc = td->font_wid;
-		win_geom.height_inc = td->font_hgt;
-		win_geom.min_width = 1 * td->font_wid;
-		win_geom.min_height = 1 * td->font_hgt;
-		win_geom.max_width = 255 * td->font_wid;
-		win_geom.max_height = 255 * td->font_hgt;
-		gtk_window_set_geometry_hints(GTK_WINDOW(td->window), NULL, &win_geom,
-					GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE | GDK_HINT_RESIZE_INC);
-		
-		/* Register callbacks */
-		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
-					 GTK_SIGNAL_FUNC(delete_event_handler), NULL);
-		gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event", 
-					 GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
-		gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event",
-					 GTK_SIGNAL_FUNC(expose_event_handler), td);
-		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event",
-					 GTK_SIGNAL_FUNC(hide_event_handler), td);
-		
-		/* Pack widgets */
+		/* Pack the menu bar together with the main window */
+		/* For vertical placement of the menu bar and the drawing area */
+		box = gtk_vbox_new(FALSE, 0);
+
+		/* Let the window widget own it */
 		gtk_container_add(GTK_CONTAINER(td->window), box);
-		gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
 	}
 	
+	/* And place the drawing area just beneath it */
+	gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
+		
+	/* Show the widgets - use of td->shown is a dirty hack XXX XXX */
+	if (!td->shown) return;
+	
 	/* Show the widgets */
-	gtk_widget_show_all(td->window);
+	/* gtk_widget_show_all(td->window); */
+	
+	/* g_assert(td->drawing_area->window != 0); */
+	
+	
 
-	/* Create a pixmap as buffer for screenupdates */
-	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
-					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
-	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
-	td->gc = gdk_gc_new(td->drawing_area->window);
-	
-	/* Clear the pixmap */
-	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
-		                0, 0,
-		                td->cols * td->font_wid, td->rows * td->font_hgt);
-						
-	/* Copy it to the window */
-	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                0, 0, 0, 0,
-					td->cols * td->font_wid, td->rows * td->font_hgt);
-	
+	/* Create pixmap */
+	/* init_pixmap(td); */
+
 	/* Show the widgets */
 	gtk_widget_show_all(td->window);
 }
@@ -2053,7 +2657,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	/* Try graphics */
 	if (arg_graphics)
 	{
-		(void) pick_graphics(graphmode, &tile_size, filename);
+		(void) pick_graphics(graphmode, &xsize, &ysize, filename);
 	}
 
 	/* Load graphics */
@@ -2070,13 +2674,21 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 			/* No tiles */
 			use_graphics = GRAPHICS_NONE;
 		}
-		
 	}
 
 #endif /* USE_GRAPHICS */
+
+	/* Initialise the term names */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		data[i].name = angband_term_name[i];
+	}
 		
-	/* Initialize the windows */
-	for (i = 0; i < num_term; i++)
+	/*
+	 * Initialize the windows
+	 * (Backwards so main window is on top)
+	 */
+	for (i = MAX_TERM_DATA - 1; i >= 0; i--)
 	{
 		term_data *td = &data[i];
 		
@@ -2085,13 +2697,30 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 
 		/* Save global entry */
 		angband_term[i] = Term;
-
+		
+		/* Hack - Set the shown flag */
+		if (i < num_term)
+		{
+			td->shown = TRUE;
+		}
+		else
+		{	
+			td->shown = FALSE;
+		}
+		
 		/* Init the window */
 		init_gtk_window(td, i);
 	}
-	
-	/* Initialise the graphics */
-	graf_init();
+
+#ifdef USE_GRAPHICS
+	if (use_graphics)
+	{	
+		/* Initialise the graphics */
+		graf_init();
+	}
+
+#endif /* USE_GRAPHICS */
+
 
 	/* Activate the "Angband" window screen */
 	Term_activate(&data[0].t);
