@@ -2446,7 +2446,7 @@ void messages_free(void)
  */
 static void msg_flush(int x)
 {
-	if (!p_ptr->state.skip_more)
+	if (!p_ptr->state.skip_more && !auto_more)
 	{
 		/* Pause for response */
 		prtf(x, 0, CLR_L_BLUE "-more-");
@@ -2547,16 +2547,6 @@ static void msg_print_aux(u16b type, cptr msg)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_MESSAGE);
-
-	/* Handle "auto_more" */
-	if (auto_more)
-	{
-		/* Force window update */
-		window_stuff();
-
-		/* Done */
-		return;
-	}
 
 	/* Copy it */
 	strcpy(buf, msg);
