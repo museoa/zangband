@@ -1798,7 +1798,6 @@ void Term_erase(int x, int y, int n)
 	if (n < 0) n = 0;
 	if ((x >= w) || (y >= h)) return;
 
-
 	/* Force legal size */
 	if (x + n > w) n = w - x;
 
@@ -1907,8 +1906,6 @@ void Term_clear(void)
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
 }
-
-
 
 
 
@@ -2452,6 +2449,11 @@ errr Term_resize(int w, int h)
 	if (Term->resize_hook)
 	{
 		Term->resize_hook();
+	}
+	else
+	{
+		/* Just refresh it */
+		Term_fresh();
 	}
 
 	/* Success */
