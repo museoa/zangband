@@ -118,6 +118,7 @@ Y:terrain_streams
 Y:maximize_mode
 Y:preserve_mode
 Y:autoroller
+X:fast_autoroller
 
 
 ##### Ironman #####

@@ -23,11 +23,6 @@
 #define AUTOROLLER_STEP		25L
 
 /*
- * Define this to cut down processor use while autorolling
- */
-#define AUTOROLLER_DELAY
-
-/*
  * Maximum number of tries for selection of a proper quest monster
  */
 #define MAX_TRIES 100
@@ -2544,10 +2539,8 @@ static bool player_birth_aux(void)
 				/* Dump round */
 				put_str(format("%10ld", auto_round), 10, col+20);
 
-#ifdef AUTOROLLER_DELAY
 				/* Delay 1/10 second */
-				if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
-#endif
+				if (flag && !fast_autoroller) Term_xtra(TERM_XTRA_DELAY, 100);
 
 				/* Make sure they see everything */
 				Term_fresh();

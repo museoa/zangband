@@ -6259,6 +6259,9 @@ option_type option_info[] =
 	{ &autoroller,                  TRUE,  6,6,15,
 	"autoroller",                   "Specify 'minimal' stats" },
 
+	{ &fast_autoroller,             FALSE,	6, 6, 16,
+	"fast_autoroller",              "Autoroll quickly (may not be safe)" },
+
 	/*** Stacking ***/
 
 	{ &testing_stack,               TRUE,  255, 7, 30,
