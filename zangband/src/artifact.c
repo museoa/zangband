@@ -1329,6 +1329,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	s32b total_flags, target_flags;
 	bool a_cursed = FALSE;
 	int i;
+	int given = 0;
 
 	/* No activation yet */
 	o_ptr->activate = 0;
@@ -1381,6 +1382,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				else
 					o_ptr->flags3 |= TR3_FEATHER;
 				powers--;
+				given++;
 				break;
 
 			case TV_GLOVES:
@@ -1389,6 +1391,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				else
 					o_ptr->flags1 |= TR1_DEX;
 				powers--;
+				given++;
 				break;
 
 			case TV_HELM:
@@ -1400,6 +1403,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				else
 					o_ptr->flags1 |= TR1_INFRA;
 				powers--;
+				given++;
 				break;
 		}
 	}
@@ -1407,7 +1411,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	total_flags = flag_cost(o_ptr, 1);
 
 	/* Main loop */
-	while (total_flags < target_flags)
+	while (total_flags < target_flags || given < 2)
 	{
 		switch (randint1(o_ptr->tval < TV_BOOTS ? 11 : 7))
 		{
@@ -1430,6 +1434,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				random_minor_theme_weapon(o_ptr);
 				break;
 		}
+		given++;
 		
 		total_flags = flag_cost(o_ptr, 1);
 	}
