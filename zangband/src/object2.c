@@ -233,11 +233,15 @@ static void compact_objects_aux(int i1, int i2)
 	/* Acquire object */
 	o_ptr = &o_list[i1];
 
-	/* Acquire grid */
-	c_ptr = area(o_ptr->ix, o_ptr->iy);
+    /* Check bounds */
+    if (in_bounds(o_ptr->ix, o_ptr->iy))
+    {
+        /* Acquire grid */
+        c_ptr = area(o_ptr->ix, o_ptr->iy);
 
-	/* Repair grid */
-	if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
+        /* Repair grid */
+        if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
+    }
 
 	/* Structure copy */
 	o_list[i2] = o_list[i1];
