@@ -170,7 +170,6 @@ CreateWidget(
     widgetPtr->canvas = canvas;
     none.type = ICON_TYPE_NONE;
     none.index = 0;
-    none.ascii = -1;
 	widgetPtr->assign = none;
 	widgetPtr->assignbg = none;
 	widgetPtr->gwidth = widgetPtr->gheight = g_icon_size;

@@ -39,7 +39,6 @@ void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr)
 {
 	iconOut->type = assignPtr->type;
 	iconOut->index = assignPtr->index;
-	iconOut->ascii = assignPtr->ascii;
 }
 
 void init_palette(void)
@@ -53,18 +52,9 @@ void init_palette(void)
 
 char *AssignToString_Icon(char *buf, t_assign_icon *assign)
 {
-	if (assign->ascii == -1)
-	{
-		strnfmt(buf, 128, "icon %s %d",
+	strnfmt(buf, 128, "icon %s %d",
 			g_icon_data[assign->type].desc,
 			assign->index);
-	}
-	else
-	{
-		strnfmt(buf, 128, "icon %s %d %d",
-			g_icon_data[assign->type].desc,
-			assign->index, assign->ascii);
-	}
 
 	return buf;
 }
@@ -122,7 +112,6 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cpt
 
 	assignPtr->type = iconSpec.type;
 	assignPtr->index = iconSpec.index;
-	assignPtr->ascii = iconSpec.ascii;
 
 	return TCL_OK;
 }
@@ -312,7 +301,6 @@ void init_icons(int size, int depth)
 
 	assign.type = ICON_TYPE_DEFAULT;
 	assign.index = 0;
-	assign.ascii = -1;
 
 
 	/*

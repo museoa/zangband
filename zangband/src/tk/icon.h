@@ -81,7 +81,6 @@ extern int Icon_GetIndexFromObj(Tcl_Interp *interp,
 typedef struct t_assign_icon {
 	int type;
 	int index;
-	int ascii;
 } t_assign_icon;
 
 
