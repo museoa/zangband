@@ -1281,12 +1281,14 @@ static void do_cmd_wiz_cure_all(void)
  */
 static void do_cmd_wiz_jump(void)
 {
-	int max_depth;
+	int min_depth, max_depth;
+	dun_type *d_ptr = dungeon();
 	
 	/* In the wilderness and no dungeon? */
 	if (!check_down_wild()) return;
 
-	max_depth = dungeon()->max_level;
+	max_depth = d_ptr->max_level;
+	min_depth = d_ptr->min_level;
 
 	/* Ask for level */
 	if (p_ptr->cmd.arg <= 0)
@@ -1296,9 +1298,20 @@ static void do_cmd_wiz_jump(void)
 		/* Default */
 		strnfmt(tmp_val, 160, "%d", p_ptr->depth);
 
-		/* Ask for a level */
-		if (!get_string(tmp_val, 11, "Jump to level (0-%d): ",
-						max_depth)) return;
+		/* Does this dungeon start right at the surface */
+		if (min_depth == 1)
+		{
+			/* Ask for a level */
+			if (!get_string(tmp_val, 11, "Jump to level (0-%d): ",
+							min_depth, max_depth)) return;
+		}
+		/* Ignore the depths between the surface and the start */
+		else
+		{
+			/* Ask for a level */
+			if (!get_string(tmp_val, 11, "Jump to level (0, %d-%d): ",
+							min_depth, max_depth)) return;
+		}
 
 		/* Extract request */
 		p_ptr->cmd.arg = atoi(tmp_val);
@@ -1308,6 +1321,10 @@ static void do_cmd_wiz_jump(void)
 	if (p_ptr->cmd.arg < 0) p_ptr->cmd.arg = 0;
 
 	/* Paranoia */
+	if (p_ptr->cmd.arg > 0 && p_ptr->cmd.arg < min_depth)
+		p_ptr->cmd.arg = min_depth;
+
+	/* Paranoia */
 	if (p_ptr->cmd.arg > max_depth) p_ptr->cmd.arg = max_depth;
 
 	/* Accept request */
@@ -1315,6 +1332,9 @@ static void do_cmd_wiz_jump(void)
 
 	/* Change level */
 	p_ptr->depth = p_ptr->cmd.arg;
+
+	/* Change the recall_depth of the dungeon */
+	d_ptr->recall_depth = MAX(d_ptr->recall_depth, p_ptr->depth);
 
 	/* Leaving */
 	p_ptr->state.leaving = TRUE;
