@@ -134,9 +134,6 @@ proc LongName {name} {
 	return $name
 }
 
-# XXX Added this namespace just so I can call MsgCatInit
-namespace eval NSInitStartup {
-}
 
 # AboutApplication --
 #
@@ -190,6 +187,9 @@ proc QuitNoSave {} {
 	return
 }
 
+namespace eval NSInitStartup {
+}
+
 
 # NSInitStartup::InitStartupScreen --
 #
@@ -227,7 +227,6 @@ proc NSInitStartup::InitStartupScreen {} {
 
 	# Program info
 	set info "ZAngband\nhttp://www.zangband.org\n"
-	append info [mc email]
 	label .info \
 		-text $info -justify left
 
@@ -667,12 +666,9 @@ proc NSInitStartup::InitStartup {} {
 	
 	# Error handling
 	Source bgerror.tcl
-
-	# Internationalization
-	Source msgcat.tcl
 			
 	# Global copyright blurb
-	set Angband(copy) [mc original-z]
+	set Angband(copy) "Based on ZAngband (c) the ZAngband Dev Team"
 
 	# Hack -- Require WindowPosition() command
 	Source library utils.tcl
@@ -686,8 +682,8 @@ proc NSInitStartup::InitStartup {} {
 	# Poor-Man's Font Management
 	set screenWidth [winfo screenwidth .]
 	if {[Platform windows]} {
-		set fontSys [mc font,sys]
-		set fontFixed [mc font,fixed]
+		set fontSys "{MS Sans Serif}"
+		set fontFixed "Courier"
 		if {$screenWidth > 800} {
 			Global font,sys,small "$fontSys 8"
 			Global font,sys,normal "$fontSys 8"

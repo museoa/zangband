@@ -32,8 +32,6 @@ proc NSColorPreferences::InitModule {} {
 	global Angband
 	variable Hook
 
-	MsgCatInit color
-
 	NSModule::LoadIfNeeded NSColorPicker
 
 	set Hook {}
@@ -157,7 +155,7 @@ proc NSColorPreferences::InitWindow {oop} {
 
 	set win .colorpreferences$oop
 	toplevel $win
-	wm title $win [mc Color]
+	wm title $win "Color"
 
 	wm resizable $win no no
 	wm transient $win [Window main]
@@ -178,7 +176,7 @@ proc NSColorPreferences::InitWindow {oop} {
 	# Tabs!
 	set tabsId [NSObject::New NSTabs $win]
 	foreach {hook label} $Hook {
-		NSTabs::Add $tabsId [mc $label]
+		NSTabs::Add $tabsId $label
 	}
 	NSTabs::Info $tabsId invokeCmd "NSColorPreferences::InvokeTab $oop"
 	NSTabs::Info $tabsId active 1
@@ -234,7 +232,7 @@ proc NSColorPreferences::InitWindow {oop} {
 	frame $frame.label \
 		-borderwidth 0
 	label $frame.label.title \
-		-text [mc Opacity] -borderwidth 0
+		-text "Opacity" -borderwidth 0
 	label $frame.label.value \
 		-borderwidth 0
 	scale $frame.opacity \
@@ -322,20 +320,20 @@ proc NSColorPreferences::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_COLOR
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_COLOR -label [mc Color] -underline 0 -identifier M_COLOR
+		-menu MENU_COLOR -label "Color" -underline 0 -identifier M_COLOR
 
 	set entries {}
 
 	set i 1
 	foreach {hook label} $Hook {
-		lappend entries [list -type radiobutton -label [mc $label] \
+		lappend entries [list -type radiobutton -label $label \
 			-variable NSColorPreferences($oop,hook) -value $hook \
 			-accelerator $i -identifier E_HOOK_$i]
 		bind $win <KeyPress-$i> "NSColorPreferences::SetHook $oop $hook"
 		incr i
 	}
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
 
 	NSMenu::MenuInsertEntries $mbar -end MENU_COLOR $entries
@@ -976,7 +974,7 @@ proc NSColorPreferences::color_hook_status {oop message args} {
 			# Good: text
 			set fill [Value statusGoodText]
 			set opacity [Value statusGoodText2]
-			set itemList [Add_Text $canvas $centerH $centerV center [mc Good] $font $fill]
+			set itemList [Add_Text $canvas $centerH $centerV center "Good" $font $fill]
 			Add_Tags $canvas $itemList statusGoodText $fill $opacity
 
 			set y1 [expr {$height + $bevelSize + 8 + $bevelSize / 2}]
@@ -999,7 +997,7 @@ proc NSColorPreferences::color_hook_status {oop message args} {
 			# Info: text
 			set fill [Value statusInfoText]
 			set opacity [Value statusInfoText2]
-			set itemList [Add_Text $canvas $centerH [expr {$y1 + $centerV}] center [mc Info] $font $fill]
+			set itemList [Add_Text $canvas $centerH [expr {$y1 + $centerV}] center "Info" $font $fill]
 			Add_Tags $canvas $itemList statusInfoText $fill $opacity
 
 			incr y1 [expr {$height + $bevelSize + 8 + $bevelSize / 2}]
@@ -1022,7 +1020,7 @@ proc NSColorPreferences::color_hook_status {oop message args} {
 			# Bad: text
 			set fill [Value statusBadText]
 			set opacity [Value statusBadText2]
-			set itemList [Add_Text $canvas $centerH [expr {$y1 + $centerV}] center [mc Bad] $font $fill]
+			set itemList [Add_Text $canvas $centerH [expr {$y1 + $centerV}] center "Bad" $font $fill]
 			Add_Tags $canvas $itemList statusBadText $fill $opacity
 		}
 
@@ -1067,7 +1065,7 @@ proc NSColorPreferences::color_hook_monster_bar {oop message args} {
 			# Name text
 			set fill [Value healthNameText]
 			set opacity [Value healthNameText2]
-			set itemList [Add_Text $canvas $centerH $centerV center [mc "Monster Name"] "Times 18" $fill]
+			set itemList [Add_Text $canvas $centerH $centerV center "Monster Name" "Times 18" $fill]
 			Add_Tags $canvas $itemList healthNameText $fill $opacity
 
 			# Name bevel

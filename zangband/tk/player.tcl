@@ -30,8 +30,6 @@ namespace eval NSPlayer {
 
 proc NSPlayer::InitModule {} {
 
-	MsgCatInit player
-
 	NSModule::AddModuleIfNeeded NSCharInfoCanvas [PathTk charinfo-canvas.tcl]
 	NSModule::LoadIfNeeded NSCharInfoCanvas
 

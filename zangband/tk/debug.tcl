@@ -36,8 +36,6 @@ proc NSDebug::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit
-
 	# Create the Debug Window
 	NSObject::New NSDebug
 
@@ -293,7 +291,7 @@ proc NSDebug::InitMenus {oop} {
 	lappend entries [list -type command -label "Debug Mode" -command "DoUnderlyingCommand ^A" -identifier E_DEBUG_MODE]
 	lappend entries [list -type command -label "Reload" -command "InitDebug $oop" -identifier E_INIT_DEBUG]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] -command "NSDebug::Close $oop" -accelerator $mod+W -underline 0 -identifier E_CLOSE]
+	lappend entries [list -type command -label "Close" -command "NSDebug::Close $oop" -accelerator $mod+W -underline 0 -identifier E_CLOSE]
 	
 	NSMenu::MenuInsertEntries $mbar -end MENU_DEBUG $entries
 

@@ -15,8 +15,6 @@ namespace eval NSBirth {
 variable Priv
 variable Detail
 
-MsgCatInit birth
-
 #
 # Descriptions of races
 #

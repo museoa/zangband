@@ -50,8 +50,6 @@ Track-inventory
 
 proc NSChoiceWindow::InitModule {} {
 
-	MsgCatInit inven choice
-
 	NSObject::New NSChoiceWindow
 
 	return
@@ -201,7 +199,7 @@ proc NSChoiceWindow::InitWindow {oop} {
 
 	set win .choice$oop
 	toplevel $win
-	wm title $win [mc Choice]
+	wm title $win "Choice"
 
 	wm transient $win [Window main]
 
@@ -701,10 +699,10 @@ proc NSChoiceWindow::GetItemCommand {oop index  _command _label} {
 
 	if {[string equal $where equipment]} {
 		if {$attrib(known) && $attrib(activate)} {
-			set label [mc Activate]
+			set label "Activate"
 			set charCmd A
 		} else {
-			set label [mc Remove]
+			set label "Remove"
 			set charCmd t
 		}
 		set command "DoKeymapCmd {} $charCmd $charItem"
@@ -717,7 +715,7 @@ proc NSChoiceWindow::GetItemCommand {oop index  _command _label} {
 			# See if the character can read this book
 			if {[lsearch -exact [angband player spell_book] $attrib(tval)] != -1} {
 
-				set label [mc Browse]
+				set label "Browse"
 				set charCmd b
 
 				# Hack -- Browse shows all the books
@@ -728,39 +726,39 @@ proc NSChoiceWindow::GetItemCommand {oop index  _command _label} {
 		TV_ARROW -
 		TV_BOLT -
 		TV_SHOT {
-			set label [mc Fire]
+			set label "Fire"
 			set charCmd f
 		}
 		TV_FLASK {
-			set label [mc Refuel]
+			set label "Refuel"
 			set charCmd F
 		}
 		TV_FOOD {
-			set label [mc Eat]
+			set label "Eat"
 			set charCmd E
 		}
 		TV_POTION {
-			set label [mc Drink]
+			set label "Drink"
 			set charCmd q
 		}
 		TV_SCROLL {
-			set label [mc Read]
+			set label "Read"
 			set charCmd r
 		}
 		TV_SPIKE {
-			set label [mc Jam]
+			set label "Jam"
 			set charCmd j
 		}
 		TV_STAFF {
-			set label [mc Use]
+			set label "Use"
 			set charCmd u
 		}
 		TV_ROD {
-			set label [mc Zap]
+			set label "Zap"
 			set charCmd z
 		}
 		TV_WAND {
-			set label [mc Aim]
+			set label "Aim"
 			set charCmd a
 		}
 		TV_BOW -
@@ -780,7 +778,7 @@ proc NSChoiceWindow::GetItemCommand {oop index  _command _label} {
 		TV_LITE -
 		TV_AMULET -
 		TV_RING {
-			set label [mc Wield]
+			set label "Wield"
 			set charCmd w
 		}
 	}
@@ -791,9 +789,9 @@ proc NSChoiceWindow::GetItemCommand {oop index  _command _label} {
 		if {[lsearch -exact $match $index] != -1} {
 			set charCmd s
 			if {[angband store ishome]} {
-				set label [mc Drop]
+				set label "Drop"
 			} else {
-				set label [mc Sell]
+				set label "Sell"
 			}
 		}
 	}
@@ -1010,16 +1008,16 @@ proc NSChoiceWindow::ContextMenu {oop menu x y} {
 
 	$menu delete 0 end
 
-	$menu add command -label [mc "Set Font"] \
+	$menu add command -label "Set Font" \
 		-command "NSModule::LoadIfNeeded NSFont ; NSWindowManager::Display font choice"
-	$menu add checkbutton -label [mc "Auto Expand"] \
+	$menu add checkbutton -label "Auto Expand" \
 		-variable NSChoiceWindow($oop,expand) \
 		-command "NSChoiceWindow::OptionChanged $oop expand autoexpand"
-	$menu add checkbutton -label [mc "Show Icon"] \
+	$menu add checkbutton -label "Show Icon" \
 		-variable NSChoiceWindow($oop,showIcon) \
 		-command "NSChoiceWindow::OptionChanged $oop showIcon showicon"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	# Hack -- Try to prevent collapsing while popup is visible.
 	# It would be nice if "winfo ismapped $menu" worked
@@ -1205,7 +1203,7 @@ proc NSChoiceWindow::hook_power {oop message args} {
 			# No row is hit
 			if {$row == -1} {
 		
-				$menu add command -label [mc Cancel] \
+				$menu add command -label "Cancel" \
 					-command {angband keypress \033}
 				return 1
 			}
@@ -1215,7 +1213,7 @@ proc NSChoiceWindow::hook_power {oop message args} {
 			$menu add command -label "Select This Power" -command $command \
 				-font [BoldFont $font]
 			$menu add separator
-			$menu add command -label [mc Cancel] \
+			$menu add command -label "Cancel" \
 				-command {angband keypress \033}
 
 			return 1
@@ -1375,7 +1373,7 @@ proc NSChoiceWindow::hook_spell {oop message args} {
 			# No row is hit
 			if {$row == -1} {
 		
-				$menu add command -label [mc Cancel] \
+				$menu add command -label "Cancel" \
 					-command {angband keypress \033}
 				return 1
 			}
@@ -1395,7 +1393,7 @@ proc NSChoiceWindow::hook_spell {oop message args} {
 			$menu add command -label "Select This [string totitle $spellType]" \
 				-command $command -font [BoldFont $font]
 			$menu add separator
-			$menu add command -label [mc Cancel] \
+			$menu add command -label "Cancel" \
 				-command {angband keypress \033}
 
 			return 1

@@ -32,14 +32,12 @@ proc NSCharacterWindow::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit player
-
 	set Priv(hook) {}
-	lappend Priv(hook) HookInfo [mc Info]
-	lappend Priv(hook) HookFlags [mc Flags]
-	lappend Priv(hook) HookMutations [mc Mutations]
-	lappend Priv(hook) HookVirtues [mc Virtues]
-	lappend Priv(hook) HookNotes [mc Notes]
+	lappend Priv(hook) HookInfo "Info"
+	lappend Priv(hook) HookFlags "Flags"
+	lappend Priv(hook) HookMutations "Mutations"
+	lappend Priv(hook) HookVirtues "Virtues"
+	lappend Priv(hook) HookNotes "Notes"
 
 	NSObject::New NSCharacterWindow
 
@@ -171,7 +169,7 @@ proc NSCharacterWindow::InitWindow {oop} {
 
 	set win .character$oop
 	toplevel $win
-	wm title $win [mc Character]
+	wm title $win "Character"
 
 	wm transient $win [Window main]
 
@@ -300,7 +298,7 @@ proc NSCharacterWindow::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_CHARACTER
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_CHARACTER -label [mc Character] -underline 0 \
+		-menu MENU_CHARACTER -label "Character" -underline 0 \
 		-identifier M_CHARACTER
 
 	set entries {}
@@ -314,7 +312,7 @@ proc NSCharacterWindow::InitMenus {oop} {
 	}
 	lappend entries [list -type separator]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
 
 	NSMenu::MenuInsertEntries $mbar -end MENU_CHARACTER $entries

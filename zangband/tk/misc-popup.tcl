@@ -29,8 +29,6 @@ namespace eval NSMiscPopup {
 
 proc NSMiscPopup::InitModule {} {
 
-	MsgCatInit inven misc-win
-
 	InitImageIfNeeded Image_ButtonActivate button-activate.gif
 	InitImageIfNeeded Image_ButtonFood button-food.gif
 	InitImageIfNeeded Image_ButtonPotion button-potion.gif
@@ -885,7 +883,7 @@ proc NSMiscPopup::hook_power {oop message args} {
 			# No row is hit
 			if {$row == -1} {
 		
-				$menu add command -label [mc Cancel] \
+				$menu add command -label  Cancel] \
 					-command {angband keypress \033}
 				return 1
 			}
@@ -895,7 +893,7 @@ proc NSMiscPopup::hook_power {oop message args} {
 			$menu add command -label "Select This Power" -command $command \
 				-font [BoldFont $font]
 			$menu add separator
-			$menu add command -label [mc Cancel] \
+			$menu add command -label "Cancel" \
 				-command {angband keypress \033}
 
 			return 1
@@ -1056,7 +1054,7 @@ proc NSMiscPopup::hook_spell {oop message args} {
 			# No row is hit
 			if {$row == -1} {
 		
-				$menu add command -label [mc Cancel] \
+				$menu add command -label "Cancel" \
 					-command {angband keypress \033}
 				return 1
 			}
@@ -1076,7 +1074,7 @@ proc NSMiscPopup::hook_spell {oop message args} {
 			$menu add command -label "Select This [string totitle $spellType]" \
 				-command $command -font [BoldFont $font]
 			$menu add separator
-			$menu add command -label [mc Cancel] \
+			$menu add command -label "Cancel" \
 				-command {angband keypress \033}
 
 			return 1

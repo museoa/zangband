@@ -32,8 +32,6 @@ proc NSMessageHistory::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit message
-
 	set Priv(find,string) ""
 	set Priv(find,index) end
 
@@ -176,7 +174,7 @@ proc NSMessageHistory::InitWindow {oop} {
 
 	set win .messages$oop
 	toplevel $win
-	wm title $win [mc "Message History"]
+	wm title $win "Message History"
 
 	wm transient $win [Window main]
 
@@ -313,22 +311,22 @@ proc NSMessageHistory::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_MESSAGE
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_MESSAGE -label [mc Message] -underline 0 \
+		-menu MENU_MESSAGE -label "Message" -underline 0 \
 		-identifier M_MESSAGE
 
 	set entries {}
-	lappend entries [list -type command -label [mc "Dump Messages"] \
+	lappend entries [list -type command -label "Dump Messages" \
 		-underline 0 -identifier E_DUMP]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Find...] \
+	lappend entries [list -type command -label "Find..." \
 		-accelerator f -underline 0 -identifier E_FIND]
-	lappend entries [list -type command -label [mc "Find Again"] \
+	lappend entries [list -type command -label "Find Again" \
 		-accelerator g -underline 6 -identifier E_FIND_AGAIN]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "Max Messages..."] \
+	lappend entries [list -type command -label "Max Messages..." \
 		-underline 0 -identifier E_MAX]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_MESSAGE $entries
@@ -611,9 +609,9 @@ proc NSMessageHistory::Find {oop again} {
 	} else {
 
 		# Ask the user for a string
-		set string [NSUtils::StringBox -title [mc Find] \
-			-initial $Priv(find,string) -prompt [mc find-prompt] \
-			-buttons [list [mc Find] [mc Cancel]] -parent [Info $oop win]]
+		set string [NSUtils::StringBox -title "Find" \
+			-initial $Priv(find,string) -prompt "find-prompt" \
+			-buttons [list "Find" "Cancel"] -parent [Info $oop win]]
 
 		# User cancelled
 		if {![string length $string]} return
@@ -659,10 +657,10 @@ proc NSMessageHistory::Find {oop again} {
 proc NSMessageHistory::MaxMessages {oop} {
 
 	# Ask the user for a number
-	set string [NSUtils::StringBox -title [mc max-title] \
-		-initial [Value messages,max] -prompt [mc max-prompt] \
-		-buttons [list [mc OK] [mc Cancel]] -parent [Info $oop win] \
-		-entrywidth 5 -type integer -message [mc max-message]]
+	set string [NSUtils::StringBox -title "max-title" \
+		-initial [Value messages,max] -prompt "max-prompt" \
+		-buttons [list "OK" "Cancel"] -parent [Info $oop win] \
+		-entrywidth 5 -type integer -message "max-message"]
 	if {![string length $string]} return
 
 	if {![scan $string "%d" max]} return

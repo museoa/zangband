@@ -38,8 +38,6 @@ proc NSMainWindow::InitModule {} {
 
 	global Display
 	global PYPX
-
-	MsgCatInit main
 	
 	NSModule::LoadIfNeeded NSMap
 	NSModule::LoadIfNeeded NSWidget
@@ -138,7 +136,7 @@ proc NSMainWindow::InitWindow {oop} {
 
 	set win .main$oop
 	toplevel $win
-	wm title $win "[mc Main] - ZAngband"
+	wm title $win "Main - ZAngband"
 
 	# Do stuff when window closes
 	wm protocol $win WM_DELETE_WINDOW "NSMainWindow::Close $oop"
@@ -451,13 +449,13 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_FILE
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_FILE -label [mc File] -underline 0 -identifier M_FILE
+		-menu MENU_FILE -label "File" -underline 0 -identifier M_FILE
 
 	set entries {}
-	lappend entries [list -type command -label [mc Save] -identifier E_GAME_SAVE]
+	lappend entries [list -type command -label "Save" -identifier E_GAME_SAVE]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "Quit With Save"] -identifier E_GAME_EXIT]
-	lappend entries [list -type command -label [mc Quit] -identifier E_GAME_ABORT]
+	lappend entries [list -type command -label "Quit With Save" -identifier E_GAME_EXIT]
+	lappend entries [list -type command -label "Quit" -identifier E_GAME_ABORT]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_FILE $entries
 
@@ -468,52 +466,52 @@ proc NSMainWindow::InitMenus {oop} {
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_INVEN]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_INVEN -label [mc Inven] -underline 0 -identifier M_INVEN
+		-menu MENU_INVEN -label "Inven" -underline 0 -identifier M_INVEN
 
 	# Magic Menu
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_MAGIC]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc Activate] -identifier E_MAGIC_ACTIVATE]
-	lappend entries [list -type command -label [mc "Aim Wand"] -identifier E_MAGIC_WAND]
-	lappend entries [list -type command -label [mc "Drink Potion"] -identifier E_MAGIC_POTION]
-	lappend entries [list -type command -label [mc "Read Scroll"] -identifier E_MAGIC_SCROLL]
-	lappend entries [list -type command -label [mc "Use Staff"] -identifier E_MAGIC_STAFF]
-	lappend entries [list -type command -label [mc "Zap Rod"] -identifier E_MAGIC_ROD]
+	lappend entries [list -type command -label "Activate" -identifier E_MAGIC_ACTIVATE]
+	lappend entries [list -type command -label "Aim Wand" -identifier E_MAGIC_WAND]
+	lappend entries [list -type command -label "Drink Potion" -identifier E_MAGIC_POTION]
+	lappend entries [list -type command -label "Read Scroll" -identifier E_MAGIC_SCROLL]
+	lappend entries [list -type command -label "Use Staff" -identifier E_MAGIC_STAFF]
+	lappend entries [list -type command -label "Zap Rod" -identifier E_MAGIC_ROD]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Browse] -identifier E_MAGIC_BROWSE]
-	lappend entries [list -type command -label [mc Study] -identifier E_MAGIC_STUDY]
+	lappend entries [list -type command -label "Browse" -identifier E_MAGIC_BROWSE]
+	lappend entries [list -type command -label "Study" -identifier E_MAGIC_STUDY]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_MAGIC $entries
 
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_USE]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc Destroy] -identifier E_USE_DESTROY]
-	lappend entries [list -type command -label [mc Drop] -identifier E_USE_DROP]
-	lappend entries [list -type command -label [mc "Pick Up"] -identifier E_USE_PICKUP]
-	lappend entries [list -type command -label [mc "Take Off"] -identifier E_USE_TAKEOFF]
-	lappend entries [list -type command -label [mc Wear/Wield] -identifier E_USE_WIELD]
+	lappend entries [list -type command -label "Destroy" -identifier E_USE_DESTROY]
+	lappend entries [list -type command -label "Drop" -identifier E_USE_DROP]
+	lappend entries [list -type command -label "Pick Up" -identifier E_USE_PICKUP]
+	lappend entries [list -type command -label "Take Off" -identifier E_USE_TAKEOFF]
+	lappend entries [list -type command -label "Wear/Wield" -identifier E_USE_WIELD]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "Eat Food"] -identifier E_USE_FOOD]
-	lappend entries [list -type command -label [mc "Fire Missle"] -identifier E_USE_MISSILE]
-	lappend entries [list -type command -label [mc "Fuel Light"] -identifier E_USE_FUEL]
-	lappend entries [list -type command -label [mc "Jam Spike"] -identifier E_USE_SPIKE]
-	lappend entries [list -type command -label [mc Throw] -identifier E_USE_THROW]
+	lappend entries [list -type command -label "Eat Food" -identifier E_USE_FOOD]
+	lappend entries [list -type command -label "Fire Missle" -identifier E_USE_MISSILE]
+	lappend entries [list -type command -label "Fuel Light" -identifier E_USE_FUEL]
+	lappend entries [list -type command -label "Jam Spike" -identifier E_USE_SPIKE]
+	lappend entries [list -type command -label "Throw" -identifier E_USE_THROW]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_USE $entries
 
 	set entries {}
-	lappend entries [list -type command -label [mc Equipment] -identifier E_INVEN_EQUIPMENT]
-	lappend entries [list -type command -label [mc Inventory] -identifier E_INVEN_INVENTORY]
+	lappend entries [list -type command -label "Equipment" -identifier E_INVEN_EQUIPMENT]
+	lappend entries [list -type command -label "Inventory" -identifier E_INVEN_INVENTORY]
 	lappend entries [list -type separator]
- 	lappend entries [list -type cascade -menu MENU_MAGIC -label [mc Magic] -identifier M_MAGIC]
-	lappend entries [list -type cascade -menu MENU_USE -label [mc Use] -identifier M_USE]
+ 	lappend entries [list -type cascade -menu MENU_MAGIC -label "Magic" -identifier M_MAGIC]
+	lappend entries [list -type cascade -menu MENU_USE -label "Use" -identifier M_USE]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Inspect] -identifier E_INVEN_INSPECT]
+	lappend entries [list -type command -label "Inspect" -identifier E_INVEN_INSPECT]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Inscribe] -identifier E_INVEN_INSCRIBE]
-	lappend entries [list -type command -label [mc Uninscribe] -identifier E_INVEN_UNINSCRIBE]
+	lappend entries [list -type command -label "Inscribe" -identifier E_INVEN_INSCRIBE]
+	lappend entries [list -type command -label "Uninscribe" -identifier E_INVEN_UNINSCRIBE]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_INVEN $entries
 
@@ -524,64 +522,64 @@ proc NSMainWindow::InitMenus {oop} {
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_ACTION]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_ACTION -label [mc Action] -underline 0 -identifier M_ACTION
+		-menu MENU_ACTION -label "Action" -underline 0 -identifier M_ACTION
 
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_ACTION_ALTER]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc Alter] -identifier E_ACTION_ALTER]
-	lappend entries [list -type command -label [mc Bash] -identifier E_ACTION_BASH]
-	lappend entries [list -type command -label [mc Close] -identifier E_ACTION_CLOSE]
-	lappend entries [list -type command -label [mc Disarm] -identifier E_ACTION_DISARM]
-	lappend entries [list -type command -label [mc Open] -identifier E_ACTION_OPEN]
-	lappend entries [list -type command -label [mc Tunnel] -identifier E_ACTION_TUNNEL]
+	lappend entries [list -type command -label "Alter" -identifier E_ACTION_ALTER]
+	lappend entries [list -type command -label "Bash" -identifier E_ACTION_BASH]
+	lappend entries [list -type command -label "Close" -identifier E_ACTION_CLOSE]
+	lappend entries [list -type command -label "Disarm" -identifier E_ACTION_DISARM]
+	lappend entries [list -type command -label "Open" -identifier E_ACTION_OPEN]
+	lappend entries [list -type command -label "Tunnel" -identifier E_ACTION_TUNNEL]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_ACTION_ALTER $entries
 
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_ACTION_LOOKING]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc Look] -identifier E_ACTION_LOOK]
-	lappend entries [list -type command -label [mc Map] -identifier E_ACTION_MAP]
+	lappend entries [list -type command -label "Look" -identifier E_ACTION_LOOK]
+	lappend entries [list -type command -label "Map" -identifier E_ACTION_MAP]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_ACTION_LOOKING $entries
 
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_ACTION_RESTING]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc Rest] -identifier E_ACTION_REST]
-	lappend entries [list -type command -label [mc "Stay (With Pickup)"] -identifier E_ACTION_STAY]
-	lappend entries [list -type command -label [mc "Stay"] -identifier E_ACTION_STAY_TOGGLE]
+	lappend entries [list -type command -label "Rest" -identifier E_ACTION_REST]
+	lappend entries [list -type command -label "Stay (With Pickup)" -identifier E_ACTION_STAY]
+	lappend entries [list -type command -label "Stay" -identifier E_ACTION_STAY_TOGGLE]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_ACTION_RESTING $entries
 
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_ACTION_SEARCHING]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc Search] -identifier E_ACTION_SEARCH]
-	lappend entries [list -type command -label [mc "Search Mode"] -identifier E_ACTION_SEARCH_MODE]
+	lappend entries [list -type command -label "Search" -identifier E_ACTION_SEARCH]
+	lappend entries [list -type command -label "Search Mode" -identifier E_ACTION_SEARCH_MODE]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_ACTION_SEARCHING $entries
 
 	set menuId [NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_ACTION_MOVEMENT]
 	NSMenu::Info $menuId setupCmd "NSMainWindow::MenuSetupCmd $oop"
 	set entries {}
-	lappend entries [list -type command -label [mc "Go Down"] -identifier E_ACTION_DOWN]
-	lappend entries [list -type command -label [mc "Go Up"] -identifier E_ACTION_UP]
-	lappend entries [list -type command -label [mc Run] -identifier E_ACTION_RUN]
-	lappend entries [list -type command -label [mc "Walk (With Pickup)"] -identifier E_ACTION_WALK]
-	lappend entries [list -type command -label [mc "Walk"] -identifier E_ACTION_WALK_TOGGLE]
+	lappend entries [list -type command -label "Go Down" -identifier E_ACTION_DOWN]
+	lappend entries [list -type command -label "Go Up" -identifier E_ACTION_UP]
+	lappend entries [list -type command -label "Run" -identifier E_ACTION_RUN]
+	lappend entries [list -type command -label "Walk (With Pickup)" -identifier E_ACTION_WALK]
+	lappend entries [list -type command -label "Walk" -identifier E_ACTION_WALK_TOGGLE]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_ACTION_MOVEMENT $entries
 
 	set entries {}
- 	lappend entries [list -type cascade -menu MENU_ACTION_ALTER -label [mc Alter] -identifier M_ACTION_ALTER]
- 	lappend entries [list -type cascade -menu MENU_ACTION_LOOKING -label [mc Looking] -identifier M_ACTION_LOOKING]
- 	lappend entries [list -type cascade -menu MENU_ACTION_MOVEMENT -label [mc Movement] -identifier M_ACTION_MOVEMENT]
- 	lappend entries [list -type cascade -menu MENU_ACTION_RESTING -label [mc Resting] -identifier M_ACTION_RESTING]
- 	lappend entries [list -type cascade -menu MENU_ACTION_SEARCHING -label [mc Searching] -identifier M_ACTION_SEARCHING]
+ 	lappend entries [list -type cascade -menu MENU_ACTION_ALTER -label "Alter" -identifier M_ACTION_ALTER]
+ 	lappend entries [list -type cascade -menu MENU_ACTION_LOOKING -label "Looking" -identifier M_ACTION_LOOKING]
+ 	lappend entries [list -type cascade -menu MENU_ACTION_MOVEMENT -label "Movement" -identifier M_ACTION_MOVEMENT]
+ 	lappend entries [list -type cascade -menu MENU_ACTION_RESTING -label "Resting" -identifier M_ACTION_RESTING]
+ 	lappend entries [list -type cascade -menu MENU_ACTION_SEARCHING -label "Searching" -identifier M_ACTION_SEARCHING]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Note] -identifier E_ACTION_NOTE]
-	lappend entries [list -type command -label [mc Repeat] -identifier E_ACTION_REPEAT]
-	lappend entries [list -type command -label [mc Target] -identifier E_ACTION_TARGET]
+	lappend entries [list -type command -label "Note" -identifier E_ACTION_NOTE]
+	lappend entries [list -type command -label "Repeat" -identifier E_ACTION_REPEAT]
+	lappend entries [list -type command -label "Target" -identifier E_ACTION_TARGET]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Pets] -identifier E_ACTION_PETS]
-	lappend entries [list -type command -label [mc "Use Power"] -identifier E_ACTION_POWER]
+	lappend entries [list -type command -label "Pets" -identifier E_ACTION_PETS]
+	lappend entries [list -type command -label "Use Power" -identifier E_ACTION_POWER]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_ACTION $entries
 
@@ -591,23 +589,23 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_OTHER
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_OTHER -label [mc Other] -underline 0 -identifier M_OTHER
+		-menu MENU_OTHER -label "Other" -underline 0 -identifier M_OTHER
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_PREFERENCES
 	set entries {}
-	lappend entries [list -type command -label [mc Color] -identifier E_PREF_COLOR]
-	lappend entries [list -type command -label [mc Font] -identifier E_PREF_FONT]
-	lappend entries [list -type command -label [mc Options] -identifier E_PREF_OPTIONS]
+	lappend entries [list -type command -label "Color" -identifier E_PREF_COLOR]
+	lappend entries [list -type command -label "Font" -identifier E_PREF_FONT]
+	lappend entries [list -type command -label "Options" -identifier E_PREF_OPTIONS]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_PREFERENCES $entries
 
 	set entries {}
-	lappend entries [list -type command -label [mc "Character Info"] -identifier E_OTHER_INFO]
-	lappend entries [list -type command -label [mc Feeling] -identifier E_OTHER_FEELING]
-	lappend entries [list -type command -label [mc Knowledge] -identifier E_OTHER_KNOWLEDGE]
-	lappend entries [list -type command -label [mc "Message History"] -identifier E_OTHER_MESSAGES]
-	lappend entries [list -type cascade -menu MENU_PREFERENCES -label [mc Preferences] -identifier M_PREFERENCES]
-	lappend entries [list -type command -label [mc "Quest Status"] -identifier E_OTHER_QUEST]
-	lappend entries [list -type command -label [mc "Time Of Day"] -identifier E_OTHER_TIME]
+	lappend entries [list -type command -label "Character Info" -identifier E_OTHER_INFO]
+	lappend entries [list -type command -label "Feeling" -identifier E_OTHER_FEELING]
+	lappend entries [list -type command -label "Knowledge" -identifier E_OTHER_KNOWLEDGE]
+	lappend entries [list -type command -label "Message History" -identifier E_OTHER_MESSAGES]
+	lappend entries [list -type cascade -menu MENU_PREFERENCES -label "Preferences" -identifier M_PREFERENCES]
+	lappend entries [list -type command -label "Quest Status" -identifier E_OTHER_QUEST]
+	lappend entries [list -type command -label "Time Of Day" -identifier E_OTHER_TIME]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_OTHER $entries
 
@@ -617,38 +615,38 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_WINDOW
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_WINDOW -label [mc Window] -underline 0 -identifier M_WINDOW
+		-menu MENU_WINDOW -label "Window" -underline 0 -identifier M_WINDOW
 
 	set entries {}
-	lappend entries [list -type command -label [mc "Arrange Windows..."] -identifier E_WINDOW_DEFPOS]
-	lappend entries [list -type command -label [mc "Maximize Windows..."] -identifier E_WINDOW_MAXIMIZE]
+	lappend entries [list -type command -label "Arrange Windows..." -identifier E_WINDOW_DEFPOS]
+	lappend entries [list -type command -label "Maximize Windows..." -identifier E_WINDOW_MAXIMIZE]
 		lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "Save Window Positions"] -identifier E_WINDOW_SAVEPOS]
-	lappend entries [list -type command -label [mc "Load Window Positions"] -identifier E_WINDOW_LOADPOS]
-	lappend entries [list -type checkbutton -label [mc "AutoSave Positions"] \
+	lappend entries [list -type command -label "Save Window Positions" -identifier E_WINDOW_SAVEPOS]
+	lappend entries [list -type command -label "Load Window Positions" -identifier E_WINDOW_LOADPOS]
+	lappend entries [list -type checkbutton -label "AutoSave Positions" \
 		-variable ::NSMainWindow($oop,window,autosave) -identifier E_WINDOW_AUTOSAVE]
 	if {[file exists [PathTk choice-window.tcl]]} {
 		Info $oop choiceWindow [Value choicewindow,show]
 		lappend entries [list -type separator]
-		lappend entries [list -type checkbutton -label [mc "Choice Window"] \
+		lappend entries [list -type checkbutton -label "Choice Window" \
 			-variable ::NSMainWindow($oop,choiceWindow) -identifier E_CHOICEWINDOW]
 	}
 	Info $oop messageWindow [Value message,float]
-	lappend entries [list -type checkbutton -label [mc "Message Window"] \
+	lappend entries [list -type checkbutton -label "Message Window" \
 		-variable ::NSMainWindow($oop,messageWindow) -identifier E_WINDOW_MESSAGE]
 	Info $oop messagesWindow 0
-	lappend entries [list -type checkbutton -label [mc "Messages Window"] \
+	lappend entries [list -type checkbutton -label "Messages Window" \
 		-variable ::NSMainWindow($oop,messagesWindow) -identifier E_WINDOW_MESSAGES]
 	Info $oop miscWindow [Value misc,float]
-	lappend entries [list -type checkbutton -label [mc "Misc Window"] \
+	lappend entries [list -type checkbutton -label "Misc Window" \
 		-variable ::NSMainWindow($oop,miscWindow) -identifier E_WINDOW_MISC]
 if 0 {
-	lappend entries [list -type checkbutton -label [mc "Progress Window"] \
+	lappend entries [list -type checkbutton -label "Progress Window" \
 		-variable ::NSMainWindow($oop,progressWindow) \
 		-identifier E_WINDOW_PROGRESS]
 }
 	Info $oop recallWindow [Value recall,show]
-	lappend entries [list -type checkbutton -label [mc "Recall Window"] \
+	lappend entries [list -type checkbutton -label "Recall Window" \
 		-variable ::NSMainWindow($oop,recallWindow) -identifier E_WINDOW_RECALL]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_WINDOW $entries
 
@@ -658,11 +656,11 @@ if 0 {
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_HELP
 	NSMenu::MenuInsertEntry $mbarId -end MENUBAR -type cascade \
-		-menu MENU_HELP -label [mc Help] -underline 0 -identifier M_HELP
+		-menu MENU_HELP -label "Help" -underline 0 -identifier M_HELP
 
 	set entries {}
-	lappend entries [list -type command -label [mc Help] -identifier E_HELP]
-	lappend entries [list -type command -label [mc Tips] -identifier E_TIPS]
+	lappend entries [list -type command -label "Help" -identifier E_HELP]
+	lappend entries [list -type command -label "Tips" -identifier E_TIPS]
 	lappend entries [list -type separator]
 	lappend entries [list -type command \
 		-label "About ZAngband..." -identifier E_ABOUT]
@@ -835,8 +833,8 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_OTHER_TIME {DoUnderlyingCommand ^T}
 
 		E_WINDOW_DEFPOS {
-			set title [mc dialog-title-defpos]
-			set message [mc dialog-msg-defpos]
+			set title "dialog-title-defpos"
+			set message "dialog-msg-defpos"
 			set answer [tk_messageBox -parent [Info $oop win] -type yesno \
 				-icon question -title $title -message $message]
 			if {[string equal $answer yes]} {
@@ -844,8 +842,8 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 			}
 		}
 		E_WINDOW_MAXIMIZE {
-			set title [mc dialog-title-max]
-			set message [mc dialog-msg-max]
+			set title "dialog-title-max"
+			set message "dialog-msg-max"
 			set answer [tk_messageBox -parent [Info $oop win] -type yesno \
 				-icon question -title $title -message $message]
 			if {[string equal $answer yes]} {
@@ -854,14 +852,14 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		}
 		E_WINDOW_SAVEPOS {WriteGeometryFile}
 		E_WINDOW_LOADPOS {
-			set title [mc dialog-title-loadpos]
+			set title "dialog-title-loadpos"
 			if {![file exists [PathTk config geometry]]} {
-				set message [mc dialog-msg-loadpos-fail]
+				set message "dialog-msg-loadpos-fail"
 				tk_messageBox -parent [Info $oop win] \
 					-title $title -message $message
 				return
 			}
-			set message [mc dialog-msg-loadpos]
+			set message "dialog-msg-loadpos"
 			set answer [tk_messageBox -parent [Info $oop win] -type yesno \
 				-icon question -title $title -message $message]
 			if {[string equal $answer yes]} {
@@ -967,8 +965,8 @@ proc NSMainWindow::Close {oop} {
 
 	# Ask the user to confirm quit with save
 	set answer [tk_messageBox -icon question -type yesno \
-		-title [format [mc dialog-title-quit] "ZAngband"] \
-		-message [mc dialog-msg-quit]]
+		-title [format "dialog-title-quit" "ZAngband"] \
+		-message "dialog-msg-quit"]
 	if {[string equal $answer no]} return
 
 	# Save and quit
@@ -2055,7 +2053,7 @@ proc NSMainWindow::DisplayDepth {label depth} {
 	if {$depth == 0} {
 		set depthStr [angband cave wild_name]
 	} else {
-		set depthStr [format [mc "Level %d"] $depth]
+		set depthStr [format "Level %d" $depth]
 	}
 	$label configure -text $depthStr
 
@@ -2076,7 +2074,7 @@ proc NSMainWindow::DisplayDepth {label depth} {
 proc NSMainWindow::Bind_Py_level {oop level} {
 
 	if {$level != [Info $oop Py_level]} {
-		NSStatus::SetStatusMessage [format [mc "Level %d"] $level] Level info
+		NSStatus::SetStatusMessage [format "Level %d" $level] Level info
 		Info $oop Py_level $level
 	}
 
@@ -2555,7 +2553,7 @@ proc NSMainWindow::ContextMenu_StatusBar {menu x y} {
 
 	$menu delete 0 end
 
-	$menu add command -label [mc "Set Font"] \
+	$menu add command -label "Set Font" \
 		-command "NSModule::LoadIfNeeded NSFont ; NSWindowManager::Display font statusBar"
 	$menu add command -label "Set Color" \
 		-command {
@@ -2569,7 +2567,7 @@ proc NSMainWindow::ContextMenu_StatusBar {menu x y} {
 	$menu add command -label "Set Autobar Font" \
 		-command "NSModule::LoadIfNeeded NSFont ; NSWindowManager::Display font autobar"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	tk_popup $menu $x $y
 

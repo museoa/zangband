@@ -29,8 +29,6 @@ namespace eval NSMiscWindow {
 
 proc NSMiscWindow::InitModule {} {
 
-	MsgCatInit misc-win
-
 	NSModule::LoadIfNeeded NSBalloon
 
 	InitAuxWindows
@@ -96,7 +94,7 @@ proc NSMiscWindow::InitAuxWindows {} {
 	
 		set win .tools
 		toplevel $win
-		wm title $win [mc "Tool"]
+		wm title $win "Tool"
 		wm transient $win $winMain
 		wm resizable $win no no
 		Term_KeyPress_Bind $win
@@ -117,7 +115,7 @@ proc NSMiscWindow::InitAuxWindows {} {
 
 	set win .message
 	toplevel $win
-	wm title $win [mc "Message"]
+	wm title $win "Message"
 	wm transient $win $winMain
 	wm resizable $win yes no
 	wm protocol $win WM_DELETE_WINDOW {
@@ -143,7 +141,7 @@ pack $child -side top -expand yes -fill x
 
 	set win .misc
 	toplevel $win
-	wm title $win [mc "Misc"]
+	wm title $win "Misc"
 	wm transient $win [Window main]
 	wm resizable $win no no
 	wm protocol $win WM_DELETE_WINDOW {
@@ -169,7 +167,7 @@ pack $child -expand yes -fill y
 
 	set win .progress
 	toplevel $win
-	wm title $win [mc "Progress"]
+	wm title $win "Progress"
 	wm transient $win $winMain
 	wm resizable $win no no
 	wm protocol $win WM_DELETE_WINDOW "NSMiscWindow::HideProgressWindow"
@@ -240,7 +238,7 @@ proc NSMiscWindow::InitDisplay_Message {parent} {
 
 	NSStatusText::StatusText $text \
 		[Global main,statusBar] \
-		[mc "Click for last message. Double-click for message history."]
+		"Click for last message. Double-click for message history."
 
 	# Update ourself when the font for the Message Window changes
 	NSValueManager::AddClient font,message \
@@ -286,7 +284,7 @@ proc NSMiscWindow::ContextMenu_Message {menu x y} {
 
 	$menu delete 0 end
 
-	$menu add command -label [mc "Set Font"] \
+	$menu add command -label "Set Font" \
 		-command "NSModule::LoadIfNeeded NSFont ; NSWindowManager::Display font message"
 	if {[winfo ismapped [Window message]]} {
 		set label "Attach To Main"
@@ -301,7 +299,7 @@ proc NSMiscWindow::ContextMenu_Message {menu x y} {
 		NSMainWindow::MenuInvoke [Global main,oop] ignore E_WINDOW_MESSAGE
 		"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	tk_popup $menu $x $y
 
@@ -404,7 +402,7 @@ if 0 {
 	foreach title {STR INT WIS DEX CON CHR} stat [angband info stat_name] {
 		$c create image 0 0 -image Image_Misc$title -anchor nw \
 			-tags "$title pic,$title"
-		$c create text 0 0 -text [mc $title] -font $font \
+		$c create text 0 0 -text $title -font $font \
 			-justify left -anchor nw -fill White \
 			-tags "font $title txt,$title"
 		CanvasFeedbackAdd $c $title \
@@ -432,7 +430,7 @@ if 0 {
 	foreach title {LEVEL EXP AU AC} {
 		$c create image 0 0 -image Image_Misc$title -anchor nw \
 			-tags "$title pic,$title"
-		$c create text 0 0 -text [mc $title] -font $font \
+		$c create text 0 0 -text $title -font $font \
 			-justify left -anchor nw -fill White \
 			-tags "font $title txt,$title"
 		CanvasFeedbackAdd $c $title \
@@ -450,7 +448,7 @@ if 0 {
 	}
 	
 	foreach title {HP SP FD} option {hitpoints mana food} {
-		$c create text 0 0 -text [mc $title] -font $font \
+		$c create text 0 0 -text $title -font $font \
 			-fill White -anchor nw -tags "font $title"
 		$c create text 0 0 -text 99999 -font $font \
 			-fill [Value TERM_L_GREEN] -anchor ne -tags "font $option"
@@ -478,9 +476,9 @@ if 0 {
 		Value misc,mode,exp [expr {![Value misc,mode,exp]}]
 		namespace eval NSMiscWindow {
 			if {[Value misc,mode,exp]} {
-				%W itemconfigure txt,EXP -text [mc EXP]
+				%W itemconfigure txt,EXP -text "EXP"
 			} else {
-				%W itemconfigure txt,EXP -text [mc ADV]
+				%W itemconfigure txt,EXP -text "ADV"
 			}
 			eval bind_Py_exp [angband player exp]
 			CanvasFeedbackCmd_MiscWindow EXP enter
@@ -541,9 +539,9 @@ proc NSMiscWindow::MiscSet {} {
 	$canvas itemconfigure icon -assign [angband player icon]
 
 	if {[Value misc,mode,exp]} {
-		$canvas itemconfigure txt,EXP -text [mc EXP]
+		$canvas itemconfigure txt,EXP -text "EXP"
 	} else {
-		$canvas itemconfigure txt,EXP -text [mc ADV]
+		$canvas itemconfigure txt,EXP -text "ADV"
 	}
 
 if 0 {
@@ -583,7 +581,7 @@ proc NSMiscWindow::ContextMenu_Misc {menu x y} {
 
 	$menu delete 0 end
 
-	$menu add command -label [mc "Set Font"] \
+	$menu add command -label "Set Font" \
 		-command "NSModule::LoadIfNeeded NSFont ; NSWindowManager::Display font misc"
 	if {[winfo ismapped [Window misc]]} {
 		set label "Attach To Main"
@@ -623,7 +621,7 @@ proc NSMiscWindow::ContextMenu_Misc {menu x y} {
 			"
 	}
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	tk_popup $menu $x $y
 
@@ -740,7 +738,7 @@ proc NSMiscWindow::InitDisplay_Progress {parent} {
 	# Bar titles
 	set y 7
 	foreach title {HP SP FD} option {hitpoints mana food} {
-		$c create text 2 [incr y 15] -text [mc $title] -font $font \
+		$c create text 2 [incr y 15] -text $title -font $font \
 			-fill White -anchor sw -tags "font $title"
 		CanvasFeedbackAdd $c $title \
 			"NSMiscWindow::CanvasFeedbackCmd_Progress $option"
@@ -881,7 +879,7 @@ proc NSMiscWindow::ConfigProgress {} {
 	# Calculate the width of the text
 	set textWidth 0
 	foreach label [list HP SP FD] {
-		set twidth [font measure $font [mc $label]]
+		set twidth [font measure $font $label]
 		if {$twidth > $textWidth} {
 			set textWidth $twidth
 		}
@@ -1028,7 +1026,7 @@ proc NSMiscWindow::ContextMenu_Progress {menu x y} {
 	$menu add command -label "$action Numbers" -state $state \
 		-command "NSMiscWindow::ToggleProgress showNumbers"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	tk_popup $menu $x $y
 
@@ -1324,65 +1322,65 @@ proc NSMiscWindow::CanvasFeedbackCmd_MiscWindow {info action} {
 			angband player stat $info statInfo
 			set max $statInfo(use)
 			set top $statInfo(top)
-			set message [format [mc "Your character's %s"] [mc $info]]
+			set message [format "Your character's %s" $info]
 			if {$max < $top} {
-				append message [format [mc " (max %s)"] [cnv_stat_disp $top]]
+				append message [format " (max %s)" [cnv_stat_disp $top]]
 			}
 		}
 		icon {
-#			set message [mc "Click for a menu of actions."]
-			set message [mc "Click to display the Character Window."]
+#			set message "Click for a menu of actions."
+			set message "Click to display the Character Window."
 		}
 		class -
 		name -
 		race -
 		title {
-			set message [format [mc "Your character's %s"] [mc $info]]
+			set message [format "Your character's %s" $info]
 			if {[string equal $info name]} {
-				append message [mc ". Click to change."]
+				append message ". Click to change."
 			}
 		}
 		ac -
 		AC {
-			set message [mc "Your character's armor class "]
+			set message "Your character's armor class "
 			if {[Value misc,mode,armor_class]} {
-				append message [mc "(total)"]
+				append message "(total)"
 			} else {
-				append message [mc "(base,bonus)"]
+				append message "(base,bonus)"
 			}
 			if {[string equal $info AC]} {
-				append message [mc ". Click to toggle."]
+				append message ". Click to toggle."
 			}
 		}
 		AU {
-			set message [mc "Your character's gold"]
+			set message "Your character's gold"
 		}
 		exp -
 		EXP {
 			scan [angband player exp] "%d %d %d" cur max adv
 			if {[Value misc,mode,exp]} {
-				set message [mc "Current experience points"]
+				set message "Current experience points"
 				if {$cur < $max} {
-					append message [format [mc " (max %s)"] $max]
+					append message [format " (max %s)" $max]
 				}
 			} else {
-				set message [mc "Experience points for next level"]
+				set message "Experience points for next level"
 				if {($cur < $max) && ($adv != 999999999)} {
 					if {$max < $adv} {
 						set max [expr {$adv - $max}]
-						append message [format [mc " (min %d)"] $max]
+						append message [format " (min %d)" $max]
 					}
 				}
 			}
 			if {[string equal $info EXP]} {
-				append message [mc ". Click to toggle."]
+				append message ". Click to toggle."
 			}
 		}
 		LEVEL {
-			set message [mc "Your character's experience level"]
+			set message "Your character's experience level"
 			set max [angband player max_lev]
 			if {[angband player lev] < $max} {
-				append message [format [mc " (max %s)"] $max]
+				append message [format " (max %s)" $max]
 			}
 		}
 		food -
@@ -1391,10 +1389,10 @@ proc NSMiscWindow::CanvasFeedbackCmd_MiscWindow {info action} {
 			set desc(food) "food level"
 			set desc(hitpoints) "hit points"
 			set desc(mana) "spell points"
-			set message [format [mc "Your character's %s"] [mc $desc($info)]]
+			set message [format "Your character's %s" $desc($info)]
 			scan [angband player $info] "%d %d %f" cur max frac
 			if {$cur < $max} {
-				append message [format [mc " (max %s)"] $max]
+				append message [format " (max %s)" $max]
 			}
 		}
 	}
@@ -1418,7 +1416,7 @@ proc NSMiscWindow::CanvasFeedbackCmd_Progress {info action} {
 			set desc(food) "food level"
 			set desc(hitpoints) "hit points"
 			set desc(mana) "spell points"
-			set message [format [mc "Your character's %s"] [mc $desc($info)]]
+			set message [format "Your character's %s" $desc($info)]
 			set showNumbers [Value progress,showNumbers]
 			set showBars [Value progress,showBars]
 			scan [angband player $info] "%d %d %f" cur max frac
@@ -1426,10 +1424,10 @@ proc NSMiscWindow::CanvasFeedbackCmd_Progress {info action} {
 				append message " ($cur/$max)"
 			} elseif {$showBars} {
 				if {$cur < $max} {
-					append message [format [mc " (max %s)"] $max]
+					append message [format " (max %s)" $max]
 				}
 			}
-			append message [mc ". Right-Click for options."]
+			append message ". Right-Click for options."
 		}
 	}
 
@@ -1518,7 +1516,7 @@ proc NSMiscWindow::InventoryPopup {menu canvas invOrEquip cmdChar args} {
 	if {$num} {
 		$menu add separator
 	}
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	set x [winfo rootx [winfo toplevel $canvas]]
 	set y [expr {[winfo rooty $canvas] + [winfo height $canvas]}]
@@ -1649,7 +1647,7 @@ proc NSMiscWindow::MiscArrangeWide {} {
 	foreach title {STR INT WIS DEX CON CHR} {
 		if {$useText} {
 			$canvas coords txt,$title 2 [incr y $rowHeight]
-			set width [font measure $font [mc $title]]
+			set width [font measure $font $title]
 			if {$width > $maxWidth} {
 				set maxWidth $width
 			}
@@ -1698,7 +1696,7 @@ if 0 {
 	if {$useText} {
 		set w 0
 		foreach title {EXP ADV AU} {
-			set w2 [expr {[font measure $font [mc $title]] + [font measure $font 99999999]}]
+			set w2 [expr {[font measure $font $title] + [font measure $font 99999999]}]
 			if {$w2 > $w} {
 				set w $w2
 			}
@@ -1882,7 +1880,7 @@ proc NSMiscWindow::MiscArrangeTall {} {
 	if {$useText} {
 		set maxWidth 0
 		foreach title {EXP ADV AU} {
-			set width [font measure $font [mc $title]]
+			set width [font measure $font $title]
 			if {$width > $maxWidth} {
 				set maxWidth $width
 			}
@@ -1897,7 +1895,7 @@ proc NSMiscWindow::MiscArrangeTall {} {
 	if {$useText} {
 		set maxWidth 0
 		foreach title {STR INT WIS DEX CON CHR} {
-			set width [font measure $font [mc $title]]
+			set width [font measure $font $title]
 			if {$width > $maxWidth} {
 				set maxWidth $width
 			}
@@ -1912,7 +1910,7 @@ proc NSMiscWindow::MiscArrangeTall {} {
 	}
 
 	if {$useText} {
-		set right [expr {2 + [font measure $font [mc AC]] + $pad}]
+		set right [expr {2 + [font measure $font "AC"] + $pad}]
 	} else {
 		set right 18
 	}

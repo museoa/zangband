@@ -31,8 +31,6 @@ proc NSTips::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit tips
-
 	set Priv(current) [Value tip,current]
 	set Priv(showTips) [Value tip,show]
 #	NSValueManager::AddClient showTips \
@@ -73,7 +71,7 @@ proc NSTips::ReadTipsFile {} {
 	global Angband
 	variable Priv
 
-	set tips_file [mc tips.txt]
+	set tips_file "tips.txt"
 	if {[catch {open [PathTk doc $tips_file]} fileId]} {
 		set prompt "The following error occurred while attempting to open "
 		append prompt "the \"$tips_file\" file for reading"
@@ -214,7 +212,7 @@ proc NSTips::InitWindow {oop} {
 
 	# Checkbutton
 	checkbutton $win.misc.checkshow \
-		-text [mc "Show this window every time the game starts"] \
+		-text "Show this window every time the game starts" \
 		-variable NSTips::Priv(showTips) \
 		-command "Value tip,show \$NSTips::Priv(showTips)"
 
@@ -234,13 +232,13 @@ proc NSTips::InitWindow {oop} {
 	frame $win.buttons \
 		-borderwidth 0
 	button $win.buttons.back \
-		-text [mc "< Back"] -command "NSTips::DisplayPreviousTip $oop" -width 11 \
+		-text "< Back" -command "NSTips::DisplayPreviousTip $oop" -width 11 \
 		-underline 2
 	button $win.buttons.next \
-		-text [mc "Next >"] -command "NSTips::DisplayNextTip $oop" -width 11 \
+		-text "Next >" -command "NSTips::DisplayNextTip $oop" -width 11 \
 		-underline 0 -default active
 	button $win.buttons.close \
-		-text [mc "Close"] -command "NSTips::Close $oop" -width 11
+		-text "Close" -command "NSTips::Close $oop" -width 11
 	pack $win.buttons.close \
 		-side right -pady 5 -padx 5
 	pack $win.buttons.next \
@@ -332,7 +330,7 @@ proc NSTips::DisplayTip {oop tip} {
 		set font {Helvetica 10}
 	}
 
-	$text insert end [mc "Did you know...\n"] tag1
+	$text insert end "Did you know...\n" tag1
 	$text tag configure tag1 -font [BoldFont $font] \
 		-lmargin1 20 -spacing1 20 -spacing3 15
 

@@ -31,8 +31,6 @@ proc NSCharFlagsCanvas::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit charflags
-
 	NSModule::LoadIfNeeded NSBalloon
 
 	set Priv(slots) [list \
@@ -284,7 +282,7 @@ proc NSCharFlagsCanvas::InitLayout {oop} {
 	set labelWidth 0
 	set labels {}
 	foreach flag $Priv(flags) {
-		set label [mc $flag]
+		set label $flag
 		set width [font measure $Priv(font,font) $label]
 		if {$width > $labelWidth} {
 			set labelWidth $width

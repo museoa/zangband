@@ -32,8 +32,6 @@ proc NSKnowledge::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit know
-
 	set Priv(hook) {}
 
 	# Create the Knowledge Window
@@ -187,7 +185,7 @@ proc NSKnowledge::InitWindow {oop} {
 
 	set win .knowledge$oop
 	toplevel $win
-	wm title $win [mc Knowledge]
+	wm title $win "Knowledge"
 
 	wm transient $win [Window main]
 
@@ -387,7 +385,7 @@ proc NSKnowledge::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_KNOWLEDGE
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_KNOWLEDGE -label [mc Knowledge] -underline 0 \
+		-menu MENU_KNOWLEDGE -label "Knowledge" -underline 0 \
 		-identifier M_KNOWLEDGE
 
 	set entries {}
@@ -400,15 +398,15 @@ proc NSKnowledge::InitMenus {oop} {
 		incr i
 	}
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Find...] \
+	lappend entries [list -type command -label "Find..." \
 		-accelerator f -underline 0 -identifier E_FIND]
-	lappend entries [list -type command -label [mc "Find Again"] \
+	lappend entries [list -type command -label "Find Again" \
 		-accelerator g -underline 6 -identifier E_FIND_AGAIN]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "Set Font"] \
+	lappend entries [list -type command -label "Set Font" \
 		-underline 0 -identifier E_FONT]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
 
 	NSMenu::MenuInsertEntries $mbar -end MENU_KNOWLEDGE $entries
@@ -1200,9 +1198,9 @@ proc NSKnowledge::Find {oop again} {
 	} else {
 
 		# Ask the user for a name
-		set string [NSUtils::StringBox -title [mc Find] \
-			-initial $Priv(find,string) -prompt [mc find-prompt] \
-			-buttons [list [mc Find] [mc Cancel]] -parent [Info $oop win]]
+		set string [NSUtils::StringBox -title "Find" \
+			-initial $Priv(find,string) -prompt "find-prompt" \
+			-buttons [list "Find" "Cancel"] -parent [Info $oop win]]
 		if {![string length $string]} return
 
 		# Clean up after the dialog, give message

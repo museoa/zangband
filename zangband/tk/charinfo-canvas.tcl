@@ -27,8 +27,6 @@ namespace eval NSCharInfoCanvas {
 
 proc NSCharInfoCanvas::InitModule {} {
 
-	MsgCatInit player
-
 	return
 }
 
@@ -63,9 +61,6 @@ proc NSCharInfoCanvas::NSCharInfoCanvas {oop parent} {
 	set lineHgt [font metrics $font -linespace]
 
 	set charWidth [font measure $font 9]
-	if {$::JAPANESE} {
-#		set charWidth [expr {$charWidth / 2}]
-	}
 	set width [expr {$charWidth * 80}]
 	set height [expr {$lineHgt * 25}]
 
@@ -184,7 +179,7 @@ proc NSCharInfoCanvas::InitLayoutAux {oop group row anchor labelList} {
 
 	foreach label $labelList {
 		if {[string compare $label -]} {
-			set label [mc $label]
+			set label $label
 			lappend idList [$canvas create text 0 0 -font $font -fill White \
 				-anchor $anchor -text $label -tags $group]
 		} else {
@@ -486,7 +481,7 @@ proc NSCharInfoCanvas::likert {x y} {
 	# Negative value
 	if {$x < 0} {
 		set likert_color [Value TERM_L_RED]
-		return [mc "Very Bad"]
+		return "Very Bad"
 	}
 
 	# Analyze the value
@@ -495,29 +490,29 @@ proc NSCharInfoCanvas::likert {x y} {
 		0 -
 		1 {
 			set likert_color [Value TERM_L_RED]
-			return [mc "Bad"]
+			return "Bad"
 		}
 		2 {
 			set likert_color [Value TERM_L_RED]
-			return [mc "Poor"]
+			return "Poor"
 		}
 		3 -
 		4 {
 			set likert_color [Value TERM_YELLOW]
-			return [mc "Fair"]
+			return "Fair"
 		}
 		5 {
 			set likert_color [Value TERM_YELLOW]
-			return [mc "Good"]
+			return "Good"
 		}
 		6 {
 			set likert_color [Value TERM_YELLOW]
-			return [mc "Very Good"]
+			return "Very Good"
 		}
 		7 -
 		8 {
 			set likert_color [Value TERM_L_GREEN]
-			return [mc "Excellent"]
+			return "Excellent"
 		}
 		9 -
 		10 -
@@ -525,18 +520,18 @@ proc NSCharInfoCanvas::likert {x y} {
 		12 -
 		13 {
 			set likert_color [Value TERM_L_GREEN]
-			return [mc "Superb"]
+			return "Superb"
 		}
 		14 -
 		15 -
 		16 -
 		17 {
 			set likert_color [Value TERM_L_BLUE]
-			return [mc "Chaos Rank"]
+			return "Chaos Rank"
 		}
 		default {
 			set likert_color Violet
-			return [format [mc "Amber \[%d\]"] [expr {int((((($x / $y) - 17) * 5) / 2))}]]
+			return [format "Amber \[%d\]" [expr {int((((($x / $y) - 17) * 5) / 2))}]]
 		}
 	}
 

@@ -31,8 +31,6 @@ proc NSDebugAlloc::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit know
-
 	set Priv(find,string) ""
 	set Priv(find,fromStart) 1
 
@@ -354,12 +352,12 @@ proc NSDebugAlloc::InitMenus {oop} {
 	lappend entries [list -type command -label "Allocate" \
 		-accelerator a -underline 0 -identifier E_ALLOCATE]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Find...] \
+	lappend entries [list -type command -label "Find..." \
 		-accelerator f -underline 0 -identifier E_FIND]
-	lappend entries [list -type command -label [mc "Find Again"] \
+	lappend entries [list -type command -label "Find Again" \
 		-accelerator g -underline 6 -identifier E_FIND_AGAIN]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-accelerator $mod+W -underline 0 -identifier E_CLOSE]
 
 	NSMenu::MenuInsertEntries $mbar -end MENU_DEBUG $entries
@@ -721,9 +719,9 @@ proc NSDebugAlloc::Find {oop again} {
 	} else {
 
 		# Ask the user for a name
-		set string [NSUtils::StringBox -title [mc Find] \
+		set string [NSUtils::StringBox -title "Find" \
 			-initial $Priv(find,string) -prompt Name \
-			-buttons [list [mc Find] [mc Cancel]] -parent [Info $oop win]]
+			-buttons [list "Find" "Cancel"] -parent [Info $oop win]]
 
 		# User cancelled
 		if {![string length $string]} return

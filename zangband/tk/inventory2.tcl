@@ -27,8 +27,6 @@ namespace eval NSInventory2 {
 
 proc NSInventory2::InitModule {} {
 
-	MsgCatInit inven
-
 	InitImageIfNeeded Image_ButtonOptions button-options.gif
 	InitImageIfNeeded Image_ButtonHelp button-help.gif
 	InitImageIfNeeded Image_Binding dg_binding.gif
@@ -273,7 +271,7 @@ proc NSInventory2::InitWindow {oop} {
 	set padRing 2
 
 	MakeBorder $oop $canvas 0 0 $widthEquip $heightEquip
-	MakeHeader $oop $canvas 0 0 $widthEquip [mc Equipment] equipment,title
+	MakeHeader $oop $canvas 0 0 $widthEquip "Equipment" equipment,title
 
 	set slots [list \
 		INVEN_WIELD 111 158 {119 0 0} {204 0 0} \
@@ -340,7 +338,7 @@ proc NSInventory2::InitWindow {oop} {
 
 	set x [expr {$widthEquip + 1}]
 	MakeBorder $oop $canvas $x 0 $widthInven $heightInven
-	MakeHeader $oop $canvas $x 0 $widthInven [mc Inventory] inventory,title
+	MakeHeader $oop $canvas $x 0 $widthInven "Inventory" inventory,title
 
 	set left [expr {$x + $padRing + 3 + 6}]
 	set top [expr {3 + ($heightHeader - 1) + 6}]
@@ -615,13 +613,13 @@ proc NSInventory2::Win98MenuCmd_Options {oop button} {
 	$menu add separator
 	lappend descList ""
 
-	$menu add checkbutton -label [mc "Always On Top"] \
+	$menu add checkbutton -label "Always On Top" \
 		-command {Inventory2Obj AlwaysOnTop} \
 		-variable NSInventory2($oop,alwaysOnTop)
 	lappend keywordList ""
 	lappend descList "Keep the window on top of the Main Window"
 
-	$menu add command -label [mc "List Mode"] -command {Inventory2Obj Swap}
+	$menu add command -label "List Mode" -command {Inventory2Obj Swap}
 	lappend keywordList ""
 	lappend descList "Use the list window"
 
@@ -689,10 +687,10 @@ proc NSInventory2::GetItemCommand {oop where index _command _label} {
 
 	if {[string equal $where equipment]} {
 		if {$attrib(known) && $attrib(activate)} {
-			set label [mc Activate]
+			set label "Activate"
 			set charCmd A
 		} else {
-			set label [mc Remove]
+			set label "Remove"
 			set charCmd t
 		}
 		set command "DoKeymapCmd {} $charCmd $charItem"
@@ -701,7 +699,7 @@ proc NSInventory2::GetItemCommand {oop where index _command _label} {
 	
 	switch -glob -- $attrib(tval) {
 		*_BOOK {
-			set label [mc Browse]
+			set label "Browse"
 			set charCmd b
 
 			# Hack -- Browse shows all the books
@@ -711,39 +709,39 @@ proc NSInventory2::GetItemCommand {oop where index _command _label} {
 		TV_ARROW -
 		TV_BOLT -
 		TV_SHOT {
-			set label [mc Fire]
+			set label "Fire"
 			set charCmd f
 		}
 		TV_FLASK {
-			set label [mc Refuel]
+			set label "Refuel"
 			set charCmd F
 		}
 		TV_FOOD {
-			set label [mc Eat]
+			set label "Eat"
 			set charCmd E
 		}
 		TV_POTION {
-			set label [mc Drink]
+			set label "Drink"
 			set charCmd q
 		}
 		TV_SCROLL {
-			set label [mc Read]
+			set label "Read"
 			set charCmd r
 		}
 		TV_SPIKE {
-			set label [mc Jam]
+			set label "Jam"
 			set charCmd j
 		}
 		TV_STAFF {
-			set label [mc Use]
+			set label "Use"
 			set charCmd u
 		}
 		TV_ROD {
-			set label [mc Zap]
+			set label "Zap"
 			set charCmd z
 		}
 		TV_WAND {
-			set label [mc Aim]
+			set label "Aim"
 			set charCmd a
 		}
 		TV_BOW -
@@ -763,7 +761,7 @@ proc NSInventory2::GetItemCommand {oop where index _command _label} {
 		TV_LITE -
 		TV_AMULET -
 		TV_RING {
-			set label [mc Wield]
+			set label "Wield"
 			set charCmd w
 		}
 	}
@@ -1018,9 +1016,9 @@ proc NSInventory2::ContextMenu {oop menu x y} {
 	# No row is hit
 	if {![string length $where]} {
 
-		$menu add command -label [mc Close] -command $closeCmd
+		$menu add command -label "Close" -command $closeCmd
 		$menu add separator
-		$menu add command -label [mc Cancel] -command $cancelCmd
+		$menu add command -label "Cancel" -command $cancelCmd
 
 		# Pop up the menu
 		tk_popup $menu $x $y
@@ -1043,9 +1041,9 @@ proc NSInventory2::ContextMenu {oop menu x y} {
 	# Require a real item (ie, in equipment)
 	if {[string equal $attrib(tval) TV_NONE]} {
 
-		$menu add command -label [mc Close] -command $closeCmd
+		$menu add command -label "Close" -command $closeCmd
 		$menu add separator
-		$menu add command -label [mc Cancel] -command $cancelCmd
+		$menu add command -label "Cancel" -command $cancelCmd
 
 		# Pop up the menu
 		tk_popup $menu $x $y
@@ -1060,10 +1058,10 @@ proc NSInventory2::ContextMenu {oop menu x y} {
 		# Append a command to select the item
 		set command "angband keypress $itemKey"
 
-		$menu add command -label [mc "Select This Item"] -command $command \
+		$menu add command -label "Select This Item" -command $command \
 			-font [BoldFont $font]
 		$menu add separator
-		$menu add command -label [mc Cancel] -command $cancelCmd
+		$menu add command -label "Cancel" -command $cancelCmd
 
 		# Pop up the menu
 		tk_popup $menu $x $y
@@ -1114,9 +1112,9 @@ if 0 {
 		if {[lsearch -exact $match $index] != -1} {
 			set cmdChar s
 			if {[angband store ishome]} {
-				set usageString [mc "Drop"]
+				set usageString "Drop"
 			} else {
-				set usageString [mc "Sell"]
+				set usageString "Sell"
 			}
 		}
 	}
@@ -1125,12 +1123,12 @@ if 0 {
 		$menu add command -label $label -command $command -font [BoldFont $font]
 	}
 	if {![angband store shopping]} {
-		$menu add command -label [mc Drop] \
+		$menu add command -label "Drop" \
 			-command "DoKeymapCmd {} d $toggleChar$itemKey"
 	}
-	$menu add command -label [mc Inspect] \
+	$menu add command -label "Inspect" \
 		-command "DoKeymapCmd {} I $toggleChar$itemKey"
-	$menu add command -label [mc Inscribe] \
+	$menu add command -label "Inscribe" \
 		-command "DoKeymapCmd {} braceleft $toggleChar$itemKey"
 
 	# We are looking in the inventory
@@ -1142,13 +1140,13 @@ if 0 {
 
 		# Skip the y/n prompt if the user is asked to confirm
 		# the destruction of worthless items.
-		$menu add command -label [mc *Destroy*] -command $command
+		$menu add command -label "*Destroy*" -command $command
 	}
 
 	$menu add separator
-	$menu add command -label [mc Close] -command $closeCmd
+	$menu add command -label "Close" -command $closeCmd
 	$menu add separator
-	$menu add command -label [mc Cancel] -command $cancelCmd
+	$menu add command -label "Cancel" -command $cancelCmd
 
 	# Pop up the menu
 	tk_popup $menu $x $y
@@ -1186,9 +1184,9 @@ proc NSInventory2::SetList {oop where tval {both 0}} {
 
 	# Set window title
 	if {$both} {
-		wm title $win [mc Items]
+		wm title $win "Items"
 	} else {
-		wm title $win [mc [string totitle $where]]
+		wm title $win [string totitle $where]
 	}
 	
 	return
@@ -1340,7 +1338,7 @@ proc NSInventory2::SetList_Inventory {oop} {
 	}
 	$canvas itemconfigure inventory,status,left -text ""
 	$canvas itemconfigure inventory,status,right -text ""
-	$canvas itemconfigure inventory,title -text [mc Inventory]
+	$canvas itemconfigure inventory,title -text "Inventory"
 
 	switch -- $where {
 		equipment {
@@ -1350,7 +1348,7 @@ proc NSInventory2::SetList_Inventory {oop} {
 		}
 		floor {
 			set itemList [angband floor find -tester yes]
-			$canvas itemconfigure inventory,title -text [mc Floor]
+			$canvas itemconfigure inventory,title -text "Floor"
 			set whereItem floor
 		}
 		inventory {
@@ -1415,14 +1413,14 @@ proc NSInventory2::SetList_Inventory {oop} {
 
 	set numItems [llength $itemList]
 	if {$numItems == 1} {
-		set string [format [mc "%d item"] $numItems]
+		set string [format "%d item" $numItems]
 	} else {
-		set string [format [mc "%d items"] $numItems]
+		set string [format "%d items" $numItems]
 	}
 	if {0 && [string compare [Info $oop where] floor]} {
 		set weightLimit [angband inventory weight_limit]
 		set capacity [expr {$weightLimit / 2 + $weightLimit / 10}]
-		append string "    [mc Threshold] [fmt_wgt $capacity 1]"
+		append string "    Threshold [fmt_wgt $capacity 1]"
 	}
 	$canvas itemconfigure inventory,status,left -text $string
 
@@ -1561,7 +1559,7 @@ proc NSInventory2::BindStatus {oop message where side} {
 		equipment {
 			switch -- $side {
 				left {
-					set string "[mc Total]/[mc Threshold]/[mc Limit]"
+					set string "Total/Threshold/Limit"
 				}
 				right {
 					set string "Weight of equipment items"

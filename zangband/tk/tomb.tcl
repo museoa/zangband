@@ -27,8 +27,6 @@ namespace eval NSTomb {
 
 proc NSTomb::InitModule {} {
 
-	MsgCatInit tomb
-
 	return
 }
 
@@ -53,7 +51,7 @@ proc NSTomb::KinglyWindow {} {
 
 	set win .kingly
 	toplevel $win
-	wm title $win [mc Winner!]
+	wm title $win "Winner!"
 	wm resizable $win no no
 
 	#
@@ -105,12 +103,12 @@ proc NSTomb::KinglyWindow {} {
 		$center [incr y $fontHeight] -fill White -font $font \
 		-anchor n -justify center -text $kingly -fill Gold
 
-    append message [mc "Veni, Vidi, Vici!\n"]
-    append message [mc "I came, I saw, I conquered!\n"]
+    append message "Veni, Vidi, Vici!\n"
+    append message "I came, I saw, I conquered!\n"
 	if {[string equal [angband player sex] Male]} {
-		append message [mc "All Hail the Mighty King!"]
+		append message "All Hail the Mighty King!"
 	} else {
-		append message [mc "All Hail the Mighty Queen!"]
+		append message "All Hail the Mighty Queen!"
 	}
 
 	incr y [expr {$fontHeight * 14}]
@@ -119,7 +117,7 @@ proc NSTomb::KinglyWindow {} {
 		-font $font -justify center
 
 	button $win.continue \
-		-text [mc Continue] -width 11 -default active \
+		-text "Continue" -width 11 -default active \
 		-command "set AngbandPriv(result) 1"
 
 	#
@@ -185,7 +183,7 @@ proc NSTomb::TombWindow {} {
 
 	set win .tomb
 	toplevel $win
-	wm title $win [mc Tomb]
+	wm title $win "Tomb"
 	wm resizable $win no no
 
 	# Do stuff when window closes
@@ -206,7 +204,7 @@ proc NSTomb::TombWindow {} {
 
 	# Split long "died_from" string
 	set doSplit 0
-	set died_from [format [mc "by %s"] [angband player died_from]]
+	set died_from [format "by %s" [angband player died_from]]
 	if {[string length $died_from] > 38} {
 		set index [string wordstart $died_from 37]
 		set died_from2 [string range $died_from $index end]
@@ -235,7 +233,7 @@ proc NSTomb::TombWindow {} {
 	set y [expr {$fontHeight * 2}]
 
 	$c create text \
-		$center [incr y $fontHeight] -text [mc RIP] -fill White -font $font \
+		$center [incr y $fontHeight] -text "RIP" -fill White -font $font \
 		-justify center
 	incr y $fontHeight
 
@@ -243,7 +241,7 @@ proc NSTomb::TombWindow {} {
 		$center [incr y $fontHeight] -text [angband player name] -fill White \
 		-font $font -justify center
 	$c create text \
-		$center [incr y $fontHeight] -text [mc the] -fill White -font $font \
+		$center [incr y $fontHeight] -text "the" -fill White -font $font \
 		-justify center
 	$c create text \
 		$center [incr y $fontHeight] -text [angband player title] -fill White \
@@ -256,19 +254,19 @@ proc NSTomb::TombWindow {} {
 		-fill White -font $font -justify center
 	$c create text \
 		$center [incr y $fontHeight] \
-		-text [format [mc "Level: %s"] [angband player level]] \
+		-text [format "Level: %s" [angband player level]] \
 		-fill White -font $font -justify center
 	$c create text \
 		$center [incr y $fontHeight] \
-		-text [format [mc "Exp: %s"] [lindex [angband player exp] 0]] \
+		-text [format "Exp: %s" [lindex [angband player exp] 0]] \
 		-fill White -font $font -justify center
 	$c create text \
 		$center [incr y $fontHeight] \
-		-text [format [mc "AU: %s"] [angband player gold]] \
+		-text [format "AU: %s" [angband player gold]] \
 		-fill White -font $font -justify center
 	$c create text \
 		$center [incr y $fontHeight] \
-		-text [format [mc "Killed on Level %s"] [angband player depth]] \
+		-text [format "Killed on Level %s" [angband player depth]] \
 		-fill White -font $font -justify center
 	$c create text \
 		$center [incr y $fontHeight] -text $died_from \
@@ -290,9 +288,9 @@ proc NSTomb::TombWindow {} {
 	#
 
 	button $win.messages \
-		-text [mc Messages] -width 9 -command "MessageDump $win"
+		-text "Messages" -width 9 -command "MessageDump $win"
 	button $win.continue \
-		-text [mc Continue] -width 11  -default active \
+		-text "Continue" -width 11  -default active \
 		-command "set AngbandPriv(result) 1"
 
 	#

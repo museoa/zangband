@@ -30,8 +30,6 @@ namespace eval NSStore2 {
 
 proc NSStore2::InitModule {} {
 
-	MsgCatInit store
-
 	InitImageIfNeeded Image_ButtonOptions button-options.gif
 	InitImageIfNeeded Image_ButtonHelp button-help.gif
 	InitImageIfNeeded Image_Binding dg_binding.gif
@@ -272,17 +270,17 @@ proc NSStore2::InitWindow {oop} {
 	frame $frame \
 		-borderwidth 0
 	label $frame.howMany \
-		-font $font -text [mc Quantity:]
+		-font $font -text "Quantity:"
 	entry $frame.quantity \
 		-width 2 -state disabled -textvariable NSStore2($oop,quantity)
 	label $frame.howMuch \
-		-font $font -text [mc "Total Cost:"]
+		-font $font -text "Total Cost:"
 	label $frame.totalCost \
 		-font $font -text "" -anchor w
 	label $frame.purse \
 		-font $font
 	label $frame.playerGold \
-		-font $font -text [mc "Gold Remaining:"]
+		-font $font -text "Gold Remaining:"
 	label $frame.gold \
 		-font $font -text [angband player gold]
 
@@ -372,7 +370,7 @@ proc NSStore2::InitWindow {oop} {
 
 	set x [expr {$widthStore + 1}]
 	MakeBorder $oop $canvas $x 0 $widthInven $heightStore
-	MakeHeader $oop $canvas $x 0 $widthInven [mc Inventory] inventory,title
+	MakeHeader $oop $canvas $x 0 $widthInven "Inventory" inventory,title
 
 	set left [expr {$x + $padRing + 3 + 6}]
 	set top [expr {3 + ($heightHeader - 1) + 6}]
@@ -532,14 +530,14 @@ proc NSStore2::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_STORE
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_STORE -label [mc Store] -underline 0 -identifier M_STORE
+		-menu MENU_STORE -label "Store" -underline 0 -identifier M_STORE
 
 	set entries {}
-	lappend entries [list -type command -label [mc Buy] -identifier E_STORE_BUY]
-	lappend entries [list -type command -label [mc Sell] -identifier E_STORE_SELL]
+	lappend entries [list -type command -label "Buy" -identifier E_STORE_BUY]
+	lappend entries [list -type command -label "Sell" -identifier E_STORE_SELL]
 	lappend entries [list -type separator -identifier E_SEP_1]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Leave] \
+	lappend entries [list -type command -label "Leave" \
 		-identifier E_STORE_EXIT]
 
 	NSMenu::MenuInsertEntries $mbar -end MENU_STORE $entries
@@ -601,7 +599,7 @@ proc NSStore2::Synch {oop} {
 	}
 	set id [Info $oop toolbar,buyId]
 	[NSToolbar::GetTool $toolbarId $id] configure -state $state \
-		-label [mc $label]
+		-label $label
 
 	#
 	# Drop/Sell button
@@ -619,7 +617,7 @@ proc NSStore2::Synch {oop} {
 	}
 	set id [Info $oop toolbar,sellId]
 	[NSToolbar::GetTool $toolbarId $id] configure -state $state \
-		-label [mc $label]
+		-label $label
 
 	return
 }
@@ -873,7 +871,7 @@ proc NSStore2::Win98MenuCmd_Options {oop button} {
 	lappend keywordList ""
 	lappend descList ""
 
-	$menu add command -label [mc "List Mode"] -command {Store2Obj Swap}
+	$menu add command -label "List Mode" -command {Store2Obj Swap}
 	lappend descList "Use the list window"
 
 	Info $oop toolbar,mode option
@@ -970,9 +968,9 @@ proc NSStore2::Win98MenuCmd_Buy {oop button} {
 		$menu add separator
 	}
 	if {$doItem} {
-		$menu add command -label [mc Cancel] -command "angband keypress \033"
+		$menu add command -label "Cancel" -command "angband keypress \033"
 	} else {
-		$menu add command -label [mc Cancel]
+		$menu add command -label "Cancel"
 	}
 
 	if {[angband store ishome]} {
@@ -1052,9 +1050,9 @@ proc NSStore2::Win98MenuCmd_Sell {oop button} {
 		$menu add separator
 	}
 	if {$doItem} {
-		$menu add command -label [mc Cancel] -command "angband keypress \033"
+		$menu add command -label "Cancel" -command "angband keypress \033"
 	} else {
-		$menu add command -label [mc Cancel]
+		$menu add command -label "Cancel"
 	}
 
 	if {[angband store ishome]} {
@@ -1118,7 +1116,7 @@ proc NSStore2::ConfigureWindow {oop} {
 		-side right -expand no -padx 2
 
 	if {![angband store ishome]} {
-		$frame.purse configure -text "[mc Purse:] [angband store purse]    "
+		$frame.purse configure -text "Purse: [angband store purse]    "
 		pack $frame.purse \
 			-side right -expand no -padx 2
 	}
@@ -1126,18 +1124,18 @@ proc NSStore2::ConfigureWindow {oop} {
 	set mbarId [Info $oop mbarId]
 	NSMenu::MenuDeleteEntry $mbarId E_DESTROY
 	if {[angband store ishome]} {
-		NSMenu::EntryConfigure $mbarId M_STORE -label [mc Home]
-		NSMenu::EntryConfigure $mbarId M_SELL -label [mc Drop]
-		NSMenu::EntryConfigure $mbarId E_STORE_BUY -label [mc Take]
-		NSMenu::EntryConfigure $mbarId E_STORE_SELL -label [mc Drop]
+		NSMenu::EntryConfigure $mbarId M_STORE -label "Home"
+		NSMenu::EntryConfigure $mbarId M_SELL -label "Drop"
+		NSMenu::EntryConfigure $mbarId E_STORE_BUY -label "Take"
+		NSMenu::EntryConfigure $mbarId E_STORE_SELL -label "Drop"
 		NSMenu::MenuInsertEntry $mbarId -before E_SEP_1 \
-			-type command -label [mc Destroy] -identifier E_DESTROY
+			-type command -label "Destroy" -identifier E_DESTROY
 
 	} else {
-		NSMenu::EntryConfigure $mbarId M_STORE -label [mc Store]
-		NSMenu::EntryConfigure $mbarId M_SELL -label [mc Sell]
-		NSMenu::EntryConfigure $mbarId E_STORE_BUY -label [mc Buy]
-		NSMenu::EntryConfigure $mbarId E_STORE_SELL -label [mc Sell]
+		NSMenu::EntryConfigure $mbarId M_STORE -label "Store"
+		NSMenu::EntryConfigure $mbarId M_SELL -label "Sell"
+		NSMenu::EntryConfigure $mbarId E_STORE_BUY -label "Buy"
+		NSMenu::EntryConfigure $mbarId E_STORE_SELL -label "Sell"
 	}
 
 	return
@@ -1219,14 +1217,14 @@ proc NSStore2::SetList {oop} {
 	if {[angband store ishome]} {
 
 		# Set the window title
-		wm title $win [mc "Your Home"]
-		$canvas itemconfigure store,title -text [mc "Your Home"]
+		wm title $win "Your Home"
+		$canvas itemconfigure store,title -text "Your Home"
 
 	# Not in the Home
 	} else {
 
 		# Set the window title
-		wm title $win [format [mc "The %s owned by %s"] \
+		wm title $win [format "The %s owned by %s" \
 			$storename [angband store ownername]]
 		$canvas itemconfigure store,title -text "The $storename"
 	}
@@ -1257,9 +1255,9 @@ proc NSStore2::SetList {oop} {
 
 	# Display number of objects
 	if {$count == 1} {
-		set string [format [mc "%d item"] $count]
+		set string [format "%d item" $count]
 	} else {
-		set string [format [mc "%d items"] $count]
+		set string [format "%d items" $count]
 	}
 	$canvas itemconfigure store,status,left -text $string
 
@@ -1328,9 +1326,9 @@ proc NSStore2::SetList_Inventory {oop} {
 
 	set numItems [llength $itemList]
 	if {$numItems == 1} {
-		set string [format [mc "%d item"] $numItems]
+		set string [format "%d item" $numItems]
 	} else {
-		set string [format [mc "%d items"] $numItems]
+		set string [format "%d items" $numItems]
 	}
 	$canvas itemconfigure inventory,status,left -text $string
 
@@ -1394,15 +1392,15 @@ proc NSStore2::ContextMenu {oop menu x y} {
 		# We are waiting for a command
 		if {[string equal [angband inkey_flags] INKEY_CMD]} {
 		
-			$menu add command -label [mc "$stringBuy An Item"] \
+			$menu add command -label "$stringBuy An Item" \
 				-command "angband keypress $charBuy"
-			$menu add command -label [mc "$stringSell An Item"] \
+			$menu add command -label "$stringSell An Item" \
 				-command "angband keypress $charSell"
 			$menu add separator
-			$menu add command -label [mc Leave] \
+			$menu add command -label "Leave" \
 				-command "angband keypress \033"
 			$menu add separator
-			$menu add command -label [mc Cancel]
+			$menu add command -label "Cancel"
 	
 			# Pop up the menu
 			tk_popup $menu $x $y
@@ -1433,10 +1431,10 @@ proc NSStore2::ContextMenu {oop menu x y} {
 			# Append a command to select the item
 			set command "angband keypress $itemKey"
 	
-			$menu add command -label [mc "Select This Item"] \
+			$menu add command -label "Select This Item" \
 				-command $command -font [BoldFont $font]
 			$menu add separator
-			$menu add command -label [mc Cancel] \
+			$menu add command -label "Cancel" \
 				-command "angband keypress \033"
 	
 			# Pop up the menu
@@ -1455,34 +1453,34 @@ proc NSStore2::ContextMenu {oop menu x y} {
 		set match [angband inventory find -store_will_buy yes]
 		if {[lsearch -exact $match $index] != -1} {
 			if {$itemAmount > 1} {
-				$menu add command -label [mc "$stringSell One"] \
+				$menu add command -label "$stringSell One" \
 					-command "angband keypress 01$charSell$itemKey" \
 					-font [BoldFont $font]
 				if {$itemAmount > 5} {
-					$menu add command -label [mc "$stringSell Five"] \
+					$menu add command -label "$stringSell Five" \
 						-command "angband keypress 05$charSell$itemKey"
 				}
-				$menu add command -label [mc "$stringSell All"] \
+				$menu add command -label "$stringSell All" \
 					-command "angband keypress 0$itemAmount$charSell$itemKey"
 			} else {
-				$menu add command -label [mc "$stringSell This Item"] \
+				$menu add command -label "$stringSell This Item" \
 					-command "angband keypress $charSell$itemKey" \
 					-font [BoldFont $font]
 			}
 			$menu add separator
-			$menu add command -label [mc "$stringBuy An Item"] \
+			$menu add command -label "$stringBuy An Item" \
 				-command "angband keypress $charBuy"
 		} else {
-			$menu add command -label [mc "$stringBuy An Item"] \
+			$menu add command -label "$stringBuy An Item" \
 				-command "angband keypress $charBuy"
-			$menu add command -label [mc "$stringSell An Item"] \
+			$menu add command -label "$stringSell An Item" \
 				-command "angband keypress $charSell"
 		}
 		$menu add separator
-		$menu add command -label [mc Leave] \
+		$menu add command -label "Leave" \
 			-command "angband keypress \033"
 		$menu add separator
-		$menu add command -label [mc Cancel]
+		$menu add command -label "Cancel"
 
 		# Pop up the menu
 		tk_popup $menu $x $y
@@ -1496,10 +1494,10 @@ proc NSStore2::ContextMenu {oop menu x y} {
 
 		# Append a command to select the item
 		set command "angband keypress $itemKey"
-		$menu add command -label [mc "Select This Item"] -command $command \
+		$menu add command -label "Select This Item" -command $command \
 			-font [BoldFont $font]
 		$menu add separator
-		$menu add command -label [mc Cancel] -command "angband keypress \033"
+		$menu add command -label "Cancel" -command "angband keypress \033"
 
 		# Pop up the menu
 		tk_popup $menu $x $y
@@ -1514,22 +1512,22 @@ proc NSStore2::ContextMenu {oop menu x y} {
 	}
 
 	if {$itemAmount == 1} {
-		$menu add command -label [mc "$stringBuy This Item"] \
+		$menu add command -label "$stringBuy This Item" \
 			-command "angband keypress $charBuy$itemKey" \
 			-font [BoldFont $font]
 	} else {
-		$menu add command -label [mc "$stringBuy One"] \
+		$menu add command -label "$stringBuy One" \
 			-command "angband keypress 01$charBuy$itemKey" \
 			-font [BoldFont $font]
 		if {$itemAmount > 5} {
-			$menu add command -label [mc "$stringBuy Five"] \
+			$menu add command -label "$stringBuy Five" \
 				-command "angband keypress 05$charBuy$itemKey"
 		}
-		$menu add command -label [mc "$stringBuy All"] \
+		$menu add command -label "$stringBuy All" \
 			-command "angband keypress 0$itemAmount$charBuy$itemKey"
 	}
 	$menu add separator
-	$menu add command -label [mc "$stringSell An Item"] \
+	$menu add command -label "$stringSell An Item" \
 		-command "angband keypress $charSell"
 
 	if {[angband store ishome]} {
@@ -1537,13 +1535,13 @@ proc NSStore2::ContextMenu {oop menu x y} {
 		# destroyed, and the user isn't asked to confirm.
 		set command "angband keypress 0${itemAmount}K$itemKey"
 		$menu add separator
-		$menu add command -label [mc *Destroy*] -command $command
+		$menu add command -label "*Destroy*" -command $command
 	}
 	$menu add separator
-	$menu add command -label [mc Leave] \
+	$menu add command -label "Leave" \
 		-command "angband keypress \033"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	# Pop up the menu
 	tk_popup $menu $x $y

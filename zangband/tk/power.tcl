@@ -29,8 +29,6 @@ namespace eval NSPower {
 
 proc NSPower::InitModule {} {
 
-	MsgCatInit power
-
 	InitImageIfNeeded Image_ButtonOptions button-options.gif
 	InitImageIfNeeded Image_ButtonHelp button-help.gif
 
@@ -158,7 +156,7 @@ proc NSPower::InitWindow {oop} {
 
 	set win .power$oop
 	toplevel $win
-	wm title $win [mc Powers]
+	wm title $win "Powers"
 
 	wm transient $win [Window main]
 
@@ -200,7 +198,7 @@ proc NSPower::InitWindow {oop} {
 	$canvas2 configure -height $height
 
 	foreach title {Name Level Cost Fail Stat} anchor {nw ne ne ne nw} {
-		$canvas2 create text 0 3 -text [mc $title] -fill gray -anchor $anchor \
+		$canvas2 create text 0 3 -text $title -fill gray -anchor $anchor \
 			-font $font -tags header,$title
 	}
 
@@ -382,9 +380,9 @@ proc NSPower::ContextMenu {oop menu x y} {
 	# No row is hit
 	if {$row == -1} {
 
-		$menu add command -label [mc Close] -command {angband keypress \033}
+		$menu add command -label "Close" -command {angband keypress \033}
 		$menu add separator
-		$menu add command -label [mc Cancel]
+		$menu add command -label "Cancel"
 
 		# Pop up the menu
 		tk_popup $menu $x $y
@@ -396,12 +394,12 @@ proc NSPower::ContextMenu {oop menu x y} {
 	set powerChars "abcdefghijklmnopqrstuvwxyz0123456789"
 	set char [string index $powerChars $row]
 
-	$menu add command -label [mc "Select This Power"] \
+	$menu add command -label "Select This Power" \
 		-command "angband keypress $char" -font [BoldFont $font]
 	$menu add separator
-	$menu add command -label [mc Close] -command {angband keypress \033}
+	$menu add command -label "Close" -command {angband keypress \033}
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	# Pop up the menu
 	tk_popup $menu $x $y
@@ -519,7 +517,7 @@ proc NSPower::NewItemCmd {oop canvistId y char desc level cost fail stat} {
 	# Stat
 	set stat [string totitle $stat]
 	lappend itemIdList [$c create text 0 [expr {$y + $diff}] \
-		-text [mc $stat] -anchor nw -justify left -font $font -fill White \
+		-text $stat -anchor nw -justify left -font $font -fill White \
 		-tags stat]
 
 	# Selection rectangle inside row

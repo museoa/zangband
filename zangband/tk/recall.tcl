@@ -31,8 +31,6 @@ proc NSRecall::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit recall
-
 	set Priv(icon,valid) 0
 	set Priv(icon,known) 0
 
@@ -151,7 +149,7 @@ proc NSRecall::InitWindow {oop} {
 
 	set win .recall$oop
 	toplevel $win
-	wm title $win [mc Recall]
+	wm title $win "Recall"
 
 	wm transient $win [Window main]
 
@@ -218,7 +216,6 @@ proc NSRecall::InitWindow {oop} {
 		$x 49 -fill Red -outline Red -tags arrow
 
 	set wrap word
-	if {$::JAPANESE} {set wrap char}
 	text $frame.text \
 		-wrap $wrap -width 1 -height 1 -font [Value font,recall] \
 		-borderwidth 0 -setgrid no -highlightthickness 0 \
@@ -988,13 +985,13 @@ proc NSRecall::ContextMenu {oop menu x y} {
 
 	$menu delete 0 end
 
-	$menu add command -label [mc "Set Font"] \
+	$menu add command -label "Set Font" \
 		-command "NSModule::LoadIfNeeded NSFont ; NSWindowManager::Display font recall"
 	$menu add checkbutton -label "Show Icon" \
 		-variable ::NSRecall($oop,showIcon) \
 		-command "NSRecall::OptionChanged $oop showIcon showicon"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	# Hack -- Try to prevent collapsing while popup is visible.
 	# It would be nice if "winfo ismapped $menu" worked
@@ -1166,43 +1163,42 @@ proc NSRecall::PetCmdInfo {_mode} {
 
 	if {[llength [angband player pets]]} {
 		set char [string index $letters [incr index]]
-		lappend data $char [mc "Dismiss pets"]
+		lappend data $char "Dismiss pets"
 	}
 
 #	set dist [struct set player_type 0 pet_follow_distance]
 	set mode ""
 
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Stay close"]
+	lappend data $char "Stay close"
 	if {$dist == [const PET_CLOSE_DIST]} {
 		set mode $char
 	}
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Follow me"]
+	lappend data $char "Follow me"
 	if {$dist == [const PET_FOLLOW_DIST]} {
 		set mode $char
 	}
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Seek and destroy"]
+	lappend data $char "Seek and destroy"
 	if {$dist == [const PET_DESTROY_DIST]} {
 		set mode $char
 	}
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Give me space"]
+	lappend data $char "Give me space"
 	if {$dist == [const PET_SPACE_DIST]} {
 		set mode $char
 	}
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Stay away"]
-	if {$dist == [const PET_AWAY_DIST]} {
+	lappend data $char "Stay away"]	if {$dist == [const PET_AWAY_DIST]} {
 		set mode $char
 	}
 		
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Allow open doors"]
+	lappend data $char "Allow open doors"
 
 	set char [string index $letters [incr index]]
-	lappend data $char [mc "Allow pickup items"]
+	lappend data $char "Allow pickup items"
 
 	return $data
 }
@@ -1310,7 +1306,7 @@ proc NSRecall::PopupSelect_CmdPet {menu x y} {
 	}
 
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	# Pressing and holding Button-3, popping up, then letting go selects 
 	# an item, so wait a bit if it was a quick press-release
@@ -1455,7 +1451,7 @@ proc NSRecall::PopupSelect_Power {menu x y} {
 	if {$num} {
 		$menu add separator
 	}
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 
 	# Pressing and holding Button-3, popping up, then letting go selects 
 	# an item, so wait a bit if it was a quick press-release

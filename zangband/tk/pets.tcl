@@ -29,8 +29,6 @@ namespace eval NSPets {
 
 proc NSPets::InitModule {} {
 
-	MsgCatInit pet
-
 	InitImageIfNeeded Image_ButtonOptions button-options.gif
 	InitImageIfNeeded Image_ButtonHelp button-help.gif
 
@@ -167,7 +165,7 @@ proc NSPets::InitWindow {oop} {
 
 	set win .pets$oop
 	toplevel $win
-	wm title $win [mc Pets]
+	wm title $win "Pets"
 
 	wm transient $win [Window main]
 
@@ -215,7 +213,7 @@ proc NSPets::InitWindow {oop} {
 	$canvas2 configure -height $height
 
 	foreach title {Name Items Status} anchor {nw ne ne nw} {
-		$canvas2 create text 0 3 -text [mc $title] -fill gray -anchor $anchor \
+		$canvas2 create text 0 3 -text $title -fill gray -anchor $anchor \
 			-font $font -tags header,$title
 	}
 
@@ -341,17 +339,17 @@ proc NSPets::InitMenus {oop} {
 
 	set menuId [NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_PETS]
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_PETS -label [mc Pets] -underline 0 -identifier M_PETS
+		-menu MENU_PETS -label "Pets" -underline 0 -identifier M_PETS
 
 	set entries {}
-	lappend entries [list -type command -label [mc "Dismiss Selected"] \
+	lappend entries [list -type command -label "Dismiss Selected" \
 		-command "NSPets::Dismiss $oop selected" -underline 0 \
 		-identifier E_DISMISS_SELECTED]
-	lappend entries [list -type command -label [mc "Dismiss All"] \
+	lappend entries [list -type command -label "Dismiss All" \
 		-command "NSPets::Dismiss $oop all" -underline 8 \
 		-identifier E_DISMISS_ALL]
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-command "NSPets::Close $oop" -underline 0 \
 		-accelerator $mod+W -identifier E_CLOSE]
 	
@@ -363,29 +361,29 @@ proc NSPets::InitMenus {oop} {
 
 	set menuId [NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_COMMAND]
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_COMMAND -label [mc Command] -underline 0 -identifier M_COMMAND
+		-menu MENU_COMMAND -label "Command" -underline 0 -identifier M_COMMAND
 	
 	set entries {}
-	lappend entries [list -type radiobutton -label [mc "Stay Close"] \
+	lappend entries [list -type radiobutton -label "Stay Close" \
 		-variable NSPets($oop,pet_follow_distance) \
 		-value [const PET_CLOSE_DIST] -identifier E_CLOSE_DIST]
-	lappend entries [list -type radiobutton -label [mc "Follow Me"] \
+	lappend entries [list -type radiobutton -label "Follow Me" \
 		-variable NSPets($oop,pet_follow_distance) \
 		-value [const PET_FOLLOW_DIST] -identifier E_FOLLOW]
-	lappend entries [list -type radiobutton -label [mc "Seek And Destroy"] \
+	lappend entries [list -type radiobutton -label "Seek And Destroy" \
 		-variable NSPets($oop,pet_follow_distance) \
 		-value [const PET_DESTROY_DIST] -identifier E_DESTROY]
-	lappend entries [list -type radiobutton -label [mc "Give Me Space"] \
+	lappend entries [list -type radiobutton -label "Give Me Space" \
 		-variable NSPets($oop,pet_follow_distance) \
 		-value [const PET_SPACE_DIST] -identifier E_SPACE]
-	lappend entries [list -type radiobutton -label [mc "Stay Away"] \
+	lappend entries [list -type radiobutton -label "Stay Away" \
 		-variable NSPets($oop,pet_follow_distance) \
 		-value [const PET_AWAY_DIST] -identifier E_AWAY]
 	lappend entries [list -type separator]
-	lappend entries [list -type checkbutton -label [mc "Open Doors"] \
+	lappend entries [list -type checkbutton -label "Open Doors" \
 		-underline 0 \
 		-variable NSPets($oop,pet_open_doors) -identifier E_DOORS]
-	lappend entries [list -type checkbutton -label [mc "Pick Up Items"] \
+	lappend entries [list -type checkbutton -label "Pick Up Items" \
 		-underline 0 \
 		-variable NSPets($oop,pet_pickup_items) -identifier E_ITEMS]
 	
@@ -733,7 +731,7 @@ proc NSPets::PositionItems {oop} {
 			set alignList [list nw ne nw]
 		}
 		foreach title $titleList align $alignList {
-			set label [mc $title]
+			set label $title
 			if {[string equal $align ne]} {
 				incr offset [font measure $font $label]
 			}
@@ -1030,26 +1028,26 @@ proc NSPets::ContextMenu {oop menu x y} {
 	$menu delete 0 end
 
 	if {$row != -1} {
-		$menu add command -label [mc "Dismiss This Pet"] \
+		$menu add command -label "Dismiss This Pet" \
 			-command "NSPets::Dismiss $oop one $row"
-		$menu add command -label [mc "Dismiss This Type"] \
+		$menu add command -label "Dismiss This Type" \
 			-command "NSPets::Dismiss $oop race $row"
 	}
 	if {[llength [NSCanvist::Selection $canvistId]]} {
-		$menu add command -label [mc "Dismiss Selected"] \
+		$menu add command -label "Dismiss Selected" \
 			-command "NSPets::Dismiss $oop selected"
 	}
 	if {[llength [angband player pets]]} {
-		$menu add command -label [mc "Dismiss All"] \
+		$menu add command -label "Dismiss All" \
 			-command "NSPets::Dismiss $oop all"
 	}
 	if {[string compare [$menu index end] none]} {
 		$menu add separator
 	}
-	$menu add command -label [mc Close] \
+	$menu add command -label "Close" \
 		-command "NSPets::Close $oop"
 	$menu add separator
-	$menu add command -label [mc Cancel]
+	$menu add command -label "Cancel"
 	
 	# Pop up the menu
 	tk_popup $menu $x $y

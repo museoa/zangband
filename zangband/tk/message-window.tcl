@@ -29,8 +29,6 @@ namespace eval NSMessageWindow {
 
 proc NSMessageWindow::InitModule {} {
 
-	MsgCatInit message
-
 	NSObject::New NSMessageWindow
 
 	return
@@ -163,7 +161,7 @@ proc NSMessageWindow::InitWindow {oop} {
 
 	set win .message$oop
 	toplevel $win
-	wm title $win [mc Messages]
+	wm title $win "Messages"
 
 	wm transient $win [Window main]
 

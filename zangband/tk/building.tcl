@@ -34,8 +34,6 @@ proc NSBuilding::InitModule {} {
 	variable Image
 	variable Action2Image
 
-	MsgCatInit building
-
 	# Symbolic names for images in the townactions.gif file
 	set names [list \
 		Sword Fruit1 Fruit2 CompareWeapons Fruit4 ResearchMonster Fruit6 Throne \

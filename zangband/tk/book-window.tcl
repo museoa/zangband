@@ -29,8 +29,6 @@ namespace eval NSBookWindow {
 
 proc NSBookWindow::InitModule {} {
 
-	MsgCatInit book
-
 	InitImageIfNeeded Image_ButtonOptions button-options.gif
 	InitImageIfNeeded Image_ButtonHelp button-help.gif
 

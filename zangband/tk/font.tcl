@@ -31,8 +31,6 @@ proc NSFont::InitModule {} {
 
 	variable Priv
 
-	MsgCatInit font
-
 	set Priv(items) {}
 	lappend Priv(items) autobar
 	lappend Priv(items) choice
@@ -145,7 +143,7 @@ proc NSFont::InitWindow {oop} {
 	
 	set win .font$oop
 	toplevel $win
-	wm title $win [mc Font]
+	wm title $win "Font"
 
 	wm resizable $win no no
 	wm transient $win [Window main]
@@ -188,7 +186,7 @@ proc NSFont::InitWindow {oop} {
 		-row 0 -column 1 -rowspan 1 -columnspan 1 -sticky ns
 
 	foreach item $Priv(items) {
-		$frame.list insert end [mc $item]
+		$frame.list insert end $item
 	}
 
 	# Configure the display when the item changes
@@ -201,8 +199,8 @@ proc NSFont::InitWindow {oop} {
 
 	frame $win.frameFont \
 		-borderwidth 0
-	InitListPlusLabel $oop $win.frameFont.face [mc Font:] 20
-	InitListPlusLabel $oop $win.frameFont.size [mc Size:] 4
+	InitListPlusLabel $oop $win.frameFont.face "Font:" 20
+	InitListPlusLabel $oop $win.frameFont.size "Size:" 4
 
 	pack $win.frameFont.face -side left -padx 4
 	pack $win.frameFont.size -side left -padx 4
@@ -222,15 +220,15 @@ proc NSFont::InitWindow {oop} {
 	frame $frame \
 		-borderwidth 0
 	label $frame.label \
-		-text [mc Style:] -anchor w
+		-text "Style:" -anchor w
 	frame $frame.frameCheck \
 		-borderwidth 2 -relief groove
 	checkbutton $frame.frameCheck.weight \
-		-text [mc Bold] -variable NSFont($oop,weight) \
+		-text "Bold" -variable NSFont($oop,weight) \
 		-onvalue bold -offvalue normal \
 		-command "NSFont::SynchFont $oop"
 	checkbutton $frame.frameCheck.slant \
-		-text [mc Italic] -variable NSFont($oop,slant) \
+		-text "Italic" -variable NSFont($oop,slant) \
 		-onvalue italic -offvalue roman \
 		-command "NSFont::SynchFont $oop"
 
@@ -253,7 +251,7 @@ proc NSFont::InitWindow {oop} {
 	pack $win.frameSample.text
 
 	$win.frameSample.text tag configure FontTag -justify center
-	$win.frameSample.text insert end [mc *sample] FontTag
+	$win.frameSample.text insert end "The quick brown fox jumped over the lazy dog." FontTag
 	$win.frameSample.text configure -state disabled
 
 	#
@@ -334,10 +332,10 @@ proc NSFont::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbar -tearoff 0 -identifier MENU_FONT
 	NSMenu::MenuInsertEntry $mbar -end MENUBAR -type cascade \
-		-menu MENU_FONT -label [mc Font] -underline 0 -identifier M_FONT
+		-menu MENU_FONT -label "Font" -underline 0 -identifier M_FONT
 
 	set entries {}
-	lappend entries [list -type command -label [mc Close] \
+	lappend entries [list -type command -label "Close" \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
 
 	NSMenu::MenuInsertEntries $mbar -end MENU_FONT $entries
@@ -619,7 +617,7 @@ proc NSFont::ItemSelectionChanged {oop} {
 		Info $oop weight $attrib(-weight)
 		Info $oop slant $attrib(-slant)
 
-		$win.frameSample.text insert end [mc *sample] FontTag
+		$win.frameSample.text insert end "The quick brown fox jumped over the lazy dog." FontTag
 
 		Info $oop noconfigure 1
 		SynchFont $oop
@@ -633,9 +631,9 @@ proc NSFont::ItemSelectionChanged {oop} {
 	$win.frameSample.text configure -state disabled
 
 	if {$count == 1} {
-		set string [mc "1 item selected"]
+		set string "1 item selected"
 	} else {
-		set string [format [mc "%d items selected"] $count]
+		set string [format "%d items selected" $count]
 	}
 	$win.statusBar itemconfigure t1 -text $string
 

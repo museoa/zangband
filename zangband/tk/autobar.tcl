@@ -27,8 +27,6 @@ namespace eval NSAutobar {
 
 proc NSAutobar::InitModule {} {
 
-	MsgCatInit inven misc-win
-
 	InitImageIfNeeded Image_ButtonActivate button-activate.gif
 	InitImageIfNeeded Image_ButtonFood button-food.gif
 	InitImageIfNeeded Image_ButtonPotion button-potion.gif
@@ -234,7 +232,7 @@ proc NSAutobar::InitDisplay {oop} {
 	set x 2
 	NewButton $oop -image Image_ButtonActivate -popup 1 -hook item \
 		-args [list equipment A -activate yes] \
-		-message [mc "Activate an equipment item"]
+		-message "Activate an equipment item"
 
 	$canvas configure -width [incr x 20]
 
@@ -1017,7 +1015,7 @@ proc NSAutobar::hook_power {oop message args} {
 			# No row is hit
 			if {$row == -1} {
 		
-				$menu add command -label [mc Cancel] \
+				$menu add command -label "Cancel" \
 					-command {angband keypress \033}
 				return 1
 			}
@@ -1027,7 +1025,7 @@ proc NSAutobar::hook_power {oop message args} {
 			$menu add command -label "Select This Power" -command $command \
 				-font "$font bold"
 			$menu add separator
-			$menu add command -label [mc Cancel] \
+			$menu add command -label "Cancel" \
 				-command {angband keypress \033}
 
 			return 1
