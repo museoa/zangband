@@ -211,13 +211,6 @@ proc NSRecall::InitWindow {oop} {
 			NSRecall::DisplayKnowledge $oop
 		}
 	"
-	$canvas bind icon <Control-ButtonRelease-1> "
-		if {\$CanvasButtonDown} {
-			$canvas move icon -1 -1
-			update idletasks
-			NSRecall::DisplayAssign $oop
-		}
-	"
 
 	# Create an arrow which appears when there is content out of site
 	set x [expr {$iconSize / 2}]
@@ -748,35 +741,6 @@ proc NSRecall::IconChanged {oop to toindex assign} {
 	return
 }
 
-# NSRecall::DisplayAssign --
-#
-#	Display the Assign Window for the displayed monster or object.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecall::DisplayAssign {oop} {
-
-	variable Priv
-
-	if {!$Priv(icon,valid)} return
-
-	# This can't work when an unknown flavored object is displayed
-	if {!$Priv(icon,known)} return
-
-	if {[string compare $Priv(icon,to) monster] &&
-		[string compare $Priv(icon,to) object]} {
-		return
-	}
-
-	NSModule::LoadIfNeeded NSAssign
-	NSWindowManager::Display assign $Priv(icon,to) $Priv(icon,toindex)
-
-	return
-}
 
 # NSRecall::DisplayKnowledge --
 #

@@ -313,8 +313,6 @@ proc NSCharacterWindow::InitMenus {oop} {
 		incr i
 	}
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "Change Icon"] \
-		-underline 0 -identifier E_ICON]
 	lappend entries [list -type command -label [mc "File Character"] \
 		-underline 0 -identifier E_DUMP]
 	lappend entries [list -type separator]
@@ -325,8 +323,6 @@ proc NSCharacterWindow::InitMenus {oop} {
 
 	set MenuString(M_CHARACTER) \
 		"Contains character-related commands."
-	set MenuString(E_ICON) \
-		"Changes the character's icon."
 	set MenuString(E_DUMP) \
 		"Dumps a character record to a text file."
 	set MenuString(E_CLOSE) \
@@ -354,7 +350,6 @@ proc NSCharacterWindow::SetupMenus {oop mbarID} {
 		lappend identList E_HOOK_[incr i]
 	}
 
-	lappend identList E_ICON
 	lappend identList E_DUMP E_CLOSE
 
 	NSMenu::MenuEnable $mbarID $identList
@@ -424,10 +419,6 @@ proc NSCharacterWindow::MenuInvoke {oop menuId ident} {
 		E_HOOK_* {
 			scan $ident "E_HOOK_%d" hookNum
 			SetHook $oop [lindex $Priv(hook) [expr {($hookNum - 1) * 2}]]
-		}
-		E_ICON {
-			NSModule::LoadIfNeeded NSAssign
-			NSWindowManager::Display assign character
 		}
 		E_DUMP {FileCharacter [Info $oop win]}
 		E_CLOSE {Close $oop}

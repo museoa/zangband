@@ -619,7 +619,6 @@ proc NSMainWindow::InitMenus {oop} {
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_PREFERENCES
 	set entries {}
 	lappend entries [list -type command -label [mc Alternate] -identifier E_PREF_ALTERNATE]
-	lappend entries [list -type command -label [mc Assign] -identifier E_PREF_ASSIGN]
 	lappend entries [list -type command -label [mc Color] -identifier E_PREF_COLOR]
 	lappend entries [list -type command -label [mc Font] -identifier E_PREF_FONT]
 	lappend entries [list -type command -label [mc Keymap] -identifier E_PREF_KEYMAP]
@@ -725,7 +724,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 
 	lappend identList E_WINDOW_SAVEPOS E_WINDOW_DEFPOS \
 		E_WINDOW_LOADPOS E_WINDOW_AUTOSAVE E_WINDOW_MAXIMIZE E_ABOUT E_TIPS
-	lappend identList M_PREFERENCES E_PREF_ASSIGN E_PREF_COLOR \
+	lappend identList M_PREFERENCES E_PREF_COLOR \
 		E_PREF_FONT E_PREF_KEYMAP E_PREF_SPRITE \
 		E_PREF_ALTERNATE
 
@@ -851,10 +850,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_PREF_ALTERNATE {
 			NSModule::LoadIfNeeded NSAlternate
 			NSWindowManager::Display alternate
-		}
-		E_PREF_ASSIGN {
-			NSModule::LoadIfNeeded NSAssign
-			NSWindowManager::Display assign
 		}
 		E_PREF_COLOR {
 			NSModule::LoadIfNeeded NSColorPreferences

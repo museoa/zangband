@@ -498,14 +498,6 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 			DoCommandIfAllowed C
 		}
 	"
-	$c bind icon <Control-ButtonRelease-1> "
-		if {\$CanvasButtonDown} {
-			$c move icon -1 -1
-			update idletasks
-			NSModule::LoadIfNeeded NSAssign
-			NSWindowManager::Display assign character
-		}
-	"
 
 	CanvasFeedbackAdd $c icon "NSMiscWindow::CanvasFeedbackCmd_MiscWindow icon"
 	
