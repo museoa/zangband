@@ -3,40 +3,38 @@ the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
 ZAngband 2.6.1:
-- Added an option so that you can set the map to remember monster-lit grids.
-- Fixed potions of life restoring CON after healing the player instead of
-  doing it before.
-- Fixed the building prices.  They were wrong by a factor of four.
-- Items from acquirement() will not be worthless.
-- Replaced the 'restrict' variable name with 'restricted'
-- The options screen could display bogus options because the list of options
-  was not properly terminated.
-- The '5' key on the numeric keypad should now work in the X11 version.
-- The standard makefile uses 'zangband' instead of 'testing' for the name
-  of the executable.  The default target is now to build zangband instead
-  of building+installing.
-- The X11 and XAW versions default to three windows instead of eight.
-- Use the mkstemp() function where available instead of the insecure
-  tmpnam(). Define HAVE_MKSTEMP if your C-library provides this function.
-- Fixed problem with description given when looking at snow.
-- Added autoconf support.
-- Fixed problem with displaying charging artifact lights in the wrong colour.
-- Fixed off-by-one error in object selection function.
-- Corrected the color palette for the 16x16 tiles in the DOS version.
-- Your pack is optimised after fueling from a lantern.
-- When hallucinating, the monster list term doesn't work.
-- Interactions with traps shouldn't have any display glitches.
-- Door bashing with '+' command works again.
-- Towns now have random names.
-- Fixed overflow error that was preventing the throwing mutation from working.
-- Only display the 'gain' message when getting a mutation.
-- Fixed problem with monsters being able to walk though wall-like squares.
-- The curses interface should now be more compatible with some BSD curses
-  versions.
+- Added an option so that you can set the map to remember monster-lit
+  grids.
+- Items from acquirement() can not be worthless anymore.
 - Quest rewards are now worth at least (100 * dungeon_level) gold pieces.
 - The object selection routines used by stores when stocking themselves
   should be much faster.
-- Fixed problem when recalling into the dungeon with the overhead map term on.
+- Towns now have random names.
+- Added autoconf support.
+- Potions of Life will now give back full hitpoints even if CON was
+  drained.
+- Fixed the building prices.  They were off by a factor of four.
+- The options screen could display bogus options.
+- Fixed problem with the description given when looking at snow.
+- Fixed problem with displaying charging artifact lights in the wrong
+  colour.
+- Fixed off-by-one error in object selection function.
+- The inventory is now reorganized after refueling from a lantern.
+- The monster list term is now turned off when hallucinating.
+- Interactions with traps shouldn't cause any display glitches.
+- Door bashing with '+' command works again.
+- Fixed an error that was preventing the throwing mutation from working.
+- Only display the 'gain' message when getting a mutation.
+- Fixed problem with monsters being able to walk though wall-like squares.
+- Fixed problem when recalling into the dungeon when the overhead map term
+  was turned on.
+- Corrected the color palette for the 16x16 tiles in the DOS version.
+- The curses interface should now be more compatible with some BSD curses
+  versions.
+- The '5' key on the numeric keypad should now work in the X11 version.
+- The X11 and XAW versions default to three windows instead of eight.
+- Use the mkstemp() function where available instead of the insecure
+  tmpnam().
 
 ZAngband 2.6.0:
 - The starting town has a fixed list of stores now.

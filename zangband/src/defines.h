@@ -35,7 +35,7 @@
 /*
  * Current version string
  */
-#define VERSION_STRING	"2.6.0"
+#define VERSION_STRING	"2.6.1"
 
 
 /*
@@ -57,7 +57,7 @@
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 6
-#define FAKE_VER_PATCH 0
+#define FAKE_VER_PATCH 1
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1

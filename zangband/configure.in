@@ -9,7 +9,7 @@ AC_CONFIG_AUX_DIR(config)
 dnl write the resulting #defines into a header file
 AM_CONFIG_HEADER(src/autoconf.h)
 
-AM_INIT_AUTOMAKE(zangband, 2.6.0)
+AM_INIT_AUTOMAKE(zangband, 2.6.1)
 
 AC_ARG_WITH(setgid,
 [  --with-setgid=NAME      setgid usage: install angband as group NAME],
