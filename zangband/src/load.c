@@ -3225,6 +3225,16 @@ static errr rd_savefile_new_aux(void)
 					
 					/* Rating */
 					rd_s16b(&dun_ptr->rating);
+					
+					
+					/* Extra dungeon info */
+					if (sf_version > 43)
+					{
+						rd_u16b(&dun_ptr->rooms);
+						rd_byte(&dun_ptr->floor);
+						rd_byte(&dun_ptr->liquid);
+						rd_byte(&dun_ptr->flags);
+					}
 				}
 			}
 			

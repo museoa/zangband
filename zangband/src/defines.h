@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 43
+#define SAVEFILE_VERSION 44
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */

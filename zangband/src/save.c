@@ -1668,6 +1668,12 @@ static bool wr_savefile_new(void)
 					
 			/* Rating + feeling */
 			wr_s16b(dun_ptr->rating);
+			
+			/* Extra info */
+			wr_u16b(dun_ptr->rooms);
+			wr_byte(dun_ptr->floor);
+			wr_byte(dun_ptr->liquid);
+			wr_byte(dun_ptr->flags);
 		}
 		else
 		{
