@@ -789,11 +789,6 @@ static bool cave_gen(void)
 	/* Place 1 or 2 up stairs near some walls */
 	alloc_stairs(FEAT_LESS, rand_range(1, 2), 3);
 
-
-	/* Determine the character location */
-	if (!new_player_spot())
-		return FALSE;
-
 	/* Handle the quest monster placements */
 	for (i = 0; i < max_quests; i++)
 	{
@@ -922,6 +917,10 @@ static bool cave_gen(void)
 		}
 	}
 
+	/* Determine the character location */
+	if (!new_player_spot())
+		return FALSE;
+	
 	return TRUE;
 }
 
