@@ -1280,7 +1280,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 		if (area(y, x)->m_idx)
 		{
-			py_attack(y, x);
+			py_attack(x, y);
 			teleport_player(30);
 		}
 		else

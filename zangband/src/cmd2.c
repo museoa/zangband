@@ -889,7 +889,7 @@ void do_cmd_open(void)
 			msg_print("There is a monster in the way!");
 
 			/* Attack */
-			py_attack(y, x);
+			py_attack(x, y);
 		}
 
 		/* Handle chests */
@@ -1045,7 +1045,7 @@ void do_cmd_close(void)
 			msg_print("There is a monster in the way!");
 
 			/* Attack */
-			py_attack(y, x);
+			py_attack(x, y);
 		}
 
 		/* Close the door */
@@ -1478,7 +1478,7 @@ void do_cmd_tunnel(void)
 			msg_print("There is a monster in the way!");
 
 			/* Attack */
-			py_attack(y, x);
+			py_attack(x, y);
 		}
 
 		/* Try digging */
@@ -1748,7 +1748,7 @@ void do_cmd_disarm(void)
 			msg_print("There is a monster in the way!");
 
 			/* Attack */
-			py_attack(y, x);
+			py_attack(x, y);
 		}
 
 		/* Disarm chest */
@@ -1831,7 +1831,7 @@ void do_cmd_alter(void)
 		if (c_ptr->m_idx)
 		{
 			/* Attack */
-			py_attack(y, x);
+			py_attack(x, y);
 		}
 
 		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
@@ -1995,7 +1995,7 @@ void do_cmd_spike(void)
 			msg_print("There is a monster in the way!");
 
 			/* Attack */
-			py_attack(y, x);
+			py_attack(x, y);
 		}
 
 		/* Go for it */

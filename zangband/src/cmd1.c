@@ -1402,7 +1402,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
  *
  * If no "weapon" is available, then "punch" the monster one time.
  */
-void py_attack(int y, int x)
+void py_attack(int x, int y)
 {
 	/* Number of dice, also total damage. */
 	long k;
@@ -2294,7 +2294,7 @@ void move_player(int dir, int do_pickup)
 			/* displace? */
 			if (stormbringer && (randint1(1000) > 666))
 			{
-				py_attack(y, x);
+				py_attack(x, y);
 			}
 			else if (cave_floor_grid(area(py, px)) ||
 			    (r_info[m_ptr->r_idx].flags2 & RF2_PASS_WALL))
@@ -2317,7 +2317,7 @@ void move_player(int dir, int do_pickup)
 		}
 		else
 		{
-			py_attack(y, x);
+			py_attack(x, y);
 			oktomove = FALSE;
 		}
 	}

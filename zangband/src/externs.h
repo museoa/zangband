@@ -342,7 +342,7 @@ extern void search(void);
 extern bool auto_pickup_okay(object_type *o_ptr);
 extern void py_pickup_aux(int o_idx);
 extern void carry(int pickup);
-extern void py_attack(int y, int x);
+extern void py_attack(int x, int y);
 extern void move_player(int dir, int do_pickup);
 extern void run_step(int dir);
 

@@ -1109,7 +1109,7 @@ static bool cast_nature_spell(int spell)
 
 				/* Hack -- attack monsters */
 				if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
-					py_attack(y, x);
+					py_attack(x, y);
 			}
 		}
 		break;
