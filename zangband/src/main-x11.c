@@ -2368,11 +2368,13 @@ static errr Term_curs_x11(int x, int y)
 			 x1, y1,
 			 Infofnt->twid - 1, Infofnt->hgt - 1);
 	}
-	
-	XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
+	else
+	{
+		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
 			 x1, y1,
 			 Infofnt->wid - 1, Infofnt->hgt - 1);
-
+	}
+	
 	/* Success */
 	return (0);
 }
