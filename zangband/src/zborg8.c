@@ -213,59 +213,6 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 }
 #endif /* 0 */
 
-/*
- * Find the mininum amount of some item to buy/sell. For most
- * items this is 1, but for certain items (such as ammunition)
- * it may be higher.  -- RML
- */
-static int borg_min_item_quantity(borg_item *item)
-{
-	/* Only trade in bunches if sufficient cash */
-	if (borg_gold < 250) return (1);
-
-	/* Don't trade expensive items in bunches */
-	if (item->cost > 5) return (1);
-
-	/* Don't trade non-known items in bunches */
-	if (!item->able) return (1);
-
-	/* Only allow some types */
-	switch (item->tval)
-	{
-		case TV_SPIKE:
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		{
-			/* Maximum number of items */
-			if (item->iqty < 5)
-				return (item->iqty);
-			return (5);
-		}
-
-		case TV_FOOD:
-		{
-			if (item->iqty < 3)
-				return (item->iqty);
-			return (3);
-		}
-
-#if 0
-		case TV_POTION:
-		case TV_SCROLL:
-		{
-			if (item->iqty < 2)
-				return (item->iqty);
-			return (2);
-		}
-#endif
-
-		default:
-		{
-			return (1);
-		}
-	}
-}
 
 /*
  * This file handles the highest level goals, and store interaction.
@@ -805,31 +752,22 @@ static bool borg_think_home_sell_aux(bool save_best)
  *
  * XXX XXX XXX Consider use of "icky" test on items
  */
-static bool borg_good_sell(borg_item *item, int who)
+static bool borg_good_sell(list_item *l_ptr, int who)
 {
 	/* Ignore store parameter - stores do not work properly yet. */
 	(void)who;
 
 	/* Never sell worthless items */
-	if (item->value <= 0) return (FALSE);
+	if (l_ptr->cost <= 0) return (FALSE);
 
 	/* Analyze the type */
-	switch (item->tval)
+	switch (l_ptr->tval)
 	{
 		case TV_POTION:
 		case TV_SCROLL:
 		{
-
 			/* Never sell if not "known" and interesting */
-			if (!item->able && (borg_skill[BI_MAXDEPTH] > 5)) return (FALSE);
-
-			/* Spell casters should not sell ResMana to shop unless
-			 * they have tons in the house
-			 */
-			if (item->tval == TV_POTION &&
-				item->sval == SV_POTION_RESTORE_MANA &&
-				borg_skill[BI_MAXSP] > 100 &&
-				borg_has[266] + num_mana > 99) return (FALSE);
+			if (!l_ptr->k_idx && (borg_skill[BI_MAXDEPTH] > 5)) return (FALSE);
 
 			break;
 		}
@@ -842,9 +780,8 @@ static bool borg_good_sell(borg_item *item, int who)
 		case TV_AMULET:
 		case TV_LITE:
 		{
-
 			/* Never sell if not "known" */
-			if (!item->able) return (FALSE);
+			if (!l_ptr->k_idx) return (FALSE);
 
 			break;
 		}
@@ -866,20 +803,18 @@ static bool borg_good_sell(borg_item *item, int who)
 		{
 
 			/* PseudoID items are ok to sell */
-			if (strstr(item->desc, "{average")) break;
+			if (strstr(l_ptr->o_name, "{average")) break;
 
 			/* Only sell "known" items (unless "icky") */
-			if (!item->able && !borg_item_icky(l_ptr)) return (FALSE);
+			if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) return (FALSE);
 
 			break;
 		}
 	}
 
-
 	/* Do not sell stuff that is not fully id'd and should be  */
-	if (!item->fully_identified && item->xtra_name)
+	if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name)
 	{
-		/* CHECK THE ARTIFACTS */
 		/* For now check all artifacts */
 		return (FALSE);
 	}
@@ -909,7 +844,6 @@ static bool borg_think_shop_sell_aux(void)
 
 	int k, b_k = -1;
 	int i, b_i = -1;
-	int qty = 1;
 	s32b p, b_p = 0L;
 	s32b c = 0L;
 	s32b b_c = 30001L;
@@ -936,45 +870,32 @@ static bool borg_think_shop_sell_aux(void)
 
 
 		/* Sell stuff */
-		for (i = 0; i < INVEN_PACK; i++)
+		for (i = 0; i < inven_num; i++)
 		{
-			borg_item *item = &borg_items[i];
-
-			/* Skip empty items */
-			if (!item->iqty) continue;
-
-			/* Skip some important type items */
-			if ((item->tval == my_ammo_tval) &&
-				(borg_skill[BI_AMISSILES] < 45)) continue;
-			if ((borg_class == CLASS_WARRIOR || borg_class == CLASS_ROGUE) &&
-				item->tval == TV_ROD && item->sval == SV_ROD_HEALING &&
-				borg_has[374] <= 3) continue;
-
-			if (borg_class == CLASS_WARRIOR &&
-				item->tval == TV_ROD && item->sval == SV_ROD_MAPPING &&
-				item->iqty <= 2) continue;
-
-			/* Avoid selling staff of dest */
-			if (item->tval == TV_STAFF && item->sval == SV_STAFF_DESTRUCTION &&
-				borg_skill[BI_ASTFDEST] < 2) continue;
+			list_item *l_ptr = &inventory[i];
 
 			/* Skip "bad" sales */
-			if (!borg_good_sell(item, k)) continue;
-
-			/* Save the item */
-			COPY(&safe_items[i], &borg_items[i], borg_item);
-
+			if (!borg_good_sell(l_ptr, k)) continue;
+			
+			/* Give the item to the shop */
+			if (l_ptr->number == 1)
+			{
+				l_ptr->treat_as = TREAT_AS_GONE;
+			}
+			else
+			{
+				l_ptr->treat_as = TREAT_AS_LESS;
+			}
+#if 0
 			/* Give the item to the shop */
 			COPY(&borg_shops[k].ware[icky], &safe_items[i], borg_item);
 
 			/* get the quantity */
-			qty = borg_min_item_quantity(item);
+			qty = 1;
 
 			/* Give a single item */
 			borg_shops[k].ware[icky].iqty = qty;
-
-			/* Lose a single item */
-			borg_items[i].iqty -= qty;
+#endif /* 0 */
 
 			/* Fix later */
 			fix = TRUE;
@@ -986,16 +907,19 @@ static bool borg_think_shop_sell_aux(void)
 			p = borg_power();
 
 			/* Restore the item */
-			COPY(&borg_items[i], &safe_items[i], borg_item);
+			l_ptr->treat_as = TREAT_AS_NORM;
 
 			/* Ignore "bad" sales */
 			if (p < b_p) continue;
 
 			/* Extract the "price" */
-			c = ((item->value < 30000L) ? item->value : 30000L);
+			c = ((l_ptr->cost < 30000L) ? l_ptr->cost : 30000L);
 
-			/* sell cheap items first.  This is done because we may have to */
-			/* buy the item back in some very strange circumstances. */
+			/*
+			 * Sell cheap items first.
+			 * This is done because we may have to buy the item back
+			 * in some very strange circumstances.
+			 */
 			if ((p == b_p) && (c >= b_c)) continue;
 
 			/* Maintain the "best" */
@@ -1004,9 +928,10 @@ static bool borg_think_shop_sell_aux(void)
 			b_p = p;
 			b_c = c;
 		}
-
+#if 0
 		/* Restore the store hole */
 		COPY(&borg_shops[k].ware[icky], &safe_shops[k].ware[icky], borg_item);
+#endif /* 0 */
 	}
 
 	/* Examine the inventory */
@@ -1030,144 +955,11 @@ static bool borg_think_shop_sell_aux(void)
 }
 
 
-
-/*
- * Help decide if an item should be bought from a real store
- *
- * We prevent the purchase of enchanted (or expensive) ammo,
- * so we do not spend all our money on temporary power.
- *
- * if level 35, who needs cash?  buy the expecive ammo!
- *
- * We prevent the purchase of low level discounted books,
- * so we will not waste slots on cheap books.
- *
- * We prevent the purchase of items from the black market
- * which are often available at normal stores, currently,
- * this includes low level books, and all wands and staffs.
- */
-static bool borg_good_buy(borg_item *item, int who)
-{
-
-	/* Check the object */
-	switch (item->tval)
-	{
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		{
-			if (borg_skill[BI_CLEVEL] < 35)
-			{
-				if (item->to_h) return (FALSE);
-				if (item->to_d) return (FALSE);
-			}
-			break;
-		}
-
-		case TV_LIFE_BOOK:
-		case TV_SORCERY_BOOK:
-		case TV_NATURE_BOOK:
-		case TV_CHAOS_BOOK:
-		case TV_DEATH_BOOK:
-		case TV_TRUMP_BOOK:
-		case TV_ARCANE_BOOK:
-		{
-			if (item->discount) return (TRUE);
-			break;
-		}
-	}
-
-	/* Don't buy from the BM until we are rich */
-	if (who == 6)
-	{
-		/* buying Remove Curse scroll is acceptable */
-		if (item->tval == TV_SCROLL && item->sval == SV_SCROLL_REMOVE_CURSE &&
-			borg_wearing_cursed) return (TRUE);
-
-		if ((borg_skill[BI_CLEVEL] < 15) && (borg_gold < 20000))
-			return (FALSE);
-		if ((borg_skill[BI_CLEVEL] < 35) && (borg_gold < 15000))
-			return (FALSE);
-		if (borg_gold < 10000)
-			return (FALSE);
-	}
-
-	/* do not buy the item if I just sold it. */
-	if (sold_item_tval == item->tval && sold_item_sval == item->sval &&
-		sold_item_pval == item->pval && sold_item_store == who)
-	{
-#if 0
-		borg_note(format("# Choosing not to buy back %s", item->desc));
-#endif
-		return (FALSE);
-	}
-
-	/* Do not buy a second digger */
-	if (item->tval == TV_DIGGING)
-	{
-		int ii;
-
-		/* scan for an existing digger */
-		for (ii = 0; ii < INVEN_PACK; ii++)
-		{
-			borg_item *item2 = &borg_items[ii];
-
-
-			/* skip non diggers */
-			if (item2->tval == TV_DIGGING) return (FALSE);
-#if 0
-			/* perhaps let him buy a digger with a better
-			 * pval than his current digger
-			 */
-			{
-				if (item->pval <= item2->pval) return (FALSE);
-			}
-#endif
-		}
-	}
-
-	/* Low level borgs should not waste the money on certain things */
-	if (borg_skill[BI_MAXCLEVEL] < 5)
-	{
-		/* next book, cant read it */
-#if 0
-		if ((item->tval == TV_MAGIC_BOOK || item->tval == TV_PRAYER_BOOK) &&
-			item->sval >= 1) return (FALSE);
-#endif
-		/* Too much food is heavy and spendy */
-		if (item->tval == TV_FOOD && borg_skill[BI_FOOD] >= 5 &&
-			borg_skill[BI_SDIG]) return (FALSE);
-
-		/* Too many torches are heavy and spendy */
-		if (item->tval == TV_LITE && item->sval == SV_LITE_TORCH &&
-			borg_skill[BI_AFUEL] >= 3) return (FALSE);
-	}
-
-	/* Rangers and Paladins and the extra books */
-	if ((borg_class == CLASS_PALADIN || borg_class == CLASS_RANGER) &&
-		borg_skill[BI_MAXCLEVEL] <= 8)
-	{
-#if 0
-		if ((item->tval == TV_MAGIC_BOOK || item->tval == TV_PRAYER_BOOK) &&
-			item->sval >= 1) return (FALSE);
-#endif
-	}
-
-
-
-	/* Okay */
-	return (TRUE);
-}
-
-
-
 /*
  * Step 3 -- buy "useful" things from a shop (to be used)
  */
 static bool borg_think_shop_buy_aux(void)
 {
-	int hole = INVEN_PACK - 1;
-
 	int slot;
 	int qty = 1;
 
@@ -1178,10 +970,8 @@ static bool borg_think_shop_buy_aux(void)
 
 	bool fix = FALSE;
 
-
 	/* Require one empty slot */
-	if (borg_items[hole].iqty) return (FALSE);
-
+	if (inven_num >= INVEN_PACK - 1) return (FALSE);
 
 	/* Extract the "power" */
 	b_p = my_power;
@@ -1205,9 +995,6 @@ static bool borg_think_shop_buy_aux(void)
 			/* second check on empty */
 			if (!item->kind) continue;
 
-			/* Skip "bad" buys */
-			if (!borg_good_buy(item, k)) continue;
-
 			/* Hack -- Require "sufficient" cash */
 			if (borg_gold < item->cost * 12 / 10) continue;
 
@@ -1220,7 +1007,7 @@ static bool borg_think_shop_buy_aux(void)
 			COPY(&safe_items[hole], &borg_items[hole], borg_item);
 
 			/* Save the number to trade */
-			qty = borg_min_item_quantity(item);
+			qty = 1;
 
 			/* Remove one item from shop (sometimes) */
 			borg_shops[k].ware[n].iqty -= qty;
@@ -1398,7 +1185,7 @@ static bool borg_think_home_buy_aux(void)
 		COPY(&safe_items[hole], &borg_items[hole], borg_item);
 
 		/* Save the number */
-		qty = borg_min_item_quantity(item);
+		qty = 1;
 
 		/* Remove one item from shop (sometimes) */
 		borg_shops[BORG_HOME].ware[n].iqty -= qty;
@@ -1648,9 +1435,6 @@ static bool borg_think_shop_grab_aux(void)
 			if (k == BORG_HOME) continue;
 #endif
 
-			/* Skip "bad" buys */
-			if (!borg_good_buy(item, k)) continue;
-
 			/* dont buy weapons or armour, I'll get those in dungeon apw */
 			if (item->tval <= TV_ROD && item->tval >= TV_BOW) continue;
 
@@ -1665,7 +1449,7 @@ static bool borg_think_shop_grab_aux(void)
 				 borg_item);
 
 			/* Save the number */
-			qty = borg_min_item_quantity(item);
+			qty = 1;
 
 			/* Give a single item */
 			borg_items[INVEN_PACK - 2].iqty = qty;
@@ -1770,7 +1554,7 @@ static bool borg_think_home_grab_aux(void)
 			 borg_item);
 
 		/* Save the number */
-		qty = borg_min_item_quantity(item);
+		qty = 1;
 
 		/* Remove one item from shop */
 		borg_shops[BORG_HOME].ware[n].iqty -= qty;
@@ -1997,7 +1781,7 @@ static bool borg_think_shop_sell(void)
 	{
 		borg_item *item = &borg_items[goal_item];
 
-		qty = borg_min_item_quantity(item);
+		qty = 1;
 
 		/* Log */
 		borg_note(format("# Selling %s", item->desc));
@@ -2066,7 +1850,7 @@ static bool borg_think_shop_buy(void)
 
 		borg_item *item = &shop->ware[goal_ware];
 
-		qty = borg_min_item_quantity(item);
+		qty = 1;
 
 		/* Paranoid */
 		if (item->tval == 0)
