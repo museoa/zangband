@@ -2684,8 +2684,7 @@ bool earthquake(int cx, int cy, int r)
 							if (!(mon_enter_test.flags & MEG_DO_MOVE)) continue;
 
 							/* ... nor on the Pattern */
-							if (cave_perma_grid(c_ptr) &&
-								cave_floor_grid(c_ptr))
+							if (cave_pattern_grid(c_ptr))
 							{
 								continue;
 							}

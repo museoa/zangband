@@ -1943,7 +1943,7 @@ static bool target_set_accept(int x, int y)
 	feat = pc_ptr->feat;
 
 	/* Notice the Pattern */
-	if (cave_perma_grid(pc_ptr) && cave_floor_grid(pc_ptr)) return (TRUE);
+	if (cave_pattern_grid(pc_ptr)) return (TRUE);
 
 	/* Notice doors */
 	if (feat == FEAT_OPEN) return (TRUE);
@@ -2492,7 +2492,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";
 
-			/* Pick a prefix for the pattern */
+			/* Pick a prefix for the pattern and stairs */
 			if (*s2 && cave_perma_grid(pc_ptr))
 			{
 				s2 = "on ";

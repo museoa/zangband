@@ -790,7 +790,7 @@ void build_tunnel(int col1, int row1, int col2, int row2)
 
 
 		/* Avoid the permanent walls */
-		if (cave_perma_grid(c_ptr)) continue;
+		if (cave_perma_grid(c_ptr) && cave_wall_grid(c_ptr)) continue;
 
 		/* Avoid "solid" granite walls */
 		if (c_ptr->feat == FEAT_WALL_SOLID) continue;
@@ -807,8 +807,11 @@ void build_tunnel(int col1, int row1, int col2, int row2)
 			tmp_c_ptr = cave_p(x, y);
 
 			/* Hack -- Avoid permanent walls */
-			if (cave_perma_grid(tmp_c_ptr)) continue;
-
+			if (cave_perma_grid(tmp_c_ptr) && cave_wall_grid(tmp_c_ptr))
+			{
+				continue;
+			}
+			
 			/* Hack -- Avoid outer/solid granite walls */
 			if (tmp_c_ptr->feat == FEAT_WALL_OUTER) continue;
 			if (tmp_c_ptr->feat == FEAT_WALL_SOLID) continue;
@@ -928,7 +931,9 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 
 	feat = cave_p(*x, *y)->feat;
 
-	if (cave_perma_grid(cave_p(*x, *y)) || (feat == FEAT_WALL_INNER))
+	if ((cave_perma_grid(cave_p(*x, *y)) &&
+		 cave_wall_grid(cave_p(*x, *y))) ||
+		 (feat == FEAT_WALL_INNER))
 	{
 		/*
 		 * Ignore permanent walls - sometimes cannot tunnel around them anyway

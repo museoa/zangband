@@ -2041,13 +2041,6 @@ static void summon_pattern_vortex(int x, int y)
 }
 
 
-static bool pattern_tile(const cave_type *c_ptr)
-{
-	return ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
-			(c_ptr->feat >= FEAT_PATTERN_START));
-}
-
-
 static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 {
 	cave_type *c1_ptr, *c2_ptr;
@@ -2055,12 +2048,12 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 	c1_ptr = area(c_x, c_y);
 	c2_ptr = area(n_x, n_y);
 
-	if (!pattern_tile(c1_ptr) && !pattern_tile(c2_ptr))
+	if (!cave_pattern_grid(c1_ptr) && !cave_pattern_grid(c2_ptr))
 		return TRUE;
 
 	if (c2_ptr->feat == FEAT_PATTERN_START)
 	{
-		if (!pattern_tile(c1_ptr) &&
+		if (!cave_pattern_grid(c1_ptr) &&
 			!p_ptr->confused && !p_ptr->stun && !p_ptr->image)
 		{
 			if (get_check
@@ -2076,7 +2069,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 			 (c2_ptr->feat == FEAT_PATTERN_END) ||
 			 (c2_ptr->feat == FEAT_PATTERN_XTRA2))
 	{
-		if (pattern_tile(c1_ptr))
+		if (cave_pattern_grid(c1_ptr))
 		{
 			return TRUE;
 		}
@@ -2103,7 +2096,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 	}
 	else if (c1_ptr->feat == FEAT_PATTERN_START)
 	{
-		if (pattern_tile(c2_ptr))
+		if (cave_pattern_grid(c2_ptr))
 			return TRUE;
 		else
 		{
@@ -2123,7 +2116,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 			 (c1_ptr->feat == FEAT_PATTERN_END) ||
 			 (c1_ptr->feat == FEAT_PATTERN_XTRA2))
 	{
-		if (!pattern_tile(c2_ptr))
+		if (!cave_pattern_grid(c2_ptr))
 		{
 			if (get_check("Really step off of the Pattern? "))
 			{
@@ -2145,7 +2138,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 	}
 	else
 	{
-		if (!pattern_tile(c1_ptr))
+		if (!cave_pattern_grid(c1_ptr))
 		{
 			if (get_check("Really step onto the Pattern here? "))
 			{
@@ -2202,7 +2195,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 
 			else
 			{
-				if (!pattern_tile(c2_ptr)
+				if (!cave_pattern_grid(c2_ptr)
 					&& get_check("Really step off of the Pattern? "))
 				{
 					take_hit(50, "Stepping off of the Pattern");
@@ -2212,7 +2205,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 					return TRUE;
 				}
 
-				else if (pattern_tile(c2_ptr)
+				else if (cave_pattern_grid(c2_ptr)
 						 && get_check("Really stray from the proper path? "))
 				{
 					take_hit(25, "Walking backwards along the Pattern");

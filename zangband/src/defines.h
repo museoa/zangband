@@ -2419,6 +2419,7 @@
 #define FF_ICKY			0x08	/* Terrain can not have objects */
 #define FF_PERM			0x10	/* Permanent terrain */
 #define FF_OBJECT		0x20	/* Terrain is described like an object */
+#define FF_PATTERN		0x40	/* The pattern */
 
 /*
  * Bit flags for the "project()" function
@@ -3997,6 +3998,12 @@
 #define cave_perma_grid(C) \
 	(f_info[(C)->feat].flags & FF_PERM)
 
+
+/*
+ * Pattern grid.
+ */
+#define cave_pattern_grid(C) \
+	(f_info[(C)->feat].flags & FF_PATTERN)
 
 /*
  * Determine if a "legal" grid is within "los" of the player

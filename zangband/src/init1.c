@@ -60,7 +60,7 @@ static cptr f_info_flags[] =
 	"ICKY",
 	"PERM",
 	"OBJECT",
-	"DUMMY4",
+	"PATTERN",
 	"DUMMY5"
 };
 

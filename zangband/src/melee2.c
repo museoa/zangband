@@ -2364,8 +2364,9 @@ static void take_move(int m_idx, int *mm)
 			do_turn = TRUE;
 		}
 
-		if (cave_perma_grid(c_ptr) && cave_floor_grid(c_ptr) &&
-			!do_turn && !(r_ptr->flags7 & RF7_CAN_FLY))
+		/* Not over the pattern */
+		if (cave_pattern_grid(c_ptr) && !do_turn &&
+			 !(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;
 		}
