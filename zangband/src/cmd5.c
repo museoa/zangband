@@ -1359,24 +1359,18 @@ static bool cast_chaos_spell(int spell)
 		break;
 	case 25: /* Meteor Swarm */
 		{
-			int x, y, dx, dy, d;
+			int x, y;
 			int b = 10 + randint(10);
 			for (i = 0; i < b; i++)
 			{
 				int count = 0;
 
-				while (TRUE)
+				while (count < 1000)
 				{
 					count++;
-					if (count > 1000) break;
+					
 					x = px - 5 + randint(10);
 					y = py - 5 + randint(10);
-
-					dx = (px > x) ? (px - x) : (x - px);
-					dy = (py > y) ? (py - y) : (y - py);
-
-					/* Approximate distance */
-					d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 					/* paranoia */
 					if (!in_bounds(y, x)) continue;
@@ -1387,10 +1381,10 @@ static bool cast_chaos_spell(int spell)
 					if (!player_has_los_grid(c_ptr)) continue;
 
 					/* if close enough - exit */
-					if (d < 6) break;
+					if (distance(py, px, y, x) < 6) break;
 				}
 
-				if (count > 1000) break;
+				if (count >= 1000) break;
 
 				project(0, 2, y, x, (plev * 3) / 2, GF_METEOR, PROJECT_KILL | PROJECT_JUMP | PROJECT_ITEM);
 			}
