@@ -1994,26 +1994,22 @@ static void borg_parse(cptr msg)
 
 static void init_borg_txt_file(void)
 {
-	/* Array of borg variables is stored as */
-	/* 0 to k_max = items in inventory */
-	/* k_max to 2*k_max  = items being worn */
-	/* 2*k_max to a_max  = artifacts worn */
-	/* 2*k_max + a_max to end of array = Other skills/possessions */
-	size_obj = z_info->k_max * 2 + z_info->a_max + BI_MAX;
-
-	/* note: C_MAKE automaticly 0 inits things */
-
-	/* Make sure we know who and what we are */
-	borg_class = p_ptr->pclass;
+	/*
+	 * Array of borg variables is stored as
+	 * 0 to k_max = items in inventory
+	 * k_max  to end of array = Other skills/possessions
+	 */
+	size_obj = z_info->k_max + BI_MAX;
 
 	C_MAKE(borg_has, size_obj, int);
 
-	/* make some shortcut pointers into the array */
-	borg_has_on = borg_has + z_info->k_max;
-	borg_artifact = borg_has_on + z_info->k_max;
-	borg_skill = borg_artifact + z_info->a_max;
+	/* Make a shortcut pointers into the array */
+	borg_skill = &borg_has[z_info->k_max];
+	
+	/* Make sure we know who and what we are */
+	borg_class = p_ptr->pclass;
 
-	/* use default values */
+	/* Use default values */
 	borg_plays_risky = FALSE;
 	borg_scums_uniques = TRUE;
 	borg_stop_king = TRUE;
@@ -4248,92 +4244,6 @@ void do_cmd_borg(void)
 
 			/* Done */
 			return;
-		}
-
-		case 'h':
-		case 'H':
-		{
-			/* dump borg 'has' information */
-			char cmd;
-			int item = 0, to = 0;
-
-			/* Get a "Borg command", or abort */
-			if (!get_com
-				("Dynamic Borg Has What: ((i)nv/(w)orn/(a)rtifact) ",
-				 &cmd)) return;
-
-			switch (cmd)
-			{
-				case 'i':
-				case 'I':
-				{
-					item = 0;
-					to = z_info->k_max;
-					break;
-				}
-				case 'w':
-				case 'W':
-				{
-					item = z_info->k_max;
-					to = z_info->k_max * 2;
-					break;
-				}
-				case 'a':
-				case 'A':
-				{
-					item = z_info->k_max * 2;
-					to = z_info->k_max * 2 + z_info->a_max;
-					break;
-				}
-			}
-
-			/* Examine the screen */
-			borg_update_frame();
-
-			/* Examine the screen */
-			borg_update();
-
-			/* Extract some "hidden" variables */
-			borg_hidden();
-
-			/* Examine the inventory */
-			borg_notice();
-			borg_notice_home();
-
-			for (; item < to; item++)
-			{
-				switch (cmd)
-				{
-					case 'i':
-					case 'I':
-					{
-						borg_note(format
-								  ("Item%03d value= %d.", item,
-								   borg_has[item]));
-						break;
-					}
-					case 'w':
-					case 'W':
-					{
-						borg_note(format
-								  ("WItem%03d value= %d.", item - z_info->k_max,
-								   borg_has[item]));
-						break;
-					}
-					case 'a':
-					case 'A':
-					{
-						borg_note(format
-								  ("Artifact%03d value= %d.",
-								   item - z_info->k_max * 2, borg_has[item]));
-						break;
-					}
-				}
-			}
-
-			/* note the completion. */
-			msg_format("Borg_has[] dump complete.  Examine Log. ");
-			break;
 		}
 
 		default:

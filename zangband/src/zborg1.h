@@ -228,8 +228,6 @@ extern bool borg_slow_return;
 
 /* Borg has is intrinsically broken */
 extern int *borg_has;
-extern int *borg_has_on;
-extern int *borg_artifact;
 extern int *borg_skill;
 extern int size_depth;
 extern int size_obj;

@@ -59,8 +59,6 @@ bool borg_scums_uniques;
 bool borg_slow_return = FALSE;
 
 int *borg_has;
-int *borg_has_on;
-int *borg_artifact;
 int *borg_skill;
 int size_class;
 int size_depth;
