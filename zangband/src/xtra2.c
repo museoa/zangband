@@ -2523,8 +2523,9 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		for (this_f_ptr = &c_ptr->fld_idx; *this_f_ptr; this_f_ptr = next_f_ptr)
 		{
 			field_type *f_ptr = &fld_list[*this_f_ptr];
+			field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 			
-			cptr name = t_info[f_ptr->t_idx].name;
+			cptr name = t_ptr->name;
 
 			char f_name[40];
 
@@ -2538,11 +2539,11 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			if (f_ptr->info & FIELD_INFO_MARK)
 			{
 				/* See if it has a special name */
-				if (f_ptr->action[FIELD_ACT_LOOK])
+				if (t_ptr->action[FIELD_ACT_LOOK])
 				{
 					/* Get the name */
-					(void) field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
-						 (vptr) f_name);
+					(void)field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
+						 (vptr)f_name);
 					
 					/* Point to it */
 					name = f_name;
@@ -2550,7 +2551,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				else
 				{
 					/* Just use the normal name of the field */
-					name = t_info[f_ptr->t_idx].name;
+					name = t_ptr->name;
 				}
 					
 				/* Not boring */

@@ -809,13 +809,6 @@ void field_prep(field_type *f_ptr, s16b t_idx)
 		/* Store the value */
 		f_ptr->data[i] = t_ptr->data_init[i];
 	}
-
-	/* create actions */
-	for (i = 0; i < FIELD_ACTION_MAX; i++)
-	{
-		/* copy function pointers */
-		f_ptr->action[i] = t_ptr->action[i];
-	}
 }
 
 
@@ -1069,12 +1062,13 @@ bool field_hook_single(s16b *field_ptr, int action, vptr action_struct)
 {
 	/* Point to the field */
 	field_type *f_ptr = &fld_list[*field_ptr];
+	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 	
 	/* Paranoia - Is there a function to call? */
-	if (f_ptr->action[action])
+	if (t_ptr->action[action])
 	{
 		/* Call the action function */
-		f_ptr->action[action](field_ptr, action_struct);
+		t_ptr->action[action](field_ptr, action_struct);
 	}
 	
 	/* Check for deletion */
@@ -1101,17 +1095,19 @@ bool field_hook_single(s16b *field_ptr, int action, vptr action_struct)
 void field_hook(s16b *field_ptr, int action, vptr action_struct)
 {
 	field_type *f_ptr;
+	field_thaum *t_ptr;
 	
 	while (*field_ptr)
 	{
 		/* Point to the field */
 		f_ptr = &fld_list[*field_ptr];
+		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Paranoia - Is there a function to call? */
-		if (f_ptr->action[action])
+		if (t_ptr->action[action])
 		{
 			/* Call the action function */
-			f_ptr->action[action](field_ptr, action_struct);
+			t_ptr->action[action](field_ptr, action_struct);
 			
 			/* Check for no deletion */
 			if (f_ptr->t_idx)
@@ -1148,10 +1144,10 @@ bool field_hook_special(s16b *field_ptr, u16b ftype, vptr action_struct)
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Check for the right field + existance of a function to call */
-		if ((t_ptr->type == ftype) && (f_ptr->action[FIELD_ACT_SPECIAL]))
+		if ((t_ptr->type == ftype) && (t_ptr->action[FIELD_ACT_SPECIAL]))
 		{
 			/* Call the action function */
-			f_ptr->action[FIELD_ACT_SPECIAL](field_ptr, action_struct);
+			t_ptr->action[FIELD_ACT_SPECIAL](field_ptr, action_struct);
 			
 			/* Check for no deletion */
 			if (f_ptr->t_idx)
@@ -1183,17 +1179,19 @@ bool field_hook_special(s16b *field_ptr, u16b ftype, vptr action_struct)
 s16b *field_hook_find(s16b *field_ptr, int action, vptr action_struct)
 {
 	field_type *f_ptr;
+	field_thaum *t_ptr;
 	
 	while (*field_ptr)
 	{
 		/* Point to the field */
 		f_ptr = &fld_list[*field_ptr];
+		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Is there a function to call? */
-		if (f_ptr->action[action])
+		if (t_ptr->action[action])
 		{
 			/* Call the action function */
-			f_ptr->action[action](field_ptr, action_struct);
+			t_ptr->action[action](field_ptr, action_struct);
 			
 			/* Done */
 			break;
