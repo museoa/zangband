@@ -1863,6 +1863,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 		if (p_ptr->muta3 & MUT3_FLESH_ROT)
 		{
 			(*f3) &= ~(TR3_REGEN);
+			(*f2) |= TR2_HOLD_LIFE;
 		}
 
 		if (p_ptr->muta3 & MUT3_BLANK_FAC)

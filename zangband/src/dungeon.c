@@ -1370,6 +1370,9 @@ static void process_world(void)
 			/* Slow healing gives some benefit... */
 			if (p_ptr->flags4 & (TR4_SLOW_HEAL)) i -= 5;
 
+			/* Wasting disease - almost no digestion */
+			if (p_ptr->muta2 & MUT2_WASTING) i -= 50;
+
 			/* Minimal digestion */
 			if (i < 1) i = 1;
 

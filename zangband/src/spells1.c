@@ -3527,7 +3527,9 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 					(p_ptr->muta1 & MUT1_BLINK) ||
 					(p_ptr->muta1 & MUT1_SWAP_POS) ||
 					(p_ptr->muta1 & MUT1_RECALL))
-				dam *= 2;
+			{
+				dam = dam * 4 / 3;
+			}
 
 			if (p_ptr->flags2 & (TR2_RES_NEXUS))
 			{

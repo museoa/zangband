@@ -900,6 +900,11 @@ bool make_attack_spell(int m_idx)
 		{
 			/* RF4_ELDRITCH_HORROR */
 			if (!direct || !seen) break;
+
+			/* What's another gibbering monstrosity or two? */
+			if (p_ptr->muta2 & MUT2_HALLU)
+				break;
+
 			disturb(TRUE);
 			sanity_blast(m_ptr);
 			break;
