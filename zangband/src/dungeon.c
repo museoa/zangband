@@ -2660,18 +2660,11 @@ static void process_player(void)
 	/* Repeat until energy is reduced */
 	while (TRUE)
 	{
-		/* Notice stuff (if needed) */
-		if (p_ptr->notice) notice_stuff();
-
-		/* Update stuff (if needed) */
-		if (p_ptr->update) update_stuff();
-
-		/* Redraw stuff (if needed) */
-		if (p_ptr->redraw) redraw_stuff();
-
-		/* Redraw stuff (if needed) */
-		if (p_ptr->window) window_stuff();
-
+		/* Notice stuff */
+		notice_stuff();
+		
+		/* Update */
+		handle_stuff();
 
 		/* Place the cursor on the player */
 		move_cursor_relative(p_ptr->px, p_ptr->py);
@@ -2712,17 +2705,11 @@ static void process_player(void)
 			inven_item_describe(item);
 			inven_item_optimize(item);
 
-			/* Notice stuff (if needed) */
-			if (p_ptr->notice) notice_stuff();
-
-			/* Update stuff (if needed) */
-			if (p_ptr->update) update_stuff();
-
-			/* Redraw stuff (if needed) */
-			if (p_ptr->redraw) redraw_stuff();
-
-			/* Redraw stuff (if needed) */
-			if (p_ptr->window) window_stuff();
+			/* Notice stuff */
+			notice_stuff();
+			
+			/* Update */
+			handle_stuff();
 		}
 
 
@@ -3091,23 +3078,14 @@ static void dungeon(void)
 	/* Calculate torch radius */
 	p_ptr->update |= (PU_TORCH);
 
-	/* Update stuff */
-	update_stuff();
-
-	/* Redraw stuff */
-	redraw_stuff();
-
-	/* Redraw stuff */
-	window_stuff();
+	/* Update */
+	handle_stuff();
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_DISTANCE | PU_MON_LITE);
 
-	/* Update stuff */
-	update_stuff();
-
-	/* Redraw stuff */
-	redraw_stuff();
+	/* Update */
+	handle_stuff();
 
 	/* Leave "xtra" mode */
 	character_xtra = FALSE;
@@ -3121,14 +3099,8 @@ static void dungeon(void)
 	/* Notice stuff */
 	notice_stuff();
 
-	/* Update stuff */
-	update_stuff();
-
-	/* Redraw stuff */
-	redraw_stuff();
-
-	/* Window stuff */
-	window_stuff();
+	/* Update */
+	handle_stuff();
 
 	/* Refresh */
 	Term_fresh();
@@ -3178,8 +3150,8 @@ static void dungeon(void)
 		 */
 		process_energy();
 
-		/* Notice stuff */
-		if (p_ptr->notice) notice_stuff();
+		/* Notice */
+		notice_stuff();
 
 		/* Similar slot? */
 		for (i = 0; i < INVEN_PACK; i++)
@@ -3190,14 +3162,8 @@ static void dungeon(void)
 			if (!j_ptr->k_idx) continue;
 		}
 
-		/* Update stuff */
-		if (p_ptr->update) update_stuff();
-
-		/* Redraw stuff */
-		if (p_ptr->redraw) redraw_stuff();
-
-		/* Redraw stuff */
-		if (p_ptr->window) window_stuff();
+		/* Update  */
+		handle_stuff();
 
 		/* Hack -- Hilite the player */
 		move_cursor_relative(p_ptr->px, p_ptr->py);
@@ -3211,17 +3177,11 @@ static void dungeon(void)
 		/* Process all of the monsters */
 		process_monsters(100);
 
-		/* Notice stuff */
-		if (p_ptr->notice) notice_stuff();
+		/* Notice */
+		notice_stuff();
 
-		/* Update stuff */
-		if (p_ptr->update) update_stuff();
-
-		/* Redraw stuff */
-		if (p_ptr->redraw) redraw_stuff();
-
-		/* Redraw stuff */
-		if (p_ptr->window) window_stuff();
+		/* Update */
+		handle_stuff();
 
 		/* Hack -- Hilite the player */
 		move_cursor_relative(p_ptr->px, p_ptr->py);
@@ -3244,17 +3204,11 @@ static void dungeon(void)
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
 
-		/* Notice stuff */
-		if (p_ptr->notice) notice_stuff();
+		/* Notice */
+		notice_stuff();
 
-		/* Update stuff */
-		if (p_ptr->update) update_stuff();
-
-		/* Redraw stuff */
-		if (p_ptr->redraw) redraw_stuff();
-
-		/* Window stuff */
-		if (p_ptr->window) window_stuff();
+		/* Update */
+		handle_stuff();
 
 		/* Hack -- Hilite the player */
 		move_cursor_relative(p_ptr->px, p_ptr->py);
@@ -3569,18 +3523,11 @@ void play_game(bool new_game)
 		/* Process the level */
 		dungeon();
 
-		/* Notice stuff */
-		if (p_ptr->notice) notice_stuff();
+		/* Notice */
+		notice_stuff();
 
-		/* Update stuff */
-		if (p_ptr->update) update_stuff();
-
-		/* Redraw stuff */
-		if (p_ptr->redraw) redraw_stuff();
-
-		/* Window stuff */
-		if (p_ptr->window) window_stuff();
-
+		/* Update */
+		handle_stuff();
 
 		/* Cancel the target */
 		p_ptr->target_who = 0;

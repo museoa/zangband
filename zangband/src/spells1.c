@@ -4558,8 +4558,8 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		}
 	}
 
-	/* Update stuff if needed */
-	if (p_ptr->update) update_stuff();
+	/* Update if required */
+	handle_stuff();
 
 
 	/* Check objects */
