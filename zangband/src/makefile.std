@@ -175,6 +175,7 @@ linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
  
 linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
                -lXaw -lXext -lSM -lICE -lXmu -lXt -lgtk `gtk-config --libs`
+
 ##
 ## Linux with the (depreciated) svga port.
 ##
@@ -197,6 +198,9 @@ cygwin: OTHEROBJS := angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
+cygwin: $(OTHEROBJS)
+	# Blank line required here
+
 
 ##
 ## Variation -- OpenBSD 
@@ -274,16 +278,17 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 ##
 ## Variation -- Dos using "main-dos.c" and the allegro library, with djgpp
 ##
-dos: CFLAGS := -Wall -O2 -ggdb -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
+dos: CFLAGS := -Wall -O2 -g -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
-dos: INSTALL := copy zangband.exe ..\zangband.exe
+dos: INSTALL := copy zangband ../zangband.exe
+dos: EXEC := .exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port with djgpp
 ##
-ibm: CFLAGS := -Wall -O2 -ggdb -DUSE_IBM
+ibm: CFLAGS := -Wall -O2 -g -DUSE_IBM
 ibm: LIBS := -lpc
-ibm: INSTALL := copy zangband.exe ..\zangband.exe
+ibm: EXEC := .exe
 
 ##
 ## Variation -- Compile using the lcc32 compiler
@@ -298,6 +303,9 @@ lcc: OTHEROBJS := angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := $(subst /, \, $(LUA))
 lcc: EXEC := .exe
+lcc: $(OTHEROBJS)
+	# Blank line required here
+
 
 ##
 ## Variation -- Compile for Risc OS 3.10 or later  (Acorn)
@@ -309,7 +317,10 @@ risc: LD := link
 risc: CFLAGS := -IOS:,C: -throwback -depend !Depend -Wan -ff -zps1 #-g
 risc: LDFLAGS := -s symbols #-d
 risc: INSTALL := Squeeze zangband ^.!RunImage
-risc: OTHEROBJS += C:o.Stubs OSLib:o.OSLib C:o.eventlib
+risc: OTHEROBJS := C:o.Stubs OSLib:o.OSLib C:o.eventlib
+risc: $(OTHEROBJS)
+	# Blank line required here
+
 
 ##
 ## Variation -- Compile for OS2  (based on old emx makefile)
@@ -326,6 +337,9 @@ emx: INSTALL := \
 	emxbind -s ..\zangband.exe\
 	copy aclient.exe ..\
 	emxbind -s ..\aclient.exe
+emx: $(OTHEROBJS)
+	# Blank line required here
+
 
 ##
 ## Special EMX dependancies
@@ -348,6 +362,9 @@ amiga: CC := sc
 amiga: CFLAGS := DEFINE AMIGA DEFINE USE_AMI
 amiga: OTHEROBJS := sound-ami.o
 amiga: INSTALL :=  # Fixme
+amiga: $(OTHEROBJS)
+	# Blank line required here
+
 
 ##
 ## Variation -- Compile using Borland C++ 5.5 (Win32)
@@ -397,7 +414,6 @@ ZUTILSRCS := $(ZUTILOBJS:.o=.c)
 BORGSRCS := $(BORGOBJS:.o=.c)
 LUAWSRCS := $(LUAWOBJS:.o=.c)
 
-
 ##
 ## Main list of objects and source files.
 ##
@@ -436,10 +452,10 @@ zangband$(EXEC): $(OBJS)
 ##
 
 clean:
-	-rm -f *.bak *.o
-	-rm -f ./lua/*.bak ./lua/*.o
-	-rm -f ./l-*.c
-	-rm -f ./lua/tolua
+	-$(RM) *.bak *.o
+	-$(RM) ./lua/*.bak ./lua/*.o
+	-$(RM) ./l-*.c
+	-$(RM) ./lua/tolua
 ##
 ## Generate dependencies automatically
 ##
