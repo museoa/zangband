@@ -741,7 +741,8 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 		/* Access Node */
 		tree_ptr = &wild_choice_tree[node];
 
-		/* If are near end - look at leaves of tree
+		/*
+		 * If are near end - look at leaves of tree
 		 *
 		 * (cutoff == 0) is used as a flag since it doesn't
 		 * split the possibility tree in any useful way.
@@ -1079,19 +1080,19 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 {
 	/* This function assumes that the "leaves" are of this form:
-	*
-	*StartNode
-	* /  \
-	*x  Node
-	*    / \
-	* type Node
-	*       / \
-	*    type Node
-	*          / \
-	*       type type
-	*
-	* (Where one pointer connects to a node, and one to a wild. gen. type)
-	*/
+	 *
+	 *StartNode
+	 * /  \
+	 *x  Node
+	 *    / \
+	 * type Node
+	 *       / \
+	 *    type Node
+	 *          / \
+	 *       type type
+	 *
+	 * (Where one pointer connects to a node, and one to a wild. gen. type)
+	 */
 
 	/*
 	 * The complexity of this function is due to the large number of
@@ -3943,3 +3944,4 @@ void create_wilderness(void)
 	/* Done */
 	wild_done();
 }
+

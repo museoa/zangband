@@ -1917,6 +1917,7 @@ static bool test_gold(int *cost)
 	return (TRUE);
 }
 
+
 static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 {
 	int		cost = 0;

@@ -228,6 +228,7 @@ static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx, in
 	return (TRUE);
 }
 
+
 /*
  * Room building routines.
  *
@@ -444,7 +445,7 @@ static void build_type2(int by0, int bx0)
 	{
 		/* Generate inner floors */
 		generate_fill(uleft[i].y, uleft[i].x,
-			 lright[i].y, lright[i].x, FEAT_FLOOR);
+		              lright[i].y, lright[i].x, FEAT_FLOOR);
 	}
 }
 
@@ -1238,8 +1239,8 @@ static void vault_prep_dragon(void)
 		{
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = (RF4_BR_ACID | RF4_BR_ELEC |
-											  RF4_BR_FIRE | RF4_BR_COLD |
-											  RF4_BR_POIS);
+			                          RF4_BR_FIRE | RF4_BR_COLD |
+			                          RF4_BR_POIS);
 
 			/* Done */
 			break;
@@ -1561,7 +1562,7 @@ static void build_type6(int by0, int bx0)
 
 			/* Decline incorrect alignment */
 			if (((align < 0) && (r_info[r_idx].flags3 & RF3_GOOD)) ||
-				 ((align > 0) && (r_info[r_idx].flags3 & RF3_EVIL)))
+			    ((align > 0) && (r_info[r_idx].flags3 & RF3_EVIL)))
 			{
 				continue;
 			}
@@ -1743,7 +1744,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 			coord_trans(&i, &j, xoffset, yoffset, transno);
 
 			/* Extract the location */
-			if (transno%2)
+			if (transno % 2)
 			{
 				/* no swap of x/y */
 				x = xval - (xmax / 2) + i;
@@ -2026,9 +2027,8 @@ static void build_type7(int by0, int bx0)
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
 		if (cheat_room)
-		{
 			msg_print("Warning! Could not place lesser vault!");
-		}
+
 		return;
 	}
 
@@ -2124,9 +2124,8 @@ static void build_type8(int by0, int bx0)
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
 		if (cheat_room)
-		{
 			msg_print("Warning! Could not place greater vault!");
-		}
+
 		return;
 	}
 
@@ -2282,15 +2281,17 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 	{
 		for (y = y1; y <= y2; y++)
 		{
-			/* Thing added based on distance to center of vault
-			 * Difficulty is 1-easy to 10-hard */
-			value = ((((s32b)(distance(cx, cy, x, y))) * 100)
-				 / size) + randint1(10) - difficulty;
+			/*
+			 * Thing added based on distance to center of vault
+			 * Difficulty is 1-easy to 10-hard
+			 */
+			value = ((((s32b)(distance(cx, cy, x, y))) * 100) / size) +
+			        randint1(10) - difficulty;
 
 			/* hack- empty square part of the time */
 			if ((randint1(100) - difficulty * 3) > 50) value = 20;
 
-			 /* if floor, shallow water and lava */
+			/* if floor, shallow water and lava */
 			if ((cave[y][x].feat == FEAT_FLOOR) ||
 			    (cave[y][x].feat == FEAT_SHAL_WATER) ||
 			    (cave[y][x].feat == FEAT_SHAL_LAVA))
@@ -2308,7 +2309,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 				}
 				else if (value < 5)
 				{
-					/* Mean monster +treasure */
+					/* Mean monster + treasure */
 					monster_level = base_level + 20;
 					place_monster(y, x, TRUE, TRUE);
 					monster_level = base_level;
@@ -2393,7 +2394,6 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 						place_object(y, x, FALSE, FALSE);
 					}
 				}
-
 			}
 		}
 	}
@@ -2412,7 +2412,8 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
  */
 static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 {
-	#define BUBBLENUM 10		/* number of bubbles */
+	/* number of bubbles */
+	#define BUBBLENUM 10
 
 	/* array of center points of bubbles */
 	coord center[BUBBLENUM];
@@ -2571,8 +2572,9 @@ static void build_room(int x1, int x2, int y1, int y2)
 }
 
 
-/* Create a random vault that looks like a collection of overlapping rooms */
-
+/*
+ * Create a random vault that looks like a collection of overlapping rooms
+ */
 static void build_room_vault(int x0, int y0, int xsize, int ysize)
 {
 	int i, x1, x2, y1, y2, xhsize, yhsize;
@@ -2615,7 +2617,9 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 }
 
 
-/* Create a random vault out of a fractal cave */
+/*
+ * Create a random vault out of a fractal cave
+ */
 static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 {
 	int grd, roug, cutoff, xhsize, yhsize, xsize, ysize;
@@ -2674,6 +2678,7 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
 		 y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint1(5));
 }
+
 
 /*
  * maze vault -- rectangular labyrinthine rooms
@@ -2846,7 +2851,8 @@ static void build_maze_vault(int x0, int y0, int xsize, int ysize)
 }
 
 
-/* Build a "mini" checkerboard vault
+/*
+ * Build a "mini" checkerboard vault
  *
  * This is done by making a permanent wall maze and setting
  * the diagonal sqaures of the checker board to be granite.
@@ -2931,7 +2937,8 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 }
 
 
-/* Build a town/ castle by using a recursive algorithm.
+/*
+ * Build a town/ castle by using a recursive algorithm.
  * Basically divide each region to create smaller regions.
  * When they get too small, stop.
  *
@@ -3101,11 +3108,12 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 
 /* Build a castle */
 
-/* Driver routine: clear the region and call the recursive
-* room routine.
-*
-*This makes a vault that looks like a castle/ city in the dungeon.
-*/
+/*
+ * Driver routine: clear the region and call the recursive
+ * room routine.
+ *
+ * This makes a vault that looks like a castle/ city in the dungeon.
+ */
 static void build_castle_vault(int x0, int y0, int xsize, int ysize)
 {
 	int dy, dx;
@@ -3142,7 +3150,7 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
  * This routine also stomps on doors
  */
 static void add_outer_wall(int x, int y, int light,
-									int x1, int y1, int x2, int y2)
+                           int x1, int y1, int x2, int y2)
 {
 	int i, j;
 	cave_type *c_ptr;
@@ -3171,7 +3179,7 @@ static void add_outer_wall(int x, int y, int light,
 				}
 			}
 		}
-		
+
 		if (light) c_ptr->info |= CAVE_GLOW;
 	}
 	else if (c_ptr->feat == FEAT_WALL_EXTRA)
@@ -3321,7 +3329,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
  * distribution of some terrain type over the vault.  This type
  * depends on the dungeon depth.
  *
- * Miniture rooms are then scattered across the vault.
+ * Miniature rooms are then scattered across the vault.
  */
 static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 {
@@ -3404,8 +3412,8 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 
 
 /*
-*This makes a vault that has many micro-rooms.
-*/
+ * This makes a vault that has many micro-rooms.
+ */
 static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 {
 	int dy, dx;
@@ -3471,6 +3479,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(x1, x2, y1, y2, randint1(5));
 }
+
 
 /*
  * Type 10 -- Random vault
@@ -3571,7 +3580,7 @@ static void build_type11(int by0, int bx0)
  * When done fill from the inside to find the walls,
  */
 static void build_type12(int by0, int bx0)
-	{
+{
 	int rad, x, y, x0, y0;
 	int light = FALSE;
 	bool emptyflag = TRUE;
@@ -3686,8 +3695,10 @@ static void build_type13(int by0, int bx0)
 
 	while (!done)
 	{
-		/* Note: size must be even or there are rounding problems
-		* This causes the tunnels not to connect properly to the room */
+		/*
+		 * Note: size must be even or there are rounding problems
+		 * This causes the tunnels not to connect properly to the room
+		 */
 
 		/* testing values for these parameters feel free to adjust */
 		grd = 1 << (randint0(4));
@@ -3894,6 +3905,7 @@ static void build_type14(int by0, int bx0)
 	}	
 }
 
+
 /*
  * Type 15 -- Parallelagram Shaped Rooms
  */
@@ -3943,6 +3955,7 @@ static void build_type15(int by0, int bx0)
 	add_outer_wall(xval, yval, light, x1, y1, x1 + h + w, y1 + h);
 }
 
+
 /*
  * Attempt to build a room of the given type at the given block
  *
@@ -3983,3 +3996,4 @@ bool room_build(int by0, int bx0, int typ)
 
 	return (TRUE);
 }
+
