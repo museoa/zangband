@@ -35,7 +35,7 @@ M:V:126
 M:Q:125
 
 # Maximum number of field types
-M:U:146
+M:U:147
 
 # Maximum size for "fld_list[]"
 M:D:512
