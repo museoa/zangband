@@ -748,7 +748,7 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 		case 26:
 			if (o_ptr->tval >= TV_BOOTS)
 			{
-				o_ptr->flags1 |= TR1_STEALTH;
+				o_ptr->flags1 |= TR3_SLOW_DIGEST;
 			}
 			else
 			{
