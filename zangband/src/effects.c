@@ -689,9 +689,9 @@ bool set_protevil(int v)
 }
 
 /*
- * Set "p_ptr->set_shadow", notice observable changes
+ * Set "p_ptr->wraith_form", notice observable changes
  */
-bool set_shadow(int v)
+bool set_wraith_form(int v)
 {
 	bool notice = FALSE;
 

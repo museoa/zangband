@@ -1455,7 +1455,7 @@ static void process_world(void)
 	/* Wraith form */
 	if (p_ptr->wraith_form)
 	{
-		(void)set_shadow(p_ptr->wraith_form - 1);
+		(void)set_wraith_form(p_ptr->wraith_form - 1);
 	}
 
 	/* Heroism */
@@ -1800,7 +1800,7 @@ static void process_world(void)
 			disturb(0, 0);
 			msg_print("You feel insubstantial!");
 			msg_print(NULL);
-			set_shadow(p_ptr->wraith_form + randint(p_ptr->lev / 2) + (p_ptr->lev / 2));
+			set_wraith_form(p_ptr->wraith_form + randint(p_ptr->lev / 2) + (p_ptr->lev / 2));
 		}
 		if ((p_ptr->muta2 & MUT2_POLY_WOUND) && one_in_(3000))
 		{

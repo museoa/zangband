@@ -1071,7 +1071,7 @@ extern bool get_hack_dir(int *dp);
 extern bool get_rep_dir(int *dp);
 extern int get_chaos_patron(void);
 extern void gain_level_reward(int chosen_reward);
-extern bool set_shadow(int v);
+extern bool set_wraith_form(int v);
 extern bool set_tim_esp(int v);
 extern bool tgt_pt (int *x, int *y);
 extern void do_poly_wounds(void);

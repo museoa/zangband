@@ -1738,7 +1738,7 @@ static bool cast_death_spell(int spell)
 
 		break;
 	case 31: /* Wraithform */
-		set_shadow(p_ptr->wraith_form + randint(plev / 2) + (plev / 2));
+		set_wraith_form(p_ptr->wraith_form + randint(plev / 2) + (plev / 2));
 		break;
 	default:
 		msg_format("You cast an unknown Death spell: %d.", spell);
