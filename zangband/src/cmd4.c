@@ -1349,7 +1349,7 @@ static void do_cmd_macro_aux(char *buf)
 	ascii_to_text(tmp, buf);
 
 	/* Hack -- display the trigger */
-	roff(tmp);
+	roff("%s", tmp);
 }
 
 #endif
@@ -1376,7 +1376,7 @@ static void do_cmd_macro_aux_keymap(char *buf)
 	ascii_to_text(tmp, buf);
 
 	/* Hack -- display the trigger */
-	roff(tmp);
+	roff("%s", tmp);
 
 
 	/* Flush */
