@@ -28,7 +28,7 @@ datadir = @datadir@
 DESTDIR = $(datadir)/games/zangband/
 GAMEGROUP = games
 
-CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)\"
+CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)lib/\"
 
 
 cygwin = @cygwin@
@@ -50,11 +50,16 @@ distclean-files = *.bak gmon.out config.log config.status
 ##
 default: zangband
 
+INSTALL = cp zangband $(bindir)/zangband;\
+		chgrp $(GAMEGROUP) $(bindir)/zangband;\
+		chmod g+s $(bindir)/zangband;
+		
+
 dirs := lib src
 dirlist := lib
 include $(scandir)
 
-INSTALL = cp zangband $(bindir)/zangband
+
 
 ##
 ## Default target
@@ -80,16 +85,12 @@ makedirs:
 	-mkdir $(DESTDIR)
 	-mkdir $(addprefix $(DESTDIR),$(dirlist))
 
-install-files: makedirs
-	for i in $(files) ; do \
-	    cp $$i $(DESTDIR)$$i; \
-	done
-
 install: makedirs zangband
 	for i in $(files) ; do \
 	    cp $$i $(DESTDIR)$$i; \
 	done
 	$(INSTALL)
+
 
 uninstall:
 	-rm -f $(bindir)/zangband

@@ -234,6 +234,8 @@ static void init_stuff(void)
 		/* Failure */
 		if (fd < 0)
 		{
+			plog_fmt("Cannot access the '%s' file!", buf);
+		
 			/* Reset to be "./lib/" */
 			strcpy(path, "./lib/");	
 		}
