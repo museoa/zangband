@@ -2266,7 +2266,8 @@ void display_inven(void)
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Start with an empty "index" */
-		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+		tmp_val[0] = tmp_val[1] = ' ';
+		tmp_val[2] = 0;
 
 		/* Is this item "acceptable"? */
 		if (item_tester_okay(o_ptr))
@@ -2331,7 +2332,8 @@ void display_equip(void)
 		o_ptr = &p_ptr->equipment[i];
 
 		/* Start with an empty "index" */
-		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+		tmp_val[0] = tmp_val[1] = ' ';
+		tmp_val[2] = 0;
 
 		/* Is this item "acceptable"? */
 		if (item_tester_okay(o_ptr))
