@@ -1501,13 +1501,13 @@ void verify_panel(void)
 	{
 		/* Center vertically */
 		prow_min = y - hgt / 2;
-		if (prow_min > max_prow_min) prow_min = max_prow_min;
-		else if (prow_min < 0) prow_min = 0;
+		if (prow_min < 0) prow_min = 0;
+		else if (prow_min > max_prow_min) prow_min = max_prow_min;
 
 		/* Center horizontally */
 		pcol_min = x - wid / 2;
-		if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
-		else if (pcol_min < 0) pcol_min = 0;
+		if (pcol_min < 0) pcol_min = 0;
+		else if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 	}
 	else
 	{
@@ -1515,16 +1515,6 @@ void verify_panel(void)
 		pcol_min = panel_col_min;
 
 		/* Scroll screen when 2 grids from top/bottom edge */
-		if (y < panel_row_min + 2)
-		{
-			while (y < prow_min + 2)
-			{
-				prow_min -= (hgt / 2);
-			}
-
-			if (prow_min < 0) prow_min = 0;
-		}
-
 		if (y > panel_row_max - 2)
 		{
 			while (y > prow_min + hgt - 2)
@@ -1535,17 +1525,17 @@ void verify_panel(void)
 			if (prow_min > max_prow_min) prow_min = max_prow_min;
 		}
 
-		/* Scroll screen when 4 grids from left/right edge */
-		if (x < panel_col_min + 4)
+		if (y < panel_row_min + 2)
 		{
-			while (x < pcol_min + 4)
+			while (y < prow_min + 2)
 			{
-				pcol_min -= (wid / 2);
+				prow_min -= (hgt / 2);
 			}
 
-			if (pcol_min < 0) pcol_min = 0;
+			if (prow_min < 0) prow_min = 0;
 		}
 
+		/* Scroll screen when 4 grids from left/right edge */
 		if (x > panel_col_max - 4)
 		{
 			while (x > pcol_min + wid - 4)
@@ -1554,6 +1544,16 @@ void verify_panel(void)
 			}
 
 			if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
+		}
+		
+		if (x < panel_col_min + 4)
+		{
+			while (x < pcol_min + 4)
+			{
+				pcol_min -= (wid / 2);
+			}
+
+			if (pcol_min < 0) pcol_min = 0;
 		}
 	}
 
@@ -2852,12 +2852,12 @@ bool target_set(int mode)
 						}
 
 						/* Slide into legality */
-						if (x >= max_wid - 1) x = max_wid - 2;
-						else if (x <= min_wid) x = min_wid + 1;
+						if (x <= min_wid) x = min_wid + 1;
+						else if (x >= max_wid - 1) x = max_wid - 2;
 
 						/* Slide into legality */
-						if (y >= max_hgt - 1) y = max_hgt- 2;
-						else if (y <= min_hgt) y = min_hgt + 1;
+						if (y <= min_hgt) y = min_hgt + 1;
+						else if (y >= max_hgt - 1) y = max_hgt - 2;
 					}
 				}
 
@@ -3008,12 +3008,12 @@ bool target_set(int mode)
 				}
 
 				/* Slide into legality */
-				if (x >= max_wid - 1) x = max_wid - 2;
-				else if (x <= min_wid) x = min_wid + 1;
+				if (x <= min_wid) x = min_wid + 1;
+				else if (x >= max_wid - 1) x = max_wid - 2;
 
 				/* Slide into legality */
-				if (y >= max_hgt - 1) y = max_hgt - 2;
-				else if (y <= min_hgt) y = min_hgt + 1;
+				if (y <= min_hgt) y = min_hgt + 1;
+				else if (y >= max_hgt - 1) y = max_hgt - 2;
 			}
 		}
 	}
