@@ -1552,13 +1552,13 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		if (o_ptr->tval == TV_LITE)
 		{
 			/* Use some fuel (except on artifacts) */
-			if (!(o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->pval > 0))
+			if (!(o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->timeout > 0))
 			{
 				/* Heal the player a bit */
-				(void)hp_player(o_ptr->pval / 20);
+				(void)hp_player(o_ptr->timeout / 20);
 
 				/* Decrease life-span of lite */
-				o_ptr->pval /= 2;
+				o_ptr->timeout /= 2;
 
 				msg_print("You absorb energy from your light!");
 
