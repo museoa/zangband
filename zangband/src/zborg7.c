@@ -1367,7 +1367,7 @@ bool borg_recharging(void)
 
 		/* Wands or staffs with no charges can be charged */
 		if ((l_ptr->tval == TV_WAND || l_ptr->tval == TV_STAFF) &&
-			(l_ptr->pval < 1 ||
+			((borg_obj_known_p(l_ptr) && l_ptr->pval < 1) ||
 			strstr(l_ptr->o_name, "{empty")))
 		{
 			/* Settle for this wand/staff. */
