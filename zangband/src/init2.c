@@ -1679,7 +1679,7 @@ errr init_v_info(void)
 
 	int mode = 0644;
 
-	errr err;
+	errr err = 0;
 
 	FILE *fp;
 
