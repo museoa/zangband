@@ -2004,7 +2004,7 @@ void py_attack(int x, int y)
 }
 
 
-static void summon_pattern_vortex(int y, int x)
+static void summon_pattern_vortex(int x, int y)
 {
 	int i;
 
@@ -2027,21 +2027,26 @@ static void summon_pattern_vortex(int y, int x)
 }
 
 
-static bool pattern_tile(int y, int x)
+static bool pattern_tile(cave_type *c_ptr)
 {
-	return ((area(y,x)->feat <= FEAT_PATTERN_XTRA2) &&
-	        (area(y,x)->feat >= FEAT_PATTERN_START));
+	return ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
+	        (c_ptr->feat >= FEAT_PATTERN_START));
 }
 
 
-static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
+static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 {
-	if (!pattern_tile(c_y, c_x) && !pattern_tile(n_y, n_x))
+	cave_type *c1_ptr, *c2_ptr;
+	
+	c1_ptr = area(c_y, c_x);
+	c2_ptr = area(n_y, n_x);
+	
+	if (!pattern_tile(c1_ptr) && !pattern_tile(c2_ptr))
 		return TRUE;
 
-	if (area(n_y, n_x)->feat == FEAT_PATTERN_START)
+	if (c2_ptr->feat == FEAT_PATTERN_START)
 	{
-		if (!pattern_tile(c_y, c_x) &&
+		if (!pattern_tile(c1_ptr) &&
 			 !p_ptr->confused && !p_ptr->stun && !p_ptr->image)
 		{
 			if (get_check("If you start walking the Pattern, you must walk the whole way. Ok? "))
@@ -2052,11 +2057,11 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 		else
 			return TRUE;
 	}
-	else if ((area(n_y, n_x)->feat == FEAT_PATTERN_OLD) ||
-	         (area(n_y, n_x)->feat == FEAT_PATTERN_END) ||
-	         (area(n_y, n_x)->feat == FEAT_PATTERN_XTRA2))
+	else if ((c2_ptr->feat == FEAT_PATTERN_OLD) ||
+	         (c2_ptr->feat == FEAT_PATTERN_END) ||
+	         (c2_ptr->feat == FEAT_PATTERN_XTRA2))
 	{
-		if (pattern_tile(c_y, c_x))
+		if (pattern_tile(c1_ptr))
 		{
 			return TRUE;
 		}
@@ -2066,7 +2071,7 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			{
 				take_hit(100, "Stepping onto the Pattern");
 
-				if (one_in_(3)) summon_pattern_vortex(n_y, n_x);
+				if (one_in_(3)) summon_pattern_vortex(n_x, n_y);
 
 				return TRUE;
 			}
@@ -2076,14 +2081,14 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			}
 		}
 	}
-	else if ((area(n_y, n_x)->feat == FEAT_PATTERN_XTRA1) ||
-	         (area(c_y, c_x)->feat == FEAT_PATTERN_XTRA1))
+	else if ((c2_ptr->feat == FEAT_PATTERN_XTRA1) ||
+	         (c1_ptr->feat == FEAT_PATTERN_XTRA1))
 	{
 		return TRUE;
 	}
-	else if (area(c_y, c_x)->feat == FEAT_PATTERN_START)
+	else if (c1_ptr->feat == FEAT_PATTERN_START)
 	{
-		if (pattern_tile(n_y, n_x))
+		if (pattern_tile(c2_ptr))
 			return TRUE;
 		else
 		{
@@ -2091,7 +2096,7 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			{
 				take_hit(10, "Stepping off of the Pattern");
 
-				if (one_in_(6)) summon_pattern_vortex(n_y, n_x);
+				if (one_in_(6)) summon_pattern_vortex(n_x, n_y);
 
 				return TRUE;
 			}
@@ -2099,17 +2104,17 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			return FALSE;
 		}
 	}
-	else if ((area(c_y,c_x)->feat == FEAT_PATTERN_OLD) ||
-	         (area(c_y,c_x)->feat == FEAT_PATTERN_END) ||
-	         (area(c_y,c_x)->feat == FEAT_PATTERN_XTRA2))
+	else if ((c1_ptr->feat == FEAT_PATTERN_OLD) ||
+	         (c1_ptr->feat == FEAT_PATTERN_END) ||
+	         (c1_ptr->feat == FEAT_PATTERN_XTRA2))
 	{
-		if (!pattern_tile(n_y, n_x))
+		if (!pattern_tile(c2_ptr))
 		{
 			if (get_check("Really step off of the Pattern? "))
 			{
 				take_hit(100, "Stepping off of the Pattern");
 
-				if (one_in_(2)) summon_pattern_vortex(n_y, n_x);
+				if (one_in_(2)) summon_pattern_vortex(n_x, n_y);
 
 				return TRUE;
 			}
@@ -2125,13 +2130,13 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 	}
 	else
 	{
-		if (!pattern_tile(c_y, c_x))
+		if (!pattern_tile(c1_ptr))
 		{
 			if (get_check("Really step onto the Pattern here? "))
 			{
 				take_hit(25, "Stepping onto the Pattern");
 
-				if (one_in_(6)) summon_pattern_vortex(n_y, n_x);
+				if (one_in_(6)) summon_pattern_vortex(n_x, n_y);
 
 				return TRUE;
 			}
@@ -2144,7 +2149,7 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 		{
 			byte ok_move = FEAT_PATTERN_START;
 
-			switch (area(c_y,c_x)->feat)
+			switch (c1_ptr->feat)
 			{
 				case FEAT_PATTERN_1:
 					ok_move = FEAT_PATTERN_2;
@@ -2164,26 +2169,26 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 					return TRUE; /* Goof-up */
 			}
 
-			if ((area(n_y, n_x)->feat == ok_move) ||
-			    (area(n_y, n_x)->feat == area(c_y, c_x)->feat))
+			if ((c2_ptr->feat == ok_move) ||
+			    (c2_ptr->feat == c1_ptr->feat))
 				return TRUE;
 
 			else
 			{
-				if (!pattern_tile(n_y, n_x) && get_check("Really step off of the Pattern? "))
+				if (!pattern_tile(c2_ptr) && get_check("Really step off of the Pattern? "))
 				{
 					take_hit(50, "Stepping off of the Pattern");
 
-					if (one_in_(3)) summon_pattern_vortex(n_y, n_x);
+					if (one_in_(3)) summon_pattern_vortex(n_x, n_y);
 
 					return TRUE;
 				}
 
-				else if (pattern_tile(n_y, n_x) && get_check("Really stray from the proper path? "))
+				else if (pattern_tile(c2_ptr) && get_check("Really stray from the proper path? "))
 				{
 					take_hit(25, "Walking backwards along the Pattern");
 
-					if (one_in_(5)) summon_pattern_vortex(n_y, n_x);
+					if (one_in_(5)) summon_pattern_vortex(n_x, n_y);
 
 					return TRUE;
 				}
@@ -2277,7 +2282,7 @@ void move_player(int dir, int do_pickup)
 		if (!is_hostile(m_ptr) &&
 		    !(p_ptr->confused || p_ptr->image || !m_ptr->ml || p_ptr->stun ||
 		    ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)) &&
-		    (pattern_seq(py, px, y, x)) &&
+		    (pattern_seq(px, py, x, y)) &&
 		    ((cave_floor_grid(c_ptr)) || p_can_pass_walls))
 		{
 			m_ptr->csleep = 0;
@@ -2486,7 +2491,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Normal movement */
-	if (!pattern_seq(py, px, y, x))
+	if (!pattern_seq(px, py, x, y))
 	{
 		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 		{
