@@ -1980,20 +1980,23 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 	}
 	else
 	{
-		msg_print("You have fallen through a trap door!");
-		sound(SOUND_FALL);
-		dam = damroll(4, 8);
-		name = "a trap door";
-		take_hit(dam, name);
+		if (!p_ptr->leaving)
+		{
+			msg_print("You have fallen through a trap door!");
+			sound(SOUND_FALL);
+			dam = damroll(4, 8);
+			name = "a trap door";
+			take_hit(dam, name);
 
-		/* Still alive and autosave enabled */
-		if (autosave_l && (p_ptr->chp >= 0))
-			do_cmd_save_game(TRUE);
+			/* Still alive and autosave enabled */
+			if (autosave_l && (p_ptr->chp >= 0))
+				do_cmd_save_game(TRUE);
 
-		dun_level++;
+			dun_level++;
 
-		/* Leaving */
-		p_ptr->leaving = TRUE;
+			/* Leaving */
+			p_ptr->leaving = TRUE;
+		}
 	}
 }
 
@@ -3220,7 +3223,7 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Unlock */
-		if (rand_int(m_ptr->hp / 10) > f_ptr->counter)
+		if (rand_int(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
 		{
 			/* Open the door */
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
@@ -3281,7 +3284,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Bash */
-		if (rand_int(m_ptr->hp / 50) > f_ptr->counter)
+		if (rand_int(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
 		{
 			/* Message */
 			msg_print("You hear a door burst open!");

@@ -2582,6 +2582,9 @@ static void process_monster(int m_idx)
 				
 			/* Do not move in any case. */
 			do_move = FALSE;
+			
+			/* The door was opened */
+			did_open_door = TRUE;
 		}
 
 		/* The player is in the way.  Attack him. */
