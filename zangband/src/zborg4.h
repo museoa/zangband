@@ -29,6 +29,8 @@ extern void borg_list_info(byte list_type);
 #define TREAT_AS_MORE	3		/* Pretend one more item */
 #define TREAT_AS_SWAP	4		/* Pretend other item is here */
 
+/* The current home */
+extern int home_shop;
 
 /* Borg functions */
 extern void borg_notice(void);

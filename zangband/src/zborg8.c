@@ -249,11 +249,11 @@ static list_item *borg_can_merge_home(list_item *l_ptr)
 /*
  * This will see what single addition/substitution is best for the home.
  */
-static list_item *borg_think_home_sell_aux2(void)
+static int borg_think_home_sell_aux2(void)
 {
 	list_item *l_ptr;
 	list_item *q_ptr;
-	list_item *r_ptr = NULL;
+	int item = -1;
 	
 	s32b power;
 	s32b best_power;
@@ -318,7 +318,7 @@ static list_item *borg_think_home_sell_aux2(void)
 		if (power > best_power)
 		{
 			/* Save the results */
-			r_ptr = l_ptr;
+			item = i;
 
 			/* Use it */
 			best_power = power;
@@ -330,10 +330,10 @@ static list_item *borg_think_home_sell_aux2(void)
 	}
 
 	/* We have an addition? */
-	if (r_ptr) return (r_ptr);
+	if (item != -1) return (item);
 	
 	/* Do we have enough room to add items? */
-	if (home_num >= STORE_INVEN_MAX - 1) return (NULL);
+	if (home_num >= STORE_INVEN_MAX - 1) return (-1);
 	
 	/* Try additions. */
 	for (i = 0; i < inven_num; i++)
@@ -375,7 +375,7 @@ static list_item *borg_think_home_sell_aux2(void)
 		if (power > best_power)
 		{
 			/* Save the results */
-			r_ptr = l_ptr;
+			item = i;
 
 			/* Use it */
 			best_power = power;
@@ -386,7 +386,7 @@ static list_item *borg_think_home_sell_aux2(void)
 	}
 
 	/* Item to give to home, if any. */
-	return (r_ptr);
+	return (item);
 }
 
 
@@ -395,146 +395,27 @@ static list_item *borg_think_home_sell_aux2(void)
  */
 static bool borg_think_home_sell_aux(void)
 {
-	int icky = STORE_INVEN_MAX - 1;
-
-	s32b home_power = -1L;
-	s32b best_home_power = -1L;
-
-	int i = -1;
-
-	byte test_a[STORE_INVEN_MAX];
-	byte best_a[STORE_INVEN_MAX];
-
-	test = test_a;
-	best = best_a;
-
-	/* if I have not been to home, do not try this yet. */
-	if (!borg_shops[BORG_HOME].when) return FALSE;
+	int index;
+	
+	/* Hack - we need to have visited the home before */
+	if (home_shop == -1) return (FALSE);
 
 	/* Hack -- the home is full and pack is full */
-	if (borg_shops[BORG_HOME].ware[icky].iqty &&
-		borg_items[INVEN_PACK - 1].iqty)
+	if ((home_num >= STORE_INVEN_MAX - 1) && (inven_num >= INVEN_PACK - 1))
 		return (FALSE);
 
-	/* Copy all the store slots */
-	for (i = 0; i < STORE_INVEN_MAX; i++)
+	/* Find best item to give to home. */
+	index = borg_think_home_sell_aux2();
+	
+	/* Do we have an item? */
+	if (index != -1)
 	{
-		/* Save the item */
-		COPY(&safe_home[i], &borg_shops[BORG_HOME].ware[i], borg_item);
-
-		/* clear test arrays (test[i] == i is no change) */
-		best[i] = test[i] = i;
+		goal_shop = home_shop;
+		goal_item = index;
+		
+		/* We have goal */
+		return (TRUE);
 	}
-
-	/* Hack -- Copy all the slots */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		COPY(&safe_items[i], &borg_items[i], borg_item);
-	}
-
-	/*
-	 * Examine the borg once more with
-	 * full inventory then swap in the
-	 * safe_items for the home optimization
-	 */
-	borg_notice();
-
-	/* Swap quantities (this should be all that is different) */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		byte save_qty;
-
-		save_qty = safe_items[i].iqty;
-		safe_items[i].iqty = borg_items[i].iqty;
-		borg_items[i].iqty = save_qty;
-	}
-
-	best_home_power = -1;
-
-	/* find best combo for home. */
-	borg_think_home_sell_aux2();
-
-	/* restore bonuses and such */
-	for (i = 0; i < STORE_INVEN_MAX; i++)
-	{
-		COPY(&borg_shops[BORG_HOME].ware[i], &safe_home[i], borg_item);
-	}
-
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		COPY(&borg_items[i], &safe_items[i], borg_item);
-	}
-
-	borg_notice();
-	borg_notice_home();
-
-	/* Drop stuff that will stack in the home */
-	for (i = 0; i < STORE_INVEN_MAX; i++)
-	{
-		/* if this is not the item that was there, */
-		/* drop off the item that replaces it. */
-		if (best[i] != i && best[i] != 255)
-		{
-			borg_item *item = &borg_items[best[i] - STORE_INVEN_MAX];
-			borg_item *item2 = &borg_shops[BORG_HOME].ware[i];
-
-			/* if this item is not the same as what was */
-			/* there before take it. */
-			if (!borg_object_similar(item2, item))
-				continue;
-
-			goal_shop = BORG_HOME;
-			goal_item = best[i] - STORE_INVEN_MAX;
-
-			return (TRUE);
-		}
-	}
-
-	/* Get rid of stuff in house but not in 'best' house if  */
-	/* pack is not full */
-	if (!borg_items[INVEN_PACK - 1].iqty)
-	{
-		for (i = 0; i < STORE_INVEN_MAX; i++)
-		{
-			/* if this is not the item that was there, */
-			/* get rid of the item that was there */
-			if ((best[i] != i) && (borg_shops[BORG_HOME].ware[i].iqty))
-			{
-				borg_item *item = &borg_items[best[i] - STORE_INVEN_MAX];
-				borg_item *item2 = &borg_shops[BORG_HOME].ware[i];
-
-				/* if this item is not the same as what was */
-				/* there before take it. */
-				if (borg_object_similar(item, item2))
-					continue;
-
-				goal_shop = BORG_HOME;
-				goal_ware = i;
-
-				return TRUE;
-			}
-		}
-	}
-
-	/* Drop stuff that is in best house but currently in inventory */
-	for (i = 0; i < STORE_INVEN_MAX; i++)
-	{
-		/* if this is not the item that was there,  */
-		/* drop off the item that replaces it. */
-		if (best[i] != i && best[i] != 255)
-		{
-			/* hack dont sell DVE */
-			if (!borg_items[best[i] - STORE_INVEN_MAX].iqty) return (FALSE);
-
-			goal_shop = BORG_HOME;
-			goal_item = best[i] - STORE_INVEN_MAX;
-
-			return (TRUE);
-		}
-	}
-
-	/* Return our num_ counts to normal */
-	borg_notice_home();
 
 	/* Assume not */
 	return (FALSE);

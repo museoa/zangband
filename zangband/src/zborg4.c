@@ -110,6 +110,9 @@ int num_hats;
 int num_gloves;
 int num_boots;
 
+/* The shop that corresponds to the current home */
+int home_shop = -1;
+
 
 /*
  * Hack - save old hook for object lists.
@@ -214,6 +217,7 @@ void borg_list_info(byte list_type)
 				if ((borg_shops[i].x == c_x) && (borg_shops[i].y == c_y))
 				{
 					shop_num = i;
+					home_shop = i;
 					break;
 				}
 			}
