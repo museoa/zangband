@@ -187,7 +187,7 @@ struct term_list
 	
 	s32b cost;	/* Object "base cost" */
 	
-	s16b k_idx;	/* Kind index (zero if "dead") */
+	s16b k_idx;	/* Kind index (zero if "unknown") */
 	s16b weight;	/* Item weight */
 	
 	s16b to_h;	/* Bonus to hit */
@@ -200,6 +200,9 @@ struct term_list
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
 	
+	s16b pval;	/* Particular value */
+	
+	byte tval;	/* Item type (from kind) */
 	byte slot;	/* Equipment slot - if applicable */
 };
 
@@ -229,6 +232,9 @@ struct list_item
 	
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
+	
+	s16b pval;	/* Particular value */
+	byte tval;	/* Item type (from kind) */
 	
 	byte slot;	/* Equipment slot */
 

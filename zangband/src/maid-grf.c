@@ -944,6 +944,10 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 		/* Duplicate equipment slot */
 		l_ptr->slot = tl_ptr->slot;
 		
+		/* Duplicate pval /tval */
+		l_ptr->pval = tl_ptr->pval;
+		l_ptr->tval = tl_ptr->tval;
+		
 		/* Duplicate bonuses */
 		l_ptr->to_h = tl_ptr->to_h;
 		l_ptr->to_d = tl_ptr->to_d;
@@ -1009,8 +1013,11 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 	l_ptr->kn_flags3 = o_ptr->kn_flags3;
 
 	/* Type of object */
-	l_ptr->k_idx = o_ptr->k_idx;
-
+	if (object_aware_p(o_ptr))
+	{
+		l_ptr->k_idx = o_ptr->k_idx;
+	}
+	
 	/* Weight and number */
 	l_ptr->weight = o_ptr->weight;
 	l_ptr->number = o_ptr->number;
@@ -1048,7 +1055,24 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 		l_ptr->to_h = o_ptr->to_h;
 		l_ptr->to_d = o_ptr->to_d;
 		l_ptr->to_a = o_ptr->to_a;
+		
+		/* Pval */
+		if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF))
+		{
+			/* Wand and staff charges */
+			l_ptr->pval = o_ptr->pval;
+		}
 	}
+	
+	/* Pval */
+	if (o_ptr->kn_flags1 & (TR1_PVAL_MASK))
+	{
+		/* Normal items with noticable pval */
+		l_ptr->pval = o_ptr->pval;
+	}
+	
+	/* Tval */
+	l_ptr->tval = o_ptr->tval;
 }
 
 /*

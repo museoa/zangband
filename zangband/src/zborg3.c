@@ -22,9 +22,6 @@
 /*
  * Some variables
  */
-
-borg_item *borg_items;	/* Current "inventory" */
-
 borg_shop *borg_shops;	/* Current "shops" */
 
 
@@ -32,8 +29,6 @@ borg_shop *borg_shops;	/* Current "shops" */
 /*
  * Safety arrays for simulating possible worlds
  */
-
-borg_item *safe_items;	/* Safety "inventory" */
 borg_item *safe_home;	/* Safety "home stuff" */
 
 borg_shop *safe_shops;	/* Safety "shops" */
@@ -779,12 +774,12 @@ list_item *borg_slot(int tval, int sval)
 	/* Scan the pack */
 	for (i = 0; i < inven_num; i++)
 	{
-		list_item *item = &inventory[i];
+		list_item *l_ptr = &inventory[i];
 
 		/* Skip un-aware items */
-		if (!item->k_idx) continue;
+		if (!l_ptr->k_idx) continue;
 		
-		k_ptr = &k_info[item->k_idx];
+		k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Require correct tval */
 		if (k_ptr->tval != tval) continue;
@@ -793,7 +788,7 @@ list_item *borg_slot(int tval, int sval)
 		if (k_ptr->sval != sval) continue;
 
 		/* Hack - Prefer the first match, it is sorted nicely already */
-		return (item);
+		return (l_ptr);
 	}
 
 	/* Done */
@@ -812,15 +807,7 @@ int look_up_index(list_item *l_ptr)
 	{
 		if (&inventory[i] == l_ptr) return (i);
 	}
-	
-#if 0
-	/* Scan equipment */
-	for (i = 0; i < equip_num; i++)
-	{
-		if (&equipment[i] == l_ptr) return (i);
-	}
-#endif /* 0 */
-	
+		
 	/* Paranoia */
 	borg_oops("Trying to find invalid object!");
 
@@ -998,39 +985,32 @@ bool borg_quaff_potion(int sval)
  */
 bool borg_quaff_unknown(void)
 {
-	int i, n = -1;
-
+	int i;
+	
 	/* Scan the pack */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
+		list_item *l_ptr = &inventory[i];
+		
 		/* Require correct tval */
-		if (item->tval != TV_POTION) continue;
+		if (l_ptr->tval != TV_POTION) continue;
 
 		/* Skip aware items */
-		if (item->kind) continue;
+		if (l_ptr->k_idx) continue;
+		
+		/* Log the message */
+		borg_note(format("# Quaffing unknown potion %s.", l_ptr->o_name));
 
-		/* Save this item */
-		n = i;
+		/* Perform the action */
+		borg_keypress('q');
+		borg_keypress(I2A(i));
+
+		/* Success */
+		return (TRUE);
 	}
 
-
 	/* None available */
-	if (n < 0) return (FALSE);
-
-	/* Log the message */
-	borg_note(format("# Quaffing unknown potion %s.", borg_items[n].desc));
-
-	/* Perform the action */
-	borg_keypress('q');
-	borg_keypress(I2A(n));
-
-	/* Success */
-	return (TRUE);
+	return (FALSE);
 }
 
 /*
@@ -1038,46 +1018,39 @@ bool borg_quaff_unknown(void)
  */
 bool borg_read_unknown(void)
 {
-	int i, n = -1;
+	int i;
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Scan the pack */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		list_item *l_ptr = &inventory[i];
+		
+		/* Skip aware items */
+		if (l_ptr->k_idx) continue;
 
 		/* Require correct tval */
-		if (item->tval != TV_SCROLL) continue;
+		if (l_ptr->tval != TV_SCROLL) continue;
 
-		/* Skip aware items */
-		if (item->kind) continue;
+		/* Not when dark */
+		if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
 
-		/* Save this item */
-		n = i;
+		/* Blind or Confused */
+		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+
+		/* Log the message */
+		borg_note(format("# Reading unknown scroll %s.",l_ptr->o_name));
+
+		/* Perform the action */
+		borg_keypress('r');
+		borg_keypress(I2A(i));
+
+		/* Success */
+		return (TRUE);
 	}
 
-
 	/* None available */
-	if (n < 0) return (FALSE);
-
-	/* Not when dark */
-	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
-
-	/* Blind or Confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
-
-	/* Log the message */
-	borg_note(format("# Reading unknown scroll %s.", borg_items[n].desc));
-
-	/* Perform the action */
-	borg_keypress('r');
-	borg_keypress(I2A(n));
-
-	/* Success */
-	return (TRUE);
+	return (FALSE);
 }
 
 
@@ -1086,39 +1059,32 @@ bool borg_read_unknown(void)
  */
 bool borg_eat_unknown(void)
 {
-	int i, n = -1;
+	int i;
 
 	/* Scan the pack */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		list_item *l_ptr = &inventory[i];
+		
+		/* Skip aware items */
+		if (l_ptr->k_idx) continue;
 
 		/* Require correct tval */
-		if (item->tval != TV_FOOD) continue;
+		if (l_ptr->tval != TV_FOOD) continue;
 
-		/* Skip aware items */
-		if (item->kind) continue;
+		/* Log the message */
+		borg_note(format("# Eating unknown mushroom %s.", l_ptr->o_name));
 
-		/* Save this item */
-		n = i;
+		/* Perform the action */
+		borg_keypress('E');
+		borg_keypress(I2A(i));
+
+		/* Success */
+		return (TRUE);
 	}
 
-
 	/* None available */
-	if (n < 0) return (FALSE);
-
-	/* Log the message */
-	borg_note(format("# Eating unknown mushroom %s.", borg_items[n].desc));
-
-	/* Perform the action */
-	borg_keypress('E');
-	borg_keypress(I2A(n));
-
-	/* Success */
-	return (TRUE);
+	return (FALSE);
 }
 
 /*
@@ -1126,39 +1092,32 @@ bool borg_eat_unknown(void)
  */
 bool borg_use_unknown(void)
 {
-	int i, n = -1;
+	int i;
 
 	/* Scan the pack */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Require correct tval */
-		if (item->tval != TV_STAFF) continue;
+		list_item *l_ptr = &inventory[i];
 
 		/* Skip aware items */
-		if (item->kind) continue;
+		if (l_ptr->k_idx) continue;
 
-		/* Save this item */
-		n = i;
+		/* Require correct tval */
+		if (l_ptr->tval != TV_STAFF) continue;
+
+		/* Log the message */
+		borg_note(format("# Using unknown Staff %s.", l_ptr->o_name));
+
+		/* Perform the action */
+		borg_keypress('u');
+		borg_keypress(I2A(i));
+
+		/* Success */
+		return (TRUE);
 	}
 
-
 	/* None available */
-	if (n < 0) return (FALSE);
-
-	/* Log the message */
-	borg_note(format("# Using unknown Staff %s.", borg_items[n].desc));
-
-	/* Perform the action */
-	borg_keypress('u');
-	borg_keypress(I2A(n));
-
-	/* Success */
-	return (TRUE);
+	return (FALSE);
 }
 
 
@@ -2743,9 +2702,7 @@ void prepare_race_class_info(void)
 
 void borg_clear_3(void)
 {
-	KILL(borg_items);
 	KILL(borg_shops);
-	KILL(safe_items);
 	KILL(safe_home);
 	KILL(safe_shops);
 }

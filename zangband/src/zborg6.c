@@ -1099,8 +1099,8 @@ bool borg_lite_beam(bool simulation)
 
 	/* Require the abilitdy */
 	if (borg_spell_okay_fail(REALM_NATURE, 1, 4, 20) ||
-		(-1 != borg_slot(TV_WAND, SV_WAND_LITE) &&
-		 borg_items[borg_slot(TV_WAND, SV_WAND_LITE)].pval) ||
+		(borg_slot(TV_WAND, SV_WAND_LITE) &&
+		 borg_slot(TV_WAND, SV_WAND_LITE)->pval) ||
 		borg_equips_rod(SV_ROD_LITE))
 		spell_ok = TRUE;
 
@@ -2089,7 +2089,7 @@ static bool borg_heal(int danger)
 		{
 			/* check my skill, drink a potion */
 			if ((borg_skill[BI_DEV] -
-				 borg_items[borg_slot(TV_STAFF, SV_STAFF_TELEPORTATION)].level >
+				 k_info[borg_slot(TV_STAFF, SV_STAFF_TELEPORTATION)->k_idx].level >
 				 7) && (danger < (avoidance + 35) * 15 / 10) &&
 				(borg_quaff_crit(FALSE) ||
 				 borg_quaff_potion(SV_POTION_HEALING)))
@@ -2211,7 +2211,7 @@ static bool borg_heal(int danger)
 																		   (SV_POTION_LIFE))
 																		  ||
 																		  /* Choose Life over Healing if way down on pts */
-																		  (hp_down > 500 && -1 == borg_slot(TV_POTION, SV_POTION_STAR_HEALING) && borg_quaff_potion(SV_POTION_LIFE)) || borg_quaff_potion(SV_POTION_STAR_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_spell_fail(REALM_LIFE, 2, 6, 17) ||	/* Holy Word */
+																		  (hp_down > 500 && !borg_slot(TV_POTION, SV_POTION_STAR_HEALING) && borg_quaff_potion(SV_POTION_LIFE)) || borg_quaff_potion(SV_POTION_STAR_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_spell_fail(REALM_LIFE, 2, 6, 17) ||	/* Holy Word */
 																		  borg_spell_fail(REALM_LIFE, 3, 4, 15) ||	/* 2000 pts */
 																		  borg_spell_fail(REALM_NATURE, 1, 7, allow_fail + 9) || borg_spell_fail(REALM_LIFE, 1, 7, 15) ||	/* 300 pts */
 /* True Vampirism ? */
@@ -2398,7 +2398,7 @@ static bool borg_heal(int danger)
 		danger / 2 < borg_skill[BI_CURHP] + 200 &&
 		(((!borg_skill[BI_ATELEPORT] ||
 		   borg_skill[BI_DEV] -
-		   borg_items[borg_slot(TV_ROD, SV_ROD_HEALING)].level > 7) &&
+		   k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
 		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 		 borg_activate_artifact(ART_GONDOR, FALSE) ||
@@ -2421,7 +2421,7 @@ static bool borg_heal(int danger)
 																	  1, 6,
 																	  allow_fail)
 																	 ||
-																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_items[borg_slot(TV_ROD, SV_ROD_HEALING)].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) || borg_quaff_potion(SV_POTION_HEALING)))
+																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) || borg_quaff_potion(SV_POTION_HEALING)))
 	{
 		borg_note("# Healing Level 7.");
 		return (TRUE);
@@ -2430,7 +2430,7 @@ static bool borg_heal(int danger)
 	/* Healing step three (300hp).  */
 	if (hp_down < 650 && danger / 2 < borg_skill[BI_CURHP] + 300 && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
-																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_items[borg_slot(TV_ROD, SV_ROD_HEALING)].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) || borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) || borg_use_staff_fail(SV_STAFF_HOLINESS) || borg_use_staff_fail(SV_STAFF_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE)))
+																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) || borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) || borg_use_staff_fail(SV_STAFF_HOLINESS) || borg_use_staff_fail(SV_STAFF_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE)))
 	{
 		borg_note("# Healing Level 8.");
 		return (TRUE);
@@ -2450,7 +2450,7 @@ static bool borg_heal(int danger)
 																		borg_use_staff_fail
 																		(SV_STAFF_HEALING)
 																		||
-																		((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_items[borg_slot(TV_ROD, SV_ROD_HEALING)].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique && (borg_quaff_potion(SV_POTION_HEALING) || borg_quaff_potion(SV_POTION_LIFE)))))
+																		((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique && (borg_quaff_potion(SV_POTION_HEALING) || borg_quaff_potion(SV_POTION_LIFE)))))
 	{
 		borg_note("# Healing Level 9.");
 		return (TRUE);
@@ -6832,7 +6832,7 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam,
  */
 static int borg_attack_aux_staff_dispel(int sval, int rad, int dam, int typ)
 {
-	int i, b_n;
+	int b_n;
 
 	/* hack - ignore parameter */
 	(void)rad;
@@ -6847,7 +6847,6 @@ static int borg_attack_aux_staff_dispel(int sval, int rad, int dam, int typ)
 
 	/* look for the staff */
 	if (!borg_equips_staff_fail(sval)) return (0);
-	i = borg_slot(TV_STAFF, sval);
 
 	/* Choose optimal location--radius defined as 10 */
 	b_n = borg_launch_bolt(MAX_SIGHT + 10, dam, typ, MAX_RANGE);
@@ -6860,7 +6859,6 @@ static int borg_attack_aux_staff_dispel(int sval, int rad, int dam, int typ)
 
 	/* Cast the prayer */
 	(void)borg_use_staff(sval);
-
 
 	/* Value */
 	return (b_n);
@@ -6914,7 +6912,7 @@ static int borg_attack_aux_rod_bolt(int sval, int rad, int dam, int typ)
  */
 static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 {
-	int i;
+	list_item *l_ptr;
 
 	int b_n;
 
@@ -6929,13 +6927,13 @@ static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 
 
 	/* Look for that wand */
-	i = borg_slot(TV_WAND, sval);
+	l_ptr = borg_slot(TV_WAND, sval);
 
 	/* None available */
-	if (i < 0) return (0);
+	if (!l_ptr) return (0);
 
 	/* No charges */
-	if (!borg_items[i].pval) return (0);
+	if (!l_ptr->pval) return (0);
 
 
 	/* Choose optimal location */
@@ -8892,9 +8890,9 @@ static int borg_defend_aux_bless(int p1)
 	/* no spell */
 	if (!borg_spell_okay_fail(REALM_LIFE, 0, 2, fail_allowed) &&
 		!borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed) &&
-		-1 == borg_slot(TV_SCROLL, SV_SCROLL_BLESSING) &&
-		-1 == borg_slot(TV_SCROLL, SV_SCROLL_HOLY_CHANT) &&
-		-1 == borg_slot(TV_SCROLL, SV_SCROLL_HOLY_PRAYER))
+		!borg_slot(TV_SCROLL, SV_SCROLL_BLESSING) &&
+		!borg_slot(TV_SCROLL, SV_SCROLL_HOLY_CHANT) &&
+		!borg_slot(TV_SCROLL, SV_SCROLL_HOLY_PRAYER))
 		return (0);
 
 	/* if we are in some danger but not much, go for a quick bless */
@@ -8957,7 +8955,7 @@ static int borg_defend_aux_speed(int p1)
 	if (borg_equips_rod(SV_ROD_SPEED))
 		speed_rod = TRUE;
 
-	if (0 > borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod && !speed_spell	/*&&
+	if (borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod && !speed_spell	/*&&
 																								   !borg_equips_artifact(ART_FEANOR, INVEN_FEET) &&
 																								   !borg_equips_artifact(ART_TARATOL, INVEN_WIELD) &&
 																								   !borg_equips_artifact(ART_TULKAS, INVEN_LEFT) */ )
@@ -9342,7 +9340,7 @@ static int borg_defend_aux_resist_f(int p1)
 	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 20, fail_allowed) &&
 		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER) &&
-		-1 == borg_slot(TV_POTION, SV_POTION_RESIST_HEAT))
+		!borg_slot(TV_POTION, SV_POTION_RESIST_HEAT))
 		return (0);
 
 	save_fire = my_oppose_fire;
@@ -9400,7 +9398,7 @@ static int borg_defend_aux_resist_c(int p1)
 	if (!borg_spell_okay_fail(REALM_NATURE, 1, 7, fail_allowed) &&
 		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 25, fail_allowed) &&
-		-1 == borg_slot(TV_POTION, SV_POTION_RESIST_COLD))
+		!borg_slot(TV_POTION, SV_POTION_RESIST_COLD))
 		return (0);
 
 	save_cold = my_oppose_cold;
@@ -9567,7 +9565,7 @@ static int borg_defend_aux_prot_evil(int p1)
 
 	if (borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed)) pfe_spell = TRUE;
 
-	if (0 <= borg_slot(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)) pfe_spell =
+	if (borg_slot(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)) pfe_spell =
 			TRUE;
 
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
@@ -9696,8 +9694,8 @@ static int borg_defend_aux_tell_away(int p1)
 		borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed) ||
 		borg_spell_okay_fail(REALM_CHAOS, 1, 5, fail_allowed) ||
 		borg_equips_artifact(ART_ULMO, INVEN_WIELD) ||
-		(-1 != borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY) &&
-		 borg_items[borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY)].pval))
+		(borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY) &&
+		 borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY)->pval))
 		spell_ok = TRUE;
 
 	if (!spell_ok) return (0);
@@ -9754,7 +9752,7 @@ static int borg_defend_aux_hero(int p1)
 		!borg_racial_check(RACE_HALF_TROLL, TRUE) &&
 		!borg_racial_check(RACE_BARBARIAN, TRUE) &&
 		!borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed) &&
-		-1 == borg_slot(TV_POTION, SV_POTION_HEROISM))
+		!borg_slot(TV_POTION, SV_POTION_HEROISM))
 		return (0);
 
 	/* if we are in some danger but not much, go for a quick bless */
@@ -9786,7 +9784,7 @@ static int borg_defend_aux_berserk(int p1)
 	if (borg_hero || borg_berserk)
 		return (0);
 
-	if (-1 == borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH))
+	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH))
 		return (0);
 
 	/* if we are in some danger but not much, go for a quick bless */
@@ -9851,7 +9849,7 @@ static int borg_defend_aux_glyph(int p1)
 	if (borg_spell_okay_fail(REALM_LIFE, 1, 7, fail_allowed)) glyph_spell =
 			TRUE;
 
-	if (0 <= borg_slot(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)) glyph_spell =
+	if (borg_slot(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)) glyph_spell =
 			TRUE;
 
 	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
@@ -10261,7 +10259,7 @@ static int borg_defend_aux_genocide(void)
 	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) ||
 		borg_equips_artifact(ART_CELEBORN, INVEN_BODY) ||
 		borg_equips_staff_fail(SV_STAFF_GENOCIDE) ||
-		(-1 != borg_slot(TV_SCROLL, SV_SCROLL_GENOCIDE)))
+		(borg_slot(TV_SCROLL, SV_SCROLL_GENOCIDE)))
 	{
 		genocide_spell = TRUE;
 	}
@@ -10781,8 +10779,8 @@ static int borg_defend_aux_inviso(int p1)
 	if (p1 > avoidance * 7) return (0);
 
 	/* Do I have anything that will work? */
-	if (-1 == borg_slot(TV_POTION, SV_POTION_DETECT_INVIS) &&
-		-1 == borg_slot(TV_SCROLL, SV_SCROLL_DETECT_INVIS) &&
+	if (!borg_slot(TV_POTION, SV_POTION_DETECT_INVIS) &&
+		!borg_slot(TV_SCROLL, SV_SCROLL_DETECT_INVIS) &&
 		!borg_equips_staff_fail(SV_STAFF_DETECT_INVIS) &&
 		!borg_equips_staff_fail(SV_STAFF_DETECT_EVIL) &&
 		!borg_spell_okay_fail(REALM_LIFE, 1, 3, fail_allowed) &&
@@ -12012,7 +12010,7 @@ static int borg_perma_aux_berserk_potion(void)
 		return (0);
 
 	/* do I have any? */
-	if (-1 == borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH))
+	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH))
 		return (0);
 
 	/* Simulation */
@@ -12701,9 +12699,9 @@ bool borg_recover(void)
 	{
 		/* Step 1.  Recharge just 1 rod. */
 		if ((borg_has[374] &&
-			 !borg_items[borg_slot(TV_ROD, SV_ROD_HEALING)].pval) ||
+			 !borg_slot(TV_ROD, SV_ROD_HEALING)->pval) ||
 			(borg_has[354] &&
-			 !borg_items[borg_slot(TV_ROD, SV_ROD_RECALL)].pval))
+			 !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
 		{
 			/* Mages can cast the recharge spell */
 
