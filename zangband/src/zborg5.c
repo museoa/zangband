@@ -2327,6 +2327,8 @@ static bool borg_handle_self(cptr str)
  */
 static void borg_forget_map(void)
 {
+	map_block *mb_ptr;
+
 #if 0
     /* Clean up the grids */
     for (y = 0; y < AUTO_MAX_Y; y++)
@@ -2361,12 +2363,13 @@ static void borg_forget_map(void)
     }
 #endif /* 0 */
 
-    /* Reset "borg_data_cost" */
-    COPY(borg_data_cost, borg_data_hard, borg_data);
-
-    /* Reset "borg_data_flow" */
-    COPY(borg_data_flow, borg_data_hard, borg_data);
-
+	/* Itterate over the map */
+	MAP_ITT_START(mb_ptr)
+	{
+		mb_ptr->cost = 255;
+		mb_ptr->flow = 255;
+	}
+	MAP_ITT_END;
 
     /* Clear "borg_data_know" */
     WIPE(borg_data_know, borg_data);

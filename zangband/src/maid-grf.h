@@ -32,6 +32,31 @@
 #define MAP_GLOW	0x02
 #define MAP_LITE	0x04
 
+/*
+ * Make an itterator, so we can scan the map quickly
+ */
+#define MAP_ITT_START(M) \
+	{ \
+		int _map_count;\
+		\
+		for (_map_count = 0; _map_count < MAP_CACHE; _map_count++) \
+		{ \
+			int _map_i, _map_j; \
+			\
+			if (!map_cache_refcount[_map_count]) continue; \
+			\
+			for (_map_i = 0; _map_i < WILD_BLOCK_SIZE; _map_i++) \
+			{ \
+				for (_map_j = 0; _map_j < WILD_BLOCK_SIZE; _map_j++) \
+				{ \
+					(M) = &map_cache[_map_count][_map_i][_map_j];\
+
+
+#define MAP_ITT_END \
+				} \
+			} \
+		} \
+	}
 
 /*
  * Map data structure
@@ -84,7 +109,13 @@ typedef errr (*map_erase_hook_type) (void);
 
 #endif /* TERM_USE_MAP */
 
+/* List of 16x16 blocks for the overhead map */
+extern map_blk_ptr *map_cache;
 
+/* Refcount for map cache */
+extern byte *map_cache_refcount;
+
+/* Extern Functions */
 extern byte gamma_table[256];
 extern void build_gamma_table(int gamma);
 extern cptr get_default_font(int term_num);

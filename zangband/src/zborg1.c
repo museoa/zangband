@@ -1054,11 +1054,9 @@ int flow_tail = 0;
  * Some variables
  */
 
-borg_data *borg_data_flow;  /* Current "flow" data */
-
 borg_data *borg_data_cost;  /* Current "cost" data */
 
-borg_data *borg_data_hard;  /* Constant "hard" data */
+borg_data *borg_data_flow;  /* Constant "flow" data */
 
 borg_data *borg_data_know;  /* Current "know" flags */
 
@@ -2354,7 +2352,7 @@ borg_calc_formula(int *formula)
  */
 void borg_init_1(void)
 {
-    int i, x, y;
+    int i, y;
 
     /* Allocate the "keypress queue" */
     C_MAKE(borg_key_queue, KEY_SIZE, char);
@@ -2376,30 +2374,16 @@ void borg_init_1(void)
     /*** Grid data ***/
 
     /* Allocate */
-    MAKE(borg_data_flow, borg_data);
-
-    /* Allocate */
     MAKE(borg_data_cost, borg_data);
 
     /* Allocate */
-    MAKE(borg_data_hard, borg_data);
+    MAKE(borg_data_flow, borg_data);
 
     /* Allocate */
     MAKE(borg_data_know, borg_data);
 
     /* Allocate */
     MAKE(borg_data_icky, borg_data);
-
-    /* Prepare "borg_data_hard" */
-    for (y = 0; y < AUTO_MAX_Y; y++)
-    {
-        for (x = 0; x < AUTO_MAX_X; x++)
-        {
-            /* Prepare "borg_data_hard" */
-            borg_data_hard->data[y][x] = 255;
-        }
-    }
-
 
     /*** Very special "tracking" array ***/
 

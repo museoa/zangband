@@ -1330,11 +1330,9 @@ extern int flow_tail;
  * Some variables
  */
 
-extern borg_data *borg_data_flow;   /* Current "flow" data */
+extern borg_data *borg_data_flow;  /* Current "flow" data */
 
 extern borg_data *borg_data_cost;   /* Current "cost" data */
-
-extern borg_data *borg_data_hard;   /* Constant "hard" data */
 
 extern borg_data *borg_data_know;   /* Current "know" flags */
 

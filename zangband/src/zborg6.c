@@ -49,8 +49,10 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	mb_ptr->monster = map->monster;
 	mb_ptr->field = map->field;
 	mb_ptr->terrain = map->terrain;
-
-	/* Clear other stuff here */
+	
+	/* Clear flow and cost */
+	if (!mb_ptr->flow) mb_ptr->flow = 255;
+	if (!mb_ptr->cost) mb_ptr->cost = 255;
 
 	/* Finally - chain into the old hook, if it exists */
 	if (old_info_hook) old_info_hook(mb_ptr, map);
@@ -221,8 +223,14 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
  */
 static void borg_flow_clear(void)
 {
-    /* Reset the "cost" fields */
-    COPY(borg_data_cost, borg_data_hard, borg_data);
+	map_block *mb_ptr;
+
+    /* Itterate over the map */
+	MAP_ITT_START(mb_ptr)
+	{
+		mb_ptr->cost = 255;
+	}
+	MAP_ITT_END;
 
     /* Wipe costs and danger */
     if (borg_danger_wipe)

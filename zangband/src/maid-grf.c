@@ -288,10 +288,10 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 static bool map_init = FALSE;
 
 /* List of 16x16 blocks for the overhead map */
-static map_blk_ptr *map_cache;
+map_blk_ptr *map_cache;
 
 /* Refcount for map cache */
-static byte *map_cache_refcount;
+byte *map_cache_refcount;
 
 /* Location of cache blocks */
 static int *map_cache_x;
