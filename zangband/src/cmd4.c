@@ -66,7 +66,7 @@ void do_cmd_redraw(void)
 
 
 	/* Redraw every window */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		/* Dead window */
 		if (!angband_term[j]) continue;
@@ -884,11 +884,11 @@ static void do_cmd_options_win(void)
 
 	bool go = TRUE;
 
-	u32b old_flag[8];
+	u32b old_flag[ANGBAND_TERM_MAX];
 
 
 	/* Memorize old flags */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		/* Acquire current flags */
 		old_flag[j] = window_flag[j];
@@ -905,7 +905,7 @@ static void do_cmd_options_win(void)
 		prt("Window Flags (<dir>, t, y, n, ESC) ", 0, 0);
 
 		/* Display the windows */
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < ANGBAND_TERM_MAX; j++)
 		{
 			byte a = TERM_WHITE;
 
@@ -935,7 +935,7 @@ static void do_cmd_options_win(void)
 			Term_putstr(0, i + 5, -1, a, str);
 
 			/* Display the windows */
-			for (j = 0; j < 8; j++)
+			for (j = 0; j < ANGBAND_TERM_MAX; j++)
 			{
 				char c = '.';
 				
@@ -974,7 +974,7 @@ static void do_cmd_options_win(void)
 			case 't':
 			{
 				/* Clear windows */
-				for (j = 0; j < 8; j++)
+				for (j = 0; j < ANGBAND_TERM_MAX; j++)
 				{
 					window_flag[j] &= ~(1L << y);
 				}
@@ -1020,7 +1020,7 @@ static void do_cmd_options_win(void)
 	}
 
 	/* Notice changes */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		term *old = Term;
 

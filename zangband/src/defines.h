@@ -142,6 +142,12 @@
 
 
 /*
+ * Maximum amount of Angband windows.
+ */
+#define ANGBAND_TERM_MAX 8
+
+
+/*
  * Total number of stores in vanilla town (see "store.c", etc)
  */
 #define MAX_STORES      9

@@ -857,10 +857,10 @@ static void wr_options(void)
 	/*** Window options ***/
 
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(window_flag[i]);
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) wr_u32b(window_flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(window_mask[i]);
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) wr_u32b(window_mask[i]);
 }
 
 

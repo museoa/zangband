@@ -1074,7 +1074,7 @@ static errr init_other(void)
 
 	
 	/* Initialize the window flags */
-	for (n = 0; n < 8; n++)
+	for (n = 0; n < ANGBAND_TERM_MAX; n++)
 	{
 		/* Analyze the options */
 		for (i = 0; i < 32; i++)

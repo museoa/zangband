@@ -2398,7 +2398,7 @@ void toggle_inven_equip(void)
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
 		/* Unused */
 		if (!angband_term[j]) continue;
@@ -2988,7 +2988,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		int ne = 0;
 
 		/* Scan windows */
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < ANGBAND_TERM_MAX; j++)
 		{
 			/* Unused */
 			if (!angband_term[j]) continue;

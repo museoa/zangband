@@ -1070,10 +1070,10 @@ static void rd_options(void)
 	/*** Window Options ***/
 
 	/* Read the window flags */
-	for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
+	for (n = 0; n < ANGBAND_TERM_MAX; n++) rd_u32b(&flag[n]);
 
 	/* Read the window masks */
-	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
+	for (n = 0; n < ANGBAND_TERM_MAX; n++) rd_u32b(&mask[n]);
 
 	/* Analyze the options */
 	for (n = 0; n < 8; n++)

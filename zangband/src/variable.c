@@ -294,8 +294,8 @@ u16b *quark__use;
 /*
  * The array of window options
  */
-u32b window_flag[8];
-u32b window_mask[8];
+u32b window_flag[ANGBAND_TERM_MAX];
+u32b window_mask[ANGBAND_TERM_MAX];
 
 /* Normal option masks */
 u32b option_mask[8];
@@ -304,13 +304,13 @@ u32b option_mask[8];
 /*
  * The array of window pointers
  */
-term *angband_term[8];
+term *angband_term[ANGBAND_TERM_MAX];
 
 
 /*
  * Standard window names
  */
-char angband_term_name[8][16] =
+char angband_term_name[ANGBAND_TERM_MAX][16] =
 {
 	VERSION_NAME,
 	"Term-1",
