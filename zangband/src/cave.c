@@ -4165,10 +4165,13 @@ static void mon_lite_hack(int x, int y)
 	c_ptr->info |= CAVE_MNLT;
 
 	/* We can see it? */
-	if (player_has_los_grid(pc_ptr)) pc_ptr->player |= GRID_SEEN;
+	if (player_has_los_grid(pc_ptr))
+	{
+		pc_ptr->player |= GRID_SEEN;
 
-	/* Remember it if view_monster_grids is set. */
-	if (view_monster_grids) remember_grid(c_ptr, pc_ptr);
+		/* Remember it if view_monster_grids is set. */
+		if (view_monster_grids) remember_grid(c_ptr, pc_ptr);
+	}
 }
 
 
