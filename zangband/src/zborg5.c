@@ -2561,6 +2561,12 @@ static void borg_count_death(int i)
  */
 static bool borg_handle_self(cptr str)
 {
+	/* Hack - ignore parameter */
+	(void) str;
+
+	/* Detection does not work with panels any more */
+#if 0
+
     int i;
 
     int q_x, q_y;
@@ -2704,6 +2710,8 @@ static bool borg_handle_self(cptr str)
         borg_detect_evil[q_y+1][q_x+0] = TRUE;
         borg_detect_evil[q_y+1][q_x+1] = TRUE;
     }
+
+#endif /* 0 */
 
     /* Done */
     return (TRUE);

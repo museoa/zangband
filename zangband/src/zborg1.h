@@ -12,9 +12,6 @@
 #ifdef ALLOW_BORG
 
 
-#define PANEL_WID  33
-#define PANEL_HGT  11
-
 /*
  * Number of grids in each screen (vertically)
  * Must be a multiple of PANEL_HGT (at least 2x)
@@ -798,9 +795,6 @@ extern int dim_door_x;
 
 extern int bad_obj_x[50];   /* Dropped cursed artifact at location (X) */
 extern int bad_obj_y[50];   /* Dropped cursed artifact at location (Y) */
-
-extern int town_x_wild[5];	/* Wilderness location of Towns */
-extern int town_y_wild[5];	/* Wilderness location of Towns */
 
 /*
  * Some estimated state variables

@@ -508,10 +508,6 @@ int dim_door_x;
 int bad_obj_x[50];  /* Dropped cursed artifact at location (X) */
 int bad_obj_y[50];  /* Dropped cursed artifact at location (Y) */
 
-/* Some important town information */
-int town_x_wild[5];	/* Wilderness location of Towns */
-int town_y_wild[5];	/* Wilderness location of Towns */
-
 /*
  * Some estimated state variables
  */

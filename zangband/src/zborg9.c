@@ -6357,32 +6357,6 @@ void borg_init_9(void)
 
     /* Now it is ready */
     initialized = TRUE;
-#if 0
-	/* Set some town stuff */
-	town_x_wild[1] = 4;	/* Wilderness location of Towns */
-	town_y_wild[1] = 4;	/* Wilderness location of Towns */
-	town_x_wild[2] = 6;	/* Wilderness location of Towns */
-	town_y_wild[2] = 4;	/* Wilderness location of Towns */
-	town_x_wild[3] = 4;	/* Wilderness location of Towns */
-	town_y_wild[3] = 2;	/* Wilderness location of Towns */
-	town_x_wild[4] = 5;	/* Wilderness location of Towns */
-	town_y_wild[4] = 6;	/* Wilderness location of Towns */
-	town_x_wild[5] = 5;	/* Wilderness location of Towns */
-	town_y_wild[5] = 8;	/* Wilderness location of Towns */
-	/*  # Wilderness layout
-	 *  W:D:##########
-	 *  W:D:#GGGGMVMM#
-	 *  W:D:#GGG3GGMM#
-	 *  W:D:#GGG|GGGG#
-	 *  W:D:#GGG1-2GG#
-	 *  W:D:#GGDD|DGG#
-	 *  W:D:#WSFF4FFS#
-	 *  W:D:#WWSSSSSS#
-	 *  W:D:#WWWW5WWW#
-	 *  W:D:##########
-	 * Towns at 1,2,3,4,5.
-	 */
-#endif /* 0 */
 }
 
 #ifndef BABLOS
@@ -7982,7 +7956,7 @@ void do_cmd_borg(void)
             }
 
             /* Get keypress */
-            msg_format("(%d,%d of %d,%d) Avoidance value %d.", c_y, c_x, panel_row_min / PANEL_HGT,panel_col_min / PANEL_WID, avoidance);
+            msg_format("(%d,%d) Avoidance value %d.", c_y, c_x, avoidance);
             msg_print(NULL);
 
             /* Redraw map */
@@ -8267,7 +8241,7 @@ void do_cmd_borg(void)
             }
 
             /* Get keypress */
-            msg_format("(%d,%d of %d,%d) Regional Fear.", c_y, c_x, panel_row_min / PANEL_HGT,panel_col_min / PANEL_WID);
+            msg_format("(%d,%d) Regional Fear.", c_y, c_x);
             msg_print(NULL);
 
             /* Redraw map */
