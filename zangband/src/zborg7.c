@@ -1,4 +1,4 @@
-/* File: borg7.c */
+/* File: zborg7.c */
 /* Purpose: High level functions for the Borg -BEN- */
 
 #include "angband.h"
@@ -860,7 +860,7 @@ bool borg_check_lite(void)
 
 			/* Can the borg cast a beam of light */
 			if (borg_spell_okay(REALM_NATURE, 1, 4) ||
-				borg_spell_okay(REALM_ARCANE, 2, 4) ||
+				borg_spell_okay(REALM_ARCANE, 2, 5) ||
 				borg_equips_rod(SV_ROD_LITE) ||
 				borg_equips_wand(SV_WAND_LITE))
 			{	
@@ -870,7 +870,7 @@ bool borg_check_lite(void)
 
 				/* Can the borg cast a beam of light */
 				if (borg_spell(REALM_NATURE, 1, 4) ||
-					borg_spell(REALM_ARCANE, 2, 4) ||
+					borg_spell(REALM_ARCANE, 2, 5) ||
 					borg_zap_rod(SV_ROD_LITE) ||
 					borg_aim_wand(SV_WAND_LITE))
 				{	

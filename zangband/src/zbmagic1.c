@@ -803,6 +803,8 @@ static bool test_borg_lite_beam(byte dir, byte radius)
 			/* North */
 			dx = 0;
 			dy = -1;
+
+			break;
 		}
 
 		case 6:
@@ -810,6 +812,8 @@ static bool test_borg_lite_beam(byte dir, byte radius)
 			/* East */
 			dx = 1;
 			dy = 0;
+
+			break;
 		}
 
 		case 2:
@@ -817,6 +821,8 @@ static bool test_borg_lite_beam(byte dir, byte radius)
 			/* South */
 			dx = 0;
 			dy = 1;
+
+			break;
 		}
 
 		case 4:
@@ -824,6 +830,8 @@ static bool test_borg_lite_beam(byte dir, byte radius)
 			/* West */
 			dx = -1;
 			dy = 0;
+
+			break;
 		}
 	}
 
@@ -832,8 +840,8 @@ static bool test_borg_lite_beam(byte dir, byte radius)
 		x += dx;
 		y += dy;
 
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
+		/* No need to light beyond the map */
+		if (!map_in_bounds(x, y)) return (FALSE);
 
 		mb_ptr = map_loc(x, y);
 
@@ -883,16 +891,16 @@ bool borg_lite_beam(bool simulation, int *dir)
 		*dir = 5;
 
 		/* North */
-		if (test_borg_lite_beam(8, bp_ptr->cur_lite)) *dir = 8;
+		if (test_borg_lite_beam(8, MAX_RANGE)) *dir = 8;
 
 		/* East */
-		else if (test_borg_lite_beam(6, bp_ptr->cur_lite)) *dir = 6;
+		else if (test_borg_lite_beam(6, MAX_RANGE)) *dir = 6;
 
 		/* West */
-		else if (test_borg_lite_beam(4, bp_ptr->cur_lite)) *dir = 4;
+		else if (test_borg_lite_beam(4, MAX_RANGE)) *dir = 4;
 
 		/* South */
-		else if (test_borg_lite_beam(2, bp_ptr->cur_lite)) *dir = 2;
+		else if (test_borg_lite_beam(2, MAX_RANGE)) *dir = 2;
 
 		/* Failure? */
 		if (*dir == 5) return (FALSE);
@@ -907,7 +915,7 @@ bool borg_lite_beam(bool simulation, int *dir)
 
 	/* cast the light beam */
 	if (borg_spell(REALM_NATURE, 1, 4) ||
-		borg_spell(REALM_ARCANE, 2, 4) ||
+		borg_spell(REALM_ARCANE, 2, 5) ||
 		borg_zap_rod(SV_ROD_LITE) ||
 		borg_aim_wand(SV_WAND_LITE))
 	{	
@@ -915,7 +923,7 @@ bool borg_lite_beam(bool simulation, int *dir)
 		borg_keypress(I2D(*dir));
 
 		/* Tell what you do */
-		borg_note("# Illuminating this hallway");
+		borg_note_fmt("# Illuminating this hallway, dir = %d", *dir);
 
 		/* Leave */
 		return (TRUE);
