@@ -1,4 +1,4 @@
-=== Introduction to the Zangband Magic System ===
+=== Zangband Magic System ===
 
 In the official releases of Angband there are only two types magic
 spells: Magic spells and priestly prayers. If the character is a mage,
@@ -58,7 +58,7 @@ spells, and each book contains 8 spells.
 
 
 ***** <A>
-=== Character Classes and Spell Ability ===
+=== Class Spell Ability ===
 
 Warriors
      Warriors cast no spells. They hate magic. In fact, they even gain
@@ -282,7 +282,11 @@ Paladin        1st                                             1st
 Warrior-Mage   2nd     1st     2nd     2nd     2nd     2nd     2nd
 Chaos Warrior                                          1st
 Monk           1st                     1st                     1st
-High Mage      1st     1st     1st     1st     1st     1st     1st=== On Casting Spells ... ===
+High Mage      1st     1st     1st     1st     1st     1st     1st
+
+
+***** <D>
+=== On Casting Spells ... ===
 
 Players who select spellcasting characters may notice a few unusual
 phenomona during the course of the game. Here's a few helps and
@@ -335,7 +339,7 @@ duration of 20 turns three times will not result in a duration of
 amount to the total duration.
 
 
-***** <D>
+***** <E>
 === Spell Types ===
 
 --- Bolts and Beams ---
@@ -372,8 +376,8 @@ can vary considerably. For example, Light Area lights a single room
 while Detect Traps affects a map panel and Genocide the entire
 level.
 
-***** <E>
-=== Notes on Summoned / Charmed Creatures ===
+***** <F>
+=== Summoned/Charmed Creatures ===
 
 A friendly creature can be a mixed blessing. At first sight, one
 might think that they can make the game much easier. It is of
@@ -407,7 +411,7 @@ pets the less mana you will be able to regain. Keep this in mind if
 you have a pet which can summon or otherwise produce more pets...
 
 
-***** <F>
+***** <G>
 === Hints and Tips ===
 
 If you miss the `old` magic user, try picking Sorcery and Chaos magic
@@ -431,7 +435,7 @@ If you still get confused trying to select the correct spellbook, try
 using macros (either the 'full' macros or inscriptions).
 
 
-***** <G>
+***** <H>
 === Spell Lists ===
 
 
@@ -688,4 +692,4 @@ Necronomicon
 Original : (??)
 Updated : (??)
 Updated : Zangband DevTeam
-Last update: November 29, 1999
+Last update: December 5, 1999

@@ -1,4 +1,4 @@
-=== List of Commands ===
+=== Zangband Commands ===
 
 
 Zangband commands are entered as an "underlying command" (a single key)
@@ -87,7 +87,7 @@ example, use "\" + "." + "6", to specify "run east".
 
 
 ***** <A>
-=== Original Keyset Command Summary (2.7.9) ===
+=== Original Keyset ===
 
      Original Keyset Directions
 
@@ -153,7 +153,7 @@ example, use "\" + "." + "6", to specify "run east".
 
 
 ***** <B>
-===  Roguelike Keyset Command Summary (2.7.9) ===
+===  Roguelike Keyset ===
 
      Roguelike Keyset Directions
 
@@ -351,4 +351,4 @@ Updated    : (2.7.6) by Russ Allbery (rra@cs.stanford.edu)
 Updated    : (2.7.9) by Ben Harrison (benh@phial.com)
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruhlmann
 Updated    : Zangband DevTeam
-Last update: November 26th, 1999
+Last update: December 3, 1999

@@ -40,7 +40,7 @@ are discussed on the Town page.
 
 
 ***** <B>
-=== Character Characteristics ===
+=== Character Attributes ===
 
 Once you begin character generation you will be asked to choose
 your character's three primary attributes - its sex, race and
@@ -162,10 +162,10 @@ activations.
 ***** <C>
 === Races ===
 
-There are ten different races that you can choose from in Zangband.
-Some races are restricted as to what profession they may be, and each
-race has its own adjustments to a character's stats and abilities. Most
-races also have intrinsic abilities.
+There are thirty different races that you can choose from in ZAngband.
+Each race has various strengths and weaknesses and its own adjustments
+to a character's stats and abilities. Many races also have intrinsic
+abilities and powers.
  
 Human
      The human is the base character. All other races are compared
@@ -742,7 +742,7 @@ High Mage
  
 
 ***** <E>
-=== The Primary Statistcs ===
+=== Primary Statistcs ===
 
 Each character has six primary "stats", strength, intelligence, wisdom,
 dexterity, constitution, and charisma, which modify the abilities of
@@ -818,7 +818,7 @@ Charisma
  
 
 ***** <F>
-=== Abilities ===
+=== Primary Skills ===
 
 Characters possess some different abilities which can help them to
 survive. The starting abilities of a character are based upon race and
@@ -955,7 +955,7 @@ Generally, however, the increases tend to be fairly even.
 
 
 ***** <I> 
-=== Combinations of Race and Class ===
+=== Race/Class Combinations ===
 
 These are the classes that are recommended for different races. You can
 still select a race that is not in the chart, but these combinations
@@ -1113,20 +1113,19 @@ Half-Titan   -5    +5    +2    -2    +1    +8    +25   +0   None
 Cyclops      -4    -5    -5    -2    -2    +5    +20   +12  10 feet
 Yeek         +2    +4    +10   +3    +5    +15   -5    -5   20 feet
 Klackon      +10   +5    +5    +0    -1    +10   +5    +5   20 feet
-Kobold       -2  -3  -2  -1  +1  +8  +10 -8   30 feet
-Nibelung     +3  +5  +10 +1  +5  +10 +9  +0   50 feet
-Dark Elf     +5  +15 +20 +3  +8  +12 -5  +10  50 feet
-Draconian    -2  +5  +3  +0  +1  +10 +5  +5   20 feet
-Mind Flayer  +10 +25 +15 +2  +5  +12 -10 -5   40 feet
-Imp          -3  +2  -1  +1  -1  +10 +5  -5   30 feet
-Golem        -5  -5  +10 -1  -1  +8  +20 +0   40 feet
-Skeleton     -5  -5  +5  -1  -1  +8  +10 +0   20 feet
-Zombie       -5  -5  +8  -1  -1  +5  +15 +0   20 feet
-Vampire      +4  +10 +10 +4  +1  +8  +5  +0   50 feet
-Spectre      +10 +25 +20 +5  +5  +14 -15 -5   50 feet
-Sprite       +10 +10 +10 +4  +10 +10 -12 +0   40 feet
-Beastman     -5  -2  -1  -1  -1  +5  +12 +5   None
-
+Kobold       -2    -3    -2    -1    +1    +8    +10   -8   30 feet
+Nibelung     +3    +5    +10   +1    +5    +10   +9    +0   50 feet
+Dark Elf     +5    +15   +20   +3    +8    +12   -5    +10  50 feet
+Draconian    -2    +5    +3    +0    +1    +10   +5    +5   20 feet
+Mind Flayer  +10   +25   +15   +2    +5    +12   -10   -5   40 feet
+Imp          -3    +2    -1    +1    -1    +10   +5    -5   30 feet
+Golem        -5    -5    +10   -1    -1    +8    +20   +0   40 feet
+Skeleton     -5    -5    +5    -1    -1    +8    +10   +0   20 feet
+Zombie       -5    -5    +8    -1    -1    +5    +15   +0   20 feet
+Vampire      +4    +10   +10   +4    +1    +8    +5    +0   50 feet
+Spectre      +10   +25   +20   +5    +5    +14   -15   -5   50 feet
+Sprite       +10   +10   +10   +4    +10   +10   -12   +0   40 feet
+Beastman     -5    -2    -1    -1    -1    +5    +12   +5   None
 
 
              Disarm  Device  Save  Stealth Search  Melee  Missile  XP
@@ -1147,4 +1146,4 @@ High Mage     30+7    36+13  30+9     2    15/20   34+15  20+15   +30%
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: November 27, 1999
+Last update: December 3, 1999

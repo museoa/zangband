@@ -1,4 +1,4 @@
-=== Attacking and Being Attacked ===
+=== Zangband Combat ===
  
 Attacking is simple in Zangband. If you move into a creature, you
 attack him. You can attack from a distance by firing a missile or by
@@ -771,4 +771,4 @@ bring in a horde of other monsters.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: November 29, 1999
+Last update: December 3, 1999

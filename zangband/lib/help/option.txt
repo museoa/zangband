@@ -680,7 +680,9 @@ Preserve Mode
     The "preserve" flag, if set when the character was created, cancels
     all level feelings of the "special" variety, but allows "missed"
     artifacts to be "saved" by wandering monsters and found again at a
-    later time. This only works for non-identified artifacts.
+    later time. This only works for non-identified artifacts. Anything
+    that would have caused a 'special' feeling contributes to the level
+    feeling that your character receives instead.
 
 Maximize Mode
     The "maximize" flag, if set when the character was created, causes
@@ -694,4 +696,4 @@ Original   : Ben Harrison
 Updated    : Zangband 2.1.* by Topi Ylinen
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruhlmann
 Updated    : Zangband DevTeam
-Last update: November 26, 1999
+Last update: November 30, 1999

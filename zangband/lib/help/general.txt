@@ -1,4 +1,4 @@
-=== Overview of Zangband ===
+=== General Information ===
 
 The game of Zangband is a single player dungeon simulation. A player
 may choose from a number of races and classes when creating a
@@ -129,4 +129,4 @@ likely to contain bugs of varying significance.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: November 26, 1999
+Last update: December 3, 1999

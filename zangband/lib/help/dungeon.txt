@@ -1,4 +1,4 @@
-=== The Town and Dungeon ===
+=== Town and Dungeon ===
 
 
 After you have created your character, you will begin your Zangband
@@ -98,11 +98,71 @@ to something you are more comfortable with.
 ***** <B>
 === The Town Level ===
 
-The town level is where you will begin your adventure. The town
-consists of eight buildings (each with an entrance), some townspeople,
-and a wall which surrounds the town. The first time you are in town it
-will be daytime, but note that the sun rises and falls (rather
-instantly) as time passes.
+The town level is where you will begin your adventure. The first time
+you are in town it will be daytime, but note that the sun rises and
+falls as time passes and if you enter the town at night, the town will
+be dark. Fortunately the various shops and the other special buildings
+are open on a 24-hour basis.
+
+Zangband 2.2.0 introduced a dramaticlly extended town level to the
+game. In addition to the basic town and the standard nine shops, new
+buildings and multiple towns seperated by a wilderness were added.
+Fixed quests were also added to the game and could be begun by entering
+certain buildings in the town(s).
+
+While most people welcome these new additions, they are not for
+everyone and consequently, there are three possible town options in
+Zangband - the 'Standard' town(s), the 'Lite' town and the 'Vanilla'
+town. The default is the standard town and the lite town and the
+vanilla town options can be selected by pressing '=' during character
+generation.
+
+Your choice of town is fixed for the duration of your character's
+life and will be the new default for future characters created with
+that savefile. This of course may be changed by again pressing '='
+during the creation of your next character.
+
+
+--- The 'Standard' Town ---
+
+The 'standard' town consists of a 10x10 square world. Each square
+(actually a rectangle) is the size of a standard ZAngband dungeon level
+and contains themed wilderness terrain (mountainous areas, oceans,
+plains, etc). There are several towns located in various parts of the
+world. Each town is situated in its own wilderness square.
+
+The wilderness is not uninhabited and can be dangerous indeed for the
+unwary. As a general rule, the further your character gets from
+civilization the more cautious he or she should be.
+
+Each of the towns contains the standard nine shops where you can
+puchase your supplies for your trips into the dungeon and sell the
+items you have collected. There are also special buildings offering
+services for a fee. The services available and the prices charged may
+vary from town to town so it can be worth hunting around for the best
+prices.
+
+Selection of the standard option also allows the creation of the
+buildings from which the various fixed quests begin.
+
+
+--- The 'Lite' Town ---
+
+The 'Lite' town option creates a 1x1 wilderness square containing a
+single town. This town contains the nine standard shops, the special
+buildings and access to a limited wilderness. The fixed quests are also
+available. This option is intended to be used by players who want to
+take advantage of the special buildings and fixed quests but don't want
+the large 10x10 wilderness and by players who need a smaller wilderness
+for computer efficiency reasons.
+
+
+--- The 'Vanilla' Town ---
+
+The vanilla town consists of the nine standard shops only and an
+inpenetrable wall which surrounds the town. There are no other
+embellishments. The special buildings and the fixed quests are
+unavailable if you select this option as is the wilderness.
 
 
 ***** <C>
@@ -123,6 +183,11 @@ distance when you wander from store to store. Fights will break out,
 though, so be prepared. Since your character grew up in this world of
 intrigue, no experience is awarded for killing the town inhabitants,
 though you may acquire treasure.
+
+One word of warning however, occasionally a creature who normally
+would inhabit only the wilderness and dungeons may wander into the
+town. These should generaly be handled with much more caution
+than the ordinary townspeople.
 
 
 ***** <D>
@@ -204,8 +269,7 @@ The Alchemy shop ("5")
 
 The Magic User's Shop ("6")
      The Magic User's Shop deals in all sorts of rings, wands, amulets,
-     and staves, as well as some magic user books (Sorcery, and Arcane)
-     can be bought and sold here.
+     and staves, as well as some magic books.
 
 The Black Market ("7")
      The Black Market will sell and buy anything at extortionate
@@ -262,7 +326,7 @@ glow with their own never-ending light.
 
 
 ***** <F>
-=== Objects Found In The Dungeon ===
+=== Objects In The Dungeon ===
 
 The mines are full of objects just waiting to be picked up and used.
 How did they get there? Well, the main source for useful items are all
@@ -451,6 +515,52 @@ For historical reasons, secret doors are never locked.
 
 
 ***** <I>
+=== Random Quests ===
+
+During character generation, you will be asked to input the number
+of random quests you wish to participate in. You may choose any
+number from 0 to 49. Random quests are always of the type 'Kill a
+random number of an out-of depth monster'. There is a limit to the
+number of levels a random quest monster may be out-of-depth but
+these quests can still be very dangerous. 
+
+Random quests always appear on even levels and are equally spaced
+throughout the dungeon (for example, a choice of 49 random quests
+results in one such quest on every even level until level 98 (level
+100 is the Serpent quest)). On entering a random quest level you
+will be told what the quest monster is and how many you have to
+kill (for example, 'This level is guarded by 10 young green
+dragons').
+
+On random quest levels, no down staircases are generated until the
+last monster is killed whcih means that you cannot continue further
+into the dungeon until you have completed your quests. When you
+kill the last quest monster, the down staircase will be created and
+the monster will drop an item of 'excellent' quality or above. This
+is true even of monsters that do not normally drop items. Using the
+services of the Trump Tower (see the Town section) can teleport you
+past a particularly nasty quest but you must come back and finish
+it later if you want your character to be a winner.
+
+Random quests can be either 'easy' or 'hard' and you must choose
+which type you want during character generation. This choice is
+irrevocable for the duration of the character's dungeon diving
+career. 'Easy' means that the game tracks how many quest monsters
+you have killed on each attempt at the quest and adds these to the
+total count. This allows you to kill one or more quest monsters,
+leave the level and return later to finish up. 'Hard' means that
+each time you enter the quest level the number of quest monsters
+remaining is reset. In other words, you have to kill all the quest
+monsters in one go.
+
+'Hard' quests can allow you to 'farm' the quest monsters by killing
+all but one, leaving the level and repeating. This allows you to
+collect and sell the dropped items and gain repeated experience for
+killing the monsters. This technique is frowned upon by many players
+and should be noted in any 'winner' post to the newsgroup.
+
+
+***** <J>
 === Winning The Game ===
 
 Once your character has killed Oberon, who lives on level 99 (4950') in
@@ -484,7 +594,7 @@ until you retire, you can still be killed, so you may want to retire
 before wandering into a hoard of Cyberdemons...
 
 
-***** <J>
+***** <K>
 === Upon Death and Dying ===
  
 If your character falls below 0 hit points, he has died and cannot be
@@ -503,4 +613,4 @@ all the experience of past incarnations.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: November 26, 1999
+Last update: December 3, 1999
