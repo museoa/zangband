@@ -613,14 +613,14 @@ static cptr k_info_flags3[] =
 
 static cptr k_info_flags4[] =
 {
-	"PROT_ANIMAL",
-	"PROT_EVIL",
-	"PROT_UNDEAD",
-	"PROT_DEMON",
-	"PROT_ORC",
-	"PROT_TROLL",
-	"PROT_GIANT",
-	"PROT_DRAGON",
+	"XXX1",
+	"XXX2",
+	"XXX3",
+	"XXX4",
+	"XXX5",
+	"XXX6",
+	"XXX7",
+	"XXX8",
 	"IM_LITE",
 	"IM_DARK",
 	"SH_ACID",

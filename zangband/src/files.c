@@ -2036,17 +2036,6 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "Nexus :", 2, TR2_RES_NEXUS);
 	display_player_flag_aux(col, row++, "Chaos :", 2, TR2_RES_CHAOS);
 	display_player_flag_aux(col, row++, "Disnch:", 2, TR2_RES_DISEN);
-	display_player_flag_aux(col, row++, "Animal:", 4, TR4_PROT_ANIMAL);
-	display_player_flag_aux(col, row++, "Evil  :", 4, TR4_PROT_EVIL);
-	display_player_flag_aux(col, row++, "Undead:", 4, TR4_PROT_UNDEAD);
-	display_player_flag_aux(col, row++, "Demon :", 4, TR4_PROT_DEMON);
-	display_player_flag_aux(col, row++, "Orc   :", 4, TR4_PROT_ORC);
-	display_player_flag_aux(col, row++, "Troll :", 4, TR4_PROT_TROLL);
-	/* XXX XXX XXX No room for these two! */
-#if 0
-	display_player_flag_aux(col, row++, "Giant :", 4, TR4_PROT_GIANT);
-	display_player_flag_aux(col, row++, "Dragon:", 4, TR4_PROT_DRAGON);
-#endif
 
 
 	/*** Set 2 ***/

@@ -1106,42 +1106,46 @@ bool identify_fully_aux(const object_type *o_ptr)
 		info[i++] = "It is very sharp and can cut your foes.";
 	}
 
-	if (f1 & (TR1_KILL_DRAGON))
+	if (o_ptr->tval >= TV_DIGGING && o_ptr->tval <= TV_SWORD)
 	{
-		info[i++] = "It is a great bane of dragons.";
+		if (f1 & (TR1_KILL_DRAGON))
+		{
+			info[i++] = "It is a great bane of dragons.";
+		}
+		else if (f1 & (TR1_SLAY_DRAGON))
+		{
+			info[i++] = "It is especially deadly against dragons.";
+		}
+		if (f1 & (TR1_SLAY_ORC))
+		{
+			info[i++] = "It is especially deadly against orcs.";
+		}
+		if (f1 & (TR1_SLAY_TROLL))
+		{
+			info[i++] = "It is especially deadly against trolls.";
+		}
+		if (f1 & (TR1_SLAY_GIANT))
+		{
+			info[i++] = "It is especially deadly against giants.";
+		}
+		if (f1 & (TR1_SLAY_DEMON))
+		{
+			info[i++] = "It strikes at demons with holy wrath.";
+		}
+		if (f1 & (TR1_SLAY_UNDEAD))
+		{
+			info[i++] = "It strikes at undead with holy wrath.";
+		}
+		if (f1 & (TR1_SLAY_EVIL))
+		{
+			info[i++] = "It fights against evil with holy fury.";
+		}
+		if (f1 & (TR1_SLAY_ANIMAL))
+		{
+			info[i++] = "It is especially deadly against natural creatures.";
+		}
 	}
-	else if (f1 & (TR1_SLAY_DRAGON))
-	{
-		info[i++] = "It is especially deadly against dragons.";
-	}
-	if (f1 & (TR1_SLAY_ORC))
-	{
-		info[i++] = "It is especially deadly against orcs.";
-	}
-	if (f1 & (TR1_SLAY_TROLL))
-	{
-		info[i++] = "It is especially deadly against trolls.";
-	}
-	if (f1 & (TR1_SLAY_GIANT))
-	{
-		info[i++] = "It is especially deadly against giants.";
-	}
-	if (f1 & (TR1_SLAY_DEMON))
-	{
-		info[i++] = "It strikes at demons with holy wrath.";
-	}
-	if (f1 & (TR1_SLAY_UNDEAD))
-	{
-		info[i++] = "It strikes at undead with holy wrath.";
-	}
-	if (f1 & (TR1_SLAY_EVIL))
-	{
-		info[i++] = "It fights against evil with holy fury.";
-	}
-	if (f1 & (TR1_SLAY_ANIMAL))
-	{
-		info[i++] = "It is especially deadly against natural creatures.";
-	}
+
 	if (f4 & (TR4_GHOUL_TOUCH))
 	{
 		info[i++] = "It gives you a paralyzing touch.";
@@ -1381,35 +1385,35 @@ bool identify_fully_aux(const object_type *o_ptr)
 		info[i++] = "It has been blessed by the gods.";
 	}
 
-	if (f4 & TR4_PROT_ANIMAL)
+	if (f1 & TR1_SLAY_ANIMAL)
 	{
 		info[i++] = "It provides protection from natural creatures.";
 	}
-	if (f4 & TR4_PROT_EVIL)
+	if (f1 & TR1_SLAY_EVIL)
 	{
 		info[i++] = "It provides protection from evil monsters.";
 	}
-	if (f4 & TR4_PROT_UNDEAD)
+	if (f1 & TR1_SLAY_UNDEAD)
 	{
 		info[i++] = "It provides protection from the undead.";
 	}
-	if (f4 & TR4_PROT_DEMON)
+	if (f1 & TR1_SLAY_DEMON)
 	{
 		info[i++] = "It provides protection from demons.";
 	}
-	if (f4 & TR4_PROT_ORC)
+	if (f1 & TR1_SLAY_ORC)
 	{
 		info[i++] = "It provides protection from orcs.";
 	}
-	if (f4 & TR4_PROT_TROLL)
+	if (f1 & TR1_SLAY_TROLL)
 	{
 		info[i++] = "It provides protection from trolls.";
 	}
-	if (f4 & TR4_PROT_GIANT)
+	if (f1 & TR1_SLAY_GIANT)
 	{
 		info[i++] = "It provides protection from giants.";
 	}
-	if (f4 & TR4_PROT_DRAGON)
+	if (f1 & TR1_SLAY_DRAGON)
 	{
 		info[i++] = "It provides protection from dragons.";
 	}

@@ -380,28 +380,28 @@ bool make_attack_normal(int m_idx)
 			/* Always disturbing */
 			disturb(TRUE);
 
-			if ((p_ptr->flags4 & TR4_PROT_DRAGON) &&
+			if ((p_ptr->flags1 & TR1_SLAY_DRAGON) &&
 					(r_ptr->flags3 & RF3_DRAGON))
 				protect = 5;
-			else if ((p_ptr->flags4 & TR4_PROT_DEMON) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_DEMON) &&
 					(r_ptr->flags3 & RF3_DEMON))
 				protect = 5;
-			else if ((p_ptr->flags4 & TR4_PROT_UNDEAD) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_UNDEAD) &&
 					(r_ptr->flags3 & RF3_UNDEAD))
 				protect = 4;
-			else if ((p_ptr->flags4 & TR4_PROT_ORC) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_ORC) &&
 					(r_ptr->flags3 & RF3_ORC))
 				protect = 4;
-			else if ((p_ptr->flags4 & TR4_PROT_TROLL) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_TROLL) &&
 					(r_ptr->flags3 & RF3_TROLL))
 				protect = 4;
-			else if ((p_ptr->flags4 & TR4_PROT_GIANT) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_GIANT) &&
 					(r_ptr->flags3 & RF3_GIANT))
 				protect = 4;
-			else if ((p_ptr->flags4 & TR4_PROT_ANIMAL) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_ANIMAL) &&
 					(r_ptr->flags3 & RF3_ANIMAL))
 				protect = 3;
-			else if ((p_ptr->flags4 & TR4_PROT_EVIL) &&
+			else if ((p_ptr->flags1 & TR1_SLAY_EVIL) &&
 					(r_ptr->flags3 & RF3_EVIL))
 				protect = 3;
 			else if ((p_ptr->tim.protevil > 0) &&

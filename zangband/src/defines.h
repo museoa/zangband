@@ -2950,14 +2950,14 @@
 #define TR3_PERMA_CURSE         0x80000000L	/* Item is Perma Cursed */
 
 
-#define TR4_PROT_ANIMAL         0x00000001L
-#define TR4_PROT_EVIL           0x00000002L
-#define TR4_PROT_UNDEAD         0x00000004L
-#define TR4_PROT_DEMON          0x00000008L
-#define TR4_PROT_ORC            0x00000010L
-#define TR4_PROT_TROLL          0x00000020L
-#define TR4_PROT_GIANT          0x00000040L
-#define TR4_PROT_DRAGON         0x00000080L
+#define TR4_XXX1                0x00000001L
+#define TR4_XXX2                0x00000002L
+#define TR4_XXX3                0x00000004L
+#define TR4_XXX4                0x00000008L
+#define TR4_XXX5                0x00000010L
+#define TR4_XXX6                0x00000020L
+#define TR4_XXX7                0x00000040L
+#define TR4_XXX8                0x00000080L
 #define TR4_IM_LITE             0x00000100L
 #define TR4_IM_DARK             0x00000200L
 #define TR4_SH_ACID             0x00000400L

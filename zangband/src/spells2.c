@@ -208,35 +208,35 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are in a battle rage.";
 	}
-	if (p_ptr->tim.protevil || (p_ptr->flags4 & (TR4_PROT_EVIL)))
+	if (p_ptr->tim.protevil || (p_ptr->flags1 & (TR1_SLAY_EVIL)))
 	{
 		info[i++] = "You are protected from evil.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_ANIMAL))
+	if (p_ptr->flags1 & (TR1_SLAY_ANIMAL))
 	{
 		info[i++] = "You are protected from animals.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_UNDEAD))
+	if (p_ptr->flags1 & (TR1_SLAY_UNDEAD))
 	{
 		info[i++] = "You are protected from undead.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_DEMON))
+	if (p_ptr->flags1 & (TR1_SLAY_DEMON))
 	{
 		info[i++] = "You are protected from demons.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_ORC))
+	if (p_ptr->flags1 & (TR1_SLAY_ORC))
 	{
 		info[i++] = "You are protected from orcs.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_TROLL))
+	if (p_ptr->flags1 & (TR1_SLAY_TROLL))
 	{
 		info[i++] = "You are protected from trolls.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_GIANT))
+	if (p_ptr->flags1 & (TR1_SLAY_GIANT))
 	{
 		info[i++] = "You are protected from giants.";
 	}
-	if (p_ptr->flags4 & (TR4_PROT_DRAGON))
+	if (p_ptr->flags1 & (TR1_SLAY_DRAGON))
 	{
 		info[i++] = "You are protected from dragons.";
 	}
@@ -623,28 +623,28 @@ void self_knowledge(void)
 	if (o_ptr->k_idx)
 	{
 		/* Indicate Blessing */
-		if (f3 & (TR3_BLESSED))
+		if (o_ptr->flags3 & (TR3_BLESSED))
 		{
 			info[i++] = "Your weapon has been blessed by the gods.";
 		}
 
-		if (f1 & (TR1_CHAOTIC))
+		if (o_ptr->flags1 & (TR1_CHAOTIC))
 		{
 			info[i++] = "Your weapon is branded with the Sign of Logrus.";
 		}
 
 		/* Hack */
-		if (f1 & (TR1_IMPACT))
+		if (o_ptr->flags1 & (TR1_IMPACT))
 		{
 			info[i++] = "The impact of your weapon can cause earthquakes.";
 		}
 
-		if (f1 & (TR1_VORPAL))
+		if (o_ptr->flags1 & (TR1_VORPAL))
 		{
 			info[i++] = "Your weapon is very sharp.";
 		}
 
-		if (f1 & (TR1_VAMPIRIC))
+		if (o_ptr->flags1 & (TR1_VAMPIRIC))
 		{
 			info[i++] = "Your weapon drains life from your foes.";
 		}
@@ -672,35 +672,35 @@ void self_knowledge(void)
 		}
 
 		/* Special "slay" flags */
-		if (f1 & (TR1_SLAY_ANIMAL))
+		if (o_ptr->flags1 & (TR1_SLAY_ANIMAL))
 		{
 			info[i++] = "Your weapon strikes at animals with extra force.";
 		}
-		if (f1 & (TR1_SLAY_EVIL))
+		if (o_ptr->flags1 & (TR1_SLAY_EVIL))
 		{
 			info[i++] = "Your weapon strikes at evil with extra force.";
 		}
-		if (f1 & (TR1_SLAY_UNDEAD))
+		if (o_ptr->flags1 & (TR1_SLAY_UNDEAD))
 		{
 			info[i++] = "Your weapon strikes at undead with holy wrath.";
 		}
-		if (f1 & (TR1_SLAY_DEMON))
+		if (o_ptr->flags1 & (TR1_SLAY_DEMON))
 		{
 			info[i++] = "Your weapon strikes at demons with holy wrath.";
 		}
-		if (f1 & (TR1_SLAY_ORC))
+		if (o_ptr->flags1 & (TR1_SLAY_ORC))
 		{
 			info[i++] = "Your weapon is especially deadly against orcs.";
 		}
-		if (f1 & (TR1_SLAY_TROLL))
+		if (o_ptr->flags1 & (TR1_SLAY_TROLL))
 		{
 			info[i++] = "Your weapon is especially deadly against trolls.";
 		}
-		if (f1 & (TR1_SLAY_GIANT))
+		if (o_ptr->flags1 & (TR1_SLAY_GIANT))
 		{
 			info[i++] = "Your weapon is especially deadly against giants.";
 		}
-		if (f1 & (TR1_SLAY_DRAGON))
+		if (o_ptr->flags1 & (TR1_SLAY_DRAGON))
 		{
 			info[i++] = "Your weapon is especially deadly against dragons.";
 		}

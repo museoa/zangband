@@ -813,16 +813,17 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 		case 32:
 		case 33:
 		case 34:
+			/* A slay on a non-weapon gives protection */
 			switch (randint1(8))
 			{
-				case 1: o_ptr->flags4 |= TR4_PROT_ANIMAL; break;
-				case 2: o_ptr->flags4 |= TR4_PROT_EVIL; break;
-				case 3: o_ptr->flags4 |= TR4_PROT_UNDEAD; break;
-				case 4: o_ptr->flags4 |= TR4_PROT_DEMON; break;
-				case 5: o_ptr->flags4 |= TR4_PROT_ORC; break;
-				case 6: o_ptr->flags4 |= TR4_PROT_TROLL; break;
-				case 7: o_ptr->flags4 |= TR4_PROT_GIANT; break;
-				case 8: o_ptr->flags4 |= TR4_PROT_DRAGON; break;
+				case 1: o_ptr->flags1 |= TR1_SLAY_ANIMAL; break;
+				case 2: o_ptr->flags1 |= TR1_SLAY_EVIL; break;
+				case 3: o_ptr->flags1 |= TR1_SLAY_UNDEAD; break;
+				case 4: o_ptr->flags1 |= TR1_SLAY_DEMON; break;
+				case 5: o_ptr->flags1 |= TR1_SLAY_ORC; break;
+				case 6: o_ptr->flags1 |= TR1_SLAY_TROLL; break;
+				case 7: o_ptr->flags1 |= TR1_SLAY_GIANT; break;
+				case 8: o_ptr->flags1 |= TR1_SLAY_DRAGON; break;
 			}
 			break;
 		case 35:
@@ -1066,15 +1067,11 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 		case 1:
 		case 2:
 			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
-			if (one_in_(2))
-				o_ptr->flags4 |= TR4_PROT_ANIMAL;
 
 			break;
 		case 3:
 		case 4:
 			o_ptr->flags1 |= TR1_SLAY_EVIL;
-			if (one_in_(3))
-				o_ptr->flags4 |= TR4_PROT_EVIL;
 
 			if (!artifact_bias && one_in_(2))
 				artifact_bias = BIAS_LAW;
@@ -1084,8 +1081,6 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 		case 5:
 		case 6:
 			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
-			if (one_in_(2))
-				o_ptr->flags4 |= TR4_PROT_UNDEAD;
 
 			if (!artifact_bias && one_in_(9))
 				artifact_bias = BIAS_PRIESTLY;
@@ -1093,8 +1088,6 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 		case 7:
 		case 8:
 			o_ptr->flags1 |= TR1_SLAY_DEMON;
-			if (one_in_(2))
-				o_ptr->flags4 |= TR4_PROT_DEMON;
 
 			if (!artifact_bias && one_in_(9))
 				artifact_bias = BIAS_PRIESTLY;
@@ -1102,35 +1095,25 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 		case 9:
 		case 10:
 			o_ptr->flags1 |= TR1_SLAY_ORC;
-			if (!one_in_(3))
-				o_ptr->flags4 |= TR4_PROT_ORC;
 
 			break;
 		case 11:
 		case 12:
 			o_ptr->flags1 |= TR1_SLAY_TROLL;
-			if (one_in_(2))
-				o_ptr->flags4 |= TR4_PROT_TROLL;
 
 			break;
 		case 13:
 		case 14:
 			o_ptr->flags1 |= TR1_SLAY_GIANT;
-			if (!one_in_(3))
-				o_ptr->flags4 |= TR4_PROT_GIANT;
 
 			break;
 		case 15:
 		case 16:
 			o_ptr->flags1 |= TR1_SLAY_DRAGON;
-			if (one_in_(3))
-				o_ptr->flags4 |= TR4_PROT_DRAGON;
 
 			break;
 		case 17:
 			o_ptr->flags1 |= TR1_KILL_DRAGON;
-			if (one_in_(2))
-				o_ptr->flags4 |= TR4_PROT_DRAGON;
 
 			break;
 		case 18:
