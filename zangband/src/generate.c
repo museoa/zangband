@@ -257,7 +257,7 @@ static void alloc_object(int set, int typ, int num)
 
 			case ALLOC_TYP_TRAP:
 			{
-				place_trap(y, x);
+				place_trap(x, y);
 				break;
 			}
 

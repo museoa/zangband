@@ -494,7 +494,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (!cave_los_grid(c_ptr)) break;
 
 			/* Place a trap */
-			place_trap(y, x);
+			place_trap(x, y);
 
 			break;
 		}

@@ -1828,7 +1828,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 					}
 					else
 					{
-						place_trap(y, x);
+						place_trap(x, y);
 					}
 					break;
 				}
@@ -1843,7 +1843,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 				case '^':
 				{
 					/* Trap */
-					place_trap(y, x);
+					place_trap(x, y);
 					break;
 				}
 			}
@@ -2369,7 +2369,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 					}
 					else
 					{
-						place_trap(y, x);
+						place_trap(x, y);
 					}
 				}
 				else if (value < 30)
@@ -2378,7 +2378,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 					monster_level = base_level + 5;
 					(void)place_monster(y, x, TRUE, TRUE);
 					monster_level = base_level;
-					place_trap(y, x);
+					place_trap(x, y);
 				}
 				else if (value < 40)
 				{
@@ -2399,7 +2399,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 				else if (value < 50)
 				{
 					/* Trap */
-					place_trap(y, x);
+					place_trap(x, y);
 				}
 				else
 				{
@@ -2412,7 +2412,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 					}
 					else if (randint0(100) < 50)
 					{
-						place_trap(y, x);
+						place_trap(x, y);
 					}
 					else if (randint0(100) < 50)
 					{

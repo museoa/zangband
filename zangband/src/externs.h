@@ -1127,7 +1127,7 @@ extern bool field_action_wall_gf(field_type *f_ptr, vptr input);
 extern bool field_action_interact_tunnel(field_type *f_ptr, vptr output);
 extern bool field_action_interact_disarm(field_type *f_ptr, vptr output);
 extern bool field_action_interact_open(field_type *f_ptr, vptr output);
-extern void place_trap(int y, int x);
+extern void place_trap(int x, int y);
 extern bool field_action_trap_init(field_type *f_ptr, vptr input);
 extern bool field_action_trap_disarm(field_type *f_ptr, vptr input);
 extern bool field_action_trap_gf(field_type *f_ptr, vptr input);

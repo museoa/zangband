@@ -1948,7 +1948,7 @@ static field_trap_type trap_num[] =
  *
  * The location must be a legal, naked, floor grid.
  */
-void place_trap(int y, int x)
+void place_trap(int x, int y)
 {	
 	u16b t_idx;
 

@@ -298,7 +298,7 @@ static void vault_trap_aux(int y, int x, int yd, int xd)
 		if (!cave_naked_grid(c_ptr)) continue;
 
 		/* Place the trap */
-		place_trap(y1, x1);
+		place_trap(x1, y1);
 
 		/* Done */
 		break;
