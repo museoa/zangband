@@ -53,7 +53,7 @@
 			{ \
 				for (_map_j = 0; _map_j < WILD_BLOCK_SIZE; _map_j++) \
 				{ \
-					(M) = &map_cache[_map_count][_map_j][_map_i];\
+					(M) = &map_cache[_map_count][_map_j][_map_i];
 
 
 #define MAP_ITT_END \
