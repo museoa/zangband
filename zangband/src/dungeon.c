@@ -3145,9 +3145,6 @@ static void dungeon(void)
 
 	/*** Process this dungeon level ***/
 
-	/* Reset the monster generation level */
-	monster_level = base_level;
-
 	/* Reset the object generation level */
 	object_level = base_level;
 

@@ -19,7 +19,7 @@
 static bool force_build_exit = FALSE;
 
 
-void have_nightmare(int r_idx)
+static void have_nightmare_aux(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 	char m_name[80];
@@ -244,6 +244,19 @@ void have_nightmare(int r_idx)
 	handle_stuff();
 }
 
+
+/*
+ * Wrapper function around the nightmare-making routine
+ * so we make sure the monster summon list is restored.
+ */
+void have_nightmare(void)
+{
+	/* Get a monster */
+	int r_idx = get_filter_mon_num(MAX_DEPTH, get_nightmare);
+
+	/* Have some nightmares */
+	have_nightmare_aux(r_idx);
+}
 
 bool get_nightmare(int r_idx)
 {
@@ -816,19 +829,13 @@ bool inn_rest(void)
 	{
 		msgf("Horrible visions flit through your mind as you sleep.");
 
-		/* Pick a nightmare */
-		get_mon_num_prep(get_nightmare, NULL);
-
 		/* Have some nightmares */
 		while (TRUE)
 		{
-			have_nightmare(get_mon_num(MAX_DEPTH));
+			have_nightmare();
 
 			if (!one_in_(3)) break;
 		}
-
-		/* Remove the monster restriction */
-		get_mon_num_prep(NULL, NULL);
 
 		msgf("You awake screaming.");
 		message_flush();

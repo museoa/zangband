@@ -3146,12 +3146,12 @@ static void add_monsters_block(int x, int y)
 				if (one_in_(2))
 				{
 					/* Monsters are awake */
-					(void)place_monster(xx + i, yy + j, FALSE, TRUE);
+					(void)place_monster(xx + i, yy + j, FALSE, TRUE, 0);
 				}
 				else
 				{
 					/* Monsters are asleep */
-					(void)place_monster(xx + i, yy + j, TRUE, TRUE);
+					(void)place_monster(xx + i, yy + j, TRUE, TRUE, 0);
 				}
 			}
 		}

@@ -113,7 +113,6 @@ extern u32b seed_flavor;
 extern bool msg_flag;
 extern s16b num_repro;
 extern s16b object_level;
-extern s16b monster_level;
 extern s16b base_level;
 extern s32b turn;
 extern s32b old_turn;
@@ -274,13 +273,10 @@ extern byte item_tester_tval;
 extern bool (*item_tester_hook) (const object_type *o_ptr);
 extern bool (*ang_sort_comp) (const vptr u, const vptr v, int a, int b);
 extern void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
-extern monster_hook_type get_mon_num_hook;
-extern monster_hook_type get_mon_num2_hook;
 extern byte (*get_obj_num_hook) (int k_idx);
 extern s32b max_wild;
 extern cptr gf_color[MAX_GF];
 extern int highscore_fd;
-extern bool monster_terrain_sensitive;
 extern int mutant_regenerate_mod;
 
 /* birth.c */
@@ -517,9 +513,9 @@ extern void compact_monsters(int size);
 extern void wipe_m_list(void);
 extern void wipe_monsters(int rg_idx);
 extern s16b m_pop(void);
-extern void get_mon_num_prep(monster_hook_type monster_hook,
-							 monster_hook_type monster_hook2);
+extern void get_mon_num_prep(monster_hook_type monster_hook);
 extern s16b get_mon_num(int level);
+extern s16b get_filter_mon_num(int level, monster_hook_type monster_hook);
 extern void monster_desc(char *desc, const monster_type *m_ptr, int mode,
 						 int max);
 extern void monster_fmt(char *buf, uint max, cptr fmt, va_list *vp);
@@ -528,9 +524,10 @@ extern void lore_treasure(int m_idx, int num_item, int num_gold);
 extern void update_mon_vis(u16b r_idx, int increment);
 extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
+extern bool test_monster_square(cave_type *c_ptr, monster_race *r_ptr);
 extern bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 							  bool friendly, bool pet);
-extern bool place_monster(int x, int y, bool slp, bool grp);
+extern bool place_monster(int x, int y, bool slp, bool grp, int deltalevel);
 extern bool alloc_horde(int x, int y);
 extern bool alloc_monster(int dis, bool slp);
 extern bool summon_specific(int who, int x1, int y1, int lev, int type,
@@ -543,29 +540,10 @@ extern bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 							  bool pet);
 
 /* monster3.c (currently in monster1.c) */
-extern bool monster_dungeon(int r_idx);
-extern bool monster_quest(int r_idx);
-extern bool monster_ocean(int r_idx);
-extern bool monster_shore(int r_idx);
-extern bool monster_town(int r_idx);
-extern bool monster_grass(int r_idx);
-extern bool monster_deep_water_dun(int r_idx);
-extern bool monster_shallow_water_dun(int r_idx);
-extern bool monster_lava_dun(int r_idx);
-extern bool monster_acid_dun(int r_idx);
-extern bool monster_swamp_dun(int r_idx);
-extern bool monster_deep_water_wild(int r_idx);
-extern bool monster_shallow_water_wild(int r_idx);
-extern bool monster_lava_wild(int r_idx);
-extern bool monster_acid_wild(int r_idx);
-extern bool monster_swamp_wild(int r_idx);
-extern monster_hook_type get_monster_hook(void);
-extern monster_hook_type get_monster_hook2(int x, int y);
 extern void set_friendly(monster_type *m_ptr);
 extern void set_pet(monster_type *m_ptr);
 extern void set_hostile(monster_type *m_ptr);
 extern void anger_monster(monster_type *m_ptr);
-extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
 extern bool are_enemies(const monster_type *m_ptr1, const monster_type *m_ptr2);
 extern bool monster_living(const monster_race *r_ptr);
 
@@ -859,7 +837,7 @@ extern void store_init(int town_num, int store_num, byte store);
 
 /* bldg.c */
 extern bool get_nightmare(int r_idx);
-extern void have_nightmare(int r_idx);
+extern void have_nightmare(void);
 extern bool test_gold(s32b *cost);
 extern void do_cmd_bldg(field_type *f_ptr);
 extern bool compare_weapons(void);

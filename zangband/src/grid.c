@@ -350,9 +350,7 @@ void vault_monsters(int x1, int y1, int num)
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Place the monster (allow groups) */
-			monster_level = base_level + 2;
-			(void)place_monster(x, y, TRUE, TRUE);
-			monster_level = base_level;
+			(void)place_monster(x, y, TRUE, TRUE, 2);
 
 			/* Have placed a monster */
 			break;

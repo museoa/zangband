@@ -401,11 +401,7 @@ static bool cave_gen(void)
 	bool cavern = FALSE;
 	int laketype = 0;
 
-
 	dun_data dun_body;
-
-	/* Prepare allocation table */
-	get_mon_num_prep(get_monster_hook(), NULL);
 
 	/* Global data */
 	dun = &dun_body;
@@ -1295,6 +1291,9 @@ void generate_cave(void)
 	dun_ptr->theme.combat = 20;
 	dun_ptr->theme.magic = 20;
 	dun_ptr->theme.tools = 20;
+	
+	/* Hack - Reset the dungeon habitat to be everything */
+	dun_ptr->habitat = RF8_DUNGEON;
 
 	/* Build the wilderness */
 	if (!p_ptr->depth)
@@ -1317,9 +1316,6 @@ void generate_cave(void)
 
 		/* Set the base level */
 		base_level = p_ptr->depth;
-
-		/* Reset the monster generation level */
-		monster_level = base_level;
 
 		/* Reset the object generation level */
 		object_level = base_level;

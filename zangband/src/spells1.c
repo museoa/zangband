@@ -3813,14 +3813,8 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			{
 				msgf("A horrible vision enters your mind.");
 
-				/* Pick a nightmare */
-				get_mon_num_prep(get_nightmare, NULL);
-
 				/* Have some nightmares */
-				have_nightmare(get_mon_num(MAX_DEPTH));
-
-				/* Remove the monster restriction */
-				get_mon_num_prep(NULL, NULL);
+				have_nightmare();
 			}
 
 			(void)set_paralyzed(p_ptr->tim.paralyzed + dam);

@@ -76,23 +76,14 @@ bool teleport_away(int m_idx, int dis)
 
 			c_ptr = area(nx, ny);
 
-			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
-			{
-				continue;
-			}
-
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Not on player */
 			if ((ny == p_ptr->py) && (nx == p_ptr->px)) continue;
 
-			/* ...nor onto the Pattern */
-			if (cave_pattern_grid(c_ptr)) continue;
-
 			/* Not on bad terrain */
-			if (!monster_can_cross_terrain(c_ptr->feat, r_ptr)) continue;
+			if (!test_monster_square(c_ptr, r_ptr)) continue;
 
 			/* 
 			 * Test for fields that will not allow monsters to
@@ -4710,13 +4701,9 @@ bool polymorph_monster(int x, int y)
 		}
 		else
 		{
-			monster_terrain_sensitive = FALSE;
-
-			/* Placing the new monster failed */
+			/* Placing the new monster failed - use the old. */
 			(void)place_monster_aux(x, y, old_r_idx, FALSE, FALSE, friendly,
 									pet);
-
-			monster_terrain_sensitive = TRUE;
 		}
 	}
 

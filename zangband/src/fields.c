@@ -2662,14 +2662,8 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 				{
 					msgf("A horrible vision enters your mind.");
 
-					/* Pick a nightmare */
-					get_mon_num_prep(get_nightmare, NULL);
-
 					/* Have some nightmares */
-					have_nightmare(get_mon_num(MAX_DEPTH));
-
-					/* Remove the monster restriction */
-					get_mon_num_prep(NULL, NULL);
+					have_nightmare();
 				}
 				(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(5, 15));
 			}

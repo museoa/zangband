@@ -84,7 +84,6 @@ bool msg_flag;	/* Used in msg_print() for "buffering" */
 s16b num_repro;	/* Current reproducer count */
 
 s16b object_level;	/* Current object creation level */
-s16b monster_level;	/* Current monster creation level */
 s16b base_level;	/* Base dungeon level */
 
 s32b turn;	/* Current game turn */
@@ -762,16 +761,6 @@ bool (*ang_sort_comp) (const vptr u, const vptr v, int a, int b);
 void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 
 
-
-/*
- * Hack -- function hooks to restrict "get_mon_num_prep()" function
- */
-monster_hook_type get_mon_num_hook;
-
-/* This is a mess. :-/ */
-monster_hook_type get_mon_num2_hook;
-
-
 /*
  * Hack -- function hook to restrict "get_obj_num_prep()" function
  */
@@ -799,14 +788,6 @@ int init_flags;
  * The "highscore" file descriptor, if available.
  */
 int highscore_fd = -1;
-
-/*
- * Should the monster allocation fail with inappropriate terrain?
- *
- * This hack is only used by the polymoph function... this probably
- * could be removed, and that function done a different way.
- */
-bool monster_terrain_sensitive = TRUE;
 
 
 /* Get rid of this... */

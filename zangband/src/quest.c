@@ -240,6 +240,27 @@ errr init_quests(void)
 	return (0);
 }
 
+static bool monster_quest(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Random quests are in the dungeon */
+	if (!(r_ptr->flags8 & RF8_DUNGEON)) return FALSE;
+
+	/* No random quests for aquatic monsters */
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+
+	/* No random quests for multiplying monsters */
+	if (r_ptr->flags2 & RF2_MULTIPLY) return FALSE;
+
+	/* No quests to kill friendly monsters */
+	if (r_ptr->flags7 & RF7_FRIENDLY) return FALSE;
+	
+	/* Only "hard" monsters for quests */
+	if (r_ptr->flags1 & (RF1_NEVER_MOVE | RF1_FRIENDS)) return FALSE;
+
+	return TRUE;
+}
 
 /*
  * Quests
@@ -326,8 +347,8 @@ void get_player_quests(int q_num)
 
 #endif /* 0 */
 
-	/* Prepare allocation table */
-	get_mon_num_prep(monster_quest, NULL);
+	/* Prepare monster list */
+	get_mon_num_prep(monster_quest);	
 
 	/* Generate quests */
 	for (i = 0; i < v; i++)
@@ -363,9 +384,6 @@ void get_player_quests(int q_num)
 			r_idx = get_mon_num(depth);
 
 			r_ptr = &r_info[r_idx];
-
-			/* Look at the monster - only "hard" monsters for quests */
-			if (r_ptr->flags1 & (RF1_NEVER_MOVE | RF1_FRIENDS)) continue;
 
 			/* Save the index if the monster is deeper than current monster */
 			if (!best_r_idx || (r_info[r_idx].level > best_level))
@@ -403,6 +421,9 @@ void get_player_quests(int q_num)
 		/* Create the quest */
 		insert_dungeon_monster_quest(best_r_idx, num, level);
 	}
+	
+	/* Restore allocation table */
+	get_mon_num_prep(NULL);
 
 	/* Add the winner quests */
 
@@ -1217,7 +1238,7 @@ bool do_cmd_knowledge_quests(int dummy)
  * Line 3 -- forbid aquatic monsters
  */
 #define quest_monster_okay(I) \
-	(monster_dungeon(I) && \
+	(!(r_info[I].flags8 & RF8_WILD_TOWN) && \
 	 !(r_info[I].flags1 & RF1_UNIQUE) && \
 	 !(r_info[I].flags7 & RF7_AQUATIC))
 
@@ -1644,7 +1665,6 @@ void draw_quest(u16b place_num)
 	cave_type *c_ptr;
 
 	/* Save generation levels */
-	s16b temp_m_level = monster_level;
 	s16b temp_o_level = object_level;
 
 	/* Object theme */
@@ -1668,14 +1688,11 @@ void draw_quest(u16b place_num)
 	/* Hack -- Induce consistant quest layout */
 	Rand_value = place[place_num].seed;
 
-	/* Hack - change to monster level of wilderness */
-	monster_level = w_ptr->done.mon_gen;
-
 	/* Change object level */
 	object_level = w_ptr->done.mon_gen;
 
 	/* Apply the monster restriction */
-	get_mon_num_prep(camp_types[q_ptr->data.wld.data].hook_func, NULL);
+	get_mon_num_prep(camp_types[q_ptr->data.wld.data].hook_func);
 
 	/* Set theme for weapons / armour */
 	theme.treasure = 0;
@@ -1811,12 +1828,11 @@ void draw_quest(u16b place_num)
 	Rand_quick = FALSE;
 
 	/* Remove the monster restriction */
-	get_mon_num_prep(NULL, NULL);
+	get_mon_num_prep(NULL);
 
 	/* Clear restriction */
 	get_obj_num_hook = NULL;
 
 	/* Hack - Restore levels */
-	monster_level = temp_m_level;
 	object_level = temp_o_level;
 }

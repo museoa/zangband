@@ -1380,7 +1380,7 @@ static bool get_moves(int m_idx, int *mm)
 
 				/* Check grid */
 				if (cave_floor_grid(c_ptr)
-					&& monster_can_cross_terrain(c_ptr->feat, r_ptr))
+					&& test_monster_square(c_ptr, r_ptr))
 				{
 					/* One more room grid */
 					room++;
@@ -2413,7 +2413,7 @@ static void take_move(int m_idx, int *mm)
 		 * to allow monsters to attack an enemy,
 		 * even if it can't enter the terrain.
 		 */
-		if (do_move && !monster_can_cross_terrain(c_ptr->feat, r_ptr))
+		if (do_move && !test_monster_square(c_ptr, r_ptr))
 		{
 			/* Assume no move allowed */
 			do_move = FALSE;

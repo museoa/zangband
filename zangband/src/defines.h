@@ -705,7 +705,7 @@
 #define EGO_INFLATE		10
 
 /*
- * There is a 1/50 (2%) chance of inflating the requested monster_level
+ * There is a 1/50 (2%) chance of inflating the requested monster level
  * during the creation of a monsters (see "get_mon_num()" in "monster.c").
  * Lower values yield harder monsters more often.
  */

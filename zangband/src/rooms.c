@@ -833,7 +833,7 @@ static void build_type4(int bx0, int by0)
  * Line 3 -- forbid aquatic monsters
  */
 #define vault_monster_okay(I) \
-	(monster_dungeon(I) && \
+	(!(r_info[I].flags8 & RF8_WILD_TOWN) && \
 	 !(r_info[I].flags1 & RF1_UNIQUE) && \
 	 !(r_info[I].flags7 & RF7_AQUATIC))
 
@@ -1162,14 +1162,8 @@ static bool vault_aux_elemental(int r_idx)
  */
 static void vault_prep_clone(void)
 {
-	/* Apply the monster restriction */
-	get_mon_num_prep(vault_aux_simple, NULL);
-
 	/* Pick a race to clone */
-	vault_aux_race = get_mon_num(p_ptr->depth + 10);
-
-	/* Remove the monster restriction */
-	get_mon_num_prep(NULL, NULL);
+	get_filter_mon_num(p_ptr->depth + 10, vault_aux_simple);
 }
 
 
@@ -1179,15 +1173,9 @@ static void vault_prep_clone(void)
 static void vault_prep_symbol(void)
 {
 	int r_idx;
-
-	/* Apply the monster restriction */
-	get_mon_num_prep(vault_aux_simple, NULL);
-
+	
 	/* Pick a race to clone */
-	r_idx = get_mon_num(p_ptr->depth + 10);
-
-	/* Remove the monster restriction */
-	get_mon_num_prep(NULL, NULL);
+	get_filter_mon_num(p_ptr->depth + 10, vault_aux_simple);
 
 	/* Extract the symbol */
 	vault_aux_char = r_info[r_idx].d_char;
@@ -1583,7 +1571,7 @@ static void build_type5(int bx0, int by0)
 	generate_door(in_x1, in_y1, in_x2, in_y2, TRUE);
 
 	/* Prepare allocation table */
-	get_mon_num_prep(n_ptr->hook_func, NULL);
+	get_mon_num_prep(n_ptr->hook_func);
 
 	/* Pick some monster types */
 	for (i = 0; i < 64; i++)
@@ -1617,7 +1605,7 @@ static void build_type5(int bx0, int by0)
 	}
 
 	/* Reset allocation table */
-	get_mon_num_prep(NULL, NULL);
+	get_mon_num_prep(NULL);
 
 	/* Describe */
 	if (cheat_room)
@@ -1791,7 +1779,7 @@ static void build_type6(int bx0, int by0)
 	generate_door(in_x1, in_y1, in_x2, in_y2, TRUE);
 
 	/* Prepare allocation table */
-	get_mon_num_prep(n_ptr->hook_func, NULL);
+	get_mon_num_prep(n_ptr->hook_func);
 
 	/* Pick some monster types */
 	for (i = 0; i < 16; i++)
@@ -1825,7 +1813,7 @@ static void build_type6(int bx0, int by0)
 	}
 
 	/* Reset allocation table */
-	get_mon_num_prep(NULL, NULL);
+	get_mon_num_prep(NULL);
 
 	/* Sort the entries */
 	for (i = 0; i < 16 - 1; i++)
@@ -2161,27 +2149,21 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				case '&':
 				{
 					/* Monster */
-					monster_level = base_level + 4;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 4);
 					break;
 				}
 
 				case '@':
 				{
 					/* Meaner monster */
-					monster_level = base_level + 8;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 8);
 					break;
 				}
 
 				case '9':
 				{
 					/* Meaner monster, plus treasure */
-					monster_level = base_level + 6;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 6);
 					object_level = base_level + 6;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
@@ -2191,9 +2173,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				case '8':
 				{
 					/* Nasty monster and treasure */
-					monster_level = base_level + 25;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 25);
 					object_level = base_level + 20;
 					place_object(x, y, TRUE, TRUE);
 					object_level = base_level;
@@ -2205,9 +2185,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 					/* Monster and/or object */
 					if (randint0(100) < 50)
 					{
-						monster_level = base_level + 3;
-						(void)place_monster(x, y, TRUE, TRUE);
-						monster_level = base_level;
+						(void)place_monster(x, y, TRUE, TRUE, 3);
 					}
 					if (randint0(100) < 50)
 					{
@@ -2577,9 +2555,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				if (value < 0)
 				{
 					/* Meanest monster + treasure */
-					monster_level = base_level + 25;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 25);
 					object_level = base_level + 25;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
@@ -2587,9 +2563,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				else if (value < 5)
 				{
 					/* Mean monster + treasure */
-					monster_level = base_level + 15;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 15);
 					object_level = base_level + 10;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
@@ -2597,9 +2571,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				else if (value < 10)
 				{
 					/* Monster */
-					monster_level = base_level + 6;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 6);
 				}
 				else if (value < 17)
 				{
@@ -2627,9 +2599,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				else if (value < 30)
 				{
 					/* Monster and trap */
-					monster_level = base_level + 5;
-					(void)place_monster(x, y, TRUE, TRUE);
-					monster_level = base_level;
+					(void)place_monster(x, y, TRUE, TRUE, 5);
 					place_trap(x, y);
 				}
 				else if (value < 40)
@@ -2637,9 +2607,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 					/* Monster or object */
 					if (randint0(100) < 50)
 					{
-						monster_level = base_level + 3;
-						(void)place_monster(x, y, TRUE, TRUE);
-						monster_level = base_level;
+						(void)place_monster(x, y, TRUE, TRUE, 3);
 					}
 					if (randint0(100) < 50)
 					{
@@ -2660,7 +2628,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 					/* 20% monster, 40% trap, 20% object, 20% blank space */
 					if (randint0(100) < 20)
 					{
-						(void)place_monster(x, y, TRUE, TRUE);
+						(void)place_monster(x, y, TRUE, TRUE, 0);
 					}
 					else if (randint0(100) < 50)
 					{

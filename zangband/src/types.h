@@ -698,8 +698,8 @@ struct wild_gen_data_type
 	byte gen_routine;	/* Generation routine number */
 
 	/*
-	 * Course type - used in plasma fractal routines to make
-	 * adjacent tiles fit togther smoothly.
+	 * Course type - used in testing to see where monsters go
+	 * in the wilderness.
 	 */
 	byte rough_type;
 
