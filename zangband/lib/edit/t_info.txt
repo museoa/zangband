@@ -358,7 +358,7 @@ F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
 
 # Locked door
-N:32:door
+N:32:locked door
 G:+:U
 W:100:2:0
 I:FEAT | NFT_LOOK | MERGE
@@ -368,7 +368,7 @@ F:15,field_action_delete | 16,field_action_interact_open
 F:17,field_action_door_lock_monster
 
 # Jammed door
-N:33:door
+N:33:stuck door
 G:+:U
 W:100:2:0
 I:FEAT | NFT_LOOK | MERGE
