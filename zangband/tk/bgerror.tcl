@@ -37,7 +37,7 @@ proc bgerror {err} {
 	set message "The following error occurred:\n\n$err\n\n"
 	append message "You might be able to continue playing.\n"
 	append message "Please send the errors.txt file to the zangband mailing list"
-	tk_messageBox -title "Error in $Angband(name)" \
+	tk_messageBox -title "Error in ZAngband" \
 		-message $message -icon info -parent $parent
 
 	if {[catch {open [PathTk errors.txt] a} fileId]} {
@@ -47,7 +47,7 @@ proc bgerror {err} {
 	}
 
 	catch {
-		puts $fileId "***** $Angband(name) $Angband(vers)"
+		puts $fileId "***** ZAngband"
 		puts $fileId $info
 		puts $fileId ""
 	}
@@ -86,7 +86,7 @@ proc HandleError {err {prompt ""}} {
 	} else {
 		set type ok
 	}
-	set answer [tk_messageBox -title "Error in $Angband(name)" \
+	set answer [tk_messageBox -title "Error in ZAngband" \
 		-message $message -type $type -icon error]
 
 	if {[catch {open [PathTk errors.txt] a} fileId]} {
@@ -96,7 +96,7 @@ proc HandleError {err {prompt ""}} {
 		}
 	} else {
 		catch {
-			puts $fileId "***** $Angband(name) $Angband(vers)"
+			puts $fileId "***** ZAngband"
 			puts $fileId $stack
 			puts $fileId ""
 		}

@@ -277,7 +277,7 @@ proc QuitNoSave {} {
 
 	# Ask the user to confirm quit with save
 	set answer [tk_messageBox -icon question -type yesno \
-		-title "Quit $Angband(name)" -message "Do you really want to\
+		-title "Quit ZAngband" -message "Do you really want to\
 		quit without saving?"]
 	if {[string equal $answer no]} return
 
@@ -319,7 +319,7 @@ proc NSInitStartup::InitStartupScreen {} {
 
 	global Angband
 
-	wm title . "$Angband(name) $Angband(vers)"
+	wm title . "ZAngband"
 	wm resizable . no no
 
 	# Quit application if the user closes the window
@@ -337,12 +337,10 @@ proc NSInitStartup::InitStartupScreen {} {
 		set font {Times 18 bold}
 	}
 	label .title \
-		-text "$Angband(name) $Angband(vers)" -font $font
+		-text "ZAngband" -font $font
 
 	# Program info
-	set info [format [mc copyright] $Angband(name)]\n
-#	append info "$Angband(copy)\n"
-append info "http://www.zangband.org\n"
+	set info "ZAngband\nhttp://www.zangband.org\n"
 	append info [mc email]
 	label .info \
 		-text $info -justify left
@@ -760,14 +758,14 @@ proc InitLoadWindow {} {
 
 	# Create a "shadow" for the text below
 	$canvas create text $x $y -font $font -anchor $anchor -fill gray \
-		-text "$Angband(name) $Angband(vers)"
+		-text "Zangband"
 	$canvas create text $x [expr {$y + $lineSpace}] -font $font2 \
-		-text "Copyright (c) 1997-2001 Tim Baker" -anchor $anchor -fill gray
+		-text "Copyright (c) 1997-2001 Tim Baker and ZAngband Dev Team" -anchor $anchor -fill gray
 
 	# Draw text over the shadow created above
 	incr x -1
 	incr y -1
-	$canvas create text $x $y -text "$Angband(name) $Angband(vers)" \
+	$canvas create text $x $y -text "ZAngband" \
 		-font $font -anchor $anchor -fill $fg
 	$canvas create text $x [expr {$y + $lineSpace}] -font $font2 \
 		-text "Copyright (c) 1997-2001 Tim Baker" -anchor $anchor -fill $fg \
@@ -992,7 +990,7 @@ Global tclCompiler 0
 	# The Tk console!
 	if {[llength [info commands console]]} {
 		console hide
-		console title "Console - $Angband(name)"
+		console title "Console - ZAngband"
 		bind all <Control-KeyPress-C> {console show}
 
 		# Hack -- Change the font

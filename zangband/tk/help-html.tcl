@@ -1301,7 +1301,7 @@ proc NSHelp::DisplayPageByUrl {oop url {title ""}} {
 	SynchButtons $oop
 
 	# Set the window title
-	wm title $win [format [mc wm-title] $title $::Angband(name)]
+	wm title $win [format [mc wm-title] $title ZAngband]
 
 	Info $oop busy 0
 
@@ -1366,7 +1366,7 @@ proc NSHelp::DisplayPageByHistory {oop index} {
 	SynchButtons $oop
 
 	# Set the window title
-	wm title $win [format [mc wm-title] $title $::Angband(name)]
+	wm title $win [format [mc wm-title] $title ZAngband]
 
 	Info $oop busy 0
 

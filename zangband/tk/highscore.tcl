@@ -220,7 +220,7 @@ proc NSHighScore::InitWindow {oop} {
 
 	set win .highscore$oop
 	toplevel $win
-	wm title $win [format [mc "%s Hall of Fame"] $Angband(name)]
+	wm title $win ["Zangband Hall of Fame"]
 
 	# Hack -- see "angband_display highscore"
 	if {![angband player is_dead]} {
@@ -550,7 +550,7 @@ proc NSHighScore::DisplayCmd {oop message first} {
 	switch -- $message {
 		preDisplay {
 			if {![Info $oop interactive]} {
-				wm title [Info $oop win] [format [mc "%s Hall of Fame"] $Angband(name)]
+				wm title [Info $oop win] ["ZAngband Hall of Fame"]
 			}
 			SetList $oop
 			focus [Info $oop canvas]
@@ -1063,7 +1063,7 @@ proc NSHighScore::Dump {oop parent} {
 		return
 	}
 
-	puts $fileId "  \[$Angband(name) $Angband(vers) Hall of Fame\]\n"
+	puts $fileId "  \[ZAngband Hall of Fame\]\n"
 
 	GetTheScores $oop
 

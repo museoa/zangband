@@ -118,14 +118,6 @@ proc NSConfig::Load {} {
 	# Create a vault for towns/quests
 	Global vault,current [vault create]
 
-	# Try "prefix-town", custom town layout and appearance
-#	ReadTownFile [Global config,town]
-
-	# Read the binary town.vlt file, if it exists.
-	### (This was created by calling ReadTownFile() and then
-	### "vault write [vault town] tk/config/town.vlt".)
-	ReadTownVault
-
 	# Custom icon assignments for each character
 	Source char-icon Config::CharIcon
 #	charicon::Assign
@@ -703,55 +695,6 @@ proc NSConfig::ReadTownFile {fileName} {
 	return
 }
 
-# NSConfig::ReadTownVault --
-#
-#	Description.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSConfig::ReadTownVault {} {
-
-	global Angband
-	global errorInfo
-
-	# ZAngbandTk: only if vanilla_town is set. The vaults for the other
-	# towns are read by the ".cfg" file.
-	if {![angband setting set vanilla_town]} return
-
-	if {[Global config,prefix] == "dg32+iso"} return
-	set name town.vlt
-
-	set path [PathTk config $name]
-	if {[file exists $path]} {
-		if {[catch {
-			vault town [vault create -file $path]
-		} result]} {
-
-			set stack $errorInfo
-
-			# Some people get an error. Note the problem and fail silently.
-			if {[catch {open [PathTk errors.txt] a} fileId]} {
-				if {$::DEBUG} {
-					tk_messageBox -icon error -title Error \
-						-message "Couldn't open [PathTk errors.txt]\n$fileId"
-				}
-			} else {
-				catch {
-					puts $fileId "***** $Angband(name) $Angband(vers)"
-					puts $fileId $stack
-					puts $fileId ""
-				}
-				close $fileId
-			}	
-		}
-	}
-
-	return
-}
 
 # Alternate --
 #

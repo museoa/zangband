@@ -138,7 +138,7 @@ proc NSMainWindow::InitWindow {oop} {
 
 	set win .main$oop
 	toplevel $win
-	wm title $win "[mc Main] - $Angband(name) $Angband(vers)"
+	wm title $win "[mc Main] - ZAngband"
 
 	# Do stuff when window closes
 	wm protocol $win WM_DELETE_WINDOW "NSMainWindow::Close $oop"
@@ -860,7 +860,7 @@ if 0 {
 	lappend entries [list -type command -label [mc Tips] -identifier E_TIPS]
 	lappend entries [list -type separator]
 	lappend entries [list -type command \
-		-label [format [mc "About %s..."] $Angband(name)] -identifier E_ABOUT]
+		-label ["About ZAngband..."] -identifier E_ABOUT]
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_HELP $entries
 	
@@ -1230,7 +1230,7 @@ proc NSMainWindow::Close {oop} {
 
 	# Ask the user to confirm quit with save
 	set answer [tk_messageBox -icon question -type yesno \
-		-title [format [mc dialog-title-quit] $Angband(name)] \
+		-title [format [mc dialog-title-quit] "ZAngband"] \
 		-message [mc dialog-msg-quit]]
 	if {[string equal $answer no]} return
 

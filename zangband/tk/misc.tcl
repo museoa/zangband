@@ -383,7 +383,7 @@ proc AbortGame {} {
 
 	global Angband
 
-	set answer [tk_messageBox -type yesno -title "Abort $Angband(name)" \
+	set answer [tk_messageBox -type yesno -title "Abort ZAngband" \
 		-message "Write config files?"]
 	if {[string equal $answer yes]} {
 		angband_close_game

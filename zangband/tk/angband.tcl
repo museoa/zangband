@@ -50,7 +50,7 @@ proc angband_close_game {} {
 
 	} result]} {
 		set message "An error occured during shutdown:\n    $result"
-		tk_messageBox -title "$Angband(name) Error" -message $message \
+		tk_messageBox -title "ZAngband Error" -message $message \
 			-icon error
 	}
 

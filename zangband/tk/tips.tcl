@@ -173,7 +173,7 @@ proc NSTips::InitWindow {oop} {
 
 	set win .tips$oop
 	toplevel $win
-	wm title $win [format [mc "%s Tips"] $Angband(name)]
+	wm title $win ["ZAngband Tips"]
 
 	wm transient $win [Window main]
 
@@ -190,7 +190,7 @@ proc NSTips::InitWindow {oop} {
 		set font {Times 18 bold}
 	}
 	label $win.header \
-		-text [format [mc "Welcome to %s"] $Angband(name)] -font $font
+		-text ["Welcome to ZAngband"] -font $font
 
 	# Tip display
 	frame $win.tip \

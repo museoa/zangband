@@ -115,7 +115,7 @@ proc NSPhotoWindow::InitWindow {oop} {
 
 	set win .photo$oop
 	toplevel $win
-	wm title $win "Photo #$Priv(count) - $Angband(name)"
+	wm title $win "Photo #$Priv(count) - ZAngband"
 	wm resizable $win no no
  
 	# Do stuff when window closes
@@ -394,7 +394,7 @@ proc NSPhotoWindow::Open {oop} {
 		return
 	}
 
-	wm title $win "[file tail $filePath] - $Angband(name)"
+	wm title $win "[file tail $filePath] - ZAngband"
 	StatusBar $oop "Reading image file..." 1
 	update
 	if {[catch {

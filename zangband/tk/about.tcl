@@ -77,7 +77,7 @@ proc NSAbout::InitWindow {} {
 	
 	set win .about
 	toplevel $win
-	wm title $win "About $Angband(name)"
+	wm title $win "About ZAngband"
 	wm transient $win [Window main]
 
 	# Do stuff when window closes
@@ -127,14 +127,14 @@ proc NSAbout::InitWindow {} {
 
 	# Create a "shadow" for the text below
 	$canvas create text $x $y -font $font -anchor $anchor -fill gray \
-		-text "$Angband(name) $Angband(vers)"
+		-text "ZAngband"
 	$canvas create text $x [expr {$y + $lineSpace}] -font $font2 \
 		-text "Copyright (c) 1997-2001 Tim Baker" -anchor $anchor -fill gray
 
 	# Draw text over the shadow created above
 	incr x -1
 	incr y -1
-	$canvas create text $x $y -text "$Angband(name) $Angband(vers)" \
+	$canvas create text $x $y -text "ZAangband" \
 		-font $font -anchor $anchor -fill $fg
 	$canvas create text $x [expr {$y + $lineSpace}] -font $font2 \
 		-text "Copyright (c) 1997-2001 Tim Baker" -anchor $anchor -fill $fg \
@@ -151,7 +151,7 @@ proc NSAbout::InitWindow {} {
 	# Rectangle at bottom
 	$canvas create rectangle 0 [expr {$height - $height2}] $width $height \
 		-fill $fg
-	set text "$Angband(name) is running on:"
+	set text "ZAngband is running on:"
 	append text "\nTcl $::tcl_patchLevel   Tk $::tk_patchLevel"
 	set os $::tcl_platform(os)
 
