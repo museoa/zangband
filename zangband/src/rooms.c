@@ -2675,7 +2675,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				jj = j / 256 + fill_data.ymin;
 				
 				/* Test square */
-				if (cave[jj][ii].feat != 255)
+				if (cave[jj][ii].feat == 255)
 				{				
 					if (xhstep2 > grd)
 					{
@@ -2705,7 +2705,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				jj = j / 256 + fill_data.ymin;
 				
 				/* Test square */
-				if (cave[jj][ii].feat != 255)
+				if (cave[jj][ii].feat == 255)
 				{
 					if (xhstep2 > grd)
 					{
@@ -2734,7 +2734,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				jj = j / 256 + fill_data.ymin;
 				
 				/* Test square */
-				if (cave[jj][ii].feat != 255)
+				if (cave[jj][ii].feat == 255)
 				{				
 					if (xhstep2 > grd)
 					{
