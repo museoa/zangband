@@ -297,8 +297,6 @@ void quest_discovery(int q_idx)
 	msg_print(find_quest[rand_range(0, 4)]);
 	msg_print(NULL);
 
-#if 1 /* TNB */
-
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
 		msg_format("Beware, this level is protected by %s!", name);
@@ -313,23 +311,6 @@ void quest_discovery(int q_idx)
 		msg_format("Be warned, this level is guarded by %d %s!", q_num,
 			name);
 	}
-
-#else /* TNB */
-
-	if (q_num == 1)
-	{
-		/* Unique */
-		msg_format("Beware, this level is protected by %s!", name);
-	}
-	else
-	{
-		/* Normal monsters */
-		plural_aux(name);
-		msg_format("Be warned, this level is guarded by %d %s!", q_num,
-			name);
-	}
-
-#endif /* TNB */
 }
 
 
@@ -448,20 +429,12 @@ static void clear_bldg(int min_row, int max_row)
 
 static void building_prt_gold(void)
 {
-#if 1 /* TNB */
-
-	Bind_Generic(EVENT_PY, KEYWORD_PY_GOLD + 1);
-
-#else /* TNB */
-
 	char tmp_str[80];
 
 	prt("Gold Remaining: ", 23, 53);
 
 	sprintf(tmp_str, "%9ld", (long) p_ptr->au);
 	prt(tmp_str, 23, 68);
-
-#endif /* TNB */
 }
 
 
@@ -604,19 +577,6 @@ static void arena_comm(int cmd)
 		case BACT_ARENA:
 			if (p_ptr->arena_number == MAX_ARENA_MONS)
 			{
-#if 1 /* TNB */
-				char buf[512];
-				(void) strcat(buf, "               Arena Victor!\n");
-				(void) strcat(buf,
-					"Congratulations!  You have defeated all before you.\n");
-				(void) strcat(buf,
-					"For that, receive the prize: 10,000 gold pieces");
-				angtk_eval("angband_building", "words", buf, NULL);
-				p_ptr->au += 10000;
-				any_more(NULL);
-				p_ptr->arena_number++;
-				angtk_eval("angband_display", "building", "show", NULL);
-#else /* TNB */
 				clear_bldg(5, 19);
 				prt("               Arena Victor!", 5, 0);
 				prt("Congratulations!  You have defeated all before you.",
@@ -629,7 +589,6 @@ static void arena_comm(int cmd)
 				msg_print("Press the space bar to continue");
 				msg_print(NULL);
 				p_ptr->arena_number++;
-#endif /* TNB */
 			}
 			else if (p_ptr->arena_number > MAX_ARENA_MONS)
 			{
@@ -676,7 +635,6 @@ static void arena_comm(int cmd)
 	}
 }
 
-#if 0 /* TNB */
 
 /*
  * display fruit for dice slots
@@ -754,7 +712,6 @@ static void display_fruit(int row, int col, int fruit)
 	}
 }
 
-#endif /* TNB */
 
 /*
  * gamble_comm
@@ -765,10 +722,8 @@ static bool gamble_comm(int cmd)
 	s32b wager;
 	s32b maxbet;
 	s32b oldgold;
-#if 0 /* TNB */
 	static const char *fruit[6] =
 		{ "Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry" };
-#endif /* TNB */
 	char out_val[160], tmp_str[80], again;
 	cptr p;
 
@@ -787,7 +742,6 @@ static bool gamble_comm(int cmd)
 			msg_print("Hey! You don't have gold - get out of here!");
 			msg_print(NULL);
 			screen_load();
-			angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 			return FALSE;
 		}
 
@@ -859,41 +813,6 @@ static bool gamble_comm(int cmd)
 				switch (cmd)
 				{
 					case BACT_IN_BETWEEN: /* Game of In-Between */
-#if 1 /* TNB */
-						odds = 3;
-						win = FALSE;
-						roll1 = randint(10);
-						roll2 = randint(10);
-						choice = randint(10);
-						if (((choice > roll1) && (choice < roll2)) ||
-							((choice < roll1) && (choice > roll2)))
-						{
-							win = TRUE;
-						}
-
-						/* XXX Hack -- Convert 10-sided to 6-sided for display */
-						if (win)
-						{
-							choice = rand_range(2, 5);
-							roll1 = rand_range(1, choice - 1);
-							roll2 = rand_range(choice + 1, 6);
-						}
-						else
-						{
-							choice = randint(6);
-							roll1 = randint(6);
-							if (roll1 == choice)
-								roll2 = randint(6);
-							else if (roll1 < choice)
-								roll2 = rand_range(1, choice);
-							else
-								roll2 = rand_range(choice, 6);
-						}
-
-						angtk_eval("angband_building", "inbetween",
-							format("%d %d %d", roll1, choice, roll2),
-							NULL);
-#else	/* TNB */
 						c_put_str(TERM_GREEN, "In Between", 5, 2);
 						odds = 3;
 						win = FALSE;
@@ -909,42 +828,8 @@ static bool gamble_comm(int cmd)
 						if (((choice > roll1) && (choice < roll2)) ||
 							((choice < roll1) && (choice > roll2)))
 							win = TRUE;
-#endif /* TNB */
 						break;
 					case BACT_CRAPS: /* Game of Craps */
-#if 1 /* TNB */
-						win = 3;
-						odds = 1;
-						roll1 = randint(6);
-						roll2 = randint(6);
-						roll3 = roll1 + roll2;
-						choice = roll3;
-						angtk_eval("angband_building", "craps",
-							format("%d %d %d", roll1, roll2, roll3), NULL);
-						if ((roll3 == 7) || (roll3 == 11))
-							win = TRUE;
-						else if ((roll3 == 2) || (roll3 == 3) ||
-							(roll3 == 12))
-							win = FALSE;
-						else
-						{
-							do
-							{
-								any_more("Hit any key to roll again");
-								roll1 = randint(6);
-								roll2 = randint(6);
-								roll3 = roll1 + roll2;
-								angtk_eval("angband_building", "craps",
-									format("%d %d %d", roll1, roll2,
-										roll3), NULL);
-								if (roll3 == choice)
-									win = TRUE;
-								else if (roll3 == 7)
-									win = FALSE;
-							}
-							while ((win != TRUE) && (win != FALSE));
-						}
-#else	/* TNB */
 						c_put_str(TERM_GREEN, "Craps", 5, 2);
 						win = 3;
 						odds = 1;
@@ -979,34 +864,9 @@ static bool gamble_comm(int cmd)
 									win = FALSE;
 							}
 							while ((win != TRUE) && (win != FALSE));
-#endif /* TNB */
 						break;
 
 					case BACT_SPIN_WHEEL: /* Spin the Wheel Game */
-#if 1 /* TNB */
-						win = FALSE;
-						odds = 8;
-						strcpy(out_val, "");
-						get_string("Pick a number (0-9): ", out_val, 32);
-						for (p = out_val; *p == ' '; p++);
-						choice = atol(p);
-						if (choice < 0)
-						{
-							msg_print("I'll put you down for 0.");
-							choice = 0;
-						}
-						else if (choice > 9)
-						{
-							msg_print("Ok, I'll put you down for 9.");
-							choice = 9;
-						}
-						msg_print(NULL);
-						roll1 = rand_int(10);
-						angtk_eval("angband_building", "wheel",
-							format("%d %d", choice, roll1), NULL);
-						if (roll1 == choice)
-							win = TRUE;
-#else /* TNB */
 						win = FALSE;
 						c_put_str(TERM_GREEN, "Wheel", 5, 2);
 						prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
@@ -1035,33 +895,9 @@ static bool gamble_comm(int cmd)
 						prt("*", 9, (3 * roll1 + 5));
 						if (roll1 == choice)
 							win = TRUE;
-#endif /* TNB */
 						break;
 
 					case BACT_DICE_SLOTS: /* The Dice Slots */
-#if 1 /* TNB */
-						win = FALSE;
-						roll1 = randint(6);
-						roll2 = randint(6);
-						roll3 = randint(6);
-						angtk_eval("angband_building", "diceslots",
-							format("%d %d %d", roll1, roll2, roll3), NULL);
-						if ((roll1 == roll2) && (roll2 == roll3))
-						{
-							win = TRUE;
-							if (roll1 == 1)
-								odds = 4;
-							else if (roll1 == 2)
-								odds = 6;
-							else
-								odds = roll1 * roll1;
-						}
-						else if ((roll1 == 6) && (roll2 == 6))
-						{
-							win = TRUE;
-							odds = roll3 + 1;
-						}
-#else	/* TNB */
 						c_put_str(TERM_GREEN, "Dice Slots", 5, 2);
 						win = FALSE;
 						roll1 = randint(6);
@@ -1091,7 +927,6 @@ static bool gamble_comm(int cmd)
 							win = TRUE;
 							odds = choice + 1;
 						}
-#endif /* TNB */
 						break;
 				}
 
@@ -1143,7 +978,6 @@ static bool gamble_comm(int cmd)
 		msg_print(NULL);
 	}
 	screen_load();
-	angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 	return (TRUE);
 }
 
@@ -1266,9 +1100,7 @@ static void get_questinfo(int questnum)
 {
 	int i;
 	int old_quest;
-#if 0 /* TNB */
 	char tmp_str[80];
-#endif /* TNB */
 	char buf[1024];	/* TNB */
 
 	/* Clear the text */
@@ -1290,27 +1122,6 @@ static void get_questinfo(int questnum)
 	/* Reset the old quest number */
 	p_ptr->inside_quest = old_quest;
 
-#if 1 /* TNB */
-
-	buf[0] = '\0';
-	for (i = 0; i < 10; i++)
-	{
-		(void) strcat(buf, format("%s\n", quest_text[i]));
-	}
-
-	/* Strip out trailing blank lines */
-	i = strlen(buf) - 1;
-	while (buf[i] == '\n')
-		buf[i--] = '\0';
-
-	/* Display */
-	angtk_eval("angband_building", "quest", "info", quest[questnum].name,
-		format("%d", quest[questnum].level), buf, NULL);
-
-	any_more(NULL);
-
-#else /* TNB */
-
 	/* Print the quest info */
 	sprintf(tmp_str, "Quest Information (Danger level: %d)",
 		quest[questnum].level);
@@ -1322,8 +1133,6 @@ static void get_questinfo(int questnum)
 	{
 		c_put_str(TERM_YELLOW, quest_text[i], i + 8, 0);
 	}
-
-#endif /* TNB */
 }
 
 
@@ -1335,11 +1144,7 @@ static void castle_quest(void)
 	int q_index = 0;
 	monster_race *r_ptr;
 	quest_type *q_ptr;
-#if 1 /* TNB */
 	char buf[1024];
-#else /* TNB */
-	cptr name;
-#endif /* TNB */
 
 
 	clear_bldg(7, 18);
@@ -1350,12 +1155,8 @@ static void castle_quest(void)
 	/* Is there a quest available at the building? */
 	if (!q_index)
 	{
-#if 1 /* TNB */
 		msg_print("I don't have a quest for you at the moment.");
 		msg_print(NULL);
-#else /* TNB */
-		put_str("I don't have a quest for you at the moment.", 8, 0);
-#endif /* TNB */
 		return;
 	}
 
@@ -1370,7 +1171,6 @@ static void castle_quest(void)
 		get_questinfo(q_index);
 
 		reinit_wilderness = TRUE;
-		angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 	}
 	/* Failed quest */
 	else if (q_ptr->status == QUEST_STATUS_FAILED)
@@ -1381,26 +1181,13 @@ static void castle_quest(void)
 		q_ptr->status = QUEST_STATUS_FAILED_DONE;
 
 		reinit_wilderness = TRUE;
-		angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 	}
 	/* Quest is still unfinished */
 	else if (q_ptr->status == QUEST_STATUS_TAKEN)
 	{
-#if 1 /* TNB */
-		buf[0] = '\0';
-		(void) strcat(buf,
-			"You have not completed your current quest yet!\n");
-		(void) strcat(buf,
-			"Use CTRL-Q to check the status of your quest.\n\n");
-		(void) strcat(buf, "Return when you have completed your quest.");
-		angtk_eval("angband_building", "words", buf, NULL);
-		any_more(NULL);
-		angtk_eval("angband_display", "building", "show", NULL);
-#else /* TNB */
 		put_str("You have not completed your current quest yet!", 8, 0);
 		put_str("Use CTRL-Q to check the status of your quest.", 9, 0);
 		put_str("Return when you have completed your quest.", 12, 0);
-#endif /* TNB */
 	}
 	/* No quest yet */
 	else if (q_ptr->status == QUEST_STATUS_UNTAKEN)
@@ -1436,21 +1223,12 @@ static void castle_quest(void)
 			}
 
 			q_ptr->cur_num = 0;
-#if 1 /* TNB */
-			(void) strcpy(buf, r_name + r_ptr->name);
-			if (q_ptr->max_num > 1)
-				plural_aux(buf);
-			msg_format("Your quest: kill %d %s", q_ptr->max_num, buf);
-#else /* TNB */
-			name = (r_name + r_ptr->name);
-			msg_format("Your quest: kill %d %s", q_ptr->max_num, name);
-#endif /* TNB */
+			msg_format("Your quest: kill %d %s", q_ptr->max_num, r_name + r_ptr->name);
 			msg_print(NULL);
 		}
 		else
 		{
 			get_questinfo(q_index);
-			angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 		}
 	}
 }
@@ -1472,7 +1250,6 @@ static void town_history(void)
 }
 
 
-#if 0 /* TNB */
 
 /*
  * Display the damage figure of an object
@@ -1646,110 +1423,6 @@ static void list_weapon(object_type * o_ptr, int row, int col)
 	put_str(tmp_str, row + 7, col + 1);
 }
 
-#else /* not 0 -- TNB */
-
-static void compare_weapon_aux2(object_type *o_ptr, cptr attr, byte slay)
-{
-	long maxdam, mindam;
-	int intmaxdam, intmindam;
-	int dambonus;
-	int numblows = p_ptr->num_blow;
-
-	dambonus = o_ptr->to_d + p_ptr->to_d;
-
-	if (dambonus > 0)
-		mindam = (100 + deadliness_conversion[dambonus]);
-	else if (dambonus > -31)
-		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
-	else
-		mindam = 0;
-
-	/* Include effects of slaying bonus */
-	mindam = (mindam * slay) / 10;
-
-	/* Effect of damage dice */
-	maxdam = mindam * (o_ptr->ds * o_ptr->dd);
-	mindam *= o_ptr->dd;
-
-	/* number of blows */
-	maxdam *= numblows;
-	mindam *= numblows;
-
-	/* rescale */
-	intmaxdam = maxdam / 100;
-	intmindam = mindam / 100;
-
-	angtk_eval("angband_building", "compare_weapons", "flag",
-		attr, format("%d %d", intmindam, intmaxdam), NULL);
-}
-
-static void compare_weapon_aux1(object_type * o_ptr, int col, int row)
-{
-	u32b f1, f2, f3;
-
-	/* Get the flags of the weapon */
-	object_flags(o_ptr, &f1, &f2, &f3);
-
-	/* BUG Same info for every flag, ignores damage multiplier */
-
-	if (f1 & TR1_SLAY_ANIMAL)
-		compare_weapon_aux2(o_ptr, "SLAY_ANIMAL", 17);
-	if (f1 & TR1_SLAY_EVIL)
-		compare_weapon_aux2(o_ptr, "SLAY_EVIL", 15);
-	if (f1 & TR1_SLAY_UNDEAD)
-		compare_weapon_aux2(o_ptr, "SLAY_UNDEAD", 20);
-	if (f1 & TR1_SLAY_DEMON)
-		compare_weapon_aux2(o_ptr, "SLAY_DEMON", 20);
-	if (f1 & TR1_SLAY_ORC)
-		compare_weapon_aux2(o_ptr, "SLAY_ORC", 20);
-	if (f1 & TR1_SLAY_TROLL)
-		compare_weapon_aux2(o_ptr, "SLAY_TROLL", 20);
-	if (f1 & TR1_SLAY_GIANT)
-		compare_weapon_aux2(o_ptr, "SLAY_GIANT", 20);
-	if (f1 & TR1_SLAY_DRAGON)
-		compare_weapon_aux2(o_ptr, "SLAY_DRAGON", 20);
-	if (f1 & TR1_KILL_DRAGON)
-		compare_weapon_aux2(o_ptr, "KILL_DRAGON", 30);
-	if (f1 & TR1_BRAND_ACID)
-		compare_weapon_aux2(o_ptr, "BRAND_ACID", 20);
-	if (f1 & TR1_BRAND_ELEC)
-		compare_weapon_aux2(o_ptr, "BRAND_ELEC", 20);
-	if (f1 & TR1_BRAND_FIRE)
-		compare_weapon_aux2(o_ptr, "BRAND_FIRE", 20);
-	if (f1 & TR1_BRAND_COLD)
-		compare_weapon_aux2(o_ptr, "BRAND_COLD", 20);
-	if (f1 & TR1_BRAND_POIS)
-		compare_weapon_aux2(o_ptr, "BRAND_POIS", 20);
-}
-
-static void list_weapon(object_type * o_ptr, int row, int col)
-{
-	char o_name[O_NAME_MAX];
-	long maxdam, mindam;
-	int dambonus;
-
-	/* Print the weapon name */
-	object_desc(o_name, o_ptr, TRUE, 0);
-
-	dambonus = o_ptr->to_d + p_ptr->to_d;
-
-	if (dambonus > 0)
-		mindam = (100 + deadliness_conversion[dambonus]);
-	else if (dambonus > -31)
-		mindam = (100 - deadliness_conversion[ABS(dambonus)]);
-	else
-		mindam = 0;
-
-	/* Effect of damage dice */
-	maxdam = mindam * (o_ptr->ds * o_ptr->dd);
-	mindam *= o_ptr->ds;
-
-	angtk_eval("angband_building", "compare_weapons", "list_weapon",
-		o_name, format("%d %d %d %d %d %d %d", o_ptr->to_h, o_ptr->to_d,
-			o_ptr->dd, o_ptr->ds, p_ptr->num_blow, mindam, maxdam), NULL);
-}
-
-#endif /* not 0 -- TNB */
 
 /*
  * Hook to specify "weapon"
@@ -1840,14 +1513,6 @@ static bool compare_weapons(void)
 		("Based on your current abilities, here is what your weapons will do",
 		4, 2);
 
-#if 1 /* TNB */
-
-	angtk_eval("angband_building", "compare_weapons", "init",
-		"Based on your current abilities, here is what your weapons will do",
-		NULL);
-
-#endif /* TNB */
-
 	/* Copy first weapon into the weapon slot (if it's not already there) */
 	if (o1_ptr != i_ptr)
 		object_copy(i_ptr, o1_ptr);
@@ -1881,13 +1546,6 @@ static bool compare_weapons(void)
 	put_str
 		("(Only highest damage applies per monster. Special damage not cumulative.)",
 		20, 0);
-
-#if 1 /* TNB */
-
-	any_more(NULL);
-	angtk_eval("angband_display", "building", "show", NULL);
-
-#endif /* TNB */
 
 	/* Done */
 	return (TRUE);
@@ -2124,26 +1782,6 @@ static void building_recharge(void)
 	}
 
 	/* Limit the number of charges for wands and staves */
-#if 1 /* BUG -- TNB */
-
-	if ((o_ptr->tval == TV_WAND) &&
-		((o_ptr->pval / o_ptr->number) >= k_ptr->pval))
-	{
-		msg_format("%s already fully charged.",
-			(o_ptr->number > 1) ? "These wands are" : "This wand is");
-		msg_print(NULL);
-		return;
-	}
-	else if ((o_ptr->tval == TV_STAFF) && (o_ptr->pval >= k_ptr->pval))
-	{
-		msg_format("%s already fully charged.",
-			(o_ptr->number > 1) ? "These staffs are" : "This staff is");
-		msg_print(NULL);
-		return;
-	}
-
-#else /* BUG -- TNB */
-
 	if (((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF)) &&
 		(o_ptr->pval / o_ptr->number >= k_ptr->pval))
 	{
@@ -2160,10 +1798,6 @@ static void building_recharge(void)
 		return;
 	}
 
-#endif /* BUG -- TNB */
-
-#if 0 /* see "price *= charges" below! BUG -- TNB */
-
 	/* Check if the player has enough money */
 	if (p_ptr->au < price)
 	{
@@ -2173,23 +1807,8 @@ static void building_recharge(void)
 		return;
 	}
 
-#endif /* BUG -- TNB */
-
 	if (o_ptr->tval == TV_ROD)
 	{
-#if 1 /* see "price *= charges" below! BUG -- TNB */
-
-		/* Check if the player has enough money */
-		if (p_ptr->au < price)
-		{
-			object_desc(tmp_str, o_ptr, TRUE, 0);
-			msg_format("You need %d gold to recharge %s!", price, tmp_str);
-			msg_print(NULL);
-			return;
-		}
-
-#endif /* BUG -- TNB */
-
 		if (get_check(format("Recharge the %s for %d gold? ",
 					((o_ptr->number > 1) ? "rods" : "rod"), price)))
 		{
@@ -2208,25 +1827,10 @@ static void building_recharge(void)
 		else
 			max_charges = o_ptr->number * k_ptr->pval - o_ptr->pval;
 
-#if 1 /* TNB */
-
-		object_desc(tmp_str, o_ptr, TRUE, 3);
-		angtk_eval("angband_building", "recharge_item", "info",
-			format("%d %d %d", o_ptr->k_idx, price, max_charges),
-			tmp_str, NULL);
-
-		/* Get the quantity for staves and wands */
-		s = format("Add how many charges (1-%d)? ", max_charges);
-		charges = get_quantity(s, max_charges);
-
-#else /* TNB */
-
 		/* Get the quantity for staves and wands */
 		charges =
 			get_quantity(format("Add how many charges for %d gold? ",
 		  price), MIN(p_ptr->au / price, max_charges));
-
-#endif /* TNB */
 
 		/* Do nothing */
 		if (charges < 1)
@@ -2234,19 +1838,6 @@ static void building_recharge(void)
 
 		/* Get the new price */
 		price *= charges;
-
-#if 1 /* see "price *= charges" below! BUG -- TNB */
-
-		/* Check if the player has enough money */
-		if (p_ptr->au < price)
-		{
-			object_desc(tmp_str, o_ptr, TRUE, 0);
-			msg_format("You need %d gold to recharge %s!", price, tmp_str);
-			msg_print(NULL);
-			return;
-		}
-
-#endif /* BUG -- TNB */
 
 		/* Recharge */
 		o_ptr->pval += charges;
@@ -2358,16 +1949,13 @@ static void bldg_process_command(building_type * bldg, int i)
 			case BACT_ENCHANT_WEAPON:
 				item_tester_hook = item_tester_hook_melee_weapon;
 				enchant_item(bcost, 1, 1, 0);
-				angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 				break;
 			case BACT_ENCHANT_ARMOR:
 				item_tester_hook = item_tester_hook_armour;
 				enchant_item(bcost, 0, 0, 1);
-				angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 				break;
 			case BACT_RECHARGE:
 				building_recharge();
-				angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 				break;
 			case BACT_IDENTS: /* needs work */
 				identify_pack();
@@ -2420,12 +2008,10 @@ static void bldg_process_command(building_type * bldg, int i)
 			case BACT_ENCHANT_ARROWS:
 				item_tester_hook = item_tester_hook_ammo;
 				enchant_item(bcost, 1, 1, 0);
-				angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 				break;
 			case BACT_ENCHANT_BOW:
 				item_tester_tval = TV_BOW;
 				enchant_item(bcost, 1, 1, 0);
-				angtk_eval("angband_display", "building", "show", NULL); /* TNB */
 				break;
 			case BACT_RECALL:
 				p_ptr->word_recall = 1;
@@ -2522,11 +2108,7 @@ void do_cmd_bldg(void)
 
 	if ((which == 2) && p_ptr->inside_arena && !p_ptr->exit_bldg)
 	{
-#if 1 /* TNB */
-		msg_print("The gates are closed.  The monster awaits!");
-#else /* TNB */
 		prt("The gates are closed.  The monster awaits!", 0, 0);
-#endif /* TNB */
 		return;
 	}
 	else if ((which == 2) && p_ptr->inside_arena)
@@ -2539,19 +2121,6 @@ void do_cmd_bldg(void)
 		p_ptr->oldpy = py;
 		p_ptr->oldpx = px;
 	}
-
-#if 1 /* TNB */
-
-	angtk_widget_lock(TRUE);
-
-	/* Information used by Tcl "building" command */
-	g_buildingdata.inside = TRUE;
-	g_buildingdata.building_loc = which;
-	g_buildingdata.bldg = bldg;
-
-	angtk_eval("angband_display", "building", "show", NULL);
-
-#endif /* TNB */
 
 	/* Forget the lite */
 	forget_lite();
@@ -2631,14 +2200,4 @@ void do_cmd_bldg(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-#if 1 /* TNB */
-
-	p_ptr->update |= (PU_LITE);	/* BUG */
-
-	p_ptr->update |= (PU_MAP_INFO);	/* needed? */
-	g_buildingdata.inside = FALSE;
-	angtk_eval("angband_display", "building", "hide", NULL);
-	angtk_widget_lock(FALSE);
-
-#endif /* TNB */
 }
