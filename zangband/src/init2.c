@@ -346,6 +346,8 @@ static errr init_info_raw(int fd, header *head)
 
 	if (data != MAP_FAILED)
 	{
+		head->mmap_base = data;
+
 		/* Skip the header */
 		data += sizeof(header);
 
@@ -363,6 +365,8 @@ static errr init_info_raw(int fd, header *head)
 	else
 	{
 #endif /* HAVE_MMAP */
+
+		head->mmap_base = NULL;
 
 		/* Allocate the "*_info" array */
 		C_MAKE(head->info_ptr, head->info_size, char);
@@ -648,6 +652,17 @@ static errr init_info(cptr filename, header *head,
  */
 static errr free_info(header *head)
 {
+#ifdef HAVE_MMAP
+	if (head->mmap_base)
+	{
+		munmap(head->mmap_base, sizeof(header) + head->info_size + 
+			head->name_size + head->text_size);
+
+		/* Success */
+		return (0);
+	}
+#endif /* HAVE_MMAP */
+
 	if (head->info_size)
 		FREE(head->info_ptr);
 
