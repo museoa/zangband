@@ -71,6 +71,8 @@ Zangband 2.3.4:
 -Increased the maximum number of pits to 2 per level
 -Fixed a bug that caused thrown/fired objects to look strange with
  graphics turned on.
+-Fixed a bug that could mess up character dumps when the player had
+ drained stats.
 -Changed the compiler optimization flags for the DOS version to work-
  around a bug in DJGPP that could cause ZAngband to hang when
  compacting items.
