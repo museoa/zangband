@@ -391,7 +391,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	clear_row(1);
 		
 	/* Will they fit in one column? */
-	if (num < 18)
+	if (num < 19)
 	{
 		for (i = 0; i < num; i++)
 		{
@@ -406,7 +406,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	}
 	
 	/* Two columns (use numbers as well) */
-	else if (num < 36)
+	else if (num < 37)
 	{
 		for (i = 0; i < num; i++)
 		{
@@ -454,7 +454,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 		/* Display the prompt */
 		prtf(0, 0, "%s (Command (a), ESC=exit)", prompt ? prompt : "Select a command: ");
 	}
-	else if (cnt < 18)
+	else if (cnt < 19)
 	{
 		/* Display the prompt */
 		prtf(0, 0, "%s (Command (a-%c), ESC=exit)",
@@ -483,7 +483,7 @@ static int get_choice(char c, int num, bool *ask)
 	
 	int i;
 
-	if (num < 18)
+	if (num < 19)
 	{
 		if (isalpha(c))
 		{
