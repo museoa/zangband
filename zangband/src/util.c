@@ -339,7 +339,7 @@ void my_fclose(FILE *fff)
 	if (!fff) return;
 
 	/* Close, check for error */
-	fclose(fff);
+	(void)fclose(fff);
 }
 
 
@@ -1864,7 +1864,7 @@ char inkey(void)
 
 
 	/* Restore the cursor */
-	Term_set_cursor(v);
+	(void)Term_set_cursor(v);
 
 
 	/* Cancel the various "global parameters" */
@@ -2051,37 +2051,37 @@ cptr quark_str(s16b i)
 /*
  * The next "free" index to use
  */
-u16b message__next;
+static u16b message__next;
 
 /*
  * The index of the oldest message (none yet)
  */
-u16b message__last;
+static u16b message__last;
 
 /*
  * The next "free" offset
  */
-u16b message__head;
+static u16b message__head;
 
 /*
  * The offset to the oldest used char (none yet)
  */
-u16b message__tail;
+static u16b message__tail;
 
 /*
  * The array of offsets, by index [MESSAGE_MAX]
  */
-u16b *message__ptr;
+static u16b *message__ptr;
 
 /*
  * The array of chars, by offset [MESSAGE_BUF]
  */
-char *message__buf;
+static char *message__buf;
 
 /*
  * The array[MESSAGE_MAX] of bytes for the colors of messages
  */
-byte *message__color;
+static byte *message__color;
 
 
 /*
@@ -2796,7 +2796,7 @@ void c_roff(byte a, cptr str)
 				for (i = w - 2; i >= 0; i--)
 				{
 					/* Grab existing attr/char */
-					Term_what(i, y, &av[i], &cv[i]);
+					(void)Term_what(i, y, &av[i], &cv[i]);
 
 					/* Break on space */
 					if (cv[i] == ' ') break;
@@ -2889,9 +2889,8 @@ bool askfor_aux(char *buf, int len)
 
 	bool done = FALSE;
 
-
 	/* Locate the cursor */
-	Term_locate(&x, &y);
+	(void)Term_locate(&x, &y);
 
 
 	/* Paranoia -- check len */

@@ -2344,7 +2344,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(40))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2573,7 +2573,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(21))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2725,7 +2725,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(21))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2798,7 +2798,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Roll for random artifact */
 					if (one_in_(21))
 					{
-						create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 
 						break;
 					}
@@ -2832,7 +2832,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2871,7 +2871,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2913,7 +2913,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -2990,7 +2990,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Roll for a random artifacts */
 					if (one_in_(20))
 					{
-						create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 
 						break;
 					}
@@ -3038,7 +3038,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Roll for a random artifact */
 				if (one_in_(20))
 				{
-					create_artifact(o_ptr, FALSE);
+					(void)create_artifact(o_ptr, FALSE);
 
 					break;
 				}
@@ -3199,7 +3199,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (one_in_(7))
 					{
 						/* Randart ring */
-						create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 					}
 					else
 					{
@@ -3452,7 +3452,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (one_in_(7))
 					{
 						/* Randart amulet */
-						create_artifact(o_ptr, FALSE);
+						(void)create_artifact(o_ptr, FALSE);
 
 						if (o_ptr->pval == 0)
 						{

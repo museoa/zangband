@@ -2038,16 +2038,13 @@ errr Term_what(int x, int y, byte *a, char *c)
 /*
  * Flush and forget the input
  */
-errr Term_flush(void)
+void Term_flush(void)
 {
 	/* Hack -- Flush all events */
 	Term_xtra(TERM_XTRA_FLUSH, 0);
 
 	/* Forget all keypresses */
 	Term->key_head = Term->key_tail = 0;
-
-	/* Success */
-	return (0);
 }
 
 

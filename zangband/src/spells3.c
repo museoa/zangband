@@ -1034,7 +1034,7 @@ void brand_weapon(int brand_type)
 
 		msg_format("Your %s %s", o_name, act);
 
-		enchant(o_ptr, rand_range(4, 6), ENCH_TOHIT | ENCH_TODAM);
+		(void)enchant(o_ptr, rand_range(4, 6), ENCH_TOHIT | ENCH_TODAM);
 	}
 	else
 	{
@@ -1076,17 +1076,17 @@ void call_the_(void)
 	{
 		for (i = 1; i < 10; i++)
 		{
-			if (i-5) fire_ball(GF_ROCKET, i, 175, 2);
+			if (i != 5) (void)fire_ball(GF_ROCKET, i, 175, 2);
 		}
 
 		for (i = 1; i < 10; i++)
 		{
-			if (i-5) fire_ball(GF_MANA, i, 175, 3);
+			if (i != 5) (void)fire_ball(GF_MANA, i, 175, 3);
 		}
 
 		for (i = 1; i < 10; i++)
 		{
-			if (i-5) fire_ball(GF_NUKE, i, 175, 4);
+			if (i != 5) (void)fire_ball(GF_NUKE, i, 175, 4);
 		}
 	}
 	else
@@ -2900,7 +2900,7 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 	if (ident && !(k_ptr->aware))
 	{
 		k_ptr->aware = TRUE;
-		gain_exp((k_ptr->level + (p_ptr->lev >> 1)) / p_ptr->lev);
+		gain_exp((k_ptr->level + p_ptr->lev / 2) / p_ptr->lev);
 	}
 	
 	/* Window stuff */
@@ -2920,7 +2920,7 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 void display_spell_list(void)
 {
 	int             i, j;
-	int             y, x;
+	int             y = 1, x = 1;
 	int             use_realm1 = p_ptr->realm1 - 1;
 	int             use_realm2 = p_ptr->realm2 - 1;
 	int             m[9];
@@ -2938,9 +2938,6 @@ void display_spell_list(void)
 	/* Mindcrafter spell-list */
 	if (p_ptr->pclass == CLASS_MINDCRAFTER)
 	{
-		int             i;
-		int             y = 1;
-		int             x = 1;
 		int             minfail;
 		int             plev = p_ptr->lev;
 		int             chance;
@@ -3453,7 +3450,8 @@ void print_spells(byte *spells, int num, int y, int x, int realm)
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s",
 		    I2A(i), spell_names[realm][spell], /* realm, spell */
-		    s_ptr->slevel, s_ptr->smana, spell_chance(spell, realm), comment);
+		    (int)s_ptr->slevel, (int)s_ptr->smana,
+			spell_chance(spell, realm), comment);
 		c_prt(line_attr, out_val, y + i + 1, x);
 	}
 
@@ -3835,7 +3833,7 @@ void acid_dam(int dam, cptr kb_str)
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid))
-		inven_damage(set_acid_destroy, inv);
+		(void)inven_damage(set_acid_destroy, inv);
 }
 
 
@@ -3864,7 +3862,7 @@ void elec_dam(int dam, cptr kb_str)
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
-		inven_damage(set_elec_destroy, inv);
+		(void)inven_damage(set_elec_destroy, inv);
 }
 
 
@@ -3893,7 +3891,7 @@ void fire_dam(int dam, cptr kb_str)
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire))
-		inven_damage(set_fire_destroy, inv);
+		(void)inven_damage(set_fire_destroy, inv);
 }
 
 
@@ -3922,7 +3920,7 @@ void cold_dam(int dam, cptr kb_str)
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold))
-		inven_damage(set_cold_destroy, inv);
+		(void)inven_damage(set_cold_destroy, inv);
 }
 
 
@@ -4145,7 +4143,7 @@ bool brand_bolts(void)
 		add_ego_flags(o_ptr, EGO_FLAME);
 
 		/* Enchant */
-		enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
+		(void)enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
 
 		/* Notice */
 		return (TRUE);
@@ -4246,7 +4244,7 @@ bool polymorph_monster(int y, int x)
 			monster_terrain_sensitive = FALSE;
 
 			/* Placing the new monster failed */
-			place_monster_aux(y, x, old_r_idx, FALSE, FALSE, friendly, pet);
+			(void)place_monster_aux(y, x, old_r_idx, FALSE, FALSE, friendly, pet);
 
 			monster_terrain_sensitive = TRUE;
 		}

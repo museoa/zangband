@@ -80,52 +80,52 @@ void self_knowledge(void)
 
 	for (v_nr = 0; v_nr < MAX_PLAYER_VIRTUES; v_nr++)
 	{
-		char v_name[20];
+		char virt_name[20];
 		char vir_desc[80];
 		int tester = p_ptr->virtues[v_nr];
 
-		strcpy(v_name, virtue[(p_ptr->vir_types[v_nr]) - 1]);
+		strcpy(virt_name, virtue[(p_ptr->vir_types[v_nr]) - 1]);
 
-		sprintf(vir_desc, "Oops. No info about %s.", v_name);
+		sprintf(vir_desc, "Oops. No info about %s.", virt_name);
 		if (tester < -100)
 			sprintf(vir_desc, "You are the polar opposite of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < -80)
 			sprintf(vir_desc, "You are an arch-enemy of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < -60)
 			sprintf(vir_desc, "You are a bitter enemy of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < -40)
 			sprintf(vir_desc, "You are an enemy of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < -20)
 			sprintf(vir_desc, "You have sinned against %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < 0)
 			sprintf(vir_desc, "You have strayed from the path of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester == 0)
 			sprintf(vir_desc,"You are neutral to %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < 20)
 			sprintf(vir_desc,"You are somewhat virtuous in %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < 40)
 			sprintf(vir_desc,"You are virtuous in %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < 60)
 			sprintf(vir_desc,"You are very virtuous in %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < 80)
 			sprintf(vir_desc,"You are a champion of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else if (tester < 100)
 			sprintf(vir_desc,"You are a great champion of %s (%d).",
-				v_name, tester);
+				virt_name, tester);
 		else
 			sprintf(vir_desc,"You are the living embodiment of %s (%d).",
-		v_name, tester);
+		virt_name, tester);
 
 		strcpy(v_string[v_nr], vir_desc);
 
@@ -601,14 +601,14 @@ void self_knowledge(void)
 		if ((k == 22) && (j+1 < i))
 		{
 			prt("-- more --", k, 15);
-			inkey();
+			(void)inkey();
 			for (; k > 2; k--) prt("", k, 15);
 		}
 	}
 
 	/* Pause */
 	prt("[Press any key to continue]", k, 13);
-	inkey();
+	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -788,14 +788,14 @@ void report_magics(void)
 		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", k, 15);
-			inkey();
+			(void)inkey();
 			for (; k > 2; k--) prt("", k, 15);
 		}
 	}
 
 	/* Pause */
 	prt("[Press any key to continue]", k, 13);
-	inkey();
+	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -3564,23 +3564,23 @@ void call_chaos(void)
 			if (dummy - 5)
 			{
 				if (line_chaos)
-					fire_beam(Chaos_type, dummy, 75);
+					(void)fire_beam(Chaos_type, dummy, 75);
 				else
-					fire_ball(Chaos_type, dummy, 75, 2);
+					(void)fire_ball(Chaos_type, dummy, 75, 2);
 			}
 		}
 	}
 	else if (one_in_(3))
 	{
-		fire_ball(Chaos_type, 0, 300, 8);
+		(void)fire_ball(Chaos_type, 0, 300, 8);
 	}
 	else
 	{
 		if (!get_aim_dir(&dir)) return;
 		if (line_chaos)
-			fire_beam(Chaos_type, dir, 150);
+			(void)fire_beam(Chaos_type, dir, 150);
 		else
-			fire_ball(Chaos_type, dir, 150, 3 + (plev / 35));
+			(void)fire_ball(Chaos_type, dir, 150, 3 + (plev / 35));
 	}
 }
 
@@ -3606,19 +3606,23 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("The ground trembles...");
-					earthquake(py, px, rand_range(5, 15));
+					(void)earthquake(py, px, rand_range(5, 15));
 					if (!one_in_(6)) break;
 				}
+				
+				/* Fall through */
 			}
 			case 30: case 31:
 			{
 				if (!(*count))
 				{
 					msg_print("A portal opens to a plane of raw mana!");
-					destroy_area(py, px, 20);
+					(void)destroy_area(py, px, 20);
 					project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
 					if (!one_in_(6)) break;
 				}
+				
+				/* Fall through */
 			}
 			case 32: case 33:
 			{
@@ -3629,6 +3633,8 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					if (!one_in_(13)) (*count) += activate_hi_summon();
 					if (!one_in_(6)) break;
 				}
+				
+				/* Fall through */
 			}
 			case 34:
 			{
@@ -3636,30 +3642,40 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				wall_breaker();
 				if (one_in_(7))
 				{
-					project(1, 7, py, px, 50, GF_KILL_WALL, flg);
+					(void)project(1, 7, py, px, 50, GF_KILL_WALL, flg);
 				}
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 1: case 2: case 3: case 16: case 17:
 			{
 				aggravate_monsters(0);
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 4: case 5: case 6:
 			{
 				(*count) += activate_hi_summon();
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 7: case 8: case 9: case 18:
 			{
 				(*count) += summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 10: case 11: case 12:
 			{
 				msg_print("You feel your life draining away...");
 				lose_exp(p_ptr->exp / 16);
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 13: case 14: case 15: case 19: case 20:
 			{
@@ -3672,26 +3688,32 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msg_print("You feel like a statue!");
 					if (p_ptr->free_act)
 					{
-						set_paralyzed(p_ptr->paralyzed + randint1(3));
+						(void)set_paralyzed(p_ptr->paralyzed + randint1(3));
 					}
 					else
 					{
-						set_paralyzed(p_ptr->paralyzed + randint1(13));
+						(void)set_paralyzed(p_ptr->paralyzed + randint1(13));
 					}
 					stop_ty = TRUE;
 				}
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 21: case 22: case 23:
 			{
 				(void)do_dec_stat(randint0(6));
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 24:
 			{
 				msg_print("Huh? Who am I? What am I doing here?");
-				lose_all_info();
+				(void)lose_all_info();
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			case 25:
 			{
@@ -3705,6 +3727,8 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					break;
 				}
 				if (!one_in_(6)) break;
+				
+				/* Fall through */
 			}
 			default:
 			{
@@ -3834,12 +3858,12 @@ void wall_breaker(void)
 			if ((y != py) || (x != px)) break;
 		}
 
-		project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
+		(void)project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
 				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 	}
 	else if (randint1(100) > 30)
 	{
-		earthquake(py, px, 1);
+		(void)earthquake(py, px, 1);
 	}
 	else
 	{
@@ -3854,7 +3878,7 @@ void wall_breaker(void)
 				if ((y != py) || (x != px)) break;
 			}
 
-			project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
+			(void)project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
 					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 		}
 	}
