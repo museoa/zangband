@@ -25,7 +25,4 @@ NSConfig::SourceOne classic-common
 # Hack
 NSConfig::NoMoreIcons
 
-# Assign an icon to each flavored object
-NSConfig::SourceOne config-flavor
-
 
