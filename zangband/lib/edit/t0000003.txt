@@ -196,6 +196,7 @@ F:b:129:3:0:0:0:0:0:24
 # (Adjust reward as needed; I think this quest is tough enough, and
 #  Artifact Creation scrolls are flaky enough to not be an automatic
 #  huge reward.  Besides, they're cool when they turn up.)
+# Changed to BDSM -- RG
 ?:[EQU $QUEST24 3]
 F:~:1:3:0:432
 
