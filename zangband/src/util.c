@@ -167,12 +167,6 @@ void init_setuid(void)
 
 	/* Drop permissions */
 	safe_setuid_drop();
-	
-	/* Initialize the "time" checker */
-	if (check_time_init() || check_time())
-	{
-		quit("The gates to Angband are closed (bad time).");
-	}
 
 	/* Initialize the "load" checker */
 	if (check_load_init() || check_load())

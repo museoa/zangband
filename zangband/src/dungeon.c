@@ -930,7 +930,7 @@ static void process_world(void)
 	if (!(turn % 1000))
 	{
 		/* Check time and load */
-		if ((0 != check_time()) || (0 != check_load()))
+		if (0 != check_load())
 		{
 			/* Warning */
 			if (closing_flag <= 2)

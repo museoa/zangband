@@ -347,10 +347,6 @@
 #endif /* DEFAULT_PATH */
 
 
-/*
- * OPTION: Check the "time" against "lib/file/hours.txt"
- */
-/* #define CHECK_TIME */
 
 /*
  * OPTION: Check the "load" against "lib/file/load.txt"

@@ -414,7 +414,6 @@ extern errr file_character(cptr name, bool full);
 extern errr process_pref_file_command(char *buf);
 extern errr process_pref_file(cptr fmt, ...);
 extern void print_equippy(void);
-extern errr check_time_init(void);
 extern errr check_load_init(void);
 extern void likert(char *buf, uint max, cptr fmt, va_list *vp);
 extern void player_flags(object_flags *of_ptr);
