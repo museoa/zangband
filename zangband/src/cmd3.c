@@ -131,7 +131,9 @@ void do_cmd_wield(void)
 
 	object_type *q_ptr;
 
-	object_type *o_ptr;
+    object_type *o_ptr;
+
+    object_type temp_object;
 
 	cptr act;
 
@@ -186,7 +188,22 @@ void do_cmd_wield(void)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+    p_ptr->energy_use = 100;
+
+	/* Split object */
+    /*
+     * We have to split now because inven_takeoff calls reorder_objects_aux,
+     * which will mess up the object list so that q_ptr might not point at
+     * the object we want to wield afterwards.
+     */
+    q_ptr = item_split(q_ptr, 1);
+
+    /*
+     * Save the object to a safe place, because inven_takeoff calls
+     * item_split again, which will clobber the temporary object returned by
+     * the previous item_split call.
+     */
+    object_copy(&temp_object, q_ptr);
 
 	/* Take off existing item */
 	if (o_ptr->k_idx)
@@ -195,11 +212,8 @@ void do_cmd_wield(void)
 		(void)inven_takeoff(o_ptr);
 	}
 
-	/* Split object */
-	q_ptr = item_split(q_ptr, 1);
-
 	/* Wear the new stuff */
-	object_copy(o_ptr, q_ptr);
+	object_copy(o_ptr, &temp_object);
 
 	/* Forget stack */
 	o_ptr->next_o_idx = 0;
