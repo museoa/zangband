@@ -3028,6 +3028,12 @@ static errr rd_savefile_new_aux(void)
 	{
 		/* Read the stores */
 		rd_u16b(&tmp16u);
+		
+		town[i].numstores = tmp16u;
+		
+		/* Allocate the stores */
+		C_MAKE(town[i].store, town[i].numstores, store_type);
+		
 		for (i = 1; i < town_count; i++)
 		{
 			/* HACK - ignore the empty towns */
