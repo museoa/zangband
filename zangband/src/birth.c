@@ -2494,8 +2494,17 @@ static bool player_birth_aux_3(void)
 
 #ifdef ALLOW_AUTOROLLER
 
+#ifndef OLD_AUTOROLLER
+
+	s16b stat_weight[A_MAX];
+	s16b stat_save[A_MAX];
+
+#else /* !OLD_AUTOROLLER */
+
 	s16b stat_limit[A_MAX];
 
+#endif /* OLD_AUTOROLLER */
+	
 	s32b stat_match[A_MAX];
 
 	s32b auto_round = 0L;
@@ -2515,6 +2524,65 @@ static bool player_birth_aux_3(void)
 
 		/* Clean up */
 		clear_from(10);
+
+#ifndef OLD_AUTOROLLER
+
+		/* Extra info */
+		Term_putstr(5, 10, -1, TERM_WHITE,
+			"The auto-roller will generate 500 characters and try to pick");
+		Term_putstr(5, 11, -1, TERM_WHITE,
+			"the one with the best stats, according to the weightings you");
+		Term_putstr(5, 12, -1, TERM_WHITE,
+			"choose below. Enter a value from 1-100 for each stat.");
+
+		/* Prompt for the stat weights */
+		put_str("Enter weight for: ", 2, 15);
+
+		/* Output the prompts */
+		for (i = 0; i < A_MAX; i++)
+		{
+			/* Reset the "success" counter */
+			stat_match[i] = 0;
+
+			/* Prepare a prompt */
+			sprintf(buf, "%-5s", stat_names[i]);
+
+			/* Dump the prompt */
+			put_str(buf, 5, 16 + i);
+		}
+
+		/* Input the minimum stats */
+		for (i = 0; i < A_MAX; i++)
+		{
+			/* In the Antiband version this is dependent on class & stat */
+			int def_weight = 50;
+
+			/* Get a minimum stat */
+			while (TRUE)
+			{
+				char *s;
+
+				/* Move the cursor */
+				put_str("", 10, 16 + i);
+
+				/* Default */
+				sprintf(inp, "%i", def_weight);
+
+				/* Get a response (or escape) */
+				if (!askfor_aux(inp, 9)) inp[0] = '\0';
+
+				/* Extract an input */
+				v = atoi(inp);
+
+				/* Break on valid input */
+				if (v <= 100) break;
+			}
+
+			/* Save the weight */
+			stat_weight[i] = (v > 0) ? v : def_weight;
+		}
+
+#else /* !OLD_AUTOROLLER */
 
 		/* Extra info */
 		Term_putstr(5, 10, -1, TERM_WHITE,
@@ -2602,6 +2670,9 @@ static bool player_birth_aux_3(void)
 			/* Save the minimum stat */
 			stat_limit[i] = (v > 0) ? v : 0;
 		}
+
+#endif /* !OLD_AUTOROLLER */
+
 	}
 
 #endif /* ALLOW_AUTOROLLER */
@@ -2620,6 +2691,127 @@ static bool player_birth_aux_3(void)
 		/* Feedback */
 		if (autoroller)
 		{
+		
+#ifndef OLD_AUTOROLLER
+
+			s32b best_score;
+			s32b cur_score;
+
+			Term_clear();
+
+			/* Label */
+			put_str("Weight", col + 5, 2);
+
+			/* Label */
+			put_str("  Roll", col + 13, 2);
+
+			/* Put the stat weights */
+			for (i = 0; i < A_MAX; i++)
+			{
+				/* Label stats */
+				put_str(stat_names[i], col, i + 3);
+
+				/* Put the weight */
+				sprintf(buf, "%6i", stat_weight[i]);
+				c_put_str(TERM_L_BLUE, buf, col + 5, i + 3);
+			}
+
+			/* Note when we started */
+			last_round = auto_round;
+
+			/* Label count */
+			put_str("Round:", col + 13, 10);
+
+			/* Indicate the state */
+			put_str("(Hit ESC to stop)", col + 13, 12);
+
+			best_score = -1;
+			for (i = 0; i < A_MAX; i++)
+			{
+				stat_save[i] = 3;
+			}
+
+			/* Auto-roll */
+			while (TRUE)
+			{
+				bool accept = TRUE;
+
+				/* Get a new character */
+				get_stats();
+
+				/* Advance the round */
+				auto_round++;
+
+				/* Hack -- Prevent overflow */
+				if (auto_round >= 1000000L) break;
+
+				/* Calculate a score for the rolled stats */
+				cur_score = 0;
+				for (i = 0; i < A_MAX; i++)
+				{
+					if (p_ptr->stat_cur[i] <= 18)
+					{
+						cur_score += p_ptr->stat_cur[i] * stat_weight[i] * 10;
+					}
+					else
+					{
+						cur_score += (p_ptr->stat_cur[i] - 18 + 180) *
+								stat_weight[i];
+					}
+				}
+
+				/* Compare current score against saved stats */
+				if (cur_score > best_score)
+				{
+					best_score = cur_score;
+					for (i = 0; i < A_MAX; i++)
+					{
+						stat_save[i] = p_ptr->stat_cur[i];
+					}
+				}
+
+				/* Break after 500 rolls */
+				if (auto_round >= last_round + 500) break;
+
+				/* Take note every x rolls */
+				flag = (!(auto_round % AUTOROLLER_STEP));
+
+				/* Update display occasionally */
+				if (flag || (auto_round < last_round + 100))
+				{
+					/* Put the stats (and percents) */
+					for (i = 0; i < A_MAX; i++)
+					{
+						/* Put the stat */
+						cnv_stat(stat_use[i], buf);
+						c_put_str(TERM_L_GREEN, buf, col+13, 3+i);
+					}
+
+					/* Dump round */
+					put_str(format("%10ld", auto_round), col + 20, 10);
+
+					/* Make sure they see everything */
+					Term_fresh();
+
+					/* Delay 1/10 second */
+					if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
+
+					/* Do not wait for a key */
+					inkey_scan = TRUE;
+
+					/* Check for a keypress */
+					if (inkey()) break;
+				}
+			}
+
+			/* Load best stat set rolled */
+			for (i = 0; i < A_MAX; i++)
+			{
+				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_save[i];
+			}
+
+#else /* !OLD_AUTOROLLER */
+		
 			Term_clear();
 
 			/* Label */
@@ -2729,6 +2921,9 @@ static bool player_birth_aux_3(void)
 					if (inkey()) break;
 				}
 			}
+
+#endif /* OLD_AUTOROLLER */
+
 		}
 
 		/* Otherwise just get a character */
