@@ -52,7 +52,7 @@
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 3
-#define FAKE_VER_PATCH 2
+#define FAKE_VER_PATCH 3
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1
@@ -491,6 +491,33 @@
 #define BIAS_MAGE           17
 #define BIAS_WARRIOR        18
 #define BIAS_RANGER         19
+
+
+/*** Pet constants ***/
+
+
+/*
+ * Commands
+ */
+#define PET_DISMISS					1
+#define PET_STAY_CLOSE				2
+#define PET_FOLLOW_ME				3
+#define PET_SEEK_AND_DESTROY		4
+#define PET_ALLOW_SPACE				5
+#define PET_STAY_AWAY				6
+#define PET_OPEN_DOORS           7
+#define PET_TAKE_ITEMS				8
+
+/*
+ * Follow distances
+ */
+#define PET_CLOSE_DIST				1
+#define PET_FOLLOW_DIST				6
+#define PET_SEEK_DIST				10
+#define PET_DESTROY_DIST			255
+#define PET_SPACE_DIST				(-10)
+#define PET_AWAY_DIST				(-25)
+
 
 /*
  * There is a 1/20 (5%) chance of inflating the requested object_level
