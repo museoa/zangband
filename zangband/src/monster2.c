@@ -1845,6 +1845,21 @@ static bool place_monster_okay(int r_idx)
 	/* Paranoia -- Skip identical monsters */
 	if (place_monster_idx == r_idx) return (FALSE);
 
+	/* Good vs. evil */
+	if (((r_ptr->flags3 & RF3_EVIL) &&
+		  (z_ptr->flags3 & RF3_GOOD)) ||
+		 ((r_ptr->flags3 & RF3_GOOD) &&
+		  (z_ptr->flags3 & RF3_EVIL)))
+	{
+		return FALSE;
+	}
+
+	/* Hostile vs. non-hostile */
+	if ((r_ptr->flags7 & RF7_FRIENDLY) != (z_ptr->flags7 & RF7_FRIENDLY))
+	{
+		return FALSE;
+	}
+
 	/* Okay */
 	return (TRUE);
 }
@@ -2126,7 +2141,7 @@ static bool summon_specific_okay(int r_idx)
 
 		/* Do not summon enemies */
 
-		/* Friendly vs. opposite aligned normal or pet */
+		/* Good vs. evil */
 		if (((r_ptr->flags3 & RF3_EVIL) &&
 			  (s_ptr->flags3 & RF3_GOOD)) ||
 			 ((r_ptr->flags3 & RF3_GOOD) &&
