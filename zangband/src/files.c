@@ -532,6 +532,9 @@ errr process_pref_file_aux(char *buf)
 				return (0);
 			}
 		}
+
+		/* XXX XXX XXX - ignore unknown options */
+		return (0);
 	}
 
 	/* Process "Y:<str>" -- turn option on */
@@ -552,6 +555,9 @@ errr process_pref_file_aux(char *buf)
 				return (0);
 			}
 		}
+
+		/* XXX XXX XXX - ignore unknown options */
+		return (0);
 	}
 
 	/* Process "Z:<type>:<str>" -- set spell color */
