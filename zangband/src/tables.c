@@ -1420,8 +1420,13 @@ owner_type owners[MAX_STORES][MAX_OWNERS] =
 b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 {
 	{
-		/* Weaponsmith */
+		/* Weaponmaster */
 		{ "Suiyan",			150,			RACE_HUMAN},
+	},
+	
+	{
+		/* Zymurgist */
+		{ "Tanistil",			100,			RACE_ELF},
 	}
 };
 

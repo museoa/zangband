@@ -158,6 +158,7 @@ static bool create_city(int x, int y, int town_num)
 	u16b building;
 
 	bool city_block;
+	u32b rng_seed_save;
 
 	wild_gen2_type *w_ptr;
 
@@ -212,6 +213,9 @@ static bool create_city(int x, int y, int town_num)
 		}
 	}
 	
+	/* Hack - save seed of rng */
+	rng_seed_save = Rand_value;
+	
 	/* 
 	 * Generate second fractal
 	 */
@@ -219,7 +223,10 @@ static bool create_city(int x, int y, int town_num)
 	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 	set_temp_mid(WILD_BLOCK_SIZE * law);
 	frac_block();
-		
+	
+	/* Restore the old seed */
+	Rand_value = rng_seed_save;
+	
 	/* Find walls */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{

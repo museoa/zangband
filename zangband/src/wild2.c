@@ -575,7 +575,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 		
-		case BUILD_WEAPONSMITH:
+		case BUILD_WEAPONMASTER:
 		{
 			field = FT_BUILD_WEAPON;
 			break;
@@ -610,70 +610,37 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	/* Really dodgy - just a rectangle, independent of type, for now */
 	int xx, yy;
 	
-	store_type *st_ptr = &town[town_num].store[store];
+	/* Hack - save the rng seed */
+	u32b rng_save_seed = Rand_value;
 	
-	bool on_screen;
+	store_type *st_ptr = &town[town_num].store[store];
 
 	/* Save location */
 	xx = x;
 	yy = y;
 	
 	/* Get coords */
-	on_screen = get_city_block_locat(&xx, &yy);
+	if (!get_city_block_locat(&xx, &yy)) return;
 	
 	/* What are we drawing? */
 	if (build_is_store(st_ptr->type))
 	{
-		if (on_screen)
-		{
-			/* Draw the store */
-			draw_store(xx + 4, yy + 4, st_ptr, x, y);
-		}
-		else
-		{
-			/* 
-			 * XXX XXX XXX Hack - cycle RNG
-			 * (The RNG must be in a consistant state no matter
-			 * whether the building is on the screen or not.
-			 */
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-		}
+		/* Draw the store */
+		draw_store(xx + 4, yy + 4, st_ptr, x, y);
 	}
 	else if (build_is_general(st_ptr->type))
 	{
-		if (on_screen)
-		{
-			/* Draw the general feature */
-			draw_general(xx + 4, yy + 4, st_ptr, x, y);
-		}
+		/* Draw the general feature */
+		draw_general(xx + 4, yy + 4, st_ptr, x, y);
 	}
 	else
 	{
-		if (on_screen)
-		{
-			/* Hack - Draw the "normal" building */
-			draw_store(xx + 4, yy + 4, st_ptr, x, y);
-		}
-		else
-		{
-			/* 
-			 * XXX XXX XXX Hack - cycle RNG
-			 * (The RNG must be in a consistant state no matter
-			 * whether the building is on the screen or not.
-			 */
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-			(void) randint0(1);
-		}
+		/* Hack - Draw the "normal" building */
+		draw_store(xx + 4, yy + 4, st_ptr, x, y);
 	}
+	
+	/* Hack - restore the rng seed */
+	Rand_value = rng_save_seed;
 }
 
 
@@ -711,7 +678,7 @@ void draw_city(u16b town_num)
 	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 	set_temp_mid(WILD_BLOCK_SIZE * town[town_num].pop);
 	frac_block();
-	
+		
 	/* Find area outside the city */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -876,7 +843,7 @@ void draw_city(u16b town_num)
 				}
 			}
 		}
-					
+		
 		/* Draw the building */
 		draw_building(0, i, j, build, town_num);
 		
@@ -1041,6 +1008,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FT_STORE_HOME:
 				case FT_STORE_BOOK:
 				case FT_BUILD_WEAPON:
+				case FT_BUILD_RECHARGE:
 				{
 					/* Stores + buildings */
 					(void) place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx);

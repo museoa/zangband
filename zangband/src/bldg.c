@@ -462,11 +462,20 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 	/* Display building-specific information */
 	switch (f_ptr->data[0])
 	{
-		case BLDG_WEAPONSMITH:
+		case BLDG_WEAPONMASTER:
 		{
 			sprintf(tmp_str, " E) Examine Weapons (%dgp)",
 				 f_ptr->data[1] * bo_ptr->inflate);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+			break;
+		}
+		
+		case BLDG_RECHARGE:
+		{
+			sprintf(tmp_str, " R) Recharge Items");
+			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+			
+			break;
 		}
 	}
 
@@ -1258,7 +1267,7 @@ static bool item_tester_hook_ammo(object_type *o_ptr)
  * Copies the weapons to compare into the weapon-slot and
  * compares the values for both weapons.
  */
-static bool compare_weapons(void)
+static void compare_weapons(void)
 {
 	int item, item2;
 	object_type *o1_ptr, *o2_ptr;
@@ -1280,7 +1289,7 @@ static bool compare_weapons(void)
 	/* Get the first weapon */
 	q = "What is your first weapon? ";
 	s = "You have nothing to compare.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN))) return (FALSE);
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN))) return;
 
 	/* Get the item (in the pack) */
 	o1_ptr = &inventory[item];
@@ -1291,7 +1300,7 @@ static bool compare_weapons(void)
 	/* Get the second weapon */
 	q = "What is your second weapon? ";
 	s = "You have nothing to compare.";
-	if (!get_item(&item2, q, s, (USE_EQUIP | USE_INVEN))) return (FALSE);
+	if (!get_item(&item2, q, s, (USE_EQUIP | USE_INVEN))) return;
 
 	/* Get the item (in the pack) */
 	o2_ptr = &inventory[item2];
@@ -1331,7 +1340,7 @@ static bool compare_weapons(void)
 	put_str("(Only highest damage applies per monster. Special damage not cumulative.)", 20, 0);
 
 	/* Done */
-	return (TRUE);
+	return;
 }
 
 
@@ -1435,6 +1444,7 @@ static bool enchant_item(int cost, int to_hit, int to_dam, int to_ac)
 	}
 }
 
+#endif /* 0 */
 
 /*
  * Recharge rods, wands and staves
@@ -1446,7 +1456,7 @@ static bool enchant_item(int cost, int to_hit, int to_dam, int to_ac)
  * for recharging wands and staves are dependent on the cost of
  * the base-item.
  */
-static void building_recharge(void)
+static void building_recharge(long cost)
 {
 	int         item, lev;
 	object_type *o_ptr;
@@ -1535,16 +1545,22 @@ static void building_recharge(void)
 	}
 	else if (o_ptr->tval == TV_STAFF)
 	{
-		/* Price per charge ( = double the price paid by shopkeepers for the charge) */
-		price = (get_object_cost(o_ptr) / 10) * o_ptr->number;
+		/*
+		 * Price per charge ( = double the price paid 
+		 * by shopkeepers for the charge)
+		 */
+		price = (o_ptr->cost / 10) * o_ptr->number;
 
 		/* Pay at least 10 gold per charge */
 		price = MAX(10, price);
 	}
 	else
 	{
-		/* Price per charge ( = double the price paid by shopkeepers for the charge) */
-		price = (get_object_cost(o_ptr) / 10);
+		/*
+		 * Price per charge ( = double the price paid
+		 * by shopkeepers for the charge)
+		 */
+		price = (o_ptr->cost / 10);
 
 		/* Pay at least 10 gold per charge */
 		price = MAX(10, price);
@@ -1567,6 +1583,9 @@ static void building_recharge(void)
 		return;
 	}
 
+	/* Factor in shopkeeper greed */
+	price = (price * cost / 100);
+	
 	/* Check if the player has enough money */
 	if (p_ptr->au < price)
 	{
@@ -1633,7 +1652,6 @@ static void building_recharge(void)
 	/* Finished */
 	return;
 }
-#endif /* 0 */
 
 
 #if 0
@@ -1715,9 +1733,6 @@ static void bldg_process_command(building_type *bldg, int i)
 			break;
 		case BACT_RESEARCH_MONSTER:
 			paid = research_mon();
-			break;
-		case BACT_COMPARE_WEAPONS:
-			paid = compare_weapons();
 			break;
 		case BACT_ENCHANT_WEAPON:
 			item_tester_hook = item_tester_hook_melee_weapon;
@@ -1849,24 +1864,59 @@ void do_cmd_quest(void)
 
 #endif /* 0 */
 
+/* Does the player have enough gold for this action? */
+static bool test_gold(int *cost)
+{
+	if (p_ptr->au < *cost)
+	{
+		/* Player does not have enough gold */
+
+		msg_format("You need %d gold to do this!", *cost);
+		msg_print(NULL);
+		
+		*cost = 0;
+		
+		return (FALSE);
+	
+	}
+	
+	/* Player has enough gold */
+	return (TRUE);
+}
+
 static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 {
-	long	cost = 0;
+	int		cost = 0;
 	bool	done = FALSE;
 	
 	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
 	switch (f_ptr->data[0])
 	{
-		case BLDG_WEAPONSMITH:
+		case BLDG_WEAPONMASTER:
 		{
 			if (p_ptr->command_cmd == 'E')
 			{
-				if(compare_weapons())
+				cost = f_ptr->data[1] * bo_ptr->inflate;
+				
+				if (test_gold(&cost))
 				{
-					cost = f_ptr->data[1] * bo_ptr->inflate;
+					compare_weapons();
+					
 					done = TRUE;
-				} 
+				}
+			}
+			
+			break;
+		}
+		
+		case BLDG_RECHARGE:
+		{
+			if (p_ptr->command_cmd == 'R')
+			{
+				building_recharge(f_ptr->data[1] * bo_ptr->inflate);
+				
+				done = TRUE;
 			}
 		}
 	}
