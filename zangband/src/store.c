@@ -181,13 +181,15 @@ static byte info_flags;
  * to adjust (by 200) to extract a usable multiplier.  Note that the
  * "greed" value is always something (?).
  */
-static s32b price_item(object_type *o_ptr, int greed, bool flip)
+static s32b price_item(object_type *o_ptr, bool flip)
 {
 	int factor;
 	int adjust;
 	s32b price;
 
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	
+	int greed = ot_ptr->min_inflate;
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);
@@ -1005,7 +1007,7 @@ static void display_entry(int pos)
 		}
 
 		/* Extract the "minimum" price */
-		x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+		x = price_item(o_ptr, FALSE);
 
 		/* Actually draw the price (with tax) */
 		(void)sprintf(out_val, "%9ld  ", (long)x);
@@ -1431,7 +1433,7 @@ static void store_purchase(int *store_top)
 	}
 
 	/* Determine the "best" price (per item) */
-	best = price_item(j_ptr, ot_ptr->min_inflate, FALSE);
+	best = price_item(j_ptr, FALSE);
 
 	/* Find out how many the player wants */
 	if (o_ptr->number > 1)
@@ -1466,7 +1468,7 @@ static void store_purchase(int *store_top)
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
 		/* Get price */
-		price = price_item(j_ptr, ot_ptr->min_inflate, FALSE) * amt;
+		price = price_item(j_ptr, FALSE) * amt;
 
 		/* Player can afford it */
 		if (p_ptr->au < price)
@@ -1690,46 +1692,6 @@ static void store_sell(int *store_top)
 	/* Get an item */
 	s = "You have nothing that I want.";
 
-	/* Update player inventory information */
-	OBJ_ITT_START (p_ptr->inventory, o_ptr)
-	{
-		/* Not right type of item? */
-		if (item_tester_hook && !item_tester_hook(o_ptr))
-		{
-			/* Hack - cannot sell item */
-			o_ptr->temp_cost = 0;
-
-			continue;
-		}
-
-		/* Not enough room? */
-		if (!store_check_num(o_ptr))
-		{
-			/* Hack - cannot sell item */
-			o_ptr->temp_cost = 0;
-
-			continue;
-		}
-
-		if (st_ptr->type == BUILD_STORE_HOME)
-		{
-			/* Hack - you can 'sell' anything to your home if there is room */
-			o_ptr->temp_cost = 1;
-		}
-		else
-		{
-			/*
-			 * Hack - Otherwise, get store price
-			 * for one item into o_ptr->temp_cost.
-			 * (This is set inside price_item().)
-			 */
-			(void)price_item(o_ptr, ot_ptr->min_inflate, FALSE);
-		}
-	}
-	OBJ_ITT_END;
-
-	Term_write_list(p_ptr->inventory, LIST_INVEN);
-
 	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN));
 
 	/* Not a valid item */
@@ -1744,7 +1706,6 @@ static void store_sell(int *store_top)
 		/* Nope */
 		return;
 	}
-
 
 	/* Assume one item */
 	amt = 1;
@@ -1814,7 +1775,7 @@ static void store_sell(int *store_top)
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
 		/* Get price */
-		price = price_item(q_ptr, ot_ptr->min_inflate, FALSE) * amt;
+		price = price_item(q_ptr, FALSE) * amt;
 
 		/* Sold... */
 		if (store_access_item(q_ptr, price, FALSE))
@@ -2454,6 +2415,8 @@ void do_cmd_store(const field_type *f1_ptr)
 	int tmp_chr;
 	int i;
 	int store_top;
+	
+	object_type *o_ptr;
 
 	/* Hack - save f1_ptr for later */
 	f_ptr = f1_ptr;
@@ -2528,7 +2491,6 @@ void do_cmd_store(const field_type *f1_ptr)
 	/* No automatic command */
 	p_ptr->command_new = 0;
 
-
 	/* Start at the beginning */
 	store_top = 0;
 
@@ -2559,6 +2521,67 @@ void do_cmd_store(const field_type *f1_ptr)
 		{
 			Term_write_list(st_ptr->stock, LIST_STORE);
 		}
+		
+		/* What can we sell? */
+		if (st_ptr->type == BUILD_STORE_HOME)
+		{
+			/* Home takes anything */
+			item_tester_hook = NULL;
+		}
+		else
+		{
+			/* Only allow items the store will buy */
+			item_tester_hook = store_will_stock;
+		}
+
+		/* Update player inventory information */
+		OBJ_ITT_START (p_ptr->inventory, o_ptr)
+		{
+			/* Not right type of item? */
+			if (item_tester_hook && !item_tester_hook(o_ptr))
+			{
+				/* Hack - cannot sell item */
+				o_ptr->temp_cost = 0;
+
+				continue;
+			}
+
+			/* Not enough room? */
+			if (!store_check_num(o_ptr))
+			{
+				/* Hack - cannot sell item */
+				o_ptr->temp_cost = 0;
+
+				continue;
+			}
+
+			if (st_ptr->type == BUILD_STORE_HOME)
+			{
+				/*
+				 * Hack - you can 'sell' anything to your home
+				 * if there is room
+				 */
+				o_ptr->temp_cost = 1;
+			}
+			else
+			{
+				/*
+				 * Hack - Otherwise, get store price
+				 * for one item into o_ptr->temp_cost.
+				 * (This is set inside price_item().)
+				 */
+				(void)price_item(o_ptr, FALSE);
+			}
+		}
+		OBJ_ITT_END;
+
+		/* Send information */
+		Term_write_list(p_ptr->inventory, LIST_INVEN);
+	
+		/* Reset tester hook */
+		item_tester_hook = NULL;
+		
+		
 
 		/* Basic commands */
 		prt(" ESC) Exit from Building.", 0, 22);
