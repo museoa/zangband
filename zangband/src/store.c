@@ -867,7 +867,7 @@ static void store_create(void)
 	for (tries = 0; tries < 50; tries++)
     {
         /* Assume no flags */
-        flags = OC_NONE;
+        flags = OC_NORMAL;
 
         /* Assume no bonus */
         delta = 0;
@@ -898,13 +898,13 @@ static void store_create(void)
         }
 
         /* Occasionally generate unusually good items */
-        while (one_in_(40))
+        while (one_in_(30))
         {
             delta += rand_range(5, 15);
         }
 
         /* Apply some magic */
-        apply_magic(q_ptr, level, delta + (level - k_info[kind].level) / 3, flags);
+        apply_magic(q_ptr, level, delta, flags);
 
 		/* Mega-Hack -- no chests in stores */
 		if (q_ptr->tval == TV_CHEST) continue;
