@@ -580,8 +580,8 @@ void borg_note(cptr what)
 	/* Mega-Hack -- Check against the search string */
 	if (borg_match[0] && strstr(what, borg_match))
 	{
-		/* Clean cancel */
-		borg_cancel = TRUE;
+		/* Tell the user why you quit */
+		borg_oops("Search string was matched");
 	}
 
 	/* Scan windows */

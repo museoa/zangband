@@ -2171,10 +2171,13 @@ static char borg_inkey_hack(int flush_first)
 	{
 		/* Flush messages */
 		borg_parse(NULL);
-	
-		/* Log death */
-		borg_log_death();
-		borg_log_death_data();
+		
+		/* Log death, if it is wanted */
+		if (borg_flag_dump)
+		{
+			borg_log_death();
+			borg_log_death_data();
+		}
 
 		/* flush the buffer */
 		borg_flush();
@@ -2315,11 +2318,7 @@ static char borg_inkey_hack(int flush_first)
 	return (ESCAPE);
 }
 
-
-/* this will display the values which the borg believes an
- * item has.  Select the item by inven # prior to hitting
- * the ^zo.
- */
+/* This will display the values which the borg believes an item has. */
 static void borg_display_item(list_item *l_ptr)
 {
 	int j = 13;
@@ -2375,6 +2374,34 @@ static void borg_display_item(list_item *l_ptr)
                     "%v", binary_fmt, l_ptr->kn_flags3);
 }
 
+/* Get all sorts of temporary values from the game. */
+static void borg_cheat_temp_bools(void)
+{
+	/* Allowable Cheat -- Obtain "recall" flag */
+	goal_recalling = p_ptr->tim.word_recall * 1000;
+	
+	/* Allowable Cheat -- Obtain "prot_from_evil" flag */
+	borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
+	
+	/* Allowable Cheat -- Obtain "speed" flag */
+	borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
+	
+	/* Allowable Cheat -- Obtain "goi" flag */
+	borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
+	borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
+	
+	/* Allowable Cheat -- Obtain "resist" flags */
+	my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
+	my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
+	my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
+	my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
+	my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
+	
+	borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
+	borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
+	borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
+	borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
+}
 
 /*
  * Initialize the Borg
@@ -3083,60 +3110,6 @@ void do_cmd_borg(void)
 	/* Get a "Borg command", or abort */
 	if (!get_com("Borg command: ", &cmd)) return;
 
-	/* Simple help */
-	if (cmd == '?')
-	{
-		/* Save the screen */
-		Term_save();
-
-		/* Clear the screen */
-		Term_clear();
-
-		/* First column */
-		prtf(2, 3,
-        			"Command 'z' activates the Borg.\n"
-					"Command 'x' steps the Borg.\n"
-				    "Command 'c' modifies the cheat flags.\n"
-		            "Command 's' activates search mode.\n"
-		            "Command 'g' displays grid feature.\n"
-		            "Command 'k' displays monster info.\n"
-		            "Command '%%' displays current flow.\n"
-		            "Command '_' Regional Fear info.\n"
-		            "Command 'R' Respawn Borg.\n"
-        		    "Command 'e' Examine Equip Item.\n"
-		            "Command '@' Borg LOS.\n"
-		            "Command 'q' Auto stop on level.\n"
-		            "Command 'd' Dump spell info.\n"
-		            "Command '^' Flow Pathway.");
-        
-        /* Second column */
-        prtf(42, 3,
-					"Command 'u' updates the Borg.\n"
-	       			"Command 'f' modifies the normal flags.\n"
-					"Command 'l' activates a log file.\n"
-					"Command 'i' displays grid info.\n"
-				    "Command 'a' displays avoidances.\n"
-				    "Command 't' displays object info.\n"
-				    "Command '#' displays danger grid.\n"
-				    "Command 'p' Borg Power.\n"
-				    "Command '2' level prep info.\n"
-				    "Command '!' Time.\n"
-				    "Command 'w' My Swap Weapon.\n"
-				    "Command 'v' Version stamp.\n"
-				    "Command 'y' Last 75 steps.\n"
-			    	"Command 'o' Examine Inven Item.");
-
-		/* Prompt for key */
-		msgf("Commands: ");
-		message_flush();
-
-		/* Restore the screen */
-		Term_load();
-
-		/* Done */
-		return;
-	}
-
 	/* Hack -- force initialization */
 	if (!initialized) borg_init_9();
 
@@ -3175,30 +3148,9 @@ void do_cmd_borg(void)
 			my_need_stat_check[3] = TRUE;
 			my_need_stat_check[4] = TRUE;
 			my_need_stat_check[5] = TRUE;
-
-			/* Allowable Cheat -- Obtain "recall" flag */
-			goal_recalling = p_ptr->tim.word_recall * 1000;
-
-			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
-			borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
-
-			/* Allowable Cheat -- Obtain "speed" flag */
-			borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
-
-			/* Allowable Cheat -- Obtain "goi" flag */
-			borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
-			borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
-
-			/* Allowable Cheat -- Obtain "resist" flags */
-			my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
-			my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
-			my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
-			my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
-			my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
-			borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
-			borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
-			borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
-			borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
+			
+			/* Fill the borg_bools for temporary states*/
+			borg_cheat_temp_bools();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3222,27 +3174,9 @@ void do_cmd_borg(void)
 
 			/* Step forever */
 			borg_step = 0;
-
-			/* Allowable Cheat -- Obtain "recall" flag */
-			goal_recalling = p_ptr->tim.word_recall * 1000;
-
-			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
-			borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
-			/* Allowable Cheat -- Obtain "speed" flag */
-			borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
-			/* Allowable Cheat -- Obtain "goi" flag */
-			borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
-			borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
-			/* Allowable Cheat -- Obtain "resist" flags */
-			my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
-			my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
-			my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
-			my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
-			my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
-			borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
-			borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
-			borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
-			borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
+			
+			/* Fill the borg_bools for temporary states*/
+			borg_cheat_temp_bools();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3285,26 +3219,9 @@ void do_cmd_borg(void)
 			my_need_stat_check[3] = TRUE;
 			my_need_stat_check[4] = TRUE;
 			my_need_stat_check[5] = TRUE;
-
-			/* Allowable Cheat -- Obtain "recall" flag */
-			goal_recalling = p_ptr->tim.word_recall * 1000;
-			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
-			borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
-			/* Allowable Cheat -- Obtain "speed" flag */
-			borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
-			/* Allowable Cheat -- Obtain "goi" flag */
-			borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
-			borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
-			/* Allowable Cheat -- Obtain "resist" flags */
-			my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
-			my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
-			my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
-			my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
-			my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
-			borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
-			borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
-			borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
-			borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
+			
+			/* Fill the borg_bools for temporary states*/
+			borg_cheat_temp_bools();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3319,54 +3236,66 @@ void do_cmd_borg(void)
 		case 'F':
 		{
 			/* Command: toggle "flags" */
-
-			/* Get a "Borg command", or abort */
-			if (!get_com("Borg command: Toggle Flag: (m/s) ", &cmd)) return;
-
-			switch (cmd)
+						
+			Term_save();
+			do
 			{
-				case 'm':
-				case 'M':
+				/* Clear the screen */
+				Term_clear();
+				
+				/* List the possibilities */
+				prtf(1, 2,
+					"a)  The borg stops when he wins:         %s    (borg_stop_king)\n"
+					"b)  Allow borg to avoid death:           %s    (borg_cheat_death)\n"
+					"c)  Log some characteristics at death:   %s    (borg_flag_dump)\n"
+					"d)  Autosave when entering new levels:   %s    (borg_flag_save)\n"
+					, (borg_stop_king) ? "true " : "false"
+					, (borg_cheat_death) ? "true " : "false"
+					, (borg_flag_dump) ? "true " : "false"
+					, (borg_flag_save) ? "true " : "false");
+			
+			
+				/* What does the user want? */
+				get_com("Borg options  (Command (a-d), ESC)", &cmd);
+			
+				/* Toggle a bool */
+				switch (cmd)
 				{
-					/* Give borg thought messages in window */
-					break;
-				}
-
-				case 'd':
-				case 'D':
-				{
-					/* Dump savefile at each death */
-					borg_flag_dump = !borg_flag_dump;
-					msgf("Borg -- borg_flag_dump is now %d.",
-							   borg_flag_dump);
-					break;
-				}
-			}
+					case 'a':
+					case 'A':
+					{
+						borg_stop_king = !borg_stop_king;
+						break;
+					}
+					case 'b':
+					case 'B':
+					{
+						borg_cheat_death = !borg_cheat_death;
+						break;
+					}
+					case 'c':
+					case 'C':
+					{
+						borg_flag_dump = !borg_flag_dump;
+						break;
+					}
+					case 'd':
+					case 'D':
+					{
+						borg_flag_save = !borg_flag_save;
+						break;
+					}
+					case ESCAPE:
+					{
+						/* Restore the screen */
+						Term_load();
+						break;
+					}
+ 				}
+ 			}
+			while (cmd != ESCAPE);
+			
 			break;
-		}
-
-		case 'c':
-		case 'C':
-		{
-			/* Command: toggle "cheat" flags */
-
-			/* Get a "Borg command", or abort */
-			if (!get_com("Borg command: Toggle Cheat: (d/i/e/s/p)", &cmd))
-				return;
-
-			switch (cmd)
-			{
-				case 'd':
-				case 'D':
-				{
-					borg_cheat_death = !borg_cheat_death;
-					msgf("Borg -- borg_cheat_death is now %d.",
-							   borg_cheat_death);
-					break;
-				}
-			}
-			break;
-
 		}
 
 		case 'l':
@@ -3533,9 +3462,11 @@ void do_cmd_borg(void)
 
 				default:
 				{
+					/* Save the screen and clear it */
 					Term_save();
 					Term_clear();
-					prtf(1, 1, "Possible entries for features.\n"
+					
+					prtf(1, 1, "Possible entries for features:\n"
 								".  Dungeon floor\n"
 								",  Open door\n"
 								"+  Closed door\n"
@@ -3561,6 +3492,7 @@ void do_cmd_borg(void)
 					msgf("Press any key.");
 					message_flush();
 
+					/* Restore the screen */
 					Term_load();
 					
 					return;
@@ -3950,24 +3882,6 @@ void do_cmd_borg(void)
 			break;
 		}
 
-		case 'q':
-		{
-			char cmd;
-
-			get_com("Stop when Morgoth Dies? (y or n)? ", &cmd);
-
-			if (cmd == 'n' || cmd == 'N')
-			{
-				borg_stop_king = FALSE;
-			}
-			else
-			{
-				borg_stop_king = TRUE;
-			}
-
-			break;
-		}
-
 		case '2':
 		{
 			/* Command: APW HACK debug -- preparation for level */
@@ -4002,109 +3916,235 @@ void do_cmd_borg(void)
 		case 'O':
 		{
 			/* Command: Display all known info on item */
-			int n = p_ptr->cmd.arg - 1;
+			int n;
+			
+			bool show_inventory = TRUE;
+			char tmp_val[80];
 
-			/* Paranoia */
-			if (n < 0) n = 0;
-			if (n >= inven_num) break;
+			do
+			{
+				if (inven_num == 0) show_inventory = FALSE;
 
-			/* Save the screen */
-			Term_save();
+				if (show_inventory)
+				{
+					strnfmt(tmp_val, 80, "Inven: / for Equip, ESC) Show borg believes on which item? (a-%c) "
+						  , I2A(inven_num - 1));
+				}
+				else
+				{
+					strnfmt(tmp_val, 80, "Equip: / for Inven, ESC) Show borg believes on which item? (a-%c) "
+						  , I2A(equip_num - 1));
+				}
 
-			/* Display the special screen */
-			borg_display_item(&inventory[n]);
+				get_com(tmp_val, &cmd);
+				if (cmd == '/') show_inventory = !show_inventory;
+			}
+			while (cmd == '/');
+			
+			/* Convert to array index*/
+			n = A2I(cmd);
 
-			/* pause for study */
+			if (show_inventory)
+			{
+				/* Bound checking */
+				if ((n < 0) || (n >= inven_num)) break;
+
+				/* Display the special screen */
+				borg_display_item(&inventory[n]);
+			}
+			else
+			{
+				/* Is it legal to use this in equipment[]? */
+				if ((n < 0) || (n >= equip_num)) break;
+				if (!equipment[n].k_idx) break;
+
+				/* Display the special screen */
+				borg_display_item(&equipment[n]);
+			}
+
+			/* Pause for study */
 			msgf("Borg believes: ");
 			message_flush();
 
 			/* Restore the screen */
 			Term_load();
 
-
 			break;
 		}
-
-		case 'e':
-		case 'E':
-		{
-			/* Command: Display all known info on item */
-			int n = p_ptr->cmd.arg - 1;
-
-			/* Paranoia */
-			if (n < 0) n = 0;
-			if (n >= equip_num) break;
-
-			/* Save the screen */
-			Term_save();
-
-			/* Display the special screen */
-			borg_display_item(&equipment[n]);
-
-			/* pause for study */
-			msgf("Borg believes: ");
-			message_flush();
-
-			/* Restore the screen */
-			Term_load();
-
-			break;
-		}
-
-
+			
 		case 'd':
 		case 'D':
 		{
-			/* Dump realms (requires big screen to work) */
-			int ii = 1, k;
+			/*
+			 * Dump all the spells from the books of your realms
+			 * in your inventory
+			 */
+			byte spell, inv, ii;
+			cptr legal = NULL;
+
+			/* Warriors don't have realms */
+			if (borg_class == CLASS_WARRIOR) break;
 
 			/* Save the screen */
 			Term_save();
 
-			/* Dump the first realm spells */
-			for (k = 1; k < MAX_REALM; k++)
+			if (borg_class == CLASS_MINDCRAFTER)
 			{
-				int i = 0, j;
+				/* Clear the screen */
+				Term_clear();
 
-				/* skip wrong realms */
-				if ((k != bp_ptr->realm1) && (k != bp_ptr->realm2)) continue;
+				ii = 2;
 
-				/* Books */
-				for (i = 0; i < 4; i++)
+				/* Mindcrafters have no books, just spells */
+				for (spell = 0; spell < MINDCRAFT_MAX; spell++)
 				{
+					/* pick up the spell */
+					borg_mind *as = &borg_minds[spell];
 
-					/* Clear the screen */
-					Term_clear();
-					
-					ii += 1;
-					
-					put_fstr(1, ii, "Realm:  %s", borg_magics[k][0][0].realm_name);
+					/* Can you cast it at all? */
+					legal = (as->level <= bp_ptr->lev) ? "Legal" : "Not legal";
 
-					ii++;
+					/* Show spell name, legalility and # of casts */
+					put_fstr(1, ii, "%s",	as->name);
+					put_fstr(32, ii++, "%s, attempted %d times", legal, as->times);
+				}
 
-					for (j = 0; j < 8; j++)
+				/* Give a chance to look */
+				msgf("Mindcrafter spells:");
+				message_flush();
+
+				/* Restore the screen */
+				Term_load();
+
+				/* Done */
+				break;
+			}
+
+			/* The first 8 items of the inventory can be a book of the realm */
+			for (inv = 0; (inv < 4 * MAX_REALM) && (inv < inven_num); inv++)
+			{
+				borg_magic *as;
+				int book;
+
+				/* Clear the screen */
+				Term_clear();
+
+				ii = 4;
+	
+				if (inventory[inv].tval == (bp_ptr->realm1 - 1 + TV_BOOKS_MIN))
+				{
+					/* Display name of the book */
+					put_fstr(1, ii - 2, "%s", inventory[inv].o_name);
+
+					/* Which book of this realm is it exactly? */
+					book = k_info[inventory[inv].k_idx].sval;
+
+					for (spell = 0; spell < 8; spell++)
 					{
-						borg_magic *as = &borg_magics[k][i][j];
-						cptr legal = NULL;
+						/* pick up spell */
+						as = &borg_magics[bp_ptr->realm1][book][spell];
 
+						/*  Can you cast it at all? */
 						if (as->level < 99)
 						{
-							legal = (borg_spell_legal(k, i, j) ?
-								 "Legal" : "Not Legal ");
+							legal = (borg_spell_legal(bp_ptr->realm1, book, spell) ?
+								 "Legal" : "Not legal");
 						}
+	
+						/* Show spell name, legalility and # of casts */
 						put_fstr(1, ii, "%s",	as->name);
-						put_fstr(30, ii++, "%s, attempted %d times", legal, as->times);
+						put_fstr(32, ii++, "%s, attempted %d times", legal, as->times);
+
 					}
-					get_com("Exam spell books.  Press any key for next book.",
-							&cmd);
+					/* Give a chance to look */
+					msgf("Examining spell books.");
+					message_flush();
+				}
+			
+				/* second realm, if it exists */
+				if (bp_ptr->realm2 &&
+					(inventory[inv].tval == (bp_ptr->realm2 - 1 + TV_BOOKS_MIN)))
+				{
+					ii = 4;
+
+					/* Display name of the book */
+					put_fstr(1, ii - 2, "%s", inventory[inv].o_name);
+
+					/* Which book of this realm is it exactly? */
+					book = k_info[inventory[inv].k_idx].sval;
+
+					for (spell = 0; spell < 8; spell++)
+					{
+						/* pick up spell */
+						as = &borg_magics[bp_ptr->realm2][book][spell];
+
+						/* Can you cast it at all? */
+						if (as->level < 99)
+						{
+							legal = (borg_spell_legal(bp_ptr->realm2, book, spell) ?
+								 "Legal" : "Not legal");
+						}
+
+						/* Show spell name, legalility and # of casts */
+						put_fstr(1, ii, "%s",	as->name);
+						put_fstr(32, ii++, "%s, attempted %d times", legal, as->times);
+					}
+
+					/* Give a chance to look */
+					msgf("Examining spell books.");
+					message_flush();
 				}
 			}
+		
+			/* Restore the screen */
+			Term_load();
+
+			/* Done */
+			break;
+		}
+		
+		case '?':
+		{
+			/* Save and clear the screen */
+			Term_save();
+			Term_clear();
+
+			/* First column */
+			prtf(2, 3,
+				"Command 'z' activates the Borg.\n"
+				"Command 'x' steps the Borg.\n"
+				"Command 'u' updates the Borg.\n"
+		    	"Command '2' level prep info.\n"
+		        "Command 's' activates search mode.\n"
+		        "Command 'g' displays grid feature.\n"
+	    	    "Command 'k' displays monster info.\n"
+	        	"Command '%%' displays current flow.\n"
+		        "Command '_' Regional Fear info.\n"
+		        "Command 'd' Dump spell info.\n"
+	    	    "Command '^' Flow Pathway.");
+	 
+		    /* Second column */
+			prtf(42, 3,
+				"Command 'f' modifies the options.\n"
+				"Command 'l' activates a log file.\n"
+				"Command 'i' displays grid info.\n"
+			    "Command 'a' displays avoidances.\n"
+			    "Command 't' displays object info.\n"
+		    	"Command '#' displays danger grid.\n"
+			    "Command 'p' Borg Power.\n"
+			    "Command '!' Time.\n"
+			    "Command 'y' Last 75 steps.\n"
+	    		"Command 'o' Examine Inven Item.");
+
+			/* Prompt for key */
+			msgf("Commands: ");
+			message_flush();
 
 			/* Restore the screen */
 			Term_load();
 
 			/* Done */
-			return;
+			break;
 		}
 
 		default:
