@@ -558,9 +558,6 @@ void build_tunnel(int row1, int col1, int row2, int col2)
 		/* Pierce "outer" walls of rooms */
 		if (c_ptr->feat == FEAT_WALL_OUTER)
 		{
-			/* Avoid corners */
-			if (next_to_walls(tmp_row, tmp_col) < 4) continue;
-
 			/* Acquire the "next" location */
 			y = tmp_row + row_dir;
 			x = tmp_col + col_dir;
