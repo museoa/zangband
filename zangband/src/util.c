@@ -1944,6 +1944,8 @@ errr quarks_init(void)
 {
 	/* Quark variables */
 	C_MAKE(quark__str, QUARK_MAX, cptr);
+	C_MAKE(quark__use, QUARK_MAX, u16b);
+
 
 	/* Success */
 	return (0);
@@ -1964,6 +1966,7 @@ errr quarks_free(void)
 	}
 
 	/* Free the list of "quarks" */
+	C_FREE((void*)quark__use, QUARK_MAX, u16b);
 	C_FREE((void*)quark__str, QUARK_MAX, cptr);
 
 	/* Success */
