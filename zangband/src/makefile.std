@@ -10,6 +10,12 @@
 # or possibly for "Atari" or "Amiga" computers with "Curses" ports,
 # see below for more information.
 #
+#
+# USAGE:  Simply type in "make portname" where portname is the name
+#         of your port.  ie. "make open_bsd".  The default port can
+#         be changed by editing the default_port target.
+#
+#
 # Note that "main-mac.c", the visual module for the Macintosh,
 # must be compiled in a special way, see elsewhere.
 #
