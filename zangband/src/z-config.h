@@ -12,14 +12,10 @@
  */
 
 /* Allow debug commands */
-#if 1
-#  define USE_DEBUG
-#endif
+#define USE_DEBUG
 
 /* Allow various special stuff (sound, graphics, etc.) */
-#if 1
-#  define USE_SPECIAL
-#endif
+#define USE_SPECIAL
 
 
 /*
@@ -615,12 +611,12 @@
  * Use the new sorting routines for creation
  * of the monster allocation table
  */
-/*#define SORT_R_INFO*/
+#define SORT_R_INFO
 
 /*
  * Use a scripting language
  */
-/*#define USE_SCRIPT*/
+/* #define USE_SCRIPT */
 
 #ifdef USE_SCRIPT
 /*
