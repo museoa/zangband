@@ -2349,7 +2349,7 @@ static void borg_display_item(list_item *l_ptr)
 				"siwdcc  ssidsahanvudotgddhuoclio\n"
 				"tnieoh  trnipttmiinmrrnrrraiierl\n"
 				"rtsxna..lcfgdkcpmldncltggpksdced\n"
-                "%r%v", binary_fmt, l_ptr->kn_flags1);
+                "%v", binary_fmt, l_ptr->kn_flags1);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 				"SUST...IMMUN..RESIST............\n"
@@ -2357,7 +2357,7 @@ static void borg_display_item(list_item *l_ptr)
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 			    "tnieoh  ierlrfraierliatrnnnrhehi\n"
 			    "rtsxna..dcedwlatdcedsrekdfddrxss\n"
-                "%r%v", binary_fmt, l_ptr->kn_flags2);
+                "%v", binary_fmt, l_ptr->kn_flags2);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
 					"fe      ehsi  st    iiiiadta  hp\n"
@@ -2368,7 +2368,7 @@ static void borg_display_item(list_item *l_ptr)
 				    "uu  egirnyoahivaeggoclioaeoasrrr\n"
 				    "rr  litsopdretitsehtierltxrtesss\n"
 	    			"aa  echewestreshtntsdcedeptedeee\n"
-                    "%r%v", binary_fmt, l_ptr->kn_flags3);
+                    "%v", binary_fmt, l_ptr->kn_flags3);
 }
 
 

@@ -8,9 +8,9 @@
 /*
  * Function used to print a flag in coloured binary.
  */
-uint binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)
+void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)
 {
-	uint i, len;
+	uint i;
 	u32b mask = 1;
 
 	char tmp[256];
@@ -43,14 +43,10 @@ uint binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)
 		mask *= 2;
 	}
 	
-	len = strlen(tmp) + 1;
-	
-	if (len >= max) len = max - 1;
-	tmp[len] = '\0';
+	/* Hack - pre-terminate if required */
+	tmp[max - 1] = '\0';
 
 	strcpy(buf, tmp);
-
-	return (len);
 }
 
 

@@ -27,8 +27,8 @@
  *
  * The format strings allow the basic "sprintf()" format sequences, though
  * some of them are processed slightly more carefully or portably, as well
- * as a few "special" sequences, including the "%r" and "%v" sequences, and
- * the "capilitization" sequences of "%C", "%S", and "%V".
+ * as a few "special" sequences, including the  "%v" sequence, and a the
+ * recursive "%S' sequence.
  *
  * Note that some "limitations" are enforced by the current implementation,
  * for example, no "format sequence" can exceed 100 characters, including any
@@ -46,7 +46,7 @@
  * removed from the "format sequence", and replaced by the textual form
  * of the next argument in the argument list.  See examples below.
  *
- * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,r,v.
+ * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,v,S,t.
  *
  * Format("%%")
  *   Append the literal "%".
@@ -101,16 +101,9 @@
  *   strnfmt(fmt, extra information).
  *   This allows recursive formatting.
  *
- * Format("%V", vptr v)
- *   Note -- possibly significant mode flag
- * Format("%v", vptr v)
- *   Append the object "v", using the current "user defined print routine".
- *   User specified modifiers, often ignored.
- *
- * Format("%r", vstrnfmt_aux_func *fp)
- *   Set the "user defined print routine" (vstrnfmt_aux) to "fp".
- *   No legal modifiers.
- *
+ * Format("%v", vstrnfmt_aux_func function_name, extra_args...)
+ *   Append the object "v", using function_name, called with
+ *   the extra arguments.
  *
  * For examples below, assume "int n = 0; int m = 100; char buf[100];",
  * plus "char *s = NULL;", and unknown values "char *txt; int i;".
@@ -130,7 +123,7 @@
  * For example: "s = buf; n = vstrnfmt(s+n, 100-n, ...); ..." will allow
  * multiple bounded "appends" to "buf", with constant access to "strlen(buf)".
  *
- * For example: "format("The %r%v was destroyed!", obj_desc, obj);"
+ * For example: "format("The %v was destroyed!", obj_desc, obj);"
  * (where "obj_desc(buf, max, fmt, obj)" will "append" a "description"
  * of the given object to the given buffer, and return the total length)
  * will return a "useful message" about the object "obj", for example,
@@ -148,36 +141,7 @@
 /*
  * The "type" of the "user defined print routine" pointer
  */
-typedef uint (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
-
-/*
- * The "default" user defined print routine.  Ignore the "fmt" string.
- */
-static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, va_list *vp)
-{
-	uint len;
-    
-    vptr arg;
-
-	/* Unused parameter */
-	(void)fmt;
-    
-    /* Get the argument */
-	arg = va_arg(*vp, vptr);
-
-	/* Pointer display */
-	len = sprintf(buf, "<<%p>>", arg);
-	if (len >= max) len = max - 1;
-	buf[len] = '\0';
-	return (len);
-}
-
-/*
- * The "current" user defined print routine.  It can be changed
- * dynamically by sending the proper "%r" sequence to "vstrnfmt()"
- */
-static vstrnfmt_aux_func vstrnfmt_aux = vstrnfmt_aux_dflt;
-
+typedef void (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
 
 
 /*
@@ -303,20 +267,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 			/* Continue */
 			continue;
 		}
-
-		/* Hack -- Pre-process "%r" */
-		if (*s == 'r')
-		{
-			/* Extract the next argument, and save it (globally) */
-			vstrnfmt_aux = va_arg(*vp, vstrnfmt_aux_func);
-
-			/* Skip the "r" */
-			s++;
-
-			/* Continue */
-			continue;
-		}
-
 
 		/* Begin the "aux" string */
 		q = 0;
@@ -577,11 +527,15 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 				break;
 			}
 
-			case 'V':
 			case 'v':
 			{
+				vstrnfmt_aux_func tmp_func;
+			
+				/* Extract the function to call */
+				tmp_func = va_arg(*vp, vstrnfmt_aux_func);
+			
 				/* Format the "user data" */
-				(void)vstrnfmt_aux(tmp, 1000, aux, vp);
+				tmp_func(tmp, 1000, aux, vp);
 
 				/* Done */
 				break;

@@ -2557,7 +2557,7 @@ static int current_message_type = MSG_GENERIC;
 /*
  * Change the message type
  */
-uint set_message_type(char *buf, uint max, cptr fmt, va_list *vp)
+void set_message_type(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	/* Unused parameters */
 	(void)fmt;
@@ -2568,9 +2568,6 @@ uint set_message_type(char *buf, uint max, cptr fmt, va_list *vp)
     
     /* Get the argument - and set the message type */
 	current_message_type = va_arg(*vp, int);
-	
-	/* Zero length string */
-	return (0);
 }
 
 /*

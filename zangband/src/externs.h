@@ -909,7 +909,7 @@ extern errr message_color_define(u16b type, byte color);
 extern void message_add(cptr str, u16b type);
 extern errr messages_init(void);
 extern void messages_free(void);
-extern uint set_message_type(char *buf, uint max, cptr fmt, va_list *vp);
+extern void set_message_type(char *buf, uint max, cptr fmt, va_list *vp);
 extern void msgf(cptr fmt, ...);
 extern void msg_effect(u16b type, s16b extra);
 extern void message_flush(void);
@@ -1237,7 +1237,7 @@ extern void Term_write_equipment(void);
 extern void Term_write_list(s16b o_idx, byte list_type);
 
 /* ui.c */
-extern uint binary_fmt(char *buf, uint max, cptr fmt, va_list *vp);
+extern void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 extern int get_player_choice(cptr *choices, int num, int col, int wid,
                              cptr helpfile, void (*hook) (cptr));
 extern int get_player_sort_choice(cptr *choices, int num, int col, int wid,
