@@ -1564,7 +1564,7 @@ static void fix_tile(cave_type *c_ptr)
 /*
  * Load dungeon or wilderness map
  */
-static void load_map(int ymax, int ymin, int xmax, int xmin)
+static void load_map(int xmin, int ymin, int xmax, int ymax)
 {
 	int i, y, x;
 	byte count;
@@ -2140,7 +2140,7 @@ static errr rd_dungeon(void)
 		change_level(1);
 
 		/* Load dungeon map */
-		load_map(cur_hgt, 0, cur_wid, 0);
+		load_map(0, 0, cur_wid, cur_hgt);
 	}
 	else if (sf_version < VERSION_CHANGE_WILD)
 	{
@@ -2164,7 +2164,7 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 			
 			/* Load dungeon map */
-			load_map(cur_hgt, 0, cur_wid, 0);
+			load_map(0, 0, cur_wid, cur_hgt);
 
 			/* Strip the wilderness map */
 			strip_map(p_ptr->max_hgt, p_ptr->min_hgt,
@@ -2199,13 +2199,13 @@ static errr rd_dungeon(void)
 		if (p_ptr->depth)
 		{
 			/* Load dungeon map */
-			load_map(cur_hgt, 0, cur_wid, 0);
+			load_map(0, 0, cur_wid, cur_hgt);
 		}
 		else
 		{
 			/* Load the wilderness */
-			load_map(p_ptr->max_hgt, p_ptr->min_hgt,
-			         p_ptr->max_wid, p_ptr->min_wid);
+			load_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
+				 p_ptr->max_hgt);
 		}
 	}
 
