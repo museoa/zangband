@@ -132,26 +132,46 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 			mult_m_crit = 15;
 
 
-		if ((mult_m_crit == 15) ||
+		/* Criticals with PSI_HIT weapons do about 47% more damage */
+		if (psi_hit)
+		{
+			int bonus;
+			if (one_in_(12) && p_ptr->csp >= PSI_COST * 3)
+				bonus = 3;
+			else if (one_in_(3) && p_ptr->csp >= PSI_COST * 2)
+				bonus = 2;
+			else
+				bonus = 1;
+
+			mult_m_crit *= bonus;
+			
+			p_ptr->csp -= PSI_COST * bonus;
+			p_ptr->redraw |= (PR_MANA);
+			p_ptr->window |= (PW_PLAYER);
+			p_ptr->window |= (PW_SPELL);
+		}
+
+
+		if ((mult_m_crit <= 15) ||
 			((o_ptr->tval == TV_HAFTED) && (o_ptr->sval == SV_WHIP)))
 		{
 			msgf(MSGT_HIT, "You strike %s.", m_name);
 		}
-		else if (mult_m_crit == 20)
+		else if (mult_m_crit <= 20)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msgf(MSGT_HIT, "You hack at %s.", m_name);
 			else
 				msgf(MSGT_HIT, "You bash %s.", m_name);
 		}
-		else if (mult_m_crit == 27)
+		else if (mult_m_crit <= 27)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msgf(MSGT_HIT, "You slash %s.", m_name);
 			else
 				msgf(MSGT_HIT, "You pound %s.", m_name);
 		}
-		else if (mult_m_crit == 36)
+		else if (mult_m_crit <= 36)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msgf(MSGT_HIT, "You gouge %s!", m_name);
@@ -161,16 +181,6 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 		else
 		{
 			msgf(MSGT_HIT, "You *smite* %s!", m_name);
-		}
-
-		if (psi_hit)
-		{
-			mult_m_crit = mult_m_crit * 3 / 2;
-			
-			p_ptr->csp -= PSI_COST;
-			p_ptr->redraw |= (PR_MANA);
-			p_ptr->window |= (PW_PLAYER);
-			p_ptr->window |= (PW_SPELL);
 		}
 	}
 
