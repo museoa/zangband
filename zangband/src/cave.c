@@ -1692,9 +1692,9 @@ void prt_map(void)
 
 
 	/* Get bounds */
-	xmin = (min_wid < panel_col_min) ? panel_col_min : 0;
+	xmin = (min_wid < panel_col_min) ? panel_col_min : min_wid;
 	xmax = (max_wid - 1 > panel_col_max) ? panel_col_max : max_wid - 1;
-	ymin = (min_hgt < panel_row_min) ? panel_row_min : 0;
+	ymin = (min_hgt < panel_row_min) ? panel_row_min : min_hgt;
 	ymax = (max_hgt - 1 > panel_row_max) ? panel_row_max : max_hgt - 1;
 
 	/* Bottom section of screen */
