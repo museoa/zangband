@@ -3081,7 +3081,7 @@ D:A mystic at one with nature.  Om.
 N:242:Pink horror
 G:u:R
 I:110:10d9:20:20:20
-W:21:3:0:42
+W:30:3:0:42
 B:CLAW:TERRIFY:1d8
 B:CLAW:TERRIFY:1d8
 B:BITE:CONFUSE:1d6
