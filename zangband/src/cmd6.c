@@ -168,7 +168,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_WEAKNESS:
 			{
-				take_hit(damroll(6, 6), "poisonous food.");
+				take_hit(damroll(6, 6), "poisonous food");
 				(void)do_dec_stat(A_STR);
 				ident = TRUE;
 				break;
@@ -176,7 +176,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_SICKNESS:
 			{
-				take_hit(damroll(6, 6), "poisonous food.");
+				take_hit(damroll(6, 6), "poisonous food");
 				(void)do_dec_stat(A_CON);
 				ident = TRUE;
 				break;
@@ -184,7 +184,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_STUPIDITY:
 			{
-				take_hit(damroll(8, 8), "poisonous food.");
+				take_hit(damroll(8, 8), "poisonous food");
 				(void)do_dec_stat(A_INT);
 				ident = TRUE;
 				break;
@@ -192,7 +192,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_NAIVETY:
 			{
-				take_hit(damroll(8, 8), "poisonous food.");
+				take_hit(damroll(8, 8), "poisonous food");
 				(void)do_dec_stat(A_WIS);
 				ident = TRUE;
 				break;
@@ -200,7 +200,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_UNHEALTH:
 			{
-				take_hit(damroll(10, 10), "poisonous food.");
+				take_hit(damroll(10, 10), "poisonous food");
 				(void)do_dec_stat(A_CON);
 				ident = TRUE;
 				break;
@@ -208,7 +208,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_DISEASE:
 			{
-				take_hit(damroll(10, 10), "poisonous food.");
+				take_hit(damroll(10, 10), "poisonous food");
 				(void)do_dec_stat(A_STR);
 				ident = TRUE;
 				break;
