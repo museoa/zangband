@@ -443,11 +443,6 @@
 /* #define MONK_HACK */
 
 /*
- * Add caverns and lakes to the dungeon
- */
-#define ALLOW_CAVERNS_AND_LAKES
-
-/*
  * Add pillar tunnels (Annoying)
  */
 /* #define PILLAR_TUNNELS */
