@@ -1090,7 +1090,7 @@ extern void excise_field_idx(int fld_idx);
 extern void delete_field_idx(int fld_idx);
 extern void delete_field_ptr(s16b *fld_id);
 extern void delete_field_aux(s16b *fld_idx_ptr);
-extern void delete_field(int y, int x);
+extern void delete_field(int x, int y);
 extern void delete_field_location(cave_type *c_ptr);
 extern void compact_fields(int size);
 extern void wipe_f_list(void);

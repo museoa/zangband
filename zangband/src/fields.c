@@ -243,7 +243,7 @@ void delete_field_aux(s16b *fld_idx_ptr)
 /*
  * Deletes all fields at given location
  */
-void delete_field(int y, int x)
+void delete_field(int x, int y)
 {
 	cave_type *c_ptr;
 
