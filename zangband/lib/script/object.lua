@@ -251,11 +251,11 @@ function quaff_potion(object)
 		end
 	elseif object.sval == SV_POTION_HEROISM then
 		if clear_afraid() then ident = TRUE end
-		if set_hero(player.hero + rand_range(25, 50)) then ident = TRUE end
+		if inc_hero(rand_range(25, 50)) then ident = TRUE end
 		if hp_player(10)then ident = TRUE end
 	elseif object.sval == SV_POTION_BERSERK_STRENGTH then
 		if clear_afraid() then ident = TRUE end
-		if set_shero(player.shero + rand_range(25, 50)) then ident = TRUE end
+		if inc_shero(rand_range(25, 50)) then ident = TRUE end
 		if hp_player(30) then ident = TRUE end
 	elseif object.sval == SV_POTION_CURE_LIGHT then
 		if hp_player(38) then ident = TRUE end
@@ -516,11 +516,11 @@ function read_scroll(object)
 	elseif object.sval == SV_SCROLL_SATISFY_HUNGER then
 		if set_food(PY_FOOD_MAX - 1) then ident = TRUE end
 	elseif object.sval == SV_SCROLL_BLESSING then
-		if set_blessed(player.blessed + rand_range(6, 18)) then ident = TRUE end
+		if inc_blessed(rand_range(6, 18)) then ident = TRUE end
 	elseif object.sval == SV_SCROLL_HOLY_CHANT then
-		if set_blessed(player.blessed + rand_range(12, 36)) then ident = TRUE end
+		if inc_blessed(rand_range(12, 36)) then ident = TRUE end
 	elseif object.sval == SV_SCROLL_HOLY_PRAYER then
-		if set_blessed(player.blessed + rand_range(24, 72)) then ident = TRUE end
+		if inc_blessed(rand_range(24, 72)) then ident = TRUE end
 	elseif object.sval == SV_SCROLL_MONSTER_CONFUSION then
 		if player.confusing == 0 then
 			msgf("Your hands begin to glow.")
