@@ -576,9 +576,12 @@ char *vformat(cptr fmt, va_list vp)
 	while (1)
 	{
 		uint len;
+		
+		/* Hack - use copy of vp so that vstrnfmt can be called again */
+		va_list vp_copy = vp;
 
 		/* Build the string */
-		len = vstrnfmt(format_buf, format_len, fmt, &vp);
+		len = vstrnfmt(format_buf, format_len, fmt, &vp_copy);
 
 		/* Success */
 		if (len < format_len - 1) break;
