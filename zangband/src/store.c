@@ -1826,7 +1826,7 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
 		strcpy(out_val, "");
 
 		/* Ask the user for a response */
-		if (!get_string(buf, out_val, 32)) return (FALSE);
+		if (!get_string(buf, out_val, 33)) return (FALSE);
 
 		/* Skip leading spaces */
 		for (p = out_val; *p == ' '; p++) /* loop */;

@@ -3757,7 +3757,7 @@ void change_player_name(void)
 		strcpy(tmp, player_name);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15)) strcpy(player_name, tmp);
+		if (askfor_aux(tmp, 16)) strcpy(player_name, tmp);
 
 		/* Process the player name */
 		process_player_name(FALSE);
@@ -3788,7 +3788,7 @@ void get_character_name(void)
 	strcpy(tmp, player_name);
 
 	/* Prompt for a new name */
-	if (get_string("Enter a name for your character: ", tmp, 15))
+	if (get_string("Enter a name for your character: ", tmp, sizeof(tmp)))
 	{
 		/* Use the name */
 		strcpy(player_name, tmp);

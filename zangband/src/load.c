@@ -2758,7 +2758,7 @@ static errr rd_savefile_new_aux(void)
 				strcpy(inp, "20");
 
 				/* Get a response (or escape) */
-				if (!askfor_aux(inp, 2)) inp[0] = '\0';
+				if (!askfor_aux(inp, 3)) inp[0] = '\0';
 				v = atoi(inp);
 
 				/* Break on valid input */

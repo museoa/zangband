@@ -2051,7 +2051,7 @@ static bool cast_trump_spell(int spell, bool success)
 				sprintf(tmp_val, "%d", MAX(p_ptr->depth, 1));
 
 				/* Ask for a level */
-				if (get_string(ppp, tmp_val, 10))
+				if (get_string(ppp, tmp_val, 11))
 				{
 					/* Extract request */
 					dummy = atoi(tmp_val);

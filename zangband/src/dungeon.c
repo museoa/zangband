@@ -441,7 +441,7 @@ static void pattern_teleport(void)
 		sprintf(tmp_val, "%d", p_ptr->depth);
 
 		/* Ask for a level */
-		if (!get_string(ppp, tmp_val, 10)) return;
+		if (!get_string(ppp, tmp_val, 11)) return;
 
 		/* Extract request */
 		p_ptr->command_arg = atoi(tmp_val);

@@ -2283,7 +2283,7 @@ static bool get_player_quests(void)
 			strcpy(inp, "20");
 
 			/* Get a response (or escape) */
-			if (!askfor_aux(inp, 2)) inp[0] = '\0';
+			if (!askfor_aux(inp, 3)) inp[0] = '\0';
 
 			/* Check for random number of quests */
 			if (inp[0] == '*')
@@ -2789,7 +2789,7 @@ static bool player_birth_aux_3(void)
 				strcpy(inp, "");
 
 				/* Get a response (or escape) */
-				if (!askfor_aux(inp, 8)) inp[0] = '\0';
+				if (!askfor_aux(inp, 9)) inp[0] = '\0';
 
 				/* Hack -- add a fake slash */
 				strcat(inp, "/");

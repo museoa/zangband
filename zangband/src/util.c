@@ -2893,6 +2893,9 @@ void clear_from(int row)
  * Backspace clears the default or deletes the final char.
  * ESCAPE clears the buffer and the window and returns FALSE.
  * RETURN accepts the current buffer contents and returns TRUE.
+ *
+ * Note that 'len' refers to the size of the buffer.  The maximum length
+ * of the input is 'len-1'.
  */
 bool askfor_aux(char *buf, int len)
 {
@@ -2919,7 +2922,7 @@ bool askfor_aux(char *buf, int len)
 
 
 	/* Paranoia -- Clip the default entry */
-	buf[len] = '\0';
+	buf[len-1] = '\0';
 
 
 	/* Display the default answer */
@@ -2964,7 +2967,7 @@ bool askfor_aux(char *buf, int len)
 			break;
 
 		default:
-			if ((k < len) && (isprint(i)))
+			if ((k < len-1) && (isprint(i)))
 			{
 				buf[k++] = i;
 			}
@@ -3158,7 +3161,7 @@ s16b get_quantity(cptr prompt, int max)
 	sprintf(buf, "%d", amt);
 
 	/* Ask for a quantity */
-	if (!get_string(prompt, buf, 6)) return (0);
+	if (!get_string(prompt, buf, 7)) return (0);
 
 	/* Extract a number */
 	amt = atoi(buf);

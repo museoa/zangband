@@ -558,7 +558,7 @@ static s32b gamble_init(void)
 	 * Use get_string() because we may need more than
 	 * the s16b value returned by get_quantity().
 	 */
-	if (!get_string(tmp_str, out_val, 32))
+	if (!get_string(tmp_str, out_val, 33))
 	{
 		screen_load();		
 		return (0);
