@@ -4675,7 +4675,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			if (!chance)
 			{
 				/* Message */
-				msg_format("The %s disappears%.",
+				msg_format("The %s disappear%.",
 					o_name, (plural ? "" : "s"));
 			}
 
