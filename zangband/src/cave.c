@@ -79,18 +79,20 @@ int distance(int x1, int y1, int x2, int y2)
 /*
  * Return TRUE if the given square contains a trap
  */
-bool is_trap(cave_type *c_ptr)
+bool is_trap(const cave_type *c_ptr)
 {
-	return (*field_is_type(&c_ptr->fld_idx, FTYPE_TRAP) != 0);
+	/* We assume field_is_type does not alter the data in c_ptr */
+	return (*field_is_type((s16b *)&c_ptr->fld_idx, FTYPE_TRAP) != 0);
 }
 
 
 /*
  * Return TRUE if the given square contains a known trap
  */
-bool is_visible_trap(cave_type *c_ptr)
+bool is_visible_trap(const cave_type *c_ptr)
 {
-	return (*field_first_known(&c_ptr->fld_idx, FTYPE_TRAP) != 0);
+	/* We assume field_first_known does not alter the data in c_ptr */
+	return (*field_first_known((s16b *)&c_ptr->fld_idx, FTYPE_TRAP) != 0);
 }
 
 
@@ -236,7 +238,7 @@ static bool los_general(int x1, int y1, int x2, int y2, cave_hook_type c_hook)
  * Hack - a function to pass to los_general() used
  * to simulate the old los()
  */
-static bool cave_stop_wall(cave_type *c_ptr)
+static bool cave_stop_wall(const cave_type *c_ptr)
 {
 	/* Is it passable? */
 	if (cave_los_grid(c_ptr)) return (FALSE);
@@ -600,7 +602,7 @@ void mmove(int *x, int *y, int x1, int y1)
 
 
 /* Does this square stop the projection? */
-static bool project_stop(cave_type *c_ptr, u16b flg)
+static bool project_stop(const cave_type *c_ptr, u16b flg)
 {
 	if (cave_los_grid(c_ptr))
 	{
@@ -638,7 +640,7 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
  * Hack - a function to pass to los_general() used
  * to do projectable().  Assume everything blocks projections.
  */
-static bool cave_stop_project(cave_type *c_ptr)
+static bool cave_stop_project(const cave_type *c_ptr)
 {
 	/* Is it passable? */
 	return (project_stop(c_ptr, 0));
@@ -883,7 +885,7 @@ sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg)
 
 
 /* Will this square stop a ball spell? */
-static bool cave_stop_ball(cave_type *c_ptr)
+static bool cave_stop_ball(const cave_type *c_ptr)
 {
 	/* Walls block spells */
 	if (!cave_los_grid(c_ptr)) return (TRUE);
@@ -908,7 +910,7 @@ bool in_ball_range(int x1, int y1, int x2, int y2)
 /*
  * Does the grid stop disintegration?
  */
-static bool cave_stop_disintegration(cave_type *c_ptr)
+static bool cave_stop_disintegration(const cave_type *c_ptr)
 {
 	/* Some terrain types block disintegration */
 	if (cave_wall_grid(c_ptr) && cave_perma_grid(c_ptr))
@@ -1174,7 +1176,7 @@ static int breath_gf[32] =
  *
  * (This may be a little slow....
  */
-static byte breath_attr(monster_race *r_ptr)
+static byte breath_attr(const monster_race *r_ptr)
 {
 	/* Mask out the breath flags */
 	u32b flags = r_ptr->flags4 & RF4_BREATHS;
@@ -1661,8 +1663,8 @@ static void variable_player_graph(byte *a, char *c)
  * such as "multi-hued" or "clear" monsters, cause the attr/char codes
  * to be "scrambled" in various ways.
  */
-static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp,
-                     byte *tap, char *tcp)
+static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
+					 byte *ap, char *cp, byte *tap, char *tcp)
 {
 	feature_type *f_ptr;
 

@@ -3753,7 +3753,7 @@ static void spell_info(char *p, int spell, int realm)
 					case 22:
 					{
 						sprintf(p, " dam %d", plev * 3);
-						break;
+						/* break; */
 					}
 				}
 				break;

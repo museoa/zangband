@@ -3180,7 +3180,9 @@ void borg_status(void)
 /* keep a log of certain battles, used on Questor uniques */
 void borg_log_battle(bool keep_log)
 {
-	char buf[80];
+	/* char buf[80]; */
+	
+	(void) keep_log;
 
 /* for now the log is deactivated */
 	return;

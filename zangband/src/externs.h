@@ -290,8 +290,8 @@ extern void player_birth(void);
 
 /* cave.c */
 extern int distance(int x1, int y1, int x2, int y2);
-extern bool is_trap(cave_type *c_ptr);
-extern bool is_visible_trap(cave_type *c_ptr);
+extern bool is_trap(const cave_type *c_ptr);
+extern bool is_visible_trap(const cave_type *c_ptr);
 extern bool los(int x1, int y1, int x2, int y2);
 extern void mmove_init(int x1, int y1, int x2, int y2);
 extern void mmove(int *x, int *y, int x1, int y1);
