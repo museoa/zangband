@@ -1949,6 +1949,31 @@ void do_cmd_debug(void)
 			break;
 		}
 
+        case 'T':
+        {
+            /* Count towns */
+            int towns = 0;
+            int stairs = 0;
+            int i, j;
+
+            for (i = 0; i < place_count; i++)
+            {
+                place_type *pl_ptr = &place[i];
+
+                if (!pl_ptr->quest_num) towns++;
+
+                for (j = 0; j < pl_ptr->numstores; j++)
+                {
+                    store_type *st_ptr = &pl_ptr->store[j];
+
+                    if (st_ptr->type == BUILD_STAIRS) stairs++;
+                }
+            }
+
+            msg_format("%i towns, %i stairs", towns, stairs);
+            break;
+        }
+
 		case 'v':
 		{
 			/* Very Good Objects */
