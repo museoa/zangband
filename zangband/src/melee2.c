@@ -1071,6 +1071,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	byte            y_saver = t_ptr->fy;
 	byte            x_saver = t_ptr->fx;
 
+	/* Cannot attack self */
+	if (m_idx == t_idx) return FALSE;
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW) return FALSE;
@@ -1117,13 +1119,6 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		int method = r_ptr->blow[ap_cnt].method;
 		int d_dice = r_ptr->blow[ap_cnt].d_dice;
 		int d_side = r_ptr->blow[ap_cnt].d_side;
-
-		if (t_ptr == m_ptr) /* Paranoia */
-		{
-			if (wizard)
-				msg_print("Monster attacking self?");
-			break;
-		}
 
 		/* Stop attacking if the target dies! */
 		if (t_ptr->fx != x_saver || t_ptr->fy != y_saver)
@@ -1358,10 +1353,11 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Message */
 			if (act)
 			{
-				(void)strfmt(temp, act, t_name);
 				if (m_ptr->ml || t_ptr->ml)
+				{
+					strfmt(temp, act, t_name);
 					msg_format("%^s %s", m_name, temp);
-
+				}
 			}
 
 			/* Hack -- assume all attacks are obvious */
@@ -1736,7 +1732,6 @@ static void process_monster(int m_idx)
 	bool            did_take_item;
 	bool            did_kill_item;
 	bool            did_move_body;
-	bool            did_kill_body;
 	bool            did_pass_wall;
 	bool            did_kill_wall;
 	bool            gets_angry = FALSE;
@@ -2214,7 +2209,6 @@ static void process_monster(int m_idx)
 	did_take_item = FALSE;
 	did_kill_item = FALSE;
 	did_move_body = FALSE;
-	did_kill_body = FALSE;
 	did_pass_wall = FALSE;
 	did_kill_wall = FALSE;
 
@@ -2503,39 +2497,21 @@ static void process_monster(int m_idx)
 			/* Assume no movement */
 			do_move = FALSE;
 
-			/* Kill weaker monsters */
-			/* Friends don't kill friends. */
-			/* Questors never get killed. */
-			if ((r_ptr->flags2 & RF2_KILL_BODY) &&
-			    (r_ptr->mexp > z_ptr->mexp) && cave_floor_bold(ny, nx) &&
-			    !(is_friendly(m_ptr) && is_friendly(m2_ptr)) &&
-			    !(is_pet(m_ptr) && is_pet(m2_ptr)) &&
-			    !(z_ptr->flags1 & RF1_QUESTOR))
-			{
-				/* Allow movement */
-				do_move = TRUE;
-
-				/* Monster ate another monster */
-				did_kill_body = TRUE;
-
-				/* XXX XXX XXX Message */
-
-				/* Kill the monster */
-				delete_monster(ny, nx);
-
-				/* Hack -- get the empty monster */
-				y_ptr = &m_list[c_ptr->m_idx];
-			}
-
 			/* Attack 'enemies' */
-			else if (are_enemies(m_ptr, m2_ptr) || m_ptr->confused)
+			if (((r_ptr->flags2 & (RF2_KILL_BODY)) &&
+				  (r_ptr->mexp * r_ptr->level > z_ptr->mexp * z_ptr->level) &&
+				  (cave_floor_bold(ny, nx))) ||
+				 are_enemies(m_ptr, m2_ptr) || m_ptr->confused)
 			{
 				do_move = FALSE;
+
+				if (r_ptr->flags2 & RF2_KILL_BODY) r_ptr->r_flags2 |= (RF2_KILL_BODY);
+
 				/* attack */
-				if (m2_ptr->r_idx && (m2_ptr->hp >= 0))
+				if ((m2_ptr->r_idx) && (m2_ptr->hp >= 0))
 				{
-					if (monst_attack_monst(m_idx, c_ptr->m_idx))
-						return;
+					if (monst_attack_monst(m_idx, cave[ny][nx].m_idx))
+					return;
 				}
 			}
 
@@ -2796,9 +2772,6 @@ static void process_monster(int m_idx)
 
 		/* Monster pushed past another monster */
 		if (did_move_body) r_ptr->r_flags2 |= (RF2_MOVE_BODY);
-
-		/* Monster ate another monster */
-		if (did_kill_body) r_ptr->r_flags2 |= (RF2_KILL_BODY);
 
 		/* Monster passed through a wall */
 		if (did_pass_wall) r_ptr->r_flags2 |= (RF2_PASS_WALL);
