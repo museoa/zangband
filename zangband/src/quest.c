@@ -86,6 +86,8 @@ static void quest_wipe(int q_idx)
 	 */
 }
 
+/* The quest list will be dynamic soon... */
+#if 0
 
 /*
  * Copy a quest from one slot to another
@@ -97,6 +99,7 @@ static void quest_copy(int src, int dst)
 	
 	/* Insert other needed copy code here - ie fixing info / item array */
 }
+
 
 /*
  * Remove a quest from the list
@@ -124,8 +127,6 @@ static void quest_remove(int q_idx)
 	q_max--;
 }
 
-/* The quest list will be dynamic soon... */
-#if 0
 
 /*
  * Clean the list of quests, removing 'completed' ones
@@ -589,6 +590,9 @@ static void create_stairs(int y, int x)
 
 	/* Create stairs down */
 	cave_set_feat(y, x, FEAT_MORE);
+	
+	/* Notice the change */
+	note_spot(y, x);
 
 	/* Remember to update everything */
 	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
@@ -1036,8 +1040,7 @@ void do_cmd_knowledge_quests(void)
 			case QUEST_TYPE_DUNGEON:
 			{
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-				int q_num = q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num;
-				
+								
 				strncpy(name, r_name + r_ptr->name, 80);
 				
 				if (q_ptr->status == QUEST_STATUS_TAKEN)

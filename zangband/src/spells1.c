@@ -470,7 +470,13 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			cave_set_feat(y, x, FEAT_CLOSED);
 
 			/* Observe */
-			if (known) obvious = TRUE;
+			if (known)
+			{
+				obvious = TRUE;
+				
+				/* Notice */
+				note_spot(y, x);
+			}
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -517,6 +523,9 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 			/* Place a wall */
 			cave_set_feat(y, x, FEAT_WALL_EXTRA);
+			
+			/* Notice */
+			note_spot(y, x);
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -4429,6 +4438,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 								else
 									cave_set_feat(y, x, FEAT_FLOOR);
 							}
+							
+							/* Notice */
+							note_spot(y, x);
 
 							/* Update some things -- similar to GF_KILL_WALL */
 							p_ptr->update |= (PU_VIEW | PU_FLOW

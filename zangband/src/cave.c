@@ -1952,9 +1952,31 @@ void note_spot(int y, int x)
 		|| (pc_ptr->player & (GRID_LITE)))
 		&& player_has_los_grid(pc_ptr) && !p_ptr->blind)
 	{
+		/* Memorize certain non-torch-lit wall grids */
+		if (!cave_floor_grid(c_ptr))
+		{
+			int yy, xx;
+
+			/* Hack -- move one grid towards player */
+			yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
+			xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
+
+			/* Check for "local" illumination */
+			if (!(area(yy, xx)->info & (CAVE_GLOW)))
+			{
+				/* Hack - lite the spot any way */
+				lite_spot(y, x);
+				
+				/* Done */
+				return;
+			}
+		}
+		
 		/* We can see the square */
 		pc_ptr->player |= (GRID_SEEN);
-
+			
+		/* Memorize feature */
+		pc_ptr->feat = c_ptr->feat;
 
 		/* Hack -- memorize objects */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -1978,53 +2000,6 @@ void note_spot(int y, int x)
 
 			/* Memorize fields */
 			f_ptr->info |= FIELD_INFO_MARK;
-		}
-
-
-		/* Hack -- memorize grids */
-		if (pc_ptr->feat != c_ptr->feat)
-		{
-			/* Handle floor grids first */
-			if (cave_floor_grid(c_ptr))
-			{
-				/* Option -- memorize all torch-lit floors */
-				if (view_torch_grids && (pc_ptr->player & (GRID_LITE)))
-				{
-					/* Memorize */
-					pc_ptr->feat = c_ptr->feat;
-				}
-
-				/* Option -- memorize all perma-lit floors */
-				else if (view_perma_grids && (c_ptr->info & (CAVE_GLOW)))
-				{
-					/* Memorize */
-					pc_ptr->feat = c_ptr->feat;
-				}
-			}
-
-			/* Memorize torch-lit walls */
-			else if (pc_ptr->player & (GRID_LITE))
-			{
-				/* Memorize */
-				pc_ptr->feat = c_ptr->feat;
-			}
-
-			/* Memorize certain non-torch-lit wall grids */
-			else
-			{
-				int yy, xx;
-
-				/* Hack -- move one grid towards player */
-				yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-				xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
-
-				/* Check for "local" illumination */
-				if (area(yy, xx)->info & (CAVE_GLOW))
-				{
-					/* Memorize */
-					pc_ptr->feat = c_ptr->feat;
-				}
-			}
 		}
 	}
 

@@ -3214,6 +3214,9 @@ bool field_action_door_unlock(field_type *f_ptr, vptr input)
 		/* Open the door */
 		cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
 		
+		/* Notice the change */
+		note_spot(f_ptr->fy, f_ptr->fx);
+		
 		/* Delete the field */
 		return (TRUE);
 	}
@@ -3250,12 +3253,18 @@ bool field_action_door_bash(field_type *f_ptr, vptr input)
 		if (randint0(100) < 50)
 		{
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
+			
+			/* Notice the change */
+			note_spot(f_ptr->fy, f_ptr->fx);
 		}
 
 		/* Open the door */
 		else
 		{
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+			
+			/* Notice the change */
+			note_spot(f_ptr->fy, f_ptr->fx);
 		}
 		
 		/* Delete the field */
@@ -3315,6 +3324,9 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 			{
 				p_ptr->update |= (PU_VIEW | PU_FLOW 
 					| PU_MONSTERS | PU_MON_LITE);
+
+				/* Notice the change */
+				note_spot(f_ptr->fy, f_ptr->fx);
 			}
 			
 			/* Cannot move */
@@ -3391,7 +3403,9 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
 			{
 				p_ptr->update |= (PU_VIEW | PU_FLOW |
-				                  PU_MONSTERS | PU_MON_LITE);
+						 PU_MONSTERS | PU_MON_LITE);
+				/* Notice the change */
+				note_spot(f_ptr->fy, f_ptr->fx);
 			}
 			
 			/* Hack -- fall into doorway */

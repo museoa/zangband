@@ -2503,7 +2503,7 @@ static void process_monster(int m_idx)
 				do_view = TRUE;
 				
 				/* Forget the wall */
-				pc_ptr->feat = c_ptr->feat;
+				note_spot(ny, nx);
 			}
 		}
 		
@@ -2560,6 +2560,9 @@ static void process_monster(int m_idx)
 
 			/* Handle viewable doors */
 			if (player_can_see_bold(ny, nx)) do_view = TRUE;
+			
+			/* Notice the change */
+			note_spot(ny, nx);
 				
 			/* Take a turn */
 			do_turn = TRUE;
