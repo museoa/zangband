@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-Changes since 2.5.0
+ZAngband 2.5.1:
 -Documentation updates.
 -Changed the drive-letters in the Cygwin makefile from d: to c:.
 -Fixed a bug with the Amiga map.
@@ -53,7 +53,6 @@ Changes since 2.5.0
 -Transparency now works in XAW mode.
 -Added gamma correction for -X11.
 -You can no longer target friendly monsters by accident.
-
 
 ZAngband 2.5.0:
 -Completely reworked the wilderness.  The extended towns and fixed
