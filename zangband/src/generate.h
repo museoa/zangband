@@ -94,7 +94,7 @@ extern int dun_tun_jct;
 #define BLOCK_WID	11
 
 /*
- * Maximum numbers of rooms along each axis (currently 6x6)
+ * Maximum numbers of rooms along each axis
  */
 #define MAX_ROOMS_ROW	(MAX_HGT / BLOCK_HGT)
 #define MAX_ROOMS_COL	(MAX_WID / BLOCK_WID)
@@ -102,7 +102,6 @@ extern int dun_tun_jct;
 
 /*
  * Bounds on some arrays used in the "dun_data" structure.
- * These bounds are checked, though usually this is a formality.
  */
 #define CENT_MAX	100
 #define DOOR_MAX	200
@@ -114,6 +113,8 @@ extern int dun_tun_jct;
 
 /*
  * Structure to hold all "dungeon generation" data
+ * Using this instead of global variables, 
+ * fixes a memory fragmentation problem on some windows compilers.
  */
 
 typedef struct dun_data dun_data;

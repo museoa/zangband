@@ -1186,9 +1186,13 @@ void generate_cave(void)
 		bool okay = TRUE;
 
 		cptr why = NULL;
-
-
-		/* XXX XXX XXX XXX */
+		
+		/*
+		 * XXX XXX XXX XXX
+		 * Perhaps we should simply check for no monsters / objects
+		 * and complain if any exist.  That way these two lines
+		 * could eventually be removed.
+		 */
 		o_max = 1;
 		m_max = 1;
 
@@ -1208,9 +1212,6 @@ void generate_cave(void)
 
 				/* No monsters */
 				cave[y][x].m_idx = 0;
-
-				/* No mimic */
-				cave[y][x].mimic = 0;
 
 #ifdef MONSTER_FLOW
 				/* No flow */
