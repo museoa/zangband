@@ -327,6 +327,10 @@ errr top_twenty(void)
 
 	high_score   the_score;
 
+#ifndef HIGHSCORE_DATE_HACK
+	char long_day[12];
+#endif
+	
 	time_t ct = time((time_t*)0);
 
 
@@ -416,8 +420,19 @@ errr top_twenty(void)
 	/* Save the date in a hacked up form (9 chars) */
 	(void)sprintf(the_score.day, "%-.6s %-.2s", ctime(&ct) + 4, ctime(&ct) + 22);
 #else
-	/* Save the date in standard form (8 chars) */
-	(void)strftime(the_score.day, 9, "%m/%d/%y", localtime(&ct));
+	/* Get the date with a 4-digit year */
+	(void)strftime(long_day, 11, "%m/%d/%Y", localtime(&ct));
+
+	/* Remove the century */
+	j = 7;
+	do
+	{    
+		j++;
+		long_day[j-2] = long_day[j];
+	} while (long_day[j]);
+
+        /* Save the date in standard form (8 chars) */
+       (void)strnfmt(the_score.day, 9, "%s", long_day);
 #endif
 
 	/* Save the player name (15 chars) */
