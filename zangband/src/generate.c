@@ -199,7 +199,7 @@ static void alloc_object(int set, int typ, int num)
 {
 	int y, x, k;
 	int dummy = 0;
-	cave_type *c_ptr;
+	cave_type *c_ptr = NULL;
 
 	/* Place some objects */
 	for (k = 0; k < num; k++)
@@ -248,7 +248,7 @@ static void alloc_object(int set, int typ, int num)
 		{
 			case ALLOC_TYP_RUBBLE:
 			{
-				place_rubble(y, x);
+				c_ptr->feat = FEAT_RUBBLE;
 				break;
 			}
 
@@ -451,17 +451,17 @@ static bool cave_gen(void)
 		destroyed = TRUE;
 
 		/* extra rubble around the place looks cool */
-		build_lake(3);
+		build_lake(LAKE_DESTROY);
 	}
 
 	/* Make a lake some of the time */
 	if ((rand_int(LAKE_LEVEL) == 0) && !empty_level && !destroyed && terrain_streams)
 	{
 		/* Lake of Water */
-		if (dun_level > 52) laketype = 2;
+		if (dun_level > 52) laketype = LAKE_WATER;
 
 		/* Lake of Lava */
-		if (dun_level > 90) laketype = 1;
+		if (dun_level > 90) laketype = LAKE_LAVA;
 
 		if (laketype != 0)
 		{
@@ -577,10 +577,16 @@ static bool cave_gen(void)
 
 			}
 
-			/* Type 4 -- Large room (25%) */
-			if ((k < 25) && room_build(y, x, 4)) continue;
+			/* Type 4 -- Large room (15%) */
+			if ((k < 15) && room_build(y, x, 4)) continue;
 
-			/* Type 3 -- Cross room (25%) */
+			/* Type 14 -- Large room (10%) */
+			if ((k < 25) && room_build(y, x, 14)) continue;
+			
+			/* Type 13 -- Large Feature room (5%) */
+			if ((k < 30) && room_build(y, x, 13)) continue;
+			
+			/* Type 3 -- Cross room (20%) */
 			if ((k < 50) && room_build(y, x, 3)) continue;
 
 			/* Type 2 -- Overlapping (25%) */
@@ -744,7 +750,7 @@ static bool cave_gen(void)
 			c_ptr = &cave[y][x];
 			
 			/* Deleting a locked or jammed door is problematical */
-			clear_icky_door(c_ptr);
+			delete_field_location(c_ptr);
 
 			/* Clear previous contents (if not a lake), add a floor */
 			if ((c_ptr->feat < FEAT_DEEP_WATER) ||
@@ -765,7 +771,7 @@ static bool cave_gen(void)
 			c_ptr = &cave[y][x];
 			
 			/* Deleting a locked or jammed door is problematical */
-			clear_icky_door(c_ptr);
+			delete_field_location(c_ptr);
 
 			/* Clear previous contents, add up floor */
 			c_ptr->feat = FEAT_FLOOR;
