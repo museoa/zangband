@@ -221,13 +221,16 @@ static void alloc_object(int set, int typ, int num)
 			if (!cave_naked_grid(c_ptr)) continue;
 
 			/* Check for "room" */
-			room = (cave[y][x].info & CAVE_ROOM) ? TRUE : FALSE;
+			room = (c_ptr->info & CAVE_ROOM) ? TRUE : FALSE;
 
 			/* Require corridor? */
 			if ((set == ALLOC_SET_CORR) && room) continue;
 
 			/* Require room? */
 			if ((set == ALLOC_SET_ROOM) && !room) continue;
+			
+			/* Traps cannot be placed on 'icky' grids (rivers/lakes) */
+			if ((typ == ALLOC_TYP_TRAP) && (c_ptr->info & CAVE_ICKY)) continue;
 
 			/* Accept it */
 			break;
