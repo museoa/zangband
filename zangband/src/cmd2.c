@@ -683,7 +683,8 @@ bool do_cmd_open_aux(int x, int y)
 		if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 		/* Success? */
-		if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, i))
+		if (!field_script_single(f_ptr, FIELD_ACT_INTERACT,
+									"i", LUA_VAR_NAMED(i, "power")))
 		{
 			/* Sound */
 			sound(SOUND_OPENDOOR);
@@ -1031,7 +1032,8 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	if (f_ptr && (action == ACT_TUNNEL))
 	{
-		if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, dig))
+		if (!field_script_single(f_ptr, FIELD_ACT_INTERACT,
+									"i", LUA_VAR_NAMED(dig, "power")))
 		{
 			/* Finished tunneling */
 			return (FALSE);
@@ -1505,7 +1507,8 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, i))
+	if (!field_script_single(f_ptr, FIELD_ACT_INTERACT,
+								"i", LUA_VAR_NAMED(i, "power")))
 	{
 		/* Message */
 		msgf("You have disarmed the %s.", t_ptr->name);

@@ -1673,34 +1673,6 @@ bool field_action_corpse_look(field_type *f_ptr, va_list vp)
 
 
 /*
- * Try to tunnel into a wall.
- */
-bool field_action_wall_tunnel(field_type *f_ptr, va_list vp)
-{
-	int dig = va_arg(vp, int);
-
-	/* Hack - ignore 'f_ptr' */
-	(void)f_ptr;
-
-	if (dig > 40 + randint0(1600))
-	{
-		/* Success */
-
-		msgf("You have finished the tunnel.");
-
-		/* Delete field */
-		return (TRUE);
-	}
-
-	/* Failure */
-
-	msgf("You tunnel into it.");
-
-	return (FALSE);
-}
-
-
-/*
  * Traps code.
  *
  * data[0]  Trap power  (used to be always 5).
@@ -1894,35 +1866,6 @@ void place_trap(int x, int y)
 		/* Initialise it */
 		(void)field_script_single(f_ptr, FIELD_ACT_INIT, "");
 	}
-}
-
-
-/*
- * Try to disarm a trap.
- */
-bool field_action_trap_disarm(field_type *f_ptr, va_list vp)
-{
-	int disarm = va_arg(vp, int);
-
-	/* Extract trap "power" */
-	int power = f_ptr->data[0] / 2;
-
-	/* Extract the difficulty */
-	int j = disarm - power;
-
-	/* Always have a small chance of success */
-	if (j < 2) j = 2;
-
-	if (randint0(100) < j)
-	{
-		/* Success */
-
-		/* Delete the field */
-		return (TRUE);
-	}
-
-	/* Done */
-	return (FALSE);
 }
 
 
@@ -2965,83 +2908,6 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 	 * Initialise it.
 	 */
 	(void)field_script_single(f_ptr, FIELD_ACT_INIT, "i:", LUA_VAR(power));
-}
-
-
-bool field_action_door_unlock(field_type *f_ptr, va_list vp)
-{
-	int lock = va_arg(vp, int);
-
-	/* Extract door "power" */
-	int power = lock - f_ptr->counter;
-
-	/* Always have a small chance of success */
-	if (power < 2) power = 2;
-
-	if (randint0(100) < power)
-	{
-		/* Success */
-
-		/* Message */
-		msgf("The door is unlocked.");
-
-		/* Open the door */
-		cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
-
-		/* Delete the field */
-		return (TRUE);
-	}
-
-	/* Failure */
-
-	/* Message */
-	msgf("You failed to unlock the door.");
-
-	/* We know the door is locked */
-	f_ptr->info |= FIELD_INFO_NFT_LOOK;
-	f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_door_bash(field_type *f_ptr, va_list vp)
-{
-	int jam = va_arg(vp, int);
-
-	/* Extract unjamming "power" */
-	int power = jam / 10 + adj_str_wgt[p_ptr->stat[A_STR].ind] / 2;
-
-	if (randint0(power) > f_ptr->counter)
-	{
-		/* Success */
-
-		/* Message */
-		msgf("The door crashes open!");
-
-		/* Break down the door */
-		if (randint0(100) < 50)
-		{
-			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_BROKEN);
-		}
-
-		/* Open the door */
-		else
-		{
-			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
-		}
-
-		/* Delete the field */
-		return (TRUE);
-	}
-
-	/* We know the door is jammed */
-	f_ptr->info |= FIELD_INFO_NFT_LOOK;
-	f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
-
-	/* Done */
-	return (FALSE);
 }
 
 

@@ -6860,13 +6860,7 @@ const field_action f_action[] =
 			
 	/* Function returning name of the monster the corpse once was. */
 	{field_action_corpse_look, "field_action_corpse_look"},
-	
-	/* Tunnel into a "standard" wall to pass */
-	{field_action_wall_tunnel, "field_action_wall_tunnel"},
-	
-	/* Trap disarming function */
-	{field_action_trap_disarm, "field_action_trap_disarm"},
-	
+		
 	/* Trapdoor */
 	{field_action_hit_trap_door, "field_action_hit_trap_door"},
 	
@@ -6944,12 +6938,6 @@ const field_action f_action[] =
 	
 	/* Lose Memory Trap */
 	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"},
-	
-	/* Attempt to unlock a door */
-	{field_action_door_unlock, "field_action_door_unlock"},
-		
-	/* Attempt to bash a door */
-	{field_action_door_bash, "field_action_door_bash"},
 	
 	/* Monster attemts to enter locked door */
 	{field_action_door_lock_monster, "field_action_door_lock_monster"},
