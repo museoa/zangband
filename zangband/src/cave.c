@@ -1663,13 +1663,8 @@ static void variable_player_graph(byte *a, char *c)
  * such as "multi-hued" or "clear" monsters, cause the attr/char codes
  * to be "scrambled" in various ways.
  */
-#ifdef USE_TRANSPARENCY
 static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp,
                      byte *tap, char *tcp)
-#else  /* USE_TRANSPARENCY */
-
-static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
-#endif /* USE_TRANSPARENCY */
 {
 	feature_type *f_ptr;
 
@@ -1757,8 +1752,6 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 		image_random(&a, &c);
 	}
 
-
-#ifdef USE_TRANSPARENCY
 	/* Save the terrain info for the transparency effects */
 
 	/* Does the feature have "extended terrain" information? */
@@ -1776,7 +1769,6 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 		(*tap) = a;
 		(*tcp) = c;
 	}
-#endif /* USE_TRANSPARENCY */
 
 	/* Handle "player" */
 	if (character_dungeon && (c_ptr == area(p_ptr->px, p_ptr->py)))
@@ -1924,11 +1916,10 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 
 				/* Normal attr */
 				a = fld_ptr->f_attr;
-#ifdef USE_TRANSPARENCY
+
 				/* Save the terrain info for the transparency effects */
 				(*tap) = a;
 				(*tcp) = c;
-#endif /* USE_TRANSPARENCY */
 			}
 			else
 			{
@@ -2150,10 +2141,8 @@ void display_dungeon(void)
 
 	int wid = Term->wid / 2, hgt = Term->hgt / 2;
 
-#ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
-#endif /* USE_TRANSPARENCY */
 
 	for (x = px - wid + 1; x <= px + wid; x++)
 	{
@@ -2169,20 +2158,12 @@ void display_dungeon(void)
 				Term_write_map(x, y, c_ptr, pc_ptr);
 #endif /* TERM_USE_MAP */
 
-#ifdef USE_TRANSPARENCY
 				/* Examine the grid */
 				map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
 
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
 								tc);
-#else  /* USE_TRANSPARENCY */
-				/* Examine the grid */
-				map_info(c_ptr, pc_ptr, &a, &c);
-
-				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
-#endif /* USE_TRANSPARENCY */
 			}
 			else
 			{
@@ -2197,14 +2178,9 @@ void display_dungeon(void)
 				/* Normal char */
 				c = f_ptr->x_char;
 
-#ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
 								tc);
-#else  /* USE_TRANSPARENCY */
-				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
-#endif /* USE_TRANSPARENCY */
 			}
 		}
 	}
@@ -2241,24 +2217,14 @@ void lite_spot(int x, int y)
 			byte a;
 			char c;
 
-#ifdef USE_TRANSPARENCY
 			byte ta;
 			char tc;
 
 			/* Examine the grid */
 			map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
-#else  /* USE_TRANSPARENCY */
-			/* Examine the grid */
-			map_info(c_ptr, pc_ptr, &a, &c);
-#endif /* USE_TRANSPARENCY */
 
-#ifdef USE_TRANSPARENCY
 			/* Hack -- Queue it */
 			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
-#else  /* USE_TRANSPARENCY */
-			/* Hack -- Queue it */
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
-#endif /* USE_TRANSPARENCY */
 		}
 	}
 }
@@ -2290,11 +2256,8 @@ void prt_map(void)
 	byte *pa;
 	char *pc;
 
-#ifdef USE_TRANSPARENCY
 	byte *pta;
 	char *ptc;
-#endif /* USE_TRANSPARENCY */
-
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -2351,7 +2314,6 @@ void prt_map(void)
 	pa = mp_a;
 	pc = mp_c;
 
-#ifdef USE_TRANSPARENCY
 	pta = mp_ta;
 	ptc = mp_tc;
 
@@ -2388,39 +2350,6 @@ void prt_map(void)
 		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt,
 						xmax - xmin + 1, pa, pc, pta, ptc);
 	}
-
-#else  /* USE_TRANSPARENCY */
-
-	/* Dump the map */
-	for (y = ymin; y <= ymax; y++)
-	{
-		/* No characters yet */
-		n = 0;
-
-		/* Scan the columns of row "y" */
-		for (x = xmin; x <= xmax; x++)
-		{
-			c_ptr = area(x, y);
-			pc_ptr = parea(x, y);
-
-#ifdef TERM_USE_MAP
-			/* Tell the world about this square */
-			Term_write_map(x, y, c_ptr, pc_ptr);
-#endif /* TERM_USE_MAP */
-
-			/* Determine what is there */
-			map_info(c_ptr, pc_ptr, pa++, pc++);
-		}
-
-		/* Point to start of line */
-		pa = mp_a;
-		pc = mp_c;
-
-		/* Efficiency -- Redraw that row of the map */
-		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt,
-						xmax - xmin + 1, pa, pc);
-	}
-#endif /* USE_TRANSPARENCY */
 
 	/* Restore the cursor */
 	(void)Term_set_cursor(v);
@@ -2556,10 +2485,8 @@ void display_map(int *cx, int *cy)
 	byte ta;
 	char tc;
 
-#ifdef USE_TRANSPARENCY
 	byte tta;
 	char ttc;
-#endif /* USE_TRANSPARENCY */
 
 	byte tp;
 
@@ -2572,10 +2499,8 @@ void display_map(int *cx, int *cy)
 
 	byte **mp;
 
-#ifdef USE_TRANSPARENCY
 	byte **mta;
 	char **mtc;
-#endif /* USE_TRANSPARENCY */
 
 	bool old_view_special_lite = view_special_lite;
 	bool old_view_granite_lite = view_granite_lite;
@@ -2608,11 +2533,8 @@ void display_map(int *cx, int *cy)
 	C_MAKE(mc, (hgt + 2), char *);
 	C_MAKE(mp, (hgt + 2), byte *);
 
-#ifdef USE_TRANSPARENCY
 	C_MAKE(mta, (hgt + 2), byte *);
 	C_MAKE(mtc, (hgt + 2), char *);
-#endif /* USE_TRANSPARENCY */
-
 
 	/* Allocate and wipe each line map */
 	for (i = 0; i < (hgt + 2); i++)
@@ -2622,10 +2544,8 @@ void display_map(int *cx, int *cy)
 		C_MAKE(mc[i], (wid + 2), char);
 		C_MAKE(mp[i], (wid + 2), byte);
 
-#ifdef USE_TRANSPARENCY
 		C_MAKE(mta[i], (wid + 2), byte);
 		C_MAKE(mtc[i], (wid + 2), char);
-#endif /* USE_TRANSPARENCY */
 	}
 
 	/* Clear the chars and attributes */
@@ -2637,10 +2557,8 @@ void display_map(int *cx, int *cy)
 			ma[y][x] = TERM_WHITE;
 			mc[y][x] = ' ';
 
-#ifdef USE_TRANSPARENCY
 			mta[y][x] = TERM_WHITE;
 			mtc[y][x] = ' ';
-#endif /* USE_TRANSPARENCY */
 
 			/* No priority */
 			mp[y][x] = 0;
@@ -2776,7 +2694,6 @@ void display_map(int *cx, int *cy)
 					ma[j + 1][i + 1] = f_info[feat].x_attr;
 					mc[j + 1][i + 1] = f_info[feat].x_char;
 
-#ifdef USE_TRANSPARENCY
 					if (f_info[feat].w_attr)
 					{
 						mta[j + 1][i + 1] = f_info[feat].w_attr;
@@ -2787,7 +2704,6 @@ void display_map(int *cx, int *cy)
 						mta[j + 1][i + 1] = ma[j + 1][i + 1];
 						mtc[j + 1][i + 1] = mc[j + 1][i + 1];
 					}
-#endif /* USE_TRANSPARENCY */
 				}
 			}
 		}
@@ -2827,11 +2743,7 @@ void display_map(int *cx, int *cy)
 
 
 				/* Extract the current attr/char at that map location */
-#ifdef USE_TRANSPARENCY
 				map_info(c_ptr, pc_ptr, &ta, &tc, &tta, &ttc);
-#else  /* USE_TRANSPARENCY */
-				map_info(c_ptr, pc_ptr, &ta, &tc);
-#endif /* USE_TRANSPARENCY */
 
 				/* Extract the priority of that attr/char */
 				tp = priority(pc_ptr->feat);
@@ -2845,11 +2757,9 @@ void display_map(int *cx, int *cy)
 					/* Save the attr */
 					ma[y][x] = ta;
 
-#ifdef USE_TRANSPARENCY
 					/* Save the transparency graphic */
 					mtc[y][x] = ttc;
 					mta[y][x] = tta;
-#endif /* USE_TRANSPARENCY */
 
 					/* Save priority */
 					mp[y][x] = tp;
@@ -2891,16 +2801,11 @@ void display_map(int *cx, int *cy)
 			ta = ma[j][i];
 			tc = mc[j][i];
 
-#ifdef USE_TRANSPARENCY
 			tta = mta[j][i];
 			ttc = mtc[j][i];
 
 			/* Hack -- Queue it */
 			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
-#else  /* USE_TRANSPARENCY */
-
-			Term_queue_char(COL_MAP + i - 1, j, ta, tc);
-#endif /* USE_TRANSPARENCY */
 		}
 	}
 
@@ -2914,20 +2819,16 @@ void display_map(int *cx, int *cy)
 		/* Free one row each array */
 		FREE(ma[i]);
 		FREE(mc[i]);
-#ifdef USE_TRANSPARENCY
 		FREE(mta[i]);
 		FREE(mtc[i]);
-#endif /* USE_TRANSPARENCY */
 		FREE(mp[i]);
 	}
 
 	/* Free the maps */
 	FREE(ma);
 	FREE(mc);
-#ifdef USE_TRANSPARENCY
 	FREE(mta);
 	FREE(mtc);
-#endif /* USE_TRANSPARENCY */
 	FREE(mp);
 }
 

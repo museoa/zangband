@@ -149,12 +149,12 @@ CC = gcc
 ##       to get 256 colours.
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
-#         -D"USE_X11" -D"USE_GCU" -D"USE_VCS" -D"USE_TRANSPARENCY"
+#         -D"USE_X11" -D"USE_GCU" -D"USE_VCS"
 #LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 ## Option: Use XAW instead of pure X11
 CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
-          -D"USE_XAW" -D"USE_GCU" -D"USE_VCS" -D"USE_TRANSPARENCY"
+          -D"USE_XAW" -D"USE_GCU" -D"USE_VCS"
 LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
           -lX11 -lcurses -lncurses
 
@@ -163,7 +163,7 @@ LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
 ## (This requires the 16x16.bmp file to exist for it to work)
 #
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
-#         -D"USE_GCU" -D"USE_TRANSPARENCY" -D"USE_XPJ"
+#         -D"USE_GCU" -D"USE_XPJ"
 #		 
 #LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib
 
@@ -173,7 +173,7 @@ LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
 ## (Use the -m option to start the one you want.)
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g  -D"USE_GCU" -D"USE_VCS"\
-#         -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
+#         -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
 #         `gtk-config --cflags` -D"USE_GTK" 
 #		 
 #LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga \
@@ -184,7 +184,7 @@ LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
 ##
 #
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -I/usr/x11r6/include \
-#         -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
+#         -D"USE_X11" -D"USE_GCU"
 #LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 
@@ -213,7 +213,7 @@ LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
 ## Variation -- Use "main-gtk.c"
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g  -D"USE_GCU"\
-#         -D"USE_TRANSPARENCY" `gtk-config --cflags` -D"USE_GTK" 
+#         `gtk-config --cflags` -D"USE_GTK" 
 #		 
 #LIBS = -lcurses -lncurses -L/usr/X11R6/lib \
 #       -lgtk `gtk-config --libs`

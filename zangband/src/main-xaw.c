@@ -184,12 +184,8 @@ struct AngbandPart
 	/* Tiles */
 	XImage *tiles;
 
-#ifdef USE_TRANSPARENCY
-
 	/* Tempory storage for overlaying tiles. */
 	XImage *TmpImage;
-
-#endif
 
 #endif /* USE_GRAPHICS */
 
@@ -417,13 +413,8 @@ static void AngbandOutputText(AngbandWidget widget, int x, int y,
 /*
  * Draw some graphical characters.
  */
-# ifdef USE_TRANSPARENCY
 static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
  const byte *ap, const char *cp, const byte *tap, const char *tcp)
-# else /* USE_TRANSPARENCY */
-static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
- const byte *ap, const char *cp)
-# endif /* USE_TRANSPARENCY */
 
 
 {
@@ -432,7 +423,6 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 	byte a;
 	char c;
 
-#ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
 
@@ -440,7 +430,6 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 	int k,l;
 
 	unsigned long pixel, blank;
-#endif /* USE_TRANSPARENCY */
 
 	/* Figure out where to place the text */
 	y = (y * widget->angband.fontheight + widget->angband.internal_border);
@@ -454,8 +443,6 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 		/* For extra speed - cache these values */
 		x1 = (c&0x7F) * widget->angband.fontwidth;
 		y1 = (a&0x7F) * widget->angband.fontheight;
-
-#ifdef USE_TRANSPARENCY
 
 		ta = *tap++;
 		tc = *tcp++;
@@ -514,19 +501,6 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 			          widget->angband.fontwidth,
 			          widget->angband.fontheight);
 		}
-
-#else /* USE_TRANSPARENCY */
-
-		/* Draw object / terrain */
-		XPutImage(XtDisplay(widget), XtWindow(widget),
-		          widget->angband.gc[0],
-		          widget->angband.tiles,
-		          x1, y1,
-		          x, y,
-		          widget->angband.fontwidth,
-		          widget->angband.fontheight);
-
-#endif /* USE_TRANSPARENCY */
 
 		x += widget->angband.fontwidth;
 	}
@@ -1449,21 +1423,13 @@ static errr Term_text_xaw(int x, int y, int n, byte a, cptr s)
 /*
  * Draw some graphical characters.
  */
-# ifdef USE_TRANSPARENCY
 static errr Term_pict_xaw(int x, int y, int n, const byte *ap, const char *cp,
 	const byte *tap, const char *tcp)
-# else /* USE_TRANSPARENCY */
-static errr Term_pict_xaw(int x, int y, int n, const byte *ap, const char *cp)
-# endif /* USE_TRANSPARENCY */
 {
 	term_data *td = (term_data*)(Term->data);
 
 	/* Draw the pictures */
-# ifdef USE_TRANSPARENCY
 	AngbandOutputPict(td->widget, x, y, n, ap, cp, tap, tcp);
-# else /* USE_TRANSPARENCY */
-	AngbandOutputPict(td->widget, x, y, n, ap, cp);
-# endif /* USE_TRANSPARENCY */
 
 	/* Success */
 	return (0);
@@ -1668,10 +1634,7 @@ errr init_xaw(int argc, char *argv[])
 
 	int graphmode = GRAPHICS_ANY;
 	
-#ifdef USE_TRANSPARENCY
-
 	char *TmpData;
-#endif /* USE_TRANSPARENCY */
 
 #endif /* USE_GRAPHICS */
 
@@ -1799,7 +1762,6 @@ errr init_xaw(int argc, char *argv[])
 			            td->widget->angband.fontheight);
 		}
 
-#ifdef USE_TRANSPARENCY
 		/* Initialize the transparency temp storage*/
 		for (i = 0; i < num_term; i++)
 		{
@@ -1827,8 +1789,6 @@ errr init_xaw(int argc, char *argv[])
 			        td->widget->angband.fontheight, 8, 0);
 
 		}
-#endif /* USE_TRANSPARENCY */
-
 
 		/* Free tiles_raw? XXX XXX */
 	}

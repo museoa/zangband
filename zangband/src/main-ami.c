@@ -541,11 +541,7 @@ static struct NewMenu newmenu[ MENUMAX ];
 extern void center_string( char *buf, cptr str );
 extern void amiga_gfxmap(void);
 
-#ifdef USE_TRANSPARENCY
 static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp );
-#else
-static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp );
-#endif
 
 errr init_ami ( void );
 static int load_backpic ( term_data *t, char *name );
@@ -2520,11 +2516,7 @@ static errr amiga_clear( void )
 	return ( 0 );
 }
 
-#ifdef USE_TRANSPARENCY
 static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp )
-#else
-static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp )
-#endif
 {
 	term_data *td = (term_data *)(Term->data);
 
@@ -2548,7 +2540,6 @@ static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp )
 		a = ap[i];
 		c = cp[i];
 
-#ifdef USE_TRANSPARENCY
 		if (screen_enhanced)
 		{
 			put_gfx(  td->rp, x, y, tcp[i], tap[i] );
@@ -2556,9 +2547,6 @@ static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp )
 		}
 		put_gfx(  td->rp, x, y, c, a );
 		use_mask = 0;
-#else
-		put_gfx( td->rp, x, y, c, a );
-#endif
 		x++;
 	}
 	return ( 0 );
@@ -3504,16 +3492,12 @@ static void cursor_off( term_data *td )
 		/* Restore graphics under cursor */
 		if ( CUR_A & 0xf0 && (use_graphics == GRAPHICS_ORIGINAL))
 		{
-#ifdef USE_TRANSPARENCY
 		put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, Term->scr->tc[ td->cursor_ypos ][ td->cursor_xpos ],
 				Term->scr->ta[ td->cursor_ypos ][ td->cursor_xpos ]);
 		use_mask = 1;
 		put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, Term->scr->c[ td->cursor_ypos ][ td->cursor_xpos ],
 				Term->scr->a[ td->cursor_ypos ][ td->cursor_xpos ]);
 		use_mask = 0;
-#else
-			put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, CUR_C, CUR_A );
-#endif
 		}
 		/* Restore char/attr under cursor */
 		else
@@ -3585,16 +3569,13 @@ static void cursor_anim( void )
 		if ( CUR_A & 0x80 && (use_graphics == GRAPHICS_ORIGINAL))
 		{
 			/* First draw the tile under cursor */
-#ifdef USE_TRANSPARENCY
 			put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, Term->scr->tc[ td->cursor_ypos ][ td->cursor_xpos ],
 				Term->scr->ta[ td->cursor_ypos ][ td->cursor_xpos ]);
 			use_mask = 1;
 			put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, Term->scr->c[ td->cursor_ypos ][ td->cursor_xpos ],
 				Term->scr->a[ td->cursor_ypos ][ td->cursor_xpos ]);
 			use_mask = 0;
-#else
-			put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, CUR_C, CUR_A );
-#endif
+
 			if ( td->cursor_frame < 4 )
 			{
 				x0 = td->cursor_xpos * td->fw;
@@ -4115,9 +4096,8 @@ static void amiga_map( void )
 	term_data *td = &data[ 0 ];
 	int i,j;
 	byte ta,tc;
-#ifdef USE_TRANSPARENCY
 	byte tap,tcp;
-#endif
+
 #ifdef ANG282
 	int max_wid = DUNGEON_WID, max_hgt = DUNGEON_HGT;
 	int min_wid = 0, min_hgt = 0;
@@ -4188,11 +4168,7 @@ static void amiga_map( void )
 			/* Get tile from cave table */
 			else
 			{
-#ifdef USE_TRANSPARENCY
 				map_info( j, i, &ta, (char *) &tc, &tap, (char *) &tcp );
-#else
-				map_info( j, i, &ta, (char *) &tc );
-#endif
 			}
 
 			/* Ignore non-graphics */

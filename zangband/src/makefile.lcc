@@ -21,7 +21,7 @@ RC		=	$(LCC_PATH)\bin\lrc.exe
 #
 LIBS	=	$(LCC_PATH)\lib\winmm.lib
 INCS	=	$(LCC_PATH)\include
-CFLAGS	=	-I$(INCS) -DUSE_TRANSPARENCY
+CFLAGS	=	-I$(INCS)
 
 #
 # Project files

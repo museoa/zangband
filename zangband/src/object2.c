@@ -92,23 +92,23 @@ void delete_held_object(s16b *o_idx_ptr, int o_idx)
 void delete_dungeon_object(int o_idx)
 {
 	object_type *o_ptr;
-	
+
 	int x, y;
-	
+
 	cave_type *c_ptr;
-	
+
 	/* Object */
 	o_ptr = &o_list[o_idx];
-	
+
 	/* Location */
 	x = o_ptr->ix;
 	y = o_ptr->iy;
-	
+
 	c_ptr = area(x, y);
-	
+
 	/* Excise */
 	excise_object_idx(&c_ptr->o_idx, o_idx);
-	
+
 	/* Visual update */
 	lite_spot(x, y);
 
@@ -170,7 +170,7 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
 	object_type forge;
 	object_type *o_ptr, *q_ptr;
-	
+
 	/* Get local object */
 	q_ptr = &forge;
 
@@ -182,7 +182,7 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 
 		/* Delete the object */
 		object_wipe(o_ptr);
-		
+
 		/* Count objects */
 		o_cnt--;
 
@@ -296,9 +296,9 @@ void compact_objects(int size)
 	int i, y, x, num, cnt;
 
 	int cur_lev, cur_dis, chance;
-	
+
 	bool object_held;
-	
+
 	monster_type *m_ptr = NULL;
 
 
@@ -350,7 +350,7 @@ void compact_objects(int size)
 
 				/* Monsters protect their objects */
 				if (randint0(100) < 90) continue;
-				
+
 				object_held = TRUE;
 			}
 
@@ -360,7 +360,7 @@ void compact_objects(int size)
 				/* Get the location */
 				y = o_ptr->iy;
 				x = o_ptr->ix;
-				
+
 				object_held = FALSE;
 			}
 
@@ -386,7 +386,7 @@ void compact_objects(int size)
 			{
 				delete_dungeon_object(i);
 			}
-			
+
 			/* Count it */
 			num++;
 		}
@@ -424,9 +424,9 @@ void compact_objects(int size)
 void wipe_o_list(void)
 {
 	int i;
-	
+
 	int x, y;
-	
+
 	cave_type *c_ptr;
 
 	/* Delete the existing objects */
@@ -436,7 +436,7 @@ void wipe_o_list(void)
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
-		
+
 		/* Skip held objects */
 		if (o_ptr->held_m_idx) continue;
 
@@ -457,11 +457,11 @@ void wipe_o_list(void)
 
 		/* Hack -- see above */
 		c_ptr->o_idx = 0;
-			
+
 		/* Delete the object */
 		delete_dungeon_object(i);
 	}
-	
+
 	/* Compress the object list */
 	compact_objects(0);
 }
@@ -507,7 +507,7 @@ void wipe_objects(int rg_idx)
 s16b get_list_slot(s16b o_idx, int slot)
 {
 	object_type *o_ptr;
-	
+
 	/* Start counting at zero */
 	int i = 0;
 
@@ -5607,7 +5607,7 @@ void reorder_pack(void)
 	object_type *q_ptr, *j_ptr, *o_ptr;
 
 	bool flag = FALSE;
-	
+
 	/* Get local object */
 	q_ptr = &forge;
 

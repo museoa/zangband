@@ -59,13 +59,11 @@ struct term_data
 	GdkPixmap *pixmap;
 	GdkGC *gc;
 
-#ifdef USE_GRAPHICS	
+#ifdef USE_GRAPHICS
+
 	GdkImage *tiles;
-
-#ifdef USE_TRANSPARENCY
 	GdkImage *temp;
-#endif /* USE_TRANSPARENCY */
-
+	
 #endif /* USE_GRAPHICS */
 
 	int font_wid;
@@ -812,19 +810,14 @@ static errr Term_curs_gtk(int x, int y)
 /*
  * Draw some graphical characters.
  */
-# ifdef USE_TRANSPARENCY
 static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp,
 	const byte *tap, const char *tcp)
-# else /* USE_TRANSPARENCY */
-static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
-# endif /* USE_TRANSPARENCY */
 {
 	int i, x1, y1, x0 = x, y0 = y;
 
 	byte a;
 	char c;
 
-#ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
 
@@ -832,15 +825,11 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 	int k, l;
 
 	guint32 pixel, blank;
-	
-#endif /* USE_TRANSPARENCY */
 
 	term_data *td = (term_data*)(Term->data);
 
-#ifdef USE_TRANSPARENCY	
 	/* Mega Hack^2 - assume the top left corner is "black" */
 	blank = gdk_image_get_pixel(td->tiles, 0, td->font_hgt * 6);
-#endif /* USE_TRANSPARENCY */
 	
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
@@ -860,8 +849,6 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 		/* For extra speed - cache these values */
 		x1 = (c&0x7F) * td->font_wid;
 		y1 = (a&0x7F) * td->font_hgt;
-
-#ifdef USE_TRANSPARENCY
 
 		ta = *tap++;
 		tc = *tcp++;
@@ -905,15 +892,7 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 			/* Hack - flush the changes */
 			gdk_flush();
 		}
-
-#else /* USE_TRANSPARENCY */
-
-		/* Draw object / terrain */
-		gdk_draw_image(td->pixmap, td->gc, td->tiles,
-				 x1, y1, x, y,
-				 td->font_wid, td->font_hgt);
-
-#endif /* USE_TRANSPARENCY */
+		
 		x += td->font_wid;
 	}
 	
@@ -1171,8 +1150,6 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 		/* Resize tiles */
 		td->tiles = resize_tiles(td->font_wid, td->font_hgt);
 
-#ifdef USE_TRANSPARENCY
-
 		/* Get a new temp */ 
 		if (td->temp) gdk_image_destroy(td->temp);
 	
@@ -1180,13 +1157,12 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 		td->temp = gdk_image_new(GDK_IMAGE_FASTEST,
 						gdk_visual_get_system(),
 						td->font_wid, td->font_hgt);
-
-#endif /* USE_TRANSPARENCY */
 	}
-#endif /* USE_GRAPHICS */
 
+#endif /* USE_GRAPHICS */
+	
 	init_pixmap(td);
-		
+
 	/* Recalculate size hints */	
 	set_size_hints(td);
 	
@@ -1422,16 +1398,11 @@ static void graf_nuke(void)
 		/* Forget pointer */
 		td->tiles = NULL;
 
-# ifdef USE_TRANSPARENCY
-
 		/* Free previously allocated transparency buffer */
 		if (td->temp) gdk_image_destroy(td->temp);
 
 		/* Forget stale pointer */
 		td->temp = NULL;
-
-# endif /* USE_TRANSPARENCY */
-
 	}
 }
 
@@ -1466,12 +1437,9 @@ static void graf_init(void)
 			/* Resize tiles */
 			td->tiles = resize_tiles(td->font_wid, td->font_hgt);
 
-#ifdef USE_TRANSPARENCY
-
 			/* Initialize the transparency temp storage*/			
 			td->temp = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
 				td->font_wid, td->font_hgt);
-#endif /* USE_TRANSPARENCY */
 		}
 		else
 		{
@@ -1564,8 +1532,6 @@ static void change_graf_mode_event_handler(GtkButton *was_clicked,
 }
 
 
-# ifdef USE_TRANSPARENCY
-
 /*
  * Toggles the boolean value of use_transparency
  */
@@ -1578,8 +1544,6 @@ static void change_trans_mode_event_handler(GtkButton *was_clicked,
 	/* Hack - force redraw */
 	Term_key_push(KTRL('R'));
 }
-
-# endif /* USE_TRANSPARENCY */
 
 #endif /* USE_GRAPHICS */
 
@@ -2021,14 +1985,9 @@ static void graf_menu_update_handler(GtkWidget *widget, gpointer user_data)
 	check_menu_item(
 		"<Angband>/Options/Graphics/New",
 		(use_graphics == GRAPHICS_ADAM_BOLT));
-
-# ifdef USE_TRANSPARENCY
-
 	check_menu_item(
 		"<Angband>/Options/Graphics/Transparency",
 		use_transparency);
-
-# endif /* USE_TRANSPARENCY */
 }
 
 #endif /* USE_GRAPHICS */
@@ -2279,11 +2238,8 @@ static GtkItemFactoryEntry main_menu_items[] =
 	  change_graf_mode_event_handler, GRAPHICS_ADAM_BOLT, "<CheckItem>" },
 	{ "/Options/Graphics/sep1", NULL,
 	  NULL, 0, "<Separator>" },
-#ifdef USE_TRANSPARENCY
 	{ "/Options/Graphics/Transparency", NULL,
 	  change_trans_mode_event_handler, 0, "<CheckItem>" },
-#endif /* USE_TRANSPARENCY */
-
 #endif /* USE_GRAPHICS */
 };
 

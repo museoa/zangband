@@ -2330,7 +2330,7 @@ static errr rd_dungeon(void)
 
 		/* Get a new record */
 		o_idx = o_pop();
-		
+
 		/* Oops */
 		if (i != o_idx)
 		{
@@ -2363,7 +2363,7 @@ static errr rd_dungeon(void)
 
 			/* Place the object */
 			c_ptr->o_idx = o_idx;
-			
+
 			/* Hack - set region of object */
 			o_ptr->region = cur_region;
 		}

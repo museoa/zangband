@@ -3374,17 +3374,10 @@ static void borg_display_map_info(byte data, byte type)
 
 			if (c != ' ')
 			{
-#ifdef USE_TRANSPARENCY
-
 				/* Hack -- Queue it */
-				Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, a,
-								c);
-#else  /* USE_TRANSPARENCY */
-
-				Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
-#endif /* USE_TRANSPARENCY */
+				Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c,
+								a, c);
 			}
-
 		}
 	}
 }

@@ -497,14 +497,10 @@ static bool can_use_graphics = FALSE;
  */
 static DIBINIT infGraph;
 
-#ifdef USE_TRANSPARENCY
-
 /*
  * The global bitmap mask
  */
 static DIBINIT infMask;
-
-#endif /* USE_TRANSPARENCY */
 
 #endif /* USE_GRAPHICS */
 
@@ -1402,8 +1398,6 @@ static bool init_graphics(void)
 		infGraph.CellWidth = wid;
 		infGraph.CellHeight = hgt;
 
-#ifdef USE_TRANSPARENCY
-
 		if (arg_graphics == GRAPHICS_ADAM_BOLT)
 		{
 			/* Access the mask file */
@@ -1416,8 +1410,6 @@ static bool init_graphics(void)
 				return (FALSE);
 			}
 		}
-
-#endif /* USE_TRANSPARENCY */
 
 		/* Activate a palette */
 		if (!new_palette())
@@ -2279,11 +2271,7 @@ static errr Term_text_win(int x, int y, int n, byte a, cptr s)
  *
  * If "graphics" is not available, we simply "wipe" the given grids.
  */
-# ifdef USE_TRANSPARENCY
 static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
-# else /* USE_TRANSPARENCY */
-static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
-# endif /* USE_TRANSPARENCY */
 {
 	term_data *td = (term_data*)(Term->data);
 
@@ -2295,13 +2283,9 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	int dest_x, dest_y;
 	int dest_wid, dest_hgt;
 
-# ifdef USE_TRANSPARENCY
-
 	int tsrc_x, tsrc_y;
 
 	HDC hdcMask;
-
-# endif /* USE_TRANSPARENCY */
 
 	HDC hdc;
 	HDC hdcSrc;
@@ -2333,8 +2317,6 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	hdcSrc = CreateCompatibleDC(hdc);
 	hbmSrcOld = SelectObject(hdcSrc, infGraph.hBitmap);
 
-# ifdef USE_TRANSPARENCY
-
 	if (arg_graphics == GRAPHICS_ADAM_BOLT)
 	{
 		hdcMask = CreateCompatibleDC(hdc);
@@ -2344,8 +2326,6 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	{
 		hdcMask = NULL;
 	}
-
-# endif /* USE_TRANSPARENCY */
 
 	/* Draw attr/char pairs */
 	for (i = 0; i < n; i++, dest_x += dest_wid)
@@ -2360,8 +2340,6 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 		/* Location of bitmap cell */
 		src_x = col * src_wid;
 		src_y = row * src_hgt;
-
-# ifdef USE_TRANSPARENCY
 
 		if (arg_graphics == GRAPHICS_ADAM_BOLT)
 		{
@@ -2402,9 +2380,6 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 			}
 		}
 		else
-
-# endif /* USE_TRANSPARENCY */
-
 		{
 			/* Perfect size */
 			if ((src_wid == dest_wid) && (src_hgt == dest_hgt))
@@ -2429,16 +2404,12 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	SelectObject(hdcSrc, hbmSrcOld);
 	DeleteDC(hdcSrc);
 
-# ifdef USE_TRANSPARENCY
-
 	if (arg_graphics == GRAPHICS_ADAM_BOLT)
 	{
 		/* Release */
 		SelectObject(hdcMask, hbmSrcOld);
 		DeleteDC(hdcMask);
 	}
-
-# endif /* USE_TRANSPARENCY */
 
 	/* Release */
 	ReleaseDC(td->w, hdc);
@@ -4547,11 +4518,8 @@ static void hook_quit(cptr str)
 #ifdef USE_GRAPHICS
 	if (infGraph.hPalette) DeleteObject(infGraph.hPalette);
 	if (infGraph.hBitmap) DeleteObject(infGraph.hBitmap);
-
-#ifdef USE_TRANSPARENCY
 	if (infMask.hPalette) DeleteObject(infMask.hPalette);
 	if (infMask.hBitmap) DeleteObject(infMask.hBitmap);
-#endif /* USE_TRANSPARENCY */
 
 #endif /* USE_GRAPHICS */
 

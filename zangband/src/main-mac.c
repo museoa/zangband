@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: main-mac.c */
 
 /* Purpose: Simple support for MACINTOSH Angband */
@@ -1741,15 +1740,7 @@ static errr Term_text_mac(int x, int y, int n, byte a, const char *cp)
  *
  * Erase "n" characters starting at (x,y)
  */
-#ifdef USE_TRANSPARENCY
-	
-	static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
-
-#else
-
-	static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp)
-
-#endif
+static errr Term_pict_mac(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
 {
 	int i;
 	Rect dirtyRect;
@@ -1770,10 +1761,8 @@ static errr Term_text_mac(int x, int y, int n, byte a, const char *cp)
 		byte a = ap[i];
 		char c = cp[i];
 		
-#ifdef USE_TRANSPARENCY
 		byte ta = tap[i];
 		char tc = tcp[i];
-#endif
 
 #ifdef ANGBAND_LITE_MAC
 
@@ -1788,19 +1777,15 @@ static errr Term_text_mac(int x, int y, int n, byte a, const char *cp)
 			int col, row;
 			Rect r1;
 			
-#ifdef USE_TRANSPARENCY
 			int terrain_col, terrain_row;
 			Rect terrain_rect;
-#endif
 
 			/* Row and Col */
 			row = ((byte)a & 0x7F) % kPictRows;
 			col = ((byte)c & 0x7F) % kPictCols;
 
-#ifdef USE_TRANSPARENCY
 			terrain_row = ((byte)ta & 0x7F) % kPictRows;
 			terrain_col = ((byte)tc & 0x7F) % kPictCols;
-#endif
 			
 			/* Source rectangle */
 			r1.left = col * kGrafWidth;
@@ -1818,7 +1803,6 @@ static errr Term_text_mac(int x, int y, int n, byte a, const char *cp)
 					 &(td->w->portBits),
 					 &r1, &r2, srcCopy, NULL);
 			*/
-#ifdef USE_TRANSPARENCY
 			/* Terrain rectangle */
 			terrain_rect.left = terrain_col * kGrafWidth;
 			terrain_rect.top = terrain_row * kGrafHeight;
@@ -1834,11 +1818,6 @@ static errr Term_text_mac(int x, int y, int n, byte a, const char *cp)
 						&r1,
 						&r1,
 						&r2);
-#else
-			CopyBits((BitMap*)frameP->framePix,
-					 &(td->w->portBits),
-					 &r1, &r2, srcCopy, NULL);
-#endif /* USE_TRANSPARENCY */
 
 			/* Restore colors */
 			BackColor(blackColor);

@@ -432,23 +432,15 @@ static errr term_text_svgalib(int x, int y, int n, byte a, cptr s)
 
 #ifdef USE_GRAPHICS
 
-# ifdef USE_TRANSPARENCY
 static errr term_pict_svgalib(int x, int y, int n,
 	 const byte *ap, const char *cp, const byte *tap, const char *tcp)
-# else /* USE_TRANSPARENCY */
-static errr term_pict_svgalib(int x, int y, int n,
-	 const byte *ap, const char *cp)
-# endif /* USE_TRANSPARENCY */
 {
 	int i;
 	int x2, y2;
 
-
-# ifdef USE_TRANSPARENCY
 	/* Hack - Ignore unused transparency data for now */
 	(void) tap;
 	(void) tcp;
-# endif /* USE_TRANSPARENCY */
 
 	for (i = 0; i < n; i++)
 	{

@@ -949,12 +949,9 @@ void map_panel_size(void)
 
 	/* Kill previous size of line */
 
-#ifdef USE_TRANSPARENCY
 	/* String of terrain characters along one row of the map */
 	if (mp_ta) KILL(mp_ta);
 	if (mp_tc) KILL(mp_tc);
-
-#endif /* USE_TRANSPARENCY */
 
 	/* String of characters along one row of the map */
 	if (mp_a) KILL(mp_a);
@@ -965,12 +962,9 @@ void map_panel_size(void)
 
 	/* Make the new lines */
 
-#ifdef USE_TRANSPARENCY
 	/* String of terrain characters along one row of the map */
 	C_MAKE(mp_ta, wid, byte);
 	C_MAKE(mp_tc, wid, char);
-
-#endif /* USE_TRANSPARENCY */
 
 	/* String of characters along one row of the map */
 	C_MAKE(mp_a, wid, byte);
