@@ -23,8 +23,7 @@ void check_experience(void)
 {
 	bool level_reward = FALSE;
 	bool level_mutation = FALSE;
-
-
+	
 	/* Hack -- lower limit */
 	if (p_ptr->exp < 0) p_ptr->exp = 0;
 
@@ -93,10 +92,22 @@ void check_experience(void)
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv)
 		{
-			int vir;
+			int vir, i;
 			for (vir = 0; vir < MAX_PLAYER_VIRTUES; vir++)
 				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
 
+			if (p_ptr->prace == RACE_BEASTMAN)
+			{
+				/* 
+				 * Chance for a mutation is increased
+				 * if multiple levels are gained.
+				 */
+				for (i = p_ptr->max_plv; i < p_ptr->lev; i++)
+				{
+					if (randint(5) == 1) level_mutation = TRUE;
+				}
+			}
+			
 			p_ptr->max_plv = p_ptr->lev;
 
 			if ((p_ptr->pclass == CLASS_CHAOS_WARRIOR) ||
@@ -105,10 +116,7 @@ void check_experience(void)
 				level_reward = TRUE;
 			}
 
-			if (p_ptr->prace == RACE_BEASTMAN)
-			{
-				if (randint(5) == 1) level_mutation = TRUE;
-			}
+			
 		}
 
 		/* Sound */
