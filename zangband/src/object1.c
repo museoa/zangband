@@ -334,6 +334,13 @@ static void roff_obj_aux(const object_type *o_ptr)
 		}
 	}
 
+	/* Food that can be thrown is worth noting */
+	if (k_ptr->ds > 1 && k_ptr->dd > 1 && k_ptr->tval == TV_FOOD)
+	{
+		roff("It can be thrown for %id%i damage.  ",
+			k_ptr->dd, k_ptr->ds);
+	}
+
 	if (FLAG(of_ptr, TR_BLOWS))
 	{
 		if (o_ptr->pval > 0)
