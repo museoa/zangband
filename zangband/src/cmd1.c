@@ -2459,6 +2459,7 @@ void move_player(int dir, int do_pickup)
 		{
 			/* Do not leave the wilderness */
 			msg_print("You can not leave the wilderness.");
+			energy_use = 0;
 			return;
 		}
 	}
@@ -2720,6 +2721,16 @@ void move_player(int dir, int do_pickup)
 				 * typing mistakes should not cost you a turn...
 				 */
 			}
+			
+			/* Jungle */
+			else if (c_ptr->feat == FEAT_JUNGLE)
+			{
+				msg_print("There jungle is impassable.");
+
+				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+					energy_use = 0;
+			}
+			
 			/* Wall (or secret door) */
 			else
 			{
