@@ -2807,7 +2807,7 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 			break;
 		case SV_POTION_POISON:
 			dt = GF_POIS;
-			dam = 3;
+			dam = damroll(3, 6);
 			ident = TRUE;
 			angry = TRUE;
 			break;

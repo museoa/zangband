@@ -1871,7 +1871,7 @@ static s16b w_bonus(int max, int lev_dif)
 	if (max < 6) return (0);
 
 	/* Level difference is too small? */
-	if (abs(lev_dif) < 10) return (0);
+	if (ABS(lev_dif) < 10) return (0);
 
 	if (lev_dif < 0)
 	{

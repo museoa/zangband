@@ -1209,10 +1209,10 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 		dy = (y2 - y1) / 2;
 
 		/* perturbation perpendicular to path */
-		changex = (randint0(abs(dy) + 2) * 2 - abs(dy) - 1) / 2;
+		changex = (randint0(ABS(dy) + 2) * 2 - ABS(dy) - 1) / 2;
 
 		/* perturbation perpendicular to path */
-		changey = (randint0(abs(dx) + 2) * 2 - abs(dx) - 1) / 2;
+		changey = (randint0(ABS(dx) + 2) * 2 - ABS(dx) - 1) / 2;
 
 		/* Work out "mid" ponit */
 		x3 = x1 + dx + changex;

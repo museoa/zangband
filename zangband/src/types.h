@@ -106,6 +106,26 @@ struct header
 	u32b	text_size;		/* Size of the "text" array in bytes */
 };
 
+/*
+ * Structure used to store information required for LOS
+ * calculatations.  The same data can be inverted to
+ * get the squares affected by a projection.  Those squares
+ * can be itterated over to get a 'flight path' for arrows
+ * and thrown items...
+ */
+ 
+typedef struct project_type project_type;
+
+struct project_type
+{
+	/* Offset of square */
+	byte x;
+	byte y;
+	
+	/* Index into array if this square is a wall */
+	byte slope;
+	byte square;
+};
 
 
 /*

@@ -168,9 +168,9 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	for (i = 0; i < MAX_CITY_BUILD; i++)
 	{
 		/* Work out total effects due to location */
-		total = abs(pop - wild_build[i].pop) +
-				abs(magic - wild_build[i].magic) +
-				abs(law - wild_build[i].law) + 1;
+		total = ABS(pop - wild_build[i].pop) +
+				ABS(magic - wild_build[i].magic) +
+				ABS(law - wild_build[i].law) + 1;
 
 		/* Effect due to total count */
 		total += build[i] * 20 * wild_build[i].rarity;
@@ -2463,7 +2463,7 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 		if (dy != 0)
 		{
 			/* perturbation perpendicular to path */
-			changex = randint1(abs(dy)) - abs(dy) / 2;
+			changex = randint1(ABS(dy)) - ABS(dy) / 2;
 		}
 		else
 		{
@@ -2473,7 +2473,7 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 		if (dx != 0)
 		{
 			/* perturbation perpendicular to path */
-			changey = randint1(abs(dx)) - abs(dx) / 2;
+			changey = randint1(ABS(dx)) - ABS(dx) / 2;
 		}
 		else
 		{
@@ -2979,7 +2979,7 @@ static void link_river(int x1, int x2, int y1, int y2)
 		if (dy != 0)
 		{
 			/* perturbation perpendicular to path */
-			changex = randint1(abs(dy)) - abs(dy) / 2;
+			changex = randint1(ABS(dy)) - ABS(dy) / 2;
 		}
 		else
 		{
@@ -2989,7 +2989,7 @@ static void link_river(int x1, int x2, int y1, int y2)
 		if (dx != 0)
 		{
 			/* perturbation perpendicular to path */
-			changey = randint1(abs(dx)) - abs(dx) / 2;
+			changey = randint1(ABS(dx)) - ABS(dx) / 2;
 		}
 		else
 		{

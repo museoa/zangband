@@ -1763,7 +1763,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (seen) obvious = TRUE;
 
 			/* PSI only works if the monster can see you! -- RG */
-			if (!(los(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)))
+			if (!(c_ptr->info & CAVE_VIEW))
 			{
 				dam = 0;
 				note = " can't see you, and isn't affected!";
@@ -5610,6 +5610,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 						ref_ptr->r_flags2 |= RF2_REFLECTING;
 					}
 
+					/* Recursion... */
 					project(area(y,x)->m_idx, 0, t_y, t_x,  dam, typ, flg);
 				}
 				else

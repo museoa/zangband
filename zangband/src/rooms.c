@@ -2025,7 +2025,7 @@ static void build_type7(int by0, int bx0)
 	}
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(abs(x), abs(y), FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(ABS(x), ABS(y), FALSE, by0, bx0, &xval, &yval)) return;
 
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
@@ -2122,7 +2122,7 @@ static void build_type8(int by0, int bx0)
 	}
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(abs(x), abs(y), FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(ABS(x), ABS(y), FALSE, by0, bx0, &xval, &yval)) return;
 
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
@@ -2278,7 +2278,7 @@ static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
 	cy = (y1 + y2) / 2;
 
 	/* Rough measure of size of vault= sum of lengths of sides */
-	size = abs(x2 - x1) + abs(y2 - y1);
+	size = ABS(x2 - x1) + ABS(y2 - y1);
 
 	for (x = x1; x <= x2; x++)
 	{
@@ -3207,8 +3207,8 @@ static int dist2(int x1, int y1, int x2, int y2,
                  int h1, int h2, int h3, int h4)
 {
 	int dx, dy;
-	dx = abs(x2 - x1);
-	dy = abs(y2 - y1);
+	dx = ABS(x2 - x1);
+	dy = ABS(y2 - y1);
 
 	/* Basically this works by taking the normal pythagorean formula
 	 * and using an expansion to express this in a way without the

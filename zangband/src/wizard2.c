@@ -1806,99 +1806,99 @@ void do_cmd_debug(void)
 
 		/* Hack -- Generate Spoilers */
 		case '"':
-		do_cmd_spoilers();
-		break;
+			do_cmd_spoilers();
+			break;
 
 #endif /* ALLOW_SPOILERS */
 
 #ifdef MATLAB
 		case '=':
-		output_monster_matlab();
-		break;
+			output_monster_matlab();
+			break;
 #endif /* MATLAB */
 
 		/* Hack -- Help */
 		case '?':
-		screen_save();
-		show_file("wizard.txt", NULL, 0 , 0);
-		screen_load();
-		break;
+			screen_save();
+			show_file("wizard.txt", NULL, 0 , 0);
+			screen_load();
+			break;
 
 
 		/* Cure all maladies */
 		case 'a':
-		do_cmd_wiz_cure_all();
-		break;
+			do_cmd_wiz_cure_all();
+			break;
 
 		/* Know alignment */
 		case 'A':
-		msg_format("Your alignment is %d.", p_ptr->align);
-		break;
+			msg_format("Your alignment is %d.", p_ptr->align);
+			break;
 
 		/* Teleport to target */
 		case 'b':
-		do_cmd_wiz_bamf();
-		break;
+			do_cmd_wiz_bamf();
+			break;
 
 		/* Create any object */
 		case 'c':
-		wiz_create_item();
-		break;
+			wiz_create_item();
+			break;
 
 		/* Create a named artifact */
 		case 'C':
-		wiz_create_named_art(p_ptr->command_arg);
-		break;
+			wiz_create_named_art(p_ptr->command_arg);
+			break;
 
 		/* Detect everything */
 		case 'd':
-		detect_all();
-		break;
+			detect_all();
+			break;
 
 		/* Edit character */
 		case 'e':
-		do_cmd_wiz_change();
-		break;
+			do_cmd_wiz_change();
+			break;
 
 		/* View item info */
 		case 'f':
-		identify_fully();
-		break;
+			identify_fully();
+			break;
 
 		/* Create feature */
 		case 'F':
-		if (p_ptr->command_arg > 0) do_cmd_wiz_feature(p_ptr->command_arg);
-		break;
+			if (p_ptr->command_arg > 0) do_cmd_wiz_feature(p_ptr->command_arg);
+			break;
 
 		/* Good Objects */
 		case 'g':
-		if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
-		acquirement(py, px, p_ptr->command_arg, FALSE, TRUE);
-		break;
+			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
+			acquirement(py, px, p_ptr->command_arg, FALSE, TRUE);
+			break;
 
 		/* Hitpoint rerating */
 		case 'h':
-		do_cmd_rerate(); break;
+			do_cmd_rerate(); break;
 
 #ifdef MONSTER_HORDES
 		case 'H':
-		do_cmd_summon_horde(); break;
+			do_cmd_summon_horde(); break;
 #endif /* MONSTER_HORDES */
 
 		/* Identify */
 		case 'i':
-		(void)ident_spell();
-		break;
+			(void)ident_spell();
+			break;
 
 		/* Fields Integrity */
 		case 'I':
-		(void)test_field_data_integrity();
-		break;
+			(void)test_field_data_integrity();
+			break;
 
 		/* Go up or down in the dungeon */
 		case 'j':
-		do_cmd_wiz_jump();
-		break;
+			do_cmd_wiz_jump();
+			break;
 
 		/* Self-Knowledge */
 		case 'k':
@@ -2018,46 +2018,46 @@ void do_cmd_debug(void)
 		break;
 
 		case 'W':
-		test_decision_tree();
-		break;
+			test_decision_tree();
+			break;
 
 		/* Increase Experience */
 		case 'x':
-		if (p_ptr->command_arg)
-		{
-			gain_exp(p_ptr->command_arg);
-		}
-		else
-		{
-			gain_exp(p_ptr->exp + 1);
-		}
-		break;
+			if (p_ptr->command_arg)
+			{
+				gain_exp(p_ptr->command_arg);
+			}
+			else
+			{
+				gain_exp(p_ptr->exp + 1);
+			}
+			break;
 
 		/* Zap Monsters (Genocide) */
 		case 'z':
-		do_cmd_wiz_zap();
-		break;
+			do_cmd_wiz_zap();
+			break;
 
 		case 'Z':
-		do_cmd_wiz_zap_all();
-		break;
+			do_cmd_wiz_zap_all();
+			break;
 
 		/* Hack -- whatever I desire */
 		case '_':
-		do_cmd_wiz_hack_ben();
-		break;
+			do_cmd_wiz_hack_ben();
+			break;
 
 #ifdef USE_SCRIPT
 		/* Hack -- activate a script */
 		case '@':
-		do_cmd_wiz_script();
-		break;
+			do_cmd_wiz_script();
+			break;
 #endif /* USE_SCRIPT */
 
 		/* Not a Wizard Command */
 		default:
-		msg_print("That is not a valid debug command.");
-		break;
+			msg_print("That is not a valid debug command.");
+			break;
 	}
 }
 

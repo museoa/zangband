@@ -1482,7 +1482,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c1 = 0x1000000 / abs((long)prob1 - prob);
+			c1 = 0x1000000 / ABS((long)prob1 - prob);
 		}
 	}
 	if (feat2)
@@ -1493,7 +1493,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c2 = 0x1000000 / abs((long) prob2 - prob);
+			c2 = 0x1000000 / ABS((long) prob2 - prob);
 		}
 	}
 	if (feat3)
@@ -1504,7 +1504,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c3 = 0x1000000 / abs((long) prob3 - prob);
+			c3 = 0x1000000 / ABS((long) prob3 - prob);
 		}
 	}
 
@@ -1516,7 +1516,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c4 = 0x1000000 / abs((long) prob4 - prob);
+			c4 = 0x1000000 / ABS((long) prob4 - prob);
 		}
 	}
 
@@ -2578,7 +2578,7 @@ void move_wild(void)
 	min_hgt = wild_grid.y_min;
 
 	/* Shift in only a small discrepency */
-	if (abs(dy) == 1)
+	if (ABS(dy) == 1)
 	{
 		if (dy == 1) shift_down();
 		else shift_up();
@@ -2612,7 +2612,7 @@ void move_wild(void)
 	min_wid = wild_grid.x_min;
 
 	/* Shift in only a small discrepency */
-	if (abs(dx) == 1)
+	if (ABS(dx) == 1)
 	{
 		if (dx == 1) shift_right();
 		else shift_left();

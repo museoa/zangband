@@ -304,7 +304,7 @@ static bool summon_possible(int y1, int x1)
 		for (dx = -2; dx <= 2; dx++)
 		{
 			/* Only check a circular area */
-			if ((abs(dx) == 2) && (abs(dy) == 2)) continue;
+			if ((ABS(dx) == 2) && (ABS(dy) == 2)) continue;
 
 			/* Get square */
 			x = x1 + dx;

@@ -10,6 +10,24 @@
  * Support for Adam Bolt's tileset, lighting and transparency effects
  * by Robert Ruehlmann (rr9@angband.org)
  */
+ 
+/*
+ * Maximum number of slopes in a single octant
+ */
+#define VINFO_MAX_SLOPES 135
+
+
+/*
+ * Table of data used to calculate projections / los / shots.
+ */
+static project_type *project_data[VINFO_MAX_SLOPES];
+
+/* Number of squares per slope */
+static int slope_count[VINFO_MAX_SLOPES];
+
+/* The min and max slopes for each square in sight */
+static int p_slope_min[MAX_SIGHT+1][MAX_SIGHT+1];
+static int p_slope_max[MAX_SIGHT+1][MAX_SIGHT+1];
 
 
 /*
@@ -68,35 +86,20 @@ bool is_visible_trap(cave_type *c_ptr)
 }
 
 
-
 /*
- * A simple, fast, integer-based line-of-sight algorithm.  By Joseph Hall,
- * 4116 Brewster Drive, Raleigh NC 27606.  Email to jnh@ecemwl.ncsu.edu.
+ * Slow, but simple LOS routine.  This works in the same way as
+ * the view code, so that if something is in view, los() behaves
+ * as expected.
  *
- * Returns TRUE if a line of sight can be traced from (x1,y1) to (x2,y2).
+ * The old routine was fast, but did not behave in the right way.
+ * This new routine does not need to be fast, because it isn't
+ * called in time-critical code.
  *
- * The LOS begins at the center of the tile (x1,y1) and ends at the center of
- * the tile (x2,y2).  If los() is to return TRUE, all of the tiles this line
- * passes through must be floor tiles, except for (x1,y1) and (x2,y2).
  *
- * We assume that the "mathematical corner" of a non-floor tile does not
- * block line of sight.
- *
- * Because this function uses (short) ints for all calculations, overflow may
- * occur if dx and dy exceed 90.
- *
- * Once all the degenerate cases are eliminated, the values "qx", "qy", and
- * "m" are multiplied by a scale factor "f1 = abs(dx * dy * 2)", so that
- * we can use integer arithmetic.
- *
- * We travel from start to finish along the longer axis, starting at the border
- * between the first and second tiles, where the y offset = .5 * slope, taking
- * into account the scale factor.  See below.
- *
- * Also note that this function and the "move towards target" code do NOT
- * share the same properties.  Thus, you can see someone, target them, and
- * then fire a bolt at them, but the bolt may hit a wall, not them.  However,
- * by clever choice of target locations, you can sometimes throw a "curve".
+ * It works by trying all slopes that connect (x1,y1) with (x2,y2)
+ * If a wall is found, then it back-tracks to the 'best' square
+ * to check next.  There may be cases where it checks the same
+ * square multiple times, but a simple algorithm is much cleaner.
  *
  * Note that "line of sight" is not "reflexive" in all cases.
  *
@@ -106,28 +109,16 @@ bool is_visible_trap(cave_type *c_ptr)
  */
 bool los(int y1, int x1, int y2, int x2)
 {
-	/* Delta */
-	int dx, dy;
-
-	/* Absolute */
-	int ax, ay;
-
-	/* Signs */
-	int sx, sy;
-
-	/* Fractions */
-	int qx, qy;
-
-	/* Scanners */
-	int tx, ty;
-
-	/* Scale factors */
-	int f1, f2;
-
-	/* Slope, or 1/Slope, of LOS */
-	int m;
-
+	int i, j, temp;
+	
+	int x, y;
+	
+	int dx, dy, ax, ay, sx, sy;
+	
 	cave_type *c_ptr;
+
+	/* We only work for points that are less than MAX_SIGHT appart. */
+	if (distance(y1, x1, y2, x2) > MAX_SIGHT) return (FALSE);
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -137,200 +128,79 @@ bool los(int y1, int x1, int y2, int x2)
 	ay = ABS(dy);
 	ax = ABS(dx);
 
-
-	/* Handle adjacent (or identical) grids */
-	if ((ax < 2) && (ay < 2)) return (TRUE);
-
-
-	/* Directly South/North */
-	if (!dx)
-	{
-		/* South -- check for walls */
-		if (dy > 0)
-		{
-			for (ty = y1 + 1; ty < y2; ty++)
-			{
-				c_ptr = area(ty, x1);
-				if (!cave_floor_grid(c_ptr)) return (FALSE);
-			}
-		}
-
-		/* North -- check for walls */
-		else
-		{
-			for (ty = y1 - 1; ty > y2; ty--)
-			{
-				c_ptr = area(ty, x1);
-				if (!cave_floor_grid(c_ptr)) return (FALSE);
-			}
-		}
-
-		/* Assume los */
-		return (TRUE);
-	}
-
-	/* Directly East/West */
-	if (!dy)
-	{
-		/* East -- check for walls */
-		if (dx > 0)
-		{
-			for (tx = x1 + 1; tx < x2; tx++)
-			{
-				c_ptr = area(y1, tx);
-				if (!cave_floor_grid(c_ptr)) return (FALSE);
-			}
-		}
-
-		/* West -- check for walls */
-		else
-		{
-			for (tx = x1 - 1; tx > x2; tx--)
-			{
-				c_ptr = area(y1, tx);
-				if (!cave_floor_grid(c_ptr)) return (FALSE);
-			}
-		}
-
-		/* Assume los */
-		return (TRUE);
-	}
-
-
+	/*
+	 * Start at the first square in the list.
+	 * This is a square adjacent to (x1,y1)
+	 */
+	j = 0;
+	
 	/* Extract some signs */
 	sx = (dx < 0) ? -1 : 1;
 	sy = (dy < 0) ? -1 : 1;
-
-
-	/* Vertical "knights" */
-	if (ax == 1)
+	
+	/* Hack - we need to stick to one octant */
+	if (ay < ax)
 	{
-		if (ay == 2)
+		/* Look up the slope to use */
+		i = p_slope_min[ax][ay];
+	
+		while (i <= p_slope_max[ax][ay])
 		{
-			c_ptr = area(y1 + sy, x1);
-			if (cave_floor_grid(c_ptr)) return (TRUE);
-		}
-	}
-
-	/* Horizontal "knights" */
-	else if (ay == 1)
-	{
-		if (ax == 2)
-		{
-			c_ptr = area(y1, x1 + sx);
-			if (cave_floor_grid(c_ptr)) return (TRUE);
-		}
-	}
-
-
-	/* Calculate scale factor div 2 */
-	f2 = (ax * ay);
-
-	/* Calculate scale factor */
-	f1 = f2 << 1;
-
-
-	/* Travel horizontally */
-	if (ax >= ay)
-	{
-		/* Let m = dy / dx * 2 * (dy * dx) = 2 * dy * dy */
-		m = ay * ay << 1;
-
-		tx = x1 + sx;
-
-		/* Consider the special case where slope == 1. */
-		if (ax == ay)
-		{
-			ty = y1 + sy;
-			qy = -f2;
-		}
-		else
-		{
-			ty = y1;
-			qy = f2;
-		}
-
-		/* Note (below) the case (qy == f2), where */
-		/* the LOS exactly meets the corner of a tile. */
-		while (x2 - tx)
-		{
-			c_ptr = area(ty, tx);
-			if (!cave_floor_grid(c_ptr)) return (FALSE);
-
-			qy += m;
-
-			if (qy < f2)
+			x = x1 + sx * project_data[i][j].x;
+			y = y1 + sy * project_data[i][j].y;
+		
+			/* Done? */
+			if ((x == x2) && (y == y2)) return (TRUE);
+		
+			c_ptr = area(y, x);
+		
+			if (cave_floor_grid(c_ptr))
 			{
-				tx += sx;
-			}
-			else if (qy > f2)
-			{
-				ty += sy;
-				c_ptr = area(ty, tx);
-				if (!cave_floor_grid(c_ptr)) return (FALSE);
-				qy -= f1;
-				tx += sx;
+				/* Advance along ray */
+				j++;
 			}
 			else
 			{
-				ty += sy;
-				qy -= f1;
-				tx += sx;
+				/* A wall - go to the best position we have not looked at yet */
+				temp = project_data[i][j].slope;
+				j = project_data[i][j].square;
+				i = temp;
 			}
 		}
 	}
-
-	/* Travel vertically */
 	else
 	{
-		/* Let m = dx / dy * 2 * (dx * dy) = 2 * dx * dx */
-		m = ax * ax << 1;
-
-		ty = y1 + sy;
-
-		if (ax == ay)
+		/* Look up the slope to use */
+		i = p_slope_min[ay][ax];
+	
+		while (i <= p_slope_max[ay][ax])
 		{
-			tx = x1 + sx;
-			qx = -f2;
-		}
-		else
-		{
-			tx = x1;
-			qx = f2;
-		}
-
-		/* Note (below) the case (qx == f2), where */
-		/* the LOS exactly meets the corner of a tile. */
-		while (y2 - ty)
-		{
-			c_ptr = area(ty, tx);
-			if (!cave_floor_grid(c_ptr)) return (FALSE);
-
-			qx += m;
-
-			if (qx < f2)
+			/* Note that the data offsets have x,y swapped */
+			x = x1 + sx * project_data[i][j].y;
+			y = y1 + sy * project_data[i][j].x;
+		
+			/* Done? */
+			if ((x == x2) && (y == y2)) return (TRUE);
+		
+			c_ptr = area(y, x);
+		
+			if (cave_floor_grid(c_ptr))
 			{
-				ty += sy;
-			}
-			else if (qx > f2)
-			{
-				tx += sx;
-				c_ptr = area(ty, tx);
-				if (!cave_floor_grid(c_ptr)) return (FALSE);
-				qx -= f1;
-				ty += sy;
+				/* Advance along ray */
+				j++;
 			}
 			else
 			{
-				tx += sx;
-				qx -= f1;
-				ty += sy;
+				/* A wall - go to the best position we have not looked at yet */
+				temp = project_data[i][j].slope;
+				j = project_data[i][j].square;
+				i = temp;
 			}
-		}
+		}	
 	}
-
-	/* Assume los */
-	return (TRUE);
+	
+	/* No path */
+	return (FALSE);
 }
 
 
@@ -2601,12 +2471,6 @@ void forget_view(void)
 
 
 /*
- * Maximum number of slopes in a single octant
- */
-#define VINFO_MAX_SLOPES 135
-
-
-/*
  * Mask of bits used in a single octant
  */
 #define VINFO_BITS_4 0x0000007FL
@@ -2630,11 +2494,7 @@ struct vinfo_type
 	s16b grid_x[8];
 	s16b grid_y[8];
 
-	u32b bits_4;
-	u32b bits_3;
-	u32b bits_2;
-	u32b bits_1;
-	u32b bits_0;
+	u32b bits[5];
 
 	vinfo_type *next_0;
 	vinfo_type *next_1;
@@ -2670,22 +2530,20 @@ typedef struct vinfo_hack vinfo_hack;
 /*
  * Temporary data used by "vinfo_init()"
  *
- *	- Number of grids
- *
  *	- Number of slopes
  *
  *	- Slope values
  *
- *	- Slope range per grid
+ *  - Slope min and max for each square
  */
 struct vinfo_hack
 {
 	int num_slopes;
 
-	long slopes[VINFO_MAX_SLOPES];
+	s32b slopes[VINFO_MAX_SLOPES];
 
-	long slopes_min[MAX_SIGHT+1][MAX_SIGHT+1];
-	long slopes_max[MAX_SIGHT+1][MAX_SIGHT+1];
+	s32b slopes_min[MAX_SIGHT+1][MAX_SIGHT+1];
+	s32b slopes_max[MAX_SIGHT+1][MAX_SIGHT+1];
 };
 
 
@@ -2765,7 +2623,7 @@ static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
 
 
 /*
- * Initialize the "vinfo" array
+ * Initialize the "vinfo" and "project_data" arrays
  *
  * Full Octagon (radius 20), Grids=1149
  *
@@ -2780,7 +2638,7 @@ static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
  */
 errr vinfo_init(void)
 {
-	int i;
+	int i, j;
 	int y, x;
 
 	long m;
@@ -2809,6 +2667,12 @@ errr vinfo_init(void)
 			/* Default slope range */
 			hack->slopes_min[y][x] = 999999999;
 			hack->slopes_max[y][x] = 0;
+
+			/* Clear the p_slope_min and max arrays */
+			p_slope_min[x][y] = VINFO_MAX_SLOPES;
+			p_slope_max[x][y] = 0;
+			p_slope_min[y][x] = VINFO_MAX_SLOPES;
+			p_slope_max[y][x] = 0;
 
 			/* Paranoia */
 			if (num_grids >= VINFO_MAX_GRIDS)
@@ -2872,6 +2736,8 @@ errr vinfo_init(void)
 	ang_sort(hack->slopes, NULL, hack->num_slopes);
 
 
+	/* Clear the counters for each slope */
+	(void) C_WIPE(slope_count, VINFO_MAX_SLOPES, int);
 
 	/* Enqueue player grid */
 	queue[queue_tail++] = &vinfo[0];
@@ -2922,16 +2788,19 @@ errr vinfo_init(void)
 
 			/* Memorize intersection slopes (for non-player-grids) */
 			if ((e > 0) &&
-			    (hack->slopes_min[y][x] < m) &&
-			    (m < hack->slopes_max[y][x]))
+			    (hack->slopes_min[y][x] < m) && (m < hack->slopes_max[y][x]))
 			{
+				/* We use this slope */
+				slope_count[i]++;
+				
+				/* Save the bit that stands for this slope */
 				switch (i / 32)
 				{
-					case 4: vinfo[e].bits_4 |= (1L << (i % 32)); break;
-					case 3: vinfo[e].bits_3 |= (1L << (i % 32)); break;
-					case 2: vinfo[e].bits_2 |= (1L << (i % 32)); break;
-					case 1: vinfo[e].bits_1 |= (1L << (i % 32)); break;
-					case 0: vinfo[e].bits_0 |= (1L << (i % 32)); break;
+					case 4: vinfo[e].bits[4] |= (1L << (i % 32)); break;
+					case 3: vinfo[e].bits[3] |= (1L << (i % 32)); break;
+					case 2: vinfo[e].bits[2] |= (1L << (i % 32)); break;
+					case 1: vinfo[e].bits[1] |= (1L << (i % 32)); break;
+					case 0: vinfo[e].bits[0] |= (1L << (i % 32)); break;
 				}
 			}
 		}
@@ -2988,19 +2857,116 @@ errr vinfo_init(void)
 
 
 	/* Verify maximal bits XXX XXX XXX */
-	if (((vinfo[1].bits_4 | vinfo[2].bits_4) != VINFO_BITS_4) ||
-	    ((vinfo[1].bits_3 | vinfo[2].bits_3) != VINFO_BITS_3) ||
-	    ((vinfo[1].bits_2 | vinfo[2].bits_2) != VINFO_BITS_2) ||
-	    ((vinfo[1].bits_1 | vinfo[2].bits_1) != VINFO_BITS_1) ||
-	    ((vinfo[1].bits_0 | vinfo[2].bits_0) != VINFO_BITS_0))
+	if (((vinfo[1].bits[4] | vinfo[2].bits[4]) != VINFO_BITS_4) ||
+	    ((vinfo[1].bits[3] | vinfo[2].bits[3]) != VINFO_BITS_3) ||
+	    ((vinfo[1].bits[2] | vinfo[2].bits[2]) != VINFO_BITS_2) ||
+	    ((vinfo[1].bits[1] | vinfo[2].bits[1]) != VINFO_BITS_1) ||
+	    ((vinfo[1].bits[0] | vinfo[2].bits[0]) != VINFO_BITS_0))
 	{
 		quit("Incorrect bit masks!");
 	}
 
+	/* Create the project_data array */
+	for (i = 0; i < VINFO_MAX_SLOPES; i++)
+	{
+		/* Create the list of squares intersected by this slope */
+		C_MAKE(project_data[i], slope_count[i], project_type);
+		
+		j = 0;
+		
+		for (y = 0; y <= MAX_SIGHT; ++y)
+		{
+			for (x = y; x <= MAX_SIGHT; ++x)
+			{
+				/* Only if in range */
+				if (distance(0, 0, y, x) > MAX_SIGHT) continue;
+				
+				/* Hack - ignore the origin */
+				if (!x && !y) continue;
+			
+				m = hack->slopes[i];
+
+				/* Does this square intersect the line? */
+			    if ((hack->slopes_min[y][x] < m) &&
+					 (m < hack->slopes_max[y][x]))
+				{
+					/* Save the square */
+					project_data[i][j].x = x;
+					project_data[i][j].y = y;
+					
+					/* Add in the slopes information */
+					if (p_slope_min[x][y] > i) p_slope_min[x][y] = i;
+					if (p_slope_max[x][y] < i) p_slope_max[x][y] = i;
+					
+					/* Next square... */			
+					j++;
+				}
+			}
+		}
+	}
+	
+	
+	/* 
+	 * Add in the final information in the projection table.
+	 *
+	 * We need to know where to go to if the current square
+	 * is blocked.  This will be the first slope that does
+	 * not contain this square.  The position along that slope
+	 * will be the first square that is not already scanned
+	 * by the current slope.
+	 *
+	 * This means that we may end up scanning squares twice,
+	 * but the simplification of the algorithm is worth it. 
+	 */
+	for (i = 0; i < VINFO_MAX_SLOPES; i++)
+	{
+		for (j = 0; j < slope_count[i]; j++)
+		{
+			/* Set default case. */
+			project_data[i][j].slope = VINFO_MAX_SLOPES;
+			project_data[i][j].square = 0;
+			
+			/* Find first slope without this square */
+			for (x = i + 1; x < VINFO_MAX_SLOPES; x++)
+			{
+				bool found = FALSE;
+				
+				for (y = 0; y < slope_count[x]; y++)
+				{
+					if ((project_data[x][y].x == project_data[i][j].x) &&
+						(project_data[x][y].y == project_data[i][j].y))
+					{
+						found = TRUE;
+						break;
+					}
+				}
+				
+				/* Did we find the blocking square? */
+				if (found) continue;
+				
+				/* We did not find the square - save the row */
+				project_data[i][j].slope = x;
+				
+				/* Paranoia */
+				project_data[i][j].square = 0;
+				
+				/* Find the first non-matching square */
+				for (y = 0; y < slope_count[x]; y++)
+				{
+					if ((project_data[x][y].x != project_data[i][y].x) ||
+						(project_data[x][y].y != project_data[i][y].y))
+					{
+						/* Not a match */
+						project_data[i][j].square = y;
+						break;
+					} 
+				}
+			}
+		}	
+	}
 
 	/* Kill hack */
 	FREE(hack, vinfo_hack);
-
 
 	/* Success */
 	return (0);
@@ -3208,11 +3174,11 @@ void update_view(void)
 			p = queue[queue_head++];
 
 			/* Check bits */
-			if ((bits0 & (p->bits_0)) ||
-			    (bits1 & (p->bits_1)) ||
-			    (bits2 & (p->bits_2)) ||
-			    (bits3 & (p->bits_3)) ||
-			    (bits4 & (p->bits_4)))
+			if ((bits0 & (p->bits[0])) ||
+			    (bits1 & (p->bits[1])) ||
+			    (bits2 & (p->bits[2])) ||
+			    (bits3 & (p->bits[3])) ||
+			    (bits4 & (p->bits[4])))
 			{
 				/* Get location */
 				x = p->grid_x[o2] + px;
@@ -3222,11 +3188,11 @@ void update_view(void)
 				if (!in_bounds2(y, x))
 				{
 					/* Clear bits */
-					bits0 &= ~(p->bits_0);
-					bits1 &= ~(p->bits_1);
-					bits2 &= ~(p->bits_2);
-					bits3 &= ~(p->bits_3);
-					bits4 &= ~(p->bits_4);
+					bits0 &= ~(p->bits[0]);
+					bits1 &= ~(p->bits[1]);
+					bits2 &= ~(p->bits[2]);
+					bits3 &= ~(p->bits[3]);
+					bits4 &= ~(p->bits[4]);
 
 					continue;
 				}
@@ -3325,11 +3291,11 @@ void update_view(void)
 				else
 				{
 					/* Clear bits */
-					bits0 &= ~(p->bits_0);
-					bits1 &= ~(p->bits_1);
-					bits2 &= ~(p->bits_2);
-					bits3 &= ~(p->bits_3);
-					bits4 &= ~(p->bits_4);
+					bits0 &= ~(p->bits[0]);
+					bits1 &= ~(p->bits[1]);
+					bits2 &= ~(p->bits[2]);
+					bits3 &= ~(p->bits[3]);
+					bits4 &= ~(p->bits[4]);
 
 					/* All ready seen.  Next... */
 					if (info & CAVE_VIEW) continue;
