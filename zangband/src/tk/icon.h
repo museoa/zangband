@@ -39,7 +39,6 @@ typedef struct t_icon_data {
 	cptr desc; /* type name */
 	IconPtr icon_data; /* Address of icon data */
 	int icon_count; /* Number of icons */
-	int *char_table; /* Table of chars for ascii icons */
 
 	int depth; /* Bits per pixel (8, 16, 24) */
 	int bypp; /* Bytes per pixel (1, 2, 3 or 4) */

@@ -138,7 +138,6 @@ static void Icon_AddType(t_icon_data *data)
 	icon_data_ptr->desc = string_make(data->desc);
 	icon_data_ptr->icon_count = data->icon_count;
 	icon_data_ptr->icon_data = data->icon_data;
-	icon_data_ptr->char_table = data->char_table;
 	icon_data_ptr->depth = data->depth;
 	icon_data_ptr->bypp = data->bypp;
 	icon_data_ptr->width = data->width;
@@ -180,7 +179,6 @@ void init_icons(int size, int depth)
 	icon_data_ptr->desc = "none";
 	icon_data_ptr->icon_count = 1;
 	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
-	icon_data_ptr->char_table = NULL;
 	for (i = 0; i < g_icon_length; i++)
 	{
 		icon_data_ptr->icon_data[i] = 0x00;
@@ -210,7 +208,6 @@ void init_icons(int size, int depth)
 	icon_data_ptr->desc = "blank";
 	icon_data_ptr->icon_count = 1;
 	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
-	icon_data_ptr->char_table = NULL;
 	for (i = 0; i < g_icon_length; i++)
 	{
 		if (g_icon_depth != 8)
@@ -237,7 +234,6 @@ void init_icons(int size, int depth)
 	icon_data_ptr->desc = "default";
 	icon_data_ptr->icon_count = 1;
 	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
-	icon_data_ptr->char_table = NULL;
 	n = 0, y2 = 0;
 	for (y = 0; y < 16; y++)
 	{
