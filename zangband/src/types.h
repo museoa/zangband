@@ -1754,9 +1754,6 @@ struct dun_gen_type
 	int min_level;
 	int max_level;
 
-	/* How deep is the dungeon on average, except that 0 = full depth */
-	int dif_level;
-	
 	/* Probability (inverse rarity) */
 	int chance;
 	
