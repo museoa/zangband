@@ -606,13 +606,20 @@ static errr term_data_init(term_data *td, int i)
 }
 
 
-static void init_gtk_window(term_data *td, bool main)
+static void init_gtk_window(term_data *td, int i)
 {
+	cptr font;
+	
+	bool main = (i == 0) ? TRUE : FALSE;
+	
 	GtkWidget *menu_bar, *file_item, *file_menu, *box;
 	GtkWidget *seperator_item, *file_exit_item, *file_new_item, *file_open_item;
 	GtkWidget *options_item, *options_menu, *options_font_item;
+	
+	/* Get default font for this term */
+	font = get_default_font(i);
 
-	load_font(td, DEFAULT_X11_FONT_0);
+	load_font(td, font);
 
 	/* Create widgets */
 	td->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -736,7 +743,7 @@ errr init_gtk(int argc, char **argv)
 		angband_term[i] = Term;
 
 		/* Init the window */
-		init_gtk_window(td, (i == 0));
+		init_gtk_window(td, i);
 	}
 
 	/* Activate the "Angband" window screen */

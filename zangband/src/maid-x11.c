@@ -853,5 +853,4 @@ XImage *ResizeImage(Display *dpy, XImage *Im,
 
 #endif /* USE_GRAPHICS */
 
-
 #endif /* USE_XMAID */

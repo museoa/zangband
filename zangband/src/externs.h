@@ -964,6 +964,8 @@ extern byte gamma_table[256];
 extern void build_gamma_table(int gamma);
 #endif /* SUPPORT_GAMMA */
 
+extern cptr get_default_font(int term_num);
+
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
 extern s16b modify_stat_value(int value, int amount);

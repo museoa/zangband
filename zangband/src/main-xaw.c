@@ -1503,7 +1503,6 @@ static errr term_data_init(term_data *td, Widget topLevel,
 	cptr str;
 
 	int val;
-	cptr font;
 	
 	/* Create the shell widget */
 	parent = XtCreatePopupShell(name, topLevelShellWidgetClass, topLevel,
@@ -1545,70 +1544,9 @@ static errr term_data_init(term_data *td, Widget topLevel,
 	str = getenv(buf);
 	val = (str != NULL) ? atoi(str) : -1;
 	if (val > 0) widget_arg[6].value = val;
-
-		
-	/* Window specific font name */
-	sprintf(buf, "ANGBAND_X11_FONT_%d", i);
-
-	/* Check environment for that font */
-	font = getenv(buf);
-
-	/* Check environment for "base" font */
-	if (!font) font = getenv("ANGBAND_X11_FONT");
-
-	/* No environment variables, use default font */
-	if (!font)
-	{
-		switch (i)
-		{
-			case 0:
-			{
-				font = DEFAULT_X11_FONT_0;
-			}
-			break;
-			case 1:
-			{
-				font = DEFAULT_X11_FONT_1;
-			}
-			break;
-			case 2:
-			{
-				font = DEFAULT_X11_FONT_2;
-			}
-			break;
-			case 3:
-			{
-				font = DEFAULT_X11_FONT_3;
-			}
-			break;
-			case 4:
-			{
-				font = DEFAULT_X11_FONT_4;
-			}
-			break;
-			case 5:
-			{
-				font = DEFAULT_X11_FONT_5;
-			}
-			break;
-			case 6:
-			{
-				font = DEFAULT_X11_FONT_6;
-			}
-			break;
-			case 7:
-			{
-				font = DEFAULT_X11_FONT_7;
-			}
-			break;
-			default:
-			{
-				font = DEFAULT_X11_FONT;
-			}
-		}
-	}
-
-	widget_arg[7].value = (unsigned long) font;
+	
+	/* Get default font for this term */
+	widget_arg[7].value = (unsigned long) get_default_font(i);
 
 
 	/* Create the interior widget */
