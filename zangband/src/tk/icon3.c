@@ -1677,201 +1677,6 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 	return TCL_OK;
 }
 
-/*
- * icon photo $imageName -type $type -index $index
- * Set an existing photo image with icon data. This is similar to the
- * Widget_Photo() routine and lets us set a label widget with a picture
- * of any icon.
- */
-static int objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Tk_PhotoHandle photoH;
-	Tk_PhotoImageBlock photoBlock;
-	char *imageName;
-	int i, transparent = 0;
-	int r, g, b;
-	IconSpec iconSpec;
-	t_icon_data *iconDataPtr;
-	unsigned char *photoData;
-	unsigned char *srcPtr = NULL, *dstPtr;
-	unsigned char *dataPtr, *maskPtr = NULL;
-	
-	/* Hack - ignore unused parameter */
-	(void) dummy;
-
-	/* Required number of arguments */
-    if (objc < 3)
-    {
-		Tcl_WrongNumArgs(interp, 2, objv,
-			(char *) "imageName -type iconType -index iconIndex");
-		return TCL_ERROR;
-    }
-
-	/* Get the name of the Tk photo image. */
-	imageName = Tcl_GetStringFromObj(objv[2], NULL);
-
-	/* Lookup the photo by name. It must already exist */
-	photoH = Tk_FindPhoto(interp, imageName);
-
-	/* The photo was not found */
-	if (photoH == NULL)
-	{
-		/* Set the error */
-	    Tcl_AppendResult(interp, "image \"", imageName,
-	    	"\" doesn't exist or is not a photo image",
-	    	NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Scan the arguments for icon type and index */
-	if (Icon_ParseArgs(interp, objc, objv, 3, &iconSpec) != TCL_OK)
-	{
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	iconDataPtr = &g_icon_data[iconSpec.type];
-	dataPtr = (unsigned char *) Tcl_Alloc(iconDataPtr->length);
-
-	/* Ascii-type icon */
-	if (iconSpec.ascii != -1)
-	{
-		srcPtr = Icon_GetAsciiData(&iconSpec, dataPtr);
-	}
-
-	/* Dynamic transparent */
-	else if (iconDataPtr->dynamic)
-	{
-		/* Should never be assigned */
-		transparent = 1;
-	}
-	
-	/* Transparent */
-	else if (iconDataPtr->rle_data != NULL)
-	{
-		unsigned char *bounds = iconDataPtr->rle_bounds + iconSpec.index * 4;
-		IconPtr rlePtr = iconDataPtr->rle_data +
-			iconDataPtr->rle_offset[iconSpec.index];
-
-		/* Init to transparent pixel */
-		for (i = 0; i < iconDataPtr->pixels; i++)
-		{
-			PixelLongToPtr(dataPtr + i * iconDataPtr->bypp,
-				iconDataPtr->rle_pixel, iconDataPtr->bypp);
-		}
-		
-		/* Decode image */
-		RL_Decode(bounds[2], bounds[3], iconDataPtr->bypp,
-			rlePtr, dataPtr + bounds[0] * iconDataPtr->bypp + 
-			bounds[1] * iconDataPtr->pitch, iconDataPtr->pitch);
-
-		/* Create a mask, 1-byte-per-pixel */
-		maskPtr = (unsigned char *) Tcl_Alloc(iconDataPtr->pixels);
-		for (i = 0; i < iconDataPtr->pixels; i++)
-		{
-			int pixel = PixelPtrToLong(dataPtr + i * iconDataPtr->bypp,
-				iconDataPtr->bypp);
-
-			/* Not transparent */
-			if (pixel != iconDataPtr->rle_pixel)
-				maskPtr[i] = 1;
-
-			/* Transparent */
-			else
-				maskPtr[i] = 0;
-		}
-
-		srcPtr = dataPtr;
-		transparent = 1;
-	}
-
-	/* Simple */
-	else
-	{
-		srcPtr = iconDataPtr->icon_data + iconSpec.index * iconDataPtr->length;
-	}
-
-	/* Convert the icon data to RGB */
-	photoData = (unsigned char *) Tcl_Alloc(iconDataPtr->pixels * 3);
-	dstPtr = photoData;
-	for (i = 0; i < iconDataPtr->pixels; i++)
-	{
-		PixelPtrToRGB(srcPtr, &r, &g, &b, iconDataPtr->bypp);
-		*dstPtr++ = r;
-		*dstPtr++ = g;
-		*dstPtr++ = b;
-		srcPtr += iconDataPtr->bypp;
-	}
-	
-	photoBlock.width = iconDataPtr->width;
-	photoBlock.height = iconDataPtr->height;
-	photoBlock.pixelSize = 3;
-	photoBlock.pitch = photoBlock.width * photoBlock.pixelSize;
-	photoBlock.offset[0] = 0;
-	photoBlock.offset[1] = 1;
-	photoBlock.offset[2] = 2;
-
-	/*
-	 * The next bit is adapted from FileReadGIF() in tkImgGIF.c
-	 * from Tk 8.0.4
-	 */
-	if (transparent)
-	{
-		int start, end, y, x;
-		
-		/*
-		 * The trick to creating a photo image with transparency
-		 * is to only put image data into the masked regions.
-		 */
-		i = 0;
-		for (y = 0; y < photoBlock.height; y++)
-		{
-			x = 0;
-			while (x < photoBlock.width)
-			{
-				/* Search for first non-transparent pixel */
-				while ((x < photoBlock.width) && !maskPtr[i])
-				{
-					x++; i++;
-				}
-				end = x;
-				start = i;
-				
-				/* Search for first transparent pixel */
-				while ((end < photoBlock.width) && maskPtr[i])
-				{
-					end++; i++;
-				}
-				if (end > x)
-				{
-					photoBlock.pixelPtr = &photoData[start * 3];
-					Tk_PhotoPutBlock(photoH, &photoBlock, x,
-						y, end - x, 1);
-				}
-				x = end;
-			}
-		}
-	}
-
-	/* Not transparent */
-	else
-	{
-		photoBlock.pixelPtr = photoData;
-	
-		/* Add the data to the photo image */
-		Tk_PhotoPutBlock(photoH, &photoBlock, 0, 0, photoBlock.width,
-			photoBlock.height);
-	}
-
-	Tcl_Free((char *) photoData);
-	Tcl_Free((char *) dataPtr);
-	if (maskPtr)
-		Tcl_Free((char *) maskPtr);
-
-	return TCL_OK;
-}
 
 void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 {
@@ -2601,12 +2406,12 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 {
 	static cptr cmdOption[] = {"createtype", "count",
 		"gettypes", "validate", "size", "ascii",
-		"gamma", "photo", "makeicon", "depth",
+		"gamma", "makeicon", "depth",
 		"rle", "height", "width", "dynamic", "duplicate",
 		"transparent", "dark", "flags", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
-		IDX_GAMMA, IDX_PHOTO, IDX_MAKEICON, IDX_DEPTH,
+		IDX_GAMMA, IDX_MAKEICON, IDX_DEPTH,
 		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DYNAMIC, IDX_DUPLICATE,
 		IDX_TRANSPARENT, IDX_DARK, IDX_FLAGS} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -2993,9 +2798,6 @@ wrongCreateArgs:
 			}
 			break;
 		}
-
-		case IDX_PHOTO: /* photo */
-			return objcmd_icon_photo(dummy, interp, objc, objv);
 
 		case IDX_MAKEICON: /* makeicon */
 		{		
