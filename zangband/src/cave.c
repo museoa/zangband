@@ -3161,7 +3161,7 @@ void update_view(void)
 		y = view_y[i];
 		x = view_x[i];
 
-		if (!in_bounds(y,x)) continue;
+		if (!in_bounds2(y,x)) continue;
 
 		c_ptr = area(y, x);
 		info = c_ptr->info;
