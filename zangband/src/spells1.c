@@ -4417,14 +4417,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 							if (cave_valid_grid(c_ptr) &&
 								(c_ptr->feat < FEAT_PATTERN_START ||
-								 c_ptr->feat > FEAT_PATTERN_XTRA2) &&
-								(c_ptr->feat < FEAT_DEEP_WATER ||
-								 c_ptr->feat > FEAT_GRASS))
+								 c_ptr->feat > FEAT_SHAL_ACID))
 							{
 								if ((c_ptr->feat == FEAT_TREES) ||
 									(c_ptr->feat == FEAT_PINE_TREE) ||
 									(c_ptr->feat == FEAT_SNOW_TREE))
-									cave_set_feat(y, x, FEAT_GRASS);
+									cave_set_feat(y, x, FEAT_DIRT);
 								else
 									cave_set_feat(y, x, FEAT_FLOOR);
 							}
