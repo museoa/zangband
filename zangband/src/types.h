@@ -1040,6 +1040,11 @@ struct player_type
 	u32b muta1;
 	u32b muta2;
 	u32b muta3;
+	
+	#ifdef AVATAR
+	s16b virtues[8];
+	s16b vir_types[8];
+	#endif
 
 	s16b word_recall;	/* Word of recall counter */
 

@@ -2818,6 +2818,10 @@ static void process_monster(int m_idx)
 
 			/* Dump a message */
 			msg_format("%^s turns to fight!", m_name);
+			
+			#ifdef AVATAR
+			chg_virtue(V_COMPASSION, -1);
+			#endif
 		}
 
 		/* XXX XXX XXX Actually do something now (?) */

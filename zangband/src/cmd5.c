@@ -487,6 +487,13 @@ void do_cmd_study(void)
 		p, spell_names
 		[(increment ? p_ptr->realm2 - 1 : p_ptr->realm1 - 1)][spell % 32]);
 
+	#ifdef AVATAR
+	if (mp_ptr->spell_book == TV_LIFE_BOOK)
+		chg_virtue(V_FAITH, 1);
+	else
+		chg_virtue(V_KNOWLEDGE, 1);
+	#endif
+	
 	/* Sound */
 	sound(SOUND_STUDY);
 
@@ -1217,6 +1224,11 @@ static bool cast_chaos_spell(int spell)
 			some potent effects only at high level. */
 
 			int die = randint(100) + plev / 5;
+			
+			#ifdef AVATAR
+			if (die < 26)
+				chg_virtue(V_CHANCE, 1);
+			#endif
 
 			if (!get_aim_dir(&dir)) return FALSE;
 			if (die > 100)
@@ -1504,7 +1516,12 @@ static bool cast_death_spell(int spell)
 
 		dummy = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
 		if (drain_life(dir, dummy))
-		{
+		{			
+			#ifdef AVATAR
+			chg_virtue(V_SACRIFICE, -1);
+			chg_virtue(V_VITALITY, -1);
+			#endif
+			
 			(void)hp_player(dummy);
 			/* Gain nutritional sustenance: 150/hp drained */
 			/* A Food ration gives 5000 food points (by contrast) */
@@ -1538,6 +1555,12 @@ static bool cast_death_spell(int spell)
 			if (!get_aim_dir(&dir)) return FALSE;
 
 			msg_print("You call on the power of the dead...");
+			
+			#ifdef AVATAR
+			if (die < 26)
+				chg_virtue(V_CHANCE, 1);
+			#endif
+			
 			if (die > 100)
 				msg_print("You feel a surge of eldritch force!");
 
@@ -1545,6 +1568,10 @@ static bool cast_death_spell(int spell)
 			{
 				msg_print("Oh no! Mouldering forms rise from the earth around you!");
 				(void)summon_specific(py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				
+				#ifdef AVATAR
+				chg_virtue(V_UNLIFE, 1);
+				#endif
 			}
 			else if (die < 14)
 			{
@@ -1671,6 +1698,11 @@ static bool cast_death_spell(int spell)
 	case 20: /* Vampirism True */
 		if (!get_aim_dir(&dir)) return FALSE;
 
+		#ifdef AVATAR
+		chg_virtue(V_SACRIFICE, -1);
+		chg_virtue(V_VITALITY, -1);
+		#endif
+
 		for (dummy = 0; dummy < 3; dummy++)
 		{
 			if (drain_life(dir, 100))
@@ -1718,6 +1750,10 @@ static bool cast_death_spell(int spell)
 					msg_print("Ancient, long-dead forms arise from the ground to serve you!");
 				else
 					msg_print("'The dead arise... to punish you for disturbing them!'");
+			
+			#ifdef AVATAR
+			chg_virtue(V_UNLIFE, 1);
+			#endif
 			}
 
 			break;
@@ -1852,6 +1888,11 @@ static bool cast_trump_spell(int spell, bool success)
 
 				msg_print("You shuffle the deck and draw a card...");
 
+				#ifdef AVATAR
+				if (die < 30)
+					chg_virtue(V_CHANCE, 1);
+				#endif
+				
 				if (die < 7)
 				{
 					msg_print("Oh no! It's Death!");
@@ -2691,6 +2732,14 @@ void do_cmd_cast(void)
 		msg_format("You failed to get the %s off!", prayer);
 		sound(SOUND_FAIL);
 
+		#ifdef AVATAR
+		if ((randint(100) < chance) && (mp_ptr->spell_book == TV_LIFE_BOOK))
+			chg_virtue(V_FAITH, -1);
+		else if (randint(100) < chance)
+			chg_virtue(V_KNOWLEDGE, -1);
+		#endif
+
+
 		if (realm == REALM_TRUMP)
 		{
 			cast_trump_spell(spell, FALSE);
@@ -2719,6 +2768,16 @@ void do_cmd_cast(void)
 	/* Process spell */
 	else
 	{
+		#ifdef AVATAR
+		if ((randint(100) < chance) && (chance < 50))
+		{
+			if (mp_ptr->spell_book == TV_LIFE_BOOK)
+				chg_virtue(V_FAITH, 1);
+			else
+				chg_virtue(V_KNOWLEDGE, 1);
+		}
+		#endif
+		
 		/* Spells.  */
 		switch (realm)
 		{
@@ -2771,6 +2830,13 @@ void do_cmd_cast(void)
 
 			/* Gain experience */
 			gain_exp(e * s_ptr->slevel);
+			
+			#ifdef AVATAR
+			if (mp_ptr->spell_book == TV_LIFE_BOOK)
+				chg_virtue(V_FAITH, 1);
+			else
+				chg_virtue(V_KNOWLEDGE, 1);
+			#endif
 		}
 	}
 
@@ -2798,6 +2864,13 @@ void do_cmd_cast(void)
 
 		/* Hack -- Bypass free action */
 		(void)set_paralyzed(p_ptr->paralyzed + randint(5 * oops + 1));
+
+		#ifdef AVATAR
+		if (mp_ptr->spell_book == TV_LIFE_BOOK)
+			chg_virtue(V_FAITH, -10);
+		else
+			chg_virtue(V_KNOWLEDGE, -10);
+		#endif
 
 		/* Damage CON (possibly permanently) */
 		if (rand_int(100) < 50)

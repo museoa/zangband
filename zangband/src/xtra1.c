@@ -3600,6 +3600,10 @@ void calc_bonuses(void)
 		if (p_ptr->icky_wield)
 		{
 			msg_print("You do not feel comfortable with your weapon.");
+			#ifdef AVATAR
+			if (hack_mind)
+				chg_virtue(V_FAITH, -1);
+			#endif		
 		}
 		else if (inventory[INVEN_WIELD].k_idx)
 		{
@@ -3617,9 +3621,18 @@ void calc_bonuses(void)
 	if (p_ptr->pclass == CLASS_MONK && (monk_armour_aux != monk_notify_aux))
 	{
 		if (monk_heavy_armor())
+		{
 			msg_print("The weight of your armor disrupts your balance.");
+			#ifdef AVATAR            
+			if (hack_mind)
+			{
+				chg_virtue(V_HARMONY, -1);
+			}
+			#endif
+		}
 		else
 			msg_print("You regain your balance.");
+		
 		monk_notify_aux = monk_armour_aux;
 	}
 }

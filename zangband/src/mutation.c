@@ -542,6 +542,10 @@ bool gain_random_mutation(int choose_mut)
 	}
 	else
 	{
+		#ifdef AVATAR
+		chg_virtue(V_CHANCE, 1);
+		#endif
+		
 		if (p_ptr->prace == RACE_VAMPIRE &&
 		  !(p_ptr->muta1 & MUT1_HYPN_GAZE) &&
 		   (randint(10) < 7))

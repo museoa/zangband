@@ -19,7 +19,7 @@ OBJS = \
   bldg.o script.o effects.o racial.o \
   artifact.o mutation.o flavor.o spells3.o \
   mspells1.o mspells2.o scores.o mind.o \
-  obj_kind.o wild.o
+  obj_kind.o wild.o avatar.o
 
 # Compiler
 

@@ -1517,6 +1517,10 @@ static void rd_extra(void)
 		p_ptr->muta1 = 0;
 		p_ptr->muta2 = 0;
 		p_ptr->muta3 = 0;
+		
+		#ifdef AVATAR
+		get_virtues();
+		#endif
 	}
 	else
 	{
@@ -1535,6 +1539,21 @@ static void rd_extra(void)
 		rd_u32b(&p_ptr->muta1);
 		rd_u32b(&p_ptr->muta2);
 		rd_u32b(&p_ptr->muta3);
+		 
+		#ifdef AVATAR
+		if (z_older_than(2,3,4))
+		{
+			get_virtues();
+		}
+		else
+		{
+			for (i = 0; i < 8; i++)
+				rd_s16b(&p_ptr->virtues[i]);
+			for (i = 0; i < 8; i++)
+				rd_s16b(&p_ptr->vir_types[i]);
+		
+		}
+		#endif
 	}
 
 	/* Calc the regeneration modifier for mutations */

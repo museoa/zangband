@@ -84,6 +84,12 @@ void check_experience(void)
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv)
 		{
+			#ifdef AVATAR
+			int vir;
+			for (vir = 0; vir < 8; vir++)
+				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
+			#endif
+			
 			p_ptr->max_plv = p_ptr->lev;
 
 			if ((p_ptr->pclass == CLASS_CHAOS_WARRIOR) ||
@@ -958,6 +964,11 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 	s32b            div, new_exp, new_exp_frac;
 
+	#ifdef AVATAR
+	/* Innocent until proven otherwise */
+	bool        innocent = TRUE, thief = FALSE;
+	int         i;
+	#endif
 
 	/* Redraw (later) if needed */
 	if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
@@ -1021,10 +1032,111 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 					p_ptr->au += reward;
 					p_ptr->redraw |= (PR_GOLD);
+					
+					#ifdef AVATAR
+					chg_virtue(V_JUSTICE, 5);
+					#endif
 				}
 			}
 		}
+		
+		#ifdef AVATAR
+		if (r_ptr->level > dun_level)
+		{
+			if (randint(10) <= (dun_level - r_ptr->level))
+				chg_virtue(V_VALOUR, 1);
+		}
+		if (r_ptr->level >= 2 * (p_ptr->lev))
+			chg_virtue(V_VALOUR, 1);
+	
+		if ((r_ptr->flags1 & RF1_UNIQUE) && ((r_ptr->flags3 & RF3_EVIL) ||
+			(r_ptr->flags3 & RF3_GOOD)))
+			
+			chg_virtue(V_HARMONY, 2);
 
+		if ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags3 & RF3_GOOD))
+		{
+			chg_virtue(V_UNLIFE, 2);
+			chg_virtue(V_VITALITY, -2);
+		}
+
+		if ((r_ptr->flags1 & RF1_UNIQUE) & (randint(3)==1))
+			chg_virtue(V_INDIVIDUALISM, -1);
+
+		if ((strstr((r_name + r_ptr->name),"beggar")) ||
+			(strstr((r_name + r_ptr->name),"leper")))
+		{
+			chg_virtue(V_COMPASSION, -1);
+		}
+
+		if ((r_ptr->flags1 & RF3_GOOD) &&
+			((r_ptr->level * 100) / 1 + (3 * dun_level) >= randint(100)))
+			
+			chg_virtue(V_UNLIFE, 1);
+
+		if (r_ptr->d_char == 'A')
+		{
+			if (r_ptr->flags1 & RF1_UNIQUE)
+				chg_virtue(V_FAITH, -2);
+			else if ((r_ptr->level * 100) / 1 + (3 * dun_level) >= randint(100))
+				chg_virtue(V_FAITH, -1);
+		}
+		else if (r_ptr->flags3 & RF3_DEMON)
+		{
+			if (r_ptr->flags1 & RF1_UNIQUE)
+				chg_virtue(V_FAITH, 2);
+			else if ((r_ptr->level * 100) / 1 + (3 * dun_level) >= randint(100))
+				chg_virtue(V_FAITH, 1);
+		}
+
+		if ((r_ptr->flags3 & RF3_UNDEAD) && (r_ptr->flags1 & RF1_UNIQUE))
+			chg_virtue(V_VITALITY, 2);
+
+		if (r_ptr->r_deaths)
+		{
+			if (r_ptr->flags1 & RF1_UNIQUE)
+			{
+				chg_virtue(V_HONOUR, 10);
+			}
+			else if ((r_ptr->level * 100) / 1 + (2 * dun_level) >= randint(100))
+			{
+				chg_virtue(V_HONOUR, 1);
+			}
+		}
+		
+		for (i = 0; i < 4; i++)
+		{
+			if(r_ptr->blow[i].d_dice != 0) innocent = FALSE; /* Murderer! */
+		
+			if ((r_ptr->blow[i].effect == RBE_EAT_ITEM)
+				|| (r_ptr->blow[i].effect == RBE_EAT_GOLD))
+			
+				thief = TRUE; /* Thief! */
+		}
+
+		/* The new law says it is illegal to live in the dungeon */
+		if (r_ptr->level != 0) innocent = FALSE;
+
+		if (thief)
+		{
+			if (r_ptr->flags1 & RF1_UNIQUE)
+				chg_virtue(V_JUSTICE, 3);
+			else if (1+((r_ptr->level * 100) / 1 + (2 * dun_level))
+				>= randint(100))
+				
+				chg_virtue(V_JUSTICE, 1);
+		}
+		else if (innocent)
+		{
+			chg_virtue (V_JUSTICE, -1);
+		}
+
+		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & RF3_EVIL))
+		{
+			if (randint(3)==1) chg_virtue(V_NATURE, -1);
+		}
+		
+		#endif
 
 		/* Make a sound */
 		sound(SOUND_KILL);

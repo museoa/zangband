@@ -3339,6 +3339,37 @@ static void do_cmd_knowledge_objects(void)
 	fd_kill(file_name);
 }
 
+#ifdef AVATAR
+/*
+* List virtues & status
+*
+*/
+void do_cmd_knowledge_virtues(void)
+{
+	
+	FILE *fff;
+	
+	char file_name[1024];
+	
+	
+	/* Temporary file */
+	if (path_temp(file_name, 1024)) return;
+		
+	/* Open a new file */
+	fff = my_fopen(file_name, "w");
+	
+	if (fff) dump_virtues(fff);
+	
+	/* Close the file */
+	my_fclose(fff);
+	
+	/* Display the file contents */
+	show_file(file_name, "Virtues", 0, 0);
+	
+	/* Remove the file */
+	fd_kill(file_name);
+}
+#endif
 
 /*
  * Print quest status of all active quests
@@ -3487,8 +3518,16 @@ void do_cmd_knowledge(void)
 		prt("(6) Display current pets", 9, 5);
 		prt("(7) Display current quests", 10, 5);
 
+		#ifdef AVATAR
+		prt("(8) Display virtues", 10, 5);
+		#endif
+  
+		#ifdef AVATAR
 		/* Prompt */
+		prt("Command: ", 13, 0);
+		#else
 		prt("Command: ", 12, 0);
+		#endif
 
 		/* Prompt */
 		i = inkey();
@@ -3519,6 +3558,13 @@ void do_cmd_knowledge(void)
 		case '7': /* Quests */
 			do_cmd_knowledge_quests();
 			break;
+		
+		#ifdef AVATAR		
+		case '8': /* Virtues */
+			do_cmd_knowledge_virtues();
+			break;
+		#endif
+		
 		default: /* Unknown option */
 			bell();
 		}

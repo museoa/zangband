@@ -2719,7 +2719,10 @@ static bool player_birth_aux(void)
 	/* Get a name, recolor it, prepare savefile */
 	change_player_name();
 
-
+	#ifdef AVATAR
+	 get_virtues();
+	#endif
+ 
 	/* Prompt for it */
 	prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
 

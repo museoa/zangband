@@ -1250,7 +1250,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	/* Fear amount (amount to fear) */
 	int do_fear = 0;
 
-
+	#ifdef AVATAR
+	bool heal_leper = FALSE;
+	#endif
+	
 	/* Hold the monster name */
 	char m_name[80];
 
@@ -2146,6 +2149,32 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			/* No overflow */
 			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
+			#ifdef AVATAR
+			chg_virtue(V_VITALITY, 1);
+			
+			if (r_ptr->flags1 & RF1_UNIQUE)
+				chg_virtue(V_INDIVIDUALISM, 1);
+	
+			if (is_friendly(m_ptr))
+				chg_virtue(V_HONOUR, 1);
+			else if (!(r_ptr->flags3 & RF3_EVIL))
+			{
+				if (r_ptr->flags3 & RF3_GOOD)
+					chg_virtue(V_COMPASSION, 2);
+				else
+					chg_virtue(V_COMPASSION, 1);
+			}
+
+			if (strstr((r_name + r_ptr->name),"leper"))
+			{
+				heal_leper = TRUE;
+				chg_virtue(V_COMPASSION, 5);
+			}
+	
+			if (r_ptr->flags3 & RF3_ANIMAL)
+				chg_virtue(V_NATURE, 1);
+			#endif
+
 			/* Redraw (later) if needed */
 			if (p_ptr->health_who == c_ptr->m_idx) p_ptr->redraw |= (PR_HEALTH);
 
@@ -2166,6 +2195,13 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			/* Speed up */
 			if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
 			note = " starts moving faster.";
+
+			#ifdef AVATAR
+			if (r_ptr->flags1 & RF1_UNIQUE)
+				chg_virtue(V_INDIVIDUALISM, 1);
+			if (is_friendly(m_ptr))
+				chg_virtue(V_HONOUR, 1);
+			#endif
 
 			/* No "real" damage */
 			dam = 0;
@@ -2288,6 +2324,12 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				note = " suddenly seems friendly!";
 				set_pet(m_ptr);
+				
+				#ifdef AVATAR
+				chg_virtue(V_INDIVIDUALISM, -1);
+				if (r_ptr->flags3 & RF3_ANIMAL)
+					chg_virtue(V_NATURE, 1);
+				#endif
 			}
 
 			/* No "real" damage */
@@ -2356,6 +2398,11 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				note = " is tamed!";
 				set_pet(m_ptr);
+				
+				#ifdef AVATAR
+				if (r_ptr->flags3 & RF3_ANIMAL)
+					chg_virtue(V_NATURE, 1);
+				#endif
 			}
 
 			/* No "real" damage */
@@ -2945,6 +2992,14 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		note = note_dies;
 	}
 
+	#ifdef AVATAR
+	if (heal_leper)
+	{
+		msg_print("The Mangy looking leper is healed!");
+		delete_monster_idx(c_ptr->m_idx);
+	}
+ 	#endif
+
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
 	else if (do_poly && (randint(90) > r_ptr->level))
 	{
@@ -2980,6 +3035,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 		/* Message */
 		note = " disappears!";
+		
+		#ifdef AVATAR
+		chg_virtue(V_VALOUR, -1);
+		#endif
 
 		/* Teleport */
 		teleport_away(c_ptr->m_idx, do_dist);

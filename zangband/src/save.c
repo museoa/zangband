@@ -1024,6 +1024,13 @@ static void wr_extra(void)
 	wr_u32b(p_ptr->muta2);
 	wr_u32b(p_ptr->muta3);
 
+	#ifdef AVATAR
+	for (i = 0; i<8; i++)
+		wr_s16b(p_ptr->virtues[i]);
+	for (i = 0; i<8; i++)
+		wr_s16b(p_ptr->vir_types[i]);
+	#endif
+
 	wr_byte(p_ptr->confusing);
 	wr_byte(0);     /* oops */
 	wr_byte(0);     /* oops */

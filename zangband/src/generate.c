@@ -1134,6 +1134,11 @@ static byte extract_feeling(void)
 	if (rating > 10) return 8;
 	if (rating > 0) return 9;
 
+        #ifdef AVATAR
+	if((turn - old_turn) > 50000L)
+		chg_virtue(V_PATIENCE, 1);	
+	#endif
+
 	return 10;
 }
 

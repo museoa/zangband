@@ -630,3 +630,8 @@
  * Monsters can drop corpses when killed
  */
 /* #define USE_CORPSES */
+
+/*
+ * Compile in virtues
+ */
+#define AVATAR

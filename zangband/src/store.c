@@ -285,6 +285,11 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7a[rand_int(MAX_COMMENT_7A)]);
 
+		#ifdef AVATAR
+		chg_virtue(V_HONOUR, -1);
+		chg_virtue(V_JUSTICE, -1);
+		#endif
+		
 		/* Sound */
 		sound(SOUND_STORE1);
 	}
@@ -294,6 +299,12 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	{
 		/* Comment */
 		msg_print(comment_7b[rand_int(MAX_COMMENT_7B)]);
+		
+		#ifdef AVATAR
+		chg_virtue(V_JUSTICE, -1);
+		if (randint(4)==1)
+			chg_virtue(V_HONOUR, -1);
+		#endif
 
 		/* Sound */
 		sound(SOUND_STORE2);
@@ -304,6 +315,13 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	{
 		/* Comment */
 		msg_print(comment_7c[rand_int(MAX_COMMENT_7C)]);
+		
+		#ifdef AVATAR
+		if (randint(4)==1)
+			chg_virtue(V_HONOUR, -1);
+		else if (randint(4)==1)
+			chg_virtue(V_HONOUR, 1);
+		#endif
 
 		/* Sound */
 		sound(SOUND_STORE3);
@@ -314,6 +332,16 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	{
 		/* Comment */
 		msg_print(comment_7d[rand_int(MAX_COMMENT_7D)]);
+
+		#ifdef AVATAR
+		if (randint(2)==1)
+			chg_virtue(V_HONOUR, -1);
+		if (randint(4)==1)
+			chg_virtue(V_HONOUR, 1);
+
+		if (10 * price < value)
+			chg_virtue(V_SACRIFICE, 1);
+		#endif
 
 		/* Sound */
 		sound(SOUND_STORE4);
@@ -2646,10 +2674,17 @@ static void store_purchase(void)
 			{
 				/* Say "okay" */
 				say_comment_1();
+				
+				#ifdef AVATAR
+				if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
+					chg_virtue(V_JUSTICE, -1);
+				if((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
+					chg_virtue(V_NATURE, -1);
+				#endif
 
 				/* Make a sound */
 				sound(SOUND_BUY);
-
+				
 				/* Be happy */
 				decrease_insults();
 
@@ -2946,6 +2981,14 @@ static void store_sell(void)
 			/* Make a sound */
 			sound(SOUND_SELL);
 
+			#ifdef AVATAR
+			if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
+				chg_virtue(V_JUSTICE, -1);
+
+			if((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
+				chg_virtue(V_NATURE, 1);
+			#endif
+			
 			/* Be happy */
 			decrease_insults();
 

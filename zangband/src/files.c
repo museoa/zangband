@@ -3129,7 +3129,12 @@ errr file_character(cptr name, bool full)
 		else
 			fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
 	}
+	
+	#ifdef AVATAR
+	fprintf(fff, "\n\n  [Virtues]\n\n");
+	dump_virtues(fff);
 
+	#endif
 
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{

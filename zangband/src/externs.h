@@ -1222,3 +1222,12 @@ extern void wilderness_gen(void);
 extern errr init_wilderness(void);
 extern void seed_wilderness(void);
 extern errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int xmax, int *y, int *x);
+
+
+#ifdef AVATAR
+/* avatar.c */
+extern cptr virtue[MAX_VIRTUE];
+extern void get_virtues();
+extern void chg_virtue(int virtue, int amount);
+extern void dump_virtues(FILE * OutFile);
+#endif
