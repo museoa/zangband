@@ -229,25 +229,13 @@ errr init_quests(void)
 	C_MAKE(quest, z_info->q_max, quest_type);
 	
 	/* Reset number of quests */
-	q_max = 0;
+	q_max = 1;
 	
 	/* Wipe the quests */
 	for (i = 0; i < z_info->q_max; i++)
 	{
 		quest_wipe(i);
 	}
-
-	/* Add the winner quests */
-	
-	/* Hack XXX XXX Oberon, hard coded */
-	quest[insert_dungeon_monster_quest(QW_OBERON, 1, 98)].x_type
-		 = QX_KILL_WINNER;
-	
-	/* Hack XXX XXX Serpent, hard coded */
-	quest[insert_dungeon_monster_quest(QW_SERPENT, 1, 100)].x_type
-		 = QX_KILL_WINNER;
-	
-	/* Add some 'random quests' at birth. */
 	
 	return (0);
 }
@@ -267,6 +255,9 @@ void get_player_quests(void)
 	
 	int best_level, best_r_idx;
 	int num;
+	
+	/* Reset number of quests */
+	q_max = 1;
 
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
@@ -376,6 +367,16 @@ void get_player_quests(void)
 		/* Create the quest */
 		insert_dungeon_monster_quest(best_r_idx, num, level);
 	}
+	
+	/* Add the winner quests */
+	
+	/* Hack XXX XXX Oberon, hard coded */
+	quest[insert_dungeon_monster_quest(QW_OBERON, 1, 98)].x_type
+		 = QX_KILL_WINNER;
+	
+	/* Hack XXX XXX Serpent, hard coded */
+	quest[insert_dungeon_monster_quest(QW_SERPENT, 1, 100)].x_type
+		 = QX_KILL_WINNER;
 }
 
 
@@ -1416,7 +1417,7 @@ bool create_quest(int x, int y, int town_num)
 	quest_type *q_ptr;
 	
 	/* Select type of monster to place in the camp */
-	qtype = pick_quest_type(camp_types, w_ptr->done.mon_gen);
+	qtype = pick_quest_type(camp_types, w_ptr->trans.law_map);
 	
 	/* Is the area too easy for the quests? */
 	if (qtype == -1) return (FALSE);
@@ -1435,9 +1436,12 @@ bool create_quest(int x, int y, int town_num)
 	t_ptr->monst_type = TOWN_MONST_MONST;
 	t_ptr->x = x;
 	t_ptr->y = y;
+	t_ptr->quest_num = q_num;
 
 	/* Data value is used as a counter of "active" blocks */
 	t_ptr->data = 0;
+	
+	if ((!t_ptr->xsize) || (!t_ptr->ysize)) quit("Zero quest size");
 	
 	/* Link wilderness to quest */
 	for (i = 0; i < t_ptr->xsize; i++)
@@ -1450,7 +1454,7 @@ bool create_quest(int x, int y, int town_num)
 			 * Add quest to wilderness
 			 * Note: only 255 can be stored currently.
 			 */
-			w_ptr->done.town = (byte)town_num;
+			w_ptr->trans.town = (byte)town_num;
 			
 			/* Increment "active block" counter */
 			t_ptr->data++;
@@ -1476,7 +1480,7 @@ bool create_quest(int x, int y, int town_num)
 	/* Save the quest data */
 	q_ptr->data.wld.town = town_num;
 	q_ptr->data.wld.data = qtype;
-	q_ptr->data.wld.depth = w_ptr->done.mon_gen;
+	q_ptr->data.wld.depth = w_ptr->trans.law_map;
 	
 	return (TRUE);
 }

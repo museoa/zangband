@@ -122,7 +122,7 @@ s16b fld_cnt = 0;		/* Number of live fields */
 s16b rg_max = 1;		/* Number of allocated regions */
 s16b rg_cnt = 0;		/* Number of live regions */
 
-s16b q_max = 0;			/* Number of allocated quests */
+s16b q_max = 1;			/* Number of allocated quests */
 
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
 s16b hack_m_idx_ii = 0;
