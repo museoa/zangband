@@ -41,6 +41,7 @@ class object_class(object_type):
 		target = copy.deepcopy(self)
 		# Mega-Hack ! - Redirect the base object
 		target.this = j_ptr
+		return target
 
 	def get_object_name_hook(self):
 		return self.name
