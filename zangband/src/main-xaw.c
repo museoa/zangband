@@ -1618,11 +1618,13 @@ errr init_xaw(int argc, char *argv[])
 			continue;
 		}
 
+#ifdef USE_GRAPHICS
 		if (prefix(argv[i], "-s"))
 		{
 			smoothRescaling = FALSE;
 			continue;
 		}
+#endif /* USE_GRAPHICS */
 
 		if (prefix(argv[i], "-n"))
 		{
