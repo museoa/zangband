@@ -107,7 +107,7 @@ zangband: $(objs-y)
 ##
 makefile: configure makefile.in
 	$(CONFIGURE)
-
+	
 configure: configure.in
 	aclocal
 	autoheader
@@ -188,6 +188,17 @@ test:
 	@if [ ! -r .default_path -o x"$(DESTDIR)" != x`cat .default_path` ]; then \
 		echo "$(DESTDIR)" > .default_path; \
 	fi
+
+# Hack to remake configure.in if the version number changes
+.version: src/defines.h
+	@if [ ! -r .version -o x"$(VERSION)" != x`cat .version` ]; then \
+		echo "$(VERSION)" > .version; \
+	fi
+
+configure.in: .version
+	cat configure.in | sed -e "s/AC_INIT.*$$/AC_INIT\(Zangband,\ `cat .version`,\ bugs@zangband.org\)/" > configure.new
+	mv configure.new configure.in
+		
 
 .PHONY: dirs installbase install uninstall dist distcheck distgz \
 		 clean distclean test
