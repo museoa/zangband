@@ -14,6 +14,8 @@
 #include "zbmagic.h"
 
 
+bool borg_simulate; /* Simulation flag */
+
 
 /*
  * New method for handling attacks, missiles, and spells

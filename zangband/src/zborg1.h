@@ -453,7 +453,6 @@ extern s16b avoidance;	/* Current danger thresh-hold */
 
 extern bool borg_failure;	/* Notice failure */
 
-extern bool borg_simulate;	/* Simulation flag */
 extern bool borg_attacking;	/* Are we attacking a monster? */
 extern bool borg_offsetting;	/* Are we attacking a monster? with offsett balls */
 

@@ -13,5 +13,6 @@ extern bool borg_escape(int b_q);
 extern bool borg_heal(int danger);
 
 /* zbmagic2.c */
+extern bool borg_simulate;	/* Simulation flag */
 extern int borg_launch_beam(int dam, int typ, int max);
 extern void borg_temp_fill(bool all_monsters);

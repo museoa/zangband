@@ -144,7 +144,6 @@ s16b avoidance = 0;	/* Current danger thresh-hold */
 
 bool borg_failure;	/* Notice failure */
 
-bool borg_simulate;	/* Simulation flag */
 bool borg_attacking;	/* Simulation flag */
 bool borg_offsetting;	/* offset ball attacks */
 
