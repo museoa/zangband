@@ -3702,7 +3702,7 @@
 #define last_words				p_ptr->options[28]
 #define speak_unique			p_ptr->options[29]
 #define small_levels			svr_ptr->options[0]
-#define empty_levels			svr_ptr->options[1]
+/* {TRUE,  0, NULL,					"Number 31" }, svr_ptr->options[1] */
 
 /* Option set 1 */
 
@@ -3889,7 +3889,7 @@
 /* {TRUE,  0, NULL,					"Number 197" }, p_ptr->birth[5] */
 /* {TRUE,  0, NULL,					"Number 198" }, p_ptr->birth[6] */
 /* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
-#define ironman_empty_levels	p_ptr->birth[8]
+/* {TRUE,  0, NULL,					"Number 200" }, p_ptr->birth[8] */
 #define terrain_streams			p_ptr->birth[9]
 /* {TRUE,  0, NULL,					"Number 202" }, p_ptr->birth[10] */
 #define munchkin_death			p_ptr->birth[11]

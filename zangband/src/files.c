@@ -3056,13 +3056,6 @@ errr file_character(cptr name, bool full)
 
 	if (ironman_downward) froff(fff, "\n Diving only:        ON");
 
-	if (ironman_empty_levels)
-		froff(fff, "\n Arena Levels:       ALWAYS");
-	else if (empty_levels)
-		froff(fff, "\n Arena Levels:       ENABLED");
-	else
-		froff(fff, "\n Arena Levels:       OFF");
-
 	if (ironman_nightmare) froff(fff, "\n Nightmare Mode:     ON");
 
 	froff(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,

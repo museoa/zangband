@@ -6176,7 +6176,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  3, "last_words",			"Get last words when the character dies" },
 	{TRUE,  3, "speak_unique",			"Allow uniques to speak" },
 	{TRUE,  3, "small_levels",			"Allow unusually small dungeon levels" },
-	{TRUE,  3, "empty_levels",			"Allow empty 'arena' levels" },
+	{TRUE,  0, NULL,					"Number 31" },
 
 	{TRUE,  0, NULL,					"Number 32" },
 	{TRUE,  0, NULL,					"Number 33" },
@@ -6351,7 +6351,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,	0, NULL,					"Number 197" },
 	{TRUE,	0, NULL,					"Number 198" },
 	{TRUE,	0, NULL,					"Number 199" },
-	{FALSE, 6, "ironman_empty_levels",	"Always create empty 'arena' levels" },
+	{TRUE,	0, NULL,					"Number 200" },
 	{TRUE,  6, "terrain_streams",		"Create terrain 'streamers' in the dungeon" },
 	{TRUE, 0, NULL,						"Number 202" },
 	{FALSE, 6, "munchkin_death",		"Ask for saving death" },

@@ -635,16 +635,12 @@ static bool cave_gen(dun_type *d_ptr)
 		}
 	}
 	
-	/* Empty arena levels */
-	if (ironman_empty_levels || (empty_levels && one_in_(EMPTY_LEVEL)))
+	/* Empty arena levels only ever in "city" dungeons */
+	if ((d_ptr->habitat & RF8_DUN_CITY) && one_in_(EMPTY_LEVEL))
 	{
-		/* Only ever in "city" dungeons */
-		if (d_ptr->habitat & RF8_DUN_CITY)
-		{
-			empty_level = TRUE;
+		empty_level = TRUE;
 
-			if (cheat_room) msgf("Arena level.");
-		}
+		if (cheat_room) msgf("City level.");
 	}
 
 	/* Hack -- Start with basic granite */
