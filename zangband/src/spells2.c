@@ -3671,7 +3671,6 @@ void call_chaos(void)
  */
 bool activate_ty_curse(bool stop_ty, int *count)
 {
-	int i;
 	int stat = 0;
 
 	int flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
