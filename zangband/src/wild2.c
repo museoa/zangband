@@ -2146,7 +2146,7 @@ static bool blank_spot(int x, int y, int xsize, int ysize, int town_num, bool to
  */
 static const dun_gen_type dungeons[] =
 {
-	{{0, 10, 0, 40}, RF7_DUN_DARKWATER, 0, 15, 1,
+	{{0, 10, 0, 40}, RF7_DUN_DARKWATER, 1, 15, 1,
 		100, 0,
 		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_STRANGE,
 		FEAT_DRY_MUD,
@@ -2217,7 +2217,7 @@ static const dun_gen_type dungeons[] =
 		LQ_ACID,
 		DF_TRACK},
 
-	{{10, 20, 10, 40}, RF7_DUN_MINE, 0, 40, 1,
+	{{10, 20, 10, 40}, RF7_DUN_MINE, 1, 40, 1,
 		200, 200,
 		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_RUIN | RT_STRANGE,
 		FEAT_DIRT,
