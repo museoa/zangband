@@ -34,6 +34,19 @@
 #define MAP_ONCE    0x08		/* This block has ever been seen */
 
 /*
+ * Constants used to describe the state of monsters
+ * to users of the overhead map
+ */
+#define MONST_AWAKE		0x01
+#define MONST_FRIEND	0x02
+#define MONST_PET		0x04
+#define MONST_CONFUSED	0x08
+#define MONST_FEAR		0x10
+#define MONST_STUN		0x20
+#define MONST_INVULN	0x40
+
+
+/*
  * Make an itterator, so we can scan the map quickly
  */
 #define MAP_ITT_START(M) \
@@ -87,6 +100,9 @@ struct term_map
 
 	/* Player-known flags */
 	byte flags;
+	
+	/* Monster flags */
+	byte m_flags;
 };
 
 typedef struct map_block map_block;
@@ -94,6 +110,7 @@ typedef struct map_block map_block;
 struct map_block
 {
 	/* Save what it looks like */
+
 #ifdef TERM_OVERHEAD_MAP
 	u16b feature_code;
 #endif /* TERM_OVERHEAD_MAP */
@@ -104,9 +121,16 @@ struct map_block
 	s16b monster;
 	s16b field;
 	byte terrain;
-	char unknown;	/* unknown mimics or flavoured objects */
+	
+	/* unknown mimics or flavoured objects */
+	char unknown;
+	
+	/* Monster flags */
+	byte m_flags;
 #endif /* TERM_CAVE_MAP */
 
+	/* We need to save the flags to get the refcounting right. */
+	byte flags;
 
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
@@ -124,9 +148,6 @@ struct map_block
 	byte detect;	/* Detection flags */
 	byte xtra;	/* search count */
 #endif /* ALLOW_BORG */
-
-	/* We need to save the flags to get the refcounting right. */
-	byte flags;
 };
 
 typedef map_block *map_blk_ptr;

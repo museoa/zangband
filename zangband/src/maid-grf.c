@@ -641,6 +641,7 @@ static void save_map_location(int x, int y, term_map *map)
 	mb_ptr->field = map->field;
 	mb_ptr->terrain = map->terrain;
 	mb_ptr->unknown = map->unknown;
+	mb_ptr->m_flags = map->m_flags;
 
 #endif /* TERM_CAVE_MAP */
 
@@ -716,6 +717,15 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;
+				
+				/* Get monster information */
+				if (!m_ptr->csleep) map.m_flags |= MONST_AWAKE;
+				if (is_friendly(m_ptr)) map.m_flags |= MONST_FRIEND;
+				if (is_pet(m_ptr)) map.m_flags |= MONST_PET;
+				if (m_ptr->confused) map.m_flags |= MONST_CONFUSED;
+				if (m_ptr->monfear) map.m_flags |= MONST_FEAR;
+				if (m_ptr->stunned) map.m_flags |= MONST_STUN;
+				if (m_ptr->invulner) map.m_flags |= MONST_INVULN;
 			}
 
 			/* Mimic in los? */
