@@ -29,7 +29,7 @@
  * For example, if M is 100, you get "percentile dice"
  */
 #define rand_int(M) \
-	((Rand_unbiased) ? ((s32b)(Rand_num(M))) : (Rand_div(M)))
+	((s32b)Rand_div(M))
 
 /*
  * Generates a random long integer X where A<=X<=B
@@ -69,7 +69,6 @@
 
 /**** Available Variables ****/
 
-extern bool Rand_unbiased;
 extern bool Rand_quick;
 extern u32b Rand_value;
 extern u16b Rand_place;
@@ -78,9 +77,6 @@ extern u32b Rand_state[RAND_DEG];
 
 /**** Available Functions ****/
 
-extern int Rand_bit(void);
-extern u32b Rand_u32b(void);
-extern u32b Rand_num(u32b m);
 extern void Rand_state_init(u32b seed);
 extern s32b Rand_mod(s32b m);
 extern s32b Rand_div(u32b m);

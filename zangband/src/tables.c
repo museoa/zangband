@@ -6201,9 +6201,6 @@ option_type option_info[] =
 	{ &ironman_hard_quests,         FALSE, 6,6,6,
 	"ironman_hard_quests",          "Quest monsters get reinforcements" },
 
-	{ &Rand_unbiased,               FALSE, 6,6,7,
-	"Rand_unbiased",                "Use an unbiased RNG (slow)" },
-
 	{ &ironman_empty_levels,        FALSE, 6,6,8,
 	"ironman_empty_levels",         "Always create empty 'arena' levels" },
 

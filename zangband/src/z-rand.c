@@ -52,12 +52,6 @@ bool Rand_quick = TRUE;
 
 
 /*
- * Use an unbiased RNG (slow)
- */
-bool Rand_unbiased;
-
-
-/*
  * Current "value" of the "simple" RNG
  */
 u32b Rand_value;
@@ -72,121 +66,6 @@ u16b Rand_place;
  * Current "state" table for the "complex" RNG
  */
 u32b Rand_state[RAND_DEG];
-
-
-
-/* Random number generator selector */
-
-
-/*
- * Generate a random bit
- *
- * This is done by generating two random bits (either 0 or 1)
- * until the bits are different, at which point the first is returned.
- * This gives an *unbiased* random bit.
- *
- * Consider the situation where a '0' has probability 'p' and a '1' has
- * probability 'q' (1-p).  The probabilities for the four possibilities with
- * two bits are as follows:
- *
- * 	00		p*p = p^2
- *		01		p*q = pq
- *		10		q*p = pq
- *		11		q*q = q^2
- *
- *	Note that '01' and '10' appear with equal probability.  This means that
- * if either is generated, the first bit is as likely to be '0' as '1',
- * and therefore the generator has no inherent bias.
- *
- * Note also that we cannot simply discard the first bit when a duplicate is
- * found, and continue the test using the second bit and a new bit -- doing so
- * predetermines the return value.
- *
- * Unfortunately, this method depends on the variation in the bit generator.
- * Any periodicity present in the bit stream will be reflected to some extent
- * in the output.
- *
- * Eric Bock (kobe@micron.net)
- */
-int Rand_bit(void)
-{
-	int a, b;
-
-	/* Obtain a random pair */
-	do
-	{
-		a = Rand_div(0x10000) < 0x08000;
-		b = Rand_div(0x10000) < 0x08000;
-	}
-	while (a == b);
-
-	return a;
-}
-
-/*
- * Generate a random 32-bit integer.
- * Note that this can be extended to any number of bits.
- */
-u32b Rand_u32b(void)
-{
-	u32b r = 0;
-	byte i = 0;
-
-	int a, b;
-
-	for (; i < 32; i++)
-	{
-		/* Obtain a random pair */
-		do
-		{
-			a = Rand_div(0x10000) < 0x08000;
-			b = Rand_div(0x10000) < 0x08000;
-		}
-		while (a == b);
-
-		/* Add a random bit */
-		r += (u32b)a << i;
-	}
-
-	return r;
-}
-
-/* Generate a random integer with 0 <= X < M */
-u32b Rand_num(u32b m)
-{
-	u32b r = m;
-
-	byte i = 0;
-
-	int a, b;
-
-	/* Simple case */
-	if (m <= 1) return 0;
-
-	/* Wait for it */
-	while (r >= m)
-	{
-		r = 0;
-
-		/* Generate a random log(2)m-bit integer */
-		for (i = 0; (1UL << i) < m; i++)
-		{
-			/* Obtain a random pair */
-			do
-			{
-				a = Rand_div(0x10000) < 0x08000;
-				b = Rand_div(0x10000) < 0x08000;
-			}
-			while (a == b);
-
-			/* Add a random bit */
-			r += (u32b)a << i;
-		}
-	}
-
-	/* Success */
-	return r;
-}
 
 
 /*
