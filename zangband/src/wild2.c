@@ -540,7 +540,7 @@ static void remove_islands(void)
 {
 	int i, j, k, l;
 	bool city_block;
-
+	
 	/* Rescan walls to avoid "islands" */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -550,7 +550,7 @@ static void remove_islands(void)
 			if (temp_block[j][i] == 1)
 			{
 				city_block = FALSE;
-
+				
 				/* Scan around */
 				for (k = -1; k <= 1; k++)
 				{
@@ -1170,6 +1170,9 @@ void draw_city(place_type *pl_ptr)
 
 	/* 'Fill' the town with buildings */
 	count = fill_town_driver();
+	
+	/* Paranoia */
+	if (count < 7) quit("Random number generator failure");
 
 	/* Make sure the city is self-connected properly */
 	remove_islands();
