@@ -154,8 +154,6 @@ struct borg_kill
 {
 	s16b r_idx;	/* Race index */
 
-	u16b next_kill;	/* Next kill in this list */
-
 	s16b power;	/* Estimated hit-points */
 	s16b when;	/* When last seen */
 
@@ -164,6 +162,8 @@ struct borg_kill
 	bool ranged_attack;	/* can attack from a dx */
 
 	byte m_flags;
+	
+	byte type;	/* Type of kill */
 };
 
 

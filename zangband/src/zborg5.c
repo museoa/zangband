@@ -84,18 +84,6 @@ static int borg_normal_size;	/* Number of normals */
 static s16b *borg_normal_what;	/* Indexes of normals */
 static cptr *borg_normal_text;	/* Names of normals */
 
-/*
- * Monster tracking
- */
-static u16b mon_used_head = 0;
-static u16b mon_used_tail = 0;
-static u16b mon_new_head = 0;
-static u16b mon_new_tail = 0;
-static u16b mon_old_head = 0;
-static u16b mon_old_tail = 0;
-static u16b mon_move_head = 0;
-static u16b mon_move_tail = 0;
-
 
 /*
  * Delete an old "object" record
@@ -512,154 +500,27 @@ static int get_blank_kill(void)
 }
 
 
-static void get_list(u16b **list_head, u16b **list_tail, byte type)
-{
-	switch (type)
-	{
-		case BORG_MON_USED:
-		{
-			*list_head = &mon_used_head;
-			*list_tail = &mon_used_tail;
-			break;
-		}
-
-		case BORG_MON_NEW:
-		{
-			*list_head = &mon_new_head;
-			*list_tail = &mon_new_tail;
-			break;
-		}
-
-		case BORG_MON_OLD:
-		{
-			*list_head = &mon_old_head;
-			*list_tail = &mon_old_tail;
-			break;
-		}
-
-		case BORG_MON_MOVE:
-		{
-			*list_head = &mon_move_head;
-			*list_tail = &mon_move_tail;
-			break;
-		}
-	}
-}
-
 /*
  * Get a new kill entry for a list
  */
 static int get_new_mon(byte type)
 {
-	u16b *list_head = NULL;
-	u16b *list_tail = NULL;
-
-	int new;
+	int who;
 
 	borg_kill *kill;
-
-	/* Get the required list */
-	get_list(&list_head, &list_tail, type);
-
-	/* Do we already have a list? */
-	if (!(*list_head))
-	{
-		/* Get a new empty kill struct */
-		new = get_blank_kill();
-		*list_head = new;
-	}
-	else
-	{
-		/* Get last node in list */
-		kill = &borg_kills[*list_tail];
-
-		/* Get a new empty kill struct */
-		new = get_blank_kill();
-
-		/* Link to new node */
-		kill->next_kill = new;
-	}
-
-	/* Move the tail now */
-	*list_tail = new;
-
-	/* Blank out the link */
-	kill = &borg_kills[new];
-	kill->next_kill = 0;
 	
-	borg_note(format("# Getting new monster entry. (%d)", new));
+	/* Get new kill */
+	who = get_blank_kill();
+	
+	kill = &borg_kills[who];
+	
+	/* Set type */
+	kill->type = type;
+	
+	borg_note(format("# Getting new monster entry. (%d)", who));
 
 	/* Done */
-	return (new);
-}
-
-/*
- * Find the entry that points to this one
- */
-static u16b *find_mon_entry(u16b who, u16b *previous)
-{
-	int i;
-	
-	*previous = 0;
-	
-	/* Paranoia */
-	if (!who) borg_oops("# Invalid monster node! (0)");
-	
-	/* First, check the list heads */
-	if (mon_used_head == who) return (&mon_used_head);
-	if (mon_new_head == who) return (&mon_new_head);
-	if (mon_old_head == who) return (&mon_old_head);
-	if (mon_move_head == who) return (&mon_move_head);
-
-	/* Scan the list looking for the node before the one we want */
-	for (i = 1; i < borg_kills_nxt; i++)
-	{
-		/* Find empty entries */
-		if (borg_kills[i].next_kill == who)
-		{
-			*previous = i;
-			return (&borg_kills[i].next_kill);
-		}
-	}
-	
-	/* Message about our failure */
-	borg_note(format("# Cannot find preceeding monster node! (%d)", who));
-	
-	/* Failure */
-	return (NULL);
-}
-
-/*
- * Disconnect kill 'who' from the list it is in
- */
-static bool excise_mon(u16b who)
-{
-	u16b previous;
-	u16b *connector = find_mon_entry(who, &previous);
-	
-	borg_kill *kill = &borg_kills[who];
-	
-	/* Paranoia */
-	if (!connector) return (FALSE);
-	
-	/* Disconnect from list */
-	*connector = kill->next_kill;
-	
-	borg_note(format("# Excising entry. (%d)", who));
-	
-	/* Correct list tails */
-	if (!kill->next_kill)
-	{
-		if (mon_used_tail == who) mon_used_tail = previous;
-		else if (mon_new_tail == who) mon_new_tail = previous;
-		else if (mon_old_tail == who) mon_old_tail = previous;
-		else if (mon_move_tail == who) mon_move_tail = previous;
-	}
-	
-	/* Paranoia */
-	kill->next_kill = 0;
-	
-	return (TRUE);
+	return (who);
 }
 
 
@@ -669,8 +530,6 @@ static bool excise_mon(u16b who)
 static void move_mon_entry(u16b who, byte type)
 {
 	borg_kill *kill = &borg_kills[who];
-	
-	u16b *list_head, *list_tail;
 		
 	/* Paranoia */
 	if (!who)
@@ -678,30 +537,8 @@ static void move_mon_entry(u16b who, byte type)
 		borg_oops("Trying to move invalid monster number (0)");
 		return;
 	}
-	
-	/* Disconnect the kill */
-	if (!excise_mon(who)) return;
-	
-	/* Attach to the end of the required list */
-		
-	/* Get the required list */
-	get_list(&list_head, &list_tail, type);
 
-	if (*list_tail)
-	{
-		/* Just connect to the tail of the list */
-		kill = &borg_kills[*list_tail];
-
-		kill->next_kill = who;
-	}
-	else
-	{
-		/* We need to make this the first node */
-		*list_head = who;
-	}
-
-	/* This is now the list tail */
-	*list_tail = who;
+	kill->type = type;
 	
 	borg_note(format("# Moving monster entry. (%d)", who));
 }
@@ -710,7 +547,7 @@ static void move_mon_entry(u16b who, byte type)
 /*
  * Delete an old "kill" record
  */
-static void borg_remove_kill(int who)
+void borg_delete_kill(int who)
 {
 	borg_kill *kill = &borg_kills[who];
 	
@@ -743,69 +580,43 @@ static void borg_remove_kill(int who)
 
 
 /*
- * Kill a monster, and remove it from any lists
- */
-void borg_delete_kill(int who)
-{	
-	/* Disconnect the kill */
-	if (!excise_mon(who)) return;
-
-	/* Remove it */
-	borg_remove_kill(who);
-}
-
-
-/*
  * Remove all monsters of a given type
  */
 static void borg_wipe_mon(byte type)
 {
-	u16b *list_head, *list_tail;
+	int i;
 	
-	get_list(&list_head, &list_tail, type);
-	
-	while (*list_head)
+	borg_kill *kill;
+
+	for (i = 1; i < borg_kills_nxt; i++)
 	{
-		/* Get rid of kill */
-		borg_delete_kill(*list_head);
+		kill = &borg_kills[i];
+		
+		if (kill->type == type)
+		{
+			borg_delete_kill(i);
+		}
 	}
 }
 
 
 /*
- * Append all the kills in list two
- * to the end of list one.
+ * Change all the kills of type two
+ * to be type one.
  */
 static void borg_append_mon_list(byte type1, byte type2)
 {
-	u16b *list1_head, *list1_tail;
-	u16b *list2_head, *list2_tail;
+	int i;
 	
-	/* Get lists */
-	get_list(&list1_head, &list1_tail, type1);
-	get_list(&list2_head, &list2_tail, type2);
-	
-	/* Does the first list exist? */
-	if (*list1_tail)
+	borg_kill *kill;
+
+	for (i = 1; i < borg_kills_nxt; i++)
 	{
-		/* Get last node in first list */
-		borg_kill *kill = &borg_kills[*list1_tail];
-	
-		/* Attach second list onto first */
-		kill->next_kill = *list2_head;
+		kill = &borg_kills[i];
+		
+		/* Add kills of type2 to type1 */
+		if (kill->type == type2) kill->type = type1;
 	}
-	else
-	{
-		/* The first list does not exist, just swap details */
-		*list1_head = *list2_head;
-	}
-	
-	/* The first list now ends here */
-	if (*list2_tail) *list1_tail = *list2_tail;
-	
-	/* Nullify second list */
-	*list2_head = 0;
-	*list2_tail = 0;
 }
 
 
@@ -904,8 +715,6 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 }
 
 
-
-
 /*
  * Force sleep onto a "kill" record
  * ??? Since this check is done at update_kill should I have it here?
@@ -936,9 +745,6 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 
 	/* Too far away */
 	if (d > MAX_SIGHT) return (FALSE);
-
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (FALSE);
 
 	/* Access the grid */
 	mb_ptr = map_loc(x, y);
@@ -990,76 +796,52 @@ static bool borg_follow_kill_aux(int i, int x, int y)
  */
 static void observe_kill_move(int new_type, int old_type, int dist)
 {
-	u16b *list1_head, *list1_tail;
-	u16b *list2_head, *list2_tail;
-	
-	u16b curr_kill, scan_kill;
-	u16b curr_next, scan_next;
-
-	
+	int i, j;
 	borg_kill *kill1, *kill2;
 	
 	int x, y, d;
-
-	/* Get lists */
-	get_list(&list1_head, &list1_tail, old_type);
 	
-	/* Start from the start of the list */
-	curr_kill = *list1_head;
-	
-	/* Paranoia - no more of this type left. */
-	if (!curr_kill) return;
-	
-	/* Scan kill list */
-	while(curr_kill)
+	for (i = 1; i < borg_kills_nxt; i++)
 	{
-		kill1 = &borg_kills[curr_kill];
+		kill1 = &borg_kills[i];
+	
+		/* Paranoia - ignore dead monsters */
+		if (!kill1->r_idx) continue;
 		
-		curr_next = kill1->next_kill;
-		
+		/* Must be correct type */
+		if (kill1->type != old_type) continue;
+	
 		x = kill1->x;
 		y = kill1->y;
 	
-		/* Scan for monsters in the other list close enough */
-		get_list(&list2_head, &list2_tail, new_type);
-		
-		scan_kill = *list2_head;
-		
-		/* Paranoia - no more of this type left. */
-		if (!scan_kill) return;
-		
-		while (scan_kill)
+		for (j = 1; j < borg_kills_nxt; j++)
 		{
-			kill2 = &borg_kills[scan_kill];
-			scan_next = kill2->next_kill;
+			kill2 = &borg_kills[j];
+			
+			/* Paranoia - ignore dead monsters */
+			if (!kill2->r_idx) continue;
+			
+			/* Must be correct type */
+			if (kill2->type != new_type) continue;
 			
 			/* Must be same race */
-			if (kill2->r_idx != kill1->r_idx)
-			{
-				/* Get next monster */
-				scan_kill = scan_next;
-				continue;
-			}
-		
+			if (kill2->r_idx != kill1->r_idx) continue;
+			
 			/* Calculate distance */
 			d = distance(x, y, kill2->x, kill2->y);
 			
 			/* Too far away */
-			if (d > dist)
-			{
-				scan_kill = scan_next;
-				continue;
-			}
+			if (d > dist) continue;
 			
 			/* Move the old monster to the used list */
-			move_mon_entry(curr_kill, BORG_MON_USED);
+			move_mon_entry(i, BORG_MON_USED);
 			
 			/* Remove the new monster */
-			borg_delete_kill(scan_kill);
-			
+			borg_delete_kill(j);
+
 			/* Note */
 			borg_note(format("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
-							curr_kill, kill1->x, kill1->y, x, y));
+							i, kill1->x, kill1->y, x, y));
 			
 			/* Change the location of the old one */
 			kill1->x = x;
@@ -1069,20 +851,14 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			kill1->when = borg_t;
 			
 			/* Update the monster */
-			borg_update_kill(curr_kill);
+			borg_update_kill(i);
 
 			/* Recalculate danger */
 			borg_danger_wipe = TRUE;
 
 			/* Clear goals */
 			if (!borg_skill[BI_ESP] && goal == GOAL_TAKE) goal = 0;
-			
-			/* Done with this one */
-			break;
 		}
-		
-		/* Move to next monster if already have not done so */
-		curr_kill = curr_next;
 	}
 }
 
@@ -1132,9 +908,7 @@ static bool remove_bad_kills(u16b who)
  */
 static void handle_old_mons(byte type)
 {
-	u16b *list_head, *list_tail;
-	
-	u16b curr_kill, next_kill;
+	int i, j;
 	
 	borg_kill *kill;
 	
@@ -1144,39 +918,44 @@ static void handle_old_mons(byte type)
 	int b_dx = 0, b_dy = 0;
 	int ox, oy;
 	
-	int j;
-	
-	/* Get lists */
-	get_list(&list_head, &list_tail, type);
-	
-	curr_kill = *list_head;
-	
-	while (curr_kill)
+	for (i = 1; i < borg_kills_nxt; i++)
 	{
-		kill = &borg_kills[curr_kill];
+		kill = &borg_kills[i];
 		
-		next_kill = kill->next_kill;
+		/* Paranoia - ignore dead monsters */
+		if (!kill->r_idx) continue;
 		
-		if (remove_bad_kills(curr_kill))
+		/* Must be of correct type */
+		if (kill->type != type) continue;
+		
+		ox = kill->x;
+		oy = kill->y;
+		
+		if (map_in_bounds(ox, oy))
 		{
-			/* Move to next kill */
-			curr_kill = next_kill;
-			continue;
+			/* Access the grid */
+			mb_ptr = map_loc(ox, oy);
+		
+			/* Is a matching monster on this square? */
+			if (mb_ptr->monster == kill->r_idx)
+			{
+				/* Move the old monster to the used list */
+				move_mon_entry(i, BORG_MON_USED);
+				
+				continue;	
+			}
 		}
+		
+		if (remove_bad_kills(i)) continue;
 		
 		/* Hack -- blind or hallucinating */
 		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE])
 		{
 			/* Move the old monster to the used list */
-			move_mon_entry(curr_kill, BORG_MON_USED);
-			
-			/* Move to next kill */
-			curr_kill = next_kill;
+			move_mon_entry(i, BORG_MON_USED);
+
 			continue;
 		}
-		
-		ox = kill->x;
-		oy = kill->y;
 		
 		/* Scan for non-visible squares near the monster */
 		for (j = 0; j < 8; j++)
@@ -1202,7 +981,7 @@ static void handle_old_mons(byte type)
 			if (mb_ptr->monster) continue;
 
 			/* Skip visible grids */
-			if (borg_follow_kill_aux(curr_kill, x, y)) continue;
+			if (borg_follow_kill_aux(i, x, y)) continue;
 
 			/* Collect the offsets */
 			b_dx += dx;
@@ -1228,32 +1007,32 @@ static void handle_old_mons(byte type)
 		if (borg_cave_wall_grid(mb_ptr) || mb_ptr->monster)
 		{
 			/* Just delete the monster */
-			borg_delete_kill(curr_kill);
-			
-			/* Move to next kill */
-			curr_kill = next_kill;
+			borg_delete_kill(i);
 			continue;
 		}
 		
-		/* Note */
-		borg_note(format("# Following monster (%d) from (%d,%d) to (%d,%d)",
-						curr_kill, ox, oy, kill->x, kill->y));
+		ox += b_dx;
+		oy += b_dy;
 		
-		/* Save the Location */
-		kill->x = ox + b_dx;
-		kill->y = oy + b_dy;
+		if ((ox != kill->x) || (oy != kill->y))
+		{
+			/* Note */
+			borg_note(format("# Following monster (%d) from (%d,%d) to (%d,%d)",
+						i, kill->x, kill->y, ox, oy));
+						
+			/* Recalculate danger */
+			borg_danger_wipe = TRUE;
+
+			/* Clear goals */
+			goal = 0;
+			
+			/* Save the Location */
+			kill->x = ox;
+			kill->y = oy;
+		}
 		
 		/* Move the old monster to the used list */
-		move_mon_entry(curr_kill, BORG_MON_USED);
-
-		/* Recalculate danger */
-		borg_danger_wipe = TRUE;
-
-		/* Clear goals */
-		goal = 0;
-		
-		/* Move to next kill */
-		curr_kill = next_kill;
+		move_mon_entry(i, BORG_MON_USED);
 	}
 }
 
