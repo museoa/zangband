@@ -1,33 +1,61 @@
 # CVS: Last edit by $Author$ on $Date$
 # File: t_info.txt
 
-# Includes the town definitions
+# Defines the field types.
 
-# Preferences for the town features
-%:t_pref.txt
+# Later this will be replaced by python.
 
-# Town 1
-?:[AND [EQU $TOWN 1] [EQU $WILDERNESS LITE] ]
-%:t_lite.txt
-?:[AND [EQU $TOWN 1] [EQU $WILDERNESS NORMAL] ]
-%:t0000001.txt
-?:[AND [EQU $TOWN 1] [EQU $WILDERNESS NONE] ]
-%:t_basic.txt
-?:1
+# === Understanding t_info.txt ===
 
-# Town 2
-?:[EQU $TOWN 2]
-%:t0000002.txt
+# N: serial number : & field name~
+# G: symbol : color
+# W: priority : type : counter inital value 
+# I: flag | flag | flag
+# D: Data[8] 
+# F: location,function | location,function | location,function
 
-# Town 3
-?:[EQU $TOWN 3]
-%:t0000003.txt
 
-# Town 4
-?:[EQU $TOWN 4]
-%:t0000004.txt
+# 'N' indicates the beginning of an entry. The serial number must
+# increase for each new item. The '&' and '~' symbols are use to
+# include articles and pluralization as necessary to ensure
+# grammatical correctness in descriptions.
 
-# Town 5
-?:[EQU $TOWN 5]
-%:t0000005.txt
+# 'G' is for graphics - symbol and color. There are 16 colors, as
+# follows:
 
+# D - Black        w - White          s - Gray          o - Orange
+# r - Red          g - Green          b - Blue          u - Brown
+# d - Dark Gray    W - Light Gray     v - Violet        y - Yellow
+# R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
+
+# 'W' describes extra information about the field.  Priority decides
+# which field is visually "on top".  Type is a number which describes
+# whether the field is a trap, door, building, magic wall etc.
+# Counter initial value is used for timed effects / effects with counters.
+
+# 'I' is a set 'info' flags describing the type of field.  These are mostly
+# used for "quick" recall of information.  (Most other things probably can
+# be stored in the data[] array if required.)
+
+# 'D' 8 bytes of data for the field.  How this is used depends on the
+# functions called in the 'F' section below.
+
+# 'F' The list of functions used by the field.  "Location" refurs to the
+# entry in the action[] array.  See defines.h for the various action types.
+# Note the lack of space between the two parts.  The comma is the seperator.
+
+
+##### Something special #####
+
+# test
+N:0:something
+G:@:w
+W:0:0:0
+D:0:0:0:0:0:0:0:0
+
+N:1:& trap~
+G:^:w
+W:240:1:0
+I:FEAT | ATTR | CHAR
+D:0:0:0:0:0:0:0:0
+F:0,field_action_nothing | 13,field_action_nothing
