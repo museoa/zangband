@@ -493,6 +493,8 @@ static bool borg_good_sell(list_item *l_ptr)
 	/* Never sell worthless items */
 	if (l_ptr->cost <= 0) return (FALSE);
 
+#if 0
+
 	/* Analyze the type */
 	switch (l_ptr->tval)
 	{
@@ -552,6 +554,8 @@ static bool borg_good_sell(list_item *l_ptr)
 		/* For now check all artifacts */
 		return (FALSE);
 	}
+
+#endif /* 0 */
 
 	/* Assume we can */
 	return (TRUE);
