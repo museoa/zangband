@@ -859,11 +859,11 @@ static bool borg_enchant_to_a(void)
 	if (!my_need_enchant_to_a) return (FALSE);
 
 	/* Need "enchantment" ability */
-	if ((!amt_enchant_to_a) && (!amt_enchant_armor)) return (FALSE);
+	if (!amt_enchant_to_a) return (FALSE);
 
 	/* Don't cast the spell in the dungeon, keep it for town */
 	if (bp_ptr->depth &&
-		amt_enchant_armor == 1000) return (FALSE);
+		amt_enchant_to_a == 1000) return (FALSE);
 	
 	/* Look for armor that needs enchanting */
 	for (i = EQUIP_BODY; i < equip_num; i++)
@@ -939,7 +939,7 @@ static bool borg_enchant_to_h(void)
 	if (!my_need_enchant_to_h) return (FALSE);
 
 	/* Need "enchantment" ability */
-	if ((!amt_enchant_to_h) && (!amt_enchant_weapon)) return (FALSE);
+	if (!amt_enchant_to_h) return (FALSE);
 
 	/* Don't cast the spell in the dungeon, keep it for town */
 	if (bp_ptr->depth &&
@@ -992,12 +992,8 @@ static bool borg_enchant_to_h(void)
 		b_a = a;
 	}
 
-	/*
-	 * If the weapon is high and the ammo is low 
-	 * OR if the weapon is beyond enchanting
-	 */
-	if ((b_a >= 10 && a_a <= 10) ||
-		b_a >= 15)
+	/* If the weapon is high and the ammo is low */
+	if (b_a >= 10 && a_a < 10)
 	{
 		/* Assign the ammo to be enchanted */
 		b_a = a_a;
@@ -1066,7 +1062,7 @@ static bool borg_enchant_to_d(void)
 	if (!my_need_enchant_to_d) return (FALSE);
 
 	/* Need "enchantment" ability */
-	if ((!amt_enchant_to_d) && (!amt_enchant_weapon)) return (FALSE);
+	if (!amt_enchant_to_d) return (FALSE);
 
 	/* Don't cast the spell in the dungeon, keep it for town */
 	if (bp_ptr->depth &&
@@ -1087,7 +1083,7 @@ static bool borg_enchant_to_d(void)
 		a = l_ptr->to_d;
 
 		/* Find the least enchanted item */
-		if (b_a < a) continue;
+		if (a >= b_a) continue;
 
 		/* Save the info */
 		b_i = i;
@@ -1111,21 +1107,16 @@ static bool borg_enchant_to_d(void)
 		/* Obtain the bonus  */
 		a = l_ptr->to_d;
 
-
 		/* Find the least enchanted item */
-		if (a_a < a) continue;
+		if (a >= a_a) continue;
 
 		/* Save the info  */
 		a_i = i;
 		a_a = a;
 	}
 
-	/*
-	 * If the weapon is high and the ammo is low
-	 * OR if the weapon is beyond enchanting
-	 */
-	if ((b_a >= 10 && a_a <= 10) ||
-		b_a >= 15)
+	/* If the weapon is high and the ammo is low */
+	if (b_a >= 10 && a_a < 10)
 	{
 		/* Assign the ammo to be enchanted */
 		b_a = a_a;
@@ -1134,7 +1125,7 @@ static bool borg_enchant_to_d(void)
 	}
 
 	/* Nothing */
-	if (b_a >= 15) return (FALSE);
+	if (b_a >= 25) return (FALSE);
 
 	/* Enchant it */
 	if (borg_spell_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1282,8 +1273,8 @@ bool borg_enchanting(void)
 	if (borg_decurse()) return (TRUE);
 	if (borg_star_decurse()) return (TRUE);
 
-	/* Enchant things */
-	if (borg_enchant_to_d()) return (TRUE);
+	/* Enchant things, but don't get stuck on just trying the first type */
+	if (one_in_(2) && borg_enchant_to_d()) return (TRUE);
 	if (borg_enchant_to_a()) return (TRUE);
 	if (borg_enchant_to_h()) return (TRUE);
 

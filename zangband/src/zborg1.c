@@ -243,9 +243,9 @@ int my_ammo_tval;	/* Ammo -- "tval" */
 s16b my_ammo_power;	/* Average power */
 s16b my_ammo_range;	/* Shooting range */
 
-s16b my_need_enchant_to_a;	/* Need some enchantment */
-s16b my_need_enchant_to_h;	/* Need some enchantment */
-s16b my_need_enchant_to_d;	/* Need some enchantment */
+bool my_need_enchant_to_a;	/* Need some enchantment */
+bool my_need_enchant_to_h;	/* Need some enchantment */
+bool my_need_enchant_to_d;	/* Need some enchantment */
 
 
 /*
@@ -270,8 +270,6 @@ s16b amt_enchant_to_a;
 s16b amt_enchant_to_d;
 s16b amt_enchant_to_h;
 s16b amt_brand_weapon;	/* apw brand bolts */
-s16b amt_enchant_weapon;
-s16b amt_enchant_armor;
 s16b amt_digger;
 
 

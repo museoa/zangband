@@ -543,9 +543,9 @@ extern int my_ammo_tval;	/* Ammo -- "tval"   */
 extern s16b my_ammo_power;	/* Average power   */
 extern s16b my_ammo_range;	/* Shooting range   */
 
-extern s16b my_need_enchant_to_a;	/* Need some enchantment */
-extern s16b my_need_enchant_to_h;	/* Need some enchantment */
-extern s16b my_need_enchant_to_d;	/* Need some enchantment */
+extern bool my_need_enchant_to_a;	/* Need some enchantment */
+extern bool my_need_enchant_to_h;	/* Need some enchantment */
+extern bool my_need_enchant_to_d;	/* Need some enchantment */
 
 
 /*
@@ -571,8 +571,6 @@ extern s16b amt_enchant_to_a;
 extern s16b amt_enchant_to_d;
 extern s16b amt_enchant_to_h;
 extern s16b amt_brand_weapon;	/* cubragol and bolts */
-extern s16b amt_enchant_weapon;
-extern s16b amt_enchant_armor;
 extern s16b amt_digger;
 
 

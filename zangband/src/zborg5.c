@@ -3941,19 +3941,13 @@ static s32b borg_power_aux4(void)
 	/*** Enchantment ***/
 
 	/* Reward enchant armor */
-	if (amt_enchant_to_a && my_need_enchant_to_a) value += 14L;
+	if (amt_enchant_to_a && my_need_enchant_to_a) value += amt_enchant_to_a * 14L;
 
 	/* Reward enchant weapon to hit */
-	if (amt_enchant_to_h && my_need_enchant_to_h) value += 24L;
+	if (amt_enchant_to_h && my_need_enchant_to_h) value += amt_enchant_to_h * 24L;
 
 	/* Reward enchant weapon to damage */
-	if (amt_enchant_to_d && my_need_enchant_to_d) value += 109L;
-
-	/* Reward *enchant weapon* to damage */
-	if (amt_enchant_weapon) value += 5000L;
-
-	/* Reward *enchant armour*  */
-	if (amt_enchant_armor) value += 5000L;
+	if (amt_enchant_to_d && my_need_enchant_to_d) value += amt_enchant_to_d * 109L;
 
 	/*** Hack -- books ***/
 

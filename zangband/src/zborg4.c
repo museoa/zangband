@@ -1087,9 +1087,9 @@ static void borg_notice_enchant(void)
 	int i;
 
 	/* Assume no enchantment needed */
-	my_need_enchant_to_a = 0;
-	my_need_enchant_to_h = 0;
-	my_need_enchant_to_d = 0;
+	my_need_enchant_to_a = FALSE;
+	my_need_enchant_to_h = FALSE;
+	my_need_enchant_to_d = FALSE;
 
 	/* Hack -- enchant all the equipment (weapons) */
 	for (i = 0; i <= EQUIP_BOW; i++)
@@ -1102,34 +1102,11 @@ static void borg_notice_enchant(void)
 		/* Skip "unknown" items */
 		if (!borg_obj_known_p(l_ptr)) continue;
 
-		/* Enchant all weapons (to hit) */
-		if ((borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-			 amt_enchant_weapon >= 1))
-		{
-			if (l_ptr->to_h < 15)
-			{
-				my_need_enchant_to_h += (15 - l_ptr->to_h);
-			}
+		/* Can we use a to_hit */
+		if (l_ptr->to_h < 15) my_need_enchant_to_h = TRUE;
 
-			/* Enchant all weapons (to damage) */
-			if (l_ptr->to_d < 15)
-			{
-				my_need_enchant_to_d += (15 - l_ptr->to_d);
-			}
-		}
-		else
-		{
-			if (l_ptr->to_h < 8)
-			{
-				my_need_enchant_to_h += (8 - l_ptr->to_h);
-			}
-
-			/* Enchant all weapons (to damage) */
-			if (l_ptr->to_d < 8)
-			{
-				my_need_enchant_to_d += (8 - l_ptr->to_d);
-			}
-		}
+		/* Can we use a to_dam */
+		if (l_ptr->to_h < 25) my_need_enchant_to_d = TRUE;
 	}
 
 	/* Hack -- enchant all the equipment (armor) */
@@ -1143,21 +1120,13 @@ static void borg_notice_enchant(void)
 		/* Skip "unknown" items */
 		if (!borg_obj_known_p(l_ptr)) continue;
 
-		/* Note need for enchantment */
-		if ((borg_spell_okay_fail(REALM_SORCERY, 3, 5, 40) ||
-			 amt_enchant_armor >= 1))
+		/* Can we use a to_ac */
+		if (l_ptr->to_a < 15)
 		{
-			if (l_ptr->to_a < 15)
-			{
-				my_need_enchant_to_a += (15 - l_ptr->to_a);
-			}
-		}
-		else
-		{
-			if (l_ptr->to_a < 10)
-			{
-				my_need_enchant_to_a += (10 - l_ptr->to_a);
-			}
+			my_need_enchant_to_a = TRUE;
+
+			/* After one candidate is found skip the rest */
+			break;
 		}
 	}
 }
@@ -1598,7 +1567,8 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_STAR_ENCHANT_WEAPON:
 		{
-			amt_enchant_weapon += number;
+			amt_enchant_to_h += number * 2;
+			amt_enchant_to_d += number * 2;
 			break;
 		}
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
@@ -1608,7 +1578,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_STAR_ENCHANT_ARMOR:
 		{
-			amt_enchant_armor += number;
+			amt_enchant_to_a += number * 2;
 			break;
 		}
 		case SV_SCROLL_RUNE_OF_PROTECTION:
@@ -2381,8 +2351,6 @@ static void borg_notice_aux2(void)
 	amt_enchant_to_h = 0;
 
 	amt_brand_weapon = 0;
-	amt_enchant_weapon = 0;
-	amt_enchant_armor = 0;
 
 	/*** Process the inventory ***/
 	borg_notice_inven();
@@ -2517,19 +2485,16 @@ static void borg_notice_aux2(void)
 	{
 		amt_enchant_to_h += 1000;
 		amt_enchant_to_d += 1000;
-		amt_enchant_weapon += 1000;
 	}
 
 	/* Handle "enchant armor" */
 	if (borg_spell_legal_fail(REALM_SORCERY, 3, 5, 40))
 	{
 		amt_enchant_to_a += 1000;
-		amt_enchant_armor += 1000;
 	}
 
 	/* Handle Diggers */
-	if (borg_spell_legal_fail(REALM_SORCERY, 1, 8, 40) ||
-		borg_spell_legal_fail(REALM_NATURE, 1, 0, 40) ||
+	if (borg_spell_legal_fail(REALM_NATURE, 1, 0, 40) ||
 		borg_spell_legal_fail(REALM_CHAOS, 0, 6, 40) ||
 		borg_racial_check(RACE_HALF_GIANT, TRUE))
 	{
