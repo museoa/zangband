@@ -685,7 +685,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	}
 	/* A stack of rods lacks enough energy. */
 	else if ((o_ptr->number > 1)
-			 && (o_ptr->timeout > o_ptr->pval - k_ptr->pval))
+			 && (o_ptr->timeout > (o_ptr->number - 1) * k_ptr->pval))
 	{
 		if (flush_failure) flush();
 		msg_print("The rods are all still charging.");

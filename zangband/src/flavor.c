@@ -1628,7 +1628,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	else if (known && (o_ptr->tval == TV_ROD))
 	{
 		/* Hack -- Dump " (# charging)" if relevant */
-		if ((o_ptr->timeout) && (o_ptr->tval != TV_LITE))
+		if (o_ptr->timeout)
 		{
 			/* Stacks of rods display an exact count of charging rods. */
 			if (o_ptr->number > 1)
