@@ -1690,6 +1690,12 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 	/* Choose */
 	while (TRUE)
 	{
+		/*
+		 * Note to Melkor: What happens when the screen is resized?
+		 * There is no 'redraw' hook at this point... 
+		 * (That is why the original code restricted itself to what
+		 * would fit in the smallest possible screen.) -SF-
+		 */
 		hgt = Term->hgt - TABLE_ROW - 1;
 
 		/* Redraw the list */
@@ -3088,7 +3094,7 @@ static bool player_birth_aux(void)
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for it */
-	prt("['Ctrl-X' to suicide, 'Esc' to start over, or Enter to continue]", 23, 10);
+	prt("['Ctrl-X' to suicide, 'Del' to start over, or Enter to continue]", 23, 10);
 
 	/* Get a key */
 	ch = inkey();
@@ -3097,7 +3103,7 @@ static bool player_birth_aux(void)
 	if (ch == KTRL('X')) quit(NULL);
 
 	/* Start over */
-	if (ch == ESCAPE) return (FALSE);
+	if ((ch == 0x7F) || (ch == KTRL('H'))) return (FALSE);
 
 	/* Accept */
 	return (TRUE);
