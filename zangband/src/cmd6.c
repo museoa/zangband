@@ -487,7 +487,10 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_SALT_WATER:
 		{
 			msg_print("The potion makes you vomit!");
-			(void)set_food(PY_FOOD_STARVE - 1);
+			if (p_ptr->food > PY_FOOD_STARVE - 1)
+			{
+				(void)set_food(PY_FOOD_STARVE - 1);
+			}
 			(void)set_poisoned(0);
 			(void)set_paralyzed(p_ptr->paralyzed + 4);
 			ident = TRUE;
@@ -1035,7 +1038,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	if (!(object_aware_p(o_ptr)))
+	if (!(object_aware_p(q_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
@@ -1058,7 +1061,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	switch (p_ptr->prace)
 	{
 		case RACE_VAMPIRE:
-			(void)set_food(p_ptr->food + (o_ptr->pval / 10));
+			(void)set_food(p_ptr->food + (q_ptr->pval / 10));
 			break;
 		case RACE_SKELETON:
 			/* Do nothing */
@@ -1066,10 +1069,10 @@ static void do_cmd_quaff_potion_aux(int item)
 		case RACE_GOLEM:
 		case RACE_ZOMBIE:
 		case RACE_SPECTRE:
-			set_food(p_ptr->food + ((o_ptr->pval) / 20));
+			set_food(p_ptr->food + ((q_ptr->pval) / 20));
 			break;
 		default:
-			(void)set_food(p_ptr->food + o_ptr->pval);
+			(void)set_food(p_ptr->food + q_ptr->pval);
 	}
 }
 
