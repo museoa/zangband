@@ -34,10 +34,6 @@
  *
  * Note that it is assumed that "memset()" will function correctly,
  * in particular, that it returns its first argument.
- *
- *
- * We assume that the asci ## merge operator works.  If not, we may
- * need to make another macro that uses a comment to merge stuff. XXX XXX
  */
 
 
