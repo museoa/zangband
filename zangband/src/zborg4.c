@@ -231,6 +231,10 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_SUST_CHR)) borg_skill[BI_SCHR] = TRUE;
 }
 
+
+/*
+ * Notice the effects of equipment
+ */
 static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_might)
 {
 	int i;
@@ -408,56 +412,12 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_mig
 	}
 }
 
-
 /*
- * Helper function -- notice the player equipment
+ * Recalculate player stats
  */
-static void borg_notice_aux1(void)
+static void borg_notice_stats(void)
 {
-	int i, hold;
-
-	int extra_blows = 0;
-
-	int extra_shots = 0;
-	int extra_might = 0;
-	int my_num_fire;
-
-	list_item *l_ptr;
-
-	/* Recalc some Variables */
-	borg_skill[BI_ARMOR] = 0;
-	borg_skill[BI_SPEED] = 110;
-
-	/* Start with a single blow per turn */
-	borg_skill[BI_BLOWS] = 1;
-
-	/* Start with a single shot per turn */
-	my_num_fire = 1;
-
-	/* Reset the "ammo" tval to darts by default */
-	my_ammo_tval = 0;
-
-	/* Reset the "ammo" sides for darts */
-	my_ammo_sides = 4;
-
-	/* Reset the shooting power */
-	my_ammo_power = 0;
-
-	/* Reset the shooting range */
-	my_ammo_range = 0;
-
-	/* Notice player flags */
-	borg_notice_player();
-
-
-	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
-
-	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
-
-	/* Vampires that do not Resist Light are in trouble */
-	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
-		borg_skill[BI_FEAR_LITE] = TRUE;
+	int i;
 
 	/* Update "stats" */
 	for (i = 0; i < A_MAX; i++)
@@ -514,19 +474,35 @@ static void borg_notice_aux1(void)
 		borg_skill[BI_FAIL2] = adj_mag_fail[my_stat_ind[A_INT]];
 	}
 
-
-	/* Bloating slows the player down (a little) */
-	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
-
-
-
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
 	borg_skill[BI_ARMOR] += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
 	borg_skill[BI_TODAM] += ((int)(adj_str_td[my_stat_ind[A_STR]]) - 128);
 	borg_skill[BI_TOHIT] += ((int)(adj_dex_th[my_stat_ind[A_DEX]]) - 128);
 
-	/* Obtain the "hold" value */
-	hold = adj_str_hold[my_stat_ind[A_STR]];
+
+}
+
+/*
+ * Examine bow
+ */
+static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
+{
+	list_item *l_ptr;
+	
+	/* Start with a single shot per turn */
+	int my_num_fire = 1;
+
+	/* Reset the "ammo" tval to darts by default */
+	my_ammo_tval = 0;
+
+	/* Reset the "ammo" sides for darts */
+	my_ammo_sides = 4;
+
+	/* Reset the shooting power */
+	my_ammo_power = 0;
+
+	/* Reset the shooting range */
+	my_ammo_range = 0;
 
 	/* Examine the "current bow" */
 	l_ptr = &equipment[EQUIP_BOW];
@@ -624,6 +600,54 @@ static void borg_notice_aux1(void)
 	borg_skill[BI_BMAXDAM] =
 		(my_ammo_sides + borg_skill[BI_BTODAM]) * my_ammo_power;
 	borg_skill[BI_BMAXDAM] *= borg_skill[BI_SHOTS];
+}
+
+/*
+ * Helper function -- notice the player equipment
+ */
+static void borg_notice_aux1(void)
+{
+	int i, hold;
+
+	int extra_blows = 0;
+
+	int extra_shots = 0;
+	int extra_might = 0;
+
+	list_item *l_ptr;
+
+	/* Recalc some Variables */
+	borg_skill[BI_ARMOR] = 0;
+	borg_skill[BI_SPEED] = 110;
+
+	/* Start with a single blow per turn */
+	borg_skill[BI_BLOWS] = 1;
+
+	/* Notice player flags */
+	borg_notice_player();
+
+	/* Clear the stat modifiers */
+	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
+
+	/* Notice equipment */
+	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
+
+	/* Vampires that do not Resist Light are in trouble */
+	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
+		borg_skill[BI_FEAR_LITE] = TRUE;
+
+	
+	/* Bloating slows the player down (a little) */
+	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
+	
+	/* Recalculate the stats */
+	borg_notice_stats();
+
+	/* Obtain the "hold" value */
+	hold = adj_str_hold[my_stat_ind[A_STR]];
+
+	/* Examine ranged weapon */
+	borg_notice_shooter(hold, extra_might, extra_shots);
 
 	/* Examine the "main weapon" */
 	l_ptr = &equipment[EQUIP_WIELD];
