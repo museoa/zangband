@@ -945,7 +945,7 @@ void monster_death(int m_idx)
 		object_wipe(q_ptr);
 
 		/* Average of 20 great objects per game */
-		if (randint0(number_of_quests() + 1) < 20)
+		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
 			make_object(q_ptr, TRUE, TRUE);
