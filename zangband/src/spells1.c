@@ -4881,8 +4881,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 							/* Enforce an arc */
 							if (distance(by, bx, y, x) != cdis) continue;
 
-							/* The blast is stopped by walls/fields */
-							if (!projectable(by, bx, y, x)) continue;
+							/* The blast is stopped by walls */
+							if (!los(by, bx, y, x)) continue;
 
 							/* Save this grid */
 							gy[grids] = y;
@@ -4962,7 +4962,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 						else
 						{
 							/* Ball explosions are stopped by walls/fields */
-							if (!projectable(y2, x2, y, x)) continue;
+							if (!los(y2, x2, y, x)) continue;
 						}
 
 						/* Save this grid */
