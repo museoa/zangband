@@ -7,18 +7,17 @@ import ui.standard
 ui = ui.standard.ui_standard()
 
 # Events
-#import base.event
-#events = base.event.event_data()
+import base.event
+events = base.event.event_data()
 
 # Worlds
-#import base.world
-#worlds = base.world.world_data()
+import base.world
+worlds = base.world.world_data()
 
 # Player
-#import base.player
-#player = base.player.player()
+import base.player
+player = base.player.player()
 
 # Known object types
-#import base.object
-#objects = base.object.object_data_class()
-
+import base.object
+objects = base.object.object_data_class()

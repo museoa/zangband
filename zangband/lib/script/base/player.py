@@ -1,9 +1,9 @@
 """Generic code for the player"""
 
-from player import *
+from angband.player import *
 
 
-class player:
+class player(player_type):
 	"""Base class for the player"""
 
 	def __init__(self):

@@ -1263,10 +1263,4 @@ extern char *memset(char*, int, huge);
 extern int usleep(huge usecs);
 #endif
 
-#ifdef USE_SCRIPT
-/* script.c */
-extern errr script_execute(char *name);
-extern errr init_script(void);
-#endif /* USE_SCRIPT */
-
 

@@ -7,10 +7,9 @@
 #####################################################################
 
 
-import sys
-from ioc import msg_print
+from angband.io import msg_print
 import os.path
-import system
+from angband import system
 
 class error_handler:
 	def write(self, text):
@@ -25,6 +24,7 @@ class error_handler:
 			else:
 				msg_print(text)
 
-# Redirect stderr, stdout, and stdin
-sys.stderr = error_handler()
-
+	def __init__(self):
+		# Redirect stderr
+		import sys
+		sys.stderr = self

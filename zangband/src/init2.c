@@ -4,6 +4,7 @@
 
 #include "angband.h"
 
+#include "script.h"
 
 #ifdef CHECK_MODIFICATION_TIME
 #ifdef MACINTOSH

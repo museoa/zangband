@@ -45,7 +45,7 @@ class nexus(world):
 	           proxy("Male", "data.player.gender.male", "male")]
 
 	classes = [proxy("Warrior", "data.player.pclass.warrior", "warrior"),
-	           proxy("Mage", "data.player.pclass.mage", "mage_class"),
+	           proxy("Mage", "data.player.pclass.mage", "mage"),
 	           proxy("Priest", "data.player.pclass.priest", "priest"),
 	           proxy("Rogue", "data.player.pclass.rogue", "rogue"),
 	           proxy("Ranger", "data.player.pclass.ranger", "ranger"),

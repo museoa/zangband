@@ -6,7 +6,10 @@
 
 #ifdef USE_SCRIPT
 
-#include "Python.h"
+#include <Python.h>
+
+#include "script.h"
+
 
 /*
  * Execute a Python script
@@ -60,21 +63,21 @@ errr script_execute(char *name)
 
 
 #ifdef STATIC_PYTHON
-extern void initevent(void);
-extern void initplayer(void);
+extern void initeventc(void);
+extern void initplayerc(void);
 extern void initioc(void);
-extern void initobjects(void);
-extern void initcave(void);
-extern void initmonster(void);
-extern void initpclass(void);
-extern void initprace(void);
-extern void initterrain(void);
-extern void initcommands(void);
-extern void initrealms(void);
-extern void initrandom(void);
-extern void initspells(void);
-extern void initstore(void);
-extern void initsystem(void);
+extern void initobjectsc(void);
+extern void initcavec(void);
+extern void initmonsterc(void);
+extern void initpclassc(void);
+extern void initpracec(void);
+extern void initterrainc(void);
+extern void initcommandsc(void);
+extern void initrealmsc(void);
+extern void initrandomc(void);
+extern void initspellsc(void);
+extern void initstorec(void);
+extern void initsystemc(void);
 #endif /* STATIC_PYTHON */
 
 
@@ -120,22 +123,24 @@ errr init_script(void)
 
 	if (PyRun_SimpleString(buf) == 0)
 	{
+		script_init_io();
+
 #ifdef STATIC_PYTHON
-		initevent();
-		initplayer();
-		initioc();
-		initobjects();
-		initcave();
-		initmonster();
-		initpclass();
-		initprace();
-		initterrain();
-		initcommands();
-		initrealms();
-		initrandom();
-		initspells();
-		initstore();
-		initsystem();
+		initeventc();
+		initplayerc();
+		/* initioc(); */
+		initobjectsc();
+		initcavec();
+		initmonsterc();
+		initpclassc();
+		initpracec();
+		initterrainc();
+		initcommandsc();
+		initrealmsc();
+		initrandomc();
+		initspellsc();
+		initstorec();
+		initsystemc();
 #endif /* STATIC_PYTHON */
 
 		if (PyRun_SimpleString("import init") == 0) return 0;

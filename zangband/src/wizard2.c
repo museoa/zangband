@@ -12,6 +12,8 @@
 
 #include "angband.h"
 
+#include "script.h"
+
 
 /*
  * Hack -- Rerate Hitpoints
