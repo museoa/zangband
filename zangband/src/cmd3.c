@@ -520,7 +520,13 @@ void do_cmd_observe(void)
 	if (!identify_fully_aux(o_ptr)) msgf("You see nothing special.");
 }
 
+static bool item_tester_inscribed(const object_type *o_ptr)
+{
+	/* Nothing to remove */
+	if (!o_ptr->inscription) return (FALSE);
 
+	return (TRUE);
+}
 
 /*
  * Remove the inscription from an object
@@ -531,6 +537,9 @@ void do_cmd_uninscribe(void)
 	object_type *o_ptr;
 
 	cptr q, s;
+	
+	/* Only inscribed items */
+	item_tester_hook = item_tester_inscribed;
 
 	/* Get an item */
 	q = "Un-inscribe which item? ";
@@ -540,13 +549,6 @@ void do_cmd_uninscribe(void)
 
 	/* Not a valid item */
 	if (!o_ptr) return;
-
-	/* Nothing to remove */
-	if (!o_ptr->inscription)
-	{
-		msgf("That item had no inscription to remove.");
-		return;
-	}
 
 	/* Message */
 	msgf("Inscription removed.");
