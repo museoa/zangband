@@ -2794,6 +2794,35 @@ void player_birth(void)
 		if (player_birth_aux()) break;
 	}
 
+	/* Create a note file if that option is set */
+	if (take_notes) {
+
+	  /* Variables */
+	  char buff[1024];
+	  char fname[80];
+	  char long_day[25];
+	  time_t ct = time((time_t*)0);
+
+	  /* Create the file name */
+	  sprintf(fname, "%s.txt", player_name);
+	  path_build(buff, 1024, ANGBAND_DIR_SAVE, fname);  
+
+	  /* Open the file (notes_file is global) */
+	  notes_file = my_fopen(buff, "w");
+
+	  /* Get the date */
+	  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+
+	  /* Add in "character start" information 
+	   * XXX - Need to add in magic realms
+	   */
+	  fprintf(notes_file, "%s the %s %s\n", player_name, 
+		                                race_info[p_ptr->prace].title, 
+		                                race_info[p_ptr->pclass].title );
+	  fprintf(notes_file, "Born on %s\n",long_day);
+	  fprintf(notes_file, "================================================\n");
+
+	} /* if (take_notes) */
 
 	/* Note player birth in the message recall */
 	message_add(" ");

@@ -3154,7 +3154,7 @@ static void process_command(void)
 		/* Take notes */
 		case ':':
 		{
-			do_cmd_note();
+			do_cmd_note("");
 			break;
 		}
 
@@ -4039,6 +4039,7 @@ void play_game(bool new_game)
 	{
 		/* Process the player name */
 		process_player_name(FALSE);
+
 	}
 
 	/* Init the RNG */
@@ -4086,6 +4087,30 @@ void play_game(bool new_game)
 				(*option_info[i].o_var) = FALSE;
 			}
 		}
+	}
+
+	/* Hack - if note file exists, load it */
+	if (!new_game && take_notes) {
+
+	  char buff[1024];
+	  char fname[80];
+	  char long_day[25];
+	  time_t ct = time((time_t*)0);
+
+	  /* Create the file name */
+	  sprintf(fname, "%s.txt", player_name);
+	  path_build(buff, 1024, ANGBAND_DIR_SAVE, fname);
+
+	  /* Open the file for appending */
+	  notes_file = my_fopen(buff, "a");
+
+	  /* Get the date */
+	  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+
+	  /* Add in continuation info */
+	  fprintf(notes_file, "================================================\n");
+	  fprintf(notes_file, "New session start at %s\n", long_day);
+	  
 	}
 
 	/* Roll new character */

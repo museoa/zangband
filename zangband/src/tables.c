@@ -6208,11 +6208,11 @@ option_type option_info[] =
 	{ &fast_autoroller,             FALSE, 6, 5, 17,
 	"fast_autoroller",              "Autoroll quickly (may not be safe)" },
 
-        /* { &take_notes,                  FALSE, 6, 5, 18,
-           "take_notes",                   "Allow notes to be appended to a file" }, */
+        { &take_notes,                  FALSE, 6, 5, 18,
+           "take_notes",                "Allow notes to be appended to a file" },
 
-        /* { &auto_notes,                  FALSE, 6, 5, 19,
-           "auto_notes",                 "Automatically note important events" }, */
+        { &auto_notes,                  FALSE, 6, 5, 19,
+           "auto_notes",                 "Automatically note important events" },
 
         /*** Artificial Intelligence Options ***/
 

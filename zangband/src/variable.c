@@ -179,6 +179,7 @@ store_type **store_cache;	/* The cache of store stocks */
 
 /*
  * Software options (set via the '=' command).  See "tables.c"
+ * Needs to be rearranged to fit the data in tables.c
  */
 
 
@@ -270,6 +271,8 @@ bool track_target;			/* Monsters target the player */
 bool smart_learn;			/* Monsters learn from their mistakes */
 bool smart_cheat;			/* Monsters exploit player weaknesses */
 
+bool take_notes;                        /* Allow notes to be added to a file */
+bool auto_notes;                        /* Automatically take notes */
 
 /* Option Set 4 -- Efficiency */
 
@@ -1126,3 +1129,5 @@ bool fast_autoroller;
 bool use_transparency = FALSE; /* Use transparent tiles */
 
 bool can_save = TRUE;         /* Game can be saved */
+
+FILE *notes_file;            /* File handle for the text notes file */

@@ -3409,7 +3409,7 @@ static void store_process_command(void)
 		/* Take notes */
 		case ':':
 		{
-			do_cmd_note();
+			do_cmd_note("");
 			break;
 		}
 

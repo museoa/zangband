@@ -4516,7 +4516,6 @@ void close_game(void)
 	/* Flush the input */
 	flush();
 
-
 	/* No suspending now */
 	signals_ignore_tstp();
 
@@ -4535,8 +4534,26 @@ void close_game(void)
 	/* Handle death */
 	if (death)
 	{
+	  
+	  /* Variable for the date */
+	  time_t ct = time((time_t*)0);
+	  char long_day[25];
+
+
 		/* Handle retirement */
-		if (total_winner) kingly();
+		if (total_winner) {
+
+		  if (take_notes) {
+
+		    (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+		    fprintf(notes_file, "%s defeated the Serpent on %s\n.", player_name, long_day);
+		    fprintf(notes_file, "Long live %s!", player_name);
+
+		  }
+
+		  kingly();
+		  
+		}
 
 		/* Save memories */
 		if (!munchkin_death || get_check("Save death? "))
@@ -4548,6 +4565,16 @@ void close_game(void)
 #endif
 
 		/* You are dead */
+		if (take_notes) {
+
+		  /* Get time */
+		  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+		 
+		  /* Add note */
+		  fprintf(notes_file, "%s died to %s on %s\n",player_name, died_from, long_day);
+
+		}
+
 		print_tomb();
 
 		/* Show more info */
@@ -4577,6 +4604,9 @@ void close_game(void)
 	/* Forget the high score fd */
 	highscore_fd = -1;
 
+	/* Close the notes file */
+	if (take_notes)
+	  my_fclose(notes_file);
 
 	/* Allow suspending now */
 	signals_handle_tstp();

@@ -2440,23 +2440,44 @@ void do_cmd_colors(void)
 
 
 /*
- * Note something in the message recall
+ * Teke notes.  There are two ways this can happen, either in the message recall or
+ * a file.  The command can also be passed a string, which will automatically be
+ * written. -CK-
  */
-void do_cmd_note(void)
+void do_cmd_note(char *note)
 {
 	char buf[80];
 
 	/* Default */
 	strcpy(buf, "");
 
-	/* Input */
-	if (!get_string("Note: ", buf, 60)) return;
+	/* If a note is passed, use that, otherwise accept user input. */
+	if (streq(note, "")) { 
+	  
+	  if (!get_string("Note: ", buf, 60)) return;
+	
+	}
+	
+	else
+	  strncpy(buf, note, 60);
 
 	/* Ignore empty notes */
 	if (!buf[0] || (buf[0] == ' ')) return;
 
-	/* Add the note to the message recall */
-	msg_format("Note: %s", buf);
+	/* If the note taking option is on, write it to the file, otherwise write to
+	 * the message recall.
+	 */
+	if (take_notes) {
+	  
+	  fprintf(notes_file, buf);
+ 
+	  /* Hack - add newline */
+	  fprintf(notes_file, "\n");
+
+	}
+
+	else msg_format("Note: %s", buf);
+
 }
 
 
