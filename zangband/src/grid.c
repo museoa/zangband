@@ -604,7 +604,7 @@ void generate_door(int x1, int y1, int x2, int y2, bool secret)
 /*
  * Always picks a correct direction
  */
-static void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2)
+static void correct_dir(int *cdir, int *rdir, int x1, int y1, int x2, int y2)
 {
 	/* Extract vertical and horizontal directions */
 	*rdir = (y1 == y2) ? 0 : (y1 < y2) ? 1 : -1;
@@ -625,7 +625,7 @@ static void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2)
 /*
  * Pick a random direction
  */
-static void rand_dir(int *rdir, int *cdir)
+static void rand_dir(int *cdir, int *rdir)
 {
 	/* Pick a random direction */
 	int i = randint0(4);
@@ -734,7 +734,7 @@ void build_tunnel(int row1, int col1, int row2, int col2)
 	start_col = col1;
 
 	/* Start out in the correct direction */
-	correct_dir(&row_dir, &col_dir, row1, col1, row2, col2);
+	correct_dir(&col_dir, &row_dir, col1, row1, col2, row2);
 
 	/* Keep going until done (or bored) */
 	while ((row1 != row2) || (col1 != col2))
@@ -746,12 +746,12 @@ void build_tunnel(int row1, int col1, int row2, int col2)
 		if (randint0(100) < dun_tun_chg)
 		{
 			/* Acquire the correct direction */
-			correct_dir(&row_dir, &col_dir, row1, col1, row2, col2);
+			correct_dir(&col_dir, &row_dir, col1, row1, col2, row2);
 
 			/* Random direction */
 			if (randint0(100) < dun_tun_rnd)
 			{
-				rand_dir(&row_dir, &col_dir);
+				rand_dir(&col_dir, &row_dir);
 			}
 		}
 
@@ -764,12 +764,12 @@ void build_tunnel(int row1, int col1, int row2, int col2)
 		while (!in_bounds(tmp_row, tmp_col))
 		{
 			/* Acquire the correct direction */
-			correct_dir(&row_dir, &col_dir, row1, col1, row2, col2);
+			correct_dir(&col_dir, &row_dir, col1, row1, col2, row2);
 
 			/* Random direction */
 			if (randint0(100) < dun_tun_rnd)
 			{
-				rand_dir(&row_dir, &col_dir);
+				rand_dir(&col_dir, &row_dir);
 			}
 
 			/* Get the next location */
