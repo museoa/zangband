@@ -203,6 +203,7 @@ extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];
 extern cave_type *cave[MAX_HGT];
 extern cave_type *(*area)(int, int);
+extern pcave_type *(*parea)(int, int);
 extern u16b *temp_block[WILD_BLOCK_SIZE + 1];
 extern blk_ptr *wild_cache;
 extern int **wild_refcount;
@@ -316,7 +317,6 @@ extern void map_info(int y, int x, byte *ap, char *cp);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int y, int x);
-extern void note_wild_spot(cave_type *c_ptr);
 extern void display_dungeon(void);
 extern void lite_spot(int y, int x);
 extern void prt_map(void);
@@ -1071,7 +1071,7 @@ extern void k_info_reset(void);
 
 /* wild.c */
 extern void select_town_name(char *name, int pop);
-extern void light_dark_square(cave_type *c_ptr, bool daytime);
+extern void light_dark_square(int y, int x, bool daytime);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
 extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);
 extern void test_decision_tree(void);

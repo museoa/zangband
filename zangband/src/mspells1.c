@@ -344,7 +344,7 @@ static bool summon_possible(int y1, int x1)
 
 			/* Require empty floor grid in line of sight of player */
 			if (cave_empty_grid(c_ptr)
-				 && (player_has_los_grid(c_ptr))) return (TRUE);
+				 && (player_has_los_grid(parea(y, x)))) return (TRUE);
 		}
 	}
 

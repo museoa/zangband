@@ -1165,7 +1165,6 @@ static bool cast_chaos_spell(int spell)
 
 	int	dir, i, beam;
 	int	plev = p_ptr->lev;
-	cave_type *c_ptr;
 
 	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
 	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
@@ -1385,10 +1384,8 @@ static bool cast_chaos_spell(int spell)
 					/* paranoia */
 					if (!in_bounds(y, x)) continue;
 
-					c_ptr = area(y, x);
-
 					/* keep going if not in LOS */
-					if (!player_has_los_grid(c_ptr)) continue;
+					if (!player_has_los_grid(parea(y, x))) continue;
 
 					/* if close enough - exit */
 					if (distance(py, px, y, x) < 6) break;

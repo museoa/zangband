@@ -421,7 +421,7 @@ static void do_cmd_wiz_feature(int feat)
 	delete_monster_idx(area(y, x)->m_idx);
 
 	/* Forget this grid */
-	area(y, x)->player &= ~(GRID_MARK);
+	parea(y, x)->player &= ~(GRID_MARK);
 
 	/* Place the feature */
 	cave_set_feat(y, x, feat);
@@ -1973,7 +1973,7 @@ void do_cmd_debug(void)
 				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 				{
 					area(y, x)->info |= (CAVE_GLOW);
-					area(y, x)->player |= (GRID_MARK);
+					parea(y, x)->player |= (GRID_MARK);
 				}
 			}
 

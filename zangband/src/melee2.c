@@ -436,7 +436,7 @@ static void get_moves_aux(int m_idx, int *yp, int *xp)
 	}
 
 	/* Hack XXX XXX -- Player can see us, run towards him */
-	if (player_has_los_grid(c_ptr)) return;
+	if (player_has_los_grid(parea(y1, x1))) return;
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -767,7 +767,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				{
 					gy = y;
 					gx = x;
-					if (!player_has_los_grid(c_ptr))
+					if (!player_has_los_grid(parea(y, x)))
 					{
 						gdis = dis * 5;
 					}
@@ -854,7 +854,8 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 			if ((y == py) && (x == px)) continue;
 
 			/* Check for hidden, available grid */
-			if (!player_has_los_grid(c_ptr) && clean_shot(fy, fx, y, x, FALSE))
+			if (!player_has_los_grid(parea(y, x))
+					 && clean_shot(fy, fx, y, x, FALSE))
 			{
 				/* Calculate distance from player */
 				dis = distance(y, x, py, px);
@@ -1921,6 +1922,7 @@ static void process_monster(int m_idx)
 	int             mm[8];
 
 	cave_type       *c_ptr;
+	pcave_type		*pc_ptr;
 
 	monster_type    *y_ptr;
 
@@ -2241,12 +2243,12 @@ static void process_monster(int m_idx)
 	}
 
 	/* Access that cave grid */
-	c_ptr = area(oy,ox);
+	c_ptr = area(oy, ox);
 
 	/* Some monsters can speak */
 	if (speak_unique &&
 	    (r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE) &&
-		player_has_los_grid(c_ptr))
+		player_has_los_grid(parea(oy, ox)))
 	{
 		char monmessage[1024];
 		cptr filename;
@@ -2425,6 +2427,7 @@ static void process_monster(int m_idx)
 
 		/* Access that cave grid */
 		c_ptr = area(ny, nx);
+		pc_ptr = parea(ny, nx);
 
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
@@ -2492,7 +2495,7 @@ static void process_monster(int m_idx)
 			}
 
 			/* Forget the wall */
-			c_ptr->player &= ~(GRID_MARK);
+			pc_ptr->player &= ~(GRID_MARK);
 
 			/* Notice */
 			cave_set_feat(ny, nx, FEAT_FLOOR);
@@ -3115,7 +3118,7 @@ void process_monsters(int min_energy)
 
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
-			(player_has_los_grid(c_ptr) || p_ptr->aggravate))
+			(player_has_los_grid(parea(fy, fx)) || p_ptr->aggravate))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;

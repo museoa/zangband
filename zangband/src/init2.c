@@ -961,7 +961,7 @@ static errr init_quests(void)
  */
 static errr init_other(void)
 {
-	int i, j, n;
+	int i, j, k, n;
 
 	/*** Prepare the various "bizarre" arrays ***/
 
@@ -992,6 +992,13 @@ static errr init_other(void)
 		/* Allocate one row of the cave */
 		C_MAKE(cave[i], MAX_WID, cave_type);
 	}
+	
+	/* Allocate the player information for each grid (dungeon) */
+	for (i = 0; i < MAX_HGT; i++)
+	{
+		/* Allocate one row of the cave */
+		C_MAKE(p_ptr->pcave[i], MAX_WID, pcave_type);
+	}
 
 	/* Allocate temporary wilderness block */
 	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
@@ -1016,10 +1023,26 @@ static errr init_other(void)
 		}
 	}
 
-	/*
-	 * The grid around the player is allocated in variable.c
-	 * since it doesn't take much memory.
-	 */
+	/* Allocate the player information for each grid (wilderness) */
+	
+	/* Allocate WILD_VIEW by WILD_VIEW blocks */
+	C_MAKE(p_ptr->pwild, WILD_VIEW, pblk_ptr*);
+	
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		C_MAKE(p_ptr->pwild[i], WILD_VIEW, pblk_ptr);
+		
+		/* Allocate each block */
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			C_MAKE(p_ptr->pwild[i][j], WILD_BLOCK_SIZE, pcave_type*);
+			
+			for (k = 0; k < WILD_BLOCK_SIZE; k++)
+			{
+				C_MAKE(p_ptr->pwild[i][j][k], WILD_BLOCK_SIZE, pcave_type);
+			}
+		}
+	}
 
 	/* Allocate the wilderness itself */
 	C_MAKE(wild, z_info->ws_max, wild_type*);

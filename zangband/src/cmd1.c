@@ -2213,6 +2213,7 @@ void move_player(int dir, int do_pickup)
 	int y, x;
 
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 	monster_type *m_ptr;
 
 	char m_name[80];
@@ -2241,6 +2242,7 @@ void move_player(int dir, int do_pickup)
 
 	/* Examine the destination */
 	c_ptr = area(y, x);
+	pc_ptr = parea(y, x);
 
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -2383,10 +2385,10 @@ void move_player(int dir, int do_pickup)
 			disturb(FALSE);
 
 			/* Notice things in the dark */
-			if (!(c_ptr->player & GRID_MARK) && !(c_ptr->player & GRID_SEEN))
+			if (!(pc_ptr->player & GRID_MARK) && !(pc_ptr->player & GRID_SEEN))
 			{
 				msg_print("You feel a closed door blocking your way.");
-				c_ptr->player |= (GRID_MARK);
+				pc_ptr->player |= (GRID_MARK);
 				lite_spot(y, x);
 			}
 
@@ -2427,10 +2429,10 @@ void move_player(int dir, int do_pickup)
 		disturb(FALSE);
 
 		/* Notice things in the dark */
-		if (!(c_ptr->player & (GRID_MARK)) && !(c_ptr->player & (GRID_SEEN)))
+		if (!(pc_ptr->player & (GRID_MARK)) && !(pc_ptr->player & (GRID_SEEN)))
 		{
 			message(MSG_HITWALL, 0, "You feel something blocking your way.");
-			c_ptr->player |= (GRID_MARK);
+			pc_ptr->player |= (GRID_MARK);
 			lite_spot(y, x);
 		}
 		/* Notice things */
@@ -2591,6 +2593,7 @@ void move_player(int dir, int do_pickup)
 static int see_wall(int dir, int y, int x)
 {
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Get the new location */
 	y += ddy[dir];
@@ -2600,6 +2603,7 @@ static int see_wall(int dir, int y, int x)
 	if (!in_bounds2(y, x)) return (TRUE);
 
 	c_ptr = area(y, x);
+	pc_ptr = parea(y, x);
 
 	/* Non-wall grids are not known walls */
 	if (c_ptr->feat < FEAT_PILLAR) return (FALSE);
@@ -2618,7 +2622,7 @@ static int see_wall(int dir, int y, int x)
 	    (c_ptr->feat <= FEAT_SNOW)) return (FALSE);
 
 	/* Must be known to the player */
-	if (!(c_ptr->player & (GRID_MARK))) return (FALSE);
+	if (!(pc_ptr->player & (GRID_MARK))) return (FALSE);
 
 	/* Default */
 	return (TRUE);
@@ -2631,6 +2635,7 @@ static int see_wall(int dir, int y, int x)
 static int see_nothing(int dir, int y, int x)
 {
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Get the new location */
 	y += ddy[dir];
@@ -2640,9 +2645,10 @@ static int see_nothing(int dir, int y, int x)
 	if (!in_bounds2(y, x)) return (FALSE);
 
 	c_ptr = area(y, x);
+	pc_ptr = parea(y, x);
 
 	/* Memorized grids are always known */
-	if (c_ptr->player & (GRID_MARK)) return (FALSE);
+	if (pc_ptr->player & (GRID_MARK)) return (FALSE);
 
 	/* Non-floor grids are unknown */
 	if (!cave_floor_grid(c_ptr)) return (TRUE);
@@ -2933,7 +2939,9 @@ static bool run_test(void)
 	int         row, col;
 	int         i, max, inv;
 	int         option = 0, option2 = 0;
+	
 	cave_type   *c_ptr;
+	pcave_type	*pc_ptr;
 
 	/* Hack - do not run next to edge of wilderness */
 	if (!in_bounds(py, px)) return TRUE;
@@ -2963,6 +2971,7 @@ static bool run_test(void)
 
 		/* Access grid */
 		c_ptr = area(row, col);
+		pc_ptr = parea(row, col);
 
 
 		/* Visible monsters abort running */
@@ -2996,7 +3005,7 @@ static bool run_test(void)
 		inv = TRUE;
 
 		/* Check memorized grids */
-		if (c_ptr->player & (GRID_MARK))
+		if (pc_ptr->player & (GRID_MARK))
 		{
 			bool notice = TRUE;
 

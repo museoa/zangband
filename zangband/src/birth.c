@@ -1258,15 +1258,25 @@ static void player_wipe(void)
 
 	bool options[OPT_PLAYER];
 	bool birth[OPT_BIRTH];
+	pcave_type *pcave[MAX_HGT];
+	pblk_ptr **pwild;
 
 	/* Hack -- save these allocated arrays */
 	C_COPY(options, p_ptr->options, OPT_PLAYER, bool);
 	C_COPY(birth, p_ptr->birth, OPT_BIRTH, bool);
+	
+	/* Hack -- save the cave and wilderness arrays */
+	C_COPY(pcave, p_ptr->pcave, MAX_HGT, pcave_type*);
+	pwild = p_ptr->pwild;
 
 	/* Hack -- zero the struct */
 	(void)WIPE(p_ptr, player_type);
+	
+	/* Hack -- Restore the cave and wilderness arrays */
+	C_COPY(p_ptr->pcave, pcave, MAX_HGT, pcave_type*);
+	p_ptr->pwild = pwild;;
 
-	/* Hack -- Restore the arrays */
+	/* Hack -- Restore the option arrays */
 	C_COPY(p_ptr->options, options, OPT_PLAYER, bool);
 	C_COPY(p_ptr->birth, birth, OPT_BIRTH, bool);
 

@@ -2000,6 +2000,7 @@ static bool target_set_accept(int y, int x)
 	int py = p_ptr->py;
 
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	s16b this_o_idx, next_o_idx = 0;
 	s16b this_f_idx, next_f_idx = 0;
@@ -2017,6 +2018,7 @@ static bool target_set_accept(int y, int x)
 
 	/* Examine the grid */
 	c_ptr = area(y, x);
+	pc_ptr = parea(y, x);
 
 	/* Visible monsters */
 	if (c_ptr->m_idx)
@@ -2059,7 +2061,7 @@ static bool target_set_accept(int y, int x)
 	}
 
 	/* Interesting memorized features */
-	if (c_ptr->player & (GRID_MARK))
+	if (pc_ptr->player & (GRID_MARK))
 	{
 		/* Notice the Pattern */
 		if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
@@ -2172,6 +2174,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 	int px = p_ptr->px;
 
 	cave_type *c_ptr = area(y, x);
+	pcave_type *pc_ptr = parea(y, x);
 
 	s16b this_o_idx, next_o_idx = 0;
 	s16b *this_f_ptr, *next_f_ptr = NULL;
@@ -2610,7 +2613,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		feat = c_ptr->feat;
 
 		/* Require knowledge about grid, or ability to see grid */
-		if (!(c_ptr->player & GRID_MARK) && !player_can_see_bold(y, x))
+		if (!(pc_ptr->player & GRID_MARK) && !player_can_see_bold(y, x))
 		{
 			/* Forget feature */
 			feat = FEAT_NONE;

@@ -1079,6 +1079,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 	byte prev_char;
 
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 
@@ -1132,10 +1133,10 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 		for (x = xmin; x < xmax; x++)
 		{
 			/* Get the cave */
-			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Extract a byte */
-			tmp8u = c_ptr->player;
+			tmp8u = pc_ptr->player;
 
 			/* If the run is broken, or too full, flush it 	*/
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))

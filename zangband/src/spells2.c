@@ -868,6 +868,7 @@ bool detect_doors(void)
 	bool detect = FALSE;
 
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Scan a radius MAX_DETECT circle */
 	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
@@ -878,7 +879,8 @@ bool detect_doors(void)
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Detect secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
@@ -893,7 +895,7 @@ bool detect_doors(void)
 			     (c_ptr->feat == FEAT_BROKEN))
 			{
 				/* Hack -- Memorize */
-				c_ptr->player |= (GRID_MARK);
+				pc_ptr->player |= (GRID_MARK);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -928,6 +930,7 @@ bool detect_stairs(void)
 	bool detect = FALSE;
 
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Scan a radiuc MAX_DETECT circle */
 	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
@@ -938,14 +941,15 @@ bool detect_stairs(void)
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Detect stairs */
 			if ((c_ptr->feat == FEAT_LESS) ||
 			    (c_ptr->feat == FEAT_MORE))
 			{
 				/* Hack -- Memorize */
-				c_ptr->player |= (GRID_MARK);
+				pc_ptr->player |= (GRID_MARK);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -980,7 +984,7 @@ bool detect_treasure(void)
 	bool detect = FALSE;
 
 	cave_type *c_ptr;
-
+	pcave_type *pc_ptr;
 
 	/* Scan a radius MAX_DETECT circle */
 	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
@@ -991,7 +995,8 @@ bool detect_treasure(void)
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Notice embedded gold */
 
@@ -1008,7 +1013,7 @@ bool detect_treasure(void)
 			    (c_ptr->feat == FEAT_QUARTZ_K))
 			{
 				/* Hack -- Memorize */
-				c_ptr->player |= (GRID_MARK);
+				pc_ptr->player |= (GRID_MARK);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -1724,8 +1729,6 @@ bool project_hack(int typ, int dam)
 	u16b    flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
 	bool    obvious = FALSE;
 
-	cave_type *c_ptr;
-
 	/* Mark all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
 	{
@@ -1738,10 +1741,8 @@ bool project_hack(int typ, int dam)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
-		c_ptr = area(y, x);
-
 		/* Require line of sight */
-		if (!player_has_los_grid(c_ptr)) continue;
+		if (!player_has_los_grid(parea(y, x))) continue;
 
 		/* Mark the monster */
 		m_ptr->mflag |= (MFLAG_TEMP);
@@ -1905,7 +1906,7 @@ bool raise_dead(int y, int x, bool pet)
 		/* Raise Corpses / Skeletons */
 		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (vptr) &pet))
 		{
-			if (player_has_los_grid(c_ptr)) obvious = TRUE;
+			if (player_has_los_grid(parea(fy, fx))) obvious = TRUE;
 		}
 	}
 
@@ -1923,7 +1924,6 @@ void aggravate_monsters(int who)
 	int     i;
 	bool    sleep = FALSE;
 	bool    speed = FALSE;
-	cave_type *c_ptr;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++)
@@ -1953,10 +1953,8 @@ void aggravate_monsters(int who)
 			}
 		}
 
-		c_ptr = area(m_ptr->fy, m_ptr->fx);
-
 		/* Speed up monsters in line of sight */
-		if (player_has_los_grid(c_ptr))
+		if (player_has_los_grid(parea(m_ptr->fy, m_ptr->fx)))
 		{
 			/* Speed up (instantly) to racial base + 10 */
 			if (m_ptr->mspeed < r_ptr->speed + 10)
@@ -2143,7 +2141,6 @@ bool probing(void)
 {
 	int     i;
 	bool    probe = FALSE;
-	cave_type *c_ptr;
 
 	/* Probe all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -2153,10 +2150,8 @@ bool probing(void)
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
-		c_ptr = area(m_ptr->fy, m_ptr->fx);
-
 		/* Require line of sight */
-		if (!player_has_los_grid(c_ptr)) continue;
+		if (!player_has_los_grid(parea(m_ptr->fy, m_ptr->fx))) continue;
 
 		/* Probe visible monsters */
 		if (m_ptr->ml)
@@ -2207,8 +2202,10 @@ bool probing(void)
 bool destroy_area(int y1, int x1, int r)
 {
 	int       y, x, k, t;
-	cave_type *c_ptr;
 	bool      flag = FALSE;
+	
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Prevent destruction of quest levels and town */
 	if (p_ptr->inside_quest || !p_ptr->depth)
@@ -2232,13 +2229,14 @@ bool destroy_area(int y1, int x1, int r)
 
 			/* Access the grid */
 			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 			/* Lose light and knowledge */
 			c_ptr->info &= ~(CAVE_GLOW);
-			c_ptr->player &= ~(GRID_MARK);
+			pc_ptr->player &= ~(GRID_MARK);
 
 			/* Hack -- Notice player affect */
 			if ((x == p_ptr->px) && (y == p_ptr->py))
@@ -2376,7 +2374,10 @@ bool earthquake(int cy, int cx, int r)
 	int             damage = 0;
 	int             sn = 0, sy = 0, sx = 0;
 	bool            hurt = FALSE;
+	
 	cave_type       *c_ptr;
+	pcave_type		*pc_ptr;
+	
 	bool            map[32][32];
 	field_mon_test	mon_enter_test;
 
@@ -2414,14 +2415,15 @@ bool earthquake(int cy, int cx, int r)
 			if (distance(cy, cx, yy, xx) > r) continue;
 
 			/* Access the grid */
-			c_ptr = area(yy,xx);
+			c_ptr = area(yy, xx);
+			pc_ptr = parea(yy, xx);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 			/* Lose light and knowledge */
 			c_ptr->info &= ~(CAVE_GLOW);
-			c_ptr->player &= ~(GRID_MARK);
+			pc_ptr->player &= ~(GRID_MARK);
 
 			/* Skip the epicenter */
 			if (!dx && !dy) continue;
@@ -2944,10 +2946,14 @@ static void cave_temp_room_unlite(void)
 			int y = temp_y[i] + ddy_cdd[j];
 			int x = temp_x[i] + ddx_cdd[j];
 
-			cave_type *c_ptr = area(y,x);
+			cave_type *c_ptr;
+			pcave_type *pc_ptr;
 
 			/* Verify */
 			if (!in_bounds2(y, x)) continue;
+			
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
@@ -2966,7 +2972,7 @@ static void cave_temp_room_unlite(void)
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget the grid */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Notice + Redraw */
 				note_spot(y, x);

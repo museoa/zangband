@@ -1163,7 +1163,7 @@ void fetch(int dir, int wgt, bool require_los)
 		}
 
 		/* We need to see the item */
-		if (require_los && !player_has_los_grid(c_ptr))
+		if (require_los && !player_has_los_grid(parea(ty, tx)))
 		{
 			msg_print("You have no direct line of sight to that location.");
 			return;

@@ -210,6 +210,7 @@ static int project_m_y;
 static bool project_f(int who, int r, int y, int x, int dam, int typ)
 {
 	cave_type       *c_ptr = area(y, x);
+	pcave_type		*pc_ptr = parea(y, x);
 
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(y, x);
@@ -276,7 +277,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				c_ptr->feat = FEAT_FLOOR;
 						
 				/* Forget the door */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 				
 				/* Note + Lite the spot */
 				note_spot(y, x);
@@ -339,14 +340,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_TREES)
 			{
 				/* Message */
-				if (known && (c_ptr->player & (GRID_MARK)))
+				if (known && (pc_ptr->player & (GRID_MARK)))
 				{
 					msg_print("It disappears!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_DIRT);
@@ -356,14 +357,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Message */
-				if (known && (c_ptr->player & (GRID_MARK)))
+				if (known && (pc_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The wall turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -373,7 +374,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
 				/* Message */
-				if (known && (c_ptr->player & (GRID_MARK)))
+				if (known && (pc_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The vein turns into mud!");
 					msg_print("You have found something!");
@@ -381,7 +382,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				}
 
 				/* Forget the wall */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -394,14 +395,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA)
 			{
 				/* Message */
-				if (known && (c_ptr->player & (GRID_MARK)))
+				if (known && (pc_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The vein turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -411,14 +412,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Message */
-				if (known && (c_ptr->player & (GRID_MARK)))
+				if (known && (pc_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The rubble turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the rubble */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -442,14 +443,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_SECRET))
 			{
 				/* Hack -- special message */
-				if (known && (c_ptr->player & (GRID_MARK)))
+				if (known && (pc_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The door turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 				
 				/* Destroy the feature */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -474,7 +475,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			cave_set_feat(y, x, FEAT_CLOSED);
 
 			/* Observe */
-			if (c_ptr->player & (GRID_MARK)) obvious = TRUE;
+			if (pc_ptr->player & (GRID_MARK)) obvious = TRUE;
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -556,7 +557,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget */
-				c_ptr->player &= ~(GRID_MARK);
+				pc_ptr->player &= ~(GRID_MARK);
 
 				/* Notice + Redraw */
 				note_spot(y, x);
@@ -928,7 +929,8 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 {
 	int tmp;
 
-	cave_type *c_ptr = area(y,x);
+	cave_type *c_ptr = area(y, x);
+	pcave_type *pc_ptr = parea(y, x);
 
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
@@ -1458,7 +1460,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (seen) obvious = TRUE;
 
 			/* PSI only works if the monster can see you! -- RG */
-			if (!player_has_los_grid(c_ptr))
+			if (!player_has_los_grid(pc_ptr))
 			{
 				dam = 0;
 				note = " can't see you, and isn't affected!";
@@ -3116,8 +3118,6 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	/* Hack -- messages */
 	cptr act = NULL;
 
-	cave_type *c_ptr;
-
 	/* Player is not here */
 	if ((x != p_ptr->px) || (y != p_ptr->py)) return (FALSE);
 
@@ -3147,10 +3147,8 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			/* not off edge */
 			if (!in_bounds2(t_y, t_x)) continue;
 
-			c_ptr = area(t_y, t_x);
-
 			/* Hack - exit if can see the reflection */
-			if (player_has_los_grid(c_ptr)) break;
+			if (player_has_los_grid(parea(t_y, t_x))) break;
 		}
 
 		if (max_attempts < 1)
@@ -4080,6 +4078,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	bool jump = FALSE;
 
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Are there no monsters queued to die? */
 	bool mon_explode = (mon_d_head == mon_d_tail) ? TRUE : FALSE;
@@ -4248,7 +4247,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		{
 
 			/* Only do visuals if the player can "see" the bolt */
-			if (panel_contains(y, x) && player_has_los_grid(c_ptr))
+			if (panel_contains(y, x) && player_has_los_grid(parea(y, x)))
 			{
 				byte a, c;
 
@@ -4475,10 +4474,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				y = gy[i];
 				x = gx[i];
 
-				c_ptr = area(y, x);
+				pc_ptr = parea(y, x);
 
 				/* Only do visuals if the player can "see" the blast */
-				if (panel_contains(y, x) && player_has_los_grid(c_ptr))
+				if (panel_contains(y, x) && player_has_los_grid(pc_ptr))
 				{
 					byte a, c;
 
@@ -4515,10 +4514,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				y = gy[i];
 				x = gx[i];
 
-				c_ptr = area(y, x);
+				pc_ptr = parea(y, x);
 
 				/* Hack -- Erase if needed */
-				if (panel_contains(y, x) && player_has_los_grid(c_ptr))
+				if (panel_contains(y, x) && player_has_los_grid(pc_ptr))
 				{
 					lite_spot(y, x);
 				}

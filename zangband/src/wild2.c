@@ -1958,10 +1958,13 @@ static void add_monsters_block(int x, int y)
 	}
 }
 
-void light_dark_square(cave_type *c_ptr, bool daytime)
+void light_dark_square(int y, int x, bool daytime)
 {
+	cave_type *c_ptr = area(y, x);
+	pcave_type *pc_ptr = parea(y, x);
+	
 	/* Hack -- Notice spot */
-	note_wild_spot(c_ptr);
+	note_spot(y, x);
 	
 	if (daytime)
 	{
@@ -1969,7 +1972,7 @@ void light_dark_square(cave_type *c_ptr, bool daytime)
 		c_ptr->info |= (CAVE_GLOW);
 
 		/* Hack -- Memorize lit grids if allowed */
-		if (view_perma_grids) c_ptr->player |= (GRID_MARK);
+		if (view_perma_grids) pc_ptr->player |= (GRID_MARK);
 	}
 	else
 	{
@@ -1981,7 +1984,7 @@ void light_dark_square(cave_type *c_ptr, bool daytime)
 		{
 			/* Forget the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
-			c_ptr->player &= ~(GRID_MARK);
+			pc_ptr->player &= ~(GRID_MARK);
 		}
 		else
 		{
@@ -1989,14 +1992,14 @@ void light_dark_square(cave_type *c_ptr, bool daytime)
 			c_ptr->info |= (CAVE_GLOW);
 
 			/* Hack -- Memorize lit grids if allowed */
-			if (view_perma_grids) c_ptr->player |= (GRID_MARK);
+			if (view_perma_grids) pc_ptr->player |= (GRID_MARK);
 		}
 	}
 }
 
 
 /* Lighten / Darken new block depending on Day/ Night */
-static void light_dark_block(blk_ptr block_ptr, int x, int y)
+static void light_dark_block(int x, int y)
 {
 	int i, j;
 
@@ -2016,7 +2019,8 @@ static void light_dark_block(blk_ptr block_ptr, int x, int y)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			light_dark_square(&block_ptr[j][i], daytime);
+			light_dark_square(y * WILD_BLOCK_SIZE + j,
+				 x * WILD_BLOCK_SIZE + i, daytime);
 		}
 	}
 }
@@ -2119,7 +2123,7 @@ static void gen_block(int x, int y)
 	}
 
 	/* Day / Night - lighten or darken the new block */
-	light_dark_block(block_ptr, x, y);
+	light_dark_block(x, y);
 
 	/* Set the object generation level */
 
@@ -2131,7 +2135,26 @@ static void gen_block(int x, int y)
 }
 
 
-#if 0
+/*
+ * Erase the player grid information in a block
+ */
+static void erase_grids(pblk_ptr block_ptr)
+{
+	int i, j;
+	
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			/* No memorised feature */
+			block_ptr[i][j].feat = FEAT_NONE;
+			
+			/* All flags off */
+			block_ptr[i][j].player = 0x00;
+		} 
+	}
+}
+
 
 /*
  * The following four functions shift the visible
@@ -2141,28 +2164,24 @@ static void gen_block(int x, int y)
 static void shift_down(void)
 {
 	u16b i, j;
-	blk_ptr block_ptr;
+	pblk_ptr block_ptr;
 	
-	for (i = 0; i < WILD_GRID_SIZE; i++)
+	for (i = 0; i < WILD_VIEW; i++)
 	{
 		/* The block on the edge */
-		block_ptr = wild_grid.block_ptr[0][i];
+		block_ptr = p_ptr->pwild[0][i];
 
 		/* Delete the block */
-		del_block(block_ptr);
+		erase_grids(block_ptr);
 
 		/* Scroll pointers */
-		for (j = 1; j < WILD_GRID_SIZE; j++)
+		for (j = 1; j < WILD_VIEW; j++)
 		{
-			wild_grid.block_ptr[j - 1][i] = wild_grid.block_ptr[j][i];
+			p_ptr->pwild[j - 1][i] = p_ptr->pwild[j][i];
 		}
 
 		/* Connect new grid to wilderness */
-		wild_grid.block_ptr[WILD_GRID_SIZE - 1][i] = block_ptr;
-
-		/* Make the new block */
-		gen_block(i + wild_grid.x, WILD_GRID_SIZE - 1 + wild_grid.y,
-		          block_ptr);
+		p_ptr->pwild[WILD_VIEW - 1][i] = block_ptr;
 	}
 }
 
@@ -2170,27 +2189,24 @@ static void shift_down(void)
 static void shift_up(void)
 {
 	u16b i, j;
-	blk_ptr block_ptr;
+	pblk_ptr block_ptr;
 	
-	for (i = 0; i < WILD_GRID_SIZE; i++)
+	for (i = 0; i < WILD_VIEW; i++)
 	{
 		/* The block on the edge */
-		block_ptr = wild_grid.block_ptr[WILD_GRID_SIZE - 1][i];
+		block_ptr = p_ptr->pwild[WILD_VIEW - 1][i];
 
 		/* Delete the block */
-		del_block(block_ptr);
+		erase_grids(block_ptr);
 
 		/* Scroll pointers */
-		for (j = WILD_GRID_SIZE - 1; j > 0; j--)
+		for (j = WILD_VIEW - 1; j > 0; j--)
 		{
-			wild_grid.block_ptr[j][i] = wild_grid.block_ptr[j - 1][i];
+			p_ptr->pwild[j][i] = p_ptr->pwild[j - 1][i];
 		}
 
 		/* Connect new grid to wilderness */
-		wild_grid.block_ptr[0][i] = block_ptr;
-
-		/* Make the new block */
-		gen_block(i + wild_grid.x, wild_grid.y, block_ptr);
+		p_ptr->pwild[0][i] = block_ptr;
 	}
 }
 
@@ -2198,28 +2214,24 @@ static void shift_up(void)
 static void shift_right(void)
 {
 	u16b i, j;
-	blk_ptr block_ptr;
+	pblk_ptr block_ptr;
 	
-	for (j = 0; j < WILD_GRID_SIZE; j++)
+	for (j = 0; j < WILD_VIEW; j++)
 	{
 		/* The block on the edge */
-		block_ptr = wild_grid.block_ptr[j][0];
+		block_ptr = p_ptr->pwild[j][0];
 
 		/* Delete the block */
-		del_block(block_ptr);
+		erase_grids(block_ptr);
 
 		/* Scroll pointers */
-		for (i = 1; i < WILD_GRID_SIZE; i++)
+		for (i = 1; i < WILD_VIEW; i++)
 		{
-			wild_grid.block_ptr[j][i - 1] = wild_grid.block_ptr[j][i];
+			p_ptr->pwild[j][i - 1] = p_ptr->pwild[j][i];
 		}
 
 		/* Connect new grid to wilderness */
-		wild_grid.block_ptr[j][WILD_GRID_SIZE - 1] = block_ptr;
-
-		/* Make the new block */
-		gen_block(WILD_GRID_SIZE - 1 + wild_grid.x, j + wild_grid.y,
-		          block_ptr);
+		p_ptr->pwild[j][WILD_VIEW - 1] = block_ptr;
 	}
 }
 
@@ -2227,31 +2239,27 @@ static void shift_right(void)
 static void shift_left(void)
 {
 	u16b i, j;
-	blk_ptr block_ptr;
+	pblk_ptr block_ptr;
 	
-	for (j = 0; j < WILD_GRID_SIZE; j++)
+	for (j = 0; j < WILD_VIEW; j++)
 	{
 		/* The block on the edge */
-		block_ptr = wild_grid.block_ptr[j][WILD_GRID_SIZE - 1];
+		block_ptr = p_ptr->pwild[j][WILD_VIEW - 1];
 
 		/* Delete the block */
-		del_block(block_ptr);
+		erase_grids(block_ptr);
 
 		/* Scroll pointers */
-		for (i = WILD_GRID_SIZE - 1; i > 0; i--)
+		for (i = WILD_VIEW - 1; i > 0; i--)
 		{
-			wild_grid.block_ptr[j][i] = wild_grid.block_ptr[j][i - 1];
+			p_ptr->pwild[j][i] = p_ptr->pwild[j][i - 1];
 		}
 
 		/* Connect new grid to wilderness */
-		wild_grid.block_ptr[j][0] = block_ptr;
-
-		/* Make the new block */
-		gen_block(wild_grid.x, j + wild_grid.y, block_ptr);
+		p_ptr->pwild[j][0] = block_ptr;
 	}
 }
 
-#endif /* 0 */
 
 /* Delete a wilderness block */
 static void del_block(int x, int y)
@@ -2277,9 +2285,6 @@ static void del_block(int x, int y)
 			block_ptr[yy][xx].info = 0;
 			block_ptr[yy][xx].feat = 0;
 			
-			/* Hack XXX */
-			block_ptr[yy][xx].player = 0;
-
 			/* Delete monster on the square */
 			m_idx = block_ptr[yy][xx].m_idx;
 
@@ -2337,7 +2342,7 @@ void shift_in_bounds(int *x, int *y)
 	if (*x < 0) *x = 0;
 	if (*y < 0) *y = 0;
 
-	/* Hack XXX This doesn't isn't set when we call during loading */
+	/* Hack XXX This isn't set when we are called during loading */
 	if (max_wild)
 	{
 		if (*x + WILD_VIEW >= max_wild) *x = max_wild - WILD_VIEW - 1;
@@ -2377,7 +2382,6 @@ void move_wild(void)
 	/* If we haven't moved block - exit */
 	if ((ox == x) && (oy == y)) return;
 	
-#if 0	
 	/* Shift the player information */
 	while(ox < x)
 	{
@@ -2394,15 +2398,20 @@ void move_wild(void)
 	while(oy < y)
 	{
 		oy++;
-		shift_up();
+		shift_down();
 	}
 	
 	while(oy > y)
 	{
 		oy--;
-		shift_down();
+		shift_up();
 	}
-#endif /* 0 */
+	
+	/* Reset bounds */
+	p_ptr->min_wid = x * WILD_BLOCK_SIZE;
+	p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
+	p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
+	p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
 
 	/* Allocate new blocks */
 	for (i = 0; i < WILD_VIEW; i++)
@@ -2412,12 +2421,6 @@ void move_wild(void)
 			allocate_block(x + i, y + j);
 		}
 	}
-	
-	/* Reset bounds */
-	p_ptr->min_wid = x * WILD_BLOCK_SIZE;
-	p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
-	p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
-	p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
 		
 	/* Deallocate old blocks */
 	for (i = 0; i < WILD_VIEW; i++)
@@ -2446,14 +2449,13 @@ static void day_night(void)
 	u16b x, y;
 
 	/* Light up or darken the area */
-	for (y = 0; y < WILD_GRID_SIZE; y++)
+	for (y = 0; y < WILD_VIEW; y++)
 	{
-		for (x = 0; x < WILD_GRID_SIZE; x++)
+		for (x = 0; x < WILD_VIEW; x++)
 		{
 			/* Light or darken wilderness block */
-			light_dark_block(wild_grid.block_ptr[y][x],
-			                 (x + min_wid / WILD_BLOCK_SIZE),
-			                 (y + min_hgt / WILD_BLOCK_SIZE));
+			light_dark_block(x + min_wid / WILD_BLOCK_SIZE,
+			                 y + min_hgt / WILD_BLOCK_SIZE);
 		}
 	}
 }
@@ -2498,8 +2500,8 @@ static pcave_type *access_pwild(int y, int x)
 	 * Divide by 16 to get block.
 	 * Logical AND with 15 to get location within block.
 	 */
-	return &p_ptr->pwild[(y / WILD_BLOCK_SIZE) - p_ptr->old_wild_y]
-		[(x / WILD_BLOCK_SIZE) - p_ptr->old_wild_x][y & 15][x & 15];
+	return &p_ptr->pwild[(y - p_ptr->min_hgt) / WILD_BLOCK_SIZE]
+		[(x - p_ptr->min_wid) / WILD_BLOCK_SIZE][y & 15][x & 15];
 }
 
 
@@ -2540,12 +2542,18 @@ void init_wild_cache(void)
 {
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;
+	
+	pblk_ptr block_ptr;
 		
 	/* Allocate blocks around player */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
 		for (j = 0; j < WILD_VIEW; j++)
 		{
+			/* Hack - erase the player knowledge */
+			block_ptr = p_ptr->pwild[i][j];
+			erase_grids(block_ptr);
+			
 			allocate_block(x + i, y + j);
 		}
 	}
@@ -2595,6 +2603,7 @@ void change_level(int level)
 		
 		/* Access the wilderness */
 		area = access_wild;
+		parea = access_pwild;
 		
 		/* Bounds checking rountine */
 		in_bounds = in_bounds_wild;
@@ -2637,6 +2646,7 @@ void change_level(int level)
 
 		/* Access the cave */
 		area = access_cave;
+		parea = access_pcave;
 		
 		/* Bounds checking */
 		in_bounds = in_bounds_cave;

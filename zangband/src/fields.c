@@ -130,7 +130,7 @@ static void notice_field(field_type *f_ptr)
 	if (in_bounds(y, x))
 	{
 		/* Can the player see the square? */
-		if (player_has_los_grid(area(y, x)))
+		if (player_has_los_grid(parea(y, x)))
 		{		
 			/* Note + Lite the spot */
 			note_spot(y, x);
@@ -1413,7 +1413,7 @@ bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		/* Describe observable breakage */
-		if (area(f_ptr->fy, f_ptr->fx)->player & GRID_MARK)
+		if (parea(f_ptr->fy, f_ptr->fx)->player & GRID_MARK)
 		{
 			msg_print("The rune of protection is broken!");
 		}
@@ -1514,7 +1514,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 		if (summon_named_creature(f_ptr->fy, f_ptr->fx,
 				 r_idx, FALSE, FALSE, FALSE))
 		{
-			if (player_has_los_grid(area(f_ptr->fy, f_ptr->fx)))
+			if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
 			{
 				if (disturb_minor) msg_format("The %s rises.", t_ptr->name);
 			}
@@ -1524,7 +1524,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 		}
 		
 		/* Paranoia */
-		else if (player_has_los_grid(area(f_ptr->fy, f_ptr->fx)))
+		else if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
 		{
 			/* Let player know what happened. */
 			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
@@ -1533,7 +1533,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 	}
 	else
 	{
-		if (player_has_los_grid(area(f_ptr->fy, f_ptr->fx)))
+		if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
 		{
 			/* Let player know what happened. */
 			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
@@ -3415,6 +3415,7 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 	field_magic_target *f_m_t = (field_magic_target*) input;
 	
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 	
 	if (f_m_t->typ == GF_KILL_WALL)
 	{
@@ -3426,9 +3427,10 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 		}
 
 		c_ptr = area(f_ptr->fy, f_ptr->fx);
+		pc_ptr = parea(f_ptr->fy, f_ptr->fx);
 		
 		/* Forget the door */
-		c_ptr->player &= ~(GRID_MARK);
+		pc_ptr->player &= ~(GRID_MARK);
 		
 		/* Destroy the feature */
 		c_ptr->feat = FEAT_FLOOR;
@@ -3449,9 +3451,10 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 		}
 
 		c_ptr = area(f_ptr->fy, f_ptr->fx);
+		pc_ptr = parea(f_ptr->fy, f_ptr->fx);
 		
 		/* Forget the door */
-		c_ptr->player &= ~(GRID_MARK);
+		pc_ptr->player &= ~(GRID_MARK);
 		
 		/* Destroy the feature */
 		c_ptr->feat = FEAT_FLOOR;

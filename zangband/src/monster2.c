@@ -1044,7 +1044,7 @@ void update_mon(int m_idx, bool full)
 	/* Seen by vision */
 	bool easy = FALSE;
 
-	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Exit if monster does not exist. */
 	if (!m_idx) return;
@@ -1124,10 +1124,10 @@ void update_mon(int m_idx, bool full)
 			}
 		}
 
-		c_ptr = area(fy, fx);
+		pc_ptr = parea(fy, fx);
 
 		/* Normal line of sight, and not blind */
-		if (player_has_los_grid(c_ptr) && !p_ptr->blind)
+		if (player_has_los_grid(pc_ptr) && !p_ptr->blind)
 		{
 			bool do_invisible = FALSE;
 			bool do_cold_blood = FALSE;

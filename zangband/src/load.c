@@ -1581,7 +1581,9 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 	byte count;
 	byte tmp8u;
 	s16b tmp16s;
+	
 	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/*** Run length decoding ***/
 
@@ -1596,8 +1598,9 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 		for (i = count; i > 0; i--)
 		{
 			/* Access the cave */
-			c_ptr = area(y,x);
-
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
+			
 			/* Extract "info" (without the CAVE_ROOM flag set)*/
 			c_ptr->info = (tmp8u & (CAVE_GLOW | CAVE_ICKY));
 			
@@ -1608,7 +1611,7 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 				 * Set old CAVE_MARK and CAVE_LITE flags
 				 * (Ignore the CAVE_VIEW flag)
 				 */
-				c_ptr->player = tmp8u & (GRID_MARK | GRID_LITE);
+				pc_ptr->player = tmp8u & (GRID_MARK | GRID_LITE);
 			}
 
 			/* Advance/Wrap */
@@ -1638,10 +1641,10 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			for (i = count; i > 0; i--)
 			{
 				/* Access the cave */
-				c_ptr = area(y,x);
+				pc_ptr = parea(y,x);
 
 				/* Extract "player" */
-				c_ptr->player = tmp8u;
+				pc_ptr->player = tmp8u;
 
 				/* Advance/Wrap */
 				if (++x >= xmax)

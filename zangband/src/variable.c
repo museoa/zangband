@@ -423,6 +423,13 @@ cave_type *cave[MAX_HGT];
 cave_type *(*area)(int, int);
 
 /*
+ * Equivalent function pointer used to get player information
+ * for each grid.
+ */
+
+pcave_type *(*parea)(int, int);
+
+/*
  * Variables used to access the scrollable wilderness.
  * This is designed to be as fast as possible - whilst using as little
  * RAM as possible to store a massive wilderness.
