@@ -3146,9 +3146,7 @@ void field_action_door_lock_monster(s16b **field_ptr, void *input)
 	
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
-	bool do_move = mon_enter->do_move;
-	
-	if (!do_move)
+	if (!mon_enter->do_move)
 	{
 		/* Monster cannot open the door */
 	
@@ -3201,9 +3199,7 @@ void field_action_door_jam_monster(s16b **field_ptr, void *input)
 	
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
-	bool do_move = mon_enter->do_move;
-	
-	if (!do_move)
+	if (!mon_enter->do_move)
 	{
 		/* Monster cannot open the door */
 	
