@@ -1552,7 +1552,8 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 				/* Use darkened colour */
 				a = darking_colours[a];
 			}
-			else if (use_transparency && feat_supports_lighting[feat])
+			else if ((use_graphics == GRAPHICS_ADAM_BOLT)
+				 && feat_supports_lighting[feat])
 			{
 				/* Use a dark tile */
 				c++;
@@ -1567,7 +1568,8 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 				/* Use bright colour */
 				a = lighting_colours[a];
 			}
-			else if (use_transparency && feat_supports_lighting[feat])
+			else if ((use_graphics == GRAPHICS_ADAM_BOLT)
+				 && feat_supports_lighting[feat])
 			{
 				/* Use a light tile */
 				c+=2;
@@ -1735,7 +1737,8 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 			if (fld_ptr->info & FIELD_INFO_FEAT)
 			{
 				/* Terrain level */
-				if (use_transparency && (fld_ptr->info & (FIELD_INFO_TRANS)))
+				if ((use_graphics == GRAPHICS_ADAM_BOLT)
+					 && (fld_ptr->info & (FIELD_INFO_TRANS)))
 				{
 					/* Take into account dynamic lighting. */
 					c += fld_ptr->f_char - f_ptr->x_char;
