@@ -29,6 +29,7 @@
 void self_knowledge(void)
 {
 	int i = 0, j, k, x, height;
+	int res;
 
 	int v_nr;
 	char v_string[8][128];
@@ -365,109 +366,114 @@ void self_knowledge(void)
 		info[i++] = "You have a source of permanent light.";
 	}
 
-	if (FLAG(p_ptr, TR_IM_ACID))
+	res = res_acid_lvl();
+	if (res == 0)
 	{
 		info[i++] = "You are completely immune to acid.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_ACID)) && (p_ptr->tim.oppose_acid))
+	else if (res <= 25)
 	{
-		if (FLAG(p_ptr, TR_HURT_ACID))
-			info[i++] = "You resist acid very well.";
-		else
-			info[i++] = "You resist acid exceptionally well.";
+		info[i++] = "You resist acid exceptionally well.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_ACID)) || (p_ptr->tim.oppose_acid))
+	else if (res <= 50)
 	{
-		if (FLAG(p_ptr, TR_HURT_ACID))
-			info[i++] = "You are somewhat resistant to acid.";
-		else
-			info[i++] = "You are resistant to acid.";
+		info[i++] = "You are resistant to acid.";
 	}
-	else if (FLAG(p_ptr, TR_HURT_ACID))
+	else if (res < 100)
+	{
+		info[i++] = "You are somewhat resistant to acid.";
+	}
+	else if (res > 100)
 	{
 		info[i++] = "You are vulnerable to acid.";
 	}
 
-	if (FLAG(p_ptr, TR_IM_ELEC))
+	res = res_elec_lvl();
+	if (res == 0)
 	{
 		info[i++] = "You are completely immune to lightning.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_ELEC)) && (p_ptr->tim.oppose_elec))
+	else if (res <= 25)
 	{
-		if (FLAG(p_ptr, TR_HURT_ELEC))
-			info[i++] = "You resist lightning very well.";
-		else
-			info[i++] = "You resist lightning exceptionally well.";
+		info[i++] = "You resist lightning exceptionally well.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_ELEC)) || (p_ptr->tim.oppose_elec))
+	else if (res <= 50)
 	{
-		if (FLAG(p_ptr, TR_HURT_ELEC))
-			info[i++] = "You are somewhat resistant to lightning.";
-		else
-			info[i++] = "You are resistant to lightning.";
+		info[i++] = "You are resistant to lightning.";
 	}
-	else if (FLAG(p_ptr, TR_HURT_ELEC))
+	else if (res < 100)
+	{
+		info[i++] = "You are somewhat resistant to lightning.";
+	}
+	else if (res > 100)
 	{
 		info[i++] = "You are vulnerable to lightning.";
 	}
 
-	if (FLAG(p_ptr, TR_IM_FIRE))
+	res = res_fire_lvl();
+	if (res == 0)
 	{
 		info[i++] = "You are completely immune to fire.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_FIRE)) && (p_ptr->tim.oppose_fire))
+	else if (res <= 25)
 	{
-		if (FLAG(p_ptr, TR_HURT_FIRE))
-			info[i++] = "You resist fire very well.";
-		else
-			info[i++] = "You resist fire exceptionally well.";
+		info[i++] = "You resist fire exceptionally well.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_FIRE)) || (p_ptr->tim.oppose_fire))
+	else if (res <= 50)
 	{
-		if (FLAG(p_ptr, TR_HURT_FIRE))
-			info[i++] = "You are somewhat resistant to fire.";
-		else
-			info[i++] = "You are resistant to fire.";
+		info[i++] = "You are resistant to fire.";
 	}
-	else if (FLAG(p_ptr, TR_HURT_FIRE))
+	else if (res < 100)
+	{
+		info[i++] = "You are somewhat resistant to fire.";
+	}
+	else if (res > 100)
 	{
 		info[i++] = "You are vulnerable to fire.";
 	}
 
-	if (FLAG(p_ptr, TR_IM_COLD))
+	res = res_cold_lvl();
+	if (res == 0)
 	{
 		info[i++] = "You are completely immune to cold.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_COLD)) && (p_ptr->tim.oppose_cold))
+	else if (res <= 25)
 	{
-		if (FLAG(p_ptr, TR_HURT_COLD))
-			info[i++] = "You resist cold very well.";
-		else
-			info[i++] = "You resist cold exceptionally well.";
+		info[i++] = "You resist cold exceptionally well.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_COLD)) || (p_ptr->tim.oppose_cold))
+	else if (res <= 50)
 	{
-		if (FLAG(p_ptr, TR_HURT_COLD))
-			info[i++] = "You are somewhat resistant to cold.";
-		else
-			info[i++] = "You are resistant to cold.";
+		info[i++] = "You are resistant to cold.";
 	}
-	else if (FLAG(p_ptr, TR_HURT_COLD))
+	else if (res < 100)
+	{
+		info[i++] = "You are somewhat resistant to cold.";
+	}
+	else if (res > 100)
 	{
 		info[i++] = "You are vulnerable to cold.";
 	}
 
-	if (FLAG(p_ptr, TR_IM_POIS))
+	res = res_pois_lvl();
+	if (res == 0)
 	{
 		info[i++] = "You are completely immune to poison.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_POIS)) && (p_ptr->tim.oppose_pois))
+	else if (res <= 25)
 	{
 		info[i++] = "You resist poison exceptionally well.";
 	}
-	else if ((FLAG(p_ptr, TR_RES_POIS)) || (p_ptr->tim.oppose_pois))
+	else if (res <= 50)
 	{
 		info[i++] = "You are resistant to poison.";
+	}
+	else if (res < 100)
+	{
+		info[i++] = "You are somewhat resistant to poison.";
+	}
+	else if (res > 100)
+	{
+		info[i++] = "You are vulnerable to poison.";
 	}
 
 	if (FLAG(p_ptr, TR_IM_LITE))
