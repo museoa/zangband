@@ -938,7 +938,7 @@ G:l:w
 I:120:1d1:6:3:10
 W:3:1:0:1
 B:BITE:HURT:1d1
-F:RAND_50 | RAND_25 | CAN_FLY |
+F:RAND_50 | RAND_25 |
 F:MULTIPLY | WEIRD_MIND | 
 F:ANIMAL
 D:It is six inches long.
