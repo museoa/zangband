@@ -2350,6 +2350,9 @@ static errr rd_dungeon(void)
 		{
 			/* Count objects */
 			o_cnt++;
+			
+			/* Hack - set region of object */
+			o_ptr->region = cur_region;
 
 			/* Dungeon items */
 			if (!ignore_stuff && (o_ptr->ix || o_ptr->iy))
@@ -2374,9 +2377,6 @@ static errr rd_dungeon(void)
 
 				/* Place the object */
 				c_ptr->o_idx = o_max;
-
-				/* Hack - set region of object */
-				o_ptr->region = cur_region;
 			}
 		}
 	}
