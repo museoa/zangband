@@ -4226,7 +4226,7 @@ S:TELE_TO | HEAL | SCARE | CAUSE_2 | BLIND | S_MONSTER
 D:A devil ray of the depths, with priestly magic.
 
 N:329:Huorn
-G:#:g
+G:%:g
 I:110:35d10:40:22:20
 W:19:1:0:75
 B:CRUSH:HURT:3d6
@@ -13585,7 +13585,7 @@ D:It is a streamlined metal demon, moving under its own power to crush you.
 D:  It rumbles hungrily.
 
 N:873:Shallow puddle
-G:#:B
+G:~:B
 I:115:9d6:10:17:0
 W:11:6:0:70
 B:TOUCH:ACID:2d3
@@ -13597,7 +13597,7 @@ F:EMPTY_MIND
 D:It is a placid watery pool.
 
 N:874:Deep puddle
-G:#:b
+G:~:b
 I:125:17d6:15:40:0
 W:23:6:0:70
 B:TOUCH:ACID:4d3
@@ -13687,7 +13687,7 @@ S:S_HI_DRAGON
 S:SCARE | BLINK | SHRIEK
 D:The tortured soul of a once powerful wyrm.
 
-N:880:Creeping Dust
+N:880:Creeping dust
 G:.:v
 I:120:2d6:30:30:100
 W:75:6:0:800
