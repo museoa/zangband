@@ -560,6 +560,7 @@ extern bool item_tester_hook_nonsword(const object_type *o_ptr);
 extern bool item_tester_hook_ammo(const object_type *o_ptr);
 extern bool item_tester_hook_fletcher(const object_type *o_ptr);
 extern bool item_tester_hook_armour(const object_type *o_ptr);
+extern bool item_tester_hook_armour_no_acid(const object_type *o_ptr);
 extern bool item_tester_hook_soft_armour(const object_type *o_ptr);
 extern bool item_tester_hook_hard_armour(const object_type *o_ptr);
 extern bool item_tester_hook_helm(const object_type *o_ptr);

@@ -1293,6 +1293,18 @@ bool item_tester_hook_armour(const object_type *o_ptr)
 }
 
 /*
+ * Hook to specify "armour" without acid resistance
+ */
+bool item_tester_hook_armour_no_acid(const object_type *o_ptr)
+{
+	/* If this item is an armour and is not acid proof */
+	if (item_tester_hook_armour(o_ptr) &&
+		!FLAG(o_ptr, TR_IGNORE_ACID)) return (TRUE);
+
+	return (FALSE);
+}
+
+/*
  * Hook to specify "soft armour"
  */
 bool item_tester_hook_soft_armour(const object_type *o_ptr)

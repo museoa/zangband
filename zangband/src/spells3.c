@@ -4025,7 +4025,7 @@ bool rustproof(void)
 	cptr q, s;
 
 	/* Select a piece of armour */
-	item_tester_hook = item_tester_hook_armour;
+	item_tester_hook = item_tester_hook_armour_no_acid;
 
 	/* Get an item */
 	q = "Rustproof which piece of armour? ";
