@@ -116,6 +116,26 @@
 ?:[EQU $QUEST_NUMBER 28]
 %:q0000028.txt
 
+# Thieves Quest 1
+?:[EQU $QUEST_NUMBER 29]
+%:q0thief1.txt
+
+# Thieves Quest 2
+?:[EQU $QUEST_NUMBER 30]
+%:q0thief2.txt
+
+# Old Man Willow Quest
+?:[EQU $QUEST_NUMBER 31]
+%:q0willow.txt
+
+# Dark Elven Lords Quest
+?:[EQU $QUEST_NUMBER 32]
+%:qdarkelf.txt
+
+# The Cloning Pits
+?:[EQU $QUEST_NUMBER 33]
+%:q0clone0.txt
+
 # Random quests (always adressed with number 40)
 ?:[EQU $QUEST_NUMBER 40]
 %:q_random.txt

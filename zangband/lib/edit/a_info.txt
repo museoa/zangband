@@ -88,7 +88,16 @@ F:SEE_INVIS | FREE_ACT | REGEN | LITE |
 F:INSTA_ART
 
 
-# Artifact 7 is unused
+# The Incandescent Light of Edison
+# Thomas Alva Edison the "Wizard of Menlo Park", patented 1,093 inventions
+# inventor of the incandescent lightbulb
+# Default reward for The Dark Elven Lords Quest
+
+N:7:of Edison
+I:39:3:5
+W:20:10:5:20000
+P:0:1d1:0:0:0
+F:INSTA_ART | INFRA | SH_FIRE | SH_ELEC 
 
 
 # The Ring of Barahir -> Frakir
@@ -337,13 +346,12 @@ F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR
 
 # The Hard Leather Cap of Ben Franklin
 # A Wise Brilliant Scientist and Politician
-# A Reward for the Old Castle Quest
 
 N:33:of Ben Franklin
 I:32:2:5
-W:40:50:15:90000
+W:20:30:15:90000
 P:2:0d0:0:0:15
-F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | IM_ELEC 
+F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | RES_BLIND | IM_ELEC 
 
 
 # The Massive Iron Crown of Morgoth
@@ -445,13 +453,12 @@ F:LITE | SEE_INVIS | REGEN | ACTIVATE
 
 # The Cloak of Houdini
 # Escape Artist and Spiritualist
-# A reward for The Old Castle Quest
 
 N:43:of Houdini
 I:35:1:7
-W:40:60:10:100000
+W:30:30:10:100000
 P:1:0d0:0:0:18
-F:STEALTH | SEARCH | FREE_ACT | SEE_INVIS | TELEPATHY
+F:STEALTH | SEARCH | FREE_ACT | SEE_INVIS | HOLD_LIFE | TELEPATHY
 
 
 # The Cloak 'Colluin'
@@ -633,7 +640,14 @@ P:6:1d1:0:0:20
 F:STR | CON | HIDE_TYPE | SPEED
 
 
-# Artifact 63 is unused
+# The Pair of Soft Leather Boots of Shiva's Avatar
+# Default reward for The Cloning Pits 
+
+N:63:of Shiva's Avatar
+I:30:2:1
+W:60:40:20:125000
+P:5:1d1:10:15:15
+F:BLOWS | RES_SHARDS | RES_CONF | RES_SOUND | STR | DEX | CON
 
 
 # The Main Gauche of Maedhros
@@ -1285,18 +1299,15 @@ F:ACTIVATE | SHOW_MODS
 
 
 # The Executioner's Sword 'Slayer'
-# This sword is a vampire slaying weapon, that has vampiric powers
 # Default reward for The Old Castle Quest
 
 N:123:'Slayer'
-I:23:28:3
-W:40:140:260:490000
-P:0:4d5:13:18:3
-F:BLOWS | VAMPIRIC | SLAY_EVIL | SLAY_UNDEAD | BLESSED |
-F:RES_FIRE | RES_COLD | RES_POIS | RES_DARK | RES_BLIND | 
-F:RES_CONF | RES_NETHER | RES_FEAR | SPEED | FREE_ACT |  
-F:SEE_INVIS | HOLD_LIFE | REGEN | FEATHER | LITE | 
-F:STEALTH | INFRA | SHOW_MODS
+I:23:28:2
+W:40:80:240:290000
+P:0:4d5:15:20:0
+F:SLAY_EVIL | BLOWS | VAMPIRIC | SLAY_UNDEAD | BLESSED |
+F:SEE_INVIS | HOLD_LIFE | REGEN | FEATHER | RES_BLIND | 
+F:STEALTH | INFRA | FREE_ACT | RES_FEAR | SHOW_MODS
 
 
 # The Long Bow 'Belthronding'
