@@ -2994,7 +2994,7 @@ static void create_roads(void)
 					(distance(x2, y2, x3, y3) > max_dist)) continue;
 
 				/* See if the town is "in the way" */
-				if (dist_to_line(y3, x3, y1, x1, y2, x2) > dist / ROAD_MIN)
+				if (dist_to_line(x3, y3, x1, y1, x2, y2) > dist / ROAD_MIN)
 				{
 					continue;
 				}

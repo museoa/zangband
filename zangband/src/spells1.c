@@ -3872,7 +3872,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 /*
  * Find the distance from (x, y) to a line.
  */
-int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
+int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
 {
 	/* Vector from (x, y) to (x1, y1) */
 	int py = y1 - y;
@@ -4558,7 +4558,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			/* Find the closest point in the blast */
 			if (breath)
 			{
-				int d = dist_to_line(y, x, y1, x1, y2, x2);
+				int d = dist_to_line(x, y, x1, y1, x2, y2);
 
 				/* Affect the grid */
 				if (project_f(who, d, x, y, dam, typ)) notice = TRUE;
@@ -4624,7 +4624,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			/* Find the closest point in the blast */
 			if (breath)
 			{
-				int d = dist_to_line(y, x, y1, x1, y2, x2);
+				int d = dist_to_line(x, y, x1, y1, x2, y2);
 
 				/* Affect the object in the grid */
 				if (project_o(who, d, x, y, dam, typ)) notice = TRUE;
@@ -4664,7 +4664,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				/* Find the closest point in the blast */
 				if (breath)
 				{
-					int d = dist_to_line(y, x, y1, x1, y2, x2);
+					int d = dist_to_line(x, y, x1, y1, x2, y2);
 
 					/* Affect the monster in the grid */
 					if (project_m(who, d, x, y, dam, typ)) notice = TRUE;
@@ -4759,7 +4759,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			/* Find the closest point in the blast */
 			if (breath)
 			{
-				int d = dist_to_line(y, x, y1, x1, y2, x2);
+				int d = dist_to_line(x, y, x1, y1, x2, y2);
 
 				/* Affect the player */
 				if (project_p(who, d, x, y, dam, typ, rad)) notice = TRUE;

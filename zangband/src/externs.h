@@ -668,7 +668,7 @@ extern void remove_loc(void);
 
 /* spells1.c */
 extern void take_hit(int damage, cptr kb_str);
-extern int dist_to_line(int y, int x, int y1, int x1, int y2, int x2);
+extern int dist_to_line(int x, int y, int x1, int y1, int x2, int y2);
 extern bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg);
 
 /* spells2.c */
