@@ -47,6 +47,10 @@ struct birther
 	s16b stat[6];
 
 	char history[4][60];
+
+	s16b patron;
+
+	s16b hp[PY_MAX_LEVEL];
 };
 
 
@@ -810,6 +814,15 @@ static void save_prev_data(void)
 	{
 		strcpy(prev.history[i], history[i]);
 	}
+
+	/* Save the patron */
+	prev.patron = p_ptr->chaos_patron;
+
+	/* Save the hitpoints */
+	for (i = 0; i < PY_MAX_LEVEL; i++)
+	{
+		prev.hp[i] = player_hp[i];
+	}
 }
 
 
@@ -844,6 +857,15 @@ static void load_prev_data(void)
 		strcpy(temp.history[i], history[i]);
 	}
 
+	/* Save the patron */
+	temp.patron = p_ptr->chaos_patron;
+
+	/* Save the hitpoints */
+	for (i = 0; i < PY_MAX_LEVEL; i++)
+	{
+		temp.hp[i] = player_hp[i];
+	}
+
 
 	/*** Load the previous data ***/
 
@@ -867,6 +889,15 @@ static void load_prev_data(void)
 		strcpy(history[i], prev.history[i]);
 	}
 
+	/* Save the patron */
+	p_ptr->chaos_patron = prev.patron;
+
+	/* Save the hitpoints */
+	for (i = 0; i < PY_MAX_LEVEL; i++)
+	{
+		player_hp[i] = prev.hp[i];
+	}
+
 
 	/*** Save the current data ***/
 
@@ -887,6 +918,15 @@ static void load_prev_data(void)
 	for (i = 0; i < 4; i++)
 	{
 		strcpy(prev.history[i], temp.history[i]);
+	}
+
+	/* Save the patron */
+	prev.patron = temp.patron;
+
+	/* Save the hitpoints */
+	for (i = 0; i < PY_MAX_LEVEL; i++)
+	{
+		prev.hp[i] = temp.hp[i];
 	}
 }
 
