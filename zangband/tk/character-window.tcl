@@ -741,7 +741,7 @@ proc NSCharacterWindow::HookNotes {oop message args} {
 			set text [Info $oop hook,notes,text]
 			$text delete 1.0 end
 			set name [string range [angband player base_name] 0 7].txt
-			set path [Path lib save $name]
+			set path [PathTk lib save $name]
 			if {[file exists $path]} {
 				set id [open $path]
 				$text insert end [read $id]

@@ -290,16 +290,6 @@ if 1 {
 	set Write(savefile) "NSValueManager::Write"
 	variable Read
 	set Read(savefile) "NSValueManager::Read"
-
-	if {$::DEBUG} {
-
-		# Verify we have all the tval's
-		foreach tval [angband info tval] {
-			if {![info exists Value($tval)]} {
-				error "forgot to Manage $tval"
-			}
-		}
-	}
 	
 	LoadValueFile
 
@@ -511,7 +501,7 @@ proc NSValueManager::Changed {name} {
 proc NSValueManager::Write {name} {
 
 	# Instead of writing "Manage savefile {C:/ AngbandTk lib save SaveFile}"
-	# we will write "Manage savefile {Path lib save SaveFile}"
+	# we will write "Manage savefile {PathTk lib save SaveFile}"
 	# so the user can move the game directory without trouble, and
 	# make UpgradeTool's job easier.
 
@@ -524,8 +514,8 @@ proc NSValueManager::Write {name} {
 		savefile {
 			set path [eval file join $value]
 			if {[IsFileInPath $path]} {
-				set list [StripCommon $path [Path]]
-				return [concat Path $list]
+				set list [StripCommon $path [PathTk]]
+				return [concat PathTk $list]
 			}
 		}
 	}
@@ -552,7 +542,7 @@ proc NSValueManager::Read {name} {
 
 	switch -- $name {
 		savefile {
-			if {[lindex $value 0] == "Path"} {
+			if {[lindex $value 0] == "PathTk"} {
 				Manage $name [file split [eval $value]]
 			}
 		}
@@ -727,8 +717,6 @@ proc ExpandSetting {which object event detail} {
 qeinstall detail <Setting> scroll_follow 502 ExpandSetting
 qeinstall detail <Setting> show_icons 503 ExpandSetting
 
-# Hack -- ZAngband uses plain_descriptions
-qebind ZAngband <Setting-plain_descriptions> "qegenerate <Setting-show_flavors>"
 qeinstall detail <Setting> show_flavors 504 ExpandSetting
 
 

@@ -870,7 +870,7 @@ proc NSHighScore::GetTheScores {oop} {
 	set nameList [lsort [array names highscore_predict]]
 
 	# Build the filename
-	set buf [Path lib apex scores.raw]
+	set buf [PathTk lib apex scores.raw]
 
 	# See if the file exists
 	if {[file exists $buf]} {

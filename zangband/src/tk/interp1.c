@@ -2266,7 +2266,7 @@ void angtk_display_info(char *title, char **info, int count)
 
 static void HandleError(void)
 {
-	char message[1024], path[1024];
+	char path[1024];
 	char *errorInfo;
 	FILE *fp;
 
@@ -2281,10 +2281,9 @@ static void HandleError(void)
 	}
 
 	/* Display a message and quit */
-	sprintf(message, "The following error occurred:\n\n%s\n\n",
-		Tcl_GetStringResult(g_interp));
-	strcat(message, "Please send the errors.txt file to dbaker@direct.ca");
-	quit(message);
+	quit_fmt("The following error occurred:\n\n%s\n\n"
+			 "Please examine the errors.txt file to see what happened.",
+				Tcl_GetStringResult(g_interp));
 }
 
 static CommandInit commandInit[] = {

@@ -2206,7 +2206,7 @@ proc NSBirth::Configure {oop stage} {
 		Accept {
 
 			# Choose a place to save it
-			set path [tk_getSaveFile -parent $win -initialdir [Path lib save] \
+			set path [tk_getSaveFile -parent $win -initialdir [PathTk lib save] \
 				-initialfile [angband player name]]
 			update
 

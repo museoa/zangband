@@ -145,18 +145,6 @@ proc Debug {what} {
 	return
 }
 
-if 0 {
-
-set errorInfo {}
-
-rename angband angband_old
-proc angband {args} {
-	Debug "angband $args"
-	eval angband_old $args
-}
-
-}
-
 
 proc InitCommandWindow {} {
 

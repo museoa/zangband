@@ -970,7 +970,6 @@ proc NSOptions::GetPage {page} {
 			return {
 				depth_in_feet
 				show_details
-				plain_descriptions
 				show_labels
 				show_weights
 				show_icons

@@ -10,13 +10,6 @@
 # included in all such copies.
 #
 
-if 0 {
-rename focus old_focus
-proc focus {args} {
-	return [eval old_focus $args]
-}
-}
-
 # Toplevel headaches (Win32, Tk 8.3.3):
 # If a window is withdrawn, then "wm geometry $w" returns the geometry
 # from the last time the window was visible, *not* any requested geomtry.
@@ -979,7 +972,7 @@ proc IsUserFile {path} {
 
 proc IsFileInPath {path} {
 
-	return [IsFileInX $path [Path]]
+	return [IsFileInX $path [PathTk]]
 }
 
 

@@ -420,7 +420,7 @@ proc NSChooseGame::ModalLoop {oop} {
 	puts $fileId "# Automatically generated. Do not edit.\n"
 
 	set wd [pwd]
-	cd [Path lib save]
+	cd [PathTk lib save]
 	set fileList [lsort -dictionary [glob -nocomplain *]]
 	set count [llength $fileList]
 	set i 0
@@ -431,7 +431,7 @@ proc NSChooseGame::ModalLoop {oop} {
 		# non-savefiles
 		if {[file size $file] < 5000} continue
 
-		set path [Path lib save $file]
+		set path [PathTk lib save $file]
 		catch {
 			set path [LongName $path]
 		}
@@ -646,7 +646,7 @@ proc NSChooseGame::Browse {oop} {
 	}
 	set fileName [tk_getOpenFile -filetypes $types -parent $win \
 		-initialfile *.* \
-		-initialdir [Path lib save]]
+		-initialdir [PathTk lib save]]
 	if {[string length $fileName]} {
 		if {[catch {
 			set path [LongName $fileName]

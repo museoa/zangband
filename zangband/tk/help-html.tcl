@@ -1135,11 +1135,11 @@ proc NSHelp::HyperlinkCmd {oop click url} {
 				set doLabel 0
 				if {[file exists $filePath]} {
 					# Nothing
-				} elseif {[file exists [Path lib file $fileName]]} {
-					set url [Path lib file $fileName]
+				} elseif {[file exists [PathTk lib file $fileName]]} {
+					set url [PathTk lib file $fileName]
 					set doLabel 1
-				} elseif {[file exists [Path lib help $fileName]]} {
-					set url [Path lib help $fileName]
+				} elseif {[file exists [PathTk lib help $fileName]]} {
+					set url [PathTk lib help $fileName]
 					set doLabel 1
 				} elseif {[file exists [PathTk doc $fileName]]} {
 					set url [PathTk doc $fileName]
@@ -1201,12 +1201,12 @@ proc NSHelp::DisplayPageByUrl {oop url {title ""}} {
 			# Nothing
 	
 		# Look in lib\file
-		} elseif {[file exists [Path lib file $fileName]]} {
-			set filePath [Path lib file $fileName]
+		} elseif {[file exists [PathTk lib file $fileName]]} {
+			set filePath [PathTk lib file $fileName]
 	
 		# Look in lib\help
-		} elseif {[file exists [Path lib help $fileName]]} {
-			set filePath [Path lib help $fileName]
+		} elseif {[file exists [PathTk lib help $fileName]]} {
+			set filePath [PathTk lib help $fileName]
 	
 		# Look in tk\doc
 		} elseif {[file exists [PathTk doc $fileName]]} {
@@ -1692,7 +1692,7 @@ proc NSHelp::ReadContents {oop path} {
 					set list {}
 					foreach elem $path {
 						if {[string equal $elem ANGBAND_DIR]} {
-							set elem [Path]
+							set elem [PathTk]
 						}
 						lappend list $elem
 					}
@@ -1717,7 +1717,7 @@ proc NSHelp::ReadContents {oop path} {
 				foreach path [split $buf ,] {
 					foreach elem $path {
 						if {[string equal $elem ANGBAND_DIR]} {
-							set elem [Path]
+							set elem [PathTk]
 						}
 						lappend list $elem
 					}
@@ -1734,7 +1734,7 @@ proc NSHelp::ReadContents {oop path} {
 					set list {}
 					foreach elem $path {
 						if {[string equal $elem ANGBAND_DIR]} {
-							set elem [Path]
+							set elem [PathTk]
 						}
 						lappend list $elem
 					}
@@ -1811,10 +1811,10 @@ proc NSHelp::SelectPageCmd {oop url data} {
 
 	if {[file exists $filePath]} {
 		set url2 $filePath
-	} elseif {[file exists [Path lib file $fileName]]} {
-		set url2 [Path lib file $fileName]
-	} elseif {[file exists [Path lib help $fileName]]} {
-		set url2 [Path lib help $fileName]
+	} elseif {[file exists [PathTk lib file $fileName]]} {
+		set url2 [PathTk lib file $fileName]
+	} elseif {[file exists [PathTk lib help $fileName]]} {
+		set url2 [PathTk lib help $fileName]
 	} elseif {[file exists [PathTk doc $fileName]]} {
 		set url2 [PathTk doc $fileName]
 	} else {
@@ -1954,7 +1954,7 @@ namespace eval NSHelp::ZHelp {
 
 proc NSHelp::ZHelp::GetTextByTag {file tag2} {
 
-	set path [Path lib help $file]
+	set path [PathTk lib help $file]
 
 	set tagList [GetTagList $file]
 	if {![llength $tagList]} {
@@ -2017,7 +2017,7 @@ proc NSHelp::ZHelp::GetTextByTag {file tag2} {
 
 proc NSHelp::ZHelp::HlpToHtml {file} {
 
-	set path [Path lib help $file]
+	set path [PathTk lib help $file]
 	if {[catch {open $path} fileId]} {
 		return ""
 	}
@@ -2060,7 +2060,7 @@ proc NSHelp::ZHelp::GetTagList {file} {
 		return $TagList($file)
 	}
 
-	set path [Path lib help $file]
+	set path [PathTk lib help $file]
 	if {[catch {open $path} fileId]} {
 		return {}
 	}
@@ -2112,7 +2112,7 @@ proc NSHelp::ZHelp::GenHelpIndex {} {
 	}
 
 	set wd [pwd]
-	cd [Path lib help]
+	cd [PathTk lib help]
 	catch {
 		foreach file [lsort -dictionary [glob *.txt]] {
 			set tagList [GetTagList $file]

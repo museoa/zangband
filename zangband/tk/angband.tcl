@@ -660,13 +660,13 @@ proc angband_borg {command} {
 			set prefix [Value borg,prefix]
 			set shLib borg[info sharedlibextension]
 			if {[string length $prefix] &&
-				[file exists [Path borg $prefix $shLib]]} {
+				[file exists [PathTk borg $prefix $shLib]]} {
 
 				# Tell the binary which directory to use
-				borg path [Path borg $prefix]
+				borg path [PathTk borg $prefix]
 
 				# Tell the binary which DLL to load
-				borg dll [Path borg $prefix $shLib]
+				borg dll [PathTk borg $prefix $shLib]
 
 				# Remember the prefix. "Value borg,prefix" may be changed
 				# by the user in the Borg Window, but "Global borg,prefix"

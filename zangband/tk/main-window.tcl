@@ -775,7 +775,7 @@ proc NSMainWindow::InitMenus {oop} {
 	set entries {}
 	lappend entries [list -type command -label [mc Alternate] -identifier E_PREF_ALTERNATE]
 	lappend entries [list -type command -label [mc Assign] -identifier E_PREF_ASSIGN]
-	if {[file exists [Path borg borg.tcl]]} {
+	if {[file exists [PathTk borg borg.tcl]]} {
 		lappend entries [list -type command -label [mc Borg] -identifier E_PREF_BORG]
 	}
 	lappend entries [list -type command -label [mc Color] -identifier E_PREF_COLOR]
@@ -907,7 +907,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 		E_PREF_ALTERNATE
 	lappend identList M_PHOTO E_PHOTO_NEW E_PHOTO_OPEN
 
-	if {[file exists [Path borg borg.tcl]]} {
+	if {[file exists [PathTk borg borg.tcl]]} {
 		lappend identList E_PREF_BORG
 	}
 

@@ -40,9 +40,9 @@ proc bgerror {err} {
 	tk_messageBox -title "Error in $Angband(name)" \
 		-message $message -icon info -parent $parent
 
-	if {[catch {open [Path errors.txt] a} fileId]} {
+	if {[catch {open [PathTk errors.txt] a} fileId]} {
 		tk_messageBox -icon error -title Error \
-			-message "Couldn't open [Path errors.txt]"
+			-message "Couldn't open [PathTk errors.txt]"
 		return
 	}
 
@@ -92,7 +92,7 @@ proc HandleError {err {prompt ""}} {
 	if {[catch {open [PathTk errors.txt] a} fileId]} {
 		if {$::DEBUG} {
 			tk_messageBox -icon error -title Error \
-				-message "Couldn't open [Path errors.txt]\n$fileId"
+				-message "Couldn't open [PathTk errors.txt]\n$fileId"
 		}
 	} else {
 		catch {

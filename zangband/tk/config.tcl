@@ -291,7 +291,7 @@ proc NSConfig::Source {fileName namespace} {
 proc NSConfig::FileLibData {file} {
 
 	set file [file tail $file]
-	return [Path lib data $file]
+	return [PathTk lib data $file]
 }
 
 # NSConfig::FindImage --
@@ -734,10 +734,10 @@ proc NSConfig::ReadTownVault {} {
 			set stack $errorInfo
 
 			# Some people get an error. Note the problem and fail silently.
-			if {[catch {open [Path errors.txt] a} fileId]} {
+			if {[catch {open [PathTk errors.txt] a} fileId]} {
 				if {$::DEBUG} {
 					tk_messageBox -icon error -title Error \
-						-message "Couldn't open [Path errors.txt]\n$fileId"
+						-message "Couldn't open [PathTk errors.txt]\n$fileId"
 				}
 			} else {
 				catch {
@@ -873,18 +873,7 @@ namespace eval Config::Assign {
 proc Config::Assign::Source {path} {
 
 	source $path
-if 0 {
-	# Debug
-	foreach group [assign groups] {
-		set count [assign count $group]
-		for {set i 0} {$i < $count} {incr i} {
-			set assign [assign set $group $i]
-			if {[string equal $assign "icon default 0"]} {
-				Debug "$group $i $assign"
-			}
-		}
-	}
-}
+
 	return
 }
 
