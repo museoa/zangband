@@ -1446,15 +1446,17 @@ void display_dungeon(void)
 	int x, y;
 	byte a;
 	char c;
+	
+	int wid = Term->wid / 2, hgt = Term->hgt / 2;
 
 #ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
 #endif /* USE_TRANSPARENCY */
 
-	for (x = px - Term->wid / 2 + 1; x <= px + Term->wid / 2; x++)
+	for (x = px - wid + 1; x <= px + wid; x++)
 	{
-		for (y = py - Term->hgt / 2 + 1; y <= py + Term->hgt / 2; y++)
+		for (y = py - hgt + 1; y <= py + hgt; y++)
 		{
 			if (in_bounds2(y, x))
 			{
@@ -1469,10 +1471,10 @@ void display_dungeon(void)
 
 #ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c, ta, tc);
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c);
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
 #endif /* USE_TRANSPARENCY */
 
 			}
@@ -1491,10 +1493,10 @@ void display_dungeon(void)
 
 #ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c, ta, tc);
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + Term->wid / 2 - 1, y - py + Term->hgt / 2 - 1, a, c);
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
 #endif /* USE_TRANSPARENCY */
 			}
 		}
@@ -1528,10 +1530,10 @@ void lite_spot(int y, int x)
 
 #ifdef USE_TRANSPARENCY
 		/* Hack -- Queue it */
-		Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
+		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 		/* Hack -- Queue it */
-		Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c);
+		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
 	}
 }
@@ -1553,7 +1555,7 @@ void prt_map(void)
 	s16b	xmin, xmax, ymin, ymax;
 	
 	/* Temp variables to speed up deletion loops */
-	s16b l1, l2;
+	s16b l1, l2, l3;
 	
 	byte *pa;
 	char *pc;
@@ -1603,23 +1605,19 @@ void prt_map(void)
 		Term_erase(13, y, map_wid);
 	}
 	
-	/* Left section of screen */
+	/* Sides of screen */
+	/* Left side */
 	l1 = xmin - panel_col_min;
 	
-	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
-	{
-		/* Erase the section */
-		Term_erase(13, y, l1);
-	}
-
-	/* Right section of screen */
-	l1 = xmax - panel_col_prt;
-	l2 = xmax - panel_col_min - map_wid;	
+	/* Right side */
+	l2 = xmax - panel_col_prt;
+	l3 = Term->wid - l2;
 	
 	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
 	{
-		/* Erase the section */
-		Term_erase(l1, y, l2);
+		/* Erase the sections */
+		Term_erase(13, y, l1);
+		Term_erase(l2, y, l3);
 	}
 	
 	/* Pointers to current position in the string */
