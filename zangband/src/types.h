@@ -508,17 +508,14 @@ struct wild_grid_type
 	/* Pointers to blocks */
 	blk_ptr block_ptr[WILD_GRID_SIZE][WILD_GRID_SIZE];
 	
-	/* Location of blocks in cache */
-	byte block_num[WILD_GRID_SIZE][WILD_GRID_SIZE];
-	
 	/* Number of grids in cache */
 	byte cache_count;
 	
-	int y_max;
-	int x_max;
+	u16b y_max;
+	u16b x_max;
 	
-	int y_min;
-	int x_min;
+	u16b y_min;
+	u16b x_min;
 	
 	u32b wild_seed;
 };

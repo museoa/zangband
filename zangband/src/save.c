@@ -1076,14 +1076,13 @@ static void wr_extra(void)
 	wr_s32b(turn);
 }
 
-
-
 /*
- * Write the current dungeon
+ * Save the dungeon or wilderness
  */
-static void wr_dungeon(void)
+
+static void save_map(int ymax, int ymin, int xmax, int xmin)
 {
-	int i, y, x;
+	int y, x;
 
 	byte tmp8u;
 	u16b tmp16s;
@@ -1093,7 +1092,222 @@ static void wr_dungeon(void)
 	s16b prev_s16b;
 
 	cave_type *c_ptr;
+	
+	/*** Simple "Run-Length-Encoding" of cave ***/
 
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_char = 0;
+
+	/* Dump the cave */
+	for (y = ymin; y < ymax; y++)
+	{
+		for (x = xmin; x < xmax; x++)
+		{
+			/* Get the cave */
+			c_ptr = area(y,x);
+	
+			/* Extract a byte */
+			tmp8u = c_ptr->info;
+
+			/* If the run is broken, or too full, flush it 	*/
+			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			{
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
+				prev_char = tmp8u;
+				count = 1;
+			}
+
+			/* Continue the run */
+			else
+			{
+				count++;
+			}
+		}
+	}
+	
+	/* Flush the data (if any) */
+	if (count)
+	{
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+	}
+
+
+	/*** Simple "Run-Length-Encoding" of cave ***/
+
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_char = 0;
+
+	/* Dump the cave */
+	for (y = ymin; y < ymax; y++)
+	{
+		for (x = xmin; x < xmax; x++)
+		{
+			/* Get the cave */
+			c_ptr = area(y,x);
+
+			/* Extract a byte */
+			tmp8u = c_ptr->feat;
+
+			/* If the run is broken, or too full, flush it */
+			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			{
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
+				prev_char = tmp8u;
+				count = 1;
+			}
+
+			/* Continue the run */
+			else
+			{
+				count++;
+			}
+		}
+	}
+
+	/* Flush the data (if any) */
+	if (count)
+	{
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+	}
+
+
+	/*** Simple "Run-Length-Encoding" of cave ***/
+
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_char = 0;
+
+	/* Dump the cave */
+	for (y = ymin; y < ymax; y++)
+	{
+		for (x = xmin; x < xmax; x++)
+		{
+			/* Get the cave */
+			c_ptr = area(y,x);
+
+			/* Extract a byte */
+			tmp8u = c_ptr->mimic;
+
+			/* If the run is broken, or too full, flush it */
+			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			{	
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
+				prev_char = tmp8u;
+				count = 1;
+			}
+
+			/* Continue the run */
+			else
+			{
+				count++;
+			}
+		}
+	}
+
+	/* Flush the data (if any) */
+	if (count)
+	{
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+	}
+
+
+	/*** Simple "Run-Length-Encoding" of cave ***/
+
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_s16b = 0;
+
+	/* Dump the cave */
+	for (y = ymin; y < ymax; y++)
+	{
+		for (x = xmin; x < xmax; x++)
+		{
+			/* Get the cave */
+			c_ptr = area(y,x);
+
+			/* Extract a byte */
+			tmp16s = c_ptr->special;
+
+			/* If the run is broken, or too full, flush it */
+			if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
+			{
+				wr_byte((byte)count);
+				wr_u16b(prev_s16b);
+				prev_s16b = tmp16s;
+				count = 1;
+			}
+
+			/* Continue the run */
+			else
+			{
+				count++;
+			}
+		}
+	}
+
+	/* Flush the data (if any) */
+	if (count)
+	{
+		wr_byte((byte)count);
+		wr_u16b(prev_s16b);
+	}
+}
+
+/* 
+ * Save wilderness data
+ */	
+static void save_wild_data(void)
+{
+	int i, j;
+	
+	/* Save bounds */
+	wr_u16b(wild_grid.y_max);
+	wr_u16b(wild_grid.x_max);
+	wr_u16b(wild_grid.y_min);
+	wr_u16b(wild_grid.x_min);
+	wr_byte(wild_grid.y);
+	wr_byte(wild_grid.x);
+	
+	/* Save cache status */
+	wr_byte(wild_grid.cache_count);
+	
+	/* Save wilderness seed */
+	wr_u32b(wild_grid.wild_seed);
+	
+	/* Save wilderness map */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		for (j = 0; j < WILD_SIZE; j++)
+		{
+			/* Terrain */
+			wr_u16b(wild[j][i].done.wild);
+			
+			/* Town / Dungeon / Specials */
+			wr_u16b(wild[j][i].done.town);
+			
+			/* Info flag */
+			wr_byte(wild[j][i].done.info);
+			
+			/* Monster Gen type */
+			wr_byte(wild[j][i].done.mon_gen);			
+		}	
+	}
+}
+
+/*
+ * Write the current dungeon
+ */
+static void wr_dungeon(void)
+{
+	int i;
 
 	/*** Basic info ***/
 
@@ -1107,176 +1321,27 @@ static void wr_dungeon(void)
 	wr_u16b(cur_wid);
 	wr_u16b(max_panel_rows);
 	wr_u16b(max_panel_cols);
-
+	
+	/* Save wilderness data */	
+	save_wild_data();
+	
 	if(dun_level)
 	{
-		/*** Simple "Run-Length-Encoding" of cave ***/
-
-		/* Note that this will induce two wasted bytes */
-		count = 0;
-		prev_char = 0;
-
-		/* Dump the cave */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				/* Get the cave */
-				c_ptr = &cave[y][x];
-	
-				/* Extract a byte */
-				tmp8u = c_ptr->info;
-
-				/* If the run is broken, or too full, flush it 	*/
-				if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-				{
-					wr_byte((byte)count);
-					wr_byte((byte)prev_char);
-					prev_char = tmp8u;
-					count = 1;
-				}
-
-				/* Continue the run */
-				else
-				{
-					count++;
-				}
-			}
-		}
-	
-		/* Flush the data (if any) */
-		if (count)
-		{
-			wr_byte((byte)count);
-			wr_byte((byte)prev_char);
-		}
-
-
-		/*** Simple "Run-Length-Encoding" of cave ***/
-
-		/* Note that this will induce two wasted bytes */
-		count = 0;
-		prev_char = 0;
-
-		/* Dump the cave */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				/* Get the cave */
-				c_ptr = &cave[y][x];
-
-				/* Extract a byte */
-				tmp8u = c_ptr->feat;
-
-				/* If the run is broken, or too full, flush it */
-				if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-				{
-					wr_byte((byte)count);
-					wr_byte((byte)prev_char);
-					prev_char = tmp8u;
-					count = 1;
-				}
-
-				/* Continue the run */
-				else
-				{
-					count++;
-				}
-			}
-		}
-
-		/* Flush the data (if any) */
-		if (count)
-		{
-			wr_byte((byte)count);
-			wr_byte((byte)prev_char);
-		}
-
-
-		/*** Simple "Run-Length-Encoding" of cave ***/
-
-		/* Note that this will induce two wasted bytes */
-		count = 0;
-		prev_char = 0;
-
-		/* Dump the cave */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				/* Get the cave */
-				c_ptr = &cave[y][x];
-
-				/* Extract a byte */
-				tmp8u = c_ptr->mimic;
-
-				/* If the run is broken, or too full, flush it */
-				if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-				{	
-					wr_byte((byte)count);
-					wr_byte((byte)prev_char);
-					prev_char = tmp8u;
-					count = 1;
-				}
-
-				/* Continue the run */
-				else
-				{
-					count++;
-				}
-			}
-		}
-
-		/* Flush the data (if any) */
-		if (count)
-		{
-			wr_byte((byte)count);
-			wr_byte((byte)prev_char);
-		}
-
-
-		/*** Simple "Run-Length-Encoding" of cave ***/
-
-		/* Note that this will induce two wasted bytes */
-		count = 0;
-		prev_s16b = 0;
-
-		/* Dump the cave */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				/* Get the cave */
-				c_ptr = &cave[y][x];
-
-				/* Extract a byte */
-				tmp16s = c_ptr->special;
-
-				/* If the run is broken, or too full, flush it */
-				if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
-				{
-					wr_byte((byte)count);
-					wr_u16b(prev_s16b);
-					prev_s16b = tmp16s;
-					count = 1;
-				}
-
-				/* Continue the run */
-				else
-				{
-					count++;
-				}
-			}
-		}
-
-		/* Flush the data (if any) */
-		if (count)
-		{
-			wr_byte((byte)count);
-			wr_u16b(prev_s16b);
-		}
+		/* Save dungeon map*/
+		save_map(cur_hgt, 0, cur_wid, 0);	
+		
+		/* Save wilderness map*/
+		change_level(0); 
+		save_map(wild_grid.y_max, wild_grid.y_min,
+		   wild_grid.x_max, wild_grid.x_min);
+		change_level(dun_level);
 	}
+	else
+	{
+		save_map(wild_grid.y_max, wild_grid.y_min,
+		   wild_grid.x_max, wild_grid.x_min);	
+	}
+
 
 	/* Compact the objects */
 	compact_objects(0);

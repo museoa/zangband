@@ -1867,7 +1867,7 @@ static errr rd_dungeon_aux(void)
 				}
 
 				/* Access the cave */
-				c_ptr = &cave[ychar][xchar];
+				c_ptr = area(ychar,xchar);
 
 				/* Hack -- Clear all the flags */
 				c_ptr->info = 0x00;
@@ -2056,7 +2056,7 @@ static errr rd_dungeon_aux(void)
 
 
 		/* Access the item location */
-		c_ptr = &cave[q_ptr->iy][q_ptr->ix];
+		c_ptr = area(q_ptr->iy,q_ptr->ix);
 
 
 		/* Hack -- convert old "dungeon" objects */
@@ -2422,7 +2422,7 @@ static errr rd_dungeon_aux(void)
 
 
 		/* Access grid */
-		c_ptr = &cave[q_ptr->fy][q_ptr->fx];
+		c_ptr = area(q_ptr->fy,q_ptr->fx);
 
 		/* Access race */
 		r_ptr = &r_info[q_ptr->r_idx];
@@ -2464,7 +2464,7 @@ static errr rd_dungeon_aux(void)
 	{
 		for (x = 0; x < cur_wid; x++)
 		{
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			/* Hack -- convert nothing-ness into floors */
 			if (!c_ptr->feat) c_ptr->feat = FEAT_FLOOR;
@@ -2482,6 +2482,198 @@ static errr rd_dungeon_aux(void)
 
 
 /*
+ * Load dungeon or wilderness map
+ */
+
+static void load_map(int ymax, int ymin, int xmax, int xmin)
+{
+	int i, y, x;
+	byte count;
+	byte tmp8u;
+	s16b tmp16s;
+	cave_type *c_ptr;
+
+	/*** Run length decoding ***/
+
+	/* Load the dungeon data */
+	for (x = xmin, y = ymin; y < ymax; )
+	{
+		/* Grab RLE info */
+		rd_byte(&count);
+		rd_byte(&tmp8u);
+
+		/* Apply the RLE info */
+		for (i = count; i > 0; i--)
+		{
+			/* Access the cave */
+			c_ptr = area(y,x);
+
+			/* Extract "info" */
+			c_ptr->info = tmp8u;
+
+			/* Advance/Wrap */
+			if (++x >= xmax)
+			{
+				/* Wrap */
+				x = xmin;
+
+				/* Advance/Wrap */
+				if (++y >= ymax) break;
+			}
+		}
+	}
+
+
+	/*** Run length decoding ***/
+
+	/* Load the dungeon data */
+	for (x = xmin, y = ymin; y < ymax; )
+	{
+		/* Grab RLE info */
+		rd_byte(&count);
+		rd_byte(&tmp8u);
+
+		/* Apply the RLE info */
+		for (i = count; i > 0; i--)
+		{
+			/* Access the cave */
+			c_ptr = area(y,x);
+
+			/* Extract "feat" */
+			c_ptr->feat = tmp8u;
+
+			/* Advance/Wrap */
+			if (++x >= xmax)
+			{
+				/* Wrap */
+				x = xmin;
+
+				/* Advance/Wrap */
+				if (++y >= ymax) break;
+			}
+		}
+	}
+
+
+	if (!z_older_than(2, 1, 3))
+	{
+		/*** Run length decoding ***/
+
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Access the cave */
+				c_ptr = area(y,x);
+	
+				/* Extract "feat" */
+				c_ptr->mimic = tmp8u;
+
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+
+		/*** Run length decoding ***/
+
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_s16b(&tmp16s);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Access the cave */
+				c_ptr = area(y,x);
+	
+				/* Extract "feat" */
+				c_ptr->special = tmp16s;
+
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+	}
+}
+
+
+/* 
+ * Load wilderness data
+ */	
+static void load_wild_data(void)
+{
+	int i, j, n;
+	
+	/* Load bounds */
+	rd_u16b(&wild_grid.y_max);
+	rd_u16b(&wild_grid.x_max);
+	rd_u16b(&wild_grid.y_min);
+	rd_u16b(&wild_grid.x_min);
+	rd_byte(&wild_grid.y);
+	rd_byte(&wild_grid.x);
+	
+	/* Load cache status */
+	rd_byte(&wild_grid.cache_count);
+	
+	/* Load wilderness seed */
+	rd_u32b(&wild_grid.wild_seed);
+	
+	/* Load wilderness map */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		for (j = 0; j < WILD_SIZE; j++)
+		{
+			/* Terrain */
+			rd_u16b(&wild[j][i].done.wild);
+			
+			/* Town / Dungeon / Specials */
+			rd_u16b(&wild[j][i].done.town);
+			
+			/* Info flag */
+			rd_byte(&wild[j][i].done.info);
+			
+			/* Monster Gen type */
+			rd_byte(&wild[j][i].done.mon_gen);			
+		}	
+	}
+	
+	/* Allocate blocks around player */
+	for(i = 0; i < WILD_GRID_SIZE; i++)
+	{
+		for(j = 0; j < WILD_GRID_SIZE; j++)
+		{
+			/* Allocate block and link to the grid */
+			n = i + WILD_GRID_SIZE * j;
+			wild_grid.block_ptr[j][i] = wild_cache[n].block_ptr;	
+		}	
+	}
+}
+
+
+/*
  * Read the dungeon
  *
  * The monsters/objects must be loaded in the same order
@@ -2489,11 +2681,8 @@ static errr rd_dungeon_aux(void)
  */
 static errr rd_dungeon(void)
 {
-	int i, y, x;
-	int ymax, xmax;
-	byte count;
-	byte tmp8u;
-	s16b tmp16s;
+	int i;
+	
 	u16b limit;
 	cave_type *c_ptr;
 
@@ -2522,146 +2711,42 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
 	
-	create_wilderness();
-	
-	if(dun_level)
+	/* Old method */
+	if (older_than(2, 8, 0))
 	{
-		/* Old method */
-		if (older_than(2, 8, 0))
-		{
-			return (rd_dungeon_aux());
-		}
-
-		/* Maximal size */
-		ymax = cur_hgt;
-		xmax = cur_wid;
-
-
-		/*** Run length decoding ***/
-
-		/* Load the dungeon data */
-		for (x = y = 0; y < ymax; )
-		{
-			/* Grab RLE info */
-			rd_byte(&count);
-			rd_byte(&tmp8u);
-
-			/* Apply the RLE info */
-			for (i = count; i > 0; i--)
-			{
-				/* Access the cave */
-				c_ptr = &cave[y][x];
-
-				/* Extract "info" */
-				c_ptr->info = tmp8u;
-
-				/* Advance/Wrap */
-				if (++x >= xmax)
-				{
-					/* Wrap */
-					x = 0;
-
-					/* Advance/Wrap */
-					if (++y >= ymax) break;
-				}
-			}
-		}
-
-
-		/*** Run length decoding ***/
-
-		/* Load the dungeon data */
-		for (x = y = 0; y < ymax; )
-		{
-			/* Grab RLE info */
-			rd_byte(&count);
-			rd_byte(&tmp8u);
-
-			/* Apply the RLE info */
-			for (i = count; i > 0; i--)
-			{
-				/* Access the cave */
-				c_ptr = &cave[y][x];
-
-				/* Extract "feat" */
-				c_ptr->feat = tmp8u;
-
-				/* Advance/Wrap */
-				if (++x >= xmax)
-				{
-					/* Wrap */
-					x = 0;
-
-					/* Advance/Wrap */
-					if (++y >= ymax) break;
-				}
-			}
-		}
-
-
-		if (!z_older_than(2, 1, 3))
-		{
-			/*** Run length decoding ***/
-
-			/* Load the dungeon data */
-			for (x = y = 0; y < ymax; )
-			{
-				/* Grab RLE info */
-				rd_byte(&count);
-				rd_byte(&tmp8u);
-
-				/* Apply the RLE info */
-				for (i = count; i > 0; i--)
-				{
-					/* Access the cave */
-					c_ptr = &cave[y][x];
+		return (rd_dungeon_aux());
+	}
+	else if (sf_version<7)
+	{
+		create_wilderness();
+		
+		/* Load dungeon map*/
+		load_map(cur_hgt, 0, cur_wid, 0);
 	
-					/* Extract "feat" */
-					c_ptr->mimic = tmp8u;
-
-					/* Advance/Wrap */
-					if (++x >= xmax)
-					{
-						/* Wrap */
-						x = 0;
-
-						/* Advance/Wrap */
-						if (++y >= ymax) break;
-					}
-				}
-			}
-
-			/*** Run length decoding ***/
-
-			/* Load the dungeon data */
-			for (x = y = 0; y < ymax; )
-			{
-				/* Grab RLE info */
-				rd_byte(&count);
-				rd_s16b(&tmp16s);
-
-				/* Apply the RLE info */
-				for (i = count; i > 0; i--)
-				{
-					/* Access the cave */
-					c_ptr = &cave[y][x];
+	}
+	else
+	{
+		/* Load wilderness data */	
+		load_wild_data();
 	
-					/* Extract "feat" */
-					c_ptr->special = tmp16s;
-
-					/* Advance/Wrap */
-					if (++x >= xmax)
-					{
-						/* Wrap */
-						x = 0;
-
-						/* Advance/Wrap */
-						if (++y >= ymax) break;
-					}
-				}
-			}
+		if(dun_level)
+		{
+			/* Load dungeon map*/
+			load_map(cur_hgt, 0, cur_wid, 0);	
+		
+			/* Load wilderness map*/
+			change_level(0); 
+			load_map(wild_grid.y_max, wild_grid.y_min,
+			   wild_grid.x_max, wild_grid.x_min);
+			change_level(dun_level);
+		}
+		else
+		{
+			load_map(wild_grid.y_max, wild_grid.y_min,
+			   wild_grid.x_max, wild_grid.x_min);	
 		}
 	}
+	
 	
 	/*** Objects ***/
 
@@ -2722,7 +2807,7 @@ static errr rd_dungeon(void)
 		else
 		{
 			/* Access the item location */
-			c_ptr = &cave[o_ptr->iy][o_ptr->ix];
+			c_ptr = area(o_ptr->iy,o_ptr->ix);
 
 			/* Build a stack */
 			o_ptr->next_o_idx = c_ptr->o_idx;
@@ -2774,7 +2859,7 @@ static errr rd_dungeon(void)
 
 
 		/* Access grid */
-		c_ptr = &cave[m_ptr->fy][m_ptr->fx];
+		c_ptr = area(m_ptr->fy,m_ptr->fx);
 
 		/* Mark the location */
 		c_ptr->m_idx = m_idx;
