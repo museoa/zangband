@@ -170,7 +170,7 @@ $(PORTS): install
 ##
 ## Hack - default install action
 ##
-INSTALL := cp zangband ..
+INSTALL = cp zangband$(EXEC) ..
 
 ##
 ## Variation -- All the ports that work in Linux at once.
@@ -197,6 +197,7 @@ cygwin: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
 cygwin: ANGOBJS += angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
+cygwin: EXEC := .exe
 cygwin: RESCMD = $< -O coff -o $@
 
 ##
@@ -268,6 +269,7 @@ dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
 dos: LUA := lua\# Dos has different path seperators
+dos: EXEC := .exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port
@@ -275,6 +277,7 @@ dos: LUA := lua\# Dos has different path seperators
 ibm: CFLAGS += -DUSE_IBM
 ibm: LIBS := -lpc
 ibm: LUA := lua\# Dos has different path seperators
+ibm: EXEC := .exe
 
 ##
 ## Variation -- Compile using the lcc32 compiler
@@ -288,6 +291,7 @@ lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
 lcc: ANGOBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := lua\# Dos has different path seperators
+lcc: EXEC := .exe
 
 ##
 ## Variation -- Compile for Risc OS 3.10 or later  (Acorn)
@@ -300,6 +304,7 @@ risc: CFLAGS := -IOS:,C: -throwback -depend !Depend -Wan -ff -zps1 #-g
 risc: LDFLAGS := -s symbols #-d
 risc: INSTALL := Squeeze zangband ^.!RunImage
 risc: ANGOBJS += C:o.Stubs OSLib:o.OSLib C:o.eventlib
+
 
 ##########################################################
 
@@ -343,7 +348,7 @@ endif
 ## makefile system.)
 ##
 
-install: zangband
+install: zangband$(EXEC)
 	$(INSTALL)
 
 
@@ -351,8 +356,8 @@ install: zangband
 ## Build the "ZAngband" program
 ##
 
-zangband: $(OBJS)
-	$(CC) $(CFLAGS) -o zangband $(OBJS) $(LDFLAGS) $(LIBS)
+zangband$(EXEC): $(OBJS)
+	$(CC) $(CFLAGS) -o zangband$(EXEC) $(OBJS) $(LDFLAGS) $(LIBS)
 
 
 
@@ -383,7 +388,7 @@ depend:
 ## Lua stuff
 ##
 
-$(LUA)tolua: $(TOLUAOBJS)
+$(LUA)tolua$(EXEC): $(TOLUAOBJS)
 	$(CC) -o $(LUA)tolua $(TOLUAOBJS) $(LDFLAGS) $(LIBS)
 
 ##
@@ -470,8 +475,8 @@ angband.res : angband.rc
 ## trailing ".c" from the filename.
 ##
 
-$(LUAWSRCS): %.c: %.pkg $(LUA)tolua
-	lua/tolua -n $(subst l-,,$*) -o $@ $<
+$(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
+	lua/tolua$(EXEC) -n $(subst l-,,$*) -o $@ $<
 
 ##
 ## Hack... .o files can be created from .obj files
