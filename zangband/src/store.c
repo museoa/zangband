@@ -721,7 +721,8 @@ static object_type *store_carry(object_type *o_ptr)
 
 	/* Identify it fully */
 	object_known(o_ptr);
-
+	object_mental(o_ptr);
+	
 	/* Save all the known flags */
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;

@@ -2801,7 +2801,7 @@
 #define OB_EMPTY     0x04		/* Item charges are known */
 #define OB_KNOWN     0x08		/* Item abilities are known */
 #define OB_STOREB    0x10		/* Item is storebought */
-#define OB_DUMMY2    0x20
+#define OB_MENTAL    0x20		/* Item is *id*'ed */
 #define OB_DUMMY3    0x40
 #define OB_DUMMY4    0x80
 
@@ -3873,10 +3873,7 @@
  * Is the object fully known?
  */
 #define object_known_full(T) \
-	(((T)->flags1 | (T)->flags2 | (T)->flags3) && \
-		((T)->flags1 == (T)->kn_flags1) && \
-		((T)->flags2 == (T)->kn_flags2) && \
-		((T)->flags3 == (T)->kn_flags3)) \
+	((T)->info & (OB_MENTAL))
 
 
 /*

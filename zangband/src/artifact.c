@@ -1570,6 +1570,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		/* Identify it fully */
 		object_aware(o_ptr);
 		object_known(o_ptr);
+		object_mental(o_ptr);
 
 		/* Save all the known flags */
 		o_ptr->kn_flags1 = o_ptr->flags1;

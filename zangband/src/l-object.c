@@ -3352,6 +3352,27 @@ tolua_lerror:
  return 0;
 }
 
+/* function: object_mental */
+static int toluaI_object_object_mental00(lua_State* tolua_S)
+{
+ if (
+     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
+     !tolua_isnoobj(tolua_S,2)
+ )
+  goto tolua_lerror;
+ else
+ {
+  object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
+  {
+   object_mental(o_ptr);
+  }
+ }
+ return 0;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'object_mental'.");
+ return 0;
+}
+
 /* function: flag_cost */
 static int toluaI_object_flag_cost00(lua_State* tolua_S)
 {
@@ -5262,7 +5283,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_constant(tolua_S,NULL,"OB_EMPTY",OB_EMPTY);
  tolua_constant(tolua_S,NULL,"OB_KNOWN",OB_KNOWN);
  tolua_constant(tolua_S,NULL,"OB_STOREB",OB_STOREB);
- tolua_constant(tolua_S,NULL,"OB_DUMMY2",OB_DUMMY2);
+ tolua_constant(tolua_S,NULL,"OB_MENTAL",OB_MENTAL);
  tolua_constant(tolua_S,NULL,"OB_DUMMY3",OB_DUMMY3);
  tolua_constant(tolua_S,NULL,"OB_DUMMY4",OB_DUMMY4);
  tolua_constant(tolua_S,NULL,"TR1_STR",TR1_STR);
@@ -5526,6 +5547,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"object_known",toluaI_object_object_known00);
  tolua_function(tolua_S,NULL,"object_aware",toluaI_object_object_aware00);
  tolua_function(tolua_S,NULL,"object_tried",toluaI_object_object_tried00);
+ tolua_function(tolua_S,NULL,"object_mental",toluaI_object_object_mental00);
  tolua_function(tolua_S,NULL,"flag_cost",toluaI_object_flag_cost00);
  tolua_function(tolua_S,NULL,"object_value",toluaI_object_object_value00);
  tolua_function(tolua_S,NULL,"object_value_real",toluaI_object_object_value_real00);
@@ -6420,7 +6442,7 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_EMPTY");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_KNOWN");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_STOREB");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_DUMMY2");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_MENTAL");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_DUMMY3");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_DUMMY4");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"TR1_STR");
@@ -6604,6 +6626,7 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_known");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_aware");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_tried");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_mental");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"flag_cost");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_value");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_value_real");

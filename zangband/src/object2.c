@@ -863,6 +863,14 @@ void object_tried(object_type *o_ptr)
 	k_info[o_ptr->k_idx].tried = TRUE;
 }
 
+/*
+ * The player has know *identified* the item
+ */
+void object_mental(object_type *o_ptr)
+{
+	o_ptr->info |= (OB_MENTAL);
+}
+
 
 /*
  * Return the "value" of an "unknown" item

@@ -626,6 +626,7 @@ extern s16b get_obj_num(int level, int min_level);
 extern void object_known(object_type *o_ptr);
 extern void object_aware(object_type *o_ptr);
 extern void object_tried(object_type *o_ptr);
+extern void object_mental(object_type *o_ptr);
 extern s32b flag_cost(const object_type *o_ptr, int plusses);
 extern s32b object_value(const object_type *o_ptr);
 extern s32b object_value_real(const object_type *o_ptr);

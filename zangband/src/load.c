@@ -629,7 +629,7 @@ static void rd_item(object_type *o_ptr)
 		}
 
 		/* Identification status */
-		if (o_ptr->info & (0x20))
+		if (o_ptr->info & (OB_MENTAL))
 		{
 			o_ptr->kn_flags1 = o_ptr->flags1;
 			o_ptr->kn_flags2 = o_ptr->flags2;

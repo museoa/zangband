@@ -2257,6 +2257,7 @@ bool identify_fully(void)
 
 	/* Identify it */
 	identify_item(o_ptr);
+	object_mental(o_ptr);
 
 	/* Save all the known flags */
 	o_ptr->kn_flags1 = o_ptr->flags1;
