@@ -1291,7 +1291,7 @@ proc NSRecall::PetCmdInfo {_mode} {
 		lappend data $char [mc "Dismiss pets"]
 	}
 
-	set dist [struct set player_type 0 pet_follow_distance]
+#	set dist [struct set player_type 0 pet_follow_distance]
 	set mode ""
 
 	set char [string index $letters [incr index]]
@@ -1321,18 +1321,10 @@ proc NSRecall::PetCmdInfo {_mode} {
 	}
 		
 	set char [string index $letters [incr index]]
-	if {[struct set player_type 0 pet_open_doors]} {
-		lappend data $char [mc "Disallow open doors"]
-	} else {
-		lappend data $char [mc "Allow open doors"]
-	}
+	lappend data $char [mc "Allow open doors"]
 
 	set char [string index $letters [incr index]]
-	if {[struct set player_type 0 pet_pickup_items]} {
-		lappend data $char [mc "Disallow pickup items"]
-	} else {
-		lappend data $char [mc "Allow pickup items"]
-	}
+	lappend data $char [mc "Allow pickup items"]
 
 	return $data
 }

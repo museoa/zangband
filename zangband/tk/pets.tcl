@@ -214,7 +214,7 @@ proc NSPets::InitWindow {oop} {
 	set height [expr {3 + $fontHeight + 3}]
 	$canvas2 configure -height $height
 
-	foreach title {Name Items Upkeep Status} anchor {nw ne ne nw} {
+	foreach title {Name Items Status} anchor {nw ne ne nw} {
 		$canvas2 create text 0 3 -text [mc $title] -fill gray -anchor $anchor \
 			-font $font -tags header,$title
 	}
@@ -482,18 +482,10 @@ proc NSPets::MenuSelect {oop menuId index ident} {
 			set desc "Pets roam freely."
 		}
 		E_DOORS {
-			if {[struct set player_type 0 pet_open_doors]} {
-				set desc "Don't allow pets to open doors."
-			} else {
-				set desc "Allow pets to open doors."
-			}
+			set desc "Allow pets to open doors."
 		}
 		E_ITEMS {
-			if {[struct set player_type 0 pet_pickup_items]} {
-				set desc "Don't allow pets to pick up items."
-			} else {
-				set desc "Allow pets to pick up items."
-			}
+			set desc "Allow pets to pick up items."
 		}
 		
 		default {
@@ -528,7 +520,7 @@ proc NSPets::DisplayCmd {oop message first} {
 	
 	switch -- $message {
 		preDisplay {
-
+if 0 {
 			# XXX Hack -- Synchronzize the radiobutton menu entries
 			Info $oop pet_follow_distance \
 				[struct set player_type 0 pet_follow_distance]
@@ -540,6 +532,7 @@ proc NSPets::DisplayCmd {oop message first} {
 				[struct set player_type 0 pet_pickup_items]
 			
 			SetList $oop
+}		
 		}
 		postDisplay {
 		}
@@ -630,116 +623,7 @@ proc NSPets::CountPetObjects {oop m_idx} {
 	return $numObjects
 }
 
-# NSPets::SetList --
-#
-#	Set the list.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
 
-proc NSPets::SetList {oop} {
-
-	variable Priv
-	
-	set win [Info $oop win]
-	set canvistId [Info $oop canvistId]
-
-	# Clear the list
-	NSCanvist::DeleteAll $canvistId
-
-	set font [Value font,knowledge]
-
-	# We are going to calculate the maximum column width for each
-	# column, and must consider the width of the column titles
-	# in some cases
-	set Priv(width,name) 150
-	set Priv(width,objects) [font measure $font "ABItems"]
-	set Priv(width,upkeep) [font measure $font "ABUpkeep"]
-	set Priv(width,status) [font measure $font "ABStatus"]
-
-#	Info $oop current -1
-
-	# Create a list of m_idx/r_idx pairs
-	set match2 {}
-	foreach m_idx [angband player pets] {
-		set r_idx [angband m_list set $m_idx r_idx]
-		lappend match2 [list $m_idx $r_idx]
-	}
-
-	# Sort based on increasing r_idx, then break up into
-	# m_idx/r_idx lists
-
-	set match [set r_match {}]
-	if {[llength $match2]} {
-		set match2 [lsort -integer -index 1 $match2]
-		foreach elem $match2 {
-			lappend match [lindex $elem 0]
-			lappend r_match [lindex $elem 1]
-		}
-	}
-	Info $oop match $match
-	Info $oop r_match $r_match
-
-	# Total upkeep
-	set total_friend_levels 0
-	
-	# Add each pet to the list
-	foreach m_idx [Info $oop match] r_idx [Info $oop r_match] {
-
-		# Get icon and name
-		set icon [angband r_info info $r_idx icon]
-		set name [angband r_info info $r_idx name]
-
-		# Count the objects carried by the pet
-		set numObjects [CountPetObjects $oop $m_idx]
-
-		set r_level [angband r_info set $r_idx level]
-
-		# look_mon_desc(), but only if visible
-		set status ""
-		if {[angband m_list set $m_idx ml]} {
-			set status [angband m_list info $m_idx look_mon_desc]
-		}
-
-		# Append the pet to the list
-		NSCanvist::Insert $canvistId end $icon $name \
-			$numObjects $r_level $status
-
-		incr total_friend_levels $r_level
-	}
-
-	# Arrange all the items
-	PositionItems $oop
-
-	# Calculate the upkeep
-	set upkeep_factor 0
-	set total_friends [llength [Info $oop match]]
-	set pclass [struct set player_type 0 pclass]
-	set pet_upkeep_div [struct set player_class $pclass pet_upkeep_div]
-	if {$total_friends > 1 + ([angband player level] / $pet_upkeep_div)} {
-		set upkeep_factor $total_friend_levels
-		if {$upkeep_factor > 100} {
-			set upkeep_factor 100
-		} elseif {$upkeep_factor < 10} {
-			set upkeep_factor 10
-		}
-	}
-	
-	# Display the number of pets in the status bar
-	set num [llength [Info $oop match]]
-	if {$num == 1} {
-		set s ""
-	} else {
-		set s s
-	}
-	$win.statusBar itemconfigure t2 \
-		-text "$num pet$s  Upkeep: $upkeep_factor%"
-
-	return
-}
 
 # NSPets::StatusBar --
 #
@@ -773,7 +657,7 @@ proc NSPets::StatusBar {oop text zap} {
 # Results:
 #	What happened.
 
-proc NSPets::NewItemCmd {oop canvistId y iconSpec name numObjects upkeep status {color White}} {
+proc NSPets::NewItemCmd {oop canvistId y iconSpec name numObjects status {color White}} {
 
 	variable Priv
 
@@ -808,11 +692,6 @@ proc NSPets::NewItemCmd {oop canvistId y iconSpec name numObjects upkeep status 
 			-tags objects]
 	}
 	
-	# Upkeep
-	lappend itemIdList [$c create text 0 [expr {$y + $diff}] \
-		-text $upkeep% -anchor ne -font $font -fill $color \
-		-tags upkeep]
-
 	# Status
 	lappend itemIdList [$c create text 0 [expr {$y + $diff}] \
 		-text $status -anchor nw -font $font -fill $color \
@@ -833,12 +712,6 @@ proc NSPets::NewItemCmd {oop canvistId y iconSpec name numObjects upkeep status 
 	set width [font measure $font $numObjects]
 	if {$width > $Priv(width,objects)} {
 		set Priv(width,objects) $width
-	}
-
-	# Maximum width of upkeep
-	set width [font measure $font $upkeep%]
-	if {$width > $Priv(width,upkeep)} {
-		set Priv(width,upkeep) $width
 	}
 
 	# Maximum width of status
@@ -883,11 +756,11 @@ proc NSPets::PositionItems {oop} {
 	if {![NSCanvist::Info $canvistId count]} {
 
 		if {[Info $oop pet_pickup_items]} {
-			set titleList [list Name Items Upkeep Status]
+			set titleList [list Name Items Status]
 			set alignList [list nw ne ne nw]
 		} else {
 			$header coords header,Items 0 3
-			set titleList [list Name Upkeep Status]
+			set titleList [list Name Status]
 			set alignList [list nw ne nw]
 		}
 		foreach title $titleList align $alignList {
@@ -934,13 +807,6 @@ proc NSPets::PositionItems {oop} {
 		$header coords header,Items 0 3
 	}
 	
-	# Position each upkeep
-	incr offset $Priv(width,upkeep)
-	set coords [$canvas coords upkeep]
-	$canvas move upkeep [expr {$offset - [lindex $coords 0]}] 0
-
-	# Configure the upkeep header
-	$header coords header,Upkeep $offset 3
 
 	# Position each status
 	incr offset [font measure $font "AB"]
@@ -1106,7 +972,7 @@ proc NSPets::ValueChanged_font_knowledge {oop} {
 
 	# Set font of list header
 	set canvas [Info $oop header,canvas]
-	foreach title [list Name Items Upkeep Status] {
+	foreach title [list Name Items Status] {
 		$canvas itemconfigure header,$title -font $font
 	}
 

@@ -570,28 +570,6 @@ if 0 {
 		CanvasFeedbackAdd $c $info \
 			"NSMiscWindow::CanvasFeedbackCmd_MiscWindow $title"
 	}
-
-	# Equippy chars
-	set slots [list \
-		INVEN_WIELD \
-		INVEN_BOW \
-		INVEN_LEFT \
-		INVEN_RIGHT \
-		INVEN_NECK \
-		INVEN_LITE \
-		INVEN_BODY \
-		INVEN_OUTER \
-		INVEN_ARM \
-		INVEN_HEAD \
-		INVEN_HANDS \
-		INVEN_FEET \
-	]
-	foreach slot $slots {
-		$c create text 0 0 -text " " -font [Global font,fixed,normal] \
-			-fill White -anchor nw -tags "equippy $slot"
-		CanvasFeedbackAdd $c $slot \
-			"NSMiscWindow::CanvasFeedbackCmd_MiscWindow $slot"
-	}
 	
 	foreach title {HP SP FD} option {hitpoints mana food} {
 		$c create text 0 0 -text [mc $title] -font $font \
@@ -707,8 +685,6 @@ if 0 {
 		scan [angband player $tag] "%d %d %f" cur max frac
 		UpdateHP_SP_FD $tag $cur $max $frac
 	}
-
-	Equippy
 }
 
 	return
@@ -1505,25 +1481,6 @@ return
 
 proc NSMiscWindow::CanvasFeedbackCmd_MiscWindow {info action} {
 
-	# Equippy
-	if {[string match INVEN_* $info]} {
-		set canvas [Global misc,canvas]
-		switch -- $action {
-			press1 {
-				angband equipment info $info attrib
-				if {$attrib(known) && $attrib(activate) && !$attrib(timeout)} {
-					if {[string equal [angband inkey_flags] INKEY_CMD]} {
-						DoKeymapCmd {} A $attrib(char)
-					}
-				}
-			}
-			leave {
-				NSMainWindow::StatusText [Global main,oop] {}
-			}
-		}
-		return
-	}
-
 	if {![string equal $action enter]} {
 		NSMainWindow::StatusText [Global main,oop] {}
 		return
@@ -1864,7 +1821,7 @@ proc NSMiscWindow::MiscArrangeWide {} {
 	$canvas itemconfigure name -anchor w
 	$canvas itemconfigure title -anchor w
 
-	foreach tag {equippy HP SP FD hitpoints mana food} {
+	foreach tag {HP SP FD hitpoints mana food} {
 		$canvas itemconfigure $tag -state hidden
 	}
 
@@ -2060,7 +2017,7 @@ proc NSMiscWindow::MiscArrangeTall {} {
 	$canvas itemconfigure name -anchor nw
 	$canvas itemconfigure title -anchor nw
 
-	foreach tag {equippy HP SP FD hitpoints mana food} {
+	foreach tag {HP SP FD hitpoints mana food} {
 		$canvas itemconfigure $tag -state normal
 	}
 
@@ -2087,32 +2044,8 @@ proc NSMiscWindow::MiscArrangeTall {} {
 		incr y $rowHeight
 	}
 
-	# Equippy
-	set slots [list \
-		INVEN_WIELD \
-		INVEN_BOW \
-		INVEN_LEFT \
-		INVEN_RIGHT \
-		INVEN_NECK \
-		INVEN_LITE \
-		INVEN_BODY \
-		INVEN_OUTER \
-		INVEN_ARM \
-		INVEN_HEAD \
-		INVEN_HANDS \
-		INVEN_FEET \
-	]
-	set fontE [Global font,fixed,normal]
-	set fontHeightE [font metrics $fontE -linespace]
-	set x 2
-	set y [expr {$top1 + $rowHeight * 3}]
-	foreach slot $slots {
-		$canvas coords $slot $x $y
-		incr x [font measure $fontE W]
-	}
-
 	# Stat titles
-	set top2 [expr {$top1 + $rowHeight * 3 + $fontHeightE}]
+	set top2 [expr {$top1 + $rowHeight * 3}]
 	set y $top2
 	foreach title {STR INT WIS DEX CON CHR} {
 		if {$useText} {
@@ -2163,12 +2096,6 @@ proc NSMiscWindow::MiscArrangeTall {} {
 		set minRight 18
 	}
 	incr minRight [font measure $font 99999999]
-
-	# Equippy
-	set right [expr {2 + [font measure $fontE "012345678912"]}]
-	if {$right > $minRight} {
-		set minRight $right
-	}
 
 	# Stat
 	if {$useText} {
@@ -2269,44 +2196,6 @@ proc NSMiscWindow::ValueChanged_font_misc {} {
 	switch -- $layout {
 		wide { MiscArrangeWide }
 		tall { MiscArrangeTall }
-	}
-
-	return
-}
-
-proc NSMiscWindow::Equippy {} {
-
-	if {[Value misc,layout] == "wide"} return
-
-	# Get the Misc Window canvas
-	set canvas [Global misc,canvas]
-
-	set slots [list \
-		INVEN_WIELD \
-		INVEN_BOW \
-		INVEN_LEFT \
-		INVEN_RIGHT \
-		INVEN_NECK \
-		INVEN_LITE \
-		INVEN_BODY \
-		INVEN_OUTER \
-		INVEN_ARM \
-		INVEN_HEAD \
-		INVEN_HANDS \
-		INVEN_FEET \
-	]
-	set index [const INVEN_WIELD]
-	foreach slot $slots {
-		if {[struct set inventory $index k_idx]} {
-			set char [struct info inventory $index char]
-			set attr [struct info inventory $index attr]
-			set name [lindex [angband info term_attr] $attr]
-			$canvas itemconfigure $slot -text $char -fill [Value $name] \
-				-state normal
-		} else {
-			$canvas itemconfigure $slot -state hidden
-		}
-		incr index
 	}
 
 	return

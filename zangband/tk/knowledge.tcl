@@ -1483,35 +1483,6 @@ proc NSKnowledge::hook_monster {oop message args} {
 }
 
 
-proc NSKnowledge::quest_number {} {
-
-	if {[angband player inside_quest]} {
-		return [angband player inside_quest]
-	}
-
-	set level [angband player depth]
-
-	set q_match [struct find quest_type \
-		-field status == QUEST_STATUS_TAKEN \
-		-field type == QUEST_TYPE_KILL_LEVEL \
-		-field flags !& QUEST_FLAG_PRESET \
-		-field level == $level]
-	if {[llength $q_match]} {
-		return [lindex $q_match 0]
-	}
-
-	set q_match [struct find quest_type \
-		-field status == QUEST_STATUS_TAKEN \
-		-field type == QUEST_TYPE_RANDOM \
-		-field level == $level]
-	if {[llength $q_match]} {
-		return [lindex $q_match 0]
-	}
-
-	return -1
-}
-
-
 # NSKnowledge::CalcGroupListWidth --
 #
 #	Returns the desired width of the group list.
