@@ -228,79 +228,6 @@ int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 	return StringToAssign_Icon(interp, assignPtr, desc);
 }
 
-/* (assign) types */
-static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	Tcl_Obj *listObjPtr;
-
-	/* Hack - ignore parameters */
-	(void) objc;
-	(void) objv;
-	(void) clientData;
-
-	listObjPtr = Tcl_NewListObj(0, NULL);
-	
-	Tcl_ListObjAppendElement(interp, listObjPtr,
-		Tcl_NewStringObj(keyword_assign_type[0], -1));
-
-	Tcl_SetObjResult(interp, listObjPtr);
-
-	return TCL_OK;
-}
-
-
-/* (assign) toicon $assign */
-static int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	char buf[128], *t;
-	IconSpec iconSpec;
-	t_assign_icon assign;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	t = Tcl_GetString(objV[1]);
-	if (assign_parse(interp, &assign, t) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	FinalIcon(&iconSpec, &assign);
-	(void) AssignToString_Icon(buf, &assign);
-	Tcl_SetResult(interp, buf + 5, TCL_VOLATILE);
-
-	return TCL_OK;
-}
-
-/* (assign) validate $assign */
-static int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	char *t;
-	t_assign_icon assign;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	t = Tcl_GetString(objV[1]);
-    return assign_parse(interp, &assign, t);
-}
-
-
-CommandInit assignCmdInit[] = {
-	{0, "assign", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "types", 1, 1, NULL, objcmd_assign_types, (ClientData) 0},
-		{1, "toicon", 2, 2, "assign", objcmd_assign_toicon, (ClientData) 0},
-		{1, "validate", 2, 2, "assign", objcmd_assign_validate, (ClientData) 0},
-	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
-};
-
 
 /*
  * Initialize the icon environment. This should be called once with
@@ -447,9 +374,6 @@ void init_icons(int size, int depth)
 
 	/* Clear the color hash table */
 	Palette_ResetHash();
-
-	/* Add some new commands to the global interpreter */
-	CommandInfo_Init(g_interp, assignCmdInit, NULL);
 	
 	if (init_widget(g_interp, g_icon_depth) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
