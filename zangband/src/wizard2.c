@@ -167,7 +167,7 @@ static void prt_binary(u32b flags, int col, int row)
  *
  * Use a monte-carlo method to calculate the probabilities.
  */
-static void prt_alloc(const object_type *o_ptr, int row, int col, u32b monte)
+static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 {
 	u32b i, j;
 	u32b maxd = 1, maxr = 1, maxt = 1;
@@ -946,7 +946,7 @@ static void wiz_statistics(object_type *o_ptr)
 	test_roll = MAX(1, test_roll);
 
 	/* Display the rarity graph */
-	prt_alloc(o_ptr, 2, 0, test_roll);
+	prt_alloc(o_ptr, 0, 2, test_roll);
 }
 
 
@@ -1047,7 +1047,7 @@ static void do_cmd_wiz_play(void)
 	wiz_display_item(q_ptr);
 
 	/* Display the rarity graph - turned off for now (too slow).*/
-	/* prt_alloc(o_ptr, 2, 0, 1000); */
+	/* prt_alloc(o_ptr, 0, 2, 1000); */
 
 	/* The main loop */
 	while (TRUE)
