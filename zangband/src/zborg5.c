@@ -2827,14 +2827,14 @@ static void borg_forget_map(void)
 	map_block *mb_ptr;
 
 	/* Itterate over the map */
-	MAP_ITT_START(mb_ptr)
+	MAP_ITT_START (mb_ptr)
 	{
-	/* Clear flow information */
-	mb_ptr->cost = 255;
-	mb_ptr->flow = 255;
+		/* Clear flow information */
+		mb_ptr->cost = 255;
+		mb_ptr->flow = 255;
 
-	/* Clear icky + know flag */
-	mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+		/* Clear icky + know flag */
+		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
 	}
 	MAP_ITT_END;
 
@@ -2969,48 +2969,49 @@ static void borg_cheat_feats(void)
 	/* Currently only cheat towns and wilderness */
 	if (borg_skill[BI_CDEPTH] == 0)
 	{
-		MAP_ITT_START(mb_ptr)
+		MAP_ITT_START (mb_ptr)
 		{
-	/* Dungeon Stair Location */
-	if (mb_ptr->terrain == FEAT_MORE)
-	{
-		/* Get location */
-		MAP_GET_LOC(x, y);
-
-		/* Check for an existing "down stairs" */
-		for (i = 0; i < track_more_num; i++)
-		{
-			/* We already knew about that one */
-			if ((track_more_x[i] == x) && (track_more_y[i] == y))
+			/* Dungeon Stair Location */
+			if (mb_ptr->terrain == FEAT_MORE)
 			{
-				break;
-			}
-		}
+				/* Get location */
+				MAP_GET_LOC(x, y);
 
-		/* Track the newly discovered "down stairs" */
-		if ((i == track_more_num) && (i < track_more_size))
-		{
-			track_more_x[i] = x;
-			track_more_y[i] = y;
-			track_more_num++;
-		}
-	}
+				/* Check for an existing "down stairs" */
+				for (i = 0; i < track_more_num; i++)
+				{
+					/* We already knew about that one */
+					if ((track_more_x[i] == x) && (track_more_y[i] == y))
+					{
+						break;
+					}
+				}
+
+				/* Track the newly discovered "down stairs" */
+				if ((i == track_more_num) && (i < track_more_size))
+				{
+					track_more_x[i] = x;
+					track_more_y[i] = y;
+					track_more_num++;
+				}
+			}
 
 
 #if 0
-	/* Shop Entry */
-	if (cave[y][x].feat >= FEAT_SHOP_HEAD && cave[y][x].feat <= FEAT_SHOP_TAIL)
-	{
-		for (i = 0; i < MAX_STORES; i++)
-		{
-			if (cave[y][x].feat == FEAT_SHOP_HEAD + i)
+			/* Shop Entry */
+			if (cave[y][x].feat >= FEAT_SHOP_HEAD &&
+				cave[y][x].feat <= FEAT_SHOP_TAIL)
 			{
-				/* Shop Location */
-				track_shop_x[i] = x;
-				track_shop_y[i] = y;
+				for (i = 0; i < MAX_STORES; i++)
+				{
+					if (cave[y][x].feat == FEAT_SHOP_HEAD + i)
+					{
+						/* Shop Location */
+						track_shop_x[i] = x;
+						track_shop_y[i] = y;
+					}
+				}
 			}
-		}
-	}
 #endif /* 0 */
 
 		}
