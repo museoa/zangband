@@ -3528,8 +3528,8 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	if (cheat_room) msg_print("Bubble Vault");
 
 	/* Allocate center of bubbles */
-	center[0].x = randint(xsize - 2) + 1;
-	center[0].y = randint(ysize - 2) + 1;
+	center[0].x = randint(xsize - 3) + 1;
+	center[0].y = randint(ysize - 3) + 1;
 
 	for (i = 1; i < BUBBLENUM; i++)
 	{
@@ -3540,8 +3540,8 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 		{
 			done = TRUE;
 
-			x = randint(xsize - 2) + 1;
-			y = randint(ysize - 2) + 1;
+			x = randint(xsize - 3) + 1;
+			y = randint(ysize - 3) + 1;
 
 			for (j = 0; j < i; j++);
 			{
@@ -3556,31 +3556,31 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 
 
 	/* Top and bottom boundaries */
-	for (i = 0; i <= xsize; i++)
+	for (i = 0; i < xsize; i++)
 	{
 		int x = x0 - xhsize + i;
 
 		cave[y0 - yhsize + 0][x].feat = FEAT_WALL_OUTER;
 		cave[y0 - yhsize + 0][x].info |= (CAVE_ROOM | CAVE_ICKY);
-		cave[y0 - yhsize + ysize][x].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + ysize][x].info |= (CAVE_ROOM | CAVE_ICKY);
+		cave[y0 - yhsize + ysize - 1][x].feat = FEAT_WALL_OUTER;
+		cave[y0 - yhsize + ysize - 1][x].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
 	/* Left and right boundaries */
-	for (i = 1; i < ysize; i++)
+	for (i = 1; i < ysize - 1; i++)
 	{
 		int y = y0 - yhsize + i;
 
 		cave[y][x0 - xhsize + 0].feat = FEAT_WALL_OUTER;
 		cave[y][x0 - xhsize + 0].info |= (CAVE_ROOM | CAVE_ICKY);
-		cave[y][x0 - xhsize + xsize].feat = FEAT_WALL_OUTER;
-		cave[y][x0 - xhsize + xsize].info |= (CAVE_ROOM | CAVE_ICKY);
+		cave[y][x0 - xhsize + xsize - 1].feat = FEAT_WALL_OUTER;
+		cave[y][x0 - xhsize + xsize - 1].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
 	/* Fill in middle with bubbles */
-	for (x = 1; x < xsize; x++)
+	for (x = 1; x < xsize - 1; x++)
 	{
-		for (y = 1; y < ysize; y++)
+		for (y = 1; y < ysize - 1; y++)
 		{
 			/* Get distances to two closest centers */
 
@@ -3632,13 +3632,13 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	/* Try to add some random doors */
 	for (i = 0; i < 500; i++)
 	{
-		x = randint(xsize - 2) - xhsize + x0 + 1;
-		y = randint(ysize - 2) - yhsize + y0 + 1;
+		x = randint(xsize - 3) - xhsize + x0 + 1;
+		y = randint(ysize - 3) - yhsize + y0 + 1;
 		add_door(x, y);
 	}
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1, y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
+	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 2, y0 - yhsize + 1, y0 - yhsize + ysize - 2, randint(5));
 }
 
 
