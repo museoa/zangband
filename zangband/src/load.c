@@ -1234,7 +1234,7 @@ static void rd_extra(void)
 	byte tmp8u;
 	s16b tmp16s;
 	s16b dummy;
-	
+
 	char old_history[60];
 
 	rd_string(player_name, 32);
@@ -1327,13 +1327,10 @@ static void rd_extra(void)
 	rd_u16b(&p_ptr->csp_frac);
 
 	rd_s16b(&p_ptr->max_lev);
-	rd_s16b(&p_ptr->max_depth);
+	strip_bytes(2);				/* Old "max_depth" */
 
 	/* Repair maximum player level XXX XXX XXX */
 	if (p_ptr->max_lev < p_ptr->lev) p_ptr->max_lev = p_ptr->lev;
-
-	/* Repair maximum dungeon level */
-	if (p_ptr->max_depth < 0) p_ptr->max_depth = 1;
 
 	/* More info */
 	strip_bytes(8);
@@ -3318,6 +3315,13 @@ static errr rd_savefile_new_aux(void)
 					rd_byte(&dun_ptr->min_level);
 					rd_byte(&dun_ptr->max_level);
 					
+					if (vanilla_town)
+					{
+						dun_ptr->min_level = 1;
+						dun_ptr->max_level = MAX_DEPTH - 1;
+					}
+					
+					
 					/* Rating */
 					rd_s16b(&dun_ptr->rating);
 					
@@ -3329,6 +3333,28 @@ static errr rd_savefile_new_aux(void)
 						rd_byte(&dun_ptr->floor);
 						rd_byte(&dun_ptr->liquid);
 						rd_byte(&dun_ptr->flags);
+						
+						/* Recall depth */
+						if (sf_version > 46)
+						{
+							rd_byte(&dun_ptr->recall_depth);
+						}
+						else
+						{
+							/* Hack - use old one-dungeon depth */
+							dun_ptr->recall_depth = p_ptr->depth;
+							
+							/* Make sure the value is in bounds */
+							if (dun_ptr->recall_depth < dun_ptr->min_level)
+							{
+								dun_ptr->recall_depth = dun_ptr->min_level;
+							}
+							
+							if (dun_ptr->recall_depth > dun_ptr->max_level)
+							{
+								dun_ptr->recall_depth = dun_ptr->max_level;
+							}
+						}
 					}
 				}
 			}

@@ -954,7 +954,7 @@ static void wr_extra(void)
 
 	/* Max Player and Dungeon Levels */
 	wr_s16b(p_ptr->max_lev);
-	wr_s16b(p_ptr->max_depth);
+	wr_s16b(0);					/* oops */
 
 	/* More info */
 	wr_s16b(0);					/* oops */
@@ -1711,6 +1711,9 @@ static bool wr_savefile_new(void)
 			wr_byte(dun_ptr->floor);
 			wr_byte(dun_ptr->liquid);
 			wr_byte(dun_ptr->flags);
+			
+			/* Recall depth */
+			wr_byte(dun_ptr->recall_depth);
 		}
 		else
 		{

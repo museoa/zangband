@@ -1282,8 +1282,12 @@ static void do_cmd_wiz_cure_all(void)
  */
 static void do_cmd_wiz_jump(void)
 {
+	int max_depth;
+	
 	/* In the wilderness and no dungeon? */
 	if (!check_down_wild()) return;
+
+	max_depth = dungeon()->max_level;
 
 	/* Ask for level */
 	if (p_ptr->cmd.arg <= 0)
@@ -1295,7 +1299,7 @@ static void do_cmd_wiz_jump(void)
 
 		/* Ask for a level */
 		if (!get_string(tmp_val, 11, "Jump to level (0-%d): ",
-						max_dun_level())) return;
+						max_depth)) return;
 
 		/* Extract request */
 		p_ptr->cmd.arg = atoi(tmp_val);
@@ -1305,7 +1309,7 @@ static void do_cmd_wiz_jump(void)
 	if (p_ptr->cmd.arg < 0) p_ptr->cmd.arg = 0;
 
 	/* Paranoia */
-	if (p_ptr->cmd.arg > max_dun_level()) p_ptr->cmd.arg = max_dun_level();
+	if (p_ptr->cmd.arg > max_depth) p_ptr->cmd.arg = max_depth;
 
 	/* Accept request */
 	msgf("You jump to dungeon level %d.", p_ptr->cmd.arg);

@@ -445,7 +445,7 @@ static void pattern_teleport(void)
 
 		/* Maximum level */
 		if (p_ptr->depth > 100)
-			max_level = max_dun_level();
+			max_level = dungeon()->max_level;
 		else if (p_ptr->depth == 100)
 			max_level = 100;
 
@@ -1808,16 +1808,19 @@ static void process_world(void)
 			}
 			else
 			{
+				dun_type *d_ptr = dungeon();
+				
 				msgf("You feel yourself yanked downwards!");
 
 				/* Not lower than bottom of dungeon */
-				p_ptr->depth = max_dun_level();
+				p_ptr->depth = d_ptr->recall_depth;
 				
-				/* Not further than we have already gone. */
-				if (p_ptr->depth > p_ptr->max_depth) p_ptr->depth = p_ptr->max_depth;
-
-				if (p_ptr->depth < 1) p_ptr->depth = 1;
-
+				/* Go down at least to the start of the dungeon */
+				if (p_ptr->depth < d_ptr->min_level)
+				{
+					p_ptr->depth = d_ptr->min_level;
+				}
+				
 				/* Nightmare mode makes recall more dangerous */
 				if (ironman_nightmare && one_in_(666))
 				{
@@ -1834,9 +1837,9 @@ static void process_world(void)
 						p_ptr->depth = MAX_DEPTH - 1;
 					}
 					
-					if (p_ptr->depth > max_dun_level())
+					if (p_ptr->depth > d_ptr->max_level)
 					{
-						p_ptr->depth = max_dun_level();
+						p_ptr->depth = d_ptr->max_level;
 					}
 				}
 			}
@@ -2956,7 +2959,7 @@ static void process_energy(void)
  * This function will not exit until the level is completed,
  * the user dies, or the game is terminated.
  */
-static void dungeon(void)
+static void evolve_dungeon(void)
 {
 	cave_type *c_ptr;
 
@@ -3487,7 +3490,7 @@ void play_game(bool new_game)
 	while (TRUE)
 	{
 		/* Process the level */
-		dungeon();
+		evolve_dungeon();
 
 		/* Notice */
 		notice_stuff();

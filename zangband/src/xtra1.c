@@ -557,7 +557,7 @@ static void prt_depth(void)
 			prtf(COL_DEPTH, Term->hgt - 1, "Wilderness");
 		}
 	}
-	else if (p_ptr->depth == max_dun_level())
+	else if (p_ptr->depth == dungeon()->max_level)
 	{
 		prtf(COL_DEPTH, Term->hgt - 1, "Bottom");
 	}

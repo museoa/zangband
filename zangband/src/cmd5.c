@@ -1978,14 +1978,18 @@ static bool cast_trump_spell(int spell, bool success)
 			}
 			break;
 		case 3:				/* Reset Recall */
-			if (success)
+			if (p_ptr->depth && success)
 			{
+				dun_type *d_ptr = dungeon();
+				
+				s16b max_depth = MAX(p_ptr->depth, d_ptr->recall_depth);
+			
 				/* Default */
-				strnfmt(tmp_val, 160, "%d", MAX(p_ptr->depth, 1));
+				strnfmt(tmp_val, 160, "%d", MAX(max_depth, 1));
 
 				/* Ask for a level */
 				if (get_string(tmp_val, 11, "Reset to which level (1-%d): ",
-								 p_ptr->max_depth))
+								 d_ptr->recall_depth))
 				{
 					/* Extract request */
 					dummy = atoi(tmp_val);
@@ -1994,9 +1998,9 @@ static bool cast_trump_spell(int spell, bool success)
 					if (dummy < 1) dummy = 1;
 
 					/* Paranoia */
-					if (dummy > p_ptr->max_depth) dummy = p_ptr->max_depth;
+					if (dummy > max_depth) dummy = max_depth;
 
-					p_ptr->max_depth = dummy;
+					d_ptr->recall_depth = dummy;
 
 					/* Accept request */
 					msgf("Recall depth set to level %d (%d').", dummy,

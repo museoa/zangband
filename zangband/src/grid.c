@@ -80,7 +80,7 @@ void place_random_stairs(int x, int y)
 		up_stairs = FALSE;
 
 	/* Bottom */
-	if (p_ptr->depth >= max_dun_level())
+	if (p_ptr->depth >= dungeon()->max_level)
 		down_stairs = FALSE;
 
 	/* Final quest */

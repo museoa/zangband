@@ -607,57 +607,6 @@ void teleport_player_to(int nx, int ny)
 
 
 /*
- * What is the maximum dungeon level for this dungeon?
- */
-int max_dun_level(void)
-{
-	place_type *pl_ptr = &place[p_ptr->place_num];
-	dun_type *d_ptr = pl_ptr->dungeon;
-
-	/* Vanilla town is special */
-	if (vanilla_town) return (MAX_DEPTH - 1);
-	
-	/* Otherwise, use max depth of dungeon */
-	return (d_ptr->max_level);
-}
-
-/*
- * Fix problems due to dungeons not starting at level 1.
- *
- * direction is -1 for going down, and +1 for up.
- */
-void move_dun_level(int direction)
-{
-	place_type *pl_ptr = &place[p_ptr->place_num];
-	dun_type *d_ptr = pl_ptr->dungeon;
-	
-	/* Change depth */
-	p_ptr->depth += direction;
-
-	/* Leaving */
-	p_ptr->state.leaving = TRUE;
-		
-	/* Don't need to do anything with the old dungeon */
-	if (vanilla_town) return;
-	
-	/* Out of bounds? */
-	if (p_ptr->depth < d_ptr->min_level)
-	{
-		/* We have just decended - and have to decend more? */
-		if (direction == 1)
-		{
-			p_ptr->depth = d_ptr->min_level;
-		}
-		else
-		{
-			/* Go to surface. */
-			p_ptr->depth = 0;
-		}
-	}
-}
-
-
-/*
  * Teleport the player one level up or down (random when legal)
  */
 void teleport_player_level(void)
@@ -703,7 +652,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->state.leaving = TRUE;
 	}
-	else if (one_in_(2) || (p_ptr->depth >= max_dun_level()))
+	else if (one_in_(2) || (p_ptr->depth >= dungeon()->max_level))
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
 
@@ -759,6 +708,8 @@ bool check_down_wild(void)
  */
 void recall_player(int turns)
 {
+	dun_type *d_ptr = dungeon();
+
 	/*
 	 * TODO: Recall the player to the last
 	 * visited town when in the wilderness
@@ -773,15 +724,15 @@ void recall_player(int turns)
 
 	if (!check_down_wild()) return;
 
-	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
+	if (p_ptr->depth && (d_ptr->recall_depth > p_ptr->depth))
 	{
 		if (get_check("Reset recall depth? "))
-			p_ptr->max_depth = p_ptr->depth;
+			d_ptr->recall_depth = p_ptr->depth;
 
 	}
-	else if (p_ptr->depth > p_ptr->max_depth)
+	else if (p_ptr->depth > d_ptr->recall_depth)
 	{
-		p_ptr->max_depth = p_ptr->depth;
+		d_ptr->recall_depth = p_ptr->depth;
 	}
 
 	if (!p_ptr->tim.word_recall)
@@ -1686,7 +1637,7 @@ void stair_creation(void)
 		/* Quest level */
 		cave_set_feat(px, py, FEAT_LESS);
 	}
-	else if (one_in_(2) || (p_ptr->depth >= max_dun_level()))
+	else if (one_in_(2) || (p_ptr->depth >= dungeon()->max_level))
 	{
 		cave_set_feat(px, py, FEAT_LESS);
 	}

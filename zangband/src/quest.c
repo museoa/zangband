@@ -561,7 +561,7 @@ static void create_stairs(int x, int y)
 	cave_type *c_ptr = area(x, y);
 	
 	/* Paranoia - not on deepest dungeon level */
-	if (p_ptr->depth == max_dun_level()) return;
+	if (p_ptr->depth == dungeon()->max_level) return;
 
 	/* Stagger around */
 	while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
@@ -1191,7 +1191,7 @@ static bool request_bounty(int dummy)
 		 * Random monster out of depth
 		 * (depending on level + number of quests)
 		 */
-		r_idx = get_mon_num(p_ptr->max_depth + 6);
+		r_idx = get_mon_num(p_ptr->max_lev * 2);
 
 		r_ptr = &r_info[r_idx];
 		
@@ -1206,7 +1206,7 @@ static bool request_bounty(int dummy)
 		}
 
 		/* Accept monsters that are a few levels out of depth */
-		if (best_level > p_ptr->max_depth) break;
+		if (best_level > p_ptr->max_lev * 2) break;
 	}
 
 	r_ptr = &r_info[best_r_idx];
@@ -1222,7 +1222,7 @@ static bool request_bounty(int dummy)
 	}
 	else
 	{
-		num = 5 + randint0(p_ptr->max_depth / 4 + 5) / r_ptr->rarity;
+		num = 5 + randint0(p_ptr->max_lev / 2) / r_ptr->rarity;
 	}
 	
 	/* Generate the quest */

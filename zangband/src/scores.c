@@ -178,7 +178,7 @@ static long total_points(void)
 
 	if (mult < 5) mult = 5;		/* At least 5% of the original score */
 
-	temp = p_ptr->max_exp + (100 * p_ptr->max_depth);
+	temp = p_ptr->max_exp;
 
 	temp = (temp * mult) / race_info[p_ptr->rp.prace].r_exp;
 
@@ -517,7 +517,7 @@ void enter_score(void)
 	strnfmt(the_score.cur_lev, 4, "%3d", p_ptr->lev);
 	strnfmt(the_score.cur_dun, 4, "%3d", p_ptr->depth);
 	strnfmt(the_score.max_lev, 4, "%3d", p_ptr->max_lev);
-	strnfmt(the_score.max_dun, 4, "%3d", p_ptr->max_depth);
+	strnfmt(the_score.max_dun, 4, "%3d", max_dun_level_reached());
 
 	/* Save the cause of death (31 chars) */
 	strnfmt(the_score.how, 32, "%-.31s", p_ptr->state.died_from);
@@ -630,7 +630,7 @@ void predict_score(void)
 	strnfmt(the_score.cur_lev, 4, "%3d", p_ptr->lev);
 	strnfmt(the_score.cur_dun, 4, "%3d", p_ptr->depth);
 	strnfmt(the_score.max_lev, 4, "%3d", p_ptr->max_lev);
-	strnfmt(the_score.max_dun, 4, "%3d", p_ptr->max_depth);
+	strnfmt(the_score.max_dun, 4, "%3d", max_dun_level_reached());
 
 	/* Hack -- no cause of death */
 	strcpy(the_score.how, "nobody (yet!)");

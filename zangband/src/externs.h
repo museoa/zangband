@@ -761,8 +761,6 @@ extern bool teleport_away(int m_idx, int dis);
 extern void teleport_to_player(int m_idx);
 extern void teleport_player(int dis);
 extern void teleport_player_to(int nx, int ny);
-extern int max_dun_level(void);
-extern void move_dun_level(int direction);
 extern void teleport_player_level(void);
 extern bool check_down_wild(void);
 extern void recall_player(int turns);
@@ -1068,6 +1066,9 @@ extern byte the_floor(void);
 extern void change_level(int);
 extern int base_level(void);
 extern void wipe_all_list(void);
+extern dun_type *dungeon(void);
+extern void move_dun_level(int direction);
+extern int max_dun_level_reached(void);
 extern cptr building_name(byte build_type);
 
 /* avatar.c */

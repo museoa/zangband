@@ -2176,6 +2176,8 @@ void init_vanilla_town(void)
 
 	place_type *pl_ptr = &place[1];
 
+	dun_type *d_ptr;
+
 	/* Only one town */
 	strcpy(pl_ptr->name, "Town");
 	pl_ptr->seed = randint0(0x10000000);
@@ -2207,6 +2209,12 @@ void init_vanilla_town(void)
 	
 	/* Create dungeon */
 	MAKE(pl_ptr->dungeon, dun_type);
+	
+	d_ptr = pl_ptr->dungeon;
+	
+	/* Set dungeon depths */
+	d_ptr->max_level = MAX_DEPTH - 1;
+	d_ptr->min_level = 1;
 
 	/* Make the town - and get the location of the stairs */
 	van_town_gen(1);
@@ -4369,6 +4377,39 @@ static void del_wild_cache(void)
 
 
 /*
+ * Fix problems due to dungeons not starting at level 1.
+ *
+ * direction is -1 for going down, and +1 for up.
+ */
+void move_dun_level(int direction)
+{
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	dun_type *d_ptr = pl_ptr->dungeon;
+	
+	/* Change depth */
+	p_ptr->depth += direction;
+
+	/* Leaving */
+	p_ptr->state.leaving = TRUE;
+		
+	/* Out of bounds? */
+	if (p_ptr->depth < d_ptr->min_level)
+	{
+		/* We have just decended - and have to decend more? */
+		if (direction == 1)
+		{
+			p_ptr->depth = d_ptr->min_level;
+		}
+		else
+		{
+			/* Go to surface. */
+			p_ptr->depth = 0;
+		}
+	}
+}
+
+
+/*
  * This function _must_ be called whenever the dungeon level changes.
  * It makes sure the bounds and access functions point to the correct
  * functions.  If this is not done - bad things happen.
@@ -4523,6 +4564,18 @@ int base_level(void)
 
 
 /*
+ * What is the current dungeon?
+ */
+dun_type *dungeon(void)
+{
+	place_type *pl_ptr = &place[p_ptr->place_num];
+
+	/* Return the dungeon */
+	return (pl_ptr->dungeon);
+}
+
+
+/*
  * Delete all active things
  */
 void wipe_all_list(void)
@@ -4563,5 +4616,36 @@ void wipe_all_list(void)
 	in_bounds = NULL;
 	in_bounds2 = NULL;
 	in_boundsp = NULL;
+}
+
+/*
+ * Get the maximum dungeon level ever reached.
+ */
+int max_dun_level_reached(void)
+{
+	int i, max = 0;
+	
+	place_type *pl_ptr;
+	dun_type *d_ptr;
+	
+	/* Scan all places */
+	for (i = 0; i < place_count; i++)
+	{
+		pl_ptr = &place[i];
+		
+		if (pl_ptr->dungeon)
+		{
+			d_ptr = pl_ptr->dungeon;
+			
+			/* Best depth? */
+			if (d_ptr->recall_depth > max)
+			{
+				max = d_ptr->recall_depth;
+			}
+		}
+	}
+
+	/* Done */
+	return (max);
 }
 

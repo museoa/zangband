@@ -1455,10 +1455,11 @@ struct player_type
 	
 	player_data rp;	/* Role-play information */
 	
-	s16b max_depth;	/* Max depth */
 	s16b depth;	/* Cur depth */
+
 	s16b max_lev;	/* Max level */
 	s16b lev;	/* Cur level */
+
 	u16b exp_frac;	/* Cur exp frac (times 2^16) */
 
 	s32b max_exp;	/* Max experience */
@@ -1733,20 +1734,18 @@ struct dun_type
 	s16b rating;	/* Level's current rating */
 
 	s16b region;	/* Hack - Region for current level */
-
+	
+	u16b rooms;		/* Room types available */
+	
+	byte recall_depth;	/* Recall depth */
+	
 	bool good_item_flag;	/* True if "Artifact" on this level */
 	
-	/* Room types available */
-	u16b rooms;
+	byte floor;		/* Floor terrain type */
 	
-	/* Floor terrain type */
-	byte floor;
+	byte liquid;	/* Liquid type for lakes/ rivers etc. */
 	
-	/* Liquid type for lakes/ rivers etc. */
-	byte liquid;
-	
-	/* Extra flags */
-	byte flags;
+	byte flags;		/* Extra flags */
 };
 
 

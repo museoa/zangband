@@ -2691,8 +2691,15 @@ void borg_update_frame(void)
 	/* If this is the first borg run then avoid reinitialization */
 	if (old_depth == 128) old_depth = bp_ptr->depth;
 
-	/* Hack -- Access max depth */
-	bp_ptr->max_depth = p_ptr->max_depth;
+	/* Guess max depth */
+	if (bp_ptr->depth > bp_ptr->max_depth)
+	{
+		bp_ptr->max_depth = bp_ptr->depth;
+	}
+	else
+	{
+		bp_ptr->max_depth = 1;
+	}
 
 	/* Hack -- Realms */
 	bp_ptr->realm1 = p_ptr->spell.r[0].realm;

@@ -1986,7 +1986,7 @@ static void borg_log_death(void)
 	froff(borg_log_file, "Exp: %lu  Gold: %lu  Turn: %lu\n",
 			(long) /* total_points() */ 0, (long)p_ptr->au, (long)turn);
 	froff(borg_log_file, "Killed on level: %d (max. %d) by %s\n",
-			p_ptr->depth, p_ptr->max_depth, p_ptr->state.died_from);
+			p_ptr->depth, max_dun_level_reached(), p_ptr->state.died_from);
 
 	froff(borg_log_file, "----------\n\n");
 
