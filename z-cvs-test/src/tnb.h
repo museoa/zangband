@@ -56,8 +56,6 @@ extern void spell_info(char *p, int spell, int realm);
 /* main-tnb.c */
 extern bool g_initialized;
 extern bool game_in_progress;
-extern cptr ANGBAND_DIR_XTRA_HELP;
-extern cptr ANGBAND_DIR_SOUND;
 extern cptr ANGBAND_DIR_ROOT;
 extern cptr ANGBAND_DIR_TK;
 extern cptr ANGBAND_DIR_COMMON;

@@ -24,7 +24,6 @@
 static term data;
 bool g_initialized = FALSE;
 bool game_in_progress = FALSE;
-cptr ANGBAND_DIR_XTRA_HELP;
 cptr ANGBAND_DIR_ROOT;
 cptr ANGBAND_DIR_TK;
 cptr ANGBAND_DIR_COMMON;
@@ -659,13 +658,6 @@ static void init_stuff(int argc, char **argv)
 
 	/* Build the "help" path */
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "help");
-
-	/* Allocate the path */
-	ANGBAND_DIR_XTRA_HELP = string_make(path);
-
-	/* Validate the "help" directory */
-	/* validate_dir(ANGBAND_DIR_XTRA_HELP); */
-
 
 	/* Build the "tk" path */
 	path_build(path, 1024, ANGBAND_DIR_ROOT, "tk");
