@@ -162,7 +162,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	s32b total = 0;
 
 	/* Draw stairs first for small towns */
-	if ((build_num < 10) && (!build[BUILD_STAIRS])) return (BUILD_STAIRS);
+	if ((build_num < 11) && (!build[BUILD_STAIRS])) return (BUILD_STAIRS);
 
 
 	for (i = 0; i < MAX_CITY_BUILD; i++)
@@ -331,6 +331,9 @@ static bool create_city(int x, int y, int town_num)
 {
 	int i, j, k, l;
 
+	/* Hack - fix this XXX XXX */
+	/* First town must have a low pop */
+
 /*	int pop = wild[y][x].trans.pop_map; */
 	int pop = (1 << randint0(7)) + 128;
 	int law = wild[y][x].trans.law_map;
@@ -350,6 +353,9 @@ static bool create_city(int x, int y, int town_num)
 	u16b build[MAX_CITY_BUILD];
 	u16b build_list[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 
+	/* Hack - the first town must have stairs - so use a low pop */
+	if (town_num == 1) pop = 32 + 128;
+	
 	/* Wipe the list of allocated buildings */
 	(void)C_WIPE(build, MAX_CITY_BUILD, u16b);
 	(void)C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
@@ -758,7 +764,7 @@ static void init_towns(void)
 			w_ptr = &wild[y][x].trans;
 
 			/* Select easiest town */
-			if ((w_ptr->law_map) > town_value)
+			if (w_ptr->law_map > town_value)
 			{
 				/* Check to see if the town has stairs */
 				for (i = 0; i < town[town_count].numstores; i++)
@@ -779,7 +785,7 @@ static void init_towns(void)
 			town_count++;
 		}
 	}
-
+	
 	/* Hack - add a supplies store to the starting town */
 	for (i = 0; i < town[best_town].numstores; i++)
 	{
