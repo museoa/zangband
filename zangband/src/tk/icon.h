@@ -39,7 +39,6 @@ typedef struct t_icon_data {
 	cptr desc; /* type name */
 	IconPtr icon_data; /* Address of icon data */
 	int icon_count; /* Number of icons */
-	Tk_Font font; /* Font for ascii icons */
 	int *char_table; /* Table of chars for ascii icons */
 
 	int depth; /* Bits per pixel (8, 16, 24) */
@@ -53,10 +52,6 @@ typedef struct t_icon_data {
 
 extern t_icon_data *g_icon_data; /* Array of icon types */
 extern int g_icon_data_count; /* Number of icon types */
-
-typedef struct t_ascii {
-	int color[2]; /* Foreground/Background palette index */
-} t_ascii;
 
 extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
 

@@ -139,7 +139,6 @@ static void Icon_AddType(t_icon_data *data)
 	icon_data_ptr->icon_count = data->icon_count;
 	icon_data_ptr->icon_data = data->icon_data;
 	icon_data_ptr->char_table = data->char_table;
-	icon_data_ptr->font = data->font;
 	icon_data_ptr->depth = data->depth;
 	icon_data_ptr->bypp = data->bypp;
 	icon_data_ptr->width = data->width;
@@ -182,7 +181,6 @@ void init_icons(int size, int depth)
 	icon_data_ptr->icon_count = 1;
 	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
 	icon_data_ptr->char_table = NULL;
-	icon_data_ptr->font = NULL;
 	for (i = 0; i < g_icon_length; i++)
 	{
 		icon_data_ptr->icon_data[i] = 0x00;
@@ -213,7 +211,6 @@ void init_icons(int size, int depth)
 	icon_data_ptr->icon_count = 1;
 	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
 	icon_data_ptr->char_table = NULL;
-	icon_data_ptr->font = NULL;
 	for (i = 0; i < g_icon_length; i++)
 	{
 		if (g_icon_depth != 8)
@@ -241,7 +238,6 @@ void init_icons(int size, int depth)
 	icon_data_ptr->icon_count = 1;
 	C_MAKE(icon_data_ptr->icon_data, g_icon_length, byte);
 	icon_data_ptr->char_table = NULL;
-	icon_data_ptr->font = NULL;
 	n = 0, y2 = 0;
 	for (y = 0; y < 16; y++)
 	{
@@ -796,16 +792,8 @@ int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
 
 	iconDataPtr = &g_icon_data[type];
 
-	/* Font-icon must specify ascii */
-	if ((iconDataPtr->font != NULL) && (ascii == -1))
-	{
-		Tcl_AppendStringsToObj(resultPtr, "icon type \"", typeName, "\"",
-			" is ascii", NULL);
-		return TCL_ERROR;
-	}
-
-	/* Non-font-icon must not specify ascii */
-	if ((iconDataPtr->font == NULL) && (ascii != -1))
+	/* Must not specify ascii */
+	if (ascii != -1)
 	{
 		Tcl_AppendStringsToObj(resultPtr, "icon type \"", typeName, "\"",
 			" is not ascii", NULL);
@@ -944,13 +932,6 @@ void Icon_Exit(void)
 	for (i = 0; i < g_icon_data_count; i++)
 	{
 		t_icon_data *iconDataPtr = &g_icon_data[i];
-
-		/* This is an "ascii" icon type */
-		if (iconDataPtr->font != NULL)
-		{
-			/* Important: free the font */
-			Tk_FreeFont(g_icon_data[i].font);
-		}
 
 		/* Help the memory debugger */
 		if (iconDataPtr->icon_data)
