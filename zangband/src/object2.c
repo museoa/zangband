@@ -2450,18 +2450,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_SLAYING_WEAPON:
 					{
-						o_ptr->ds++;
-						
-						while (one_in_(o_ptr->ds) && (o_ptr->ds < 10))
-						{
-							o_ptr->ds++;
-						}
-						
-						while (one_in_(o_ptr->dd) && (o_ptr->dd < 10)
-							 && (o_ptr->ds < 10))
-						{
-							o_ptr->dd++;
-						}
+						/* Supercharge the damage dice */
+						o_ptr->ds += (o_ptr->ds * randint1(5)) / 5;
 						
 						if (one_in_(5))
 						{
@@ -2551,15 +2541,9 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Hack -- Super-charge the damage dice */
 				if (ego)
 				{
-					while (one_in_(10L * o_ptr->dd * o_ptr->ds))
+					if (one_in_(10L * o_ptr->dd * o_ptr->ds))
 					{
-						o_ptr->dd++;
-					}
-
-					/* Hack -- Lower the damage dice */
-					if (o_ptr->dd > 9)
-					{
-						o_ptr->dd = 9;
+						o_ptr->ds += (o_ptr->ds * randint1(5)) / 5;
 					}
 				}
 			}
@@ -2626,23 +2610,12 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					ego = get_ego_num(level);
 				}
-
-				/* Extra powers */
-				if (ego == EGO_SLAYING_BOLT)
-				{
-					o_ptr->ds++;
-				}
-
+				
 				/* Hack -- super-charge the damage dice */
-				while (one_in_(10L * o_ptr->dd * o_ptr->ds) && (o_ptr->ds < 10))
+				if (one_in_(10L * o_ptr->dd * o_ptr->ds) ||
+					 (ego == EGO_SLAYING_BOLT))
 				{
-					o_ptr->ds++;
-				}
-
-				/* Hack -- restrict the damage dice */
-				if (o_ptr->ds > 9)
-				{
-					o_ptr->ds = 9;
+					o_ptr->ds += (o_ptr->ds * randint1(5)) / 5;
 				}
 			}
 

@@ -1529,12 +1529,11 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	if (o_ptr->dd && o_ptr->ds)
 	{
-		while (one_in_(10L * o_ptr->dd * o_ptr->ds) && (o_ptr->ds < 10))
+		if (one_in_(10L * o_ptr->dd * o_ptr->ds))
 		{
-			o_ptr->dd++;
+			o_ptr->ds += (o_ptr->ds * randint1(5)) / 5;
 		}
 	}
-
 
 	if (o_ptr->tval >= TV_BOOTS)
 	{
