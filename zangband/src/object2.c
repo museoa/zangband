@@ -198,15 +198,14 @@ void delete_object_list(s16b *o_idx_ptr)
 void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
 	object_type forge;
-	object_type *o_ptr;
-	object_type *q_ptr;
+	object_type *o_ptr, *q_ptr;
+	
+	/* Get local object */
+	q_ptr = &forge;
 
 	/* Drop objects being carried */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Copy the object */
 		object_copy(q_ptr, o_ptr);
 
@@ -5633,10 +5632,14 @@ void reorder_pack(void)
 	s32b o_value;
 	s32b j_value;
 	object_type forge;
-	object_type *q_ptr;
-	object_type *j_ptr;
-	object_type *o_ptr;
+
+	object_type *q_ptr, *j_ptr, *o_ptr;
+
 	bool flag = FALSE;
+	
+	/* Get local object */
+	q_ptr = &forge;
+
 
 
 	/* Re-order the pack (forwards) */
@@ -5713,9 +5716,6 @@ void reorder_pack(void)
 
 		/* Take note */
 		flag = TRUE;
-
-		/* Get local object */
-		q_ptr = &forge;
 
 		/* Save a copy of the moving item */
 		object_copy(q_ptr, &inventory[i]);
