@@ -889,9 +889,6 @@ bool monster_death(int m_idx)
 		(void)drop_near(q_ptr, -1, y, x);
 	}
 
-	/* Reset the object level */
-	object_level = base_level;
-
 	/* Take note of any dropped treasure */
 	if (visible && (dump_item || dump_gold))
 	{
@@ -929,6 +926,9 @@ bool monster_death(int m_idx)
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
+	
+	/* Reset the object level */
+	object_level = base_level;
 
 #ifdef USE_SCRIPT
 	kill_monster_callback(m_idx);
