@@ -4233,7 +4233,7 @@ static int borg_thrust_damage_one(int i)
 	if (kill->m_flags & (MONST_FRIEND | MONST_PET)) dam = -10;
 
 	/* Invuln monsters take no dam */
-	if (kill->invulner) dam = 0;
+	if (kill->m_flags & MONST_INVULN) dam = 0;
 
 	/* Damage */
 	return (dam);
@@ -5198,7 +5198,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	if (kill->m_flags & (MONST_FRIEND | MONST_PET)) dam = -10;
 
 	/* Invuln monsters take no dam */
-	if (kill->invulner) dam = 0;
+	if (kill->m_flags & MONST_INVULN) dam = 0;
 
 	/* Return Damage as pure danger of the monster */
 	if (typ == GF_AWAY_ALL || typ == GF_AWAY_EVIL) return (dam);

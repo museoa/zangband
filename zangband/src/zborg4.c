@@ -8729,7 +8729,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	{
 		v1 = v1 / 2;
 	}
-	if (kill->stunned)
+	if (kill->m_flags & MONST_STUN)
 	{
 		v1 = v1 * 10 / 13;
 	}
@@ -8861,7 +8861,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 			v2 = v2 / 2;
 		}
 		/* Reduce danger from stunnned monsters  */
-		if (kill->stunned)
+		if (kill->m_flags & MONST_STUN)
 		{
 			v2 = v2 * 10 / 13;
 		}

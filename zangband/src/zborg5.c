@@ -503,10 +503,6 @@ static void borg_update_kill(int i)
 	/* Monster moves (times ten) */
 	kill->moves = (t * e) / 10;
 	
-	/* Assume we don't know */
-	kill->stunned = FALSE;
-	kill->invulner = FALSE;
-	
 	/* Assume no ranged attacks */
 	kill->ranged_attack = FALSE;
 
@@ -529,10 +525,6 @@ static void borg_update_kill(int i)
 		{
 			/* Use the known hp */
 			kill->power = kill->power * mb_ptr->m_hp / 10;
-		
-			/* Set the monster flags we know about */
-			if (mb_ptr->m_flags & MONST_STUN) kill->stunned = TRUE;
-			if (mb_ptr->m_flags & MONST_INVULN) kill->invulner = TRUE;
 			
 			/* Save the flags */
 			kill->m_flags = mb_ptr->m_flags;
