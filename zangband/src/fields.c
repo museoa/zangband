@@ -1568,7 +1568,7 @@ void field_action_corpse_raise(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	bool *want_pet = (bool *) input; 
+	bool want_pet = *((bool *) input); 
 	
 	/*
 	 * Data[1] * 256 + Data[2] = r_idx of monster.
@@ -1579,7 +1579,7 @@ void field_action_corpse_raise(s16b *field_ptr, vptr input)
 
 	/* Make a monster nearby if possible */
 	if (summon_named_creature(f_ptr->fy, f_ptr->fx,
-	                          r_idx, FALSE, FALSE, *want_pet))
+	                          r_idx, FALSE, FALSE, want_pet))
 	{
 		/* Set the cloned flag, so no treasure is dropped */
 		m_list[hack_m_idx_ii].smart |= SM_CLONED;
@@ -1755,9 +1755,9 @@ void field_action_corpse_look(s16b *field_ptr, vptr output)
  */
 void field_action_wall_tunnel(s16b *field_ptr, vptr input)
 {	
-	int *dig = (int *) input;
+	int dig = *((int *) input);
 	
-	if (*dig > 40 + randint0(1600))
+	if (dig > 40 + randint0(1600))
 	{
 		/* Success */
 		
@@ -2068,13 +2068,13 @@ void field_action_trap_disarm(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	int *disarm = (int *) input;
+	int disarm = *((int *) input);
 	
 	/* Extract trap "power" */
 	int	power = f_ptr->data[0] / 2;	
 	
 	/* Extract the difficulty */
-	int j = *disarm - power;
+	int j = disarm - power;
 
 	/* Always have a small chance of success */
 	if (j < 2) j = 2;
@@ -3171,7 +3171,7 @@ void field_action_counter_init(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	int *value = (int *) input;
+	int value = *((int *) input);
 	int max;
 	int new_value;
 	
@@ -3182,7 +3182,7 @@ void field_action_counter_init(s16b *field_ptr, vptr input)
 	 */
 	max = f_ptr->data[6] * 256 + f_ptr->data[7];
 	
-	new_value = f_ptr->counter + *value;
+	new_value = f_ptr->counter + value;
 	
 	/* Bounds checking */
 	if (new_value > max)
@@ -3212,10 +3212,10 @@ void field_action_door_unlock(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	int *lock = (int *) input;
+	int lock = *((int *) input);
 	
 	/* Extract door "power" */
-	int power = *lock - f_ptr->counter;	
+	int power = lock - f_ptr->counter;	
 	
 	/* Always have a small chance of success */
 	if (power < 2) power = 2;
@@ -3251,10 +3251,10 @@ void field_action_door_bash(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	int *jam = (int *) input;
+	int jam = *((int *) input);
 	
 	/* Extract unjamming "power" */
-	int power = *jam / 10 + adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2;
+	int power = jam / 10 + adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2;
 		
 	if (randint0(power) > f_ptr->counter)
 	{
@@ -3560,7 +3560,7 @@ void field_action_weaponmaster1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int factor = *((int *) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
