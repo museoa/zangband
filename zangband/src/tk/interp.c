@@ -961,9 +961,6 @@ static CommandInit commandInit[] = {
 		{1, "floor", 0, 0, NULL, objcmd_floor, (ClientData) 0},
 		{1, "keycount", 0, 0, NULL, objcmd_keycount, (ClientData) 0},
 	{0, "fontdesc", 2, 2, "font", objcmd_fontdesc, (ClientData) 0},
-	{0, "term_window", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "char", 3, 3, "x y", objcmd_term_char, (ClientData) 0},
-		{1, "attr", 3, 3, "x y", objcmd_term_attr, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 

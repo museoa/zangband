@@ -56,6 +56,8 @@ extern int tnb_tile_y;
 
 extern char tnb_tile_file[1024];
 
+extern void tnb_get_term(int x, int y, byte *attr, char *c);
+
 /* canv-widget.c */
 extern int CanvasWidget_Init(Tcl_Interp *interp);
 
@@ -259,9 +261,8 @@ DECLARE_TK_HOOK(message);
 DECLARE_TK_HOOK(fontdesc);
 DECLARE_TK_HOOK(equipinfo);
 DECLARE_TK_HOOK(inveninfo);
-DECLARE_TK_HOOK(term_char);
-DECLARE_TK_HOOK(term_attr);
 #endif /* _INCLUDE_TNB_H_ */
 
 
 extern int init_widget(Tcl_Interp *interp);
+extern int init_term(Tcl_Interp *interp);

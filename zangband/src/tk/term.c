@@ -1,6 +1,6 @@
-/* File: widget.c */
+/* File: term.c */
 
-/* Purpose: Widget stuff */
+/* Purpose: Term emulation stuff */
 
 /*
  * Copyright (c) 1997-2001 Tim Baker
@@ -12,7 +12,6 @@
 
 #include "tnb.h"
 #include "icon.h"
-#include "../maid-grf.h"
 
 typedef struct Widget Widget;
 
@@ -22,10 +21,13 @@ struct Widget
     Display *display;
     Tcl_Interp *interp;
     Tcl_Command widgetCmd;
-	GC copyGC;					/* XCopyArea() context */
+	GC gc;						/* XCopyArea() context */
 	BitmapPtr bitmap;			/* Offscreen bitmap */
     int width;					/* # of columns */
     int height;					/* # of rows */
+	
+	Tk_Font font;
+	int font_y;
 	
 	BitmapPtr tiles;			/* The graphical tiles */
 
@@ -104,7 +106,7 @@ static void Widget_Display(ClientData clientData)
 	XCopyArea(widgetPtr->display,
 		widgetPtr->bitmap->pixmap, /* source drawable */
 		Tk_WindowId(tkwin), /* dest drawable */
-		widgetPtr->copyGC, /* graphics context */
+		widgetPtr->gc, /* graphics context */
 		widgetPtr->dx, widgetPtr->dy, /* source top-left */
 		(unsigned int) widgetPtr->dw, /* width */
 		(unsigned int) widgetPtr->dh, /* height */
@@ -169,153 +171,35 @@ static void DrawBlank(int x, int y, BitmapPtr bitmapPtr)
 	}
 }
 
-static u16b r16mask = 0, r16shift = 0;
-static u16b g16mask = 0, g16shift = 0;
-static u16b b16mask = 0, b16shift = 0;
-
-static int count_ones(u16b mask)
-{
-	int n;
-
-	for (n = 0; mask != 0; mask &= mask - 1)
-	{
-		n++;
-	}
-	
-	return (n);
-}
-
-
-/* Initialise the 16bit colour masks and shifts */
-static void init_masks(Tcl_Interp *interp)
-{
-	Tk_Window tkwin = Tk_MainWindow(interp);
-	Visual *visual = Tk_Visual(tkwin);
-	
-	int redcount, greencount, bluecount;
-	
-	r16mask = visual->red_mask;
-	g16mask = visual->green_mask;
-	b16mask = visual->blue_mask;
-
-#ifdef PLATFORM_WIN
-	/* XXX Always 5-5-5 */
-	r16mask = 0x7C00;
-	g16mask = 0x03E0;
-	b16mask = 0x001F;
-#endif
-	
-	/* Get red mask and shift */
-	redcount = count_ones(r16mask);
-	greencount = count_ones(g16mask);
-	bluecount = count_ones(b16mask);
-	
-	r16shift = redcount + greencount + bluecount - 8;
-	g16shift = greencount + bluecount - 8;
-	b16shift = 8 - bluecount;
-}
-
-
-/*
- * Find a location on the bitmaps
- */
-static byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
-{
-	return (bitmap_ptr->pixelPtr + x * bitmap_ptr->pixelSize + y * bitmap_ptr->pitch);
-}
-
-
 /*
  * Draw stuff at this location
  */
-static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
+static void DrawIconSpec(int x, int y, byte attr, char c, Widget *widgetPtr)
 {
-	u32b *src1, *src2;
-	byte *dest;
-	u16b r, g, b;
+	int x2, y2, width;
 	
-	u32b pixel;
+	char buf[2];
 	
-	int i, j;
+	/* Draw a blank square first */
+	DrawBlank(x, y, widgetPtr->bitmap);
 	
-	int depth = widgetPtr->bitmap->depth;
+	/* Only draw characters */
+	if (attr & 0x80) return;
 	
-	int s1x = 0, s2x = 0, s1y = 0, s2y = 0;
+	/* Make our one-character long string */
+	buf[0] = c;
+	buf[1] = '\0';
 	
-	if (mb_ptr->a & 0x80)
-	{
-		s1x = (mb_ptr->c & 0x7F) * widgetPtr->gwidth;
-		s1y = (mb_ptr->a & 0x7F) * widgetPtr->gheight;
-	}
+	/* Calculate the width of the character */
+	width = Tk_TextWidth(widgetPtr->font, buf, 1);
 	
-	if (mb_ptr->ta & 0x80)
-	{
-		s2x = (mb_ptr->tc & 0x7F) * widgetPtr->gwidth;
-		s2y = (mb_ptr->ta & 0x7F) * widgetPtr->gheight;
-	}
+	/* Calculate the position of the character in the bitmap */
+	x2 = widgetPtr->gwidth + (widgetPtr->gwidth - width) / 2;
+	y2 = widgetPtr->gheight + widgetPtr->font_y;
 	
-	
-	/* Loop over bitmap size */
-	for (i = 0; i < widgetPtr->gwidth; i++)
-	{
-		for (j = 0; j < widgetPtr->gheight; j++)
-		{
-			/* Get address of icon data in tiles bitmap */	
-			src1 = (u32b *) get_icon_ptr(widgetPtr->tiles, s1x + i, s1y + j);
-			src2 = (u32b *) get_icon_ptr(widgetPtr->tiles, s2x + i, s2y + j);
-
-			/* Get destination */
-			dest = get_icon_ptr(widgetPtr->bitmap, x + i, y + j);
-				
-			/* Get tile pixel (using transparency) */
-			pixel = *src1 & 0x00FFFFFF;
-			
-			/* Hack - overlay */
-			if (!pixel) pixel = *src2 & 0x00FFFFFF;
-			
-			b = (pixel & 0x00FF0000) >> 16;
-			g = (pixel & 0x0000FF00) >> 8;
-			r = pixel & 0xFF;
-						
-			
-			/* Convert to bitdepth of screen bitmap and display */
-			
-			switch (depth)
-			{
-				case 8:
-				{
-					*dest = Palette_RGB2Index(r, g, b);
-		
-					break;
-				}
-			
-				case 16:
-				{
-					u16b p;
-					
-					/* Convert to 16bit colour */
-					
-					p = (r << r16shift) & r16mask;
-					p += (g << g16shift) & g16mask;
-					p += (b >> b16shift) & b16mask;
-					
-					dest[1] = (byte) ((p & 0xFF00) >> 8);
-					dest[0] = (byte) (p & 0x00FF);
-					
-					break;
-				}
-		
-				case 24:
-				{
-					dest[0] = r;
-					dest[1] = g;
-					dest[2] = b;
-					
-					break;
-				}
-			}
-		}
-	}
+	/* Draw the character into the bitmap */
+	Tk_DrawChars(widgetPtr->display, widgetPtr->bitmap->pixmap, widgetPtr->gc,
+				widgetPtr->font, buf, 1, x2 + x, y2 + y);
 }
 
 
@@ -326,8 +210,9 @@ static void widget_draw_all(Widget *widgetPtr)
 {
 	int y, x, yp, xp;
 	
-	map_block *mb_ptr;
-
+	byte a;
+	char c;
+	
 	/* Paranoia: make sure the bitmap exists */
 	if (!widgetPtr->bitmap) return;
 
@@ -338,26 +223,17 @@ static void widget_draw_all(Widget *widgetPtr)
 			xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
 			yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 			
-			/* Are we on the map? */
-			if (!map_in_bounds(x, y))
+			if ((x < 0) || (x >= 80) || (y < 0) || (y >= 24))
 			{
-				/* Are we on the screen? */
-				if ((x >= widgetPtr->x_min) && (x < widgetPtr->x_max) &&
-					(y >= widgetPtr->y_min) && (y < widgetPtr->y_max))
-				{
-					
-					/* Just "erase" this spot */
-					DrawBlank(xp, yp, widgetPtr->bitmap);
-				}
-				
-				continue;
+				/* Just "erase" this spot */
+				DrawBlank(xp, yp, widgetPtr->bitmap);
 			}
 			
-			/* Get the map location */
-			mb_ptr = map_loc(x, y);
-		
+			/* Hack - Get attr/char of this location */
+			tnb_get_term(x, y, &a, &c);
+					
 			/* Draw stuff at that location */
-			DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
+			DrawIconSpec(xp, yp, a, c, widgetPtr);
 		}
 	}
 
@@ -476,14 +352,26 @@ static void Widget_WorldChanged(ClientData instanceData)
 	Tk_Window tkwin = widgetPtr->tkwin;
     XGCValues gcValues;
 
-	/* Allocate GC */
-    if (widgetPtr->copyGC == None)
+	/* Allocate  GC */
+    if (widgetPtr->gc == None)
     {
+		gcValues.foreground = 0xFFFFFF;
 		gcValues.function = GXcopy;
 		gcValues.graphics_exposures = False;
-		widgetPtr->copyGC = Tk_GetGC(tkwin, GCFunction | GCGraphicsExposures,
-			&gcValues);
+		gcValues.font = Tk_FontId(widgetPtr->font);
+		widgetPtr->gc = Tk_GetGC(tkwin, GCForeground | GCFunction |
+								 GCGraphicsExposures | GCFont, &gcValues);
     }
+	
+	if (!widgetPtr->font_y)
+	{
+		Tk_FontMetrics fm;
+
+		/* Get info about the font */
+		Tk_GetFontMetrics(widgetPtr->font, &fm);
+		
+		widgetPtr->font_y = (widgetPtr->gheight - fm.linespace) / 2 + fm.ascent;
+	}
 
 	/* Size changed */
 	if ((widgetPtr->width != widgetPtr->oldWidth) ||
@@ -642,65 +530,6 @@ static int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *
 	*rowPtr = y - widgetPtr->y_min;
 	*colPtr = x - widgetPtr->x_min;
 	return TRUE;
-}
-
-/*
- * Map hooks for the widget
- */
-
-/* Want to redraw this square */
-static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
-{
-	Widget *widgetPtr = (Widget *) data;
-		
-	int xp, yp;
-	int dl = widgetPtr->dx, dt = widgetPtr->dy;
-	int dr = widgetPtr->dw + dl - 1, db = widgetPtr->dh + dt - 1;
-	int x = map->x, y = map->y;
-	
-	mb_ptr->a = map->a;
-	mb_ptr->c = map->c;
-	mb_ptr->ta = map->ta;
-	mb_ptr->tc = map->tc;
-
-	if (widgetPtr->flags & WIDGET_WIPE) return;
-
-	/* Needs to be on the screen */
-	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max)) return;
-	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max)) return;
-
-	/* Bitmap coords */
-	xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
-	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
-		
-	/* Draw stuff at this location */
-	DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
-	
-	/* Dirty bounds */
-	if (xp < dl) dl = xp;
-	if (yp < dt) dt = yp;
-	if (xp + widgetPtr->gwidth - 1 > dr) dr = xp + widgetPtr->gwidth - 1;
-	if (yp + widgetPtr->gheight - 1 > db) db = yp + widgetPtr->gheight - 1;
-
-	/* Keep track of invalid region */
-	widgetPtr->dx = dl;
-	widgetPtr->dy = dt;
-	widgetPtr->dw = dr - dl + 1;
-	widgetPtr->dh = db - dt + 1;
-	
-	Widget_EventuallyRedraw(widgetPtr);
-}
-
-static void Widget_map_erase(vptr data)
-{
-	/* Wipe the screen */
-	Widget_Wipe((Widget *) data);
-}
-
-static void Widget_player_move(int x, int y, vptr data)
-{
-	/* Recenter the widget and redraw */
-	Widget_Center((Widget *) data, x, y);
 }
 
 
@@ -982,9 +811,9 @@ static void Widget_Destroy(Widget *widgetPtr)
 
 
 	/* Free a GC */ 
-    if (widgetPtr->copyGC != None)
+    if (widgetPtr->gc != None)
     {
-		Tk_FreeGC(widgetPtr->display, widgetPtr->copyGC);
+		Tk_FreeGC(widgetPtr->display, widgetPtr->gc);
     }
 
 	/* Free the bitmap */
@@ -999,10 +828,8 @@ static void Widget_Destroy(Widget *widgetPtr)
 
 	widgetPtr->tkwin = NULL;
 	
-	/* Free the callbacks */
-	del_callback(CALL_MAP_INFO, widgetPtr);
-	del_callback(CALL_MAP_ERASE, widgetPtr);
-	del_callback(CALL_PLAYER_MOVE, widgetPtr);
+	/* Free the font, if any */
+	if (widgetPtr->font) Tk_FreeFont(widgetPtr->font);
 	
 	/* Free the tiles */
 	if (widgetPtr->tiles) Bitmap_Delete(widgetPtr->tiles);
@@ -1066,7 +893,7 @@ static Tk_ClassProcs widgetProcs = {
 /*
  * Table specifying legal configuration options for a Widget.
  */
-static Tk_OptionSpec optionSpecs[20] = {
+static Tk_OptionSpec optionSpecs[] = {
     {TK_OPTION_INT, (char *) "-height", (char *) "height", (char *) "Height",
     (char *) "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-width", (char *) "width", (char *) "Width",
@@ -1075,6 +902,8 @@ static Tk_OptionSpec optionSpecs[20] = {
     (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
     (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
+	{TK_OPTION_FONT, (char *) "-font", NULL, NULL,
+	(char *) "{MS Sans Serif} 8", -1, Tk_Offset(Widget, font), 0, 0, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -1141,7 +970,7 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	 * a capital letter, and there exists a Tcl command with the same
 	 * name as each class.
 	 */
-    Tk_SetClass(tkwin, "Widget");
+    Tk_SetClass(tkwin, "Term");
 	
 	/* Create the pointer */
 	MAKE(widgetPtr, Widget);
@@ -1163,7 +992,7 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		Widget_CmdDeletedProc);
 
 	/* Set more fields */
-	widgetPtr->copyGC = None;
+	widgetPtr->gc = None;
     widgetPtr->width = 0;
     widgetPtr->height = 0;
     widgetPtr->gwidth = tnb_tile_x;
@@ -1209,18 +1038,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	/* Load the tiles */
 	widgetPtr->tiles = Bitmap_Load(g_interp, tnb_tile_file);
 	
-	/* Hack - initialise the hooks into the overhead map code */
-
-	/* Initialise the overhead map code */
-	init_overhead_map();
-
-	/* Save the tk hooks into the overhead map */
-	set_callback((callback_type) Widget_map_info, CALL_MAP_INFO, widgetPtr);
-	set_callback((callback_type) Widget_map_erase, CALL_MAP_ERASE, widgetPtr);
-
-	/* Save old player movement hook */
-	set_callback((callback_type) Widget_player_move, CALL_PLAYER_MOVE, widgetPtr);
-
 	/* Return the window pathname */
     Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),
     	-1);
@@ -1230,15 +1047,12 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 }
 
 /*
- * Initialize the Widget package
+ * Initialize the Term package
  */
-int init_widget(Tcl_Interp *interp)
+int init_term(Tcl_Interp *interp)
 {
-	/* Create the "widget" interpreter command */
-	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
-	
-	/* Initialise palette stuff */
-	if (g_icon_depth == 16) init_masks(interp);
+	/* Create the "term" interpreter command */
+	Tcl_CreateObjCommand(interp, "term", Widget_ObjCmd, NULL, NULL);
 
 	/* Success */
     return TCL_OK;
