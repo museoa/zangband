@@ -438,8 +438,9 @@ C:6:6:4:4
 F:WIS | 
 F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON | 
 F:SEE_INVIS | BLESSED | RES_FEAR
-# 10% bonus to saving throws, paladins only
-L:BONUS:if player.class == CLASS_PALADIN then player.skill.sav = player.skill.sav + 10 end
+L:MAKE:	if player.class == CLASS_PALADIN then 
+L:MAKE:		object.flags4 = bOr(object.flags4, TR4_LUCK_10) 
+L:MAKE:	end
 L:MAKE:	add_ego_power(EGO_XTRA_SUSTAIN, object)
 L:MAKE:	if one_in_(4) then
 L:MAKE:		object.flags1 = bOr(object.flags1, TR1_BLOWS)
