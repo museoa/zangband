@@ -2781,13 +2781,13 @@
  * Special Object Flags
  */
 #define IDENT_SENSE     0x01	/* Item has been "sensed" */
-#define IDENT_FIXED     0x02	/* Item has been "haggled" */
+#define IDENT_DUMMY1    0x02
 #define IDENT_EMPTY     0x04	/* Item charges are known */
 #define IDENT_KNOWN     0x08	/* Item abilities are known */
 #define IDENT_STOREB    0x10	/* Item is storebought !!!! */
-#define IDENT_DUMMY1    0x20
-#define IDENT_DUMMY2    0x40
-#define IDENT_DUMMY3    0x80
+#define IDENT_DUMMY2    0x20
+#define IDENT_DUMMY3    0x40
+#define IDENT_DUMMY4    0x80
 
 
 

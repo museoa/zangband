@@ -1356,19 +1356,8 @@ static void display_entry(int pos)
 			put_str(out_val, wid - 19, i + 6);
 		}
 
-		/* Display a "fixed" cost */
-		if (o_ptr->ident & (IDENT_FIXED))
-		{
-			/* Extract the "minimum" price */
-			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
-
-			/* Actually draw the price (not fixed) */
-			(void)sprintf(out_val, "%9ld F", (long)x);
-			put_str(out_val, wid - 12, i + 6);
-		}
-
 		/* Display a "taxed" cost */
-		else if (auto_haggle)
+		if (auto_haggle)
 		{
 			/* Extract the "minimum" price */
 			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
@@ -1636,9 +1625,6 @@ static void store_shuffle(store_type *st_ptr)
 		{
 			o_ptr->discount = 50;
 		}
-
-		/* Hack -- Items are no longer "fixed price" */
-		o_ptr->ident &= ~(IDENT_FIXED);
 
 		/* Mega-Hack -- Note that the item is "on sale" */
 		o_ptr->inscription = quark_add("on sale");
@@ -2389,12 +2375,6 @@ static void store_purchase(int *store_top)
 	/* Find out how many the player wants */
 	if (o_ptr->number > 1)
 	{
-		/* Hack -- note cost of "fixed" items */
-		if (!(st_ptr->type == BUILD_STORE_HOME) && (o_ptr->ident & IDENT_FIXED))
-		{
-			msg_format("That costs %ld gold per item.", (long)(best));
-		}
-
 		/* Get a quantity */
 		amt = get_quantity(NULL, o_ptr->number);
 
@@ -2427,40 +2407,24 @@ static void store_purchase(int *store_top)
 	/* Attempt to buy it */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
-		/* Fixed price, quick buy */
-		if (o_ptr->ident & (IDENT_FIXED))
-		{
-			/* Assume accept */
-			choice = 0;
-
-			/* Go directly to the "best" deal */
-			price = (best * j_ptr->number);
-		}
-
 		/* Haggle for it */
-		else
-		{
-			/* Describe the object (fully) */
-			object_desc_store(o_name, j_ptr, TRUE, 3, 256);
+		
+		/* Describe the object (fully) */
+		object_desc_store(o_name, j_ptr, TRUE, 3, 256);
 
-			/* Message */
-			msg_format("Buying %s (%c).", o_name, I2A(item));
-			message_flush();
+		/* Message */
+		msg_format("Buying %s (%c).", o_name, I2A(item));
+		message_flush();
 
-			/* Haggle for a final price */
-			choice = purchase_haggle(j_ptr, &price);
+		/* Haggle for a final price */
+		choice = purchase_haggle(j_ptr, &price);
 
-			/* Hack -- Got kicked out */
-			if (st_ptr->store_open >= turn) return;
-		}
-
+		/* Hack -- Got kicked out */
+		if (st_ptr->store_open >= turn) return;
 
 		/* Player wants it */
 		if (choice == 0)
 		{
-			/* Fix the item price (if "correctly" haggled) */
-			if (price == (best * j_ptr->number)) o_ptr->ident |= (IDENT_FIXED);
-
 			/* Player can afford it */
 			if (p_ptr->au >= price)
 			{
@@ -2481,9 +2445,6 @@ static void store_purchase(int *store_top)
 
 				/* Hack -- buying an item makes you aware of it */
 				object_aware(j_ptr);
-
-				/* Hack -- clear the "fixed" flag from the item */
-				j_ptr->ident &= ~(IDENT_FIXED);
 
 				/* Describe the transaction */
 				object_desc(o_name, j_ptr, TRUE, 3, 256);
