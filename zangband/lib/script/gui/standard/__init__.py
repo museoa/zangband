@@ -127,3 +127,5 @@ class gui_standard(gui_class):
 
 		return spells[index]
 
+import variable
+variable.gui = gui_standard()
