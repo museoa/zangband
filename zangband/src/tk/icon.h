@@ -58,8 +58,6 @@ typedef struct t_ascii {
 	int color[2]; /* Foreground/Background palette index */
 } t_ascii;
 
-extern int g_ascii_count; /* Number of elements in g_ascii[] array */
-
 extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
 
 extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
@@ -68,7 +66,6 @@ extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 extern int Icon_Init(Tcl_Interp *interp, int size, int depth);
 extern int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
 	IconSpec *specPtr);
-extern IconPtr Icon_GetAsciiData(IconSpec *specPtr, IconPtr dstPtr);
 extern int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr,
 	char *typeName);
 extern int Icon_GetTypeFromObj(Tcl_Interp *interp,

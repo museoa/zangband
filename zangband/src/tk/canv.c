@@ -374,33 +374,13 @@ static void DrawIconSpec(IconSpec *iconSpecPtr)
 
 	dstPtr = CanvWidgetBitmap.pixelPtr;
 
-	/*
-	 * If this is an ascii-type icon, then we must call a routine to
-	 * give us the colorized icon data.
-	 */
-	if (iconSpecPtr->ascii != -1)
-	{
-		IconData iconData;
-		srcPtr = Icon_GetAsciiData(iconSpecPtr, iconData);
-		for (y = 0; y < iconDataPtr->height; y++)
-		{
-			memcpy(dstPtr, srcPtr, iconDataPtr->pitch);
-			srcPtr += iconDataPtr->pitch;
-			dstPtr += CanvWidgetBitmap.pitch;
-		}
-	}
-
-	/* Not an ascii-type icon */
-	else
-	{
-		srcPtr = iconDataPtr->icon_data + iconSpecPtr->index * g_icon_length;
+	srcPtr = iconDataPtr->icon_data + iconSpecPtr->index * g_icon_length;
 	
-		for (y = 0; y < iconDataPtr->height; y++)
-		{
-			memcpy(dstPtr, srcPtr, iconDataPtr->pitch);
-			srcPtr += iconDataPtr->pitch;
-			dstPtr += CanvWidgetBitmap.pitch;
-		}
+	for (y = 0; y < iconDataPtr->height; y++)
+	{
+		memcpy(dstPtr, srcPtr, iconDataPtr->pitch);
+		srcPtr += iconDataPtr->pitch;
+		dstPtr += CanvWidgetBitmap.pitch;
 	}
 }
 

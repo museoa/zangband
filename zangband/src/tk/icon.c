@@ -21,8 +21,6 @@ Tcl_HashTable g_icon_table; /* Hash table for icon types */
 long g_icon_length = 0; /* Length in bytes of one icon */
 int g_icon_size = 0; /* Icon dimensions (16, 24 or 32) */
 int g_icon_depth = 0; /* Icon depth (8, 16 or 24 bpp) */
-t_ascii *g_ascii; /* Array of ascii info */
-int g_ascii_count;  /* Number of elems in g_ascii[] array */
 int g_pixel_size; /* Num bytes per pixel (1, 2, 3 or 4) */
 int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
 
@@ -631,67 +629,6 @@ int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 
 
 /*
- * Get colorized data for TYPE_ASCII icon.
- */
-IconPtr Icon_GetAsciiData(IconSpec *specPtr, IconPtr iconPtr)
-{
-	int i;
-	int j = specPtr->index;
-	int k = specPtr->ascii;
-	t_icon_data *icon_data_ptr = &g_icon_data[specPtr->type];
-	PixelPtr srcPtr, dstPtr;
-	int *color = g_ascii[k].color;
-
-	srcPtr.pix8 = icon_data_ptr->icon_data + j * icon_data_ptr->length;
-	dstPtr.pix8 = iconPtr;
-
-	if (icon_data_ptr->depth == 8)
-	{
-		for (i = 0; i < icon_data_ptr->pixels; i++)
-		{
-			*dstPtr.pix8++ = color[*srcPtr.pix8++];
-		}
-	}
-	else if (icon_data_ptr->depth == 16)
-	{
-		for (i = 0; i < icon_data_ptr->pixels; i++)
-		{
-			*dstPtr.pix16++ = color[*srcPtr.pix16++];
-		}
-	}
-	else if (icon_data_ptr->depth == 24)
-	{
-		/* Skip to low-order byte */
-		srcPtr.pix8 += 2;
-
-		for (i = 0; i < icon_data_ptr->pixels; i++)
-		{
-			unsigned char *zbgr = (unsigned char *) &color[*srcPtr.pix8];
-
-#ifdef PLATFORM_WIN
-			dstPtr.pix8[0] = zbgr[2]; /* b */
-			dstPtr.pix8[1] = zbgr[1]; /* g */
-			dstPtr.pix8[2] = zbgr[0]; /* r */
-#endif /* */
-#ifdef PLATFORM_X11
-			dstPtr.pix8[0] = zbgr[0]; /* r */
-			dstPtr.pix8[1] = zbgr[1]; /* g */
-			dstPtr.pix8[2] = zbgr[2]; /* b */
-#endif /* */
-
-			/* Skip to low-order byte */
-			srcPtr.pix8 += g_pixel_size;
-
-			dstPtr.pix8 += g_pixel_size;
-		}
-	}
-
-	return iconPtr;
-}
-
-
-
-/*
  * objcmd_icon --
  */
 static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -887,18 +824,6 @@ int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
 		return TCL_ERROR;
 	}
 
-	if ((ascii != -1) && (ascii >= g_ascii_count))
-	{
-		/* Set the error */
-		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			format("bad ascii index \"%d\": "
-			"must be from 0 to %d", ascii,
-			g_ascii_count - 1), -1);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
 	specPtr->type = type;
 	specPtr->index = index;
 	specPtr->ascii = ascii;
@@ -996,10 +921,6 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 	 */
 	MAKE(g_icon_data, t_icon_data);
 	g_icon_data_count = 0;
-
-	/* Array of ascii configurations */
-	MAKE(g_ascii, t_ascii);
-	g_ascii_count = 0;
 
 	/*
 	 * This hash table maps symbolic names of icon types (as defined
