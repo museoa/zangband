@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-ZAngband 2.6.0:
+ZAngband 2.5.6:
 - Shifted store names over so that the long ones fit along with the
   maximum price.
 - Fixed display of the 'curse' line on the info screen so it shows
