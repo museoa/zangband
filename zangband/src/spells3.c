@@ -2038,9 +2038,6 @@ static void bad_luck(object_type *o_ptr)
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
 
-		/* Break it */
-		o_ptr->ident |= (IDENT_BROKEN);
-
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 
@@ -2281,9 +2278,9 @@ bool mundane_spell(void)
 		o_ptr->timeout = o_ptr->pval * o_ptr->number;
 		o_ptr->pval = k_ptr->pval * o_ptr->number;
 	}
-
-	/* Hack -- worthless items are always "broken" */
-	if (o_ptr->cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
+	
+	/* Initialise cost */
+	o_ptr->cost = k_ptr->cost;
 
 	/* Hack -- cursed items are always "cursed" */
 	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
@@ -4639,9 +4636,6 @@ bool curse_armor(void)
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
 
-		/* Break it */
-		o_ptr->ident |= (IDENT_BROKEN);
-
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 
@@ -4707,9 +4701,6 @@ bool curse_weapon(void)
 
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
-
-		/* Break it */
-		o_ptr->ident |= (IDENT_BROKEN);
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);

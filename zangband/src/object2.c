@@ -1834,9 +1834,6 @@ void object_prep(object_type *o_ptr, int k_idx)
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
 
-	/* Hack -- worthless items are always "broken" */
-	if (o_ptr->cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
-
 	/* Hack -- cursed items are always "cursed" */
 	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 }
@@ -2103,9 +2100,6 @@ static byte get_ego_num(int level)
 static void init_ego_item(object_type *o_ptr, byte ego)
 {
 	ego_item_type *e_ptr = &e_info[ego];
-
-	/* Hack -- acquire "broken" flag */
-	if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
 	/* Hack -- acquire "cursed" flag */
 	if (e_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
@@ -3157,7 +3151,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3183,7 +3177,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3210,7 +3204,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3264,7 +3258,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3293,7 +3287,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					/* Weakness, Stupidity */
 
 					/* Broken */
-					o_ptr->ident |= (IDENT_BROKEN);
+					o_ptr->cost = 0;
 
 					/* Cursed */
 					o_ptr->ident |= (IDENT_CURSED);
@@ -3309,7 +3303,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					/* WOE, Stupidity */
 
 					/* Broken */
-					o_ptr->ident |= (IDENT_BROKEN);
+					o_ptr->cost = 0;
 
 					/* Cursed */
 					o_ptr->ident |= (IDENT_CURSED);
@@ -3332,7 +3326,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3355,7 +3349,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3378,7 +3372,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3402,7 +3396,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3427,7 +3421,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3459,7 +3453,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3504,7 +3498,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (flags & OC_FORCE_BAD)
 					{
 						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
+						o_ptr->cost = 0;
 
 						/* Cursed */
 						o_ptr->ident |= (IDENT_CURSED);
@@ -3552,7 +3546,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					/* Amulet of Destruction -- always cursed */
 
 					/* Broken */
-					o_ptr->ident |= (IDENT_BROKEN);
+					o_ptr->cost = 0;
 
 					/* Cursed */
 					o_ptr->ident |= (IDENT_CURSED);
@@ -4007,9 +4001,6 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	if (o_ptr->k_idx)
 	{
 		object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-		/* Hack -- acquire "broken" flag */
-		if (!o_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
 		/* Hack -- acquire "cursed" flag */
 		if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);

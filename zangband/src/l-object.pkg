@@ -1089,7 +1089,7 @@ typedef int sint;
 #define IDENT_STOREB    0x10    /* Item is storebought !!!! */
 #define IDENT_MENTAL    0x20    /* Item information is known */
 #define IDENT_CURSED    0x40    /* Item is temporarily cursed */
-#define IDENT_BROKEN    0x80    /* Item is permanently worthless */
+#define IDENT_DUMMY1    0x80
 
 
 

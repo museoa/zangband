@@ -468,9 +468,6 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->pval = k_ptr->pval * o_ptr->number;
 	}
 
-	/* Hack -- notice "broken" items */
-	if (k_ptr->cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
-
 	/* Mega-Hack... Corpses became fields */
 	if ((o_ptr->tval == 10) && (sf_version < 15))
 	{
@@ -530,7 +527,7 @@ static void rd_item(object_type *o_ptr)
 	}
 
 	/* Hack -- extract the "broken" flag */
-	if (o_ptr->pval < 0) o_ptr->ident |= (IDENT_BROKEN);
+	if (o_ptr->pval < 0) o_ptr->cost = 0;
 
 	if (sf_version < 19)
 	{
@@ -549,9 +546,6 @@ static void rd_item(object_type *o_ptr)
 				/* Keep the damage dice */
 				o_ptr->dd = old_dd;
 				o_ptr->ds = old_ds;
-
-				/* Hack -- extract the "broken" flag */
-				if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
 				if (name2 == EGO_TRUMP)
 				{
@@ -591,9 +585,6 @@ static void rd_item(object_type *o_ptr)
 
 			/* Acquire new artifact weight */
 			o_ptr->weight = a_ptr->weight;
-
-			/* Hack -- extract the "broken" flag */
-			if (!a_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
 			/* Save the artifact flags */
 			o_ptr->flags1 |= a_ptr->flags1;

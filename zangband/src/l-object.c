@@ -5610,7 +5610,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_constant(tolua_S,NULL,"IDENT_STOREB",IDENT_STOREB);
  tolua_constant(tolua_S,NULL,"IDENT_MENTAL",IDENT_MENTAL);
  tolua_constant(tolua_S,NULL,"IDENT_CURSED",IDENT_CURSED);
- tolua_constant(tolua_S,NULL,"IDENT_BROKEN",IDENT_BROKEN);
+ tolua_constant(tolua_S,NULL,"IDENT_DUMMY1",IDENT_DUMMY1);
  tolua_constant(tolua_S,NULL,"TR1_STR",TR1_STR);
  tolua_constant(tolua_S,NULL,"TR1_INT",TR1_INT);
  tolua_constant(tolua_S,NULL,"TR1_WIS",TR1_WIS);
@@ -6783,7 +6783,7 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"IDENT_STOREB");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"IDENT_MENTAL");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"IDENT_CURSED");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"IDENT_BROKEN");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"IDENT_DUMMY1");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"TR1_STR");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"TR1_INT");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"TR1_WIS");
