@@ -10,9 +10,9 @@
  * included in all such copies.
  */
 
-#include <tcl.h>
 #include "angband.h"
 #include "tnb.h"
+#include <tcl.h>
 #include "interp.h"
 #include "cmdinfo-dll.h"
 #include "struct-dll.h"
@@ -30,7 +30,7 @@ extern int objcmd_photo_mask(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 
 /* d_attr characters */
-char *g_attr_str = "dwsorgbuDWvyRGBU";
+cptr g_attr_str = "dwsorgbuDWvyRGBU";
 
 /* Last known target state */
 int target_state = 0;
@@ -40,9 +40,6 @@ bool target_vis = FALSE;
 
 /* TRUE if current command is repeated */
 bool command_repeating = FALSE;
-
-/* Dimensions of the generated cave */
-int g_cave_hgt = 0, g_cave_wid = 0;
 
 /* NULL-terminated lists */
 cptr *keyword_gender;
@@ -62,7 +59,7 @@ int exit_skip_save = FALSE;
  * g_hash_tval hash table.
  */
 t_tval g_tval[] = {
-	{"TV_NONE", 0},
+	TVAL_DESC(TV_ANY),
 	TVAL_DESC(TV_SKELETON),
 	TVAL_DESC(TV_BOTTLE),
 	TVAL_DESC(TV_JUNK),
@@ -70,7 +67,6 @@ t_tval g_tval[] = {
 	TVAL_DESC(TV_CHEST),
 	TVAL_DESC(TV_FIGURINE),
 	TVAL_DESC(TV_STATUE),
-	TVAL_DESC(TV_CORPSE),
 	TVAL_DESC(TV_SHOT),
 	TVAL_DESC(TV_ARROW),
 	TVAL_DESC(TV_BOLT),
@@ -252,251 +248,12 @@ static Tcl_Obj *DumpPets(void)
 	return listObjPtr;
 }
 
-
-/*
- * Return a Tcl list of descriptions of the character's mutations
- */
-static Tcl_Obj *DumpMutations(void)
-{
-	int n, i = 0, j;
-	Tcl_Obj *listObjPtr;
-	cptr info[128];
-
-	/* Create a new Tcl list object */
-	listObjPtr = Tcl_NewListObj(0, NULL);
-
-	/* Check muta1 flags */
-	for (j = 0; j < 32; j++)
-	{
-		if (p_ptr->muta1 & (1L << j))
-		{
-			info[i++] = mut1_desc[j];
-		}
-	}
-
-	/* Check muta2 flags */
-	for (j = 0; j < 32; j++)
-	{
-		if (p_ptr->muta2 & (1L << j))
-		{
-			info[i++] = mut2_desc[j];
-		}
-	}
-
-	/* Check muta3 flags */
-	for (j = 0; j < 32; j++)
-	{
-		if (p_ptr->muta3 & (1L << j))
-		{
-			info[i++] = mut3_desc[j];
-		}
-	}
-
-	/* Append each description to the list */
-	for (n = i, i = 0; i < n; i++)
-	{
-		Tcl_ListObjAppendElement(g_interp, listObjPtr,
-			ExtToUtf_NewStringObj((char *) info[i], -1));
-	}
-
-	return listObjPtr;
-}
-
-/*
- * Return a Tcl list of descriptions of the character's virtues
- */
-static Tcl_Obj *DumpVirtues(void)
-{
-	char *vd;
-	int v_nr;
-	Tcl_Obj *listObjPtr;
-
-	/* Create a new Tcl list object */
-	listObjPtr = Tcl_NewListObj(0, NULL);
-
-	for (v_nr = 0; v_nr < MAX_PLAYER_VIRTUES; v_nr++)
-	{
-		char v_name[20];
-
-		int tester = p_ptr->virtues[v_nr];
-
-		strcpy(v_name, virtue[p_ptr->vir_types[v_nr] - 1]);
-
-		if ((p_ptr->vir_types[v_nr] == 0) ||
-			(p_ptr->vir_types[v_nr] > MAX_VIRTUE))
-			vd = format("Oops. No info about %s.", v_name);
-		else if (tester < -100)
-			vd = format("You are the polar opposite of %s.", v_name);
-		else if (tester < -80)
-			vd = format("You are an arch-enemy of %s.", v_name);
-		else if (tester < -60)
-			vd = format("You are a bitter enemy of %s.", v_name);
-		else if (tester < -40)
-			vd = format("You are an enemy of %s.", v_name);
-		else if (tester < -20)
-			vd = format("You have sinned against %s.", v_name);
-		else if (tester < 0)
-			vd = format("You have strayed from the path of %s.", v_name);
-		else if (tester == 0)
-			vd = format("You are neutral to %s.", v_name);
-		else if (tester < 20)
-			vd = format("You are somewhat virtuous in %s.", v_name);
-		else if (tester < 40)
-			vd = format("You are virtuous in %s.", v_name);
-		else if (tester < 60)
-			vd = format("You are very virtuous in %s.", v_name);
-		else if (tester < 80)
-			vd = format("You are a champion of %s.", v_name);
-		else if (tester < 100)
-			vd = format("You are a great champion of %s.", v_name);
-		else
-			vd = format("You are the living embodiment of %s.", v_name);
-
-		Tcl_ListObjAppendElement(g_interp, listObjPtr,
-			Tcl_NewStringObj(vd, -1));
-	}
-
-	if (wizard)
-	{
-		vd = format("Your overall alignment is %ld.", p_ptr->align);
-		Tcl_ListObjAppendElement(g_interp, listObjPtr,
-			Tcl_NewStringObj(vd, -1));
-	}
-
-	return listObjPtr;
-}
-
-/*
- * Dump object info into an array variable. Array names are:
- *		char, number, name, inscription, weight, tval, sval, icon
- * Extra name "label" for equipment...
- */
-int dump_object_info(char *varName, object_type *o_ptr, int index)
-{
-	char buf[128], o_name[O_NAME_MAX];
-	cptr str;
-	u32b f1, f2, f3;
-
-	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
-	if (ExtToUtf_SetArrayValueString(varName, "name", o_name) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Inscription */
-	if (o_ptr->inscription)
-	{
-		strcpy(buf, quark_str(o_ptr->inscription));
-	}
-	else
-	{
-		buf[0] = '\0';
-	}
-	if (ExtToUtf_SetArrayValueString(varName, "inscription", buf) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Char */
-	if (SetArrayValueChar(varName, "char", index_to_label(index)) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Number */
-	if (SetArrayValueLong(varName, "number", o_ptr->number) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Weight */
-	if (SetArrayValueLong(varName, "weight", o_ptr->weight) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Tval */
-	(void) angtk_tval_string(&str, o_ptr->tval);
-	if (SetArrayValueString(varName, "tval", (char *) str) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Sval */
-	if (SetArrayValueLong(varName, "sval", o_ptr->sval) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* K_idx */
-	if (SetArrayValueLong(varName, "k_idx", o_ptr->k_idx) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Icon */
-	if (SetArrayValueString(varName, "icon",
-		assign_print_object(buf, o_ptr)) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Label in equipment */
-	if (index >= INVEN_WIELD)
-	{
-		if (ExtToUtf_SetArrayValueString(varName, "label", (char *) mention_use(index))
-			!= TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-	}
-
-	/* Known object */
-	if (object_known_p(o_ptr))
-	{
-		/* Known */
-		if (SetArrayValueLong(varName, "known", 1) != TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-
-		/* Get the object flags */
-		object_flags(o_ptr, &f1, &f2, &f3);
-
-		/* Activate */
-		if (SetArrayValueLong(varName, "activate",
-			(f3 & (TR3_ACTIVATE)) != 0) != TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-
-		if (SetArrayValueLong(varName, "timeout", o_ptr->timeout) != TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-	}
-
-	/* Unknown object */
-	else
-	{
-		/* Known */
-		if (SetArrayValueLong(varName, "known", 0) != TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-	}
-
-	/* Success */
-	return TCL_OK;
-}
-
 static int s_status_value;
 
 /*
  * Prints status of hunger
  */
-static char *state_hunger(void)
+static cptr state_hunger(void)
 {
 	/* Fainting / Starving */
 	if (p_ptr->food < PY_FOOD_FAINT)
@@ -538,7 +295,7 @@ static char *state_hunger(void)
 /*
  * Prints Blind status
  */
-static char *state_blind(void)
+static cptr state_blind(void)
 {
 	if (p_ptr->blind)
 	{
@@ -553,7 +310,7 @@ static char *state_blind(void)
 /*
  * Prints Confusion status
  */
-static char *state_confused(void)
+static cptr state_confused(void)
 {
 	if (p_ptr->confused)
 	{
@@ -568,7 +325,7 @@ static char *state_confused(void)
 /*
  * Prints Fear status
  */
-static char *state_afraid(void)
+static cptr state_afraid(void)
 {
 	if (p_ptr->afraid)
 	{
@@ -583,7 +340,7 @@ static char *state_afraid(void)
 /*
  * Prints Poisoned status
  */
-static char *state_poisoned(void)
+static cptr state_poisoned(void)
 {
 	if (p_ptr->poisoned)
 	{
@@ -629,7 +386,7 @@ static int trunc_num(int n)
  * This function was a major bottleneck when resting, so a lot of
  * the text formatting code was optimized in place below.
  */
-static char *state_state(void)
+static cptr state_state(void)
 {
 	/* Paralysis */
 	if (p_ptr->paralyzed)
@@ -638,9 +395,9 @@ static char *state_state(void)
 	}
 
 	/* Resting */
-	else if (resting)
+	else if (p_ptr->resting)
 	{
-		int n = resting;
+		int n = p_ptr->resting;
 
 		/* Rest until healed */
 		if (n == -1)
@@ -661,9 +418,9 @@ static char *state_state(void)
 	}
 
 	/* Repeating */
-	else if (command_rep)
+	else if (p_ptr->command_rep)
 	{
-		int n = command_rep;
+		int n = p_ptr->command_rep;
 
 		s_status_value = trunc_num(n);
 
@@ -693,7 +450,7 @@ static char *state_state(void)
 /*
  * Prints the speed of a character.			-CJS-
  */
-static char *state_speed(void)
+static cptr state_speed(void)
 {
 	int n = p_ptr->pspeed;
 
@@ -718,7 +475,7 @@ static char *state_speed(void)
 	return "";
 }
 
-static char *state_study(void)
+static cptr state_study(void)
 {
 	if (p_ptr->new_spells)
 	{
@@ -730,7 +487,7 @@ static char *state_study(void)
 	}
 }
 
-static char *state_cut(void)
+static cptr state_cut(void)
 {
 	int c = p_ptr->cut;
 
@@ -768,7 +525,7 @@ static char *state_cut(void)
 	}
 }
 
-static char *state_stun(void)
+static cptr state_stun(void)
 {
 	int s = p_ptr->stun;
 
@@ -790,16 +547,16 @@ static char *state_stun(void)
 	}
 }
 
-static char *state_winner(void)
+static cptr state_winner(void)
 {
 	/* Wizard */
-	if (wizard)
+	if (p_ptr->wizard)
 	{
 		return "Wizard";
 	}
 
 	/* Winner */
-	else if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		return "Winner";
 	}
@@ -811,95 +568,11 @@ static char *state_winner(void)
 	}
 }
 
-#ifdef ALLOW_STATUS_EXTRA
-
-static char *state_extra(int pr)
+cptr player_status(int status, int *value)
 {
-	bool state = FALSE;
+	cptr format;
 
-	static cptr status_extra_text[] = {
-		"Blessed", "Hero", "Berserk", "Res Acid", "Res Cold", "Res Elec",
-		"Res Fire", "Res Poison", "Prot Evil", "Shield",
-		"Invulnerable",
-		"Faster", "Slower", "Infravision", "See Invis", "Recall", "Hallucinate",
-		"ESP", "Wraith",
-		NULL
-	};
-
-	switch (pr)
-	{
-		case PR_BLESSED:
-			if (p_ptr->blessed) state = TRUE;
-			break;
-		case PR_HERO:
-			if (p_ptr->hero) state = TRUE;
-			break;
-		case PR_SHERO:
-			if (p_ptr->shero) state = TRUE;
-			break;
-		case PR_OPPOSE_ACID:
-			if (p_ptr->oppose_acid) state = TRUE;
-			break;
-		case PR_OPPOSE_COLD:
-			if (p_ptr->oppose_cold) state = TRUE;
-			break;
-		case PR_OPPOSE_ELEC:
-			if (p_ptr->oppose_elec) state = TRUE;
-			break;
-		case PR_OPPOSE_FIRE:
-			if (p_ptr->oppose_fire) state = TRUE;
-			break;
-		case PR_OPPOSE_POIS:
-			if (p_ptr->oppose_pois) state = TRUE;
-			break;
-		case PR_PROTEVIL:
-			if (p_ptr->protevil) state = TRUE;
-			break;
-		case PR_SHIELD:
-			if (p_ptr->shield) state = TRUE;
-			break;
-		case PR_INVULN:
-			if (p_ptr->invuln) state = TRUE;
-			break;
-		case PR_FAST:
-			if (p_ptr->fast) state = TRUE;
-			break;
-		case PR_SLOW:
-			if (p_ptr->slow) state = TRUE;
-			break;
-		case PR_TIM_INFRA:
-			if (p_ptr->tim_infra) state = TRUE;
-			break;
-		case PR_SEE_INVIS:
-			if (p_ptr->tim_invis) state = TRUE;
-			break;
-		case PR_RECALL:
-			if (p_ptr->word_recall) state = TRUE;
-			break;
-		case PR_IMAGE:
-			if (p_ptr->image) state = TRUE;
-			break;
-		case PR_TIM_ESP:
-			if (p_ptr->tim_esp) state = TRUE;
-			break;
-		case PR_WRAITH:
-			if (p_ptr->wraith_form) state = TRUE;
-			break;
-	}
-
-	if (state)
-		return (char *) status_extra_text[pr];
-
-	return "";
-}
-
-#endif /* ALLOW_STATUS_EXTRA */
-
-char *player_status(int status, int *value)
-{
-	char *format;
-
-	typedef char *(status_proc)(void);
+	typedef cptr (status_proc)(void);
 	static status_proc *status_info[] = {
 		state_cut,
 		state_stun,
@@ -915,14 +588,6 @@ char *player_status(int status, int *value)
 	};
 
 	s_status_value = 0;
-
-#ifdef ALLOW_STATUS_EXTRA
-	if (status >= KEYWORD_STATUS_EXTRA)
-    {
-		format = state_extra(status - KEYWORD_STATUS_EXTRA);
-	}
-    else
-#endif /* ALLOW_STATUS_EXTRA */
 
 	format = (*status_info[status])();
 	(*value) = s_status_value;
@@ -952,7 +617,7 @@ void shots_per_round(int *_shots, int *_shots_frac)
 {
 	int energy_fire = 100;
 	int shots, shots_frac;
-	object_type *o_ptr = &inventory[INVEN_BOW];
+	object_type *o_ptr = &p_ptr->equipment[EQUIP_BOW];
 
 	if (o_ptr->k_idx)
 	{
@@ -1019,19 +684,17 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"ability", "age", "armor_class",
+	static cptr cmdOptions[] = {"ability", "age", "armor_class",
 		"blows_per_round", "icon", "class", "depth", "died_from",
 		"exp", "food", "gold", "height", "history", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "name", "position",
 		"race", "sex", "shots_per_round", "social_class", "spell_book",
 		"stat", "status", "title", "to_dam", "to_hit", "weight",
-		"total_weight", "maximize", "preserve", "base_name", "flags",
-		"is_dead", "turn", "max_level", "disturb", "cheat", "new_spells",
+		"total_weight", "preserve", "base_name", "flags",
+		"is_dead", "turn", "max_level", "disturb", "new_spells",
 		"command_rep", "running", "prayer_or_spell", "health_who",
 		"monster_race_idx", "life_rating",
-		"deadliness_conversion",
-		"mutations", "pets", "realm1", "realm2", "patron",
-		"inside_arena", "inside_quest", "virtues",
+		"pets", "realm1", "realm2", "patron",
 		NULL};
 	enum {IDX_ABILITY, IDX_AGE, IDX_ARMOR_CLASS,
 		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_CLASS, IDX_DEPTH, IDX_DIED_FROM,
@@ -1039,13 +702,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_NAME, IDX_POSITION,
 		IDX_RACE, IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
 		IDX_STAT, IDX_STATUS, IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
-		IDX_TOTAL_WEIGHT, IDX_MAXIMIZE, IDX_PRESERVE, IDX_BASE_NAME, IDX_FLAGS,
-		IDX_IS_DEAD, IDX_TURN, IDX_MAX_LEVEL, IDX_DISTURB, IDX_CHEAT, IDX_NEW_SPELLS,
+		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME, IDX_FLAGS,
+		IDX_IS_DEAD, IDX_TURN, IDX_MAX_LEVEL, IDX_DISTURB, IDX_NEW_SPELLS,
 		IDX_COMMAND_REP, IDX_RUNNING, IDX_PRAYER_OR_SPELL, IDX_HEALTH_WHO,
 		IDX_MONSTER_RACE_IDX, IDX_LIFE_RATING,
-		IDX_DEADLINESS_CONVERSION,
-		IDX_MUTATIONS, IDX_PETS, IDX_REALM1, IDX_REALM2, IDX_PATRON,
-		IDX_INSIDE_ARENA, IDX_INSIDE_QUEST, IDX_VIRTUES
+		IDX_PETS, IDX_REALM1, IDX_REALM2, IDX_PATRON
 		} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -1056,10 +717,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	int stat_add[6];
 	long expadv;
 	double pct;
-	char buf[512], *t, *p;
+	char buf[512];
+	cptr t, p;
 	Tcl_Obj *listObjPtr;
 
-	static char *abilityOptions[] = {"fighting", "bows_throw", "saving_throw",
+	static cptr abilityOptions[] = {"fighting", "bows_throw", "saving_throw",
 		"stealth", "perception", "searching", "disarming", "magic_device",
 		NULL};
 
@@ -1077,12 +739,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	/* Required number of arguments */
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
 		return TCL_ERROR;
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -1094,30 +756,30 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		    if (objC != 3)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "ability");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "ability");
 				return TCL_ERROR;
 		    }
 
-		    if (Tcl_GetIndexFromObj(interp, objV[2], abilityOptions, "ability", 0, 
+		    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) abilityOptions, (char *) "ability", 0, 
 				&index) != TCL_OK)
 			{
 				return TCL_ERROR;
 		    }
 	
 			/* Fighting Skill (with current weapon) */
-			o_ptr = &inventory[INVEN_WIELD];
+			o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 			tmp = p_ptr->to_h + o_ptr->to_h;
 			ability[0].rating = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 	
 			/* Shooting Skill (with current bow and normal missile) */
-			o_ptr = &inventory[INVEN_BOW];
+			o_ptr = &p_ptr->equipment[EQUIP_BOW];
 			tmp = p_ptr->to_h + o_ptr->to_h;
 			ability[1].rating = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
 	
 			ability[2].rating = p_ptr->skill_sav;
 			ability[3].rating = p_ptr->skill_stl;
 			ability[4].rating = p_ptr->skill_fos;
-			ability[5].rating = p_ptr->skill_srh;
+			ability[5].rating = p_ptr->skill_sns;
 			ability[6].rating = p_ptr->skill_dis;
 			ability[7].rating = p_ptr->skill_dev;
 			 
@@ -1162,12 +824,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break; 
 
 		case IDX_DIED_FROM: /* died_from */
-			if (!death)
+			if (!p_ptr->is_dead)
 			{
-				Tcl_SetStringObj(resultPtr, "character is not dead", -1);
+				Tcl_SetStringObj(resultPtr, (char *) "character is not dead", -1);
 				return TCL_ERROR;
 			}
-			ExtToUtf_SetResult(interp, died_from);
+			ExtToUtf_SetResult(interp, p_ptr->died_from);
 			break;
 
 		case IDX_EXP: /* exp */
@@ -1196,7 +858,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			buf[0] = '\0';
 			for (i = 0; i < 4; i++)
 			{
-				(void) strcat(buf, format("%s\n", history[i]));
+				(void) strcat(buf, format("%s\n", p_ptr->history[i]));
 			}
 			i = strlen(buf) - 1;
 			while (buf[i] == '\n') buf[i--] = '\0';
@@ -1248,7 +910,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_POSITION: /* position */
-			Tcl_SetStringObj(resultPtr, format("%d %d", py, px),
+			Tcl_SetStringObj(resultPtr, format("%d %d", p_ptr->py, p_ptr->px),
 				-1);
 			break;
 
@@ -1293,11 +955,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		case IDX_STAT: /* stat */
 		    if (objC != 4)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "stat varName");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "stat varName");
 				return TCL_ERROR;
 		    }
 		    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_stat,
-		    	"statName", 0, &index) != TCL_OK)
+		    	(char *) "statName", 0, &index) != TCL_OK)
 			{
 				return TCL_ERROR;
 		    }
@@ -1331,9 +993,9 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			/* stat_add[] is not for equipment only in ZAngband */
 			for (i = 0; i < 6; i++) stat_add[i] = 0;
 
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			for (i = 0; i < EQUIP_MAX; i++)
 			{
-				object_type *o_ptr = &inventory[i];
+				object_type *o_ptr = &p_ptr->equipment[i];
 				u32b f1, f2, f3;
 
 				/* Skip non-objects */
@@ -1362,11 +1024,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		case IDX_STATUS: /* status */
 		    if (objC != 3)
 			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "status");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "status");
 				return TCL_ERROR;
 		    }
 		    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_status,
-				"status", 0, &index) != TCL_OK)
+				(char *) "status", 0, &index) != TCL_OK)
 			{
 				return TCL_ERROR;
 			}
@@ -1395,10 +1057,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_SetIntObj(resultPtr, p_ptr->total_weight);
 			break;
 
-		case IDX_MAXIMIZE: /* maximize */
-			Tcl_SetIntObj(resultPtr, maximize_mode);
-			break;
-
 		case IDX_PRESERVE: /* preserve */
 			Tcl_SetIntObj(resultPtr, preserve_mode);
 			break;
@@ -1417,7 +1075,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_IS_DEAD: /* is_dead */
-			Tcl_SetBooleanObj(resultPtr, death);
+			Tcl_SetBooleanObj(resultPtr, p_ptr->is_dead);
 			break;
 
 		case IDX_TURN: /* turn */
@@ -1425,75 +1083,38 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_MAX_LEVEL: /* max_level */
-			Tcl_SetIntObj(resultPtr, p_ptr->max_plv);
+			Tcl_SetIntObj(resultPtr, p_ptr->max_lev);
 			break;
 
 		case IDX_DISTURB: /* disturb */
 			/* When is this allowed? */
 			if (inkey_flags == 0)
 			{
-				disturb(0, 0);
-			}
-			break;
-
-		case IDX_CHEAT: /* cheat */
-		    if (objC != 3)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "arrayName");
-				return TCL_ERROR;
-		    }
-			t = Tcl_GetStringFromObj(objV[2], NULL);
-			if (SetArrayValueLong(t, "death", (noscore & 0x0001) != 0)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "wizard", (noscore & 0x0002) != 0)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "debug", (noscore & 0x0008) != 0)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(t, "borg", (noscore & 0x0010) != 0)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			for (i = 0; i < CHEAT_MAX; i++)
-			{
-				if (SetArrayValueLong(t, (char *) cheat_info[i].o_text,
-					(noscore & (cheat_info[i].o_set * 256 + cheat_info[i].o_bit)) != 0) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
+				disturb(FALSE);
 			}
 			break;
 
 		case IDX_NEW_SPELLS: /* new_spells */
 			if (!p_ptr->realm1)
 			{
-				Tcl_SetStringObj(resultPtr, "character cannot read books", -1);
+				Tcl_SetStringObj(resultPtr, (char *) "character cannot read books", -1);
 				return TCL_ERROR;
 			}
 			Tcl_SetIntObj(resultPtr, p_ptr->new_spells);
 			break;
 
 		case IDX_COMMAND_REP: /* command_rep */
-			Tcl_SetIntObj(resultPtr, command_rep);
+			Tcl_SetIntObj(resultPtr, p_ptr->command_rep);
 			break;
 
 		case IDX_RUNNING: /* running */
-			Tcl_SetIntObj(resultPtr, running);
+			Tcl_SetIntObj(resultPtr, p_ptr->running);
 			break;
 
 		case IDX_PRAYER_OR_SPELL: /* prayer_or_spell */
 			if (!p_ptr->realm1)
 			{
-				Tcl_SetStringObj(resultPtr, "character cannot read books", -1);
+				Tcl_SetStringObj(resultPtr, (char *) "character cannot read books", -1);
 				return TCL_ERROR;
 			}
 			switch (mp_ptr->spell_book)
@@ -1506,7 +1127,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				quit_fmt("unhandled mp_ptr->spell_book %d",
 					mp_ptr->spell_book);
 			}
-			Tcl_SetStringObj(resultPtr, t, -1);
+			Tcl_SetStringObj(resultPtr, (char *) t, -1);
 			break;
 
 		case IDX_HEALTH_WHO: /* health_who */
@@ -1545,11 +1166,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				{
 					return TCL_ERROR;
 				}
-				if (!((r_idx >= 0) && (r_idx < max_r_idx)))
+				if (!((r_idx >= 0) && (r_idx < z_info->r_max)))
 				{
 					Tcl_SetStringObj(resultPtr,
 						format("bad r_info index \"%d\": must be between 0 and %d",
-						r_idx, (int) max_r_idx - 1), -1);
+						r_idx, (int) z_info->r_max - 1), -1);
 					return TCL_ERROR;
 				}
 				p_ptr->monster_race_idx = r_idx;
@@ -1559,31 +1180,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_LIFE_RATING: /* life_rating */
-			i = (int) (((long) player_hp[PY_MAX_LEVEL - 1] * 200L) / 
+			i = (int) (((long) p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) / 
 				(2 * p_ptr->hitdie + ((PY_MAX_LEVEL - 1) *
 				(p_ptr->hitdie + 1))));
 			Tcl_SetIntObj(resultPtr, i);
 			break;
-
-		case IDX_DEADLINESS_CONVERSION: /* deadliness_conversion */
-			if (Tcl_GetIntFromObj(interp, objV[2], &index) == TCL_OK)
-			{
-				if ((index >= 0) && (index < 201))
-				{
-					Tcl_SetIntObj(resultPtr, deadliness_conversion[index]);
-				}
-				else if ((index < 0) && (ABS(index) < 201))
-				{
-					index *= -1;
-					Tcl_SetIntObj(resultPtr, -deadliness_conversion[index]);
-				}
-			}
-			break;
 			
-		case IDX_MUTATIONS: /* mutations */
-			Tcl_SetObjResult(interp, DumpMutations());
-			break;
-
 		case IDX_PETS: /* pets */
 			Tcl_SetObjResult(interp, DumpPets());
 			break;
@@ -1603,17 +1205,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				(char *) chaos_patrons[p_ptr->chaos_patron]);
 			break;
 
-		case IDX_INSIDE_ARENA: /* inside_arena */
-			Tcl_SetBooleanObj(resultPtr, p_ptr->inside_arena);
-			break;
-
-		case IDX_INSIDE_QUEST: /* inside_quest */
-			Tcl_SetIntObj(resultPtr, p_ptr->inside_quest);
-			break;
-
-		case IDX_VIRTUES: /* virtues */
-			Tcl_SetObjResult(interp, DumpVirtues());
-			break;
 	}
 
 	return TCL_OK;
@@ -1694,14 +1285,14 @@ cptr power_desc[] = {
  */
 static void dump_power_info(char *varName, int power, bool racial, int min_level, int cost, int use_stat, int difficulty)
 {
-	char *type = racial ? "racial" : "mutation";
+	cptr type = racial ? "racial" : "mutation";
 	int chance = 100 - racial_chance(min_level, use_stat, difficulty);
 	
 	SetArrayValueLong(varName, "chance", chance);
 	SetArrayValueLong(varName, "cost", cost);
 	SetArrayValueLong(varName, "level", min_level);
-	ExtToUtf_SetArrayValueString(varName, "name", (char *) power_desc[power]);
-	SetArrayValueString(varName, "stat", (char *) keyword_stat[use_stat]);
+	ExtToUtf_SetArrayValueString(varName, (char *) "name", (char *) power_desc[power]);
+	SetArrayValueString(varName, "stat", keyword_stat[use_stat]);
 	SetArrayValueString(varName, "type", type);
 }
 
@@ -2230,7 +1821,7 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"get", "info", NULL};
+	static cptr cmdOptions[] = {"get", "info", NULL};
 	enum {IDX_GET, IDX_INFO} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -2242,12 +1833,12 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	/* Required number of arguments */
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
 		return TCL_ERROR;
     }
 
 	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -2256,7 +1847,7 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	if (!character_generated)
 	{
 		Tcl_AppendStringsToObj(resultPtr,
-			"character has not been generated yet", NULL);
+			(char *) "character has not been generated yet", NULL);
 		return TCL_ERROR;
 	}
 
@@ -2279,7 +1870,7 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 		case IDX_INFO: /* info */
 		    if (objC != 4)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "power arrayName");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "power arrayName");
 				return TCL_ERROR;
 		    }
 			if (Tcl_GetIntFromObj(interp, objV[2], &index)
@@ -2312,7 +1903,7 @@ static int GetBookFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *bookNum)
 	}
 
 	/* Verify the book number */
-	if ((k_idx <= 0) || (k_idx >= max_k_idx))
+	if ((k_idx <= 0) || (k_idx >= z_info->k_max))
 	{
 		/* Set the error */
 		Tcl_SetStringObj(resultPtr,
@@ -2386,7 +1977,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"find", "info", "memory", NULL};
+	static cptr cmdOptions[] = {"find", "info", "memory", NULL};
 	enum {IDX_FIND, IDX_INFO, IDX_MEMORY} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -2406,14 +1997,14 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	if (objC < 2)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
 
 		/* Failure */
 		return TCL_ERROR;
 	}
 
 	/* Get the requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
     {
 		return TCL_ERROR;
@@ -2448,7 +2039,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			/* Required number of arguments */
 		    if (objC < 3)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "bookNum");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "bookNum");
 				return TCL_ERROR;
 		    }
 
@@ -2468,25 +2059,25 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			if (tval == p_ptr->realm2 + (TV_LIFE_BOOK - 1))
 			{
 				realm = p_ptr->realm2;
-				forgotten = spell_forgotten2;
-				learned = spell_learned2;
-				worked = spell_worked2;
+				forgotten = p_ptr->spell_forgotten2;
+				learned = p_ptr->spell_learned2;
+				worked = p_ptr->spell_worked2;
 			}
 			else
 			{
 				realm = p_ptr->realm1;
-				forgotten = spell_forgotten1;
-				learned = spell_learned1;
-				worked = spell_worked1;
+				forgotten = p_ptr->spell_forgotten1;
+				learned = p_ptr->spell_learned1;
+				worked = p_ptr->spell_worked1;
 			}
 			
 			/* Scan arguments for options */
 			for (i = 3; i < objC; )
 			{
-				static char *cmdOptions[] = {"-known", "-tester", NULL};
+				static cptr cmdOptions[] = {"-known", "-tester", NULL};
 				
 				/* Get the sub-option */
-				if (Tcl_GetIndexFromObj(interp, objV[i], cmdOptions, "option",
+				if (Tcl_GetIndexFromObj(interp, objV[i], (char **) cmdOptions, (char *) "option",
 					0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
@@ -2520,7 +2111,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			 * If we are not casting or studying a spell, then there is
 			 * no need to check spell_okay().
 			 */
-			if ((command_cmd != 'G') && (command_cmd != 'm'))
+			if ((p_ptr->command_cmd != 'G') && (p_ptr->command_cmd != 'm'))
 			{
 				request_tester = 0;
 			}
@@ -2567,7 +2158,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 					/* Return only "okay" spells */
 					if (request_tester && match_tester)
 					{
-						bool known = command_cmd != 'G';
+						bool known = p_ptr->command_cmd != 'G';
 						if (!spell_okay(spell, known, realm - 1))
 						{
 							continue;
@@ -2589,7 +2180,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			/* Required number of arguments */
 		    if (objC < 5)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "bookNum spellIndex arrayName");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "bookNum spellIndex arrayName");
 				return TCL_ERROR;
 		    }
 
@@ -2625,16 +2216,16 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			if (tval == p_ptr->realm2 + (TV_LIFE_BOOK - 1))
 			{
 				realm = p_ptr->realm2;
-				forgotten = spell_forgotten2;
-				learned = spell_learned2;
-				worked = spell_worked2;
+				forgotten = p_ptr->spell_forgotten2;
+				learned = p_ptr->spell_learned2;
+				worked = p_ptr->spell_worked2;
 			}
 			else
 			{
 				realm = p_ptr->realm1;
-				forgotten = spell_forgotten1;
-				learned = spell_learned1;
-				worked = spell_worked1;
+				forgotten = p_ptr->spell_forgotten1;
+				learned = p_ptr->spell_learned1;
+				worked = p_ptr->spell_worked1;
 			}
 
 			/* Find the first spell in the book */
@@ -2661,7 +2252,8 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			if (fake_spell_flags[sval] & (1L << spell))
 			{
 				magic_type *s_ptr;
-				char info[80], *comment;
+				char info[80];
+				cptr comment;
 				
 				/* Access the spell */
 				s_ptr = &mp_ptr->info[realm-1][spell];
@@ -2678,7 +2270,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				{
 					return TCL_ERROR;
 				}
-				if (ExtToUtf_SetArrayValueString(t, "name",
+				if (ExtToUtf_SetArrayValueString(t, (char *) "name",
 					(char *) spell_names[realm-1][spell]) != TCL_OK)
 				{
 					return TCL_ERROR;
@@ -2719,7 +2311,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				{
 					comment = " untried";
 				}
-				if (ExtToUtf_SetArrayValueString(t, "info", comment + 1)
+				if (ExtToUtf_SetArrayValueString(t, (char *) "info", (char *) comment + 1)
 					!= TCL_OK)
 				{
 					return TCL_ERROR;
@@ -2769,418 +2361,9 @@ static void init_keyword_misc(void)
 	keyword_race[MAX_RACES] = NULL;
 }
 
-/*
- * objcmd_home --
- *
- * 		home count $townNum
- * 		home info $townNum $index
- * 		home memory $townNum $index
- */
-
-int
-objcmd_home(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	static char *cmdOptions[] = {"count", "info", "memory", "name",
-		"max_towns",NULL};
-	enum {IDX_COUNT, IDX_INFO, IDX_MEMORY, IDX_NAME, IDX_MAX_TOWNS} option;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-	char *buffer, *varName;
-	int item, n, town_idx;
-	object_type *o_ptr;
-	long length;
-	store_type *st_ptr;
-
-	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-	/* Get the town number */
-	if (Tcl_GetIntFromObj(interp, objV[2], &town_idx) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the town number */
-	if ((town_idx < 1) || (town_idx >= max_towns))
-	{
-		/* Set the error */
-		Tcl_SetResult(interp,
-			format("bad town number \"%d\": must be from 1 to %d",
-			town_idx, max_towns - 1), TCL_VOLATILE);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the store info */
-	st_ptr = &town[town_idx].store[STORE_HOME];
-
-	switch (option)
-	{
-		case IDX_COUNT: /* count */
-			Tcl_SetIntObj(resultPtr, (int) st_ptr->stock_num);
-			break;
-			
-		case IDX_INFO: /* info */
-
-			/* Required number of arguments */
-		    if (objC != 5)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "town item arrayName");
-				return TCL_ERROR;
-		    }
-
-			if (Tcl_GetIntFromObj(interp, objV[3], &item) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if ((item < 0) || (item >= st_ptr->stock_num))
-			{
-				goto bad_index;
-			}
-
-			/* Get the array variable name to dump results in */
-			varName = Tcl_GetStringFromObj(objV[4], NULL);
-
-			/* Get item info */
-			o_ptr = &st_ptr->stock[item];
-
-			n = storedata.store_num;
-			storedata.store_num = STORE_HOME;
-			if (dump_object_info_store(varName, o_ptr, item) != TCL_OK)
-			{
-				storedata.store_num = n;
-				return TCL_ERROR;
-			}
-			storedata.store_num = n;
-			break;
-
-		case IDX_MEMORY: /* memory */
-
-			/* Required number of arguments */
-		    if (objC != 4)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "town item");
-				return TCL_ERROR;
-		    }
-
-			if (Tcl_GetIntFromObj(interp, objV[3], &item) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-	
-			if ((item < 0) || (item >= st_ptr->stock_num))
-			{
-				goto bad_index;
-			}
-	
-			/* Get object info */
-			o_ptr = &st_ptr->stock[item];
-	
-			buffer = Tcl_Alloc(5 * 1024L);
-			length = angtk_describe_object(o_ptr, buffer, FALSE);
-			Tcl_SetObjResult(interp, ExtToUtf_NewStringObj(buffer, length));
-			Tcl_Free(buffer);
-			break;
-
-		case IDX_NAME: /* name */
-			/* Hack -- The town names are not set until this is done... */
-			if (town[1].name[0] == '\0')
-			{
-				/* Not sure if this is safe */
-				process_dungeon_file("w_info.txt", 0, 0, max_wild_y, max_wild_x);
-			}
-
-			ExtToUtf_SetResult(interp, town[town_idx].name);
-			break;
-
-		case IDX_MAX_TOWNS: /* max_towns */
-			Tcl_SetIntObj(resultPtr, max_towns);
-			break;
-	}
-
-	return TCL_OK;
-
-bad_index:
-	Tcl_SetResult(interp,
-		format("bad home index \"%d\": must be from 0 to %d",
-		item, st_ptr->stock_num - 1), TCL_VOLATILE);
-	return TCL_ERROR;
-}
-
-/* This is an information block set in store.c */
-_storedata storedata = {0};
-
 /* store.c */
 extern char *store_cost(object_type *o_ptr);
 
-/*
- * Dump object info into an array variable. Array names are:
- *		char, number, name, weight, tval, sval, icon, cost
- */
-int dump_object_info_store(char *varName, object_type * o_ptr, int index)
-{
-	char buf[128], o_name[O_NAME_MAX];
-	cptr cstr;
-
-	/* Description */
-	if (storedata.store_num == STORE_HOME)
-	{
-		object_desc(o_name, o_ptr, TRUE, 3);
-	}
-	else
-	{
-		object_desc_store(o_name, o_ptr, TRUE, 3);
-	}
-	if (ExtToUtf_SetArrayValueString(varName, "name", o_name) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Char */
-	if (SetArrayValueChar(varName, "char", I2A(index)) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Number */
-	if (SetArrayValueLong(varName, "number", o_ptr->number) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Weight */
-	if (SetArrayValueLong(varName, "weight", o_ptr->weight) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Tval */
-	(void) angtk_tval_string(&cstr, o_ptr->tval);
-	if (SetArrayValueString(varName, "tval", (char *) cstr) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Sval */
-	if (SetArrayValueLong(varName, "sval", o_ptr->sval) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* K_idx */
-	if (SetArrayValueLong(varName, "k_idx", o_ptr->k_idx) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Icon */
-	if (SetArrayValueString(varName, "icon", assign_print_object(buf, o_ptr))
-		!= TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Cost */
-	if (SetArrayValueString(varName, "cost", store_cost(o_ptr)) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Success */
-	return TCL_OK;
-}
-
-/*
- *--------------------------------------------------------------
- *
- * objcmd_store --
- *
- *	Implements the "store" script command.
- * 	Syntax:
- *		store count     -- number of items
- *		store info      -- info about an item
- *      store ishome    -- return 1 if in the Home
- *		store memory    -- item memory
- *		store ownername -- name of owner
- *		store ownerrace -- race of owner
- *		store purchase <index> <quantity> -- purchase index'th item
- *		store purse     -- max purse
- *		store storename -- building name
- *		store worthless -- item is worthless
- *
- *--------------------------------------------------------------
- */
-
-int
-objcmd_store(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	static char *cmdOptions[] = {"count", "info", "ishome", "memory",
-		"ownername", "ownerrace", "purse", "storename",
-		"worthless", "shopping", NULL};
-	enum {IDX_COUNT, IDX_INFO, IDX_ISHOME, IDX_MEMORY,
-		IDX_OWNERNAME, IDX_OWNERRACE, IDX_PURSE, IDX_STORENAME,
-		IDX_WORTHLESS, IDX_SHOPPING} option;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-	char *buffer, *t, *varName;
-	int item;
-	object_type *o_ptr;
-	long length;
-
-	/* Required number of arguments */
-    if (objC < 2)
-    {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
-		return TCL_ERROR;
-    }
-
-	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-	if (option == IDX_SHOPPING)
-	{
-		Tcl_SetObjResult(interp, Tcl_NewBooleanObj(storedata.shopping));
-		return TCL_OK;
-	}
-
-	if (!storedata.shopping)
-	{
-		Tcl_SetResult(interp, "character isn't shopping", TCL_VOLATILE);
-		return TCL_ERROR;
-	}
-
-	switch (option)
-	{
-		case IDX_COUNT: /* count */
-			Tcl_SetIntObj(resultPtr, (int) storedata.st_ptr->stock_num);
-			break;
-			
-		case IDX_INFO: /* info */
-			if (Tcl_GetIntFromObj(interp, objV[2], &item) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if ((item < 0) || (item >= storedata.st_ptr->stock_num))
-			{
-				goto bad_index;
-			}
-
-			/* Get the array variable name to dump results in */
-			varName = Tcl_GetStringFromObj(objV[3], NULL);
-
-			/* Get item info */
-			o_ptr = &storedata.st_ptr->stock[item];
-
-			if (dump_object_info_store(varName, o_ptr, item) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			break;
-
-		case IDX_ISHOME: /* ishome */
-			Tcl_SetBooleanObj(resultPtr, storedata.store_num == STORE_HOME);
-			break;
-
-		case IDX_MEMORY: /* memory */
-	
-			if (Tcl_GetIntFromObj(interp, objV[2], &item) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-	
-			if ((item < 0) || (item >= storedata.st_ptr->stock_num))
-			{
-				goto bad_index;
-			}
-	
-			/* Get object info */
-			o_ptr = &storedata.st_ptr->stock[item];
-	
-			buffer = Tcl_Alloc(5 * 1024L);
-			length = angtk_describe_object(o_ptr, buffer,
-				storedata.store_num != STORE_HOME);
-			Tcl_SetObjResult(interp, ExtToUtf_NewStringObj(buffer, length));
-			Tcl_Free(buffer);
-			break;
-
-		case IDX_OWNERNAME: /* ownername */
-			ExtToUtf_SetResult(interp,
-				(char *) storedata.ot_ptr->owner_name);
-			break;
-
-		case IDX_OWNERRACE: /* ownerrace */
-			ExtToUtf_SetResult(interp,
-				(char *) race_info[storedata.ot_ptr->owner_race].title);
-			break;
-
-		case IDX_PURSE: /* purse */
-			Tcl_SetStringObj(resultPtr,
-				format("%ld", storedata.ot_ptr->max_cost), -1);
-			break;
-
-		case IDX_STORENAME: /* storename */
-			t = (char *) (f_name + f_info[FEAT_SHOP_HEAD + storedata.store_num].name);
-			ExtToUtf_SetResult(interp, t);
-			break;
-
-		case IDX_WORTHLESS: /* worthless */
-			if (Tcl_GetIntFromObj(interp, objV[2], &item) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if ((item < 0) || (item >= storedata.st_ptr->stock_num))
-			{
-				goto bad_index;
-			}
-	
-			/* Get object info */
-			o_ptr = &storedata.st_ptr->stock[item];
-
-			/* Is it worthless? */
-			Tcl_SetBooleanObj(resultPtr, object_value(o_ptr) < 1);
-			break;
-
-		case IDX_SHOPPING: /* Avoid compiler warning */
-			break;
-	}
-
-	return TCL_OK;
-
-bad_index:
-	Tcl_SetResult(interp,
-		format("bad store index \"%d\": must be from 0 to %d",
-		item, storedata.st_ptr->stock_num - 1), TCL_VOLATILE);
-	return TCL_ERROR;
-}
-
-#if 0
-
-/*
- * As one hack, I have Term_fresh() calling the "update" Tcl command. But
- * that get's called during startup before angtk_init() is called. So
- * I add this variable to fix my hack.
- */
-
-static int Tcl_Initialized = 0;
-
-#endif
 
 /*
  *--------------------------------------------------------------
@@ -3194,7 +2377,7 @@ static int Tcl_Initialized = 0;
 
 void angtk_eval(cptr command, ...)
 {
-	cptr = command;
+	cptr s = command;
 	va_list vp;
 	int objc = 0;
 	Tcl_Obj *objv[40];
@@ -3320,7 +2503,7 @@ void angtk_display_info(char *title, char **info, int count)
 	angtk_display_info_aux(title, Tcl_NewListObj(objc, objv));
 }
 
-void HandleError(void)
+static void HandleError(void)
 {
 	char message[1024], path[1024];
 	char *errorInfo;
@@ -3331,7 +2514,7 @@ void HandleError(void)
 	fp = fopen(path, "a");
 	if (fp != NULL)
 	{
-		errorInfo = Tcl_GetVar(g_interp, "errorInfo", TCL_GLOBAL_ONLY);
+		errorInfo = Tcl_GetVar(g_interp, (char *) "errorInfo", TCL_GLOBAL_ONLY);
 		fprintf(fp, "***** (inside HandleError)\n\n%s\n\n", errorInfo);
 		fclose(fp);
 	}
@@ -3378,7 +2561,6 @@ static CommandInit commandInit[] = {
 		{1, "cave", 0, 0, NULL, objcmd_cave, (ClientData) 0},
 		{1, "equipment", 0, 0, NULL, objcmd_equipment, (ClientData) 0},
 		{1, "game", 0, 0, NULL, objcmd_game, (ClientData) 0},
-		{1, "home", 3, 0, "option town ?args ...?", objcmd_home, (ClientData) 0},
 		{1, "info", 0, 0, NULL, objcmd_info, (ClientData) 0},
 		{1, "inkey_flags", 1, 1, NULL, objcmd_inkey_flags, (ClientData) 0},
 		{1, "inkey_other", 1, 1, NULL, objcmd_inkey_other, (ClientData) 0},
@@ -3389,7 +2571,6 @@ static CommandInit commandInit[] = {
 		{1, "player", 0, 0, NULL, objcmd_player, (ClientData) 0},
 		{1, "setting", 0, 0, NULL, objcmd_setting, (ClientData) 0},
 		{1, "spell", 0, 0, NULL, objcmd_spell, (ClientData) 0},
-		{1, "store", 0, 0, NULL, objcmd_store, (ClientData) 0},
 		{1, "equipinfo", 3, 3, "slot arrayName", objcmd_equipinfo, (ClientData) 0},
 		{1, "inveninfo", 3, 3, "slot arrayName", objcmd_inveninfo, (ClientData) 0},
 		{1, "keymap", 0, 0, NULL, objcmd_keymap, (ClientData) 0},
@@ -3468,8 +2649,8 @@ void angtk_angband_initialized(void)
 	/* Names of gender, race and class */
 	init_keyword_misc();
 
-	C_MAKE(g_feat_flag, max_f_idx, byte);
-	for (i = 0; i < max_f_idx; i++)
+	C_MAKE(g_feat_flag, z_info->f_max, byte);
+	for (i = 0; i < z_info->f_max; i++)
 	{
 		g_feat_flag[i] = 0;
 	}
@@ -3485,12 +2666,8 @@ void angtk_angband_initialized(void)
 
 	init_struct();
 
-#ifdef ALLOW_STATUS_EXTRA
-	redraw_init();
-#endif /* ALLOW_STATUS_EXTRA */
-
 	/* Program is intialized */
-	if (Tcl_EvalEx(g_interp, "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
+	if (Tcl_EvalEx(g_interp, (char *) "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
 	{
 		HandleError();
 	}
@@ -3506,7 +2683,7 @@ int angtk_eval_file(cptr extFileName)
 	int result;
 
 	utfFileName = Tcl_ExternalToUtfDString(NULL, extFileName, -1, &dString);
-	result = Tcl_EvalFile(g_interp, utfFileName);
+	result = Tcl_EvalFile(g_interp, (char *) utfFileName);
 	Tcl_DStringFree(&dString);
 	return result;
 }
@@ -3533,18 +2710,16 @@ int angtk_generate(void)
  */
 void angtk_cave_generated(void)
 {
-	int y, x;
-	
+#if 0	
 	/* Check each grid for door alignment */
 	for (y = 0; y < g_cave_hgt; y++)
 	{
 		for (x = 0; x < g_cave_wid; x++)
 		{
-			int feat = cave[y][x].feat;
+			int feat = area(x, y)->feat;
 
 			/* This is a door (or secret door) */
-			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
-				(feat >= FEAT_DOOR_HEAD && feat <= FEAT_SECRET))
+			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) || (feat == FEAT_CLOSED))
 			{
 				/* Note vertical doors */
 				if (door_vertical(y, x))
@@ -3568,6 +2743,8 @@ void angtk_cave_generated(void)
 			}
 		}
 	}
+
+#endif /* 0 */
 
 	g_icon_map_changed = TRUE;
 
@@ -3631,11 +2808,11 @@ void angtk_character_generated(void)
 		{
 			for (x = 0; x < MAX_WID; x++)
 			{
-				int feat = cave[y][x].feat;
+				int feat = area(x, y)->feat;
 	
 				/* This is a door (or secret door) */
 				if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
-					(feat >= FEAT_DOOR_HEAD && feat <= FEAT_SECRET))
+					(feat == FEAT_CLOSED))
 				{
 					/* Note vertical doors */
 					if (door_vertical(y, x))
@@ -3650,12 +2827,6 @@ void angtk_character_generated(void)
 		g_grid_xtra_init = TRUE;
     }
 
-	if (!g_cave_hgt)
-	{
-		g_cave_hgt = cur_hgt;
-		g_cave_wid = cur_wid;
-	}
-
 	/*
 	 * Assign icons to each grid. You have to do this *after* sourcing
 	 * the startup script, because that's where icon types are defined
@@ -3663,277 +2834,10 @@ void angtk_character_generated(void)
 	 */
 	g_icon_map_changed = TRUE;
 
-#ifdef ALLOW_STATUS_EXTRA
-
-	for (y = 0; y < PR_MAX; y++)	
-		redraw_add(y);
-
-#endif /* ALLOW_STATUS_EXTRA */
-
 	/* If animation is enabled, start the animation timer */
 	if (allow_animation) angtk_start_timer();
 }
 
-/*
- * Describe a cave location. This code should be (nearly) the
- * same as in target_set_aux() in xtra2.c. The location does
- * not need to be in bounds.
- */
-void angtk_examine(int y, int x, char *out_val)
-{
-	cptr s1, s2, s3;
-
-	bool boring;
-
-	int feat;
-
-	s16b this_o_idx, next_o_idx;
-
-	char tmp_val[80];
-
-	/* Nothing to see */
-	(void) strcpy(out_val, "");
-
-	/* Not in bounds */
-	if (!in_bounds2(y, x)) return;
-
-	/* Assume boring */
-	boring = TRUE;
-
-	/* Default */
-	s1 = "You see ";
-	s2 = "";
-	s3 = "";
-
-	/* The player */
-	if ((py == y) && (px == x))
-	{
-		/* Description */
-		s1 = "You are ";
-
-		/* Preposition */
-		s2 = "on ";
-	}
-
-
-	/* Hack -- hallucination */
-	if (p_ptr->image)
-	{
-		cptr name = "something strange";
-
-		/* Display a message */
-		sprintf(out_val, "%s%s%s%s", s1, s2, s3, name);
-
-		/* Done */
-		return;
-	}
-
-
-	/* Actual monsters */
-	if (cave[y][x].m_idx > 0)
-	{
-		monster_type *m_ptr = &m_list[cave[y][x].m_idx];
-
-		/* Visible */
-		if (m_ptr->ml)
-		{
-			char m_name[80];
-			cptr attitude;
-
-			/* Get the monster name ("a kobold") */
-			monster_desc(m_name, m_ptr, 0x08);
-
-			if (is_pet(m_ptr))
-				attitude = " (pet)";
-			else if (is_friendly(m_ptr))
-				attitude = " (friendly)";
-			else
-				attitude = "";
-
-			/* Describe */
-			sprintf(out_val, "%s%s%s%s (%s)%s%s",
-			        s1, s2, s3, m_name, look_mon_desc(cave[y][x].m_idx),
-					(m_ptr->smart & SM_CLONED ? " (clone)" : ""),
-					attitude);
-
-			/* Done */
-			return;
-		}
-	}
-
-#ifdef ALLOW_EASY_FLOOR
-
-	if (easy_floor)
-	{
-		int floor_list[23], floor_num;
-		
-		/* Scan the pile of objects */
-		(void) scan_floor(floor_list, &floor_num, y, x, 0x02);
-
-		/* There are some marked objects here */
-		if (floor_num)
-		{
-			/* Only one known object */
-			if (floor_num == 1)
-			{
-				char o_name[O_NAME_MAX];
-	
-				/* Acquire object */
-				object_type *o_ptr = &o_list[floor_list[0]];
-
-				/* Describe the object */
-				object_desc(o_name, o_ptr, TRUE, 3);
-	
-				/* Message */
-				sprintf(out_val, "%s%s%s%s", s1, s2, s3, o_name);
-			}
-
-			/* Multiple known objects */
-			else
-			{				
-				/* Message */
-				sprintf(out_val, "%s%s%sa pile of %d items",
-					s1, s2, s3, floor_num);
-			}
-
-			/* Done */
-			return;
-		}
-	}
-
-	/* !easy_floor */
-	else
-	
-#endif /* ALLOW_EASY_FLOOR */
-
-	/* Scan all objects in the grid */
-	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
-		/* Describe it */
-		if (o_ptr->marked)
-		{
-			char o_name[O_NAME_MAX];
-
-			/* Obtain an object description */
-			object_desc(o_name, o_ptr, TRUE, 3);
-
-			/* Describe the object */
-			sprintf(out_val, "%s%s%s%s", s1, s2, s3, o_name);
-
-			/* Done */
-			return;
-		}
-	}
-
-	/* Get feature */
-	feat = cave[y][x].feat;
-
-	if (cave[y][x].mimic)
-	{
-		feat = cave[y][x].mimic;
-	}
-
-	/* Feature (apply "mimic") */
-	feat = f_info[feat].mimic;
-
-	/* Require knowledge about grid, or ability to see grid */
-	if (!(cave[y][x].info & (CAVE_MARK)) && !player_can_see_bold(y,x))
-	{
-		/* Forget feature */
-		feat = FEAT_NONE;
-	}
-
-	/* Terrain feature if needed */
-	if (boring || (feat > FEAT_INVIS))
-	{
-		cptr name = f_name + f_info[feat].name;
-
-		/* Hack -- special handling for building doors */
-		if ((feat >= FEAT_BLDG_HEAD) && (feat <= FEAT_BLDG_TAIL))
-		{
-			name = building[feat - FEAT_BLDG_HEAD].name;
-		}
-
-		/* Hack -- handle unknown grids */
-		if (feat == FEAT_NONE) return;
-
-		/* Hack -- handle open floor grids */
-		if (feat == FEAT_FLOOR) return;
-
-		/* Pick a prefix */
-		if (*s2 && ((feat >= FEAT_MINOR_GLYPH) &&
-					(feat <= FEAT_PATTERN_XTRA2))) s2 = "on ";
-		else if (*s2 && (feat >= FEAT_DOOR_HEAD)) s2 = "in ";
-
-		/* Pick proper indefinite article */
-		s3 = (is_a_vowel(name[0])) ? "an " : "a ";
-
-		/* Hack -- special introduction for store & building doors -KMW- */
-		if (((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)) ||
-			((feat >= FEAT_BLDG_HEAD) & (feat <= FEAT_BLDG_TAIL)))
-		{
-			s3 = "the entrance to the ";
-		}
-
-		/* "You see dirt." */
-		if (feat == FEAT_DIRT)
-		{
-			s3 = "";
-		}
-
-		if (feat == FEAT_QUEST_ENTER)
-		{
-			int q_idx = cave[y][x].special;
-
-			/* Access the quest */
-			quest_type *q_ptr = &quest[q_idx];
-
-			/* Perhaps initialize the quest name */
-			if (!q_ptr->name[0])
-			{
-				int i, old_quest;
-				
-				/* Clear the text */
-				for (i = 0; i < 10; i++)
-				{
-					quest_text[i][0] = '\0';
-				}
-		
-				quest_text_line = 0;
-		
-				/* Set the quest number temporarily */
-				old_quest = p_ptr->inside_quest;
-				p_ptr->inside_quest = q_idx;
-		
-				/* Get the quest text */
-				init_flags = INIT_SHOW_TEXT;
-				process_dungeon_file("q_info.txt", 0, 0, 0, 0);
-		
-				/* Reset the old quest number */
-				p_ptr->inside_quest = old_quest;
-			}
-
-			/* Build an expanded feature description */
-			(void) sprintf(tmp_val, "%s (%s)", name, q_ptr->name);
-			
-			name = tmp_val;
-		}
-
-		/* Display a message */
-		sprintf(out_val, "%s%s%s%s", s1, s2, s3, name);
-
-		/* Done */
-		return;
-	}
-}
 
 /*
  * Return TRUE if the character should be allowed to attempt to move
@@ -3954,17 +2858,15 @@ bool player_test_feature(int y, int x, int mode)
 	bool message = FALSE;
 	bool note = FALSE;
 	bool pass_wall = FALSE;
-	int feat = cave[y][x].feat;
+	int feat = area(x, y)->feat;
 	
 	/* Hack -- walking into unseen features obtains knowledge XXX XXX */
-	if ((cave[y][x].info & (CAVE_MARK))) known = TRUE;
+	/* if ((cave[y][x].info & (CAVE_MARK))) known = TRUE; */
+	known = TRUE;
 
 	/* Player can not walk through "walls" unless in Shadow Form */
 	if ((p_ptr->wraith_form) || (p_ptr->pass_wall))
 		pass_wall = TRUE;
-
-	/* Apply mimic field */
-	if (cave[y][x].mimic) feat = cave[y][x].mimic;
 	
 	/* Print a message if asked */
 	if (mode & 0x01) message = TRUE;
@@ -3972,12 +2874,7 @@ bool player_test_feature(int y, int x, int mode)
 	/* Examine the feature */
 	switch (feat)
 	{
-		case FEAT_DOOR_HEAD:
-		case 0x21: case 0x22: case 0x23: case 0x24:
-		case 0x25: case 0x26: case 0x27: case 0x28:
-		case 0x29: case 0x2A: case 0x2B: case 0x2C:
-		case 0x2D: case 0x2E:
-		case FEAT_DOOR_TAIL:
+		case FEAT_CLOSED:
 			if (pass_wall) return (TRUE);
 			if (!known)
 			{
@@ -4016,8 +2913,6 @@ bool player_test_feature(int y, int x, int mode)
 		case FEAT_SECRET:
 		case FEAT_MAGMA:
 		case FEAT_QUARTZ:
-		case FEAT_MAGMA_H:
-		case FEAT_QUARTZ_H:
 		case FEAT_MAGMA_K:
 		case FEAT_QUARTZ_K:
 		case FEAT_WALL_EXTRA:
@@ -4050,7 +2945,7 @@ bool player_test_feature(int y, int x, int mode)
 		case FEAT_TREES:
 			if ((p_ptr->pclass != CLASS_RANGER))
 			{
-				if (message) energy_use += 10;
+				if (message) p_ptr->energy += 10;
 			}
 			return (TRUE);
 			break;
@@ -4119,17 +3014,6 @@ bool player_test_feature(int y, int x, int mode)
 				msg = "The heat of the lava is too intense to cross!";
 #endif
 			break;
-
-		case FEAT_DARK_PIT:
-			if (p_ptr->ffall) return (TRUE);
-			if (!known)
-			{
-				msg = "You feel a chasm blocking your way.";
-				note = TRUE;
-			}
-			else
-				msg = "You can't cross the chasm.";
-			break;
 			
 		default:
 			return (TRUE);
@@ -4149,16 +3033,12 @@ bool player_test_feature(int y, int x, int mode)
 		if (note)
 		{
 			/* Memorize the grid */
-			cave[y][x].info |= (CAVE_MARK);
 			angtk_feat_known(y, x); /* TNB */
-
-			/* Draw the grid */
-			lite_spot(y, x);
 		}
 
 		/* XXX Hack -- No energy is used */
 		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-			energy_use = 0;
+			p_ptr->energy = 0;
 	}
 
 	/* Character cannot move here */

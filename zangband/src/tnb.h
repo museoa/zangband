@@ -154,7 +154,6 @@ extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
 extern void angtk_idle(void);
-extern void angtk_locate(int dir);
 
 /* interp1.c */
 extern cptr *keyword_gender;
@@ -167,10 +166,9 @@ extern cptr *keyword_class;
 	 (misc_to_attr[k_info[k_idx].flavor]) : \
 	 (k_info[k_idx].x_attr))
 
-extern char *g_attr_str;
+extern cptr g_attr_str;
 extern int exit_skip_save;
 extern bool command_repeating;
-extern int g_cave_hgt, g_cave_wid;
 extern void angtk_angband_initialized(void);
 extern void angtk_character_generated(void);
 extern void angtk_display_info_init(void);
@@ -181,14 +179,12 @@ extern void angtk_eval(cptr command, ...);
 extern int angtk_eval_file(cptr extFileName);
 extern int angtk_generate(void);
 extern void angtk_cave_generated(void);
-extern void angtk_examine(int y, int x, char *out_val);
 extern void angtk_health(char *buf);
 extern int angtk_tval_string(cptr *str, int tval);
 extern int angtk_tval_const(int *tval, cptr str);
-extern int dump_object_info(char *varName, object_type *o_ptr, int index);
 extern void angtk_init(void);
 extern bool player_test_feature(int y, int x, int mode);
-extern char *player_status(int status, int *value);
+extern cptr player_status(int status, int *value);
 
 extern void blows_per_round(int *_blows, int *_muta_att);
 extern void shots_per_round(int *shots, int *shots_frac);
@@ -227,16 +223,6 @@ extern int inkey_flags;
 /* r_info.c */
 extern long angtk_roff(int r_idx, char *buffer);
 
-/* store.c */
-typedef struct _storedata {
-	bool shopping;
-	int store_num;
-	store_type *st_ptr;
-	owner_type *ot_ptr;
-} _storedata;
-
-extern _storedata storedata;
-extern int dump_object_info_store(char *varName, object_type *o_ptr, int index);
 extern bool store_will_buy(const object_type *o_ptr);
 
 /* Event types */
@@ -479,42 +465,5 @@ extern int get_powers(int *power);
 #ifdef ALLOW_EASY_FLOOR
 extern int floor_y, floor_x;
 #endif /* ALLOW_EASY_FLOOR */
-
-#define ALLOW_STATUS_EXTRA
-
-#ifdef ALLOW_STATUS_EXTRA
-
-enum {
-	PR_BLESSED,
-	PR_HERO,
-	PR_SHERO,
-	PR_OPPOSE_ACID,
-	PR_OPPOSE_COLD,
-	PR_OPPOSE_ELEC,
-	PR_OPPOSE_FIRE,
-	PR_OPPOSE_POIS,
-	PR_PROTEVIL,
-	PR_SHIELD,
-	PR_INVULN,
-	PR_FAST,
-	PR_SLOW,
-	PR_TIM_INFRA,
-	PR_SEE_INVIS,
-	PR_RECALL,
-	PR_IMAGE,
-	PR_TIM_ESP,
-	PR_WRAITH,
-	PR_MAX
-};
-
-enum {
-KEYWORD_STATUS_EXTRA = KEYWORD_STATUS_MAX
-};
-
-extern void redraw_init(void);
-extern void redraw_flush(void);
-extern void redraw_add(int pr);
-
-#endif /* ALLOW_STATUS_EXTRA */
 
 #endif /* _INCLUDE_TNB_H_ */

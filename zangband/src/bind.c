@@ -64,13 +64,6 @@ cptr keyword_stat[] = {"strength", "intelligence", "wisdom", "dexterity",
 	"constitution", "charisma", NULL};
 cptr keyword_status[] = {"cut", "stun", "hunger", "blind", "confused",
 	"afraid", "poisoned", "state", "speed", "study", "winner",
-#ifdef ALLOW_STATUS_EXTRA
-	"blessed", "hero", "berserk", "acid", "cold", "elec", "fire",
-	"pois", "protevil", "shield", "invuln",
-	"fast", "slow",
-	"infra", "see_invis", "recall", "image",
-	"esp", "wraith",
-#endif /* ALLOW_STATUS_EXTRA */
 	NULL};
 
 cptr *keyword_setting = NULL;

@@ -61,11 +61,11 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"assign", "blocked", "examine", "height", "width",
+	static char *cmdOptions[] = {"assign", "blocked",
 		"info", "in_bounds", "in_bounds_fully", "exists", "shape", "day",
 		"wild_name",
 		NULL};
-	enum {IDX_ASSIGN, IDX_BLOCKED, IDX_EXAMINE, IDX_HEIGHT, IDX_WIDTH,
+	enum {IDX_ASSIGN, IDX_BLOCKED,
 		IDX_INFO, IDX_IN_BOUNDS, IDX_IN_BOUNDS_FULLY, IDX_EXISTS, IDX_SHAPE,
 		IDX_DAY , IDX_WILD_NAME
 		} option;
@@ -160,45 +160,6 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			blocked = !player_test_feature(y, x, 0);
 
 			Tcl_SetBooleanObj(resultPtr, blocked);
-			break;
-
-		case IDX_EXAMINE: /* examine */
-			if (!character_dungeon) goto not_exists;
-
-			/* Required number of arguments */
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "y x");
-				return TCL_ERROR;
-			}
-
-			/* Get the y coordinate */
-			if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-			{
-				y = -1;
-			}
-	
-			/* Get the x coordinate */
-			if (Tcl_GetIntFromObj(interp, objV[3], &x) != TCL_OK)
-			{
-				x = -1;
-			}
-
-			/* Get a string describing what is seen. */
-			angtk_examine(y, x, desc);
-
-			/* Set the result */
-			ExtToUtf_SetResult(interp, desc);
-			break;
-
-		case IDX_HEIGHT: /* height */
-			if (!character_dungeon) goto not_exists;
-			Tcl_SetIntObj(resultPtr, g_cave_hgt);
-			break;
-
-		case IDX_WIDTH: /* width */
-			if (!character_dungeon) goto not_exists;
-			Tcl_SetIntObj(resultPtr, g_cave_wid);
 			break;
 
 		case IDX_INFO: /* info */
@@ -369,9 +330,9 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"find", "info", "memory", "flags",
+	static char *cmdOptions[] = {"find", "memory", "flags",
 		"inscription", NULL};
-	enum {IDX_FIND, IDX_INFO, IDX_MEMORY, IDX_FLAGS,
+	enum {IDX_FIND, IDX_MEMORY, IDX_FLAGS,
 		IDX_INSCRIPTION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -516,41 +477,6 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 				if (request_limit && (++cnt >= match_limit)) break;
 			}
 			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
-		case IDX_INFO: /* info */
-
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "slot arrayName");
-				return TCL_ERROR;
-			}
-
-			/* Get a numerical index or slot name */
-			if (Tcl_GetIntFromObj(interp, objV[2], &i_idx) != TCL_OK)
-			{
-				Tcl_ResetResult(interp);
-				if (Tcl_GetIndexFromObj(interp, objV[2],
-					(char **) keyword_slot, "slot", 0, &i_idx) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-			}
-			if ((i_idx < 0) || (i_idx >= (INVEN_TOTAL - INVEN_WIELD)))
-			{
-				goto bad_index;
-			}
-	
-			/* Get object info */
-			o_ptr = &inventory[INVEN_WIELD + i_idx];
-
-			/* Get the array variable name to dump results in */
-			varName = Tcl_GetStringFromObj(objV[3], NULL);
-
-			if (dump_object_info(varName, o_ptr, INVEN_WIELD + i_idx) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
 			break;
 
 		case IDX_MEMORY: /* memory */
@@ -740,9 +666,9 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"find", "info", "memory", "inscription",
+	static char *cmdOptions[] = {"find", "memory", "inscription",
 		NULL};
-	enum {IDX_FIND, IDX_INFO, IDX_MEMORY, IDX_INSCRIPTION} option;
+	enum {IDX_FIND, IDX_MEMORY, IDX_INSCRIPTION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -910,38 +836,6 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			Tcl_SetObjResult(interp, listObjPtr);
 			break;
 		}
-
-		case IDX_INFO: /* info */
-	
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "index arrayName");
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[2], &i) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (i <= 0 || i > o_max) goto bad_index;
-			
-			/* Get the array variable name to dump results in */
-			varName = Tcl_GetStringFromObj(objV[3], NULL);
-
-			/* Get item info */
-			o_ptr = &o_list[i];
-
-			/* Illegal */
-			if (!o_ptr->k_idx || (o_ptr->iy != fy) || (o_ptr->ix != fx))
-			{
-				goto bad_index;
-			}
-			
-			/* Floor items always get 'a' for char */
-			if (dump_object_info(varName, o_ptr, 0) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			break;
 
 		case IDX_MEMORY: /* memory */
 
@@ -2223,10 +2117,10 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"count", "find", "info", "memory",
+	static char *cmdOptions[] = {"count", "find", "memory",
 		"total_weight", "weight_limit", "inscription", "worthless",
 		NULL};
-	enum {IDX_COUNT, IDX_FIND, IDX_INFO, IDX_MEMORY,
+	enum {IDX_COUNT, IDX_FIND, IDX_MEMORY,
 		IDX_TOTAL_WEIGHT, IDX_WEIGHT_LIMIT, IDX_INSCRIPTION, IDX_WORTHLESS
 	} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -2442,34 +2336,6 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 			Tcl_SetObjResult(interp, listObjPtr);
 			break;
 		}
-
-		case IDX_INFO: /* info */
-	
-		    if (objC != 4)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "index arrayName");
-				return TCL_ERROR;
-		    }
-			if (Tcl_GetIntFromObj(interp, objV[2], &i_idx) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if ((i_idx < 0) || (i_idx >= z))
-			{
-				goto bad_index;
-			}
-
-			/* Get the array variable name to dump results in */
-			varName = Tcl_GetStringFromObj(objV[3], NULL);
-
-			/* Get item info */
-			o_ptr = &inventory[i_idx];
-
-			if (dump_object_info(varName, o_ptr, i_idx) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			break;
 
 		case IDX_MEMORY: /* memory */
 

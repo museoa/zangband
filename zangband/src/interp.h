@@ -31,7 +31,7 @@ extern int objcmd_inveninfo _ANSI_ARGS_((ClientData clientData,
 
 /* interp1.c */
 typedef struct {
-	char *key; /* Textual name of TVAL_XXX macro */
+	cptr key; /* Textual name of TVAL_XXX macro */
 	int value; /* TVAL_XXX constant */
 } t_tval;
 extern t_tval g_tval[];
@@ -49,8 +49,6 @@ extern int objcmd_power _ANSI_ARGS_((ClientData clientData,
 extern int objcmd_setting _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 extern int objcmd_spell _ANSI_ARGS_((ClientData clientData,
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-extern int objcmd_store _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 extern int objcmd_system _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
