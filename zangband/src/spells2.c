@@ -2155,15 +2155,6 @@ bool genocide(int player_cast)
 	bool result = FALSE;
 	int msec = delay_factor * delay_factor * delay_factor;
 
-	/* Need a better way to control this... (wilderness is a major problem) */
-#if 0
-	/* Prevent genocide in quest levels */
-	if (p_ptr->inside_quest)
-	{
-		return (FALSE);
-	}
-#endif /* 0 */
-
 	/* Mega-Hack -- Get a monster symbol */
 	(void)(get_com("Choose a monster race (by symbol) to genocide: ", &typ));
 
@@ -2240,13 +2231,6 @@ bool mass_genocide(int player_cast)
 	int msec = delay_factor * delay_factor * delay_factor;
 
 	/* This needs to be rethought - the wilderness is a problem... */
-#if 0
-	/* Prevent mass genocide in quest levels */
-	if (p_ptr->inside_quest)
-	{
-		return (FALSE);
-	}
-#endif /* 0 */
 
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++)

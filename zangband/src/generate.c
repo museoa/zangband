@@ -175,7 +175,7 @@ static bool alloc_stairs(int feat, int num, int walls)
 		if (p_ptr->depth && is_quest_level(p_ptr->depth)) return TRUE;
 
 		/* No downstairs at the bottom */
-		if (p_ptr->depth >= MAX_DEPTH - 1) return TRUE;
+		if (p_ptr->depth >= max_dun_level()) return TRUE;
 	}
 
 	/* Place "num" stairs */

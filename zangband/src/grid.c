@@ -80,7 +80,7 @@ void place_random_stairs(int x, int y)
 		up_stairs = FALSE;
 
 	/* Bottom */
-	if (p_ptr->depth >= MAX_DEPTH - 1)
+	if (p_ptr->depth >= max_dun_level())
 		down_stairs = FALSE;
 
 	/* Quest-level */

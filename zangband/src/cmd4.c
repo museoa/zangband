@@ -451,6 +451,18 @@ void init_options(byte flags)
 			player_counter++;
 		}
 	}
+
+	/*
+	 * XXX XXX XXX This is an absolutely evil hack.
+	 * If ironman_downward is set - set vanilla town as well
+	 */
+	if (ironman_downward)
+	{
+		vanilla_town = TRUE;
+	
+		/* And here is the bit that shouldn't see the light of day. */
+		option_info[192].o_val = TRUE;
+	}
 }
 
 

@@ -1593,7 +1593,7 @@ static bool is_road_place(u16b place_num)
 			else
 			{
 				/* Can we connect a road? */
-				if (d_ptr->flags & (DF_TRACK | DF_ROAD)) return (TRUE);
+				if (d_ptr->flags & (DF_ROAD)) return (TRUE);
 			}
 			
 			/* No roads here */

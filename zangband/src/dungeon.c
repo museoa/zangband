@@ -445,7 +445,7 @@ static void pattern_teleport(void)
 
 		/* Maximum level */
 		if (p_ptr->depth > 100)
-			max_level = MAX_DEPTH - 1;
+			max_level = max_dun_level();
 		else if (p_ptr->depth == 100)
 			max_level = 100;
 
@@ -1847,6 +1847,11 @@ static void process_world(void)
 					else if (p_ptr->depth > 100)
 					{
 						p_ptr->depth = MAX_DEPTH - 1;
+					}
+					
+					if (p_ptr->depth > max_dun_level())
+					{
+						p_ptr->depth = max_dun_level();
 					}
 				}
 			}

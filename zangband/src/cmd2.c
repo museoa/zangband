@@ -65,6 +65,9 @@ void do_cmd_go_up(void)
 
 			/* Leaving */
 			p_ptr->state.leaving = TRUE;
+			
+			/* Fix dungeon level due to new themed dungeons */
+			fixup_dun_level();
 
 			/*
 			 * Hack XXX XXX Take some time
@@ -134,6 +137,9 @@ void do_cmd_go_down(void)
 
 			/* Create a way back */
 			p_ptr->state.create_up_stair = TRUE;
+			
+			/* Fix dungeon level due to new themed dungeons */
+			fixup_dun_level();
 
 			/*
 			 * Hack XXX XXX Take some time

@@ -605,6 +605,48 @@ void teleport_player_to(int nx, int ny)
 }
 
 
+/*
+ * What is the maximum dungeon level for this dungeon?
+ */
+int max_dun_level(void)
+{
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	dun_type *d_ptr = pl_ptr->dungeon;
+
+	/* Vanilla town is special */
+	if (vanilla_town) return (MAX_DEPTH - 1);
+	
+	/* Otherwise, use max depth of dungeon */
+	return (d_ptr->max_level);
+}
+
+/*
+ * Fix problems due to dungeons not starting at level 1.
+ */
+void fixup_dun_level(void)
+{
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	dun_type *d_ptr = pl_ptr->dungeon;
+	
+	/* Don't need to do anything with the old dungeon */
+	if (vanilla_town) return;
+	
+	/* Out of bounds */
+	if (p_ptr->depth < d_ptr->min_level)
+	{
+		/* We have just decended - and have to decend more? */
+		if (p_ptr->depth == 1)
+		{
+			p_ptr->depth = d_ptr->min_level;
+		}
+		else
+		{
+			/* Assume we are rising from d_ptr->min_level upwards. */
+			p_ptr->depth = 0;
+		}
+	}
+}
+
 
 /*
  * Teleport the player one level up or down (random when legal)
@@ -618,8 +660,12 @@ void teleport_player_level(void)
 		return;
 	}
 
-	if (!check_down_wild()) return;
-
+	if (!check_down_wild())
+	{
+		msgf("There is no effect.");
+		return;
+	}
+	
 	if (p_ptr->flags3 & (TR3_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
@@ -637,7 +683,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->state.leaving = TRUE;
 	}
-	else if (is_quest_level(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
+	else if (is_quest_level(p_ptr->depth))
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
 
@@ -648,7 +694,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->state.leaving = TRUE;
 	}
-	else if (one_in_(2))
+	else if (one_in_(2) || (p_ptr->depth >= max_dun_level()))
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
 
@@ -670,6 +716,9 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->state.leaving = TRUE;
 	}
+
+	/* Fix dungeon level due to new themed dungeons */
+	fixup_dun_level();
 
 	/* Sound */
 	sound(SOUND_TPLEVEL);
@@ -1630,33 +1679,23 @@ void stair_creation(void)
 	/* XXX XXX XXX */
 	delete_object(px, py);
 
-#if 0
-	/* Create a staircase */
-	if (p_ptr->inside_quest)
-	{
-		/* Quest? */
-		msgf("There is no effect!");
-		return;
-	}
-#endif /* 0 */
-
 	if (!p_ptr->depth || ironman_downward)
 	{
 		/* Town/wilderness or Ironman */
 		cave_set_feat(px, py, FEAT_MORE);
 	}
-	else if (is_quest_level(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
+	else if (is_quest_level(p_ptr->depth))
 	{
 		/* Quest level */
 		cave_set_feat(px, py, FEAT_LESS);
 	}
-	else if (one_in_(2))
+	else if (one_in_(2) || (p_ptr->depth >= max_dun_level()))
 	{
-		cave_set_feat(px, py, FEAT_MORE);
+		cave_set_feat(px, py, FEAT_LESS);
 	}
 	else
 	{
-		cave_set_feat(px, py, FEAT_LESS);
+		cave_set_feat(px, py, FEAT_MORE);
 	}
 }
 

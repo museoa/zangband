@@ -2096,7 +2096,7 @@ void place_trap(int x, int y)
 		if (is_quest_level(p_ptr->depth)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
-		if (p_ptr->depth >= MAX_DEPTH - 1) continue;
+		if (p_ptr->depth >= max_dun_level()) continue;
 
 		/* Probably should prevent trap doors in the wilderness */
 		if (!p_ptr->depth) continue;
