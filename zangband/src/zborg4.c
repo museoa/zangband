@@ -2559,9 +2559,8 @@ static void borg_notice_armour_swap(void)
 	int b_i = 0;
 	s32b v = -1L;
 	s32b b_v = 0L;
-	int dam, damage;
 
-	borg_item *item;
+	list_item *l_ptr;
 
 	armour_swap = 0;
 
@@ -2569,33 +2568,21 @@ static void borg_notice_armour_swap(void)
 	if (!borg_uses_swaps) return;
 
 	/*** Process the inventory ***/
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		item = &borg_items[i];
+		l_ptr = &inventory[i];
 
 		/* reset counter */
 		v = -1L;
-		dam = 0;
-		damage = 0;
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Hack -- skip un-aware items */
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Dont carry swaps until dlevel 50.  They are heavy */
 		if (borg_skill[BI_MAXDEPTH] < 50) continue;
 
-		/* Require "known" (or average, good, etc) */
-		if (!item->able &&
-			!strstr(item->desc, "{good}") &&
-			!strstr(item->desc, "{excellent") &&
-			!strstr(item->desc, "{terrible") &&
-			!strstr(item->desc, "{special")) continue;
-
-		/* One Ring is not a swap */
-		/* if (item->name1 == ART_POWER) continue; */
+		/* Require "known" */
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Clear all the swap weapon flags as I look at each one. */
 		armour_swap_slay_animal = FALSE;
@@ -2645,7 +2632,7 @@ static void borg_notice_armour_swap(void)
 		decurse_armour_swap = -1;
 
 		/* Analyze the item */
-		switch (item->tval)
+		switch (l_ptr->tval)
 		{
 			case TV_RING:
 			case TV_AMULET:
@@ -2658,162 +2645,70 @@ static void borg_notice_armour_swap(void)
 			case TV_HARD_ARMOR:
 			case TV_DRAG_ARMOR:
 			{
-				/* ARMOUR TYPE STUFF */
-
-				/* various slays */
-				/* as of 280, armours dont have slays but random artifacts might.
-				 */
-				if (item->flags1 & TR1_SLAY_ANIMAL) armour_swap_slay_animal =
-						TRUE;
-				if (item->flags1 & TR1_SLAY_EVIL) armour_swap_slay_evil = TRUE;
-				if (item->flags1 & TR1_SLAY_UNDEAD) armour_swap_slay_undead =
-						TRUE;
-				if (item->flags1 & TR1_SLAY_DEMON) armour_swap_slay_demon =
-						TRUE;
-				if (item->flags1 & TR1_SLAY_ORC) armour_swap_slay_orc = TRUE;
-				if (item->flags1 & TR1_SLAY_TROLL) armour_swap_slay_troll =
-						TRUE;
-				if (item->flags1 & TR1_SLAY_GIANT) armour_swap_slay_giant =
-						TRUE;
-				if (item->flags1 & TR1_SLAY_DRAGON) armour_swap_slay_dragon =
-						TRUE;
-				if (item->flags1 & TR1_KILL_DRAGON) armour_swap_kill_dragon =
-						TRUE;
-				if (item->flags1 & TR1_IMPACT) armour_swap_impact = TRUE;
-				if (item->flags1 & TR1_BRAND_ACID) armour_swap_brand_acid =
-						TRUE;
-				if (item->flags1 & TR1_BRAND_ELEC) armour_swap_brand_elec =
-						TRUE;
-				if (item->flags1 & TR1_BRAND_FIRE) armour_swap_brand_fire =
-						TRUE;
-				if (item->flags1 & TR1_BRAND_COLD) armour_swap_brand_cold =
-						TRUE;
-
 				/* Affect infravision */
-				if (item->flags1 & TR1_INFRA) armour_swap_see_infra +=
-						item->pval;
-				/* Affect various skills */
-				/* Affect speed */
+				if (l_ptr->kn_flags1 & TR1_INFRA) armour_swap_see_infra +=
+						l_ptr->pval;
 
 				/* Various flags */
-				if (item->flags3 & TR3_SLOW_DIGEST) armour_swap_slow_digest =
+				if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) armour_swap_slow_digest =
 						TRUE;
-				if (item->flags3 & TR3_AGGRAVATE) armour_swap_aggravate = TRUE;
-				if (item->flags3 & TR3_TELEPORT) armour_swap_teleport = TRUE;
-				if (item->flags3 & TR3_REGEN) armour_swap_regenerate = TRUE;
-				if (item->flags3 & TR3_TELEPATHY) armour_swap_telepathy = TRUE;
-				if (item->flags3 & TR3_LITE) armour_swap_lite = TRUE;
-				if (item->flags3 & TR3_SEE_INVIS) armour_swap_see_invis = TRUE;
-				if (item->flags3 & TR3_FEATHER) armour_swap_ffall = TRUE;
-				if (item->flags2 & TR2_FREE_ACT) armour_swap_free_act = TRUE;
-				if (item->flags2 & TR2_HOLD_LIFE) armour_swap_hold_life = TRUE;
+				if (l_ptr->kn_flags3 & TR3_AGGRAVATE) armour_swap_aggravate = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPORT) armour_swap_teleport = TRUE;
+				if (l_ptr->kn_flags3 & TR3_REGEN) armour_swap_regenerate = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPATHY) armour_swap_telepathy = TRUE;
+				if (l_ptr->kn_flags3 & TR3_LITE) armour_swap_lite = TRUE;
+				if (l_ptr->kn_flags3 & TR3_SEE_INVIS) armour_swap_see_invis = TRUE;
+				if (l_ptr->kn_flags3 & TR3_FEATHER) armour_swap_ffall = TRUE;
+				if (l_ptr->kn_flags2 & TR2_FREE_ACT) armour_swap_free_act = TRUE;
+				if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) armour_swap_hold_life = TRUE;
 
 				/* Immunity flags */
-				/* if you are immune you automaticly resist */
-				if (item->flags2 & TR2_IM_FIRE)
+				if (l_ptr->kn_flags2 & TR2_IM_FIRE)
 				{
 					armour_swap_immune_fire = TRUE;
 					armour_swap_resist_fire = TRUE;
 				}
-				if (item->flags2 & TR2_IM_ACID)
+				if (l_ptr->kn_flags2 & TR2_IM_ACID)
 				{
 					armour_swap_immune_acid = TRUE;
 					armour_swap_resist_acid = TRUE;
 				}
-				if (item->flags2 & TR2_IM_COLD)
+				if (l_ptr->kn_flags2 & TR2_IM_COLD)
 				{
 					armour_swap_immune_cold = TRUE;
 					armour_swap_resist_cold = TRUE;
 				}
-				if (item->flags2 & TR2_IM_ELEC)
+				if (l_ptr->kn_flags2 & TR2_IM_ELEC)
 				{
 					armour_swap_immune_elec = TRUE;
 					armour_swap_resist_elec = TRUE;
 				}
 
 				/* Resistance flags */
-				if (item->flags2 & TR2_RES_ACID) armour_swap_resist_acid = TRUE;
-				if (item->flags2 & TR2_RES_ELEC) armour_swap_resist_elec = TRUE;
-				if (item->flags2 & TR2_RES_FIRE) armour_swap_resist_fire = TRUE;
-				if (item->flags2 & TR2_RES_COLD) armour_swap_resist_cold = TRUE;
-				if (item->flags2 & TR2_RES_POIS) armour_swap_resist_pois = TRUE;
-				if (item->flags2 & TR2_RES_CONF) armour_swap_resist_conf = TRUE;
-				if (item->flags2 & TR2_RES_SOUND) armour_swap_resist_sound =
+				if (l_ptr->kn_flags2 & TR2_RES_ACID) armour_swap_resist_acid = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_ELEC) armour_swap_resist_elec = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_FIRE) armour_swap_resist_fire = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_COLD) armour_swap_resist_cold = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_POIS) armour_swap_resist_pois = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_CONF) armour_swap_resist_conf = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_SOUND) armour_swap_resist_sound =
 						TRUE;
-				if (item->flags2 & TR2_RES_LITE) armour_swap_resist_lite = TRUE;
-				if (item->flags2 & TR2_RES_DARK) armour_swap_resist_dark = TRUE;
-				if (item->flags2 & TR2_RES_CHAOS) armour_swap_resist_chaos =
+				if (l_ptr->kn_flags2 & TR2_RES_LITE) armour_swap_resist_lite = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_DARK) armour_swap_resist_dark = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_CHAOS) armour_swap_resist_chaos =
 						TRUE;
-				if (item->flags2 & TR2_RES_DISEN) armour_swap_resist_disen =
+				if (l_ptr->kn_flags2 & TR2_RES_DISEN) armour_swap_resist_disen =
 						TRUE;
-				if (item->flags2 & TR2_RES_SHARDS) armour_swap_resist_shard =
+				if (l_ptr->kn_flags2 & TR2_RES_SHARDS) armour_swap_resist_shard =
 						TRUE;
-				if (item->flags2 & TR2_RES_NEXUS) armour_swap_resist_nexus =
+				if (l_ptr->kn_flags2 & TR2_RES_NEXUS) armour_swap_resist_nexus =
 						TRUE;
-				if (item->flags2 & TR2_RES_BLIND) armour_swap_resist_blind =
+				if (l_ptr->kn_flags2 & TR2_RES_BLIND) armour_swap_resist_blind =
 						TRUE;
-				if (item->flags2 & TR2_RES_NETHER) armour_swap_resist_neth =
+				if (l_ptr->kn_flags2 & TR2_RES_NETHER) armour_swap_resist_neth =
 						TRUE;
-				if (item->cursed) decurse_armour_swap = 0;
-				if (item->flags3 & TR3_HEAVY_CURSE) decurse_armour_swap = 1;
-
-				/* Sustain flags */
-
-				/* calculating the value of the swap weapon. */
-				damage = (item->dd * item->ds * 35L);
-				/* Reward "damage" and increased blows per round */
-				v += damage * (borg_skill[BI_BLOWS] + 1);
-
-				/* Reward "bonus to hit" */
-				v += ((borg_skill[BI_TOHIT] + item->to_h) * 35L);
-
-				/* Reward "bonus to dam" */
-				v += ((borg_skill[BI_TODAM] + item->to_d) * 35L);
-
-				dam = damage * borg_skill[BI_BLOWS];
-
-				/* assume 2x base damage for x% of creatures */
-				dam = damage * 2 * borg_skill[BI_BLOWS];
-
-				if (!borg_skill[BI_WS_ANIMAL] && !borg_skill[BI_WB_ELEC] &&
-					armour_swap_slay_animal) v += (dam * 2) / 2;
-				if (!borg_skill[BI_WS_EVIL] &&
-					armour_swap_slay_evil) v += (dam * 7) / 2;
-				/* assume 3x base damage for x% of creatures */
-				dam = damage * 3 * borg_skill[BI_BLOWS];
-
-				if (!borg_skill[BI_WS_UNDEAD] &&
-					armour_swap_slay_undead) v += (dam * 5) / 2;
-				if (!borg_skill[BI_WS_DEMON] &&
-					armour_swap_slay_demon) v += (dam * 3) / 2;
-				if (!borg_skill[BI_WS_GIANT] &&
-					armour_swap_slay_giant) v += (dam * 4) / 2;
-				if (!borg_skill[BI_WS_DRAGON] && !borg_skill[BI_WK_DRAGON] &&
-					armour_swap_slay_dragon) v += (dam * 6) / 2;
-				if (!borg_skill[BI_WB_ACID] &&
-					armour_swap_brand_acid) v += (dam * 4) / 2;
-				if (!borg_skill[BI_WB_ELEC] &&
-					armour_swap_brand_elec) v += (dam * 5) / 2;
-				if (!borg_skill[BI_WB_FIRE] &&
-					armour_swap_brand_fire) v += (dam * 3) / 2;
-				if (!borg_skill[BI_WB_COLD] &&
-					armour_swap_brand_cold) v += (dam * 3) / 2;
-				/* SOrc and STroll get 1/2 reward now */
-				if (!borg_skill[BI_WS_ORC] &&
-					armour_swap_slay_orc) v += (dam * 1) / 2;
-				if (!borg_skill[BI_WS_TROLL] &&
-					armour_swap_slay_troll) v += (dam * 2) / 2;
-				/* SOrc and STroll get 2/2 reward if slay evil not possesed */
-				if (!borg_skill[BI_WS_ORC] && !borg_skill[BI_WS_EVIL] &&
-					armour_swap_slay_orc) v += (dam * 1) / 2;
-				if (!borg_skill[BI_WS_TROLL] && !borg_skill[BI_WS_EVIL] &&
-					armour_swap_slay_troll) v += (dam * 1) / 2;
-
-				/* assume 5x base damage for x% of creatures */
-				dam = damage * 5 * borg_skill[BI_BLOWS];
-				if (!borg_skill[BI_WK_DRAGON] &&
-					armour_swap_kill_dragon) v += (dam * 5) / 2;
-
+				if (l_ptr->kn_flags3 & TR3_CURSED) decurse_armour_swap = 0;
+				if (l_ptr->kn_flags3 & TR3_HEAVY_CURSE) decurse_armour_swap = 1;
 
 				if (!borg_skill[BI_SDIG] && armour_swap_slow_digest) v += 10L;
 				if (armour_swap_aggravate) v -= 8000L;
@@ -2868,30 +2763,9 @@ static void borg_notice_armour_swap(void)
 					armour_swap_resist_blind) v += 5000L;
 				if (!borg_skill[BI_RNTHR] &&
 					armour_swap_resist_neth) v += 5500L;
-				/* Special concern if Tarraseque is alive */
-				if (borg_skill[BI_MAXDEPTH] >= 75 &&
-					((!borg_skill[BI_ICOLD] && armour_swap_immune_cold) ||
-					 (!borg_skill[BI_IFIRE] && armour_swap_immune_fire)))
-				{
-					/* If Tarraseque is alive */
-					if (borg_race_death[838] == 0)
-					{
-						if (!borg_skill[BI_ICOLD] &&
-							armour_swap_immune_cold) v += 90000L;
-						if (!borg_skill[BI_IFIRE] &&
-							armour_swap_immune_fire) v += 90000L;
-					}
-
-				}
-
 
 
 				/*  Mega-Hack -- resists (level 60) */
-				/* Its possible that he will get a sword and a cloak
-				 * both with the same high resist and keep each based
-				 * on that resist.  We want him to check to see
-				 * that the other swap does not already have the high resist.
-				 */
 				if (!borg_skill[BI_RNTHR] && borg_skill[BI_MAXDEPTH] + 1 >= 55
 					&& !weapon_swap_resist_neth &&
 					armour_swap_resist_neth) v += 105000L;
@@ -2901,31 +2775,30 @@ static void borg_notice_armour_swap(void)
 				if (!borg_skill[BI_RDIS] && borg_skill[BI_MAXDEPTH] + 1 >= 60 &&
 					!weapon_swap_resist_disen &&
 					armour_swap_resist_disen) v += 100000L;
-
-				/* some artifacts would make good back ups for their activation */
-
 			}
 
-				/* skip usless ones */
-				if (v <= 1000) continue;
+			/* skip usless ones */
+			if (v <= 1000) continue;
 
-				/* collect the best one */
-				if ((b_i >= 0) && (v < b_v)) continue;
+			/* collect the best one */
+			if ((b_i >= 0) && (v < b_v)) continue;
 
-				/* track it */
-				b_i = i;
-				b_v = v;
-				armour_swap_value = v;
-				armour_swap = i;
+			/* track it */
+			b_i = i;
+			b_v = v;
+			armour_swap_value = v;
+			armour_swap = i;
 		}
 	}
 
-	/* Now that we know who the best swap is lets set our swap
+	/*
+	 * Now that we know who the best swap is lets set our swap
 	 * flags and get a move on
 	 */
-		/*** Process the best inven item ***/
+	
+	/*** Process the best inven item ***/
 
-	item = &borg_items[b_i];
+	l_ptr = &inventory[b_i];
 
 	/* Clear all the swap weapon flags as I look at each one. */
 	armour_swap_slay_animal = FALSE;
@@ -2975,103 +2848,96 @@ static void borg_notice_armour_swap(void)
 	decurse_armour_swap = -1;
 
 	/* various slays */
-	if (item->flags1 & TR1_SLAY_ANIMAL) armour_swap_slay_animal = TRUE;
-	if (item->flags1 & TR1_SLAY_EVIL) armour_swap_slay_evil = TRUE;
-	if (item->flags1 & TR1_SLAY_UNDEAD) armour_swap_slay_undead = TRUE;
-	if (item->flags1 & TR1_SLAY_DEMON) armour_swap_slay_demon = TRUE;
-	if (item->flags1 & TR1_SLAY_ORC) armour_swap_slay_orc = TRUE;
-	if (item->flags1 & TR1_SLAY_TROLL) armour_swap_slay_troll = TRUE;
-	if (item->flags1 & TR1_SLAY_GIANT) armour_swap_slay_giant = TRUE;
-	if (item->flags1 & TR1_SLAY_DRAGON) armour_swap_slay_dragon = TRUE;
-	if (item->flags1 & TR1_KILL_DRAGON) armour_swap_kill_dragon = TRUE;
-	if (item->flags1 & TR1_IMPACT) armour_swap_impact = TRUE;
-	if (item->flags1 & TR1_BRAND_ACID) armour_swap_brand_acid = TRUE;
-	if (item->flags1 & TR1_BRAND_ELEC) armour_swap_brand_elec = TRUE;
-	if (item->flags1 & TR1_BRAND_FIRE) armour_swap_brand_fire = TRUE;
-	if (item->flags1 & TR1_BRAND_COLD) armour_swap_brand_cold = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) armour_swap_slay_animal = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) armour_swap_slay_evil = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_UNDEAD) armour_swap_slay_undead = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_DEMON) armour_swap_slay_demon = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_ORC) armour_swap_slay_orc = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_TROLL) armour_swap_slay_troll = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_GIANT) armour_swap_slay_giant = TRUE;
+	if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) armour_swap_slay_dragon = TRUE;
+	if (l_ptr->kn_flags1 & TR1_KILL_DRAGON) armour_swap_kill_dragon = TRUE;
+	if (l_ptr->kn_flags1 & TR1_IMPACT) armour_swap_impact = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_ACID) armour_swap_brand_acid = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_ELEC) armour_swap_brand_elec = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_FIRE) armour_swap_brand_fire = TRUE;
+	if (l_ptr->kn_flags1 & TR1_BRAND_COLD) armour_swap_brand_cold = TRUE;
 
 	/* Affect infravision */
-	if (item->flags1 & TR1_INFRA) armour_swap_see_infra += item->pval;
-	/* Affect various skills */
-	/* Affect speed */
+	if (l_ptr->kn_flags1 & TR1_INFRA) armour_swap_see_infra += l_ptr->pval;
 
 	/* Various flags */
-	if (item->flags3 & TR3_SLOW_DIGEST) armour_swap_slow_digest = TRUE;
-	if (item->flags3 & TR3_AGGRAVATE) armour_swap_aggravate = TRUE;
-	if (item->flags3 & TR3_TELEPORT) armour_swap_teleport = TRUE;
-	if (item->flags3 & TR3_REGEN) armour_swap_regenerate = TRUE;
-	if (item->flags3 & TR3_TELEPATHY) armour_swap_telepathy = TRUE;
-	if (item->flags3 & TR3_LITE) armour_swap_lite = TRUE;
-	if (item->flags3 & TR3_SEE_INVIS) armour_swap_see_invis = TRUE;
-	if (item->flags3 & TR3_FEATHER) armour_swap_ffall = TRUE;
-	if (item->flags2 & TR2_FREE_ACT) armour_swap_free_act = TRUE;
-	if (item->flags2 & TR2_HOLD_LIFE) armour_swap_hold_life = TRUE;
+	if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) armour_swap_slow_digest = TRUE;
+	if (l_ptr->kn_flags3 & TR3_AGGRAVATE) armour_swap_aggravate = TRUE;
+	if (l_ptr->kn_flags3 & TR3_TELEPORT) armour_swap_teleport = TRUE;
+	if (l_ptr->kn_flags3 & TR3_REGEN) armour_swap_regenerate = TRUE;
+	if (l_ptr->kn_flags3 & TR3_TELEPATHY) armour_swap_telepathy = TRUE;
+	if (l_ptr->kn_flags3 & TR3_LITE) armour_swap_lite = TRUE;
+	if (l_ptr->kn_flags3 & TR3_SEE_INVIS) armour_swap_see_invis = TRUE;
+	if (l_ptr->kn_flags3 & TR3_FEATHER) armour_swap_ffall = TRUE;
+	if (l_ptr->kn_flags2 & TR2_FREE_ACT) armour_swap_free_act = TRUE;
+	if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) armour_swap_hold_life = TRUE;
 
 	/* Immunity flags */
-	/* if you are immune you automaticly resist */
-	if (item->flags2 & TR2_IM_FIRE)
+	if (l_ptr->kn_flags2 & TR2_IM_FIRE)
 	{
 		armour_swap_immune_fire = TRUE;
 		armour_swap_resist_fire = TRUE;
 	}
-	if (item->flags2 & TR2_IM_ACID)
+	if (l_ptr->kn_flags2 & TR2_IM_ACID)
 	{
 		armour_swap_immune_acid = TRUE;
 		armour_swap_resist_acid = TRUE;
 	}
-	if (item->flags2 & TR2_IM_COLD)
+	if (l_ptr->kn_flags2 & TR2_IM_COLD)
 	{
 		armour_swap_immune_cold = TRUE;
 		armour_swap_resist_cold = TRUE;
 	}
-	if (item->flags2 & TR2_IM_ELEC)
+	if (l_ptr->kn_flags2 & TR2_IM_ELEC)
 	{
 		armour_swap_immune_elec = TRUE;
 		armour_swap_resist_elec = TRUE;
 	}
 
 	/* Resistance flags */
-	if (item->flags2 & TR2_RES_ACID) armour_swap_resist_acid = TRUE;
-	if (item->flags2 & TR2_RES_ELEC) armour_swap_resist_elec = TRUE;
-	if (item->flags2 & TR2_RES_FIRE) armour_swap_resist_fire = TRUE;
-	if (item->flags2 & TR2_RES_COLD) armour_swap_resist_cold = TRUE;
-	if (item->flags2 & TR2_RES_POIS) armour_swap_resist_pois = TRUE;
-	if (item->flags2 & TR2_RES_CONF) armour_swap_resist_conf = TRUE;
-	if (item->flags2 & TR2_RES_SOUND) armour_swap_resist_sound = TRUE;
-	if (item->flags2 & TR2_RES_LITE) armour_swap_resist_lite = TRUE;
-	if (item->flags2 & TR2_RES_DARK) armour_swap_resist_dark = TRUE;
-	if (item->flags2 & TR2_RES_CHAOS) armour_swap_resist_chaos = TRUE;
-	if (item->flags2 & TR2_RES_DISEN) armour_swap_resist_disen = TRUE;
-	if (item->flags2 & TR2_RES_SHARDS) armour_swap_resist_shard = TRUE;
-	if (item->flags2 & TR2_RES_NEXUS) armour_swap_resist_nexus = TRUE;
-	if (item->flags2 & TR2_RES_BLIND) armour_swap_resist_blind = TRUE;
-	if (item->flags2 & TR2_RES_NETHER) armour_swap_resist_neth = TRUE;
-	if (item->cursed) decurse_armour_swap = 0;
-	if (item->flags3 & TR3_HEAVY_CURSE) decurse_armour_swap = 1;
+	if (l_ptr->kn_flags2 & TR2_RES_ACID) armour_swap_resist_acid = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_ELEC) armour_swap_resist_elec = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_FIRE) armour_swap_resist_fire = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_COLD) armour_swap_resist_cold = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_POIS) armour_swap_resist_pois = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_CONF) armour_swap_resist_conf = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_SOUND) armour_swap_resist_sound = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_LITE) armour_swap_resist_lite = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_DARK) armour_swap_resist_dark = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_CHAOS) armour_swap_resist_chaos = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_DISEN) armour_swap_resist_disen = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_SHARDS) armour_swap_resist_shard = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_NEXUS) armour_swap_resist_nexus = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_BLIND) armour_swap_resist_blind = TRUE;
+	if (l_ptr->kn_flags2 & TR2_RES_NETHER) armour_swap_resist_neth = TRUE;
+	if (l_ptr->kn_flags3 & TR3_CURSED) decurse_armour_swap = 0;
+	if (l_ptr->kn_flags3 & TR3_HEAVY_CURSE) decurse_armour_swap = 1;
 
 	enchant_armour_swap_to_a = 0;
-
-	/* dont look for enchantment on non armours */
-	if (item->tval >= TV_LITE) return;
 
 	/* Hack -- enchant the swap equipment (armor) */
 	/* Note need for enchantment */
 	if ((borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
 		 amt_enchant_armor >= 1))
 	{
-		if (item->to_a < 10)
+		if (l_ptr->to_a < 10)
 		{
-			enchant_armour_swap_to_a += (10 - item->to_a);
+			enchant_armour_swap_to_a += (10 - l_ptr->to_a);
 		}
 	}
 	else
 	{
-		if (item->to_a < 8)
+		if (l_ptr->to_a < 8)
 		{
-			enchant_armour_swap_to_a += (8 - item->to_a);
+			enchant_armour_swap_to_a += (8 - l_ptr->to_a);
 		}
 	}
-
 }
 
 /*
