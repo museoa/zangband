@@ -4321,7 +4321,7 @@ void change_level(int level)
 
 	if (level == 0)
 	{
-		if (pl_ptr->dungeon->region)
+		if (pl_ptr->dungeon && pl_ptr->dungeon->region)
 		{
 			/* Delete dungeon */
 			pl_ptr->dungeon->region = unref_region(pl_ptr->dungeon->region);
@@ -4371,7 +4371,7 @@ void change_level(int level)
 	else
 	{
 		/* In the dungeon */
-		if (pl_ptr->dungeon->region)
+		if (pl_ptr->dungeon && pl_ptr->dungeon->region)
 		{
 			/* Delete old dungeon */
 			pl_ptr->dungeon->region = unref_region(pl_ptr->dungeon->region);
