@@ -84,15 +84,6 @@ static int borg_normal_size;	/* Number of normals */
 static s16b *borg_normal_what;	/* Indexes of normals */
 static cptr *borg_normal_text;	/* Names of normals */
 
-
-/*
- * Hack -- object/monster tracking array
- */
-
-static int borg_wank_num = 0;
-
-static borg_wank *borg_wanks;
-
 /*
  * Monster tracking
  */
@@ -490,6 +481,9 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 static int get_blank_kill(void)
 {
 	int i;
+	
+	/* Count the monsters */
+	borg_kills_cnt++;
 
 	/* Look for a "dead" monster */
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -555,7 +549,7 @@ static void get_list(u16b **list_head, u16b **list_tail, byte type)
 /*
  * Get a new kill entry for a list
  */
-int get_new_mon(byte type)
+static int get_new_mon(byte type)
 {
 	u16b *list_head = NULL;
 	u16b *list_tail = NULL;
@@ -592,75 +586,159 @@ int get_new_mon(byte type)
 	/* Blank out the link */
 	kill = &borg_kills[new];
 	kill->next_kill = 0;
+	
+	borg_note(format("# Getting new monster entry. (%d)", new));
 
 	/* Done */
 	return (new);
 }
 
 /*
+ * Find the entry that points to this one
+ */
+static u16b *find_mon_entry(u16b who, u16b *previous)
+{
+	int i;
+	
+	*previous = 0;
+	
+	/* Paranoia */
+	if (!who) borg_oops("# Invalid monster node! (0)");
+	
+	/* First, check the list heads */
+	if (mon_used_head == who) return (&mon_used_head);
+	if (mon_new_head == who) return (&mon_new_head);
+	if (mon_old_head == who) return (&mon_old_head);
+	if (mon_move_head == who) return (&mon_move_head);
+
+	/* Scan the list looking for the node before the one we want */
+	for (i = 1; i < borg_kills_nxt; i++)
+	{
+		/* Find empty entries */
+		if (borg_kills[i].next_kill == who)
+		{
+			*previous = i;
+			return (&borg_kills[i].next_kill);
+		}
+	}
+	
+	/* Message about our failure */
+	borg_note(format("# Cannot find preceeding monster node! (%d)", who));
+	
+	/* Failure */
+	return (NULL);
+}
+
+/*
+ * Disconnect kill 'who' from the list it is in
+ */
+static bool excise_mon(u16b who)
+{
+	u16b previous;
+	u16b *connector = find_mon_entry(who, &previous);
+	
+	borg_kill *kill = &borg_kills[who];
+	
+	/* Paranoia */
+	if (!connector) return (FALSE);
+	
+	/* Disconnect from list */
+	*connector = kill->next_kill;
+	
+	borg_note(format("# Excising entry. (%d)", who));
+	
+	/* Correct list tails */
+	if (!kill->next_kill)
+	{
+		if (mon_used_tail == who) mon_used_tail = previous;
+		else if (mon_new_tail == who) mon_new_tail = previous;
+		else if (mon_old_tail == who) mon_old_tail = previous;
+		else if (mon_move_tail == who) mon_move_tail = previous;
+	}
+	
+	/* Paranoia */
+	kill->next_kill = 0;
+	
+	return (TRUE);
+}
+
+
+/*
  * Move a kill entry from one list to another
  */
-void move_mon_entry(int i, u16b *node_ptr, byte type)
+static void move_mon_entry(u16b who, byte type)
 {
-	borg_kill *kill = &borg_kills[i];
-
-	u16b *list_head = NULL;
-	u16b *list_tail = NULL;
-
+	borg_kill *kill = &borg_kills[who];
+	
+	u16b *list_head, *list_tail;
+		
+	/* Paranoia */
+	if (!who)
+	{
+		borg_oops("Trying to move invalid monster number (0)");
+		return;
+	}
+	
+	/* Disconnect the kill */
+	if (!excise_mon(who)) return;
+	
+	/* Attach to the end of the required list */
+		
 	/* Get the required list */
 	get_list(&list_head, &list_tail, type);
 
-	/* Excise the node */
-	*node_ptr = kill->next_kill;
-	kill->next_kill = 0;
-
-	if (*list_head)
+	if (*list_tail)
 	{
 		/* Just connect to the tail of the list */
 		kill = &borg_kills[*list_tail];
 
-		kill->next_kill = i;
+		kill->next_kill = who;
 	}
 	else
 	{
 		/* We need to make this the first node */
-		*list_head = i;
+		*list_head = who;
 	}
 
 	/* This is now the list tail */
-	*list_tail = i;
+	*list_tail = who;
+	
+	borg_note(format("# Moving monster entry. (%d)", who));
 }
 
 
 /*
  * Delete an old "kill" record
  */
-void borg_delete_kill(int i)
+static void borg_remove_kill(int who)
 {
-	borg_kill *kill = &borg_kills[i];
-
-	map_block *mb_ptr;
+	borg_kill *kill = &borg_kills[who];
+	
+	/* map_block *mb_ptr; */
+	
+	borg_note(format("# Removing monster entry. (%d)", who));
 
 	/* Paranoia -- Already wiped */
 	if (!kill->r_idx) return;
 
+#if 0	
+	if (map_in_bounds(kill->x, kill->y))
+	{
+		mb_ptr = map_loc(kill->x, kill->y);
+		
+		/* Clear kill */
+		mb_ptr->kill = 0;
+	}
+#endif /* 0 */
+
 	/* Note */
 	borg_note(format("# Forgetting a monster '%s' at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), kill->y, kill->x));
+					 (r_name + r_info[kill->r_idx].name), kill->x, kill->y));
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
 				   -(borg_danger(kill->y, kill->x, 1, TRUE)), TRUE);
 #endif
-
-	/* Bounds checking */
-	if (map_in_bounds(kill->x, kill->y))
-	{
-		mb_ptr = map_loc(kill->x, kill->y);
-
-		/* Update the grids */
-		mb_ptr->kill = 0;
-	}
 
 	/* Kill the monster */
 	WIPE(kill, borg_kill);
@@ -671,10 +749,77 @@ void borg_delete_kill(int i)
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
 
-
 	/* Wipe goals */
 	goal = 0;
 }
+
+
+/*
+ * Kill a monster, and remove it from any lists
+ */
+void borg_delete_kill(int who)
+{	
+	/* Disconnect the kill */
+	if (!excise_mon(who)) return;
+
+	/* Remove it */
+	borg_remove_kill(who);
+}
+
+
+/*
+ * Remove all monsters of a given type
+ */
+static void borg_wipe_mon(byte type)
+{
+	u16b *list_head, *list_tail;
+	
+	get_list(&list_head, &list_tail, type);
+	
+	while (*list_head)
+	{
+		/* Get rid of kill */
+		borg_delete_kill(*list_head);
+	}
+}
+
+
+/*
+ * Append all the kills in list two
+ * to the end of list one.
+ */
+static void borg_append_mon_list(byte type1, byte type2)
+{
+	u16b *list1_head, *list1_tail;
+	u16b *list2_head, *list2_tail;
+	
+	/* Get lists */
+	get_list(&list1_head, &list1_tail, type1);
+	get_list(&list2_head, &list2_tail, type2);
+	
+	/* Does the first list exist? */
+	if (*list1_tail)
+	{
+		/* Get last node in first list */
+		borg_kill *kill = &borg_kills[*list1_tail];
+	
+		/* Attach second list onto first */
+		kill->next_kill = *list2_head;
+	}
+	else
+	{
+		/* The first list does not exist, just swap details */
+		*list1_head = *list2_head;
+	}
+	
+	/* The first list now ends here */
+	if (*list2_tail) *list1_tail = *list2_tail;
+	
+	/* Nullify second list */
+	*list2_head = 0;
+	*list2_tail = 0;
+}
+
 
 /*
  * Hack -- Update a "new" monster
@@ -734,26 +879,9 @@ static void borg_update_kill(int i)
 /*
  * Obtain a new "kill" index
  */
-static int borg_new_kill(int r_idx, int y, int x)
+static void borg_new_kill(int r_idx, int n, int x, int y)
 {
-	int n;
-	int p = 0;
-
-	map_block *mb_ptr;
-
-	borg_kill *kill;
-
-	monster_race *r_ptr;
-
-	/* Get an empty kill */
-	n = get_blank_kill();
-
-	/* Count the monsters */
-	borg_kills_cnt++;
-
-	/* Access the monster */
-	kill = &borg_kills[n];
-	r_ptr = &r_info[kill->r_idx];
+	borg_kill *kill = &borg_kills[n];
 
 	/* Save the race */
 	kill->r_idx = r_idx;
@@ -762,28 +890,23 @@ static int borg_new_kill(int r_idx, int y, int x)
 	kill->x = x;
 	kill->y = y;
 
-	mb_ptr = map_loc(x, y);
-
-	/* Update the grids */
-	mb_ptr->kill = n;
-
 	/* Timestamp */
 	kill->when = borg_t;
 
 	/* Update the monster */
 	borg_update_kill(n);
 
+	/* Note */
+	borg_note(format("# Creating a monster '%s' (%d)",
+					 (r_name + r_info[kill->r_idx].name), n));
+
+#if 0
 	/* Danger of this monster to its grid (used later) */
 	p = borg_danger(y, x, 1, FALSE);
 
-	/* Note */
-	borg_note(format("# Creating a monster '%s' at (%d,%d) danger %d",
-					 (r_name + r_info[kill->r_idx].name), y, x, p));
-
-#if 0
 	/* Add some regional fear (2%) due to this monster */
 	borg_fear_grid(NULL, y, x, p * 2 / 100, TRUE);
-#endif
+#endif /* 0 */
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
@@ -791,8 +914,8 @@ static int borg_new_kill(int r_idx, int y, int x)
 	/* Wipe goals */
 	goal = 0;
 
-	/* Return the monster */
-	return (n);
+	/* Done */
+	return;
 }
 
 
@@ -812,7 +935,7 @@ static void borg_sleep_kill(void)
 /*
  * Determine if a monster should be "viewable"
  */
-static bool borg_follow_kill_aux(int i, int y, int x)
+static bool borg_follow_kill_aux(int i, int x, int y)
 {
 	int d;
 
@@ -875,322 +998,272 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 
 
 /*
- * Attempt to "follow" a missing monster
+ * Attempt to track monsters from one
+ * square to another.
  *
- * This routine is not called when the player is blind or hallucinating.
- *
- * Currently this function is a total hack, but handles the case of only
- * one possible location (taking it), two adjacent possible locations
- * (taking the diagonal one), and three adjacent locations with the
- * central one being a diagonal (taking the diagonal one).
- *
- * We should perhaps handle the case of three adjacent locations with
- * the central one being a non-diagonal (taking the non-diagonal one).
- *
- * We should perhaps attempt to take into account "last known direction",
- * which would allow us to "predict" motion up to walls, and we should
- * perhaps attempt to take into account the "standard" flee algorithm,
- * though that feels a little like cheating.
+ * This is a quadratic algorithm, but may be fast enough...
  */
-static void borg_follow_kill(int i)
+static void observe_kill_move(int new_type, int old_type, int dist)
 {
-	int j;
-	int x, y;
-	int ox, oy;
+	u16b *list1_head, *list1_tail;
+	u16b *list2_head, *list2_tail;
+	
+	u16b curr_kill, scan_kill;
+	u16b curr_next, scan_next;
 
-	int dx, b_dx = 0;
-	int dy, b_dy = 0;
+	
+	borg_kill *kill1, *kill2;
+	
+	int x, y, d;
 
-	map_block *mb_ptr;
-
-	borg_kill *kill = &borg_kills[i];
-
-	/* Paranoia */
-	if (!kill->r_idx) return;
-
-	/* Old location */
-	ox = kill->x;
-	oy = kill->y;
-
-	/* Out of sight */
-	if (!borg_follow_kill_aux(i, oy, ox)) return;
-
-	mb_ptr = map_loc(ox, oy);
-
-	/* Note */
-	borg_note(format("# There was a monster '%s' at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), oy, ox));
-
-
-	/* Prevent silliness */
-	if (borg_cave_wall_grid(mb_ptr))
+	/* Get lists */
+	get_list(&list1_head, &list1_tail, old_type);
+	
+	/* Start from the start of the list */
+	curr_kill = *list1_head;
+	
+	/* Paranoia - no more of this type left. */
+	if (!curr_kill) return;
+	
+	/* Scan kill list */
+	while(curr_kill)
 	{
-		/* Delete the monster */
-		borg_delete_kill(i);
-
-		/* Done */
-		return;
-	}
-
-	/* Prevent loops */
-	if (one_in_(100))
-	{
-		/* Just delete the monster */
-		borg_delete_kill(i);
-
-		/* Done */
-		return;
-	}
-
-	/* prevent overflows */
-	if (borg_t > 20000)
-	{
-		/* Just delete the monster */
-		borg_delete_kill(i);
-
-		/* Done */
-		return;
-	}
-
-	/* Some never move, no reason to follow them */
-	if ((r_info[kill->r_idx].flags1 & RF1_NEVER_MOVE) ||
-		(kill->m_flags & MONST_ASLEEP))
-	{
-		/* delete them if they are under me */
-		if (kill->y == c_y && kill->x == c_x)
+		kill1 = &borg_kills[curr_kill];
+		
+		curr_next = kill1->next_kill;
+		
+		x = kill1->x;
+		y = kill1->y;
+	
+		/* Scan for monsters in the other list close enough */
+		get_list(&list2_head, &list2_tail, new_type);
+		
+		scan_kill = *list2_head;
+		
+		/* Paranoia - no more of this type left. */
+		if (!scan_kill) return;
+		
+		while (scan_kill)
 		{
-			borg_delete_kill(i);
-		}
-		/* Dont 'forget' certain ones */
-		return;
-	}
-
-	/* Scan locations */
-	for (j = 0; j < 8; j++)
-	{
-		/* Access offset */
-		dx = ddx_ddd[j];
-		dy = ddy_ddd[j];
-
-		/* Access location */
-		x = ox + dx;
-		y = oy + dy;
-
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
-
-		/* Access the grid */
-		mb_ptr = map_loc(x, y);
-
-		/* Skip known walls and doors */
-		if (borg_cave_wall_grid(mb_ptr)) continue;
-
-		/* Skip known monsters */
-		if (mb_ptr->kill) continue;
-
-		/* Skip visible grids */
-		if (borg_follow_kill_aux(i, y, x)) continue;
-
-		/* Collect the offsets */
-		b_dx += dx;
-		b_dy += dy;
-	}
-
-
-	/* Don't go too far */
-	if (b_dx < -1) b_dx = -1;
-	else if (b_dx > 1) b_dx = 1;
-
-	/* Don't go too far */
-	if (b_dy < -1) b_dy = -1;
-	else if (b_dy > 1) b_dy = 1;
-
-
-	/* Access location */
-	x = ox + b_dx;
-	y = oy + b_dy;
-
-	/* Access the grid */
-	mb_ptr = map_loc(x, y);
-
-	/* Avoid walls and doors */
-	if (borg_cave_wall_grid(mb_ptr))
-	{
-		/* Just delete the monster */
-		borg_delete_kill(i);
-
-		/* Done */
-		return;
-	}
-
-	/* Avoid monsters */
-	if (mb_ptr->kill)
-	{
-		/* Just delete the monster */
-		borg_delete_kill(i);
-
-		/* Done */
-		return;
-	}
-
-	mb_ptr = map_loc(kill->x, kill->y);
-
-	/* Update the grids */
-	mb_ptr->kill = 0;
-
-	/* Save the Location */
-	kill->x = ox + b_dx;
-	kill->y = oy + b_dy;
-
-	mb_ptr = map_loc(kill->x, kill->y);
-
-	/* Update the grids */
-	mb_ptr->kill = i;
-
-	/* Note */
-	borg_note(format("# Following a monster '%s' to (%d,%d) from (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name),
-					 kill->y, kill->x, oy, ox));
-
-	/* Recalculate danger */
-	borg_danger_wipe = TRUE;
-
-	/* Clear goals */
-	goal = 0;
-}
-
-
-
-
-
-/*
- * Attempt to notice a changing "kill"
- */
-static bool observe_kill_diff(int y, int x)
-{
-	int i, r_idx;
-
-	borg_kill *kill;
-	map_block *mb_ptr;
-
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (FALSE);
-
-	/* Get grid */
-	mb_ptr = map_loc(x, y);
-
-	/* Guess the race */
-	r_idx = mb_ptr->monster;
-
-	/* Oops */
-	if (!r_idx) return (FALSE);
-
-	/* Create a new monster */
-	i = borg_new_kill(r_idx, y, x);
-
-	/* Get the object */
-	kill = &borg_kills[i];
-
-	/* Timestamp */
-	kill->when = borg_t;
-
-	/* Done */
-	return (TRUE);
-}
-
-
-/*
- * Attempt to "track" a "kill" at the given location
- * Assume that the monster moved at most 'd' grids.
- * If "flag" is TRUE, allow monster "conversion"
- */
-static bool observe_kill_move(int y, int x, int d, bool flag)
-{
-	int i, z, ox, oy;
-	borg_kill *kill;
-	monster_race *r_ptr;
-
-	map_block *mb_ptr;
-
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (FALSE);
-
-	/* Look at the monsters */
-	for (i = 1; i < borg_kills_nxt; i++)
-	{
-		kill = &borg_kills[i];
-
-		/* Skip dead monsters */
-		if (!kill->r_idx) continue;
-
-		/* Skip assigned monsters */
-		if (kill->seen) continue;
-
-		/* Old location */
-		ox = kill->x;
-		oy = kill->y;
-
-		/* Bounds checking */
-		if (!map_in_bounds(ox, oy)) continue;
-
-		/* Calculate distance */
-		z = distance(oy, ox, y, x);
-
-		/* Verify distance */
-		if (z > d) continue;
-
-		/* Verify "reasonable" motion, if allowed */
-		if (!flag && (z > (kill->moves / 10) + 1)) continue;
-
-		/* Access the monster race */
-		r_ptr = &r_info[kill->r_idx];
-
-		/* Actual movement */
-		if (z)
-		{
-			mb_ptr = map_loc(kill->x, kill->y);
-
-			/* Update the grids */
-			mb_ptr->kill = 0;
-
-			/* Save the Location */
-			kill->x = x;
-			kill->y = y;
-
-			mb_ptr = map_loc(kill->x, kill->y);
-
-			/* Update the grids */
-			mb_ptr->kill = i;
-
+			kill2 = &borg_kills[scan_kill];
+			scan_next = kill2->next_kill;
+			
+			/* Must be same race */
+			if (kill2->r_idx != kill1->r_idx)
+			{
+				/* Get next monster */
+				scan_kill = scan_next;
+				continue;
+			}
+		
+			/* Calculate distance */
+			d = distance(x, y, kill2->x, kill2->y);
+			
+			/* Too far away */
+			if (d > dist)
+			{
+				scan_kill = scan_next;
+				continue;
+			}
+			
+			/* Move the old monster to the used list */
+			move_mon_entry(curr_kill, BORG_MON_USED);
+			
+			/* Remove the new monster */
+			borg_delete_kill(scan_kill);
+			
 			/* Note */
-			borg_note(format
-					  ("# Tracking a monster '%s' at (%d,%d) from (%d,%d)",
-					   (r_name + r_ptr->name), kill->y, kill->x, ox, oy));
+			borg_note(format("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
+							curr_kill, kill1->x, kill1->y, x, y));
+			
+			/* Change the location of the old one */
+			kill1->x = x;
+			kill1->y = y;
+			
+			/* Save timestamp */
+			kill1->when = borg_t;
+			
+			/* Update the monster */
+			borg_update_kill(curr_kill);
 
 			/* Recalculate danger */
 			borg_danger_wipe = TRUE;
 
 			/* Clear goals */
 			if (!borg_skill[BI_ESP] && goal == GOAL_TAKE) goal = 0;
+			
+			/* Done with this one */
+			break;
 		}
+		
+		/* Move to next monster if already have not done so */
+		curr_kill = curr_next;
+	}
+}
 
-		/* Note when last seen */
-		kill->when = borg_t;
+static bool remove_bad_kills(u16b who)
+{
+	int ox, oy;
+	
+	borg_kill *kill = &borg_kills[who];
 
-		/* Update the monster */
-		borg_update_kill(i);
-
-		/* Mark as seen */
-		kill->seen = TRUE;
-
-		/* Done */
+	ox = kill->x;
+	oy = kill->y;
+	
+	/* Monster is out of bounds */
+	if (!map_in_bounds(ox, oy))
+	{
+		borg_delete_kill(who);
 		return (TRUE);
 	}
-
-	/* Oops */
+	
+	/* Are we supposed to see this, but don't? */
+	if (borg_follow_kill_aux(who, ox, oy))
+	{
+		borg_delete_kill(who);
+		return (TRUE);
+	}
+	
+	/* We haven't seen it for ages? */
+	if (borg_t - kill->when > 2000)
+	{
+		borg_delete_kill(who);
+		return (TRUE);
+	}
+	
+	/* Did not remove monster */
 	return (FALSE);
 }
 
+/*
+ * Track remaining unaccounted for monsters
+ */
+static void handle_old_mons(byte type)
+{
+	u16b *list_head, *list_tail;
+	
+	u16b curr_kill, next_kill;
+	
+	borg_kill *kill;
+	
+	map_block *mb_ptr;
+	
+	int x, y, dx, dy;
+	int b_dx = 0, b_dy = 0;
+	int ox, oy;
+	
+	int j;
+	
+	/* Get lists */
+	get_list(&list_head, &list_tail, type);
+	
+	curr_kill = *list_head;
+	
+	while (curr_kill)
+	{
+		kill = &borg_kills[curr_kill];
+		
+		next_kill = kill->next_kill;
+		
+		if (remove_bad_kills(curr_kill))
+		{
+			/* Move to next kill */
+			curr_kill = next_kill;
+			continue;
+		}
+		
+		/* Hack -- blind or hallucinating */
+		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE])
+		{
+			/* Move the old monster to the used list */
+			move_mon_entry(curr_kill, BORG_MON_USED);
+			
+			/* Move to next kill */
+			curr_kill = next_kill;
+			continue;
+		}
+		
+		ox = kill->x;
+		oy = kill->y;
+		
+		/* Scan for non-visible squares near the monster */
+		for (j = 0; j < 8; j++)
+		{
+			/* Access offset */
+			dx = ddx_ddd[j];
+			dy = ddy_ddd[j];
+
+			/* Access location */
+			x = ox + dx;
+			y = oy + dy;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Access the grid */
+			mb_ptr = map_loc(x, y);
+
+			/* Skip known walls and doors */
+			if (borg_cave_wall_grid(mb_ptr)) continue;
+
+			/* Skip known monsters */
+			if (mb_ptr->monster) continue;
+
+			/* Skip visible grids */
+			if (borg_follow_kill_aux(curr_kill, x, y)) continue;
+
+			/* Collect the offsets */
+			b_dx += dx;
+			b_dy += dy;
+		}
+
+		/* Don't go too far */
+		if (b_dx < -1) b_dx = -1;
+		else if (b_dx > 1) b_dx = 1;
+
+		/* Don't go too far */
+		if (b_dy < -1) b_dy = -1;
+		else if (b_dy > 1) b_dy = 1;
+
+		/* Access location */
+		x = ox + b_dx;
+		y = oy + b_dy;
+	
+		/* Access the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Avoid walls and doors */
+		if (borg_cave_wall_grid(mb_ptr) || mb_ptr->monster)
+		{
+			/* Just delete the monster */
+			borg_delete_kill(curr_kill);
+			
+			/* Move to next kill */
+			curr_kill = next_kill;
+			continue;
+		}
+		
+		/* Note */
+		borg_note(format("# Following monster (%d) from (%d,%d) to (%d,%d)",
+						curr_kill, ox, oy, kill->x, kill->y));
+		
+		/* Save the Location */
+		kill->x = ox + b_dx;
+		kill->y = oy + b_dy;
+		
+		/* Move the old monster to the used list */
+		move_mon_entry(curr_kill, BORG_MON_USED);
+
+		/* Recalculate danger */
+		borg_danger_wipe = TRUE;
+
+		/* Clear goals */
+		goal = 0;
+		
+		/* Move to next kill */
+		curr_kill = next_kill;
+	}
+}
 
 
 /*
@@ -1993,34 +2066,15 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 	{
 		/* Note */
 		borg_note("# Possible Invisible monster nearby.");
-		borg_note("# Possible Offscreen monster nearby");
-
-		/* Shift the panel */
-		need_shift_panel = TRUE;
 
 		/* if I can, cast detect inviso--time stamp it
 		 * We stamp it now if we can, or later if we just did the spell
 		 * That way we dont loop casting the spell.    APW
 		 */
-		/* detect invis spell not working right, for now just shift panel
-		 * and cast a light beam if in a hallway and we have see_inv*/
 		if (need_see_inviso < (borg_t))
 		{
 			need_see_inviso = (borg_t);
 		}
-
-		/* Ignore */
-		return (0);
-	}
-
-	/* Handle offsreen monsters */
-	if (suffix(who, " (offscreen)"))
-	{
-		/* Note */
-		borg_note("# Offscreen monster nearby");
-
-		/* Shift the panel */
-		need_shift_panel = TRUE;
 
 		/* Ignore */
 		return (0);
@@ -2130,76 +2184,6 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 
 #endif /* 0 */
 
-#if 0
-	/*** Hack -- Find a similar monster ***/
-
-	/* Nothing yet */
-	b_i = -1;
-	b_d = 999;
-
-	/* Scan the monsters */
-	for (i = 1; i < borg_kills_nxt; i++)
-	{
-		kill = &borg_kills[i];
-
-		/* Skip "dead" monsters */
-		if (!kill->r_idx) continue;
-
-		/* Skip "matching" monsters */
-		if (kill->r_idx == r_idx) continue;
-
-		/* Verify char */
-		if (r_info[kill->r_idx].d_char != r_ptr->d_char) continue;
-
-		/* Verify attr (unless clear or multi-hued) */
-		if (!(r_ptr->flags1 & (RF1_ATTR_MULTI | RF1_ATTR_CLEAR)))
-		{
-			/* Verify attr */
-			if (r_info[kill->r_idx].d_attr != r_ptr->d_attr) continue;
-		}
-
-		/* Distance away */
-		d = distance(kill->y, kill->x, y, x);
-
-		/* Check distance */
-		if (d > r) continue;
-
-		/* Track closest one */
-		if (d > b_d) continue;
-
-		/* Track it */
-		b_i = i;
-		b_d = d;
-	}
-
-	/* Found one */
-	if (b_i >= 0)
-	{
-		kill = &borg_kills[b_i];
-
-		/* Note */
-		borg_note(format("# Converting a monster '%s' at (%d,%d)",
-						 (r_name + r_info[kill->r_idx].name),
-						 kill->y, kill->x));
-
-		/* Change the race */
-		kill->r_idx = r_idx;
-
-		/* Update the monster */
-		borg_update_kill(b_i);
-
-		/* Recalculate danger */
-		borg_danger_wipe = TRUE;
-
-		/* Clear goals */
-		if (!borg_skill[BI_ESP] && goal == GOAL_TAKE) goal = 0;
-
-		/* Index */
-		return (b_i);
-	}
-
-#endif /* 0 */
-
 	/*** Hack -- Find an existing monster ***/
 
 	/* Nothing yet */
@@ -2243,7 +2227,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 		/* Note */
 		borg_note(format("# Matched a monster '%s' at (%d,%d)",
 						 (r_name + r_info[kill->r_idx].name),
-						 kill->y, kill->x));
+						 kill->x, kill->y));
 
 
 		/* Index */
@@ -2440,18 +2424,45 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	 */
 	if (map->monster)
 	{
-		borg_wank *wank;
-
-		/* Check for memory overflow */
-		if (borg_wank_num == AUTO_VIEW_MAX)
-			borg_oops("too many objects or monsters");
-
-		/* Access next wank, advance */
-		wank = &borg_wanks[borg_wank_num++];
-
-		/* Save some information */
-		wank->x = x;
-		wank->y = y;
+		/* Is the monster known? */
+		if (mb_ptr->kill && (map->monster == mb_ptr->monster))
+		{
+			/* Remove it from the old list. */
+			move_mon_entry(mb_ptr->kill, BORG_MON_USED);
+		}
+		else
+		{
+			/* Is it a new monster? */
+			if (mb_ptr->kill)
+			{
+				/* Move old entry into "moved" list */
+				move_mon_entry(mb_ptr->kill, BORG_MON_MOVE);
+			}
+			
+			/* Add to the "new" list */
+			mb_ptr->kill = get_new_mon(BORG_MON_NEW);
+			
+			/* Fill in information for new monster */
+			borg_new_kill(map->monster, mb_ptr->kill, x, y);
+		
+		}
+	}
+	else
+	{
+		if (mb_ptr->kill && (map->flags & MAP_SEEN))
+		{
+			/* Check */
+			borg_kill *kill = &borg_kills[mb_ptr->kill];
+			
+			if ((kill->x == x) && (kill->y == y)) 
+			{
+				/* We need to remove this from the list, it must have moved. */
+				move_mon_entry(mb_ptr->kill, BORG_MON_MOVE);
+			}
+			
+			/* Clear it */
+			mb_ptr->kill = 0;
+		}
 	}
 
 	/*
@@ -2849,32 +2860,6 @@ void borg_update(void)
 	cptr what;
 
 	bool reset = FALSE;
-
-
-	/*** Process objects/monsters ***/
-
-	/* Scan monsters */
-	for (i = 1; i < borg_kills_nxt; i++)
-	{
-		borg_kill *kill = &borg_kills[i];
-
-		/* Skip dead monsters */
-		if (!kill->r_idx) continue;
-
-		/* Clear flags */
-		kill->seen = FALSE;
-
-		/* Skip recently seen monsters */
-		if (borg_t - kill->when < 2000) continue;
-
-		/* Note */
-		borg_note(format("# Expiring a monster '%s' (%d) at (%d,%d)",
-						 (r_name + r_info[kill->r_idx].name), kill->r_idx,
-						 kill->y, kill->x));
-
-		/* Kill the monster */
-		borg_delete_kill(i);
-	}
 
 	/*** Handle messages ***/
 
@@ -3525,97 +3510,30 @@ void borg_update(void)
 		borg_do_update_view = FALSE;
 	}
 
-	/*** Track objects and monsters ***/
-
-	/* Pass 1 -- stationary monsters */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track stationary monsters */
-		if (observe_kill_move(wank->y, wank->x, 0, FALSE))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-	/* Pass 3a -- moving monsters (distance 1) */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track moving monsters */
-		if (observe_kill_move(wank->y, wank->x, 1, FALSE))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-	/* Pass 3b -- moving monsters (distance 2) */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track moving monsters */
-		if (observe_kill_move(wank->y, wank->x, 2, FALSE))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-	/* Pass 3c -- moving monsters (distance 3) */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track moving monsters */
-		if (observe_kill_move(wank->y, wank->x, 3, FALSE))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-	/* Pass 3d -- moving monsters (distance 3, allow changes) */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track moving monsters */
-		if (observe_kill_move(wank->y, wank->x, 3, TRUE))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-	/* Pass 5 -- new monsters */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track new monsters */
-		if (observe_kill_diff(wank->y, wank->x))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-
-	/* Ignore certain Wanks */
-	if (borg_wank_num)
-	{
-#if 0
-		int i;
-		for (i = 0; i < borg_wank_num; i++)
-		{
-			borg_wank *wank = &borg_wanks[i];
-			borg_note(format("# Unresolved Wank at %d,%d. #%d of %d",
-							 wank->y, wank->x, i, borg_wank_num));
-		}
-#endif
-
-		/* Clear Unresolved Wanks */
-		borg_wank_num = 0;
-	}
+	/*** Track monsters ***/
+	
+	/* New monsters near 'moved' monsters */
+	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 1);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 2);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 3);
+	
+	/* New monsters near 'old forgotten' monsters */
+	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 1);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 2);
+	
+	/* Scan all the remaining 'old' monsters */
+	handle_old_mons(BORG_MON_OLD);
+	handle_old_mons(BORG_MON_MOVE);
+	
+	/* Append remaining monsters to used list */
+	borg_append_mon_list(BORG_MON_USED, BORG_MON_NEW);
+	borg_append_mon_list(BORG_MON_USED, BORG_MON_OLD);
+	
+	/* Get rid of moved monsters we have not tracked */
+	borg_wipe_mon(BORG_MON_MOVE);
+	
+	/* Append used monsters to 'old' list, and delete used monsters */
+	borg_append_mon_list(BORG_MON_OLD, BORG_MON_USED);
 
 	/*** Handle messages ***/
 
@@ -3767,26 +3685,6 @@ void borg_update(void)
 		/* Final message */
 		borg_note(format("# %s (%d)", msg, borg_msg_use[i]));
 	}
-
-	/*** Notice missing monsters ***/
-	/* Scan the monster list */
-	for (i = 1; i < borg_kills_nxt; i++)
-	{
-		borg_kill *kill = &borg_kills[i];
-
-		/* Skip dead monsters */
-		if (!kill->r_idx) continue;
-
-		/* Skip seen monsters */
-		if (kill->when == borg_t) continue;
-
-		/* Hack -- blind or hallucinating */
-		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE]) continue;
-
-		/* Predict the monster */
-		borg_follow_kill(i);
-	}
-
 
 	/*** Various things ***/
 
@@ -3977,12 +3875,6 @@ void borg_init_5(void)
 
 	/* Allocate array of use-types */
 	C_MAKE(borg_msg_use, borg_msg_max, s16b);
-
-
-	/*** Object/Monster tracking ***/
-
-	/* Array of "wanks" */
-	C_MAKE(borg_wanks, AUTO_VIEW_MAX, borg_wank);
 
 
 	/*** Parse "unique" monster names ***/

@@ -41,24 +41,6 @@ extern void borg_map_info(map_block *mb_ptr, term_map *map);
  */
 extern void borg_map_erase(void);
 
-
-/*
- * Hack -- monster/object tracking grids
- */
-
-typedef struct borg_wank borg_wank;
-
-struct borg_wank
-{
-	/* Linked list of wanks */
-	u16b next_wank;
-
-	/* Location */
-	byte x;
-	byte y;
-};
-
-
 /*
  * Update state based on current "map"
  */
@@ -73,8 +55,6 @@ extern void borg_react(cptr msg, cptr buf);
 /*
  * Monster kill list interface
  */
-extern int get_new_mon(byte type);
-extern void move_mon_entry(int i, u16b *node_ptr, byte type);
 extern void borg_delete_kill(int i);
 
 
