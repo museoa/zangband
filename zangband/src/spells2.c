@@ -31,7 +31,7 @@ void self_knowledge(void)
 {
 	int i = 0, j, k;
 
-	int v_nr = 0;
+	int v_nr;
 	char v_string[8][128];
 
 	u32b f1 = 0L, f2 = 0L, f3 = 0L;

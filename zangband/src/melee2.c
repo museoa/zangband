@@ -35,14 +35,12 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	monster_type *t_ptr;
-	monster_race *tr_ptr;
 
 	/* Scan thru all monsters */
 	for (i = 1; i < m_max; i++)
 	{
 		t_idx = i;
 		t_ptr = &m_list[t_idx];
-		tr_ptr = &r_info[t_ptr->r_idx];
 
 		/* The monster itself isn't a target */
 		if (t_ptr == m_ptr) continue;
@@ -1072,22 +1070,20 @@ static int check_hit2(int power, int level, int ac)
 /* Monster attacks monster */
 static bool monst_attack_monst(int m_idx, int t_idx)
 {
-	monster_type *m_ptr = &m_list[m_idx];
-	monster_type *t_ptr = &m_list[t_idx];
+	monster_type    *m_ptr = &m_list[m_idx];
+	monster_type    *t_ptr = &m_list[t_idx];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-	monster_race *tr_ptr = &r_info[t_ptr->r_idx];
+	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race    *tr_ptr = &r_info[t_ptr->r_idx];
 
 	int             ap_cnt;
 	int             ac, rlev, pt;
 	char            m_name[80], t_name[80];
 	char            ddesc[80], temp[80];
-	bool            blinked = FALSE, touched = FALSE;
-	bool			explode = FALSE;
-	bool			fear = FALSE;
-	bool			heal_effect = FALSE;
-	int            y_saver = t_ptr->fy;
-	int            x_saver = t_ptr->fx;
+	bool            blinked, heal_effect;
+	bool            explode = FALSE, touched = FALSE, fear = FALSE;
+	int             y_saver = t_ptr->fy;
+	int             x_saver = t_ptr->fx;
 
 	bool see_m = m_ptr->ml;
 	bool see_t = t_ptr->ml;
@@ -2600,13 +2596,13 @@ static void process_monster(int m_idx)
 		/* Creature has been allowed move */
 		if (do_move)
 		{
-			s16b this_o_idx, next_o_idx = 0;
+			s16b this_o_idx, next_o_idx;
 
 			/* Take a turn */
 			do_turn = TRUE;
 
 			/* Hack -- Update the old location */
-			area(oy,ox)->m_idx = c_ptr->m_idx;
+			area(oy, ox)->m_idx = c_ptr->m_idx;
 
 			/* Mega-Hack -- move the old monster, if any */
 			if (c_ptr->m_idx)
@@ -2662,9 +2658,11 @@ static void process_monster(int m_idx)
 				/* Skip gold */
 				if (o_ptr->tval == TV_GOLD) continue;
 
-				/* Skip "real" corpses and statues, to avoid
-					extreme silliness like a novice rogue
-					pockets full of statues and corpses */
+				/*
+				 * Skip "real" corpses and statues, to avoid extreme
+				 * silliness like a novice rogue pockets full of statues
+				 * and corpses.
+				 */
 				if ((o_ptr->tval == TV_CORPSE) ||
 				    (o_ptr->tval == TV_STATUE)) continue;
 
