@@ -207,7 +207,6 @@ static void compact_objects_aux(int i1, int i2)
 
 	object_type *o_ptr;
 
-
 	/* Do nothing */
 	if (i1 == i2) return;
 
@@ -231,47 +230,14 @@ static void compact_objects_aux(int i1, int i2)
 		}
 	}
 
-
 	/* Acquire object */
 	o_ptr = &o_list[i1];
 
+	/* Acquire grid */
+	c_ptr = area(o_ptr->ix, o_ptr->iy);
 
-	/* Monster */
-	if (o_ptr->held_m_idx)
-	{
-		monster_type *m_ptr;
-
-		/* Acquire monster */
-		m_ptr = &m_list[o_ptr->held_m_idx];
-
-		/* Repair monster */
-		if (m_ptr->hold_o_idx == i1)
-		{
-			/* Repair */
-			m_ptr->hold_o_idx = i2;
-		}
-	}
-
-	/* Dungeon */
-	else
-	{
-		int y, x;
-
-		/* Acquire location */
-		y = o_ptr->iy;
-		x = o_ptr->ix;
-
-		/* Acquire grid */
-		c_ptr = area(x, y);
-
-		/* Repair grid */
-		if (c_ptr->o_idx == i1)
-		{
-			/* Repair */
-			c_ptr->o_idx = i2;
-		}
-	}
-
+	/* Repair grid */
+	if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
 
 	/* Structure copy */
 	o_list[i2] = o_list[i1];
@@ -415,6 +381,9 @@ void compact_objects(int size)
 
 		/* Skip real objects */
 		if (o_ptr->k_idx) continue;
+		
+		/* Stop when we get to a held object */
+		if (o_ptr->held_m_idx) break;
 
 		/* Move last object into open hole */
 		compact_objects_aux(o_max - 1, i);
