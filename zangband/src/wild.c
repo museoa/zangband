@@ -328,7 +328,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 	 */
 
 	int rooms[MAX_STORES];
-
+	byte feat;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -367,6 +367,24 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 
 		/* Require a floor grid */
 		if (cave[*yy][*xx].feat == FEAT_PEBBLES) break;
+	}
+
+	/* Put dungeon floor next to stairs so they are easy to find. */
+	for (y = -1; y <= 1; y++)
+	{
+		for(x = -1; x <= 1; x++)
+		{
+			/* Get feat at location */
+			feat = cave[*yy + y][*xx + x].feat;
+			
+			/* If square is a shop, exit */
+			if (feat == FEAT_PERM_EXTRA) continue;
+			if ((feat >= FEAT_SHOP_HEAD)
+				 && (feat <= FEAT_SHOP_TAIL)) continue;		
+				
+			/* Convert square to dungeon floor */
+			cave[*yy + y][*xx + x].feat = FEAT_FLOOR;
+		}
 	}
 
 	/* Clear previous contents, add down stairs */
