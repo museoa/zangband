@@ -2,6 +2,9 @@ This is a document file listing the changes in Zangband (compared to the
 standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
+Zangband 2.3.3:
+-Added magical figurines, statues, and corpses.
+
 ZAngband 2.3.1:
 -Added Tom Morton's 'fake artifact names' patch.  Inscribing "a Foo" with
  "#'Bar'" will display the item as "a Foo 'Bar'".
