@@ -48,7 +48,7 @@ files = angdos.cfg readme z_faq.txt z_update.txt
 clean-files = zangband
 distclean-files = *.bak gmon.out config.log config.status
 
-srcfiles = bootstrap configure configure.in makefile makefile.in
+srcfiles = configure configure.in makefile makefile.in
 
 ##
 ## Default target
