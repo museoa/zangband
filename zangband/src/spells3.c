@@ -3249,12 +3249,13 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 2:
 					{
+						/* Actually rand_range(12,24) */
 						strcpy(p, " dur 12+d12 turns");
 						break;
 					}
 					case 4:
 					{
-						sprintf(p, " dam %d", 10 + (plev / 2));
+						sprintf(p, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 6:
@@ -3269,17 +3270,18 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 11:
 					{
+						/* Actually rand_range(24,48) */
 						strcpy(p, " dur 24+d24");
 						break;
 					}
 					case 12:
 					{
-						sprintf(p, " dam 3d6+%d", plev + orb);
+						sprintf(p, " dam %d+3d6", plev + orb);
 						break;
 					}
 					case 13:
 					{
-						sprintf(p, " dur d25+%d", 3 * plev);
+						sprintf(p, " dur %d+d25", 3 * plev);
 						break;
 					}
 					case 14:
@@ -3309,12 +3311,14 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 24:
 					{
+						/* Actually rand_range(25,50) */
 						strcpy(p, " dur 25+d25");
 						break;
 					}
 					case 25:
 					{
-						strcpy(p, " dur 48+d48");
+						/* Actually rand_range(50,100) */
+						strcpy(p, " dur 50+d50");
 						break;
 					}
 					case 28:
@@ -3329,6 +3333,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 31:
 					{
+						/* Actually rand_range(7,14) */
 						strcpy(p, " dur 7+d7");
 						break;
 					}
@@ -3348,7 +3353,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 3:
 					{
-						sprintf(p, " dam %d", 10 + (plev / 2));
+						sprintf(p, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 5:
@@ -3368,6 +3373,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 20:
 					{
+						/* Actually rand_range(25,55) */
 						strcpy(p, " dur 25+d30");
 						break;
 					}
@@ -3383,16 +3389,18 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 26:
 					{
-						sprintf(p, " dam 7d7+%d", plev / 2);
+						sprintf(p, " dam %d+7d7", plev / 2);
 						break;
 					}
 					case 27:
 					{
+						/* Actually rand_range(25,55) */
 						strcpy(p, " dur 25+d30");
 						break;
 					}
 					case 31:
 					{
+						/* Actually rand_range(8,16) */
 						strcpy(p, " dur 8+d8");
 						break;
 					}
@@ -3412,11 +3420,12 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 4:
 					{
-						sprintf(p, " dam %d", 10 + (plev / 2));
+						sprintf(p, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 6:
 					{
+						/* Actually rand_range(20,40) */
 						strcpy(p, " dur 20+d20");
 						break;
 					}
@@ -3442,11 +3451,13 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 18:
 					{
+						/* Actually rand_range(30,50) */
 						strcpy(p, " dur 20+d30");
 						break;
 					}
 					case 19:
 					{
+						/* Actually rand_range(20,40) */
 						strcpy(p, " dur 20+d20");
 						break;
 					}
@@ -3477,7 +3488,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 31:
 					{
-						sprintf(p, " dam %d+%d", 4 * plev, 100 + plev);
+						sprintf(p, " dam %d+%d", 4 * plev, (100 + plev) / 2);
 						break;
 					}
 				}
@@ -3496,12 +3507,12 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 2:
 					{
-						sprintf(p, " dam %d", 10 + (plev / 2));
+						sprintf(p, " dam 2d%d", (plev / 2));
 						break;
 					}
 					case 4:
 					{
-						sprintf(p, " dam 3d5+%d", plev + (plev /
+						sprintf(p, " dam %d+3d5", plev + (plev /
 														  (((p_ptr->pclass ==
 															 CLASS_MAGE)
 															|| (p_ptr->pclass ==
@@ -3511,7 +3522,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 5:
 					{
-						sprintf(p, " dam %dd8", (6 + ((plev - 5) / 4)));
+						sprintf(p, " dam %dd8", (8 + ((plev - 5) / 4)));
 						break;
 					}
 					case 6:
@@ -3536,7 +3547,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 10:
 					{
-						sprintf(p, " dam %d", 45 + plev);
+						sprintf(p, " dam %d", (45 + plev) / 2);
 						break;
 					}
 					case 11:
@@ -3566,7 +3577,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 24:
 					{
-						sprintf(p, " dam %dd8", (9 + (plev / 10)));
+						sprintf(p, " dam %dd8", (9 + ((plev - 5) / 4)));
 						break;
 					}
 					case 25:
@@ -3625,12 +3636,13 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 5:
 					{
+						/* Actually rand_range(20,40) */
 						sprintf(p, " dur 20+d20");
 						break;
 					}
 					case 8:
 					{
-						sprintf(p, " dam 3d6+%d", plev +
+						sprintf(p, " dam %d+3d6", plev +
 								(plev / (((p_ptr->pclass == CLASS_MAGE) ||
 										  (p_ptr->pclass ==
 										   CLASS_HIGH_MAGE)) ? 2 : 4)));
@@ -3643,7 +3655,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 11:
 					{
-						sprintf(p, " dm %d* 5+d15", 2 + (plev / 15));
+						sprintf(p, " dm %d+%d*d15", plev, MAX(1, plev / 10));
 						break;
 					}
 					case 13:
@@ -3653,6 +3665,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 16:
 					{
+						/* Actually rand_range(25,50) */
 						strcpy(p, " dur 25+d25");
 						break;
 					}
@@ -3668,6 +3681,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 19:
 					{
+						/* This is too complicated to give accurately */
 						strcpy(p, " max dur 50");
 						break;
 					}
@@ -3698,6 +3712,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 31:
 					{
+						/* Actually rand_range(plev/2,plev) */
 						sprintf(p, " dur %d+d%d", (plev / 2), (plev / 2));
 						break;
 					}
@@ -3737,6 +3752,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 6:
 					{
+						/* Actually rand_range(25,55) */
 						strcpy(p, " dur 25+d30");
 						break;
 					}
@@ -3789,6 +3805,7 @@ static void spell_info(char *p, int spell, int realm)
 					case 16:
 					case 17:
 					{
+						/* Actually rand_range(20,40) */
 						strcpy(p, " dur 20+d20");
 						break;
 					}
@@ -3809,6 +3826,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 23:
 					{
+						/* Actually rand_range(24,48) */
 						strcpy(p, " dur 24+d24");
 						break;
 					}
@@ -3824,6 +3842,7 @@ static void spell_info(char *p, int spell, int realm)
 					}
 					case 31:
 					{
+						/* Actually rand_range(25,55) */
 						strcpy(p, " dur 25+d30");
 						break;
 					}
