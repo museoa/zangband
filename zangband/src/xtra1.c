@@ -3726,19 +3726,12 @@ void update_stuff(void)
 		p_ptr->update &= ~(PU_VIEW);		
 		update_view();
 	}
-	
-	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
-	{
-		p_ptr->update &= ~(PU_MON_LITE);
-		update_mon_lite();
-	}
 
 	if (p_ptr->update & (PU_FLOW))
 	{
 		p_ptr->update &= ~(PU_FLOW);
 		update_flow();
 	}
-
 
 	if (p_ptr->update & (PU_DISTANCE))
 	{
@@ -3751,6 +3744,12 @@ void update_stuff(void)
 	{
 		p_ptr->update &= ~(PU_MONSTERS);
 		update_monsters(FALSE);
+	}
+	
+	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
+	{
+		p_ptr->update &= ~(PU_MON_LITE);
+		update_mon_lite();
 	}
 }
 
