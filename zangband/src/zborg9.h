@@ -12,6 +12,8 @@
 #define BORG_SHOW_INFO	2
 #define BORG_SHOW_FLAG	3
 #define BORG_SHOW_FLOW	4
+#define BORG_SHOW_AVOID	5
+#define BORG_SHOW_STEP	6
 
 
 /*

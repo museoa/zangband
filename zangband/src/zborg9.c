@@ -738,10 +738,11 @@ static bool borg_think(void)
 	if ((0 == borg_what_text(0, 0, 16, &t_a, buf)) &&
 		(prefix(buf, "Map sector ")))
 	{
+#if 0
 		/* Hack -- get the panel info */
 		w_y = (buf[12] - '0') * (SCREEN_HGT / 2);
 		w_x = (buf[14] - '0') * (SCREEN_WID / 2);
-
+#endif /* 0 */
 		/* Leave panel mode */
 		borg_keypress(ESCAPE);
 
@@ -4100,8 +4101,46 @@ static void borg_display_map_info(byte data, byte type)
 						
 						break;
 					}
+					
+					case BORG_SHOW_AVOID:
+					{
+						/* Obtain danger */
+						int p = borg_danger(y, x, 1, TRUE);
+						
+						/* Skip non-avoidances */
+						if (p <= avoidance / 3) break;
+						
+						if (p <= avoidance)
+						{
+							a = TERM_YELLOW;
+						}
+						else
+						{
+							a = TERM_RED;
+						}
+						
+						break;
+					}
+					
+					case BORG_SHOW_STEP:
+					{
+						int i;
+						
+						/* Check for an existing step */
+						for (i = 0; i < track_step_num; i++)
+						{
+							/* Stop if we already new about this glyph */
+							if ((track_step_x[i] == x) && (track_step_y[i] == y))
+							{
+								a = TERM_WHITE;
+								c = '*';
+								
+								break;
+							}
+						}
+						break;
+					}
 				}
-			
 			}
 		
 		
@@ -5160,9 +5199,6 @@ void do_cmd_borg(void)
 		case 'I':
 		{
 			/* Command: check "info" flags */
-#if 0
-			int x, y;
-
 			u16b mask;
 
 			/* Get a "Borg command", or abort */
@@ -5218,28 +5254,10 @@ void do_cmd_borg(void)
 					break;
 				}
 			}
+			
+			/* Show it */
+			borg_display_map_info(mask, BORG_SHOW_FLAG);
 
-			/* Scan map */
-			for (y = w_y; y < w_y + SCREEN_HGT; y++)
-			{
-				for (x = w_x; x < w_x + SCREEN_WID; x++)
-				{
-					byte a = TERM_RED;
-
-					/* Given mask, show only those grids */
-					if (mask && !(ag->info & mask)) continue;
-
-					/* Given no mask, show unknown grids */
-					if (!mask && (ag->info & BORG_MARK)) continue;
-
-					/* Color */
-					if (borg_cave_floor_bold(y, x)) a = TERM_YELLOW;
-
-					/* Display */
-					print_rel('*', a, y, x);
-				}
-			}
-#endif /* 0 */
 			/* Get keypress */
 			msg_print("Press any key.");
 			msg_print(NULL);
@@ -5253,29 +5271,10 @@ void do_cmd_borg(void)
 		case 'A':
 		{
 			/* Command: check "avoidances" */
-			int x, y, p;
-
-			/* Scan map */
-			for (y = w_y; y < w_y + SCREEN_HGT; y++)
-			{
-				for (x = w_x; x < w_x + SCREEN_WID; x++)
-				{
-					byte a = TERM_RED;
-
-					/* Obtain danger */
-					p = borg_danger(y, x, 1, TRUE);
-
-					/* Skip non-avoidances */
-					if (p <= avoidance / 3) continue;
-
-					/* Use yellow for less painful */
-					if (p <= avoidance) a = TERM_YELLOW;
-
-					/* Display */
-					print_rel('*', a, y, x);
-				}
-			}
-
+			
+			/* Show it */
+			borg_display_map_info(0, BORG_SHOW_AVOID);
+			
 			/* Get keypress */
 			msg_format("(%d,%d) Avoidance value %d.", c_y, c_x, avoidance);
 			msg_print(NULL);
@@ -5288,24 +5287,9 @@ void do_cmd_borg(void)
 		case 'y':
 		{
 			/* Command: check previous steps */
-			int x, y, i;
-
-			/* Scan map */
-			for (y = w_y; y < w_y + SCREEN_HGT; y++)
-			{
-				for (x = w_x; x < w_x + SCREEN_WID; x++)
-				{
-					byte a = TERM_RED;
-					/* Check for an existing step */
-					for (i = 0; i < track_step_num; i++)
-					{
-						/* Stop if we already new about this glyph */
-						if ((track_step_x[i] == x) && (track_step_y[i] == y))
-							/* Display */
-							print_rel('*', a, y, x);
-					}
-				}
-			}
+			
+			/* Show it */
+			borg_display_map_info(0, BORG_SHOW_STEP);
 
 			/* Get keypress */
 			msg_format("(%d) Steps noted", track_step_num);
