@@ -3658,7 +3658,7 @@
 
 /* Option Set 7 */
 
-#define destroy_worthless		svr_ptr->options[15]
+/* {TRUE,  0, NULL,					"Number 224" },svr_ptr->options[15] */
 #define monster_light			svr_ptr->options[16]
 /* "Turn on muliplayer client - server code" , svr_ptr->options[17] */
 /* {TRUE,  0, NULL,					"Number 227" },svr_ptr->options[18] */
