@@ -34,6 +34,15 @@ static object_type temp_object;
 
 
 /*
+ * Prepare an object based on an existing object
+ */
+static void object_copy(object_type *o_ptr, const object_type *j_ptr)
+{
+	/* Copy the structure */
+	COPY(o_ptr, j_ptr, object_type);
+}
+
+/*
  * Excise a dungeon object from any stacks
  */
 static void excise_object_idx(s16b *o_idx_ptr, object_type *o_ptr)
@@ -147,7 +156,7 @@ void delete_object(int x, int y)
 /*
  * Delete a statically-allocated object
  */
-void delete_static_object(object_type *o_ptr)
+static void delete_static_object(object_type *o_ptr)
 {
 	/* Deallocate quarks */
 	quark_remove(&o_ptr->xtra_name);
@@ -1814,16 +1823,6 @@ void object_wipe(object_type *o_ptr)
 
 	/* Wipe the structure */
 	(void)WIPE(o_ptr, object_type);
-}
-
-
-/*
- * Prepare an object based on an existing object
- */
-void object_copy(object_type *o_ptr, const object_type *j_ptr)
-{
-	/* Copy the structure */
-	COPY(o_ptr, j_ptr, object_type);
 }
 
 /*

@@ -808,49 +808,44 @@ static void wiz_tweak_item(object_type *o_ptr)
 /*
  * Apply magic to an item or turn it into an artifact. -Bernd-
  */
-static void wiz_reroll_item(object_type *o_ptr)
+static bool wiz_reroll_item(object_type *o_ptr)
 {
-	object_type *q_ptr;
-
 	char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return;
-
-	/* Get a duplicate of the object */
-	q_ptr = object_dup(o_ptr);
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return(TRUE);
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
 	{
 		/* Display full item debug information */
-		wiz_display_item(q_ptr);
+		wiz_display_item(o_ptr);
 
 		/* Ask wizard what to do. */
 		if (!get_com
 			("[a]ccept, [w]orthless, [n]ormal, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
-			if ((q_ptr->flags3 & TR3_INSTA_ART) && (q_ptr->activate > 128))
+			if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128))
 			{
-				a_info[q_ptr->activate - 128].cur_num = 0;
-				q_ptr->activate = 0;
-				q_ptr->xtra_name = 0;
+				a_info[o_ptr->activate - 128].cur_num = 0;
+				o_ptr->activate = 0;
+				o_ptr->xtra_name = 0;
 			}
 
 			/* Done */
-			return;
+			return (FALSE);
 		}
 
 		/* Create/change it! */
 		if (ch == 'A' || ch == 'a') break;
 
 		/* Preserve wizard-generated artifacts */
-		if ((q_ptr->flags3 & TR3_INSTA_ART) && (q_ptr->activate > 128))
+		if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128))
 		{
-			a_info[q_ptr->activate - 128].cur_num = 0;
-			q_ptr->activate = 0;
-			q_ptr->xtra_name = 0;
+			a_info[o_ptr->activate - 128].cur_num = 0;
+			o_ptr->activate = 0;
+			o_ptr->xtra_name = 0;
 
 			/* Remove the artifact flag */
 			o_ptr->flags3 &= ~(TR3_INSTA_ART);
@@ -861,38 +856,35 @@ static void wiz_reroll_item(object_type *o_ptr)
 			case 'w':  case 'W':
 			{
 				/* Apply bad magic, but first clear object */
-				q_ptr = object_prep(o_ptr->k_idx);
-				apply_magic(q_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
+				o_ptr = object_prep(o_ptr->k_idx);
+				apply_magic(o_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
 				break;
 			}
 			case 'n':  case 'N':
 			{
 				/* Apply normal magic, but first clear object */
-				q_ptr = object_prep(o_ptr->k_idx);
-				apply_magic(q_ptr, p_ptr->depth, 0, OC_NORMAL);
+				o_ptr = object_prep(o_ptr->k_idx);
+				apply_magic(o_ptr, p_ptr->depth, 0, OC_NORMAL);
 				break;
 			}
 			case 'e':  case 'E':
 			{
 				/* Apply great magic, but first clear object */
-				q_ptr = object_prep(o_ptr->k_idx);
-				apply_magic(q_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
+				o_ptr = object_prep(o_ptr->k_idx);
+				apply_magic(o_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
 				break;
 			}
 			case 's':  case 'S':
 			{
-				q_ptr = object_prep(o_ptr->k_idx);
+				o_ptr = object_prep(o_ptr->k_idx);
 
 				/* Make a random artifact */
-				(void)create_artifact(q_ptr, FALSE);
+				(void)create_artifact(o_ptr, FALSE);
 				break;
 			}
 		}
 	}
 	
-	/* Swap objects */
-	swap_objects(o_ptr, q_ptr);
-
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -901,6 +893,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+	
+	/* Success */
+	return (TRUE);
 }
 
 
@@ -978,8 +973,7 @@ static void wiz_quantity_item(object_type *o_ptr)
  */
 static void do_cmd_wiz_play(void)
 {
-	object_type forge;
-	object_type *q_ptr, *z_ptr;
+	object_type *q_ptr;
 
 	object_type *o_ptr;
 
@@ -991,25 +985,19 @@ static void do_cmd_wiz_play(void)
 	q = "Play with which object? ";
 	s = "You have nothing to play with.";
 
-	z_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
+	q_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
 
 	/* Not a valid item */
-	if (!z_ptr) return;
+	if (!q_ptr) return;
 
 	/* Save the screen */
 	screen_save();
 
 	/* Duplicate object */
-	o_ptr = object_dup(z_ptr);
+	o_ptr = object_dup(q_ptr);
 	
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Copy object */
-	object_copy(q_ptr, o_ptr);
-
 	/* Display the item */
-	wiz_display_item(q_ptr);
+	wiz_display_item(o_ptr);
 
 	/* Display the rarity graph - turned off for now (too slow). */
 	/* prt_alloc(o_ptr, 0, 2, 1000); */
@@ -1027,9 +1015,6 @@ static void do_cmd_wiz_play(void)
 			/* Ignore changes */
 			msg_print("Changes ignored.");
 			
-			/* Delete the references */
-			delete_static_object(q_ptr);
-			
 			/* Done */
 			break;
 		}
@@ -1041,11 +1026,8 @@ static void do_cmd_wiz_play(void)
 			msg_print("Changes accepted.");
 			
 			/* Swap the objects */
-			swap_objects(z_ptr, q_ptr);
+			swap_objects(q_ptr, o_ptr);
 			
-			/* Delete the references */
-			delete_static_object(q_ptr);
-
 			/* Recalculate bonuses */
 			p_ptr->update |= (PU_BONUS);
 
@@ -1060,22 +1042,26 @@ static void do_cmd_wiz_play(void)
 
 		if (ch == 's' || ch == 'S')
 		{
-			wiz_statistics(q_ptr);
+			wiz_statistics(o_ptr);
 		}
 
 		if (ch == 'r' || ch == 'r')
 		{
-			wiz_reroll_item(q_ptr);
+			if (!wiz_reroll_item(o_ptr))
+			{
+				/* Restore old item */
+				o_ptr = object_dup(q_ptr);
+			}
 		}
 
 		if (ch == 't' || ch == 'T')
 		{
-			wiz_tweak_item(q_ptr);
+			wiz_tweak_item(o_ptr);
 		}
 
 		if (ch == 'q' || ch == 'Q')
 		{
-			wiz_quantity_item(q_ptr);
+			wiz_quantity_item(o_ptr);
 		}
 	}
 
