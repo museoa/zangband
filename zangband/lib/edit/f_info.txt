@@ -51,7 +51,7 @@ G:':U
 # 0x05 --> broken door
 
 N:5:broken door
-G:':U
+G:':u
 
 # 0x06 --> up stairs (perm)
 
@@ -100,8 +100,8 @@ G:^:s
 
 # 0x14 --> visible trap -- rune -- summon
 
-N:20:strange rune
-G:^:o
+N:20:evil rune
+G:^:G
 
 # 0x15 --> visible trap -- rune -- teleport
 
