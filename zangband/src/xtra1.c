@@ -3340,6 +3340,9 @@ void update_stuff(void)
 	/* Character is in "icky" mode, no screen updates */
 	if (character_icky) return;
 	
+	/* Do not update map, it doesn't exist */
+	if (!character_dungeon) return;
+	
 	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
 	{
 		p_ptr->update &= ~(PU_MON_LITE);
@@ -3398,21 +3401,12 @@ void redraw_stuff(void)
 	/* Character is in "icky" mode, no screen updates */
 	if (character_icky) return;
 
-
-
 	/* Hack -- clear the screen */
 	if (p_ptr->redraw & (PR_WIPE))
 	{
 		p_ptr->redraw &= ~(PR_WIPE);
 		message_flush();
 		Term_clear();
-	}
-
-
-	if (p_ptr->redraw & (PR_MAP))
-	{
-		p_ptr->redraw &= ~(PR_MAP);
-		prt_map();
 	}
 
 
@@ -3578,6 +3572,16 @@ void redraw_stuff(void)
 		p_ptr->redraw &= ~(PR_STUDY);
 		prt_study();
 	}
+	
+	/* Do not update map it, doesn't exist */
+	if (!character_dungeon) return;
+	
+	if (p_ptr->redraw & (PR_MAP))
+	{
+		p_ptr->redraw &= ~(PR_MAP);
+		prt_map();
+	}
+
 }
 
 
