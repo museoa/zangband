@@ -1227,15 +1227,6 @@ void generate_cave(void)
 	/* Build the wilderness */
 	if (!p_ptr->depth)
 	{
-		/* XXX XXX Reset the object theme to wilderness values */
-		dundata->theme.treasure = 20;
-		dundata->theme.combat = 20;
-		dundata->theme.magic = 20;
-		dundata->theme.tools = 20;
-	
-		/* Hack - Reset the dungeon habitat to be everything */
-		dundata->habitat = RF8_DUNGEON;
-	
 		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
 
