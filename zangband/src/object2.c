@@ -1529,9 +1529,6 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 			/* Require identical "pval" code */
 			if (o_ptr->pval != j_ptr->pval) return (FALSE);
 
-			/* Artifacts + Ego items never stack */
-			if (o_ptr->xtra_name || j_ptr->xtra_name) return (FALSE);
-
 			/* Hack -- Never stack recharging items */
 			if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
 
