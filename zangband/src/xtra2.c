@@ -2367,8 +2367,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		{
 			field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 
-			cptr name = t_ptr->name;
-
 			char fld_name[40];
 
 			/* Do not describe this field */
@@ -2377,29 +2375,19 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			/* Describe if if is visible and known. */
 			if (f_ptr->info & FIELD_INFO_MARK)
 			{
+				/* Default to field name */
+				strncpy(fld_name, t_ptr->name, 40);
+			
 				/* See if it has a special name */
-				if (t_ptr->action[FIELD_ACT_LOOK])
-				{
-					/* Get the name */
-					(void)field_hook_single(f_ptr, FIELD_ACT_LOOK,
-											fld_name);
-
-					/* Point to it */
-					name = fld_name;
-				}
-				else
-				{
-					/* Just use the normal name of the field */
-					name = t_ptr->name;
-				}
-
+				(void)field_hook_single(f_ptr, FIELD_ACT_LOOK, fld_name);
+				
 				/* Not boring */
 				boring = FALSE;
 
-				s3 = is_a_vowel(name[0]) ? "an " : "a ";
+				s3 = is_a_vowel(fld_name[0]) ? "an " : "a ";
 
 				/* Describe the field */
-				prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, name, info);
+				prtf(0, 0, "%s%s%s%s [%s]", s1, s2, s3, fld_name, info);
 				move_cursor_relative(x, y);
 				query = inkey();
 
@@ -2423,7 +2411,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 				/* Hack - we've seen a field here */
 				seen = TRUE;
-
 			}
 		}
 		FLD_ITT_END;

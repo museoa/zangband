@@ -703,6 +703,15 @@ static cptr t_info_flags[] =
 	"XXX14"
 };
 
+/*
+ * Object script triggers
+ */
+static cptr t_info_triggers[] =
+{
+	"INIT",
+	"LOAD",
+	NULL
+};
 
 
 /*** Initialize from ascii template files ***/
@@ -2707,7 +2716,7 @@ static errr grab_one_action_flag(field_thaum *t_ptr, char *what)
 	{
 		if (streq(t, f_action[i].func))
 		{
-			t_ptr->action[location] = f_action[i].action;
+			t_ptr->func[location] = f_action[i].action;
 			return (0);
 		}
 	}
@@ -2925,7 +2934,39 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
+		
+		/* Process 'L' for "Lua script" */
+		if (buf[0] == 'L')
+		{
+			int n;
+		
+			/* There better be a current t_ptr */
+			if (!t_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
+			/* Analyze the first field */
+			for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */ ;
+
+			/* Terminate the field (if necessary) */
+			if (*t == ':') *t++ = '\0';
+
+			/* Analyze the trigger */
+			for (n = 0; t_info_triggers[n]; n++)
+			{
+				if (streq(s, t_info_triggers[n])) break;
+			}
+
+			/* Invalid trigger */
+			if (!t_info_triggers[n]) return (PARSE_ERROR_GENERIC);
+
+			/* Get the text */
+			s = t;
+
+			/* Store the text */
+			t_ptr->action[n] = quark_add(s);
+			
+			/* Next... */
+			continue;
+		}
 
 		/* Oops */
 		return (PARSE_ERROR_UNDEFINED_DIRECTIVE);

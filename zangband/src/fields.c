@@ -975,10 +975,10 @@ bool field_hook_single(field_type *f_ptr, int action, ...)
 	va_start(vp, action);
 
 	/* Paranoia - Is there a function to call? */
-	if (t_ptr->action[action])
+	if (t_ptr->func[action])
 	{
 		/* Call the action function */
-		if (t_ptr->action[action] (f_ptr, vp))
+		if (t_ptr->func[action] (f_ptr, vp))
 		{
 			/* The field wants to be deleted */
 			delete_field_ptr(f_ptr);
@@ -1039,7 +1039,7 @@ void field_hook(cave_type *c_ptr, int action, ...)
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Paranoia - Is there a function to call? */
-		if (t_ptr->action[action])
+		if (t_ptr->func[action])
 		{
 			va_list vp;
 		
@@ -1047,7 +1047,7 @@ void field_hook(cave_type *c_ptr, int action, ...)
 			va_start(vp, action);
 		
 			/* Call the action function */
-			if (t_ptr->action[action] (f_ptr, vp))
+			if (t_ptr->func[action] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
 				delete_field_ptr(f_ptr);
@@ -1079,7 +1079,7 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Check for the right field + existance of a function to call */
-		if ((t_ptr->type == ftype) && (t_ptr->action[FIELD_ACT_SPECIAL]))
+		if ((t_ptr->type == ftype) && (t_ptr->func[FIELD_ACT_SPECIAL]))
 		{
 			va_list vp;
 		
@@ -1087,7 +1087,7 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
 			va_start(vp, ftype);
 		
 			/* Call the action function */
-			if (t_ptr->action[FIELD_ACT_SPECIAL] (f_ptr, vp))
+			if (t_ptr->func[FIELD_ACT_SPECIAL] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
 				delete_field_ptr(f_ptr);
@@ -1121,7 +1121,7 @@ field_type *field_hook_find(cave_type *c_ptr, int action, ...)
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Is there a function to call? */
-		if (t_ptr->action[action])
+		if (t_ptr->func[action])
 		{
 			va_list vp;
 
@@ -1129,7 +1129,7 @@ field_type *field_hook_find(cave_type *c_ptr, int action, ...)
 			va_start(vp, action);
 		
 			/* Call the action function */
-			if (t_ptr->action[action] (f_ptr, vp))
+			if (t_ptr->func[action] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
 				delete_field_ptr(f_ptr);

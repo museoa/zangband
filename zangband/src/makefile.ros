@@ -45,7 +45,8 @@ OBJS := variable.o tables.o util.o cave.o \
 	bldg.o obj_kind.o wild1.o wild2.o wild3.o avatar.o notes.o\
 	maid-grf.o main-ros.o \
 	z-util.o z-virt.o z-form.o z-rand.o z-term.o\
-	l-monst.o l-object.o l-player.o l-random.o l-ui.o l-misc.o l-spell.o
+	l-monst.o l-object.o l-player.o l-random.o l-ui.o l-misc.o\
+	l-spell.o l-field.o
 
 
 # Defaults for norcy
@@ -122,6 +123,9 @@ l-monst.c: $(tolua) l-monst.pkg
 
 l-object.c: $(tolua) l-object.pkg
 	$(tolua) -n object -o c.l-object l-object/pkg
+
+l-field.c: $(tolua) l-field.pkg
+	$(tolua) -n field -o c.l-field l-field/pkg
 
 l-player.c: $(tolua) l-player.pkg
 	$(tolua) -n player -o c.l-player l-player/pkg

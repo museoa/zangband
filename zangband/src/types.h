@@ -901,14 +901,14 @@ struct field_thaum
 
 	s16b count_init;	/* Counter for timed effects */
 
-	field_action_type action[FIELD_ACTION_MAX];	/* Function indexs for the actions */
+	field_action_type func[FIELD_ACTION_MAX];	/* Function indexs for the actions */
+	
+	s16b action[FIELD_ACTION_MAX];	/* Action scripts */
 
 	/* Storage space for the actions to interact with. */
 	byte data_init[8];
 
 	u16b info;	/* Information flags */
-
-
 };
 
 

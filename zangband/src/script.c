@@ -567,6 +567,64 @@ bool use_object(object_type *o_ptr, bool *id_return, int dir)
 	return result;
 }
 
+#if 0
+/*
+ * Apply an field trigger, a small lua script which does
+ * what the old field action functions did.
+ */
+void apply_field_trigger(int trigger_id, field_type *f_ptr, cptr format, ...)
+{
+	va_list vp;
+	
+	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
+
+	cptr script = NULL;
+	
+	void *q_ptr = NULL;
+	
+	bool success;
+	
+	if (t_ptr->action[trigger_id])
+	{
+		script = quark_str(t_ptr->action[trigger_id]);
+	}
+	else
+	{
+		return;
+	}
+	
+	/* Save parameter so recursion works. */
+	lua_getglobal (L, "field");
+	if (tolua_istype(L, -1, tolua_tag(L, "field_type"), 0))
+	{
+		q_ptr = tolua_getuserdata(L, -1, NULL);
+	}
+	lua_pop(L,1);
+
+	/* Set parameters (really global) */
+	tolua_pushusertype(L, (void*)f_ptr, tolua_tag(L, "field_type"));
+	lua_setglobal(L, "field");
+	
+	/* Begin the Varargs Stuff */
+	va_start(vp, format);
+	
+	success = call_lua_hook(script, format, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+	
+	/* Restore global so recursion works*/
+	tolua_pushusertype(L, q_ptr, tolua_tag(L,"field_type"));
+	lua_setglobal(L, "field");
+	
+	/* Paranoia */
+	if (!success)
+	{
+		msgf("Script for field: %s failed.", t_ptr->name);
+	}
+}
+#endif
+
 
 static void line_hook(lua_State *L, lua_Debug *ar)
 {
@@ -749,6 +807,8 @@ extern int tolua_misc_open(lua_State* tolua_S);
 extern void tolua_misc_close(lua_State* tolua_S);
 extern int tolua_spell_open(lua_State* tolua_S);
 extern void tolua_spell_close(lua_State* tolua_S);
+extern int tolua_field_open(lua_State* tolua_S);
+extern void tolua_field_close(lua_State* tolua_S);
 
 
 /*
@@ -780,6 +840,7 @@ errr script_init(void)
 	tolua_ui_open(L);
 	tolua_misc_open(L);
 	tolua_spell_open(L);
+	tolua_field_open(L);
 
 	/* Initialization code */
 	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");

@@ -53,12 +53,19 @@ extern bool script_do_file(cptr filename);
 /*
  * Execute one of the scripts attached to an object
  */
-extern void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...); 
+extern void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...);
 
 /*
  * Callback for using an object
  */
 extern bool use_object(object_type *o_ptr, bool *ident, int aim);
+
+/*
+ * Execute a script attached to a field
+ */
+extern void apply_field_trigger(int trigger_id, field_type *f_ptr, cptr format, ...);
+
+
 
 /*
  * Debug lua stack depth
