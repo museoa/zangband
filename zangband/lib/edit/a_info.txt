@@ -1535,7 +1535,7 @@ F:SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON | VORPAL |
 F:CHR | SUST_CHR | RES_FEAR | RES_LITE | RES_BLIND | REGEN | SHOW_MODS
 F:INSTA_ART
 L:USE:	msgf("You summon the Legion of the Dawn.")
-L:USE:	summon_specific(-1, px, py, player.depth, SUMMON_DAWN, TRUE, TRUE, TRUE)
+L:USE:	summon_specific(-1, player.px, player.py, player.depth, SUMMON_DAWN, TRUE, TRUE, TRUE)
 L:USE:	object.timeout = rand_range(500, 1000)
 L:DESC:	return "summon the Legion of the Dawn every 500-1000 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
