@@ -393,11 +393,11 @@ static void roff_aux(int r_idx, int remem)
 		
 		if (depth_in_feet)
 		{
-			roff(CLR_SLATE "at depths of %d feet", r_ptr->level * 50);
+			roff(CLR_SLATE " at depths of %d feet", r_ptr->level * 50);
 		}
 		else
 		{
-			roff(CLR_SLATE "on dungeon level %d", r_ptr->level);
+			roff(CLR_SLATE " on dungeon level %d", r_ptr->level);
 		}
 		old = TRUE;
 	}
