@@ -104,6 +104,14 @@ BORGOBJS := \
 	zborg6.o zborg7.o zborg8.o zborg9.o \
 
 ##
+## Get the list of .c files from the .o files
+##
+ANGSRCS := $(ANGOBJS:.o=.c)
+ZUTILSRCS := $(ZUTILOBJS:.o=.c)
+BORGSRCS := $(BORGOBJS:.o=.c)
+LUAWSRCS := $(LUAWOBJS:.o=.c)
+
+##
 ## The list of ports available
 ##
 PORTS := default_port linux open_bsd main-cap vt100 solaris sgi dec \
@@ -327,14 +335,6 @@ LUAOBJS := $(addprefix $(LUA), \
 
 TOLUAOBJS := \
   $(addprefix $(LUA), tolua.o tolualua.o liolib.o) $(LUAOBJS)
-
-##
-## Get the list of .c files from the .o files
-##
-ANGSRCS := $(ANGOBJS:.o=.c)
-ZUTILSRCS := $(ZUTILOBJS:.o=.c)
-BORGSRCS := $(BORGOBJS:.o=.c)
-LUAWSRCS := $(LUAWOBJS:.o=.c)
 
 
 ##
