@@ -537,8 +537,6 @@ proc NSMiscWindow::MiscSet {} {
 
 	set canvas [Global misc,canvas]
 
-	$canvas itemconfigure icon -assign [angband player icon]
-
 	if {[Value misc,mode,exp]} {
 		$canvas itemconfigure txt,EXP -text "EXP"
 	} else {

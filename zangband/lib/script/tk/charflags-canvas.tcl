@@ -323,8 +323,6 @@ if 0 {
 
 	# Character icon
 	$canvas create widget $x $y -anchor center -tags py
-	$canvas bind py <Enter> \
-		"NSCharFlagsCanvas::StatusBar_Player $oop"
 	$canvas bind py <Leave> \
 		"\[NSCharFlagsCanvas::Info $oop statusBar] itemconfigure t1 -text {}"
 
@@ -413,7 +411,6 @@ proc NSCharFlagsCanvas::SetInfo {oop} {
 		}
 	}
 
-	$header itemconfigure py -assign [angband player icon]
 	foreach flag [angband player flags] {
 		$canvas itemconfigure $flag,py -fill White -outline White
 		set visible($flag) 1
@@ -468,36 +465,6 @@ proc NSCharFlagsCanvas::StatusBar_Slot {oop slot} {
 	return
 }
 
-# NSCharFlagsCanvas::StatusBar_Player --
-#
-#	Display the character name and race in the status bar, and recall
-#	the character history to the Recall Window.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSCharFlagsCanvas::StatusBar_Player {oop} {
-
-	set desc " name, the  race and class"
-
-	[Info $oop statusBar] itemconfigure t1 -text $desc
-
-	set icon [angband player icon]
-	set color [Value TERM_L_BLUE]
-	set memory [angband player history]
-	NSRecall::SetText [Global recall,oop] $icon $color $desc $memory
-
-	# Hack -- Set things up so if the character icon changes, the
-	# Recall Window will be updated. This is massive overkill.
-	set NSRecall::Priv(icon,to) character
-	set NSRecall::Priv(icon,toindex) 0
-	set NSRecall::Priv(icon,valid) 1
-
-	return
-}
 
 # NSCharFlagsCanvas::Configure --
 #
