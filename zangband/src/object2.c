@@ -2320,7 +2320,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for ego item */
-				if (get_ego_prep(INVEN_DIG, TRUE))
+				if (get_ego_prep(ES_DIG, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2353,7 +2353,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for an ego-item */
-				if (get_ego_prep(INVEN_WIELD, TRUE))
+				if (get_ego_prep(ES_WIELD, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2552,7 +2552,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Roll for an ego-item */
-				if (get_ego_prep(INVEN_WIELD, FALSE))
+				if (get_ego_prep(ES_WIELD, FALSE))
 				{
 					ego = get_ego_num(level);
 
@@ -2582,7 +2582,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_BOW, TRUE))
+				if (get_ego_prep(ES_BOW, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2606,7 +2606,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_AMMO, TRUE))
+				if (get_ego_prep(ES_AMMO, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2623,7 +2623,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_AMMO, FALSE))
+				if (get_ego_prep(ES_AMMO, FALSE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2734,7 +2734,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for an ego item */
-				if (get_ego_prep(INVEN_BODY, TRUE))
+				if (get_ego_prep(ES_BODY, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2809,7 +2809,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					}
 
 					/* Roll for ego-item */
-					if (get_ego_prep(INVEN_ARM, TRUE))
+					if (get_ego_prep(ES_ARM, TRUE))
 					{
 						ego = get_ego_num(level);
 					}
@@ -2843,7 +2843,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_HANDS, TRUE))
+				if (get_ego_prep(ES_HANDS, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2859,7 +2859,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_HANDS, FALSE))
+				if (get_ego_prep(ES_HANDS, FALSE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2882,7 +2882,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_FEET, TRUE))
+				if (get_ego_prep(ES_FEET, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2901,7 +2901,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_FEET, FALSE))
+				if (get_ego_prep(ES_FEET, FALSE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2924,7 +2924,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_CROWN, TRUE))
+				if (get_ego_prep(ES_CROWN, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -2967,7 +2967,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			else if (flags & OC_FORCE_BAD)
 			{
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_HEAD, FALSE))
+				if (get_ego_prep(ES_HEAD, FALSE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -3001,7 +3001,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					}
 
 					/* Roll for ego-item */
-					if (get_ego_prep(INVEN_HEAD, TRUE))
+					if (get_ego_prep(ES_HEAD, TRUE))
 					{
 						ego = get_ego_num(level);
 					}
@@ -3020,7 +3020,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				else if (flags & OC_FORCE_BAD)
 				{
 					/* Roll for ego-item */
-					if (get_ego_prep(INVEN_HEAD, FALSE))
+					if (get_ego_prep(ES_HEAD, FALSE))
 					{
 						ego = get_ego_num(level);
 					}
@@ -3049,7 +3049,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_OUTER, TRUE))
+				if (get_ego_prep(ES_OUTER, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -3066,7 +3066,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			{
 
 				/* Roll for ego-item */
-				if (get_ego_prep(INVEN_OUTER, TRUE))
+				if (get_ego_prep(ES_OUTER, TRUE))
 				{
 					ego = get_ego_num(level);
 				}
@@ -3577,7 +3577,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random ego */
-				if (get_ego_prep(INVEN_LITE, TRUE))
+				if (get_ego_prep(ES_LITE, TRUE))
 				{
 					ego = get_ego_num(level);
 

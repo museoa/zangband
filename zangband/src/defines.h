@@ -828,6 +828,30 @@
 
 
 /*
+ * Ego item slot-types
+ */
+
+/* XXX XXX Hack - gap */
+ 
+#define ES_CROWN     21
+#define ES_DIG		 22
+#define ES_AMMO      23
+#define ES_WIELD     24
+#define ES_BOW       25
+
+/* Hack - gap */
+
+#define ES_NECK      28
+#define ES_LITE      29
+#define ES_BODY      30
+#define ES_OUTER     31
+#define ES_ARM       32
+#define ES_HEAD      33
+#define ES_HANDS     34
+#define ES_FEET      35
+
+
+/*
  * Maximum number of "normal" pack slots, and the index of the "overflow"
  * slot, which can hold an item, but only temporarily, since it causes the
  * pack to "overflow", dropping the "last" item onto the ground.  Since this
