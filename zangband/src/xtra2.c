@@ -97,7 +97,7 @@ void check_experience(void)
 		if (p_ptr->lev > p_ptr->max_plv)
 		{
 			int vir;
-			for (vir = 0; vir < 8; vir++)
+			for (vir = 0; vir < MAX_PLAYER_VIRTUES; vir++)
 				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
 
 			p_ptr->max_plv = p_ptr->lev;

@@ -1337,8 +1337,8 @@ struct player_type
 	u32b muta2;
 	u32b muta3;
 
-	s16b virtues[8];
-	s16b vir_types[8];
+	s16b virtues[MAX_PLAYER_VIRTUES];
+	s16b vir_types[MAX_PLAYER_VIRTUES];
 
 	s16b word_recall;	/* Word of recall counter */
 

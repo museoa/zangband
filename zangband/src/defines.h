@@ -3572,6 +3572,13 @@ extern int PlayerUID;
 
 #define MAX_VIRTUE 18
 
+/*
+ * Number of virtues the player can have
+ * ToDo: Check if changing this value breaks anything
+ * (apart from savefile compatibility).
+ */
+#define MAX_PLAYER_VIRTUES 8
+
 
 /*
  * Hack -- attempt to reduce various values

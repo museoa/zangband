@@ -78,7 +78,7 @@ void self_knowledge(void)
 		f3 |= t3;
 	}
 
-	for (v_nr = 0; v_nr < 8; v_nr++)
+	for (v_nr = 0; v_nr < MAX_PLAYER_VIRTUES; v_nr++)
 	{
 		char v_name[20];
 		char vir_desc[80];

@@ -1617,12 +1617,12 @@ static void rd_extra(void)
 		}
 		else
 		{
-			for (i = 0; i < 8; i++)
+			for (i = 0; i < MAX_PLAYER_VIRTUES; i++)
 			{
 				rd_s16b(&p_ptr->virtues[i]);
 			}
 
-			for (i = 0; i < 8; i++)
+			for (i = 0; i < MAX_PLAYER_VIRTUES; i++)
 			{
 				rd_s16b(&p_ptr->vir_types[i]);
 			}
