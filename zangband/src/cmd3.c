@@ -1474,7 +1474,7 @@ void do_cmd_query_symbol(void)
 
 
 	/* Prompt XXX XXX XXX */
-	put_str("Recall details? (k/p/y/n): ", 0, 40);
+	put_str("Recall details? (k/y/n): ", 0, 40);
 
 	/* Query */
 	query = inkey();
@@ -1482,6 +1482,13 @@ void do_cmd_query_symbol(void)
 	/* Restore */
 	prt(buf, 0, 0);
 
+	why=2;
+	/* Select the sort method */
+	ang_sort_comp = ang_sort_comp_hook;
+	ang_sort_swap = ang_sort_swap_hook;
+
+	/* Sort the array */
+	ang_sort(who, &why, n);
 
 	/* Sort by kills (and level) */
 	if (query == 'k')
@@ -1490,19 +1497,11 @@ void do_cmd_query_symbol(void)
 		query = 'y';
 	}
 
-	/* Sort by level */
-	if (query == 'p')
-	{
-		why = 2;
-		query = 'y';
-	}
-
 	/* Catch "escape" */
 	if (query != 'y') return;
 
-
 	/* Sort if needed */
-	if (why)
+	if (why==4)
 	{
 		/* Select the sort method */
 		ang_sort_comp = ang_sort_comp_hook;
