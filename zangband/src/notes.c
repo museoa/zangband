@@ -155,7 +155,9 @@ void add_note_type(int note_number)
 						  race_info[p_ptr->rp.prace].title,
 						  class_info[p_ptr->rp.pclass].title);
 
-			if (p_ptr->spell.r[0].realm != REALM_NONE)
+			/* No "Chaos-Warrior of Chaos" */
+			if (p_ptr->rp.pclass != CLASS_CHAOS_WARRIOR &&
+				p_ptr->spell.r[0].realm != REALM_NONE)
 			{
 				strnfcat(player, 100, &len, " of %s", realm_names[p_ptr->spell.r[0].realm]);
 			}
