@@ -2913,9 +2913,9 @@ static void process_monster(int m_idx)
  * changes (flags, attacks, spells), we induce a redraw of the monster
  * recall window.
  */
-void process_monsters(void)
+void process_monsters(int min_energy)
 {
-	int             i, e;
+	int             i;
 	int             fx, fy;
 
 	bool            test;
@@ -3028,22 +3028,8 @@ void process_monsters(void)
 			continue;
 		}
 
-		speed = m_ptr->mspeed;
-
-		/* Monsters move quickly in Nightmare mode */
-		if (ironman_nightmare)
-		{
-			speed = MIN(199, m_ptr->mspeed + 5);
-		}
-
-		e = extract_energy[speed];
-
-		/* Give this monster some energy */
-		m_ptr->energy += e;
-
-
 		/* Not enough energy to move */
-		if (m_ptr->energy < 100) continue;
+		if (m_ptr->energy < min_energy) continue;
 
 		/* Use up "some" energy */
 		m_ptr->energy -= 100;

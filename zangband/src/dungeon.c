@@ -3285,7 +3285,7 @@ static void process_player(void)
 {
 	int i;
 
-	/*** Apply energy ***/
+	
 
 	if (hack_mutation)
 	{
@@ -3293,16 +3293,6 @@ static void process_player(void)
 		(void)gain_random_mutation(0);
 		hack_mutation = FALSE;
 	}
-
-	if (p_ptr->pspeed > 199) i = 49;
-	else if (p_ptr->pspeed < 0) i = 1;
-	else i = extract_energy[p_ptr->pspeed];
-
-	p_ptr->energy += i;
-
-	/* No turn yet */
-	if (p_ptr->energy < 100) return;
-
 
 	/*** Check for interupts ***/
 
@@ -3364,8 +3354,8 @@ static void process_player(void)
 
 	/*** Handle actual user input ***/
 
-	/* Repeat until out of energy */
-	while (p_ptr->energy >= 100)
+	/* Repeat until energy is reduced */
+	while (TRUE)
 	{
 		/* Notice stuff (if needed) */
 		if (p_ptr->notice) notice_stuff();
@@ -3619,6 +3609,62 @@ static void process_player(void)
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
+		
+		/* Used up energy for this turn */
+		if (energy_use) break;
+	}
+}
+
+/* 
+ * Add energy to player and monsters.
+ * Those with the most energy move first.
+ * (This prevents monsters like Morgoth getting double moves
+ * when he is at a lower speed than the player.)
+ */
+static void process_energy(void)
+{
+	int i, speed, e;
+	monster_type *m_ptr;
+	
+	/*** Apply energy to player ***/
+	if (p_ptr->pspeed > 199) i = 49;
+	else if (p_ptr->pspeed < 0) i = 1;
+	else i = extract_energy[p_ptr->pspeed];
+
+	p_ptr->energy += i;
+
+	/* Give energy to all monsters */
+	for (i = m_max - 1; i >= 1; i--)
+	{
+		
+		/* Access the monster */
+		m_ptr = &m_list[i];
+
+		/* Ignore "dead" monsters */
+		if (!m_ptr->r_idx) continue;
+
+		speed = m_ptr->mspeed;
+
+		/* Monsters move quickly in Nightmare mode */
+		if (ironman_nightmare)
+		{
+			speed = MIN(199, m_ptr->mspeed + 5);
+		}
+
+		e = extract_energy[speed];
+
+		/* Give this monster some energy */
+		m_ptr->energy += e;
+	}
+
+	/* Can the player move? */
+	while (p_ptr->energy >= 100 && !p_ptr->leaving)
+	{
+		/* process monster with even more energy first */
+		process_monsters(p_ptr->energy + 1);
+
+		/* Process the player */
+		process_player();
 	}
 }
 
@@ -3633,7 +3679,7 @@ static void dungeon(void)
 {
 	int quest_num;
 	
-	cave_type *c_ptr;
+	cave_type *c_ptr;	
 
 	/* Set the base level */
 	base_level = dun_level;
@@ -3851,10 +3897,12 @@ static void dungeon(void)
 
 		/* Hack -- Compress the object list occasionally */
 		if (o_cnt + 32 < o_max) compact_objects(0);
-
-
-		/* Process the player */
-		process_player();
+		
+		/* 
+		 * Add energy to player and monsters.
+		 * Those with the most energy move first.
+		 */
+		process_energy();
 
 		/* Notice stuff */
 		if (p_ptr->notice) notice_stuff();
@@ -3887,7 +3935,7 @@ static void dungeon(void)
 		if (!alive || death) break;
 
 		/* Process all of the monsters */
-		process_monsters();
+		process_monsters(100);
 
 		/* Notice stuff */
 		if (p_ptr->notice) notice_stuff();
