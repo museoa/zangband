@@ -532,7 +532,25 @@ static void borg_merge_kill(int who)
  */
 void borg_delete_kill(int who)
 {
-	borg_merge_kill(who);
+	borg_kill *kill = &borg_kills[who];
+
+	/* Paranoia -- Already wiped */
+	if (!kill->r_idx) return;
+
+	/* Note */
+	borg_note(format("# Removing a monster '%s' at (%d,%d)",
+					 (r_name + r_info[kill->r_idx].name), kill->x, kill->y));
+#if 0
+	/* Reduce the regional fear with this guy dead */
+	borg_fear_grid(NULL, kill->y, kill->x,
+				   -(borg_danger(kill->y, kill->x, 1, TRUE)), TRUE);
+#endif
+
+	/* Kill the monster */
+	WIPE(kill, borg_kill);
+
+	/* One less monster */
+	borg_kills_cnt--;
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
