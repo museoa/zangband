@@ -251,6 +251,7 @@ extern bool avoid_center;
 extern bool destroy_worthless;
 extern bool take_notes;
 extern bool auto_notes;
+extern bool point_based;
 extern byte hitpoint_warn;
 extern byte delay_factor;
 extern s16b autosave_freq;
@@ -605,6 +606,7 @@ extern void signals_ignore_tstp(void);
 extern void signals_handle_tstp(void);
 extern void signals_init(void);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
+extern void get_character_name(void);
 
 /* generate.c */
 extern void place_closed_door(int y, int x);

@@ -63,6 +63,10 @@
  */
 #define VERSION_EXTRA   0
 
+/*
+ * Maximum number of abilities
+ */
+#define A_MAX  6
 
 /*
  * Number of grids in each block (vertically)
