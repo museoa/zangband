@@ -385,7 +385,7 @@ streams.o: streams.c $(INCS) grid.h generate.h
 init1.o: init1.c $(INCS)
 init2.o: init2.c $(INCS)
 load.o: load.c $(INCS)
-maid-grf.o: maid-grf.c $(INCS)
+maid-grf.o: maid-grf.c $(INCS) maid-grf.h
 maid-x11.o: maid-x11.c $(INCS) maid-grf.h
 main-cap.o: main-cap.c $(INCS)
 main-gtk.o: main-gtk.c $(INCS) maid-grf.h

@@ -849,6 +849,29 @@ MELEE1_C=\
 
 melee1.obj: $(MELEE1_C) melee1.c
 	$(CC) -c $(CFLAGS) melee1.c
+	
+# Build MAID-GRF.C
+MAID-GRF_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	readdib.h\
+
+maid-grf.obj: $(MAID-GRF_C) maid-grf.c
+	$(CC) -c $(CFLAGS) maid-grf.c
+
 
 # Build MAIN-WIN.C
 MAIN-WIN_C=\
@@ -868,6 +891,7 @@ MAIN-WIN_C=\
 	types.h\
 	externs.h\
 	readdib.h\
+	maid-grf.h\
 
 main-win.obj: $(MAIN-WIN_C) main-win.c
 	$(CC) -c $(CFLAGS) main-win.c

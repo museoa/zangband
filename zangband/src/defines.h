@@ -2385,9 +2385,9 @@
 /*
  * Feature flags
  */
-#define FF_BLOCK_LOS	0x01
-#define FF_HALF_LOS		0x02
-#define FF_USE_TRANS	0x04
+#define FF_BLOCK		0x01	/* Blocks movement + los */
+#define FF_HALF_LOS		0x02	/* Half-blocks los */
+#define FF_USE_TRANS	0x04	/* Use transparency light effects */
 
 
 /*

@@ -12,7 +12,7 @@
  */
 
 #include "angband.h"
-
+#include "maid-grf.h"
 
 #ifdef SUPPORT_GAMMA
 
@@ -282,3 +282,321 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 	return (TRUE);
 }
 #endif /* USE_GRAPHICS */
+
+#ifdef TERM_USE_MAP
+
+/* List of 16x16 blocks for the overhead map */
+static map_blk_ptr *map_cache;
+
+/* Refcount for map cache */
+static byte *map_cache_refcount;
+
+/* Location of cache blocks */
+static int *map_cache_x;
+static int *map_cache_y;
+
+/* The map itself - grid of 16x16 blocks*/
+static map_blk_ptr **map_grid;
+
+/* Reference count of each 16x16 block */
+static byte **map_refcount;
+
+/* Player location */
+static int player_x = 0;
+static int player_y = 0;
+
+static map_info_hook_type map_info_hook = NULL;
+
+/*
+ * Set the map hook - returning the old hook
+ *
+ * You need to keep a copy of the old hook
+ * to chain in on because multiple places
+ * use the overhead map.
+ */
+map_info_hook_type set_map_hook(map_info_hook_type hook_func)
+{
+	/* Save the original hook */
+	map_info_hook_type temp = map_info_hook;
+	
+	/* Set the hook */
+	map_info_hook = hook_func;
+	
+	/* Return the old hook for chaining */
+	return (temp);
+}
+
+
+/*
+ * Create the map information
+ */
+void init_overhead_map(void)
+{
+	int i;
+	
+	/* Make the list of pointers to blocks */
+	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr);
+	
+	/* Refcount for cache blocks */
+	C_MAKE(map_cache_refcount, MAP_CACHE, bool);
+	
+	/* Cache block locations */
+	C_MAKE(map_cache_x, MAP_CACHE, int);
+	C_MAKE(map_cache_y, MAP_CACHE, int);
+
+	/* Allocate each block */
+	for (i = 0; i < MAP_CACHE; i++)
+	{
+		/* Allocate block */
+		C_MAKE(map_cache[i], WILD_BLOCK_SIZE, cave_type *);
+
+		/* Allocate rows of a block */
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			C_MAKE(map_cache[i][j], WILD_BLOCK_SIZE, cave_type);
+		}
+	}
+	
+	/* Allocate the overhead map itself */
+	C_MAKE(map_grid, WILD_SIZE, map_blk_ptr *);
+	C_MAKE(map_refcount, WILD_SIZE, int *);
+
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		/* Allocate one row of the wilderness */
+		C_MAKE(map_grid[i], WILD_SIZE, map_blk_ptr);
+		C_MAKE(map_refcount[i], WILD_SIZE, int);
+	}
+}
+
+/*
+ * Delete the overhead map
+ */
+void del_overhead_map(void)
+{
+	int i;
+	
+	/* Free refcount for cache blocks */
+	FREE(map_cache_refcount);
+	
+	/* Cache block locations */
+	FREE(map_cache_x);
+	FREE(map_cache_y);
+
+	/* Delete each block */
+	for (i = 0; i < MAP_CACHE; i++)
+	{
+		/* Allocate rows of a block */
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			FREE(map_cache[i][j]);
+		}
+		
+		/* Free block */
+		FREE(map_cache[i]);
+	}
+	
+	/* Free the list of pointers to blocks */
+	FREE(map_cache);
+	
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		/* Free one row of the wilderness */
+		FREE(map_grid[i]);
+		FREE(map_refcount[i]);
+	}
+	
+	/* Free the overhead map itself */
+	FREE(map_grid);
+	FREE(map_refcount);
+}
+
+
+/*
+ * Clear the map when changing a level.
+ */
+void clear_map(void)
+{
+	int i, j;
+	
+	/* Erase the map */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		for (j = 0; j < WILD_SIZE; j++)
+		{
+			map_refcount[i] = 0;
+			map_grid[i] = NULL;
+		}
+	}
+	
+	/* Erase the cache */
+	for (i = 0; i < MAP_CACHE; i++)
+	{
+		map_cache_recount[i] = 0;
+	}
+	
+	/* Player doesn't have a position */
+	player_x = 0;
+	player_y = 0;
+}
+
+
+/*
+ * Erase a block
+ */
+static void clear_block(int block)
+{
+	int i, j;
+	
+	map_block_type *mb_ptr;
+	
+	/* Wipe each square */
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			mb_ptr = &map_cache[block][i][j];
+			
+			(void)WIPE(mb_ptr, map_block_type);
+		}
+	}
+}
+
+
+/*
+ * Find an empty block to use
+ */
+static int get_empty_block(void)
+{
+	int i;
+	int dist, best_dist = 0;
+	int best_block = 0;
+	
+	int px, py;
+		
+	/* Get player block location */
+	px = player_x / 16;
+	py = player_y / 16;
+	
+	/* Scan for a used but out of los block */
+	for (i = 0; i < MAP_CACHE; i++)
+	{
+		/* Get block out of los */
+		if (map_cache_refcount[i]) continue;
+		
+		/* Get rough dist from player */
+		dist = ABS(map_cache_x[i] - px) + ABS(map_cache_y[i] - py);
+		
+		/* Save furthest block */
+		if (dist > best_dist)
+		{
+			best_dist = dist;
+			best_block = i;
+		}
+	}
+	
+	/* Erase the block */
+	clear_block(best_block);
+	
+	/* Return the furthest unused block from the player */
+	return (best_block);
+}
+
+
+/*
+ * Is the relative location in bounds on the map?
+ */
+bool map_in_bounds_rel(int dx, int dy)
+{
+	return (map_refcount[(y - player_y) / 16]
+						[(x - player_x) / 16] ? TRUE : FALSE);
+}
+
+/*
+ * Is the location in bounds on the map?
+ */
+static bool map_in_bounds(int dx, int dy)
+{
+	return (map_refcount[y  / 16][x  / 16] ? TRUE : FALSE);
+}
+
+
+/*
+ * Save information into a block location
+ */
+static void save_map_location(int x, int y, term_map *map)
+{
+	map_block_ptr *mbp_ptr;
+	map_block *mb_ptr;
+	
+	bool visible;
+	
+	/* Does the location exist? */
+	if (!map_in_bounds(x, y))
+	{
+		int block_num;
+		
+		/* Create a new block there */
+		block_num = get_empty_block();	
+	
+		/* Set this block up */
+		map_refcount[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = 1;
+		
+		mb_ptr = &map_cache[block_num];
+
+		/* Link to the map */
+		map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = mbp_ptr;
+	}
+	else
+	{
+		mbp_ptr = map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE];
+	}
+	
+	mb_ptr = mbptr[y % 15][x % 15];
+	
+	/* Increment refcount depending on visibility */
+	if (map->flags & MAP_SEEN)
+	{
+		/* Wasn't seen, and now is */
+		if (!mb_ptr->flags & MAP_SEEN)
+		{
+			map_cache_refcount[block_num]++;
+		}
+	}
+	else
+	{
+		/* Was seen, and now is not */
+		if (mb_ptr->flags & MAP_SEEN)
+		{
+			map_cache_refcount[block_num]--;
+		}
+	}
+	
+	/* Remember info by calling hook */
+	if (map_info_hook)
+	{
+		map_info_hook(mb_ptr, map);
+	}
+
+	/* Hack - save player location */
+	if (map->monster == -1)
+	{
+		player_x = x;
+		player_y = y;
+	}
+}
+
+
+/*
+ * Get the information in the map
+ */
+map_block *read_map_location(int dx, int dy)
+{
+	int x = dx + player_x;
+	int y = dy + player_y;
+	
+	return (map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]
+				[y % 15][x % 15]);
+}
+
+#endif /* TERM_USE_MAP */
