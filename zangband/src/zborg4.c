@@ -1668,6 +1668,236 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 
 
 /*
+ * Examine an item in the inventory
+ */
+static void borg_notice_inven_item(list_item *l_ptr)
+{
+	int number;
+	
+	object_kind *k_ptr;
+	
+	if (l_ptr->treat_as == TREAT_AS_LESS)
+	{
+		/* Pretend we have less items */
+		number = l_ptr->number - 1;
+	}
+	else
+	{
+		number = l_ptr->number;
+	}
+
+	/* count up the items on the borg */
+	borg_has[l_ptr->k_idx] += number;
+
+	/* Keep track of weight */
+	borg_skill[BI_ENCUMBERD] += l_ptr->weight * number;
+
+	/* Get item type */
+	k_ptr = &k_info[l_ptr->k_idx];
+
+	/* Analyze the item */
+	switch (l_ptr->tval)
+	{
+		case TV_LIFE_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_LIFE ||
+				borg_skill[BI_REALM2] == REALM_LIFE)
+				amt_book[REALM_LIFE][k_ptr->sval] += number;
+			break;
+		}
+		case TV_SORCERY_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_SORCERY ||
+				borg_skill[BI_REALM2] == REALM_SORCERY)
+				amt_book[REALM_SORCERY][k_ptr->sval] += number;
+			break;
+		}
+		case TV_NATURE_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_NATURE ||
+				borg_skill[BI_REALM2] == REALM_NATURE)
+				amt_book[REALM_NATURE][k_ptr->sval] += number;
+			break;
+		}
+		case TV_CHAOS_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_CHAOS ||
+				borg_skill[BI_REALM2] == REALM_CHAOS)
+				amt_book[REALM_CHAOS][k_ptr->sval] += number;
+			break;
+		}
+		case TV_DEATH_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_DEATH ||
+				borg_skill[BI_REALM2] == REALM_DEATH)
+				amt_book[REALM_DEATH][k_ptr->sval] += number;
+			break;
+		}
+		case TV_TRUMP_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_TRUMP ||
+				borg_skill[BI_REALM2] == REALM_TRUMP)
+				amt_book[REALM_TRUMP][k_ptr->sval] += number;
+			break;
+		}
+		case TV_ARCANE_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_ARCANE ||
+				borg_skill[BI_REALM2] == REALM_ARCANE)
+				amt_book[REALM_ARCANE][k_ptr->sval] += number;
+			break;
+		}
+
+
+		case TV_FOOD:
+		{
+			/* Food */
+			borg_notice_food(l_ptr, number);
+			break;
+		}
+
+		case TV_POTION:
+		{
+			/* Potions */
+			borg_notice_potions(l_ptr, number);
+			break;
+		}
+
+		case TV_SCROLL:
+		{
+			/* Scrolls */
+			borg_notice_scrolls(l_ptr, number);
+			break;
+		}
+
+		case TV_ROD:
+		{
+			/* Rods */
+			borg_notice_rods(l_ptr, number);
+			break;
+		}
+
+		case TV_STAFF:
+		{
+			/* Staffs */
+			borg_notice_staves(l_ptr, number);
+			break;
+		}
+
+
+		case TV_FLASK:
+		{
+			/* Flasks */
+
+			/* Use as fuel if we equip a lantern */
+			if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] +=
+					number;
+
+			/* Count as Missiles */
+			if (borg_skill[BI_CLEVEL] < 15) borg_skill[BI_AMISSILES] +=
+					number;
+
+			break;
+		}
+
+		case TV_LITE:
+
+		{
+			/* Torches */
+
+			/* Use as fuel if it is a torch and we carry a torch */
+			if ((k_ptr->sval == SV_LITE_TORCH) &&
+				(borg_skill[BI_CUR_LITE] <= 1))
+			{
+				borg_skill[BI_AFUEL] += number;
+			}
+			break;
+		}
+
+
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		{
+			/* Weapons */
+
+
+			/* These items are checked a bit later in a sub routine
+			 * to notice the flags.  It is done outside this switch.
+			 */
+			break;
+		}
+
+		case TV_DIGGING:
+		{
+			/* Shovels and such */
+
+			/* Hack -- ignore worthless ones (including cursed) */
+			if (l_ptr->kn_flags3 & TR3_CURSED) break;
+
+			/* Do not carry if weak, won't be able to dig anyway */
+			if (borg_skill[BI_DIG] < 30) break;
+
+			amt_digger += number;
+			break;
+		}
+
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		{
+			/* Missiles */
+
+			/* Hack -- ignore invalid missiles */
+			if (l_ptr->tval != my_ammo_tval) break;
+
+			/* Count them */
+			borg_skill[BI_AMISSILES] += number;
+
+			/* Enchant missiles if have lots of cash */
+			if (borg_skill[BI_CLEVEL] > 35)
+			{
+				if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) &&
+					number >= 5)
+				{
+					if (l_ptr->to_h < 8)
+					{
+						my_need_enchant_to_h += (10 - l_ptr->to_h);
+					}
+
+					if (l_ptr->to_d < 8)
+					{
+						my_need_enchant_to_d += (10 - l_ptr->to_d);
+					}
+				}
+				else
+				{
+					if (l_ptr->to_h < 5)
+					{
+						my_need_enchant_to_h += (8 - l_ptr->to_h);
+					}
+
+					if (l_ptr->to_d < 5)
+					{
+						my_need_enchant_to_d += (8 - l_ptr->to_d);
+					}
+				}
+			}
+
+			break;
+		}
+	}
+}
+
+
+/*
  * Notice the inventory
  */
 static void borg_notice_inven(void)
@@ -1675,238 +1905,52 @@ static void borg_notice_inven(void)
 	list_item *l_ptr;
 
 	int i;
-
-	int number;
+	
+	bool swapped = FALSE;
 
 	/* Scan the inventory */
 	for (i = 0; i < inven_num; i++)
 	{
-		object_kind *k_ptr;
-
 		l_ptr = &inventory[i];
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
-
-		/* Skip empty / unaware items */
+		
+		/* Item swapped with equipment? */
+		if (l_ptr->treat_as == TREAT_AS_SWAP)
+		{
+			/* Notice we have swaps */
+			swapped = TRUE;
+			
+			/* Get next item */
+			continue;
+		}
+		
+		/* Unaware item? */
 		if (!l_ptr->k_idx) continue;
-
-		if (l_ptr->treat_as == TREAT_AS_LESS)
+		
+		/* Examine the item */
+		borg_notice_inven_item(l_ptr);
+	}
+	
+	/* Look for swaps if they exist */
+	if (!swapped) return;
+	
+	/* Search equipment for the swapped item */
+	for (i = 0; i < equip_num; i++)
+	{
+		l_ptr = &equipment[i];
+	
+		/* A known item? */
+		if (l_ptr->k_idx)
 		{
-			/* Pretend we have less items */
-			number = l_ptr->number - 1;
-		}
-		else
-		{
-			number = l_ptr->number;
-		}
-
-		/* count up the items on the borg */
-		borg_has[l_ptr->k_idx] += number;
-
-		/* Keep track of weight */
-		borg_skill[BI_ENCUMBERD] += l_ptr->weight * number;
-
-		/* Get item type */
-		k_ptr = &k_info[l_ptr->k_idx];
-
-		/* Analyze the item */
-		switch (l_ptr->tval)
-		{
-			case TV_LIFE_BOOK:
+			if (l_ptr->treat_as == TREAT_AS_SWAP)
 			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_LIFE ||
-					borg_skill[BI_REALM2] == REALM_LIFE)
-					amt_book[REALM_LIFE][k_ptr->sval] += number;
-				break;
-			}
-			case TV_SORCERY_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_SORCERY ||
-					borg_skill[BI_REALM2] == REALM_SORCERY)
-					amt_book[REALM_SORCERY][k_ptr->sval] += number;
-				break;
-			}
-			case TV_NATURE_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_NATURE ||
-					borg_skill[BI_REALM2] == REALM_NATURE)
-					amt_book[REALM_NATURE][k_ptr->sval] += number;
-				break;
-			}
-			case TV_CHAOS_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_CHAOS ||
-					borg_skill[BI_REALM2] == REALM_CHAOS)
-					amt_book[REALM_CHAOS][k_ptr->sval] += number;
-				break;
-			}
-			case TV_DEATH_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_DEATH ||
-					borg_skill[BI_REALM2] == REALM_DEATH)
-					amt_book[REALM_DEATH][k_ptr->sval] += number;
-				break;
-			}
-			case TV_TRUMP_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_TRUMP ||
-					borg_skill[BI_REALM2] == REALM_TRUMP)
-					amt_book[REALM_TRUMP][k_ptr->sval] += number;
-				break;
-			}
-			case TV_ARCANE_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_ARCANE ||
-					borg_skill[BI_REALM2] == REALM_ARCANE)
-					amt_book[REALM_ARCANE][k_ptr->sval] += number;
-				break;
-			}
-
-
-			case TV_FOOD:
-			{
-				/* Food */
-				borg_notice_food(l_ptr, number);
-				break;
-			}
-
-			case TV_POTION:
-			{
-				/* Potions */
-				borg_notice_potions(l_ptr, number);
-				break;
-			}
-
-			case TV_SCROLL:
-			{
-				/* Scrolls */
-				borg_notice_scrolls(l_ptr, number);
-				break;
-			}
-
-			case TV_ROD:
-			{
-				/* Rods */
-				borg_notice_rods(l_ptr, number);
-				break;
-			}
-
-			case TV_STAFF:
-			{
-				/* Staffs */
-				borg_notice_staves(l_ptr, number);
-				break;
-			}
-
-
-			case TV_FLASK:
-			{
-				/* Flasks */
-
-				/* Use as fuel if we equip a lantern */
-				if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] +=
-						number;
-
-				/* Count as Missiles */
-				if (borg_skill[BI_CLEVEL] < 15) borg_skill[BI_AMISSILES] +=
-						number;
-
-				break;
-			}
-
-			case TV_LITE:
-
-			{
-				/* Torches */
-
-				/* Use as fuel if it is a torch and we carry a torch */
-				if ((k_ptr->sval == SV_LITE_TORCH) &&
-					(borg_skill[BI_CUR_LITE] <= 1))
-				{
-					borg_skill[BI_AFUEL] += number;
-				}
-				break;
-			}
-
-
-			case TV_HAFTED:
-			case TV_POLEARM:
-			case TV_SWORD:
-			{
-				/* Weapons */
-
-
-				/* These items are checked a bit later in a sub routine
-				 * to notice the flags.  It is done outside this switch.
-				 */
-				break;
-			}
-
-			case TV_DIGGING:
-			{
-				/* Shovels and such */
-
-				/* Hack -- ignore worthless ones (including cursed) */
-				if (l_ptr->kn_flags3 & TR3_CURSED) break;
-
-				/* Do not carry if weak, won't be able to dig anyway */
-				if (borg_skill[BI_DIG] < 30) break;
-
-				amt_digger += number;
-				break;
-			}
-
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-			{
-				/* Missiles */
-
-				/* Hack -- ignore invalid missiles */
-				if (l_ptr->tval != my_ammo_tval) break;
-
-				/* Count them */
-				borg_skill[BI_AMISSILES] += number;
-
-				/* Enchant missiles if have lots of cash */
-				if (borg_skill[BI_CLEVEL] > 35)
-				{
-					if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) &&
-						number >= 5)
-					{
-						if (l_ptr->to_h < 8)
-						{
-							my_need_enchant_to_h += (10 - l_ptr->to_h);
-						}
-
-						if (l_ptr->to_d < 8)
-						{
-							my_need_enchant_to_d += (10 - l_ptr->to_d);
-						}
-					}
-					else
-					{
-						if (l_ptr->to_h < 5)
-						{
-							my_need_enchant_to_h += (8 - l_ptr->to_h);
-						}
-
-						if (l_ptr->to_d < 5)
-						{
-							my_need_enchant_to_d += (8 - l_ptr->to_d);
-						}
-					}
-				}
-
-				break;
+				/* Examine the item */
+				borg_notice_inven_item(l_ptr);
+				
+				/* Done */
+				return;
 			}
 		}
 	}
