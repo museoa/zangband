@@ -23,153 +23,165 @@
 /*
  * Recursive fractal algorithm to place water through the dungeon.
  */
-static void recursive_river(int x1,int y1, int x2, int y2, int feat1, int feat2,int width)
-		{
-	int dx,dy,length,l,x,y;
+static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2, int width)
+{
+	int dx, dy, length, l, x, y;
 	int changex, changey;
-	int ty,tx;
+	int ty, tx;
 	bool done;
-	length=distance(x1,y1,x2,y2);
-	if(length>4)
-			{
-		/*Divide path in half and call routine twice.
-		* There is a small chance of splitting the river
-		*/ 
-		dx=(x2-x1)/2;
-		dy=(y2-y1)/2;
 
-		if (dy!=0)
-			{
-			/* perturbation perpendicular to path */
-			changex=randint(abs(dy))*2-abs(dy);
-			}
-			else
+
+	length = distance(x1, y1, x2, y2);
+
+	if (length > 4)
+	{
+		/*
+		 * Divide path in half and call routine twice.
+		 * There is a small chance of splitting the river
+		 */
+		dx = (x2 - x1) / 2;
+		dy = (y2 - y1) / 2;
+
+		if (dy != 0)
 		{
-			changex=0;
+			/* perturbation perpendicular to path */
+			changex = randint(abs(dy)) * 2 - abs(dy);
 		}
-
-		if (dx!=0)
-		{
-			/* perturbation perpendicular to path */
-			changey=randint(abs(dx))*2-abs(dx);
-	}
 		else
 		{
-			changey=0;
-}
+			changex = 0;
+		}
 
-		if (!in_bounds(y1+dy+changey,x1+dx+changex))
-{
-			changex=0;
-			changey=0;
-		}		
+		if (dx != 0)
+		{
+			/* perturbation perpendicular to path */
+			changey=randint(abs(dx)) * 2 - abs(dx);
+		}
+		else
+		{
+			changey = 0;
+		}
+
+		if (!in_bounds(y1 + dy + changey, x1 + dx + changex))
+		{
+			changex = 0;
+			changey = 0;
+		}
 
 		/* construct river out of two smaller ones */
-		recursive_river(x1, y1, x1+dx+changex, y1+dy+changey, feat1, feat2, width);
-		recursive_river(x1+dx+changex, y1+dy+changey, x2, y2, feat1, feat2, width);
+		recursive_river(x1, y1, x1 + dx + changex, y1 + dy + changey, feat1, feat2, width);
+		recursive_river(x1 + dx + changex, y1 + dy + changey, x2, y2, feat1, feat2, width);
 
-		/* Split the river some of the time -junctions look cool */
-		if ((randint(DUN_WAT_CHG)==1)&&(width>0))
-	{
-			recursive_river(x1+dx+changex, y1+dy+changey, x1+8*(dx+changex),
-			  y1+8*(dy+changey), feat1, feat2, width-1);
+		/* Split the river some of the time - junctions look cool */
+		if ((randint(DUN_WAT_CHG) == 1) && (width > 0))
+		{
+			recursive_river(x1 + dx + changex, y1 + dy + changey,
+			                x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
+			                feat1, feat2, width - 1);
 		}
 	}
 	else
 	{
 		/*Actually build the river*/
-		for (l=0;l<length;l++)
-	{
-			x=x1+l*(x2-x1)/length;
-			y=y1+l*(y2-y1)/length;
-			done=FALSE;
-			while(!done)
+		for (l = 0; l < length; l++)
 		{
+			x = x1 + l * (x2 - x1) / length;
+			y = y1 + l * (y2 - y1) / length;
+
+			done = FALSE;
+
+			while (!done)
+			{
 				for (ty = y - width - 1; ty <= y + width + 1; ty++)
 				{
 					for (tx = x - width - 1; tx <= x + width + 1; tx++)
-			{
-				if (!in_bounds(ty, tx)) continue;
+					{
+						if (!in_bounds(ty, tx)) continue;
 
 						if (cave[ty][tx].feat == feat1) continue;
 						if (cave[ty][tx].feat == feat2) continue;
-			
+
 						if (distance(ty, tx, y, x) > rand_spread(width, 1)) continue;
 
-				/* Do not convert permanent features */
-				if (cave_perma_bold(ty, tx)) continue;
+						/* Do not convert permanent features */
+						if (cave_perma_bold(ty, tx)) continue;
 
-				/*
-				 * Clear previous contents, add feature
-						 * The border mainly gets feat2, while the center gets feat1 */
+						/*
+						 * Clear previous contents, add feature
+						 * The border mainly gets feat2, while the center gets feat1
+						 */
 						if (distance(ty, tx, y, x) > width)
 							cave[ty][tx].feat = feat2;
-				else
+						else
 							cave[ty][tx].feat = feat1;
 
-				/* Lava terrain glows */
+						/* Lava terrain glows */
 						if ((feat1 == FEAT_DEEP_LAVA) ||  (feat1 == FEAT_SHAL_LAVA))
-				{
-					cave[ty][tx].info |= CAVE_GLOW;
+						{
+							cave[ty][tx].info |= CAVE_GLOW;
+						}
+
+						/* Hack -- don't teleport here */
+						cave[ty][tx].info |= CAVE_ICKY;
+					}
 				}
 
-				/* Hack -- don't teleport here */
-				cave[ty][tx].info |= CAVE_ICKY;
-			}
-		}
 				done=TRUE;
 			}
-		}	
 		}
-		}
+	}
+}
+
 
 /*
  * Places water /lava through dungeon.
  */
 void add_river(int feat1, int feat2)
-		{
+{
 	int y2, x2;
-	int y1=0, x1=0, wid;
+	int y1 = 0, x1 = 0;
+	int wid;
 
 
 	/* Hack -- Choose starting point */
-	y2 = randint(cur_hgt /2 -2)+cur_hgt/2;
-	x2 = randint(cur_wid /2 -2)+cur_wid/2;
+	y2 = randint(cur_hgt / 2 - 2) + cur_hgt / 2;
+	x2 = randint(cur_wid / 2 - 2) + cur_wid / 2;
 
 	/* Hack -- Choose ending point somewhere on boundary */
 	switch(randint(4))
-			{
+	{
 		case 1:
 		{
 			/* top boundary */
-			x1=randint(cur_wid-2)+1;
-			y1=1;			
+			x1 = randint(cur_wid-2)+1;
+			y1 = 1;
 			break;
-			}
+		}
 		case 2:
-			{
+		{
 			/* left boundary */
-			x1=1;
-			y1=randint(cur_hgt-2)+1;
+			x1 = 1;
+			y1 = randint(cur_hgt-2)+1;
 			break;
 		}
 		case 3:
 		{
 			/* right boundary */
-			x1=cur_wid-1;
-			y1=randint(cur_hgt-2)+1;
+			x1 = cur_wid-1;
+			y1 = randint(cur_hgt-2)+1;
 			break;
 		}
 		case 4:
 		{
 			/* bottom boundary */
-			x1=randint(cur_wid-2)+1;
-			y1=cur_hgt-1;
+			x1 = randint(cur_wid-2)+1;
+			y1 = cur_hgt-1;
 			break;
-			}
 		}
+	}
+
 	wid = randint(DUN_WAT_RNG);
-	recursive_river(x1, y1, x2, y2, feat1, feat2, wid);	
+	recursive_river(x1, y1, x2, y2, feat1, feat2, wid);
 
 	/* Hack - Save the location as a "room" */
 	if (dun->cent_n < CENT_MAX)
@@ -256,42 +268,45 @@ void build_streamer(int feat, int chance)
 	}
 }
 
+
 /*
  * Put trees near a hole in the dungeon roof  (rubble on ground + up stairway)
  * This happens in real world lava tubes.
  */
+void place_trees(int x, int y)
+{
+	int i, j;
 
-void place_trees(int x,int y)
-				{
-	int i,j;
 	/* place trees/ rubble in ovalish distribution*/
-	for (i=x-3;i<x+4;i++)
+	for (i=x-3; i<x+4; i++)
+	{
+		for (j=y-3; j<y+4; j++)
+		{
+			/* Want square to be in the circle and accessable.*/
+			if (in_bounds(j, i) && (distance(j, i, y, x) < 4) && (!cave_perma_bold(j, i)))
+			{
+				/*
+				 * Clear previous contents, add feature
+				 * The border mainly gets trees, while the center gets rubble */
+				if ((distance(j, i, y, x) > 1) || (randint(100) < 25))
 				{
-		for (j=y-3;j<y+4;j++)
-		{/* Want square to be in the circle and accessable.*/
-		if (in_bounds(j,i)
-			&& (distance(j, i, y, x) < 4)
-			&& (!cave_perma_bold(j, i)))
-			{/*
-			  * Clear previous contents, add feature
-			  * The border mainly gets trees, while the center gets rubble */
-			if ((distance(j, i, y, x) > 1)||(randint(100)<25))
-				{if (randint(100)<75)
-					cave[j][i].feat = FEAT_TREES;
+					if (randint(100)<75)
+						cave[j][i].feat = FEAT_TREES;
+				}
+				else
+				{
+					cave[j][i].feat = FEAT_RUBBLE;
+				}
 
+				/* Light area since is open above */
+				cave[j][i].info|=CAVE_GLOW;
+			}
+		}
 	}
-	else
-				cave[j][i].feat = FEAT_RUBBLE;
-
-			/* Light area since is open above */
-			cave[j][i].info|=CAVE_GLOW;
-					}
-				}
-				}
 
 	/* No up stairs in ironman mode */
-	if ((!ironman_downward)&&(randint(3)==1))
-				{
+	if ((!ironman_downward) && (randint(3) == 1))
+	{
 		/* up stair */
 		cave[y][x].feat=FEAT_LESS;
 	}
@@ -384,5 +399,3 @@ void destroy_level(void)
 		}
 	}
 }
-
-

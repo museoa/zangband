@@ -115,14 +115,14 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 	/* Test for critical hit. */
 	if (randint(i + 200) <= i)
 	{
-		/* Encourage the player to make sneak attacks on 
+		/* Encourage the player to make sneak attacks on
 		 * sleeping monsters. -LM-
 		 */
-		if ((sleeping_bonus) && (p_ptr->pclass == CLASS_ROGUE)) 
+		if ((sleeping_bonus) && (p_ptr->pclass == CLASS_ROGUE))
 			msg_print("You ruthlessly sneak attack!");
 
 
-		/* Hack - Weapons that normally do little damage benefit most from 
+		/* Hack - Weapons that normally do little damage benefit most from
 		 * critical hits (10x inflation).
 		 */
 		mult_m_crit = 120 / (o_ptr->dd * (o_ptr->ds + 1));
@@ -131,13 +131,13 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 
 
 		/* Determine level of critical hit */
-		k = randint(i) + randint(100); 
+		k = randint(i) + randint(100);
 
 		/* This portion of the function determines the level of critical hit,
-		 * the critical mult_m_crit, and displays an appropriate combat 
-		 * message.  A distinction is often made between edged and blunt 
-		 * weapons.  Unfortunately, whips sometimes display rather odd 
-		 * messages... 
+		 * the critical mult_m_crit, and displays an appropriate combat
+		 * message.  A distinction is often made between edged and blunt
+		 * weapons.  Unfortunately, whips sometimes display rather odd
+		 * messages...
 		 */
 		if (k < 100)
 		{
@@ -180,30 +180,31 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 			else
 				msg_format("You bludgeon %s!", m_name);
 		}
-		else 
+		else
   		{
 			mult_m_crit *= 32;
 			msg_format("You *smite* %s!", m_name);
-	}
+		}
 
-
-		/* Compensate for the weak weapon bonus by deflating the critical 
+		/*
+		 * Compensate for the weak weapon bonus by deflating the critical
 		 * hit multiplier.
 		 */
 		mult_m_crit /= 10;
-}
+	}
 
-	/* If the blow is not a critical hit, display the default attack 
+	/* If the blow is not a critical hit, display the default attack
 	 * message and apply the standard multiplier.
 	 */
 	else
 	{
-		mult_m_crit = 10; 
+		mult_m_crit = 10;
 		msg_format("You hit %s.", m_name);
 	}
 
 	return (mult_m_crit);
 }
+
 
 /*
  * Critical hits (by player)
@@ -267,13 +268,13 @@ static s16b critical_norm(int weight, int plus, int dam)
  */
 s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 {
-	
-	/* 
+
+	/*
 	* mult is scaled to be *4 so that the fractional slays can be stored
 	* in an integer. -SF-
 	*/
 	int mult = 4;
-	
+
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -1431,12 +1432,12 @@ void py_attack(int y, int x)
 	/**** The monster bashing code. -LM- ****/
 
 	/* No shield on arm, no bash.  */
-	if (!inventory[INVEN_ARM].k_idx) 
+	if (!inventory[INVEN_ARM].k_idx)
 	{
 		bash_chance = 0;
 	}
 
-	/* Players do not bash if they could otherwise take advantage of special 
+	/* Players do not bash if they could otherwise take advantage of special
 	 * bonuses against sleeping monsters, or if the monster is low-level.
 	 */
 	else if ((sleeping_bonus) || (r_ptr->level < p_ptr->lev / 2))
@@ -1445,10 +1446,10 @@ void py_attack(int y, int x)
 	}
 
 	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
-	else bash_chance = p_ptr->skill_thn + 
-		(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 
+	else bash_chance = p_ptr->skill_thn +
+		(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128
 		+ ((p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
-		|| p_ptr->pclass == CLASS_WARRIOR_MAGE || p_ptr->pclass == CLASS_CHAOS_WARRIOR) ? 
+		|| p_ptr->pclass == CLASS_WARRIOR_MAGE || p_ptr->pclass == CLASS_CHAOS_WARRIOR) ?
 		p_ptr->lev : 0);
 
 	/* Players bash more often when they see a real need. */
@@ -1456,7 +1457,7 @@ void py_attack(int y, int x)
 	{
 		if ((!inventory[INVEN_WIELD].k_idx) && (p_ptr->pclass != CLASS_MONK))
 			bash_chance *= 3;
-		else if ((inventory[INVEN_WIELD].dd * inventory[INVEN_WIELD].ds * blows) 
+		else if ((inventory[INVEN_WIELD].dd * inventory[INVEN_WIELD].ds * blows)
 			< (inventory[INVEN_ARM].dd * inventory[INVEN_ARM].ds * 3))
 			bash_chance *= 2;
 	}
@@ -1467,7 +1468,7 @@ void py_attack(int y, int x)
 		msg_print("You get in a shield bash!");
 
 		/* Calculate attack quality, a mix of momentum and accuracy. */
-		bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) + 
+		bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) +
 			(p_ptr->total_weight / 80) + (inventory[INVEN_ARM].weight / 3);
 
 		/* Calculate damage.  Big shields are deadly. */
@@ -1483,7 +1484,7 @@ void py_attack(int y, int x)
 		if (bash_dam > 125) bash_dam = 125;
 
 		/* Encourage the player to keep wearing that heavy shield. */
-		if (randint(bash_dam) > 30 + randint(bash_dam / 2)) 
+		if (randint(bash_dam) > 30 + randint(bash_dam / 2))
 			msg_print("WHAMM!");
 
 
@@ -1504,7 +1505,7 @@ void py_attack(int y, int x)
 		}
 
 		/* Confusion. */
-		if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6) && 
+		if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6) &&
 			(!r_ptr->flags3 & (RF3_NO_CONF)))
 		{
 			msg_format("%^s appears confused.", m_name);
@@ -1540,7 +1541,7 @@ void py_attack(int y, int x)
 		/* Test for hit */
 		if (test_hit_combat(chance+ sleeping_bonus, r_ptr->ac+ terrain_bonus, m_ptr->ml))
 		{
-			
+
 			/* Sound */
 			sound(SOUND_HIT);
 
@@ -1718,41 +1719,41 @@ void py_attack(int y, int x)
 			{
 				/* base damage dice. */
 				k = o_ptr->dd;
-				
+
 				/* multiply by slays or brands. (10x inflation) */
 				k = tot_dam_aux(o_ptr, k, m_ptr);
 
 				/* multiply by critical hit. (10x inflation) */
 				k *= critical_melee(chance, sleeping_bonus, m_name, o_ptr);
-				
+
 				/* Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
 				if (total_deadliness > 0)
 					k *= (100 + deadliness_conversion[total_deadliness]);
 				else if (total_deadliness > -31)
-					k *= (100 - 
+					k *= (100 -
 					deadliness_conversion[ABS(total_deadliness)]);
 				else
 					k = 0;
 
 				/* Get the whole number of dice by deflating the result. */
 				k_whole = k / 10000;
-				
+
 				/* Calculate the remainder (the fractional die, x10000). */
 				k_remainder = k % 10000;
-				
 
-				/* Calculate and combine the damages of the whole and 
+
+				/* Calculate and combine the damages of the whole and
 				 * fractional dice.
 				 */
-				k = damroll(k_whole, o_ptr->ds) + 
+				k = damroll(k_whole, o_ptr->ds) +
 					(k_remainder * damroll(1, o_ptr->ds) / 10000);
 
 				/* hack -- check for earthquake. */
 				if (p_ptr->impact && (k > 49)) do_quake = TRUE;
-			
-				
+
+
 
 				if ((p_ptr->impact && ((k > 50) || randint(7) == 1)) ||
 					 (chaos_effect == 2))
@@ -1822,16 +1823,16 @@ void py_attack(int y, int x)
 			/* Damage, check for fear and death */
 			if (mon_take_hit(c_ptr->m_idx, k, &fear, NULL))
 			{
-				/* Hack -- High-level warriors can spread their attacks out 
+				/* Hack -- High-level warriors can spread their attacks out
 				 * among weaker foes. -LM-
 				 */
 				if (((p_ptr->pclass == CLASS_WARRIOR)||(p_ptr->pclass == CLASS_CHAOS_WARRIOR))
-				 && (p_ptr->lev > 39) && (num < p_ptr->num_blow) && 
+				 && (p_ptr->lev > 39) && (num < p_ptr->num_blow) &&
 					(energy_use))
 				{
 					energy_use = energy_use * num / p_ptr->num_blow;
 				}
-				
+
 				mdeath = TRUE;
 				break;
 			}

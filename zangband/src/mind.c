@@ -387,14 +387,16 @@ static bool cast_mindcrafter_spell(int spell)
 		/* Adrenaline */
 		set_afraid(0);
 		set_stun(0);
-		
-		/* Only heal when Adrenalin Channeling is not active. We check
-		 * that by checking if the player isn't fast and 'heroed' atm. */
+
+		/*
+		 * Only heal when Adrenalin Channeling is not active. We check
+		 * that by checking if the player isn't fast and 'heroed' atm.
+		 */
 		if (!p_ptr->fast || !(p_ptr->hero || p_ptr->shero))
 		{
 			hp_player(plev);
 		}
-		
+
 		b = 10 + randint((plev * 3) / 2);
 		if (plev < 35)
 			set_hero(p_ptr->hero + b);
@@ -416,7 +418,7 @@ static bool cast_mindcrafter_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		b = damroll(plev / 2, 6);
-		
+
 		/* This is always a radius-0 ball now */
 		if (fire_ball(GF_PSI_DRAIN, dir, b, 0))
 			p_ptr->energy -= randint(150);

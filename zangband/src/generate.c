@@ -307,7 +307,7 @@ static int next_to_corr(int y1, int x1)
  * Determine if the given location is "between" two walls,
  * and "next to" two corridor spaces.  XXX XXX XXX
  *
- * Assumes "in_bounds(y,x)"
+ * Assumes "in_bounds(y, x)"
  */
 static bool possible_doorway(int y, int x)
 {
@@ -372,12 +372,12 @@ static bool cave_gen(void)
 	int feat1, feat2;
 
 	cave_type *c_ptr;
-	
+
 	bool destroyed = FALSE;
 	bool empty_level = FALSE;
 	bool cavern = FALSE;
 	int laketype =0;
-	
+
 
 	dun_data dun_body;
 
@@ -407,7 +407,7 @@ static bool cave_gen(void)
 			msg_print("Arena level.");
 	}
 
-	
+
 	/* Hack -- Start with basic granite */
 	for (y = 0; y < cur_hgt; y++)
 	{
@@ -431,35 +431,35 @@ static bool cave_gen(void)
 		/* extra rubble around the place looks cool */
 		build_lake(3);
 	}
-	
+
 	/* Make a lake some of the time */
 	if ((rand_int(LAKE_LEVEL) == 0)&& (!empty_level)&& (!destroyed))
 	{
 		/* Lake of Water */
 		if (dun_level>30) laketype=2;
-		
+
 		/* Lake of Lava */
 		if (dun_level>60) laketype=1;
-		
+
 		if (laketype!=0)
 		{
 			if (cheat_room)
 				msg_print("Lake on the level.");
-			build_lake(laketype);		
+			build_lake(laketype);
 		}
-	}	
-	
+	}
+
 	if ((dun_level>DUN_CAVERN)&& (!(empty_level))
-			&& (laketype==0)&& (!(destroyed))&&(randint(200)<dun_level))
+			&& (laketype == 0)&& (!(destroyed))&&(randint(200)<dun_level))
 	{
 		cavern=TRUE;
-		
+
 		/* make a large fractal cave in the middle of the dungeon */
-		
+
 		if (cheat_room)
 			msg_print("Cavern on level.");
-		
-		build_cavern(); 				
+
+		build_cavern();
 	}
 
 	/* Hack -- No destroyed "quest" levels */
@@ -505,7 +505,7 @@ static bool cave_gen(void)
 
 		/* Destroyed levels are boring */
 		if (destroyed)
-		{				
+		{
 			/* Attempt a "trivial" room */
 			if (room_build(y, x, 1)) continue;
 			continue;
@@ -578,30 +578,30 @@ static bool cave_gen(void)
 			if ((k < 100) && room_build(y, x, 12)) continue;
 		}
 
-		/*The deeper you are, the more cavelike the rooms are*/		
-		k=randint(100);
-		
-		/*no caves when a cavern exists: they look bad */	
-		if ((k<dun_level)&&(!cavern)&&(!empty_level)&&(laketype==0))		
-			{
+		/* The deeper you are, the more cavelike the rooms are */
+		k = randint(100);
+
+		/* No caves when a cavern exists: they look bad */
+		if ((k<dun_level)&&(!cavern)&&(!empty_level)&&(laketype == 0))
+		{
 			/* Type 9 -- Fractal cave */
 			if (room_build(y, x, 9)) continue;
-			}
-		else			
+		}
+		else
 			/* Attempt a "trivial" room */
 		if (room_build(y, x, 1)) continue;
 		continue;
 	}
 
-	/* Make a hole in the dungeon roof sometimes at level 1 */	
-	if (dun_level==1)
+	/* Make a hole in the dungeon roof sometimes at level 1 */
+	if (dun_level == 1)
 	{
 		while (randint(DUN_MOS_DEN)==1)
 		{
 			place_trees(randint(cur_wid-2),randint(cur_hgt-2));
 	}
 	}
-	
+
 	/* Destroy the level if necessary */
 	if (destroyed) destroy_level();
 
@@ -619,12 +619,12 @@ static bool cave_gen(void)
 			feat1 = FEAT_DEEP_LAVA;
 			feat2 = FEAT_SHAL_LAVA;
 		}
-	 
-	 
+
+
 	 	/* Only add river if matches lake type or if have no lake at all */
-	 	if (((laketype==1)&&(feat1==FEAT_DEEP_LAVA))||
-	 		((laketype==2)&&(feat1==FEAT_DEEP_WATER))||
-			(laketype==0))
+	 	if (((laketype == 1)&&(feat1 == FEAT_DEEP_LAVA))||
+	 		((laketype == 2)&&(feat1 == FEAT_DEEP_WATER))||
+			(laketype == 0))
 	 	{
 			add_river(feat1, feat2);
 		}
@@ -690,21 +690,21 @@ static bool cave_gen(void)
 	/* Connect all the rooms together */
 	for (i = 0; i < dun->cent_n; i++)
 	{
-		
+
 		/* Reset the arrays */
 		dun->tunn_n = 0;
 		dun->wall_n = 0;
-		
+
 		/* Connect the room to the previous room */
 		if((randint(15)>dun_level)&&(randint(100)<50))
 		{
 			/* make catacomb-like tunnel */
-			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y,3,30);
+			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3,30);
 		}
 		else if (randint(dun_level)>25)
 		{
 			/* make cave-like tunnel */
-			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y,2,2);
+			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 2,2);
 		}
 		else
 		{

@@ -455,7 +455,7 @@ void monster_death(int m_idx)
 #ifdef USE_CORPSES
 	/* Drop a dead corpse? */
 	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 4) == 1) &&
-	    ((r_ptr->flags9 & RF9_DROP_CORPSE) || 
+	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
         (r_ptr->flags9 & RF9_DROP_SKELETON)))
 	{
 		/* Assume skeleton */
