@@ -540,7 +540,7 @@ void do_cmd_destroy(void)
 	/* Artifacts cannot be destroyed */
 	if (artifact_p(o_ptr) || o_ptr->art_name)
 	{
-		cptr feel = "special";
+		byte feel = FEEL_SPECIAL;
 
 		energy_use = 0;
 
@@ -548,10 +548,10 @@ void do_cmd_destroy(void)
 		msg_format("You cannot destroy %s.", o_name);
 
 		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = FEEL_TERRIBLE;
 
 		/* Hack -- inscribe the artifact */
-		o_ptr->inscription = quark_add(feel);
+		o_ptr->feeling = feel;
 
 		/* We have "felt" it (again) */
 		o_ptr->ident |= (IDENT_SENSE);

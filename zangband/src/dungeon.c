@@ -20,70 +20,70 @@
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
-static cptr value_check_aux1(object_type *o_ptr)
+static byte value_check_aux1(object_type *o_ptr)
 {
 	/* Artifacts */
 	if (artifact_p(o_ptr) || o_ptr->art_name)
 	{
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "terrible";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return FEEL_TERRIBLE;
 
 		/* Normal */
-		return "special";
+		return FEEL_SPECIAL;
 	}
 
 	/* Ego-Items */
 	if (ego_item_p(o_ptr))
 	{
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return FEEL_WORTHLESS;
 
 		/* Normal */
-		return "excellent";
+		return FEEL_EXCELLENT;
 	}
 
 	/* Cursed items */
-	if (cursed_p(o_ptr)) return "cursed";
+	if (cursed_p(o_ptr)) return FEEL_CURSED;
 
 	/* Broken items */
-	if (broken_p(o_ptr)) return "broken";
+	if (broken_p(o_ptr)) return FEEL_BROKEN;
 
 	/* Good "armor" bonus */
-	if (o_ptr->to_a > 0) return "good";
+	if (o_ptr->to_a > 0) return FEEL_GOOD;
 
 	/* Good "weapon" bonus */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+	if (o_ptr->to_h + o_ptr->to_d > 0) return FEEL_GOOD;
 
 	/* Default to "average" */
-	return "average";
+	return FEEL_AVERAGE;
 }
 
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
-static cptr value_check_aux2(object_type *o_ptr)
+static byte value_check_aux2(object_type *o_ptr)
 {
 	/* Cursed items (all of them) */
-	if (cursed_p(o_ptr)) return "cursed";
+	if (cursed_p(o_ptr)) return FEEL_CURSED;
 
 	/* Broken items (all of them) */
-	if (broken_p(o_ptr)) return "broken";
+	if (broken_p(o_ptr)) return FEEL_BROKEN;
 
 	/* Artifacts -- except cursed/broken ones */
-	if (artifact_p(o_ptr) || o_ptr->art_name) return "good";
+	if (artifact_p(o_ptr) || o_ptr->art_name) return FEEL_GOOD;
 
 	/* Ego-Items -- except cursed/broken ones */
-	if (ego_item_p(o_ptr)) return "good";
+	if (ego_item_p(o_ptr)) return FEEL_GOOD;
 
 	/* Good armor bonus */
-	if (o_ptr->to_a > 0) return "good";
+	if (o_ptr->to_a > 0) return FEEL_GOOD;
 
 	/* Good weapon bonuses */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+	if (o_ptr->to_h + o_ptr->to_d > 0) return FEEL_GOOD;
 
 	/* No feeling */
-	return (NULL);
+	return FEEL_NONE;
 }
 
 
@@ -105,7 +105,7 @@ static void sense_inventory(void)
 	int         i;
 	int         plev = p_ptr->lev;
 	bool        heavy = FALSE;
-	cptr        feel;
+	byte        feel;
 	object_type *o_ptr;
 	char        o_name[80];
 
@@ -310,7 +310,8 @@ static void sense_inventory(void)
 		{
 			msg_format("You feel the %s (%c) you are %s %s %s...",
 			           o_name, index_to_label(i), describe_use(i),
-			           ((o_ptr->number == 1) ? "is" : "are"), feel);
+			           ((o_ptr->number == 1) ? "is" : "are"),
+					   game_inscriptions[feel]);
 		}
 
 		/* Message (inventory) */
@@ -318,14 +319,15 @@ static void sense_inventory(void)
 		{
 			msg_format("You feel the %s (%c) in your pack %s %s...",
 			           o_name, index_to_label(i),
-			           ((o_ptr->number == 1) ? "is" : "are"), feel);
+			           ((o_ptr->number == 1) ? "is" : "are"),
+					   game_inscriptions[feel]);
 		}
 
 		/* We have "felt" it */
 		o_ptr->ident |= (IDENT_SENSE);
 
-		/* Inscribe it textually */
-		if (!o_ptr->inscription) o_ptr->inscription = quark_add(feel);
+		/* Set the "inscription" */
+		o_ptr->feeling = feel;
 
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -697,7 +699,7 @@ bool psychometry(void)
 	int             item;
 	object_type     *o_ptr;
 	char            o_name[80];
-	cptr            feel;
+	byte            feel;
 	cptr            q, s;
 
 
@@ -739,31 +741,14 @@ bool psychometry(void)
 	}
 
 	msg_format("You feel that the %s %s %s...",
-	    o_name, ((o_ptr->number == 1) ? "is" : "are"), feel);
+			   o_name, ((o_ptr->number == 1) ? "is" : "are"),
+			   game_inscriptions[feel]);
 
 	/* We have "felt" it */
 	o_ptr->ident |= (IDENT_SENSE);
 
-	/* Access the inscription */
-	q = quark_str(o_ptr->inscription);
-
-	/* Hack -- Remove auto-inscriptions */
-	if (q && ((streq(q, "cursed")) ||
-	    (streq(q, "broken")) ||
-	    (streq(q, "good")) ||
-	    (streq(q, "average")) ||
-	    (streq(q, "excellent")) ||
-	    (streq(q, "worthless")) ||
-	    (streq(q, "special")) ||
-	    (streq(q, "terrible"))))
-	{
-		/* Forget the inscription */
-		o_ptr->inscription = 0;
-	}
-
-	/* Inscribe it textually */
-	if (!o_ptr->inscription)
-		o_ptr->inscription = quark_add(feel);
+	/* "Inscribe" it */
+	o_ptr->feeling = feel;
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);

@@ -1188,6 +1188,9 @@ static int store_carry(object_type *o_ptr)
 
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
+	
+	/* Erase the "feeling" */
+	o_ptr->feeling = FEEL_NONE;
 
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < st_ptr->stock_num; slot++)
@@ -2653,6 +2656,8 @@ static void store_purchase(void)
 				/* Erase the inscription */
 				j_ptr->inscription = 0;
 
+				/* Erase the "feeling" */
+				j_ptr->feeling = FEEL_NONE;
 				/* Give it to the player */
 				item_new = inven_carry(j_ptr);
 
@@ -2902,9 +2907,12 @@ static void store_sell(void)
 	/* Get a full description */
 	object_desc(o_name, q_ptr, TRUE, 3);
 
-	/* Remove any inscription for stores */
-	if (cur_store_num != STORE_HOME) q_ptr->inscription = 0;
-
+	/* Remove any inscription, feeling for stores */
+	if (cur_store_num != STORE_HOME)
+	{
+		q_ptr->inscription = 0;
+		q_ptr->feeling = FEEL_NONE;
+	}
 
 	/* Is there room in the store (or the home?) */
 	if (!store_check_num(q_ptr))

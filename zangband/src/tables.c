@@ -6471,3 +6471,23 @@ martial_arts ma_blows[MAX_MA] =
 	{ "You punch %s.",                          48, 35, 10, 12, 18 },
 #endif
 };
+
+/* 
+ * Table of game-generated inscriptions (indexed by the defines in
+ * defines.h). -- RG
+ */
+cptr game_inscriptions[] = 
+{
+	NULL,            /* FEEL_NONE */
+	"broken",        /* FEEL_BROKEN */
+	"terrible",      /* FEEL_TERRIBLE */
+	"worthless",     /* FEEL_WORTHLESS */
+	"cursed",        /* FEEL_CURSED */
+	"uncursed",      /* FEEL_UNCURSED */
+	"average",       /* FEEL_AVERAGE */
+	"good",          /* FEEL_GOOD */
+	"excellent",     /* FEEL_EXCELLENT */
+	"special",       /* FEEL_SPECIAL */
+};
+
+	  

@@ -754,26 +754,8 @@ s16b get_obj_num(int level)
 void object_known(object_type *o_ptr)
 {
 	/* Remove "default inscriptions" */
-	if (o_ptr->inscription && (o_ptr->ident & (IDENT_SENSE)))
-	{
-		/* Access the inscription */
-		cptr q = quark_str(o_ptr->inscription);
-
-		/* Hack -- Remove auto-inscriptions */
-		if ((streq(q, "cursed")) ||
-		    (streq(q, "broken")) ||
-		    (streq(q, "good")) ||
-		    (streq(q, "average")) ||
-		    (streq(q, "excellent")) ||
-		    (streq(q, "worthless")) ||
-		    (streq(q, "special")) ||
-		    (streq(q, "terrible")))
-		{
-			/* Forget the inscription */
-			o_ptr->inscription = 0;
-		}
-	}
-
+	o_ptr->feeling = FEEL_NONE;
+	
 	/* Clear the "Felt" info */
 	o_ptr->ident &= ~(IDENT_SENSE);
 
@@ -1575,6 +1557,9 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "inscriptions" */
 	if (j_ptr->inscription) o_ptr->inscription = j_ptr->inscription;
 
+	/* Hack -- blend "feelings" */
+	if (j_ptr->feeling) o_ptr->feeling = j_ptr->feeling;
+	
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
 	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;

@@ -2221,26 +2221,8 @@ bool lose_all_info(void)
 		if (o_ptr->ident & (IDENT_MENTAL)) continue;
 
 		/* Remove "default inscriptions" */
-		if (o_ptr->inscription && (o_ptr->ident & (IDENT_SENSE)))
-		{
-			/* Access the inscription */
-			cptr q = quark_str(o_ptr->inscription);
-
-			/* Hack -- Remove auto-inscriptions */
-			if ((streq(q, "cursed")) ||
-			    (streq(q, "broken")) ||
-			    (streq(q, "good")) ||
-			    (streq(q, "average")) ||
-			    (streq(q, "excellent")) ||
-			    (streq(q, "worthless")) ||
-			    (streq(q, "special")) ||
-			    (streq(q, "terrible")))
-			{
-				/* Forget the inscription */
-				o_ptr->inscription = 0;
-			}
-		}
-
+		o_ptr->feeling = FEEL_NONE;
+		
 		/* Hack -- Clear the "empty" flag */
 		o_ptr->ident &= ~(IDENT_EMPTY);
 

@@ -582,9 +582,36 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->xtra1);
 	rd_byte(&o_ptr->xtra2);
 
+	/* Feeling - from 2.3.1, "savefile version 1" */
+	if (sf_version >= 1) 
+	{
+		rd_byte(&o_ptr->feeling);
+	}
+	
 	/* Inscription */
 	rd_string(buf, 128);
 
+	/* If this savefile is old, maybe we need to translate the feeling */
+	if (sf_version < 1)
+	{
+		byte i;
+		
+		for (i=0; i <= FEEL_MAX; i++)
+		{
+			if (game_inscriptions[i] == NULL)
+			{
+				continue;
+			}
+			
+			if (streq(buf,game_inscriptions[i])) 
+			{
+				o_ptr->feeling = i;
+				buf[0] = 0;
+				break;
+			}
+		}
+	}
+	
 	/* Save the inscription */
 	if (buf[0]) o_ptr->inscription = quark_add(buf);
 

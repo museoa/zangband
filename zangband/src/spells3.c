@@ -1129,7 +1129,7 @@ static int remove_curse_aux(int all)
 			o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
 
 		/* Take note */
-		o_ptr->inscription = quark_add("uncursed");
+		o_ptr->feeling = FEEL_UNCURSED;
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -1230,16 +1230,16 @@ bool alchemy(void)
 	/* Artifacts cannot be destroyed */
 	if (artifact_p(o_ptr) || o_ptr->art_name)
 	{
-		cptr feel = "special";
+		byte feel = FEEL_SPECIAL;
 
 		/* Message */
 		msg_format("You fail to turn %s to gold!", o_name);
 
 		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = FEEL_TERRIBLE;
 
 		/* Hack -- inscribe the artifact */
-		o_ptr->inscription = quark_add(feel);
+		o_ptr->feeling = feel;
 
 		/* We have "felt" it (again) */
 		o_ptr->ident |= (IDENT_SENSE);
@@ -1422,7 +1422,7 @@ static void break_curse(object_type *o_ptr)
 		if (o_ptr->art_flags3 & TR3_HEAVY_CURSE)
 			o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
 
-		o_ptr->inscription = quark_add("uncursed");
+		o_ptr->feeling = FEEL_UNCURSED;
 	}
 }
 
@@ -2227,7 +2227,7 @@ bool bless_weapon(void)
 		o_ptr->ident |= (IDENT_SENSE);
 
 		/* Take note */
-		o_ptr->inscription = quark_add("uncursed");
+		o_ptr->feeling = FEEL_UNCURSED;
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);

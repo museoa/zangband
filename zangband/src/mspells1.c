@@ -520,13 +520,7 @@ void curse_equipment(int chance, int heavy_chance)
 	if (changed)
 	{
 		msg_print("There is a malignant black aura surrounding you...");
-		if (o_ptr->inscription)
-		{
-			if (streq(quark_str(o_ptr->inscription), "uncursed"))
-			{
-				o_ptr->inscription = 0;
-			}
-		}
+		o_ptr->feeling = FEEL_NONE;
 	}
 }
 

@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 0
+#define SAVEFILE_VERSION 1
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -52,7 +52,7 @@
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 3
-#define FAKE_VER_PATCH 0
+#define FAKE_VER_PATCH 1
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1
@@ -2264,6 +2264,23 @@
  */
 #define ART_MIN_NORMAL          16
 
+/*
+ * Game generated inscription indices. These are stored in the object,
+ * and are used to index the string array from tables.c.
+ */
+
+#define FEEL_NONE              0
+#define FEEL_BROKEN            1
+#define FEEL_TERRIBLE          2
+#define FEEL_WORTHLESS         3
+#define FEEL_CURSED            4
+#define FEEL_UNCURSED          5
+#define FEEL_AVERAGE           6
+#define FEEL_GOOD              7
+#define FEEL_EXCELLENT         8
+#define FEEL_SPECIAL           9
+
+#define FEEL_MAX               9
 
 /*
  * Hack -- special "xtra" object powers

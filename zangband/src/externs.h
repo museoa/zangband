@@ -71,6 +71,7 @@ extern cptr chaos_patrons[MAX_PATRON];
 extern int chaos_stats[MAX_PATRON];
 extern int chaos_rewards[MAX_PATRON][20];
 extern martial_arts ma_blows[MAX_MA];
+extern cptr game_inscriptions[];
 
 /* variable.c */
 extern cptr copyright[5];

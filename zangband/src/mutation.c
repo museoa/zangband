@@ -1964,7 +1964,7 @@ void mutation_power_aux(u32b power)
 					if (!o_ptr->k_idx) continue;
 					if (!cursed_p(o_ptr)) continue;
 
-					o_ptr->inscription = quark_add("cursed");
+					o_ptr->feeling = FEEL_CURSED;
 				}
 			}
 			break;

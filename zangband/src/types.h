@@ -544,6 +544,8 @@ struct object_type
 
 	u16b inscription;	/* Inscription index */
 	u16b art_name;      /* Artifact name (random artifacts) */
+	
+	byte feeling;          /* Game generated inscription number (eg, pseudo-id) */
 
 	u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
 	u32b art_flags2;        /* Flags, set 2  for the random artifacts of*/
