@@ -2485,7 +2485,7 @@ static void display_player_middle(void)
 	if (object_known_p(o_ptr)) show_todam += o_ptr->to_d;
 
 	/* convert to oangband "deadliness" */
-	percentdam = deadliness_calc(show_todam);
+	percentdam = deadliness_calc(show_todam, o_ptr->ds);
 
 	/*** Bonuses ***/
 

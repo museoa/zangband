@@ -22,10 +22,13 @@
  * This number is 'inflated' by 100 from the eventual
  * multiplier to the damage dealt.
  */
-int deadliness_calc(int attack_power)
+int deadliness_calc(int attack_power, int dice)
 {
+	int index = dice > 10 ? 10 : dice;
+	int scale = dice_to_deadliness[index];
+	
 	/* Calculate effect of deadliness - linearly */
-	int result = (attack_power * 3) + 100;
+	int result = (attack_power * scale / 2) + 100;
 
 	/* Really powerful minus yields zero damage */
 	if (result < 0) result = 0;
@@ -37,7 +40,7 @@ int deadliness_calc(int attack_power)
 long avg_dam(int attack_power, int dice_num, int dice_sides)
 {
 	/* Calculate damage per dice x 100 */
-	long temp = dice_sides * deadliness_calc(attack_power);
+	long temp = dice_sides * deadliness_calc(attack_power, dice_sides);
 
 	/* Add one to take into account dice formula, and return avg*200 */
 	return (dice_num * (temp + 100));
@@ -1404,7 +1407,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
  */
 void py_attack(int x, int y)
 {
-	/* Number of dice, also total damage. */
+	/* Sides dice, also total damage. */
 	long k;
 
 	/* The whole and fractional damage dice and their resulting damage. */
@@ -1668,6 +1671,7 @@ void py_attack(int x, int y)
 				slay = tot_dam_aux(o_ptr, m_ptr);
 				k *= slay;
 
+
 				/* multiply by critical hit. (10x inflation) */
 				k *= critical_melee(chance, sleeping_bonus, m_name, o_ptr);
 
@@ -1675,7 +1679,7 @@ void py_attack(int x, int y)
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				k *= deadliness_calc(total_deadliness);
+				k *= deadliness_calc(total_deadliness, o_ptr->ds);
 
 				/*
 				 * Get the whole number of dice sides by deflating,

@@ -1310,7 +1310,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		/* Show the tohit/todam on request */
 		if (show_weapon)
 		{
-			strnfcat(buf, max, &len, " (%+d,%+d%%)", o_ptr->to_h, o_ptr->to_d * 3);
+			strnfcat(buf, max, &len, " (%+d,%+d%%)", o_ptr->to_h, 
+					deadliness_calc(o_ptr->to_d, o_ptr->ds) - 100);
 		}
 
 		/* Show the tohit if needed */

@@ -43,6 +43,7 @@ extern const byte adj_dex_blow[];
 extern const byte adj_dex_safe[];
 extern const byte adj_con_fix[];
 extern const byte adj_con_mhp[];
+extern const byte dice_to_deadliness[11];
 extern const byte blows_table[12][12];
 extern const owner_type owners[MAX_STORES][MAX_OWNERS];
 extern const b_own_type b_owners[MAX_BLDG][MAX_B_OWN];
@@ -332,7 +333,7 @@ extern void object_kind_track(int k_idx);
 extern void disturb(bool stop_search);
 
 /* cmd1.c */
-extern int deadliness_calc(int attack_power);
+extern int deadliness_calc(int attack_power, int dice);
 extern long avg_dam(int attack_power, int dice_num, int dice_sides);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);

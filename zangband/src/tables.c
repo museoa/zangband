@@ -1000,6 +1000,22 @@ const byte adj_con_mhp[] =
 };
 
 
+/* Damage dice to 1/2% increase in deadliness per +to_d */
+const byte dice_to_deadliness[11] =
+{
+	0,  /* 0 */
+	20, /* 1 */
+	20, /* 2 */
+	16, /* 3 */
+	12, /* 4 */
+	10, /* 5 */
+	8,  /* 6 */
+	7,  /* 7 */
+	6,  /* 8 */
+	5,  /* 9 */
+	4   /* 10+ */
+};
+
 
 /*
  * This is changed for [O] combat V2.  (From L.M.)
