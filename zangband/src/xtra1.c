@@ -3698,12 +3698,6 @@ void calc_bonuses(void)
 	}
 
 	p_ptr->align = friend_align;
-
-	/* Determine player alignment */
-	for (i = 0; i < 8; i++)
-	{
-		p_ptr->align += p_ptr->virtues[i];
-	}
 }
 
 
