@@ -4083,7 +4083,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define disturb_minor			p_ptr->options[24]
 #define disturb_other			p_ptr->options[25]
 #define disturb_traps			p_ptr->options[26]
-/* {TRUE,  0, NULL,					"Number 27" }, p_ptr->options[27] */
+#define auto_more				p_ptr->options[27]
 #define last_words				p_ptr->options[28]
 #define speak_unique			p_ptr->options[29]
 #define small_levels			svr_ptr->options[0]
