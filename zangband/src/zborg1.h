@@ -81,17 +81,22 @@
 /*
  * Some assistance with the borg_attack and magic arrows
  */
-#define GF_ARROW_SEEKER  92
-#define GF_ARROW_FLAME   93
-#define GF_ARROW_FROST   94
-#define GF_ARROW_ANIMAL  95
-#define GF_ARROW_DRAGON  96
-#define GF_ARROW_EVIL    97
-#define GF_ARROW_WOUNDING 98
-#define GF_HOLY_WORD      99
-#define GF_DISP_UNDEAD_DEMON 100	/* effect both */
-#define GF_ELEMENTS       101	/* all elements could be cast */
-#define GF_DEATHRAY      102
+#define GF_ARROW_2			92
+#define GF_ARROW_FLAME		93
+#define GF_ARROW_FROST		94
+#define GF_ARROW_SHOCKING	95
+#define GF_ARROW_ANIMAL		96
+#define GF_ARROW_DRAGON		97
+#define GF_ARROW_EVIL		98
+#define GF_ARROW_EXPLOSION	99
+
+#define BORG_ARROW_FIRST	GF_ARROW_2
+#define BORG_ARROW_LAST		GF_ARROW_EXPLOSION
+
+#define GF_HOLY_WORD		100
+#define GF_DISP_UNDEAD_DEMON 101	/* effect both */
+#define GF_ELEMENTS			102	/* all elements could be cast */
+#define GF_DEATHRAY			103
 
 /* the Z randarts are considered #127 by the borg */
 #define ART_RANDART  127
@@ -227,6 +232,7 @@ struct borg_ability
 	s16b det_door;
 	s16b det_evil;
 	s16b magic_map;
+	s16b lite;
 
 	s16b recharge;
 	s16b remove_curse;
@@ -238,6 +244,11 @@ struct borg_ability
 	s16b csw;
 	s16b res_heat;
 	s16b res_cold;
+
+	s16b death;
+	s16b poison;
+	s16b mana;
+	s16b logrus;
 };
 
 /*

@@ -3652,6 +3652,15 @@ static s32b borg_power_aux4(void)
 		if (amt_food_hical <= 5) value += amt_food_hical * 50;
 	}
 
+	/* Reward throwing potions of poison for low level borgs */
+	if (bp_ptr->lev <= 16) value += bp_ptr->able.poison * 50;
+
+	/* Reward potions you can throw for damage */
+	value += bp_ptr->able.death * 1000;
+
+	/* Reward scrolls you can read for damage */
+	value += bp_ptr->able.logrus * 1000;
+
 	/* Reward Cure Poison and Cuts */
 	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
 		bp_ptr->able.ccw) value += 100000;
@@ -3759,9 +3768,17 @@ static s32b borg_power_aux4(void)
 	/* Restore Mana */
 	if (bp_ptr->msp > 100)
 	{
-		for (k = 0; k < 10 && k < borg_has[266]; k++) value += 4000L;
+		/* reward carrying potions/staffs of mana to use */
+		for (k = 0; k < 10 && k < bp_ptr->able.mana; k++) value += 4000L;
 		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi);
 			 k++) value += 4000L;
+	}
+	else if (borg_class != CLASS_WARRIOR)
+	{
+		/* reward carrying potions/staffs of mana to bring home */
+		for (k = 0; k < 99 && k < bp_ptr->able.mana; k++) value += 1000L;
+		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi);
+			 k++) value += 1000L;
 	}
 
 	/* Reward cure critical.  Heavy reward on first 5 */
@@ -3820,6 +3837,10 @@ static s32b borg_power_aux4(void)
 
 	/* Reward magic mapping */
 	for (k = 0; (k < 1) && (k < bp_ptr->able.magic_map); k++) value += 4000L;
+
+	/* Reward room lites */
+	for (k = 0; (k < 10) && (k < bp_ptr->able.lite); k++) value += 600L;
+	for (; (k < 20) && (k < bp_ptr->able.lite); k++) value += 60L;
 
 	/* Genocide scrolls. Just scrolls, mainly used for Morgoth */
 	if (bp_ptr->max_depth >= 98)
@@ -4372,7 +4393,7 @@ static cptr borg_prepared_aux2(int depth)
 	/* must have lots of restore mana to go after MORGOTH */
 	if (!bp_ptr->winner)
 	{
-		if ((bp_ptr->msp > 100) && (borg_has[266] < 15)) return ("15ResMana");
+		if ((bp_ptr->msp > 100) && (bp_ptr->able.mana < 15)) return ("15ResMana");
 
 		/* must have lots of heal */
 		if (borg_has[242] < 15 &&

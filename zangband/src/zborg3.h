@@ -62,8 +62,8 @@
 /*
  * Define some MindCraft Spells
  */
-#define MIND_PRECOGNIT   0
-#define MIND_NEURAL_BL	 1
+#define MIND_NEURAL_BL   0
+#define MIND_PRECOGNIT   1
 #define MIND_MINOR_DISP  2
 #define MIND_MAJOR_DISP  3
 #define MIND_DOMINATION  4
@@ -159,6 +159,7 @@ extern bool borg_read_scroll(int sval);
 extern bool borg_equips_rod(int sval);
 extern bool borg_zap_rod(int sval);
 extern bool borg_aim_wand(int sval);
+extern bool borg_equips_wand_fail(int sval);
 extern bool borg_use_staff(int sval);
 extern bool borg_use_staff_fail(int sval);
 extern bool borg_equips_staff_fail(int sval);
@@ -168,6 +169,7 @@ extern bool borg_activate_dragon(int drag_sval);	/* apw */
 extern bool borg_equips_dragon(int drag_sval);	/* apw */
 extern bool borg_activate_ring(int ring_sval);
 extern bool borg_equips_ring(int ring_sval);
+
 extern bool borg_spell_legal(int realm, int book, int what);
 extern bool borg_spell_okay(int realm, int book, int what);
 extern bool borg_spell(int realm, int book, int what);

@@ -190,7 +190,7 @@ bool borg_item_icky(list_item *l_ptr)
 		slot = borg_wield_slot(l_ptr);
 
 		/* Obtain my equipped item in the slot */
-		l_ptr = look_up_equip_slot(slot);
+		l_ptr = &equipment[slot];
 
 		/* Is my item an ego or artifact? */
 		if (l_ptr && borg_obj_is_ego_art(l_ptr)) return (TRUE);
@@ -1250,14 +1250,9 @@ static bool borg_decurse(void)
 	/* Nothing to decurse */
 	if (!borg_wearing_cursed) return (FALSE);
 
-	if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
-		!(borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-		  borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval) &&
-		!borg_spell_okay_fail(REALM_LIFE, 1, 0, 40))	return (FALSE);
-
 	/* remove the curse */
-	if (borg_spell(REALM_LIFE, 1, 0) ||
-		borg_use_staff(SV_STAFF_REMOVE_CURSE) ||
+	if (borg_spell_fail(REALM_LIFE, 1, 0, 40) ||
+		borg_use_staff_fail(SV_STAFF_REMOVE_CURSE) ||
 		borg_read_scroll(SV_SCROLL_REMOVE_CURSE))
 	{
 		/* Shekockazol! */
@@ -1285,13 +1280,9 @@ static bool borg_star_decurse(void)
 	/* Nothing to *decurse* */
 	if (!borg_heavy_curse) return (FALSE);
 
-	/* Nothing to *decurse* with */
-	if (!borg_spell_okay_fail(REALM_LIFE, 2, 1, 40) && 
-		!borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE))	return (FALSE);
-
 	/* remove the curse */
-	if (borg_spell(REALM_LIFE, 2, 1) ||
-		borg_read_scroll(SV_SCROLL_REMOVE_CURSE))
+	if (borg_spell_fail(REALM_LIFE, 2, 1, 40) ||
+		borg_read_scroll(SV_SCROLL_STAR_REMOVE_CURSE))
 	{
 		/* Shekockazol! */
 		borg_wearing_cursed = FALSE;
@@ -1371,9 +1362,6 @@ bool borg_recharging(void)
 			 * the borg has the big recharge spell. And its not a *Dest*
 			 */
 			if ((l_ptr->pval < 3) &&
-				(borg_spell_okay(REALM_SORCERY, 0, 7) ||
-				 borg_spell_okay(REALM_CHAOS, 2, 2) ||
-				 borg_spell_okay(REALM_ARCANE, 3, 0)) &&
 				k_info[l_ptr->k_idx].sval < SV_STAFF_POWER)
 				charge = TRUE;
 
@@ -1384,10 +1372,7 @@ bool borg_recharging(void)
 
 		/* recharge rods that are 'charging' if we have the big recharge */
 		/* spell */
-		if ((l_ptr->tval == TV_ROD) && l_ptr->timeout &&
-			(borg_spell_okay(REALM_SORCERY, 0, 7) ||
-			 borg_spell_okay(REALM_CHAOS, 2, 2) ||
-			 borg_spell_okay(REALM_ARCANE, 3, 0)))
+		if (l_ptr->tval == TV_ROD && l_ptr->timeout)
 		{
 			/*
 			 * Don't do this.  The borg will continue until wild magic consumes
@@ -1401,12 +1386,11 @@ bool borg_recharging(void)
 		if (!charge) continue;
 
 		/* Attempt to recharge */
-		if (borg_activate_artifact(ART_THINGOL, FALSE) ||
-			borg_activate_rand_art(ACT_RECHARGE) ||
-			borg_spell(REALM_SORCERY, 0, 7) ||
+		if (borg_spell(REALM_SORCERY, 0, 7) ||
 			borg_spell(REALM_ARCANE, 3, 0) ||
 			borg_spell(REALM_CHAOS, 2, 2) ||
-			borg_read_scroll(SV_SCROLL_RECHARGING))
+			borg_read_scroll(SV_SCROLL_RECHARGING) ||
+			borg_activate_artifact(ART_THINGOL, FALSE))
 		{
 			/* Message */
 			borg_note_fmt("Recharging %s", l_ptr->o_name);
@@ -2320,7 +2304,7 @@ bool borg_test_stuff_star(void)
 			else
 			{
 				l_ptr = &equipment[b_i];
-				
+
 				/* Switch to equipment but not in case you go there immediately */
 				for (i = 0; i < inven_num; i++)
 				{
@@ -2361,7 +2345,7 @@ bool borg_test_stuff_star(void)
 	return (FALSE);
 }
 
-
+/* use the Mindcrafter Psychometry power to pesudo-id items */
 bool borg_test_stuff_pseudo(void)
 {
 	int i, b_i = -1;
@@ -2372,89 +2356,89 @@ bool borg_test_stuff_pseudo(void)
 
 	/* Only valid for mindcrafters between lvl 14 and 25 */
 	if (borg_class != CLASS_MINDCRAFTER || 
-	 	bp_ptr->lev < 15 || bp_ptr->lev > 24) return (FALSE);
+		bp_ptr->lev < 15 || bp_ptr->lev > 24) return (FALSE);
 
 	/* don't ID stuff when you can't recover spent spell point immediately */
 	if (bp_ptr->csp < 50 &&
-	 	!borg_check_rest() &&
-	 	borg_mindcr_legal(MIND_PSYCHOMETRY, 15))
-	 	return (FALSE);
+		!borg_check_rest() &&
+		borg_mindcr_legal(MIND_PSYCHOMETRY, 15))
+		return (FALSE);
 
 	/* No ID if in danger */
 	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
 
-	/* Look for an item to pesudo identify */
+	/* Look for an item to pseudo identify */
 	for (i = 0; i < equip_num + inven_num; i++)
 	{
-	 	if (i >= equip_num)
-	 	{
-	 		inven = TRUE;
-	 		l_ptr = &inventory[i - equip_num];
-	 	}
-	 	else
-	 	{
-	 		l_ptr = look_up_equip_slot(i);
+		if (i >= equip_num)
+		{
+			inven = TRUE;
+			l_ptr = &inventory[i - equip_num];
+		}
+		else
+		{
+			l_ptr = look_up_equip_slot(i);
 
-	 		/* Ignore empty slots */
-	 		if (!l_ptr) continue;
-	 	}
+			/* Ignore empty slots */
+			if (!l_ptr) continue;
+		}
 
-	 	/* Ignore items that were id'd before */
-	 	if (borg_obj_known_p(l_ptr)) continue;
+		/* Ignore items that were id'd before */
+		if (borg_obj_known_p(l_ptr)) continue;
 
-	 	/* Item has to be weapon, armor or ammo */
-	 	if (l_ptr->tval < TV_SHOT || l_ptr->tval > TV_DRAG_ARMOR) continue;
+		/* Item has to be weapon, armor or ammo */
+		if (l_ptr->tval < TV_SHOT || l_ptr->tval > TV_DRAG_ARMOR) continue;
 
-	 	/* Item does not have a pseudo-id already (or comment) */
-	 	if (strstr(l_ptr->o_name, "{")) continue;
+		/* Item does not have a pseudo-id already (or comment) */
+		if (strstr(l_ptr->o_name, "{")) continue;
 
-	 	/* Track it */
-	 	if (inven)
-	 	{
-	 		b_i = i - equip_num;
-	 	}
-	 	else
-	 	{
-	 		b_i = i;
-	 	}
+		/* Track it */
+		if (inven)
+		{
+			b_i = i - equip_num;
+		}
+		else
+		{
+			b_i = i;
+		}
 
-	 	break;
+		break;
 	}
 
 	/* Found something */
 	if (b_i >= 0)
 	{
-	 	if (borg_mindcr(MIND_PSYCHOMETRY, 15))
-	 	{
-	 		if (inven)
-	 		{
-	 			l_ptr = &inventory[b_i];
-	 		}
-	 		else
-	 		{
-	 			l_ptr = &equipment[b_i];
+		if (borg_mindcr(MIND_PSYCHOMETRY, 15))
+		{
+			if (inven)
+			{
+				l_ptr = &inventory[b_i];
+			}
+			else
+			{
+				l_ptr = &equipment[b_i];
 
-	 			/* Switch to equipment but not in case you go there immediately */
-	 			for (i = 0; i < inven_num; i++)
-	 			{
-	 				if (inventory[i].tval >= TV_SHOT &&
-	 					inventory[i].tval <= TV_DRAG_ARMOR)
-	 				{
-	 					borg_keypress('/');
-	 					break;
-	 				}
-	 			}
-	 		}
+				/* Switch to equipment but not in case you go there immediately */
+				for (i = 0; i < inven_num; i++)
+				{
+					if (inventory[i].tval >= TV_SHOT &&
+						inventory[i].tval <= TV_DRAG_ARMOR)
+					{
+						borg_keypress('/');
+						break;
+					}
+				}
+			}
 
-	 		/* Log -- may be cancelled */
-	 		borg_note_fmt("# pseudo identifying %s.", l_ptr->o_name);
+			/* Log -- may be cancelled */
+			borg_note_fmt("# pseudo identifying %s.", l_ptr->o_name);
 
-	 		/* Select the item */
-	 		borg_keypress(I2A(b_i));
+			/* Select the item */
+			borg_keypress(I2A(b_i));
 
-	 		/* press enter a few time (get rid of display) */
-	 		borg_keypress(ESCAPE);
-	 	
+			/* press enter a few time (get rid of display) */
+			borg_keypress(ESCAPE);
+
 			/* Success */
 			return (TRUE);
 		}

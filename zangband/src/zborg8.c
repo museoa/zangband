@@ -79,23 +79,23 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			/* Require knowledge */
 			if (!borg_obj_known_p(l_ptr) ||
 				!borg_obj_known_p(q_ptr)) return (FALSE);
-			
+
 			/* Require identical charges */
 			if (l_ptr->pval != q_ptr->pval) return (FALSE);
-			
+
+			/* Probably okay */
 			break;
 		}
-		
 		case TV_WAND:
- 		{
+		{
 			/* Wands */
- 
+
 			/* Require equal knowledge */
 			if (borg_obj_known_p(l_ptr) !=
 				borg_obj_known_p(q_ptr)) return (FALSE);
- 
- 			/* Probably okay */
- 			break;
+
+			/* Probably okay */
+			break;
 		}
 
 		case TV_BOW:
@@ -117,7 +117,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 
 			return (FALSE);
 		}
-	
+
 		case TV_LITE:
 		{
 			/* Lights */
@@ -157,7 +157,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 
 			/* Require identical "pval" code */
 			if (l_ptr->pval != q_ptr->pval) return (FALSE);
-			
+
 			/* Hack --  items with hidden flags don't stack */
 			if (borg_obj_star_id_able(l_ptr)) return (FALSE);
 
@@ -198,6 +198,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 	/* They match, so they must be similar */
 	return (TRUE);
 }
+
 
 /*
  * This file handles the highest level goals, and store interaction.
@@ -360,7 +361,7 @@ static int borg_think_home_sell_aux2(void)
 
 	/**** Get the starting best (current) ****/
 
-	/* Evaluate the home  */;
+	/* Evaluate the home  */
 	best_power = borg_power_home() + borg_power();
 
 	/* Try merges */
@@ -727,7 +728,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		if (!l_ptr->cost) continue;
 
 		/* Hack -- Require "sufficient" cash */
-		if (borg_gold < l_ptr->cost * 12 / 10) continue;
+		if (borg_gold < l_ptr->cost) continue;
 		
 		/* Obtain "slot" */
 		slot = borg_wield_slot(l_ptr);
@@ -928,6 +929,9 @@ static bool borg_think_shop_grab_aux(int shop)
 
 		/* Obtain the "cost" of the item */
 		c = l_ptr->cost;
+
+		/* Ignore too expensive items */
+		if (borg_gold < c) continue;
 
 		/* Penalize expensive items */
 		if (c > borg_gold / 10) s -= c;
@@ -1492,7 +1496,7 @@ bool borg_think_dungeon(void)
 		if (borg_wear_stuff()) return (TRUE);
 
 		/* Can I recall out with a rod */
-		if (!goal_recalling && borg_zap_rod(SV_ROD_RECALL)) return (TRUE);
+		if (!goal_recalling && borg_recall()) return (TRUE);
 
 		/* Test for stairs */
 		if (map_loc(c_x, c_y)->feat == FEAT_LESS)
@@ -1627,7 +1631,7 @@ bool borg_think_dungeon(void)
 
 	/* Use things */
 	if (borg_use_things()) return (TRUE);
-	
+
 	/* Pseudo identify unknown things */
 	if (borg_test_stuff_pseudo()) return (TRUE);
 

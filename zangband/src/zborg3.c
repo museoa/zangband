@@ -133,7 +133,7 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_NOP /*   "Sleep Monster" */ ,
 	  BORG_MAGIC_OBJ /*   "Recharging" */ },
 
-	 {							/* Master Sorc (sval 1) */
+	 {							/* Master Sorcery (sval 1) */
 	  BORG_MAGIC_NOP /*   "Magic Map" */ ,
 	  BORG_MAGIC_OBJ /*   "Ident" */ ,
 	  BORG_MAGIC_AIM /*   "Slow Monster" */ ,
@@ -143,7 +143,7 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_NOP /*   "Detection True" */ ,
 	  BORG_MAGIC_OBJ /*   "*ID*" */ },
 
-	 {							/* Pattern Sorc (sval 2) */
+	 {							/* Pattern Sorcery (sval 2) */
 	  BORG_MAGIC_NOP /*   "Detect Obj" */ ,
 	  BORG_MAGIC_NOP /*   "Detect Enchant" */ ,
 	  BORG_MAGIC_ICK /*   "Charm Mon" */ ,
@@ -428,7 +428,7 @@ static byte borg_magic_rating[8][4][8] =
 	 },							/* end of Null Realm */
 
 	{							/* Life Realm */
-	 {							/* Beginners Handbook (sval 0) */
+	 {							/* Common Prayers (sval 0) */
 	  85 /*   "Detect Evil" */ ,
 	  55 /*   "Cure Light Wounds" */ ,
 	  85 /*   "Bless" */ ,
@@ -437,7 +437,7 @@ static byte borg_magic_rating[8][4][8] =
 	  75 /*   "Find Traps & Doors" */ ,
 	  65 /*   "Cure Medium Wounds" */ ,
 	  85 /*   "Satisfy Hunger" */ },
-	 {							/* Words of Wisdom (sval 1) */
+	 {							/* High Mass (sval 1) */
 	  65 /*   "Remove Curse" */ ,
 	  65 /*   "Cure Poison" */ ,
 	  85 /*   "Cure Crit Wounds" */ ,
@@ -446,7 +446,7 @@ static byte borg_magic_rating[8][4][8] =
 	  85 /*   "Prot/Evil" */ ,
 	  65 /*   "Heal 300" */ ,
 	  55 /*   "Glyph" */ },
-	 {							/* Chants and Blessings (sval 2) */
+	 {							/* Book of the Unicorn (sval 2) */
 	  65 /*   "Exorcism" */ ,
 	  65 /*   "Dispel Curse" */ ,
 	  55 /*   "Dispel Demon" */ ,
@@ -455,7 +455,7 @@ static byte borg_magic_rating[8][4][8] =
 	  55 /*   "Banishment" */ ,
 	  65 /*   "Holy Word" */ ,
 	  55 /*   "Warding True" */ },
-	 {							/* Exorcism and Dispelling (sval 3) */
+	 {							/* Blessings of the Grail (sval 3) */
 	  55 /*   "Heroism" */ ,
 	  65 /*   "Prayer" */ ,
 	  45 /*   "Bless Weapon" */ ,
@@ -467,7 +467,7 @@ static byte borg_magic_rating[8][4][8] =
 	 },							/* end of Life Magic */
 
 	{							/* Sorcery Realm */
-	 {							/* Magic for Beginners (sval 0) */
+	 {							/* Beginners Handbook (sval 0) */
 	  95 /*   "Detect Monsters" */ ,
 	  85 /*   "Phase Door" */ ,
 	  65 /*   "Detect Door" */ ,
@@ -476,7 +476,7 @@ static byte borg_magic_rating[8][4][8] =
 	  75 /*   "Teleport Selft" */ ,
 	  65 /*   "Sleep Monster" */ ,
 	  65 /*   "Recharging" */ },
-	 {							/* Conjurings and Tricks (sval 1) */
+	 {							/* Master Sorcery (sval 1) */
 	  55 /*   "Magic Map" */ ,
 	  85 /*   "Identify" */ ,
 	  55 /*   "Slow Monster" */ ,
@@ -485,7 +485,7 @@ static byte borg_magic_rating[8][4][8] =
 	  55 /*   "Haste Self" */ ,
 	  85 /*   "Detection True" */ ,
 	  75 /*   "*Identify*" */ },
-	 {							/* Incantations and Illusions (sval 2) */
+	 {							/* Pattern Sorcery (sval 2) */
 	  55 /*   "Detect Obj/Treasure" */ ,
 	  55 /*   "Detect Enchantment" */ ,
 	  75 /*   "Charm Monster" */ ,
@@ -494,7 +494,7 @@ static byte borg_magic_rating[8][4][8] =
 	  0 /*   "Self Knowledge" */ ,
 	  65 /*   "Teleport Level" */ ,
 	  65 /*   "Word of Recall" */ },
-	 {							/* Sorcery and Evocations (sval 3) */
+	 {							/* Grimoir of Power (sval 3) */
 	  55 /*   "Stasis" */ ,
 	  0 /*   "Telekinesis" */ ,
 	  0 /*   "Explosive Rune" */ ,
@@ -818,6 +818,37 @@ list_item *borg_slot(int tval, int sval)
 
 	/* Done */
 	return (NULL);
+}
+
+/*
+ * Return the slot of an item with the given tval/sval, if available.
+ * The first available is returned.  The search is started from <from>
+ * This way with repeated calls the second pile of an item can be found.
+ */
+static int borg_slot_from(int tval, int sval, int from)
+{
+	int i;
+
+	/* Scan the pack */
+	for (i = from; i < inven_num; i++)
+	{
+		list_item *l_ptr = &inventory[i];
+
+		/* Skip un-aware items */
+		if (!l_ptr->k_idx) continue;
+
+		/* Continue looking for the right tval */
+		if (l_ptr->tval != tval) continue;
+
+		/* Require correct sval */
+		if (k_info[l_ptr->k_idx].sval != sval) continue;
+
+		/* This is what was looked for */
+		return (i);
+	}
+
+	/* Object not found */
+	return (-1);
 }
 
 /*
@@ -1199,59 +1230,42 @@ bool borg_read_scroll(int sval)
 	return (TRUE);
 }
 
-/*
- * Hack -- checks rod (by sval) and
- * make a fail check on it.
- */
-bool borg_equips_rod(int sval)
-{
-	list_item *l_ptr;
-	object_kind *k_ptr;
 
+/* Take an item and makes a fail check on it */
+static bool borg_use_item_fail(list_item *l_ptr, bool risky)
+{
 	int chance, lev;
 
-	/* Look for that staff */
-	l_ptr = borg_slot(TV_ROD, sval);
-
-	/* None available */
-	if (!l_ptr) return (FALSE);
-
-	/* No charges */
-	if (!l_ptr->pval) return (FALSE);
-
-	/* Get item type */
-	k_ptr = &k_info[l_ptr->k_idx];
-
 	/* Extract the item level */
-	lev = (k_ptr->level);
+	lev = k_info[l_ptr->k_idx].level;
 
 	/* Base chance of success */
 	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
 	if (bp_ptr->status.confused) chance = chance / 2;
-
+	
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
+	
+	/* Do you feel lucky, punk? */
+	if (risky)
+	{
+		if (chance < USE_DEVICE) return (FALSE);
+	}
+	else
+	{
+		if (chance < USE_DEVICE * 2) return (FALSE);
+	}
 
-	/* Roll for usage */
-	if (chance < USE_DEVICE * 2) return (FALSE);
-
-	/* Yep we got one */
 	return (TRUE);
 }
 
 
-
-/*
- * Hack -- attempt to zap the given (charged) rod (by sval)
- */
-bool borg_zap_rod(int sval)
+/* To zap a rod or not */
+static bool borg_rod_aux(int sval, bool zap)
 {
 	list_item *l_ptr;
-	object_kind *k_ptr;
-
-	int lev, chance;
 
 	/* Look for that rod */
 	l_ptr = borg_slot(TV_ROD, sval);
@@ -1259,33 +1273,91 @@ bool borg_zap_rod(int sval)
 	/* None available */
 	if (!l_ptr) return (FALSE);
 
-	/* Hack -- Still charging */
-	if (l_ptr->timeout) return (FALSE);
+	/* Still charging */
+	if (l_ptr->timeout == l_ptr->number) return (FALSE);
 
-	/* Get item type */
-	k_ptr = &k_info[l_ptr->k_idx];
+	/* Can we zap this rod */
+	if (!borg_use_item_fail(l_ptr, FALSE)) return (FALSE);
 
-	/* Extract the item level */
-	lev = (k_ptr->level);
+	/* Do we want to zap it? */
+	if (zap)
+	{
+		/* Log the message */
+		borg_note_fmt("# Zapping %s.", l_ptr->o_name);
 
-	/* Base chance of success */
-	chance = bp_ptr->skill_dev;
+		/* Perform the action */
+		borg_keypress('z');
+		borg_keypress(I2A(look_up_index(l_ptr)));
+	}
 
-	/* Confusion hurts skill */
-	if (bp_ptr->status.confused) chance = chance / 2;
+	/* Success */
+	return (TRUE);
+}
 
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
+/* Can we zap this rod? */
+bool borg_equips_rod(int sval)
+{
+	return (borg_rod_aux(sval, FALSE));
+}
 
-	/* Roll for usage */
-	if (chance < USE_DEVICE + 2) return (FALSE);
+/* Let's zap this rod if possible  */
+bool borg_zap_rod(int sval)
+{
+	return (borg_rod_aux(sval, TRUE));
+}
 
-	/* Log the message */
-	borg_note_fmt("# Zapping %s.", l_ptr->o_name);
 
-	/* Perform the action */
-	borg_keypress('z');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+/*
+ * Hack -- attempt to use the requested wand (by sval).
+ * Wands with unknown charges can also be tried if they are not {empty}
+ * If (fail) is set then do a fail check.
+ * If (aim) is set then aim the wand.
+ */
+static bool borg_wand_aux(int sval, bool aim, bool fail)
+{
+	list_item *l_ptr;
+	int slot = 0;
+
+	/* Look for that wand */
+	slot = borg_slot_from(TV_WAND, sval, slot);
+
+	/* Search the inventory until the right wand with charges is found */
+	while (slot != -1)
+	{
+		l_ptr = &inventory[slot];
+
+		/* Accept this wand if it may have charges */
+		if (borg_obj_known_p(l_ptr))
+		{
+			/* Identified with charges */
+			if (l_ptr->pval) break;
+		}
+		else
+		{
+			/* unidentified and not inscribed as empty */
+			if (!strstr(l_ptr->o_name, "{empty}")) break;
+		}
+
+		/* Look for the next wand */
+		slot = borg_slot_from(TV_WAND, sval, slot + 1);
+	}
+
+	/* No wand found */
+	if (slot == -1) return (FALSE);
+
+	/* Can we aim this wand */
+	if (fail && !borg_use_item_fail(l_ptr, FALSE)) return (FALSE);
+
+	/* Aim the wand */
+	if (aim)
+	{
+		/* Log the message */
+		borg_note_fmt("# Aiming %s.", l_ptr->o_name);
+
+		/* Perform the action */
+		borg_keypress('a');
+		borg_keypress(I2A(slot));
+	}
 
 	/* Success */
 	return (TRUE);
@@ -1297,117 +1369,108 @@ bool borg_zap_rod(int sval)
  */
 bool borg_aim_wand(int sval)
 {
+	/* aim that wand without a fail check */
+	return (borg_wand_aux(sval, TRUE, FALSE));
+}
+
+
+/*
+ * Hack -- attempt to aim the given (charged) wand (by sval)
+ */
+bool borg_equips_wand_fail(int sval)
+{
+	/* Search for that wand with a fail check */
+	return (borg_wand_aux(sval, FALSE, TRUE));
+}
+
+
+/*
+ * Hack -- attempt to use the requested staff (by sval).
+ * Staffs with unknown charges can also be tried if they are not {empty}
+ * This is ok to do because if the staff is empty the effect (a wasted turn)
+ * is the same as a failure to use the staff.
+ * If (fail) is set then do a fail check.
+ * If (use) is set then use the staff.
+ */
+static bool borg_staff_aux(int sval, bool use, bool fail)
+{
 	list_item *l_ptr;
+	int slot = 0;
 
-	/* Look for that wand */
-	l_ptr = borg_slot(TV_WAND, sval);
+	/* Look for that staff */
+	slot = borg_slot_from(TV_STAFF, sval, slot);
 
-	/* None available */
-	if (!l_ptr) return (FALSE);
+	/* Search the inventory until the right staff with charges is found */
+	while (slot != -1)
+	{
+		l_ptr = &inventory[slot];
 
-	/* No charges */
-	if (!l_ptr->pval) return (FALSE);
+		/* Accept this staff if it may have charges */
+		if (borg_obj_known_p(l_ptr))
+		{
+			/* Identified with charges */
+			if (l_ptr->pval) break;
+		}
+		else
+		{
+			/* unidentified and not inscribed as empty */
+			if (!strstr(l_ptr->o_name, "{empty}")) break;
+		}
 
-	/* Log the message */
-	borg_note_fmt("# Aiming %s.", l_ptr->o_name);
+		/* Look for the next staff */
+		slot = borg_slot_from(TV_STAFF, sval, slot + 1);
+	}
 
-	/* Perform the action */
-	borg_keypress('a');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+	/* No staff found */
+	if (slot == -1) return (FALSE);
+
+	/* Do the fail check */
+	if (fail)
+	{
+		if (sval == SV_STAFF_TELEPORTATION)
+		{
+			/* Take more risk if you want to teleport */
+			if (!borg_use_item_fail(l_ptr, TRUE)) return (FALSE);
+		}
+		else
+		{
+			/* Do not take more risks for other staffs */
+			if (!borg_use_item_fail(l_ptr, FALSE)) return (FALSE);
+		}
+	}
+
+	/* Use the staff */
+	if (use)
+	{
+		/* Log the message */
+		borg_note_fmt("# Using %s.", l_ptr->o_name);
+
+		/* Perform the action */
+		borg_keypress('u');
+		borg_keypress(I2A(slot));
+	}
 
 	/* Success */
 	return (TRUE);
 }
 
-
 /*
- * Hack -- attempt to use the given (charged) staff (by sval)
+ * Hack -- attempt to use the requested staff (by sval)
  */
 bool borg_use_staff(int sval)
 {
-	list_item *l_ptr;
-
-	/* Look for that staff */
-	l_ptr = borg_slot(TV_STAFF, sval);
-
-	/* None available */
-	if (!l_ptr) return (FALSE);
-
-	/* No charges */
-	if (!l_ptr->pval) return (FALSE);
-
-	/* Log the message */
-	borg_note_fmt("# Using %s.", l_ptr->o_name);
-
-	/* Perform the action */
-	borg_keypress('u');
-	borg_keypress(I2A(look_up_index(l_ptr)));
-
-	/* Success */
-	return (TRUE);
+	/* Use the staff (if available) without fail check */
+	return borg_staff_aux(sval, TRUE, FALSE);
 }
 
 /*
- * Hack -- attempt to use the given (charged) staff (by sval) and
+ * Hack -- attempt to use the requested staff (by sval) and
  * make a fail check on it.
  */
 bool borg_use_staff_fail(int sval)
 {
-	list_item *l_ptr;
-	object_kind *k_ptr;
-
-	int chance, lev;
-
-	/* Look for that staff */
-	l_ptr = borg_slot(TV_STAFF, sval);
-
-	/* None available */
-	if (!l_ptr) return (FALSE);
-
-	/* No charges */
-	if (!l_ptr->pval) return (FALSE);
-
-	/* Get item type */
-	k_ptr = &k_info[l_ptr->k_idx];
-
-	/* Extract the item level */
-	lev = k_ptr->level;
-
-	/* Base chance of success */
-	chance = bp_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (bp_ptr->status.confused) chance = chance / 2;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Roll for usage, but if its a Teleport be generous. */
-	if (chance < USE_DEVICE * 2)
-	{
-		if (sval != SV_STAFF_TELEPORTATION)
-		{
-			return (FALSE);
-		}
-
-		/* We need to give some "desparation attempt to teleport staff" */
-		if (!bp_ptr->status.confused && !bp_ptr->status.blind)
-		{
-			/* We really have no chance, return false, attempt the scroll */
-			if (chance < USE_DEVICE) return (FALSE);
-		}
-		/* We might have a slight chance, or we cannot not read */
-	}
-
-	/* Log the message */
-	borg_note_fmt("# Using %s.", l_ptr->o_name);
-
-	/* Perform the action */
-	borg_keypress('u');
-	borg_keypress(I2A(look_up_index(l_ptr)));
-
-	/* Success */
-	return (TRUE);
+	/* Use the staff with fail check */
+	return borg_staff_aux(sval, TRUE, TRUE);
 }
 
 /*
@@ -1416,57 +1479,9 @@ bool borg_use_staff_fail(int sval)
  */
 bool borg_equips_staff_fail(int sval)
 {
-	list_item *l_ptr;
-	object_kind *k_ptr;
-
-	int chance, lev;
-
-	/* Look for that staff */
-	l_ptr = borg_slot(TV_STAFF, sval);
-
-	/* None available */
-	if (!l_ptr) return (FALSE);
-
-	/* No charges */
-	if (!l_ptr->pval) return (FALSE);
-
-	/* Get item type */
-	k_ptr = &k_info[l_ptr->k_idx];
-
-	/* Extract the item level */
-	lev = k_ptr->level;
-
-	/* Base chance of success */
-	chance = bp_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (bp_ptr->status.confused) chance = chance / 2;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Roll for usage, but if its a Teleport be generous. */
-	if (chance < USE_DEVICE * 2)
-	{
-		if (sval != SV_STAFF_TELEPORTATION && sval != SV_STAFF_DESTRUCTION)
-		{
-			return (FALSE);
-		}
-
-		/* We need to give some "desparation attempt to teleport staff" */
-		if (!bp_ptr->status.confused)
-		{
-			/* We really have no chance, return false, attempt the scroll */
-			if (chance < USE_DEVICE) return (FALSE);
-		}
-
-		/* We might have a slight chance, continue on */
-	}
-
-	/* Yep we got one */
-	return (TRUE);
+	/* Do not use the staff, just do the fail check */
+	return borg_staff_aux(sval, FALSE, TRUE);
 }
-
 
 /*
  * Hack -- attempt to use the given artifact (by index)
@@ -1637,8 +1652,9 @@ bool borg_activate_dragon(int drag_sval)
 	return (TRUE);
 }
 
+
 /*
- * Hack -- check and see if borg is wielding a ring and if
+ * Check and see if borg is wielding a ring and if
  * he will pass a fail check.
  */
 bool borg_equips_ring(int ring_sval)
@@ -1667,15 +1683,6 @@ bool borg_equips_ring(int ring_sval)
 	 		l_ptr->timeout) return (FALSE);
 	}
 
-	/* check on fail rate
-	 * The fail check is automatic for rings.  It is an attack
-	 * item.  He should not sit around failing 5 or 6 times in a row.
-	 * he should attempt to activate it, and if he is likely to fail, then
-	 * eh should look at a different attack option.  We are assuming
-	 * that the fail rate is about 50%.  So He may still try to activate it
-	 * and fail.  But he will not even try if he has negative chance or
-	 * less than twice the USE_DEVICE variable
-	 */
 	/* Extract the item level */
 	lev = k_ptr->level;
 
@@ -1695,9 +1702,8 @@ bool borg_equips_ring(int ring_sval)
 	return (TRUE);
 }
 
-
 /*
- *  Hack -- attempt to use the given ring
+ *  Attempt to use the given ring
  */
 bool borg_activate_ring(int ring_sval)
 {
@@ -2414,6 +2420,14 @@ bool borg_racial_check(int race, bool check_fail)
 	/* Cost -- dont go into debt */
 	if (use_hp && (cost > bp_ptr->chp * 7 / 10)) return (FALSE);
 
+	/* Cost -- dont go into debt */
+	if (bp_ptr->chp < bp_ptr->mhp * 5 / 10 &&
+		borg_race != RACE_GNOME) return (FALSE);
+
+	/* Gnomes can go into emergency zone (mostly) */
+	if (bp_ptr->chp < bp_ptr->mhp * 3 / 10 &&
+		borg_race == RACE_GNOME) return (FALSE);
+
 	/* Legal check ends here */
 	if (!check_fail) return (TRUE);
 
@@ -2461,14 +2475,6 @@ bool borg_racial(int race)
 {
 	/* Require ability (right now) */
 	if (!borg_racial_check(race, TRUE)) return (FALSE);
-
-	/* Cost -- dont go into debt */
-	if (bp_ptr->chp < bp_ptr->mhp * 5 / 10 &&
-		borg_race != RACE_GNOME) return (FALSE);
-
-	/* Gnomes can go into emergency zone (mostly) */
-	if (bp_ptr->chp < bp_ptr->mhp * 3 / 10 &&
-		borg_race == RACE_GNOME) return (FALSE);
 
 	/* Debugging Info */
 	borg_note("# Racial Power.");

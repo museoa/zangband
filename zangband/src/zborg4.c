@@ -366,8 +366,8 @@ list_item *look_up_equip_slot(int slot)
 	list_item *l_ptr;
 
 	int i;
-	
-	/* Paranoia */
+
+	/* check for valid slots */
 	if (slot < 0 || slot > equip_num) return (NULL);
 
 	/* Look in equipment */
@@ -1505,6 +1505,27 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 			bp_ptr->able.speed += number;
 			break;
 		}
+		case SV_POTION_POISON:
+		{
+			bp_ptr->able.poison += number;
+			break;
+		}
+		case SV_POTION_RESTORE_MANA:
+		{
+			if (borg_class == CLASS_WARRIOR)
+				bp_ptr->able.death += number;
+			else
+				bp_ptr->able.mana += number;
+
+			break;
+		}
+		case SV_POTION_DETONATIONS:
+		case SV_POTION_DEATH:
+		case SV_POTION_RUINATION:
+		{
+			bp_ptr->able.death += number;
+			break;
+		}
 	}
 }
 
@@ -1603,7 +1624,31 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
 			bp_ptr->food += number * 5;
-			
+			break;
+		}
+		case SV_SCROLL_ICE:
+		{
+			if (bp_ptr->flags2 & TR2_RES_COLD) bp_ptr->able.logrus += number;
+			break;
+		}
+		case SV_SCROLL_FIRE:
+		{
+			if (bp_ptr->flags2 & TR2_RES_FIRE) bp_ptr->able.logrus += number;
+			break;
+		}
+		case SV_SCROLL_CHAOS:
+		{
+			if (bp_ptr->flags2 & TR2_RES_CHAOS) bp_ptr->able.logrus += number;
+			break;
+		}
+		case SV_SCROLL_DISPEL_UNDEAD:
+		{
+			bp_ptr->able.logrus += number;
+			break;
+		}
+		case SV_SCROLL_LIGHT:
+		{
+			bp_ptr->able.lite += number;
 			break;
 		}
 	}
@@ -1688,6 +1733,12 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			break;
 		}
 
+		case SV_ROD_ILLUMINATION:
+		{
+			bp_ptr->able.lite += number * 100;
+			break;
+		}
+
 		case SV_ROD_HEALING:
 		{
 			/* only +2 per rod because of long charge time. */
@@ -1765,6 +1816,11 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		{
 			amt_cool_staff += number;
 			bp_ptr->able.heal += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_LITE:
+		{
+			bp_ptr->able.lite += number * l_ptr->pval;
 			break;
 		}
 	}
@@ -2310,6 +2366,16 @@ static void borg_notice_aux2(void)
 		bp_ptr->able.magic_map += 1000;
 	}
 
+	/* Handle "light" */
+	if (borg_spell_legal(REALM_LIFE, 0, 4) ||
+		borg_spell_legal(REALM_SORCERY, 0, 3) ||
+		borg_spell_legal(REALM_NATURE, 0, 4) ||
+		borg_spell_legal(REALM_CHAOS, 0, 2) ||
+		borg_spell_legal(REALM_ARCANE, 0, 5))
+	{
+		bp_ptr->able.lite += 1000;
+	}
+
 	/* Handle "protection from evil" */
 	if (borg_spell_legal(REALM_LIFE, 1, 5))
 	{
@@ -2622,6 +2688,9 @@ void borg_update_frame(void)
 	/* Hack -- Access depth */
 	bp_ptr->depth = p_ptr->depth;
 
+	/* If this is the first borg run then avoid reinitialization */
+	if (old_depth == 128) old_depth = bp_ptr->depth;
+
 	/* Hack -- Access max depth */
 	bp_ptr->max_depth = p_ptr->max_depth;
 
@@ -2924,8 +2993,8 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 	list_item *w_ptr;
 
 	dupe_count = l_ptr->number - 1;
-	
-	/* Paranoia */
+
+	/* Avoid trouble */
 	if (dupe_count <= 0) return;
 
 	/* Look for other items before this one that are the same */
@@ -3902,7 +3971,7 @@ static void borg_notice_home_aux(void)
 
 		/* Hack - simulate change in number of items */
 		if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number = 1;
-		if (l_ptr->treat_as == TREAT_AS_SWAP) l_ptr->number = 1;	
+		if (l_ptr->treat_as == TREAT_AS_SWAP) l_ptr->number = 1;
 		if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
 
 		/* Notice item flags */
@@ -4381,7 +4450,7 @@ static s32b borg_power_home_aux2(void)
 	for (k = 0; k < 99 && k < num_ez_heal; k++) value += 8000L - k * 8L;
 	if (bp_ptr->msp > 1)
 	{
-		for (k = 0; k < 99 && k < num_mana; k++) value += 6000L - k * 8L;
+		for (k = 0; k < 99 && k < num_mana; k++) value += 2000L - k * 8L;
 	}
 
 	/*** Healing ***/
@@ -4390,7 +4459,7 @@ static s32b borg_power_home_aux2(void)
 	for (k = 0; k < 99 && k < num_cure_critical; k++) value += 1500L - k * 10L;
 
 	/* Collect cure serious - but they aren't as good */
-	for (k = 0; k < 99 && k < num_cure_serious; k++) value += 750L - k * 100L;
+	for (k = 0; k < 99 && k < num_cure_serious; k++) value += 750L - k * 2L;
 
 	/*** Various ***/
 

@@ -2038,6 +2038,7 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 {
 	int i, j;
 	borg_kill *kill1, *kill2;
+	map_block *mb_ptr1, *mb_ptr2;
 
 	int x, y, d;
 
@@ -2053,10 +2054,14 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 
 		x = kill1->x;
 		y = kill1->y;
+		mb_ptr1 = map_loc(x, y);
 
 		for (j = 1; j < borg_kills_nxt; j++)
 		{
 			kill2 = &borg_kills[j];
+
+			/* Don't use self */
+			if (i == j) continue;
 
 			/* Paranoia - ignore dead monsters */
 			if (!kill2->r_idx) continue;
@@ -2073,6 +2078,8 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			/* Too far away */
 			if (d > dist) continue;
 
+			mb_ptr2 = map_loc(kill2->x, kill2->y);
+
 			/* Note */
 			borg_note_fmt
 				("# Tracking monster (%d) from (%d,%d) to (%d) (%d,%d)", i, x,
@@ -2085,8 +2092,11 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			/* Remove the new monster */
 			borg_merge_kill(j);
 
-			x = kill1->x;
-			y = kill1->y;
+			/* remove overwritten index from the old map position */
+			if (mb_ptr1->kill == i)	mb_ptr1->kill = 0;
+
+			/* Put the index on the new map position */
+			mb_ptr2->kill = i;
 
 			/* Save timestamp */
 			kill1->when = borg_t;
@@ -2158,7 +2168,7 @@ static bool remove_bad_kills(u16b who)
  */
 static void handle_old_mons(byte type)
 {
-	int i;
+	u16b i;
 
 	borg_kill *kill;
 

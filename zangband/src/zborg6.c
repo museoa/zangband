@@ -13,6 +13,7 @@
 #include "zborg6.h"
 
 static bool borg_desperate = FALSE;
+static int g_slot;
 
 
 
@@ -671,6 +672,9 @@ bool borg_recall(void)
 			borg_spell_fail(REALM_TRUMP, 1, 6, 60) ||
 			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL))
 		{
+			/* Press another ESC to avoid the recall reset */
+			borg_keypress(ESCAPE);
+
 			/* Success */
 			return (TRUE);
 		}
@@ -2480,7 +2484,8 @@ static bool borg_heal(int danger)
 		bp_ptr->csp = bp_ptr->msp;
 
 		if (borg_spell(REALM_LIFE, 1, 1) ||
-			borg_spell(REALM_ARCANE, 1, 5) || borg_spell(REALM_NATURE, 0, 7))
+			borg_spell(REALM_ARCANE, 1, 5) ||
+			borg_spell(REALM_NATURE, 0, 7))
 		{
 			/* verify use of spell */
 			/* borg_keypress('y'); */
@@ -3818,14 +3823,11 @@ bool borg_caution(void)
  *   Elemental Rings
  */
 
-#define	BF_LAUNCH_NORMAL		0
-#define BF_LAUNCH_SEEKER		1
-#define BF_LAUNCH_FLAME			2
-#define BF_LAUNCH_FROST			3
-#define BF_LAUNCH_ANIMAL		4
-#define BF_LAUNCH_EVIL 			5
-#define BF_LAUNCH_DRAGON		6
-#define BF_LAUNCH_WOUNDING		7
+#define BF_MIN					5
+
+#define BF_ARTIFACT				5
+#define BF_SCROLL				6
+#define BF_LAUNCH				7
 #define BF_OBJECT				8
 #define BF_THRUST				9
 
@@ -3979,11 +3981,11 @@ bool borg_caution(void)
 #define	BF_RACIAL_SPRITE		145
 #define	BF_RACIAL_YEEK			146
 
-#define    BF_RING_ACID 		147
-#define    BF_RING_FLAMES	 	148
-#define    BF_RING_ICE  		149
+#define	BF_RING_ACID			147
+#define	BF_RING_FLAMES			148
+#define	BF_RING_ICE				149
 
-#define    BF_MAX				150
+#define	BF_MAX					150
 
 
 
@@ -4261,8 +4263,8 @@ static bool borg_target(int x, int y)
 	/* Report a little bit */
 	if (mb_ptr->monster)
 	{
-		borg_note_fmt("# Targeting %s.",
-					  (r_name + r_info[mb_ptr->monster].name));
+		borg_note_fmt("# Targeting %s, from (%d, %d) to (%d, %d).",
+					  (r_name + r_info[mb_ptr->monster].name), c_x, c_y, x, y);
 	}
 	else
 	{
@@ -4342,18 +4344,10 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			break;
 		}
 
+		case GF_ARROW_2:
 		case GF_ARROW:
 		{
 			/* Standard Arrow */
-			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 5;
-			break;
-		}
-
-		case GF_ARROW_SEEKER:
-		{
-			/* Seeker Arrow/Bolt */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 10;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
 				!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 5;
 			break;
@@ -4372,6 +4366,15 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Arrow of Frost */
 			if (!(r_ptr->flags3 & RF3_IM_COLD)) dam *= 3;
+			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
+				!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 5;
+			break;
+		}
+
+		case GF_ARROW_SHOCKING:
+		{
+			/* Arrow of Shocking */
+			if (!(r_ptr->flags3 & RF3_IM_ELEC)) dam *= 3;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
 				!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 5;
 			break;
@@ -4399,14 +4402,6 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Arrow of slay dragon */
 			if (r_ptr->flags3 & RF3_DRAGON) dam *= 3;
-			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 5;
-			break;
-		}
-
-		case GF_ARROW_WOUNDING:
-		{
-			/* Arrow of Wounding */
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
 				!(r_ptr->flags1 & RF1_UNIQUE)) dam /= 5;
 			break;
@@ -5264,10 +5259,17 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 			/* dispel spells act like beams (sort of) */
 			if (borg_cave_wall_grid(mb_ptr))
 			{
+				/* Is this a bolt */
 				if (rad != -1)
+				{
+					/* A bolt that ends in a wall results in 0 damage */
 					return (0);
+				}
 				else
+				{
+					/* A beam that ends in a wall results in n damage */
 					return (n);
+				}
 			}
 		}
 
@@ -5536,18 +5538,15 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 	}
 
 	/* This will allow the borg to target places adjacent to a monster
-	 * in order to exploit and abuse a feature of the game.  Whereas,
-	 * the borg, while targeting a monster will not score d/t walls, he
-	 * could land a success hit by targeting adjacent to the monster.
-	 * For example:
+	 * in order to exploit that ball spells do damage to creatures next
+	 * to the target location.  For example:
 	 * ######################
 	 * #####@..........######
-	 * ############P..x......
+	 * ############x.........
+	 * ############P.........
 	 * ######################
-	 * In order to hit the P, the borg must target the x and not the P.
-	 *
-	 * This is a massive exploitation.  But it ranks with Farming, Scumming,
-	 * Savefile abuse.
+	 * In order to damage P, the borg must target x.  You get half of the
+	 * full damage this way.
 	 */
 	for (i = 0; i < borg_temp_n; i++)
 	{
@@ -5598,13 +5597,12 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 		}
 	}
 
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
 	/* Save the location */
 	g_x = borg_temp_x[b_i] + b_o_x;
 	g_y = borg_temp_y[b_i] + b_o_y;
+
+	/* Simulation */
+	if (borg_simulate) return (b_n);
 
 	/* Target the location */
 	(void)borg_target(g_x, g_y);
@@ -5614,77 +5612,318 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 }
 
 
+/* Simulate/Apply the optimal result of activating an artifact */
+static int borg_attack_aux_artifact(void)
+{
+	/* Yeah well, how do I find out what the activation is */
+	return (0);
+}
 
 
 /*
- * Simulate/Apply the optimal result of launching a normal missile
+ * Simulate/Apply the optimal result of reading a scroll
  *
- * First, pick the "optimal" ammo, then pick the optimal target
+ */
+static int borg_attack_aux_scroll(void)
+{
+	int n, b_n = 0;
+	int k, b_k = -1;
+
+	/* Simulation */
+	if (borg_simulate)
+	{
+		/* No reading while blind, confused, or hallucinating */
+		if (bp_ptr->status.blind || bp_ptr->status.confused ||
+			bp_ptr->status.image) return (0);
+
+		/* Try all scrolls */
+		for (k = 0; k < inven_num; k++)
+		{
+			list_item *l_ptr = &inventory[k];
+
+			/* Skip the wrong scrolls */
+			if (l_ptr->tval != TV_SCROLL) continue;
+
+			/* Reset damdage counter */
+			n = 0;
+
+			/* What scroll have we here? */
+			switch (k_info[l_ptr->k_idx].sval)
+			{
+				case SV_SCROLL_ICE:
+				{
+					/* With resistancy it is safe to read this scroll */
+					if (bp_ptr->flags2 & TR2_RES_COLD)
+					{
+						/* How much damage from a cold ball? */
+						n = borg_launch_bolt_aux(c_x, c_y, 4, 150, GF_COLD, 0);
+					break;
+					}
+				}
+
+				case SV_SCROLL_FIRE:
+				{
+					/* With resistancy it is safe to read this scroll */
+					if (bp_ptr->flags2 & TR2_RES_FIRE)
+					{
+						/* How much damage from a fire ball? */
+						n = borg_launch_bolt_aux(c_x, c_y, 4, 75, GF_FIRE, 0);
+					}
+					break;
+				}
+
+				/* Scroll of Logrus */
+				case SV_SCROLL_CHAOS:
+				{
+					/* With resistancy it is safe to read this scroll */
+					if (bp_ptr->flags2 & TR2_RES_CHAOS)
+					{
+						/* How much damage from a chaos ball? */
+						n = borg_launch_bolt_aux(c_x, c_y, 4, 225, GF_CHAOS, 0);
+					}
+					break;
+				}
+
+				case SV_SCROLL_DISPEL_UNDEAD:
+				{
+					/* Damage all the undead in LOS. */
+					n = borg_launch_bolt(MAX_RANGE, 60, GF_DISP_UNDEAD, MAX_RANGE);
+					break;
+				}
+
+				default:
+				{
+					/* This scroll is a dud, damagewise*/
+					n = 0;
+				}
+			}
+					
+			/* Is it better than before? */
+			if (n <= b_n) continue;
+
+			/* Keep track of the scroll */
+			b_k = k;
+			b_n = n;
+		}
+
+		/* Set the slot global */
+		g_slot = b_k;
+
+		/* Return the value of the simulation */
+		return (b_n);
+	}
+
+	/* Do it */
+	borg_note_fmt("# Reading scroll '%s'", inventory[g_slot].o_name);
+
+	/* Read */
+	borg_keypress('r');
+
+	/* the scroll */
+	borg_keypress(I2A(g_slot));
+
+	/* Value */
+	return (b_n);
+}
+
+
+/* This function checks if some missile has a certain damage_type */
+static bool borg_missile_equals_type(list_item *l_ptr, int gf_i)
+{
+	/* Just making sure it is a missile */
+	if (!l_ptr ||
+		l_ptr->tval < TV_SHOT ||
+		l_ptr->tval > TV_BOLT) return (FALSE);
+
+	switch (gf_i)
+	{
+		/* Normal, unidentified, wounding or slaying missiles */
+		case GF_ARROW_2:
+		{
+			if (borg_obj_is_ego_art(l_ptr) &&
+				!strstr(l_ptr->o_name, "Wounding") &&
+				!strstr(l_ptr->o_name, "Returning") &&
+				!strstr(l_ptr->o_name, "Slaying")) return (FALSE);
+
+			return (TRUE);
+		}
+
+		/* Flaming missiles */
+		case GF_ARROW_FLAME:
+		{
+			if (l_ptr->kn_flags1 & TR1_BRAND_FIRE) return (TRUE);
+			return (FALSE);
+		}
+
+		/* Freezing missiles */
+		case GF_ARROW_FROST:
+		{
+			if (l_ptr->kn_flags1 & TR1_BRAND_COLD) return (TRUE);
+			return (FALSE);
+		}
+
+		/* Electric missiles */
+		case GF_ARROW_SHOCKING:
+		{
+			if (l_ptr->kn_flags1 & TR1_BRAND_ELEC) return (TRUE);
+			return (FALSE);
+		}
+
+		/* Amimal missiles */
+		case GF_ARROW_ANIMAL:
+		{
+			if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) return (TRUE);
+			return (FALSE);
+		}
+
+		/* Evil missiles */
+		case GF_ARROW_EVIL:
+		{
+			if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) return (TRUE);
+			return (FALSE);
+		}
+
+		/* Dragon missiles */
+		case GF_ARROW_DRAGON:
+		{
+			if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) return (TRUE);
+			return (FALSE);
+		}
+
+       	/* Exploding missiles */
+		case GF_ARROW_EXPLOSION:
+		{
+			if (l_ptr->kn_flags4 & TR4_EXPLODE) return (TRUE);
+			return (FALSE);
+		}
+
+		default:
+		{
+			return (FALSE);
+		}
+	}
+}
+
+
+/*
+ * Simulate/Apply the optimal result of launching a missile
+ *
+ * Check out which ammo is available and then call the apropriate routine for it
+ *
  */
 static int borg_attack_aux_launch(void)
 {
-	int b_n = 0;
+	int n, b_n = 0;
+	int b_x = 0, b_y = 0;
+	int k, b_k, b_b_k = -1;
+	int d, b_d;
+	int first_missile = -1, last_missile;
+	int gf_i;
 
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-
+	list_item *l_ptr;
 	list_item *bow = &equipment[EQUIP_BOW];
 
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
+	/* Simulation */
+	if (borg_simulate)
 	{
-		list_item *l_ptr = &inventory[k];
+		/* No firing while blind, confused, or hallucinating */
+		if (bp_ptr->status.blind || bp_ptr->status.confused ||
+			bp_ptr->status.image) return (0);
 
-		/* Skip Ego branded items--they are looked at later */
-		if (borg_obj_is_ego_art(l_ptr)) continue;
+		/* Scan the pack to find out where the missiles are */
+		for (k = 0; k < inven_num; k++)
+		{
+			l_ptr = &inventory[k];
 
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
+			/* Skip non-missiles */
+			if (l_ptr->tval < my_ammo_tval) break;
+			if (l_ptr->tval > my_ammo_tval) continue;
 
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) && !strstr(l_ptr->o_name, "{average") &&
-			!strstr(l_ptr->o_name, "{good") &&
-			!strstr(l_ptr->o_name, "{excellent")) continue;
+			/* Set the first missile */
+			if (first_missile == -1) first_missile = k;
+		}
 
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d * (100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
+		/* Set the last missile */
+		last_missile = k;
 
+		/* If there are no missiles, don't try further */
+		if (first_missile == -1) return (0);
 
-		/* Paranoia */
-		if (d <= 0) continue;
+		/* Try all missile types */
+		for (gf_i = BORG_ARROW_FIRST; gf_i < BORG_ARROW_LAST; gf_i++)
+		{
+			/* Reset trackers */
+			b_d = -1;
+			b_k = -1;
 
-		if ((b_k >= 0) && (d <= b_d)) continue;
+			/* Try all missiles */
+			for (k = first_missile; k < last_missile; k++)
+			{
+				l_ptr = &inventory[k];
 
-		b_k = k;
-		b_d = d;
+				/* Skip cursed missiles (accept unidentified missiles) */
+				if (strstr(l_ptr->o_name, "{cursed")) continue;
+
+				/* Is this an missile of the current type? */
+				if (!borg_missile_equals_type(l_ptr, gf_i)) continue;
+
+				/* Determine average damage */
+				d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+				d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
+				d = d * bp_ptr->b_max_dam / 6;
+
+				/* Is it better than the previous missile */
+				if (d <= b_d) continue;
+
+				/* Track this missile */
+				b_d = d;
+				b_k = k;
+			}
+		
+			/* Do we have an missile? */
+			if (b_k == -1) continue;
+
+			/* Find a target */
+			if (gf_i == GF_ARROW_EXPLOSION)
+			{
+				/* Exploding missiles actually are flaming missiles with a kick */
+				n = borg_launch_bolt(0, 100 + b_d, GF_ARROW_FLAME, MAX_RANGE);
+			}
+			else
+			{
+				/* No tricks needed for other missiles */
+				n = borg_launch_bolt(0, b_d, gf_i, MAX_RANGE);
+			}
+					
+			/* Is it better than before? */
+			if (n <= b_n) continue;
+
+			b_b_k = b_k;
+			b_n = n;
+			b_x = g_x;
+			b_y = g_y;
+		}
+
+		/* Set the targetting globals */
+		g_x = b_x;
+		g_y = b_y;
+		g_slot = b_b_k;
+
+		/* Return the value of the simulation */
+		return (b_n);
 	}
 
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
+	/* Set the target */
+	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Firing standard missile '%s'", inventory[b_k].o_name);
+	borg_note_fmt("# Firing missile '%s'", inventory[g_slot].o_name);
 
 	/* Fire */
 	borg_keypress('f');
 
 	/* Use the missile */
-	borg_keypress(I2A(b_k));
+	borg_keypress(I2A(g_slot));
 
 	/* Use target */
 	borg_keypress('5');
@@ -5696,532 +5935,6 @@ static int borg_attack_aux_launch(void)
 	return (b_n);
 }
 
-/*
- * Simulate/Apply the optimal result of launching a SEEKER missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_seeker(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip non-seekers items--they are looked at later */
-		if (k_info[l_ptr->k_idx].sval != SV_AMMO_HEAVY) continue;
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_SEEKER, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-	/* Do it */
-	borg_note_fmt("# Firing seeker missile '%s'", inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -2;
-
-	/* Value */
-	return (b_n);
-}
-
-/*
- * Simulate/Apply the optimal result of launching a branded missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_flame(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_FLAME, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
-	/* Do it */
-	borg_note_fmt("# Firing flame branded missile '%s'", inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -1;
-
-	/* Value */
-	return (b_n);
-}
-
-/*
- * Simulate/Apply the optimal result of launching a branded missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_frost(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_FROST, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
-	/* Do it */
-	borg_note_fmt("# Firing frost branded missile '%s'", inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -2;
-
-	/* Value */
-	return (b_n);
-}
-
-/*
- * Simulate/Apply the optimal result of launching a branded missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_animal(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_ANIMAL, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
-	/* Do it */
-	borg_note_fmt("# Firing animal missile '%s'", inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -2;
-
-	/* Value */
-	return (b_n);
-}
-
-/*
- * Simulate/Apply the optimal result of launching a branded missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_evil(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_EVIL, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
-	/* Do it */
-	borg_note_fmt("# Firing evil branded missile '%s'", inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -2;
-
-	/* Value */
-	return (b_n);
-}
-
-/*
- * Simulate/Apply the optimal result of launching a branded missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_dragon(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_DRAGON, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
-	/* Do it */
-	borg_note_fmt("# Firing dragon branded missile '%s'",
-				  inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -2;
-
-	/* Value */
-	return (b_n);
-}
-
-/*
- * Simulate/Apply the optimal result of launching a branded missile
- *
- * First, pick the "optimal" ammo, then pick the optimal target
- */
-static int borg_attack_aux_launch_wounding(void)
-{
-	int b_n = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
-	list_item *bow = &equipment[EQUIP_BOW];
-
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
-	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip bad missiles */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Skip un-identified, non-average, missiles */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
-
-		/* Determine average damage */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + (100 + 3 * (l_ptr->to_d + bow->to_d)) / 100;
-		d = d * bp_ptr->b_max_dam / 6;
-
-
-		/* Paranoia */
-		if (d <= 0) continue;
-
-		if ((b_k >= 0) && (d <= b_d)) continue;
-
-		b_k = k;
-		b_d = d;
-	}
-
-	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Choose optimal type of bolt */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW_WOUNDING, MAX_RANGE);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-
-	/* Do it */
-	borg_note_fmt("# Firing wounding branded missile '%s'",
-				  inventory[b_k].o_name);
-
-	/* Fire */
-	borg_keypress('f');
-
-	/* Use the missile */
-	borg_keypress(I2A(b_k));
-
-	/* Use target */
-	borg_keypress('5');
-
-	/* Set our shooting flag */
-	successful_target = -2;
-
-	/* Value */
-	return (b_n);
-}
 
 /*
  * Simulate/Apply the optimal result of throwing an object
@@ -6230,14 +5943,16 @@ static int borg_attack_aux_launch_wounding(void)
  */
 static int borg_attack_aux_object(void)
 {
-	int b_n;
+	int n = 0, b_n = 0;
+	int k, b_k = 0;
 
-	int b_r = 0;
-
-	int k, b_k = -1;
-	int d, b_d = -1;
-
+	int d, gf, r;
 	int div, mul;
+
+
+	/* No firing while blind, confused, or hallucinating */
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Scan the pack */
 	for (k = 0; k < inven_num; k++)
@@ -6246,27 +5961,86 @@ static int borg_attack_aux_object(void)
 
 		/* Skip un-identified, non-average, objects */
 		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average")) continue;
+			!strstr(l_ptr->o_name, "{average") &&
+			!strstr(l_ptr->o_name, "{cursed") &&
+			!strstr(l_ptr->o_name, "{dubious")) continue;
 
-		/* Skip "equipment" items (not ammo) */
-		if (borg_wield_slot(l_ptr) >= 0) continue;
+		/* Don't throw practical things */
+		if (l_ptr->tval == TV_STAFF ||
+			l_ptr->tval == TV_WAND ||
+			l_ptr->tval == TV_ROD ||
+			l_ptr->tval == TV_SCROLL ||
+			l_ptr->tval == TV_FOOD ||
+			(l_ptr->tval >= TV_BOOKS_MIN &&
+			 l_ptr->tval <= TV_BOOKS_MAX)) continue;
 
 		/* Determine average damage from object */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
 
-		/* Skip useless stuff */
-		if (d <= 0) continue;
+		/* Set the damage type */
+		gf = GF_ARROW;
+
+		/* Some potions do special damage when thrown */
+		if (l_ptr->tval == TV_POTION)
+		{
+			/* Which potion is this? */
+			switch (k_info[l_ptr->k_idx].sval)
+			{
+				case SV_POTION_RUINATION:
+				case SV_POTION_DETONATIONS:
+				{
+					/* Set damage and damage type */
+					d  = 25 * (25 + 1) / 2;
+					gf = GF_SHARDS;
+					break;
+				}
+				case SV_POTION_DEATH:
+				{
+					/* Set damage and damage type */
+					d  = 25 * (25 + 1) / 2;
+					gf = GF_DEATH_RAY;
+					break;
+				}
+				case SV_POTION_RESTORE_MANA:
+				{
+					/* Set damage and damage type */
+					d  = 10 * (10 + 1) / 2;
+					gf = GF_MANA;
+					break;
+				}
+				case SV_POTION_POISON:
+				{
+					/* Set damage and damage type */
+					d  = 3 * (6 + 1) / 2;
+					gf = GF_POIS;
+					break;
+				}
+				default:
+				{
+					/* Don't throw any other potion */
+					d = 0;
+				}
+			}
+		}
 
 		/* Hack -- Save last seven flasks for fuel, if needed */
-		if ((l_ptr->tval == TV_FLASK) && (bp_ptr->able.fuel <= 7) &&
-			!borg_fighting_unique) continue;
+		if (l_ptr->tval == TV_FLASK)
+		{
+			list_item* k_ptr = look_up_equip_slot(EQUIP_LITE);
 
-		/* Ignore worse damage */
-		if ((b_k >= 0) && (d <= b_d)) continue;
+			/*
+			 * Don't throw the flask if the borg wields a lantern
+			 * and he has only a few flasks. 
+			 * Throw it anyway if he is fighting a unique
+			 */
+			if (k_ptr &&
+				k_info[k_ptr->k_idx].sval == SV_LITE_LANTERN &&
+				bp_ptr->able.fuel <= 7 &&
+				!borg_fighting_unique) continue;
+		}
 
-		/* Track */
-		b_k = k;
-		b_d = d;
+		/* Ignore 0 damage */
+		if (d <= 0) continue;
 
 		/* Extract a "distance multiplier" */
 		mul = 10;
@@ -6275,27 +6049,26 @@ static int borg_attack_aux_object(void)
 		div = ((l_ptr->weight > 10) ? l_ptr->weight : 10);
 
 		/* Hack -- Distance -- Reward strength, penalize weight */
-		b_r = (adj_str_blow[my_stat_ind[A_STR]] + 20) * mul / div;
+		r = (adj_str_blow[my_stat_ind[A_STR]] + 20) * mul / div;
 
 		/* Max distance of 10 */
-		if (b_r > 10) b_r = 10;
+		if (r > 10) r = 10;
+
+		/* Choose optimal location */
+		n = borg_launch_bolt(0, d, gf, r);
+
+		if (n < b_n) continue;
+
+		/* Track */
+		b_k = k;
+		b_n = n;
 	}
 
 	/* Nothing to use */
-	if (b_k < 0) return (0);
-
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-
-	/* Choose optimal location */
-	b_n = borg_launch_bolt(0, b_d, GF_ARROW, b_r);
+	if (n <= 0) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (b_n);
-
 
 	/* Do it */
 	borg_note_fmt("# Throwing painful object '%s'", inventory[b_k].o_name);
@@ -6317,8 +6090,6 @@ static int borg_attack_aux_object(void)
 }
 
 
-
-
 /*
  * Simulate/Apply the optimal result of using a "normal" attack spell
  *
@@ -6327,58 +6098,62 @@ static int borg_attack_aux_object(void)
 static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
                                       int dam, int typ)
 {
-	int b_n;
+	int b_n = -1;
 	int penalty = 0;
 
 	borg_magic *as = &borg_magics[realm][book][what];
 
 
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* make sure I am powerfull enough to do another goi if this one falls */
-	if (borg_goi && ((bp_ptr->csp - as->power) < 70)) return (0);
-
-	/* Paranoia */
-	if (borg_simulate && (randint0(100) < 5)) return (0);
-
-	/* Require ability (right now) */
-	if (!borg_spell_okay_fail
-		(realm, book, what, (borg_fighting_unique ? 40 : 25))) return (0);
-
-
-	/* Choose optimal location */
-	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
-
-	/* weaklings need that spell, they dont get penalized */
-	if (!book && !what && (bp_ptr->max_lev <= 30))
+	/* Only estimate the effect of the spell when it is not cast */
+	if (borg_simulate)
 	{
-		if (borg_simulate) return (b_n);
+		/* Require ability (right now) */
+		if (!borg_spell_okay_fail
+			(realm, book, what, (borg_fighting_unique ? 40 : 25))) return (0);
+
+		/* No firing while blind, confused, or hallucinating */
+		if (bp_ptr->status.blind || bp_ptr->status.confused ||
+			bp_ptr->status.image) return (0);
+
+		/* make sure I am powerfull enough to do another goi if this one falls */
+		if (borg_goi && ((bp_ptr->csp - as->power) < 70)) return (0);
+
+		/* Paranoia */
+		if (randint0(100) < 5) return (0);
+
+		/* Choose optimal location */
+		b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
+
+		/* weaklings need that spell, they dont get penalized */
+		if (!book && !what && (bp_ptr->max_lev <= 30)) return (b_n);
+
+		/* Penalize mana usage */
+		b_n = b_n - as->power;
+
+		/* Penalize use of reserve mana */
+		if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n = b_n - (as->power * 10);
+
+		/* Penalize use of deep reserve mana */
+		if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n = b_n - (as->power * 20);
+
+		/* Really penalize use of mana needed for final teleport */
+		if (borg_class == CLASS_MAGE) penalty = 6;
+		if (borg_class == CLASS_RANGER) penalty = 22;
+		if (borg_class == CLASS_ROGUE) penalty = 20;
+		if (borg_class == CLASS_PRIEST) penalty = 8;
+		if (borg_class == CLASS_PALADIN) penalty = 20;
+		if ((bp_ptr->msp > 30) && (bp_ptr->csp - as->power) < penalty)
+			b_n = b_n - (as->power * 750);
+
+		/* Simulation */
+		return (b_n);
 	}
 
-	/* Penalize mana usage */
-	b_n = b_n - as->power;
-
-	/* Penalize use of reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n = b_n - (as->power * 10);
-
-	/* Penalize use of deep reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n = b_n - (as->power * 20);
-
-	/* Really penalize use of mana needed for final teleport */
-	if (borg_class == CLASS_MAGE) penalty = 6;
-	if (borg_class == CLASS_RANGER) penalty = 22;
-	if (borg_class == CLASS_ROGUE) penalty = 20;
-	if (borg_class == CLASS_PRIEST) penalty = 8;
-	if (borg_class == CLASS_PALADIN) penalty = 20;
-	if ((bp_ptr->msp > 30) && (bp_ptr->csp - as->power) < penalty)
-		b_n = b_n - (as->power * 750);
-
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
+	/*
+	 * Target the location.  g_x and g_y are globals that were set in
+	 * borg_launch_bolt and kept safe in borg_attack.
+	 */
+	(void)borg_target(g_x, g_y);
 
 	/* Cast the spell */
 	(void)borg_spell(realm, book, what);
@@ -6392,6 +6167,7 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 	/* Value */
 	return (b_n);
 }
+
 
 /* This routine is the same as the one above only in an emergency case.
  * The borg will enter negative mana casting this
@@ -6698,8 +6474,6 @@ static int borg_attack_aux_rod_bolt(int sval, int rad, int dam, int typ)
  */
 static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 {
-	list_item *l_ptr;
-
 	int b_n;
 
 
@@ -6707,20 +6481,11 @@ static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 	if (bp_ptr->status.blind || bp_ptr->status.confused ||
 		bp_ptr->status.image) return (0);
 
-
 	/* Paranoia */
 	if (borg_simulate && (randint0(100) < 5)) return (0);
 
-
-	/* Look for that wand */
-	l_ptr = borg_slot(TV_WAND, sval);
-
-	/* None available */
-	if (!l_ptr) return (0);
-
-	/* No charges */
-	if (!l_ptr->pval) return (0);
-
+	/* Do we have such a wand in a usable condition? */
+	if (!borg_equips_wand_fail(sval)) return (0);
 
 	/* Choose optimal location */
 	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
@@ -6809,6 +6574,7 @@ static int borg_attack_aux_dragon(int sval, int rad, int dam, int typ)
 
 /*
  * Simulate/Apply the optimal result of ACTIVATING an elemental RING
+ *
  */
 static int borg_attack_aux_ring_bolt(int sval, int rad, int dam, int typ)
 {
@@ -6816,7 +6582,7 @@ static int borg_attack_aux_ring_bolt(int sval, int rad, int dam, int typ)
 
 	/* No firing while blind, confused, or hallucinating */
 	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-	 	bp_ptr->status.image) return (0);
+		bp_ptr->status.image) return (0);
 
 	/* Paranoia */
 	if (borg_simulate && (randint0(100) < 5)) return (0);
@@ -6843,6 +6609,7 @@ static int borg_attack_aux_ring_bolt(int sval, int rad, int dam, int typ)
 	return (b_n);
 }
 
+
 /* Whirlwind--
  * Attacks adjacent monsters
  */
@@ -6868,7 +6635,7 @@ static int borg_attack_aux_nature_whirlwind(void)
 
 		mb_ptr = map_loc(x, y);
 
-		/* is ther ea kill next to me */
+		/* is there a kill next to me */
 		if (mb_ptr->kill)
 		{
 			/* Calculate "average" damage */
@@ -7119,52 +6886,22 @@ static int borg_attack_aux(int what)
 	/* Analyze */
 	switch (what)
 	{
-		case BF_LAUNCH_NORMAL:
+		case BF_ARTIFACT:
 		{
-			/* Missile attack */
+			/* Any damage inducing artifact */
+			return (borg_attack_aux_artifact());
+		}
+
+		case BF_SCROLL:
+		{
+			/* Read some scroll that is nasty */
+			return (borg_attack_aux_scroll());
+		}
+
+		case BF_LAUNCH:
+		{
+			/* Fire something with your launcher */
 			return (borg_attack_aux_launch());
-		}
-
-		case BF_LAUNCH_SEEKER:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_seeker());
-		}
-
-		case BF_LAUNCH_FLAME:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_flame());
-		}
-
-		case BF_LAUNCH_FROST:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_frost());
-		}
-
-		case BF_LAUNCH_ANIMAL:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_animal());
-		}
-
-		case BF_LAUNCH_EVIL:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_evil());
-		}
-
-		case BF_LAUNCH_DRAGON:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_dragon());
-		}
-
-		case BF_LAUNCH_WOUNDING:
-		{
-			/* Missile attack */
-			return (borg_attack_aux_launch_wounding());
 		}
 
 		case BF_OBJECT:
@@ -7815,7 +7552,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Mind-- Neural Blast */
 			dam = 3 + ((bp_ptr->lev - 1) / 4) * (3 + (bp_ptr->lev / 15)) / 2;
-			rad = -1;
+			rad = 1;
 			return (borg_attack_aux_mind_bolt
 					(MIND_NEURAL_BL, 1, rad, dam, GF_PSI));
 		}
@@ -7824,7 +7561,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Mind-- Pulverise */
 			dam = ((8 + ((bp_ptr->lev - 5) / 4) * 8)) / 2;
-			rad = -1;
+			rad = bp_ptr->lev / 15;
 			return (borg_attack_aux_mind_bolt
 					(MIND_PULVERISE, 11, rad, dam, GF_SOUND));
 		}
@@ -7875,7 +7612,7 @@ static int borg_attack_aux(int what)
 		case BF_ROD_ELEC_BOLT:
 		{
 			/* Rod -- elec bolt */
-			dam = 3 * (8 + 1) / 2;
+			dam = 5 * (8 + 1) / 2;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_ELEC_BOLT, rad, dam, GF_ELEC));
 		}
@@ -7883,7 +7620,7 @@ static int borg_attack_aux(int what)
 		case BF_ROD_COLD_BOLT:
 		{
 			/* Rod -- cold bolt */
-			dam = 5 * (8 + 1) / 2;
+			dam = 6 * (8 + 1) / 2;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_COLD_BOLT, rad, dam, GF_COLD));
 		}
@@ -7899,7 +7636,7 @@ static int borg_attack_aux(int what)
 		case BF_ROD_FIRE_BOLT:
 		{
 			/* Rod -- fire bolt */
-			dam = 8 * (8 + 1) / 2;
+			dam = 10 * (8 + 1) / 2;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_FIRE_BOLT, rad, dam, GF_FIRE));
 		}
@@ -7916,7 +7653,7 @@ static int borg_attack_aux(int what)
 		case BF_ROD_DRAIN_LIFE:
 		{
 			/* Spell -- drain life */
-			dam = (75);
+			dam = (150);
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_DRAIN_LIFE, rad, dam, GF_OLD_DRAIN));
 		}
@@ -7925,16 +7662,16 @@ static int borg_attack_aux(int what)
 		{
 			/* Rod -- elec ball */
 			rad = 2;
-			dam = 32;
+			dam = 75;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_ELEC_BALL, rad, dam, GF_ELEC));
 		}
 
 		case BF_ROD_COLD_BALL:
 		{
-			/* Rod -- acid ball */
+			/* Rod -- cold ball */
 			rad = 2;
-			dam = 48;
+			dam = 100;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_COLD_BALL, rad, dam, GF_COLD));
 		}
@@ -7943,7 +7680,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Rod -- acid ball */
 			rad = 2;
-			dam = 60;
+			dam = 125;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_ACID_BALL, rad, dam, GF_ACID));
 		}
@@ -7952,7 +7689,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Rod -- fire ball */
 			rad = 2;
-			dam = 72;
+			dam = 150;
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_FIRE_BALL, rad, dam, GF_FIRE));
 		}
@@ -8012,7 +7749,7 @@ static int borg_attack_aux(int what)
 		case BF_STAFF_POWER:
 		{
 			/* Staff -- Power */
-			dam = 120;
+			dam = 300;
 			rad = MAX_SIGHT + 10;
 			return (borg_attack_aux_staff_dispel
 					(SV_STAFF_POWER, rad, dam, GF_TURN_ALL));
@@ -8024,7 +7761,7 @@ static int borg_attack_aux(int what)
 			rad = MAX_SIGHT + 10;
 			if (bp_ptr->chp < bp_ptr->mhp / 2) dam = 500;
 			else
-				dam = 120;
+				dam = 300;
 			return (borg_attack_aux_staff_dispel
 					(SV_STAFF_HOLINESS, rad, dam, GF_DISP_EVIL));
 		}
@@ -8041,7 +7778,7 @@ static int borg_attack_aux(int what)
 		case BF_WAND_COLD_BOLT:
 		{
 			/* Wand -- cold bolt */
-			dam = 3 * (8 + 1) / 2;
+			dam = 6 * (8 + 1) / 2;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_COLD_BOLT, rad, dam, GF_COLD));
 		}
@@ -8049,7 +7786,7 @@ static int borg_attack_aux(int what)
 		case BF_WAND_ACID_BOLT:
 		{
 			/* Wand -- acid bolt */
-			dam = 5 * (8 + 1) / 2;
+			dam = 6 * (8 + 1) / 2;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_ACID_BOLT, rad, dam, GF_ACID));
 		}
@@ -8057,7 +7794,7 @@ static int borg_attack_aux(int what)
 		case BF_WAND_FIRE_BOLT:
 		{
 			/* Wand -- fire bolt */
-			dam = 6 * (8 + 1) / 2;
+			dam = 10 * (8 + 1) / 2;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_FIRE_BOLT, rad, dam, GF_FIRE));
 		}
@@ -8097,7 +7834,7 @@ static int borg_attack_aux(int what)
 		case BF_WAND_ANNIHILATION:
 		{
 			/* Wand -- annihilation */
-			dam = 125;
+			dam = 175;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_ANNIHILATION, rad, dam, GF_OLD_DRAIN));
 		}
@@ -8105,7 +7842,7 @@ static int borg_attack_aux(int what)
 		case BF_WAND_DRAIN_LIFE:
 		{
 			/* Wand -- drain life */
-			dam = 75;
+			dam = 150;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_DRAIN_LIFE, rad, dam, GF_OLD_DRAIN));
 		}
@@ -8123,7 +7860,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- stinking cloud */
 			rad = 2;
-			dam = 12;
+			dam = 15;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_STINKING_CLOUD, rad, dam, GF_POIS));
 		}
@@ -8132,7 +7869,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- elec ball */
 			rad = 2;
-			dam = 32;
+			dam = 75;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_ELEC_BALL, rad, dam, GF_ELEC));
 		}
@@ -8141,7 +7878,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- acid ball */
 			rad = 2;
-			dam = 48;
+			dam = 100;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_COLD_BALL, rad, dam, GF_COLD));
 		}
@@ -8150,7 +7887,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- acid ball */
 			rad = 2;
-			dam = 60;
+			dam = 125;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_ACID_BALL, rad, dam, GF_ACID));
 		}
@@ -8159,7 +7896,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- fire ball */
 			rad = 2;
-			dam = 72;
+			dam = 150;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_FIRE_BALL, rad, dam, GF_FIRE));
 		}
@@ -8176,7 +7913,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- dragon cold */
 			rad = 3;
-			dam = 80;
+			dam = 200;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_DRAGON_COLD, rad, dam, GF_COLD));
 		}
@@ -8185,7 +7922,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Wand -- dragon fire */
 			rad = 3;
-			dam = 100;
+			dam = 250;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_DRAGON_FIRE, rad, dam, GF_FIRE));
 		}
@@ -8193,6 +7930,7 @@ static int borg_attack_aux(int what)
 		case BF_WAND_ROCKETS:
 		{
 			/* Wand -- Rocket */
+			rad = 2;
 			dam = 250;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_ROCKETS, rad, dam, GF_ROCKET));
@@ -8202,35 +7940,35 @@ static int borg_attack_aux(int what)
 		case BF_DRAGON_BLUE:
 		{
 			rad = 2;
-			dam = 100;
+			dam = 330;
 			return (borg_attack_aux_dragon(SV_DRAGON_BLUE, rad, dam, GF_ELEC));
 		}
 
 		case BF_DRAGON_WHITE:
 		{
 			rad = 2;
-			dam = 110;
+			dam = 370;
 			return (borg_attack_aux_dragon(SV_DRAGON_WHITE, rad, dam, GF_COLD));
 		}
 
 		case BF_DRAGON_BLACK:
 		{
 			rad = 2;
-			dam = 130;
+			dam = 430;
 			return (borg_attack_aux_dragon(SV_DRAGON_BLACK, rad, dam, GF_ACID));
 		}
 
 		case BF_DRAGON_GREEN:
 		{
 			rad = 2;
-			dam = 150;
+			dam = 500;
 			return (borg_attack_aux_dragon(SV_DRAGON_GREEN, rad, dam, GF_POIS));
 		}
 
 		case BF_DRAGON_RED:
 		{
 			rad = 2;
-			dam = 200;
+			dam = 670;
 			return (borg_attack_aux_dragon(SV_DRAGON_RED, rad, dam, GF_FIRE));
 		}
 
@@ -8238,7 +7976,7 @@ static int borg_attack_aux(int what)
 		{
 			chance = randint0(5);
 			rad = 2;
-			dam = 200;
+			dam = 840;
 			return (borg_attack_aux_dragon(SV_DRAGON_MULTIHUED, rad, dam,
 										   (((chance == 1) ? GF_ELEC :
 											 ((chance == 2) ? GF_COLD :
@@ -8250,7 +7988,7 @@ static int borg_attack_aux(int what)
 		case BF_DRAGON_BRONZE:
 		{
 			rad = 2;
-			dam = 120;
+			dam = 400;
 			return (borg_attack_aux_dragon
 					(SV_DRAGON_BRONZE, rad, dam, GF_CONFUSION));
 		}
@@ -8258,7 +7996,7 @@ static int borg_attack_aux(int what)
 		case BF_DRAGON_GOLD:
 		{
 			rad = 2;
-			dam = 150;
+			dam = 430;
 			return (borg_attack_aux_dragon(SV_DRAGON_GOLD, rad, dam, GF_SOUND));
 		}
 
@@ -8266,7 +8004,7 @@ static int borg_attack_aux(int what)
 		{
 			chance = randint0(2);
 			rad = 2;
-			dam = 220;
+			dam = 740;
 			return (borg_attack_aux_dragon(SV_DRAGON_CHAOS, rad, dam,
 										   (chance ==
 											1 ? GF_CHAOS : GF_DISENCHANT)));
@@ -8276,7 +8014,7 @@ static int borg_attack_aux(int what)
 		{
 			chance = randint0(2);
 			rad = 2;
-			dam = 230;
+			dam = 750;
 			return (borg_attack_aux_dragon(SV_DRAGON_LAW, rad, dam,
 										   (chance ==
 											1 ? GF_SOUND : GF_SHARDS)));
@@ -8286,7 +8024,7 @@ static int borg_attack_aux(int what)
 		{
 			chance = randint0(4);
 			rad = 2;
-			dam = 230;
+			dam = 840;
 			return (borg_attack_aux_dragon(SV_DRAGON_BALANCE, rad, dam,
 										   (((chance == 1) ? GF_CHAOS :
 											 ((chance == 2) ? GF_DISENCHANT :
@@ -8298,15 +8036,15 @@ static int borg_attack_aux(int what)
 		{
 			chance = randint0(2);
 			rad = 2;
-			dam = 200;
+			dam = 670;
 			return (borg_attack_aux_dragon(SV_DRAGON_SHINING, rad, dam,
 										   (chance == 0 ? GF_LITE : GF_DARK)));
 		}
 
 		case BF_DRAGON_POWER:
 		{
-			rad = 2;
-			dam = 300;
+			rad = 3;
+			dam = 1000;
 			return (borg_attack_aux_dragon
 					(SV_DRAGON_POWER, rad, dam, GF_MISSILE));
 		}
@@ -8392,7 +8130,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_racial_bolt
 					(RACE_YEEK, rad, dam, GF_OLD_SLEEP));
 		}
-		
+
 		case BF_RING_ACID:
 		{
 			/* Ring -- acid ball */
@@ -8456,6 +8194,7 @@ bool borg_attack(bool boosted_bravery)
 
 	int n, b_n = 0;
 	int g, b_g = -1;
+	int b_x = 0, b_y = 0, b_slot = -1;
 
 	map_block *mb_ptr;
 
@@ -8543,7 +8282,7 @@ bool borg_attack(bool boosted_bravery)
 	borg_simulate = TRUE;
 
 	/* Analyze the possible attacks */
-	for (g = 0; g < BF_MAX; g++)
+	for (g = BF_MIN; g < BF_MAX; g++)
 	{
 		/* Simulate */
 		n = borg_attack_aux(g);
@@ -8554,6 +8293,11 @@ bool borg_attack(bool boosted_bravery)
 		/* Track best */
 		b_g = g;
 		b_n = n;
+
+		/* Track the globals */
+		b_x = g_x;
+		b_y = g_y;
+		b_slot = g_slot;
 	}
 
 	/* Nothing good */
@@ -8569,6 +8313,11 @@ bool borg_attack(bool boosted_bravery)
 
 	/* Instantiate */
 	borg_simulate = FALSE;
+
+	/* set globals back for this attack */
+	g_x = b_x;
+	g_y = b_y;
+	g_slot = b_slot;
 
 	/* Instantiate */
 	(void)borg_attack_aux(b_g);
@@ -9504,7 +9253,8 @@ static int borg_defend_aux_hero(int p1)
 			borg_spell(REALM_DEATH, 3, 0) ||
 			borg_mindcr(MIND_ADRENALINE, 23) ||
 			borg_racial(RACE_HALF_TROLL) ||
-			borg_racial(RACE_BARBARIAN) || borg_quaff_potion(SV_POTION_HEROISM))
+			borg_racial(RACE_BARBARIAN) ||
+			borg_quaff_potion(SV_POTION_HEROISM))
 			return 1;
 	}
 
@@ -10368,7 +10118,8 @@ static int borg_defend_aux_destruction(void)
 	if (borg_simulate) return (d);
 
 	/* Cast the spell */
-	if (borg_spell(REALM_CHAOS, 1, 6) || borg_use_staff(SV_STAFF_DESTRUCTION))
+	if (borg_spell(REALM_CHAOS, 1, 6) ||
+		borg_use_staff(SV_STAFF_DESTRUCTION))
 	{
 		return (d);
 	}

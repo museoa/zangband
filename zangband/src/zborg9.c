@@ -2161,6 +2161,9 @@ static char borg_inkey_hack(int flush_first)
 			/* Ignore death, and just print a message */
 			borg_note("Player died, continuing with borg_cheat_death");
 			
+			/* If the borg was recalling before he died he isn't now */
+			goal_recalling = 0;
+			
 			/* Cheat death */
 			return ('n');
 		}
@@ -2298,7 +2301,7 @@ static void borg_display_item(list_item *l_ptr)
 	int j = 13;
 
 	/* Clear the screen */
-    clear_region(13 - 2, 1, 23);
+    clear_region(13 - 2, 1, 30);
 
 	/* Describe fully */
 	if (l_ptr->o_name) prtf(j, 2, l_ptr->o_name);
@@ -2336,16 +2339,21 @@ static void borg_display_item(list_item *l_ptr)
 			    "rtsxna..dcedwlatdcedsrekdfddrxss\n"
                 "%v", binary_fmt, l_ptr->kn_flags2);
 
-	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
-					"fe      ehsi  st    iiiiadta  hp\n"
-				    "il   n taihnf ee    ggggcregb vr\n"
-				    "re  nowysdose eld   nnnntalrl ym\n"
-				    "ec  omrcyewta ieirmsrrrriieaeccc\n"
-				    "aa  taauktmatlnpgeihaefcvnpvsuuu\n"
-				    "uu  egirnyoahivaeggoclioaeoasrrr\n"
-				    "rr  litsopdretitsehtierltxrtesss\n"
-	    			"aa  echewestreshtntsdcedeptedeee\n"
-                    "%v", binary_fmt, l_ptr->kn_flags3);
+	prtf(j + 32, 10, "+------------FLAGS3------------+\n"
+				     "SH  NO tehsif itdrmsIGNRadtabchp\n"
+				     "fe  tm yzdhnelneieihaefccrpgluvm\n"
+				     "il  ea cktmativlgggocliotnorercc\n"
+				     "re  lg rnyorhtiesehtierlvxrvssrr\n"
+	    			 "ec  ec swpdtresptntsdcedtpttsess\n"
+                     "%v", binary_fmt, l_ptr->kn_flags3);
+
+	prtf(j + 32, 17, "+------------FLAGS4------------+\n"
+				     "        IMSH p pt reHURT..  CURS\n"
+				     "        ldac alao txaefcld  as h\n"
+				     "        iacomtusupupclioia  utee\n"
+				     "        trilurcscsrlierltr  taaa\n"
+	    		 	 "        ekddtnkwhinodcedek  ottl\n"
+                     "%v", binary_fmt, l_ptr->kn_flags4);
 }
 
 /* Get all sorts of temporary values from the game. */
