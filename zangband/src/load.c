@@ -446,12 +446,8 @@ static void rd_item(object_type *o_ptr)
 #endif /* USE_SCRIPT */
 	}
 
-	/* Mega-Hack -- handle "dungeon objects" later */
-	if ((o_ptr->k_idx >= 445) && (o_ptr->k_idx <= 479)) return;
-
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];
-
 
 	/* For rod-stacking */
 	if (z_older_than(2, 2, 5) && (o_ptr->tval == TV_ROD))
@@ -467,7 +463,7 @@ static void rd_item(object_type *o_ptr)
 	if ((o_ptr->tval == 10) && (sf_version < 15))
 	{
 		/* Hack - get rid of it. */
-		o_ptr->tval = 0;
+		o_ptr->k_idx = 0;
 		return;
 	}
 	
@@ -482,6 +478,11 @@ static void rd_item(object_type *o_ptr)
 		rd_u32b(&o_ptr->kn_flags1);
 		rd_u32b(&o_ptr->kn_flags2);
 		rd_u32b(&o_ptr->kn_flags3);
+	}
+	else
+	{
+		/* Set the cost to something reasonable */
+		o_ptr->cost = k_ptr->cost;
 	}
 
 	/* Repair non "wearable" items */
@@ -513,7 +514,6 @@ static void rd_item(object_type *o_ptr)
 
 	/* Hack -- extract the "broken" flag */
 	if (!o_ptr->pval < 0) o_ptr->ident |= (IDENT_BROKEN);
-
 	
 	if (sf_version < 19)
 	{
@@ -540,6 +540,16 @@ static void rd_item(object_type *o_ptr)
 				{
 					/* Mega-Hack -- set activation */
 					o_ptr->activate = ACT_TELEPORT_1;
+				}
+				
+				/* Change the price */
+				if (!e_ptr->cost)
+				{
+					o_ptr->cost = 0L;
+				}
+				else
+				{
+					o_ptr->cost += e_ptr->cost;
 				}
 				
 				/* Note: the xtra1 value is ignored here. */
@@ -588,7 +598,7 @@ static void rd_item(object_type *o_ptr)
 			else
 			{
 				/* Hack - use the artifact price */
-				o_ptr->cost = k_info[o_ptr->k_idx].cost + a_ptr->cost;
+				o_ptr->cost = a_ptr->cost;
 			}
 		}
 		/* Convert Random artifacts */
@@ -835,7 +845,7 @@ static errr rd_store(int town_number, int store_number)
 	s16b good_buy, bad_buy, insult_cur;
 	s32b store_open;
 	
-	byte num, owner, type;
+	byte num, owner, type = 0;
 
 	/* Read the basic info */
 	rd_s32b(&store_open);
@@ -849,8 +859,11 @@ static errr rd_store(int town_number, int store_number)
 	{
 		rd_u16b(&st_ptr->x);
 		rd_u16b(&st_ptr->y);
+		
+		/* Hack - only listen to 'type' in recent savefiles */
 		rd_byte(&type);
 	}
+	
 	
 	/* Initialise the store */
 	if (build_is_store(type))
