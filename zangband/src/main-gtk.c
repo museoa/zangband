@@ -239,17 +239,6 @@ static errr CheckEvent(bool wait)
 }
 
 
-static int waste_time(gpointer data)
-{
-	/* Hack - ignore data */
-	(void) data;
-	
-	/* Wait so we don't waste all the processor */
-	usleep(5);
-	
-	return(0);
-}
-
 static errr Term_flush_gtk(void)
 {
 	/* XXX */
@@ -407,19 +396,18 @@ static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
 {
 	/* Hack - Ignore parameters */
 	(void) was_clicked;
-	(void) user_data;
+	term_data *td = (term_data*) user_data;
 	
-	if (game_in_progress)
-	{
-		plog("You can't start a new game while you're still playing!");
-	}
-	else
+	if (!game_in_progress)
 	{
 		/* Continue into angband code */
 		game_in_progress = TRUE;
 
 		/* Start a new game */
 		gtk_newgame = TRUE;
+	
+		/* The user can now resize the main window */
+		gtk_window_set_policy(GTK_WINDOW(td->window), FALSE, TRUE, TRUE);
 	}
 }
 
@@ -438,6 +426,7 @@ static void load_font(term_data *td, cptr fontname)
 static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 {
 	gchar *fontname;
+	GdkGeometry win_geom;
 	
 	term_data *td = gtk_object_get_data(GTK_OBJECT(font_selector), "term_data");
 
@@ -461,7 +450,7 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
 					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
 	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
-	td->gc = gdk_gc_new(td->drawing_area->window);
+	/* td->gc = gdk_gc_new(td->drawing_area->window); */
 	
 	/* Clear the pixmap */
 	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
@@ -482,8 +471,27 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	gtk_window_set_default_size(GTK_WINDOW(td->window),
 				 td->cols * td->font_wid, td->rows * td->font_hgt);
 	
+	/* Initialize the geometry information */
+	win_geom.width_inc = td->font_wid;
+	win_geom.height_inc = td->font_hgt;
+	win_geom.min_width = 80 * td->font_wid;
+	win_geom.min_height = 24 * td->font_hgt;
+	win_geom.max_width = 255 * td->font_wid;
+	win_geom.max_height = 255 * td->font_hgt;
+	win_geom.base_width = 1;
+	win_geom.base_height = 1;
+	gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
+				 td->drawing_area, &win_geom,
+				 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
+				| GDK_HINT_BASE_SIZE | GDK_HINT_RESIZE_INC);
+	
 	/* Redraw the term */
 	Term_redraw();
+	
+	/* Copy it to the window */
+	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+	                0, 0, 0, 0,
+					td->cols * td->font_wid, td->rows * td->font_hgt);
 	
 	/* gtk_window_set_policy(GTK_WINDOW(td->window),
 				  FALSE, TRUE, FALSE); */
@@ -545,6 +553,9 @@ static void file_ok_callback(GtkWidget *widget, GtkWidget *file_selector)
 
 	gtk_widget_destroy(file_selector);
 
+	/* Hack - make main window resizeable */
+	gtk_window_set_policy(GTK_WINDOW(data[0].window), FALSE, TRUE, TRUE);
+
 	/* Continue into angband */
 	game_in_progress = TRUE;
 }
@@ -559,11 +570,7 @@ static void open_event_handler(GtkButton *was_clicked, gpointer user_data)
 	(void) was_clicked;
 	(void) user_data;
 	
-	if (game_in_progress)
-	{
-		plog("You can't open a new game while you're still playing!");
-	}
-	else
+	if (!game_in_progress)
 	{
 		/* Prepare the savefile path */
 		path_build(buf, 1024, ANGBAND_DIR_SAVE, "*");
@@ -691,6 +698,31 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
 			return (TRUE);
 		}
 		
+		/* Hack - the cursor keys */
+		case GDK_Up:
+		{
+			Term_keypress('8');
+			return (TRUE);
+		}
+		
+		case GDK_Down:
+		{
+			Term_keypress('2');
+			return (TRUE);
+		}
+		
+		case GDK_Left:
+		{
+			Term_keypress('4');
+			return (TRUE);
+		}
+		
+		case GDK_Right:
+		{
+			Term_keypress('6');
+			return (TRUE);
+		}
+		
 		case GDK_Shift_L:
 		case GDK_Shift_R:
 		case GDK_Control_L:
@@ -735,14 +767,62 @@ static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 				 gpointer user_data)
 {
 	term_data *td = user_data;
+	term_data *old_data = (term_data*)(Term->data); 
+	gint height, width;
 
 	GdkPixmap *pixmap = gtk_object_get_data(GTK_OBJECT(widget), "pixmap");
 
-	if (pixmap)
-	{
-		/* Restrict the area - Don't forget to reset it! XXX */
-		/* gdk_gc_set_clip_rectangle(td->gc, &(event->area)); */
+	gdk_window_get_size(widget->window, &width, &height );
+	
+	/* Determine "proper" number of rows/cols */
+	width = (width + 1) / td->font_wid;
+	height = (height + 1) / td->font_hgt;
 
+	/* Check height and width - and then resize */
+	if ((width != td->cols) || (height != td->rows))
+	{
+		/* Delete the old pixmap */
+		gdk_pixmap_unref(td->pixmap);
+	
+		/* Save correct size */
+		td->cols = width;
+		td->rows = height;
+		
+		if (td == &data[0])
+		{
+			/* Hack the main window must be at least 80x24 */
+			if (td->cols < 80) td->cols = 80;
+			if (td->rows < 24) td->rows = 24;
+		}
+		
+		/* Create a pixmap as buffer for screenupdates */
+		td->pixmap = gdk_pixmap_new(td->drawing_area->window,
+						 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
+		gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
+	
+		/* Clear the pixmap */
+		/* gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
+			                0, 0,
+		    	            td->cols * td->font_wid, td->rows * td->font_hgt); */
+		
+		/* Copy the data to the window */
+		gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+	                0, 0, 0, 0,
+					td->cols * td->font_wid, td->rows * td->font_hgt);
+		
+		/* Hack -- activate the Term */
+		Term_activate(&td->t);
+		
+		/* Resize the Term (if needed) */
+		(void)Term_resize(td->cols, td->rows);
+		
+		/* Hack -- Activate the old term */
+		Term_activate(&old_data->t);
+	}
+
+	/* Just redraw the exposed part */
+	else if (pixmap)
+	{
 		g_assert(widget->window != 0);
 
 		gdk_draw_pixmap(widget->window, td->gc, pixmap,
@@ -797,6 +877,8 @@ static void init_gtk_window(term_data *td, int i)
 	
 	bool main_win = (i == 0) ? TRUE : FALSE;
 	
+	GdkGeometry win_geom;
+	
 	GtkWidget *menu_bar, *file_item, *file_menu, *box;
 	GtkWidget *seperator_item, *file_exit_item, *file_new_item, *file_open_item;
 	GtkWidget *options_item, *options_menu, *options_font_item;
@@ -830,14 +912,27 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
 		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
 				 td->cols * td->font_wid, td->rows * td->font_hgt);
-		gtk_window_set_policy(GTK_WINDOW(td->window), FALSE, TRUE, TRUE);
+		gtk_window_set_policy(GTK_WINDOW(td->window), FALSE, FALSE, FALSE);
 		
+		/* Initialize the geometry information */
+		win_geom.width_inc = td->font_wid;
+		win_geom.height_inc = td->font_hgt;
+		win_geom.min_width = 80 * td->font_wid;
+		win_geom.min_height = 24 * td->font_hgt;
+		win_geom.max_width = 255 * td->font_wid;
+		win_geom.max_height = 255 * td->font_hgt;
+		win_geom.base_width = 1;
+		win_geom.base_height = 1;
+		gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
+					 td->drawing_area, &win_geom,
+					 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
+					| GDK_HINT_BASE_SIZE | GDK_HINT_RESIZE_INC);
 		
 		/* Register callbacks */
 		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate",
 					 quit_event_handler, NULL);
 		gtk_signal_connect(GTK_OBJECT(file_new_item), "activate",
-					 new_event_handler, NULL);
+					 new_event_handler, td);
 		gtk_signal_connect(GTK_OBJECT(file_open_item), "activate",
 					 open_event_handler, NULL);
 		gtk_signal_connect(GTK_OBJECT(options_font_item), "activate",
@@ -876,6 +971,16 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
 				 td->cols * td->font_wid, td->rows * td->font_hgt);
 		gtk_window_set_policy(GTK_WINDOW(td->window), TRUE, TRUE, TRUE);
+		
+		/* Initialize the geometry information */
+		win_geom.width_inc = td->font_wid;
+		win_geom.height_inc = td->font_hgt;
+		win_geom.min_width = 1 * td->font_wid;
+		win_geom.min_height = 1 * td->font_hgt;
+		win_geom.max_width = 255 * td->font_wid;
+		win_geom.max_height = 255 * td->font_hgt;
+		gtk_window_set_geometry_hints(GTK_WINDOW(td->window), NULL, &win_geom,
+					GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE | GDK_HINT_RESIZE_INC);
 		
 		/* Register callbacks */
 		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
@@ -977,8 +1082,6 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	/* Prompt the user */
 	prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 17);
 	Term_fresh();
-	
-	gtk_idle_add(waste_time, NULL);
 	
 	while (!game_in_progress)
 	{
