@@ -714,22 +714,10 @@ static void borg_remove_kill(int who)
 {
 	borg_kill *kill = &borg_kills[who];
 	
-	/* map_block *mb_ptr; */
-	
 	borg_note(format("# Removing monster entry. (%d)", who));
 
 	/* Paranoia -- Already wiped */
 	if (!kill->r_idx) return;
-
-#if 0	
-	if (map_in_bounds(kill->x, kill->y))
-	{
-		mb_ptr = map_loc(kill->x, kill->y);
-		
-		/* Clear kill */
-		mb_ptr->kill = 0;
-	}
-#endif /* 0 */
 
 	/* Note */
 	borg_note(format("# Forgetting a monster '%s' at (%d,%d)",
@@ -1109,6 +1097,13 @@ static bool remove_bad_kills(u16b who)
 	
 	/* Monster is out of bounds */
 	if (!map_in_bounds(ox, oy))
+	{
+		borg_delete_kill(who);
+		return (TRUE);
+	}
+	
+	/* Is the monster underneith us? */
+	if ((c_x == ox) && (c_y == oy))
 	{
 		borg_delete_kill(who);
 		return (TRUE);
