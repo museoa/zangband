@@ -297,10 +297,13 @@ void place_trees(int x, int y)
 	{
 		for (j = y - 3; j < y + 4; j++)
 		{
+			/* Paranoia */
+			if (!in_bounds(i, j)) continue;
+			
 			c_ptr = cave_p(i, j);
 
 			/* Want square to be in the circle and accessable. */
-			if (in_bounds(i, j) && (distance(i, j, x, y) < 4) && !cave_perma_grid(c_ptr))
+			if ((distance(i, j, x, y) < 4) && !cave_perma_grid(c_ptr))
 			{
 				/* Adding to grids with fields is problematical */
 				delete_field_location(c_ptr);
