@@ -740,6 +740,8 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
  */
 void Term_erase_map(void)
 {
+	if (!map_init) return;
+	
 	/* Notify erasure of the map */
 	if (map_erase_hook) map_erase_hook();
 	
