@@ -50,20 +50,23 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 		/* Paranoia -- Skip dead monsters */
 		if (!t_ptr->r_idx) continue;
 
-		/* Hack -- only fight away from player */
-		if (p_ptr->pet_follow_distance < 0)
+		if (is_pet(m_ptr))
 		{
-			/* No fighting near player */
-			if (t_ptr->cdis <= (0 - p_ptr->pet_follow_distance))
+			/* Hack -- only fight away from player */
+			if (p_ptr->pet_follow_distance < 0)
+			{
+				/* No fighting near player */
+				if (t_ptr->cdis <= (0 - p_ptr->pet_follow_distance))
+				{
+					continue;
+				}
+			}
+			/* Hack -- no fighting away from player */
+			else if ((m_ptr->cdis < t_ptr->cdis) &&
+						(t_ptr->cdis > p_ptr->pet_follow_distance))
 			{
 				continue;
 			}
-		}
-		/* Hack -- no fighting away from player */
-		else if ((m_ptr->cdis < t_ptr->cdis) &&
-					(t_ptr->cdis > p_ptr->pet_follow_distance))
-		{
-			continue;
 		}
 
 		/* Monster must be 'an enemy' */
@@ -2117,7 +2120,7 @@ static void process_monster(int m_idx)
 
 	/* 50% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-	         (rand_int(100) < 50))
+				(rand_int(100) < 50))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_50);
@@ -2128,13 +2131,23 @@ static void process_monster(int m_idx)
 
 	/* 25% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_25) &&
-	         (rand_int(100) < 25))
+				(rand_int(100) < 25))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= RF1_RAND_25;
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+	}
+
+	/* Can't reach player - find something else to hit */
+	else if ((r_ptr->flags1 & RF1_NEVER_MOVE) && (m_ptr->cdis > 1))
+	{
+		/* Try four "random" directions */
+		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+
+		/* Look for an enemy */
+		get_enemy_dir(m_ptr, mm);
 	}
 
 	/* Pets will follow the player */
@@ -2311,7 +2324,7 @@ static void process_monster(int m_idx)
 
 			/* Creature can open doors. */
 			if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
-			    (!is_pet(m_ptr) || p_ptr->pet_open_doors))
+				 (!is_pet(m_ptr) || p_ptr->pet_open_doors))
 			{
 				/* Closed doors and secret doors */
 				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
