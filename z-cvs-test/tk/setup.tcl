@@ -34,41 +34,8 @@ proc NSSetup::InitModule {} {
 	NSModule::LoadIfNeeded NSTabbedFrame
 	NSModule::LoadIfNeeded NSTitleFrame
 
-	# Create list of installed variants
-	set glob [glob -nocomplain -types d [CPath variant *]]
-	set glob [lsort -dictionary $glob]
-	set Priv(variant,name) {}
-	set Priv(variant,shlib) {}
-	foreach path $glob {
-		set shlib [file join $path angband[info sharedlibextension]]
-		if {[file exists $shlib]} {
-			lappend Priv(variant,name) [file tail $path]
-			lappend Priv(variant,shlib) $shlib
-		}
-	}
-
-	set Priv(variant,sel) -1
-	set path [CPathTk config variant]
-	if {[file exists $path]} {
-		set chan [open $path]
-		set string [string trim [gets $chan]]
-		close $chan
-		set i [lsearch -exact $Priv(variant,name) $string]
-		if {$i == -1} {
-			set Priv(variant,always) 0
-		} else {
-			set Priv(variant,always) 1
-			set Priv(variant,sel) $i
-		}
-	} else {
-		set Priv(variant,always) 0
-	}
-
 	set Priv(page) {}
 	lappend Priv(page) Icon
-	if {[llength $Priv(variant,name)]} {
-		lappend Priv(page) Variant
-	}
 
 	NSObject::New NSSetup
 
@@ -316,17 +283,6 @@ proc NSSetup::ModalLoop {oop} {
 	if {[string equal $Result ok]} {
 
 		NSConfig::SetPrefix $Priv(icon,prefix)
-
-		set path [CPathTk config variant]
-		if {$Priv(variant,always)} {
-			set row [$Priv(variant,listbox) curselection]
-			set name [lindex $Priv(variant,name) $row]
-			set chan [open $path w]
-			puts $chan $name
-			close $chan
-		} elseif {[file exists $path]} {
-			file delete $path
-		}
 	}
 
 	destroy $win
@@ -638,65 +594,6 @@ proc NSSetup::PreviewMotion {oop x y} {
 	}
 	if {$dy} {
 		set Priv(preview,y) $y
-	}
-
-	return
-}
-
-
-# NSSetup::SetPage_Variant --
-#
-#	Description.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSSetup::SetPage_Variant {oop} {
-
-	variable Priv
-
-	set content [Info $oop content].variant
-
-	if {[Info $oop createOnly]} {
-
-		frame $content \
-			-borderwidth 0
-
-		set frame $content.frameList
-		frame $frame -borderwidth 1 -relief sunken
-		listbox $frame.listbox -width 35 -height 6 \
-			-yscrollcommand "$frame.yscroll set" \
-			-listvariable ::NSSetup::Priv(variant,name) \
-			-borderwidth 0 -highlightthickness 0 -background White \
-			-exportselection no
-		scrollbar $frame.yscroll -orient vertical -command "$frame.listbox yview"
-		pack $frame.listbox $frame.yscroll -side left -fill y
-	
-		checkbutton $content.check -text [mc variant-always] \
-			-variable ::NSSetup::Priv(variant,always)
-	
-		pack $frame $content.check -side top
-	
-		set Priv(variant,listbox) $frame.listbox
-
-		pack $content -expand yes -fill both
-
-		if {$Priv(variant,sel) != -1} {
-			$frame.listbox selection set $Priv(variant,sel)
-		}
-
-		set Priv(variant,seen) 0
-	
-		return
-	}
-
-	pack $content -expand yes -fill both
-
-	if {!$Priv(variant,seen)} {
-		set Priv(variant,seen) 1
 	}
 
 	return
