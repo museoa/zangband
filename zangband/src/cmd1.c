@@ -1539,14 +1539,9 @@ void py_attack(int y, int x)
 	bonus = p_ptr->to_h + o_ptr->to_h;
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
-	msg_format("Total number of blows %d", blows);
-
-
 	/* Attack once for each legal blow */
 	while (num++ < blows)
 	{
-		
-		msg_format("num blows %d", num);
 		/* Test for hit */
 		if (test_hit_combat(chance+ sleeping_bonus, r_ptr->ac+ terrain_bonus, m_ptr->ml))
 		{
