@@ -558,7 +558,8 @@ static bool create_city(int x, int y, int town_num)
 	/* Hack - fix this XXX XXX */
 
 	/* int pop = wild[y][x].trans.pop_map; */
-    int pop = (wild[y][x].trans.pop_map / rand_range(4, 16)) + 128;
+    int pop = ((wild[y][x].trans.pop_map + wild[y][x].trans.law_map) /
+               rand_range(4, 32)) + 128;
 	int law = wild[y][x].trans.law_map;
 	int magic;
 	int build_num = 0, build_tot;

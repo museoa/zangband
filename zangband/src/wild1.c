@@ -2439,7 +2439,7 @@ static void create_lakes(void)
 
 
 /* Value used for sea-level calculation */
-static byte *wild_temp_dist;
+static u32b *wild_temp_dist;
 
 
 /*
@@ -2452,7 +2452,7 @@ static void store_hgtmap(int x, int y, int val)
 	if ((val / 16) >= max_wild) val = (max_wild * 16) - 1;
 
 	/* Save distribution information */
-	wild_temp_dist[val / 16] = 1;
+	wild_temp_dist[val / 16]++;
 
 	/* store the value in height-map format */
 	wild[y][x].gen.hgt_map = val;
@@ -2635,7 +2635,7 @@ static void store_popmap(int x, int y, int val, u16b sea)
 	if ((val / 16) >= max_wild) val = (max_wild * 16) - 1;
 
 	/* Save distribution information (only if not below sea level) */
-	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val / 16] = 1;
+	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val / 16]++;
 
 	/* store the value in height-map format */
 	wild[y][x].gen.pop_map = val;
@@ -2816,7 +2816,7 @@ static void store_lawmap(int x, int y, int val, u16b sea)
 	if ((val / 16) >= max_wild) val = (max_wild * 16) - 1;
 
 	/* Save distribution information (only if not below sea level) */
-	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val / 16] = 1;
+	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val / 16]++;
 
 	/* store the value in height-map format */
 	wild[y][x].gen.law_map = val;
@@ -3164,22 +3164,23 @@ static void create_wild_info(int *bestx, int *besty)
 	int x, y;
 
 	byte hgt, pop, law;
-	u16b hgt_min, hgt_max, pop_min, pop_max, law_min, law_max;
-	byte sea_level;
+	u16b hgt_min, hgt_max, pop_min, pop_max;
+    byte sea_level;
+    int t;
 
-	long hgt_scale, pop_scale, law_scale;
+	long hgt_scale, pop_scale;
 
 	wild_type *w_ptr;
 
 	/* Huge wilderness */
 	max_wild = WILD_SIZE;
-	C_MAKE(wild_temp_dist, WILD_SIZE, byte);
+	C_MAKE(wild_temp_dist, WILD_SIZE, u32b);
 
 	/* Create "height" information of wilderness */
 	create_hgt_map();
 
 	/* Work out extremes of height so it can be scaled. */
-	hgt_min = hgt_max = pop_min = pop_max = law_min = law_max = 0;
+	hgt_min = hgt_max = pop_min = pop_max = 0;
 
 	/* Minimum height */
 	for (i = 0; i < max_wild; i++)
@@ -3244,33 +3245,14 @@ static void create_wild_info(int *bestx, int *besty)
 
 	create_law_map(sea_level * 16 + hgt_min);
 
-	/* Work out extremes of "lawfulness" so it can be scaled. */
+    /* Work out extremes of "lawfulness" so it can be scaled. */
 
-	/* Minimum lawfulness */
-	for (i = 0; i < max_wild; i++)
-	{
-		if (wild_temp_dist[i] != 0)
-		{
-			law_min = i;
-			break;
-		}
-	}
-
-	/* Maximum lawfulness */
-	for (i = max_wild - 1; i >= 0; i--)
-	{
-		if (wild_temp_dist[i] != 0)
-		{
-			law_max = i;
-			break;
-		}
-	}
-
-	/* Lawfulness scale factor */
-	law_scale = (law_max - law_min);
-
-	/* Rescale minimum. */
-	law_min *= 16;
+    /* Calculate lawfulness map */
+    for (i = t = 0; i < max_wild; i++)
+    {
+        t += wild_temp_dist[i];
+        wild_temp_dist[i] = t / (max_wild * max_wild / 256);
+    }
 
 	/* Best place in wilderness for starting town */
 	x = -1;
@@ -3290,8 +3272,8 @@ static void create_wild_info(int *bestx, int *besty)
 			 */
 
 			hgt = (byte)((w_ptr->gen.hgt_map - hgt_min) * 16 / hgt_scale);
-			pop = (byte)((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
-			law = (byte)((w_ptr->gen.law_map - law_min) * 16 / law_scale);
+            pop = (byte)((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
+            law = wild_temp_dist[w_ptr->gen.law_map / 16];
 
 			/*
 			 * Go to transition data structure
