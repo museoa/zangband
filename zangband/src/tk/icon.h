@@ -196,7 +196,6 @@ extern t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
  */
 typedef struct t_display {
 	bool blank; /* Totally uninteresting grid */
-	TintPtr tint; /* Tint to apply, or NULL */
 	IconSpec fg; /* Foreground */
 	IconSpec bg[ICON_LAYER_MAX]; /* Background (when typeFG is masked) */
 } t_display;
@@ -321,9 +320,5 @@ extern char *assign_print(char *buf, t_assign *assignPtr);
 extern char *assign_print2(char *buf, int assignType, int assignIndex);
 extern char *assign_print_object(char *buf, object_type *o_ptr);
 extern void get_object_assign(t_assign *assignPtr, object_type *o_ptr);
-
-extern int objcmd_vault _ANSI_ARGS_((ClientData clientData,
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-extern int vault_icon(int y, int x, bool test_feat, t_assign assign[ICON_LAYER_MAX]);
 
 #endif /* _INCLUDE_ICON_H_ */

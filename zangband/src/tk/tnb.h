@@ -289,7 +289,7 @@ extern unsigned char g_colormap2palette[256];
 
 extern int gamma_correct(int value, double gamma);
 
-typedef unsigned char TintValue, TintTable[256], *TintPtr;
+typedef unsigned char TintValue, TintTable[256];
 int Palette_Init(Tcl_Interp *interp, char *fileName);
 #ifdef PLATFORM_WIN
 /* HPALETTE */ void *Palette_GetHPal(void);
@@ -298,7 +298,6 @@ unsigned char *Palette_GetRGB(void);
 void Palette_ResetHash(void);
 int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
 void Palette_GammaTable(double gamma, TintTable table);
-void Palette_TintTable(int tint, int opacity, TintTable table);
 
 int Colormap_Init(Tcl_Interp *interp);
 unsigned char *Colormap_GetRGB(void);

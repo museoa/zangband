@@ -141,7 +141,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 	/* */
 	displayPtr->blank = FALSE;
-	displayPtr->tint = NULL;
 
 	if (m_idx || o_ptr)
 	{

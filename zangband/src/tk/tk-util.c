@@ -558,15 +558,6 @@ int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b)
 	return IndexedColor_RGB2Index(&g_palette, r, g, b);
 }
 
-/*
- * Calculate the 256 palette indices that the palette index 'tint'
- * looks like at the given opacity against each of the standard
- * palette colors.
- */
-void Palette_TintTable(int tint, int opacity, TintTable table)
-{
-	IndexedColor_TintTable(&g_palette, tint, opacity, table);
-}
 
 /* 
  * Writes 256 palette indices into the given tint table. Each
