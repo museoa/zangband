@@ -2150,7 +2150,9 @@ errr message_color_define(u16b type, byte color)
  */
 void message_add(cptr str, u16b type)
 {
-	int n, k, i, x, o;
+	int m, n, k, i, x, o;
+
+	char w[1024];
 
 	cptr s;
 	cptr t;
@@ -2177,6 +2179,66 @@ void message_add(cptr str, u16b type)
 
 	/* Limit number of messages to check */
 	if (k > 32) k = 32;
+
+	/* Check previous message */
+	for(i = message__next; m; m--)
+	{
+		int j = 1;
+
+		char buf[1024];
+		char *t;
+
+		cptr old;
+
+		/* Back up, wrap if needed */
+		if (i-- == 0) i = MESSAGE_MAX - 1;
+
+		/* Index */
+		o = message__ptr[i];
+
+		/* Get the old string */
+		old = &message__buf[o];
+
+		/* Skip small messages */
+		if (!old) continue;
+
+		strcpy(buf, old);
+
+		/* Find multiple */
+		for (t = buf; *t && (*t != '<'); t++);
+
+		if (*t)
+		{
+			/* Message is too small */
+			if (strlen(buf) < 6) break;
+
+			/* Drop the space */
+			*(t - 1) = '\0';
+
+			/* Get multiplier */
+			j = atoi(++t);
+		}
+
+		/* Limit the multiplier to 1000 */
+		if (buf && streq(buf, str) && (j < 1000))
+		{
+			j++;
+
+			/* Overwrite */
+			message__next = i;
+
+			str = w;
+
+			/* Write it out */
+			sprintf(w, "%s <%dx>", buf, j);
+
+			/* Message length */
+			n = strlen(str);
+		}
+
+		/* Done */
+		break;
+	}
 
 	/* Start just after the most recent message */
 	i = message__next;
@@ -2206,11 +2268,8 @@ void message_add(cptr str, u16b type)
 		/* Get the old string */
 		old = &message__buf[o];
 
-		/* Inline 'streq(str, old)' */
-		for (s = str, t = old; (*s == *t) && *s; ++s, ++t) /* loop */ ;
-
-		/* Continue if not equal */
-		if (*s) continue;
+		/* Compare */
+		if (!streq(old, str)) continue;
 
 		/* Get the next available message index */
 		x = message__next;
