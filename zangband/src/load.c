@@ -917,11 +917,6 @@ static void rd_store(int town_num, int store_num)
             rd_item(q_ptr);
 
             /* Ignore the item */
-            /*
-             * Doing the obvious thing by trying to add the item to the
-             * shop's stock won't work, because objects are loaded after
-             * stores are. This means the contents of the home are lost.
-             */
 		}
 	}
 	else
@@ -1986,7 +1981,7 @@ static void load_wild_data(void)
 }
 
 /* The version when the format of the wilderness last changed */
-#define VERSION_CHANGE_WILD		28
+#define VERSION_CHANGE_WILD		38
 
 
 /*
