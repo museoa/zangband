@@ -631,7 +631,7 @@ void draw_city(u16b town_num)
 	
 	/* Generate plasma factal */
 	clear_temp_block();
-	set_temp_corner_val(WILD_BLOCK_SIZE * 32);
+	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 	set_temp_mid(WILD_BLOCK_SIZE * town[town_num].pop);
 	frac_block();
 	
@@ -640,7 +640,7 @@ void draw_city(u16b town_num)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
-			if (temp_block[j][i] < WILD_BLOCK_SIZE * 64)
+			if (temp_block[j][i] < WILD_BLOCK_SIZE * 128)
 			{
 				/* Outside the city */
 				temp_block[j][i] = 0;

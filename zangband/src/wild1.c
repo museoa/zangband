@@ -42,9 +42,9 @@ static bool create_city(int x, int y, int town_num)
 {
 	int i, j, k, l;
 	
-	int pop = wild[y][x].trans.pop_map / 2;
-	int law = wild[y][x].trans.law_map / 2;
-	int magic;
+	int pop = wild[y][x].trans.pop_map;
+	int law = wild[y][x].trans.law_map;
+	int magic, temp;
 	int count = 0;	
 	int build_num = 0;
 	u16b building;
@@ -81,7 +81,7 @@ static bool create_city(int x, int y, int town_num)
 	
 	/* Generate plasma factal */
 	clear_temp_block();
-	set_temp_corner_val(WILD_BLOCK_SIZE * 32);
+	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 	set_temp_mid(WILD_BLOCK_SIZE * pop);
 	frac_block();
 	
@@ -90,7 +90,17 @@ static bool create_city(int x, int y, int town_num)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE + 1; j++)
 		{
-			town_block[j][i] = temp_block[j][i];
+			temp = temp_block[j][i];
+			
+			if (temp < WILD_BLOCK_SIZE * 128)
+			{
+				/* Outside the town */
+				town_block[j][i] = 0;
+			}
+			else
+			{
+				town_block[j][i] = temp;
+			}
 		}
 	}
 	
@@ -98,23 +108,10 @@ static bool create_city(int x, int y, int town_num)
 	 * Generate second fractal
 	 */
 	clear_temp_block();
-	set_temp_corner_val(WILD_BLOCK_SIZE * 32);
+	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 	set_temp_mid(WILD_BLOCK_SIZE * law);
 	frac_block();
-	
-	/* Allocate interior squares */
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			if (town_block[j][i] < WILD_BLOCK_SIZE * 64)
-			{
-				/* Outside the city */
-				town_block[j][i] = 0;
-			}
-		}
-	}
-	
+		
 	/* Find walls */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -155,7 +152,7 @@ static bool create_city(int x, int y, int town_num)
 	
 		
 	/* Too few squares??? */
-	if (count < 5) return (FALSE);
+	if (count < 3) return (FALSE);
 
 	/* Rescan walls to avoid "islands" */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -201,8 +198,7 @@ static bool create_city(int x, int y, int town_num)
 		{
 			if (town_block[j][i])
 			{
-				w_ptr =	&wild[town[town_count].y + j / 2][town[town_count].x
-					+ i / 2].trans;
+				w_ptr =	&wild[y + j / 2][x + i / 2].trans;
 
 				/*
 				 * Add city to wilderness
@@ -226,7 +222,7 @@ static bool create_city(int x, int y, int town_num)
 		j = randint0(WILD_BLOCK_SIZE);
 		
 		/* Find some room for a building */
-		while(!town_block[j][i])
+		while(town_block[j][i] <= 1)
 		{
 			/* Scan across town_block */
 			i++;
@@ -264,7 +260,7 @@ static bool create_city(int x, int y, int town_num)
 		/* Decrement free space in city */
 		count--;
 		
-		temp_block[j][i] = 0;
+		town_block[j][i] = 0;
 	}
 	
 	/*
