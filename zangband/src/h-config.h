@@ -197,6 +197,13 @@
 
 
 /*
+ * Borland seems to use __int64 as well
+ */
+#ifdef __BORLANDC__
+# define MSDEV
+#endif /* __BORLANDC__ */
+
+/*
  * OPTION: set "SET_UID" if the machine is a "multi-user" machine.
  * This option is used to verify the use of "uids" and "gids" for
  * various "Unix" calls, and of "pids" for getting a random seed,
