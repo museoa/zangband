@@ -4395,6 +4395,22 @@ static void build_type17(int bx0, int by0)
 	y2 = yval + (ysize - 1) / 2;
 	x2 = xval + (xsize - 1) / 2;
 	
+	/* Paranoia - Room is too small, just make a rectangle */
+	if (xsize * ysize < 15)
+	{
+		/* Generate new room */
+		generate_room(x1, y1, x2, y2, light);
+
+		/* Generate inner floors */
+		generate_fill(x1 + 1, y1 + 1, x2 - 1, y2 - 1, dun->feat_floor);
+	
+		/* Generate outer walls */
+		generate_draw(x1, y1, x2, y2, FEAT_WALL_OUTER);
+	
+		/* Done */
+		return;
+	}
+	
 	/* Determine number of shapes to use */
 	num = rand_range(2, 4);
 
