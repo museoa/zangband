@@ -99,6 +99,8 @@ function classPackage:preamble ()
  output('/* function to register type */')
  output('static void toluaI_reg_types (lua_State* tolua_S)')
  output('{')
+-- Hack - prevent compiler warnings when no types.
+ output('(void) tolua_S;	/* Hack - prevent compiler warnings */')
  foreach(_usertype,function(n,v) output(' tolua_usertype(tolua_S,"',v,'");') end)
  output('}')
  output('\n')
