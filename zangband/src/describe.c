@@ -1,7 +1,7 @@
 /* File: describe.c */
 
 /* Purpose: object recall */
-;
+
 /*
  * Copyright (c) 1997-2001 Tim Baker
  *
@@ -128,7 +128,7 @@ long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store)
 	{
 		if (f3 & TR3_PERMA_CURSE)		vp[vn++] = "is permanently cursed";
 		else if (f3 & TR3_HEAVY_CURSE) 	vp[vn++] = "is heavily cursed";
-		else if (known || (o_ptr->ident & (IDENT_SENSE))) vp[vn++] = "is cursed";
+		else if (known || (o_ptr->info & OB_SENSE)) vp[vn++] = "is cursed";
 	}
 	
 	if (f3 & TR3_DRAIN_EXP)			vp[vn++] = "drains experience";
@@ -391,7 +391,7 @@ long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store)
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE)
 	{
-		if (artifact_p(o_ptr))
+		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
 			roll_off("It provides light (radius 3) forever.", k);
 		}
@@ -438,14 +438,14 @@ long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store)
 	}
 	
 	/* Permanently identified? */
-	if (o_ptr->ident & IDENT_MENTAL)
+	if (o_ptr->info & OB_MENTAL)
 	{
 		roll_off("It is permanently identified.", k);
 		k = TRUE;
 	}
 
 	/* Store bought */
-	if (!in_store && (o_ptr->ident & IDENT_STOREB))
+	if (!in_store && (o_ptr->info & OB_STOREB))
 	{
 		roll_off("It was purchased.", k);
 		k = TRUE;
@@ -456,58 +456,14 @@ long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store)
 
 
 /*
- * Hack -- Create a "forged" artifact
- * Taken from wizard1.c.
- */
-bool make_fake_artifact(object_type *o_ptr, int name1)
-{
-	int i;
-
-	artifact_type *a_ptr = &a_info[name1];
-
-
-	/* Ignore "empty" artifacts */
-	if (!a_ptr->name) return FALSE;
-
-	/* Acquire the "kind" index */
-	i = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-	/* Oops */
-	if (!i) return (FALSE);
-
-	/* Create the artifact */
-	object_prep(o_ptr, i);
-
-	/* Save the name */
-	o_ptr->name1 = name1;
-
-	/* Extract the fields */
-	o_ptr->pval = a_ptr->pval;
-	o_ptr->ac = a_ptr->ac;
-	o_ptr->dd = a_ptr->dd;
-	o_ptr->ds = a_ptr->ds;
-	o_ptr->to_a = a_ptr->to_a;
-	o_ptr->to_h = a_ptr->to_h;
-	o_ptr->to_d = a_ptr->to_d;
-	o_ptr->weight = a_ptr->weight;
-
-	/* Hack -- acquire "cursed" flag */
-	if (a_ptr->flags3 & TR3_CURSED)
-		o_ptr->ident |= (IDENT_CURSED);
-
-	/* Success */
-	return (TRUE);
-}
-
-/*
  * Set a field of a Tcl array variable
  */
-int SetArrayValueChar(char *varName, char *field, char value)
+int SetArrayValueChar(cptr varName, cptr field, char value)
 {
 	char string[20];
 
 	(void) sprintf(string, "%c", value);
-	if (Tcl_SetVar2(g_interp, varName, field, string, TCL_LEAVE_ERR_MSG)
+	if (Tcl_SetVar2(g_interp, (char *) varName, (char *) field, string, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
 		return TCL_ERROR;
@@ -518,12 +474,12 @@ int SetArrayValueChar(char *varName, char *field, char value)
 /*
  * Set a field of a Tcl array variable
  */
-int SetArrayValueLong(char *varName, char *field, long value)
+int SetArrayValueLong(cptr varName, cptr field, long value)
 {
 	char string[20];
 
 	(void) sprintf(string, "%ld", value);
-	if (Tcl_SetVar2(g_interp, varName, field, string, TCL_LEAVE_ERR_MSG)
+	if (Tcl_SetVar2(g_interp, (char *) varName, (char *) field, string, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
 		return TCL_ERROR;
@@ -534,9 +490,9 @@ int SetArrayValueLong(char *varName, char *field, long value)
 /*
  * Set a field of a Tcl array variable
  */
-int SetArrayValueString(char *varName, char *field, char *value)
+int SetArrayValueString(cptr varName, cptr field, cptr value)
 {
-	if (Tcl_SetVar2(g_interp, varName, field, value, TCL_LEAVE_ERR_MSG)
+	if (Tcl_SetVar2(g_interp, (char *) varName, (char *) field, (char *) value, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
 		return TCL_ERROR;
@@ -547,7 +503,7 @@ int SetArrayValueString(char *varName, char *field, char *value)
 /*
  * Dump object info into a Tcl array variable
  */
-int DumpObjectInfo(object_type *o_ptr, char *varName)
+static int DumpObjectInfo(object_type *o_ptr, char *varName)
 {
 	int known;
 	u32b f1, f2, f3;
@@ -572,7 +528,7 @@ int DumpObjectInfo(object_type *o_ptr, char *varName)
 		{
 			return TCL_ERROR;
 		}
-		if (SetArrayValueLong(varName, "artifact", artifact_p(o_ptr) ? 1 : 0)
+		if (SetArrayValueLong(varName, "artifact", (o_ptr->flags3 & TR3_INSTA_ART) ? 1 : 0)
 			!= TCL_OK)
 		{
 			return TCL_ERROR;
@@ -632,12 +588,12 @@ int DumpObjectInfo(object_type *o_ptr, char *varName)
 		return TCL_ERROR;
 	}
 
-	note = "";
+	note = (char *) "";
 	if (o_ptr->inscription)
 	{
 		note = (char *) quark_str(o_ptr->inscription);
 	}
-	if (ExtToUtf_SetArrayValueString(varName, "note", note) != TCL_OK)
+	if (ExtToUtf_SetArrayValueString(varName, (char *) "note", note) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -650,8 +606,7 @@ int DumpObjectInfo(object_type *o_ptr, char *varName)
  * with the "angband inventory" command. The main difference is it
  * returns more info.
  */
-int
-objcmd_inveninfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+int objcmd_inveninfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 /*	int objC = objc - infoCmd->depth; */
@@ -660,6 +615,9 @@ objcmd_inveninfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int i_idx;
 	char *varName;
 	object_type *o_ptr;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
     if (Tcl_GetIntFromObj(interp, objV[1], &i_idx) != TCL_OK)
     {
@@ -672,7 +630,7 @@ objcmd_inveninfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	varName = Tcl_GetStringFromObj(objV[2], NULL);
 
 	/* Grab the item */
-	o_ptr = &inventory[i_idx];
+	o_ptr = get_list_item(p_ptr->inventory, i_idx);
 
 	return DumpObjectInfo(o_ptr, varName);
 }
@@ -700,13 +658,16 @@ objcmd_equipinfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int i_idx;
 	char *varName;
 	object_type *o_ptr;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Get a numerical index or slot name */
     if (Tcl_GetIntFromObj(interp, objV[1], &i_idx) != TCL_OK)
     {
 		Tcl_ResetResult(interp);
 		if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_slot,
-			"slot", 0, &i_idx) != TCL_OK)
+			(char *) "slot", 0, &i_idx) != TCL_OK)
 		{
 			return TCL_ERROR;
 		}
@@ -714,13 +675,11 @@ objcmd_equipinfo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
 	/*** Verify index, existing object ***/
 
-	i_idx += INVEN_WIELD;
-
 	/* Get the array variable name to dump results in */
 	varName = Tcl_GetStringFromObj(objV[2], NULL);
 
 	/* Grab the item */
-	o_ptr = &inventory[i_idx];
+	o_ptr = &p_ptr->equipment[i_idx];
 
 	return DumpObjectInfo(o_ptr, varName);
 }
@@ -744,7 +703,7 @@ Tcl_Obj *dump_object_flags(Tcl_Interp *interp, object_type *o_ptr)
 	object_flags_known(o_ptr, &f[1], &f[2], &f[3]);
 
 	/* Hack -- Artifact lights give permanent light */
-	if (artifact_p(o_ptr) && (o_ptr->tval == TV_LITE))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->tval == TV_LITE))
 	{
 		f[3] |= TR3_LITE;
 	}
@@ -755,7 +714,7 @@ Tcl_Obj *dump_object_flags(Tcl_Interp *interp, object_type *o_ptr)
 	 * known/sensed then I add the "cursed" flag.
 	 */
 	if (cursed_p(o_ptr) && (object_known_p(o_ptr) ||
-		(o_ptr->ident & (IDENT_SENSE))))
+		(o_ptr->info & (OB_SENSE))))
 	{
 		f[3] |= TR3_CURSED;
 	}

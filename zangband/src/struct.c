@@ -754,8 +754,8 @@ int struct_info_artifact_type(Tcl_Interp *interp, StructType *typePtr,
 	int objc, Tcl_Obj *CONST objv[], int objOffset, artifact_type *a_ptr,
 	int a_idx)
 {
-	static char *infoOption[] = {"exists", "icon", "k_idx", "location",
-		"memory", "name", "object_desc", NULL};
+	static char *infoOption[] = {"exists", "icon", "k_idx",
+	 "name", NULL};
 /*	int objC = objc - objOffset; */
 	Tcl_Obj *CONST *objV = objv + objOffset;
 	int index;
@@ -799,50 +799,9 @@ int struct_info_artifact_type(Tcl_Interp *interp, StructType *typePtr,
 			break;
 		}
 
-		case 3: /* location */
-			index = angtk_find_artifact(a_idx, o_ptr);
-			if (index == -1)
-			{
-				return TCL_ERROR;
-			}
-			Tcl_SetResult(interp, (char *) keyword_artifact_location[index],
-				TCL_VOLATILE);
-			break;
-
-		case 4: /* memory */
-		{
-			char *buffer;
-			long length;
-
-			index = angtk_find_artifact(a_idx, o_ptr);
-			if (index == -1)
-			{
-				return TCL_ERROR;
-			}
-			buffer = Tcl_Alloc(5 * 1024L);
-			length = angtk_describe_object(o_ptr, buffer, FALSE);
-			Tcl_SetObjResult(interp, ExtToUtf_NewStringObj(buffer, length));
-			Tcl_Free(buffer);
-			break;
-		}
-
-		case 5: /* name */
+		case 3: /* name */
 			ExtToUtf_SetResult(interp, a_name + a_ptr->name);
 			break;
-
-		case 6: /* object_desc */
-		{
-			char o_name[O_NAME_MAX];
-
-			index = angtk_find_artifact(a_idx, o_ptr);
-			if (index == -1)
-			{
-				return TCL_ERROR;
-			}
-			object_desc(o_name, o_ptr, TRUE, 3);
-			ExtToUtf_SetResult(interp, o_name);
-			break;
-		}
 	}
 
 	return TCL_OK;

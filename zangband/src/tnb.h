@@ -168,7 +168,6 @@ extern cptr *keyword_class;
 	 (k_info[k_idx].x_attr))
 
 extern char *g_attr_str;
-extern cptr keyword_artifact_location[];
 extern int exit_skip_save;
 extern bool command_repeating;
 extern int g_cave_hgt, g_cave_wid;
@@ -183,7 +182,6 @@ extern int angtk_eval_file(cptr extFileName);
 extern int angtk_generate(void);
 extern void angtk_cave_generated(void);
 extern void angtk_examine(int y, int x, char *out_val);
-extern int angtk_find_artifact(int a_idx, object_type *o_ptr);
 extern void angtk_health(char *buf);
 extern int angtk_tval_string(cptr *str, int tval);
 extern int angtk_tval_const(int *tval, cptr str);
@@ -353,10 +351,9 @@ extern void init_birth(void);
 extern cptr keyword_slot[];
 extern int strcpy_len(char *s1, const char *s2);
 extern long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store);
-extern bool make_fake_artifact(object_type *o_ptr, int name1);
-extern int SetArrayValueChar(char *varName, char *field, char value);
-extern int SetArrayValueLong(char *varName, char *field, long value);
-extern int SetArrayValueString(char *varName, char *field, char *value);
+extern int SetArrayValueChar(cptr varName, cptr field, char value);
+extern int SetArrayValueLong(cptr varName, cptr field, long value);
+extern int SetArrayValueString(cptr varName, cptr field, cptr value);
 
 /* map.c */
 extern void init_map(void);
