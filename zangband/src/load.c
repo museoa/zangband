@@ -1597,10 +1597,10 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 			if (sf_version < 27)
 			{
 				/*
-				 * Set old CAVE_MARK and CAVE_LITE flags
+				 * Set old CAVE_MARK and flag (used below)
 				 * (Ignore the CAVE_VIEW flag)
 				 */
-				pc_ptr->player = tmp8u & (0x01 | GRID_LITE);
+				pc_ptr->player = tmp8u & (0x01);
 			}
 
 			/* Advance/Wrap */
@@ -1632,8 +1632,8 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 				/* Access the cave */
 				pc_ptr = parea(x, y);
 
-				/* Extract "player" */
-				pc_ptr->player = tmp8u;
+				/* Extract "player info" (only use detect grid data) */
+				pc_ptr->player = tmp8u & (GRID_DTCT);
 
 				/* Advance/Wrap */
 				if (++x >= xmax)
@@ -2541,7 +2541,7 @@ static void strip_quests(u16b num)
 			}
 
 			/* Load quest status if quest is running */
-			if (status == QUEST_STATUS_TAKEN)
+			if (status == 1)
 			{
 				strip_bytes(6);
 
@@ -2586,6 +2586,87 @@ static void strip_quests(u16b num)
 			 * We don't have to care about the other info,
 			 * since status should be 0 for these quests anyway
 			 */
+		}
+	}
+}
+
+/*
+ * Load the quests
+ */
+static void rd_quests(int max_quests)
+{
+	int i, q_idx;
+	
+	quest_type *q_ptr;
+	
+	for (i = 0; i < max_quests; i++)
+	{
+		q_idx = q_pop();
+		
+		/* Paranoia (We've already tested < q_max)*/
+		if (!q_idx) quit("Trying to load too many quests!");
+	
+		q_ptr = &quest[q_idx];
+		
+		/* Generic information */
+		rd_byte(&q_ptr->status);
+		rd_byte(&q_ptr->flags);
+		rd_byte(&q_ptr->type);
+		rd_byte(&q_ptr->item);
+		
+		rd_u16b(&q_ptr->town);
+		rd_u16b(&q_ptr->shop);
+		rd_u16b(&q_ptr->reward);
+		
+		rd_byte(&q_ptr->c_type);
+		rd_byte(&q_ptr->x_type);
+		
+		rd_u32b(&q_ptr->timeout);
+		rd_string(q_ptr->name, 60);
+		
+		/* Data - quest-type specific */
+		switch (q_ptr->type)
+		{
+			/* Un-initialised quests */
+			case QUEST_TYPE_UNKNOWN: break;
+			
+			/* General quests */
+			case QUEST_TYPE_GENERAL:
+			{
+				rd_u16b(&q_ptr->data.gen.town);
+				rd_u16b(&q_ptr->data.gen.shop);
+				rd_u16b(&q_ptr->data.gen.r_idx);
+				rd_u16b(&q_ptr->data.gen.cur_num);
+				rd_u16b(&q_ptr->data.gen.max_num);
+				break;
+			}
+			
+			/* Dungeon quests */
+			case QUEST_TYPE_DUNGEON:
+			{
+				rd_u16b(&q_ptr->data.dun.r_idx);
+				rd_u16b(&q_ptr->data.dun.level);
+				
+				rd_s16b(&q_ptr->data.dun.cur_num);
+				rd_s16b(&q_ptr->data.dun.max_num);
+				rd_s16b(&q_ptr->data.dun.num_mon);
+				break;
+			}
+			
+			/* Wilderness quests */
+			case QUEST_TYPE_WILD:
+			{
+				rd_u16b(&q_ptr->data.wld.town);
+				rd_u16b(&q_ptr->data.wld.data);
+				rd_byte(&q_ptr->data.wld.depth);
+				break;
+			}
+		
+			default:
+			{
+				/* Unknown quest type... panic */
+				quit("Loading unknown quest type.");
+			}
 		}
 	}
 }
@@ -2776,11 +2857,14 @@ static errr rd_savefile_new_aux(void)
 		/* Number of quests */
 		rd_u16b(&max_quests_load);
 		
-		strip_quests(max_quests_load);
+		/* Ignore old quests */
+		if (sf_version < 30)
+		{
+			strip_quests(max_quests_load);
+		}
 
-#if 0
-		/* 2.2.3 or newer version */
-		if (!z_older_than(2, 2, 3))
+		/* Newer versions */
+		else
 		{
 			/* Incompatible save files */
 			if (max_quests_load > z_info->q_max)
@@ -2788,9 +2872,9 @@ static errr rd_savefile_new_aux(void)
 				note(format("Too many (%u) quests!", max_quests_load));
 				return (23);
 			}
+			
+			rd_quests(max_quests_load);
 		}
-		
-#endif /* 0 */
 
 		/* Only in 2.2.1 and 2.2.2 */
 		if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
@@ -2900,12 +2984,9 @@ static errr rd_savefile_new_aux(void)
 	}
 
 	/*
-	 * Select the number of random quests
-	 * when importing old savefiles.
+	 * Reinitialise the quests when loading an old version
 	 */
-#if 0
-	if (z_older_than(2, 2, 0)) (Update this to 2.7.0 soon)
-#endif /* 0 */
+	if (sf_version < 30)
 	{
 		(void) get_player_quests();		
 	}
@@ -3106,7 +3187,7 @@ static errr rd_savefile_new_aux(void)
 			
 			if (sf_version > 21)
 			{
-				rd_byte(&town[i].pop);
+				rd_byte(&town[i].data);
 			}
 
 			/* Gates */
@@ -3126,6 +3207,22 @@ static errr rd_savefile_new_aux(void)
 			/* Locatation */
 			rd_byte(&town[i].x);
 			rd_byte(&town[i].y);
+				
+			/* Size */
+			if (sf_version > 29)
+			{
+				rd_byte(&town[i].xsize);
+				rd_byte(&town[i].ysize);
+				
+				rd_u16b(&town[i].quest_num);
+				rd_byte(&town[i].monst_type);
+			}
+			else
+			{
+				/* Need to create town size as default */
+				town[i].xsize = 8;
+				town[i].ysize = 8;
+			}
 
 			/* Name */
 			if (sf_version < 26)
@@ -3141,7 +3238,7 @@ static errr rd_savefile_new_aux(void)
 				}
 				else
 				{
-					select_town_name(town[i].name, town[i].pop);
+					select_town_name(town[i].name, town[i].data);
 				}
 			}
 			else

@@ -1557,11 +1557,12 @@ static void test_wild_data(void)
  */
 static bool is_road_town(u16b town_num)
 {
-	/* Hack - ignore the parameter for now */
-	(void) town_num;
-
-	/* Hack - change this when we implement other things */
-
+	town_type *t_ptr = &town[town_num];
+	
+	/* No roads to wilderness quests */
+	if (t_ptr->quest_num) return (FALSE);
+	
+	/* Default to true otherwise */
 	return (TRUE);
 }
 

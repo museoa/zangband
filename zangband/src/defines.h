@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 29
+#define SAVEFILE_VERSION 30
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -68,6 +68,11 @@
  * The maximum number of players we support
  */
 #define MAX_PLAYERS		1
+
+/*
+ * Maximum amount of Angband windows.
+ */
+#define ANGBAND_TERM_MAX 8
 
 /*
  * Number of grids in each block (vertically)
@@ -108,32 +113,12 @@
 #define WILD_SEA	65471
 
 /*
- * Quest status
- */
-#define QUEST_STATUS_UNTAKEN		0
-#define QUEST_STATUS_TAKEN			1
-#define QUEST_STATUS_COMPLETED		2
-#define QUEST_STATUS_REWARDED		3
-#define QUEST_STATUS_FINISHED		4
-#define QUEST_STATUS_FAILED			5
-#define QUEST_STATUS_FAILED_DONE	6
-
-/*
  * Quest type
  */
 #define QUEST_TYPE_UNKNOWN			0
 #define QUEST_TYPE_GENERAL			1
 #define QUEST_TYPE_DUNGEON			2
 #define QUEST_TYPE_WILD				3
-
-/*
- * Quest flags
- */
-#define QUEST_FLAG_ACTIVE		0x01	/* Quest triggers have effect */
-#define QUEST_FLAG_TIME			0x02	/* Quest has timeout */
-#define QUEST_FLAG_ITEM			0x04	/* Player has art. quest item */
-#define QUEST_FLAG_KNOWN		0x10	/* Player knows about this quest */
-
 
 /*
  * Quest creation types
@@ -149,7 +134,7 @@
 #define QX_KILL_MONST			1
 #define QX_KILL_UNIQUE			2
 #define QX_KILL_WINNER			3
-
+#define QX_WILD_ENTER			4
 
 /*
  * Mega Hack XXX XXX Info for winner quest
@@ -163,31 +148,6 @@
 
 /* Maximum length of town name + '/0' */
 #define T_NAME_LEN	18
-
-/* Town types */
-#define TOWN_OLD		1
-#define TOWN_FRACT		2
-#define TOWN_QUEST		3
-
-/* Town monster types */
-#define TOWN_MONST_VILLAGER		1
-#define TOWN_MONST_ELVES		2
-#define TOWN_MONST_DWARF		3
-#define TOWN_MONST_LIZARD		4
-#define TOWN_MONST_MONST		5
-#define TOWN_MONST_ABANDONED	6
-
-
-/* Building types */
-#define BT_GENERAL		0
-#define BT_STORE		1
-#define BT_BUILD		2
-
-
-/*
- * Maximum amount of Angband windows.
- */
-#define ANGBAND_TERM_MAX 8
 
 
 /*

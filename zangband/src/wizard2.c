@@ -1125,68 +1125,21 @@ static void do_cmd_wiz_play(void)
  */
 static void wiz_create_item(void)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-	int i;
-
-	object_type	forge;
-	object_type *q_ptr;
-	object_kind *k_ptr;
-
 	int k_idx;
-
 
 	/* Save the screen */
 	screen_save();
 
 	/* Get object base type */
 	k_idx = wiz_create_itemtype();
+	
+	if (!k_idx) return;
 
 	/* Restore the screen */
 	screen_load();
-
-
-	/* Return if failed */
-	if (!k_idx) return;
-
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Create the item */
-	object_prep(q_ptr, k_idx);
-
-	k_ptr = &k_info[k_idx];
-
-	if (k_ptr->flags3 & TR3_INSTA_ART)
-	{
-		/* Find the "special" artifact this object belongs to */
-		for (i = 1; i < z_info->a_max; i++)
-		{
-			artifact_type *a_ptr = &a_info[i];
-
-			/* Skip "empty" artifacts */
-			if (!a_ptr->name) continue;
-
-			if ((a_ptr->tval == k_ptr->tval) && (a_ptr->sval == k_ptr->sval))
-			{
-				/* found it */
-				create_named_art(i, px, py);
-
-				/* All done */
-				msg_print("Allocated.");
-
-				return;
-			}
-		}
-	}
-	else
-	{
-		/* Apply magic */
-		apply_magic(q_ptr, p_ptr->depth, 0, 0);
-	}
-
-	/* Drop the object from heaven */
-	(void)drop_near(q_ptr, -1, px, py);
+	
+	/* Place the object */
+	place_specific_object(p_ptr->px, p_ptr->py, p_ptr->depth, k_idx);
 
 	/* All done */
 	msg_print("Allocated.");

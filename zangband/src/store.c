@@ -1143,7 +1143,7 @@ static void store_create(void)
 		level = rand_range(f_ptr->data[1], f_ptr->data[2]);
 		
 		/* Get an item */
-		kind = 	get_obj_num(level, 0);
+		kind = get_obj_num(level, 0);
 		
 		/* Handle failure */
 		if (!kind) continue;

@@ -4109,6 +4109,53 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	return (TRUE);
 }
 
+void place_specific_object(int x, int y, int level, int k_idx)
+{
+	object_type	forge;
+	object_type *q_ptr;
+	object_kind *k_ptr;
+	
+	int i;
+	
+	/* Paranoia */
+	if (!k_idx) return;
+	
+	/* Get local object */
+	q_ptr = &forge;
+
+	/* Create the item */
+	object_prep(q_ptr, k_idx);
+
+	k_ptr = &k_info[k_idx];
+
+	/* Instant artifacts are special */
+	if (k_ptr->flags3 & TR3_INSTA_ART)
+	{
+		/* Find the "special" artifact this object belongs to */
+		for (i = 1; i < z_info->a_max; i++)
+		{
+			artifact_type *a_ptr = &a_info[i];
+
+			/* Skip "empty" artifacts */
+			if (!a_ptr->name) continue;
+
+			if ((a_ptr->tval == k_ptr->tval) && (a_ptr->sval == k_ptr->sval))
+			{
+				/* found it */
+				create_named_art(i, x, y);
+			}
+		}
+	}
+	else
+	{
+		/* Apply magic */
+		apply_magic(q_ptr, level, 0, 0);
+	}
+
+	/* Drop the object at the square */
+	(void)drop_near(q_ptr, -1, x, y);
+}
+
 
 /*
  * Attempt to place an object (normal or good/great) at the given location.

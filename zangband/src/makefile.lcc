@@ -281,6 +281,7 @@ WILD1_C=\
 	types.h\
 	externs.h\
 	wild.h\
+	grid.h\
 
 wild1.obj: $(WILD1_C) wild1.c
 	$(CC) -c $(CFLAGS) wild1.c
@@ -675,6 +676,8 @@ QUEST_C=\
 	defines.h\
 	types.h\
 	externs.h\
+	wild.h\
+	grid.h\
 
 quest.obj: $(QUEST_C) quest.c
 	$(CC) -c $(CFLAGS) quest.c

@@ -14,7 +14,6 @@
 #include "angband.h"
 
 #include "wild.h"
-#include "grid.h"
 
 /*
  * Helper functions that can be called recursively.  (Need function prototypes.)
@@ -597,7 +596,12 @@ static bool create_city(int x, int y, int town_num)
 	t_ptr->x = x;
 	t_ptr->y = y;
 
-	t_ptr->pop = pop;
+	/* Save the population value in the 'data' value */
+	t_ptr->data = pop;
+	
+	/* Hack - the size is constant... */
+	t_ptr->xsize = 8;
+	t_ptr->ysize = 8;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -1246,8 +1250,6 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 }
 
 
-
-
 /* Actually draw the city in the region */
 static void draw_city(u16b town_num)
 {
@@ -1256,7 +1258,6 @@ static void draw_city(u16b town_num)
 	byte i, j;
 	byte magic;
 	u16b build;
-	u16b town_size = WILD_BLOCK_SIZE * 8;
 
 	bool city_block;
 
@@ -1266,28 +1267,10 @@ static void draw_city(u16b town_num)
 	if (t_ptr->region) quit("Town already has region during creation.");
 	
 	/* Get region */
-	t_ptr->region = (s16b) create_region(town_size, town_size, REGION_NULL);
+	t_ptr->region = (s16b) create_region(t_ptr->xsize * WILD_BLOCK_SIZE,
+			 t_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
 	
 	/* Hack - do not increment refcount here - let allocate_block do that */
-
-	/*
-	 * Region should be wiped by create_region -
-	 * so this should no longer be needed
-	 */
-#if 0
-	/* Place transparent area */
-	for (j = 0; j < town_size; j++)
-	{
-		for (i = 0; i < town_size; i++)
-		{
-			c_ptr = cave_p(i, j);
-			
-			/* Create empty area */
-			set_feat_grid(c_ptr, FEAT_NONE);
-			c_ptr->fld_idx = 0;
-		}
-	}
-#endif /* 0 */
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -1301,7 +1284,9 @@ static void draw_city(u16b town_num)
 	/* Generate plasma factal */
 	clear_temp_block();
 	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
-	set_temp_mid((u16b)(WILD_BLOCK_SIZE * town[town_num].pop));
+	
+	/* Use population value saved in data. */
+	set_temp_mid((u16b)(WILD_BLOCK_SIZE * town[town_num].data));
 	frac_block();
 
 	/* Find area outside the city */
@@ -1498,38 +1483,56 @@ void init_towns(int xx, int yy)
 			y = randint0(max_wild);
 		}
 		
-		/*
-		 * See if a city will fit.
-		 * (Need a 8x8 block free.)
-		 */
-		if (!town_blank(x, y, 8, 8, town_count)) continue;
-
-		/* Generate it */
-		if (create_city(x, y, town_count))
+		if (town_count < z_info->wp_max / TOWN_FRACTION)
 		{
-			w_ptr = &wild[y][x].trans;
+			/*
+			 * See if a city will fit.
+			 * (Need a 8x8 block free.)
+			 */
+			if (!town_blank(x, y, 8, 8, town_count)) continue;
 
-			/* Select easiest town */
-			if (w_ptr->law_map > town_value)
+			/* Generate it */
+			if (create_city(x, y, town_count))
 			{
-				/* Check to see if the town has stairs */
-				for (i = 0; i < town[town_count].numstores; i++)
-				{
-					if (town[town_count].store[i].type == BUILD_STAIRS)
-					{
-						/* Save this town */
-						town_value = w_ptr->law_map;
-						best_town = town_count;
+				w_ptr = &wild[y][x].trans;
 
-						/* Done */
-						break;
+				/* Select easiest town */
+				if (w_ptr->law_map > town_value)
+				{
+					/* Check to see if the town has stairs */
+					for (i = 0; i < town[town_count].numstores; i++)
+					{
+						if (town[town_count].store[i].type == BUILD_STAIRS)
+						{
+							/* Save this town */
+							town_value = w_ptr->law_map;
+							best_town = town_count;
+
+							/* Done */
+							break;
+						}
 					}
 				}
 			}
-
-			/* Increment number of towns */
-			town_count++;
 		}
+		else
+		{
+			int xsize, ysize;
+			byte flags;
+			
+			/* Pick quest size / type */
+			pick_wild_quest(&xsize, &ysize, &flags);
+			
+			/* See if a quest will fit */
+			if (!quest_blank(x, y, xsize, ysize, town_count, flags)) continue;
+			
+			/* Build it */
+			if (!create_quest(x, y, town_count)) continue;
+		}
+		
+
+		/* Increment number of towns / quests */
+		town_count++;
 	}
 	
 	/* Hack - the starting town uses pre-defined stores */
@@ -1556,6 +1559,9 @@ void init_towns(int xx, int yy)
 	draw_city(best_town);
 
 	place_player_start(&p_ptr->wilderness_x, &p_ptr->wilderness_y, best_town);
+	
+	/* Hack - No current region */
+	set_region(0);
 }
 
 
@@ -1676,10 +1682,6 @@ void van_town_gen(u16b town_num)
 			
 			/* Create empty area */
 			set_feat_grid(c_ptr, FEAT_PERM_EXTRA);
-#if 0
-			/* Cleared in C_MAKE in create_region */
-			c_ptr->fld_idx = 0;
-#endif /* 0 */
 		}
 	}
 
@@ -1760,7 +1762,8 @@ static void town_gen(u16b town_num)
 	{
 		case TOWN_OLD: van_town_gen(town_num); break;
 		case TOWN_FRACT: draw_city(town_num); break;
-		default: quit("Unknown town type in wilderness");
+		case TOWN_QUEST: draw_quest(town_num); break;
+		default: quit("Unknown town/quest type in wilderness");
 	}
 	
 	/* Hack - set global region back to wilderness value */
@@ -1774,24 +1777,29 @@ static void town_gen(u16b town_num)
  */
 static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 {
-	int i, j, xx, yy;
+	int i, j, x1, y1, x2, y2;
 
+	int fld_idx, type;
+	
+	/* Generation level for monsters and objects */
+	int level = wild[y][x].done.mon_gen;
+	
 	cave_type *c_ptr;
 	town_type *t_ptr = &town[w_town];
 	
-	/* Check that town region exists */
+	/* Check that town/quest region exists */
 	if (!t_ptr->region)
 	{
-		/* Create the town */
+		/* Create the town/quest */
 		town_gen(w_town);
 	}
 	
 	/* Paranoia */
-	if (!t_ptr->region) quit("Could not get a region for the town");
+	if (!t_ptr->region) quit("Could not get a region for the town/quest");
 
 	/* Find block to copy */
-	xx = (x - town[w_town].x) * WILD_BLOCK_SIZE;
-	yy = (y - town[w_town].y) * WILD_BLOCK_SIZE;
+	x1 = (x - town[w_town].x) * WILD_BLOCK_SIZE;
+	y1 = (y - town[w_town].y) * WILD_BLOCK_SIZE;
 
 	/* copy 16x16 block from the region */
 	for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -1799,7 +1807,11 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			/* Get pointer to overlay info */
-			c_ptr = access_region(xx + i, yy + j, t_ptr->region);
+			c_ptr = access_region(x1 + i, y1 + j, t_ptr->region);
+			
+			/* Get destination */
+			x2 = x * WILD_BLOCK_SIZE + i;
+			y2 = y * WILD_BLOCK_SIZE + j;
 
 			/* Only copy if there is something there. */
 			if (c_ptr->feat == FEAT_NONE) continue;
@@ -1808,6 +1820,19 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 			block_ptr[j][i].feat = c_ptr->feat;
 
 			/*
+			 * Instantiate object
+			 */
+			place_specific_object(x2, y2, level, c_ptr->o_idx);
+			
+			/*
+			 * Instantiate monster
+			 */
+			if (c_ptr->m_idx)
+			{
+				place_monster_one(x2, y2, c_ptr->m_idx, FALSE, FALSE, FALSE);
+			}
+			
+			/*
 			 * Instantiate field
 			 *
 			 * Note that most types of field are not in this list.
@@ -1815,16 +1840,27 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 			 * Doors, buildings, traps, quests etc.
 			 * are all that are in this list.
 			 */
-			if (!(c_ptr->fld_idx)) continue;
-
-			switch (t_info[c_ptr->fld_idx].type)
+			fld_idx = c_ptr->fld_idx;
+			
+			if (fld_idx)
+			{
+				type = t_info[c_ptr->fld_idx].type;
+			}
+			else
+			{
+				type = FTYPE_NOTHING;
+			}
+			
+			switch (type)
 			{
 				/* Nothing */
+				case FTYPE_NOTHING: break;
+				
+				/* Trap */
 				case FTYPE_TRAP:
 				{
 					/* Activate the trap */
-					if (place_field(x * WILD_BLOCK_SIZE + i,
-						 y * WILD_BLOCK_SIZE + j, c_ptr->fld_idx))
+					if (place_field(x2, y2, c_ptr->fld_idx))
 					{
 						/* Hack - Initialise it (without "extra" information) */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
@@ -1833,14 +1869,14 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 
 					break;
 				}
-
+				
+				/* Door */
 				case FTYPE_DOOR:
 				{
 					int data = 9;
 
 					/* Add a door field */
-					if (place_field(x * WILD_BLOCK_SIZE + i,
-						 y * WILD_BLOCK_SIZE + j, c_ptr->fld_idx))
+					if (place_field(x2, y2, c_ptr->fld_idx))
 					{
 						/* Add "power" of lock / jam to the field */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
@@ -1849,12 +1885,12 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 
 					break;
 				}
-
+				
+				/* Building */
 				case FTYPE_BUILD:
 				{
 					/* Stores + buildings */
-					(void) place_field(x * WILD_BLOCK_SIZE + i,
-						 y * WILD_BLOCK_SIZE + j, c_ptr->fld_idx);
+					(void) place_field(x2, y2, c_ptr->fld_idx);
 
 					break;
 				}
@@ -3084,7 +3120,7 @@ static void gen_block(int x, int y)
 	/* Is there a town? */
 	if (w_town)
 	{
-		/* overlay town on wilderness */
+		/* overlay town/quest on wilderness */
 		overlay_town(x, y, w_town, block_ptr);
 
 		/* Paranoia */
@@ -3253,6 +3289,13 @@ static void del_block(int x, int y)
 	{
 		/* Decrease refcount region */
 		t_ptr->region = unref_region(t_ptr->region);
+		
+		/* Unref quest? */
+		if ((!t_ptr->region) && (t_ptr->quest_num))
+		{
+			/* No longer active */
+			quest[t_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE);
+		}
 	}
 		
 	/* Time to delete it - get block pointer */
@@ -3353,6 +3396,8 @@ void move_wild(void)
 	int x, y;
 	int ox = p_ptr->old_wild_x, oy = p_ptr->old_wild_y;
 	int i, j;
+	quest_type *q_ptr;
+	town_type *t_ptr;
 
 	/* Get upper left hand block in grid. */
 
@@ -3365,6 +3410,30 @@ void move_wild(void)
 	
 	/* Hack - set town */
 	p_ptr->town_num = wild[y][x].done.town;
+	
+	t_ptr = &town[p_ptr->town_num];
+	
+	/* Check for wilderness quests */
+	if (t_ptr->quest_num)
+	{
+		q_ptr = &quest[t_ptr->quest_num];
+		
+		/* Some quests are completed by walking on them */
+		if (q_ptr->x_type == QX_WILD_ENTER)
+		{
+			/* Remove town block from wilderness */
+			wild[y][x].done.town = 0;
+			
+			/* Decrement active block counter */
+			t_ptr->data--;
+			
+			/* Done? */
+			if (!t_ptr->data)
+			{
+				trigger_quest_complete(QX_WILD_ENTER, (vptr) q_ptr);
+			}
+		}
+	}
 	
 	/* Move boundary */
 	shift_in_bounds(&x, &y);
@@ -3428,28 +3497,6 @@ void move_wild(void)
 	p_ptr->old_wild_x = x;
 	p_ptr->old_wild_y = y;	
 }
-
-#if 0
-
-/*
- * Lighten / Darken Wilderness
- */
-static void day_night(void)
-{
-	u16b x, y;
-
-	/* Light up or darken the area */
-	for (y = 0; y < WILD_VIEW; y++)
-	{
-		for (x = 0; x < WILD_VIEW; x++)
-		{
-			/* Light or darken wilderness block */
-			light_dark_block(x + p_ptr->old_wild_x, y + p_ptr->old_wild_y);
-		}
-	}
-}
-
-#endif /* 0 */
 
 
 /*
@@ -3628,14 +3675,6 @@ void change_level(int level)
 		in_bounds2 = in_bounds_wild;
 		in_boundsp = in_bounds_wild_player;
 
-#if 0
-		if (p_ptr->depth == 0)
-		{
-			/* Lighten / darken wilderness */
-			day_night();
-		}
-#endif /* 0 */
-
 		/* Initialise the boundary */
 		p_ptr->min_wid = p_ptr->old_wild_x * WILD_BLOCK_SIZE;
 		p_ptr->min_hgt = p_ptr->old_wild_y * WILD_BLOCK_SIZE;
@@ -3674,7 +3713,11 @@ void change_level(int level)
 		
 		/* Change dun_ptr? */
 		
-		/* Zero bounds - allocated in generate.c */
+		/* 
+		 * Zero bounds - allocated in generate.c
+		 *
+		 * Should these be set here at all???
+		 */
 		p_ptr->min_hgt = 0;
 		p_ptr->max_hgt = 1;
 		p_ptr->min_wid = 0;

@@ -13,6 +13,8 @@
 
 #include "angband.h"
 
+#include "wild.h"
+
 /*
  * Maximum number of tries for selection of a proper quest monster
  */
@@ -25,7 +27,7 @@
  * This routine should almost never fail, but in case it does,
  * we must be sure to handle "failure" of this routine.
  */
-static u16b q_pop(void)
+u16b q_pop(void)
 {
 	int i;
 
@@ -454,10 +456,19 @@ void quest_discovery(void)
 					msg_format("%s: Be warned, this level is guarded by %d %s!",
 						 find_quest[rand_range(0, 5)], q_num, name);
 				}
+				
+				/* Disturb */
+				disturb(FALSE);
+				
+				continue;
 			}
 		
 			case QUEST_TYPE_WILD:
 			{
+				msg_print("You discover something unusual in the wilderness.");
+				
+				/* Disturb */
+				disturb(FALSE);
 		
 				/* Paranoia */
 				continue;
@@ -637,7 +648,7 @@ static void quest_reward(int num, int x, int y)
 /*
  * Test each quest to see which ones are created
  */
-void trigger_quest_create(byte c_type, void *data)
+void trigger_quest_create(byte c_type, vptr data)
 {
 	int i, j, k;
 	quest_type *q_ptr;
@@ -737,7 +748,7 @@ void trigger_quest_create(byte c_type, void *data)
 /*
  * Test each quest to see if they are completed
  */
-void trigger_quest_complete(byte x_type, void *data)
+void trigger_quest_complete(byte x_type, vptr data)
 {
 	int i;
 	quest_type *q_ptr;
@@ -837,11 +848,27 @@ void trigger_quest_complete(byte x_type, void *data)
 				
 				continue;
 			}
+			
+			case QX_WILD_ENTER:
+			{
+				/* Only trigger for the correct quest */
+				if (q_ptr != data) continue;
+				
+				/* Complete the quest */
+				q_ptr->status = QUEST_STATUS_FINISHED;
+			
+				continue;
+			}
 		}
-#if 0		
-		/* Hack - Give a message for 'completed' quests. */
-		if (q_ptr->status == QUEST_STATUS_COMPLETED)
+		
+		/*
+		 * Hack - Give a message for 'completed' quests.
+		 * XXX XXX XXX (Not yet - no quest-givers)
+		 */
+		/* if (q_ptr->status == QUEST_STATUS_COMPLETED) */
+		if (q_ptr->status == QUEST_STATUS_FINISHED)
 		{
+#if 0
 			/* Take note */
 			if (auto_notes)
 			{
@@ -852,11 +879,11 @@ void trigger_quest_complete(byte x_type, void *data)
 				
 				add_note(note, 'Q');
 			}
-
+#endif /* 0 */
 			msg_print("You just completed your quest!");
 			message_flush();
 		}
-#endif /* 0 */
+
 	}
 }
 
@@ -1091,3 +1118,552 @@ void do_cmd_knowledge_quests(void)
 	/* Remove the file */
 	(void)fd_kill(file_name);
 }
+
+
+/*
+ * The following functions are used to determine if the given monster
+ * is appropriate for inclusion in a quest of the given type.
+ *
+ * The general selections are not allowed to include "unique" monsters.
+ */
+
+
+/*
+ * Hack - Monster validation macro
+ *
+ * Line 1 -- forbid town monsters
+ * Line 2 -- forbid uniques
+ * Line 3 -- forbid aquatic monsters
+ */
+#define quest_monster_okay(I) \
+	(monster_dungeon(I) && \
+	 !(r_info[I].flags1 & RF1_UNIQUE) && \
+	 !(r_info[I].flags7 & RF7_AQUATIC))
+
+
+/*
+ * Helper monster selection function
+ */
+static bool quest_aux_simple(int r_idx)
+{
+	/* Okay */
+	return (quest_monster_okay(r_idx));
+}
+
+
+/*
+ * Helper function for selecting undead
+ */
+static bool quest_aux_undead(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Validate the monster */
+	if (!quest_monster_okay(r_idx)) return (FALSE);
+
+	/* Require Undead */
+	if (!(r_ptr->flags3 & (RF3_UNDEAD))) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for selecting orcs
+ */
+static bool quest_aux_orc(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Validate the monster */
+	if (!quest_monster_okay(r_idx)) return (FALSE);
+
+	/* Require orc */
+	if (!(r_ptr->flags3 & RF3_ORC)) return (FALSE);
+
+	/* Decline undead */
+	if (r_ptr->flags3 & RF3_UNDEAD) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for selecting trolls
+ */
+static bool quest_aux_troll(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Validate the monster */
+	if (!quest_monster_okay(r_idx)) return (FALSE);
+
+	/* Require troll */
+	if (!(r_ptr->flags3 & RF3_TROLL)) return (FALSE);
+
+	/* Decline undead */
+	if (r_ptr->flags3 & RF3_UNDEAD) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for selecting giants
+ */
+static bool quest_aux_giant(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Validate the monster */
+	if (!quest_monster_okay(r_idx)) return (FALSE);
+
+	/* Require giant */
+	if (!(r_ptr->flags3 & RF3_GIANT)) return (FALSE);
+
+	/* Decline undead */
+	if (r_ptr->flags3 & RF3_UNDEAD) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for selecting dragons
+ */
+static bool quest_aux_dragon(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Validate the monster */
+	if (!quest_monster_okay(r_idx)) return (FALSE);
+
+	/* Require dragon */
+	if (!(r_ptr->flags3 & RF3_DRAGON)) return (FALSE);
+
+	/* Decline undead */
+	if (r_ptr->flags3 & RF3_UNDEAD) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+static int pick_quest_type(quest_aux_type *l_ptr, int level)
+{
+	int tmp, total;
+	
+	quest_aux_type *n_ptr;
+
+	int i;
+
+	/* Calculate the total possibilities */
+	for (i = 0, total = 0; TRUE; i++)
+	{
+		n_ptr = &l_ptr[i];
+		
+		/* Note end */
+		if (!n_ptr->hook_func) break;
+
+		/* Ignore excessive depth */
+		if (n_ptr->level > level) continue;
+
+		/* Count this possibility */
+		total += n_ptr->chance * MAX_DEPTH / (level - n_ptr->level + 5);
+	}
+	
+	if (!total) return (-1);
+
+	/* Pick a random type */
+	tmp = randint0(total);
+
+	/* Find this type */
+	for (i = 0, total = 0; TRUE; i++)
+	{
+		n_ptr = &l_ptr[i];
+		
+		/* Note end */
+		if (!n_ptr->hook_func) break;
+
+		/* Ignore excessive depth */
+		if (n_ptr->level > level) continue;
+
+		/* Count this possibility */
+		total += n_ptr->chance * MAX_DEPTH / (level - n_ptr->level + 5);
+
+		/* Found the type */
+		if (tmp < total) break;
+	}
+
+	return (i);
+}
+
+
+
+static quest_aux_type camp_types[] =
+{
+	{quest_aux_orc,		5,	1, "orc"},
+	{quest_aux_undead,	15,	4, "undead"},
+	{quest_aux_troll,	30,	1, "troll"},
+	{quest_aux_giant,	50,	2, "giant"},
+	{quest_aux_dragon,	60,	4, "dragon"},
+	{NULL,				0,	0, NULL},
+};
+
+
+
+/*
+ * Pick a quest to use
+ */
+void pick_wild_quest(int *xsize, int *ysize, byte *flags)
+{
+	/* Hack - don't worry too much now, we only have one type of quest */
+	
+	/* Random size */
+	*xsize = randint1(5);
+	*ysize = randint1(5);
+	
+	/* On normal terrain */
+	*flags =  Q_GEN_PICKY;
+}
+
+/*
+ * Look to see if a wilderness block is able to have
+ * a quest overlayed on top.
+ */
+bool quest_blank(int x, int y, int xsize, int ysize, int town_count, byte flags)
+{
+	int i, j;
+	wild_gen2_type *w_ptr;
+	town_type *t_ptr = &town[town_count];
+
+	/* Hack - Population check */
+	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
+
+	for (i = x - 1; i < x + xsize + 2; i++)
+	{
+		for (j = y - 1; j < y + ysize + 2; j++)
+		{
+			/* Hack - Not next to boundary */
+			if ((i <= 0) || (i >= max_wild - 1) ||
+			    (j <= 0) || (j >= max_wild - 1))
+			{
+				return (FALSE);
+			}
+
+			w_ptr = &wild[j][i].trans;
+
+			/* No town/quest already */
+			if (w_ptr->town) return (FALSE);
+
+			/* Picky quests require "normal terrain" */
+			if (flags & Q_GEN_PICKY)
+			{
+				/* No water or lava or acid */
+				if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
+				{
+					 return (FALSE);
+				}
+			}
+			
+			/* Ocean quests must be on water */
+			if (flags & Q_GEN_OCEAN)
+			{
+				/* Not on Ocean? */
+				if (w_ptr->hgt_map >= (256 / SEA_FRACTION)) return (FALSE);
+			}
+			else
+			{
+				/* Otherwise, Ocean is not allowed */
+				if (w_ptr->hgt_map < (256 / SEA_FRACTION)) return (FALSE);
+			}
+		}
+	}
+
+	/* Look to see if another town / quest is too close */
+	for (i = 1; i < town_count; i++)
+	{
+		if (distance(town[i].x, town[i].y, x, y) < QUEST_MIN_DIST)
+		{
+			/* Too close? */
+			return (FALSE);
+		}
+	}
+	
+	/* Save size */
+	t_ptr->xsize = xsize;
+	t_ptr->ysize = ysize;
+
+	/* Ok then */
+	return (TRUE);
+}
+
+
+/*
+ * Create a quest in the wilderness
+ */
+bool create_quest(int x, int y, int town_num)
+{
+	int i, j;
+	int q_num, qtype;
+	
+	wild_type *w_ptr = &wild[y][x];
+	
+	town_type *t_ptr = &town[town_num];
+	
+	quest_type *q_ptr;
+	
+	/* Select type of monster to place in the camp */
+	qtype = pick_quest_type(camp_types, w_ptr->done.mon_gen);
+	
+	/* Is the area too easy for the quests? */
+	if (qtype == -1) return (FALSE);
+	
+	/* Get a new quest */
+	q_num = q_pop();
+
+	/* Paranoia */
+	if (!q_num) return (FALSE);
+	
+	/* Get a random seed for later */
+	t_ptr->seed = randint0(0x10000000);
+
+	/* Quest */
+	t_ptr->type = TOWN_QUEST;
+	t_ptr->monst_type = TOWN_MONST_MONST;
+	t_ptr->x = x;
+	t_ptr->y = y;
+
+	/* Data value is used as a counter of "active" blocks */
+	t_ptr->data = 0;
+	
+	/* Link wilderness to quest */
+	for (i = 0; i < t_ptr->xsize; i++)
+	{
+		for (j = 0; j < t_ptr->ysize; j++)
+		{
+			w_ptr = &wild[y + j][x + i];
+			
+			/*
+			 * Add quest to wilderness
+			 * Note: only 255 can be stored currently.
+			 */
+			w_ptr->done.town = (byte)town_num;
+			
+			/* Increment "active block" counter */
+			t_ptr->data++;
+		}
+	}
+	
+	/* Set up quest */
+	q_ptr = &quest[q_num];
+	
+	/* Store in information */
+	q_ptr->type =  QUEST_TYPE_WILD;
+
+	/* We don't need a special generator */
+	q_ptr->c_type = QC_NONE;
+	
+	/* We need to trigger when the player enters the wilderness block */
+	q_ptr->x_type = QX_WILD_ENTER;
+	
+	/* XXX XXX Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Defeat the %d camp.",
+		 camp_types[qtype].name);
+	
+	/* Save the quest data */
+	q_ptr->data.wld.town = town_num;
+	q_ptr->data.wld.data = qtype;
+	q_ptr->data.wld.depth = w_ptr->done.mon_gen;
+	
+	return (TRUE);
+}
+
+
+/*
+ * Draw the quest onto its region
+ */
+void draw_quest(u16b town_num)
+{
+	int x, y, n;
+	int i, j;
+	
+	town_type *t_ptr = &town[town_num];
+	
+	wild_type *w_ptr = &wild[t_ptr->y][t_ptr->x];
+	
+	quest_type *q_ptr = &quest[t_ptr->quest_num];
+	
+	cave_type *c_ptr;
+	
+	/* Save generation levels */
+	s16b temp_m_level = monster_level;
+	s16b temp_o_level = object_level;
+	
+	/* Object theme */
+	obj_theme theme;
+		
+	int depth = q_ptr->data.wld.depth;
+	
+	/* Paranoia */
+	if (t_ptr->region) quit("Quest already has region during creation.");
+	
+	/* Get region */
+	t_ptr->region = (s16b) create_region(t_ptr->xsize * WILD_BLOCK_SIZE,
+		 t_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
+	
+	/* Hack - do not increment refcount here - let allocate_block do that */
+
+	/* Hack -- Use the "simple" RNG */
+	Rand_quick = TRUE;
+
+	/* Hack -- Induce consistant quest layout */
+	Rand_value = town[town_num].seed;
+	
+	/* Hack - change to monster level of wilderness */
+	monster_level = w_ptr->done.mon_gen;
+	
+	/* Change object level */
+	object_level = w_ptr->done.mon_gen;
+	
+	/* Apply the monster restriction */
+	get_mon_num_prep(quest_aux_simple, NULL);
+	
+	/* Set theme for weapons / armour */
+	theme.treasure = 0;
+	theme.combat = 100;
+	theme.magic = 0;
+	theme.tools = 0;
+
+	init_match_theme(theme);
+	
+	/* Activate restriction */
+	get_obj_num_hook = kind_is_theme;
+
+	/* Prepare allocation table */
+	get_obj_num_prep();
+	
+	/* Pick number random spots within region */
+	n = randint1(t_ptr->xsize * t_ptr->ysize / 4);
+	
+	while (n != 0)
+	{
+		/* Decrement counter */
+		n--;
+		
+		/* Get spot */
+		x = randint0(t_ptr->xsize * 2);
+		y = randint0(t_ptr->ysize * 2);
+		
+		/* Place ground */
+		for (i = 0; i < 8; i++)
+		{
+			for (j = 0; j < 8; j++)
+			{
+				/* Get location */
+				c_ptr = cave_p(x * 8 + i, y * 8 + j);
+				
+				/* Draw a roughly circular blob */
+				if (randint0(distance(0, 0, i, j)) < 4)
+				{
+					if (one_in_(3))
+					{
+						c_ptr->feat = FEAT_PEBBLES;
+					}
+					else
+					{
+						c_ptr->feat = FEAT_DIRT;
+					}
+					
+					/* Place monsters on spots */
+					if (one_in_(QUEST_CAMP_MON))
+					{
+						/* Pick a race to clone */
+						c_ptr->m_idx = get_mon_num(depth);
+					}
+				
+					/* Place weapons + armour around the spots */
+					if (one_in_(QUEST_CAMP_OBJ))
+					{
+						c_ptr->o_idx = get_obj_num(depth, depth / 3);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	/* Set theme for junk */
+	theme.treasure = 5;
+	theme.combat = 0;
+	theme.magic = 0;
+	theme.tools = 5;
+	
+	init_match_theme(theme);
+	
+	/* Prepare allocation table */
+	get_obj_num_prep();
+	
+	/* Scatter stuff over the region */
+	for (i = 0; i < t_ptr->xsize * WILD_BLOCK_SIZE; i++)
+	{
+		for (j = 0; j < t_ptr->ysize * WILD_BLOCK_SIZE; j++)
+		{
+			/* Only on some squares */
+			if (!one_in_(QUEST_CAMP_SCATTER)) continue;
+			
+			/* Get location */
+			c_ptr = cave_p(i, j);
+			
+			/* Not on allocated squares */
+			if (c_ptr->feat) continue;
+			
+			if (one_in_(3))
+			{
+				c_ptr->feat = FEAT_PEBBLES;
+			}
+			else
+			{
+				c_ptr->feat = FEAT_DIRT;
+			}
+					
+			/* Place monsters on spots */
+			if (one_in_(QUEST_CAMP_MON))
+			{
+				/* Pick a race to clone */
+				c_ptr->m_idx = get_mon_num(depth);
+				
+				/* Place junk under monsters */
+				if (one_in_(QUEST_CAMP_OBJ))
+				{
+					c_ptr->o_idx = get_obj_num(depth, 0);
+				}
+			}
+		}
+	}
+	
+	/* Hack - Activate quest */
+	q_ptr->flags |= QUEST_FLAG_ACTIVE;
+	
+	/* Mega-hack Give a message if we "discover" it */
+	quest_discovery();
+	
+	/* Hack XXX XXX (No quest-giving store yet) */
+	
+	/* Hack -- use the "complex" RNG */
+	Rand_quick = FALSE;
+	
+	/* Remove the monster restriction */
+	get_mon_num_prep(NULL, NULL);
+	
+	/* Clear restriction */
+	get_obj_num_hook = NULL;
+	
+	/* Hack - Restore levels */
+	monster_level = temp_m_level;
+	object_level = temp_o_level;
+}
+

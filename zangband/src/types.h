@@ -1091,7 +1091,8 @@ struct quest_wld
 	u16b refcount;			/* Refcount for wilderness code */
 	u16b town;				/* Equivalent "town number" */
 	
-	u16b complete_data;		/* Data so can choose completion */
+	u16b data;				/* Data so can choose completion */
+	byte depth;				/* Power of monsters */
 };
 
 
@@ -1733,7 +1734,10 @@ struct town_type
 	byte		x;			/* Location mod 16 in wilderness */
 	byte		y;
 	
-	byte		pop;		/* population density (from wilderness) */
+	byte		xsize;		/* Size in wilderness */
+	byte		ysize;		/* Size in wilderness */
+	
+	byte		data;		/* pop for towns, generic for quests */
 	byte		monst_type;	/* Type of population (monsters/people etc.) */
 	
 	s16b		region;		/* Region */

@@ -162,7 +162,7 @@ notes.o: notes.c $(INCS)
 object1.o: object1.c $(INCS)
 object2.o: object2.c $(INCS)
 obj_kind.o: obj_kind.c $(INCS)
-quest.o: quest.c $(INCS)
+quest.o: quest.c $(INCS) wild.h grid.h
 racial.o: racial.c $(INCS)
 save.o: save.c $(INCS)
 scores.o: scores.c $(INCS)
@@ -174,7 +174,7 @@ store.o: store.c $(INCS)
 tables.o: tables.c $(INCS)
 util.o: util.c $(INCS)
 variable.o: variable.c $(INCS)
-wild1.o: wild1.c $(INCS) wild.h
+wild1.o: wild1.c $(INCS) wild.h grid.h
 wild2.o: wild2.c $(INCS) wild.h grid.h
 wizard1.o: wizard1.c $(INCS)
 wizard2.o: wizard2.c $(INCS)

@@ -656,6 +656,7 @@ extern byte kind_is_match(int k_idx);
 extern void init_match_theme(obj_theme theme);
 extern byte kind_is_theme(int k_idx);
 extern bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme);
+extern void place_specific_object(int x, int y, int level, int k_idx);
 extern void place_object(int x, int y, bool good, bool great);
 extern bool make_gold(object_type *j_ptr, int coin_type);
 extern void place_gold(int x, int y);
@@ -1223,6 +1224,7 @@ extern bool field_action_issupplies_tester(field_type *f_ptr, vptr input);
 extern void test_compress_module(void);
 
 /* quest.c */
+extern u16b q_pop(void);
 extern u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level);
 extern errr init_quests(void);
 extern void get_player_quests(void);
@@ -1230,8 +1232,8 @@ extern void quest_discovery(void);
 extern int quest_number(void);
 extern void activate_quests(int level);
 extern int number_of_quests(void);
-extern void trigger_quest_create(byte c_type, void *data);
-extern void trigger_quest_complete(byte x_type, void *data);
+extern void trigger_quest_create(byte c_type, vptr data);
+extern void trigger_quest_complete(byte x_type, vptr data);
 extern void do_cmd_knowledge_quests(void);
 
 /*

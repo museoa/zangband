@@ -1498,24 +1498,61 @@ static bool wr_savefile_new(void)
 
 	for (i = 0; i < q_max; i++)
 	{
-		/* Save status for every quest */
-		wr_s16b(0);
-
-		/* And the dungeon level too */
-		/* (prevents problems with multi-level quests) */
-		wr_s16b(0);
-#if 0
-		/* Save quest status if quest is running */
-		if (quest[i].status == QUEST_STATUS_TAKEN)
+		wr_byte(quest[i].status);
+		wr_byte(quest[i].flags);
+		wr_byte(quest[i].type);
+		wr_byte(quest[i].item);
+		
+		wr_u16b(quest[i].town);
+		wr_u16b(quest[i].shop);
+		wr_u16b(quest[i].reward);
+		
+		wr_byte(quest[i].c_type);
+		wr_byte(quest[i].x_type);
+		
+		wr_u32b(quest[i].timeout);
+		wr_string(quest[i].name);
+		
+		/* Data - quest-type specific */
+		switch (quest[i].type)
 		{
-			wr_s16b(quest[i].cur_num);
-			wr_s16b(quest[i].max_num);
-			wr_s16b(quest[i].type);
-			wr_s16b(quest[i].r_idx);
-			wr_s16b(quest[i].k_idx);
-			wr_byte(quest[i].flags);
+			case QUEST_TYPE_UNKNOWN: break;
+			
+			case QUEST_TYPE_GENERAL:
+			{
+				wr_u16b(quest[i].data.gen.town);
+				wr_u16b(quest[i].data.gen.shop);
+				wr_u16b(quest[i].data.gen.r_idx);
+				wr_u16b(quest[i].data.gen.cur_num);
+				wr_u16b(quest[i].data.gen.max_num);
+				break;
+			}
+			
+			case QUEST_TYPE_DUNGEON:
+			{
+				wr_u16b(quest[i].data.dun.r_idx);
+				wr_u16b(quest[i].data.dun.level);
+				
+				wr_s16b(quest[i].data.dun.cur_num);
+				wr_s16b(quest[i].data.dun.max_num);
+				wr_s16b(quest[i].data.dun.num_mon);
+				break;
+			}
+			
+			case QUEST_TYPE_WILD:
+			{
+				wr_u16b(quest[i].data.wld.town);
+				wr_u16b(quest[i].data.wld.data);
+				wr_byte(quest[i].data.wld.depth);
+				break;
+			}
+		
+			default:
+			{
+				/* Unknown quest type... panic */
+				quit("Cannot save unknown quest type.");
+			}
 		}
-#endif /* 0 */
 	}
 
 	/* Dump the position in the wilderness */
@@ -1536,7 +1573,6 @@ static bool wr_savefile_new(void)
 		wr_byte(0);
 		wr_byte(0);
 	}
-
 
 
 	/* Write the "extra" information */
@@ -1599,7 +1635,7 @@ static bool wr_savefile_new(void)
 
 		/* Type */
 		wr_u16b(town[i].type);
-		wr_byte(town[i].pop);
+		wr_byte(town[i].data);
 		
 		/* Gates */
 		wr_byte(town[i].gates_x[0]);
@@ -1615,6 +1651,13 @@ static bool wr_savefile_new(void)
 		/* Location */
 		wr_byte(town[i].x);
 		wr_byte(town[i].y);
+		
+		/* Size */
+		wr_byte(town[i].xsize);
+		wr_byte(town[i].ysize);
+		
+		wr_u16b(town[i].quest_num);
+		wr_byte(town[i].monst_type);
 
 		/* Name */
 		wr_string(town[i].name);
