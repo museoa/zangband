@@ -1672,6 +1672,9 @@ bool building_magetower(int factor, bool display)
 				/* Notice player location */
 				Term_move_player();
 
+				/* Remove all monster lights */
+				lite_n = 0;
+
 				/* Notice the move */
 				move_wild();
 
