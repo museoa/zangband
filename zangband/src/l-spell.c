@@ -3397,6 +3397,25 @@ tolua_lerror:
  return 0;
 }
 
+/* function: do_cmd_rerate */
+static int toluaI_spell_do_cmd_rerate00(lua_State* tolua_S)
+{
+ if (
+     !tolua_isnoobj(tolua_S,1)
+ )
+  goto tolua_lerror;
+ else
+ {
+  {
+   do_cmd_rerate();
+  }
+ }
+ return 0;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'do_cmd_rerate'.");
+ return 0;
+}
+
 /* Open function */
 int tolua_spell_open (lua_State* tolua_S)
 {
@@ -3658,6 +3677,7 @@ int tolua_spell_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"map_area",toluaI_spell_map_area00);
  tolua_function(tolua_S,NULL,"wiz_lite",toluaI_spell_wiz_lite00);
  tolua_function(tolua_S,NULL,"wiz_dark",toluaI_spell_wiz_dark00);
+ tolua_function(tolua_S,NULL,"do_cmd_rerate",toluaI_spell_do_cmd_rerate00);
  return 1;
 }
 /* Close function */
@@ -3919,4 +3939,5 @@ void tolua_spell_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"map_area");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"wiz_lite");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"wiz_dark");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"do_cmd_rerate");
 }

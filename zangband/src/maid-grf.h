@@ -19,11 +19,6 @@
 #define MAP_CACHE	(WILD_VIEW * WILD_VIEW * 2)
 
 
-extern byte gamma_table[256];
-extern void build_gamma_table(int gamma);
-extern cptr get_default_font(int term_num);
-extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
-
 #ifdef TERM_USE_MAP
 typedef struct map_block map_block;
 
@@ -46,8 +41,22 @@ struct map_block
 	byte flags;
 };
 
-typdef map_block **map_blk_ptr;
+typedef map_block **map_blk_ptr;
 
-typedef (*map_info_hook_type)(map_block *mb_ptr, term_map *map);
+typedef void (*map_info_hook_type)(map_block *mb_ptr, term_map *map);
 
 #endif /* TERM_USE_MAP */
+
+
+extern byte gamma_table[256];
+extern void build_gamma_table(int gamma);
+extern cptr get_default_font(int term_num);
+extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
+extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
+extern void init_overhead_map(void);
+extern void del_overhead_map(void);
+extern void clear_map(void);
+extern bool map_in_bounds_rel(int dx, int dy);
+extern void save_map_location(int x, int y, term_map *map);
+extern map_block *read_map_location(int dx, int dy);
+

@@ -18,6 +18,10 @@
  */
 #include "h-basic.h"
 
+/*
+ * Configuration
+ */
+#include "z-config.h"
 
 /*
  * Include the mid-level includes.
@@ -26,14 +30,13 @@
 #include "z-virt.h"
 #include "z-form.h"
 #include "z-rand.h"
-#include "z-term.h"
 
 /*
  * Include the high-level includes.
  */
-#include "z-config.h"
 #include "defines.h"
 #include "types.h"
+#include "z-term.h"
 #include "externs.h"
 
 

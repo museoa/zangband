@@ -296,7 +296,7 @@ static int *map_cache_x;
 static int *map_cache_y;
 
 /* The map itself - grid of 16x16 blocks*/
-static map_blk_ptr **map_grid;
+static int **map_grid;
 
 /* Reference count of each 16x16 block */
 static byte **map_refcount;
@@ -332,13 +332,13 @@ map_info_hook_type set_map_hook(map_info_hook_type hook_func)
  */
 void init_overhead_map(void)
 {
-	int i;
+	int i, j;
 	
 	/* Make the list of pointers to blocks */
 	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr);
 	
 	/* Refcount for cache blocks */
-	C_MAKE(map_cache_refcount, MAP_CACHE, bool);
+	C_MAKE(map_cache_refcount, MAP_CACHE, byte);
 	
 	/* Cache block locations */
 	C_MAKE(map_cache_x, MAP_CACHE, int);
@@ -348,24 +348,24 @@ void init_overhead_map(void)
 	for (i = 0; i < MAP_CACHE; i++)
 	{
 		/* Allocate block */
-		C_MAKE(map_cache[i], WILD_BLOCK_SIZE, cave_type *);
+		C_MAKE(map_cache[i], WILD_BLOCK_SIZE, map_block *);
 
 		/* Allocate rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
-			C_MAKE(map_cache[i][j], WILD_BLOCK_SIZE, cave_type);
+			C_MAKE(map_cache[i][j], WILD_BLOCK_SIZE, map_block);
 		}
 	}
 	
 	/* Allocate the overhead map itself */
-	C_MAKE(map_grid, WILD_SIZE, map_blk_ptr *);
-	C_MAKE(map_refcount, WILD_SIZE, int *);
+	C_MAKE(map_grid, WILD_SIZE, int *);
+	C_MAKE(map_refcount, WILD_SIZE, byte *);
 
 	for (i = 0; i < WILD_SIZE; i++)
 	{
 		/* Allocate one row of the wilderness */
-		C_MAKE(map_grid[i], WILD_SIZE, map_blk_ptr);
-		C_MAKE(map_refcount[i], WILD_SIZE, int);
+		C_MAKE(map_grid[i], WILD_SIZE, int);
+		C_MAKE(map_refcount[i], WILD_SIZE, byte);
 	}
 }
 
@@ -374,7 +374,7 @@ void init_overhead_map(void)
  */
 void del_overhead_map(void)
 {
-	int i;
+	int i, j;
 	
 	/* Free refcount for cache blocks */
 	FREE(map_cache_refcount);
@@ -424,15 +424,18 @@ void clear_map(void)
 	{
 		for (j = 0; j < WILD_SIZE; j++)
 		{
-			map_refcount[i] = 0;
-			map_grid[i] = NULL;
+			/* Not referenced */
+			map_refcount[i][j] = 0;
+			
+			/* Hack - we don't need to do this */
+			/* map_grid[i][j] = -1; */
 		}
 	}
 	
 	/* Erase the cache */
 	for (i = 0; i < MAP_CACHE; i++)
 	{
-		map_cache_recount[i] = 0;
+		map_cache_refcount[i] = 0;
 	}
 	
 	/* Player doesn't have a position */
@@ -448,7 +451,7 @@ static void clear_block(int block)
 {
 	int i, j;
 	
-	map_block_type *mb_ptr;
+	map_block *mb_ptr;
 	
 	/* Wipe each square */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -457,7 +460,7 @@ static void clear_block(int block)
 		{
 			mb_ptr = &map_cache[block][i][j];
 			
-			(void)WIPE(mb_ptr, map_block_type);
+			(void)WIPE(mb_ptr, map_block);
 		}
 	}
 }
@@ -508,14 +511,14 @@ static int get_empty_block(void)
  */
 bool map_in_bounds_rel(int dx, int dy)
 {
-	return (map_refcount[(y - player_y) / 16]
-						[(x - player_x) / 16] ? TRUE : FALSE);
+	return (map_refcount[(dy + player_y) / 16]
+						[(dx + player_x) / 16] ? TRUE : FALSE);
 }
 
 /*
  * Is the location in bounds on the map?
  */
-static bool map_in_bounds(int dx, int dy)
+static bool map_in_bounds(int x, int y)
 {
 	return (map_refcount[y  / 16][x  / 16] ? TRUE : FALSE);
 }
@@ -524,35 +527,34 @@ static bool map_in_bounds(int dx, int dy)
 /*
  * Save information into a block location
  */
-static void save_map_location(int x, int y, term_map *map)
+void save_map_location(int x, int y, term_map *map)
 {
-	map_block_ptr *mbp_ptr;
+	map_blk_ptr mbp_ptr;
 	map_block *mb_ptr;
 	
-	bool visible;
+	int block_num;
 	
 	/* Does the location exist? */
 	if (!map_in_bounds(x, y))
 	{
-		int block_num;
-		
 		/* Create a new block there */
 		block_num = get_empty_block();	
 	
 		/* Set this block up */
 		map_refcount[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = 1;
 		
-		mb_ptr = &map_cache[block_num];
+		mbp_ptr = map_cache[block_num];
 
 		/* Link to the map */
-		map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = mbp_ptr;
+		map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = block_num;
 	}
 	else
 	{
-		mbp_ptr = map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE];
+		block_num = map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE];
+		mbp_ptr = map_cache[block_num];
 	}
 	
-	mb_ptr = mbptr[y % 15][x % 15];
+	mb_ptr = &mbp_ptr[y % 15][x % 15];
 	
 	/* Increment refcount depending on visibility */
 	if (map->flags & MAP_SEEN)
@@ -595,7 +597,7 @@ map_block *read_map_location(int dx, int dy)
 	int x = dx + player_x;
 	int y = dy + player_y;
 	
-	return (map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]
+	return (&map_cache[map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]]
 				[y % 15][x % 15]);
 }
 

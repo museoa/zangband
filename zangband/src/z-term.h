@@ -230,7 +230,7 @@ struct term
 };
 
 
-#ifdef USE_TERM_MAP
+#ifdef TERM_USE_MAP
 
 /*
  * Map data structure
@@ -246,7 +246,7 @@ struct term_map
 	byte flags;
 };
 
-#endif /* USE_TERM_MAP */
+#endif /* TERM_USE_MAP */
 
 
 /**** Available Constants ****/
@@ -359,13 +359,13 @@ extern void Term_activate(term *t);
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
 
-#ifdef USE_TERM_MAP
+#ifdef TERM_USE_MAP
 
-extern errr (*term_map_hook) (int x, int y, term_map data) = NULL;
-extern errr (*term_erase_map_hook) (void) = NULL;
+extern errr (*term_map_hook) (int x, int y, term_map *map);
+extern errr (*term_erase_map_hook) (void);
 extern void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr);
 extern void Term_erase_map(void);
 
-#endif /* USE_TERM_MAP */
+#endif /* TERM_USE_MAP */
 
 #endif /* INCLUDED_Z_TERM_H */

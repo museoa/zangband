@@ -12,11 +12,6 @@
 
 #include "angband.h"
 
-#include "z-term.h"
-
-#include "z-virt.h"
-
-
 /*
  * This file provides a generic, efficient, terminal window package,
  * which can be used not only on standard terminal environments such
@@ -278,19 +273,19 @@ term *Term = NULL;
  * Data used for the overhead map used by
  * some ports and the borg.
  */
-#ifdef USE_TERM_MAP
+#ifdef TERM_USE_MAP
 
 /*
  * Hook to send map information
  */
-errr (*term_map_hook) (int x, int y, term_map data) = NULL;
+errr (*term_map_hook) (int x, int y, term_map *map) = NULL;
 
 /*
  * Hook to erase the map
  */
 errr (*term_erase_map_hook) (void) = NULL;
 
-#endif /* USE_TERM_MAP */
+#endif /* TERM_USE_MAP */
 
 
 /*** Local routines ***/
@@ -2657,7 +2652,7 @@ errr term_init(term *t, int w, int h, int k)
 	return (0);
 }
 
-#ifdef USE_TERM_MAP
+#ifdef TERM_USE_MAP
 
 /*
  * Angband-specific code designed to allow the map to be sent
@@ -2680,7 +2675,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	bool lite = (c_ptr->info & CAVE_MNLT) || (pc_ptr->player & GRID_LITE);
 
 	/* Paranoia */
-	if (!map_hook) return;
+	if (!term_map_hook) return;
 
 	/* Visible, and not hallucinating */
 	if (visible && !p_ptr->image)
@@ -2703,7 +2698,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 		for (fld_idx = c_ptr->fld_idx; fld_idx; fld_idx = next_f_idx)
 		{
 			/* Acquire field */
-			fld_ptr = &fld_list[this_f_idx];
+			fld_ptr = &fld_list[fld_idx];
 
 			/* Acquire next field */
 			next_f_idx = fld_ptr->next_f_idx;
@@ -2759,10 +2754,8 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
  */
 void Term_erase_map(void)
 {
-	int i, j;
-
 	/* Erase the map */
 	if (term_erase_map_hook) term_erase_map_hook();
 }
 
-#endif /* USE_TERM_MAP */
+#endif /* TERM_USE_MAP */
