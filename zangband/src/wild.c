@@ -4689,7 +4689,28 @@ static void wild_done(void)
 }
 
 /*
- * Create the wilderness - dodgy function now.  Much to be done.
+ * Create the wilderness
+ *
+ * This is done by making three plasma fractals
+ * The three values for each 16x16 block are then passed into
+ * the decision tree code to get a wilderness type.  (This
+ * is done for speed.  The binary tree takes O(log(n)) steps to
+ * find a matching type from w_info.txt, a linear search will
+ * obviously be a O(n) algorithm.  With hundreds of types, the
+ * difference is noticable.
+ *
+ * The old three values for height, law level, and population level
+ * are then merged to work out the monster generation statistics for
+ * each 16x16 block.
+ *
+ * Finally towns are placed. 
+ *
+ * Problem: The towns don't take into account the hpl of the wilderness
+ * properly yet.  There may need to be another union to store the information
+ * as the wildness is being made...
+ 
+ *
+ * This code is incomplete: 
  * No lakes yet.
  * No roads yet.
  * No specials yet.
@@ -4921,6 +4942,7 @@ void create_wilderness(void)
 	/* Connect the towns with roads */
 	create_roads();
 #endif /* 0 */
+	
 	/* Done */
 	wild_done();
 }
