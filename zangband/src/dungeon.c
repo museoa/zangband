@@ -1767,6 +1767,9 @@ static void process_world(void)
 			/* Disturbing! */
 			disturb(FALSE);
 
+			/* Leaving */
+			p_ptr->leaving = TRUE;
+			
 			/* Determine the level */
 			if (p_ptr->depth)
 			{
@@ -1799,9 +1802,6 @@ static void process_world(void)
 						p_ptr->depth = MAX_DEPTH - 1;
 					}
 				}
-
-				/* Leaving */
-				p_ptr->leaving = TRUE;
 			}
 
 			/* Sound */
