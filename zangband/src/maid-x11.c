@@ -33,6 +33,9 @@
 #include <X11/keysymdef.h>
 #endif /* __MAKEDEPEND__ */
 
+/* Include our headers */
+#include "maid-x11.h"
+
 
 #ifdef SUPPORT_GAMMA
 static bool gamma_table_ready = FALSE;
