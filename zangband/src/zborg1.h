@@ -90,7 +90,7 @@
 /* #define BORG_LITE   0x10 */   /* lit by the torch */
 #define BORG_VIEW   0x20    /* in line of sight */
 #define BORG_TEMP   0x40    /* temporary flag */
-#define BORG_XTRA   0x80    /* extra flag */
+/* #define BORG_XTRA   0x80 */   /* extra flag */
 
 
 /*
