@@ -3245,6 +3245,9 @@ static void dungeon(void)
 			{
 				cave_set_feat(p_ptr->py, p_ptr->px, FEAT_LESS);
 			}
+
+			/* Mark the stairs as known */
+			c_ptr->info |= (CAVE_MARK);
 		}
 
 		/* Cancel the stair request */
