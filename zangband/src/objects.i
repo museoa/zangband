@@ -137,12 +137,6 @@ typedef struct object_type
 			object_type *o_ptr = (object_type*) malloc(sizeof(object_type));
 			object_wipe(o_ptr);
 
-#if 0
-			/* Add a reference to new callback */
-			Py_XINCREF(self);
-
-			o_ptr->python = self;
-#endif
 			return (o_ptr);
 		}
 
@@ -164,9 +158,8 @@ typedef struct object_type
 		void object_prep(int k_idx)
 		{
 			object_prep(self, k_idx);
-#ifdef USE_SCRIPT
+
 			self->python = object_create_callback(self);
-#endif
 		}
 
 		s16b drop_near(int chance, int y, int x)
@@ -193,12 +186,12 @@ typedef struct object_type
 		{
 			object_aware(self);
 		}
-#ifdef USE_SCRIPT
+
 		void set_python(PyObject *python)
 		{
 			self->python = python;
 		}
-#endif /* USE_SCRIPT */
+
 	}
 } object_type;
 

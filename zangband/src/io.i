@@ -106,28 +106,6 @@ struct term
 
 	term_win *tmp;
 	term_win *mem;
-
-	void (*init_hook)(term *t);
-	void (*nuke_hook)(term *t);
-
-	errr (*user_hook)(int n);
-
-	errr (*xtra_hook)(int n, int v);
-
-	errr (*curs_hook)(int x, int y);
-
-	errr (*wipe_hook)(int x, int y, int n);
-
-	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
-
-	void (*resize_hook)(void);
-
-#ifdef USE_TRANSPARENCY
-	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp);
-#else /* USE_TRANSPARENCY */
-	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp);
-#endif /* USE_TRANSPARENCY */
-
 };
 
 
@@ -137,9 +115,9 @@ extern bool show_file(cptr name, cptr what, int line, int mode);
 
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);
-extern errr path_temp(char *buf, int max);
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern FILE *my_fopen(cptr file, cptr mode);
+extern FILE *my_fopen_temp(char *buf, int max);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
 extern errr my_fclose(FILE *fff);
@@ -394,7 +372,7 @@ extern errr term_init(term *t, int w, int h, int k);
 extern u32b option_mask[8];
 extern u32b window_flag[8];
 extern u32b window_mask[8];
-/* extern term *angband_term[8];  :This doesn't work for me -SF- */
+extern term *angband_term[8];
 extern char angband_term_name[8][16];
 extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];

@@ -4,7 +4,7 @@
 
 #include "event.h"
 
-#ifdef USE_SCRIPT
+
 /* Array of the Python objects */
 static PyObject *python_callbacks[MAX_EVENT];
 
@@ -780,37 +780,6 @@ bool leave_wilderness_callback(int y, int x)
 }
 
 
-void store_examine_callback(const object_type *o_ptr)
-{
-	PyObject *func, *arglist;
-	PyObject *result;
-	char _ptemp[128];
-
-	/* Get the Python object */
-	func = python_callbacks[STORE_EXAMINE_EVENT];
-
-	/* Callback installed */
-	if (func)
-	{
-		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
-		arglist = Py_BuildValue("(s)", _ptemp);
-
-		/* Call the object with the correct arguments */
-		result = PyEval_CallObject(func, arglist);
-
-		/* Free the arguments */
-		Py_DECREF(arglist);
-
-		/* Free the result */
-		Py_XDECREF(result);
-	}
-
-	/* Void */
-	return;
-}
-
-
 bool monster_move_callback(int *mm, int m_idx)
 {
 	PyObject *func, *arglist;
@@ -1090,7 +1059,7 @@ bool destroy_object_callback(object_type *o_ptr, int number)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
 		arglist = Py_BuildValue("((si))", _ptemp, number);
 
 		/* Call the object with the correct arguments */
@@ -1125,7 +1094,7 @@ PyObject* object_create_callback(object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
 		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
@@ -1291,7 +1260,7 @@ PyObject* object_copy_callback(object_type *o_ptr, const object_type *j_ptr)
 		char _ptemp[128];
 
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, j_ptr, "_object_type_p");
+		SWIG_MakePtr(_ptemp, j_ptr, SWIGTYPE_p_object_type);
 
 		result = PyObject_CallMethod(o_ptr->python, "object_copy_hook", "(s)", _ptemp);
 
@@ -1676,7 +1645,7 @@ PyObject* field_copy_callback(field_type *f_ptr, field_type *g_ptr)
 		char _ptemp[128];
 
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, g_ptr, "_field_type_p");
+		SWIG_MakePtr(_ptemp, g_ptr, SWIGTYPE_p_field_type);
 
 		result = PyObject_CallMethod(f_ptr->python, "field_copy_hook", "(s)", _ptemp);
 
@@ -1769,7 +1738,6 @@ void remove_callback(int event)
 	python_callbacks[event] = NULL;
 }
 
-#endif /* USE_SCRIPT */
 %}
 
 %typemap(python,in) PyObject *PyFunc
@@ -1787,12 +1755,12 @@ void remove_callback(int event)
 	$target = $source;
 }
 
+typedef const object_type *object_type_ptr;
+
 %include "event.h"
 
-#ifdef USE_SCRIPT
 void set_callback(int event, PyObject *PyFunc);
 
 PyObject *get_callback(int event);
 
 void remove_callback(int event);
-#endif /* USE_SCRIPT */

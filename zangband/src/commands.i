@@ -13,23 +13,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-typedef struct cave_type cave_type;
-
-struct cave_type
-{
-	byte info;		/* Hack -- cave flags */
-
-	byte feat;		/* Hack -- feature type */
-
-	s16b o_idx;		/* Object in this grid */
-
-	s16b m_idx;		/* Monster in this grid */
-
-	s16b fld_idx;		/* Field in this grid */
-
-	byte cost;		/* Hack -- cost of flowing */
-	byte when;		/* Hack -- when cost was computed */
-};
 
 /* Forward declare */
 typedef struct field_type field_type;
@@ -114,9 +97,7 @@ struct field_type
 	
 	byte priority;			/* LOS priority higher = more visible */
 
-#ifdef USE_SCRIPT
 	PyObject *python;
-#endif /* USE_SCRIPT */
 };
 
 
