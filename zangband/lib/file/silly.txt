@@ -1,5 +1,5 @@
 N:*:Default
-299
+297
 Borg
 Dalek
 Destructor
@@ -76,7 +76,6 @@ Spy
 Dog catcher
 Vacuum cleaner
 Lawnmower Man
-Bloodletter of Khorne
 Buzzard
 Oyster
 Wombat
@@ -169,14 +168,11 @@ Q
 Red Baron
 Giddy goon
 Vogon
-Lizard King
 Hutt
 Puppet master
 Wookie
 Giant sandworm
 Muad' Dib
-Ent
-Huorn
 Werepotato
 Mindless one
 Alien queen
@@ -224,7 +220,6 @@ Hound of the Baskervilles
 Wizball
 ID monster
 Mancubus
-Arch-vile
 Pain elemental
 I-ball
 Killdozer
@@ -276,6 +271,8 @@ Other
 Uncanny
 Libido
 Super-ego
+Ego
+Id
 Boy Blunder
 Big nothing
 Parademon
@@ -299,3 +296,4 @@ Beast of the Black Forest
 Demon of the Belfry
 Sex Beast
 Sunday Morning Slasher
+Luggage
