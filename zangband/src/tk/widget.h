@@ -60,7 +60,7 @@ struct Widget
 	DoubleLink link;			/* Linked list of Widget's */
 	DoubleLink linkMap;			/* Linked list of mapped Widget's */
 	DoubleLinker linkerItem;	/* List of items */
-	DoubleLinker linkerItemVis;	/* List of visible items */
+	/* DoubleLinker linkerItemVis; */	/* List of visible items */
 	int noUpdate;				/* Drawing is disabled */
 
 	int tc;						/* rc * cc */

@@ -197,7 +197,6 @@ static void widget_draw_all(Widget *widgetPtr)
 	int tile, layer;
 	int rc = widgetPtr->rc;
 	int cc = widgetPtr->cc;
-	DoubleLink *link;
 	int y, x, yp, xp;
 	t_display wtd;
 	IconSpec iconSpec;
@@ -261,19 +260,6 @@ static void widget_draw_all(Widget *widgetPtr)
 	/* There are no invalid tiles */
 	widgetPtr->invalidCnt = 0;
 
-	/* Now draw all of the items for this Widget */
-	for (link = widgetPtr->linkerItemVis.head; link; link = link->next)
-	{
-		WidgetItem *itemPtr = DoubleLink_Data(link, WidgetItem);
-
-		(*itemPtr->typePtr->displayProc)(widgetPtr->interp, widgetPtr,
-			itemPtr);
-
-		/* Invalidate the grids covered by the item */
-/*		Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-			itemPtr->maxY, itemPtr->maxX);
-*/	}
-
 	/* Set dirty bounds to entire window */
 	widgetPtr->dx = widgetPtr->bx;
 	widgetPtr->dy = widgetPtr->by;
@@ -291,13 +277,11 @@ static void widget_draw_invalid(Widget *widgetPtr)
 	int i, layer;
 	int cc = widgetPtr->cc;
 	int y, x, yp, xp;
-	DoubleLink *link;
 	t_display wtd;
 	IconSpec iconSpec;
 	BitmapPtr bitmapPtr = &widgetPtr->bitmap;
 	short *pinfo = widgetPtr->info;
 	int dl, dt, dr, db;
-	int by, bx;
 
 	/* Paranoia: make sure the bitmap exists */
 	if (bitmapPtr->pixelPtr == NULL) return;
@@ -375,25 +359,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 	}
 
 	widgetPtr->invalidCnt = 0;
-
-	/* Redraw any items inside the dirty area */
-	by = widgetPtr->by;
-	bx = widgetPtr->bx;
-	for (link = widgetPtr->linkerItemVis.head; link; link = link->next)
-	{
-		WidgetItem *itemPtr = DoubleLink_Data(link, WidgetItem);
-
-		if ((bx + itemPtr->x2 > dl) && (bx + itemPtr->x1 < dr) &&
-			(by + itemPtr->y2 > dt) && (by + itemPtr->y1 < db))
-		{
-			(*itemPtr->typePtr->displayProc)(widgetPtr->interp, widgetPtr,
-				itemPtr);
-		}
-				
-		/* Invalidate the grids covered by the item */
-/*		Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-			itemPtr->maxY, itemPtr->maxX);
-*/	}
 
 	widgetPtr->dx = dl;
 	widgetPtr->dy = dt;
@@ -1951,8 +1916,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
 	DoubleLink_Init(&widgetPtr->linkerItem, NULL, NULL);
 	widgetPtr->linkerItem.what = "item";
-	DoubleLink_Init(&widgetPtr->linkerItemVis, NULL, NULL);
-	widgetPtr->linkerItemVis.what ="itemVis";
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
