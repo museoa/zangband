@@ -591,14 +591,13 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 	char o_name[256];
 
 	int k_idx = 0;
-	bool is_potion = FALSE;
 
 	object_type *o_ptr;
 
-	bool is_art = FALSE;
-	bool ignore = FALSE;
-	bool plural = FALSE;
-	bool do_kill = FALSE;
+	bool is_art;
+	bool ignore;
+	bool plural;
+	bool do_kill;
 
 	cptr note_kill = NULL;
 
@@ -615,6 +614,12 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 	{
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3);
+
+		/* Reset the state */
+		is_art = FALSE;
+		ignore = FALSE;
+		plural = FALSE;
+		do_kill = FALSE;
 
 		/* Get the "plural"-ness */
 		if (o_ptr->number > 1) plural = TRUE;
@@ -826,6 +831,8 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			/* Kill it */
 			else
 			{
+				bool is_potion = FALSE;
+			
 				/* Describe if needed */
 				if (known && (o_ptr->info & OB_SEEN) && note_kill)
 				{
