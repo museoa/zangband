@@ -853,31 +853,22 @@
 #define ROW_STUN                22
 #define COL_STUN                0       /* <stun> */
 
-#define ROW_HUNGRY              23
 #define COL_HUNGRY              0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
 
-#define ROW_BLIND               23
 #define COL_BLIND               7       /* "Blind" */
 
-#define ROW_CONFUSED    23
 #define COL_CONFUSED    13      /* "Confused" */
 
-#define ROW_AFRAID              23
 #define COL_AFRAID              22      /* "Afraid" */
 
-#define ROW_POISONED    23
 #define COL_POISONED    29      /* "Poisoned" */
 
-#define ROW_STATE               23
 #define COL_STATE               38      /* <state> */
 
-#define ROW_SPEED               23
 #define COL_SPEED               49      /* "Slow (-NN)" or "Fast (+NN)" */
 
-#define ROW_STUDY               23
 #define COL_STUDY               64      /* "Study" */
 
-#define ROW_DEPTH               23
 #define COL_DEPTH               70      /* "Lev NNN" / "NNNN ft" */
 
 

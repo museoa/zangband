@@ -1603,9 +1603,9 @@ static errr CheckEvent(bool wait)
 
 	term_data *td = NULL;
 	infowin *iwin = NULL;
-
+	
 	int i, x, y;
-
+	int window = 0;
 
 	/* Do not wait unless requested */
 	if (!wait && !XPending(Metadpy->dpy)) return (1);
@@ -1629,6 +1629,7 @@ static errr CheckEvent(bool wait)
 		{
 			td = &data[i];
 			iwin = td->win;
+			window = i;
 			break;
 		}
 	}
@@ -1764,6 +1765,8 @@ static errr CheckEvent(bool wait)
 
 			int ox = Infowin->ox;
 			int oy = Infowin->oy;
+			
+			bool redraw_it = TRUE;
 
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;
@@ -1776,19 +1779,28 @@ static errr CheckEvent(bool wait)
 			rows = ((Infowin->h - (oy + oy)) / td->fnt->hgt);
 
 			/* Paranoia */
+#if 0
 			if (td == &data[0]) cols = 80;
 			if (td == &data[0]) rows = 24;
+#endif /* 0 */
 
 			/* Hack -- minimal size */
 			if (cols < 1) cols = 1;
 			if (rows < 1) rows = 1;
 
+			if (window == 0)
+			{
+				/* Hack the main window must be at least 80x24 */
+				if (cols < 80) cols = 80;
+				if (rows < 24) rows = 24;
+			}		
+			
 			/* Desired size of window */
 			wid = cols * td->fnt->wid + (ox + ox);
 			hgt = rows * td->fnt->hgt + (oy + oy);
-
+			
 			/* Resize the Term (if needed) */
-			Term_resize(cols, rows);
+			if (Term_resize(cols, rows) == 1) redraw_it = FALSE;
 
 			/* Resize the windows if any "change" is needed */
 			if ((Infowin->w != wid) || (Infowin->h != hgt))
@@ -1797,7 +1809,40 @@ static errr CheckEvent(bool wait)
 				Infowin_set(td->win);
 				Infowin_resize(wid, hgt);
 			}
-
+			
+			/* Reset map size if required */
+			if (window == 0)
+			{				
+				/* Recalculate map size */
+				map_hgt = (rows - 2) / 2;
+				map_wid = (cols - 14) / 2;
+				
+				/* Must be even */
+				map_hgt += map_hgt;
+				map_wid += map_wid;
+				
+				/* Mega-Hack -- no panel yet */
+				panel_row_min = 0;
+				panel_row_max = 0;
+				panel_col_min = 0;
+				panel_col_max = 0;
+				
+				/* Reset the panels */
+				map_panel_size();
+				
+				verify_panel();
+			}
+						
+			/* Only redraw if everything is initialised */
+			if (character_dungeon && redraw_it)
+			{			
+				/* Activate term zero for the redraw */
+				Term_activate(&data[0].t);
+				
+				/* redraw */
+				do_cmd_redraw();
+			}
+			
 			break;
 		}
 	}
@@ -2097,8 +2142,6 @@ static errr term_data_init(term_data *td, int i)
 {
 	term *t = &td->t;
 
-	bool fixed = (i == 0);
-
 	cptr name = angband_term_name[i];
 
 	cptr font;
@@ -2199,22 +2242,24 @@ static errr term_data_init(term_data *td, int i)
 	str = getenv(buf);
 	y = (str != NULL) ? atoi(str) : -1;
 
+	/* Window specific cols */
+	sprintf(buf, "ANGBAND_X11_COLS_%d", i);
+	str = getenv(buf);
+	val = (str != NULL) ? atoi(str) : -1;
+	if (val > 0) cols = val;
 
-	if (!fixed)
+	/* Window specific rows */
+	sprintf(buf, "ANGBAND_X11_ROWS_%d", i);
+	str = getenv(buf);
+	val = (str != NULL) ? atoi(str) : -1;
+	if (val > 0) rows = val;
+	
+	/* Hack the main window must be at least 80x24 */
+	if (!i)
 	{
-		/* Window specific cols */
-		sprintf(buf, "ANGBAND_X11_COLS_%d", i);
-		str = getenv(buf);
-		val = (str != NULL) ? atoi(str) : -1;
-		if (val > 0) cols = val;
-
-		/* Window specific rows */
-		sprintf(buf, "ANGBAND_X11_ROWS_%d", i);
-		str = getenv(buf);
-		val = (str != NULL) ? atoi(str) : -1;
-		if (val > 0) rows = val;
+		if (cols < 80) cols = 80;
+		if (rows < 24) rows = 24;
 	}
-
 
 	/* Window specific inner border offset (ox) */
 	sprintf(buf, "ANGBAND_X11_IBOX_%d", i);
@@ -2235,7 +2280,7 @@ static errr term_data_init(term_data *td, int i)
 	Infofnt_init_data(font);
 
 	/* Hack -- key buffer size */
-	num = (fixed ? 1024 : 16);
+	num = ((i == 0) ? 1024 : 16);
 
 	/* Assume full size windows */
 	wid = cols * td->fnt->wid + (ox + ox);
@@ -2277,6 +2322,7 @@ static errr term_data_init(term_data *td, int i)
 	/* Oops */
 	if (sh == NULL) quit("XAllocSizeHints failed");
 
+#if 0
 	/* Fixed window size */
 	if (fixed)
 	{
@@ -2289,13 +2335,16 @@ static errr term_data_init(term_data *td, int i)
 	/* Variable window size */
 	else
 	{
+#endif /* 0 */
 		/* Variable size */
 		sh->flags = PMinSize | PMaxSize;
 		sh->min_width = td->fnt->wid + (ox + ox);
 		sh->min_height = td->fnt->hgt + (oy + oy);
 		sh->max_width = 256 * td->fnt->wid + (ox + ox);
 		sh->max_height = 256 * td->fnt->hgt + (oy + oy);
+#if 0
 	}
+#endif /* 0 */
 
 	/* Resize increment */
 	sh->flags |= PResizeInc;

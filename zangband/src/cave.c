@@ -2252,7 +2252,7 @@ void do_cmd_view_map(void)
 			display_map(&cy, &cx);
 			
 			/* Wait for it */
-			put_str("Move around, or hit any other key to continue", 23, 25);
+			put_str("Move around, or hit any other key to continue.", map_hgt + 1, (14 + map_wid) / 2 + 15);
 			
 			/* Hilite the player */
 			move_cursor(cy, cx);
@@ -2859,13 +2859,16 @@ void forget_view(void)
 	{
 		int y = view_y[i];
 		int x = view_x[i];
+		
+		/* Only lite the spot if is on the panel (can change due to resizing */
+		if (!panel_contains(y, x)) continue;
 
 		/* Access the grid */
 		c_ptr = area(y,x);
 
 		/* Forget that the grid is viewable */
 		c_ptr->info &= ~(CAVE_VIEW);
-
+		
 		/* Update the screen */
 		lite_spot(y, x);
 	}

@@ -4651,13 +4651,7 @@ static void wild_done(void)
 	px = (s16b)p_ptr->wilderness_x;
 	py = (s16b)p_ptr->wilderness_y;
 
-	/* Determine number of panels */
-	max_panel_rows = (max_wild * 16 / map_hgt) * 2;
-	max_panel_cols = (max_wild * 16 / map_wid) * 2;
-
-	/* Assume illegal panel */
-	panel_row = max_panel_rows;
-	panel_col = max_panel_cols;
+	map_panel_size();
 
 	/* Hack - delete all items / monsters / fields in wilderness */
 	wipe_o_list();

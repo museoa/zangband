@@ -85,6 +85,55 @@ void do_cmd_redraw(void)
 	}
 }
 
+/* 
+ * Redraw the current term.
+ *
+ * This is used when the map is resized.
+ */
+
+void do_cmd_redraw_term(void)
+{
+	/* Hack -- react to changes */
+	Term_xtra(TERM_XTRA_REACT, 0);
+
+	/* Combine and Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Update torch */
+	p_ptr->update |= (PU_TORCH);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
+
+	/* Forget lite/view */
+	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+
+	/* Update lite/view */
+	p_ptr->update |= (PU_VIEW | PU_LITE);
+
+	/* Update monsters */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw everything */
+	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
+
+	/* Hack -- update */
+	handle_stuff();
+
+	/* Redraw */
+	Term_redraw();
+
+	/* Refresh */
+	Term_fresh();
+}
+
+
 
 /*
  * Recall the most recent message

@@ -984,6 +984,30 @@ static void quest_gen(void)
 
 #endif
 
+void map_panel_size(void)
+{
+	/* Only if the map exists */
+	if (!character_dungeon) return;
+	
+	/* reset panels */
+	if (dun_level)
+	{
+		/* Determine number of panels (dungeon) */
+		max_panel_rows = (cur_hgt / map_hgt) * 2 - 2;
+		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
+	}
+	else
+	{	
+		/* Determine number of panels (wilderness) */
+		max_panel_rows = (max_wild * 16 / map_hgt) * 2;
+		max_panel_cols = (max_wild * 16 / map_wid) * 2;
+	}
+		
+	/* Assume illegal panel */
+	panel_row = max_panel_rows;
+	panel_col = max_panel_cols;
+}
+
 /* Make a real level */
 static bool level_gen(cptr *why)
 {
@@ -1006,13 +1030,8 @@ static bool level_gen(cptr *why)
 		cur_hgt = level_height * BLOCK_HGT;
 		cur_wid = level_width * BLOCK_WID;
 
-		/* Determine number of panels */
-		max_panel_rows = (cur_hgt / map_hgt) * 2 - 2;
-		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
-
-		/* Assume illegal panel */
-		panel_row = max_panel_rows;
-		panel_col = max_panel_cols;
+		/* Reset map panels */
+		map_panel_size();
 
 		if (cheat_room)
 		  msg_format("X:%d, Y:%d.", max_panel_cols, max_panel_rows);
@@ -1023,13 +1042,8 @@ static bool level_gen(cptr *why)
 		cur_hgt = MAX_HGT;
 		cur_wid = MAX_WID;
 
-		/* Determine number of panels */
-		max_panel_rows = (cur_hgt / map_hgt) * 2 - 2;
-		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
-
-		/* Assume illegal panel */
-		panel_row = max_panel_rows;
-		panel_col = max_panel_cols;
+		/* Reset map panels */
+		map_panel_size();
 	}
 
 	/* Make a dungeon */
@@ -1086,13 +1100,8 @@ void generate_cave(void)
 		px = (s16b)p_ptr->wilderness_x;
 		py = (s16b)p_ptr->wilderness_y;
 
-		/* Determine number of panels */
-		max_panel_rows = (max_wild * 16 / map_hgt) * 2;
-		max_panel_cols = (max_wild * 16 / map_wid) * 2;
-
-		/* Assume illegal panel */
-		panel_row = max_panel_rows;
-		panel_col = max_panel_cols;
+		/* Reset map panels */
+		map_panel_size();
 
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();

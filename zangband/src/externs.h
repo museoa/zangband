@@ -543,6 +543,7 @@ extern bool research_mon(void);
 
 /* cmd4.c */
 extern void do_cmd_redraw(void);
+extern void do_cmd_redraw_term(void);
 extern void do_cmd_message_one(void);
 extern void do_cmd_messages(void);
 extern void do_cmd_options_aux(int page, cptr info);
@@ -619,6 +620,7 @@ extern void get_character_name(void);
 
 /* generate.c */
 extern void place_closed_door(int y, int x);
+extern void map_panel_size(void);
 extern void generate_cave(void);
 
 /* init1.c */
