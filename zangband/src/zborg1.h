@@ -154,7 +154,7 @@ struct borg_kill
 {
 	s16b r_idx;	/* Race index */
 
-	bool awake;	/* Probably awake */
+	/* bool awake; */	/* Probably awake */
 	bool friendly;	/* friend/pet */
 
 	bool confused;	/* Probably confused */

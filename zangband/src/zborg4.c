@@ -8693,7 +8693,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 
 
 	/* Reduce danger from sleeping monsters */
-	if ((!kill->awake) && (d > 1))
+	if ((kill->m_flags & MONST_ASLEEP) && (d > 1))
 	{
 		/* Normal reduction of fear */
 		if (borg_skill[BI_CLEVEL] >= 10)
@@ -8711,7 +8711,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	if (borg_sleep_spell_ii)
 	{
 		if ((d == 1) &&
-			(kill->awake) &&
+			(!(kill->m_flags & MONST_ASLEEP)) &&
 			(!(r_ptr->flags3 & RF3_NO_SLEEP)) &&
 			(!(r_ptr->flags1 & RF1_UNIQUE)) &&
 			(r_ptr->level <= (borg_skill[BI_CLEVEL] - 15)))
@@ -8744,7 +8744,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	}
 
 	/* Tweak danger based on the "alertness" of the monster */
-	if (!kill->awake)
+	if (kill->m_flags & MONST_ASLEEP)
 	{
 		/* increase the danger for light sleepers */
 		int inc = r_ptr->sleep + 5;
@@ -8819,7 +8819,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 		}
 
 		/* Reduce danger from sleeping monsters */
-		if ((!kill->awake) && (d > 1))
+		if ((kill->m_flags & MONST_ASLEEP) && (d > 1))
 		{
 			/* weaklings and should still fear */
 			if (borg_skill[BI_CLEVEL] >= 10)
@@ -8838,7 +8838,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 		{
 
 			if ((d == 1) &&
-				(kill->awake) &&
+				(!(kill->m_flags & MONST_ASLEEP)) &&
 				(!(r_ptr->flags3 & RF3_NO_SLEEP)) &&
 				(!(r_ptr->flags1 & RF1_UNIQUE)) &&
 				(r_ptr->level <=
@@ -8882,7 +8882,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 		}
 #endif
 		/* Tweak danger based on the "alertness" of the monster */
-		if (!kill->awake)
+		if (kill->m_flags & MONST_ASLEEP)
 		{
 			/* increase the danger for light sleepers */
 			int inc = r_ptr->sleep + 5;

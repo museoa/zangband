@@ -2864,7 +2864,7 @@ bool borg_think_dungeon(void)
 		if (!kill->r_idx) continue;
 
 		/* Skip sleeping monsters */
-		if (!kill->awake) continue;
+		if (kill->m_flags & MONST_ASLEEP) continue;
 
 		/* Count the monsters which are "breeders" */
 		if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY) j++;

@@ -504,7 +504,6 @@ static void borg_update_kill(int i)
 	kill->moves = (t * e) / 10;
 	
 	/* Assume we don't know */
-	kill->awake = TRUE;
 	kill->afraid = FALSE;
 	kill->confused = FALSE;
 	kill->stunned = FALSE;
@@ -535,7 +534,6 @@ static void borg_update_kill(int i)
 			kill->power = kill->power * mb_ptr->m_hp / 10;
 		
 			/* Set the monster flags we know about */
-			if (mb_ptr->m_flags & MONST_ASLEEP) kill->awake = FALSE;
 			if (mb_ptr->m_flags & MONST_FRIEND) kill->friendly = TRUE;
 			if (mb_ptr->m_flags & MONST_PET) kill->friendly = TRUE;
 			if (mb_ptr->m_flags & MONST_CONFUSED) kill->confused = TRUE;
@@ -607,20 +605,8 @@ void borg_delete_kill(int i)
  * Force sleep onto a "kill" record
  * ??? Since this check is done at update_kill should I have it here?
  */
-static void borg_sleep_kill(int i)
+static void borg_sleep_kill(void)
 {
-	borg_kill *kill = &borg_kills[i];
-
-	/* Paranoia -- Already wiped */
-	if (!kill->r_idx) return;
-
-	/* Note */
-	borg_note(format("# Noting sleep on a monster '%s' at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), kill->y, kill->x));
-
-	/* note sleep */
-	kill->awake = FALSE;
-
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
 }
@@ -771,8 +757,7 @@ static void borg_follow_kill(int i)
 
 	/* Some never move, no reason to follow them */
 	if ((r_info[kill->r_idx].flags1 & RF1_NEVER_MOVE) ||
-		/* Some are sleeping and don't move, no reason to follow them */
-		(kill->awake == FALSE))
+		(kill->m_flags & MONST_ASLEEP))
 	{
 		/* delete them if they are under me */
 		if (kill->y == c_y && kill->x == c_x)
@@ -3106,12 +3091,9 @@ void borg_update(void)
 		/* Handle "sleep" */
 		else if (prefix(msg, "STATE_SLEEP:"))
 		{
-			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
-			{
-				borg_sleep_kill(k);
-				borg_msg_use[i] = 3;
-			}
+			/* Notice changes */
+			borg_sleep_kill();
+			borg_msg_use[i] = 3;
 		}
 
 		/* Handle "awake" */
@@ -3604,12 +3586,9 @@ void borg_update(void)
 		/* Handle "sleep" */
 		else if (prefix(msg, "STATE_SLEEP:"))
 		{
-			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
-			{
-				borg_sleep_kill(k);
-				borg_msg_use[i] = 4;
-			}
+			/* Notice changes */
+			borg_sleep_kill();
+			borg_msg_use[i] = 4;
 		}
 
 		/* Handle "awake" */

@@ -748,7 +748,7 @@ static bool borg_surrounded(void)
 		if (!borg_los(c_y, c_x, y9, x9)) continue;
 
 		/* if asleep, don't consider this one */
-		if (!kill->awake) continue;
+		if (kill->m_flags & MONST_ASLEEP) continue;
 
 		/* Monsters with Pass Wall are dangerous, no escape from them */
 		if (r_ptr->flags2 & RF2_PASS_WALL) continue;
@@ -4284,7 +4284,7 @@ extern int borg_attack_aux_thrust(void)
 		kill = &borg_kills[mb_ptr->kill];
 
 		/* Hack -- avoid waking most "hard" sleeping monsters */
-		if (!kill->awake && (d <= kill->power))
+		if ((kill->m_flags & MONST_ASLEEP) && (d <= kill->power))
 		{
 			/* Calculate danger */
 			borg_full_damage = TRUE;
@@ -4296,7 +4296,7 @@ extern int borg_attack_aux_thrust(void)
 		}
 
 		/* Hack -- ignore sleeping town monsters */
-		if (!borg_skill[BI_CDEPTH] && !kill->awake) continue;
+		if (!borg_skill[BI_CDEPTH] && (kill->m_flags & MONST_ASLEEP)) continue;
 
 
 		/* Calculate "danger" to player */
@@ -5030,7 +5030,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->speed < r_ptr->speed) break;
 			if (kill->afraid) break;
 			if (kill->confused) break;
-			if (!kill->awake) break;
+			if (kill->m_flags & MONST_ASLEEP) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5053,7 +5053,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (r_ptr->flags3 & RF3_NO_FEAR) break;
 			if (kill->afraid) break;
 			if (kill->confused) break;
-			if (!kill->awake) break;
+			if (kill->m_flags & MONST_ASLEEP) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5075,7 +5075,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->speed < r_ptr->speed) break;
 			if (kill->afraid) break;
 			if (kill->confused) break;
-			if (!kill->awake) break;
+			if (kill->m_flags & MONST_ASLEEP) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5099,7 +5099,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->speed < r_ptr->speed) break;
 			if (kill->afraid) break;
 			if (kill->confused) break;
-			if (!kill->awake) break;
+			if (kill->m_flags & MONST_ASLEEP) break;
 			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
@@ -5138,7 +5138,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				if (kill->confused) break;
 				if (kill->afraid) break;
 				if (kill->speed < r_ptr->speed) break;
-				if (!kill->awake) break;
+				if (kill->m_flags & MONST_ASLEEP) break;
 				if (r_ptr->level > borg_skill[BI_CLEVEL] - 5) break;
 				borg_fear_mon_spell = FALSE;
 				p1 = borg_danger_aux(c_y, c_x, 1, i, TRUE);
@@ -5371,13 +5371,13 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 	if (d <= 0) return (d);
 
 	/* Hack -- avoid waking most "hard" sleeping monsters */
-	if (!kill->awake && (p > avoidance / 2) && (d < kill->power))
+	if ((kill->m_flags & MONST_ASLEEP) && (p > avoidance / 2) && (d < kill->power))
 	{
 		return (-999);
 	}
 
 	/* Hack -- ignore sleeping town monsters */
-	if (!borg_skill[BI_CDEPTH] && !kill->awake)
+	if (!borg_skill[BI_CDEPTH] && (kill->m_flags & MONST_ASLEEP))
 	{
 		return (0);
 	}
@@ -7362,7 +7362,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 		}
 
 		/* Hack -- avoid waking most "hard" sleeping monsters */
-		if (!kill->awake && (d <= kill->power))
+		if ((kill->m_flags & MONST_ASLEEP) && (d <= kill->power))
 		{
 			/* Calculate danger */
 			borg_full_damage = TRUE;
@@ -7374,7 +7374,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 		}
 
 		/* Hack -- ignore sleeping town monsters */
-		if (!borg_skill[BI_CDEPTH] && !kill->awake) continue;
+		if (!borg_skill[BI_CDEPTH] && (kill->m_flags & MONST_ASLEEP)) continue;
 
 		/* Calculate "danger" to player */
 		borg_full_damage = TRUE;
