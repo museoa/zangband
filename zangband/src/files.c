@@ -2118,7 +2118,6 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "Aura Fire:", 3, TR3_SH_FIRE);
 	display_player_flag_aux(col, row++, "Aura Elec:", 3, TR3_SH_ELEC);
 	display_player_flag_aux(col, row++, "Aura Cold:", 4, TR4_SH_COLD);
-	display_player_flag_aux(col, row++, "NoTeleprt:", 3, TR3_NO_TELE);
 	display_player_flag_aux(col, row++, "No Magic :", 3, TR3_NO_MAGIC);
 	display_player_flag_aux(col, row++, "Free Actn:", 2, TR2_FREE_ACT);
 	display_player_flag_aux(col, row++, "SeeInvis.:", 3, TR3_SEE_INVIS);
@@ -2157,6 +2156,7 @@ static void display_player_flag_info(void)
 							3, TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
 	display_player_flag_aux(col, row++, "AutoCurse:", 4, TR4_AUTO_CURSE);
 	display_player_flag_aux(col, row++, "Teleport :", 3, TR3_TELEPORT);
+	display_player_flag_aux(col, row++, "NoTeleprt:", 3, TR3_NO_TELE);
 	display_player_flag_aux(col, row++, "Aggravate:", 3, TR3_AGGRAVATE);
 	display_player_flag_aux(col, row++, "DrainStat:", 4, TR4_DRAIN_STATS);
 	display_player_flag_aux(col, row++, "Drain Exp:", 3, TR3_DRAIN_EXP);
@@ -3073,11 +3073,55 @@ errr file_character(cptr name, bool full)
 	/* Show (known) flags grid */
 	if (full)
 	{
+		/* New line */
 		froff(fff, "\n\n");
+	
+		display_player(DISPLAY_PLAYER_FLAG);
+		
+		/* Dump part of the screen */
+		for (y = 2; y < 9; y++)
+		{
+			/* Dump each row */
+			for (x = 0; x < 63; x++)
+			{
+				/* Get the attr/char */
+				(void)(Term_what(x + 16, y, &a, &c));
+	
+				/* Dump it */
+				buf[x] = c;
+			}
+
+			/* End the string */
+			buf[x] = '\0';
+
+			/* Kill trailing spaces */
+			while ((x > 0) && (buf[x - 1] == ' ')) buf[--x] = '\0';
+
+			/* End the row */
+			froff(fff, "%s\n", buf);
+		}
+		
+		/* New line */
+		froff(fff, "\n");
+
+        /* Dump column */
+		for (y = 12; y < 20; y++)
+		{
+			for (x = 0; x < 24; x++)
+			{
+				(void)(Term_what(x + 45, y, &a, &c));
+				buf[x] = c;
+			}
+
+			buf[x] = '\0';
+			froff(fff, "%s\n", buf);
+		}
+	
+		froff(fff, "\n");
 		display_player(DISPLAY_PLAYER_SUMMARY);
 
 		/* Dump first column */
-		for (y = 6; y < 23; y++)
+		for (y = 2; y < 19; y++)
 		{
 			for (x = 0; x < 21; x++)
 			{
@@ -3093,11 +3137,11 @@ errr file_character(cptr name, bool full)
 		froff(fff, "\n");
 
 		/* Dump second column */
-		for (y = 12; y < 22; y++)
+		for (y = 2; y < 23; y++)
 		{
-			for (x = 0; x < 23; x++)
+			for (x = 0; x < 24; x++)
 			{
-				(void)(Term_what(x + 25, y, &a, &c));
+				(void)(Term_what(x + 24, y, &a, &c));
 				buf[x] = c;
 			}
 
@@ -3109,7 +3153,7 @@ errr file_character(cptr name, bool full)
 		froff(fff, "\n");
 
 		/* Dump third column */
-		for (y = 12; y < 23; y++)
+		for (y = 2; y < 22; y++)
 		{
 			for (x = 0; x < 24; x++)
 			{
