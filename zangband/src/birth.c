@@ -746,64 +746,6 @@ static void load_prev_data(void)
 }
 
 
-#ifdef OLD_AUTOROLLER
-
-/*
- * Returns adjusted stat -JK-  Algorithm by -JWT-
- *
- * auto_roll is boolean and states maximum changes should be used rather
- * than random ones to allow specification of higher values to wait for.
- *
- */
-static int adjust_stat(int value, int amount)
-{
-	int i;
-
-	/* Negative amounts */
-	if (amount < 0)
-	{
-		/* Apply penalty */
-		for (i = 0; i < (0 - amount); i++)
-		{
-			if (value >= 18 + 10)
-			{
-				value -= 10;
-			}
-			else if (value > 18)
-			{
-				value = 18;
-			}
-			else if (value > 3)
-			{
-				value--;
-			}
-		}
-	}
-
-	/* Positive amounts */
-	else if (amount > 0)
-	{
-		/* Apply reward */
-		for (i = 0; i < amount; i++)
-		{
-			if (value < 18)
-			{
-				value++;
-			}
-			else
-			{
-				value += 10;
-			}
-		}
-	}
-
-	/* Return the result */
-	return (value);
-}
-
-#endif /* OLD_AUTOROLLER */
-
-
 /*
  * Roll for a characters stats
  *
@@ -2501,17 +2443,9 @@ static bool player_birth_aux_3(void)
 
 #ifdef ALLOW_AUTOROLLER
 
-#ifndef OLD_AUTOROLLER
-
 	s16b stat_weight[A_MAX];
 	s16b stat_save[A_MAX];
 
-#else  /* !OLD_AUTOROLLER */
-
-	s16b stat_limit[A_MAX];
-
-	int j, m
-#endif /* OLD_AUTOROLLER */
 	s32b stat_match[A_MAX];
 
 	s32b auto_round = 0L;
@@ -2525,8 +2459,6 @@ static bool player_birth_aux_3(void)
 	if (autoroller)
 	{
 		char inp[80];
-
-#ifndef OLD_AUTOROLLER
 
 		/* Clean up */
 		clear_from(10);
@@ -2583,103 +2515,6 @@ static bool player_birth_aux_3(void)
 			/* Save the weight */
 			stat_weight[i] = (v > 0) ? v : def_weight;
 		}
-
-#else  /* !OLD_AUTOROLLER */
-
-		int mval[A_MAX];
-
-		/* Clean up */
-		clear_from(10);
-
-		/* Extra info */
-		Term_putstr(5, 10, -1, TERM_WHITE,
-					"The auto-roller will automatically ignore characters which do");
-		Term_putstr(5, 11, -1, TERM_WHITE,
-					"not meet the minimum values for any stats specified below.");
-		Term_putstr(5, 12, -1, TERM_WHITE,
-					"Note that stats are not independant, so it is not possible to");
-		Term_putstr(5, 13, -1, TERM_WHITE,
-					"get perfect (or even high) values for all your stats.");
-
-		/* Prompt for the minimum stats */
-		put_str("Enter minimum value for: ", 2, 15);
-
-		/* Output the maximum stats */
-		for (i = 0; i < A_MAX; i++)
-		{
-			/* Reset the "success" counter */
-			stat_match[i] = 0;
-
-			/* Race/Class bonus */
-			j = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-
-			/* Obtain the "maximal" stat */
-			m = adjust_stat(17, j);
-
-			/* Save the maximum */
-			mval[i] = m;
-
-			/* Extract a textual format */
-			/* cnv_stat(m, inp); */
-
-			/* Above 18 */
-			if (m > 18)
-			{
-				sprintf(inp, "(Max of 18/%02d):", (m - 18));
-			}
-
-			/* From 3 to 18 */
-			else
-			{
-				sprintf(inp, "(Max of %2d):", m);
-			}
-
-			/* Prepare a prompt */
-			sprintf(buf, "%-5s%-20s", stat_names[i], inp);
-
-			/* Dump the prompt */
-			put_str(buf, 5, 16 + i);
-		}
-
-		/* Input the minimum stats */
-		for (i = 0; i < A_MAX; i++)
-		{
-			/* Get a minimum stat */
-			while (TRUE)
-			{
-				char *s;
-
-				/* Move the cursor */
-				put_str("", 30, 16 + i);
-
-				/* Default */
-				strcpy(inp, "");
-
-				/* Get a response (or escape) */
-				if (!askfor_aux(inp, 9)) inp[0] = '\0';
-
-				/* Hack -- add a fake slash */
-				strcat(inp, "/");
-
-				/* Hack -- look for the "slash" */
-				s = strchr(inp, '/');
-
-				/* Hack -- Nuke the slash */
-				*s++ = '\0';
-
-				/* Hack -- Extract an input */
-				v = atoi(inp) + atoi(s);
-
-				/* Break on valid input */
-				if (v <= mval[i]) break;
-			}
-
-			/* Save the minimum stat */
-			stat_limit[i] = (v > 0) ? v : 0;
-		}
-
-#endif /* !OLD_AUTOROLLER */
-
 	}
 
 #endif /* ALLOW_AUTOROLLER */
@@ -2698,9 +2533,6 @@ static bool player_birth_aux_3(void)
 		/* Feedback */
 		if (autoroller)
 		{
-
-#ifndef OLD_AUTOROLLER
-
 			s32b best_score;
 			s32b cur_score;
 
@@ -2814,121 +2646,6 @@ static bool player_birth_aux_3(void)
 			{
 				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_save[i];
 			}
-
-#else  /* !OLD_AUTOROLLER */
-
-			Term_clear();
-
-			/* Label */
-			put_str(" Limit", col + 5, 2);
-
-			/* Label */
-			put_str("  Freq", col + 13, 2);
-
-			/* Label */
-			put_str("  Roll", col + 24, 2);
-
-			/* Put the minimal stats */
-			for (i = 0; i < A_MAX; i++)
-			{
-				/* Label stats */
-				put_str(stat_names[i], col, i + 3);
-
-				/* Put the stat */
-				cnv_stat(stat_limit[i], buf);
-				c_put_str(TERM_L_BLUE, buf, col + 5, i + 3);
-			}
-
-			/* Note when we started */
-			last_round = auto_round;
-
-			/* Label count */
-			put_str("Round:", col + 13, 10);
-
-			/* Indicate the state */
-			put_str("(Hit ESC to stop)", col + 13, 12);
-
-			/* Auto-roll */
-			while (1)
-			{
-				bool accept = TRUE;
-
-				/* Get a new character */
-				get_stats();
-
-				/* Advance the round */
-				auto_round++;
-
-				/* Hack -- Prevent overflow */
-				if (auto_round >= 1000000L) break;
-
-				/* Check and count acceptable stats */
-				for (i = 0; i < A_MAX; i++)
-				{
-					/* This stat is okay */
-					if (stat_use[i] >= stat_limit[i])
-					{
-						stat_match[i]++;
-					}
-
-					/* This stat is not okay */
-					else
-					{
-						accept = FALSE;
-					}
-				}
-
-				/* Break if "happy" */
-				if (accept) break;
-
-				/* Take note every x rolls */
-				flag = (!(auto_round % AUTOROLLER_STEP));
-
-				/* Update display occasionally */
-				if (flag || (auto_round < last_round + 100))
-				{
-					/* Put the stats (and percents) */
-					for (i = 0; i < A_MAX; i++)
-					{
-						/* Put the stat */
-						cnv_stat(stat_use[i], buf);
-						c_put_str(TERM_L_GREEN, buf, col + 24, i + 3);
-
-						/* Put the percent */
-						if (stat_match[i])
-						{
-							int p = 1000L * stat_match[i] / auto_round;
-							byte attr = (p < 100) ? TERM_YELLOW : TERM_L_GREEN;
-							sprintf(buf, "%3d.%d%%", p / 10, p % 10);
-							c_put_str(attr, buf, col + 13, i + 3);
-						}
-
-						/* Never happened */
-						else
-						{
-							c_put_str(TERM_RED, "(NONE)", col + 13, i + 3);
-						}
-					}
-
-					/* Dump round */
-					put_str(format("%10ld", auto_round), col + 20, 10);
-
-					/* Make sure they see everything */
-					Term_fresh();
-
-					/* Delay 1/10 second */
-					if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
-
-					/* Do not wait for a key */
-					inkey_scan = TRUE;
-
-					/* Check for a keypress */
-					if (inkey()) break;
-				}
-			}
-
-#endif /* OLD_AUTOROLLER */
-
 		}
 
 		/* Otherwise just get a character */
