@@ -4287,7 +4287,7 @@ static int minus_ac(void)
  */
 void acid_dam(int dam, cptr kb_str)
 {
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	int inv;
 
 	/* Total Immunity */
 	if (p_ptr->immune_acid || (dam <= 0)) return;
@@ -4298,6 +4298,8 @@ void acid_dam(int dam, cptr kb_str)
 	/* Resist the damage */
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CHR);
@@ -4319,7 +4321,7 @@ void acid_dam(int dam, cptr kb_str)
  */
 void elec_dam(int dam, cptr kb_str)
 {
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	int inv;
 
 	/* Total immunity */
 	if (p_ptr->immune_elec || (dam <= 0)) return;
@@ -4330,6 +4332,8 @@ void elec_dam(int dam, cptr kb_str)
 	/* Resist the damage */
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_DEX);
@@ -4348,7 +4352,7 @@ void elec_dam(int dam, cptr kb_str)
  */
 void fire_dam(int dam, cptr kb_str)
 {
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	int inv;
 
 	/* Totally immune */
 	if (p_ptr->immune_fire || (dam <= 0)) return;
@@ -4359,6 +4363,8 @@ void fire_dam(int dam, cptr kb_str)
 	/* Resist the damage */
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
@@ -4377,7 +4383,7 @@ void fire_dam(int dam, cptr kb_str)
  */
 void cold_dam(int dam, cptr kb_str)
 {
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	int inv;
 
 	/* Total immunity */
 	if (p_ptr->immune_cold || (dam <= 0)) return;
@@ -4388,6 +4394,8 @@ void cold_dam(int dam, cptr kb_str)
 	/* Resist the damage */
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
