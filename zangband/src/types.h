@@ -1184,9 +1184,9 @@ struct player_type
 	s16b pspeed;		/* Current speed */
 
 	/*** Pet commands ***/
-	byte pet_follow_distance; /* Length of the imaginary "leash" for pets */
-	byte pet_open_doors;      /* flag - allow pets to open doors */
-	byte pet_pickup_items;    /* flag - allow pets to pickup items */
+	s16b pet_follow_distance; /* Length of the imaginary "leash" for pets */
+	bool pet_open_doors;      /* flag - allow pets to open doors */
+	bool pet_pickup_items;    /* flag - allow pets to pickup items */
 
 	/*** Temporary fields ***/
 	byte exit_bldg;			/* Goal obtained in arena? -KMW- */
