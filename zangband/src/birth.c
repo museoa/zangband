@@ -1107,12 +1107,6 @@ static void get_extra(void)
 	/* Initialize rewards information -KMW- */
 	p_ptr->inside_quest = 0;
 
-	/* Reset rewards */
-	for (i = 0; i < MAX_BACT; i++)
-	{
-		p_ptr->rewards[i] = 0;
-	}
-
 	/* Hitdice */
 	p_ptr->hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
 

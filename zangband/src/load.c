@@ -1136,6 +1136,7 @@ static void rd_extra(void)
 
 	byte tmp8u;
 	s16b tmp16s;
+	s16b dummy;
 
 	rd_string(player_name, 32);
 
@@ -1189,12 +1190,7 @@ static void rd_extra(void)
 
 		rd_s16b(&tmp16s);
 
-		if (tmp16s > MAX_BACT)
-		{
-			note(format("Too many (%d) building rewards!", tmp16s));
-		}
-
-		for (i = 0; i < tmp16s; i++) rd_s16b(&p_ptr->rewards[i]);
+		for (i = 0; i < tmp16s; i++) rd_s16b(&dummy);
 	}
 	/* 2.1.2 beta version */
 	else if (z_major == 2 && z_minor == 1 && z_patch == 2)
@@ -1220,8 +1216,6 @@ static void rd_extra(void)
 
 		/* Initialize quest information -KMW- */
 		p_ptr->inside_quest = 0;
-
-		for (i = 0; i < MAX_BACT; ++i) p_ptr->rewards[i] = 0;
 	}
 
 	rd_s16b(&p_ptr->mhp);

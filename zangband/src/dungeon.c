@@ -1015,21 +1015,6 @@ static void process_world(void)
 		}
 	}
 
-	/* Set back the rewards once a day */
-	if (!(turn % (10L * STORE_TURNS)))
-	{
-		int n;
-
-		/* Reset the rewards */
-		for (n = 0; n < MAX_BACT; n++)
-		{
-			p_ptr->rewards[n] = FALSE;
-		}
-
-		/* Message */
-		if (cheat_xtra) msg_print("Rewards reset.");
-	}
-
 
 	/*** Process the monsters ***/
 
