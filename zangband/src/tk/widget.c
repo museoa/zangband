@@ -29,22 +29,10 @@ struct Widget
 	
 	BitmapPtr tiles;			/* The graphical tiles */
 
-#define WIDGET_REDRAW 0x0001
-#define WIDGET_DELETED 0x0002
-#define WIDGET_EXPOSE 0x0004
-#define WIDGET_NO_UPDATE 0x0008
-#define WIDGET_WIPE 0x0010
-	int flags;                  /* Misc flags */
-
     int oldWidth, oldHeight;	/* To notice changes */
-    int oldTileCnt;				/* To notice changes */
-    Tk_Cursor cursor;           /* Cursor? */
-	int setGrid;                /* Use gridded geometry */
 
 	int y, x;					/* Cave location (center of widget) */
-	int noUpdate;				/* Drawing is disabled */
 
-	int tc;						/* rc * cc */
 	int rc, cc;					/* Rows, columns */
 	int bh, bw;					/* Bitmap width & height */
 	int by, bx;					/* Offset of window from bitmap */
@@ -55,6 +43,13 @@ struct Widget
     int gwidth;					/* Source column width */
     int gheight;				/* Source row height */
     int oldGWidth, oldGHeight;	/* To notice changes */
+	
+	#define WIDGET_REDRAW 0x01
+	#define WIDGET_DELETED 0x02
+	#define WIDGET_EXPOSE 0x04
+	#define WIDGET_WIPE 0x08
+	byte flags;                  /* Misc flags */
+
 };
 
 /* Predeclare */
@@ -336,9 +331,6 @@ static void widget_draw_all(Widget *widgetPtr)
 	/* Paranoia: make sure the bitmap exists */
 	if (!widgetPtr->bitmap) return;
 
-	/* Drawing is disabled */
-	if (widgetPtr->flags & WIDGET_NO_UPDATE) return;
-
 	for (x = widgetPtr->x_min; x < widgetPtr->x_max; x++)
 	{
 		for (y = widgetPtr->y_min; y < widgetPtr->y_max; y++)
@@ -438,7 +430,6 @@ static void Widget_Calc(Widget *widgetPtr)
 	cc = cLeft + 1 + cRight;
 	rc = rTop + 1 + rBottom;
 
-	widgetPtr->tc = rc * cc;
 	widgetPtr->rc = rc;
 	widgetPtr->cc = cc;
 
@@ -447,6 +438,30 @@ static void Widget_Calc(Widget *widgetPtr)
 
 	widgetPtr->bx = cLeft * widgetPtr->gwidth - dLeft;
 	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
+}
+
+static void Widget_Wipe(Widget *widgetPtr)
+{
+	/* Remember to redraw all grids later */
+	widgetPtr->flags |= WIDGET_WIPE;
+
+	/* Redraw later */
+	Widget_EventuallyRedraw(widgetPtr);
+}
+
+
+static void Widget_Center(Widget *widgetPtr, int cx, int cy)
+{
+	/* Remember new center */
+	widgetPtr->y = cy, widgetPtr->x = cx;
+
+	/* Calculate the limits of visibility */
+	widgetPtr->y_min = cy - widgetPtr->rc / 2;
+	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
+	widgetPtr->x_min = cx - widgetPtr->cc / 2;
+	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
+
+	Widget_Wipe(widgetPtr);
 }
 
 
@@ -498,15 +513,6 @@ static void Widget_WorldChanged(ClientData instanceData)
 		Widget_CreateBitmap(widgetPtr);
 	}
 
-	if (widgetPtr->noUpdate)
-	{
-		widgetPtr->flags |= WIDGET_NO_UPDATE;
-	}
-	else
-	{
-		widgetPtr->flags &= ~WIDGET_NO_UPDATE;
-	}
-
 	/* The widget is of non-zero size */
     if ((widgetPtr->width > 0) && (widgetPtr->height > 0))
 	{
@@ -514,30 +520,14 @@ static void Widget_WorldChanged(ClientData instanceData)
 		Tk_GeometryRequest(tkwin, widgetPtr->width, widgetPtr->height);
 	}
 
-	/* We want to control gridded geometry of its toplevel */
-	if (widgetPtr->setGrid)
-	{
-		/* Turn on gridded geometry management for the toplevel */
-		Tk_SetGrid(tkwin, widgetPtr->cc, widgetPtr->rc,
-			widgetPtr->gwidth, widgetPtr->gheight);
-	}
-
-	/* We do not want to control gridded geometry of its toplevel */
-	else
-	{
-		/* Cancel gridded geometry management for the toplevel */
-		Tk_UnsetGrid(widgetPtr->tkwin);
-	}
-
 	/* Remember the current info */
-	widgetPtr->oldTileCnt = widgetPtr->tc;
 	widgetPtr->oldWidth = widgetPtr->width;
 	widgetPtr->oldHeight = widgetPtr->height;
 	widgetPtr->oldGWidth = widgetPtr->gwidth;
 	widgetPtr->oldGHeight = widgetPtr->gheight;
 
 	/* Redraw the window (later) */
-	Widget_EventuallyRedraw(widgetPtr);
+	Widget_Wipe(widgetPtr);
 }
 
 /*
@@ -653,31 +643,6 @@ static int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *
 	*colPtr = x - widgetPtr->x_min;
 	return TRUE;
 }
-
-static void Widget_Wipe(Widget *widgetPtr)
-{
-	/* Remember to redraw all grids later */
-	widgetPtr->flags |= WIDGET_WIPE;
-
-	/* Redraw later */
-	Widget_EventuallyRedraw(widgetPtr);
-}
-
-
-static void Widget_Center(Widget *widgetPtr, int cx, int cy)
-{
-	/* Remember new center */
-	widgetPtr->y = cy, widgetPtr->x = cx;
-
-	/* Calculate the limits of visibility */
-	widgetPtr->y_min = cy - widgetPtr->rc / 2;
-	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
-	widgetPtr->x_min = cx - widgetPtr->cc / 2;
-	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
-
-	Widget_Wipe(widgetPtr);
-}
-
 
 /*
  * Map hooks for the widget
@@ -1110,13 +1075,7 @@ static Tk_OptionSpec optionSpecs[20] = {
     (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
     (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
-    {TK_OPTION_CURSOR, (char *) "-cursor", (char *) "cursor", (char *) "Cursor",
-    (char *) "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
-    {TK_OPTION_BOOLEAN, (char *) "-setgrid", (char *) "setGrid", (char *) "SetGrid",
-	(char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, (char *) "-noupdate", (char *) "noUpdate", (char *) "NoUpdate",
-	(char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
-   {TK_OPTION_END, NULL, NULL, NULL,
+    {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
 
@@ -1211,13 +1170,10 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
     widgetPtr->gheight = tnb_tile_y;
     widgetPtr->oldWidth = widgetPtr->oldHeight = 0;
     widgetPtr->oldGWidth = widgetPtr->oldGHeight = 0;
-    widgetPtr->cursor = None;
-	widgetPtr->setGrid = FALSE;
     widgetPtr->flags = 0;
 	widgetPtr->y = widgetPtr->x = 0;
 	widgetPtr->y_min = widgetPtr->y_max = 0;
 	widgetPtr->x_min = widgetPtr->x_max = 0;
-	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
 
