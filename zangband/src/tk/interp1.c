@@ -2197,7 +2197,6 @@ static void angtk_character_generated(void)
 static CommandInit commandInit[] = {
 	{0, "angband", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "cave", 0, 0, NULL, objcmd_cave, (ClientData) 0},
-		{1, "equipment", 0, 0, NULL, objcmd_equipment, (ClientData) 0},
 		{1, "game", 0, 0, NULL, objcmd_game, (ClientData) 0},
 		{1, "info", 0, 0, NULL, objcmd_info, (ClientData) 0},
 		{1, "inkey_flags", 1, 1, NULL, objcmd_inkey_flags, (ClientData) 0},
