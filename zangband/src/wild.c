@@ -359,6 +359,8 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 			/* Get feat at location */
 			feat = cave[*yy + y][*xx + x].feat;
 
+			if (feat == FEAT_PERM_EXTRA) continue;
+			
 			/* Convert square to dungeon floor */
 			cave[*yy + y][*xx + x].feat = FEAT_FLOOR;
 		}
