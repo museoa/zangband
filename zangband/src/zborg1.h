@@ -182,29 +182,6 @@ struct borg_kill
 };
 
 
-
-/*
- * Maximum number of rooms.  This may be too small.
- * But if AUTO_ROOMS * sizeof(borg_room) > 64K then some
- * machines may not be able to allocate the room array.
- */
-#define AUTO_ROOMS  (MAX_X * MAX_Y / 8)
-
-
-
-/*** Some macros ***/
-
-
-/*
- * Determine "twice" the distance between two points
- * This results in "diagonals" being "correctly" ranged,
- * that is, a diagonal appears "furthur" than an adjacent.
- */
-#define double_distance(Y1,X1,Y2,X2) \
-    (distance(((int)(Y1))<<1,((int)(X1))<<1,((int)(Y2))<<1,((int)(X2))<<1))
-
-
-
 /*** Some variables ***/
 
 

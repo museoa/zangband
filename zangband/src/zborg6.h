@@ -35,6 +35,16 @@
 
 #define SV_FOOD_MIN_OKAY    SV_FOOD_CURE_POISON
 
+
+/*
+ * Determine "twice" the distance between two points
+ * This results in "diagonals" being "correctly" ranged,
+ * that is, a diagonal appears "furthur" than an adjacent.
+ */
+#define double_distance(Y1,X1,Y2,X2) \
+    (distance(((int)(Y1))<<1,((int)(X1))<<1,((int)(Y2))<<1,((int)(X2))<<1))
+
+
 /*
  * Attempt to induce "word of recall"
  */
