@@ -879,11 +879,10 @@ void do_cmd_options(void)
 		prt("(2) Disturbance Options", 5, 5);
 		prt("(3) Game-Play Options", 6, 5);
 		prt("(4) Efficiency Options", 7, 5);
-		prt("(Z/5) Zangband Options", 8, 5);
-		prt("(6) Object auto-destruction Options", 9, 5);
+		prt("(5) Display Options", 8, 5);
+		prt("(6) Artificial Intelligence Options", 9, 5);
+                prt("(7) Testing Options", 10, 5);
 
-		/* Testing */
-		prt("(S) Stacking Options", 11, 5);
 		/* Special choices */
 		prt("(D) Base Delay Factor", 12, 5);
 		prt("(H) Hitpoint Warning", 13, 5);
@@ -908,10 +907,10 @@ void do_cmd_options(void)
 		/* Analyze */
 		switch (k)
 		{
-			/* General Options */
+			/* User Interface Options */
 			case '1':
 			{
-				/* Process the general options */
+				/* Spawn */
 				do_cmd_options_aux(1, "User Interface Options");
 				break;
 			}
@@ -924,7 +923,7 @@ void do_cmd_options(void)
 				break;
 			}
 
-			/* Inventory Options */
+			/* Game-Play Options */
 			case '3':
 			{
 				/* Spawn */
@@ -940,30 +939,31 @@ void do_cmd_options(void)
 				break;
 			}
 
-			/* Zangband Options */
-			case 'Z': case 'z': case '5':
+			/* Display Options */
+			case '5':
 			{
-				do_cmd_options_aux(5, "Zangband Options");
+                                /* Spawn */
+				do_cmd_options_aux(5, "Display Options");
 				break;
 			}
 
-			/* Object auto-destruction Options */
+			/* Artificial Intelligence Options */
 			case '6':
 			{
 				/* Spawn */
-				do_cmd_options_aux(7, "Object auto-destruction Options");
+				do_cmd_options_aux(7, "Artificial Intelligence Options");
 				break;
 			}
 
-			/* Testing Options */
-			case 'T': /* For people who do this by memory */
-			case 'S':
-			case 's':
-			{
-				/* Spawn */
-				do_cmd_options_aux(255, "Stacking Options");
-				break;
-			}
+			/* Testing options (autodestroy) */
+		        case 'T': /* For people who do this by memory */
+                        case '7':
+                        {
+
+                                /* Spawn */
+                                do_cmd_options_aux(8, "Testing Options");
+                                break;
+                        }
 
 			/* Cheating Options */
 			case 'C':
