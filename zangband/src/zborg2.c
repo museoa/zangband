@@ -817,6 +817,183 @@ void borg_forget_view(void)
 
 
 
+
+
+/* Slope and square used by mmove2 */
+static int mmove_slope;
+static int mmove_sq;
+
+/* Direction to move in */
+static int mmove_dx;
+static int mmove_dy;
+
+
+/*
+ * Calculate the slope and square information used by
+ * a following mmove2
+ */
+void borg_mmove_init(int x1, int y1, int x2, int y2)
+{
+	int temp;
+
+	int xx, yy;
+
+	int dx, dy, ax, ay, sx, sy, dist;
+
+	map_block *mb_ptr;
+	
+	bool is_projectable;
+
+	/* Clear slope and square */
+	mmove_slope = 0;
+	mmove_sq = 0;
+
+	/* Clear direction */
+	mmove_dx = 0;
+	mmove_dy = 0;
+
+	/* Paranoia - degenerate case */
+	if ((x1 == x2) && (y1 == y2)) return;
+
+	/* Extract the offset */
+	dy = y2 - y1;
+	dx = x2 - x1;
+
+	/*
+	 * We only work for points that are less than MAX_SIGHT appart.
+	 * Note that MAX_RANGE < MAX_SIGHT
+	 */
+	dist = distance(x1, y1, x2, y2);
+
+	if (dist > MAX_SIGHT)
+	{
+		/* Rescale */
+		dx = (dx * MAX_SIGHT) / dist;
+		dy = (dy * MAX_SIGHT) / dist;
+	}
+
+	/* Save direction */
+	mmove_dx = dx;
+	mmove_dy = dy;
+
+	/* Extract the absolute offset */
+	ay = ABS(dy);
+	ax = ABS(dx);
+
+	/* Extract some signs */
+	sx = (dx < 0) ? -1 : 1;
+	sy = (dy < 0) ? -1 : 1;
+	
+	
+	/* Is the square projectable from here? */
+	is_projectable = projectable(x1, y1, x2, y2);
+
+	/*
+	 * Start at the first square in the list.
+	 * This is a square adjacent to (x1,y1)
+	 */
+
+	/* Hack - we need to stick to one octant */
+	if (ay < ax)
+	{
+		/* Look up the slope to use */
+		mmove_slope = p_slope_min[ax][ay];
+
+		while (mmove_slope <= p_slope_max[ax][ay])
+		{
+			xx = x1 + sx * project_data[mmove_slope][mmove_sq].x;
+			yy = y1 + sy * project_data[mmove_slope][mmove_sq].y;
+
+			/* Done? */
+			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
+			
+			/* Paranoia */
+			if (!map_in_bounds(xx, yy)) break;
+
+			mb_ptr = map_loc(xx, yy);
+			
+			/* Do we want to stop early? */
+			if (!is_projectable && mb_ptr->monster) break;
+
+			/* Is the square not occupied by a monster, and passable? */
+			if (!borg_cave_los_grid(mb_ptr) || mb_ptr->monster)
+			{
+				/* Advance to the best position we have not looked at yet */
+				temp = project_data[mmove_slope][mmove_sq].slope;
+				mmove_sq = project_data[mmove_slope][mmove_sq].square;
+				mmove_slope = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				(mmove_sq)++;
+			}
+		}
+
+		/* No match? */
+		if (mmove_slope > p_slope_max[ax][ay])
+		{
+			mmove_slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
+		}
+	}
+	else
+	{
+		/* Look up the slope to use */
+		mmove_slope = p_slope_min[ay][ax];
+
+		while (mmove_slope <= p_slope_max[ay][ax])
+		{
+			/* Note that the data offsets have x,y swapped */
+			xx = x1 + sx * project_data[mmove_slope][mmove_sq].y;
+			yy = y1 + sy * project_data[mmove_slope][mmove_sq].x;
+
+			/* Done? */
+			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
+
+			/* Paranoia */
+			if (!map_in_bounds(xx, yy)) break;
+
+			mb_ptr = map_loc(xx, yy);
+			
+			/* Do we want to stop early? */
+			if (!is_projectable && mb_ptr->monster) break;
+
+			/* Is the square not occupied by a monster, and passable? */
+			if (!cave_los_grid(mb_ptr) || mb_ptr->monster)
+			{
+				/* Advance to the best position we have not looked at yet */
+				temp = project_data[mmove_slope][mmove_sq].slope;
+				mmove_sq = project_data[mmove_slope][mmove_sq].square;
+				mmove_slope = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				(mmove_sq)++;
+			}
+		}
+
+		/* No match? */
+		if (mmove_slope > p_slope_max[ay][ax])
+		{
+			mmove_slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+		}
+	}
+
+
+	/*
+	 * Reset to start.
+	 *
+	 * Square zero is the the first square along the path.
+	 * It is not the starting square
+	 */
+	mmove_sq = 0;
+}
+
+
+
+
+
 /*
  * Calculate "incremental motion". Used by project() and shoot().
  * Assumes that (*y,*x) lies on the path from (y1,x1) to (y2,x2).
