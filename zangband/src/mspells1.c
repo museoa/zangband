@@ -792,7 +792,6 @@ bool make_attack_spell(int m_idx)
 	char            m_name[80];
 	char            m_poss[80];
 	char            ddesc[80];
-	bool            no_inate = FALSE;
 
 	/* Target location */
 	int x = px;
@@ -831,19 +830,9 @@ bool make_attack_spell(int m_idx)
 
 	/* Stop if player is leaving */
 	if (p_ptr->leaving) return (FALSE);
-
-	if (stupid_monsters)
-	{
-		/* Only do spells occasionally */
-		if (randint0(100) >= chance) return (FALSE);
-	}
-	else
-	{
-		if (randint0(100) >= chance) return (FALSE);
-
-		/* Sometimes forbid inate attacks (breaths) */
-		if (randint0(100) >= (chance * 2)) no_inate = TRUE;
-	}
+	
+	/* Only do spells occasionally */
+	if (randint0(100) >= chance) return (FALSE);
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
 
@@ -862,12 +851,6 @@ bool make_attack_spell(int m_idx)
 	f4 = r_ptr->flags4;
 	f5 = r_ptr->flags5;
 	f6 = r_ptr->flags6;
-
-	if (!stupid_monsters)
-	{
-		/* Forbid inate attacks sometimes */
-		if (no_inate) f4 = 0L;
-	}
 
 	/* Hack -- allow "desperate" spells */
 	if ((r_ptr->flags2 & (RF2_SMART)) && (m_ptr->hp < m_ptr->maxhp / 10) &&
