@@ -1,4 +1,3 @@
-# CVS: Last edit by $Author$ on $Date$
 ##### Special attr/char values #####
 
 
@@ -3038,7 +3037,7 @@ F:32:0x81:0x8B
 
 #N:33:pillar
 #G:#:w
-
+F:33:0xCF:0x9A
 
 # secret door
 F:48:0x80:0x82
@@ -3248,10 +3247,10 @@ F:135:0xCF:0x81
 
 #N:136:thick swamp
 #G:;:g
+F:136:0xCF:0x93
 
 #N:137:swamp
 F:137:0xCF:0x92
-
 
 # Object attr/char definitions
 
@@ -4876,6 +4875,9 @@ K:580:0xB4:0x8D
 # Invisible Wall
 # no tile.
 
+# N:0:Nothing
+# N:1:blank
+
 # Glyph of warding.
 T:2:0xA2:0x88
 
@@ -4883,7 +4885,7 @@ T:2:0xA2:0x88
 T:3:0xA2:0x87
 
 # Corpse
-T:4:0xB4:0x8B
+T:4:0xB4:0x8C
 
 # Skeleton
 T:5:0xB4:0x8B
@@ -5015,9 +5017,287 @@ T:46:0xCC/0x9D
 T:47:0xCB/0x9F
 
 # Map Maker
-T:48:0xCB/0x9A
+T:48:0xD4:0x9B
+
+# N:49:Advanced Weapon Smiths
+T:49:0xCC:0x80
+
+# N:50:Expert Weapon Smiths
+T:50:0xCC:0x81
+
+# N:51:Arcane Weapon Smiths
+T:51:0xCC:0x82
+
+# N:52:Obscure Weapon Smiths
+T:52:0xCC:0x83
+
+# N:53:Rare Weapon Smiths
+T:53:0xCC:0x84
+
+# N:54:Advanced Armoury
+T:54:0xCC:0x85
+
+# N:55:Expert Armoury
+T:55:0xCC:0x86
+
+# N:56:Arcane Armoury
+T:56:0xCC:0x87
+
+# N:57:Obscure Armoury
+T:57:0xCC:0x88
+
+# N:58:Rare Armoury
+T:58:0xCC:0x89
+
+# N:59:Swordsman
+T:59:0xCC:0x8A
+
+# N:60:Advanced Swordsman
+T:60:0xCC:0x8B
+
+# N:61:Expert Swordsman
+T:61:0xCC:0x8C
+
+# N:62:Arcane Swordsman
+T:62:0xCC:0x8D
+
+# N:63:Obscure Swordsman
+T:63:0xCC:0x8E
+
+# N:64:Rare Swordsman
+T:64:0xCC:0x8F
+
+# N:65:Shieldsman
+T:65:0xCC:0x90
+
+# N:66:Advanced Shieldsman
+T:66:0xCC:0x91
+
+# N:67:Expert Shieldsman
+T:67:0xCC:0x92
+
+# N:68:Arcane Shieldsman
+T:68:0xCC:0x93
+
+# N:69:Obscure Shieldsman
+T:69:0xCC:0x94
+
+# N:70:Rare Shieldsman
+T:70:0xCC:0x95
+
+# N:71:Axeman
+T:71:0xCC:0x96
+
+# N:72:Advanced Axeman
+T:72:0xCC:0x97
+
+# N:73:Expert Axeman
+T:73:0xCC:0x98
+
+# N:74:Arcane Axeman
+T:74:0xCC:0x99
+
+# N:75:Obscure Axeman
+T:75:0xCC:0x9A
+
+# N:76:Rare Axeman
+T:76:0xCC:0x9B
+
+# N:77:Ammo Supplies
+T:77:0xD3:0x80
+
+# N:78:Powerful Ammo Supplies
+T:78:0xD3:0x81
+
+# N:79:Deadly Ammo Supplies
+T:79:0xD3:0x82
+
+# N:80:Fletcher
+T:80:0xD3:0x83
+
+# N:81:Advanced Fletcher
+T:81:0xD3:0x84
+
+# N:82:Expert Fletcher
+T:82:0xD3:0x85
+
+# N:83:Rare Fletcher
+T:83:0xD3:0x86
+
+# N:84:Warrior Hall
+T:84:0xD3:0x87
+
+# N:85:Advanced Warrior Hall
+T:85:0xD3:0x88
+
+# N:86:Expert Warrior Hall
+T:86:0xD3:0x89
+
+# N:87:Arcane Warrior Hall
+T:87:0xD3:0x8A
+
+# N:88:Obscure Warrior Hall
+T:88:0xD3:0x8B
+
+# N:89:Rare Warrior Hall
+T:89:0xD3:0x8C
+
+# N:90:Clothes Store
+T:90:0xD3:0x8D
+
+# N:91:Expensive Clothes Store
+T:91:0xD3:0x8E
+
+# N:92:Heavy Armoury
+T:92:0x81:0x92
+
+# N:93:Advanced Heavy Armoury
+T:93:0xCC:0x85
+
+# N:94:Expert Heavy Armoury
+T:94:0xCC:0x86
+
+# N:95:Arcane Heavy Armoury
+T:95:0xCC:0x87
+
+# N:96:Obscure Heavy Armoury
+T:96:0xCC:0x88
+
+# N:97:Rare Heavy Armoury
+T:97:0xCC:0x89
+
+# N:98:Milliner
+T:98:0xD3:0x8F
+
+# N:99:Advanced Milliner
+T:99:0xD3:0x90
+
+# N:100:Expert Milliner
+T:100:0xD3:0x91
+
+# N:101:Rare Milliner
+T:101:0xD3:0x92
+
+# N:102:Jeweler
+T:102:0xD3:0x93
+
+# N:103:Copper Jewler
+T:103:0xD3:0x94
+
+# N:104:Silver Jeweler
+T:104:0xD3:0x95
+
+# N:105:Gold Jeweler
+T:105:0xD3:0x96
+
+# N:106:Rare Jeweler
+T:106:0xD3:0x97
+
+# N:107:Statue Store
+T:107:0xD3:0x98
+
+# N:108:Expensive Statue Store
+T:108:0xD3:0x99
+
+# N:109:Figurine Store
+T:109:0xD3:0x9A
+
+# N:110:Expensive Figurine Store
+T:110:0xD3:0x9B
+
+# N:111:Potion Store
+T:111:0xD4:0x80
+
+# N:112:Cultured Potion Store
+T:112:0xD4:0x81
+
+# N:113:Expensive Potion Store
+T:113:0xD4:0x82
+
+# N:114:Obscure Potion Store
+T:114:0xD4:0x83
+
+# N:115:Rare Potion Store
+T:115:0xD4:0x84
+
+# N:116:Scroll Store
+T:116:0xD4:0x85
+
+# N:117:Crafted Scroll Store
+T:117:0xD4:0x86
+
+# N:118:Expensive Scroll Store
+T:118:0xD4:0x87
+
+# N:119:Obscure Scroll Store
+T:119:0xD4:0x88
+
+# N:120:Rare Scroll Store
+T:120:0xD4:0x89
+
+# N:121:Magic Store
+T:120:0xD4:0x8A
+
+# N:122:Crafted Magic Store
+T:122:0xD4:0x8B
+
+# N:123:Expensive Magic Store
+T:123:0xD4:0x8C
+
+# N:124:Obscure Magic Store
+T:124:0xD4:0x8D
+
+# N:125:Rare Magic Store
+T:125:0xD4:0x8E
+
+# N:126:Rare Book Store
+T:126:0xD4:0x8F
+
+# N:127:Large Temple
+T:127:0xD4:0x90
+
+# N:128:High Temple
+T:128:0xD4:0x91
+
+# N:129:Hidden Temple
+T:129:0xD4:0x92
+
+# N:130:Supplies Store
+T:130:0xD4:0x93
+
+# N:131:Dungeon Supplies Store
+T:131:0xD4:0x94
+
+# N:132:Large Black Market
+T:132:0xD4:0x95
+
+# N:133:Hidden Black Market
+T:133:0xD4:0x96
+
+# N:134:Advanced Alchemy Shop
+T:134:0xD4:0x97
+
+# N:135:Rare Alchemy Shop
+T:135:0xD4:0x98
+
+# N:136:Junk Store
+T:136:0xD4:0x99
+
+# N:137:Food Store
+T:137:0xD4:0x9A
+
+# N:138:Library
+F:138:0xCB:0x91
+
+# N:139:Casino
+F:139:0xCB:0x94
+
+# N:140:Inn
+F:140:0xCB:0x95
+
+# N:141:Healer
+F:141:0xCB:0x8F
 
 
 # Load the special player pictures
 %:xtra-xxx.prf
-
