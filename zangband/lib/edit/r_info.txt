@@ -26,15 +26,10 @@
 # recall window.  See "cave.c" for info.
 
 # CHAR_CLEAR monsters use special symbols (.) as given below,
-# and use those symbols for the recall window.  In theory, normally,
-# these monsters cannot be targetted, and when examined look like normal
-# floors, until the player "notices" them (perhaps check "awake").
+# and use those symbols for the recall window.
 
 # CHAR_MULTI monsters use special symbols (!, ?, =) as given below,
-# and use those symbols for the recall window.  In theory, normally,
-# these monsters cannot be targetted, and when examined look like normal
-# objects, until the player "notices" them (perhaps check "awake").
-
+# and use those symbols for the recall window.
 # Note that there are (a few) normal monsters who are "violet" but not
 # ATTR_MULTI, and a lot of monsters which are "white" but not ATTR_CLEAR.
 
@@ -82,15 +77,7 @@
 # of the creature and should be what the creature "looks" like.
 
 # Many of the "unique" monsters were changed to "match" the "base" monster
-# from which they were derived.  Angband 2.8.0 may require every "unique"
-# monster to be based on a "normal" monster, and may enforce color matching.
-# This may result in the addition of some new monsters, to serve as "base"
-# monsters, possibly including Ogre captains, Greater Balrogs, Black Trolls,
-# Vampire Queens, Giant Werewolfs, and others.  This may be accompanied by
-# a separation of the monster list into a "normal" monster list (r_info)
-# with 512 entries, and a "unique" monster list (u_info) with 128 entries,
-# which will require reorganization of the list.  Some new "player ghost"
-# unique monsters will probably be added at the same time.
+# from which they were derived.
 
 # Mushrooms look just like food (and use the "," symbol for both the recall
 # window and for normal display), Creeping coins look just like coins (and
@@ -99,18 +86,8 @@
 # window).  All other monsters use "alphabetic" symbols, and "alphabetic"
 # symbols are used only for monsters.
 
-# The "0" and "9" symbols are reserved for internal debugging use.
-
-# The "&" symbol is reserved for future use as a special "terrain feature".
-
-# The "`" symbol is reserved as an "alternate" open door picture, since
-# the "'" symbol looks like the "," symbol in some fonts (esp. IBM).
-
 # The "x" symbol is free for use as an "attr/char mapping" for annoying
 # monsters, such as magic mushrooms, drolems, etc.
-
-# Certain symbols ("X", "Y", "B", "l", "I", etc) are used by
-# very few monsters, and could be reorganized somewhat.
 
 # There are still too many "p" monsters, perhaps they should be broken up.
 
@@ -814,7 +791,7 @@ G:C:w
 I:120:4d6:30:17:0
 W:6:2:0:110
 O:0:0:0
-B:BITE:HURT:1d4
+B:BITE:HURT:1d6
 F:UNIQUE | CAN_SPEAK | WILD_DUNGEON_01
 F:FORCE_MAXHP | RAND_25 | DROP_CORPSE
 F:BASH_DOOR | 
@@ -827,7 +804,7 @@ G:C:w
 I:120:4d6:30:17:0
 W:6:2:0:110
 O:0:0:0
-B:BITE:HURT:1d4
+B:BITE:HURT:1d6
 F:UNIQUE | CAN_SPEAK | WILD_DUNGEON_01
 F:FORCE_MAXHP | RAND_25 | DROP_CORPSE
 F:BASH_DOOR | 
@@ -840,7 +817,7 @@ G:C:w
 I:120:4d6:30:17:0
 W:6:2:0:110
 O:0:0:0
-B:BITE:HURT:1d4
+B:BITE:HURT:1d6
 F:UNIQUE | CAN_SPEAK | WILD_DUNGEON_01
 F:FORCE_MAXHP | RAND_25 | DROP_CORPSE
 F:BASH_DOOR | 
@@ -864,7 +841,7 @@ G:f:u
 I:120:4d6:30:17:0
 W:6:1:0:91
 O:0:0:0
-B:CLAW:HURT:1d2
+B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
 F:UNIQUE | WILD_DUNGEON_01
 F:FORCE_MAXHP | DROP_SKELETON 
@@ -912,8 +889,8 @@ G:B:s
 I:120:3d5:40:15:0
 W:7:2:0:58
 O:0:0:0
-B:BITE:HURT:1d3
-B:BITE:HURT:1d3
+B:BITE:HURT:1d2
+B:BITE:HURT:1d2
 F:ANIMAL | CAN_FLY | DROP_CORPSE | FORCE_MAXHP | WILD_GRASS 
 F:WILD_FOREST1 | WILD_FOREST2
 D:It is a hooded crow, gray except for the black wings and head.
@@ -1011,8 +988,8 @@ G:B:D
 I:120:3d5:40:15:0
 W:3:2:0:25
 O:0:0:0
-B:BITE:HURT:1d4
-B:BITE:HURT:1d4
+B:BITE:HURT:1d3
+B:BITE:HURT:1d3
 F:ANIMAL | CAN_FLY | DROP_CORPSE | FORCE_MAXHP | WILD_GRASS |
 F:WILD_FOREST1 | WILD_FOREST2
 D:Larger than a crow, pitch black.
@@ -1281,7 +1258,7 @@ G:s:w
 I:110:4d7:20:16:40
 W:10:1:0:95
 O:0:0:0
-B:HIT:HURT:1d6
+B:HIT:HURT:1d7
 F:WILD_DUNGEON_01
 F:COLD_BLOOD | EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
@@ -1367,7 +1344,7 @@ D:He seems to consider you an agent of the devil.
 
 N:98:Zog
 G:h:b
-I:110:11d9:20:25:20
+I:110:8d9:20:25:20
 W:7:1:0:49
 O:50:0:25
 B:HIT:HURT:1d8
@@ -1576,7 +1553,7 @@ G:r:R
 I:120:7d9:12:15:20
 W:11:1:0:210
 O:0:0:0
-B:BITE:HURT:3d2
+B:BITE:HURT:2d2
 B:BITE:HURT:3d2
 F:EVIL | ANIMAL | DROP_CORPSE | WILD_DUNGEON_01
 S:1_IN_9
@@ -1633,7 +1610,7 @@ G:J:r
 I:110:4d8:6:12:1
 W:10:1:0:102
 O:0:0:0
-B:BITE:POISON:2d5
+B:BITE:POISON:2d8
 F:RAND_50 | CAN_SWIM | WILD_DUNGEON_01 | DROP_SKELETON | DROP_CORPSE
 F:BASH_DOOR | WILD_WASTE1 | WILD_MOUNT1 | WILD_MOUNT2
 F:ANIMAL | IM_POIS
@@ -1646,7 +1623,7 @@ I:100:9d9:10:12:25
 W:11:1:0:49
 O:0:0:0
 B:BITE:ACID:2d4
-B:BITE:ACID:2d6
+B:BITE:ACID:2d4
 F:WILD_DUNGEON_01 | WILD_FOREST1
 F:ANIMAL | EMPTY_MIND | KILL_ITEM | KILL_BODY | CAN_SWIM
 F:DROP_CORPSE
@@ -1688,8 +1665,8 @@ G:z:s
 I:110:4d9:20:14:30
 W:12:1:0:137
 O:0:0:0
-B:HIT:HURT:1d2
-B:HIT:HURT:1d2
+B:HIT:HURT:1d3
+B:HIT:HURT:1d3
 F:WILD_DUNGEON_01
 F:EMPTY_MIND | COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
@@ -1854,7 +1831,7 @@ G:s:w
 I:110:7d8:20:18:40
 W:13:1:0:206
 O:0:0:0
-B:HIT:HURT:2d5
+B:HIT:HURT:2d8
 F:COLD_BLOOD | EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | ORC | UNDEAD | WILD_DUNGEON_01
 F:IM_COLD | IM_POIS | 
@@ -1863,7 +1840,7 @@ D:It is an animated orc skeleton.
 
 N:137:Wormtongue, Agent of Saruman
 G:p:D
-I:110:19d10:20:15:20
+I:115:19d10:20:15:20
 W:12:2:0:632
 O:10:50:40
 B:HIT:HURT:1d5
@@ -2339,8 +2316,8 @@ G:J:g
 I:110:5d10:8:15:1
 W:15:2:0:276
 O:0:0:0
-B:SPIT:BLIND:1d2
-B:BITE:POISON:3d4
+B:SPIT:BLIND:1d4
+B:BITE:POISON:5d4
 F:RAND_50 | WILD_DUNGEON_01 | WILD_SWAMP1 | WILD_SWAMP2 | WILD_FOREST1
 F:DROP_SKELETON | DROP_CORPSE
 F:BASH_DOOR | CAN_SWIM |
@@ -2387,10 +2364,8 @@ G:S:s
 I:110:7d10:8:10:80
 W:14:2:0:204
 O:0:0:0
-B:BITE:HURT:1d10
-B:BITE:POISON:1d6
-B:BITE:POISON:1d6
-B:BITE:HURT:1d10
+B:BITE:POISON:3d6
+B:BITE:POISON:3d6
 F:WEIRD_MIND | BASH_DOOR | WILD_DUNGEON_01 | DROP_SKELETON | WILD_WASTE1
 F:ANIMAL | IM_POIS
 D:It is a vast black spider whose bulbous body is bloated with poison.
@@ -2407,7 +2382,7 @@ D:It is moving slowly towards you.
 
 N:177:The Borshin
 G:g:w
-I:110:9d15:40:20:0
+I:110:10d15:40:20:0
 W:17:2:0:464
 O:0:0:0
 B:HIT:HURT:2d11
@@ -2447,7 +2422,7 @@ G:y:u
 I:113:3d8:18:15:10
 W:15:1:0:400
 O:0:0:0
-B:EXPLODE:HURT:15d2
+B:EXPLODE:HURT:10d2
 F:WILD_DUNGEON_01 | SILLY |
 F:OPEN_DOOR | BASH_DOOR | LITE_1
 F:ANIMAL | IM_ACID | NO_FEAR
@@ -2495,8 +2470,8 @@ G:h:D
 I:110:7d11:20:14:20
 W:14:1:0:204
 O:10:90:0
-B:HIT:HURT:1d8
-B:HIT:HURT:1d8
+B:HIT:HURT:1d10
+B:HIT:HURT:1d10
 F:MALE | WILD_DUNGEON_01
 F:DROP_1D2 | 
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
@@ -2578,7 +2553,7 @@ G:H:o
 I:110:12d8:20:10:20
 W:15:1:0:343
 O:0:0:0
-B:CLAW:HURT:1d3
+B:CLAW:HURT:1d6
 B:CLAW:HURT:1d3
 B:CRUSH:HURT:1d10
 F:WILD_DUNGEON_01
@@ -2590,7 +2565,7 @@ G:u:B
 I:110:11d9:20:25:20
 W:14:3:0:213
 O:0:0:0
-B:CLAW:TERRIFY:1d8
+B:CLAW:TERRIFY:1d6
 B:CLAW:TERRIFY:1d8
 F:FRIENDS | WILD_DUNGEON_01
 F:OPEN_DOOR | BASH_DOOR | 
@@ -2602,7 +2577,7 @@ G:m:U
 I:110:11d8:2:6:70
 W:14:2:0:213
 O:0:0:0
-B:HIT:POISON:1d3
+B:HIT:POISON:1d10
 F:NEVER_MOVE | WILD_DUNGEON_01
 F:STUPID | EMPTY_MIND | 
 F:IM_POIS | 
@@ -2614,9 +2589,9 @@ G:q:u
 I:110:10d11:10:25:10
 W:6:1:0:46
 O:0:0:0
-B:CLAW:HURT:1d5
-B:CLAW:HURT:1d5
-B:BITE:HURT:1d10
+B:CLAW:HURT:1d10
+B:CLAW:HURT:1d10
+B:BITE:HURT:1d15
 F:BASH_DOOR | WILD_FOREST2 | WILD_MOUNT1 | WILD_MOUNT2 | DROP_CORPSE
 F:ANIMAL
 D:A huge, beastly bear.
@@ -2681,7 +2656,7 @@ G:C:u
 I:120:4d7:30:15:20
 W:18:1:0:366
 O:0:0:0
-B:BITE:HURT:1d6
+B:BITE:HURT:1d8
 F:RAND_25 | 
 F:FRIENDS | 
 F:BASH_DOOR | WILD_DUNGEON_01 | WILD_FOREST1 | WILD_FOREST2
@@ -2778,7 +2753,6 @@ I:110:15d9:10:10:12
 W:15:2:0:267
 O:20:50:20
 B:HIT:HURT:1d5
-B:HIT:HURT:1d5
 B:HIT:CONFUSE:1d3
 F:WILD_DUNGEON_01
 F:DROP_60 | EVIL | SHAPECHANGER | ATTR_MULTI | ATTR_ANY
@@ -2856,7 +2830,7 @@ W:16:1:0:315
 O:0:0:0
 B:HIT:HURT:1d4
 B:HIT:HURT:1d4
-B:HIT:HURT:1d4
+B:HIT:HURT:1d6
 F:WILD_DUNGEON_01
 F:COLD_BLOOD | EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | ORC | UNDEAD | 
@@ -2880,7 +2854,7 @@ G:J:D
 I:120:7d8:10:14:1
 W:19:3:0:579
 O:0:0:0
-B:BITE:POISON:4d4
+B:BITE:POISON:8d4
 F:RAND_50 | 
 F:BASH_DOOR | CAN_SWIM | WILD_DUNGEON_01 | WILD_FOREST1 | WILD_FOREST2
 F:WILD_SWAMP1 | WILD_SWAMP2
@@ -2893,7 +2867,7 @@ I:120:5d7:30:14:20
 W:14:1:0:284
 O:0:0:0
 B:BITE:HURT:1d3
-B:BITE:HURT:1d4
+B:BITE:HURT:1d6
 F:RAND_25 | 
 F:FRIENDS | 
 F:BASH_DOOR | WILD_DUNGEON_01 | WILD_WASTE1 |
@@ -3211,9 +3185,9 @@ G:S:b
 I:110:7d13:8:15:80
 W:18:2:0:846
 O:0:0:0
-B:HIT:HURT:1d12
-B:HIT:HURT:1d12
-B:BITE:POISON:1d6
+B:HIT:HURT:1d10
+B:HIT:HURT:1d10
+B:BITE:POISON:1d10
 F:FORCE_SLEEP | WILD_DUNGEON_01 | WILD_FOREST2
 F:BASH_DOOR | DROP_SKELETON |
 F:EVIL | IM_POIS
@@ -3324,8 +3298,8 @@ G:u:R
 I:110:10d9:20:20:20
 W:30:3:0:800
 O:0:0:0
-B:CLAW:TERRIFY:1d8
-B:CLAW:TERRIFY:1d8
+B:CLAW:TERRIFY:1d6
+B:CLAW:TERRIFY:1d6
 B:BITE:CONFUSE:1d6
 F:FRIENDS | WILD_DUNGEON_01 | WILD_WASTE2 
 F:OPEN_DOOR | BASH_DOOR | 
@@ -3541,7 +3515,7 @@ D:It is a large wolf with eyes full of cunning.
 
 N:258:Cheerful leprechaun
 G:h:G
-I:120:2d4:8:6:6
+I:115:2d4:8:6:6
 W:26:2:0:512
 O:100:0:0
 B:TOUCH:EAT_GOLD
@@ -3737,6 +3711,7 @@ I:110:4d7:30:15:0
 W:23:1:0:1008
 O:0:0:0
 B:BITE:HURT:1d6
+B:BITE:HURT:1d6
 F:FORCE_SLEEP | DROP_CORPSE
 F:FRIENDS | WILD_DUNGEON_01
 F:BASH_DOOR | LITE_1 | LITE_2
@@ -3750,6 +3725,7 @@ G:Z:D
 I:110:4d7:30:15:0
 W:24:1:0:1204
 O:0:0:0
+B:BITE:HURT:1d6
 B:BITE:HURT:1d6
 F:FORCE_SLEEP | DROP_CORPSE
 F:FRIENDS | WILD_DUNGEON_01
@@ -3795,9 +3771,9 @@ G:S:G
 I:120:7d15:8:16:80
 W:25:3:0:1524
 O:0:0:0
-B:BITE:POISON:1d6
-B:BITE:POISON:1d6
-B:BITE:POISON:1d6
+B:BITE:POISON:3d6
+B:BITE:POISON:3d6
+B:BITE:POISON:3d6
 F:WEIRD_MIND | BASH_DOOR | WILD_DUNGEON_01 | WILD_FOREST1
 F:ANIMAL | IM_POIS | DROP_SKELETON
 D:A giant spider with hairy black and red legs.
@@ -3819,9 +3795,8 @@ G:S:u
 I:120:6d8:15:13:80
 W:23:2:0:1037
 O:0:0:0
-B:BITE:HURT:1d8
-B:BITE:POISON:1d6
-B:BITE:POISON:1d6
+B:BITE:POISON:2d6
+B:BITE:POISON:2d6
 F:FRIENDS | WILD_DUNGEON_01 | WILD_FOREST2 |
 F:WEIRD_MIND | BASH_DOOR | HURT_LITE |
 F:ANIMAL | EVIL | IM_POIS | DROP_SKELETON
@@ -3966,7 +3941,7 @@ G:F:G
 I:110:2d8:12:16:50
 W:23:2:0:920
 O:0:0:0
-B:BITE:POISON:1d6
+B:BITE:POISON:2d6
 F:FORCE_SLEEP | RAND_50 | RAND_25 | WILD_DUNGEON_01 | WILD_SWAMP2 |
 F:WEIRD_MIND | BASH_DOOR | CAN_FLY |
 F:ANIMAL | IM_POIS
@@ -4186,7 +4161,7 @@ D:A whirlpool of sentient liquid.
 
 N:304:Giant red scorpion
 G:S:R
-I:110:10d8:12:44:20
+I:110:10d8:12:34:20
 W:25:1:0:937
 O:0:0:0
 B:BITE:HURT:2d4
@@ -4227,8 +4202,8 @@ G:Z:r
 I:110:7d6:30:15:0
 W:26:1:0:1436
 O:0:0:0
-B:BITE:FIRE:1d3
-B:BITE:FIRE:1d3
+B:BITE:FIRE:1d6
+B:BITE:FIRE:1d6
 B:BITE:FIRE:1d3
 F:FORCE_SLEEP | 
 F:FRIENDS | WILD_DUNGEON_01
@@ -4261,8 +4236,8 @@ G:Z:y
 I:110:7d6:30:15:0
 W:27:1:0:1303
 O:0:0:0
-B:BITE:ELEC:1d3
-B:BITE:ELEC:1d3
+B:BITE:ELEC:1d6
+B:BITE:ELEC:1d6
 B:BITE:ELEC:1d3
 F:FORCE_SLEEP | WILD_DUNGEON_01
 F:FRIENDS | DROP_SKELETON | DROP_CORPSE
@@ -4406,7 +4381,7 @@ I:110:14d8:20:50:30
 W:30:2:0:2629
 O:30:50:20
 B:HIT:CONFUSE:3d5
-B:HIT:EXP_20:3d5
+B:HIT:EXP_20:1d5
 F:DROP_1D2 | WILD_DUNGEON_01 | WILD_WASTE1 | WILD_WASTE2
 F:OPEN_DOOR | BASH_DOOR | NO_CONF | NO_SLEEP | DROP_CORPSE
 F:EVIL | IM_FIRE | ATTR_ANY | ATTR_MULTI
@@ -4420,8 +4395,8 @@ G:u:R
 I:120:9d8:20:25:30
 W:29:2:0:3498
 O:30:0:30
-B:CLAW:CONFUSE:3d5
-B:CLAW:CONFUSE:3d5
+B:CLAW:CONFUSE:2d5
+B:CLAW:CONFUSE:2d5
 F:WILD_DUNGEON_01
 F:FORCE_MAXHP | DROP_60 | FEMALE |
 F:OPEN_DOOR | BASH_DOOR | NO_CONF | NO_SLEEP |
@@ -5233,8 +5208,8 @@ G:h:v
 I:120:5d10:20:8:20
 W:29:1:0:2062
 O:0:0:100
-B:HIT:HURT:1d6
-B:HIT:HURT:1d6
+B:HIT:HURT:1d3
+B:HIT:HURT:1d3
 F:MALE | WILD_DUNGEON_01
 F:FORCE_SLEEP | 
 F:ONLY_ITEM | DROP_1D2 | DROP_SKELETON | DROP_CORPSE
@@ -5389,8 +5364,8 @@ G:G:B
 I:110:8d12:20:20:40
 W:37:1:0:2349
 O:0:0:0
-B:HIT:HURT:44d2
-B:HIT:HURT:44d2
+B:HIT:HURT:40d2
+B:HIT:HURT:40d2
 F:WILD_DUNGEON_01
 F:PASS_WALL | NO_SLEEP | COLD_BLOOD | NONLIVING | NO_FEAR |
 F:FORCE_MAXHP | RES_TELE | EMPTY_MIND | CAN_FLY 
@@ -5401,6 +5376,7 @@ G:l:w
 I:120:75d6:20:35:20
 W:34:2:0:6584
 O:0:0:0
+B:BITE:HURT:3d6
 B:BITE:HURT:3d6
 B:BITE:HURT:3d6
 B:BITE:HURT:3d6
@@ -5517,7 +5493,7 @@ F:IM_FIRE | IM_ELEC | EMPTY_MIND | EVIL | SMART | RES_TELE | CAN_FLY
 S:1_IN_4
 S:DRAIN_MANA | BLINK | BLIND | SCARE | CONF | S_UNDEAD | S_MONSTER |
 S:HEAL | TELE_AWAY | DARKNESS | S_HYDRA | TRAPS | FORGET | TELE_TO | SHRIEK
-D:Nobody has ever seen It.
+D:What is It?
 
 N:394:Banshee
 G:G:W
@@ -5821,8 +5797,8 @@ G:p:W
 I:110:14d8:14:27:20
 W:37:3:0:1644
 O:0:0:0
-B:HIT:HURT:1d9
-B:HIT:HURT:1d9
+B:HIT:HURT:1d8
+B:HIT:HURT:1d8
 F:FRIENDS | MALE | DROP_SKELETON | DROP_CORPSE
 F:BASH_DOOR | OPEN_DOOR | WILD_DUNGEON_01 | LITE_2
 S:1_IN_8
@@ -5973,9 +5949,8 @@ G:T:s
 I:110:15d12:20:30:40
 W:42:1:0:3973
 O:10:80:0
-B:CLAW:POISON:3d3
-B:CLAW:POISON:3d3
-B:BITE:HURT:1d6
+B:CLAW:POISON:4d3
+B:CLAW:POISON:4d3
 F:FRIENDS | DROP_60 | WILD_MOUNT2 | WILD_DUNGEON_01 | WILD_SWAMP1 | WILD_SWAMP2
 F:OPEN_DOOR | BASH_DOOR | DROP_CORPSE
 F:EVIL | TROLL
@@ -5983,7 +5958,7 @@ D:A powerful troll form.  Venom drips from its needlelike claws.
 
 N:425:Flamer of Tzeentch
 G:,:R
-I:110:45d15:10:35:20
+I:110:30d15:10:35:20
 W:41:2:0:9241
 O:0:0:0
 B:ENGULF:FIRE:3d6
@@ -6086,7 +6061,7 @@ D:A hideous ogre wrapped in black sorcerous robes.
 
 N:431:Grendel
 G:O:g
-I:120:15d70:20:50:20
+I:120:15d60:20:50:20
 W:41:2:0:39464
 O:0:100:0
 B:HIT:HURT:6d6
@@ -6197,7 +6172,7 @@ F:INVISIBLE | OPEN_DOOR | BASH_DOOR |
 F:EVIL | NO_CONF | NO_SLEEP
 D:A creature who lives underground and eats surface 
 D:dwellers whom it catches 
-D:with its poisonous tentacle, which is the only part of the creature tha 
+D:with its poisonous tentacle, which is the only part of the creature that 
 D:is ever seen. Perhaps it is better not to see the part which remains 
 D:underground...
 
@@ -6264,7 +6239,8 @@ F:ANIMAL | IM_POIS | NO_CONF | NO_SLEEP | FORCE_MAXHP | UNIQUE | FORCE_SLEEP
 S:1_IN_3
 S:SHRIEK | CONF | S_HYDRA | SLOW | BLIND | DRAIN_MANA
 S:BA_POIS | BR_CHAO | FORGET | DARKNESS | BR_NUKE
-D:The lovable purple reptile is making a guest appearance here.
+D:The lovable purple reptile is making a guest appearance here.  Flee while 
+D:you still can!
 
 N:442:Black knight
 G:p:D
@@ -6285,7 +6261,7 @@ D:menacingly.
 
 N:443:Seahorse
 G:l:o
-I:120:83d11:20:30:20
+I:120:40d10:20:30:20
 W:48:2:0:14964
 O:0:0:0
 B:BITE:PARALYZE:4d5
@@ -6387,7 +6363,7 @@ S:1_IN_3 |
 S:HASTE | TPORT | TELE_TO | BLIND | CONF | 
 S:BO_FIRE | BO_COLD | BO_ELEC | 
 S:S_MONSTER
-D:A fat mage with glasses.
+D:A fat mage with glasses and a pointy hat.
 
 N:450:Mind flayer
 G:h:v
@@ -6431,8 +6407,7 @@ B:CLAW:POISON:2d4
 B:CLAW:POISON:2d4
 B:BITE:HURT:4d4
 F:FRIENDS | WILD_DUNGEON_01 | WILD_SHORE | DROP_CORPSE
-F:RAND_25 | 
-F:DROP_90 |
+F:RAND_25 | DROP_90 |
 F:CAN_SWIM | BASH_DOOR | ELDRITCH_HORROR | RES_TELE |
 F:EVIL | DEMON | IM_FIRE | IM_POIS | RES_WATE
 D:"I thought their predominant color was a greyish-green, 
@@ -6520,7 +6495,6 @@ O:100:0:0
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
-B:HIT:POISON:3d4
 F:CHAR_MULTI | WILD_DUNGEON_01
 F:FORCE_SLEEP | NEVER_MOVE | 
 F:EMPTY_MIND | COLD_BLOOD | 
@@ -6537,8 +6511,7 @@ G:.:v
 I:120:2d6:30:30:100
 W:42:6:0:3813
 O:0:0:0
-B:HIT:POISON:3d4
-B:HIT:CONFUSE:3d4
+B:HIT:CONFUSE:8d4
 F:WILD_DUNGEON_01
 F:CHAR_MULTI | ATTR_MULTI | ATTR_ANY |
 F:FORCE_SLEEP | NEVER_MOVE | MULTIPLY |
@@ -6848,7 +6821,7 @@ F:EVIL | UNDEAD | IM_COLD | CAN_FLY |
 F:IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_15 | 
 S:BLIND | HOLD | DRAIN_MANA
-D:You don't believe in them.
+D:You don't believe in them, and they don't believe in you.
 
 N:478:Death watch beetle
 G:K:B
@@ -6895,10 +6868,9 @@ G:S:D
 I:110:12d70:8:40:80
 W:51:3:0:65312
 O:20:30:50
-B:BITE:HURT:2d10
-B:STING:POISON:2d5
-B:STING:LOSE_STR:1d4
-B:STING:POISON:2d5
+B:STING:POISON:4d5
+B:BITE:LOSE_STR:1d4
+B:STING:POISON:4d5
 F:UNIQUE | FEMALE | WILD_DUNGEON_01 | WILD_FOREST2
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ESCORT | ESCORTS | DROP_CORPSE
@@ -7026,7 +6998,7 @@ G:R:g
 I:110:11d68:20:35:50
 W:45:7:0:34314
 O:20:0:80
-B:BITE:HURT:5d5
+B:BITE:HURT:2d5
 B:CRUSH:HURT:2d10
 B:CRUSH:HURT:2d10
 F:UNIQUE | CAN_SPEAK | WILD_DUNGEON_01
@@ -7175,7 +7147,6 @@ G:p:v
 I:120:30d7:30:25:5
 W:52:3:0:35063
 O:0:0:100
-B:HIT:HURT:10d2
 B:KICK:HURT:10d2
 B:PUNCH:HURT:10d2
 B:KICK:HURT:10d2
@@ -7298,8 +7269,8 @@ W:52:7:0:65338
 O:0:100:0
 B:HIT:HURT:9d1
 B:HIT:HURT:6d5
-B:HIT:HURT:25d1
-B:HIT:HURT:30d1
+B:HIT:HURT:20d1
+B:HIT:HURT:20d1
 F:UNIQUE | MALE | WEIRD_MIND | CAN_SPEAK | SILLY |
 F:FORCE_MAXHP | WILD_DUNGEON_01 | WILD_GRASS | DROP_CORPSE
 F:ONLY_ITEM | DROP_90 | DROP_GOOD |
@@ -7602,9 +7573,9 @@ G:U:r
 I:120:23d8:20:20:30
 W:52:1:0:16904
 O:0:100:0
-B:HIT:EXP_20:13d1
-B:HIT:EXP_20:13d1
-B:HIT:EXP_20:13d1
+B:HIT:EXP_20:10d1
+B:HIT:EXP_20:10d1
+B:HIT:EXP_20:10d1
 F:WILD_DUNGEON_01
 F:FORCE_MAXHP | OPEN_DOOR | FRIENDS | DROP_60 | REGENERATE |
 F:ONLY_ITEM | DROP_CHOSEN | NO_FEAR | NONLIVING |
@@ -7790,8 +7761,8 @@ G:S:v
 I:120:26d14:12:25:40
 W:51:4:0:15770
 O:0:0:0
-B:BITE:POISON:1d6
-B:STING:POISON:1d6
+B:BITE:POISON:3d6
+B:STING:POISON:3d6
 F:WEIRD_MIND | BASH_DOOR | FRIENDS | ELDRITCH_HORROR | DROP_CORPSE
 F:ANIMAL | EVIL | WILD_DUNGEON_01 | WILD_WASTE1 | WILD_WASTE2
 D:Bloated purple spiders with long, bristly legs.
@@ -8165,7 +8136,7 @@ D:A sentient arcane tome casting spells with malevolent intent.
 
 N:558:Colossus
 G:g:y
-I:110:30d70:15:75:10
+I:105:30d70:15:75:10
 W:55:4:0:30102
 O:0:0:0
 B:HIT:HURT:10d10
@@ -8223,9 +8194,9 @@ G:d:g
 I:110:33d10:20:40:70
 W:54:1:0:27120
 O:50:50:0
-B:CLAW:HURT:1d4
-B:CLAW:HURT:1d4
-B:BITE:HURT:1d6
+B:CLAW:HURT:1d8
+B:CLAW:HURT:1d8
+B:BITE:HURT:2d10
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY |
 F:DROP_2D2 | DROP_CORPSE
 F:BASH_DOOR | WILD_DUNGEON_01 | WILD_MOUNT2 | WILD_FOREST2 |
@@ -8272,14 +8243,14 @@ D:deepest red hue.  Heat radiates from its form.
 
 N:564:Nightblade
 G:h:D
-I:120:14d13:20:30:10
+I:125:14d13:20:30:10
 W:52:2:0:15815
 O:0:100:0
-B:HIT:POISON:3d4
-B:HIT:POISON:3d4
-B:HIT:LOSE_CON:3d4
+B:HIT:POISON:8d4
+B:HIT:POISON:8d4
+B:HIT:LOSE_CON:2d4
 F:MALE | WILD_DUNGEON_01 | WILD_FOREST1
-F:DROP_90 | FRIENDS | INVISIBLE | DROP_SKELETON | DROP_CORPSE
+F:DROP_90 | INVISIBLE | DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | BASH_DOOR | HURT_LITE |
 F:EVIL | NO_CONF | NO_SLEEP
 D:A dark elven assassin, so stealthy that he is almost impossible to see.
@@ -8403,7 +8374,7 @@ D:A gaunt figure, clothed in black robes.
 
 N:572:The Greater hell magic mushroom were-quylthulg
 G:Q:s
-I:120:19d70:50:40:50
+I:120:19d50:50:40:50
 W:54:3:0:74777
 O:0:50:50
 B:GAZE:EXP_VAMP:4d8
@@ -8542,12 +8513,12 @@ D:You have not seen it yet.
 
 N:580:Flying polyp
 G:l:R
-I:120:35d7:90:35:10
+I:115:35d7:90:35:10
 W:55:2:0:20673
 O:0:0:0
-B:CRUSH:PARALYZE:8d4
-B:CRUSH:PARALYZE:8d4
-B:CRUSH:PARALYZE:8d4
+B:CRUSH:PARALYZE:7d4
+B:CRUSH:PARALYZE:7d4
+B:CRUSH:PARALYZE:7d4
 F:WILD_DUNGEON_01
 F:PASS_WALL | INVISIBLE | FORCE_MAXHP | RES_DISE | 
 F:IM_POIS | IM_COLD | IM_ACID | ELDRITCH_HORROR |
@@ -8582,8 +8553,6 @@ G:E:y
 I:130:12d10:30:60:0
 W:61:4:0:61775
 O:0:0:0
-B:HIT:HURT:1d9
-B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 F:FORCE_SLEEP | FORCE_MAXHP | RAND_50 | 
@@ -8819,7 +8788,7 @@ D:darted like a stupendous monster of nightmares..."
 
 N:596:Mother Hydra
 G:u:g
-I:120:19d75:12:80:50
+I:120:19d75:12:60:50
 W:60:3:0:224876
 O:0:50:50
 B:CLAW:POISON:8d4
@@ -9253,10 +9222,10 @@ D:A huge draconic form enveloped in clouds of poisonous vapour.
 
 N:619:Chthonian
 G:w:D
-I:120:70d10:20:45:20
+I:120:60d10:20:45:20
 W:53:2:0:101625
 O:100:0:0
-B:CRUSH:SHATTER:11d6
+B:CRUSH:SHATTER:8d6
 B:TOUCH:LOSE_CON:1d2
 B:TOUCH:LOSE_CON:1d2
 F:WILD_DUNGEON_01
@@ -10191,8 +10160,8 @@ F:REGENERATE | NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR |
 F:RES_TELE |
 F:ONLY_ITEM | DROP_90 | DROP_GOOD | DROP_GREAT | UNIQUE |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | SMART | POWERFUL |
-S:1_IN_3
-S:BLIND | HEAL | BA_DARK | HASTE | CONF |
+S:1_IN_4
+S:HEAL | BA_DARK | HASTE | CONF |
 D:Deriving his strength from the shadows, this king of thieves 
 D:steals only for the challenge.
 
@@ -10333,8 +10302,8 @@ G:.:v
 I:120:9d100:20:50:10
 W:65:2:0:183036
 O:40:40:10
-B:TOUCH:LOSE_ALL:7d6
-B:TOUCH:LOSE_ALL:7d6
+B:TOUCH:LOSE_ALL:6d6
+B:TOUCH:LOSE_ALL:6d6
 F:FORCE_SLEEP | FORCE_MAXHP | RAND_25 | WILD_DUNGEON_01
 F:INVISIBLE | PASS_WALL | CAN_FLY | 
 F:ONLY_ITEM | DROP_2D2 | ATTR_MULTI | ATTR_ANY |
@@ -10449,7 +10418,7 @@ G:z:D
 I:120:50d50:30:40:15
 W:61:3:0:769103
 O:0:0:100
-B:CLAW:HURT:50d1
+B:CLAW:HURT:40d1
 B:TOUCH:TIME:1d50
 B:TOUCH:TIME:1d50
 F:ESCORT | UNIQUE | IM_COLD | ELDRITCH_HORROR | RES_NETH |
@@ -10943,7 +10912,6 @@ O:40:50:0
 B:CRUSH:SHATTER:10d11
 B:CRUSH:SHATTER:10d11
 B:CRUSH:SHATTER:10d11
-B:CRUSH:SHATTER:10d11
 F:FORCE_SLEEP | FORCE_MAXHP | HURT_ROCK 
 F:WILD_DUNGEON_01 | WILD_MOUNT1 | WILD_MOUNT2
 F:DROP_3D2 | MOVE_BODY | KILL_WALL |
@@ -11028,9 +10996,9 @@ G:R:D
 I:120:35d100:30:60:15
 W:68:3:0:613125
 O:20:0:80
-B:CRUSH:HURT:23d13
-B:CRUSH:HURT:23d13
-B:CRUSH:HURT:23d13
+B:CRUSH:HURT:23d10
+B:CRUSH:HURT:23d10
+B:CRUSH:HURT:23d10
 F:WILD_DUNGEON_01
 F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | ELDRITCH_HORROR |
 F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | KILL_BODY |
@@ -11111,9 +11079,9 @@ G:#:W
 I:120:12d40:20:40:20
 W:72:4:0:58950
 O:0:0:0
-B:HIT:HURT:3d6
-B:HIT:HURT:3d6
-B:HIT:HURT:3d6
+B:HIT:HURT:3d10
+B:HIT:HURT:3d10
+B:HIT:HURT:3d10
 F:WILD_DUNGEON_01
 F:FORCE_SLEEP | COLD_BLOOD | EMPTY_MIND | PASS_WALL | RAND_50 | MULTIPLY |
 F:BASH_DOOR | IM_COLD | IM_FIRE | IM_POIS | NONLIVING |
@@ -11917,7 +11885,7 @@ W:77:3:0:1051325
 O:0:100:0
 B:HIT:HURT:50d1
 B:HIT:HURT:50d1
-B:HIT:HURT:50d1
+B:HIT:HURT:25d2
 F:WILD_DUNGEON_01
 F:DEMON | EVIL | DROP_GOOD | REGENERATE | CAN_FLY | NONLIVING |
 F:FORCE_SLEEP | FORCE_MAXHP | ONLY_ITEM | DROP_2D2 | ELDRITCH_HORROR |
@@ -12373,8 +12341,8 @@ G:H:R
 I:130:32d70:35:62:255
 W:87:4:0:1056990
 O:30:50:20
-B:CLAW:HURT:10d10
-B:CLAW:HURT:10d10
+B:CLAW:HURT:15d15
+B:CLAW:HURT:15d15
 B:BITE:HURT:10d10
 B:BITE:HURT:10d10
 F:ATTR_MULTI | EVIL | WILD_DUNGEON_01
@@ -12932,7 +12900,9 @@ S:BRAIN_SMASH | TRAPS | BA_MANA |
 S:BO_MANA | BA_NETH | 
 S:S_MONSTERS | S_UNDEAD | S_KIN | ANIM_DEAD
 D:He is a highly cunning, extremely magical being, spoken of in legends.  
-D:This ancient shadow of death wilts any living thing it passes.
+D:His head is rumored to control spells of great power.  
+D:This ancient shadow of death wilts any living thing it passes. 
+
 
 N:805:Omarax the Eye Tyrant
 G:e:y
@@ -13151,7 +13121,7 @@ O:80:0:20
 B:CLAW:POISON:8d10
 B:CLAW:POISON:8d10
 B:CRUSH:HURT:8d15
-B:BITE:HURT:100d1
+B:BITE:HURT:2d50
 F:UNIQUE | MALE | CAN_SPEAK | SMART | RES_TELE | ANIMAL | WILD_DUNGEON_01
 F:ESCORT | ESCORTS | CAN_SWIM | ELDRITCH_HORROR |
 F:OPEN_DOOR | BASH_DOOR |
@@ -13792,10 +13762,10 @@ G:U:u
 I:130:90d70:90:45:90
 W:97:4:0:9128463
 O:0:100:0
-B:HIT:HURT:2d50
-B:HIT:HURT:2d50
-B:HIT:HURT:2d50
-B:HIT:HURT:2d50
+B:HIT:HURT:2d40
+B:HIT:HURT:2d40
+B:HIT:HURT:2d40
+B:HIT:HURT:2d40
 F:RAND_25 | EVIL | DEMON | WILD_DUNGEON_01
 F:DROP_1D2 | DROP_GOOD | ONLY_ITEM | RES_TELE | DROP_GREAT | UNIQUE |
 F:IM_POIS | IM_FIRE | FORCE_SLEEP | FORCE_MAXHP | NONLIVING
@@ -14201,7 +14171,7 @@ O:0:100:0
 B:HIT:UN_BONUS:12d12
 B:HIT:UN_POWER:12d12
 B:HIT:CONFUSE:10d2
-B:HIT:BLIND:3d2
+B:HIT:BLIND:10d2
 F:UNIQUE | QUESTOR | MALE | CAN_SPEAK | DROP_CORPSE | WILD_DUNGEON_01
 F:ATTR_MULTI | AMBERITE | RES_TELE
 F:FORCE_SLEEP | FORCE_MAXHP | FORCE_DEPTH | 
@@ -14262,7 +14232,7 @@ D:pulp!
 
 N:862:The Serpent of Chaos
 G:J:D
-I:155:140d150:111:87:0
+I:155:140d180:111:87:0
 W:100:1:0:13311000
 O:0:50:50
 B:CRUSH:SHATTER:22d10
@@ -14326,7 +14296,7 @@ F:RES_TELE | RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_DISE |
 F:NO_FEAR | NO_CONF | NO_STUN | NO_SLEEP | 
 S:1_IN_2 | 
 S:BR_NETH | BR_TIME | BA_MANA | BO_MANA | HAND_DOOM | HEAL | 
-S:S_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+S:S_DEMON | S_HI_UNDEAD | S_HI_DRAGON | TPORT
 D:It is a ring of immense power.  You can hardly believe you've 
 D:finally found the One Ring!
 
@@ -14434,7 +14404,7 @@ D:A monk in dusky robes trained in the most lethal martial arts.
 
 N:871:Unstable worm mass
 G:w:o
-I:100:3d8:10:5:5
+I:110:3d8:10:5:5
 W:20:4:0:76
 O:0:0:0
 B:EXPLODE:FIRE:5d5
@@ -14569,7 +14539,7 @@ D:The tortured soul of a once powerful wyrm.
 
 N:880:Creeping dust
 G:.:v
-I:120:2d6:30:30:100
+I:140:2d6:30:30:100
 W:90:6:0:67830
 O:0:0:0
 B:HIT:CONFUSE:3d4
