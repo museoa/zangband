@@ -966,6 +966,21 @@ static void hit_trap(void)
 			msg_print("A strange white mist surrounds you!");
 			if (!p_ptr->free_act)
 			{
+         	msg_print("You fall asleep.");
+
+				if (ironman_nightmare)
+				{
+					msg_print("A horrible vision enters your mind.");
+
+					/* Pick a nightmare */
+					get_mon_num_prep(get_nightmare, NULL);
+
+					/* Have some nightmares */
+					have_nightmare(get_mon_num(MAX_DEPTH));
+
+					/* Remove the monster restriction */
+					get_mon_num_prep(NULL, NULL);
+				}
 				(void)set_paralyzed(p_ptr->paralyzed + rand_int(10) + 5);
 			}
 			break;

@@ -607,7 +607,7 @@ static bool gamble_comm(int cmd)
 }
 
 
-static bool get_nightmare(int r_idx)
+bool get_nightmare(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -622,7 +622,7 @@ static bool get_nightmare(int r_idx)
 }
 
 
-static void have_nightmare(int r_idx)
+void have_nightmare(int r_idx)
 {
 	bool happened = FALSE;
 

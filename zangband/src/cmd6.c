@@ -550,6 +550,21 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!p_ptr->free_act)
 			{
+         	msg_print("You fall asleep.");
+
+				if (ironman_nightmare)
+				{
+					msg_print("A horrible vision enters your mind.");
+
+					/* Pick a nightmare */
+					get_mon_num_prep(get_nightmare, NULL);
+
+					/* Have some nightmares */
+					have_nightmare(get_mon_num(MAX_DEPTH));
+
+					/* Remove the monster restriction */
+					get_mon_num_prep(NULL, NULL);
+				}
 				if (set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4))
 				{
 					ident = TRUE;

@@ -3869,6 +3869,21 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
 			if (p_ptr->free_act)  break;
 			if (fuzzy) msg_print("You fall asleep!");
+
+			if (ironman_nightmare)
+			{
+				msg_print("A horrible vision enters your mind.");
+
+				/* Pick a nightmare */
+				get_mon_num_prep(get_nightmare, NULL);
+
+				/* Have some nightmares */
+				have_nightmare(get_mon_num(MAX_DEPTH));
+
+				/* Remove the monster restriction */
+				get_mon_num_prep(NULL, NULL);
+			}
+
 			set_paralyzed(p_ptr->paralyzed + dam);
 			dam = 0;
 			break;

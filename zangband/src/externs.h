@@ -933,6 +933,8 @@ extern void store_init(int town_num, int store_num);
 extern void move_to_black_market(object_type * o_ptr);
 
 /* bldg.c */
+extern bool get_nightmare(int r_idx);
+extern void have_nightmare(int r_idx);
 extern void do_cmd_bldg(void);
 extern void do_cmd_quest(void);
 extern void quest_discovery(int q_idx);
