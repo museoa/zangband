@@ -1293,9 +1293,10 @@ s32b object_value_real(object_type *o_ptr)
 				+ sqvalue(o_ptr->to_a)) * 5L);
 
 			/* Hack -- Factor in extra damage dice */
-			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
+			if (o_ptr->dd * o_ptr->ds)
 			{
-				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 100L;
+				value = value * (k_ptr->dd * k_ptr->ds /
+					 (o_ptr->dd * o_ptr->ds));
 			}
 
 			/* Done */
@@ -1309,12 +1310,13 @@ s32b object_value_real(object_type *o_ptr)
 		{
 			/* Factor in the bonuses */
 			value += ((sqvalue(o_ptr->to_h)
-				+ sqvalue(o_ptr->to_d)) * 2L);
+				+ sqvalue(o_ptr->to_d)));
 
 			/* Hack -- Factor in extra damage dice */
-			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
+			if (o_ptr->dd * o_ptr->ds)
 			{
-				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 5L;
+				value = value * (k_ptr->dd * k_ptr->ds /
+					 (o_ptr->dd * o_ptr->ds));
 			}
 
 			/* Done */
