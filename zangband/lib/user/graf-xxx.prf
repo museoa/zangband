@@ -2903,6 +2903,15 @@ R:868:0xC4:0x9B
 # Boadile
 R:869:0xC4:0x9C
 
+# Anti-magic hound
+R:882:0xC4:0x9D
+
+# Mana hound
+R:883:0xC4:0x9E
+
+# Vore
+R:884:0xC4:0x9F
+
 
 # Feature attr/char definitions
 
@@ -4772,6 +4781,9 @@ K:578:0xB4:0x8B
 
 # Generic Corpse
 K:579:0xB4:0x8C
+
+# T-shirt
+K:580:0xB4:0x8D
 
 # Load the special player pictures
 %:xtra-xxx.prf
