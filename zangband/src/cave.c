@@ -4369,6 +4369,13 @@ void update_mon_lite(void)
 			/* The is the square newly lit and visible? */
 			if ((c_ptr->info & (CAVE_VIEW | CAVE_TEMP)) == CAVE_VIEW)
 			{
+				/* Do we have a monster on this square? */
+				if (c_ptr->m_idx)
+				{
+					/* Update the monster */
+					update_mon(c_ptr->m_idx, FALSE);
+				}
+				
 				/* It is now lit */
 				note_spot(fy, fx);
 			}
