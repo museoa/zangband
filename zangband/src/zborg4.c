@@ -979,7 +979,7 @@ static void borg_notice_aux1(void)
 		if (item->sval == SV_LITE_LANTERN) borg_skill[BI_CUR_LITE] = 2;
 
 		/* No fuel means no radius */
-		if (!item->pval) borg_skill[BI_CUR_LITE] = 0;
+		if (!item->timeout) borg_skill[BI_CUR_LITE] = 0;
 
 		/* Artifact lites -- radius three */
 		/* HACK assume non-torch/non lantern lite is artifact */

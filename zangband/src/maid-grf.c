@@ -590,21 +590,26 @@ static void save_map_location(int x, int y, term_map *map)
 	if (map->flags & MAP_SEEN)
 	{
 		/* Wasn't seen, and now is */
-		if (!mb_ptr->flags & MAP_SEEN)
+		if (!(mb_ptr->flags & (MAP_SEEN | MAP_KEEP)))
 		{
-			map_cache_refcount[block_num]++;
+            map_cache_refcount[block_num]++;
+            map_refcount[y1][x1]++;
+
+            /* Save the fact that this block has been seen */
+            mb_ptr->flags |= MAP_ONCE;
 		}
 	}
-	else
+	else if (!(mb_ptr->flags & MAP_KEEP))
 	{
 		/* Was seen, and now is not */
 		if (mb_ptr->flags & MAP_SEEN)
 		{
 			/* Paranoia */
-			if (!map_cache_refcount[block_num])
-				quit("Decrementing invalid overhead map loc");
-
-			map_cache_refcount[block_num]--;
+            if (!map_cache_refcount[block_num])
+                quit("Decrementing invalid overhead map loc");
+			
+            map_cache_refcount[block_num]--;
+            map_refcount[y1][x1]--;
 		}
 	}
 
@@ -614,8 +619,9 @@ static void save_map_location(int x, int y, term_map *map)
 		map_info_hook(mb_ptr, map);
 	}
 
-	/* Save the flags */
-	mb_ptr->flags = map->flags;
+    /* Save the flags */
+    mb_ptr->flags &= (MAP_ONCE | MAP_KEEP);
+	mb_ptr->flags |= map->flags;
 
 	/* XXX XXX Hack */
 	player_x = p_ptr->px;

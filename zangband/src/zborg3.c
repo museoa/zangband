@@ -1605,7 +1605,7 @@ bool borg_refuel_torch(void)
 	}
 
 	/* Dont bother with empty */
-	if (borg_items[i].pval == 0)
+	if (borg_items[i].timeout == 0)
 	{
 		return (FALSE);
 	}
@@ -2224,10 +2224,13 @@ bool borg_activate_artifact(int name1, bool secondary)
 {
 	int i;
 
-	/* Hack - ignore unused parameter */
-	(void)name1;
-	(void)secondary;
+    /* Hack - ignore unused parameter */
+	(void) name1;
+    (void) secondary;
 
+    /* -RML- We can't recognize artifacts yet... */
+    return (FALSE);
+	
 	/* Check the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{

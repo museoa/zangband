@@ -390,7 +390,10 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Avoid "wall" grids (not doors) unless tunneling */
 			if (!tunneling &&
 				(mb_ptr->terrain >= FEAT_SECRET &&
-				 mb_ptr->terrain <= FEAT_WALL_SOLID)) continue;
+                 mb_ptr->terrain <= FEAT_WALL_SOLID)) continue;
+
+            /* Avoid pillars */
+            if (!tunneling && mb_ptr->terrain == FEAT_PILLAR) continue;
 
 			/* Avoid "perma-wall" grids */
 			if (mb_ptr->terrain >= FEAT_PERM_EXTRA &&
@@ -411,9 +414,9 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 			/* Avoid some other Zang Terrains */
 
-			/* Avoid unknown grids (if requested or retreating) */
+            /* Avoid unknown grids (if requested or retreating) */
 			if ((avoid || borg_desperate) &&
-				(mb_ptr->terrain == FEAT_NONE)) continue;
+                (mb_ptr->terrain == FEAT_NONE)) continue;
 
 			/* Avoid Monsters if Desprerate */
 			if (borg_desperate && (mb_ptr->monster)) continue;
@@ -2962,7 +2965,7 @@ bool borg_caution(void)
 	/*** Notice "nasty" situations ***/
 
 	/* About to run out of light is extremely nasty */
-	if (!borg_skill[BI_LITE] && borg_items[INVEN_LITE].pval < 250) nasty = TRUE;
+	if (!borg_skill[BI_LITE] && borg_items[INVEN_LITE].timeout < 250) nasty = TRUE;
 
 	/* Starvation is nasty */
 	if (borg_skill[BI_ISWEAK]) nasty = TRUE;
@@ -3427,18 +3430,18 @@ bool borg_caution(void)
 		if ((item->tval == TV_LITE) && (item->sval == SV_LITE_TORCH))
 		{
 			/* Try to refuel the torch */
-			if ((item->pval < 500) && borg_refuel_torch()) return (TRUE);
+			if ((item->timeout < 500) && borg_refuel_torch()) return (TRUE);
 		}
 
 		/* Must have light -- Refuel current lantern */
 		if ((item->tval == TV_LITE) && (item->sval == SV_LITE_LANTERN))
 		{
 			/* Try to refill the lantern */
-			if ((item->pval < 1000) && borg_refuel_lantern()) return (TRUE);
+			if ((item->timeout < 1000) && borg_refuel_lantern()) return (TRUE);
 		}
 
 		/* Flee for fuel */
-		if (borg_skill[BI_CDEPTH] && (item->pval < 250))
+		if (borg_skill[BI_CDEPTH] && (item->timeout < 250))
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -12397,7 +12400,8 @@ static int borg_perma_aux_glyph(void)
 			mb_ptr = map_loc(x, y);
 
 			/* track adjacent walls */
-			if (				/* (mb_ptr->terrain == FEAT_GLYPH) || */
+            if (				/* (mb_ptr->terrain == FEAT_GLYPH) || */
+                   (mb_ptr->terrain == FEAT_PILLAR) ||
 				   ((mb_ptr->terrain >= FEAT_MAGMA) &&
 					(mb_ptr->terrain <= FEAT_WALL_SOLID)))
 			{
@@ -12723,7 +12727,7 @@ bool borg_recover(void)
 		(borg_items[INVEN_LITE].sval == SV_LITE_TORCH))
 	{
 		/* Refuel the torch if needed */
-		if (borg_items[INVEN_LITE].pval < 2500)
+		if (borg_items[INVEN_LITE].timeout < 250)
 		{
 			if (borg_refuel_torch()) return (TRUE);
 
@@ -12741,7 +12745,7 @@ bool borg_recover(void)
 		(borg_items[INVEN_LITE].sval == SV_LITE_LANTERN))
 	{
 		/* Refuel the lantern if needed */
-		if (borg_items[INVEN_LITE].pval < 5000)
+		if (borg_items[INVEN_LITE].timeout < 500)
 		{
 			if (borg_refuel_lantern()) return (TRUE);
 
@@ -13259,6 +13263,7 @@ static bool borg_play_step(int y2, int x2)
 	/* Objects -- Take */
 	if (mb_ptr->object)
 	{
+#if 0
 		/*** Handle Chests ***/
 		/* The borg will cheat when it comes to chests.
 		 * He does not have to but it makes him faster and
@@ -13266,7 +13271,6 @@ static bool borg_play_step(int y2, int x2)
 		 * person would not know by looking at the trap.
 		 * So there is no advantage to the borg.
 		 */
-#if 0
 		if (strstr(k_name + k_info[mb_ptr->object].name, "chest") &&
 			!strstr(k_name + k_info[mb_ptr->object].name, "Ruined"))
 		{
@@ -13298,8 +13302,6 @@ static bool borg_play_step(int y2, int x2)
 				borg_keypress(I2D(dir));
 				return (TRUE);
 			}
-		}
-#endif /* 0 */
 
 		/* No trap, or unknown trap that passed above checks - Open it */
 		/* if (o_ptr->pval < 0 || !object_known_p(o_ptr)) */
@@ -13315,7 +13317,8 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Empty chest */
 		/* continue in routine and pick it up */
-		/* } */
+		}
+#endif /* 0 */
 
 		/*** Handle other takes ***/
 		/* Message */
@@ -13438,7 +13441,7 @@ static bool borg_play_step(int y2, int x2)
 #endif /* 0 */
 
 	/* Rubble, Treasure, Seams, Walls -- Tunnel or Melt */
-	if (mb_ptr->terrain >= FEAT_SECRET && mb_ptr->terrain <= FEAT_WALL_SOLID)
+	if (mb_ptr->terrain >= FEAT_PILLAR && mb_ptr->terrain <= FEAT_WALL_SOLID)
 	{
 
 		/* Mega-Hack -- prevent infinite loops */
@@ -14786,12 +14789,6 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 	/* Have the borg so some Searching */
 	borg_needs_searching = TRUE;
 
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (FALSE);
-
-	/* Get the grid */
-	mb_ptr = map_loc(x, y);
-
 	/* Skip ones that make me wander too far */
 	if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
 	{
@@ -14805,9 +14802,14 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 			j >= borg_skill[BI_CLEVEL] * 5 + 9) return (FALSE);
 	}
 
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return (TRUE);
 
-	/* Explore unknown grids */
-	if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
+	/* Get the grid */
+	mb_ptr = map_loc(x, y);
+
+    /* Explore unknown grids */
+    if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
 
 	/* Efficiency -- Ignore "boring" grids */
 	if (mb_ptr->terrain < FEAT_CLOSED) return (FALSE);
@@ -15439,13 +15441,20 @@ static bool borg_flow_dark_1(int b_stair)
 		y = borg_temp_y[i];
 		x = borg_temp_x[i];
 
-		/* Create a path */
-		borg_flow_direct(y, x);
-	}
+        /* Create a path */
+#if 0
+        borg_flow_direct(y, x);
+#endif
+        borg_flow_enqueue_grid(y, x);
+    }
+
+    /* Spread the flow */
+    borg_flow_spread(5, TRUE, FALSE, FALSE);
 
 
-	/* Attempt to Commit the flow */
-	if (!borg_flow_commit(NULL, GOAL_DARK)) return (FALSE);
+    /* Attempt to Commit the flow */
+    /* Note was NULL */
+	if (!borg_flow_commit("dark-1", GOAL_DARK)) return (FALSE);
 
 	/* Take one step */
 	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
@@ -15527,13 +15536,20 @@ static bool borg_flow_dark_2(void)
 		y = borg_temp_y[i];
 		x = borg_temp_x[i];
 
-		/* Create a path */
-		borg_flow_direct(y, x);
+        /* Create a path */
+#if 0
+        borg_flow_direct(y, x);
+#endif
+        borg_flow_enqueue_grid(y, x);
 	}
 
+    /* Spread the flow */
+    borg_flow_spread(5, TRUE, FALSE, FALSE);
 
-	/* Attempt to Commit the flow */
-	if (!borg_flow_commit(NULL, GOAL_DARK)) return (FALSE);
+
+    /* Attempt to Commit the flow */
+    /* Note was NULL */
+	if (!borg_flow_commit("dark-2", GOAL_DARK)) return (FALSE);
 
 	/* Take one step */
 	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
@@ -15619,8 +15635,9 @@ static bool borg_flow_dark_3(int b_stair)
 	borg_flow_spread(5, TRUE, TRUE, FALSE);
 
 
-	/* Attempt to Commit the flow */
-	if (!borg_flow_commit(NULL, GOAL_DARK)) return (FALSE);
+    /* Attempt to Commit the flow */
+    /* Note was NULL */
+    if (!borg_flow_commit("dark-3", GOAL_DARK)) return (FALSE);
 
 	/* Take one step */
 	if (!borg_flow_old(GOAL_DARK)) return (FALSE);

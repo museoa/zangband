@@ -4047,12 +4047,10 @@ static void borg_display_map_info(byte data, byte type)
 	{
 		for (y = panel_row_min; y < panel_row_max; y++)
 		{
-			if (!map_in_bounds(x, y))
-			{
-				a = TERM_DARK;
-				c = ' ';
-			}
-			else
+            a = TERM_DARK;
+            c = ' ';
+
+			if (map_in_bounds(x, y))
 			{
 				mb_ptr = map_loc(x, y);
 				
@@ -4143,15 +4141,18 @@ static void borg_display_map_info(byte data, byte type)
 				}
 			}
 		
-		
+
+            if (c != ' ')
+            {
 #ifdef USE_TRANSPARENCY
 
-			/* Hack -- Queue it */
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, a, c);
+                /* Hack -- Queue it */
+                Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, a, c);
 #else  /* USE_TRANSPARENCY */
 
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
+                Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
+            }
 		
 		}
 	}
@@ -5276,7 +5277,7 @@ void do_cmd_borg(void)
 					int y = kill->y;
 
 					/* Display */
-					print_rel('*', TERM_RED, y, x);
+					print_rel('*', TERM_RED, x, y);
 
 					/* Count */
 					n++;
@@ -5310,7 +5311,7 @@ void do_cmd_borg(void)
 					int y = take->y;
 
 					/* Display */
-					print_rel('*', TERM_RED, y, x);
+					print_rel('*', TERM_RED, x, y);
 
 					/* Count */
 					n++;
@@ -5415,7 +5416,7 @@ void do_cmd_borg(void)
 					y = false_y + ddy_ddd[b_i];
 
 					/* Display */
-					print_rel('*', TERM_RED, y, x);
+					print_rel('*', TERM_RED, x, y);
 
 					/* Simulate motion */
 					false_y = y;
@@ -5469,7 +5470,7 @@ void do_cmd_borg(void)
 					if (p <= avoidance / 4) a = TERM_YELLOW;
 
 					/* Display */
-					print_rel('*', a, y, x);
+					print_rel('*', a, x, y);
 				}
 			}
 

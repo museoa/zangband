@@ -2638,7 +2638,13 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	int y = map->y;
 
 	bool old_wall;
-	bool new_wall;
+    bool new_wall;
+
+    /* Keep this info */
+    if (map->flags & MAP_SEEN)
+    {
+        mb_ptr->flags |= MAP_KEEP;
+    }
 
 	/* Save the old "wall" or "door" */
 	old_wall = !borg_cave_floor_grid(mb_ptr);
@@ -2646,8 +2652,13 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	/* Save the information used by the borg */
 	mb_ptr->object = map->object;
 	mb_ptr->monster = map->monster;
-	mb_ptr->field = map->field;
-	mb_ptr->terrain = map->terrain;
+    mb_ptr->field = map->field;
+    if (map->terrain != FEAT_NONE)
+        mb_ptr->terrain = map->terrain;
+
+    /* Special code for unseen terrain */
+    if (!(map->flags & MAP_SEEN) && !(mb_ptr->flags & MAP_ONCE))
+        mb_ptr->terrain = FEAT_NONE;
 
 	/*
 	 * Examine monsters
@@ -2657,7 +2668,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		borg_wank *wank;
 
 		/* Check for memory overflow */
-		if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
+        if (borg_wank_num == AUTO_VIEW_MAX)
+            borg_oops("too many objects or monsters");
 
 		/* Access next wank, advance */
 		wank = &borg_wanks[borg_wank_num++];
@@ -2676,7 +2688,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		borg_wank *wank;
 
 		/* Check for memory overflow */
-		if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
+        if (borg_wank_num == AUTO_VIEW_MAX)
+            borg_oops("too many objects or monsters");
 
 		/* Access next wank, advance */
 		wank = &borg_wanks[borg_wank_num++];

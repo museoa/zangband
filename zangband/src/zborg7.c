@@ -4475,24 +4475,27 @@ bool borg_wear_recharge(void)
 	/* Not if hungry */
 	if (borg_skill[BI_ISWEAK]) return (FALSE);
 
-	/* Look for an (wearable- non rod) item to recharge */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		borg_item *item = &borg_items[i];
-		object_type *o_ptr;	/* cheat */
-		o_ptr = &inventory[i];	/* cheat */
+    /* Look for an (wearable- non rod) item to recharge */
+    for (i = 0; i < INVEN_TOTAL; i++)
+    {
+        borg_item *item = &borg_items[i];
+        object_type *o_ptr;  /* cheat */
+        o_ptr = &inventory[i]; /* cheat */
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+        /* Skip empty items */
+        if (!item->iqty) continue;
+        if (!item->kind) continue;
 
-		/* skip items that are charged */
-		if (!item->timeout) continue;
+        /* skip items that are charged */
+        if (!item->timeout) continue;
 
-		/* Cheat-- the borg is misreading his equip.
-		 * So this is pulling the info right from the game.
-		 */
-		if (!o_ptr->timeout) continue;
+        /* skip lites */
+        if (item->tval == TV_LITE) continue;
+
+        /* Cheat-- the borg is misreading his equip.
+         * So this is pulling the info right from the game.
+         */
+        if (!o_ptr->timeout) continue;
 
 		/* Where does this belong? */
 		slot = borg_wield_slot(item);
