@@ -282,7 +282,7 @@ static void sense_inventory(void)
 	/*** Check for "sensing" ***/
 
 	/* No sensing when confused */
-	if (p_ptr->confused) return;
+	if (p_ptr->tim.confused) return;
 	
 	/* Analyze the class */
 	switch (p_ptr->rp.pclass)
@@ -504,7 +504,7 @@ static void wreck_the_pattern(void)
 	msgf("You bleed on the Pattern!");
 	msgf("Something terrible happens!");
 
-	if (!p_ptr->invuln)
+	if (!p_ptr->tim.invuln)
 		take_hit(damroll(10, 8), "corrupting the Pattern");
 
 	to_ruin = rand_range(35, 80);
@@ -535,7 +535,7 @@ static bool pattern_effect(void)
 		(c_ptr->feat > FEAT_PATTERN_XTRA2))
 		return FALSE;
 
-	if ((p_ptr->rp.prace == RACE_AMBERITE) && (p_ptr->cut > 0) && one_in_(10))
+	if ((p_ptr->rp.prace == RACE_AMBERITE) && (p_ptr->tim.cut > 0) && one_in_(10))
 	{
 		wreck_the_pattern();
 	}
@@ -578,14 +578,14 @@ static bool pattern_effect(void)
 	}
 	else if (c_ptr->feat == FEAT_PATTERN_XTRA2)
 	{
-		if (!p_ptr->invuln)
+		if (!p_ptr->tim.invuln)
 			take_hit(200, "walking the corrupted Pattern");
 	}
 	else
 	{
 		if ((p_ptr->rp.prace == RACE_AMBERITE) && one_in_(2))
 			return TRUE;
-		else if (!p_ptr->invuln)
+		else if (!p_ptr->tim.invuln)
 			take_hit(damroll(1, 3), "walking the Pattern");
 	}
 
@@ -744,7 +744,7 @@ void notice_lite_change(object_type *o_ptr)
 	}
 
 	/* Hack -- Special treatment when blind */
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		/* Hack -- save some light for later */
 		if (o_ptr->timeout == 0) o_ptr->timeout++;
@@ -1006,7 +1006,7 @@ static void process_world(void)
 	/*** Damage over Time ***/
 
 	/* Take damage from poison */
-	if (p_ptr->poisoned && !p_ptr->invuln)
+	if (p_ptr->tim.poisoned && !p_ptr->tim.invuln)
 	{
 		/* Take damage */
 		take_hit(1, "poison");
@@ -1016,7 +1016,7 @@ static void process_world(void)
 	/* (Vampires) Take damage from sunlight */
 	if (p_ptr->rp.prace == RACE_VAMPIRE)
 	{
-		if (!p_ptr->depth && !p_ptr->resist_lite && !p_ptr->invuln &&
+		if (!p_ptr->depth && !p_ptr->resist_lite && !p_ptr->tim.invuln &&
 			(!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
 		{
 			if (c_ptr->info & CAVE_GLOW)
@@ -1048,17 +1048,17 @@ static void process_world(void)
 			object_desc(o_name, o_ptr, TRUE, 0, 256);
 
 			strnfmt(ouch, 280, "wielding %s", o_name);
-			if (!p_ptr->invuln) take_hit(1, ouch);
+			if (!p_ptr->tim.invuln) take_hit(1, ouch);
 		}
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_LAVA) &&
-		!p_ptr->invuln && !p_ptr->immune_fire && !p_ptr->ffall)
+		!p_ptr->tim.invuln && !p_ptr->immune_fire && !p_ptr->ffall)
 	{
 		int damage = p_ptr->lev;
 
 		if (p_ptr->resist_fire) damage = damage / 3;
-		if (p_ptr->oppose_fire) damage = damage / 3;
+		if (p_ptr->tim.oppose_fire) damage = damage / 3;
 
 		if (damage)
 		{
@@ -1070,14 +1070,14 @@ static void process_world(void)
 	}
 
 	else if ((c_ptr->feat == FEAT_DEEP_LAVA) &&
-			 !p_ptr->invuln && !p_ptr->immune_fire)
+			 !p_ptr->tim.invuln && !p_ptr->immune_fire)
 	{
 		int damage = p_ptr->lev * 2;
 		cptr message;
 		cptr hit_from;
 
 		if (p_ptr->resist_fire) damage = damage / 3;
-		if (p_ptr->oppose_fire) damage = damage / 3;
+		if (p_ptr->tim.oppose_fire) damage = damage / 3;
 
 		if (p_ptr->ffall)
 		{
@@ -1103,12 +1103,12 @@ static void process_world(void)
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_ACID) &&
-		!p_ptr->invuln && !p_ptr->immune_acid && !p_ptr->ffall)
+		!p_ptr->tim.invuln && !p_ptr->immune_acid && !p_ptr->ffall)
 	{
 		int damage = p_ptr->lev;
 
 		if (p_ptr->resist_acid) damage = damage / 3;
-		if (p_ptr->oppose_acid) damage = damage / 3;
+		if (p_ptr->tim.oppose_acid) damage = damage / 3;
 
 		if (damage)
 		{
@@ -1120,14 +1120,14 @@ static void process_world(void)
 	}
 
 	else if ((c_ptr->feat == FEAT_DEEP_ACID) &&
-			 !p_ptr->invuln && !p_ptr->immune_acid)
+			 !p_ptr->tim.invuln && !p_ptr->immune_acid)
 	{
 		int damage = p_ptr->lev * 2;
 		cptr message;
 		cptr hit_from;
 
 		if (p_ptr->resist_acid) damage = damage / 3;
-		if (p_ptr->oppose_acid) damage = damage / 3;
+		if (p_ptr->tim.oppose_acid) damage = damage / 3;
 
 		if (p_ptr->ffall)
 		{
@@ -1153,11 +1153,11 @@ static void process_world(void)
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&
-		!p_ptr->invuln && !p_ptr->resist_pois && !p_ptr->ffall)
+		!p_ptr->tim.invuln && !p_ptr->resist_pois && !p_ptr->ffall)
 	{
 		int damage = p_ptr->lev;
 
-		if (p_ptr->oppose_pois) damage = damage / 3;
+		if (p_ptr->tim.oppose_pois) damage = damage / 3;
 
 		if (damage)
 		{
@@ -1168,14 +1168,14 @@ static void process_world(void)
 		}
 	}
 
-	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->invuln)
+	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->tim.invuln)
 	{
 		int damage = p_ptr->lev * 2;
 		cptr message;
 		cptr hit_from;
 
 		if (p_ptr->resist_pois) damage = damage / 3;
-		if (p_ptr->oppose_pois) damage = damage / 3;
+		if (p_ptr->tim.oppose_pois) damage = damage / 3;
 
 		if (p_ptr->ffall)
 		{
@@ -1222,7 +1222,7 @@ static void process_world(void)
 	 */
 	if (cave_wall_grid(c_ptr))
 	{
-		if (!p_ptr->invuln && !p_ptr->wraith_form &&
+		if (!p_ptr->tim.invuln && !p_ptr->tim.wraith_form &&
 			((p_ptr->chp > (p_ptr->lev / 5)) || !p_ptr->pass_wall))
 		{
 			cptr dam_desc;
@@ -1307,16 +1307,16 @@ static void process_world(void)
 	}
 
 	/* Take damage from cuts */
-	if (p_ptr->cut && !p_ptr->invuln)
+	if (p_ptr->tim.cut && !p_ptr->tim.invuln)
 	{
 		/* Mortal wound or Deep Gash */
-		if (p_ptr->cut > 200)
+		if (p_ptr->tim.cut > 200)
 		{
 			i = 3;
 		}
 
 		/* Severe cut */
-		else if (p_ptr->cut > 100)
+		else if (p_ptr->tim.cut > 100)
 		{
 			i = 2;
 		}
@@ -1376,7 +1376,7 @@ static void process_world(void)
 		i = (PY_FOOD_STARVE - p_ptr->food) / 10;
 
 		/* Take damage */
-		if (!p_ptr->invuln) take_hit(i, "starvation");
+		if (!p_ptr->tim.invuln) take_hit(i, "starvation");
 	}
 
 	/* Default regeneration */
@@ -1403,14 +1403,14 @@ static void process_world(void)
 		if (p_ptr->food < PY_FOOD_FAINT)
 		{
 			/* Faint occasionally */
-			if (!p_ptr->paralyzed && (randint0(100) < 10))
+			if (!p_ptr->tim.paralyzed && (randint0(100) < 10))
 			{
 				/* Message */
 				msgf("You faint from the lack of food.");
 				disturb(TRUE);
 
 				/* Hack -- faint (bypass free action) */
-				(void)set_paralyzed(p_ptr->paralyzed + randint1(5));
+				(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(5));
 			}
 		}
 	}
@@ -1464,8 +1464,8 @@ static void process_world(void)
 	}
 
 	/* Poisoned or cut yields no healing */
-	if (p_ptr->poisoned) regen_amount = 0;
-	if (p_ptr->cut) regen_amount = 0;
+	if (p_ptr->tim.poisoned) regen_amount = 0;
+	if (p_ptr->tim.cut) regen_amount = 0;
 
 	/* Special floor -- Pattern, in a wall -- yields no healing */
 	if (cave_no_regen) regen_amount = 0;
@@ -1480,60 +1480,60 @@ static void process_world(void)
 
 
 	/*** Timeout Various Things ***/
-	if (p_ptr->image) (void)set_image(p_ptr->image - 1);
-	if (p_ptr->blind) (void)set_blind(p_ptr->blind - 1);
-	if (p_ptr->tim_invis) (void)set_tim_invis(p_ptr->tim_invis - 1);
-	if (p_ptr->tim_esp) (void)set_tim_esp(p_ptr->tim_esp - 1);
-	if (p_ptr->tim_infra) (void)set_tim_infra(p_ptr->tim_infra - 1);
-	if (p_ptr->paralyzed) (void)set_paralyzed(p_ptr->paralyzed - 1);
-	if (p_ptr->confused) (void)set_confused(p_ptr->confused - 1);
-	if (p_ptr->afraid) (void)set_afraid(p_ptr->afraid - 1);
-	if (p_ptr->fast) (void)set_fast(p_ptr->fast - 1);
-	if (p_ptr->slow) (void)set_slow(p_ptr->slow - 1);
-	if (p_ptr->protevil) (void)set_protevil(p_ptr->protevil - 1);
-	if (p_ptr->invuln) (void)set_invuln(p_ptr->invuln - 1);
-	if (p_ptr->wraith_form) (void)set_wraith_form(p_ptr->wraith_form - 1);
-	if (p_ptr->hero) (void)set_hero(p_ptr->hero - 1);
-	if (p_ptr->shero) (void)set_shero(p_ptr->shero - 1);
-	if (p_ptr->blessed) (void)set_blessed(p_ptr->blessed - 1);
-	if (p_ptr->shield) (void)set_shield(p_ptr->shield - 1);
-	if (p_ptr->oppose_acid) (void)set_oppose_acid(p_ptr->oppose_acid - 1);
-	if (p_ptr->oppose_elec) (void)set_oppose_elec(p_ptr->oppose_elec - 1);
-	if (p_ptr->oppose_fire) (void)set_oppose_fire(p_ptr->oppose_fire - 1);
-	if (p_ptr->oppose_cold) (void)set_oppose_cold(p_ptr->oppose_cold - 1);
-	if (p_ptr->oppose_pois) (void)set_oppose_pois(p_ptr->oppose_pois - 1);
+	if (p_ptr->tim.image) (void)set_image(p_ptr->tim.image - 1);
+	if (p_ptr->tim.blind) (void)set_blind(p_ptr->tim.blind - 1);
+	if (p_ptr->tim.invis) (void)set_tim_invis(p_ptr->tim.invis - 1);
+	if (p_ptr->tim.esp) (void)set_tim_esp(p_ptr->tim.esp - 1);
+	if (p_ptr->tim.infra) (void)set_tim_infra(p_ptr->tim.infra - 1);
+	if (p_ptr->tim.paralyzed) (void)set_paralyzed(p_ptr->tim.paralyzed - 1);
+	if (p_ptr->tim.confused) (void)set_confused(p_ptr->tim.confused - 1);
+	if (p_ptr->tim.afraid) (void)set_afraid(p_ptr->tim.afraid - 1);
+	if (p_ptr->tim.fast) (void)set_fast(p_ptr->tim.fast - 1);
+	if (p_ptr->tim.slow) (void)set_slow(p_ptr->tim.slow - 1);
+	if (p_ptr->tim.protevil) (void)set_protevil(p_ptr->tim.protevil - 1);
+	if (p_ptr->tim.invuln) (void)set_invuln(p_ptr->tim.invuln - 1);
+	if (p_ptr->tim.wraith_form) (void)set_wraith_form(p_ptr->tim.wraith_form - 1);
+	if (p_ptr->tim.hero) (void)set_hero(p_ptr->tim.hero - 1);
+	if (p_ptr->tim.shero) (void)set_shero(p_ptr->tim.shero - 1);
+	if (p_ptr->tim.blessed) (void)set_blessed(p_ptr->tim.blessed - 1);
+	if (p_ptr->tim.shield) (void)set_shield(p_ptr->tim.shield - 1);
+	if (p_ptr->tim.oppose_acid) (void)set_oppose_acid(p_ptr->tim.oppose_acid - 1);
+	if (p_ptr->tim.oppose_elec) (void)set_oppose_elec(p_ptr->tim.oppose_elec - 1);
+	if (p_ptr->tim.oppose_fire) (void)set_oppose_fire(p_ptr->tim.oppose_fire - 1);
+	if (p_ptr->tim.oppose_cold) (void)set_oppose_cold(p_ptr->tim.oppose_cold - 1);
+	if (p_ptr->tim.oppose_pois) (void)set_oppose_pois(p_ptr->tim.oppose_pois - 1);
 
 
 	/*** Poison and Stun and Cut ***/
 
 	/* Poison */
-	if (p_ptr->poisoned)
+	if (p_ptr->tim.poisoned)
 	{
 		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
 
 		/* Apply some healing */
-		(void)set_poisoned(p_ptr->poisoned - adjust);
+		(void)set_poisoned(p_ptr->tim.poisoned - adjust);
 	}
 
 	/* Stun */
-	if (p_ptr->stun)
+	if (p_ptr->tim.stun)
 	{
 		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
 
 		/* Apply some healing */
-		(void)set_stun(p_ptr->stun - adjust);
+		(void)set_stun(p_ptr->tim.stun - adjust);
 	}
 
 	/* Cut */
-	if (p_ptr->cut)
+	if (p_ptr->tim.cut)
 	{
 		int adjust = adj_con_fix[p_ptr->stat_ind[A_CON]] + 1;
 
 		/* Hack -- Truly "mortal" wound */
-		if (p_ptr->cut > 1000) adjust = 0;
+		if (p_ptr->tim.cut > 1000) adjust = 0;
 
 		/* Apply some healing */
-		(void)set_cut(p_ptr->cut - adjust);
+		(void)set_cut(p_ptr->tim.cut - adjust);
 	}
 
 	/*** Process mutation effects ***/
@@ -1568,7 +1568,7 @@ static void process_world(void)
 	/* Rarely, take damage from the Jewel of Judgement */
 	if (one_in_(999) && !p_ptr->anti_magic)
 	{
-		if ((p_ptr->equipment[EQUIP_LITE].tval) && !p_ptr->invuln &&
+		if ((p_ptr->equipment[EQUIP_LITE].tval) && !p_ptr->tim.invuln &&
 			(p_ptr->equipment[EQUIP_LITE].sval == SV_LITE_THRAIN))
 		{
 			msgf("The Jewel of Judgement drains life from you!");
@@ -1766,23 +1766,23 @@ static void process_world(void)
 	/*** Involuntary Movement ***/
 
 	/* Delayed Word-of-Recall */
-	if (p_ptr->word_recall)
+	if (p_ptr->tim.word_recall)
 	{
 		/*
 		 * HACK: Autosave BEFORE resetting the recall counter (rr9)
 		 * The player is yanked up/down as soon as
 		 * he loads the autosaved game.
 		 */
-		if (autosave_l && (p_ptr->word_recall == 1))
+		if (autosave_l && (p_ptr->tim.word_recall == 1))
 			do_cmd_save_game(TRUE);
 
 		/* Count down towards recall */
-		p_ptr->word_recall--;
+		p_ptr->tim.word_recall--;
 
 		p_ptr->redraw |= (PR_STATUS);
 
 		/* Activate the recall */
-		if (!p_ptr->word_recall)
+		if (!p_ptr->tim.word_recall)
 		{
 			/* Disturbing! */
 			disturb(FALSE);
@@ -2609,11 +2609,11 @@ static void process_player(void)
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) &&
 				(p_ptr->csp == p_ptr->msp) &&
-				!p_ptr->blind && !p_ptr->confused &&
-				!p_ptr->poisoned && !p_ptr->afraid &&
-				!p_ptr->stun && !p_ptr->cut &&
-				!p_ptr->slow && !p_ptr->paralyzed &&
-				!p_ptr->image && !p_ptr->word_recall)
+				!p_ptr->tim.blind && !p_ptr->tim.confused &&
+				!p_ptr->tim.poisoned && !p_ptr->tim.afraid &&
+				!p_ptr->tim.stun && !p_ptr->tim.cut &&
+				!p_ptr->tim.slow && !p_ptr->tim.paralyzed &&
+				!p_ptr->tim.image && !p_ptr->tim.word_recall)
 			{
 				disturb(FALSE);
 			}
@@ -2701,7 +2701,7 @@ static void process_player(void)
 
 
 		/* Paralyzed or Knocked Out */
-		if (p_ptr->paralyzed || (p_ptr->stun >= 100))
+		if (p_ptr->tim.paralyzed || (p_ptr->tim.stun >= 100))
 		{
 			/* Take a turn */
 			p_ptr->energy_use = 100;
@@ -2777,7 +2777,7 @@ static void process_player(void)
 
 
 			/* Hack -- constant hallucination */
-			if (p_ptr->image) p_ptr->redraw |= (PR_MAP);
+			if (p_ptr->tim.image) p_ptr->redraw |= (PR_MAP);
 
 
 			/* Shimmer monsters if needed */
@@ -3556,14 +3556,14 @@ void play_game(bool new_game)
 				(void)set_food(PY_FOOD_MAX - 1);
 
 				/* Hack -- cancel recall */
-				if (p_ptr->word_recall)
+				if (p_ptr->tim.word_recall)
 				{
 					/* Message */
 					msgf("A tension leaves the air around you...");
 					message_flush();
 
 					/* Hack -- Prevent recall */
-					p_ptr->word_recall = 0;
+					p_ptr->tim.word_recall = 0;
 					p_ptr->redraw |= (PR_STATUS);
 				}
 

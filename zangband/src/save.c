@@ -951,38 +951,38 @@ static void wr_extra(void)
 	wr_s16b(0);					/* oops */
 
 	wr_s16b(0);					/* old "rest" */
-	wr_s16b(p_ptr->blind);
-	wr_s16b(p_ptr->paralyzed);
-	wr_s16b(p_ptr->confused);
+	wr_s16b(p_ptr->tim.blind);
+	wr_s16b(p_ptr->tim.paralyzed);
+	wr_s16b(p_ptr->tim.confused);
 	wr_s16b(p_ptr->food);
 	wr_s16b(0);					/* old "food_digested" */
 	wr_s16b(0);					/* old "protection" */
 	wr_s16b(p_ptr->energy);
-	wr_s16b(p_ptr->fast);
-	wr_s16b(p_ptr->slow);
-	wr_s16b(p_ptr->afraid);
-	wr_s16b(p_ptr->cut);
-	wr_s16b(p_ptr->stun);
-	wr_s16b(p_ptr->poisoned);
-	wr_s16b(p_ptr->image);
-	wr_s16b(p_ptr->protevil);
-	wr_s16b(p_ptr->invuln);
-	wr_s16b(p_ptr->hero);
-	wr_s16b(p_ptr->shero);
-	wr_s16b(p_ptr->shield);
-	wr_s16b(p_ptr->blessed);
-	wr_s16b(p_ptr->tim_invis);
-	wr_s16b(p_ptr->word_recall);
+	wr_s16b(p_ptr->tim.fast);
+	wr_s16b(p_ptr->tim.slow);
+	wr_s16b(p_ptr->tim.afraid);
+	wr_s16b(p_ptr->tim.cut);
+	wr_s16b(p_ptr->tim.stun);
+	wr_s16b(p_ptr->tim.poisoned);
+	wr_s16b(p_ptr->tim.image);
+	wr_s16b(p_ptr->tim.protevil);
+	wr_s16b(p_ptr->tim.invuln);
+	wr_s16b(p_ptr->tim.hero);
+	wr_s16b(p_ptr->tim.shero);
+	wr_s16b(p_ptr->tim.shield);
+	wr_s16b(p_ptr->tim.blessed);
+	wr_s16b(p_ptr->tim.invis);
+	wr_s16b(p_ptr->tim.word_recall);
 	wr_s16b(p_ptr->see_infra);
-	wr_s16b(p_ptr->tim_infra);
-	wr_s16b(p_ptr->oppose_fire);
-	wr_s16b(p_ptr->oppose_cold);
-	wr_s16b(p_ptr->oppose_acid);
-	wr_s16b(p_ptr->oppose_elec);
-	wr_s16b(p_ptr->oppose_pois);
-	wr_s16b(p_ptr->tim_esp);
-	wr_s16b(p_ptr->wraith_form);
-	wr_s16b(p_ptr->resist_magic);
+	wr_s16b(p_ptr->tim.infra);
+	wr_s16b(p_ptr->tim.oppose_fire);
+	wr_s16b(p_ptr->tim.oppose_cold);
+	wr_s16b(p_ptr->tim.oppose_acid);
+	wr_s16b(p_ptr->tim.oppose_elec);
+	wr_s16b(p_ptr->tim.oppose_pois);
+	wr_s16b(p_ptr->tim.esp);
+	wr_s16b(p_ptr->tim.wraith_form);
+	wr_s16b(p_ptr->tim.resist_magic);
 
 	wr_s16b(p_ptr->chaos_patron);
 	wr_u32b(p_ptr->muta1);

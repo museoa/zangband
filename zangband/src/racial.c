@@ -30,15 +30,15 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
         stat += 18-180;
 
 	/* No chance for success */
-	if ((p_ptr->lev < min_level) || p_ptr->confused)
+	if ((p_ptr->lev < min_level) || p_ptr->tim.confused)
 	{
 		return (0);
 	}
 
 	/* Calculate difficulty */
-	if (p_ptr->stun)
+	if (p_ptr->tim.stun)
 	{
-		difficulty += p_ptr->stun;
+		difficulty += p_ptr->tim.stun;
 	}
 	else if (p_ptr->lev > min_level)
 	{
@@ -148,7 +148,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	}
 
 	/* Too confused */
-	else if (p_ptr->confused)
+	else if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused to use this power.");
 		p_ptr->energy_use = 0;
@@ -167,9 +167,9 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 
 	/* Else attempt to do it! */
 
-	if (p_ptr->stun)
+	if (p_ptr->tim.stun)
 	{
-		difficulty += p_ptr->stun;
+		difficulty += p_ptr->tim.stun;
 	}
 	else if (p_ptr->lev > min_level)
 	{
@@ -260,12 +260,12 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_HALF_TROLL:
 			{
 				msgf("RAAAGH!");
-				if (!p_ptr->shero)
+				if (!p_ptr->tim.shero)
 				{
 					(void)hp_player(30);
 				}
 				(void)set_afraid(0);
-				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
+				(void)set_shero(p_ptr->tim.shero + 10 + randint1(plev));
 
 				break;
 			}
@@ -316,13 +316,13 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_BARBARIAN:
 			{
 				msgf("Raaagh!");
-				if (!p_ptr->shero)
+				if (!p_ptr->tim.shero)
 				{
 					(void)hp_player(30);
 				}
 
 				(void)set_afraid(0);
-				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
+				(void)set_shero(p_ptr->tim.shero + 10 + randint1(plev));
 				break;
 			}
 
@@ -537,7 +537,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 			case RACE_GOLEM:
 			{
-				(void)set_shield(p_ptr->shield + rand_range(30, 50));
+				(void)set_shield(p_ptr->tim.shield + rand_range(30, 50));
 				break;
 			}
 
@@ -698,7 +698,7 @@ void do_cmd_racial_power(void)
 	const mutation_type *mut_ptr;
 
 	/* Not when we're confused */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused to use any powers!");
 		p_ptr->energy_use = 0;

@@ -1668,7 +1668,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msgf("The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(p_ptr->protevil + randint1(25) + k);
+				(void)set_protevil(p_ptr->tim.protevil + randint1(25) + k);
 				o_ptr->timeout = (s16b)rand_range(225, 450);
 				break;
 			}
@@ -1693,13 +1693,13 @@ bool activate_effect(object_type *o_ptr)
 			case ART_TULKAS:
 			{
 				msgf("The ring glows brightly...");
-				if (!p_ptr->fast)
+				if (!p_ptr->tim.fast)
 				{
 					(void)set_fast(rand_range(75, 150));
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)set_fast(p_ptr->tim.fast + 5);
 				}
 				o_ptr->timeout = (s16b)rand_range(150, 300);
 				break;
@@ -1792,14 +1792,14 @@ bool activate_effect(object_type *o_ptr)
 				(void)fire_ball(GF_MISSILE, dir, 1000, 4);
 				msgf("Your armor glows many colours...");
 				(void)set_afraid(0);
-				(void)set_shero(p_ptr->shero + rand_range(50, 100));
+				(void)set_shero(p_ptr->tim.shero + rand_range(50, 100));
 				(void)hp_player(30);
-				(void)set_blessed(p_ptr->blessed + rand_range(50, 100));
-				(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(50, 100));
-				(void)set_oppose_elec(p_ptr->oppose_elec + rand_range(50, 100));
-				(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(50, 100));
-				(void)set_oppose_cold(p_ptr->oppose_cold + rand_range(50, 100));
-				(void)set_oppose_pois(p_ptr->oppose_pois + rand_range(50, 100));
+				(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
+				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(50, 100));
+				(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(50, 100));
+				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(50, 100));
+				(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(50, 100));
+				(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(50, 100));
 				o_ptr->timeout = 100;
 				break;
 			}
@@ -1822,7 +1822,7 @@ bool activate_effect(object_type *o_ptr)
 				(void)set_stun(0);
 				(void)set_confused(0);
 				(void)set_blind(0);
-				(void)set_hero(p_ptr->hero + rand_range(25, 50));
+				(void)set_hero(p_ptr->tim.hero + rand_range(25, 50));
 				(void)hp_player(777);
 				o_ptr->timeout = 300;
 				break;
@@ -1891,11 +1891,11 @@ bool activate_effect(object_type *o_ptr)
 			case ART_COLLUIN:
 			{
 				msgf("Your cloak glows many colours...");
-				(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(20, 40));
-				(void)set_oppose_elec(p_ptr->oppose_elec + rand_range(20, 40));
-				(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(20, 40));
-				(void)set_oppose_cold(p_ptr->oppose_cold + rand_range(20, 40));
-				(void)set_oppose_pois(p_ptr->oppose_pois + rand_range(20, 40));
+				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
+				(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(20, 40));
+				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
+				(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
+				(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(20, 40));
 				o_ptr->timeout = 111;
 				break;
 			}
@@ -1989,13 +1989,13 @@ bool activate_effect(object_type *o_ptr)
 			case ART_FEANOR:
 			{
 				msgf("Your boots glow bright green...");
-				if (!p_ptr->fast)
+				if (!p_ptr->tim.fast)
 				{
 					(void)set_fast(rand_range(20, 40));
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)set_fast(p_ptr->tim.fast + 5);
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -2147,7 +2147,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msgf("Your battle axe radiates deep purple...");
 				(void)hp_player(100);
-				(void)set_cut((p_ptr->cut / 2) - 50);
+				(void)set_cut((p_ptr->tim.cut / 2) - 50);
 				o_ptr->timeout = (s16b)rand_range(3, 6);
 				break;
 			}
@@ -2221,13 +2221,13 @@ bool activate_effect(object_type *o_ptr)
 			case ART_ENERGY:
 			{
 				msgf("Your scythe glows bright green...");
-				if (!p_ptr->fast)
+				if (!p_ptr->tim.fast)
 				{
 					(void)set_fast(rand_range(20, 40));
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)set_fast(p_ptr->tim.fast + 5);
 				}
 				o_ptr->timeout = (s16b)rand_range(100, 200);
 				break;
@@ -2767,7 +2767,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msgf("The %s radiates deep purple...", o_name);
 			(void)hp_player(75);
-			(void)set_cut((p_ptr->cut / 2) - 50);
+			(void)set_cut((p_ptr->tim.cut / 2) - 50);
 			o_ptr->timeout = (s16b)rand_range(3, 6);
 			break;
 		}
@@ -2828,7 +2828,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_ESP:
 		{
 			msgf("The %s enters your thoughts...", o_name);
-			(void)set_tim_esp(p_ptr->tim_esp + rand_range(25, 55));
+			(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
 			o_ptr->timeout = 200;
 			break;
 		}
@@ -2836,8 +2836,8 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_BERSERK:
 		{
 			msgf("The %s angers you...", o_name);
-			(void)set_shero(p_ptr->shero + rand_range(50, 100));
-			(void)set_blessed(p_ptr->blessed + rand_range(50, 100));
+			(void)set_shero(p_ptr->tim.shero + rand_range(50, 100));
+			(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
 			o_ptr->timeout = (s16b)rand_range(100, 200);
 			break;
 		}
@@ -2846,7 +2846,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msgf("The %s lets out a shrill wail...", o_name);
 			k = 3 * p_ptr->lev;
-			(void)set_protevil(p_ptr->protevil + randint1(25) + k);
+			(void)set_protevil(p_ptr->tim.protevil + randint1(25) + k);
 			o_ptr->timeout = (s16b)rand_range(225, 450);
 			break;
 		}
@@ -2854,11 +2854,11 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_RESIST_ALL:
 		{
 			msgf("The %s glows many colours...", o_name);
-			(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(40, 80));
-			(void)set_oppose_elec(p_ptr->oppose_elec + rand_range(40, 80));
-			(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(40, 80));
-			(void)set_oppose_cold(p_ptr->oppose_cold + rand_range(40, 80));
-			(void)set_oppose_pois(p_ptr->oppose_pois + rand_range(40, 80));
+			(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(40, 80));
+			(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(40, 80));
+			(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(40, 80));
+			(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(40, 80));
+			(void)set_oppose_pois(p_ptr->tim.oppose_pois + rand_range(40, 80));
 			o_ptr->timeout = 200;
 			break;
 		}
@@ -2866,13 +2866,13 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SPEED:
 		{
 			msgf("The %s glows bright green...", o_name);
-			if (!p_ptr->fast)
+			if (!p_ptr->tim.fast)
 			{
 				(void)set_fast(rand_range(20, 40));
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void)set_fast(p_ptr->tim.fast + 5);
 			}
 			o_ptr->timeout = 250;
 			break;
@@ -2881,13 +2881,13 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_XTRA_SPEED:
 		{
 			msgf("The %s glows brightly...", o_name);
-			if (!p_ptr->fast)
+			if (!p_ptr->tim.fast)
 			{
 				(void)set_fast(rand_range(75, 150));
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void)set_fast(p_ptr->tim.fast + 5);
 			}
 			o_ptr->timeout = (s16b)rand_range(200, 400);
 			break;
@@ -2896,7 +2896,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_WRAITH:
 		{
 			msgf("The %s fades out...", o_name);
-			(void)set_wraith_form(p_ptr->wraith_form +
+			(void)set_wraith_form(p_ptr->tim.wraith_form +
 								  rand_range(plev / 2, plev));
 			o_ptr->timeout = 1000;
 			break;
@@ -2906,7 +2906,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msgf("The %s fires a beam of bright white light at you...",
 					   o_name);
-			(void)set_invuln(p_ptr->invuln + rand_range(8, 16));
+			(void)set_invuln(p_ptr->tim.invuln + rand_range(8, 16));
 			o_ptr->timeout = 1000;
 			break;
 		}

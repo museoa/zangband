@@ -2355,7 +2355,7 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 
 			name = "a spiked pit";
 			dam *= 2;
-			(void)set_cut(p_ptr->cut + randint1(dam));
+			(void)set_cut(p_ptr->tim.cut + randint1(dam));
 		}
 
 		/* Take the damage */
@@ -2400,16 +2400,16 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 			name = "a spiked pit";
 
 			dam *= 2;
-			(void)set_cut(p_ptr->cut + randint1(dam));
+			(void)set_cut(p_ptr->tim.cut + randint1(dam));
 
-			if (p_ptr->resist_pois || p_ptr->oppose_pois)
+			if (p_ptr->resist_pois || p_ptr->tim.oppose_pois)
 			{
 				msgf("The poison does not affect you!");
 			}
 			else
 			{
 				dam *= 2;
-				(void)set_poisoned(p_ptr->poisoned + randint1(dam));
+				(void)set_poisoned(p_ptr->tim.poisoned + randint1(dam));
 			}
 		}
 
@@ -2519,9 +2519,9 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		case 2:
 		{
 			msgf("A pungent green gas surrounds you!");
-			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
+			if (!p_ptr->resist_pois && !p_ptr->tim.oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_range(10, 30));
+				(void)set_poisoned(p_ptr->tim.poisoned + rand_range(10, 30));
 			}
 			break;
 		}
@@ -2582,9 +2582,9 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("A pungent grey gas surrounds you!");
 			(void)fire_ball(GF_POIS, 0, 350, 4);
 
-			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
+			if (!p_ptr->resist_pois && !p_ptr->tim.oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_range(100, 150));
+				(void)set_poisoned(p_ptr->tim.poisoned + rand_range(100, 150));
 			}
 			break;
 		}
@@ -2627,7 +2627,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 		case 0:
 		{
 			msgf("A blue gas surrounds you!");
-			(void)set_slow(p_ptr->slow + rand_range(20, 40));
+			(void)set_slow(p_ptr->tim.slow + rand_range(20, 40));
 			break;
 		}
 
@@ -2636,7 +2636,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 			msgf("A black gas surrounds you!");
 			if (!p_ptr->resist_blind)
 			{
-				(void)set_blind(p_ptr->blind + rand_range(25, 75));
+				(void)set_blind(p_ptr->tim.blind + rand_range(25, 75));
 			}
 			break;
 		}
@@ -2646,7 +2646,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 			msgf("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_confu)
 			{
-				(void)set_confused(p_ptr->confused + rand_range(10, 30));
+				(void)set_confused(p_ptr->tim.confused + rand_range(10, 30));
 			}
 			break;
 		}
@@ -2671,7 +2671,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 					/* Remove the monster restriction */
 					get_mon_num_prep(NULL, NULL);
 				}
-				(void)set_paralyzed(p_ptr->paralyzed + rand_range(5, 15));
+				(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(5, 15));
 			}
 			break;
 		}
@@ -2682,7 +2682,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 
 			if (!p_ptr->resist_chaos)
 			{
-				(void)set_image(p_ptr->image + rand_range(10, 30));
+				(void)set_image(p_ptr->tim.image + rand_range(10, 30));
 			}
 			break;
 		}

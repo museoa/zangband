@@ -418,9 +418,9 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 	if (trap & (CHEST_POISON))
 	{
 		msgf("A puff of green gas surrounds you!");
-		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+		if (!(p_ptr->resist_pois || p_ptr->tim.oppose_pois))
 		{
-			(void)set_poisoned(p_ptr->poisoned + rand_range(10, 30));
+			(void)set_poisoned(p_ptr->tim.poisoned + rand_range(10, 30));
 		}
 	}
 
@@ -431,7 +431,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + rand_range(10, 30));
+			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(10, 30));
 		}
 	}
 
@@ -494,8 +494,8 @@ static bool do_cmd_open_chest(int x, int y, object_type *o_ptr)
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite()) i = i / 10;
-		if (p_ptr->confused || p_ptr->image) i = i / 10;
+		if (p_ptr->tim.blind || no_lite()) i = i / 10;
+		if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 		/* Extract the difficulty */
 		j = i - o_ptr->pval;
@@ -741,8 +741,8 @@ bool do_cmd_open_aux(int x, int y)
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite()) i = i / 10;
-		if (p_ptr->confused || p_ptr->image) i = i / 10;
+		if (p_ptr->tim.blind || no_lite()) i = i / 10;
+		if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 		/* Success? */
 		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, i))
@@ -1456,8 +1456,8 @@ static bool do_cmd_disarm_chest(int x, int y, object_type *o_ptr)
 	i = p_ptr->skill_dis;
 
 	/* Penalize some conditions */
-	if (p_ptr->blind || no_lite()) i = i / 10;
-	if (p_ptr->confused || p_ptr->image) i = i / 10;
+	if (p_ptr->tim.blind || no_lite()) i = i / 10;
+	if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 	/* Extract the difficulty */
 	j = i - o_ptr->pval;
@@ -1561,8 +1561,8 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	i = p_ptr->skill_dis;
 
 	/* Penalize some conditions */
-	if (p_ptr->blind || no_lite()) i = i / 10;
-	if (p_ptr->confused || p_ptr->image) i = i / 10;
+	if (p_ptr->tim.blind || no_lite()) i = i / 10;
+	if (p_ptr->tim.confused || p_ptr->tim.image) i = i / 10;
 
 	/* Success */
 	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, i))
@@ -1997,7 +1997,7 @@ void do_cmd_run(void)
 	int dir;
 
 	/* Hack -- no running when confused */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused!");
 		return;
@@ -2114,11 +2114,11 @@ void do_cmd_rest(void)
 	/* Why are you sleeping when there's no need?  WAKE UP! */
 	if ((p_ptr->chp == p_ptr->mhp) &&
 		(p_ptr->csp == p_ptr->msp) &&
-		!p_ptr->blind && !p_ptr->confused &&
-		!p_ptr->poisoned && !p_ptr->afraid &&
-		!p_ptr->stun && !p_ptr->cut &&
-		!p_ptr->slow && !p_ptr->paralyzed &&
-		!p_ptr->image && !p_ptr->word_recall)
+		!p_ptr->tim.blind && !p_ptr->tim.confused &&
+		!p_ptr->tim.poisoned && !p_ptr->tim.afraid &&
+		!p_ptr->tim.stun && !p_ptr->tim.cut &&
+		!p_ptr->tim.slow && !p_ptr->tim.paralyzed &&
+		!p_ptr->tim.image && !p_ptr->tim.word_recall)
 		chg_virtue(V_DILIGENCE, -1);
 
 	/* Take a turn XXX XXX XXX (?) */

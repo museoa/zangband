@@ -746,15 +746,15 @@ void recall_player(int turns)
 			p_ptr->max_depth = p_ptr->depth;
 
 	}
-	if (!p_ptr->word_recall)
+	if (!p_ptr->tim.word_recall)
 	{
-		p_ptr->word_recall = turns;
+		p_ptr->tim.word_recall = turns;
 		msgf("The air about you becomes charged...");
 		p_ptr->redraw |= (PR_STATUS);
 	}
 	else
 	{
-		p_ptr->word_recall = 0;
+		p_ptr->tim.word_recall = 0;
 		msgf("A tension leaves the air around you...");
 		p_ptr->redraw |= (PR_STATUS);
 	}
@@ -2980,8 +2980,8 @@ void display_spell_list(void)
 			if (chance < minfail) chance = minfail;
 
 			/* Stunning makes spells harder */
-			if (p_ptr->stun > 50) chance += 25;
-			else if (p_ptr->stun) chance += 15;
+			if (p_ptr->tim.stun > 50) chance += 25;
+			else if (p_ptr->tim.stun) chance += 15;
 
 			/* Always a 5 percent chance of working */
 			if (chance > 95) chance = 95;
@@ -3125,8 +3125,8 @@ s16b spell_chance(int spell, int realm)
 	if (chance < minfail) chance = minfail;
 
 	/* Stunning makes spells harder */
-	if (p_ptr->stun > 50) chance += 25;
-	else if (p_ptr->stun) chance += 15;
+	if (p_ptr->tim.stun > 50) chance += 25;
+	else if (p_ptr->tim.stun) chance += 15;
 
 	/* Always a 5 percent chance of working */
 	if (chance > 95) chance = 95;
@@ -4274,11 +4274,11 @@ void acid_dam(int dam, cptr kb_str)
 
 	/* Resist the damage */
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
-	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
+	if (p_ptr->tim.oppose_acid) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_acid || p_ptr->resist_acid)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
@@ -4288,7 +4288,7 @@ void acid_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->oppose_acid && p_ptr->resist_acid))
+	if (!(p_ptr->tim.oppose_acid && p_ptr->resist_acid))
 		(void)inven_damage(set_acid_destroy, inv);
 }
 
@@ -4307,19 +4307,19 @@ void elec_dam(int dam, cptr kb_str)
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
 
 	/* Resist the damage */
-	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
+	if (p_ptr->tim.oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_elec || p_ptr->resist_elec)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_DEX);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
+	if (!(p_ptr->tim.oppose_elec && p_ptr->resist_elec))
 		(void)inven_damage(set_elec_destroy, inv);
 }
 
@@ -4339,18 +4339,18 @@ void fire_dam(int dam, cptr kb_str)
 
 	/* Resist the damage */
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
-	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
+	if (p_ptr->tim.oppose_fire) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_fire || p_ptr->resist_fire)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->resist_fire && p_ptr->oppose_fire))
+	if (!(p_ptr->resist_fire && p_ptr->tim.oppose_fire))
 		(void)inven_damage(set_fire_destroy, inv);
 }
 
@@ -4370,18 +4370,18 @@ void cold_dam(int dam, cptr kb_str)
 
 	/* Resist the damage */
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
-	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
+	if (p_ptr->tim.oppose_cold) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_cold || p_ptr->resist_cold)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->resist_cold && p_ptr->oppose_cold))
+	if (!(p_ptr->resist_cold && p_ptr->tim.oppose_cold))
 		(void)inven_damage(set_cold_destroy, inv);
 }
 
@@ -4794,7 +4794,7 @@ void sanity_blast(const monster_type *m_ptr)
 	/* Do we pass the saving throw? */
 	if (saving_throw(p_ptr->skill_sav * 100 / power)) return;
 
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
 		/* Something silly happens... */
 		msgf("You behold the %s visage of %v!",
@@ -4803,7 +4803,7 @@ void sanity_blast(const monster_type *m_ptr)
 		if (one_in_(3))
 		{
 			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
-			p_ptr->image = p_ptr->image + randint1(r_ptr->level);
+			(void)set_image(p_ptr->tim.image + randint1(r_ptr->level));
 		}
 
 		/* Never mind; we can't see it clearly enough */
@@ -4833,11 +4833,11 @@ void sanity_blast(const monster_type *m_ptr)
 		if ((!p_ptr->resist_fear) || one_in_(5))
 		{
 			/* Get afraid, even if have resist fear! */
-			(void)set_afraid(p_ptr->afraid + rand_range(10, 20));
+			(void)set_afraid(p_ptr->tim.afraid + rand_range(10, 20));
 		}
 		if (!p_ptr->resist_chaos)
 		{
-			(void)set_image(p_ptr->image + rand_range(150, 400));
+			(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 		}
 		return;
 	}

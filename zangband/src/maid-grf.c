@@ -782,7 +782,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	map.terrain = pc_ptr->feat;
 
 	/* Visible, and not hallucinating */
-	if (visible && !p_ptr->image)
+	if (visible && !p_ptr->tim.image)
 	{
 		map.flags = MAP_SEEN | MAP_ONCE;
 
@@ -791,7 +791,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	}
 
 	/* Not hallucinating */
-	if (!p_ptr->image)
+	if (!p_ptr->tim.image)
 	{
 		/* Save known monsters */
 		if (c_ptr->m_idx)

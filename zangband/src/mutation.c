@@ -946,7 +946,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		cave_type *c_ptr;
 
 		/* Handle player fear */
-		if (p_ptr->afraid)
+		if (p_ptr->tim.afraid)
 		{
 			/* Message */
 			msgf("You are too afraid!");
@@ -1128,12 +1128,12 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT1_BERSERK)
 	{
-		if (!p_ptr->shero)
+		if (!p_ptr->tim.shero)
 		{
 			(void)hp_player(30);
 		}
 
-		(void)set_shero(p_ptr->shero + rand_range(25, 50));
+		(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
 		(void)set_afraid(0);
 	}
 
@@ -1166,27 +1166,27 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 		if (randint0(5) < num)
 		{
-			(void)set_oppose_acid(p_ptr->oppose_acid + dur);
+			(void)set_oppose_acid(p_ptr->tim.oppose_acid + dur);
 			num--;
 		}
 		if (randint0(4) < num)
 		{
-			(void)set_oppose_elec(p_ptr->oppose_elec + dur);
+			(void)set_oppose_elec(p_ptr->tim.oppose_elec + dur);
 			num--;
 		}
 		if (randint0(3) < num)
 		{
-			(void)set_oppose_fire(p_ptr->oppose_fire + dur);
+			(void)set_oppose_fire(p_ptr->tim.oppose_fire + dur);
 			num--;
 		}
 		if (randint0(2) < num)
 		{
-			(void)set_oppose_cold(p_ptr->oppose_cold + dur);
+			(void)set_oppose_cold(p_ptr->tim.oppose_cold + dur);
 			num--;
 		}
 		if (num)
 		{
-			(void)set_oppose_pois(p_ptr->oppose_pois + dur);
+			(void)set_oppose_pois(p_ptr->tim.oppose_pois + dur);
 			num--;
 		}
 	}
@@ -1383,16 +1383,16 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msgf("RAAAAGHH!");
 		msgf("You feel a fit of rage coming over you!");
-		(void)set_shero(p_ptr->shero + 10 + randint1(p_ptr->lev));
+		(void)set_shero(p_ptr->tim.shero + 10 + randint1(p_ptr->lev));
 	}
 
 	else if (mut_ptr->which == MUT2_COWARDICE)
 	{
-		if (!(p_ptr->resist_fear || p_ptr->hero || p_ptr->shero))
+		if (!(p_ptr->resist_fear || p_ptr->tim.hero || p_ptr->tim.shero))
 		{
 			disturb(FALSE);
 			msgf("It's so dark... so scary!");
-			(void)set_afraid(p_ptr->afraid + rand_range(13, 40));
+			(void)set_afraid(p_ptr->tim.afraid + rand_range(13, 40));
 		}
 	}
 
@@ -1421,7 +1421,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + rand_range(15, 35));
+			(void)set_confused(p_ptr->tim.confused + rand_range(15, 35));
 		}
 
 		if (!p_ptr->resist_chaos)
@@ -1442,7 +1442,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 				if (one_in_(3))
 				{
 					msgf("Thishcischs GooDSChtuff!");
-					(void)set_image(p_ptr->image + rand_range(150, 300));
+					(void)set_image(p_ptr->tim.image + rand_range(150, 300));
 				}
 			}
 		}
@@ -1454,7 +1454,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
-			(void)set_image(p_ptr->image + rand_range(20, 70));
+			(void)set_image(p_ptr->tim.image + rand_range(20, 70));
 		}
 	}
 
@@ -1496,25 +1496,25 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		if (one_in_(2))
 		{
 			msgf("You feel less energetic.");
-			if (p_ptr->fast > 0)
+			if (p_ptr->tim.fast > 0)
 			{
 				(void)set_fast(0);
 			}
 			else
 			{
-				(void)set_slow(p_ptr->slow + rand_range(10, 40));
+				(void)set_slow(p_ptr->tim.slow + rand_range(10, 40));
 			}
 		}
 		else
 		{
 			msgf("You feel more energetic.");
-			if (p_ptr->slow > 0)
+			if (p_ptr->tim.slow > 0)
 			{
 				(void)set_slow(0);
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + rand_range(10, 40));
+				(void)set_fast(p_ptr->tim.fast + rand_range(10, 40));
 			}
 		}
 		message_flush();
@@ -1603,7 +1603,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msgf("You feel insubstantial!");
 		message_flush();
-		(void)set_wraith_form(p_ptr->wraith_form +
+		(void)set_wraith_form(p_ptr->tim.wraith_form +
 							  rand_range(p_ptr->lev / 2, p_ptr->lev));
 	}
 
@@ -1665,7 +1665,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 	else if ((mut_ptr->which == MUT2_WEIRD_MIND) && !p_ptr->anti_magic)
 	{
-		if (p_ptr->tim_esp > 0)
+		if (p_ptr->tim.esp > 0)
 		{
 			msgf("Your mind feels cloudy!");
 			(void)set_tim_esp(0);
@@ -1728,7 +1728,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msgf("You feel invincible!");
 		message_flush();
-		(void)set_invuln(p_ptr->invuln + rand_range(8, 16));
+		(void)set_invuln(p_ptr->tim.invuln + rand_range(8, 16));
 	}
 
 	else if (mut_ptr->which == MUT2_SP_TO_HP)

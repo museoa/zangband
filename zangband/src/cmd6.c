@@ -337,7 +337,7 @@ void do_cmd_read_scroll(void)
 	cptr q, s;
 
 	/* Check some conditions */
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		msgf("You can't see anything.");
 		return;
@@ -347,7 +347,7 @@ void do_cmd_read_scroll(void)
 		msgf("You have no light to read by.");
 		return;
 	}
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused!");
 		return;
@@ -403,7 +403,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->tim.confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
 	chance = chance - lev / 2;
@@ -713,7 +713,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->tim.confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
 	chance = chance - lev / 2;
@@ -828,13 +828,13 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 
 		case SV_ROD_SPEED:
 		{
-			if (!p_ptr->fast)
+			if (!p_ptr->tim.fast)
 			{
 				if (set_fast(rand_range(15, 45))) ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void)set_fast(p_ptr->tim.fast + 5);
 			}
 			break;
 		}
@@ -1107,7 +1107,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance /= 2;
+	if (p_ptr->tim.confused) chance /= 2;
 
 	/* Cursed items are difficult to activate */
 	if (cursed_p(o_ptr)) chance /= 3;
@@ -1314,7 +1314,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 			case SV_RING_ACID:
 			{
 				(void)fire_ball(GF_ACID, dir, 100, 2);
-				(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(20, 40));
+				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
@@ -1322,7 +1322,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 			case SV_RING_ICE:
 			{
 				(void)fire_ball(GF_COLD, dir, 100, 2);
-				(void)set_oppose_cold(p_ptr->oppose_cold + rand_range(20, 40));
+				(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}
@@ -1330,7 +1330,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 			case SV_RING_FLAMES:
 			{
 				(void)fire_ball(GF_FIRE, dir, 100, 2);
-				(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(20, 40));
+				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(25, 50);
 				break;
 			}

@@ -1814,7 +1814,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					update_mon_vis(t_ptr->r_idx, 1);
 				}
 
-				if ((p_ptr->image) && one_in_(3))
+				if ((p_ptr->tim.image) && one_in_(3))
 				{
 					strnfmt(temp, 80, "%s %s.",
 								 silly_attacks[randint0(MAX_SILLY_ATTACK)],

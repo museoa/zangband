@@ -2490,25 +2490,25 @@ void borg_update_frame(void)
 	}
 
 	/* Check for "Blind" */
-	if (p_ptr->blind) bp_ptr->status.blind = TRUE;
+	if (p_ptr->tim.blind) bp_ptr->status.blind = TRUE;
 
 	/* Check for "Confused" */
-	if (p_ptr->confused) bp_ptr->status.confused = TRUE;
+	if (p_ptr->tim.confused) bp_ptr->status.confused = TRUE;
 
 	/* Check for "Afraid" */
-	if (p_ptr->afraid) bp_ptr->status.afraid = TRUE;
+	if (p_ptr->tim.afraid) bp_ptr->status.afraid = TRUE;
 
 	/* Check for "Poisoned" */
-	if (p_ptr->poisoned) bp_ptr->status.poisoned = TRUE;
+	if (p_ptr->tim.poisoned) bp_ptr->status.poisoned = TRUE;
 
 	/* Check for any text */
-	if (p_ptr->cut) bp_ptr->status.cut = TRUE;
+	if (p_ptr->tim.cut) bp_ptr->status.cut = TRUE;
 
 	/* Check for Stun */
-	if (p_ptr->stun && (p_ptr->stun <= 50)) bp_ptr->status.stun = TRUE;
+	if (p_ptr->tim.stun && (p_ptr->tim.stun <= 50)) bp_ptr->status.stun = TRUE;
 
 	/* Check for Heavy Stun */
-	if (p_ptr->stun > 50) bp_ptr->status.heavy_stun = TRUE;
+	if (p_ptr->tim.stun > 50) bp_ptr->status.heavy_stun = TRUE;
 
 	/* XXX XXX XXX Parse "State" */
 	if (p_ptr->searching) bp_ptr->status.search = TRUE;
@@ -2517,7 +2517,7 @@ void borg_update_frame(void)
 	if (p_ptr->new_spells) bp_ptr->status.study = TRUE;
 
 	/* Check for hallucination */
-	if (p_ptr->image) bp_ptr->status.image = TRUE;
+	if (p_ptr->tim.image) bp_ptr->status.image = TRUE;
 
 	/* Parse stats */
 	for (i = 0; i < A_MAX; i++)

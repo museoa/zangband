@@ -479,8 +479,8 @@ void search(void)
 	chance = p_ptr->skill_sns;
 
 	/* Penalize various conditions */
-	if (p_ptr->blind || no_lite()) chance = chance / 10;
-	if (p_ptr->confused || p_ptr->image) chance = chance / 10;
+	if (p_ptr->tim.blind || no_lite()) chance = chance / 10;
+	if (p_ptr->tim.confused || p_ptr->tim.image) chance = chance / 10;
 
 	/* Search the nearby grids, which are always in bounds */
 	for (y = (py - 1); y <= (py + 1); y++)
@@ -927,7 +927,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 			msgf("You are suddenly very hot!");
 
-			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->tim.oppose_fire) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
 
 			take_hit(aura_damage, aura_dam);
@@ -950,7 +950,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 			msgf("You are suddenly very cold!");
 
-			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->tim.oppose_cold) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
 
 			take_hit(aura_damage, aura_dam);
@@ -971,7 +971,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 			/* Hack -- Get the "died from" name */
 			monster_desc(aura_dam, m_ptr, 0x88, 80);
 
-			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->tim.oppose_elec) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
 
 			msgf("You get zapped!");
@@ -1279,7 +1279,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 		/* keep the highest level attack available we found */
 		if ((ma_ptr->min_level > old_ptr->min_level) &&
-			!p_ptr->stun && !p_ptr->confused)
+			!p_ptr->tim.stun && !p_ptr->tim.confused)
 		{
 			old_ptr = ma_ptr;
 
@@ -1487,8 +1487,8 @@ void py_attack(int x, int y)
 	}
 
 	/* Stop if friendly and visible */
-	if (!is_hostile(m_ptr) && !p_ptr->stun && !p_ptr->confused
-		&& !p_ptr->image && !((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)
+	if (!is_hostile(m_ptr) && !p_ptr->tim.stun && !p_ptr->tim.confused
+		&& !p_ptr->tim.image && !((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->tim.shero)
 		&& m_ptr->ml)
 	{
 		if (!o_ptr->xtra_name)
@@ -1513,7 +1513,7 @@ void py_attack(int x, int y)
 	}
 
 	/* Handle player fear */
-	if (p_ptr->afraid)
+	if (p_ptr->tim.afraid)
 	{
 		/* Message */
 		if (m_ptr->ml)
@@ -2030,7 +2030,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 	if (c2_ptr->feat == FEAT_PATTERN_START)
 	{
 		if (!cave_pattern_grid(c1_ptr) &&
-			!p_ptr->confused && !p_ptr->stun && !p_ptr->image)
+			!p_ptr->tim.confused && !p_ptr->tim.stun && !p_ptr->tim.image)
 		{
 			if (get_check
 				("If you start walking the Pattern, you must walk the whole way. Ok? "))
@@ -2265,7 +2265,7 @@ void move_player(int dir, int do_pickup)
 
 	/* Player can not walk through "walls"... */
 	/* unless in Shadow Form */
-	if (p_ptr->wraith_form || p_ptr->pass_wall)
+	if (p_ptr->tim.wraith_form || p_ptr->pass_wall)
 		p_can_pass_walls = TRUE;
 
 	/* Never walk through permanent features */
@@ -2284,8 +2284,8 @@ void move_player(int dir, int do_pickup)
 	{
 		/* Attack -- only if we can see it OR it is not in a wall */
 		if (!is_hostile(m_ptr) &&
-			!(p_ptr->confused || p_ptr->image || !m_ptr->ml || p_ptr->stun ||
-			  ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)) &&
+			!(p_ptr->tim.confused || p_ptr->tim.image || !m_ptr->ml || p_ptr->tim.stun ||
+			  ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->tim.shero)) &&
 			(pattern_seq(px, py, x, y)) &&
 			((cave_floor_grid(c_ptr)) || p_can_pass_walls))
 		{
@@ -2414,7 +2414,7 @@ void move_player(int dir, int do_pickup)
 
 				msgf("There is a closed door blocking your way.");
 
-				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 					p_ptr->energy_use = 0;
 			}
 
@@ -2446,7 +2446,7 @@ void move_player(int dir, int do_pickup)
 			{
 				msgf(MSGT_HITWALL, "There is rubble blocking your way.");
 
-				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 					p_ptr->energy_use = 0;
 
 				/*
@@ -2461,7 +2461,7 @@ void move_player(int dir, int do_pickup)
 			{
 				msgf(MSGT_HITWALL, "The jungle is impassable.");
 
-				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 					p_ptr->energy_use = 0;
 			}
 
@@ -2470,7 +2470,7 @@ void move_player(int dir, int do_pickup)
 			{
 				msgf(MSGT_HITWALL, "There is a pillar blocking your way.");
 
-				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 					p_ptr->energy_use = 0;
 			}
 
@@ -2479,7 +2479,7 @@ void move_player(int dir, int do_pickup)
 			{
 				msgf(MSGT_HITWALL, "There is a wall blocking your way.");
 
-				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 					p_ptr->energy_use = 0;
 			}
 		}
@@ -2491,7 +2491,7 @@ void move_player(int dir, int do_pickup)
 	/* Normal movement */
 	if (!pattern_seq(px, py, x, y))
 	{
-		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+		if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 		{
 			p_ptr->energy_use = 0;
 		}
@@ -3043,7 +3043,7 @@ static bool run_test(void)
 				case FEAT_SHAL_LAVA:
 				{
 					/* Ignore */
-					if (p_ptr->invuln || p_ptr->immune_fire) notice = FALSE;
+					if (p_ptr->tim.invuln || p_ptr->immune_fire) notice = FALSE;
 
 					/* Done */
 					break;
@@ -3053,7 +3053,7 @@ static bool run_test(void)
 				case FEAT_SHAL_ACID:
 				{
 					/* Ignore */
-					if (p_ptr->invuln || p_ptr->immune_acid) notice = FALSE;
+					if (p_ptr->tim.invuln || p_ptr->immune_acid) notice = FALSE;
 
 					/* Done */
 					break;
@@ -3063,7 +3063,7 @@ static bool run_test(void)
 				case FEAT_SHAL_SWAMP:
 				{
 					/* Ignore */
-					if (p_ptr->invuln) notice = FALSE;
+					if (p_ptr->tim.invuln) notice = FALSE;
 
 					/* Done */
 					break;

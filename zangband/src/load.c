@@ -1265,41 +1265,41 @@ static void rd_extra(void)
 
 	/* Read the flags */
 	strip_bytes(2);				/* Old "rest" */
-	rd_s16b(&p_ptr->blind);
-	rd_s16b(&p_ptr->paralyzed);
-	rd_s16b(&p_ptr->confused);
+	rd_s16b(&p_ptr->tim.blind);
+	rd_s16b(&p_ptr->tim.paralyzed);
+	rd_s16b(&p_ptr->tim.confused);
 	rd_s16b(&p_ptr->food);
 	strip_bytes(4);				/* Old "food_digested" / "protection" */
 	rd_s16b(&p_ptr->energy);
-	rd_s16b(&p_ptr->fast);
-	rd_s16b(&p_ptr->slow);
-	rd_s16b(&p_ptr->afraid);
-	rd_s16b(&p_ptr->cut);
-	rd_s16b(&p_ptr->stun);
-	rd_s16b(&p_ptr->poisoned);
-	rd_s16b(&p_ptr->image);
-	rd_s16b(&p_ptr->protevil);
-	rd_s16b(&p_ptr->invuln);
-	rd_s16b(&p_ptr->hero);
-	rd_s16b(&p_ptr->shero);
-	rd_s16b(&p_ptr->shield);
-	rd_s16b(&p_ptr->blessed);
-	rd_s16b(&p_ptr->tim_invis);
-	rd_s16b(&p_ptr->word_recall);
+	rd_s16b(&p_ptr->tim.fast);
+	rd_s16b(&p_ptr->tim.slow);
+	rd_s16b(&p_ptr->tim.afraid);
+	rd_s16b(&p_ptr->tim.cut);
+	rd_s16b(&p_ptr->tim.stun);
+	rd_s16b(&p_ptr->tim.poisoned);
+	rd_s16b(&p_ptr->tim.image);
+	rd_s16b(&p_ptr->tim.protevil);
+	rd_s16b(&p_ptr->tim.invuln);
+	rd_s16b(&p_ptr->tim.hero);
+	rd_s16b(&p_ptr->tim.shero);
+	rd_s16b(&p_ptr->tim.shield);
+	rd_s16b(&p_ptr->tim.blessed);
+	rd_s16b(&p_ptr->tim.invis);
+	rd_s16b(&p_ptr->tim.word_recall);
 	rd_s16b(&p_ptr->see_infra);
-	rd_s16b(&p_ptr->tim_infra);
-	rd_s16b(&p_ptr->oppose_fire);
-	rd_s16b(&p_ptr->oppose_cold);
-	rd_s16b(&p_ptr->oppose_acid);
-	rd_s16b(&p_ptr->oppose_elec);
-	rd_s16b(&p_ptr->oppose_pois);
+	rd_s16b(&p_ptr->tim.infra);
+	rd_s16b(&p_ptr->tim.oppose_fire);
+	rd_s16b(&p_ptr->tim.oppose_cold);
+	rd_s16b(&p_ptr->tim.oppose_acid);
+	rd_s16b(&p_ptr->tim.oppose_elec);
+	rd_s16b(&p_ptr->tim.oppose_pois);
 
 	/* Old savefiles do not have the following fields... */
 	if ((z_major == 2) && (z_minor == 0) && (z_patch == 6))
 	{
-		p_ptr->tim_esp = 0;
-		p_ptr->wraith_form = 0;
-		p_ptr->resist_magic = 0;
+		p_ptr->tim.esp = 0;
+		p_ptr->tim.wraith_form = 0;
+		p_ptr->tim.resist_magic = 0;
 		p_ptr->chaos_patron = get_chaos_patron();
 		p_ptr->muta1 = 0;
 		p_ptr->muta2 = 0;
@@ -1309,9 +1309,9 @@ static void rd_extra(void)
 	}
 	else
 	{
-		rd_s16b(&p_ptr->tim_esp);
-		rd_s16b(&p_ptr->wraith_form);
-		rd_s16b(&p_ptr->resist_magic);
+		rd_s16b(&p_ptr->tim.esp);
+		rd_s16b(&p_ptr->tim.wraith_form);
+		rd_s16b(&p_ptr->tim.resist_magic);
 		if (sf_version < 32)
 		{
 			/* Ignore unused counters */

@@ -163,154 +163,154 @@ static void prt_status(void)
 	/* Collate active flags */
 
 	/* Hack -- Hallucinating */
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
 		letter[num] = CLR_VIOLET "H";
 		num++;
 	}
 
 	/* Blindness */
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		letter[num] = CLR_L_DARK "B";
 		num++;
 	}
 
 	/* Times see-invisible */
-	if (p_ptr->tim_invis)
+	if (p_ptr->tim.invis)
 	{
 		letter[num] = CLR_L_BLUE "I";
 		num++;
 	}
 
 	/* Timed esp */
-	if (p_ptr->tim_esp)
+	if (p_ptr->tim.esp)
 	{
 		letter[num] = CLR_ORANGE "E";
 		num++;
 	}
 
 	/* Timed infra-vision */
-	if (p_ptr->tim_infra)
+	if (p_ptr->tim.infra)
 	{
 		letter[num] = CLR_L_RED "I";
 		num++;
 	}
 
 	/* Paralysis */
-	if (p_ptr->paralyzed)
+	if (p_ptr->tim.paralyzed)
 	{
 		letter[num] = CLR_RED "P";
 		num++;
 	}
 
 	/* Confusion */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		letter[num] = CLR_VIOLET "C";
 		num++;
 	}
 
 	/* Fast */
-	if (p_ptr->fast)
+	if (p_ptr->tim.fast)
 	{
 		letter[num] = CLR_GREEN "S";
 		num++;
 	}
 
 	/* Slow */
-	if (p_ptr->slow)
+	if (p_ptr->tim.slow)
 	{
 		letter[num] = CLR_RED "S";
 		num++;
 	}
 
 	/* Protection from evil */
-	if (p_ptr->protevil)
+	if (p_ptr->tim.protevil)
 	{
 		letter[num] = CLR_L_DARK "E";
 		num++;
 	}
 
 	/* Invulnerability */
-	if (p_ptr->invuln)
+	if (p_ptr->tim.invuln)
 	{
 		letter[num] = CLR_YELLOW "I";
 		num++;
 	}
 
 	/* Wraith form */
-	if (p_ptr->wraith_form)
+	if (p_ptr->tim.wraith_form)
 	{
 		letter[num] = CLR_L_DARK "W";
 		num++;
 	}
 
 	/* Heroism */
-	if (p_ptr->hero)
+	if (p_ptr->tim.hero)
 	{
 		letter[num] = CLR_WHITE "H";
 		num++;
 	}
 
 	/* Super Heroism / berserk */
-	if (p_ptr->shero)
+	if (p_ptr->tim.shero)
 	{
 		letter[num] = CLR_RED "B";
 		num++;
 	}
 
 	/* Blessed */
-	if (p_ptr->blessed)
+	if (p_ptr->tim.blessed)
 	{
 		letter[num] = CLR_WHITE "B";
 		num++;
 	}
 
 	/* Shield */
-	if (p_ptr->shield)
+	if (p_ptr->tim.shield)
 	{
 		letter[num] = CLR_WHITE "S";
 		num++;
 	}
 
 	/* Oppose Acid */
-	if (p_ptr->oppose_acid)
+	if (p_ptr->tim.oppose_acid)
 	{
 		letter[num] = CLR_GREEN "A";
 		num++;
 	}
 
 	/* Oppose Lightning */
-	if (p_ptr->oppose_elec)
+	if (p_ptr->tim.oppose_elec)
 	{
 		letter[num] = CLR_BLUE "E";
 		num++;
 	}
 
 	/* Oppose Fire */
-	if (p_ptr->oppose_fire)
+	if (p_ptr->tim.oppose_fire)
 	{
 		letter[num] = CLR_RED "F";
 		num++;
 	}
 
 	/* Oppose Cold */
-	if (p_ptr->oppose_cold)
+	if (p_ptr->tim.oppose_cold)
 	{
 		letter[num] = CLR_WHITE "C";
 		num++;
 	}
 
 	/* Oppose Poison */
-	if (p_ptr->oppose_pois)
+	if (p_ptr->tim.oppose_pois)
 	{
 		letter[num] = CLR_GREEN "P";
 		num++;
 	}
 
 	/* Word of Recall */
-	if (p_ptr->word_recall)
+	if (p_ptr->tim.word_recall)
 	{
 		letter[num] = CLR_WHITE "W";
 		num++;
@@ -615,7 +615,7 @@ static void prt_hunger(void)
  */
 static void prt_blind(void)
 {
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		put_fstr(COL_BLIND, Term->hgt - 1, CLR_ORANGE "Blind");
 	}
@@ -631,7 +631,7 @@ static void prt_blind(void)
  */
 static void prt_confused(void)
 {
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		put_fstr(COL_CONFUSED, Term->hgt - 1, CLR_ORANGE "Confused");
 	}
@@ -647,7 +647,7 @@ static void prt_confused(void)
  */
 static void prt_afraid(void)
 {
-	if (p_ptr->afraid)
+	if (p_ptr->tim.afraid)
 	{
 		put_fstr(COL_AFRAID, Term->hgt - 1, CLR_ORANGE "Afraid");
 	}
@@ -663,7 +663,7 @@ static void prt_afraid(void)
  */
 static void prt_poisoned(void)
 {
-	if (p_ptr->poisoned)
+	if (p_ptr->tim.poisoned)
 	{
 		put_fstr(COL_POISONED, Term->hgt - 1, CLR_ORANGE "Poisoned");
 	}
@@ -791,7 +791,7 @@ static void prt_speed(void)
 	if (p_ptr->searching) i += 10;
 
 	/* Paralysis */
-	if (p_ptr->paralyzed)
+	if (p_ptr->tim.paralyzed)
 	{
 		put_fstr(COL_SPEED, Term->hgt - 1, CLR_RED "Paralyzed!");
 	}
@@ -858,7 +858,7 @@ static void prt_study(void)
 
 static void prt_cut(void)
 {
-	int c = p_ptr->cut;
+	int c = p_ptr->tim.cut;
 
 	if (c > 1000)
 	{
@@ -897,7 +897,7 @@ static void prt_cut(void)
 
 static void prt_stun(void)
 {
-	int s = p_ptr->stun;
+	int s = p_ptr->tim.stun;
 
 	if (s > 100)
 	{
@@ -950,7 +950,7 @@ static void health_redraw(void)
 	}
 
 	/* Tracking a hallucinatory monster */
-	else if (p_ptr->image)
+	else if (p_ptr->tim.image)
 	{
 		/* Indicate that the monster health is "unknown" */
 		put_fstr(COL_INFO, ROW_INFO, "[----------]");
@@ -1927,8 +1927,8 @@ static void calc_hitpoints(void)
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
 
 	/* Factor in the hero / superhero settings */
-	if (p_ptr->hero) mhp += 10;
-	if (p_ptr->shero) mhp += 30;
+	if (p_ptr->tim.hero) mhp += 10;
+	if (p_ptr->tim.shero) mhp += 30;
 
 	/* New maximum hitpoints */
 	if (p_ptr->mhp != mhp)
@@ -2015,7 +2015,7 @@ static void calc_torch(void)
 	 * Hack - blindness gives a torch radius of zero.
 	 * This speeds up the map_info() function.
 	 */
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		/* No light */
 		p_ptr->cur_lite = 0;
@@ -3066,14 +3066,14 @@ static void calc_bonuses(void)
 
 
 	/* Apply temporary "stun" */
-	if (p_ptr->stun > 50)
+	if (p_ptr->tim.stun > 50)
 	{
 		p_ptr->to_h -= 20;
 		p_ptr->dis_to_h -= 20;
 		p_ptr->to_d -= 20;
 		p_ptr->dis_to_d -= 20;
 	}
-	else if (p_ptr->stun)
+	else if (p_ptr->tim.stun)
 	{
 		p_ptr->to_h -= 5;
 		p_ptr->dis_to_h -= 5;
@@ -3082,14 +3082,14 @@ static void calc_bonuses(void)
 	}
 
 	/* Invulnerability */
-	if (p_ptr->invuln)
+	if (p_ptr->tim.invuln)
 	{
 		p_ptr->to_a += 100;
 		p_ptr->dis_to_a += 100;
 	}
 
 	/* wraith_form */
-	if (p_ptr->wraith_form)
+	if (p_ptr->tim.wraith_form)
 	{
 		p_ptr->to_a += 100;
 		p_ptr->dis_to_a += 100;
@@ -3097,7 +3097,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Temporary blessing */
-	if (p_ptr->blessed)
+	if (p_ptr->tim.blessed)
 	{
 		p_ptr->to_a += 5;
 		p_ptr->dis_to_a += 5;
@@ -3106,21 +3106,21 @@ static void calc_bonuses(void)
 	}
 
 	/* Temporary shield */
-	if (p_ptr->shield)
+	if (p_ptr->tim.shield)
 	{
 		p_ptr->to_a += 50;
 		p_ptr->dis_to_a += 50;
 	}
 
 	/* Temporary "Hero" */
-	if (p_ptr->hero)
+	if (p_ptr->tim.hero)
 	{
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
 	}
 
 	/* Temporary "Beserk" */
-	if (p_ptr->shero)
+	if (p_ptr->tim.shero)
 	{
 		p_ptr->to_h += 24;
 		p_ptr->dis_to_h += 24;
@@ -3129,38 +3129,38 @@ static void calc_bonuses(void)
 	}
 
 	/* Temporary "fast" */
-	if (p_ptr->fast)
+	if (p_ptr->tim.fast)
 	{
 		p_ptr->pspeed += 10;
 	}
 
 	/* Temporary "slow" */
-	if (p_ptr->slow)
+	if (p_ptr->tim.slow)
 	{
 		p_ptr->pspeed -= 10;
 	}
 
 	/* Temporary "telepathy" */
-	if (p_ptr->tim_esp)
+	if (p_ptr->tim.esp)
 	{
 		p_ptr->telepathy = TRUE;
 	}
 
 	/* Temporary see invisible */
-	if (p_ptr->tim_invis)
+	if (p_ptr->tim.invis)
 	{
 		p_ptr->see_inv = TRUE;
 	}
 
 	/* Temporary infravision boost */
-	if (p_ptr->tim_infra)
+	if (p_ptr->tim.infra)
 	{
 		p_ptr->see_infra++;
 	}
 
 
 	/* Hack -- Hero/Shero -> Res fear */
-	if (p_ptr->hero || p_ptr->shero)
+	if (p_ptr->tim.hero || p_ptr->tim.shero)
 	{
 		p_ptr->resist_fear = TRUE;
 	}

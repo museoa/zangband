@@ -1687,7 +1687,7 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	char c;
 
 	byte feat_not_ascii;
-	s16b halluc = p_ptr->image;
+	s16b halluc = p_ptr->tim.image;
 
 	/* Info flags */
 	player = pc_ptr->player;
@@ -1710,7 +1710,7 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	 * Need to have lighting on and the player is not blind.
 	 * We then need to have a grid that is allowed to be lit.
 	 */
-	if (view_bright_lite && !p_ptr->blind
+	if (view_bright_lite && !p_ptr->tim.blind
 		&& (!(f_ptr->flags & FF_BLOCK)
 			|| (view_granite_lite && !view_torch_grids)))
 	{
@@ -1750,7 +1750,7 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	}
 
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
-	if (halluc && !p_ptr->blind && (feat != FEAT_PERM_SOLID) && one_in_(256))
+	if (halluc && !p_ptr->tim.blind && (feat != FEAT_PERM_SOLID) && one_in_(256))
 	{
 		/* Hallucinate */
 		image_random(&a, &c);
@@ -1873,11 +1873,11 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
-				if (p_ptr->invuln || !use_color)
+				if (p_ptr->tim.invuln || !use_color)
 				{
 					a = TERM_WHITE;
 				}
-				else if (p_ptr->wraith_form) a = TERM_L_DARK;
+				else if (p_ptr->tim.wraith_form) a = TERM_L_DARK;
 			}
 
 			/* Save the info */
@@ -1979,8 +1979,8 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	/* Hack -- fake monochrome */
 	if (fake_monochrome)
 	{
-		if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-		else if (p_ptr->wraith_form) a = TERM_L_DARK;
+		if (p_ptr->tim.invuln || !use_color) a = TERM_WHITE;
+		else if (p_ptr->tim.wraith_form) a = TERM_L_DARK;
 	}
 
 	/* Save the info */
@@ -2016,8 +2016,8 @@ void print_rel(char c, byte a, int x, int y)
 		/* Hack -- fake monochrome */
 		if (fake_monochrome)
 		{
-			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
-			else if (p_ptr->wraith_form) a = TERM_L_DARK;
+			if (p_ptr->tim.invuln || !use_color) a = TERM_WHITE;
+			else if (p_ptr->tim.wraith_form) a = TERM_L_DARK;
 		}
 
 		/* Draw the char using the attr */
@@ -2074,7 +2074,7 @@ void note_spot(int x, int y)
 	/* Is it lit + in view + player is not blind? */
 	if (((c_ptr->info & (CAVE_GLOW | CAVE_MNLT))
 		 || (pc_ptr->player & (GRID_LITE)))
-		&& player_has_los_grid(pc_ptr) && !p_ptr->blind)
+		&& player_has_los_grid(pc_ptr) && !p_ptr->tim.blind)
 	{
 		/* Memorize certain non-torch-lit wall grids */
 		if (!cave_floor_grid(c_ptr) && !(pc_ptr->player & (GRID_LITE)))
@@ -2500,7 +2500,7 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 			*a = object_attr(o_ptr);
 
 			/* Hack -- hallucination */
-			if (p_ptr->image) image_object(a, c);
+			if (p_ptr->tim.image) image_object(a, c);
 
 			/* High priority */
 			tp = 30;
@@ -4157,7 +4157,7 @@ void update_view(void)
 		info = c_ptr->info;
 
 		/* Handle blindness */
-		if ((p_ptr->blind) && !(info & CAVE_XTRA))
+		if ((p_ptr->tim.blind) && !(info & CAVE_XTRA))
 		{
 			/* Grid cannot be memorised (wasn't before) */
 			forget_grid(pc_ptr);
@@ -4353,7 +4353,7 @@ void update_mon_lite(void)
 	s16b fx, fy;
 
 	/* Blindness check */
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		/* Clear all the monster lit squares */
 		for (i = 0; i < lite_n; i++)

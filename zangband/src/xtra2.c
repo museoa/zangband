@@ -1627,7 +1627,7 @@ bool target_able(int m_idx)
 	if (!projectable(px, py, m_ptr->fx, m_ptr->fy)) return (FALSE);
 
 	/* Hack -- no targeting hallucinations */
-	if (p_ptr->image) return (FALSE);
+	if (p_ptr->tim.image) return (FALSE);
 
 	/* Assume okay */
 	return (TRUE);
@@ -1904,7 +1904,7 @@ static bool target_set_accept(int x, int y)
 
 
 	/* Handle hallucination */
-	if (p_ptr->image) return (FALSE);
+	if (p_ptr->tim.image) return (FALSE);
 
 	/* paranoia */
 	if (!in_boundsp(x, y)) return (FALSE);
@@ -2097,7 +2097,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 
 		/* Hack -- hallucination */
-		if (p_ptr->image)
+		if (p_ptr->tim.image)
 		{
 			cptr name = "something strange";
 
@@ -3113,7 +3113,7 @@ bool get_aim_dir(int *dp)
 	p_ptr->command_dir = dir;
 
 	/* Check for confusion */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		/* Random direction */
 		dir = ddd[randint0(8)];
@@ -3190,7 +3190,7 @@ bool get_rep_dir(int *dp)
 	p_ptr->command_dir = dir;
 
 	/* Apply "confusion" */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		/* Standard confusion */
 		if (randint0(100) < 75)
@@ -3850,7 +3850,7 @@ bool get_hack_dir(int *dp)
 	p_ptr->command_dir = dir;
 
 	/* Check for confusion */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		/* XXX XXX XXX */
 		/* Random direction */

@@ -54,7 +54,7 @@ void have_nightmare(int r_idx)
 		return;
 	}
 
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
 		/* Something silly happens... */
 		msgf("You behold the %s visage of %s!",
@@ -63,7 +63,7 @@ void have_nightmare(int r_idx)
 		if (one_in_(3))
 		{
 			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
-			p_ptr->image = p_ptr->image + randint1(r_ptr->level);
+			(void) set_image(p_ptr->tim.image + randint1(r_ptr->level));
 		}
 
 		/* Never mind; we can't see it clearly enough */
@@ -104,11 +104,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + rand_range(4, 8));
+			(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 		}
 		if (!p_ptr->resist_chaos && one_in_(3))
 		{
-			(void)set_image(p_ptr->image + rand_range(250, 400));
+			(void)set_image(p_ptr->tim.image + rand_range(250, 400));
 		}
 		return;
 	}
@@ -126,11 +126,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + rand_range(4, 8));
+			(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 		}
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
+			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
 		}
 		while (!saving_throw(p_ptr->skill_sav))
 		{
@@ -142,7 +142,7 @@ void have_nightmare(int r_idx)
 		}
 		if (!p_ptr->resist_chaos)
 		{
-			(void)set_image(p_ptr->image + rand_range(250, 400));
+			(void)set_image(p_ptr->tim.image + rand_range(250, 400));
 		}
 		return;
 	}
@@ -795,7 +795,7 @@ bool inn_rest(void)
 	}
 
 	/* Hurt? */
-	if ((p_ptr->poisoned) || (p_ptr->cut))
+	if ((p_ptr->tim.poisoned) || (p_ptr->tim.cut))
 	{
 		msgf("You need a healer, not a room.");
 		message_flush();
@@ -840,7 +840,7 @@ bool inn_rest(void)
 	/* Normally heal the player */
 	(void)set_blind(0);
 	(void)set_confused(0);
-	p_ptr->stun = 0;
+	p_ptr->tim.stun = 0;
 	p_ptr->csp = p_ptr->msp;
 
 	msgf("You awake refreshed for the new day.");

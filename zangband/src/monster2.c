@@ -708,7 +708,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode, int max)
 	int n;
 
 	/* Are we hallucinating? (Idea from Nethack...) */
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
 		if (one_in_(2))
 		{
@@ -907,7 +907,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode, int max)
 	else
 	{
 		/* It could be a Unique */
-		if ((r_ptr->flags1 & RF1_UNIQUE) && !p_ptr->image)
+		if ((r_ptr->flags1 & RF1_UNIQUE) && !p_ptr->tim.image)
 		{
 			/* Start with the name (thus nominative and objective) */
 			n = strnfmt(desc, max, "%s", name);
@@ -1241,7 +1241,7 @@ void update_mon(int m_idx, bool full)
 			pc_ptr = parea(fx, fy);
 
 			/* Normal line of sight, and not blind */
-			if (player_has_los_grid(pc_ptr) && !p_ptr->blind)
+			if (player_has_los_grid(pc_ptr) && !p_ptr->tim.blind)
 			{
 				bool do_invisible = FALSE;
 				bool do_cold_blood = FALSE;
@@ -2901,35 +2901,35 @@ void update_smart_learn(int m_idx, int what)
 		case DRS_ACID:
 		{
 			if (p_ptr->resist_acid) m_ptr->smart |= (SM_RES_ACID);
-			if (p_ptr->oppose_acid) m_ptr->smart |= (SM_OPP_ACID);
+			if (p_ptr->tim.oppose_acid) m_ptr->smart |= (SM_OPP_ACID);
 			if (p_ptr->immune_acid) m_ptr->smart |= (SM_IMM_ACID);
 			break;
 		}
 		case DRS_ELEC:
 		{
 			if (p_ptr->resist_elec) m_ptr->smart |= (SM_RES_ELEC);
-			if (p_ptr->oppose_elec) m_ptr->smart |= (SM_OPP_ELEC);
+			if (p_ptr->tim.oppose_elec) m_ptr->smart |= (SM_OPP_ELEC);
 			if (p_ptr->immune_elec) m_ptr->smart |= (SM_IMM_ELEC);
 			break;
 		}
 		case DRS_FIRE:
 		{
 			if (p_ptr->resist_fire) m_ptr->smart |= (SM_RES_FIRE);
-			if (p_ptr->oppose_fire) m_ptr->smart |= (SM_OPP_FIRE);
+			if (p_ptr->tim.oppose_fire) m_ptr->smart |= (SM_OPP_FIRE);
 			if (p_ptr->immune_fire) m_ptr->smart |= (SM_IMM_FIRE);
 			break;
 		}
 		case DRS_COLD:
 		{
 			if (p_ptr->resist_cold) m_ptr->smart |= (SM_RES_COLD);
-			if (p_ptr->oppose_cold) m_ptr->smart |= (SM_OPP_COLD);
+			if (p_ptr->tim.oppose_cold) m_ptr->smart |= (SM_OPP_COLD);
 			if (p_ptr->immune_cold) m_ptr->smart |= (SM_IMM_COLD);
 			break;
 		}
 		case DRS_POIS:
 		{
 			if (p_ptr->resist_pois) m_ptr->smart |= (SM_RES_POIS);
-			if (p_ptr->oppose_pois) m_ptr->smart |= (SM_OPP_POIS);
+			if (p_ptr->tim.oppose_pois) m_ptr->smart |= (SM_OPP_POIS);
 			break;
 		}
 		case DRS_NETH:

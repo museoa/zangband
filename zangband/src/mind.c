@@ -197,8 +197,8 @@ static int get_mindcraft_power(int *sn)
 		if (chance < minfail) chance = minfail;
 
 		/* Stunning makes spells harder */
-		if (p_ptr->stun > 50) chance += 25;
-		else if (p_ptr->stun) chance += 15;
+		if (p_ptr->tim.stun > 50) chance += 25;
+		else if (p_ptr->tim.stun) chance += 15;
 
 		/* Always a 5 percent chance of working */
 		if (chance > 95) chance = 95;
@@ -322,7 +322,7 @@ static bool cast_mindcrafter_spell(int spell)
 
 			if ((plev > 24) && (plev < 40))
 			{
-				(void)set_tim_esp(p_ptr->tim_esp + plev);
+				(void)set_tim_esp(p_ptr->tim.esp + plev);
 			}
 
 			if (!b) msgf("You feel safe.");
@@ -367,12 +367,12 @@ static bool cast_mindcrafter_spell(int spell)
 			break;
 		case MINDCRAFT_CHARACTER_ARMOUR:
 			/* Character Armour */
-			(void)set_shield(p_ptr->shield + plev);
-			if (plev > 14) (void)set_oppose_acid(p_ptr->oppose_acid + plev);
-			if (plev > 19) (void)set_oppose_fire(p_ptr->oppose_fire + plev);
-			if (plev > 24) (void)set_oppose_cold(p_ptr->oppose_cold + plev);
-			if (plev > 29) (void)set_oppose_elec(p_ptr->oppose_elec + plev);
-			if (plev > 34) (void)set_oppose_pois(p_ptr->oppose_pois + plev);
+			(void)set_shield(p_ptr->tim.shield + plev);
+			if (plev > 14) (void)set_oppose_acid(p_ptr->tim.oppose_acid + plev);
+			if (plev > 19) (void)set_oppose_fire(p_ptr->tim.oppose_fire + plev);
+			if (plev > 24) (void)set_oppose_cold(p_ptr->tim.oppose_cold + plev);
+			if (plev > 29) (void)set_oppose_elec(p_ptr->tim.oppose_elec + plev);
+			if (plev > 34) (void)set_oppose_pois(p_ptr->tim.oppose_pois + plev);
 			break;
 		case MINDCRAFT_PSYCHOMETRY:
 			/* Psychometry */
@@ -398,19 +398,19 @@ static bool cast_mindcrafter_spell(int spell)
 			 * Only heal when Adrenalin Channeling is not active. We check
 			 * that by checking if the player isn't fast and 'heroed' atm.
 			 */
-			if (!p_ptr->fast || !(p_ptr->hero || p_ptr->shero))
+			if (!p_ptr->tim.fast || !(p_ptr->tim.hero || p_ptr->tim.shero))
 			{
 				(void)hp_player(plev);
 			}
 
 			b = 10 + randint1((plev * 3) / 2);
 			if (plev < 35)
-				(void)set_hero(p_ptr->hero + b);
+				(void)set_hero(p_ptr->tim.hero + b);
 			else
-				(void)set_shero(p_ptr->shero + b);
+				(void)set_shero(p_ptr->tim.shero + b);
 
 			/* Haste */
-			(void)set_fast(p_ptr->fast + b);
+			(void)set_fast(p_ptr->tim.fast + b);
 
 			break;
 		case MINDCRAFT_PSYCHIC_DRAIN:
@@ -455,7 +455,7 @@ void do_cmd_mindcraft(void)
 
 
 	/* not if confused */
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused!");
 		return;
@@ -498,8 +498,8 @@ void do_cmd_mindcraft(void)
 	if (chance < minfail) chance = minfail;
 
 	/* Stunning makes spells harder */
-	if (p_ptr->stun > 50) chance += 25;
-	else if (p_ptr->stun) chance += 15;
+	if (p_ptr->tim.stun > 50) chance += 25;
+	else if (p_ptr->tim.stun) chance += 15;
 
 	/* Always a 5 percent chance of working */
 	if (chance > 95) chance = 95;
@@ -524,16 +524,16 @@ void do_cmd_mindcraft(void)
 			else if (b < 15)
 			{
 				msgf("Weird visions seem to dance before your eyes...");
-				(void)set_image(p_ptr->image + rand_range(5, 15));
+				(void)set_image(p_ptr->tim.image + rand_range(5, 15));
 			}
 			else if (b < 45)
 			{
 				msgf("Your brain is addled!");
-				(void)set_confused(p_ptr->confused + randint1(8));
+				(void)set_confused(p_ptr->tim.confused + randint1(8));
 			}
 			else if (b < 90)
 			{
-				(void)set_stun(p_ptr->stun + randint1(8));
+				(void)set_stun(p_ptr->tim.stun + randint1(8));
 			}
 			else
 			{
@@ -584,7 +584,7 @@ void do_cmd_mindcraft(void)
 		msgf("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-		(void)set_paralyzed(p_ptr->paralyzed + randint1(5 * oops + 1));
+		(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(5 * oops + 1));
 
 		/* Damage WIS (possibly permanently) */
 		if (randint0(100) < 50)

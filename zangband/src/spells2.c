@@ -156,31 +156,31 @@ void self_knowledge(void)
 		}
 	}
 
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		info[i++] = "You cannot see.";
 	}
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		info[i++] = "You are confused.";
 	}
-	if (p_ptr->afraid)
+	if (p_ptr->tim.afraid)
 	{
 		info[i++] = "You are terrified.";
 	}
-	if (p_ptr->cut)
+	if (p_ptr->tim.cut)
 	{
 		info[i++] = "You are bleeding.";
 	}
-	if (p_ptr->stun)
+	if (p_ptr->tim.stun)
 	{
 		info[i++] = "You are stunned.";
 	}
-	if (p_ptr->poisoned)
+	if (p_ptr->tim.poisoned)
 	{
 		info[i++] = "You are poisoned.";
 	}
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
 		info[i++] = "You are hallucinating.";
 	}
@@ -196,19 +196,19 @@ void self_knowledge(void)
 	{
 		info[i++] = "You cannot survive on normal food.";
 	}
-	if (p_ptr->blessed)
+	if (p_ptr->tim.blessed)
 	{
 		info[i++] = "You feel righteous.";
 	}
-	if (p_ptr->hero)
+	if (p_ptr->tim.hero)
 	{
 		info[i++] = "You feel heroic.";
 	}
-	if (p_ptr->shero)
+	if (p_ptr->tim.shero)
 	{
 		info[i++] = "You are in a battle rage.";
 	}
-	if (p_ptr->protevil || p_ptr->shld_evil)
+	if (p_ptr->tim.protevil || p_ptr->shld_evil)
 	{
 		info[i++] = "You are protected from evil.";
 	}
@@ -240,15 +240,15 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are protected from dragons.";
 	}
-	if (p_ptr->shield)
+	if (p_ptr->tim.shield)
 	{
 		info[i++] = "You are protected by a mystic shield.";
 	}
-	if (p_ptr->invuln)
+	if (p_ptr->tim.invuln)
 	{
 		info[i++] = "You are temporarily invulnerable.";
 	}
-	if (p_ptr->wraith_form)
+	if (p_ptr->tim.wraith_form)
 	{
 		info[i++] = "You are temporarily incorporeal.";
 	}
@@ -264,7 +264,7 @@ void self_knowledge(void)
 	{
 		info[i++] = "You can learn some spells/prayers.";
 	}
-	if (p_ptr->word_recall)
+	if (p_ptr->tim.word_recall)
 	{
 		info[i++] = "You will soon be recalled.";
 	}
@@ -363,14 +363,14 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are completely immune to acid.";
 	}
-	else if ((p_ptr->resist_acid) && (p_ptr->oppose_acid))
+	else if ((p_ptr->resist_acid) && (p_ptr->tim.oppose_acid))
 	{
 		if (p_ptr->hurt_acid)
 			info[i++] = "You resist acid very well.";
 		else
 			info[i++] = "You resist acid exceptionally well.";
 	}
-	else if ((p_ptr->resist_acid) || (p_ptr->oppose_acid))
+	else if ((p_ptr->resist_acid) || (p_ptr->tim.oppose_acid))
 	{
 		if (p_ptr->hurt_acid)
 			info[i++] = "You are somewhat resistant to acid.";
@@ -386,14 +386,14 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are completely immune to lightning.";
 	}
-	else if ((p_ptr->resist_elec) && (p_ptr->oppose_elec))
+	else if ((p_ptr->resist_elec) && (p_ptr->tim.oppose_elec))
 	{
 		if (p_ptr->hurt_elec)
 			info[i++] = "You resist lightning very well.";
 		else
 			info[i++] = "You resist lightning exceptionally well.";
 	}
-	else if ((p_ptr->resist_elec) || (p_ptr->oppose_elec))
+	else if ((p_ptr->resist_elec) || (p_ptr->tim.oppose_elec))
 	{
 		if (p_ptr->hurt_elec)
 			info[i++] = "You are somewhat resistant to lightning.";
@@ -409,14 +409,14 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are completely immune to fire.";
 	}
-	else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire))
+	else if ((p_ptr->resist_fire) && (p_ptr->tim.oppose_fire))
 	{
 		if (p_ptr->hurt_fire)
 			info[i++] = "You resist fire very well.";
 		else
 			info[i++] = "You resist fire exceptionally well.";
 	}
-	else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire))
+	else if ((p_ptr->resist_fire) || (p_ptr->tim.oppose_fire))
 	{
 		if (p_ptr->hurt_fire)
 			info[i++] = "You are somewhat resistant to fire.";
@@ -432,14 +432,14 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are completely immune to cold.";
 	}
-	else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold))
+	else if ((p_ptr->resist_cold) && (p_ptr->tim.oppose_cold))
 	{
 		if (p_ptr->hurt_cold)
 			info[i++] = "You resist cold very well.";
 		else
 			info[i++] = "You resist cold exceptionally well.";
 	}
-	else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold))
+	else if ((p_ptr->resist_cold) || (p_ptr->tim.oppose_cold))
 	{
 		if (p_ptr->hurt_cold)
 			info[i++] = "You are somewhat resistant to cold.";
@@ -451,11 +451,11 @@ void self_knowledge(void)
 		info[i++] = "You are vulnerable to cold.";
 	}
 
-	if ((p_ptr->resist_pois) && (p_ptr->oppose_pois))
+	if ((p_ptr->resist_pois) && (p_ptr->tim.oppose_pois))
 	{
 		info[i++] = "You resist poison exceptionally well.";
 	}
-	else if ((p_ptr->resist_pois) || (p_ptr->oppose_pois))
+	else if ((p_ptr->resist_pois) || (p_ptr->tim.oppose_pois))
 	{
 		info[i++] = "You are resistant to poison.";
 	}
@@ -805,64 +805,64 @@ void report_magics(void)
 	int info2[128];
 
 
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
-		info2[i] = report_magics_aux(p_ptr->blind);
+		info2[i] = report_magics_aux(p_ptr->tim.blind);
 		info[i++] = "You cannot see";
 	}
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
-		info2[i] = report_magics_aux(p_ptr->confused);
+		info2[i] = report_magics_aux(p_ptr->tim.confused);
 		info[i++] = "You are confused";
 	}
-	if (p_ptr->afraid)
+	if (p_ptr->tim.afraid)
 	{
-		info2[i] = report_magics_aux(p_ptr->afraid);
+		info2[i] = report_magics_aux(p_ptr->tim.afraid);
 		info[i++] = "You are terrified";
 	}
-	if (p_ptr->poisoned)
+	if (p_ptr->tim.poisoned)
 	{
-		info2[i] = report_magics_aux(p_ptr->poisoned);
+		info2[i] = report_magics_aux(p_ptr->tim.poisoned);
 		info[i++] = "You are poisoned";
 	}
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
-		info2[i] = report_magics_aux(p_ptr->image);
+		info2[i] = report_magics_aux(p_ptr->tim.image);
 		info[i++] = "You are hallucinating";
 	}
-	if (p_ptr->blessed)
+	if (p_ptr->tim.blessed)
 	{
-		info2[i] = report_magics_aux(p_ptr->blessed);
+		info2[i] = report_magics_aux(p_ptr->tim.blessed);
 		info[i++] = "You feel righteous";
 	}
-	if (p_ptr->hero)
+	if (p_ptr->tim.hero)
 	{
-		info2[i] = report_magics_aux(p_ptr->hero);
+		info2[i] = report_magics_aux(p_ptr->tim.hero);
 		info[i++] = "You feel heroic";
 	}
-	if (p_ptr->shero)
+	if (p_ptr->tim.shero)
 	{
-		info2[i] = report_magics_aux(p_ptr->shero);
+		info2[i] = report_magics_aux(p_ptr->tim.shero);
 		info[i++] = "You are in a battle rage";
 	}
-	if (p_ptr->protevil)
+	if (p_ptr->tim.protevil)
 	{
-		info2[i] = report_magics_aux(p_ptr->protevil);
+		info2[i] = report_magics_aux(p_ptr->tim.protevil);
 		info[i++] = "You are protected from evil";
 	}
-	if (p_ptr->shield)
+	if (p_ptr->tim.shield)
 	{
-		info2[i] = report_magics_aux(p_ptr->shield);
+		info2[i] = report_magics_aux(p_ptr->tim.shield);
 		info[i++] = "You are protected by a mystic shield";
 	}
-	if (p_ptr->invuln)
+	if (p_ptr->tim.invuln)
 	{
-		info2[i] = report_magics_aux(p_ptr->invuln);
+		info2[i] = report_magics_aux(p_ptr->tim.invuln);
 		info[i++] = "You are invulnerable";
 	}
-	if (p_ptr->wraith_form)
+	if (p_ptr->tim.wraith_form)
 	{
-		info2[i] = report_magics_aux(p_ptr->wraith_form);
+		info2[i] = report_magics_aux(p_ptr->tim.wraith_form);
 		info[i++] = "You are incorporeal";
 	}
 	if (p_ptr->confusing)
@@ -870,34 +870,34 @@ void report_magics(void)
 		info2[i] = 7;
 		info[i++] = "Your hands are glowing dull red.";
 	}
-	if (p_ptr->word_recall)
+	if (p_ptr->tim.word_recall)
 	{
-		info2[i] = report_magics_aux(p_ptr->word_recall);
+		info2[i] = report_magics_aux(p_ptr->tim.word_recall);
 		info[i++] = "You are waiting to be recalled";
 	}
-	if (p_ptr->oppose_acid)
+	if (p_ptr->tim.oppose_acid)
 	{
-		info2[i] = report_magics_aux(p_ptr->oppose_acid);
+		info2[i] = report_magics_aux(p_ptr->tim.oppose_acid);
 		info[i++] = "You are resistant to acid";
 	}
-	if (p_ptr->oppose_elec)
+	if (p_ptr->tim.oppose_elec)
 	{
-		info2[i] = report_magics_aux(p_ptr->oppose_elec);
+		info2[i] = report_magics_aux(p_ptr->tim.oppose_elec);
 		info[i++] = "You are resistant to lightning";
 	}
-	if (p_ptr->oppose_fire)
+	if (p_ptr->tim.oppose_fire)
 	{
-		info2[i] = report_magics_aux(p_ptr->oppose_fire);
+		info2[i] = report_magics_aux(p_ptr->tim.oppose_fire);
 		info[i++] = "You are resistant to fire";
 	}
-	if (p_ptr->oppose_cold)
+	if (p_ptr->tim.oppose_cold)
 	{
-		info2[i] = report_magics_aux(p_ptr->oppose_cold);
+		info2[i] = report_magics_aux(p_ptr->tim.oppose_cold);
 		info[i++] = "You are resistant to cold";
 	}
-	if (p_ptr->oppose_pois)
+	if (p_ptr->tim.oppose_pois)
 	{
-		info2[i] = report_magics_aux(p_ptr->oppose_pois);
+		info2[i] = report_magics_aux(p_ptr->tim.oppose_pois);
 		info[i++] = "You are resistant to poison";
 	}
 
@@ -1432,7 +1432,7 @@ bool detect_monsters_normal(void)
 
 		/* Detect all non-invisible monsters */
 		if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
-			p_ptr->see_inv || p_ptr->tim_invis)
+			p_ptr->see_inv || p_ptr->tim.invis)
 		{
 			/* Repair visibility later */
 			repair_monsters = TRUE;
@@ -2490,7 +2490,7 @@ bool destroy_area(int x1, int y1, int r)
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
 			/* Become blind */
-			(void)set_blind(p_ptr->blind + rand_range(10, 20));
+			(void)set_blind(p_ptr->tim.blind + rand_range(10, 20));
 		}
 	}
 
@@ -2672,14 +2672,14 @@ bool earthquake(int cx, int cy, int r)
 				{
 					msgf("You are bashed by rubble!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint1(50));
+					(void)set_stun(p_ptr->tim.stun + randint1(50));
 					break;
 				}
 				case 3:
 				{
 					msgf("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint1(50));
+					(void)set_stun(p_ptr->tim.stun + randint1(50));
 					break;
 				}
 			}
@@ -3351,7 +3351,7 @@ bool lite_area(int dam, int rad)
 	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
-	if (!p_ptr->blind)
+	if (!p_ptr->tim.blind)
 	{
 		msgf("You are surrounded by a white light.");
 	}
@@ -3376,7 +3376,7 @@ bool unlite_area(int dam, int rad)
 	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
-	if (!p_ptr->blind)
+	if (!p_ptr->tim.blind)
 	{
 		msgf("Darkness surrounds you.");
 	}
@@ -3982,11 +3982,11 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msgf("You feel like a statue!");
 					if (p_ptr->free_act)
 					{
-						(void)set_paralyzed(p_ptr->paralyzed + randint1(3));
+						(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(3));
 					}
 					else
 					{
-						(void)set_paralyzed(p_ptr->paralyzed + randint1(13));
+						(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(13));
 					}
 					stop_ty = TRUE;
 				}

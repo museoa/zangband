@@ -2747,7 +2747,7 @@ bool borg_caution(void)
 		{
 			borg_note_fmt
 				("# Protected by GOI (borg turns:%d; game turns:%d)",
-				 borg_goi / borg_game_ratio, p_ptr->invuln);
+				 borg_goi / borg_game_ratio, p_ptr->tim.invuln);
 		}
 		if (borg_shield)
 		{
@@ -10696,7 +10696,7 @@ bool borg_defend(int p1)
 			{
 				borg_note_fmt
 					("# refreshing GOI.  borg_goi=%d, p_ptr->invuln=%d, (ratio=%d)",
-					 borg_goi, p_ptr->invuln, borg_game_ratio);
+					 borg_goi, p_ptr->tim.invuln, borg_game_ratio);
 				return (TRUE);
 			}
 		}

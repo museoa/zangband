@@ -376,7 +376,7 @@ bool make_attack_normal(int m_idx)
 
 
 			/* Hack -- Apply "protection from evil" */
-			if ((p_ptr->protevil > 0) &&
+			if ((p_ptr->tim.protevil > 0) &&
 				(r_ptr->flags3 & RF3_EVIL) &&
 				(p_ptr->lev >= rlev) && ((randint0(100) + p_ptr->lev) > 50))
 			{
@@ -436,7 +436,7 @@ bool make_attack_normal(int m_idx)
 			/* Message */
 			if (act)
 			{
-				if ((p_ptr->image) && one_in_(3))
+				if ((p_ptr->tim.image) && one_in_(3))
 				{
 					msgf("%^s %s you.", m_name,
 							   silly_attacks[randint0(MAX_SILLY_ATTACK)]);
@@ -491,10 +491,10 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Take "poison" effect */
-						if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+						if (!(p_ptr->resist_pois || p_ptr->tim.oppose_pois))
 						{
 							if (set_poisoned
-								(p_ptr->poisoned + randint1(rlev) + 5))
+								(p_ptr->tim.poisoned + randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
@@ -592,7 +592,7 @@ bool make_attack_normal(int m_idx)
 						obvious = TRUE;
 
 						/* Saving throw (unless paralyzed) based on dex and level */
-						if (!p_ptr->paralyzed &&
+						if (!p_ptr->tim.paralyzed &&
 							(randint0(100) <
 							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
 							  p_ptr->lev)))
@@ -655,7 +655,7 @@ bool make_attack_normal(int m_idx)
 						if (m_ptr->confused) break;
 
 						/* Saving throw (unless paralyzed) based on dex and level */
-						if (!p_ptr->paralyzed &&
+						if (!p_ptr->tim.paralyzed &&
 							(randint0(100) <
 							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
 							  p_ptr->lev)))
@@ -763,7 +763,7 @@ bool make_attack_normal(int m_idx)
 							if (o_ptr->pval < 1) o_ptr->pval = 1;
 
 							/* Notice */
-							if (!p_ptr->blind)
+							if (!p_ptr->tim.blind)
 							{
 								msgf("Your light dims.");
 								obvious = TRUE;
@@ -852,7 +852,7 @@ bool make_attack_normal(int m_idx)
 						/* Increase "blind" */
 						if (!p_ptr->resist_blind)
 						{
-							if (set_blind(p_ptr->blind + 10 + randint1(rlev)))
+							if (set_blind(p_ptr->tim.blind + 10 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -873,7 +873,7 @@ bool make_attack_normal(int m_idx)
 						if (!p_ptr->resist_confu)
 						{
 							if (set_confused
-								(p_ptr->confused + 3 + randint1(rlev)))
+								(p_ptr->tim.confused + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -903,7 +903,7 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							if (set_afraid(p_ptr->afraid + 3 + randint1(rlev)))
+							if (set_afraid(p_ptr->tim.afraid + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -918,7 +918,7 @@ bool make_attack_normal(int m_idx)
 					case RBE_PARALYZE:
 					{
 						/* Hack -- Prevent perma-paralysis via damage */
-						if (p_ptr->paralyzed && (damage < 1)) damage = 1;
+						if (p_ptr->tim.paralyzed && (damage < 1)) damage = 1;
 
 						/* Take damage */
 						take_hit(damage, ddesc);
@@ -937,7 +937,7 @@ bool make_attack_normal(int m_idx)
 						else
 						{
 							if (set_paralyzed
-								(p_ptr->paralyzed + 3 + randint1(rlev)))
+								(p_ptr->tim.paralyzed + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -1181,10 +1181,10 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Take "poison" effect */
-						if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+						if (!(p_ptr->resist_pois || p_ptr->tim.oppose_pois))
 						{
 							if (set_poisoned
-								(p_ptr->poisoned + randint1(rlev) + 5))
+								(p_ptr->tim.poisoned + randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
@@ -1414,7 +1414,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the cut */
-				if (k) (void)set_cut(p_ptr->cut + k);
+				if (k) (void)set_cut(p_ptr->tim.cut + k);
 			}
 
 			/* Handle stun */
@@ -1469,7 +1469,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the stun */
-				if (k) (void)set_stun(p_ptr->stun + k);
+				if (k) (void)set_stun(p_ptr->tim.stun + k);
 			}
 
 			if (explode)

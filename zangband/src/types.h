@@ -1274,6 +1274,45 @@ struct player_spell
 };
 
 /*
+ * Timed effects acting on the player
+ */
+typedef struct player_timed player_timed;
+
+struct player_timed
+{
+	s16b fast;	/* Timed -- Fast */
+	s16b slow;	/* Timed -- Slow */
+	s16b blind;	/* Timed -- Blindness */
+	s16b paralyzed;	/* Timed -- Paralysis */
+	s16b confused;	/* Timed -- Confusion */
+	s16b afraid;	/* Timed -- Fear */
+	s16b image;	/* Timed -- Hallucination */
+	s16b poisoned;	/* Timed -- Poisoned */
+	s16b cut;	/* Timed -- Cut */
+	s16b stun;	/* Timed -- Stun */
+
+	s16b protevil;	/* Timed -- Protection */
+	s16b invuln;	/* Timed -- Invulnerable */
+	s16b hero;	/* Timed -- Heroism */
+	s16b shero;	/* Timed -- Super Heroism */
+	s16b shield;	/* Timed -- Shield Spell */
+	s16b blessed;	/* Timed -- Blessed */
+	s16b invis;	/* Timed -- See Invisible */
+	s16b infra;	/* Timed -- Infra Vision */
+
+	s16b oppose_acid;	/* Timed -- oppose acid */
+	s16b oppose_elec;	/* Timed -- oppose lightning */
+	s16b oppose_fire;	/* Timed -- oppose heat */
+	s16b oppose_cold;	/* Timed -- oppose cold */
+	s16b oppose_pois;	/* Timed -- oppose poison */
+	s16b esp;	/* Timed ESP */
+	s16b wraith_form;	/* Timed wraithform */
+	s16b resist_magic;	/* Timed Resist Magic (later) */
+	
+	s16b word_recall;	/* Word of recall counter */
+};
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.
@@ -1329,36 +1368,6 @@ struct player_type
 
 	player_spell spell;	/* Spell information */
 
-
-	s16b fast;	/* Timed -- Fast */
-	s16b slow;	/* Timed -- Slow */
-	s16b blind;	/* Timed -- Blindness */
-	s16b paralyzed;	/* Timed -- Paralysis */
-	s16b confused;	/* Timed -- Confusion */
-	s16b afraid;	/* Timed -- Fear */
-	s16b image;	/* Timed -- Hallucination */
-	s16b poisoned;	/* Timed -- Poisoned */
-	s16b cut;	/* Timed -- Cut */
-	s16b stun;	/* Timed -- Stun */
-
-	s16b protevil;	/* Timed -- Protection */
-	s16b invuln;	/* Timed -- Invulnerable */
-	s16b hero;	/* Timed -- Heroism */
-	s16b shero;	/* Timed -- Super Heroism */
-	s16b shield;	/* Timed -- Shield Spell */
-	s16b blessed;	/* Timed -- Blessed */
-	s16b tim_invis;	/* Timed -- See Invisible */
-	s16b tim_infra;	/* Timed -- Infra Vision */
-
-	s16b oppose_acid;	/* Timed -- oppose acid */
-	s16b oppose_elec;	/* Timed -- oppose lightning */
-	s16b oppose_fire;	/* Timed -- oppose heat */
-	s16b oppose_cold;	/* Timed -- oppose cold */
-	s16b oppose_pois;	/* Timed -- oppose poison */
-	s16b tim_esp;	/* Timed ESP */
-	s16b wraith_form;	/* Timed wraithform */
-	s16b resist_magic;	/* Timed Resist Magic (later) */
-
 	u32b muta1;	/* Mutations */
 	u32b muta2;	/* Mutations */
 	u32b muta3;	/* Mutations */
@@ -1367,7 +1376,6 @@ struct player_type
 	s16b vir_types[MAX_PLAYER_VIRTUES];
 
 	s16b chaos_patron;	/* Players Chaos Patron */
-	s16b word_recall;	/* Word of recall counter */
 
 	s16b energy;	/* Current energy */
 	s16b food;	/* Current nutrition */
@@ -1391,6 +1399,7 @@ struct player_type
 					 * Note: was byte, causing overflow for Amberite
 					 * characters (such as Amberite Paladins)
 					 */
+	player_timed tim;	/* Timed effects */
 
 	/*** Pointers to player grid information ***/
 

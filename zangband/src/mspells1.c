@@ -743,7 +743,7 @@ bool make_attack_spell(int m_idx)
 	int count = 0;
 
 	/* Extract the blind-ness */
-	bool blind = (p_ptr->blind ? TRUE : FALSE);
+	bool blind = (p_ptr->tim.blind ? TRUE : FALSE);
 
 	/* Extract the "see-able-ness" */
 	bool seen = (!blind && m_ptr->ml);
@@ -1461,12 +1461,12 @@ bool make_attack_spell(int m_idx)
 
 				if (!p_ptr->resist_confu)
 				{
-					(void)set_confused(p_ptr->confused + rand_range(4, 8));
+					(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 				}
 
 				if (!p_ptr->resist_chaos && one_in_(3))
 				{
-					(void)set_image(p_ptr->image + rand_range(150, 400));
+					(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 				}
 
 				take_hit(damroll(8, 8), ddesc);
@@ -1498,17 +1498,17 @@ bool make_attack_spell(int m_idx)
 				take_hit(damroll(12, 15), ddesc);
 				if (!p_ptr->resist_blind)
 				{
-					(void)set_blind(p_ptr->blind + rand_range(8, 16));
+					(void)set_blind(p_ptr->tim.blind + rand_range(8, 16));
 				}
 				if (!p_ptr->resist_confu)
 				{
-					(void)set_confused(p_ptr->confused + rand_range(4, 8));
+					(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 				}
 				if (!p_ptr->free_act)
 				{
-					(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
+					(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
 				}
-				(void)set_slow(p_ptr->slow + rand_range(4, 8));
+				(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
 
 				while (randint0(100) > p_ptr->skill_sav)
 					(void)do_dec_stat(A_INT);
@@ -1517,7 +1517,7 @@ bool make_attack_spell(int m_idx)
 
 				if (!p_ptr->resist_chaos)
 				{
-					(void)set_image(p_ptr->image + rand_range(150, 400));
+					(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 				}
 			}
 			break;
@@ -1599,7 +1599,7 @@ bool make_attack_spell(int m_idx)
 			else
 			{
 				take_hit(damroll(15, 15), ddesc);
-				(void)set_cut(p_ptr->cut + damroll(10, 10));
+				(void)set_cut(p_ptr->tim.cut + damroll(10, 10));
 			}
 			break;
 		}
@@ -1756,7 +1756,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_afraid(p_ptr->afraid + rand_range(4, 8));
+				(void)set_afraid(p_ptr->tim.afraid + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
 			break;
@@ -1805,7 +1805,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_confused(p_ptr->confused + rand_range(4, 8));
+				(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
@@ -1827,7 +1827,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_slow(p_ptr->slow + rand_range(4, 8));
+				(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1851,7 +1851,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
+				(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;

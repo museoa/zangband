@@ -1572,7 +1572,7 @@ void display_visible(void)
     clear_from(0);
 
 	/* Are we hallucinating? */
-	if (p_ptr->image)
+	if (p_ptr->tim.image)
 	{
 		put_fstr(0, 10, CLR_VIOLET "Hallucinations");
 

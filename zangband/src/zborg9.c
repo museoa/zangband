@@ -3194,28 +3194,28 @@ void do_cmd_borg(void)
 			my_need_stat_check[5] = TRUE;
 
 			/* Allowable Cheat -- Obtain "recall" flag */
-			goal_recalling = p_ptr->word_recall * 1000;
+			goal_recalling = p_ptr->tim.word_recall * 1000;
 
 			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
-			borg_prot_from_evil = (p_ptr->protevil ? TRUE : FALSE);
+			borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
 
 			/* Allowable Cheat -- Obtain "speed" flag */
-			borg_speed = (p_ptr->fast ? TRUE : FALSE);
+			borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
 
 			/* Allowable Cheat -- Obtain "goi" flag */
-			borg_goi = (p_ptr->invuln ? 9000 : 0);
-			borg_inviso = (p_ptr->tim_invis ? 9000 : 0);
+			borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
+			borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
 
 			/* Allowable Cheat -- Obtain "resist" flags */
-			my_oppose_acid = (p_ptr->oppose_acid ? TRUE : FALSE);
-			my_oppose_elec = (p_ptr->oppose_elec ? TRUE : FALSE);
-			my_oppose_fire = (p_ptr->oppose_fire ? TRUE : FALSE);
-			my_oppose_cold = (p_ptr->oppose_cold ? TRUE : FALSE);
-			my_oppose_pois = (p_ptr->oppose_pois ? TRUE : FALSE);
-			borg_bless = (p_ptr->blessed ? TRUE : FALSE);
-			borg_shield = (p_ptr->shield ? TRUE : FALSE);
-			borg_hero = (p_ptr->hero ? TRUE : FALSE);
-			borg_berserk = (p_ptr->shero ? TRUE : FALSE);
+			my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
+			my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
+			my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
+			my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
+			my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
+			borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
+			borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
+			borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
+			borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3241,25 +3241,25 @@ void do_cmd_borg(void)
 			borg_step = 0;
 
 			/* Allowable Cheat -- Obtain "recall" flag */
-			goal_recalling = p_ptr->word_recall * 1000;
+			goal_recalling = p_ptr->tim.word_recall * 1000;
 
 			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
-			borg_prot_from_evil = (p_ptr->protevil ? TRUE : FALSE);
+			borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
 			/* Allowable Cheat -- Obtain "speed" flag */
-			borg_speed = (p_ptr->fast ? TRUE : FALSE);
+			borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
 			/* Allowable Cheat -- Obtain "goi" flag */
-			borg_goi = (p_ptr->invuln ? 9000 : 0);
-			borg_inviso = (p_ptr->tim_invis ? 9000 : 0);
+			borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
+			borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
 			/* Allowable Cheat -- Obtain "resist" flags */
-			my_oppose_acid = (p_ptr->oppose_acid ? TRUE : FALSE);
-			my_oppose_elec = (p_ptr->oppose_elec ? TRUE : FALSE);
-			my_oppose_fire = (p_ptr->oppose_fire ? TRUE : FALSE);
-			my_oppose_cold = (p_ptr->oppose_cold ? TRUE : FALSE);
-			my_oppose_pois = (p_ptr->oppose_pois ? TRUE : FALSE);
-			borg_bless = (p_ptr->blessed ? TRUE : FALSE);
-			borg_shield = (p_ptr->shield ? TRUE : FALSE);
-			borg_hero = (p_ptr->hero ? TRUE : FALSE);
-			borg_berserk = (p_ptr->shero ? TRUE : FALSE);
+			my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
+			my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
+			my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
+			my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
+			my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
+			borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
+			borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
+			borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
+			borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3304,24 +3304,24 @@ void do_cmd_borg(void)
 			my_need_stat_check[5] = TRUE;
 
 			/* Allowable Cheat -- Obtain "recall" flag */
-			goal_recalling = p_ptr->word_recall * 1000;
+			goal_recalling = p_ptr->tim.word_recall * 1000;
 			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
-			borg_prot_from_evil = (p_ptr->protevil ? TRUE : FALSE);
+			borg_prot_from_evil = (p_ptr->tim.protevil ? TRUE : FALSE);
 			/* Allowable Cheat -- Obtain "speed" flag */
-			borg_speed = (p_ptr->fast ? TRUE : FALSE);
+			borg_speed = (p_ptr->tim.fast ? TRUE : FALSE);
 			/* Allowable Cheat -- Obtain "goi" flag */
-			borg_goi = (p_ptr->invuln ? 9000 : 0);
-			borg_inviso = (p_ptr->tim_invis ? 9000 : 0);
+			borg_goi = (p_ptr->tim.invuln ? 9000 : 0);
+			borg_inviso = (p_ptr->tim.invis ? 9000 : 0);
 			/* Allowable Cheat -- Obtain "resist" flags */
-			my_oppose_acid = (p_ptr->oppose_acid ? TRUE : FALSE);
-			my_oppose_elec = (p_ptr->oppose_elec ? TRUE : FALSE);
-			my_oppose_fire = (p_ptr->oppose_fire ? TRUE : FALSE);
-			my_oppose_cold = (p_ptr->oppose_cold ? TRUE : FALSE);
-			my_oppose_pois = (p_ptr->oppose_pois ? TRUE : FALSE);
-			borg_bless = (p_ptr->blessed ? TRUE : FALSE);
-			borg_shield = (p_ptr->shield ? TRUE : FALSE);
-			borg_hero = (p_ptr->hero ? TRUE : FALSE);
-			borg_berserk = (p_ptr->shero ? TRUE : FALSE);
+			my_oppose_acid = (p_ptr->tim.oppose_acid ? TRUE : FALSE);
+			my_oppose_elec = (p_ptr->tim.oppose_elec ? TRUE : FALSE);
+			my_oppose_fire = (p_ptr->tim.oppose_fire ? TRUE : FALSE);
+			my_oppose_cold = (p_ptr->tim.oppose_cold ? TRUE : FALSE);
+			my_oppose_pois = (p_ptr->tim.oppose_pois ? TRUE : FALSE);
+			borg_bless = (p_ptr->tim.blessed ? TRUE : FALSE);
+			borg_shield = (p_ptr->tim.shield ? TRUE : FALSE);
+			borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
+			borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
 
 			/* Message */
 			borg_note("# Installing keypress hook");

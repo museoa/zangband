@@ -83,7 +83,7 @@ bool monst_spell_monst(int m_idx)
 	bool wake_up = FALSE;
 	bool fear = FALSE;
 
-	bool blind = (p_ptr->blind ? TRUE : FALSE);
+	bool blind = (p_ptr->tim.blind ? TRUE : FALSE);
 
 	bool see_m = m_ptr->ml;
 	bool see_t;

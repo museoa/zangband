@@ -25,7 +25,7 @@ bool set_blind(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->blind)
+		if (!p_ptr->tim.blind)
 		{
 			msgf("You are blind!");
 			notice = TRUE;
@@ -37,7 +37,7 @@ bool set_blind(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->blind)
+		if (p_ptr->tim.blind)
 		{
 			msgf("You can see again.");
 			notice = TRUE;
@@ -45,7 +45,7 @@ bool set_blind(int v)
 	}
 
 	/* Use the value */
-	p_ptr->blind = v;
+	p_ptr->tim.blind = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -89,7 +89,7 @@ bool set_confused(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->confused)
+		if (!p_ptr->tim.confused)
 		{
 			msgf("You are confused!");
 			notice = TRUE;
@@ -101,7 +101,7 @@ bool set_confused(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->confused)
+		if (p_ptr->tim.confused)
 		{
 			msgf("You feel less confused now.");
 			notice = TRUE;
@@ -109,7 +109,7 @@ bool set_confused(int v)
 	}
 
 	/* Use the value */
-	p_ptr->confused = v;
+	p_ptr->tim.confused = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -144,7 +144,7 @@ bool set_poisoned(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->poisoned)
+		if (!p_ptr->tim.poisoned)
 		{
 			msgf("You are poisoned!");
 			notice = TRUE;
@@ -154,7 +154,7 @@ bool set_poisoned(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->poisoned)
+		if (p_ptr->tim.poisoned)
 		{
 			msgf("You are no longer poisoned.");
 			notice = TRUE;
@@ -162,7 +162,7 @@ bool set_poisoned(int v)
 	}
 
 	/* Use the value */
-	p_ptr->poisoned = v;
+	p_ptr->tim.poisoned = v;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -194,7 +194,7 @@ bool set_afraid(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->afraid)
+		if (!p_ptr->tim.afraid)
 		{
 			msgf("You are terrified!");
 			notice = TRUE;
@@ -206,7 +206,7 @@ bool set_afraid(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->afraid)
+		if (p_ptr->tim.afraid)
 		{
 			msgf("You feel bolder now.");
 			notice = TRUE;
@@ -214,7 +214,7 @@ bool set_afraid(int v)
 	}
 
 	/* Use the value */
-	p_ptr->afraid = v;
+	p_ptr->tim.afraid = v;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -246,7 +246,7 @@ bool set_paralyzed(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->paralyzed)
+		if (!p_ptr->tim.paralyzed)
 		{
 			msgf("You are paralyzed!");
 			notice = TRUE;
@@ -256,7 +256,7 @@ bool set_paralyzed(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->paralyzed)
+		if (p_ptr->tim.paralyzed)
 		{
 			msgf("You can move again.");
 			notice = TRUE;
@@ -264,7 +264,7 @@ bool set_paralyzed(int v)
 	}
 
 	/* Use the value */
-	p_ptr->paralyzed = v;
+	p_ptr->tim.paralyzed = v;
 
 	/* Redraw status bar + message*/
 	p_ptr->redraw |= (PR_STATUS);
@@ -301,7 +301,7 @@ bool set_image(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->image)
+		if (!p_ptr->tim.image)
 		{
 			msgf("Oh, wow! Everything looks so cosmic now!");
 			notice = TRUE;
@@ -314,7 +314,7 @@ bool set_image(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->image)
+		if (p_ptr->tim.image)
 		{
 			msgf("You can see clearly again.");
 			notice = TRUE;
@@ -325,7 +325,7 @@ bool set_image(int v)
 	}
 
 	/* Use the value */
-	p_ptr->image = v;
+	p_ptr->tim.image = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -366,7 +366,7 @@ bool set_fast(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->fast)
+		if (!p_ptr->tim.fast)
 		{
 			msgf("You feel yourself moving faster!");
 			notice = TRUE;
@@ -379,7 +379,7 @@ bool set_fast(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->fast)
+		if (p_ptr->tim.fast)
 		{
 			msgf("You feel yourself slow down.");
 			notice = TRUE;
@@ -387,7 +387,7 @@ bool set_fast(int v)
 	}
 
 	/* Use the value */
-	p_ptr->fast = v;
+	p_ptr->tim.fast = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -422,7 +422,7 @@ bool set_slow(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->slow)
+		if (!p_ptr->tim.slow)
 		{
 			msgf("You feel yourself moving slower!");
 			notice = TRUE;
@@ -432,7 +432,7 @@ bool set_slow(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->slow)
+		if (p_ptr->tim.slow)
 		{
 			msgf("You feel yourself speed up.");
 			notice = TRUE;
@@ -440,7 +440,7 @@ bool set_slow(int v)
 	}
 
 	/* Use the value */
-	p_ptr->slow = v;
+	p_ptr->tim.slow = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -475,7 +475,7 @@ bool set_shield(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->shield)
+		if (!p_ptr->tim.shield)
 		{
 			msgf("Your skin turns to stone.");
 			notice = TRUE;
@@ -485,7 +485,7 @@ bool set_shield(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->shield)
+		if (p_ptr->tim.shield)
 		{
 			msgf("Your skin returns to normal.");
 			notice = TRUE;
@@ -493,7 +493,7 @@ bool set_shield(int v)
 	}
 
 	/* Use the value */
-	p_ptr->shield = v;
+	p_ptr->tim.shield = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -529,7 +529,7 @@ bool set_blessed(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->blessed)
+		if (!p_ptr->tim.blessed)
 		{
 			msgf("You feel righteous!");
 			notice = TRUE;
@@ -539,7 +539,7 @@ bool set_blessed(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->blessed)
+		if (p_ptr->tim.blessed)
 		{
 			msgf("The prayer has expired.");
 			notice = TRUE;
@@ -547,7 +547,7 @@ bool set_blessed(int v)
 	}
 
 	/* Use the value */
-	p_ptr->blessed = v;
+	p_ptr->tim.blessed = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -582,7 +582,7 @@ bool set_hero(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->hero)
+		if (!p_ptr->tim.hero)
 		{
 			msgf("You feel like a hero!");
 			notice = TRUE;
@@ -592,7 +592,7 @@ bool set_hero(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->hero)
+		if (p_ptr->tim.hero)
 		{
 			msgf("The heroism wears off.");
 			notice = TRUE;
@@ -600,7 +600,7 @@ bool set_hero(int v)
 	}
 
 	/* Use the value */
-	p_ptr->hero = v;
+	p_ptr->tim.hero = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -638,7 +638,7 @@ bool set_shero(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->shero)
+		if (!p_ptr->tim.shero)
 		{
 			msgf("You feel like a killing machine!");
 			notice = TRUE;
@@ -648,7 +648,7 @@ bool set_shero(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->shero)
+		if (p_ptr->tim.shero)
 		{
 			msgf("You feel less Berserk.");
 			notice = TRUE;
@@ -656,7 +656,7 @@ bool set_shero(int v)
 	}
 
 	/* Use the value */
-	p_ptr->shero = v;
+	p_ptr->tim.shero = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -694,7 +694,7 @@ bool set_protevil(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->protevil)
+		if (!p_ptr->tim.protevil)
 		{
 			msgf("You feel safe from evil!");
 			notice = TRUE;
@@ -704,7 +704,7 @@ bool set_protevil(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->protevil)
+		if (p_ptr->tim.protevil)
 		{
 			msgf("You no longer feel safe from evil.");
 			notice = TRUE;
@@ -712,7 +712,7 @@ bool set_protevil(int v)
 	}
 
 	/* Use the value */
-	p_ptr->protevil = v;
+	p_ptr->tim.protevil = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -743,7 +743,7 @@ bool set_wraith_form(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->wraith_form)
+		if (!p_ptr->tim.wraith_form)
 		{
 			msgf
 				("You leave the physical world and turn into a wraith-being!");
@@ -763,7 +763,7 @@ bool set_wraith_form(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->wraith_form)
+		if (p_ptr->tim.wraith_form)
 		{
 			msgf("You feel opaque.");
 			notice = TRUE;
@@ -780,7 +780,7 @@ bool set_wraith_form(int v)
 	}
 
 	/* Use the value */
-	p_ptr->wraith_form = v;
+	p_ptr->tim.wraith_form = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -816,7 +816,7 @@ bool set_invuln(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->invuln)
+		if (!p_ptr->tim.invuln)
 		{
 			msgf("Invulnerability!");
 			notice = TRUE;
@@ -840,7 +840,7 @@ bool set_invuln(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->invuln)
+		if (p_ptr->tim.invuln)
 		{
 			msgf("The invulnerability wears off.");
 			notice = TRUE;
@@ -857,7 +857,7 @@ bool set_invuln(int v)
 	}
 
 	/* Use the value */
-	p_ptr->invuln = v;
+	p_ptr->tim.invuln = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -880,7 +880,7 @@ bool set_invuln(int v)
 
 
 /*
- * Set "p_ptr->tim_esp", notice observable changes
+ * Set "p_ptr->tim.esp", notice observable changes
  */
 bool set_tim_esp(int v)
 {
@@ -892,7 +892,7 @@ bool set_tim_esp(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->tim_esp)
+		if (!p_ptr->tim.esp)
 		{
 			msgf("You feel your consciousness expand!");
 			notice = TRUE;
@@ -902,7 +902,7 @@ bool set_tim_esp(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->tim_esp)
+		if (p_ptr->tim.esp)
 		{
 			msgf("Your consciousness contracts again.");
 			notice = TRUE;
@@ -910,7 +910,7 @@ bool set_tim_esp(int v)
 	}
 
 	/* Use the value */
-	p_ptr->tim_esp = v;
+	p_ptr->tim.esp = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -948,7 +948,7 @@ bool set_tim_invis(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->tim_invis)
+		if (!p_ptr->tim.invis)
 		{
 			msgf("Your eyes feel very sensitive!");
 			notice = TRUE;
@@ -958,7 +958,7 @@ bool set_tim_invis(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->tim_invis)
+		if (p_ptr->tim.invis)
 		{
 			msgf("Your eyes feel less sensitive.");
 			notice = TRUE;
@@ -966,7 +966,7 @@ bool set_tim_invis(int v)
 	}
 
 	/* Use the value */
-	p_ptr->tim_invis = v;
+	p_ptr->tim.invis = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1004,7 +1004,7 @@ bool set_tim_infra(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->tim_infra)
+		if (!p_ptr->tim.infra)
 		{
 			msgf("Your eyes begin to tingle!");
 			notice = TRUE;
@@ -1014,7 +1014,7 @@ bool set_tim_infra(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->tim_infra)
+		if (p_ptr->tim.infra)
 		{
 			msgf("Your eyes stop tingling.");
 			notice = TRUE;
@@ -1022,7 +1022,7 @@ bool set_tim_infra(int v)
 	}
 
 	/* Use the value */
-	p_ptr->tim_infra = v;
+	p_ptr->tim.infra = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1060,7 +1060,7 @@ bool set_oppose_acid(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->oppose_acid)
+		if (!p_ptr->tim.oppose_acid)
 		{
 			msgf("You feel resistant to acid!");
 			notice = TRUE;
@@ -1070,7 +1070,7 @@ bool set_oppose_acid(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->oppose_acid)
+		if (p_ptr->tim.oppose_acid)
 		{
 			msgf("You feel less resistant to acid.");
 			notice = TRUE;
@@ -1078,7 +1078,7 @@ bool set_oppose_acid(int v)
 	}
 
 	/* Use the value */
-	p_ptr->oppose_acid = v;
+	p_ptr->tim.oppose_acid = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1110,7 +1110,7 @@ bool set_oppose_elec(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->oppose_elec)
+		if (!p_ptr->tim.oppose_elec)
 		{
 			msgf("You feel resistant to electricity!");
 			notice = TRUE;
@@ -1120,7 +1120,7 @@ bool set_oppose_elec(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->oppose_elec)
+		if (p_ptr->tim.oppose_elec)
 		{
 			msgf("You feel less resistant to electricity.");
 			notice = TRUE;
@@ -1128,7 +1128,7 @@ bool set_oppose_elec(int v)
 	}
 
 	/* Use the value */
-	p_ptr->oppose_elec = v;
+	p_ptr->tim.oppose_elec = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1160,7 +1160,7 @@ bool set_oppose_fire(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->oppose_fire)
+		if (!p_ptr->tim.oppose_fire)
 		{
 			msgf("You feel resistant to fire!");
 			notice = TRUE;
@@ -1170,7 +1170,7 @@ bool set_oppose_fire(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->oppose_fire)
+		if (p_ptr->tim.oppose_fire)
 		{
 			msgf("You feel less resistant to fire.");
 			notice = TRUE;
@@ -1178,7 +1178,7 @@ bool set_oppose_fire(int v)
 	}
 
 	/* Use the value */
-	p_ptr->oppose_fire = v;
+	p_ptr->tim.oppose_fire = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1210,7 +1210,7 @@ bool set_oppose_cold(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->oppose_cold)
+		if (!p_ptr->tim.oppose_cold)
 		{
 			msgf("You feel resistant to cold!");
 			notice = TRUE;
@@ -1220,7 +1220,7 @@ bool set_oppose_cold(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->oppose_cold)
+		if (p_ptr->tim.oppose_cold)
 		{
 			msgf("You feel less resistant to cold.");
 			notice = TRUE;
@@ -1228,7 +1228,7 @@ bool set_oppose_cold(int v)
 	}
 
 	/* Use the value */
-	p_ptr->oppose_cold = v;
+	p_ptr->tim.oppose_cold = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1260,7 +1260,7 @@ bool set_oppose_pois(int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->oppose_pois)
+		if (!p_ptr->tim.oppose_pois)
 		{
 			msgf("You feel resistant to poison!");
 			notice = TRUE;
@@ -1270,7 +1270,7 @@ bool set_oppose_pois(int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->oppose_pois)
+		if (p_ptr->tim.oppose_pois)
 		{
 			msgf("You feel less resistant to poison.");
 			notice = TRUE;
@@ -1278,7 +1278,7 @@ bool set_oppose_pois(int v)
 	}
 
 	/* Use the value */
-	p_ptr->oppose_pois = v;
+	p_ptr->tim.oppose_pois = v;
 
 	/* Redraw status bar */
 	p_ptr->redraw |= (PR_STATUS);
@@ -1326,19 +1326,19 @@ bool set_stun(int v)
 	}
 
 	/* Knocked out */
-	if (p_ptr->stun > 100)
+	if (p_ptr->tim.stun > 100)
 	{
 		old_aux = 3;
 	}
 
 	/* Heavy stun */
-	else if (p_ptr->stun > 50)
+	else if (p_ptr->tim.stun > 50)
 	{
 		old_aux = 2;
 	}
 
 	/* Stun */
-	else if (p_ptr->stun > 0)
+	else if (p_ptr->tim.stun > 0)
 	{
 		old_aux = 1;
 	}
@@ -1454,7 +1454,7 @@ bool set_stun(int v)
 	}
 
 	/* Use the value */
-	p_ptr->stun = v;
+	p_ptr->tim.stun = v;
 
 	/* No change */
 	if (!notice) return (FALSE);
@@ -1497,43 +1497,43 @@ bool set_cut(int v)
 		v = 0;
 
 	/* Mortal wound */
-	if (p_ptr->cut > 1000)
+	if (p_ptr->tim.cut > 1000)
 	{
 		old_aux = 7;
 	}
 
 	/* Deep gash */
-	else if (p_ptr->cut > 200)
+	else if (p_ptr->tim.cut > 200)
 	{
 		old_aux = 6;
 	}
 
 	/* Severe cut */
-	else if (p_ptr->cut > 100)
+	else if (p_ptr->tim.cut > 100)
 	{
 		old_aux = 5;
 	}
 
 	/* Nasty cut */
-	else if (p_ptr->cut > 50)
+	else if (p_ptr->tim.cut > 50)
 	{
 		old_aux = 4;
 	}
 
 	/* Bad cut */
-	else if (p_ptr->cut > 25)
+	else if (p_ptr->tim.cut > 25)
 	{
 		old_aux = 3;
 	}
 
 	/* Light cut */
-	else if (p_ptr->cut > 10)
+	else if (p_ptr->tim.cut > 10)
 	{
 		old_aux = 2;
 	}
 
 	/* Graze */
-	else if (p_ptr->cut > 0)
+	else if (p_ptr->tim.cut > 0)
 	{
 		old_aux = 1;
 	}
@@ -1682,7 +1682,7 @@ bool set_cut(int v)
 	}
 
 	/* Use the value */
-	p_ptr->cut = v;
+	p_ptr->tim.cut = v;
 
 	/* No change */
 	if (!notice) return (FALSE);
@@ -2475,7 +2475,7 @@ bool lose_all_info(void)
 void do_poly_wounds(void)
 {
 	/* Changed to always provide at least _some_ healing */
-	s16b wounds = p_ptr->cut;
+	s16b wounds = p_ptr->tim.cut;
 	s16b hit_p = (p_ptr->mhp - p_ptr->chp);
 	s16b change = damroll(p_ptr->lev, 5);
 	bool Nasty_effect = (one_in_(5));
@@ -2492,7 +2492,7 @@ void do_poly_wounds(void)
 	}
 	else
 	{
-		(void)set_cut(p_ptr->cut - (change / 2));
+		(void)set_cut(p_ptr->tim.cut - (change / 2));
 	}
 }
 
@@ -2730,7 +2730,7 @@ void take_hit(int damage, cptr hit_from)
 	disturb(TRUE);
 
 	/* Mega-Hack -- Apply "invulnerability" */
-	if (p_ptr->invuln && (damage < 9000))
+	if (p_ptr->tim.invuln && (damage < 9000))
 	{
 		if (one_in_(PENETRATE_INVULNERABILITY))
 		{
@@ -2742,7 +2742,7 @@ void take_hit(int damage, cptr hit_from)
 		}
 	}
 
-	if (p_ptr->wraith_form)
+	if (p_ptr->tim.wraith_form)
 	{
 		damage /= 10;
 		if ((damage == 0) && one_in_(10)) damage = 1;
@@ -2763,7 +2763,7 @@ void take_hit(int damage, cptr hit_from)
 	if (pen_invuln)
 		msgf("The attack penetrates your shield of invulnerability!");
 
-	if (!(p_ptr->invuln) || (pen_invuln))
+	if (!(p_ptr->tim.invuln) || (pen_invuln))
 	{
 		if (p_ptr->chp == 0)
 		{
@@ -2797,7 +2797,7 @@ void take_hit(int damage, cptr hit_from)
 		/* Note cause of death */
 		len = strnfmt(p_ptr->died_from, 80, hit_from);
 
-		if (p_ptr->image) strnfcat(p_ptr->died_from, 80, &len, "(?)");
+		if (p_ptr->tim.image) strnfcat(p_ptr->died_from, 80, &len, "(?)");
 
 		/* No longer a winner */
 		p_ptr->total_winner = FALSE;
