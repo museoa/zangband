@@ -1979,6 +1979,37 @@ static void del_block(blk_ptr block_ptr)
 }
 
 
+/* Clear the temporary block */
+static void clear_temp_block(void)
+{
+	int i, j;
+	/* Clear the section */
+	for (i = 0; i <= WILD_BLOCK_SIZE; i++)
+	{
+		for (j = 0; j <= WILD_BLOCK_SIZE; j++)
+		{
+			/* MAX_SHORT is a flag for "not done yet" */
+			temp_block[j][i] = MAX_SHORT;
+		}
+	}
+}
+
+/* Set the corners of the temporary block to val */
+static void set_temp_corner_val(u16b val)
+{
+	temp_block[0][0] = val;
+	temp_block[0][WILD_BLOCK_SIZE] = val;
+	temp_block[WILD_BLOCK_SIZE][0] = val;
+	temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = val;
+}
+
+/* Set the middle of the temporary block to val */
+static void set_temp_mid(u16b val)
+{
+	temp_block[WILD_BLOCK_SIZE / 2 ][WILD_BLOCK_SIZE /2] = val;
+}
+
+
 /*
 * Explanation of the plasma fractal algorithm:
 *
@@ -2002,7 +2033,7 @@ static void del_block(blk_ptr block_ptr)
 
 static void frac_block(void)
 {
-	int cutoff, grd;
+	int grd;
 
 	/* fixed point variables- these are stored as 256 x normal value
 	* this gives 8 binary places of fractional part + 8 places of normal part*/
@@ -2012,29 +2043,7 @@ static void frac_block(void)
 	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
 	size = WILD_BLOCK_SIZE;
 
-	/* Clear the section */
-	for (i = 0; i <= size; i++)
-	{
-		for (j = 0; j <= size; j++)
-		{
-			/* MAX_SHORT is a flag for "not done yet" */
-			temp_block[j][i] = MAX_SHORT;
-		}
-	}
-
-	/* Hack - set boundary value midway. */
-	cutoff = WILD_BLOCK_SIZE * 128;
-
 	grd = 4 * 256;
-
-	/* Set the corner values just in case grd > size. */
-	temp_block[0][0] = cutoff;
-	temp_block[0][size] = cutoff;
-	temp_block[size][0] = cutoff;
-	temp_block[0][size] = cutoff;
-
-	/* Set the middle square to be an open area. */
-	temp_block[size / 2][size / 2] = cutoff;
 
 	/* Initialize the step sizes */
 	lstep = hstep = size * 256;
@@ -2262,6 +2271,12 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 {
 	int i, j, element;
 	byte new_feat;
+	
+	/* Initialise temporary block */
+	clear_temp_block();
+	set_temp_corner_val(WILD_BLOCK_SIZE * 128);
+	set_temp_mid(WILD_BLOCK_SIZE * 128);
+	
 	/* Generate plasma factal */
 	frac_block();
 
@@ -2283,6 +2298,105 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 	}
 }
 
+/*
+ * The function that picks a "blending feature" for wild. gen. type 1
+ */
+static void blend_wild_01(cave_type *c_ptr, byte data[8])
+{	
+	/* Store an "average" terrain feature */ 
+	c_ptr->feat = pick_feat(data[0], data[2], data[4], data[6],
+		data[1], data[3], data[5], data[7], 128);
+}
+
+/* 
+ * Blend a block based on the adjacent blocks
+ * This makes the wilderness look much better.
+ */
+static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
+{
+	int i, j, dx, dy;
+	
+	u16b w_type, g_type;
+	
+	/* Initialise temporary block */
+	clear_temp_block();
+	
+	/* Boundary is at half probability */
+	set_temp_corner_val(WILD_BLOCK_SIZE * 128);
+	
+	/* This is the "full" value so that the center of the block stays as normal */
+	set_temp_mid(WILD_BLOCK_SIZE * 256);
+	
+	/* Generate plasma factal */
+	frac_block();
+	
+	/* Blend based on height map */
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			/* Chance to blend is based on element in fractal */
+			if (rand_int(WILD_BLOCK_SIZE * 256) > temp_block[j][i]) continue;
+			
+			/* Work out adjacent block */
+			if (i < WILD_BLOCK_SIZE / 4)
+			{
+				dx = -1;
+			}
+			else if (i > (WILD_BLOCK_SIZE * 3) / 4)
+			{
+				dx = +1;
+			}
+			else
+			{
+				dx = 0;
+			}
+			
+			if (j < WILD_BLOCK_SIZE / 4)
+			{
+				dy = -1;
+			}
+			else if (j > (WILD_BLOCK_SIZE * 3) / 4)
+			{
+				dy = +1;
+			}
+			else
+			{
+				dy = 0;
+			}
+			
+			/* Check to see if adjacent square is not in bounds */
+			if (((y + dy) < 0) || ((y + dy) >= max_wild) ||
+				((x + dx) < 0) || ((x + dx) >= max_wild)) continue;
+			
+			w_type = wild[y + dy][x + dx].done.wild;
+			
+			/* The sea doesn't blend. (Use rivers) */
+			if (w_type >= WILD_SEA) continue;
+			
+			/* If adjacent type is the same as this one - don't blend */
+			if (w_type == type) continue;
+			
+			/* Get generation type */
+			g_type = wild_gen_data[w_type].gen_routine;
+			
+			/* Based on type - choose wilderness block generation function */
+			switch (g_type)
+			{
+				case 1:
+					/* Only one type at the moment. */
+			
+					/* Fractal plasma with weighted terrain probabilites */
+					blend_wild_01(&block_ptr[j][i],
+						 wild_gen_data[w_type].data);
+				break;
+		
+				default:
+					quit("Illegal wilderness block type.");
+			}
+		}
+	}
+}
 
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
@@ -2334,7 +2448,9 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 				quit("Illegal wilderness block type.");
 		}
 	
-	
+		/* Blend with adjacent terrains */
+		blend_block(x, y, block_ptr, w_type);
+				
 		/* Add roads / river / lava (Not done)*/
 
 	}
