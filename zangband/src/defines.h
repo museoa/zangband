@@ -260,7 +260,7 @@
 
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			67
+#define MAX_CITY_BUILD			90
 
 
 /*
