@@ -1177,11 +1177,17 @@ static void store_create(void)
 			apply_magic(q_ptr, level, 0, OC_NONE);
 		}
 
-		/* Require valid object */
-		if (!store_will_stock(q_ptr)) continue;
-
 		/* Mega-Hack -- no chests in stores */
 		if (q_ptr->tval == TV_CHEST) continue;
+
+		/* The item is "known" */
+		object_known(q_ptr);
+
+		/* Mark it storebought */
+		q_ptr->ident |= IDENT_STOREB;
+
+		/* Require valid object */
+		if (!store_will_stock(q_ptr)) continue;
 
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
@@ -1189,12 +1195,6 @@ static void store_create(void)
 			if (q_ptr->sval == SV_LITE_TORCH) q_ptr->timeout = FUEL_TORCH / 2;
 			if (q_ptr->sval == SV_LITE_LANTERN) q_ptr->timeout = FUEL_LAMP / 2;
 		}
-
-		/* The item is "known" */
-		object_known(q_ptr);
-
-		/* Mark it storebought */
-		q_ptr->ident |= IDENT_STOREB;
 
 		/* Mass produce and/or Apply discount */
 		mass_produce(q_ptr);
