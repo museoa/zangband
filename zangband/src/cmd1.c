@@ -193,7 +193,7 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 				msg_format("You bludgeon %s!", m_name);
 		}
 		else
-  		{
+		{
 			mult_m_crit *= 32;
 			msg_format("You *smite* %s!", m_name);
 		}
@@ -623,6 +623,55 @@ void search(void)
 }
 
 
+/*
+ * Automatically destroy items in this grid.
+ */
+static void auto_destroy_items(cave_type *c_ptr)
+{
+	s16b this_o_idx, next_o_idx = 0;
+
+	char o_name[80];
+
+
+	/* Scan the pile of objects */
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		/* Acquire object */
+		object_type *o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Known to be worthless? */
+		if (destroy_worthless && (object_value(o_ptr) < 1))
+		{
+			/* Artifact? */
+			if (!can_player_destroy_object(o_ptr))
+			{
+				/* Describe the object (with {terrible/special}) */
+				object_desc(o_name, o_ptr, TRUE, 3);
+
+				/* Message */
+				msg_format("You cannot auto-destroy %s.", o_name);
+
+				/* Done */
+				return;
+			}
+
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3);
+
+			/* Print a message */
+			msg_format("Auto-destroying %s.", o_name);
+
+			/* Destroy the item */
+			delete_object_idx(this_o_idx);
+
+			continue;
+		}
+	}
+}
+
 
 
 /*
@@ -638,6 +687,9 @@ void carry(int pickup)
 
 	char o_name[80];
 
+
+	/* Automatically destroy items */
+	auto_destroy_items(c_ptr);
 
 #ifdef ALLOW_EASY_FLOOR
 
@@ -794,7 +846,6 @@ static int check_hit(int power)
 	/* Assume miss */
 	return (FALSE);
 }
-
 
 
 /*
@@ -1196,9 +1247,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 	char            m_name[80];
-
 	int             dss, ddd;
-
 	char            *atk_desc;
 
 	switch (attack)
@@ -1247,7 +1296,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
-	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !rand_int(2)) && test_hit_combat(chance, r_ptr->ac, m_ptr->ml))
+	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !rand_int(2)) &&
+	    test_hit_combat(chance, r_ptr->ac, m_ptr->ml))
 	{
 		/* Sound */
 		sound(SOUND_HIT);
@@ -1421,7 +1471,7 @@ void py_attack(int y, int x)
 		}
 
 		msg_format("Your black blade greedily attacks %s!", m_name);
-		
+
 		chg_virtue(V_INDIVIDUALISM, 1);
 		chg_virtue(V_HONOUR, -1);
 		chg_virtue(V_JUSTICE, -1);
@@ -1467,10 +1517,10 @@ void py_attack(int y, int x)
 	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
 	else bash_chance = p_ptr->skill_thn +
 	                   (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
-                       (((p_ptr->pclass == CLASS_WARRIOR) ||
-					     (p_ptr->pclass == CLASS_PALADIN) ||
-						 (p_ptr->pclass == CLASS_WARRIOR_MAGE) ||
-						 (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
+	                   (((p_ptr->pclass == CLASS_WARRIOR) ||
+	                     (p_ptr->pclass == CLASS_PALADIN) ||
+	                     (p_ptr->pclass == CLASS_WARRIOR_MAGE) ||
+	                     (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
 
 	/* Players bash more often when they see a real need. */
 	if (bash_chance)
@@ -1572,9 +1622,9 @@ void py_attack(int y, int x)
 			/* Select a chaotic effect (50% chance) */
 			if ((f1 & TR1_CHAOTIC) && (randint(2) == 1))
 			{
-				if (randint(10)==1)
-				chg_virtue(V_CHANCE, 1);
-				
+				if (randint(10) == 1)
+					chg_virtue(V_CHANCE, 1);
+
 				if (randint(5) < 3)
 				{
 					/* Vampiric (20%) */
@@ -1773,17 +1823,14 @@ void py_attack(int y, int x)
 				if (vorpal_cut)
 				{
 					/*
-					* The vorpal blade does average:
-					*	(e+2)/3 x normal damage.
-					* A normal weapon with the vorpal flag does average:
-					*   e-3/2 x normal damage.
-					* Note: this has changed from before - the vorpal blade
-					*  has been toned down because of the oangband based
-					*  combat.
-					*/
-					   
-					
-					
+					 * The vorpal blade does average:
+					 *	(e+2)/3 x normal damage.
+					 * A normal weapon with the vorpal flag does average:
+					 *   e-3/2 x normal damage.
+					 * Note: this has changed from before - the vorpal blade
+					 *  has been toned down because of the oangband based
+					 *  combat.
+					 */
 					int mult = 2;
 
 					int inc_chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
@@ -1824,13 +1871,13 @@ void py_attack(int y, int x)
 					{
 						switch(mult)
 						{
-							case 2:	msg_format("You gouge %s!", m_name);		break;
-							case 3:	msg_format("You maim %s!", m_name);			break;
-							case 4:	msg_format("You carve %s!", m_name);		break;
-							case 5:	msg_format("You cleave %s!", m_name);		break;
-							case 6:	msg_format("You smite %s!", m_name);		break;
-							case 7:	msg_format("You eviscerate %s!", m_name);	break;
-							default:	msg_format("You shred %s!", m_name);		break;
+							case 2: msg_format("You gouge %s!", m_name); break;
+							case 3: msg_format("You maim %s!", m_name); break;
+							case 4: msg_format("You carve %s!", m_name); break;
+							case 5: msg_format("You cleave %s!", m_name); break;
+							case 6: msg_format("You smite %s!", m_name); break;
+							case 7: msg_format("You eviscerate %s!", m_name); break;
+							default: msg_format("You shred %s!", m_name); break;
 						}
 					}
 				}
@@ -2037,10 +2084,8 @@ void py_attack(int y, int x)
 
 	if (drain_left != MAX_VAMPIRIC_DRAIN)
 	{
-		if (randint(4)==1)
-		{
+		if (randint(4) == 1)
 			chg_virtue(V_VITALITY, 1);
-		}
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
@@ -2348,7 +2393,7 @@ void move_player(int dir, int do_pickup)
 			/* Hack: move to new area */
 			p_ptr->oldpx = x;
 			p_ptr->oldpy = y;
-			
+
 			if (y == 0)
 			{
 				p_ptr->wilderness_y--;

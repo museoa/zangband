@@ -35,10 +35,8 @@ void do_cmd_redraw(void)
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
-
 	/* Combine and Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 
 	/* Update torch */
 	p_ptr->update |= (PU_TORCH);
@@ -338,6 +336,7 @@ static option_type cheat_info[CHEAT_MAX] =
 	{ &cheat_live,		FALSE,	255,	0x20, 0x00,
 	"cheat_live",		"Allow player to avoid death" }
 };
+
 
 /*
  * Interact with some options for cheating
@@ -880,18 +879,19 @@ void do_cmd_options(void)
 		prt("(2) Disturbance Options", 5, 5);
 		prt("(3) Game-Play Options", 6, 5);
 		prt("(4) Efficiency Options", 7, 5);
+		prt("(Z/5) Zangband Options", 8, 5);
+		prt("(6) Object auto-destruction Options", 9, 5);
 
-		prt("(Z/5) Zangband Options", 9, 5);
 		/* Testing */
-		prt("(S) Stacking Options", 10, 5);
+		prt("(S) Stacking Options", 11, 5);
 		/* Special choices */
-		prt("(D) Base Delay Factor", 11, 5);
-		prt("(H) Hitpoint Warning", 12, 5);
-		prt("(A) Autosave Options", 13, 5);
+		prt("(D) Base Delay Factor", 12, 5);
+		prt("(H) Hitpoint Warning", 13, 5);
+		prt("(A) Autosave Options", 14, 5);
 
 
 		/* Window flags */
-		prt("(W) Window Flags", 14, 5);
+		prt("(W) Window Flags", 15, 5);
 
 		/* Cheating */
 		prt("(C) Cheating Options", 16, 5);
@@ -944,6 +944,14 @@ void do_cmd_options(void)
 			case 'Z': case 'z': case '5':
 			{
 				do_cmd_options_aux(5, "Zangband Options");
+				break;
+			}
+
+			/* Object auto-destruction Options */
+			case '6':
+			{
+				/* Spawn */
+				do_cmd_options_aux(7, "Object auto-destruction Options");
 				break;
 			}
 
@@ -3060,6 +3068,7 @@ void plural_aux(char *Name)
 		strcpy(&(Name[NameLen]), "s");
 	}
 }
+
 
 /*
  * Display current pets

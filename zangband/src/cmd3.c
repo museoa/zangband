@@ -308,7 +308,7 @@ void do_cmd_wield(void)
 	{
 		/* Warn the player */
 		msg_print("Oops! It feels deathly cold!");
-		
+
 		chg_virtue(V_HARMONY, -1);
 
 		/* Note the curse */
@@ -539,32 +539,14 @@ void do_cmd_destroy(void)
 	/* Take a turn */
 	energy_use = 100;
 
-	/* Artifacts cannot be destroyed */
-	if (artifact_p(o_ptr) || o_ptr->art_name)
+	/* Can the player destroy the object? */
+	if (!can_player_destroy_object(o_ptr))
 	{
-		byte feel = FEEL_SPECIAL;
-
+		/* Don't take a turn */
 		energy_use = 0;
 
 		/* Message */
 		msg_format("You cannot destroy %s.", o_name);
-
-		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = FEEL_TERRIBLE;
-
-		/* Hack -- inscribe the artifact */
-		o_ptr->feeling = feel;
-
-		/* We have "felt" it (again) */
-		o_ptr->ident |= (IDENT_SENSE);
-
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		p_ptr->redraw |= (PR_EQUIPPY);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 		/* Done */
 		return;
@@ -604,7 +586,7 @@ void do_cmd_destroy(void)
 			msg_print("You feel more experienced.");
 			gain_exp(tester_exp * amt);
 		}
-	
+
 		if (high_level_book(o_ptr) && o_ptr->tval == TV_LIFE_BOOK)
 		{
 			chg_virtue(V_UNLIFE, 1);
@@ -615,13 +597,13 @@ void do_cmd_destroy(void)
 			chg_virtue(V_UNLIFE, -1);
 			chg_virtue(V_VITALITY, 1);
 		}
-	
+
 		if (o_ptr->to_a || o_ptr->to_h || o_ptr->to_d)
 			chg_virtue(V_ENCHANT, -1);
-	
+
 		if (object_value_real(o_ptr) > 30000)
 			chg_virtue(V_SACRIFICE, 2);
-	
+
 		else if (object_value_real(o_ptr) > 10000)
 			chg_virtue(V_SACRIFICE, 1);
 	}

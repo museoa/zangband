@@ -256,6 +256,7 @@ extern bool use_command;
 extern bool center_player;
 extern bool avoid_center;
 extern bool pillar_tunnels;
+extern bool destroy_worthless;
 extern byte hitpoint_warn;
 extern byte delay_factor;
 extern s16b autosave_freq;
@@ -758,6 +759,7 @@ extern void place_trap(int y, int x);
 extern cptr item_activation(object_type *o_ptr);
 extern void combine_pack(void);
 extern void reorder_pack(void);
+extern bool can_player_destroy_object(object_type *o_ptr);
 extern void display_koff(int k_idx);
 
 /* racial.c */

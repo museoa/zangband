@@ -940,9 +940,10 @@ bool easy_floor;
 bool use_command;
 bool center_player;
 bool avoid_center;
-
 bool pillar_tunnels;
 
+/* Auto-destruction options */
+bool destroy_worthless;
 
 /*
  * Wilderness

@@ -1241,28 +1241,11 @@ bool alchemy(void)
 		}
 	}
 
-	/* Artifacts cannot be destroyed */
-	if (artifact_p(o_ptr) || o_ptr->art_name)
+	/* Check for artifacts */
+	if (!can_player_destroy_object(o_ptr))
 	{
-		byte feel = FEEL_SPECIAL;
-
 		/* Message */
 		msg_format("You fail to turn %s to gold!", o_name);
-
-		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = FEEL_TERRIBLE;
-
-		/* Hack -- inscribe the artifact */
-		o_ptr->feeling = feel;
-
-		/* We have "felt" it (again) */
-		o_ptr->ident |= (IDENT_SENSE);
-
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 		/* Done */
 		return FALSE;

@@ -5698,6 +5698,39 @@ void reorder_pack(void)
 }
 
 
+bool can_player_destroy_object(object_type *o_ptr)
+{
+	/* Artifacts cannot be destroyed */
+	if (artifact_p(o_ptr) || o_ptr->art_name)
+	{
+		byte feel = FEEL_SPECIAL;
+
+		/* Hack -- Handle icky artifacts */
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = FEEL_TERRIBLE;
+
+		/* Hack -- inscribe the artifact */
+		o_ptr->feeling = feel;
+
+		/* We have "felt" it (again) */
+		o_ptr->ident |= (IDENT_SENSE);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Redraw equippy chars */
+		p_ptr->redraw |= (PR_EQUIPPY);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Done */
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+
 /*
  * Hack -- display an object kind in the current window
  *
