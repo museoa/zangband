@@ -1664,6 +1664,9 @@ bool building_magetower(int factor, bool display)
 
 				p_ptr->wilderness_x = p_ptr->px;
 				p_ptr->wilderness_y = p_ptr->py;
+				
+				/* Notice player location */
+				Term_move_player();
 
 				/* Notice the move */
 				move_wild();

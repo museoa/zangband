@@ -3837,6 +3837,9 @@ void change_level(int level)
 		/* In the wilderness */
 		p_ptr->px = (s16b)p_ptr->wilderness_x;
 		p_ptr->py = (s16b)p_ptr->wilderness_y;
+		
+		/* Notice player location */
+		Term_move_player();
 
 		/* Used to be in the dungeon? */
 		if (area != access_wild) switched = TRUE;

@@ -2253,6 +2253,9 @@ static errr rd_dungeon(void)
 	/* Hack - restore player position */
 	p_ptr->px = px;
 	p_ptr->py = py;
+	
+	/* Notice position */
+	Term_move_player();
 
 	/* Hack -  wipe the stuff on this level... */
 	wipe_monsters(cur_region);

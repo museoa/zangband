@@ -47,14 +47,12 @@ bool new_player_spot(void)
 	if (max_attempts < 1)		/* Should be -1, actually if we failed... */
 		return FALSE;
 
-
-	/* Save the new player grid */
-	/* py = y; */
-	/* px = x; */
-
 	/* Save the new player grid */
 	p_ptr->py = y;
 	p_ptr->px = x;
+	
+	/* Notice player location */
+	Term_move_player();
 
 	return TRUE;
 }

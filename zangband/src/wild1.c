@@ -2997,6 +2997,9 @@ static void wild_done(void)
 {
 	p_ptr->px = (s16b)p_ptr->wilderness_x;
 	p_ptr->py = (s16b)p_ptr->wilderness_y;
+	
+	/* Notice player location */
+	Term_move_player();
 
 	map_panel_size();
 

@@ -3550,9 +3550,6 @@ void play_game(bool new_game)
 	Term_write_list(p_ptr->inventory, LIST_INVEN);
 	Term_write_equipment();
 
-	/* Notice movement */
-	Term_move_player();
-
 	/* Process */
 	while (TRUE)
 	{
