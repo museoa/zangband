@@ -1414,14 +1414,14 @@ static const dun_gen_type dungeons[] =
 		LQ_WATER | LQ_LAVA,
 		DF_ROAD},
 
-	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 60, 30, 1,
+	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 60, 10, 1,
 		250, 200,
 		RT_SIMPLE | RT_COMPLEX | RT_BUILDING | RT_RVAULT,
 		FEAT_FLOOR_WOOD,
 		LQ_ACID | LQ_LAVA,
 		DF_TRACK},
 
-	{{10, 20, 20, 0}, RF8_DUN_RUIN, 20, 80, 25, 1,
+	{{10, 20, 20, 0}, RF8_DUN_RUIN, 20, 80, 10, 1,
 		0, 150,
 		RT_RUIN,
 		FEAT_PEBBLES,
@@ -1464,14 +1464,14 @@ static const dun_gen_type dungeons[] =
 		LQ_ACID,
 		DF_TRACK},
 
-	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 40, 25, 1,
+	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 40, 10, 1,
 		200, 200,
 		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_RUIN | RT_STRANGE,
 		FEAT_DIRT,
 		LQ_WATER | LQ_LAVA,
 		DF_ROAD},
 
-	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 60, 25, 1,
+	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 60, 10, 1,
 		200, 200,
 		RT_SIMPLE | RT_COMPLEX | RT_DENSE | RT_FANCY | RT_BUILDING |
 		RT_CRYPT | RT_RVAULT | RT_STRANGE,
