@@ -121,66 +121,60 @@ static s16b value_feeling[] =
  */
 bool borg_item_icky(list_item *l_ptr)
 {
-	object_kind *k_ptr = &k_info[l_ptr->k_idx];
+	int sval = k_info[l_ptr->k_idx].sval;
 
 	/* if its average, dump it if you want to. */
 	if (strstr(l_ptr->o_name, "{average")) return (TRUE);
+
+	/* things that are good/excellent/special/tainted need ID so are not icky */
+	if (strstr(l_ptr->o_name, "{special") ||
+		strstr(l_ptr->o_name, "{terrible") ||
+		strstr(l_ptr->o_name, "{excellent") ||
+		strstr(l_ptr->o_name, "{tainted")) return (FALSE);
 
 	/* Mega-Hack -- allow "icky" items */
 	if (borg_class == CLASS_PRIEST ||
 		borg_class == CLASS_RANGER ||
 		borg_class == CLASS_MAGE || (bp_ptr->lev < 20))
 	{
-		/* things that are good/excelent/special */
-		if (strstr(l_ptr->o_name, "{special") ||
-			strstr(l_ptr->o_name, "{terrible") ||
-			strstr(l_ptr->o_name, "{excellent"))
-			/* not icky */
-			return (FALSE);
 
-		/* Broken dagger/sword, Filthy rag */
-		if (((l_ptr->tval == TV_SWORD) && (k_ptr->sval == SV_BROKEN_DAGGER)) ||
-			((l_ptr->tval == TV_SWORD) && (k_ptr->sval == SV_BROKEN_SWORD)) ||
-			((l_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_FILTHY_RAG)))
-		{
-			return (TRUE);
-		}
+		/* Swords */
+		if (l_ptr->tval == TV_SWORD)
+				return (sval == SV_BROKEN_DAGGER ||
+						sval == SV_BROKEN_SWORD ||
+						sval == SV_DAGGER);
 
-		/* Dagger, Sling */
-		if (((l_ptr->tval == TV_SWORD) && (k_ptr->sval == SV_DAGGER)) ||
-			((l_ptr->tval == TV_BOW) && (k_ptr->sval == SV_SLING)))
-		{
-			return (TRUE);
-		}
+		/* Hafted */
+		if (l_ptr->tval == TV_HAFTED)
+			return (sval == SV_CLUB ||
+					sval == SV_WHIP);
 
-		/* Cloak, Robe */
-		if (((l_ptr->tval == TV_CLOAK) && (k_ptr->sval == SV_CLOAK)) ||
-			((l_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_ROBE)))
-		{
-			return (TRUE);
-		}
+		/* Sling */
+		if (l_ptr->tval == TV_BOW) return (sval == SV_SLING);
+
+		/* Rags and Robes */
+		if (l_ptr->tval == TV_SOFT_ARMOR)
+			return (sval == SV_FILTHY_RAG ||
+					sval == SV_SOFT_LEATHER_ARMOR ||
+					sval == SV_SOFT_STUDDED_LEATHER ||
+					sval == SV_ROBE);
+
+		/* Cloak */
+		if (l_ptr->tval == TV_CLOAK) return (sval == SV_CLOAK);
 
 		/* Leather Gloves */
-		if ((l_ptr->tval == TV_GLOVES) &&
-			(k_ptr->sval == SV_SET_OF_LEATHER_GLOVES))
-		{
-			return (TRUE);
-		}
+		if (l_ptr->tval == TV_GLOVES)
+			return (sval == SV_SET_OF_LEATHER_GLOVES);
+
+		/* Helmet */
+		if (l_ptr->tval == TV_HELM) return (sval == SV_HARD_LEATHER_CAP);
 
 		/* Assume the item is not icky */
 		return (FALSE);
 	}
 
-	/*
-	 * Process other classes which do get pseudo ID
-	 * things that are good/excelent/special/no P-ID
-	 */
-	if (strstr(l_ptr->o_name, "{special") || strstr(l_ptr->o_name, "{terrible")
-		|| strstr(l_ptr->o_name, "{excellent"))
-		return (FALSE);
 
-
-		/*** {Good} items in inven, But I have {excellent} in equip ***/
+	/*** {Good} items in inven, But I have {excellent} in equip ***/
 
 	if (strstr(l_ptr->o_name, "{good"))
 	{
@@ -192,8 +186,13 @@ bool borg_item_icky(list_item *l_ptr)
 		/* Obtain my equipped item in the slot */
 		l_ptr = &equipment[slot];
 
-		/* Is my item an ego or artifact? */
-		if (slot != -1 && borg_obj_is_ego_art(l_ptr)) return (TRUE);
+		/* Is the equipped item an ego or artifact? */
+		if (slot != -1 &&
+			(borg_obj_is_ego_art(l_ptr) ||
+			strstr(l_ptr->o_name, "{special") ||
+			strstr(l_ptr->o_name, "{terrible") ||
+			strstr(l_ptr->o_name, "{excellent") ||
+			strstr(l_ptr->o_name, "{tainted"))) return (TRUE);
 	}
 
 	/* Assume not icky, I should have extra ID for the item */
@@ -1492,6 +1491,64 @@ static bool borg_consume(list_item *l_ptr)
 }
 
 /*
+ * Should we *id* this item?
+ */
+bool borg_obj_star_id_able(list_item *l_ptr)
+{
+	/* Is there an object at all? */
+	if (!l_ptr) return (FALSE);
+
+	/* Demand that the item is identified */
+	if (!borg_obj_known_p(l_ptr)) return (FALSE);
+	
+	/* Some non-ego items should be *id'ed too */
+	if (l_ptr->tval == TV_SHIELD &&
+	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_SHIELD) return (TRUE);
+	if (l_ptr->tval == TV_HELM &&
+	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_HELM) return (TRUE);
+	if (l_ptr->tval == TV_CLOAK &&
+	 	k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK) return (TRUE);
+
+	/* not an ego object */
+	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
+
+	/* Artifacts */
+	if (KN_FLAG(l_ptr, TR_INSTA_ART)) return (TRUE);
+
+	/* Weapons */
+	if (streq(l_ptr->xtra_name, "(Holy Avenger)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Defender)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Blessed)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Westernesse")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slay Dragon")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of *Slay* Dragon")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Chaotic)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slaying")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Vampiric)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Trump Weapon)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Pattern Weapon)")) return (TRUE);
+
+	/* Bow */
+	if (streq(l_ptr->xtra_name, "of Might")) return (TRUE);
+
+	/* Armour */
+	if (streq(l_ptr->xtra_name, "of Permanence")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Resistance")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Elvenkind")) return (TRUE);
+
+	/* Hat */
+	if (streq(l_ptr->xtra_name, "of the Magi")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Lordliness")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Seeing")) return (TRUE);
+
+	/* Cloak */
+	if (streq(l_ptr->xtra_name, "of Aman")) return (TRUE);
+
+	/* Any object that reaches here has nothing interesting to *id* */
+	return (FALSE);
+}
+
+/*
  * Destroy 'number' items
  */
 static void borg_destroy_item(list_item *l_ptr, int slot, int number)
@@ -1636,6 +1693,7 @@ bool borg_crush_junk(void)
 				!(strstr(l_ptr->o_name, "{average") ||
 				  strstr(l_ptr->o_name, "{cursed") ||
 				  strstr(l_ptr->o_name, "{bad") ||
+				  strstr(l_ptr->o_name, "{broken") ||
 				  strstr(l_ptr->o_name, "{dubious") ||
 				  strstr(l_ptr->o_name, "{worthless"))) continue;
 
@@ -1761,10 +1819,11 @@ bool borg_crush_hole(void)
 		/* Don't crush our spell books */
 		if (borg_has_realm(l_ptr->tval - TV_BOOKS_MIN + 1)) continue;
 
-		/* Hack -- skip artifacts and ego items not fully identified */
-		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
-		if (strstr(l_ptr->o_name, "{special")) continue;
-		if (strstr(l_ptr->o_name, "{terrible")) continue;
+		/* Hack -- Skip items with unknown flags */
+		if ((borg_obj_star_id_able(l_ptr) &&
+			!borg_obj_known_full(l_ptr)) ||
+			(strstr(l_ptr->o_name, "{special") ||
+			strstr(l_ptr->o_name, "{terrible"))) continue;
 
 		/* Get sval */
 		sval = k_info[l_ptr->k_idx].sval;
@@ -1861,10 +1920,11 @@ bool borg_crush_slow(void)
 		/* Skip "good" unknown items (unless "icky") */
 		if (!borg_obj_known_p(l_ptr) && !borg_item_icky(l_ptr)) continue;
 
-		/* Hack -- Skip artifacts */
-		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
-		if (strstr(l_ptr->o_name, "{special")) continue;
-		if (strstr(l_ptr->o_name, "{terrible")) continue;
+		/* Hack -- Skip items with unknown flags */
+		if ((borg_obj_star_id_able(l_ptr) &&
+			!borg_obj_known_full(l_ptr)) ||
+			(strstr(l_ptr->o_name, "{special") ||
+			strstr(l_ptr->o_name, "{terrible"))) continue;
 
 		/* Pretend item is less */
 		l_ptr->treat_as = TREAT_AS_LESS;
@@ -1908,63 +1968,6 @@ bool borg_crush_slow(void)
 	return (FALSE);
 }
 
-/*
- * Should we *id* this item?
- */
-bool borg_obj_star_id_able(list_item *l_ptr)
-{
-	/* Is there an object at all? */
-	if (!l_ptr) return (FALSE);
-
-	/* Demand that the item is identified */
-	if (!borg_obj_known_p(l_ptr)) return (FALSE);
-	
-	/* Some non-ego items should be *id'ed too */
-	if (l_ptr->tval == TV_SHIELD &&
-	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_SHIELD) return (TRUE);
-	if (l_ptr->tval == TV_HELM &&
-	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_HELM) return (TRUE);
-	if (l_ptr->tval == TV_CLOAK &&
-	 	k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK) return (TRUE);
-
-	/* not an ego object */
-	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
-
-	/* Artifacts */
-	if (KN_FLAG(l_ptr, TR_INSTA_ART)) return (TRUE);
-
-	/* Weapons */
-	if (streq(l_ptr->xtra_name, "(Holy Avenger)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Defender)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Blessed)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Westernesse")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Slay Dragon")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of *Slay* Dragon")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Chaotic)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Slaying")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Vampiric)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Trump Weapon)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Pattern Weapon)")) return (TRUE);
-
-	/* Bow */
-	if (streq(l_ptr->xtra_name, "of Might")) return (TRUE);
-
-	/* Armour */
-	if (streq(l_ptr->xtra_name, "of Permanence")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Resistance")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Elvenkind")) return (TRUE);
-
-	/* Hat */
-	if (streq(l_ptr->xtra_name, "of the Magi")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Lordliness")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Seeing")) return (TRUE);
-
-	/* Cloak */
-	if (streq(l_ptr->xtra_name, "of Aman")) return (TRUE);
-
-	/* Any object that reaches here has nothing interesting to *id* */
-	return (FALSE);
-}
 
 /*
  * Identify items if possible
@@ -2662,7 +2665,8 @@ bool borg_wear_stuff(void)
 			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* apw do not wear not *id* artifacts */
-		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
+		if (!borg_obj_known_full(l_ptr) &&
+			borg_obj_star_id_able(l_ptr)) continue;
 
 		/* skip it if it has not been decursed */
 		if (KN_FLAG(l_ptr, TR_CURSED) ||

@@ -698,8 +698,29 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 }
 
 
+/* Make sure the borg keeps money back for food and light */
+static bool borg_spends_gold_okay(list_item *l_ptr)
+{
+	/* Always allow buying fuel */
+	if (l_ptr->tval == TV_LITE ||
+		l_ptr->tval == TV_FLASK) return (TRUE);
 
-/*
+	/* Nothing else to be bought if the borg is this low on money */
+	if (borg_gold < 20) return (FALSE);
+
+	/* Allow food to be bought when there is more than 20 gold */
+	if (l_ptr->tval == TV_FOOD ||
+		(l_ptr->tval == TV_SCROLL &&
+		k_info[l_ptr->k_idx].sval == SV_SCROLL_SATISFY_HUNGER)) return (TRUE);
+
+	/* Nothing else to be bought if the borg is this low on money */
+	if (borg_gold < 100) return (FALSE);
+
+	/* Spend away */
+	return (TRUE);
+}
+
+	/*
  * Step 3 -- buy "useful" things from a shop (to be used)
  */
 static bool borg_think_shop_buy_aux(int shop)
@@ -777,6 +798,9 @@ static bool borg_think_shop_buy_aux(int shop)
 
 		/* Obtain the "cost" of the item */
 		c = l_ptr->cost;
+
+		/* Is it too costly? */
+		if (!borg_spends_gold_okay(l_ptr)) continue;
 
 		/* Penalize the cost of expensive items */
 		if (c > borg_gold / 10) p -= c;
@@ -945,6 +969,9 @@ static bool borg_think_shop_grab_aux(int shop)
 
 		/* Obtain the "cost" of the item */
 		c = l_ptr->cost;
+
+		/* Is it too costly? */
+		if (!borg_spends_gold_okay(l_ptr)) continue;
 
 		/* Ignore too expensive items */
 		if (borg_gold < c) continue;

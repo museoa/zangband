@@ -872,7 +872,7 @@ int look_up_index(list_item *l_ptr)
 
 
 /*
- * Hack -- refuel a torch
+ * Hack -- refuel a torch with the minimal torch
  */
 bool borg_refuel_torch(void)
 {
@@ -882,8 +882,11 @@ bool borg_refuel_torch(void)
 	/* Must first wield before one can refuel */
 	if (!equipment[EQUIP_LITE].k_idx) return (FALSE);
 
-	/* Must wield torch */
+ 	/* Must wield torch */
 	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_TORCH) return (FALSE);
+
+	/* Cast phlogiston */
+	if (borg_spell_fail(REALM_ARCANE, 1, 1, 40)) return (TRUE);
 
 	/* Look for the minimal torch */
 	for (slot = 0; slot < inven_num; slot++)
@@ -898,7 +901,10 @@ bool borg_refuel_torch(void)
 
 		/* Ignore torches with the most fuel */
 		if (l_ptr->timeout >= fuel) continue;
-		
+
+		/* Is this an ego_torch? */
+		if (borg_obj_is_ego_art(l_ptr)) continue;
+
 		/* My favorite torch */
 		b_slot = slot;
 		fuel = l_ptr->timeout;
@@ -924,32 +930,58 @@ bool borg_refuel_torch(void)
  */
 bool borg_refuel_lantern(void)
 {
+	int slot, b_slot = -1, fuel = 14999;
 	list_item *l_ptr;
 
-	/* Look for a torch */
-	l_ptr = borg_slot(TV_FLASK, 0);
+	/* Must first wield before one can refuel */
+	if (!equipment[EQUIP_LITE].k_idx) return (FALSE);
 
-	/* None available */
-	if (!l_ptr) return (FALSE);
-
-	/* Need to be wielding a light */
-	if (!equipment[EQUIP_LITE].k_idx)
-	{
-		return (FALSE);
-	}
-
-	/* Cant refuel a torch with oil */
+ 	/* Must wield lantern */
 	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_LANTERN)
-	{
 		return (FALSE);
+
+	/* Cast phlogiston */
+	if (borg_spell_fail(REALM_ARCANE, 1, 1, 40)) return (TRUE);
+
+	/* Loop through the inventory backwards */
+	for (slot = inven_num - 1; slot >= 0; slot--)
+	{
+		l_ptr = &inventory[slot];
+
+		/* Maybe fuel with a Lantern? */
+		if (l_ptr->tval == TV_LITE &&
+			k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN)
+		{
+			/* Ignore lanterns with the most fuel */
+			if (l_ptr->timeout >= fuel) continue;
+
+			/* My favorite lantern */
+			b_slot = slot;
+			fuel = l_ptr->timeout;
+		}
+		else
+		{
+			/* Maybe fuel with a flask? */
+			if (l_ptr->tval == TV_FLASK)
+			{
+				/* Get out of the loop */
+				break;
+			}
+		}
 	}
+
+	/* b_slot holds best lantern, slot holds flask, let's see if there is one */
+	if (b_slot == -1 && slot == -1) return (FALSE);
+
+	/* Found no lantern but a flask */
+	if (b_slot == -1) b_slot = slot;
 
 	/* Log the message */
-	borg_note_fmt("# Refueling with %s.", l_ptr->o_name);
+	borg_note_fmt("# Refueling with %s.", inventory[b_slot].o_name);
 
 	/* Perform the action */
 	borg_keypress('F');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+	borg_keypress(I2A(b_slot));
 
 	/* Success */
 	return (TRUE);
@@ -1631,7 +1663,7 @@ byte borg_spell_mana(int realm, int book, int spell)
 }
 
 /* Combines the legality check with the cost */
-static bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
+bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
 {
 	/* Is this spell castable with the fail_check? */
 	if (!borg_spell_legal_fail(realm, book, spell, fail)) return (FALSE);

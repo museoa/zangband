@@ -3167,24 +3167,32 @@ bool borg_caution(void)
 	{
 		list_item *l_ptr = &equipment[EQUIP_LITE];
 
-		object_kind *k_ptr = &k_info[l_ptr->k_idx];
-
-		/* Must have light -- Refuel current torch */
-		if ((l_ptr->tval == TV_LITE) && (k_ptr->sval == SV_LITE_TORCH))
+		/* If there is something in the lite slot */
+		if (l_ptr->k_idx)
 		{
-			/* Try to refuel the torch */
-			if ((l_ptr->timeout < 500) && borg_refuel_torch()) return (TRUE);
-		}
+			object_kind *k_ptr = &k_info[l_ptr->k_idx];
 
-		/* Must have light -- Refuel current lantern */
-		if ((l_ptr->tval == TV_LITE) && (k_ptr->sval == SV_LITE_LANTERN))
-		{
-			/* Try to refill the lantern */
-			if ((l_ptr->timeout < 1000) && borg_refuel_lantern()) return (TRUE);
+			/* If the light source is getting low */
+			if (l_ptr->timeout < 1000)
+			{
+				/* Try to refuel the torch */
+				if (k_ptr->sval == SV_LITE_TORCH && borg_refuel_torch())
+				{
+					/* success */
+					return (TRUE);
+				}
+
+				/* Try to refuel the lantern */
+				if (k_ptr->sval == SV_LITE_LANTERN && borg_refuel_lantern())
+				{
+					/* success */
+					return (TRUE);
+				}
+			}
 		}
 
 		/* Flee for fuel */
-		if (bp_ptr->depth && (l_ptr->timeout < 250))
+		if (bp_ptr->depth && (!l_ptr->k_idx || l_ptr->timeout < 1000))
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -5350,7 +5358,7 @@ static int borg_attack_artifact(int *b_slot)
 {
 	/* Ignore parameter */
 	(void) b_slot;
- 
+
 	/* Yeah well, how do I find out what the activation is */
  	return (0);
 }
@@ -8342,7 +8350,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 			}
 		}
 
-		/* Mnaual of Mastery */
+		/* Manual of Mastery */
 		case 3:
 		{
 			switch(spell)
@@ -10253,29 +10261,29 @@ static int borg_defend_aux_hero(int p1)
  */
 static int borg_defend_aux_berserk(int p1)
 {
-	/* already hero */
-	if (borg_hero || borg_berserk)
-		return (0);
-
-	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
-		borg_mutation_check(MUT1_BERSERK, TRUE))
-		return (0);
-
-	/* if we are in some danger but not much, go for a quick bless */
-	if (borg_goi || (p1 > avoidance / 12 && p1 < avoidance / 2) ||
-		(borg_fighting_unique && p1 < avoidance * 13 / 10))
+	if (borg_simulate)
 	{
-		/* Simulation */
-		/* berserk is a low priority */
-		if (borg_simulate) return (5);
+		/* already hero */
+		if (borg_hero || borg_berserk) return (0);
 
+		if (borg_mutation_check(MUT1_BERSERK, TRUE) ||
+			!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH)) return (0);
+
+		/* if we are in some danger but not much, go for a quick bless */
+		if (borg_goi || (p1 > avoidance / 12 && p1 < avoidance / 2) ||
+			(borg_fighting_unique && p1 < avoidance * 13 / 10))
+		{
+			/* berserk is a low priority */
+			 return (5);
+		}
+
+		/* Failed */
+		return (0);
 		/* do it! */
-		if (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
-			borg_mutation(MUT1_BERSERK))
-			return 2;
 	}
 
-	return (0);
+	return (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+			borg_mutation(MUT1_BERSERK));
 }
 
 /* Glyph of Warding and Rune of Protection */

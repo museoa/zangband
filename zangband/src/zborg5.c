@@ -3130,6 +3130,7 @@ static s32b borg_power_aux3(void)
 
 	/* Hack -- Reward for wearing a permanent light */
 	if (bp_ptr->britelite) value += 5000;
+
 	/* Hack -- Reward speed */
 
 	if (bp_ptr->speed >= 150)
@@ -3289,7 +3290,7 @@ static s32b borg_power_aux3(void)
 	{
 		if (FLAG(bp_ptr, TR_FEATHER)) value += 50;
 	}
-	if (bp_ptr->britelite) value += 10000L;
+
 	if (FLAG(bp_ptr, TR_TELEPATHY))
 	{
 		if (FLAG(bp_ptr, TR_SEE_INVIS)) value += 500L;
@@ -3585,8 +3586,36 @@ static s32b borg_power_aux4(void)
 	 * if you have a perma light source you get all these points,
 	 * except for a Lantern of Everburning, that still needs fuel
 	 */
-	value += 6000 * MIN(bp_ptr->able.fuel, 5);
-	value += 600 * MIN_FLOOR(bp_ptr->able.fuel, 5, 10);
+
+	value += 6000 * MIN(bp_ptr->able.fuel, 3);
+	value += 600 * MIN_FLOOR(bp_ptr->able.fuel, 3, 7);
+
+	/* If the borg wields a torch */
+	if (k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_TORCH)
+	{
+		/* reward carrying a lantern when you don't use it */
+		value += 500 * MIN(amt_lantern, 1);
+
+		/* If you need fuel prefer torches */
+		if (bp_ptr->able.fuel < 1000) value += 50 * MIN(amt_torch_fuel, 7);
+
+		/*
+		 * The flasks acts as molotov cocktails, but they can't
+		 * outshine the torches for value, because they are fuel too
+		 */
+		if (bp_ptr->lev < 15) value += 5 * MIN(amt_flask, 20);
+	}
+
+	/* If the borg wields a lantern */
+	if (k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_LANTERN)
+	{
+		/* If you need fuel prefer flasks/lanterns */
+		if (bp_ptr->able.fuel < 1000)
+			value += 50 * MIN(amt_lantern + amt_flask, 7);
+
+		/* Keep some more flasks as molotov cocktails */
+		if (bp_ptr->lev < 15) value += 50 * MIN_FLOOR(amt_flask, 7, 20);
+	}
 
 	/* Reward Food */
 

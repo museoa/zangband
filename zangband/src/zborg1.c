@@ -252,6 +252,9 @@ bool my_need_enchant_to_d;	/* Need some enchantment */
 s16b amt_food_scroll;
 s16b amt_food_hical;
 s16b amt_food_lowcal;
+s16b amt_torch_fuel;
+s16b amt_lantern;
+s16b amt_flask;
 
 s16b amt_slow_poison;
 s16b amt_cure_confusion;
