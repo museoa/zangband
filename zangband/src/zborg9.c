@@ -3792,12 +3792,6 @@ void borg_status(void)
 			Term_putstr(42, 4, -1, attr,
 						"Breeder level (close the door, will ye)");
 
-			if (borg_kills_summoner != -1) attr = TERM_WHITE;
-			else
-				attr = TERM_SLATE;
-			Term_putstr(42, 5, -1, attr,
-						"Summoner very close (AS-Corridor appropriate)");
-
 			/* level preparedness */
 			attr = TERM_SLATE;
 			Term_putstr(42, 6, -1, attr, "Reason for not diving:");

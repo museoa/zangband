@@ -657,7 +657,6 @@ borg_take *borg_takes;
  */
 
 s16b borg_kills_cnt;
-s16b borg_kills_summoner;	/* index of a summoner */
 s16b borg_kills_nxt;
 
 borg_kill *borg_kills;
@@ -778,9 +777,6 @@ bool borg_do_crush_slow = FALSE;
 /* am I fighting a unique? */
 int borg_fighting_unique;
 bool borg_fighting_evil_unique;
-
-/* am I fighting a summoner? */
-bool borg_fighting_summoner;
 
 
 /*
@@ -1750,7 +1746,7 @@ void borg_init_1(void)
 	borg_kills_nxt = 1;
 
 	/* Array of monsters */
-	C_MAKE(borg_kills, 256, borg_kill);
+	C_MAKE(borg_kills, BORG_KILLS_MAX, borg_kill);
 
 	/*** Special counters ***/
 

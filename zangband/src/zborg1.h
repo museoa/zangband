@@ -990,7 +990,6 @@ extern borg_take *borg_takes;
  */
 
 extern s16b borg_kills_cnt;
-extern s16b borg_kills_summoner;	/* index of a summoning guy */
 extern s16b borg_kills_nxt;
 
 extern borg_kill *borg_kills;
@@ -1107,10 +1106,6 @@ extern bool borg_do_crush_slow;
 /* am I fighting a unique */
 extern int borg_fighting_unique;
 extern bool borg_fighting_evil_unique;
-
-/* am I fighting a summoner */
-extern bool borg_fighting_summoner;
-
 
 
 /*** Some functions ***/

@@ -1154,10 +1154,8 @@ static void borg_near_monster_type(int dist)
 	int i;
 
 	/* reset the borg flags */
-	borg_fighting_summoner = FALSE;
 	borg_fighting_unique = 0;
 	borg_fighting_evil_unique = FALSE;
-	borg_kills_summoner = -1;
 
 	/* Scan the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -1266,7 +1264,6 @@ TRUE;
 		/* Chaos and Confusion are really bad */
 		if ((!borg_skill[BI_SRKAOS] && !borg_skill[BI_SRCONF]) &&
 			(strstr(r_name + r_ptr->name, "Chaos"))) scaryguy_on_level = TRUE;
-#endif /* 0 */
 
 		/*** Scan for Summoners ***/
 
@@ -1298,6 +1295,7 @@ TRUE;
 				borg_kills_summoner = i;
 			}
 		}
+#endif /* 0 */
 	}
 }
 
@@ -9080,12 +9078,6 @@ static int borg_defend_aux_speed(int p1)
 		/* HACK pretend that it was scary and will be safer */
 		p2 = p2 * 7 / 10;
 	}
-	/* if we are fighting a unique and a summoner cast it. */
-	if (borg_fighting_summoner && borg_fighting_unique)
-	{
-		/* HACK pretend that it was scary and will be safer */
-		p2 = p2 * 7 / 10;
-	}
 	/* if the unique is Sauron cast it */
 	if (borg_skill[BI_CDEPTH] == 99 && borg_fighting_unique >= 10)
 	{
@@ -10013,6 +10005,9 @@ static int borg_defend_aux_glyph(int p1)
 /* True Warding */
 static int borg_defend_aux_true_warding(int p1)
 {
+	/* Ignore parameter */
+	(void) p1;
+#if 0
 	int p2 = 0;
 	int fail_allowed = 30;
 	int glyph_bad = 0;
@@ -10106,6 +10101,7 @@ static int borg_defend_aux_true_warding(int p1)
 			return (p1 - p2);
 		}
 	}
+#endif /* 0 */
 
 	/* default to can't do it. */
 	return (0);
@@ -10115,6 +10111,9 @@ static int borg_defend_aux_true_warding(int p1)
 /* Create Granite Walls-- Nature spell */
 static int borg_defend_aux_create_walls(int p1)
 {
+	/* Ignore parameter */
+	(void) p1;
+#if 0
 	int p2 = 0;
 	int fail_allowed = 30;
 	int wall_bad = 0;
@@ -10213,6 +10212,7 @@ static int borg_defend_aux_create_walls(int p1)
 			return (p1 - p2);
 		}
 	}
+#endif /* 0 */
 
 	/* default to can't do it. */
 	return (0);
@@ -12147,6 +12147,7 @@ static int borg_perma_aux_berserk_potion(void)
 /* Glyph of Warding in a a-s corridor */
 static int borg_perma_aux_glyph(void)
 {
+#if 0
 	int i, wall_y, wall_x, wall_count = 0, y, x;
 	int fail_allowed = 20;
 
@@ -12230,6 +12231,7 @@ static int borg_perma_aux_glyph(void)
 		}
 		return (2);
 	}
+#endif /* 0 */
 
 	/* default to can't do it. */
 	return (0);
@@ -14053,6 +14055,7 @@ bool borg_flow_kill_aim(bool viewable)
  */
 bool borg_flow_kill_corridor(bool viewable)
 {
+#if 0
 	int o_y, o_x;
 	int m_x, m_y;
 	int f_y, f_x;
@@ -14062,11 +14065,16 @@ bool borg_flow_kill_corridor(bool viewable)
 
 	borg_kill *kill;
 
+#endif /* 0 */
+
 	/* Hack - ignore usused parameter */
 	(void)viewable;
 
 	/* Efficiency -- Nothing to kill */
 	if (!borg_kills_cnt) return (FALSE);
+	
+	/* Need to do this properly */
+#if 0
 
 	/* Only do this to summoners when they are close */
 	if (borg_kills_summoner == -1) return (FALSE);
@@ -14186,7 +14194,7 @@ bool borg_flow_kill_corridor(bool viewable)
 
 		return (TRUE);
 	}
-
+#endif /* 0 */
 	return FALSE;
 }
 
