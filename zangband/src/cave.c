@@ -4818,7 +4818,7 @@ void cave_set_feat(int y, int x, int feat)
 	c_ptr->feat = feat;
 
 	/* Notice + Redraw */
-	note_spot(y, x);
+	if (character_dungeon) note_spot(y, x);
 }
 
 

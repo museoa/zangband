@@ -513,7 +513,7 @@ static bool cave_gen(void)
 
 	/* No rooms yet */
 	dun->cent_n = 0;
-
+	
 	/* Build some rooms */
 	for (i = 0; i < dun_rooms; i++)
 	{
@@ -910,7 +910,6 @@ static bool cave_gen(void)
 		}
 	}
 
-
 	/* Basic "amount" */
 	k = (p_ptr->depth / 3);
 	if (k > 10) k = 10;
@@ -973,7 +972,7 @@ static bool cave_gen(void)
 			}
 		}
 	}
-
+	
 	/* Determine the character location */
 	if (!new_player_spot())
 		return FALSE;
@@ -1086,14 +1085,15 @@ static bool level_gen(cptr *why)
 		min_wid = 0;
 		max_wid = MAX_WID;
 	}
-
+	
 	/* Make a dungeon */
 	if (!cave_gen())
 	{
 		*why = "could not place player";
 		return FALSE;
 	}
-	else return TRUE;
+	
+	return TRUE;
 }
 
 
@@ -1161,13 +1161,21 @@ void generate_cave(void)
 
 	/* The dungeon is not ready */
 	character_dungeon = FALSE;
-
+	
 	/* Generate */
 	for (num = 0; TRUE; num++)
 	{
 		bool okay = TRUE;
 
 		cptr why = NULL;
+		
+		/* 
+		 * Start with a blank cave
+		 */
+		for (y = 0; y < MAX_HGT; y++)
+		{
+			(void) C_WIPE(cave[y], MAX_WID, cave_type);
+		}
 		
 		/*
 		 * XXX XXX XXX XXX
@@ -1178,36 +1186,7 @@ void generate_cave(void)
 		o_max = 1;
 		m_max = 1;
 
-		/* 
-		 * Start with a blank cave
-		 *
-		 * XXX XXX Would C_WIPE be faster and cleaner?
-		 */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				/* No flags */
-				cave[y][x].info = 0;
-
-				/* No features */
-				cave[y][x].feat = 0;
-
-				/* No objects */
-				cave[y][x].o_idx = 0;
-
-				/* No monsters */
-				cave[y][x].m_idx = 0;
-
-				/* No fields */
-				cave[y][x].fld_idx = 0;
-
-				/* No flow */
-				cave[y][x].cost = 0;
-				cave[y][x].when = 0;
-			}
-		}
-
+		
 		/* Set the base level */
 		base_level = p_ptr->depth;
 
@@ -1227,17 +1206,7 @@ void generate_cave(void)
 		if (!generate_level_callback(p_ptr->depth))
 #endif /* USE_SCRIPT */
 		{
-
-#if 0
-
-			if (p_ptr->inside_quest)
-			{
-				quest_gen();
-			}
-#endif
-
 			okay = level_gen(&why);
-
 		}
 
 		/* Extract the feeling */
@@ -1301,7 +1270,7 @@ void generate_cave(void)
 		/* Wipe the fields */
 		wipe_f_list();
 	}
-
+	
 	/* The dungeon is ready */
 	character_dungeon = TRUE;
 	

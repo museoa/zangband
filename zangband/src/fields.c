@@ -270,7 +270,7 @@ void delete_field(int y, int x)
 	delete_field_aux(&(c_ptr->fld_idx));
 
 	/* Note + Lite the spot */
-	note_spot(y, x);
+	if (character_dungeon) note_spot(y, x);
 }
 
 
