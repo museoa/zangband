@@ -22,6 +22,8 @@
 
 #include "angband.h"
 
+#include "maid-grf.h"
+
 #ifdef USE_GTK
 
 #include <gtk/gtk.h>

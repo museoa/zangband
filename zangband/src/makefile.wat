@@ -22,7 +22,7 @@ OBJS = &
   generate.obj dungeon.obj init1.obj init2.obj quest.obj &
   effects.obj racial.obj grid.obj streams.obj rooms.obj &
   artifact.obj mutation.obj flavor.obj spells3.obj &
-  mspells1.obj mspells2.obj scores.obj mind.obj &
+  mspells1.obj mspells2.obj scores.obj mind.obj maid-grf.obj &
   bldg.obj obj_kind.obj wild1.obj wild2.obj avatar.obj notes.obj &
   main-ibm.obj main.obj
 

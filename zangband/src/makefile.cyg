@@ -48,6 +48,7 @@ EXOBJS = \
 	init2.o \
 	load.o \
 	main.o \
+	maid-grf.o \
 	main-win.o \
 	melee1.o \
 	melee2.o \
@@ -244,8 +245,11 @@ main.o: main.c $(INCS)
 
 melee1.o: melee1.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
-
-main-win.o: main-win.c $(INCS)
+	
+maid-grf.o: maid-grf.c $(INCS)
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
+	
+main-win.o: main-win.c $(INCS) maid-grf.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
 melee2.o: melee2.c $(INCS)

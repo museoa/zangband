@@ -69,7 +69,7 @@ SRCS = \
 	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c\
 	main-lsl.c main-vcs.c main-gtk.c main.c \
 	l-monst.c l-object.c l-player.c l-random.c l-ui.c \
-	l-misc.c l-spell.c
+	maid-grf.c l-misc.c l-spell.c
 
 OBJS = \
 	z-util.o z-virt.o z-form.o z-rand.o z-term.o \
@@ -88,7 +88,7 @@ OBJS = \
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main.o\
 	l-monst.o l-object.o l-player.o l-random.o l-ui.o \
-	l-misc.o l-spell.o \
+	maid-grf.o l-misc.o l-spell.o \
 	$(LUAOBJS)
 
 ##
@@ -385,15 +385,16 @@ streams.o: streams.c $(INCS) grid.h generate.h
 init1.o: init1.c $(INCS)
 init2.o: init2.c $(INCS)
 load.o: load.c $(INCS)
-maid-x11.o: maid-x11.c $(INCS)
+maid-grf.o: maid-grf.c $(INCS)
+maid-x11.o: maid-x11.c $(INCS) maid-grf.h
 main-cap.o: main-cap.c $(INCS)
-main-gtk.o: main-gtk.c $(INCS)
+main-gtk.o: main-gtk.c $(INCS) maid-grf.h
 main-gcu.o: main-gcu.c $(INCS)
 main-lsl.o: main-lsl.c $(INCS)
 main-vcs.o: main-vcs.c $(INCS)
-main-x11.o: main-x11.c $(INCS) maid-x11.h
-main-xaw.o: main-xaw.c $(INCS) maid-x11.h
-main-xpj.o: main-xpj.c $(INCS) maid-x11.h
+main-x11.o: main-x11.c $(INCS) maid-x11.h maid-grf.h
+main-xaw.o: main-xaw.c $(INCS) maid-x11.h maid-grf.h
+main-xpj.o: main-xpj.c $(INCS) maid-x11.h maid-grf.h
 main.o: main.c $(INCS)
 melee1.o: melee1.c $(INCS)
 melee2.o: melee2.c $(INCS)

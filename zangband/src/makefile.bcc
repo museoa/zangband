@@ -98,6 +98,7 @@ OBJ = \
 	melee2.obj \
 	melee1.obj \
 	main-win.obj \
+	maid-grf.obj \
 	notes.obj \
 	load.obj \
 	init2.obj \

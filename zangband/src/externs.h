@@ -168,10 +168,8 @@ extern s16b panel_col_min, panel_col_max;
 extern s16b panel_col_prt, panel_row_prt;
 extern byte *mp_a;
 extern char *mp_c;
-#ifdef USE_TRANSPARENCY
 extern byte *mp_ta;
 extern char *mp_tc;
-#endif /* USE_TRANSPARENCY */
 extern int player_uid;
 extern int player_euid;
 extern int player_egid;
@@ -938,17 +936,6 @@ extern bool repeat_pull(int *what);
 extern void repeat_clear(void);
 extern void repeat_check(void);
 
-#ifdef SUPPORT_GAMMA
-extern byte gamma_table[256];
-extern void build_gamma_table(int gamma);
-#endif /* SUPPORT_GAMMA */
-
-extern cptr get_default_font(int term_num);
-
-#ifdef USE_GRAPHICS
-extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
-#endif /* USE_GRAPHICS */
-
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
 extern s16b modify_stat_value(int value, int amount);
@@ -1251,6 +1238,7 @@ extern int number_of_quests(void);
 extern void trigger_quest_create(byte c_type, vptr data);
 extern void trigger_quest_complete(byte x_type, vptr data);
 extern void do_cmd_knowledge_quests(void);
+
 
 /*
  * Hack -- conditional (or "bizarre") externs

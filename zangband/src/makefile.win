@@ -31,7 +31,7 @@ SRCS = \
   main-win.c readdib.c \
   effects.c quest.c racial.c \
   artifact.c mutation.c flavor.c spells3.c \
-  mspells1.c mspells2.c scores.c mind.c \
+  mspells1.c mspells2.c scores.c mind.c maid-grf.c \
   bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c
 
 OBJS = \
@@ -47,7 +47,7 @@ OBJS = \
   main-win.obj readdib.obj \
   effects.o quest.o racial.o \
   artifact.o mutation.o flavor.o spells3.o \
-  mspells1.o mspells2.o scores.o mind.o \
+  mspells1.o mspells2.o scores.o mind.o maid-grf.o \
   bldg.obj obj_kind.obj wild1.o wild2.o avatar.o notes.o
 
 OBJS32 = \
@@ -63,7 +63,7 @@ OBJS32 = \
   main-win.o32 readdib.o32 \
   effects.o32 quest.o32 racial.o32 \
   artifact.o32 mutation.o32 flavor.o32 spells3.o32 \
-  mspells1.o32 mspells2.o32 scores.o32 mind.o32 \
+  mspells1.o32 mspells2.o32 scores.o32 mind.o32 maid-grf.o32 \
   bldg.o32 obj_kind.o32 wild1.o32 wild2.o32 avatar.o32 notes.o32
 
 default: bccw16.cfg angband cleanobj bccw32.cfg angband32 cleanobj32
@@ -179,7 +179,7 @@ wizard1 wizard2 +
 generate dungeon init1 init2 +
 effects quest racial obj_kind +
 artifact mutation flavor spells3 +
-mspells1 mspells2 scores mind +
+mspells1 mspells2 scores mind maid-grf +
 main-win readdib bldg wild1 wild2 avatar notes,+
 ..\angband.exe,..\angband.map,import cwl,..\ext-win\src\angband.def
 |
@@ -210,7 +210,7 @@ wizard1.o32 wizard2.o32 grid.o32 streams.o32 rooms.o32 +
 generate.o32 dungeon.o32 init1.o32 init2.o32 +
 effects.o32 quest.o32 racial.o32 obj_kind.o32 +
 artifact.o32 mutation.o32 flavor.o32 spells3.o32 +
-mspells1.o32 mspells2.o32 scores.o32 mind.o32 +
+mspells1.o32 mspells2.o32 scores.o32 mind.o32 maid-grf.o32 +
 main-win.o32 readdib.o32 bldg.o32 wild1.o32 wild2.o32 avatar.o32 notes.o32,+
 ..\angband32.exe,..\angband.map,import32 cw32,..\ext-win\src\angband.def
 |
