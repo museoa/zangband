@@ -153,6 +153,4 @@ typedef unsigned long long s64b;
  
 #endif /* L64 */
 
-typedef u64b ufix40_24;
-
 #endif

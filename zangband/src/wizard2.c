@@ -161,6 +161,8 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
+typedef u64b ufix40_24;  /* Fixed point: 40 bits integer 24 bits fractional */
+
 static ufix40_24 pow4(ufix40_24 n)
 {
     ufix40_24 pow2 = (n * n) >> 24;
@@ -172,7 +174,7 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 	int i;
 	long value1, total;
     alloc_entry *table = alloc_kind_table;
-    ufix40_24 p;  /* Fixed point: 40 bits integer 24 bits fractional */
+    ufix40_24 p;
 
     int level;
 
