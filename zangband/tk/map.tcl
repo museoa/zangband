@@ -215,10 +215,6 @@ proc NSMap::ScaleCmd {oop} {
 proc NSMap::SetView {oop y x} {
 
 	set widget [Info $oop widget]
-if {[$widget cget -style] == "iso"} {
-	SetView_iso $oop $y $x
-	return
-}
 
 	scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
 	set height [expr {$y_max - $y_min + 1}]
@@ -246,29 +242,6 @@ if 0 {
 	return
 }
 
-proc NSMap::SetView_iso {oop y x} {
-
-	set widgetId [Info $oop widgetId]
-	set widget [Info $oop widget]
-
-	NSWidget::Size $widgetId height width
-	NSWidget::CaveSize $widgetId dunHgt dunWid
-
-	NSWidget::CaveToIso $widgetId y x
-
-	set y [ConstrainCenter $y $dunHgt $height]
-	set x [ConstrainCenter $x $dunWid $width]
-
-	NSWidget::IsoToCave $widgetId y x
-
-	# Center the widget at the given location
-	$widget center $y $x
-
-	# Update the scrollbars
-	SynchScrollBars $oop
-
-	return
-}
 
 # NSMap::SynchScrollBars --
 #
@@ -284,10 +257,6 @@ proc NSMap::SynchScrollBars {oop} {
 
 	set frame [Info $oop frame]
 	set widget [Info $oop widget]
-if {[$widget cget -style] == "iso"} {
-	SynchScrollBars_iso $oop
-	return
-}
 
 	scan [$widget center] "%d %d" cy cx
 
@@ -316,52 +285,6 @@ if {[$widget cget -style] == "iso"} {
 		[expr {$bottom / double($dunHgt)}]
 
 	set left [expr {$cx - $width / 2}]
-	if {$left < 0} {set left 0}
-	set right [expr {$left + $width}]
-	if {$right > $dunWid} {set right $dunWid}
-	$frame.xscroll set [expr {$left / double($dunWid)}] \
-		[expr {$right / double($dunWid)}]
-
-	set command [Info $oop viewCmd]
-	if {[string length $command]} {
-		uplevel #0 $command
-	}
-
-	return
-}
-
-proc NSMap::SynchScrollBars_iso {oop} {
-
-	set frame [Info $oop frame]
-	set widgetId [Info $oop widgetId]
-	set widget [Info $oop widget]
-
-	scan [$widget center] "%d %d" yc xc
-
-	scan [$widget isoinfo] "%d %d %d %d %d %d %d %d %d %d" \
-		rc cc rTop rBottom cLeft cRight igTop igBot igLef igRig
-	NSWidget::Size $widgetId height width
-	NSWidget::CaveSize $widgetId dunHgt dunWid
-
-	set yi $yc
-	set xi $xc
-	NSWidget::CaveToIso $widgetId yi xi
-
-	if {$dunHgt > $height} {
-#		incr yi 1
-	}
-	if {$dunWid > $width} {
-#		incr xi 1
-	}
-
-	set top [expr {$yi - ($rTop - $igTop) * 2}]
-	if {$top < 0} {set top 0}
-	set bottom [expr {$top + $height}]
-	if {$bottom > $dunHgt} {set bottom $dunHgt}
-	$frame.yscroll set [expr {$top / double($dunHgt)}] \
-		[expr {$bottom / double($dunHgt)}]
-
-	set left [expr {$xi - ($cLeft - $igLef) * 2}]
 	if {$left < 0} {set left 0}
 	set right [expr {$left + $width}]
 	if {$right > $dunWid} {set right $dunWid}

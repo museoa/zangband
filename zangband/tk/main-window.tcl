@@ -1550,18 +1550,6 @@ proc NSMainWindow::ProgressSynch {name option} {
 
 proc NSMainWindow::DisplayCursor {oop show x y} {
 
-	if {0} {
-		set isoview [Global main,isoview]
-		if {$show} {
-			$isoview configure -hit 1 -hitx $x -hity $y
-		} else {
-			$isoview configure -hit -1
-		}
-		$isoview wipe
-		Global cursor,visible $show
-		return
-	}
-
 	set widget [Global main,widget]
 
 	# Show the cursor
