@@ -876,7 +876,7 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 
 	}
 
-	switch (randint1(10))
+	switch (randint1(12))
 	{
 		case 1:
 			o_ptr->flags4 |= TR4_HURT_ACID;
@@ -905,6 +905,10 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 			break;
 		case 10:
 			o_ptr->flags4 |= TR4_DRAIN_STATS;
+			break;
+		case 11:
+		case 12:
+			o_ptr->flags4 |= TR4_AUTO_CURSE;
 			break;
 	}
 

@@ -1549,6 +1549,15 @@ void py_attack(int x, int y)
 		return;
 	}
 
+	/* Using a weapon can cause it to become cursed */
+	if ((o_ptr->flags4 & (TR4_AUTO_CURSE)) && 
+			!(o_ptr->flags3 & (TR3_CURSED)) && (randint(100) < 10))
+	{
+		msgf("Your weapon glows black.");
+		o_ptr->flags3 |= TR3_CURSED;
+		o_ptr->feeling = FEEL_NONE;
+	}
+
 	/* Monsters in rubble can take advantage of cover. -LM- */
 	if (c_ptr->feat == FEAT_RUBBLE)
 	{

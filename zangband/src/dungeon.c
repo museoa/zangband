@@ -1630,6 +1630,15 @@ static void process_world(void)
 			(void)activate_ty_curse(FALSE, &count);
 		}
 
+		/* Auto-curse */
+		if ((o_ptr->flags4 & TR4_AUTO_CURSE) && 
+				!(o_ptr->flags3 & TR3_CURSED) && one_in_(1000))
+		{
+			msgf("There is a malignant black aura surrounding you...");;
+			o_ptr->flags3 |= TR3_CURSED;
+			o_ptr->feeling = FEEL_NONE;
+		}
+
 		/* Make a chainsword noise */
 		if ((o_ptr->activate == ART_CHAINSWORD + 128) &&
 			one_in_(CHAINSWORD_NOISE))
