@@ -4345,6 +4345,11 @@ extern int PlayerUID;
 
 #define FIELD_ACTION_MAX		20
 
+/* To make the declarations in externs.h simpler */
+#define DECL_FIELD_ACTION(N) \
+	extern bool field_action_##N (field_type *f_ptr, vptr nothing)
+
+
 /*
  * Monster enter grid test flags
  */
