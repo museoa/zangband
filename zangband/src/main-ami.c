@@ -37,59 +37,23 @@
 		Menu configuration in xtra/cfg/menu.cfg
 */
 
-/************************************************************************/
-/* Please define the following to suit each variant:							*/
-/* 																							*/
-/* If variant is based upon Ang 281 : #define ANG281							*/
-/* If variant is based upon Ang 282 : #define ANG282							*/
-/* If variant is based upon Ang 283 : #define ANG283 *and*					*/
-/*												  #define ANG282  						*/
-/*																								*/
-/* Comment out all the unused ANG28x definitions!								*/
-/*																								*/
-/* This is the 'developer' version, which means I've aimed more for 		*/
-/* convenience than for elegance; this file will compile with variants	*/
-/* based upon 281, 282 or 283.														*/
-/*																								*/
-/* Note : You may need to define ZANGBAND for variants based upon Zang	*/
-/*        but more importantly, for AB tile support. As far as I know	*/
-/*        only Zang's variants support this, so you may need to change	*/
-/*        some #defines as/when this changes.									*/
-/************************************************************************/
 
 /* What variant is this? Used in the highscore dump */
-#include "angband.h"
-
-
-#ifdef USE_AMI
-
-cptr help_ami[] =
-{
-	"To use AMI (Amiga)",
-	NULL
-};
-
-/* Yep, Bablos, this is still a mess! ;) */
-#define VERTITLE "Zangband 2.5.2b"
-#define VERSION "Zangband"
-#define VERS "2.5.2b"
-#define VARIANT "Zangband 2.5.2b"
+#define VARIANT "Zangband 2.7.1"
 
 /* Main 'assign' needed. Kick2.0+ systems usually don't need it anyway */
 #define VERPATH "Zangband:"
 
 #define CGXSUPPORT					/* Define for RTG support. Leave on */
-/*#define SANGBAND */					/* Define if this is Sangband. */
 #define ZANGBAND						/* Define if this is Zangband. Zangband now has extra gfx */
-/* #define KANGBAND */					/* Define for Kang, used in Highscore handling */
-/* #define GFXFUNCS	*/				/* Define if we allow gfx debugging functions. */
-/* #define DEBUG */
-/* #define ANG283 */
-/* #define ANG282 */               /* Based upon Angband 2.8.2 ? */
-#define ANG281                  /* Based upon Angband 2.8.1 ? */
+//#define GFXFUNCS					/* Define if we allow gfx debugging functions. */
+//#define ANG283
+//#define ANG282                /* Based upon Angband 2.8.2 ? */
 
 #ifndef __CEXTRACT__
+#include "angband.h"
 
+#ifdef USE_AMI
 
 #include "vers.h"
 
@@ -187,22 +151,13 @@ cptr help_ami[] =
 #define MAX_TERM_VERT 24							/* Max num of lines in a term (y) */
 #define MAX_TERM_HORIZ 80							/* Max num of chars in a term (x) */
 
-#define DF_GFXW 256
-#define DF_GFXH 256									/* Size of 8x8 tile image */
-#define DF_GFXB 4
-
 #define AB_GFXW 640
 #define AB_GFXH 960									/* Size of 16x16 tile image */
 #define AB_GFXB 8
 
-#ifdef ZANGBAND
-#  undef DF_GFXH
-#  undef DF_GFXW
-#  undef DF_GFXB
-#  define DF_GFXW 320
-#  define DF_GFXH 792
-#  define DF_GFXB 5
-#endif
+#define DF_GFXW 256
+#define DF_GFXH 792
+#define DF_GFXB 5
 
 /* Size of current bitmap...initialise by load_gfx() */
 int GFXW, GFXH, GFXB;
@@ -240,7 +195,7 @@ struct Library *CyberGfxBase = NULL;
 struct Library *DataTypesBase = NULL;
 
 struct Device *ConsoleDev = NULL;
-struct Library *ConsoleDevice = NULL;
+struct Device *ConsoleDevice = NULL;
 
 /* Data shared between terms */
 typedef struct term_global
@@ -451,7 +406,7 @@ static ULONG palette32[ 32 * 3 + 2 ];
 static UWORD palette4[ 32 ];
 
 /* Version string */
-static char ver[] = "\0$VER: "VERSION" "VERS"  "__BABLOSDATE__;
+static char ver[] = "\0$VER: "VARIANT"  "__BABLOSDATE__;
 
 struct AmiSound
 {
@@ -628,7 +583,6 @@ void amiga_user_name ( char *buf );
 void amiga_write_user_name ( char *name );
 static int get_p_attr ( void );
 static int get_p_char ( void );
-void amiga_register ( char *ourname );
 static void init_default_palette(void);
 static void amiga_gfx(int type);
 static int find_menuitem(int *rmenu, int *item, void *ud);
@@ -1080,7 +1034,7 @@ errr init_ami( void )
 			 WA_DragBar, !backdrop && !ts->notitle,
 			 WA_DepthGadget, !backdrop && !ts->notitle,
 			 WA_NewLookMenus, TRUE,
-			 backdrop ? TAG_IGNORE : WA_ScreenTitle, VERTITLE,
+			 backdrop ? TAG_IGNORE : WA_ScreenTitle, VERIANT,
 			 ( backdrop || ts->notitle ) ? TAG_IGNORE : WA_Title, ts->name,
 			 WA_Activate, TRUE,
 			 WA_RMBTrap, !use_menus,
@@ -1549,7 +1503,7 @@ void amiga_open_libs( void )
 
 	/* Initialise console (only using RawKeyConvert) */
 	ConsoleDev = (struct Device *)OpenDevice("console.device",CONU_LIBRARY,(struct IORequest *)&io_req,0L);
-	ConsoleDevice = (struct Library *)io_req.io_Device;
+	ConsoleDevice = (struct Device *)io_req.io_Device;
 	CyberGfxBase = (struct Library *)OpenLibrary( "cybergraphics.library", 41L);
 
 	/* Is this evil?? */
@@ -1981,6 +1935,8 @@ int read_menus( void )
 					internal = MNU_GRAPHICS_16;
 				else if (!stricmp(buf, "save_palette"))
 					internal = MNU_SAVE_PALETTE;
+                else if (!stricmp(buf, "export_hs"))
+					internal = MNU_EXPORT_HS;
 				else if (!stricmp(buf, "CTRL"))
 					ctrl_key = TRUE;
 				else if (!stricmp(buf, "HELP"))
@@ -2823,7 +2779,7 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 			else
 				Term_resize(nw,nh);
 
-			Term_fresh();
+			Term_redraw();
 
 			Term_activate(angband_term[ 0 ]);
 
@@ -3023,15 +2979,7 @@ int amiga_tomb( void )
 		scalbm = convbm;
 
 	/* King or Queen */
-#ifdef ANG282
-#ifdef SANGBAND
-	if (p_ptr->total_winner)
-#else
 	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
-#endif
-#else
-	if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
-#endif
 	{
 		p = "Magnificent";
 	}
@@ -3039,11 +2987,7 @@ int amiga_tomb( void )
 	/* Normal */
 	else
 	{
-#ifdef SANGBAND
-		p =  mp_ptr->title;
-#else
 		p = player_title[p_ptr->pclass][(p_ptr->lev-1)/5];
-#endif
 	}
 
 	tomb_str( 3, " R.I.P." );
@@ -3057,12 +3001,10 @@ int amiga_tomb( void )
 
 	tomb_str( 7, (char *)p );
 
-/*	tomb_str( 9, (char *)cp_ptr->title ); */
+	tomb_str( 9, (char *)cp_ptr->title );
 
-#ifndef SANGBAND
 	sprintf( tmp, "Level: %d", (int)p_ptr->lev );
 	tomb_str( 10, tmp );
-#endif
 
 	sprintf( tmp, "Exp: %ld", (long)p_ptr->exp );
 	tomb_str( 11, tmp );
@@ -3070,18 +3012,10 @@ int amiga_tomb( void )
 	sprintf( tmp, "AU: %ld", (long)p_ptr->au );
 	tomb_str( 12, tmp );
 
-#ifdef ANG282
 	sprintf( tmp, "Killed on Level %d", p_ptr->depth );
-#else
-	sprintf( tmp, "Killed on Level %d", dun_level );
-#endif
 	tomb_str( 13, tmp );
 
-#ifdef ANG282
 	sprintf( tmp, "by %s", p_ptr->died_from );
-#else
-	sprintf( tmp, "by %s", died_from );
-#endif
 	tomb_str( 14, tmp );
 
 	sprintf( tmp, "%-.24s", ctime(&ct));
@@ -3537,11 +3471,7 @@ static void cursor_anim( void )
 {
 	term_data *td = term_curs;
 	int x0, y0, x1, y1;
-#ifdef ANG282
 	int i = p_ptr->px,j = p_ptr->py;
-#else
-   int i = px, j = py;
-#endif
 
 	if ( !term_curs || td->iconified || !td->wrp)
 		return;
@@ -4109,11 +4039,6 @@ static void amiga_map( void )
 	byte ta,tc;
 	byte tap,tcp;
 
-#ifdef ANG282
-	int max_wid = DUNGEON_WID, max_hgt = DUNGEON_HGT;
-	int min_wid = 0, min_hgt = 0;
-#endif
-
 	/* Only in graphics mode, and not on Kickstart1.3 */
 	if ((use_graphics == GRAPHICS_NONE) || KICK13 || !tglob.mapbm)
 		return;
@@ -4129,7 +4054,6 @@ static void amiga_map( void )
 	Term_clear();
 	Term_fresh();
 
-#ifdef ZANGBAND
 	/* In the dungeon */
 	if (p_ptr->depth)
 	{
@@ -4143,13 +4067,7 @@ static void amiga_map( void )
 		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * MAX_WID )) / 2;
 		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * MAX_HGT )) / 2;
 	}
-#else
 
-	/* Calculate offset values */
-	td->map_x = (( td->fw * 80 ) - ( td->mpt_w * cur_wid )) / 2;
-	td->map_y = (( td->fh * 24 ) - ( td->mpt_h * cur_hgt )) / 2;
-
-#endif
 
 	if (td->map_x < 0)
 		td->map_x = 0;
@@ -5185,12 +5103,13 @@ void amiga_hs_to_ascii(void)
 	char filename[MAX_PATH_LENGTH];
 	char destfile[MAX_PATH_LENGTH];
 	char temp[200];
+    char date_temp[15];
 	struct high_score h;
 	int i;
 	FILE *f,*d;
 
 	int pr, pc, clev, mlev, cdun, mdun;
-	cptr user, gold, when, aged;
+	cptr gold, when, aged;
 
 	path_build(filename,MAX_PATH_LENGTH,ANGBAND_DIR_APEX,"scores.raw");
 	f = fopen(filename,"r");
@@ -5233,31 +5152,30 @@ void amiga_hs_to_ascii(void)
 	cdun = atoi(h.cur_dun);
 	mdun = atoi(h.max_dun);
 
-#ifdef KANGBAND
-	ia = atoi(h.inside_special);    /* -KMW- */
-#endif
 	/* Hack -- extract the gold and such */
-	for (user = h.uid; isspace(*user); user++) /* loop */;
 	for (when = h.day; isspace(*when); when++) /* loop */;
 	for (gold = h.gold; isspace(*gold); gold++) /* loop */;
 	for (aged = h.turns; isspace(*aged); aged++) /* loop */;
 
-	/* Dump some info */
-#ifdef KANGBAND
-	sprintf(temp, "%3d.%9s  %s the %s %s, Level %d",
-	        i + 1, h.pts, h.who,
-	        race_info[pr].title, class_info[pc].title,
-	        clev);
-#else
-/*	sprintf(temp, "%3d.%9s  %s the %s %s",
-	        i + 1, h.pts, h.who,
-	        race_info[pr].title,magic_info[pc].title); */
-	sprintf(temp, "%3d.%9s  %s the %s %s, Level %d",
-	        i + 1, h.pts, h.who,
-	        race_info[pr].title, class_info[pc].title,
-	        clev);
+	/* Reconfigure Date */
+	if ((*when == '@') && strlen(when) == 9)
+	{
+		sprintf(date_temp, "%.2s-%.2s-%.4s", 
+			when+7, when+5, when+1);
+	}
+	else
+	{
+		sprintf(date_temp, "%.2s-%.2s-20%.2s",
+			when+3, when, when+6);
+	}
+	when = date_temp;
 
-#endif
+
+	/* Dump some info */
+	sprintf(temp, "%3d.%9s  %s the %s %s, Level %d",
+	        i + 1, h.pts, h.who,
+	        race_info[pr].title, class_info[pc].title,
+	        clev);
 
 	/* Dump the first line */
 	fprintf(d, "%s\n",temp);
@@ -5277,8 +5195,8 @@ void amiga_hs_to_ascii(void)
 
 	/* And still another line of info */
 	sprintf(temp,
-	       "               (User %s, Date %s, Gold %s, Turn %s).",
-			        user, when, gold, aged);
+	       "               (Date %s, Gold %s, Turn %s).",
+			        when, gold, aged);
 
 	fprintf(d, "%s\n\n",temp);
 
@@ -5355,18 +5273,7 @@ void amiga_write_user_name( char *name )
 
 static int get_p_attr( void )
 {
-#ifdef ZANGBAND
 	return p_ptr->pclass + 36;
-#else
-#ifdef SANGBAND
-	int pc = 1,pr = p_ptr->prace;
-#else
-	int pc = p_ptr->pclass,pr = p_ptr->prace;
-#endif
-	pc = pc % 6;
-	pr = pr % 5;
-	return((( pc * 10 + pr) >> 5) + 12);
-#endif
 }
 
 /* -------------------------------------------------------------------- */
@@ -5379,88 +5286,9 @@ static int get_p_attr( void )
 
 static int get_p_char( void )
 {
-#ifdef ZANGBAND
 	return p_ptr->prace;
-#else
-#ifdef SANGBAND
-	int pc = 1,pr = p_ptr->prace;
-#else
-	int pc = p_ptr->pclass,pr = p_ptr->prace;
-#endif
-	pc = pc % 6;
-	pr = pr % 5;
-	return(( pc * 10 + pr) & 0x1f );
-#endif
 }
 
-void amiga_register(char *ourname)
-{
-	char tmp[500];
-	char tmp2[500];
-	char buf[200];
-	char *p,*s;
-	FILE *f;
-	BPTR templock;
-
-	if (KICK13)
-		return;
-
-	/* Add ENVARC: stuff */
-
-	if (templock = Lock("ENVARC:Angband",ACCESS_READ))
-		UnLock(templock);
-	else
-	{
-		templock = CreateDir("ENVARC:Angband");
-		if (templock)
-			UnLock(templock);
-		else
-			return;
-	}
-
-	/* Path of executable */
-	NameFromLock(GetProgramDir(),tmp2,400);
-	GetProgramName(buf,200);
-	AddPart(tmp2,buf,500);
-	if (getasn("ENVARC"))
-	{
-		f = fopen("ENVARC:Angband/AngMUI","r");
-		if (!f)
-		{
-			f = fopen("ENVARC:Angband/AngMUI","w");
-			if (!f)
-				return;
-		}
-		while (fgets(tmp,500,f))
-		{
-			int z = strlen(tmp) - 1;
-
-			if (tmp[z] == '\n')
-				tmp[z] = 0;
-
-			p = strstr(tmp,",");
-			p++;
-			p = strstr(p,",");
-			p++;
-			s = p;
-			p = strstr(p,",");
-			*p++ = 0;
-
-			if (strreq(tmp2, s))
-			{
-				fclose(f);
-				return;
-			}
-		}
-		fclose(f);
-		f = fopen("ENVARC:Angband/AngMUI","a");
-		if (f)
-		{
-			fprintf(f,"%s,%s,%s,%d\n",VERTITLE,ourname,tmp2,SOUND_MAX);
-			fclose(f);
-		}
-	}
-}
 
 static void amiga_gfx(int type)
 {
@@ -5504,8 +5332,13 @@ static void amiga_gfx(int type)
 			return;
 		}
 		Term_load();
+        
+        /* XXX XXX XXX */
+		if (screen_enhanced)
+			use_graphics = GRAPHICS_ADAM_BOLT;
+		else
+			use_graphics = GRAPHICS_ORIGINAL;
 		
-		/* XXX XXX XXX */
 		reset_visuals();
 		do_cmd_redraw();
 	}
