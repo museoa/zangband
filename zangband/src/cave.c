@@ -674,8 +674,8 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 		if (project_stop(c_ptr, flg)) break;
 	}
 
-	/* Length */
-	return (sq + 1);
+	/* Length (never more than MAX_RANGE) */
+	return (MIN(sq + 1, MAX_RANGE));
 }
 
 
