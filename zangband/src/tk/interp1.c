@@ -2268,18 +2268,6 @@ void angtk_init(void)
 	/* Hash table for object kind "tval" */
 	init_tval_hash();
 
-	/* Settings */
-	init_settings();
-
-	for (i = 0; commandInit[i].name; ++i)
-	{
-		if (streq(commandInit[i].name, "setting"))
-		{
-			commandInit[i].clientData = g_setting;
-			break;
-		}
-	}
-	
 	/* Tcl commands */
 	CommandInfo_Init(g_interp, commandInit, NULL);
 

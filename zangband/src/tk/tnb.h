@@ -259,11 +259,6 @@ extern int map_symbol_feature(int f_idx);
 extern int map_symbol_find(Tcl_Interp *interp, Tcl_Obj *objName,
 	int *symbolIndex);
 
-
-/* setting.c */
-extern void init_settings(void);
-extern struct SettingGroup_ *g_setting;
-
 /* struct.c */
 extern void init_struct(void);
 
