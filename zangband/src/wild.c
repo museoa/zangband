@@ -906,7 +906,8 @@ void move_wild(void)
 	if (y + WILD_GRID_SIZE > WILD_SIZE) y = WILD_SIZE - WILD_GRID_SIZE;
 		
 	/* Hack - set town */
-	p_ptr->town_num = wild[py>>4][px>>4].done.town;
+	p_ptr->town_num = wild[p_ptr->wilderness_y>>4]
+		[p_ptr->wilderness_x>>4].done.town;
 	
 	/* 
 	 * Hack - check to see if first block is the same.
@@ -1013,18 +1014,18 @@ void create_wilderness(void)
 	{
 		px = p_ptr->wilderness_x;
 		py = p_ptr->wilderness_y;
+		
+		/* Determine number of panels */
+		max_panel_rows = WILD_SIZE*16 * 2 - 2;
+		max_panel_cols = WILD_SIZE*16 * 2 - 2;
+
+		/* Assume illegal panel */
+		panel_row = max_panel_rows;
+		panel_col = max_panel_cols;
 	}
 	
 	max_wild_y = WILD_SIZE*16;
 	max_wild_x = WILD_SIZE*16;
-	
-	/* Determine number of panels */
-	max_panel_rows = WILD_SIZE*16 * 2 - 2;
-	max_panel_cols = WILD_SIZE*16 * 2 - 2;
-
-	/* Assume illegal panel */
-	panel_row = max_panel_rows;
-	panel_col = max_panel_cols;
 	
 	/* Clear cache */
 	wild_grid.cache_count = 0;
@@ -1041,8 +1042,11 @@ void create_wilderness(void)
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);
 	
-	/* Allocate blocks around player */
-	move_wild();
+	if (!dun_level)
+	{
+		/* Allocate blocks around player */
+		move_wild();
+	}
 }
 
 

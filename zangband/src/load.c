@@ -2788,6 +2788,8 @@ static errr rd_dungeon(void)
 		}
 	}
 
+	/*change_level(dun_level);*/
+
 	/* There is no town stored in cave[][] */
 	set_no_town();
 	
