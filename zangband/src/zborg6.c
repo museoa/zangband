@@ -14091,8 +14091,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (!bp_ptr->cur_lite) return (FALSE);
 
 		/* Allow "stone to mud" ability */
-		if (borg_spell_legal(REALM_SORCERY, 1, 8) ||
-			borg_spell_legal(REALM_ARCANE, 2, 4) ||
+		if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 			borg_spell_legal(REALM_NATURE, 1, 0) ||
 			borg_spell_legal(REALM_CHAOS, 2, 3) ||
 			borg_racial(RACE_HALF_GIANT)) return (TRUE);
