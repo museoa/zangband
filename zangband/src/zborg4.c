@@ -7545,8 +7545,8 @@ static int borg_danger_aux2(int i, bool average)
 					z = 600;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSHRD]) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
@@ -7562,8 +7562,8 @@ break;
 				z = (1 * 6);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
 				break;
@@ -7575,8 +7575,8 @@ break;
 				z = (3 * 6);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
 				break;
@@ -7588,8 +7588,8 @@ break;
 				z = (5 * 6);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
 				break;
@@ -7601,8 +7601,8 @@ break;
 				z = (7 * 6);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
 				break;
@@ -7618,8 +7618,8 @@ break;
 					z = 1200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
@@ -7640,8 +7640,8 @@ break;
 					z = 1200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
@@ -7662,8 +7662,8 @@ break;
 					z = 1200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
@@ -7684,8 +7684,8 @@ break;
 					z = 1200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
@@ -7705,8 +7705,8 @@ break;
 					z = 600;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RPOIS]) z = (z + 2) / 3;
 				if (my_oppose_pois) z = (z + 2) / 3;
@@ -7728,8 +7728,8 @@ break;
 					z = 450;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RNTHR])
 				{
@@ -7753,7 +7753,7 @@ break;
 					z *= 2;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RLITE])
 				{
@@ -7774,7 +7774,7 @@ z /= 25;
 					z = 350;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RDARK]) z = (z * 2) / 3;
 				if (borg_skill[BI_RDARK]) break;
@@ -7792,7 +7792,7 @@ z /= 25;
 					z = 350;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RCONF]) z = z / 2;
 				if (borg_skill[BI_RCONF]) break;
@@ -7812,7 +7812,7 @@ z /= 25;
 					z = 350;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RSND]) z = (z * 5) / 9;
 				if (borg_skill[BI_RSND]) break;
@@ -7837,7 +7837,7 @@ z /= 25;
 					z = 500;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RKAOS]) z = (z * 6) / 9;
 				if (!borg_full_damage)
@@ -7856,7 +7856,7 @@ z /= 25;
 					z = 400;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RDIS]) z = (z * 6) / 10;
 				if (borg_skill[BI_RDIS]) break;
@@ -7873,7 +7873,7 @@ z /= 25;
 					z = 250;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RNXUS]) z = (z * 6) / 10;
 				if (borg_skill[BI_RNXUS]) break;
@@ -7893,7 +7893,7 @@ z /= 25;
 					z = 150;
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -7911,8 +7911,8 @@ z /= 25;
 					z = 200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -7930,8 +7930,8 @@ break;
 					z = 200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -7961,8 +7961,8 @@ break;
 					z = 400;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSHRD]) z = (z * 6) / 9;
 				if (borg_skill[BI_RSHRD]) break;
@@ -7982,8 +7982,8 @@ break;
 					z = 200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSND]) break;
 				/* Pump this up if you have goi so that the borg is sure */
@@ -8009,8 +8009,8 @@ break;
 					z = 200;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSND]) break;
 				/* if already stunned be REALLY nervous about this */
@@ -8032,8 +8032,8 @@ break;
 					z = 250;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -8048,8 +8048,8 @@ break;
 				z = (lev + (10 * 6));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (!borg_skill[BI_RPOIS]) p += 25;
 				if (!borg_full_damage)
@@ -8066,8 +8066,8 @@ break;
 					z = 600;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (!borg_skill[BI_RPOIS]) p += 25;
 				/* if looking at full damage, things that are just annoying */
@@ -8083,8 +8083,8 @@ break;
 				z = ((lev * 2) + 75);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RKAOS]) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
@@ -8101,8 +8101,8 @@ break;
 				if (z >= 300) z = 300;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				/*     if (borg_skill[BI_Rdisintegration?]) z = (z + 2) / 3; */
 				/* if looking at full damage, things that are just annoying */
@@ -8118,8 +8118,8 @@ break;
 				z = (lev * 3) / 2 + 15;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
@@ -8137,8 +8137,8 @@ break;
 				z = (lev * 3) / 2 + 8;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
@@ -8156,8 +8156,8 @@ break;
 				z = (lev * 7) / 2 + 10;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
@@ -8175,8 +8175,8 @@ break;
 				z = (lev * 3) / 2 + 10;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
@@ -8193,8 +8193,8 @@ break;
 				z = (12 * 2);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RPOIS]) z = (z + 2) / 3;
 				if (my_oppose_pois) z = (z + 2) / 3;
@@ -8213,8 +8213,8 @@ break;
 				z = (lev + (75) + 50);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RNTHR]) z = (z * 6) / 8;
 				if (borg_skill[BI_RNTHR]) break;
@@ -8231,8 +8231,8 @@ break;
 				z = ((lev * 5) / 2) + 50;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSND]) break;
 				/* if already stunned be REALLY nervous about this */
@@ -8256,8 +8256,8 @@ break;
 					p += 50;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				break;
 			}
@@ -8268,7 +8268,7 @@ break;
 				z = (((lev * 4)) + (75));
 				if (borg_goi)
 				{
-z /= 25;
+					z /= 25;
 				}
 				if (borg_skill[BI_RDARK]) z = (z * 6) / 9;
 				if (borg_skill[BI_RDARK]) break;
@@ -8367,8 +8367,8 @@ z /= 25;
 				z = ((7 * 8) + (lev / 3));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
@@ -8386,8 +8386,8 @@ break;
 				z = ((4 * 8) + (lev / 3));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
@@ -8405,8 +8405,8 @@ break;
 				z = ((9 * 8) + (lev / 3));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
@@ -8424,8 +8424,8 @@ break;
 				z = ((6 * 8) + (lev / 3));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
@@ -8449,8 +8449,8 @@ break;
 				z = (50 + 30 + (5 * 5) + (lev * 3) / 2);
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RNTHR]) z = (z * 6) / 8;
 				if (borg_skill[BI_RNTHR]) break;
@@ -8467,8 +8467,8 @@ break;
 				z = ((10 * 10) + (lev));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSND]) break;
 				/* if already stunned be REALLY nervous about this */
@@ -8492,8 +8492,8 @@ break;
 					p += 50;
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				break;
 			}
@@ -8504,8 +8504,8 @@ break;
 				z = (10 + (8 * 7) + (lev));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				if (borg_skill[BI_RSND]) break;
 				/* if already stunned be REALLY nervous about this */
@@ -8522,8 +8522,8 @@ break;
 				z = ((6 * 6) + (lev));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -8544,8 +8544,8 @@ break;
 				z = ((2 * 6) + (lev / 3));
 				if (borg_goi)
 				{
-z /= 25;
-break;
+					z /= 25;
+					break;
 				}
 				break;
 			}

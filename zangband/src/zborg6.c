@@ -2564,7 +2564,7 @@ static bool borg_heal(int danger)
 		 borg_mindcr_fail(MIND_ADRENALINE, 50, allow_fail) ||
 		 /* ||
 		    borg_quaff_crit(FALSE) don't want to CCW here, it would not help enough */
-		 ))
+		))
 	{
 		borg_note("# Healing Level 4.");
 		return (TRUE);
@@ -7095,7 +7095,7 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam,
 
 	/* Require ability (right now) */
 	if (!borg_mindcr_okay_fail(spell, level, (borg_fighting_unique ? 40 : 25)))
-			return (0);
+		return (0);
 
 
 	/* Choose optimal location */
@@ -10149,7 +10149,7 @@ static int borg_defend_aux_glyph(int p1)
 								   (mb_ptr->terrain == FEAT_MINOR_GLYPH) ||
 								   (mb_ptr->terrain == FEAT_GLYPH) ||
 								   ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) */
-		 ||
+		||
 		(mb_ptr->terrain == FEAT_CLOSED) || (mb_ptr->terrain == FEAT_LESS) ||
 		(mb_ptr->terrain == FEAT_MORE) || (mb_ptr->terrain == FEAT_OPEN) ||
 		(mb_ptr->terrain == FEAT_BROKEN))
@@ -10283,7 +10283,7 @@ static int borg_defend_aux_true_warding(int p1)
 			/* track spaces that cannot be protected */
 			if ((mb_ptr->object)	/* ||
 									   ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) */
-				 ||
+				||
 				(mb_ptr->terrain == FEAT_LESS) || (mb_ptr->terrain == FEAT_MORE)
 				|| (mb_ptr->terrain == FEAT_OPEN) ||
 				(mb_ptr->terrain == FEAT_BROKEN) || (mb_ptr->monster))
@@ -10389,7 +10389,7 @@ static int borg_defend_aux_create_walls(int p1)
 			/* track spaces that cannot be protected */
 			if ((mb_ptr->object)	/*||
 									   ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) */
-				 ||
+				||
 				(mb_ptr->terrain == FEAT_LESS) || (mb_ptr->terrain == FEAT_MORE)
 				|| (mb_ptr->terrain == FEAT_OPEN) ||
 				(mb_ptr->terrain == FEAT_BROKEN) || (mb_ptr->monster))
@@ -12373,7 +12373,7 @@ static int borg_perma_aux_glyph(void)
 	if ((mb_ptr->object)		/*||
 								   (mb_ptr->terrain == FEAT_GLYPH) ||
 								   ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) */
-		 ||
+		||
 		(mb_ptr->terrain == FEAT_CLOSED) || (mb_ptr->terrain == FEAT_LESS) ||
 		(mb_ptr->terrain == FEAT_MORE) || (mb_ptr->terrain == FEAT_OPEN) ||
 		(mb_ptr->terrain == FEAT_BROKEN))
@@ -14232,7 +14232,7 @@ static bool borg_play_step(int y2, int x2)
 
 				/* Attempt to Commit the flow */
 				if (!borg_flow_commit("targetable position", GOAL_KILL))
-						return (FALSE);
+					return (FALSE);
 
 				/* Take one step */
 				if (!borg_flow_old(GOAL_KILL)) return (FALSE);
@@ -14393,7 +14393,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Attempt to Commit the flow */
 		if (!borg_flow_commit("anti-summon corridor", GOAL_KILL))
-				return (FALSE);
+			return (FALSE);
 
 		/* Take one step */
 		if (!borg_flow_old(GOAL_KILL)) return (FALSE);

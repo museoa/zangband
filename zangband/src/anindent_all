@@ -293,5 +293,11 @@
 ./anindent zborg8.h
 ./anmerge zborg8.h
 
+./anindent zborg9.c
+./anmerge zborg9.c
+
+./anindent zborg9.h
+./anmerge zborg9.h
+
 rm ./s_back.c
 rm ./s_back.c~
