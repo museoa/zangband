@@ -297,7 +297,7 @@ extern void player_birth(void);
 extern int distance(int x1, int y1, int x2, int y2);
 extern bool is_trap(cave_type *c_ptr);
 extern bool is_visible_trap(cave_type *c_ptr);
-extern bool los(int y1, int x1, int y2, int x2);
+extern bool los(int x1, int y1, int x2, int y2);
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope,
 	 int *sq);
 extern bool projectable(int y1, int x1, int y2, int x2);

@@ -4694,7 +4694,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					}
 
 					while (max_attempts && in_bounds2(t_y, t_x) &&
-					    !(los(y, x, t_y, t_x)));
+					    !(los(x, y, t_x, t_y)));
 
 					if (max_attempts < 1)
 					{

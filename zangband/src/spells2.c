@@ -1900,7 +1900,7 @@ bool raise_dead(int y, int x, bool pet)
 		fx = f_ptr->fx;
 
 		/* Require line of sight */
-		if (!los(fy, fx, y, x)) continue;
+		if (!los(fx, fy, x, y)) continue;
 
 		c_ptr = area(fy, fx);
 

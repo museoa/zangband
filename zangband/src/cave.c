@@ -242,7 +242,7 @@ static bool cave_stop_wall(cave_type *c_ptr)
  *
  * Use the "update_view()" function to determine player line-of-sight.
  */
-bool los(int y1, int x1, int y2, int x2)
+bool los(int x1, int y1, int x2, int y2)
 {
 	return (los_general(x1, y1, x2, y2, cave_stop_wall));
 }
