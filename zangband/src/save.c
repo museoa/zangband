@@ -1862,7 +1862,7 @@ bool load_player(void)
 	{
 		/* Give a message */
 		msg_print("Savefile does not exist.");
-		msg_print(NULL);
+		message_flush();
 
 		/* Allow this */
 		return (TRUE);
@@ -1895,7 +1895,7 @@ bool load_player(void)
 
 			/* Message */
 			msg_print("Savefile is currently in use.");
-			msg_print(NULL);
+			message_flush();
 
 			/* Oops */
 			return (FALSE);
@@ -2050,7 +2050,7 @@ bool load_player(void)
 				msg_format("Converted a %d.%d.%d savefile.",
 				    z_major, z_minor, z_patch);
 			}
-			msg_print(NULL);
+			message_flush();
 		}
 
 		/* Player is dead */
@@ -2115,7 +2115,7 @@ bool load_player(void)
 	/* Message */
 	msg_format("Error (%s) reading %d.%d.%d savefile.",
 		   what, z_major, z_minor, z_patch);
-	msg_print(NULL);
+	message_flush();
 
 	/* Oops */
 	return (FALSE);

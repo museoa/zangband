@@ -125,32 +125,32 @@ static int critical_melee(int chance, int sleeping_bonus, char *m_name,
 		if ((mult_m_crit == 15) || 
 			((o_ptr->tval == TV_HAFTED) && (o_ptr->sval == SV_WHIP)))
 		{
-			msg_format("You strike %s.", m_name);
+			message_format(MSG_HIT, 0, "You strike %s.", m_name);
 		}
 		else if (mult_m_crit == 20)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-				msg_format("You hack at %s.", m_name);
+				message_format(MSG_HIT, 0, "You hack at %s.", m_name);
 			else
-				msg_format("You bash %s.", m_name);
+				message_format(MSG_HIT, 0, "You bash %s.", m_name);
 		}
 		else if (mult_m_crit == 27)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-				msg_format("You slash %s.", m_name);
+				message_format(MSG_HIT, 0, "You slash %s.", m_name);
 			else
-				msg_format("You pound %s.", m_name);
+				message_format(MSG_HIT, 0, "You pound %s.", m_name);
 		}
 		else if (mult_m_crit == 36)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-				msg_format("You gouge %s!", m_name);
+				message_format(MSG_HIT, 0, "You gouge %s!", m_name);
 			else
-				msg_format("You bludgeon %s!", m_name);
+				message_format(MSG_HIT, 0, "You bludgeon %s!", m_name);
 		}
 		else
 		{
-			msg_format("You *smite* %s!", m_name);
+			message_format(MSG_HIT, 0, "You *smite* %s!", m_name);
 		}	
 	}
 	
@@ -161,7 +161,7 @@ static int critical_melee(int chance, int sleeping_bonus, char *m_name,
 	else
 	{
 		mult_m_crit = 10;
-		msg_format("You hit %s.", m_name);
+		message_format(MSG_HIT, 0, "You hit %s.", m_name);
 	}
 
 	return (mult_m_crit);
@@ -776,7 +776,7 @@ void carry(int pickup)
 					char out_val[160];
 					
 					/* Paranoia XXX XXX XXX */
-					msg_print(NULL);
+					message_flush();
 					
 					sprintf(out_val, "Pick up %s? [y/n/k] ", o_name);
 					
@@ -790,7 +790,7 @@ void carry(int pickup)
 						if (quick_messages) break;
 						if (i == ESCAPE) break;
 						if (strchr("YyNnKk", i)) break;
-						bell();
+						bell("Illegal pick-up command!");
 					}
 
 					/* Erase the prompt */
@@ -914,7 +914,7 @@ void carry(int pickup)
 			char out_val[160];
 					
 			/* Paranoia XXX XXX XXX */
-			msg_print(NULL);
+			message_flush();
 			
 			/* Describe the object */
 			object_desc(o_name, o_ptr, TRUE, 3);
@@ -931,7 +931,7 @@ void carry(int pickup)
 				if (quick_messages) break;
 				if (i == ESCAPE) break;
 				if (strchr("YyNnKk", i)) break;
-				bell();
+				bell("Illegal pick-up command!");
 			}
 
 			/* Erase the prompt */
@@ -1123,7 +1123,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		/* Sound */
 		sound(SOUND_HIT);
 
-		msg_format("You hit %s with your %s.", m_name, atk_desc);
+		message_format(MSG_HIT, m_ptr->r_idx, "You hit %s with your %s.", m_name, atk_desc);
 
 		k = damroll(ddd, dss);
 		k = critical_norm(n_weight, p_ptr->to_h, k);
@@ -1178,7 +1178,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		sound(SOUND_MISS);
 
 		/* Message */
-		msg_format("You miss %s.", m_name);
+		message_format(MSG_MISS, m_ptr->r_idx, "You miss %s.", m_name);
 	}
 }
 
@@ -1340,12 +1340,12 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 	{
 		if (r_ptr->flags1 & RF1_MALE)
 		{
-			msg_format("You hit %s in the groin with your knee!", m_name);
+			message_format(MSG_HIT, m_ptr->r_idx, "You hit %s in the groin with your knee!", m_name);
 			sound(SOUND_PAIN);
 			special_effect = MA_KNEE;
 		}
 		else
-			msg_format(ma_ptr->desc, m_name);
+			message_format(MSG_HIT, m_ptr->r_idx, ma_ptr->desc, m_name);
 	}
 
 	else if (ma_ptr->effect == MA_SLOW)
@@ -1353,10 +1353,10 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 		if (!((r_ptr->flags1 & RF1_NEVER_MOVE) ||
 			strchr("~#{}.UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
 		{
-			msg_format("You kick %s in the ankle.", m_name);
+			message_format(MSG_HIT, m_ptr->r_idx, "You kick %s in the ankle.", m_name);
 			special_effect = MA_SLOW;
 		}
-		else msg_format(ma_ptr->desc, m_name);
+		else message_format(MSG_HIT, m_ptr->r_idx, ma_ptr->desc, m_name);
 	}
 	else
 	{
@@ -1365,7 +1365,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 			stun_effect = rand_range(ma_ptr->effect / 2, ma_ptr->effect);
 		}
 
-		msg_format(ma_ptr->desc, m_name);
+		message_format(MSG_HIT, m_ptr->r_idx, ma_ptr->desc, m_name);
 	}
 
 	*k = critical_norm(p_ptr->lev * randint1(10), ma_ptr->min_level, *k);
@@ -1954,7 +1954,7 @@ void py_attack(int y, int x)
 			sound(SOUND_MISS);
 
 			/* Message */
-			msg_format("You miss %s.", m_name);
+			message_format(MSG_MISS, m_ptr->r_idx, "You miss %s.", m_name);
 		}
 	}
 
@@ -1998,7 +1998,7 @@ void py_attack(int y, int x)
 		sound(SOUND_FLEE);
 
 		/* Message */
-		msg_format("%^s flees in terror!", m_name);
+		message_format(MSG_FLEE, m_ptr->r_idx, "%^s flees in terror!", m_name);
 	}
 
 	if (drain_left != MAX_VAMPIRIC_DRAIN)
@@ -2444,7 +2444,7 @@ void move_player(int dir, int do_pickup)
 		if ((!(c_ptr->info & (CAVE_MARK))) &&
 		    (p_ptr->blind || !(c_ptr->info & (CAVE_LITE))))
 		{
-			msg_print("You feel something blocking your way.");
+			message(MSG_HITWALL, 0, "You feel something blocking your way.");
 			c_ptr->info |= (CAVE_MARK);
 			lite_spot(y, x);
 		}
@@ -2454,7 +2454,7 @@ void move_player(int dir, int do_pickup)
 			/* Rubble */
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
-				msg_print("There is rubble blocking your way.");
+				message(MSG_HITWALL, 0, "There is rubble blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 					p_ptr->energy_use = 0;
@@ -2469,7 +2469,7 @@ void move_player(int dir, int do_pickup)
 			/* Jungle */
 			else if (c_ptr->feat == FEAT_JUNGLE)
 			{
-				msg_print("The jungle is impassable.");
+				message(MSG_HITWALL, 0, "The jungle is impassable.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 					p_ptr->energy_use = 0;
@@ -2478,7 +2478,7 @@ void move_player(int dir, int do_pickup)
 			/* Pillar */
 			else if (c_ptr->feat == FEAT_PILLAR)
 			{
-				msg_print("There is a pillar blocking your way.");
+				message(MSG_HITWALL, 0, "There is a pillar blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 					p_ptr->energy_use = 0;
@@ -2487,7 +2487,7 @@ void move_player(int dir, int do_pickup)
 			/* Wall (or secret door) */
 			else
 			{
-				msg_print("There is a wall blocking your way.");
+				message(MSG_HITWALL, 0, "There is a wall blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 					p_ptr->energy_use = 0;
@@ -2620,7 +2620,7 @@ void move_player(int dir, int do_pickup)
 			{
 				quest[p_ptr->inside_quest].status = QUEST_STATUS_COMPLETED;
 				msg_print("You accomplished your quest!");
-				msg_print(NULL);
+				message_flush();
 			}
 
 			leaving_quest = p_ptr->inside_quest;

@@ -634,7 +634,7 @@ void teleport_player_level(void)
 
 	if (!p_ptr->depth || ironman_downward)
 	{
-		msg_print("You sink through the floor.");
+		message(MSG_TPLEVEL, 0, "You sink through the floor.");
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -645,7 +645,7 @@ void teleport_player_level(void)
 	}
 	else if (quest_number(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
-		msg_print("You rise up through the ceiling.");
+		message(MSG_TPLEVEL, 0, "You rise up through the ceiling.");
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -656,7 +656,7 @@ void teleport_player_level(void)
 	}
 	else if (one_in_(2))
 	{
-		msg_print("You rise up through the ceiling.");
+		message(MSG_TPLEVEL, 0, "You rise up through the ceiling.");
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -667,7 +667,7 @@ void teleport_player_level(void)
 	}
 	else
 	{
-		msg_print("You sink through the floor.");
+		message(MSG_TPLEVEL, 0, "You sink through the floor.");
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 

@@ -533,7 +533,7 @@ static s32b gamble_init(void)
 	if (p_ptr->au < 1)
 	{
 		msg_print("Hey! You don't have gold - get out of here!");
-		msg_print(NULL);
+		message_flush();
 
 		screen_load();
 		return (0);
@@ -573,7 +573,7 @@ static s32b gamble_init(void)
 	if (wager > p_ptr->au)
 	{
 		msg_print("Hey! You don't have the gold - get out of here!");
-		msg_print(NULL);
+		message_flush();
 
 		screen_load();
 		return (0);
@@ -589,7 +589,7 @@ static s32b gamble_init(void)
 		wager = 1;
 	}
 		
-	msg_print(NULL);
+	message_flush();
 
 	sprintf(tmp_str, "Gold before game: %9ld", p_ptr->au);
 	prt(tmp_str, 20, 2);
@@ -636,7 +636,7 @@ static bool gamble_again(bool win, int odds, s32b wager)
 	if (wager > p_ptr->au)
 	{
 		msg_print("Hey! You don't have the gold - get out of here!");
-		msg_print(NULL);
+		message_flush();
 
 		/* Get out here */
 		return (FALSE);
@@ -661,7 +661,7 @@ static void gamble_done(void)
 	else
 		msg_print("You lost gold! Haha, better head home.");
 	
-	msg_print(NULL);
+	message_flush();
 	
 	screen_load();
 }
@@ -752,7 +752,7 @@ void gamble_craps(void)
 			{
 				/* Ok - we need to roll a few more times */
 				msg_print("Hit any key to roll again");
-				msg_print(NULL);
+				message_flush();
 
 				roll1 = randint1(6);
 				roll2 = randint1(6);
@@ -801,7 +801,7 @@ void gamble_spin_wheel(void)
 		
 		choice = get_quantity("Pick a number (1-10): ", 10);
 		
-		msg_print(NULL);
+		message_flush();
 		roll1 = randint1(10);
 		sprintf(tmp_str, "The wheel spins to a stop and the winner is %d",
 			roll1);
@@ -898,7 +898,7 @@ bool inn_rest(void)
 	if ((turn % (10L * TOWN_DAWN)) < 50000)
 	{
 		msg_print("The rooms are available only at night.");
-		msg_print(NULL);
+		message_flush();
 		
 		return (FALSE);
 	}
@@ -907,9 +907,9 @@ bool inn_rest(void)
 	if ((p_ptr->poisoned) || (p_ptr->cut))
 	{
 		msg_print("You need a healer, not a room.");
-		msg_print(NULL);
+		message_flush();
 		msg_print("Sorry, but don't want anyone dying in here.");
-		msg_print(NULL);			
+		message_flush();			
 
 		return (FALSE);
 	}
@@ -941,7 +941,7 @@ bool inn_rest(void)
 		get_mon_num_prep(NULL, NULL);
 
 		msg_print("You awake screaming.");
-		msg_print(NULL);
+		message_flush();
 		
 		return (TRUE);
 	}
@@ -953,7 +953,7 @@ bool inn_rest(void)
 	p_ptr->csp = p_ptr->msp;
 
 	msg_print("You awake refreshed for the new day.");
-	msg_print(NULL);
+	message_flush();
 
 	return (TRUE);
 }
@@ -968,7 +968,7 @@ static void share_gold(void)
 {
 	int i = (p_ptr->lev * 2) * 10;
 	msg_format("You collect %d gold pieces", i);
-	msg_print(NULL);
+	message_flush();
 	p_ptr->au += i;
 }
 
@@ -1099,7 +1099,7 @@ static void castle_quest(void)
 			q_ptr->cur_num = 0;
 			name = (r_name + r_ptr->name);
 			msg_format("Your quest: kill %d %s", q_ptr->max_num, name);
-			msg_print(NULL);
+			message_flush();
 		}
 		else
 		{
@@ -1469,7 +1469,7 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	{
 		object_desc(tmp_str, o_ptr, TRUE, 0);
 		msg_format("You do not have the gold to improve %s!", tmp_str);
-		msg_print(NULL);
+		message_flush();
 		return (FALSE);
 	}
 
@@ -1511,7 +1511,7 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	{
 		object_desc(tmp_str, o_ptr, TRUE, 1);
 		msg_format("Improved %s for %d gold.", tmp_str, cost * o_ptr->number);
-		msg_print(NULL);
+		message_flush();
 
 		/* Charge the money */
 		p_ptr->au -= (cost * o_ptr->number);
@@ -1579,7 +1579,7 @@ void building_recharge(s32b cost)
 	if (!object_known_p(o_ptr))
 	{
 		msg_format("The item must be identified first!");
-		msg_print(NULL);
+		message_flush();
 
 		if ((p_ptr->au >= 50) &&
 			get_check("Identify for 50 gold? "))
@@ -1616,7 +1616,7 @@ void building_recharge(s32b cost)
 		{
 			/* No recharge necessary */
 			msg_format("That doesn't need to be recharged.");
-			msg_print(NULL);
+			message_flush();
 			return;
 		}
 	}
@@ -1656,7 +1656,7 @@ void building_recharge(s32b cost)
 		else if ((o_ptr->tval == TV_STAFF) && (o_ptr->number > 1))
 			msg_print("These staffs are already fully charged.");
 
-		msg_print(NULL);
+		message_flush();
 		return;
 	}
 
@@ -1668,7 +1668,7 @@ void building_recharge(s32b cost)
 	{
 		object_desc(tmp_str, o_ptr, TRUE, 0);
 		msg_format("You need %d gold to recharge %s!", price, tmp_str);
-		msg_print(NULL);
+		message_flush();
 		return;
 	}
 
@@ -1715,7 +1715,7 @@ void building_recharge(s32b cost)
 	/* Give feedback */
 	object_desc(tmp_str, o_ptr, TRUE, 3);
 	msg_format("%^s %s recharged for %d gold.", tmp_str, ((o_ptr->number > 1) ? "were" : "was"), price);
-	msg_print(NULL);
+	message_flush();
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -1745,7 +1745,7 @@ bool building_healer(void)
 	if (paid)
 	{
 		msg_print("You are infused with magic, and your ailments disappear.");
-		msg_print(NULL);	
+		message_flush();	
 	}
 	
 	return (paid);
@@ -1789,7 +1789,7 @@ static void bldg_process_command(building_type *bldg, int i)
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 			msg_print("Your posessions have been identified.");
-			msg_print(NULL);
+			message_flush();
 			paid = TRUE;
 			break;
 		case BACT_LEARN:
@@ -1821,7 +1821,7 @@ static void bldg_process_command(building_type *bldg, int i)
 			else
 			{
 				msg_print("You just had your daily allowance!");
-				msg_print(NULL);
+				message_flush();
 			}
 			break;
 		case BACT_ENCHANT_ARROWS:
@@ -2274,7 +2274,7 @@ void do_cmd_bldg(field_type *f_ptr)
 
 
 	/* Flush messages XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Clear the screen */

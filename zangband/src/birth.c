@@ -952,7 +952,7 @@ static void get_extra(void)
 		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 	msg_format("Current Life Rating is %d/100.", percent);
-	msg_print(NULL);
+	message_flush();
 
 #endif /* SHOW_LIFE_RATE */
 
@@ -1843,12 +1843,12 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 			}
 			else
 			{
-				bell();
+				bell("Illegal birth choice!");
 			}
 		}
 
 		/* Invalid input */
-		bell();
+		bell("Illegal birth choice!");
 	}
 
 	return (INVALID_CHOICE);
@@ -2583,7 +2583,7 @@ static bool player_birth_aux_2(void)
 		if (cost > 48)
 		{
 			/* Warning */
-			bell();
+			bell("Excessive stats!");
 
 			/* Reduce stat */
 			stats[stat]--;
@@ -3044,7 +3044,7 @@ static bool player_birth_aux_3(void)
 			}
 
 			/* Warning */
-			bell();
+			bell("Illegal auto-roller command!");
 		}
 
 		/* Are we done? */

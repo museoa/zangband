@@ -1680,7 +1680,7 @@ bool detect_monsters_xxx(u32b match_flag)
 
 		/* Describe result */
 		msg_format("You sense the presence of %s!", desc_monsters);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Result */

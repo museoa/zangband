@@ -123,7 +123,7 @@ void check_experience(void)
 		sound(SOUND_LEVEL);
 
 		/* Message */
-		msg_format("Welcome to level %d.", p_ptr->lev);
+		message_format(MSG_LEVEL, p_ptr->lev, "Welcome to level %d.", p_ptr->lev);
 
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
@@ -369,7 +369,7 @@ bool monster_death(int m_idx, bool explode)
 					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
-						msg_print(NULL);
+						message_flush();
 					}
 
 					quest[i].cur_num = 0;
@@ -401,7 +401,7 @@ bool monster_death(int m_idx, bool explode)
 					{
 						quest[i].status = QUEST_STATUS_COMPLETED;
 						msg_print("You just completed your quest!");
-						msg_print(NULL);
+						message_flush();
 					}
 				}
 				break;
@@ -438,7 +438,7 @@ bool monster_death(int m_idx, bool explode)
 					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
-						msg_print(NULL);
+						message_flush();
 					}
 
 					/* Finish the two main quests without rewarding */
@@ -466,7 +466,7 @@ bool monster_death(int m_idx, bool explode)
 					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
-						msg_print(NULL);
+						message_flush();
 					}
 					quest[i].cur_num = 0;
 				}
@@ -1179,25 +1179,25 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Death by Missile/Spell attack */
 		if (note)
 		{
-			msg_format("%^s%s", m_name, note);
+			message_format(MSG_KILL, m_ptr->r_idx, "%^s%s", m_name, note);
 		}
 
 		/* Death by physical attack -- invisible monster */
 		else if (!m_ptr->ml)
 		{
-			msg_format("You have killed %s.", m_name);
+			message_format(MSG_KILL, m_ptr->r_idx, "You have killed %s.", m_name);
 		}
 
 		/* Death by Physical attack -- non-living monster */
 		else if (!monster_living(r_ptr))
 		{
-			msg_format("You have destroyed %s.", m_name);
+			message_format(MSG_KILL, m_ptr->r_idx, "You have destroyed %s.", m_name);
 		}
 
 		/* Death by Physical attack -- living monster */
 		else
 		{
-			msg_format("You have slain %s.", m_name);
+			message_format(MSG_KILL, m_ptr->r_idx, "You have slain %s.", m_name);
 		}
 
 		/* Get how much the kill was worth */
@@ -2816,7 +2816,7 @@ bool target_set(int mode)
 					}
 					else
 					{
-						bell();
+						bell("Illegal target!");
 					}
 					break;
 				}
@@ -2885,7 +2885,7 @@ bool target_set(int mode)
 					/* Extract the action (if any) */
 					d = get_keymap_dir(query);
 
-					if (!d) bell();
+					if (!d) bell("Illegal command for target mode!");
 					break;
 				}
 			}
@@ -3098,7 +3098,7 @@ bool target_set(int mode)
 					/* Extract the action (if any) */
 					d = get_keymap_dir(query);
 
-					if (!d) bell();
+					if (!d) bell("Illegal command for target mode!");
 					break;
 				}
 			}
@@ -3264,7 +3264,7 @@ bool get_aim_dir(int *dp)
 		if ((dir == 5) && !target_okay()) dir = 0;
 
 		/* Error */
-		if (!dir) bell();
+		if (!dir) bell("Illegal aim direction!");
 	}
 
 	/* No direction */
@@ -3341,7 +3341,7 @@ bool get_rep_dir(int *dp)
 		dir = get_keymap_dir(ch);
 
 		/* Oops */
-		if (!dir) bell();
+		if (!dir) bell("Illegal repeatable direction!");
 	}
 
 	/* Aborted */
@@ -3914,7 +3914,7 @@ bool get_hack_dir(int *dp)
 		if ((dir == 5) && !target_okay()) dir = 0;
 
 		/* Error */
-		if (!dir) bell();
+		if (!dir) bell("Illegal direction!");
 	}
 
 	/* No direction */

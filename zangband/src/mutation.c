@@ -1286,7 +1286,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		else
 		{
 			msg_print("You don't see any monster in this direction");
-			msg_print(NULL);
+			message_flush();
 		}
 	}
 
@@ -1410,7 +1410,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			
 			/* Teleport player */
 			msg_print("Your position suddenly seems very uncertain...");
-			msg_print(NULL);
+			message_flush();
 			teleport_player(40);
 		}
 	}
@@ -1433,7 +1433,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			if (one_in_(20))
 			{
-				msg_print(NULL);
+				message_flush();
 				if (one_in_(3)) (void)lose_all_info();
 				else wiz_dark();
 				teleport_player(100);
@@ -1467,7 +1467,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 
 		msg_print("BRRAAAP! Oops.");
-		msg_print(NULL);
+		message_flush();
 		(void)fire_ball(GF_POIS, 0, p_ptr->lev, 3);
 	}
 
@@ -1477,7 +1477,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("Magical energy flows through you! You must release it!");
 		flush();
-		msg_print(NULL);
+		message_flush();
 		(void)get_hack_dir(&dire);
 		(void)fire_ball(GF_MANA, dire, p_ptr->lev * 2, 3);
 	}				
@@ -1521,7 +1521,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 				(void)set_fast(p_ptr->fast + rand_range(10, 40));
 			}
 		}
-		msg_print(NULL);
+		message_flush();
 	}
 
 	else if (mut_ptr->which == MUT2_BANISH_ALL)
@@ -1529,7 +1529,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You suddenly feel almost lonely.");
 		(void)banish_monsters(100);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	else if (mut_ptr->which == MUT2_EAT_LIGHT)
@@ -1538,7 +1538,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		cave_type *c_ptr = area(p_ptr->py, p_ptr->px);
 
 		msg_print("A shadow passes over you.");
-		msg_print(NULL);
+		message_flush();
 
 		/* Absorb light from the current possition */
 		if (c_ptr->info & CAVE_GLOW)
@@ -1590,7 +1590,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		disturb(FALSE);
 		msg_print("You feel the world warping around you!");
-		msg_print(NULL);
+		message_flush();
 		(void)fire_ball(GF_CHAOS, 0, p_ptr->lev, 8);
 	}
 
@@ -1606,7 +1606,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		disturb(FALSE);
 		msg_print("You feel insubstantial!");
-		msg_print(NULL);
+		message_flush();
 		(void)set_wraith_form(p_ptr->wraith_form +
 			 rand_range(p_ptr->lev / 2, p_ptr->lev));
 	}
@@ -1650,7 +1650,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			msg_print("You can feel yourself wasting away!");
-			msg_print(NULL);
+			message_flush();
 #if 0
 			(void)dec_stat(which_stat, rand_range(6, 12), one_in_(3));
 #else
@@ -1689,7 +1689,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		disturb(FALSE);
 		msg_print("Your stomach roils, and you lose your lunch!");
-		msg_print(NULL);
+		message_flush();
 		(void)set_food(PY_FOOD_WEAK);
 	}
 
@@ -1735,7 +1735,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		disturb(FALSE);
 		msg_print("You feel invincible!");
-		msg_print(NULL);
+		message_flush();
 		(void)set_invuln(p_ptr->invuln + rand_range(8, 16));
 	}
 				
@@ -1783,7 +1783,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		msg_print("You trip over your own feet!");
 		take_hit(randint1(p_ptr->wt / 6), "tripping");
 
-		msg_print(NULL);
+		message_flush();
 		o_ptr = &inventory[INVEN_WIELD];
 			if ((o_ptr->k_idx) && !cursed_p(o_ptr))
 		{

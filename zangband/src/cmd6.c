@@ -912,7 +912,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_STAR_ENLIGHTENMENT:
 		{
 			msg_print("You begin to feel more enlightened...");
-			msg_print(NULL);
+			message_flush();
 			wiz_lite();
 			(void)do_inc_stat(A_INT);
 			(void)do_inc_stat(A_WIS);
@@ -931,7 +931,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_SELF_KNOWLEDGE:
 		{
 			msg_print("You begin to know yourself a little better...");
-			msg_print(NULL);
+			message_flush();
 			self_knowledge();
 			ident = TRUE;
 			break;
@@ -1496,9 +1496,9 @@ static void do_cmd_read_scroll_aux(int item)
 			if (err) strcpy(Rumor, "Some rumors are wrong.");
 
 			msg_print("There is message on the scroll. It says:");
-			msg_print(NULL);
+			message_flush();
 			msg_format("%s", Rumor);
-			msg_print(NULL);
+			message_flush();
 			msg_print("The scroll disappears in a puff of smoke!");
 			ident = TRUE;
 			break;
@@ -2972,7 +2972,7 @@ static void do_cmd_activate_aux(int item)
 
 
 	/* Activate the artifact */
-	msg_print("You activate it...");
+	message(MSG_ZAP, 0, "You activate it...");
 
 	/* Sound */
 	sound(SOUND_ZAP);

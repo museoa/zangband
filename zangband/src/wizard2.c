@@ -184,7 +184,7 @@ static void prt_alloc(const object_type *o_ptr, int row, int col, u32b monte)
 	(void)C_WIPE(total, MAX_DEPTH, u32b);
 	(void)C_WIPE(display, 20, u32b);
 
-	msg_print(NULL);
+	message_flush();
 	prt("Calculating probability distribution - please wait.", 0, 0);
 
 	/* Refresh */
@@ -1964,14 +1964,14 @@ void do_cmd_debug(void)
 				{
 					p_ptr->quest[i].status++;
 					msg_print("Completed Quest");
-					msg_print(NULL);
+					message_flush();
 					break;
 				}
 			}
 			if (i == max_quests)
 			{
 				msg_print("No current quest");
-				msg_print(NULL);
+				message_flush();
 			}
 			break;
 		}

@@ -419,7 +419,7 @@ void enter_score(void)
 	if (p_ptr->noscore & 0x000F)
 	{
 		msg_print("Score not registered for wizards.");
-		msg_print(NULL);
+		message_flush();
 		score_idx = -1;
 		return;
 	}
@@ -430,7 +430,7 @@ void enter_score(void)
 	if (p_ptr->noscore & 0x00F0)
 	{
 		msg_print("Score not registered for borgs.");
-		msg_print(NULL);
+		message_flush();
 		score_idx = -1;
 		return;
 	}
@@ -441,7 +441,7 @@ void enter_score(void)
 	if (p_ptr->noscore & 0xFF00)
 	{
 		msg_print("Score not registered for cheaters.");
-		msg_print(NULL);
+		message_flush();
 		score_idx = -1;
 		return;
 	}
@@ -451,7 +451,7 @@ void enter_score(void)
 	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting"))
 	{
 		msg_print("Score not registered due to interruption.");
-		msg_print(NULL);
+		message_flush();
 		score_idx = -1;
 		return;
 	}
@@ -460,7 +460,7 @@ void enter_score(void)
 	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting"))
 	{
 		msg_print("Score not registered due to quitting.");
-		msg_print(NULL);
+		message_flush();
 		score_idx = -1;
 		return;
 	}
@@ -553,7 +553,7 @@ void top_twenty(void)
 	if (highscore_fd < 0)
 	{
 		msg_print("Score file unavailable.");
-		msg_print(NULL);
+		message_flush();
 		return;
 	}
 
@@ -588,7 +588,7 @@ void predict_score(void)
 	if (highscore_fd < 0)
 	{
 		msg_print("Score file unavailable.");
-		msg_print(NULL);
+		message_flush();
 		return;
 	}
 
@@ -666,7 +666,7 @@ void show_highclass(void)
 	if (highscore_fd < 0)
 	{
 		msg_print("Score file unavailable.");
-		msg_print(NULL);
+		message_flush();
 		return;
 	}
 
@@ -701,7 +701,7 @@ void show_highclass(void)
 	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
 	msg_print("Hit any key to continue");
-	msg_print(NULL);
+	message_flush();
 
 	for (j = 5; j < 18; j++) prt("", j, 0);
 }
@@ -732,7 +732,7 @@ void race_score(int race_num)
 	if (highscore_fd < 0)
 	{
 		msg_print("Score file unavailable.");
-		msg_print(NULL);
+		message_flush();
 		return;
 	}
 
@@ -791,7 +791,7 @@ void race_legends(void)
 	{
 		race_score(i);
 		msg_print("Hit any key to continue");
-		msg_print(NULL);
+		message_flush();
 		for (j = 5; j < 19; j++)
 			prt("", j, 0);
 	}

@@ -142,7 +142,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell("Illegal spell choice!");
 			continue;
 		}
 
@@ -152,7 +152,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 		/* Require "okay" spells */
 		if (!spell_okay(spell, known, use_realm - 1))
 		{
-			bell();
+			bell("Illegal spell choice!");
 			msg_format("You may not %s that %s.", prompt, p);
 			continue;
 		}
@@ -369,7 +369,7 @@ void do_cmd_study(void)
 
 	msg_format("You can learn %d new %s%s.", p_ptr->new_spells, p,
 		(p_ptr->new_spells == 1?"":"s"));
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Restrict choices to "useful" books */
@@ -478,7 +478,7 @@ void do_cmd_study(void)
 	p_ptr->spell_order[i++] = spell;
 
 	/* Mention the result */
-	msg_format("You have learned the %s of %s.",
+	message_format(MSG_STUDY, 0, "You have learned the %s of %s.",
 		p, spell_names
 		[(increment ? p_ptr->realm2 - 1 : p_ptr->realm1 - 1)][spell % 32]);
 
@@ -829,7 +829,7 @@ static bool cast_life_spell(int spell)
 		break;
 	default:
 		msg_format("You cast an unknown Life spell: %d.", spell);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	return TRUE;
@@ -965,7 +965,7 @@ static bool cast_sorcery_spell(int spell)
 		break;
 	default:
 		msg_format("You cast an unknown Sorcery spell: %d.", spell);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	return TRUE;
@@ -1152,7 +1152,7 @@ static bool cast_nature_spell(int spell)
 		break;
 	default:
 		msg_format("You cast an unknown Nature spell: %d.", spell);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	if (no_trump)
@@ -1431,7 +1431,7 @@ static bool cast_chaos_spell(int spell)
 		break;
 	default:
 		msg_format("You cast an unknown Chaos spell: %d.", spell);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	return TRUE;
@@ -1839,7 +1839,7 @@ static bool cast_death_spell(int spell)
 		break;
 	default:
 		msg_format("You cast an unknown Death spell: %d.", spell);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	return TRUE;
@@ -2469,7 +2469,7 @@ static bool cast_trump_spell(int spell, bool success)
 		}
 		default:
 			msg_format("You cast an unknown Trump spell: %d.", spell);
-			msg_print(NULL);
+			message_flush();
 	}
 
 	if (no_trump)
@@ -2622,7 +2622,7 @@ static bool cast_arcane_spell(int spell)
 		break;
 	default:
 		msg_format("You cast an unknown Arcane spell: %d.", spell);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	return TRUE;
@@ -2833,7 +2833,7 @@ void do_cmd_cast(void)
 		default:
 			cast = FALSE;
 			msg_format("You cast a spell from an unknown realm: realm %d, spell %d.", realm, spell);
-			msg_print(NULL);
+			message_flush();
 		}
 
 		/* Canceled spells cost neither a turn nor mana */
@@ -3125,7 +3125,7 @@ void do_cmd_pet(void)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell("Illegal pet command!");
 			continue;
 		}
 

@@ -1985,7 +1985,7 @@ static bool enter_wizard_mode(void)
 		/* Mention effects */
 		msg_print("Wizard mode is for debugging and experimenting.");
 		msg_print("The game will not be scored if you enter wizard mode.");
-		msg_print(NULL);
+		message_flush();
 
 		/* Verify request */
 		if (!get_check("Are you sure you want to enter wizard mode? "))
@@ -2019,7 +2019,7 @@ static bool enter_debug_mode(void)
 		/* Mention effects */
 		msg_print("The debug commands are for debugging and experimenting.");
 		msg_print("The game will not be scored if you use debug commands.");
-		msg_print(NULL);
+		message_flush();
 
 		/* Verify request */
 		if (!get_check("Are you sure you want to use debug commands? "))
@@ -2056,7 +2056,7 @@ static bool enter_borg_mode(void)
 		/* Mention effects */
 		msg_print("The borg commands are for debugging and experimenting.");
 		msg_print("The game will not be scored if you use borg commands.");
-		msg_print(NULL);
+		message_flush();
 
 		/* Verify request */
 		if (!get_check("Are you sure you want to use borg commands? "))
@@ -3238,7 +3238,7 @@ static void dungeon(void)
 	panel_center();
 
 	/* Flush messages */
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Enter "xtra" mode */
@@ -3789,7 +3789,7 @@ void play_game(bool new_game)
 		change_level(p_ptr->depth);
 
 		/* XXX XXX XXX */
-		msg_print(NULL);
+		message_flush();
 
 		/* Accidental Death */
 		if (p_ptr->playing && p_ptr->is_dead)
@@ -3808,7 +3808,7 @@ void play_game(bool new_game)
 
 				/* Message */
 				msg_print("You invoke wizard mode and cheat death.");
-				msg_print(NULL);
+				message_flush();
 
 				/* Restore hit points */
 				p_ptr->chp = p_ptr->mhp;
@@ -3836,7 +3836,7 @@ void play_game(bool new_game)
 				{
 					/* Message */
 					msg_print("A tension leaves the air around you...");
-					msg_print(NULL);
+					message_flush();
 
 					/* Hack -- Prevent recall */
 					p_ptr->word_recall = 0;

@@ -3032,7 +3032,8 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				sound(SOUND_FLEE);
 
 				/* Message */
-				msg_format("%^s flees in terror!", m_name);
+				message_format(MSG_FLEE, m_ptr->r_idx,
+				               "%^s flees in terror!", m_name);
 			}
 
 			/* Hack -- handle sleep */

@@ -385,7 +385,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Hack -- Error of some kind */
-		if (i == j) bell();
+		if (i == j) bell(NULL);
 	}
 
 	/* Restore the screen */
@@ -602,7 +602,7 @@ static void do_cmd_options_cheat(cptr info)
 
 			default:
 			{
-				bell();
+				bell("Illegal command for cheat options!");
 				break;
 			}
 		}
@@ -737,7 +737,7 @@ static void do_cmd_options_autosave(cptr info)
 
 			default:
 			{
-				bell();
+				bell("Illegal command for autosave!");
 				break;
 			}
 		}
@@ -772,7 +772,7 @@ static void do_cmd_options_aux(int page, cptr info)
 	{
 		/* There are no options */
 		msg_print("There are no available options there at the moment.");
-		msg_print(NULL);
+		message_flush();
 		
 		/* Bail out */
 		return;
@@ -862,7 +862,7 @@ static void do_cmd_options_aux(int page, cptr info)
 
 			default:
 			{
-				bell();
+				bell("Illegal command for normal options!");
 				break;
 			}
 		}
@@ -1014,7 +1014,7 @@ static void do_cmd_options_win(void)
 				x = (x + ddx[d] + 8) % 8;
 				y = (y + ddy[d] + 16) % 16;
 
-				if (!d) bell();
+				if (!d) bell("Illegal command for window options!");
 			}
 		}
 	}
@@ -1252,7 +1252,7 @@ void do_cmd_options(byte flags)
 					else if (isdigit(k))
 						delay_factor = D2I(k);
 					else
-						bell();
+						bell("Illegal delay factor!");
 				}
 
 				screen_load();
@@ -1276,7 +1276,7 @@ void do_cmd_options(byte flags)
 					k = inkey();
 					if (k == ESCAPE) break;
 					if (isdigit(k)) hitpoint_warn = D2I(k);
-					else bell();
+					else bell("Illegal hitpoint warning!");
 				}
 
 				break;
@@ -1333,13 +1333,13 @@ void do_cmd_options(byte flags)
 			default:
 			{
 				/* Oops */
-				bell();
+				bell("Illegal command for options!");
 				break;
 			}
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 
@@ -1994,11 +1994,11 @@ void do_cmd_macros(void)
 		else
 		{
 			/* Oops */
-			bell();
+			bell("Illegal command for macros!");
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Load screen */
@@ -2557,11 +2557,11 @@ void do_cmd_visuals(void)
 		/* Unknown option */
 		else
 		{
-			bell();
+			bell("Illegal command for visuals!");
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 
@@ -2789,11 +2789,11 @@ void do_cmd_colors(void)
 		/* Unknown option */
 		else
 		{
-			bell();
+			bell("Illegal command for colors!");
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 
@@ -2997,7 +2997,7 @@ void do_cmd_load_screen(void)
 
 	/* Message */
 	msg_print("Screen dump loaded.");
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Restore the screen */
@@ -3112,7 +3112,7 @@ void do_cmd_save_screen(void)
 
 		/* Message */
 		msg_print("Screen dump saved.");
-		msg_print(NULL);
+		message_flush();
 
 
 		/* Restore the screen */
@@ -3158,7 +3158,7 @@ static void do_cmd_knowledge_uniques(void)
 	{
 		/* No monsters to recall */
 		msg_print("No known uniques.");
-		msg_print(NULL);
+		message_flush();
 
 		/* XXX XXX Free the "who" array */
 		C_KILL(who, max_r_idx, u16b);
@@ -3439,7 +3439,7 @@ static void do_cmd_knowledge_kill_count(void)
 	{
 		/* No monsters to recall */
 		msg_print("No known monsters!");
-		msg_print(NULL);
+		message_flush();
 
 		/* XXX XXX Free the "who" array */
 		C_KILL(who, max_r_idx, u16b);
@@ -3869,14 +3869,14 @@ void do_cmd_knowledge(void)
 			if (take_notes)
 				do_cmd_knowledge_notes();
 			else
-				bell();
+				bell("You have turned on note taking!");
 			break;
 		default: /* Unknown option */
-			bell();
+			bell("Illegal command for knowledge!");
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Restore the screen */

@@ -748,7 +748,7 @@ void do_cmd_inscribe(void)
 
 	/* Message */
 	msg_format("Inscribing %s.", o_name);
-	msg_print(NULL);
+	message_flush();
 
 	/* Start with nothing */
 	strcpy(out_val, "");
@@ -1117,7 +1117,7 @@ void do_cmd_locate(void)
 			dir = get_keymap_dir(command);
 
 			/* Error */
-			if (!dir) bell();
+			if (!dir) bell("Illegal direction for locate!");
 		}
 
 		/* No direction */

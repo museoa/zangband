@@ -270,7 +270,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	if ((value <= 0) && (price > value))
 	{
 		/* Comment */
-		msg_print(comment_7a[randint0(MAX_COMMENT_7A)]);
+		message(MSG_STORE1, 0, comment_7a[randint0(MAX_COMMENT_7A)]);
 
 		chg_virtue(V_HONOUR, -1);
 		chg_virtue(V_JUSTICE, -1);
@@ -283,7 +283,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	else if ((value < guess) && (price > value))
 	{
 		/* Comment */
-		msg_print(comment_7b[randint0(MAX_COMMENT_7B)]);
+		message(MSG_STORE2, 0, comment_7b[randint0(MAX_COMMENT_7B)]);
 
 		chg_virtue(V_JUSTICE, -1);
 		if (one_in_(4)) chg_virtue(V_HONOUR, -1);
@@ -296,7 +296,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	else if ((value > guess) && (value < (4 * guess)) && (price < value))
 	{
 		/* Comment */
-		msg_print(comment_7c[randint0(MAX_COMMENT_7C)]);
+		message(MSG_STORE3, 0, comment_7c[randint0(MAX_COMMENT_7C)]);
 
 		if (one_in_(4))
 			chg_virtue(V_HONOUR, -1);
@@ -311,7 +311,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	else if ((value > guess) && (price < value))
 	{
 		/* Comment */
-		msg_print(comment_7d[randint0(MAX_COMMENT_7D)]);
+		message(MSG_STORE4, 0, comment_7d[randint0(MAX_COMMENT_7D)]);
 
 		if (one_in_(2))
 			chg_virtue(V_HONOUR, -1);
@@ -1658,7 +1658,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	}
 
 	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Assume failure */
@@ -1687,7 +1687,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 		}
 
 		/* Oops */
-		bell();
+		bell("Illegal store object choice!");
 	}
 
 	/* Clear the prompt */
@@ -1816,7 +1816,7 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
 
 
 	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Ask until done */
@@ -1881,7 +1881,7 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
 
 		/* Warning */
 		msg_print("Invalid response.");
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Success */
@@ -1957,7 +1957,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 		{
 			/* Message summary */
 			msg_print("You eventually agree upon the price.");
-			msg_print(NULL);
+			message_flush();
 		}
 
 		/* No haggle option */
@@ -1965,7 +1965,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 		{
 			/* Message summary */
 			msg_print("You quickly agree upon the price.");
-			msg_print(NULL);
+			message_flush();
 
 			/* Apply Sales Tax */
 			final_ask += final_ask / 10;
@@ -2137,7 +2137,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 		{
 			/* Message */
 			msg_print("You instantly agree upon the price.");
-			msg_print(NULL);
+			message_flush();
 
 			/* Offer full purse */
 			final_ask = purse;
@@ -2148,7 +2148,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 		{
 			/* Message */
 			msg_print("You eventually agree upon the price.");
-			msg_print(NULL);
+			message_flush();
 		}
 
 		/* No haggle option */
@@ -2156,7 +2156,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 		{
 			/* Message summary */
 			msg_print("You quickly agree upon the price.");
-			msg_print(NULL);
+			message_flush();
 
 			/* Apply Sales Tax */
 			final_ask -= final_ask / 10;
@@ -2433,7 +2433,7 @@ static void store_purchase(int *store_top)
 
 			/* Message */
 			msg_format("Buying %s (%c).", o_name, I2A(item));
-			msg_print(NULL);
+			message_flush();
 
 			/* Haggle for a final price */
 			choice = purchase_haggle(j_ptr, &price);
@@ -2766,7 +2766,7 @@ static void store_sell(int *store_top)
 	{
 		/* Describe the transaction */
 		msg_format("Selling %s (%c).", o_name, index_to_label(item));
-		msg_print(NULL);
+		message_flush();
 
 		/* Haggle for it */
 		choice = sell_haggle(q_ptr, &price);
@@ -3645,7 +3645,7 @@ void do_cmd_store(field_type *f1_ptr)
 
 
 	/* Flush messages XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Clear the screen */

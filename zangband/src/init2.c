@@ -449,7 +449,7 @@ static errr init_f_info(void)
 #if 0
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'f_info.raw' file.");
-		msg_print(NULL);
+		message_flush();
 #endif
 	}
 
@@ -497,7 +497,7 @@ static errr init_f_info(void)
 		msg_format("Error %d at line %d of 'f_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'f_info.txt' file.");
@@ -713,7 +713,7 @@ static errr init_k_info(void)
 #if 0
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'k_info.raw' file.");
-		msg_print(NULL);
+		message_flush();
 #endif
 	}
 
@@ -761,7 +761,7 @@ static errr init_k_info(void)
 		msg_format("Error %d at line %d of 'k_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'k_info.txt' file.");
@@ -979,7 +979,7 @@ static errr init_a_info(void)
 #if 0
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'a_info.raw' file.");
-		msg_print(NULL);
+		message_flush();
 #endif
 	}
 
@@ -1027,7 +1027,7 @@ static errr init_a_info(void)
 		msg_format("Error %d at line %d of 'a_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'a_info.txt' file.");
@@ -1242,7 +1242,7 @@ static errr init_e_info(void)
 #if 0
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'e_info.raw' file.");
-		msg_print(NULL);
+		message_flush();
 #endif
 	}
 
@@ -1290,7 +1290,7 @@ static errr init_e_info(void)
 		msg_format("Error %d at line %d of 'e_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'e_info.txt' file.");
@@ -1502,7 +1502,7 @@ static errr init_r_info(void)
 #if 0
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'r_info.raw' file.");
-		msg_print(NULL);
+		message_flush();
 #endif
 	}
 
@@ -1550,7 +1550,7 @@ static errr init_r_info(void)
 		msg_format("Error %d at line %d of 'r_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'r_info.txt' file.");
@@ -1761,7 +1761,7 @@ errr init_v_info(void)
 #if 0
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'v_info.raw' file.");
-		msg_print(NULL);
+		message_flush();
 #endif
 	}
 
@@ -1809,7 +1809,7 @@ errr init_v_info(void)
 		msg_format("Error %d at line %d of 'v_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'v_info.txt' file.");
@@ -1939,7 +1939,7 @@ errr init_w_info(void)
 		msg_format("Error %d at line %d of 'w_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 'w_info.txt' file.");
@@ -1995,7 +1995,7 @@ errr init_t_info(void)
 		msg_format("Error %d at line %d of 't_info.txt'.", err, error_line);
 		msg_format("Record %d contains a '%s' error.", error_idx, oops);
 		msg_format("Parsing '%s'.", buf);
-		msg_print(NULL);
+		message_flush();
 
 		/* Quit */
 		quit("Error in 't_info.txt' file.");
@@ -2048,6 +2048,14 @@ static errr init_other(void)
 {
 	int i, j, n;
 
+
+	/*** Prepare the various "bizarre" arrays ***/
+
+	/* Initialize the "quark" package */
+	(void)quarks_init();
+
+	/* Initialize the "message" package */
+	(void)messages_init();
 
 	/*** Prepare the "dungeon" information ***/
 
@@ -2121,14 +2129,6 @@ static errr init_other(void)
 
 	/* Macro action buffer */
 	C_MAKE(macro__buf, 1024, char);
-
-	/* Quark variables */
-	C_MAKE(quark__str, QUARK_MAX, cptr);
-	C_MAKE(quark__use, QUARK_MAX, u16b);
-
-	
-	/* Prepare the "message" package */
-	message_init();
 
 
 	/* Clear the spell colour strings */

@@ -237,7 +237,7 @@ static int get_mindcraft_power(int *sn)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell("Illegal mindcrafter power choice!");
 			continue;
 		}
 

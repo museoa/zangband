@@ -645,6 +645,22 @@ errr process_pref_file_command(char *buf)
 		}
 	}
 
+	/* Process "M:<type>:<attr>" -- colors for message-types */
+	else if (buf[0] == 'M')
+	{
+		if (tokenize(buf+2, 2, zz, TOKENIZE_CHECKQUOTE) == 2)
+		{
+			u16b type = (u16b)strtol(zz[0], NULL, 0);
+			int color = color_char_to_attr(zz[1][0]);
+
+			/* Ignore illegal color */
+			if (color < 0) return (1);
+
+			/* Store the color */
+			return (message_color_define(type, (byte)color));
+		}
+	}
+
 
 	/* Failure */
 	return (1);
@@ -972,7 +988,7 @@ static errr process_pref_file_aux(cptr name)
 		/* ToDo: Add better error messages */
 		msg_format("Error %d in line %d of file '%s'.", err, line, name);
 		msg_format("Parsing '%s'", old);
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Close the file */
@@ -2678,11 +2694,11 @@ void do_cmd_character(void)
 		/* Oops */
 		else
 		{
-			bell();
+			bell("Illegal option!");
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Restore the screen */
@@ -2755,7 +2771,7 @@ errr file_character(cptr name, bool full)
 	{
 		/* Message */
 		msg_format("Character dump failed!");
-		msg_print(NULL);
+		message_flush();
 
 		/* Error */
 		return (-1);
@@ -3048,7 +3064,7 @@ errr file_character(cptr name, bool full)
 
 	/* Message */
 	msg_print("Character dump successful.");
-	msg_print(NULL);
+	message_flush();
 
 	/* Success */
 	return (0);
@@ -3205,7 +3221,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	{
 		/* Message */
 		msg_format("Cannot open '%s'.", name);
-		msg_print(NULL);
+		message_flush();
 
 		/* Oops */
 		return (TRUE);
@@ -3363,7 +3379,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		/* Hack -- failed search */
 		if (find)
 		{
-			bell();
+			bell("Search string not found!");
 			line = back;
 			find = NULL;
 			continue;
@@ -3848,7 +3864,7 @@ void do_cmd_save_game(int is_autosave)
 	}
 
 	/* Clear messages */
-	msg_print(NULL);
+	message_flush();
 
 	/* Handle stuff */
 	handle_stuff();
@@ -3884,7 +3900,7 @@ void do_cmd_save_game(int is_autosave)
 	Term_fresh();
 
 	/* Clear messages. */
-	msg_print(NULL);
+	message_flush();
 
 	/* Hack -- erase the message line. */
 	prt("", 0, 0);
@@ -4328,7 +4344,7 @@ static void close_game_handle_death(void)
 	prt("(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit", 22, 0);
 
 	/* Flush messages */
-	msg_print(NULL);
+	message_flush();
 
 	/* Flush all input keys */
 	flush();
@@ -4360,7 +4376,7 @@ static void close_game_handle_death(void)
 					if (!save_player())
 					{
 						msg_print("Death save failed!");
-						msg_print(NULL);
+						message_flush();
 					}
 
 #if 0
@@ -4430,7 +4446,7 @@ void close_game(void)
 	handle_stuff();
 
 	/* Flush the messages */
-	msg_print(NULL);
+	message_flush();
 
 	/* Flush the input */
 	flush();

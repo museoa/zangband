@@ -3528,7 +3528,7 @@ static bool test_gold(s32b *cost)
 		/* Player does not have enough gold */
 
 		msg_format("You need %ld gold to do this!", (long) *cost);
-		msg_print(NULL);
+		message_flush();
 		
 		*cost = 0;
 		
@@ -3633,7 +3633,7 @@ bool field_action_recharge2(field_type *f_ptr, vptr input)
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 			msg_print("Your posessions have been identified.");
-			msg_print(NULL);
+			message_flush();
 		}
 		
 		/* Subtract off cost */
@@ -3777,7 +3777,7 @@ bool field_action_mutate2(field_type *f_ptr, vptr input)
 			p_ptr->au -= cost;
 					
 			/* Display messages */
-			msg_print(NULL);
+			message_flush();
 			
 			/* Hack - We want to redraw the screen */
 			*factor = 2;
@@ -4030,7 +4030,7 @@ bool field_action_inn2(field_type *f_ptr, vptr input)
 		if (test_gold(&cost))
 		{
 			msg_print("The barkeeper gives you some gruel and a beer.");
-			msg_print(NULL);
+			message_flush();
 			(void)set_food(PY_FOOD_MAX - 1);
 			
 			/* Subtract off cost */

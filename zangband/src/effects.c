@@ -2696,8 +2696,8 @@ void take_hit(int damage, cptr hit_from)
 		/* Hack -- Note death */
 		if (!last_words)
 		{
-			msg_print("You die.");
-			msg_print(NULL);
+			message(MSG_DEATH, 0, "You die.");
+			message_flush();
 		}
 		else
 		{
@@ -2732,13 +2732,13 @@ void take_hit(int damage, cptr hit_from)
 	if (p_ptr->chp < warning)
 	{
 		/* Hack -- bell on first notice */
-		if (old_chp > warning) bell();
+		if (old_chp > warning) bell("Low hitpoint warning!");
 
 		sound(SOUND_WARN);
 
 		/* Message */
-		msg_print("*** LOW HITPOINT WARNING! ***");
-		msg_print(NULL);
+		message(MSG_HITPOINT_WARN, 0, "*** LOW HITPOINT WARNING! ***");
+		message_flush();
 	}
 }
 

@@ -91,8 +91,9 @@ void user_name(char *buf, int id)
 	/* Look up the user name */
 	if ((pw = getpwuid(id)))
 	{
-		(void)strcpy(buf, pw->pw_name);
-		buf[16] = '\0';
+		/* Get the first 15 characters of the user name */
+		(void)strncpy(buf, pw->pw_name, 16);
+		buf[15] = '\0';
 
 #ifdef CAPITALIZE_USER_NAME
 		/* Hack -- capitalize the user name */
@@ -448,12 +449,12 @@ errr my_fgets(FILE *fff, char *buf, huge n)
  *
  * Dump a string, plus a newline, to a file
  *
- * XXX XXX XXX Process internal weirdness?
+ * Perhaps this function should handle internal weirdness.
  */
 errr my_fputs(FILE *fff, cptr buf, huge n)
 {
-	/* XXX XXX */
-	n = n ? n : 0;
+	/* Unused parameter */
+	(void)n;
 
 	/* Dump, ignore errors */
 	(void)fprintf(fff, "%s\n", buf);
@@ -521,7 +522,7 @@ errr fd_kill(cptr file)
 	/* Remove */
 	(void)remove(buf);
 
-	/* XXX XXX XXX */
+	/* Assume success XXX XXX XXX */
 	return (0);
 }
 
@@ -543,7 +544,7 @@ errr fd_move(cptr file, cptr what)
 	/* Rename */
 	(void)rename(buf, aux);
 
-	/* XXX XXX XXX */
+	/* Assume success XXX XXX XXX */
 	return (0);
 }
 
@@ -818,62 +819,6 @@ errr fd_close(int fd)
 
 #endif /* ACORN */
 
-
-
-
-/*
- * XXX XXX XXX Important note about "colors" XXX XXX XXX
- *
- * The "TERM_*" color definitions list the "composition" of each
- * "Angband color" in terms of "quarters" of each of the three color
- * components (Red, Green, Blue), for example, TERM_UMBER is defined
- * as 2/4 Red, 1/4 Green, 0/4 Blue.
- *
- * The following info is from "Torbjorn Lindgren" (see "main-xaw.c").
- *
- * These values are NOT gamma-corrected.  On most machines (with the
- * Macintosh being an important exception), you must "gamma-correct"
- * the given values, that is, "correct for the intrinsic non-linearity
- * of the phosphor", by converting the given intensity levels based
- * on the "gamma" of the target screen, which is usually 1.7 (or 1.5).
- *
- * The actual formula for conversion is unknown to me at this time,
- * but you can use the table below for the most common gamma values.
- *
- * So, on most machines, simply convert the values based on the "gamma"
- * of the target screen, which is usually in the range 1.5 to 1.7, and
- * usually is closest to 1.7.  The converted value for each of the five
- * different "quarter" values is given below:
- *
- *  Given     Gamma 1.0       Gamma 1.5       Gamma 1.7     Hex 1.7
- *  -----       ----            ----            ----          ---
- *   0/4        0.00            0.00            0.00          #00
- *   1/4        0.25            0.27            0.28          #47
- *   2/4        0.50            0.55            0.56          #8f
- *   3/4        0.75            0.82            0.84          #d7
- *   4/4        1.00            1.00            1.00          #ff
- *
- * Note that some machines (i.e. most IBM machines) are limited to a
- * hard-coded set of colors, and so the information above is useless.
- *
- * Also, some machines are limited to a pre-determined set of colors,
- * for example, the IBM can only display 16 colors, and only 14 of
- * those colors resemble colors used by Angband, and then only when
- * you ignore the fact that "Slate" and "cyan" are not really matches,
- * so on the IBM, we use "orange" for both "Umber", and "Light Umber"
- * in addition to the obvious "Orange", since by combining all of the
- * "indeterminate" colors into a single color, the rest of the colors
- * are left with "meaningful" values.
- */
-
-
-/*
- * Move the cursor
- */
-void move_cursor(int row, int col)
-{
-	Term_gotoxy(col, row);
-}
 
 
 
@@ -1367,36 +1312,6 @@ void flush(void)
 
 
 /*
- * Flush the screen, make a noise
- */
-void bell(void)
-{
-	/* Mega-Hack -- Flush the output */
-	Term_fresh();
-
-	/* Make a bell noise (if allowed) */
-	if (ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
-
-	/* Flush the input (later!) */
-	flush();
-}
-
-
-/*
- * Hack -- Make a (relevant?) sound
- */
-void sound(int val)
-{
-	/* No sound */
-	if (!use_sound) return;
-
-	/* Make a sound (if allowed) */
-	Term_xtra(TERM_XTRA_SOUND, val);
-}
-
-
-
-/*
  * Helper function called only from "inkey()"
  *
  * This function does almost all of the "macro" processing.
@@ -1858,78 +1773,72 @@ char inkey(void)
 }
 
 
-
-
 /*
- * We use a global array for all inscriptions to reduce the memory
- * spent maintaining inscriptions.  Of course, it is still possible
- * to run out of inscription memory, especially if too many different
- * inscriptions are used, but hopefully this will be rare.
- *
- * We use dynamic string allocation because otherwise it is necessary
- * to pre-guess the amount of quark activity.  We limit the total
- * number of quarks, but this is much easier to "expand" as needed.
- *
- * Any two items with the same inscription will have the same "quark"
- * index, which should greatly reduce the need for inscription space.
- *
- * Note that "quark zero" is NULL and should not be "dereferenced".
- *
- * From time to time, with random artifacts, and with a borg playing,
- * the game will run out of quarks.  This has been fixed with the
- * addition of the compact_quarks() routine.  This routine will remove
- * the least recently used quark from the list.  If QUARK_MAX is bigger
- * than the total number of objects possible in the game - then this
- * will never be a problem.  (At least one quark will be unused.)
- * As it stands, QUARK_MAX is smaller than that to save memory.  So
- * occasionally, an object will get the "wrong" inscription.  This
- * is better than disabling inscriptions alltogether though.  (That
- * was the previous behaviour.)
- *
- * The quark_add_perm() function was added to make certain that some
- * quarks wouldn't be affected by the compaction process.  These game
- * inscriptions / strings should never be deallocated.  No matter how
- * rarely they are used.
+ * Flush the screen, make a noise
  */
-
-
-/*
- * Out of space - Compact the quarks
- */
-static s16b compact_quarks(void)
+void bell(cptr reason)
 {
-	s16b i, empty = 1;
-	
-	u16b min_use = quark__use[quark__num - 1];
-	
-	/* Find least recently used quark */
-	for (i = 1; i < quark__num; i++)
-	{
-		if (quark__use[i] < min_use)
-		{
-			/* Less used than current quark? */
-			empty = i;
-			min_use = quark__use[i];
-		}
-	}
-		
-	/* Reset all the times to something "smaller" */
-	for (i = 1; i < quark__num; i++)
-	{
-		/* Hack XXX XXX - just use old value divided by QUARK_COMPACT */
-		quark__use[i] = quark__use[i] / QUARK_COMPACT;
-	}
+	/* Mega-Hack -- Flush the output */
+	Term_fresh();
 
-	/* 
-	 * Reset the time
-	 *
-	 * Note that QUARK_MAX * QUARK_COMPACT must be less than the
-	 * size of a s16b.
-	 */
-	quark__tim = quark__num + 1;
+	/* Hack -- memorize the reason if possible */
+	if (character_generated && reason) message_add(reason, MSG_BELL);
 
-	return (empty);
+	/* Make a bell noise (if allowed) */
+	if (ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
+
+	/* Flush the input (later!) */
+	flush();
 }
+
+
+/*
+ * Hack -- Make a (relevant?) sound
+ */
+void sound(int val)
+{
+	/* No sound */
+	if (!use_sound) return;
+
+	/* Make a sound (if allowed) */
+	Term_xtra(TERM_XTRA_SOUND, val);
+}
+
+
+
+
+/*
+ * The "quark" package
+ *
+ * This package is used to reduce the memory usage of object inscriptions.
+ *
+ * We use dynamic string allocation because otherwise it is necessary to
+ * pre-guess the amount of quark activity.  We limit the total number of
+ * quarks, but this is much easier to "expand" as needed.  XXX XXX XXX
+ *
+ * Two objects with the same inscription will have the same "quark" index.
+ *
+ * Some code uses "zero" to indicate the non-existance of a quark.
+ *
+ * Note that "quark zero" is NULL and should never be "dereferenced".
+ *
+ * ToDo: Add reference counting for quarks, so that unused quarks can
+ * be overwritten.
+ *
+ * ToDo: Automatically resize the array if necessary.
+ */
+
+
+/*
+ * The number of quarks (first quark is NULL)
+ */
+static s16b quark__num = 1;
+
+
+/*
+ * The array[QUARK_MAX] of pointers to the quarks
+ */
+static cptr *quark__str;
 
 
 /*
@@ -1946,28 +1855,14 @@ s16b quark_add(cptr str)
 		if (streq(quark__str[i], str)) return (i);
 	}
 
-	/* Paranoia -- Require room */
-	if (quark__num == QUARK_MAX)
-	{
-		i = compact_quarks();
-		
-		/* Paranoia - no room? */
-		if (!i) return (0);
-		
-		/* Delete the old quark */
-		string_free(quark__str[i]);
-	}
-	else
-	{
-		/* New maximal quark */
-		quark__num = i + 1;
-	}
-	
+	/* Hack -- Require room XXX XXX XXX */
+	if (quark__num == QUARK_MAX) return (0);
+
+	/* New quark */
+	i = quark__num++;
+
 	/* Add a new quark */
 	quark__str[i] = string_make(str);
-
-	/* Save the time */
-	quark__use[i] = ++quark__tim;
 
 	/* Return the index */
 	return (i);
@@ -1981,44 +1876,86 @@ cptr quark_str(s16b i)
 {
 	cptr q;
 
-	/* Paranoia */
-	if ((i < 0) || (i >= quark__num)) return (NULL);
+	/* Verify */
+	if ((i < 0) || (i >= quark__num)) i = 0;
 
-	/* Access the quark */
+	/* Get the quark */
 	q = quark__str[i];
-	
-	/* Save the access time */
-	quark__use[i] = ++quark__tim;
-	
-	/* Compact from time to time */
-	if (quark__tim > QUARK_COMPACT * QUARK_MAX)
-	{
-		(void)compact_quarks();
-	}
 
 	/* Return the quark */
 	return (q);
 }
 
 
+/*
+ * Initialize the "quark" package
+ */
+errr quarks_init(void)
+{
+	/* Quark variables */
+	C_MAKE(quark__str, QUARK_MAX, cptr);
+
+	/* Success */
+	return (0);
+}
 
 
 /*
- * Second try for the "message" handling routines.
+ * Free the "quark" package
+ */
+errr quarks_free(void)
+{
+	int i;
+
+	/* Free the "quarks" */
+	for (i = 1; i < quark__num; i++)
+	{
+		string_free(quark__str[i]);
+	}
+
+	/* Free the list of "quarks" */
+	C_FREE((void*)quark__str, QUARK_MAX, cptr);
+
+	/* Success */
+	return (0);
+}
+
+
+/*
+ * The "message memorization" package.
  *
  * Each call to "message_add(s)" will add a new "most recent" message
  * to the "message recall list", using the contents of the string "s".
  *
- * The messages will be stored in such a way as to maximize "efficiency",
- * that is, we attempt to maximize the number of sequential messages that
- * can be retrieved, given a limited amount of storage space.
+ * The number of memorized messages is available as "message_num()".
  *
- * We keep a buffer of chars to hold the "text" of the messages, not
- * necessarily in "order", and an array of offsets into that buffer,
- * representing the actual messages.  This is made more complicated
- * by the fact that both the array of indexes, and the buffer itself,
- * are both treated as "circular arrays" for efficiency purposes, but
- * the strings may not be "broken" across the ends of the array.
+ * Old messages can be retrieved by "message_str(age)", where the "age"
+ * of the most recently memorized message is zero, and the oldest "age"
+ * which is available is "message_num() - 1".  Messages outside this
+ * range are returned as the empty string.
+ *
+ * The messages are stored in a special manner that maximizes "efficiency",
+ * that is, we attempt to maximize the number of semi-sequential messages
+ * that can be retrieved, given a limited amount of storage space, without
+ * causing the memorization of new messages or the recall of old messages
+ * to be too expensive.
+ *
+ * We keep a buffer of chars to hold the "text" of the messages, more or
+ * less in the order they were memorized, and an array of offsets into that
+ * buffer, representing the actual messages, but we allow the "text" to be
+ * "shared" by two messages with "similar" ages, as long as we never cause
+ * sharing to reach too far back in the the buffer.
+ *
+ * The implementation is complicated by the fact that both the array of
+ * offsets, and the buffer itself, are both treated as "circular arrays"
+ * for efficiency purposes, but the strings may not be "broken" across
+ * the ends of the array.
+ *
+ * When we want to memorize a new message, we attempt to "reuse" the buffer
+ * space by checking for message duplication within the recent messages.
+ *
+ * Otherwise, if we need more buffer space, we grab a full quarter of the
+ * total buffer space at a time, to keep the reclamation code efficient.
  *
  * The "message_add()" function is rather "complex", because it must be
  * extremely efficient, both in space and time, for use with the Borg.
@@ -2046,33 +1983,25 @@ static u16b message__head;
 static u16b message__tail;
 
 /*
- * The array of offsets, by index [MESSAGE_MAX]
+ * The array[MESSAGE_MAX] of offsets, by index
  */
 static u16b *message__ptr;
 
 /*
- * The array of chars, by offset [MESSAGE_BUF]
+ * The array[MESSAGE_BUF] of chars, by offset
  */
 static char *message__buf;
 
 /*
- * The array[MESSAGE_MAX] of bytes for the colors of messages
+ * The array[MESSAGE_MAX] of u16b for the types of messages
  */
-static byte *message__color;
+static u16b *message__type;
 
 
 /*
- * Initialize the "message" package
+ * Table of colors associated to message-types
  */
-void message_init(void)
-{
-	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
-	C_MAKE(message__buf, MESSAGE_BUF, char);
-	C_MAKE(message__color, MESSAGE_MAX, byte);
-
-	/* Hack -- No messages yet */
-	message__tail = MESSAGE_BUF;
-}
+static byte message__color[MSG_MAX];
 
 
 /*
@@ -2080,20 +2009,8 @@ void message_init(void)
  */
 s16b message_num(void)
 {
-	int last, next, n;
-
-	/* Extract the indexes */
-	last = message__last;
-	next = message__next;
-
-	/* Handle "wrap" */
-	if (next < last) next += MESSAGE_MAX;
-
-	/* Extract the space */
-	n = (next - last);
-
-	/* Return the result */
-	return (n);
+	/* Determine how many messages are "available" */
+	return (message__next + MESSAGE_MAX - message__last) % MESSAGE_MAX;
 }
 
 
@@ -2101,7 +2018,7 @@ s16b message_num(void)
 /*
  * Recall the "text" of a saved message
  */
-cptr message_str(int age)
+cptr message_str(s16b age)
 {
 	s16b x;
 	s16b o;
@@ -2110,13 +2027,13 @@ cptr message_str(int age)
 	/* Forgotten messages have no text */
 	if ((age < 0) || (age >= message_num())) return ("");
 
-	/* Acquire the "logical" index */
+	/* Get the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
 
 	/* Get the "offset" for the message */
 	o = message__ptr[x];
 
-	/* Access the message text */
+	/* Get the message text */
 	s = &message__buf[o];
 
 	/* Return the message text */
@@ -2125,9 +2042,9 @@ cptr message_str(int age)
 
 
 /*
- * Recall the "color" of a saved message
+ * Recall the "type" of a saved message
  */
-byte message_color(int age)
+u16b message_type(s16b age)
 {
 	s16b x;
 
@@ -2137,19 +2054,56 @@ byte message_color(int age)
 	/* Get the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
 
-	/* Return the message color */
-	return (message__color[x]);
+	/* Return the message type */
+	return (message__type[x]);
+}
+
+
+/*
+ * Recall the "color" of a saved message
+ */
+byte message_color(s16b age)
+{
+	return message__color[message_type(age)];
+}
+
+
+errr message_color_define(u16b type, byte color)
+{
+	/* Ignore illegal types */
+	if (type >= MSG_MAX) return (1);
+
+	/* Store the color */
+	message__color[type] = color;
+
+	/* Success */
+	return (0);
 }
 
 
 /*
  * Add a new message, with great efficiency
+ *
+ * We must ignore long messages to prevent internal overflow, since we
+ * assume that we can always get enough space by advancing "message__tail"
+ * by one quarter the total buffer space.
+ *
+ * We must not attempt to optimize using a message index or buffer space
+ * which is "far away" from the most recent entries, or we will lose a lot
+ * of messages when we "expire" the old message index and/or buffer space.
+ *
+ * We attempt to minimize the use of "string compare" operations in this
+ * function, because they are expensive when used in mass quantities.
  */
-void message_add(cptr str, byte attr)
+void message_add(cptr str, u16b type)
 {
-	int i, k, x, m, n;
+	int n, k, i, x, o;
 
-	char u[1024];
+	cptr s;
+	cptr t;
+	cptr u;
+	char *v;
+
 
 	/*** Step 1 -- Analyze the message ***/
 
@@ -2159,119 +2113,70 @@ void message_add(cptr str, byte attr)
 	/* Message length */
 	n = strlen(str);
 
-	/* Important Hack -- Ignore "long" messages */
+	/* Hack -- Ignore "long" messages */
 	if (n >= MESSAGE_BUF / 4) return;
 
 
 	/*** Step 2 -- Attempt to optimize ***/
 
 	/* Limit number of messages to check */
-	m = message_num();
-
-	k = m / 4;
+	k = message_num() / 4;
 
 	/* Limit number of messages to check */
-	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
+	if (k > 32) k = 32;
 
-	/* Check previous message */
-	for (i = message__next; m; m--)
-	{
-		int j = 1;
+	/* Start just after the most recent message */
+	i = message__next;
 
-		char buf[1024];
-		char *t;
-
-		cptr old;
-
-		/* Back up and wrap if needed */
-		if (i-- == 0) i = MESSAGE_MAX - 1;
-
-		/* Access the old string */
-		old = &message__buf[message__ptr[i]];
-
-		/* Skip small messages */
-		if (!old) continue;
-
-		strcpy(buf, old);
-
-		/* Find multiple */
-		for (t = buf; *t && (*t != '<'); t++);
-
-		if (*t)
-		{
-			/* Message is too small */
-			if (strlen(buf) < 6) break;
-
-			/* Drop the space */
-			*(t - 1) = '\0';
-
-			/* Get multiplier */
-			j = atoi(++t);
-		}
-
-		/* Limit the multiplier to 1000 */
-		if (buf && streq(buf, str) && (j < 1000))
-		{
-			j++;
-
-			/* Overwrite */
-			message__next = i;
-
-			str = u;
-
-			/* Write it out */
-			sprintf(u, "%s <%dx>", buf, j);
-
-			/* Message length */
-			n = strlen(str);
-		}
-
-		/* Done */
-		break;
-	}
-
-	/* Check the last few messages (if any to count) */
-	for (i = message__next; k; k--)
+	/* Check the last few messages for duplication */
+	for ( ; k; k--)
 	{
 		u16b q;
 
 		cptr old;
 
-		/* Back up and wrap if needed */
+		/* Back up, wrap if needed */
 		if (i-- == 0) i = MESSAGE_MAX - 1;
 
 		/* Stop before oldest message */
 		if (i == message__last) break;
 
+		/* Index */
+		o = message__ptr[i];
+
 		/* Extract "distance" from "head" */
-		q = (message__head + MESSAGE_BUF - message__ptr[i]) % MESSAGE_BUF;
+		q = (message__head + MESSAGE_BUF - o) % MESSAGE_BUF;
 
-		/* Do not optimize over large distance */
-		if (q > MESSAGE_BUF / 2) continue;
+		/* Do not optimize over large distances */
+		if (q >= MESSAGE_BUF / 4) continue;
 
-		/* Access the old string */
-		old = &message__buf[message__ptr[i]];
+		/* Get the old string */
+		old = &message__buf[o];
 
-		/* Compare */
-		if (!streq(old, str)) continue;
+		/* Inline 'streq(str, old)' */
+		for (s = str, t = old; (*s == *t) && *s; ++s, ++t) /* loop */ ;
 
-		/* Get the next message index, advance */
-		x = message__next++;
+		/* Continue if not equal */
+		if (*s) continue;
 
-		/* Handle wrap */
-		if (message__next == MESSAGE_MAX) message__next = 0;
+		/* Get the next available message index */
+		x = message__next;
+
+		/* Advance 'message__next', wrap if needed */
+		if (++message__next == MESSAGE_MAX) message__next = 0;
 
 		/* Kill last message if needed */
-		if (message__next == message__last) message__last++;
-
-		/* Handle wrap */
-		if (message__last == MESSAGE_MAX) message__last = 0;
+		if (message__next == message__last)
+		{
+			/* Advance 'message__last', wrap if needed */
+			if (++message__last == MESSAGE_MAX) message__last = 0;
+		}
 
 		/* Assign the starting address */
 		message__ptr[x] = message__ptr[i];
 
-		/* Store the color */
-		message__color[x] = attr;
+		/* Store the message type */
+		message__type[x] = type;
 
 		/* Success */
 		return;
@@ -2280,8 +2185,8 @@ void message_add(cptr str, byte attr)
 
 	/*** Step 3 -- Ensure space before end of buffer ***/
 
-	/* Kill messages and Wrap if needed */
-	if (message__head + n + 1 >= MESSAGE_BUF)
+	/* Kill messages, and wrap, if needed */
+	if (message__head + (n + 1) >= MESSAGE_BUF)
 	{
 		/* Kill all "dead" messages */
 		for (i = message__last; TRUE; i++)
@@ -2292,8 +2197,11 @@ void message_add(cptr str, byte attr)
 			/* Stop before the new message */
 			if (i == message__next) break;
 
+			/* Get offset */
+			o = message__ptr[i];
+
 			/* Kill "dead" messages */
-			if (message__ptr[i] >= message__head)
+			if (o >= message__head)
 			{
 				/* Track oldest message */
 				message__last = i + 1;
@@ -2308,16 +2216,13 @@ void message_add(cptr str, byte attr)
 	}
 
 
-	/*** Step 4 -- Ensure space before next message ***/
+	/*** Step 4 -- Ensure space for actual characters ***/
 
-	/* Kill messages if needed */
-	if (message__head + n + 1 > message__tail)
+	/* Kill messages, if needed */
+	if (message__head + (n + 1) > message__tail)
 	{
-		/* Grab new "tail" */
-		message__tail = message__head + n + 1;
-
-		/* Advance tail while possible past first "nul" */
-		while (message__buf[message__tail-1]) message__tail++;
+		/* Advance to new "tail" location */
+		message__tail += (MESSAGE_BUF / 4);
 
 		/* Kill all "dead" messages */
 		for (i = message__last; TRUE; i++)
@@ -2328,9 +2233,11 @@ void message_add(cptr str, byte attr)
 			/* Stop before the new message */
 			if (i == message__next) break;
 
+			/* Get offset */
+			o = message__ptr[i];
+
 			/* Kill "dead" messages */
-			if ((message__ptr[i] >= message__head) &&
-				(message__ptr[i] < message__tail))
+			if ((o >= message__head) && (o < message__tail))
 			{
 				/* Track oldest message */
 				message__last = i + 1;
@@ -2341,18 +2248,18 @@ void message_add(cptr str, byte attr)
 
 	/*** Step 5 -- Grab a new message index ***/
 
-	/* Get the next message index, advance */
-	x = message__next++;
+	/* Get the next available message index */
+	x = message__next;
 
-	/* Handle wrap */
-	if (message__next == MESSAGE_MAX) message__next = 0;
+	/* Advance 'message__next', wrap if needed */
+	if (++message__next == MESSAGE_MAX) message__next = 0;
 
 	/* Kill last message if needed */
-	if (message__next == message__last) message__last++;
-
-	/* Handle wrap */
-	if (message__last == MESSAGE_MAX) message__last = 0;
-
+	if (message__next == message__last)
+	{
+		/* Advance 'message__last', wrap if needed */
+		if (++message__last == MESSAGE_MAX) message__last = 0;
+	}
 
 
 	/*** Step 6 -- Insert the message text ***/
@@ -2360,21 +2267,104 @@ void message_add(cptr str, byte attr)
 	/* Assign the starting address */
 	message__ptr[x] = message__head;
 
-	/* Append the new part of the message */
-	for (i = 0; i < n; i++)
-	{
-		/* Copy the message */
-		message__buf[message__head + i] = str[i];
-	}
-
-	/* Terminate */
-	message__buf[message__head + i] = '\0';
+	/* Inline 'strcpy(message__buf + message__head, str)' */
+	v = message__buf + message__head;
+	for (u = str; *u; ) *v++ = *u++;
+	*v = '\0';
 
 	/* Advance the "head" pointer */
-	message__head += n + 1;
+	message__head += (n + 1);
 
-	/* Store the color */
-	message__color[x] = attr;
+	/* Store the message type */
+	message__type[x] = type;
+}
+
+
+/*
+ * Initialize the "message" package
+ */
+errr messages_init(void)
+{
+	/* Message variables */
+	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
+	C_MAKE(message__buf, MESSAGE_BUF, char);
+	C_MAKE(message__type, MESSAGE_MAX, u16b);
+
+	/* Init the message colors to white */
+	(void)C_BSET(message__color, TERM_WHITE, MSG_MAX, byte);
+
+	/* Hack -- No messages yet */
+	message__tail = MESSAGE_BUF;
+
+	/* Success */
+	return (0);
+}
+
+
+/*
+ * Free the "message" package
+ */
+void messages_free(void)
+{
+	/* Free the messages */
+	C_FREE(message__ptr, MESSAGE_MAX, u16b);
+	C_FREE(message__buf, MESSAGE_BUF, char);
+	C_FREE(message__type, MESSAGE_MAX, u16b);
+}
+
+
+/*
+ * XXX XXX XXX Important note about "colors" XXX XXX XXX
+ *
+ * The "TERM_*" color definitions list the "composition" of each
+ * "Angband color" in terms of "quarters" of each of the three color
+ * components (Red, Green, Blue), for example, TERM_UMBER is defined
+ * as 2/4 Red, 1/4 Green, 0/4 Blue.
+ *
+ * The following info is from "Torbjorn Lindgren" (see "main-xaw.c").
+ *
+ * These values are NOT gamma-corrected.  On most machines (with the
+ * Macintosh being an important exception), you must "gamma-correct"
+ * the given values, that is, "correct for the intrinsic non-linearity
+ * of the phosphor", by converting the given intensity levels based
+ * on the "gamma" of the target screen, which is usually 1.7 (or 1.5).
+ *
+ * The actual formula for conversion is unknown to me at this time,
+ * but you can use the table below for the most common gamma values.
+ *
+ * So, on most machines, simply convert the values based on the "gamma"
+ * of the target screen, which is usually in the range 1.5 to 1.7, and
+ * usually is closest to 1.7.  The converted value for each of the five
+ * different "quarter" values is given below:
+ *
+ *  Given     Gamma 1.0       Gamma 1.5       Gamma 1.7     Hex 1.7
+ *  -----       ----            ----            ----          ---
+ *   0/4        0.00            0.00            0.00          #00
+ *   1/4        0.25            0.27            0.28          #47
+ *   2/4        0.50            0.55            0.56          #8f
+ *   3/4        0.75            0.82            0.84          #d7
+ *   4/4        1.00            1.00            1.00          #ff
+ *
+ * Note that some machines (i.e. most IBM machines) are limited to a
+ * hard-coded set of colors, and so the information above is useless.
+ *
+ * Also, some machines are limited to a pre-determined set of colors,
+ * for example, the IBM can only display 16 colors, and only 14 of
+ * those colors resemble colors used by Angband, and then only when
+ * you ignore the fact that "Slate" and "cyan" are not really matches,
+ * so on the IBM, we use "orange" for both "Umber", and "Light Umber"
+ * in addition to the obvious "Orange", since by combining all of the
+ * "indeterminate" colors into a single color, the rest of the colors
+ * are left with "meaningful" values.
+ */
+
+
+/*
+ * Move the cursor
+ */
+void move_cursor(int row, int col)
+{
+	Term_gotoxy(col, row);
 }
 
 
@@ -2409,13 +2399,16 @@ static void msg_flush(int x)
 			if (quick_messages) break;
 			if (cmd == ' ') break;
 			if ((cmd == '\n') || (cmd == '\r')) break;
-			bell();
+			bell("Illegal response to a 'more' prompt!");
 		}
 	}
 
 	/* Clear the line */
 	Term_erase(0, 0, 255);
 }
+
+
+static int message_column = 0;
 
 
 /*
@@ -2429,51 +2422,48 @@ static void msg_flush(int x)
  *
  * These messages are memorized for later reference (see above).
  *
- * We could do "Term_fresh()" to provide "flicker" if needed.
+ * We could do a "Term_fresh()" to provide "flicker" if needed.
  *
- * The global "msg_flag" variable can be cleared to tell us to
- * "erase" any "pending" messages still on the screen.
+ * The global "msg_flag" variable can be cleared to tell us to "erase" any
+ * "pending" messages still on the screen, instead of using "msg_flush()".
+ * This should only be done when the user is known to have read the message.
  *
- * XXX XXX XXX Note that we must be very careful about using the
- * "msg_print()" functions without explicitly calling the special
- * "msg_print(NULL)" function, since this may result in the loss
- * of information if the screen is cleared, or if anything is
- * displayed on the top line.
+ * We must be very careful about using the "msg_print()" functions without
+ * explicitly calling the special "message_flush()" function, since this may
+ * result in the loss of information if the screen is cleared, or if anything
+ * is displayed on the top line.
  *
- * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
+ * Hack -- Note that "message_flush()" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
-void msg_print_color(byte attr, cptr msg)
+static void msg_print_aux(u16b type, cptr msg)
 {
-	static int p = 0;
-
 	int n;
-
 	char *t;
-
 	char buf[1024];
+	byte color = TERM_WHITE;
 
 
 	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) attr = TERM_WHITE;
+	if (!use_color || ironman_moria) type = MSG_GENERIC;
 
 	/* Hack -- Reset */
-	if (!msg_flag) p = 0;
+	if (!msg_flag) message_column = 0;
 
 	/* Message Length */
 	n = (msg ? strlen(msg) : 0);
 
 	/* Hack -- flush when requested or needed */
-	if (p && (!msg || ((p + n) > 72)))
+	if (message_column && (!msg || ((message_column + n) > 72)))
 	{
 		/* Flush */
-		msg_flush(p);
+		msg_flush(message_column);
 
 		/* Forget it */
 		msg_flag = FALSE;
 
 		/* Reset */
-		p = 0;
+		message_column = 0;
 	}
 
 
@@ -2484,8 +2474,12 @@ void msg_print_color(byte attr, cptr msg)
 	if (n > 1000) return;
 
 
-	/* Memorize the message */
-	if (character_generated) message_add(msg, attr);
+	/* Memorize the message (if legal) */
+	if (character_generated && !(p_ptr->is_dead))
+		message_add(msg, type);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_MESSAGE);
 
 
 	/* Copy it */
@@ -2493,6 +2487,13 @@ void msg_print_color(byte attr, cptr msg)
 
 	/* Analyze the buffer */
 	t = buf;
+
+	/* Get the color of the message (if legal) */
+	if (message__color)
+		color = message__color[type];
+
+	/* HACK -- no "black" messages */
+	if (color == TERM_DARK) color = TERM_WHITE;
 
 	/* Split message */
 	while (n > 72)
@@ -2518,13 +2519,10 @@ void msg_print_color(byte attr, cptr msg)
 		t[split] = '\0';
 
 		/* Display part of the message */
-		Term_putstr(0, 0, split, attr, t);
+		Term_putstr(0, 0, split, color, t);
 
 		/* Flush it */
 		msg_flush(split + 1);
-
-		/* Memorize the piece */
-		/* if (character_generated) message_add(t, attr); */
 
 		/* Restore the split character */
 		t[split] = oops;
@@ -2536,72 +2534,26 @@ void msg_print_color(byte attr, cptr msg)
 		t += split; n -= split;
 	}
 
-
 	/* Display the tail of the message */
-	Term_putstr(p, 0, n, attr, t);
-
-	/* Memorize the tail */
-	/* if (character_generated) message_add(t, attr); */
-
-	/* Window stuff */
-	p_ptr->window |= (PW_MESSAGE);
+	Term_putstr(message_column, 0, n, color, t);
 
 	/* Remember the message */
 	msg_flag = TRUE;
 
 	/* Remember the position */
-	p += n + 1;
+	message_column += n + 1;
 
 	/* Optional refresh */
-	if (fresh_message) Term_fresh();
+	if (fresh_after) Term_fresh();
 }
 
 
+/*
+ * Print a message in the default color (white)
+ */
 void msg_print(cptr msg)
 {
-	msg_print_color(TERM_WHITE, msg);
-}
-
-
-/*
- * Hack -- prevent "accidents" in "screen_save()" or "screen_load()"
- */
-static int screen_depth = 0;
-
-
-/*
- * Save the screen, and increase the "icky" depth.
- *
- * This function must match exactly one call to "screen_load()".
- */
-void screen_save(void)
-{
-	/* Hack -- Flush messages */
-	msg_print(NULL);
-
-	/* Save the screen (if legal) */
-	if (screen_depth++ == 0) Term_save();
-
-	/* Increase "icky" depth */
-	character_icky++;
-}
-
-
-/*
- * Load the screen, and decrease the "icky" depth.
- *
- * This function must match exactly one call to "screen_save()".
- */
-void screen_load(void)
-{
-	/* Hack -- Flush messages */
-	msg_print(NULL);
-
-	/* Load the screen (if legal) */
-	if (--screen_depth == 0) Term_load();
-
-	/* Decrease "icky" depth */
-	character_icky--;
+	msg_print_aux(MSG_GENERIC, msg);
 }
 
 
@@ -2624,15 +2576,33 @@ void msg_format(cptr fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	msg_print(buf);
+	msg_print_aux(MSG_GENERIC, buf);
+}
+
+
+/*
+ * Display a message and play the associated sound.
+ *
+ * The "extra" parameter is currently unused.
+ */
+void message(u16b message_type, s16b extra, cptr message)
+{
+	/* Unused parameter */
+	(void)extra;
+
+	sound(message_type);
+
+	msg_print_aux(message_type, message);
 }
 
 
 
 /*
- * Display a formatted message, using "vstrnfmt()" and "msg_print()".
+ * Display a formatted message and play the associated sound.
+ *
+ * The "extra" parameter is currently unused.
  */
-void msg_format_color(byte attr, cptr fmt, ...)
+void message_format(u16b message_type, s16b extra, cptr fmt, ...)
 {
 	va_list vp;
 
@@ -2648,7 +2618,73 @@ void msg_format_color(byte attr, cptr fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	msg_print_color(attr, buf);
+	message(message_type, extra, buf);
+}
+
+
+/*
+ * Print the queued messages.
+ */
+void message_flush(void)
+{
+	/* Hack -- Reset */
+	if (!msg_flag) message_column = 0;
+
+	/* Flush when needed */
+	if (message_column)
+	{
+		/* Print pending messages */
+		msg_flush(message_column);
+
+		/* Forget it */
+		msg_flag = FALSE;
+
+		/* Reset */
+		message_column = 0;
+	}
+}
+
+
+
+/*
+ * Hack -- prevent "accidents" in "screen_save()" or "screen_load()"
+ */
+static int screen_depth = 0;
+
+
+/*
+ * Save the screen, and increase the "icky" depth.
+ *
+ * This function must match exactly one call to "screen_load()".
+ */
+void screen_save(void)
+{
+	/* Hack -- Flush messages */
+	message_flush();
+
+	/* Save the screen (if legal) */
+	if (screen_depth++ == 0) Term_save();
+
+	/* Increase "icky" depth */
+	character_icky++;
+}
+
+
+/*
+ * Load the screen, and decrease the "icky" depth.
+ *
+ * This function must match exactly one call to "screen_save()".
+ */
+void screen_load(void)
+{
+	/* Hack -- Flush messages */
+	message_flush();
+
+	/* Load the screen (if legal) */
+	if (--screen_depth == 0) Term_load();
+
+	/* Decrease "icky" depth */
+	character_icky--;
 }
 
 
@@ -2666,6 +2702,7 @@ void c_put_str(byte attr, cptr str, int row, int col)
 	/* Position cursor, Dump the attr/text */
 	Term_putstr(col, row, -1, attr, str);
 }
+
 
 /*
  * As above, but in "white"
@@ -2693,6 +2730,7 @@ void c_prt(byte attr, cptr str, int row, int col)
 	/* Dump the attr/text */
 	Term_addstr(-1, attr, str);
 }
+
 
 /*
  * As above, but in "white"
@@ -2932,7 +2970,7 @@ bool askfor_aux(char *buf, int len)
 			}
 			else
 			{
-				bell();
+				bell("Illegal edit key!");
 			}
 			break;
 		}
@@ -2968,7 +3006,7 @@ bool get_string(cptr prompt, char *buf, int len)
 	bool res;
 
 	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 	/* Display prompt */
 	prt(prompt, 0, 0);
@@ -3001,7 +3039,7 @@ bool get_check(cptr prompt)
 	p_ptr->skip_more = FALSE;
 
 	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 	/* Hack -- Build a "useful" prompt */
 	(void)strnfmt(buf, 78, "%.70s[y/n] ", prompt);
@@ -3016,7 +3054,7 @@ bool get_check(cptr prompt)
 		if (quick_messages) break;
 		if (i == ESCAPE) break;
 		if (strchr("YyNn", i)) break;
-		bell();
+		bell("Illegal response to a 'yes/no' question!");
 	}
 
 	/* Erase the prompt */
@@ -3040,7 +3078,7 @@ bool get_check(cptr prompt)
 bool get_com(cptr prompt, char *command)
 {
 	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 	/* Display a prompt */
 	prt(prompt, 0, 0);
@@ -3221,7 +3259,7 @@ void request_command(int shopping)
 		if (p_ptr->command_new)
 		{
 			/* Flush messages */
-			msg_print(NULL);
+			message_flush();
 
 			/* Use auto-command */
 			cmd = (char)p_ptr->command_new;
@@ -3284,7 +3322,7 @@ void request_command(int shopping)
 					if (p_ptr->command_arg >= 10000)
 					{
 						/* Warn */
-						bell();
+						bell("Invalid repeat count!");
 
 						/* Limit */
 						p_ptr->command_arg = 9999;
@@ -3486,6 +3524,37 @@ bool is_a_vowel(int ch)
 	}
 
 	return (FALSE);
+}
+
+
+/*
+ * Convert a "color letter" into an "actual" color
+ * The colors are: dwsorgbuDWvyRGBU, as shown below
+ */
+int color_char_to_attr(char c)
+{
+	switch (c)
+	{
+		case 'd': return (TERM_DARK);
+		case 'w': return (TERM_WHITE);
+		case 's': return (TERM_SLATE);
+		case 'o': return (TERM_ORANGE);
+		case 'r': return (TERM_RED);
+		case 'g': return (TERM_GREEN);
+		case 'b': return (TERM_BLUE);
+		case 'u': return (TERM_UMBER);
+
+		case 'D': return (TERM_L_DARK);
+		case 'W': return (TERM_L_WHITE);
+		case 'v': return (TERM_VIOLET);
+		case 'y': return (TERM_YELLOW);
+		case 'R': return (TERM_L_RED);
+		case 'G': return (TERM_L_GREEN);
+		case 'B': return (TERM_L_BLUE);
+		case 'U': return (TERM_L_UMBER);
+	}
+
+	return (-1);
 }
 
 
@@ -3755,7 +3824,7 @@ void build_gamma_table(int gamma)
 
 		/*
 		 * Store the value in the table so that the
-		 * floating point pow function isn't needed .
+		 * floating point pow function isn't needed.
 		 */
 		gamma_table[i] = ((long)(value / 256) * i) / 256;
 	}

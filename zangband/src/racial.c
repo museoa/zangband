@@ -817,7 +817,7 @@ void do_cmd_racial_power(void)
 			/* Totally Illegal */
 			if ((i < 0) || (i >= num))
 			{
-				bell();
+				bell("Illegal racial power choice!");
 				continue;
 			}
 

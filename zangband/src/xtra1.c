@@ -3714,7 +3714,7 @@ void redraw_stuff(void)
 	if (p_ptr->redraw & (PR_WIPE))
 	{
 		p_ptr->redraw &= ~(PR_WIPE);
-		msg_print(NULL);
+		message_flush();
 		Term_clear();
 	}
 

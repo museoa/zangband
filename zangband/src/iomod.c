@@ -69,7 +69,7 @@ static PyObject* io_bell(PyObject *self, PyObject *args)
 		return NULL;
 
 	/* Make a bell noice */
-	bell();
+	bell(NULL);
 
 	/* Return nothing */
 	Py_INCREF(Py_None);

@@ -102,7 +102,7 @@ void do_cmd_go_up(void)
 			p_ptr->energy_use = 0;
 
 			/* Success */
-			msg_print("You enter a maze of up staircases.");
+			message(MSG_STAIRS, 0, "You enter a maze of up staircases.");
 
 			if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -233,7 +233,7 @@ void do_cmd_go_down(void)
 			p_ptr->energy_use = 0;
 
 			/* Success */
-			msg_print("You enter a maze of down staircases.");
+			message(MSG_STAIRS, 0, "You enter a maze of down staircases.");
 
 			if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -646,7 +646,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 		/* Success -- May still have traps */
 		if (randint0(100) < j)
 		{
-			msg_print("You have picked the lock.");
+			message(MSG_OPENDOOR, 0, "You have picked the lock.");
 			gain_exp(1);
 			flag = TRUE;
 		}
@@ -657,7 +657,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 			/* We may continue repeating */
 			more = TRUE;
 			if (flush_failure) flush();
-			msg_print("You failed to pick the lock.");
+			message(MSG_LOCKPICK_FAIL, 0, "You failed to pick the lock.");
 		}
 	}
 
@@ -997,7 +997,7 @@ void do_cmd_open(void)
 		if (!((c_ptr->feat == FEAT_CLOSED) || o_idx))
 		{
 			/* Message */
-			msg_print("You see nothing there to open.");
+			message(MSG_NOTHING_TO_OPEN, 0, "You see nothing there to open.");
 		}
 
 		/* Monster in the way */
@@ -2259,7 +2259,7 @@ void do_cmd_stay(int pickup)
 		{
 			quest[q_index].status = QUEST_STATUS_COMPLETED;
 			msg_print("You accomplished your quest!");
-			msg_print(NULL);
+			message_flush();
 		}
 
 		leaving_quest = p_ptr->inside_quest;
@@ -2903,7 +2903,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 						sound(SOUND_FLEE);
 
 						/* Message */
-						msg_format("%^s flees in terror!", m_name);
+						message_format(MSG_FLEE, m_ptr->r_idx,
+						               "%^s flees in terror!", m_name);
 					}
 				}
 			}
@@ -3339,7 +3340,8 @@ void do_cmd_throw_aux(int mult)
 						sound(SOUND_FLEE);
 
 						/* Message */
-						msg_format("%^s flees in terror!", m_name);
+						message_format(MSG_FLEE, m_ptr->r_idx,
+						               "%^s flees in terror!", m_name);
 					}
 				}
 			}

@@ -2879,7 +2879,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 
 
 	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 
 	/* Not done */
@@ -3183,7 +3183,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				{
 					if (!allow_equip)
 					{
-						bell();
+						bell("Cannot switch item selector!");
 						break;
 					}
 					p_ptr->command_wrk = (USE_EQUIP);
@@ -3192,7 +3192,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				{
 					if (!allow_inven)
 					{
-						bell();
+						bell("Cannot switch item selector!");
 						break;
 					}
 					p_ptr->command_wrk = (USE_INVEN);
@@ -3209,7 +3209,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 					}
 					else
 					{
-						bell();
+						bell("Cannot switch item selector!");
 						break;
 					}
 				}
@@ -3232,7 +3232,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			{
 				if (!allow_floor)
 				{
-					bell();
+					bell("Cannot select floor!");
 					break;
 				}
 
@@ -3311,21 +3311,21 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				/* Look up the tag */
 				if (!get_tag(&k, which))
 				{
-					bell();
+					bell("Illegal object choice (tag)!");
 					break;
 				}
 
 				/* Hack -- Validate the item */
 				if ((k < INVEN_WIELD) ? !inven : !equip)
 				{
-					bell();
+					bell("Illegal object choice (tag)!");
 					break;
 				}
 
 				/* Validate the item */
 				if (!get_item_okay(k))
 				{
-					bell();
+					bell("Illegal object choice (tag)!");
 					break;
 				}
 
@@ -3384,7 +3384,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				/* Validate the item */
 				if (!get_item_okay(k))
 				{
-					bell();
+					bell("Illegal object choice (default)!");
 					break;
 				}
 
@@ -3428,7 +3428,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 					k = islower(which) ? A2I(which) : -1;
 					if (k < 0 || k >= floor_num)
 					{
-						bell();
+						bell("Illegal object choice (floor)!");
 						break;
 					}
 
@@ -3439,7 +3439,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				/* Validate the item */
 				if ((p_ptr->command_wrk != USE_FLOOR) && !get_item_okay(k))
 				{
-					bell();
+					bell("Illegal object choice (normal)!");
 					break;
 				}
 

@@ -2619,11 +2619,11 @@ void do_cmd_spoilers(void)
 		/* Oops */
 		else
 		{
-			bell();
+			bell("Illegal command for spoilers!");
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 

@@ -2867,7 +2867,7 @@ static errr rd_savefile_new_aux(void)
 			if (c == ESCAPE) break;
 			if ((c == 'y') || (c == 'n')) break;
 			if (c == '?') do_cmd_help();
-			else bell();
+			else bell("Illegal answer!");
 		}
 
 		/* Set "hard quests" mode */
@@ -2916,7 +2916,7 @@ static errr rd_savefile_new_aux(void)
 			if (c == ESCAPE) break;
 			if ((c == 'y') || (c == 'n')) break;
 			if (c == '?') do_cmd_help();
-			else bell();
+			else bell("Illegal answer!");
 		}
 
 		/* Set "wilderness" mode */
