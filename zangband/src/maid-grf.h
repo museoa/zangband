@@ -134,6 +134,9 @@ struct term_map
 	/* Rough measure of monster hp */
 	byte m_hp;
 	
+	/* Priority for overhead mini map */
+	byte priority;
+	
 	/* Map information about square */
 	byte a;
 	char c;
@@ -190,6 +193,9 @@ struct map_block
 
 	/* We need to save the flags to get the refcounting right. */
 	byte flags;
+	
+	/* Priority of tile (For overhead map display) */
+	byte priority;
 };
 
 typedef map_block *map_blk_ptr;

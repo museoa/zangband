@@ -676,6 +676,9 @@ static void save_map_location(int x, int y, term_map *map)
 	/* Save the flags */
 	mb_ptr->flags = map->flags;
 
+	/* Save the priority */
+	mb_ptr->priority = map->priority;
+
 #ifdef TERM_CAVE_MAP
 
 	/* Save the information */
@@ -878,166 +881,49 @@ static byte priority(byte feat)
  * the reduced-size dungeon map.
  *
  * We need to calculate priority as well as the symbols to display.
+ *
+ * We cheat by getting the symbol recorded previously.
  */
 static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 {
 	int tp;
 
 	byte feat;
-	feature_type *f_ptr;
 
-	object_type *o_ptr;
-	field_type *fld_ptr;
-	monster_type *m_ptr;
-
-	s16b this_f_idx, next_f_idx;
-
-	cave_type *c_ptr = area(x, y);
-	pcave_type *pc_ptr = parea(x, y);
-
-	/* Get terrain feature */
-	feat = pc_ptr->feat;
-	f_ptr = &f_info[feat];
-
-	/* Extract the priority of that attr/char */
-	tp = priority(feat);
-
-	*a = f_ptr->x_attr;
-	*c = f_ptr->x_char;
-
-	if (f_ptr->w_attr)
+	map_block *mb_ptr;
+	
+	if (!map_in_bounds(x, y))
 	{
-		/*
-		 * Store extended terrain information. 
-		 */
-		*ta = f_ptr->w_attr;
-		*tc = f_ptr->w_char;
+		/* Out of bounds - black square */
+		*a = 0;
+		*c = ' ';
+		*ta = 0;
+		*tc = ' ';
+
+		return (0);
 	}
-	else
+	
+	
+	/* Get overhead map square */
+	mb_ptr = map_loc(x, y);
+
+	/* Default to precalculated priority */
+	tp = mb_ptr->priority;
+	
+	if (!tp)
 	{
-		*ta = *a;
-		*tc = *c;
+		/* Get terrain feature */
+		feat = parea(x, y)->feat;
+
+		/* Extract the priority of that attr/char */
+		tp = priority(feat);
 	}
-
-	/* Objects */
-	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
-	{
-		/* Memorized objects */
-		if (o_ptr->info & (OB_SEEN))
-		{
-			/* Normal char */
-			*c = object_char(o_ptr);
-
-			/* Normal attr */
-			*a = object_attr(o_ptr);
-
-			/* Hack -- hallucination */
-			if (p_ptr->tim.image) image_object(a, c);
-
-			/* High priority */
-			tp = 30;
-
-			/* Done */
-			break;
-		}
-	}
-	OBJ_ITT_END;
-
-	/* Do we have a known field here? */
-	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
-	{
-		/* Acquire field */
-		fld_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = fld_ptr->next_f_idx;
-
-		/* Memorized, visible fields */
-		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
-			(FIELD_INFO_MARK | FIELD_INFO_VIS))
-		{
-			/* Which display level to use? */
-			if (fld_ptr->info & FIELD_INFO_FEAT)
-			{
-				if (tp < 30)
-				{
-					*c = fld_ptr->f_char;
-					*a = fld_ptr->f_attr;
-				}
-
-				/* Save the terrain info for the transparency effects */
-				*ta = *a;
-				*tc = *c;
-			}
-			else
-			{
-				/* Do we need to look at objects? */
-				if (fld_ptr->info & (FIELD_INFO_IGNORE))
-				{
-					if (tp < 30)
-					{
-						*c = fld_ptr->f_char;
-						*a = fld_ptr->f_attr;
-					}
-				}
-				else
-				{
-					*c = fld_ptr->f_char;
-					*a = fld_ptr->f_attr;
-				}
-			}
-
-			/* Set high priority */
-			tp = 30;
-			break;
-		}
-	}
-
-	/* Do we have a known monster here? */
-	if (c_ptr->m_idx)
-	{
-		m_ptr = &m_list[c_ptr->m_idx];
-
-		/* Visible monster */
-		if (m_ptr->ml)
-		{
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-			byte feat_not_ascii = (*a & 0x80);
-
-			/* Desired attr */
-			if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
-			{
-				*a = r_ptr->x_attr;
-			}
-
-			/* Desired char */
-			if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
-			{
-				*c = r_ptr->x_char;
-			}
-
-			/* High priority */
-			tp = 40;
-		}
-	}
-
-	/* Finally - use the player */
-	if ((x == p_ptr->px) && (y == p_ptr->py))
-	{
-		monster_race *r_ptr = &r_info[0];
-
-		/* Get the "player" attr */
-		*a = r_ptr->x_attr;
-
-		/* Get the "player" char */
-		*c = r_ptr->x_char;
-#ifdef VARIABLE_PLAYER_GRAPH
-
-		variable_player_graph(a, c);
-#endif /* VARIABLE_PLAYER_GRAPH */
-		/* Highest priority */
-		tp = 50;
-	}
+	
+	/* Get attributes from overhead map */
+	*a = mb_ptr->a;
+	*c = mb_ptr->c;
+	*ta = mb_ptr->ta;
+	*tc = mb_ptr->tc;
 
 	/* Return priority */
 	return (tp);
@@ -2367,6 +2253,9 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 
 			/* Keep this grid */
 			map.flags |= MAP_ONCE;
+			
+			/* High priority tile */
+			map.priority = 30;
 		
 			/* Which display level to use? */
 			if (fld_ptr->info & FIELD_INFO_FEAT)
@@ -2432,6 +2321,9 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 
 			/* Keep this grid */
 			map.flags |= MAP_ONCE;
+			
+			/* High priority tile */
+			map.priority = 30;
 		
 			/* A field is obscuring the view to the object */
 			if (float_field) break;
@@ -2475,6 +2367,9 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 			/* Save mimic character */
 			map.unknown = r_ptr->d_char;
 		}
+		
+		/* High priority tile */
+		map.priority = 40;
 	}
 
 	/* Hack -- fake monochrome */
@@ -2485,7 +2380,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 	}
 	
 	/* Handle "player" */
-	if (character_dungeon && (c_ptr == area(p_ptr->px, p_ptr->py)))
+	if ((x == p_ptr->px) && (y == p_ptr->py))
 	{
 		monster_race *r_ptr = &r_info[0];
 
@@ -2498,6 +2393,9 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 
 		variable_player_graph(&a, &c)
 #endif /* VARIABLE_PLAYER_GRAPH */
+
+		/* High priority tile */
+		map.priority = 50;
 	}
 	
 	/* Save the info */
