@@ -1754,7 +1754,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msg_print("The ring glows in multiple colours...");
 				if (!get_aim_dir(&dir)) return FALSE;
-				fire_ball(GF_MISSILE, dir, 400, 3);
+				fire_ball(GF_MISSILE, dir, 800, 3);
 				o_ptr->timeout = (s16b)rand_range(250, 500);
 				break;
 			}

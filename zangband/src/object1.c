@@ -727,7 +727,7 @@ cptr item_activation(const object_type *o_ptr)
 			}
 			case ART_ELEMENTS:
 			{
-				return "the elements (400) every 250+d250 turns";
+				return "the elements (800) every 250+d250 turns";
 			}
 			case ART_DOR:  case ART_TERROR:
 			{
