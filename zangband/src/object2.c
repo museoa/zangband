@@ -477,8 +477,7 @@ static s16b o_pop(void)
 	bool wrapped = FALSE;
 
 	/* Wrap counter */
-	if (o_cur > o_max) o_cur = 1;
-
+	if (o_cur >= o_max) o_cur = 1;
 
 	/*
 	 * If the number remaining is less than one third of the
@@ -5004,6 +5003,9 @@ static s16b *look_up_list(object_type *o_ptr)
 		
 		/* Debug - make sure we don't have a corrupted inventory */
 		if (j_ptr->ix || j_ptr->iy) quit("Corrupted inventory contains dungeon objects!");
+		
+		/* Debug - test array bounds */
+		if (GET_ARRAY_INDEX(o_list, j_ptr) >= o_max) quit("Inven outside bounds!");
 	}
 	OBJ_ITT_END;
 
