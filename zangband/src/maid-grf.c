@@ -581,7 +581,7 @@ static void save_map_location(int x, int y, term_map *map)
 		mbp_ptr = map_cache[block_num];
 	}
 	
-	mb_ptr = &mbp_ptr[y % 15][x % 15];
+	mb_ptr = &mbp_ptr[y & 15][x & 15];
 	
 	/* Increment refcount depending on visibility */
 	if (map->flags & MAP_SEEN)
@@ -625,7 +625,7 @@ static void save_map_location(int x, int y, term_map *map)
 map_block *map_loc(int x, int y)
 {
 	return (&map_cache[map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]]
-				[y % 15][x % 15]);
+				[y & 15][x & 15]);
 }
 
 
