@@ -1664,20 +1664,32 @@ static void break_curse(object_type *o_ptr)
 }
 
 
-#define ENCHANT_MAX 25
+#define ENCHANT_MAX_DAM 25
+#define ENCHANT_MAX 15
 
 /*
  * Used by the "enchant" function (chance of failure)
  *
  * Formula: 1000-0.064x^3
  */
-static int enchant_table[ENCHANT_MAX + 1] =
+static int enchant_table_dam[ENCHANT_MAX_DAM + 1] =
 {
 	0, 115, 221, 319, 407,
 	488, 561, 627, 686, 738,
 	784, 824, 859, 889, 914,
 	936, 953, 967, 978, 986,
 	992, 996, 998, 999, 999,
+	1000
+};
+
+/*
+ * Used by the "enchant" function (chance of failure)
+ */
+static int enchant_table[ENCHANT_MAX] =
+{
+	0, 10,  50, 100, 200,
+	300, 400, 500, 650, 800,
+	950, 987, 993, 995, 998,
 	1000
 };
 
@@ -1750,9 +1762,9 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 		if (eflag & ENCH_TODAM)
 		{
 			if (o_ptr->to_d < 0) chance = 0;
-			else if (o_ptr->to_d > ENCHANT_MAX) chance = 1000;
+			else if (o_ptr->to_d > ENCHANT_MAX_DAM) chance = 1000;
 			else
-				chance = enchant_table[o_ptr->to_d];
+				chance = enchant_table_dam[o_ptr->to_d];
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
