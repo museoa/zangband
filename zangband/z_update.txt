@@ -42,8 +42,6 @@ ZAngband 2.5.0:
  had various flags removed.
 -The energy it takes to zap a rod/ aim a wand / use a staff and
  activate an artifact now depends on the players device skill.
--The XP function now decreases the amount per monster killed as you
- kill more.  The effect is less than in Rangband.
 -Changed monster critical hit code so that stormy doesn't get
  insta-kills quite as often.
 -Golems lose their "nostun" ability in hard games with the ironman
@@ -82,7 +80,12 @@ ZAngband 2.5.0:
  main-mac-carbon.c.
 -Added makefiles for the Cygwin, LCC-32 and Borland command line
  compilers.
+-Graphics under x11 / xaw.
 -Enabled transparency for x11 systems (this is a hack).
+-Changed the x11 / xaw versions to use semi-graphical characters in
+ ascii mode.
+-Changed the pref files so monsters that look like terrain, also get
+ changed when graphical characters are used.
 -Added some Draconian histories.
 -Added a patch by Jason Willoughby to remove Y2K warnings when
  compiling.
