@@ -1578,8 +1578,7 @@ static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost,
 			{
 				link_p[max_link] = i;
 				link_w[max_link] = j;
-				cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) *
-					factor * 2;
+				cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) * factor;
 				max_link++;
 
 				/* Only collect 1 link per city */
