@@ -437,15 +437,37 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 {
 	int i, mc, ms, mo, mx;
 
-	char buf[128];
 	char msg[128];
 
 	/* Extract four "modifier flags" */
 	mc = (event->state & GDK_CONTROL_MASK) ? TRUE : FALSE;
 	ms = (event->state & GDK_SHIFT_MASK) ? TRUE : FALSE;
 	mo = (event->state & GDK_MOD1_MASK) ? TRUE : FALSE;
-	mx = (event->state & GDK_MOD2_MASK) ? TRUE : FALSE;
+	mx = (event->state & GDK_MOD3_MASK) ? TRUE : FALSE;
+	
+	/*
+	 * Hack XXX
+	 * Parse shifted numeric (keypad) keys specially.
+	 */
+	if ((event->state == GDK_SHIFT_MASK)
+		&& (event->keyval >= GDK_KP_0) && (event->keyval <= GDK_KP_9))
+	{
+		/* Build the macro trigger string */
+		sprintf(msg, "%cS_%X%c", 31, event->keyval, 13);
+	
+		/* Enqueue the "macro trigger" string */
+		for (i = 0; msg[i]; i++) Term_keypress(msg[i]);
+	
+		/* Hack -- auto-define macros as needed */
+		if (event->length && (macro_find_exact(msg) < 0))
+		{
+			/* Create a macro */
+			macro_add(msg, event->string);
+		}
 
+		return (TRUE);
+	}
+	
 	/* Normal keys with no modifiers */
 	if (event->length && !mo && !mx)
 	{
@@ -458,7 +480,7 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 
 
 	/* Handle a few standard keys (bypass modifiers) XXX XXX XXX */
-	switch (event->keyval)
+	switch ((uint) event->keyval)
 	{
 		case GDK_Escape:
 		{
@@ -510,7 +532,7 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 	        mc ? "N" : "", ms ? "S" : "",
 	        mo ? "O" : "", mx ? "M" : "",
 	        event->keyval, 13);
-
+	
 	/* Enqueue the "macro trigger" string */
 	for (i = 0; msg[i]; i++) Term_keypress(msg[i]);
 	
@@ -518,7 +540,7 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 	if (event->length && (macro_find_exact(msg) < 0))
 	{
 		/* Create a macro */
-		macro_add(msg, buf);
+		macro_add(msg, event->string);
 	}
 
 	return (TRUE);
@@ -670,6 +692,11 @@ static void init_gtk_window(term_data *td, bool main)
 	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
 		                0, 0,
 		                td->cols * td->font_wid, td->rows * td->font_hgt);
+						
+	/* Copy it to the window */
+	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+	                0, 0, 0, 0,
+					td->cols * td->font_wid, td->rows * td->font_hgt);
 }
 
 
@@ -719,9 +746,12 @@ errr init_gtk(int argc, char **argv)
 	quit_aux = hook_quit;
 	core_aux = hook_quit;
 
+	/* Set the system suffix */
+	ANGBAND_SYS = "gtk";
+
 	/* Catch nasty signals */
 	signals_init();
-
+	
 	/* Initialize */
 	init_angband();
 

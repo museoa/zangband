@@ -637,12 +637,7 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-gtk.c" support */
 	if (!done && (!mstr || (streq(mstr, "gtk"))))
 	{
-		if (0 == init_gtk(argc, argv))
-		{
-			/* Mega-hack */
-			ANGBAND_SYS = "gtk";
-			done = TRUE;
-		}
+		init_gtk(argc, argv);
 	}
 #endif
 
