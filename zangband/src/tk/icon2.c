@@ -217,209 +217,11 @@ static int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int
 }
 
 
-/* Indexes are EFFECT_SPELL_XXX constants */
-cptr keyword_effect_spell[] = {
-"arrow",
-"missile",
-"mana",
-"light_weak",
-"dark_weak",
-"water",
-"plasma",
-"meteor",
-"ice",
-"gravity",
-"inertia",
-"force",
-"time",
-"acid",
-"electricity",
-"fire",
-"cold",
-"poison",
-"light",
-"dark",
-"confusion",
-"sound",
-"shard",
-"nexus",
-"nether",
-"chaos",
-"disenchant",
-"rocket",
-"nuke",
-"death_ray",
-"holy_fire",
-"hell_fire",
-"disintegrate",
-"psi",
-"psi_drain",
-"telekenesis",
-"domination",
-NULL
-};
-
-/* Indexes are EFFECT_AMMO_XXX constants */
-cptr keyword_effect_ammo[] = {
-"arrow",
-"bolt",
-NULL
-};
-
-cptr keyword_effect_group[] = {"ball", "bolt", "ammo", NULL};
-
-/*
- * (effect) assign $group $effect ?-type iconType -index iconIndex?
- */
-static int objcmd_effect_assign(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-	t_effect *effect_ptr;
-	int effectIndex, effectType;
-	IconSpec iconSpec;
-
-	/* Get the effect type */
-	if (Tcl_GetIndexFromObj(interp, objV[1], keyword_effect_group,
-		"type", 0, &effectType) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Access the effect */
-	effect_ptr = &g_effect[effectType];
-
-	/* Get the effect keyword */
-	if (Tcl_GetIndexFromObj(interp, objV[2], effect_ptr->name,
-		"effect", 0, &effectIndex) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* */
-	if (objC > 3)
-	{
-		/* Scan the arguments for icon type and index */
-		if (Icon_ParseArgs(interp, objc, objv, infoCmd->depth + 3, &iconSpec)
-			!= TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-
-		/* Set the icon */
-		effect_ptr->icon[effectIndex] = iconSpec;
-
-		/* Success */
-		return TCL_OK;;
-	}
-
-	/* Get the icon */
-	iconSpec = effect_ptr->icon[effectIndex];
-
-	/* Return an icon description */
-	Tcl_SetStringObj(resultPtr, format("%s %d",
-		g_icon_data[iconSpec.type].desc, iconSpec.index), -1);
-
-	/* Success */
-	return TCL_OK;;
-}
-
-/*
- * (effect) groups
- */
-static int objcmd_effect_groups(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-/*	CommandInfo *infoCmd = (CommandInfo *) clientData; */
-/*	int objC = objc - infoCmd->depth; */
-/*	Tcl_Obj *CONST *objV = objv + infoCmd->depth; */
-
-	int index;
-	Tcl_Obj *listObjPtr;
-
-	/* Hack - ignore parameters */
-	(void) objc;
-	(void) objv;
-	(void) clientData;
-
-	/* Create a new Tcl list object */
-	listObjPtr = Tcl_NewListObj(0, NULL);
-
-	/* Check each effect keyword */
-	for (index = 0; index < EFFECT_MAX; index++)
-	{
-		/* Append effect keyword as a string object to the list*/
-		Tcl_ListObjAppendElement(interp, listObjPtr,
-			Tcl_NewStringObj(keyword_effect_group[index], -1));
-	}
-
-	/* Return the list */
-	Tcl_SetObjResult(interp, listObjPtr);
-
-	/* Success */
-	return TCL_OK;;
-}
-
-/*
- * (effect) names $group
- */
-static int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-/*	int objC = objc - infoCmd->depth; */
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	t_effect *effect_ptr;
-	int effectType, index;
-	Tcl_Obj *listObjPtr;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	/* Get the effect type */
-	if (Tcl_GetIndexFromObj(interp, objV[1], keyword_effect_group,
-		"type", 0, &effectType) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Access the effect */
-	effect_ptr = &g_effect[effectType];
-
-	/* Create a new Tcl list object */
-	listObjPtr = Tcl_NewListObj(0, NULL);
-
-	/* Check each effect keyword */
-	for (index = 0; effect_ptr->name[index]; index++)
-	{
-		/* Append effect keyword as a string object to the list*/
-		Tcl_ListObjAppendElement(interp, listObjPtr,
-			Tcl_NewStringObj(effect_ptr->name[index], -1));
-	}
-
-	/* Return the list */
-	Tcl_SetObjResult(interp, listObjPtr);
-
-	/* Success */
-	return TCL_OK;;
-}
-
-
-
 CommandInit assignCmdInit[] = {
 	{0, "assign", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "types", 1, 1, NULL, objcmd_assign_types, (ClientData) 0},
 		{1, "toicon", 2, 2, "assign", objcmd_assign_toicon, (ClientData) 0},
 		{1, "validate", 2, 2, "assign", objcmd_assign_validate, (ClientData) 0},
-	{0, "effect", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "assign", 3, 0, "group effect ?args ...?", objcmd_effect_assign, (ClientData) 0},
-		{1, "groups", 1, 1, NULL, objcmd_effect_groups, (ClientData) 0},
-		{1, "names", 2, 2, "group", objcmd_effect_names, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
@@ -433,7 +235,6 @@ void init_icons(int size, int depth)
 	int i, n, y, x, y2, x2;
 	t_assign assign;
 	t_icon_data icon_data, *icon_data_ptr = &icon_data;
-	IconSpec iconDefault = {ICON_TYPE_DEFAULT, 0, -1};
 	unsigned char *rgb = Colormap_GetRGB();
 
 	/* Initialize the Icon library */
@@ -623,32 +424,6 @@ void init_icons(int size, int depth)
 		g_background[i] = i;
 	}
 	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].icon.type = ICON_TYPE_NONE;
-
-	/* Array of effect info */
-	C_MAKE(g_effect, EFFECT_MAX, t_effect);
-	C_MAKE(g_effect[EFFECT_SPELL_BALL].icon, EFFECT_SPELL_MAX, IconSpec);
-	C_MAKE(g_effect[EFFECT_SPELL_BOLT].icon, EFFECT_SPELL_MAX, IconSpec);
-	C_MAKE(g_effect[EFFECT_AMMO].icon, EFFECT_AMMO_MAX, IconSpec);
-
-	g_effect[EFFECT_SPELL_BALL].name = keyword_effect_spell;
-	g_effect[EFFECT_SPELL_BOLT].name = keyword_effect_spell;
-	g_effect[EFFECT_AMMO].name = keyword_effect_ammo;
-
-	/* Set default icon for each effect */
-	for (i = 0; i < EFFECT_SPELL_MAX; i++)
-	{
-		/* Default ball icon */
-		g_effect[EFFECT_SPELL_BALL].icon[i] = iconDefault;
-
-		/* Default bolt icon (first of 4) */
-		g_effect[EFFECT_SPELL_BOLT].icon[i] = iconDefault;
-	}
-
-	/* Set default icon for each effect */
-	for (i = 0; i < EFFECT_AMMO_MAX; i++)
-	{
-		g_effect[EFFECT_AMMO].icon[i] = iconDefault;
-	}
 
 	/* Clear the color hash table */
 	Palette_ResetHash();

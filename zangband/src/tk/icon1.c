@@ -18,7 +18,6 @@ t_assign_group g_assign[ASSIGN_MAX];
 t_assign g_assign_none;
 t_grid *g_grid[MAX_HGT] = {0};
 
-t_effect *g_effect; /* Array of effect icon info */
 int *g_background = NULL;
 
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
