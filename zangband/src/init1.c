@@ -726,6 +726,8 @@ static cptr t_info_triggers[] =
 	"SPEC",
 	"INTERT",
 	"MENTT",
+	"BUILD1",
+	"BUILD2",
 	"STORE1",
 	"STORE2",
 	NULL

@@ -1774,7 +1774,7 @@
 #define TV_CHEST         7		/* Chests ('&') */
 #define TV_FIGURINE      8		/* Magical figurines */
 #define TV_STATUE        9		/* Statue */
-/*#define TV_CORPSE       10  *//* Corpses are now fields */
+/*#define TV_CORPSE       10  */ /* Corpses are now fields */
 #define TV_SHOT         16		/* Ammo for slings */
 #define TV_ARROW        17		/* Ammo for bows */
 #define TV_BOLT         18		/* Ammo for x-bows */
@@ -5022,10 +5022,13 @@ extern int PlayerUID;
 #define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
 #define FIELD_ACT_INTERACT_TEST	16	/* Test for type of player interaction */
 #define FIELD_ACT_MON_ENTER_TEST 17	/* Monster attempts to enter grid */
-#define FIELD_ACT_STORE_ACT1	18	/* Store / building prelimiary action */
-#define FIELD_ACT_STORE_ACT2	19	/* Store / building final action */
+#define FIELD_ACT_BUILD_ACT1	18	/* Building prelimiary action */
+#define FIELD_ACT_BUILD_ACT2	19	/* Building final action */
+#define FIELD_ACT_STORE_ACT1	20	/* Store object antiselection action */
+#define FIELD_ACT_STORE_ACT2	21	/* Store object selection action */
 
-#define FIELD_ACTION_MAX		20
+
+#define FIELD_ACTION_MAX		22
 
 #define ACT_TUNNEL		0
 #define ACT_DISARM		1

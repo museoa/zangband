@@ -591,7 +591,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	bool result = FALSE;
 
 	/* Will the store !not! buy this item? */
-	field_hook(c_ptr, FIELD_ACT_STORE_ACT1, o_ptr, &result);
+	field_script(c_ptr, FIELD_ACT_STORE_ACT1, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 	/* We don't want this item type? */
 	if (result == TRUE) return (FALSE);
@@ -600,7 +600,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	result = TRUE;
 
 	/* Will the store buy this item? */
-	field_hook(c_ptr, FIELD_ACT_STORE_ACT2, o_ptr, &result);
+	field_script(c_ptr, FIELD_ACT_STORE_ACT2, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 	/* Finally check to see if we will buy the item */
 	return (result && store_will_buy(o_ptr));
