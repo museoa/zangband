@@ -3683,8 +3683,8 @@ extern int PlayerUID;
 #define FIELD_INFO_MERGE	0x0080  /* Merge counter with similar fields */ 
 #define FIELD_INFO_ENTER	0x0100  /* Grid blocks entry by entities */
 #define FIELD_INFO_NO_MAGIC	0x0200  /* Grid blocks magic */
-#define FIELD_INFO_PERM		0x0400  /* Grid is not affected by disintegrate */
-#define FIELD_INFO_NO_OBJCT	0x0800	/* Grid cannot hold objects */
+#define FIELD_INFO_NO_OBJCT	0x0400  /* Grid cannot hold objects */
+#define FIELD_INFO_PERM		0x0800	/* Grid is not affected by disintegrate */
 #define FIELD_INFO_DUMMY11	0x1000
 #define FIELD_INFO_DUMMY12	0x2000
 #define FIELD_INFO_DUMMY13	0x4000
