@@ -1741,17 +1741,17 @@ void prt_map(void)
 	{
 		/* Dungeon */
 		xmin = (0 < panel_col_min) ? panel_col_min : 0;
-		xmax = (cur_wid > panel_col_max) ? panel_col_max : cur_wid;
+		xmax = (cur_wid - 1 > panel_col_max) ? panel_col_max : cur_wid - 1;
 		ymin = (0 < panel_row_min) ? panel_row_min : 0;
-		ymax = (cur_hgt > panel_row_max) ? panel_row_max : cur_hgt;
+		ymax = (cur_hgt - 1 > panel_row_max) ? panel_row_max : cur_hgt - 1;
 	}
 	else
 	{
 		/* Wilderness */
 		xmin = (wild_grid.x_min < panel_col_min) ? panel_col_min : wild_grid.x_min;
-		xmax = (wild_grid.x_max > panel_col_max) ? panel_col_max : wild_grid.x_max;
+		xmax = (wild_grid.x_max - 1> panel_col_max) ? panel_col_max : wild_grid.x_max - 1;
 		ymin = (wild_grid.y_min < panel_row_min) ? panel_row_min : wild_grid.y_min;
-		ymax = (wild_grid.y_max > panel_row_max) ? panel_row_max : wild_grid.y_max;
+		ymax = (wild_grid.y_max - 1 > panel_row_max) ? panel_row_max : wild_grid.y_max - 1;
 	}
 	
 	
