@@ -999,7 +999,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			f_ptr = &f_info[feat];
 				
 			/* Handle "blind" */
-			if ((p_ptr->blind) || !(c_ptr->info & CAVE_MARK))
+			if (!(c_ptr->info & CAVE_MARK))
 			{
 				/* Access darkness */
 				f_ptr = &f_info[FEAT_NONE];
