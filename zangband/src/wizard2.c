@@ -402,7 +402,7 @@ static void do_cmd_wiz_change_aux(void)
 	strnfmt(tmp_val, 160, "%ld", (long)(p_ptr->au));
 
 	/* Query */
-	if (!get_string(tmp_val, 10, "Gold: ")) return;
+	if (!get_string(tmp_val, 9, "Gold: ")) return;
 
 	/* Extract */
 	tmp_long = atol(tmp_val);
