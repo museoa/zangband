@@ -3954,7 +3954,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			{
 				if (stop_ty ||
 					((p_ptr->flags2 & (TR2_FREE_ACT)) &&
-					 (randint1(100) < p_ptr->skill.sav)))
+					 (saving_throw(p_ptr->skill.sav))))
 				{
 					/* Do nothing */ ;
 				}
