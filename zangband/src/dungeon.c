@@ -460,9 +460,9 @@ static void pattern_teleport(void)
 
 static void wreck_the_pattern(void)
 {
-	int to_ruin = 0, r_y, r_x;
+	int to_ruin, r_y, r_x;
 
-	if (area(py,px)->feat == FEAT_PATTERN_XTRA2)
+	if (area(py, px)->feat == FEAT_PATTERN_XTRA2)
 	{
 		/* Ruined already */
 		return;
@@ -480,8 +480,8 @@ static void wreck_the_pattern(void)
 	{
 		scatter(&r_y, &r_x, py, px, 4, 0);
 
-		if ((area(r_y,r_x)->feat >= FEAT_PATTERN_START) &&
-		    (area(r_y,r_x)->feat < FEAT_PATTERN_XTRA2))
+		if ((area(r_y, r_x)->feat >= FEAT_PATTERN_START) &&
+		    (area(r_y, r_x)->feat < FEAT_PATTERN_XTRA2))
 		{
 			cave_set_feat(r_y, r_x, FEAT_PATTERN_XTRA2);
 		}
@@ -494,8 +494,8 @@ static void wreck_the_pattern(void)
 /* Returns TRUE if we are on the Pattern... */
 static bool pattern_effect(void)
 {
-	if ((area(py,px)->feat < FEAT_PATTERN_START) ||
-	    (area(py,px)->feat > FEAT_PATTERN_XTRA2))
+	if ((area(py, px)->feat < FEAT_PATTERN_START) ||
+	    (area(py, px)->feat > FEAT_PATTERN_XTRA2))
 		return FALSE;
 
 	if ((p_ptr->prace == RACE_AMBERITE) &&
@@ -3553,7 +3553,7 @@ static void process_player(void)
  */
 static void dungeon(void)
 {
-	int quest_num = 0;
+	int quest_num;
 
 	/* Set the base level */
 	base_level = dun_level;
@@ -3756,7 +3756,7 @@ static void dungeon(void)
 	/* Main loop */
 	while (TRUE)
 	{
-		int i, correct_inven_cnt = 0;
+		int i;
 
 		/* Hack -- Compact the monster list occasionally */
 		if (m_cnt + 32 > max_m_idx) compact_monsters(64);
@@ -3785,8 +3785,6 @@ static void dungeon(void)
 
 			/* Skip non-objects */
 			if (!j_ptr->k_idx) continue;
-
-			correct_inven_cnt++;
 		}
 
 		/* Update stuff */
