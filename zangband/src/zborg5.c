@@ -243,6 +243,32 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 	return (n);
 }
 
+/*
+ * Remove objects that are out of bounds
+ */
+static void delete_dead_objects(void)
+{
+	int i;
+
+	borg_take *bt_ptr;
+
+	/* Look for a "dead" object */
+	for (i = 1; i < borg_takes_nxt; i++)
+	{
+		bt_ptr = &borg_takes[i];
+	
+		/* Is the object "alive"? */
+		if (bt_ptr->k_idx)
+		{
+			/* Is it out of bounds? */
+			if (!map_in_bounds(bt_ptr->x, bt_ptr->y))
+			{
+				/* Delete it */
+				borg_delete_take(i);
+			}
+		}
+	}
+}
 
 /*
  * Attempt to convert a monster name into a race index
@@ -3588,6 +3614,9 @@ void borg_update(void)
 
 	/* Update the map */
 	borg_update_map();
+	
+	/* Update the objects */
+	delete_dead_objects();
 
 	/* Reset */
 	if (reset)
