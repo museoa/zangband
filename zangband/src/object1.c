@@ -574,13 +574,20 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Collect resistances */
 	vn = 0;
-	if (FLAG(of_ptr, TR_RES_ACID))   vp[vn++] = "acid";
-	if (FLAG(of_ptr, TR_RES_ELEC))   vp[vn++] = "electricity";
-	if (FLAG(of_ptr, TR_RES_FIRE))   vp[vn++] = "fire";
-	if (FLAG(of_ptr, TR_RES_COLD))   vp[vn++] = "cold";
-	if (FLAG(of_ptr, TR_RES_POIS))   vp[vn++] = "poison";
-	if (FLAG(of_ptr, TR_RES_LITE))   vp[vn++] = "bright light";
-	if (FLAG(of_ptr, TR_RES_DARK))   vp[vn++] = "magical darkness";
+	if (FLAG(of_ptr, TR_RES_ACID) &&
+		!FLAG(of_ptr, TR_IM_ACID))   vp[vn++] = "acid";
+	if (FLAG(of_ptr, TR_RES_ELEC) &&
+		!FLAG(of_ptr, TR_IM_ELEC))   vp[vn++] = "electricity";
+	if (FLAG(of_ptr, TR_RES_FIRE) &&
+		!FLAG(of_ptr, TR_IM_FIRE))   vp[vn++] = "fire";
+	if (FLAG(of_ptr, TR_RES_COLD) &&
+		!FLAG(of_ptr, TR_IM_COLD))   vp[vn++] = "cold";
+	if (FLAG(of_ptr, TR_RES_POIS) &&
+		!FLAG(of_ptr, TR_IM_POIS))   vp[vn++] = "poison";
+	if (FLAG(of_ptr, TR_RES_LITE) &&
+		!FLAG(of_ptr, TR_IM_LITE))   vp[vn++] = "bright light";
+	if (FLAG(of_ptr, TR_RES_DARK) &&
+		!FLAG(of_ptr, TR_IM_DARK))   vp[vn++] = "magical darkness";
 	if (FLAG(of_ptr, TR_RES_FEAR))   vp[vn++] = "fear";
 	if (FLAG(of_ptr, TR_RES_BLIND))  vp[vn++] = "blindness";
 	if (FLAG(of_ptr, TR_RES_CONF))   vp[vn++] = "confusion";
@@ -750,12 +757,18 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Collect vulnerabilities */
 	vn = 0;
-	if (FLAG(of_ptr, TR_HURT_ACID)) vp[vn++] = "acid";
-	if (FLAG(of_ptr, TR_HURT_ELEC)) vp[vn++] = "lightning";
-	if (FLAG(of_ptr, TR_HURT_FIRE)) vp[vn++] = "fire";
-	if (FLAG(of_ptr, TR_HURT_COLD)) vp[vn++] = "frost";
-	if (FLAG(of_ptr, TR_HURT_LITE)) vp[vn++] = "bright light";
-	if (FLAG(of_ptr, TR_HURT_DARK)) vp[vn++] = "magical darkness";
+	if (FLAG(of_ptr, TR_HURT_ACID) &&
+		!FLAG(of_ptr, TR_IM_ACID)) vp[vn++] = "acid";
+	if (FLAG(of_ptr, TR_HURT_ELEC) &&
+		!FLAG(of_ptr, TR_IM_ELEC)) vp[vn++] = "lightning";
+	if (FLAG(of_ptr, TR_HURT_FIRE) &&
+		!FLAG(of_ptr, TR_IM_FIRE)) vp[vn++] = "fire";
+	if (FLAG(of_ptr, TR_HURT_COLD) &&
+		!FLAG(of_ptr, TR_IM_COLD)) vp[vn++] = "frost";
+	if (FLAG(of_ptr, TR_HURT_LITE) &&
+		!FLAG(of_ptr, TR_IM_LITE)) vp[vn++] = "bright light";
+	if (FLAG(of_ptr, TR_HURT_DARK) &&
+		!FLAG(of_ptr, TR_IM_DARK)) vp[vn++] = "magical darkness";
 
 	/* Print vulnerabilities */
 	if (vn)
@@ -856,9 +869,6 @@ void identify_fully_aux(const object_type *o_ptr)
 
 	/* Restore the screen */
 	screen_load();
-
-	/* XXX */
-	return;
 }
 
 /*
