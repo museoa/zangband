@@ -16,7 +16,7 @@
 
 ##### System Specific Subfiles #####
 
-?:[IOR[EQU $SYS xaw] [EQU $SYS gtk]]
+?:[IOR [EQU $SYS xaw] [EQU $SYS gtk] [EQU $SYS tnb]]
 %:graf-xaw.prf
 
 ?:[EQU $SYS x11]
