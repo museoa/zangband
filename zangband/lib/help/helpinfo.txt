@@ -9,13 +9,12 @@ Return : Advance one line (wraps to the start at the end of the file).
 (#)    : Jump to a specific line (defaults to line zero).
 (%)    : Jump to a specific file (defaults to "help.hlp").
 (=)    : Hilite lines containing a string (case sensitive).
-(/)    : Search for a string (use Slash + Return to continue a search).
+(/)    : Search for a string (use '/' + Return to continue a search).
+         (Use '#' + '0' + Return + '/' + Return to restart a search.)
 (|)    : Save the current document to a file.
 [0..9] [a..z] [A..Z] : Press the indicated number to activate a link.
-
-Hint: Use Pound + Zero + Return + Slash + Return to restart a search.
 
 --
 Original   : (??)
 Updated    : Zangband DevTeam
-Last update: November 22, 1999
+Last update: November 26, 1999

@@ -1,4 +1,4 @@
-=== The Dungeon ===
+=== The Town and Dungeon ===
 
 
 After you have created your character, you will begin your Zangband
@@ -8,6 +8,7 @@ In order to direct your character through his adventure, you will enter
 single character commands (see "commands.txt").
 
 
+***** <A>
 === Symbols On Your Map ===
 
 Symbols on your map can be broken down into three categories: Features
@@ -30,8 +31,8 @@ to something you are more comfortable with.
  
                 Features that do not block line of sight
  
-  .  A floor space                   1   Entrance to General Store
-  .  A trap (hidden)                 2   Entrance to Armory
+  .   A floor space                   1   Entrance to General Store
+  .   A trap (hidden)                 2   Entrance to Armory
   ^   A trap (known)                  3   Entrance to Weapon Smith
   ;   A glyph of warding              4   Entrance to Temple
   '   An open door                    5   Entrance to Alchemy Shop
@@ -94,7 +95,7 @@ to something you are more comfortable with.
             ~   Aquatic monsters
 
 
-
+***** <B>
 === The Town Level ===
 
 The town level is where you will begin your adventure. The town
@@ -104,6 +105,7 @@ will be daytime, but note that the sun rises and falls (rather
 instantly) as time passes.
 
 
+***** <C>
 === Townspeople ===
 
 The town contains many different kinds of people. There are the street
@@ -123,6 +125,7 @@ intrigue, no experience is awarded for killing the town inhabitants,
 though you may acquire treasure.
 
 
+***** <D>
 === Town Buildings ===
 
 Your character will begin his adventure with some basic supplies, and
@@ -217,6 +220,8 @@ The Bookstore ("9")
     The Bookstore deals in all sorts of magical books. You can purchase
     and sell spellbooks for the spellcasters here.
 
+
+***** <E>
 === Within The Dungeon ===
 
 Once your character is adequately supplied with food, light, armor, and
@@ -256,6 +261,7 @@ appropriate. There are rumors of objects of exceptional power which
 glow with their own never-ending light.
 
 
+***** <F>
 === Objects Found In The Dungeon ===
 
 The mines are full of objects just waiting to be picked up and used.
@@ -354,7 +360,7 @@ line between tasty food and annoying mushroom is a fine one, and
 sometimes a potion will reach out and bite you...
 
 
-=== Cursed Objects ===
+--- Cursed Objects ---
 
 Some objects, mainly armor and weapons, have had curses laid upon them.
 These horrible objects will look like any other normal item, but will
@@ -369,6 +375,7 @@ wrong. The item will also be inscribed "cursed".
 Shopkeepers will refuse to buy any known cursed item.
 
 
+***** <G>
 === Mining ===
 
 Much of the treasure within the dungeon can be found only by mining it
@@ -412,6 +419,7 @@ rumors imply that these rooms are guarded by incredibly powerful
 monsters, so beware!
 
 
+***** <H>
 === Staircases, Secret Doors, Passages, and Rooms ===
 
 Staircases are the manner in which you get deeper or climb out of the
@@ -442,6 +450,7 @@ they pass through.
 For historical reasons, secret doors are never locked.
 
 
+***** <I>
 === Winning The Game ===
 
 Once your character has killed Oberon, who lives on level 99 (4950') in
@@ -475,6 +484,7 @@ until you retire, you can still be killed, so you may want to retire
 before wandering into a hoard of Cyberdemons...
 
 
+***** <J>
 === Upon Death and Dying ===
  
 If your character falls below 0 hit points, he has died and cannot be
@@ -489,16 +499,8 @@ not there, but the new player will find his monster memory containing
 all the experience of past incarnations.
 
 
-=== Help ===
-
-The newsgroup "rec.games.roguelike.angband" is a good place to ask
-various questions about both game play and game design, and you can
-email bug reports and such to (benh@phial.com). Be sure to include the
-version number you are playing in any bug reports. Zangband specific
-bug reports should be sent to (rr9@angband.org).
-
 --
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: November 16, 1999
+Last update: November 26, 1999

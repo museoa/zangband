@@ -64,7 +64,7 @@ original author.
 12. Indenting increments by 5 spaces each time.
 
 
---- Hyperlinks ---
+=== Hyperlinks ===
 
 Zangband supports links between help files as follows. At the point in
 the text where you wish to insert a link, place the text '[#]' where '#'
@@ -108,5 +108,4 @@ the current file in the link).
 
 -- 
 Original    : Zangband DevTeam
-Last update : November 17, 1999
-
+Last update : November 26, 1999
