@@ -1993,7 +1993,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			SET_FLAG(o_ptr, TR_RES_DARK);
 
 			if (one_in_(ACTIVATION_CHANCE))
-				misc_activation_power(o_ptr, level, "beam of sunlight");
+				misc_activation_power(o_ptr, level, "beam of sunlight (%sd8)");
 			else if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "light area (2d20)");
 
