@@ -1008,7 +1008,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 			 && (!(feat & 0x20) || view_granite_lite))
 		{
 			/* It's not in view? */
-			if ((!(info & (CAVE_VIEW))) && view_bright_lite)
+			if (((!(info & (CAVE_VIEW))) && view_bright_lite) ||
+				((!(info & (CAVE_GLOW | CAVE_LITE))) &&  view_torch_grids))
 			{
 				/* If is ascii graphics */
 				if (!(a & 0x80))
