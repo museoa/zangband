@@ -457,25 +457,18 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 				goto error;
 			}
 
-			if (widgetPtr->style != WIDGET_STYLE_ISO)
-			{
-				if (x < 0 || x >= widgetPtr->width)
-					break;
-				if (y < 0 || y >= widgetPtr->height)
-					break;
+			if (x < 0 || x >= widgetPtr->width)
+				break;
+			if (y < 0 || y >= widgetPtr->height)
+				break;
 
-				WindowToBitmap(widgetPtr, &y, &x);
+			WindowToBitmap(widgetPtr, &y, &x);
 	
-				row = y / widgetPtr->gheight;
-				col = x / widgetPtr->gwidth;
+			row = y / widgetPtr->gheight;
+			col = x / widgetPtr->gwidth;
 	
-				yc = widgetPtr->y_min + row;
-				xc = widgetPtr->x_min + col;
-			}
-			else
-			{
-				PointToTile(widgetPtr, x, y, &col, &row, &xc, &yc);
-			}
+			yc = widgetPtr->y_min + row;
+			xc = widgetPtr->x_min + col;
 				
 			(void) sprintf(buffer, "%d %d", yc, xc);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
@@ -785,20 +778,12 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (vis)
 			{
 				int yp, xp, h, w;
-				if (widgetPtr->style == WIDGET_STYLE_ISO)
-				{
-					yp = widgetPtr->yp[r * widgetPtr->cc + c] - widgetPtr->by;
-					xp = widgetPtr->xp[r * widgetPtr->cc + c] - widgetPtr->bx;
-					h = ISO_HGT;
-					w = ISO_WID;
-				}
-				else
-				{
-					yp = r * widgetPtr->gheight - widgetPtr->by;
-					xp = c * widgetPtr->gwidth - widgetPtr->bx;
-					h = widgetPtr->gheight;
-					w = widgetPtr->gwidth;
-				}
+
+				yp = r * widgetPtr->gheight - widgetPtr->by;
+				xp = c * widgetPtr->gwidth - widgetPtr->bx;
+				h = widgetPtr->gheight;
+				w = widgetPtr->gwidth;
+				
 				if (yp < 0 || yp + h > widgetPtr->height ||
 					xp < 0 || xp + w > widgetPtr->width)
 				{
@@ -853,27 +838,18 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 				goto error;
 			}
 
-			if (widgetPtr->style != WIDGET_STYLE_ISO)
-			{
-				if (x < 0 || x >= widgetPtr->width)
-					break;
-				if (y < 0 || y >= widgetPtr->height)
-					break;
+			if (x < 0 || x >= widgetPtr->width)
+				break;
+			if (y < 0 || y >= widgetPtr->height)
+				break;
 
-				WindowToBitmap(widgetPtr, &y, &x);
+			WindowToBitmap(widgetPtr, &y, &x);
 	
-				row = y / widgetPtr->gheight;
-				col = x / widgetPtr->gwidth;
+			row = y / widgetPtr->gheight;
+			col = x / widgetPtr->gwidth;
 	
-				yc = widgetPtr->y_min + row;
-				xc = widgetPtr->x_min + col;
-			}
-			else
-			{
-				/* Find the *floor tile* containing point */
-				if (PointToTile(widgetPtr, x, y, &col, &row, &xc, &yc))
-					break;
-			}
+			yc = widgetPtr->y_min + row;
+			xc = widgetPtr->x_min + col;
 
 			/* Refine the hit */
 			if (widgetPtr->hitTestProc)
@@ -1127,27 +1103,14 @@ void Widget_WorldChanged(ClientData instanceData)
 		}
 	}
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
+	/* Style or size changed */
+	if ((widgetPtr->style != widgetPtr->oldStyle) ||
+		(widgetPtr->width != widgetPtr->oldWidth) ||
+		(widgetPtr->height != widgetPtr->oldHeight) ||
+		(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
+		(widgetPtr->gheight != widgetPtr->oldGHeight))
 	{
-		/* Style or size changed */
-		if ((widgetPtr->style != widgetPtr->oldStyle) ||
-			(widgetPtr->width != widgetPtr->oldWidth) ||
-			(widgetPtr->height != widgetPtr->oldHeight) ||
-			(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
-			(widgetPtr->gheight != widgetPtr->oldGHeight))
-		{
-			Widget_Calc(widgetPtr);
-		}
-	}
-	else
-	{
-		/* Style or size changed */
-		if ((widgetPtr->style != widgetPtr->oldStyle) ||
-			(widgetPtr->width != widgetPtr->oldWidth) ||
-			(widgetPtr->height != widgetPtr->oldHeight))
-		{
-			IsoView_Calc(widgetPtr);
-		}
+		Widget_Calc(widgetPtr);
 	}
 
 	/* The bitmap is not the right size */
@@ -1688,19 +1651,11 @@ void Widget_Center(Widget *widgetPtr, int cy, int cx)
 	/* Remember new center */
 	widgetPtr->y = cy, widgetPtr->x = cx;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		/* Calculate the limits of visibility */
-		widgetPtr->y_min = cy - widgetPtr->rc / 2;
-		widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
-		widgetPtr->x_min = cx - widgetPtr->cc / 2;
-		widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
-	}
-	else
-	{
-		widgetPtr->y0 = cy - widgetPtr->yo[widgetPtr->centerTile];
-		widgetPtr->x0 = cx - widgetPtr->xo[widgetPtr->centerTile];
-	}
+	/* Calculate the limits of visibility */
+	widgetPtr->y_min = cy - widgetPtr->rc / 2;
+	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
+	widgetPtr->x_min = cx - widgetPtr->cc / 2;
+	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
 
 	Widget_Wipe(widgetPtr);
 }
@@ -1737,13 +1692,6 @@ if (widgetPtr->flags & WIDGET_WIPE) return;
 			return;
 		widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
 		widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
-
-		/* XXX Hack -- Lighting up rooms is slow */
-		if (widgetPtr->style == WIDGET_STYLE_ISO)
-		{
-			if (widgetPtr->invalidCnt >= 40)
-				widgetPtr->flags |= WIDGET_WIPE;
-		}
 	}
 	else
 	{
@@ -1905,95 +1853,13 @@ int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
 int y1, x1, y2, x2, isoy, isox,  isoy1, isox1,  isoy2, isox2;
 int guess, row = 0, col = 0;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
-			return FALSE;
-		if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))
-			return FALSE;
-		*rowPtr = y - widgetPtr->y_min;
-		*colPtr = x - widgetPtr->x_min;
-		return TRUE;
-	}
-
-#if 1
-
-	/* Get cave coords of top-left tile */
-	y1 = widgetPtr->y0;
-	x1 = widgetPtr->x0;
-
-	/* Get cave coords of bottom-right tile */
-	y2 = y1 + pyo[rc * cc - 1];
-	x2 = x1 + pxo[rc * cc - 1];
-
-	/* Cave x,y -> Iso x-y,x+y */
-	isoy1 = x1 + y1;
-	isox1 = x1 - y1;
-
-	/* Cave x,y -> Iso x-y,x+y */
-	isoy2 = x2 + y2;
-	isox2 = x2 - y2;
-
-	/* Cave x,y -> Iso x-y,x+y */
-	isoy = x + y;
-	isox = x - y;
-
-	guess = TRUE;
-	if (isoy < isoy1 || isoy > isoy2) guess = FALSE;
-	if (isox < isox1 || isox > isox2) guess = FALSE;
-	if (guess)
-	{
-		row = isoy - isoy1;
-		col = (isox - isox1) / 2;
-
-		if (row < 0 || col < 0 || row >= rc || col >= cc)
-		{
-		}
-		else
-		{
-			/* Verify */
-			yy = y1 + pyo[row * cc + col];
-			xx = x1 + pxo[row * cc + col];
-
-			if (y != yy || x != xx)
-			{
-			}
-			else
-			{
-				(*rowPtr) = row;
-				(*colPtr) = col;
-				return TRUE;
-			}
-		}
-	}
-
-#endif
-
-	if (!(debug_widgets & DEBUG_WIDGET_ISO)) return FALSE;
-
-	/* Get cave coords of top-left tile */
-	yt = widgetPtr->y0;
-	xt = widgetPtr->x0;
-
-	/* Slow method, checks every tile until done */
-	for (r = 0; r < rc; r++)
-	{
-		for (c = 0; c < cc; c++)
-		{
-			/* Calculate cave coords */
-			yy = yt + pyo[r * cc + c];
-			xx = xt + pxo[r * cc + c];
-
-			if ((yy == y) && (xx == x))
-			{
-				(*rowPtr) = r;
-				(*colPtr) = c;
-				return TRUE;
-			}
-		}
-	}
-
-	return FALSE;
+	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
+		return FALSE;
+	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))
+		return FALSE;
+	*rowPtr = y - widgetPtr->y_min;
+	*colPtr = x - widgetPtr->x_min;
+	return TRUE;
 }
 
 /*

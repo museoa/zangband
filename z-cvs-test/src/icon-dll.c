@@ -3155,12 +3155,6 @@ startup_log("createtype: Tcl_Alloc(%ld)", iconData.icon_count * ICON_LENGTH);
 
 			/* Not transparent */
 			if (iconDataPtr->rle_data == NULL)
-
-				/* It *is* transparent when using isometric code */
-				trans = (g_icon_style == ICON_STYLE_ISO);
-
-			/* Special non-transparent "floor" icon */
-			if (iconDataPtr->flags[index] & ICON_FLAG_ISO)
 				trans = FALSE;
 				
 			Tcl_SetBooleanObj(resultPtr, trans);

@@ -100,22 +100,9 @@ static void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr)
 	dy = widgetPtr->by;
 	dx = widgetPtr->bx;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		height = widgetPtr->gheight;
-		width = widgetPtr->gwidth;
-		my = 1;
-	}
-	else
-	{
-		height = ISO_FH2;
-		width = ISO_WID2;
-		my = 2;
-
-		/* BitmapToCanvas */
-		dy += widgetPtr->cy - (ISO_HGT - ISO_FH);
-		dx += widgetPtr->cx;
-	}
+	height = widgetPtr->gheight;
+	width = widgetPtr->gwidth;
+	my = 1;
 	
 	itemPtr->minY = (dy + itemPtr->y1) / height * my;
 	itemPtr->maxY = (dy + itemPtr->y2) / height * my;
@@ -1988,6 +1975,8 @@ static int DisplayCursor(Tcl_Interp *interp, Widget *widgetPtr,
 	if (CalcCursorPosition(widgetPtr, cursorPtr))
 	{
 		int lineWidth = cursorPtr->lineWidth;
+		int gHeight = widgetPtr->gheight;
+		int gWidth = widgetPtr->gwidth;
 		
 		col = cursorPtr->col, row = cursorPtr->row;
 	
@@ -1995,38 +1984,13 @@ static int DisplayCursor(Tcl_Interp *interp, Widget *widgetPtr,
 		gcValues.line_width = lineWidth;
 		gc = Tk_GetGC(widgetPtr->tkwin, GCForeground | GCLineWidth, &gcValues);
 
-		if (widgetPtr->style != WIDGET_STYLE_ISO)
-		{
-			int gHeight = widgetPtr->gheight;
-			int gWidth = widgetPtr->gwidth;
-
-		    XDrawRectangle(widgetPtr->display,
-		    	widgetPtr->bitmap.pixmap, gc,
-				col * gWidth + lineWidth / 2,
-				row * gHeight + lineWidth / 2,
-				gWidth - lineWidth / 2 - 1,
-				gHeight - lineWidth / 2 - 1);
-		}
-		else
-		{
-			XPoint points[10];
-			int tile = row * widgetPtr->cc + col;
-			int yp = widgetPtr->yp[tile];
-			int xp = widgetPtr->xp[tile];
-			int np = 0;
-
-			points[np].x = xp, points[np++].y = yp + ISO_HGT - ISO_FH2 / 2 - 1;
-			points[np].x = xp + ISO_WID / 2, points[np++].y = yp + ISO_HGT - ISO_FH2 - 1;
-			points[np].x = xp + ISO_WID / 2 - 1, points[np++].y = yp + ISO_HGT - ISO_FH2 - 1;
-			points[np].x = xp + ISO_WID - 1, points[np++].y = yp + ISO_HGT - ISO_FH2 / 2 - 1;
-			points[np].x = xp + ISO_WID / 2 - 1, points[np++].y = yp + ISO_HGT - 1;
-			points[np].x = xp + ISO_WID / 2, points[np++].y = yp + ISO_HGT - 1;
-			points[np++] = points[0];
-
-			XDrawLines(widgetPtr->display,
-		    	widgetPtr->bitmap.pixmap, gc,
-		    	points, np, CoordModeOrigin);
-		}
+		XDrawRectangle(widgetPtr->display,
+			widgetPtr->bitmap.pixmap, gc,
+			col * gWidth + lineWidth / 2,
+			row * gHeight + lineWidth / 2,
+			gWidth - lineWidth / 2 - 1,
+			gHeight - lineWidth / 2 - 1);
+		
 		
 		Tk_FreeGC(widgetPtr->display, gc);
 
@@ -2051,6 +2015,9 @@ static int CalcCursorPosition(Widget *widgetPtr, CursorItem *cursorPtr)
 {
 	WidgetItem *itemPtr = (WidgetItem *) cursorPtr;
 	int row, col;
+	
+	int gHeight = widgetPtr->gheight;
+	int gWidth = widgetPtr->gwidth;
 
 	if (!Widget_CaveToView(widgetPtr, cursorPtr->y, cursorPtr->x, &row, &col))
 		return 0;
@@ -2060,26 +2027,10 @@ static int CalcCursorPosition(Widget *widgetPtr, CursorItem *cursorPtr)
 	itemPtr->minX = itemPtr->maxX = col;
 	itemPtr->minY = itemPtr->maxY = row;
 
-	if (widgetPtr->style == WIDGET_STYLE_ISO)
-	{
-		int tile = row * widgetPtr->cc + col;
-		int yp = widgetPtr->yp[tile];
-		int xp = widgetPtr->xp[tile];
-		itemPtr->x1 = xp + ISO_LAPX - widgetPtr->bx;
-		itemPtr->y1 = yp + ISO_HGT - ISO_FH - widgetPtr->by;
-		itemPtr->x2 = itemPtr->x1 + ISO_WID;
-		itemPtr->y2 = itemPtr->y1 + ISO_HGT;
-	}
-	else
-	{
-		int gHeight = widgetPtr->gheight;
-		int gWidth = widgetPtr->gwidth;
-
-		itemPtr->x1 = col * gWidth - widgetPtr->bx;
-		itemPtr->x2 = itemPtr->x1 + gWidth;
-		itemPtr->y1 = row * gHeight - widgetPtr->by;
-		itemPtr->y2 = itemPtr->y1 + gHeight;
-	}
+	itemPtr->x1 = col * gWidth - widgetPtr->bx;
+	itemPtr->x2 = itemPtr->x1 + gWidth;
+	itemPtr->y1 = row * gHeight - widgetPtr->by;
+	itemPtr->y2 = itemPtr->y1 + gHeight;
 
 	return 1;
 }
@@ -2245,41 +2196,20 @@ static int ConfigureRect(Tcl_Interp *interp, Widget *widgetPtr,
 
 	Tk_FreeSavedOptions(&savedOptions);
 
-#if 1
 	if (redisplay && (itemPtr->visible || wasVisible))
 	{
-		if (widgetPtr->style == WIDGET_STYLE_ISO)
+		if (rectPtr->hasDirty)
 		{
-			Widget_Wipe(widgetPtr);
+			Widget_InvalidateArea(widgetPtr,
+				rectPtr->dirty[0], rectPtr->dirty[1],
+				rectPtr->dirty[2], rectPtr->dirty[3]);
+			rectPtr->hasDirty = FALSE;
 		}
-		else
-		{
-			if (rectPtr->hasDirty)
-			{
-				Widget_InvalidateArea(widgetPtr,
-					rectPtr->dirty[0], rectPtr->dirty[1],
-					rectPtr->dirty[2], rectPtr->dirty[3]);
-				rectPtr->hasDirty = FALSE;
-			}
-			Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-				itemPtr->maxY, itemPtr->maxX);
-			widgetPtr->flags |= WIDGET_DRAW_INVALID;
-			Widget_EventuallyRedraw(widgetPtr);
-		}
-	}
-#else
-	if (redisplay && (itemPtr->visible || wasVisible))
-	{
-		if (itemPtr->visible && (!wasVisible || (mask & RECT_BOUNDS)))
-		{
-			Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-				itemPtr->maxY, itemPtr->maxX);
-		}
-
+		Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
+			itemPtr->maxY, itemPtr->maxX);
 		widgetPtr->flags |= WIDGET_DRAW_INVALID;
 		Widget_EventuallyRedraw(widgetPtr);
 	}
-#endif
 
 	/* Success */
 	return TCL_OK;
@@ -2305,65 +2235,20 @@ static int DisplayRect(Tcl_Interp *interp, Widget *widgetPtr,
 	if (CalcRectPosition(widgetPtr, rectPtr))
 	{
     	int lineWidth = rectPtr->lineWidth;
+		
+		int gHeight = widgetPtr->gheight;
+		int gWidth = widgetPtr->gwidth;
 
 		gcValues.foreground = rectPtr->color->pixel;
 		gcValues.line_width = lineWidth;
 		gc = Tk_GetGC(widgetPtr->tkwin, GCForeground | GCLineWidth, &gcValues);
 
-		if (widgetPtr->style != WIDGET_STYLE_ISO)
-		{
-			int gHeight = widgetPtr->gheight;
-			int gWidth = widgetPtr->gwidth;
-
-		    XDrawRectangle(widgetPtr->display, widgetPtr->bitmap.pixmap, gc,
-				rectPtr->x_min * gWidth + lineWidth / 2,
-				rectPtr->y_min * gHeight + lineWidth / 2,
-				rectPtr->width * gWidth - lineWidth / 2 - 1,
-				rectPtr->height * gHeight - lineWidth / 2 - 1);
-		}
-		else
-		{
-			int cy, cx, cyp, cxp;
-			int yp[4], xp[4], y, x;
-			XPoint points[10];
-			int np = 0;
-			
-			cy = widgetPtr->y; cx = widgetPtr->x;
-			cyp = widgetPtr->yp[widgetPtr->centerTile] + (ISO_HGT - ISO_FH);
-			cxp = widgetPtr->xp[widgetPtr->centerTile] + ISO_LAPX;
-
-			y = rectPtr->y1; x = rectPtr->x1;
-			yp[0] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[0] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			xp[0] += ISO_WID2 / 2;
-
-			y = rectPtr->y1; x = rectPtr->x2;
-			yp[1] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[1] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			yp[1] += ISO_FH2 / 2;
-			xp[1] += ISO_WID2;
-
-			y = rectPtr->y2; x = rectPtr->x2;
-			yp[2] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[2] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			yp[2] += ISO_FH2;
-			xp[2] += ISO_WID2 / 2;
-
-			y = rectPtr->y2; x = rectPtr->x1;
-			yp[3] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[3] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			yp[3] += ISO_FH2 / 2;
-
-			points[np].x = xp[0], points[np++].y = yp[0];
-			points[np].x = xp[1], points[np++].y = yp[1];
-			points[np].x = xp[2], points[np++].y = yp[2];
-			points[np].x = xp[3], points[np++].y = yp[3];
-			points[np++] = points[0];
-
-			XDrawLines(widgetPtr->display,
-		    	widgetPtr->bitmap.pixmap, gc,
-		    	points, np, CoordModeOrigin);
-		}
+		XDrawRectangle(widgetPtr->display, widgetPtr->bitmap.pixmap, gc,
+			rectPtr->x_min * gWidth + lineWidth / 2,
+			rectPtr->y_min * gHeight + lineWidth / 2,
+			rectPtr->width * gWidth - lineWidth / 2 - 1,
+			rectPtr->height * gHeight - lineWidth / 2 - 1);
+		
 
 		Tk_FreeGC(widgetPtr->display, gc);
 
@@ -2388,52 +2273,28 @@ static int CalcRectPosition(Widget *widgetPtr, RectItem *rectPtr)
 {
 	WidgetItem *itemPtr = (WidgetItem *) rectPtr;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		int x_min, x_max, y_min, y_max;
+	int x_min, x_max, y_min, y_max;
 	
-		y_min = widgetPtr->y_min, y_max = widgetPtr->y_max;
-		x_min = widgetPtr->x_min, x_max = widgetPtr->x_max;
+	y_min = widgetPtr->y_min, y_max = widgetPtr->y_max;
+	x_min = widgetPtr->x_min, x_max = widgetPtr->x_max;
 	
-		rectPtr->x_min = rectPtr->x1 - x_min;
-		rectPtr->y_min = rectPtr->y1 - y_min;
-		rectPtr->x_max = rectPtr->x_min + rectPtr->width - 1;
-		rectPtr->y_max = rectPtr->y_min + rectPtr->height - 1;
+	rectPtr->x_min = rectPtr->x1 - x_min;
+	rectPtr->y_min = rectPtr->y1 - y_min;
+	rectPtr->x_max = rectPtr->x_min + rectPtr->width - 1;
+	rectPtr->y_max = rectPtr->y_min + rectPtr->height - 1;
 	
-		if ((rectPtr->x2 < x_min) || (rectPtr->x1 >= x_max)) return 0;
-		if ((rectPtr->y2 < y_min) || (rectPtr->y1 >= y_max)) return 0;
+	if ((rectPtr->x2 < x_min) || (rectPtr->x1 >= x_max)) return 0;
+	if ((rectPtr->y2 < y_min) || (rectPtr->y1 >= y_max)) return 0;
 	
-		itemPtr->minX = MAX(rectPtr->x_min, 0);
-		itemPtr->maxX = MIN(rectPtr->x_max, widgetPtr->cc - 1);
-		itemPtr->minY = MAX(rectPtr->y_min, 0);
-		itemPtr->maxY = MIN(rectPtr->y_max, widgetPtr->rc - 1);
+	itemPtr->minX = MAX(rectPtr->x_min, 0);
+	itemPtr->maxX = MIN(rectPtr->x_max, widgetPtr->cc - 1);
+	itemPtr->minY = MAX(rectPtr->y_min, 0);
+	itemPtr->maxY = MIN(rectPtr->y_max, widgetPtr->rc - 1);
 
-		itemPtr->x1 = itemPtr->minX * widgetPtr->gwidth - widgetPtr->bx;
-		itemPtr->x2 = (itemPtr->maxX + 1) * widgetPtr->gwidth - widgetPtr->bx;
-		itemPtr->y1 = itemPtr->minY * widgetPtr->gheight - widgetPtr->by;
-		itemPtr->y2 = (itemPtr->maxY + 1) * widgetPtr->gheight - widgetPtr->by;
-	}
-	else
-	{
-#if 1
-		itemPtr->minX = 0;
-		itemPtr->maxX = widgetPtr->cc - 1;
-		itemPtr->minY = 0;
-		itemPtr->maxY = widgetPtr->rc - 1;
-#else
-		int cy = widgetPtr->y;
-		int cx = widgetPtr->x;
-		int ct = widgetPtr->centerTile;
-		int cc = widgetPtr->cc;
-		int row = ct / cc, col = ct % cc;
-
-		itemPtr->minY = row + (rectPtr->y1 - cy) + (rectPtr->x1 - cx);
-		itemPtr->minX = col - (rectPtr->y2 - cy) + (rectPtr->x1 - cx);
-
-		itemPtr->maxY = row + (rectPtr->y2 - cy) + (rectPtr->x2 - cx);
-		itemPtr->maxX = col - (rectPtr->y1 - cy) + (rectPtr->x2 - cx);
-#endif
-	}
+	itemPtr->x1 = itemPtr->minX * widgetPtr->gwidth - widgetPtr->bx;
+	itemPtr->x2 = (itemPtr->maxX + 1) * widgetPtr->gwidth - widgetPtr->bx;
+	itemPtr->y1 = itemPtr->minY * widgetPtr->gheight - widgetPtr->by;
+	itemPtr->y2 = (itemPtr->maxY + 1) * widgetPtr->gheight - widgetPtr->by;
 
 	return 1;
 }

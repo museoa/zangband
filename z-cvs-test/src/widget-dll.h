@@ -43,7 +43,6 @@ struct Widget
 
 #define WIDGET_STYLE_ICON 0
 #define WIDGET_STYLE_MAP 1
-#define WIDGET_STYLE_ISO 2
 	int style;
 
 #define WIDGET_REDRAW 0x0001
@@ -84,7 +83,7 @@ struct Widget
 	int by, bx;					/* Offset of window from bitmap */
 	int dy, dx, dw, dh;			/* Dirty rect for copying */
 
-	/* WIDGET_STYLE_ICON & WIDGET_STYLE_ISO */
+	/* WIDGET_STYLE_ICON */
 
 #define WIDGET_INFO_IGNORE 0x0001	/* This tile isn't visible */
 #define WIDGET_INFO_DIRTY 0x0002	/* This tile needs redraw */

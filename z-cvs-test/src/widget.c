@@ -115,11 +115,6 @@ void Widget_InvertSpot(Widget *widgetPtr, int row, int col, t_display *wtd)
 	}
 	else
 	{
-		if (widgetPtr->style == WIDGET_STYLE_ISO)
-		{
-			yp += (ISO_HGT - 32 - ISO_BOTTOM);
-		}
- 
 		/* Get the address of the top-left corner */
 		dstPtr = bitmapPtr->pixelPtr + xp * bypp + yp * pitch;
 
@@ -1197,16 +1192,6 @@ int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 		exPtr->symbolProc = NULL;
 	}
 
-	/* Make this Widget draw isometric icons */
-	if (widgetPtr->style == WIDGET_STYLE_ISO)
-	{
-		widgetPtr->drawAllProc = iso_draw_all;
-		widgetPtr->drawInvalidProc = iso_draw_invalid;
-		widgetPtr->hitTestProc = iso_hittest;
-		exPtr->whatToDrawProc = iso_wtd;
-		exPtr->symbolProc = NULL;
-	}
-
 	return TCL_OK;
 }
 
@@ -1529,15 +1514,6 @@ bool angtk_effect_spell(int y, int x, int typ, int bolt)
 	{
 		iconSpec = g_effect[EFFECT_SPELL_BOLT].icon[effect];
 
-		/*
-		 * 1: ns, 2: we, 3: sw-ne, 4: nw-se
-		 */
-		if (g_icon_style == ICON_STYLE_ISO)
-		{
-			int xform[4] = { 3, 4, 2, 1 };
-			bolt = xform[bolt - 1];
-		}
-
 		iconSpec.index += bolt - 1;
 	}
 	else
@@ -1557,15 +1533,6 @@ bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir)
 
 	/* Eliminate '5' */
 	if (dir >= 5) dir -= 1;
-
-	/*
-	 * 1: sw, 2: s, 3: se, 4: w, 5: e, 6: nw, 7: n, 8: ne
-	 */
-	if (g_icon_style == ICON_STYLE_ISO)
-	{
-		int xform[8] = { 4, 1, 2, 6, 3, 7, 8, 5 };
-		dir = xform[dir - 1];
-	}
 
 	switch (k_info[o_ptr->k_idx].tval)
 	{
@@ -1973,107 +1940,6 @@ void angtk_locate(int dir)
 						x = g_cave_wid - cc + cc / 2 + 1;
 				}
 			}
-		}
-
-		if (widgetPtr->style == WIDGET_STYLE_ISO)
-		{
-#if 1
-			y += ddy[dir] * 10;
-			x += ddx[dir] * 10;
-			if (ddy[dir] < 0)
-			{
-				if (y < 0)
-					y = 0;
-			}
-			if (ddy[dir] > 0)
-			{
-				if (y >= g_cave_hgt)
-					y = g_cave_hgt - 1;
-			}
-			if (ddx[dir] < 0)
-			{
-				if (x < 0)
-					x = 0;
-			}
-			if (ddx[dir] > 0)
-			{
-				if (x >= g_cave_wid)
-					x = g_cave_wid - 1;
-			}
-#else
-			int isoy, isox, isohgt, isowid;
-			int y1, x1, y2, x2, isoy1, isox1, isoy2, isox2;
-
-			/* Get cave coords of top-left tile */
-			y1 = widgetPtr->y0;
-			x1 = widgetPtr->x0;
-		
-			/* Get cave coords of bottom-right tile */
-			y2 = y1 + widgetPtr->yo[rc * cc - 1];
-			x2 = x1 + widgetPtr->xo[rc * cc - 1];
-		
-			/* Cave x,y -> Iso x-y,x+y */
-			isoy1 = x1 + y1;
-			isox1 = x1 - y1;
-		
-			/* Cave x,y -> Iso x-y,x+y */
-			isoy2 = x2 + y2;
-			isox2 = x2 - y2;
-
-			/* Cave x,y -> Iso x-y,x+y */
-			isoy = x + y;
-			isox = x - y;
-
-			/* Make zero-based */
-			isox1 += g_cave_hgt - 1;
-			isox2 += g_cave_hgt - 1;
-			isox += g_cave_hgt - 1;
-
-			isohgt = isowid = g_cave_hgt + g_cave_wid;
-			
-			if (ddy[dir] < 0)
-			{
-				if (isoy1 > -1)
-				{
-					isoy = isoy1;
-//					if (isoy - rc / 2 < -1)
-//						isoy = rc / 2 - 1;
-				}
-			}
-			if (ddy[dir] > 0)
-			{
-				if (isoy2 < isohgt)
-				{
-					isoy = isoy2;
-//					if (isoy - rc / 2 + rc > isohgt)
-//						isoy = isohgt - rc + rc / 2 + 1;
-				}
-			}
-			if (ddx[dir] < 0)
-			{
-				if (isox1 > -1)
-				{
-					isox = isox1;
-//					if (isox - cc / 2 < -1)
-//						isox = cc / 2 - 1;
-				}
-			}
-			if (ddx[dir] > 0)
-			{
-				if (isox2 < isowid)
-				{
-					isox = isox2;
-//					if (isox - cc / 2 + cc > isowid)
-//						isox = isowid - cc + cc / 2 + 1;
-				}
-			}
-
-			/* Undo zero-based */
-			isox -= g_cave_hgt - 1;
-			
-			y = (isoy - isox) / 2;
-			x = (isoy + isox) / 2;
-#endif /* 0 */
 		}
 
 		Widget_Center(widgetPtr, y, x);
