@@ -4126,6 +4126,8 @@
  *  so we have the correct types.
  * (Without this check - it would be quite easy
  * to get the two pointers the wrong way around.)
+ *
+ * We need to lite_spot() as well...
  */
 #define remember_grid(C1, C2) \
 	(((C2)->feat = (C1)->feat), \

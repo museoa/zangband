@@ -3600,9 +3600,6 @@ void light_dark_square(int x, int y, bool daytime)
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
 
-	/* Hack -- Notice spot */
-	note_spot(x, y);
-
 	if (daytime)
 	{
 		/* Assume lit */
@@ -3635,6 +3632,9 @@ void light_dark_square(int x, int y, bool daytime)
 			if (view_perma_grids) remember_grid(c_ptr, pc_ptr);
 		}
 	}
+	
+	/* Hack -- Light spot */
+	lite_spot(x, y);
 }
 
 

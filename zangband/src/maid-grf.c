@@ -730,593 +730,6 @@ map_block *map_loc(int x, int y)
 }
 
 
-
-/*
- * Hack -- Legal monster codes
- */
-static cptr image_monster_hack =
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-
-/*
- * Mega-Hack -- Hallucinatory monster
- */
-static void image_monster(byte *ap, char *cp)
-{
-	int n = strlen(image_monster_hack);
-
-	/* Random symbol from set above */
-	if (use_graphics)
-	{
-		(*cp) = r_info[randint1(z_info->r_max - 1)].x_char;
-		(*ap) = r_info[randint1(z_info->r_max - 1)].x_attr;
-	}
-	else
-		/* Text mode */
-	{
-		(*cp) = (image_monster_hack[randint0(n)]);
-
-		/* Random color */
-		(*ap) = randint1(15);
-	}
-}
-
-
-/*
- * Hack -- Legal object codes
- */
-static cptr image_object_hack = "?/|\\\"!$()_-=[]{},~";
-
-
-/*
- * Mega-Hack -- Hallucinatory object
- */
-static void image_object(byte *ap, char *cp)
-{
-	int n = strlen(image_object_hack);
-
-	if (use_graphics)
-	{
-		(*cp) = k_info[randint1(z_info->k_max - 1)].x_char;
-		(*ap) = k_info[randint1(z_info->k_max - 1)].x_attr;
-	}
-	else
-	{
-		(*cp) = (image_object_hack[randint0(n)]);
-
-		/* Random color */
-		(*ap) = randint1(15);
-	}
-}
-
-
-/*
- * Hack -- priority array (see below)
- *
- * Note that all "walls" always look like "secret doors" (see "map_info()").
- *
- * This really needs to be done a better way.
- */
-static const byte priority_table[][2] =
-{
-	/* Dark */
-	{FEAT_NONE, 2},
-
-	/* Floors */
-	{FEAT_FLOOR, 5},
-
-	/* Walls */
-	{FEAT_SECRET, 10},
-	{FEAT_WALL_EXTRA, 10},
-	{FEAT_WALL_INNER, 10},
-	{FEAT_WALL_OUTER, 10},
-	{FEAT_WALL_SOLID, 10},
-
-
-	/* Perm Walls */
-	{FEAT_PERM_EXTRA, 10},
-	{FEAT_PERM_INNER, 10},
-	{FEAT_PERM_OUTER, 10},
-	{FEAT_PERM_SOLID, 10},
-
-	/* Quartz */
-	{FEAT_QUARTZ, 11},
-
-	/* Magma */
-	{FEAT_MAGMA, 12},
-
-	/* Rubble */
-	{FEAT_RUBBLE, 13},
-
-	/* Open doors */
-	{FEAT_OPEN, 15},
-	{FEAT_BROKEN, 15},
-
-	/* Closed doors */
-	{FEAT_CLOSED, 17},
-
-	/* Hidden gold */
-	{FEAT_QUARTZ_K, 19},
-	{FEAT_MAGMA_K, 19},
-
-	/* water, lava, & trees */
-	{FEAT_DEEP_WATER, 20},
-	{FEAT_SHAL_WATER, 20},
-	{FEAT_DEEP_LAVA, 20},
-	{FEAT_SHAL_LAVA, 20},
-	{FEAT_DIRT, 6},
-	{FEAT_GRASS, 6},
-	{FEAT_TREES, 6},
-	{FEAT_MOUNTAIN, 20},
-
-	/* Stairs */
-	{FEAT_LESS, 25},
-	{FEAT_MORE, 25},
-
-	/* End */
-	{0, 0}
-};
-
-
-/*
- * Hack -- a priority function (see below)
- */
-static byte priority(byte feat)
-{
-	int i = 0;
-
-	/* Scan the table */
-	while (priority_table[i][1])
-	{
-		/* Does the feature match? */
-		if (priority_table[i][0] == feat)
-		{
-			return (priority_table[i][1]);
-		}
-
-		/* Next entry */
-		i++;
-	}
-
-	/* Default  (The player /objects/fields?) */
-	return (20);
-}
-
-
-/*
- * Equivalent function to map_info, but for displaying
- * the reduced-size dungeon map.
- *
- * We need to calculate priority as well as the symbols to display.
- *
- * We cheat by getting the symbol recorded previously.
- */
-static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
-{
-	int tp;
-
-	byte feat;
-
-	map_block *mb_ptr;
-	
-	if (!map_in_bounds(x, y))
-	{
-		/* Out of bounds - black square */
-		*a = 0;
-		*c = ' ';
-		*ta = 0;
-		*tc = ' ';
-
-		return (0);
-	}
-	
-	
-	/* Get overhead map square */
-	mb_ptr = map_loc(x, y);
-
-	/* Default to precalculated priority */
-	tp = mb_ptr->priority;
-	
-	if (!tp)
-	{
-		/* Get terrain feature */
-		feat = parea(x, y)->feat;
-
-		/* Extract the priority of that attr/char */
-		tp = priority(feat);
-	}
-	
-	/* Get attributes from overhead map */
-	*a = mb_ptr->a;
-	*c = mb_ptr->c;
-	*ta = mb_ptr->ta;
-	*tc = mb_ptr->tc;
-
-	/* Return priority */
-	return (tp);
-}
-
-
-/*
- * Display a "small-scale" map of the dungeon in the active Term
- *
- * Note that the "map_info()" function must return fully colorized
- * data or this function will not work correctly.
- *
- * Note that this function must "disable" the special lighting
- * effects so that the "priority" function will work.
- *
- * Note the use of a specialized "priority" function to allow this
- * function to work with any graphic attr/char mappings, and the
- * attempts to optimize this function where possible.
- *
- * cx and cy are offsets from the position of the player.  This
- * allows the map to be shifted around - but only works in the
- * wilderness.  cx and cy return the position of the player on the
- * possibly shifted map.
- */
-void display_map(int *cx, int *cy)
-{
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
-	int i, j, x, y;
-
-	byte feat;
-
-	byte ta;
-	char tc;
-
-	byte tta;
-	char ttc;
-
-	byte tp;
-
-	bool road;
-
-	u16b w_type, w_info, twn;
-
-	byte **ma;
-	char **mc;
-
-	byte **mp;
-
-	byte **mta;
-	char **mtc;
-
-	int hgt, wid, yrat, xrat, xfactor, yfactor;
-	
-	place_type *pl_ptr;
-
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-	hgt -= 2;
-	wid -= 14;
-
-	/* Paranoia */
-	if ((hgt < 3) || (wid < 3))
-	{
-		/*
-		 * Need to place the player...
-		 * This is wrong, but the map is too small anyway.
-		 */
-		(*cy) = ROW_MAP;
-		(*cx) = COL_MAP;
-		return;
-	}
-
-	/* Allocate the maps */
-	C_MAKE(ma, (hgt + 2), byte *);
-	C_MAKE(mc, (hgt + 2), char *);
-	C_MAKE(mp, (hgt + 2), byte *);
-
-	C_MAKE(mta, (hgt + 2), byte *);
-	C_MAKE(mtc, (hgt + 2), char *);
-
-	/* Allocate and wipe each line map */
-	for (i = 0; i < (hgt + 2); i++)
-	{
-		/* Allocate one row each array */
-		C_MAKE(ma[i], (wid + 2), byte);
-		C_MAKE(mc[i], (wid + 2), char);
-		C_MAKE(mp[i], (wid + 2), byte);
-
-		C_MAKE(mta[i], (wid + 2), byte);
-		C_MAKE(mtc[i], (wid + 2), char);
-	}
-
-	/* Clear the chars and attributes */
-	for (y = 0; y < hgt + 2; ++y)
-	{
-		for (x = 0; x < wid + 2; ++x)
-		{
-			/* Nothing here */
-			ma[y][x] = TERM_WHITE;
-			mc[y][x] = ' ';
-
-			mta[y][x] = TERM_WHITE;
-			mtc[y][x] = ' ';
-
-			/* No priority */
-			mp[y][x] = 0;
-		}
-	}
-
-	if (!p_ptr->depth)
-	{
-		/* Plot wilderness */
-
-		/* work out coords of player in wilderness */
-		x = px / 16 + *cx;
-		y = py / 16 + *cy;
-
-		/* recenter */
-		x = x - wid / 2;
-		if (x + wid >= max_wild) x = max_wild - wid - 1;
-		if (x < 0) x = 0;
-
-		y = y - hgt / 2;
-		if (y + hgt >= max_wild) y = max_wild - hgt - 1;
-		if (y < 0) y = 0;
-
-		/* Player location in wilderness */
-		(*cy) += py / 16 - y + ROW_MAP;
-		(*cx) += px / 16 - x + COL_MAP;
-
-		/* Fill in the map */
-		for (i = 0; i < wid; ++i)
-		{
-			for (j = 0; j < hgt; ++j)
-			{
-				/* Only draw blocks inside map */
-				if (((x + i + 1) >= max_wild)
-					|| ((y + j + 1) >= max_wild)) continue;
-
-				/* Only draw blocks that have been seen */
-				if (!(wild[j + y][i + x].done.info & WILD_INFO_SEEN)) continue;
-
-				w_type = wild[j + y][i + x].done.wild;
-				w_info = wild[j + y][i + x].done.info;
-
-				if (w_type < WILD_SEA)
-				{
-					/* Normal terrain */
-					feat = wild_gen_data[w_type].feat;
-
-					/* Allow roads to be drawn */
-					road = TRUE;
-				}
-				else
-				{
-					feat = FEAT_DEEP_WATER;
-
-					/* No roads please */
-					road = FALSE;
-				}
-
-				/* Add in effect of other specials */
-				if (w_info & (WILD_INFO_WATER))
-				{
-					feat = FEAT_DEEP_WATER;
-				}
-				else if (w_info & (WILD_INFO_ACID))
-				{
-					feat = FEAT_DEEP_ACID;
-				}
-				else if (w_info & (WILD_INFO_LAVA))
-				{
-					feat = FEAT_DEEP_LAVA;
-				}
-
-				/* This is a nasty hack */
-
-				/* Add in effects of roads */
-				if ((w_info & (WILD_INFO_ROAD)) && road)
-				{
-					ma[j + 1][i + 1] = TERM_UMBER;
-					mc[j + 1][i + 1] = '+';
-					feat = FEAT_NONE;
-				}
-				else if ((w_info & (WILD_INFO_TRACK)) && road)
-				{
-					ma[j + 1][i + 1] = TERM_L_UMBER;
-					mc[j + 1][i + 1] = '+';
-					feat = FEAT_NONE;
-				}
-
-				/* Hack - draw places */
-				/* Eventually will get attr,char from place data structure. */
-
-				twn = wild[j + y][i + x].done.place;
-
-				/* If there is a place... */
-				if (twn)
-				{
-					pl_ptr = &place[twn];
-				
-					switch (place[twn].type)
-					{
-						case TOWN_QUEST:
-						{
-							/* Hack make a char / attr from depth */
-							wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
-
-							int depth = (w_ptr->done.mon_gen + 9) / 10;
-
-							if (depth > 9) depth = 9;
-
-							/* Quests are red */
-							ma[j + 1][i + 1] = TERM_RED;
-							mc[j + 1][i + 1] = '0' + depth;
-							feat = FEAT_NONE;
-							
-							break;
-						}
-						
-						case TOWN_DUNGEON:
-						{
-							/* Hack make a char / attr from depth */
-							int depth = (pl_ptr->dungeon->min_level + 9) / 10;
-							
-							if (depth > 9) depth = 9;
-
-							/* Dungeons are blue */
-							ma[j + 1][i + 1] = TERM_L_BLUE;
-							mc[j + 1][i + 1] = '0' + depth;
-							feat = FEAT_NONE;
-							
-							break;
-						}
-						
-						default:
-						{
-							/* Towns are white */
-							ma[j + 1][i + 1] = TERM_WHITE;
-							mc[j + 1][i + 1] = pl_ptr->name[0];
-							feat = FEAT_NONE;
-						
-							break;
-						}
-					}
-				}
-
-				/* Finally show position of player */
-				if ((i + x == px / 16) && (j + y == py / 16))
-				{
-					ma[j + 1][i + 1] = TERM_WHITE;
-					mc[j + 1][i + 1] = '@';
-					feat = FEAT_NONE;
-				}
-
-				if (feat)
-				{
-					/* Get attr / char pair for wilderness block type */
-					ma[j + 1][i + 1] = f_info[feat].x_attr;
-					mc[j + 1][i + 1] = f_info[feat].x_char;
-
-					if (f_info[feat].w_attr)
-					{
-						mta[j + 1][i + 1] = f_info[feat].w_attr;
-						mtc[j + 1][i + 1] = f_info[feat].w_char;
-					}
-					else
-					{
-						mta[j + 1][i + 1] = ma[j + 1][i + 1];
-						mtc[j + 1][i + 1] = mc[j + 1][i + 1];
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		yrat = p_ptr->max_hgt - p_ptr->min_hgt;
-		xrat = p_ptr->max_wid - p_ptr->min_wid;
-
-		/* Get scaling factors */
-		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 10 : 1;
-		xfactor = ((xrat / wid < 4) && (xrat > wid)) ? 10 : 1;
-
-		yrat = (yrat * yfactor + hgt - 1) / hgt;
-		xrat = (xrat * xfactor + wid - 1) / wid;
-
-		/* Player location in dungeon */
-		(*cy) = py * yfactor / yrat + ROW_MAP;
-		(*cx) = px * xfactor / xrat + COL_MAP;
-
-		/* Fill in the map of dungeon */
-		for (i = p_ptr->min_wid; i < p_ptr->max_wid; ++i)
-		{
-			for (j = p_ptr->min_hgt; j < p_ptr->max_hgt; ++j)
-			{
-				/* Location */
-				x = i * xfactor / xrat + 1;
-				y = j * yfactor / yrat + 1;
-
-				/* Get priority and symbol */
-				tp = display_map_info(i, j, &tc, &ta, &ttc, &tta);
-
-				/* Save "best" */
-				if (mp[y][x] < tp)
-				{
-					/* Save the char */
-					mc[y][x] = tc;
-
-					/* Save the attr */
-					ma[y][x] = ta;
-
-					/* Save the transparency graphic */
-					mtc[y][x] = ttc;
-					mta[y][x] = tta;
-
-					/* Save priority */
-					mp[y][x] = tp;
-				}
-			}
-		}
-	}
-
-	/* Corners */
-	i = wid + 1;
-	j = hgt + 1;
-
-	/* Draw the corners */
-	mc[0][0] = '+';
-	mc[0][i] = '+';
-	mc[j][0] = '+';
-	mc[j][i] = '+';
-
-	/* Draw the horizontal edges */
-	for (i = 1; i <= wid; i++)
-	{
-		mc[0][i] = '-';
-		mc[j][i] = '-';
-	}
-
-	/* Draw the vertical edges */
-	for (j = 1; j <= hgt; j++)
-	{
-		mc[j][0] = '|';
-		mc[j][i] = '|';
-	}
-
-	/* Display each map line in order */
-	for (j = 0; j < hgt + 2; ++j)
-	{
-		/* Display the line */
-		for (i = 0; i < wid + 2; ++i)
-		{
-			ta = ma[j][i];
-			tc = mc[j][i];
-
-			tta = mta[j][i];
-			ttc = mtc[j][i];
-
-			/* Hack -- Queue it */
-			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
-		}
-	}
-
-	/* Free each line map */
-	for (i = 0; i < (hgt + 2); i++)
-	{
-		/* Free one row each array */
-		FREE(ma[i]);
-		FREE(mc[i]);
-		FREE(mta[i]);
-		FREE(mtc[i]);
-		FREE(mp[i]);
-	}
-
-	/* Free the maps */
-	FREE(ma);
-	FREE(mc);
-	FREE(mta);
-	FREE(mtc);
-	FREE(mp);
-}
-
-
 /*
  * Display a "small-scale" map of the dungeon for the player
  *
@@ -1791,6 +1204,63 @@ static void variable_player_graph(byte *a, char *c)
 #endif /* VARIABLE_PLAYER_GRAPH */
 
 
+/*
+ * Hack -- Legal monster codes
+ */
+static cptr image_monster_hack =
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+
+/*
+ * Mega-Hack -- Hallucinatory monster
+ */
+static void image_monster(byte *ap, char *cp)
+{
+	int n = strlen(image_monster_hack);
+
+	/* Random symbol from set above */
+	if (use_graphics)
+	{
+		(*cp) = r_info[randint1(z_info->r_max - 1)].x_char;
+		(*ap) = r_info[randint1(z_info->r_max - 1)].x_attr;
+	}
+	else
+		/* Text mode */
+	{
+		(*cp) = (image_monster_hack[randint0(n)]);
+
+		/* Random color */
+		(*ap) = randint1(15);
+	}
+}
+
+
+/*
+ * Hack -- Legal object codes
+ */
+static cptr image_object_hack = "?/|\\\"!$()_-=[]{},~";
+
+
+/*
+ * Mega-Hack -- Hallucinatory object
+ */
+static void image_object(byte *ap, char *cp)
+{
+	int n = strlen(image_object_hack);
+
+	if (use_graphics)
+	{
+		(*cp) = k_info[randint1(z_info->k_max - 1)].x_char;
+		(*ap) = k_info[randint1(z_info->k_max - 1)].x_attr;
+	}
+	else
+	{
+		(*cp) = (image_object_hack[randint0(n)]);
+
+		/* Random color */
+		(*ap) = randint1(15);
+	}
+}
 
 
 /*
@@ -2627,6 +2097,541 @@ void display_dungeon(void)
 			}
 		}
 	}
+}
+
+
+/*
+ * Hack -- priority array (see below)
+ *
+ * Note that all "walls" always look like "secret doors" (see "map_info()").
+ *
+ * This really needs to be done a better way.
+ */
+static const byte priority_table[][2] =
+{
+	/* Dark */
+	{FEAT_NONE, 2},
+
+	/* Floors */
+	{FEAT_FLOOR, 5},
+
+	/* Walls */
+	{FEAT_SECRET, 10},
+	{FEAT_WALL_EXTRA, 10},
+	{FEAT_WALL_INNER, 10},
+	{FEAT_WALL_OUTER, 10},
+	{FEAT_WALL_SOLID, 10},
+
+
+	/* Perm Walls */
+	{FEAT_PERM_EXTRA, 10},
+	{FEAT_PERM_INNER, 10},
+	{FEAT_PERM_OUTER, 10},
+	{FEAT_PERM_SOLID, 10},
+
+	/* Quartz */
+	{FEAT_QUARTZ, 11},
+
+	/* Magma */
+	{FEAT_MAGMA, 12},
+
+	/* Rubble */
+	{FEAT_RUBBLE, 13},
+
+	/* Open doors */
+	{FEAT_OPEN, 15},
+	{FEAT_BROKEN, 15},
+
+	/* Closed doors */
+	{FEAT_CLOSED, 17},
+
+	/* Hidden gold */
+	{FEAT_QUARTZ_K, 19},
+	{FEAT_MAGMA_K, 19},
+
+	/* water, lava, & trees */
+	{FEAT_DEEP_WATER, 20},
+	{FEAT_SHAL_WATER, 20},
+	{FEAT_DEEP_LAVA, 20},
+	{FEAT_SHAL_LAVA, 20},
+	{FEAT_DIRT, 6},
+	{FEAT_GRASS, 6},
+	{FEAT_TREES, 6},
+	{FEAT_MOUNTAIN, 20},
+
+	/* Stairs */
+	{FEAT_LESS, 25},
+	{FEAT_MORE, 25},
+
+	/* End */
+	{0, 0}
+};
+
+
+/*
+ * Hack -- a priority function (see below)
+ */
+static byte priority(byte feat)
+{
+	int i = 0;
+
+	/* Scan the table */
+	while (priority_table[i][1])
+	{
+		/* Does the feature match? */
+		if (priority_table[i][0] == feat)
+		{
+			return (priority_table[i][1]);
+		}
+
+		/* Next entry */
+		i++;
+	}
+
+	/* Default  (The player /objects/fields?) */
+	return (20);
+}
+
+
+/*
+ * Equivalent function to map_info, but for displaying
+ * the reduced-size dungeon map.
+ *
+ * We need to calculate priority as well as the symbols to display.
+ *
+ * We cheat by getting the symbol recorded previously.
+ */
+static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
+{
+	int tp;
+
+	byte feat;
+
+	map_block *mb_ptr;
+	
+	if (!map_in_bounds(x, y))
+	{
+		/*
+		 * Out of bounds 
+		 * XXX Hack try anyway. 
+		 *
+		 * map_info() should bring the square in bounds.
+		 */
+		map_info(x, y, a, c, ta, tc);
+	}
+	
+	
+	/* Get overhead map square */
+	mb_ptr = map_loc(x, y);
+
+	/* Default to precalculated priority */
+	tp = mb_ptr->priority;
+	
+	if (!tp)
+	{
+		/* Get terrain feature */
+		feat = parea(x, y)->feat;
+
+		/* Extract the priority of that attr/char */
+		tp = priority(feat);
+	}
+	
+	/* Get tile */
+	if (mb_ptr->a)
+	{
+		/* Get attributes from overhead map */
+		*a = mb_ptr->a;
+		*c = mb_ptr->c;
+		*ta = mb_ptr->ta;
+		*tc = mb_ptr->tc;
+	}
+	else
+	{
+		map_info(x, y, a, c, ta, tc);
+	}
+	
+	/* Return priority */
+	return (tp);
+}
+
+
+/*
+ * Display a "small-scale" map of the dungeon in the active Term
+ *
+ * Note that the "map_info()" function must return fully colorized
+ * data or this function will not work correctly.
+ *
+ * Note that this function must "disable" the special lighting
+ * effects so that the "priority" function will work.
+ *
+ * Note the use of a specialized "priority" function to allow this
+ * function to work with any graphic attr/char mappings, and the
+ * attempts to optimize this function where possible.
+ *
+ * cx and cy are offsets from the position of the player.  This
+ * allows the map to be shifted around - but only works in the
+ * wilderness.  cx and cy return the position of the player on the
+ * possibly shifted map.
+ */
+void display_map(int *cx, int *cy)
+{
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
+	int i, j, x, y;
+
+	byte feat;
+
+	byte ta;
+	char tc;
+
+	byte tta;
+	char ttc;
+
+	byte tp;
+
+	bool road;
+
+	u16b w_type, w_info, twn;
+
+	byte **ma;
+	char **mc;
+
+	byte **mp;
+
+	byte **mta;
+	char **mtc;
+
+	int hgt, wid, yrat, xrat, xfactor, yfactor;
+	
+	place_type *pl_ptr;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	hgt -= 2;
+	wid -= 14;
+
+	/* Paranoia */
+	if ((hgt < 3) || (wid < 3))
+	{
+		/*
+		 * Need to place the player...
+		 * This is wrong, but the map is too small anyway.
+		 */
+		(*cy) = ROW_MAP;
+		(*cx) = COL_MAP;
+		return;
+	}
+
+	/* Allocate the maps */
+	C_MAKE(ma, (hgt + 2), byte *);
+	C_MAKE(mc, (hgt + 2), char *);
+	C_MAKE(mp, (hgt + 2), byte *);
+
+	C_MAKE(mta, (hgt + 2), byte *);
+	C_MAKE(mtc, (hgt + 2), char *);
+
+	/* Allocate and wipe each line map */
+	for (i = 0; i < (hgt + 2); i++)
+	{
+		/* Allocate one row each array */
+		C_MAKE(ma[i], (wid + 2), byte);
+		C_MAKE(mc[i], (wid + 2), char);
+		C_MAKE(mp[i], (wid + 2), byte);
+
+		C_MAKE(mta[i], (wid + 2), byte);
+		C_MAKE(mtc[i], (wid + 2), char);
+	}
+
+	/* Clear the chars and attributes */
+	for (y = 0; y < hgt + 2; ++y)
+	{
+		for (x = 0; x < wid + 2; ++x)
+		{
+			/* Nothing here */
+			ma[y][x] = TERM_WHITE;
+			mc[y][x] = ' ';
+
+			mta[y][x] = TERM_WHITE;
+			mtc[y][x] = ' ';
+
+			/* No priority */
+			mp[y][x] = 0;
+		}
+	}
+
+	if (!p_ptr->depth)
+	{
+		/* Plot wilderness */
+
+		/* work out coords of player in wilderness */
+		x = px / 16 + *cx;
+		y = py / 16 + *cy;
+
+		/* recenter */
+		x = x - wid / 2;
+		if (x + wid >= max_wild) x = max_wild - wid - 1;
+		if (x < 0) x = 0;
+
+		y = y - hgt / 2;
+		if (y + hgt >= max_wild) y = max_wild - hgt - 1;
+		if (y < 0) y = 0;
+
+		/* Player location in wilderness */
+		(*cy) += py / 16 - y + ROW_MAP;
+		(*cx) += px / 16 - x + COL_MAP;
+
+		/* Fill in the map */
+		for (i = 0; i < wid; ++i)
+		{
+			for (j = 0; j < hgt; ++j)
+			{
+				/* Only draw blocks inside map */
+				if (((x + i + 1) >= max_wild)
+					|| ((y + j + 1) >= max_wild)) continue;
+
+				/* Only draw blocks that have been seen */
+				if (!(wild[j + y][i + x].done.info & WILD_INFO_SEEN)) continue;
+
+				w_type = wild[j + y][i + x].done.wild;
+				w_info = wild[j + y][i + x].done.info;
+
+				if (w_type < WILD_SEA)
+				{
+					/* Normal terrain */
+					feat = wild_gen_data[w_type].feat;
+
+					/* Allow roads to be drawn */
+					road = TRUE;
+				}
+				else
+				{
+					feat = FEAT_DEEP_WATER;
+
+					/* No roads please */
+					road = FALSE;
+				}
+
+				/* Add in effect of other specials */
+				if (w_info & (WILD_INFO_WATER))
+				{
+					feat = FEAT_DEEP_WATER;
+				}
+				else if (w_info & (WILD_INFO_ACID))
+				{
+					feat = FEAT_DEEP_ACID;
+				}
+				else if (w_info & (WILD_INFO_LAVA))
+				{
+					feat = FEAT_DEEP_LAVA;
+				}
+
+				/* This is a nasty hack */
+
+				/* Add in effects of roads */
+				if ((w_info & (WILD_INFO_ROAD)) && road)
+				{
+					ma[j + 1][i + 1] = TERM_UMBER;
+					mc[j + 1][i + 1] = '+';
+					feat = FEAT_NONE;
+				}
+				else if ((w_info & (WILD_INFO_TRACK)) && road)
+				{
+					ma[j + 1][i + 1] = TERM_L_UMBER;
+					mc[j + 1][i + 1] = '+';
+					feat = FEAT_NONE;
+				}
+
+				/* Hack - draw places */
+				/* Eventually will get attr,char from place data structure. */
+
+				twn = wild[j + y][i + x].done.place;
+
+				/* If there is a place... */
+				if (twn)
+				{
+					pl_ptr = &place[twn];
+				
+					switch (place[twn].type)
+					{
+						case TOWN_QUEST:
+						{
+							/* Hack make a char / attr from depth */
+							wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
+
+							int depth = (w_ptr->done.mon_gen + 9) / 10;
+
+							if (depth > 9) depth = 9;
+
+							/* Quests are red */
+							ma[j + 1][i + 1] = TERM_RED;
+							mc[j + 1][i + 1] = '0' + depth;
+							feat = FEAT_NONE;
+							
+							break;
+						}
+						
+						case TOWN_DUNGEON:
+						{
+							/* Hack make a char / attr from depth */
+							int depth = (pl_ptr->dungeon->min_level + 9) / 10;
+							
+							if (depth > 9) depth = 9;
+
+							/* Dungeons are blue */
+							ma[j + 1][i + 1] = TERM_L_BLUE;
+							mc[j + 1][i + 1] = '0' + depth;
+							feat = FEAT_NONE;
+							
+							break;
+						}
+						
+						default:
+						{
+							/* Towns are white */
+							ma[j + 1][i + 1] = TERM_WHITE;
+							mc[j + 1][i + 1] = pl_ptr->name[0];
+							feat = FEAT_NONE;
+						
+							break;
+						}
+					}
+				}
+
+				/* Finally show position of player */
+				if ((i + x == px / 16) && (j + y == py / 16))
+				{
+					ma[j + 1][i + 1] = TERM_WHITE;
+					mc[j + 1][i + 1] = '@';
+					feat = FEAT_NONE;
+				}
+
+				if (feat)
+				{
+					/* Get attr / char pair for wilderness block type */
+					ma[j + 1][i + 1] = f_info[feat].x_attr;
+					mc[j + 1][i + 1] = f_info[feat].x_char;
+
+					if (f_info[feat].w_attr)
+					{
+						mta[j + 1][i + 1] = f_info[feat].w_attr;
+						mtc[j + 1][i + 1] = f_info[feat].w_char;
+					}
+					else
+					{
+						mta[j + 1][i + 1] = ma[j + 1][i + 1];
+						mtc[j + 1][i + 1] = mc[j + 1][i + 1];
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		yrat = p_ptr->max_hgt - p_ptr->min_hgt;
+		xrat = p_ptr->max_wid - p_ptr->min_wid;
+
+		/* Get scaling factors */
+		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 10 : 1;
+		xfactor = ((xrat / wid < 4) && (xrat > wid)) ? 10 : 1;
+
+		yrat = (yrat * yfactor + hgt - 1) / hgt;
+		xrat = (xrat * xfactor + wid - 1) / wid;
+
+		/* Player location in dungeon */
+		(*cy) = py * yfactor / yrat + ROW_MAP;
+		(*cx) = px * xfactor / xrat + COL_MAP;
+
+		/* Fill in the map of dungeon */
+		for (i = p_ptr->min_wid; i < p_ptr->max_wid; ++i)
+		{
+			for (j = p_ptr->min_hgt; j < p_ptr->max_hgt; ++j)
+			{
+				/* Location */
+				x = i * xfactor / xrat + 1;
+				y = j * yfactor / yrat + 1;
+
+				/* Get priority and symbol */
+				tp = display_map_info(i, j, &tc, &ta, &ttc, &tta);
+
+				/* Save "best" */
+				if (mp[y][x] < tp)
+				{
+					/* Save the char */
+					mc[y][x] = tc;
+
+					/* Save the attr */
+					ma[y][x] = ta;
+
+					/* Save the transparency graphic */
+					mtc[y][x] = ttc;
+					mta[y][x] = tta;
+
+					/* Save priority */
+					mp[y][x] = tp;
+				}
+			}
+		}
+	}
+
+	/* Corners */
+	i = wid + 1;
+	j = hgt + 1;
+
+	/* Draw the corners */
+	mc[0][0] = '+';
+	mc[0][i] = '+';
+	mc[j][0] = '+';
+	mc[j][i] = '+';
+
+	/* Draw the horizontal edges */
+	for (i = 1; i <= wid; i++)
+	{
+		mc[0][i] = '-';
+		mc[j][i] = '-';
+	}
+
+	/* Draw the vertical edges */
+	for (j = 1; j <= hgt; j++)
+	{
+		mc[j][0] = '|';
+		mc[j][i] = '|';
+	}
+
+	/* Display each map line in order */
+	for (j = 0; j < hgt + 2; ++j)
+	{
+		/* Display the line */
+		for (i = 0; i < wid + 2; ++i)
+		{
+			ta = ma[j][i];
+			tc = mc[j][i];
+
+			tta = mta[j][i];
+			ttc = mtc[j][i];
+
+			/* Hack -- Queue it */
+			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
+		}
+	}
+
+	/* Free each line map */
+	for (i = 0; i < (hgt + 2); i++)
+	{
+		/* Free one row each array */
+		FREE(ma[i]);
+		FREE(mc[i]);
+		FREE(mta[i]);
+		FREE(mtc[i]);
+		FREE(mp[i]);
+	}
+
+	/* Free the maps */
+	FREE(ma);
+	FREE(mc);
+	FREE(mta);
+	FREE(mtc);
+	FREE(mp);
 }
 
 

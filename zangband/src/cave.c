@@ -2422,7 +2422,13 @@ static void mon_lite_hack(int x, int y)
 		pc_ptr->player |= GRID_SEEN;
 
 		/* Remember it if view_monster_grids is set. */
-		if (view_monster_grids) remember_grid(c_ptr, pc_ptr);
+		if (view_monster_grids)
+		{
+			remember_grid(c_ptr, pc_ptr);
+			
+			/* Show on the screen */
+			lite_spot(x, y);
+		}
 	}
 }
 
@@ -3023,8 +3029,14 @@ void map_area(void)
 					{
 						/* Memorize the walls */
 						remember_grid(c_ptr, pc_ptr);
+						
+						/* Notice the change */
+						lite_spot(xx, yy);
 					}
 				}
+				
+				/* Notice the change */
+				lite_spot(x, y);
 			}
 		}
 	}
@@ -3101,7 +3113,7 @@ void wiz_lite(void)
 			OBJ_ITT_END;
 			
 			/* Notice the change */
-			note_spot(x, y);
+			lite_spot(x, y);
 		}
 	}
 
