@@ -1136,12 +1136,6 @@ static bool do_cmd_tunnel_test(int y, int x)
 
 /*
  * Tunnel through wall.  Assumes valid location.
- *
- * Note that it is impossible to "extend" rooms past their
- * outer walls (which are actually part of the room).
- *
- * This will, however, produce grids which are NOT illuminated
- * (or darkened) along with the rest of the room.
  */
 static bool twall(int y, int x, byte feat)
 {
@@ -1205,7 +1199,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		(c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + rand_int(400)) && twall(y, x, FEAT_GRASS))
+		if ((p_ptr->skill_dig > 10 + rand_int(400)) && twall(y, x, FEAT_SNOW))
 		{
 			msg_print("You have cleared away the trees.");
 
