@@ -15,8 +15,6 @@ ZAngband 2.5.0:
 -Removed makefile.org  (It was a copy of makfile.std).
 -Removed the overhead map in vanilla town mode - it isn't needed.
 -Removed some warnings given by VC.
--Uniques are now entered correctly in the monster list even if blinded
- or hallucinating.
 -Score now rewards ironman options rather than penalizing options which
  can be turned on and off.
 -Adjusted minimum levels for the various types of rooms.
