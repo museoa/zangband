@@ -2561,9 +2561,8 @@ static void display_player_skill_info(void)
 			/* Search */
 			else if (skill == 1)
 			{
-				if (p_ptr->muta1 & MUT1_LASER_EYE) dummy -= 1;
-				/* Actually +1.5 or so */
-				if (p_ptr->muta3 & MUT3_XTRA_EYES) dummy += 2;
+				if (p_ptr->muta1 & MUT1_LASER_EYE) dummy -= 2;
+				if (p_ptr->muta3 & MUT3_XTRA_EYES) dummy += 3;
 			}
 			/* Infra */
 			else if (skill == 2)
