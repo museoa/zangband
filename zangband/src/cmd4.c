@@ -3289,7 +3289,6 @@ static const cptr plural_table[] =
 	"ff", "ffs",
 	"f", "ves",
 	"mage", "magi",
-	"geist", "geister",
 	"eraph", "eraphim",
 	"umak", "umakil",
 	"saurus", "saurs",
