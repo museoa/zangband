@@ -1081,11 +1081,11 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			move_wild();
 		}
 		
-		/* Process fields under the player. */
-		field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
-
 		lite_spot(py, px);
 		lite_spot(oy, ox);
+		
+		/* Process fields under the player. */
+		field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 		verify_panel();
 

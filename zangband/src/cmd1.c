@@ -2554,15 +2554,14 @@ void move_player(int dir, int do_pickup)
 			move_wild();
 		}
 		
-		/* Process fields under the player. */
-		field_hook(&area(y, x)->fld_idx,
-			 FIELD_ACT_PLAYER_ENTER, NULL);
-		
 		/* Redraw new spot */
 		lite_spot(y, x);		
 
 		/* Redraw old spot */
 		lite_spot(oy, ox);
+		
+		/* Process fields under the player. */
+		field_hook(&area(y, x)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
  
 		/* Sound */
 		/* sound(SOUND_WALK); */
