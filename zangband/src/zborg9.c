@@ -1967,7 +1967,7 @@ static void init_borg_txt_file(void)
 	C_MAKE(borg_has, z_info->k_max, int);
 
 	/* Make sure we know who and what we are */
-	borg_class = p_ptr->pclass;
+	borg_class = p_ptr->rp.pclass;
 
 	/* Use default values */
 	borg_scums_uniques = TRUE;
@@ -2006,8 +2006,8 @@ static void borg_log_death(void)
 	fprintf(borg_log_file, buf);
 
 	fprintf(borg_log_file, "%s the %s %s, Level %d/%d\n", player_name,
-			race_info[p_ptr->prace].title,
-			class_info[p_ptr->pclass].title, p_ptr->lev, p_ptr->max_lev);
+			race_info[p_ptr->rp.prace].title,
+			class_info[p_ptr->rp.pclass].title, p_ptr->lev, p_ptr->max_lev);
 
 	fprintf(borg_log_file, "Exp: %lu  Gold: %lu  Turn: %lu\n",
 			(long) /* total_points() */ 0, (long)p_ptr->au, (long)turn);
@@ -2045,7 +2045,7 @@ static void borg_log_death_data(void)
 
 	/* dump stuff for easy import to database */
 	fprintf(borg_log_file, "%s, %s, %d, %d, %s\n",
-			race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title,
+			race_info[p_ptr->rp.prace].title, class_info[p_ptr->rp.pclass].title,
 			p_ptr->lev, p_ptr->depth, p_ptr->died_from);
 
 	my_fclose(borg_log_file);
@@ -2521,14 +2521,14 @@ void borg_init_9(void)
 	/*** Hack -- Extract race ***/
 
 	/* Insert the player Race--cheat */
-	borg_race = p_ptr->prace;
+	borg_race = p_ptr->rp.prace;
 
 	/* Extract the race pointer */
 	rb_ptr = &race_info[borg_race];
 
 
 	/*** Hack -- Extract class ***/
-	borg_class = p_ptr->pclass;
+	borg_class = p_ptr->rp.pclass;
 
 	/* Extract the class pointer */
 	cb_ptr = &class_info[borg_class];
