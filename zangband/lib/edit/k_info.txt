@@ -4962,8 +4962,6 @@ W:50:0:120:1400
 A:50/4
 P:0:3d4:0:0:0
 F:PSI_CRIT | LITE | SHOW_MODS
-L:TIMED:local line = get_rnd_line("chainswd.txt")
-L:TIMED:if line then msgf(line) end
 D:The blade of this sword is made of pure magic.
 
 N:593:& Hammer~ of Returning
