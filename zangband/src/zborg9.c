@@ -3398,15 +3398,6 @@ void borg_status(void)
 	monster_race *r_ptr;
 	int q_num;
 	char name[80];
-
-	/* For displaying information on random quests */
-	if (borg_quest_level)
-	{
-		q_ptr = &quest[borg_quest_level];
-		r_ptr = &r_info[q_ptr->r_idx];
-		q_num = q_ptr->max_num;
-		strcpy(name, (r_name + r_ptr->name));
-	}
 #endif /* 0 */
 
 	/* Scan windows */
@@ -3773,19 +3764,6 @@ void borg_status(void)
 			else
 				Term_putstr(58, 2, -1, attr,
 							"                                   ");
-
-#if 0
-			if (borg_quest_level) attr = TERM_WHITE;
-			else
-				attr = TERM_SLATE;
-			Term_putstr(42, 3, -1, attr, "Quest Level");
-			if (borg_quest_level) Term_putstr(55, 3, -1, attr,
-											  format("%s (%d)", name, q_num));
-			else
-				Term_putstr(55, 3, -1, attr,
-							"                                   ");
-#endif /* 0 */
-
 			if (breeder_level) attr = TERM_WHITE;
 			else
 				attr = TERM_SLATE;

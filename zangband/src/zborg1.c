@@ -123,7 +123,6 @@ s16b time_this_panel = 0L;	/* Current "time" on current panel */
 bool vault_on_level;	/* Borg will search for a vault */
 bool unique_on_level;
 bool scaryguy_on_level;	/* flee from certain guys */
-s16b borg_quest_level;	/* On a level with quest */
 
 bool breeder_level = FALSE;	/* Borg will shut door */
 s16b old_depth = 128;
@@ -140,7 +139,6 @@ s16b when_detect_traps;	/* When we last detected traps */
 s16b when_detect_doors;	/* When we last detected doors */
 s16b when_detect_walls;	/* When we last detected walls */
 s16b when_detect_evil;	/* When we last detected monsters or evil */
-s16b when_last_kill_mult = 0;	/* When a multiplier was last killed */
 
 bool my_need_alter;	/* incase i hit a wall or door */
 bool my_no_alter;	/*  */

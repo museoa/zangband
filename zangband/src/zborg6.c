@@ -1754,7 +1754,7 @@ static bool borg_escape(int b_q)
 		/* time to flee */
 		if (!goal_fleeing &&
 			(!borg_fighting_unique || borg_skill[BI_CLEVEL] < 35) &&
-			!vault_on_level && !borg_quest_level)
+			!vault_on_level)
 		{
 			/* Note */
 			borg_note("# Fleeing (failed to teleport)");
@@ -1766,7 +1766,7 @@ static bool borg_escape(int b_q)
 		/* Flee now */
 		if (!goal_leaving &&
 			(!borg_fighting_unique || borg_skill[BI_CLEVEL] < 35) &&
-			!vault_on_level && !borg_quest_level)
+			!vault_on_level)
 		{
 			/* Flee! */
 			borg_note("# Leaving (failed to teleport)");
@@ -1832,7 +1832,7 @@ static bool borg_escape(int b_q)
 		/* if we got this far we tried to escape but couldn't... */
 		/* time to flee */
 		if (!goal_fleeing && !borg_fighting_unique && borg_skill[BI_CLEVEL] < 25
-			&& !vault_on_level && !borg_quest_level)
+			&& !vault_on_level)
 		{
 			/* Note */
 			borg_note("# Fleeing (failed to teleport)");
@@ -1843,7 +1843,7 @@ static bool borg_escape(int b_q)
 
 		/* Flee now */
 		if (!goal_leaving && !borg_fighting_unique &&
-			!vault_on_level && !borg_quest_level)
+			!vault_on_level)
 		{
 			/* Flee! */
 			borg_note("# Leaving (failed to teleport)");
@@ -2817,8 +2817,8 @@ bool borg_caution(void)
 
 	/* Only allow three 'escapes' per level unless heading for morogoth
 	   or fighting a unique, then allow 7. */
-	if ((borg_escapes > 3 && !unique_on_level && !borg_ready_morgoth &&
-		 !borg_quest_level) || borg_escapes > 7)
+	if ((borg_escapes > 3 && !unique_on_level && !borg_ready_morgoth) ||
+		borg_escapes > 7)
 	{
 		/* No leaving if going after questors */
 		if (borg_skill[BI_CDEPTH] <= 98)
@@ -3070,8 +3070,8 @@ bool borg_caution(void)
 		/* Start fleeing */
 		/* do not flee level if going after Morgoth or fighting a unique */
 		if (!goal_fleeing && !borg_fighting_unique &&
-			(borg_skill[BI_CLEVEL] < 50) && !vault_on_level && !borg_quest_level
-			&& (borg_skill[BI_CDEPTH] < 100 && borg_ready_morgoth == 1))
+			(borg_skill[BI_CLEVEL] < 50) && !vault_on_level &&
+			 (borg_skill[BI_CDEPTH] < 100) && (borg_ready_morgoth == 1))
 		{
 			/* Note */
 			borg_note("# Fleeing (excessive danger)");
@@ -12388,14 +12388,6 @@ bool borg_check_rest(void)
 
 	/* now check the ground to see if safe. */
 	if (borg_on_safe_grid() == FALSE) return (FALSE);
-
-	/* Do not rest recently after killing a multiplier */
-	/* This will avoid the problem of resting next to */
-	/* an unkown area full of breeders */
-	if (when_last_kill_mult > (borg_t - 4) && when_last_kill_mult <= borg_t)
-		return (FALSE);
-
-	when_last_kill_mult = 0;
 
 	/* Generally disturb_move is off */
 	disturb_move = FALSE;

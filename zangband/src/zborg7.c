@@ -4682,7 +4682,7 @@ bool borg_leave_level(bool bored)
 
 	/* Hack -- Power-climb upwards when needed */
 	if ((cptr)NULL != borg_prepared(borg_skill[BI_CDEPTH]) &&
-		!unique_on_level && !borg_quest_level)
+		!unique_on_level)
 	{
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
@@ -4760,7 +4760,7 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* return to town if it has been a while */
-	if ((!goal_rising && bored && !vault_on_level && !borg_quest_level &&
+	if ((!goal_rising && bored && !vault_on_level &&
 		 !borg_fighting_unique &&
 		 borg_time_town + borg_t - borg_began > 8000) ||
 		(borg_time_town + borg_t - borg_began > 12000))

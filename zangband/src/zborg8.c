@@ -3263,8 +3263,7 @@ bool borg_think_dungeon(void)
 	/*** Leave the level XXX XXX XXX ***/
 
 	/* Leave the level */
-	if (goal_leaving && !goal_recalling && !unique_on_level &&
-		!borg_quest_level)
+	if (goal_leaving && !goal_recalling && !unique_on_level)
 	{
 		/* Hack -- Take the next stairs */
 		if (borg_ready_morgoth == 0)

@@ -452,7 +452,6 @@ extern s16b time_this_panel;	/* Current "time" for current panel */
 extern bool vault_on_level;	/* borg will search for a vault */
 extern bool unique_on_level;
 extern bool scaryguy_on_level;
-extern s16b borg_quest_level;	/* On a level with quest */
 
 extern bool breeder_level;	/* Borg will shut doors */
 extern s16b old_depth;
@@ -469,7 +468,6 @@ extern s16b when_detect_traps;	/* When we last detected traps */
 extern s16b when_detect_doors;	/* When we last detected doors */
 extern s16b when_detect_walls;	/* When we last detected walls */
 extern s16b when_detect_evil;
-extern s16b when_last_kill_mult;	/* When a multiplier was last killed */
 
 extern bool my_need_alter;	/* incase of walls/doors */
 extern bool my_no_alter;	/* incase of walls/doors */

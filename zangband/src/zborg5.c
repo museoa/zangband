@@ -662,10 +662,6 @@ void borg_delete_kill(int i)
 		mb_ptr->kill = 0;
 	}
 
-	/* save a time stamp of when the last multiplier was killed */
-	if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY)
-		when_last_kill_mult = borg_t;
-
 	/* Kill the monster */
 	WIPE(kill, borg_kill);
 
@@ -678,10 +674,6 @@ void borg_delete_kill(int i)
 
 	/* Wipe goals */
 	goal = 0;
-
-	/* After killing a monster, check for being in a quest */
-	/* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
-
 }
 
 /*
@@ -3434,9 +3426,6 @@ void borg_update(void)
 
 		borg_times_twitch = 0;
 		borg_escapes = 0;
-
-		/* Check for being in a quest */
-		/* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
 	}
 
 	/* Handle old level */
