@@ -2449,10 +2449,10 @@ static bool player_birth_aux(void)
 		for (j = 0; j < MAX_TRIES; j++)
 		{
 			/*
-			 * Random monster 5 - 10 levels out of depth
-			 * (depending on level)
+			 * Random monster out of depth
+			 * (depending on level + number of quests)
 			 */
-			r_idx = get_mon_num(q_ptr->level + 4 + randint(q_ptr->level / 10));
+			r_idx = get_mon_num(q_ptr->level * v / 20 + 4 + randint( q_ptr->level * v / 200));
 			r_ptr = &r_info[r_idx];
 
 			/* Save the index if the monster is deeper than out current monster */
