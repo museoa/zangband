@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: object2.c */
 
 /* Purpose: Object code, part 2 */
@@ -1464,14 +1463,9 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 		/* Wands */
 		case TV_WAND:
 		{
-			/* Require either knowledge or known empty for both wands. */
-			if ((!(o_ptr->ident & (IDENT_EMPTY)) &&
-				!object_known_p(o_ptr)) ||
-				(!(j_ptr->ident & (IDENT_EMPTY)) &&
-				!object_known_p(j_ptr))) return (FALSE);
-
 			/* Wand charges combine in O&ZAngband. */
-
+ 			if (object_known_p(o_ptr) != object_known_p(j_ptr)) return (FALSE);
+			
 			/* Assume okay */
 			break;
 		}
@@ -4062,8 +4056,12 @@ void place_object(int y, int x, bool good, bool great)
 	object_wipe(q_ptr);
 
 	/* Make an object (if possible) */
-	if (!make_object(q_ptr, (good?15:0) + (great?15:0), dun_theme)) return;
-
+	if (!make_object(q_ptr, (u16b)((good?15:0) + (great?15:0)),
+		 dun_theme))
+	{
+		return;
+	}
+	
 	/* Make an object */
 	o_idx = o_pop();
 
