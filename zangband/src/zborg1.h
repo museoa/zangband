@@ -1143,14 +1143,6 @@ extern bool borg_is_kill[256];	/* Symbol may be a monster */
 
 
 /*
- * Maintain a set of grids (liteable grids)
- */
-
-extern s16b borg_lite_n;
-extern byte borg_lite_y[AUTO_LITE_MAX];
-extern byte borg_lite_x[AUTO_LITE_MAX];
-
-/*
  * Maintain a set of glow grids (liteable grids)
  */
 

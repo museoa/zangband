@@ -13997,7 +13997,6 @@ bool borg_flow_light(int why)
 
 	map_block *mb_ptr;
 
-
 	/* reset counters */
 	borg_glow_n = 0;
 	i = 0;
@@ -15420,15 +15419,20 @@ static bool borg_flow_dark_1(int b_stair)
 	int i;
 
 	int x, y;
+	
+	/* Ignore parameter */
+	(void) b_stair;
 
 
 	/* Hack -- not in town */
 	if (!borg_skill[BI_CDEPTH]) return (FALSE);
 
-
 	/* Reset */
 	borg_temp_n = 0;
-
+	
+	
+	/* This is broken borg_lite_ no longer exists */
+#if 0
 	/* Scan torch-lit grids */
 	for (i = 0; i < borg_lite_n; i++)
 	{
@@ -15443,6 +15447,7 @@ static bool borg_flow_dark_1(int b_stair)
 		borg_temp_y[borg_temp_n] = y;
 		borg_temp_n++;
 	}
+#endif 0
 
 	/* Nothing */
 	if (!borg_temp_n) return (FALSE);

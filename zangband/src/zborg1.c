@@ -952,15 +952,6 @@ bool borg_is_kill[256];	/* Symbol may be a monster */
 
 
 /*
- * Maintain a set of grids marked as "BORG_LITE"
- */
-
-s16b borg_lite_n = 0;
-
-byte borg_lite_x[AUTO_LITE_MAX];
-byte borg_lite_y[AUTO_LITE_MAX];
-
-/*
  * Maintain a set of grids marked as "BORG_GLOW"
  */
 
