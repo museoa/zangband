@@ -210,9 +210,6 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 	take->x = x;
 	take->y = y;
 
-	/* Timestamp */
-	take->when = borg_t;
-
 	/* Note */
 	borg_note(format("# Creating an object '%s' at (%d,%d)",
 					 (k_name + k_info[take->k_idx].name), y, x));
@@ -2519,7 +2516,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		/* Save some information */
 		wank->x = x;
 		wank->y = y;
-		wank->type = WANK_KILL;
 	}
 
 	/*
@@ -3613,8 +3609,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track stationary monsters */
-		if ((wank->type == WANK_KILL) &&
-			observe_kill_move(wank->y, wank->x, 0, FALSE))
+		if (observe_kill_move(wank->y, wank->x, 0, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3626,8 +3621,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) &&
-			observe_kill_move(wank->y, wank->x, 1, FALSE))
+		if (observe_kill_move(wank->y, wank->x, 1, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3639,8 +3633,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) &&
-			observe_kill_move(wank->y, wank->x, 2, FALSE))
+		if (observe_kill_move(wank->y, wank->x, 2, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3652,8 +3645,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) &&
-			observe_kill_move(wank->y, wank->x, 3, FALSE))
+		if (observe_kill_move(wank->y, wank->x, 3, FALSE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3665,8 +3657,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track moving monsters */
-		if ((wank->type == WANK_KILL) &&
-			observe_kill_move(wank->y, wank->x, 3, TRUE))
+		if (observe_kill_move(wank->y, wank->x, 3, TRUE))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3678,7 +3669,7 @@ void borg_update(void)
 		borg_wank *wank = &borg_wanks[i];
 
 		/* Track new monsters */
-		if ((wank->type == WANK_KILL) && observe_kill_diff(wank->y, wank->x))
+		if (observe_kill_diff(wank->y, wank->x))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];

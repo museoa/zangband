@@ -30,10 +30,6 @@ extern map_info_hook_type old_info_hook;
 extern void borg_map_info(map_block *mb_ptr, term_map *map);
 
 
-#define WANK_KILL	2
-
-
-
 /*
  * Hack -- monster/object tracking grids
  */
@@ -48,8 +44,6 @@ struct borg_wank
 	/* Location */
 	byte x;
 	byte y;
-
-	byte type;
 };
 
 
