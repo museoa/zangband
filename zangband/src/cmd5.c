@@ -2705,7 +2705,7 @@ void do_cmd_cast(void)
 				   prayer);
 
 		/* Verify */
-		if (get_check("Stop now? ")) return;
+		if (!get_check("Attempt it anyway? ")) return;
 	}
 
 

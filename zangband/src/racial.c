@@ -151,7 +151,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	/* Risk death? */
 	else if (use_hp && (p_ptr->chp < cost))
 	{
-		if (get_check("You are extremely weak to try this.  Stop now? "))
+		if (!get_check("Really use the power in your weakened state? "))
 		{
 			p_ptr->state.energy_use = 0;
 			return FALSE;

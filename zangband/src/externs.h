@@ -1255,6 +1255,7 @@ extern void sound(int num);
 extern int color_char_to_attr(char c);
 extern void screen_save(void);
 extern void screen_load(void);
+extern int fmt_offset(cptr str1, cptr str2);
 extern void put_fstr(int col, int row, cptr str, ...);
 extern void prtf(int col, int row, cptr str, ...);
 extern void roff(cptr str, ...);

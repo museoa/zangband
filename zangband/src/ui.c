@@ -873,6 +873,42 @@ void screen_load(void)
 	character_icky--;
 }
 
+/*
+ * Find offset of str2 in str1, including the
+ * effects of formatting characters.
+ *
+ * This is not equal to str2 - str1 in general.
+ */
+int fmt_offset(cptr str1, cptr str2)
+{
+	cptr c = str1;
+	int i = 0;
+
+	while (*c && (c != str2))
+	{
+		/* Does this character match the escape code? */
+		if (*c == '$')
+		{
+			/* Scan the next character */
+			c++;
+			
+			/* Is it a colour specifier? */
+			if (((*c >= 'A') && (*c <= 'R')) ||
+				((*c >= 'a') && (*c <= 'r')))
+			{
+				c++;
+				
+				continue;
+			}
+		}
+		
+		/* Next position */
+		i++;
+		c++;
+	}
+	
+	return (i);
+}
 
 /*
  * Put a string with control characters at a given location
@@ -1450,12 +1486,11 @@ bool get_check(cptr prompt, ...)
 	/* Success? */
 	switch (i)
 	{
-		case 'n': case 'N':
-		case ESCAPE:
-			return (FALSE);
-	
-		default:
+		case 'y': case 'Y':
 			return (TRUE);
+		
+		default:
+			return (FALSE);
 	}
 }
 

@@ -1339,7 +1339,7 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 	put_fstr(0, 2, "Offer :  %ld", (long)price);
 
 	/* Ask the user for a response */
-	if (!get_check("Do you want to %s it? ", (buy) ? "buy" : "sell")) return (FALSE);
+	if (get_check("Stop? ")) return (FALSE);
 
 
 	/* Chose to make transaction */

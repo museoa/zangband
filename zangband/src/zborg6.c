@@ -1426,10 +1426,10 @@ static bool borg_dim_door(int emergency, int p1)
 
 
 /* Just in case the key changes again */
-void borg_press_faint_accept(void)
+static void borg_press_faint_accept(void)
 {
 	borg_keypress(' ');
-	borg_keypress('n');
+	borg_keypress('y');
 }
 
 

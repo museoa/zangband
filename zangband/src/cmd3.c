@@ -148,7 +148,7 @@ void do_cmd_wield(void)
 	if (cursed_p(q_ptr) && confirm_wear &&
 		(object_known_p(q_ptr) || (q_ptr->info & OB_SENSE)))
 	{
-		if (get_check("Avoid using the %v {cursed}? ",
+		if (!get_check("Really use the %v {cursed}? ",
 			 OBJECT_FMT(q_ptr, FALSE, 0)))
 			return;
 	}
@@ -477,7 +477,7 @@ void do_cmd_destroy(void)
 		if (!(auto_destroy && (object_value(o_ptr) < 1)))
 		{
 			/* Make a verification */
-			if (get_check("Avoid destroying %v? ", OBJECT_FMT(o_ptr, TRUE, 3)))
+			if (!get_check("Really destroy %v? ", OBJECT_FMT(o_ptr, TRUE, 3)))
 			{
 				o_ptr->number = old_number;
 				return;
