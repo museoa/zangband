@@ -1138,9 +1138,20 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 	/* Monster has a target */
 	if ((m_ptr->tx) && (m_ptr->ty))
 	{
-		/* It's out of LOS; keep using it, except in "knight's move" cases */
-		if (!player_has_los_grid(parea(m_ptr->tx, m_ptr->ty)))
+		if (in_boundsp(m_ptr->tx, m_ptr->ty)
+			&& player_has_los_grid(parea(m_ptr->tx, m_ptr->ty)))
 		{
+			/* It's in LOS; cancel it. */
+			m_ptr->tx = 0;
+			m_ptr->ty = 0;
+		}
+		else
+		{
+			/*
+			 * It's out of LOS;
+			 * keep using it, except in "knight's move" cases
+			 */
+		
 			/* Get axis distance from character to current target */
 			int dist_x = ABS(p_ptr->px - m_ptr->tx);
 			int dist_y = ABS(p_ptr->py - m_ptr->ty);
@@ -1179,13 +1190,6 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 			*tx = m_ptr->tx;
 			*ty = m_ptr->ty;
 			return (TRUE);
-		}
-
-		/* It's in LOS; cancel it. */
-		else
-		{
-			m_ptr->tx = 0;
-			m_ptr->ty = 0;
 		}
 	}
 
