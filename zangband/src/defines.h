@@ -3475,7 +3475,7 @@
 /* {TRUE,  0, NULL,					"Number 44" }, svr_ptr->options[11] */
 /* {TRUE,  0, NULL,					"Number 45" }, svr_ptr->options[12] */
 #define smart_learn				svr_ptr->options[13]
-#define smart_cheat				svr_ptr->options[14]
+/* {TRUE,  0, NULL,					"Number 47" }, svr_ptr->options[14] */
 #define	view_reduce_lite		p_ptr->options[33]
 #define view_reduce_view		p_ptr->options[34]
 #define avoid_abort				p_ptr->options[35]

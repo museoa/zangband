@@ -6186,7 +6186,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  0, NULL,					"Number 44" },
 	{TRUE,  0, NULL,					"Number 45" },
 	{TRUE,  7, "smart_learn",			"Monsters learn from their mistakes" },
-	{FALSE, 7, "smart_cheat",			"Monsters exploit players weaknesses" },
+	{FALSE, 7, NULL,					"Number 47" },
 	{FALSE, 4, "view_reduce_lite",		"Reduce lite-radius when running" },
 	{FALSE, 4, "view_reduce_view",		"Reduce view-radius in town" },
 	{FALSE, 4, "avoid_abort",			"Avoid checking for user abort" },
