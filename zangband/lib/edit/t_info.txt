@@ -98,6 +98,7 @@ L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
 L:SPEC:deleteme
+L:EXIT:corpse_decay()
 
 # Skeleton
 N:5:skeleton
@@ -114,7 +115,7 @@ L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
 L:SPEC:deleteme
-
+L:EXIT:corpse_decay()
 
 # Trapdoor
 N:6:trap door
