@@ -843,6 +843,14 @@ static void do_cmd_options_aux(int page, cptr info)
 				break;
 			}
 
+			case '?':
+			{
+				sprintf(buf, "option.txt#%s", option_info[opt[k]].o_text);
+				show_file(buf, NULL, 0, 0);
+				Term_clear();
+				break;
+			}
+
 			default:
 			{
 				bell();

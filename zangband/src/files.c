@@ -395,7 +395,7 @@ errr process_pref_file_aux(char *buf)
 			return (0);
 		}
 	}
-	
+
 	/* Process "T:<num>:<a>/<c>" -- attr/char for fields */
 	else if (buf[0] == 'T')
 	{
@@ -548,10 +548,10 @@ errr process_pref_file_aux(char *buf)
 			{
 				/* Clear */
 				option_info[i].o_val = FALSE;
-				
+
 				/* Save the change */
 				init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-				
+
 				return (0);
 			}
 		}
@@ -570,10 +570,10 @@ errr process_pref_file_aux(char *buf)
 			{
 				/* Set */
 				option_info[i].o_val = TRUE;
-				
+
 				/* Save the change */
 				init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-				
+
 				return (0);
 			}
 		}
@@ -604,7 +604,7 @@ errr process_pref_file_aux(char *buf)
 				{
 					string_free(gf_color[gf_desc[i].num]);
 				}
-				
+
 				/* Remember this color set */
 				gf_color[gf_desc[i].num] = string_make(t);
 
@@ -1391,7 +1391,7 @@ static void display_player_abilities(void)
 		}
 	}
 	/* Calculate shots per round  - note "strange" formula. */
-	
+
 	/* The real number of shots per round is (1 + n)/2 */
 	shots = (1 + p_ptr->num_fire) * 50;
 	shot_frac = (shots * 100 / energy_fire) % 100;
@@ -1805,7 +1805,7 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 		}
 #endif /* MUT3_SUS_STATS */
 	}
-	
+
 	/* Remove flags that were not in Moria */
 	if (ironman_moria)
 	{
@@ -3024,57 +3024,6 @@ errr file_character(cptr name, bool full)
 }
 
 
-typedef struct file_tag
-{
-	char name[32];
-	int line_number;
-} file_tag;
-
-
-typedef struct file_tags
-{
-	file_tag tags[64];
-	int index;
-} file_tags;
-
-
-static void add_tag(file_tags *the_tags, cptr name, int line)
-{
-	if (the_tags->index < 64)
-	{
-		file_tag *tag = &(the_tags->tags[the_tags->index]);
-
-		/* Set the name and end it with '\0' */
-		strncpy(tag->name, name, 31);
-		tag->name[31] = '\0';
-
-		/* Set the line-number */
-		tag->line_number = line;
-
-		/* Increase the number of tags */
-		the_tags->index++;
-	}
-}
-
-
-static int get_line(file_tags *the_tags, cptr name)
-{
-	int i;
-
-	/* Search for the tag */
-	for (i = 0; i < the_tags->index; i++)
-	{
-		if (streq(the_tags->tags[i].name, name))
-		{
-			return the_tags->tags[i].line_number;
-		}
-	}
-
-	/* Not found */
-	return 0;
-}
-
-
 /*
  * Recursive file perusal.
  *
@@ -3143,9 +3092,6 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	/* Sub-menu information */
 	char hook[62][32];
 
-	/* Tags for in-file references */
-	file_tags tags;
-
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -3164,9 +3110,6 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	{
 		hook[i][0] = '\0';
 	}
-
-	/* No tags yet */
-	tags.index = 0;
 
 	/* Copy the filename */
 	strcpy(filename, name);
@@ -3268,8 +3211,18 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			/* Notice "tag" requests */
 			else if (buf[6] == '<')
 			{
-				buf[strlen(buf) - 1] = '\0';
-				add_tag(&tags, buf + 7, next);
+				if (tag)
+				{
+					/* Remove the closing '>' of the tag */
+					buf[strlen(buf) - 1] = '\0';
+
+					/* Compare with the requested tag */
+					if (streq(buf + 7, tag))
+					{
+						/* Remember the tagged line */
+						line = next;
+					}
+				}
 			}
 
 			/* Skip this */
@@ -3282,9 +3235,6 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Save the number of "real" lines */
 	size = next;
-
-	/* Go to the tagged line */
-	if (tag) line = get_line(&tags, tag);
 
 	/* Display the file */
 	while (TRUE)
@@ -3904,7 +3854,7 @@ void do_cmd_save_game(int is_autosave)
 
 	/* Clear messages. */
 	msg_print(NULL);
-	
+
 	/* Hack -- erase the message line. */
 	prt("", 0, 0);
 
@@ -4149,7 +4099,7 @@ static void show_info(void)
 		object_aware(o_ptr);
 		object_known(o_ptr);
 		o_ptr->ident |= IDENT_MENTAL;
-		
+
 		/* Save all the known flags */
 		o_ptr->kn_flags1 = o_ptr->flags1;
 		o_ptr->kn_flags2 = o_ptr->flags2;
@@ -4172,7 +4122,7 @@ static void show_info(void)
 			object_aware(o_ptr);
 			object_known(o_ptr);
 			o_ptr->ident |= IDENT_MENTAL;
-			
+
 			/* Save all the known flags */
 			o_ptr->kn_flags1 = o_ptr->flags1;
 			o_ptr->kn_flags2 = o_ptr->flags2;
@@ -4203,33 +4153,33 @@ static void show_info(void)
 	if (p_ptr->equip_cnt)
 	{
 		Term_clear();
-		
+
 		/* Equipment -- if any */
 		item_tester_full = TRUE;
 		show_equip();
-		
+
 		prt("You are using: -more-", 0, 0);
-		
+
 		/* Flush keys */
 		flush();
-		
+
 		if (inkey() == ESCAPE) return;
 	}
 
-	
+
 	if (p_ptr->inven_cnt)
 	{
 		Term_clear();
-		
+
 		/* Inventory -- if any */
 		item_tester_full = TRUE;
 		show_inven();
-		
+
 		prt("You are carrying: -more-", 0, 0);
-		
+
 		/* Flush keys */
 		flush();
-		
+
 		if (inkey() == ESCAPE) return;
 	}
 
@@ -4270,7 +4220,7 @@ static void show_info(void)
 
 				/* Flush keys */
 				flush();
-				
+
 				/* Wait for it */
 				if (inkey() == ESCAPE) return;
 			}
@@ -4282,7 +4232,7 @@ static void show_info(void)
 static void close_game_handle_death(void)
 {
 	char ch;
-	
+
 	/* Handle retirement */
 	if (p_ptr->total_winner)
 	{
@@ -4294,13 +4244,13 @@ static void close_game_handle_death(void)
 
 		kingly();
 	}
-	
+
 	/* Save memories */
 	if (!munchkin_death || get_check("Save death? "))
 	{
 		if (!save_player()) msg_print("death save failed!");
 	}
-	
+
 #if 0
 	/* Dump bones file */
 	make_bones();
@@ -4323,10 +4273,10 @@ static void close_game_handle_death(void)
 		/* Output to the notes file */
 		output_note(buf);
 	}
-	
+
 	/* Enter player in high score list */
 	enter_score();
-	
+
 	/* You are dead */
 	print_tomb();
 
@@ -4350,7 +4300,7 @@ static void close_game_handle_death(void)
 
 		/* Flush all input keys */
 		flush();
-		
+
 		ch = inkey();
 
 		switch (ch)
@@ -4359,7 +4309,7 @@ static void close_game_handle_death(void)
 			{
 				/* Flush the keys */
 				flush();
-			
+
 				if (get_check("Do you really want to exit? "))
 				{
 					/* Save dead player */
@@ -4375,42 +4325,42 @@ static void close_game_handle_death(void)
 #endif
 					/* Go home, we're done */
 					return;
-				}	
+				}
 				else
 				{
 					break;
 				}
 			}
-			
+
 			case 'd':
 			case 'D':
 			{
 				/* Dump char file */
 				char tmp[160] = "";
-	
+
 				/* Prompt */
 				put_str("Filename: ", 23, 0);
-					
+
 				/* Ask for filename (or abort) */
 				if (!askfor_aux(tmp, 60)) continue;
 
 				/* Ignore Return */
 				if (!tmp[0]) continue;
-	
+
 				/* Dump a character file */
 				(void)file_character(tmp, FALSE);
 
 				break;
 			}
-			
+
 			case 'c':
-			case 'C':		
+			case 'C':
 			{
 				/* Show char info */
 				show_info();
 				break;
 			}
-			
+
 			case 't':
 			case 'T':
 			{
@@ -4454,7 +4404,7 @@ void close_game(void)
 
 	/* Open the high score file, for reading/writing */
 	highscore_fd = fd_open(buf, O_RDWR);
-	
+
 	if (p_ptr->is_dead)
 	{
 		/* Handle death */
@@ -4576,7 +4526,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 				{
 					/* Error while converting the monster number */
 					msg_print("Error - end of file.");
-					
+
 					my_fclose(fp);
 					return (-1);
 				}
@@ -4641,7 +4591,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	{
 		/* Close the file */
 		my_fclose(fp);
-		
+
 		return (-1);
 	}
 
