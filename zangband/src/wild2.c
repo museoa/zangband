@@ -2643,6 +2643,9 @@ bool init_places(int xx, int yy)
 	
 	/* Create quests */
 	create_quests();
+	
+	/* Hack - set global region back to wilderness value */
+	set_region(0);
 
 	/* Done */
 	return (TRUE);
