@@ -1330,7 +1330,7 @@ L:USE:	if not success then return end
 L:USE:	fire_ball(GF_FIRE, dir, 100, 2)
 L:USE:	inc_oppose_fire(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
-L:DESC:	return "ball of fire and resist fire"
+L:DESC:	return "ball of fire (100) and resist fire (20+ turns)"
 L:MAKE:	object.to_a = rand_range(5, 10) + m_bonus(10, level)
 D:This ring feels warm to the touch.
 
@@ -1346,7 +1346,7 @@ L:USE:	if not success then return end
 L:USE:	fire_ball(GF_ACID, dir, 100, 2)
 L:USE:	inc_oppose_acid(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
-L:DESC:	return "ball of acid and resist acid"
+L:DESC:	return "ball of acid (100) and resist acid (20+ turns)"
 L:MAKE:	object.to_a = rand_range(5, 10) + m_bonus(10, level)
 D:This ring is covered with a strange sheen.
 
@@ -1362,7 +1362,7 @@ L:USE:	if not success then return end
 L:USE:	fire_ball(GF_COLD, dir, 100, 2)
 L:USE:	inc_oppose_cold(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
-L:DESC: return "ball of cold and resist cold"
+L:DESC: return "ball of cold (100) and resist cold (20+ turns)"
 L:MAKE:	object.to_a = rand_range(5, 10) + m_bonus(10, level)
 D:This ring feels cool to the touch.
 
