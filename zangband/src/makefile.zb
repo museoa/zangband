@@ -198,7 +198,8 @@ notsrcfiles += compress.c autoconf.h
 
 srcfiles += $(filter_out $(notsrcfiles), \
 		 src/*.c src/*.h src/angband.rc src/angband.ico \
-		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg)
+		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg) \
+		 autoconf.h.in
 
 # scan other source directories
 dirs := lua tk
