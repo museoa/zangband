@@ -521,6 +521,42 @@ void wipe_o_list(void)
 	o_cnt = 0;
 }
 
+/*
+ * Wipe objects in region
+ */
+void wipe_objects(int rg_idx)
+{
+	int i;
+	
+	object_type *o_ptr;
+
+	/* Delete the existing objects */
+	for (i = 1; i < o_max; i++)
+	{
+		o_ptr = &o_list[i];
+
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+		
+		/* Enforce region */
+		if (o_ptr->region != rg_idx) continue;
+
+		/* Preserve artifacts */
+		if (preserve_mode && (o_ptr->flags3 & TR3_INSTA_ART) &&
+		    (o_ptr->activate > 127) &&
+		    (a_info[o_ptr->activate - 128].cur_num == 1))
+		{
+			a_info[o_ptr->activate - 128].cur_num = 0;
+		}
+		
+		/* Delete the object */
+		delete_object_idx(i);
+	}
+
+	/* Compress the object list */
+	compact_objects(0);
+}
+
 
 /*
  * Acquires and returns the index of a "free" object.
@@ -531,7 +567,6 @@ void wipe_o_list(void)
 s16b o_pop(void)
 {
 	int i;
-
 
 	/* Initial allocation */
 	if (o_max < z_info->o_max)
@@ -4131,6 +4166,9 @@ void place_object(int x, int y, bool good, bool great)
 		/* Location */
 		o_ptr->iy = y;
 		o_ptr->ix = x;
+		
+		/* Region */
+		o_ptr->region = cur_region;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4247,6 +4285,9 @@ void place_gold(int x, int y)
 		/* Save location */
 		o_ptr->iy = y;
 		o_ptr->ix = x;
+		
+		/* Region */
+		o_ptr->region = cur_region;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4595,6 +4636,9 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 		/* Locate */
 		j_ptr->iy = by;
 		j_ptr->ix = bx;
+		
+		/* Region */
+		j_ptr->region = cur_region;
 
 		/* No monster */
 		j_ptr->held_m_idx = 0;
@@ -5117,6 +5161,9 @@ s16b inven_carry(object_type *o_ptr)
 
 	/* Forget location */
 	j_ptr->iy = j_ptr->ix = 0;
+	
+	/* Forget Region */
+	j_ptr->region = 0;
 
 	/* No longer marked */
 	j_ptr->marked = FALSE;

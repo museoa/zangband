@@ -2821,6 +2821,9 @@ static void process_monster(int m_idx)
 
 						/* Forget location */
 						o_ptr->iy = o_ptr->ix = 0;
+						
+						/* XXX Hack - Forget region */
+						o_ptr->region = 0;
 
 						/* Memorize monster */
 						o_ptr->held_m_idx = m_idx;

@@ -2659,7 +2659,7 @@ void change_level(int level)
 
 	/* Hack - reset trap detection flag */
 	p_ptr->detected = FALSE;
-
+	
 	/* Clear the monster lights */
 	clear_mon_lite();
 	

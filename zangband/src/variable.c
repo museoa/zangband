@@ -119,6 +119,9 @@ s16b m_cnt = 0;			/* Number of live monsters */
 s16b fld_max = 1;		/* Number of allocated fields */
 s16b fld_cnt = 0;		/* Number of live fields */
 
+s16b rg_max = 1;		/* Number of allocated regions */
+s16b rg_cnt = 0;		/* Number of live regions */
+
 s16b q_max = 0;			/* Number of allocated quests */
 
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
@@ -482,6 +485,16 @@ dun_type dun_data;
 dun_type *dun_ptr = &dun_data;
 
 /*
+ * The current global region.
+ */
+region_type cave_data;
+
+/*
+ * Index of current global region
+ */
+int	cur_region;
+
+/*
  * The array of dungeon items [z_info->o_max]
  */
 object_type *o_list;
@@ -492,9 +505,19 @@ object_type *o_list;
 monster_type *m_list;
 
 /*
- * The array of fields [max_fld_idx]
+ * The array of fields [z_info->fld_max]
  */
 field_type *fld_list;
+
+/*
+ * The array of regions [z_info->rg_max]
+ */
+region_type *rg_list;
+
+/*
+ * The array of region information [z_info->rg_max]
+ */
+region_info *ri_list;
 
 /*
  * Number of towns used.

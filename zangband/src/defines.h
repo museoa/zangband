@@ -2394,6 +2394,12 @@
 
 
 /*
+ * Region flags
+ */
+#define REGION_CAVE		0x01
+#define REGION_
+
+/*
  * Bit flags for the "project()" function
  *
  *   JUMP: Jump directly to the target location (this is a hack)

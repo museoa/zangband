@@ -945,6 +945,18 @@ errr parse_z_info(char *buf, header *head)
 		/* Save the value */
 		z_info->fld_max = max;
 	}
+	
+	/* Process 'G' for "Maximum region list" */
+	else if (buf[2] == 'G')
+	{
+		int max;
+
+		/* Scan for the value */
+		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+
+		/* Save the value */
+		z_info->rg_max = max;
+	}
 
 	/* Process 'W' for "Maximum wilderness values" */
 	else if (buf[2] == 'W')

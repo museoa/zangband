@@ -539,7 +539,7 @@ void wipe_f_list(void)
 	{
 		field_type *f_ptr = &fld_list[i];
 
-		/* Skip dead objects */
+		/* Skip dead fields */
 		if (!f_ptr->t_idx) continue;
 
 		/* Access location */
@@ -561,6 +561,33 @@ void wipe_f_list(void)
 
 	/* Reset "fld_cnt" */
 	fld_cnt = 0;
+}
+
+/*
+ * Wipe fields in region
+ */
+void wipe_fields(int rg_idx)
+{
+	int i;
+
+	/* Delete the existing fields */
+	for (i = 1; i < fld_max; i++)
+	{
+		field_type *f_ptr = &fld_list[i];
+
+		/* Skip dead fields */
+		if (!f_ptr->t_idx) continue;
+		
+		/* Enforce region */
+		if (f_ptr->region != rg_idx) continue;
+		
+		/* Delete the field */
+		delete_field_idx(i);
+
+	}
+
+	/* Compress the fields list */
+	compact_fields(0);
 }
 
 
@@ -1044,7 +1071,10 @@ s16b place_field(int x, int y, s16b t_idx)
 
 	/* Connect to ground */
 	f_ptr->fy = y;
-	f_ptr->fx = x;	
+	f_ptr->fx = x;
+	
+	/* Region */
+	f_ptr->region = cur_region;
 
 	return (fld_idx);
 }

@@ -327,7 +327,7 @@ void compact_monsters(int size)
 
 
 /*
- * Delete/Remove all the monsters when the player leaves the level
+ * Delete/Remove all the monsters in the game
  *
  * This is an efficient method of simulating multiple calls to the
  * "delete_monster()" function, with no visual effects.
@@ -388,6 +388,32 @@ void wipe_m_list(void)
 	p_ptr->window |= PW_VISIBLE;
 }
 
+/*
+ * Wipe monsters in region
+ */
+void wipe_monsters(int rg_idx)
+{
+	int i;
+	monster_type *m_ptr;
+
+	/* Delete all the monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		m_ptr = &m_list[i];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		
+		/* Enforce region */
+		if (m_ptr->region != rg_idx) continue;
+
+		/* Delete the monster */
+		delete_monster_idx(i);
+	}
+	
+	/* Compress the monster list */
+	compact_monsters(0);
+}
 
 /*
  * Acquires and returns the index of a "free" monster.
@@ -397,7 +423,6 @@ void wipe_m_list(void)
 s16b m_pop(void)
 {
 	int i;
-
 
 	/* Normal allocation */
 	if (m_max < z_info->m_max)
@@ -1470,7 +1495,9 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly, bool pe
 	/* Place the monster at the location */
 	m_ptr->fy = y;
 	m_ptr->fx = x;
-
+	
+	/* Region */
+	m_ptr->region = cur_region;
 
 	/* No "damage" yet */
 	m_ptr->stunned = 0;

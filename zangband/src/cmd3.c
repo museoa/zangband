@@ -232,6 +232,9 @@ void do_cmd_wield(void)
 
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;
+	
+	/* Forget Region */
+	o_ptr->region = 0;
 
 	/* Increase the weight */
 	p_ptr->total_weight += q_ptr->weight;

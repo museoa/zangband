@@ -67,6 +67,7 @@ struct maxima
 
 	u16b t_max;		/* Max size for field types array */
 	u16b fld_max;	/* Max size for field list */
+	u16b rg_max;	/* Max size for region list */
 
 	u16b ws_max;	/* Max size for wilderness */
 	u16b wn_max;	/* Max size for wilderness tree nodes */
@@ -505,19 +506,56 @@ struct coord
  * Pointer to a 16x16 block of cave grids.
  * The grids are allocated and deallocated in large
  * blocks for speed.
+ *
+ * Note - blocks also do not use the region code
+ * because of speed.  (We don't need to constantly
+ * allocate and deallocate everything.)
  */
-
 typedef cave_type **blk_ptr;
 
+/*
+ * Alias of block pointer - region type
+ *
+ * Whilst these are the same type as blk_ptr, they
+ * are used in a different way.  (Allocating large
+ * chucks at a time.)
+ */
+typedef cave_type **region_type;
 
 /*
  * Pointer to a 16x16 block of grids of player information.
  * The grids are allocated and deallocated in large
  * blocks for speed.
  */
-
 typedef pcave_type **pblk_ptr;
 
+
+/*
+ * Region equivalent of the above.
+ */
+typedef pcave_type **pregion_type;
+
+
+/*
+ * Region information
+ *
+ * Note - most of this stuff is dungeon specific.
+ *
+ * Note - the reason why this isn't part of region_type
+ * is because we don't want to have to add offsets all
+ * the time for every cave access.  That would be slow.
+ */
+typedef struct region_info region_info;
+
+struct region_info
+{
+	u16b xsize;
+	u16b ysize;
+	
+	u16b refcount;
+	
+	byte flags;
+};
 
 /*
  * Structure used to generate the wilderness.
@@ -526,7 +564,6 @@ typedef pcave_type **pblk_ptr;
  * These values are then converted into simple look up numbers
  * for the wilderness generation type and wandering monster type.
  */
-
 typedef struct wild_gen1_type wild_gen1_type;
 
 struct wild_gen1_type
@@ -748,6 +785,8 @@ struct object_type
 
 	s32b cost;			/* Object "base cost" */
 	
+	s16b region;		/* Region */
+	
 	byte feeling;       /* Game generated inscription number (eg, pseudo-id) */
 
 	byte activate;		/* Activation type */
@@ -804,16 +843,18 @@ struct monster_type
 	byte confused;		/* Monster is confused */
 	byte monfear;		/* Monster is afraid */
 	byte invulner;          /* Monster is temporarily invulnerable */
+	
+	u32b smart;			/* Field for "smart_learn" */
+	
+	s16b hold_o_idx;	/* Object being held (if any) */
+	
+	s16b region;		/* Region */
 
 	byte cdis;			/* Current dis from player */
 
 	byte mflag;			/* Extra monster flags */
 
-	bool ml;			/* Monster is "visible" */
-
-	s16b hold_o_idx;	/* Object being held (if any) */
-
-	u32b smart;			/* Field for "smart_learn" */
+	bool ml;			/* Monster is "visible" */	
 };
 
 /* Forward declare */
@@ -852,7 +893,7 @@ struct field_thaum
 
 	byte priority;			/* LOS priority higher = more visible */
 
-	byte type;			/* Type of field */
+	byte type;				/* Type of field */
 
 	s16b count_init;		/* Counter for timed effects */
 
@@ -861,9 +902,9 @@ struct field_thaum
 	/* Storage space for the actions to interact with. */
 	byte data_init[8];
 
-	u16b info;			/* Information flags */
+	u16b info;				/* Information flags */
 
-	char *name;			/* The name of the field */
+	char *name;				/* The name of the field */
 };
 
 
@@ -895,6 +936,8 @@ struct field_type
 	byte data[8];
 
 	s16b counter;			/* Counter for timed effects */
+	
+	s16b region;			/* Region */
 	
 	byte priority;			/* LOS priority higher = more visible */
 };

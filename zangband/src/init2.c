@@ -960,8 +960,15 @@ static errr init_other(void)
 
 	/* Initialize the "message" package */
 	(void)messages_init();
+	
+	
+	/*** Prepare region list ***/
+	C_MAKE(rg_list, z_info->rg_max, region_type);
+	C_MAKE(ri_list, z_info->rg_max, region_info);
 
 	/*** Prepare dungeon arrays ***/
+	
+	/* Remove this soon.... */	
 
 	/* Allocate and wipe each line of the cave */
 	for (i = 0; i < MAX_HGT; i++)
@@ -970,7 +977,7 @@ static errr init_other(void)
 		C_MAKE(cave[i], MAX_WID, cave_type);
 	}
 	
-	/* Allocate the player information for each grid (dungeon) */
+	/* Hack - Allocate the player information for each grid */
 	for (i = 0; i < MAX_HGT; i++)
 	{
 		/* Allocate one row of the cave */

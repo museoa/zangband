@@ -1051,6 +1051,169 @@ static byte extract_feeling(void)
 
 
 /*
+ * Delete a region from the region list
+ *
+ * Only call this when cleaning up the game during
+ * exit - use unref_region() below normally.
+ */
+void del_region(int rg_idx)
+{
+	int i;
+	
+	/* Acquire region info */
+	region_info *ri_ptr = &ri_list[rg_idx];
+	
+	/*
+	 * Deallocate everything if region uses
+	 * literal meanings of cave_type structure values.
+	 *
+	 * Note - quests have this flag unset.
+	 * m_idx refers to race of monster.
+	 * o_idx refers to type of object.
+	 * fld_idx refers to type of field.
+	 *
+	 * (Rather than index of monster, object or fields.)
+	 */
+	if (ri_ptr->flags & REGION_CAVE)
+	{
+		/* Delete everything in the region */
+		wipe_monsters(rg_idx);
+		wipe_objects(rg_idx);
+		wipe_fields(rg_idx);
+	}
+
+	/* Deallocate the cave information */
+	
+	/* Free the cave */
+	for (i = 0; i < ri_ptr->xsize; i++)
+	{
+		/* Allocate one row of the cave */
+		FREE(rg_list[rg_idx][i]);
+	}
+	
+	/* Free the region + info */
+	FREE(rg_list[rg_idx]);
+	WIPE(&ri_list[rg_idx], region_info);
+	
+	/* Decrement counter */
+	rg_cnt--;
+}
+
+/*
+ * Decrease refcount on region - deallocate if empty
+ */
+void unref_region(int rg_idx)
+{
+	/* Acquire region info */
+	region_info *ri_ptr = &ri_list[rg_idx];
+	
+	/* Decrease refcount */
+	ri_ptr->refcount--;
+	
+	/* Delete if just lost final reference */
+	if (!ri_ptr->refcount) del_region(rg_idx);
+}
+
+
+/*
+ * Increase refcount on region
+ */
+void incref_region(int rg_idx)
+{
+	/* Acquire region info */
+	region_info *ri_ptr = &ri_list[rg_idx];
+	
+	/* Increase refcount */
+	ri_ptr->refcount++;
+}
+
+/*
+ * Do the actual work of allocating a region
+ */
+static void allocate_region(int rg_idx, int x, int y)
+{
+	int i;
+	
+	/* Acquire region info */
+	region_info *ri_ptr = &ri_list[rg_idx];
+	
+	/* Save size */
+	ri_ptr->xsize = x;
+	ri_ptr->ysize = y;
+	
+	/* Hack set the refcount to one - assume caller holds reference */
+	ri_ptr->refcount = 1;
+	
+	/* Make the array of pointers to the cave */
+	C_MAKE(rg_list[rg_idx], y, cave_type*);
+	
+	/* Allocate and wipe each line of the region */
+	for (i = 0; i < y; i++)
+	{
+		/* Allocate one row of the cave */
+		C_MAKE(rg_list[rg_idx][i], x, cave_type);
+	}
+}
+
+
+/*
+ * Allocate a region.
+ *
+ * (Usually used to store the dungeon,
+ * However, can be used in the wilderness to store
+ * town info.)
+ *
+ * This rountine should never fail - but be prepared
+ * for when it does.
+ */
+int create_region(int x, int y)
+{
+	int rg_idx;
+	int i;
+	
+	if (rg_max < z_info->rg_max)
+	{
+		/* Get next space */
+		rg_idx = rg_max;
+		
+		/* Expand region array */
+		rg_max++;
+
+		/* Count regions */
+		rg_cnt++;
+		
+		/* Allocate the region */
+		allocate_region(rg_idx, x, y);
+		
+		/* Done */
+		return (rg_idx);
+	}
+	
+	/* Recycle dead regions */
+	for (i = 1; i < rg_max; i++)
+	{
+		/* Skip used regions */
+		if (rg_list[i]) continue;
+
+		/* Count regions */
+		rg_cnt++;
+		
+		/* Allocate the region */
+		allocate_region(i, x, y);
+
+		/* Use this region */
+		return (i);
+	}
+	
+	/* Warn the player */
+	msg_print("Too many regions!");
+
+	/* Oops */
+	return (0);
+}
+
+
+/*
  * Generates a random dungeon level			-RAK-
  *
  * Hack -- regenerate any "overflow" levels
