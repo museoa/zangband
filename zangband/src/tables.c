@@ -6938,6 +6938,9 @@ field_action f_action[] =
 	
 	/* Helms maker */
 	{field_action_ishelm_tester, "field_action_ishelm_tester"},
+	
+	/* Non-scroll magic items maker */
+	{field_action_issupplies_tester, "field_action_issupplies_tester"},
 
 	/* Done */
 	{NULL, NULL}

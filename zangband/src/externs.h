@@ -1224,7 +1224,7 @@ extern void field_action_isclothes_tester(s16b *field_ptr, vptr input);
 extern void field_action_ishardarmour_tester(s16b *field_ptr, vptr input);
 extern void field_action_isphardarmour_tester(s16b *field_ptr, vptr input);
 extern void field_action_ishelm_tester(s16b *field_ptr, vptr input);
-
+extern void field_action_issupplies_tester(s16b *field_ptr, vptr input);
 
 /*
  * Hack -- conditional (or "bizarre") externs

@@ -4153,7 +4153,7 @@ void field_action_issword_tester(s16b *field_ptr, vptr input)
 /*
  * Axeman will buy/sell
  */
-void field_action_isnonsword_tester(s16b *field_ptr, void *input)
+void field_action_isnonsword_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4166,7 +4166,7 @@ void field_action_isnonsword_tester(s16b *field_ptr, void *input)
 /*
  * Shieldsman will buy/sell
  */
-void field_action_isshield_tester(s16b *field_ptr, void *input)
+void field_action_isshield_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4188,7 +4188,7 @@ void field_action_isshield_tester(s16b *field_ptr, void *input)
 /*
  * Clothesstore will buy/sell
  */
-void field_action_isclothes_tester(s16b *field_ptr, void *input)
+void field_action_isclothes_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4201,7 +4201,7 @@ void field_action_isclothes_tester(s16b *field_ptr, void *input)
 /*
  * Heavy Armour store will buy/sell
  */
-void field_action_ishardarmour_tester(s16b *field_ptr, void *input)
+void field_action_ishardarmour_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4214,7 +4214,7 @@ void field_action_ishardarmour_tester(s16b *field_ptr, void *input)
 /*
  * Pure Heavy Armour store will buy/sell
  */
-void field_action_isphardarmour_tester(s16b *field_ptr, void *input)
+void field_action_isphardarmour_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4227,7 +4227,7 @@ void field_action_isphardarmour_tester(s16b *field_ptr, void *input)
 /*
  * Helmsman will buy/sell
  */
-void field_action_ishelm_tester(s16b *field_ptr, void *input)
+void field_action_ishelm_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4238,5 +4238,34 @@ void field_action_ishelm_tester(s16b *field_ptr, void *input)
 }
 
 
+/*
+ * Supplies store will buy/sell
+ */
+void field_action_issupplies_tester(s16b *field_ptr, vptr input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Pick potions */
+	item_tester_tval = TV_POTION;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+
+	/* Restore tval */
+	item_tester_tval = tval_save;
+	
+	/*
+	 * Trigger on rechargable items, potions, or books
+	 * (We only want scrolls as magic items in the supplies store)
+	 */
+	f_o_ptr->result = (f_o_ptr->result ||
+		item_tester_hook_recharge(f_o_ptr->o_ptr) ||
+		item_tester_hook_is_book(f_o_ptr->o_ptr));
+}
 
 
