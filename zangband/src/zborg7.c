@@ -824,7 +824,7 @@ bool borg_check_lite_only(void)
  * Enchant armor with the lowest AC.  This routine doesn't use the spell when
  * the borg is in the dungeon because down there he has better things to do.
  */
-static bool borg_enchant_to_a(void)
+static bool borg_enchant_to_a(bool scroll_only)
 {
 	int i, slot;
 
@@ -837,7 +837,9 @@ static bool borg_enchant_to_a(void)
 	/* Enchant it */
 	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR) ||
-		(!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 5, 40)))
+		(!bp_ptr->depth &&
+		 !scroll_only &&
+		  borg_spell_fail(REALM_SORCERY, 3, 5, 40)))
 	{
 		/*
 		 * Find out if the prompt is at Inven or Equip by checking if
@@ -1000,17 +1002,25 @@ static bool borg_enchant_to_d(void)
  * Otherwise target arrows.
  * Forget about enchanting arrows with the spell if its bonuses are high
  */
-static bool borg_enchant_to_w(void)
+static bool borg_enchant_to_w(bool scroll_only)
 {
 	int i, slot, slot_d, slot_h;
 
 	bool inven, inven_d, inven_h;
 	bool scroll = borg_read_scroll_fail(SV_SCROLL_STAR_ENCHANT_WEAPON);
 
-
 	/* Can we enchant at all */
-	if (!scroll &&
-		!borg_spell_fail(REALM_SORCERY, 3, 4, 40)) return (FALSE);
+	if (scroll_only)
+	{
+		/* Is there a scroll */
+		if (!scroll) return (FALSE);
+	}
+	else
+	{
+		/* Is there a scroll or the spell */
+		if (!scroll &&
+			!borg_spell_fail(REALM_SORCERY, 3, 4, 40)) return (FALSE);
+	}
 
 	/* What is the item with the lowest dam? */
 	slot_d = borg_notice_enchant_dam(&inven_d);
@@ -1355,25 +1365,25 @@ static bool borg_brand_bolts(void)
 /* Enchant things */
 bool borg_enchanting(void)
 {
+	/* Prevent casting a spell over and over */
+	bool scroll_only = ((borg_t - borg_began > 150 && bp_ptr->depth) ||
+						(borg_t - borg_began > 350 && !bp_ptr->depth));
+
 	/* Forbid blind/confused */
 	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
-	/* One time only */
+	/* Simple enchanting */
+	if (borg_enchant_to_d()) return (TRUE);
+	if (borg_enchant_to_h()) return (TRUE);
+	if (borg_enchant_to_a(scroll_only)) return (TRUE);
+	if (borg_enchant_to_w(scroll_only)) return (TRUE);
+
+	/* Odd enchanting */
 	if (borg_decurse()) return (TRUE);
 	if (borg_star_decurse()) return (TRUE);
 	if (borg_enchant_artifact()) return (TRUE);
 	if (borg_mundane()) return (TRUE);
 	if (borg_brand_bolts()) return (TRUE);
-
-	/* Prevent casting a spell over and over */
-	if ((borg_t - borg_began > 150 && bp_ptr->depth) ||
-		(borg_t - borg_began > 350 && !bp_ptr->depth)) return (FALSE);
-
-	/* Maybe with spell */
-	if (borg_enchant_to_a()) return (TRUE);
-	if (borg_enchant_to_d()) return (TRUE);
-	if (borg_enchant_to_h()) return (TRUE);
-	if (borg_enchant_to_w()) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
