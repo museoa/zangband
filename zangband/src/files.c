@@ -641,6 +641,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 	char b2 = ']';
 
 	char f = ' ';
+        char tmp[8];
 
 	/* Initial */
 	s = (*sp);
