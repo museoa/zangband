@@ -459,10 +459,6 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 			/* Clear previous contents, add down stairs */
 			cave[y0][x0].feat = FEAT_MORE;
 			
-			/* Save the location so that we can start on it */
-			wild_stairs_x = x * 8 + x0 % 8;
-			wild_stairs_y = y * 8 + y0 % 8;
-			
 			break;
 		}
 		
@@ -676,6 +672,13 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	/* Save location */
 	xx = x;
 	yy = y;
+	
+	/* Hack - set location of stairs so we can start on them. */
+	if (st_ptr->type == BUILD_STAIRS)
+	{
+		wild_stairs_x = x * 8 + 4;
+		wild_stairs_y = y * 8 + 4;
+	}
 	
 	/* Get coords */
 	if (!get_city_block_locat(&xx, &yy)) return;
