@@ -408,8 +408,6 @@ extern bool psychometry(void);
 extern void play_game(bool new_game);
 
 /* files.c */
-extern void safe_setuid_drop(void);
-extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens, int mode);
 extern void display_player(int mode);
 extern void do_cmd_character(void);
@@ -433,9 +431,6 @@ extern void do_cmd_save_and_exit(void);
 extern void center_string(char *buf, uint max, cptr fmt, va_list *vp);
 extern void close_game(void);
 extern void exit_game_panic(void);
-extern void signals_ignore_tstp(void);
-extern void signals_handle_tstp(void);
-extern void signals_init(void);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
 extern void get_character_name(void);
 
@@ -847,6 +842,11 @@ extern bool inn_rest(void);
 extern void build_init(int town_num, int build_num, byte build_type);
 
 /* util.c */
+extern void safe_setuid_drop(void);
+extern void safe_setuid_grab(void);
+extern void signals_ignore_tstp(void);
+extern void signals_handle_tstp(void);
+extern void signals_init(void);
 extern bool assert_helper(cptr expr, cptr file, int line, bool result);
 extern errr path_parse(char *buf, int max, cptr file);
 extern void path_build(char *buf, int max, cptr path, cptr file);
