@@ -363,21 +363,24 @@ static int show_menu(int num, menu_type *options, int select)
  * Display a menu, and get a choice.
  * Return false if escape is pressed.
  *
- * 'num' is the number of options.
- * 'options' are the corresponding strings to print.
- * 'cmd' is an array of functions to call - one
- *       for each option.
+ * 'options' is an array that contains the strings to print.
+ *       plus all the functions to call together with the
+ *       flags for each option.
  * 'select' shows the default/current option.
  *       If negative, it is ignored.
  * 'prompt' is an optional prompt.
  */
-bool display_menu(int num, menu_type *options, int select, cptr prompt)
+bool display_menu(menu_type *options, int select, cptr prompt)
 {
 	int i = -1, j, cnt;
 	int ask = 0;
 	char choice;
+	int num = 0;
 	
 	int x, y;
+	
+	/* Calculate the number of strings we have */
+	while (options[num].text) num++;
                   
     /* Paranoia XXX XXX XXX */
 	message_flush();

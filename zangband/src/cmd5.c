@@ -2950,7 +2950,7 @@ void do_cmd_pray(void)
 }
 
 /* Forward declare */
-extern menu_type pet_menu[PET_CHOICE_MAX];
+extern menu_type pet_menu[PET_CHOICE_MAX + 1];
 
 
 /*
@@ -3159,7 +3159,7 @@ static bool cmd_pets_items(int dummy)
 
 
 /* The menu used to interact with pets */
-menu_type pet_menu[PET_CHOICE_MAX] =
+menu_type pet_menu[PET_CHOICE_MAX + 1] =
 {
 	{"dismiss pets", cmd_pets_dismiss, TRUE, FALSE},
 	{"stay close", cmd_pets_close, TRUE, TRUE},
@@ -3168,7 +3168,8 @@ menu_type pet_menu[PET_CHOICE_MAX] =
 	{"give me space", cmd_pets_space, TRUE, TRUE},
 	{"stay away", cmd_pets_away, TRUE, TRUE},
 	{NULL, cmd_pets_doors, TRUE, FALSE},
-	{NULL, cmd_pets_items, TRUE, FALSE}
+	{NULL, cmd_pets_items, TRUE, FALSE},
+	MENU_END
 };
 
 
@@ -3228,5 +3229,5 @@ void do_cmd_pet(void)
 	}
 
 	/* Interact with menu */
-	display_menu(PET_CHOICE_MAX, pet_menu, pet_select, NULL);
+	display_menu(pet_menu, pet_select, NULL);
 }

@@ -1207,6 +1207,9 @@ static bool do_cmd_options_dump(int dummy)
 	return (FALSE);
 }
 
+/* Number of things in the main options menu */
+#define OPTION_MENU_MAX			18
+
 
 /* The main options menu */
 menu_type options_menu[OPTION_MENU_MAX] =
@@ -1228,6 +1231,7 @@ menu_type options_menu[OPTION_MENU_MAX] =
 	{"Window Flags", do_cmd_options_win, TRUE, FALSE},
 	MENU_SEPERATOR,
 	{"Dump Options to a Pref File", do_cmd_options_dump, TRUE, FALSE},
+	MENU_END
 };
 
 
@@ -1242,7 +1246,7 @@ void do_cmd_options(byte flags)
 	/* Save option flags so menu functions can access them */
 	option_flags = flags;
 
-	display_menu(OPTION_MENU_MAX, options_menu, -1, format("%s options", VERSION_NAME));
+	display_menu(options_menu, -1, format("%s options", VERSION_NAME));
 
 	/* Hack - Redraw equippy chars */
 	p_ptr->redraw |= (PR_EQUIPPY);
