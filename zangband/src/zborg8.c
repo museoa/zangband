@@ -602,22 +602,32 @@ static bool borg_spends_gold_okay(list_item *l_ptr)
 	if (l_ptr->tval == TV_LITE ||
 		l_ptr->tval == TV_FLASK) return (TRUE);
 
-	/* Nothing else to be bought if the borg is this low on money */
-	if (borg_gold < 20) return (FALSE);
+	/* If the borg is low on money and may need to refuel */
+	if (borg_gold < 20 &&
+		!KN_FLAG(&equipment[EQUIP_LITE], TR_INSTA_ART)) return (FALSE);
 
 	/* Allow food to be bought when there is more than 20 gold */
 	if (l_ptr->tval == TV_FOOD ||
 		(l_ptr->tval == TV_SCROLL &&
 		k_info[l_ptr->k_idx].sval == SV_SCROLL_SATISFY_HUNGER)) return (TRUE);
 
-	/* Nothing else to be bought if the borg is this low on money */
-	if (borg_gold < 80) return (FALSE);
+	/* If the borg is low on money and does not have a food spell */
+	if (borg_gold < 80 &&
+		!borg_spell_legal_fail(REALM_LIFE, 0, 7, 65) &&
+		!borg_spell_legal_fail(REALM_ARCANE, 2, 6, 65) &&
+		!borg_spell_legal_fail(REALM_NATURE, 0, 3, 65) &&
+		!borg_racial_check(RACE_HOBBIT, TRUE)) return (FALSE);
 
 	if (l_ptr->tval == TV_SCROLL &&
 		k_info[l_ptr->k_idx].sval == SV_SCROLL_WORD_OF_RECALL) return (TRUE);
 
-	/* Nothing else to be bought if the borg is this low on money */
-	if (borg_gold < 200) return (FALSE);
+	/* If the borg is low on money and does not have a recall spell */
+	if (borg_gold < 200 &&
+		!borg_equips_rod(SV_ROD_RECALL) &&
+		!borg_spell_legal_fail(REALM_SORCERY, 2, 7, 60) &&
+		!borg_spell_legal_fail(REALM_ARCANE, 3, 6, 60) &&
+		!borg_spell_legal_fail(REALM_TRUMP, 1, 6, 60) &&
+		!borg_mutation_check(MUT1_RECALL, TRUE)) return (FALSE);
 
 	/* Spend away */
 	return (TRUE);
@@ -853,8 +863,18 @@ static bool borg_think_shop_grab_aux(int shop)
 	{
 		list_item *l_ptr = &cur_list[n];
 
+		/* Obtain the "cost" of the item */
+		c = l_ptr->cost;
+
 		/* Hack - we cannot buy some items */
-		if (!l_ptr->cost) continue;
+		if (c <= 0) continue;
+
+		/* Ignore too expensive items */
+		if (borg_gold < c) continue;
+
+		/* Too heavy to carry now */
+		if (2 * (bp_ptr->weight + l_ptr->weight) /
+			adj_str_wgt[my_stat_ind[A_STR]] >= 120) continue;
 
 		/* Get a single item */
 		l_ptr->treat_as = TREAT_AS_LESS;
@@ -865,14 +885,8 @@ static bool borg_think_shop_grab_aux(int shop)
 		/* Restore the item */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
-		/* Obtain the "cost" of the item */
-		c = l_ptr->cost;
-
 		/* Is it too costly? */
 		if (!borg_spends_gold_okay(l_ptr)) continue;
-
-		/* Ignore too expensive items */
-		if (borg_gold < c) continue;
 
 		/* Penalize expensive items */
 		if (c > borg_gold / 10) s -= c;
