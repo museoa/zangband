@@ -474,6 +474,12 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 ##
+## Hack... .o files can be created from .obj files
+##
+%.o:%.obj
+	move $@ $<
+
+##
 ## Phony targets
 ##
 .PHONY: install clean depend $(PORTS) lcc_clean dos_clean ibm_clean
