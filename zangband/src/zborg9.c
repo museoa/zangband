@@ -3151,7 +3151,6 @@ void do_cmd_borg(void)
 		            "Command '@' Borg LOS.\n"
 		            "Command 'q' Auto stop on level.\n"
 		            "Command 'd' Dump spell info.\n"
-		            "Command '$$' Reload Borg.txt.\n"
 		            "Command '^' Flow Pathway.");
         
         /* Second column */
@@ -3168,7 +3167,6 @@ void do_cmd_borg(void)
 				    "Command '!' Time.\n"
 				    "Command 'w' My Swap Weapon.\n"
 				    "Command 'v' Version stamp.\n"
-				    "Command 'h' Borg_Has function.\n"
 				    "Command 'y' Last 75 steps.\n"
 			    	"Command 'o' Examine Inven Item.");
 
@@ -3188,21 +3186,6 @@ void do_cmd_borg(void)
 
 	switch (cmd)
 	{
-		case '$':
-		{
-			/* Command: Nothing */
-
-			/*** Hack -- initialize borg.ini options ***/
-
-			/* Message */
-			borg_note("Reloading the Borg rules... (zborg.txt)");
-
-			KILL(borg_has);
-
-			init_borg_txt_file();
-			borg_note("# Ready...");
-			break;
-		}
 
 		case 'z':
 		case 'Z':
