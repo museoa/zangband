@@ -1400,7 +1400,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Effect of damage dice */
 	maxdam = mindam * (o_ptr->ds * o_ptr->dd);
-	mindam *= o_ptr->ds;
+	mindam *= o_ptr->dd;
 
 	/* rescale */
 	intmaxdam = maxdam / 100;
