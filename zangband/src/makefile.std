@@ -167,7 +167,7 @@ INSTALL = cp zangband$(EXEC) ..
 ## Note: Get the 16x16.bmp file, and put in [Z]directory/lib/xtra/graf
 ##       to get 256 colours.
 ##
-linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
+linux: CFLAGS += -std=gnu99 -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
                  -D"USE_XAW" `gtk-config --cflags` -D"USE_GTK" \
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations
  
@@ -177,7 +177,7 @@ linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
 ##
 ## Linux with the (depreciated) svga port.
 ##
-linux_svga: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
+linux_svga: CFLAGS += -std=gnu99 -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
                  -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
                   `gtk-config --cflags` -D"USE_GTK" \
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations

@@ -105,10 +105,6 @@ typedef int sint;
 /* An unsigned, "standard" integer (often pre-defined) */
 typedef unsigned int uint;
 
-
-/* The largest possible signed integer (pre-defined) */
-/* typedef long long; */
-
 /* The largest possible unsigned integer */
 typedef unsigned long huge;
 
@@ -121,10 +117,40 @@ typedef unsigned short u16b;
 #ifdef L64						/* 64 bit longs */
 typedef signed int s32b;
 typedef unsigned int u32b;
-#else
+
+/* Signed/Unsigned 64bit value */
+typedef long u64b;
+typedef unsigned long s64b;
+#else /* L64 */
 typedef signed long s32b;
 typedef unsigned long u32b;
-#endif
 
+/* Try to get a 64 bit type */
+#if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+
+#include <stdint.h>
+typedef uint64_t u64b;
+typedef int64_t s64b;
+#else /* __STDC__ && __STDC_VERSION__ */
+
+/* Define this if you have <sys/types.h> with an old compiler */
+#ifdef HAS_SYS_TYPES
+
+#include <sys/types.h>
+typedef u_int64_t u64b;
+typedef int64_t s64b;
+
+#else /* HAS_SYS_TYPES */
+
+/* Attempt to use "long long" which is semi-standard for older compilers */
+
+/* Signed/Unsigned 64bit value */
+typedef long long u64b;
+typedef unsigned long long s64b;
+
+#endif /* HAS_SYS_TYPES */
+#endif /* __STDC__ && __STDC_VERSION__ */
+ 
+#endif /* L64 */
 
 #endif
