@@ -2597,6 +2597,9 @@ static void del_wild_cache(void)
 
 void change_level(int level)
 {
+	int i, j;
+	pcave_type *pc_ptr;
+
 	bool switched = FALSE;
 
 	/* Hack - reset trap detection flag */
@@ -2671,6 +2674,21 @@ void change_level(int level)
 		/* Access the cave */
 		area = access_cave;
 		parea = access_pcave;
+		
+		
+		for (i = 0; i < MAX_WID; i++)
+		{
+			for (j = 0; j < MAX_HGT; j++)
+			{
+				pc_ptr = parea(j, i);
+				
+				/* Clear the player dungeon memory */
+				pc_ptr->feat = FEAT_NONE;
+				
+				/* Clear the player dungeon flags */
+				pc_ptr->player = 0x00;
+			}
+		}
 		
 		/* Bounds checking */
 		in_bounds = in_bounds_cave;
