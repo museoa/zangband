@@ -116,6 +116,13 @@ u16b q_pop(void)
 }
 
 
+/* Test if this quest has been discovered */
+bool quest_status_taken(int q_num)
+{
+	return (quest[q_num].status == QUEST_STATUS_TAKEN);
+}
+
+
 /*
  * Make a quest for killing n monsters of a certain type on a certain level
  */
@@ -276,13 +283,19 @@ static u16b find_good_town(int *dist)
 	return (best_place);
 }
 
-
-static cptr describe_quest_location(cptr * dirn, int x, int y)
+/*
+ * This function returns the closest name of the closest town and the
+ * direction to that town.  If known == TRUE then the player must have
+ * seen the closest town to, in order not to give away clues to the map.
+ */
+cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 {
 	int i;
 	
 	int dx, dy;
 	
+	wild_done_type *w_ptr;
+
 	/* Find the nearest town */
 	int best_dist = 99999;
 	int best_town = 0;
@@ -292,8 +305,17 @@ static cptr describe_quest_location(cptr * dirn, int x, int y)
 		int d;
 
 		/* Only real towns */
-		if (place[i].type != TOWN_FRACT)
-			continue;
+		if (place[i].type != TOWN_FRACT) continue;
+
+		/* Should this be a known town? */
+		if (known)
+		{
+			/* Get wilderness square */
+			 w_ptr = &wild[place[i].y][place[i].x].done;
+	
+			/* Has the player visited this square? */
+			if (!(w_ptr->info & WILD_INFO_SEEN)) continue;
+		}
 
 		/* Find closest town */
 		d = distance(x, y, place[i].x, place[i].y);
@@ -550,6 +572,9 @@ void activate_quests(int level)
 	{
 		q_ptr = &quest[i];
 		
+		/* Is the quest still there? */
+		if (q_ptr->status > QUEST_STATUS_TAKEN) continue;
+
 		/* Assume no longer active */
 		q_ptr->flags &= ~(QUEST_FLAG_ACTIVE);
 
@@ -616,21 +641,7 @@ void activate_quests(int level)
 			
 			case QUEST_TYPE_FIND_ITEM:
 			{
-				int place_num = q_ptr->data.fit.place;
-				
-				place_type *pl_ptr;
-				
-				/* Not correct place? */
-				if (place_num != p_ptr->place_num) break;
-				
-				pl_ptr = &place[place_num];
-				
-				/* Need to be in the dungeon */
-				if (!pl_ptr->dungeon) break;
-			
-				/* Correct dungeon level? */
-				if (level != pl_ptr->dungeon->max_level) break;
-				
+				/* Always active until the relic has been id'd */
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			}
 			
@@ -850,6 +861,21 @@ void trigger_quest_create(byte c_type, vptr data)
 			
 			case QC_DUN_ARTIFACT:
 			{
+				int place_num = q_ptr->data.fit.place;
+				
+				place_type *pl_ptr;
+				
+				/* Not correct place? */
+				if (place_num != p_ptr->place_num) continue;
+				
+				pl_ptr = &place[place_num];
+				
+				/* Need to be in the dungeon */
+				if (!pl_ptr->dungeon) continue;
+			
+				/* Correct dungeon level? */
+				if (p_ptr->depth != pl_ptr->dungeon->max_level) continue;
+				
 				display_artifact_quest(q_ptr);
 				continue;
 			}
@@ -1111,13 +1137,12 @@ void reward_quest(quest_type *q_ptr)
 			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
 				/* Work out reward */
-				long reward = q_ptr->reward;
-				reward *= reward * 100;
+				u16b reward = q_ptr->reward;
 				
 				/* Give to player */
 				p_ptr->au += reward;
 				
-				msgf("You are given %ld gold pieces for your efforts.", reward);
+				msgf("You are given %d gold pieces for your efforts.", reward);
 				
 				/* Allow another quest to be selected */
 				q_ptr->place = 0;
@@ -1135,7 +1160,33 @@ void reward_quest(quest_type *q_ptr)
 			else
 			{
 				msgf("%s", q_ptr->name);
-				msgf("Still looking for them?");
+
+				/* If you have killed all but one monster */
+				if (q_ptr->data.bnt.max_num - q_ptr->data.bnt.cur_num == 1)
+				{
+					monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
+
+					if (FLAG(r_ptr, RF_MALE))
+					{
+						/* Male reference */
+						msgf("Still looking for him?");
+					}
+					else if (FLAG(r_ptr, RF_FEMALE))
+					{
+						/* Female reference */
+						msgf("Still looking for her?");
+					}
+					else
+					{
+						/* Neuter reference */
+						msgf("Still looking for it?");
+					}
+				}
+				else
+				{
+					/* More than one monster */
+					msgf("Still looking for them?");
+				}
 			}
 			
 			break;
@@ -1146,12 +1197,12 @@ void reward_quest(quest_type *q_ptr)
 			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
 				/* Work out reward */
-				long reward = q_ptr->reward * 100;
+				u16b reward = q_ptr->reward;
 				
 				/* Give to player */
 				p_ptr->au += reward;
 				
-				msgf("You are given %ld gold pieces for your efforts.", reward);
+				msgf("You are given %d gold pieces for your efforts.", reward);
 				
 				/* Allow another quest to be selected */
 				q_ptr->place = 0;
@@ -1180,12 +1231,12 @@ void reward_quest(quest_type *q_ptr)
 			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
 				/* Work out reward */
-				long reward = q_ptr->reward * 100;
+				u16b reward = q_ptr->reward;
 				
 				/* Give to player */
 				p_ptr->au += reward;
 				
-				msgf("You are given %ld gold pieces for your efforts.", reward);
+				msgf("You are given %d gold pieces for your efforts.", reward);
 				
 				/* Allow another quest to be selected */
 				q_ptr->place = 0;
@@ -1290,7 +1341,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	pl_ptr = &place[q_ptr->data.fit.place];
 	
 	/* Get name of closest town + direction away from it */
-	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y, FALSE);
 				
 	/* XXX XXX Create quest name */
 	(void)strnfmt(q_ptr->name, 128, "Find the relic %s, which is hidden %s of %s.",
@@ -1486,8 +1537,11 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	q_ptr->data.bnt.r_idx = r_idx;
 	q_ptr->data.bnt.cur_num = 0;
 	q_ptr->data.bnt.max_num = num;
-	q_ptr->reward = r_ptr->level;
+	q_ptr->reward = r_ptr->level * r_ptr->level * num * 2;
 
+	/* bonus reward for uniques */
+	if (num == 1) q_ptr->reward *= 10;
+	
 	/* Done */
 	return (q_ptr);
 }
@@ -1639,7 +1693,7 @@ static quest_type *insert_message_quest(int dist)
 	q_ptr->data.msg.place = place_num;
 	
 	/* Set the reward level */
-	q_ptr->reward = dist;
+	q_ptr->reward = dist * 100;
 	
 	/* Done */
 	return (q_ptr);
@@ -1726,7 +1780,7 @@ static quest_type *insert_find_place_quest(void)
 	pl_ptr->quest_num = q_num;
 	
 	/* Get name of closest town + direction away from it */
-	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y, FALSE);
 				
 	/* XXX XXX Create quest name */
 	(void)strnfmt(q_ptr->name, 128, "Find a certain lost ruin, which is hidden %s of %s.",
@@ -1735,7 +1789,8 @@ static quest_type *insert_find_place_quest(void)
 	q_ptr->data.fpl.place = place_num;
 	
 	/* Set the reward level */
-	q_ptr->reward = distance(pl_ptr->x, pl_ptr->y, p_ptr->wilderness_x / 16, p_ptr->wilderness_y / 16);
+	q_ptr->reward = 100 * distance(pl_ptr->x, pl_ptr->y, p_ptr->wilderness_x / 16,
+					p_ptr->wilderness_y / 16);
 
 	/* Done */
 	return (q_ptr);
@@ -1861,9 +1916,18 @@ bool do_cmd_knowledge_quests(int dummy)
 			{
 				if (taken)
 				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s  You have killed %d.\n\n",
-							q_ptr->name, quest[i].data.bnt.cur_num);
+					/* Kill just one monster? */
+					if (q_ptr->data.bnt.max_num == 1)
+					{
+						/* Don't show the count */
+						strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+					}
+					else
+					{
+						/* Show the count */
+						strnfmt(tmp_str, 256, "%s  You have killed %d.\n\n",
+								q_ptr->name, quest[i].data.bnt.cur_num);
+					}
 				}
 				else if (finished)
 				{
@@ -2368,7 +2432,7 @@ bool create_quest(int x, int y, int place_num)
 	q_ptr->x_type = QX_WILD_ENTER;
 	
 	/* Get name and direction of closest town to quest */
-	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y, FALSE);
 
 	/* Create quest name */
 	(void)strnfmt(q_ptr->name, 128, "Defeat the %s camp %s of %s.",

@@ -822,12 +822,13 @@ void do_cmd_view_map(void)
 		int x, y;
 
 		/* Direction */
-		int d;
+		char d;
 		
 		wild_done_type *w_ptr;
 		
-		cptr town_name;
-		int town_name_len;
+		cptr place_name;
+		cptr place_dir;
+		int place_name_len;
 
 		/* No offset yet */
 		x = 0;
@@ -850,23 +851,67 @@ void do_cmd_view_map(void)
 			pl_ptr = (w_ptr->place ? &place[w_ptr->place] : NULL);
 
 			/* Show the town name, if it exists */
-			if (pl_ptr && (w_ptr->info & WILD_INFO_SEEN) && pl_ptr->numstores)
+			if (pl_ptr && (w_ptr->info & WILD_INFO_SEEN))
 			{
-				town_name = pl_ptr->name;
-				town_name_len = strlen(town_name);
-			
-				/* Display it */
-				put_fstr(COL_MAP + (wid - COL_MAP - town_name_len) / 2, 0, town_name);
+				if (pl_ptr->numstores)
+				{
+					place_name = pl_ptr->name;
+					place_name_len = strlen(place_name);
+				
+					/* Display town name */
+					put_fstr(1 + (wid - place_name_len) / 2, 0, place_name);
 
-				/* Display different prompt -MT */
-				put_fstr(COL_MAP - 36 + (wid - COL_MAP) / 2, hgt - 1,
-						"Move around, press * for town info, or hit any other key to continue.");
+					/* Display town prompt */
+					put_fstr(wid / 2 - 34, hgt - 1,
+							"Move around, press * for town info or hit any other key to continue.");
+				}
+				else
+				{
+					/* Display standard prompt */
+					put_fstr(wid / 2 - 23, hgt - 1,
+							"Move around or hit any other key to continue.");
+
+					if (pl_ptr->dungeon)
+					{
+						/* Fetch closest known town and direction */
+						place_name = describe_quest_location(&place_dir,
+										pl_ptr->x, pl_ptr->y, TRUE);
+						place_name_len = strlen(place_name) +
+										 strlen(place_dir) + 19;
+
+						/* Is this dungeon guarded? */
+						if (pl_ptr->dungeon->recall_depth == 0)
+						{
+							/* Show where the dungeon is */
+							put_fstr((wid - place_name_len) / 2, 0,
+								"Guarded dungeon %s of %s.", place_dir, place_name);
+						}
+						else
+						{
+							/* Show where the dungeon is */
+							put_fstr((wid - place_name_len - 2) / 2, 0,
+								"Unguarded dungeon %s of %s.", place_dir, place_name);
+						}
+					}
+					else
+					{
+						if (quest_status_taken(pl_ptr->quest_num))
+						{
+							/* Fetch wilderness quest name */
+							place_name = quest[pl_ptr->quest_num].name;
+							place_name_len = strlen(place_name);
+
+							/* Display wilderness quest name */
+							put_fstr(1 + (wid - place_name_len) / 2, 0, place_name);
+						}
+					}
+				}
 			}
 			else
 			{
 				/* Display standard prompt -MT */
-				put_fstr(COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1,
-						"Move around, or hit any other key to continue.");
+				put_fstr(wid / 2 - 23, hgt - 1,
+						"Move around or hit any other key to continue.");
 			}
 
 			/* Show the cursor */
@@ -2377,7 +2422,7 @@ void display_map(int *cx, int *cy)
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 	hgt -= 2;
-	wid -= 14;
+	wid -= 2;
 
 	/* Paranoia */
 	if ((hgt < 3) || (wid < 3))
@@ -2447,7 +2492,7 @@ void display_map(int *cx, int *cy)
 
 		/* Player location in wilderness */
 		(*cy) += py / 16 - y + ROW_MAP;
-		(*cx) += px / 16 - x + COL_MAP;
+		(*cx) += px / 16 - x + 1;
 
 		/* Fill in the map */
 		for (i = 0; i < wid; ++i)
@@ -2608,7 +2653,7 @@ void display_map(int *cx, int *cy)
 
 		/* Player location in dungeon */
 		(*cy) = py * yfactor / yrat + ROW_MAP;
-		(*cx) = px * xfactor / xrat + COL_MAP;
+		(*cx) = px * xfactor / xrat + 1;
 
 		/* Fill in the map of dungeon */
 		for (i = p_ptr->min_wid; i < p_ptr->max_wid; ++i)
@@ -2679,7 +2724,7 @@ void display_map(int *cx, int *cy)
 			ttc = mtc[j][i];
 
 			/* Hack -- Queue it */
-			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
+			Term_queue_char(i, j, ta, tc, tta, ttc);
 		}
 	}
 

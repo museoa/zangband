@@ -1144,7 +1144,9 @@ extern void test_compress_module(void);
 
 /* quest.c */
 extern u16b q_pop(void);
+extern bool quest_status_taken(int q_num);
 extern u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level);
+extern cptr describe_quest_location(cptr * dirn, int x, int y, bool known);
 extern errr init_quests(void);
 extern void init_player_quests(void);
 extern void quest_discovery(void);
