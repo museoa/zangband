@@ -700,7 +700,7 @@ static bool borg_think_shop_buy_aux(int shop)
 	for (n = 0; n < cur_num; n++)
 	{
 		list_item *l_ptr = &cur_list[n];
-
+		
 		/* second check on empty */
 		if (!l_ptr->k_idx) continue;
 
@@ -709,7 +709,7 @@ static bool borg_think_shop_buy_aux(int shop)
 
 		/* Hack -- Require "sufficient" cash */
 		if (borg_gold < l_ptr->cost * 12 / 10) continue;
-
+		
 		/* Obtain "slot" */
 		slot = borg_wield_slot(l_ptr);
 

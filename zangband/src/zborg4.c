@@ -1559,6 +1559,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
 			bp_ptr->food += number * 5;
+			
 			break;
 		}
 	}
@@ -1739,7 +1740,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 	{
 		number = l_ptr->number;
 	}
-
+	
 	/* count up the items on the borg */
 	borg_has[l_ptr->k_idx] += number;
 

@@ -3632,7 +3632,7 @@ static s32b borg_power_aux4(void)
 
 	for (k = 0; (k < 25) && (k < bp_ptr->food); k++) value += 10000L;
 	for (; (k < 35) && (k < bp_ptr->food); k++) value += 200L;
-
+	
 	if ((bp_ptr->flags3 & TR3_REGEN) && !(bp_ptr->flags3 & TR3_SLOW_DIGEST))
 	{
 		for (k = 0; (k < 10) && (k < bp_ptr->food); k++) value += 500L;
@@ -4013,10 +4013,10 @@ s32b borg_power(void)
 
 	/* Process the equipment */
 	value += borg_power_aux3();
-
+	
 	/* Process the inventory */
 	value += borg_power_aux4();
-
+	
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
 	for (i = 1; i <= bp_ptr->max_depth + 10; i++)

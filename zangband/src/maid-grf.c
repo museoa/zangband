@@ -1067,14 +1067,14 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 /*
  * Set the basic object flags to send to the port
  */
-static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
+static void set_basic_flags(term_list *l_ptr, object_type *o_ptr, bool in_store)
 {
 	/* Known flags */
 	object_flags_known(o_ptr, &l_ptr->kn_flags1,
 					   &l_ptr->kn_flags2, &l_ptr->kn_flags3);
 
 	/* Type of object */
-	if (object_aware_p(o_ptr))
+	if (object_aware_p(o_ptr) || in_store)
 	{
 		l_ptr->k_idx = o_ptr->k_idx;
 	}
@@ -1195,7 +1195,7 @@ void Term_write_equipment(void)
 		l_ptr = &list[i];
 
 		/* Set object flags */
-		set_basic_flags(l_ptr, o_ptr);
+		set_basic_flags(l_ptr, o_ptr, FALSE);
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -1255,17 +1255,20 @@ void Term_write_list(s16b o_idx, byte list_type)
 		/* Get object list element */
 		l_ptr = &list[i];
 
-		/* Set object flags */
-		set_basic_flags(l_ptr, o_ptr);
-
 		/* Stores are special */
 		if (list_type == LIST_STORE)
 		{
+			/* Set object flags */
+			set_basic_flags(l_ptr, o_ptr, TRUE);
+		
 			/* Describe the object */
 			object_desc_store(o_name, o_ptr, TRUE, 3, 256);
 		}
 		else
 		{
+			/* Set object flags */
+			set_basic_flags(l_ptr, o_ptr, FALSE);
+		
 			/* Describe the object */
 			object_desc(o_name, o_ptr, TRUE, 3, 256);
 		}
