@@ -116,13 +116,15 @@ dirs:
 	-mkdir $(DESTDIR)
 	-mkdir $(addprefix $(DESTDIR),$(filter-out $(srcdirlist), $(dirlist)))
 
-installbase: dirs zangband
+base: dirs
 	for i in $(files) ; do \
 	    cp $$i $(DESTDIR)$$i; \
 	done
+	
+installbase: base
 	$(INSTALL)
 
-install: installbase
+install: installbase zangband
 	cp zangband $(bindir)/zangband
 	if [ -n "$(GAMEGROUP)" ] ; then \
 		chgrp $(GAMEGROUP) $(bindir)/zangband; \
@@ -133,12 +135,12 @@ uninstall:
 	-rm -f $(bindir)/zangband
 	-rm -rf $(DESTDIR)
 
-dist: installbase
+dist: base
 	-mkdir $(addprefix $(DESTDIR),$(srcdirlist))
 	for i in $(srcfiles) ; do \
 		cp $$i $(DESTDIR)$$i; \
 	done
-	for i in $(notsrcfiles) ; do \
+	-for i in $(notsrcfiles) ; do \
 		rm $(DESTDIR)$$i; \
 	done
 
@@ -210,5 +212,5 @@ configure.in: .version
 	mv configure.new configure.in
 		
 
-.PHONY: dirs installbase install uninstall dist distcheck distgz \
+.PHONY: dirs base installbase install uninstall dist distcheck distgz \
 		 clean distclean test
