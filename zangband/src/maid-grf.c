@@ -296,7 +296,7 @@ static callback_list *callbacks[CALL_MAX];
 void init_term_callbacks(void)
 {
 	/* Wipe the array */
-	C_WIPE(callbacks, CALL_MAX, callback_list *);
+	(void) C_WIPE(callbacks, CALL_MAX, callback_list *);
 }
 
 /*
