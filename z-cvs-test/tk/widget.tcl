@@ -376,13 +376,8 @@ proc NSWidget::CaveSize {oop _height _width} {
 		incr w 2
 	}
 
-	if {[$widget cget -style] == "iso"} {
-		set height [expr {$h + $w - 1}]
-		set width [expr {$h + $w - 1}]
-	} else {
-		set height $h
-		set width $w
-	}
+	set height $h
+	set width $w
 
 	return
 }

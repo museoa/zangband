@@ -1325,9 +1325,6 @@ proc NSMainWindow::TargetSetup {oop} {
 
 	# This "cursor" is displayed during targetting/looking
 	set itemId [$widget create cursor -color yellow -linewidth 2 -visible no]
-	if {[Global iconStyle] == "iso"} {
-		$widget itemconfigure $itemId -linewidth 1
-	}
 
 	qebind $widget <Term-fresh> "NSMainWindow::Fresh_Cursor $oop"
 	qeconfigure $widget <Term-fresh> -active no

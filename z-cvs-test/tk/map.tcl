@@ -224,10 +224,6 @@ proc NSMap::ScaleCmd {oop} {
 proc NSMap::SetView {oop y x} {
 
 	set widget [Info $oop widget]
-if {[$widget cget -style] == "iso"} {
-	SetView_iso $oop $y $x
-	return
-}
 
 	scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
 	set height [expr {$y_max - $y_min + 1}]
@@ -251,29 +247,6 @@ if {[$widget cget -style] == "iso"} {
 	return
 }
 
-proc NSMap::SetView_iso {oop y x} {
-
-	set widgetId [Info $oop widgetId]
-	set widget [Info $oop widget]
-
-	NSWidget::Size $widgetId height width
-	NSWidget::CaveSize $widgetId dunHgt dunWid
-
-	NSWidget::CaveToIso $widgetId y x
-
-	set y [ConstrainCenter $y $dunHgt $height]
-	set x [ConstrainCenter $x $dunWid $width]
-
-	NSWidget::IsoToCave $widgetId y x
-
-	# Center the widget at the given location
-	$widget center $y $x
-
-	# Update the scrollbars
-	SynchScrollBars $oop
-
-	return
-}
 
 # NSMap::SynchScrollBars --
 #
