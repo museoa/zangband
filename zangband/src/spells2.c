@@ -3991,11 +3991,11 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msgf("You feel like a statue!");
 					if (p_ptr->flags2 & (TR2_FREE_ACT))
 					{
-						(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(3));
+						(void)inc_paralyzed(randint1(3));
 					}
 					else
 					{
-						(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(13));
+						(void)inc_paralyzed(randint1(13));
 					}
 					stop_ty = TRUE;
 				}

@@ -2627,7 +2627,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 		case 0:
 		{
 			msgf("A blue gas surrounds you!");
-			(void)set_slow(p_ptr->tim.slow + rand_range(20, 40));
+			(void)inc_slow(rand_range(20, 40));
 			break;
 		}
 
@@ -2665,7 +2665,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 					/* Have some nightmares */
 					have_nightmare();
 				}
-				(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(5, 15));
+				(void)inc_paralyzed(rand_range(5, 15));
 			}
 			break;
 		}
@@ -2676,7 +2676,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 
 			if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 			{
-				(void)set_image(p_ptr->tim.image + rand_range(10, 30));
+				(void)inc_image(rand_range(10, 30));
 			}
 			break;
 		}

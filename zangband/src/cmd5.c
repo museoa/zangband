@@ -743,14 +743,7 @@ static bool cast_life_spell(int spell)
 			(void)hp_player(300);
 
 			/* Haste */
-			if (!p_ptr->tim.fast)
-			{
-				(void)set_fast(randint1(20 + plev) + plev);
-			}
-			else
-			{
-				(void)set_fast(p_ptr->tim.fast + randint1(5));
-			}
+			(void)inc_fast(randint1(20 + plev) + plev);
 
 			(void)clear_afraid();
 			break;
@@ -824,14 +817,7 @@ static bool cast_sorcery_spell(int spell)
 			(void)fire_beam(GF_AWAY_ALL, dir, plev);
 			break;
 		case 13:				/* Haste Self */
-			if (!p_ptr->tim.fast)
-			{
-				(void)set_fast(randint1(20 + plev) + plev);
-			}
-			else
-			{
-				(void)set_fast(p_ptr->tim.fast + randint1(5));
-			}
+			(void)inc_fast(randint1(20 + plev) + plev);
 			break;
 		case 14:				/* Detection True */
 			(void)detect_all();
@@ -1657,14 +1643,7 @@ static bool cast_death_spell(int spell)
 			(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
 			(void)hp_player(30);
 			(void)clear_afraid();
-			if (!p_ptr->tim.fast)
-			{
-				(void)set_fast(rand_range(plev / 2, 20 + plev));
-			}
-			else
-			{
-				(void)set_fast(p_ptr->tim.fast + randint1(5));
-			}
+			(void)inc_fast(rand_range(plev / 2, 20 + plev));
 			break;
 		case 20:				/* Vampirism True */
 			if (!get_aim_dir(&dir)) return FALSE;
@@ -2786,7 +2765,7 @@ void do_cmd_cast(void)
 					}
 					if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 					{
-						(void)set_image(p_ptr->tim.image + rand_range(150, 400));
+						(void)inc_image(rand_range(150, 400));
 					}
 				}
 
@@ -2901,7 +2880,7 @@ void do_cmd_cast(void)
 		msgf("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-		(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(5 * oops + 1));
+		(void)inc_paralyzed(randint1(5 * oops + 1));
 
 		if (mp_ptr->spell_book == TV_LIFE_BOOK)
 			chg_virtue(V_FAITH, -10);

@@ -278,7 +278,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					msgf
 						("You picture the Pattern in your mind and walk it...");
 					(void)clear_poisoned();
-					(void)set_image(0);
+					(void)clear_image();
 					(void)set_stun(0);
 					(void)set_cut(0);
 					(void)clear_blind();

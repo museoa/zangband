@@ -68,13 +68,13 @@ function eat_food(object)
 		ident = TRUE
 	elseif object.sval == SV_FOOD_PARALYSIS then
 		if not player.free_act then
-			if set_paralyzed(player.paralyzed + rand_int(10) + 10) then
+			if inc_paralyzed(rand_int(10) + 10) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_HALLUCINATION then
 		if not player.resist_chaos then
-			if set_image(player.image + rand_int(250) + 250) then
+			if inc_image(rand_int(250) + 250) then
 				ident = TRUE
 			end
 		end
@@ -117,14 +117,14 @@ function quaff_potion(object)
 		msgf("You feel less thirsty.")
 		ident = TRUE
 	elseif object.sval == SV_POTION_SLOWNESS then
-		if set_slow(player.slow + rand_range(15, 40)) then ident = TRUE end
+		if inc_slow(rand_range(15, 40)) then ident = TRUE end
 	elseif object.sval == SV_POTION_SALT_WATER then
 		msgf("The potion makes you vomit!")
 		if player.food > PY_FOOD_STARVE - 1 then
 			set_food(PY_FOOD_STARVE - 1)
 		end
 		clear_poisoned()
-		set_paralyzed(player.paralyzed + 4)
+		inc_paralyzed(4)
 		ident = TRUE
 	elseif object.sval == SV_POTION_POISON then
 		if not (player.resist_pois or (player.oppose_pois > 0)) then
@@ -148,7 +148,7 @@ function quaff_potion(object)
 
 		if not player.resist_chaos then
 			if one_in_(2) then
-				if set_image(player.image + rand_range(150, 300)) then
+				if inc_image(rand_range(150, 300)) then
 					ident = TRUE
 				end
 			end
@@ -182,7 +182,7 @@ function quaff_potion(object)
 				get_mon_num_prep(NULL, NULL)
 			end
 
-			if set_paralyzed(player.paralyzed + rand_range(4, 8)) then
+			if inc_paralyzed(rand_range(4, 8)) then
 				ident = TRUE
 			end
 		end
@@ -240,11 +240,7 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_BOLDNESS then
 		if clear_afraid() then ident = TRUE end
 	elseif object.sval == SV_POTION_SPEED then
-		if player.fast == 0 then
-			if set_fast(rand_range(15, 40)) then ident = TRUE end
-		else
-			set_fast(player.fast + 5)
-		end
+		if inc_fast(rand_range(15, 40)) then ident = TRUE end
 	elseif object.sval == SV_POTION_RESIST_HEAT then
 		if set_oppose_fire(player.oppose_fire + rand_range(10, 20)) then
 			ident = TRUE
@@ -297,7 +293,7 @@ function quaff_potion(object)
 		clear_poisoned()
 		clear_blind()
 		clear_confused()
-		set_image(0)
+		clear_image()
 		set_stun(0)
 		set_cut(0)
 		do_res_stat(A_STR)
@@ -401,7 +397,7 @@ function quaff_potion(object)
 		if clear_confused() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
-		if set_image(0) then ident = TRUE end
+		if clear_image() then ident = TRUE end
 	elseif object.sval == SV_POTION_INVULNERABILITY then
 		set_invuln(player.invuln + rand_range(7, 14))
 		ident = TRUE
@@ -607,7 +603,7 @@ function use_staff(object)
 		end
 		if unlite_area(10, 3) then ident = TRUE end
 	elseif sval == SV_STAFF_SLOWNESS then
-		if set_slow(player.slow + rand_range(15, 45)) then ident = TRUE end
+		if inc_slow(rand_range(15, 45)) then ident = TRUE end
 	elseif sval == SV_STAFF_HASTE_MONSTERS then
 		if speed_monsters() then ident = TRUE end
 	elseif sval == SV_STAFF_SUMMONING then
@@ -663,7 +659,7 @@ function use_staff(object)
 		if clear_confused() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
-		if set_image(0) then ident = TRUE end
+		if clear_image() then ident = TRUE end
 	elseif sval == SV_STAFF_HEALING then
 		if hp_player(300) then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
@@ -684,11 +680,7 @@ function use_staff(object)
 	elseif sval == SV_STAFF_SLOW_MONSTERS then
 		if slow_monsters() then ident = TRUE end
 	elseif sval == SV_STAFF_SPEED then
-		if player.fast == 0 then
-			if set_fast(rand_range(15, 45)) then ident = TRUE end
-		else
-			set_fast(player.fast + 5)
-		end
+		if inc_fast(rand_range(15, 45)) then ident = TRUE end
 	elseif sval == SV_STAFF_PROBING then
 		probing()
 		ident = TRUE

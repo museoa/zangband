@@ -304,7 +304,7 @@ bool clear_afraid(void)
 /*
  * Set "p_ptr->paralyzed", notice observable changes
  */
-bool set_paralyzed(int v)
+static bool set_paralyzed(int v)
 {
 	bool notice = FALSE;
 
@@ -355,11 +355,29 @@ bool set_paralyzed(int v)
 
 
 /*
+ * Increase the paralyzed counter
+ */
+bool inc_paralyzed(int v)
+{
+	return(set_paralyzed(p_ptr->tim.paralyzed + v));
+}
+
+
+/*
+ * No more paralyzation
+ */
+bool clear_paralyzed(void)
+{
+	return(set_paralyzed(0));
+}
+
+
+/*
  * Set "p_ptr->image", notice observable changes
  *
  * Note that we must redraw the map when hallucination changes.
  */
-bool set_image(int v)
+static bool set_image(int v)
 {
 	bool notice = FALSE;
 
@@ -420,11 +438,28 @@ bool set_image(int v)
 	return (TRUE);
 }
 
+/*
+ * Increase the image counter
+ */
+bool inc_image(int v)
+{
+	return(set_image(p_ptr->tim.image + v));
+}
+
+
+/*
+ * No more hallucination
+ */
+bool clear_image(void)
+{
+	return(set_image(0));
+}
+
 
 /*
  * Set "p_ptr->fast", notice observable changes
  */
-bool set_fast(int v)
+static bool set_fast(int v)
 {
 	bool notice = FALSE;
 
@@ -478,9 +513,37 @@ bool set_fast(int v)
 
 
 /*
+ * Increase the "fast" counter.
+ *
+ * Hack - only increase speed a little bit if already hasted.
+ */
+bool inc_fast(int v)
+{
+	/* Haste */
+	if ((!p_ptr->tim.fast) || (v < 0))
+	{
+		 return (set_fast(v));
+	}
+	else
+	{
+		return (set_fast(p_ptr->tim.fast + randint1(5)));
+	}
+}
+
+
+/*
+ * No more increased speed
+ */
+bool clear_fast(void)
+{
+	return(set_fast(0));
+}
+
+
+/*
  * Set "p_ptr->slow", notice observable changes
  */
-bool set_slow(int v)
+static bool set_slow(int v)
 {
 	bool notice = FALSE;
 
@@ -529,6 +592,23 @@ bool set_slow(int v)
 	return (TRUE);
 }
 
+
+/*
+ * Increase the "slow" counter
+ */
+bool inc_slow(int v)
+{
+	return(set_slow(p_ptr->tim.slow + v));
+}
+
+
+/*
+ * No more "slowness"
+ */
+bool clear_slow(void)
+{
+	return(set_slow(0));
+}
 
 /*
  * Set "p_ptr->shield", notice observable changes

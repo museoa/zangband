@@ -1478,7 +1478,7 @@ bool make_attack_spell(int m_idx)
 
 				if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 				{
-					(void)set_image(p_ptr->tim.image + rand_range(150, 400));
+					(void)inc_image(rand_range(150, 400));
 				}
 
 				take_hit(damroll(8, 8), ddesc);
@@ -1518,9 +1518,9 @@ bool make_attack_spell(int m_idx)
 				}
 				if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 				{
-					(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
+					(void)inc_paralyzed(rand_range(4, 8));
 				}
-				(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
+				(void)inc_slow(rand_range(4, 8));
 
 				while (randint0(100) > p_ptr->skill.sav)
 					(void)do_dec_stat(A_INT);
@@ -1529,7 +1529,7 @@ bool make_attack_spell(int m_idx)
 
 				if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 				{
-					(void)set_image(p_ptr->tim.image + rand_range(150, 400));
+					(void)inc_image(rand_range(150, 400));
 				}
 			}
 			break;
@@ -1839,7 +1839,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
+				(void)inc_slow(rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1863,7 +1863,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
+				(void)inc_paralyzed(rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;

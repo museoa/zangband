@@ -543,7 +543,7 @@ static bool pattern_effect(void)
 	if (c_ptr->feat == FEAT_PATTERN_END)
 	{
 		(void)clear_poisoned();
-		(void)set_image(0);
+		(void)clear_image();
 		(void)set_stun(0);
 		(void)set_cut(0);
 		(void)clear_blind();
@@ -1429,7 +1429,7 @@ static void process_world(void)
 				disturb(TRUE);
 
 				/* Hack -- faint (bypass free action) */
-				(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(5));
+				(void)inc_paralyzed(randint1(5));
 			}
 		}
 	}
@@ -1503,16 +1503,16 @@ static void process_world(void)
 
 
 	/*** Timeout Various Things ***/
-	if (p_ptr->tim.image) (void)set_image(p_ptr->tim.image - 1);
+	if (p_ptr->tim.image) (void)inc_image(-1);
 	if (p_ptr->tim.blind) (void)inc_blind(-1);
 	if (p_ptr->tim.invis) (void)set_tim_invis(p_ptr->tim.invis - 1);
 	if (p_ptr->tim.esp) (void)set_tim_esp(p_ptr->tim.esp - 1);
 	if (p_ptr->tim.infra) (void)set_tim_infra(p_ptr->tim.infra - 1);
-	if (p_ptr->tim.paralyzed) (void)set_paralyzed(p_ptr->tim.paralyzed - 1);
+	if (p_ptr->tim.paralyzed) (void)inc_paralyzed(-1);
 	if (p_ptr->tim.confused) (void)inc_confused(-1);
 	if (p_ptr->tim.afraid) (void)inc_afraid(-1);
-	if (p_ptr->tim.fast) (void)set_fast(p_ptr->tim.fast - 1);
-	if (p_ptr->tim.slow) (void)set_slow(p_ptr->tim.slow - 1);
+	if (p_ptr->tim.fast) (void)inc_fast(-1);
+	if (p_ptr->tim.slow) (void)inc_slow(-1);
 	if (p_ptr->tim.protevil) (void)set_protevil(p_ptr->tim.protevil - 1);
 	if (p_ptr->tim.invuln) (void)set_invuln(p_ptr->tim.invuln - 1);
 	if (p_ptr->tim.wraith_form) (void)set_wraith_form(p_ptr->tim.wraith_form - 1);
@@ -3584,8 +3584,8 @@ void play_game(bool new_game)
 				(void)clear_confused();
 				(void)clear_poisoned();
 				(void)clear_afraid();
-				(void)set_paralyzed(0);
-				(void)set_image(0);
+				(void)clear_paralyzed();
+				(void)clear_image();
 				(void)set_stun(0);
 				(void)set_cut(0);
 

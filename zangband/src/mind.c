@@ -410,7 +410,7 @@ static bool cast_mindcrafter_spell(int spell)
 				(void)set_shero(p_ptr->tim.shero + b);
 
 			/* Haste */
-			(void)set_fast(p_ptr->tim.fast + b);
+			(void)inc_fast(b);
 
 			break;
 		case MINDCRAFT_PSYCHIC_DRAIN:
@@ -524,7 +524,7 @@ void do_cmd_mindcraft(void)
 			else if (b < 15)
 			{
 				msgf("Weird visions seem to dance before your eyes...");
-				(void)set_image(p_ptr->tim.image + rand_range(5, 15));
+				(void)inc_image(rand_range(5, 15));
 			}
 			else if (b < 45)
 			{
@@ -584,7 +584,7 @@ void do_cmd_mindcraft(void)
 		msgf("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-		(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(5 * oops + 1));
+		(void)inc_paralyzed(randint1(5 * oops + 1));
 
 		/* Damage WIS (possibly permanently) */
 		if (randint0(100) < 50)

@@ -4815,7 +4815,7 @@ void sanity_blast(const monster_type *m_ptr)
 		if (one_in_(3))
 		{
 			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
-			(void)set_image(p_ptr->tim.image + randint1(r_ptr->level));
+			(void)inc_image(randint1(r_ptr->level));
 		}
 
 		/* Never mind; we can't see it clearly enough */
@@ -4849,7 +4849,7 @@ void sanity_blast(const monster_type *m_ptr)
 		}
 		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
-			(void)set_image(p_ptr->tim.image + rand_range(150, 400));
+			(void)inc_image(rand_range(150, 400));
 		}
 		return;
 	}

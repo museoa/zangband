@@ -63,7 +63,7 @@ static void have_nightmare_aux(int r_idx)
 		if (one_in_(3))
 		{
 			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
-			(void) set_image(p_ptr->tim.image + randint1(r_ptr->level));
+			(void) inc_image(randint1(r_ptr->level));
 		}
 
 		/* Never mind; we can't see it clearly enough */
@@ -108,7 +108,7 @@ static void have_nightmare_aux(int r_idx)
 		}
 		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 		{
-			(void)set_image(p_ptr->tim.image + rand_range(250, 400));
+			(void)inc_image(rand_range(250, 400));
 		}
 		return;
 	}
@@ -130,7 +130,7 @@ static void have_nightmare_aux(int r_idx)
 		}
 		if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 		{
-			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
+			(void)inc_paralyzed(rand_range(4, 8));
 		}
 		while (!saving_throw(p_ptr->skill.sav))
 		{
@@ -142,7 +142,7 @@ static void have_nightmare_aux(int r_idx)
 		}
 		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
-			(void)set_image(p_ptr->tim.image + rand_range(250, 400));
+			(void)inc_image(rand_range(250, 400));
 		}
 		return;
 	}

@@ -1686,14 +1686,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_TULKAS:
 			{
 				msgf("The ring glows brightly...");
-				if (!p_ptr->tim.fast)
-				{
-					(void)set_fast(rand_range(75, 150));
-				}
-				else
-				{
-					(void)set_fast(p_ptr->tim.fast + 5);
-				}
+				(void)inc_fast(rand_range(75, 150));
 				o_ptr->timeout = (s16b)rand_range(150, 300);
 				break;
 			}
@@ -1982,14 +1975,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_FEANOR:
 			{
 				msgf("Your boots glow bright green...");
-				if (!p_ptr->tim.fast)
-				{
-					(void)set_fast(rand_range(20, 40));
-				}
-				else
-				{
-					(void)set_fast(p_ptr->tim.fast + 5);
-				}
+				(void)inc_fast(rand_range(20, 40));
 				o_ptr->timeout = 200;
 				break;
 			}
@@ -2214,14 +2200,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_ENERGY:
 			{
 				msgf("Your scythe glows bright green...");
-				if (!p_ptr->tim.fast)
-				{
-					(void)set_fast(rand_range(20, 40));
-				}
-				else
-				{
-					(void)set_fast(p_ptr->tim.fast + 5);
-				}
+				(void)inc_fast(rand_range(20, 40));
 				o_ptr->timeout = (s16b)rand_range(100, 200);
 				break;
 			}
@@ -2859,14 +2838,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SPEED:
 		{
 			msgf("The %s glows bright green...", o_name);
-			if (!p_ptr->tim.fast)
-			{
-				(void)set_fast(rand_range(20, 40));
-			}
-			else
-			{
-				(void)set_fast(p_ptr->tim.fast + 5);
-			}
+			(void)inc_fast(rand_range(20, 40));
 			o_ptr->timeout = 250;
 			break;
 		}
@@ -2874,14 +2846,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_XTRA_SPEED:
 		{
 			msgf("The %s glows brightly...", o_name);
-			if (!p_ptr->tim.fast)
-			{
-				(void)set_fast(rand_range(75, 150));
-			}
-			else
-			{
-				(void)set_fast(p_ptr->tim.fast + 5);
-			}
+			(void)inc_fast(rand_range(75, 150));
 			o_ptr->timeout = (s16b)rand_range(200, 400);
 			break;
 		}

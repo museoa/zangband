@@ -1526,8 +1526,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 								}
 								default:
 									if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
-										(void)set_paralyzed(p_ptr->tim.paralyzed +
-															randint1(dam));
+										(void)inc_paralyzed(randint1(dam));
 									break;
 							}
 						}
@@ -3403,7 +3402,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 			{
-				(void)set_image(p_ptr->tim.image + randint1(10));
+				(void)inc_image(randint1(10));
 				if (one_in_(3))
 				{
 					msgf("Your body is twisted by chaos!");
@@ -3587,7 +3586,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Inertia -- slowness */
 			if (fuzzy) msgf("You are hit by something slow!");
-			(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
+			(void)inc_slow(rand_range(4, 8));
 			take_hit(dam, killer);
 			break;
 		}
@@ -3750,7 +3749,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			msgf("Gravity warps around you.");
 			teleport_player(5);
 			if (!(p_ptr->flags3 & (TR3_FEATHER)))
-				(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
+				(void)inc_slow(rand_range(4, 8));
 			if (!((p_ptr->flags2 & (TR2_RES_SOUND)) ||
 				 (p_ptr->flags3 & (TR3_FEATHER))))
 			{
@@ -3790,7 +3789,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_OLD_SPEED:
 		{
 			if (fuzzy) msgf("You are hit by something!");
-			(void)set_fast(p_ptr->tim.fast + randint1(5));
+			(void)inc_fast(randint1(5));
 			dam = 0;
 			break;
 		}
@@ -3798,7 +3797,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_OLD_SLOW:
 		{
 			if (fuzzy) msgf("You are hit by something slow!");
-			(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
+			(void)inc_slow(rand_range(4, 8));
 			break;
 		}
 
@@ -3815,7 +3814,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				have_nightmare();
 			}
 
-			(void)set_paralyzed(p_ptr->tim.paralyzed + dam);
+			(void)inc_paralyzed(dam);
 			dam = 0;
 			break;
 		}

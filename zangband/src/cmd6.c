@@ -810,7 +810,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 			if (clear_confused()) ident = TRUE;
 			if (set_stun(0)) ident = TRUE;
 			if (set_cut(0)) ident = TRUE;
-			if (set_image(0)) ident = TRUE;
+			if (clear_image()) ident = TRUE;
 			break;
 		}
 
@@ -836,14 +836,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 
 		case SV_ROD_SPEED:
 		{
-			if (!p_ptr->tim.fast)
-			{
-				if (set_fast(rand_range(15, 45))) ident = TRUE;
-			}
-			else
-			{
-				(void)set_fast(p_ptr->tim.fast + 5);
-			}
+			if (inc_fast(rand_range(15, 45))) ident = TRUE;
 			break;
 		}
 

@@ -1241,11 +1241,11 @@ static void do_cmd_wiz_cure_all(void)
 	(void)clear_confused();
 	(void)clear_poisoned();
 	(void)clear_afraid();
-	(void)set_paralyzed(0);
-	(void)set_image(0);
+	(void)clear_paralyzed();
+	(void)clear_image();
 	(void)set_stun(0);
 	(void)set_cut(0);
-	(void)set_slow(0);
+	(void)clear_slow();
 
 	/* No longer hungry */
 	(void)set_food(PY_FOOD_MAX - 1);

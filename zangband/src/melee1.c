@@ -970,8 +970,7 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							if (set_paralyzed
-								(p_ptr->tim.paralyzed + 3 + randint1(rlev)))
+							if (inc_paralyzed(3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}

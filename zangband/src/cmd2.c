@@ -421,7 +421,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 
 		if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 		{
-			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(10, 30));
+			(void)inc_paralyzed(rand_range(10, 30));
 		}
 	}
 

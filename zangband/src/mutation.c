@@ -1430,7 +1430,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 				if (one_in_(3))
 				{
 					msgf("Thishcischs GooDSChtuff!");
-					(void)set_image(p_ptr->tim.image + rand_range(150, 300));
+					(void)inc_image(rand_range(150, 300));
 				}
 			}
 		}
@@ -1442,7 +1442,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
-			(void)set_image(p_ptr->tim.image + rand_range(20, 70));
+			(void)inc_image(rand_range(20, 70));
 		}
 	}
 
@@ -1488,11 +1488,11 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			msgf("You feel less energetic.");
 			if (p_ptr->tim.fast > 0)
 			{
-				(void)set_fast(0);
+				(void)clear_fast();
 			}
 			else
 			{
-				(void)set_slow(p_ptr->tim.slow + rand_range(10, 40));
+				(void)inc_slow(rand_range(10, 40));
 			}
 		}
 		else
@@ -1500,11 +1500,11 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			msgf("You feel more energetic.");
 			if (p_ptr->tim.slow > 0)
 			{
-				(void)set_slow(0);
+				(void)clear_slow();
 			}
 			else
 			{
-				(void)set_fast(p_ptr->tim.fast + rand_range(10, 40));
+				(void)inc_fast(rand_range(10, 40));
 			}
 		}
 		message_flush();
