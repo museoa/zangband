@@ -222,6 +222,19 @@ static void roff_mon_aux(int r_idx, int remem)
 	mf_ptr->flags[5] = (r_ptr->flags[5] & r_ptr->r_flags[5]);
 	mf_ptr->flags[6] = (r_ptr->flags[6]);
 
+	/*
+	 * Hack.  All flags from flag[6] are known.  But the swimming flag should
+	 * not be known until discovered.  I suppose I can write it in one
+	 * line of code but then noone knows why I did so.
+
+	 * So if the monster is not known to be a swimmer
+	 */
+	if  (!(r_ptr->r_flags[6] & RF6_CAN_SWIM))
+	{
+		/* Take away the swimming flag */
+		mf_ptr->flags[6] &= ~(RF6_CAN_SWIM);
+	}
+
 
 	/* Assume some "obvious" flags */
 	COPY_FLAG(r_ptr, mf_ptr, RF_UNIQUE);
@@ -424,6 +437,11 @@ static void roff_mon_aux(int r_idx, int remem)
 		{
 			roff(CLR_SLATE "normally found");
 		}
+
+		if (FLAG(mf_ptr, RF_AQUATIC))
+		{
+			roff(CLR_SLATE " in water");
+		}
 		
 		if (depth_in_feet)
 		{
@@ -443,14 +461,20 @@ static void roff_mon_aux(int r_idx, int remem)
 		/* Introduction */
 		if (old)
 		{
-			roff(", and ");
+			roff(" and ");
 		}
 		else
 		{
 			roff("%^s ", wd_he[msex]);
 			old = TRUE;
 		}
-		roff("moves");
+
+		if (FLAG(mf_ptr, RF_CAN_FLY))
+		{
+			roff("flies");
+		}
+		else
+			roff("moves");
 
 		/* Random-ness */
 		if ((FLAG(mf_ptr, RF_RAND_50)) || (FLAG(mf_ptr, RF_RAND_25)))
@@ -473,7 +497,7 @@ static void roff_mon_aux(int r_idx, int remem)
 			roff(" erratically");
 
 			/* Hack -- Occasional conjunction */
-			if (speed != 110) roff(", and");
+			if (speed != 110) roff(" and");
 		}
 
 		/* Speed */
@@ -791,7 +815,7 @@ static void roff_mon_aux(int r_idx, int remem)
 		/* Intro */
 		if (breath)
 		{
-			roff(", and is also");
+			roff(" and is also");
 		}
 		else
 		{
@@ -871,6 +895,7 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect special abilities. */
 	vn = 0;
+	if (FLAG(mf_ptr, RF_CAN_SWIM))  vp[vn++] = "swim";
 	if (FLAG(mf_ptr, RF_OPEN_DOOR)) vp[vn++] = "open doors";
 	if (FLAG(mf_ptr, RF_BASH_DOOR)) vp[vn++] = "bash down doors";
 	if (FLAG(mf_ptr, RF_PASS_WALL)) vp[vn++] = "pass through walls";
@@ -1414,7 +1439,7 @@ static void roff_mon_aux(int r_idx, int remem)
 		}
 		else
 		{
-			roff(", and ");
+			roff(" and ");
 		}
 
 
