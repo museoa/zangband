@@ -3038,6 +3038,12 @@ static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 			w_ptr->mon_prob = 0;
 			break;
 		}
+		
+		case TOWN_MONST_MONST:
+		{
+			/* Do nothing - keep defaults */
+			break;
+		}
 
 		/*
 		 * Add in other probabilities in here for the

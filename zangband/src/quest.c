@@ -1305,11 +1305,11 @@ static int pick_quest_type(quest_aux_type *l_ptr, int level)
 
 static quest_aux_type camp_types[] =
 {
-	{quest_aux_orc,		5,	1, "orc"},
-	{quest_aux_undead,	15,	4, "undead"},
-	{quest_aux_troll,	30,	1, "troll"},
-	{quest_aux_giant,	50,	2, "giant"},
-	{quest_aux_dragon,	60,	4, "dragon"},
+	{quest_aux_orc,		10,	1, "orc"},
+	{quest_aux_undead,	20,	4, "undead"},
+	{quest_aux_troll,	40,	1, "troll"},
+	{quest_aux_giant,	60,	2, "giant"},
+	{quest_aux_dragon,	80,	4, "dragon"},
 	{NULL,				0,	0, NULL},
 };
 
@@ -1417,7 +1417,7 @@ bool create_quest(int x, int y, int town_num)
 	quest_type *q_ptr;
 	
 	/* Select type of monster to place in the camp */
-	qtype = pick_quest_type(camp_types, w_ptr->trans.law_map);
+	qtype = pick_quest_type(camp_types, (255 - w_ptr->trans.law_map) / 3);
 	
 	/* Is the area too easy for the quests? */
 	if (qtype == -1) return (FALSE);
@@ -1480,7 +1480,7 @@ bool create_quest(int x, int y, int town_num)
 	/* Save the quest data */
 	q_ptr->data.wld.town = town_num;
 	q_ptr->data.wld.data = qtype;
-	q_ptr->data.wld.depth = w_ptr->trans.law_map;
+	/* q_ptr->data.wld.depth = (255 - w_ptr->trans.law_map) / 3; */
 	
 	return (TRUE);
 }
@@ -1509,7 +1509,7 @@ void draw_quest(u16b town_num)
 	/* Object theme */
 	obj_theme theme;
 		
-	int depth = q_ptr->data.wld.depth;
+	int depth = w_ptr->done.mon_gen;
 	
 	/* Paranoia */
 	if (t_ptr->region) quit("Quest already has region during creation.");
@@ -1533,7 +1533,7 @@ void draw_quest(u16b town_num)
 	object_level = w_ptr->done.mon_gen;
 	
 	/* Apply the monster restriction */
-	get_mon_num_prep(quest_aux_simple, NULL);
+	get_mon_num_prep(camp_types[q_ptr->data.wld.data].hook_func, NULL);
 	
 	/* Set theme for weapons / armour */
 	theme.treasure = 0;
@@ -1550,7 +1550,7 @@ void draw_quest(u16b town_num)
 	get_obj_num_prep();
 	
 	/* Pick number random spots within region */
-	n = randint1(t_ptr->xsize * t_ptr->ysize / 4);
+	n = (t_ptr->xsize * t_ptr->ysize) / 4;
 	
 	while (n != 0)
 	{

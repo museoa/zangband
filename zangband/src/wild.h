@@ -107,7 +107,7 @@
 /* Helper defines for random quests */
 #define QUEST_CAMP_MON		5		/* One in five squares has a monster */
 #define QUEST_CAMP_OBJ		5		/* One in five squares has an object */
-#define QUEST_CAMP_SCATTER	50		/* Non-camp sqaures have stuff */
+#define QUEST_CAMP_SCATTER	10		/* Non-camp sqaures have stuff */
 
 
 /* Building types */
