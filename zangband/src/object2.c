@@ -1650,16 +1650,10 @@ void object_absorb(object_type *o_ptr, const object_type *j_ptr)
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
 	/* If the extra object was fully known */
-	if (object_known_full(j_ptr) || j_ptr->info & OB_STOREB)
+	if (object_known_full(j_ptr))
 	{
 		/* Then the stack is fully known too */
 		object_mental(o_ptr);
-	}
-
-	/* Hack -- clear "storebought" if only one has it */
-	if ((o_ptr->info & OB_STOREB) && !(j_ptr->info & OB_STOREB))
-	{
-		o_ptr->info &= ~OB_STOREB;
 	}
 
 	/* Hack -- blend "mental" status */

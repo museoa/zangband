@@ -137,7 +137,7 @@ static long equip_value(void)
 	{
 		o_ptr = &p_ptr->equipment[i];
 
-		if (o_ptr->info & OB_STOREB) continue;
+		if (o_ptr->info & OB_NO_EXP) continue;
 		if (!(o_ptr->info & OB_KNOWN)) continue;
 
 		total += object_value(o_ptr);
@@ -146,7 +146,7 @@ static long equip_value(void)
 	/* Scan inventory */
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		if (o_ptr->info & OB_STOREB) continue;
+		if (o_ptr->info & OB_NO_EXP) continue;
 		if (!(o_ptr->info & OB_KNOWN)) continue;
 
 		total += object_value(o_ptr);

@@ -2853,7 +2853,7 @@
 #define OB_KNOWN     0x08		/* Item abilities are known */
 #define OB_STOREB    0x10		/* Item is storebought */
 #define OB_MENTAL    0x20		/* Item is *id*'ed */
-#define OB_DUMMY3    0x40
+#define OB_NO_EXP    0x40		/* Item gives no score */
 #define OB_DUMMY4    0x80
 
 
@@ -4161,6 +4161,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 /* {FALSE, 0, NULL, 					"Number 54" }, p_ptr->options[39] */
 #define fresh_before			p_ptr->options[40]
 #define fresh_after				p_ptr->options[41]
+#define emergency_stop			p_ptr->options[42]
 /* {FALSE, 0, NULL,					"Number 57" }, p_ptr->options[42] */
 #define compress_savefile		p_ptr->options[43]
 #define hilite_player			p_ptr->options[44]

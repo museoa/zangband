@@ -569,8 +569,8 @@ static void player_outfit(void)
 			object_aware(q_ptr);
 			object_known(q_ptr);
 
-			/* These objects are "storebought" */
-			q_ptr->info |= OB_STOREB;
+			/* These objects give no score */
+			q_ptr->info |= OB_NO_EXP;
 
 			(void)inven_carry(q_ptr);
 
@@ -598,8 +598,8 @@ static void player_outfit(void)
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-		/* These objects are "storebought" */
-		q_ptr->info |= OB_STOREB;
+		/* These objects give no score */
+		q_ptr->info |= OB_NO_EXP;
 
 		(void)inven_carry(q_ptr);
 	}
@@ -622,8 +622,8 @@ static void player_outfit(void)
 		q_ptr = object_prep(lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
 		q_ptr->number = (byte)rand_range(15, 20);
 
-		/* These objects are "storebought" */
-		q_ptr->info |= OB_STOREB;
+		/* These objects give no score */
+		q_ptr->info |= OB_NO_EXP;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -633,8 +633,8 @@ static void player_outfit(void)
 		/* Hack -- Give the player a bow */
 		q_ptr = object_prep(lookup_kind(TV_BOW, SV_SHORT_BOW));
 
-		/* This object is "storebought" */
-		q_ptr->info |= OB_STOREB;
+		/* These objects give no score */
+		q_ptr->info |= OB_NO_EXP;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -648,8 +648,8 @@ static void player_outfit(void)
 		q_ptr->number = 1;
 		q_ptr->pval = (byte)rand_range(25, 30);
 
-		/* This object is "storebought" */
-		q_ptr->info |= OB_STOREB;
+		/* These objects give no score */
+		q_ptr->info |= OB_NO_EXP;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -685,8 +685,8 @@ static void player_outfit(void)
 			add_ego_flags(q_ptr, EGO_BRAND_POIS);
 		}
 
-		/* These objects are "storebought" */
-		q_ptr->info |= OB_STOREB;
+		/* These objects give no score */
+		q_ptr->info |= OB_NO_EXP;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
