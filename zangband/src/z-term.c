@@ -1049,7 +1049,9 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 }
 
 
-
+/*
+ * Draw / Redraw the tiles in a term
+ */ 
 static void Term_fresh_section(void)
 {
 	int y;
@@ -1059,8 +1061,6 @@ static void Term_fresh_section(void)
 	int w = Term->wid;
 	int h = Term->hgt;
 
-
-	
 	/* Something to update */
 	if (y1 <= y2)
 	{
@@ -1125,7 +1125,66 @@ static void Term_fresh_section(void)
 	}
 }
 
+/*
+ * Redraw the cursor
+ */
+static void Term_fresh_cursor(void)
+{
+	term_win *old = Term->old;
+	term_win *scr = Term->scr;
 
+	/* Cursor update -- Show new Cursor */
+	if (Term->soft_cursor)
+	{
+		/* Draw the cursor */
+		if (!scr->cu && scr->cv)
+		{
+			/* Call the cursor display routine */
+			(void)((*Term->curs_hook) (scr->cx, scr->cy));
+		}
+	}
+
+	/* Cursor Update -- Show new Cursor */
+	else
+	{
+		/* The cursor is useless, hide it */
+		if (scr->cu)
+		{
+			/* Paranoia -- Put the cursor NEAR where it belongs */
+			(void)((*Term->curs_hook) (Term->wid - 1, scr->cy));
+
+			/* Make the cursor invisible */
+			/* Term_xtra(TERM_XTRA_SHAPE, 0); */
+		}
+
+		/* The cursor is invisible, hide it */
+		else if (!scr->cv)
+		{
+			/* Paranoia -- Put the cursor where it belongs */
+			(void)((*Term->curs_hook) (scr->cx, scr->cy));
+
+			/* Make the cursor invisible */
+			/* Term_xtra(TERM_XTRA_SHAPE, 0); */
+		}
+
+		/* The cursor is visible, display it correctly */
+		else
+		{
+			/* Put the cursor where it belongs */
+			(void)((*Term->curs_hook) (scr->cx, scr->cy));
+
+			/* Make the cursor visible */
+			Term_xtra(TERM_XTRA_SHAPE, 1);
+		}
+	}
+
+
+	/* Save the "cursor state" */
+	old->cu = scr->cu;
+	old->cv = scr->cv;
+	old->cx = scr->cx;
+	old->cy = scr->cy;	
+}
 
 /*
  * Actually perform all requested changes to the window
@@ -1264,7 +1323,6 @@ void Term_fresh(void)
 		return;
 	}
 
-
 	/* Paranoia -- use "fake" hooks to prevent core dumps */
 	if (!Term->curs_hook) Term->curs_hook = Term_curs_hack;
 	if (!Term->wipe_hook) Term->wipe_hook = Term_wipe_hack;
@@ -1351,58 +1409,8 @@ void Term_fresh(void)
 	/* Redraw stuff as required */
 	Term_fresh_section();
 
-	/* Cursor update -- Show new Cursor */
-	if (Term->soft_cursor)
-	{
-		/* Draw the cursor */
-		if (!scr->cu && scr->cv)
-		{
-			/* Call the cursor display routine */
-			(void)((*Term->curs_hook) (scr->cx, scr->cy));
-		}
-	}
-
-	/* Cursor Update -- Show new Cursor */
-	else
-	{
-		/* The cursor is useless, hide it */
-		if (scr->cu)
-		{
-			/* Paranoia -- Put the cursor NEAR where it belongs */
-			(void)((*Term->curs_hook) (w - 1, scr->cy));
-
-			/* Make the cursor invisible */
-			/* Term_xtra(TERM_XTRA_SHAPE, 0); */
-		}
-
-		/* The cursor is invisible, hide it */
-		else if (!scr->cv)
-		{
-			/* Paranoia -- Put the cursor where it belongs */
-			(void)((*Term->curs_hook) (scr->cx, scr->cy));
-
-			/* Make the cursor invisible */
-			/* Term_xtra(TERM_XTRA_SHAPE, 0); */
-		}
-
-		/* The cursor is visible, display it correctly */
-		else
-		{
-			/* Put the cursor where it belongs */
-			(void)((*Term->curs_hook) (scr->cx, scr->cy));
-
-			/* Make the cursor visible */
-			Term_xtra(TERM_XTRA_SHAPE, 1);
-		}
-	}
-
-
-	/* Save the "cursor state" */
-	old->cu = scr->cu;
-	old->cv = scr->cv;
-	old->cx = scr->cx;
-	old->cy = scr->cy;
-
+	/* Redraw cursor */
+	Term_fresh_cursor();
 
 	/* Actually flush the output */
 	Term_xtra(TERM_XTRA_FRESH, 0);
@@ -1724,7 +1732,19 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	total_erase = Term->total_erase;
 	Term->total_erase = TRUE;
 	Term_fresh_section();
-	Term->total_erase = total_erase;
+	Term->total_erase = FALSE;
+	
+	/* Hack -- clear all "cursor" data */
+	Term->old->cv = 0;
+	Term->old->cu = 0;
+	Term->old->cx = 0;
+	Term->old->cy = 0;
+	
+	/* Redraw cursor */
+	Term_fresh_cursor();
+
+	/* Actually flush the output */
+	Term_xtra(TERM_XTRA_FRESH, 0);
 
 	/* Success */
 	return (0);
