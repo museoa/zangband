@@ -115,9 +115,9 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 						 * The border mainly gets feat2, while the center gets feat1
 						 */
 						if (distance(tx, ty, x, y) > width)
-							c_ptr->feat = feat2;
+							set_feat_grid(c_ptr, feat2);
 						else
-							c_ptr->feat = feat1;
+							set_feat_grid(c_ptr, feat1);
 
 						/* Lava terrain glows */
 						if ((feat1 == FEAT_DEEP_LAVA) ||  (feat1 == FEAT_SHAL_LAVA))
@@ -249,9 +249,9 @@ void build_streamer(int feat, int chance)
 			if (c_ptr->feat > FEAT_WALL_SOLID) continue;
 
 			/* Clear previous contents, add proper vein type */
-			c_ptr->feat = feat;
-
-			/* Hack -- Add some (known) treasure */
+			set_feat_grid(c_ptr, feat);
+			
+			/* Hack XXX XXX -- Add some (known) treasure */
 			if (one_in_(chance)) c_ptr->feat += 0x04;
 			
 			/*
@@ -312,11 +312,11 @@ void place_trees(int x, int y)
 				if ((distance(i, j, x, y) > 1) || one_in_(4))
 				{
 					if (randint1(100) < 75)
-						cave_p(i, j)->feat = FEAT_TREES;
+						set_feat_bold(i, j, FEAT_TREES);
 				}
 				else
 				{
-					cave_p(i, j)->feat = FEAT_RUBBLE;
+					set_feat_bold(i, j, FEAT_RUBBLE);
 				}
 
 				/* Light area since is open above */
@@ -329,7 +329,7 @@ void place_trees(int x, int y)
 	if (!ironman_downward && one_in_(3))
 	{
 		/* up stair */
-		cave_p(x, y)->feat = FEAT_LESS;
+		set_feat_bold(x, y, FEAT_LESS);
 	}
 
 	/* Hack - Save the location as a "room" */
@@ -394,28 +394,28 @@ void destroy_level(void)
 					if (t < 20)
 					{
 						/* Create granite wall */
-						c_ptr->feat = FEAT_WALL_EXTRA;
+						set_feat_grid(c_ptr, FEAT_WALL_EXTRA);
 					}
 
 					/* Quartz */
 					else if (t < 70)
 					{
 						/* Create quartz vein */
-						c_ptr->feat = FEAT_QUARTZ;
+						set_feat_grid(c_ptr, FEAT_QUARTZ);
 					}
 
 					/* Magma */
 					else if (t < 100)
 					{
 						/* Create magma vein */
-						c_ptr->feat = FEAT_MAGMA;
+						set_feat_grid(c_ptr, FEAT_MAGMA);
 					}
 
 					/* Floor */
 					else
 					{
 						/* Create floor */
-						c_ptr->feat = FEAT_FLOOR;
+						set_feat_grid(c_ptr, FEAT_FLOOR);
 					}
 
 					/* No longer part of a room or vault */

@@ -166,7 +166,7 @@ static bool alloc_stairs(int feat, int num, int walls)
 				if (next_to_walls(x, y) < walls) continue;
 
 				/* Clear previous contents, add stairs */
-				c_ptr->feat = feat;
+				set_feat_grid(c_ptr, feat);
 
 				/* All done */
 				flag = TRUE;
@@ -251,7 +251,7 @@ static void alloc_object(int set, int typ, int num)
 		{
 			case ALLOC_TYP_RUBBLE:
 			{
-				c_ptr->feat = FEAT_RUBBLE;
+				set_feat_grid(c_ptr, FEAT_RUBBLE);
 				break;
 			}
 
@@ -276,7 +276,7 @@ static void alloc_object(int set, int typ, int num)
 			case ALLOC_TYP_INVIS:
 			{
 				/* Create invisible wall */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				set_feat_grid(c_ptr, FEAT_FLOOR);
 				(void)place_field(x, y, FT_WALL_INVIS);
 				break;
 			}
@@ -446,10 +446,10 @@ static bool cave_gen(void)
 		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
 			if (empty_level)
-				cave_p(x, y)->feat = FEAT_FLOOR;
+				set_feat_bold(x, y, FEAT_FLOOR);
 			else
 			  /* Create granite wall */
-				cave_p(x, y)->feat = FEAT_WALL_EXTRA;
+			  	set_feat_bold(x, y, FEAT_WALL_EXTRA);
 		}
 	}
 
@@ -678,28 +678,28 @@ static bool cave_gen(void)
 	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_p(x, p_ptr->min_hgt)->feat = FEAT_PERM_SOLID;
+		set_feat_bold(x, p_ptr->min_hgt, FEAT_PERM_SOLID);
 	}
 
 	/* Special boundary walls -- Bottom */
 	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_p(x, p_ptr->max_hgt - 1)->feat = FEAT_PERM_SOLID;
+		set_feat_bold(x, p_ptr->max_hgt - 1, FEAT_PERM_SOLID);
 	}
 
 	/* Special boundary walls -- Left */
 	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_p(p_ptr->min_wid, y)->feat = FEAT_PERM_SOLID;
+		set_feat_bold(p_ptr->min_wid, y, FEAT_PERM_SOLID);
 	}
 
 	/* Special boundary walls -- Right */
 	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_p(p_ptr->max_wid - 1, y)->feat = FEAT_PERM_SOLID;
+		set_feat_bold(p_ptr->max_wid - 1, y, FEAT_PERM_SOLID);
 	}
 
 
@@ -770,7 +770,7 @@ static bool cave_gen(void)
 			if ((c_ptr->feat < FEAT_DEEP_WATER) ||
 			    (c_ptr->feat > FEAT_SHAL_LAVA))
 			{
-				c_ptr->feat = FEAT_FLOOR;
+				set_feat_grid(c_ptr, FEAT_FLOOR);
 			}
 		}
 
@@ -788,7 +788,7 @@ static bool cave_gen(void)
 			delete_field_location(c_ptr);
 
 			/* Clear previous contents, add up floor */
-			c_ptr->feat = FEAT_FLOOR;
+			set_feat_grid(c_ptr, FEAT_FLOOR);
 
 			/* Occasional doorway */
 			if (randint0(100) < dun_tun_pen)

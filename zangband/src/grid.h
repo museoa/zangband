@@ -33,7 +33,20 @@
 /*
  * Access the cave data structure
  */
-#define cave_p(X,Y)		(&cave[Y][X]) 
+#define cave_p(X, Y) \
+	(&cave[Y][X])
+
+/*
+ * Set feature on a square
+ */
+#define set_feat_bold(X, Y, F) \
+	(cave_p(X, Y)->feat=(F))
+
+/*
+ * Grid-based version of the above
+ */
+#define set_feat_grid(C, F) \
+	((C)->feat=(F))
 
 
 /* Externs */

@@ -102,11 +102,11 @@ void place_random_stairs(int x, int y)
 	/* Place the stairs */
 	if (up_stairs)
 	{
-		c_ptr->feat = FEAT_LESS;
+		set_feat_grid(c_ptr, FEAT_LESS);
 	}
 	else if (down_stairs)
 	{
-		c_ptr->feat = FEAT_MORE;
+		set_feat_grid(c_ptr, FEAT_MORE);
 	}
 }
 
@@ -118,6 +118,8 @@ void place_random_door(int x, int y)
 {
 	int tmp;
 
+	cave_type *c_ptr = cave_p(x, y);
+	
 	/* Making a door on top of fields is problematical */
 	delete_field(y, x);
 	
@@ -125,7 +127,7 @@ void place_random_door(int x, int y)
 	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
-		cave_set_feat(x, y, FEAT_FLOOR);
+		set_feat_grid(c_ptr, FEAT_FLOOR);
 		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
@@ -137,21 +139,21 @@ void place_random_door(int x, int y)
 	if (tmp < 300)
 	{
 		/* Create open door */
-		cave_set_feat(x, y, FEAT_OPEN);
+		set_feat_grid(c_ptr, FEAT_OPEN);
 	}
 
 	/* Broken doors (100/1000) */
 	else if (tmp < 400)
 	{
 		/* Create broken door */
-		cave_set_feat(x, y, FEAT_BROKEN);
+		set_feat_grid(c_ptr, FEAT_BROKEN);
 	}
 
 	/* Secret doors (200/1000) */
 	else if (tmp < 600)
 	{
 		/* Create secret door */
-		cave_set_feat(x, y, FEAT_SECRET);
+		set_feat_grid(c_ptr, FEAT_SECRET);
 	}
 
 	/* Closed, locked, or stuck doors (400/1000) */
@@ -170,7 +172,7 @@ void place_closed_door(int x, int y)
 	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
-		cave_set_feat(x, y, FEAT_FLOOR);
+		set_feat_bold(x, y, FEAT_FLOOR);
 		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
@@ -182,7 +184,7 @@ void place_closed_door(int x, int y)
 	if (tmp < 300)
 	{
 		/* Create closed door */
-		cave_set_feat(x, y, FEAT_CLOSED);
+		set_feat_bold(x, y, FEAT_CLOSED);
 	}
 
 	/* Locked doors (99/400) */
@@ -444,7 +446,7 @@ void generate_fill(int x1, int y1, int x2, int y2, int feat)
 		for (x = x1; x <= x2; x++)
 		{
 			/* Draw feature on every square */
-			cave_p(x, y)->feat = feat;
+			set_feat_bold(x, y, feat);
 		}
 	}
 }
@@ -459,14 +461,14 @@ void generate_draw(int x1, int y1, int x2, int y2, int feat)
 
 	for (y = y1; y <= y2; y++)
 	{
-		cave_set_feat(x1, y, feat);
-		cave_set_feat(x2, y, feat);
+		set_feat_bold(x1, y, feat);
+		set_feat_bold(x2, y, feat);
 	}
 
 	for (x = x1; x <= x2; x++)
 	{
-		cave_set_feat(x, y1, feat);
-		cave_set_feat(x, y2, feat);
+		set_feat_bold(x, y1, feat);
+		set_feat_bold(x, y2, feat);
 	}
 }
 
@@ -485,12 +487,12 @@ void generate_plus(int x1, int y1, int x2, int y2, int feat)
 
 	for (y = y1; y <= y2; y++)
 	{
-		cave_set_feat(x0, y, feat);
+		set_feat_bold(x0, y, feat);
 	}
 
 	for (x = x1; x <= x2; x++)
 	{
-		cave_set_feat(x, y0, feat);
+		set_feat_bold(x, y0, feat);
 	}
 }
 
@@ -507,10 +509,10 @@ void generate_open(int x1, int y1, int x2, int y2, int feat)
 	x0 = (x1 + x2) / 2;
 
 	/* Open all sides */
-	cave_set_feat(x0, y1, feat);
-	cave_set_feat(x1, y0, feat);
-	cave_set_feat(x0, y2, feat);
-	cave_set_feat(x2, y0, feat);
+	set_feat_bold(x0, y1, feat);
+	set_feat_bold(x1, y0, feat);
+	set_feat_bold(x0, y2, feat);
+	set_feat_bold(x2, y0, feat);
 }
 
 
@@ -530,22 +532,22 @@ void generate_hole(int x1, int y1, int x2, int y2, int feat)
 	{
 		case 0:
 		{
-			cave_set_feat(x0, y1, feat);
+			set_feat_bold(x0, y1, feat);
 			break;
 		}
 		case 1:
 		{
-			cave_set_feat(x1, y0, feat);
+			set_feat_bold(x1, y0, feat);
 			break;
 		}
 		case 2:
 		{
-			cave_set_feat(x0, y2, feat);
+			set_feat_bold(x0, y2, feat);
 			break;
 		}
 		case 3:
 		{
-			cave_set_feat(x2, y0, feat);
+			set_feat_bold(x2, y0, feat);
 			break;
 		}
 	}
@@ -679,7 +681,7 @@ void set_floor(int x, int y)
 	/* Set to be floor if is a wall (don't touch lakes). */
 	if (c_ptr->feat == FEAT_WALL_EXTRA)
 	{
-		c_ptr->feat = FEAT_FLOOR;
+		set_feat_grid(c_ptr, FEAT_FLOOR);
 	}
 }
 
@@ -832,7 +834,7 @@ void build_tunnel(int col1, int row1, int col2, int row2)
 					if (cave_p(x, y)->feat == FEAT_WALL_OUTER)
 					{
 						/* Change the wall to a "solid" wall */
-						cave_p(x, y)->feat = FEAT_WALL_SOLID;
+						set_feat_bold(x, y, FEAT_WALL_SOLID);
 					}
 				}
 			}
