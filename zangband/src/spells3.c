@@ -4253,7 +4253,7 @@ bool polymorph_monster(int y, int x)
 	/* Update some things */
 	p_ptr->update |= (PU_MON_LITE);
 	
-	return polymorphed;
+	return (polymorphed);
 }
 
 

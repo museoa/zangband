@@ -2164,7 +2164,7 @@ bool make_artifact(object_type *o_ptr)
 	/* Moria had no artifacts */
 	if (ironman_moria) return (FALSE);
 
-	/* No artifacts in the town  Why???  (There is a wildernes...) */
+	/* No artifacts in the town  Why???  (There is a wilderness...) */
 	if (!p_ptr->depth) return (FALSE);
 
 	/* Check the artifact list */
@@ -3918,7 +3918,7 @@ byte kind_is_theme(int k_idx)
 		case TV_CLOAK:		return (match_theme.combat);
 		case TV_SOFT_ARMOR:	return (match_theme.combat);
 		case TV_HARD_ARMOR: return (match_theme.combat);
-		case TV_DRAG_ARMOR: return (match_theme.treasure);
+		case TV_DRAG_ARMOR: return (match_theme.treasure + match_theme.combat);
 		case TV_LITE:		return (match_theme.tools);
 		case TV_AMULET:		return (match_theme.treasure);
 		case TV_RING:		return (match_theme.treasure);
