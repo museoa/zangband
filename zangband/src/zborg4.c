@@ -184,9 +184,8 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice store inventory changes */
 			
-			/* Mega-hack - update position */
-			c_x = p_ptr->px;
-			c_y = p_ptr->py;
+			/* Hack - Memorize player location */
+			map_get_player(&c_x, &c_y);
 
 			/* Silly value */
 			shop_num = -1;
@@ -214,9 +213,8 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice home inventory changes */
 			
-			/* Mega-hack - update position */
-			c_x = p_ptr->px;
-			c_y = p_ptr->py;
+			/* Hack - Memorize player location */
+			map_get_player(&c_x, &c_y);
 
 			/* Silly value */
 			shop_num = -1;

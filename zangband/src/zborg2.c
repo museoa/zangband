@@ -2836,11 +2836,8 @@ static void borg_update_map(void)
 {
 	int i;
 
-	/* Hack - simply read location of player from game... */
-
 	/* Memorize player location */
-	c_x = p_ptr->px;
-	c_y = p_ptr->py;
+	map_get_player(&c_x, &c_y);
 
 	/* Mark this grid as having been stepped on */
 	track_step_x[track_step_num] = c_x;

@@ -346,7 +346,14 @@ map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func)
 	return (temp);
 }
 
-
+/*
+ * Access the player location
+ */
+void map_get_player(int *x, int *y)
+{
+	*x = player_x;
+	*y = player_y;
+}
 
 /*
  * Clear the map when changing a level.
@@ -647,10 +654,15 @@ static void save_map_location(int x, int y, term_map *map)
 	mb_ptr->m_hp = map->m_hp;
 
 #endif /* TERM_CAVE_MAP */
+}
 
-	/* XXX XXX Hack */
-	player_x = p_ptr->px;
-	player_y = p_ptr->py;
+/*
+ * Save the player location
+ */
+static void set_player_location(int x, int y)
+{
+	player_x = x;
+	player_y = y;
 }
 
 
@@ -827,6 +839,14 @@ void Term_erase_map(void)
 
 	/* Actually clear the map */
 	clear_map();
+}
+
+/*
+ * The player has moved
+ */
+void Term_move_player(void)
+{
+	set_player_location(p_ptr->px, p_ptr->py);
 }
 
 #endif /* TERM_USE_MAP */
@@ -1238,3 +1258,4 @@ void Term_write_list(s16b o_idx, byte list_type)
 }
 
 #endif /* TERM_USE_LIST */
+

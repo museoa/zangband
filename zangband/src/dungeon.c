@@ -3552,6 +3552,10 @@ void play_game(bool new_game)
 	Term_write_equipment();
 #endif /* TERM_USE_LIST */
 
+#ifdef TERM_USE_MAP		
+		/* Notice movement */
+		Term_move_player();
+#endif /* TERM_USE_MAP */
 
 	/* Process */
 	while (TRUE)

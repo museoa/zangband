@@ -282,6 +282,7 @@ extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
 #ifdef TERM_USE_MAP
 extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
 extern map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func);
+extern void map_get_player(int *x, int *y);
 extern void init_overhead_map(void);
 extern void del_overhead_map(void);
 extern bool map_in_bounds(int x, int y);

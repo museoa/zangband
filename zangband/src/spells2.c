@@ -2566,6 +2566,12 @@ bool earthquake(int cx, int cy, int r)
 			/* Move the player */
 			p_ptr->py = sy;
 			p_ptr->px = sx;
+			
+#ifdef TERM_USE_MAP		
+			/* Notice movement */
+			Term_move_player();
+#endif /* TERM_USE_MAP */
+
 
 			if (!p_ptr->depth)
 			{
@@ -3380,6 +3386,11 @@ bool teleport_swap(int dir)
 	/* Move the player */
 	p_ptr->px = tx;
 	p_ptr->py = ty;
+	
+#ifdef TERM_USE_MAP		
+	/* Notice movement */
+	Term_move_player();
+#endif /* TERM_USE_MAP */
 
 	tx = m_ptr->fx;
 	ty = m_ptr->fy;
