@@ -859,19 +859,9 @@ static void rd_store(int town_num, int store_num)
 	/* Restore the saved parameters */
 	st_ptr->data = data;
 	st_ptr->owner = owner;
-
-	if (!z_older_than(2, 1, 3))
-	{
-		/* Read last visit */
-		rd_s32b(&st_ptr->last_visit);
-	}
-	else
-	{
-		/* Reset last visit to the current turn */
-		st_ptr->last_visit = turn;
-	}
-
-
+	
+	/* Read last visit */
+	rd_s32b(&st_ptr->last_visit);
 
 	/*
 	 * Hack - allocate store if it has stock
@@ -993,17 +983,10 @@ static void rd_options(void)
 	cheat_know = (c & 0x1000) ? TRUE : FALSE;
 	cheat_live = (c & 0x2000) ? TRUE : FALSE;
 
-	if (z_older_than(2, 1, 0))
-	{
-		autosave_t = autosave_l = 0;
-		autosave_freq = 0;
-	}
-	else
-	{
-		rd_byte(&autosave_l);
-		rd_byte(&autosave_t);
-		rd_s16b(&autosave_freq);
-	}
+	/* Autosave options */
+	rd_byte(&autosave_l);
+	rd_byte(&autosave_t);
+	rd_s16b(&autosave_freq);
 
 
 	/*** Normal Options ***/
@@ -1159,38 +1142,13 @@ static void rd_extra(void)
 
 	rd_s16b(&p_ptr->lev);
 
-	/* Current version */
-	if (!z_older_than(2, 1, 3))
-	{
-		rd_s16b(&p_ptr->place_num);
+	rd_s16b(&p_ptr->place_num);
 
-		/* Read arena and rewards information */
-		strip_bytes(12);		/* oops */
+	/* Read arena and rewards information */
+	strip_bytes(12);
 
-		rd_s16b(&tmp16s);
-
-		for (i = 0; i < tmp16s; i++) rd_s16b(&dummy);
-	}
-	/* 2.1.2 beta version */
-	else if (z_major == 2 && z_minor == 1 && z_patch == 2)
-	{
-		/* Town index */
-		rd_s16b(&tmp16s);
-		p_ptr->place_num = 1;
-
-		strip_bytes(8);			/* oops */
-
-		/* Throw away old quest informations */
-		for (i = 0; i < 100; i++) rd_s16b(&tmp16s);
-		for (i = 0; i < 10; i++) rd_s16b(&tmp16s);
-		for (i = 0; i < 10; i++) rd_s16b(&tmp16s);
-		for (i = 0; i < 5; i++) rd_s16b(&tmp16s);
-		for (i = 0; i < 5; i++) rd_s16b(&tmp16s);
-	}
-	else						/* 2.1.0 or older */
-	{
-		p_ptr->place_num = 1;
-	}
+	rd_s16b(&tmp16s);
+	for (i = 0; i < tmp16s; i++) rd_s16b(&dummy);
 
 	rd_s16b(&p_ptr->mhp);
 	rd_s16b(&p_ptr->chp);
@@ -1703,67 +1661,64 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 	}
 
 
-	if (!z_older_than(2, 1, 3))
+	/*** Run length decoding ***/
+
+	if (sf_version < 28)
 	{
-		/*** Run length decoding ***/
-
-		if (sf_version < 28)
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax;)
 		{
-			/* Load the dungeon data */
-			for (x = xmin, y = ymin; y < ymax;)
-			{
-				/* Grab RLE info */
-				rd_byte(&count);
-				rd_byte(&tmp8u);
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
 
-				/* Apply the RLE info */
-				for (i = count; i > 0; i--)
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Ignore this (The mimic field has been removed) */
+
+				/* Advance/Wrap */
+				if (++x >= xmax)
 				{
-					/* Ignore this (The mimic field has been removed) */
+					/* Wrap */
+					x = xmin;
 
 					/* Advance/Wrap */
-					if (++x >= xmax)
-					{
-						/* Wrap */
-						x = xmin;
-
-						/* Advance/Wrap */
-						if (++y >= ymax) break;
-					}
+					if (++y >= ymax) break;
 				}
 			}
 		}
+	}
 
-		/*** Run length decoding ***/
+	/*** Run length decoding ***/
 
-		/* This isn't stored in later versions. */
-		if (sf_version < 15)
+	/* This isn't stored in later versions. */
+	if (sf_version < 15)
+	{
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax;)
 		{
-			/* Load the dungeon data */
-			for (x = xmin, y = ymin; y < ymax;)
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_s16b(&tmp16s);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
 			{
-				/* Grab RLE info */
-				rd_byte(&count);
-				rd_s16b(&tmp16s);
+				/* Access the cave */
+				c_ptr = area(x, y);
 
-				/* Apply the RLE info */
-				for (i = count; i > 0; i--)
+				/* Extract field */
+				c_ptr->fld_idx = 0;
+
+				/* Advance/Wrap */
+				if (++x >= xmax)
 				{
-					/* Access the cave */
-					c_ptr = area(x, y);
-
-					/* Extract field */
-					c_ptr->fld_idx = 0;
+					/* Wrap */
+					x = xmin;
 
 					/* Advance/Wrap */
-					if (++x >= xmax)
-					{
-						/* Wrap */
-						x = xmin;
-
-						/* Advance/Wrap */
-						if (++y >= ymax) break;
-					}
+					if (++y >= ymax) break;
 				}
 			}
 		}
@@ -2451,7 +2406,7 @@ static errr rd_dungeon(void)
 	/*** Success ***/
 
 	/* Regenerate the dungeon for old savefiles and corrupted panic-saves */
-	if (z_older_than(2, 1, 3) || (py == 0) || (px == 0))
+	if ((py == 0) || (px == 0))
 	{
 		character_dungeon = FALSE;
 	}
@@ -2662,6 +2617,9 @@ static errr rd_savefile_new_aux(void)
 	u32b o_x_check, o_v_check;
 #endif
 
+	u16b max_towns_load;
+	u16b max_quests_load;
+
 
 	/* Mention the savefile version */
 	note(format("Loading a %d.%d.%d savefile...", z_major, z_minor, z_patch));
@@ -2793,157 +2751,106 @@ static errr rd_savefile_new_aux(void)
 	}
 	if (arg_fiddle) note("Loaded Object Memory");
 
-	/* 2.1.3 or newer version */
-	if (!z_older_than(2, 1, 3))
+		
+
+	/* Number of towns */
+	rd_u16b(&max_towns_load);
+
+	/* 2.2.2 or older version */
+	if (z_older_than(2, 2, 3))
 	{
-		u16b max_towns_load;
-		u16b max_quests_load;
-
-		/* Number of towns */
-		rd_u16b(&max_towns_load);
-
-		/* 2.2.2 or older version */
-		if (z_older_than(2, 2, 3))
-		{
-			/* Ignore higher numbers of towns */
-			if (max_towns_load > z_info->wp_max)
-				max_towns_load = z_info->wp_max;
-		}
-
-		/* Incompatible save files */
+		/* Ignore higher numbers of towns */
 		if (max_towns_load > z_info->wp_max)
-		{
-			note(format("Too many (%u) towns!", max_towns_load));
-			return (23);
-		}
+			max_towns_load = z_info->wp_max;
+	}
+		
+	/* Incompatible save files */
+	if (max_towns_load > z_info->wp_max)
+	{
+		note(format("Too many (%u) towns!", max_towns_load));
+		return (23);
+	}
 
-		/* Number of quests */
-		rd_u16b(&max_quests_load);
+	/* Number of quests */
+	rd_u16b(&max_quests_load);
 
-		/* Ignore old quests */
-		if (sf_version < 30)
-		{
-			strip_quests(max_quests_load);
-		}
+	/* Ignore old quests */
+	if (sf_version < 30)
+	{
+		strip_quests(max_quests_load);
+	}
 
-		/* Newer versions */
-		else
-		{
-			/* Incompatible save files */
-			if (max_quests_load > z_info->q_max)
-			{
-				note(format("Too many (%u) quests!", max_quests_load));
-				return (23);
-			}
-
-			rd_quests(max_quests_load);
-		}
-
-		/* Only in 2.2.1 and 2.2.2 */
-		if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
-		{
-			/* "Hard quests" flag */
-			rd_byte((byte *)&ironman_hard_quests);
-
-			/* Inverted "Wilderness" flag */
-			rd_byte((byte *)&vanilla_town);
-			vanilla_town = !vanilla_town;
-		}
-
-		/* Position in the wilderness */
-		rd_s32b(&p_ptr->wilderness_x);
-		rd_s32b(&p_ptr->wilderness_y);
-
-		/* Size of the wilderness */
-		rd_s32b(&wild_x_size);
-		rd_s32b(&wild_y_size);
-
+	/* Newer versions */
+	else
+	{
 		/* Incompatible save files */
-		if ((wild_x_size > WILD_SIZE) || (wild_y_size > WILD_SIZE))
+		if (max_quests_load > z_info->q_max)
 		{
-			note(format
-				 ("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
+			note(format("Too many (%u) quests!", max_quests_load));
 			return (23);
 		}
 
-		/* Hack - if size is zero - set to WILD_SIZE */
-		if ((wild_x_size == 0) && (wild_y_size == 0))
+		rd_quests(max_quests_load);
+	}
+
+	/* Only in 2.2.1 and 2.2.2 */
+	if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
+	{
+		/* "Hard quests" flag */
+		rd_byte((byte *)&ironman_hard_quests);
+
+		/* Inverted "Wilderness" flag */
+		rd_byte((byte *)&vanilla_town);
+		vanilla_town = !vanilla_town;
+	}
+
+	/* Position in the wilderness */
+	rd_s32b(&p_ptr->wilderness_x);
+	rd_s32b(&p_ptr->wilderness_y);
+
+	/* Size of the wilderness */
+	rd_s32b(&wild_x_size);
+	rd_s32b(&wild_y_size);
+
+	/* Incompatible save files */
+	if ((wild_x_size > WILD_SIZE) || (wild_y_size > WILD_SIZE))
+	{
+		note(format
+			 ("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
+		return (23);
+	}
+
+	/* Hack - if size is zero - set to WILD_SIZE */
+	if ((wild_x_size == 0) && (wild_y_size == 0))
+	{
+		wild_x_size = WILD_SIZE;
+		wild_y_size = WILD_SIZE;
+	}
+
+	/* Hack - set size of wilderness to x size only */
+	max_wild = wild_x_size;
+
+	tempx = (int)p_ptr->wilderness_x / 16;
+	tempy = (int)p_ptr->wilderness_y / 16;
+
+	/* Get corner of visible region */
+	shift_in_bounds(&tempx, &tempy);
+
+	/* Set corner of visible region */
+	p_ptr->old_wild_x = tempx;
+	p_ptr->old_wild_y = tempy;
+
+	/* Ignore the seeds from old versions */
+	if (sf_version < 9)
+	{
+		/* Load the wilderness seeds */
+		for (i = 0; i < wild_x_size; i++)
 		{
-			wild_x_size = WILD_SIZE;
-			wild_y_size = WILD_SIZE;
-		}
-
-		/* Hack - set size of wilderness to x size only */
-		max_wild = wild_x_size;
-
-		tempx = (int)p_ptr->wilderness_x / 16;
-		tempy = (int)p_ptr->wilderness_y / 16;
-
-		/* Get corner of visible region */
-		shift_in_bounds(&tempx, &tempy);
-
-		/* Set corner of visible region */
-		p_ptr->old_wild_x = tempx;
-		p_ptr->old_wild_y = tempy;
-
-		/* Ignore the seeds from old versions */
-		if (sf_version < 9)
-		{
-			/* Load the wilderness seeds */
-			for (i = 0; i < wild_x_size; i++)
+			for (j = 0; j < wild_y_size; j++)
 			{
-				for (j = 0; j < wild_y_size; j++)
-				{
-					/* Ignore seeds */
-					rd_u32b(&tmp32u);
-				}
+				/* Ignore seeds */
+				rd_u32b(&tmp32u);
 			}
-		}
-	}
-	/* rr9: Load old savegame without the quest infos */
-	else if (z_older_than(2, 1, 1))
-	{
-		/* Load the number of quests */
-		rd_u16b(&tmp16u);
-
-		/* Ignore all infos */
-		for (i = 0; i < tmp16u; i++)
-		{
-			strip_bytes(4);
-		}
-	}
-	/* rr9: Load 2.1.1 savegame quest infos */
-	else if (z_older_than(2, 1, 2))
-	{
-		/* Load the number of quests */
-		rd_u16b(&tmp16u);
-
-		j = tmp16u;
-
-		/* Ignore the quests */
-		for (i = 0; i < j; i++)
-		{
-			strip_bytes(5);
-		}
-	}
-	/* 2.1.2 beta version */
-	else if (z_older_than(2, 1, 3))
-	{
-		/* Load the number of quests */
-		rd_u16b(&tmp16u);
-
-		/* Incompatible save files */
-		if (tmp16u > 20)
-		{
-			note(format("Too many (%u) quests!", tmp16u));
-			return (23);
-		}
-
-		/* Load the quest information */
-		for (i = 0; i < tmp16u; i++)
-		{
-			/* Throw it away */
-			strip_bytes(14);
 		}
 	}
 
@@ -2956,55 +2863,6 @@ static errr rd_savefile_new_aux(void)
 	}
 
 	if (arg_fiddle) note("Loaded Quests");
-
-	/* A version without the wilderness */
-	if (z_older_than(2, 1, 2))
-	{
-		char c;
-
-		/* Clear */
-		clear_from(14);
-
-		/*** Wilderness mode ***/
-
-		/* Extra info */
-		Term_putstr(5, 14, -1, TERM_WHITE,
-					"'Wilderness' mode enables the extended wilderness of ZAngband");
-		Term_putstr(5, 15, -1, TERM_WHITE,
-					"giving you a wilderness and several new towns to explore.");
-		Term_putstr(5, 16, -1, TERM_WHITE,
-					"Switching off 'wilderness' mode is recommended for slower computers,");
-		Term_putstr(5, 17, -1, TERM_WHITE,
-					"because the wilderness slows down the system a bit.");
-
-		/* Ask about "wilderness" mode */
-		while (1)
-		{
-			put_str("Use 'wilderness'? (y/n/*) ", 2, 20);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			if (c == 'S') return (FALSE);
-			if (c == '*')
-			{
-				c = 'y';
-				if (one_in_(2))
-					c = 'n';
-				break;
-			}
-			if (c == ESCAPE) break;
-			if ((c == 'y') || (c == 'n')) break;
-			if (c == '?') do_cmd_help();
-			else
-				bell("Illegal answer!");
-		}
-
-		/* Set "wilderness" mode */
-		vanilla_town = (c == 'y');
-
-		/* Clear */
-		clear_from(14);
-	}
-
 
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);
@@ -3082,16 +2940,8 @@ static errr rd_savefile_new_aux(void)
 	}
 
 	/* Read number of towns */
-	if (!z_older_than(2, 1, 3))
-	{
-		rd_u16b(&tmp16u);
-		place_count = tmp16u;
-	}
-	else
-	{
-		/* Only one town */
-		place_count = 2;
-	}
+	rd_u16b(&tmp16u);
+	place_count = tmp16u;
 
 	/* Paranoia */
 	if (place_count > z_info->wp_max)
