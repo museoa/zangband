@@ -588,7 +588,10 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 		if (rand_int(100) < j)
 		{
 			msg_print("You have picked the lock.");
-			gain_exp(1);
+
+			/* Gain experience, but not for the locked doors in town */
+			if (dun_level) gain_exp(1);
+
 			flag = TRUE;
 		}
 
