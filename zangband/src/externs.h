@@ -1112,7 +1112,6 @@ extern bool field_hook_single(field_type *f_ptr, int action, ...);
 extern bool field_script_single(field_type *f_ptr, int action, cptr format, ...);
 extern void field_hook(cave_type *c_ptr, int action, ...);
 extern bool field_hook_special(cave_type *c_ptr, u16b t_idx, ...);
-extern field_type *field_hook_find(cave_type *c_ptr, int action, ...);
 extern field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...);
 extern void process_fields(void);
 extern void test_field_data_integrity(void);

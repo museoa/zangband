@@ -1180,50 +1180,6 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
  * Call the required action function for the first field
  * in the specified list with that function.
  */
-field_type *field_hook_find(cave_type *c_ptr, int action, ...)
-{
-	field_type *f_ptr;
-	field_thaum *t_ptr; 
-
-	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
-	{
-		/* Point to the field */
-		t_ptr = &t_info[f_ptr->t_idx];
-
-		/* Is there a function to call? */
-		if (t_ptr->func[action])
-		{
-			va_list vp;
-
-		    /* Begin the Varargs Stuff */
-			va_start(vp, action);
-		
-			/* Call the action function */
-			if (t_ptr->func[action] (f_ptr, vp))
-			{
-				/* The field wants to be deleted */
-				delete_field_ptr(f_ptr);
-			}
-			
-			/* End the Varargs Stuff */
-			va_end(vp);
-
-			/* Done */
-			return (f_ptr);
-		}
-	}
-	FLD_ITT_END;
-    
-
-	/* Found nothing */
-	return (NULL);
-}
-
-
-/*
- * Call the required action function for the first field
- * in the specified list with that function.
- */
 field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...)
 {
 	field_type *f_ptr;
