@@ -592,7 +592,8 @@ bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int)
 		/* No match? */
 		if (i == -1)
 		{
-			if (choice == '\r')
+			/* Pick default option */
+			if ((choice == '\r') || (choice == ' '))
 			{
 				/* Default options */
         		if (num == 1)
