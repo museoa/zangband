@@ -754,6 +754,12 @@ cptr ANGBAND_DIR_HELP;
 cptr ANGBAND_DIR_INFO;
 
 /*
+ * Default user "preference" files (ascii)
+ * These files are rarely portable between platforms
+ */
+cptr ANGBAND_DIR_PREF;
+
+/*
  * Savefiles for current characters (binary)
  * These files are portable between platforms
  */

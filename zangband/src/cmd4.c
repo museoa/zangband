@@ -1374,7 +1374,7 @@ void do_cmd_pref(void)
 	if (!get_string("Pref: ", buf, 80)) return;
 
 	/* Process that pref command */
-	(void)process_pref_file_aux(buf);
+	(void)process_pref_file_command(buf);
 }
 
 
