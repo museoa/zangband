@@ -2653,7 +2653,7 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 	msg_print("Your purse becomes weightless!");
 	
 	/* No gold! */
-	p_ptr->au = 0;
+	p_ptr->au = p_ptr->au / 2;
 
 	/* Redraw gold */
 	p_ptr->redraw |= (PR_GOLD);
