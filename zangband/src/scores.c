@@ -67,7 +67,7 @@ static int highscore_where(const high_score *score)
 	}
 
 	/* The "last" entry is always usable */
-	return (MAX_HISCORES - 1);
+	return (MAX_HISCORES);
 }
 
 
@@ -96,7 +96,7 @@ static int highscore_add(const high_score *score)
 	the_score = (*score);
 
 	/* Slide all the scores down one */
-	for (i = slot; !done && (i < MAX_HISCORES); i++)
+	for (i = slot; !done && (i <= MAX_HISCORES); i++)
 	{
 		/* Read the old guy, note errors */
 		if (highscore_seek(i)) return (-1);
@@ -191,13 +191,78 @@ static long total_points(void)
 
 
 /*
+ * Hack - save index of player's high score
+ */
+static int score_idx = -1;
+
+/* Hack - save from-to for resizing purposes */
+static int score_from = -1;
+static int score_to = -1;
+static high_score *score_score = NULL;
+static bool score_resize = FALSE;
+
+
+/* find out how many score entries you can have on a page */
+static int entries_on_page(void)
+{
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* determine how many entries that is on a page */
+	return (hgt / 4 - 1);
+}
+
+
+/* Find out what range is nice on the current page size */
+static void determine_scores_page(int *from, int *to, int note)
+{
+	int entries;
+
+	/* Determine how many entries that is on a page */
+	entries = entries_on_page();
+
+	/* If the note belongs on the first or second page */
+	if (note <= 3 * entries / 2)
+	{
+		/* Show the second page */
+		*from = entries;
+		*to = 2 * entries;
+
+		return;
+	}
+
+	/* A page with the score nicely in the middle */
+	*from = note - entries / 2;
+	*to = note + entries / 2;
+
+	/* even entries lead to too large, odd range */
+	if (!(entries % 2)) *to -= 1;
+
+	/* If the range overshoots  the last page */
+	if (*to >= MAX_HISCORES)
+	{
+		*from = MAX_HISCORES - entries;
+		*to = MAX_HISCORES;
+
+		/* This entry does not get saved, only displayed */
+		if (note == MAX_HISCORES)
+		{
+			*from += 1;
+			*to += 1;
+		}
+	}
+}
+
+/*
  * Display the scores in a given range.
  * Assumes the high score list is already open.
- * Only five entries per line, too much info.
  *
  * Mega-Hack -- allow "fake" entry at the given position.
  */
-void display_scores_aux(int from, int to, int note, const high_score *score)
+static bool display_scores_aux2(int from, int to, int note,
+						 const high_score *score, bool no_wait)
 {
 	int i, j, k, n, place;
 	byte attr;
@@ -207,19 +272,26 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 	char out_val[256];
 	
 	int len;
+	int entries;
 
 	/* Paranoia -- it may not have opened */
-	if (highscore_fd < 0) return;
-
-
-	/* Assume we will show the first 10 */
-	if (from < 0) from = 0;
-	if (to < 0) to = 10;
-	if (to > MAX_HISCORES) to = MAX_HISCORES;
-
+	if (highscore_fd < 0) return (FALSE);
 
 	/* Seek to the beginning */
-	if (highscore_seek(0)) return;
+	if (highscore_seek(0)) return (FALSE);
+
+	/* Determine how many entries that is on a page */
+	entries = entries_on_page();
+
+	/* Dimensions of the first page */
+	if (to < entries)
+	{
+		from = 0;
+		to = entries;
+	}
+
+	/* Remember ending of the list */
+	score_to = to;
 
 	/* Hack -- Count the high scores */
 	for (i = 0; i < MAX_HISCORES; i++)
@@ -228,14 +300,13 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 	}
 
 	/* Hack -- allow "fake" entry to be last */
-	if ((note == i) && score) i++;
+	if (note == i) i++;
 
 	/* Forget about the last entries */
 	if (i > to) i = to;
 
-
-	/* Show 5 per page, until "done" */
-	for (k = from, place = k + 1; k < i; k += 5)
+	/* Show 'entries' per page, until "done" */
+	for (k = from, place = k + 1; k < i; k += entries)
 	{
 		/* Clear screen */
 		Term_clear();
@@ -249,13 +320,15 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			put_fstr(40, 0, "(from position %d)", k + 1);
 		}
 
-		/* Dump 5 entries */
-		for (j = k, n = 0; j < i && n < 5; place++, j++, n++)
+		/* Dump entries */
+		for (j = k, n = 0; j < i && n < entries; place++, j++, n++)
 		{
 			int pr, pc, clev, mlev, cdun, mdun;
 
 			cptr user, gold, when, aged;
 
+			/* Remember the current starting point */
+			score_from = k;
 
 			/* Hack -- indicate death in yellow */
 			attr = (j == note) ? TERM_YELLOW : TERM_WHITE;
@@ -336,13 +409,91 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 
 
 		/* Wait for response */
-		prtf(17, 23, "[Press ESC to quit, any other key to continue.]");
+		prtf(15, entries * 4 + 3, "[Press ESC to quit, any other key to continue.]");
+
+		/* No keystrokes needed during resizing */
+		if (no_wait) return (TRUE);
+
 		j = inkey();
-		clear_row(23);
+		clear_row(entries * 4 + 3);
+
+		/* Check for resize, entries may have changed */
+		if (score_resize)
+		{
+			/* set back to default */
+			score_resize = FALSE;
+
+			/* Not all of the previous range was shown yet */
+			if (score_to < to)
+			{
+				/* Show rest of the range */
+				return (display_scores_aux2(score_from + entries_on_page(),
+											to,
+											score_idx,
+											score_score,
+											FALSE));
+			}
+		}
 
 		/* Hack -- notice Escape */
-		if (j == ESCAPE) break;
+		if (j == ESCAPE) return (FALSE);
 	}
+
+	return (TRUE);
+}
+
+/* Make sense of the display range and redraw the screen */
+static void resize_scores(void)
+{
+	int from, to;
+
+	/* Alert the public */
+	score_resize = TRUE;
+
+	/* Displaying the whole list? */
+	if (score_idx == -1 || score_to < score_idx)
+	{
+		/* Display the list */
+		(void)display_scores_aux2(score_from, score_from + entries_on_page(),
+								  -1, NULL, TRUE);
+	}
+	else
+	/* So this page has score_idx at its center */
+	{
+		/* Make new range for the new page */
+		determine_scores_page(&from, &to, score_idx);
+
+		/* Display the list */
+		(void)display_scores_aux2(from, to, score_idx, score_score, TRUE);
+	}
+}
+
+
+bool display_scores_aux(int from, int to, int note, const high_score *score)
+{
+	bool outcome;
+	void (*hook) (void);
+
+	/* Remember the old hook */
+	hook = angband_term[0]->resize_hook
+		;
+	/* set the resize hook to scores */
+	angband_term[0]->resize_hook = resize_scores;
+
+	/* Display the scores */
+	outcome = display_scores_aux2(from, to, note, score, FALSE);
+
+	/* Restore the old resize hook */
+	angband_term[0]->resize_hook = hook;
+
+	/* The size may have changed during the scores display */
+	angband_term[0]->resize_hook();
+
+	/* Hack - Flush it */
+	Term_fresh();
+
+	/* Allow another call depending on the outcome of this call */
+	return (outcome);
 }
 
 
@@ -369,7 +520,7 @@ void display_scores(int from, int to)
 	Term_clear();
 
 	/* Display the scores */
-	display_scores_aux(from, to, -1, NULL);
+	(void)display_scores_aux(from, to, -1, NULL);
 
 	/* Shut the high score file */
 	(void)fd_close(highscore_fd);
@@ -380,12 +531,6 @@ void display_scores(int from, int to)
 	/* Quit */
 	quit(NULL);
 }
-
-
-/*
- * Hack - save index of player's high score
- */
-static int score_idx = -1;
 
 
 /*
@@ -554,6 +699,9 @@ void enter_score(void)
  */
 void top_twenty(void)
 {
+	int from, to;
+	bool cont;
+
 	/* Clear screen */
 	Term_clear();
 
@@ -565,17 +713,17 @@ void top_twenty(void)
 		return;
 	}
 
-	/* Hack -- Display the top fifteen scores */
-	if (score_idx < 10)
-	{
-		display_scores_aux(0, 15, score_idx, NULL);
-	}
+	/* Show the first page of the highscore */
+	cont = display_scores_aux(0, 5, score_idx, NULL);
 
-	/* Display the scores surrounding the player */
-	else
+	/* If the user didn't press ESC, show the second page too */
+	if (cont)
 	{
-		display_scores_aux(0, 5, score_idx, NULL);
-		display_scores_aux(score_idx - 2, score_idx + 7, score_idx, NULL);
+		/* Determine what the second page will be */
+		determine_scores_page(&from, &to, score_idx);
+
+		/* Show the second page */
+		(void)display_scores_aux(from, to, score_idx, NULL);
 	}
 
 	/* Success */
@@ -588,7 +736,8 @@ void top_twenty(void)
  */
 void predict_score(void)
 {
-	int j;
+	int j, from, to;
+	bool cont;
 
 	high_score the_score;
 
@@ -639,18 +788,21 @@ void predict_score(void)
 	/* See where the entry would be placed */
 	j = highscore_where(&the_score);
 
+	/* Keep it for resizing */
+	score_idx = j;
+	score_score = &the_score;
 
-	/* Hack -- Display the top fifteen scores */
-	if (j < 10)
-	{
-		display_scores_aux(0, 15, j, &the_score);
-	}
+	/* Show the first page of the highscore */
+	cont = display_scores_aux(0, 5, score_idx, NULL);
 
-	/* Display some "useful" scores */
-	else
+	/* If the user didn't press ESC, show the second page too */
+	if (cont)
 	{
-		display_scores_aux(0, 5, -1, NULL);
-		display_scores_aux(j - 2, j + 7, j, &the_score);
+		/* Determine what the second page will be */
+		determine_scores_page(&from, &to, score_idx);
+
+		/* Show the second page */
+		(void)display_scores_aux(from, to, score_idx, &the_score);
 	}
 }
 

@@ -1026,7 +1026,7 @@ extern bool create_artifact(object_type *o_ptr, int level, bool a_scroll);
 extern void create_named_art(int a_idx, int x, int y);
 
 /* scores.c */
-extern void display_scores_aux(int from, int to, int note,
+extern bool display_scores_aux(int from, int to, int note,
 							   const high_score *score);
 extern void display_scores(int from, int to);
 extern void kingly(void);

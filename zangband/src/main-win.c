@@ -3480,29 +3480,32 @@ static void process_menus(WORD wCmd)
 				/* Prevent various functions */
 				initialized = FALSE;
 
-				/* Save Screen */
-				screen_save();
-
-				/* Clear screen */
-				Term_clear();
-
 				/* Display the scores */
 				if (game_in_progress && character_generated)
+				{
+					/* Show a selection of the score list */
 					predict_score();
+				}
 				else
-					display_scores_aux(0, MAX_HISCORES, -1, NULL);
+				{
+					/* Save Screen */
+					screen_save();
+
+					/* Show all the scores */
+					(void)display_scores_aux(0, MAX_HISCORES, -1, NULL);
+
+					/* Load screen */
+					screen_load();
+
+					/* Hack - Flush it */
+					Term_fresh();
+				}
 
 				/* Shut the high score file */
 				(void)fd_close(highscore_fd);
 
 				/* Forget the high score fd */
 				highscore_fd = -1;
-
-				/* Load screen */
-				screen_load();
-
-				/* Hack - Flush it */
-				Term_fresh();
 
 				/* We are ready again */
 				initialized = TRUE;
