@@ -3046,10 +3046,6 @@ static int borg_item_cmp(const void *item1, const void *item2)
 
 static void init_borg_txt_file(void)
 {
-
-	FILE *fp;
-
-	char buf[1024];
 	int i;
 
 	/* Array of borg variables is stored as */
@@ -3080,145 +3076,14 @@ static void init_borg_txt_file(void)
 	borg_artifact = borg_has_on + z_info->k_max;
 	borg_skill = borg_artifact + z_info->a_max;
 
-	path_build(buf, 1024, ANGBAND_DIR_PREF, "zborg.txt");
-
-	/* Open the file */
-	fp = my_fopen(buf, "r");
-
-	/* No file, use defaults */
-	if (!fp)
-	{
-		/* Complain */
-		msg_print("*****WARNING***** You do not have a proper zborg.txt file!");
-		msg_print("Make sure zborg.txt is located in the 'user' subdirectory!");
-		msg_print(NULL);
-
-		/* use default values */
-		borg_plays_risky = FALSE;
-		borg_scums_uniques = TRUE;
-		borg_uses_swaps = TRUE;
-		borg_slow_optimizehome = FALSE;
-		borg_stop_dlevel = 128;
-		borg_stop_clevel = 55;
-		borg_stop_king = TRUE;
-		return;
-	}
-
-
-	/* Parse the file */
-/* AJG needed to make this wider so I could read long formulas */
-	while (0 == my_fgets(fp, buf, sizeof(buf) - 1))
-	{
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Chop the buffer */
-		buf[sizeof(buf) - 1] = '\0';
-
-
-
-		if (prefix(buf, "borg_plays_risky ="))
-		{
-			if (buf[strlen("borg_plays_risky =") + 1] == 'T' ||
-				buf[strlen("borg_plays_risky =") + 1] == '1' ||
-				buf[strlen("borg_plays_risky =") + 1] == 't') borg_plays_risky =
-TRUE;
-			else
-				borg_plays_risky = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_scums_uniques ="))
-		{
-			if (buf[strlen("borg_scums_uniques =") + 1] == 'T' ||
-				buf[strlen("borg_scums_uniques =") + 1] == '1' ||
-				buf[strlen("borg_scums_uniques =") + 1] ==
-				't') borg_scums_uniques = TRUE;
-			else
-				borg_scums_uniques = FALSE;
-			continue;
-		}
-		if (prefix(buf, "borg_uses_swaps ="))
-		{
-			if (buf[strlen("borg_uses_swaps =") + 1] == 'T' ||
-				buf[strlen("borg_uses_swaps =") + 1] == '1' ||
-				buf[strlen("borg_uses_swaps =") + 1] == 't') borg_uses_swaps =
-TRUE;
-			else
-				borg_uses_swaps = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_slow_optimizehome ="))
-		{
-			if (buf[strlen("borg_slow_optimizehome =") + 1] == 'T' ||
-				buf[strlen("borg_slow_optimizehome =") + 1] == '1' ||
-				buf[strlen("borg_slow_optimizehome =") + 1] ==
-				't') borg_slow_optimizehome = TRUE;
-			else
-				borg_slow_optimizehome = FALSE;
-
-			/* for now always leave as false since its broken */
-			borg_slow_optimizehome = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_stop_king ="))
-		{
-			if (buf[strlen("borg_stop_king =") + 1] == 'T' ||
-				buf[strlen("borg_stop_king =") + 1] == '1' ||
-				buf[strlen("borg_stop_king =") + 1] == 't') borg_stop_king =
-TRUE;
-			else
-				borg_stop_king = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_stop_clevel ="))
-		{
-			sscanf(buf + strlen("borg_stop_clevel =") + 1, "%d",
-				   &borg_stop_clevel);
-			continue;
-		}
-		if (prefix(buf, "borg_stop_dlevel ="))
-		{
-			sscanf(buf + strlen("borg_stop_dlevel =") + 1, "%d",
-				   &borg_stop_dlevel);
-			continue;
-		}
-
-		if (prefix(buf, "REQ"))
-		{
-			if (!borg_load_requirement(buf + strlen("REQ")))
-				borg_note(buf);
-			continue;
-		}
-		if (prefix(buf, "FORMULA"))
-		{
-			if (!borg_load_formula(buf + strlen("FORMULA")))
-				borg_note(buf);
-			continue;
-		}
-		if (prefix(buf, "CND"))
-		{
-			if (!borg_load_formula(buf + strlen("CND")))
-				borg_note(buf);
-			continue;
-		}
-		if (prefix(buf, "POWER"))
-		{
-			if (!borg_load_power(buf + strlen("POWER")))
-				borg_note(buf);
-
-			continue;
-		}
-	}
-
-	/* Close it */
-	my_fclose(fp);
-
-	for (i = 0; i < MAX_CLASS; i++)
-		qsort(borg_required_item[i], n_req[i], sizeof(req_item), borg_item_cmp);
+	/* use default values */
+	borg_plays_risky = FALSE;
+	borg_scums_uniques = TRUE;
+	borg_uses_swaps = TRUE;
+	borg_slow_optimizehome = FALSE;
+	borg_stop_dlevel = 128;
+	borg_stop_clevel = 55;
+	borg_stop_king = TRUE;
 
 	/* Success */
 	return;
