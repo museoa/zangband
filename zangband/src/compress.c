@@ -137,7 +137,7 @@ static int rerase_block_byte(block_handle *h_ptr)
 	return (h_ptr->b_ptr->block_data[h_ptr->counter++]);
 }
 
-static write_block_byte(block_handle *h_ptr, byte output)
+static void write_block_byte(block_handle *h_ptr, byte output)
 {
 	/* End of block? */
 	if (h_ptr->counter >= BLOCK_DATA_SIZE)
@@ -166,7 +166,7 @@ static byte current_byte;
 /* Which bit are we up to */
 static byte current_bit;
 
-static write_block_bit(block_handle *h_ptr, byte output)
+static void write_block_bit(block_handle *h_ptr, byte output)
 {
 	/* End of block? */
 	if (h_ptr->counter >= BLOCK_DATA_SIZE)
@@ -234,14 +234,14 @@ static int rerase_block_bit(block_handle *h_ptr)
 }
 
 /* Initialise static variables used to have a bitwise stream */
-static init_block_bit(void)
+static void init_block_bit(void)
 {
 	current_byte = 0;
 	current_bit = 0;
 }
 
 /* Write out the pending bits, if any exist */
-static flush_bits(block_handle *h_ptr)
+static void flush_bits(block_handle *h_ptr)
 {
 	/* End of block? */
 	if (h_ptr->counter >= BLOCK_DATA_SIZE)
@@ -279,7 +279,7 @@ static flush_bits(block_handle *h_ptr)
  *
  * Compact everything until the least amount of memory is used.
  */
-static cln_blocks(block_type *b_ptr)
+static void cln_blocks(block_type *b_ptr)
 {
 	int i = 0, j = 0;
 	block_type* next_ptr = b_ptr;
@@ -351,7 +351,7 @@ static cln_blocks(block_type *b_ptr)
 /*
  * RLE encode this list of blocks - inserting new blocks as needed
  */
-static rle_blocks_encode(block_handle *h1_ptr)
+static void rle_blocks_encode(block_handle *h1_ptr)
 {
 	block_handle handle, *h2_ptr = &handle;
 	block_type *b_ptr;
@@ -427,7 +427,7 @@ static rle_blocks_encode(block_handle *h1_ptr)
  * Scan for duplicated symbols, and then fill in the count
  * with copies of them.
  */
-static rle_blocks_decode(block_handle *h1_ptr)
+static void rle_blocks_decode(block_handle *h1_ptr)
 {
 	block_handle handle, *h2_ptr = &handle;
 	block_type *b_ptr;
@@ -501,7 +501,7 @@ static u32b run_bits;
 
 
 /* Encode a symbol into the block stream */
-static arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol)
+static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol)
 {
 	/* How large is the current range of possibilities? */
 	u32b range = bound2 - bound1 + 1;
@@ -685,7 +685,7 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 }
 
 /* Flush the final bits when done */
-static flush_arith(block_handle *h_ptr)
+static void flush_arith(block_handle *h_ptr)
 {
 	/* Output the second highest bit */
 	write_block_bit(h_ptr, bounds1 & NEXT_BIT_32)
@@ -705,7 +705,7 @@ static flush_arith(block_handle *h_ptr)
 	flush_bits(h_ptr);
 }
 
-static arth_blocks_encode(block_handle *h1_ptr)
+static void arth_blocks_encode(block_handle *h1_ptr)
 {
 	block_handle handle, *h2_ptr = &handle;
 	block_type *b_ptr;
@@ -778,7 +778,7 @@ static arth_blocks_encode(block_handle *h1_ptr)
 	}
 }
 
-static arth_blocks_decode(block_handle *h1_ptr)
+static void arth_blocks_decode(block_handle *h1_ptr)
 {
 	block_handle handle, *h2_ptr = &handle;
 	block_type *b_ptr;
@@ -931,7 +931,7 @@ static void ang_sort_swap_string(vptr u, vptr v, int a, int b)
  * This has a worst-case time of O(n^2log(n))
  * We avoid that by doing a RLE before calling this routine.
  */
-void sort_string(int *s_ptr, char *string, int len)
+static void sort_string(int *s_ptr, char *string, int len)
 {
 	byte symbol;
 	int i;
@@ -980,7 +980,7 @@ void sort_string(int *s_ptr, char *string, int len)
  *
  * Reading h1_ptr, writing to h2_ptr;
  */
-static bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
+static void bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 {
 	int *offsets;
 	block_type b_ptr = h1_ptr->b_ptr;
@@ -1036,7 +1036,7 @@ static bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
  *
  * Reading h1_ptr, writing to h2_ptr
  */
-static ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
+static void ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 {
 	int size, transform;
 	int i;
@@ -1109,3 +1109,78 @@ static ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
 	C_KILL(temp, size, u32b);
 }
 
+
+/*
+ * Read a file into an empty stream of blocks.
+ */
+static errr read_file(block_handle *h_ptr, cptr name)
+{
+	FILE *fp;
+	
+	block_type *b_ptr;
+	
+	/* Open the file */
+	fp = my_fopen(name, "r");
+
+	/* No such file */
+	if (!fp) return (-1);
+	
+	/* Get a new block */
+	h_ptr->b_ptr = new_block();
+
+	b_ptr = h_ptr->b_ptr;
+
+	/* Process the file */
+	while (TRUE)
+	{
+		/* Read the data */
+		b_ptr->size = read(fp, b_ptr->block_data, BLOCK_DATA_SIZE);
+		
+		/* Out of data */
+		if (b_ptr->size != BLOCK_DATA_SIZE) break;
+		
+		/* Need a new block */
+		b_ptr->b_next = new_block();
+		b_ptr = b_ptr->b_next;
+	}
+	
+	/* Close the file */
+	my_fclose(fp);
+
+	/* Done */
+	return (0);
+}
+
+static errr write_file(block_handle *h_ptr, cptr name)
+{
+	FILE *fp;
+	
+	block_type *b_ptr;
+	
+	/* Open the file */
+	fp = my_fopen(name, "w");
+
+	/* No such file */
+	if (!fp) return (-1);
+
+	b_ptr = h_ptr->b_ptr;
+
+	/* Process the file */
+	while (b_ptr)
+	{
+		/* Write out the data */
+		if (write(fd, b_ptr->block_data, b_ptr->size) != b_ptr->size)
+		{
+			return (1);
+		}
+
+		/* Next block */
+		b_ptr = b_ptr->b_next;
+	}
+	
+	/* Close the file */
+	my_fclose(fp);
+
+	/* Done */
+	return (0);
+}
