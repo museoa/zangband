@@ -239,11 +239,7 @@ extern int g_colormap_white, g_colormap_black;
 #define COLORMAP_BLACK g_colormap_black
 
 extern unsigned char g_palette2colormap[256];
-extern unsigned char g_colormap2palette[256];
 
-extern int gamma_correct(int value, double gamma);
-
-typedef unsigned char TintValue, TintTable[256];
 extern int Palette_Init(Tcl_Interp *interp, char *fileName);
 #ifdef PLATFORM_WIN
 /* HPALETTE */ extern void *Palette_GetHPal(void);
@@ -251,12 +247,10 @@ extern int Palette_Init(Tcl_Interp *interp, char *fileName);
 extern unsigned char *Palette_GetRGB(void);
 extern void Palette_ResetHash(void);
 extern int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
-extern void Palette_GammaTable(double gamma, TintTable table);
 
 extern int Colormap_Init(Tcl_Interp *interp);
 extern unsigned char *Colormap_GetRGB(void);
 extern int Colormap_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
-extern void Colormap_TintTable(int tint, int opacity, TintTable table);
 
 typedef struct RGBInfo RGBInfo;
 struct RGBInfo

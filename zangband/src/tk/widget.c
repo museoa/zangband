@@ -62,20 +62,6 @@ struct Widget
 };
 
 
-/*
- * Widget items use tint tables for transparency. Since each tint table
- * takes 256 bytes, and there may be many Widget items, we allow items
- * to share tint tables.
- */
-typedef struct t_widget_color
-{
-	int ref_cnt; /* Number of allocations; zero means free'd */
-	int color; /* Palette index for this table */
-	int opacity; /* Opacity for this table */
-	TintTable tint; /* The tint table */
-} t_widget_color;
-
-
 static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 {
 	int pitch = bitmapPtr->pitch;

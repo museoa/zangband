@@ -147,9 +147,6 @@ extern bool g_icon_map_changed;
 /* t_grid -> t_display */
 extern void get_display_info(int y, int x, t_display *displayPtr);
 
-extern IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t,
-	IconPtr b);
-
 extern byte *g_palette_rgb;
 
 extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr);

@@ -349,52 +349,20 @@ void init_palette(void)
  * the foreground should be tinted, and the background may or may not
  * be tinted (depending on whether the floor is tinted).
  */
-IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
+static IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, IconPtr b)
 {
 	int i;
 
 	/* Masked */
 	if (fg)
 	{
-		/* Tint */
-		if (t)
-		{
-			for (i = 0; i < g_icon_length; i++)
-			{
-				*b++ = (*(t + *bg++) & *mk++) | *fg++;
-			}
-		}
 
 		/* No tint */
-		else
 		{
 			for (i = 0; i < g_icon_length; i++)
 			{
 				*b++ = (*bg++ & *mk++) | *fg++;
 			}
-		}
-	}
-
-	/* Not masked */
-	else
-	{
-		/* Tint */
-		if (t)
-		{
-			for (i = 0; i < g_icon_length; i++)
-			{
-				*b++ = *(t + *bg++);
-			}
-		}
-
-		/* No tint */
-		else
-		{
-			/*
-			 * In the simplest case (non-masked, non-tinted), just return
-			 * the given address of the icon data.
-			 */
-			return bg;
 		}
 	}
 

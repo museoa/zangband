@@ -46,7 +46,6 @@ int g_palette_white = 0;
 int g_colormap_black;
 int g_colormap_white;
 
-unsigned char g_colormap2palette[256];
 unsigned char g_palette2colormap[256];
 
 /*
@@ -196,107 +195,6 @@ static int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned c
 	return index;
 }
 
-/*
- * Calculate the 256 palette indices that the palette index 'tint'
- * looks like at the given opacity against each of the standard
- * palette colors.
- */
-static void IndexedColor_TintTable(IndexedColor *idc, int tint, int opacity, TintTable table)
-{
-	int i;
-	long v1, v2, m;
-	int r1, g1, b1, r2, g2, b2;
-	unsigned char *rgb = idc->rgb;
-
-#define RGB_MAX_S 127
-#define RGB_MAX_U 255
-
-	m = opacity;
-
-	/* Get the RGB values for the given palette index */
-	r2 = rgb[tint * 3];
-	g2 = rgb[tint * 3 + 1];
-	b2 = rgb[tint * 3 + 2];
-
-	/* Check each palette entry */
-	for (i = 0; i < 256; ++i)
-	{
-		/* Get the i'th RGB values */
-		r1 = rgb[i * 3];
-		g1 = rgb[i * 3 + 1];
-		b1 = rgb[i * 3 + 2];
-
-		/*
-		 * Simple linear equation using opacity as "slope"
-		 */
-
-		v1 = r1;
-		v2 = r2;
-		r1 = v1 + ( m * ( v2 - v1 ) + (RGB_MAX_S) ) / RGB_MAX_U;
-		
-		v1 = g1;
-		v2 = g2;
-		g1 = v1 + ( m * ( v2 - v1 ) + (RGB_MAX_S) ) / RGB_MAX_U;
-		
-		v1 = b1;
-		v2 = b2;
-		b1 = v1 + ( m * ( v2 - v1 ) + (RGB_MAX_S) ) / RGB_MAX_U;
-
-		/* Now we have the RGB value, convert it into a palette index */
-		table[i] = (TintValue) IndexedColor_RGB2Index(idc, r1, g1, b1);
-	}
-}
-
-/*
- * Return gamma-corrected intensity. This is usually called on
- * each component of an RGB value.
- */
-int gamma_correct(int value, double gamma)
-{
-#if 0 /* Don't use the math library... use util.c */
-	double ind;
-	double inverse;
-
-	if (gamma)
-	{
-		inverse = 1.0 / gamma;
-	}
-	else
-	{
-		inverse = 1.0;
-	}
-	ind = (double) value / 256.0;
-	return (int) (256 * pow(ind, inverse));
-#endif /* 0 */
-	/* Hack - ignore gamma value now */
-	(void) gamma;
-
-	return (value);
-}
-
-/* 
- * Writes 256 palette indices into the given tint table. Each
- * index is calculated by applying a gamma correction to each
- * RGB value of the global palette, then finding the nearest
- * palette index for the gamma-corrected RGB.
- */
-static void IndexedColor_GammaTable(IndexedColor *idc, double gamma, TintTable tint)
-{
-	int i, r, g, b;
-	unsigned char *rgb = idc->rgb;
-
-	/* Check each palette index */
-	for (i = 0; i < 256; i++)
-	{
-		/* Gamma-correct each RGB intensity */
-		r = gamma_correct(rgb[i * 3], gamma);
-		g = gamma_correct(rgb[i * 3 + 1], gamma);
-		b = gamma_correct(rgb[i * 3 + 2], gamma);
-
-		/* Find nearest palette index for RGB values */
-		tint[i] = IndexedColor_RGB2Index(idc, r, g, b);
-	}
-}
 
 /* nearest $color */
 static int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
@@ -465,17 +363,6 @@ int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b)
 }
 
 
-/* 
- * Writes 256 palette indices into the given tint table. Each
- * index is calculated by applying a gamma correction to each
- * RGB value of the global palette, then finding the nearest
- * palette index for the gamma-corrected RGB.
- */
-void Palette_GammaTable(double gamma, unsigned char *tint)
-{
-	IndexedColor_GammaTable(&g_palette, gamma, tint);
-}
-
 #ifdef PLATFORM_WIN
 
 void *Palette_GetHPal(void)
@@ -582,12 +469,6 @@ int Colormap_Init(Tcl_Interp *interp)
 		g_colormap.rgb[i * 3 + 0] = r;
 		g_colormap.rgb[i * 3 + 1] = g;
 		g_colormap.rgb[i * 3 + 2] = b;
-
-		/* Find the closest color in the palette */
-		k = Palette_RGB2Index(r, g, b);
-
-		/* Map colormap index -> palette index */
-		g_colormap2palette[i] = k;
 	}
 
 	for (i = 0; i < 256; i++)
@@ -629,11 +510,6 @@ unsigned char *Colormap_GetRGB(void)
 int Colormap_RGB2Index(unsigned char r, unsigned char g, unsigned char b)
 {
 	return IndexedColor_RGB2Index(&g_colormap, r, g, b);
-}
-
-void Colormap_TintTable(int tint, int opacity, TintTable table)
-{
-	IndexedColor_TintTable(&g_colormap, tint, opacity, table);
 }
 
 /*
