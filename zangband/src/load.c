@@ -2006,9 +2006,6 @@ static errr rd_dungeon(void)
 
 		create_wilderness();
 
-		wipe_m_list();
-		wipe_o_list();
-
 		/* Hack - do not load data into wilderness */
 		change_level(1);
 
@@ -2041,10 +2038,6 @@ static errr rd_dungeon(void)
 
 			create_wilderness();
 			
-			wipe_o_list();
-			wipe_m_list();
-			wipe_f_list();
-			
 			p_ptr->depth = dun_level_backup;
 			
 			change_level(p_ptr->depth);
@@ -2073,10 +2066,6 @@ static errr rd_dungeon(void)
 
 			/* Make a new wilderness */
 			create_wilderness();
-			
-			wipe_m_list();
-			wipe_o_list();
-			wipe_f_list();
 		}
 	}
 	else
@@ -2149,14 +2138,6 @@ static errr rd_dungeon(void)
 		/* Get a new record */
 		o_idx = o_pop();
 
-		/* Oops */
-		if (i != o_idx)
-		{
-			note(format("Object allocation error (%d <> %d)", i, o_idx));
-			return (152);
-		}
-
-
 		/* Acquire place */
 		o_ptr = &o_list[o_idx];
 
@@ -2170,20 +2151,37 @@ static errr rd_dungeon(void)
 		if (o_ptr->held_m_idx)
 		{
 			monster_type *m_ptr;
-
+			
 			/* Monster */
 			m_ptr = &m_list[o_ptr->held_m_idx];
 
-			/* Build a stack */
-			o_ptr->next_o_idx = m_ptr->hold_o_idx;
+			/* Paranoia */
+			if (m_ptr->r_idx)
+			{
+				/* Build a stack */
+				o_ptr->next_o_idx = m_ptr->hold_o_idx;
 
-			/* Place the object */
-			m_ptr->hold_o_idx = o_idx;
+				/* Place the object */
+				m_ptr->hold_o_idx = o_idx;
+			}
+			else
+			{
+				/* The monster does not exist any more! */
+				o_ptr->held_m_idx = 0;
+			}
 		}
 
 		/* Dungeon */
 		else if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
 		{
+			/* Oops */
+			if (i != o_idx)
+			{
+				note(format("Object allocation error (%d <> %d)", i, o_idx));
+				return (152);
+			}
+
+			
 			/* Access the item location */
 			c_ptr = area(o_ptr->iy,o_ptr->ix);
 
@@ -2221,14 +2219,6 @@ static errr rd_dungeon(void)
 		/* Get a new record */
 		m_idx = m_pop();
 
-		/* Oops */
-		if (i != m_idx)
-		{
-			note(format("Monster allocation error (%d <> %d)", i, m_idx));
-			return (162);
-		}
-
-
 		/* Acquire monster */
 		m_ptr = &m_list[m_idx];
 
@@ -2237,6 +2227,13 @@ static errr rd_dungeon(void)
 
 		if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
 		{
+			/* Oops */
+			if (i != m_idx)
+			{
+				note(format("Monster allocation error (%d <> %d)", i, m_idx));
+				return (162);
+			}
+			
 			/* Access grid */
 			c_ptr = area(m_ptr->fy,m_ptr->fx);
 
