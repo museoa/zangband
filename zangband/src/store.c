@@ -982,7 +982,8 @@ static void display_entry(int pos)
 	/* Hack -- fake monochrome */
 	if (!use_color || ironman_moria) a = TERM_WHITE;
 
-	Term_draw(3, i + 6, a, c);
+    if (object_aware_p(o_ptr))
+        Term_draw(3, i + 6, a, c);
 
 	/* Describe an item in the home */
 	if (st_ptr->type == BUILD_STORE_HOME)
