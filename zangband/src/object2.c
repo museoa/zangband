@@ -226,6 +226,8 @@ static void compact_objects_aux(int i1, int i2)
 		{
 			/* Repair */
 			o_ptr->next_o_idx = i2;
+			
+			break;
 		}
 	}
 
@@ -296,10 +298,10 @@ void compact_objects(int size)
 	int i, y, x, num, cnt;
 
 	int cur_lev, cur_dis, chance;
+	
+	object_type *o_ptr;
 
-	bool object_held;
-
-	monster_type *m_ptr = NULL;
+	monster_type *m_ptr;
 
 
 	/* Compact */
@@ -328,45 +330,23 @@ void compact_objects(int size)
 		/* Examine the objects */
 		for (i = 1; i < o_max; i++)
 		{
-			object_type *o_ptr = &o_list[i];
-
-			byte obj_level = get_object_level(o_ptr);
+			o_ptr = &o_list[i];
 
 			/* Skip dead objects */
 			if (!o_ptr->k_idx) continue;
 
 			/* Hack -- High level objects start out "immune" */
-			if (obj_level > cur_lev) continue;
+			if (get_object_level(o_ptr) > cur_lev) continue;
 
-			/* Monster */
-			if (o_ptr->held_m_idx)
-			{
-				/* Acquire monster */
-				m_ptr = &m_list[o_ptr->held_m_idx];
+			/* Not held objects */
+			if (o_ptr->held_m_idx) continue;
 
-				/* Get the location */
-				y = m_ptr->fy;
-				x = m_ptr->fx;
-
-				/* Monsters protect their objects */
-				if (randint0(100) < 90) continue;
-
-				object_held = TRUE;
-			}
-
-			/* Dungeon */
-			else
-			{
-				/* Get the location */
-				y = o_ptr->iy;
-				x = o_ptr->ix;
-
-				object_held = FALSE;
-			}
+			/* Get the location */
+			x = o_ptr->ix;
+			y = o_ptr->iy;
 
 			/* Nearby objects start out "immune" */
-			if ((cur_dis > 0) &&
-				(distance(p_ptr->px, p_ptr->py, x, y) < cur_dis)) continue;
+			if (distance(p_ptr->px, p_ptr->py, x, y) < cur_dis) continue;
 
 			/* Saving throw */
 			chance = 90;
@@ -378,18 +358,53 @@ void compact_objects(int size)
 			if (randint0(100) < chance) continue;
 
 			/* Delete the object */
-			if (object_held)
-			{
-				delete_held_object(&m_ptr->hold_o_idx, i);
-			}
-			else
-			{
-				delete_dungeon_object(i);
-			}
+			delete_dungeon_object(i);
 
 			/* Count it */
 			num++;
 		}
+		
+		/* Scan monster inventories */
+		for (i = 1; i < m_max; i++)
+		{
+			m_ptr = &m_list[i];
+			
+			/* Ignore dead monsters */
+			if (!m_ptr->r_idx) continue;
+		
+			/* We need to hold some objects */
+			if (!m_ptr->hold_o_idx) continue;
+			
+			/* Get the location */
+			x = m_ptr->fx;
+			y = m_ptr->fy;
+			
+			/* Nearby objects start out "immune" */
+			if (distance(p_ptr->px, p_ptr->py, x, y) < cur_dis) continue;
+			
+			/* Saving throw (higher than dungeon objects) */
+			chance = 99;
+			
+			OBJ_ITT_START(m_ptr->hold_o_idx, o_ptr)
+			{
+				/* Hack -- High level objects start out "immune" */
+				if (get_object_level(o_ptr) > cur_lev) continue;
+			
+				/* Hack -- only compact artifacts in emergencies */
+				if ((o_ptr->flags3 & TR3_INSTA_ART) && (cnt < 1000)) chance = 100;
+
+				/* Apply the saving throw */
+				if (randint0(100) < chance) continue;
+				
+				/* Delete the object */
+				delete_held_object(&m_ptr->hold_o_idx, _this_o_idx);
+				
+				/* Count it */
+				num++;
+			}
+			OBJ_ITT_END;
+		}
+		
 	}
 
 
