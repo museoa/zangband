@@ -2302,7 +2302,15 @@ static void take_move(int m_idx, int *mm)
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, m_ptr, &flags);
 
 		/* Get result */
-		if (flags & (MEG_DO_MOVE)) do_move = TRUE;
+		if (flags & (MEG_DO_MOVE))
+		{
+			do_move = TRUE;
+		}
+		else
+		{
+			do_move = FALSE;
+		}
+		
 		if (flags & (MEG_OPEN)) did_open_door = TRUE;
 		if (flags & (MEG_BASH)) did_bash_door = TRUE;
 		if (flags & (MEG_DO_TURN)) do_turn = TRUE;
