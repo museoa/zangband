@@ -52,10 +52,6 @@
  *   Append the literal "%".
  *   No legal modifiers.
  *
- * Format("%n", int *np)
- *   Save the current length into (*np).
- *   No legal modifiers.
- *
  * Format("%p", vptr v)
  *   Append the pointer "v" (implementation varies).
  *   No legal modifiers.
@@ -311,24 +307,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			continue;
 		}
 
-		/* Pre-process "%n" */
-		if (*s == 'n')
-		{
-			int *arg;
-
-			/* Get the next argument */
-			arg = va_arg(vp, int *);
-
-			/* Save the current length */
-			(*arg) = n;
-
-			/* Skip the "n" */
-			s++;
-
-			/* Continue */
-			continue;
-		}
-
 		/* Hack -- Pre-process "%r" */
 		if (*s == 'r')
 		{
@@ -548,24 +526,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				/* Done */
 				break;
 			}
-#if 0
-			case 'f':
-			case 'e':  case 'E':
-			case 'g':  case 'G':
-			{
-				/* Floating Point -- various formats */
-				double arg;
-
-				/* Get the next argument */
-				arg = va_arg(vp, double);
-
-				/* Format the argument */
-				sprintf(tmp, aux, arg);
-
-				/* Done */
-				break;
-			}
-#endif /* 0 */
 			case 'p':
 			{
 				/* Pointer -- implementation varies */
