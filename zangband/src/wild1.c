@@ -1571,11 +1571,41 @@ static bool is_road_place(u16b place_num)
 {
 	place_type *pl_ptr = &place[place_num];
 
-	/* No roads to wilderness quests */
-	if (pl_ptr->quest_num) return (FALSE);
+	switch (pl_ptr->type)
+	{
+		case TOWN_QUEST:
+		{
+			/* No roads to wilderness quests */
+			return (FALSE);
+		}
+		
+		case TOWN_DUNGEON:
+		{
+			dun_type *d_ptr = pl_ptr->dungeon;
+			
+			wild_gen2_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x].trans;
 
-	/* Default to true otherwise */
-	return (TRUE);
+			if (w_ptr->law_map + w_ptr->pop_map < 256)
+			{
+				/* Can we connect a track? */
+				if (d_ptr->flags & DF_TRACK) return (TRUE);
+			}
+			else
+			{
+				/* Can we connect a road? */
+				if (d_ptr->flags & (DF_TRACK | DF_ROAD)) return (TRUE);
+			}
+			
+			/* No roads here */
+			return (FALSE);
+		}
+		
+		default:
+		{
+			/* Default to true otherwise */
+			return (TRUE);
+		}
+	}
 }
 
 

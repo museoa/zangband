@@ -113,6 +113,11 @@
 #define QUEST_CAMP_OBJ		5	/* One in five squares has an object */
 #define QUEST_CAMP_SCATTER	10	/* Non-camp sqaures have stuff */
 
+/* Dungeon flags */
+#define DF_NONE			0x00
+#define DF_ROAD			0x01
+#define DF_TRACK		0x02
+
 
 /* Building types */
 #define BT_GENERAL		0

@@ -1732,6 +1732,9 @@ struct dun_type
 	
 	/* Liquid type for lakes/ rivers etc. */
 	byte liquid;
+	
+	/* Extra flags */
+	byte flags;
 };
 
 
@@ -1755,8 +1758,8 @@ struct dun_gen_type
 	int chance;
 	
 	/* Wilderness location */
-	int pop;
-	int height;
+	byte pop;
+	byte height;
 	
 	/* Room types available */
 	u16b rooms;
@@ -1766,6 +1769,9 @@ struct dun_gen_type
 	
 	/* Liquid type for lakes/ rivers etc. */
 	byte liquid;
+	
+	/* Extra flags */
+	byte flags;
 };
 
 
