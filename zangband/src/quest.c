@@ -514,6 +514,9 @@ bool is_quest_level(int level)
 		/* Must be dungeon quest */
 		if (q_ptr->type != QUEST_TYPE_DUNGEON) continue;
 		
+		/* Is the quest still there? */
+		if (q_ptr->status > QUEST_STATUS_TAKEN) continue;
+		
 		/* Does the level match? */
 		if (q_ptr->data.dun.level == level) return (TRUE);
 	}
