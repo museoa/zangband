@@ -158,9 +158,8 @@ struct borg_kill
 
 	bool confused;	/* Probably confused */
 	bool afraid;	/* Probably afraid */
-	bool quiver;	/* Probably quivering */
-	bool stunned;
-	bool poisoned;	/* Probably poisoned */
+
+	bool stunned;	/* Probably stunned */
 	bool invulner;	/* Probably Invulnerable */
 
 	bool seen;	/* Assigned motion */
@@ -172,13 +171,11 @@ struct borg_kill
 
 	byte speed;	/* Estimated speed */
 	byte moves;	/* Estimates moves */
-	bool ranged_attack;	/* can attack from a dx */
+	
 	s16b power;	/* Estimated hit-points */
-	s16b other;	/* Estimated something */
-	s16b level;	/* Monsters Level */
-
-
 	s16b when;	/* When last seen */
+	
+	bool ranged_attack;	/* can attack from a dx */
 };
 
 

@@ -5033,7 +5033,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->afraid) break;
 			if (kill->confused) break;
 			if (!kill->awake) break;
-			if ((kill->level >=
+			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
 												  4) * 3) + 10)) break;
@@ -5056,7 +5056,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->afraid) break;
 			if (kill->confused) break;
 			if (!kill->awake) break;
-			if ((kill->level >=
+			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
 												  4) * 3) + 10)) break;
@@ -5078,7 +5078,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->afraid) break;
 			if (kill->confused) break;
 			if (!kill->awake) break;
-			if ((kill->level >=
+			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
 												  4) * 3) + 10)) break;
@@ -5102,7 +5102,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if (kill->afraid) break;
 			if (kill->confused) break;
 			if (!kill->awake) break;
-			if ((kill->level >=
+			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
 												  4) * 3) + 10)) break;
@@ -5120,7 +5120,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_OLD_POLY:
 		{
 			dam = 0;
-			if ((kill->level >=
+			if ((r_ptr->level >=
 				 (borg_skill[BI_CLEVEL] <
 				  13) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10) /
 												  4) * 3) + 10)) break;
@@ -5141,7 +5141,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				if (kill->afraid) break;
 				if (kill->speed < r_ptr->speed) break;
 				if (!kill->awake) break;
-				if (kill->level > borg_skill[BI_CLEVEL] - 5) break;
+				if (r_ptr->level > borg_skill[BI_CLEVEL] - 5) break;
 				borg_fear_mon_spell = FALSE;
 				p1 = borg_danger_aux(c_y, c_x, 1, i, TRUE);
 				borg_fear_mon_spell = TRUE;
@@ -5194,7 +5194,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	/* use Missiles on certain types of monsters */
 	if ((borg_danger_aux(kill->y, kill->x, 1, i, TRUE) >= avoidance * 3 / 10) ||
 		(r_ptr->flags1 & RF1_FRIENDS /* monster has friends */  &&
-		 kill->level >= borg_skill[BI_CLEVEL] - 5 /* close levels */ ) ||
+		 r_ptr->level >= borg_skill[BI_CLEVEL] - 5 /* close levels */ ) ||
 		(kill->ranged_attack /* monster has a ranged attack */ ) ||
 		(r_ptr->flags1 & RF1_UNIQUE) ||
 		(r_ptr->flags2 & RF2_MULTIPLY) ||

@@ -8714,7 +8714,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 			(kill->awake) &&
 			(!(r_ptr->flags3 & RF3_NO_SLEEP)) &&
 			(!(r_ptr->flags1 & RF1_UNIQUE)) &&
-			(kill->level <= (borg_skill[BI_CLEVEL] - 15)))
+			(r_ptr->level <= (borg_skill[BI_CLEVEL] - 15)))
 		{
 			v1 = v1 / 3;
 		}
@@ -8841,7 +8841,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 				(kill->awake) &&
 				(!(r_ptr->flags3 & RF3_NO_SLEEP)) &&
 				(!(r_ptr->flags1 & RF1_UNIQUE)) &&
-				(kill->level <=
+				(r_ptr->level <=
 				 ((borg_skill[BI_CLEVEL] <
 				   15) ? borg_skill[BI_CLEVEL] : (((borg_skill[BI_CLEVEL] - 10)
 												   / 4) * 3) + 10)))

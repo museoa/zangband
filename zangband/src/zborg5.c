@@ -508,9 +508,6 @@ static void borg_update_kill_new(int i)
 #endif
 	kill->power = /* m_ptr->hp; */ r_ptr->hdice * r_ptr->hside;
 
-	/* Extract the Level */
-	kill->level = r_ptr->level;
-
 	/* Extract the Invuln */
 	kill->invulner = /* m_ptr->invulner; */ FALSE;
 
