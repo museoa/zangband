@@ -1857,6 +1857,7 @@
 #define SV_TWO_HANDED_FLAIL             18
 #define SV_GREAT_HAMMER                 19
 #define SV_MACE_OF_DISRUPTION           20
+#define SV_WHIP_OF_ENTANGLEMENT         21
 #define SV_GROND                        50
 
 /* The "sval" values for TV_POLEARM */
