@@ -569,7 +569,7 @@ static bool create_city(int x, int y, int town_num)
 	u32b rng_seed_save;
 
 	wild_gen2_type *w_ptr;
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 
 	u16b build[MAX_CITY_BUILD];
 	u16b build_list[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
@@ -586,26 +586,26 @@ static bool create_city(int x, int y, int town_num)
 	(void)C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
 
 	/* Add town */
-	select_town_name(t_ptr->name, pop);
-	t_ptr->seed = randint0(0x10000000);
+	select_town_name(pl_ptr->name, pop);
+	pl_ptr->seed = randint0(0x10000000);
 
-	t_ptr->type = TOWN_FRACT;
-	t_ptr->monst_type = TOWN_MONST_VILLAGER;
-	t_ptr->x = x;
-	t_ptr->y = y;
+	pl_ptr->type = TOWN_FRACT;
+	pl_ptr->monst_type = TOWN_MONST_VILLAGER;
+	pl_ptr->x = x;
+	pl_ptr->y = y;
 
 	/* Save the population value in the 'data' value */
-	t_ptr->data = pop;
+	pl_ptr->data = pop;
 	
 	/* Hack - the size is constant... */
-	t_ptr->xsize = 8;
-	t_ptr->ysize = 8;
+	pl_ptr->xsize = 8;
+	pl_ptr->ysize = 8;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = t_ptr->seed;
+	Rand_value = pl_ptr->seed;
 
 	/* We don't have to save this in the town structure */
 	magic = randint0(256);
@@ -706,8 +706,8 @@ static bool create_city(int x, int y, int town_num)
 	}
 
 	/* Clear the gates locations */
-	(void)C_WIPE(t_ptr->gates_x, MAX_GATES, byte);
-	(void)C_WIPE(t_ptr->gates_y, MAX_GATES, byte);
+	(void)C_WIPE(pl_ptr->gates_x, MAX_GATES, byte);
+	(void)C_WIPE(pl_ptr->gates_y, MAX_GATES, byte);
 	(void)C_WIPE(gate_num, MAX_GATES, byte);
 
 
@@ -748,16 +748,16 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[0] = i;
 					gate_num[0] = 2;
-					t_ptr->gates_x[0] = i;
-					t_ptr->gates_y[0] = j;
+					pl_ptr->gates_x[0] = i;
+					pl_ptr->gates_y[0] = j;
 				}
 				else if ((gate_value[0] == i) && one_in_(gate_num[0]))
 				{
 					/* save it */
 					gate_value[0] = i;
 					gate_num[0]++;
-					t_ptr->gates_x[0] = i;
-					t_ptr->gates_y[0] = j;
+					pl_ptr->gates_x[0] = i;
+					pl_ptr->gates_y[0] = j;
 				}
 
 				/* Left gate */
@@ -766,16 +766,16 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[1] = i;
 					gate_num[1] = 2;
-					t_ptr->gates_x[1] = i;
-					t_ptr->gates_y[1] = j;
+					pl_ptr->gates_x[1] = i;
+					pl_ptr->gates_y[1] = j;
 				}
 				else if ((gate_value[1] == i) && one_in_(gate_num[1]))
 				{
 					/* save it */
 					gate_value[1] = i;
 					gate_num[1]++;
-					t_ptr->gates_x[1] = i;
-					t_ptr->gates_y[1] = j;
+					pl_ptr->gates_x[1] = i;
+					pl_ptr->gates_y[1] = j;
 				}
 
 				/* Bottom gate */
@@ -784,16 +784,16 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[2] = j;
 					gate_num[2] = 2;
-					t_ptr->gates_x[2] = i;
-					t_ptr->gates_y[2] = j;
+					pl_ptr->gates_x[2] = i;
+					pl_ptr->gates_y[2] = j;
 				}
 				else if ((gate_value[2] == j) && one_in_(gate_num[2]))
 				{
 					/* save it */
 					gate_value[2] = j;
 					gate_num[2]++;
-					t_ptr->gates_x[2] = i;
-					t_ptr->gates_y[2] = j;
+					pl_ptr->gates_x[2] = i;
+					pl_ptr->gates_y[2] = j;
 				}
 
 				/* Top gate */
@@ -802,16 +802,16 @@ static bool create_city(int x, int y, int town_num)
 					/* save it */
 					gate_value[3] = j;
 					gate_num[3] = 2;
-					t_ptr->gates_x[3] = i;
-					t_ptr->gates_y[3] = j;
+					pl_ptr->gates_x[3] = i;
+					pl_ptr->gates_y[3] = j;
 				}
 				else if ((gate_value[3] == j) && one_in_(gate_num[3]))
 				{
 					/* save it */
 					gate_value[3] = j;
 					gate_num[3]++;
-					t_ptr->gates_x[3] = i;
-					t_ptr->gates_y[3] = j;
+					pl_ptr->gates_x[3] = i;
+					pl_ptr->gates_y[3] = j;
 				}
 			}
 		}
@@ -875,8 +875,8 @@ static bool create_city(int x, int y, int town_num)
 	 */
 
 	/* Allocate the stores */
-	C_MAKE(t_ptr->store, build_num, store_type);
-	t_ptr->numstores = build_num;
+	C_MAKE(pl_ptr->store, build_num, store_type);
+	pl_ptr->numstores = build_num;
 
 	/* Initialise the stores */
 	for (i = 0; i < build_num; i++)
@@ -960,7 +960,7 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_count)
 /*
  * Draw the gates to the city
  */
-static void draw_gates(byte i, byte j, town_type *t_ptr)
+static void draw_gates(byte i, byte j, place_type *pl_ptr)
 {
 	int k;
 	int x = i * 8, y = j * 8;
@@ -971,7 +971,7 @@ static void draw_gates(byte i, byte j, town_type *t_ptr)
 	/* Draw gates if visible */
 	for (k = 0; k < MAX_GATES; k++)
 	{
-		if ((t_ptr->gates_x[k] == i) && (t_ptr->gates_y[k] == j))
+		if ((pl_ptr->gates_x[k] == i) && (pl_ptr->gates_y[k] == j))
 		{
 			/* Add doors (hack) */
 
@@ -1259,14 +1259,14 @@ static void draw_city(u16b town_num)
 
 	bool city_block;
 
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 		
 	/* Paranoia */
-	if (t_ptr->region) quit("Town already has region during creation.");
+	if (pl_ptr->region) quit("Town already has region during creation.");
 	
 	/* Get region */
-	t_ptr->region = (s16b) create_region(t_ptr->xsize * WILD_BLOCK_SIZE,
-			 t_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
+	pl_ptr->region = (s16b) create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
+			 pl_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
 	
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -1411,7 +1411,7 @@ static void draw_city(u16b town_num)
 				}
 
 				/* Draw the gates */
-				draw_gates(i, j, t_ptr);
+				draw_gates(i, j, pl_ptr);
 			}
 		}
 	}
@@ -1666,13 +1666,13 @@ void van_town_gen(u16b town_num)
 	
 	cave_type *c_ptr;
 	
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 	
 	/* Paranoia */
-	if (t_ptr->region) quit("Town already has region during creation.");
+	if (pl_ptr->region) quit("Town already has region during creation.");
 	
 	/* Get region */
-	t_ptr->region = (s16b) create_region(V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT,
+	pl_ptr->region = (s16b) create_region(V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT,
 											 REGION_NULL);
 	
 	/* Hack - do not increment refcount here - let allocate_block do that */
@@ -1720,17 +1720,17 @@ void init_vanilla_town(void)
 {
 	int i, j;
 	
-	town_type *t_ptr = &town[1];
+	place_type *pl_ptr = &town[1];
 
 	/* Only one town */
-	strcpy(t_ptr->name, "Town");
-	t_ptr->seed = randint0(0x10000000);
-	t_ptr->numstores = 9;
-	t_ptr->type = TOWN_OLD;
-	t_ptr->x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
-	t_ptr->y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
-	t_ptr->xsize = V_TOWN_BLOCK_WID / WILD_BLOCK_SIZE;
-	t_ptr->ysize = V_TOWN_BLOCK_HGT / WILD_BLOCK_SIZE;
+	strcpy(pl_ptr->name, "Town");
+	pl_ptr->seed = randint0(0x10000000);
+	pl_ptr->numstores = 9;
+	pl_ptr->type = TOWN_OLD;
+	pl_ptr->x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
+	pl_ptr->y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
+	pl_ptr->xsize = V_TOWN_BLOCK_WID / WILD_BLOCK_SIZE;
+	pl_ptr->ysize = V_TOWN_BLOCK_HGT / WILD_BLOCK_SIZE;
 
 	/* Allocate the stores */
 	C_MAKE(town[1].store, MAX_STORES, store_type);
@@ -1743,9 +1743,9 @@ void init_vanilla_town(void)
 	}
 
 	/* Place town on wilderness */
-	for (i = t_ptr->x; i < t_ptr->x + t_ptr->xsize; i++)
+	for (i = pl_ptr->x; i < pl_ptr->x + pl_ptr->xsize; i++)
 	{
-		for (j = t_ptr->y; j < t_ptr->y + t_ptr->ysize; j++)
+		for (j = pl_ptr->y; j < pl_ptr->y + pl_ptr->ysize; j++)
 		{
 			wild[j][i].done.town = 1;
 		}
@@ -1796,17 +1796,17 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 	int level = wild[y][x].done.mon_gen;
 	
 	cave_type *c_ptr;
-	town_type *t_ptr = &town[w_town];
+	place_type *pl_ptr = &town[w_town];
 	
 	/* Check that town/quest region exists */
-	if (!t_ptr->region)
+	if (!pl_ptr->region)
 	{
 		/* Create the town/quest */
 		town_gen(w_town);
 	}
 	
 	/* Paranoia */
-	if (!t_ptr->region) quit("Could not get a region for the town/quest");
+	if (!pl_ptr->region) quit("Could not get a region for the town/quest");
 
 	/* Find block to copy */
 	x1 = (x - town[w_town].x) * WILD_BLOCK_SIZE;
@@ -1818,7 +1818,7 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			/* Get pointer to overlay info */
-			c_ptr = access_region(x1 + i, y1 + j, t_ptr->region);
+			c_ptr = access_region(x1 + i, y1 + j, pl_ptr->region);
 			
 			/* Get destination */
 			x2 = x * WILD_BLOCK_SIZE + i;
@@ -3285,7 +3285,7 @@ static void del_block(int x, int y)
 	int m_idx;
 	
 	wild_type *w_ptr = &wild[y][x];
-	town_type *t_ptr = &town[w_ptr->done.town];
+	place_type *pl_ptr = &town[w_ptr->done.town];
 	
 	if (!wild_refcount[y][x]) quit("Dead wilderness cache!");
 
@@ -3299,13 +3299,13 @@ static void del_block(int x, int y)
 	if (w_ptr->done.town)
 	{
 		/* Decrease refcount region */
-		t_ptr->region = unref_region(t_ptr->region);
+		pl_ptr->region = unref_region(pl_ptr->region);
 		
 		/* Unref quest? */
-		if ((!t_ptr->region) && (t_ptr->quest_num))
+		if ((!pl_ptr->region) && (pl_ptr->quest_num))
 		{
 			/* No longer active or created */
-			quest[t_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE
+			quest[pl_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE
 				 | QUEST_FLAG_CREATED);
 		}
 	}
@@ -3408,8 +3408,9 @@ void move_wild(void)
 	int x, y;
 	int ox = p_ptr->old_wild_x, oy = p_ptr->old_wild_y;
 	int i, j;
+	
 	quest_type *q_ptr;
-	town_type *t_ptr;
+	place_type *pl_ptr;
 
 	/* Get upper left hand block in grid. */
 
@@ -3423,12 +3424,12 @@ void move_wild(void)
 	/* Hack - set town */
 	p_ptr->town_num = wild[y][x].done.town;
 	
-	t_ptr = &town[p_ptr->town_num];
+	pl_ptr = &town[p_ptr->town_num];
 	
 	/* Check for wilderness quests */
-	if (t_ptr->quest_num)
+	if (pl_ptr->quest_num)
 	{
-		q_ptr = &quest[t_ptr->quest_num];
+		q_ptr = &quest[pl_ptr->quest_num];
 		
 		/* Some quests are completed by walking on them */
 		if (q_ptr->x_type == QX_WILD_ENTER)
@@ -3437,10 +3438,10 @@ void move_wild(void)
 			wild[y][x].done.town = 0;
 			
 			/* Decrement active block counter */
-			t_ptr->data--;
+			pl_ptr->data--;
 			
 			/* Done? */
-			if (!t_ptr->data)
+			if (!pl_ptr->data)
 			{
 				trigger_quest_complete(QX_WILD_ENTER, (vptr) q_ptr);
 			}

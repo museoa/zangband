@@ -1091,7 +1091,7 @@ static errr init_other(void)
 	C_MAKE(store_cache, STORE_CACHE_AMNT, store_type*);
 
 	/* Allocate the towns */
-	C_MAKE(town, z_info->wp_max, town_type);
+	C_MAKE(town, z_info->wp_max, place_type);
 	
 	
 	/*** Pre-allocate space for the "format()" buffer ***/

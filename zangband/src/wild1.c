@@ -1557,10 +1557,10 @@ static void test_wild_data(void)
  */
 static bool is_road_town(u16b town_num)
 {
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 	
 	/* No roads to wilderness quests */
-	if (t_ptr->quest_num) return (FALSE);
+	if (pl_ptr->quest_num) return (FALSE);
 	
 	/* Default to true otherwise */
 	return (TRUE);
@@ -1663,7 +1663,7 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
  */
 static void road_connect(u16b *x, u16b *y, u16b town_num)
 {
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 
 	/* Big distance */
 	int dist = max_wild * 2;
@@ -1672,13 +1672,13 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 	u16b x1 = *x, y1 = *y;
 
 	/* Check town type */
-	if (t_ptr->type == TOWN_FRACT)
+	if (pl_ptr->type == TOWN_FRACT)
 	{
 		for (k = 0; k < MAX_GATES; k++)
 		{
 			/* Get distance from gate to target square */
-			cdist = distance(x1, y1, t_ptr->x + t_ptr->gates_x[k] / 2,
-				 t_ptr->y + t_ptr->gates_y[k] / 2);
+			cdist = distance(x1, y1, pl_ptr->x + pl_ptr->gates_x[k] / 2,
+				 pl_ptr->y + pl_ptr->gates_y[k] / 2);
 
 			if (cdist < dist)
 			{
@@ -1689,29 +1689,29 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 				{
 					case 0:
 					{
-						*x = t_ptr->x + t_ptr->gates_x[0] / 2;
-						*y = t_ptr->y + t_ptr->gates_y[0] / 2;
+						*x = pl_ptr->x + pl_ptr->gates_x[0] / 2;
+						*y = pl_ptr->y + pl_ptr->gates_y[0] / 2;
 						break;
 					}
 
 					case 1:
 					{
-						*x = t_ptr->x + t_ptr->gates_x[1] / 2;
-						*y = t_ptr->y + t_ptr->gates_y[1] / 2;
+						*x = pl_ptr->x + pl_ptr->gates_x[1] / 2;
+						*y = pl_ptr->y + pl_ptr->gates_y[1] / 2;
 						break;
 					}
 
 					case 2:
 					{
-						*x = t_ptr->x + t_ptr->gates_x[2] / 2;
-						*y = t_ptr->y + t_ptr->gates_y[2] / 2;
+						*x = pl_ptr->x + pl_ptr->gates_x[2] / 2;
+						*y = pl_ptr->y + pl_ptr->gates_y[2] / 2;
 						break;
 					}
 
 					case 3:
 					{
-						*x = t_ptr->x + t_ptr->gates_x[3] / 2;
-						*y = t_ptr->y + t_ptr->gates_y[3] / 2;
+						*x = pl_ptr->x + pl_ptr->gates_x[3] / 2;
+						*y = pl_ptr->y + pl_ptr->gates_y[3] / 2;
 						break;
 					}
 				}
@@ -1723,8 +1723,8 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 	}
 
 	/* Dodgy hack = just output median town square */
-	*x = t_ptr->x + t_ptr->xsize / 2;
-	*y = t_ptr->y + t_ptr->ysize / 2;
+	*x = pl_ptr->x + pl_ptr->xsize / 2;
+	*y = pl_ptr->y + pl_ptr->ysize / 2;
 }
 
 

@@ -1717,11 +1717,11 @@ struct store_type
 
 
 /*
- * A structure describing a town with
- * stores and buildings
+ * A structure describing a place with
+ * stores and buildings.
  */
-typedef struct town_type town_type;
-struct town_type
+typedef struct place_type place_type;
+struct place_type
 {
 	u32b        seed;		/* Seed for RNG */
 	store_type	*store;		/* The stores[numstores] */

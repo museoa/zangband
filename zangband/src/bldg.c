@@ -1904,13 +1904,13 @@ void do_cmd_bldg(field_type *f_ptr)
 	store_type   *b_ptr;
 	bool	leave_build = FALSE;
 
-	town_type	*twn_ptr = &town[p_ptr->town_num];
+	place_type	*pl_ptr = &town[p_ptr->town_num];
 	
 	/* Get the building the player is on */
-	for (i = 0; i < twn_ptr->numstores; i++)
+	for (i = 0; i < pl_ptr->numstores; i++)
 	{
-		if ((p_ptr->py - twn_ptr->y * 16 == twn_ptr->store[i].y) && 
-		 (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
+		if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) && 
+		 (p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
 		{
 			which = i;
 		}
@@ -1924,7 +1924,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	}
 
 
-	b_ptr = &twn_ptr->store[which];
+	b_ptr = &pl_ptr->store[which];
 
 	/* Forget the view */
 	forget_view();

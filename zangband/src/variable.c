@@ -518,9 +518,9 @@ region_info *ri_list;
 u16b town_count;
 
 /*
- * The towns [z_info->wp_max]
+ * Places in the wilderness [z_info->wp_max]
  */
-town_type *town;
+place_type *town;
 
 
 /*

@@ -227,7 +227,7 @@ extern field_type *fld_list;
 extern region_type *rg_list;
 extern region_info *ri_list;
 extern u16b town_count;
-extern town_type *town;
+extern place_type *town;
 extern object_type *inventory;
 extern s16b alloc_kind_size;
 extern alloc_entry *alloc_kind_table;

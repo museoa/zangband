@@ -1376,7 +1376,7 @@ bool quest_blank(int x, int y, int xsize, int ysize, int town_count, byte flags)
 {
 	int i, j;
 	wild_gen2_type *w_ptr;
-	town_type *t_ptr = &town[town_count];
+	place_type *pl_ptr = &town[town_count];
 
 	/* Hack - Population check */
 	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
@@ -1432,8 +1432,8 @@ bool quest_blank(int x, int y, int xsize, int ysize, int town_count, byte flags)
 	}
 	
 	/* Save size */
-	t_ptr->xsize = xsize;
-	t_ptr->ysize = ysize;
+	pl_ptr->xsize = xsize;
+	pl_ptr->ysize = ysize;
 
 	/* Ok then */
 	return (TRUE);
@@ -1450,7 +1450,7 @@ bool create_quest(int x, int y, int town_num)
 	
 	wild_type *w_ptr = &wild[y][x];
 	
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 	
 	quest_type *q_ptr;
 	
@@ -1467,24 +1467,24 @@ bool create_quest(int x, int y, int town_num)
 	if (!q_num) return (FALSE);
 	
 	/* Get a random seed for later */
-	t_ptr->seed = randint0(0x10000000);
+	pl_ptr->seed = randint0(0x10000000);
 
 	/* Quest */
-	t_ptr->type = TOWN_QUEST;
-	t_ptr->monst_type = TOWN_MONST_MONST;
-	t_ptr->x = x;
-	t_ptr->y = y;
-	t_ptr->quest_num = q_num;
+	pl_ptr->type = TOWN_QUEST;
+	pl_ptr->monst_type = TOWN_MONST_MONST;
+	pl_ptr->x = x;
+	pl_ptr->y = y;
+	pl_ptr->quest_num = q_num;
 
 	/* Data value is used as a counter of "active" blocks */
-	t_ptr->data = 0;
+	pl_ptr->data = 0;
 	
-	if ((!t_ptr->xsize) || (!t_ptr->ysize)) quit("Zero quest size");
+	if ((!pl_ptr->xsize) || (!pl_ptr->ysize)) quit("Zero quest size");
 	
 	/* Link wilderness to quest */
-	for (i = 0; i < t_ptr->xsize; i++)
+	for (i = 0; i < pl_ptr->xsize; i++)
 	{
-		for (j = 0; j < t_ptr->ysize; j++)
+		for (j = 0; j < pl_ptr->ysize; j++)
 		{
 			w_ptr = &wild[y + j][x + i];
 			
@@ -1495,7 +1495,7 @@ bool create_quest(int x, int y, int town_num)
 			w_ptr->trans.town = (byte)town_num;
 			
 			/* Increment "active block" counter */
-			t_ptr->data++;
+			pl_ptr->data++;
 		}
 	}
 	
@@ -1532,11 +1532,11 @@ void draw_quest(u16b town_num)
 	int x, y, n;
 	int i, j;
 	
-	town_type *t_ptr = &town[town_num];
+	place_type *pl_ptr = &town[town_num];
 	
-	wild_type *w_ptr = &wild[t_ptr->y][t_ptr->x];
+	wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
 	
-	quest_type *q_ptr = &quest[t_ptr->quest_num];
+	quest_type *q_ptr = &quest[pl_ptr->quest_num];
 	
 	cave_type *c_ptr;
 	
@@ -1550,11 +1550,11 @@ void draw_quest(u16b town_num)
 	int depth = w_ptr->done.mon_gen;
 	
 	/* Paranoia */
-	if (t_ptr->region) quit("Quest already has region during creation.");
+	if (pl_ptr->region) quit("Quest already has region during creation.");
 	
 	/* Get region */
-	t_ptr->region = (s16b) create_region(t_ptr->xsize * WILD_BLOCK_SIZE,
-		 t_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
+	pl_ptr->region = (s16b) create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
+		 pl_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
 	
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -1588,7 +1588,7 @@ void draw_quest(u16b town_num)
 	get_obj_num_prep();
 	
 	/* Pick number random spots within region */
-	n = (t_ptr->xsize * t_ptr->ysize) / 4;
+	n = (pl_ptr->xsize * pl_ptr->ysize) / 4;
 	
 	while (n != 0)
 	{
@@ -1596,8 +1596,8 @@ void draw_quest(u16b town_num)
 		n--;
 		
 		/* Get spot */
-		x = randint0(t_ptr->xsize * 2);
-		y = randint0(t_ptr->ysize * 2);
+		x = randint0(pl_ptr->xsize * 2);
+		y = randint0(pl_ptr->ysize * 2);
 		
 		/* Place ground */
 		for (i = 0; i < 8; i++)
@@ -1649,9 +1649,9 @@ void draw_quest(u16b town_num)
 	get_obj_num_prep();
 	
 	/* Scatter stuff over the region */
-	for (i = 0; i < t_ptr->xsize * WILD_BLOCK_SIZE; i++)
+	for (i = 0; i < pl_ptr->xsize * WILD_BLOCK_SIZE; i++)
 	{
-		for (j = 0; j < t_ptr->ysize * WILD_BLOCK_SIZE; j++)
+		for (j = 0; j < pl_ptr->ysize * WILD_BLOCK_SIZE; j++)
 		{
 			/* Only on some squares */
 			if (!one_in_(QUEST_CAMP_SCATTER)) continue;
