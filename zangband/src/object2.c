@@ -4166,23 +4166,32 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	/* Make an artifact */
 	if (!randint0(prob) && (make_artifact(o_ptr))) return (TRUE);
 
-	/* Select items based on "theme" */
-	init_match_theme(theme);
+	/* Is there a restriction already? */
+	if (!get_obj_num_hook)
+	{
+		/* Select items based on "theme" */
+		init_match_theme(theme);
 	
-	/* Activate restriction */
-	get_obj_num_hook = kind_is_theme;
+		/* Activate restriction */
+		get_obj_num_hook = kind_is_theme;
 	
-	/* Prepare allocation table */
-	get_obj_num_prep();
+		/* Prepare allocation table */
+		get_obj_num_prep();
 	
-	/* Pick a random object */
-	k_idx = get_obj_num(base);
+		/* Pick a random object */
+		k_idx = get_obj_num(base);
 	
-	/* Clear restriction */
-	get_obj_num_hook = NULL;
+		/* Clear restriction */
+		get_obj_num_hook = NULL;
 
-	/* Prepare allocation table */
-	get_obj_num_prep();
+		/* Prepare allocation table */
+		get_obj_num_prep();
+	}
+	else
+	{
+		/* Pick a random object using the current restriction */
+		k_idx = get_obj_num(base);
+	}
 
 	/* Handle failure */
 	if (!k_idx) return (FALSE);
