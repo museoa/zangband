@@ -616,10 +616,10 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* Collect curses */
 	vn = 0;
 	if (TEST_FLAG(ff, 2, TR2_DRAIN_EXP))   vp[vn++] = "drains your experience";
+	if (TEST_FLAG(ff, 3, TR3_DRAIN_STATS)) vp[vn++] = "drains your stats";
 	if (TEST_FLAG(ff, 2, TR2_TELEPORT))    vp[vn++] = "induces random teleportation";
 	if (TR_FLAG(ff, 2, AGGRAVATE))     vp[vn++] = "aggravates nearby creatures";
 	if (TEST_FLAG(ff, 3, TR3_AUTO_CURSE))  vp[vn++] = "becomes cursed randomly";
-	if (TEST_FLAG(ff, 3, TR3_DRAIN_STATS)) vp[vn++] = "drain your stats";
 	if (TEST_FLAG(ff, 3, TR3_CANT_EAT))    vp[vn++] = "makes you unable to eat normal food";
 	if (TEST_FLAG(ff, 3, TR3_SLOW_HEAL))   vp[vn++] = "slows your healing";
 
