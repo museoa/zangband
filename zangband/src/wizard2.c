@@ -825,12 +825,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 
 /*
- * Maximum number of rolls
- */
-#define TEST_ROLL 100000
-
-
-/*
  * Try to create an item again. Output some statistics.    -Bernd-
  *
  * The statistics are correct now.  We acquire a clean grid, and then
@@ -841,7 +835,9 @@ static void wiz_reroll_item(object_type *o_ptr)
  */
 static void wiz_statistics(object_type *o_ptr)
 {
-	long i, matches, better, worse, other;
+	u32b i, matches, better, worse, other, correct;
+
+	u32b test_roll = 1000000;
 
 	char ch;
 	char *quality;
@@ -851,7 +847,10 @@ static void wiz_statistics(object_type *o_ptr)
 	object_type forge;
 	object_type	*q_ptr;
 
-	cptr q = "Rolls: %ld, Matches: %ld, Better: %ld, Worse: %ld, Other: %ld";
+	cptr q = "Rolls: %ld  Correct: %ld  Matches: %ld  Better: %ld  Worse: %ld  Other: %ld";
+
+	cptr p = "Enter number of items to roll: ";
+	char tmp_val[80];
 
 
 	/* XXX XXX XXX Mega-Hack -- allow multiple artifacts */
@@ -894,16 +893,20 @@ static void wiz_statistics(object_type *o_ptr)
 			break;
 		}
 
+		sprintf(tmp_val, "%d", test_roll);
+		if (get_string(p, tmp_val, 10)) test_roll = atol(tmp_val);
+		test_roll = MAX(1, test_roll);
+
 		/* Let us know what we are doing */
 		msg_format("Creating a lot of %s items. Base level = %d.",
-		           quality, dun_level);
+					  quality, dun_level);
 		msg_print(NULL);
 
 		/* Set counters to zero */
-		matches = better = worse = other = 0;
+		correct = matches = better = worse = other = 0;
 
 		/* Let's rock and roll */
-		for (i = 0; i <= TEST_ROLL; i++)
+		for (i = 0; i <= test_roll; i++)
 		{
 			/* Output every few rolls */
 			if ((i < 100) || (i % 100 == 0))
@@ -922,7 +925,7 @@ static void wiz_statistics(object_type *o_ptr)
 				}
 
 				/* Dump the stats */
-				prt(format(q, i, matches, better, worse, other), 0, 0);
+				prt(format(q, i, correct, matches, better, worse, other), 0, 0);
 				Term_fresh();
 			}
 
@@ -945,29 +948,33 @@ static void wiz_statistics(object_type *o_ptr)
 			if ((o_ptr->tval) != (q_ptr->tval)) continue;
 			if ((o_ptr->sval) != (q_ptr->sval)) continue;
 
+			/* One more correct item */
+			correct++;
+
 			/* Check for match */
 			if ((q_ptr->pval == o_ptr->pval) &&
-			    (q_ptr->to_a == o_ptr->to_a) &&
-			    (q_ptr->to_h == o_ptr->to_h) &&
-			    (q_ptr->to_d == o_ptr->to_d))
+				 (q_ptr->to_a == o_ptr->to_a) &&
+				 (q_ptr->to_h == o_ptr->to_h) &&
+				 (q_ptr->to_d == o_ptr->to_d) &&
+				 (q_ptr->name1 == o_ptr->name1))
 			{
 				matches++;
 			}
 
 			/* Check for better */
 			else if ((q_ptr->pval >= o_ptr->pval) &&
-			         (q_ptr->to_a >= o_ptr->to_a) &&
-			         (q_ptr->to_h >= o_ptr->to_h) &&
-			         (q_ptr->to_d >= o_ptr->to_d))
+						(q_ptr->to_a >= o_ptr->to_a) &&
+						(q_ptr->to_h >= o_ptr->to_h) &&
+						(q_ptr->to_d >= o_ptr->to_d))
 			{
 				better++;
 			}
 
 			/* Check for worse */
 			else if ((q_ptr->pval <= o_ptr->pval) &&
-			         (q_ptr->to_a <= o_ptr->to_a) &&
-			         (q_ptr->to_h <= o_ptr->to_h) &&
-			         (q_ptr->to_d <= o_ptr->to_d))
+						(q_ptr->to_a <= o_ptr->to_a) &&
+						(q_ptr->to_h <= o_ptr->to_h) &&
+						(q_ptr->to_d <= o_ptr->to_d))
 			{
 				worse++;
 			}
@@ -977,10 +984,12 @@ static void wiz_statistics(object_type *o_ptr)
 			{
 				other++;
 			}
+
+			if (matches) break;
 		}
 
 		/* Final dump */
-		msg_format(q, i, matches, better, worse, other);
+		msg_format(q, i, correct, matches, better, worse, other);
 		msg_print(NULL);
 	}
 
