@@ -183,92 +183,77 @@ typedef struct ThreadSpecificData {
 } ThreadSpecificData;
 Tcl_ThreadDataKey dataKey;
 
-static void		Prompt _ANSI_ARGS_((Tcl_Interp *interp, int partial));
-static void		StdinProc _ANSI_ARGS_((ClientData clientData,
-			    int mask));
 
+/*
+ *----------------------------------------------------------------------
+ *
+ * Prompt --
+ *
+ *	Issue a prompt on standard output, or invoke a script
+ *	to issue the prompt.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	A prompt gets output, and a Tcl script may be evaluated
+ *	in interp.
+ *
+ *----------------------------------------------------------------------
+ */
 
-Tcl_Interp *TclTk_Init(int argc, cptr *argv)
+/*
+ * Interpreter to use for prompting.
+ * Non-zero 'partial' means there already
+ * exists a partial command, so use
+ * the secondary prompt.
+ */
+static void Prompt(Tcl_Interp *interp, int partial)
 {
-	char *args;
-	char buf[20];
-	Tcl_DString argString;
-	Tcl_Interp *interp;
-    Tcl_Channel inChannel, outChannel;
-    ThreadSpecificData *tsdPtr;
+    cptr promptCmd;
+    int code;
+    Tcl_Channel outChannel, errChannel;
 
-	interp = Tcl_CreateInterp();
+    promptCmd = Tcl_GetVar(interp,
+	(partial ? "tcl_prompt2" : "tcl_prompt1"), TCL_GLOBAL_ONLY);
+    if (promptCmd == NULL) {
+defaultPrompt:
+	if (!partial) {
 
-	/*** From tk83/generic/TkMain.c ***/
+            /*
+             * We must check that outChannel is a real channel - it
+             * is possible that someone has transferred stdout out of
+             * this interpreter with "interp transfer".
+             */
 
-	tsdPtr = (ThreadSpecificData *) 
-		Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
-
-	Tcl_FindExecutable(argv[0]);
-	tsdPtr->interp = interp;
-
-	args = Tcl_Merge(argc-1, argv+1);
-	Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-	Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-	Tcl_DStringFree(&argString);
-	Tcl_Free(args);
-	sprintf(buf, "%d", argc-1);
-
-	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-	Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-	Tcl_DStringFree(&argString);
-
-	tsdPtr->tty = isatty(0);
-	Tcl_SetVar(interp, "tcl_interactive",
-		(tsdPtr->tty ? "1" : "0"), TCL_GLOBAL_ONLY);
-
-	/*** from tk83/unix/tkAppInit.c (Tcl_AppInit) ***/
-
-	if (Tcl_Init(interp) != TCL_OK)
-	{
-		goto error;
+	    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
+            if (outChannel != (Tcl_Channel) NULL) {
+                Tcl_WriteChars(outChannel, "% ", 2);
+            }
 	}
-	if (Tk_Init(interp) != TCL_OK)
-	{
-		goto error;
+    } else {
+	code = Tcl_Eval(interp, promptCmd);
+	if (code != TCL_OK) {
+	    Tcl_AddErrorInfo(interp,
+		    "\n    (script that generates prompt)");
+            /*
+             * We must check that errChannel is a real channel - it
+             * is possible that someone has transferred stderr out of
+             * this interpreter with "interp transfer".
+             */
+            
+	    errChannel = Tcl_GetChannel(interp, "stderr", NULL);
+            if (errChannel != (Tcl_Channel) NULL) {
+                Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
+                Tcl_WriteChars(errChannel, "\n", 1);
+            }
+	    goto defaultPrompt;
 	}
-	Tcl_StaticPackage(interp, "Tk", Tk_Init, Tk_SafeInit);
-
-	/*** From tk83/generic/TkMain.c (again) ***/
-
-	/*
-	 * Establish a channel handler for stdin.
-	 */
-
-	inChannel = Tcl_GetStdChannel(TCL_STDIN);
-	if (inChannel)
-	{
-		Tcl_CreateChannelHandler(inChannel, TCL_READABLE, StdinProc,
-			(ClientData) inChannel);
-	}
-	if (tsdPtr->tty)
-	{
-		Prompt(interp, 0);
-	}
-
-	outChannel = Tcl_GetStdChannel(TCL_STDOUT);
-	if (outChannel)
-	{
-		Tcl_Flush(outChannel);
-	}
-
-    Tcl_DStringInit(&tsdPtr->command);
-    Tcl_DStringInit(&tsdPtr->line);
-	Tcl_ResetResult(interp);
-
-	return interp;
-
-error:
-	TkpDisplayWarning(Tcl_GetStringResult(interp), "TclTk_Init Failed!");
-	Tcl_DeleteInterp(interp);
-	Tcl_Exit(1);
-	return NULL;
+    }
+    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
+    if (outChannel != (Tcl_Channel) NULL) {
+        Tcl_Flush(outChannel);
+    }
 }
 
 
@@ -366,76 +351,89 @@ static void StdinProc(ClientData clientData, int mask)
     Tcl_ResetResult(interp);
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * Prompt --
- *
- *	Issue a prompt on standard output, or invoke a script
- *	to issue the prompt.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	A prompt gets output, and a Tcl script may be evaluated
- *	in interp.
- *
- *----------------------------------------------------------------------
- */
 
-/*
- * Interpreter to use for prompting.
- * Non-zero 'partial' means there already
- * exists a partial command, so use
- * the secondary prompt.
- */
-static void Prompt(Tcl_Interp *interp, int partial)
+Tcl_Interp *TclTk_Init(int argc, cptr *argv)
 {
-    cptr promptCmd;
-    int code;
-    Tcl_Channel outChannel, errChannel;
+	char *args;
+	char buf[20];
+	Tcl_DString argString;
+	Tcl_Interp *interp;
+    Tcl_Channel inChannel, outChannel;
+    ThreadSpecificData *tsdPtr;
 
-    promptCmd = Tcl_GetVar(interp,
-	(partial ? "tcl_prompt2" : "tcl_prompt1"), TCL_GLOBAL_ONLY);
-    if (promptCmd == NULL) {
-defaultPrompt:
-	if (!partial) {
+	interp = Tcl_CreateInterp();
 
-            /*
-             * We must check that outChannel is a real channel - it
-             * is possible that someone has transferred stdout out of
-             * this interpreter with "interp transfer".
-             */
+	/*** From tk83/generic/TkMain.c ***/
 
-	    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
-            if (outChannel != (Tcl_Channel) NULL) {
-                Tcl_WriteChars(outChannel, "% ", 2);
-            }
+	tsdPtr = (ThreadSpecificData *) 
+		Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
+
+	Tcl_FindExecutable(argv[0]);
+	tsdPtr->interp = interp;
+
+	args = Tcl_Merge(argc-1, argv+1);
+	Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
+	Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+	Tcl_DStringFree(&argString);
+	Tcl_Free(args);
+	sprintf(buf, "%d", argc-1);
+
+	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
+	Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+	Tcl_DStringFree(&argString);
+
+	tsdPtr->tty = isatty(0);
+	Tcl_SetVar(interp, "tcl_interactive",
+		(tsdPtr->tty ? "1" : "0"), TCL_GLOBAL_ONLY);
+
+	/*** from tk83/unix/tkAppInit.c (Tcl_AppInit) ***/
+
+	if (Tcl_Init(interp) != TCL_OK)
+	{
+		goto error;
 	}
-    } else {
-	code = Tcl_Eval(interp, promptCmd);
-	if (code != TCL_OK) {
-	    Tcl_AddErrorInfo(interp,
-		    "\n    (script that generates prompt)");
-            /*
-             * We must check that errChannel is a real channel - it
-             * is possible that someone has transferred stderr out of
-             * this interpreter with "interp transfer".
-             */
-            
-	    errChannel = Tcl_GetChannel(interp, "stderr", NULL);
-            if (errChannel != (Tcl_Channel) NULL) {
-                Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-                Tcl_WriteChars(errChannel, "\n", 1);
-            }
-	    goto defaultPrompt;
+	if (Tk_Init(interp) != TCL_OK)
+	{
+		goto error;
 	}
-    }
-    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
-    if (outChannel != (Tcl_Channel) NULL) {
-        Tcl_Flush(outChannel);
-    }
+	Tcl_StaticPackage(interp, "Tk", Tk_Init, Tk_SafeInit);
+
+	/*** From tk83/generic/TkMain.c (again) ***/
+
+	/*
+	 * Establish a channel handler for stdin.
+	 */
+
+	inChannel = Tcl_GetStdChannel(TCL_STDIN);
+	if (inChannel)
+	{
+		Tcl_CreateChannelHandler(inChannel, TCL_READABLE, StdinProc,
+			(ClientData) inChannel);
+	}
+	if (tsdPtr->tty)
+	{
+		Prompt(interp, 0);
+	}
+
+	outChannel = Tcl_GetStdChannel(TCL_STDOUT);
+	if (outChannel)
+	{
+		Tcl_Flush(outChannel);
+	}
+
+    Tcl_DStringInit(&tsdPtr->command);
+    Tcl_DStringInit(&tsdPtr->line);
+	Tcl_ResetResult(interp);
+
+	return interp;
+
+error:
+	TkpDisplayWarning(Tcl_GetStringResult(interp), "TclTk_Init Failed!");
+	Tcl_DeleteInterp(interp);
+	Tcl_Exit(1);
+	return NULL;
 }
+
 
 #endif /* PLATFORM_X11 */
