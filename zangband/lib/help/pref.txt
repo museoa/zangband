@@ -179,7 +179,7 @@ change the actual RGB values used to represent each of the 16 colors
 used by Zangband, and perhaps even allow you to define new colors which
 are not currently used by Zangband.
 
-Colors can be specified in user pref files as line of the form
+Colors can be specified in user pref files as a line of the form
 "V:<N>:<V>:<R>:<G>:<B>".
 
 
