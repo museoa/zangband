@@ -6305,7 +6305,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 6, "ironman_moria",			"The good old days..." },
 	{FALSE, 6, "munchkin_death",		"Ask for saving death" },
 	{FALSE, 6, "ironman_rooms",			"Always generate very unusual rooms" },
-	{TRUE,  6, NULL,					"Number 205" },
+	{TRUE,  0, NULL,					"Number 205" },
 	{TRUE,  6, "preserve_mode",			"Preserve artifacts" },
 	{TRUE,  6, "autoroller",			"Specify 'minimal' stats" },
 	{FALSE, 6, "point_based",			"Generate character using a point system" },
