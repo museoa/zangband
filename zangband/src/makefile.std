@@ -173,7 +173,7 @@ linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
 				 -Wno-long-long -Wwrite-strings -Wpointer-arith \
 				 -Wbad-function-cast -Wsign-compare \
 				 -Waggregate-return -Wstrict-prototypes \
-				 -Wredundant-decls -Wunreachable-code -Wdisabled-optimization
+				 -Wredundant-decls -Wunreachable-code
  
 linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
                -lXaw -lXext -lSM -lICE -lXmu -lXt -lgtk `gtk-config --libs`
