@@ -430,14 +430,27 @@ P:13:1d4:0:0:10
 F:STR | CON | RES_NEXUS | RES_NETHER | NO_TELE | SLOW_DIGEST | HIDE_TYPE
 F:INSTA_ART
 
-# The Soft Leather Armour 'Hithlomir'
+# The Hagaromo 'Tenyo's Despair'
 
-N:27:'Hithlomir'
-I:36:4:4
-W:35:3:80:45000
-P:4:0d0:0:0:20
-F:STEALTH | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK
+N:27:'Tenyo's Despair'
+I:36:16:4
+W:45:3:20:40000
+P:2:0d0:0:0:20
+F:STEALTH | FEATHER | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK |
+F:ACTIVATE | SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR
 F:INSTA_ART
+L:USE:	msgf("Your robe shines brightly.")
+L:USE:	cure_potion(500, TRUE, TRUE, TRUE)
+L:USE:  local d = randint1(100)
+L:USE:	if d <= 50 then
+L:USE:		inc_blessed(rand_range(25, 50))
+L:USE:	elseif d <= 75 then
+L:USE:		turn_monsters(plev * 4)
+L:USE:	else
+L:USE:		summon_controlled(SUMMON_ANGEL)
+L:USE:	end
+L:USE:	object.timeout = 1000
+L:DESC:	return "heavenly blessing and heal (500) every 1000 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 # The Leather Scale Mail 'Thalkettoth'
