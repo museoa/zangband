@@ -343,7 +343,8 @@ AngbandClassRec angbandClassRec =
 	},
 	/* Simple class fields initialization */
 	{
-		/* change_sensitive     */      XtInheritChangeSensitive
+		/* change_sensitive     */      XtInheritChangeSensitive,
+		/* extension            */      NULL
 	},
 	/* Angband class fields initialization */
 	{
@@ -568,6 +569,9 @@ static void Initialize(AngbandWidget request, AngbandWidget wnew)
 	                                angband_color_table[1][2],
 	                                angband_color_table[1][3]);
 
+	/* Ignore this parameter */
+	(void) request;
+	
 	/* Fix the background color */
 	wnew->core.background_pixel = bg;
 
@@ -729,6 +733,9 @@ static void Redisplay(AngbandWidget wnew, XEvent *xev, Region region)
 	term_data *old_td = (term_data*)(Term->data);
 	term_data *td = &data[0];
 
+	/* Ignore parameter */
+	(void) region;
+
 	/* Hack - Find the term to activate */
 	for (i = 0; i < num_term; i++)
 	{
@@ -798,7 +805,12 @@ static Boolean SetValues(AngbandWidget current, AngbandWidget request,
 	int height, width;
 	int i;
 
-
+	/* Ignore parameters */
+	(void) request;
+	(void) args;
+	(void) num_args;
+	
+	
 	/* Handle font change */
 	if (wnew->angband.font != current->angband.font)
 	{
@@ -1053,6 +1065,10 @@ static void react_redraw(Widget widget,
 	term_data *old_td = (term_data*)(Term->data);
 	term_data *td = (term_data*)client_data;
 
+	/* Ignore parameters */
+	(void) widget;
+	(void) call_data;
+
 	/* Activate the proper Term */
 	Term_activate(&td->t);
 
@@ -1186,6 +1202,9 @@ static void handle_event(Widget widget, XtPointer client_data, XEvent *event,
 	term_data *old_td = (term_data*)(Term->data);
 	term_data *td = (term_data *)client_data;
 
+	/* Ignore parameter */
+	(void) widget;
+	
 	/* Continue to process the event by default */
 	*continue_to_dispatch = TRUE;
 
@@ -1225,7 +1244,7 @@ static void handle_event(Widget widget, XtPointer client_data, XEvent *event,
 /*
  * Process an event (or just check for one)
  */
-errr CheckEvent(bool wait)
+static errr CheckEvent(bool wait)
 {
 	XEvent event;
 
@@ -1376,7 +1395,7 @@ static errr Term_xtra_xaw(int n, int v)
 static errr Term_wipe_xaw(int x, int y, int n)
 {
 	term_data *td = (term_data*)(Term->data);
-
+	
 	/* Erase using color 0 */
 	AngbandClearArea(td->widget, x, y, n, 1, 0);
 
@@ -1394,9 +1413,15 @@ static errr Term_wipe_xaw(int x, int y, int n)
 static errr Term_curs_xaw(int x, int y)
 {
 	term_data *td = (term_data*)(Term->data);
-
-	/* Hilite the cursor character */
-	AngbandClearArea(td->widget, x, y, 1, 1, COLOR_XOR);
+	
+	/* Hilite the cursor character with a box */
+	XDrawRectangle(XtDisplay(td->widget), XtWindow(td->widget),
+		td->widget->angband.gc[COLOR_XOR],
+		x * td->widget->angband.fontwidth + 
+			td->widget->angband.internal_border,
+		y * td->widget->angband.fontheight +
+			td->widget->angband.internal_border,
+		td->widget->angband.fontwidth - 1, td->widget->angband.fontheight - 1);
 
 	/* Success */
 	return (0);

@@ -1851,14 +1851,14 @@ static errr Term_curs_xpj(int x, int y)
 			 x * P_TILE_SIZE + y * P_TILE_SIZE / 2
 			 + P_TILE_SIZE  / 4 + Infowin->ox, 
 			 y * P_TILE_SIZE + P_TILE_SIZE / 2 + Infowin->oy,
-			  P_TILE_SIZE, P_TILE_SIZE);
+			  P_TILE_SIZE - 1, P_TILE_SIZE - 1);
 	}
 	else
 	{
 		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
 			 x * Infofnt->wid + Infowin->ox,
 			 y * Infofnt->hgt + Infowin->oy,
-			 Infofnt->wid, Infofnt->hgt);
+			 Infofnt->wid - 1, Infofnt->hgt - 1);
 	}
 
 	/* Success */
