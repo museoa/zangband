@@ -30,13 +30,13 @@
 #include "z-virt.h"
 #include "z-form.h"
 #include "z-rand.h"
+#include "z-term.h"
 
 /*
  * Include the high-level includes.
  */
 #include "defines.h"
 #include "types.h"
-#include "z-term.h"
 #include "externs.h"
 
 

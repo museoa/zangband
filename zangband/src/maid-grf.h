@@ -18,8 +18,35 @@
  */
 #define MAP_CACHE	(WILD_VIEW * WILD_VIEW * 2)
 
-
+/*
+ * This is used by the Borg and by ports that like to
+ * draw a "graphical" small-scale map
+ */
 #ifdef TERM_USE_MAP
+
+/*
+ * Constants used to pass lighting information to users
+ * of the overhead map hooks.
+ */
+#define MAP_SEEN	0x01
+#define MAP_GLOW	0x02
+#define MAP_LITE	0x04
+
+
+/*
+ * Map data structure
+ */
+typedef struct term_map term_map;
+
+struct term_map
+{
+	s16b object;
+	s16b monster;
+	s16b field;
+	byte terrain;
+	byte flags;
+};
+
 typedef struct map_block map_block;
 
 struct map_block
@@ -55,8 +82,10 @@ extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
 extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
 extern void init_overhead_map(void);
 extern void del_overhead_map(void);
-extern void clear_map(void);
 extern bool map_in_bounds_rel(int dx, int dy);
 extern void save_map_location(int x, int y, term_map *map);
 extern map_block *read_map_location(int dx, int dy);
-
+extern errr (*term_map_hook) (int x, int y, term_map *map);
+extern errr (*term_erase_map_hook) (void);
+extern void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr);
+extern void Term_erase_map(void);

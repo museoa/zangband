@@ -9,8 +9,8 @@
  */
 
 /* Purpose: a generic, efficient, terminal window package -BEN- */
-
-#include "angband.h"
+#include "z-virt.h"
+#include "z-term.h"
 
 /*
  * This file provides a generic, efficient, terminal window package,
@@ -2652,110 +2652,3 @@ errr term_init(term *t, int w, int h, int k)
 	return (0);
 }
 
-#ifdef TERM_USE_MAP
-
-/*
- * Angband-specific code designed to allow the map to be sent
- * to the port as required.  This allows the main-???.c file
- * not to access internal game data, which may or may not
- * be accessable.
- */
-void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
-{
-	term_map map;
-
-	int fld_idx, next_f_idx, o_idx, next_o_idx;
-
-	monster_type *m_ptr;
-	object_type *o_ptr;
-	field_type *fld_ptr;
-
-	bool visible = pc_ptr->player & GRID_SEEN;
-	bool glow = c_ptr->info & CAVE_GLOW;
-	bool lite = (c_ptr->info & CAVE_MNLT) || (pc_ptr->player & GRID_LITE);
-
-	/* Paranoia */
-	if (!term_map_hook) return;
-
-	/* Visible, and not hallucinating */
-	if (visible && !p_ptr->image)
-	{
-		/* Save known data */
-		map.terrain = pc_ptr->feat;
-
-		if (c_ptr->m_idx)
-		{
-			m_ptr = &m_list[c_ptr->m_idx];
-
-			/* Visible monster */
-			if (m_ptr->ml)
-			{
-				map.monster = m_ptr->r_idx;
-			}
-		}
-
-		/* Fields */
-		for (fld_idx = c_ptr->fld_idx; fld_idx; fld_idx = next_f_idx)
-		{
-			/* Acquire field */
-			fld_ptr = &fld_list[fld_idx];
-
-			/* Acquire next field */
-			next_f_idx = fld_ptr->next_f_idx;
-
-			/* Memorized, visible fields */
-			if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
-				(FIELD_INFO_MARK | FIELD_INFO_VIS))
-			{
-				map.field = fld_ptr->t_idx;
-				break;
-			}
-		}
-
-		for (o_idx = c_ptr->o_idx; o_idx; o_idx = next_o_idx)
-		{
-			/* Acquire object */
-			o_ptr = &o_list[o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
-			/* Memorized objects */
-			if (o_ptr->marked)
-			{
-				map.object = o_ptr->k_idx;
-				break;
-			}
-		}
-
-		map.flags = MAP_SEEN;
-
-		if (glow) map.flags |= MAP_GLOW;
-		if (lite) map.flags |= MAP_LITE;
-	}
-	else
-	{
-		map.flags = glow ? MAP_GLOW : 0;
-	}
-	
-	/* Hack - check if is player location */
-	if ((p_ptr->px == x) && (p_ptr->py = y))
-	{
-		/* Hack - set monster as a flag */
-		map.monster = -1;
-	}
-
-	/* Send data to hook */
-	term_map_hook(x, y, &map);
-}
-
-/*
- * Erase the map
- */
-void Term_erase_map(void)
-{
-	/* Erase the map */
-	if (term_erase_map_hook) term_erase_map_hook();
-}
-
-#endif /* TERM_USE_MAP */
