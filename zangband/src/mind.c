@@ -160,8 +160,8 @@ static int get_mindcraft_power(int *sn)
 
 				/* Display a list of spells */
 				prt("", y, x);
-				put_str("Name", y, x + 5);
-				put_str("Lv Mana Fail Info", y, x + 35);
+				put_str("Name", x + 5, y);
+				put_str("Lv Mana Fail Info", x + 35, y);
 
 				/* Dump the spells */
 				for (i = 0; i < MINDCRAFT_MAX; i++)

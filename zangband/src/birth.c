@@ -1696,7 +1696,7 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		if (hook) hook(choices[cur]);
 
 		/* Move the cursor */
-		put_str("", TABLE_ROW + cur - top, col);
+		put_str("", col, TABLE_ROW + cur - top);
 
 		c = inkey();
 
@@ -2255,14 +2255,14 @@ static bool player_birth_aux_1(void)
 
 	/* Display the information so far. */
 	/* Name, Sex, Race, Class */
-	put_str("Name     :", 2, 0);
-	put_str("Sex      :", 3, 0);
-	put_str("Race     :", 4, 0);
-	put_str("Class    :", 5, 0);
+	put_str("Name     :", 0, 2);
+	put_str("Sex      :", 0, 3);
+	put_str("Race     :", 0, 4);
+	put_str("Class    :", 0, 5);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
-		put_str("Magic    :", 6, 0);
+		put_str("Magic    :", 0, 6);
 	}
 
 	c_put_str(TERM_L_BLUE, player_name, 11, 2);
@@ -2406,14 +2406,14 @@ static bool player_birth_aux_2(void)
 		display_player(mode);
 
 		/* Display the costs header */
-		put_str("Cost", row - 2, col + 32);
+		put_str("Cost", col + 32, row - 2);
 
 		/* Display the costs */
 		for (i = 0; i < A_MAX; i++)
 		{
 			/* Display cost */
 			sprintf(buf, "%4d", birth_stat_costs[stats[i] - 10]);
-			put_str(buf, row + (i-1), col + 32);
+			put_str(buf, col + 32, row + (i-1));
 		}
 
 
@@ -2527,7 +2527,7 @@ static bool player_birth_aux_3(void)
 		            "get perfect (or even high) values for all your stats.");
 
 		/* Prompt for the minimum stats */
-		put_str("Enter minimum value for: ", 15, 2);
+		put_str("Enter minimum value for: ", 2, 15);
 
 		/* Output the maximum stats */
 		for (i = 0; i < A_MAX; i++)
@@ -2563,7 +2563,7 @@ static bool player_birth_aux_3(void)
 			sprintf(buf, "%-5s%-20s", stat_names[i], inp);
 
 			/* Dump the prompt */
-			put_str(buf, 16 + i, 5);
+			put_str(buf, 5, 16 + i);
 		}
 
 		/* Input the minimum stats */
@@ -2575,7 +2575,7 @@ static bool player_birth_aux_3(void)
 				char *s;
 
 				/* Move the cursor */
-				put_str("", 16 + i, 30);
+				put_str("", 30, 16 + i);
 
 				/* Default */
 				strcpy(inp, "");
@@ -2623,19 +2623,19 @@ static bool player_birth_aux_3(void)
 			Term_clear();
 
 			/* Label */
-			put_str(" Limit", 2, col + 5);
+			put_str(" Limit", col + 5, 2);
 
 			/* Label */
-			put_str("  Freq", 2, col + 13);
+			put_str("  Freq", col + 13, 2);
 
 			/* Label */
-			put_str("  Roll", 2, col + 24);
+			put_str("  Roll", col + 24, 2);
 
 			/* Put the minimal stats */
 			for (i = 0; i < A_MAX; i++)
 			{
 				/* Label stats */
-				put_str(stat_names[i], i + 3, col);
+				put_str(stat_names[i], col, i + 3);
 
 				/* Put the stat */
 				cnv_stat(stat_limit[i], buf);
@@ -2646,10 +2646,10 @@ static bool player_birth_aux_3(void)
 			last_round = auto_round;
 
 			/* Label count */
-			put_str("Round:", 10, col+13);
+			put_str("Round:", col + 13, 10);
 
 			/* Indicate the state */
-			put_str("(Hit ESC to stop)", 12, col+13);
+			put_str("(Hit ESC to stop)", col + 13, 12);
 
 			/* Auto-roll */
 			while (1)
@@ -2714,7 +2714,7 @@ static bool player_birth_aux_3(void)
 					}
 
 					/* Dump round */
-					put_str(format("%10ld", auto_round), 10, col+20);
+					put_str(format("%10ld", auto_round), col + 20, 10);
 
 					/* Make sure they see everything */
 					Term_fresh();

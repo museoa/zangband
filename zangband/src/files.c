@@ -1285,8 +1285,8 @@ static void prt_num(cptr header, s32b num, int row, int col, byte color, int wid
 {
 	int len = strlen(header);
 	char out_val[32];
-	put_str(header, row, col);
-	put_str("   ", row, col + len);
+	put_str(header, col, row);
+	put_str("   ", col + len, row);
 	(void)sprintf(out_val, "%*ld", wid, (long)num);
 	c_put_str(color, out_val, col + len + 3, row);
 }
@@ -1476,53 +1476,53 @@ static void display_player_abilities(void)
 	xfos = p_ptr->skill_fos;
 
 
-	put_str("Fighting    :", 16, COL_SKILLS1);
+	put_str("Fighting    :", COL_SKILLS1, 16);
 	likert(xthn, 10, desc);
 	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 16);
 
-	put_str("Bows/Throw  :", 17, COL_SKILLS1);
+	put_str("Bows/Throw  :", COL_SKILLS1, 17);
 	likert(xthb, 10, desc);
 	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 17);
 
-	put_str("Saving Throw:", 18, COL_SKILLS1);
+	put_str("Saving Throw:", COL_SKILLS1, 18);
 	likert(xsav, 6, desc);
 	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 18);
 
-	put_str("Stealth     :", 19, COL_SKILLS1);
+	put_str("Stealth     :", COL_SKILLS1, 19);
 	likert(xstl, 1, desc);
 	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 19);
 
 
-	put_str("Perception  :", 16, COL_SKILLS2);
+	put_str("Perception  :", COL_SKILLS2, 16);
 	likert(xfos, 6, desc);
 	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 16);
 
-	put_str("Searching   :", 17, COL_SKILLS2);
+	put_str("Searching   :", COL_SKILLS2, 17);
 	likert(xsrh, 6, desc);
 	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 17);
 
-	put_str("Disarming   :", 18, COL_SKILLS2);
+	put_str("Disarming   :", COL_SKILLS2, 18);
 	likert(xdis, 8, desc);
 	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 18);
 
-	put_str("Magic Device:", 19, COL_SKILLS2);
+	put_str("Magic Device:", COL_SKILLS2, 19);
 	likert(xdev, 6, desc);
 	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 19);
 
 
-	put_str("Blows/Round :", 16, COL_SKILLS3);
+	put_str("Blows/Round :", COL_SKILLS3, 16);
 
 	if (!muta_att)
-		put_str(format("%d", p_ptr->num_blow), 16, COL_SKILLS3 + WID_SKILLS);
+		put_str(format("%d", p_ptr->num_blow), COL_SKILLS3 + WID_SKILLS, 16);
 	else
-		put_str(format("%d+%d", p_ptr->num_blow, muta_att), 16, COL_SKILLS3 + WID_SKILLS);
+		put_str(format("%d+%d", p_ptr->num_blow, muta_att), COL_SKILLS3 + WID_SKILLS, 16);
 
-	put_str("Shots/Round :", 17, COL_SKILLS3);
+	put_str("Shots/Round :", COL_SKILLS3, 17);
 
 	/* Calculate shots (rounded) */
-	put_str(format("%d.%d", shots, shot_frac), 17, COL_SKILLS3 + WID_SKILLS);
+	put_str(format("%d.%d", shots, shot_frac), COL_SKILLS3 + WID_SKILLS, 17);
 
-	put_str("Avg.Dam./Rnd:", 18, COL_SKILLS3);
+	put_str("Avg.Dam./Rnd:", COL_SKILLS3, 18);
 
 	/* Effect of damage dice x2 */
 	avgdam = avg_dam(dambonus, damdice, damsides);
@@ -1568,10 +1568,10 @@ static void display_player_abilities(void)
 		sprintf(desc, "%d", (int)avgdam);
 	}
 
-	put_str(desc, 18, COL_SKILLS3 + WID_SKILLS);
+	put_str(desc, COL_SKILLS3 + WID_SKILLS, 18);
 
-	put_str("Infra-Vision:", 19, COL_SKILLS3);
-	put_str(format("%d'", p_ptr->see_infra * 10), 19, COL_SKILLS3 + WID_SKILLS);
+	put_str("Infra-Vision:", COL_SKILLS3, 19);
+	put_str(format("%d'", p_ptr->see_infra * 10), COL_SKILLS3 + WID_SKILLS, 19);
 }
 
 
@@ -2043,10 +2043,10 @@ static void display_player_misc_info(void)
 	char	buf[80];
 
 	/* Display basics */
-	put_str("Name      :", 2, 1);
-	put_str("Sex       :", 3, 1);
-	put_str("Race      :", 4, 1);
-	put_str("Class     :", 5, 1);
+	put_str("Name      :", 1, 2);
+	put_str("Sex       :", 1, 3);
+	put_str("Race      :", 1, 4);
+	put_str("Class     :", 1, 5);
 
 	c_put_str(TERM_L_BLUE, player_name, 13, 2);
 	c_put_str(TERM_L_BLUE, sp_ptr->title, 13, 3);
@@ -2054,9 +2054,9 @@ static void display_player_misc_info(void)
 	c_put_str(TERM_L_BLUE, cp_ptr->title, 13, 5);
 
 	/* Display extras */
-	put_str("Level     :", 6, 1);
-	put_str("Hits(Max) :", 7, 1);
-	put_str("Mana(Max) :", 8, 1);
+	put_str("Level     :", 1, 6);
+	put_str("Hits(Max) :", 1, 7);
+	put_str("Mana(Max) :", 1, 8);
 
 	(void)sprintf(buf, "%d", (int)p_ptr->lev);
 	c_put_str(TERM_L_BLUE, buf, 13, 6);
@@ -2345,19 +2345,19 @@ static void display_player_top(void)
 	char buf[80];
 
 	/* Name, Sex, Race, Class */
-	put_str("Name     :", 2, COL_NAME);
-	put_str("Sex      :", 3, COL_NAME);
-	put_str("Race     :", 4, COL_NAME);
-	put_str("Class    :", 5, COL_NAME);
+	put_str("Name     :", COL_NAME, 2);
+	put_str("Sex      :", COL_NAME, 3);
+	put_str("Race     :", COL_NAME, 4);
+	put_str("Class    :", COL_NAME, 5);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
-		put_str("Magic    :", 6, COL_NAME);
+		put_str("Magic    :", COL_NAME, 6);
 	}
 
 	if (p_ptr->pclass == CLASS_CHAOS_WARRIOR)
 	{
-		put_str("Patron   :", 7, COL_NAME);
+		put_str("Patron   :", COL_NAME, 7);
 	}
 
 	c_put_str(TERM_L_BLUE, player_name, COL_NAME + WID_NAME, 2);
@@ -2395,7 +2395,7 @@ static void display_player_top(void)
 			int value;
 
 			/* Use lowercase stat name */
-			put_str(stat_names_reduced[i], 2 + i, COL_STATS);
+			put_str(stat_names_reduced[i], COL_STATS, i + 2);
 
 			/* Get the current stat */
 			value = p_ptr->stat_use[i];
@@ -2420,7 +2420,7 @@ static void display_player_top(void)
 		else
 		{
 			/* Assume uppercase stat name */
-			put_str(stat_names[i], 2 + i, COL_STATS);
+			put_str(stat_names[i], COL_STATS, i + 2);
 
 			/* Obtain the current stat (modified) */
 			cnv_stat(p_ptr->stat_use[i], buf);
@@ -2482,7 +2482,7 @@ static void display_player_middle(void)
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
-		put_str("Exp to Adv.", 12, COL_VALUE);
+		put_str("Exp to Adv.", COL_VALUE, 12);
 		c_put_str(TERM_L_GREEN, "       *****", COL_VALUE + 11, 12);
 	}
 	else if (toggle_xp)
@@ -2554,7 +2554,7 @@ static void display_player_standard(void)
 	/* Extra info */
 	display_player_middle();
 
-	put_str("(Miscellaneous Abilities)", 15, 25);
+	put_str("(Miscellaneous Abilities)", 25, 15);
 
 	/* Display the abilities */
 	display_player_abilities();
@@ -2574,12 +2574,12 @@ static void display_player_history(void)
 	/* Extra info */
 	display_player_middle();
 
-	put_str("(Character Background)", 15, 25);
+	put_str("(Character Background)", 25, 15);
 
 	/* Dump the history */
 	for (i = 0; i < 4; i++)
 	{
-		put_str(p_ptr->history[i], i + 16, 10);
+		put_str(p_ptr->history[i], 10, i + 16);
 	}
 }
 
@@ -4044,7 +4044,7 @@ static void print_tomb(void)
 			while (0 == my_fgets(fp, buf, 1024))
 			{
 				/* Display and advance */
-				put_str(buf, i++, 0);
+				put_str(buf, 0, i++);
 			}
 
 			/* Close */
@@ -4065,17 +4065,17 @@ static void print_tomb(void)
 		}
 
 		center_string(buf, player_name);
-		put_str(buf, 6, 11);
+		put_str(buf, 11, 6);
 
 		center_string(buf, "the");
-		put_str(buf, 7, 11);
+		put_str(buf, 11, 7);
 
 		center_string(buf, p);
-		put_str(buf, 8, 11);
+		put_str(buf, 11, 8);
 
 
 		center_string(buf, cp_ptr->title);
-		put_str(buf, 10, 11);
+		put_str(buf, 11, 10);
 
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
@@ -4083,15 +4083,15 @@ static void print_tomb(void)
 
 		(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
 		center_string(buf, tmp);
-		put_str(buf, 12, 11);
+		put_str(buf, 11, 12);
 
 		(void)sprintf(tmp, "AU: %ld", (long)p_ptr->au);
 		center_string(buf, tmp);
-		put_str(buf, 13, 11);
+		put_str(buf, 11, 13);
 
 		(void)sprintf(tmp, "Killed on Level %d", p_ptr->depth);
 		center_string(buf, tmp);
-		put_str(buf, 14, 11);
+		put_str(buf, 11, 14);
 
 
 		if (strlen(p_ptr->died_from) > 24)
@@ -4104,12 +4104,12 @@ static void print_tomb(void)
 			(void)sprintf(tmp, "by %s.", p_ptr->died_from);
 
 		center_string(buf, tmp);
-		put_str(buf, 15, 11);
+		put_str(buf, 11, 15);
 
 
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
-		put_str(buf, 17, 11);
+		put_str(buf, 11, 17);
 	}
 }
 
@@ -4387,7 +4387,7 @@ static void close_game_handle_death(void)
 				char tmp[160] = "";
 
 				/* Prompt */
-				put_str("Filename: ", 23, 0);
+				put_str("Filename: ", 0, 23);
 
 				/* Ask for filename (or abort) */
 				if (!askfor_aux(tmp, 60)) continue;

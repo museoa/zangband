@@ -2295,7 +2295,7 @@ void show_inven(void)
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j + 1, col);
+		put_str(tmp_val, col, j + 1);
 
 		/* Display graphics for object, if desired */
 		a = object_attr(o_ptr);
@@ -2323,7 +2323,7 @@ void show_inven(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j + 1, 71);
+			put_str(tmp_val, 71, j + 1);
 		}
 	}
 
@@ -2436,7 +2436,7 @@ void show_equip(void)
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j+1, col);
+		put_str(tmp_val, col, j + 1);
 
 		/* Show_equip_graph perm. on. */
 		a = object_attr(o_ptr);
@@ -2462,7 +2462,7 @@ void show_equip(void)
 		{
 			/* Mention the use */
 			(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
-			put_str(tmp_val, j+1, col + 5);
+			put_str(tmp_val, col + 5, j + 1);
 
 			/* Display the entry itself */
 			c_put_str(out_color[j], out_desc[j], col + 21, j + 1);
@@ -2480,7 +2480,7 @@ void show_equip(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j+1, 71);
+			put_str(tmp_val, 71, j + 1);
 		}
 	}
 
@@ -2832,7 +2832,7 @@ void show_floor(int x, int y)
 		sprintf(tmp_val, "%c)", index_to_label(j));
 
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j + 1, col);
+		put_str(tmp_val, col, j + 1);
 
 		/* Display the entry itself */
 		c_put_str(out_color[j], out_desc[j], col + 3, j + 1);
@@ -2842,7 +2842,7 @@ void show_floor(int x, int y)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j + 1, 71);
+			put_str(tmp_val, 71, j + 1);
 		}
 	}
 

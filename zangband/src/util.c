@@ -2694,7 +2694,7 @@ void c_put_str(byte attr, cptr str, int col, int row)
 /*
  * As above, but in "white"
  */
-void put_str(cptr str, int row, int col)
+void put_str(cptr str, int col, int row)
 {
 	/* Spawn */
 	Term_putstr(col, row, -1, TERM_WHITE, str);
@@ -3178,7 +3178,7 @@ void pause_line(int row)
 {
 	int i;
 	prt("", row, 0);
-	put_str("[Press any key to continue]", row, 23);
+	put_str("[Press any key to continue]", 23, row);
 	i = inkey();
 	prt("", row, 0);
 }

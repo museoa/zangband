@@ -1534,7 +1534,7 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Prompt XXX XXX XXX */
-	put_str("Recall details? (k/y/n): ", 0, 40);
+	put_str("Recall details? (k/y/n): ", 40, 0);
 
 	/* Query */
 	query = inkey();

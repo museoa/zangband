@@ -123,7 +123,7 @@ static void prt_stat(int stat)
 	/* Display "injured" stat */
 	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
 	{
-		put_str(stat_names_reduced[stat], ROW_STAT + stat, 0);
+		put_str(stat_names_reduced[stat], 0, ROW_STAT + stat);
 		cnv_stat(p_ptr->stat_use[stat], tmp);
 		c_put_str(TERM_YELLOW, tmp, COL_STAT + 6, ROW_STAT + stat);
 	}
@@ -131,7 +131,7 @@ static void prt_stat(int stat)
 	/* Display "healthy" stat */
 	else
 	{
-		put_str(stat_names[stat], ROW_STAT + stat, 0);
+		put_str(stat_names[stat], 0, ROW_STAT + stat);
 		cnv_stat(p_ptr->stat_use[stat], tmp);
 		c_put_str(TERM_L_GREEN, tmp, COL_STAT + 6, ROW_STAT + stat);
 	}
@@ -139,7 +139,7 @@ static void prt_stat(int stat)
 	/* Indicate natural maximum */
 	if (p_ptr->stat_max[stat] == 18+100)
 	{
-		put_str("!", ROW_STAT + stat, 3);
+		put_str("!", 3, ROW_STAT + stat);
 	}
 }
 
@@ -455,12 +455,12 @@ static void prt_level(void)
 
 	if (p_ptr->lev >= p_ptr->max_lev)
 	{
-		put_str("LEVEL ", ROW_LEVEL, 0);
+		put_str("LEVEL ", 0, ROW_LEVEL);
 		c_put_str(TERM_L_GREEN, tmp, COL_LEVEL + 6, ROW_LEVEL);
 	}
 	else
 	{
-		put_str("Level ", ROW_LEVEL, 0);
+		put_str("Level ", 0, ROW_LEVEL);
 		c_put_str(TERM_YELLOW, tmp, COL_LEVEL + 6, ROW_LEVEL);
 	}
 }
@@ -483,7 +483,7 @@ static void prt_exp(void)
 		attr = TERM_YELLOW;
 	}
 	
-	put_str("EXP ", ROW_EXP, 0);
+	put_str("EXP ", 0, ROW_EXP);
 
 	if (toggle_xp)
 	{
@@ -518,7 +518,7 @@ static void prt_gold(void)
 {
 	char tmp[32];
 
-	put_str("AU ", ROW_GOLD, COL_GOLD);
+	put_str("AU ", COL_GOLD, ROW_GOLD);
 	sprintf(tmp, "%9ld", (long)p_ptr->au);
 	c_put_str(TERM_L_GREEN, tmp, COL_GOLD + 3, ROW_GOLD);
 }
@@ -532,7 +532,7 @@ static void prt_ac(void)
 {
 	char tmp[32];
 
-	put_str("Cur AC ", ROW_AC, COL_AC);
+	put_str("Cur AC ", COL_AC, ROW_AC);
 	sprintf(tmp, "%5d", p_ptr->dis_ac + p_ptr->dis_to_a);
 	c_put_str(TERM_L_GREEN, tmp, COL_AC + 7, ROW_AC);
 }
@@ -554,7 +554,7 @@ static void prt_hp(void)
 	
 #endif /* !VARIABLE_PLAYER_GRAPH */
 
-	put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
+	put_str("Max HP ", COL_MAXHP, ROW_MAXHP);
 
 	sprintf(tmp, "%5d", p_ptr->mhp);
 	color = TERM_L_GREEN;
@@ -562,7 +562,7 @@ static void prt_hp(void)
 	c_put_str(color, tmp, COL_MAXHP + 7, ROW_MAXHP);
 
 
-	put_str("Cur HP ", ROW_CURHP, COL_CURHP);
+	put_str("Cur HP ", COL_CURHP, ROW_CURHP);
 
 	sprintf(tmp, "%5d", p_ptr->chp);
 
@@ -618,7 +618,7 @@ static void prt_sp(void)
 	if (!mp_ptr->spell_book) return;
 
 
-	put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
+	put_str("Max SP ", COL_MAXSP, ROW_MAXSP);
 
 	sprintf(tmp, "%5d", p_ptr->msp);
 	color = TERM_L_GREEN;
@@ -626,7 +626,7 @@ static void prt_sp(void)
 	c_put_str(color, tmp, COL_MAXSP + 7, ROW_MAXSP);
 
 
-	put_str("Cur SP ", ROW_CURSP, COL_CURSP);
+	put_str("Cur SP ", COL_CURSP, ROW_CURSP);
 
 	sprintf(tmp, "%5d", p_ptr->csp);
 
@@ -733,7 +733,7 @@ static void prt_blind(void)
 	}
 	else
 	{
-		put_str("     ", Term->hgt - 1, COL_BLIND);
+		put_str("     ", COL_BLIND, Term->hgt - 1);
 	}
 }
 
@@ -749,7 +749,7 @@ static void prt_confused(void)
 	}
 	else
 	{
-		put_str("        ", Term->hgt - 1, COL_CONFUSED);
+		put_str("        ", COL_CONFUSED, Term->hgt - 1);
 	}
 }
 
@@ -765,7 +765,7 @@ static void prt_afraid(void)
 	}
 	else
 	{
-		put_str("      ", Term->hgt - 1, COL_AFRAID);
+		put_str("      ", COL_AFRAID, Term->hgt - 1);
 	}
 }
 
@@ -781,7 +781,7 @@ static void prt_poisoned(void)
 	}
 	else
 	{
-		put_str("        ", Term->hgt - 1, COL_POISONED);
+		put_str("        ", COL_POISONED, Term->hgt - 1);
 	}
 }
 
@@ -956,11 +956,11 @@ static void prt_study(void)
 {
 	if (p_ptr->new_spells)
 	{
-		put_str("Study", Term->hgt - 1, COL_STUDY);
+		put_str("Study", COL_STUDY, Term->hgt - 1);
 	}
 	else
 	{
-		put_str("     ", Term->hgt - 1, COL_STUDY);
+		put_str("     ", COL_STUDY, Term->hgt - 1);
 	}
 }
 
@@ -999,7 +999,7 @@ static void prt_cut(void)
 	}
 	else
 	{
-		put_str("            ", ROW_CUT, COL_CUT);
+		put_str("            ", COL_CUT, ROW_CUT);
 	}
 }
 
@@ -1022,7 +1022,7 @@ static void prt_stun(void)
 	}
 	else
 	{
-		put_str("            ", ROW_STUN, COL_STUN);
+		put_str("            ", COL_STUN, ROW_STUN);
 	}
 }
 

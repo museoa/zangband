@@ -2856,7 +2856,7 @@ static errr rd_savefile_new_aux(void)
 		/* Ask about "wilderness" mode */
 		while (1)
 		{
-			put_str("Use 'wilderness'? (y/n/*) ", 20, 2);
+			put_str("Use 'wilderness'? (y/n/*) ", 2, 20);
 			c = inkey();
 			if (c == 'Q') quit(NULL);
 			if (c == 'S') return (FALSE);

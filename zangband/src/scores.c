@@ -245,7 +245,7 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 		if (k > 0)
 		{
 			sprintf(tmp_val, "(from position %d)", k + 1);
-			put_str(tmp_val, 0, 40);
+			put_str(tmp_val, 40, 0);
 		}
 
 		/* Dump 5 entries */
@@ -832,23 +832,23 @@ void kingly(void)
 	Term_clear();
 
 	/* Display a crown */
-	put_str("#", 1, 34);
-	put_str("#####", 2, 32);
-	put_str("#", 3, 34);
-	put_str(",,,  $$$  ,,,", 4, 28);
-	put_str(",,=$   \"$$$$$\"   $=,,", 5, 24);
-	put_str(",$$        $$$        $$,", 6, 22);
-	put_str("*>         <*>         <*", 7, 22);
-	put_str("$$         $$$         $$", 8, 22);
-	put_str("\"$$        $$$        $$\"", 9, 22);
-	put_str("\"$$       $$$       $$\"", 10, 23);
-	put_str("*#########*#########*", 11, 24);
-	put_str("*#########*#########*", 12, 24);
+	put_str("#", 34, 1);
+	put_str("#####", 32, 2);
+	put_str("#", 34, 3);
+	put_str(",,,  $$$  ,,,", 28, 4);
+	put_str(",,=$   \"$$$$$\"   $=,,", 24, 5);
+	put_str(",$$        $$$        $$,", 22, 6);
+	put_str("*>         <*>         <*", 22, 7);
+	put_str("$$         $$$         $$", 22, 8);
+	put_str("\"$$        $$$        $$\"", 22, 9);
+	put_str("\"$$       $$$       $$\"", 23, 10);
+	put_str("*#########*#########*", 24, 11);
+	put_str("*#########*#########*", 24, 12);
 
 	/* Display a message */
-	put_str("Veni, Vidi, Vici!", 15, 26);
-	put_str("I came, I saw, I conquered!", 16, 21);
-	put_str(format("All Hail the Mighty %s!", sp_ptr->winner), 17, 22);
+	put_str("Veni, Vidi, Vici!", 26, 15);
+	put_str("I came, I saw, I conquered!", 21, 16);
+	put_str(format("All Hail the Mighty %s!", sp_ptr->winner), 22, 17);
 
 	/* Flush input */
 	flush();

@@ -922,7 +922,7 @@ static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
 	sprintf(tmp_str, " %d-%d damage", intmindam, intmaxdam);
 
 	/* Print the damage */
-	put_str(tmp_str, r, WEP_MAST_COL2 + 8);
+	put_str(tmp_str, WEP_MAST_COL2 + 8, r);
 }
 
 
@@ -1083,26 +1083,26 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Print to_hit and to_dam of the weapon */
 	sprintf(tmp_str, "To Hit: %d  Deadliness: %d", o_ptr->to_h, o_ptr->to_d);
-	put_str(tmp_str, 8, WEP_MAST_COL1);
+	put_str(tmp_str, WEP_MAST_COL1, 8);
 
 	/* Print the weapons base damage dice and blows */
 	sprintf(tmp_str, "Dice: %dd%d    Number of Blows: %d",
 		 (int) o_ptr->dd, (int) o_ptr->ds, p_ptr->num_blow);
-	put_str(tmp_str, 10, WEP_MAST_COL1);
+	put_str(tmp_str, WEP_MAST_COL1, 10);
 
 	/* Print hit probabilities */
 	sprintf(tmp_str, "Enemy AC:  Low   Medium  High");
-	put_str(tmp_str, 12, WEP_MAST_COL1);
+	put_str(tmp_str, WEP_MAST_COL1, 12);
 	
 	sprintf(tmp_str, "Hit Prob:  %2d%% %2d%% %2d%% %2d%% %2d%%", 
 		hit_prob(o_ptr->to_h, 25), hit_prob(o_ptr->to_h, 50),
 		hit_prob(o_ptr->to_h, 75), hit_prob(o_ptr->to_h, 100),
 		hit_prob(o_ptr->to_h, 200));
-	put_str(tmp_str, 13, WEP_MAST_COL1);
+	put_str(tmp_str, WEP_MAST_COL1, 13);
 	
 	/* Print critical hit probabilities */
 	sprintf(tmp_str, "Critical: 1.0 1.5 2.0 2.7 3.6 5.0");
-	put_str(tmp_str, 15, WEP_MAST_COL1);
+	put_str(tmp_str, WEP_MAST_COL1, 15);
 	
 	sprintf(tmp_str, "          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
 		critical_prob(o_ptr->to_h, 0),
@@ -1112,7 +1112,7 @@ static void list_weapon(const object_type *o_ptr)
 		critical_prob(o_ptr->to_h, 4),
 		critical_prob(o_ptr->to_h, 5));
   
-	put_str(tmp_str, 16, WEP_MAST_COL1);
+	put_str(tmp_str, WEP_MAST_COL1, 16);
 	
 	c_put_str(TERM_L_BLUE, "Possible Damage:", WEP_MAST_COL2, 6);
 
@@ -1125,7 +1125,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Damage for one blow (if it hits) */
 	sprintf(tmp_str, "One Strike: %d-%d damage", intmindam, intmaxdam);
-	put_str(tmp_str, 7, WEP_MAST_COL2);
+	put_str(tmp_str, WEP_MAST_COL2, 7);
 
 	/* Rescale */
 	intmindam *= p_ptr->num_blow;
@@ -1133,7 +1133,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Damage for the complete attack (if all blows hit) */
 	sprintf(tmp_str, "One Attack: %d-%d damage", intmindam, intmaxdam);
-	put_str(tmp_str, 8, WEP_MAST_COL2);
+	put_str(tmp_str, WEP_MAST_COL2, 8);
 }
 
 
@@ -1160,7 +1160,7 @@ bool compare_weapons(void)
 		return (FALSE);
 	}
 
-	put_str("Based on your current abilities, here is what your weapon will do:", 4, 2);
+	put_str("Based on your current abilities, here is what your weapon will do:", 2, 4);
 
 	/* Identify the weapon */
 	identify_item(o_ptr);
@@ -1181,7 +1181,7 @@ bool compare_weapons(void)
 	list_weapon(o_ptr);
 	compare_weapon_aux1(o_ptr);
 
-	put_str("(Only highest damage applies per monster. Special damage not cumulative.)", 20, 0);
+	put_str("(Only highest damage applies per monster. Special damage not cumulative.)", 0, 20);
 
 	/* Done */
 	return (TRUE);

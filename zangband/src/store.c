@@ -1323,7 +1323,7 @@ static void display_entry(int pos)
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
 			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(out_val, i+6, 68);
+			put_str(out_val, 68, i + 6);
 		}
 	}
 
@@ -1347,7 +1347,7 @@ static void display_entry(int pos)
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
 			(void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-			put_str(out_val, i+6, 61);
+			put_str(out_val, 61, i + 6);
 		}
 
 		/* Display a "fixed" cost */
@@ -1358,7 +1358,7 @@ static void display_entry(int pos)
 
 			/* Actually draw the price (not fixed) */
 			(void)sprintf(out_val, "%9ld F", (long)x);
-			put_str(out_val, i+6, 68);
+			put_str(out_val, 68, i + 6);
 		}
 
 		/* Display a "taxed" cost */
@@ -1372,7 +1372,7 @@ static void display_entry(int pos)
 
 			/* Actually draw the price (with tax) */
 			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, i+6, 68);
+			put_str(out_val, 68, i + 6);
 		}
 
 		/* Display a "haggle" cost */
@@ -1383,7 +1383,7 @@ static void display_entry(int pos)
 
 			/* Actually draw the price (not fixed) */
 			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, i+6, 68);
+			put_str(out_val, 68, i + 6);
 		}
 	}
 }
@@ -1411,7 +1411,7 @@ static void display_inventory(int store_top)
 	for (i = k; i < 13; i++) prt("", i + 6, 0);
 
 	/* Assume "no current page" */
-	put_str("        ", 5, 20);
+	put_str("        ", 20, 5);
 
 	/* Visual reminder of "more items" */
 	if (st_ptr->stock_num > 12)
@@ -1420,7 +1420,7 @@ static void display_inventory(int store_top)
 		prt("-more-", k + 6, 3);
 
 		/* Indicate the "current page" */
-		put_str(format("(Page %d)", store_top/12 + 1), 5, 20);
+		put_str(format("(Page %d)", store_top/12 + 1), 20, 5);
 	}
 }
 
@@ -1455,15 +1455,15 @@ static void display_store(int store_top)
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		/* Put the owner name */
-		put_str("Your Home", 3, 30);
+		put_str("Your Home", 30, 3);
 
 		/* Label the item descriptions */
-		put_str("Item Description", 5, 3);
+		put_str("Item Description", 3, 5);
 
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_str("Weight", 5, 70);
+			put_str("Weight", 70, 5);
 		}
 	}
 
@@ -1476,23 +1476,23 @@ static void display_store(int store_top)
 
 		/* Put the owner name and race */
 		sprintf(buf, "%s (%s)", owner_name, race_name);
-		put_str(buf, 3, 5);
+		put_str(buf, 5, 3);
 
 		/* Show the max price in the store (above prices) */
 		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
 		prt(buf, 3, 45);
 
 		/* Label the item descriptions */
-		put_str("Item Description", 5, 3);
+		put_str("Item Description", 3, 5);
 
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_str("Weight", 5, 60);
+			put_str("Weight", 60, 5);
 		}
 
 		/* Label the asking price (in stores) */
-		put_str("Price", 5, 72);
+		put_str("Price", 72, 5);
 	}
 
 	/* Display the current gold */
@@ -2016,7 +2016,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 		while (!flag && loop_flag)
 		{
 			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
-			put_str(out_val, 1, 0);
+			put_str(out_val, 0, 1);
 			cancel = receive_offer("What do you offer? ", &offer, last_offer,
 					 1, cur_ask, final);
 
@@ -2089,7 +2089,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 				prt("", 1, 0);
 				(void)sprintf(out_val, "Your last offer: %ld",
 							  (long)last_offer);
-				put_str(out_val, 1, 39);
+				put_str(out_val, 39, 1);
 				say_comment_2(cur_ask, annoyed);
 			}
 		}
@@ -2207,7 +2207,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 			loop_flag = TRUE;
 
 			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
-			put_str(out_val, 1, 0);
+			put_str(out_val, 0, 1);
 			cancel = receive_offer("What price do you ask? ", &offer,
 				 last_offer, -1, cur_ask, final);
 
@@ -2282,7 +2282,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 				prt("", 1, 0);
 				(void)sprintf(out_val,
 							  "Your last bid %ld", (long)last_offer);
-				put_str(out_val, 1, 39);
+				put_str(out_val, 39, 1);
 				say_comment_3(cur_ask, annoyed);
 			}
 		}

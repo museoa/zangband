@@ -280,13 +280,13 @@ void get_player_quests(void)
 	/* Ask the number of additional quests */
 	while (TRUE)
 	{
-		put_str("Number of additional quests? (<50) ", 20, 2);
+		put_str("Number of additional quests? (<50) ", 2, 20);
 
 		/* Get a the number of additional quest */
 		while (TRUE)
 		{
 			/* Move the cursor */
-			put_str("", 20, 37);
+			put_str("", 37, 20);
 
 			/* Default */
 			strcpy(inp, "20");
@@ -919,7 +919,7 @@ static void castle_quest(void)
 	/* Is there a quest available at the building? */
 	if (!q_index)
 	{
-		put_str("I don't have a quest for you at the moment.", 8, 0);
+		put_str("I don't have a quest for you at the moment.", 0, 8);
 		return;
 	}
 
@@ -944,9 +944,9 @@ static void castle_quest(void)
 	/* Quest is still unfinished */
 	else if (q_ptr->status == QUEST_STATUS_TAKEN)
 	{
-		put_str("You have not completed your current quest yet!", 8, 0);
-		put_str("Use CTRL-Q to check the status of your quest.", 9, 0);
-		put_str("Return when you have completed your quest.", 12, 0);
+		put_str("You have not completed your current quest yet!", 0, 8);
+		put_str("Use CTRL-Q to check the status of your quest.", 0, 9);
+		put_str("Return when you have completed your quest.", 0, 12);
 	}
 	/* No quest yet */
 	else if (q_ptr->status == QUEST_STATUS_UNTAKEN)
