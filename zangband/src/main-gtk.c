@@ -106,7 +106,8 @@ static errr Term_wipe_gtk(int x, int y, int n)
 	g_assert(td->drawing_area->window != 0);
 
 	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc,
-	                   TRUE, x * td->font_wid, y * td->font_hgt, n * td->font_wid, td->font_hgt);
+					TRUE, x * td->font_wid, y * td->font_hgt,
+					n * td->font_wid, td->font_hgt);
 
 	/* Copy it to the window */
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
@@ -135,9 +136,12 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	g_assert(td->pixmap != NULL);
 	g_assert(td->drawing_area->window != 0);
 
-	if (!gdk_colormap_alloc_color(gdk_colormap_get_system(), &color, TRUE, FALSE))
+	if (!gdk_colormap_alloc_color(gdk_colormap_get_system(),
+			 &color, TRUE, FALSE))
+	{
 		g_print("Couldn't allocate color.");
-
+	}
+	
 	gdk_gc_set_foreground(td->gc, &color);
 
 	/* Clear the line */
@@ -146,7 +150,9 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	/* Draw the text to the pixmap */
 	for (i = 0; i < n; i++)
 	{
-		gdk_draw_text(td->pixmap, td->font, td->gc, (x + i) * td->font_wid, td->font->ascent + y * td->font_hgt, s + i, 1);
+		gdk_draw_text(td->pixmap, td->font, td->gc,
+					 (x + i) * td->font_wid,
+					 td->font->ascent + y * td->font_hgt, s + i, 1);
 	}
 
 	/* Copy it to the window */
@@ -162,6 +168,9 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 
 static errr CheckEvent(bool wait)
 {
+	/* Hack - ignore parameter */
+	(void) wait;
+	
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
@@ -236,7 +245,8 @@ static errr Term_curs_gtk(int x, int y)
 	gdk_gc_set_foreground(td->gc, &color);
 
 	gdk_draw_rectangle(td->pixmap, td->gc, FALSE,
-	                   x * td->font_wid, y * td->font_hgt, td->font_wid - 1, td->font_hgt - 1);
+	                   x * td->font_wid, y * td->font_hgt,
+					   td->font_wid - 1, td->font_hgt - 1);
 
 	/* Copy it to the window */
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
@@ -274,12 +284,19 @@ static void save_game_gtk(void)
 
 static void hook_quit(cptr str)
 {
+	/* Hack - Ignore parameter */
+	(void) str;
+	
 	gtk_exit(0);
 }
 
 
 static void quit_event_handler(GtkButton *was_clicked, gpointer user_data)
 {
+	/* Hack - Ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+
 	save_game_gtk();
 
 	quit(NULL);
@@ -288,12 +305,19 @@ static void quit_event_handler(GtkButton *was_clicked, gpointer user_data)
 
 static void destroy_event_handler(GtkButton *was_clicked, gpointer user_data)
 {
+	/* Hack - Ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+	
 	quit(NULL);
 }
 
 
 static void hide_event_handler(GtkWidget *window, gpointer user_data)
 {
+	/* Hack - Ignore parameter */
+	(void) user_data;
+	
 	gtk_widget_hide(window);
 }
 
@@ -305,6 +329,10 @@ static void cleanup_angband (void)
 
 static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
 {
+	/* Hack - Ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+	
 	if (game_in_progress)
 	{
 		plog("You can't start a new game while you're still playing!");
@@ -333,11 +361,17 @@ static void load_font(term_data *td, cptr fontname)
 static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 {
 	gchar *fontname;
-	term_data *td = gtk_object_get_data(GTK_OBJECT(font_selector), "term_data");
+	
+	term_data *td = gtk_object_get_data(GTK_OBJECT(font_selector),
+													 "term_data");
 
+	/* Hack - ignore widget */
+	(void) widget;
+	
 	g_assert(td != NULL);
 
-	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(font_selector));
+	fontname = gtk_font_selection_dialog_get_font_name(
+						GTK_FONT_SELECTION_DIALOG(font_selector));
 
 	g_assert(fontname != NULL);
 
@@ -351,26 +385,33 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 
 	gchar *spacings[] = { "c", "m", NULL };
 
+	/* Hack - ignore widget */
+	(void) widget;
+	
 	font_selector = gtk_font_selection_dialog_new("Select font");
 
 	gtk_object_set_data(GTK_OBJECT(font_selector), "term_data", user_data);
 
 	/* Filter to show only fixed-width fonts */
-	gtk_font_selection_dialog_set_filter(GTK_FONT_SELECTION_DIALOG(font_selector),
-	                                    GTK_FONT_FILTER_BASE, GTK_FONT_ALL,
-	                                    NULL, NULL, NULL, NULL, spacings, NULL);
+	gtk_font_selection_dialog_set_filter(
+					GTK_FONT_SELECTION_DIALOG(font_selector),
+					GTK_FONT_FILTER_BASE, GTK_FONT_ALL,
+					NULL, NULL, NULL, NULL, spacings, NULL);
 
-	gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
-	                   "clicked", font_ok_callback, (gpointer)font_selector);
+	gtk_signal_connect(
+			GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
+	        "clicked", font_ok_callback, (gpointer)font_selector);
 
 	/* Ensure that the dialog box is destroyed when the user clicks a button. */
-	gtk_signal_connect_object(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
-	                          "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
-	                          (gpointer)font_selector);
+	gtk_signal_connect_object(
+			GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
+			"clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
+			(gpointer)font_selector);
 
-	gtk_signal_connect_object(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->cancel_button),
-	                          "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
-	                         (gpointer)font_selector);
+	gtk_signal_connect_object(
+			GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->cancel_button),
+			"clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
+			(gpointer)font_selector);
 
 	gtk_widget_show(GTK_WIDGET(font_selector));
 }
@@ -378,7 +419,11 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 
 static void file_ok_callback(GtkWidget *widget, GtkWidget *file_selector)
 {
-	strcpy(savefile, gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_selector)));
+	/* Hack - ignore widget */
+	(void) widget;
+	
+	strcpy(savefile,
+		gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_selector)));
 
 	gtk_widget_destroy(file_selector);
 
@@ -395,6 +440,10 @@ static void open_event_handler(GtkButton *was_clicked, gpointer user_data)
 	GtkWidget *file_selector;
 	char buf[1024];
 
+	/* Hack - ignore parameters */
+	(void) was_clicked;
+	(void) user_data;
+	
 	if (game_in_progress)
 	{
 		plog("You can't open a new game while you're still playing!");
@@ -406,17 +455,23 @@ static void open_event_handler(GtkButton *was_clicked, gpointer user_data)
 
 		file_selector = gtk_file_selection_new("Select a savefile");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(file_selector), buf);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(file_selector)->ok_button),
-		                   "clicked", file_ok_callback, (gpointer)file_selector);
+		gtk_signal_connect(
+				GTK_OBJECT(GTK_FILE_SELECTION(file_selector)->ok_button),
+		    	"clicked", file_ok_callback, (gpointer)file_selector);
 
-		/* Ensure that the dialog box is destroyed when the user clicks a button. */
-		gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(file_selector)->ok_button),
-		                          "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
-		                          (gpointer)file_selector);
+		/*
+		 * Ensure that the dialog box is destroyed
+		 * when the user clicks a button.
+		 */
+		gtk_signal_connect_object(
+				GTK_OBJECT(GTK_FILE_SELECTION(file_selector)->ok_button),
+				"clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
+				(gpointer)file_selector);
 
-		gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(file_selector)->cancel_button),
-		                          "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
-		                          (gpointer)file_selector);
+		gtk_signal_connect_object(
+				GTK_OBJECT(GTK_FILE_SELECTION(file_selector)->cancel_button),
+				"clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
+				(gpointer)file_selector);
 
 		gtk_window_set_modal(GTK_WINDOW(file_selector), TRUE);
 		gtk_widget_show(GTK_WIDGET(file_selector));
@@ -424,8 +479,14 @@ static void open_event_handler(GtkButton *was_clicked, gpointer user_data)
 }
 
 
-static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event,
+										 gpointer user_data)
 {
+	/* Hack - ignore parameters */
+	(void) widget;
+	(void) event;
+	(void) user_data;
+	
 	save_game_gtk();
 
 	/* Don't prevent closure */
@@ -433,12 +494,17 @@ static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event, gpointe
 }
 
 
-static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
+										 gpointer user_data)
 {
 	int i, mc, ms, mo, mx;
 
 	char msg[128];
 
+	/* Hack - Ignore parameters */
+	(void) widget;
+	(void) user_data;
+	
 	/* Extract four "modifier flags" */
 	mc = (event->state & GDK_CONTROL_MASK) ? TRUE : FALSE;
 	ms = (event->state & GDK_SHIFT_MASK) ? TRUE : FALSE;
@@ -547,7 +613,8 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event, gp
 }
 
 
-static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
+				 gpointer user_data)
 {
 	term_data *td = user_data;
 
@@ -610,7 +677,7 @@ static void init_gtk_window(term_data *td, int i)
 {
 	cptr font;
 	
-	bool main = (i == 0) ? TRUE : FALSE;
+	bool main_win = (i == 0) ? TRUE : FALSE;
 	
 	GtkWidget *menu_bar, *file_item, *file_menu, *box;
 	GtkWidget *seperator_item, *file_exit_item, *file_new_item, *file_open_item;
@@ -626,9 +693,10 @@ static void init_gtk_window(term_data *td, int i)
 	box = gtk_vbox_new(FALSE, 0);
 	td->drawing_area = gtk_drawing_area_new();
 
-	/* Create menu */
-	if (main)
+	/* The main window is special */
+	if (main_win)
 	{
+		/* Create menu */
 		menu_bar = gtk_menu_bar_new();
 		file_item = gtk_menu_item_new_with_label("File");
 		file_menu = gtk_menu_new();
@@ -639,43 +707,38 @@ static void init_gtk_window(term_data *td, int i)
 		options_item = gtk_menu_item_new_with_label("Options");
 		options_menu = gtk_menu_new();
 		options_font_item = gtk_menu_item_new_with_label("Font");
-	}
-
-	/* Set attributes */
-	gtk_window_set_title(GTK_WINDOW(td->window), td->name);
-	gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area), td->cols * td->font_wid, td->rows * td->font_hgt);
-
-	/* Register callbacks */
-	if (main)
-	{
-		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate", quit_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(file_new_item), "activate", new_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(file_open_item), "activate", open_event_handler, NULL);
-		gtk_signal_connect(GTK_OBJECT(options_font_item), "activate", change_font_event_handler, td);
-	}
-
-	gtk_signal_connect(GTK_OBJECT(td->window), "delete_event", GTK_SIGNAL_FUNC(delete_event_handler), NULL);
-	gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event", GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
-	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event", GTK_SIGNAL_FUNC(expose_event_handler), td);
-
-	if (main)
-		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event", GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
-	else
-		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event", GTK_SIGNAL_FUNC(hide_event_handler), td);
-
-	/* Pack widgets */
-	gtk_container_add(GTK_CONTAINER(td->window), box);
-
-	if (main)
-	{
+	
+		/* Set attributes */
+		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
+		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
+				 td->cols * td->font_wid, td->rows * td->font_hgt);
+	
+		/* Register callbacks */
+		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate",
+					 quit_event_handler, NULL);
+		gtk_signal_connect(GTK_OBJECT(file_new_item), "activate",
+					 new_event_handler, NULL);
+		gtk_signal_connect(GTK_OBJECT(file_open_item), "activate",
+					 open_event_handler, NULL);
+		gtk_signal_connect(GTK_OBJECT(options_font_item), "activate",
+					 change_font_event_handler, td);
+		
+		/* Register more callbacks */
+		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
+					 GTK_SIGNAL_FUNC(delete_event_handler), NULL);
+		gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event", 
+					 GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
+		gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event",
+					 GTK_SIGNAL_FUNC(expose_event_handler), td);
+		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event", 
+					 GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
+		
+		/* Pack widgets */
+		gtk_container_add(GTK_CONTAINER(td->window), box);
 		gtk_box_pack_start(GTK_BOX(box), menu_bar, FALSE, FALSE, NO_PADDING);
-	}
-
-	gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
-
-	/* Pack the menu bar */
-	if (main)
-	{
+		gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
+	
+		/* Pack the menu bar */
 		gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), file_item);
 		gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), options_item);
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(file_item), file_menu);
@@ -686,12 +749,34 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_menu_append(GTK_MENU(file_menu), file_exit_item);
 		gtk_menu_append(GTK_MENU(options_menu), options_font_item);
 	}
+	else
+	{
+		/* Set attributes */
+		gtk_window_set_title(GTK_WINDOW(td->window), td->name);
+		gtk_drawing_area_size(GTK_DRAWING_AREA(td->drawing_area),
+				 td->cols * td->font_wid, td->rows * td->font_hgt);
+		
+		/* Register callbacks */
+		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
+					 GTK_SIGNAL_FUNC(delete_event_handler), NULL);
+		gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event", 
+					 GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
+		gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event",
+					 GTK_SIGNAL_FUNC(expose_event_handler), td);
+		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event",
+					 GTK_SIGNAL_FUNC(hide_event_handler), td);
+		
+		/* Pack widgets */
+		gtk_container_add(GTK_CONTAINER(td->window), box);
+		gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
+	}
 
 	/* Show the widgets */
 	gtk_widget_show_all(td->window);
 
 	/* Create a pixmap as buffer for screenupdates */
-	td->pixmap = gdk_pixmap_new(td->drawing_area->window, td->cols * td->font_wid, td->rows * td->font_hgt, -1);
+	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
+					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
 	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
 	td->gc = gdk_gc_new(td->drawing_area->window);
 	
