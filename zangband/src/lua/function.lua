@@ -89,12 +89,10 @@ function classFunction:supcode ()
  if overload >= 0 then
   output('  return '..strsub(self.cname,1,-3)..format("%02d",overload)..'(tolua_S);')
  else
-  output('  tolua_error(tolua_S,"#ferror in function \''..self.lname..'\'.");')
-  output('  return 0;')
+  output('  TOLUA_ERR_FN('..self.lname..');')
  end
- output(' }')
- output(' else\n {')
- 
+ output(' } else')
+ output(' {')
  -- declare self, if the case
  local narg
  if class then narg=2 else narg=1 end
@@ -217,7 +215,6 @@ function classFunction:supcode ()
    end
   end
  end
-
  output(' }')
  output(' return '..nret..';')
 
