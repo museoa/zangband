@@ -1787,6 +1787,25 @@ static void calc_mana(void)
 	/* Extract total mana */
 	msp = adj_mag_mana[p_ptr->stat_ind[mp_ptr->spell_stat]] * levels / 2;
 
+	/* Hack - the weak spellcasters get half as much mana (rounded up) in Oangband. */
+	switch (p_ptr->pclass)
+	{
+		case CLASS_ROGUE:
+		case CLASS_RANGER:
+		case CLASS_PALADIN:
+		case CLASS_MONK:
+		case CLASS_CHAOS_WARRIOR:
+		{
+			msp = (msp + 1) / 2;
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	
+	
 	/* Hack -- usually add one mana */
 	if (msp) msp++;
 
@@ -1837,14 +1856,57 @@ static void calc_mana(void)
 	/* Determine the weight allowance */
 	max_wgt = mp_ptr->spell_weight;
 
-	/* Heavy armor penalizes mana */
+	/* Heavy armor penalizes mana by a percentage.  -LM- */
 	if (((cur_wgt - max_wgt) / 10) > 0)
 	{
 		/* Encumbered */
 		p_ptr->cumber_armor = TRUE;
 
-		/* Reduce mana */
-		msp -= ((cur_wgt - max_wgt) / 10);
+		/* Subtract a percentage of maximum mana. */
+		switch (p_ptr->pclass)
+		{
+			/* For these classes, mana is halved if armour 
+			 * is 30 pounds over their weight limit. */
+			case CLASS_MAGE:
+			case CLASS_HIGH_MAGE:
+			{
+				msp -= msp * (cur_wgt - max_wgt) / 600;
+				break;
+			}
+
+			/* Mana halved if armour is 40 pounds over weight limit. */
+			case CLASS_PRIEST:
+			case CLASS_MINDCRAFTER:
+			{
+				msp -= msp * (cur_wgt - max_wgt) / 800;
+				break;
+			}
+
+			/* Mana halved if armour is 50 pounds over weight limit. */
+			case CLASS_ROGUE:
+			case CLASS_RANGER:
+			case CLASS_MONK:
+			{
+				msp -= msp * (cur_wgt - max_wgt) / 1000;
+				break;
+			}
+
+			/* Mana halved if armour is 60 pounds over weight limit. */
+			case CLASS_PALADIN:
+			case CLASS_CHAOS_WARRIOR:
+			case CLASS_WARRIOR_MAGE:
+			{
+				msp -= msp * (cur_wgt - max_wgt) / 1200;
+				break;
+			}
+
+			/* For new classes created, but not yet added to this formula. */
+			default:
+			{
+				msp -= msp * (cur_wgt - max_wgt) / 800;
+				break;
+			}
+		}
 	}
 
 
