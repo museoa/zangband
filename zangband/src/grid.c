@@ -15,6 +15,23 @@
 #include "generate.h"
 #include "grid.h"
 
+void clear_icky_door(cave_type *c_ptr)
+{
+	s16b fld_idx;
+	
+	/* Want a closed door terrain */
+	if (c_ptr->feat != FEAT_CLOSED) return;
+	
+	/* See if there is a door field here */
+	fld_idx = field_is_type(c_ptr->fld_idx, FTYPE_DOOR);
+	
+	if (fld_idx)
+	{
+		/* There is - delete it */
+		delete_field_idx(fld_idx);
+	}
+}
+
 
 /*
  * Returns random co-ordinates for player/monster/object
@@ -112,10 +129,7 @@ void place_random_door(int y, int x)
 	int tmp;
 
 	/* Making a door on top of a door is problematical */
-	if (field_is_type(cave[y][x].fld_idx, FTYPE_DOOR))
-	{
-		return;
-	}	
+	clear_icky_door(&cave[y][x]);	
 	
 	/* Invisible wall */
 	if (ironman_nightmare && !rand_int(666))

@@ -31,7 +31,7 @@
 #define place_outer_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_OUTER)
 
 /* Externs */
-
+extern void clear_icky_door(cave_type *c_ptr);
 extern bool new_player_spot(void);
 
 extern void place_random_stairs(int y, int x);

@@ -108,6 +108,9 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 						/* Do not convert permanent features */
 						if (cave_perma_grid(c_ptr)) continue;
 
+						/* Deleting a locked / jammed door is problematical */
+						clear_icky_door(c_ptr);
+						
 						/*
 						 * Clear previous contents, add feature
 						 * The border mainly gets feat2, while the center gets feat1
@@ -290,6 +293,9 @@ void place_trees(int x, int y)
 			/* Want square to be in the circle and accessable. */
 			if (in_bounds(j, i) && (distance(j, i, y, x) < 4) && !cave_perma_grid(c_ptr))
 			{
+				/* Deleting a locked or jammed door is problematical */
+				clear_icky_door(c_ptr);
+				
 				/*
 				 * Clear previous contents, add feature
 				 * The border mainly gets trees, while the center gets rubble
@@ -363,6 +369,9 @@ void destroy_level(void)
 				{
 					/* Delete objects */
 					delete_object(y, x);
+					
+					/* Deleting a locked or jammed door is problematical */
+					clear_icky_door(c_ptr);
 
 					/* Wall (or floor) type */
 					t = rand_int(200);

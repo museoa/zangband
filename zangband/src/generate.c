@@ -744,6 +744,9 @@ static bool cave_gen(void)
 
 			/* Access the grid */
 			c_ptr = &cave[y][x];
+			
+			/* Deleting a locked or jammed door is problematical */
+			clear_icky_door(c_ptr);
 
 			/* Clear previous contents (if not a lake), add a floor */
 			if ((c_ptr->feat < FEAT_DEEP_WATER) ||
@@ -762,6 +765,9 @@ static bool cave_gen(void)
 
 			/* Access the grid */
 			c_ptr = &cave[y][x];
+			
+			/* Deleting a locked or jammed door is problematical */
+			clear_icky_door(c_ptr);
 
 			/* Clear previous contents, add up floor */
 			c_ptr->feat = FEAT_FLOOR;
