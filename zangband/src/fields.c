@@ -1944,7 +1944,7 @@ struct field_trap_type
 {
 	/* Field type */
 	u16b t_idx;
-	
+
 	/* Average level found on */
 	byte level;
 };
@@ -1953,33 +1953,33 @@ struct field_trap_type
 /* Array used to work out which trap to place */
 static field_trap_type trap_num[] =
 {
-	{FT_TRAP_DOOR,			5},
-	{FT_TRAP_PIT,			5},	
-	{FT_TRAP_SPIKE_PIT,		15},
-	{FT_TRAP_POISON_PIT,	30},
-	{FT_TRAP_CURSE,			20},
-	{FT_TRAP_TELEPORT,		40},
-	{FT_TRAP_ELEMENT,		10},
-	{FT_TRAP_BA_ELEMENT,	50},
-	{FT_TRAP_GAS,			5},
-	{FT_TRAP_TRAPS,			60},
-	{FT_TRAP_TEMP_STAT,		25},
-	{FT_TRAP_PERM_STAT,		70},
-	{FT_TRAP_LOSE_XP,		80},
-	{FT_TRAP_DISENCHANT,	35}, 
-	{FT_TRAP_DROP_ITEM,		55},
-	{FT_TRAP_MUTATE,		90},
-	{FT_TRAP_NEW_LIFE,		100},
-	{FT_TRAP_NO_LITE,		0},
-	{FT_TRAP_HUNGER,		0},
-	{FT_TRAP_NO_GOLD,		25},
-	{FT_TRAP_HASTE_MON,		15},
-	{FT_TRAP_RAISE_MON,		40},
-	{FT_TRAP_DRAIN_MAGIC,	65},
-	{FT_TRAP_AGGRAVATE,		15},
-	{FT_TRAP_SUMMON,		20},
-	{FT_TRAP_LOSE_MEMORY,	30},
-	{0,						0}
+	{FT_TRAP_DOOR, 5},
+	{FT_TRAP_PIT, 5},
+	{FT_TRAP_SPIKE_PIT, 15},
+	{FT_TRAP_POISON_PIT, 30},
+	{FT_TRAP_CURSE, 20},
+	{FT_TRAP_TELEPORT, 40},
+	{FT_TRAP_ELEMENT, 10},
+	{FT_TRAP_BA_ELEMENT, 50},
+	{FT_TRAP_GAS, 5},
+	{FT_TRAP_TRAPS, 60},
+	{FT_TRAP_TEMP_STAT, 25},
+	{FT_TRAP_PERM_STAT, 70},
+	{FT_TRAP_LOSE_XP, 80},
+	{FT_TRAP_DISENCHANT, 35},
+	{FT_TRAP_DROP_ITEM, 55},
+	{FT_TRAP_MUTATE, 90},
+	{FT_TRAP_NEW_LIFE, 100},
+	{FT_TRAP_NO_LITE, 0},
+	{FT_TRAP_HUNGER, 0},
+	{FT_TRAP_NO_GOLD, 25},
+	{FT_TRAP_HASTE_MON, 15},
+	{FT_TRAP_RAISE_MON, 40},
+	{FT_TRAP_DRAIN_MAGIC, 65},
+	{FT_TRAP_AGGRAVATE, 15},
+	{FT_TRAP_SUMMON, 20},
+	{FT_TRAP_LOSE_MEMORY, 30},
+	{0, 0}
 };
 
 
@@ -3529,7 +3529,7 @@ bool field_action_door_build(field_type *f_ptr, vptr nothing)
 }
 
 /* Does the player have enough gold for this action? */
-static bool test_gold(s32b * cost)
+static bool test_gold(s32b *cost)
 {
 	if (p_ptr->au < *cost)
 	{

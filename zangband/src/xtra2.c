@@ -165,7 +165,7 @@ void check_experience(void)
  *
  * XXX XXX XXX Note the use of actual "monster names"
  */
-static int get_coin_type(const monster_race * r_ptr)
+static int get_coin_type(const monster_race *r_ptr)
 {
 	cptr name = (r_name + r_ptr->name);
 
@@ -257,46 +257,172 @@ bool monster_death(int m_idx, bool explode)
 			int d_side = r_ptr->blow[i].d_side;
 			int damage = damroll(d_dice, d_side);
 
+			/* ToDo: Apply the correct effects */
 			switch (r_ptr->blow[i].effect)
 			{
-				case RBE_HURT:      typ = GF_MISSILE; break;
-				case RBE_POISON:    typ = GF_POIS; break;
-				case RBE_UN_BONUS:  typ = GF_DISENCHANT; break;
-				case RBE_UN_POWER:  typ = GF_MISSILE; break; /* ToDo: Apply the correct effects */
-				case RBE_EAT_GOLD:  typ = GF_MISSILE; break;
-				case RBE_EAT_ITEM:  typ = GF_MISSILE; break;
-				case RBE_EAT_FOOD:  typ = GF_MISSILE; break;
-				case RBE_EAT_LITE:  typ = GF_MISSILE; break;
-				case RBE_ACID:      typ = GF_ACID; break;
-				case RBE_ELEC:      typ = GF_ELEC; break;
-				case RBE_FIRE:      typ = GF_FIRE; break;
-				case RBE_COLD:      typ = GF_COLD; break;
-				case RBE_BLIND:     typ = GF_LITE; break; /* HACK - for Yellow light */
-				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
-				case RBE_TERRIFY:   typ = GF_MISSILE; break;
-				case RBE_PARALYZE:  typ = GF_MISSILE; break;
-				case RBE_LOSE_STR:  typ = GF_MISSILE; break;
-				case RBE_LOSE_DEX:  typ = GF_MISSILE; break;
-				case RBE_LOSE_CON:  typ = GF_MISSILE; break;
-				case RBE_LOSE_INT:  typ = GF_MISSILE; break;
-				case RBE_LOSE_WIS:  typ = GF_MISSILE; break;
-				case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
-				case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
-				case RBE_SHATTER:   typ = GF_ROCKET; break;
-				case RBE_EXP_10:    typ = GF_MISSILE; break;
-				case RBE_EXP_20:    typ = GF_MISSILE; break;
-				case RBE_EXP_40:    typ = GF_MISSILE; break;
-				case RBE_EXP_80:    typ = GF_MISSILE; break;
-				case RBE_DISEASE:   typ = GF_POIS; break;
-				case RBE_TIME:      typ = GF_TIME; break;
-				case RBE_EXP_VAMP:  typ = GF_MISSILE; break;
+				case RBE_HURT:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_POISON:
+				{
+					typ = GF_POIS;
+					break;
+				}
+				case RBE_UN_BONUS:
+				{
+					typ = GF_DISENCHANT;
+					break;
+				}
+				case RBE_UN_POWER:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EAT_GOLD:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EAT_ITEM:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EAT_FOOD:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EAT_LITE:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_ACID:
+				{
+					typ = GF_ACID;
+					break;
+				}
+				case RBE_ELEC:
+				{
+					typ = GF_ELEC;
+					break;
+				}
+				case RBE_FIRE:
+				{
+					typ = GF_FIRE;
+					break;
+				}
+				case RBE_COLD:
+				{
+					typ = GF_COLD;
+					break;
+				}
+				case RBE_BLIND:
+				{
+					/* Hack - for Yellow light */
+					typ = GF_LITE;
+					break;
+				}
+				case RBE_CONFUSE:
+				{
+					typ = GF_CONFUSION;
+					break;
+				}
+				case RBE_TERRIFY:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_PARALYZE:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_STR:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_DEX:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_CON:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_INT:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_WIS:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_CHR:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_LOSE_ALL:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_SHATTER:
+				{
+					typ = GF_ROCKET;
+					break;
+				}
+				case RBE_EXP_10:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EXP_20:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EXP_40:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_EXP_80:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
+				case RBE_DISEASE:
+				{
+					typ = GF_POIS;
+					break;
+				}
+				case RBE_TIME:
+				{
+					typ = GF_TIME;
+					break;
+				}
+				case RBE_EXP_VAMP:
+				{
+					typ = GF_MISSILE;
+					break;
+				}
 			}
 
-			(void)project(m_idx, 3, x, y, damage, typ, flg);
+			(void) project(m_idx, 3, x, y, damage, typ, flg);
 			break;
 		}
 	}
-	
+
 	/* Complete quests */
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
@@ -724,7 +850,7 @@ int mon_damage_mod(const monster_type *m_ptr, int dam, int type)
 /*
  * This function calculates the experience gained for killing a monster.
  */
-void exp_for_kill(const monster_race * r_ptr, s32b *new_exp, s32b *new_exp_frac)
+void exp_for_kill(const monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 {
 	s32b div, exp;
 
@@ -1521,7 +1647,7 @@ bool target_able(int m_idx)
 /*
  * Hack - function to get object name of mimic
  */
-static bool mimic_desc(char *m_name, const monster_race * r_ptr)
+static bool mimic_desc(char *m_name, const monster_race *r_ptr)
 {
 	/* Hack - look at default character */
 	switch (r_ptr->d_char)
@@ -2980,7 +3106,7 @@ bool get_aim_dir(int *dp)
 	dir = p_ptr->command_dir;
 
 	/* Hack -- auto-target if requested */
-	if (use_old_target && !ironman_moria && target_okay())dir = 5;
+	if (use_old_target && !ironman_moria && target_okay()) dir = 5;
 
 	if (repeat_pull(dp))
 	{
@@ -3018,20 +3144,20 @@ bool get_aim_dir(int *dp)
 		/* Convert various keys to "standard" keys */
 		switch (command)
 		{
-				/* Use current target */
 			case 'T':
 			case 't':
 			case '.':
 			case '5':
 			case '0':
 			{
+				/* Use current target */
 				dir = 5;
 				break;
 			}
 
-				/* Set new target */
 			case '*':
 			{
+				/* Set new target */
 				if (target_set(TARGET_KILL | TARGET_HOST)) dir = 5;
 				break;
 			}
@@ -3046,7 +3172,7 @@ bool get_aim_dir(int *dp)
 		}
 
 		/* Verify requested targets */
-		if ((dir == 5) && !target_okay())dir = 0;
+		if ((dir == 5) && !target_okay()) dir = 0;
 
 		/* Error */
 		if (!dir) bell("Illegal aim direction!");
@@ -3214,12 +3340,15 @@ void gain_level_reward(int chosen_reward)
 	switch (chosen_reward ? chosen_reward : effect)
 	{
 		case REW_POLY_SLF:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou needst a new form, mortal!'");
 			do_poly_self();
 			break;
+		}
 		case REW_GAIN_EXP:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Well done, mortal! Lead on!'");
@@ -3231,25 +3360,33 @@ void gain_level_reward(int chosen_reward)
 				gain_exp(ee);
 			}
 			break;
+		}
 		case REW_LOSE_EXP:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou didst not deserve that, slave.'");
 			lose_exp(p_ptr->exp / 6);
 			break;
+		}
 		case REW_GOOD_OBJ:
+		{
 			msg_format("The voice of %s whispers:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Use my gift wisely.'");
 			acquirement(px, py, 1, FALSE, FALSE);
 			break;
+		}
 		case REW_GREA_OBJ:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Use my gift wisely.'");
 			acquirement(px, py, 1, TRUE, FALSE);
 			break;
+		}
 		case REW_CHAOS_WP:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy blade.'");
@@ -3355,18 +3492,23 @@ void gain_level_reward(int chosen_reward)
 			/* Drop it in the dungeon */
 			(void) drop_near(q_ptr, -1, px, py);
 			break;
+		}
 		case REW_GOOD_OBS:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy reward.'");
 			acquirement(px, py, rand_range(2, 3), FALSE, FALSE);
 			break;
+		}
 		case REW_GREA_OBS:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Behold, mortal, how generously I reward thy loyalty.'");
 			acquirement(px, py, rand_range(2, 3), TRUE, FALSE);
 			break;
+		}
 		case REW_TY_CURSE:
 		{
 			msg_format("The voice of %s thunders:",
@@ -3376,6 +3518,7 @@ void gain_level_reward(int chosen_reward)
 			break;
 		}
 		case REW_SUMMON_M:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'My pets, destroy the arrogant mortal!'");
@@ -3385,19 +3528,25 @@ void gain_level_reward(int chosen_reward)
 									   FALSE);
 			}
 			break;
+		}
 		case REW_H_SUMMON:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou needst worthier opponents!'");
 			(void) activate_hi_summon();
 			break;
+		}
 		case REW_DO_HAVOC:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Death and destruction! This pleaseth me!'");
 			call_chaos();
 			break;
+		}
 		case REW_GAIN_ABL:
+		{
 			msg_format("The voice of %s rings out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Stay, mortal, and let me mold thee.'");
@@ -3406,7 +3555,9 @@ void gain_level_reward(int chosen_reward)
 			else
 				(void) do_inc_stat(randint0(A_MAX));
 			break;
+		}
 		case REW_LOSE_ABL:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'I grow tired of thee, mortal.'");
@@ -3415,7 +3566,9 @@ void gain_level_reward(int chosen_reward)
 			else
 				(void) do_dec_stat(randint0(A_MAX));
 			break;
+		}
 		case REW_RUIN_ABL:
+		{
 			msg_format("The voice of %s thunders:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou needst a lesson in humility, mortal!'");
@@ -3425,12 +3578,16 @@ void gain_level_reward(int chosen_reward)
 				(void) dec_stat(i, rand_range(10, 25), TRUE);
 			}
 			break;
+		}
 		case REW_POLY_WND:
+		{
 			msg_format("You feel the power of %s touch you.",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			do_poly_wounds();
 			break;
+		}
 		case REW_AUGM_ABL:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Receive this modest gift from me!'");
@@ -3439,14 +3596,18 @@ void gain_level_reward(int chosen_reward)
 				(void) do_inc_stat(i);
 			}
 			break;
+		}
 		case REW_HURT_LOT:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Suffer, pathetic fool!'");
 			(void) fire_ball(GF_DISINTEGRATE, 0, p_ptr->lev * 4, 4);
 			take_hit(p_ptr->lev * 4, wrath_reason);
 			break;
+		}
 		case REW_HEAL_FUL:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Rise, my servant!'");
@@ -3467,19 +3628,25 @@ void gain_level_reward(int chosen_reward)
 
 			(void) hp_player(5000);
 			break;
+		}
 		case REW_CURSE_WP:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou reliest too much on thy weapon.'");
 			(void) curse_weapon();
 			break;
+		}
 		case REW_CURSE_AR:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou reliest too much on thine equipment.'");
 			(void) curse_armor();
 			break;
+		}
 		case REW_PISS_OFF:
+		{
 			msg_format("The voice of %s whispers:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Now thou shalt pay for annoying me.'");
@@ -3505,6 +3672,7 @@ void gain_level_reward(int chosen_reward)
 					}
 			}
 			break;
+		}
 		case REW_WRATH:
 		{
 			msg_format("The voice of %s thunders:",
@@ -3527,39 +3695,52 @@ void gain_level_reward(int chosen_reward)
 			break;
 		}
 		case REW_DESTRUCT:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Death and destruction! This pleaseth me!'");
 			(void) destroy_area(px, py, 25);
 			break;
+		}
 		case REW_GENOCIDE:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Let me relieve thee of thine oppressors!'");
 			(void) genocide(FALSE);
 			break;
+		}
 		case REW_MASS_GEN:
+		{
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Let me relieve thee of thine oppressors!'");
 			(void) mass_genocide(FALSE);
 			break;
+		}
 		case REW_DISPEL_C:
+		{
 			msg_format("You can feel the power of %s assault your enemies!",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			(void) dispel_monsters(p_ptr->lev * 4);
 			break;
+		}
 		case REW_IGNORE:
+		{
 			msg_format("%s ignores you.", chaos_patrons[p_ptr->chaos_patron]);
 			break;
+		}
 		case REW_SER_DEMO:
+		{
 			msg_format("%s rewards you with a demonic servant!",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			if (!summon_specific
 				(-1, px, py, p_ptr->depth, SUMMON_DEMON, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
+		}
 		case REW_SER_MONS:
+		{
 			msg_format("%s rewards you with a servant!",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			if (!summon_specific
@@ -3567,18 +3748,23 @@ void gain_level_reward(int chosen_reward)
 				 TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
+		}
 		case REW_SER_UNDE:
+		{
 			msg_format("%s rewards you with an undead servant!",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			if (!summon_specific
 				(-1, px, py, p_ptr->depth, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
+		}
 		default:
+		{
 			msg_format("The voice of %s stammers:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_format("'Uh... uh... the answer's %d/%d, what's the question?'",
 					   type, effect);
+		}
 	}
 }
 
@@ -3724,7 +3910,7 @@ bool get_hack_dir(int *dp)
 		}
 
 		/* Verify requested targets */
-		if ((dir == 5) && !target_okay())dir = 0;
+		if ((dir == 5) && !target_okay()) dir = 0;
 
 		/* Error */
 		if (!dir) bell("Illegal direction!");

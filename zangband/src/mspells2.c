@@ -242,9 +242,9 @@ bool monst_spell_monst(int m_idx)
 
 		switch (thrown_spell)
 		{
-			/* RF4_SHRIEK */
 			case 96 + 0:
 			{
+				/* RF4_SHRIEK */
 				if (known)
 				{
 					if (see_m)
@@ -262,9 +262,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_ELDRITCH_HORROR */
 			case 96 + 1:
 			{
+				/* RF4_ELDRITCH_HORROR */
 				if (known)
 				{
 					if (see_m)
@@ -282,15 +282,15 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_XXX3X4 */
 			case 96 + 2:
 			{
+				/* RF4_XXX3X4 */
 				break;
 			}
 
-			/* RF4_ROCKET */
 			case 96 + 3:
 			{
+				/* RF4_ROCKET */
 				if (known)
 				{
 					if (see_either)
@@ -320,9 +320,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_ARROW_1 */
 			case 96 + 4:
 			{
+				/* RF4_ARROW_1 */
 				if (known)
 				{
 					if (see_either)
@@ -350,9 +350,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_ARROW_2 */
 			case 96 + 5:
 			{
+				/* RF4_ARROW_2 */
 				if (known)
 				{
 					if (see_either)
@@ -380,9 +380,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_ARROW_3 */
 			case 96 + 6:
 			{
+				/* RF4_ARROW_3 */
 				if (known)
 				{
 					if (see_either)
@@ -410,9 +410,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_ARROW_4 */
 			case 96 + 7:
 			{
+				/* RF4_ARROW_4 */
 				if (known)
 				{
 					if (see_either)
@@ -440,9 +440,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_ACID */
 			case 96 + 8:
 			{
+				/* RF4_BR_ACID */
 				if (known)
 				{
 					if (see_either)
@@ -474,9 +474,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_ELEC */
 			case 96 + 9:
 			{
+				/* RF4_BR_ELEC */
 				if (known)
 				{
 					if (see_either)
@@ -508,9 +508,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_FIRE */
 			case 96 + 10:
 			{
+				/* RF4_BR_FIRE */
 				if (known)
 				{
 					if (see_either)
@@ -542,9 +542,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_COLD */
 			case 96 + 11:
 			{
+				/* RF4_BR_COLD */
 				if (known)
 				{
 					if (see_either)
@@ -575,9 +575,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_POIS */
 			case 96 + 12:
 			{
+				/* RF4_BR_POIS */
 				if (known)
 				{
 					if (see_either)
@@ -609,9 +609,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_NETH */
 			case 96 + 13:
 			{
+				/* RF4_BR_NETH */
 				if (known)
 				{
 					if (see_either)
@@ -643,9 +643,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_LITE */
 			case 96 + 14:
 			{
+				/* RF4_BR_LITE */
 				if (known)
 				{
 					if (see_either)
@@ -677,9 +677,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_DARK */
 			case 96 + 15:
 			{
+				/* RF4_BR_DARK */
 				if (known)
 				{
 					if (see_either)
@@ -711,9 +711,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_CONF */
 			case 96 + 16:
 			{
+				/* RF4_BR_CONF */
 				if (known)
 				{
 					if (see_either)
@@ -745,9 +745,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_SOUN */
 			case 96 + 17:
 			{
+				/* RF4_BR_SOUN */
 				if (known)
 				{
 					if (see_either)
@@ -779,9 +779,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_CHAO */
 			case 96 + 18:
 			{
+				/* RF4_BR_CHAO */
 				if (known)
 				{
 					if (see_either)
@@ -813,9 +813,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_DISE */
 			case 96 + 19:
 			{
+				/* RF4_BR_DISE */
 				if (known)
 				{
 					if (see_either)
@@ -847,9 +847,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_NEXU */
 			case 96 + 20:
 			{
+				/* RF4_BR_NEXU */
 				if (known)
 				{
 					if (see_either)
@@ -881,9 +881,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_TIME */
 			case 96 + 21:
 			{
+				/* RF4_BR_TIME */
 				if (known)
 				{
 					if (see_either)
@@ -915,9 +915,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_INER */
 			case 96 + 22:
 			{
+				/* RF4_BR_INER */
 				if (known)
 				{
 					if (see_either)
@@ -949,9 +949,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_GRAV */
 			case 96 + 23:
 			{
+				/* RF4_BR_GRAV */
 				if (known)
 				{
 					if (see_either)
@@ -983,9 +983,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_SHAR */
 			case 96 + 24:
 			{
+				/* RF4_BR_SHAR */
 				if (known)
 				{
 					if (see_either)
@@ -1017,9 +1017,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_PLAS */
 			case 96 + 25:
 			{
+				/* RF4_BR_PLAS */
 				if (known)
 				{
 					if (see_either)
@@ -1051,9 +1051,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_WALL */
 			case 96 + 26:
 			{
+				/* RF4_BR_WALL */
 				if (known)
 				{
 					if (see_either)
@@ -1085,9 +1085,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_MANA */
 			case 96 + 27:
 			{
+				/* RF4_BR_MANA */
 				if (known)
 				{
 					if (see_either)
@@ -1119,9 +1119,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BA_NUKE */
 			case 96 + 28:
 			{
+				/* RF4_BA_NUKE */
 				if (known)
 				{
 					if (see_either)
@@ -1150,9 +1150,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_NUKE */
 			case 96 + 29:
 			{
+				/* RF4_BR_NUKE */
 				if (known)
 				{
 					if (see_either)
@@ -1184,9 +1184,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BA_CHAO */
 			case 96 + 30:
 			{
+				/* RF4_BA_CHAO */
 				if (known)
 				{
 					if (see_either)
@@ -1215,9 +1215,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF4_BR_DISI -> Breathe Disintegration */
 			case 96 + 31:
 			{
+				/* RF4_BR_DISI */
 				if (known)
 				{
 					if (see_either)
@@ -1249,9 +1249,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_ACID */
 			case 128 + 0:
 			{
+				/* RF5_BA_ACID */
 				if (known)
 				{
 					if (see_either)
@@ -1280,9 +1280,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_ELEC */
 			case 128 + 1:
 			{
+				/* RF5_BA_ELEC */
 				if (known)
 				{
 					if (see_either)
@@ -1311,9 +1311,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_FIRE */
 			case 128 + 2:
 			{
+				/* RF5_BA_FIRE */
 				if (known)
 				{
 					if (see_either)
@@ -1342,9 +1342,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_COLD */
 			case 128 + 3:
 			{
+				/* RF5_BA_COLD */
 				if (known)
 				{
 					if (see_either)
@@ -1373,9 +1373,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_POIS */
 			case 128 + 4:
 			{
+				/* RF5_BA_POIS */
 				if (known)
 				{
 					if (see_either)
@@ -1404,9 +1404,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_NETH */
 			case 128 + 5:
 			{
+				/* RF5_BA_NETH */
 				if (known)
 				{
 					if (see_either)
@@ -1435,9 +1435,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_WATE */
 			case 128 + 6:
 			{
+				/* RF5_BA_WATE */
 				if (known)
 				{
 					if (see_either)
@@ -1468,9 +1468,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_MANA */
 			case 128 + 7:
 			{
+				/* RF5_BA_MANA */
 				if (known)
 				{
 					if (see_either)
@@ -1499,9 +1499,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BA_DARK */
 			case 128 + 8:
 			{
+				/* RF5_BA_DARK */
 				if (known)
 				{
 					if (see_either)
@@ -1530,9 +1530,10 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_DRAIN_MANA */
 			case 128 + 9:
 			{
+				/* RF5_DRAIN_MANA */
+
 				/* Attack power */
 				int power = (randint1(rlev) / 2) + 1;
 
@@ -1576,9 +1577,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_MIND_BLAST */
 			case 128 + 10:
 			{
+				/* RF5_MIND_BLAST */
 				if (see_m)
 				{
 					msg_format("%^s gazes intently at %s.", m_name, t_name);
@@ -1619,9 +1620,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BRAIN_SMASH */
 			case 128 + 11:
 			{
+				/* RF5_BRAIN_SMASH */
 				if (see_m)
 				{
 					msg_format("%^s gazes intently at %s.", m_name, t_name);
@@ -1664,9 +1665,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_CAUSE_1 */
 			case 128 + 12:
 			{
+				/* RF5_CAUSE_1 */
 				if (known)
 				{
 					if (see_m)
@@ -1695,9 +1696,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_CAUSE_2 */
 			case 128 + 13:
 			{
+				/* RF5_CAUSE_2 */
 				if (known)
 				{
 					if (see_m)
@@ -1726,9 +1727,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_CAUSE_3 */
 			case 128 + 14:
 			{
+				/* RF5_CAUSE_3 */
 				if (known)
 				{
 					if (see_m)
@@ -1757,9 +1758,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_CAUSE_4 */
 			case 128 + 15:
 			{
+				/* RF5_CAUSE_4 */
 				if (known)
 				{
 					if (see_m)
@@ -1789,9 +1790,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_ACID */
 			case 128 + 16:
 			{
+				/* RF5_BO_ACID */
 				if (known)
 				{
 					if (see_either)
@@ -1811,9 +1812,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_ELEC */
 			case 128 + 17:
 			{
+				/* RF5_BO_ELEC */
 				if (known)
 				{
 					if (see_either)
@@ -1833,9 +1834,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_FIRE */
 			case 128 + 18:
 			{
+				/* RF5_BO_FIRE */
 				if (known)
 				{
 					if (see_either)
@@ -1855,9 +1856,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_COLD */
 			case 128 + 19:
 			{
+				/* RF5_BO_COLD */
 				if (known)
 				{
 					if (see_either)
@@ -1877,16 +1878,17 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_POIS */
 			case 128 + 20:
 			{
+				/* RF5_BO_POIS */
+
 				/* XXX XXX XXX */
 				break;
 			}
 
-			/* RF5_BO_NETH */
 			case 128 + 21:
 			{
+				/* RF5_BO_NETH */
 				if (known)
 				{
 					if (see_either)
@@ -1906,9 +1908,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_WATE */
 			case 128 + 22:
 			{
+				/* RF5_BO_WATE */
 				if (known)
 				{
 					if (see_either)
@@ -1927,9 +1929,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_MANA */
 			case 128 + 23:
 			{
+				/* RF5_BO_MANA */
 				if (known)
 				{
 					if (see_either)
@@ -1949,9 +1951,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_PLAS */
 			case 128 + 24:
 			{
+				/* RF5_BO_PLAS */
 				if (known)
 				{
 					if (see_either)
@@ -1971,9 +1973,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BO_ICEE */
 			case 128 + 25:
 			{
+				/* RF5_BO_ICEE */
 				if (known)
 				{
 					if (see_either)
@@ -1992,9 +1994,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_MISSILE */
 			case 128 + 26:
 			{
+				/* RF5_MISSILE */
 				if (known)
 				{
 					if (see_either)
@@ -2014,9 +2016,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_SCARE */
 			case 128 + 27:
 			{
+				/* RF5_SCARE */
 				if (known)
 				{
 					if (see_either)
@@ -2053,9 +2055,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_BLIND */
 			case 128 + 28:
 			{
+				/* RF5_BLIND */
 				if (known)
 				{
 					if (see_either)
@@ -2091,9 +2093,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_CONF */
 			case 128 + 29:
 			{
+				/* RF5_CONF */
 				if (known)
 				{
 					if (see_either)
@@ -2130,9 +2132,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_SLOW */
 			case 128 + 30:
 			{
+				/* RF5_SLOW */
 				if (known)
 				{
 					if (see_either)
@@ -2167,9 +2169,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF5_HOLD */
 			case 128 + 31:
 			{
+				/* RF5_HOLD */
 				if (known)
 				{
 					if (see_either)
@@ -2204,10 +2206,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-
-			/* RF6_HASTE */
 			case 160 + 0:
 			{
+				/* RF6_HASTE */
 				if (known)
 				{
 					if (see_m)
@@ -2240,9 +2241,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_HAND_DOOM */
 			case 160 + 1:
 			{
+				/* RF6_HAND_DOOM */
 				if (known)
 				{
 					if (see_m)
@@ -2281,9 +2282,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_HEAL */
 			case 160 + 2:
 			{
+				/* RF6_HEAL */
 				if (known)
 				{
 					if (see_m)
@@ -2349,9 +2350,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_INVULNER */
 			case 160 + 3:
 			{
+				/* RF6_INVULNER */
 				if (known)
 				{
 					if (see_m)
@@ -2371,9 +2372,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_BLINK */
 			case 160 + 4:
 			{
+				/* RF6_BLINK */
 				if (see_m)
 				{
 					msg_format("%^s blinks away.", m_name);
@@ -2384,9 +2385,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_TPORT */
 			case 160 + 5:
 			{
+				/* RF6_TPORT */
 				if (see_m)
 				{
 					msg_format("%^s teleports away.", m_name);
@@ -2397,28 +2398,29 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_XXX3X6 */
 			case 160 + 6:
 			{
+				/* RF6_XXX3X6 */
 				break;
 			}
 
-			/* RF6_XXX4X6 */
 			case 160 + 7:
 			{
+				/* RF6_XXX4X6 */
 				break;
 			}
 
-			/* RF6_TELE_TO */
 			case 160 + 8:
 			{
+				/* RF6_TELE_TO */
+
 				/* Not implemented */
 				break;
 			}
 
-			/* RF6_TELE_AWAY */
 			case 160 + 9:
 			{
+				/* RF6_TELE_AWAY */
 				bool resists_tele = FALSE;
 
 				if (known)
@@ -2465,22 +2467,23 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_TELE_LEVEL */
 			case 160 + 10:
 			{
+				/* RF6_TELE_LEVEL */
+
 				/* Not implemented */
 				break;
 			}
 
-			/* RF6_XXX5 */
 			case 160 + 11:
 			{
+				/* RF6_XXX5 */
 				break;
 			}
 
-			/* RF6_DARKNESS */
 			case 160 + 12:
 			{
+				/* RF6_DARKNESS */
 				if (known)
 				{
 					if (see_m)
@@ -2507,23 +2510,25 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_TRAPS */
 			case 160 + 13:
 			{
+				/* RF6_TRAPS */
+
 				/* Not implemented */
 				break;
 			}
 
-			/* RF6_FORGET */
 			case 160 + 14:
 			{
+				/* RF6_FORGET */
+
 				/* Not implemented */
 				break;
 			}
 
-			/* RF6_RAISE_DEAD */
 			case 160 + 15:
 			{
+				/* RF6_RAISE_DEAD */
 				if (raise_dead
 					(m_ptr->fx, m_ptr->fy, (bool) (!is_hostile(m_ptr))) && known
 					&& see_m)
@@ -2533,9 +2538,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_SUMMON_KIN */
 			case 160 + 16:
 			{
+				/* RF6_SUMMON_KIN */
 				if (known)
 				{
 					if (see_either)
@@ -2570,9 +2575,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_CYBER */
 			case 160 + 17:
 			{
+				/* RF6_S_CYBER */
 				if (known)
 				{
 					if (see_either)
@@ -2598,9 +2603,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_MONSTER */
 			case 160 + 18:
 			{
+				/* RF6_S_MONSTER */
 				int type = (friendly ? SUMMON_NO_UNIQUES : 0);
 
 				if (known)
@@ -2629,9 +2634,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_MONSTERS */
 			case 160 + 19:
 			{
+				/* RF6_S_MONSTERS */
 				int type = (friendly ? SUMMON_NO_UNIQUES : 0);
 
 				if (known)
@@ -2663,9 +2668,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_ANT */
 			case 160 + 20:
 			{
+				/* RF6_S_ANT */
 				if (known)
 				{
 					if (see_either)
@@ -2695,9 +2700,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_SPIDER */
 			case 160 + 21:
 			{
+				/* RF6_S_SPIDER */
 				if (known)
 				{
 					if (see_either)
@@ -2727,9 +2732,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_HOUND */
 			case 160 + 22:
 			{
+				/* RF6_S_HOUND */
 				if (known)
 				{
 					if (see_either)
@@ -2759,9 +2764,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_HYDRA */
 			case 160 + 23:
 			{
+				/* RF6_S_HYDRA */
 				if (known)
 				{
 					if (see_either)
@@ -2791,9 +2796,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_ANGEL */
 			case 160 + 24:
 			{
+				/* RF6_S_ANGEL */
 				if (known)
 				{
 					if (see_either)
@@ -2823,9 +2828,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_DEMON */
 			case 160 + 25:
 			{
+				/* RF6_S_DEMON */
 				if (known)
 				{
 					if (see_either)
@@ -2857,9 +2862,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_UNDEAD */
 			case 160 + 26:
 			{
+				/* RF6_S_UNDEAD */
 				if (known)
 				{
 					if (see_either)
@@ -2889,9 +2894,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_DRAGON */
 			case 160 + 27:
 			{
+				/* RF6_S_DRAGON */
 				if (known)
 				{
 					if (see_either)
@@ -2921,9 +2926,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_HI_UNDEAD */
 			case 160 + 28:
 			{
+				/* RF6_S_HI_UNDEAD */
 				int type =
 					(friendly ? SUMMON_HI_UNDEAD_NO_UNIQUES : SUMMON_HI_UNDEAD);
 
@@ -2956,9 +2961,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_HI_DRAGON */
 			case 160 + 29:
 			{
+				/* RF6_S_HI_DRAGON */
 				int type =
 					(friendly ? SUMMON_HI_DRAGON_NO_UNIQUES : SUMMON_HI_DRAGON);
 
@@ -2992,9 +2997,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_AMBERITES */
 			case 160 + 30:
 			{
+				/* RF6_S_AMBERITES */
 				if (known)
 				{
 					if (see_either)
@@ -3025,9 +3030,9 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_S_UNIQUE */
 			case 160 + 31:
 			{
+				/* RF6_S_UNIQUE */
 				if (known)
 				{
 					if (see_either)

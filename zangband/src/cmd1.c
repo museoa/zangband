@@ -484,7 +484,7 @@ void search(void)
 	chance = p_ptr->skill_sns;
 
 	/* Penalize various conditions */
-	if (p_ptr->blind || no_lite())chance = chance / 10;
+	if (p_ptr->blind || no_lite()) chance = chance / 10;
 	if (p_ptr->confused || p_ptr->image) chance = chance / 10;
 
 	/* Search the nearby grids, which are always in bounds */
@@ -1044,7 +1044,7 @@ static void touch_zap_player(monster_type *m_ptr)
 }
 
 
-static void natural_attack(s16b m_idx, int attack, bool * fear, bool * mdeath)
+static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 {
 	int k, bonus, chance;
 	int n_weight;
@@ -1057,38 +1057,50 @@ static void natural_attack(s16b m_idx, int attack, bool * fear, bool * mdeath)
 	switch (attack)
 	{
 		case MUT2_SCOR_TAIL:
+		{
 			dss = 3;
 			ddd = 7;
 			n_weight = 5;
 			atk_desc = "tail";
 			break;
+		}
 		case MUT2_HORNS:
+		{
 			dss = 2;
 			ddd = 6;
 			n_weight = 15;
 			atk_desc = "horns";
 			break;
+		}
 		case MUT2_BEAK:
+		{
 			dss = 2;
 			ddd = 4;
 			n_weight = 5;
 			atk_desc = "beak";
 			break;
+		}
 		case MUT2_TRUNK:
+		{
 			dss = 1;
 			ddd = 4;
 			n_weight = 35;
 			atk_desc = "trunk";
 			break;
+		}
 		case MUT2_TENTACLES:
+		{
 			dss = 2;
 			ddd = 5;
 			n_weight = 5;
 			atk_desc = "tentacles";
 			break;
+		}
 		default:
+		{
 			dss = ddd = n_weight = 1;
 			atk_desc = "undefined body part";
+		}
 	}
 
 	/* Extract monster name (or "it") */
@@ -1134,23 +1146,35 @@ static void natural_attack(s16b m_idx, int attack, bool * fear, bool * mdeath)
 		switch (attack)
 		{
 			case MUT2_SCOR_TAIL:
+			{
 				project(0, 0, m_ptr->fx, m_ptr->fy, k, GF_POIS, PROJECT_KILL);
 				*mdeath = (m_ptr->r_idx == 0);
 				break;
+			}
 			case MUT2_HORNS:
+			{
 				*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 				break;
+			}
 			case MUT2_BEAK:
+			{
 				*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 				break;
+			}
 			case MUT2_TRUNK:
+			{
 				*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 				break;
+			}
 			case MUT2_TENTACLES:
+			{
 				*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 				break;
+			}
 			default:
+			{
 				*mdeath = mon_take_hit(m_idx, k, fear, NULL);
+			}
 		}
 
 		make_noise(4);
@@ -1170,7 +1194,7 @@ static void natural_attack(s16b m_idx, int attack, bool * fear, bool * mdeath)
 
 
 static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
-						 bool * fear, char *m_name)
+						 bool *fear, char *m_name)
 {
 	int bash_chance, bash_quality, bash_dam;
 
@@ -1744,24 +1768,51 @@ void py_attack(int x, int y)
 					{
 						switch (mult)
 						{
-							case 2: msg_format("You gouge %s!", m_name); break;
-							case 3: msg_format("You maim %s!", m_name); break;
-							case 4: msg_format("You carve %s!", m_name); break;
-							case 5: msg_format("You cleave %s!", m_name); break;
-							case 6: msg_format("You smite %s!", m_name); break;
-							case 7: msg_format("You eviscerate %s!", m_name); break;
-							default: msg_format("You shred %s!", m_name); break;
+							case 2:
+							{
+								msg_format("You gouge %s!", m_name);
+								break;
+							}
+							case 3:
+							{
+								msg_format("You maim %s!", m_name);
+								break;
+							}
+							case 4:
+							{
+								msg_format("You carve %s!", m_name);
+								break;
+							}
+							case 5:
+							{
+								msg_format("You cleave %s!", m_name);
+								break;
+							}
+							case 6:
+							{
+								msg_format("You smite %s!", m_name);
+								break;
+							}
+							case 7:
+							{
+								msg_format("You eviscerate %s!", m_name);
+								break;
+							}
+							default:
+							{
+								msg_format("You shred %s!", m_name);
+							}
 						}
 					}
 				}
 			}
-			
+
 			/* Bare hands and not a monk */
 			else
 			{
 				msg_format("You %s %s.",
-				           ((p_ptr->prace == RACE_GHOUL) ? "claw" : "punch"),
-				           m_name);
+						   ((p_ptr->prace == RACE_GHOUL) ? "claw" : "punch"),
+						   m_name);
 			}
 
 			/* No negative damage */
@@ -2155,22 +2206,34 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 			switch (c1_ptr->feat)
 			{
 				case FEAT_PATTERN_1:
+				{
 					ok_move = FEAT_PATTERN_2;
 					break;
+				}
 				case FEAT_PATTERN_2:
+				{
 					ok_move = FEAT_PATTERN_3;
 					break;
+				}
 				case FEAT_PATTERN_3:
+				{
 					ok_move = FEAT_PATTERN_4;
 					break;
+				}
 				case FEAT_PATTERN_4:
+				{
 					ok_move = FEAT_PATTERN_1;
 					break;
+				}
 				default:
+				{
 					if (p_ptr->wizard)
 						msg_format("Funny Pattern walking, %d.",
 								   *area(c_x, c_y));
-					return TRUE;	/* Goof-up */
+
+					/* Goof-up */
+					return TRUE;
+				}
 			}
 
 			if ((c2_ptr->feat == ok_move) || (c2_ptr->feat == c1_ptr->feat))
@@ -2801,12 +2864,14 @@ static int see_nothing(int dir, int x, int y)
 /*
  * Hack -- allow quick "cycling" through the legal directions
  */
-static byte cycle[] = { 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
+static byte cycle[] =
+{ 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
 
 /*
  * Hack -- map each direction into the "middle" of the "cycle[]" array
  */
-static byte chome[] = { 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
+static byte chome[] =
+{ 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
 
 
 /*
@@ -3013,17 +3078,11 @@ static bool run_test(void)
 			/* Examine the terrain */
 			switch (c_ptr->feat)
 			{
-					/* Floors */
 				case FEAT_FLOOR:
-
-					/* Secret doors */
 				case FEAT_SECRET:
-
-					/* Normal veins */
 				case FEAT_MAGMA:
 				case FEAT_QUARTZ:
 
-					/* Walls */
 				case FEAT_WALL_EXTRA:
 				case FEAT_WALL_INNER:
 				case FEAT_WALL_OUTER:
@@ -3032,7 +3091,7 @@ static bool run_test(void)
 				case FEAT_PERM_INNER:
 				case FEAT_PERM_OUTER:
 				case FEAT_PERM_SOLID:
-					/* dirt, grass, trees, ... */
+
 				case FEAT_SAND:
 				case FEAT_SALT:
 				case FEAT_WET_MUD:

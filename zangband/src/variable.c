@@ -37,32 +37,32 @@ byte version_extra = VERSION_EXTRA;
 /*
  * Savefile version
  */
-byte sf_major;			/* Savefile's "version_major" */
-byte sf_minor;			/* Savefile's "version_minor" */
-byte sf_patch;			/* Savefile's "version_patch" */
-byte sf_extra;			/* Savefile's "version_extra" */
-u32b sf_version;		/* Savefile's "version" */
+byte sf_major;	/* Savefile's "version_major" */
+byte sf_minor;	/* Savefile's "version_minor" */
+byte sf_patch;	/* Savefile's "version_patch" */
+byte sf_extra;	/* Savefile's "version_extra" */
+u32b sf_version;	/* Savefile's "version" */
 
-byte z_major;           /* Savefile version for Zangband */
+byte z_major;	/* Savefile version for Zangband */
 byte z_minor;
 byte z_patch;
 
 /*
  * Savefile information
  */
-u32b sf_xtra;			/* Operating system info */
-u32b sf_when;			/* Time when savefile created */
-u16b sf_lives;			/* Number of past "lives" with this file */
-u16b sf_saves;			/* Number of "saves" during this life */
+u32b sf_xtra;	/* Operating system info */
+u32b sf_when;	/* Time when savefile created */
+u16b sf_lives;	/* Number of past "lives" with this file */
+u16b sf_saves;	/* Number of "saves" during this life */
 
 /*
  * Run-time arguments
  */
-bool arg_fiddle;			/* Command arg -- Request fiddle mode */
-bool arg_wizard;			/* Command arg -- Request wizard mode */
-bool arg_sound;				/* Command arg -- Request special sounds */
-byte arg_graphics;			/* Command arg -- Request graphics mode */
-bool arg_monochrome;		/* Command arg -- Request monochrome mode */
+bool arg_fiddle;	/* Command arg -- Request fiddle mode */
+bool arg_wizard;	/* Command arg -- Request wizard mode */
+bool arg_sound;	/* Command arg -- Request special sounds */
+byte arg_graphics;	/* Command arg -- Request graphics mode */
+bool arg_monochrome;	/* Command arg -- Request monochrome mode */
 bool arg_force_original;	/* Command arg -- Request original keyset */
 bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
 
@@ -70,38 +70,38 @@ bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
  * Various things
  */
 bool character_generated;	/* The character exists */
-bool character_dungeon;		/* The character has a dungeon */
-bool character_loaded;		/* The character was loaded from a savefile */
-bool character_saved;		/* The character was just saved to a savefile */
+bool character_dungeon;	/* The character has a dungeon */
+bool character_loaded;	/* The character was loaded from a savefile */
+bool character_saved;	/* The character was just saved to a savefile */
 
-bool character_icky;		/* The game is in an icky full screen mode */
-bool character_xtra;		/* The game is in an icky startup mode */
+bool character_icky;	/* The game is in an icky full screen mode */
+bool character_xtra;	/* The game is in an icky startup mode */
 
-u32b seed_flavor;		/* Hack -- consistent object colors */
+u32b seed_flavor;	/* Hack -- consistent object colors */
 
-bool msg_flag;			/* Used in msg_print() for "buffering" */
+bool msg_flag;	/* Used in msg_print() for "buffering" */
 
 obj_theme dun_theme;	/* Current dungeon object theme */
-s16b num_repro;			/* Current reproducer count */
+s16b num_repro;	/* Current reproducer count */
 
-s16b object_level;		/* Current object creation level */
-s16b monster_level;		/* Current monster creation level */
-s16b base_level;        /* Base dungeon level */
+s16b object_level;	/* Current object creation level */
+s16b monster_level;	/* Current monster creation level */
+s16b base_level;	/* Base dungeon level */
 
-s32b turn;				/* Current game turn */
-s32b old_turn;			/* Turn when level began (feelings) */
+s32b turn;	/* Current game turn */
+s32b old_turn;	/* Turn when level began (feelings) */
 
-bool use_sound;			/* The "sound" mode is enabled */
-bool use_graphics;		/* The "graphics" mode is enabled */
+bool use_sound;	/* The "sound" mode is enabled */
+bool use_graphics;	/* The "graphics" mode is enabled */
 
-bool use_transparency = FALSE; /* Use transparent tiles */
+bool use_transparency = FALSE;	/* Use transparent tiles */
 
-s16b signal_count;		/* Hack -- Count interupts */
+s16b signal_count;	/* Hack -- Count interupts */
 
-bool inkey_base;		/* See the "inkey()" function */
-bool inkey_xtra;		/* See the "inkey()" function */
-bool inkey_scan;		/* See the "inkey()" function */
-bool inkey_flag;		/* See the "inkey()" function */
+bool inkey_base;	/* See the "inkey()" function */
+bool inkey_xtra;	/* See the "inkey()" function */
+bool inkey_scan;	/* See the "inkey()" function */
+bool inkey_flag;	/* See the "inkey()" function */
 
 bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
@@ -110,26 +110,26 @@ bool repair_monsters;	/* Hack -- optimize detect monsters */
 /* Is this needed? */
 bool hack_mutation;
 
-s16b o_max = 1;			/* Number of allocated objects */
-s16b o_cnt = 0;			/* Number of live objects */
+s16b o_max = 1;	/* Number of allocated objects */
+s16b o_cnt = 0;	/* Number of live objects */
 
-s16b m_max = 1;			/* Number of allocated monsters */
-s16b m_cnt = 0;			/* Number of live monsters */
+s16b m_max = 1;	/* Number of allocated monsters */
+s16b m_cnt = 0;	/* Number of live monsters */
 
-s16b fld_max = 1;		/* Number of allocated fields */
-s16b fld_cnt = 0;		/* Number of live fields */
+s16b fld_max = 1;	/* Number of allocated fields */
+s16b fld_cnt = 0;	/* Number of live fields */
 
-s16b rg_max = 1;		/* Number of allocated regions */
-s16b rg_cnt = 0;		/* Number of live regions */
+s16b rg_max = 1;	/* Number of allocated regions */
+s16b rg_cnt = 0;	/* Number of live regions */
 
-s16b q_max = 1;			/* Number of allocated quests */
+s16b q_max = 1;	/* Number of allocated quests */
 
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
 s16b hack_m_idx_ii = 0;
-s16b *hack_fld_ptr = NULL; /* Hack -- see "fields.c" */
+s16b *hack_fld_ptr = NULL;	/* Hack -- see "fields.c" */
 
 /* Can we get rid of this at all? */
-char summon_kin_type;   /* Hack, by Julian Lighton: summon 'relatives' */
+char summon_kin_type;	/* Hack, by Julian Lighton: summon 'relatives' */
 
 /* This probably can be moved to player_type */
 int total_friends = 0;
@@ -143,13 +143,13 @@ store_type **store_cache;	/* The cache of store stocks */
 
 /* Special options */
 
-byte hitpoint_warn;		/* Hitpoint warning (0 to 9) */
+byte hitpoint_warn;	/* Hitpoint warning (0 to 9) */
 
-byte delay_factor;		/* Delay factor (0 to 9) */
+byte delay_factor;	/* Delay factor (0 to 9) */
 
-byte autosave_l;        /* Autosave before entering new levels */
-byte autosave_t;        /* Timed autosave */
-s16b autosave_freq;     /* Autosave frequency */
+byte autosave_l;	/* Autosave before entering new levels */
+byte autosave_t;	/* Timed autosave */
+s16b autosave_freq;	/* Autosave frequency */
 
 /* Cheating options */
 bool cheat_peek;
@@ -160,7 +160,7 @@ bool cheat_know;
 bool cheat_live;
 
 
-bool closing_flag;		/* Dungeon is closing */
+bool closing_flag;	/* Dungeon is closing */
 
 bool fake_monochrome;	/* Use fake monochrome for effects */
 
@@ -176,7 +176,7 @@ s16b panel_col_prt, panel_row_prt;
 
 byte *mp_a = NULL;
 char *mp_c = NULL;
-	
+
 #ifdef USE_TRANSPARENCY
 byte *mp_ta = NULL;
 char *mp_tc = NULL;
@@ -415,14 +415,14 @@ char angband_sound_name[SOUND_MAX][16] =
  * In the wilderness, things are more complicated.
  */
 
-cave_type *(*area)(int, int);
+cave_type *(*area) (int, int);
 
 /*
  * Equivalent function pointer used to get player information
  * for each grid.
  */
 
-pcave_type *(*parea)(int, int);
+pcave_type *(*parea) (int, int);
 
 /*
  * Variables used to access the scrollable wilderness.
@@ -462,9 +462,9 @@ wild_gen_data_type *wild_gen_data;
 wild_choice_tree_type *wild_choice_tree;
 
 /* Bounds checking function pointers */
-bool (*in_bounds)(int, int);
-bool (*in_bounds2)(int, int);
-bool (*in_boundsp)(int, int);
+bool (*in_bounds) (int, int);
+bool (*in_bounds2) (int, int);
+bool (*in_boundsp) (int, int);
 
 /*
  * Current size of the wilderness
@@ -485,7 +485,7 @@ region_type cave_data;
 /*
  * Index of current global region
  */
-int	cur_region;
+int cur_region;
 
 /*
  * The array of dungeon items [z_info->o_max]
@@ -615,7 +615,7 @@ server_type s_body;
 /*
  * Pointer to the server information
  */
-server_type *svr_ptr = &s_body; 
+server_type *svr_ptr = &s_body;
 
 
 
@@ -783,19 +783,19 @@ byte item_tester_tval;
  * Here is a "hook" used during calls to "get_item()" and
  * "show_inven()" and "show_equip()", and the choice window routines.
  */
-bool (*item_tester_hook)(const object_type*);
+bool (*item_tester_hook) (const object_type *);
 
 
 /*
  * Current "comp" function for ang_sort()
  */
-bool (*ang_sort_comp)(const vptr u, const vptr v, int a, int b);
+bool (*ang_sort_comp) (const vptr u, const vptr v, int a, int b);
 
 
 /*
  * Current "swap" function for ang_sort()
  */
-void (*ang_sort_swap)(const vptr u, const vptr v, int a, int b);
+void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 
 
 
@@ -811,7 +811,7 @@ monster_hook_type get_mon_num2_hook;
 /*
  * Hack -- function hook to restrict "get_obj_num_prep()" function
  */
-byte (*get_obj_num_hook)(int k_idx);
+byte (*get_obj_num_hook) (int k_idx);
 
 
 /* Get rid of the quest stuff? */
@@ -847,5 +847,3 @@ bool monster_terrain_sensitive = TRUE;
 
 /* Get rid of this... */
 int mutant_regenerate_mod = 100;
-
-

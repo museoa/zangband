@@ -2233,7 +2233,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_ERIRIL:
 			{
 				msg_print("Your quarterstaff glows yellow...");
-				if (!ident_spell())return FALSE;
+				if (!ident_spell()) return FALSE;
 				o_ptr->timeout = 10;
 				break;
 			}
@@ -2964,7 +2964,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_ID_PLAIN:
 		{
-			if (!ident_spell())return FALSE;
+			if (!ident_spell()) return FALSE;
 			o_ptr->timeout = 10;
 			break;
 		}
@@ -3029,7 +3029,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_DIM_DOOR:
 		{
 			msg_print("You open a dimensional gate. Choose a destination.");
-			if (!dimension_door())return FALSE;
+			if (!dimension_door()) return FALSE;
 			o_ptr->timeout = 100;
 			break;
 		}

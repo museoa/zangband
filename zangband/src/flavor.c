@@ -16,14 +16,14 @@
 /*
  * Max sizes of the following arrays
  */
-#define MAX_ROCKS      56       /* Used with rings (min 51) */
-#define MAX_AMULETS    17       /* Used with amulets (min 16) */
-#define MAX_WOODS      32       /* Used with staffs (min 30) */
-#define MAX_METALS     39       /* Used with wands/rods (min 30/29) */
-#define MAX_COLORS     66       /* Used with potions (min 64) */
-#define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
-#define MAX_TITLES     54       /* Used with scrolls (min 48) */
-#define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
+#define MAX_ROCKS      56		/* Used with rings (min 51) */
+#define MAX_AMULETS    17		/* Used with amulets (min 16) */
+#define MAX_WOODS      32		/* Used with staffs (min 30) */
+#define MAX_METALS     39		/* Used with wands/rods (min 30/29) */
+#define MAX_COLORS     66		/* Used with potions (min 64) */
+#define MAX_SHROOM     20		/* Used with mushrooms (min 20) */
+#define MAX_TITLES     54		/* Used with scrolls (min 48) */
+#define MAX_SYLLABLES 164		/* Used with scrolls (see below) */
 
 
 /*
@@ -43,7 +43,7 @@ static cptr ring_adj[MAX_ROCKS] =
 	"Engagement", "Adamantite",
 	"Wire", "Dilithium", "Bone", "Wooden",
 	"Iron", "Serpent", "Wedding", "Double",
-	"Plain", "Brass",  "Scarab", "Shining",
+	"Plain", "Brass", "Scarab", "Shining",
 	"Rusty", "Transparent"
 };
 
@@ -81,7 +81,7 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
 	TERM_L_DARK, TERM_WHITE, TERM_L_UMBER, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
-	TERM_L_UMBER, TERM_VIOLET /* Hack */
+	TERM_L_UMBER, TERM_VIOLET	/* Hack */
 };
 
 
@@ -96,7 +96,7 @@ static cptr staff_adj[MAX_WOODS] =
 	"Maple", "Mulberry", "Oak", "Pine", "Redwood",
 	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
 	"Mistletoe", "Hawthorn", "Bamboo", "Silver", "Runed",
-	"Golden", "Ashen"/*,"Gnarled","Ivory","Sandlewood"*/
+	"Golden", "Ashen"	/*,"Gnarled","Ivory","Sandlewood" */
 };
 
 static byte staff_col[MAX_WOODS] =
@@ -107,7 +107,7 @@ static byte staff_col[MAX_WOODS] =
 	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_RED,
 	TERM_RED, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER,
 	TERM_GREEN, TERM_L_UMBER, TERM_L_UMBER, TERM_L_WHITE, TERM_UMBER,
-	TERM_YELLOW, TERM_SLATE, /*???,???,???*/
+	TERM_YELLOW, TERM_SLATE,	/*???,???,??? */
 };
 
 
@@ -120,7 +120,8 @@ static cptr wand_adj[MAX_METALS] =
 	"Iron", "Magnesium", "Molybdenum", "Nickel", "Rusty",
 	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
 	"Zirconium", "Zinc", "Aluminium-Plated", "Copper-Plated", "Gold-Plated",
-	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated", "Zinc-Plated",
+	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated",
+		"Zinc-Plated",
 	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
 	"Platinum", "Lead", "Lead-Plated", "Ivory", "Adamantite",
 	"Uridium", "Long", "Short", "Hexagonal"
@@ -840,7 +841,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Analyze the object */
 	switch (o_ptr->tval)
 	{
-		/* Some objects are easy to describe */
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
@@ -848,13 +848,14 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		case TV_FLASK:
 		case TV_CHEST:
 		{
+			/* Some objects are easy to describe */
 			break;
 		}
 
-		/* Figurines/Statues */
 		case TV_FIGURINE:
 		case TV_STATUE:
 		{
+			/* Figurines/Statues */
 			cptr tmp = r_name + r_ptr->name;
 
 			if (!(r_ptr->flags1 & RF1_UNIQUE))
@@ -872,7 +873,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			break;
 		}
 
-		/* Missiles/ Bows/ Weapons */
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -882,12 +882,12 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		case TV_SWORD:
 		case TV_DIGGING:
 		{
+			/* Missiles/ Bows/ Weapons */
 			show_weapon = TRUE;
 			break;
 		}
 
 
-		/* Armour */
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
@@ -898,20 +898,22 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+			/* Armour */
 			show_armour = TRUE;
 			break;
 		}
 
 
-		/* Lites (including a few "Specials") */
 		case TV_LITE:
 		{
+			/* Lites (including a few "Specials") */
 			break;
 		}
 
-		/* Amulets (including a few "Specials") */
 		case TV_AMULET:
 		{
+			/* Amulets (including a few "Specials") */
+
 			/* Known artifacts */
 			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware &&
 				(o_ptr->activate > 128)) break;
@@ -928,9 +930,10 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			break;
 		}
 
-		/* Rings (including a few "Specials") */
 		case TV_RING:
 		{
+			/* Rings (including a few "Specials") */
+
 			/* Known artifacts */
 			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware &&
 				(o_ptr->activate > 128)) break;
@@ -1033,7 +1036,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			break;
 		}
 
-		/* Magic Books */
+			/*** Magic Books ***/
+
 		case TV_LIFE_BOOK:
 		{
 			modstr = basenm;
@@ -1105,16 +1109,16 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		}
 
 
-		/* Hack -- Gold/Gems */
 		case TV_GOLD:
 		{
+			/* Hack -- Gold/Gems */
 			strcpy(buf, basenm);
 			return;
 		}
 
-		/* Used in the "inventory" routine */
 		default:
 		{
+			/* Used in the "inventory" routine */
 			strcpy(buf, "(nothing)");
 			return;
 		}
@@ -1379,7 +1383,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Dump base weapon info */
 	switch (o_ptr->tval)
 	{
-		/* Missiles and Weapons */
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -1387,6 +1390,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
+		{
+			/* Missiles and Weapons */
 
 			/* Append a "damage" string */
 			t = object_desc_chr(t, ' ');
@@ -1398,23 +1403,27 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 			/* All done */
 			break;
+		}
 
-
-		/* Bows get a special "damage string" */
 		case TV_BOW:
+		{
+			/* Bows get a special "damage string" */
 
 			/* Extract the "base power" */
 			switch (o_ptr->sval)
 			{
 				case SV_SLING:
+				{
 					power = 2;
 					break;
-
+				}
 				case SV_SHORT_BOW:
+				{
 					power = 2;
 					break;
-
+				}
 				case SV_LONG_BOW:
+				{
 					if (p_ptr->stat_use[A_STR] >= 16)
 					{
 						power = 3;
@@ -1425,18 +1434,22 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 						power = 2;
 					}
 					break;
-
+				}
 				case SV_LIGHT_XBOW:
+				{
 					power = 4;
 					break;
-
+				}
 				case SV_HEAVY_XBOW:
+				{
 					power = 5;
 					break;
-
+				}
 				default:
+				{
 					msg_print("Unknown firing multiplier.");
 					power = 0;
+				}
 			}
 
 			/* Apply the "Extra Might" flag */
@@ -1451,6 +1464,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 			/* All done */
 			break;
+		}
 	}
 
 
@@ -1798,7 +1812,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		t = object_desc_chr(t, c2);
 	}
 
-copyback:
+  copyback:
 	/* Here's where we dump the built string into buf. */
 	tmp_val[size - 1] = '\0';
 	t = tmp_val;

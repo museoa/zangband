@@ -75,7 +75,7 @@
 
 /* Decision tree constants */
 
-/* Lower two bits describe cut */ 
+/* Lower two bits describe cut */
 #define DT_HGT		0x01
 #define DT_POP		0x02
 #define DT_LAW		0x03
@@ -111,9 +111,9 @@
 #define QUEST_FLAG_KNOWN		0x10	/* Player knows about this quest */
 
 /* Helper defines for random quests */
-#define QUEST_CAMP_MON		5		/* One in five squares has a monster */
-#define QUEST_CAMP_OBJ		5		/* One in five squares has an object */
-#define QUEST_CAMP_SCATTER	10		/* Non-camp sqaures have stuff */
+#define QUEST_CAMP_MON		5	/* One in five squares has a monster */
+#define QUEST_CAMP_OBJ		5	/* One in five squares has an object */
+#define QUEST_CAMP_SCATTER	10	/* Non-camp sqaures have stuff */
 
 
 /* Building types */
@@ -136,17 +136,17 @@ typedef struct wild_building_type wild_building_type;
 
 struct wild_building_type
 {
-	u16b	gen;	/* Created */
-	u16b	field;	/* Field type, if applicable */
-	
-	byte	type;	/* Type of building */
-	
+	u16b gen;	/* Created */
+	u16b field;	/* Field type, if applicable */
+
+	byte type;	/* Type of building */
+
 	/* Suggested location in parameter space */
-	byte	pop;
-	byte	magic;
-	byte	law;
-	
-	u16b	rarity;	/* Rarity of store */
+	byte pop;
+	byte magic;
+	byte law;
+
+	u16b rarity;	/* Rarity of store */
 };
 
 /* Quest generation helper */
@@ -154,7 +154,7 @@ typedef struct quest_aux_type quest_aux_type;
 
 struct quest_aux_type
 {
-	bool (*hook_func)(int r_idx);
+	bool (*hook_func) (int r_idx);
 	int level;
 	int chance;
 	cptr name;
@@ -172,6 +172,6 @@ extern void frac_block(void);
 /* quest.c */
 extern void pick_wild_quest(int *xsize, int *ysize, byte *flags);
 extern bool quest_blank(int x, int y, int xsize, int ysize, int place_num,
-	 byte flags);
+						byte flags);
 extern bool create_quest(int x, int y, int place_num);
 extern void draw_quest(u16b place_num);

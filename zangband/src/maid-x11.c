@@ -170,7 +170,8 @@ typedef struct BITMAPFILEHEADER
 	u16b bfReserved1;
 	u16b bfReserved2;
 	u32b bfOffBits;
-} BITMAPFILEHEADER;
+}
+BITMAPFILEHEADER;
 
 
 /*
@@ -189,7 +190,8 @@ typedef struct BITMAPINFOHEADER
 	u32b biYPelsPerMeter;
 	u32b biClrUsed;
 	u32b biClrImportand;
-} BITMAPINFOHEADER;
+}
+BITMAPINFOHEADER;
 
 /*
  * The Win32 "RGBQUAD" type.
@@ -198,7 +200,8 @@ typedef struct RGBQUAD
 {
 	unsigned char b, g, r;
 	unsigned char filler;
-} RGBQUAD;
+}
+RGBQUAD;
 
 
 /*** Helper functions for system independent file loading. ***/

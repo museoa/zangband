@@ -485,7 +485,7 @@ void enter_score(void)
 	/* Save the date in a hacked up form (9 chars) */
 	(void) sprintf(the_score.day, "%-.6s %-.2s", ctime(&ct) + 4,
 				   ctime(&ct) + 22);
-#else /* HIGHSCORE_DATE_HACK */
+#else  /* HIGHSCORE_DATE_HACK */
 	/* Get the date with a 4-digit year */
 	(void) strftime(long_day, 11, "%m/%d/%Y", localtime(&ct));
 

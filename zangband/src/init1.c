@@ -339,7 +339,7 @@ static cptr r_info_flags6[] =
 	"DARKNESS",
 	"TRAPS",
 	"FORGET",
-	"ANIM_DEAD", /* ToDo: Implement ANIM_DEAD */
+	"ANIM_DEAD",	/* ToDo: Implement ANIM_DEAD */
 	"S_KIN",
 	"S_CYBER",
 	"S_MONSTER",
@@ -642,7 +642,7 @@ static cptr t_info_flags[] =
 /*
  * Initialize an "*_info" array, by parsing an ascii "template" file
  */
-errr init_info_txt(FILE * fp, char *buf, header * head,
+errr init_info_txt(FILE *fp, char *buf, header *head,
 				   parse_info_txt_func parse_info_txt_line)
 {
 	errr err;
@@ -723,7 +723,7 @@ errr init_info_txt(FILE * fp, char *buf, header * head,
  * Returns FALSE when there isn't enough space available to store
  * the text.
  */
-static bool add_text(u32b *offset, header * head, cptr buf)
+static bool add_text(u32b *offset, header *head, cptr buf)
 {
 	/* Hack -- Verify space */
 	if (head->text_size + strlen(buf) + 8 > z_info->fake_text_size)
@@ -753,7 +753,7 @@ static bool add_text(u32b *offset, header * head, cptr buf)
  * Returns 0 when there isn't enough space available to store
  * the name.
  */
-static u32b add_name(header * head, cptr buf)
+static u32b add_name(header *head, cptr buf)
 {
 	u32b index;
 
@@ -778,7 +778,7 @@ static u32b add_name(header * head, cptr buf)
 /*
  * Initialize the "z_info" structure, by parsing an ascii "template" file
  */
-errr parse_z_info(char *buf, header * head)
+errr parse_z_info(char *buf, header *head)
 {
 	/* Unused parameter */
 	(void) head;
@@ -1118,7 +1118,7 @@ errr parse_v_info(char *buf, header *head)
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
  */
-errr parse_f_info(char *buf, header * head)
+errr parse_f_info(char *buf, header *head)
 {
 	int i;
 

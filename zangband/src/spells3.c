@@ -545,7 +545,7 @@ void teleport_player_to(int nx, int ny)
 		/* Can enter grid? */
 		if (cave_naked_grid(c_ptr) && !(fields_have_flags(c_ptr->fld_idx,
 														  FIELD_INFO_NO_ENTER)))
-				break;
+			break;
 
 		/* No non-movement */
 		if ((y == py) && (x == px)) continue;
@@ -623,7 +623,7 @@ void teleport_player_level(void)
 		return;
 	}
 
-	if (!check_down_wild())return;
+	if (!check_down_wild()) return;
 
 	if (p_ptr->anti_tele)
 	{
@@ -734,7 +734,7 @@ void recall_player(int turns)
 		return;
 	}
 
-	if (!check_down_wild())return;
+	if (!check_down_wild()) return;
 
 	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
 	{
@@ -772,22 +772,54 @@ void word_of_recall(void)
  */
 bool apply_disenchant(void)
 {
-	int             t = 0;
-	object_type     *o_ptr;
-	char            o_name[256];
+	int t = 0;
+	object_type *o_ptr;
+	char o_name[256];
 
 
 	/* Pick a random slot */
 	switch (randint1(8))
 	{
-		case 1: t = INVEN_WIELD; break;
-		case 2: t = INVEN_BOW; break;
-		case 3: t = INVEN_BODY; break;
-		case 4: t = INVEN_OUTER; break;
-		case 5: t = INVEN_ARM; break;
-		case 6: t = INVEN_HEAD; break;
-		case 7: t = INVEN_HANDS; break;
-		case 8: t = INVEN_FEET; break;
+		case 1:
+		{
+			t = INVEN_WIELD;
+			break;
+		}
+		case 2:
+		{
+			t = INVEN_BOW;
+			break;
+		}
+		case 3:
+		{
+			t = INVEN_BODY;
+			break;
+		}
+		case 4:
+		{
+			t = INVEN_OUTER;
+			break;
+		}
+		case 5:
+		{
+			t = INVEN_ARM;
+			break;
+		}
+		case 6:
+		{
+			t = INVEN_HEAD;
+			break;
+		}
+		case 7:
+		{
+			t = INVEN_HANDS;
+			break;
+		}
+		case 8:
+		{
+			t = INVEN_FEET;
+			break;
+		}
 	}
 
 	/* Get the item */
@@ -997,25 +1029,35 @@ void brand_weapon(int brand_type)
 
 		switch (brand_type)
 		{
+			case 1:
+			{
+				act = "is engulfed in raw Logrus!";
+				ego = EGO_CHAOTIC;
+				break;
+			}
+			case 2:
+			{
+				act = "is coated with poison.";
+				ego = EGO_BRAND_POIS;
+				break;
+			}
+			case 3:
+			{
+				act = "thirsts for blood!";
+				ego = EGO_VAMPIRIC;
+				break;
+			}
 			case 4:
+			{
 				act = "seems very unstable now.";
 				ego = EGO_TRUMP;
 				o_ptr->pval = randint1(2);
 				o_ptr->activate = ACT_TELEPORT_1;
 				break;
-			case 3:
-				act = "thirsts for blood!";
-				ego = EGO_VAMPIRIC;
-				break;
-			case 2:
-				act = "is coated with poison.";
-				ego = EGO_BRAND_POIS;
-				break;
-			case 1:
-				act = "is engulfed in raw Logrus!";
-				ego = EGO_CHAOTIC;
-				break;
+			}
+
 			default:
+			{
 				if (randint0(100) < 25)
 				{
 					act = "is covered in a fiery shield!";
@@ -1026,6 +1068,7 @@ void brand_weapon(int brand_type)
 					act = "glows deep, icy blue!";
 					ego = EGO_BRAND_COLD;
 				}
+			}
 		}
 
 		msg_format("Your %s %s", o_name, act);
@@ -1339,7 +1382,7 @@ void identify_pack(void)
  */
 static int enchant_table[ENCHANT_MAX + 1] =
 {
-	0,   115, 221, 319, 407,
+	0, 115, 221, 319, 407,
 	488, 561, 627, 686, 738,
 	784, 824, 859, 889, 914,
 	936, 953, 967, 978, 986,
@@ -1567,7 +1610,7 @@ void stair_creation(void)
 		return;
 	}
 
-	if (!check_down_wild())return;
+	if (!check_down_wild()) return;
 
 	/* XXX XXX XXX */
 	delete_object(px, py);
@@ -1789,7 +1832,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	q = "Enchant which item? ";
 	s = "You have nothing to enchant.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-			return (FALSE);
+		return (FALSE);
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -1852,7 +1895,7 @@ bool artifact_scroll(void)
 	q = "Enchant which item? ";
 	s = "You have nothing to enchant.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-			return (FALSE);
+		return (FALSE);
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -2104,7 +2147,7 @@ bool ident_spell(void)
 	q = "Identify which item? ";
 	s = "You have nothing to identify.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-			return (FALSE);
+		return (FALSE);
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -2162,7 +2205,7 @@ bool mundane_spell(void)
 	q = "Use which item? ";
 	s = "You have nothing you can use.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-			return (FALSE);
+		return (FALSE);
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -2257,7 +2300,7 @@ bool identify_fully(void)
 	q = "Identify which item? ";
 	s = "You have nothing to identify.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-			return (FALSE);
+		return (FALSE);
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -2830,9 +2873,11 @@ bool potion_smash_effect(int who, int x, int y, int k_idx)
 		case SV_POTION_DEC_DEX:
 		case SV_POTION_DEC_CON:
 		case SV_POTION_DEC_CHR:
-		case SV_POTION_WATER:	/* perhaps a 'water' attack? */
+		case SV_POTION_WATER:
 		case SV_POTION_APPLE_JUICE:
+		{
 			return TRUE;
+		}
 
 		case SV_POTION_INFRAVISION:
 		case SV_POTION_DETECT_INVIS:
@@ -2864,89 +2909,124 @@ bool potion_smash_effect(int who, int x, int y, int k_idx)
 		case SV_POTION_RESISTANCE:
 		case SV_POTION_INVULNERABILITY:
 		case SV_POTION_NEW_LIFE:
+		{
 			/* All of the above potions have no effect when shattered */
 			return FALSE;
+		}
 		case SV_POTION_SLOWNESS:
+		{
 			dt = GF_OLD_SLOW;
 			dam = 5;
 			ident = TRUE;
 			angry = TRUE;
 			break;
+		}
 		case SV_POTION_POISON:
+		{
 			dt = GF_POIS;
 			dam = damroll(3, 6);
 			ident = TRUE;
 			angry = TRUE;
 			break;
+		}
 		case SV_POTION_BLINDNESS:
+		{
 			dt = GF_DARK;
 			ident = TRUE;
 			angry = TRUE;
 			break;
-		case SV_POTION_CONFUSION:	/* Booze */
+		}
+		case SV_POTION_CONFUSION:
+		{
+			/* Booze */
 			dt = GF_OLD_CONF;
 			ident = TRUE;
 			angry = TRUE;
 			break;
+		}
 		case SV_POTION_SLEEP:
+		{
 			dt = GF_OLD_SLEEP;
 			angry = TRUE;
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_RUINATION:
 		case SV_POTION_DETONATIONS:
+		{
 			dt = GF_SHARDS;
 			dam = damroll(25, 25);
 			angry = TRUE;
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_DEATH:
-			dt = GF_DEATH_RAY;	/* !! */
+		{
+			/* !! */
+			dt = GF_DEATH_RAY;
 			dam = damroll(25, 25);
 			angry = TRUE;
 			radius = 1;
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_SPEED:
+		{
 			dt = GF_OLD_SPEED;
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_CURE_LIGHT:
+		{
 			dt = GF_OLD_HEAL;
 			dam = damroll(2, 3);
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_CURE_SERIOUS:
+		{
 			dt = GF_OLD_HEAL;
 			dam = damroll(4, 3);
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_CURE_CRITICAL:
 		case SV_POTION_CURING:
+		{
 			dt = GF_OLD_HEAL;
 			dam = damroll(6, 3);
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_HEALING:
+		{
 			dt = GF_OLD_HEAL;
 			dam = damroll(10, 10);
 			ident = TRUE;
 			break;
+		}
 		case SV_POTION_STAR_HEALING:
 		case SV_POTION_LIFE:
+		{
 			dt = GF_OLD_HEAL;
 			dam = damroll(50, 50);
 			radius = 1;
 			ident = TRUE;
 			break;
-		case SV_POTION_RESTORE_MANA:	/* MANA */
+		}
+		case SV_POTION_RESTORE_MANA:
+		{
+			/* MANA */
 			dt = GF_MANA;
 			dam = damroll(10, 10);
 			radius = 1;
 			ident = TRUE;
 			break;
+		}
 		default:
-			/* Do nothing */ ;
+		{
+			/* Do nothing */
+		}
 	}
 
 	(void) project(who, radius, x, y, dam, dt,
@@ -3257,166 +3337,609 @@ static void spell_info(char *p, int spell, int realm)
 
 		/* See below */
 		int orb = (plev / ((p_ptr->pclass == CLASS_PRIEST ||
-		                    p_ptr->pclass == CLASS_HIGH_MAGE) ? 2 : 4));
+							p_ptr->pclass == CLASS_HIGH_MAGE) ? 2 : 4));
 
 		/* Analyze the spell */
 		switch (realm)
 		{
-			case 0: /* Life */
+			case 0:
+			{
+				/* Life */
 				switch (spell)
 				{
-					case  1: strcpy (p, " heal 2d10"); break;
-					case  2: strcpy (p, " dur 12+d12 turns"); break;
-					case  4: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-					case  6: strcpy (p, " heal 4d10"); break;
-					case 10: strcpy (p, " heal 8d10"); break;
-					case 11: strcpy (p, " dur 24+d24"); break;
-					case 12: sprintf(p, " dam 3d6+%d", plev + orb); break;
-					case 13: sprintf(p, " dur d25+%d", 3 * plev); break;
-					case 14: strcpy (p, " heal 300"); break;
-					case 16: sprintf(p, " dam %d+%d", plev, plev); break;
-					case 18: sprintf(p, " dam %d+%d", 3 * plev, 3 * plev); break;
-					case 20: sprintf(p, " dam %d", 4 * plev); break;
-					case 22: sprintf(p, " d %d/h 1000", 4 * plev); break;
-					case 24: strcpy (p, " dur 25+d25"); break;
-					case 25: strcpy (p, " dur 48+d48"); break;
-					case 28: strcpy (p, " heal 2000"); break;
-					case 30: sprintf(p, " h300/d%d+388", plev * 4); break;
-					case 31: strcpy (p, " dur 7+d7"); break;
+					case 1:
+					{
+						strcpy(p, " heal 2d10");
+						break;
+					}
+					case 2:
+					{
+						strcpy(p, " dur 12+d12 turns");
+						break;
+					}
+					case 4:
+					{
+						sprintf(p, " dam %d", 10 + (plev / 2));
+						break;
+					}
+					case 6:
+					{
+						strcpy(p, " heal 4d10");
+						break;
+					}
+					case 10:
+					{
+						strcpy(p, " heal 8d10");
+						break;
+					}
+					case 11:
+					{
+						strcpy(p, " dur 24+d24");
+						break;
+					}
+					case 12:
+					{
+						sprintf(p, " dam 3d6+%d", plev + orb);
+						break;
+					}
+					case 13:
+					{
+						sprintf(p, " dur d25+%d", 3 * plev);
+						break;
+					}
+					case 14:
+					{
+						strcpy(p, " heal 300");
+						break;
+					}
+					case 16:
+					{
+						sprintf(p, " dam %d+%d", plev, plev);
+						break;
+					}
+					case 18:
+					{
+						sprintf(p, " dam %d+%d", 3 * plev, 3 * plev);
+						break;
+					}
+					case 20:
+					{
+						sprintf(p, " dam %d", 4 * plev);
+						break;
+					}
+					case 22:
+					{
+						sprintf(p, " d %d/h 1000", 4 * plev);
+						break;
+					}
+					case 24:
+					{
+						strcpy(p, " dur 25+d25");
+						break;
+					}
+					case 25:
+					{
+						strcpy(p, " dur 48+d48");
+						break;
+					}
+					case 28:
+					{
+						strcpy(p, " heal 2000");
+						break;
+					}
+					case 30:
+					{
+						sprintf(p, " h300/d%d+388", plev * 4);
+						break;
+					}
+					case 31:
+					{
+						strcpy(p, " dur 7+d7");
+						break;
+					}
 				}
 				break;
+			}
 
-			case 1: /* Sorcery */
+			case 1:
+			{
+				/* Sorcery */
 				switch (spell)
 				{
-					case  1: strcpy (p, " range 10"); break;
-					case  3: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-					case  5: sprintf(p, " range %d", plev * 5); break;
-					case 13: sprintf(p, " dur %d+d%d", plev, plev + 20); break;
-					case 19: sprintf(p, " range %d", plev + 2); break;
-					case 20: strcpy (p, " dur 25+d30"); break;
-					case 23: strcpy (p, " delay 15+d21"); break;
-					case 25: sprintf(p, " max wgt %d", plev * 15 / 10); break;
-					case 26: sprintf(p, " dam 7d7+%d", plev / 2); break;
-					case 27: strcpy (p, " dur 25+d30"); break;
-					case 31: strcpy (p, " dur 8+d8"); break;
+					case 1:
+					{
+						strcpy(p, " range 10");
+						break;
+					}
+					case 3:
+					{
+						sprintf(p, " dam %d", 10 + (plev / 2));
+						break;
+					}
+					case 5:
+					{
+						sprintf(p, " range %d", plev * 5);
+						break;
+					}
+					case 13:
+					{
+						sprintf(p, " dur %d+d%d", plev, plev + 20);
+						break;
+					}
+					case 19:
+					{
+						sprintf(p, " range %d", plev + 2);
+						break;
+					}
+					case 20:
+					{
+						strcpy(p, " dur 25+d30");
+						break;
+					}
+					case 23:
+					{
+						strcpy(p, " delay 15+d21");
+						break;
+					}
+					case 25:
+					{
+						sprintf(p, " max wgt %d", plev * 15 / 10);
+						break;
+					}
+					case 26:
+					{
+						sprintf(p, " dam 7d7+%d", plev / 2);
+						break;
+					}
+					case 27:
+					{
+						strcpy(p, " dur 25+d30");
+						break;
+					}
+					case 31:
+					{
+						strcpy(p, " dur 8+d8");
+						break;
+					}
 				}
 				break;
+			}
 
-			case 2: /* Nature */
+			case 2:
+			{
+				/* Nature */
 				switch (spell)
 				{
-					case  1: strcpy (p, " heal 2d8"); break;
-					case  4: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-					case  6: strcpy (p, " dur 20+d20"); break;
-					case  9: sprintf(p, " dam %dd8", (3 + ((plev - 5) / 4))); break;
-					case 11: sprintf(p, " dam %dd8", (5 + ((plev - 5) / 4))); break;
-					case 12: strcpy (p, " dam 6d8"); break;
-					case 15: strcpy (p, " heal 1000"); break;
-					case 18: strcpy (p, " dur 20+d30"); break;
-					case 19: strcpy (p, " dur 20+d20"); break;
-					case 24: strcpy (p, " rad 10"); break;
-					case 26: sprintf(p, " dam %d", 70 + plev); break;
-					case 27: sprintf(p, " dam %d", 90 + plev); break;
-					case 28: sprintf(p, " dam %d", 100 + plev); break;
-					case 29: strcpy (p, " dam 75"); break;
-					case 31: sprintf(p, " dam %d+%d", 4 * plev, 100 + plev); break;
+					case 1:
+					{
+						strcpy(p, " heal 2d8");
+						break;
+					}
+					case 4:
+					{
+						sprintf(p, " dam %d", 10 + (plev / 2));
+						break;
+					}
+					case 6:
+					{
+						strcpy(p, " dur 20+d20");
+						break;
+					}
+					case 9:
+					{
+						sprintf(p, " dam %dd8", (3 + ((plev - 5) / 4)));
+						break;
+					}
+					case 11:
+					{
+						sprintf(p, " dam %dd8", (5 + ((plev - 5) / 4)));
+						break;
+					}
+					case 12:
+					{
+						strcpy(p, " dam 6d8");
+						break;
+					}
+					case 15:
+					{
+						strcpy(p, " heal 1000");
+						break;
+					}
+					case 18:
+					{
+						strcpy(p, " dur 20+d30");
+						break;
+					}
+					case 19:
+					{
+						strcpy(p, " dur 20+d20");
+						break;
+					}
+					case 24:
+					{
+						strcpy(p, " rad 10");
+						break;
+					}
+					case 26:
+					{
+						sprintf(p, " dam %d", 70 + plev);
+						break;
+					}
+					case 27:
+					{
+						sprintf(p, " dam %d", 90 + plev);
+						break;
+					}
+					case 28:
+					{
+						sprintf(p, " dam %d", 100 + plev);
+						break;
+					}
+					case 29:
+					{
+						strcpy(p, " dam 75");
+						break;
+					}
+					case 31:
+					{
+						sprintf(p, " dam %d+%d", 4 * plev, 100 + plev);
+						break;
+					}
 				}
 				break;
+			}
 
-			case 3: /* Chaos */
+			case 3:
+			{
+				/* Chaos */
 				switch (spell)
 				{
-					case  0: sprintf(p, " dam %dd4", 3 + ((plev - 1) / 5)); break;
-					case  2: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-					case  4: sprintf(p, " dam 3d5+%d", plev + (plev /
-					     (((p_ptr->pclass == CLASS_MAGE) ||
-					     (p_ptr->pclass == CLASS_HIGH_MAGE)) ? 2 : 4))); break;
-					case  5: sprintf(p, " dam %dd8", (6 + ((plev - 5) / 4))); break;
-					case  6: sprintf(p, " dam %dd8", (8 + ((plev - 5) / 4))); break;
-					case  7: sprintf(p, " range %d", plev * 5); break;
-					case  8: strcpy (p, " random"); break;
-					case  9: sprintf(p, " dam %dd8", (10 + ((plev - 5) / 4))); break;
-					case 10: sprintf(p, " dam %d", 45 + plev); break;
-					case 11: sprintf(p, " dam %dd8", (11 + ((plev - 5) / 4))); break;
-					case 12: sprintf(p, " dam %d", 55 + plev); break;
-					case 15: sprintf(p, " dam %d", 66 + plev); break;
-					case 17: sprintf(p, " dam %dd8", (5 + (plev / 10))); break;
-					case 19: sprintf(p, " dam %d", 80 + plev); break;
-					case 24: sprintf(p, " dam %dd8", (9 + (plev / 10))); break;
-					case 25: sprintf(p, " dam %d each", (3 * plev) / 2); break;
-					case 26: sprintf(p, " dam %d", 75 + plev); break;
-					case 27: strcpy (p, " dam 75 / 150"); break;
-					case 28: sprintf(p, " dam %d", 120 + plev); break;
-					case 29: sprintf(p, " dam %d", 300 + (plev * 2)); break;
-					case 30: sprintf(p, " dam %d", p_ptr->chp); break;
-					case 31: strcpy (p, " dam 3 * 175"); break;
+					case 0:
+					{
+						sprintf(p, " dam %dd4", 3 + ((plev - 1) / 5));
+						break;
+					}
+					case 2:
+					{
+						sprintf(p, " dam %d", 10 + (plev / 2));
+						break;
+					}
+					case 4:
+					{
+						sprintf(p, " dam 3d5+%d", plev + (plev /
+														  (((p_ptr->pclass ==
+															 CLASS_MAGE)
+															|| (p_ptr->pclass ==
+																CLASS_HIGH_MAGE))
+														   ? 2 : 4)));
+						break;
+					}
+					case 5:
+					{
+						sprintf(p, " dam %dd8", (6 + ((plev - 5) / 4)));
+						break;
+					}
+					case 6:
+					{
+						sprintf(p, " dam %dd8", (8 + ((plev - 5) / 4)));
+						break;
+					}
+					case 7:
+					{
+						sprintf(p, " range %d", plev * 5);
+						break;
+					}
+					case 8:
+					{
+						strcpy(p, " random");
+						break;
+					}
+					case 9:
+					{
+						sprintf(p, " dam %dd8", (10 + ((plev - 5) / 4)));
+						break;
+					}
+					case 10:
+					{
+						sprintf(p, " dam %d", 45 + plev);
+						break;
+					}
+					case 11:
+					{
+						sprintf(p, " dam %dd8", (11 + ((plev - 5) / 4)));
+						break;
+					}
+					case 12:
+					{
+						sprintf(p, " dam %d", 55 + plev);
+						break;
+					}
+					case 15:
+					{
+						sprintf(p, " dam %d", 66 + plev);
+						break;
+					}
+					case 17:
+					{
+						sprintf(p, " dam %dd8", (5 + (plev / 10)));
+						break;
+					}
+					case 19:
+					{
+						sprintf(p, " dam %d", 80 + plev);
+						break;
+					}
+					case 24:
+					{
+						sprintf(p, " dam %dd8", (9 + (plev / 10)));
+						break;
+					}
+					case 25:
+					{
+						sprintf(p, " dam %d each", (3 * plev) / 2);
+						break;
+					}
+					case 26:
+					{
+						sprintf(p, " dam %d", 75 + plev);
+						break;
+					}
+					case 27:
+					{
+						strcpy(p, " dam 75 / 150");
+						break;
+					}
+					case 28:
+					{
+						sprintf(p, " dam %d", 120 + plev);
+						break;
+					}
+					case 29:
+					{
+						sprintf(p, " dam %d", 300 + (plev * 2));
+						break;
+					}
+					case 30:
+					{
+						sprintf(p, " dam %d", p_ptr->chp);
+						break;
+					}
+					case 31:
+					{
+						strcpy(p, " dam 3 * 175");
+						break;
+					}
 				}
 				break;
+			}
 
-			case 4: /* Death */
+			case 4:
+			{
+				/* Death */
 				switch (spell)
 				{
-					case  1: sprintf(p, " dam %dd3", (3 + ((plev - 1) / 5))); break;
-					case  3: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-					case  5: sprintf(p, " dur 20+d20"); break;
-					case  8: sprintf(p, " dam 3d6+%d", plev +
-					    (plev / (((p_ptr->pclass == CLASS_MAGE) ||
-					    (p_ptr->pclass == CLASS_HIGH_MAGE)) ? 2 : 4))); break;
-					case  9: sprintf(p, " dam %dd8", (6 + ((plev - 5) / 4))); break;
-					case 11: sprintf(p, " dm %d* 5+d15", 2 + (plev / 15)); break;
-					case 13: sprintf(p, " dam %d", 4 * plev); break;
-					case 16: strcpy (p, " dur 25+d25"); break;
-					case 17: strcpy (p, " random"); break;
-					case 18: sprintf(p, " dam %dd8", (4 + ((plev - 5) / 4))); break;
-					case 19: strcpy (p, " max dur 50"); break;
-					case 20: strcpy (p, " dam 3*100"); break;
-					case 22: strcpy (p, " dam 120"); break;
-					case 27: sprintf(p, " dam %d", plev * 3); break;
-					case 28: sprintf(p, " dam %d", plev * 4); break;
-					case 29: strcpy (p, " dam 666"); break;
-					case 31: sprintf(p, " dur %d+d%d", (plev / 2), (plev / 2)); break;
+					case 1:
+					{
+						sprintf(p, " dam %dd3", (3 + ((plev - 1) / 5)));
+						break;
+					}
+					case 3:
+					{
+						sprintf(p, " dam %d", 10 + (plev / 2));
+						break;
+					}
+					case 5:
+					{
+						sprintf(p, " dur 20+d20");
+						break;
+					}
+					case 8:
+					{
+						sprintf(p, " dam 3d6+%d", plev +
+								(plev / (((p_ptr->pclass == CLASS_MAGE) ||
+										  (p_ptr->pclass ==
+										   CLASS_HIGH_MAGE)) ? 2 : 4)));
+						break;
+					}
+					case 9:
+					{
+						sprintf(p, " dam %dd8", (6 + ((plev - 5) / 4)));
+						break;
+					}
+					case 11:
+					{
+						sprintf(p, " dm %d* 5+d15", 2 + (plev / 15));
+						break;
+					}
+					case 13:
+					{
+						sprintf(p, " dam %d", 4 * plev);
+						break;
+					}
+					case 16:
+					{
+						strcpy(p, " dur 25+d25");
+						break;
+					}
+					case 17:
+					{
+						strcpy(p, " random");
+						break;
+					}
+					case 18:
+					{
+						sprintf(p, " dam %dd8", (4 + ((plev - 5) / 4)));
+						break;
+					}
+					case 19:
+					{
+						strcpy(p, " max dur 50");
+						break;
+					}
+					case 20:
+					{
+						strcpy(p, " dam 3*100");
+						break;
+					}
+					case 22:
+					{
+						strcpy(p, " dam 120");
+						break;
+					}
+					case 27:
+					{
+						sprintf(p, " dam %d", plev * 3);
+						break;
+					}
+					case 28:
+					{
+						sprintf(p, " dam %d", plev * 4);
+						break;
+					}
+					case 29:
+					{
+						strcpy(p, " dam 666");
+						break;
+					}
+					case 31:
+					{
+						sprintf(p, " dur %d+d%d", (plev / 2), (plev / 2));
+						break;
+					}
 				}
 				break;
+			}
 
-			case 5: /* Trump */
+			case 5:
+			{
+				/* Trump */
 				switch (spell)
 				{
-					case  0: strcpy (p, " range 10"); break;
-					case  1: sprintf(p, " dam %dd3", 3 + ((plev - 1) / 5)); break;
-					case  2: strcpy (p, " random"); break;
-					case  4: sprintf(p, " range %d", plev * 4); break;
-					case  5: sprintf(p, " range %d", plev + 2); break;
-					case  6: strcpy (p, " dur 25+d30"); break;
-					case  8: sprintf(p, " max wgt %d", plev * 15 / 10); break;
-					case 14: strcpy (p, " delay 15+d21"); break;
-					case 22: sprintf(p, " dam %d", plev * 3); break;
+					case 0:
+					{
+						strcpy(p, " range 10");
+						break;
+					}
+					case 1:
+					{
+						sprintf(p, " dam %dd3", 3 + ((plev - 1) / 5));
+						break;
+					}
+					case 2:
+					{
+						strcpy(p, " random");
+						break;
+					}
+					case 4:
+					{
+						sprintf(p, " range %d", plev * 4);
+						break;
+					}
+					case 5:
+					{
+						sprintf(p, " range %d", plev + 2);
+						break;
+					}
+					case 6:
+					{
+						strcpy(p, " dur 25+d30");
+						break;
+					}
+					case 8:
+					{
+						sprintf(p, " max wgt %d", plev * 15 / 10);
+						break;
+					}
+					case 14:
+					{
+						strcpy(p, " delay 15+d21");
+						break;
+					}
+					case 22:
+					{
+						sprintf(p, " dam %d", plev * 3);
+						break;
+					}
 				}
 				break;
+			}
 
-			case 6: /* Arcane */
+			case 6:
+			{
+				/* Arcane */
 				switch (spell)
 				{
-					case  0: sprintf(p, " dam %dd3", 3 + ((plev - 1) / 5)); break;
-					case  4: strcpy (p, " range 10"); break;
-					case  5: sprintf(p, " dam 2d%d", plev / 2); break;
-					case  7: strcpy (p, " heal 2d8"); break;
+					case 0:
+					{
+						sprintf(p, " dam %dd3", 3 + ((plev - 1) / 5));
+						break;
+					}
+					case 4:
+					{
+						strcpy(p, " range 10");
+						break;
+					}
+					case 5:
+					{
+						sprintf(p, " dam 2d%d", plev / 2);
+						break;
+					}
+					case 7:
+					{
+						strcpy(p, " heal 2d8");
+						break;
+					}
 					case 14:
 					case 15:
 					case 16:
-					case 17: strcpy (p, " dur 20+d20"); break;
-					case 18: strcpy (p, " heal 4d8"); break;
-					case 19: sprintf(p, " range %d", plev * 5); break;
-					case 21: strcpy (p, " dam 6d8"); break;
-					case 23: strcpy (p, " dur 24+d24"); break;
-					case 28: sprintf(p, " dam %d", 75 + plev); break;
-					case 30: strcpy (p, " delay 15+d21"); break;
-					case 31: strcpy (p, " dur 25+d30"); break;
+					case 17:
+					{
+						strcpy(p, " dur 20+d20");
+						break;
+					}
+					case 18:
+					{
+						strcpy(p, " heal 4d8");
+						break;
+					}
+					case 19:
+					{
+						sprintf(p, " range %d", plev * 5);
+						break;
+					}
+					case 21:
+					{
+						strcpy(p, " dam 6d8");
+						break;
+					}
+					case 23:
+					{
+						strcpy(p, " dur 24+d24");
+						break;
+					}
+					case 28:
+					{
+						sprintf(p, " dam %d", 75 + plev);
+						break;
+					}
+					case 30:
+					{
+						strcpy(p, " delay 15+d21");
+						break;
+					}
+					case 31:
+					{
+						strcpy(p, " dur 25+d30");
+						break;
+					}
 				}
 				break;
+			}
 
 			default:
+			{
 				sprintf(p, "Unknown type: %d.", realm);
+			}
 		}
 	}
 }
@@ -3526,10 +4049,9 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
  */
 bool hates_acid(const object_type *o_ptr)
 {
-	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
-		/* Wearable items */
+			/* Wearable items */
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
@@ -3546,27 +4068,28 @@ bool hates_acid(const object_type *o_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+			/* Analyze the type */
 			return (TRUE);
 		}
 
-		/* Staffs/Scrolls are wood/paper */
 		case TV_STAFF:
 		case TV_SCROLL:
 		{
+			/* Staffs/Scrolls are wood/paper */
 			return (TRUE);
 		}
 
-		/* Ouch */
 		case TV_CHEST:
 		{
+			/* Ouch */
 			return (TRUE);
 		}
 
-		/* Junk is useless */
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
 		{
+			/* Junk is useless */
 			return (TRUE);
 		}
 	}
@@ -3603,7 +4126,6 @@ bool hates_fire(const object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
-		/* Wearable */
 		case TV_LITE:
 		case TV_ARROW:
 		case TV_BOW:
@@ -3614,10 +4136,10 @@ bool hates_fire(const object_type *o_ptr)
 		case TV_CLOAK:
 		case TV_SOFT_ARMOR:
 		{
+			/* Wearable */
 			return (TRUE);
 		}
 
-		/* Books */
 		case TV_LIFE_BOOK:
 		case TV_SORCERY_BOOK:
 		case TV_NATURE_BOOK:
@@ -3626,19 +4148,20 @@ bool hates_fire(const object_type *o_ptr)
 		case TV_TRUMP_BOOK:
 		case TV_ARCANE_BOOK:
 		{
+			/* Books */
 			return (TRUE);
 		}
 
-		/* Chests */
 		case TV_CHEST:
 		{
+			/* Chests */
 			return (TRUE);
 		}
 
-		/* Staffs/Scrolls burn */
 		case TV_STAFF:
 		case TV_SCROLL:
 		{
+			/* Staffs/Scrolls burn */
 			return (TRUE);
 		}
 	}
@@ -3806,19 +4329,43 @@ int inven_damage(inven_func typ, int perc)
 static int minus_ac(void)
 {
 	object_type *o_ptr = NULL;
-	u32b        f1, f2, f3;
-	char        o_name[256];
+	u32b f1, f2, f3;
+	char o_name[256];
 
 
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint1(6))
 	{
-		case 1: o_ptr = &inventory[INVEN_BODY]; break;
-		case 2: o_ptr = &inventory[INVEN_ARM]; break;
-		case 3: o_ptr = &inventory[INVEN_OUTER]; break;
-		case 4: o_ptr = &inventory[INVEN_HANDS]; break;
-		case 5: o_ptr = &inventory[INVEN_HEAD]; break;
-		case 6: o_ptr = &inventory[INVEN_FEET]; break;
+		case 1:
+		{
+			o_ptr = &inventory[INVEN_BODY];
+			break;
+		}
+		case 2:
+		{
+			o_ptr = &inventory[INVEN_ARM];
+			break;
+		}
+		case 3:
+		{
+			o_ptr = &inventory[INVEN_OUTER];
+			break;
+		}
+		case 4:
+		{
+			o_ptr = &inventory[INVEN_HANDS];
+			break;
+		}
+		case 5:
+		{
+			o_ptr = &inventory[INVEN_HEAD];
+			break;
+		}
+		case 6:
+		{
+			o_ptr = &inventory[INVEN_FEET];
+			break;
+		}
 	}
 
 	/* Nothing to damage */
@@ -3880,7 +4427,7 @@ void acid_dam(int dam, cptr kb_str)
 		(void) do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
-	if (minus_ac())dam = (dam + 1) / 2;
+	if (minus_ac()) dam = (dam + 1) / 2;
 
 	/* Take damage */
 	take_hit(dam, kb_str);

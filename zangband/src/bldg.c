@@ -74,20 +74,21 @@ void have_nightmare(int r_idx)
 
 	switch (p_ptr->prace)
 	{
-			/* Imps may make a saving throw */
 		case RACE_IMP:
 		{
+			/* Imps may make a saving throw */
 			if (saving_throw(20 + p_ptr->lev)) return;
 
 			break;
 		}
-			/* Undead may make a saving throw */
+
 		case RACE_SKELETON:
 		case RACE_ZOMBIE:
 		case RACE_SPECTRE:
 		case RACE_VAMPIRE:
 		case RACE_GHOUL:
 		{
+			/* Undead may make a saving throw */
 			if (saving_throw(10 + p_ptr->lev)) return;
 
 			break;
@@ -279,7 +280,7 @@ static void building_prt_gold(void)
 /*
  * Display a building.
  */
-static void display_build(const field_type * f_ptr, const store_type * b_ptr)
+static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 {
 	char tmp_str[80];
 
@@ -323,7 +324,9 @@ static void display_fruit(int col, int row, int fruit)
 {
 	switch (fruit)
 	{
-		case 0: /* lemon */
+		case 0:
+		{
+			/* lemon */
 			c_put_str(TERM_YELLOW, "   ####.", col, row);
 			c_put_str(TERM_YELLOW, "  #    #", col, row + 1);
 			c_put_str(TERM_YELLOW, " #     #", col, row + 2);
@@ -332,9 +335,12 @@ static void display_fruit(int col, int row, int fruit)
 			c_put_str(TERM_YELLOW, "#     # ", col, row + 5);
 			c_put_str(TERM_YELLOW, "#    #  ", col, row + 6);
 			c_put_str(TERM_YELLOW, ".####   ", col, row + 7);
-			prt(                   " Lemon  ", col, row + 8);
+			prt(" Lemon  ", col, row + 8);
 			break;
-		case 1: /* orange */
+		}
+		case 1:
+		{
+			/* orange */
 			c_put_str(TERM_ORANGE, "   ##   ", col, row);
 			c_put_str(TERM_ORANGE, "  #..#  ", col, row + 1);
 			c_put_str(TERM_ORANGE, " #....# ", col, row + 2);
@@ -343,20 +349,26 @@ static void display_fruit(int col, int row, int fruit)
 			c_put_str(TERM_ORANGE, " #....# ", col, row + 5);
 			c_put_str(TERM_ORANGE, "  #..#  ", col, row + 6);
 			c_put_str(TERM_ORANGE, "   ##   ", col, row + 7);
-			prt(                   " Orange ", col, row + 8);
+			prt(" Orange ", col, row + 8);
 			break;
-		case 2: /* sword */
-			c_put_str(TERM_SLATE, "   /\\   " , col, row);
-			c_put_str(TERM_SLATE, "   ##   " , col, row + 1);
-			c_put_str(TERM_SLATE, "   ##   " , col, row + 2);
-			c_put_str(TERM_SLATE, "   ##   " , col, row + 3);
-			c_put_str(TERM_SLATE, "   ##   " , col, row + 4);
-			c_put_str(TERM_SLATE, "   ##   " , col, row + 5);
-			c_put_str(TERM_UMBER, " ###### " , col, row + 6);
-			c_put_str(TERM_UMBER, "   ##   " , col, row + 7);
-			prt(                  " Sword  " , col, row + 8);
+		}
+		case 2:
+		{
+			/* sword */
+			c_put_str(TERM_SLATE, "   /\\   ", col, row);
+			c_put_str(TERM_SLATE, "   ##   ", col, row + 1);
+			c_put_str(TERM_SLATE, "   ##   ", col, row + 2);
+			c_put_str(TERM_SLATE, "   ##   ", col, row + 3);
+			c_put_str(TERM_SLATE, "   ##   ", col, row + 4);
+			c_put_str(TERM_SLATE, "   ##   ", col, row + 5);
+			c_put_str(TERM_UMBER, " ###### ", col, row + 6);
+			c_put_str(TERM_UMBER, "   ##   ", col, row + 7);
+			prt(" Sword  ", col, row + 8);
 			break;
-		case 3: /* shield */
+		}
+		case 3:
+		{
+			/* shield */
 			c_put_str(TERM_SLATE, " ###### ", col, row);
 			c_put_str(TERM_SLATE, "#      #", col, row + 1);
 			c_put_str(TERM_SLATE, "# ++++ #", col, row + 2);
@@ -365,9 +377,12 @@ static void display_fruit(int col, int row, int fruit)
 			c_put_str(TERM_SLATE, " #    # ", col, row + 5);
 			c_put_str(TERM_SLATE, "  #  #  ", col, row + 6);
 			c_put_str(TERM_SLATE, "   ##   ", col, row + 7);
-			prt(                  " Shield ", col, row + 8);
+			prt(" Shield ", col, row + 8);
 			break;
-		case 4: /* plum */
+		}
+		case 4:
+		{
+			/* plum */
 			c_put_str(TERM_VIOLET, "   ##   ", col, row);
 			c_put_str(TERM_VIOLET, " ###### ", col, row + 1);
 			c_put_str(TERM_VIOLET, "########", col, row + 2);
@@ -376,9 +391,12 @@ static void display_fruit(int col, int row, int fruit)
 			c_put_str(TERM_VIOLET, " ###### ", col, row + 5);
 			c_put_str(TERM_VIOLET, "  ####  ", col, row + 6);
 			c_put_str(TERM_VIOLET, "   ##   ", col, row + 7);
-			prt(                   "  Plum  ", col, row + 8);
+			prt("  Plum  ", col, row + 8);
 			break;
-		case 5: /* cherry */
+		}
+		case 5:
+		{
+			/* cherry */
 			c_put_str(TERM_RED, "      ##", col, row);
 			c_put_str(TERM_RED, "   ###  ", col, row + 1);
 			c_put_str(TERM_RED, "  #..#  ", col, row + 2);
@@ -387,8 +405,9 @@ static void display_fruit(int col, int row, int fruit)
 			c_put_str(TERM_RED, "#..##..#", col, row + 5);
 			c_put_str(TERM_RED, "#..##..#", col, row + 6);
 			c_put_str(TERM_RED, " ##  ## ", col, row + 7);
-			prt(                " Cherry ", col, row + 8);
+			prt(" Cherry ", col, row + 8);
 			break;
+		}
 	}
 }
 
@@ -705,7 +724,7 @@ void gamble_spin_wheel(void)
 void gamble_dice_slots(void)
 {
 	static const char *fruit[6] =
-		{ "Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry" };
+	{ "Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry" };
 
 	s32b wager = gamble_init();
 	char tmp_str[80];
@@ -1516,26 +1535,36 @@ static void bldg_process_command(building_type * bldg, int i)
 	switch (bact)
 	{
 		case BACT_NOTHING:
+		{
 			/* Do nothing */
 			break;
+		}
 		case BACT_RESEARCH_ITEM:
+		{
 			paid = identify_fully();
 			break;
+		}
 		case BACT_TOWN_HISTORY:
+		{
 			town_history();
 			break;
+		}
 		case BACT_RACE_LEGENDS:
+		{
 			race_legends();
 			break;
-
+		}
 		case BACT_KING_LEGENDS:
 		case BACT_ARENA_LEGENDS:
 		case BACT_LEGENDS:
+		{
 			show_highclass();
 			break;
 
-
-		case BACT_IDENTS:		/* needs work */
+		}
+		case BACT_IDENTS:
+		{
+			/* needs work */
 			identify_pack();
 
 			/* Combine / Reorder the pack (later) */
@@ -1545,10 +1574,15 @@ static void bldg_process_command(building_type * bldg, int i)
 			message_flush();
 			paid = TRUE;
 			break;
+		}
 		case BACT_LEARN:
+		{
 			do_cmd_study();
 			break;
-		case BACT_HEALING:		/* needs work */
+		}
+		case BACT_HEALING:
+		{
+			/* needs work */
 			hp_player(200);
 			set_poisoned(0);
 			set_blind(0);
@@ -1557,7 +1591,10 @@ static void bldg_process_command(building_type * bldg, int i)
 			set_stun(0);
 			paid = TRUE;
 			break;
-		case BACT_RESTORE:		/* needs work */
+		}
+		case BACT_RESTORE:
+		{
+			/* needs work */
 			if (do_res_stat(A_STR)) paid = TRUE;
 			if (do_res_stat(A_INT)) paid = TRUE;
 			if (do_res_stat(A_WIS)) paid = TRUE;
@@ -1565,7 +1602,10 @@ static void bldg_process_command(building_type * bldg, int i)
 			if (do_res_stat(A_CON)) paid = TRUE;
 			if (do_res_stat(A_CHR)) paid = TRUE;
 			break;
-		case BACT_GOLD:		/* set timed reward flag */
+		}
+		case BACT_GOLD:
+		{
+			/* set timed reward flag */
 			if (!p_ptr->rewards[BACT_GOLD])
 			{
 				share_gold();
@@ -1577,21 +1617,29 @@ static void bldg_process_command(building_type * bldg, int i)
 				message_flush();
 			}
 			break;
+		}
 		case BACT_ENCHANT_ARROWS:
+		{
 			item_tester_hook = item_tester_hook_ammo;
 			enchant_item(bcost, 1, 1, 0);
 			break;
+		}
 		case BACT_ENCHANT_BOW:
+		{
 			item_tester_tval = TV_BOW;
 			enchant_item(bcost, 1, 1, 0);
 			break;
+		}
 		case BACT_RECALL:
+		{
 			p_ptr->word_recall = 1;
 			msg_print("The air about you becomes charged...");
 			paid = TRUE;
 			p_ptr->redraw |= (PR_STATUS);
 			break;
+		}
 		case BACT_TELEPORT_LEVEL:
+		{
 			amt = get_quantity("Teleport to which level? ", 98);
 			if (amt > 0)
 			{
@@ -1602,6 +1650,7 @@ static void bldg_process_command(building_type * bldg, int i)
 				p_ptr->redraw |= (PR_STATUS);
 			}
 			break;
+		}
 	}
 }
 
@@ -1609,7 +1658,7 @@ static void bldg_process_command(building_type * bldg, int i)
 #endif /* 0 */
 
 
-static bool process_build_hook(field_type * f_ptr, store_type * b_ptr)
+static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 {
 	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 
@@ -1644,7 +1693,7 @@ static bool process_build_hook(field_type * f_ptr, store_type * b_ptr)
  * Note that we must disable some commands which are allowed
  * in the dungeon but not in the stores, to prevent chaos.
  */
-static bool build_process_command(field_type * f_ptr, store_type * b_ptr)
+static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 {
 	/* Handle repeating the last command */
 	repeat_check();
@@ -1656,63 +1705,63 @@ static bool build_process_command(field_type * f_ptr, store_type * b_ptr)
 
 	/* Process the building-specific commands */
 	if (process_build_hook(f_ptr, b_ptr)) return (FALSE);
-	
+
 	/* Parse the command */
 	switch (p_ptr->command_cmd)
 	{
-		/* Leave */
 		case ESCAPE:
 		{
+			/* Leave */
 			return (TRUE);
 		}
 
-		/* Redraw */
 		case KTRL('R'):
 		{
+			/* Redraw */
 			do_cmd_redraw();
 			display_build(f_ptr, b_ptr);
 			break;
 		}
 
-		/* Ignore return */
 		case '\r':
 		{
+			/* Ignore return */
 			break;
 		}
 
 		/*** Inventory Commands ***/
 
-		/* Wear/wield equipment */
 		case 'w':
 		{
+			/* Wear/wield equipment */
 			do_cmd_wield();
 			break;
 		}
 
-		/* Take off equipment */
 		case 't':
 		{
+			/* Take off equipment */
 			do_cmd_takeoff();
 			break;
 		}
 
-		/* Destroy an item */
 		case 'k':
 		{
+			/* Destroy an item */
 			do_cmd_destroy();
 			break;
 		}
 
-		/* Equipment list */
 		case 'e':
 		{
+			/* Equipment list */
 			do_cmd_equip();
 			break;
 		}
 
-		/* Inventory list */
 		case 'i':
 		{
+			/* Inventory list */
 			do_cmd_inven();
 			break;
 		}
@@ -1720,16 +1769,16 @@ static bool build_process_command(field_type * f_ptr, store_type * b_ptr)
 
 		/*** Various commands ***/
 
-		/* Identify an object */
 		case 'I':
 		{
+			/* Identify an object */
 			do_cmd_observe();
 			break;
 		}
 
-		/* Hack -- toggle windows */
 		case KTRL('I'):
 		{
+			/* Hack -- toggle windows */
 			toggle_inven_equip();
 			break;
 		}
@@ -1737,48 +1786,47 @@ static bool build_process_command(field_type * f_ptr, store_type * b_ptr)
 
 		/*** Use various objects ***/
 
-		/* Browse a book */
 		case 'b':
 		{
+			/* Browse a book */
 			do_cmd_browse();
 			break;
 		}
 
-		/* Inscribe an object */
 		case '{':
 		{
+			/* Inscribe an object */
 			do_cmd_inscribe();
 			break;
 		}
 
-		/* Uninscribe an object */
 		case '}':
 		{
+			/* Uninscribe an object */
 			do_cmd_uninscribe();
 			break;
 		}
 
 
-
 		/*** Help and Such ***/
 
-		/* Help */
 		case '?':
 		{
+			/* Help */
 			do_cmd_help();
 			break;
 		}
 
-		/* Identify symbol */
 		case '/':
 		{
+			/* Identify symbol */
 			do_cmd_query_symbol();
 			break;
 		}
 
-		/* Character description */
 		case 'C':
 		{
+			/* Character description */
 			do_cmd_character();
 			display_build(f_ptr, b_ptr);
 			break;
@@ -1787,115 +1835,115 @@ static bool build_process_command(field_type * f_ptr, store_type * b_ptr)
 
 		/*** System Commands ***/
 
-		/* Hack -- User interface */
 		case '!':
 		{
-			(void)Term_user(0);
+			/* Hack -- User interface */
+			(void) Term_user(0);
 			break;
 		}
 
-		/* Single line from a pref file */
 		case '"':
 		{
+			/* Single line from a pref file */
 			do_cmd_pref();
 			break;
 		}
 
-		/* Interact with macros */
 		case '@':
 		{
+			/* Interact with macros */
 			do_cmd_macros();
 			break;
 		}
 
-		/* Interact with visuals */
 		case '%':
 		{
+			/* Interact with visuals */
 			do_cmd_visuals();
 			break;
 		}
 
-		/* Interact with colors */
 		case '&':
 		{
+			/* Interact with colors */
 			do_cmd_colors();
 			break;
 		}
 
-		/* Interact with options */
 		case '=':
 		{
+			/* Interact with options */
 			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			break;
 		}
 
 		/*** Misc Commands ***/
 
-		/* Take notes */
 		case ':':
 		{
+			/* Take notes */
 			do_cmd_note();
 			break;
 		}
 
-		/* Version info */
 		case 'V':
 		{
+			/* Version info */
 			do_cmd_version();
 			break;
 		}
 
-		/* Repeat level feeling */
 		case KTRL('F'):
 		{
+			/* Repeat level feeling */
 			do_cmd_feeling();
 			break;
 		}
 
-		/* Show previous message */
 		case KTRL('O'):
 		{
+			/* Show previous message */
 			do_cmd_message_one();
 			break;
 		}
 
-		/* Show previous messages */
 		case KTRL('P'):
 		{
+			/* Show previous messages */
 			do_cmd_messages();
 			break;
 		}
 
-		/* Check artifacts, uniques etc. */
 		case '~':
 		case '|':
 		{
+			/* Check artifacts, uniques etc. */
 			do_cmd_knowledge();
 			break;
 		}
 
-		/* Load "screen dump" */
 		case '(':
 		{
+			/* Load "screen dump" */
 			do_cmd_load_screen();
 			break;
 		}
 
-		/* Save "screen dump" */
 		case ')':
 		{
+			/* Save "screen dump" */
 			do_cmd_save_screen();
 			break;
 		}
 
-		/* Hack -- Unknown command */
 		default:
 		{
+			/* Hack -- Unknown command */
 			msg_print("That command does not work in buildings.");
 			break;
 		}
 	}
-	
+
 	return (FALSE);
 }
 
@@ -1903,7 +1951,7 @@ static bool build_process_command(field_type * f_ptr, store_type * b_ptr)
 /*
  * Do building commands
  */
-void do_cmd_bldg(field_type * f_ptr)
+void do_cmd_bldg(field_type *f_ptr)
 {
 	int i, which = -1;
 	store_type *b_ptr;

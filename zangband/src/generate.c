@@ -556,8 +556,8 @@ static bool cave_gen(void)
 					else
 					{
 						if (cheat_room)
-								msg_format("Refusing a greater vault. %d",
-										   max_vault_ok);
+							msg_format("Refusing a greater vault. %d",
+									   max_vault_ok);
 					}
 				}
 
@@ -981,7 +981,7 @@ void map_panel_size(void)
 }
 
 /* Make a real level */
-static bool level_gen(cptr * why)
+static bool level_gen(cptr *why)
 {
 	int level_height, level_width;
 

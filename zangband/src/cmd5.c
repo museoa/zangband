@@ -502,7 +502,8 @@ void do_cmd_study(void)
 #define MAX_BIZARRE		6
 
 
-static const int bizarre_num[MAX_BIZARRE] = {
+static const int bizarre_num[MAX_BIZARRE] =
+{
 	SUMMON_BIZARRE1,
 	SUMMON_BIZARRE2,
 	SUMMON_BIZARRE3,

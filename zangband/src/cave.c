@@ -995,39 +995,40 @@ static void image_random(byte *ap, char *cp)
 /*
  * Table of the GF type for each breath
  */
-static int breath_gf[32] = {
-	GF_NONE,					/* RF4_SHRIEK */
-	GF_NONE,					/* RF4_ELDRITCH_HORROR */
-	GF_NONE,					/* RF4_XXX3X4 */
-	GF_NONE,					/* RF4_ROCKET */
-	GF_NONE,					/* RF4_ARROW_1 */
-	GF_NONE,					/* RF4_ARROW_2 */
-	GF_NONE,					/* RF4_ARROW_3 */
-	GF_NONE,					/* RF4_ARROW_4 */
-	GF_ACID,					/* RF4_BR_ACID */
-	GF_ELEC,					/* RF4_BR_ELEC */
-	GF_FIRE,					/* RF4_BR_FIRE */
-	GF_COLD,					/* RF4_BR_COLD */
-	GF_POIS,					/* RF4_BR_POIS */
-	GF_NETHER,					/* RF4_BR_NETH */
-	GF_LITE,					/* RF4_BR_LITE */
-	GF_DARK,					/* RF4_BR_DARK */
-	GF_CONFUSION,				/* RF4_BR_CONF */
-	GF_SOUND,					/* RF4_BR_SOUN */
-	GF_CHAOS,					/*RF4_BR_CHAO */
-	GF_DISENCHANT,				/* RF4_BR_DISE */
-	GF_NEXUS,					/* RF4_BR_NEXU */
-	GF_TIME,					/* RF4_BR_TIME */
-	GF_INERTIA,					/* RF4_BR_INER */
-	GF_GRAVITY,					/* RF4_BR_GRAV */
-	GF_SHARDS,					/* RF4_BR_SHAR */
-	GF_PLASMA,					/* RF4_BR_PLAS */
-	GF_FORCE,					/* RF4_BR_WALL */
-	GF_MANA,					/* RF4_BR_MANA */
-	GF_NONE,					/* RF4_BA_NUKE */
-	GF_NUKE,					/* RF4_BR_NUKE */
-	GF_NONE,					/* RF4_BA_CHAO */
-	GF_DISINTEGRATE				/* RF4_BR_DISI */
+static int breath_gf[32] =
+{
+	GF_NONE,	/* RF4_SHRIEK */
+	GF_NONE,	/* RF4_ELDRITCH_HORROR */
+	GF_NONE,	/* RF4_XXX3X4 */
+	GF_NONE,	/* RF4_ROCKET */
+	GF_NONE,	/* RF4_ARROW_1 */
+	GF_NONE,	/* RF4_ARROW_2 */
+	GF_NONE,	/* RF4_ARROW_3 */
+	GF_NONE,	/* RF4_ARROW_4 */
+	GF_ACID,	/* RF4_BR_ACID */
+	GF_ELEC,	/* RF4_BR_ELEC */
+	GF_FIRE,	/* RF4_BR_FIRE */
+	GF_COLD,	/* RF4_BR_COLD */
+	GF_POIS,	/* RF4_BR_POIS */
+	GF_NETHER,	/* RF4_BR_NETH */
+	GF_LITE,	/* RF4_BR_LITE */
+	GF_DARK,	/* RF4_BR_DARK */
+	GF_CONFUSION,	/* RF4_BR_CONF */
+	GF_SOUND,	/* RF4_BR_SOUN */
+	GF_CHAOS,	/* RF4_BR_CHAO */
+	GF_DISENCHANT,	/* RF4_BR_DISE */
+	GF_NEXUS,	/* RF4_BR_NEXU */
+	GF_TIME,	/* RF4_BR_TIME */
+	GF_INERTIA,	/* RF4_BR_INER */
+	GF_GRAVITY,	/* RF4_BR_GRAV */
+	GF_SHARDS,	/* RF4_BR_SHAR */
+	GF_PLASMA,	/* RF4_BR_PLAS */
+	GF_FORCE,	/* RF4_BR_WALL */
+	GF_MANA,	/* RF4_BR_MANA */
+	GF_NONE,	/* RF4_BA_NUKE */
+	GF_NUKE,	/* RF4_BR_NUKE */
+	GF_NONE,	/* RF4_BA_CHAO */
+	GF_DISINTEGRATE	/* RF4_BR_DISI */
 };
 
 
@@ -1036,7 +1037,7 @@ static int breath_gf[32] = {
  *
  * (This may be a little slow....
  */
-static byte breath_attr(monster_race * r_ptr)
+static byte breath_attr(monster_race *r_ptr)
 {
 	/* Mask out the breath flags */
 	u32b flags = r_ptr->flags4 & RF4_BREATHS;
@@ -1113,7 +1114,8 @@ static byte breath_attr(monster_race * r_ptr)
 /*
  * The 16x16 tile of the terrain supports lighting
  */
-static const bool feat_supports_lighting[256] = {
+static const bool feat_supports_lighting[256] =
+{
 	FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE,	/* 0x00 */
 	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x08 */
 	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x10 */
@@ -1156,7 +1158,8 @@ static const bool feat_supports_lighting[256] = {
  * This is used to do dynamic lighting effects in ascii :-)
  */
 
-static const byte lighting_colours[16] = {
+static const byte lighting_colours[16] =
+{
 	/* TERM_DARK */
 	TERM_L_DARK,
 
@@ -1206,7 +1209,8 @@ static const byte lighting_colours[16] = {
 	TERM_L_UMBER,
 };
 
-static const byte darking_colours[16] = {
+static const byte darking_colours[16] =
+{
 	/* TERM_DARK */
 	TERM_DARK,
 
@@ -1284,110 +1288,156 @@ static void variable_player_graph(byte *a, char *c)
 				switch (p_ptr->pclass)
 				{
 					case CLASS_PALADIN:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_WHITE;
 						else
 							*a = TERM_WHITE;
 						*c = 253;
 						break;
+					}
 					case CLASS_WARRIOR_MAGE:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_RED;
 						else
 							*a = TERM_VIOLET;
 						break;
+					}
 					case CLASS_CHAOS_WARRIOR:
+					{
 						*a = randint1(14);
 						break;
+					}
 					case CLASS_MAGE:
 					case CLASS_HIGH_MAGE:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_RED;
 						else
 							*a = TERM_RED;
 						*c = 248;
 						break;
+					}
 					case CLASS_PRIEST:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_BLUE;
 						else
 							*a = TERM_BLUE;
 						*c = 248;
 						break;
+					}
 					case CLASS_RANGER:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_GREEN;
 						else
 							*a = TERM_GREEN;
 						break;
+					}
 					case CLASS_ROGUE:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_SLATE;
 						else
 							*a = TERM_L_DARK;
 						break;
+					}
 					case CLASS_WARRIOR:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_UMBER;
 						else
 							*a = TERM_UMBER;
 						break;
+					}
 					case CLASS_MONK:
 					case CLASS_MINDCRAFTER:
+					{
 						if (p_ptr->lev < 20)
 							*a = TERM_L_UMBER;
 						else
 							*a = TERM_UMBER;
 						*c = 248;
 						break;
-					default:	/* Unknown */
+					}
+					default:
+					{
+						/* Unknown */
 						*a = TERM_WHITE;
+					}
 				}
 
 				switch (p_ptr->prace)
 				{
 					case RACE_GNOME:
 					case RACE_HOBBIT:
+					{
 						*c = 144;
 						break;
+					}
 					case RACE_DWARF:
+					{
 						*c = 236;
 						break;
+					}
 					case RACE_HALF_ORC:
+					{
 						*c = 243;
 						break;
+					}
 					case RACE_HALF_TROLL:
+					{
 						*c = 184;
 						break;
+					}
 					case RACE_ELF:
 					case RACE_HALF_ELF:
 					case RACE_HIGH_ELF:
+					{
 						*c = 223;
 						break;
+					}
 					case RACE_HALF_OGRE:
+					{
 						*c = 168;
 						break;
+					}
 					case RACE_HALF_GIANT:
 					case RACE_HALF_TITAN:
 					case RACE_CYCLOPS:
+					{
 						*c = 145;
 						break;
+					}
 					case RACE_YEEK:
+					{
 						*c = 209;
 						break;
+					}
 					case RACE_KLACKON:
+					{
 						*c = 229;
 						break;
+					}
 					case RACE_KOBOLD:
+					{
 						*c = 204;
 						break;
+					}
 					case RACE_NIBELUNG:
+					{
 						*c = 144;
 						break;
+					}
 					case RACE_DARK_ELF:
+					{
 						*c = 223;
 						break;
+					}
 					case RACE_DRACONIAN:
+					{
 						if (p_ptr->lev < 20)
 							*c = 240;
 						else if (p_ptr->lev < 40)
@@ -1395,16 +1445,24 @@ static void variable_player_graph(byte *a, char *c)
 						else
 							*c = 137;
 						break;
+					}
 					case RACE_MIND_FLAYER:
+					{
 						*c = 236;
 						break;
+					}
 					case RACE_IMP:
+					{
 						*c = 142;
 						break;
+					}
 					case RACE_GOLEM:
+					{
 						*c = 6;
 						break;
+					}
 					case RACE_SKELETON:
+					{
 						if (p_ptr->pclass == CLASS_MAGE ||
 							p_ptr->pclass == CLASS_PRIEST ||
 							p_ptr->pclass == CLASS_HIGH_MAGE ||
@@ -1414,22 +1472,33 @@ static void variable_player_graph(byte *a, char *c)
 						else
 							*c = 181;
 						break;
+					}
 					case RACE_ZOMBIE:
 					case RACE_GHOUL:
+					{
 						*c = 221;
 						break;
+					}
 					case RACE_VAMPIRE:
+					{
 						*c = 217;
 						break;
+					}
 					case RACE_SPECTRE:
+					{
 						*c = 241;
 						break;
+					}
 					case RACE_SPRITE:
+					{
 						*c = 244;
 						break;
+					}
 					case RACE_BEASTMAN:
+					{
 						*c = 154;
 						break;
+					}
 				}
 			}
 		}
@@ -1500,9 +1569,10 @@ static void variable_player_graph(byte *a, char *c)
 #ifdef USE_TRANSPARENCY
 static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 					 byte *ap, char *cp, byte *tap, char *tcp)
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
+
 static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
-#endif	/* USE_TRANSPARENCY */
+#endif /* USE_TRANSPARENCY */
 {
 	feature_type *f_ptr;
 
@@ -2013,7 +2083,7 @@ void display_dungeon(void)
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
 								tc);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 				/* Examine the grid */
 				map_info(c_ptr, pc_ptr, &a, &c);
 
@@ -2038,7 +2108,7 @@ void display_dungeon(void)
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
 								tc);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
 #endif /* USE_TRANSPARENCY */
@@ -2073,7 +2143,7 @@ void lite_spot(int x, int y)
 
 		/* Examine the grid */
 		map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 		/* Examine the grid */
 		map_info(c_ptr, pc_ptr, &a, &c);
 #endif /* USE_TRANSPARENCY */
@@ -2081,7 +2151,7 @@ void lite_spot(int x, int y)
 #ifdef USE_TRANSPARENCY
 		/* Hack -- Queue it */
 		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 		/* Hack -- Queue it */
 		Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
@@ -2208,7 +2278,7 @@ void prt_map(void)
 						xmax - xmin + 1, pa, pc, pta, ptc);
 	}
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 	/* Dump the map */
 	for (y = ymin; y <= ymax; y++)
@@ -2251,7 +2321,8 @@ void prt_map(void)
  *
  * This really needs to be done a better way.
  */
-static const byte priority_table[][2] = {
+static const byte priority_table[][2] =
+{
 	/* Dark */
 	{FEAT_NONE, 2},
 
@@ -2597,7 +2668,7 @@ void display_map(int *cx, int *cy)
 				/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
 				map_info(c_ptr, pc_ptr, &ta, &tc, &tta, &ttc);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 				map_info(c_ptr, pc_ptr, &ta, &tc);
 #endif /* USE_TRANSPARENCY */
 
@@ -2665,7 +2736,7 @@ void display_map(int *cx, int *cy)
 
 			/* Hack -- Queue it */
 			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 			Term_queue_char(COL_MAP + i - 1, j, ta, tc);
 #endif /* USE_TRANSPARENCY */
@@ -3367,20 +3438,13 @@ errr vinfo_init(void)
 
 			/* Memorize intersection slopes (for non-player-grids) */
 			if ((e > 0) &&
-			    (hack->slopes_min[y][x] < m) && (m < hack->slopes_max[y][x]))
+				(hack->slopes_min[y][x] < m) && (m < hack->slopes_max[y][x]))
 			{
 				/* We use this slope */
 				slope_count[i]++;
-				
+
 				/* Save the bit that stands for this slope */
-				switch (i / 32)
-				{
-					case 4: vinfo[e].bits[4] |= (1L << (i % 32)); break;
-					case 3: vinfo[e].bits[3] |= (1L << (i % 32)); break;
-					case 2: vinfo[e].bits[2] |= (1L << (i % 32)); break;
-					case 1: vinfo[e].bits[1] |= (1L << (i % 32)); break;
-					case 0: vinfo[e].bits[0] |= (1L << (i % 32)); break;
-				}
+				vinfo[e].bits[i / 32] |= (1L << (i % 32));
 			}
 		}
 

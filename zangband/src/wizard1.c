@@ -22,21 +22,21 @@ static cptr attr_to_text(byte a)
 {
 	switch (a)
 	{
-		case TERM_DARK:    return ("xxx");
-		case TERM_WHITE:   return ("White");
-		case TERM_SLATE:   return ("Slate");
-		case TERM_ORANGE:  return ("Orange");
-		case TERM_RED:     return ("Red");
-		case TERM_GREEN:   return ("Green");
-		case TERM_BLUE:    return ("Blue");
-		case TERM_UMBER:   return ("Umber");
-		case TERM_L_DARK:  return ("L.Dark");
+		case TERM_DARK: return ("xxx");
+		case TERM_WHITE: return ("White");
+		case TERM_SLATE: return ("Slate");
+		case TERM_ORANGE: return ("Orange");
+		case TERM_RED: return ("Red");
+		case TERM_GREEN: return ("Green");
+		case TERM_BLUE: return ("Blue");
+		case TERM_UMBER: return ("Umber");
+		case TERM_L_DARK: return ("L.Dark");
 		case TERM_L_WHITE: return ("L.Slate");
-		case TERM_VIOLET:  return ("Violet");
-		case TERM_YELLOW:  return ("Yellow");
-		case TERM_L_RED:   return ("L.Red");
+		case TERM_VIOLET: return ("Violet");
+		case TERM_YELLOW: return ("Yellow");
+		case TERM_L_RED: return ("L.Red");
 		case TERM_L_GREEN: return ("L.Green");
-		case TERM_L_BLUE:  return ("L.Blue");
+		case TERM_L_BLUE: return ("L.Blue");
 		case TERM_L_UMBER: return ("L.Umber");
 	}
 
@@ -53,7 +53,8 @@ typedef struct
 {
 	byte tval;
 	cptr name;
-} grouper;
+}
+grouper;
 
 
 
@@ -67,67 +68,68 @@ typedef struct
  */
 static const grouper group_item[] =
 {
-	{ TV_SHOT,          "Ammo" },
-	{ TV_ARROW,         NULL },
-	{ TV_BOLT,          NULL },
+	{TV_SHOT, "Ammo"},
+	{TV_ARROW, NULL},
+	{TV_BOLT, NULL},
 
-	{ TV_BOW,           "Bows" },
+	{TV_BOW, "Bows"},
 
-	{ TV_SWORD,         "Weapons" },
-	{ TV_POLEARM,       NULL },
-	{ TV_HAFTED,        NULL },
-	{ TV_DIGGING,       NULL },
+	{TV_SWORD, "Weapons"},
+	{TV_POLEARM, NULL},
+	{TV_HAFTED, NULL},
+	{TV_DIGGING, NULL},
 
-	{ TV_SOFT_ARMOR,    "Armour (Body)" },
-	{ TV_HARD_ARMOR,    NULL },
-	{ TV_DRAG_ARMOR,    NULL },
+	{TV_SOFT_ARMOR, "Armour (Body)"},
+	{TV_HARD_ARMOR, NULL},
+	{TV_DRAG_ARMOR, NULL},
 
-	{ TV_CLOAK,         "Armour (Misc)" },
-	{ TV_SHIELD,        NULL },
-	{ TV_HELM,          NULL },
-	{ TV_CROWN,         NULL },
-	{ TV_GLOVES,        NULL },
-	{ TV_BOOTS,         NULL },
+	{TV_CLOAK, "Armour (Misc)"},
+	{TV_SHIELD, NULL},
+	{TV_HELM, NULL},
+	{TV_CROWN, NULL},
+	{TV_GLOVES, NULL},
+	{TV_BOOTS, NULL},
 
-	{ TV_AMULET,        "Amulets" },
-	{ TV_RING,          "Rings" },
+	{TV_AMULET, "Amulets"},
+	{TV_RING, "Rings"},
 
-	{ TV_SCROLL,        "Scrolls" },
-	{ TV_POTION,        "Potions" },
-	{ TV_FOOD,          "Food" },
+	{TV_SCROLL, "Scrolls"},
+	{TV_POTION, "Potions"},
+	{TV_FOOD, "Food"},
 
-	{ TV_ROD,           "Rods" },
-	{ TV_WAND,          "Wands" },
-	{ TV_STAFF,         "Staffs" },
+	{TV_ROD, "Rods"},
+	{TV_WAND, "Wands"},
+	{TV_STAFF, "Staffs"},
 
-	{ TV_LIFE_BOOK,     "Books (Life)" },
-	{ TV_SORCERY_BOOK,  "Books (Sorcery)" },
-	{ TV_NATURE_BOOK,   "Books (Nature)" },
-	{ TV_CHAOS_BOOK,    "Books (Chaos)" },
-	{ TV_DEATH_BOOK,    "Books (Death)" },
-	{ TV_TRUMP_BOOK,    "Books (Trump)" },
-	{ TV_ARCANE_BOOK,   "Books (Arcane)" },
+	{TV_LIFE_BOOK, "Books (Life)"},
+	{TV_SORCERY_BOOK, "Books (Sorcery)"},
+	{TV_NATURE_BOOK, "Books (Nature)"},
+	{TV_CHAOS_BOOK, "Books (Chaos)"},
+	{TV_DEATH_BOOK, "Books (Death)"},
+	{TV_TRUMP_BOOK, "Books (Trump)"},
+	{TV_ARCANE_BOOK, "Books (Arcane)"},
 
-	{ TV_CHEST,         "Chests" },
+	{TV_CHEST, "Chests"},
 
-	{ TV_FIGURINE,      "Magical Figurines" },
-	{ TV_STATUE,        "Statues" },
+	{TV_FIGURINE, "Magical Figurines"},
+	{TV_STATUE, "Statues"},
 
-	{ TV_SPIKE,         "Various" },
-	{ TV_LITE,          NULL },
-	{ TV_FLASK,         NULL },
-	{ TV_JUNK,          NULL },
-	{ TV_BOTTLE,        NULL },
-	{ TV_SKELETON,      NULL },
+	{TV_SPIKE, "Various"},
+	{TV_LITE, NULL},
+	{TV_FLASK, NULL},
+	{TV_JUNK, NULL},
+	{TV_BOTTLE, NULL},
+	{TV_SKELETON, NULL},
 
-	{ 0, "" }
+	{0, ""}
 };
 
 
 /*
  * Describe the kind
  */
-static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int k)
+static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
+					  int k)
 {
 	object_type forge;
 	object_type *q_ptr;
@@ -170,32 +172,31 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 	/* Damage */
 	switch (q_ptr->tval)
 	{
-		/* Bows */
 		case TV_BOW:
 		{
+			/* Bows */
 			break;
 		}
 
-		/* Ammo */
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
 		{
-			sprintf(dam, "%dd%d", (int)q_ptr->dd, (int)q_ptr->ds);
+			/* Ammo */
+			sprintf(dam, "%dd%d", (int) q_ptr->dd, (int) q_ptr->ds);
 			break;
 		}
 
-		/* Weapons */
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
 		{
-			sprintf(dam, "%dd%d", (int)q_ptr->dd, (int)q_ptr->ds);
+			/* Weapons */
+			sprintf(dam, "%dd%d", (int) q_ptr->dd, (int) q_ptr->ds);
 			break;
 		}
 
-		/* Armour */
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
@@ -206,6 +207,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+			/* Armour */
 			sprintf(dam, "%d", q_ptr->ac);
 			break;
 		}
@@ -381,27 +383,27 @@ static void spoil_obj_desc(cptr fname)
  */
 static const grouper group_artifact[] =
 {
-	{ TV_SWORD,             "Edged Weapons" },
-	{ TV_POLEARM,           "Polearms" },
-	{ TV_HAFTED,            "Hafted Weapons" },
-	{ TV_BOW,               "Bows" },
+	{TV_SWORD, "Edged Weapons"},
+	{TV_POLEARM, "Polearms"},
+	{TV_HAFTED, "Hafted Weapons"},
+	{TV_BOW, "Bows"},
 
-	{ TV_SOFT_ARMOR,        "Body Armor" },
-	{ TV_HARD_ARMOR,        NULL },
-	{ TV_DRAG_ARMOR,        NULL },
+	{TV_SOFT_ARMOR, "Body Armor"},
+	{TV_HARD_ARMOR, NULL},
+	{TV_DRAG_ARMOR, NULL},
 
-	{ TV_CLOAK,             "Cloaks" },
-	{ TV_SHIELD,            "Shields" },
-	{ TV_HELM,              "Helms/Crowns" },
-	{ TV_CROWN,             NULL },
-	{ TV_GLOVES,            "Gloves" },
-	{ TV_BOOTS,             "Boots" },
+	{TV_CLOAK, "Cloaks"},
+	{TV_SHIELD, "Shields"},
+	{TV_HELM, "Helms/Crowns"},
+	{TV_CROWN, NULL},
+	{TV_GLOVES, "Gloves"},
+	{TV_BOOTS, "Boots"},
 
-	{ TV_LITE,              "Light Sources" },
-	{ TV_AMULET,            "Amulets" },
-	{ TV_RING,              "Rings" },
+	{TV_LITE, "Light Sources"},
+	{TV_AMULET, "Amulets"},
+	{TV_RING, "Rings"},
 
-	{ 0, NULL }
+	{0, NULL}
 };
 
 
@@ -435,12 +437,12 @@ struct flag_desc
 
 static const flag_desc stat_flags_desc[] =
 {
-	{ TR1_STR,        "STR" },
-	{ TR1_INT,        "INT" },
-	{ TR1_WIS,        "WIS" },
-	{ TR1_DEX,        "DEX" },
-	{ TR1_CON,        "CON" },
-	{ TR1_CHR,        "CHR" }
+	{TR1_STR, "STR"},
+	{TR1_INT, "INT"},
+	{TR1_WIS, "WIS"},
+	{TR1_DEX, "DEX"},
+	{TR1_CON, "CON"},
+	{TR1_CHR, "CHR"}
 };
 
 /*
@@ -450,12 +452,12 @@ static const flag_desc stat_flags_desc[] =
 
 static const flag_desc pval_flags1_desc[] =
 {
-	{ TR1_STEALTH,    "Stealth" },
-	{ TR1_SEARCH,     "Searching" },
-	{ TR1_INFRA,      "Infravision" },
-	{ TR1_TUNNEL,     "Tunneling" },
-	{ TR1_BLOWS,      "Attacks" },
-	{ TR1_SPEED,      "Speed" }
+	{TR1_STEALTH, "Stealth"},
+	{TR1_SEARCH, "Searching"},
+	{TR1_INFRA, "Infravision"},
+	{TR1_TUNNEL, "Tunneling"},
+	{TR1_BLOWS, "Attacks"},
+	{TR1_SPEED, "Speed"}
 };
 
 /*
@@ -464,15 +466,15 @@ static const flag_desc pval_flags1_desc[] =
 
 static const flag_desc slay_flags_desc[] =
 {
-	{ TR1_SLAY_ANIMAL,        "Animal" },
-	{ TR1_SLAY_EVIL,          "Evil" },
-	{ TR1_SLAY_UNDEAD,        "Undead" },
-	{ TR1_SLAY_DEMON,         "Demon" },
-	{ TR1_SLAY_ORC,           "Orc" },
-	{ TR1_SLAY_TROLL,         "Troll" },
-	{ TR1_SLAY_GIANT,         "Giant" },
-	{ TR1_SLAY_DRAGON,        "Dragon" },
-	{ TR1_KILL_DRAGON,        "Xdragon" }
+	{TR1_SLAY_ANIMAL, "Animal"},
+	{TR1_SLAY_EVIL, "Evil"},
+	{TR1_SLAY_UNDEAD, "Undead"},
+	{TR1_SLAY_DEMON, "Demon"},
+	{TR1_SLAY_ORC, "Orc"},
+	{TR1_SLAY_TROLL, "Troll"},
+	{TR1_SLAY_GIANT, "Giant"},
+	{TR1_SLAY_DRAGON, "Dragon"},
+	{TR1_KILL_DRAGON, "Xdragon"}
 };
 
 /*
@@ -485,16 +487,16 @@ static const flag_desc slay_flags_desc[] =
  */
 static const flag_desc brand_flags_desc[] =
 {
-	{ TR1_BRAND_ACID,         "Acid Brand" },
-	{ TR1_BRAND_ELEC,         "Lightning Brand" },
-	{ TR1_BRAND_FIRE,         "Flame Tongue" },
-	{ TR1_BRAND_COLD,         "Frost Brand" },
-	{ TR1_BRAND_POIS,         "Poisoned" },
+	{TR1_BRAND_ACID, "Acid Brand"},
+	{TR1_BRAND_ELEC, "Lightning Brand"},
+	{TR1_BRAND_FIRE, "Flame Tongue"},
+	{TR1_BRAND_COLD, "Frost Brand"},
+	{TR1_BRAND_POIS, "Poisoned"},
 
-	{ TR1_CHAOTIC,            "Mark of Chaos" },
-	{ TR1_VAMPIRIC,           "Vampiric" },
-	{ TR1_IMPACT,             "Earthquake impact on hit" },
-	{ TR1_VORPAL,             "Very sharp" },
+	{TR1_CHAOTIC, "Mark of Chaos"},
+	{TR1_VAMPIRIC, "Vampiric"},
+	{TR1_IMPACT, "Earthquake impact on hit"},
+	{TR1_VORPAL, "Very sharp"},
 };
 
 
@@ -503,22 +505,22 @@ static const flag_desc brand_flags_desc[] =
  */
 static const flag_desc resist_flags_desc[] =
 {
-	{ TR2_RES_ACID,   "Acid" },
-	{ TR2_RES_ELEC,   "Lightning" },
-	{ TR2_RES_FIRE,   "Fire" },
-	{ TR2_RES_COLD,   "Cold" },
-	{ TR2_RES_POIS,   "Poison" },
-	{ TR2_RES_FEAR,   "Fear"},
-	{ TR2_RES_LITE,   "Light" },
-	{ TR2_RES_DARK,   "Dark" },
-	{ TR2_RES_BLIND,  "Blindness" },
-	{ TR2_RES_CONF,   "Confusion" },
-	{ TR2_RES_SOUND,  "Sound" },
-	{ TR2_RES_SHARDS, "Shards" },
-	{ TR2_RES_NETHER, "Nether" },
-	{ TR2_RES_NEXUS,  "Nexus" },
-	{ TR2_RES_CHAOS,  "Chaos" },
-	{ TR2_RES_DISEN,  "Disenchantment" },
+	{TR2_RES_ACID, "Acid"},
+	{TR2_RES_ELEC, "Lightning"},
+	{TR2_RES_FIRE, "Fire"},
+	{TR2_RES_COLD, "Cold"},
+	{TR2_RES_POIS, "Poison"},
+	{TR2_RES_FEAR, "Fear"},
+	{TR2_RES_LITE, "Light"},
+	{TR2_RES_DARK, "Dark"},
+	{TR2_RES_BLIND, "Blindness"},
+	{TR2_RES_CONF, "Confusion"},
+	{TR2_RES_SOUND, "Sound"},
+	{TR2_RES_SHARDS, "Shards"},
+	{TR2_RES_NETHER, "Nether"},
+	{TR2_RES_NEXUS, "Nexus"},
+	{TR2_RES_CHAOS, "Chaos"},
+	{TR2_RES_DISEN, "Disenchantment"},
 };
 
 /*
@@ -527,10 +529,10 @@ static const flag_desc resist_flags_desc[] =
 
 static const flag_desc immune_flags_desc[] =
 {
-	{ TR2_IM_ACID,    "Acid" },
-	{ TR2_IM_ELEC,    "Lightning" },
-	{ TR2_IM_FIRE,    "Fire" },
-	{ TR2_IM_COLD,    "Cold" },
+	{TR2_IM_ACID, "Acid"},
+	{TR2_IM_ELEC, "Lightning"},
+	{TR2_IM_FIRE, "Fire"},
+	{TR2_IM_COLD, "Cold"},
 };
 
 /*
@@ -539,12 +541,12 @@ static const flag_desc immune_flags_desc[] =
  */
 static const flag_desc sustain_flags_desc[] =
 {
-	{ TR2_SUST_STR,   "STR" },
-	{ TR2_SUST_INT,   "INT" },
-	{ TR2_SUST_WIS,   "WIS" },
-	{ TR2_SUST_DEX,   "DEX" },
-	{ TR2_SUST_CON,   "CON" },
-	{ TR2_SUST_CHR,   "CHR" },
+	{TR2_SUST_STR, "STR"},
+	{TR2_SUST_INT, "INT"},
+	{TR2_SUST_WIS, "WIS"},
+	{TR2_SUST_DEX, "DEX"},
+	{TR2_SUST_CON, "CON"},
+	{TR2_SUST_CHR, "CHR"},
 };
 
 /*
@@ -553,10 +555,10 @@ static const flag_desc sustain_flags_desc[] =
 
 static const flag_desc misc_flags2_desc[] =
 {
-	{ TR2_THROW,      "Throwing" },
-	{ TR2_REFLECT,    "Reflection" },
-	{ TR2_FREE_ACT,   "Free Action" },
-	{ TR2_HOLD_LIFE,  "Hold Life" },
+	{TR2_THROW, "Throwing"},
+	{TR2_REFLECT, "Reflection"},
+	{TR2_FREE_ACT, "Free Action"},
+	{TR2_HOLD_LIFE, "Hold Life"},
 };
 
 /*
@@ -568,19 +570,19 @@ static const flag_desc misc_flags2_desc[] =
 
 static const flag_desc misc_flags3_desc[] =
 {
-	{ TR3_SH_FIRE,            "Fiery Aura" },
-	{ TR3_SH_ELEC,            "Electric Aura" },
-	{ TR3_NO_TELE,            "Prevent Teleportation" },
-	{ TR3_NO_MAGIC,           "Anti-Magic" },
-	{ TR3_FEATHER,            "Levitation" },
-	{ TR3_SEE_INVIS,          "See Invisible" },
-	{ TR3_TELEPATHY,          "ESP" },
-	{ TR3_SLOW_DIGEST,        "Slow Digestion" },
-	{ TR3_REGEN,              "Regeneration" },
-	{ TR3_XTRA_SHOTS,         "+1 Extra Shot" },        /* always +1? */
-	{ TR3_DRAIN_EXP,          "Drains Experience" },
-	{ TR3_AGGRAVATE,          "Aggravates" },
-	{ TR3_BLESSED,            "Blessed Blade" },
+	{TR3_SH_FIRE, "Fiery Aura"},
+	{TR3_SH_ELEC, "Electric Aura"},
+	{TR3_NO_TELE, "Prevent Teleportation"},
+	{TR3_NO_MAGIC, "Anti-Magic"},
+	{TR3_FEATHER, "Levitation"},
+	{TR3_SEE_INVIS, "See Invisible"},
+	{TR3_TELEPATHY, "ESP"},
+	{TR3_SLOW_DIGEST, "Slow Digestion"},
+	{TR3_REGEN, "Regeneration"},
+	{TR3_XTRA_SHOTS, "+1 Extra Shot"},	/* always +1? */
+	{TR3_DRAIN_EXP, "Drains Experience"},
+	{TR3_AGGRAVATE, "Aggravates"},
+	{TR3_BLESSED, "Blessed Blade"},
 };
 
 
@@ -647,8 +649,8 @@ typedef struct
 
 	/* A list of various magical qualities an object may have */
 	cptr misc_magic[N_ELEMENTS(misc_flags2_desc) + N_ELEMENTS(misc_flags3_desc) + 1 +	/* Permanent Light */
-					1 +			/* type of curse */
-					1];			/* sentinel NULL */
+					1 +	/* type of curse */
+					1];	/* sentinel NULL */
 
 	/* A string describing an artifact's activation */
 	cptr activation;
@@ -699,8 +701,8 @@ static void spoiler_underline(cptr str)
  *
  * The possibly updated description pointer is returned.
  */
-static cptr *spoiler_flag_aux(const u32b flags, const flag_desc *flag_ptr,
-							  cptr * desc_ptr, const int n_elmnts)
+static cptr *spoiler_flag_aux(const u32b flags, const flag_desc * flag_ptr,
+							  cptr *desc_ptr, const int n_elmnts)
 {
 	int i;
 
@@ -730,7 +732,7 @@ static void analyze_general(const object_type *o_ptr, char *desc_ptr)
  * List "player traits" altered by an artifact's pval. These include stats,
  * speed, infravision, tunneling, stealth, searching, and extra attacks.
  */
-static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
+static void analyze_pval(const object_type *o_ptr, pval_info_type * p_ptr)
 {
 	const u32b all_stats = (TR1_STR | TR1_INT | TR1_WIS |
 							TR1_DEX | TR1_CON | TR1_CHR);
@@ -953,7 +955,7 @@ static void analyze_misc(const object_type *o_ptr, char *misc_desc)
 /*
  * Fill in an object description structure for a given object
  */
-static void object_analyze(const object_type *o_ptr, obj_desc_list *desc_ptr)
+static void object_analyze(const object_type *o_ptr, obj_desc_list * desc_ptr)
 {
 	analyze_general(o_ptr, desc_ptr->description);
 
@@ -1044,7 +1046,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 	strcpy(line, INDENT1);
 
 	/* Create header (if one was given) */
-	if (header && (header[0]))
+	if (header &&(header[0]))
 	{
 		strcat(line, header);
 		strcat(line, " ");
@@ -1127,7 +1129,7 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 /*
  * Create a spoiler file entry for an artifact
  */
-static void spoiler_print_art(obj_desc_list *art_ptr)
+static void spoiler_print_art(obj_desc_list * art_ptr)
 {
 	pval_info_type *pval_ptr = &art_ptr->pval_info;
 
@@ -1868,72 +1870,74 @@ static void spoil_mon_info(cptr fname)
 
 		/* Collect spells */
 		vn = 0;
-		if (flags5 & (RF5_BA_ACID))           vp[vn++] = "produce acid balls";
-		if (flags5 & (RF5_BA_ELEC))           vp[vn++] = "produce lightning balls";
-		if (flags5 & (RF5_BA_FIRE))           vp[vn++] = "produce fire balls";
-		if (flags5 & (RF5_BA_COLD))           vp[vn++] = "produce frost balls";
-		if (flags5 & (RF5_BA_POIS))           vp[vn++] = "produce poison balls";
-		if (flags5 & (RF5_BA_NETH))           vp[vn++] = "produce nether balls";
-		if (flags5 & (RF5_BA_WATE))           vp[vn++] = "produce water balls";
-		if (flags4 & (RF4_BA_NUKE))           vp[vn++] = "produce balls of radiation";
-		if (flags5 & (RF5_BA_MANA))           vp[vn++] = "produce mana storms";
-		if (flags5 & (RF5_BA_DARK))           vp[vn++] = "produce darkness storms";
-		if (flags4 & (RF4_BA_CHAO))           vp[vn++] = "invoke raw Logrus";
-		if (flags6 & (RF6_HAND_DOOM))         vp[vn++] = "invoke the Hand of Doom";
-		if (flags5 & (RF5_DRAIN_MANA))        vp[vn++] = "drain mana";
-		if (flags5 & (RF5_MIND_BLAST))        vp[vn++] = "cause mind blasting";
-		if (flags5 & (RF5_BRAIN_SMASH))       vp[vn++] = "cause brain smashing";
-		if (flags5 & (RF5_CAUSE_1))           vp[vn++] = "cause light wounds and cursing";
-		if (flags5 & (RF5_CAUSE_2))           vp[vn++] = "cause serious wounds and cursing";
-		if (flags5 & (RF5_CAUSE_3))           vp[vn++] = "cause critical wounds and cursing";
-		if (flags5 & (RF5_CAUSE_4))           vp[vn++] = "cause mortal wounds";
-		if (flags5 & (RF5_BO_ACID))           vp[vn++] = "produce acid bolts";
-		if (flags5 & (RF5_BO_ELEC))           vp[vn++] = "produce lightning bolts";
-		if (flags5 & (RF5_BO_FIRE))           vp[vn++] = "produce fire bolts";
-		if (flags5 & (RF5_BO_COLD))           vp[vn++] = "produce frost bolts";
-		if (flags5 & (RF5_BO_POIS))           vp[vn++] = "produce poison bolts";
-		if (flags5 & (RF5_BO_NETH))           vp[vn++] = "produce nether bolts";
-		if (flags5 & (RF5_BO_WATE))           vp[vn++] = "produce water bolts";
-		if (flags5 & (RF5_BO_MANA))           vp[vn++] = "produce mana bolts";
-		if (flags5 & (RF5_BO_PLAS))           vp[vn++] = "produce plasma bolts";
-		if (flags5 & (RF5_BO_ICEE))           vp[vn++] = "produce ice bolts";
-		if (flags5 & (RF5_MISSILE))           vp[vn++] = "produce magic missiles";
-		if (flags5 & (RF5_SCARE))             vp[vn++] = "terrify";
-		if (flags5 & (RF5_BLIND))             vp[vn++] = "blind";
-		if (flags5 & (RF5_CONF))              vp[vn++] = "confuse";
-		if (flags5 & (RF5_SLOW))              vp[vn++] = "slow";
-		if (flags5 & (RF5_HOLD))              vp[vn++] = "paralyze";
-		if (flags6 & (RF6_HASTE))             vp[vn++] = "haste-self";
-		if (flags6 & (RF6_HEAL))              vp[vn++] = "heal-self";
-		if (flags6 & (RF6_INVULNER))          vp[vn++] = "make invulnerable";
-		if (flags6 & (RF6_BLINK))             vp[vn++] = "blink-self";
-		if (flags6 & (RF6_TPORT))             vp[vn++] = "teleport-self";
-		if (flags6 & (RF6_XXX3))              vp[vn++] = "do something";
-		if (flags6 & (RF6_XXX4))              vp[vn++] = "do something";
-		if (flags6 & (RF6_TELE_TO))           vp[vn++] = "teleport to";
-		if (flags6 & (RF6_TELE_AWAY))         vp[vn++] = "teleport away";
-		if (flags6 & (RF6_TELE_LEVEL))        vp[vn++] = "teleport level";
-		if (flags6 & (RF6_XXX5))              vp[vn++] = "do something";
-		if (flags6 & (RF6_DARKNESS))          vp[vn++] = "create darkness";
-		if (flags6 & (RF6_TRAPS))             vp[vn++] = "create traps";
-		if (flags6 & (RF6_FORGET))            vp[vn++] = "cause amnesia";
-		if (flags6 & (RF6_RAISE_DEAD))        vp[vn++] = "raise dead";
-		if (flags6 & (RF6_S_MONSTER))         vp[vn++] = "summon a monster";
-		if (flags6 & (RF6_S_MONSTERS))        vp[vn++] = "summon monsters";
-		if (flags6 & (RF6_S_KIN))             vp[vn++] = "summon aid";
-		if (flags6 & (RF6_S_ANT))             vp[vn++] = "summon ants";
-		if (flags6 & (RF6_S_SPIDER))          vp[vn++] = "summon spiders";
-		if (flags6 & (RF6_S_HOUND))           vp[vn++] = "summon hounds";
-		if (flags6 & (RF6_S_HYDRA))           vp[vn++] = "summon hydras";
-		if (flags6 & (RF6_S_ANGEL))           vp[vn++] = "summon an angel";
-		if (flags6 & (RF6_S_DEMON))           vp[vn++] = "summon a demon";
-		if (flags6 & (RF6_S_UNDEAD))          vp[vn++] = "summon an undead";
-		if (flags6 & (RF6_S_DRAGON))          vp[vn++] = "summon a dragon";
-		if (flags6 & (RF6_S_HI_UNDEAD))       vp[vn++] = "summon greater undead";
-		if (flags6 & (RF6_S_HI_DRAGON))       vp[vn++] = "summon ancient dragons";
-		if (flags6 & (RF6_S_CYBER))           vp[vn++] = "summon Cyberdemons";
-		if (flags6 & (RF6_S_AMBERITES))       vp[vn++] = "summon Lords of Amber";
-		if (flags6 & (RF6_S_UNIQUE))          vp[vn++] = "summon unique monsters";
+		if (flags5 & (RF5_BA_ACID)) vp[vn++] = "produce acid balls";
+		if (flags5 & (RF5_BA_ELEC)) vp[vn++] = "produce lightning balls";
+		if (flags5 & (RF5_BA_FIRE)) vp[vn++] = "produce fire balls";
+		if (flags5 & (RF5_BA_COLD)) vp[vn++] = "produce frost balls";
+		if (flags5 & (RF5_BA_POIS)) vp[vn++] = "produce poison balls";
+		if (flags5 & (RF5_BA_NETH)) vp[vn++] = "produce nether balls";
+		if (flags5 & (RF5_BA_WATE)) vp[vn++] = "produce water balls";
+		if (flags4 & (RF4_BA_NUKE)) vp[vn++] = "produce balls of radiation";
+		if (flags5 & (RF5_BA_MANA)) vp[vn++] = "produce mana storms";
+		if (flags5 & (RF5_BA_DARK)) vp[vn++] = "produce darkness storms";
+		if (flags4 & (RF4_BA_CHAO)) vp[vn++] = "invoke raw Logrus";
+		if (flags6 & (RF6_HAND_DOOM)) vp[vn++] = "invoke the Hand of Doom";
+		if (flags5 & (RF5_DRAIN_MANA)) vp[vn++] = "drain mana";
+		if (flags5 & (RF5_MIND_BLAST)) vp[vn++] = "cause mind blasting";
+		if (flags5 & (RF5_BRAIN_SMASH)) vp[vn++] = "cause brain smashing";
+		if (flags5 & (RF5_CAUSE_1)) vp[vn++] = "cause light wounds and cursing";
+		if (flags5 & (RF5_CAUSE_2)) vp[vn++] =
+				"cause serious wounds and cursing";
+		if (flags5 & (RF5_CAUSE_3)) vp[vn++] =
+				"cause critical wounds and cursing";
+		if (flags5 & (RF5_CAUSE_4)) vp[vn++] = "cause mortal wounds";
+		if (flags5 & (RF5_BO_ACID)) vp[vn++] = "produce acid bolts";
+		if (flags5 & (RF5_BO_ELEC)) vp[vn++] = "produce lightning bolts";
+		if (flags5 & (RF5_BO_FIRE)) vp[vn++] = "produce fire bolts";
+		if (flags5 & (RF5_BO_COLD)) vp[vn++] = "produce frost bolts";
+		if (flags5 & (RF5_BO_POIS)) vp[vn++] = "produce poison bolts";
+		if (flags5 & (RF5_BO_NETH)) vp[vn++] = "produce nether bolts";
+		if (flags5 & (RF5_BO_WATE)) vp[vn++] = "produce water bolts";
+		if (flags5 & (RF5_BO_MANA)) vp[vn++] = "produce mana bolts";
+		if (flags5 & (RF5_BO_PLAS)) vp[vn++] = "produce plasma bolts";
+		if (flags5 & (RF5_BO_ICEE)) vp[vn++] = "produce ice bolts";
+		if (flags5 & (RF5_MISSILE)) vp[vn++] = "produce magic missiles";
+		if (flags5 & (RF5_SCARE)) vp[vn++] = "terrify";
+		if (flags5 & (RF5_BLIND)) vp[vn++] = "blind";
+		if (flags5 & (RF5_CONF)) vp[vn++] = "confuse";
+		if (flags5 & (RF5_SLOW)) vp[vn++] = "slow";
+		if (flags5 & (RF5_HOLD)) vp[vn++] = "paralyze";
+		if (flags6 & (RF6_HASTE)) vp[vn++] = "haste-self";
+		if (flags6 & (RF6_HEAL)) vp[vn++] = "heal-self";
+		if (flags6 & (RF6_INVULNER)) vp[vn++] = "make invulnerable";
+		if (flags6 & (RF6_BLINK)) vp[vn++] = "blink-self";
+		if (flags6 & (RF6_TPORT)) vp[vn++] = "teleport-self";
+		if (flags6 & (RF6_XXX3)) vp[vn++] = "do something";
+		if (flags6 & (RF6_XXX4)) vp[vn++] = "do something";
+		if (flags6 & (RF6_TELE_TO)) vp[vn++] = "teleport to";
+		if (flags6 & (RF6_TELE_AWAY)) vp[vn++] = "teleport away";
+		if (flags6 & (RF6_TELE_LEVEL)) vp[vn++] = "teleport level";
+		if (flags6 & (RF6_XXX5)) vp[vn++] = "do something";
+		if (flags6 & (RF6_DARKNESS)) vp[vn++] = "create darkness";
+		if (flags6 & (RF6_TRAPS)) vp[vn++] = "create traps";
+		if (flags6 & (RF6_FORGET)) vp[vn++] = "cause amnesia";
+		if (flags6 & (RF6_RAISE_DEAD)) vp[vn++] = "raise dead";
+		if (flags6 & (RF6_S_MONSTER)) vp[vn++] = "summon a monster";
+		if (flags6 & (RF6_S_MONSTERS)) vp[vn++] = "summon monsters";
+		if (flags6 & (RF6_S_KIN)) vp[vn++] = "summon aid";
+		if (flags6 & (RF6_S_ANT)) vp[vn++] = "summon ants";
+		if (flags6 & (RF6_S_SPIDER)) vp[vn++] = "summon spiders";
+		if (flags6 & (RF6_S_HOUND)) vp[vn++] = "summon hounds";
+		if (flags6 & (RF6_S_HYDRA)) vp[vn++] = "summon hydras";
+		if (flags6 & (RF6_S_ANGEL)) vp[vn++] = "summon an angel";
+		if (flags6 & (RF6_S_DEMON)) vp[vn++] = "summon a demon";
+		if (flags6 & (RF6_S_UNDEAD)) vp[vn++] = "summon an undead";
+		if (flags6 & (RF6_S_DRAGON)) vp[vn++] = "summon a dragon";
+		if (flags6 & (RF6_S_HI_UNDEAD)) vp[vn++] = "summon greater undead";
+		if (flags6 & (RF6_S_HI_DRAGON)) vp[vn++] = "summon ancient dragons";
+		if (flags6 & (RF6_S_CYBER)) vp[vn++] = "summon Cyberdemons";
+		if (flags6 & (RF6_S_AMBERITES)) vp[vn++] = "summon Lords of Amber";
+		if (flags6 & (RF6_S_UNIQUE)) vp[vn++] = "summon unique monsters";
 
 		if (vn)
 		{
@@ -2219,30 +2223,124 @@ static void spoil_mon_info(cptr fname)
 			/* Acquire the method */
 			switch (r_ptr->blow[j].method)
 			{
-				case RBM_HIT:    p = "hit"; break;
-				case RBM_TOUCH:  p = "touch"; break;
-				case RBM_PUNCH:  p = "punch"; break;
-				case RBM_KICK:   p = "kick"; break;
-				case RBM_CLAW:   p = "claw"; break;
-				case RBM_BITE:   p = "bite"; break;
-				case RBM_STING:  p = "sting"; break;
-				case RBM_XXX1:   break;
-				case RBM_BUTT:   p = "butt"; break;
-				case RBM_CRUSH:  p = "crush"; break;
-				case RBM_ENGULF: p = "engulf"; break;
-				case RBM_CHARGE: p = "charge"; break;
-				case RBM_CRAWL:  p = "crawl on you"; break;
-				case RBM_DROOL:  p = "drool on you"; break;
-				case RBM_SPIT:   p = "spit"; break;
-				case RBM_EXPLODE: p = "explode"; break;
-				case RBM_GAZE:   p = "gaze"; break;
-				case RBM_WAIL:   p = "wail"; break;
-				case RBM_SPORE:  p = "release spores"; break;
-				case RBM_XXX4:   break;
-				case RBM_BEG:    p = "beg"; break;
-				case RBM_INSULT: p = "insult"; break;
-				case RBM_MOAN:   p = "moan"; break;
-				case RBM_SHOW:   p = "sing"; break;
+				case RBM_HIT:
+				{
+					p = "hit";
+					break;
+				}
+				case RBM_TOUCH:
+				{
+					p = "touch";
+					break;
+				}
+				case RBM_PUNCH:
+				{
+					p = "punch";
+					break;
+				}
+				case RBM_KICK:
+				{
+					p = "kick";
+					break;
+				}
+				case RBM_CLAW:
+				{
+					p = "claw";
+					break;
+				}
+				case RBM_BITE:
+				{
+					p = "bite";
+					break;
+				}
+				case RBM_STING:
+				{
+					p = "sting";
+					break;
+				}
+				case RBM_XXX1:
+				{
+					break;
+				}
+				case RBM_BUTT:
+				{
+					p = "butt";
+					break;
+				}
+				case RBM_CRUSH:
+				{
+					p = "crush";
+					break;
+				}
+				case RBM_ENGULF:
+				{
+					p = "engulf";
+					break;
+				}
+				case RBM_CHARGE:
+				{
+					p = "charge";
+					break;
+				}
+				case RBM_CRAWL:
+				{
+					p = "crawl on you";
+					break;
+				}
+				case RBM_DROOL:
+				{
+					p = "drool on you";
+					break;
+				}
+				case RBM_SPIT:
+				{
+					p = "spit";
+					break;
+				}
+				case RBM_EXPLODE:
+				{
+					p = "explode";
+					break;
+				}
+				case RBM_GAZE:
+				{
+					p = "gaze";
+					break;
+				}
+				case RBM_WAIL:
+				{
+					p = "wail";
+					break;
+				}
+				case RBM_SPORE:
+				{
+					p = "release spores";
+					break;
+				}
+				case RBM_XXX4:
+				{
+					break;
+				}
+				case RBM_BEG:
+				{
+					p = "beg";
+					break;
+				}
+				case RBM_INSULT:
+				{
+					p = "insult";
+					break;
+				}
+				case RBM_MOAN:
+				{
+					p = "moan";
+					break;
+				}
+				case RBM_SHOW:
+				{
+					p = "sing";
+					break;
+				}
 			}
 
 
@@ -2252,37 +2350,161 @@ static void spoil_mon_info(cptr fname)
 			/* Acquire the effect */
 			switch (r_ptr->blow[j].effect)
 			{
-				case RBE_HURT:          q = "attack"; break;
-				case RBE_POISON:        q = "poison"; break;
-				case RBE_UN_BONUS:      q = "disenchant"; break;
-				case RBE_UN_POWER:      q = "drain charges"; break;
-				case RBE_EAT_GOLD:      q = "steal gold"; break;
-				case RBE_EAT_ITEM:      q = "steal items"; break;
-				case RBE_EAT_FOOD:      q = "eat your food"; break;
-				case RBE_EAT_LITE:      q = "absorb light"; break;
-				case RBE_ACID:          q = "shoot acid"; break;
-				case RBE_ELEC:          q = "electrocute"; break;
-				case RBE_FIRE:          q = "burn"; break;
-				case RBE_COLD:          q = "freeze"; break;
-				case RBE_BLIND:         q = "blind"; break;
-				case RBE_CONFUSE:       q = "confuse"; break;
-				case RBE_TERRIFY:       q = "terrify"; break;
-				case RBE_PARALYZE:      q = "paralyze"; break;
-				case RBE_LOSE_STR:      q = "reduce strength"; break;
-				case RBE_LOSE_INT:      q = "reduce intelligence"; break;
-				case RBE_LOSE_WIS:      q = "reduce wisdom"; break;
-				case RBE_LOSE_DEX:      q = "reduce dexterity"; break;
-				case RBE_LOSE_CON:      q = "reduce constitution"; break;
-				case RBE_LOSE_CHR:      q = "reduce charisma"; break;
-				case RBE_LOSE_ALL:      q = "reduce all stats"; break;
-				case RBE_SHATTER:       q = "shatter"; break;
-				case RBE_EXP_10:        q = "lower experience (by 10d6+)"; break;
-				case RBE_EXP_20:        q = "lower experience (by 20d6+)"; break;
-				case RBE_EXP_40:        q = "lower experience (by 40d6+)"; break;
-				case RBE_EXP_80:        q = "lower experience (by 80d6+)"; break;
-				case RBE_DISEASE:       q = "disease"; break;
-				case RBE_TIME:          q = "time"; break;
-				case RBE_EXP_VAMP:      q = "drain life force"; break;
+				case RBE_HURT:
+				{
+					q = "attack";
+					break;
+				}
+				case RBE_POISON:
+				{
+					q = "poison";
+					break;
+				}
+				case RBE_UN_BONUS:
+				{
+					q = "disenchant";
+					break;
+				}
+				case RBE_UN_POWER:
+				{
+					q = "drain charges";
+					break;
+				}
+				case RBE_EAT_GOLD:
+				{
+					q = "steal gold";
+					break;
+				}
+				case RBE_EAT_ITEM:
+				{
+					q = "steal items";
+					break;
+				}
+				case RBE_EAT_FOOD:
+				{
+					q = "eat your food";
+					break;
+				}
+				case RBE_EAT_LITE:
+				{
+					q = "absorb light";
+					break;
+				}
+				case RBE_ACID:
+				{
+					q = "shoot acid";
+					break;
+				}
+				case RBE_ELEC:
+				{
+					q = "electrocute";
+					break;
+				}
+				case RBE_FIRE:
+				{
+					q = "burn";
+					break;
+				}
+				case RBE_COLD:
+				{
+					q = "freeze";
+					break;
+				}
+				case RBE_BLIND:
+				{
+					q = "blind";
+					break;
+				}
+				case RBE_CONFUSE:
+				{
+					q = "confuse";
+					break;
+				}
+				case RBE_TERRIFY:
+				{
+					q = "terrify";
+					break;
+				}
+				case RBE_PARALYZE:
+				{
+					q = "paralyze";
+					break;
+				}
+				case RBE_LOSE_STR:
+				{
+					q = "reduce strength";
+					break;
+				}
+				case RBE_LOSE_INT:
+				{
+					q = "reduce intelligence";
+					break;
+				}
+				case RBE_LOSE_WIS:
+				{
+					q = "reduce wisdom";
+					break;
+				}
+				case RBE_LOSE_DEX:
+				{
+					q = "reduce dexterity";
+					break;
+				}
+				case RBE_LOSE_CON:
+				{
+					q = "reduce constitution";
+					break;
+				}
+				case RBE_LOSE_CHR:
+				{
+					q = "reduce charisma";
+					break;
+				}
+				case RBE_LOSE_ALL:
+				{
+					q = "reduce all stats";
+					break;
+				}
+				case RBE_SHATTER:
+				{
+					q = "shatter";
+					break;
+				}
+				case RBE_EXP_10:
+				{
+					q = "lower experience (by 10d6+)";
+					break;
+				}
+				case RBE_EXP_20:
+				{
+					q = "lower experience (by 20d6+)";
+					break;
+				}
+				case RBE_EXP_40:
+				{
+					q = "lower experience (by 40d6+)";
+					break;
+				}
+				case RBE_EXP_80:
+				{
+					q = "lower experience (by 80d6+)";
+					break;
+				}
+				case RBE_DISEASE:
+				{
+					q = "disease";
+					break;
+				}
+				case RBE_TIME:
+				{
+					q = "time";
+					break;
+				}
+				case RBE_EXP_VAMP:
+				{
+					q = "drain life force";
+					break;
+				}
 			}
 
 
@@ -2359,11 +2581,11 @@ static void spoil_mon_info(cptr fname)
 static cptr long_stat_names[A_MAX] =
 {
 	"Strength",
-      "Intelligence",
-      "Wisdom",
-      "Dexterity",
-      "Constitution",
-      "Charisma"
+	"Intelligence",
+	"Wisdom",
+	"Dexterity",
+	"Constitution",
+	"Charisma"
 };
 
 

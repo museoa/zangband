@@ -30,7 +30,7 @@ static void quit_hook(cptr s)
 	int j;
 
 	/* Unused parameter */
-	(void)s;
+	(void) s;
 
 	/* Scan windows */
 	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--)
@@ -49,7 +49,7 @@ static void quit_hook(cptr s)
  * Set the stack size (for the Amiga)
  */
 #ifdef AMIGA
-# include <dos.h>
+#include <dos.h>
 __near long __stack = 32768L;
 #endif /* AMIGA */
 
@@ -58,7 +58,7 @@ __near long __stack = 32768L;
  * Set the stack size and overlay buffer (see main-286.c")
  */
 #ifdef USE_286
-# include <dos.h>
+#include <dos.h>
 extern unsigned _stklen = 32768U;
 extern unsigned _ovrbuffer = 0x1500;
 #endif /* USE_286 */
@@ -125,7 +125,7 @@ static void init_stuff(void)
 	/* Hack -- prepare "path" */
 	strcpy(path, "Angband:");
 
-#else /* AMIGA / VM */
+#else  /* AMIGA / VM */
 
 	cptr tail = NULL;
 
@@ -179,35 +179,35 @@ static void change_path(cptr info)
 		case 'a':
 		{
 			string_free(ANGBAND_DIR_APEX);
-			ANGBAND_DIR_APEX = string_make(s+1);
+			ANGBAND_DIR_APEX = string_make(s + 1);
 			break;
 		}
 
 		case 'f':
 		{
 			string_free(ANGBAND_DIR_FILE);
-			ANGBAND_DIR_FILE = string_make(s+1);
+			ANGBAND_DIR_FILE = string_make(s + 1);
 			break;
 		}
 
 		case 'h':
 		{
 			string_free(ANGBAND_DIR_HELP);
-			ANGBAND_DIR_HELP = string_make(s+1);
+			ANGBAND_DIR_HELP = string_make(s + 1);
 			break;
 		}
 
 		case 'i':
 		{
 			string_free(ANGBAND_DIR_INFO);
-			ANGBAND_DIR_INFO = string_make(s+1);
+			ANGBAND_DIR_INFO = string_make(s + 1);
 			break;
 		}
 
 		case 'x':
 		{
 			string_free(ANGBAND_DIR_XTRA);
-			ANGBAND_DIR_XTRA = string_make(s+1);
+			ANGBAND_DIR_XTRA = string_make(s + 1);
 			break;
 		}
 
@@ -221,40 +221,40 @@ static void change_path(cptr info)
 			quit_fmt("Restricted option '-d%s'", info);
 		}
 
-#else /* VERIFY_SAVEFILE */
+#else  /* VERIFY_SAVEFILE */
 
 		case 'b':
 		{
 			string_free(ANGBAND_DIR_BONE);
-			ANGBAND_DIR_BONE = string_make(s+1);
+			ANGBAND_DIR_BONE = string_make(s + 1);
 			break;
 		}
 
 		case 'd':
 		{
 			string_free(ANGBAND_DIR_DATA);
-			ANGBAND_DIR_DATA = string_make(s+1);
+			ANGBAND_DIR_DATA = string_make(s + 1);
 			break;
 		}
 
 		case 'e':
 		{
 			string_free(ANGBAND_DIR_EDIT);
-			ANGBAND_DIR_EDIT = string_make(s+1);
+			ANGBAND_DIR_EDIT = string_make(s + 1);
 			break;
 		}
 
 		case 's':
 		{
 			string_free(ANGBAND_DIR_SAVE);
-			ANGBAND_DIR_SAVE = string_make(s+1);
+			ANGBAND_DIR_SAVE = string_make(s + 1);
 			break;
 		}
 
 		case 'z':
 		{
 			string_free(ANGBAND_DIR_SCRIPT);
-			ANGBAND_DIR_SCRIPT = string_make(s+1);
+			ANGBAND_DIR_SCRIPT = string_make(s + 1);
 			break;
 		}
 
@@ -265,7 +265,7 @@ static void change_path(cptr info)
 		case 'u':
 		{
 			string_free(ANGBAND_DIR_USER);
-			ANGBAND_DIR_USER = string_make(s+1);
+			ANGBAND_DIR_USER = string_make(s + 1);
 			break;
 		}
 
@@ -294,7 +294,7 @@ static void game_usage(void)
 	puts("  -s<num>  Show <num> high scores");
 	puts("  -u<who>  Use your <who> savefile");
 	puts("  -d<def>  Define a 'lib' dir sub-path");
-	
+
 #ifdef USE_XAW
 	puts("  -mxaw    To use XAW");
 	puts("  --       Sub options");
@@ -303,7 +303,7 @@ static void game_usage(void)
 	puts("  -- -b#   Set tileset bitmap");
 	puts("  -- -n#   Number of terms to use");
 #endif /* USE_XAW */
-	
+
 #ifdef USE_X11
 	puts("  -mx11    To use X11");
 	puts("  --       Sub options");
@@ -312,7 +312,7 @@ static void game_usage(void)
 	puts("  -- -b#   Set tileset bitmap");
 	puts("  -- -n#   Number of terms to use");
 #endif /* USE_X11 */
-	
+
 #ifdef USE_XPJ
 	puts("  -mxpj    To use XPJ");
 	puts("  --       Sub options");
@@ -320,7 +320,7 @@ static void game_usage(void)
 	puts("  -- -s    Turn off smoothscaling graphics");
 	puts("  -- -n#   Number of terms to use");
 #endif /* USE_XPJ */
-	
+
 #ifdef USE_GCU
 	puts("  -mgcu    To use GCU (GNU Curses)");
 #endif /* USE_GCU */
@@ -365,7 +365,7 @@ static void game_usage(void)
 	puts("  -- x0,y0,x1,y1  Create new term");
 	puts("  -- --noframe    No window frames");
 #endif /* USE_VCS */
-				
+
 	/* Actually abort the process */
 	quit(NULL);
 }
@@ -409,12 +409,12 @@ int main(int argc, char *argv[])
 #ifdef SET_UID
 
 	/* Default permissions on files */
-	(void)umask(022);
+	(void) umask(022);
 
-# ifdef SECURE
+#ifdef SECURE
 	/* Authenticate */
 	Authenticate();
-# endif /* SECURE */
+#endif /* SECURE */
 
 #endif /* SET_UID */
 
@@ -433,17 +433,18 @@ int main(int argc, char *argv[])
 	player_uid += (getgid() * 1000);
 #endif /* VMS */
 
-# ifdef SAFE_SETUID
+#ifdef SAFE_SETUID
 
-#  if defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX)
+#if defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX)
 
 	/* Save some info for later */
 	player_euid = geteuid();
 	player_egid = getegid();
 
-#  endif /* defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX) */
+#endif /* defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX) */
 
-#  if 0 /* XXX XXX XXX */
+	/* XXX XXX XXX */
+#if 0
 
 	/* Redundant setting necessary in case root is running the game */
 	/* If not root or game not setuid the following two calls do nothing */
@@ -458,9 +459,9 @@ int main(int argc, char *argv[])
 		quit("setuid(): cannot set permissions correctly!");
 	}
 
-#  endif /* 0 */
+#endif /* 0 */
 
-# endif /* SAFE_SETUID */
+#endif /* SAFE_SETUID */
 
 #endif /* SET_UID */
 
@@ -486,7 +487,7 @@ int main(int argc, char *argv[])
 	/* Get the "user name" as a default player name */
 #ifdef ANGBAND_2_8_1
 	user_name(player_name, player_uid);
-#else /* ANGBAND_2_8_1 */
+#else  /* ANGBAND_2_8_1 */
 	user_name(op_ptr->full_name, player_uid);
 #endif /* ANGBAND_2_8_1 */
 
@@ -576,7 +577,7 @@ int main(int argc, char *argv[])
 
 				/* Make sure it's terminated */
 				player_name[31] = '\0';
-#else /* ANGBAND_2_8_1 */
+#else  /* ANGBAND_2_8_1 */
 				/* Get the savefile name */
 				strncpy(op_ptr->full_name, &argv[i][2], 32);
 
@@ -617,8 +618,8 @@ int main(int argc, char *argv[])
 
 			default:
 			{
-				 /* Default usage-help */
-				 game_usage();
+				/* Default usage-help */
+				game_usage();
 			}
 		}
 	}
@@ -644,7 +645,7 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-gtk.c" support */
 	if (!done && (!mstr || (streq(mstr, "gtk"))))
 	{
-		if (0 == init_gtk((unsigned char*) &new_game, argc, argv))
+		if (0 == init_gtk((unsigned char *) &new_game, argc, argv))
 		{
 			done = TRUE;
 		}
@@ -852,4 +853,3 @@ int main(int argc, char *argv[])
 }
 
 #endif /* !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN) */
-

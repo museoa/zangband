@@ -489,14 +489,14 @@ static errr Term_text_hack(int x, int y, int n, byte a, const char *cp)
 #ifdef USE_TRANSPARENCY
 static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp,
 						   const byte *tap, const char *tcp)
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
-#endif	/* USE_TRANSPARENCY */
+#endif /* USE_TRANSPARENCY */
 {
 	/* Compiler silliness */
 #ifdef USE_TRANSPARENCY
 	if (x || y || n || ap || cp || tap || tcp) return (-2);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 	if (x || y || n || ap || cp) return (-2);
 #endif /* USE_TRANSPARENCY */
 
@@ -516,9 +516,9 @@ static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
  */
 #ifdef USE_TRANSPARENCY
 void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 void Term_queue_char(int x, int y, byte a, char c)
-#endif	/* USE_TRANSPARENCY */
+#endif /* USE_TRANSPARENCY */
 {
 	term_win *scrn = Term->scr;
 
@@ -534,7 +534,7 @@ void Term_queue_char(int x, int y, byte a, char c)
 	if ((*scr_aa == a) && (*scr_cc == c) &&
 		(*scr_taa == ta) && (*scr_tcc == tc)) return;
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 	/* Hack -- Ignore non-changes */
 	if ((*scr_aa == a) && (*scr_cc == c)) return;
@@ -572,9 +572,9 @@ void Term_queue_char(int x, int y, byte a, char c)
  */
 #ifdef USE_TRANSPARENCY
 void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta, char *tc)
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 void Term_queue_line(int x, int y, int n, byte *a, char *c)
-#endif	/* USE_TRANSPARENCY */
+#endif /* USE_TRANSPARENCY */
 {
 	term_win *scrn = Term->scr;
 
@@ -616,7 +616,7 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 		*scr_taa++ = *ta++;
 		*scr_tcc++ = *tc++;
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 		/* Hack -- Ignore non-changes */
 		if ((*scr_aa == *a) && (*scr_cc == *c))
@@ -695,7 +695,7 @@ void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 		/* Hack -- Ignore non-changes */
 		if ((oa == a) && (oc == *s) && (ota == 0) && (otc == 0)) continue;
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 		/* Hack -- Ignore non-changes */
 		if ((oa == a) && (oc == *s)) continue;
@@ -802,7 +802,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 		/* Handle unchanged grids */
 		if ((na == oa) && (nc == oc) && (nta == ota) && (ntc == otc))
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 		/* Handle unchanged grids */
 		if ((na == oa) && (nc == oc))
@@ -817,7 +817,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 				(void) ((*Term->pict_hook) (fx, y, fn,
 											&scr_aa[fx], &scr_cc[fx],
 											&scr_taa[fx], &scr_tcc[fx]));
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 				(void) ((*Term->pict_hook) (fx, y, fn, &scr_aa[fx],
 											&scr_cc[fx]));
 #endif /* USE_TRANSPARENCY */
@@ -850,7 +850,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 		(void) ((*Term->pict_hook) (fx, y, fn,
 									&scr_aa[fx], &scr_cc[fx], &scr_taa[fx],
 									&scr_tcc[fx]));
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 		(void) ((*Term->pict_hook) (fx, y, fn, &scr_aa[fx], &scr_cc[fx]));
 #endif /* USE_TRANSPARENCY */
 	}
@@ -926,7 +926,7 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 		/* Handle unchanged grids */
 		if ((na == oa) && (nc == oc) && (nta == ota) && (ntc == otc))
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 		/* Handle unchanged grids */
 		if ((na == oa) && (nc == oc))
@@ -991,7 +991,7 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 			/* Hack -- Draw the special attr/char pair */
 			(void) ((*Term->pict_hook) (x, y, 1, &na, &nc, &nta, &ntc));
 
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 
 			/* Hack -- Draw the special attr/char pair */
 			(void) ((*Term->pict_hook) (x, y, 1, &na, &nc));
@@ -1410,7 +1410,7 @@ void Term_fresh(void)
 			{
 #ifdef USE_TRANSPARENCY
 				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc, &ota, &otc));
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc));
 #endif /* USE_TRANSPARENCY */
 			}
@@ -1420,7 +1420,7 @@ void Term_fresh(void)
 			{
 #ifdef USE_TRANSPARENCY
 				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc, &ota, &otc));
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 				(void) ((*Term->pict_hook) (tx, ty, 1, &oa, &oc));
 #endif /* USE_TRANSPARENCY */
 			}
@@ -1643,7 +1643,7 @@ void Term_draw(int x, int y, byte a, char c)
 	/* Queue it for later */
 #ifdef USE_TRANSPARENCY
 	Term_queue_char(x, y, a, c, 0, 0);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 	Term_queue_char(x, y, a, c);
 #endif /* USE_TRANSPARENCY */
 
@@ -1677,7 +1677,7 @@ void Term_addch(byte a, char c)
 	/* Queue the given character for display */
 #ifdef USE_TRANSPARENCY
 	Term_queue_char(Term->scr->cx, Term->scr->cy, a, c, 0, 0);
-#else /* USE_TRANSPARENCY */
+#else  /* USE_TRANSPARENCY */
 	Term_queue_char(Term->scr->cx, Term->scr->cy, a, c);
 #endif /* USE_TRANSPARENCY */
 
@@ -2472,7 +2472,7 @@ errr Term_resize(int w, int h)
  * To "create" a valid "term", one should do "term_init(t)", then
  * set the various flags and hooks, and then do "Term_activate(t)".
  */
-void Term_activate(term * t)
+void Term_activate(term *t)
 {
 	/* Hack -- already done */
 	if (Term == t) return;
@@ -2505,7 +2505,7 @@ void Term_activate(term * t)
 /*
  * Nuke a term
  */
-errr term_nuke(term * t)
+errr term_nuke(term *t)
 {
 	int w = t->wid;
 	int h = t->hgt;
@@ -2575,7 +2575,7 @@ errr term_nuke(term * t)
  * By default, the cursor starts out "invisible"
  * By default, we "erase" using "black spaces"
  */
-errr term_init(term * t, int w, int h, int k)
+errr term_init(term *t, int w, int h, int k)
 {
 	int y;
 

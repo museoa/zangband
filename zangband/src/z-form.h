@@ -56,5 +56,3 @@ extern void core_fmt(cptr fmt, ...);
 
 
 #endif
-
-

@@ -840,7 +840,7 @@ void object_aware(object_type *o_ptr)
 #ifndef SCRIPT_OBJ_KIND
 	/* Fully aware of the effects */
 	k_info[o_ptr->k_idx].aware = TRUE;
-#else /* SCRIPT_OBJ_KIND */
+#else  /* SCRIPT_OBJ_KIND */
 	/* Fully aware of the effects */
 	o_ptr->aware = TRUE;
 #endif /* SCRIPT_OBJ_KIND */
@@ -855,7 +855,7 @@ void object_tried(object_type *o_ptr)
 #ifndef SCRIPT_OBJ_KIND
 	/* Mark it as tried (even if "aware") */
 	k_info[o_ptr->k_idx].tried = TRUE;
-#else /* SCRIPT_OBJ_KIND */
+#else  /* SCRIPT_OBJ_KIND */
 	o_ptr->tried = TRUE;
 #endif /* SCRIPT_OBJ_KIND */
 }
@@ -873,29 +873,53 @@ static s32b object_value_base(const object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
-		/* Un-aware Food */
-		case TV_FOOD: return (5L);
+		case TV_FOOD:
+		{
+			/* Un-aware Food */
+			return (5L);
+		}
 
-		/* Un-aware Potions */
-		case TV_POTION: return (20L);
+		case TV_POTION:
+		{
+			/* Un-aware Potions */
+			return (20L);
+		}
 
-		/* Un-aware Scrolls */
-		case TV_SCROLL: return (20L);
+		case TV_SCROLL:
+		{
+			/* Un-aware Scrolls */
+			return (20L);
+		}
 
-		/* Un-aware Staffs */
-		case TV_STAFF: return (70L);
+		case TV_STAFF:
+		{
+			/* Un-aware Staffs */
+			return (70L);
+		}
 
-		/* Un-aware Wands */
-		case TV_WAND: return (50L);
+		case TV_WAND:
+		{
+			/* Un-aware Wands */
+			return (50L);
+		}
 
-		/* Un-aware Rods */
-		case TV_ROD: return (90L);
+		case TV_ROD:
+		{
+			/* Un-aware Rods */
+			return (90L);
+		}
 
-		/* Un-aware Rings */
-		case TV_RING: return (45L);
+		case TV_RING:
+		{
+			/* Un-aware Rings */
+			return (45L);
+		}
 
-		/* Un-aware Amulets */
-		case TV_AMULET: return (45L);
+		case TV_AMULET:
+		{
+			/* Un-aware Amulets */
+			return (45L);
+		}
 	}
 
 	/* Paranoia -- Oops */
@@ -1206,9 +1230,10 @@ s32b object_value_real(const object_type *o_ptr)
 	/* Analyze the item */
 	switch (o_ptr->tval)
 	{
-			/* Wands/Staffs */
 		case TV_WAND:
 		{
+			/* Wands */
+
 			/* Pay extra for charges, depending on standard number of
 			 * charges.  Handle new-style wands correctly. -LM-
 			 */
@@ -1219,6 +1244,8 @@ s32b object_value_real(const object_type *o_ptr)
 		}
 		case TV_STAFF:
 		{
+			/* Staffs */
+
 			/* Pay extra for charges, depending on standard number of
 			 * charges.  -LM-
 			 */
@@ -1228,25 +1255,24 @@ s32b object_value_real(const object_type *o_ptr)
 			break;
 		}
 
-			/* Rings/Amulets */
 		case TV_RING:
 		case TV_AMULET:
 		{
+			/* Rings/Amulets */
+
 			/* Hack -- negative bonuses are bad */
 			if (o_ptr->to_a < 0) return (0L);
 			if (o_ptr->to_h < 0) return (0L);
 			if (o_ptr->to_d < 0) return (0L);
 
 			/* Give credit for bonuses */
-			value += ((sqvalue(o_ptr->to_h) +
-			           sqvalue(o_ptr->to_d) +
-			           sqvalue(o_ptr->to_a)) * 7L);
+			value += ((sqvalue(o_ptr->to_h) + sqvalue(o_ptr->to_d) +
+					   sqvalue(o_ptr->to_a)) * 7L);
 
 			/* Done */
 			break;
 		}
 
-		/* Armor */
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
@@ -1257,6 +1283,8 @@ s32b object_value_real(const object_type *o_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+			/* Armour */
+
 			/* Give credit for hit bonus */
 			value += (sqvalue(o_ptr->to_h - k_ptr->to_h) * 7L);
 
@@ -1270,54 +1298,52 @@ s32b object_value_real(const object_type *o_ptr)
 			break;
 		}
 
-		/* Bows/Weapons */
 		case TV_BOW:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_SWORD:
 		case TV_POLEARM:
 		{
+			/* Bows/Weapons */
+
 			/* Factor in the bonuses */
-			value += ((sqvalue(o_ptr->to_h) +
-			           sqvalue(o_ptr->to_d) +
-			           sqvalue(o_ptr->to_a)) * 7L);
+			value += ((sqvalue(o_ptr->to_h) + sqvalue(o_ptr->to_d) +
+					   sqvalue(o_ptr->to_a)) * 7L);
 
 			/* Hack -- Factor in extra damage dice */
 			if (k_ptr->dd * k_ptr->ds)
 			{
-				value = value * o_ptr->dd * o_ptr->ds /
-				        (k_ptr->dd * k_ptr->ds);
+				value = value * o_ptr->dd * o_ptr->ds / (k_ptr->dd * k_ptr->ds);
 			}
 
 			/* Done */
 			break;
 		}
 
-		/* Ammo */
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		{
+			/* Ammo */
+
 			/* Factor in the bonuses */
-			value += ((sqvalue(o_ptr->to_h) +
-			           sqvalue(o_ptr->to_d)));
+			value += ((sqvalue(o_ptr->to_h) + sqvalue(o_ptr->to_d)));
 
 			/* Hack -- Factor in extra damage dice */
 			if (k_ptr->dd * k_ptr->ds)
 			{
-				value = value * o_ptr->dd * o_ptr->ds /
-				        (k_ptr->dd * k_ptr->ds);
+				value = value * o_ptr->dd * o_ptr->ds / (k_ptr->dd * k_ptr->ds);
 			}
 
 			/* Done */
 			break;
 		}
 
-		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
 		{
+			/* Figurines, relative to monster level */
 			value = (r_info[o_ptr->pval].level *
-			         r_info[o_ptr->pval].level * 5L);
+					 r_info[o_ptr->pval].level * 5L);
 			break;
 		}
 	}
@@ -1496,33 +1522,37 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 	/* Analyze the items */
 	switch (o_ptr->tval)
 	{
-		/* Chests */
 		case TV_CHEST:
 		{
+			/* Chests */
+
 			/* Never okay */
 			return (FALSE);
 		}
 
-			/* Figurines and Statues */
 		case TV_FIGURINE:
 		case TV_STATUE:
 		{
+			/* Figurines and Statues */
+
 			/* Never okay */
 			return (FALSE);
 		}
 
-		/* Food and Potions and Scrolls */
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_SCROLL:
 		{
+			/* Food and Potions and Scrolls */
+
 			/* Assume okay */
 			break;
 		}
 
-			/* Staffs */
 		case TV_STAFF:
 		{
+			/* Staffs */
+
 			/* Require either knowledge or known empty for both staffs. */
 			if ((!(o_ptr->ident & (IDENT_EMPTY)) &&
 				 !object_known_p(o_ptr)) ||
@@ -1536,9 +1566,10 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 			break;
 		}
 
-		/* Wands */
 		case TV_WAND:
 		{
+			/* Wands */
+
 			/* Wand charges combine in O&ZAngband. */
 			if (object_known_p(o_ptr) != object_known_p(j_ptr)) return (FALSE);
 
@@ -1546,14 +1577,14 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 			break;
 		}
 
-		/* Staffs and Wands and Rods */
 		case TV_ROD:
 		{
+			/* Staffs and Wands and Rods */
+
 			/* Assume okay */
 			break;
 		}
 
-		/* Weapons and Armor */
 		case TV_BOW:
 		case TV_DIGGING:
 		case TV_HAFTED:
@@ -1569,6 +1600,8 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+			/* Weapons and Armor */
+
 			/* Require permission */
 			if (!stack_allow_items) return (FALSE);
 
@@ -1583,22 +1616,23 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 			/* Fall through */
 		}
 
-		/* Rings, Amulets, Lites */
 		case TV_RING:
 		case TV_AMULET:
-
 		{
+			/* Rings, Amulets, Lites */
+
 			/* Require full knowledge of both items */
 			if (!object_known_p(o_ptr)
 				|| !object_known_p(j_ptr)) return (FALSE);
 			/* Fall through */
 		}
 
-		/* Missiles */
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
 		{
+			/* Missiles */
+
 			/* Require identical knowledge of both items */
 			if (object_known_p(o_ptr) != object_known_p(j_ptr)) return (FALSE);
 
@@ -1619,9 +1653,10 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 			break;
 		}
 
-		/* Various */
 		default:
 		{
+			/* Various */
+
 			/* Require knowledge */
 			if (!object_known_p(o_ptr)
 				|| !object_known_p(j_ptr)) return (FALSE);
@@ -3166,12 +3201,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Strength, Constitution, Dexterity, Intelligence */
 				case SV_RING_STR:
 				case SV_RING_CON:
 				case SV_RING_DEX:
 				case SV_RING_INT:
 				{
+					/* Strength, Constitution, Dexterity, Intelligence */
+
 					/* Stat bonus */
 					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
@@ -3191,9 +3227,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Ring of Speed! */
 				case SV_RING_SPEED:
 				{
+					/* Ring of Speed! */
+
 					/* Base speed (1 to 10) */
 					o_ptr->pval = randint1(o_ptr->pval / 2) +
 						m_bonus(o_ptr->pval, level);
@@ -3248,9 +3285,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				}
 					break;
 
-					/* Searching */
 				case SV_RING_SEARCHING:
 				{
+					/* Searching */
+
 					/* Bonus to searching */
 					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
@@ -3270,20 +3308,22 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Flames, Acid, Ice */
 				case SV_RING_FLAMES:
 				case SV_RING_ACID:
 				case SV_RING_ICE:
 				{
+					/* Flames, Acid, Ice */
+
 					/* Bonus to armor class */
 					o_ptr->to_a = rand_range(5, 10) + m_bonus(10, level);
 					break;
 				}
 
-					/* Weakness, Stupidity */
 				case SV_RING_WEAKNESS:
 				case SV_RING_STUPIDITY:
 				{
+					/* Weakness, Stupidity */
+
 					/* Broken */
 					o_ptr->ident |= (IDENT_BROKEN);
 
@@ -3296,9 +3336,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* WOE, Stupidity */
 				case SV_RING_WOE:
 				{
+					/* WOE, Stupidity */
+
 					/* Broken */
 					o_ptr->ident |= (IDENT_BROKEN);
 
@@ -3312,9 +3353,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Ring of damage */
 				case SV_RING_DAMAGE:
 				{
+					/* Ring of damage */
+
 					/* Bonus to damage */
 					o_ptr->to_d = rand_range(5, 13) + m_bonus(10, level);
 
@@ -3334,9 +3376,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Ring of Accuracy */
 				case SV_RING_ACCURACY:
 				{
+					/* Ring of Accuracy */
+
 					/* Bonus to hit */
 					o_ptr->to_h = rand_range(5, 13) + m_bonus(10, level);
 
@@ -3356,9 +3399,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Ring of Protection */
 				case SV_RING_PROTECTION:
 				{
+					/* Ring of Protection */
+
 					/* Bonus to armor class */
 					o_ptr->to_a = rand_range(5, 13) + m_bonus(10, level);
 
@@ -3378,9 +3422,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Ring of Slaying */
 				case SV_RING_SLAYING:
 				{
+					/* Ring of Slaying */
+
 					/* Bonus to damage and to hit */
 					o_ptr->to_d = randint1(7) + m_bonus(10, level);
 					o_ptr->to_h = randint1(7) + m_bonus(10, level);
@@ -3411,10 +3456,11 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 			/* Analyze */
 			switch (o_ptr->sval)
 			{
-					/* Amulet of wisdom/charisma */
 				case SV_AMULET_WISDOM:
 				case SV_AMULET_CHARISMA:
 				{
+					/* Amulet of wisdom/charisma */
+
 					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
 
 					/* Cursed */
@@ -3457,9 +3503,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				}
 					break;
 
-					/* Amulet of searching */
 				case SV_AMULET_SEARCHING:
 				{
+					/* Amulet of searching */
 					o_ptr->pval = randint1(5) + m_bonus(o_ptr->pval, level);
 
 					/* Cursed */
@@ -3478,9 +3524,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Amulet of the Magi -- never cursed */
 				case SV_AMULET_THE_MAGI:
 				{
+					/* Amulet of the Magi */
 					if (one_in_(7))
 					{
 						/* Randart amulet */
@@ -3509,9 +3555,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					break;
 				}
 
-					/* Amulet of Destruction -- always cursed */
 				case SV_AMULET_DOOM:
 				{
+					/* Amulet of Destruction -- always cursed */
+
 					/* Broken */
 					o_ptr->ident |= (IDENT_BROKEN);
 
@@ -3707,14 +3754,46 @@ void add_ego_power(int power, object_type *o_ptr)
 			/* Choose an ability */
 			switch (randint0(8))
 			{
-				case 0: (o_ptr->flags3) |= (TR3_FEATHER);     break;
-				case 1: (o_ptr->flags3) |= (TR3_LITE);        break;
-				case 2: (o_ptr->flags3) |= (TR3_SEE_INVIS);   break;
-				case 3: (o_ptr->flags3) |= (TR3_TELEPATHY);   break;
-				case 4: (o_ptr->flags3) |= (TR3_SLOW_DIGEST); break;
-				case 5: (o_ptr->flags3) |= (TR3_REGEN);       break;
-				case 6: (o_ptr->flags2) |= (TR2_FREE_ACT);    break;
-				case 7: (o_ptr->flags2) |= (TR2_HOLD_LIFE);   break;
+				case 0:
+				{
+					(o_ptr->flags3) |= (TR3_FEATHER);
+					break;
+				}
+				case 1:
+				{
+					(o_ptr->flags3) |= (TR3_LITE);
+					break;
+				}
+				case 2:
+				{
+					(o_ptr->flags3) |= (TR3_SEE_INVIS);
+					break;
+				}
+				case 3:
+				{
+					(o_ptr->flags3) |= (TR3_TELEPATHY);
+					break;
+				}
+				case 4:
+				{
+					(o_ptr->flags3) |= (TR3_SLOW_DIGEST);
+					break;
+				}
+				case 5:
+				{
+					(o_ptr->flags3) |= (TR3_REGEN);
+					break;
+				}
+				case 6:
+				{
+					(o_ptr->flags2) |= (TR2_FREE_ACT);
+					break;
+				}
+				case 7:
+				{
+					(o_ptr->flags2) |= (TR2_HOLD_LIFE);
+					break;
+				}
 			}
 
 			break;
@@ -3724,12 +3803,36 @@ void add_ego_power(int power, object_type *o_ptr)
 			/* Choose a sustain */
 			switch (randint0(6))
 			{
-				case 0: (o_ptr->flags2) |= (TR2_SUST_STR); break;
-				case 1: (o_ptr->flags2) |= (TR2_SUST_INT); break;
-				case 2: (o_ptr->flags2) |= (TR2_SUST_WIS); break;
-				case 3: (o_ptr->flags2) |= (TR2_SUST_DEX); break;
-				case 4: (o_ptr->flags2) |= (TR2_SUST_CON); break;
-				case 5: (o_ptr->flags2) |= (TR2_SUST_CHR); break;
+				case 0:
+				{
+					(o_ptr->flags2) |= (TR2_SUST_STR);
+					break;
+				}
+				case 1:
+				{
+					(o_ptr->flags2) |= (TR2_SUST_INT);
+					break;
+				}
+				case 2:
+				{
+					(o_ptr->flags2) |= (TR2_SUST_WIS);
+					break;
+				}
+				case 3:
+				{
+					(o_ptr->flags2) |= (TR2_SUST_DEX);
+					break;
+				}
+				case 4:
+				{
+					(o_ptr->flags2) |= (TR2_SUST_CON);
+					break;
+				}
+				case 5:
+				{
+					(o_ptr->flags2) |= (TR2_SUST_CHR);
+					break;
+				}
 			}
 
 			break;
@@ -3740,17 +3843,61 @@ void add_ego_power(int power, object_type *o_ptr)
 			/* Choose a power */
 			switch (randint0(11))
 			{
-				case  0: (o_ptr->flags2) |= (TR2_RES_BLIND);  break;
-				case  1: (o_ptr->flags2) |= (TR2_RES_CONF);   break;
-				case  2: (o_ptr->flags2) |= (TR2_RES_SOUND);  break;
-				case  3: (o_ptr->flags2) |= (TR2_RES_SHARDS); break;
-				case  4: (o_ptr->flags2) |= (TR2_RES_NETHER); break;
-				case  5: (o_ptr->flags2) |= (TR2_RES_NEXUS);  break;
-				case  6: (o_ptr->flags2) |= (TR2_RES_CHAOS);  break;
-				case  7: (o_ptr->flags2) |= (TR2_RES_DISEN);  break;
-				case  8: (o_ptr->flags2) |= (TR2_RES_POIS);   break;
-				case  9: (o_ptr->flags2) |= (TR2_RES_DARK);   break;
-				case 10: (o_ptr->flags2) |= (TR2_RES_LITE);   break;
+				case 0:
+				{
+					(o_ptr->flags2) |= (TR2_RES_BLIND);
+					break;
+				}
+				case 1:
+				{
+					(o_ptr->flags2) |= (TR2_RES_CONF);
+					break;
+				}
+				case 2:
+				{
+					(o_ptr->flags2) |= (TR2_RES_SOUND);
+					break;
+				}
+				case 3:
+				{
+					(o_ptr->flags2) |= (TR2_RES_SHARDS);
+					break;
+				}
+				case 4:
+				{
+					(o_ptr->flags2) |= (TR2_RES_NETHER);
+					break;
+				}
+				case 5:
+				{
+					(o_ptr->flags2) |= (TR2_RES_NEXUS);
+					break;
+				}
+				case 6:
+				{
+					(o_ptr->flags2) |= (TR2_RES_CHAOS);
+					break;
+				}
+				case 7:
+				{
+					(o_ptr->flags2) |= (TR2_RES_DISEN);
+					break;
+				}
+				case 8:
+				{
+					(o_ptr->flags2) |= (TR2_RES_POIS);
+					break;
+				}
+				case 9:
+				{
+					(o_ptr->flags2) |= (TR2_RES_DARK);
+					break;
+				}
+				case 10:
+				{
+					(o_ptr->flags2) |= (TR2_RES_LITE);
+					break;
+				}
 			}
 
 			break;
@@ -3943,49 +4090,50 @@ byte kind_is_theme(int k_idx)
 		{
 			/* Degree of junk is defined in terms of the other 4 quantities */
 			return (100 - (match_theme.treasure + match_theme.combat +
-						match_theme.magic + match_theme.tools));
+						   match_theme.magic + match_theme.tools));
 		}
-		case TV_SPIKE:		return (match_theme.tools);
-		case TV_CHEST:		return (match_theme.treasure);
-		case TV_FIGURINE:	return (match_theme.treasure);
-		case TV_STATUE:		return (match_theme.treasure);
-		case TV_SHOT:		return (match_theme.combat);
-		case TV_ARROW:		return (match_theme.combat);
-		case TV_BOLT:		return (match_theme.combat);
-		case TV_BOW:		return (match_theme.combat);
-		case TV_DIGGING:	return (match_theme.tools);
-		case TV_HAFTED:		return (match_theme.combat);
-		case TV_POLEARM:	return (match_theme.combat);
-		case TV_SWORD:		return (match_theme.combat);
-		case TV_BOOTS:		return (match_theme.combat);
-		case TV_GLOVES:		return (match_theme.combat);
-		case TV_HELM:		return (match_theme.combat);
-		case TV_CROWN:		return (match_theme.treasure);
-		case TV_SHIELD:		return (match_theme.combat);
-		case TV_CLOAK:		return (match_theme.combat);
-		case TV_SOFT_ARMOR:	return (match_theme.combat);
+		case TV_SPIKE: return (match_theme.tools);
+		case TV_CHEST: return (match_theme.treasure);
+		case TV_FIGURINE: return (match_theme.treasure);
+		case TV_STATUE: return (match_theme.treasure);
+		case TV_SHOT: return (match_theme.combat);
+		case TV_ARROW: return (match_theme.combat);
+		case TV_BOLT: return (match_theme.combat);
+		case TV_BOW: return (match_theme.combat);
+		case TV_DIGGING: return (match_theme.tools);
+		case TV_HAFTED: return (match_theme.combat);
+		case TV_POLEARM: return (match_theme.combat);
+		case TV_SWORD: return (match_theme.combat);
+		case TV_BOOTS: return (match_theme.combat);
+		case TV_GLOVES: return (match_theme.combat);
+		case TV_HELM: return (match_theme.combat);
+		case TV_CROWN: return (match_theme.treasure);
+		case TV_SHIELD: return (match_theme.combat);
+		case TV_CLOAK: return (match_theme.combat);
+		case TV_SOFT_ARMOR: return (match_theme.combat);
 		case TV_HARD_ARMOR: return (match_theme.combat);
-		case TV_DRAG_ARMOR: return (match_theme.treasure + match_theme.combat);
-		case TV_LITE:		return (match_theme.tools);
-		case TV_AMULET:		return (match_theme.treasure);
-		case TV_RING:		return (match_theme.treasure);
-		case TV_STAFF:		return (match_theme.magic);
-		case TV_WAND:		return (match_theme.magic);
-		case TV_ROD:		return (match_theme.magic);
-		case TV_SCROLL:		return (match_theme.magic);
-		case TV_POTION:		return (match_theme.magic);
-		case TV_FLASK:		return (match_theme.tools);
-		case TV_FOOD:		return (match_theme.tools);
-		case TV_LIFE_BOOK:	return (match_theme.magic);
+		case TV_DRAG_ARMOR: return (match_theme.treasure +
+					 match_theme.combat);
+		case TV_LITE: return (match_theme.tools);
+		case TV_AMULET: return (match_theme.treasure);
+		case TV_RING: return (match_theme.treasure);
+		case TV_STAFF: return (match_theme.magic);
+		case TV_WAND: return (match_theme.magic);
+		case TV_ROD: return (match_theme.magic);
+		case TV_SCROLL: return (match_theme.magic);
+		case TV_POTION: return (match_theme.magic);
+		case TV_FLASK: return (match_theme.tools);
+		case TV_FOOD: return (match_theme.tools);
+		case TV_LIFE_BOOK: return (match_theme.magic);
 		case TV_SORCERY_BOOK: return (match_theme.magic);
-		case TV_NATURE_BOOK:  return (match_theme.magic);
-		case TV_CHAOS_BOOK:   return (match_theme.magic);
-		case TV_DEATH_BOOK:   return (match_theme.magic);
-		case TV_TRUMP_BOOK:   return (match_theme.magic);
-		case TV_ARCANE_BOOK:  return (match_theme.magic);
-		
-		/* Paranoia */
-		default:	return (0);
+		case TV_NATURE_BOOK: return (match_theme.magic);
+		case TV_CHAOS_BOOK: return (match_theme.magic);
+		case TV_DEATH_BOOK: return (match_theme.magic);
+		case TV_TRUMP_BOOK: return (match_theme.magic);
+		case TV_ARCANE_BOOK: return (match_theme.magic);
+
+			/* Paranoia */
+		default: return (0);
 	}
 }
 

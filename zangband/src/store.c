@@ -441,11 +441,11 @@ static void mass_produce(object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
-			/* Food, Flasks, and Lites */
 		case TV_FOOD:
 		case TV_FLASK:
 		case TV_LITE:
 		{
+			/* Food, Flasks, and Lites */
 			if (cost <= 5L) size += damroll(3, 5);
 			if (cost <= 20L) size += damroll(3, 5);
 			break;
@@ -1598,7 +1598,7 @@ static void store_maint(void)
 /*
  * Shuffle one of the stores.
  */
-static void store_shuffle(store_type * st_ptr)
+static void store_shuffle(store_type *st_ptr)
 {
 	int i, j;
 
@@ -1761,7 +1761,7 @@ static void decrease_insults(void)
 static int haggle_insults(void)
 {
 	/* Increase insults */
-	if (increase_insults())return (TRUE);
+	if (increase_insults()) return (TRUE);
 
 	/* Display and flush insult */
 	say_comment_5();
@@ -1916,7 +1916,7 @@ static bool receive_offer(cptr pmt, s32b *poffer, s32b last_offer, int factor,
 		if (((*poffer) * factor) >= (last_offer * factor)) break;
 
 		/* Insult, and check for kicked out */
-		if (haggle_insults())return (TRUE);
+		if (haggle_insults()) return (TRUE);
 
 		/* Reject offer (correctly) */
 		(*poffer) = last_offer;
@@ -2990,16 +2990,16 @@ static void store_process_command(int *store_top)
 	/* Parse the command */
 	switch (p_ptr->command_cmd)
 	{
-		/* Leave */
 		case ESCAPE:
 		{
+			/* Leave */
 			leave_store = TRUE;
 			break;
 		}
 
-		/* Browse */
 		case ' ':
 		{
+			/* Browse */
 			if (st_ptr->stock_num <= 12)
 			{
 				msg_print("Entire inventory is shown.");
@@ -3013,116 +3013,115 @@ static void store_process_command(int *store_top)
 			break;
 		}
 
-		/* Redraw */
 		case KTRL('R'):
 		{
+			/* Redraw */
 			do_cmd_redraw();
 			display_store(*store_top);
 			break;
 		}
 
-		/* Get (purchase) */
 		case 'g':
 		{
+			/* Get (purchase) */
 			store_purchase(store_top);
 			break;
 		}
 
-		/* Drop (Sell) */
 		case 'd':
 		{
+			/* Drop (Sell) */
 			store_sell(store_top);
 			break;
 		}
 
-		/* Examine */
 		case 'x':
 		{
+			/* Examine */
 			store_examine(*store_top);
 			break;
 		}
 
-		/* Ignore return */
 		case '\r':
 		{
+			/* Ignore return */
 			break;
 		}
 
-		/*** Inventory Commands ***/
+			/*** Inventory Commands ***/
 
-		/* Wear/wield equipment */
 		case 'w':
 		{
+			/* Wear/wield equipment */
 			do_cmd_wield();
 			break;
 		}
 
-		/* Take off equipment */
 		case 't':
 		{
+			/* Take off equipment */
 			do_cmd_takeoff();
 			break;
 		}
 
-		/* Destroy an item */
 		case 'k':
 		{
+			/* Destroy an item */
 			do_cmd_destroy();
 			break;
 		}
 
-		/* Equipment list */
 		case 'e':
 		{
+			/* Equipment list */
 			do_cmd_equip();
 			break;
 		}
 
-		/* Inventory list */
 		case 'i':
 		{
+			/* Inventory list */
 			do_cmd_inven();
 			break;
 		}
 
 
-		/*** Various commands ***/
+			/*** Various commands ***/
 
-		/* Identify an object */
 		case 'I':
 		{
+			/* Identify an object */
 			do_cmd_observe();
 			break;
 		}
 
-		/* Hack -- toggle windows */
 		case KTRL('I'):
 		{
+			/* Hack -- toggle windows */
 			toggle_inven_equip();
 			break;
 		}
 
 
+			/*** Use various objects ***/
 
-		/*** Use various objects ***/
-
-		/* Browse a book */
 		case 'b':
 		{
+			/* Browse a book */
 			do_cmd_browse();
 			break;
 		}
 
-		/* Inscribe an object */
 		case '{':
 		{
+			/* Inscribe an object */
 			do_cmd_inscribe();
 			break;
 		}
 
-		/* Uninscribe an object */
 		case '}':
 		{
+			/* Uninscribe an object */
 			do_cmd_uninscribe();
 			break;
 		}
@@ -3131,23 +3130,23 @@ static void store_process_command(int *store_top)
 
 		/*** Help and Such ***/
 
-		/* Help */
 		case '?':
 		{
+			/* Help */
 			do_cmd_help();
 			break;
 		}
 
-		/* Identify symbol */
 		case '/':
 		{
+			/* Identify symbol */
 			do_cmd_query_symbol();
 			break;
 		}
 
-		/* Character description */
 		case 'C':
 		{
+			/* Character description */
 			do_cmd_character();
 			display_store(*store_top);
 			break;
@@ -3156,110 +3155,110 @@ static void store_process_command(int *store_top)
 
 		/*** System Commands ***/
 
-		/* Hack -- User interface */
 		case '!':
 		{
-			(void)Term_user(0);
+			/* Hack -- User interface */
+			(void) Term_user(0);
 			break;
 		}
 
-		/* Single line from a pref file */
 		case '"':
 		{
+			/* Single line from a pref file */
 			do_cmd_pref();
 			break;
 		}
 
-		/* Interact with macros */
 		case '@':
 		{
+			/* Interact with macros */
 			do_cmd_macros();
 			break;
 		}
 
-		/* Interact with visuals */
 		case '%':
 		{
+			/* Interact with visuals */
 			do_cmd_visuals();
 			break;
 		}
 
-		/* Interact with colors */
 		case '&':
 		{
+			/* Interact with colors */
 			do_cmd_colors();
 			break;
 		}
 
-		/* Interact with options */
 		case '=':
 		{
+			/* Interact with options */
 			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			break;
 		}
 
-		/*** Misc Commands ***/
+			/*** Misc Commands ***/
 
-		/* Take notes */
 		case ':':
 		{
+			/* Take notes */
 			do_cmd_note();
 			break;
 		}
 
-		/* Version info */
 		case 'V':
 		{
+			/* Version info */
 			do_cmd_version();
 			break;
 		}
 
-		/* Repeat level feeling */
 		case KTRL('F'):
 		{
+			/* Repeat level feeling */
 			do_cmd_feeling();
 			break;
 		}
 
-		/* Show previous message */
 		case KTRL('O'):
 		{
+			/* Show previous message */
 			do_cmd_message_one();
 			break;
 		}
 
-		/* Show previous messages */
 		case KTRL('P'):
 		{
+			/* Show previous messages */
 			do_cmd_messages();
 			break;
 		}
 
-		/* Check artifacts, uniques etc. */
 		case '~':
 		case '|':
 		{
+			/* Check artifacts, uniques, quests etc. */
 			do_cmd_knowledge();
 			break;
 		}
 
-		/* Load "screen dump" */
 		case '(':
 		{
+			/* Load "screen dump" */
 			do_cmd_load_screen();
 			break;
 		}
 
-		/* Save "screen dump" */
 		case ')':
 		{
+			/* Save "screen dump" */
 			do_cmd_save_screen();
 			break;
 		}
 
-		/* Hack -- Unknown command */
 		default:
 		{
+			/* Hack -- Unknown command */
 			msg_print("That command does not work in stores.");
 			break;
 		}
@@ -3324,7 +3323,7 @@ static void deallocate_store(void)
  * what is in every store in every town in the wilderness.  This
  * allocates the required array if the stockpointer is NULL.
  */
-bool allocate_store(store_type * st_ptr)
+bool allocate_store(store_type *st_ptr)
 {
 	int i, n = 0;
 

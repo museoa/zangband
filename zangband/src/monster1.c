@@ -190,34 +190,34 @@ static void roff_aux(int r_idx, int remem)
 
 
 	/* Assume some "obvious" flags */
-	if (r_ptr->flags1 & RF1_UNIQUE)  flags1 |= (RF1_UNIQUE);
+	if (r_ptr->flags1 & RF1_UNIQUE) flags1 |= (RF1_UNIQUE);
 	if (r_ptr->flags1 & RF1_QUESTOR) flags1 |= (RF1_QUESTOR);
-	if (r_ptr->flags1 & RF1_MALE)    flags1 |= (RF1_MALE);
-	if (r_ptr->flags1 & RF1_FEMALE)  flags1 |= (RF1_FEMALE);
+	if (r_ptr->flags1 & RF1_MALE) flags1 |= (RF1_MALE);
+	if (r_ptr->flags1 & RF1_FEMALE) flags1 |= (RF1_FEMALE);
 
 	/* Assume some "creation" flags */
-	if (r_ptr->flags1 & RF1_CHAR_MIMIC)  flags1 |= (RF1_CHAR_MIMIC);
+	if (r_ptr->flags1 & RF1_CHAR_MIMIC) flags1 |= (RF1_CHAR_MIMIC);
 	if (r_ptr->flags1 & RF1_FRIENDS) flags1 |= (RF1_FRIENDS);
-	if (r_ptr->flags1 & RF1_ESCORT)  flags1 |= (RF1_ESCORT);
+	if (r_ptr->flags1 & RF1_ESCORT) flags1 |= (RF1_ESCORT);
 	if (r_ptr->flags1 & RF1_ESCORTS) flags1 |= (RF1_ESCORTS);
 
 	/* Killing a monster reveals some properties */
 	if (r_ptr->r_tkills || cheat_know)
 	{
 		/* Know "race" flags */
-		if (r_ptr->flags3 & RF3_ORC)      flags3 |= (RF3_ORC);
-		if (r_ptr->flags3 & RF3_TROLL)    flags3 |= (RF3_TROLL);
-		if (r_ptr->flags3 & RF3_GIANT)    flags3 |= (RF3_GIANT);
-		if (r_ptr->flags3 & RF3_DRAGON)   flags3 |= (RF3_DRAGON);
-		if (r_ptr->flags3 & RF3_DEMON)    flags3 |= (RF3_DEMON);
-		if (r_ptr->flags3 & RF3_UNDEAD)   flags3 |= (RF3_UNDEAD);
-		if (r_ptr->flags3 & RF3_EVIL)     flags3 |= (RF3_EVIL);
-		if (r_ptr->flags3 & RF3_GOOD)     flags3 |= (RF3_GOOD);
-		if (r_ptr->flags3 & RF3_ANIMAL)   flags3 |= (RF3_ANIMAL);
+		if (r_ptr->flags3 & RF3_ORC) flags3 |= (RF3_ORC);
+		if (r_ptr->flags3 & RF3_TROLL) flags3 |= (RF3_TROLL);
+		if (r_ptr->flags3 & RF3_GIANT) flags3 |= (RF3_GIANT);
+		if (r_ptr->flags3 & RF3_DRAGON) flags3 |= (RF3_DRAGON);
+		if (r_ptr->flags3 & RF3_DEMON) flags3 |= (RF3_DEMON);
+		if (r_ptr->flags3 & RF3_UNDEAD) flags3 |= (RF3_UNDEAD);
+		if (r_ptr->flags3 & RF3_EVIL) flags3 |= (RF3_EVIL);
+		if (r_ptr->flags3 & RF3_GOOD) flags3 |= (RF3_GOOD);
+		if (r_ptr->flags3 & RF3_ANIMAL) flags3 |= (RF3_ANIMAL);
 		if (r_ptr->flags3 & RF3_AMBERITE) flags3 |= (RF3_AMBERITE);
 
 		/* Know 'quantum' flag */
-		if (r_ptr->flags2 & RF2_QUANTUM)  flags2 |= (RF2_QUANTUM);
+		if (r_ptr->flags2 & RF2_QUANTUM) flags2 |= (RF2_QUANTUM);
 
 		/* Know "forced" flags */
 		if (r_ptr->flags1 & RF1_FORCE_DEPTH) flags1 |= (RF1_FORCE_DEPTH);
@@ -1217,30 +1217,124 @@ static void roff_aux(int r_idx, int remem)
 		/* Acquire the method */
 		switch (method)
 		{
-			case RBM_HIT:		p = "hit"; break;
-			case RBM_TOUCH:		p = "touch"; break;
-			case RBM_PUNCH:		p = "punch"; break;
-			case RBM_KICK:		p = "kick"; break;
-			case RBM_CLAW:		p = "claw"; break;
-			case RBM_BITE:		p = "bite"; break;
-			case RBM_STING:		p = "sting"; break;
-			case RBM_XXX1:		break;
-			case RBM_BUTT:		p = "butt"; break;
-			case RBM_CRUSH:		p = "crush"; break;
-			case RBM_ENGULF:	p = "engulf"; break;
-			case RBM_CHARGE: 	p = "charge";   break;
-			case RBM_CRAWL:		p = "crawl on you"; break;
-			case RBM_DROOL:		p = "drool on you"; break;
-			case RBM_SPIT:		p = "spit"; break;
-			case RBM_EXPLODE:	p = "explode"; break;
-			case RBM_GAZE:		p = "gaze"; break;
-			case RBM_WAIL:		p = "wail"; break;
-			case RBM_SPORE:		p = "release spores"; break;
-			case RBM_XXX4:		break;
-			case RBM_BEG:		p = "beg"; break;
-			case RBM_INSULT:	p = "insult"; break;
-			case RBM_MOAN:		p = "moan"; break;
-			case RBM_SHOW:  	p = "sing"; break;
+			case RBM_HIT:
+			{
+				p = "hit";
+				break;
+			}
+			case RBM_TOUCH:
+			{
+				p = "touch";
+				break;
+			}
+			case RBM_PUNCH:
+			{
+				p = "punch";
+				break;
+			}
+			case RBM_KICK:
+			{
+				p = "kick";
+				break;
+			}
+			case RBM_CLAW:
+			{
+				p = "claw";
+				break;
+			}
+			case RBM_BITE:
+			{
+				p = "bite";
+				break;
+			}
+			case RBM_STING:
+			{
+				p = "sting";
+				break;
+			}
+			case RBM_XXX1:
+			{
+				break;
+			}
+			case RBM_BUTT:
+			{
+				p = "butt";
+				break;
+			}
+			case RBM_CRUSH:
+			{
+				p = "crush";
+				break;
+			}
+			case RBM_ENGULF:
+			{
+				p = "engulf";
+				break;
+			}
+			case RBM_CHARGE:
+			{
+				p = "charge";
+				break;
+			}
+			case RBM_CRAWL:
+			{
+				p = "crawl on you";
+				break;
+			}
+			case RBM_DROOL:
+			{
+				p = "drool on you";
+				break;
+			}
+			case RBM_SPIT:
+			{
+				p = "spit";
+				break;
+			}
+			case RBM_EXPLODE:
+			{
+				p = "explode";
+				break;
+			}
+			case RBM_GAZE:
+			{
+				p = "gaze";
+				break;
+			}
+			case RBM_WAIL:
+			{
+				p = "wail";
+				break;
+			}
+			case RBM_SPORE:
+			{
+				p = "release spores";
+				break;
+			}
+			case RBM_XXX4:
+			{
+				break;
+			}
+			case RBM_BEG:
+			{
+				p = "beg";
+				break;
+			}
+			case RBM_INSULT:
+			{
+				p = "insult";
+				break;
+			}
+			case RBM_MOAN:
+			{
+				p = "moan";
+				break;
+			}
+			case RBM_SHOW:
+			{
+				p = "sing";
+				break;
+			}
 		}
 
 
@@ -1250,37 +1344,161 @@ static void roff_aux(int r_idx, int remem)
 		/* Acquire the effect */
 		switch (effect)
 		{
-			case RBE_HURT:    	q = "attack"; break;
-			case RBE_POISON:  	q = "poison"; break;
-			case RBE_UN_BONUS:	q = "disenchant"; break;
-			case RBE_UN_POWER:	q = "drain charges"; break;
-			case RBE_EAT_GOLD:	q = "steal gold"; break;
-			case RBE_EAT_ITEM:	q = "steal items"; break;
-			case RBE_EAT_FOOD:	q = "eat your food"; break;
-			case RBE_EAT_LITE:	q = "absorb light"; break;
-			case RBE_ACID:    	q = "shoot acid"; break;
-			case RBE_ELEC:    	q = "electrocute"; break;
-			case RBE_FIRE:    	q = "burn"; break;
-			case RBE_COLD:    	q = "freeze"; break;
-			case RBE_BLIND:   	q = "blind"; break;
-			case RBE_CONFUSE: 	q = "confuse"; break;
-			case RBE_TERRIFY: 	q = "terrify"; break;
-			case RBE_PARALYZE:	q = "paralyze"; break;
-			case RBE_LOSE_STR:	q = "reduce strength"; break;
-			case RBE_LOSE_INT:	q = "reduce intelligence"; break;
-			case RBE_LOSE_WIS:	q = "reduce wisdom"; break;
-			case RBE_LOSE_DEX:	q = "reduce dexterity"; break;
-			case RBE_LOSE_CON:	q = "reduce constitution"; break;
-			case RBE_LOSE_CHR:	q = "reduce charisma"; break;
-			case RBE_LOSE_ALL:	q = "reduce all stats"; break;
-			case RBE_SHATTER:	q = "shatter"; break;
-			case RBE_EXP_10:	q = "lower experience (by 10d6+)"; break;
-			case RBE_EXP_20:	q = "lower experience (by 20d6+)"; break;
-			case RBE_EXP_40:	q = "lower experience (by 40d6+)"; break;
-			case RBE_EXP_80:	q = "lower experience (by 80d6+)"; break;
-			case RBE_DISEASE:	q = "disease"; break;
-			case RBE_TIME:      q = "time"; break;
-			case RBE_EXP_VAMP:  q = "drain life force"; break;
+			case RBE_HURT:
+			{
+				q = "attack";
+				break;
+			}
+			case RBE_POISON:
+			{
+				q = "poison";
+				break;
+			}
+			case RBE_UN_BONUS:
+			{
+				q = "disenchant";
+				break;
+			}
+			case RBE_UN_POWER:
+			{
+				q = "drain charges";
+				break;
+			}
+			case RBE_EAT_GOLD:
+			{
+				q = "steal gold";
+				break;
+			}
+			case RBE_EAT_ITEM:
+			{
+				q = "steal items";
+				break;
+			}
+			case RBE_EAT_FOOD:
+			{
+				q = "eat your food";
+				break;
+			}
+			case RBE_EAT_LITE:
+			{
+				q = "absorb light";
+				break;
+			}
+			case RBE_ACID:
+			{
+				q = "shoot acid";
+				break;
+			}
+			case RBE_ELEC:
+			{
+				q = "electrocute";
+				break;
+			}
+			case RBE_FIRE:
+			{
+				q = "burn";
+				break;
+			}
+			case RBE_COLD:
+			{
+				q = "freeze";
+				break;
+			}
+			case RBE_BLIND:
+			{
+				q = "blind";
+				break;
+			}
+			case RBE_CONFUSE:
+			{
+				q = "confuse";
+				break;
+			}
+			case RBE_TERRIFY:
+			{
+				q = "terrify";
+				break;
+			}
+			case RBE_PARALYZE:
+			{
+				q = "paralyze";
+				break;
+			}
+			case RBE_LOSE_STR:
+			{
+				q = "reduce strength";
+				break;
+			}
+			case RBE_LOSE_INT:
+			{
+				q = "reduce intelligence";
+				break;
+			}
+			case RBE_LOSE_WIS:
+			{
+				q = "reduce wisdom";
+				break;
+			}
+			case RBE_LOSE_DEX:
+			{
+				q = "reduce dexterity";
+				break;
+			}
+			case RBE_LOSE_CON:
+			{
+				q = "reduce constitution";
+				break;
+			}
+			case RBE_LOSE_CHR:
+			{
+				q = "reduce charisma";
+				break;
+			}
+			case RBE_LOSE_ALL:
+			{
+				q = "reduce all stats";
+				break;
+			}
+			case RBE_SHATTER:
+			{
+				q = "shatter";
+				break;
+			}
+			case RBE_EXP_10:
+			{
+				q = "lower experience (by 10d6+)";
+				break;
+			}
+			case RBE_EXP_20:
+			{
+				q = "lower experience (by 20d6+)";
+				break;
+			}
+			case RBE_EXP_40:
+			{
+				q = "lower experience (by 40d6+)";
+				break;
+			}
+			case RBE_EXP_80:
+			{
+				q = "lower experience (by 80d6+)";
+				break;
+			}
+			case RBE_DISEASE:
+			{
+				q = "disease";
+				break;
+			}
+			case RBE_TIME:
+			{
+				q = "time";
+				break;
+			}
+			case RBE_EXP_VAMP:
+			{
+				q = "drain life force";
+				break;
+			}
 		}
 
 
@@ -1834,20 +2052,32 @@ monster_hook_type get_monster_hook2(int x, int y)
 		switch (area(x, y)->feat)
 		{
 			case FEAT_SHAL_WATER:
+			{
 				return &(monster_shallow_water_dun);
+			}
 			case FEAT_DEEP_WATER:
+			{
 				return &(monster_deep_water_dun);
+			}
 			case FEAT_DEEP_LAVA:
 			case FEAT_SHAL_LAVA:
+			{
 				return &(monster_lava_dun);
+			}
 			case FEAT_DEEP_ACID:
 			case FEAT_SHAL_ACID:
+			{
 				return &(monster_acid_dun);
+			}
 			case FEAT_DEEP_SWAMP:
 			case FEAT_SHAL_SWAMP:
+			{
 				return &(monster_swamp_dun);
+			}
 			default:
+			{
 				return NULL;
+			}
 		}
 	}
 
@@ -1911,22 +2141,36 @@ monster_hook_type get_monster_hook2(int x, int y)
 	switch (area(x, y)->feat)
 	{
 		case FEAT_SHAL_WATER:
+		{
 			return &(monster_shallow_water_wild);
+		}
 		case FEAT_DEEP_WATER:
+		{
 			return &(monster_deep_water_wild);
+		}
 		case FEAT_OCEAN_WATER:
+		{
 			return (wild_mon_hook);
+		}
 		case FEAT_DEEP_LAVA:
 		case FEAT_SHAL_LAVA:
+		{
 			return &(monster_lava_wild);
+		}
 		case FEAT_DEEP_ACID:
 		case FEAT_SHAL_ACID:
+		{
 			return &(monster_acid_wild);
+		}
 		case FEAT_DEEP_SWAMP:
 		case FEAT_SHAL_SWAMP:
+		{
 			return &(monster_swamp_wild);
+		}
 		default:
+		{
 			return (wild_mon_hook);
+		}
 	}
 }
 
@@ -1977,7 +2221,7 @@ void anger_monster(monster_type *m_ptr)
 /*
  * Check if monster can cross terrain
  */
-bool monster_can_cross_terrain(byte feat, monster_race * r_ptr)
+bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 {
 	/* Ocean */
 	if (feat == FEAT_OCEAN_WATER)
@@ -2110,7 +2354,7 @@ static char *elf_syllable1[] =
 {
 	"Al", "An", "Bal", "Bel", "Cal", "Cel", "El", "Elr", "Elv", "Eow", "F",
 	"Fal", "Fel", "Fin", "G", "Gal", "Gel", "Gl", "Is", "Lan", "Leg", "N",
-	"Nal", "Nel",  "S", "Sal", "Sel", "T", "Tal", "Tel", "Thr", "Tin",
+	"Nal", "Nel", "S", "Sal", "Sel", "T", "Tal", "Tel", "Thr", "Tin",
 };
 
 static char *elf_syllable2[] =
@@ -2136,7 +2380,7 @@ static char *gnome_syllable1[] =
 
 static char *gnome_syllable2[] =
 {
-	"a", "aa",  "ai", "e", "ei", "i", "o", "uo", "u", "uu",
+	"a", "aa", "ai", "e", "ei", "i", "o", "uo", "u", "uu",
 };
 
 static char *gnome_syllable3[] =

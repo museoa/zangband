@@ -201,7 +201,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 }
 
 
-static void cmd_racial_power_aux(const mutation_type * mut_ptr)
+static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 {
 	s16b plev = p_ptr->lev;
 	int dir = 0;

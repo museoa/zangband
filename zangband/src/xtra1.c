@@ -1924,44 +1924,46 @@ static void calc_mana(void)
 		 */
 		switch (p_ptr->pclass)
 		{
-			/* For these classes, mana is halved if armour
-			 * is 30 pounds over their weight limit. */
 			case CLASS_MAGE:
 			case CLASS_HIGH_MAGE:
 			{
+				/*
+				 * For these classes, mana is halved if armour
+				 * is 30 pounds over their weight limit.
+				 */
 				msp -= msp * (cur_wgt - max_wgt) / 600 + 1;
 				break;
 			}
 
-			/* Mana halved if armour is 40 pounds over weight limit. */
 			case CLASS_PRIEST:
 			case CLASS_MINDCRAFTER:
 			{
+				/* Mana halved if armour is 40 pounds over weight limit. */
 				msp -= msp * (cur_wgt - max_wgt) / 800 + 1;
 				break;
 			}
 
-			/* Mana halved if armour is 50 pounds over weight limit. */
 			case CLASS_ROGUE:
 			case CLASS_RANGER:
 			case CLASS_MONK:
 			{
+				/* Mana halved if armour is 50 pounds over weight limit. */
 				msp -= msp * (cur_wgt - max_wgt) / 1000 + 1;
 				break;
 			}
 
-			/* Mana halved if armour is 60 pounds over weight limit. */
 			case CLASS_PALADIN:
 			case CLASS_CHAOS_WARRIOR:
 			case CLASS_WARRIOR_MAGE:
 			{
+				/* Mana halved if armour is 60 pounds over weight limit. */
 				msp -= msp * (cur_wgt - max_wgt) / 1200 + 1;
 				break;
 			}
 
-			/* For new classes created, but not yet added to this formula. */
 			default:
 			{
+				/* For new classes, but not yet added to this formula. */
 				msp -= msp * (cur_wgt - max_wgt) / 800 + 1;
 				break;
 			}
@@ -2191,56 +2193,58 @@ static sint add_special_melee_skill(byte pclass, object_type *o_ptr)
 
 	switch (pclass)
 	{
-		/*
-		 * Warrior.
-		 * Can use 15 lb weapons without penalty at level 1,
-		 * and 45 lb weapons without penalty at 50th level.
-		 */
 		case CLASS_WARRIOR:
 		{
+			/*
+			 * Warrior.
+			 * Can use 15 lb weapons without penalty at level 1,
+			 * and 45 lb weapons without penalty at 50th level.
+			 */
 			add_skill = 25 + p_ptr->lev - (weight / 6);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -10) add_skill = -10;
 			break;
 		}
 
-		/*
-		 * Mage/High Mage.
-		 * Can use 6 lb weapons without penalty at level 1,
-		 * and 16 lb weapons without penalty at 50th level.
-		 */
 		case CLASS_MAGE:
 		case CLASS_HIGH_MAGE:
 		{
+			/*
+			 * Mage/High Mage.
+			 * Can use 6 lb weapons without penalty at level 1,
+			 * and 16 lb weapons without penalty at 50th level.
+			 */
 			add_skill = 20 + (2 * p_ptr->lev / 3) - (weight / 3);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -30) add_skill = -30;
 			break;
 		}
 
-		/*
-		 * Priest.
-		 * Can use 12 lb weapons without penalty at level 1,
-		 * and 22 lb weapons without penalty at 50th level.
-		 */
 		case CLASS_PRIEST:
 		{
+			/*
+			 * Priest.
+			 * Can use 12 lb weapons without penalty at level 1,
+			 * and 22 lb weapons without penalty at 50th level.
+			 */
 			add_skill = 30 + (1 * p_ptr->lev / 2) - (weight / 4);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -25) add_skill = -25;
 			break;
 		}
 
-		/*
-		 * Rogue.
-		 * Can use 10 lb weapons without penalty at level 1,
-		 * and 20 lb weapons without penalty at 50th level.
-		 * Can get a bonus for using light weapons.
-		 */
 		case CLASS_ROGUE:
 		{
-			if (!o_ptr->k_idx) add_skill = 0;
-
+			/*
+			 * Rogue.
+			 * Can use 10 lb weapons without penalty at level 1,
+			 * and 20 lb weapons without penalty at 50th level.
+			 * Can get a bonus for using light weapons.
+			 */
+			if (!o_ptr->k_idx)
+			{
+				add_skill = 0;
+			}
 			else
 			{
 				add_skill = 33 + (2 * p_ptr->lev / 3) - (weight / 3);
@@ -2251,43 +2255,46 @@ static sint add_special_melee_skill(byte pclass, object_type *o_ptr)
 			break;
 		}
 
-		/*
-		 * Ranger.
-		 * Can use 12 lb weapons without penalty at level 1,
-		 * and 25 lb weapons without penalty at 50th level.
-		 */
 		case CLASS_RANGER:
 		{
+			/*
+			 * Ranger.
+			 * Can use 12 lb weapons without penalty at level 1,
+			 * and 25 lb weapons without penalty at 50th level.
+			 */
 			add_skill = 25 + (1 * p_ptr->lev / 2) - (weight / 5);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -20) add_skill = -20;
 			break;
 		}
 
-		/*
-		 * Paladin/Chaos warrior/Warrior mage.
-		 * Can use 15 lb weapons without penalty at level 1,
-		 * and 45 lb weapons without penalty at 50th level.
-		 */
 		case CLASS_PALADIN:
 		case CLASS_CHAOS_WARRIOR:
 		case CLASS_WARRIOR_MAGE:
 		{
+			/*
+			 * Paladin/Chaos warrior/Warrior mage.
+			 * Can use 15 lb weapons without penalty at level 1,
+			 * and 45 lb weapons without penalty at 50th level.
+			 */
 			add_skill = 25 + p_ptr->lev - (weight / 6);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -10) add_skill = -10;
 			break;
 		}
 
-		/*
-		 * Monk.
-		 * Can use 5 lb weapons without penalty at level 1,
-		 * and slightly over 12 lb weapons without penalty at 50th level.
-		 * Much prefers to use hands and feet.
-		 */
 		case CLASS_MONK:
 		{
-			if (!o_ptr->k_idx) add_skill = 14 + (p_ptr->lev);
+			/*
+			 * Monk.
+			 * Can use 5 lb weapons without penalty at level 1,
+			 * and slightly over 12 lb weapons without penalty at 50th level.
+			 * Much prefers to use hands and feet.
+			 */
+			if (!o_ptr->k_idx)
+			{
+				add_skill = 14 + (p_ptr->lev);
+			}
 			else
 			{
 				add_skill = 16 + (p_ptr->lev / 2) - (weight / 3);
@@ -2297,13 +2304,13 @@ static sint add_special_melee_skill(byte pclass, object_type *o_ptr)
 			break;
 		}
 
-		/*
-		 * Mindcrafter.
-		 * Can use 6 lb weapons without penalty at level 1,
-		 * and 16 lb weapons without penalty at 50th level.
-		 */
 		case CLASS_MINDCRAFTER:
 		{
+			/*
+			 * Mindcrafter.
+			 * Can use 6 lb weapons without penalty at level 1,
+			 * and 16 lb weapons without penalty at 50th level.
+			 */
 			add_skill = 20 + (2 * p_ptr->lev / 3) - (weight / 3);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -30) add_skill = -30;
@@ -2316,7 +2323,8 @@ static sint add_special_melee_skill(byte pclass, object_type *o_ptr)
 
 
 /*
- * Calculate all class and race-based bonuses and penalties to missile skill -LM-
+ * Calculate all class and race-based bonuses and penalties to missile skill
+ *			 -LM-
  */
 static sint add_special_missile_skill(byte pclass)
 {
@@ -2324,10 +2332,9 @@ static sint add_special_missile_skill(byte pclass)
 
 	switch (pclass)
 	{
-
-		/* Rogues are good with slings. */
 		case CLASS_ROGUE:
 		{
+			/* Rogues are good with slings. */
 			if (p_ptr->ammo_tval == TV_SHOT)
 			{
 				add_skill = 3 + p_ptr->lev / 4;
@@ -2335,10 +2342,13 @@ static sint add_special_missile_skill(byte pclass)
 			break;
 		}
 
-		/* Rangers have a high missile skill, but they are not supposed to
-		* be great with xbows and slings. */
 		case CLASS_RANGER:
 		{
+			/*
+			 * Rangers have a high missile skill,
+			 * but they are not supposed to
+			 * be great with xbows and slings.
+			 */
 			if (p_ptr->ammo_tval == TV_SHOT)
 			{
 				add_skill = 0 - p_ptr->lev / 7;
@@ -2350,9 +2360,9 @@ static sint add_special_missile_skill(byte pclass)
 			break;
 		}
 
-		/* Monks get a small bonus with slings. */
 		case CLASS_MONK:
 		{
+			/* Monks get a small bonus with slings. */
 			if (p_ptr->ammo_tval == TV_SHOT)
 			{
 				add_skill = p_ptr->lev / 7;
@@ -2552,22 +2562,31 @@ static void calc_bonuses(void)
 	switch (p_ptr->pclass)
 	{
 		case CLASS_WARRIOR:
+		{
 			if (p_ptr->lev > 29) p_ptr->resist_fear = TRUE;
 			break;
+		}
 		case CLASS_PALADIN:
+		{
 			if (p_ptr->lev > 39) p_ptr->resist_fear = TRUE;
 			break;
+		}
 		case CLASS_CHAOS_WARRIOR:
+		{
 			if (p_ptr->lev > 29) p_ptr->resist_chaos = TRUE;
 			if (p_ptr->lev > 39) p_ptr->resist_fear = TRUE;
 			break;
+		}
 		case CLASS_MINDCRAFTER:
+		{
 			if (p_ptr->lev > 9) p_ptr->resist_fear = TRUE;
 			if (p_ptr->lev > 19) p_ptr->sustain_wis = TRUE;
 			if (p_ptr->lev > 29) p_ptr->resist_confu = TRUE;
 			if (p_ptr->lev > 39) p_ptr->telepathy = TRUE;
 			break;
+		}
 		case CLASS_MONK:
+		{
 			/* Unencumbered Monks become faster every 10 levels */
 			if (!p_ptr->monk_armour_stat)
 			{
@@ -2584,27 +2603,39 @@ static void calc_bonuses(void)
 			}
 
 			break;
+		}
 	}
 
 	/***** Races ****/
 	switch (p_ptr->prace)
 	{
 		case RACE_ELF:
+		{
 			p_ptr->resist_lite = TRUE;
 			break;
+		}
 		case RACE_HOBBIT:
+		{
 			p_ptr->sustain_dex = TRUE;
 			break;
+		}
 		case RACE_GNOME:
+		{
 			p_ptr->free_act = TRUE;
 			break;
+		}
 		case RACE_DWARF:
+		{
 			p_ptr->resist_blind = TRUE;
 			break;
+		}
 		case RACE_HALF_ORC:
+		{
 			p_ptr->resist_dark = TRUE;
 			break;
+		}
 		case RACE_HALF_TROLL:
+		{
 			p_ptr->sustain_str = TRUE;
 
 			if (p_ptr->lev > 14)
@@ -2615,62 +2646,92 @@ static void calc_bonuses(void)
 				if (p_ptr->pclass == CLASS_WARRIOR)
 				{
 					p_ptr->slow_digest = TRUE;
-					/* Let's not make Regeneration
+					/*
+					 * Let's not make Regeneration
 					 * a disadvantage for the poor warriors who can
 					 * never learn a spell that satisfies hunger (actually
 					 * neither can rogues, but half-trolls are not
-					 * supposed to play rogues) */
+					 * supposed to play rogues)
+					 */
 				}
 			}
 			break;
+		}
 		case RACE_AMBERITE:
+		{
 			p_ptr->sustain_con = TRUE;
-			p_ptr->regenerate = TRUE;	/* Amberites heal fast... */
+
+			/* Amberites heal fast... */
+			p_ptr->regenerate = TRUE;
 			break;
+		}
 		case RACE_HIGH_ELF:
+		{
 			p_ptr->resist_lite = TRUE;
 			p_ptr->see_inv = TRUE;
 			break;
+		}
 		case RACE_BARBARIAN:
+		{
 			p_ptr->resist_fear = TRUE;
 			break;
+		}
 		case RACE_HALF_OGRE:
+		{
 			p_ptr->resist_dark = TRUE;
 			p_ptr->sustain_str = TRUE;
 			break;
+		}
 		case RACE_HALF_GIANT:
+		{
 			p_ptr->sustain_str = TRUE;
 			p_ptr->resist_shard = TRUE;
 			break;
+		}
 		case RACE_HALF_TITAN:
+		{
 			p_ptr->resist_chaos = TRUE;
 			break;
+		}
 		case RACE_CYCLOPS:
+		{
 			p_ptr->resist_sound = TRUE;
 			break;
+		}
 		case RACE_YEEK:
+		{
 			p_ptr->resist_acid = TRUE;
 			if (p_ptr->lev > 19) p_ptr->immune_acid = TRUE;
 			break;
+		}
 		case RACE_KLACKON:
+		{
 			p_ptr->resist_confu = TRUE;
 			p_ptr->resist_acid = TRUE;
 
 			/* Klackons become faster */
 			p_ptr->pspeed += (p_ptr->lev) / 10;
 			break;
+		}
 		case RACE_KOBOLD:
+		{
 			p_ptr->resist_pois = TRUE;
 			break;
+		}
 		case RACE_NIBELUNG:
+		{
 			p_ptr->resist_disen = TRUE;
 			p_ptr->resist_dark = TRUE;
 			break;
+		}
 		case RACE_DARK_ELF:
+		{
 			p_ptr->resist_dark = TRUE;
 			if (p_ptr->lev > 19) p_ptr->see_inv = TRUE;
 			break;
+		}
 		case RACE_DRACONIAN:
+		{
 			p_ptr->ffall = TRUE;
 			if (p_ptr->lev > 4) p_ptr->resist_fire = TRUE;
 			if (p_ptr->lev > 9) p_ptr->resist_cold = TRUE;
@@ -2678,31 +2739,41 @@ static void calc_bonuses(void)
 			if (p_ptr->lev > 19) p_ptr->resist_elec = TRUE;
 			if (p_ptr->lev > 34) p_ptr->resist_pois = TRUE;
 			break;
+		}
 		case RACE_MIND_FLAYER:
+		{
 			p_ptr->sustain_int = TRUE;
 			p_ptr->sustain_wis = TRUE;
 			if (p_ptr->lev > 14) p_ptr->see_inv = TRUE;
 			if (p_ptr->lev > 29) p_ptr->telepathy = TRUE;
 			break;
+		}
 		case RACE_IMP:
+		{
 			p_ptr->resist_fire = TRUE;
 			if (p_ptr->lev > 9) p_ptr->see_inv = TRUE;
 			break;
+		}
 		case RACE_GOLEM:
+		{
 			p_ptr->slow_digest = TRUE;
 			p_ptr->free_act = TRUE;
 			p_ptr->see_inv = TRUE;
 			p_ptr->resist_pois = TRUE;
 			if (p_ptr->lev > 34) p_ptr->hold_life = TRUE;
 			break;
+		}
 		case RACE_SKELETON:
+		{
 			p_ptr->resist_shard = TRUE;
 			p_ptr->hold_life = TRUE;
 			p_ptr->see_inv = TRUE;
 			p_ptr->resist_pois = TRUE;
 			if (p_ptr->lev > 9) p_ptr->resist_cold = TRUE;
 			break;
+		}
 		case RACE_ZOMBIE:
+		{
 			p_ptr->resist_nethr = TRUE;
 			p_ptr->hold_life = TRUE;
 			p_ptr->see_inv = TRUE;
@@ -2710,7 +2781,9 @@ static void calc_bonuses(void)
 			p_ptr->slow_digest = TRUE;
 			if (p_ptr->lev > 4) p_ptr->resist_cold = TRUE;
 			break;
+		}
 		case RACE_VAMPIRE:
+		{
 			p_ptr->resist_dark = TRUE;
 			p_ptr->hold_life = TRUE;
 			p_ptr->resist_nethr = TRUE;
@@ -2718,7 +2791,9 @@ static void calc_bonuses(void)
 			p_ptr->resist_pois = TRUE;
 			p_ptr->lite = TRUE;
 			break;
+		}
 		case RACE_SPECTRE:
+		{
 			p_ptr->resist_nethr = TRUE;
 			p_ptr->hold_life = TRUE;
 			p_ptr->see_inv = TRUE;
@@ -2728,24 +2803,31 @@ static void calc_bonuses(void)
 			p_ptr->pass_wall = TRUE;
 			if (p_ptr->lev > 34) p_ptr->telepathy = TRUE;
 			break;
+		}
 		case RACE_SPRITE:
+		{
 			p_ptr->ffall = TRUE;
 			p_ptr->resist_lite = TRUE;
 
 			/* Sprites become faster */
 			p_ptr->pspeed += p_ptr->lev / 10;
 			break;
+		}
 		case RACE_BEASTMAN:
+		{
 			p_ptr->resist_confu = TRUE;
 			p_ptr->resist_sound = TRUE;
 			break;
+		}
 		case RACE_GHOUL:
+		{
 			if (p_ptr->lev > 9) p_ptr->resist_dark = TRUE;
 			p_ptr->hold_life = TRUE;
 			if (p_ptr->lev > 19) p_ptr->resist_nethr = TRUE;
 			p_ptr->resist_cold = TRUE;
 			p_ptr->resist_pois = TRUE;
 			break;
+		}
 	}
 
 	/* Apply the racial modifiers */
@@ -2834,19 +2916,19 @@ static void calc_bonuses(void)
 		if (f3 & (TR3_XTRA_SHOTS)) extra_shots++;
 
 		/* Various flags */
-		if (f3 & (TR3_AGGRAVATE))   p_ptr->aggravate = TRUE;
-		if (f3 & (TR3_TELEPORT))    p_ptr->teleport = TRUE;
-		if (f3 & (TR3_DRAIN_EXP))   p_ptr->exp_drain = TRUE;
-		if (f3 & (TR3_BLESSED))     p_ptr->bless_blade = TRUE;
-		if (f3 & (TR3_XTRA_MIGHT))  p_ptr->xtra_might = TRUE;
+		if (f3 & (TR3_AGGRAVATE)) p_ptr->aggravate = TRUE;
+		if (f3 & (TR3_TELEPORT)) p_ptr->teleport = TRUE;
+		if (f3 & (TR3_DRAIN_EXP)) p_ptr->exp_drain = TRUE;
+		if (f3 & (TR3_BLESSED)) p_ptr->bless_blade = TRUE;
+		if (f3 & (TR3_XTRA_MIGHT)) p_ptr->xtra_might = TRUE;
 		if (f3 & (TR3_SLOW_DIGEST)) p_ptr->slow_digest = TRUE;
-		if (f3 & (TR3_REGEN))       p_ptr->regenerate = TRUE;
-		if (f3 & (TR3_TELEPATHY))   p_ptr->telepathy = TRUE;
-		if (f3 & (TR3_LITE))        p_ptr->lite = TRUE;
-		if (f3 & (TR3_SEE_INVIS))   p_ptr->see_inv = TRUE;
-		if (f3 & (TR3_FEATHER))     p_ptr->ffall = TRUE;
-		if (f2 & (TR2_FREE_ACT))    p_ptr->free_act = TRUE;
-		if (f2 & (TR2_HOLD_LIFE))   p_ptr->hold_life = TRUE;
+		if (f3 & (TR3_REGEN)) p_ptr->regenerate = TRUE;
+		if (f3 & (TR3_TELEPATHY)) p_ptr->telepathy = TRUE;
+		if (f3 & (TR3_LITE)) p_ptr->lite = TRUE;
+		if (f3 & (TR3_SEE_INVIS)) p_ptr->see_inv = TRUE;
+		if (f3 & (TR3_FEATHER)) p_ptr->ffall = TRUE;
+		if (f2 & (TR2_FREE_ACT)) p_ptr->free_act = TRUE;
+		if (f2 & (TR2_HOLD_LIFE)) p_ptr->hold_life = TRUE;
 
 		/* Immunity flags */
 		if (f2 & (TR2_IM_FIRE)) p_ptr->immune_fire = TRUE;
@@ -2855,28 +2937,28 @@ static void calc_bonuses(void)
 		if (f2 & (TR2_IM_ELEC)) p_ptr->immune_elec = TRUE;
 
 		/* Resistance flags */
-		if (f2 & (TR2_RES_ACID))   p_ptr->resist_acid = TRUE;
-		if (f2 & (TR2_RES_ELEC))   p_ptr->resist_elec = TRUE;
-		if (f2 & (TR2_RES_FIRE))   p_ptr->resist_fire = TRUE;
-		if (f2 & (TR2_RES_COLD))   p_ptr->resist_cold = TRUE;
-		if (f2 & (TR2_RES_POIS))   p_ptr->resist_pois = TRUE;
-		if (f2 & (TR2_RES_FEAR))   p_ptr->resist_fear = TRUE;
-		if (f2 & (TR2_RES_CONF))   p_ptr->resist_confu = TRUE;
-		if (f2 & (TR2_RES_SOUND))  p_ptr->resist_sound = TRUE;
-		if (f2 & (TR2_RES_LITE))   p_ptr->resist_lite = TRUE;
-		if (f2 & (TR2_RES_DARK))   p_ptr->resist_dark = TRUE;
-		if (f2 & (TR2_RES_CHAOS))  p_ptr->resist_chaos = TRUE;
-		if (f2 & (TR2_RES_DISEN))  p_ptr->resist_disen = TRUE;
+		if (f2 & (TR2_RES_ACID)) p_ptr->resist_acid = TRUE;
+		if (f2 & (TR2_RES_ELEC)) p_ptr->resist_elec = TRUE;
+		if (f2 & (TR2_RES_FIRE)) p_ptr->resist_fire = TRUE;
+		if (f2 & (TR2_RES_COLD)) p_ptr->resist_cold = TRUE;
+		if (f2 & (TR2_RES_POIS)) p_ptr->resist_pois = TRUE;
+		if (f2 & (TR2_RES_FEAR)) p_ptr->resist_fear = TRUE;
+		if (f2 & (TR2_RES_CONF)) p_ptr->resist_confu = TRUE;
+		if (f2 & (TR2_RES_SOUND)) p_ptr->resist_sound = TRUE;
+		if (f2 & (TR2_RES_LITE)) p_ptr->resist_lite = TRUE;
+		if (f2 & (TR2_RES_DARK)) p_ptr->resist_dark = TRUE;
+		if (f2 & (TR2_RES_CHAOS)) p_ptr->resist_chaos = TRUE;
+		if (f2 & (TR2_RES_DISEN)) p_ptr->resist_disen = TRUE;
 		if (f2 & (TR2_RES_SHARDS)) p_ptr->resist_shard = TRUE;
-		if (f2 & (TR2_RES_NEXUS))  p_ptr->resist_nexus = TRUE;
-		if (f2 & (TR2_RES_BLIND))  p_ptr->resist_blind = TRUE;
+		if (f2 & (TR2_RES_NEXUS)) p_ptr->resist_nexus = TRUE;
+		if (f2 & (TR2_RES_BLIND)) p_ptr->resist_blind = TRUE;
 		if (f2 & (TR2_RES_NETHER)) p_ptr->resist_nethr = TRUE;
 
-		if (f2 & (TR2_REFLECT))  p_ptr->reflect = TRUE;
-		if (f3 & (TR3_SH_FIRE))  p_ptr->sh_fire = TRUE;
-		if (f3 & (TR3_SH_ELEC))  p_ptr->sh_elec = TRUE;
+		if (f2 & (TR2_REFLECT)) p_ptr->reflect = TRUE;
+		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
+		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = TRUE;
 		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
-		if (f3 & (TR3_NO_TELE))  p_ptr->anti_tele = TRUE;
+		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
 		/* Sustain flags */
 		if (f2 & (TR2_SUST_STR)) p_ptr->sustain_str = TRUE;

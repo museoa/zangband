@@ -1378,20 +1378,26 @@ bool set_stun(int v)
 		/* Describe the state */
 		switch (new_aux)
 		{
-			/* Stun */
 			case 1:
+			{
+				/* Stun */
 				msg_print("You have been stunned.");
 				break;
+			}
 
-			/* Heavy stun */
 			case 2:
+			{
+				/* Heavy stun */
 				msg_print("You have been heavily stunned.");
 				break;
+			}
 
-			/* Knocked out */
 			case 3:
+			{
+				/* Knocked out */
 				msg_print("You have been knocked out.");
 				break;
+			}
 		}
 
 		/*
@@ -1433,11 +1439,13 @@ bool set_stun(int v)
 		/* Describe the state */
 		switch (new_aux)
 		{
-			/* None */
 			case 0:
+			{
+				/* None */
 				msg_print("You are no longer stunned.");
 				if (disturb_state) disturb(FALSE);
 				break;
+			}
 		}
 
 		/* Notice */
@@ -1589,40 +1597,54 @@ bool set_cut(int v)
 		/* Describe the state */
 		switch (new_aux)
 		{
-			/* Graze */
 			case 1:
+			{
+				/* Graze */
 				msg_print("You have been given a graze.");
 				break;
+			}
 
-			/* Light cut */
 			case 2:
+			{
+				/* Light cut */
 				msg_print("You have been given a light cut.");
 				break;
+			}
 
-			/* Bad cut */
 			case 3:
+			{
+				/* Bad cut */
 				msg_print("You have been given a bad cut.");
 				break;
+			}
 
-			/* Nasty cut */
 			case 4:
+			{
+				/* Nasty cut */
 				msg_print("You have been given a nasty cut.");
 				break;
+			}
 
-			/* Severe cut */
 			case 5:
+			{
+				/* Severe cut */
 				msg_print("You have been given a severe cut.");
 				break;
+			}
 
-			/* Deep gash */
 			case 6:
+			{
+				/* Deep gash */
 				msg_print("You have been given a deep gash.");
 				break;
+			}
 
-			/* Mortal wound */
 			case 7:
+			{
+				/* Mortal wound */
 				msg_print("You have been given a mortal wound.");
 				break;
+			}
 		}
 
 		/* Notice */
@@ -1645,11 +1667,13 @@ bool set_cut(int v)
 		/* Describe the state */
 		switch (new_aux)
 		{
-			/* None */
 			case 0:
+			{
+				/* None */
 				msg_print("You are no longer bleeding.");
 				if (disturb_state) disturb(FALSE);
 				break;
+			}
 		}
 
 		/* Notice */
@@ -1797,34 +1821,44 @@ bool set_food(int v)
 		/* Describe the state */
 		switch (new_aux)
 		{
-			/* Weak */
 			case 1:
+			{
+				/* Weak */
 				msg_print("You are still weak.");
 				break;
+			}
 
-			/* Hungry */
 			case 2:
+			{
+				/* Hungry */
 				msg_print("You are still hungry.");
 				break;
+			}
 
-			/* Normal */
 			case 3:
+			{
+				/* Normal */
 				msg_print("You are no longer hungry.");
 				break;
+			}
 
-			/* Full */
 			case 4:
+			{
+				/* Full */
 				msg_print("You are full!");
 				break;
+			}
 
-			/* Bloated */
 			case 5:
+			{
+				/* Bloated */
 				msg_print("You have gorged yourself!");
 
 				chg_virtue(V_HARMONY, -1);
 				chg_virtue(V_PATIENCE, -1);
 				chg_virtue(V_TEMPERANCE, -2);
 				break;
+			}
 		}
 
 		/* Change */
@@ -1837,30 +1871,40 @@ bool set_food(int v)
 		/* Describe the state */
 		switch (new_aux)
 		{
-			/* Fainting / Starving */
 			case 0:
+			{
+				/* Fainting / Starving */
 				msg_print("You are getting faint from hunger!");
 				break;
+			}
 
-			/* Weak */
 			case 1:
+			{
+				/* Weak */
 				msg_print("You are getting weak from hunger!");
 				break;
+			}
 
-			/* Hungry */
 			case 2:
+			{
+				/* Hungry */
 				msg_print("You are getting hungry.");
 				break;
+			}
 
-			/* Normal */
 			case 3:
+			{
+				/* Normal */
 				msg_print("You are no longer full.");
 				break;
+			}
 
-			/* Full */
 			case 4:
+			{
+				/* Full */
 				msg_print("You are no longer gorged.");
 				break;
+			}
 		}
 
 		/* Change */
@@ -2166,7 +2210,8 @@ bool hp_player(int num)
 /*
  * Array of stat "descriptions"
  */
-static cptr desc_stat_pos[] = {
+static cptr desc_stat_pos[] =
+{
 	"strong",
 	"smart",
 	"wise",
@@ -2179,7 +2224,8 @@ static cptr desc_stat_pos[] = {
 /*
  * Array of stat "descriptions"
  */
-static cptr desc_stat_neg[] = {
+static cptr desc_stat_neg[] =
+{
 	"weak",
 	"stupid",
 	"naive",
@@ -2199,12 +2245,36 @@ bool do_dec_stat(int stat)
 	/* Access the "sustain" */
 	switch (stat)
 	{
-		case A_STR: if (p_ptr->sustain_str) sust = TRUE; break;
-		case A_INT: if (p_ptr->sustain_int) sust = TRUE; break;
-		case A_WIS: if (p_ptr->sustain_wis) sust = TRUE; break;
-		case A_DEX: if (p_ptr->sustain_dex) sust = TRUE; break;
-		case A_CON: if (p_ptr->sustain_con) sust = TRUE; break;
-		case A_CHR: if (p_ptr->sustain_chr) sust = TRUE; break;
+		case A_STR:
+		{
+			if (p_ptr->sustain_str) sust = TRUE;
+			break;
+		}
+		case A_INT:
+		{
+			if (p_ptr->sustain_int) sust = TRUE;
+			break;
+		}
+		case A_WIS:
+		{
+			if (p_ptr->sustain_wis) sust = TRUE;
+			break;
+		}
+		case A_DEX:
+		{
+			if (p_ptr->sustain_dex) sust = TRUE;
+			break;
+		}
+		case A_CON:
+		{
+			if (p_ptr->sustain_con) sust = TRUE;
+			break;
+		}
+		case A_CHR:
+		{
+			if (p_ptr->sustain_chr) sust = TRUE;
+			break;
+		}
 	}
 
 	/* Sustain */

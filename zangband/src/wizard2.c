@@ -581,56 +581,57 @@ static void wiz_display_item(const object_type *o_ptr)
  */
 typedef struct tval_desc
 {
-	int        tval;
-	cptr       desc;
-} tval_desc;
+	int tval;
+	cptr desc;
+}
+tval_desc;
 
 /*
  * A list of tvals and their textual names
  */
 static const tval_desc tvals[] =
 {
-	{ TV_SWORD,             "Sword"                },
-	{ TV_POLEARM,           "Polearm"              },
-	{ TV_HAFTED,            "Hafted Weapon"        },
-	{ TV_BOW,               "Bow"                  },
-	{ TV_ARROW,             "Arrows"               },
-	{ TV_BOLT,              "Bolts"                },
-	{ TV_SHOT,              "Shots"                },
-	{ TV_SHIELD,            "Shield"               },
-	{ TV_CROWN,             "Crown"                },
-	{ TV_HELM,              "Helm"                 },
-	{ TV_GLOVES,            "Gloves"               },
-	{ TV_BOOTS,             "Boots"                },
-	{ TV_CLOAK,             "Cloak"                },
-	{ TV_DRAG_ARMOR,        "Dragon Scale Mail"    },
-	{ TV_HARD_ARMOR,        "Hard Armor"           },
-	{ TV_SOFT_ARMOR,        "Soft Armor"           },
-	{ TV_RING,              "Ring"                 },
-	{ TV_AMULET,            "Amulet"               },
-	{ TV_LITE,              "Lite"                 },
-	{ TV_POTION,            "Potion"               },
-	{ TV_SCROLL,            "Scroll"               },
-	{ TV_WAND,              "Wand"                 },
-	{ TV_STAFF,             "Staff"                },
-	{ TV_ROD,               "Rod"                  },
-	{ TV_LIFE_BOOK,         "Life Spellbook"       },
-	{ TV_SORCERY_BOOK,      "Sorcery Spellbook"    },
-	{ TV_NATURE_BOOK,       "Nature Spellbook"     },
-	{ TV_CHAOS_BOOK,        "Chaos Spellbook"      },
-	{ TV_DEATH_BOOK,        "Death Spellbook"      },
-	{ TV_TRUMP_BOOK,        "Trump Spellbook"      },
-	{ TV_ARCANE_BOOK,       "Arcane Spellbook"     },
-	{ TV_SPIKE,             "Spikes"               },
-	{ TV_DIGGING,           "Digger"               },
-	{ TV_CHEST,             "Chest"                },
-	{ TV_FIGURINE,          "Magical Figurine"     },
-	{ TV_STATUE,            "Statue"               },
-	{ TV_FOOD,              "Food"                 },
-	{ TV_FLASK,             "Flask"                },
-	{ TV_JUNK,              "Junk"                 },
-	{ TV_SKELETON,          "Skeleton"             },
-	{ 0,                    NULL                   }
+	{TV_SWORD, "Sword"},
+	{TV_POLEARM, "Polearm"},
+	{TV_HAFTED, "Hafted Weapon"},
+	{TV_BOW, "Bow"},
+	{TV_ARROW, "Arrows"},
+	{TV_BOLT, "Bolts"},
+	{TV_SHOT, "Shots"},
+	{TV_SHIELD, "Shield"},
+	{TV_CROWN, "Crown"},
+	{TV_HELM, "Helm"},
+	{TV_GLOVES, "Gloves"},
+	{TV_BOOTS, "Boots"},
+	{TV_CLOAK, "Cloak"},
+	{TV_DRAG_ARMOR, "Dragon Scale Mail"},
+	{TV_HARD_ARMOR, "Hard Armor"},
+	{TV_SOFT_ARMOR, "Soft Armor"},
+	{TV_RING, "Ring"},
+	{TV_AMULET, "Amulet"},
+	{TV_LITE, "Lite"},
+	{TV_POTION, "Potion"},
+	{TV_SCROLL, "Scroll"},
+	{TV_WAND, "Wand"},
+	{TV_STAFF, "Staff"},
+	{TV_ROD, "Rod"},
+	{TV_LIFE_BOOK, "Life Spellbook"},
+	{TV_SORCERY_BOOK, "Sorcery Spellbook"},
+	{TV_NATURE_BOOK, "Nature Spellbook"},
+	{TV_CHAOS_BOOK, "Chaos Spellbook"},
+	{TV_DEATH_BOOK, "Death Spellbook"},
+	{TV_TRUMP_BOOK, "Trump Spellbook"},
+	{TV_ARCANE_BOOK, "Arcane Spellbook"},
+	{TV_SPIKE, "Spikes"},
+	{TV_DIGGING, "Digger"},
+	{TV_CHEST, "Chest"},
+	{TV_FIGURINE, "Magical Figurine"},
+	{TV_STATUE, "Statue"},
+	{TV_FOOD, "Food"},
+	{TV_FLASK, "Flask"},
+	{TV_JUNK, "Junk"},
+	{TV_SKELETON, "Skeleton"},
+	{0, NULL}
 };
 
 
@@ -860,40 +861,40 @@ static void wiz_reroll_item(object_type *o_ptr)
 			a_info[q_ptr->activate - 128].cur_num = 0;
 			q_ptr->activate = 0;
 			q_ptr->xtra_name = 0;
-			
+
 			/* Remove the artifact flag */
 			o_ptr->flags3 &= ~(TR3_INSTA_ART);
 		}
 
 		switch (ch)
 		{
-			/* Apply bad magic, but first clear object */
-			case 'w': case 'W':
+			case 'w':  case 'W':
 			{
+				/* Apply bad magic, but first clear object */
 				object_prep(q_ptr, o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
 				break;
 			}
-			/* Apply normal magic, but first clear object */
-			case 'n': case 'N':
+			case 'n':  case 'N':
 			{
+				/* Apply normal magic, but first clear object */
 				object_prep(q_ptr, o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_NORMAL);
 				break;
 			}
-			/* Apply great magic, but first clear object */
-			case 'e': case 'E':
+			case 'e':  case 'E':
 			{
+				/* Apply great magic, but first clear object */
 				object_prep(q_ptr, o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
 				break;
 			}
-			case 's': case 'S':
+			case 's':  case 'S':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
 
 				/* Make a random artifact */
-				(void)create_artifact(q_ptr, FALSE);
+				(void) create_artifact(q_ptr, FALSE);
 				break;
 			}
 		}
@@ -1688,182 +1689,238 @@ void do_cmd_debug(void)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int     x, y;
-	char    cmd;
+	int x, y;
+	char cmd;
 
 
 	/* Get a "debug command" */
-	(void)get_com("Debug Command: ", &cmd);
+	(void) get_com("Debug Command: ", &cmd);
 
 	/* Analyze the command */
 	switch (cmd)
 	{
-		/* Nothing */
 		case ESCAPE:
 		case ' ':
 		case '\n':
 		case '\r':
-		break;
-
+		{
+			/* Nothing */
+			break;
+		}
 
 #ifdef ALLOW_SPOILERS
-
-		/* Hack -- Generate Spoilers */
 		case '"':
+		{
+			/* Hack -- Generate Spoilers */
 			do_cmd_spoilers();
-		break;
-
+			break;
+		}
 #endif /* ALLOW_SPOILERS */
 
 #ifdef MATLAB
 		case '=':
+		{
 			output_monster_matlab();
-		break;
+			break;
+		}
 #endif /* MATLAB */
 
-		/* Hack -- Help */
 		case '?':
+		{
+			/* Hack -- Help */
 			screen_save();
-			(void)show_file("wizard.txt", NULL, 0 , 0);
+			(void) show_file("wizard.txt", NULL, 0, 0);
 			screen_load();
-		break;
+			break;
+		}
 
-
-		/* Cure all maladies */
 		case 'a':
+		{
+			/* Cure all maladies */
 			do_cmd_wiz_cure_all();
-		break;
+			break;
+		}
 
-		/* Know alignment */
 		case 'A':
+		{
+			/* Know alignment */
 			msg_format("Your alignment is %d.", p_ptr->align);
-		break;
+			break;
+		}
 
-		/* Teleport to target */
 		case 'b':
+		{
+			/* Teleport to target */
 			do_cmd_wiz_bamf();
-		break;
+			break;
+		}
 
-		/* Create any object */
 		case 'c':
+		{
+			/* Create any object */
 			wiz_create_item();
-		break;
+			break;
+		}
 
-		/* Create a named artifact */
 		case 'C':
+		{
+			/* Create a named artifact */
 			wiz_create_named_art(p_ptr->command_arg);
-		break;
+			break;
+		}
 
-		/* Detect everything */
 		case 'd':
-			(void)detect_all();
-		break;
+		{
+			/* Detect everything */
+			(void) detect_all();
+			break;
+		}
 
-		/* Edit character */
 		case 'e':
+		{
+			/* Edit character */
 			do_cmd_wiz_change();
-		break;
+			break;
+		}
 
-		/* View item info */
 		case 'f':
-			(void)identify_fully();
-		break;
+		{
+			/* View item info */
+			(void) identify_fully();
+			break;
+		}
 
-		/* Create feature */
 		case 'F':
+		{
+			/* Create feature */
 			if (p_ptr->command_arg > 0) do_cmd_wiz_feature(p_ptr->command_arg);
-		break;
+			break;
+		}
 
-		/* Good Objects */
 		case 'g':
+		{
+			/* Good Objects */
 			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
 			acquirement(px, py, p_ptr->command_arg, FALSE, TRUE);
-		break;
+			break;
+		}
 
-		/* Hitpoint rerating */
 		case 'h':
+		{
+			/* Hitpoint rerating */
 			do_cmd_rerate();
-		break;
+			break;
+		}
 
 #ifdef MONSTER_HORDES
 		case 'H':
+		{
 			do_cmd_summon_horde();
-		break;
+			break;
+		}
 #endif /* MONSTER_HORDES */
 
-		/* Identify */
 		case 'i':
-			(void)ident_spell();
-		break;
+		{
+			/* Identify */
+			(void) ident_spell();
+			break;
+		}
 
-		/* Fields Integrity */
 		case 'I':
-			(void)test_field_data_integrity();
-		break;
+		{
+			/* Fields Integrity */
+			(void) test_field_data_integrity();
+			break;
+		}
 
-		/* Go up or down in the dungeon */
 		case 'j':
+		{
+			/* Go up or down in the dungeon */
 			do_cmd_wiz_jump();
-		break;
+			break;
+		}
 
-		/* Test compression code */
 		case 'J':
+		{
+			/* Test compression code */
 			/* test_compress_module(); */
-		break;
-		
-		/* Self-Knowledge */
+			break;
+		}
+
 		case 'k':
+		{
+			/* Self-Knowledge */
 			self_knowledge();
-		break;
+			break;
+		}
 
-		/* Learn about objects */
 		case 'l':
+		{
+			/* Learn about objects */
 			do_cmd_wiz_learn();
-		break;
-		
-		/* Lose Mutation */
+			break;
+		}
+
 		case 'L':
-			(void)lose_mutation(p_ptr->command_arg);
-		break;
+		{
+			/* Lose Mutation */
+			(void) lose_mutation(p_ptr->command_arg);
+			break;
+		}
 
-		/* Magic Mapping */
 		case 'm':
+		{
+			/* Magic Mapping */
 			map_area();
-		break;
+			break;
+		}
 
-		/* Gain Mutation */
 		case 'M':
-			(void)gain_mutation(p_ptr->command_arg);
-		break;
+		{
+			/* Gain Mutation */
+			(void) gain_mutation(p_ptr->command_arg);
+			break;
+		}
 
-		/* Specific reward */
 		case 'r':
-			(void)gain_level_reward(p_ptr->command_arg);
-		break;
+		{
+			/* Specific reward */
+			(void) gain_level_reward(p_ptr->command_arg);
+			break;
+		}
 
-		/* Summon _friendly_ named monster */
 		case 'N':
+		{
+			/* Summon _friendly_ named monster */
 			do_cmd_wiz_named_friendly(p_ptr->command_arg, TRUE);
-		break;
+			break;
+		}
 
-		/* Summon Named Monster */
 		case 'n':
+		{
+			/* Summon Named Monster */
 			do_cmd_wiz_named(p_ptr->command_arg, TRUE);
-		break;
+			break;
+		}
 
-		/* Object playing routines */
 		case 'o':
+		{
+			/* Object playing routines */
 			do_cmd_wiz_play();
-		break;
+			break;
+		}
 
-		/* Phase Door */
 		case 'p':
+		{
+			/* Phase Door */
 			teleport_player(10);
-		break;
+			break;
+		}
 
-		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
+			/* Make every dungeon square "known" to test streamers -KMW- */
 			for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 			{
 				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
@@ -1877,25 +1934,32 @@ void do_cmd_debug(void)
 			break;
 		}
 
-		/* Summon Random Monster(s) */
 		case 's':
+		{
+			/* Summon Random Monster(s) */
 			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
 			do_cmd_wiz_summon(p_ptr->command_arg);
-		break;
+			break;
+		}
 
-		/* Teleport */
 		case 't':
+		{
+			/* Teleport */
 			teleport_player(100);
-		break;
+			break;
+		}
 
-		/* Very Good Objects */
 		case 'v':
+		{
+			/* Very Good Objects */
 			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
 			acquirement(px, py, p_ptr->command_arg, TRUE, TRUE);
-		break;
+			break;
+		}
 
-		/* Wizard Light the Level */
 		case 'w':
+		{
+			/* Wizard Light the Level */
 			if (p_ptr->depth)
 			{
 				wiz_lite();
@@ -1904,16 +1968,20 @@ void do_cmd_debug(void)
 			{
 				learn_map();
 			}
-		break;
-		
+			break;
+		}
+
 #ifdef DEBUG
 		case 'W':
+		{
 			test_decision_tree();
-		break;
+			break;
+		}
 #endif /* DEBUG */
 
-		/* Increase Experience */
 		case 'x':
+		{
+			/* Increase Experience */
 			if (p_ptr->command_arg)
 			{
 				gain_exp(p_ptr->command_arg);
@@ -1922,33 +1990,42 @@ void do_cmd_debug(void)
 			{
 				gain_exp(p_ptr->exp + 1);
 			}
-		break;
+			break;
+		}
 
-		/* Zap Monsters (Genocide) */
 		case 'z':
+		{
+			/* Zap Monsters (Genocide) */
 			do_cmd_wiz_zap();
-		break;
+			break;
+		}
 
 		case 'Z':
+		{
 			do_cmd_wiz_zap_all();
-		break;
+			break;
+		}
 
-		/* Hack -- whatever I desire */
 		case '_':
+		{
+			/* Hack -- whatever I desire */
 			do_cmd_wiz_hack_ben();
-		break;
+			break;
+		}
 
-		/* Execute script */
 		case '@':
 		{
+			/* Execute script */
 			do_cmd_script();
 			break;
 		}
 
-		/* Not a Wizard Command */
 		default:
+		{
+			/* Not a Debug Command */
 			msg_print("That is not a valid debug command.");
-		break;
+			break;
+		}
 	}
 }
 

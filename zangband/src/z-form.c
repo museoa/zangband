@@ -458,9 +458,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		/* Process the "format" char */
 		switch (aux[q - 1])
 		{
-			/* Simple Character -- standard format */
 			case 'c':
 			{
+				/* Simple Character -- standard format */
 				int arg;
 
 				/* Get the next argument */
@@ -473,9 +473,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Signed Integers -- standard format */
 			case 'd':  case 'i':
 			{
+				/* Signed Integers -- standard format */
 				if (do_long)
 				{
 					long arg;
@@ -501,9 +501,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Unsigned Integers -- various formats */
 			case 'u':  case 'o':  case 'x':  case 'X':
 			{
+				/* Unsigned Integers -- various formats */
 				if (do_long)
 				{
 					unsigned long arg;
@@ -529,11 +529,11 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Floating Point -- various formats */
 			case 'f':
 			case 'e':  case 'E':
 			case 'g':  case 'G':
 			{
+				/* Floating Point -- various formats */
 				double arg;
 
 				/* Get the next argument */
@@ -546,9 +546,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* Pointer -- implementation varies */
 			case 'p':
 			{
+				/* Pointer -- implementation varies */
 				vptr arg;
 
 				/* Get the next argument */
@@ -561,9 +561,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* String */
 			case 's':
 			{
+				/* String */
 				cptr arg;
 				char arg2[1024];
 
@@ -584,10 +584,10 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-			/* User defined data */
 			case 'V':
 			case 'v':
 			{
+				/* User defined data */
 				vptr arg;
 
 				/* Get the next argument */
@@ -600,8 +600,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				break;
 			}
 
-
-			/* Oops */
 			default:
 			{
 				/* Error -- illegal format char */

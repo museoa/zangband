@@ -2661,7 +2661,7 @@ bool earthquake(int cx, int cy, int r)
 							/* Check for a field that blocks movement */
 							if (fields_have_flags(c_ptr->fld_idx,
 												  FIELD_INFO_NO_ENTER))
-									continue;
+								continue;
 
 							/*
 							 * Test for fields that will not allow this
@@ -3111,15 +3111,15 @@ static void cave_temp_room_aux(int x, int y)
 	if (distance(p_ptr->px, p_ptr->py, x, y) > MAX_RANGE) return;
 
 
-	/* Verify this grid */
-	/*
-	* The reason why it is ==6 instead of >5 is that 8 is impossible
-	* due to the check for cave_floor_grid above.
-	* 7 lights dead-end corridors (you need to do this for the
-	* checkboard interesting rooms, so that the boundary is lit
-	* properly.
-	* This leaves only a check for 6 bounding walls!
-	*/
+	/* Verify this grid
+	 *
+	 * The reason why it is ==6 instead of >5 is that 8 is impossible
+	 * due to the check for cave_floor_grid above.
+	 * 7 lights dead-end corridors (you need to do this for the
+	 * checkboard interesting rooms, so that the boundary is lit
+	 * properly.
+	 * This leaves only a check for 6 bounding walls!
+	 */
 	if ((next_to_walls_adj(x, y) == 6) && (next_to_open(x, y) <= 1)) return;
 
 	/* Paranoia -- verify space */
@@ -3707,13 +3707,13 @@ void call_chaos(void)
 
 	int hurt_types[30] =
 	{
-		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
-		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
-		GF_HOLY_FIRE, GF_WATER,   GF_LITE,    GF_DARK,
-		GF_FORCE,     GF_INERTIA, GF_MANA,    GF_METEOR,
-		GF_ICE,       GF_CHAOS,   GF_NETHER,  GF_DISENCHANT,
-		GF_SHARDS,    GF_SOUND,   GF_NEXUS,   GF_CONFUSION,
-		GF_TIME,      GF_GRAVITY, GF_ROCKET,  GF_NUKE,
+		GF_ELEC, GF_POIS, GF_ACID, GF_COLD,
+		GF_FIRE, GF_MISSILE, GF_ARROW, GF_PLASMA,
+		GF_HOLY_FIRE, GF_WATER, GF_LITE, GF_DARK,
+		GF_FORCE, GF_INERTIA, GF_MANA, GF_METEOR,
+		GF_ICE, GF_CHAOS, GF_NETHER, GF_DISENCHANT,
+		GF_SHARDS, GF_SOUND, GF_NEXUS, GF_CONFUSION,
+		GF_TIME, GF_GRAVITY, GF_ROCKET, GF_NUKE,
 		GF_HELL_FIRE, GF_DISINTEGRATE
 	};
 
@@ -3929,49 +3929,105 @@ int activate_hi_summon(void)
 
 	for (i = 0; i < (randint1(9) + (p_ptr->depth / 40)); i++)
 	{
-		switch (randint1(26) + (p_ptr->depth / 20))
+		switch ((randint1(26) + (p_ptr->depth / 20)) / 2)
 		{
-			case 1: case 2:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_ANT, TRUE, FALSE, FALSE);
+			case 1:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_ANT, TRUE,
+									FALSE, FALSE);
 				break;
-			case 3: case 4:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_SPIDER, TRUE, FALSE, FALSE);
+			}
+			case 2:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_SPIDER,
+									TRUE, FALSE, FALSE);
 				break;
-			case 5: case 6:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HOUND, TRUE, FALSE, FALSE);
+			}
+			case 3:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_HOUND, TRUE,
+									FALSE, FALSE);
 				break;
-			case 7: case 8:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HYDRA, TRUE, FALSE, FALSE);
+			}
+			case 4:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_HYDRA, TRUE,
+									FALSE, FALSE);
 				break;
-			case 9: case 10:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_ANGEL, TRUE, FALSE, FALSE);
+			}
+			case 5:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_ANGEL, TRUE,
+									FALSE, FALSE);
 				break;
-			case 11: case 12:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+			}
+			case 6:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_UNDEAD,
+									TRUE, FALSE, FALSE);
 				break;
-			case 13: case 14:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, FALSE);
+			}
+			case 7:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_DRAGON,
+									TRUE, FALSE, FALSE);
 				break;
-			case 15: case 16:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
+			}
+			case 8:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_DEMON, TRUE,
+									FALSE, FALSE);
 				break;
-			case 17:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+			}
+			case 9:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_AMBERITES,
+									TRUE, FALSE, FALSE);
 				break;
-			case 18: case 19:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+			}
+			case 10:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_UNIQUE,
+									TRUE, FALSE, FALSE);
 				break;
-			case 20: case 21:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+			}
+			case 11:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_HI_UNDEAD,
+									TRUE, FALSE, FALSE);
 				break;
-			case 22: case 23:
-				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
+			}
+			case 12:
+			{
+				count +=
+					summon_specific(0, px, py, p_ptr->depth, SUMMON_HI_DRAGON,
+									TRUE, FALSE, FALSE);
 				break;
-			case 24: case 25:
-				count += summon_specific(0, px, py, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
+			}
+			case 13:
+			{
+				count +=
+					summon_specific(0, px, py, 100, SUMMON_CYBER, TRUE, FALSE,
+									FALSE);
 				break;
+			}
 			default:
-				count += summon_specific(0, px, py, (((p_ptr->depth * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
+			{
+				count +=
+					summon_specific(0, px, py, (((p_ptr->depth * 3) / 2) + 5),
+									0, TRUE, FALSE, FALSE);
+			}
 		}
 	}
 
@@ -3999,7 +4055,8 @@ int summon_cyber(int who, int x, int y)
 
 	for (i = 0; i < max_cyber; i++)
 	{
-		count += summon_specific(who, x, y, 100, SUMMON_CYBER, FALSE, friendly, pet);
+		count +=
+			summon_specific(who, x, y, 100, SUMMON_CYBER, FALSE, friendly, pet);
 	}
 
 	return count;

@@ -20,7 +20,8 @@
 
 
 /* The names of the virtues */
-cptr virtue[MAX_VIRTUE] = {
+cptr virtue[MAX_VIRTUE] =
+{
 	"Compassion",
 	"Honour",
 	"Justice",
@@ -358,7 +359,7 @@ void chg_virtue(int virtue, int amount)
 }
 
 
-void dump_virtues(FILE * OutFile)
+void dump_virtues(FILE *OutFile)
 {
 	int v_nr;
 

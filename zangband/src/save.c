@@ -405,7 +405,7 @@ static errr rd_savefile(void)
 	while (!done)
 	{
 		/* Read the block */
-		if (rd_block())break;
+		if (rd_block()) break;
 
 		/* Analyze the type */
 		switch (data_type)
@@ -420,7 +420,7 @@ static errr rd_savefile(void)
 				/* Grab the options */
 			case TYPE_OPTIONS:
 			{
-				if (get_options())err = -1;
+				if (get_options()) err = -1;
 				break;
 			}
 		}
@@ -451,12 +451,12 @@ static errr rd_savefile(void)
  * Some "local" parameters, used to help write savefiles
  */
 
-static FILE *fff;				/* Current save "file" */
+static FILE *fff;	/* Current save "file" */
 
-static byte xor_byte;			/* Simple encryption */
+static byte xor_byte;	/* Simple encryption */
 
-static u32b v_stamp = 0L;		/* A simple "checksum" on the actual values */
-static u32b x_stamp = 0L;		/* A simple "checksum" on the encoded bytes */
+static u32b v_stamp = 0L;	/* A simple "checksum" on the actual values */
+static u32b x_stamp = 0L;	/* A simple "checksum" on the encoded bytes */
 
 
 
@@ -722,7 +722,7 @@ static void wr_xtra(int k_idx)
 /*
  * Write a "store" record
  */
-static void wr_store(const store_type * st_ptr)
+static void wr_store(const store_type *st_ptr)
 {
 	int j;
 
@@ -1755,7 +1755,7 @@ static bool save_player_aux(char *name)
 		if (fff)
 		{
 			/* Write the savefile */
-			if (wr_savefile_new())ok = TRUE;
+			if (wr_savefile_new()) ok = TRUE;
 
 			/* Attempt to close it */
 			my_fclose(fff);

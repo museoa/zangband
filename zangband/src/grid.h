@@ -32,7 +32,7 @@
  */
 #define cave_p(X, Y) \
 	(&cave_data[Y][X])
-	
+
 /*
  * Access the cave data for the given region
  */
@@ -87,8 +87,8 @@ extern void build_tunnel(int col1, int row1, int col2, int row2);
 extern bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff);
 
 extern void generate_hmap(int x0, int y0, int xsiz, int ysiz, int grd,
-	 int roug, int cutoff);
+						  int roug, int cutoff);
 extern bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
-	 bool light);
+							 bool light);
 extern bool generate_lake(int x0, int y0, int xsize, int ysize,
-	 int c1, int c2, int c3, int type);
+						  int c1, int c2, int c3, int type);

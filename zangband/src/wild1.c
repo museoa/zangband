@@ -2541,9 +2541,10 @@ static void create_hgt_map(void)
 					{
 						/* Average of left and right points +random bit */
 						store_hgtmap(ii, jj,
-						((wild[jj][(i - hstep) / 16].gen.hgt_map +
-						wild[jj][(i + hstep) / 16].gen.hgt_map) / 2) +
-						((randint1(lstep) - hstep) / 2));
+									 ((wild[jj][(i - hstep) / 16].gen.hgt_map +
+									   wild[jj][(i +
+												 hstep) / 16].gen.hgt_map) /
+									  2) + ((randint1(lstep) - hstep) / 2));
 					}
 				}
 			}
@@ -2571,9 +2572,11 @@ static void create_hgt_map(void)
 					{
 						/* Average of up and down points +random bit */
 						store_hgtmap(ii, jj,
-						((wild[(j - hstep) / 16][ii].gen.hgt_map
-						+ wild[(j + hstep) / 16][ii].gen.hgt_map) / 2)
-						+ ((randint1(lstep) - hstep) / 2));
+									 ((wild[(j - hstep) / 16][ii].gen.hgt_map
+									   +
+									   wild[(j +
+											 hstep) / 16][ii].gen.hgt_map) /
+									  2) + ((randint1(lstep) - hstep) / 2));
 					}
 				}
 			}
@@ -2601,11 +2604,19 @@ static void create_hgt_map(void)
 						/* average over all four corners + scale by 181 to
 						 * reduce the effect of the square grid on the shape of the fractal */
 						store_hgtmap(ii, jj,
-						((wild[(j - hstep) / 16][(i - hstep) / 16].gen.hgt_map
-						+ wild[(j + hstep) / 16][(i - hstep) / 16].gen.hgt_map
-						+ wild[(j - hstep) / 16][(i + hstep) / 16].gen.hgt_map
-						+ wild[(j + hstep) / 16][(i + hstep) / 16].gen.hgt_map) / 4)
-						+ (((randint1(lstep) - hstep) * 181) / 256));
+									 ((wild[(j - hstep) / 16][(i - hstep) / 16].
+									   gen.hgt_map +
+									   wild[(j + hstep) / 16][(i -
+															   hstep) /
+															  16].gen.hgt_map +
+									   wild[(j - hstep) / 16][(i +
+															   hstep) /
+															  16].gen.hgt_map +
+									   wild[(j + hstep) / 16][(i +
+															   hstep) /
+															  16].gen.hgt_map) /
+									  4) +
+									 (((randint1(lstep) - hstep) * 181) / 256));
 					}
 				}
 			}
@@ -2708,9 +2719,11 @@ static void create_pop_map(u16b sea)
 					{
 						/* Average of left and right points +random bit */
 						store_popmap(ii, jj,
-						((wild[jj][(i - hstep) / 16].gen.pop_map +
-						wild[jj][(i + hstep) / 16].gen.pop_map) / 2) +
-						((randint1(lstep) - hstep) / 2), sea);
+									 ((wild[jj][(i - hstep) / 16].gen.pop_map +
+									   wild[jj][(i +
+												 hstep) / 16].gen.pop_map) /
+									  2) + ((randint1(lstep) - hstep) / 2),
+									 sea);
 					}
 				}
 			}
@@ -2738,9 +2751,12 @@ static void create_pop_map(u16b sea)
 					{
 						/* Average of up and down points +random bit */
 						store_popmap(ii, jj,
-						((wild[(j - hstep) / 16][ii].gen.pop_map
-						+ wild[(j + hstep) / 16][ii].gen.pop_map) / 2)
-						+ ((randint1(lstep) - hstep) / 2), sea);
+									 ((wild[(j - hstep) / 16][ii].gen.pop_map
+									   +
+									   wild[(j +
+											 hstep) / 16][ii].gen.pop_map) /
+									  2) + ((randint1(lstep) - hstep) / 2),
+									 sea);
 					}
 				}
 			}
@@ -2768,11 +2784,20 @@ static void create_pop_map(u16b sea)
 						/* average over all four corners + scale by 181 to
 						 * reduce the effect of the square grid on the shape of the fractal */
 						store_popmap(ii, jj,
-						((wild[(j - hstep) / 16][(i - hstep) / 16].gen.pop_map
-						+ wild[(j + hstep) / 16][(i - hstep) / 16].gen.pop_map
-						+ wild[(j - hstep) / 16][(i + hstep) / 16].gen.pop_map
-						+ wild[(j + hstep) / 16][(i + hstep) / 16].gen.pop_map) / 4)
-						+ (((randint1(lstep) - hstep) * 181) / 256), sea);
+									 ((wild[(j - hstep) / 16][(i - hstep) / 16].
+									   gen.pop_map +
+									   wild[(j + hstep) / 16][(i -
+															   hstep) /
+															  16].gen.pop_map +
+									   wild[(j - hstep) / 16][(i +
+															   hstep) /
+															  16].gen.pop_map +
+									   wild[(j + hstep) / 16][(i +
+															   hstep) /
+															  16].gen.pop_map) /
+									  4) +
+									 (((randint1(lstep) - hstep) * 181) / 256),
+									 sea);
 					}
 				}
 			}
@@ -2879,9 +2904,11 @@ static void create_law_map(u16b sea)
 					{
 						/* Average of left and right points +random bit */
 						store_lawmap(ii, jj,
-						((wild[jj][(i - hstep) / 16].gen.law_map +
-						wild[jj][(i + hstep) / 16].gen.law_map) / 2) +
-						((randint1(lstep) - hstep) / 2), sea);
+									 ((wild[jj][(i - hstep) / 16].gen.law_map +
+									   wild[jj][(i +
+												 hstep) / 16].gen.law_map) /
+									  2) + ((randint1(lstep) - hstep) / 2),
+									 sea);
 					}
 				}
 			}
@@ -2908,9 +2935,12 @@ static void create_law_map(u16b sea)
 					{
 						/* Average of up and down points +random bit */
 						store_lawmap(ii, jj,
-						((wild[(j - hstep) / 16][ii].gen.law_map
-						+ wild[(j + hstep) / 16][ii].gen.law_map) / 2)
-						+ ((randint1(lstep) - hstep) / 2), sea);
+									 ((wild[(j - hstep) / 16][ii].gen.law_map
+									   +
+									   wild[(j +
+											 hstep) / 16][ii].gen.law_map) /
+									  2) + ((randint1(lstep) - hstep) / 2),
+									 sea);
 					}
 				}
 			}
@@ -2938,11 +2968,20 @@ static void create_law_map(u16b sea)
 						/* average over all four corners + scale by 181 to
 						 * reduce the effect of the square grid on the shape of the fractal */
 						store_lawmap(ii, jj,
-						((wild[(j - hstep) / 16][(i - hstep) / 16].gen.law_map
-						+ wild[(j + hstep) / 16][(i - hstep) / 16].gen.law_map
-						+ wild[(j - hstep) / 16][(i + hstep) / 16].gen.law_map
-						+ wild[(j + hstep) / 16][(i + hstep) / 16].gen.law_map) / 4)
-						+ (((randint1(lstep) - hstep) * 181) / 256), sea);
+									 ((wild[(j - hstep) / 16][(i - hstep) / 16].
+									   gen.law_map +
+									   wild[(j + hstep) / 16][(i -
+															   hstep) /
+															  16].gen.law_map +
+									   wild[(j - hstep) / 16][(i +
+															   hstep) /
+															  16].gen.law_map +
+									   wild[(j + hstep) / 16][(i +
+															   hstep) /
+															  16].gen.law_map) /
+									  4) +
+									 (((randint1(lstep) - hstep) * 181) / 256),
+									 sea);
 					}
 				}
 			}

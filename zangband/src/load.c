@@ -242,7 +242,7 @@ static void rd_u32b(u32b *ip)
 	(*ip) |= ((u32b) (sf_get()) << 24);
 }
 
-static void rd_s32b(s32b * ip)
+static void rd_s32b(s32b *ip)
 {
 	rd_u32b((u32b *) ip);
 }

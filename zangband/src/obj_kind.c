@@ -65,7 +65,7 @@ void k_info_reset(void)
 
 
 /* Add a new object template */
-object_kind *k_info_add(object_kind * k_info_entry)
+object_kind *k_info_add(object_kind *k_info_entry)
 {
 	/* Resize if necessary */
 	while (k_info_size <= z_info->k_max)

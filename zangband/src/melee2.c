@@ -101,7 +101,7 @@ static void convert_target_dir(monster_type *m_ptr, int *mm)
 /*
  * Is the monster worth targetting?
  */
-static bool nice_target(monster_type *m_ptr, monster_race * r_ptr,
+static bool nice_target(monster_type *m_ptr, monster_race *r_ptr,
 						monster_type *t_ptr)
 {
 	/* The monster itself isn't a target */
@@ -388,7 +388,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
  * Hack, based on mon_take_hit... perhaps all monster attacks on
  * other monsters should use this?
  */
-void mon_take_hit_mon(int m_idx, int dam, bool * fear, cptr note)
+void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -425,8 +425,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool * fear, cptr note)
 	if (m_ptr->hp < 0)
 	{
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			(r_ptr->flags1 & RF1_QUESTOR) ||
-			(r_ptr->flags3 & RF3_UNIQUE_7))
+			(r_ptr->flags1 & RF1_QUESTOR) || (r_ptr->flags3 & RF3_UNIQUE_7))
 		{
 			m_ptr->hp = 1;
 		}
@@ -697,93 +696,104 @@ static sint d_off_x_2[] =
 
 
 static sint d_off_y_3[] =
-{ -1, -1, -2, -2, -3, -3, -3, 0, 0, 1, 1, 2, 2,
-  3, 3, 3, 0 };
+{ -1, -1, -2, -2, -3, -3, -3, 0, 0, 1, 1, 2, 2, 3, 3, 3, 0 };
 
 static sint d_off_x_3[] =
-{ -3, 3, -2, 2, -1, 0, 1, -3, 3, -3, 3, -2, 2,
-  -1, 0, 1, 0 };
+{ -3, 3, -2, 2, -1, 0, 1, -3, 3, -3, 3, -2, 2, -1, 0, 1, 0 };
 
 
 static sint d_off_y_4[] =
-{ -1, -1, -2, -2, -3, -3, -3, -3, -4, -4, -4, 0,
-  0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 0 };
+{
+	-1, -1, -2, -2, -3, -3, -3, -3, -4, -4, -4, 0, 0, 1, 1, 2, 2, 3, 3, 3, 3, 4,
+		4, 4, 0
+};
 
 static sint d_off_x_4[] =
-{ -4, 4, -3, 3, -2, -3, 2, 3, -1, 0, 1, -4, 4,
-  -4, 4, -3, 3, -2, -3, 2, 3, -1, 0, 1, 0 };
+{
+	-4, 4, -3, 3, -2, -3, 2, 3, -1, 0, 1, -4, 4, -4, 4, -3, 3, -2, -3, 2, 3, -1,
+		0, 1, 0
+};
 
 
 static sint d_off_y_5[] =
-{ -1, -1, -2, -2, -3, -3, -4, -4, -4, -4, -5, -5,
-  -5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5,
-  5, 0 };
+{
+	-1, -1, -2, -2, -3, -3, -4, -4, -4, -4, -5, -5, -5, 0, 0, 1, 1, 2, 2, 3, 3,
+		4, 4, 4, 4, 5, 5, 5, 0
+};
 
 static sint d_off_x_5[] =
-{ -5, 5, -4, 4, -4, 4, -2, -3, 2, 3, -1, 0, 1,
-  -5, 5, -5, 5, -4, 4, -4, 4, -2, -3, 2, 3, -1,
-  0, 1, 0 };
+{
+	-5, 5, -4, 4, -4, 4, -2, -3, 2, 3, -1, 0, 1, -5, 5, -5, 5, -4, 4, -4, 4, -2,
+		-3, 2, 3, -1, 0, 1, 0
+};
 
 
 static sint d_off_y_6[] =
-{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5,
-  -6, -6, -6, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5,
-  5, 5, 6, 6, 6, 0 };
+{
+	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5, -6, -6, -6, 0, 0, 1, 1, 2,
+		2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 0
+};
 
 static sint d_off_x_6[] =
-{ -6, 6, -5, 5, -5, 5, -4, 4, -2, -3, 2, 3, -1,
-  0, 1, -6, 6, -6, 6, -5, 5, -5, 5, -4, 4, -2,
-  -3, 2, 3, -1, 0, 1, 0 };
+{
+	-6, 6, -5, 5, -5, 5, -4, 4, -2, -3, 2, 3, -1, 0, 1, -6, 6, -6, 6, -5, 5, -5,
+		5, -4, 4, -2, -3, 2, 3, -1, 0, 1, 0
+};
 
 
 static sint d_off_y_7[] =
-{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5,
-  -6, -6, -6, -6, -7, -7, -7, 0, 0, 1, 1, 2, 2, 3,
-  3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 0 };
+{
+	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -5, -5, -6, -6, -6, -6, -7, -7, -7,
+		0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 0
+};
 
 static sint d_off_x_7[] =
-{ -7, 7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2,
-  -3, 2, 3, -1, 0, 1, -7, 7, -7, 7, -6, 6, -6,
-  6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
-  1, 0 };
+{
+	-7, 7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, -7, 7, -7,
+		7, -6, 6, -6, 6, -5, 5, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, 0
+};
 
 
 static sint d_off_y_8[] =
-{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6,
-  -6, -6, -7, -7, -7, -7, -8, -8, -8, 0, 0, 1, 1,
-  2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
-  8, 8, 8, 0 };
+{
+	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6, -6, -6, -7, -7, -7, -7, -8,
+		-8, -8, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8,
+		8, 8, 0
+};
 
 static sint d_off_x_8[] =
-{ -8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4,
-  5, -2, -3, 2, 3, -1, 0, 1, -8, 8, -8, 8, -7,
-  7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3,
-  2, 3, -1, 0, 1, 0 };
+{
+	-8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, -8,
+		8, -8, 8, -7, 7, -7, 7, -6, 6, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
+		1, 0
+};
 
 
 static sint d_off_y_9[] =
-{ -1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6,
-  -7, -7, -7, -7, -8, -8, -8, -8, -9, -9, -9, 0,
-  0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7,
-  7, 8, 8, 8, 8, 9, 9, 9, 0 };
+{
+	-1, -1, -2, -2, -3, -3, -4, -4, -5, -5, -6, -6, -7, -7, -7, -7, -8, -8, -8,
+		-8, -9, -9, -9, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 7, 8,
+		8, 8, 8, 9, 9, 9, 0
+};
 
 static sint d_off_x_9[] =
-{ -9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4,
-  -5, 4, 5, -2, -3, 2, 3, -1, 0, 1, -9, 9, -9,
-  9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5,
-  4, 5, -2, -3, 2, 3, -1, 0, 1, 0 };
+{
+	-9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5, 4, 5, -2, -3, 2, 3, -1, 0,
+		1, -9, 9, -9, 9, -8, 8, -8, 8, -7, 7, -7, 7, -6, 6, -4, -5, 4, 5, -2,
+		-3, 2, 3, -1, 0, 1, 0
+};
 
 
 static sint *dist_offsets_y[10] =
 {
-	d_off_y_0, d_off_y_1, d_off_y_2, d_off_y_3, d_off_y_4,
-	d_off_y_5, d_off_y_6, d_off_y_7, d_off_y_8, d_off_y_9
+	d_off_y_0, d_off_y_1, d_off_y_2, d_off_y_3, d_off_y_4, d_off_y_5, d_off_y_6,
+		d_off_y_7, d_off_y_8, d_off_y_9
 };
 
 static sint *dist_offsets_x[10] =
 {
-	d_off_x_0, d_off_x_1, d_off_x_2, d_off_x_3, d_off_x_4,
-	d_off_x_5, d_off_x_6, d_off_x_7, d_off_x_8, d_off_x_9
+	d_off_x_0, d_off_x_1, d_off_x_2, d_off_x_3, d_off_x_4, d_off_x_5, d_off_x_6,
+		d_off_x_7, d_off_x_8, d_off_x_9
 };
 
 /*
@@ -1547,37 +1557,161 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		/* Extract the attack "power" */
 		switch (effect)
 		{
-		case RBE_HURT:          power = 60; break;
-		case RBE_POISON:        power =  5; break;
-		case RBE_UN_BONUS:      power = 20; break;
-		case RBE_UN_POWER:      power = 15; break;
-		case RBE_EAT_GOLD:      power =  5; break;
-		case RBE_EAT_ITEM:      power =  5; break;
-		case RBE_EAT_FOOD:      power =  5; break;
-		case RBE_EAT_LITE:      power =  5; break;
-		case RBE_ACID:          power =  0; break;
-		case RBE_ELEC:          power = 10; break;
-		case RBE_FIRE:          power = 10; break;
-		case RBE_COLD:          power = 10; break;
-		case RBE_BLIND:         power =  2; break;
-		case RBE_CONFUSE:       power = 10; break;
-		case RBE_TERRIFY:       power = 10; break;
-		case RBE_PARALYZE:      power =  2; break;
-		case RBE_LOSE_STR:      power =  0; break;
-		case RBE_LOSE_DEX:      power =  0; break;
-		case RBE_LOSE_CON:      power =  0; break;
-		case RBE_LOSE_INT:      power =  0; break;
-		case RBE_LOSE_WIS:      power =  0; break;
-		case RBE_LOSE_CHR:      power =  0; break;
-		case RBE_LOSE_ALL:      power =  2; break;
-		case RBE_SHATTER:       power = 60; break;
-		case RBE_EXP_10:        power =  5; break;
-		case RBE_EXP_20:        power =  5; break;
-		case RBE_EXP_40:        power =  5; break;
-		case RBE_EXP_80:        power =  5; break;
-		case RBE_DISEASE:       power =  5; break;
-		case RBE_TIME:          power =  5; break;
-		case RBE_EXP_VAMP:      power =  5; break;
+			case RBE_HURT:
+			{
+				power = 60;
+				break;
+			}
+			case RBE_POISON:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_UN_BONUS:
+			{
+				power = 20;
+				break;
+			}
+			case RBE_UN_POWER:
+			{
+				power = 15;
+				break;
+			}
+			case RBE_EAT_GOLD:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EAT_ITEM:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EAT_FOOD:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EAT_LITE:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_ACID:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_ELEC:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_FIRE:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_COLD:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_BLIND:
+			{
+				power = 2;
+				break;
+			}
+			case RBE_CONFUSE:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_TERRIFY:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_PARALYZE:
+			{
+				power = 2;
+				break;
+			}
+			case RBE_LOSE_STR:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_DEX:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_CON:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_INT:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_WIS:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_CHR:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_ALL:
+			{
+				power = 2;
+				break;
+			}
+			case RBE_SHATTER:
+			{
+				power = 60;
+				break;
+			}
+			case RBE_EXP_10:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_20:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_40:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_80:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_DISEASE:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_TIME:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_VAMP:
+			{
+				power = 5;
+				break;
+			}
 		}
 
 

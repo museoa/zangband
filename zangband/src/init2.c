@@ -140,7 +140,7 @@ void init_file_paths(char *path)
 	ANGBAND_DIR_XTRA = string_make("");
 
 
-#else /* VM */
+#else  /* VM */
 
 
 	/*** Build the sub-directory names ***/
@@ -193,7 +193,7 @@ void init_file_paths(char *path)
 	/* Build a relative path name */
 	ANGBAND_DIR_USER = string_make(buf);
 
-#else /* PRIVATE_USER_PATH */
+#else  /* PRIVATE_USER_PATH */
 
 	/* Build a path name */
 	strcpy(tail, "user");
@@ -262,7 +262,8 @@ int error_line;
 /*
  * Standard error message text
  */
-cptr err_str[PARSE_ERROR_MAX] = {
+cptr err_str[PARSE_ERROR_MAX] =
+{
 	NULL,
 	"parse error",
 	"obsolete file",
@@ -341,7 +342,7 @@ header r_head;
 /*
  * Initialize a "*_info" array, by parsing a binary "image" file
  */
-static errr init_info_raw(int fd, header * head)
+static errr init_info_raw(int fd, header *head)
 {
 	header test;
 
@@ -1403,47 +1404,47 @@ void init_angband(void)
 
 	/* Initialize size info */
 	note("[Initializing array sizes...]");
-	if (init_z_info())quit("Cannot initialize sizes");
+	if (init_z_info()) quit("Cannot initialize sizes");
 
 	/* Initialize scripting */
 	note("[Initializing scripts... (scripts)]");
-	if (script_init())quit("Cannot initialize scripts");
+	if (script_init()) quit("Cannot initialize scripts");
 
 	/* Initialize feature info */
 	note("[Initializing arrays... (features)]");
-	if (init_f_info())quit("Cannot initialize features");
+	if (init_f_info()) quit("Cannot initialize features");
 
 	/* Initialize object info */
 	note("[Initializing arrays... (objects)]");
-	if (init_k_info())quit("Cannot initialize objects");
+	if (init_k_info()) quit("Cannot initialize objects");
 
 	/* Initialize artifact info */
 	note("[Initializing arrays... (artifacts)]");
-	if (init_a_info())quit("Cannot initialize artifacts");
+	if (init_a_info()) quit("Cannot initialize artifacts");
 
 	/* Initialize ego-item info */
 	note("[Initializing arrays... (ego-items)]");
-	if (init_e_info())quit("Cannot initialize ego-items");
+	if (init_e_info()) quit("Cannot initialize ego-items");
 
 	/* Initialize monster info */
 	note("[Initializing arrays... (monsters)]");
-	if (init_r_info())quit("Cannot initialize monsters");
+	if (init_r_info()) quit("Cannot initialize monsters");
 
 	/* Initialize feature info */
 	note("[Initializing arrays... (vaults)]");
-	if (init_v_info())quit("Cannot initialize vaults");
+	if (init_v_info()) quit("Cannot initialize vaults");
 
 	/* Initialize quest array */
 	note("[Initializing arrays... (quests)]");
-	if (init_quests())quit("Cannot initialize quests");
+	if (init_quests()) quit("Cannot initialize quests");
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (other)]");
-	if (init_other())quit("Cannot initialize other stuff");
+	if (init_other()) quit("Cannot initialize other stuff");
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (alloc)]");
-	if (init_alloc())quit("Cannot initialize alloc stuff");
+	if (init_alloc()) quit("Cannot initialize alloc stuff");
 
 
 	/*** Load default user pref files ***/

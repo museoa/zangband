@@ -1363,12 +1363,12 @@ static int pick_quest_type(quest_aux_type * l_ptr, int level)
 
 static quest_aux_type camp_types[] =
 {
-	{quest_aux_undead,	10,	1, "undead"},
-	{quest_aux_orc,		20,	2, "orc"},
-	{quest_aux_troll,	40,	4, "troll"},
-	{quest_aux_giant,	60,	1, "giant"},
-	{quest_aux_dragon,	80,	1, "dragon"},
-	{NULL,				0,	0, NULL},
+	{quest_aux_undead, 10, 1, "undead"},
+	{quest_aux_orc, 20, 2, "orc"},
+	{quest_aux_troll, 40, 4, "troll"},
+	{quest_aux_giant, 60, 1, "giant"},
+	{quest_aux_dragon, 80, 1, "dragon"},
+	{NULL, 0, 0, NULL},
 };
 
 

@@ -21,36 +21,36 @@ void safe_setuid_drop(void)
 
 #ifdef SET_UID
 
-# ifdef SAFE_SETUID
+#ifdef SAFE_SETUID
 
-#  ifdef HAVE_SETEGID
+#ifdef HAVE_SETEGID
 
 	if (setegid(getgid()) != 0)
 	{
 		quit("setegid(): cannot set permissions correctly!");
 	}
- 
-#  else /* HAVE_SETEGID */
 
-#   ifdef SAFE_SETUID_POSIX
+#else  /* HAVE_SETEGID */
+
+#ifdef SAFE_SETUID_POSIX
 
 	if (setgid(getgid()) != 0)
 	{
 		quit("setgid(): cannot set permissions correctly!");
 	}
 
-#   else /* SAFE_SETUID_POSIX */
+#else  /* SAFE_SETUID_POSIX */
 
 	if (setregid(getegid(), getgid()) != 0)
 	{
 		quit("setregid(): cannot set permissions correctly!");
 	}
 
-#   endif /* SAFE_SETUID_POSIX */
+#endif /* SAFE_SETUID_POSIX */
 
-#  endif /* HAVE_SETEGID */
+#endif /* HAVE_SETEGID */
 
-# endif /* SAFE_SETUID */
+#endif /* SAFE_SETUID */
 
 #endif /* SET_UID */
 
@@ -65,36 +65,36 @@ void safe_setuid_grab(void)
 
 #ifdef SET_UID
 
-# ifdef SAFE_SETUID
+#ifdef SAFE_SETUID
 
-#  ifdef HAVE_SETEGID
+#ifdef HAVE_SETEGID
 
 	if (setegid(player_egid) != 0)
 	{
 		quit("setegid(): cannot set permissions correctly!");
 	}
 
-#  else /* HAVE_SETEGID */
+#else  /* HAVE_SETEGID */
 
-#   ifdef SAFE_SETUID_POSIX
+#ifdef SAFE_SETUID_POSIX
 
 	if (setgid(player_egid) != 0)
 	{
 		quit("setgid(): cannot set permissions correctly!");
 	}
 
-#   else /* SAFE_SETUID_POSIX */
+#else  /* SAFE_SETUID_POSIX */
 
 	if (setregid(getegid(), getgid()) != 0)
 	{
 		quit("setregid(): cannot set permissions correctly!");
 	}
 
-#   endif /* SAFE_SETUID_POSIX */
+#endif /* SAFE_SETUID_POSIX */
 
-#  endif /* HAVE_SETEGID */
+#endif /* HAVE_SETEGID */
 
-# endif /* SAFE_SETUID */
+#endif /* SAFE_SETUID */
 
 #endif /* SET_UID */
 
@@ -192,79 +192,79 @@ struct named_num
 /* Index of spell type names */
 static const named_num gf_desc[] =
 {
-	{"GF_ELEC", 				GF_ELEC				},
-	{"GF_POIS", 				GF_POIS				},
-	{"GF_ACID", 				GF_ACID				},
-	{"GF_COLD", 				GF_COLD				},
-	{"GF_FIRE",		 			GF_FIRE				},
-	{"GF_MISSILE",				GF_MISSILE			},
-	{"GF_ARROW",				GF_ARROW			},
-	{"GF_PLASMA",				GF_PLASMA			},
-	{"GF_WATER",				GF_WATER			},
-	{"GF_LITE",					GF_LITE				},
-	{"GF_DARK",					GF_DARK				},
-	{"GF_LITE_WEAK",			GF_LITE_WEAK		},
-	{"GF_DARK_WEAK",			GF_DARK_WEAK		},
-	{"GF_SHARDS",				GF_SHARDS			},
-	{"GF_SOUND",				GF_SOUND			},
-	{"GF_CONFUSION",			GF_CONFUSION		},
-	{"GF_FORCE",				GF_FORCE			},
-	{"GF_INERTIA",				GF_INERTIA			},
-	{"GF_MANA",					GF_MANA				},
-	{"GF_METEOR",				GF_METEOR			},
-	{"GF_ICE",					GF_ICE				},
-	{"GF_CHAOS",				GF_CHAOS			},
-	{"GF_NETHER",				GF_NETHER			},
-	{"GF_DISENCHANT",			GF_DISENCHANT		},
-	{"GF_NEXUS",				GF_NEXUS			},
-	{"GF_TIME",					GF_TIME				},
-	{"GF_GRAVITY",				GF_GRAVITY			},
-	{"GF_KILL_WALL",			GF_KILL_WALL		},
-	{"GF_KILL_DOOR",			GF_KILL_DOOR		},
-	{"GF_KILL_TRAP",			GF_KILL_TRAP		},
-	{"GF_MAKE_WALL",			GF_MAKE_WALL		},
-	{"GF_MAKE_DOOR",			GF_MAKE_DOOR		},
-	{"GF_MAKE_TRAP",			GF_MAKE_TRAP		},
-	{"GF_OLD_CLONE",			GF_OLD_CLONE		},
-	{"GF_OLD_POLY",				GF_OLD_POLY			},
-	{"GF_OLD_HEAL",				GF_OLD_HEAL			},
-	{"GF_OLD_SPEED",			GF_OLD_SPEED		},
-	{"GF_OLD_SLOW",				GF_OLD_SLOW			},
-	{"GF_OLD_CONF",				GF_OLD_CONF			},
-	{"GF_OLD_SLEEP",			GF_OLD_SLEEP		},
-	{"GF_OLD_DRAIN",			GF_OLD_DRAIN		},
-	{"GF_NEW_DRAIN",			GF_NEW_DRAIN		},
-	{"GF_AWAY_UNDEAD",			GF_AWAY_UNDEAD		},
-	{"GF_AWAY_EVIL",			GF_AWAY_EVIL		},
-	{"GF_AWAY_ALL",				GF_AWAY_ALL			},
-	{"GF_TURN_UNDEAD",			GF_TURN_UNDEAD		},
-	{"GF_TURN_EVIL",			GF_TURN_EVIL		},
-	{"GF_TURN_ALL",				GF_TURN_ALL			},
-	{"GF_DISP_UNDEAD",			GF_DISP_UNDEAD		},
-	{"GF_DISP_EVIL",			GF_DISP_EVIL		},
-	{"GF_DISP_ALL",				GF_DISP_ALL			},
-	{"GF_DISP_DEMON",			GF_DISP_DEMON		},
-	{"GF_DISP_LIVING",			GF_DISP_LIVING		},
-	{"GF_ROCKET",				GF_ROCKET			},
-	{"GF_NUKE",					GF_NUKE				},
-	{"GF_MAKE_GLYPH",			GF_MAKE_GLYPH		},
-	{"GF_STASIS",				GF_STASIS			},
-	{"GF_STONE_WALL",			GF_STONE_WALL		},
-	{"GF_DEATH_RAY",			GF_DEATH_RAY		},
-	{"GF_STUN",					GF_STUN				},
-	{"GF_HOLY_FIRE",			GF_HOLY_FIRE		},
-	{"GF_HELL_FIRE",			GF_HELL_FIRE		},
-	{"GF_DISINTEGRATE",			GF_DISINTEGRATE		},
-	{"GF_CHARM",				GF_CHARM			},
-	{"GF_CONTROL_UNDEAD",		GF_CONTROL_UNDEAD	},
-	{"GF_CONTROL_ANIMAL",		GF_CONTROL_ANIMAL	},
-	{"GF_PSI",					GF_PSI				},
-	{"GF_PSI_DRAIN",			GF_PSI_DRAIN		},
-	{"GF_TELEKINESIS",			GF_TELEKINESIS		},
-	{"GF_JAM_DOOR",				GF_JAM_DOOR			},
-	{"GF_DOMINATION",			GF_DOMINATION		},
-	{"GF_DISP_GOOD",			GF_DISP_GOOD		},
-	{NULL, 						0					}
+	{"GF_ELEC", GF_ELEC},
+	{"GF_POIS", GF_POIS},
+	{"GF_ACID", GF_ACID},
+	{"GF_COLD", GF_COLD},
+	{"GF_FIRE", GF_FIRE},
+	{"GF_MISSILE", GF_MISSILE},
+	{"GF_ARROW", GF_ARROW},
+	{"GF_PLASMA", GF_PLASMA},
+	{"GF_WATER", GF_WATER},
+	{"GF_LITE", GF_LITE},
+	{"GF_DARK", GF_DARK},
+	{"GF_LITE_WEAK", GF_LITE_WEAK},
+	{"GF_DARK_WEAK", GF_DARK_WEAK},
+	{"GF_SHARDS", GF_SHARDS},
+	{"GF_SOUND", GF_SOUND},
+	{"GF_CONFUSION", GF_CONFUSION},
+	{"GF_FORCE", GF_FORCE},
+	{"GF_INERTIA", GF_INERTIA},
+	{"GF_MANA", GF_MANA},
+	{"GF_METEOR", GF_METEOR},
+	{"GF_ICE", GF_ICE},
+	{"GF_CHAOS", GF_CHAOS},
+	{"GF_NETHER", GF_NETHER},
+	{"GF_DISENCHANT", GF_DISENCHANT},
+	{"GF_NEXUS", GF_NEXUS},
+	{"GF_TIME", GF_TIME},
+	{"GF_GRAVITY", GF_GRAVITY},
+	{"GF_KILL_WALL", GF_KILL_WALL},
+	{"GF_KILL_DOOR", GF_KILL_DOOR},
+	{"GF_KILL_TRAP", GF_KILL_TRAP},
+	{"GF_MAKE_WALL", GF_MAKE_WALL},
+	{"GF_MAKE_DOOR", GF_MAKE_DOOR},
+	{"GF_MAKE_TRAP", GF_MAKE_TRAP},
+	{"GF_OLD_CLONE", GF_OLD_CLONE},
+	{"GF_OLD_POLY", GF_OLD_POLY},
+	{"GF_OLD_HEAL", GF_OLD_HEAL},
+	{"GF_OLD_SPEED", GF_OLD_SPEED},
+	{"GF_OLD_SLOW", GF_OLD_SLOW},
+	{"GF_OLD_CONF", GF_OLD_CONF},
+	{"GF_OLD_SLEEP", GF_OLD_SLEEP},
+	{"GF_OLD_DRAIN", GF_OLD_DRAIN},
+	{"GF_NEW_DRAIN", GF_NEW_DRAIN},
+	{"GF_AWAY_UNDEAD", GF_AWAY_UNDEAD},
+	{"GF_AWAY_EVIL", GF_AWAY_EVIL},
+	{"GF_AWAY_ALL", GF_AWAY_ALL},
+	{"GF_TURN_UNDEAD", GF_TURN_UNDEAD},
+	{"GF_TURN_EVIL", GF_TURN_EVIL},
+	{"GF_TURN_ALL", GF_TURN_ALL},
+	{"GF_DISP_UNDEAD", GF_DISP_UNDEAD},
+	{"GF_DISP_EVIL", GF_DISP_EVIL},
+	{"GF_DISP_ALL", GF_DISP_ALL},
+	{"GF_DISP_DEMON", GF_DISP_DEMON},
+	{"GF_DISP_LIVING", GF_DISP_LIVING},
+	{"GF_ROCKET", GF_ROCKET},
+	{"GF_NUKE", GF_NUKE},
+	{"GF_MAKE_GLYPH", GF_MAKE_GLYPH},
+	{"GF_STASIS", GF_STASIS},
+	{"GF_STONE_WALL", GF_STONE_WALL},
+	{"GF_DEATH_RAY", GF_DEATH_RAY},
+	{"GF_STUN", GF_STUN},
+	{"GF_HOLY_FIRE", GF_HOLY_FIRE},
+	{"GF_HELL_FIRE", GF_HELL_FIRE},
+	{"GF_DISINTEGRATE", GF_DISINTEGRATE},
+	{"GF_CHARM", GF_CHARM},
+	{"GF_CONTROL_UNDEAD", GF_CONTROL_UNDEAD},
+	{"GF_CONTROL_ANIMAL", GF_CONTROL_ANIMAL},
+	{"GF_PSI", GF_PSI},
+	{"GF_PSI_DRAIN", GF_PSI_DRAIN},
+	{"GF_TELEKINESIS", GF_TELEKINESIS},
+	{"GF_JAM_DOOR", GF_JAM_DOOR},
+	{"GF_DOMINATION", GF_DOMINATION},
+	{"GF_DISP_GOOD", GF_DISP_GOOD},
+	{NULL, 0}
 };
 
 
@@ -1407,7 +1407,8 @@ static void likert(int x, int y, char *desc)
 }
 
 /* Monk average attack damage - only used here, so not in tables.c */
-static int monk_avg_damage[PY_MAX_LEVEL + 1] = {
+static int monk_avg_damage[PY_MAX_LEVEL + 1] =
+{
 	0,
 	250, 275, 299, 299, 306, 309, 321, 325, 328, 332,
 	347, 353, 375, 450, 463, 507, 523, 537, 551, 575,
@@ -1436,10 +1437,10 @@ static void display_player_abilities(void)
 
 	object_type *o_ptr;
 
-	if (p_ptr->muta2 & MUT2_HORNS)     muta_att++;
+	if (p_ptr->muta2 & MUT2_HORNS) muta_att++;
 	if (p_ptr->muta2 & MUT2_SCOR_TAIL) muta_att++;
-	if (p_ptr->muta2 & MUT2_BEAK)      muta_att++;
-	if (p_ptr->muta2 & MUT2_TRUNK)     muta_att++;
+	if (p_ptr->muta2 & MUT2_BEAK) muta_att++;
+	if (p_ptr->muta2 & MUT2_TRUNK) muta_att++;
 	if (p_ptr->muta2 & MUT2_TENTACLES) muta_att++;
 
 	/* Fighting Skill (with current weapon) */
@@ -1592,7 +1593,7 @@ static void display_player_abilities(void)
 /*
  * Obtain the "flags" for the player as if he was an item
  */
-static void player_flags(u32b * f1, u32b * f2, u32b * f3)
+static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 {
 	/* Clear */
 	(*f1) = (*f2) = (*f3) = 0L;
@@ -2619,7 +2620,8 @@ static void display_player_summary(void)
 typedef void (*display_func) (void);
 
 
-static display_func displays[DISPLAY_PLAYER_MAX] = {
+static display_func displays[DISPLAY_PLAYER_MAX] =
+{
 	/* Standard display with skills */
 	display_player_standard,
 
@@ -4011,7 +4013,7 @@ static void make_bones(void)
 /*
  * Redefinable "print_tombstone" action
  */
-bool(*tombstone_aux) (void) = NULL;
+bool (*tombstone_aux) (void) = NULL;
 
 
 /*
@@ -4316,7 +4318,7 @@ static void close_game_handle_death(void)
 	/* Save memories */
 	if (!munchkin_death || get_check("Save death? "))
 	{
-		if (!save_player())msg_print("death save failed!");
+		if (!save_player()) msg_print("death save failed!");
 	}
 
 #if 0
@@ -4552,7 +4554,7 @@ void exit_game_panic(void)
 	(void) strcpy(p_ptr->died_from, "(panic save)");
 
 	/* Panic save, or get worried */
-	if (!save_player())quit("panic save failed!");
+	if (!save_player()) quit("panic save failed!");
 
 	/* Successful panic save */
 	quit("panic save succeeded!");
@@ -4983,7 +4985,7 @@ void signals_init(void)
 }
 
 
-#else /* HANDLE_SIGNALS */
+#else  /* HANDLE_SIGNALS */
 
 
 /*

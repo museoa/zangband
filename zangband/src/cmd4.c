@@ -477,12 +477,12 @@ typedef struct cheat_option_type cheat_option_type;
 
 struct cheat_option_type
 {
-	bool	*o_var;
+	bool *o_var;
 
-	u16b	o_word;
+	u16b o_word;
 
-	cptr	o_text;
-	cptr	o_desc;
+	cptr o_text;
+	cptr o_desc;
 };
 
 
@@ -491,23 +491,23 @@ struct cheat_option_type
  */
 static const cheat_option_type cheat_info[CHEAT_MAX] =
 {
-	{ &cheat_peek,		0x0001,
-	"cheat_peek",		"Peek into object creation" },
+	{&cheat_peek, 0x0001,
+	 "cheat_peek", "Peek into object creation"},
 
-	{ &cheat_hear,		0x0002,
-	"cheat_hear",		"Peek into monster creation" },
+	{&cheat_hear, 0x0002,
+	 "cheat_hear", "Peek into monster creation"},
 
-	{ &cheat_room,		0x0004,
-	"cheat_room",		"Peek into dungeon creation" },
+	{&cheat_room, 0x0004,
+	 "cheat_room", "Peek into dungeon creation"},
 
-	{ &cheat_xtra,		0x0008,
-	"cheat_xtra",		"Peek into something else" },
+	{&cheat_xtra, 0x0008,
+	 "cheat_xtra", "Peek into something else"},
 
-	{ &cheat_know,		0x0010,
-	"cheat_know",		"Know complete monster info" },
+	{&cheat_know, 0x0010,
+	 "cheat_know", "Know complete monster info"},
 
-	{ &cheat_live,		0x0020,
-	"cheat_live",		"Allow player to avoid death" }
+	{&cheat_live, 0x0020,
+	 "cheat_live", "Allow player to avoid death"}
 };
 
 
@@ -610,11 +610,11 @@ static void do_cmd_options_cheat(cptr info)
 
 static const cheat_option_type autosave_info[2] =
 {
-	{ (bool *)(&autosave_l), 0x0001,
-	  "autosave_l", "Autosave when entering new levels" },
+	{(bool *) (&autosave_l), 0x0001,
+	 "autosave_l", "Autosave when entering new levels"},
 
-	{ (bool *)(&autosave_t), 0x0002,
-	  "autosave_t", "Timed autosave" },
+	{(bool *) (&autosave_t), 0x0002,
+	 "autosave_t", "Timed autosave"},
 };
 
 
@@ -2810,7 +2810,8 @@ void do_cmd_version(void)
 /*
  * Array of feeling strings
  */
-static cptr do_cmd_feeling_text[11] = {
+static cptr do_cmd_feeling_text[11] =
+{
 	"Looks like any other level.",
 	"You feel there is something special about this level.",
 	"You nearly faint as horrible visions of death fill your mind!",
@@ -3695,35 +3696,62 @@ void do_cmd_knowledge(void)
 
 		switch (i)
 		{
-		case '1': /* Uniques */
-			do_cmd_knowledge_uniques();
-			break;
-		case '2': /* Objects */
-			do_cmd_knowledge_objects();
-			break;
-		case '3': /* Kill count */
-			do_cmd_knowledge_kill_count();
-			break;
-		case '4': /* Mutations */
-			do_cmd_knowledge_mutations();
-			break;
-		case '5': /* Pets */
-			do_cmd_knowledge_pets();
-			break;
-		case '6': /* Quests */
-			do_cmd_knowledge_quests();
-			break;
-		case '7': /* Virtues */
-			do_cmd_knowledge_virtues();
-			break;
-		case '8': /* Notes */
-			if (take_notes)
-				do_cmd_knowledge_notes();
-			else
-				bell("You have turned on note taking!");
-			break;
-		default: /* Unknown option */
-			bell("Illegal command for knowledge!");
+			case '1':
+			{
+				/* Uniques */
+				do_cmd_knowledge_uniques();
+				break;
+			}
+			case '2':
+			{
+				/* Objects */
+				do_cmd_knowledge_objects();
+				break;
+			}
+			case '3':
+			{
+				/* Kill count */
+				do_cmd_knowledge_kill_count();
+				break;
+			}
+			case '4':
+			{
+				/* Mutations */
+				do_cmd_knowledge_mutations();
+				break;
+			}
+			case '5':
+			{
+				/* Pets */
+				do_cmd_knowledge_pets();
+				break;
+			}
+			case '6':
+			{
+				/* Quests */
+				do_cmd_knowledge_quests();
+				break;
+			}
+			case '7':
+			{
+				/* Virtues */
+				do_cmd_knowledge_virtues();
+				break;
+			}
+			case '8':
+			{
+				/* Notes */
+				if (take_notes)
+					do_cmd_knowledge_notes();
+				else
+					bell("You have turned on note taking!");
+				break;
+			}
+			default:
+			{
+				/* Unknown option */
+				bell("Illegal command for knowledge!");
+			}
 		}
 
 		/* Flush messages */

@@ -419,11 +419,10 @@ void do_cmd_drop(void)
 static bool high_level_book(const object_type *o_ptr)
 {
 	if ((o_ptr->tval == TV_LIFE_BOOK) ||
-	    (o_ptr->tval == TV_SORCERY_BOOK) ||
-	    (o_ptr->tval == TV_NATURE_BOOK) ||
-	    (o_ptr->tval == TV_CHAOS_BOOK) ||
-	    (o_ptr->tval == TV_DEATH_BOOK) ||
-	    (o_ptr->tval == TV_TRUMP_BOOK))
+		(o_ptr->tval == TV_SORCERY_BOOK) ||
+		(o_ptr->tval == TV_NATURE_BOOK) ||
+		(o_ptr->tval == TV_CHAOS_BOOK) ||
+		(o_ptr->tval == TV_DEATH_BOOK) || (o_ptr->tval == TV_TRUMP_BOOK))
 	{
 		if (o_ptr->sval > 1)
 			return TRUE;

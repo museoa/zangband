@@ -1078,7 +1078,7 @@ static void create_cata_tunnel(int x, int y)
  * the surface.
  */
 static void short_seg_hack(int x1, int y1, int x2, int y2, int type, int count,
-						   bool * fail)
+						   bool *fail)
 {
 	int i, x, y;
 	int length;
@@ -2090,12 +2090,6 @@ bool generate_lake(int x0, int y0, int xsize, int ysize,
 		default: return FALSE;
 	}
 
-	/*
-	 * select region connected to center of cave system
-	 * this gets rid of alot of isolated one-sqaures that
-	 * can make teleport traps instadeaths...
-	 */
-
 	/* cutoffs */
 	fill_data.c1 = c1;
 	fill_data.c2 = c2;
@@ -2109,9 +2103,11 @@ bool generate_lake(int x0, int y0, int xsize, int ysize,
 	/* number of filled squares */
 	fill_data.amount = 0;
 
-	/* select region connected to center of cave system
-	  * this gets rid of alot of isolated one-sqaures that
-	  * can make teleport traps instadeaths... */
+	/*
+	 * Select region connected to center of cave system
+	 * this gets rid of alot of isolated one-sqaures that
+	 * can make teleport traps instadeaths...
+	 */
 	cave_fill(x0, y0);
 
 	/* if tally too small, try again */

@@ -882,66 +882,96 @@ bool identify_fully_aux(const object_type *o_ptr)
 	if (f1 & (TR1_STR))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your strength by %+i.", o_ptr->pval));
+		{
+			temp = string_make(format("It increases your strength by %+i.",
+									  o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your strength by %+i.", o_ptr->pval));
-		
+		{
+			temp = string_make(format("It decreases your strength by %+i.",
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_INT))
 	{
 		if (o_ptr->pval > 0)
+		{
 			temp = string_make(format("It increases your intelligence by %+i.",
-				 o_ptr->pval));
+									  o_ptr->pval));
+		}
 		else
+		{
 			temp = string_make(format("It decreases your intelligence by %+i.",
-				 o_ptr->pval));
-		
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_WIS))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your wisdom by %+i.", o_ptr->pval));
+		{
+			temp = string_make(format("It increases your wisdom by %+i.",
+									  o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your wisdom by %+i.", o_ptr->pval));
-		
+		{
+			temp = string_make(format("It decreases your wisdom by %+i.",
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_DEX))
 	{
 		if (o_ptr->pval > 0)
+		{
 			temp = string_make(format("It increases your dexterity by %+i.",
-				 o_ptr->pval));
+									  o_ptr->pval));
+		}
 		else
+		{
 			temp = string_make(format("It decreases your dexterity by %+i.",
-				 o_ptr->pval));
-		
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_CON))
 	{
 		if (o_ptr->pval > 0)
+		{
 			temp = string_make(format("It increases your constitution by %+i.",
-				 o_ptr->pval));
+									  o_ptr->pval));
+		}
 		else
+		{
 			temp = string_make(format("It decreases your constitution by %+i.",
-				 o_ptr->pval));
-		
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_CHR))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your charisma by %+i.", o_ptr->pval));
+		{
+			temp = string_make(format("It increases your charisma by %+i.",
+									  o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your charisma by %+i.", o_ptr->pval));
-		
+		{
+			temp = string_make(format("It decreases your charisma by %+i.",
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
@@ -949,68 +979,108 @@ bool identify_fully_aux(const object_type *o_ptr)
 	if (f1 & (TR1_STEALTH))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your stealth by %+i.", o_ptr->pval));
+		{
+			temp = string_make(format("It increases your stealth by %+i.",
+									  o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your stealth by %+i.", o_ptr->pval));
-		
+		{
+			temp = string_make(format("It decreases your stealth by %+i.",
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_SEARCH))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your searching ability by %+i.",
-				 o_ptr->pval));
+		{
+			temp =
+				string_make(format
+							("It increases your searching ability by %+i.",
+							 o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your searching ability by %+i.",
-				 o_ptr->pval));
-		
+		{
+			temp =
+				string_make(format
+							("It decreases your searching ability by %+i.",
+							 o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_INFRA))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your infravision by %i feet.",
-				 o_ptr->pval * 10));
+		{
+			temp =
+				string_make(format
+							("It increases your infravision by %i feet.",
+							 o_ptr->pval * 10));
+		}
 		else
-			temp = string_make(format("It decreases your infravision by %i feet.",
-				 -o_ptr->pval * 10));
-		
+		{
+			temp =
+				string_make(format
+							("It decreases your infravision by %i feet.",
+							 -o_ptr->pval * 10));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_TUNNEL))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your ability to dig by %+i.",
-				 o_ptr->pval));
+		{
+			temp =
+				string_make(format
+							("It increases your ability to dig by %+i.",
+							 o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your ability to dig by %+i.",
-				 o_ptr->pval));
-		
+		{
+			temp =
+				string_make(format
+							("It decreases your ability to dig by %+i.",
+							 o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_SPEED))
 	{
 		if (o_ptr->pval > 0)
-			temp = string_make(format("It increases your speed by %+i.", o_ptr->pval));
+		{
+			temp = string_make(format("It increases your speed by %+i.",
+									  o_ptr->pval));
+		}
 		else
-			temp = string_make(format("It decreases your speed by %+i.", o_ptr->pval));
-		
+		{
+			temp = string_make(format("It decreases your speed by %+i.",
+									  o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
 	if (f1 & (TR1_BLOWS))
 	{
 		if (o_ptr->pval > 0)
+		{
 			temp = string_make(format("It provides %i extra blows per turn.",
-				 o_ptr->pval));
+									  o_ptr->pval));
+		}
 		else
+		{
 			temp = string_make(format("It provides %i fewer blows per turn.",
-				 -o_ptr->pval));
-		
+									  -o_ptr->pval));
+		}
+
 		info[i++] = temp;
 		reclaim[num_reclaim++] = temp;
 	}
@@ -1523,19 +1593,71 @@ cptr mention_use(int i)
 	/* Examine the location */
 	switch (i)
 	{
-		case INVEN_WIELD: p = "Wielding"; break;
-		case INVEN_BOW:   p = "Shooting"; break;
-		case INVEN_LEFT:  p = "On left hand"; break;
-		case INVEN_RIGHT: p = "On right hand"; break;
-		case INVEN_NECK:  p = "Around neck"; break;
-		case INVEN_LITE:  p = "Light source"; break;
-		case INVEN_BODY:  p = "On body"; break;
-		case INVEN_OUTER: p = "About body"; break;
-		case INVEN_ARM:   p = "On arm"; break;
-		case INVEN_HEAD:  p = "On head"; break;
-		case INVEN_HANDS: p = "On hands"; break;
-		case INVEN_FEET:  p = "On feet"; break;
-		default:          p = "In pack"; break;
+		case INVEN_WIELD:
+		{
+			p = "Wielding";
+			break;
+		}
+		case INVEN_BOW:
+		{
+			p = "Shooting";
+			break;
+		}
+		case INVEN_LEFT:
+		{
+			p = "On left hand";
+			break;
+		}
+		case INVEN_RIGHT:
+		{
+			p = "On right hand";
+			break;
+		}
+		case INVEN_NECK:
+		{
+			p = "Around neck";
+			break;
+		}
+		case INVEN_LITE:
+		{
+			p = "Light source";
+			break;
+		}
+		case INVEN_BODY:
+		{
+			p = "On body";
+			break;
+		}
+		case INVEN_OUTER:
+		{
+			p = "About body";
+			break;
+		}
+		case INVEN_ARM:
+		{
+			p = "On arm";
+			break;
+		}
+		case INVEN_HEAD:
+		{
+			p = "On head";
+			break;
+		}
+		case INVEN_HANDS:
+		{
+			p = "On hands";
+			break;
+		}
+		case INVEN_FEET:
+		{
+			p = "On feet";
+			break;
+		}
+		default:
+		{
+			p = "In pack";
+			break;
+		}
 	}
 
 	/* Hack -- Heavy weapon */
@@ -1575,19 +1697,71 @@ cptr describe_use(int i)
 
 	switch (i)
 	{
-		case INVEN_WIELD: p = "attacking monsters with"; break;
-		case INVEN_BOW:   p = "shooting missiles with"; break;
-		case INVEN_LEFT:  p = "wearing on your left hand"; break;
-		case INVEN_RIGHT: p = "wearing on your right hand"; break;
-		case INVEN_NECK:  p = "wearing around your neck"; break;
-		case INVEN_LITE:  p = "using to light the way"; break;
-		case INVEN_BODY:  p = "wearing on your body"; break;
-		case INVEN_OUTER: p = "wearing on your back"; break;
-		case INVEN_ARM:   p = "wearing on your arm"; break;
-		case INVEN_HEAD:  p = "wearing on your head"; break;
-		case INVEN_HANDS: p = "wearing on your hands"; break;
-		case INVEN_FEET:  p = "wearing on your feet"; break;
-		default:          p = "carrying in your pack"; break;
+		case INVEN_WIELD:
+		{
+			p = "attacking monsters with";
+			break;
+		}
+		case INVEN_BOW:
+		{
+			p = "shooting missiles with";
+			break;
+		}
+		case INVEN_LEFT:
+		{
+			p = "wearing on your left hand";
+			break;
+		}
+		case INVEN_RIGHT:
+		{
+			p = "wearing on your right hand";
+			break;
+		}
+		case INVEN_NECK:
+		{
+			p = "wearing around your neck";
+			break;
+		}
+		case INVEN_LITE:
+		{
+			p = "using to light the way";
+			break;
+		}
+		case INVEN_BODY:
+		{
+			p = "wearing on your body";
+			break;
+		}
+		case INVEN_OUTER:
+		{
+			p = "wearing on your back";
+			break;
+		}
+		case INVEN_ARM:
+		{
+			p = "wearing on your arm";
+			break;
+		}
+		case INVEN_HEAD:
+		{
+			p = "wearing on your head";
+			break;
+		}
+		case INVEN_HANDS:
+		{
+			p = "wearing on your hands";
+			break;
+		}
+		case INVEN_FEET:
+		{
+			p = "wearing on your feet";
+			break;
+		}
+		default:
+		{
+			p = "carrying in your pack";
+			break;
+		}
 	}
 
 	/* Hack -- Heavy weapon */

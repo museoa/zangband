@@ -37,7 +37,7 @@
 
 typedef struct header header;
 
-typedef errr (*parse_info_txt_func)(char *buf, header *head);
+typedef errr(*parse_info_txt_func) (char *buf, header *head);
 
 /*
  * Template file header information (see "init.c").  16 bytes.
@@ -68,24 +68,24 @@ typedef errr (*parse_info_txt_func)(char *buf, header *head);
  */
 struct header
 {
-	byte v_major;		/* Version -- major */
-	byte v_minor;		/* Version -- minor */
-	byte v_patch;		/* Version -- patch */
-	byte v_extra;		/* Version -- extra */
+	byte v_major;	/* Version -- major */
+	byte v_minor;	/* Version -- minor */
+	byte v_patch;	/* Version -- patch */
+	byte v_extra;	/* Version -- extra */
 
 
-	u16b info_num;		/* Number of "info" records */
+	u16b info_num;	/* Number of "info" records */
 
-	u16b info_len;		/* Size of each "info" record */
+	u16b info_len;	/* Size of each "info" record */
 
 
-	u32b head_size;		/* Size of the "header" in bytes */
+	u32b head_size;	/* Size of the "header" in bytes */
 
-	u32b info_size;		/* Size of the "info" array in bytes */
+	u32b info_size;	/* Size of the "info" array in bytes */
 
-	u32b name_size;		/* Size of the "name" array in bytes */
+	u32b name_size;	/* Size of the "name" array in bytes */
 
-	u32b text_size;		/* Size of the "text" array in bytes */
+	u32b text_size;	/* Size of the "text" array in bytes */
 
 	void *info_ptr;
 	char *name_ptr;
@@ -95,7 +95,7 @@ struct header
 };
 
 extern errr init_info_txt(FILE *fp, char *buf, header *head,
-                          parse_info_txt_func parse_info_txt_line);
+						  parse_info_txt_func parse_info_txt_line);
 
 #ifdef ALLOW_TEMPLATES
 extern errr parse_z_info(char *buf, header *head);

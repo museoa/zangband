@@ -131,13 +131,13 @@
 /**** Available variables ****/
 
 /* Replacement hook for "rnfree()" */
-extern vptr (*rnfree_aux)(vptr);
+extern vptr (*rnfree_aux) (vptr);
 
 /* Replacement hook for "rpanic()" */
-extern vptr (*rpanic_aux)(huge);
+extern vptr (*rpanic_aux) (huge);
 
 /* Replacement hook for "ralloc()" */
-extern vptr (*ralloc_aux)(huge);
+extern vptr (*ralloc_aux) (huge);
 
 
 /**** Available functions ****/

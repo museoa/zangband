@@ -191,37 +191,161 @@ bool make_attack_normal(int m_idx)
 		/* Extract the attack "power" */
 		switch (effect)
 		{
-			case RBE_HURT:      power = 60; break;
-			case RBE_POISON:    power =  5; break;
-			case RBE_UN_BONUS:  power = 20; break;
-			case RBE_UN_POWER:  power = 15; break;
-			case RBE_EAT_GOLD:  power =  5; break;
-			case RBE_EAT_ITEM:  power =  5; break;
-			case RBE_EAT_FOOD:  power =  5; break;
-			case RBE_EAT_LITE:  power =  5; break;
-			case RBE_ACID:      power =  0; break;
-			case RBE_ELEC:      power = 10; break;
-			case RBE_FIRE:      power = 10; break;
-			case RBE_COLD:      power = 10; break;
-			case RBE_BLIND:     power =  2; break;
-			case RBE_CONFUSE:   power = 10; break;
-			case RBE_TERRIFY:   power = 10; break;
-			case RBE_PARALYZE:  power =  2; break;
-			case RBE_LOSE_STR:  power =  0; break;
-			case RBE_LOSE_DEX:  power =  0; break;
-			case RBE_LOSE_CON:  power =  0; break;
-			case RBE_LOSE_INT:  power =  0; break;
-			case RBE_LOSE_WIS:  power =  0; break;
-			case RBE_LOSE_CHR:  power =  0; break;
-			case RBE_LOSE_ALL:  power =  2; break;
-			case RBE_SHATTER:   power = 60; break;
-			case RBE_EXP_10:    power =  5; break;
-			case RBE_EXP_20:    power =  5; break;
-			case RBE_EXP_40:    power =  5; break;
-			case RBE_EXP_80:    power =  5; break;
-			case RBE_DISEASE:   power =  5; break;
-			case RBE_TIME:      power =  5; break;
-			case RBE_EXP_VAMP:  power =  5; break;
+			case RBE_HURT:
+			{
+				power = 60;
+				break;
+			}
+			case RBE_POISON:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_UN_BONUS:
+			{
+				power = 20;
+				break;
+			}
+			case RBE_UN_POWER:
+			{
+				power = 15;
+				break;
+			}
+			case RBE_EAT_GOLD:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EAT_ITEM:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EAT_FOOD:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EAT_LITE:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_ACID:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_ELEC:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_FIRE:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_COLD:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_BLIND:
+			{
+				power = 2;
+				break;
+			}
+			case RBE_CONFUSE:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_TERRIFY:
+			{
+				power = 10;
+				break;
+			}
+			case RBE_PARALYZE:
+			{
+				power = 2;
+				break;
+			}
+			case RBE_LOSE_STR:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_DEX:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_CON:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_INT:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_WIS:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_CHR:
+			{
+				power = 0;
+				break;
+			}
+			case RBE_LOSE_ALL:
+			{
+				power = 2;
+				break;
+			}
+			case RBE_SHATTER:
+			{
+				power = 60;
+				break;
+			}
+			case RBE_EXP_10:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_20:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_40:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_80:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_DISEASE:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_TIME:
+			{
+				power = 5;
+				break;
+			}
+			case RBE_EXP_VAMP:
+			{
+				power = 5;
+				break;
+			}
 		}
 
 
@@ -520,7 +644,7 @@ bool make_attack_normal(int m_idx)
 						if (!p_ptr->resist_disen)
 						{
 							/* Apply disenchantment */
-							if (apply_disenchant())obvious = TRUE;
+							if (apply_disenchant()) obvious = TRUE;
 						}
 
 						/* Learn about the player */
@@ -1122,11 +1246,14 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d = damroll(10, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
+							s32b d =
+								damroll(10,
+										6) +
+								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
 								msg_print("You feel your life slipping away!");
-								lose_exp(d/10);
+								lose_exp(d / 10);
 							}
 							else
 							{
@@ -1151,11 +1278,14 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d = damroll(20, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
+							s32b d =
+								damroll(20,
+										6) +
+								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
 								msg_print("You feel your life slipping away!");
-								lose_exp(d/10);
+								lose_exp(d / 10);
 							}
 							else
 							{
@@ -1180,11 +1310,14 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d = damroll(40, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
+							s32b d =
+								damroll(40,
+										6) +
+								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
 								msg_print("You feel your life slipping away!");
-								lose_exp(d/10);
+								lose_exp(d / 10);
 							}
 							else
 							{
@@ -1209,11 +1342,14 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d = damroll(80, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
+							s32b d =
+								damroll(80,
+										6) +
+								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
 								msg_print("You feel your life slipping away!");
-								lose_exp(d/10);
+								lose_exp(d / 10);
 							}
 							else
 							{
@@ -1232,7 +1368,8 @@ bool make_attack_normal(int m_idx)
 						/* Take "poison" effect */
 						if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 						{
-							if (set_poisoned(p_ptr->poisoned + randint1(rlev) + 5))
+							if (set_poisoned
+								(p_ptr->poisoned + randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
@@ -1243,7 +1380,8 @@ bool make_attack_normal(int m_idx)
 						{
 							/* 1% chance for perm. damage */
 							bool perm = (one_in_(10));
-							if (dec_stat(A_CON, randint1(10), perm)) obvious = TRUE;
+							if (dec_stat(A_CON, randint1(10), perm)) obvious =
+									TRUE;
 						}
 
 						break;
@@ -1252,43 +1390,75 @@ bool make_attack_normal(int m_idx)
 					{
 						switch (randint1(10))
 						{
-							case 1: case 2: case 3: case 4: case 5:
+							case 1:  case 2:  case 3:  case 4:  case 5:
 							{
 								msg_print("You feel life has clocked back.");
-								lose_exp(100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+								lose_exp(100 +
+										 (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 								break;
 							}
 
-							case 6: case 7: case 8: case 9:
+							case 6:  case 7:  case 8:  case 9:
 							{
 								int stat = randint0(6);
 
 								switch (stat)
 								{
-									case A_STR: act = "strong"; break;
-									case A_INT: act = "bright"; break;
-									case A_WIS: act = "wise"; break;
-									case A_DEX: act = "agile"; break;
-									case A_CON: act = "hale"; break;
-									case A_CHR: act = "beautiful"; break;
+									case A_STR:
+									{
+										act = "strong";
+										break;
+									}
+									case A_INT:
+									{
+										act = "bright";
+										break;
+									}
+									case A_WIS:
+									{
+										act = "wise";
+										break;
+									}
+									case A_DEX:
+									{
+										act = "agile";
+										break;
+									}
+									case A_CON:
+									{
+										act = "hale";
+										break;
+									}
+									case A_CHR:
+									{
+										act = "beautiful";
+										break;
+									}
 								}
 
-								msg_format("You're not as %s as you used to be...", act);
+								msg_format
+									("You're not as %s as you used to be...",
+									 act);
 
-								p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 3) / 4;
-								if (p_ptr->stat_cur[stat] < 3) p_ptr->stat_cur[stat] = 3;
+								p_ptr->stat_cur[stat] =
+									(p_ptr->stat_cur[stat] * 3) / 4;
+								if (p_ptr->stat_cur[stat] <
+									3) p_ptr->stat_cur[stat] = 3;
 								p_ptr->update |= (PU_BONUS);
 								break;
 							}
 
 							case 10:
 							{
-								msg_print("You're not as powerful as you used to be...");
+								msg_print
+									("You're not as powerful as you used to be...");
 
 								for (k = 0; k < A_MAX; k++)
 								{
-									p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
-									if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
+									p_ptr->stat_cur[k] =
+										(p_ptr->stat_cur[k] * 3) / 4;
+									if (p_ptr->stat_cur[k] <
+										3) p_ptr->stat_cur[k] = 3;
 								}
 								p_ptr->update |= (PU_BONUS);
 								break;
@@ -1313,7 +1483,10 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							s32b d = damroll(60, 6) + (p_ptr->exp / 100) * MON_DRAIN_LIFE;
+							s32b d =
+								damroll(60,
+										6) +
+								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
 							if (p_ptr->hold_life)
 							{
 								msg_print("You feel your life slipping away!");
@@ -1383,18 +1556,50 @@ bool make_attack_normal(int m_idx)
 				/* Roll for damage */
 				switch (tmp)
 				{
-					case 0: k = 0; break;
-					case 1: k = randint1(5); break;
-					case 2: k = rand_range(5, 10); break;
-					case 3: k = rand_range(20, 40); break;
-					case 4: k = rand_range(50, 100); break;
-					case 5: k = rand_range(100, 200); break;
-					case 6: k = 300; break;
-					default: k = 500; break;
+					case 0:
+					{
+						k = 0;
+						break;
+					}
+					case 1:
+					{
+						k = randint1(5);
+						break;
+					}
+					case 2:
+					{
+						k = rand_range(5, 10);
+						break;
+					}
+					case 3:
+					{
+						k = rand_range(20, 40);
+						break;
+					}
+					case 4:
+					{
+						k = rand_range(50, 100);
+						break;
+					}
+					case 5:
+					{
+						k = rand_range(100, 200);
+						break;
+					}
+					case 6:
+					{
+						k = 300;
+						break;
+					}
+					default:
+					{
+						k = 500;
+						break;
+					}
 				}
 
 				/* Apply the cut */
-				if (k) (void)set_cut(p_ptr->cut + k);
+				if (k) (void) set_cut(p_ptr->cut + k);
 			}
 
 			/* Handle stun */
@@ -1406,18 +1611,50 @@ bool make_attack_normal(int m_idx)
 				/* Roll for damage */
 				switch (tmp)
 				{
-					case 0: k = 0; break;
-					case 1: k = randint1(5); break;
-					case 2: k = rand_range(10, 20); break;
-					case 3: k = rand_range(20, 40); break;
-					case 4: k = rand_range(30, 60); break;
-					case 5: k = rand_range(40, 80); break;
-					case 6: k = 100; break;
-					default: k = 200; break;
+					case 0:
+					{
+						k = 0;
+						break;
+					}
+					case 1:
+					{
+						k = randint1(5);
+						break;
+					}
+					case 2:
+					{
+						k = rand_range(10, 20);
+						break;
+					}
+					case 3:
+					{
+						k = rand_range(20, 40);
+						break;
+					}
+					case 4:
+					{
+						k = rand_range(30, 60);
+						break;
+					}
+					case 5:
+					{
+						k = rand_range(40, 80);
+						break;
+					}
+					case 6:
+					{
+						k = 100;
+						break;
+					}
+					default:
+					{
+						k = 200;
+						break;
+					}
 				}
 
 				/* Apply the stun */
-				if (k) (void)set_stun(p_ptr->stun + k);
+				if (k) (void) set_stun(p_ptr->stun + k);
 			}
 
 			if (explode)
@@ -1504,18 +1741,19 @@ bool make_attack_normal(int m_idx)
 				case RBM_CRUSH:
 				case RBM_ENGULF:
 				case RBM_CHARGE:
-
-				/* Visible monsters */
-				if (m_ptr->ml)
 				{
-					/* Disturbing */
-					disturb(TRUE);
+					/* Visible monsters */
+					if (m_ptr->ml)
+					{
+						/* Disturbing */
+						disturb(TRUE);
 
-					/* Message */
-					msg_format("%^s misses you.", m_name);
+						/* Message */
+						msg_format("%^s misses you.", m_name);
+					}
+
+					break;
 				}
-
-				break;
 			}
 		}
 

@@ -518,7 +518,7 @@ static bool do_cmd_open_chest(int x, int y, s16b o_idx)
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite())i = i / 10;
+		if (p_ptr->blind || no_lite()) i = i / 10;
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Extract the difficulty */
@@ -585,7 +585,7 @@ int count_traps(int *x, int *y, bool under)
 {
 	int d;
 	int xx, yy;
-	int count = 0;				/* Count how many matches */
+	int count = 0;	/* Count how many matches */
 
 	/* Check around (and under) the character */
 	for (d = 0; d < 9; d++)
@@ -619,11 +619,11 @@ int count_traps(int *x, int *y, bool under)
 /*
  * Return the number of doors around (or under) the character.
  */
-static int count_doors(int *x, int *y, bool(*test) (int feat), bool under)
+static int count_doors(int *x, int *y, bool (*test) (int feat), bool under)
 {
 	int d;
 	int xx, yy;
-	int count = 0;				/* Count how many matches */
+	int count = 0;	/* Count how many matches */
 
 	/* Check around (and under) the character */
 	for (d = 0; d < 9; d++)
@@ -710,7 +710,12 @@ static int count_chests(int *x, int *y, bool trapped)
  */
 static int coords_to_dir(int x, int y)
 {
-	int d[3][3] = { {7, 4, 1}, {8, 5, 2}, {9, 6, 3} };
+	int d[3][3] =
+	{
+		{7, 4, 1},
+		{8, 5, 2},
+		{9, 6, 3}
+	};
 	int dy = y - p_ptr->py;
 	int dx = x - p_ptr->px;
 
@@ -761,7 +766,7 @@ bool do_cmd_open_aux(int x, int y)
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite())i = i / 10;
+		if (p_ptr->blind || no_lite()) i = i / 10;
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Success? */
@@ -1586,7 +1591,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	i = p_ptr->skill_dis;
 
 	/* Penalize some conditions */
-	if (p_ptr->blind || no_lite())i = i / 10;
+	if (p_ptr->blind || no_lite()) i = i / 10;
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
@@ -2906,9 +2911,10 @@ void do_cmd_throw_aux(int mult)
 	 * other items. -LM-
 	 */
 	if (f2 & (TR2_THROW)) chance = ((p_ptr->skill_tht) +
-		((p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ));
-	else chance = ((3 * p_ptr->skill_tht / 2) +
-		(q_ptr->to_h * BTH_PLUS_ADJ));
+									((p_ptr->to_h +
+									  q_ptr->to_h) * BTH_PLUS_ADJ));
+	else
+		chance = ((3 * p_ptr->skill_tht / 2) + (q_ptr->to_h * BTH_PLUS_ADJ));
 
 
 	/* Take a turn */
@@ -2936,7 +2942,7 @@ void do_cmd_throw_aux(int mult)
 
 
 	/* Travel until stopped */
-	for (cur_dis = 0; cur_dis <= tdis; )
+	for (cur_dis = 0; cur_dis <= tdis;)
 	{
 		/* Hack -- Stop at the target */
 		if ((y == ty) && (x == tx)) break;

@@ -796,39 +796,135 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		/* Brute force: split on the possibilities */
 		switch (kind + (mode & 0x07))
 		{
-			/* Neuter, or unknown */
-			case 0x00: res = "it"; break;
-			case 0x01: res = "it"; break;
-			case 0x02: res = "its"; break;
-			case 0x03: res = "itself"; break;
-			case 0x04: res = "something"; break;
-			case 0x05: res = "something"; break;
-			case 0x06: res = "something's"; break;
-			case 0x07: res = "itself"; break;
+				/*** Neuter, or unknown ***/
+			case 0x00:
+			{
+				res = "it";
+				break;
+			}
+			case 0x01:
+			{
+				res = "it";
+				break;
+			}
+			case 0x02:
+			{
+				res = "its";
+				break;
+			}
+			case 0x03:
+			{
+				res = "itself";
+				break;
+			}
+			case 0x04:
+			{
+				res = "something";
+				break;
+			}
+			case 0x05:
+			{
+				res = "something";
+				break;
+			}
+			case 0x06:
+			{
+				res = "something's";
+				break;
+			}
+			case 0x07:
+			{
+				res = "itself";
+				break;
+			}
 
-			/* Male (assume human if vague) */
-			case 0x10: res = "he"; break;
-			case 0x11: res = "him"; break;
-			case 0x12: res = "his"; break;
-			case 0x13: res = "himself"; break;
-			case 0x14: res = "someone"; break;
-			case 0x15: res = "someone"; break;
-			case 0x16: res = "someone's"; break;
-			case 0x17: res = "himself"; break;
+				/*** Male (assume human if vague) ***/
+			case 0x10:
+			{
+				res = "he";
+				break;
+			}
+			case 0x11:
+			{
+				res = "him";
+				break;
+			}
+			case 0x12:
+			{
+				res = "his";
+				break;
+			}
+			case 0x13:
+			{
+				res = "himself";
+				break;
+			}
+			case 0x14:
+			{
+				res = "someone";
+				break;
+			}
+			case 0x15:
+			{
+				res = "someone";
+				break;
+			}
+			case 0x16:
+			{
+				res = "someone's";
+				break;
+			}
+			case 0x17:
+			{
+				res = "himself";
+				break;
+			}
 
-			/* Female (assume human if vague) */
-			case 0x20: res = "she"; break;
-			case 0x21: res = "her"; break;
-			case 0x22: res = "her"; break;
-			case 0x23: res = "herself"; break;
-			case 0x24: res = "someone"; break;
-			case 0x25: res = "someone"; break;
-			case 0x26: res = "someone's"; break;
-			case 0x27: res = "herself"; break;
+				/*** Female (assume human if vague) ***/
+			case 0x20:
+			{
+				res = "she";
+				break;
+			}
+			case 0x21:
+			{
+				res = "her";
+				break;
+			}
+			case 0x22:
+			{
+				res = "her";
+				break;
+			}
+			case 0x23:
+			{
+				res = "herself";
+				break;
+			}
+			case 0x24:
+			{
+				res = "someone";
+				break;
+			}
+			case 0x25:
+			{
+				res = "someone";
+				break;
+			}
+			case 0x26:
+			{
+				res = "someone's";
+				break;
+			}
+			case 0x27:
+			{
+				res = "herself";
+				break;
+			}
 		}
 
 		/* Copy the result */
-		(void)strcpy(desc, res);
+		(void) strcpy(desc, res);
 	}
 
 
@@ -959,7 +1055,7 @@ void update_mon_vis(u16b r_idx, int increment)
 	/* Paranoia */
 #if 0
 	if (!r_ptr->r_see && (increment == -1)) core("Monster visibility error!");
-#else /* 0 */
+#else  /* 0 */
 	/* Ignore the bug, until we know what is really going on. */
 	if (!r_ptr->r_see && (increment == -1)) return;
 #endif /* 0 */
@@ -2855,90 +2951,109 @@ void update_smart_learn(int m_idx, int what)
 	switch (what)
 	{
 		case DRS_ACID:
+		{
 			if (p_ptr->resist_acid) m_ptr->smart |= (SM_RES_ACID);
 			if (p_ptr->oppose_acid) m_ptr->smart |= (SM_OPP_ACID);
 			if (p_ptr->immune_acid) m_ptr->smart |= (SM_IMM_ACID);
 			break;
-
+		}
 		case DRS_ELEC:
+		{
 			if (p_ptr->resist_elec) m_ptr->smart |= (SM_RES_ELEC);
 			if (p_ptr->oppose_elec) m_ptr->smart |= (SM_OPP_ELEC);
 			if (p_ptr->immune_elec) m_ptr->smart |= (SM_IMM_ELEC);
 			break;
-
+		}
 		case DRS_FIRE:
+		{
 			if (p_ptr->resist_fire) m_ptr->smart |= (SM_RES_FIRE);
 			if (p_ptr->oppose_fire) m_ptr->smart |= (SM_OPP_FIRE);
 			if (p_ptr->immune_fire) m_ptr->smart |= (SM_IMM_FIRE);
 			break;
-
+		}
 		case DRS_COLD:
+		{
 			if (p_ptr->resist_cold) m_ptr->smart |= (SM_RES_COLD);
 			if (p_ptr->oppose_cold) m_ptr->smart |= (SM_OPP_COLD);
 			if (p_ptr->immune_cold) m_ptr->smart |= (SM_IMM_COLD);
 			break;
-
+		}
 		case DRS_POIS:
+		{
 			if (p_ptr->resist_pois) m_ptr->smart |= (SM_RES_POIS);
 			if (p_ptr->oppose_pois) m_ptr->smart |= (SM_OPP_POIS);
 			break;
-
-
+		}
 		case DRS_NETH:
+		{
 			if (p_ptr->resist_nethr) m_ptr->smart |= (SM_RES_NETH);
 			break;
-
+		}
 		case DRS_LITE:
+		{
 			if (p_ptr->resist_lite) m_ptr->smart |= (SM_RES_LITE);
 			break;
-
+		}
 		case DRS_DARK:
+		{
 			if (p_ptr->resist_dark) m_ptr->smart |= (SM_RES_DARK);
 			break;
-
+		}
 		case DRS_FEAR:
+		{
 			if (p_ptr->resist_fear) m_ptr->smart |= (SM_RES_FEAR);
 			break;
-
+		}
 		case DRS_CONF:
+		{
 			if (p_ptr->resist_confu) m_ptr->smart |= (SM_RES_CONF);
 			break;
-
+		}
 		case DRS_CHAOS:
+		{
 			if (p_ptr->resist_chaos) m_ptr->smart |= (SM_RES_CHAOS);
 			break;
-
+		}
 		case DRS_DISEN:
+		{
 			if (p_ptr->resist_disen) m_ptr->smart |= (SM_RES_DISEN);
 			break;
-
+		}
 		case DRS_BLIND:
+		{
 			if (p_ptr->resist_blind) m_ptr->smart |= (SM_RES_BLIND);
 			break;
-
+		}
 		case DRS_NEXUS:
+		{
 			if (p_ptr->resist_nexus) m_ptr->smart |= (SM_RES_NEXUS);
 			break;
-
+		}
 		case DRS_SOUND:
+		{
 			if (p_ptr->resist_sound) m_ptr->smart |= (SM_RES_SOUND);
 			break;
-
+		}
 		case DRS_SHARD:
+		{
 			if (p_ptr->resist_shard) m_ptr->smart |= (SM_RES_SHARD);
 			break;
-
+		}
 		case DRS_FREE:
+		{
 			if (p_ptr->free_act) m_ptr->smart |= (SM_IMM_FREE);
 			break;
-
+		}
 		case DRS_MANA:
+		{
 			if (!p_ptr->msp) m_ptr->smart |= (SM_IMM_MANA);
 			break;
-
+		}
 		case DRS_REFLECT:
+		{
 			if (p_ptr->reflect) m_ptr->smart |= (SM_IMM_REFLECT);
 			break;
+		}
 	}
 }
 

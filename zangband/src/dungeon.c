@@ -745,7 +745,7 @@ void notice_lite_change(object_type *o_ptr)
 	{
 		disturb(FALSE);
 		msg_print("Your light has gone out!");
-		
+
 		/* Calculate torch radius */
 		p_ptr->update |= (PU_TORCH);
 	}
@@ -784,7 +784,7 @@ bool psychometry(void)
 	q = "Meditate on which item? ";
 	s = "You have nothing appropriate.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-			return (FALSE);
+		return (FALSE);
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -1503,28 +1503,28 @@ static void process_world(void)
 
 
 	/*** Timeout Various Things ***/
-	if (p_ptr->image)		(void)set_image(p_ptr->image - 1);
-	if (p_ptr->blind)		(void)set_blind(p_ptr->blind - 1);
-	if (p_ptr->tim_invis)	(void)set_tim_invis(p_ptr->tim_invis - 1);
-	if (p_ptr->tim_esp)		(void)set_tim_esp(p_ptr->tim_esp - 1);
-	if (p_ptr->tim_infra)	(void)set_tim_infra(p_ptr->tim_infra - 1);
-	if (p_ptr->paralyzed)	(void)set_paralyzed(p_ptr->paralyzed - 1);
-	if (p_ptr->confused)	(void)set_confused(p_ptr->confused - 1);
-	if (p_ptr->afraid)		(void)set_afraid(p_ptr->afraid - 1);
-	if (p_ptr->fast)		(void)set_fast(p_ptr->fast - 1);
-	if (p_ptr->slow)		(void)set_slow(p_ptr->slow - 1);
-	if (p_ptr->protevil)	(void)set_protevil(p_ptr->protevil - 1);
-	if (p_ptr->invuln)		(void)set_invuln(p_ptr->invuln - 1);
-	if (p_ptr->wraith_form)	(void)set_wraith_form(p_ptr->wraith_form - 1);
-	if (p_ptr->hero)		(void)set_hero(p_ptr->hero - 1);
-	if (p_ptr->shero)		(void)set_shero(p_ptr->shero - 1);
-	if (p_ptr->blessed)		(void)set_blessed(p_ptr->blessed - 1);
-	if (p_ptr->shield)		(void)set_shield(p_ptr->shield - 1);
-	if (p_ptr->oppose_acid)	(void)set_oppose_acid(p_ptr->oppose_acid - 1);
-	if (p_ptr->oppose_elec)	(void)set_oppose_elec(p_ptr->oppose_elec - 1);
-	if (p_ptr->oppose_fire)	(void)set_oppose_fire(p_ptr->oppose_fire - 1);
-	if (p_ptr->oppose_cold)	(void)set_oppose_cold(p_ptr->oppose_cold - 1);
-	if (p_ptr->oppose_pois)	(void)set_oppose_pois(p_ptr->oppose_pois - 1);
+	if (p_ptr->image) (void) set_image(p_ptr->image - 1);
+	if (p_ptr->blind) (void) set_blind(p_ptr->blind - 1);
+	if (p_ptr->tim_invis) (void) set_tim_invis(p_ptr->tim_invis - 1);
+	if (p_ptr->tim_esp) (void) set_tim_esp(p_ptr->tim_esp - 1);
+	if (p_ptr->tim_infra) (void) set_tim_infra(p_ptr->tim_infra - 1);
+	if (p_ptr->paralyzed) (void) set_paralyzed(p_ptr->paralyzed - 1);
+	if (p_ptr->confused) (void) set_confused(p_ptr->confused - 1);
+	if (p_ptr->afraid) (void) set_afraid(p_ptr->afraid - 1);
+	if (p_ptr->fast) (void) set_fast(p_ptr->fast - 1);
+	if (p_ptr->slow) (void) set_slow(p_ptr->slow - 1);
+	if (p_ptr->protevil) (void) set_protevil(p_ptr->protevil - 1);
+	if (p_ptr->invuln) (void) set_invuln(p_ptr->invuln - 1);
+	if (p_ptr->wraith_form) (void) set_wraith_form(p_ptr->wraith_form - 1);
+	if (p_ptr->hero) (void) set_hero(p_ptr->hero - 1);
+	if (p_ptr->shero) (void) set_shero(p_ptr->shero - 1);
+	if (p_ptr->blessed) (void) set_blessed(p_ptr->blessed - 1);
+	if (p_ptr->shield) (void) set_shield(p_ptr->shield - 1);
+	if (p_ptr->oppose_acid) (void) set_oppose_acid(p_ptr->oppose_acid - 1);
+	if (p_ptr->oppose_elec) (void) set_oppose_elec(p_ptr->oppose_elec - 1);
+	if (p_ptr->oppose_fire) (void) set_oppose_fire(p_ptr->oppose_fire - 1);
+	if (p_ptr->oppose_cold) (void) set_oppose_cold(p_ptr->oppose_cold - 1);
+	if (p_ptr->oppose_pois) (void) set_oppose_pois(p_ptr->oppose_pois - 1);
 
 
 	/*** Poison and Stun and Cut ***/
@@ -1670,11 +1670,11 @@ static void process_world(void)
 				{
 					/* Recharge */
 					o_ptr->timeout--;
-					
+
 					if (!o_ptr->timeout)
 					{
 						recharged_notice(o_ptr);
-	
+
 						/* Window stuff */
 						p_ptr->window |= (PW_EQUIP);
 					}
@@ -1683,18 +1683,18 @@ static void process_world(void)
 				{
 					/* Normal lights that are not everburning */
 					o_ptr->timeout--;
-					
+
 					/* Notice interesting fuel steps */
 					notice_lite_change(o_ptr);
 				}
 			}
 
 			/* Notice changes */
-			else 
+			else
 			{
 				/* Recharge */
 				o_ptr->timeout--;
-				
+
 				if (!o_ptr->timeout)
 				{
 					recharged_notice(o_ptr);
@@ -1985,24 +1985,24 @@ static void process_command(void)
 	/* Parse the command */
 	switch (p_ptr->command_cmd)
 	{
-		/* Ignore */
 		case ESCAPE:
 		case ' ':
 		{
+			/* Ignore */
 			break;
 		}
 
-		/* Ignore return */
 		case '\r':
 		{
+			/* Ignore return */
 			break;
 		}
 
 		/*** Wizard Commands ***/
 
-		/* Toggle Wizard Mode */
 		case KTRL('W'):
 		{
+			/* Toggle Wizard Mode */
 			if (p_ptr->wizard)
 			{
 				p_ptr->wizard = FALSE;
@@ -2026,7 +2026,6 @@ static void process_command(void)
 
 #ifdef ALLOW_WIZARD
 
-		/* Special "debug" commands */
 		case KTRL('A'):
 		{
 			/* Enter debug mode */
@@ -2042,7 +2041,6 @@ static void process_command(void)
 
 #ifdef ALLOW_BORG
 
-		/* Special "borg" commands */
 		case KTRL('Z'):
 		{
 			/* Enter borg mode */
@@ -2060,44 +2058,44 @@ static void process_command(void)
 
 		/*** Inventory Commands ***/
 
-		/* Wear/wield equipment */
 		case 'w':
 		{
+			/* Wear/wield equipment */
 			do_cmd_wield();
 			break;
 		}
 
-		/* Take off equipment */
 		case 't':
 		{
+			/* Take off equipment */
 			do_cmd_takeoff();
 			break;
 		}
 
-		/* Drop an item */
 		case 'd':
 		{
+			/* Drop an item */
 			do_cmd_drop();
 			break;
 		}
 
-		/* Destroy an item */
 		case 'k':
 		{
+			/* Destroy an item */
 			do_cmd_destroy();
 			break;
 		}
 
-		/* Equipment list */
 		case 'e':
 		{
+			/* Equipment list */
 			do_cmd_equip();
 			break;
 		}
 
-		/* Inventory list */
 		case 'i':
 		{
+			/* Inventory list */
 			do_cmd_inven();
 			break;
 		}
@@ -2105,16 +2103,16 @@ static void process_command(void)
 
 		/*** Various commands ***/
 
-		/* Identify an object */
 		case 'I':
 		{
+			/* Identify an object */
 			do_cmd_observe();
 			break;
 		}
 
-		/* Hack -- toggle windows */
 		case KTRL('I'):
 		{
+			/* Hack -- toggle windows */
 			toggle_inven_equip();
 			break;
 		}
@@ -2122,30 +2120,30 @@ static void process_command(void)
 
 		/*** Standard "Movement" Commands ***/
 
-		/* Alter a grid */
 		case '+':
 		{
+			/* Alter a grid */
 			do_cmd_alter();
 			break;
 		}
 
-		/* Dig a tunnel */
 		case 'T':
 		{
+			/* Dig a tunnel */
 			do_cmd_tunnel();
 			break;
 		}
 
-		/* Move (usually pick up things) */
 		case ';':
 		{
+			/* Move (usually pick up things) */
 			do_cmd_walk(FALSE);
 			break;
 		}
 
-		/* Move (usually do not pick up) */
 		case '-':
 		{
+			/* Move (usually do not pick up) */
 			do_cmd_walk(TRUE);
 			break;
 		}
@@ -2153,44 +2151,44 @@ static void process_command(void)
 
 		/*** Running, Resting, Searching, Staying */
 
-		/* Begin Running -- Arg is Max Distance */
 		case '.':
 		{
+			/* Begin Running -- Arg is Max Distance */
 			do_cmd_run();
 			break;
 		}
 
-		/* Stay still (usually pick things up) */
 		case ',':
 		{
+			/* Stay still (usually pick things up) */
 			do_cmd_stay(always_pickup);
 			break;
 		}
 
-		/* Stay still (usually do not pick up) */
 		case 'g':
 		{
+			/* Stay still (usually do not pick up) */
 			do_cmd_stay(!always_pickup);
 			break;
 		}
 
-		/* Rest -- Arg is time */
 		case 'R':
 		{
+			/* Rest -- Arg is time */
 			do_cmd_rest();
 			break;
 		}
 
-		/* Search for traps/doors */
 		case 's':
 		{
+			/* Search for traps/doors */
 			do_cmd_search();
 			break;
 		}
 
-		/* Toggle search mode */
 		case 'S':
 		{
+			/* Toggle search mode */
 			do_cmd_toggle_search();
 			break;
 		}
@@ -2198,44 +2196,44 @@ static void process_command(void)
 
 		/*** Stairs and Doors and Chests and Traps ***/
 
-		/* Go up staircase */
 		case '<':
 		{
+			/* Go up staircase */
 			do_cmd_go_up();
 			break;
 		}
 
-		/* Go down staircase */
 		case '>':
 		{
+			/* Go down staircase */
 			do_cmd_go_down();
 			break;
 		}
 
-		/* Open a door or chest */
 		case 'o':
 		{
+			/* Open a door or chest */
 			do_cmd_open();
 			break;
 		}
 
-		/* Close a door */
 		case 'c':
 		{
+			/* Close a door */
 			do_cmd_close();
 			break;
 		}
 
-		/* Jam a door with spikes */
 		case 'j':
 		{
+			/* Jam a door with spikes */
 			do_cmd_spike();
 			break;
 		}
 
-		/* Disarm a trap or chest */
 		case 'D':
 		{
+			/* Disarm a trap or chest */
 			do_cmd_disarm();
 			break;
 		}
@@ -2243,24 +2241,23 @@ static void process_command(void)
 
 		/*** Magic and Prayers ***/
 
-		/* Gain new spells/prayers */
 		case 'G':
 		{
+			/* Gain new spells/prayers */
 			do_cmd_study();
 			break;
 		}
 
-		/* Browse a book */
 		case 'b':
 		{
+			/* Browse a book */
 			do_cmd_browse();
 			break;
 		}
 
-		/* Cast a spell */
 		case 'm':
 		{
-			
+			/* Cast a spell */
 			if (p_ptr->anti_magic)
 			{
 				cptr which_power = "magic";
@@ -2285,74 +2282,74 @@ static void process_command(void)
 			break;
 		}
 
-		/* Issue a pet command */
 		case 'p':
 		{
+			/* Issue a pet command */
 			do_cmd_pet();
 			break;
 		}
 
 		/*** Use various objects ***/
 
-		/* Inscribe an object */
 		case '{':
 		{
+			/* Inscribe an object */
 			do_cmd_inscribe();
 			break;
 		}
 
-		/* Uninscribe an object */
 		case '}':
 		{
+			/* Uninscribe an object */
 			do_cmd_uninscribe();
 			break;
 		}
 
-		/* Activate an artifact */
 		case 'A':
 		{
+			/* Activate an artifact */
 			do_cmd_activate();
 			break;
 		}
 
-		/* Eat some food */
 		case 'E':
 		{
+			/* Eat some food */
 			do_cmd_eat_food();
 			break;
 		}
 
-		/* Fuel your lantern/torch */
 		case 'F':
 		{
+			/* Fuel your lantern/torch */
 			do_cmd_refill();
 			break;
 		}
 
-		/* Fire an item */
 		case 'f':
 		{
+			/* Fire an item */
 			do_cmd_fire();
 			break;
 		}
 
-		/* Throw an item */
 		case 'v':
 		{
+			/* Throw an item */
 			do_cmd_throw();
 			break;
 		}
 
-		/* Aim a wand */
 		case 'a':
 		{
+			/* Aim a wand */
 			do_cmd_aim_wand();
 			break;
 		}
 
-		/* Zap a rod */
 		case 'z':
 		{
+			/* Zap a rod */
 			if (use_command && rogue_like_commands)
 			{
 				do_cmd_use();
@@ -2364,23 +2361,23 @@ static void process_command(void)
 			break;
 		}
 
-		/* Quaff a potion */
 		case 'q':
 		{
+			/* Quaff a potion */
 			do_cmd_quaff_potion();
 			break;
 		}
 
-		/* Read a scroll */
 		case 'r':
 		{
+			/* Read a scroll */
 			do_cmd_read_scroll();
 			break;
 		}
 
-		/* Use a staff */
 		case 'u':
 		{
+			/* Use a staff */
 			if (use_command && !rogue_like_commands)
 			{
 				do_cmd_use();
@@ -2392,9 +2389,9 @@ static void process_command(void)
 			break;
 		}
 
-		/* Use racial power */
 		case 'U':
 		{
+			/* Use racial power */
 			do_cmd_racial_power();
 			break;
 		}
@@ -2402,30 +2399,30 @@ static void process_command(void)
 
 		/*** Looking at Things (nearby or on map) ***/
 
-		/* Full dungeon map */
 		case 'M':
 		{
+			/* Full dungeon map */
 			do_cmd_view_map();
 			break;
 		}
 
-		/* Locate player on map */
 		case 'L':
 		{
+			/* Locate player on map */
 			do_cmd_locate();
 			break;
 		}
 
-		/* Look around */
 		case 'l':
 		{
+			/* Look around */
 			do_cmd_look();
 			break;
 		}
 
-		/* Target monster or location */
 		case '*':
 		{
+			/* Target monster or location */
 			do_cmd_target();
 			break;
 		}
@@ -2434,23 +2431,23 @@ static void process_command(void)
 
 		/*** Help and Such ***/
 
-		/* Help */
 		case '?':
 		{
+			/* Help */
 			do_cmd_help();
 			break;
 		}
 
-		/* Identify symbol */
 		case '/':
 		{
+			/* Identify symbol */
 			do_cmd_query_symbol();
 			break;
 		}
 
-		/* Character description */
 		case 'C':
 		{
+			/* Character description */
 			do_cmd_character();
 			break;
 		}
@@ -2458,44 +2455,44 @@ static void process_command(void)
 
 		/*** System Commands ***/
 
-		/* Hack -- User interface */
 		case '!':
 		{
-			(void)Term_user(0);
+			/* Hack -- User interface */
+			(void) Term_user(0);
 			break;
 		}
 
-		/* Single line from a pref file */
 		case '"':
 		{
+			/* Single line from a pref file */
 			do_cmd_pref();
 			break;
 		}
 
-		/* Interact with macros */
 		case '@':
 		{
+			/* Interact with macros */
 			do_cmd_macros();
 			break;
 		}
 
-		/* Interact with visuals */
 		case '%':
 		{
+			/* Interact with visuals */
 			do_cmd_visuals();
 			break;
 		}
 
-		/* Interact with colors */
 		case '&':
 		{
+			/* Interact with colors */
 			do_cmd_colors();
 			break;
 		}
 
-		/* Interact with options */
 		case '=':
 		{
+			/* Interact with options */
 			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 			do_cmd_redraw();
 			break;
@@ -2504,60 +2501,60 @@ static void process_command(void)
 
 		/*** Misc Commands ***/
 
-		/* Take notes */
 		case ':':
 		{
+			/* Take notes */
 			do_cmd_note();
 			break;
 		}
 
-		/* Version info */
 		case 'V':
 		{
+			/* Version info */
 			do_cmd_version();
 			break;
 		}
 
-		/* Repeat level feeling */
 		case KTRL('F'):
 		{
+			/* Repeat level feeling */
 			do_cmd_feeling();
 			break;
 		}
 
-		/* Show previous message */
 		case KTRL('O'):
 		{
+			/* Show previous message */
 			do_cmd_message_one();
 			break;
 		}
 
-		/* Show previous messages */
 		case KTRL('P'):
 		{
+			/* Show previous messages */
 			do_cmd_messages();
 			break;
 		}
 
-		/* Show quest status -KMW- */
 		case KTRL('Q'):
 		{
+			/* Show quest status -KMW- */
 			do_cmd_checkquest();
 			break;
 		}
 
-		/* Redraw the screen */
 		case KTRL('R'):
 		{
+			/* Redraw the screen */
 			do_cmd_redraw();
 			break;
 		}
 
 #ifndef VERIFY_SAVEFILE
 
-		/* Hack -- Save and don't quit */
 		case KTRL('S'):
 		{
+			/* Hack -- Save and don't quit */
 			do_cmd_save_game(FALSE);
 			break;
 		}
@@ -2566,49 +2563,50 @@ static void process_command(void)
 
 		case KTRL('T'):
 		{
+			/* Get the time of day */
 			do_cmd_time();
 			break;
 		}
 
-		/* Save and quit */
 		case KTRL('X'):
 		{
+			/* Save and quit */
 			do_cmd_save_and_exit();
 			break;
 		}
 
-		/* Quit (commit suicide) */
 		case 'Q':
 		{
+			/* Quit (commit suicide) */
 			do_cmd_suicide();
 			break;
 		}
 
-		/* Check artifacts, uniques, objects */
 		case '~':
 		case '|':
 		{
+			/* Check artifacts, uniques, objects, quests etc. */
 			do_cmd_knowledge();
 			break;
 		}
 
-		/* Load "screen dump" */
 		case '(':
 		{
+			/* Load "screen dump" */
 			do_cmd_load_screen();
 			break;
 		}
 
-		/* Save "screen dump" */
 		case ')':
 		{
+			/* Save "screen dump" */
 			do_cmd_save_screen();
 			break;
 		}
 
-		/* Hack -- Unknown command */
 		default:
 		{
+			/* Hack -- Unknown command */
 			if (one_in_(2))
 			{
 				char error_m[1024];
@@ -3387,10 +3385,10 @@ void play_game(bool new_game)
 	 * Initialize wilderness info
 	 * This needs to be done before old savefiles are loaded.
 	 */
-	if (init_w_info())quit("Cannot initialize wilderness");
+	if (init_w_info()) quit("Cannot initialize wilderness");
 
 	/* Initialize field info */
-	if (init_t_info())quit("Cannot initialize fields");
+	if (init_t_info()) quit("Cannot initialize fields");
 
 
 	/* Attempt to load */
@@ -3437,26 +3435,25 @@ void play_game(bool new_game)
 		/* Seed the "complex" RNG */
 		Rand_state_init(seed);
 	}
-	
+
 	/* Set or clear "rogue_like_commands" if requested */
 	if (arg_force_original) rogue_like_commands = FALSE;
 	if (arg_force_roguelike) rogue_like_commands = TRUE;
-	
+
 	/* Roll new character */
 	if (new_game)
 	{
 		/* Wipe everything */
 		wipe_all_list();
-						
+
 		/* Roll up a new character */
 		player_birth();
 
 		/* Hack -- enter the world */
 		if ((p_ptr->prace == RACE_VAMPIRE) ||
-		    (p_ptr->prace == RACE_SKELETON) ||
-		    (p_ptr->prace == RACE_ZOMBIE) ||
-		    (p_ptr->prace == RACE_SPECTRE) ||
-		    (p_ptr->prace == RACE_GHOUL))
+			(p_ptr->prace == RACE_SKELETON) ||
+			(p_ptr->prace == RACE_ZOMBIE) ||
+			(p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_GHOUL))
 		{
 			/* Undead start just after midnight */
 			turn = (30L * TOWN_DAWN) / 4 + 1;
@@ -3505,7 +3502,7 @@ void play_game(bool new_game)
 
 
 	/* Hack -- Enter wizard mode */
-	if (arg_wizard && enter_wizard_mode())p_ptr->wizard = TRUE;
+	if (arg_wizard && enter_wizard_mode()) p_ptr->wizard = TRUE;
 
 	/* Flavor the objects */
 	flavor_init();

@@ -22,24 +22,24 @@
  */
 static const s16b roomdep[] =
 {
-	 0, /* 0  = Nothing */
-	 1, /* 1  = Simple (33x11) */
-	 1, /* 2  = Overlapping (33x11) */
-	 3, /* 3  = Crossed (33x11) */
-	 3, /* 4  = Large (33x11) */
-	10, /* 5  = Monster nest (33x11) */
-	10, /* 6  = Monster pit (33x11) */
-	10, /* 7  = Lesser vault (33x22) */
-	20, /* 8  = Greater vault (66x44) */
-	 5, /* 9  = Fractal cave (52x28) */
-	10, /* 10 = Random vault (44x22) */
-	 3, /* 11 = Circular rooms (22x22) */
-	10, /* 12 = Crypts (22x22) */
-	 5, /* 13 = Large with feature (50x36) */
-	 3, /* 14 = Large version 2 (33x11) */
-	 3, /* 15 = Parallelagram room (37x15) */
+	0, /* 0  = Nothing */
+	1, /* 1  = Simple (33x11) */
+	1, /* 2  = Overlapping (33x11) */
+	3, /* 3  = Crossed (33x11) */
+	3, /* 4  = Large (33x11) */
+	10,	/* 5  = Monster nest (33x11) */
+	10,	/* 6  = Monster pit (33x11) */
+	10,	/* 7  = Lesser vault (33x22) */
+	20,	/* 8  = Greater vault (66x44) */
+	5, /* 9  = Fractal cave (52x28) */
+	10,	/* 10 = Random vault (44x22) */
+	3, /* 11 = Circular rooms (22x22) */
+	10,	/* 12 = Crypts (22x22) */
+	5, /* 13 = Large with feature (50x36) */
+	3, /* 14 = Large version 2 (33x11) */
+	3, /* 15 = Parallelagram room (37x15) */
 };
-	
+
 
 /*
  * This funtion makes a very small room centred at (x0, y0)
@@ -272,7 +272,7 @@ static void build_type1(int bx0, int by0)
 
 	/* Try to allocate space for room.  If fails, exit */
 	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval))
-			return;
+		return;
 
 	/* Choose lite or dark */
 	light = (p_ptr->depth <= randint1(25));
@@ -505,24 +505,26 @@ static void build_type3(int bx0, int by0)
 	/* Special features (3/4) */
 	switch (randint1(4))
 	{
-		/* Nothing */
 		case 1:
 		{
+			/* Nothing */
 			break;
 		}
 
-		/* Large solid middle pillar */
 		case 2:
 		{
+			/* Large solid middle pillar */
+
 			/* Generate a small inner solid pillar */
 			generate_fill(x1b, y1a, x2b, y2a, FEAT_WALL_INNER);
 
 			break;
 		}
 
-		/* Inner treasure vault */
 		case 3:
 		{
+			/* Inner treasure vault */
+
 			/* Generate a small inner vault */
 			generate_draw(x1b, y1a, x2b, y2a, FEAT_WALL_INNER);
 
@@ -541,9 +543,10 @@ static void build_type3(int bx0, int by0)
 			break;
 		}
 
-		/* Something else */
 		case 4:
 		{
+			/* Something else */
+
 			/* Occasionally pinch the center shut */
 			if (one_in_(3))
 			{
@@ -644,9 +647,10 @@ static void build_type4(int bx0, int by0)
 	/* Inner room variations */
 	switch (randint1(5))
 	{
-		/* Just an inner room with a monster */
 		case 1:
 		{
+			/* Just an inner room with a monster */
+
 			/* Open the inner room with a secret door */
 			generate_door(x1 - 1, y1 - 1, x2 + 1, y2 + 1, TRUE);
 
@@ -656,9 +660,10 @@ static void build_type4(int bx0, int by0)
 			break;
 		}
 
-		/* Treasure Vault (with a door) */
 		case 2:
 		{
+			/* Treasure Vault (with a door) */
+
 			/* Open the inner room with a secret door */
 			generate_door(x1 - 1, y1 - 1, x2 + 1, y2 + 1, TRUE);
 
@@ -690,9 +695,10 @@ static void build_type4(int bx0, int by0)
 			break;
 		}
 
-		/* Inner pillar(s). */
 		case 3:
 		{
+			/* Inner pillar(s). */
+
 			/* Open the inner room with a secret door */
 			generate_door(x1 - 1, y1 - 1, x2 + 1, y2 + 1, TRUE);
 
@@ -737,9 +743,10 @@ static void build_type4(int bx0, int by0)
 			break;
 		}
 
-		/* Maze inside. */
 		case 4:
 		{
+			/* Maze inside. */
+
 			/* Open the inner room with a secret door */
 			generate_door(x1 - 1, y1 - 1, x2 + 1, y2 + 1, TRUE);
 
@@ -769,9 +776,10 @@ static void build_type4(int bx0, int by0)
 			break;
 		}
 
-		/* Four small rooms. */
 		case 5:
 		{
+			/* Four small rooms. */
+
 			/* Inner "cross" */
 			generate_plus(x1, y1, x2, y2, FEAT_WALL_INNER);
 
@@ -1162,9 +1170,10 @@ static void vault_prep_dragon(void)
 	/* Pick dragon type */
 	switch (randint0(6))
 	{
-		/* Black */
 		case 0:
 		{
+			/* Black */
+
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = RF4_BR_ACID;
 
@@ -1172,9 +1181,10 @@ static void vault_prep_dragon(void)
 			break;
 		}
 
-		/* Blue */
 		case 1:
 		{
+			/* Blue */
+
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = RF4_BR_ELEC;
 
@@ -1182,9 +1192,10 @@ static void vault_prep_dragon(void)
 			break;
 		}
 
-		/* Red */
 		case 2:
 		{
+			/* Red */
+
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = RF4_BR_FIRE;
 
@@ -1192,9 +1203,10 @@ static void vault_prep_dragon(void)
 			break;
 		}
 
-		/* White */
 		case 3:
 		{
+			/* White */
+
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = RF4_BR_COLD;
 
@@ -1202,9 +1214,10 @@ static void vault_prep_dragon(void)
 			break;
 		}
 
-		/* Green */
 		case 4:
 		{
+			/* Green */
+
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = RF4_BR_POIS;
 
@@ -1212,9 +1225,10 @@ static void vault_prep_dragon(void)
 			break;
 		}
 
-		/* Multi-hued */
 		default:
 		{
+			/* Multi-hued */
+
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = (RF4_BR_ACID | RF4_BR_ELEC |
 									  RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS);
@@ -1239,7 +1253,7 @@ struct vault_aux_type
 };
 
 
-static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
+static const vault_aux_type *pick_vault_type(const vault_aux_type * l_ptr)
 {
 	int tmp, total;
 
@@ -1283,16 +1297,16 @@ static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
 
 static const vault_aux_type nest_types[] =
 {
-	{"clone",	vault_aux_clone,	vault_prep_clone,	7,	6},
-	{"jelly",	vault_aux_jelly,	NULL,			7,	2},
-	{"symbol clone",vault_aux_symbol,	vault_prep_symbol,	40,	6},
-	{"mimic",	vault_aux_mimic,	NULL,			45,	2},
-	{"lovecraftian",vault_aux_cthulhu,	NULL,			80,	2},
-	{"kennel",	vault_aux_kennel,	NULL,			50,	2},
-	{"animal",	vault_aux_animal,	NULL,			50,	8},
-	{"chapel",	vault_aux_chapel,	NULL,			90,	4},
-	{"undead",	vault_aux_undead,	NULL,			90,	4},
-	{NULL,		NULL,			NULL,			0,	0},
+	{"clone", vault_aux_clone, vault_prep_clone, 7, 6},
+	{"jelly", vault_aux_jelly, NULL, 7, 2},
+	{"symbol clone", vault_aux_symbol, vault_prep_symbol, 40, 6},
+	{"mimic", vault_aux_mimic, NULL, 45, 2},
+	{"lovecraftian", vault_aux_cthulhu, NULL, 80, 2},
+	{"kennel", vault_aux_kennel, NULL, 50, 2},
+	{"animal", vault_aux_animal, NULL, 50, 8},
+	{"chapel", vault_aux_chapel, NULL, 90, 4},
+	{"undead", vault_aux_undead, NULL, 90, 4},
+	{NULL, NULL, NULL, 0, 0},
 };
 
 
@@ -1422,7 +1436,7 @@ static void build_type5(int bx0, int by0)
 			int r_idx = what[randint0(64)];
 
 			/* Place that "random" monster (no groups) */
-			(void)place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE);
+			(void) place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE);
 		}
 	}
 }
@@ -1430,15 +1444,15 @@ static void build_type5(int bx0, int by0)
 
 static const vault_aux_type pit_types[] =
 {
-	{"orc",		vault_aux_orc,		NULL,			7,	4},
-	{"troll",	vault_aux_troll,	NULL,			35,	4},
-	{"giant",	vault_aux_giant,	NULL,			70,	2},
-	{"lovecraftian",vault_aux_cthulhu,	NULL,			90,	1},
-	{"clone",	vault_aux_symbol,	vault_prep_symbol,	85,	2},
-	{"chapel",	vault_aux_chapel,	NULL,			85,	2},
-	{"dragon",	vault_aux_dragon,	vault_prep_dragon,	80,	4},
-	{"demon",	vault_aux_demon,	NULL,   		90,	4},
-	{NULL,		NULL,			NULL,			0,	0},
+	{"orc", vault_aux_orc, NULL, 7, 4},
+	{"troll", vault_aux_troll, NULL, 35, 4},
+	{"giant", vault_aux_giant, NULL, 70, 2},
+	{"lovecraftian", vault_aux_cthulhu, NULL, 90, 1},
+	{"clone", vault_aux_symbol, vault_prep_symbol, 85, 2},
+	{"chapel", vault_aux_chapel, NULL, 85, 2},
+	{"dragon", vault_aux_dragon, vault_prep_dragon, 80, 4},
+	{"demon", vault_aux_demon, NULL, 90, 4},
+	{NULL, NULL, NULL, 0, 0},
 };
 
 
@@ -1901,27 +1915,27 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 			/* Analyze the symbol */
 			switch (*t)
 			{
-				/* Monster */
 				case '&':
 				{
+					/* Monster */
 					monster_level = base_level + 4;
 					(void) place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					break;
 				}
 
-				/* Meaner monster */
 				case '@':
 				{
+					/* Meaner monster */
 					monster_level = base_level + 8;
 					(void) place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					break;
 				}
 
-				/* Meaner monster, plus treasure */
 				case '9':
 				{
+					/* Meaner monster, plus treasure */
 					monster_level = base_level + 6;
 					(void) place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
@@ -1931,9 +1945,9 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 					break;
 				}
 
-				/* Nasty monster and treasure */
 				case '8':
 				{
+					/* Nasty monster and treasure */
 					monster_level = base_level + 25;
 					(void) place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
@@ -1943,9 +1957,9 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 					break;
 				}
 
-				/* Monster and/or object */
 				case ',':
 				{
+					/* Monster and/or object */
 					if (randint0(100) < 50)
 					{
 						monster_level = base_level + 3;
@@ -1963,6 +1977,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 
 				case 'A':
 				{
+					/* Object */
 					object_level = base_level + 10;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
@@ -3544,22 +3559,54 @@ static void build_type10(int bx0, int by0)
 	/* Select type of vault */
 	vtype = randint1(9);
 
+	/* Build an appropriate room */
 	switch (vtype)
 	{
-		/* Build an appropriate room */
-		case 1: build_bubble_vault(x0, y0, xsize, ysize); break;
-		case 2: build_room_vault(x0, y0, xsize, ysize); break;
-		case 3: build_cave_vault(x0, y0, xsize, ysize); break;
-		case 4: build_maze_vault(x0, y0, xsize, ysize); break;
-		case 5: build_mini_c_vault(x0, y0, xsize, ysize); break;
-		case 6: build_castle_vault(x0, y0, xsize, ysize); break;
-		case 7: build_target_vault(x0, y0, xsize, ysize); break;
-		case 8: build_elemental_vault(x0, y0, xsize, ysize); break;
-		case 9: build_micro_room_vault(x0, y0, xsize, ysize); break;
-		/* I know how to add a few more... give me some time. */
-
-		/* Paranoia */
-		default: return;
+		case 1:
+		{
+			build_bubble_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 2:
+		{
+			build_room_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 3:
+		{
+			build_cave_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 4:
+		{
+			build_maze_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 5:
+		{
+			build_mini_c_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 6:
+		{
+			build_castle_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 7:
+		{
+			build_target_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 8:
+		{
+			build_elemental_vault(x0, y0, xsize, ysize);
+			break;
+		}
+		case 9:
+		{
+			build_micro_room_vault(x0, y0, xsize, ysize);
+			break;
+		}
 	}
 }
 
@@ -3583,7 +3630,7 @@ static void build_type11(int bx0, int by0)
 
 	/* Allocate in room_map.  If will not fit, exit */
 	if (!room_alloc(rad * 2 + 1, rad * 2 + 1, FALSE, by0, bx0, &x0, &y0))
-			return;
+		return;
 
 	/* Make circular floor */
 	for (x = x0 - rad; x <= x0 + rad; x++)
@@ -3637,7 +3684,7 @@ static void build_type12(int bx0, int by0)
 
 	/* Allocate in room_map.  If will not fit, exit */
 	if (!room_alloc(rad * 2 + 3, rad * 2 + 3, FALSE, by0, bx0, &x0, &y0))
-			return;
+		return;
 
 	/* Add outer wall */
 	generate_draw(x0 - rad, y0 - rad, x0 + rad, y0 + rad, FEAT_WALL_EXTRA);
@@ -3974,28 +4021,89 @@ bool room_build(int bx0, int by0, int typ)
 
 	/* Build a room */
 	switch (typ)
-	{ 
-		/* Build an appropriate room */
-		case 15: build_type15(bx0, by0); break;
-		case 14: build_type14(bx0, by0); break;
-		case 13: build_type13(bx0, by0); break;
-		case 12: build_type12(bx0, by0); break;
-		case 11: build_type11(bx0, by0); break;
-		case 10: build_type10(bx0, by0); break;
-		case 9: build_type9(bx0, by0); break;
-		case 8: build_type8(bx0, by0); break;
-		case 7: build_type7(bx0, by0); break;
-		case 6: build_type6(bx0, by0); break;
-		case 5: build_type5(bx0, by0); break;
-		case 4: build_type4(bx0, by0); break;
-		case 3: build_type3(bx0, by0); break;
-		case 2: build_type2(bx0, by0); break;
-		case 1: build_type1(bx0, by0); break;
+	{
+		case 15:
+		{
+			build_type15(bx0, by0);
+			break;
+		}
+		case 14:
+		{
+			build_type14(bx0, by0);
+			break;
+		}
+		case 13:
+		{
+			build_type13(bx0, by0);
+			break;
+		}
+		case 12:
+		{
+			build_type12(bx0, by0);
+			break;
+		}
+		case 11:
+		{
+			build_type11(bx0, by0);
+			break;
+		}
+		case 10:
+		{
+			build_type10(bx0, by0);
+			break;
+		}
+		case 9:
+		{
+			build_type9(bx0, by0);
+			break;
+		}
+		case 8:
+		{
+			build_type8(bx0, by0);
+			break;
+		}
+		case 7:
+		{
+			build_type7(bx0, by0);
+			break;
+		}
+		case 6:
+		{
+			build_type6(bx0, by0);
+			break;
+		}
+		case 5:
+		{
+			build_type5(bx0, by0);
+			break;
+		}
+		case 4:
+		{
+			build_type4(bx0, by0);
+			break;
+		}
+		case 3:
+		{
+			build_type3(bx0, by0);
+			break;
+		}
+		case 2:
+		{
+			build_type2(bx0, by0);
+			break;
+		}
+		case 1:
+		{
+			build_type1(bx0, by0);
+			break;
+		}
 
-		/* Paranoia */
-		default: return (FALSE);
+		default:
+		{
+			/* Paranoia */
+			return (FALSE);
+		}
 	}
 
 	return (TRUE);
 }
-
