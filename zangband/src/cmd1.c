@@ -1565,6 +1565,12 @@ void py_attack(int y, int x)
 			return;
 		}
 
+		/* Complex message */
+		if (wizard)
+		{
+			msg_format("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
+		}
+
 		/* Stunning. */
 		if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 8))
 		{
