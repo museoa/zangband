@@ -73,13 +73,13 @@
 #define VERPATH "Zangband:"
 
 #define CGXSUPPORT					/* Define for RTG support. Leave on */
-//#define SANGBAND					/* Define if this is Sangband. */
+/*#define SANGBAND */					/* Define if this is Sangband. */
 #define ZANGBAND						/* Define if this is Zangband. Zangband now has extra gfx */
-//#define KANGBAND					/* Define for Kang, used in Highscore handling */
-//#define GFXFUNCS					/* Define if we allow gfx debugging functions. */
-//#define DEBUG
-//#define ANG283
-//#define ANG282                /* Based upon Angband 2.8.2 ? */
+/* #define KANGBAND */					/* Define for Kang, used in Highscore handling */
+/* #define GFXFUNCS	*/				/* Define if we allow gfx debugging functions. */
+/* #define DEBUG */
+/* #define ANG283 */
+/* #define ANG282 */               /* Based upon Angband 2.8.2 ? */
 #define ANG281                  /* Based upon Angband 2.8.1 ? */
 
 #ifndef __CEXTRACT__
@@ -346,7 +346,7 @@ static char *term_short[] =
 	NULL
 };
 
-// Nasty Optimise hack : Writes directly to memory to speed things up.
+/* Nasty Optimise hack : Writes directly to memory to speed things up. */
 bool nasty_optimise_gfx = FALSE;
 
 /* Can we display a palette requester? (ie. is screen type ok, reqtools etc. */
@@ -462,7 +462,7 @@ static char *sound_name_desc = NULL;
 static struct AmiSound *sound_data = NULL;
 static int sounds_needed = 0;
 
-// Ouch - hack
+/* Ouch - hack */
 static struct AmiSound *sound_ref[SOUND_MAX][8];
 
 static int channel_last[ 4 ] = { -1, -1, -1, -1 };
@@ -828,7 +828,7 @@ errr init_ami( void )
 				 (screen_overscan > 0) ? screen_overscan : TAG_IGNORE,
 				 SA_Depth, screen_depth,
 				 SA_DisplayID, scr_m,
-//				 SA_Font, scrattr,
+				 /* SA_Font, scrattr, */
 				 SA_Type, CUSTOMSCREEN,
 				 SA_Title, "Angband Screen",
 				 SA_ShowTitle, FALSE,
@@ -849,7 +849,7 @@ errr init_ami( void )
 			new_scr.BlockPen = 1;
 			new_scr.ViewModes = HIRES;  /* XXX XXX XXX */
 			new_scr.Type = CUSTOMSCREEN;
-//			new_scr.Font = scrattr;
+			/* new_scr.Font = scrattr; */
 			new_scr.DefaultTitle = "Angband Screen";
 			new_scr.Gadgets = NULL;
 			new_scr.CustomBitMap = NULL;
@@ -922,7 +922,7 @@ errr init_ami( void )
 			if (data[i].use && tmp > maxh)
 				maxh = tmp;
 		}
-//      maxh += pubscr->WBorTop + pubscr->WBorBottom;
+        /* maxh += pubscr->WBorTop + pubscr->WBorBottom; */
 
 		/* Check if the public screen is large enough */
 		if ( pw < maxw || ph < maxh )
@@ -989,7 +989,7 @@ errr init_ami( void )
 		}
 		if (maxsize)
 		{
-//			printf("Accepted size %d\n",maxsize);
+			/* printf("Accepted size %d\n",maxsize); */
 			attr.ta_YSize = maxsize;
 			ts->font = OpenDiskFont( &attr );
 			if (!ts->font)
@@ -1003,7 +1003,7 @@ errr init_ami( void )
 				ts->fh = ts->font->tf_YSize;
 				ts->fb = ts->font->tf_Baseline;
 
-//				printf("Auto x %d y %d b %d\n", ts->fw, ts->fh, ts->fb);
+				/* printf("Auto x %d y %d b %d\n", ts->fw, ts->fh, ts->fb); */
 				SetFont(ts->rp, ts->font);
 			}
 			/* Recalc window widths */
@@ -1064,8 +1064,8 @@ errr init_ami( void )
 			 WA_Top, ts->wy,
 			 WA_InnerWidth, (backdrop) ? screen_width : ts->ww,
 			 WA_InnerHeight, (backdrop) ? screen_height : ts->wh,
-//			 WA_InnerWidth, ts->ww,
-//			 WA_InnerHeight, ts->wh,
+ 			 /* WA_InnerWidth, ts->ww, */
+			 /* WA_InnerHeight, ts->wh, */
 
 			 use_pub ? WA_PubScreen : WA_CustomScreen, use_pub ? pubscr : amiscr,
 			 WA_Backdrop, backdrop,
@@ -1124,7 +1124,7 @@ errr init_ami( void )
 	SetFont( ts->wrp, ts->font );
 
 	/* Never use screen's rastport on public screen */
-//	if ( use_pub )
+	/* if ( use_pub ) */
 		ts->rp = ts->wrp;
 
 	if ((IFFBase || DataTypesBase) && ts->bkgname)
@@ -1474,7 +1474,7 @@ static void init_default_palette(void)
 	}
 }
 
-// TRUE if ok
+/* TRUE if ok */
 static BOOL get_screenmode( char *modestr )
 {
 	scr_m = strtol( modestr, NULL, 0 );
@@ -1493,14 +1493,14 @@ static BOOL get_screenmode( char *modestr )
 		if ( !pubscr )
 			pubscr = LockPubScreen( modestr );
 
-		// Failed?
+		/* Failed? */
 		if ( !pubscr )
 		{
 			printf( "Unable to get a lock on screen '%s'\n", modestr );
 			return FALSE;
 		}
 
-		// We got a lock now
+		/* We got a lock now */
 		publock = TRUE;
 
 		scr_m = -1;
@@ -1630,7 +1630,7 @@ void open_term( int n, bool doall )
 			WA_MinHeight,-1,
 			WA_MaxHeight,-1,
 			WA_DetailPen,4,
-			WA_BlockPen,2,  // makes no difference, as newlook specified
+			WA_BlockPen,2,  /* makes no difference, as newlook specified */
 			use_pub ? WA_PubScreen : WA_CustomScreen, use_pub ? pubscr : amiscr,
 			WA_GimmeZeroZero, TRUE,
 			WA_DragBar, !tt->backdrop,
@@ -2201,7 +2201,7 @@ int read_prefs( void )
 			td = &data[ k ];
 		else
 		{
-//			printf( "PREFS: Error in line '%s'\n", line );
+			/* printf( "PREFS: Error in line '%s'\n", line ); */
 			continue;
 		}
 
@@ -2363,7 +2363,7 @@ static char *handle_font(struct term_data *td, char *fontname)
 			td->fh = td->font->tf_YSize;
 			td->fb = td->font->tf_Baseline;
 
-//			printf("Font x %d y %d b %d\n",td->fw, td->fh, td->fb);
+			/* printf("Font x %d y %d b %d\n",td->fw, td->fh, td->fb); */
 			/* Copy font attr to screen font */
 			if ( td == &data[ 0 ] )
 			{
@@ -2589,10 +2589,10 @@ static errr amiga_text( int x, int y, int n, byte a, cptr s )
 		}
 		else
 		{
-//			if (use_aga)
-//				quick_Text( td->rp, PEN( a & 0xF ), (char *) s, n, x * td->fw, y * td->fh + td->fb );
-//			else
-//			{
+			/* if (use_aga) */
+				/* quick_Text( td->rp, PEN( a & 0xF ), (char *) s, n, x * td->fw, y * td->fh + td->fb ); */
+			/* else */
+			/* { */
 				if (KICK30)
 					SetABPenDrMd( td->rp, PEN( a & 0x0F ), PEN( 0 ), JAM2);
 				else
@@ -2603,7 +2603,7 @@ static errr amiga_text( int x, int y, int n, byte a, cptr s )
 				}
 				Move( td->rp, x * td->fw, y * td->fh + td->fb );
 				Text( td->rp, (char *) s, n );
-//			}
+			/* } */
 		}
 	}
 	return ( 0 );
@@ -2718,8 +2718,8 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 		case IDCMP_GADGETUP:
 			if (((struct Gadget *)iaddr)->GadgetID == 0)
 			{
-				// maxbody * nh ) / max_term_vert
-				// vb * max term / maxbody
+				/* maxbody * nh ) / max_term_vert */
+				/* vb * max term / maxbody */
 				ud = (double)data[ i ].ygadinfo.VertPot / (double)0xFFFF;
 				ud *= (MAX_TERM_VERT - data[ i ].rows);
 				tmpa = modf(ud,&tmpb);
@@ -2739,7 +2739,7 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 		case IDCMP_ACTIVEWINDOW:
 			break;
 		case IDCMP_CLOSEWINDOW:
-			// Respond to any messages before closing
+			/* Respond to any messages before closing */
 			win = data[i].win;
 			while (imsg = (struct IntuiMessage *)GetMsg( win->UserPort ))
 				ReplyMsg(( struct Message *) imsg );
@@ -2762,7 +2762,7 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 			cursor_anim();
 			break;
 		case IDCMP_NEWSIZE:
-			// Calculate new rows & cols.
+			/* Calculate new rows & cols. */
 
 			win = data[ i ].win;
 			data[ i ].ww = (nw = win->Width / data[ i ].fw) * data[ i ].fw;
@@ -2773,7 +2773,7 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 			nw = (data[i].ww - win->BorderRight - win->BorderLeft) / data[i].fw;
 			nh = (data[i].wh - win->BorderTop - win->BorderBottom) / data[i].fh;
 
-			// Don`t let user have huge windows
+			/* Don`t let user have huge windows */
 			if (nh > MAX_TERM_VERT)
 				nh = MAX_TERM_VERT;
 			if (nw > MAX_TERM_HORIZ)
@@ -2792,7 +2792,7 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 				temp = (UWORD)f;
 				ChangeWindowBox(win, data[ i ].wx, data[ i ].wy, data[ i ].ww, data[ i ].wh);
 
-				// Update any gadgets inside window
+				/* Update any gadgets inside window */
 				if (data[ i ].scroll)
 				{
 					NewModifyProp(&data[ i ].ygad, win, NULL,AUTOKNOB | FREEVERT | PROPNEWLOOK,
@@ -2807,10 +2807,11 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 			}
 			Term_activate(angband_term[ i ]);
 
-			// If window scrolling is on, then we always want `band to draw
-			// everything, and we do our own clipping. Otherwise, set the window
-			// to the correct size and let `band handle it.
-
+			/*
+			 * If window scrolling is on, then we always want `band to draw
+			 * everything, and we do our own clipping. Otherwise, set the window
+			 * to the correct size and let `band handle it.
+			 */
 			if (data[ i ].scroll)
 				Term_resize(80,24);
 			else
@@ -2820,7 +2821,7 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 
 			Term_activate(angband_term[ 0 ]);
 
-			// Eat the IDCMP_NEWSIZE event coming from ChangeWindowBox(). Icky hack.
+			/* Eat the IDCMP_NEWSIZE event coming from ChangeWindowBox(). Icky hack. */
 			while (imsg = (struct IntuiMessage *)GetMsg( win->UserPort ))
 				ReplyMsg(( struct Message *) imsg );
 			break;
@@ -2857,7 +2858,7 @@ errr amiga_event( int v )
 #ifndef __GNUC__
 	chkabort();
 #endif
-	// Create mask for Wait(), as we want to watch all of our windows
+	/* Create mask for Wait(), as we want to watch all of our windows */
 
 	if (!sigmask)
 		calc_sigmask();
@@ -2887,12 +2888,12 @@ errr amiga_event( int v )
 		}
 	} while (messages);
 
-	// Wait for an event if caller wants us to
+	/* Wait for an event if caller wants us to */
 	if (v)
    {
 		Wait(sigmask);
 
-		// Ought to handle messages here
+		/* Ought to handle messages here */
 		return 0;
 	}
 		else
@@ -3413,7 +3414,7 @@ static void amiga_save_file( void )
 	fclose(f);
 	fclose(fh);
 
-	// Copy temp file to other one.
+	/* Copy temp file to other one. */
 	fsrc = (ULONG)Open("ram:temp",1005);
 	if (!fsrc)
 	{
@@ -4809,7 +4810,7 @@ void remap_bitmap( struct BitMap *srcbm, struct BitMap *dstbm, long *pens, int w
 
 	int enforce_aga = TRUE;
 
-	// Handle gfx cards. Use the AGA/ECS/OCS code if at all possible!
+	/* Handle gfx cards. Use the AGA/ECS/OCS code if at all possible! */
 	if (use_cyber)
 	{
 		if (GetCyberMapAttr(srcbm, CYBRMATTR_ISCYBERGFX) || GetCyberMapAttr(dstbm, CYBRMATTR_ISCYBERGFX))
@@ -4833,8 +4834,8 @@ void remap_bitmap( struct BitMap *srcbm, struct BitMap *dstbm, long *pens, int w
 		newrast.BitMap = dstbm;
 
 		tmpbm = alloc_bitmap( width, 1, depth_of_bitmap(dstbm), NULL, NULL );
-//		tmpbm->BytesPerRow = (((width + 15)>>4)<<1);
-//		tmprp = mainrast;
+	    /* tmpbm->BytesPerRow = (((width + 15)>>4)<<1); */
+   	    /* tmprp = mainrast; */
 		tmprp.Layer = NULL;
 		tmprp.BitMap = tmpbm;
 
@@ -4843,7 +4844,7 @@ void remap_bitmap( struct BitMap *srcbm, struct BitMap *dstbm, long *pens, int w
 		{
 			for (y = 0 ; y < height ; y++)
 			{
-//				ReadPixelLine8(&mainrast, 0, y, width, s, &tmprp);
+				/* ReadPixelLine8(&mainrast, 0, y, width, s, &tmprp); */
 				for (x = 0 ; x < width ; x++)
 					s[x] = pens[ ReadPixel(&mainrast,x,y) ];
 				WriteChunkyPixels(&newrast, 0, y, width, y, s, width);
@@ -5682,7 +5683,7 @@ static void quick_clearBltBitMapRastPort( struct BitMap *src, int x, int y, stru
 
 static void quick_BltMaskBitMapRastPort( struct BitMap *src, int x, int y, struct RastPort *rp, int dx, int dy, int dw, int dh, int mode, byte *mask)
 {
-//	ULONG *dest_plane_addr = (ULONG *)&(rp->BitMap->Planes[0]);
+	/* ULONG *dest_plane_addr = (ULONG *)&(rp->BitMap->Planes[0]); */
 	ULONG *dest_plane_addr = (ULONG *)&(rp->Layer->RastPort->BitMap->Planes[0]);
 	ULONG *source_plane_addr = (ULONG *)&(src->Planes[0]);
 	ULONG dest_row = rp->BitMap->BytesPerRow;
