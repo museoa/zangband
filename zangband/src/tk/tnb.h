@@ -311,31 +311,6 @@ extern void Bitmap_Delete(BitmapPtr bitmapPtr);
 extern HFONT TkToWinFont(Tk_Font tkFont);
 #endif /* PLATFORM_WIN */
 
-typedef struct DoubleLink DoubleLink;
-typedef struct DoubleLinker DoubleLinker;
-
-struct DoubleLink
-{
-	int isLinked;
-	DoubleLinker *linker;
-	DoubleLink *prev;
-	DoubleLink *next;
-	void *data;
-};
-
-struct DoubleLinker
-{
-	int count;
-	cptr what;
-	DoubleLink *head;
-	DoubleLink *tail;
-};
-
-#define DoubleLink_Data(link,type) ((type *) link->data)
-extern void DoubleLink_Init(DoubleLinker *linker, DoubleLink *link, void *data);
-extern void DoubleLink_Link(DoubleLink *link);
-extern void DoubleLink_Unlink(DoubleLink *link);
-
 extern Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
 extern void ExtToUtf_SetResult(Tcl_Interp *interp, cptr string);
 extern char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,

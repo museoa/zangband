@@ -1461,11 +1461,6 @@ static void Widget_Destroy(Widget *widgetPtr)
 	{
 		Widget_DeleteBitmap(widgetPtr);
 	}
-
-	/*
-	 * Removes the deleted Widget from the global list of Widgets.
-	 */
-	DoubleLink_Unlink(&widgetPtr->link);
 	
 	/* Free the options table */
 	Tk_FreeConfigOptions((char *) widgetPtr, optionTable,
@@ -1690,9 +1685,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		/* Failure */
 		return TCL_ERROR;
 	}
-
-	/* Add another widget to the list */
-	DoubleLink_Link(&widgetPtr->link);
 	
 	/* Return the window pathname */
     Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),
