@@ -68,11 +68,29 @@ end
 --
 function corpse_init()
 	field.data[1] = race / 256
-	field.data[2] = race % 256
+	field.data[2] = mod(race, 256)
 	
 	set_corpse_size(field, corpse_type(r_info[race].d_char))
 
 	notice_field(field)
+end
+
+--
+--	Look at a corpse
+--
+function corpse_look()
+	local race
+	race = monst_race(field.data[1] * 256 + field.data[2])
+	
+	if (bAnd(race.flags[0], RF0_UNIQUE) ~= 0) then
+	
+		-- Copy name to the output string.
+		name = field_name(field).." of "..mon_race_name(race)
+	else
+	
+		-- Copy name to the output string.
+		name = mon_race_name(race).." "..field_name(field)
+	end
 end
 
 --
@@ -81,10 +99,11 @@ end
 function corpse_exit()
 	local name
 	local r_idx
+	local race
 	r_idx = field.data[1] * 256 + field.data[2]
 	
 	race = monst_race(r_idx)
-	name = race.name
+	name = mon_race_name(race)
 	
 	if (ironman_nightmare == TRUE) then
 
@@ -131,13 +150,13 @@ function counter_init(max)
 	if new_value > max then
 		field.counter = max
 		
-	elseif new_value < 0
+	elseif new_value < 0 then
 		-- Hack - we'll decrement next turn
 		field.counter = 1
 		
 	else
 		-- Store in the new value
-		f_ptr->counter = new_value
+		field.counter = new_value
 	end
 end
 
