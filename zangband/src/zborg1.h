@@ -216,7 +216,6 @@ extern int borg_respawn_con;
 extern int borg_respawn_chr;
 extern int borg_dump_level;
 extern bool borg_respawn_winners;
-extern int borg_delay_factor;
 
 extern bool borg_worships_damage;
 extern bool borg_worships_speed;

@@ -3148,8 +3148,6 @@ static void init_borg_txt_file(void)
 		borg_respawn_class = -1;
 		borg_respawn_race = -2;
 		borg_chest_fail_tolerance = 13;
-		borg_delay_factor = 1;
-		if (delay_factor == 0) delay_factor = 1;
 
 		return;
 	}
@@ -3350,15 +3348,6 @@ TRUE;
 		{
 			sscanf(buf + strlen("borg_chest_fail_tolerance =") + 1, "%d",
 				   &borg_chest_fail_tolerance);
-			continue;
-		}
-
-		if (prefix(buf, "borg_delay_factor ="))
-		{
-			sscanf(buf + strlen("borg_delay_factor =") + 1, "%d",
-				   &borg_delay_factor);
-			if (borg_delay_factor <= 1) borg_delay_factor = 1;
-			if (borg_delay_factor >= 9) borg_delay_factor = 9;
 			continue;
 		}
 

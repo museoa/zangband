@@ -2698,8 +2698,7 @@ bool borg_think_dungeon(void)
 {
 	int i, j;
 
-	int msec = ((delay_factor * delay_factor) +
-				(borg_delay_factor * borg_delay_factor));
+	int msec = (delay_factor * delay_factor);
 
 	/* HACK allows user to stop the borg on certain levels */
 	if (borg_skill[BI_CDEPTH] ==

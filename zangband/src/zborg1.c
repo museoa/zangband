@@ -66,7 +66,6 @@ int borg_respawn_con;
 int borg_respawn_chr;
 int borg_dump_level;
 bool borg_respawn_winners;
-int borg_delay_factor;
 
 /* dynamic borg stuff */
 bool borg_uses_swaps;
