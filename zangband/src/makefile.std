@@ -130,7 +130,7 @@ CC = gcc
 ## Note: Get the 16x16.bmp file, and put in lib/xtra/graf
 ##       to get 256 colours.
 ##
-CFLAGS = -Wall -O2 -m486 -pipe -g -D"USE_X11" -D"USE_GCU"
+CFLAGS = -Wall -O2 -m486 -pipe -g -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 #CFLAGS = -Wall -O2 -m486 -pipe -g -D"USE_XAW" -D"USE_GCU"
