@@ -6348,7 +6348,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 6, "ironman_shops",			"Stores are permanently closed" },
 	{FALSE, 6, "ironman_small_levels",	"Always create unusually small dungeon levels" },
 	{FALSE, 6, "ironman_downward",		"Don't allow climbing upwards/recalling" },
-	{FALSE, 6, "ironman_autoscum",		"Permanently enable the autoscummer" },
+	{TRUE,	0, NULL,					"Number 197" },
 	{FALSE, 6, "ironman_hard_quests",	"Quest monsters get reinforcements" },
 	{TRUE,	0, NULL,					"Number 199" },
 	{FALSE, 6, "ironman_empty_levels",	"Always create empty 'arena' levels" },

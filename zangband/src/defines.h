@@ -3823,7 +3823,7 @@
 #define ironman_shops			p_ptr->birth[2]
 #define ironman_small_levels	p_ptr->birth[3]
 #define ironman_downward		p_ptr->birth[4]
-#define ironman_autoscum		p_ptr->birth[5]
+/* {TRUE,  0, NULL,					"Number 197" }, p_ptr->birth[5] */
 #define ironman_hard_quests		p_ptr->birth[6]
 /* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
 #define ironman_empty_levels	p_ptr->birth[8]

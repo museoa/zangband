@@ -1381,28 +1381,6 @@ void generate_cave(void)
 			okay = FALSE;
 		}
 
-		/* Mega-Hack -- "auto-scum" */
-		else if (ironman_autoscum && (num < 100))
-		{
-			/* Require "goodness" */
-			if ((dun_ptr->feeling > 9) ||
-				((p_ptr->depth >= 7) && (dun_ptr->feeling > 8)) ||
-				((p_ptr->depth >= 15) && (dun_ptr->feeling > 7)) ||
-				((p_ptr->depth >= 35) && (dun_ptr->feeling > 6)) ||
-				((p_ptr->depth >= 70) && (dun_ptr->feeling > 5)))
-			{
-				/* Give message to cheaters */
-				if (cheat_room || cheat_hear || cheat_peek || cheat_xtra)
-				{
-					/* Message */
-					why = "boring level";
-				}
-
-				/* Try again */
-				okay = FALSE;
-			}
-		}
-
 		/* Accept */
 		if (okay) break;
 

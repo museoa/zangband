@@ -3041,11 +3041,6 @@ errr file_character(cptr name, bool full)
 	else
 		froff(fff, "\n Preserve Mode:      OFF");
 
-	if (ironman_autoscum)
-		froff(fff, "\n Autoscum:           ON");
-	else
-		froff(fff, "\n Autoscum:           OFF");
-
 	if (ironman_small_levels)
 		froff(fff, "\n Small Levels:       ALWAYS");
 	else if (small_levels)
