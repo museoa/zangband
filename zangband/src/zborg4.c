@@ -1869,7 +1869,7 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 	int sval = k_info[l_ptr->k_idx].sval;
 
 	/*
-	 * Staves should not be carried to Morgoth, he drains
+	 * Staves should not be carried to The Serpent, he drains
 	 * them to heal himself- not good at all
 	 */
 	if ((bp_ptr->max_depth >= 99) && !bp_ptr->winner)
@@ -2225,6 +2225,7 @@ static void borg_notice_inven(void)
 	/* Search equipment for swapped items */
 	for (i = 0; i < equip_num; i++)
 	{
+		/* Don't use look_up_equip_slot here! */
 		l_ptr = &equipment[i];
 
 		/* A known item? */
@@ -2652,7 +2653,7 @@ static void borg_notice_aux2(void)
 
 	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
-		bp_ptr->food += amt_food_hical * 5;
+		bp_ptr->food += amt_food_hical * 3;
 		if (bp_ptr->food <= 30)
 		{
 			bp_ptr->food += amt_food_lowcal;
@@ -4555,7 +4556,7 @@ static s32b borg_power_home_aux2(void)
 	/* Reward Genocide scrolls. Just scrolls, mainly used for the Serpent */
 	value += 5000 * MIN(num_genocide, bp_ptr->lev * 2 - 1);
 
-	/* Reward Mass Genocide scrolls. Just scrolls, mainly used for Morgoth */
+	/* Reward Mass Genocide scrolls. Just scrolls, mainly used for Serpent */
 	value += 5000 * MIN(num_mass_genocide, bp_ptr->lev * 2 - 1);
 
 	/* Reward Resistance Potions for Warriors */
@@ -4618,14 +4619,12 @@ static s32b borg_power_home_aux2(void)
 	/*** Various ***/
 
 	/* Fixing Stats */
-	if (bp_ptr->lev == 50) value += 500L * num_fix_exp;
-	if (bp_ptr->lev > 35)
-	{
-		value += 5000 * MIN(num_fix_exp, 20);
-		value += 500 * MIN_FLOOR(num_fix_exp, 20, bp_ptr->lev * 2 - 1);
-	}
+	if (bp_ptr->lev == 50) value += 50L * MIN(num_fix_exp, bp_ptr->lev * 2 -1);
 	else
+	{
 		value += 5000 * MIN(num_fix_exp, 5);
+		value += 500 * MIN_FLOOR(num_fix_exp, 5, bp_ptr->lev * 2 - 1);
+	}
 
 	/* Keep shrooms in the house */
 	value += 5000 * MIN(num_fix_stat[6], bp_ptr->lev * 2 - 1);

@@ -13,16 +13,6 @@
 #ifdef ALLOW_BORG
 
 
-/* WARNING: If you mess with the objects.txt or the monster.txt and change
- * the locations of things, then you must make those changes in zborg.txt
- * as well as in this borg code.  The borg is very concerned about item
- * index locations.  ie: borgs_has[242] is looking for a Potion of Healing.
- * The borg is concerned over several items, broken swords, and several
- * monster locations (Tarresque, Sauron, Morgoth).
- *
- * This is a massive hack and must be fixed -SF-
- */
-
 /*
  * This file provides support for "borg1.c".
  */
@@ -783,7 +773,7 @@ extern bool borg_do_crush_slow;
 /* am I fighting a unique */
 extern int borg_fighting_unique;
 extern bool borg_fighting_evil_unique;
-
+#define BORG_QUESTOR	100
 
 /*** Some functions ***/
 

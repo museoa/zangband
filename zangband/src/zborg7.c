@@ -184,10 +184,10 @@ bool borg_item_icky(list_item *l_ptr)
 		slot = borg_wield_slot(l_ptr);
 
 		/* Obtain my equipped item in the slot */
-		l_ptr = &equipment[slot];
+		l_ptr = look_up_equip_slot(slot);
 
 		/* Is the equipped item an ego or artifact? */
-		if (slot != -1 &&
+		if (l_ptr &&
 			(borg_obj_is_ego_art(l_ptr) ||
 			strstr(l_ptr->o_name, "{special") ||
 			strstr(l_ptr->o_name, "{terrible") ||
@@ -1565,7 +1565,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	borg_keypresses(buf);
 
 	/* Destroy that item */
-	if (!(KN_FLAG(l_ptr, TR_INSTA_ART)))
+	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
 		/* Is the Sorcery Alchemy spell available? */
 		if (borg_spell_okay_fail(REALM_SORCERY, 3, 6, 40))
@@ -1639,6 +1639,8 @@ static bool borg_crush_unidentified(list_item* item)
 		case TV_WAND:
 		{
 			if (k_info[item->k_idx].sval == SV_WAND_CLONE_MONSTER) return TRUE;
+			if (k_info[item->k_idx].sval == SV_WAND_HASTE_MONSTER) return TRUE;
+			if (k_info[item->k_idx].sval == SV_WAND_HEAL_MONSTER) return TRUE;
 			break;
 		}
 	}
@@ -1681,84 +1683,69 @@ bool borg_crush_junk(void)
 		/* Hack - we need to work this out properly */
 		value = 0;
 
-		/* Try not to crush ammo */
-		if (l_ptr->tval == my_ammo_tval) value = 100L;
-
 		/* Skip non "worthless" items */
 		if (l_ptr->tval >= TV_FIGURINE)
 		{
+			/* Keep items that need to be *id*'d */
+			if (strstr(l_ptr->o_name, "{special") ||
+				strstr(l_ptr->o_name, "{terrible") ||
+				(!borg_obj_known_full(l_ptr) &&
+				borg_obj_star_id_able(l_ptr))) continue;
+
 			/* unknown? */
-			if (!borg_crush_unidentified(l_ptr) &&
-				!borg_obj_known_p(l_ptr) &&
-				!(strstr(l_ptr->o_name, "{average") ||
-				  strstr(l_ptr->o_name, "{cursed") ||
-				  strstr(l_ptr->o_name, "{bad") ||
-				  strstr(l_ptr->o_name, "{broken") ||
-				  strstr(l_ptr->o_name, "{dubious") ||
-				  strstr(l_ptr->o_name, "{worthless"))) continue;
-
-			/* Pretend pile isn't there */
-			l_ptr->treat_as = TREAT_AS_GONE;
-
-			/* Evaluate the inventory */
-			p = borg_power();
-
-			/* Include the effects of value of items */
-			value = old_value - bp_ptr->value;
-
-			/* Restore item */
-			l_ptr->treat_as = TREAT_AS_NORM;
-
-			/* Do not junk useful things */
-			if (my_power > p) continue;
-
-			/*
-			 * Destroy these regardless of value,
-			 * it is too troublesome to decurse, id and sell them.
-			 */
-			if (strstr(l_ptr->o_name, "{cursed") ||
+			if (!borg_obj_known_p(l_ptr) &&
+				(borg_crush_unidentified(l_ptr) ||
+				strstr(l_ptr->o_name, "{average") ||
+				strstr(l_ptr->o_name, "{cursed") ||
 				strstr(l_ptr->o_name, "{bad") ||
+				strstr(l_ptr->o_name, "{broken") ||
 				strstr(l_ptr->o_name, "{dubious") ||
-				strstr(l_ptr->o_name, "{worthless"))
+				strstr(l_ptr->o_name, "{worthless"))) value = 0;
+			else
 			{
-				value = 0;
+				/* Pretend pile isn't there */
+				l_ptr->treat_as = TREAT_AS_GONE;
+
+				/* Evaluate the inventory */
+				p = borg_power();
+
+				/* Include the effects of value of items */
+				value = old_value - bp_ptr->value;
+
+				/* Restore item */
+				l_ptr->treat_as = TREAT_AS_NORM;
+
+				/* Do not junk useful things */
+				if (my_power > p) continue;
 			}
 
 			/* up to level 5, keep anything of value 100 or better */
-			if (bp_ptr->depth < 5 && value > 100)
-				continue;
+			if (bp_ptr->depth < 5 && value > 100) continue;
+			
 			/* up to level 15, keep anything of value 100 or better */
-			if (bp_ptr->depth < 15 && value > 200)
-				continue;
+			if (bp_ptr->depth < 15 && value > 200) continue;
+			
 			/* up to level 30, keep anything of value 500 or better */
-			if (bp_ptr->depth < 30 && value > 500)
-				continue;
+			if (bp_ptr->depth < 30 && value > 500) continue;
+			
 			/* up to level 40, keep anything of value 1000 or better */
-			if (bp_ptr->depth < 40 && value > 1000)
-				continue;
+			if (bp_ptr->depth < 40 && value > 1000) continue;
+			
 			/* up to level 60, keep anything of value 1200 or better */
-			if (bp_ptr->depth < 60 && value > 1200)
-				continue;
+			if (bp_ptr->depth < 60 && value > 1200) continue;
+			
 			/* up to level 80, keep anything of value 1400 or better */
-			if (bp_ptr->depth < 80 && value > 1400)
-				continue;
+			if (bp_ptr->depth < 80 && value > 1400) continue;
+			
 			/* up to level 90, keep anything of value 1600 or better */
-			if (bp_ptr->depth < 90 && value > 1600)
-				continue;
+			if (bp_ptr->depth < 90 && value > 1600) continue;
+			
 			/* up to level 95, keep anything of value 1800 or better */
-			if (bp_ptr->depth < 95 && value > 1800)
-				continue;
+			if (bp_ptr->depth < 95 && value > 1800) continue;
+			
 			/* below level 127, keep anything of value 2000 or better */
-			if (bp_ptr->depth < 127 && value > 2000)
-				continue;
+			if (bp_ptr->depth < 127 && value > 2000) continue;
 		}
-
-		/* Hack -- skip good un-id'd "artifacts" */
-		if (strstr(l_ptr->o_name, "{special")) continue;
-		if (strstr(l_ptr->o_name, "{terrible")) continue;
-
-		/* hack check anything interesting */
-		if (borg_obj_star_id_able(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
 
 		/* Message */
 		borg_note_fmt("# Junking junk (valued at %d)", value);
@@ -1819,33 +1806,31 @@ bool borg_crush_hole(void)
 		/* Don't crush our spell books */
 		if (borg_has_realm(l_ptr->tval - TV_BOOKS_MIN + 1)) continue;
 
-		/* Hack -- Skip items with unknown flags */
-		if ((borg_obj_star_id_able(l_ptr) &&
-			!borg_obj_known_full(l_ptr)) ||
-			(strstr(l_ptr->o_name, "{special") ||
-			strstr(l_ptr->o_name, "{terrible"))) continue;
+		/* Skip items that need to be *id*'d */
+		if (strstr(l_ptr->o_name, "{special") ||
+			strstr(l_ptr->o_name, "{terrible") ||
+			(!borg_obj_known_full(l_ptr) &&
+			borg_obj_star_id_able(l_ptr))) continue;
 
 		/* Get sval */
 		sval = k_info[l_ptr->k_idx].sval;
 
 		/* never crush cool stuff that we might be needing later */
-		if ((l_ptr->tval == TV_POTION && sval == SV_POTION_RESTORE_MANA) &&
-			bp_ptr->msp) continue;
-		if ((l_ptr->tval == TV_POTION) && (sval == SV_POTION_HEALING)) continue;
-		if ((l_ptr->tval == TV_POTION) &&
-			(sval == SV_POTION_STAR_HEALING)) continue;
-		if (l_ptr->tval == TV_POTION && sval == SV_POTION_LIFE) continue;
-		if (l_ptr->tval == TV_POTION && sval == SV_POTION_SPEED) continue;
-		if (l_ptr->tval == TV_SCROLL &&
-			sval == SV_SCROLL_PROTECTION_FROM_EVIL) continue;
-		if (l_ptr->tval == TV_SCROLL &&
-			sval == SV_SCROLL_RUNE_OF_PROTECTION) continue;
-		if ((l_ptr->tval == TV_SCROLL) && (sval == SV_SCROLL_TELEPORT_LEVEL) &&
-			(bp_ptr->able.teleport_level < 1000)) continue;
-		if ((l_ptr->tval == TV_ROD) && (sval == SV_ROD_HEALING ||
-										(sval == SV_ROD_MAPPING)) &&
-			(borg_class == CLASS_WARRIOR) && (l_ptr->number <= 5)) continue;
+		if (l_ptr->tval == TV_POTION &&
+			(sval == SV_POTION_RESTORE_MANA ||
+			sval == SV_POTION_HEALING ||
+			sval == SV_POTION_STAR_HEALING ||
+			sval == SV_POTION_LIFE ||
+			sval == SV_POTION_SPEED)) continue;
 
+		if (l_ptr->tval == TV_SCROLL &&
+			(sval == SV_SCROLL_PROTECTION_FROM_EVIL ||
+			sval == SV_SCROLL_RUNE_OF_PROTECTION ||
+			sval == SV_SCROLL_TELEPORT_LEVEL)) continue;
+
+		if (l_ptr->tval == TV_ROD &&
+			(sval == SV_ROD_HEALING ||
+			sval == SV_ROD_RECALL)) continue;
 
 		/* Pretend one item isn't there */
 		l_ptr->treat_as = TREAT_AS_LESS;
@@ -1920,11 +1905,11 @@ bool borg_crush_slow(void)
 		/* Skip "good" unknown items (unless "icky") */
 		if (!borg_obj_known_p(l_ptr) && !borg_item_icky(l_ptr)) continue;
 
-		/* Hack -- Skip items with unknown flags */
-		if ((borg_obj_star_id_able(l_ptr) &&
-			!borg_obj_known_full(l_ptr)) ||
-			(strstr(l_ptr->o_name, "{special") ||
-			strstr(l_ptr->o_name, "{terrible"))) continue;
+		/* Skip items that need to be *id*'d */
+		if (strstr(l_ptr->o_name, "{special") ||
+			strstr(l_ptr->o_name, "{terrible") ||
+			(!borg_obj_known_full(l_ptr) &&
+			borg_obj_star_id_able(l_ptr))) continue;
 
 		/* Pretend item is less */
 		l_ptr->treat_as = TREAT_AS_LESS;

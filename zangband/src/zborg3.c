@@ -1219,10 +1219,24 @@ bool borg_use_unknown(void)
 	return (FALSE);
 }
 
+/* Check if the given scroll (by sval) can be read */
+bool borg_read_scroll_fail(int sval)
+{
+	/* Dark */
+	if (!map_loc(c_x, c_y)->flags & MAP_GLOW &&
+		!bp_ptr->cur_lite) return (FALSE);
 
-/*
- * Hack -- attempt to read the given scroll (by sval)
- */
+	/* Blind or Confused */
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
+
+	/* Is the scroll available? */
+	if (!borg_slot(TV_SCROLL, sval)) return (FALSE);
+
+	/* The borg has the scroll and can read it too */
+	return (TRUE);
+}
+
+/* Attempt to read the given scroll (by sval) */
 bool borg_read_scroll(int sval)
 {
 	list_item *l_ptr;
@@ -1297,7 +1311,7 @@ bool borg_use_item_fail(list_item *l_ptr, bool risky)
 
 
 /* To zap a rod or not */
-static bool borg_rod_aux(int sval, bool zap)
+static bool borg_rod_aux(int sval, bool zap, bool fail)
 {
 	int slot;
 	list_item *l_ptr;
@@ -1314,7 +1328,7 @@ static bool borg_rod_aux(int sval, bool zap)
 	if (l_ptr->timeout == l_ptr->number) return (FALSE);
 
 	/* Can we zap this rod */
-	if (!borg_use_item_fail(l_ptr, FALSE)) return (FALSE);
+	if (fail && !borg_use_item_fail(l_ptr, FALSE)) return (FALSE);
 
 	/* Do we want to zap it? */
 	if (zap)
@@ -1331,16 +1345,22 @@ static bool borg_rod_aux(int sval, bool zap)
 	return (TRUE);
 }
 
-/* Can we zap this rod? */
+/* Does the borg have this rod? */
 bool borg_equips_rod(int sval)
 {
-	return (borg_rod_aux(sval, FALSE));
+	return (borg_rod_aux(sval, FALSE, FALSE));
+}
+
+/* Does the borg have this rod and will be able to zap it? */
+bool borg_equips_rod_fail(int sval)
+{
+	return (borg_rod_aux(sval, FALSE, TRUE));
 }
 
 /* Let's zap this rod if possible  */
 bool borg_zap_rod(int sval)
 {
-	return (borg_rod_aux(sval, TRUE));
+	return (borg_rod_aux(sval, TRUE, FALSE));
 }
 
 
@@ -1464,9 +1484,10 @@ static bool borg_staff_aux(int sval, bool use, bool fail)
 	/* Do the fail check */
 	if (fail)
 	{
-		if (sval == SV_STAFF_TELEPORTATION)
+		if (sval == SV_STAFF_TELEPORTATION ||
+			sval == SV_STAFF_DESTRUCTION)
 		{
-			/* Take more risk if you want to teleport */
+			/* Take more risk if you want to teleport or destruct */
 			if (!borg_use_item_fail(l_ptr, TRUE)) return (FALSE);
 		}
 		else
@@ -1491,33 +1512,32 @@ static bool borg_staff_aux(int sval, bool use, bool fail)
 	return (TRUE);
 }
 
-/*
- * Hack -- attempt to use the requested staff (by sval)
- */
+/* Attempt to use the requested staff (by sval) */
 bool borg_use_staff(int sval)
 {
 	/* Use the staff (if available) without fail check */
 	return borg_staff_aux(sval, TRUE, FALSE);
 }
 
-/*
- * Hack -- attempt to use the requested staff (by sval) and
- * make a fail check on it.
- */
+/* Attempt to use the staff (by sval) and make a fail check on it. */
 bool borg_use_staff_fail(int sval)
 {
 	/* Use the staff with fail check */
 	return borg_staff_aux(sval, TRUE, TRUE);
 }
 
-/*
- * Hack -- checks staff (by sval) and
- * make a fail check on it.
- */
+/* Checks staff (by sval) and makes a fail check on it. */
 bool borg_equips_staff_fail(int sval)
 {
 	/* Do not use the staff, just do the fail check */
 	return borg_staff_aux(sval, FALSE, TRUE);
+}
+
+/* Checks staff (by sval) and without a fail check. */
+bool borg_equips_staff(int sval)
+{
+	/* Do not use the staff, just do the fail check */
+	return borg_staff_aux(sval, FALSE, FALSE);
 }
 
 /*
@@ -1529,7 +1549,7 @@ bool borg_equips_staff_fail(int sval)
 bool borg_check_artifact(list_item *l_ptr, bool real_use)
 {
 	/* Skip empty items */
-	if (!l_ptr) return (FALSE);
+	if (!l_ptr || !l_ptr->k_idx) return (FALSE);
 
 	/* Skip non-artifacts */
 	if (!(KN_FLAG(l_ptr, TR_INSTA_ART))) return (FALSE);
@@ -2023,7 +2043,7 @@ int borg_spell_fail_rate(int realm, int book, int what)
 	{
 		l_ptr = &equipment[EQUIP_WIELD];
 
-		if (l_ptr &&
+		if (l_ptr->k_idx &&
 			(l_ptr->tval == TV_SWORD || l_ptr->tval == TV_POLEARM) &&
 			!KN_FLAG(l_ptr, TR_BLESSED))
 		{

@@ -96,7 +96,7 @@ extern bool borg_flow_dark(bool neer);
  */
 extern bool borg_flow_spastic(bool bored);
 
-extern bool borg_lite_beam(bool simulation);
+extern bool borg_lite_beam(bool simulation, int *dir);
 extern bool borg_caution_phase(int emergency, int turns);
 
 /*

@@ -663,24 +663,22 @@ static bool borg_think_shop_sell_aux(int shop)
  */
 static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 {
-	list_item *q_ptr = &equipment[slot];
+	list_item *q_ptr = look_up_equip_slot(slot);
 
 	s32b p;
 
 	/* Paranoia */
-	if (KN_FLAG(q_ptr, TR_CURSED) ||
+	if (q_ptr &&
+		(KN_FLAG(q_ptr, TR_CURSED) ||
 		KN_FLAG(q_ptr, TR_HEAVY_CURSE) ||
-		KN_FLAG(q_ptr, TR_PERMA_CURSE))
+		KN_FLAG(q_ptr, TR_PERMA_CURSE)))
 	{
-		/* Hack, trying to wield into cursed slot - avoid this */
-		p = borg_power();
-
 		/* Return 'bad' value */
-		return (p - 1);
+		return (0);
 	}
 
 	/* Swap items */
-	q_ptr->treat_as = TREAT_AS_SWAP;
+	if (q_ptr) q_ptr->treat_as = TREAT_AS_SWAP;
 	l_ptr->treat_as = TREAT_AS_SWAP;
 
 	/* Evaluate the inventory */
@@ -690,7 +688,7 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 	if (home) p += borg_power_home();
 
 	/* Fix items */
-	equipment[slot].treat_as = TREAT_AS_NORM;
+	if (q_ptr) q_ptr->treat_as = TREAT_AS_NORM;
 	l_ptr->treat_as = TREAT_AS_NORM;
 
 	/* Return power */
@@ -771,14 +769,6 @@ static bool borg_think_shop_buy_aux(int shop)
 		/* Consider new equipment */
 		if (slot >= 0)
 		{
-			list_item *k_ptr = &equipment[slot];
-		
-			/* skip this object if the slot is occupied by a cursed item */
-			if (k_ptr ||
-				strstr(k_ptr->o_name, "{cursed") ||
-				KN_FLAG(k_ptr, TR_CURSED) ||
-				KN_FLAG(k_ptr, TR_HEAVY_CURSE)) continue;
-
 			/* Get power for doing swap */
 			p = borg_think_buy_slot(l_ptr, slot, FALSE);
 		}
@@ -1223,13 +1213,21 @@ bool borg_think_store(void)
  */
 static bool borg_think_dungeon_brave(void)
 {
+	int dir;
 	/*** Local stuff ***/
 
 	/* Attack monsters */
 	if (borg_attack(TRUE)) return (TRUE);
 
-	/* Cast a light beam to remove fear of an area */
-	if (borg_lite_beam(FALSE)) return (TRUE);
+	/* Test a light beam to remove fear of an area */
+	if (borg_lite_beam(TRUE, &dir))
+	{
+		/* Cast that beam */
+		(void)borg_lite_beam(FALSE, &dir);
+
+		/* Ready */
+		return (TRUE);
+	}
 
 	/*** Flee (or leave) the level ***/
 

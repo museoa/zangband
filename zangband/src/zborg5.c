@@ -433,7 +433,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
-				/* only morgoth. HACK to make it easier to fight him */
+				/* only Serpent. HACK to make it easier to fight him */
 				break;
 			}
 
@@ -3637,7 +3637,7 @@ static s32b borg_power_aux4(void)
 	value += 1000 * MIN_FLOOR(bp_ptr->food, 25, max_carry);
 
 	/* If you can digest food */
-	if (!FLAG(bp_ptr, TR_CANT_EAT))
+	if (!FLAG(bp_ptr, TR_CANT_EAT) && bp_ptr->food < 1000)
 	{
 		/* Prefer to buy HiCalorie foods over LowCalorie */
 		value += 20 * MIN(5 * amt_food_hical, max_carry);
@@ -4347,7 +4347,7 @@ static cptr borg_prepared_aux2(int depth)
 
 	/*** Essential Items for Level 100 ***/
 
-	/* must have lots of restore mana to go after MORGOTH */
+	/* must have lots of restore mana to go after Serpent */
 	if (!bp_ptr->winner)
 	{
 		if ((bp_ptr->msp > 100) && (bp_ptr->able.mana < 15)) return ("15ResMana");
