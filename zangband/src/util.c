@@ -3779,7 +3779,27 @@ static const s16b gamma_helper[256] =
 /*
  * Build the gamma table so that floating point isn't needed.
  *
- * Note gamma goes from 0->256.  The old value of 100 is now 128.
+ *  ANGBAND_X11_GAMMA is
+ * 256 * (1 / gamma), rounded to integer. A recommended value
+ * is 183, which is an approximation of the Macintosh hardware
+ * gamma of 1.4.
+ *
+ *   gamma	ANGBAND_X11_GAMMA
+ *   -----	-----------------
+ *   1.2	213
+ *   1.25	205
+ *   1.3	197
+ *   1.35	190
+ *   1.4	183
+ *   1.45	177
+ *   1.5	171
+ *   1.6	160
+ *   1.7	151
+ *   ...
+ *
+ * XXX XXX The environment variable, or better,
+ * the interact with colours command should allow users
+ * to specify gamma values (or gamma value * 100).
  */
 void build_gamma_table(int gamma)
 {
@@ -3790,6 +3810,10 @@ void build_gamma_table(int gamma)
 	 * diff is the new term to add to the series.
 	 */
 	long value, diff;
+	
+	/* Paranoia */
+	if (gamma < 0) gamma = 0;
+	if (gamma > 255) gamma = 255;
 
 	/* Hack - convergence is bad in these cases. */
 	gamma_table[0] = 0;
@@ -3918,3 +3942,56 @@ cptr get_default_font(int term_num)
 	
 	return (font);
 }
+
+#ifdef USE_GRAPHICS
+bool pick_graphics(int graphics, int *tile_size, char *filename)
+{
+	int old_graphics = use_graphics;
+	
+	use_graphics = GRAPHICS_NONE;
+	use_transparency = FALSE;
+		
+	if ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ADAM_BOLT))
+	{
+		/* Try the "16x16.bmp" file */
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
+
+		/* Use the "16x16.bmp" file if it exists */
+		if (0 == fd_close(fd_open(filename, O_RDONLY)))
+		{
+			/* Use graphics */
+			use_graphics = GRAPHICS_ADAM_BOLT;
+
+			use_transparency = TRUE;
+
+			*tile_size = 16;
+
+			ANGBAND_GRAF = "new";
+		}
+	}
+		
+	/* We failed, or we want 8x8 graphics */
+	if (!use_graphics && ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ORIGINAL)))
+	{
+		/* Try the "8x8.bmp" file */
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
+
+		/* Use the "8x8.bmp" file if it exists */
+		if (0 == fd_close(fd_open(filename, O_RDONLY)))
+		{
+			/* Use graphics */
+			use_graphics = GRAPHICS_ORIGINAL;
+
+			*tile_size = 8;
+
+			ANGBAND_GRAF = "old";
+		}
+	}
+	
+	/* Did we change the graphics? */
+	if (old_graphics == use_graphics) return (FALSE);
+	
+	/* Success */
+	return (TRUE);
+}
+#endif /* USE_GRAPHICS */
