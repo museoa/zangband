@@ -1825,3 +1825,34 @@ copyback:
 	t = tmp_val;
 	while ((*(buf++) = *(t++))); /* copy the string over */
 }
+
+/*
+ * Hack -- describe an item currently in a store's inventory
+ * This allows an item to *look* like the player is "aware" of it
+ */
+void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
+{
+	/* Save the "aware" flag */
+	bool hack_aware = object_aware_p(o_ptr);
+
+	/* Save the "known" flag */
+	bool hack_known = (o_ptr->ident & (IDENT_KNOWN)) ? TRUE : FALSE;
+
+
+	/* Set the "known" flag */
+	o_ptr->ident |= (IDENT_KNOWN);
+
+	/* Force "aware" for description */
+	k_info[o_ptr->k_idx].aware = TRUE;
+
+
+	/* Describe the object */
+	object_desc(buf, o_ptr, pref, mode);
+
+
+	/* Restore "aware" flag */
+	k_info[o_ptr->k_idx].aware = hack_aware;
+
+	/* Clear the known flag */
+	if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
+}

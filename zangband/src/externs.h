@@ -515,7 +515,6 @@ extern errr init_r_info_txt(FILE *fp, char *buf);
 extern errr init_w_info_txt(FILE *fp, char *buf);
 extern errr init_t_info_txt(FILE *fp, char *buf);
 extern errr process_dungeon_file(cptr name, int init_flags);
-extern void write_r_info_txt(void);
 
 /* init2.c */
 extern cptr err_str[PARSE_ERROR_MAX];
@@ -604,14 +603,18 @@ extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
 extern bool are_enemies(monster_type *m_ptr1, monster_type *m_ptr2);
 extern bool monster_living(monster_race *r_ptr);
 
+/* flavor.c */
+extern void get_table_name(char *out_string);
+extern void flavor_init(void);
+extern void object_desc(char *buf, object_type *o_ptr, int pref, int mode);
+extern void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode);
+
 /* object1.c */
 /* object2.c */
-extern void flavor_init(void);
+
 extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 extern void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
-extern void object_desc(char *buf, object_type *o_ptr, int pref, int mode);
-extern void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode);
 extern bool identify_fully_aux(object_type *o_ptr);
 extern char index_to_label(int i);
 extern s16b label_to_inven(int c);
@@ -669,6 +672,7 @@ extern s16b get_obj_num(int level, int min_level);
 extern void object_known(object_type *o_ptr);
 extern void object_aware(object_type *o_ptr);
 extern void object_tried(object_type *o_ptr);
+extern s32b flag_cost(object_type *o_ptr, int plusses);
 extern s32b object_value(object_type *o_ptr);
 extern s32b object_value_real(object_type *o_ptr);
 extern void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt);
@@ -803,8 +807,6 @@ extern bool charm_monster(int dir, int plev);
 extern bool control_one_undead(int dir, int plev);
 extern bool charm_animal(int dir, int plev);
 extern bool mindblast_monsters(int dam);
-extern void get_table_name(char *out_string);
-extern s32b flag_cost(object_type *o_ptr, int plusses);
 extern void report_magics(void);
 extern bool teleport_swap(int dir);
 extern bool project_hook(int typ, int dir, int dam, u16b flg);
@@ -963,8 +965,6 @@ extern void update_stuff(void);
 extern void redraw_stuff(void);
 extern void window_stuff(void);
 extern void handle_stuff(void);
-extern bool monk_empty_hands(void);
-extern bool monk_heavy_armor(void);
 extern void calc_bonuses(void);
 
 

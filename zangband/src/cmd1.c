@@ -1707,7 +1707,9 @@ void py_attack(int y, int x)
 				vorpal_cut = TRUE;
 			else vorpal_cut = FALSE;
 
-			if ((p_ptr->pclass == CLASS_MONK) && monk_empty_hands())
+			/* Monk attack? */
+			if ((p_ptr->pclass == CLASS_MONK) &&
+				 (!(inventory[INVEN_WIELD].k_idx)))
 			{
 				/* Make a special monk attack */
 				monk_attack(m_ptr, &k, m_name);

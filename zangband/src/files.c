@@ -1522,10 +1522,14 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 			(*f2) |= (TR2_RES_FEAR);
 		break;
 	case CLASS_MONK:
-		if ((p_ptr->lev > 9) && !monk_heavy_armor())
-			(*f1) |= TR1_SPEED;
-		if ((p_ptr->lev > 24) && !monk_heavy_armor())
-			(*f2) |= (TR2_FREE_ACT);
+		/* Monks get extra abilities if unencumbered */
+		if (!p_ptr->monk_armour_stat)
+		{
+			if (p_ptr->lev > 9)
+				(*f1) |= TR1_SPEED;
+			if (p_ptr->lev > 24)
+				(*f2) |= (TR2_FREE_ACT);
+		}
 		break;
 	case CLASS_MINDCRAFTER:
 		if (p_ptr->lev > 9)

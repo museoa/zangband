@@ -2306,9 +2306,6 @@ static sint add_special_missile_skill(byte pclass)
 	return (add_skill);
 }
 
-/* Monk armour status */
-static bool monk_notify_aux;
-
 /*
  * Calculate the players current "state", taking into account
  * not only race/class intrinsics, but also objects being worn
@@ -2345,7 +2342,7 @@ void calc_bonuses(void)
 	bool old_heavy_wield = p_ptr->heavy_wield;
 	bool old_heavy_shoot = p_ptr->heavy_shoot;
 	bool old_icky_wield = p_ptr->icky_wield;
-	bool monk_armour_aux;
+	bool old_monk_armour = p_ptr->monk_armour_stat;
 
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
@@ -2362,6 +2359,31 @@ void calc_bonuses(void)
 	/* Clear extra blows/shots */
 	extra_blows = extra_shots = 0;
 
+	/* Calculate monk armour status */
+	if (p_ptr->pclass == CLASS_MONK) 
+	{
+		u16b monk_arm_wgt = 0;
+
+		/* Weigh the armor */
+		monk_arm_wgt += inventory[INVEN_BODY ].weight;
+		monk_arm_wgt += inventory[INVEN_HEAD ].weight;
+		monk_arm_wgt += inventory[INVEN_ARM  ].weight;
+		monk_arm_wgt += inventory[INVEN_OUTER].weight;
+		monk_arm_wgt += inventory[INVEN_HANDS].weight;
+		monk_arm_wgt += inventory[INVEN_FEET ].weight;
+
+		if (monk_arm_wgt > (100 + (p_ptr->lev * 4)))
+		{
+			/* Burdened */
+			p_ptr->monk_armour_stat = TRUE;
+		}
+		else
+		{
+			/* Not burdened */
+			p_ptr->monk_armour_stat = FALSE;
+		}
+	}
+	
 	/* Clear the stat modifiers */
 	for (i = 0; i < A_MAX; i++) p_ptr->stat_add[i] = 0;
 
@@ -2497,16 +2519,20 @@ void calc_bonuses(void)
 				break;
 			case CLASS_MONK:
 				/* Unencumbered Monks become faster every 10 levels */
-				if (!(monk_heavy_armor()))
+				if (!p_ptr->monk_armour_stat)
+				{
 #ifndef MONK_HACK
 					if (!((p_ptr->prace == RACE_KLACKON) ||
 						(p_ptr->prace == RACE_SPRITE)))
 #endif /* MONK_HACK */
+					{
 						p_ptr->pspeed += (p_ptr->lev) / 10;
-
-				/* Free action if unencumbered at level 25 */
-				if ((p_ptr->lev > 24) && !monk_heavy_armor())
-					p_ptr->free_act = TRUE;
+					}
+				
+					/* Free action if unencumbered at level 25 */
+					if (p_ptr->lev > 24) p_ptr->free_act = TRUE;
+				}
+				
 				break;
 		}
 
@@ -2836,7 +2862,7 @@ void calc_bonuses(void)
 	}
 
 	/* Monks get extra ac for armour _not worn_ */
-	if ((p_ptr->pclass == CLASS_MONK) && !monk_heavy_armor())
+	if ((p_ptr->pclass == CLASS_MONK) && (!p_ptr->monk_armour_stat))
 	{
 		if (!(inventory[INVEN_BODY].k_idx))
 		{
@@ -3376,7 +3402,8 @@ void calc_bonuses(void)
 
 
 	/* Different calculation for monks with empty hands */
-	else if ((p_ptr->pclass == CLASS_MONK) && monk_empty_hands())
+	else if ((p_ptr->pclass == CLASS_MONK) &&
+				 (!(inventory[INVEN_WIELD].k_idx)))
 	{
 		p_ptr->num_blow = 2;
 
@@ -3387,11 +3414,11 @@ void calc_bonuses(void)
 		if (p_ptr->lev > 44) p_ptr->num_blow++;
 		if (p_ptr->lev > 49) p_ptr->num_blow++;
 
-		if (monk_heavy_armor()) p_ptr->num_blow /= 2;
-
-		p_ptr->num_blow += extra_blows;
-
-		if (!monk_heavy_armor())
+		if (!p_ptr->monk_armour_stat)
+		{
+			p_ptr->num_blow /= 2;
+		}
+		else
 		{
 			p_ptr->to_h += (p_ptr->lev / 3);
 			p_ptr->to_d += (p_ptr->lev / 3);
@@ -3399,6 +3426,8 @@ void calc_bonuses(void)
 			p_ptr->dis_to_h += (p_ptr->lev / 3);
 			p_ptr->dis_to_d += (p_ptr->lev / 3);
 		}
+		
+		p_ptr->num_blow += extra_blows;
 	}
 	/* Everyone gets two blows if not wielding a weapon. -LM- */
 	else if (!o_ptr->k_idx) p_ptr->num_blow = 2;
@@ -3408,7 +3437,6 @@ void calc_bonuses(void)
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
-	monk_armour_aux = FALSE;
 
 	/* Extra bonus for warriors... */
 	if (p_ptr->pclass == CLASS_WARRIOR)
@@ -3435,12 +3463,6 @@ void calc_bonuses(void)
 		/* Icky weapon */
 		p_ptr->icky_wield = TRUE;
 	}
-
-	if (monk_heavy_armor())
-	{
-		monk_armour_aux = TRUE;
-	}
-
 
 	/* Affect Skill -- stealth (bonus one) */
 	p_ptr->skill_stl += 1;
@@ -3559,9 +3581,10 @@ void calc_bonuses(void)
 		}
 	}
 
-	if (p_ptr->pclass == CLASS_MONK && (monk_armour_aux != monk_notify_aux))
+	if (p_ptr->pclass == CLASS_MONK &&
+		 (p_ptr->monk_armour_stat != old_monk_armour))
 	{
-		if (monk_heavy_armor())
+		if (p_ptr->monk_armour_stat)
 		{
 			msg_print("The weight of your armor disrupts your balance.");
 
@@ -3572,8 +3595,6 @@ void calc_bonuses(void)
 		}
 		else
 			msg_print("You regain your balance.");
-
-		monk_notify_aux = monk_armour_aux;
 	}
 
 	p_ptr->align = friend_align;
@@ -4001,29 +4022,4 @@ void handle_stuff(void)
 	if (p_ptr->window) window_stuff();
 }
 
-
-bool monk_empty_hands(void)
-{
-	if (p_ptr->pclass != CLASS_MONK) return FALSE;
-
-	return !(inventory[INVEN_WIELD].k_idx);
-}
-
-
-bool monk_heavy_armor(void)
-{
-	u16b monk_arm_wgt = 0;
-
-	if (p_ptr->pclass != CLASS_MONK) return FALSE;
-
-	/* Weight the armor */
-	monk_arm_wgt += inventory[INVEN_BODY ].weight;
-	monk_arm_wgt += inventory[INVEN_HEAD ].weight;
-	monk_arm_wgt += inventory[INVEN_ARM  ].weight;
-	monk_arm_wgt += inventory[INVEN_OUTER].weight;
-	monk_arm_wgt += inventory[INVEN_HANDS].weight;
-	monk_arm_wgt += inventory[INVEN_FEET ].weight;
-
-	return (monk_arm_wgt > (100 + (p_ptr->lev * 4)));
-}
 
