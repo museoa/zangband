@@ -41,6 +41,7 @@ for key in monster_list:
 
 	outfile.write('):\n')
 
+	outfile.write('\tr_idx = "%s"\n' % monster.r_idx)
 	outfile.write('\tname = "%s"\n' % monster.name)
 	outfile.write('\tascii = "%s,%s"\n' % (monster.letter, monster.color))
 	outfile.write('\tlevel = %d\n' % monster.level)

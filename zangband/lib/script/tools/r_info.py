@@ -287,6 +287,7 @@ monster_class instances with r_idx as key."""
 				number = atoi(strip(result[1]))
 				monsters[number] = monster_class()
 				monster = monsters[number]
+				monster.r_idx = number
 				monster.name = strip(result[2])
 			elif result[0] == 'G':
 				monster.letter = strip(result[1])

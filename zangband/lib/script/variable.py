@@ -19,8 +19,8 @@ ui = ui.standard.ui_standard()
 #####################################################################
 # Init the monsters
 #####################################################################
-import base.monster
-monsters = base.monster.monster_data()
+#import base.monster
+#monsters = base.monster.monster_data()
 
 #####################################################################
 # Init the object storage
@@ -47,7 +47,7 @@ def get_save_data():
 	return { "debug" : debug,
 	         "events" : events,
 	         "ui" : ui,
-	         "monsters" : monsters,
+#	         "monsters" : monsters,
 	         "objects" : objects,
 	         "player" : player,
 	         "worlds" : worlds }
@@ -59,8 +59,8 @@ def set_save_data(dict):
 	events = dict["events"]
 	global ui
 	ui = dict["ui"]
-	global monsters
-	monsters = dict["monsters"]
+#	global monsters
+#	monsters = dict["monsters"]
 	global objects
 	objects = dict["objects"]
 	global player
