@@ -1473,7 +1473,7 @@ void py_attack(int y, int x)
 				}
 
 				if ((p_ptr->impact && ((k > 50) || randint(7) == 1)) ||
-				    (chaos_effect == 2))
+					 (chaos_effect == 2))
 				{
 					do_quake = TRUE;
 				}
@@ -1482,13 +1482,54 @@ void py_attack(int y, int x)
 
 				if (vorpal_cut)
 				{
-					int step_k = k;
+					int mult = 2;
 
-					do
+					int inc_chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
+
+					if ((o_ptr->name1 == ART_CHAINSWORD) && (randint(2) != 1))
 					{
-						k += step_k;
+						char chainsword_noise[1024];
+						if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
+						{
+							msg_print(chainsword_noise);
+						}
 					}
-					while (randint((o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4) == 1);
+
+					if (o_ptr->name1 == ART_VORPAL_BLADE)
+					{
+						msg_print("Your Vorpal Blade goes snicker-snack!");
+					}
+					else
+					{
+						msg_format("Your weapon cuts deep into %s!", m_name);
+					}
+
+					/* Try to increase the damage */
+					while (one_in_(inc_chance))
+					{
+						mult++;
+					}
+
+					k *= mult;
+
+					/* Ouch! */
+					if (k > m_ptr->hp)
+					{
+						msg_format("You cut %s in half!", m_name);
+					}
+					else
+					{
+						switch(mult)
+						{
+							case 2:	msg_format("You gouge %s!", m_name);		break;
+							case 3:	msg_format("You maim %s!", m_name);			break;
+							case 4:	msg_format("You carve %s!", m_name);		break;
+							case 5:	msg_format("You cleave %s!", m_name);		break;
+							case 6:	msg_format("You smite %s!", m_name);		break;
+							case 7:	msg_format("You eviscerate %s!", m_name);	break;
+							default:	msg_format("You shred %s!", m_name);		break;
+						}
+					}
 				}
 
 				k += o_ptr->to_d;
@@ -1502,22 +1543,6 @@ void py_attack(int y, int x)
 
 			/* Modify the damage */
 			k = mon_damage_mod(m_ptr, k, 0);
-
-			/* Vorpal blade / Chainsword message */
-			if (vorpal_cut && (k > 0))
-			{
-				if ((o_ptr->name1 == ART_CHAINSWORD) && (randint(2) != 1))
-				{
-					char chainsword_noise[1024];
-					if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
-						msg_print(chainsword_noise);
-				}
-
-				if (o_ptr->name1 == ART_VORPAL_BLADE)
-					msg_print("Your Vorpal Blade goes snicker-snack!");
-				else
-					msg_format("Your weapon cuts deep into %s!", m_name);
-			}
 
 			/* Complex message */
 			if (wizard)
