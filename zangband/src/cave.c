@@ -4902,8 +4902,7 @@ void map_area(void)
 			pc_ptr = parea(x, y);
 
 			/* All non-walls are "checked" */
-			if (!((c_ptr->feat >= FEAT_MAGMA) &&
-				  (c_ptr->feat <= FEAT_PERM_SOLID)))
+			if (cave_floor_grid(c_ptr))
 			{
 				/* Memorize normal features */
 				if (c_ptr->feat != FEAT_FLOOR)
@@ -4919,8 +4918,7 @@ void map_area(void)
 					pc_ptr = parea(x + ddx_ddd[i], y + ddy_ddd[i]);
 
 					/* Memorize walls */
-					if ((c_ptr->feat >= FEAT_MAGMA) &&
-						(c_ptr->feat <= FEAT_PERM_SOLID))
+					if (cave_wall_grid(c_ptr))
 					{
 						/* Memorize the walls */
 						remember_grid(c_ptr, pc_ptr);
