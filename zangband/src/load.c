@@ -3109,10 +3109,19 @@ static errr rd_savefile_new_aux(void)
 			/* Name */
 			if (sf_version < 26)
 			{
-				rd_string(town[i].name, 32);
+				char temp_buffer[32];
+				
+				rd_string(temp_buffer, 32);
 				
 				/* Get a new name */
-				if (!vanilla_town) select_town_name(town[i].name, town[i].pop);
+				if (vanilla_town)
+				{
+					strcpy(town[i].name, "Town");
+				}
+				else
+				{
+					select_town_name(town[i].name, town[i].pop);
+				}
 			}
 			else
 			{
