@@ -439,6 +439,22 @@ static void hook_quit(cptr str)
 	cleanup_angband();
 }
 
+/*
+ * Memory allocation wrappers
+ */
+static vptr my_tcl_free(vptr data)
+{
+	Tcl_Free((char *) data);
+	
+	return (NULL);
+}
+
+static vptr my_tcl_alloc(huge size)
+{
+	return (Tcl_Alloc(size));
+}
+
+
 #ifdef PLATFORM_X11
 
 /*
@@ -472,6 +488,10 @@ int init_tnb(int argc, cptr *argv)
 	
 	/* Paranoia */
 	if (!g_interp) return(1);
+	
+	/* Set the memory-allocation hooks */
+	rnfree_aux = my_tcl_free;
+	ralloc_aux = my_tcl_alloc;
 
 	/* Initialize */
 	angtk_init();
