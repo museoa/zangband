@@ -1781,7 +1781,7 @@ void field_action_interact_open(s16b *field_ptr, void *output)
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match trap power against player armor.
  */
-static int check_hit(int power)
+static bool check_hit(int power)
 {
 	int k, ac;
 
@@ -1799,6 +1799,32 @@ static int check_hit(int power)
 
 	/* Power competes against Armor */
 	if (randint1(power) > ((ac * 3) / 4)) return (TRUE);
+
+	/* Assume miss */
+	return (FALSE);
+}
+
+
+/*
+ * Determine if a trap affects the player.
+ * Always miss 5% of the time, Always hit 5% of the time.
+ * Otherwise, match trap power against players saving throw.
+ */
+static bool check_save(int power)
+{
+	int k, ac;
+
+	/* Percentile dice */
+	k = randint0(100);
+
+	/* Hack -- 5% hit, 5% miss */
+	if (k < 10) return (k < 5);
+
+	/* Paranoia -- No power */
+	if (power <= 0) return (FALSE);
+
+	/* Power competes against saving throw */
+	if (randint1(power) > (p_ptr->skill_sav) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -2169,6 +2195,9 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("There is a flash of shimmering light!");
 	
 	/* Curse the equipment */
@@ -2210,6 +2239,9 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 	
 	msg_print("You hit a teleport trap!");
 	teleport_player(100);
@@ -2416,6 +2448,9 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("There is a bright flash of light!");
 
 	/* Make some new traps */
@@ -2517,6 +2552,9 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 		
@@ -2532,6 +2570,9 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 		
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("There is a bright flash of light!");
 	(void)apply_disenchant(0);
 }
@@ -2545,6 +2586,9 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 		
 	msg_print("You fumble with your equipment!");
 	
@@ -2565,6 +2609,9 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 		
 	(void)gain_random_mutation(0);
 }
@@ -2576,6 +2623,9 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 		
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
@@ -2598,6 +2648,9 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 	
 	msg_print("Darkness surrounds you!");
 	
@@ -2629,6 +2682,9 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("You suddenly feel very, very hungry!");
 	
 	/* Only effect non-starving people */
@@ -2650,6 +2706,9 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("Your purse becomes weightless!");
 	
 	/* No gold! */
@@ -2670,6 +2729,9 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("A shrill note sounds!");
 	
 	(void)speed_monsters();	
@@ -2686,6 +2748,9 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("You smell something musty.");
 	
 	(void)raise_dead(py, px, FALSE);
@@ -2701,6 +2766,9 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 	
 	msg_print("Static fills the air.");
 	
@@ -2740,6 +2808,9 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
+	
 	msg_print("Shouts fill the air!");
 	
 	aggravate_monsters(0);
@@ -2752,6 +2823,9 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1])) return;
 	
 	msg_print("Zap!");
 	
@@ -2767,6 +2841,15 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 {	
 	/* Disturb the player */
 	disturb(0, 0);
+	
+	/* Saving throw */
+	if (!check_hit(f_ptr->data[1]))
+	{
+		/* Find the trap */
+		hit_trap;
+		
+		return;
+	}
 	
 	msg_print("You are not sure what just happened!");
 	
@@ -3063,3 +3146,29 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 	mon_enter->do_move = FALSE;
 }
 
+/*
+ * Initialise artifact-saving field
+ */
+void field_action_preserve_init(s16b *field_ptr, void *input)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Save the number of the artifact */
+	f_ptr->data[0] = (byte *) input;
+	
+	return;
+}
+
+/* Preserve an artifact */
+void field_action_preserve_artifact(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	artifact_type *a_ptr = &a_info[f_ptr->data[0]];
+	
+	/* Preserve the artifact mentioned in data[0] */
+	a_ptr->cur_num = 0;
+	
+	/* Delete the field */
+	delete_field_ptr(field_ptr);
+}
