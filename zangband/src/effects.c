@@ -2645,10 +2645,10 @@ void do_poly_self(void)
             change = rp_ptr->r_adj[i] - race_info[old_race].r_adj[i];
 
             /* Adjust current stat */
-            p_ptr->stat_cur[i] = adjust_stat(i, p_ptr->stat_cur[i], change);
+            p_ptr->stat_cur[i] = adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
 
             /* Set maximum stat based on current stat and drainage */
-            p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_cur[i], change);
+            p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
         }
 
 		/* Experience factor */

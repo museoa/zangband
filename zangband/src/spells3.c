@@ -897,8 +897,8 @@ void mutate_player(void)
     bonus1 = rp_ptr->r_adj[ii] + cp_ptr->c_adj[ii];
     bonus2 = rp_ptr->r_adj[jj] + cp_ptr->c_adj[jj];
 
-    max1 = adjust_stat(jj, max1, bonus2 - bonus1);
-    max2 = adjust_stat(ii, max2, bonus1 - bonus2);
+    max1 = adjust_stat(jj, max1, bonus2 - bonus1, FALSE);
+    max2 = adjust_stat(ii, max2, bonus1 - bonus2, FALSE);
 
     /* Hack - restore both stats rather than figure try to swap drainage */
     cur1 = max1;

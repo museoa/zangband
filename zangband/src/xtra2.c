@@ -3909,7 +3909,7 @@ int stat_cap(int stat)
 }
 
 
-int adjust_stat(int stat, int value, int amount)
+int adjust_stat(int stat, int value, int amount, bool fixed)
 {
     int i;
 
@@ -3948,7 +3948,10 @@ int adjust_stat(int stat, int value, int amount)
             }
             else
             {
-                value += rand_range(5, 15);
+                if (fixed)
+                    value += 10;
+                else
+                    value += rand_range(5, 15);
             }
         }
     }
