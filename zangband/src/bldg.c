@@ -855,7 +855,7 @@ void have_nightmare(int r_idx)
  */
 static bool inn_comm(int cmd)
 {
-	int dawnval;
+	s32b dawnval;
 
 	switch (cmd)
 	{
