@@ -3329,7 +3329,7 @@ void update_view(void)
 		info = c_ptr->info;
 
 		/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
-		info &= ~(CAVE_TEMP | CAVE_XTRA);
+		info &= ~(CAVE_TEMP | CAVE_XTRA );
 
 		/* Was "CAVE_VIEW", is now not "CAVE_VIEW" */
 		if (!(info & (CAVE_VIEW)))
