@@ -192,7 +192,6 @@ cygwin: ANGOBJS += angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
-cygwin: EXEC := .exe
 
 ##
 ## Variation -- OpenBSD 
@@ -478,7 +477,7 @@ angband.res : angband.rc
 ##
 
 $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
-	$(LUA)tolua$(EXEC) -n $(subst l-,,$*) -o $@ $<
+	$(LUA)tolua -n $(subst l-,,$*) -o $@ $<
 
 ##
 ## Hack... .o files can be created from .obj files
