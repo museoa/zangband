@@ -2496,7 +2496,7 @@ static void process_monster(int m_idx)
 
 		if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
 			(cave[ny][nx].feat <= FEAT_PATTERN_XTRA2) &&
-			(do_turn == FALSE) && !(r_ptr->flags7 & RF7_CAN_FLY))
+			!do_turn && !(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;
 		}
@@ -2506,7 +2506,7 @@ static void process_monster(int m_idx)
 		if (do_move && c_ptr->m_idx)
 		{
 			monster_race *z_ptr = &r_info[y_ptr->r_idx];
-			monster_type    *m2_ptr = &m_list[c_ptr->m_idx];
+			monster_type *m2_ptr = &m_list[c_ptr->m_idx];
 
 			/* Assume no movement */
 			do_move = FALSE;
@@ -2519,7 +2519,8 @@ static void process_monster(int m_idx)
 			{
 				do_move = FALSE;
 
-				if (r_ptr->flags2 & RF2_KILL_BODY) r_ptr->r_flags2 |= (RF2_KILL_BODY);
+				if (r_ptr->flags2 & RF2_KILL_BODY)
+					r_ptr->r_flags2 |= (RF2_KILL_BODY);
 
 				/* attack */
 				if ((m2_ptr->r_idx) && (m2_ptr->hp >= 0))

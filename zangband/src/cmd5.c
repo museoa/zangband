@@ -413,8 +413,8 @@ void do_cmd_study(void)
 	if (mp_ptr->spell_book != TV_LIFE_BOOK)
 	{
 		/* Ask for a spell, allow cancel */
-		if (!get_spell(&spell, "study", sval, FALSE, (bool)(increment ? TRUE : FALSE))
-			&& (spell == -1)) return;
+		if (!get_spell(&spell, "study", sval, FALSE,
+		    (bool)(increment ? TRUE : FALSE)) && (spell == -1)) return;
 	}
 
 	/* Priest -- Learn a random prayer */
@@ -1185,10 +1185,10 @@ static bool cast_chaos_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		fire_ball(GF_MISSILE, dir,
-			(damroll(3, 5) + plev +
-			(plev / (((p_ptr->pclass == CLASS_MAGE)
-			|| (p_ptr->pclass == CLASS_HIGH_MAGE)) ? 2 : 4))),
-			((plev < 30) ? 2 : 3));
+		    (damroll(3, 5) + plev +
+		    (plev / (((p_ptr->pclass == CLASS_MAGE) ||
+		    (p_ptr->pclass == CLASS_HIGH_MAGE)) ? 2 : 4))),
+		    ((plev < 30) ? 2 : 3));
 			/* Shouldn't actually use GF_MANA, as it will destroy all
 			 * items on the floor */
 		break;

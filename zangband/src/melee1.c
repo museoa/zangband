@@ -744,8 +744,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							if (strstr((r_name + r_ptr->name), "black market")
-							    && randint(2) != 1)
+							if (strstr((r_name + r_ptr->name), "black market") &&
+							    randint(2) != 1)
 							{
 								s16b o_idx;
 

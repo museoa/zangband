@@ -2152,8 +2152,8 @@ sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
 			if (add_skill < -10) add_skill = -10;
 
 			/* Paladin penalty for non-blessed edged weapons. */
-			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-				&& ((!p_ptr->bless_blade)))
+			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) &&
+			    (!p_ptr->bless_blade))
 			{
 				add_skill -= 4 + p_ptr->lev / 3;
 

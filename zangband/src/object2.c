@@ -4648,7 +4648,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	if (!(artifact_p(j_ptr) || j_ptr->art_name))
 	{
 		/* Check to see if the object will burn on contact with lava. */
-		if ((c_ptr->feat == FEAT_SHAL_LAVA) && 
+		if ((c_ptr->feat == FEAT_SHAL_LAVA) &&
 		    ((j_ptr->tval == TV_STAFF) ||
 		     (j_ptr->tval == TV_SCROLL) ||
 		     (j_ptr->tval == TV_WAND)))

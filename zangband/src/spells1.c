@@ -4700,8 +4700,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 			{
 				monster_race *ref_ptr = &r_info[m_list[cave[y][x].m_idx].r_idx];
 
-				if ((ref_ptr->flags2 & RF2_REFLECTING) && (randint(10) != 1)
-					 && (dist_hack > 1))
+				if ((ref_ptr->flags2 & RF2_REFLECTING) &&
+				    (randint(10) != 1) && (dist_hack > 1))
 				{
 					byte t_y, t_x;
 					int max_attempts = 10;

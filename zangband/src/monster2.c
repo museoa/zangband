@@ -998,8 +998,10 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		if (p_ptr->prace == RACE_IMP) return;
 
 		/* Undead characters are 50% likely to be unaffected */
-		if ((p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_ZOMBIE)
-			|| (p_ptr->prace == RACE_VAMPIRE) || (p_ptr->prace == RACE_SPECTRE))
+		if ((p_ptr->prace == RACE_SKELETON) ||
+		    (p_ptr->prace == RACE_ZOMBIE) ||
+		    (p_ptr->prace == RACE_VAMPIRE) ||
+		    (p_ptr->prace == RACE_SPECTRE))
 		{
 			if (saving_throw(25 + p_ptr->lev)) return;
 		}
@@ -1219,7 +1221,7 @@ void update_mon(int m_idx, bool full)
 		int dx = (px > fx) ? (px - fx) : (fx - px);
 
 		/* Approximate distance */
-		d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+		d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 		/* Restrict distance */
 		if (d > 255) d = 255;
@@ -1507,8 +1509,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	if (cave[y][x].feat == FEAT_MINOR_GLYPH) return (FALSE);
 
 	/* Nor on the Pattern */
-	if ((cave[y][x].feat >= FEAT_PATTERN_START)
-	 && (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
+	if ((cave[y][x].feat >= FEAT_PATTERN_START) &&
+	    (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
 		return (FALSE);
 
 	/* Paranoia */

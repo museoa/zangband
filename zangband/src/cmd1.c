@@ -1457,10 +1457,11 @@ void py_attack(int y, int x)
 
 	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
 	else bash_chance = p_ptr->skill_thn +
-		(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128
-		+ ((p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
-		|| p_ptr->pclass == CLASS_WARRIOR_MAGE || p_ptr->pclass == CLASS_CHAOS_WARRIOR) ?
-		p_ptr->lev : 0);
+	                   (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
+                       (((p_ptr->pclass == CLASS_WARRIOR) ||
+					     (p_ptr->pclass == CLASS_PALADIN) ||
+						 (p_ptr->pclass == CLASS_WARRIOR_MAGE) ||
+						 (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
 
 	/* Players bash more often when they see a real need. */
 	if (bash_chance)
@@ -1822,8 +1823,9 @@ void py_attack(int y, int x)
 				/* Hack -- High-level warriors can spread their attacks out
 				 * among weaker foes. -LM-
 				 */
-				if (((p_ptr->pclass == CLASS_WARRIOR)||(p_ptr->pclass == CLASS_CHAOS_WARRIOR))
-				 && (p_ptr->lev > 39) && (num < p_ptr->num_blow) &&
+				if (((p_ptr->pclass == CLASS_WARRIOR) ||
+				     (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) &&
+				     (p_ptr->lev > 39) && (num < p_ptr->num_blow) &&
 					(energy_use))
 				{
 					energy_use = energy_use * num / p_ptr->num_blow;

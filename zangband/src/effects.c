@@ -2427,8 +2427,9 @@ void do_poly_self(void)
 		if (effect_msg[0])
 		{
 			msg_format("You turn into a%s %s!",
-				((new_race == RACE_AMBERITE || new_race == RACE_ELF
-				|| new_race == RACE_IMP) ? "n" : ""),
+			    (((new_race == RACE_AMBERITE) ||
+			      (new_race == RACE_ELF) ||
+			      (new_race == RACE_IMP)) ? "n" : ""),
 				race_info[new_race].title);
 		}
 		else

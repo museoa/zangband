@@ -1087,8 +1087,8 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 			 * Don't print a trailing list separator but do print a trailing
 			 * item separator.
 			 */
-			if (line_len > 1 && line[line_len - 1] == ' '
-			    && line[line_len - 2] == LIST_SEP)
+			if ((line_len > 1) && (line[line_len - 1] == ' ') &&
+			    (line[line_len - 2] == LIST_SEP))
 			{
 				/* Ignore space and separator */
 				line[line_len - 2] = '\0';

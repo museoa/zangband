@@ -1253,7 +1253,7 @@ static cptr likert(int x, int y)
 		default:
 		{
 			likert_color = TERM_VIOLET;
-			sprintf(dummy,"Amber [%d]", (int) ((((x/y)-17)*5)/2));
+			sprintf(dummy,"Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
 			return dummy;
 		}
 	}
@@ -1366,7 +1366,7 @@ static void display_player_abilities(void)
 	else
 		avgdam = 0;
 	/* Effect of damage dice x2 */
-	avgdam *= damdice*(damsides+1);
+	avgdam *= damdice * (damsides + 1);
 
 	/* number of blows */
 	avgdam *= blows;
@@ -1379,13 +1379,13 @@ static void display_player_abilities(void)
 	{
 		/* Is there a vorpal effect we know about? */
 		object_flags(o_ptr, &f1, &f2, &f3);
-		if ((o_ptr->ident & IDENT_MENTAL)&&(o_ptr->name1 == ART_VORPAL_BLADE))
+		if ((o_ptr->ident & IDENT_MENTAL) && (o_ptr->name1 == ART_VORPAL_BLADE))
 		{
 			/* vorpal blade */
 			avgdam *= 786;
 			avgdam /= 500;
 		}
-		else if((object_known_p(o_ptr))&&(f1 & TR1_VORPAL))
+		else if (object_known_p(o_ptr) && (f1 & TR1_VORPAL))
 		{
 			/* vorpal flag only */
 			avgdam *= 609;
@@ -1394,7 +1394,7 @@ static void display_player_abilities(void)
 	}
 
 	/* normal players get two 1d1 punches */
-	if ((!o_ptr->k_idx) && (!(p_ptr->pclass == CLASS_MONK))) avgdam = 2;
+	if (!o_ptr->k_idx && (p_ptr->pclass != CLASS_MONK)) avgdam = 2;
 
 	if (avgdam == 0)
 	{
@@ -1444,7 +1444,7 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 	case CLASS_MONK:
 		if ((p_ptr->lev > 9) && !monk_heavy_armor())
 			(*f1) |= TR1_SPEED;
-		if ((p_ptr->lev>24) && !monk_heavy_armor())
+		if ((p_ptr->lev > 24) && !monk_heavy_armor())
 			(*f2) |= (TR2_FREE_ACT);
 		break;
 	case CLASS_MINDCRAFTER:
@@ -2343,7 +2343,7 @@ static void display_player_ben(void)
 			byte a = TERM_SLATE;
 			char c = '.';
 
-			cptr name = object_flag_names[16*x+y];
+			cptr name = object_flag_names[16 * x + y];
 
 			/* No name */
 			if (!name) continue;
@@ -2355,7 +2355,7 @@ static void display_player_ben(void)
 			Term_putch(x * 13 + 10, y + 4, TERM_WHITE, ':');
 
 			/* Check flag */
-			if (b[x] & (1<<y))
+			if (b[x] & (1 << y))
 			{
 				a = TERM_WHITE;
 				c = '+';
@@ -2452,7 +2452,7 @@ static void display_player_ben_one(int mode)
 				char c = '.';
 
 				/* Check flag */
-				if (b[n][3*mode+x] & (1<<y))
+				if (b[n][3 * mode + x] & (1 << y))
 				{
 					a = TERM_WHITE;
 					c = '+';

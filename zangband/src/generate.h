@@ -9,7 +9,7 @@
 #define SMALL_LEVEL 3   /* 1/chance of smaller size (3) */
 #define EMPTY_LEVEL 15  /* 1/chance of being 'empty' (15) */
 #define LAKE_LEVEL  7   /* 1/chance of being a lake on the level */
-#define DARK_EMPTY  5   /* 1/chance of arena level NOT being lit (2)*/
+#define DARK_EMPTY  5   /* 1/chance of arena level NOT being lit (2) */
 #define DUN_CAVERN  30	/* 1/chance of having a cavern level */
 
 /* Number of rooms to attempt (was 50) */

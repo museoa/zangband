@@ -358,15 +358,15 @@ static bool summon_possible(int y1, int x1)
 			if (!in_bounds(y, x)) continue;
 
 			/* Only check a circular area */
-			if (distance(y1, x1, y, x)>2) continue;
+			if (distance(y1, x1, y, x) > 2) continue;
 
 			/* Hack: no summon on glyph of warding */
 			if (cave[y][x].feat == FEAT_GLYPH) continue;
 			if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor on the Pattern */
-			if ((cave[y][x].feat >= FEAT_PATTERN_START)
-				&& (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((cave[y][x].feat >= FEAT_PATTERN_START) &&
+			    (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* Require empty floor grid in line of sight */
 			if (cave_empty_bold(y, x) && los(y1, x1, y, x)) return (TRUE);

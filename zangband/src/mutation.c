@@ -532,7 +532,7 @@ bool gain_random_mutation(int choose_mut)
 				muta_chosen = TRUE;
 			}
 		}
-		if (muta_chosen == TRUE) break;
+		if (muta_chosen) break;
 	}
 
 	if (!muta_chosen)
@@ -643,8 +643,9 @@ bool gain_random_mutation(int choose_mut)
 					p_ptr->muta3 &= ~(MUT3_WART_SKIN);
 				}
 			}
-			else if (muta_which == MUT3_WART_SKIN || muta_which == MUT3_SCALES
-				|| muta_which == MUT3_FLESH_ROT)
+			else if ((muta_which == MUT3_WART_SKIN) ||
+			         (muta_which == MUT3_SCALES) ||
+			         (muta_which == MUT3_FLESH_ROT))
 			{
 				if (p_ptr->muta3 & MUT3_IRON_SKIN)
 				{
@@ -1243,7 +1244,7 @@ bool lose_mutation(int choose_mut)
 				muta_chosen = TRUE;
 			}
 		}
-		if (muta_chosen == TRUE) break;
+		if (muta_chosen) break;
 	}
 
 	if (!muta_chosen)

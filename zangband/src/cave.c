@@ -25,7 +25,7 @@ int distance (int y1, int x1, int y2, int x2)
 	int target = (dy * dy) + (dx * dx);
 
 	/* Approximate distance: hypot(dy,dx) = max(dy,dx) + min(dy,dx) / 2 */
-	int d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+	int d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 	int err;
 
@@ -2486,7 +2486,7 @@ void update_lite(void)
 				if ((dy <= 2) && (dx <= 2)) continue;
 
 				/* Hack -- approximate the distance */
-				d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+				d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 				/* Skip distant grids */
 				if (d > p) continue;
@@ -2976,7 +2976,7 @@ void update_view(void)
 		/* Acquire the "bounds" of the maximal circle */
 		z = over - n - n;
 		if (z > full - n) z = full - n;
-		while ((z + n + (n>>1)) > full) z--;
+		while ((z + n + (n >> 1)) > full) z--;
 
 
 		/* Access the four diagonal grids */

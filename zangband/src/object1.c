@@ -3330,8 +3330,7 @@ bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
 	else
 	{
 		/* Hack -- Start on equipment if requested */
-		if (command_see && (command_wrk == (USE_EQUIP))
-			&& allow_equip)
+		if (command_see && (command_wrk == (USE_EQUIP)) && allow_equip)
 		{
 			command_wrk = (USE_EQUIP);
 		}
