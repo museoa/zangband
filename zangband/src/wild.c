@@ -2645,6 +2645,10 @@ static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
 	}
 }
 
+#define ROAD_LEVEL		(WILD_BLOCK_SIZE * 180)
+#define TRACK_LEVEL		(WILD_BLOCK_SIZE * 160)
+#define ROAD_BORDER		(WILD_BLOCK_SIZE * 120)
+#define GROUND_LEVEL	(WILD_BLOCK_SIZE * 100)
 
 /*
  * Build a road or a track at this location
@@ -2656,43 +2660,132 @@ static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
  */
 static void make_wild_road(blk_ptr block_ptr, int x, int y)
 {
-	int i, j, ii, jj;
-	cave_type *c_ptr;
+	int i, j, x1, y1;
+	u16b grad1[10], grad2[10], any;
 	
-	/* Hack - do nothing */
-	return;
+	cave_type *c_ptr;
 
 	/* Only draw if road is on the square */
-	if (!(wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD))) return;
-
-	/* Clear the temporary block */
-	clear_temp_block();
-
-	/* Set the corner + side + middle values depending on road status */
-	for (i = x - 1; i <= x + 1; i++)
-	{
-		for (j = y - 1; j <= y + 1; j++)
+	if (!(wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD)))
+	{		
+		/* No flags set yet */
+		any = FALSE;
+		
+		/* Only do the sides */
+		for (i = 2; i < 10; i += 2)
 		{
-			ii = ((1 + i - x) * WILD_BLOCK_SIZE) / 2;
-			jj = ((1 + j - y) * WILD_BLOCK_SIZE) / 2;
+			/* Get direction */
+			x1 = x + ddx[i];
+			y1 = y + ddy[i];
 
-			temp_block[jj][ii] = WILD_BLOCK_SIZE * 60;
+			grad1[i] = 0;
 
-			/* Bounds checking */
-			if ((i < 0) || (j < 0) || (i >= max_wild) || (j >= max_wild)) continue;
-
-			/* Is it a track? */
-			if (wild[j][i].done.info & WILD_INFO_TRACK)
+			/* Check bounds */
+			if ((x1 >= 0) && (x1 < max_wild) && (y1 >= 0) && (y1 < max_wild))
 			{
-				temp_block[jj][ii] = WILD_BLOCK_SIZE * 180;
-			}
-
-			/* Is it a road? */
-			if (wild[j][i].done.info & WILD_INFO_ROAD)
-			{
-				temp_block[jj][ii] = WILD_BLOCK_SIZE * 210;
+				/* Check flag status */
+				if (wild[y1][x1].done.info & WILD_INFO_TRACK)
+				{
+					/* Flag is set */
+					grad1[i] = TRACK_LEVEL;
+					any = TRUE;
+				}
+				
+				if (wild[y1][x1].done.info & WILD_INFO_ROAD)
+				{
+					/* Flag is set */
+					grad1[i] = ROAD_LEVEL;
+					any = TRUE;
+				}
 			}
 		}
+		
+		/* No nearby roads */
+		if (!any) return;
+		
+		/* Convert from grad1 to grad2 */
+		for (i = 1; i < 10; i++)
+		{
+			grad2[i] = GROUND_LEVEL;	
+		}
+		
+		/* Upper left */
+		if (grad1[4] && grad1[8])
+		{
+			grad2[7] = MAX(grad1[4], grad1[8]);
+			
+			any = FALSE;
+		}
+
+		/* Upper right */
+		if (grad1[8] && grad1[6])
+		{
+			grad2[9] = MAX(grad1[8], grad1[6]);
+			
+			any = FALSE;
+		}
+
+		/* Lower right */
+		if (grad1[6] && grad1[2])
+		{
+			grad2[3] = MAX(grad1[6], grad1[2]);
+			
+			any = FALSE;
+		}
+
+		/* Lower left */
+		if (grad1[2] && grad1[4])
+		{
+			grad2[1] = MAX(grad1[2], grad1[4]);
+			
+			any = FALSE;
+		}
+		
+		/* Hack - only if there really is a road */
+		if (any) return;
+	}
+	else
+	{
+		/* Do everything */
+		
+		/* Check each adjacent square to see if is road or track */
+		for (i = 1; i < 10; i++)
+		{
+			/* Get direction */
+			x1 = x + ddx[i];
+			y1 = y + ddy[i];
+
+			grad2[i] = GROUND_LEVEL;
+
+			/* Check bounds */
+			if ((x1 >= 0) && (x1 < max_wild) && (y1 >= 0) && (y1 < max_wild))
+			{
+				/* Check flag status */
+				if (wild[y1][x1].done.info & WILD_INFO_TRACK)
+				{
+					/* Flag is set */
+					grad2[i] = TRACK_LEVEL;
+				}
+				
+				if (wild[y1][x1].done.info & WILD_INFO_ROAD)
+				{
+					/* Flag is set */
+					grad2[i] = ROAD_LEVEL;
+				}
+			}
+		}
+	}
+
+	/* Clear temporary block */
+	clear_temp_block();
+
+	/* Set sides of block */
+	for (i = 1; i < 10; i++)
+	{
+		x1 = (1 + ddx[i]) * WILD_BLOCK_SIZE / 2;
+		y1 = (1 + ddy[i]) * WILD_BLOCK_SIZE / 2;
+
+		temp_block[y1][x1] = grad2[i];
 	}
 
 	/* Build the fractal */
@@ -2704,7 +2797,7 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is it a road square? */
-			if (temp_block[j][i] >= WILD_BLOCK_SIZE * 160)
+			if (temp_block[j][i] >= ROAD_BORDER)
 			{
 				/* Point to square */
 				c_ptr = &block_ptr[j][i];
@@ -3265,6 +3358,8 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		make_wild_road(block_ptr, x, y);
 
 		/* Add lava (Not Done) */
+		
+		/* Add acid (Not Done) */
 	}
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;

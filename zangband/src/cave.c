@@ -2010,9 +2010,14 @@ void display_map(int *cy, int *cx)
 					ma[j + 1][i + 1] = TERM_BLUE;
 					mc[j + 1][i + 1] = '~';
 				}
-				else if (w_info & (WILD_INFO_ROAD | WILD_INFO_TRACK))
+				else if (w_info & (WILD_INFO_ROAD))
 				{
 					ma[j + 1][i + 1] = TERM_UMBER;
+					mc[j + 1][i + 1] = '+';
+				}
+				else if (w_info & (WILD_INFO_TRACK))
+				{
+					ma[j + 1][i + 1] = TERM_L_UMBER;
 					mc[j + 1][i + 1] = '+';
 				}
 				else
