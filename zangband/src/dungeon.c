@@ -2206,6 +2206,13 @@ static void process_world(void)
 		}
 	}
 
+	/*
+	* Cycle ultra-quick R"bool"G to prevent periodic patterns
+	* in the illumination in a forest after dark.
+	*/
+
+	rand_quick_add();
+
 
 	/*** Involuntary Movement ***/
 

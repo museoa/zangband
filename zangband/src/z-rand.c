@@ -405,8 +405,18 @@ static bool qrand_table[256] =
 * important.
 */
 
-bool quick_rand()
+bool quick_rand(void)
 {
-return qrand_table[quick_rand_place++];
+	return qrand_table[quick_rand_place++];
 }
 
+/*
+* This function adds a new random bool to the table.
+* This is done to reduce the effect of the tables small size.
+*  (Called once every 10 turns in dungeon.c)
+*/
+
+void quick_rand_add(void)
+{
+	qrand_table[quick_rand_place++]=(randint(2)==1);
+}

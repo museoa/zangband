@@ -90,8 +90,8 @@ extern s32b Rand_div(u32b m);
 extern s16b randnor(int mean, int stand);
 extern s16b damroll(int num, int sides);
 extern s16b maxroll(int num, int sides);
-extern bool quick_rand();
-
+extern bool quick_rand(void);
+extern void quick_rand_add(void);
 #endif
 
 
