@@ -688,14 +688,6 @@ int color_char_to_attr(char c)
 }
 
 
-
-
-/*
- * Hack -- prevent "accidents" in "screen_save()" or "screen_load()"
- */
-static int screen_depth = 0;
-
-
 /*
  * Save the screen, and increase the "icky" depth.
  *
@@ -706,8 +698,8 @@ void screen_save(void)
 	/* Hack -- Flush messages */
 	message_flush();
 
-	/* Save the screen (if legal) */
-	/* if (screen_depth++ == 0) */ Term_save();
+	/* Save the screen */
+	Term_save();
 
 	/* Increase "icky" depth */
 	character_icky++;
@@ -724,8 +716,8 @@ void screen_load(void)
 	/* Hack -- Flush messages */
 	message_flush();
 
-	/* Load the screen (if legal) */
-	/* if (--screen_depth == 0) */ Term_load();
+	/* Load the screen */
+	Term_load();
 
 	/* Decrease "icky" depth */
 	character_icky--;

@@ -1946,7 +1946,6 @@ void do_cmd_macros(void)
 }
 
 
-
 /*
  * Load a user pref file
  */
@@ -1959,10 +1958,8 @@ static bool do_cmd_pref_vis_load(int dummy)
 	
 	screen_save();
 	
-	Term_clear();
-	
 	/* Prompt */
-	prtf(0, 12, "Command: Load a user pref file\n\n"
+	prtf(0, 13, "Command: Load a user pref file\n\n"
 				"File: ");
 
 	/* Default filename */
@@ -2583,7 +2580,7 @@ static menu_type visuals_menu[VISUAL_MENU_MAX] =
 	{"Change object attr/chars", NULL, do_cmd_change_object, MN_AVAILABLE | MN_CLEAR},
 	{"Change feature attr/chars", NULL, do_cmd_change_feature, MN_AVAILABLE | MN_CLEAR},
 	{"Change field attr/chars", NULL, do_cmd_change_field, MN_AVAILABLE | MN_CLEAR},
-#endif
+#endif /* ALLOW_VISUALS */
 	{"Reset Visuals", NULL, do_cmd_reset_visuals, MN_AVAILABLE},
 	MENU_END
 };
@@ -2602,333 +2599,386 @@ void do_cmd_visuals(void)
 
 
 /*
- * Interact with "colors"
+ * Load a user pref file
  */
-void do_cmd_colors(void)
+static bool do_cmd_pref_col_load(int dummy)
+{
+	char tmp[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	/* Prompt */
+	prtf(0, 8, "Command: Load a user pref file\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Query */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+	
+	/* Process the given filename */
+	if (0 != process_pref_file(tmp))
+	{
+		/* Prompt */
+		msg_print("Could not load file!");
+	}
+	
+	/* Mega-Hack -- react to changes */
+	Term_xtra(TERM_XTRA_REACT, 0);
+
+	/* Mega-Hack -- redraw */
+	Term_redraw();
+	
+	screen_load();
+	return (FALSE);
+}
+
+#ifdef ALLOW_COLORS
+
+static bool do_cmd_dump_colour(int dummy)
 {
 	int i;
 
 	FILE *fff;
 
-	char tmp[160];
+	char tmp[1024], buf[1024];
 
-	char buf[1024];
+	/* Hack - ignore parameters */
+	(void) dummy;
+	
+	screen_save();
+	
+	/* Prompt */
+	prtf(0, 10, "Command: Dump colors\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		screen_load();
+		return (FALSE);
+	}
+
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Color redefinitions\n\n");
+
+	/* Dump colors */
+	for (i = 0; i < 256; i++)
+	{
+		int kv = angband_color_table[i][0];
+		int rv = angband_color_table[i][1];
+		int gv = angband_color_table[i][2];
+		int bv = angband_color_table[i][3];
+
+		cptr name = "unknown";
+
+		/* Skip non-entries */
+		if (!kv && !rv && !gv && !bv) continue;
+
+		/* Extract the color name */
+		if (i < 16) name = color_names[i];
+
+		/* Dump a comment */
+		fprintf(fff, "# Color '%s'\n", name);
+
+		/* Dump the monster attr/char info */
+		fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
+				i, (uint)kv, (uint)rv, (uint)gv, (uint)bv);
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped color redefinitions.");
+
+	screen_load();
+	return (FALSE);
+}
 
 
+/*
+ * Dump the message colours to a pref file
+ */
+static bool do_cmd_dump_message(int dummy)
+{
+	int i;
+
+	FILE *fff;
+
+	char tmp[1024], buf[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+
+	/* Prompt */
+	prtf(0, 10, "Command: Dump message colors\n\n"
+				"File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, 80))
+	{
+		screen_load();
+		return (FALSE);
+	}
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		screen_load();
+		return (FALSE);
+	}
+
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Message color definitions\n\n");
+
+	/* Dump message colors */
+	for (i = 0; i < MSG_MAX; i++)
+	{
+		byte color = get_msg_type_color(i);
+
+		cptr name = "unknown";
+
+		/* Extract the message type name */
+		name = msg_names[i];
+
+		/* Dump a comment */
+		fprintf(fff, "# Message type: %s\n", name);
+
+		/* Dump the message color */
+		fprintf(fff, "M:%d:%c\n\n", i, color_char[color]);
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped message color definitions.");
+	
+	screen_load();
+	return (FALSE);
+}
+
+
+static bool do_cmd_modify_colour(int dummy)
+{
+	static byte a = 0;
+	
+	int i;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+	
+	clear_region(0, 9, 21);
+
+	/* Prompt */
+	prtf(5, 10, "Command: Modify colors");
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		cptr name;
+		byte j;
+
+		/* Exhibit the normal colors */
+		for (j = 0; j < 16; j++)
+		{
+			/* Exhibit this color */
+			put_fstr(j * 4, 18, "%s###", color_seq[j]);
+
+			/* Exhibit all colors */
+			put_fstr(j * 4, 20, "%3d", j);
+		}
+
+		/* Describe the color */
+		name = ((a < 16) ? color_names[a] : "undefined");
+
+		/* Describe the color */
+		prtf(5, 12, "Color = %d, Name = %s", a, name);
+
+		/* Label the Current values */
+		prtf(5, 14, "K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
+						   angband_color_table[a][0],
+						   angband_color_table[a][1],
+						   angband_color_table[a][2],
+						   angband_color_table[a][3]);
+
+		/* Prompt */
+		prtf(5, 16, "Command (n/N/k/K/r/R/g/G/b/B): ");
+
+		/* Get a command */
+		i = inkey();
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Analyze */
+		if (i == 'n') a = (byte)(a + 1);
+		if (i == 'N') a = (byte)(a - 1);
+		if (i == 'k') angband_color_table[a][0] =
+				(byte)(angband_color_table[a][0] + 1);
+		if (i == 'K') angband_color_table[a][0] =
+				(byte)(angband_color_table[a][0] - 1);
+		if (i == 'r') angband_color_table[a][1] =
+				(byte)(angband_color_table[a][1] + 1);
+		if (i == 'R') angband_color_table[a][1] =
+				(byte)(angband_color_table[a][1] - 1);
+		if (i == 'g') angband_color_table[a][2] =
+				(byte)(angband_color_table[a][2] + 1);
+		if (i == 'G') angband_color_table[a][2] =
+				(byte)(angband_color_table[a][2] - 1);
+		if (i == 'b') angband_color_table[a][3] =
+				(byte)(angband_color_table[a][3] + 1);
+		if (i == 'B') angband_color_table[a][3] =
+				(byte)(angband_color_table[a][3] - 1);
+
+		/* Hack -- react to changes */
+		Term_xtra(TERM_XTRA_REACT, 0);
+
+		/* Hack -- redraw */
+		Term_redraw();
+	}
+	
+	screen_load();
+	
+	return (FALSE);
+}
+
+
+/*
+ * Modify message colours
+ */
+static bool do_cmd_modify_message(int dummy)
+{
+	static byte a = 0;
+	byte color;
+	
+	int i;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	screen_save();
+	
+	clear_region(0, 9, 17);
+	
+	/* Prompt */
+	prtf(5, 10, "Command: Modify message colors");
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		/* Describe the message */
+		prtf(5, 12, "Message = %d, Type = %s", a, msg_names[a]);
+
+		/* Show current color */
+		color = get_msg_type_color(a);
+
+		/* Paranoia */
+		if (color >= 16) color = 0;
+
+		prtf(5, 14, "Current color: %c / %s%s",
+						color_char[color],
+						color_seq[color],
+						color_names[color]);
+
+		/* Prompt */
+		prtf(5, 16, "Command (n/N/c/C): ");
+
+		/* Get a command */
+		i = inkey();
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Analyze */
+		if (i == 'n') a = (a + MSG_MAX + 1) % MSG_MAX;
+		if (i == 'N') a = (a + MSG_MAX - 1) % MSG_MAX;
+		if (i == 'c') message_color_define(a, (byte)(color + 1));
+		if (i == 'C') message_color_define(a, (byte)(color - 1));
+	}
+
+	screen_load();
+
+	return (FALSE);
+}
+
+#endif /* ALLOW_COLORS */
+
+
+#ifdef ALLOW_COLORS
+#define COLOR_MENU_MAX		6
+#else
+#define COLOR_MENU_MAX		2
+#endif /* ALLOW_COLORS */
+
+
+static menu_type color_menu[COLOR_MENU_MAX] =
+{
+	{"Load a user pref file", NULL, do_cmd_pref_col_load, MN_AVAILABLE},
+#ifdef ALLOW_COLORS
+	{"Dump colours", NULL, do_cmd_dump_colour, MN_AVAILABLE},
+	{"Dump message colours", NULL, do_cmd_dump_message, MN_AVAILABLE},
+	{"Modify colours", NULL, do_cmd_modify_colour, MN_AVAILABLE | MN_CLEAR},
+	{"Modify message colours", NULL, do_cmd_modify_message, MN_AVAILABLE | MN_CLEAR},
+#endif /* ALLOW_COLORS */
+	MENU_END
+};
+
+/*
+ * Interact with "colors"
+ */
+void do_cmd_colors(void)
+{
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
-
-	/* Save the screen */
-	screen_save();
-
-
-	/* Interact until done */
-	while (1)
-	{
-		/* Clear screen */
-		Term_clear();
-
-		/* Ask for a choice */
-		prtf(0, 2, "Interact with Colors");
-
-		/* Give some choices */
-		prtf(5, 4, "(1) Load a user pref file");
-#ifdef ALLOW_COLORS
-		prtf(5, 5, "(2) Dump colors");
-		prtf(5, 6, "(3) Dump message colors");
-		prtf(5, 7, "(4) Modify colors");
-		prtf(5, 8, "(5) Modify message colors");
-#endif
-
-		/* Prompt */
-		prtf(0, 10, "Command: ");
-
-		/* Prompt */
-		i = inkey();
-
-		/* Done */
-		if (i == ESCAPE) break;
-
-		/* Load a 'pref' file */
-		if (i == '1')
-		{
-			/* Prompt */
-			prtf(0, 10, "Command: Load a user pref file");
-
-			/* Prompt */
-			prtf(0, 12, "File: ");
-
-			/* Default file */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Query */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Process the given filename */
-			(void)process_pref_file(tmp);
-
-			/* Mega-Hack -- react to changes */
-			Term_xtra(TERM_XTRA_REACT, 0);
-
-			/* Mega-Hack -- redraw */
-			Term_redraw();
-		}
-
-#ifdef ALLOW_COLORS
-
-		/* Dump colors */
-		else if (i == '2')
-		{
-			/* Prompt */
-			prtf(0, 10, "Command: Dump colors");
-
-			/* Prompt */
-			prtf(0, 12, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Color redefinitions\n\n");
-
-			/* Dump colors */
-			for (i = 0; i < 256; i++)
-			{
-				int kv = angband_color_table[i][0];
-				int rv = angband_color_table[i][1];
-				int gv = angband_color_table[i][2];
-				int bv = angband_color_table[i][3];
-
-				cptr name = "unknown";
-
-				/* Skip non-entries */
-				if (!kv && !rv && !gv && !bv) continue;
-
-				/* Extract the color name */
-				if (i < 16) name = color_names[i];
-
-				/* Dump a comment */
-				fprintf(fff, "# Color '%s'\n", name);
-
-				/* Dump the monster attr/char info */
-				fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
-						i, (uint)kv, (uint)rv, (uint)gv, (uint)bv);
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped color redefinitions.");
-		}
-
-		/* Dump message colors */
-		else if (i == '3')
-		{
-			/* Prompt */
-			prtf(0, 10, "Command: Dump message colors");
-
-			/* Prompt */
-			prtf(0, 12, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Message color definitions\n\n");
-
-			/* Dump message colors */
-			for (i = 0; i < MSG_MAX; i++)
-			{
-				byte color = get_msg_type_color(i);
-
-				cptr name = "unknown";
-
-				/* Extract the message type name */
-				name = msg_names[i];
-
-				/* Dump a comment */
-				fprintf(fff, "# Message type: %s\n", name);
-
-				/* Dump the message color */
-				fprintf(fff, "M:%d:%c\n\n", i, color_char[color]);
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped message color definitions.");
-		}
-
-		/* Edit colors */
-		else if (i == '4')
-		{
-			static byte a = 0;
-
-			/* Prompt */
-			prtf(0, 10, "Command: Modify colors");
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				cptr name;
-				byte j;
-
-				/* Clear */
-				clear_from(12);
-
-				/* Exhibit the normal colors */
-				for (j = 0; j < 16; j++)
-				{
-					/* Exhibit this color */
-					put_fstr(j * 4, 20, "%s###", color_seq[a]);
-
-					/* Exhibit all colors */
-					put_fstr(j * 4, 22, "%3d", j);
-				}
-
-				/* Describe the color */
-				name = ((a < 16) ? color_names[a] : "undefined");
-
-				/* Describe the color */
-				put_fstr(5, 12, "Color = %d, Name = %s", a, name);
-
-				/* Label the Current values */
-				put_fstr(5, 14, "K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
-								   angband_color_table[a][0],
-								   angband_color_table[a][1],
-								   angband_color_table[a][2],
-								   angband_color_table[a][3]);
-
-				/* Prompt */
-				put_fstr(0, 16, "Command (n/N/k/K/r/R/g/G/b/B): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') a = (byte)(a + 1);
-				if (i == 'N') a = (byte)(a - 1);
-				if (i == 'k') angband_color_table[a][0] =
-						(byte)(angband_color_table[a][0] + 1);
-				if (i == 'K') angband_color_table[a][0] =
-						(byte)(angband_color_table[a][0] - 1);
-				if (i == 'r') angband_color_table[a][1] =
-						(byte)(angband_color_table[a][1] + 1);
-				if (i == 'R') angband_color_table[a][1] =
-						(byte)(angband_color_table[a][1] - 1);
-				if (i == 'g') angband_color_table[a][2] =
-						(byte)(angband_color_table[a][2] + 1);
-				if (i == 'G') angband_color_table[a][2] =
-						(byte)(angband_color_table[a][2] - 1);
-				if (i == 'b') angband_color_table[a][3] =
-						(byte)(angband_color_table[a][3] + 1);
-				if (i == 'B') angband_color_table[a][3] =
-						(byte)(angband_color_table[a][3] - 1);
-
-				/* Hack -- react to changes */
-				Term_xtra(TERM_XTRA_REACT, 0);
-
-				/* Hack -- redraw */
-				Term_redraw();
-			}
-		}
-
-		/* Edit message colors */
-		else if (i == '5')
-		{
-			static byte a = 0;
-			byte color;
-
-			/* Prompt */
-			prtf(0, 10, "Command: Modify message colors");
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				/* Clear */
-				clear_from(12);
-
-				/* Describe the message */
-				put_fstr(5, 12, "Message = %d, Type = %s", a, msg_names[a]);
-
-				/* Show current color */
-				color = get_msg_type_color(a);
-
-				/* Paranoia */
-				if (color >= 16) color = 0;
-
-				put_fstr(5, 14, "Current color: %c / ", color_char[color]);
-				put_fstr(24, 14, "%s%s", color_seq[color], color_names[color]);
-
-				/* Prompt */
-				put_fstr(0, 16, "Command (n/N/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') a = (a + MSG_MAX + 1) % MSG_MAX;
-				if (i == 'N') a = (a + MSG_MAX - 1) % MSG_MAX;
-				if (i == 'c') message_color_define(a, (byte)(color + 1));
-				if (i == 'C') message_color_define(a, (byte)(color - 1));
-			}
-		}
-#endif
-
-		/* Unknown option */
-		else
-		{
-			bell("Illegal command for colors!");
-		}
-
-		/* Flush messages */
-		message_flush();
-	}
-
-
-	/* Restore the screen */
-	screen_load();
+	display_menu(color_menu, -1, FALSE, NULL, "Interact with Colours");
 }
 
 
@@ -2966,9 +3016,8 @@ void do_cmd_note(void)
 void do_cmd_version(void)
 {
 	/* Silly message */
-	msg_format("You are playing %s %s.", VERSION_NAME, VERSION_STRING);
+	msg_print("You are playing " VERSION_NAME " " VERSION_STRING ".");
 }
-
 
 
 /*
