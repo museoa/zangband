@@ -1913,7 +1913,7 @@ static bool player_birth_aux_1(void)
 
 	if (p_ptr->realm2)
 	{
-		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 11, 7);
+		put_fstr(11, 7, CLR_L_BLUE "%s", realm_names[p_ptr->realm2]);
 	}
 
 	/* And finally, get the number of random quests */
@@ -2322,8 +2322,7 @@ static bool player_birth_aux_3(void)
 					for (i = 0; i < A_MAX; i++)
 					{
 						/* Put the stat */
-						cnv_stat(stat_use[i], buf);
-						c_put_str(TERM_L_GREEN, buf, col + 13, 3 + i);
+						put_fstr(col + 13, 3 + i, CLR_L_GREEN "%t", stat_use[i]);
 					}
 
 					/* Dump round */

@@ -923,7 +923,6 @@ extern void repeat_clear(void);
 extern void repeat_check(void);
 
 /* xtra1.c */
-extern void cnv_stat(int val, char *out_val);
 extern s16b modify_stat_value(int value, int amount);
 extern void notice_stuff(void);
 extern void update_stuff(void);

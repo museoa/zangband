@@ -13,21 +13,6 @@
 #include "angband.h"
 
 
-
-
-/*
- * Converts stat num into a six-char (right justified) string
- */
-void cnv_stat(int val, char *out_val)
-{
-    if (val >= 400)
-        sprintf(out_val, "  40+ ");
-    else
-        sprintf(out_val, "  %2d.%d", val / 10, val % 10);
-}
-
-
-
 /*
  * Modify a stat value by a "modifier", return new value
  *
@@ -69,22 +54,20 @@ static void prt_field(cptr info, int col, int row)
  */
 static void prt_stat(int stat)
 {
-	char tmp[32];
-
 	/* Display "injured" stat */
 	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
 	{
 		put_str(stat_names_reduced[stat], 0, ROW_STAT + stat);
-		cnv_stat(p_ptr->stat_use[stat], tmp);
-		c_put_str(TERM_YELLOW, tmp, COL_STAT + 6, ROW_STAT + stat);
+		put_fstr(COL_STAT + 6, ROW_STAT + stat, CLR_YELLOW "%t",
+				 p_ptr->stat_use[stat]);
 	}
 
 	/* Display "healthy" stat */
 	else
 	{
 		put_str(stat_names[stat], 0, ROW_STAT + stat);
-		cnv_stat(p_ptr->stat_use[stat], tmp);
-		c_put_str(TERM_L_GREEN, tmp, COL_STAT + 6, ROW_STAT + stat);
+		put_fstr(COL_STAT + 6, ROW_STAT + stat, CLR_L_GREEN "%t",
+				 p_ptr->stat_use[stat]);
 	}
 
 	/* Indicate natural maximum */

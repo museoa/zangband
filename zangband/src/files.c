@@ -2079,9 +2079,6 @@ static void display_player_stat_info(void)
 	byte a;
 	char c;
 
-	char buf[80];
-
-
 	/* Column */
 	stat_col = 24;
 
@@ -2117,8 +2114,7 @@ static void display_player_stat_info(void)
 
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out */
-		cnv_stat(p_ptr->stat_max[i], buf);
-		c_put_str(TERM_BLUE, buf, stat_col + 5, row + i);
+		put_fstr(stat_col + 5, row + i, CLR_BLUE "%t", p_ptr->stat_max[i]);
 
 		/* Race, class, and equipment modifiers */
 		put_fstr(stat_col + 12, row + i, CLR_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
@@ -2126,14 +2122,13 @@ static void display_player_stat_info(void)
 		put_fstr(stat_col + 20, row + i, CLR_L_BLUE "%3d", (int)e_adj);
 
 		/* Actual maximal modified value */
-		cnv_stat(p_ptr->stat_top[i], buf);
-		c_put_str(TERM_L_GREEN, buf, stat_col + 24, row + i);
+		put_fstr(stat_col + 24, row + i, CLR_L_GREEN "%t", p_ptr->stat_top[i]);
 
 		/* Only display stat_use if not maximal */
 		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
 		{
-			cnv_stat(p_ptr->stat_use[i], buf);
-			c_put_str(TERM_YELLOW, buf, stat_col + 31, row + i);
+			put_fstr(stat_col + 31, row + i, CLR_YELLOW "%t",
+						 p_ptr->stat_use[i]);
 		}
 	}
 
@@ -2322,8 +2317,7 @@ static void display_player_stat_info(void)
 static void display_player_top(void)
 {
 	int i;
-	char buf[80];
-
+	
 	/* Name, Sex, Race, Class */
 	put_fstr(COL_NAME, 2, "Name     :" CLR_L_BLUE "%s", player_name);
 	put_fstr(COL_NAME, 3, "Sex      :" CLR_L_BLUE "%s", sp_ptr->title);
@@ -2359,28 +2353,15 @@ static void display_player_top(void)
 		/* Special treatment of "injured" stats */
 		if (p_ptr->stat_cur[i] < p_ptr->stat_max[i])
 		{
-			int value;
-
 			/* Use lowercase stat name */
 			put_str(stat_names_reduced[i], COL_STATS, i + 2);
 
-			/* Get the current stat */
-			value = p_ptr->stat_use[i];
-
-			/* Obtain the current stat (modified) */
-			cnv_stat(value, buf);
-
 			/* Display the current stat (modified) */
-			c_put_str(TERM_YELLOW, buf, COL_STATS + 5, i + 2);
-
-			/* Acquire the max stat */
-			value = p_ptr->stat_top[i];
-
-			/* Obtain the maximum stat (modified) */
-			cnv_stat(value, buf);
+			put_fstr(COL_STATS + 5, i + 2, CLR_YELLOW "%t", p_ptr->stat_use[i]);
 
 			/* Display the maximum stat (modified) */
-			c_put_str(TERM_L_GREEN, buf, COL_STATS + 5 + 7, i + 2);
+			put_fstr(COL_STATS + 5 + 7, i + 2, CLR_L_GREEN "%t",
+					 p_ptr->stat_top[i]);
 		}
 
 		/* Normal treatment of "normal" stats */
@@ -2389,11 +2370,9 @@ static void display_player_top(void)
 			/* Assume uppercase stat name */
 			put_str(stat_names[i], COL_STATS, i + 2);
 
-			/* Obtain the current stat (modified) */
-			cnv_stat(p_ptr->stat_use[i], buf);
-
 			/* Display the current stat (modified) */
-			c_put_str(TERM_L_GREEN, buf, COL_STATS + 5, i + 2);
+			put_fstr(COL_STATS + 5, i + 2, CLR_L_GREEN "%t",
+					 p_ptr->stat_use[i]);
 		}
 	}
 }
