@@ -935,7 +935,7 @@ bool monster_death(int m_idx)
 #endif /* USE_SCRIPT */
 
 	/* Only process "Quest Monsters" */
-	if (!(r_ptr->flags1 & RF1_QUESTOR)) return;
+	if (!(r_ptr->flags1 & RF1_QUESTOR)) return FALSE;
 
 	/* Winner? */
 	if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
@@ -952,7 +952,7 @@ bool monster_death(int m_idx)
 		msg_print("You may retire (commit suicide) when you are ready.");
 	}
 	
-	/* Return TRUE if we dropped a coprse for the player to see */
+	/* Return TRUE if we dropped a corpse for the player to see */
 	return (dropped_corpse);
 }
 
