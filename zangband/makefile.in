@@ -25,7 +25,7 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 datadir = @datadir@
 
-DESTDIR = @datadir@/games/zangband/lib/
+DESTDIR = $(datadir)/games/zangband/lib/
 GAMEGROUP = games
 
 CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)\"
@@ -89,6 +89,10 @@ install-files: makedirs
 
 install: install-files zangband
 	$(INSTALL)
+
+uninstall:
+	-rm -rf $(datadir)/games/zangband
+	-rm -f $(bindir)/zangband
 
 clean:
 	-rm -f $(clean-files)
