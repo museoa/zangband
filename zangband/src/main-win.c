@@ -249,7 +249,7 @@
  * HTML-Help requires htmlhelp.h and htmlhelp.lib from Microsoft's
  * HTML Workshop < http://www.microsoft.com/workshop/author/htmlhelp/ >.
  */
-/* #define HTML_HELP */
+#define HTML_HELP
 #ifdef HTML_HELP
 #include <htmlhelp.h>
 #endif /* HTML_HELP */
@@ -3166,7 +3166,7 @@ static void process_menus(WORD wCmd)
 		{
 #ifdef HTML_HELP
 			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "angband.chm");
+			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "zangband.chm");
 			if (check_file(tmp))
 			{
 				HtmlHelp(data[0].w, tmp, HH_DISPLAY_TOPIC, 0);
@@ -3199,7 +3199,7 @@ static void process_menus(WORD wCmd)
 		{
 #ifdef HTML_HELP
 			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "spoilers.chm");
+			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "zkb.chm");
 			if (check_file(tmp))
 			{
 				HtmlHelp(data[0].w, tmp, HH_DISPLAY_TOPIC, 0);

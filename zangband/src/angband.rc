@@ -121,7 +121,7 @@ ANGBAND MENU
  POPUP "&Help"
  {
   MENUITEM "&General", 901
-  MENUITEM "&Spoilers", 902
+  MENUITEM "&ZAngband Knowledge Base", 902
  }
 }
 
