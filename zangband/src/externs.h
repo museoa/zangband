@@ -1226,7 +1226,7 @@ extern errr parse_line_wilderness(char *buf, int ymin, int xmin, int ymax, int x
 
 /* avatar.c */
 extern cptr virtue[MAX_VIRTUE];
-extern void get_virtues();
+extern void get_virtues(void);
 extern void chg_virtue(int virtue, int amount);
 extern void dump_virtues(FILE * OutFile);
 
