@@ -1099,8 +1099,12 @@ static bool borg_choose_shop(void)
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
 
 	/* If we are already flowing toward a shop do not check again... */
-	if (goal_shop != -1) return TRUE;
-
+	if (goal_shop != -1)
+	{
+		borg_note(format("# Goal shop: %d", goal_shop));
+		return (TRUE);
+	}
+	
 	/* Find 'best' shop to go to */
 	for (i = 0; i < track_shop_num; i++)
 	{
@@ -1148,6 +1152,12 @@ static bool borg_choose_shop(void)
  */
 bool borg_think_store(void)
 {
+	/* Paranoia */
+	if (shop_num == -1)
+	{
+		borg_oops("# Entering invalid store.");
+	}
+
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
 
@@ -1168,6 +1178,8 @@ bool borg_think_store(void)
 		
 		/* Step 5 -- Grab items from the home (for the shops) */
 		if (borg_think_home_grab_aux()) return (TRUE);
+		
+		borg_note("# Nothing to do at home.");
 	}
 	else
 	{
@@ -1179,22 +1191,24 @@ bool borg_think_store(void)
 
 		/* Step 6 -- Buy items from the shops (for the home) */
 		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+		
+		borg_note("# Nothing to do in the store.");
 	}
+	
+	/* Leave the store */
+	borg_keypress(ESCAPE);
 
-#if 0
 	/* Choose a shop to visit */
 	if (borg_choose_shop()) return (TRUE);
+	
+	/* Assume no important shop */
+	goal_shop = -1;
 
 	/* No shop */
 	shop_num = -1;
 
-#endif /* 0 */
-
-	/* Leave the store */
-	borg_keypress(ESCAPE);
-
 	/* Done */
-	return (TRUE);
+	return (FALSE);
 }
 
 

@@ -913,6 +913,9 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 
 	/* Paranoia */
 	if (*l_ptr_ptr) quit("Trying to copy over an allocated list.");
+	
+	/* We don't need to make an empty list */
+	if (!num1) return;
 
 	/* Save number of items in list */
 	*num2 = num1;
@@ -1178,8 +1181,14 @@ void Term_write_list(s16b o_idx, byte list_type)
 	/* Get list length */
 	int num = get_list_length(o_idx);
 
-	/* Paranoia */
-	if (!num) return;
+	/* Empty? */
+	if (!num)
+	{
+		/* We have an empty list */
+		save_object_list(NULL, 0, list_type);
+		
+		return;
+	}
 
 	/* Create the list */
 	C_MAKE(list, num, term_list);
@@ -1214,7 +1223,6 @@ void Term_write_list(s16b o_idx, byte list_type)
 
 	/* Save for later */
 	save_object_list(list, num, list_type);
-
 
 	for (i = 0; i < num; i++)
 	{

@@ -189,11 +189,12 @@ void borg_list_info(byte list_type)
 					break;
 				}
 			}
+			
+			/* Paranoia */
+			if (shop_num == -1) quit("Could not find home!");
 
 			/* Clear the goal */
 			goal = 0;
-
-			/* Save items for later? ... */
 
 			break;
 		}
@@ -215,6 +216,9 @@ void borg_list_info(byte list_type)
 					break;
 				}
 			}
+			
+			/* Paranoia */
+			if (shop_num == -1) quit("Could not find home!");
 
 			/* Clear the goal */
 			goal = 0;
@@ -224,10 +228,15 @@ void borg_list_info(byte list_type)
 			/* Number of items */
 			home_num = cur_num;
 
-			/* copy into the borg-home */
+			/* Save items for later... */
 			C_COPY(borg_home, cur_list, cur_num, list_item);
 
 			break;
+		}
+		default:
+		{
+			/* Paranoia */
+			quit(format("Unrecognised list type %d", list_type));
 		}
 	}
 

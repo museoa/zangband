@@ -1476,7 +1476,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	borg_note(format("# Destroying %s.", l_ptr->o_name));
 	
 	borg_keypress('0');
-	borg_keypress(format("%d", number));
+	borg_keypresses(format("%d", number));
 
 	/* Destroy that item */
 	if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
