@@ -150,8 +150,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 #define ASSIGN_TYPE_ALTERNATE 0
 #define ASSIGN_TYPE_FLAVOR 1
 #define ASSIGN_TYPE_ICON 2
-#define ASSIGN_TYPE_SPRITE 3
-#define ASSIGN_TYPE_MAX 4
+#define ASSIGN_TYPE_MAX 3
 
 /* One assigned alternate */
 typedef struct t_assign_alternate {
@@ -174,19 +173,12 @@ typedef struct t_assign_icon {
 	int ascii;
 } t_assign_icon;
 
-/* One assigned sprite */
-typedef struct t_assign_sprite {
-	int assignType; /* Required field */
-	int index;
-} t_assign_sprite;
-
 /* One assignment */
 typedef union t_assign {
 	int assignType;
 	t_assign_alternate alternate;
 	t_assign_flavor flavor;
 	t_assign_icon icon;
-	t_assign_sprite sprite;
 } t_assign;
 
 /*
@@ -262,18 +254,6 @@ extern t_flavor *g_flavor; /* Array of flavor types */
 extern int g_flavor_count; /* Number of flavors */
 extern Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
 
-typedef struct t_sprite {
-	int count; /* Number of frames */
-	int frame; /* Index of current frame */
-	int speed; /* Ticks between frames */
-	int ticks; /* Tick counter */
-	int reverse; /* */
-	bool changed; /* */
-	IconSpec *icon; /* Assignments */
-} t_sprite;
-
-extern t_sprite *g_sprite; /* Array of sprites */
-extern int g_sprite_count; /* Number of sprites in g_sprite[] array */
 
 /*
  * Constants for t_alternate.reason.

@@ -21,8 +21,6 @@ int g_grid_xtra_init = 0;
 t_flavor *g_flavor = NULL; /* Array of flavor types */
 int g_flavor_count = 0; /* Number of flavors */
 Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
-t_sprite *g_sprite; /* Array of sprites */
-int g_sprite_count;  /* Number of sprites */
 t_alternate *g_alternate; /* Array of alternate icon info */
 int g_alternate_count;  /* Number of elems in g_alternate[] array */
 t_effect *g_effect; /* Array of effect icon info */
@@ -292,8 +290,8 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 		/*
 		 * Now we have the assignment for the character, monster, or object.
-		 * The assignment may be TYPE_ALTERNATE, TYPE_FLAVOR, or
-		 * TYPE_SPRITE, which we must resolve into a "real" icon type and
+		 * The assignment may be TYPE_ALTERNATE, or TYPE_FLAVOR, which we
+		 * must resolve into a "real" icon type and
 		 * index (for example, the current frame of a sprite).
 		 *
 		 * XXX TYPE_ALTERNATE is currently used only for objects and
@@ -366,19 +364,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 					}
 				}
 				break;
-			}
-	
-			/* Resolve sprite */
-			case ASSIGN_TYPE_SPRITE:
-			{
-				/* Access the sprite */
-				t_sprite *spritePtr = &g_sprite[assign.sprite.index];
-			
-				/* Get the current frame */
-				iconSpec = spritePtr->icon[spritePtr->frame];
-			
-				/* This grid is animated */
-				displayPtr->anim = TRUE;
 			}
 		}
 	}
@@ -468,75 +453,26 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	{
 		assign = g_icon_map[layer][y][x];
 
-		/* Resolve sprite */
-		if (assign.assignType == ASSIGN_TYPE_SPRITE)
+		iconSpec.type = assign.icon.type;
+		iconSpec.index = assign.icon.index;
+		iconSpec.ascii = assign.icon.ascii;
+
+		/* Only layer 1 is required */
+		if (iconSpec.type == ICON_TYPE_NONE)
 		{
-			/* Access the sprite */
-			t_sprite *spritePtr = &g_sprite[assign.sprite.index];
-		
-			/* Get the type and index of the current frame */
-			iconSpec = spritePtr->icon[spritePtr->frame];
-		
-			/* This grid is animated */
-			displayPtr->anim = TRUE;
+			displayPtr->bg[layer] = iconSpec;
+			break;
 		}
 
-		/* Must be an icon */
-		else
+		/* XXX Hack -- Multi-hued ascii icons are animated */
+		if (iconSpec.ascii != -1)
 		{
-			iconSpec.type = assign.icon.type;
-			iconSpec.index = assign.icon.index;
-			iconSpec.ascii = assign.icon.ascii;
-
-			/* Only layer 1 is required */
-			if (iconSpec.type == ICON_TYPE_NONE)
+			if (g_ascii[iconSpec.ascii].mode != ASCII_NORMAL)
 			{
-				displayPtr->bg[layer] = iconSpec;
-				break;
-			}
-
-			/* XXX Hack -- Multi-hued ascii icons are animated */
-			if (iconSpec.ascii != -1)
-			{
-				if (g_ascii[iconSpec.ascii].mode != ASCII_NORMAL)
-				{
-					/* This grid is animated */
-					displayPtr->anim = TRUE;
-				}
+				/* This grid is animated */
+				displayPtr->anim = TRUE;
 			}
 		}
-#if 0
-		/*
-		 * Note that TYPE_ALTERNATE assignments must already have
-		 * been resolved in set_grid_assign() or this will bomb.
-		 * And TYPE_SPRITE assignments will bomb if lighting is
-		 * FT_LIGHT_ICON and not FT_LIGHT_TINT.
-		 */
-
-		if (dark)
-		{
-			/* Examine the lighting mode for this feature */
-			switch (g_feat_lite[f_idx])
-			{
-				/* Use icon series for lighting */
-				case FT_LIGHT_ICON:
-					
-					/* Paranoia: only icons use light */
-					if (assign.assignType == ASSIGN_TYPE_ICON)
-					{
-						if (iconSpec.type > ICON_TYPE_DEFAULT)
-							iconSpec.index += dark;
-					}
-					break;
-
-				/* Use tint table for lighting (slow) */
-				case FT_LIGHT_TINT:
-					if (g_icon_depth == 8)
-						displayPtr->tint = g_darken[dark-1].table;
-					break;
-			}
-		}
-#endif
 
 		/* A darkened copy of the icon exists, or will exist */
 		if ((g_icon_data[iconSpec.type].dark_data &&
@@ -735,18 +671,6 @@ void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_
 			iconOut->index = assignPtr->icon.index;
 			iconOut->ascii = assignPtr->icon.ascii;
 			break;
-
-		case ASSIGN_TYPE_SPRITE:
-		{
-			t_sprite *spritePtr = &g_sprite[assignPtr->sprite.index];
-			(*iconOut) = spritePtr->icon[spritePtr->frame];
-#if 0
-			iconOut->type = spritePtr->icon[spritePtr->frame].type;
-			iconOut->index = spritePtr->icon[spritePtr->frame].index;
-			iconOut->ascii = spritePtr->icon[spritePtr->frame].ascii;
-#endif
-			break;
-		}
 	}
 }
 
