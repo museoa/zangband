@@ -1363,6 +1363,10 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	artifact_bias = 0;
 
+	/* Nuke enchantments */
+	o_ptr->name1 = 0;
+	o_ptr->name2 = 0;
+
 	if (a_scroll && (randint(4) == 1))
 	{
 		switch (p_ptr->pclass)
