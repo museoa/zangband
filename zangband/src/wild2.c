@@ -1755,6 +1755,9 @@ void init_vanilla_town(void)
 
 	/* One town + 1 for bounds*/
 	town_count = 2;
+	
+	/* Hack - set global region back to wilderness value */
+	set_region(0);
 }
 
 
