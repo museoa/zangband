@@ -361,7 +361,7 @@ N:32:locked door
 G:+:U
 W:100:2:0
 I:NO_LOOK | MERGE
-D:0:0:0:0:0:0:0:25
+D:0:0:0:0:0:0:255:255
 F:0,field_action_counter_init
 F:10,field_action_door_unlock | 11,field_action_door_gf
 F:15,field_action_delete | 16,field_action_interact_open
@@ -372,7 +372,7 @@ N:33:stuck door
 G:+:U
 W:100:2:0
 I:NO_LOOK | MERGE
-D:15:1:0:0:0:0:0:25
+D:15:1:0:0:0:0:255:255
 F:0,field_action_counter_init
 F:10,field_action_door_bash | 11,field_action_door_gf
 F:15,field_action_delete | 16,field_action_interact_disarm
