@@ -358,6 +358,9 @@ bool los(int y1, int x1, int y2, int x2)
  */
 bool player_can_see_bold(int y, int x)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int xx, yy;
 
 	cave_type *c_ptr;
@@ -381,8 +384,8 @@ bool player_can_see_bold(int y, int x)
 	if (cave_floor_grid(c_ptr)) return (TRUE);
 
 	/* Hack -- move towards player */
-	yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-	xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
+	yy = (y < py3) ? (y + 1) : (y > py3) ? (y - 1) : y;
+	xx = (x < px3) ? (x + 1) : (x > px3) ? (x - 1) : x;
 
 	/* Check for "local" illumination */
 	if (area(yy,xx)->info & (CAVE_GLOW | CAVE_MNLT))
@@ -401,7 +404,10 @@ bool player_can_see_bold(int y, int x)
  */
 bool no_lite(void)
 {
-	return (!player_can_see_bold(py, px));
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
+	return (!player_can_see_bold(py3, px3));
 }
 
 
@@ -947,6 +953,9 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 void map_info(int y, int x, byte *ap, char *cp)
 #endif /* USE_TRANSPARENCY */
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	cave_type *c_ptr;
 
 	feature_type *f_ptr;
@@ -1068,7 +1077,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 #endif /* USE_TRANSPARENCY */
 
 	/* Handle "player" */
-	if ((y == py) && (x == px))
+	if ((y == py3) && (x == px3))
 	{
 		monster_race *r_ptr = &r_info[0];
 
@@ -1367,6 +1376,9 @@ void print_rel(char c, byte a, int y, int x)
  */
 void note_spot(int y, int x)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	cave_type *c_ptr = area(y,x);
 
 	s16b this_o_idx, next_o_idx = 0;
@@ -1437,8 +1449,8 @@ void note_spot(int y, int x)
 				int yy, xx;
 
 				/* Hack -- move one grid towards player */
-				yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-				xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
+				yy = (y < py3) ? (y + 1) : (y > py3) ? (y - 1) : y;
+				xx = (x < px3) ? (x + 1) : (x > px3) ? (x - 1) : x;
 
 				/* Check for "local" illumination */
 				if (area(yy,xx)->info & (CAVE_GLOW))
@@ -1542,6 +1554,9 @@ void note_wild_spot(cave_type *c_ptr)
 
 void display_dungeon(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int x, y;
 	byte a;
 	char c;
@@ -1553,9 +1568,9 @@ void display_dungeon(void)
 	char tc;
 #endif /* USE_TRANSPARENCY */
 
-	for (x = px - wid + 1; x <= px + wid; x++)
+	for (x = px3 - wid + 1; x <= px3 + wid; x++)
 	{
-		for (y = py - hgt + 1; y <= py + hgt; y++)
+		for (y = py3 - hgt + 1; y <= py3 + hgt; y++)
 		{
 			if (in_bounds2(y, x))
 			{
@@ -1570,10 +1585,10 @@ void display_dungeon(void)
 
 #ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta, tc);
+				Term_queue_char(x - px3 + wid - 1, y - py3 + hgt - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
+				Term_queue_char(x - px3 + wid - 1, y - py3 + hgt - 1, a, c);
 #endif /* USE_TRANSPARENCY */
 
 			}
@@ -1592,10 +1607,10 @@ void display_dungeon(void)
 
 #ifdef USE_TRANSPARENCY
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta, tc);
+				Term_queue_char(x - px3 + wid - 1, y - py3 + hgt - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
+				Term_queue_char(x - px3 + wid - 1, y - py3 + hgt - 1, a, c);
 #endif /* USE_TRANSPARENCY */
 			}
 		}
@@ -1911,6 +1926,9 @@ static int priority_tunnel(int y, int x)
  */
 void display_map(int *cy, int *cx)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int i, j, x, y;
 
 	byte ta;
@@ -1974,8 +1992,8 @@ void display_map(int *cy, int *cx)
 		/* Plot wilderness */
 
 		/* work out coords of player in wilderness */
-		x = px / 16 + *cx;
-		y = py / 16 + *cy;
+		x = px3 / 16 + *cx;
+		y = py3 / 16 + *cy;
 
 		/* recenter */
 		x = x - wid / 2;
@@ -1985,8 +2003,8 @@ void display_map(int *cy, int *cx)
 		if (y < 0) y = 0;
 
 		/* Player location in wilderness */
-		(*cy) += py / 16 - y + ROW_MAP;
-		(*cx) += px / 16 - x + COL_MAP;
+		(*cy) += py3 / 16 - y + ROW_MAP;
+		(*cx) += px3 / 16 - x + COL_MAP;
 
 		/* Fill in the map */
 		for (i = 0; i < wid; ++i)
@@ -2053,7 +2071,7 @@ void display_map(int *cy, int *cx)
 				}
 
 				/* Finally show position of player */
-				if ((i + x == px / 16) && (j + y == py / 16))
+				if ((i + x == px3 / 16) && (j + y == py3 / 16))
 				{
 					ma[j + 1][i + 1] = TERM_WHITE;
 					mc[j + 1][i + 1] = '@';
@@ -2074,8 +2092,8 @@ void display_map(int *cy, int *cx)
 		xrat = (xrat * xfactor + wid - 1) / wid;
 		
 		/* Player location in dungeon */
-		(*cy) = py * yfactor / yrat + ROW_MAP;
-		(*cx) = px * xfactor / xrat + COL_MAP;
+		(*cy) = py3 * yfactor / yrat + ROW_MAP;
+		(*cx) = px3 * xfactor / xrat + COL_MAP;
 
 		/* Fill in the map of dungeon */
 		for (i = min_wid; i < max_wid; ++i)
@@ -2180,6 +2198,9 @@ void display_map(int *cy, int *cx)
  */
 void do_cmd_view_map(void)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int cy, cx;
 	int wid, hgt;
 
@@ -2260,21 +2281,21 @@ void do_cmd_view_map(void)
 			y += ddy[d];
 
 			/* Bounds checking */
-			if (x + px / WILD_BLOCK_SIZE < 0)
+			if (x + px3 / WILD_BLOCK_SIZE < 0)
 			{
-				x = -px / WILD_BLOCK_SIZE;
+				x = -px3 / WILD_BLOCK_SIZE;
 			}
-			if (y + py / WILD_BLOCK_SIZE < 0)
+			if (y + py3 / WILD_BLOCK_SIZE < 0)
 			{
-				y = -py / WILD_BLOCK_SIZE;
+				y = -py3 / WILD_BLOCK_SIZE;
 			}
-			if (x + px / WILD_BLOCK_SIZE > max_wild - 2)
+			if (x + px3 / WILD_BLOCK_SIZE > max_wild - 2)
 			{
-				x = max_wild - px / WILD_BLOCK_SIZE - 2;
+				x = max_wild - px3 / WILD_BLOCK_SIZE - 2;
 			}
-			if (y + py / WILD_BLOCK_SIZE > max_wild - 2)
+			if (y + py3 / WILD_BLOCK_SIZE > max_wild - 2)
 			{
-				y = max_wild - py / WILD_BLOCK_SIZE - 2;
+				y = max_wild - py3 / WILD_BLOCK_SIZE - 2;
 			}
 		}
 	}
@@ -2989,6 +3010,9 @@ errr vinfo_init(void)
  */
 void update_view(void)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	cave_type *c_ptr;
 
 	byte info;
@@ -3042,7 +3066,7 @@ void update_view(void)
 	/* Player grid */
 
 	/* Get grid info */
-	info = area(py, px)->info;
+	info = area(py3, px3)->info;
 
 	/* Assume viewable */
 	info |= (CAVE_VIEW);
@@ -3068,15 +3092,15 @@ void update_view(void)
 	}
 
 	/* Save cave info */
-	area(py, px)->info = info;
+	area(py3, px3)->info = info;
 
 	/* Redraw player*/
-	/*lite_spot(py, px);*/
+	/*lite_spot(py3, px3);*/
 
 	/* Save in array */
 
-	view_y[view_n] = py;
-	view_x[view_n] = px;
+	view_y[view_n] = py3;
+	view_x[view_n] = px3;
 	view_n++;
 
 	/*** Step 2 -- octants ***/
@@ -3122,8 +3146,8 @@ void update_view(void)
 			    (bits4 & (p->bits_4)))
 			{
 				/* Get location */
-				x = p->grid_x[o2] + px;
-				y = p->grid_y[o2] + py;
+				x = p->grid_x[o2] + px3;
+				y = p->grid_y[o2] + py3;
 
 				/* Is it in bounds? */
 				if (!in_bounds2(y, x))
@@ -3246,8 +3270,8 @@ void update_view(void)
 						int yy, xx;
 
 						/* Hack -- move one grid towards player */
-						yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-						xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
+						yy = (y < py3) ? (y + 1) : (y > py3) ? (y - 1) : y;
+						xx = (x < px3) ? (x + 1) : (x > px3) ? (x - 1) : x;
 
 						/* Check for "local" illumination */
 						if (area(yy, xx)->info & (CAVE_GLOW))
@@ -3779,6 +3803,9 @@ void update_flow(void)
 
 #ifdef MONSTER_FLOW
 
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int x, y, d, w, n;
 	int ty, tx;
 
@@ -3802,8 +3829,8 @@ void update_flow(void)
 	}
 
 	/* Save player position */
-	flow_y = py;
-	flow_x = px;
+	flow_y = py3;
+	flow_x = px3;
 
 	/* Cycle the old entries (once per 128 updates) */
 	if (flow_n++ == 255)
@@ -3825,7 +3852,7 @@ void update_flow(void)
 
 
 	/*** Player Grid ***/
-	c_ptr = area(py, px);
+	c_ptr = area(py3, px3);
 
 	/* Save the time-stamp */
 	c_ptr->when = flow_n;
@@ -3834,8 +3861,8 @@ void update_flow(void)
 	c_ptr->cost = 0;
 
 	/* Enqueue that entry */
-	temp_y[0] = py;
-	temp_x[0] = px;
+	temp_y[0] = py3;
+	temp_x[0] = px3;
 
 
 	/* Now process the queue */
@@ -3906,16 +3933,19 @@ void update_flow(void)
  */
 void map_area(void)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int i, x, y, y1, y2, x1, x2;
 
 	cave_type *c_ptr;
 
 
 	/* Pick an area to map */
-	y1 = py - MAX_DETECT - randint1(10);
-	y2 = py + MAX_DETECT + randint1(10);
-	x1 = px - MAX_DETECT - randint1(20);
-	x2 = px + MAX_DETECT + randint1(20);
+	y1 = py3 - MAX_DETECT - randint1(10);
+	y2 = py3 + MAX_DETECT + randint1(10);
+	x1 = px3 - MAX_DETECT - randint1(20);
+	x2 = px3 + MAX_DETECT + randint1(20);
 
 	/* Speed -- shrink to fit legal bounds */
 	if (y1 < min_hgt + 1) y1 = min_hgt + 1;

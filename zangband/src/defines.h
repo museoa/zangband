@@ -3349,7 +3349,7 @@
 #define cave_empty_grid(C) \
     (cave_floor_grid(C) && \
      !((C)->m_idx) && \
-     !((C) == area(py, px)))
+     !((C) == area(p_ptr->py, p_ptr->px)))
 
 /*
  * Grid based version of "cave_naked_bold()"

@@ -1604,6 +1604,9 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
  */
 bool activate_effect(object_type *o_ptr)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int plev = p_ptr->lev;
 	int k, dir, dummy;
 	byte activate;
@@ -1744,7 +1747,7 @@ bool activate_effect(object_type *o_ptr)
 
 					while (attempts--)
 					{
-						scatter(&y, &x, py, px, 4, 0);
+						scatter(&y, &x, py3, px3, 4, 0);
 
 						/* paranoia */
 						if (!in_bounds2(y, x)) continue;
@@ -1752,7 +1755,7 @@ bool activate_effect(object_type *o_ptr)
 						c_ptr = area(y, x);
 						if (!cave_floor_grid(c_ptr)) continue;
 
-						if ((y != py) || (x != px)) break;
+						if ((y != py3) || (x != px3)) break;
 					}
 
 					project(0, 3, y, x, 1000, GF_ELEC,
@@ -2395,8 +2398,8 @@ bool activate_effect(object_type *o_ptr)
 
 				for (dir = 0; dir <= 9; dir++)
 				{
-					y = py + ddy[dir];
-					x = px + ddx[dir];
+					y = py3 + ddy[dir];
+					x = px3 + ddx[dir];
 
 					/* paranoia */
 					if (!in_bounds2(y, x)) continue;
@@ -2491,7 +2494,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_QUAKE:
 		{
-			earthquake(py, px, 10);
+			earthquake(py3, px3, 10);
 			o_ptr->timeout = 50;
 			break;
 		}
@@ -2579,7 +2582,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SUMMON_ANIMAL:
 		{
-			(void)summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, py3, px3, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
 			o_ptr->timeout = 200 + randint1(300);
 			break;
 		}
@@ -2587,7 +2590,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUMMON_PHANTOM:
 		{
 			msg_print("You summon a phantasmal servant.");
-			(void)summon_specific(-1, py, px, dun_level, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, py3, px3, dun_level, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
 			o_ptr->timeout = 200 + randint1(200);
 			break;
 		}
@@ -2597,7 +2600,7 @@ bool activate_effect(object_type *o_ptr)
 			bool pet = (randint1(3) == 1);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific((pet ? -1 : 0), py, px, ((plev * 3) / 2), SUMMON_ELEMENTAL, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, ((plev * 3) / 2), SUMMON_ELEMENTAL, group, FALSE, pet))
 			{
 				msg_print("An elemental materializes...");
 
@@ -2616,7 +2619,7 @@ bool activate_effect(object_type *o_ptr)
 			bool pet = (randint1(3) == 1);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific((pet ? -1 : 0), py, px, ((plev * 3) / 2), SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, ((plev * 3) / 2), SUMMON_DEMON, group, FALSE, pet))
 			{
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 				if (pet)
@@ -2646,7 +2649,7 @@ bool activate_effect(object_type *o_ptr)
 				group = TRUE;
 			}
 
-			if (summon_specific((pet ? -1 : 0), py, px, ((plev * 3) / 2), type,
+			if (summon_specific((pet ? -1 : 0), py3, px3, ((plev * 3) / 2), type,
 				                group, FALSE, pet))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");

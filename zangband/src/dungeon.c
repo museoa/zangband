@@ -460,9 +460,12 @@ static void pattern_teleport(void)
 
 static void wreck_the_pattern(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int to_ruin, r_y, r_x;
 
-	if (area(py, px)->feat == FEAT_PATTERN_XTRA2)
+	if (area(py3, px3)->feat == FEAT_PATTERN_XTRA2)
 	{
 		/* Ruined already */
 		return;
@@ -478,7 +481,7 @@ static void wreck_the_pattern(void)
 
 	while (to_ruin--)
 	{
-		scatter(&r_y, &r_x, py, px, 4, 0);
+		scatter(&r_y, &r_x, py3, px3, 4, 0);
 
 		if ((area(r_y, r_x)->feat >= FEAT_PATTERN_START) &&
 		    (area(r_y, r_x)->feat < FEAT_PATTERN_XTRA2))
@@ -487,15 +490,18 @@ static void wreck_the_pattern(void)
 		}
 	}
 
-	cave_set_feat(py, px, FEAT_PATTERN_XTRA2);
+	cave_set_feat(py3, px3, FEAT_PATTERN_XTRA2);
 }
 
 
 /* Returns TRUE if we are on the Pattern... */
 static bool pattern_effect(void)
 {
-	if ((area(py, px)->feat < FEAT_PATTERN_START) ||
-	    (area(py, px)->feat > FEAT_PATTERN_XTRA2))
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
+	if ((area(py3, px3)->feat < FEAT_PATTERN_START) ||
+	    (area(py3, px3)->feat > FEAT_PATTERN_XTRA2))
 		return FALSE;
 
 	if ((p_ptr->prace == RACE_AMBERITE) &&
@@ -504,7 +510,7 @@ static bool pattern_effect(void)
 		wreck_the_pattern();
 	}
 
-	if (area(py,px)->feat == FEAT_PATTERN_END)
+	if (area(py3, px3)->feat == FEAT_PATTERN_END)
 	{
 		(void)set_poisoned(0);
 		(void)set_image(0);
@@ -520,7 +526,7 @@ static bool pattern_effect(void)
 		(void)do_res_stat(A_CHR);
 		(void)restore_level();
 		(void)hp_player(1000);
-		cave_set_feat(py, px, FEAT_PATTERN_OLD);
+		cave_set_feat(py3, px3, FEAT_PATTERN_OLD);
 		msg_print("This section of the Pattern looks less powerful.");
 	}
 
@@ -532,15 +538,15 @@ static bool pattern_effect(void)
 	 * in the middle of the pattern...
 	 */
 
-	else if (area(py,px)->feat == FEAT_PATTERN_OLD)
+	else if (area(py3, px3)->feat == FEAT_PATTERN_OLD)
 	{
 		/* No effect */
 	}
-	else if (area(py,px)->feat == FEAT_PATTERN_XTRA1)
+	else if (area(py3, px3)->feat == FEAT_PATTERN_XTRA1)
 	{
 		pattern_teleport();
 	}
-	else if (area(py,px)->feat == FEAT_PATTERN_XTRA2)
+	else if (area(py3, px3)->feat == FEAT_PATTERN_XTRA2)
 	{
 		if (!p_ptr->invuln)
 		take_hit(200, "walking the corrupted Pattern");
@@ -861,6 +867,9 @@ static void recharged_notice(object_type *o_ptr)
  */
 static void process_world(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int i, j;
 	s32b regen_amount;
 	bool cave_no_regen = FALSE;
@@ -872,7 +881,7 @@ static void process_world(void)
 	u32b f1 = 0 , f2 = 0 , f3 = 0;
 	int temp;
 	object_kind *k_ptr;
-	cave_type *c_ptr = area(py, px);
+	cave_type *c_ptr = area(py3, px3);
 
 	/* Announce the level feeling */
 	if ((turn - old_turn == 1000) && (dun_level)) do_cmd_feeling();
@@ -1829,7 +1838,7 @@ static void process_world(void)
 		{
 			bool pet = (randint1(6) == 1);
 
-			if (summon_specific((pet ? -1 : 0), py, px,
+			if (summon_specific((pet ? -1 : 0), py3, px3,
 					 dun_level, SUMMON_DEMON, TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a demon!");
@@ -1925,7 +1934,7 @@ static void process_world(void)
 		{
 			bool pet = (randint1(3) == 1);
 
-			if (summon_specific((pet ? -1 : 0), py, px, dun_level, SUMMON_ANIMAL,
+			if (summon_specific((pet ? -1 : 0), py3, px3, dun_level, SUMMON_ANIMAL,
 				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted an animal!");
@@ -2004,7 +2013,7 @@ static void process_world(void)
 		{
 			bool pet = (randint1(5) == 1);
 
-			if (summon_specific((pet ? -1 : 0), py, px, dun_level, SUMMON_DRAGON,
+			if (summon_specific((pet ? -1 : 0), py3, px3, dun_level, SUMMON_DRAGON,
 				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a dragon!");
@@ -2433,8 +2442,8 @@ static void process_world(void)
 				}
 
 				/* Save player position */
-				p_ptr->oldpx = px;
-				p_ptr->oldpy = py;
+				p_ptr->oldpx = px3;
+				p_ptr->oldpy = py3;
 
 				/* Leaving */
 				p_ptr->leaving = TRUE;
@@ -3304,8 +3313,6 @@ static void process_player(void)
 {
 	int i;
 
-
-
 	if (hack_mutation)
 	{
 		msg_print("You feel different!");
@@ -3390,7 +3397,7 @@ static void process_player(void)
 
 
 		/* Place the cursor on the player */
-		move_cursor_relative(py, px);
+		move_cursor_relative(p_ptr->py, p_ptr->px);
 
 		/* Refresh (optional) */
 		if (fresh_before) Term_fresh();
@@ -3421,7 +3428,7 @@ static void process_player(void)
 			msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 			/* Drop it (carefully) near the player */
-			(void)drop_near(o_ptr, 0, py, px);
+			(void)drop_near(o_ptr, 0, p_ptr->py, p_ptr->px);
 
 			/* Modify, Describe, Optimize */
 			inven_item_increase(item, -255);
@@ -3507,7 +3514,7 @@ static void process_player(void)
 		else
 		{
 			/* Place the cursor on the player */
-			move_cursor_relative(py, px);
+			move_cursor_relative(p_ptr->py, p_ptr->px);
 
 			/* Get a command (normal) */
 			request_command(FALSE);
@@ -3701,6 +3708,9 @@ static void process_energy(void)
  */
 static void dungeon(void)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int quest_num;
 
 	cave_type *c_ptr;
@@ -3778,20 +3788,20 @@ static void dungeon(void)
 	if (create_up_stair || create_down_stair)
 	{
 		/* Place a stairway */
-		c_ptr = area(py, px);
+		c_ptr = area(py3, px3);
 		if (cave_valid_grid(c_ptr))
 		{
 			/* XXX XXX XXX */
-			delete_object(py, px);
+			delete_object(py3, px3);
 
 			/* Make stairs */
 			if (create_down_stair)
 			{
-				cave_set_feat(py, px, FEAT_MORE);
+				cave_set_feat(py3, px3, FEAT_MORE);
 			}
 			else
 			{
-				cave_set_feat(py, px, FEAT_LESS);
+				cave_set_feat(py3, px3, FEAT_LESS);
 			}
 		}
 
@@ -3949,7 +3959,7 @@ static void dungeon(void)
 		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
-		move_cursor_relative(py, px);
+		move_cursor_relative(py3, px3);
 
 		/* Optional fresh */
 		if (fresh_after) Term_fresh();
@@ -3973,7 +3983,7 @@ static void dungeon(void)
 		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
-		move_cursor_relative(py, px);
+		move_cursor_relative(py3, px3);
 
 		/* Optional fresh */
 		if (fresh_after) Term_fresh();
@@ -4000,7 +4010,7 @@ static void dungeon(void)
 		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
-		move_cursor_relative(py, px);
+		move_cursor_relative(py3, px3);
 
 		/* Optional fresh */
 		if (fresh_after) Term_fresh();

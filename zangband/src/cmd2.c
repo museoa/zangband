@@ -18,11 +18,14 @@
  */
 void do_cmd_go_up(void)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	bool go_up = FALSE;
 	cave_type *c_ptr;
 
 	/* Player grid */
-	c_ptr = area(py,px);
+	c_ptr = area(py3, px3);
 #if 0
 	/* Quest up stairs */
 	if (c_ptr->feat == FEAT_QUEST_UP)
@@ -153,11 +156,14 @@ void do_cmd_go_up(void)
  */
 void do_cmd_go_down(void)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	cave_type *c_ptr;
 	bool go_down = FALSE;
 
 	/* Player grid */
-	c_ptr = area(py,px);
+	c_ptr = area(py3, px3);
 
 #if 0
 
@@ -214,8 +220,8 @@ void do_cmd_go_down(void)
 			go_down = TRUE;
 
 			/* Save old player position */
-			p_ptr->oldpx = px;
-			p_ptr->oldpy = py;
+			p_ptr->oldpx = px3;
+			p_ptr->oldpy = py3;
 		}
 		else
 		{
@@ -258,6 +264,11 @@ void do_cmd_go_down(void)
  */
 void do_cmd_search(void)
 {
+#ifdef USE_SCRIPT
+	int py = p_ptr->py3;
+	int px = p_ptr->px3;
+#endif /* USE_SCRIPT */
+
 	/* Allow repeated command */
 	if (command_arg)
 	{
@@ -275,7 +286,7 @@ void do_cmd_search(void)
 	energy_use = 100;
 
 #ifdef USE_SCRIPT
-	if (cmd_search_callback(py, px))
+	if (cmd_search_callback(py3, px3))
 	{
 		/* Disturb */
 		disturb(0, 0);
@@ -696,6 +707,9 @@ static bool is_closed(int feat)
  */
 int count_traps(int *y, int *x, bool under)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int d;
 	int xx, yy;
 	int count = 0; /* Count how many matches */
@@ -707,8 +721,8 @@ int count_traps(int *y, int *x, bool under)
 		if ((d == 8) && !under) continue;
 
 		/* Extract adjacent (legal) location */
-		yy = py + ddy_ddd[d];
-		xx = px + ddx_ddd[d];
+		yy = py3 + ddy_ddd[d];
+		xx = px3 + ddx_ddd[d];
 
 		/* paranoia */
 		if (!in_bounds2(yy, xx)) continue;
@@ -733,6 +747,9 @@ int count_traps(int *y, int *x, bool under)
  */
 static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int d;
 	int xx, yy;
 	int count = 0; /* Count how many matches */
@@ -744,14 +761,14 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 		if ((d == 8) && !under) continue;
 
 		/* Extract adjacent (legal) location */
-		yy = py + ddy_ddd[d];
-		xx = px + ddx_ddd[d];
+		yy = py3 + ddy_ddd[d];
+		xx = px3 + ddx_ddd[d];
 
 		/* paranoia */
 		if (!in_bounds2(yy, xx)) continue;
 
 		/* Must have knowledge */
-		if (!(area(yy,xx)->info & (CAVE_MARK))) continue;
+		if (!(area(yy, xx)->info & (CAVE_MARK))) continue;
 
 		/* Not looking for this feature */
 		if (!((*test)(area(yy, xx)->feat))) continue;
@@ -777,6 +794,9 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
  */
 static int count_chests(int *y, int *x, bool trapped)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int d, count, o_idx;
 
 	object_type *o_ptr;
@@ -788,8 +808,8 @@ static int count_chests(int *y, int *x, bool trapped)
 	for (d = 0; d < 9; d++)
 	{
 		/* Extract adjacent (legal) location */
-		int yy = py + ddy_ddd[d];
-		int xx = px + ddx_ddd[d];
+		int yy = py3 + ddy_ddd[d];
+		int xx = px3 + ddx_ddd[d];
 
 		/* No (visible) chest is there */
 		if ((o_idx = chest_check(yy, xx)) == 0) continue;
@@ -822,11 +842,14 @@ static int count_chests(int *y, int *x, bool trapped)
  */
 static int coords_to_dir(int y, int x)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int d[3][3] = { {7, 4, 1}, {8, 5, 2}, {9, 6, 3} };
 	int dy, dx;
 
-	dy = y - py;
-	dx = x - px;
+	dy = y - py3;
+	dx = x - px3;
 
 	/* Paranoia */
 	if (ABS(dx) > 1 || ABS(dy) > 1) return (0);
@@ -926,6 +949,9 @@ bool do_cmd_open_aux(int y, int x)
  */
 void do_cmd_open(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int y, x, dir;
 
 	s16b o_idx;
@@ -969,8 +995,8 @@ void do_cmd_open(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get requested location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = py3 + ddy[dir];
+		x = px3 + ddx[dir];
 
 #ifdef USE_SCRIPT
 		if (cmd_open_callback(y, x))
@@ -1083,6 +1109,9 @@ static bool do_cmd_close_aux(int y, int x)
  */
 void do_cmd_close(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int y, x, dir;
 
 	cave_type *c_ptr;
@@ -1116,8 +1145,8 @@ void do_cmd_close(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get requested location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = py3 + ddy[dir];
+		x = px3 + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -1507,6 +1536,9 @@ static bool do_cmd_tunnel_aux(int y, int x)
  */
 void do_cmd_tunnel(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int			y, x, dir;
 
 	cave_type	*c_ptr;
@@ -1531,8 +1563,8 @@ void do_cmd_tunnel(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = py3 + ddy[dir];
+		x = px3 + ddx[dir];
 
 		/* Cannot escape the wilderness by tunneling */
 		if (!in_bounds2(y, x))
@@ -1548,7 +1580,7 @@ void do_cmd_tunnel(void)
 		}
 
 		/* Get grid */
-		c_ptr = area(y,x);
+		c_ptr = area(y, x);
 
 		/* No tunnelling through doors */
 		if ((c_ptr->feat == FEAT_CLOSED) ||
@@ -1777,6 +1809,9 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
  */
 void do_cmd_disarm(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int y, x, dir;
 
 	s16b o_idx;
@@ -1822,8 +1857,8 @@ void do_cmd_disarm(void)
 	if (get_rep_dir(&dir,TRUE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = py3 + ddy[dir];
+		x = px3 + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -1890,6 +1925,9 @@ void do_cmd_disarm(void)
  */
 void do_cmd_alter(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int			y, x, dir;
 	int			action;
 
@@ -1915,8 +1953,8 @@ void do_cmd_alter(void)
 	if (get_rep_dir(&dir,TRUE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = py3 + ddy[dir];
+		x = px3 + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -2051,6 +2089,9 @@ static bool get_spike(int *ip)
  */
 void do_cmd_spike(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int dir, item;
 	s16b y, x;
 
@@ -2061,8 +2102,8 @@ void do_cmd_spike(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = py3 + ddy[dir];
+		x = px3 + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -2201,7 +2242,10 @@ void do_cmd_run(void)
  */
 void do_cmd_stay(int pickup)
 {
-	cave_type *c_ptr = area(py,px);
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
+	cave_type *c_ptr = area(py3, px3);
 
 
 	/* Allow repeated command */
@@ -2286,7 +2330,7 @@ void do_cmd_stay(int pickup)
 			quest[leaving_quest].status = QUEST_STATUS_FAILED;
 		}
 
-		p_ptr->inside_quest = area(py,px)->special;
+		p_ptr->inside_quest = area(py3, px3)->special;
 		dun_level = 0;
 		p_ptr->oldpx = 0;
 		p_ptr->oldpy = 0;
@@ -2533,6 +2577,9 @@ static sint critical_shot(int chance, int sleeping_bonus,
  */
 void do_cmd_fire_aux(int item, object_type *j_ptr)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int dir;
 	int j, y, x, ny, nx, ty, tx;
 
@@ -2738,12 +2785,12 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 #endif /* 0 */
 
 	/* Start at the player */
-	y = py;
-	x = px;
+	y = py3;
+	x = px3;
 
 	/* Predict the "target" location */
-	ty = py + 99 * ddy[dir];
-	tx = px + 99 * ddx[dir];
+	ty = py3 + 99 * ddy[dir];
+	tx = px3 + 99 * ddx[dir];
 
 	/* Check for "target request" */
 	if ((dir == 5) && target_okay())
@@ -2766,7 +2813,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* Calculate the new location (see "project()") */
 		ny = y;
 		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx);
+		mmove2(&ny, &nx, py3, px3, ty, tx);
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx)) break;
@@ -3035,6 +3082,9 @@ void do_cmd_fire(void)
  */
 void do_cmd_throw_aux(int mult)
 {
+	int py3 = p_ptr->py;
+	int px3 = p_ptr->px;
+
 	int dir, item;
 	int j, y, x, ny, nx, ty, tx;
 	int chance, chance2, tdis;
@@ -3158,12 +3208,12 @@ void do_cmd_throw_aux(int mult)
 
 
 	/* Start at the player */
-	y = py;
-	x = px;
+	y = py3;
+	x = px3;
 
 	/* Predict the "target" location */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
+	tx = px3 + 99 * ddx[dir];
+	ty = py3 + 99 * ddy[dir];
 
 	/* Check for "target request" */
 	if ((dir == 5) && target_okay())
@@ -3186,7 +3236,7 @@ void do_cmd_throw_aux(int mult)
 		/* Calculate the new location (see "project()") */
 		ny = y;
 		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx);
+		mmove2(&ny, &nx, py3, px3, ty, tx);
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx))
@@ -3243,7 +3293,7 @@ void do_cmd_throw_aux(int mult)
 			visible = m_ptr->ml;
 
 			/* Calculate the projectile accuracy, modified by distance. */
-			chance2 = chance - distance(py, px, y, x);
+			chance2 = chance - distance(py3, px3, y, x);
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
 			if (c_ptr->feat == FEAT_RUBBLE)

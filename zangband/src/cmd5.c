@@ -530,6 +530,9 @@ static int bizarre_num[MAX_BIZARRE] =
 
 static void wild_magic(int spell)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	switch (randint1(spell) + randint1(8) + 1)
 	{
 		case 1:
@@ -602,7 +605,7 @@ static void wild_magic(int spell)
 		}
 		case 26:
 		{
-			earthquake(py, px, 5);
+			earthquake(py3, px3, 5);
 			break;
 		}
 		case 27:
@@ -640,7 +643,7 @@ static void wild_magic(int spell)
 
 			for (i = 0; i < 8; i++)
 			{
-				(void)summon_specific(0, py, px, (dun_level * 3) / 2, type, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py3, px3, (dun_level * 3) / 2, type, TRUE, FALSE, FALSE);
 			}
 			break;
 		}
@@ -652,7 +655,7 @@ static void wild_magic(int spell)
 		}
 		case 38:
 		{
-			(void)summon_cyber(-1, py, px);
+			(void)summon_cyber(-1, py3, px3);
 			break;
 		}
 		default:
@@ -671,6 +674,9 @@ static void wild_magic(int spell)
 
 static bool cast_life_spell(int spell)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int	dir;
 	int	plev = p_ptr->lev;
 
@@ -802,14 +808,14 @@ static bool cast_life_spell(int spell)
 	case 29: /* Holy Vision */
 		return identify_fully();
 	case 30: /* Divine Intervention */
-		project(0, 1, py, px, 777, GF_HOLY_FIRE, PROJECT_KILL);
+		project(0, 1, py3, px3, 777, GF_HOLY_FIRE, PROJECT_KILL);
 		dispel_monsters(plev * 4);
 		slow_monsters();
 		stun_monsters(plev * 4);
 		confuse_monsters(plev * 4);
 		turn_monsters(plev * 4);
 		stasis_monsters(plev * 4);
-		summon_specific(-1, py, px, plev, SUMMON_ANGEL, TRUE, TRUE, TRUE);
+		summon_specific(-1, py3, px3, plev, SUMMON_ANGEL, TRUE, TRUE, TRUE);
 		(void)set_shero(p_ptr->shero + randint1(25) + 25);
 		(void)hp_player(300);
 
@@ -975,6 +981,9 @@ static bool cast_sorcery_spell(int spell)
 
 static bool cast_nature_spell(int spell)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int	    dir;
 	int	    beam;
 	int	    plev = p_ptr->lev;
@@ -1055,7 +1064,7 @@ static bool cast_nature_spell(int spell)
 		slow_monsters();
 		break;
 	case 14: /* Summon Animals */
-		if (!(summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE)))
+		if (!(summon_specific(-1, py3, px3, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE)))
 			no_trump = TRUE;
 		break;
 	case 15: /* Herbal Healing */
@@ -1091,7 +1100,7 @@ static bool cast_nature_spell(int spell)
 	case 23: /* Protection from Corrosion */
 		return rustproof();
 	case 24: /* Earthquake */
-		earthquake(py, px, 10);
+		earthquake(py3, px3, 10);
 		break;
 	case 25: /* Whirlwind Attack */
 		{
@@ -1101,8 +1110,8 @@ static bool cast_nature_spell(int spell)
 
 			for (dir = 0; dir <= 9; dir++)
 			{
-				y = py + ddy[dir];
-				x = px + ddx[dir];
+				y = py3 + ddy[dir];
+				x = px3 + ddx[dir];
 
 				/* paranoia */
 				if (!in_bounds2(y, x)) continue;
@@ -1144,8 +1153,8 @@ static bool cast_nature_spell(int spell)
 		break;
 	case 31: /* Nature's Wrath */
 		(void)dispel_monsters(plev * 4);
-		earthquake(py, px, 20 + (plev / 2));
-		project(0, 1 + plev / 12, py, px,
+		earthquake(py3, px3, 20 + (plev / 2));
+		project(0, 1 + plev / 12, py3, px3,
 			100 + plev, GF_DISINTEGRATE, PROJECT_KILL | PROJECT_ITEM);
 		break;
 	default:
@@ -1162,6 +1171,9 @@ static bool cast_nature_spell(int spell)
 
 static bool cast_chaos_spell(int spell)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int	dir, i, beam;
 	int	plev = p_ptr->lev;
 	cave_type *c_ptr;
@@ -1266,11 +1278,11 @@ static bool cast_chaos_spell(int spell)
 			else if (die < 101) drain_life(dir, 100 + plev);
 			else if (die < 104)
 			{
-				earthquake(py, px, 12);
+				earthquake(py3, px3, 12);
 			}
 			else if (die < 106)
 			{
-				destroy_area(py, px, 15, TRUE);
+				destroy_area(py3, px3, 15, TRUE);
 			}
 			else if (die < 108)
 			{
@@ -1294,7 +1306,7 @@ static bool cast_chaos_spell(int spell)
 		break;
 	case 10: /* Sonic Boom */
 		msg_print("BOOM! Shake the room!");
-		project(0, plev / 10 + 2, py, px,
+		project(0, plev / 10 + 2, py3, px3,
 			45 + plev, GF_SOUND, PROJECT_KILL | PROJECT_ITEM);
 		break;
 	case 11: /* Doom Bolt -- always beam in 2.0.7 or later */
@@ -1313,7 +1325,7 @@ static bool cast_chaos_spell(int spell)
 		(void)fire_beam(GF_AWAY_ALL, dir, plev);
 		break;
 	case 14: /* Word of Destruction */
-		destroy_area(py, px, 15, TRUE);
+		destroy_area(py3, px3, 15, TRUE);
 		break;
 	case 15: /* Invoke Logrus */
 		if (!get_aim_dir(&dir)) return FALSE;
@@ -1350,7 +1362,7 @@ static bool cast_chaos_spell(int spell)
 			bool pet = (randint1(3) == 1);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, (plev * 3) / 2, SUMMON_DEMON, group, FALSE, pet))
 			{
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 
@@ -1378,8 +1390,8 @@ static bool cast_chaos_spell(int spell)
 				{
 					count++;
 					
-					x = px - 5 + randint1(10);
-					y = py - 5 + randint1(10);
+					x = px3 - 5 + randint1(10);
+					y = py3 - 5 + randint1(10);
 
 					/* paranoia */
 					if (!in_bounds(y, x)) continue;
@@ -1390,7 +1402,7 @@ static bool cast_chaos_spell(int spell)
 					if (!player_has_los_grid(c_ptr)) continue;
 
 					/* if close enough - exit */
-					if (distance(py, px, y, x) < 6) break;
+					if (distance(py3, px3, y, x) < 6) break;
 				}
 
 				if (count >= 1000) break;
@@ -1435,6 +1447,9 @@ static bool cast_chaos_spell(int spell)
 
 static bool cast_death_spell(int spell)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int	dir;
 	int	beam;
 	int	plev = p_ptr->lev;
@@ -1574,7 +1589,7 @@ static bool cast_death_spell(int spell)
 			if (die < 8)
 			{
 				msg_print("Oh no! Mouldering forms rise from the earth around you!");
-				(void)summon_specific(0, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py3, px3, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 
 				chg_virtue(V_UNLIFE, 1);
 			}
@@ -1655,11 +1670,11 @@ static bool cast_death_spell(int spell)
 			}
 			else if (die < 104)
 			{
-				earthquake(py, px, 12);
+				earthquake(py3, px3, 12);
 			}
 			else if (die < 106)
 			{
-				destroy_area(py, px, 15, TRUE);
+				destroy_area(py3, px3, 15, TRUE);
 			}
 			else if (die < 108)
 			{
@@ -1745,7 +1760,7 @@ static bool cast_death_spell(int spell)
 				group = TRUE;
 			}
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, (plev * 3) / 2, type, group, FALSE, pet))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
 
@@ -1759,7 +1774,7 @@ static bool cast_death_spell(int spell)
 #else /* 0 */
 
 			/* Testing the new corpse-raising code. */
-			if (raise_dead(py, px, (bool)(randint1(3) != 1)))
+			if (raise_dead(py3, px3, (bool)(randint1(3) != 1)))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
 				chg_virtue(V_UNLIFE, 1);
@@ -1819,7 +1834,7 @@ static bool cast_death_spell(int spell)
 				p_ptr->csp++;
 
 			/* Visual feedback */
-			move_cursor_relative(py, px);
+			move_cursor_relative(py3, px3);
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_HP | PR_MANA);
@@ -1857,6 +1872,9 @@ static bool cast_death_spell(int spell)
 
 static bool cast_trump_spell(int spell, bool success)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int     dir;
 	int     beam;
 	int     plev = p_ptr->lev;
@@ -1911,7 +1929,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 14)
 				{
 					msg_print("Oh no! It's the Devil!");
-					(void)summon_specific(0, py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
+					(void)summon_specific(0, py3, px3, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				}
 				else if (die < 18)
 				{
@@ -1934,7 +1952,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 30)
 				{
 					msg_print("It's the picture of a strange monster.");
-					if (!(summon_specific(0, py, px, (dun_level * 3) / 2, 32 + randint1(6), TRUE, FALSE, FALSE)))
+					if (!(summon_specific(0, py3, px3, (dun_level * 3) / 2, 32 + randint1(6), TRUE, FALSE, FALSE)))
 						no_trump = TRUE;
 				}
 				else if (die < 33)
@@ -1980,30 +1998,30 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 80)
 				{
 					msg_print("It's the Tower.");
-					earthquake(py, px, 5);
+					earthquake(py3, px3, 5);
 				}
 				else if (die < 82)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE1, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py3, px3, (dun_level * 3) / 2, SUMMON_BIZARRE1, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 84)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE2, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py3, px3, (dun_level * 3) / 2, SUMMON_BIZARRE2, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 86)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE4, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py3, px3, (dun_level * 3) / 2, SUMMON_BIZARRE4, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 88)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE5, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py3, px3, (dun_level * 3) / 2, SUMMON_BIZARRE5, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 96)
@@ -2121,7 +2139,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of an animal...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry animal appears!");
@@ -2136,7 +2154,7 @@ static bool cast_trump_spell(int spell, bool success)
 		case 10: /* Phantasmal Servant */
 			if (success)
 			{
-				if (summon_specific(-1, py, px, (plev * 3) / 2, SUMMON_PHANTOM, FALSE, TRUE, TRUE))
+				if (summon_specific(-1, py3, px3, (plev * 3) / 2, SUMMON_PHANTOM, FALSE, TRUE, TRUE))
 				{
 					msg_print("'Your wish, master?'");
 				}
@@ -2155,7 +2173,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a monster...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry monster appears!");
@@ -2175,7 +2193,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a monster...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_ELEMENTAL, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_ELEMENTAL, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry elemental appears!");
@@ -2221,7 +2239,7 @@ static bool cast_trump_spell(int spell, bool success)
 				case 4: dummy = SUMMON_BIZARRE5; break;
 			}
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, dummy, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, dummy, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry creature appears!");
@@ -2240,7 +2258,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a spider...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_SPIDER, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_SPIDER, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry spiders appears!");
@@ -2260,7 +2278,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a reptile...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_HYDRA, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_HYDRA, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry reptile appears!");
@@ -2279,7 +2297,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a hound...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_HOUND, TRUE, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_HOUND, TRUE, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("Angry barking surrounds you!");
@@ -2325,7 +2343,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a Cyberdemon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, SUMMON_CYBER, FALSE, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev * 2, SUMMON_CYBER, FALSE, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry Cyberdemon appears!");
@@ -2357,7 +2375,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of an undead creature...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_UNDEAD, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_UNDEAD, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry undead creature appears!");
@@ -2377,7 +2395,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a dragon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_DRAGON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_DRAGON, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry dragon appears!");
@@ -2402,7 +2420,7 @@ static bool cast_trump_spell(int spell, bool success)
 				bool group = (pet ? FALSE : TRUE);
 				int type = (pet ? SUMMON_NO_UNIQUES : 0);
 
-				if (summon_specific((pet ? -1 : 0), py, px, plev, type, group, FALSE, pet))
+				if (summon_specific((pet ? -1 : 0), py3, px3, plev, type, group, FALSE, pet))
 				{
 					if (!pet)
 						msg_print("An angry creature appears!");
@@ -2419,7 +2437,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a demon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, SUMMON_DEMON, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry demon appears!");
@@ -2440,7 +2458,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of an ancient dragon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry ancient dragon appears!");
@@ -2461,7 +2479,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a greater undead being...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), py3, px3, plev, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry greater undead creature appears!");

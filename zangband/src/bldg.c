@@ -1044,6 +1044,9 @@ static void get_questinfo(int questnum)
  */
 static void castle_quest(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int             q_index = 0;
 	monster_race    *r_ptr;
 	quest_type      *q_ptr;
@@ -1053,7 +1056,7 @@ static void castle_quest(void)
 	clear_bldg(7, 18);
 
 	/* Current quest of the building */
-	q_index = cave[py][px].special;
+	q_index = cave[py3][px3].special;
 
 	/* Is there a quest available at the building? */
 	if (!q_index)
@@ -1728,6 +1731,12 @@ static void building_recharge(void)
  */
 static void bldg_process_command(building_type *bldg, int i)
 {
+#ifdef USE_SCRIPT
+#if 0
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+#endif
+#endif /* USE_SCRIPT */
 	int bact = bldg->actions[i];
 	int bcost;
 	bool paid = FALSE;
@@ -1758,8 +1767,9 @@ static void bldg_process_command(building_type *bldg, int i)
 	}
 
 #ifdef USE_SCRIPT
-#if 0 /* FEAT_BLDG_* replaced by fields */
-	if (building_command_callback(area(py,px)->feat - FEAT_BLDG_HEAD, i))
+#if 0
+	/* FEAT_BLDG_* replaced by fields */
+	if (building_command_callback(area(py3, px3)->feat - FEAT_BLDG_HEAD, i))
 	{
 		/* Script paid the price */
 		paid = TRUE;
@@ -1916,7 +1926,10 @@ static void bldg_process_command(building_type *bldg, int i)
  */
 void do_cmd_quest(void)
 {
-	if (cave[py][px].feat != FEAT_QUEST_ENTER)
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
+	if (cave[py3][px3].feat != FEAT_QUEST_ENTER)
 	{
 		msg_print("You see no quest level here.");
 		return;
@@ -1937,7 +1950,7 @@ void do_cmd_quest(void)
 			quest[leaving_quest].status = QUEST_STATUS_FAILED;
 		}
 
-		p_ptr->inside_quest = cave[py][px].special;
+		p_ptr->inside_quest = cave[py3][px3].special;
 		dun_level = 1;
 		p_ptr->leftbldg = TRUE;
 		p_ptr->leaving = TRUE;
@@ -1950,19 +1963,22 @@ void do_cmd_quest(void)
  */
 void do_cmd_bldg(void)
 {
+	int px3 = p_ptr->px;
+	int py3 = p_ptr->py;
+
 	int             i, which;
 	char            command;
 	bool            validcmd;
 	building_type   *bldg;
 
-	if (!((area(py,px)->feat >= FEAT_BLDG_HEAD) &&
-		  (area(py,px)->feat <= FEAT_BLDG_TAIL)))
+	if (!((area(py3, px3)->feat >= FEAT_BLDG_HEAD) &&
+		(area(py3, px3)->feat <= FEAT_BLDG_TAIL)))
 	{
 		msg_print("You see no building here.");
 		return;
 	}
 
-	which = (area(py,px)->feat - FEAT_BLDG_HEAD);
+	which = (area(py3, px3)->feat - FEAT_BLDG_HEAD);
 	building_loc = which;
 
 	bldg = &building[which];
@@ -1982,8 +1998,8 @@ void do_cmd_bldg(void)
 	}
 	else
 	{
-		p_ptr->oldpy = py;
-		p_ptr->oldpx = px;
+		p_ptr->oldpy = py3;
+		p_ptr->oldpx = px3;
 	}
 
 	/* Forget the view */
