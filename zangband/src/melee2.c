@@ -2154,6 +2154,48 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	return TRUE;
 }
 
+
+/* If the monster is on a tricky feat add it to the monster memory */
+static void monster_memory_feat(cave_type *c_ptr, monster_race *r_ptr)
+{
+	switch (c_ptr->feat)
+	{
+		case FEAT_SHAL_LAVA:
+		case FEAT_DEEP_LAVA:
+		{
+			/* If the monster can not fly it must have IM_FIRE */
+			if (!FLAG(r_ptr, RF_CAN_FLY)) r_ptr->r_flags[2] |= (RF2_IM_FIRE);
+
+			break;
+		}
+		case FEAT_SHAL_ACID:
+		case FEAT_DEEP_ACID:
+		{
+			/* If the monster can not fly it must have IM_ACID */
+			if (!FLAG(r_ptr, RF_CAN_FLY)) r_ptr->r_flags[2] |= (RF2_IM_ACID);
+
+			break;
+		}
+		case FEAT_SHAL_SWAMP:
+		case FEAT_DEEP_SWAMP:
+		{
+			/* If the monster can not fly it must have IM_POIS */
+			if (!FLAG(r_ptr, RF_CAN_FLY)) r_ptr->r_flags[2] |= (RF2_IM_POIS);
+
+			break;
+		}
+		case FEAT_OCEAN_WATER:
+		case FEAT_DEEP_WATER:
+		{
+			/* If the monster can not fly or isn't aquatic it can swim */
+			if (!FLAG(r_ptr, RF_CAN_FLY) &&
+				!FLAG(r_ptr, RF_AQUATIC)) r_ptr->r_flags[6] |= (RF6_CAN_SWIM);
+
+			break;
+		}
+	}
+}
+
 /*
  * Actually move the monster
  */
@@ -2428,6 +2470,9 @@ static void take_move(int m_idx, int *mm)
 			/* Assume no move allowed */
 			do_move = FALSE;
 		}
+
+		/* Maybe add info to the monster memory */
+		if (m_ptr->ml) monster_memory_feat(c_ptr, r_ptr);
 
 		/* Some monsters never move */
 		if (do_move && (FLAG(r_ptr, RF_NEVER_MOVE)))
