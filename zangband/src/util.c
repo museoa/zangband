@@ -1770,90 +1770,19 @@ void sound(int val)
  */
 
 /*
- * Sorting hook -- comp function -- by "quark age"
- *
- * We use "u" to point to arrays of ages,
- * and sort the arrays by the value in quark__use[]
+ * The number of quarks
  */
-static bool ang_sort_comp_quark(vptr u, vptr v, int a, int b)
-{
-	s16b *x = (s16b *)(u);
-
-	u16b qa, qb;
-
-	/* Hack - ignore unused parameter */
-	(void)v;
-
-	/* Get ages */
-	qa = quark__use[x[a]];
-	qb = quark__use[x[b]];
-
-	/* Compare them */
-	return (qa <= qb);
-}
-
+static s16b quark__num;
 
 /*
- * Sorting hook -- swap function -- by "quark age"
- *
- * We use "u" to point to arrays of ages,
- * and sort the arrays by the value in quark__use[]
+ * The pointers to the quarks [QUARK_MAX]
  */
-static void ang_sort_swap_quark(vptr u, vptr v, int a, int b)
-{
-	s16b *x = (s16b *)(u);
-
-	s16b temp;
-
-	/* Hack - ignore unused parameter */
-	(void)v;
-
-	/* Swap "x" */
-	temp = x[a];
-	x[a] = x[b];
-	x[b] = temp;
-}
+static cptr *quark__str;
 
 /*
- * Out of space - Compact the quarks
+ * Refcount for Quarks
  */
-static s16b compact_quarks(void)
-{
-	s16b i, empty = 1;
-
-	s16b *quark_locat;
-
-	/* Make array used to sort quark ages */
-	C_MAKE(quark_locat, quark__num, s16b);
-
-	/* Fill in the array with the "order" of each quark */
-	for (i = 0; i < quark__num; i++)
-	{
-		quark_locat[i] = i;
-	}
-
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_quark;
-	ang_sort_swap = ang_sort_swap_quark;
-
-	/* Sort quarks - and get order location of each quark */
-	ang_sort(quark_locat, NULL, quark__num);
-
-	for (i = 1; i < quark__num; i++)
-	{
-		/* Set quark timer to be location order */
-		quark__use[quark_locat[i]] = i;
-
-		/* Find minimally used quark */
-		if (quark__use[quark_locat[i]] == 1) empty = quark_locat[i];
-	}
-
-	/* Set timer to be greater than any value so far */
-	quark__tim = quark__num + 1;
-
-	/* Return the least-used quark to overwrite if needed */
-	return (empty);
-}
+static u16b *quark__ref;
 
 
 /*
@@ -1862,39 +1791,97 @@ static s16b compact_quarks(void)
 s16b quark_add(cptr str)
 {
 	int i;
+	int posn = 0;
 
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++)
 	{
 		/* Check for equality */
-		if (streq(quark__str[i], str)) return (i);
+		if (streq(quark__str[i], str))
+		{
+			/* Increase refcount */
+			quark__ref[i]++;
+		
+			return (i);
+		}
+	}
+	
+	/* Look for an empty quark */
+	for (i = 1; i < quark__num; i++)
+	{
+		if (!quark__ref[i])
+		{
+			posn = i;
+			break;
+		}
 	}
 
-	/* Paranoia -- Require room */
-	if (quark__num == QUARK_MAX)
+	/* Did we fail to find room? */
+	if (!posn)
 	{
-		i = compact_quarks();
-
-		/* Paranoia - no room? */
-		if (!i) return (0);
-
-		/* Delete the old quark */
-		string_free(quark__str[i]);
-	}
-	else
-	{
-		/* New maximal quark */
-		quark__num = i + 1;
+		/* Paranoia -- Require room */
+		if (quark__num == QUARK_MAX)
+		{
+			/* Paranoia - no room? */
+			return (0);
+		}
+		else
+		{
+			/* Use new quark */
+			posn = quark__num;
+		
+			/* New maximal quark */
+			quark__num++;
+		}
 	}
 
 	/* Add a new quark */
-	quark__str[i] = string_make(str);
+	quark__str[posn] = string_make(str);
 
-	/* Save the time */
-	quark__use[i] = ++quark__tim;
+	/* One use of this quark */
+	quark__ref[posn] = 1;
 
 	/* Return the index */
-	return (i);
+	return (posn);
+}
+
+/*
+ * Remove the quark
+ */
+void quark_remove(s16b *i)
+{
+	/* Only need to remove real quarks */
+	if (!(*i)) return;
+	
+	/* Verify */
+	if ((*i < 0) || (*i >= quark__num)) return;
+
+	/* Decrease refcount */
+	quark__ref[*i]--;
+	
+	/* Deallocate? */
+	if (!quark__ref[*i])
+	{
+		string_free(quark__str[*i]);
+	}
+	
+	/* No longer have a quark here */
+	*i = 0;
+}
+
+/*
+ * Duplicate a quark
+ */
+void quark_dup(s16b i)
+{
+	/* Verify */
+	if ((i < 0) || (i >= quark__num)) return;
+	
+	/* Paranoia */
+	if (!quark__ref[i]) return;
+
+	/* Increase refcount */
+	quark__ref[i]++;
 }
 
 
@@ -1911,15 +1898,6 @@ cptr quark_str(s16b i)
 	/* Get the quark */
 	q = quark__str[i];
 
-	/* Save the access time */
-	quark__use[i] = ++quark__tim;
-
-	/* Compact from time to time */
-	if (quark__tim > QUARK_COMPACT)
-	{
-		(void)compact_quarks();
-	}
-
 	/* Return the quark */
 	return (q);
 }
@@ -1932,8 +1910,9 @@ errr quarks_init(void)
 {
 	/* Quark variables */
 	C_MAKE(quark__str, QUARK_MAX, cptr);
-	C_MAKE(quark__use, QUARK_MAX, u16b);
+	C_MAKE(quark__ref, QUARK_MAX, u16b);
 
+	quark__num = 1;
 
 	/* Success */
 	return (0);
@@ -1941,7 +1920,7 @@ errr quarks_init(void)
 
 
 /*
- * Free the "quark" package
+ * Free the entire "quark" package
  */
 errr quarks_free(void)
 {
@@ -1950,12 +1929,16 @@ errr quarks_free(void)
 	/* Free the "quarks" */
 	for (i = 1; i < quark__num; i++)
 	{
-		string_free(quark__str[i]);
+		/* Paranoia - only try to free existing quarks */
+		if (quark__str[i])
+		{
+			string_free(quark__str[i]);
+		}
 	}
 
 	/* Free the list of "quarks" */
-	FREE((void *)quark__use);
 	FREE((void *)quark__str);
+	FREE((void *)quark__ref);
 
 	/* Success */
 	return (0);

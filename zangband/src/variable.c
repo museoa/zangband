@@ -251,27 +251,6 @@ char *macro__buf;
 
 
 /*
- * The number of quarks
- */
-s16b quark__num;
-
-/*
- * The pointers to the quarks [QUARK_MAX]
- */
-cptr *quark__str;
-
-/*
- * Current Quark time - for least recently used algorithm
- */
-u16b quark__tim;
-
-/*
- * Time of last access for each quark
- */
-u16b *quark__use;
-
-
-/*
  * The array of window options
  */
 u32b window_flag[ANGBAND_TERM_MAX];

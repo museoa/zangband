@@ -132,8 +132,9 @@ void delete_object(int x, int y)
  */
 void delete_static_object(object_type *o_ptr)
 {
-	/* Need to adjust refcounts etc */
-	(void)o_ptr;
+	/* Deallocate quarks */
+	quark_remove(&o_ptr->xtra_name);
+	quark_remove(&o_ptr->inscription);
 
 	/* Do nothing */
 	return;
@@ -518,7 +519,7 @@ static s16b o_pop(void)
  *
  * We do not adjust position, held or region information.
  */
-object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr)
+object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr)
 {
 	s16b o_idx;
 
@@ -1805,6 +1806,10 @@ void object_copy(object_type *o_ptr, const object_type *j_ptr)
 {
 	/* Copy the structure */
 	COPY(o_ptr, j_ptr, object_type);
+	
+	/* Allocate quarks */
+	quark_dup(o_ptr->xtra_name);
+	quark_dup(o_ptr->inscription);
 }
 
 /*

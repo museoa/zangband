@@ -767,8 +767,8 @@ struct object_type
 
 	s16b next_o_idx;	/* Next object in stack (if any) */
 
-	u16b inscription;	/* Inscription index */
-	u16b xtra_name;	/* Extra Name (Artifacts and ego items) */
+	s16b inscription;	/* Inscription index */
+	s16b xtra_name;	/* Extra Name (Artifacts and ego items) */
 
 	u32b flags1;	/* Flags, set 1 */
 	u32b flags2;	/* Flags, set 2 */
