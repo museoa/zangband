@@ -674,10 +674,23 @@ static void spoiler_blanklines(int n)
 /*
  * Write a line to the spoiler file and then "underline" it with hypens
  */
-static void spoiler_underline(cptr str)
+static void spoiler_underline(cptr fmt, ...)
 {
-	fprintf(fff, "%s\n", str);
-	spoiler_out_n_chars(strlen(str), '-');
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	fprintf(fff, "%s\n", buf);
+	spoiler_out_n_chars(strlen(buf), '-');
 	fprintf(fff, "\n");
 }
 
@@ -979,11 +992,8 @@ static void object_analyze(const object_type *o_ptr, obj_desc_list *desc_ptr)
 
 static void print_header(void)
 {
-	char buf[80];
-
-	strnfmt(buf, 80, "Artifact Spoilers for %s Version %s",
+	spoiler_underline("Artifact Spoilers for %s Version %s",
 			VERSION_NAME, VERSION_STRING);
-	spoiler_underline(buf);
 }
 
 
@@ -1592,9 +1602,8 @@ static void spoil_mon_info(cptr fname)
 
 
 	/* Dump the header */
-	strnfmt(buf, 1024, "Monster Spoilers for %s Version %s",
+	spoiler_underline("Monster Spoilers for %s Version %s",
 			VERSION_NAME, VERSION_STRING);
-	spoiler_underline(buf);
 	spoiler_blanklines(1);
 
 	/* Allocate the "who" array */
@@ -2477,9 +2486,8 @@ static void spoil_mutation(cptr fname)
 	}
 
 	/* Dump the header */
-	strnfmt(buf, 1024, "Mutation Spoilers for %s Version %s",
+	spoiler_underline("Mutation Spoilers for %s Version %s",
 			VERSION_NAME, VERSION_STRING);
-	spoiler_underline(buf);
 	spoiler_blanklines(1);
 
 	for (i = 0; i < MUT_PER_SET * 3; i++)
@@ -2490,22 +2498,19 @@ static void spoil_mutation(cptr fname)
 		if (i == 0)
 		{
 			/* Activatable mutations */
-			strnfmt(buf, 1024, "The activatable mutations");
-			spoiler_underline(buf);
+			spoiler_underline("The activatable mutations");
 			spoiler_blanklines(1);
 		}
 		else if (i == MUT_PER_SET)
 		{
 			/* Random mutations */
-			strnfmt(buf, 1024, "Randomly activating mutations");
-			spoiler_underline(buf);
+			spoiler_underline("Randomly activating mutations");
 			spoil_out(NULL);
 		}
 		else if (i == MUT_PER_SET * 2)
 		{
 			/* Other mutations */
-			strnfmt(buf, 1024, "Other mutations");
-			spoiler_underline(buf);
+			spoiler_underline("Other mutations");
 			spoil_out(NULL);
 		}
 
@@ -2579,14 +2584,12 @@ static void spoil_rac_pow(cptr fname)
 	}
 
 	/* Dump the header */
-	strnfmt(buf, 1024, "Racial Powers Spoilers for %s Version %s",
+	spoiler_underline("Racial Powers Spoilers for %s Version %s",
 			VERSION_NAME, VERSION_STRING);
-	spoiler_underline(buf);
 	spoiler_blanklines(1);
 
 	/* The Racial Powers */
-	strnfmt(buf, 1024, "The Racial Powers");
-	spoiler_underline(buf);
+	spoiler_underline("The Racial Powers");
 	spoiler_blanklines(1);
 
 	for (i = 0; i < MAX_RACE_POWERS; i++)
@@ -2595,8 +2598,7 @@ static void spoil_rac_pow(cptr fname)
 
 		/* Describe power */
 		rp_ptr = &race_info[mut_ptr->which];
-		strnfmt(buf, 1024, "%s", rp_ptr->title);
-		spoiler_underline(buf);
+		spoiler_underline(rp_ptr->title);
 
 		spoil_out("%s \n", mut_ptr->desc_text);
 
