@@ -1430,7 +1430,7 @@ bool change_panel(int dy, int dx)
 	if (x > max_wid - wid) x = max_wid - wid;
 	if (x < min_wid) x = min_wid;
 	
-	if (vanilla_town)
+	if (vanilla_town && (!dun_level))
 	{
 		x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
 		y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
