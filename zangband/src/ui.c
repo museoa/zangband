@@ -336,10 +336,16 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
  *;
  * We return the number of active options.
  */
-static int show_menu(int num, menu_type *options, int select, bool scroll, cptr prompt)
+static int show_menu(int num, menu_type *options, int select, bool scroll,
+					 void (* disp)(void), cptr prompt)
 {
 	int cnt = 0;
 	int i;
+	
+	/*
+	 * Display 'special' information
+	 */
+	if (disp) disp();
 
 	/* Border on top of menu */
 	clear_row(1);
@@ -383,18 +389,18 @@ static int show_menu(int num, menu_type *options, int select, bool scroll, cptr 
 	 */
 	if (!cnt)
 	{
-		prtf(0, 0, "(No commands available, ESC=exit) %s", prompt);
+		prtf(0, 0, "%s (No commands available, ESC=exit)", prompt);
 	}
 	else if (cnt == 1)
 	{
 		/* Display the prompt */
-		prtf(0, 0, "(Command (a), ESC=exit) %s", prompt ? prompt : "Select a command: ");
+		prtf(0, 0, "%s (Command (a), ESC=exit)", prompt ? prompt : "Select a command: ");
 	}
 	else
 	{
 		/* Display the prompt */
-		prtf(0, 0, "(Command (a-%c), ESC=exit) %s", I2A(cnt - 1),
-			 prompt ? prompt : "Select a command: ");
+		prtf(0, 0, "%s (Command (a-%c), ESC=exit)",
+			 prompt ? prompt : "Select a command: " ,I2A(cnt - 1));
 	}
 	
 	return (cnt);
@@ -412,9 +418,12 @@ static int show_menu(int num, menu_type *options, int select, bool scroll, cptr 
  *       If negative, it is ignored.
  * 'scroll' controls whether or not to allow scrolling option
  *       selection.
+ * 'disp' contains an optional function to print some extra
+ *       information when constucting the menu.
  * 'prompt' is an optional prompt.
  */
-bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
+bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(void),
+					cptr prompt)
 {
 	int i = -1, j, cnt;
 	int ask = 0;
@@ -431,7 +440,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 	Term_save();
     
 	/* Show the list */
-	cnt = show_menu(num, options, select, scroll, prompt);
+	cnt = show_menu(num, options, select, scroll, disp, prompt);
 		
 	/* Paranoia */
 	if (!cnt)
@@ -495,7 +504,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 			while(!options[select].flags & MN_SELECT);
 			
 			/* Show the list */
-			show_menu(num, options, select, scroll, prompt);
+			show_menu(num, options, select, scroll, disp, prompt);
 
 			/* Next time */
 			continue;
@@ -515,7 +524,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 			while(!options[select].flags & MN_SELECT);
 			
 			/* Show the list */
-			show_menu(num, options, select, scroll, prompt);
+			show_menu(num, options, select, scroll, disp, prompt);
 			
 			/* Next time */
 			continue;
@@ -535,7 +544,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 				Term_save();
 				
 				/* Show the list */
-				show_menu(num, options, select, scroll, prompt);
+				show_menu(num, options, select, scroll, disp, prompt);
 				
 				/* Next time */
 				continue;
@@ -599,8 +608,11 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 							select = j;
 						}
 						
+						/* Show any outstanding messages */
+						message_flush();
+						
 						/* Show the list */
-						show_menu(num, options, select, scroll, prompt);
+						show_menu(num, options, select, scroll, disp, prompt);
 						
 						/* Get a new command */
 						break;

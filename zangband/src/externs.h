@@ -1245,7 +1245,7 @@ extern int get_player_choice(cptr *choices, int num, int col, int wid,
 extern int get_player_sort_choice(cptr *choices, int num, int col, int wid,
                                   cptr helpfile, void (*hook) (cptr));
 extern bool display_menu(menu_type *options, int select, bool scroll,
-						 cptr prompt);
+						 void (* disp)(void), cptr prompt);
 extern void bell(cptr reason);
 extern void sound(int num);
 extern int color_char_to_attr(char c);

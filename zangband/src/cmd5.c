@@ -3262,5 +3262,5 @@ void do_cmd_pet(void)
 	}
 
 	/* Interact with menu */
-	display_menu(pet_menu, pet_select, FALSE, NULL);
+	display_menu(pet_menu, pet_select, FALSE, NULL, NULL);
 }

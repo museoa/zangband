@@ -567,7 +567,7 @@ static bool do_cmd_options_cheat(int dummy)
 		cheat_menu[i].text = string_make(buf);
 	}
 
-	display_menu(cheat_menu, 0, TRUE, "Cheaters never win");
+	display_menu(cheat_menu, 0, TRUE, NULL, "Cheaters never win");
 
 	return (FALSE);
 }
@@ -685,7 +685,7 @@ static bool do_cmd_options_autosave(int dummy)
 	/* Save new string */
 	autosave_menu[2].text = string_make(buf);
 	
-	display_menu(autosave_menu, 0, TRUE, "Autosave");
+	display_menu(autosave_menu, 0, TRUE, NULL, "Autosave");
 	
 	return (FALSE);
 }
@@ -848,7 +848,7 @@ static bool do_cmd_options_aux(int page)
 		return (FALSE);
 	}
 	
-	display_menu(options_aux_menu, 0, TRUE, option_window_title[page]);
+	display_menu(options_aux_menu, 0, TRUE, NULL, option_window_title[page]);
 	
 	/* Save the changes */
 	init_options(option_flags);
@@ -1206,7 +1206,7 @@ void do_cmd_options(byte flags)
 	/* Save option flags so menu functions can access them */
 	option_flags = flags;
 
-	display_menu(options_menu, -1, FALSE, format("%s options", VERSION_NAME));
+	display_menu(options_menu, -1, FALSE, NULL, VERSION_NAME " options");
 
 	/* Hack - Redraw equippy chars */
 	p_ptr->redraw |= (PR_EQUIPPY);
@@ -1467,25 +1467,260 @@ errr keymap_dump(cptr fname)
 	return (0);
 }
 
+#ifdef ALLOW_MACROS
+#define MACRO_MENU_MAX 
+#else
+#define MACRO_MENU_MAX	2
+#endif /* ALLOW_MACROS */
+
+/*
+ * Load a user pref file
+ */
+static bool do_cmd_pref_load(int dummy)
+{
+	char tmp[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	/* Prompt */
+	prtf(0, 16, "Command: Load a user pref file");
+
+	/* Prompt */
+	prtf(0, 18, "File: ");
+
+	/* Default filename */
+	strnfmt(tmp, 1024, "%s.prf", player_base);
+
+	/* Ask for a file */
+	if (!askfor_aux(tmp, 80))
+	{
+		return (FALSE);
+	}
+	
+	/* Process the given filename */
+	if (0 != process_pref_file(tmp))
+	{
+		/* Prompt */
+		msg_print("Could not load file!");
+	}
+
+	return (FALSE);
+}
+
+#ifdef ALLOW_MACROS
+
+static void display_cur_action(void)
+{
+	char buf[1024];
+	
+	Term_clear();
+
+	/* Analyze the current action */
+	ascii_to_text(buf, macro__buf);
+
+	/* Describe + display that action */
+	prtf(0, 20, "Current action (if any) shown below:\n\n%s",buf);
+}
 
 
 /*
- * Interact with "macros"
- *
- * Note that the macro "action" must be defined before the trigger.
- *
- * Could use some helpful instructions on this page.  XXX XXX XXX
+ * Append macros to a file
  */
-void do_cmd_macros(void)
+static bool do_cmd_macro_append(int dummy)
 {
-	int i;
-
 	char tmp[1024];
 
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Append macros to a file\n\n"
+				"File: ");
+	
+	/* Default filename */
+	strnfmt(tmp, 1024, "%s.prf", player_base);
+
+	/* Ask for a file */
+	if (!askfor_aux(tmp, 80))
+	{
+		return (FALSE);
+	}
+	
+	/* Dump the macros */
+	(void)macro_dump(tmp);
+
+	/* Prompt */
+	msg_print("Appended macros.");
+	
+	return (FALSE);
+}
+
+
+/*
+ * Query a macro
+ */
+static bool do_cmd_macro_query(int dummy)
+{
+	char tmp[1024];
+	int k;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Query a macro\n\n"
+				"Trigger: ");
+	
+	/* Get a macro trigger */
+	do_cmd_macro_aux(tmp);
+
+	/* Acquire action */
+	k = macro_find_exact(tmp);
+
+	/* Nothing found */
+	if (k < 0)
+	{
+		/* Prompt */
+		msg_print("Found no macro.");
+	}
+
+	/* Found one */
+	else
+	{
+		/* Obtain the action */
+		strcpy(macro__buf, macro__act[k]);
+
+		/* Analyze the current action */
+		ascii_to_text(tmp, macro__buf);
+
+		/* Display the current action */
+		prtf(0, 22, tmp);
+
+		/* Prompt */
+		msg_print("Found a macro.");
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Create a macro
+ */
+static bool do_cmd_macro_create(int dummy)
+{
+	char tmp[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Create a macro\n\n"
+				"Trigger: ");
+
+	/* Clear */
+	clear_from(20);
+
+	/* Prompt */
+	prtf(0, 20, "Action: ");
+	
+	/* Get a macro trigger */
+	do_cmd_macro_aux(tmp);
+
+	/* Convert to text */
+	ascii_to_text(tmp, macro__buf);
+
+	/* Get an encoded action */
+	if (askfor_aux(tmp, 80))
+	{
+		/* Convert to ascii */
+		text_to_ascii(macro__buf, tmp);
+
+		/* Link the macro */
+		macro_add(tmp, macro__buf);
+
+		/* Prompt */
+		msg_print("Added a macro.");
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Remove a macro
+ */
+static bool do_cmd_macro_remove(int dummy)
+{
+	char tmp[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Remove a macro\n\n"
+				"Trigger: ");
+
+	/* Get a macro trigger */
+	do_cmd_macro_aux(tmp);
+
+	/* Link the macro */
+	macro_add(tmp, tmp);
+
+	/* Prompt */
+	msg_print("Removed a macro.");
+
+	return (FALSE);
+}
+
+
+/*
+ * Append the keymaps to a file
+ */
+static bool do_cmd_keymap_append(int dummy)
+{
+	char tmp[1024];
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Append keymaps to a file\n\n"
+				"File: ");
+	
+	/* Default filename */
+	strnfmt(tmp, 1024, "%s.prf", player_base);
+
+	/* Ask for a file */
+	if (!askfor_aux(tmp, 80))
+	{
+		return (FALSE);
+	}
+	
+	/* Dump the macros */
+	(void)keymap_dump(tmp);
+
+	/* Prompt */
+	msg_print("Appended keymaps.");
+	
+	return (FALSE);
+}
+
+
+/*
+ * Query a keymap
+ */
+static bool do_cmd_keymap_query(int dummy)
+{
 	char buf[1024];
-
+	
+	cptr act;
+	
 	int mode;
-
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	/* Roguelike */
 	if (rogue_like_commands)
@@ -1499,25 +1734,28 @@ void do_cmd_macros(void)
 		mode = KEYMAP_MODE_ORIG;
 	}
 
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
+	/* Prompt */
+	prtf(0, 16, "Command: Query a keymap\n\n"
+				"Keypress: ");
+	
+	/* Get a keymap trigger */
+	do_cmd_macro_aux_keymap(buf);
 
+	/* Look up the keymap */
+	act = keymap_act[mode][(byte)(buf[0])];
 
-	/* Save screen */
-	screen_save();
-
-
-	/* Process requests until done */
-	while (1)
+	/* Nothing found */
+	if (!act)
 	{
-		/* Clear screen */
-		Term_clear();
+		/* Prompt */
+		msg_print("Found no keymap.");
+	}
 
-		/* Describe */
-		prtf(0, 2, "Interact with Macros");
-
-		/* Describe that action */
-		prtf(0, 20, "Current action (if any) shown below:");
+	/* Found one */
+	else
+	{
+		/* Obtain the action */
+		strcpy(macro__buf, act);
 
 		/* Analyze the current action */
 		ascii_to_text(buf, macro__buf);
@@ -1525,329 +1763,187 @@ void do_cmd_macros(void)
 		/* Display the current action */
 		prtf(0, 22, buf);
 
-
-		/* Selections */
-		prtf(5, 4, "(1) Load a user pref file");
-#ifdef ALLOW_MACROS
-		prtf(5, 5, "(2) Append macros to a file");
-		prtf(5, 6, "(3) Query a macro");
-		prtf(5, 7, "(4) Create a macro");
-		prtf(5, 8, "(5) Remove a macro");
-		prtf(5, 9, "(6) Append keymaps to a file");
-		prtf(5, 10, "(7) Query a keymap");
-		prtf(5, 11, "(8) Create a keymap");
-		prtf(5, 12, "(9) Remove a keymap");
-		prtf(5, 13, "(0) Enter a new action");
-#endif /* ALLOW_MACROS */
-
 		/* Prompt */
-		prtf(0, 16, "Command: ");
-
-		/* Get a command */
-		i = inkey();
-
-		/* Leave */
-		if (i == ESCAPE) break;
-
-		/* Load a 'macro' file */
-		else if (i == '1')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Load a user pref file");
-
-			/* Prompt */
-			prtf(0, 18, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "%s.prf", player_base);
-
-			/* Ask for a file */
-			if (!askfor_aux(tmp, 80)) continue;
-
-			/* Process the given filename */
-			if (0 != process_pref_file(tmp))
-			{
-				/* Prompt */
-				msg_print("Could not load file!");
-			}
-		}
-
-#ifdef ALLOW_MACROS
-
-		/* Save macros */
-		else if (i == '2')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Append macros to a file");
-
-			/* Prompt */
-			prtf(0, 18, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "%s.prf", player_base);
-
-			/* Ask for a file */
-			if (!askfor_aux(tmp, 80)) continue;
-
-			/* Dump the macros */
-			(void)macro_dump(tmp);
-
-			/* Prompt */
-			msg_print("Appended macros.");
-		}
-
-		/* Query a macro */
-		else if (i == '3')
-		{
-			int k;
-
-			/* Prompt */
-			prtf(0, 16, "Command: Query a macro");
-
-			/* Prompt */
-			prtf(0, 18, "Trigger: ");
-
-			/* Get a macro trigger */
-			do_cmd_macro_aux(buf);
-
-			/* Acquire action */
-			k = macro_find_exact(buf);
-
-			/* Nothing found */
-			if (k < 0)
-			{
-				/* Prompt */
-				msg_print("Found no macro.");
-			}
-
-			/* Found one */
-			else
-			{
-				/* Obtain the action */
-				strcpy(macro__buf, macro__act[k]);
-
-				/* Analyze the current action */
-				ascii_to_text(buf, macro__buf);
-
-				/* Display the current action */
-				prtf(0, 22, buf);
-
-				/* Prompt */
-				msg_print("Found a macro.");
-			}
-		}
-
-		/* Create a macro */
-		else if (i == '4')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Create a macro");
-
-			/* Prompt */
-			prtf(0, 18, "Trigger: ");
-
-			/* Get a macro trigger */
-			do_cmd_macro_aux(buf);
-
-			/* Clear */
-			clear_from(20);
-
-			/* Prompt */
-			prtf(0, 20, "Action: ");
-
-			/* Convert to text */
-			ascii_to_text(tmp, macro__buf);
-
-			/* Get an encoded action */
-			if (askfor_aux(tmp, 80))
-			{
-				/* Convert to ascii */
-				text_to_ascii(macro__buf, tmp);
-
-				/* Link the macro */
-				macro_add(buf, macro__buf);
-
-				/* Prompt */
-				msg_print("Added a macro.");
-			}
-		}
-
-		/* Remove a macro */
-		else if (i == '5')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Remove a macro");
-
-			/* Prompt */
-			prtf(0, 18, "Trigger: ");
-
-			/* Get a macro trigger */
-			do_cmd_macro_aux(buf);
-
-			/* Link the macro */
-			macro_add(buf, buf);
-
-			/* Prompt */
-			msg_print("Removed a macro.");
-		}
-
-		/* Save keymaps */
-		else if (i == '6')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Append keymaps to a file");
-
-			/* Prompt */
-			prtf(0, 18, "File: ");
-
-			/* Default filename */
-			sprintf(tmp, "%s.prf", player_base);
-
-			/* Ask for a file */
-			if (!askfor_aux(tmp, 80)) continue;
-
-			/* Dump the macros */
-			(void)keymap_dump(tmp);
-
-			/* Prompt */
-			msg_print("Appended keymaps.");
-		}
-
-		/* Query a keymap */
-		else if (i == '7')
-		{
-			cptr act;
-
-			/* Prompt */
-			prtf(0, 16, "Command: Query a keymap");
-
-			/* Prompt */
-			prtf(0, 18, "Keypress: ");
-
-			/* Get a keymap trigger */
-			do_cmd_macro_aux_keymap(buf);
-
-			/* Look up the keymap */
-			act = keymap_act[mode][(byte)(buf[0])];
-
-			/* Nothing found */
-			if (!act)
-			{
-				/* Prompt */
-				msg_print("Found no keymap.");
-			}
-
-			/* Found one */
-			else
-			{
-				/* Obtain the action */
-				strcpy(macro__buf, act);
-
-				/* Analyze the current action */
-				ascii_to_text(buf, macro__buf);
-
-				/* Display the current action */
-				prtf(0, 22, buf);
-
-				/* Prompt */
-				msg_print("Found a keymap.");
-			}
-		}
-
-		/* Create a keymap */
-		else if (i == '8')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Create a keymap");
-
-			/* Prompt */
-			prtf(0, 18, "Keypress: ");
-
-			/* Get a keymap trigger */
-			do_cmd_macro_aux_keymap(buf);
-
-			/* Clear */
-			clear_from(20);
-
-			/* Prompt */
-			prtf(0, 20, "Action: ");
-
-			/* Convert to text */
-			ascii_to_text(tmp, macro__buf);
-
-			/* Get an encoded action */
-			if (askfor_aux(tmp, 80))
-			{
-				/* Convert to ascii */
-				text_to_ascii(macro__buf, tmp);
-
-				/* Free old keymap */
-				string_free(keymap_act[mode][(byte)(buf[0])]);
-
-				/* Make new keymap */
-				keymap_act[mode][(byte)(buf[0])] = string_make(macro__buf);
-
-				/* Prompt */
-				msg_print("Added a keymap.");
-			}
-		}
-
-		/* Remove a keymap */
-		else if (i == '9')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Remove a keymap");
-
-			/* Prompt */
-			prtf(0, 18, "Keypress: ");
-
-			/* Get a keymap trigger */
-			do_cmd_macro_aux_keymap(buf);
-
-			/* Free old keymap */
-			string_free(keymap_act[mode][(byte)(buf[0])]);
-
-			/* Make new keymap */
-			keymap_act[mode][(byte)(buf[0])] = NULL;
-
-			/* Prompt */
-			msg_print("Removed a keymap.");
-		}
-
-		/* Enter a new action */
-		else if (i == '0')
-		{
-			/* Prompt */
-			prtf(0, 16, "Command: Enter a new action");
-
-			/* Go to the correct location */
-			Term_gotoxy(0, 22);
-
-			/* Hack -- limit the value */
-			tmp[80] = '\0';
-
-			/* Get an encoded action */
-			if (!askfor_aux(buf, 80)) continue;
-
-			/* Extract an action */
-			text_to_ascii(macro__buf, buf);
-		}
-
-#endif /* ALLOW_MACROS */
-
-		/* Oops */
-		else
-		{
-			/* Oops */
-			bell("Illegal command for macros!");
-		}
-
-		/* Flush messages */
-		message_flush();
+		msg_print("Found a keymap.");
+	}
+	
+	return (FALSE);
+}
+
+
+/*
+ * Create a keymap
+ */
+static bool do_cmd_keymap_create(int dummy)
+{
+	char tmp[1024];
+	char buf[1024];
+
+	int mode;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	/* Roguelike */
+	if (rogue_like_commands)
+	{
+		mode = KEYMAP_MODE_ROGUE;
 	}
 
-	/* Load screen */
-	screen_load();
+	/* Original */
+	else
+	{
+		mode = KEYMAP_MODE_ORIG;
+	}
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Create a keymap\n\n"
+				"Keypress: ");
+
+	/* Clear */
+	clear_from(20);
+
+	/* Prompt */
+	prtf(0, 20, "Action: ");
+	
+	/* Get a keymap trigger */
+	do_cmd_macro_aux_keymap(buf);
+
+	/* Convert to text */
+	ascii_to_text(tmp, macro__buf);
+
+	/* Get an encoded action */
+	if (askfor_aux(tmp, 80))
+	{
+		/* Convert to ascii */
+		text_to_ascii(macro__buf, tmp);
+
+		/* Free old keymap */
+		string_free(keymap_act[mode][(byte)(buf[0])]);
+
+		/* Make new keymap */
+		keymap_act[mode][(byte)(buf[0])] = string_make(macro__buf);
+
+		/* Prompt */
+		msg_print("Added a keymap.");
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Remove a keymap
+ */
+static bool do_cmd_keymap_remove(int dummy)
+{
+	char buf[1024];
+
+	int mode;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	/* Roguelike */
+	if (rogue_like_commands)
+	{
+		mode = KEYMAP_MODE_ROGUE;
+	}
+
+	/* Original */
+	else
+	{
+		mode = KEYMAP_MODE_ORIG;
+	}
+
+	/* Prompt */
+	prtf(0, 16, "Command: Remove a keymap\n\n"
+				"Keypress: ");
+	
+	/* Get a keymap trigger */
+	do_cmd_macro_aux_keymap(buf);
+
+	/* Free old keymap */
+	string_free(keymap_act[mode][(byte)(buf[0])]);
+
+	/* Make new keymap */
+	keymap_act[mode][(byte)(buf[0])] = NULL;
+
+	/* Prompt */
+	msg_print("Removed a keymap.");
+
+	return (FALSE);
+}
+
+/*
+ * Create a new action
+ */
+static bool do_cmd_action_create(int dummy)
+{
+	char buf[1024];
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Prompt */
+	prtf(0, 16, "Command: Enter a new action");
+	
+	/* Go to the correct location */
+	Term_gotoxy(0, 22);
+	
+	/* Get the current default action */
+	ascii_to_text(buf, macro__buf);
+
+	/* Hack -- limit the value */
+	buf[80] = '\0';
+
+	/* Get an encoded action */
+	if (!askfor_aux(buf, 80))
+	{
+		return (FALSE);
+	}
+	
+	/* Extract an action */
+	text_to_ascii(macro__buf, buf);
+	
+	return (FALSE);
+}
+
+#endif /* ALLOW_MACROS */
+
+
+/* The main options menu */
+static menu_type macro_menu[MACRO_MENU_MAX] =
+{
+	{"Load a user pref file", NULL, do_cmd_pref_load, MN_AVAILABLE},
+#ifdef ALLOW_MACROS
+	{"Append macros to a file", NULL, do_cmd_macro_append, MN_AVAILABLE},
+	{"Query a macro", NULL, do_cmd_macro_query, MN_AVAILABLE},
+	{"Create a macro", NULL, do_cmd_macro_create, MN_AVAILABLE},
+	{"Remove a macro", NULL, do_cmd_macro_remove, MN_AVAILABLE},
+	{"Append keymaps to a file", NULL, do_cmd_keymap_append, MN_AVAILABLE},
+	{"Query a keymap", NULL, do_cmd_keymap_query, MN_AVAILABLE},
+	{"Create a keymap", NULL, do_cmd_keymap_create, MN_AVAILABLE},
+	{"Remove a keymap", NULL, do_cmd_keymap_remove, MN_AVAILABLE},
+	{"Enter a new action", NULL, do_cmd_action_create, MN_AVAILABLE},
+#endif /* ALLOW_MACROS */
+	MENU_END
+};
+
+
+/*
+ * Interact with "macros"
+ *
+ * Note that the macro "action" must be defined before the trigger.
+ *
+ * Could use some helpful instructions on this page.  XXX XXX XXX
+ */
+void do_cmd_macros(void)
+{
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+		
+	display_menu(macro_menu, -1, FALSE, display_cur_action, "Interact with Macros");
 }
 
 

@@ -2385,7 +2385,7 @@ static void msg_flush(int x)
 	if (!p_ptr->skip_more)
 	{
 		/* Pause for response */
-		put_fstr(x, 0, CLR_L_BLUE "-more-");
+		prtf(x, 0, CLR_L_BLUE "-more-");
 
 		/* Get an acceptable keypress */
 		while (1)
@@ -2522,7 +2522,7 @@ static void msg_print_aux(u16b type, cptr msg)
 		t[split] = '\0';
 
 		/* Display part of the message */
-		put_fstr(0, 0, "%s%s", color_seq[color], t);
+		prtf(0, 0, "%s%s", color_seq[color], t);
 
 		/* Flush it */
 		msg_flush(split + 1);
@@ -2539,7 +2539,7 @@ static void msg_print_aux(u16b type, cptr msg)
 	}
 
 	/* Display the tail of the message */
-	put_fstr(message_column, 0, "%s%s", color_seq[color], t);
+	prtf(message_column, 0, "%s%s", color_seq[color], t);
 
 	/* Remember the message */
 	msg_flag = TRUE;
