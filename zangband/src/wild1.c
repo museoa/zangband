@@ -662,6 +662,16 @@ static void init_towns(void)
 		}
 	}
 			
+	/* Hack - add a supplies store to the starting town */
+	for (i = 0; i < town[best_town].numstores; i++)
+	{
+		/* We need to have stairs */
+		if (town[best_town].store[i].type == BUILD_STAIRS) continue;
+		
+		/* Hack - make a supplies store */
+		store_init(best_town, i, BUILD_SUPPLIES0);
+	}
+	
 	/* Build starting city / town */
 	draw_city(best_town);
 	
