@@ -111,7 +111,8 @@ bool borg_recover(void)
 	if (bp_ptr->status.heavy_stun)
 	{
 		if (borg_activate(BORG_ACT_HEAL_SERIOUS) ||
-			borg_spell(REALM_LIFE, 1, 2))
+			borg_spell(REALM_LIFE, 1, 2) ||
+			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			/* Take note */
 			borg_note_fmt("# Cure Heavy Stun", p);
@@ -126,7 +127,8 @@ bool borg_recover(void)
 		if (borg_activate(BORG_ACT_HEAL_SERIOUS) ||
 			borg_spell(REALM_LIFE, 1, 2) ||
 			borg_spell(REALM_NATURE, 0, 7) ||
-			borg_spell(REALM_LIFE, 0, 6))
+			borg_spell(REALM_LIFE, 0, 6) ||
+			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			/* Take note */
 			borg_note_fmt("# Cure Cuts", p);
@@ -141,8 +143,9 @@ bool borg_recover(void)
 		if (borg_activate(BORG_ACT_CURE_POISON) ||
 			borg_spell(REALM_ARCANE, 1, 7) ||
 			borg_spell(REALM_NATURE, 0, 7) ||
-			borg_spell(REALM_LIFE, 1, 2))
-		{
+			borg_spell(REALM_LIFE, 1, 2) ||
+			borg_racial(RACE_AMBERITE_POWER2))
+		 {
 			/* Take note */
 			borg_note_fmt("# Cure poison", p);
 
@@ -196,6 +199,7 @@ bool borg_recover(void)
 		(borg_activate(BORG_ACT_RESTORE_LIFE) ||
 		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
+		 borg_racial(RACE_AMBERITE_POWER2) ||
 		 borg_racial(RACE_SKELETON) ||
 		 borg_racial(RACE_ZOMBIE)))
 	{
@@ -208,7 +212,12 @@ bool borg_recover(void)
 		 bp_ptr->status.fixstat[A_WIS] ||
 		 bp_ptr->status.fixstat[A_DEX] ||
 		 bp_ptr->status.fixstat[A_CON] ||
-		 bp_ptr->status.fixstat[A_CHR]) && borg_spell(REALM_LIFE, 3, 3))
+		 bp_ptr->status.fixstat[A_CHR]) &&
+		(borg_spell(REALM_LIFE, 3, 3) ||
+		 borg_zap_rod(SV_ROD_RESTORATION) ||
+		 borg_activate(BORG_ACT_RESTORATION) ||
+		 borg_racial(RACE_AMBERITE_POWER2) ||
+		 borg_eat_food(SV_FOOD_RESTORING)))
 	{
 		return (TRUE);
 	}
@@ -264,7 +273,8 @@ bool borg_recover(void)
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
-			borg_activate(BORG_ACT_CURE_POISON))
+			borg_activate(BORG_ACT_CURE_POISON) ||
+			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			return (TRUE);
 		}
@@ -278,7 +288,8 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_crit(FALSE) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
-			borg_zap_rod(SV_ROD_CURING))
+			borg_zap_rod(SV_ROD_CURING) ||
+			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			return (TRUE);
 		}
@@ -309,7 +320,8 @@ bool borg_recover(void)
 			borg_activate(BORG_ACT_BERSERKER) ||
 			borg_mutation(MUT1_BERSERK) ||
 			borg_racial(RACE_HALF_ORC) ||
-			borg_racial(RACE_HALF_TROLL))
+			borg_racial(RACE_HALF_TROLL) ||
+			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			return (TRUE);
 		}
@@ -340,10 +352,8 @@ bool borg_recover(void)
 	if (goal_fleeing) return (FALSE);
 
 	/* Step 1.  Recharge just 1 rod. */
-	if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
-		 borg_slot(TV_ROD, SV_ROD_HEALING)->timeout) ||
-		(borg_slot(TV_ROD, SV_ROD_RECALL) &&
-		 borg_slot(TV_ROD, SV_ROD_RECALL)->timeout))
+	if (borg_equips_rod(SV_ROD_HEALING) ||
+		borg_equips_rod(SV_ROD_RECALL))
 	{
 		/* Rest until at least one recharges */
 		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&

@@ -2847,6 +2847,7 @@ static void borg_notice_aux2(void)
 	/* Handle "detect evil & monsters" */
 	if (borg_activate_fail(BORG_ACT_DETECT_MONSTERS) ||
 		borg_activate_fail(BORG_ACT_DETECT_EVIL) ||
+		borg_racial_check(RACE_GHOUL_POWER2, TRUE) ||
 		borg_spell_legal_fail(REALM_LIFE, 0, 0, 60) ||
 		borg_spell_legal_fail(REALM_SORCERY, 0, 0, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 0, 60) ||
@@ -3018,6 +3019,7 @@ static void borg_notice_aux2(void)
 	if (borg_activate_fail(BORG_ACT_RESTORE_LIFE) ||
 		borg_spell_legal_fail(REALM_LIFE, 3, 3, 60) ||
 		borg_spell_legal_fail(REALM_DEATH, 1, 7, 60) ||
+		borg_racial_check(RACE_AMBERITE_POWER2, FALSE) ||
 		borg_racial_check(RACE_SKELETON, FALSE) ||
 		borg_racial_check(RACE_ZOMBIE, FALSE))
 	{

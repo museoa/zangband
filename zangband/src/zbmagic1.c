@@ -2213,6 +2213,7 @@ bool borg_heal(int danger)
 			borg_activate(BORG_ACT_CURE_POISON) ||
 			borg_use_staff(SV_STAFF_CURING) ||
 			borg_eat_food(SV_FOOD_CURE_POISON) ||
+			borg_racial(RACE_AMBERITE_POWER2) ||
 			/* buy time */
 			borg_quaff_crit(TRUE) ||
 			borg_spell_fail(REALM_LIFE, 0, 6, 40) ||

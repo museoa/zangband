@@ -770,6 +770,7 @@ static cptr borg_activation[] =
 	"alter reality",
 	"phase door",
 	"stone to mud",
+	"fire branding",
 	"borg_act_max"
 };
 
@@ -3022,8 +3023,17 @@ static bool borg_power_check(bool race, u32b which, bool check_fail,
  */
 bool borg_racial_check(int race, bool check_fail)
 {
-	/* Who are you?  Who, who.  Who, who. */
-	if (borg_race != race) return (FALSE);
+	/* normal check */
+	if (borg_race != race)
+	{
+		/* Hack these two races with two powers */
+		if ((borg_race != RACE_AMBERITE && race == RACE_AMBERITE_POWER2) ||
+			(borg_race != RACE_GHOUL && race == RACE_GHOUL_POWER2))
+		{
+			/* This race is not omnipotent */
+			return (FALSE);
+		}
+	}
 
 	/* Tell me who are you */
 	switch (race)
@@ -3043,8 +3053,11 @@ bool borg_racial_check(int race, bool check_fail)
 		case RACE_HALF_TROLL:
 			return borg_power_check(TRUE, race, check_fail, 10, 12, A_WIS, 9);
 
-		case RACE_AMBERITE:	/* not coded yet */
+		case RACE_AMBERITE:
 			return borg_power_check(TRUE, race, check_fail, 30, 50, A_INT, 50);
+
+		case RACE_AMBERITE_POWER2:
+			return borg_power_check(TRUE, race, check_fail, 40, 75, A_WIS, 50);
 
 		case RACE_BARBARIAN:
 			return borg_power_check(TRUE, race, check_fail, 8, 10, A_WIS, 9);
@@ -3104,6 +3117,9 @@ bool borg_racial_check(int race, bool check_fail)
 		case RACE_GHOUL:
 			return borg_power_check(TRUE, race, check_fail, 1, 0, A_CON, 0);
 
+		case RACE_GHOUL_POWER2:
+			return borg_power_check(TRUE, race, check_fail, 30, 10, A_WIS, 12);
+
 		case RACE_HUMAN:
 		case RACE_HALF_ELF:
 		case RACE_ELF:
@@ -3127,7 +3143,12 @@ bool borg_racial(int race)
 
 	/* Cast a spell */
 	borg_keypress('U');
-	borg_keypress('a');
+
+	/* Hack to reach the second powers of Ghoul and Amberite */
+	if (race < MAX_RACES)
+		borg_keypress('a');
+	else
+		borg_keypress('b');
 
 	/* Success */
 	return (TRUE);

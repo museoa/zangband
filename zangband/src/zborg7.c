@@ -99,7 +99,8 @@ bool borg_use_things(void)
 		(borg_activate(BORG_ACT_RESTORE_LIFE) ||
 		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
-		 borg_quaff_potion(SV_POTION_RESTORE_EXP)))
+		 borg_quaff_potion(SV_POTION_RESTORE_EXP) ||
+		 borg_racial(RACE_AMBERITE_POWER2)))
 	{
 		return (TRUE);
 	}
@@ -480,7 +481,7 @@ bool borg_check_lite(void)
 	/* Hack -- find evil */
 	if (do_evil && (!when_detect_evil || (borg_t - when_detect_evil >= 9)))
 	{
-		/* Check for traps */
+		/* Check for monsters */
 		if (borg_activate(BORG_ACT_DETECT_EVIL) ||
 			borg_activate(BORG_ACT_DETECT_MONSTERS) ||
 			borg_use_staff(SV_STAFF_DETECT_EVIL) ||
@@ -489,7 +490,8 @@ bool borg_check_lite(void)
 			borg_spell_fail(REALM_SORCERY, 0, 0, 20) ||
 			borg_spell_fail(REALM_DEATH, 0, 2, 20) ||
 			borg_spell_fail(REALM_LIFE, 0, 0, 20) ||
-			borg_spell_fail(REALM_DEATH, 0, 0, 20))
+			borg_spell_fail(REALM_DEATH, 0, 0, 20) ||
+			borg_racial(RACE_GHOUL_POWER2))
 		{
 			borg_note("# Checking for monsters.");
 
@@ -1315,6 +1317,41 @@ static bool borg_star_decurse(void)
 }
 
 
+/* If the borg has an artifact that can brand bolts try to do so */
+static bool borg_brand_bolts(void)
+{
+	int i;
+	list_item *l_ptr;
+
+	/* Can the borg brand a bolt? */
+	if (!borg_activate_fail(BORG_ACT_BRAND)) return (FALSE);
+
+	/* Find a stack of bolts */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		/* Just the bolts */
+		if (l_ptr->tval != TV_BOLT) continue;
+
+		/* Just plain bolts */
+		if (l_ptr->xtra_name) continue;
+
+		/* No cursed bolts */
+		if (KN_FLAG(l_ptr, TR_CURSED)) continue;
+
+		/* Found one */
+		break;
+	}
+
+	/* No bolts found */
+	if (i == inven_num) return (FALSE);
+
+	/* Try to brand the bolts (no need to target) */
+	return (borg_activate(BORG_ACT_BRAND));
+}
+
+
 /* Enchant things */
 bool borg_enchanting(void)
 {
@@ -1326,6 +1363,7 @@ bool borg_enchanting(void)
 	if (borg_star_decurse()) return (TRUE);
 	if (borg_enchant_artifact()) return (TRUE);
 	if (borg_mundane()) return (TRUE);
+	if (borg_brand_bolts()) return (TRUE);
 
 	/* Prevent casting a spell over and over */
 	if ((borg_t - borg_began > 150 && bp_ptr->depth) ||

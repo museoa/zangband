@@ -97,6 +97,13 @@
 
 
 /*
+ * Hack the second racial power
+ */
+#define RACE_AMBERITE_POWER2	(MAX_RACES + 1)
+#define RACE_GHOUL_POWER2		(MAX_RACES + 2)
+
+
+/*
  * Forward declare
  */
 typedef struct borg_magic borg_magic;
@@ -296,6 +303,7 @@ enum
 	BORG_ACT_CREATE_STAIRS,
 	BORG_ACT_ALTER_REALITY,
 	BORG_ACT_STONE_TO_MUD,
+	BORG_ACT_BRAND,
 	
 	BORG_ACT_MAX
 };
