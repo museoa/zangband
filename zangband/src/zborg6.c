@@ -2978,9 +2978,6 @@ bool borg_caution(void)
 
 		/* rest here until lift off */
 		borg_keypress('R');
-		borg_keypress('5');
-		borg_keypress('0');
-		borg_keypress('0');
 		borg_keypress('\n');
 
 		return (TRUE);
@@ -12863,7 +12860,6 @@ bool borg_recover(void)
 
 			/* Rest until done */
 			borg_keypress('R');
-			borg_keypress('*');
 			borg_keypress('\n');
 
 			/* Done */
