@@ -2098,6 +2098,40 @@ static void borg_notice_inven(void)
 		}
 	}
 	
+	/* Scan home for swapped items */
+	for (i = 0; i < home_num; i++)
+	{
+		l_ptr = &borg_home[i];
+		
+		/* Hack - only 'LESS' items are treated as going into inven */
+		if (l_ptr->treat_as == TREAT_AS_LESS)
+		{
+			int num = l_ptr->number;
+				
+			/* Hack - assume we get one item */
+			l_ptr->number = 1;
+				
+			/* Examine the item */
+			borg_notice_inven_item(l_ptr);
+
+			/* Restore number */
+			l_ptr->number = num;
+
+			/* Done (Only one extra item) */
+			return;
+		}
+		
+		/* Sometimes want to grab a whole pile */
+		if (l_ptr->treat_as == TREAT_AS_SWAP)
+		{
+			/* Examine the item */
+			borg_notice_inven_item(l_ptr);
+			
+			/* Done (Only one extra item) */
+			return;
+		}
+	}
+	
 	/* Scan current shop? */
 	if (use_shop)
 	{

@@ -852,6 +852,10 @@ static bool borg_think_home_buy_aux(void)
 
 /*
  * Step 5 -- buy "interesting" things from a shop (to be used later)
+ *
+ * It is highly likely this function is buggy.  We need to
+ * remember that the item is destined for the home.  (Or check
+ * for placing items in the home before selling them to a shop.)
  */
 static bool borg_think_shop_grab_aux(int shop)
 {
@@ -861,7 +865,7 @@ static bool borg_think_shop_grab_aux(int shop)
 	s32b c, b_c = 0L;
 
 	/* Require two empty slots */
-	if (inven_num >= INVEN_PACK - 1) return (FALSE);
+	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
 	/* Examine the home */
 	borg_notice_home();
@@ -931,7 +935,6 @@ static bool borg_think_shop_grab_aux(int shop)
 }
 
 
-#if 0
 /*
  * Step 6 -- take "useless" things from the home (to be sold)
  */
@@ -939,48 +942,35 @@ static bool borg_think_home_grab_aux(void)
 {
 	int n, b_n = -1;
 	s32b s, b_s = 0L;
-	int qty = 1;
-
 
 	/* Require two empty slots */
-	if (borg_items[INVEN_PACK - 1].iqty) return (FALSE);
-	if (borg_items[INVEN_PACK - 2].iqty) return (FALSE);
-
+	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
 	/* Examine the home */
 	borg_notice_home();
 
 	/* Evaluate the home */
-	b_s = borg_power_home();
-
+	b_s = borg_power_home() + borg_power();
 
 	/* Scan the home */
-	for (n = 0; n < STORE_INVEN_MAX; n++)
+	for (n = 0; n < home_num; n++)
 	{
-		borg_item *item = &borg_shops[BORG_HOME].ware[n];
+		list_item *l_ptr = &borg_home[n];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Save shop item */
-		COPY(&safe_shops[BORG_HOME].ware[n], &borg_shops[BORG_HOME].ware[n],
-			 borg_item);
-
-		/* Save the number */
-		qty = 1;
-
-		/* Remove one item from shop */
-		borg_shops[BORG_HOME].ware[n].iqty -= qty;
+		/* Remove the item */
+		l_ptr->treat_as = TREAT_AS_SWAP;
+		
+		/* Notice the player */
+		borg_notice();
 
 		/* Examine the home */
 		borg_notice_home();
 
 		/* Evaluate the home */
-		s = borg_power_home();
+		s = borg_power_home() + borg_power();
 
-		/* Restore shop item */
-		COPY(&borg_shops[BORG_HOME].ware[n], &safe_shops[BORG_HOME].ware[n],
-			 borg_item);
+		/* Restore item */
+		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "bad" sales */
 		if (s < b_s) continue;
@@ -1000,7 +990,7 @@ static bool borg_think_home_grab_aux(void)
 	if (b_n >= 0)
 	{
 		/* Visit the home */
-		goal_shop = BORG_HOME;
+		goal_shop = home_shop;
 
 		/* Grab that item */
 		goal_ware = b_n;
@@ -1012,7 +1002,6 @@ static bool borg_think_home_grab_aux(void)
 	/* Assume not */
 	return (FALSE);
 }
-#endif /* 0 */
 
 
 /*
@@ -1057,16 +1046,12 @@ static bool borg_think_shop_sell(void)
  */
 static bool borg_think_shop_buy(void)
 {
-	int qty = 1;
-
 	/* Buy something if requested */
 	if ((goal_shop == shop_num) && (goal_ware >= 0))
 	{
 		borg_shop *shop = &borg_shops[goal_shop];
 
 		borg_item *item = &shop->ware[goal_ware];
-
-		qty = 1;
 
 		/* Paranoid */
 		if (item->tval == 0)
@@ -1088,15 +1073,6 @@ static bool borg_think_shop_buy(void)
 
 		/* Buy the desired item */
 		borg_keypress(I2A(goal_ware % 12));
-
-		/* Hack -- Buy a single item (sometimes) */
-		if (qty >= 2)
-		{
-			if (qty == 5) borg_keypress('5');
-			if (qty == 4) borg_keypress('4');
-			if (qty == 3) borg_keypress('3');
-			if (qty == 2) borg_keypress('2');
-		}
 
 		/* Mega-Hack -- Accept the price */
 		borg_keypress('\n');
