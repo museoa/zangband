@@ -21,5 +21,4 @@ Config: classic32 "Ascii + Adam Bolt Features 32x32"
 Config: classic16+feat "Ascii + Original Features 16x16"
 Config: classic32+feat "Ascii + Original Features 32x32"
 Config: dg32 "David E. Gervais 32x32"
-Config: dg32+iso "Isometric David E. Gervais 32x32"
 
