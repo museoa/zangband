@@ -6168,9 +6168,6 @@ option_type option_info[] =
 	{ &autoroller,                  TRUE, 6, 5, 16,
 	"autoroller",                   "Specify 'minimal' stats" },
 
-	{ &fast_autoroller,             FALSE, 6, 5, 17,
-	"fast_autoroller",              "Autoroll quickly (may not be safe)" },
-
         { &take_notes,                  FALSE, 6, 5, 18,
            "take_notes",                "Allow notes to be appended to a file" },
 

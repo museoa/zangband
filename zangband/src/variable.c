@@ -1130,7 +1130,6 @@ bool ironman_nightmare;			/* Play the game in Nightmare mode */
 bool maximize_mode;
 bool preserve_mode;
 bool autoroller;
-bool fast_autoroller;
 
 
 bool use_transparency = FALSE; /* Use transparent tiles */

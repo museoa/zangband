@@ -434,7 +434,6 @@ extern bool ironman_nightmare;
 extern bool maximize_mode;
 extern bool preserve_mode;
 extern bool autoroller;
-extern bool fast_autoroller;
 extern bool use_transparency;
 extern bool can_save;
 
