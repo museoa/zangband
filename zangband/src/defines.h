@@ -40,6 +40,9 @@
 #define VER_PATCH 4
 #define VER_EXTRA 0
 
+/* Versions after release */
+#define VER_AFTER "b"
+
 /* Stringify argument */
 #define Z_STR(a) Z_STR1(a)
 
@@ -59,7 +62,7 @@
  * Current version string
  */
 #define VERSION_STRING \
-	Z_STR(VER_MAJOR) "." Z_STR(VER_MINOR) "." Z_STR(VER_PATCH) PRE_VERSION
+	Z_STR(VER_MAJOR) "." Z_STR(VER_MINOR) "." Z_STR(VER_PATCH) PRE_VERSION VER_AFTER
 
 #define ANGBAND_2_8_1
 #define ZANGBAND
