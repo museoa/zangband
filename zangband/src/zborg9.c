@@ -3246,7 +3246,7 @@ static void init_borg_txt_file(void)
     borg_artifact = borg_has_on + z_info->k_max;
     borg_skill = borg_artifact + z_info->k_max;
 
-   path_build(buf, 1024, ANGBAND_DIR_USER, "zborg.txt");
+   path_build(buf, 1024, ANGBAND_DIR_PREF, "zborg.txt");
 
     /* Open the file */
     fp = my_fopen(buf, "r");
