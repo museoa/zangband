@@ -332,7 +332,7 @@ static void rd_item(object_type *o_ptr)
 
 	object_kind *k_ptr;
 
-	char buf[128];
+	char buf[1024];
 	
 	/* Old flags from pre [Z] 2.5.3 */
 	byte name1, name2, xtra1, xtra2;
@@ -460,7 +460,7 @@ static void rd_item(object_type *o_ptr)
 	}
 
 	/* Inscription */
-	rd_string(buf, 128);
+	rd_string(buf, 1024);
 
 	/* If this savefile is old, maybe we need to translate the feeling */
 	if (sf_version < 1)
@@ -486,7 +486,7 @@ static void rd_item(object_type *o_ptr)
 	/* Save the inscription */
 	if (buf[0]) o_ptr->inscription = quark_add(buf);
 
-	rd_string(buf, 128);
+	rd_string(buf, 1024);
 	if (buf[0]) o_ptr->xtra_name = quark_add(buf);
 
 	/* Attached scripts */
@@ -496,7 +496,7 @@ static void rd_item(object_type *o_ptr)
 		
 		while (tmpbyte != 255)
 		{
-			rd_string(buf, 128);
+			rd_string(buf, 1024);
 
 			if (tmpbyte < MAX_TRIGGER)
 			{
@@ -1560,7 +1560,7 @@ static errr rd_inventory(void)
 static void rd_messages(void)
 {
 	int i;
-	char buf[128];
+	char buf[1024];
 	byte tmp8u;
 
 	s16b num;
@@ -1572,7 +1572,7 @@ static void rd_messages(void)
 	for (i = 0; i < num; i++)
 	{
 		/* Read the message */
-		rd_string(buf, 128);
+		rd_string(buf, 1024);
 
 		/* Read the color */
 		if (sf_version > 10)
