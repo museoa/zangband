@@ -1621,12 +1621,9 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
-			/* Weapons and Armor */
+			/* Weapons and Armor never stack */
 
-			/* Require permission */
-			if (!stack_allow_items) return (FALSE);
-
-			/* Fall through */
+			 return (FALSE);
 		}
 
 		case TV_LITE:

@@ -108,9 +108,9 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
-			/* Weapons and Armor */
+			/* Weapons and Armor never stack */
 
-			/* Fall through */
+			return (FALSE);
 		}
 
 		case TV_RING:
