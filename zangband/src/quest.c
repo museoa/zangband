@@ -1467,7 +1467,10 @@ bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 bool create_quest(int x, int y, int place_num)
 {
 	int i, j;
-	int q_num, qtype;
+    int q_num, qtype;
+    int best_town, best_dist;
+    int dx, dy;
+    cptr town_name, town_dir;
 
 	wild_type *w_ptr = &wild[y][x];
 
@@ -1530,11 +1533,64 @@ bool create_quest(int x, int y, int place_num)
 	q_ptr->c_type = QC_NONE;
 
 	/* We need to trigger when the player enters the wilderness block */
-	q_ptr->x_type = QX_WILD_ENTER;
+    q_ptr->x_type = QX_WILD_ENTER;
 
-	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp.",
-				  camp_types[qtype].name);
+    /* Find the nearest town */
+    best_dist = 99999;
+    best_town = 0;
+    for (i = 0; i < place_count; i++)
+    {
+        int d;
+
+        /* Only real towns */
+        if (place[i].type != TOWN_FRACT)
+            continue;
+
+        /* Find closest town */
+        d = distance(pl_ptr->x, pl_ptr->y, place[i].x, place[i].y);
+        if (d < best_dist)
+        {
+            best_dist = d;
+            best_town = i;
+        }
+    }
+
+    town_name = place[best_town].name;
+    dx = pl_ptr->x - place[best_town].x;
+    dy = pl_ptr->y - place[best_town].y;
+
+    if (ABS(dy) > ABS(dx) * 3)
+    {
+        if (dy > 0)
+            town_dir = "south";
+        else
+            town_dir = "north";
+    }
+    else if (ABS(dx) > ABS(dy) * 3)
+    {
+        if (dx > 0)
+            town_dir = "east";
+        else
+            town_dir = "west";
+    }
+    else if (dx > 0)
+    {
+        if (dy > 0)
+            town_dir = "south-east";
+        else
+            town_dir = "north-east";
+    }
+    else
+    {
+        if (dy > 0)
+            town_dir = "south-west";
+        else
+            town_dir = "north-west";
+    }
+
+	/* Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp %s of %s.",
+				  camp_types[qtype].name, town_dir, town_name);
 
 	/* Save the quest data */
 	q_ptr->data.wld.place = place_num;
