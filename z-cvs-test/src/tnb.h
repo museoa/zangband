@@ -256,8 +256,6 @@ typedef struct _buildingdata {
 	building_type *bldg;
 } _buildingdata;
 
-extern _buildingdata g_buildingdata;
-
 /* store.c */
 typedef struct _storedata {
 	bool shopping;

@@ -37,53 +37,6 @@ static char *object_inscription(object_type *o_ptr, char *buf)
 	return buf;
 }
 
-/* This is an information block set in building.c */
-_buildingdata g_buildingdata = {0};
-
-/* From bldg.c */
-static bool is_owner(building_type *bldg)
-{
-	if (bldg->member_class[p_ptr->pclass] == BUILDING_OWNER)
-	{
-		return (TRUE);	
-	}
-
-	if (bldg->member_race[p_ptr->prace] == BUILDING_OWNER)
-	{
-		return (TRUE);	
-	}
-
-	if ((bldg->member_realm[p_ptr->realm1] == BUILDING_OWNER) ||
-		(bldg->member_realm[p_ptr->realm2] == BUILDING_OWNER))
-	{
-		return (TRUE);
-	}
-
-	return (FALSE);
-}
-
-/* From bldg.c */
-static bool is_member(building_type *bldg)
-{
-	if (bldg->member_class[p_ptr->pclass])
-	{
-		return (TRUE);	
-	}
-
-	if (bldg->member_race[p_ptr->prace])
-	{
-		return (TRUE);	
-	}
-
-	if ((bldg->member_realm[p_ptr->realm1]) || (bldg->member_realm[p_ptr->realm2]))
-	{
-		return (TRUE);
-	}
-	
-	return (FALSE);
-}
-
-
 /*
  *--------------------------------------------------------------
  *
