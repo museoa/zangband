@@ -107,6 +107,7 @@ X:easy_floor
 X:use_command
 X:center_player
 X:avoid_center
+X:pillar_tunnels
 
 
 ##### Birth #####
