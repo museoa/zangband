@@ -390,62 +390,6 @@ static list_item *borg_think_home_sell_aux2(void)
 }
 
 
-#if 0
-/* locate useless item */
-static void borg_think_home_sell_aux3()
-{
-	int i;
-	s32b borg_empty_home_power;
-	s32b power;
-
-	/* get the starting power */
-	borg_notice();
-	power = borg_power();
-
-	/* go through the inventory and eliminate items that either  */
-	/* 1) will not increase the power of an empty house. */
-	/* 2) will reduce borg_power if given to home */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		int num_items_given;
-		num_items_given = 0;
-
-		/* Fixme */
-		l_ptr = &home_perhaps...[i];
-
-		/* if there is no item here, go to next slot */
-		if (!borg_items[i].iqty)
-			continue;
-
-		/* 2) will reduce borg_power if given to home */
-		while (borg_items[i].iqty)
-		{
-			/* reduce inventory by this item */
-			num_items_given++;
-			borg_items[i].iqty--;
-
-			/* Examine borg */
-			borg_notice();
-
-			/* done if this reduces the borgs power */
-			if (borg_power() < power)
-			{
-				/* we gave up one to many items */
-				num_items_given--;
-				break;
-			}
-		}
-
-		/* restore the qty */
-		borg_items[i].iqty = safe_items[i].iqty;
-
-		/* set the qty to number given without reducing borg power */
-		safe_items[i].iqty = num_items_given;
-	}
-}
-#endif /* 0 */
-
-
 /*
  * Step 1 -- sell "useful" things to the home (for later)
  */
@@ -487,9 +431,6 @@ static bool borg_think_home_sell_aux(void)
 	{
 		COPY(&safe_items[i], &borg_items[i], borg_item);
 	}
-
-	/* get rid of useless items */
-	borg_think_home_sell_aux3();
 
 	/*
 	 * Examine the borg once more with
