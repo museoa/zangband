@@ -2,6 +2,8 @@ subdir = ./lib/pref/
 
 ## makefile.zb
 
+srcfiles += lib/pref/makefile.zb
+
 files += $(addprefix lib/pref/,colors.prf \
 	font-ami.prf \
 	font-dos.prf \

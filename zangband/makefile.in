@@ -43,6 +43,8 @@ files = angdos.cfg readme z_faq.txt z_update.txt
 clean-files = zangband
 distclean-files = *.bak gmon.out config.log config.status
 
+srcfiles = bootstrap configure configure.in makefile makefile.in
+
 ##
 ## Default target
 ##
@@ -50,10 +52,7 @@ distclean-files = *.bak gmon.out config.log config.status
 ##
 default: zangband
 
-INSTALL = cp zangband $(bindir)/zangband;\
-		chgrp $(GAMEGROUP) $(bindir)/zangband;\
-		chmod g+s $(bindir)/zangband;
-		
+INSTALL = 
 
 dirs := lib src
 dirlist := lib
@@ -80,22 +79,40 @@ configure: configure.in
 	autoheader
 	autoconf
 
-makedirs:
-	-mkdir $(datadir)/games/zangband
+dirs:
 	-mkdir $(DESTDIR)
 	-mkdir $(addprefix $(DESTDIR),$(dirlist))
 
-install: makedirs zangband
+installbase: dirs zangband
 	for i in $(files) ; do \
 	    cp $$i $(DESTDIR)$$i; \
 	done
 	$(INSTALL)
 
+install: installbase
+	cp zangband $(bindir)/zangband
+	chgrp $(GAMEGROUP) $(bindir)/zangband
+	chmod g+s $(bindir)/zangband
 
 uninstall:
 	-rm -f $(bindir)/zangband
-	-rm -rf $(datadir)/games/zangband
+	-rm -rf $(DESTDIR)
 
+dist: installbase
+	-mkdir $(addprefix $(DESTDIR),$(srcdirlist))
+	for i in $(srcfiles) ; do \
+	    cp $$i $(DESTDIR)$$i; \
+	done
+
+distcheck: dist
+	cp -a $(DESTDIR) temp1
+	mv $(DESTDIR) temp2
+	cd temp1 && $(MAKE) dist
+	diff -ur temp2 $(DESTDIR)
+	-rm -rf temp1
+	-rm -rf temp2
+	-rm -rf $(DESTDIR)
+	
 clean:
 	-rm -f $(clean-files)
 
@@ -110,6 +127,9 @@ test:
 	@echo $(clean-files)
 	@echo
 	@echo I will install:
-	@echo $(dirlist) $(files) $(INSTALL)
+	@echo $(dirlist) $(files)
+	@echo
+	@echo I will distinstall:
+	@echo $(srcdirlist) $(srcfiles)
 
-.PHONY: makedirs install-files install clean distclean test
+.PHONY: dirs installbase install uninstall dist distcheck clean distclean test

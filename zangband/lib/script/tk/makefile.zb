@@ -2,6 +2,7 @@ subdir = ./lib/script/tk/
 
 ## makefile.zb
 
+srcfiles += lib/script/tk/makefile.zb
 files += lib/script/tk/*.tcl lib/script/tk/tips.txt
 
 dirs := config image library

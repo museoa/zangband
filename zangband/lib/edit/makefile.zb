@@ -2,6 +2,8 @@ subdir = ./lib/edit/
 
 ## makefile.zb
 
+srcfiles += lib/edit/makefile.zb
+
 files += \
   lib/edit/a_info.txt lib/edit/e_info.txt lib/edit/f_info.txt\
   lib/edit/k_info.txt lib/edit/misc.txt lib/edit/r_info.txt\

@@ -1,5 +1,7 @@
 subdir = ./lib/data/
 
+srcfiles += lib/data/makefile.zb
+
 ## makefile.zb
 
 INSTALL += \

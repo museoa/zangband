@@ -2,6 +2,8 @@ subdir = ./lib/file/
 
 ## makefile.zb
 
+srcfiles += lib/file/makefile.zb
+
 files += \
   lib/file/a_low.txt lib/file/crime.txt lib/file/elvish.txt \
   lib/file/monfear.txt lib/file/news.txt lib/file/sample.txt \

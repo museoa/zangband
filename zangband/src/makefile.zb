@@ -184,9 +184,14 @@ LUAWSRCS := $(LUAWOBJS:.o=.c)
 $(LUAWSRCS): %.c: %.pkg src/lua/tolua
 	src/lua/tolua -n $(subst l-,,$(notdir $*)) -o $@ $<
 
+clean-files += src/*.bak src/*.o src/l-*.c
+
+srcdirlist += src
+srcfiles += src/*.c src/*.h src/angband.rc src/angband.ico \
+		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg
 
 # scan other source directories
 dirs := lua tk
 include $(scandir)
 
-clean-files += src/*.bak src/*.o src/l-*.c
+

@@ -2,6 +2,8 @@ subdir = ./lib/help/
 
 ## makefile.zb
 
+srcfiles += lib/help/makefile.zb
+
 files += \
 	lib/help/attack.hlp lib/help/attack.txt lib/help/birth.hlp \
 	lib/help/birth.txt lib/help/bldg.txt lib/help/charattr.hlp \
