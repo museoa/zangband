@@ -694,29 +694,6 @@ proc NSInventory2::SettingChanged {oop keyword value} {
 	SetList_Equipment $oop
 	SetList_Inventory $oop
 
-	# XXX Mega-Hack -- OAngband displays the current weight in the
-	# message line. If the "use_metric" option changes, then we
-	# change the prompt by hand to display the correct units.
-	if {[string equal $keyword use_metric]} {
-		global AngbandPriv
-		set prompt $AngbandPriv(prompt,new)
-		if {[string match "*burden*" $prompt]} {
-			set weight [angband player total_weight]
-			if {[Setting use_metric]} {
-				set old [format "%d.%d lb" [expr {$weight / 10}] [expr {$weight % 10}]]
-				set weight [make_metric $weight]
-				set new [format "%d.%d kg" [expr {$weight / 10}] [expr {$weight % 10}]]
-			} else {
-				set new [format "%d.%d lb" [expr {$weight / 10}] [expr {$weight % 10}]]
-				set weight [make_metric $weight]
-				set old [format "%d.%d kg" [expr {$weight / 10}] [expr {$weight % 10}]]
-			}
-			regsub -all $old $prompt $new AngbandPriv(prompt,new)
-			set AngbandPriv(prompt,fresh) 1
-			Fresh_Prompt
-		}
-	}
-
 	return
 }
 
