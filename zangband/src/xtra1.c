@@ -3821,5 +3821,5 @@ void change_stuff(void)
  */
 bool player_save(int power)
 {
-	return saving_throw(p_ptr->skills[SKILL_SAV] + power);
+	return saving_throw(p_ptr->skills[SKILL_SAV] - power);
 }
