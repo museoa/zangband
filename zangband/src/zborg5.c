@@ -3989,8 +3989,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Being too heavy is really bad */
-	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT]
-		/ (adj_str_wgt[my_stat_ind[A_STR]] * adj_str_wgt[my_stat_ind[A_STR]]);
+	value -= borg_skill[BI_WEIGHT] / adj_str_wgt[my_stat_ind[A_STR]];
 
 
 	/* Reward empty slots */

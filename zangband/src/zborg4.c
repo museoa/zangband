@@ -1671,7 +1671,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
-			borg_skill[BI_FOOD] += number;
+			borg_skill[BI_FOOD] += number * 3;
 			break;
 		}
 	}
@@ -2487,7 +2487,7 @@ static void borg_notice_aux2(void)
 	if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
 	{
 		borg_skill[BI_FOOD] += amt_food_hical;
-		if (amt_food_hical <= 3) borg_skill[BI_FOOD] += amt_food_lowcal;
+		if (borg_skill[BI_FOOD] <= 4) borg_skill[BI_FOOD] += amt_food_lowcal;
 	}
 
 	/* If weak, do not count food spells */
