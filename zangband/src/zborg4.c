@@ -447,7 +447,7 @@ bool borg_test_bad_curse(list_item *l_ptr)
 	if (KN_FLAG(l_ptr, TR_NO_TELE)) return (TRUE);
 
 	/* The borg can't keep up with this drain */
-	if (KN_FLAG(l_ptr, TR_DRAIN_EXP)) return (TRUE);
+	if (KN_FLAG(l_ptr, TR_DRAIN_EXP) && bp_ptr->lev < 50) return (TRUE);
 
 	/* Only high level borgs can handle topi */
 	if (KN_FLAG(l_ptr, TR_TY_CURSE) && bp_ptr->lev < 50) return (TRUE);
