@@ -1210,6 +1210,9 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Ignore talking monsters */
 	if (strstr(msg, " says,")) return;
 
+	/* Ignore monsters picking up objects*/
+	if (strstr(msg, " picks up ")) return;
+
 	/* "It hits you." (etc) */
 	for (i = 0; suffix_hit_by[i]; i++)
 	{
