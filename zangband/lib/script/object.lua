@@ -417,6 +417,179 @@ function quaff_potion(object)
 end
 
 
+function read_scroll(object)
+	local ident = FALSE
+	local used_up = TRUE
+
+	if object.sval == SV_SCROLL_DARKNESS then
+		if not player.resist_blind and not player.resist_dark then
+			set_blind(player.blind + rand_range(3, 8))
+		end
+		if unlite_area(10, 3) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_AGGRAVATE_MONSTER then
+		msg_print("There is a high pitched humming noise.")
+		aggravate_monsters(0)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_CURSE_ARMOR then
+		if curse_armor() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_CURSE_WEAPON then
+		if curse_weapon() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_SUMMON_MONSTER then
+		for k = 0, randint1(3) do
+			if summon_specific(0, player.py, player.px, player.depth, 0, TRUE, FALSE, FALSE) then
+				ident = TRUE
+			end
+		end
+	elseif object.sval == SV_SCROLL_SUMMON_UNDEAD then
+		for k = 0, randint1(3) do
+			if summon_specific(0, player.py, player.px, player.depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE) then
+				ident = TRUE
+			end
+		end
+	elseif object.sval == SV_SCROLL_TRAP_CREATION then
+		if trap_creation() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_PHASE_DOOR then
+		teleport_player(10)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_TELEPORT then
+		teleport_player(100)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_TELEPORT_LEVEL then
+		teleport_player_level()
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_WORD_OF_RECALL then
+		word_of_recall()
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_IDENTIFY then
+		ident = TRUE
+		if not ident_spell() then used_up = FALSE end
+	elseif object.sval == SV_SCROLL_STAR_IDENTIFY then
+		ident = TRUE
+		if not identify_fully() then used_up = FALSE end
+	elseif object.sval == SV_SCROLL_REMOVE_CURSE then
+		if remove_curse() then
+			msg_print("You feel as if someone is watching over you.")
+			ident = TRUE
+		end
+	elseif object.sval == SV_SCROLL_STAR_REMOVE_CURSE then
+		remove_all_curse()
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_ENCHANT_ARMOR then
+		ident = TRUE
+		if not enchant_spell(0, 0, 1) then used_up = FALSE end
+	elseif object.sval == SV_SCROLL_ENCHANT_WEAPON_TO_HIT then
+		if not enchant_spell(1, 0, 0) then used_up = FALSE end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_ENCHANT_WEAPON_TO_DAM then
+		if not enchant_spell(0, 1, 0) then used_up = FALSE end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_STAR_ENCHANT_ARMOR then
+		if not enchant_spell(0, 0, rand_range(2, 7)) then used_up = FALSE end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_STAR_ENCHANT_WEAPON then
+		if not enchant_spell(randint1(5), randint1(5), 0) then used_up = FALSE end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_RECHARGING then
+		if not recharge(130) then used_up = FALSE end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_MUNDANITY then
+		ident = TRUE
+		if not mundane_spell() then used_up = FALSE end
+	elseif object.sval == SV_SCROLL_LIGHT then
+		if lite_area(damroll(2, 8), 2) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_MAPPING then
+		map_area()
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_DETECT_GOLD then
+		if detect_treasure() then ident = TRUE end
+		if detect_objects_gold() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_DETECT_ITEM then
+		if detect_objects_normal() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_DETECT_TRAP then
+		if detect_traps() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_DETECT_DOOR then
+		if detect_doors() then ident = TRUE end
+		if detect_stairs() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_DETECT_INVIS then
+		if detect_monsters_invis() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_SATISFY_HUNGER then
+		if set_food(PY_FOOD_MAX - 1) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_BLESSING then
+		if set_blessed(player.blessed + rand_range(6, 18)) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_HOLY_CHANT then
+		if set_blessed(player.blessed + rand_range(12, 36)) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_HOLY_PRAYER then
+		if set_blessed(player.blessed + rand_range(24, 72)) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_MONSTER_CONFUSION then
+		if player.confusing == 0 then
+			msg_print("Your hands begin to glow.")
+			player.confusing = TRUE
+			ident = TRUE
+			player.redraw = bOr(player.redraw, PR_STATUS)
+		end
+	elseif object.sval == SV_SCROLL_PROTECTION_FROM_EVIL then
+		k = 3 * player.lev
+		if set_protevil(player.protevil + randint1(25) + k) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_RUNE_OF_PROTECTION then
+		if not warding_glyph() then used_up = FALSE end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_TRAP_DOOR_DESTRUCTION then
+		if destroy_doors_touch() then ident = TRUE end
+	elseif object.sval == SV_SCROLL_STAR_DESTRUCTION then
+		if destroy_area(player.py, player.px, 15) then
+			ident = TRUE
+		else
+			msg_print("The dungeon trembles...")
+		end
+	elseif object.sval == SV_SCROLL_DISPEL_UNDEAD then
+		if dispel_undead(60) then ident = TRUE end
+	elseif object.sval == SV_SCROLL_GENOCIDE then
+		genocide(TRUE)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_MASS_GENOCIDE then
+		mass_genocide(TRUE)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_ACQUIREMENT then
+		acquirement(player.py, player.px, 1, TRUE, FALSE)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_STAR_ACQUIREMENT then
+		acquirement(player.py, player.px, rand_range(2, 3), TRUE, FALSE)
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_FIRE then
+		fire_ball(GF_FIRE, 0, 300, 4)
+		-- Note: "Double" damage since it is centered on the player ...
+		if not (player.oppose_fire or player.resist_fire or player.immune_fire) then
+			take_hit(rand_range(50, 100), "a Scroll of Fire")
+		end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_ICE then
+		fire_ball(GF_ICE, 0, 350, 4)
+		if not (player.oppose_cold or player.resist_cold or player.immune_cold) then
+			take_hit(rand_range(100, 200), "a Scroll of Ice")
+		end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_CHAOS then
+		fire_ball(GF_CHAOS, 0, 400, 4)
+		if not player.resist_chaos then
+			take_hit(rand_range(150, 300), "a Scroll of Logrus")
+		end
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_RUMOR then
+		msg_print("There is message on the scroll. It says:")
+		message_flush()
+		msg_print(get_rumor())
+		message_flush()
+		msg_print("The scroll disappears in a puff of smoke!")
+		ident = TRUE
+	elseif object.sval == SV_SCROLL_ARTIFACT then
+		if not artifact_scroll() then used_up = FALSE end
+		ident = TRUE
+	end
+
+	return ident, used_up
+end
+
+
 function use_object_hook(object)
 	local ident = FALSE
 	local used = FALSE
@@ -425,6 +598,8 @@ function use_object_hook(object)
 		ident, used = eat_food(object)
 	elseif object.tval == TV_POTION then
 		ident, used = quaff_potion(object)
+	elseif object.tval == TV_SCROLL then
+		ident, used = read_scroll(object)
 	end
 
 	return ident, used
