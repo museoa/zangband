@@ -3553,50 +3553,55 @@ void wiz_lite(void)
 		o_ptr->marked = TRUE;
 	}
 
+	/* Detect monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Repair visibility later */
+		repair_monsters = TRUE;
+
+		/* Hack -- Detect monster */
+		m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
+
+		/* Update the monster */
+		update_mon(i, FALSE);
+	}
+
 	/* Scan all normal grids */
-	for (y = 1; y < cur_hgt - 1; y++)
+	for (y = 0; y < cur_hgt; y++)
 	{
 		/* Scan all normal grids */
-		for (x = 1; x < cur_wid - 1; x++)
+		for (x = 0; x < cur_wid; x++)
 		{
 			cave_type *c_ptr = &cave[y][x];
 
-			/* Process all non-walls */
-			if (cave_floor_bold(y, x))
-			{
-				/* Scan all neighbors */
-				for (i = 0; i < 9; i++)
-				{
-					int yy = y + ddy_ddd[i];
-					int xx = x + ddx_ddd[i];
-
-					/* Get the grid */
-					c_ptr = &cave[yy][xx];
-
 /* Enlightenment is not light */
 #if 0
-					/* Perma-lite the grid */
-					c_ptr->info |= (CAVE_GLOW);
+			/* Perma-lite the grid */
+			c_ptr->info |= (CAVE_GLOW);
 #endif
 
-					/* Memorize normal features */
-					if (c_ptr->feat > FEAT_INVIS)
-					{
-						/* Memorize the grid */
-						c_ptr->info |= (CAVE_MARK);
-					}
+			/* Memorize normal features */
+			if (c_ptr->feat > FEAT_INVIS)
+			{
+				/* Memorize the grid */
+				c_ptr->info |= (CAVE_MARK);
+			}
 
 /* Inconsistent with 'magic mapping' */
 #if 0
-					/* Normally, memorize floors (see above) */
-					if (view_perma_grids && !view_torch_grids)
-					{
-						/* Memorize the grid */
-						c_ptr->info |= (CAVE_MARK);
-					}
-#endif
-				}
+			/* Normally, memorize floors (see above) */
+			if (view_perma_grids && !view_torch_grids)
+			{
+				/* Memorize the grid */
+				c_ptr->info |= (CAVE_MARK);
 			}
+#endif
 		}
 	}
 
