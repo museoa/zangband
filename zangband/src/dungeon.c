@@ -2337,39 +2337,6 @@ static void process_world(void)
 			/* Boundary control. */
 			if (o_ptr->timeout < 0) o_ptr->timeout = 0;
 		}
-		else
-		{
-			/* Decrease counter */
-			o_ptr->timeout--;
-
-			/* Notice changes */
-			if (!o_ptr->timeout)
-			{
-				if (ironman_nightmare)
-				{
-					/* Make a monster nearby if possible */
-					if (summon_named_creature(o_ptr->iy, o_ptr->ix,
-						 o_ptr->pval, FALSE, FALSE, FALSE))
-					{
-						monster_type *m_ptr = &m_list[hack_m_idx_ii];
-
-						if (player_can_see_bold(m_ptr->fy, m_ptr->fx))
-						{
-							msg_format("The %s rises.");
-						}
-
-						/* Set the cloned flag, so no treasure is dropped */
-						m_ptr->smart |= SM_CLONED;
-					}
-				}
-
-				/* Assume that no corpse is in a monsters inventory. */
-
-				/* The corpse/skeleton is destroyed */
-				floor_item_increase(i, -1);
-				floor_item_optimize(i);
-			}
-		}
 	}
 
 	/*
