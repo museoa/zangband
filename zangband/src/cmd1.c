@@ -549,7 +549,7 @@ void search(void)
 			if (rand_int(100) < chance)
 			{
 				/* do not search outside the wilderness */
-				if (!in_bounds2(y,x)) return;
+				if (!in_bounds2(y,x)) continue;
 				
 				/* Access the grid */
 				c_ptr = area(y,x);
@@ -757,13 +757,28 @@ static void auto_destroy_items(cave_type *c_ptr)
  */
 void carry(int pickup)
 {
-	cave_type *c_ptr = area(py,px);
+	cave_type *c_ptr = area(py, px);
 
 	s16b this_o_idx, next_o_idx = 0;
 
 	char o_name[80];
 
+	/* Recenter the map around the player */
+	verify_panel();
 
+	/* Update stuff */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Handle stuff */
+	handle_stuff();
+
+	
 	/* Automatically destroy items */
 	auto_destroy_items(c_ptr);
 
@@ -3002,14 +3017,16 @@ static int see_wall(int dir, int y, int x)
  */
 static int see_nothing(int dir, int y, int x)
 {
-	cave_type *c_ptr = area(y, x);
+	cave_type *c_ptr;
 	
 	/* Get the new location */
 	y += ddy[dir];
 	x += ddx[dir];
 
 	/* Illegal grids are unknown */
-	if (!in_bounds2(y, x)) return (TRUE);
+	if (!in_bounds2(y, x)) return (FALSE);
+
+	c_ptr = area(y, x);
 
 	/* Memorized grids are always known */
 	if (c_ptr->info & (CAVE_MARK)) return (FALSE);
@@ -3343,9 +3360,9 @@ static bool run_test(void)
 		/* New location */
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
-
+		
 		/* Access grid */
-		c_ptr = area(row,col);
+		c_ptr = area(row, col);
 
 
 		/* Visible monsters abort running */
@@ -3606,17 +3623,8 @@ static bool run_test(void)
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
 
-			/* Access grid */
-			c_ptr = area(row,col);
-
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
-			if (!(c_ptr->info & (CAVE_MARK)) ||
-			    ((c_ptr->feat < FEAT_SECRET) ||
-			    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-				 (c_ptr->feat <= FEAT_GRASS)) ||
-			    ((c_ptr->feat >= FEAT_BUSH) &&
-			    (c_ptr->feat <= FEAT_SHAL_SWAMP)) ||
-			    (c_ptr->feat == FEAT_TREE_WATER)))
+			if (!see_wall(new_dir, py, px))
 
 			{
 				/* Looking to break right */
@@ -3646,16 +3654,10 @@ static bool run_test(void)
 			col = px + ddx[new_dir];
 
 			/* Access grid */
-			c_ptr = area(row,col);
+			c_ptr = area(row, col);
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
-			if (!(c_ptr->info & (CAVE_MARK)) ||
-			    ((c_ptr->feat < FEAT_SECRET) ||
-			    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-				 (c_ptr->feat <= FEAT_GRASS)) ||
-			    ((c_ptr->feat >= FEAT_BUSH) &&
-			    (c_ptr->feat <= FEAT_SHAL_SWAMP)) ||
-			    (c_ptr->feat == FEAT_TREE_WATER)))
+			if (!see_wall(new_dir, py, px))
 
 			{
 				/* Looking to break left */
@@ -3775,8 +3777,7 @@ void run_step(int dir)
 	if (dir)
 	{
 		/* Hack -- do not start silly run */
-		if (see_wall(dir, py, px) &&
-		   (area(py+ddy[dir],px+ddx[dir])->feat != FEAT_TREES))
+		if (see_wall(dir, py, px))
 		{
 			/* Message */
 			msg_print("You cannot run in that direction.");
