@@ -549,7 +549,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				cave_type *c_ptr;
 
 				/* Only works on adjacent monsters */
-				if (!get_rep_dir(&dir,FALSE)) break;   /* was get_aim_dir */
+				if (!get_rep_dir(&dir)) break;
 				y = p_ptr->py + ddy[dir];
 				x = p_ptr->px + ddx[dir];
 

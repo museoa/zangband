@@ -3312,7 +3312,7 @@ bool get_aim_dir(int *dp)
  * This function tracks and uses the "global direction", and uses
  * that as the "desired direction", to which "confusion" is applied.
  */
-bool get_rep_dir(int *dp, bool under)
+bool get_rep_dir(int *dp)
 {
 	int dir;
 
@@ -3341,9 +3341,6 @@ bool get_rep_dir(int *dp, bool under)
 		/* Oops */
 		if (!dir) bell();
 	}
-
-	/* Prevent weirdness */
-	if ((dir == 5) && (!under)) dir = 0;
 
 	/* Aborted */
 	if (!dir) return (FALSE);

@@ -1026,7 +1026,7 @@ extern bool target_okay(void);
 extern bool target_set(int mode);
 extern bool get_aim_dir(int *dp);
 extern bool get_hack_dir(int *dp);
-extern bool get_rep_dir(int *dp, bool under);
+extern bool get_rep_dir(int *dp);
 extern int get_chaos_patron(void);
 extern void gain_level_reward(int chosen_reward);
 extern bool set_wraith_form(int v);
