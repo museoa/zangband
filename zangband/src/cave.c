@@ -1982,7 +1982,7 @@ void note_spot(int y, int x)
 
 
 		/* Hack -- memorize grids */
-		if (!(pc_ptr->feat))
+		if (pc_ptr->feat != c_ptr->feat)
 		{
 			/* Handle floor grids first */
 			if (cave_floor_grid(c_ptr))

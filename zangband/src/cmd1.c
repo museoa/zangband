@@ -2385,7 +2385,7 @@ void move_player(int dir, int do_pickup)
 			disturb(FALSE);
 
 			/* Notice things in the dark */
-			if (!(pc_ptr->feat) && !(pc_ptr->player & GRID_SEEN))
+			if ((pc_ptr->feat != c_ptr->feat) && !(pc_ptr->player & GRID_SEEN))
 			{
 				msg_print("You feel a closed door blocking your way.");
 				pc_ptr->feat = c_ptr->feat;
@@ -2429,7 +2429,7 @@ void move_player(int dir, int do_pickup)
 		disturb(FALSE);
 
 		/* Notice things in the dark */
-		if (!(pc_ptr->feat) && !(pc_ptr->player & (GRID_SEEN)))
+		if ((pc_ptr->feat != c_ptr->feat) && !(pc_ptr->player & (GRID_SEEN)))
 		{
 			message(MSG_HITWALL, 0, "You feel something blocking your way.");
 			pc_ptr->feat = c_ptr->feat;
