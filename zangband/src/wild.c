@@ -3429,13 +3429,33 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 			/* Overlay water */
 			wild_add_gradient(block_ptr, FEAT_SHAL_WATER, FEAT_DEEP_WATER);
 		}
+		
+		/* Add lava boundary effects. */
+		if (wild_info_bounds(x, y, WILD_INFO_LAVA))
+		{
+			/* Hack, above function sets bounds */
+
+			/* Generate plasma factal */
+			frac_block();
+
+			/* Overlay lava */
+			wild_add_gradient(block_ptr, FEAT_SHAL_LAVA, FEAT_DEEP_LAVA);
+		}
+		
+		/* Add acid boundary effects.*/
+		if (wild_info_bounds(x, y, WILD_INFO_ACID))
+		{
+			/* Hack, above function sets bounds */
+
+			/* Generate plasma factal */
+			frac_block();
+
+			/* Overlay acid */
+			wild_add_gradient(block_ptr, FEAT_SHAL_ACID, FEAT_DEEP_ACID);
+		}
 
 		/* Add roads */
 		make_wild_road(block_ptr, x, y);
-
-		/* Add lava (Not Done) */
-		
-		/* Add acid (Not Done) */
 	}
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
@@ -4478,6 +4498,9 @@ void create_lakes(void)
 			{
 				w_ptr = &wild[j][i].trans;				
 			
+				/* If non-lake square */
+				if (temp_block[j - y][i - x] > WILD_BLOCK_SIZE * 128) continue;
+				
 				/* Below sea level? */
 				if (w_ptr->hgt_map <= 256 / SEA_FRACTION)
 				{

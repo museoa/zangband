@@ -2004,10 +2004,22 @@ void display_map(int *cy, int *cx)
 
 				/* Get attr / char pair for wilderness block type */
 
+				/* This is a nasty hack */
+
 				/* Add in effects of sea / roads */
 				if ((w_type >= WILD_SEA) || (w_info & (WILD_INFO_WATER)))
 				{
 					ma[j + 1][i + 1] = TERM_BLUE;
+					mc[j + 1][i + 1] = '~';
+				}
+				else if (w_info & (WILD_INFO_ACID))
+				{
+					ma[j + 1][i + 1] = TERM_GREEN;
+					mc[j + 1][i + 1] = '~';
+				}
+				else if (w_info & (WILD_INFO_LAVA))
+				{
+					ma[j + 1][i + 1] = TERM_RED;
 					mc[j + 1][i + 1] = '~';
 				}
 				else if (w_info & (WILD_INFO_ROAD))
