@@ -1054,7 +1054,7 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 			break;
 	}
 
-	switch (randint1(34))
+	switch (randint1(36))
 	{
 		case 1:
 		case 2:
@@ -1186,6 +1186,10 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 
 			if (!artifact_bias)
 				artifact_bias = BIAS_NECROMANTIC;
+			break;
+		case 33:
+		case 34:
+			o_ptr->flags4 |= TR4_PSI_CRIT;
 			break;
 		default:
 			o_ptr->flags1 |= TR1_CHAOTIC;

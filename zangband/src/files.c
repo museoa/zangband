@@ -1537,6 +1537,15 @@ static void display_player_abilities(void)
 			avgdam *= 609;
 			avgdam /= 500;
 		}
+
+		/* Estimate the effect of increased criticals */
+		/* The average critical does 1.8345 * normal damage... */
+		if (object_known_p(o_ptr) && (p_ptr->msp >= PSI_COST) &&
+				(o_ptr->flags4 & (TR4_PSI_CRIT)))
+		{
+			avgdam *= 640;
+			avgdam /= 500;
+		}
 	}
 
 	/* normal players get two 1d1 punches */

@@ -714,6 +714,8 @@
 /* 1/x chance of hurting even if invulnerable! */
 #define PENETRATE_INVULNERABILITY 13
 
+/* Mana drained by getting in a psi hit */
+#define PSI_COST 1
 
 
 /*

@@ -102,10 +102,19 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 {
 	int power = (chance + sleeping_bonus);
 	int mult_m_crit;
+	int psi_hit = FALSE;
 
+	if ((p_ptr->flags4 & (TR4_PSI_CRIT)) && (p_ptr->csp >= PSI_COST) && 
+			(randint(100) < 80))
+	{
+		psi_hit = TRUE;
+	}
+
+	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+		power = power * 3 / 2;
 
 	/* Test for critical hit. */
-	if (randint1(power + 240) <= power)
+	if (randint1(power + 240) <= power || (psi_hit && randint(100) < 20))
 	{
 		/*
 		 * Encourage the player to make sneak attacks on
@@ -152,6 +161,16 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 		else
 		{
 			msgf(MSGT_HIT, "You *smite* %s!", m_name);
+		}
+
+		if (psi_hit)
+		{
+			mult_m_crit = mult_m_crit * 3 / 2;
+			
+			p_ptr->csp -= PSI_COST;
+			p_ptr->redraw |= (PR_MANA);
+			p_ptr->window |= (PW_PLAYER);
+			p_ptr->window |= (PW_SPELL);
 		}
 	}
 
