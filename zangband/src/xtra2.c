@@ -3110,7 +3110,7 @@ bool get_aim_dir(int *dp)
  * and place it into "cmd.dir", unless we already have one.
  *
  * This function should be used for all "repeatable" commands, such as
- * run, walk, open, close, bash, disarm, spike, tunnel, etc, as well
+ * run, walk, open, close, disarm, spike, tunnel, etc, as well
  * as all commands which must reference a grid adjacent to the player,
  * and which may not reference the grid under the player.  Note that,
  * for example, it is no longer possible to "disarm" or "open" chests
