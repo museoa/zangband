@@ -713,6 +713,8 @@ static bool store_check_num(object_type *o_ptr)
  */
 static bool store_will_buy(object_type *o_ptr)
 {
+	obj_theme theme;
+	
 	/* Thing to pass to the action functions */
 	field_obj_test f_o_t;
 	
@@ -758,6 +760,20 @@ static bool store_will_buy(object_type *o_ptr)
 	
 	/* Ignore "worthless" items XXX XXX XXX */
 	if (object_value(o_ptr) <= 0) return (FALSE);
+
+	/* Final stage, check the theme */
+
+	/* Set theme */
+	theme.treasure = f_ptr->data[3];
+	theme.combat = f_ptr->data[4];
+	theme.magic = f_ptr->data[5];
+	theme.tools = f_ptr->data[6];
+
+	/* Initialise the theme tester */
+	init_match_theme(theme);
+	
+	/* Does the object have zero probability of being made? */
+	if (!kind_is_theme(o_ptr->k_idx)) return (FALSE);
 
 	/* Assume the field restriction is ok */
 	return (f_o_t.result);
