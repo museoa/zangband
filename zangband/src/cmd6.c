@@ -1792,7 +1792,7 @@ static void do_cmd_use_staff_aux(int item)
 
 				while (attempts--)
 				{
-					scatter(&y, &x, py, px, 4, 0);
+					scatter(&y, &x, py, px, 4);
 
 					/* paranoia */
 					if (!in_bounds2(y, x)) continue;

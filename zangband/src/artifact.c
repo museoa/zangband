@@ -1747,7 +1747,7 @@ bool activate_effect(object_type *o_ptr)
 
 					while (attempts--)
 					{
-						scatter(&y, &x, py, px, 4, 0);
+						scatter(&y, &x, py, px, 4);
 
 						/* paranoia */
 						if (!in_bounds2(y, x)) continue;

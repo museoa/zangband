@@ -2740,6 +2740,9 @@ static errr init_other(void)
 	/* Hack -- No messages yet */
 	message__tail = MESSAGE_BUF;
 
+	/* Clear the spell colour strings */
+	(void) C_WIPE(gf_color, MAX_GF, cptr);
+
 
 	/*** Prepare the Player inventory ***/
 
@@ -2786,7 +2789,7 @@ static errr init_other(void)
 	/*** Pre-allocate space for the "format()" buffer ***/
 
 	/* Hack -- Just call the "format()" function */
-	(void)format("%s (%s).", "Ben Harrison", MAINTAINER);
+	(void)format("%s (%s).", "Robert Ruehlmann", MAINTAINER);
 
 
 	/* Success */

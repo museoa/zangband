@@ -1802,7 +1802,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 		{
 			int mx, my;
 
-			scatter(&my, &mx, hy, hx, 4, 0);
+			scatter(&my, &mx, hy, hx, 4);
 
 			/* paranoia */
 			if (!in_bounds2(my, mx)) continue;
@@ -1934,7 +1934,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 			int nx, ny, z, d = 3;
 
 			/* Pick a location */
-			scatter(&ny, &nx, y, x, d, 0);
+			scatter(&ny, &nx, y, x, d);
 
 			/* paranoia */
 			if (!in_bounds2(y, x)) continue;
@@ -2043,7 +2043,7 @@ bool alloc_horde(int y, int x)
 
 	for (attempts = randint1(10) + 5; attempts; attempts--)
 	{
-		scatter(&cy, &cx, y, x, 5, 0);
+		scatter(&cy, &cx, y, x, 5);
 
 		(void)summon_specific(m_idx, cy, cx, p_ptr->depth + 5, SUMMON_KIN,
 		                      TRUE, FALSE, FALSE);
@@ -2463,7 +2463,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type,
 		int d = (i / 15) + 1;
 
 		/* Pick a location */
-		scatter(&y, &x, y1, x1, d, 0);
+		scatter(&y, &x, y1, x1, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
@@ -2554,7 +2554,7 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp,
 		int d = 1;
 
 		/* Pick a location */
-		scatter(&y, &x, oy, ox, d, 0);
+		scatter(&y, &x, oy, ox, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
@@ -2596,7 +2596,7 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 		int d = 1;
 
 		/* Pick a location */
-		scatter(&y, &x, m_ptr->fy, m_ptr->fx, d, 0);
+		scatter(&y, &x, m_ptr->fy, m_ptr->fx, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
@@ -3043,35 +3043,6 @@ void update_smart_learn(int m_idx, int what)
 		if (p_ptr->reflect) m_ptr-> smart |= (SM_IMM_REFLECT);
 		break;
 	}
-}
-
-
-/*
- * Place the player in the dungeon XXX XXX
- */
-bool player_place(int y, int x)
-{
-#if 0 /* This is never used */
-
-	/* Paranoia XXX XXX */
-	if (area(y, x)->m_idx != 0) return FALSE;
-
-	/* Save player location */
-	p_ptr->py = y;
-	p_ptr->px = x;
-
-	if (!p_ptr->depth)
-	{
-		/* Scroll wilderness */
-		p_ptr->wilderness_x = px;
-		p_ptr->wilderness_y = py;
-		move_wild();
-	}
-	
-#endif /* 0 */
-
-	/* Success */
-	return TRUE;
 }
 
 

@@ -564,52 +564,14 @@ errr predict_score(void)
 
 
 /*
- * show_highclass - selectively list highscores based on class
- * -KMW-
+ * Selectively list highscores based on class -KMW-
  */
-void show_highclass(int building)
+void show_highclass(void)
 {
-
-	register int i = 0, j, m = 0;
+	int i = 0, j, m = 0;
 	int pr, pc, clev/*, al*/;
 	high_score the_score;
 	char buf[1024], out_val[256];
-
-#if 0
-	switch (building)
-	{
-		case 1:
-			prt("               Busts of Greatest Kings", 5, 0);
-			break;
-		case 2:
-			prt("               Plaque - Greatest Arena Champions", 5, 0);
-			break;
-		case 10:
-			prt("               Plaque - Greatest Fighters", 5, 0);
-			break;
-		case 11:
-			prt("               Spires of the Greatest Magic-Users", 5, 0);
-			break;
-		case 12:
-			prt("               Busts of Greatest Priests", 5, 0);
-			break;
-		case 13:
-			prt("               Wall Inscriptions - Greatest Thieves", 5, 0);
-			break;
-		case 14:
-			prt("               Plaque - Greatest Rangers", 5, 0);
-			break;
-		case 15:
-			prt("               Plaque - Greatest Paladins", 5, 0);
-			break;
-		case 16:
-			prt("               Spires of the Greatest Illusionists", 5, 0);
-			break;
-		default:
-			bell();
-			break;
-	}
-#endif
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
@@ -666,7 +628,7 @@ void show_highclass(int building)
  */
 void race_score(int race_num)
 {
-	register int i = 0, j, m = 0;
+	int i = 0, j, m = 0;
 	int pr, pc, clev, lastlev;
 	high_score the_score;
 	char buf[1024], out_val[256], tmp_str[80];

@@ -224,7 +224,7 @@ static XImage *ReadBMP(Display *dpy, char *Name)
 
 	int i, j;
 
-	int x, y;
+	u16b x, y;
 
 	unsigned long clr_pixels[256];
 

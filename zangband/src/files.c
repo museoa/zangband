@@ -599,8 +599,14 @@ errr process_pref_file_aux(char *buf)
 			/* Match this type */
 			if (streq(gf_desc[i].name, buf + 2))
 			{
+				/* Wipe old strings */
+				if (!gf_color[gf_desc[i].num])
+				{
+					string_free(gf_color[gf_desc[i].num]);
+				}
+				
 				/* Remember this color set */
-				gf_color[gf_desc[i].num] = quark_add_perm(t);
+				gf_color[gf_desc[i].num] = string_make(t);
 
 				/* Success */
 				return (0);

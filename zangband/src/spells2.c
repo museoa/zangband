@@ -4341,7 +4341,7 @@ void wall_breaker(void)
 	{
 		while (attempts--)
 		{
-			scatter(&y, &x, py, px, 4, 0);
+			scatter(&y, &x, py, px, 4);
 
 			if ((y != py) || (x != px)) break;
 		}
@@ -4361,7 +4361,7 @@ void wall_breaker(void)
 		{
 			while (1)
 			{
-				scatter(&y, &x, py, px, 4, 0);
+				scatter(&y, &x, py, px, 4);
 
 				if ((y != py) || (x != px)) break;
 			}

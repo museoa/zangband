@@ -315,7 +315,7 @@ extern u16b max_w_block;
 extern quest_type *quest;
 extern char quest_text[10][80];
 extern int quest_text_line;
-extern s16b gf_color[MAX_GF];
+extern cptr gf_color[MAX_GF];
 extern int init_flags;
 extern int highscore_fd;
 extern bool monster_terrain_sensitive;
@@ -360,7 +360,7 @@ extern void wiz_dark(void);
 extern void cave_set_feat(int y, int x, int feat);
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool projectable(int y1, int x1, int y2, int x2);
-extern void scatter(int *yp, int *xp, int y, int x, int d, int mode);
+extern void scatter(int *yp, int *xp, int y, int x, int d);
 extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
@@ -573,7 +573,6 @@ extern bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool grou
 extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
 extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pet);
-extern bool player_place(int y, int x);
 extern void monster_drop_carried_objects(monster_type *m_ptr);
 
 /* monster3.c (currently in monster1.c) */
@@ -1036,7 +1035,7 @@ extern errr top_twenty(void);
 extern errr predict_score(void);
 extern void race_legends(void);
 extern void race_score(int race_num);
-extern void show_highclass(int building);
+extern void show_highclass(void);
 
 /* mind.c */
 extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS];

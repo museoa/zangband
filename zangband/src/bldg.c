@@ -269,7 +269,7 @@ void quest_discovery(int q_idx)
 {
 	quest_type      *q_ptr = &quest[q_idx];
 	monster_race    *r_ptr = &r_info[q_ptr->r_idx];
-	int             q_num = q_ptr->max_num;
+	int             q_num = q_ptr->max_num - q_ptr->cur_num;
 	char            name[80];
 
 	/* No quest index */
@@ -369,11 +369,6 @@ int number_of_quests(void)
 /* hack as in leave_store in store.c */
 static bool leave_bldg = FALSE;
 
-/* remember building location */
-static int building_loc = 0;
-
-static bool reinit_wilderness = FALSE;
-
 static bool is_owner(building_type *bldg)
 {
 	if (bldg->member_class[p_ptr->pclass] == BUILDING_OWNER)
@@ -408,7 +403,8 @@ static bool is_member(building_type *bldg)
 		return (TRUE);
 	}
 
-	if ((bldg->member_realm[p_ptr->realm1]) || (bldg->member_realm[p_ptr->realm2]))
+	if ((bldg->member_realm[p_ptr->realm1]) || 
+		(bldg->member_realm[p_ptr->realm2]))
 	{
 		return (TRUE);
 	}
@@ -450,7 +446,8 @@ static void show_building(building_type* bldg)
 	char tmp_str[80];
 
 	Term_clear();
-	sprintf(tmp_str, "%s (%s) %35s", bldg->owner_name, bldg->owner_race, bldg->name);
+	sprintf(tmp_str, "%s (%s) %35s", bldg->owner_name, bldg->owner_race,
+		 bldg->name);
 	prt(tmp_str, 2, 1);
 	prt("You may:", 19, 0);
 
@@ -527,40 +524,6 @@ static void show_building(building_type* bldg)
 
 	prt(" ESC) Exit building", 23, 0);
 }
-
-
-/* reset timed flags */
-static void reset_tim_flags(void)
-{
-	p_ptr->fast = 0;            /* Timed -- Fast */
-	p_ptr->slow = 0;            /* Timed -- Slow */
-	p_ptr->blind = 0;           /* Timed -- Blindness */
-	p_ptr->paralyzed = 0;       /* Timed -- Paralysis */
-	p_ptr->confused = 0;        /* Timed -- Confusion */
-	p_ptr->afraid = 0;          /* Timed -- Fear */
-	p_ptr->image = 0;           /* Timed -- Hallucination */
-	p_ptr->poisoned = 0;        /* Timed -- Poisoned */
-	p_ptr->cut = 0;             /* Timed -- Cut */
-	p_ptr->stun = 0;            /* Timed -- Stun */
-
-	p_ptr->protevil = 0;        /* Timed -- Protection */
-	p_ptr->invuln = 0;          /* Timed -- Invulnerable */
-	p_ptr->hero = 0;            /* Timed -- Heroism */
-	p_ptr->shero = 0;           /* Timed -- Super Heroism */
-	p_ptr->shield = 0;          /* Timed -- Shield Spell */
-	p_ptr->blessed = 0;         /* Timed -- Blessed */
-	p_ptr->tim_invis = 0;       /* Timed -- Invisibility */
-	p_ptr->tim_infra = 0;       /* Timed -- Infra Vision */
-
-	p_ptr->oppose_acid = 0;     /* Timed -- oppose acid */
-	p_ptr->oppose_elec = 0;     /* Timed -- oppose lightning */
-	p_ptr->oppose_fire = 0;     /* Timed -- oppose heat */
-	p_ptr->oppose_cold = 0;     /* Timed -- oppose cold */
-	p_ptr->oppose_pois = 0;     /* Timed -- oppose poison */
-
-	p_ptr->confusing = 0;       /* Touch of Confusion */
-}
-
 
 
 /*
@@ -892,7 +855,7 @@ static bool gamble_comm(int cmd)
 
 
 /*
- * inn commands
+ * Inn commands
  * Note that resting for the night was a perfect way to avoid player
  * ghosts in the town *if* you could only make it to the inn in time (-:
  * Now that the ghosts are temporarily disabled in 2.8.X, this function
@@ -960,7 +923,6 @@ static bool inn_comm(int cmd)
 					}
 
 					msg_print(NULL);
-					p_ptr->leftbldg = TRUE;
 				}
 			}
 			else
@@ -1074,8 +1036,6 @@ static void castle_quest(void)
 		q_ptr->status = QUEST_STATUS_REWARDED;
 
 		get_questinfo(q_index);
-
-		reinit_wilderness = TRUE;
 	}
 	/* Failed quest */
 	else if (q_ptr->status == QUEST_STATUS_FAILED)
@@ -1084,8 +1044,6 @@ static void castle_quest(void)
 
 		/* Mark quest as done (but failed) */
 		q_ptr->status = QUEST_STATUS_FAILED_DONE;
-
-		reinit_wilderness = TRUE;
 	}
 	/* Quest is still unfinished */
 	else if (q_ptr->status == QUEST_STATUS_TAKEN)
@@ -1098,8 +1056,6 @@ static void castle_quest(void)
 	else if (q_ptr->status == QUEST_STATUS_UNTAKEN)
 	{
 		q_ptr->status = QUEST_STATUS_TAKEN;
-
-		reinit_wilderness = TRUE;
 
 		/* Assign a new quest */
 		if (q_ptr->type == QUEST_TYPE_KILL_ANY_LEVEL)
@@ -1164,7 +1120,7 @@ static void town_history(void)
  * the current +dam of the player.
  */
 static void compare_weapon_aux2(object_type *o_ptr, int numblows,
-                                int r, int c, cptr attr, byte color, byte slay)
+	 int r, int c, cptr attr, byte color, byte slay)
 {
 	char tmp_str[80];
 	long maxdam, mindam;
@@ -1731,12 +1687,6 @@ static void building_recharge(void)
  */
 static void bldg_process_command(building_type *bldg, int i)
 {
-#ifdef USE_SCRIPT
-#if 0
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-#endif
-#endif /* USE_SCRIPT */
 	int bact = bldg->actions[i];
 	int bcost;
 	bool paid = FALSE;
@@ -1766,152 +1716,139 @@ static void bldg_process_command(building_type *bldg, int i)
 		return;
 	}
 
-#ifdef USE_SCRIPT
-#if 0
-	/* FEAT_BLDG_* replaced by fields */
-	if (building_command_callback(area(py, px)->feat - FEAT_BLDG_HEAD, i))
+
+	switch (bact)
 	{
-		/* Script paid the price */
-		paid = TRUE;
-	}
-	else
-#endif
-#endif /* USE_SCRIPT */
-
-	{
-		switch (bact)
-		{
-			case BACT_NOTHING:
-				/* Do nothing */
-				break;
-			case BACT_RESEARCH_ITEM:
-				paid = identify_fully();
-				break;
-			case BACT_TOWN_HISTORY:
-				town_history();
-				break;
-			case BACT_RACE_LEGENDS:
-				race_legends();
-				break;
+		case BACT_NOTHING:
+			/* Do nothing */
+			break;
+		case BACT_RESEARCH_ITEM:
+			paid = identify_fully();
+			break;
+		case BACT_TOWN_HISTORY:
+			town_history();
+			break;
+		case BACT_RACE_LEGENDS:
+			race_legends();
+			break;
 #if 0
-			case BACT_QUEST:
-				castle_quest();
-				break;
+		case BACT_QUEST:
+			castle_quest();
+			break;
 #endif
-			case BACT_KING_LEGENDS:
-			case BACT_ARENA_LEGENDS:
-			case BACT_LEGENDS:
-				show_highclass(building_loc);
-				break;
-			case BACT_POSTER:
-			case BACT_ARENA_RULES:
-			case BACT_ARENA:
-				arena_comm(bact);
-				break;
-			case BACT_IN_BETWEEN:
-			case BACT_CRAPS:
-			case BACT_SPIN_WHEEL:
-			case BACT_DICE_SLOTS:
-			case BACT_GAMBLE_RULES:
-				gamble_comm(bact);
-				break;
-			case BACT_REST:
-			case BACT_RUMORS:
-			case BACT_FOOD:
-				paid = inn_comm(bact);
-				break;
-			case BACT_RESEARCH_MONSTER:
-				paid = research_mon();
-				break;
-			case BACT_COMPARE_WEAPONS:
-				paid = compare_weapons();
-				break;
-			case BACT_ENCHANT_WEAPON:
-				item_tester_hook = item_tester_hook_melee_weapon;
-				enchant_item(bcost, 1, 1, 0);
-				break;
-			case BACT_ENCHANT_ARMOR:
-				item_tester_hook = item_tester_hook_armour;
-				enchant_item(bcost, 0, 0, 1);
-				break;
-			case BACT_RECHARGE:
-				building_recharge();
-				break;
-			case BACT_IDENTS: /* needs work */
-				identify_pack();
+		case BACT_KING_LEGENDS:
+		case BACT_ARENA_LEGENDS:
+		case BACT_LEGENDS:
+			show_highclass();
+			break;
+		case BACT_POSTER:
+		case BACT_ARENA_RULES:
+		case BACT_ARENA:
+			arena_comm(bact);
+			break;
+		case BACT_IN_BETWEEN:
+		case BACT_CRAPS:
+		case BACT_SPIN_WHEEL:
+		case BACT_DICE_SLOTS:
+		case BACT_GAMBLE_RULES:
+			gamble_comm(bact);
+			break;
+		case BACT_REST:
+		case BACT_RUMORS:
+		case BACT_FOOD:
+			paid = inn_comm(bact);
+			break;
+		case BACT_RESEARCH_MONSTER:
+			paid = research_mon();
+			break;
+		case BACT_COMPARE_WEAPONS:
+			paid = compare_weapons();
+			break;
+		case BACT_ENCHANT_WEAPON:
+			item_tester_hook = item_tester_hook_melee_weapon;
+			enchant_item(bcost, 1, 1, 0);
+			break;
+		case BACT_ENCHANT_ARMOR:
+			item_tester_hook = item_tester_hook_armour;
+			enchant_item(bcost, 0, 0, 1);
+			break;
+		case BACT_RECHARGE:
+			building_recharge();
+			break;
+		case BACT_IDENTS: /* needs work */
+			identify_pack();
 
-				/* Combine / Reorder the pack (later) */
-				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+			/* Combine / Reorder the pack (later) */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-				msg_print("Your posessions have been identified.");
+			msg_print("Your posessions have been identified.");
+			msg_print(NULL);
+			paid = TRUE;
+			break;
+		case BACT_LEARN:
+			do_cmd_study();
+			break;
+		case BACT_HEALING: /* needs work */
+			hp_player(200);
+			set_poisoned(0);
+			set_blind(0);
+			set_confused(0);
+			set_cut(0);
+			set_stun(0);
+			paid = TRUE;
+			break;
+		case BACT_RESTORE: /* needs work */
+			if (do_res_stat(A_STR)) paid = TRUE;
+			if (do_res_stat(A_INT)) paid = TRUE;
+			if (do_res_stat(A_WIS)) paid = TRUE;
+			if (do_res_stat(A_DEX)) paid = TRUE;
+			if (do_res_stat(A_CON)) paid = TRUE;
+			if (do_res_stat(A_CHR)) paid = TRUE;
+			break;
+		case BACT_GOLD: /* set timed reward flag */
+			if (!p_ptr->rewards[BACT_GOLD])
+			{
+				share_gold();
+				p_ptr->rewards[BACT_GOLD] = TRUE;
+			}
+			else
+			{
+				msg_print("You just had your daily allowance!");
 				msg_print(NULL);
-				paid = TRUE;
-				break;
-			case BACT_LEARN:
-				do_cmd_study();
-				break;
-			case BACT_HEALING: /* needs work */
-				hp_player(200);
-				set_poisoned(0);
-				set_blind(0);
-				set_confused(0);
-				set_cut(0);
-				set_stun(0);
-				paid = TRUE;
-				break;
-			case BACT_RESTORE: /* needs work */
-				if (do_res_stat(A_STR)) paid = TRUE;
-				if (do_res_stat(A_INT)) paid = TRUE;
-				if (do_res_stat(A_WIS)) paid = TRUE;
-				if (do_res_stat(A_DEX)) paid = TRUE;
-				if (do_res_stat(A_CON)) paid = TRUE;
-				if (do_res_stat(A_CHR)) paid = TRUE;
-				break;
-			case BACT_GOLD: /* set timed reward flag */
-				if (!p_ptr->rewards[BACT_GOLD])
-				{
-					share_gold();
-					p_ptr->rewards[BACT_GOLD] = TRUE;
-				}
-				else
-				{
-					msg_print("You just had your daily allowance!");
-					msg_print(NULL);
-				}
-				break;
-			case BACT_ENCHANT_ARROWS:
-				item_tester_hook = item_tester_hook_ammo;
-				enchant_item(bcost, 1, 1, 0);
-				break;
-			case BACT_ENCHANT_BOW:
-				item_tester_tval = TV_BOW;
-				enchant_item(bcost, 1, 1, 0);
-				break;
-			case BACT_RECALL:
+			}
+			break;
+		case BACT_ENCHANT_ARROWS:
+			item_tester_hook = item_tester_hook_ammo;
+			enchant_item(bcost, 1, 1, 0);
+			break;
+		case BACT_ENCHANT_BOW:
+			item_tester_tval = TV_BOW;
+			enchant_item(bcost, 1, 1, 0);
+			break;
+		case BACT_RECALL:
+			p_ptr->word_recall = 1;
+			msg_print("The air about you becomes charged...");
+			paid = TRUE;
+			p_ptr->redraw |= (PR_STATUS);
+			break;
+		case BACT_TELEPORT_LEVEL:
+			amt = get_quantity("Teleport to which level? ", 98);
+			if (amt > 0)
+			{
 				p_ptr->word_recall = 1;
+				p_ptr->max_dlv = amt;
 				msg_print("The air about you becomes charged...");
 				paid = TRUE;
 				p_ptr->redraw |= (PR_STATUS);
-				break;
-			case BACT_TELEPORT_LEVEL:
-				amt = get_quantity("Teleport to which level? ", 98);
-				if (amt > 0)
-				{
-					p_ptr->word_recall = 1;
-					p_ptr->max_dlv = amt;
-					msg_print("The air about you becomes charged...");
-					paid = TRUE;
-					p_ptr->redraw |= (PR_STATUS);
-				}
-				break;
-			case BACT_LOSE_MUTATION:
-				paid = lose_mutation(0);
-				/* ToDo: Better message text. */
-				if (!paid)
-					msg_print("You feel oddly normal.");
+			}
+			break;
+		case BACT_LOSE_MUTATION:
+			paid = lose_mutation(0);
+			/* ToDo: Better message text. */
+			if (!paid)
+				msg_print("You feel oddly normal.");
 
-				break;
-		}
+			break;
 	}
 
 	if (paid)
@@ -1949,7 +1886,7 @@ void do_cmd_quest(void)
 
 		p_ptr->inside_quest = cave[py][px].special;
 		dun_level = 1;
-		p_ptr->leftbldg = TRUE;
+
 		p_ptr->leaving = TRUE;
 	}
 }
@@ -1976,12 +1913,8 @@ void do_cmd_bldg(void)
 	}
 
 	which = (area(py, px)->feat - FEAT_BLDG_HEAD);
-	building_loc = which;
 
 	bldg = &building[which];
-
-	/* Don't re-init the wilderness */
-	reinit_wilderness = FALSE;
 
 	/* Forget the view */
 	forget_view();
@@ -2035,10 +1968,6 @@ void do_cmd_bldg(void)
 
 	/* Flush messages XXX XXX XXX */
 	msg_print(NULL);
-
-	/* Reinit wilderness to activate quests ... */
-	if (reinit_wilderness)
-		p_ptr->leaving = TRUE;
 
 	/* Hack -- Decrease "icky" depth */
 	character_icky--;

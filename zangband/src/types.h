@@ -1014,10 +1014,6 @@ typedef struct alloc_entry alloc_entry;
 
 struct alloc_entry
 {
-#ifdef USE_SCRIPT
-	PyObject *python;
-#endif /* USE_SCRIPT */
-
 	s16b index;		/* The actual index */
 
 	byte level;		/* Base dungeon level */
@@ -1032,39 +1028,13 @@ struct alloc_entry
 /*
  * Available "options"
  *
- *	- Address of actual option variable (or NULL)
- *
- *	- Normal Value (TRUE or FALSE)
+ *	- Normal and Current Value (TRUE or FALSE)
  *
  *	- Option Page Number (or zero)
- *
- *	- Savefile Set (or zero)
- *	- Savefile Bit in that set
  *
  *	- Textual name (or NULL)
  *	- Textual description
  */
-
-#if 0
-
-typedef struct option_type option_type;
-
-struct option_type
-{
-	bool	*o_var;
-
-	byte	o_norm;
-
-	byte	o_page;
-
-	byte	o_set;
-	byte	o_bit;
-
-	cptr	o_text;
-	cptr	o_desc;
-};
-
-#endif /* 0 */
 
 typedef struct option_type option_type;
 
@@ -1077,7 +1047,6 @@ struct option_type
 	cptr	o_text;
 	cptr	o_desc;
 };
-
 
 
 /*
@@ -1162,10 +1131,6 @@ struct store_type
 
 typedef store_type *store_ptr;
 
-/*
- * The "name" of spell 'N' is stored as spell_names[X][N],
- * where X is 0 for mage-spells and 1 for priest-spells.
- */
 typedef struct magic_type magic_type;
 
 struct magic_type
@@ -1624,7 +1589,7 @@ struct player_type
 
 
 /*
- * For mulitplayer use.
+ * For multiplayer use.
  *
  * Various information must be stored on the server
  * when a multiplayer version is created.
@@ -1689,9 +1654,7 @@ struct building_type
 	s16b actions[6];                /* action codes */
 	s16b action_restr[6];           /* action restrictions */
 
-#ifdef USE_SCRIPT
-	char act_script[6][128];        /* Scripts for the building */
-#endif /* USE_SCRIPT */
+	field_action_type act_func[6];	/* Functions for the building */
 
 	s16b member_class[MAX_CLASS];   /* which classes are part of guild */
 	s16b member_race[MAX_RACES];    /* which classes are part of guild */

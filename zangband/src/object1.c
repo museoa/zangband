@@ -1567,7 +1567,7 @@ bool item_tester_okay(object_type *o_ptr)
  */
 void display_inven(void)
 {
-	register        int i, n, z = 0;
+	int i, n, z = 0;
 	object_type     *o_ptr;
 	byte            attr;
 	char            tmp_val[80];
@@ -1656,7 +1656,7 @@ void display_inven(void)
  */
 void display_equip(void)
 {
-	register        int i, n;
+	int i, n;
 	object_type     *o_ptr;
 	byte            attr;
 	char            tmp_val[80];

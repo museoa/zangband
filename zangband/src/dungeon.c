@@ -493,7 +493,7 @@ static void wreck_the_pattern(void)
 
 	while (to_ruin--)
 	{
-		scatter(&r_y, &r_x, py, px, 4, 0);
+		scatter(&r_y, &r_x, py, px, 4);
 
 		if ((area(r_y, r_x)->feat >= FEAT_PATTERN_START) &&
 		    (area(r_y, r_x)->feat < FEAT_PATTERN_XTRA2))

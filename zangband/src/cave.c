@@ -4253,10 +4253,8 @@ bool projectable(int y1, int x1, int y2, int x2)
  *
  * This function is often called from inside a loop which searches for
  * locations while increasing the "d" distance.
- *
- * Currently the "m" parameter is unused.
  */
-void scatter(int *yp, int *xp, int y, int x, int d, int m)
+void scatter(int *yp, int *xp, int y, int x, int d)
 {
 	int nx = 0, ny = 0;
 

@@ -479,7 +479,7 @@ void monster_death(int m_idx)
 		while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
 		{
 			/* Pick a location */
-			scatter(&ny, &nx, y, x, 1, 0);
+			scatter(&ny, &nx, y, x, 1);
 
 			/* Stagger */
 			y = ny; x = nx;
@@ -630,7 +630,7 @@ void monster_death(int m_idx)
 
 			do
 			{
-				scatter(&wy, &wx, y, x, 20, 0);
+				scatter(&wy, &wx, y, x, 20);
 			}
 			while (!(in_bounds(wy, wx) && cave_floor_grid(area(wy, wx))) && --attempts);
 
