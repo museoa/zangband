@@ -971,20 +971,26 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
  */
 void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 {
-	s32b div;
+	s32b div, mod;
 	
-	/* Maximum player level */
-	div = r_ptr->r_pkills;
-	
-	/* Paranoia */
-	if (!div) div = 1;
+	if (r_ptr->mexp)
+	{
+		div = r_ptr->mexp + r_ptr->r_pkills;
 
-	/* Give some experience for the kill */
-	*new_exp = ((long)r_ptr->mexp * r_ptr->level) / div;
+		mod = p_ptr->lev * div;
+		*new_exp_frac = ((long)r_ptr->mexp * r_ptr->mexp % mod) * r_ptr->level % mod;
 
-	/* Handle fractional experience */
-	*new_exp_frac = ((((long)r_ptr->mexp * r_ptr->level) % div)
-		                * 0x10000L / div);
+		/* calculate the integer exp part */
+		*new_exp = ((long)r_ptr->mexp * r_ptr->level / p_ptr->lev) * r_ptr->mexp / div;
+
+		/* Handle fractional experience */
+		*new_exp_frac = (*new_exp_frac * 0x10000L / mod);
+	}
+	else
+	{
+		*new_exp = 0;
+		*new_exp_frac = 0;	
+	}
 }
 
 /*
