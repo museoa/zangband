@@ -2420,13 +2420,22 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 
 
 /*
- * Angband-specific code designed to allow the map to be sent
- * to the port as required.  This allows the main-???.c file
- * not to access internal game data, which may or may not
+ * The status of the square (x, y) has probably changed,
+ * update our knowledge of it and return the tile info.
+ *
+ *
+ * This is Angband-specific code designed to allow the map to
+ * be sent to the port as required.  This allows the main-???.c
+ * file not to access internal game data, which may or may not
  * be accessable.
+ *
  */
-static void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
+static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 {
+	/* Get location */
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
+	
 	term_map map;
 
 	int fld_idx, next_f_idx;
@@ -2441,12 +2450,21 @@ static void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	bool visible = pc_ptr->player & GRID_SEEN;
 	bool glow = c_ptr->info & CAVE_GLOW;
 	bool lite = (c_ptr->info & CAVE_MNLT) || (pc_ptr->player & GRID_LITE);
+	
+	/* Get the map_info() information */
+	map_info(c_ptr, pc_ptr, a, c, ta, tc);
 
-	/* Paranoia */
+	/* Paranoia - no overhead map initialised, just return. */
 	if (!map_init) return;
-
+	
 	/* clear map info */
 	(void)WIPE(&map, term_map);
+	
+	/* Save tile information */
+	map.a = *a;
+	map.c = *c;
+	map.ta = *ta;
+	map.tc = *tc;
 
 	/* Save known data */
 	map.terrain = pc_ptr->feat;
@@ -2564,32 +2582,9 @@ static void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	/* Save location */
 	map.x = x;
 	map.y = y;
-	
-	/* Hack - the tk port wants the map_info() information */
-	map_info(c_ptr, pc_ptr, &map.a, &map.c, &map.ta, &map.tc);
 
 	/* Save information in map */
 	save_map_location(x, y, &map);
-}
-
-
-/*
- * The status of the square (x, y) has probably changed,
- * update our knowledge of it and return the tile info.
- */
-static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
-{
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-	
-	/* Get location */
-	c_ptr = area(x, y);
-	pc_ptr = parea(x, y);
-	
-	Term_write_map(x, y, c_ptr, pc_ptr);
-	
-	/* Examine the grid */
-	map_info(c_ptr, pc_ptr, a, c, ta, tc);
 }
 
 
