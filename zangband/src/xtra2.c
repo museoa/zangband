@@ -494,9 +494,11 @@ void monster_death(int m_idx)
 
 #ifdef USE_CORPSES
 	/* Drop a dead corpse? */
-	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
+	
+	/* Hack: Do not drop a corpse in a random quest.  (reward is set) */
+	if (((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
-	    (r_ptr->flags9 & RF9_DROP_SKELETON)))
+	    (r_ptr->flags9 & RF9_DROP_SKELETON))) && !reward)
 	{
 		/* Assume skeleton */
 		bool corpse = FALSE;
