@@ -130,17 +130,19 @@ CC = gcc
 ## Note: Get the 16x16.bmp file, and put in lib/xtra/graf
 ##       to get 256 colours.
 ##
-CFLAGS = -Wall -O2 -m486 -pipe -g -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
+CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
+         -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
-#CFLAGS = -Wall -O2 -m486 -pipe -g -D"USE_XAW" -D"USE_GCU"
+#CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
+          -D"USE_XAW" -D"USE_GCU"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lcurses
 
 
 ##
 ## Variation -- Compile for Linux
 ##
-#CFLAGS = -Wall -O2 -m486 -pipe -g -D"USE_XAW" -D"USE_GCU"
+#CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g -D"USE_XAW" -D"USE_GCU"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt \
 #	-lX11 -lcurses
 
@@ -183,7 +185,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 ## Variation -- this might work for Linux 1.1.93 using ncurses-1.8.7.
 ##
 #CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses \
-#         -Wall -O2 -fomit-frame-pointer -m486 \
+#         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer -m486 \
 #         -D"USE_X11" -D"USE_GCU"
 #LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap
 
@@ -191,7 +193,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 ## Variation -- this might work better than the suggestion above
 ##
 #CFLAGS = -I/usr/include/ncurses \
-#         -Wall -O2 -fomit-frame-pointer \
+#         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer \
 #         -D"USE_X11" -D"USE_GCU" \
 #         -D"USE_TPOSIX" -D"USE_CURS_SET"
 #LIBS = -lX11 -lncurses
