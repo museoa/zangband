@@ -674,26 +674,12 @@ static void spoiler_blanklines(int n)
 /*
  * Write a line to the spoiler file and then "underline" it with hypens
  */
-static void spoiler_underline(cptr fmt, ...)
+static void spoiler_underline(cptr str)
 {
-	va_list vp;
-
-	char buf[1024];
-
-	/* Begin the Varargs Stuff */
-	va_start(vp, fmt);
-
-	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, &vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
-
-	fprintf(fff, "%s\n", buf);
-	spoiler_out_n_chars(strlen(buf), '-');
+	fprintf(fff, "%s\n", str);
+	spoiler_out_n_chars(strlen(str), '-');
 	fprintf(fff, "\n");
 }
-
 
 
 /*
@@ -992,8 +978,7 @@ static void object_analyze(const object_type *o_ptr, obj_desc_list *desc_ptr)
 
 static void print_header(void)
 {
-	spoiler_underline("Artifact Spoilers for %s Version %s",
-			VERSION_NAME, VERSION_STRING);
+	spoiler_underline("Artifact Spoilers for " VERSION_NAME " Version " VERSION_STRING);
 }
 
 
@@ -1602,8 +1587,7 @@ static void spoil_mon_info(cptr fname)
 
 
 	/* Dump the header */
-	spoiler_underline("Monster Spoilers for %s Version %s",
-			VERSION_NAME, VERSION_STRING);
+	spoiler_underline("Monster Spoilers for " VERSION_NAME "  Version " VERSION_STRING);
 	spoiler_blanklines(1);
 
 	/* Allocate the "who" array */
@@ -2486,8 +2470,7 @@ static void spoil_mutation(cptr fname)
 	}
 
 	/* Dump the header */
-	spoiler_underline("Mutation Spoilers for %s Version %s",
-			VERSION_NAME, VERSION_STRING);
+	spoiler_underline("Mutation Spoilers for " VERSION_NAME " Version " VERSION_STRING);
 	spoiler_blanklines(1);
 
 	for (i = 0; i < MUT_PER_SET * 3; i++)
@@ -2584,8 +2567,7 @@ static void spoil_rac_pow(cptr fname)
 	}
 
 	/* Dump the header */
-	spoiler_underline("Racial Powers Spoilers for %s Version %s",
-			VERSION_NAME, VERSION_STRING);
+	spoiler_underline("Racial Powers Spoilers for " VERSION_NAME " Version " VERSION_STRING);
 	spoiler_blanklines(1);
 
 	/* The Racial Powers */
