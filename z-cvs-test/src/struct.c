@@ -1597,7 +1597,7 @@ int struct_info_monster_type(Tcl_Interp *interp, StructType *typePtr,
 			break;
 
 		case 5: /* friend */
-			resultObjPtr = Tcl_NewBooleanObj(monster_is_friend(m_ptr));
+			resultObjPtr = Tcl_NewBooleanObj(is_friendly(m_ptr) || is_pet(m_ptr));
 			break;
 	}
 

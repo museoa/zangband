@@ -18,10 +18,6 @@
 #endif /* */
 
 
-#define monster_race_valid(r_idx) ((r_idx >= 0) && (r_idx < max_r_idx))
-
-#define monster_is_friend(m) (is_friendly(m) || is_pet(m))
-
 #ifndef PY_MAX_SPELLS
 #define PY_MAX_SPELLS 64
 #endif

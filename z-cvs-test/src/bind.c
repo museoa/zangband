@@ -556,7 +556,7 @@ static void ExpandTrack(char which, ClientData object, QE_Event *eventPtr,
 
 		case 'f': /* friend */
 			m_ptr = &m_list[clientData->who];
-			QE_ExpandNumber(monster_is_friend(m_ptr), result);
+			QE_ExpandNumber((is_friendly(m_ptr) || is_pet(m_ptr)), result);
 			break;
 
 		case 'w': /* who */

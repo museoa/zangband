@@ -20,8 +20,6 @@
 #include "widget.h"
 #include "map-dll.h"
 
-#define USE_MAP_PET /* Friends and pets use different color */
-
 /* Symbol for each cave grid */
 byte *g_map_symbol[MAX_HGT];
 
@@ -168,11 +166,6 @@ void map_symbol_set(int y, int x)
 	else if (m_idx > 0)
 	{
 		monster_type *m_ptr = &m_list[m_idx];
-#ifdef USE_MAP_PET
-		if (monster_is_friend(m_ptr))
-			symbol = g_symbol_special[SYMBOL_SPECIAL_PET];
-		else
-#endif /* USE_MAP_PET */
 			symbol = g_symbol_assign[SYMBOL_ASSIGN_MONSTER].assign[m_ptr->r_idx];
 	}
 
