@@ -52,43 +52,6 @@ cptr keyword_wall[] = { "not", "single", "ns", "we", "corner_nw",
 	"corner_ne", "corner_sw", "corner_se", "tri_n", "tri_s",
 	"tri_w", "tri_e", "quad", NULL };
 
-/* #define USE_STARTUP_LOG */
-
-#ifdef USE_STARTUP_LOG
-
-static FILE *startup_fp = NULL;
-
-static void startup_log_open(void)
-{
-	char path[1024];
-
-	path_build(path, 1024, ANGBAND_DIR_ROOT, "startup-bin.log");
-	startup_fp = fopen(path, "w");
-}
-
-static void startup_log_close(void)
-{
-	if (startup_fp)
-		fclose(startup_fp);
-}
-
-void startup_log(char *fmt, ...)
-{
-	va_list args;
-    char buf[512];
-
-	if (!startup_fp) return;
-	
-	va_start(args, fmt);
-	vsprintf(buf, fmt, args);
-	va_end(args);
-   
-	fprintf(startup_fp, "%s\n", buf);
-	fflush(startup_fp);
-}
-
-#endif /* USE_STARTUP_LOG */
-
 /*
  * Calculate the light radius for this floor grid
  */
@@ -2491,10 +2454,6 @@ void init_icons(int size, int depth)
 	/* Initialize the animation timer */
 	init_timer();
 
-#ifdef USE_STARTUP_LOG
-	startup_log_open();
-#endif /* USE_STARTUP_LOG */
-
 	/* Now we can safely use lite_spot() */
 	angtk_lite_spot = angtk_lite_spot_real;
 }
@@ -2509,8 +2468,4 @@ void free_icons(void)
 
 	/* Free the animation timer */
 	free_timer();
-
-#ifdef USE_STARTUP_LOG
-	startup_log_close();
-#endif /* USE_STARTUP_LOG */
 }

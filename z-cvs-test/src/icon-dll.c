@@ -89,7 +89,6 @@ unsigned long g_term_colormap[16];
 
 #define USE_COMPRESS
 #define USE_ZLIB
-/* #define USE_STARTUP_LOG */
 
 #ifdef USE_COMPRESS
 
@@ -1989,10 +1988,6 @@ objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	return TCL_OK;
 }
 
-#ifdef USE_STARTUP_LOG
-extern void startup_log(char *fmt, ...);
-#endif
-
 void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 {
 	int i, j, dark, length;
@@ -2595,9 +2590,7 @@ wrongCreateArgs:
 
 			/* Get the name of the new icon type */
 			typeName = Tcl_GetStringFromObj(objv[2], NULL);
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: typeName is \"%s\"", typeName);
-#endif
+
 			/* Lookup the icon type by name */
 			hPtr = Tcl_FindHashEntry(&g_icon_table, typeName);
 
@@ -2637,9 +2630,7 @@ startup_log("createtype: typeName is \"%s\"", typeName);
 				{
 					return TCL_ERROR;
 			    }
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: option is \"%s\"", createSwitch[index]);
-#endif
+
 				switch (index)
 				{
 					case 0: /* -charset */
@@ -2689,10 +2680,6 @@ startup_log("createtype: option is \"%s\"", createSwitch[index]);
 			{
 				goto wrongCreateArgs;
 			}
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: iconFile is \"%s\" fontName is \"%s\" charSet is \"%s\"",
-	iconFile, fontName, charSet);
-#endif
 
 			/* Calculate some values */
 			iconData.pitch = iconData.width * iconData.bypp;
@@ -2737,15 +2724,10 @@ startup_log("createtype: iconFile is \"%s\" fontName is \"%s\" charSet is \"%s\"
 			 */
 			if (fontName != NULL)
 			{
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: Tk_GetFont(%s)...", fontName);
-#endif
 				/* Get the requested font */
 				iconData.font = Tk_GetFont(interp, Tk_MainWindow(interp),
 					fontName);
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: Tk_GetFont(%s) okay", fontName);
-#endif
+
 				/* The font could not be created */
 				if (iconData.font == NULL)
 				{
@@ -2757,9 +2739,7 @@ startup_log("createtype: Tk_GetFont(%s) okay", fontName);
 				{
 					/* The number of icons is the number of characters */
 					iconData.icon_count = strlen(charSet);
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: strlen(charSet) is %d", iconData.icon_count);
-#endif
+
 					/*
 					 * The char_table is used to remember
 					 * which characters each icon represents.
@@ -2780,9 +2760,7 @@ startup_log("createtype: strlen(charSet) is %d", iconData.icon_count);
 				{
 					iconData.icon_count = 126 - 32 + 1; /* printable only */
 				}
-#ifdef USE_STARTUP_LOG
-startup_log("createtype: Tcl_Alloc(%ld)", iconData.icon_count * ICON_LENGTH);
-#endif
+
 				/* Allocate the icon data buffer */
 				iconData.icon_data = (IconPtr) Tcl_AllocDebug(iconData.icon_count *
 					iconData.length);
