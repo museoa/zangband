@@ -3193,7 +3193,7 @@ static void ang_sort_swap_hook_s32b(const vptr u, const vptr v, int a, int b)
 /*
  * Save a slope
  */
-static void vinfo_init_aux(vinfo_hack *hack, int y, int x, s32b m)
+static void vinfo_init_aux(vinfo_hack *hack, int x, int y, s32b m)
 {
 	int i;
 
@@ -3292,25 +3292,25 @@ errr vinfo_init(void)
 			m = SCALE * (1000L * y - 500) / (1000L * x + 500);
 
 			/* Handle "legal" slopes */
-			vinfo_init_aux(hack, y, x, m);
+			vinfo_init_aux(hack, x, y, m);
 
 			/* Slope to top left corner */
 			m = SCALE * (1000L * y - 500) / (1000L * x - 500);
 
 			/* Handle "legal" slopes */
-			vinfo_init_aux(hack, y, x, m);
+			vinfo_init_aux(hack, x, y, m);
 
 			/* Slope to bottom right corner */
 			m = SCALE * (1000L * y + 500) / (1000L * x + 500);
 
 			/* Handle "legal" slopes */
-			vinfo_init_aux(hack, y, x, m);
+			vinfo_init_aux(hack, x, y, m);
 
 			/* Slope to bottom left corner */
 			m = SCALE * (1000L * y + 500) / (1000L * x - 500);
 
 			/* Handle "legal" slopes */
-			vinfo_init_aux(hack, y, x, m);
+			vinfo_init_aux(hack, x, y, m);
 		}
 	}
 
@@ -4068,7 +4068,7 @@ static bool mon_invis;
 /*
  * Add a square to the changes array
  */
-static void mon_lite_hack(int y, int x)
+static void mon_lite_hack(int x, int y)
 {
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
@@ -4207,17 +4207,17 @@ void update_mon_lite(void)
 		mon_invis = !(parea(fy, fx)->player & GRID_VIEW);
 
 		/* The square it is on */
-		mon_lite_hack(fy, fx);
+		mon_lite_hack(fx, fy);
 
 		/* Adjacent squares */
-		mon_lite_hack(fy + 1, fx);
-		mon_lite_hack(fy - 1, fx);
-		mon_lite_hack(fy, fx + 1);
-		mon_lite_hack(fy, fx - 1);
-		mon_lite_hack(fy + 1, fx + 1);
-		mon_lite_hack(fy + 1, fx - 1);
-		mon_lite_hack(fy - 1, fx + 1);
-		mon_lite_hack(fy - 1, fx - 1);
+		mon_lite_hack(fx + 1, fy);
+		mon_lite_hack(fx - 1, fy);
+		mon_lite_hack(fx, fy + 1);
+		mon_lite_hack(fx, fy - 1);
+		mon_lite_hack(fx + 1, fy + 1);
+		mon_lite_hack(fx + 1, fy - 1);
+		mon_lite_hack(fx - 1, fy + 1);
+		mon_lite_hack(fx - 1, fy - 1);
 
 		/* Radius 2 */
 		if (rad >= 2)
@@ -4225,9 +4225,9 @@ void update_mon_lite(void)
 			/* South of the monster */
 			if (in_boundsp(fy + 1, fx) && cave_floor_grid(area(fy + 1, fx)))
 			{
-				mon_lite_hack(fy + 2, fx + 1);
-				mon_lite_hack(fy + 2, fx);
-				mon_lite_hack(fy + 2, fx - 1);
+				mon_lite_hack(fx + 1, fy + 2);
+				mon_lite_hack(fx, fy + 2);
+				mon_lite_hack(fx - 1, fy + 2);
 
 				if (in_boundsp(fy + 2, fx))
 				{
@@ -4236,9 +4236,9 @@ void update_mon_lite(void)
 					/* Radius 3 */
 					if ((rad == 3) && cave_floor_grid(c_ptr))
 					{
-						mon_lite_hack(fy + 3, fx + 1);
-						mon_lite_hack(fy + 3, fx);
-						mon_lite_hack(fy + 3, fx - 1);
+						mon_lite_hack(fx + 1, fy + 3);
+						mon_lite_hack(fx, fy + 3);
+						mon_lite_hack(fx - 1, fy + 3);
 					}
 				}
 			}
@@ -4246,9 +4246,9 @@ void update_mon_lite(void)
 			/* North of the monster */
 			if (in_boundsp(fy - 1, fx) && cave_floor_grid(area(fy - 1, fx)))
 			{
-				mon_lite_hack(fy - 2, fx + 1);
-				mon_lite_hack(fy - 2, fx);
-				mon_lite_hack(fy - 2, fx - 1);
+				mon_lite_hack(fx + 1, fy - 2);
+				mon_lite_hack(fx, fy - 2);
+				mon_lite_hack(fx - 1, fy - 2);
 
 				if (in_boundsp(fy - 2, fx))
 				{
@@ -4257,9 +4257,9 @@ void update_mon_lite(void)
 					/* Radius 3 */
 					if ((rad == 3) && cave_floor_grid(c_ptr))
 					{
-						mon_lite_hack(fy - 3, fx + 1);
-						mon_lite_hack(fy - 3, fx);
-						mon_lite_hack(fy - 3, fx - 1);
+						mon_lite_hack(fx + 1, fy - 3);
+						mon_lite_hack(fx, fy - 3, fx);
+						mon_lite_hack(fx - 1, fy - 3);
 					}
 				}
 			}
@@ -4267,9 +4267,9 @@ void update_mon_lite(void)
 			/* East of the monster */
 			if (in_boundsp(fy, fx + 1) && cave_floor_grid(area(fy, fx + 1)))
 			{
-				mon_lite_hack(fy + 1, fx + 2);
-				mon_lite_hack(fy, fx + 2);
-				mon_lite_hack(fy - 1, fx + 2);
+				mon_lite_hack(fx + 2, fy + 1);
+				mon_lite_hack(fx + 2, fy);
+				mon_lite_hack(fx + 2, fy - 1);
 
 				if (in_boundsp(fy, fx + 2))
 				{
@@ -4278,9 +4278,9 @@ void update_mon_lite(void)
 					/* Radius 3 */
 					if ((rad == 3) && cave_floor_grid(c_ptr))
 					{
-						mon_lite_hack(fy + 1, fx + 3);
-						mon_lite_hack(fy, fx + 3);
-						mon_lite_hack(fy - 1, fx + 3);
+						mon_lite_hack(fx + 3, fy + 1);
+						mon_lite_hack(fx + 3, fy);
+						mon_lite_hack(fx + 3, fy - 1);
 					}
 				}
 			}
@@ -4288,9 +4288,9 @@ void update_mon_lite(void)
 			/* West of the monster */
 			if (in_boundsp(fy, fx - 1) && cave_floor_grid(area(fy, fx - 1)))
 			{
-				mon_lite_hack(fy + 1, fx - 2);
-				mon_lite_hack(fy, fx - 2);
-				mon_lite_hack(fy - 1, fx - 2);
+				mon_lite_hack(fx - 2, fy + 1);
+				mon_lite_hack(fx - 2, fy);
+				mon_lite_hack(fx - 2, fy - 1);
 
 				if (in_boundsp(fy, fx - 2))
 				{
@@ -4299,9 +4299,9 @@ void update_mon_lite(void)
 					/* Radius 3 */
 					if ((rad == 3) && cave_floor_grid(c_ptr))
 					{
-						mon_lite_hack(fy + 1, fx - 3);
-						mon_lite_hack(fy, fx - 3);
-						mon_lite_hack(fy - 1, fx - 3);
+						mon_lite_hack(fx - 3, fy + 1);
+						mon_lite_hack(fx - 3, fy);
+						mon_lite_hack(fx - 3, fy - 1);
 					}
 				}
 			}
@@ -4314,28 +4314,28 @@ void update_mon_lite(void)
 			if (in_boundsp(fy + 1, fx + 1) && 
 				cave_floor_grid(area(fy + 1, fx + 1)))
 			{
-				mon_lite_hack(fy + 2, fx + 2);
+				mon_lite_hack(fx + 2, fy + 2);
 			}
 
 			/* South-West of the monster */
 			if (in_boundsp(fy + 1, fx - 1) && 
 				cave_floor_grid(area(fy + 1, fx - 1)))
 			{
-				mon_lite_hack(fy + 2, fx - 2);
+				mon_lite_hack(fx - 2, fy + 2);
 			}
 
 			/* North-East of the monster */
 			if (in_boundsp(fy - 1, fx + 1) &&
 				cave_floor_grid(area(fy - 1, fx + 1)))
 			{
-				mon_lite_hack(fy - 2, fx + 2);
+				mon_lite_hack(fx + 2, fy - 2);
 			}
 
 			/* North-West of the monster */
 			if (in_boundsp(fy - 1, fx - 1) &&
 				cave_floor_grid(area(fy - 1, fx - 1)))
 			{
-				mon_lite_hack(fy - 2, fx - 2);
+				mon_lite_hack(fx - 2, fy - 2);
 			}
 		}
 	}
