@@ -88,7 +88,12 @@ OBJS = \
 	l-monst.o l-object.o l-player.o l-random.o l-ui.o \
 	$(LUAOBJS)
 
+#
+# Generated .c files
+#
 
+GENERATED = \
+		l-monst.c l-object.c l-player.c l-random.c l-ui.c
 
 ##
 ## Following are some "system" definitions
@@ -328,7 +333,9 @@ zangband: $(OBJS)
 
 clean:
 	-rm -f *.bak *.o
-	-rm -f .\lua\*.bak .\lua\*.o
+	-rm -f ./lua/*.bak ./lua/*.o
+	-rm -f $(GENERATED)
+	-rm -f ./lua/tolua
 
 #
 # Generate dependencies automatically
