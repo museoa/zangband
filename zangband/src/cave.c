@@ -554,45 +554,14 @@ static void image_random(byte *ap, char *cp)
  */
 static bool feat_supports_lighting(byte feat)
 {
-	if (is_trap(feat)) return TRUE;
-
-	switch (feat)
-	{
-		case FEAT_FLOOR:
-		case FEAT_INVIS:
-		case FEAT_GLYPH:
-		case FEAT_LESS:
-		case FEAT_MORE:
-		case FEAT_SECRET:
-		case FEAT_RUBBLE:
-		case FEAT_MAGMA:
-		case FEAT_QUARTZ:
-		case FEAT_MAGMA_H:
-		case FEAT_QUARTZ_H:
-		case FEAT_MAGMA_K:
-		case FEAT_QUARTZ_K:
-		case FEAT_WALL_EXTRA:
-		case FEAT_WALL_INNER:
-		case FEAT_WALL_OUTER:
-		case FEAT_WALL_SOLID:
-		case FEAT_PERM_EXTRA:
-		case FEAT_PERM_INNER:
-		case FEAT_PERM_OUTER:
-		case FEAT_PERM_SOLID:
-		case FEAT_MINOR_GLYPH:
-		case FEAT_DEEP_WATER:
-		case FEAT_SHAL_WATER:
-		case FEAT_DEEP_LAVA:
-		case FEAT_SHAL_LAVA:
-		case FEAT_DARK_PIT:
-		case FEAT_DIRT:
-		case FEAT_GRASS:
-		case FEAT_TREES:
-		case FEAT_MOUNTAIN:
-			return TRUE;
-		default:
-			return FALSE;
-	}
+	if ((feat == FEAT_OPEN) ||
+	(feat == FEAT_BROKEN) ||
+	((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)) ||
+	((feat >= FEAT_PATTERN_START) && (feat <= FEAT_PATTERN_XTRA2)) ||
+	((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)))
+		return FALSE;
+	
+	return TRUE;
 }
 
 /*
@@ -652,7 +621,7 @@ static byte lighting_colours[16][2] =
 	{TERM_SLATE, TERM_BLUE},
 	
 	/* TERM_L_UMBER */
-	{TERM_L_WHITE, TERM_UMBER}
+	{TERM_YELLOW, TERM_UMBER}
 };
 
 
@@ -799,8 +768,11 @@ void map_info(int y, int x, byte *ap, char *cp)
 	/* Feature code */
 	feat = c_ptr->feat;
 
-	/* XXX XXX Hack - Pick floors (etc) by using '.' */
-	if (f_info[feat].x_char == '.')
+	/* Apply mimic field */
+	feat = f_info[feat].mimic;
+
+	/* Hack - Non LOS blocking terrains */
+	if (!(feat & 20))
 	{
 		/* Memorized (or visible) floor */
 		if   ((c_ptr->info & CAVE_MARK) ||
@@ -909,14 +881,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 	else
 	{
 		/* Memorized grids */
-		if (c_ptr->info & CAVE_MARK)
+		if ((c_ptr->info & CAVE_MARK) && (view_granite_lite))
 		{
-			/* Apply "mimic" field */
-			if (c_ptr->mimic)
-				feat = c_ptr->mimic;
-			else
-				feat = f_info[feat].mimic;
-
 			/* Access feature */
 			f_ptr = &f_info[feat];
 
@@ -925,99 +891,93 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 			/* Normal attr */
 			a = f_ptr->x_attr;
-
-			/* Special lighting effects */
-			if (view_granite_lite &&
-			   (((a == TERM_WHITE) && !use_transparency) ||
-			   (use_transparency && feat_supports_lighting(c_ptr->feat))))
+				
+			/* Handle "blind" */
+			if (p_ptr->blind)
 			{
-				/* Handle "blind" */
-				if (p_ptr->blind)
+				if (use_transparency && feat_supports_lighting(c_ptr->feat))
 				{
-					if (use_transparency)
+					/* Use a dark tile */
+					c++;
+				}
+				else
+				{
+					/* Use darkened colour */
+					a = lighting_colours[a][1];
+				}
+			}
+
+			/* Handle "torch-lit" grids */
+			else if (c_ptr->info & CAVE_LITE)
+			{
+				/* Torch lite */
+				if (view_yellow_lite)
+				{
+					if (use_transparency && feat_supports_lighting(c_ptr->feat))
+					{
+						/* Use a brightly lit tile */
+						c += 2;
+					}
+					else
+					{
+						/* Use lightened colour */
+						a = lighting_colours[a][0];
+					}
+				}
+			}
+
+			/* Handle "view_bright_lite" */
+			else if (view_bright_lite)
+			{
+				/* Not viewable */
+				if (!(c_ptr->info & CAVE_VIEW))
+				{
+					if (use_transparency && feat_supports_lighting(c_ptr->feat))
 					{
 						/* Use a dark tile */
 						c++;
 					}
 					else
 					{
-						/* Use "dark gray" */
-						a = TERM_L_DARK;
+						/* Use darkened colour */
+						a = lighting_colours[a][1];
 					}
 				}
 
-				/* Handle "torch-lit" grids */
-				else if (c_ptr->info & CAVE_LITE)
+				/* Not glowing */
+				else if (!(c_ptr->info & CAVE_GLOW))
 				{
-					/* Torch lite */
-					if (view_yellow_lite)
+					if (use_transparency && feat_supports_lighting(c_ptr->feat))
 					{
-						if (use_transparency)
-						{
-							/* Use a brightly lit tile */
-							c += 2;
-						}
-						else
-						{
-							/* Use "yellow" */
-							a = TERM_YELLOW;
-						}
+						/* Use a lit tile */
+					}
+					else
+					{
+						/* Use darkened colour */
+						a = lighting_colours[a][1];
 					}
 				}
 
-				/* Handle "view_bright_lite" */
-				else if (view_bright_lite)
+				/* Not glowing correctly */
+				else
 				{
-					/* Not viewable */
-					if (!(c_ptr->info & CAVE_VIEW))
-					{
-						if (use_transparency)
-						{
-							/* Use a dark tile */
-							c++;
-						}
-						else
-						{
-							/* Use "gray" */
-							a = TERM_SLATE;
-						}
-					}
+					int xx, yy;
 
-					/* Not glowing */
-					else if (!(c_ptr->info & CAVE_GLOW))
+					/* Hack -- move towards player */
+					yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
+					xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
+
+					/* Check for "local" illumination */
+					if (!(area(yy,xx)->info & CAVE_GLOW))
 					{
-						if (use_transparency)
+						if (use_transparency && feat_supports_lighting(c_ptr->feat))
 						{
 							/* Use a lit tile */
 						}
 						else
 						{
-							/* Use "gray" */
-							a = TERM_SLATE;
-						}
-					}
-
-					/* Not glowing correctly */
-					else
-					{
-						int xx, yy;
-
-						/* Hack -- move towards player */
-						yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-						xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
-
-						/* Check for "local" illumination */
-						if (!(area(yy,xx)->info & CAVE_GLOW))
-						{
-							if (use_transparency)
-							{
-								/* Use a lit tile */
-							}
-							else
-							{
-								/* Use "gray" */
-								a = TERM_SLATE;
-							}
+							/* Use lightened colour */
+							a = lighting_colours[a][0];
 						}
 					}
 				}

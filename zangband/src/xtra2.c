@@ -2279,14 +2279,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		/* Double break */
 		if (this_o_idx) break;
 
-		if (c_ptr->mimic)
-		{
-			feat = c_ptr->mimic;
-		}
-		else
-		{
-			feat = f_info[c_ptr->feat].mimic;
-		}
+		feat = f_info[c_ptr->feat].mimic;
 
 		/* Require knowledge about grid, or ability to see grid */
 		if (!(c_ptr->info & CAVE_MARK) && !player_can_see_bold(y, x))
