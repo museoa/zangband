@@ -3363,7 +3363,7 @@ static void do_cmd_knowledge_quests(void)
 	FILE *fff;
 	char file_name[1024];
 	char tmp_str[80];
-	char rand_tmp_str[80] = "\0";
+	char rand_tmp_str[110] = "\0";
 	char name[80];
 	monster_race *r_ptr;
 	int i;
