@@ -1673,7 +1673,7 @@ static byte player_init[MAX_CLASS][3][2] =
 
 	{
 		/* Mindcrafter */
-		{ TV_SWORD, SV_SMALL_SWORD },
+		{ TV_SWORD, SV_DAGGER },
 		{ TV_POTION, SV_POTION_RESTORE_MANA },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
 	},
