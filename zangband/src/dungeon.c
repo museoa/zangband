@@ -3613,9 +3613,6 @@ void play_game(bool new_game)
 		/* Seed the "complex" RNG */
 		Rand_state_init(seed);
 	}
-
-	/* Reset the visual mappings */
-	reset_visuals();
 	
 	/* Set or clear "rogue_like_commands" if requested */
 	if (arg_force_original) rogue_like_commands = FALSE;
@@ -3659,6 +3656,9 @@ void play_game(bool new_game)
 		/* Hack -- seed for flavors */
 		seed_flavor = randint0(0x10000000);
 	}
+	
+	/* Reset the visual mappings */
+	reset_visuals();
 	
 	/* Normal machine (process player name) */
 	if (savefile[0])
