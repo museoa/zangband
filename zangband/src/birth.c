@@ -597,27 +597,11 @@ static hist_type bg[] =
 /*
  * Current stats
  */
-static s16b stat_use[6];
+static s16b stat_use[A_MAX];
 
-/*
- * Autoroll limit
- */
-static s16b stat_limit[6];
 
-/*
- * Autoroll matches
- */
-static s32b stat_match[6];
 
-/*
- * Autoroll round
- */
-static s32b auto_round;
 
-/*
- * Last round
- */
-static s32b last_round;
 
 
 /*
@@ -829,7 +813,7 @@ static void save_prev_data(void)
 	prev.au = p_ptr->au;
 
 	/* Save the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		prev.stat[i] = p_ptr->stat_max[i];
 	}
@@ -871,7 +855,7 @@ static void load_prev_data(void)
 	temp.au = p_ptr->au;
 
 	/* Save the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		temp.stat[i] = p_ptr->stat_max[i];
 	}
@@ -902,7 +886,7 @@ static void load_prev_data(void)
 	p_ptr->au = prev.au;
 
 	/* Load the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		p_ptr->stat_max[i] = prev.stat[i];
 		p_ptr->stat_cur[i] = prev.stat[i];
@@ -934,7 +918,7 @@ static void load_prev_data(void)
 	prev.au = temp.au;
 
 	/* Save the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		prev.stat[i] = temp.stat[i];
 	}
@@ -1060,7 +1044,7 @@ static void get_stats(void)
 	}
 
 	/* Acquire the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Extract 5 + 1d3 + 1d4 + 1d5 */
 		j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
@@ -1472,7 +1456,7 @@ static void get_money(void)
 	gold = (p_ptr->sc * 6) + randint(100) + 300;
 
 	/* Process the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Mega-Hack -- reduce gold for high stats */
 		if (stat_use[i] >= 18 + 50) gold -= 300;
@@ -1488,8 +1472,9 @@ static void get_money(void)
 	p_ptr->au = gold;
 }
 
+ 
 
-
+#if 0
 /*
  * Display stat values, subset of "put_stats()"
  *
@@ -1504,7 +1489,7 @@ static void birth_put_stats(void)
 
 
 	/* Put the stats (and percents) */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Put the stat */
 		cnv_stat(stat_use[i], buf);
@@ -1527,6 +1512,7 @@ static void birth_put_stats(void)
 	}
 }
 
+#endif 0
 
 /*
  * Clear all the global "character" data
@@ -2636,10 +2622,10 @@ static bool player_birth_aux_3(void)
 
 
 #ifdef ALLOW_AUTOROLLER
+	
+	s16b stat_limit[A_MAX];
 
-	s16b stat_limit[6];
-
-	s32b stat_match[6];
+	s32b stat_match[A_MAX];
 
 	s32b auto_round = 0L;
 
@@ -2651,7 +2637,7 @@ static bool player_birth_aux_3(void)
 	/* Initialize */
 	if (autoroller)
 	{
-		int mval[6];
+		int mval[A_MAX];
 
 		char inp[80];
 

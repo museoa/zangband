@@ -64,11 +64,6 @@
 #define VERSION_EXTRA   0
 
 /*
- * Maximum number of abilities
- */
-#define A_MAX  6
-
-/*
  * Number of grids in each block (vertically)
  * Probably hard-coded to 11, see "generate.c"
  */
@@ -723,6 +718,12 @@
 #define A_DEX   3
 #define A_CON   4
 #define A_CHR   5
+
+/*
+ * Total number of stats.
+ */
+#define A_MAX	6
+
 
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)
