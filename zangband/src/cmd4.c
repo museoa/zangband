@@ -3198,7 +3198,7 @@ static void do_cmd_knowledge_uniques(void)
 		bool dead = (r_ptr->max_num == 0);
 
 		/* Print a message */
-		fprintf(fff, "     %s is %s\n", (r_name + r_ptr->name),
+		fprintf(fff, "     %-30s is %s\n", (r_name + r_ptr->name),
 			(dead ? "dead" : "alive"));
 	}
 
