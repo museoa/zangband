@@ -872,7 +872,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 			case 'w': case 'W':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, 30, OC_FORCE_BAD);
+				apply_magic(q_ptr, dun_level, 0, OC_FORCE_BAD);
 				break;
 			}
 			/* Apply normal magic, but first clear object */
