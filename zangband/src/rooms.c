@@ -2544,7 +2544,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
  * The area inside the walls is not touched:
  * only granite is removed- normal walls stay
  */
-static void build_room(int x1, int x2, int y1, int y2)
+static void build_room(int x1, int y1, int x2, int y2)
 {
 	int x, y, xsize, ysize, temp;
 	
@@ -2625,7 +2625,7 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 		x2 = randint1(xhsize) * 2 + x0 - xhsize;
 		y1 = randint1(yhsize) * 2 + y0 - yhsize;
 		y2 = randint1(yhsize) * 2 + y0 - yhsize;
-		build_room(x1, x2, y1, y2);
+		build_room(x1, y1, x2, y2);
 	}
 
 	/* Add some random doors */
