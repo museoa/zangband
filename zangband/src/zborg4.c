@@ -2821,7 +2821,7 @@ static void borg_notice_aux2(void)
 		borg_spell_legal_fail(REALM_ARCANE, 1, 0, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 1, 2, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 2, 60) ||
-		borg_mindcr_legal_fail(MIND_PRECOGNIT, 2, 60) ||
+		borg_mindcr_legal_fail(MIND_PRECOGNIT, 5, 60) ||
 		borg_racial_check(RACE_DWARF, TRUE) ||
 		borg_racial_check(RACE_NIBELUNG, TRUE))
 	{
