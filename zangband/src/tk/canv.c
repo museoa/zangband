@@ -262,7 +262,7 @@ ConfigureWidget(
 		return TCL_ERROR;
     }
 
-	FinalIcon(&iconSpec, &widgetPtr->assign, 0, NULL);
+	FinalIcon(&iconSpec, &widgetPtr->assign);
 	iconDataPtr = &g_icon_data[iconSpec.type];
 	widgetPtr->gwidth = iconDataPtr->width;
 	widgetPtr->gheight = iconDataPtr->height;
@@ -448,8 +448,8 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		(double) widgetPtr->header.y1,
 		&drawableX, &drawableY);
 
-	FinalIcon(&iconSpecFG, &widgetPtr->assign, 0, NULL);
-	FinalIcon(&iconSpecBG, &widgetPtr->assignbg, 0, NULL);
+	FinalIcon(&iconSpecFG, &widgetPtr->assign);
+	FinalIcon(&iconSpecBG, &widgetPtr->assignbg);
 
 	if (widgetPtr->borderColor && widgetPtr->borderWidth)
 	{

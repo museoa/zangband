@@ -12,6 +12,7 @@
 
 #include "tnb.h"
 #include "icon.h"
+#include "../maid-grf.h"
 
 typedef struct Widget Widget;
 
@@ -25,13 +26,14 @@ struct Widget
 	BitmapType bitmap;			/* Offscreen bitmap */
     int width;					/* # of columns */
     int height;					/* # of rows */
+	
+	BitmapPtr tiles;			/* The graphical tiles */
 
 #define WIDGET_REDRAW 0x0001
-#define WIDGET_DRAW_INVALID 0x0002
-#define WIDGET_DELETED 0x0008
-#define WIDGET_EXPOSE 0x0010
-#define WIDGET_NO_UPDATE 0x0020
-#define WIDGET_WIPE 0x0040
+#define WIDGET_DELETED 0x0002
+#define WIDGET_EXPOSE 0x0004
+#define WIDGET_NO_UPDATE 0x0084
+#define WIDGET_WIPE 0x0010
 	int flags;                  /* Misc flags */
 
     int oldWidth, oldHeight;	/* To notice changes */
@@ -48,12 +50,6 @@ struct Widget
 	int by, bx;					/* Offset of window from bitmap */
 	int dy, dx, dw, dh;			/* Dirty rect for copying */
 
-#define WIDGET_INFO_IGNORE 0x0001	/* This tile isn't visible */
-#define WIDGET_INFO_DIRTY 0x0002	/* This tile needs redraw */
-	short *info;					/* Flags for each tile */
-
-	int *invalid, invalidCnt;	/* List of invalid grids */
-
 	int y_min, y_max;           /* Limits of displayed info */
 	int x_min, x_max;           /* Limits of displayed info */
     int gwidth;					/* Source column width */
@@ -62,111 +58,30 @@ struct Widget
 };
 
 
-static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
+/*
+ * Draw a blank square at this 'unkown' location
+ */
+static void DrawBlank(int x, int y, BitmapPtr bitmapPtr)
 {
 	int pitch = bitmapPtr->pitch;
 	int bypp = bitmapPtr->pixelSize;
+	t_icon_data *iconDataPtr;
 	IconPtr srcPtr, dstPtr;
 	int y2;
 	int length;
-	t_icon_data *iconDataPtr;
-
-	/* Ignore NONE icon */
-	if (iconSpec.type == ICON_TYPE_NONE)
-		return;
-
-	/* Special handling of BLANK */
-	if (iconSpec.type == ICON_TYPE_BLANK)
-	{
-		/* Access the "blank" icon data */
-		iconDataPtr = &g_icon_data[ICON_TYPE_BLANK];
-		length = iconDataPtr->width * bypp;
-		srcPtr = iconDataPtr->icon_data;
-		
-		/* Get the address of where to write the data in the bitmap */
-		dstPtr = bitmapPtr->pixelPtr +
-			x * bypp +
-			y * pitch;
 	
-		/* Write the icon data */
-		for (y2 = 0; y2 < g_icon_size; y2++)
-		{
-			memcpy(dstPtr, srcPtr, length);
-			srcPtr += length;
-			dstPtr += pitch;
-		}
-
-		/* Done */
-		return;
-	}
-
-	/* Sanity check icon type */
-	if ((iconSpec.type) < 0 || (iconSpec.type >= g_icon_data_count))
-	{	
-		/* Use "default" icon */
-		iconSpec.type = ICON_TYPE_DEFAULT;
-		iconSpec.index = 0;
-		iconSpec.ascii = -1;
-	}
-
-	/* Access the icon type */
-	iconDataPtr = &g_icon_data[iconSpec.type];
-
-	/* Sanity check icon index */
-	if ((iconSpec.index < 0) || (iconSpec.index >= iconDataPtr->icon_count))
-	{
-		/* Use "default" icon */
-		iconSpec.type = ICON_TYPE_DEFAULT;
-		iconSpec.index = 0;
-		iconSpec.ascii = -1;
-
-		/* Access the DEFAULT icon type */
-		iconDataPtr = &g_icon_data[iconSpec.type];
-	}
-
-	if (iconSpec.ascii != -1)
-	{
-		if (iconSpec.ascii >= g_ascii_count)
-		{
-			/* Use "default" icon */
-			iconSpec.type = ICON_TYPE_DEFAULT;
-			iconSpec.index = 0;
-			iconSpec.ascii = -1;
-
-			/* Access the DEFAULT icon type */
-			iconDataPtr = &g_icon_data[iconSpec.type];
-		}
-		else
-		{
-			IconData iconData;
-/*			iconDataPtr = &g_icon_data[ICON_TYPE_BLANK];*/
-			length = iconDataPtr->width * bypp;
-			srcPtr = Icon_GetAsciiData(&iconSpec, iconData);
-			dstPtr = bitmapPtr->pixelPtr +
-				x * bypp +
-				y * pitch;
-			for (y2 = 0; y2 < iconDataPtr->height; y2++)
-			{
-				memcpy(dstPtr, srcPtr, length);
-				srcPtr += length;
-				dstPtr += pitch;
-			}
-			return;
-		}
-	}
-
-	/* FIXME: tint */
-	srcPtr = iconDataPtr->icon_data + iconSpec.index * iconDataPtr->length;
-
+	/* Access the "blank" icon data */
+	iconDataPtr = &g_icon_data[ICON_TYPE_BLANK];
+	length = iconDataPtr->width * bypp;
+	srcPtr = iconDataPtr->icon_data;
+	
 	/* Get the address of where to write the data in the bitmap */
 	dstPtr = bitmapPtr->pixelPtr +
 		x * bypp +
 		y * pitch;
-
-	length = iconDataPtr->width * bypp;
-
+	
 	/* Write the icon data */
-	for (y2 = 0; y2 < iconDataPtr->height; y2++)
+	for (y2 = 0; y2 < g_icon_size; y2++)
 	{
 		memcpy(dstPtr, srcPtr, length);
 		srcPtr += length;
@@ -174,32 +89,197 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 	}
 }
 
-/*
- * Get what to draw
- */
-static void widget_wtd(int x, int y, t_display *wtd)
-{
-	/* If this is a valid cave location, get the display info. */
-	if (in_bounds2 && in_bounds2(x, y))
-		get_display_info(y, x, wtd);
+static int r16mask = 0, r16shift = 0;
+static int g16mask = 0, g16shift = 0;
+static int b16mask = 0, b16shift = 0;
 
-	/* This isn't a valid cave location, so draw a "blank" icon */
-	else
-		wtd->blank = TRUE;
+static int count_ones(u16b mask)
+{
+	int n;
+
+	for (n = 0; mask != 0; mask &= mask - 1)
+	{
+		n++;
+	}
+	
+	return (n);
 }
+
+static u16b get_shift(u16b mask)
+{
+	/* Basically, count leading zeros */
+	
+	int n;
+	
+	for (n = 0; !(mask & 0x8000); mask *= 2)
+	{
+		n++;
+	}
+	
+	return (n);
+}
+
+
+/* Initialise the 16bit colour masks and shifts */
+static void init_masks(Tcl_Interp *interp)
+{
+	Tk_Window tkwin = Tk_MainWindow(interp);
+	Visual *visual = Tk_Visual(tkwin);
+	
+	u16b red_mask = visual->red_mask;
+	u16b green_mask = visual->green_mask;
+	u16b blue_mask = visual->blue_mask;
+
+	int count;
+
+#ifdef PLATFORM_WIN
+	/* XXX Always 5-5-5 */
+	red_mask = 0x7C00;
+	green_mask = 0x03E0;
+	blue_mask = 0x001F;
+#endif
+	
+	/* Get red mask and shift */
+	count = count_ones(red_mask);
+	
+	if (count == 5) r16mask = 0xF8;
+	else if (count == 6) r16mask = 0xFC;
+	else quit("Bad number of red bits");
+	
+	r16shift = get_shift(red_mask);
+
+
+	/* Get green mask and shift */
+	count = count_ones(green_mask);
+	
+	if (count == 5) g16mask = 0xF8;
+	else if (count == 6) g16mask = 0xFC;
+	else quit("Bad number of green bits");
+	
+	g16shift = get_shift(green_mask);
+	
+	/* Get blue mask and shift */
+	count = count_ones(blue_mask);
+	
+	if (count == 5) b16mask = 0xF8;
+	else if (count == 6) b16mask = 0xFC;
+	else quit("Bad number of blue bits");
+	
+	r16shift = get_shift(blue_mask);
+}
+
+
+/*
+ * Find a location on the bitmaps
+ */
+static byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
+{
+	return (bitmap_ptr->pixelPtr + x * bitmap_ptr->pixelSize + y * bitmap_ptr->pitch);
+}
+
+
+/*
+ * Draw stuff at this location
+ */
+static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
+{
+	byte *src1, *src2, *dest;
+	byte r, g, b;
+	
+	int i, j;
+	
+	u32b pixel;
+	
+	int depth = widgetPtr->bitmap.depth;
+	
+	int s1x = 0, s2x = 0, s1y = 0, s2y = 0;
+	
+	if (mb_ptr->a & 0x80)
+	{
+		s1x = (mb_ptr->a & 0x7F) * widgetPtr->gwidth;
+		s1y = (mb_ptr->c & 0x7F) * widgetPtr->gwidth;
+	}
+	
+	if (mb_ptr->ta & 0x80)
+	{
+		s2x = (mb_ptr->ta & 0x7F) * widgetPtr->gwidth;
+		s2y = (mb_ptr->tc & 0x7F) * widgetPtr->gwidth;
+	}
+	
+	
+	/* Loop over bitmap size */
+	for (i = 0; i < widgetPtr->gwidth; i++)
+	{
+		for (j = 0; j < widgetPtr->gheight; j++)
+		{
+			/* Get address of icon data in tiles bitmap */	
+			src1 = get_icon_ptr(widgetPtr->tiles, s1x + i, s1y + j);
+			src2 = get_icon_ptr(widgetPtr->tiles, s2x + i, s2y + j);
+
+			/* Get destination */
+			dest = get_icon_ptr(&widgetPtr->bitmap, x + i, y + j);
+		
+		
+		
+			/* Get tile pixel (using transparency) */
+			pixel = *src1 & 0x00FFFFFF;
+			
+			/* Hack - overlay */
+			if (!pixel) pixel = *src2 & 0x00FFFFFF;
+			
+			/* Get red, green, blue masked colours */
+			r = (pixel & 0x00FF0000) >> 16;
+			g = (pixel & 0x0000FF00) >> 8;
+			b = pixel & 0x000000FF;
+			
+			
+			/* Convert to bitdepth of screen bitmap and display */
+			
+			switch (depth)
+			{
+				case 8:
+				{
+					*dest = Palette_RGB2Index(r, g, b);
+		
+					break;
+				}
+			
+				case 16:
+				{
+					u16b p;
+					
+					/* Convert to 16bit colour */
+					p = (r & r16mask) << r16shift;
+					p += (g & g16mask) << g16shift;
+					p += (b & b16mask) << b16shift;
+					
+					dest[0] = (byte) (p & 0x00FF);
+					dest[1] = (byte) ((p & 0xFF00) >> 8);		
+					break;
+				}
+		
+				case 24:
+				{
+					dest[0] = r;
+					dest[1] = g;
+					dest[2] = b;
+					
+					break;
+				}
+			}
+		}
+	}
+}
+
 
 /*
  * Redraw everything.
  */
 static void widget_draw_all(Widget *widgetPtr)
 {
-	int tile, layer;
-	int rc = widgetPtr->rc;
-	int cc = widgetPtr->cc;
 	int y, x, yp, xp;
-	t_display wtd;
-	IconSpec iconSpec;
-	BitmapPtr bitmapPtr = &widgetPtr->bitmap;
+	
+	map_block *mb_ptr;
 
 	/* Paranoia: make sure the bitmap exists */
 	if (widgetPtr->bitmap.pixelPtr == NULL) return;
@@ -207,154 +287,41 @@ static void widget_draw_all(Widget *widgetPtr)
 	/* Drawing is disabled */
 	if (widgetPtr->flags & WIDGET_NO_UPDATE) return;
 
-	for (tile = 0; tile < cc * rc; tile++)
+	for (x = widgetPtr->x_min; x < widgetPtr->x_max; x++)
 	{
-		/* This tile does not need to be redrawn */
-		widgetPtr->info[tile] &= ~(WIDGET_INFO_DIRTY);
-
-		y = widgetPtr->y_min + tile / cc;
-		x = widgetPtr->x_min + tile % cc;
-
-		widget_wtd(x, y, &wtd);
-
-		yp = tile / cc * widgetPtr->gheight;
-		xp = tile % cc * widgetPtr->gwidth;
-
-		/* Just "erase" this spot */
-		if (wtd.blank)
+		for (y = widgetPtr->y_min; y < widgetPtr->y_max; y++)
 		{
-			iconSpec.type = ICON_TYPE_BLANK;
-			DrawIconSpec(yp, xp, iconSpec, bitmapPtr);
-			continue;
+			xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
+			yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
+			
+			/* Are we on the map? */
+			if (!map_in_bounds(x, y))
+			{
+				/* Are we on the screen? */
+				if ((x >= widgetPtr->x_min) && (x < widgetPtr->x_max) &&
+					(y >= widgetPtr->y_min) && (y < widgetPtr->y_max))
+				{
+					
+					/* Just "erase" this spot */
+					DrawBlank(xp, yp, &widgetPtr->bitmap);
+				}
+				
+				continue;
+			}
+			
+			/* Get the map location */
+			mb_ptr = map_loc(x, y);
+		
+			/* Draw stuff at that location */
+			DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
 		}
-
-		/*
-		 * Draw 1-4 background layers.
-		 */
-		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-		{
-			iconSpec = wtd.bg[layer];
-	
-			/* Stop at NONE icon */
-			if (iconSpec.type == ICON_TYPE_NONE)
-				break;
-	
-			/* Draw background icon */
-			DrawIconSpec(yp, xp, iconSpec, bitmapPtr);
-	
-			/* Stop at BLANK icon */
-			if (iconSpec.type == ICON_TYPE_BLANK)
-				break;
-		}
-	
-		/* Draw foreground icon */
-		if (wtd.fg.type != ICON_TYPE_NONE)
-			DrawIconSpec(yp, xp, wtd.fg, bitmapPtr);
-	
 	}
-
-	/* There are no invalid tiles */
-	widgetPtr->invalidCnt = 0;
 
 	/* Set dirty bounds to entire window */
 	widgetPtr->dx = widgetPtr->bx;
 	widgetPtr->dy = widgetPtr->by;
 	widgetPtr->dw = widgetPtr->width;
 	widgetPtr->dh = widgetPtr->height;
-}
-
-/*
- * Redraws only those grids that were specifically marked as invalid
- * Any affected widget items are also redrawn.
- */
-static void widget_draw_invalid(Widget *widgetPtr)
-{
-	int i, layer;
-	int cc = widgetPtr->cc;
-	int y, x, yp, xp;
-	t_display wtd;
-	IconSpec iconSpec;
-	BitmapPtr bitmapPtr = &widgetPtr->bitmap;
-	short *pinfo = widgetPtr->info;
-	int dl, dt, dr, db;
-
-	/* Paranoia: make sure the bitmap exists */
-	if (bitmapPtr->pixelPtr == NULL) return;
-
-	/* Drawing is disabled */
-	if (widgetPtr->flags & WIDGET_NO_UPDATE) return;
-
-	/* Keep track of dirty area */
-	dl = bitmapPtr->width;
-	dt = bitmapPtr->height;
-	dr = 0;
-	db = 0;
-
-	for (i = 0; i < widgetPtr->invalidCnt; i++)
-	{
-		int tile = widgetPtr->invalid[i];
-
-		/* This tile does not need to be redrawn */
-		pinfo[tile] &= ~WIDGET_INFO_DIRTY;
-
-		/* Cave coords */
-		y = widgetPtr->y_min + tile / cc;
-		x = widgetPtr->x_min + tile % cc;
-
-		widget_wtd(x, y, &wtd);
-
-		/* Bitmap coords */
-		yp = (tile / cc) * widgetPtr->gheight;
-		xp = (tile % cc) * widgetPtr->gwidth;
-
-		/* Dirty bounds */
-		if (xp < dl)
-			dl = xp;
-		if (yp < dt)
-			dt = yp;
-		if (xp + widgetPtr->gwidth - 1 > dr)
-			dr = xp + widgetPtr->gwidth - 1;
-		if (yp + widgetPtr->gheight - 1 > db)
-			db = yp + widgetPtr->gheight - 1;
-
-		/* Just "erase" this spot */
-		if (wtd.blank)
-		{
-			iconSpec.type = ICON_TYPE_BLANK;
-			DrawIconSpec(yp, xp, iconSpec, bitmapPtr);
-			continue;
-		}
-
-		/*
-		 * Draw 1-4 background layers.
-		 */
-		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-		{
-			iconSpec = wtd.bg[layer];
-	
-			/* Stop at NONE icon */
-			if (iconSpec.type == ICON_TYPE_NONE)
-				break;
-	
-			/* Draw background icon */
-			DrawIconSpec(yp, xp, iconSpec, bitmapPtr);
-	
-			/* Stop at BLANK icon */
-			if (iconSpec.type == ICON_TYPE_BLANK)
-				break;
-		}
-	
-		/* Draw foreground icon */
-		if (wtd.fg.type != ICON_TYPE_NONE)
-			DrawIconSpec(yp, xp, wtd.fg, bitmapPtr);
-	}
-
-	widgetPtr->invalidCnt = 0;
-
-	widgetPtr->dx = dl;
-	widgetPtr->dy = dt;
-	widgetPtr->dw = dr - dl + 1;
-	widgetPtr->dh = db - dt + 1;
 }
 
 
@@ -369,7 +336,8 @@ static void Widget_CreateBitmap(Widget *widgetPtr)
 	widgetPtr->bitmap.width = widgetPtr->bw;
 	widgetPtr->bitmap.height = widgetPtr->bh;
 
-	widgetPtr->bitmap.depth = ((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8);
+	/* widgetPtr->bitmap.depth =
+		((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8); */
 	widgetPtr->bitmap.depth = g_icon_depth;
 
 	/* Create the bitmap */
@@ -385,7 +353,6 @@ static void Widget_DeleteBitmap(Widget *widgetPtr)
 
 static void Widget_Calc(Widget *widgetPtr)
 {
-	int i;
 	int rc, cc;
 	int dLeft, cLeft, dRight, cRight;
 	int dTop, rTop, dBottom, rBottom;
@@ -422,20 +389,6 @@ static void Widget_Calc(Widget *widgetPtr)
 
 	widgetPtr->bx = cLeft * widgetPtr->gwidth - dLeft;
 	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
-
-	if (widgetPtr->info)
-		FREE(widgetPtr->info);
-	if (widgetPtr->invalid)
-		FREE(widgetPtr->invalid);
-
-	C_MAKE(widgetPtr->info, widgetPtr->rc * widgetPtr->cc, short);
-	C_MAKE(widgetPtr->invalid, widgetPtr->rc * widgetPtr->cc, int);
-	widgetPtr->invalidCnt = 0;
-
-	for (i = 0; i < widgetPtr->rc * widgetPtr->cc; i++)
-	{
-		widgetPtr->info[i] = 0;
-	}
 }
 
 
@@ -452,20 +405,10 @@ static void Widget_Display(ClientData clientData)
 	if ((widgetPtr->flags & WIDGET_WIPE) != 0)
 	{
 		/* Forget that a wipe (and redraw) is needed */
-		widgetPtr->flags &= ~(WIDGET_WIPE | WIDGET_DRAW_INVALID);
+		widgetPtr->flags &= ~(WIDGET_WIPE);
 
 		/* Draw all grids */
 		widget_draw_all(widgetPtr);
-	}
-
-	/* We want to draw outdated grids */
-	if ((widgetPtr->flags & WIDGET_DRAW_INVALID) != 0)
-	{
-		/* Forget that a redraw is needed */
-		widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
-
-		/* Draw outdated grids (offscreen) */
-		widget_draw_invalid(widgetPtr);
 	}
 
 	/* Forget that a redraw is scheduled */
@@ -742,35 +685,12 @@ static void Widget_Wipe(Widget *widgetPtr)
 	/* Remember to redraw all grids later */
 	widgetPtr->flags |= WIDGET_WIPE;
 
-	/* Don't bother drawing invalid grids */
-	widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
-
 	/* Redraw later */
 	Widget_EventuallyRedraw(widgetPtr);
 }
 
-static void Widget_Invalidate(Widget *widgetPtr, int row, int col)
-{
-	int rc = widgetPtr->rc;
-	int cc = widgetPtr->cc;
-	int tile;
 
-	if (widgetPtr->flags & WIDGET_WIPE) return;
-
-	if (row < 0 || row >= rc)
-		return;
-	if (col < 0 || col >= cc)
-		return;
-
-	tile = row * cc + col;
-	if (widgetPtr->info[tile] & (WIDGET_INFO_DIRTY | WIDGET_INFO_IGNORE))
-		return;
-	widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
-	widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
-}
-
-
-static void Widget_Center(Widget *widgetPtr, int cy, int cx)
+static void Widget_Center(Widget *widgetPtr, int cx, int cy)
 {
 	/* Remember new center */
 	widgetPtr->y = cy, widgetPtr->x = cx;
@@ -786,14 +706,67 @@ static void Widget_Center(Widget *widgetPtr, int cy, int cx)
 
 
 /*
+ * Map hooks for the widget
+ */
+
+/* Want to redraw this square */
+static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
+{
+	Widget *widgetPtr = (Widget *) data;
+		
+	int xp, yp;
+	int dl = widgetPtr->dx, dt = widgetPtr->dy;
+	int dr = widgetPtr->dw + dl - 1, db = widgetPtr->dh + dt - 1;
+	int x = map->x, y = map->y;
+
+	if (widgetPtr->flags & WIDGET_WIPE) return;
+
+	/* Needs to be on the screen */
+	if ((x <= widgetPtr->x_min) || (x > widgetPtr->x_max)) return;
+	if ((y <= widgetPtr->y_min) || (y > widgetPtr->y_max)) return;
+
+	/* Bitmap coords */
+	xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
+	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
+	
+	/* Draw stuff at this location */
+	DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
+	
+	/* Dirty bounds */
+	if (xp < dl) dl = xp;
+	if (yp < dt) dt = yp;
+	if (xp + widgetPtr->gwidth - 1 > dr) dr = xp + widgetPtr->gwidth - 1;
+	if (yp + widgetPtr->gheight - 1 > db) db = yp + widgetPtr->gheight - 1;
+
+	/* Keep track of invalid region */
+	widgetPtr->dx = dl;
+	widgetPtr->dy = dt;
+	widgetPtr->dw = dr - dl + 1;
+	widgetPtr->dh = db - dt + 1;
+}
+
+static void Widget_map_erase(vptr data)
+{
+	/* Wipe the screen */
+	Widget_Wipe((Widget *) data);
+}
+
+static void Widget_player_move(int x, int y, vptr data)
+{
+	/* Recenter the widget and redraw */
+	Widget_Center((Widget *) data, x, y);
+}
+
+
+/*
  * This is the window-specific command created for each new Widget.
  */
 static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	static cptr commandNames[] = {"caveyx", "center", "configure",
-		"wipe", "bounds", "visible", "wipespot", "hittest", NULL};
+		"wipe", "bounds", "visible", "hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CONFIGURE,
-		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_WIPESPOT, IDX_HITTEST} option;
+		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
     Tcl_Obj *objPtr;
@@ -884,7 +857,7 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 				}
 	
 				/* Center the widget */
-				Widget_Center(widgetPtr, y, x);
+				Widget_Center(widgetPtr, x, y);
 			}
 			else
 			{
@@ -985,31 +958,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			break;
 		}
 
-		/* For debugging */
-		case IDX_WIPESPOT: /* wipespot */
-		{
-			int y, x, r, c;
-
-			/* Get y location */
-			if (Tcl_GetIntFromObj(interp, objv[2], &y) != TCL_OK)
-			{
-				goto error;
-			}
-
-			/* Get x location */
-			if (Tcl_GetIntFromObj(interp, objv[3], &x) != TCL_OK)
-			{
-				goto error;
-			}
-
-			if (!Widget_CaveToView(widgetPtr, y, x, &r, &c))
-				break;
-			Widget_Invalidate(widgetPtr, r, c);
-			widgetPtr->flags |= WIDGET_DRAW_INVALID;
-			Widget_EventuallyRedraw(widgetPtr);
-			break;
-		}
-
 		case IDX_HITTEST: /* hittest */
 		{
 			int y, x, row, col, yc, xc;
@@ -1103,15 +1051,20 @@ static void Widget_Destroy(Widget *widgetPtr)
 	Tk_FreeConfigOptions((char *) widgetPtr, optionTable,
 		widgetPtr->tkwin);
 
-	if (widgetPtr->info)
-		FREE(widgetPtr->info);
-	if (widgetPtr->invalid)
-		FREE(widgetPtr->invalid);
-
 	widgetPtr->tkwin = NULL;
+	
+	/* Free the callbacks */
+	del_callback(CALL_MAP_INFO, widgetPtr);
+	del_callback(CALL_MAP_ERASE, widgetPtr);
+	del_callback(CALL_PLAYER_MOVE, widgetPtr);
+	
+	/* Free the tiles */
+	if (widgetPtr->tiles) Bitmap_Delete(widgetPtr->tiles);
 
 	/* Free the Widget struct */
     Tcl_EventuallyFree((ClientData) widgetPtr, Tcl_Free);
+	
+	
 }
 
 
@@ -1275,8 +1228,8 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->bitmap.pixmap = None;
     widgetPtr->width = 0;
     widgetPtr->height = 0;
-    widgetPtr->gwidth = 0;
-    widgetPtr->gheight = 0;
+    widgetPtr->gwidth = tnb_tile_x;
+    widgetPtr->gheight = tnb_tile_y;
     widgetPtr->oldWidth = widgetPtr->oldHeight = 0;
     widgetPtr->oldGWidth = widgetPtr->oldGHeight = 0;
     widgetPtr->cursor = None;
@@ -1288,8 +1241,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
-	widgetPtr->info = NULL;
-	widgetPtr->invalid = NULL;
 
 	/*
 	 * Arrange for our routine to be called when any of the specified
@@ -1320,53 +1271,27 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		return TCL_ERROR;
 	}
 	
+	/* Load the tiles */
+	widgetPtr->tiles = Bitmap_Load(g_interp, tnb_tile_file);
+	
+	/* Hack - initialise the hooks into the overhead map code */
+
+	/* Initialise the overhead map code */
+	init_overhead_map();
+
+	/* Save the tk hooks into the overhead map */
+	set_callback((callback_type) Widget_map_info, CALL_MAP_INFO, widgetPtr);
+	set_callback((callback_type) Widget_map_erase, CALL_MAP_ERASE, widgetPtr);
+
+	/* Save old player movement hook */
+	set_callback((callback_type) Widget_player_move, CALL_PLAYER_MOVE, widgetPtr);
+
 	/* Return the window pathname */
     Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),
     	-1);
 
 	/* Success */
     return TCL_OK;
-}
-
-
-/*
- * This is a dummy lite_spot() routine that may get called before
- * the icons have been initialized.
- */
-static void angtk_lite_spot_dummy(int y, int x)
-{
-	/* Ignore parameters and do nothing */
-	(void) x;
-	(void) y;
-}
-
-void (*angtk_lite_spot)(int y, int x) = angtk_lite_spot_dummy;
-
-/*
- * This is called whenever the game thinks a grid needs to be redrawn,
- * via lite_spot(). If the grid actually changed then a redraw is
- * scheduled.
- */
-void angtk_lite_spot_real(int y, int x)
-{
-	/* Get knowledge about location */
-	get_grid_info(y, x, &g_grid[y][x]);
-
-}
-
-static void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int right)
-{
-	int row, col;
-
-	if (widgetPtr->flags & WIDGET_WIPE) return;
-
-	for (row = top; row <= bottom; row++)
-	{
-		for (col = left; col <= right; col++)
-		{
-			Widget_Invalidate(widgetPtr, row, col);
-		}
-	}
 }
 
 /*
@@ -1376,6 +1301,9 @@ int init_widget(Tcl_Interp *interp)
 {
 	/* Create the "widget" interpreter command */
 	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
+	
+	/* Initialise palette stuff */
+	if (g_icon_depth == 16) init_masks(interp);
 
 	/* Success */
     return TCL_OK;

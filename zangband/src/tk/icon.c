@@ -16,7 +16,6 @@
 unsigned char *g_palette_rgb;
 t_assign_group g_assign[ASSIGN_MAX];
 t_assign_icon g_assign_none;
-t_grid *g_grid[MAX_HGT] = {0};
 
 t_icon_data *g_icon_data; /* Array of icon types */
 int g_icon_data_count = 0; /* Number of icon types */
@@ -32,283 +31,16 @@ int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
 
 int *g_background = NULL;
 
-t_assign_icon *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 bool g_icon_map_changed = FALSE;
 int *g_image_monster, *g_image_object;
 
-
-/*
- * This routine fills the given t_grid struct with the indices of
- * any known feature, object or monster at the given cave location.
- * This routine does not consider light radius.
- */
-void get_grid_info(int y, int x, t_grid *gridPtr)
-{
-	byte feat;
-
-	object_type *o_ptr;
-
-	s16b m_idx;
-
-	/*
-	 * Hallucination: The original game assigns a random image to
-	 * an object or monster, and sometimes (1 in 256) to a feature.
-	 */
-
-	gridPtr->f_idx = 0;
-	gridPtr->o_ptr = NULL;
-	gridPtr->m_idx = 0;
-
-	/* Feature */
-	feat = area(x, y)->feat;
-
-	/* Monster/Player */
-	m_idx = area(x, y)->m_idx;
-
-	if ((y == p_ptr->py) && (x == p_ptr->px)) m_idx = -1;
-
-	/* Handle "player" */
-	if (m_idx < 0)
-	{
-		/* Remember the character index */
-		gridPtr->m_idx = m_idx;
-
-		/* Remember the feature index (for masked icon) */
-		gridPtr->f_idx = feat;
-
-		/* Done */
-		return;
-	}
-
-	/* Remember the feature index */
-	gridPtr->f_idx = parea(x, y)->feat;
-
-	/* Objects */
-	OBJ_ITT_START (area(x, y)->o_idx, o_ptr)
-	{
-		/* Memorized objects */
-		if (!o_ptr->info & OB_SEEN) continue;
-				
-		/* Remember the top-most object */
-		gridPtr->o_ptr = o_ptr;
-
-		/* Stop */
-		break;
-	}
-	OBJ_ITT_END;
-
-	/* Monsters */
-	if (m_idx > 0)
-	{
-		/* Visible monster */
-		if (m_list[m_idx].ml)
-		{
-			/* Remember the monster index */
-			gridPtr->m_idx = m_idx;
-		}
-	}
-}
-
-/*
- * This is the routine that determines the actual icon(s) used to
- * represent the given cave location. We use the global g_grid[] array
- * to first determine what monster/object/feature is visible at the
- * given location. Then we read the assignment for the specific monster/
- * object/feature from the g_assign[] array.
- */
-void get_display_info(int y, int x, t_display *displayPtr)
-{
-	int m_idx, f_idx;
-	
-	object_type *o_ptr;
-
-	/* Access the global cave memory */
-	t_grid *gridPtr = &g_grid[y][x];
-
-	int layer;
-
-	t_assign_icon assign;
-	IconSpec iconSpec;
-	
-	m_idx = gridPtr->m_idx;
-	o_ptr = gridPtr->o_ptr;
-	f_idx = gridPtr->f_idx;
-
-	/* The grid is completely uninteresting */
-	if (!m_idx && !o_ptr && !f_idx)
-	{
-		/* All other values are uninitialized */
-		displayPtr->blank = TRUE;
-		
-		/* Done */
-		return;
-	}
-
-	/* */
-	displayPtr->blank = FALSE;
-
-	if (m_idx || o_ptr)
-	{
-		/* Character */
-		if (m_idx == -1)
-		{
-			int k = 0;
-	
-			/*
-			 * Currently only one icon is assigned to the character. We
-			 * could allow different icons to be used depending on the
-			 * state of the character (badly wounded, invincible, etc).
-			 */
-		
-			assign = g_assign[ASSIGN_CHARACTER].assign[k];
-		}
-	
-		/* Monster */
-		else if (m_idx > 0)
-		{
-			/* Get the monster race */
-			int r_idx = m_list[m_idx].r_idx;
-	
-			/* XXX Hack -- Hallucination */
-			if (p_ptr->image)
-			{
-				/* Get a random monster race */
-				r_idx = g_image_monster[r_idx];
-			}
-	
-			/* Get the icon assigned to the monster race */
-			assign = g_assign[ASSIGN_MONSTER].assign[r_idx];
-		}
-	
-		/* Object */
-		else if (o_ptr)
-		{	
-			/* Get the icon assigned to the object kind */
-			assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
-		}
-
-		/*
-		 * Now we have the assignment for the character, monster, or object.
-		 */
-	
-		iconSpec.type = assign.type;
-		iconSpec.index = assign.index;
-		iconSpec.ascii = assign.ascii;
-	}
-
-	/* No character, monster or object */
-	else
-	{
-		iconSpec.type = ICON_TYPE_NONE;
-	}
-
-	/* Set the foreground icon */
-	displayPtr->fg = iconSpec;
-	
-	/* The feature is not known */
-	if (f_idx == 0)
-	{
-		/* Other layers uninitialized */
-		displayPtr->bg[ICON_LAYER_1].type = ICON_TYPE_BLANK;
-
-		/* Done */
-		return;
-	}
-
-	if (g_icon_map_changed)
-	{
-		int y, x;
-		
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				set_grid_assign(y, x);
-			}
-		}
-		g_icon_map_changed = FALSE;
-	}
-
-	/*
-	 * Get the icon from the global icon map. The g_icon_map[]
-	 * array allows us to use different icons for the same
-	 * feature index. For example, doors may be vertical or
-	 * horizontal.
-	 */
-	for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-	{
-		assign = g_icon_map[layer][y][x];
-
-		iconSpec.type = assign.type;
-		iconSpec.index = assign.index;
-		iconSpec.ascii = assign.ascii;
-
-		/* Only layer 1 is required */
-		if (iconSpec.type == ICON_TYPE_NONE)
-		{
-			displayPtr->bg[layer] = iconSpec;
-			break;
-		}
-
-		displayPtr->bg[layer] = iconSpec;
-	}
-}
-
-
-/*
- * This routine determines the icon to use for the given cave
- * location. It is called after the dungeon is created or loaded
- * from the savefile, and whenever a feature changes.
- * It handles any special vault icons as well.
- */
-void set_grid_assign(int y, int x)
-{
-	int feat = area(x, y)->feat;
-	t_assign_icon assign;
-	int layer;
-
-	/* The dungeon isn't ready yet */
-	if (!character_dungeon) return;
-
-	/* Paranoia */
-	if (g_icon_map[ICON_LAYER_1][0] == NULL) return;
-
-	/* Get the assignment for this feature */
-	assign = g_assign[ASSIGN_FEATURE].assign[feat];
-
-	/* Remember the icon in the global icon map */
-	g_icon_map[ICON_LAYER_1][y][x] = assign;
-
-	layer = ICON_LAYER_2;
-
-	if (feat != g_background[feat])
-	{
-		/* Swap foreground & background */
-		g_icon_map[ICON_LAYER_2][y][x] = assign;
-
-		feat = g_background[feat];
-		assign = g_assign[ASSIGN_FEATURE].assign[feat];
-
-		/* Swap foreground & background */
-		g_icon_map[ICON_LAYER_1][y][x] = assign;
-
-		/* Wipe layers 3 & 4 */
-		layer = ICON_LAYER_3;
-	}
-
-	/* Wipe the remaining layers */
-	for (; layer < ICON_LAYER_MAX; layer++)
-	{
-		g_icon_map[layer][y][x] = g_assign_none;
-	}
-}
 
 /*
  * Determine the icon type/index of a real icon type from the given
  * icon type/index. This routine is used to get the actual frame of
  * a sprite for example. Usually the given icon type/index is returned.
  */
-void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr)
+void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr)
 {
 	iconOut->type = assignPtr->type;
 	iconOut->index = assignPtr->index;
@@ -553,7 +285,7 @@ static int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int o
 		return TCL_ERROR;
 	}
 
-	FinalIcon(&iconSpec, &assign, 0, NULL);
+	FinalIcon(&iconSpec, &assign);
 	(void) AssignToString_Icon(buf, &assign);
 	Tcl_SetResult(interp, buf + 5, TCL_VOLATILE);
 
@@ -758,23 +490,6 @@ void init_icons(int size, int depth)
 	g_assign[ASSIGN_OBJECT].assign[0].type = ICON_TYPE_NONE;
 
 	/*
-	 * This is an array of t_icon types, one for every grid in
-	 * the cave! The icons are only those assigned to features,
-	 * never to monsters, objects, or the character. The icons
-	 * are not calculated for visibility or light radius. This
-	 * array allows different icons to be assigned to the same
-	 * feature type. For example, doors are horizontal or vertical,
-	 * and have different icons, and the town has a varied
-	 * set of icons.
-	 */
-	for (i = 0; i < MAX_HGT; i++)
-	{
-		int layer;
-		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-			C_MAKE(g_icon_map[layer][i], MAX_WID, t_assign_icon);
-	}
-
-	/*
 	 * When a feature is masked, or a masked icon is drawn on
 	 * a feature, we may use the icon assigned to a different feature
 	 * as the background.
@@ -811,9 +526,6 @@ void init_icons(int size, int depth)
 
 	/* Randomize the hallucination indices */
 	angtk_image_reset();
-	
-	/* Now we can safely use lite_spot() */
-	angtk_lite_spot = angtk_lite_spot_real;
 }
 
 
@@ -2091,9 +1803,12 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 
 	g_palette_rgb = Palette_GetRGB();
 
-	if (g_icon_depth == 16)
-		InitRGBInfo(interp);
+	if (g_icon_depth == 16) InitRGBInfo(interp);
 
+
+
+
+	/* New block here */
 	{
 		int i, paletteIndex;
 		for (i = 0; i < 16; i++)

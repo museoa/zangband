@@ -51,6 +51,11 @@ extern char ANGBAND_DIR_TK[1024];
 
 extern Tcl_Interp *g_interp;
 
+extern int tnb_tile_x;
+extern int tnb_tile_y;
+
+extern char tnb_tile_file[1024];
+
 /* canv-widget.c */
 extern int CanvasWidget_Init(Tcl_Interp *interp);
 
@@ -101,42 +106,16 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 extern int g_icon_size; /* 16, 24 or 32 */
 extern void init_icons(int size, int depth);
 
-
-/*
- * Memory of what is seen at a cave location for the entire cave.
- */
-typedef struct t_grid {
-	int f_idx; /* Feature */
-	object_type *o_ptr; /* Object */
-	int m_idx; /* Character/Monster */
-} t_grid;
-
-extern t_grid *g_grid[MAX_HGT];
-
-/* Cave location -> t_grid */
-extern void get_grid_info(int y, int x, t_grid *gridPtr);
-
 extern void angtk_image_reset(void);
-extern void set_grid_assign(int y, int x);
 extern void Icon_Exit(void);
 extern void init_palette(void);
 
-/* widget.c */
-extern void (*angtk_lite_spot)(int y, int x);
-extern void angtk_lite_spot_real(int y, int x);
-extern void angtk_wipe_spot(int y, int x);
-
+/* interp.c */
 extern int exit_skip_save;
 extern bool command_repeating;
 extern void angtk_angband_initialized(void);
-extern void angtk_display_info_init(void);
-extern void angtk_display_info_append(cptr s);
-extern void angtk_display_info_done(cptr title);
-extern void angtk_display_info(char *title, char **info, int count);
-extern void angtk_display_info_aux(cptr title, Tcl_Obj *listObjPtr);
 extern void angtk_eval(cptr command, ...);
 extern int angtk_eval_file(cptr extFileName);
-extern void angtk_cave_generated(void);
 extern void angtk_health(char *buf);
 extern void angtk_init(void);
 extern cptr player_status(int status, int *value);
@@ -145,7 +124,7 @@ extern cptr player_status(int status, int *value);
 /*
  * XXXXX Important!
  * If you add INKEY_XXX flags here, you must update the inkey_to_str[]
- * array in interp2.c, and keyword_inkey[] in bind.c
+ * array in interp2.c
  */
  
 #define INKEY_CMD 1

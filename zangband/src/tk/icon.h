@@ -119,37 +119,10 @@ typedef struct t_assign_group {
 	t_assign_icon *assign; /* Array of iassignments */
 } t_assign_group;
 
-/* Layers of feature icons */
-enum {
-ICON_LAYER_1,
-ICON_LAYER_2,
-ICON_LAYER_3,
-ICON_LAYER_4,
-ICON_LAYER_MAX
-};
-
-/* Per-layer assignment for each cave location */
-extern t_assign_icon *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
-
-/*
- * Information about what to display.
- */
-typedef struct t_display {
-	bool blank; /* Totally uninteresting grid */
-	IconSpec fg; /* Foreground */
-	IconSpec bg[ICON_LAYER_MAX]; /* Background (when typeFG is masked) */
-} t_display;
-
-
-/* Recalculate g_icon_map[] */
-extern bool g_icon_map_changed;
-
-/* t_grid -> t_display */
-extern void get_display_info(int y, int x, t_display *displayPtr);
 
 extern byte *g_palette_rgb;
 
-extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr);
+extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr);
 extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
 extern char *AssignToString_Icon(char *buf, t_assign_icon *assign);
 extern char *assign_print2(char *buf, int assignType);

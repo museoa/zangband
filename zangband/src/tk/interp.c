@@ -922,86 +922,6 @@ void angtk_eval(cptr command, ...)
     }
 }
 
-/*
- *--------------------------------------------------------------
- *
- * angtk_display_info --
- *
- *	Calls "angband_display info TITLE LIST" where LIST is a given
- *	array of strings, and TITLE is displayed in the window.
- *	Used for "Self Knowledge" and others.
- *
- *--------------------------------------------------------------
- */
-
-static Tcl_Obj *s_info_list = NULL;
-
-void angtk_display_info_init(void)
-{
-	s_info_list = Tcl_NewListObj(0, NULL);
-}
-
-void angtk_display_info_append(cptr s)
-{
-	Tcl_ListObjAppendElement(g_interp, s_info_list,
-		ExtToUtf_NewStringObj(s, -1));
-}
-
-void angtk_display_info_done(cptr title)
-{
-	angtk_display_info_aux(title, s_info_list);
-}
-
-void angtk_display_info_aux(cptr title, Tcl_Obj *listObjPtr)
-{
-	int i, objc = 0, result;
-	Tcl_Obj *objv[10];
-
-	objv[objc++] = Tcl_NewStringObj("angband_display", -1);
-	objv[objc++] = Tcl_NewStringObj("info", -1);
-	objv[objc++] = Tcl_NewStringObj("show", -1);
-	objv[objc++] = ExtToUtf_NewStringObj(title, -1);
-	objv[objc++] = listObjPtr;
-
-	for (i = 0; i < objc; i++)
-		Tcl_IncrRefCount(objv[i]);
-
-	result = Tcl_EvalObjv(g_interp, objc, objv, TCL_EVAL_GLOBAL);
-
-	for (i = 0; i < objc; i++)
-		Tcl_DecrRefCount(objv[i]);
-
-    if (result == TCL_ERROR)
-    {
-    	/* Report the error */
-		Tcl_AddErrorInfo(g_interp,
-			"\n    (inside angtk_display_info_aux)");
-		Tcl_BackgroundError(g_interp);
-    }
-}
-
-void angtk_display_info(char *title, char **info, int count)
-{
-	int i, objc = 0;
-	Tcl_Obj *objv[256];
-
-	/* Paranoia */
-	if (count > 256)
-	{
-		plog("angtk_display_info(): too many strings");
-		count = 256;
-	}
-
-	/* Check each string */
-	for (i = 0; i < count; i++)
-	{
-		/* Create a new string object */
-		objv[objc++] = ExtToUtf_NewStringObj(info[i], -1);
-	}
-
-	/* Pass the title and list of strings to Tcl */
-	angtk_display_info_aux(title, Tcl_NewListObj(objc, objv));
-}
 
 static void HandleError(void)
 {
@@ -1023,35 +943,6 @@ static void HandleError(void)
 	quit_fmt("The following error occurred:\n\n%s\n\n"
 			 "Please examine the errors.txt file to see what happened.",
 				Tcl_GetStringResult(g_interp));
-}
-
-/*
- * Initialize stuff after the character has been generated.
- */
-static void angtk_character_generated(void)
-{
-	char path[1024];
-
-	/* Source a file to create the interface */
-	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
-	if (angtk_eval_file(path) == TCL_ERROR)
-	{
-		HandleError();
-	}
-
-	/* The icon environment must be initialized by a script. */
-	if (g_icon_size == 0)
-	{
-		quit_fmt("Fatal error:\nIcons were not initialized.\n"
-			"You must call \"angband init_icons\"");
-	}
-
-	/*
-	 * Assign icons to each grid. You have to do this *after* sourcing
-	 * the startup script, because that's where icon types are defined
-	 * and where icon assignments are made.
-	 */
-	g_icon_map_changed = TRUE;
 }
 
 
@@ -1102,23 +993,27 @@ void angtk_init(void)
  */
 void angtk_angband_initialized(void)
 {
-	int i;
-
-	/* These are required for savefile loading (see lite_spot()) */
-	for (i = 0; i < MAX_HGT; i++)
-	{
-		/* Info about what feature/monster/object is known. */
-		C_MAKE(g_grid[i], MAX_WID, t_grid);
-	}
+	char path[1024];
 
 	/* Program is intialized */
 	if (Tcl_EvalEx(g_interp, "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
 	{
 		HandleError();
 	}
-	
-	/* Hack - look at more scripts */
-	angtk_character_generated();
+
+	/* Source a file to create the interface */
+	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
+	if (angtk_eval_file(path) == TCL_ERROR)
+	{
+		HandleError();
+	}
+
+	/* The icon environment must be initialized by a script. */
+	if (g_icon_size == 0)
+	{
+		quit_fmt("Fatal error:\nIcons were not initialized.\n"
+			"You must call \"angband init_icons\"");
+	}
 }
 
 /*
@@ -1135,16 +1030,6 @@ int angtk_eval_file(cptr extFileName)
 	Tcl_DStringFree(&dString);
 	return result;
 }
-
-
-/*
- * Do stuff after a dungeon is generated.
- */
-void angtk_cave_generated(void)
-{
-	g_icon_map_changed = TRUE;
-}
-
 
 /*
  *--------------------------------------------------------------

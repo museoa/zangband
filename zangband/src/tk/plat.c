@@ -530,8 +530,11 @@ static u32b *ReadBMP(cptr Name, int *bw, int *bh)
 	/* Determine total bytes needed for image */
 	total = infoheader.biWidth * (infoheader.biHeight + 2);
 
-	/* Allocate image memory */
-	C_MAKE(Data32, total, u32b);
+	/*
+	 * Allocate image memory
+	 * (plus a tiny bit extra so we can use aligned 32bit accesses)
+	 */
+	C_MAKE(Data32, total + 4, u32b);
 	p = Data32;
 		
 	for (y = 0; y < infoheader.biHeight; y++)
@@ -591,21 +594,18 @@ BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
 {
 	BitmapPtr bitmapPtr;
 	
-	u32b *data, *p;
+	u32b *data;
 	
 	int i, j;
 	
 	MAKE(bitmapPtr, BitmapType);
 	
+	/* Want a 24bit bitmap */
+	bitmapPtr->depth = 24;
+	
 	data = ReadBMP(name, &bitmapPtr->width, &bitmapPtr->height);
 
 	Bitmap_New(interp, bitmapPtr);
-	
-	/* Paranoia */
-	if (bitmapPtr->depth != 24)
-	{
-		quit("Cannot allocate 24bit bitmap");
-	}
 	
 	/* Copy in the data */
 	if (bitmapPtr->pixelSize == 3)
@@ -614,20 +614,24 @@ BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
 	}
 	else if (bitmapPtr->pixelSize == 4)
 	{
-		p = (u32b *) &bitmapPtr->pixmap;
+		byte *d8 = (byte *) data;
+	
+		byte *p = (byte *) bitmapPtr->pixelPtr;
 	
 		/* We need to copy each part seperately */
 		for (i = 0; i < bitmapPtr->height; i++)
 		{
 			for (j = 0; j < bitmapPtr->width; j++)
 			{
-				*p++ = *data++;
-				*p++ = *data++;
-				*p++ = *data++;
+				*p++ = *d8++;
+				*p++ = *d8++;
+				*p++ = *d8++;
 				p++;
 			}
 		}
 	}
 	
 	FREE(data);
+	
+	return (bitmapPtr);
 }
