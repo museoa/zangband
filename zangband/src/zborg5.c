@@ -843,9 +843,6 @@ static void borg_update_kill(int i)
 	/* Monster energy per game turn */
 	e = extract_energy[r_ptr->speed];
 
-	/* Monster moves (times ten) */
-	kill->moves = (t * e) / 10;
-
 	/* Assume no ranged attacks */
 	kill->ranged_attack = FALSE;
 

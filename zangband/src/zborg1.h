@@ -160,7 +160,6 @@ struct borg_kill
 	s16b when;	/* When last seen */
 
 	bool seen;	/* Assigned motion */
-	byte moves;	/* Estimates moves */
 
 	byte x, y;	/* Location */
 
