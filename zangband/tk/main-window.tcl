@@ -80,7 +80,7 @@ proc NSMainWindow::NSMainWindow {oop} {
 	Window main [Info $oop win]
 	Global main,oop $oop
 
-InitAutobar $oop
+	InitAutobar $oop
 
 	return
 }
@@ -858,10 +858,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_PREF_SPRITE {
 			NSModule::LoadIfNeeded NSSprite
 			NSWindowManager::Display sprite
-		}
-		E_PREF_SQUELCH {
-			NSModule::LoadIfNeeded NSSquelch
-			NSWindowManager::Display squelch
 		}
 
 		E_OTHER_INFO {DoUnderlyingCommand C}
@@ -1939,14 +1935,11 @@ if 0 {
 	# If the grid in the desired direction is blocked, then we will
 	# attempt to "slide" in that direction.
 	if {[angband cave blocked $y $x]} {
-if 1 {
+
 		scan $::PYPX "%d %d" py px
 		set xdiff [expr {$caveX - $px}]
 		set ydiff [expr {$caveY - $py}]
-} else {
-		set xdiff [expr {$trackX - [NSWidget::Info $widgetId width] / 2}]
-		set ydiff [expr {$trackY - [NSWidget::Info $widgetId height] / 2}]
-}
+
 		set xdiff [expr {abs($xdiff)}]
 		set ydiff [expr {abs($ydiff)}]
 		switch $dirKey {
@@ -2005,39 +1998,6 @@ if 1 {
 	# events per turn. To prevent "mouse command overflow" we
 	# never feed the Term with more than one key per turn.
 	if {[angband keycount]} return
-
-	# If the character's hit points have dropped more than 15%, then
-	# display a warning message and stop tracking. This is to prevent
-	# insta-death by running into a nasty monster. This could be an
-	# option.
-	if 1 {
-
-		# TODO: compare old maxhp to current maxhp, to prevent
-		# warnings when exp level goes up.
-
-		# Alway process the initial mouse click
-		if {!$track1st} {
-
-			variable trackHPfrac
-
-			set oldFrac $trackHPfrac
-			scan [angband player hitpoints] "%d %d %f" curhp maxhp hpfrac
-			set trackHPfrac $hpfrac
-
-			# Hit points dropped by over 15%
-			if {$hpfrac < ($oldFrac * 0.85)} {
-	
-				# Message
-				NSStatus::SetStatusMessage [mc Danger!] Danger! bad
-	
-				# The user must release and click again to move.
-				TrackRelease $oop
-	
-				# No rescheduled track.
-				return
-			}
-		}
-	}
 
 	# Move the character
 	angband keypress $dirKey
@@ -2631,12 +2591,8 @@ proc DoKeymapCmd {prefix command suffix} {
 		quotedbl {set command \"}
 	}
 	
-	if 0 {
-	
-	set command [angband keymap find $command]
+	#set command [angband keymap find $command]
 	angband keypress $prefix$command$suffix
-
-	}
 
 	return
 }
