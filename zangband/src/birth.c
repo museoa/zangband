@@ -400,7 +400,7 @@ static void player_wipe(void)
 
 	/* Hack -- Restore the cave and wilderness arrays */
 	C_COPY(p_ptr->pcave, pcave, MAX_HGT, pcave_type *);
-	p_ptr->pwild = pwild;;
+	p_ptr->pwild = pwild;
 
 	/* Hack -- Restore the option arrays */
 	C_COPY(p_ptr->options, options, OPT_PLAYER, bool);

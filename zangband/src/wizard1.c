@@ -1764,7 +1764,7 @@ static void spoil_mon_info(cptr fname)
 
 		if (flags1 & (RF0_CHAR_MIMIC))
 		{
-			spoil_out("%s is a mimic.  ", wd_che[msex]);;
+			spoil_out("%s is a mimic.  ", wd_che[msex]);
 		}
 
 		/* Collect inate attacks */

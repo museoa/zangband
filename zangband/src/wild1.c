@@ -2225,7 +2225,7 @@ static void create_rivers(void)
 
 		temp_y[i] = (s16b)rand_range(r1, r2);
 
-		r1 = ((i / RIVER_NUM) * max_wild) / RIVER_NUM;;
+		r1 = ((i / RIVER_NUM) * max_wild) / RIVER_NUM;
 		r2 = r1 + (max_wild / RIVER_NUM);
 
 		temp_x[i] = (s16b)rand_range(r1, r2);
