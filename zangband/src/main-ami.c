@@ -50,10 +50,10 @@
 //#define ANG283
 //#define ANG282                /* Based upon Angband 2.8.2 ? */
 
+#ifdef USE_AMI
+
 #ifndef __CEXTRACT__
 #include "angband.h"
-
-#ifdef USE_AMI
 
 #include "vers.h"
 
@@ -588,6 +588,11 @@ static void amiga_gfx(int type);
 static int find_menuitem(int *rmenu, int *item, void *ud);
 static void quick_BltBitMapRastPort( struct BitMap *src, int x, int y, struct RastPort *rp, int dx, int dy, int dw, int dh, int mode);
 static void quick_Text(struct RastPort *rp, int col, char *s, int n, int dx, int dy);
+
+static callback_type old_info_hook = NULL;
+static callback_type old_move_hook = NULL;
+static void ami_map_info(map_block *mb_ptr, term_map *map);
+static void ami_player_move(int x, int y);
 
 errr init_ami( void )
 {
@@ -1151,6 +1156,16 @@ errr init_ami( void )
 		sound_name_desc = malloc(8000); /* Ugh :( */
 		init_sound();
 	}
+
+	/* Initialise the overhead map */
+    init_overhead_map();
+    
+    /* Save the ami hooks into the overhead map */
+    old_info_hook = set_callback((callback_type) ami_map_info, CALL_MAP_INFO);
+
+	/* Save old player movement hook */
+	old_move_hook = set_callback((callback_type) ami_player_move,
+								 CALL_PLAYER_MOVE);
 
 	/* Success */
 	return ( 0 );
@@ -4032,12 +4047,54 @@ static int amiga_fail( char *msg )
 	return( -1 );
 }
 
+static int player_x;
+static int player_y;
+
+/*
+ * Notice that the player has moved
+ */
+static void ami_player_move(int x, int y)
+{
+	/* Save for later */
+	player_x = x;
+	player_y = y;
+    
+	/* Call the next function in the chain if it exists */
+	if (old_move_hook)
+	{
+		((player_move_hook_type) old_move_hook) (x, y);
+	}
+}
+
+
+
+/*
+ * Save the information so we can access it later
+ */
+static void ami_map_info(map_block *mb_ptr, term_map *map)
+{
+    /* Store feature code for later */
+    if (map->terrain) 
+    {
+    	mb_ptr->feature_code = f_info[map->terrain].x_attr * 256 +
+        						 f_info[map->terrain].x_char;
+    }
+    else
+    {
+    	mb_ptr->feature_code = 0;
+    }
+
+	/* Finally - chain into the old hook, if it exists */
+	if (old_info_hook) ((map_info_hook_type)old_info_hook) (mb_ptr, map);
+}
+
 static void amiga_map( void )
 {
 	term_data *td = &data[ 0 ];
 	int i,j;
 	byte ta,tc;
-	byte tap,tcp;
+   
+    map_block *mb_ptr;
 
 	/* Only in graphics mode, and not on Kickstart1.3 */
 	if ((use_graphics == GRAPHICS_NONE) || KICK13 || !tglob.mapbm)
@@ -4058,12 +4115,6 @@ static void amiga_map( void )
 	if (p_ptr->depth)
 	{
 		/* Calculate offset values */
-		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * max_wid )) / 2;
-		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * max_hgt )) / 2;
-	}
-	else
-	{
-		/* Calculate offset values */
 		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * MAX_WID )) / 2;
 		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * MAX_HGT )) / 2;
 	}
@@ -4074,51 +4125,59 @@ static void amiga_map( void )
 	if (td->map_y < 0)
 		td->map_y = 0;
 
-	/* Zangband changes the map data - you must not access it from here */
-#ifndef ZANGBAND
 
 	/* Draw all "interesting" features */
-	for ( i = 0; i < max_wid; i++ )
+	for ( i = 0; i < MAX_WID; i++ )
 	{
-		for ( j = 0; j < max_hgt; j++ )
+		for ( j = 0; j < MAX_HGT; j++ )
 		{
 			/* Get frame tile */
 			if ( (i == 0) || (i == max_wid - 1) || (j == 0) || (j == max_hgt - 1) )
 			{
-#ifdef ANG283
-				ta = f_info[ 63 ].x_attr;
-				tc = f_info[ 63 ].x_char;
-#else
-				ta = f_info[ 63 ].x_attr;
-				tc = f_info[ 63 ].x_char;
-#endif
+				ta = f_info[63].x_attr;
+				tc = f_info[63].x_char;
+
+				/* Put the graphics to the screen */
+				put_gfx_map( td, i, j, tc, ta );
 			}
 
 			/* Get tile from cave table */
 			else
 			{
-				map_info( j, i, &ta, (char *) &tc, &tap, (char *) &tcp );
-			}
-
-			/* Ignore non-graphics */
-			if ( ta & 0x80 )
-			{
-				ta = ta & ((GFXH >> 3) - 1);
-				tc = tc & ((GFXW >> 3) - 1);
-
-				/* Player XXX XXX XXX */
-				if ( ta == 12 && tc == 0 )
-				{
-					ta = get_p_attr();
+            	int x = i - MAX_WID / 2 + player_x;
+                int y = j - MAX_HGT / 2 + player_y;
+                
+                if (!map_in_bounds(x, y)) continue;
+            	
+                if ((x == player_x) && (y == player_y))
+                {
+                	ta = get_p_attr();
 					tc = get_p_char();
-				}
+                    
+                    /* Put the graphics to the screen */
+					put_gfx_map( td, i, j, tc, ta );
+                }
+                else
+                {
+                	mb_ptr = map_loc(x, y);
+                    
+                    ta = mb_ptr->feature_code / 256;
+                    tc = mb_ptr->feature_code & 0xFF;
+                    
+                    /* Ignore non-graphics */
+					if ( ta & 0x80 )
+					{
+						ta = ta & ((GFXH >> 3) - 1);
+						tc = tc & ((GFXW >> 3) - 1);
 
-				/* Put the graphics to the screen */
-				put_gfx_map( td, i, j, tc, ta );
-			}
+						/* Put the graphics to the screen */
+						put_gfx_map( td, i, j, tc, ta );
+					}
+				
+				}
+            }
 		}
 	}
-#endif /* ZANGBAND */
 
 	/* Draw a small cursor now */
 	td->cursor_map = TRUE;
