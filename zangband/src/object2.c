@@ -4014,7 +4014,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	object_prep(o_ptr, k_idx);
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(o_ptr, object_level, object_level - k_info[k_idx].level, flags);
+	apply_magic(o_ptr, base, base - k_info[k_idx].level, flags);
 
 	/* Hack -- generate multiple spikes/missiles/ mushrooms */
 	switch (o_ptr->tval)
