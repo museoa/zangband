@@ -2764,9 +2764,6 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			/* Obvious */
 			if (seen) obvious = TRUE;
 
-			/* Monster polymorphs */
-			note = " changes!";
-
 			/* Turn off the damage */
 			dam = 0;
 
@@ -2775,6 +2772,12 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 			/* Hack -- Get new race */
 			r_ptr = &r_info[m_ptr->r_idx];
+		
+			/* Show the polymorph message (note is not used) */
+			msg_format("%^s changes!", m_name);
+			
+			/* Get the monster name (AFTER polymorphing) */
+			monster_desc(m_name, m_ptr, 0);
 		}
 		else
 		{
