@@ -53,10 +53,6 @@
 /* Dynamic borg stuff */
 bool borg_scums_uniques;
 
-/* HACK... this should really be a parm into borg_prepared */
-/*         I am just being lazy */
-bool borg_slow_return = FALSE;
-
 int *borg_has;
 int *borg_skill;
 int size_class;

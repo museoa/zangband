@@ -216,10 +216,6 @@ extern int successful_target;
 
 extern bool borg_scums_uniques;
 
-/* HACK... this should really be a parm into borg_prepared */
-/*         I am just being lazy */
-extern bool borg_slow_return;
-
 /* Borg has is intrinsically broken */
 extern int *borg_has;
 extern int *borg_skill;

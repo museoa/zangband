@@ -4131,10 +4131,8 @@ void do_cmd_borg(void)
 				if ((cptr)NULL != borg_prepared(i)) break;
 			}
 
-			borg_slow_return = TRUE;
 			msg_format("Max Level: %d  Prep'd For: %d  Reason: %s",
 					   borg_skill[BI_MAXDEPTH], i - 1, borg_prepared(i));
-			borg_slow_return = FALSE;
 
 			break;
 		}

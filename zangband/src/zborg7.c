@@ -2915,10 +2915,8 @@ bool borg_leave_level(bool bored)
 					borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10))
 				{
 					cptr reason = borg_prepared(borg_skill[BI_MAXDEPTH]);
-					borg_slow_return = TRUE;
 					borg_note_fmt
 						("# Way too scary to recall down there!   %s", reason);
-					borg_slow_return = FALSE;
 				}
 				else
 					borg_note("# failed to recall when I wanted to");
@@ -2967,9 +2965,7 @@ bool borg_leave_level(bool bored)
 	{
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH] + 1);
 		g = -1;
-		borg_slow_return = TRUE;
 		borg_note_fmt("# heading up (bored and unable to dive: %s)", reason);
-		borg_slow_return = FALSE;
 	}
 
 	/* Power dive if I am playing too shallow */
@@ -2980,9 +2976,7 @@ bool borg_leave_level(bool bored)
 	{
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
-		borg_slow_return = TRUE;
 		borg_note_fmt("# heading up (too deep: %s)", reason);
-		borg_slow_return = FALSE;
 		g = -1;
 
 		/* if I must restock go to town */
@@ -2999,10 +2993,8 @@ bool borg_leave_level(bool bored)
 		if ((cptr)NULL != borg_prepared(borg_skill[BI_MAXDEPTH] * 5 / 10))
 		{
 			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
-			borg_slow_return = TRUE;
 			borg_note_fmt("# returning to town (too deep: %s)", reason);
 			goal_rising = TRUE;
-			borg_slow_return = FALSE;
 		}
 	}
 
