@@ -2076,10 +2076,10 @@ static errr rd_dungeon(void)
 	s16b cur_wid, cur_hgt;
 
 	/* Hack - Reset the object theme */
-	dun_theme.treasure = 20;
-	dun_theme.combat = 20;
-	dun_theme.magic = 20;
-	dun_theme.tools = 20;
+	dun_ptr->theme.treasure = 20;
+	dun_ptr->theme.combat = 20;
+	dun_ptr->theme.magic = 20;
+	dun_ptr->theme.tools = 20;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);

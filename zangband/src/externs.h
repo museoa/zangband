@@ -111,7 +111,6 @@ extern bool character_icky;
 extern bool character_xtra;
 extern u32b seed_flavor;
 extern bool msg_flag;
-extern obj_theme dun_theme;
 extern s16b num_repro;
 extern s16b object_level;
 extern s16b monster_level;

@@ -355,7 +355,7 @@ static void chest_death(int x, int y, object_type *o_ptr)
 		else
 		{
 			/* Make a good themed object */
-			q_ptr = make_object(15, dun_theme);
+			q_ptr = make_object(15, dun_ptr->theme);
 			if (!q_ptr) continue;
 		}
 

@@ -667,12 +667,12 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			o_ptr = make_object(30, dun_theme);
+			o_ptr = make_object(30, dun_ptr->theme);
 		}
 		else
 		{
 			/* Make a good object */
-			o_ptr = make_object(15, dun_theme);
+			o_ptr = make_object(15, dun_ptr->theme);
 		}
 
 		if (!o_ptr) continue;

@@ -1291,10 +1291,10 @@ void generate_cave(void)
 	int num;
 
 	/* Hack - Reset the object theme */
-	dun_theme.treasure = 20;
-	dun_theme.combat = 20;
-	dun_theme.magic = 20;
-	dun_theme.tools = 20;
+	dun_ptr->theme.treasure = 20;
+	dun_ptr->theme.combat = 20;
+	dun_ptr->theme.magic = 20;
+	dun_ptr->theme.tools = 20;
 
 	/* Build the wilderness */
 	if (!p_ptr->depth)

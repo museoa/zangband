@@ -4584,7 +4584,7 @@ void place_object(int x, int y, bool good, bool great)
 	}
 
 	/* Make an object (if possible) */
-	o_ptr = make_object((u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme);
+	o_ptr = make_object((good ? 15 : 0) + (great ? 15 : 0), dun_ptr->theme);
 
 	/* Put it on the ground */
 	(void)put_object(o_ptr, x, y);

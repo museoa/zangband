@@ -81,7 +81,6 @@ u32b seed_flavor;	/* Hack -- consistent object colors */
 
 bool msg_flag;	/* Used in msg_print() for "buffering" */
 
-obj_theme dun_theme;	/* Current dungeon object theme */
 s16b num_repro;	/* Current reproducer count */
 
 s16b object_level;	/* Current object creation level */

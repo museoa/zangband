@@ -1742,6 +1742,10 @@ struct place_type
 typedef struct dun_type dun_type;
 struct dun_type
 {
+	obj_theme theme;	/* Dungeon object theme */
+	
+	u32b habitat;	/* Flags describing habitat */
+
 	byte min_level;	/* Minimum level in the dungeon */
 	byte max_level;	/* Maximum dungeon level allowed */
 
