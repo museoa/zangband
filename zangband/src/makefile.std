@@ -122,7 +122,7 @@ BORGOBJS := \
 ## The Tk port files
 ##
 TKOBJS := \
-	tk/canv.o tk/cmdinfo.o tk/icon.o \
+	tk/cmdinfo.o tk/icon.o \
 	tk/describe.o tk/interp.o tk/plat.o \
 	tk/widget.o tk/tk-util.o tk/tcltk.o
 
@@ -652,7 +652,7 @@ $(TKOBJS): $(INCS) tk/tnb.h
 main-tnb.o: tk/tnb.h
 
 TKICONOBJS := \
-	tk/canv.o tk/icon.o tk/interp.o
+	tk/icon.o tk/interp.o
 
 $(TKICONOBJS): tk/icon.h
 
