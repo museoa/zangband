@@ -25,11 +25,6 @@ NSConfig::SourceOne classic-common
 # Hack
 NSConfig::NoMoreIcons
 
-# Apply gamma correction to "adam" icon type
-if {[Platform windows]} {
-	icon gamma adam 1.2
-}
-
 # Assign an icon to each flavored object
 NSConfig::SourceOne config-flavor
 
