@@ -310,8 +310,8 @@ cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 		/* Should this be a known town? */
 		if (known)
 		{
-			/* Get wilderness square */
-			 w_ptr = &wild[place[i].y][place[i].x].done;
+			/* Get wilderness square in the middle of the town */
+			 w_ptr = &wild[place[i].y + 4][place[i].x + 4].done;
 	
 			/* Has the player visited this square? */
 			if (!(w_ptr->info & WILD_INFO_SEEN)) continue;
@@ -319,6 +319,8 @@ cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 
 		/* Find closest town */
 		d = distance(x, y, place[i].x, place[i].y);
+
+		/* Keep track of the best town */
 		if (d < best_dist)
 		{
 			best_dist = d;
