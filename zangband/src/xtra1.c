@@ -485,10 +485,13 @@ static void prt_exp(void)
 		attr = TERM_YELLOW;
 	}
 
-	put_str("EXP ", 0, ROW_EXP);
+	
 
 	if (toggle_xp)
 	{
+
+		put_str("NEED ", 0, ROW_EXP);
+
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
 			c_put_str(attr, "********", COL_EXP + 4, ROW_EXP);
@@ -505,6 +508,9 @@ static void prt_exp(void)
 	}
 	else
 	{
+
+		put_str("EXP ", 0, ROW_EXP);
+
 		/* Use the 'old' experience display */
 		(void)sprintf(out_val, "%8ld", (long)p_ptr->exp);
 
