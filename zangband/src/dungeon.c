@@ -325,7 +325,7 @@ static void sense_inventory(void)
 		o_ptr->ident |= (IDENT_SENSE);
 
 		/* Inscribe it textually */
-		if (!o_ptr->note) o_ptr->note = quark_add(feel);
+		if (!o_ptr->inscription) o_ptr->inscription = quark_add(feel);
 
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -745,7 +745,7 @@ bool psychometry(void)
 	o_ptr->ident |= (IDENT_SENSE);
 
 	/* Access the inscription */
-	q = quark_str(o_ptr->note);
+	q = quark_str(o_ptr->inscription);
 
 	/* Hack -- Remove auto-inscriptions */
 	if (q && ((streq(q, "cursed")) ||
@@ -758,12 +758,12 @@ bool psychometry(void)
 	    (streq(q, "terrible"))))
 	{
 		/* Forget the inscription */
-		o_ptr->note = 0;
+		o_ptr->inscription = 0;
 	}
 
 	/* Inscribe it textually */
-	if (!o_ptr->note)
-		o_ptr->note = quark_add(feel);
+	if (!o_ptr->inscription)
+		o_ptr->inscription = quark_add(feel);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -787,10 +787,10 @@ static void recharged_notice(object_type *o_ptr)
 	cptr s;
 
 	/* No inscription */
-	if (!o_ptr->note) return;
+	if (!o_ptr->inscription) return;
 
 	/* Find a '!' */
-	s = strchr(quark_str(o_ptr->note), '!');
+	s = strchr(quark_str(o_ptr->inscription), '!');
 
 	/* Process notification request. */
 	while (s)
@@ -2049,7 +2049,8 @@ static void process_world(void)
 			else
 			{
 				if (!disturb_other ||
-				    (o_ptr->note && (strchr(quark_str(o_ptr->note),'.'))))
+				    (o_ptr->inscription && 
+					 (strchr(quark_str(o_ptr->inscription),'.'))))
 				{
 					/* Do nothing */
 					/* msg_print("Teleport aborted.") */ ;

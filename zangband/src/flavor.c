@@ -1668,9 +1668,9 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	tmp_val2[0] = '\0';
 
 	/* Use the standard inscription if available */
-	if (o_ptr->note)
+	if (o_ptr->inscription)
 	{
-		strcpy(tmp_val2, quark_str(o_ptr->note));
+		strcpy(tmp_val2, quark_str(o_ptr->inscription));
 	}
 
 	/* Note "cursed" if the item is known to be cursed */

@@ -754,10 +754,10 @@ s16b get_obj_num(int level)
 void object_known(object_type *o_ptr)
 {
 	/* Remove "default inscriptions" */
-	if (o_ptr->note && (o_ptr->ident & (IDENT_SENSE)))
+	if (o_ptr->inscription && (o_ptr->ident & (IDENT_SENSE)))
 	{
 		/* Access the inscription */
-		cptr q = quark_str(o_ptr->note);
+		cptr q = quark_str(o_ptr->inscription);
 
 		/* Hack -- Remove auto-inscriptions */
 		if ((streq(q, "cursed")) ||
@@ -770,7 +770,7 @@ void object_known(object_type *o_ptr)
 		    (streq(q, "terrible")))
 		{
 			/* Forget the inscription */
-			o_ptr->note = 0;
+			o_ptr->inscription = 0;
 		}
 	}
 
@@ -1528,10 +1528,12 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 
 
 	/* Hack -- require semi-matching "inscriptions" */
-	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)) return (0);
+	if (o_ptr->inscription && j_ptr->inscription && 
+		(o_ptr->inscription != j_ptr->inscription)) 
+	  return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if (!stack_force_notes && (o_ptr->note != j_ptr->note)) return (0);
+	if (!stack_force_notes && (o_ptr->inscription != j_ptr->inscription)) return (0);
 
 	/* Hack -- normally require matching "discounts" */
 	if (!stack_force_costs && (o_ptr->discount != j_ptr->discount)) return (0);
@@ -1571,7 +1573,7 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (j_ptr->ident & (IDENT_MENTAL)) o_ptr->ident |= (IDENT_MENTAL);
 
 	/* Hack -- blend "inscriptions" */
-	if (j_ptr->note) o_ptr->note = j_ptr->note;
+	if (j_ptr->inscription) o_ptr->inscription = j_ptr->inscription;
 
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */

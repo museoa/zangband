@@ -1067,7 +1067,7 @@ static errr rd_item_old(object_type *o_ptr)
 	rd_string(old_note, 128);
 
 	/* Save the inscription */
-	if (old_note[0]) o_ptr->note = quark_add(old_note);
+	if (old_note[0]) o_ptr->inscription = quark_add(old_note);
 
 	/* Ignore "f1", "tval", "tchar" */
 	strip_bytes(6);
@@ -1510,7 +1510,7 @@ static errr rd_store_old(int n)
 		rd_item_old(q_ptr);
 
 		/* Forget the inscription */
-		q_ptr->note = 0;
+		q_ptr->inscription = 0;
 
 		/* Save "valid" items */
 		if (st_ptr->stock_num < STORE_INVEN_MAX)

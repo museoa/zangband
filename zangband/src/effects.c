@@ -2221,10 +2221,10 @@ bool lose_all_info(void)
 		if (o_ptr->ident & (IDENT_MENTAL)) continue;
 
 		/* Remove "default inscriptions" */
-		if (o_ptr->note && (o_ptr->ident & (IDENT_SENSE)))
+		if (o_ptr->inscription && (o_ptr->ident & (IDENT_SENSE)))
 		{
 			/* Access the inscription */
-			cptr q = quark_str(o_ptr->note);
+			cptr q = quark_str(o_ptr->inscription);
 
 			/* Hack -- Remove auto-inscriptions */
 			if ((streq(q, "cursed")) ||
@@ -2237,7 +2237,7 @@ bool lose_all_info(void)
 			    (streq(q, "terrible")))
 			{
 				/* Forget the inscription */
-				o_ptr->note = 0;
+				o_ptr->inscription = 0;
 			}
 		}
 

@@ -586,7 +586,7 @@ static void rd_item(object_type *o_ptr)
 	rd_string(buf, 128);
 
 	/* Save the inscription */
-	if (buf[0]) o_ptr->note = quark_add(buf);
+	if (buf[0]) o_ptr->inscription = quark_add(buf);
 
 	rd_string(buf, 128);
 	if (buf[0]) o_ptr->art_name = quark_add(buf);

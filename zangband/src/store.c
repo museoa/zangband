@@ -1187,7 +1187,7 @@ static int store_carry(object_type *o_ptr)
 	o_ptr->ident |= IDENT_MENTAL;
 
 	/* Erase the inscription */
-	o_ptr->note = 0;
+	o_ptr->inscription = 0;
 
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < st_ptr->stock_num; slot++)
@@ -2651,7 +2651,7 @@ static void store_purchase(void)
 				msg_format("You bought %s for %ld gold.", o_name, (long)price);
 
 				/* Erase the inscription */
-				j_ptr->note = 0;
+				j_ptr->inscription = 0;
 
 				/* Give it to the player */
 				item_new = inven_carry(j_ptr);
@@ -2903,7 +2903,7 @@ static void store_sell(void)
 	object_desc(o_name, q_ptr, TRUE, 3);
 
 	/* Remove any inscription for stores */
-	if (cur_store_num != STORE_HOME) q_ptr->note = 0;
+	if (cur_store_num != STORE_HOME) q_ptr->inscription = 0;
 
 
 	/* Is there room in the store (or the home?) */
@@ -3776,7 +3776,7 @@ void store_shuffle(int which)
 		o_ptr->ident &= ~(IDENT_FIXED);
 
 		/* Mega-Hack -- Note that the item is "on sale" */
-		o_ptr->note = quark_add("on sale");
+		o_ptr->inscription = quark_add("on sale");
 	}
 }
 

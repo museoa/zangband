@@ -592,9 +592,9 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->xtra2);
 
 	/* Save the inscription (if any) */
-	if (o_ptr->note)
+	if (o_ptr->inscription)
 	{
-		wr_string(quark_str(o_ptr->note));
+		wr_string(quark_str(o_ptr->inscription));
 	}
 	else
 	{

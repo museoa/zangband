@@ -542,7 +542,7 @@ struct object_type
 
 	byte marked;		/* Object is marked */
 
-	u16b note;			/* Inscription index */
+	u16b inscription;	/* Inscription index */
 	u16b art_name;      /* Artifact name (random artifacts) */
 
 	u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */

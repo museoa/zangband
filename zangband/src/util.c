@@ -3198,10 +3198,10 @@ void request_command(int shopping)
 		if (!o_ptr->k_idx) continue;
 
 		/* No inscription */
-		if (!o_ptr->note) continue;
+		if (!o_ptr->inscription) continue;
 
 		/* Obtain the inscription */
-		s = quark_str(o_ptr->note);
+		s = quark_str(o_ptr->inscription);
 
 		/* Find a '^' */
 		s = strchr(s, '^');

@@ -551,7 +551,7 @@ void do_cmd_destroy(void)
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
 
 		/* Hack -- inscribe the artifact */
-		o_ptr->note = quark_add(feel);
+		o_ptr->inscription = quark_add(feel);
 
 		/* We have "felt" it (again) */
 		o_ptr->ident |= (IDENT_SENSE);
@@ -714,7 +714,7 @@ void do_cmd_uninscribe(void)
 	}
 
 	/* Nothing to remove */
-	if (!o_ptr->note)
+	if (!o_ptr->inscription)
 	{
 		msg_print("That item had no inscription to remove.");
 		return;
@@ -724,7 +724,7 @@ void do_cmd_uninscribe(void)
 	msg_print("Inscription removed.");
 
 	/* Remove the incription */
-	o_ptr->note = 0;
+	o_ptr->inscription = 0;
 
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
@@ -777,17 +777,17 @@ void do_cmd_inscribe(void)
 	strcpy(out_val, "");
 
 	/* Use old inscription */
-	if (o_ptr->note)
+	if (o_ptr->inscription)
 	{
 		/* Start with the old inscription */
-		strcpy(out_val, quark_str(o_ptr->note));
+		strcpy(out_val, quark_str(o_ptr->inscription));
 	}
 
 	/* Get a new inscription (possibly empty) */
 	if (get_string("Inscription: ", out_val, 80))
 	{
 		/* Save the inscription */
-		o_ptr->note = quark_add(out_val);
+		o_ptr->inscription = quark_add(out_val);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);

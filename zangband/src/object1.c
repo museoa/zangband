@@ -2316,10 +2316,10 @@ static bool get_item_allow(int item)
 	}
 
 	/* No inscription */
-	if (!o_ptr->note) return (TRUE);
+	if (!o_ptr->inscription) return (TRUE);
 
 	/* Find a '!' */
-	s = strchr(quark_str(o_ptr->note), '!');
+	s = strchr(quark_str(o_ptr->inscription), '!');
 
 	/* Process preventions */
 	while (s)
@@ -2382,10 +2382,10 @@ static int get_tag(int *cp, char tag)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip empty inscriptions */
-		if (!o_ptr->note) continue;
+		if (!o_ptr->inscription) continue;
 
 		/* Find a '@' */
-		s = strchr(quark_str(o_ptr->note), '@');
+		s = strchr(quark_str(o_ptr->inscription), '@');
 
 		/* Process all tags */
 		while (s)
