@@ -4683,6 +4683,7 @@ void map_area(void)
 				for (i = 0; i < 8; i++)
 				{
 					c_ptr = area(x + ddx_ddd[i], y + ddy_ddd[i]);
+					pc_ptr = parea(x + ddx_ddd[i], y + ddy_ddd[i]);
 
 					/* Memorize walls (etc) */
 					if (c_ptr->feat >= FEAT_SECRET)
