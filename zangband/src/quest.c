@@ -600,7 +600,6 @@ void activate_quests(int level)
 			case QUEST_TYPE_BOUNTY:
 			{
 				dun_type *d_ptr = dungeon();
-				u32b habitat = 0;
 				monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
 
 				/* Hack - toggle QUESTOR flag */

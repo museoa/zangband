@@ -822,7 +822,7 @@ void do_cmd_view_map(void)
 		int x, y;
 
 		/* Direction */
-		char d;
+		int d;
 		
 		wild_done_type *w_ptr;
 		
