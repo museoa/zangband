@@ -422,6 +422,18 @@ static void do_cmd_wiz_feature(int feat)
 	p_ptr->update |= (PU_VIEW | PU_MONSTERS);
 }
 
+/* Learn the whole wilderness map */
+void learn_map(void)
+{
+	int i, j;
+	for(i = 0; i < max_wild; i++)
+	{
+		for(j = 0; j < max_wild; j++)
+		{
+			wild[j][i].done.info |= WILD_INFO_SEEN;
+		}	
+	}
+}
 
 /*
  * Wizard routines for creating objects		-RAK-
@@ -1827,7 +1839,14 @@ void do_cmd_debug(void)
 
 		/* Wizard Light the Level */
 		case 'w':
-		wiz_lite();
+			if (dun_level)
+			{
+				wiz_lite();
+			}
+			else
+			{
+				learn_map();
+			}
 		break;
 
 		case 'W':
