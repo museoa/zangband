@@ -21,84 +21,9 @@
 
 void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd);
 
-int PointToTile(Widget *widgetPtr, int x, int y, int *colPtr, int *rowPtr,
-	int *xcPtr, int *ycPtr);
 int PointInIcon(int x, int y, IconSpec *iconSpecPtr);
 int HitTestTile(Widget *widgetPtr, int x, int y, int col, int row,
 	int xc, int yc);
-
-#ifdef PIXAR
-
-struct Pixar
-{
-	int xfb, xlr, y;
-	int dfb, dlr, dy;
-}
-thePixar = {0, -16, +16, -1, 1, -1};
-void Pixar_Click(Widget *widgetPtr)
-{
-	thePixar.xfb += thePixar.dfb;
-	if (thePixar.xfb < -16)
-	{
-		thePixar.xfb = -15;
-		thePixar.dfb = 1;
-	}
-	else if (thePixar.xfb > 16)
-	{
-		thePixar.xfb = 15;
-		thePixar.dfb = -1;
-	}
-
-	thePixar.xlr += thePixar.dlr;
-	if (thePixar.xlr < -16)
-	{
-		thePixar.xlr = -15;
-		thePixar.dlr = 1;
-	}
-	else if (thePixar.xlr > 16)
-	{
-		thePixar.xlr = 15;
-		thePixar.dlr = -1;
-	}
-
-	thePixar.y += thePixar.dy;
-	if (thePixar.y < -16)
-	{
-		thePixar.y = -15;
-		thePixar.dy = 1;
-	}
-	else if (thePixar.y > 16)
-	{
-		thePixar.y = 15;
-		thePixar.dy = -1;
-	}
-}
-
-void Pixar_Draw(Widget *widgetPtr, int x, int y)
-{
-	BitmapType *bmp = &widgetPtr->bitmap;
-	int bypp = bmp->pixelSize;
-	IconPtr dst;
-	int i, j;
-	char pixel[4];
-
-	/* Yellow */
-	PixelSet_RGB((IconPtr) pixel, 255, 255, 0, bypp);
-
-	x += 16 + thePixar.xlr;
-	y += 16 + thePixar.y;
-	dst = bmp->pixelPtr + y * bmp->pitch + x * bypp;
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
-			memcpy(dst + j * bmp->pixelSize, pixel, bypp);
-		}
-		dst += bmp->pitch;
-	}
-}
-
-#endif /* PIXAR */
 
 static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
 {
@@ -491,7 +416,6 @@ int blit(int x, int y, IconSpec iconSpec, BitmapType *bitmapPtr,
 
 	dstPtr = bitmapPtr->pixelPtr + x * bypp + y * pitch;
 
-#if 1
 	if (clip)
 	{
 		/* Skip rows */
@@ -599,77 +523,11 @@ int blit(int x, int y, IconSpec iconSpec, BitmapType *bitmapPtr,
 		}
 	}
 
-#else
-
-	while (1)
-	{
-		unsigned int trans, opaq;
-	
-		trans = rlePtr[0];
-		opaq = rlePtr[1];
-		rlePtr += 2;
-	
-		col += trans;
-	
-		if (opaq)
-		{
-			if (clip)
-			{
-				if (y >= y1 && y < y1 + h1)
-				{
-					for (i = 0; i < opaq; i++)
-						if ((x + col + i >= x1) && (x + col + i < x1 + w1))
-							memcpy(dstPtr + (col + i) * bypp, rlePtr + i * bypp, bypp);
-					if (high)
-					{
-						if (y & 1)
-							j = (col & 1) != 0;
-						else
-							j = (col & 1) == 0;
-						for (i = j; i < opaq; i += 2)
-							if ((x + col + i >= x1) && (x + col + i < x1 + w1))
-								memcpy(dstPtr + (col + i) * bypp, highPixel, bypp);
-					}
-				}
-			}
-			else
-			{
-				memcpy(dstPtr + col * bypp, rlePtr, opaq * bypp);
-				if (high)
-				{
-					if (y & 1)
-						j = (col & 1) != 0;
-					else
-						j = (col & 1) == 0;
-					for (i = j; i < opaq; i += 2)
-						memcpy(dstPtr + (col + i) * bypp, highPixel, bypp);
-				}
-			}
-			rlePtr += opaq * bypp;
-			col += opaq;
-		}
-		else if (!col)
-			break;
-	
-		if (col == w)
-		{
-			if (!--h)
-				break;
-			++y;
-			if (clip && (y >= y1 + h1))
-				break;
-			col = 0;
-			dstPtr += pitch;
-		}
-	}
-#endif /* 0 */
-
 	return 0;
 }
 
 extern int *g_image_monster, *g_image_object;
 
-#if 1
 static bool is_unknown_floor(int y, int x, int hack)
 {
 	int feat;
@@ -708,8 +566,6 @@ static bool is_unknown_floor(int y, int x, int hack)
 	/* Unlit floor */
 	return TRUE;
 }
-
-#endif
 
 void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 {
@@ -791,42 +647,12 @@ void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 	
 		/* Object */
 		else if (o_idx)
-		{
-#ifdef ALLOW_PILE_IMAGE
-	
-			/* This a pile of objects */
-			if (easy_floor && (gridPtr->xtra & GRID_XTRA_PILE))
-			{
-				/* Get the icon assigned to object-kind zero */
-				assign = g_assign[ASSIGN_OBJECT].assign[0];
-			}
-	
-			/* Not a pile */
-			else
-			{
-				/* Get the object kind */
-				int k_idx = o_list[o_idx].k_idx;
-	
-				/* XXX Hack -- Hallucination */
-				if (p_ptr->image)
-				{
-					/* Get a random object kind */
-					k_idx = g_image_object[k_idx];
-				}
-		
-				/* Get the icon assigned to the object kind */
-				assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
-			}
-			
-#else /* not ALLOW_PILE_IMAGE */
-	
+		{	
 			/* Get the object kind */
 			int k_idx = o_list[o_idx].k_idx;
 	
 			/* Get the icon assigned to the object kind */
 			assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
-	
-#endif /* not ALLOW_PILE_IMAGE */
 		}
 
 		/*
@@ -979,15 +805,6 @@ void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 		dark = 0;
 	}
 
-#if 0
-if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
-	(g_grid[y][x].shape != GRID_SHAPE_SINGLE))
-{
-	if (py < y && px < x)
-		dark = 2;
-}
-#endif
-
 	/*
 	 * Get the assignment from the global assign map. The g_icon_map[]
 	 * array allows us to use different assignments for the same
@@ -998,7 +815,6 @@ if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 	{
 		assign = g_icon_map[layer][y][x];
 
-#if 1
 		if (!layer)
 		{
 			if ((g_grid[y][x].xtra & 0x0001) &&
@@ -1013,28 +829,6 @@ if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 				assign = g_assign[ASSIGN_FEATURE].assign[FEAT_NONE];
 			}
 		}
-#else
-		/*
-		 * XXX Hack -- There is a second assignment for this feature
-		 * with an "unknown" floor.
-		 */
-		if (!layer && (g_grid[y][x].xtra & 0x0001) &&
-			(((y == g_cave_hgt - 1) || !g_grid[y+1][x].f_idx) ||
-			((x == g_cave_wid - 1) || !g_grid[y][x+1].f_idx)))
-		{
-			assign = g_assignshape[g_grid[y][x].shape][max_f_idx + f_idx];
-		}
-
-		/*
-		 * XXX Hack -- If floor is not lit, use "unknown" floor.
-		 */
-		else if (!layer && (f_idx != FEAT_FLOOR) &&
-			(g_background[f_idx] == FEAT_FLOOR) &&
-			(g_grid[y][x].dark && !(cave[y][x].info & CAVE_GLOW)))
-		{
-			assign = g_assign[ASSIGN_FEATURE].assign[FEAT_NONE];
-		}
-#endif
 
 		/* Resolve sprite */
 		if (assign.assignType == ASSIGN_TYPE_SPRITE)
@@ -1073,38 +867,7 @@ if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 				}
 			}
 		}
-#if 0
-		/*
-		 * Note that TYPE_ALTERNATE assignments must already have
-		 * been resolved in set_grid_assign() or this will bomb.
-		 * And TYPE_SPRITE assignments will bomb if lighting is
-		 * FT_LIGHT_ICON and not FT_LIGHT_TINT.
-		 */
 
-		if (dark)
-		{
-			/* Examine the lighting mode for this feature */
-			switch (g_feat_lite[f_idx])
-			{
-				/* Use icon series for lighting */
-				case FT_LIGHT_ICON:
-					
-					/* Paranoia: only icons use light */
-					if (assign.assignType == ASSIGN_TYPE_ICON)
-					{
-						if (assign.icon.type > ICON_TYPE_DEFAULT)
-							iconSpec.index += dark;
-					}
-					break;
-
-				/* Use tint table for lighting (slow) */
-				case FT_LIGHT_TINT:
-					if (g_icon_depth == 8)
-						wtd->tint[1] = g_darken[dark-1].table;
-					break;
-			}
-		}
-#endif
 		/* A darkened copy of the icon exists, or will exist */
 		if ((g_icon_data[iconSpec.type].dark_data &&
 			g_icon_data[iconSpec.type].dark_data[iconSpec.index]) ||
@@ -1237,21 +1000,6 @@ int bfHigh;
 	if (widgetPtr->flags & WIDGET_NO_UPDATE)
 		return;
 
-#if 0
-	/* Paint to catch errors */
-	IconPtr dst = bitmapPtr->pixelPtr;
-	for (y = 0; y < bitmapPtr->height; y++)
-	{
-		for (x = 0; x < bitmapPtr->width; x++)
-			dst[x] = 10;
-		dst += bitmapPtr->pitch;
-	}
-#endif
-
-#ifdef PIXAR
-	Pixar_Click(widgetPtr);
-#endif
-
 	widgetPtr->animCnt = 0;
 
 	/* Get cave coords of top-left tile */
@@ -1333,18 +1081,10 @@ int bfHigh;
 		/* Draw foreground icon */
 		if (wtd.fg.type != ICON_TYPE_NONE)
 		{
-#ifdef PIXAR
-			if (i == widgetPtr->centerTile && thePixar.xfb <= 0)
-				Pixar_Draw(widgetPtr, xp + 10, yp + 7);
-#endif
 			high = FALSE;
 			if (widgetPtr->hit == 0 && widgetPtr->hitx == x && widgetPtr->hity == y)
 				high = TRUE;
 			blit(xp, yp, wtd.fg, bitmapPtr, FALSE, 0, 0, 0, 0, high);
-#ifdef PIXAR
-			if (i == widgetPtr->centerTile && thePixar.xfb > 0)
-				Pixar_Draw(widgetPtr, xp + 10, yp + 7);
-#endif
 		}
 
 		/* Draw effect */
@@ -1383,26 +1123,6 @@ int bfHigh;
 /*		Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
 			itemPtr->maxY, itemPtr->maxX);
 */	}
-
-#if 0
-	/* horizontal line 1/2 height */
-	y = widgetPtr->by + widgetPtr->height / 2 - 1;
-	dst = widgetPtr->bitmap.pixelPtr + y * widgetPtr->bitmap.pitch;
-	for (x = widgetPtr->bx; x < widgetPtr->bx + widgetPtr->width; x++)
-		dst[x] = 10;
-
-	/* vertical line 1/2 width */
-	x = widgetPtr->bx + widgetPtr->width / 2 - 1;
-	dst = widgetPtr->bitmap.pixelPtr + x * widgetPtr->bitmap.pixelSize;
-	for (y = widgetPtr->by; y < widgetPtr->by + widgetPtr->height; y++)
-		*(dst + y * widgetPtr->bitmap.pitch) = 10;
-
-	/* vertical line -1 */
-	x = widgetPtr->bx - 1;
-	dst = widgetPtr->bitmap.pixelPtr + x * widgetPtr->bitmap.pixelSize;
-	for (y = widgetPtr->by; y < widgetPtr->by + widgetPtr->height; y++)
-		*(dst + y * widgetPtr->bitmap.pitch) = 14;
-#endif
 }
 
 int sectrect(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2, int b[4])
@@ -1573,21 +1293,19 @@ void iso_draw_invalid(Widget *widgetPtr)
 		xp = pxp[tile];
 		yp = pyp[tile];
 
-#if 1
-	if (debug_widgets & DEBUG_WIDGET_DRAW)
-	{
-		/* Paint to catch errors */
-		IconPtr dst = widgetPtr->bitmap.pixelPtr + yp * widgetPtr->bitmap.pitch +
-			xp * widgetPtr->bitmap.pixelSize;
-		int y2, x2;
-		for (y2 = 0; y2 < ISO_HGT; y2++)
+		if (debug_widgets & DEBUG_WIDGET_DRAW)
 		{
-			for (x2 = 0; x2 < ISO_WID * widgetPtr->bitmap.pixelSize; x2++)
-				dst[x2] = 10;
-			dst += widgetPtr->bitmap.pitch;
+			/* Paint to catch errors */
+			IconPtr dst = widgetPtr->bitmap.pixelPtr + yp * widgetPtr->bitmap.pitch +
+				xp * widgetPtr->bitmap.pixelSize;
+			int y2, x2;
+			for (y2 = 0; y2 < ISO_HGT; y2++)
+			{
+				for (x2 = 0; x2 < ISO_WID * widgetPtr->bitmap.pixelSize; x2++)
+					dst[x2] = 10;
+				dst += widgetPtr->bitmap.pitch;
+			}
 		}
-	}
-#endif
 
 		/* Dirty bounds */
 		if (xp < dl)

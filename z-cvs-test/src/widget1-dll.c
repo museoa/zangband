@@ -78,8 +78,6 @@ static void Widget_CreateBitmap(Widget *widgetPtr);
 static void Widget_DeleteBitmap(Widget *widgetPtr);
 
 static void WindowToBitmap(Widget *widgetPtr, int *y, int *x);
-int PointToTile(Widget *widgetPtr, int x, int y, int *colPtr, int *rowPtr,
-	int *xcPtr, int *ycPtr);
 
 /* Table of procedures for the "Widget" class */
 TkClassProcs widgetProcs = { 
@@ -1766,81 +1764,6 @@ static void BitmapToCanvas(Widget *widgetPtr, int *y, int *x)
 {
 	*y += widgetPtr->cy - (ISO_HGT - ISO_FH);
 	*x += widgetPtr->cx;
-}
-
-int PointToTile(Widget *widgetPtr, int x, int y, int *colPtr, int *rowPtr,
-	int *xcPtr, int *ycPtr)
-{
-	int row, col;
-	int yt, xt, y1, x1, y2;
-	float m;
-	int b;
-
-	if (x < 0 || x >= widgetPtr->width)
-		return 1;
-	if (y < 0 || y >= widgetPtr->height)
-		return 1;
-
-	/* Get cave coords of top-left tile */
-	yt = widgetPtr->y0;
-	xt = widgetPtr->x0;
-
-	WindowToBitmap(widgetPtr, &y, &x);
-	BitmapToCanvas(widgetPtr, &y, &x);
-
-	/* This gives us only *even* rows and columns */
-	row = y / ISO_FH2 * 2;
-	col = x / ISO_WID2;
-
-	/* Zero-based coords within box */
-	y1 = y - row * (ISO_FH2 / 2);
-	x1 = x - col * ISO_WID2;
-
-	/* See if the point is above or below 4 lines */
-	
-	m = 0.5;
-	b = -(ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 > y1)
-	{
-		--row;
-		goto finish;
-	}
-
-	b = (ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 < y1)
-	{
-		--col;
-		++row;
-		goto finish;
-	}
-
-	m = -0.5;
-	b = (ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 > y1)
-	{
-		--col;
-		--row;
-		goto finish;
-	}
-
-	b = ISO_FH2 + (ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 < y1)
-	{
-		++row;
-		goto finish;
-	}
-
-finish:
-	*rowPtr = row;
-	*colPtr = col;
-	*ycPtr = yt + widgetPtr->yo[row * widgetPtr->cc + col];
-	*xcPtr = xt + widgetPtr->xo[row * widgetPtr->cc + col];
-
-	return 0;
 }
 
 int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
