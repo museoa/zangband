@@ -1981,7 +1981,10 @@ int borg_spell_fail_rate(int realm, int book, int what)
 	if (borg_class == CLASS_WARRIOR) return (100);
 
 	/* Access the spell  */
-	chance = as->sfail;
+	if (realm == REALM_ARCANE-1)
+		chance = as->level + 20;
+	else
+		chance = as->level * 3 / 2 + 20;
 
 	/* Reduce failure rate by "effective" level adjustment */
 	chance -= 3 * (bp_ptr->lev - as->level);
@@ -2008,7 +2011,7 @@ int borg_spell_fail_rate(int realm, int book, int what)
 	}
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= adj_mag_stat[stat] - 3;
+	chance -= adj_mag_stat[stat];
 
 	/* Collect the spell cost */
 	power = borg_spell_mana(realm, book, what);
@@ -2021,13 +2024,10 @@ int borg_spell_fail_rate(int realm, int book, int what)
 		bp_ptr->muta1 & MUT1_EAT_MAGIC) chance += 5;
 
 	/*
-	 * What realm is that????
-	 * spell_chance in spells3.c has the -1 here, but I got confused with
-	 * the -1 that are in the calls to spell_chance too.  I am guessing it
-	 * refers here to REALM_DEATH that already has a banish.
+	 * 'realm' is 0-based, while the REALM_* constants are 1-based.
+	 * So, subtract 1 from the constant to get a 0-based version.
 	 */
-/*	if (realm == REALM_DEATH - 1 &&*/
-	if (realm == REALM_DEATH &&
+	if (realm == REALM_DEATH-1 &&
 		bp_ptr->muta1 & MUT1_BANISH) chance += 10;
 
 	/* Squeeeeeek */
@@ -2248,7 +2248,7 @@ int borg_mindcr_fail_rate(int spell, int level)
 	/* Hack - ignore parameter */
 	(void)level;
 
-	/* Access the spell  */
+	/* XXX Access the spell  */
 	chance = as->sfail;
 
 	/* Reduce failure rate by "effective" level adjustment */
@@ -2928,9 +2928,6 @@ static void prepare_book_info(int realm, int book)
 		/* Extract the level and power */
 		as->level = s_ptr->slevel;
 		as->power = s_ptr->smana;
-
-		/* extract fail rate. */
-		as->sfail = s_ptr->sfail;
 	}
 }
 

@@ -108,8 +108,6 @@ struct borg_magic
 
 	byte power;	/* Required power */
 
-	byte sfail;	/* Minimum chance of failure */
-
 	byte cheat;	/* Actual "spell index" (or 99) */
 
 	s32b times;	/* Times this spell was cast */

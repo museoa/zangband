@@ -2880,13 +2880,16 @@ s16b spell_chance(int spell, int realm)
 	s_ptr = &mp_ptr->info[realm][spell];
 
 	/* Extract the base spell failure rate */
-	chance = s_ptr->sfail;
+	if (realm == REALM_ARCANE-1)
+		chance = s_ptr->slevel + 20;
+	else
+		chance = s_ptr->slevel * 3 / 2 + 20;
 
 	/* Reduce failure rate by "effective" level adjustment */
 	chance -= 3 * (p_ptr->lev - s_ptr->slevel);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 3;
+	chance -= adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind];
 
 	/* Get mana cost */
 	smana = spell_mana(spell, realm);
