@@ -178,7 +178,7 @@ static bool los_general(int x1, int y1, int x2, int y2, cave_hook_type c_hook)
 			if ((x == x2) && (y == y2)) return (TRUE);
 
 			/* Stop if out of bounds */
-			if (!in_bounds(x, y)) return (FALSE);
+			if (!in_bounds2(x, y)) return (FALSE);
 
 			c_ptr = area(x, y);
 
@@ -211,7 +211,7 @@ static bool los_general(int x1, int y1, int x2, int y2, cave_hook_type c_hook)
 			if ((x == x2) && (y == y2)) return (TRUE);
 
 			/* Stop if out of bounds */
-			if (!in_bounds(x, y)) return (FALSE);
+			if (!in_bounds2(x, y)) return (FALSE);
 
 			c_ptr = area(x, y);
 
@@ -850,7 +850,7 @@ sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg)
 		}
 
 		/* Stop if out of bounds */
-		if (!in_bounds(x, y))
+		if (!in_bounds2(x, y))
 		{
 			sq--;
 			break;
@@ -958,7 +958,7 @@ void scatter(int *xp, int *yp, int x, int y, int d)
 		nx = rand_spread(x, d);
 
 		/* Ignore annoying locations */
-		if (!in_bounds(nx, ny)) continue;
+		if (!in_bounds2(nx, ny)) continue;
 
 		/* Ignore excessively distant locations */
 		if ((d > 1) && (distance(x, y, nx, ny) > d)) continue;

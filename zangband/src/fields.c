@@ -248,7 +248,7 @@ void delete_field(int x, int y)
 	cave_type *c_ptr;
 
 	/* Refuse "illegal" locations */
-	if (!in_bounds(x, y)) return;
+	if (!in_bounds2(x, y)) return;
 
 	/* Grid */
 	c_ptr = area(x, y);
@@ -2044,7 +2044,7 @@ void place_trap(int x, int y)
 	field_trap_type *n_ptr = trap_num;
 
 	/* Paranoia -- verify location */
-	if (!in_bounds(x, y)) return;
+	if (!in_bounds2(x, y)) return;
 
 	/* Calculate the total possibilities */
 	for (total = 0; TRUE; n_ptr++)

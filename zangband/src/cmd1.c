@@ -2937,12 +2937,8 @@ static bool run_test(void)
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 
-	/* Hack - do not run next to edge of wilderness */
-	if (!in_bounds(px, py)) return TRUE;
-
 	/* Where we came from */
 	prev_dir = p_ptr->run_old_dir;
-
 
 	/* Range of newly adjacent grids */
 	max = (prev_dir & 0x01) + 1;

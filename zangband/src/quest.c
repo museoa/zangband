@@ -639,7 +639,7 @@ static void create_stairs(int x, int y)
 		i++;
 
 		/* paranoia */
-		if (!in_bounds(x, y)) continue;
+		if (!in_bounds2(x, y)) continue;
 
 		c_ptr = area(x, y);
 	}

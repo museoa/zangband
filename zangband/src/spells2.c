@@ -3085,7 +3085,7 @@ static void cave_temp_room_aux(int x, int y)
 	cave_type *c_ptr;
 
 	/* Verify */
-	if (!in_bounds(x, y)) return;
+	if (!in_bounds2(x, y)) return;
 
 	/* Get the grid */
 	c_ptr = area(x, y);

@@ -72,7 +72,7 @@ bool teleport_away(int m_idx, int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(nx, ny)) continue;
+			if (!in_bounds2(nx, ny)) continue;
 
 			c_ptr = area(nx, ny);
 
@@ -223,7 +223,7 @@ void teleport_to_player(int m_idx)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(nx, ny)) continue;
+			if (!in_bounds2(nx, ny)) continue;
 
 			c_ptr = area(nx, ny);
 
@@ -378,7 +378,7 @@ void teleport_player(int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(x, y)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			c_ptr = area(x, y);
 
@@ -533,7 +533,7 @@ void teleport_player_to(int nx, int ny)
 		{
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
-			if (in_bounds(x, y)) break;
+			if (in_bounds2(x, y)) break;
 		}
 
 		/* Accept "naked" floor grids */

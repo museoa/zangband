@@ -168,7 +168,7 @@ static bool get_enemy_target(monster_type *m_ptr)
 	if (m_ptr->tx || m_ptr->ty)
 	{
 		/* paranoia */
-		if (in_bounds(m_ptr->tx, m_ptr->ty))
+		if (in_bounds2(m_ptr->tx, m_ptr->ty))
 		{
 			c_ptr = area(m_ptr->tx, m_ptr->ty);
 
@@ -1073,7 +1073,7 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 		y = my + ddy_ddd[i];
 
 		/* Check Bounds */
-		if (!in_bounds(x, y)) continue;
+		if (!in_bounds2(x, y)) continue;
 
 		c_ptr = area(x, y);
 
@@ -1182,7 +1182,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 					y = m_ptr->fy + ddy_ddd[i];
 
 					/* Check Bounds */
-					if (!in_bounds(x, y)) continue;
+					if (!in_bounds2(x, y)) continue;
 
 					if (in_boundsp(x, y) &&
 						player_has_los_grid(parea(x, y))) continue;
@@ -1226,7 +1226,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 					y = m_ptr->fy + ddy_ddd[i];
 
 					/* Check Bounds */
-					if (!in_bounds(x, y)) continue;
+					if (!in_bounds2(x, y)) continue;
 
 					c_ptr = area(x, y);
 
@@ -1263,7 +1263,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 			y = m_ptr->fy + ddy_ddd[i % 8];
 
 			/* Check Bounds */
-			if (!in_bounds(x, y)) continue;
+			if (!in_bounds2(x, y)) continue;
 
 			c_ptr = area(x, y);
 

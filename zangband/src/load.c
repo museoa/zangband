@@ -2354,7 +2354,7 @@ static errr rd_dungeon(void)
 			/* Dungeon items */
 			if (!ignore_stuff && (o_ptr->ix || o_ptr->iy))
 			{
-				if (!in_bounds(o_ptr->ix, o_ptr->iy))
+				if (!in_bounds2(o_ptr->ix, o_ptr->iy))
 				{
 					note("Object placement error (%d,%d)", o_ptr->ix,
 						  o_ptr->iy);
@@ -2445,7 +2445,7 @@ static errr rd_dungeon(void)
 				return (162);
 			}
 
-			if (!in_bounds(m_ptr->fx, m_ptr->fy))
+			if (!in_bounds2(m_ptr->fx, m_ptr->fy))
 			{
 				note("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy);
 				return (162);

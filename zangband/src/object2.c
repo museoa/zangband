@@ -139,7 +139,7 @@ void delete_object(int x, int y)
 	cave_type *c_ptr;
 
 	/* Refuse "illegal" locations */
-	if (!in_bounds(x, y)) return;
+	if (!in_bounds2(x, y)) return;
 
 	/* Grid */
 	c_ptr = area(x, y);
@@ -4523,7 +4523,7 @@ void place_object(int x, int y, bool good, bool great)
 	object_type *o_ptr;
 
 	/* Paranoia -- check bounds */
-	if (!in_bounds(x, y)) return;
+	if (!in_bounds2(x, y)) return;
 
 	/* Acquire grid */
 	c_ptr = area(x, y);
@@ -4608,7 +4608,7 @@ void place_gold(int x, int y)
 /*
  * Let an object fall to the ground at or near a location.
  *
- * The initial location is assumed to be "in_bounds()".
+ * The initial location is assumed to be "in_bounds2()".
  *
  * This function takes a parameter "chance".  This is the percentage
  * chance that the item will "disappear" instead of drop.  If the object
@@ -4691,7 +4691,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			tx = x + dx;
 
 			/* Skip illegal grids */
-			if (!in_bounds(tx, ty)) continue;
+			if (!in_bounds2(tx, ty)) continue;
 
 			/* Require line of sight */
 			if (!los(x, y, tx, ty)) continue;
@@ -5218,7 +5218,7 @@ static void item_optimize(object_type *o_ptr)
 	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 	
 	/* The player could have moved due to a phase door scroll */
-	if (in_bounds(o_ptr->ix, o_ptr->iy))
+	if (in_bounds2(o_ptr->ix, o_ptr->iy))
 	{
 		c_ptr = area(o_ptr->ix, o_ptr->iy);
 	}

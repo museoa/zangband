@@ -4372,7 +4372,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 						for (x = bx - cdis; x <= bx + cdis; x++)
 						{
 							/* Ignore "illegal" locations */
-							if (!in_bounds(x, y)) continue;
+							if (!in_bounds2(x, y)) continue;
 
 							/* Enforce a circular "ripple" */
 							if (distance(x1, y1, x, y) != bdis) continue;
