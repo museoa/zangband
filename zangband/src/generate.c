@@ -1327,7 +1327,7 @@ void generate_cave(void)
 	/* Remove the CAVE_ROOM flags... reused as CAVE_MNLT */
 	for (x = min_wid; x < max_wid; x++)
 	{
-		for(y = min_hgt; y < max_hgt; y++)
+		for (y = min_hgt; y < max_hgt; y++)
 		{
 			/* Clear the flag */
 			cave[y][x].info &= ~(CAVE_ROOM);

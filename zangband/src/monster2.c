@@ -1550,7 +1550,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
 	{ 
 		/* Cannot create */
-		return(FALSE);
+		return (FALSE);
 	}
 	
 	/* 
@@ -1857,7 +1857,8 @@ static bool place_monster_okay(int r_idx)
 	monster_race *z_ptr = &r_info[r_idx];
 
 	/* Hack - Escorts have to have the same dungeon flag */
-	if (monster_dungeon(place_monster_idx) != monster_dungeon(r_idx)) return (FALSE);
+	if (monster_dungeon(place_monster_idx) != monster_dungeon(r_idx))
+		return (FALSE);
 
 	/* Require similar "race" */
 	if (z_ptr->d_char != r_ptr->d_char) return (FALSE);
@@ -1873,18 +1874,17 @@ static bool place_monster_okay(int r_idx)
 
 	/* Good vs. evil */
 	if (((r_ptr->flags3 & RF3_EVIL) &&
-		  (z_ptr->flags3 & RF3_GOOD)) ||
-		 ((r_ptr->flags3 & RF3_GOOD) &&
-		  (z_ptr->flags3 & RF3_EVIL)))
+	     (z_ptr->flags3 & RF3_GOOD)) ||
+	    ((r_ptr->flags3 & RF3_GOOD) &&
+	     (z_ptr->flags3 & RF3_EVIL)))
 	{
 		return FALSE;
 	}
 
 	/* Hostile vs. non-hostile */
-	if ((r_ptr->flags7 & RF7_FRIENDLY) != (z_ptr->flags7 & RF7_FRIENDLY))
-	{
+	if ((r_ptr->flags7 & RF7_FRIENDLY) !=
+	    (z_ptr->flags7 & RF7_FRIENDLY))
 		return FALSE;
-	}
 
 	/* Okay */
 	return (TRUE);
@@ -1917,7 +1917,8 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(y, x, r_idx, slp, friendly, pet)) return (FALSE);
+	if (!place_monster_one(y, x, r_idx, slp, friendly, pet))
+		return (FALSE);
 
 
 	/* Require the "group" flag */
@@ -2055,7 +2056,8 @@ bool alloc_horde(int y, int x)
 	{
 		scatter(&cy, &cx, y, x, 5, 0);
 
-		(void)summon_specific(m_idx, cy, cx, dun_level + 5, SUMMON_KIN, TRUE, FALSE, FALSE);
+		(void)summon_specific(m_idx, cy, cx, dun_level + 5, SUMMON_KIN,
+		                      TRUE, FALSE, FALSE);
 
 		y = cy;
 		x = cx;
@@ -2176,9 +2178,9 @@ static bool summon_specific_okay(int r_idx)
 
 		/* Good vs. evil */
 		if (((r_ptr->flags3 & RF3_EVIL) &&
-			  (s_ptr->flags3 & RF3_GOOD)) ||
-			 ((r_ptr->flags3 & RF3_GOOD) &&
-			  (s_ptr->flags3 & RF3_EVIL)))
+		     (s_ptr->flags3 & RF3_GOOD)) ||
+		    ((r_ptr->flags3 & RF3_GOOD) &&
+		     (s_ptr->flags3 & RF3_EVIL)))
 		{
 			return FALSE;
 		}
@@ -2194,7 +2196,7 @@ static bool summon_specific_okay(int r_idx)
 	{
 		/* Do not summon enemies of the pets */
 		if (((p_ptr->align < 0) && (r_ptr->flags3 & RF3_GOOD)) ||
-			 ((p_ptr->align > 0) && (r_ptr->flags3 & RF3_EVIL)))
+		    ((p_ptr->align > 0) && (r_ptr->flags3 & RF3_EVIL)))
 		{
 			return FALSE;
 		}
@@ -2222,8 +2224,9 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_HOUND:
 		{
-			okay = (((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z')) &&
-					  !(r_ptr->flags1 & RF1_UNIQUE));
+			okay = (((r_ptr->d_char == 'C') ||
+			         (r_ptr->d_char == 'Z')) &&
+			        !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
@@ -2368,7 +2371,7 @@ static bool summon_specific_okay(int r_idx)
 			       (strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
 			       !(r_ptr->flags3 & (RF3_DRAGON)) &&
 			       !(r_ptr->flags3 & (RF3_EVIL)) &&
-					 !(r_ptr->flags3 & (RF3_UNDEAD)) &&
+			       !(r_ptr->flags3 & (RF3_UNDEAD)) &&
 			       !(r_ptr->flags3 & (RF3_DEMON)) &&
 			       !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
@@ -2420,7 +2423,7 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_GHB:
 		{
-			okay = !!strstr((r_name + r_ptr->name), "Greater hell-beast");
+			okay = (strstr((r_name + r_ptr->name), "Greater hell-beast") == 0);
 			break;
 		}
 	}
@@ -2454,7 +2457,8 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, bool friendly, bool pet)
+bool summon_specific(int who, int y1, int x1, int lev, int type,
+                     bool group, bool friendly, bool pet)
 {
 	int i, x, y, r_idx;
 	cave_type *c_ptr;
@@ -2478,7 +2482,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 
 		/* ... nor on the Pattern */
 		if ((c_ptr->feat >= FEAT_PATTERN_START) &&
-			 (c_ptr->feat <= FEAT_PATTERN_XTRA2))
+		    (c_ptr->feat <= FEAT_PATTERN_XTRA2))
 			continue;
 		
 		/* Check for a field that blocks movement */
@@ -2527,14 +2531,19 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(y, x, r_idx, FALSE, group, friendly, pet)) return (FALSE);
+	if (!place_monster_aux(y, x, r_idx, FALSE, group, friendly, pet))
+		return (FALSE);
 
 	/* Success */
 	return (TRUE);
 }
 
-/* A "dangerous" function, creates a pet of the specified type */
-bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool group_ok, bool pet)
+
+/*
+ * A "dangerous" function, creates a pet of the specified type
+ */
+bool summon_named_creature(int oy, int ox, int r_idx, bool slp,
+                           bool group_ok, bool pet)
 {
 	int i, x, y;
 	bool success = FALSE;
@@ -2616,8 +2625,6 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 	/* Result */
 	return (result);
 }
-
-
 
 
 

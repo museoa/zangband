@@ -34,7 +34,7 @@
  * This ability will also be used by other routines in the future.
  */
 void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type);
-void blend_helper(cave_type *c_ptr, byte *data,int g_type);
+void blend_helper(cave_type *c_ptr, byte *data, int g_type);
 
 
 /* Lighten / Darken new block depending on Day/ Night */
@@ -45,6 +45,7 @@ void light_dark_block(blk_ptr block_ptr, int x, int y)
 	bool daytime;
 	cave_type *c_ptr;
 
+
 	/* Day time */
 	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
 		daytime = TRUE;
@@ -52,10 +53,7 @@ void light_dark_block(blk_ptr block_ptr, int x, int y)
 		daytime = FALSE;
 
 	/* If is daytime - have seen this square */
-	if (daytime)
-	{
-		wild[y][x].done.info |= WILD_INFO_SEEN;
-	}
+	if (daytime) wild[y][x].done.info |= WILD_INFO_SEEN;
 
 	/* Light up or darken the area */
 	for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -81,7 +79,7 @@ void light_dark_block(blk_ptr block_ptr, int x, int y)
 				/* Darken "boring" features */
 				if (!(((c_ptr->feat >= FEAT_OPEN) &&
 				    (c_ptr->feat <= FEAT_MORE)) ||
-				    ((c_ptr->feat >= FEAT_CLOSED) && 
+				    ((c_ptr->feat >= FEAT_CLOSED) &&
 					(c_ptr->feat <= FEAT_SHAL_LAVA))))
 				{
 					/* Forget the grid */
@@ -155,24 +153,24 @@ void change_level(int level)
 {
 	/* Hack - reset trap detection flag */
 	p_ptr->detected = FALSE;
-	
+
 	/* Clear the monster lights */
 	clear_mon_lite();
-	
-	if (!level)
+
+	if (level == 0)
 	{
 		/* In the wilderness */
-		
+
 		/* Reset the bounds */
 		min_hgt = wild_grid.y_min;
 		max_hgt = wild_grid.y_max;
 		min_wid = wild_grid.x_min;
 		max_wid = wild_grid.x_max;
-		
+
 		/* Access the wilderness */
 		area = access_wild;
 
-		if (!dun_level)
+		if (dun_level == 0)
 		{
 			/* Lighten / darken wilderness */
 			day_night();
@@ -181,7 +179,7 @@ void change_level(int level)
 	else
 	{
 		/* In the dungeon */
-		
+
 		/* Reset the bounds */
 		min_hgt = 0;
 		max_hgt = MAX_HGT;
@@ -224,6 +222,7 @@ void change_level(int level)
 static void build_store(int n, int yy, int xx)
 {
 	int y, x, y0, x0, y1, x1, y2, x2, tmp;
+
 
 	/* Find the "center" of the store */
 	y0 = yy * 6 + 4;
@@ -308,7 +307,7 @@ static void build_store(int n, int yy, int xx)
 static void add_town_wall(void)
 {
 	int i;
-	
+
 	/* Upper and lower walls */
 	for (i = 0; i < TOWN_WID; i++)
 	{
@@ -346,23 +345,22 @@ static void add_town_wall(void)
 	}
 }
 
+
 /*
  * Generate the "consistent" town features, and place the player
  *
  * Hack -- play with the R.N.G. to always yield the same town
  * layout, including the size and shape of the buildings, the
  * locations of the doorways, and the location of the stairs.
+ *
+ * This simple routine does not check the type of stores town_num wants.
  */
 static void town_gen_hack(u16b town_num, int *xx, int *yy)
 {
 	int y, x, k, n;
-
-	/* This simple routine does not check the type of
-	 * stores town_num wants.
-	 */
-
 	int rooms[MAX_STORES];
 	byte feat;
+
 
 	/* Prepare an Array of "remaining stores", and count them */
 	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
@@ -393,12 +391,12 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		*xx = rand_range(3, TOWN_WID - 4);
 
 		feat = cave[*yy][*xx].feat;
-		
+
 		/* If square is a shop, exit */
 		if (feat == FEAT_PERM_EXTRA) continue;
 		if ((feat >= FEAT_SHOP_HEAD) &&
 			(feat <= FEAT_SHOP_TAIL)) continue;
-		
+
 		/* Blank square */
 		break;
 	}
@@ -461,7 +459,7 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 			cave[y][x].feat = vanilla_town ? FEAT_PERM_EXTRA : FEAT_NONE;
 		}
 	}
-	
+
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
@@ -476,7 +474,6 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 			if (vanilla_town)
 			{
 				cave[y][x].feat = FEAT_FLOOR;
-
 			}
 			else
 			{
@@ -490,11 +487,12 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 	town_gen_hack(town_num, xx, yy);
 
 	/* Town is now built */
-	cur_town = town_num;	
-	
+	cur_town = town_num;
+
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
 }
+
 
 /*
  * Overlay a section of a town onto the wilderness
@@ -503,6 +501,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 {
 	int i, j, xx, yy;
 	byte feat;
+
 
 	/* Find block to copy */
 	xx = (x - town[w_town].x) << 4;
@@ -524,6 +523,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 	}
 }
 
+
 /*
  * Look to see if a wilderness block is able to have
  * a town overlayed on top.
@@ -535,14 +535,14 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 
 	/* Population check */
 	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
-	
+
 	for (i = x - 1; i < x + xsize + 2; i++)
 	{
 		for (j = y - 1; j < y + ysize + 2; j++)
 		{
 			/* Hack - Not next to boundary */
-			if ((i <= 0) || (i >= max_wild - 1)
-				 || (j <= 0) || (j >= max_wild - 1))
+			if ((i <= 0) || (i >= max_wild - 1) ||
+			    (j <= 0) || (j >= max_wild - 1))
 			{
 				return (FALSE);
 			}
@@ -627,8 +627,8 @@ static void init_towns(void)
 				 * Note: only 255 towns can be stored currently.
 				 */
 				w_ptr->town = (byte)town_count;
-				
-				/* 
+
+				/*
 				 * Store the type of monsters to put on this block.
 				 * At the moment, this is just the town type - which
 				 * can then be looked up to give the answer.  This
@@ -640,7 +640,7 @@ static void init_towns(void)
 				 * placement within the town.
 				 */
 				w_ptr->town_type = town[town_count].type;
-				
+
 				/* Hack - make a flat area around the town */
 				w_ptr->info |= WILD_INFO_ROAD;
 			}
@@ -658,11 +658,12 @@ static void init_towns(void)
 	p_ptr->wilderness_y = town[best_town].y * 16 + yy;
 }
 
+
 /* Set wilderness stats depending on town type */
 void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 {
 	/* This function is very rudimentary at the moment */
-	
+
 	/* One and only one type of monster distribution */
 	switch (town_type)
 	{
@@ -670,17 +671,17 @@ void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 		{
 			/* Monsters are easy */
 			w_ptr->mon_gen = 0;
-		
+
 			/* Monsters are fairly common */
 			w_ptr->mon_prob = 64;
 			break;
 		}
-		
+
 		default:
 		{
 			/* Monsters are easy */
 			w_ptr->mon_gen = 0;
-		
+
 			/* Monsters are fairly common */
 			w_ptr->mon_prob = 64;
 		}
@@ -688,7 +689,9 @@ void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 }
 
 
-/* Place a single town in the middle of the tiny wilderness */
+/*
+ * Place a single town in the middle of the tiny wilderness
+ */
 static void init_vanilla_town(void)
 {
 	int i, j, xx, yy;
@@ -720,6 +723,7 @@ static void init_vanilla_town(void)
 	/* One town + 1 for bounds*/
 	town_count = 2;
 }
+
 
 /*
  * This section deals with wilderness generation
@@ -798,7 +802,6 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			 * Get lower two bits of type to decribe which of
 			 * (hgt,pop,law) cutoff refers to.
 			 */
-
 			switch(tree_ptr->info & 3)
 			{
 				case 1:
@@ -887,13 +890,15 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			}
 		}
 	}
-	
+
 	/* For some dumb compilers */
-	return(0);
+	return (0);
 }
+
 
 /* The number of allocated nodes in the decsion tree */
 static u16b d_tree_count;
+
 
 /*
  * This function creates a new node on the decision tree.
@@ -956,6 +961,7 @@ static u16b create_node(u16b node, bool branch)
 	return (new_node);
 }
 
+
 /*
  * This function deletes the last node on the decision tree.
  * It is needed for a major hack when something is being added
@@ -969,6 +975,7 @@ static void delete_last_node(void)
 {
 	d_tree_count--;
 }
+
 
 /*
  * This function adds a node to the tree between a "leaf"
@@ -991,7 +998,6 @@ static void delete_last_node(void)
  * tree and there is any "null" area left, the types do not fill
  * parameter space.  This will flag an error.
  */
-
 static u16b add_node_chance(u16b type, u16b node, bool branch)
 {
 	/* Is the "leaf" a tree of nodes - or a single node. */
@@ -999,10 +1005,11 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 
 	/* The node inserted into the decision tree */
 	u16b new_node;
-	wild_choice_tree_type	*tree_ptr;
+	wild_choice_tree_type *tree_ptr;
 
 	/* The old connection */
 	u16b old_node;
+
 
 	tree_ptr = &wild_choice_tree[node];
 
@@ -1022,7 +1029,6 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 
 		/* Get left leaf status */
 		is_tree = (wild_choice_tree[old_node].info & 4);
-
 	}
 	else
 	{
@@ -1305,7 +1311,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
  */
 
 static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
-	 u16b type2, wild_bound_box_type *bound2)
+                            u16b type2, wild_bound_box_type *bound2)
 {
 	/* The node inserted into the decision tree */
 	u16b new_node;
@@ -1547,10 +1553,10 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 	return (node);
 }
 
+
 /*
  * This routine compares two bounding boxes and returns true if they are the same.
  */
-
 static bool compare_bounds(wild_bound_box_type *bound1, wild_bound_box_type *bound2)
 {
 	return ((bound2->hgtmin == bound1->hgtmin) &&
@@ -1573,16 +1579,15 @@ static bool compare_bounds(wild_bound_box_type *bound1, wild_bound_box_type *bou
  * function.)
  */
 static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
-	 wild_bound_box_type *bound2, bool branch)
+                        wild_bound_box_type *bound2, bool branch)
 {
-
-
 	/* The node inserted into the decision tree */
 	u16b new_node;
 	u16b branch_node;
-	wild_choice_tree_type	*tree_ptr;
+	wild_choice_tree_type *tree_ptr;
 
 	tree_ptr = &wild_choice_tree[node];
+
 
 	if (bound1->hgtmin != bound2->hgtmin)
 	{
@@ -1594,11 +1599,11 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		else
 		{
 			branch_node = tree_ptr->ptrnode2;
-
 		}
 
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
+
 		if (new_node == 0) return (0);
 
 		/* Reconnect to new node */
@@ -1621,7 +1626,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 
 	if (bound1->hgtmax != bound2->hgtmax)
 	{
-
 		/* Record branch node */
 		if (branch)
 		{
@@ -1630,7 +1634,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		else
 		{
 			branch_node = tree_ptr->ptrnode2;
-
 		}
 
 		/* Make empty node connected along branch */
@@ -1657,7 +1660,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 
 	if (bound1->popmin != bound2->popmin)
 	{
-
 		/* Record branch node */
 		if (branch)
 		{
@@ -1666,7 +1668,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		else
 		{
 			branch_node = tree_ptr->ptrnode2;
-
 		}
 
 		/* Make empty node connected along branch */
@@ -1693,7 +1694,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 
 	if (bound1->popmax != bound2->popmax)
 	{
-
 		/* Record branch node */
 		if (branch)
 		{
@@ -1702,7 +1702,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		else
 		{
 			branch_node = tree_ptr->ptrnode2;
-
 		}
 
 		/* Make empty node connected along branch */
@@ -1729,7 +1728,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 
 	if (bound1->lawmin != bound2->lawmin)
 	{
-
 		/* Record branch node */
 		if (branch)
 		{
@@ -1738,7 +1736,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		else
 		{
 			branch_node = tree_ptr->ptrnode2;
-
 		}
 
 		/* Make empty node connected along branch */
@@ -1765,7 +1762,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 
 	if (bound1->lawmax != bound2->lawmax)
 	{
-
 		/* Record branch node */
 		if (branch)
 		{
@@ -1774,7 +1770,6 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		else
 		{
 			branch_node = tree_ptr->ptrnode2;
-
 		}
 
 		/* Make empty node connected along branch */
@@ -1808,7 +1803,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
  * This function copies the parameter bounds from one variable to another.
  */
 static void copy_bounds(wild_bound_box_type *bound1,
-	 wild_bound_box_type *bound2)
+                        wild_bound_box_type *bound2)
 {
 	bound2->hgtmin = bound1->hgtmin;
 	bound2->hgtmax = bound1->hgtmax;
@@ -1837,9 +1832,8 @@ static void copy_bounds(wild_bound_box_type *bound1,
  * current "reach" of the tree.
  */
 static u16b add_node(wild_bound_box_type *bound,
-	 wild_bound_box_type *cur_bound, u16b type, u16b node)
+                     wild_bound_box_type *cur_bound, u16b type, u16b node)
 {
-
 	/*
 	 * Temp storage of the current bounds and current type bounds
 	 * (Used in splitting a region that overlaps a cutoff)
@@ -1852,6 +1846,8 @@ static u16b add_node(wild_bound_box_type *bound,
 	bool branch = FALSE;
 
 	wild_choice_tree_type	*tree_ptr;
+
+	
 	/* Scan tree until hit a leaf or split required region */
 
 	/* Use a while loop instead of recursion to follow tree */
@@ -1876,7 +1872,6 @@ static u16b add_node(wild_bound_box_type *bound,
 			 * Get lower two bits of type to decribe which of
 			 * (hgt,pop,law) cutoff refers to.
 			 */
-
 			switch(tree_ptr->info & 3)
 			{
 				case 1:
@@ -2005,6 +2000,7 @@ static u16b add_node(wild_bound_box_type *bound,
 					}
 					break;
 				}
+
 				default:
 				{
 					msg_format("Info - %d", tree_ptr->info);
@@ -2048,7 +2044,6 @@ static u16b add_node(wild_bound_box_type *bound,
 			else
 			{
 				/* use the while loop to recurse */
-
 				oldnode = node;
 				node = tree_ptr->ptrnode1;
 			}
@@ -2172,6 +2167,7 @@ void test_decision_tree(void)
 	msg_format("Type returned: %d .", type);
 }
 
+
 #if 0
 /*
  * "Testing" function, used to find where the "invisible monster" bug
@@ -2223,6 +2219,7 @@ void test_mon_wild_integrity(void)
 }
 #endif /* 0 */
 
+
 /*
  * Test to see that there are no null nodes in the decision tree.
  */
@@ -2230,10 +2227,10 @@ static void test_wild_data(void)
 {
 	int i;
 
-	for (i=0; i < d_tree_count; i++)
+	for (i = 0; i < d_tree_count; i++)
 	{
 		if ((wild_choice_tree[i].ptrnode1 == 0) ||
-			(wild_choice_tree[i].ptrnode2 == 0))
+		    (wild_choice_tree[i].ptrnode2 == 0))
 		{
 			msg_format("Missing value at %d ", i);
 			msg_format("Cutoff %d ", wild_choice_tree[i].cutoff);
@@ -2256,6 +2253,7 @@ static void del_block(blk_ptr block_ptr)
 {
 	int x, y;
 	int m_idx;
+
 	for (x = 0; x < WILD_BLOCK_SIZE; x++)
 	{
 		for (y = 0; y < WILD_BLOCK_SIZE; y++)
@@ -2288,6 +2286,7 @@ static void del_block(blk_ptr block_ptr)
 static void clear_temp_block(void)
 {
 	int i, j;
+
 	/* Clear the section */
 	for (i = 0; i <= WILD_BLOCK_SIZE; i++)
 	{
@@ -2299,6 +2298,7 @@ static void clear_temp_block(void)
 	}
 }
 
+
 /* Set the corners of the temporary block to val */
 static void set_temp_corner_val(u16b val)
 {
@@ -2308,11 +2308,13 @@ static void set_temp_corner_val(u16b val)
 	temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = val;
 }
 
+
 /* Set the middle of the temporary block to val */
 static void set_temp_mid(u16b val)
 {
 	temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = val;
 }
+
 
 /*
  * Initialise the temporary block based on the value of a wilderness
@@ -2333,7 +2335,7 @@ static bool wild_info_bounds(int x, int y, byte info)
 	{
 		/* Set all flags */
 		grad1[5] = TRUE;
-	
+
 		/* A flag is set */
 		any = TRUE;
 	}
@@ -2361,7 +2363,7 @@ static bool wild_info_bounds(int x, int y, byte info)
 			}
 		}
 	}
-	
+
 	/* Exit if there are no set flags */
 	if (any == FALSE) return (FALSE);
 
@@ -2440,32 +2442,32 @@ static bool wild_info_bounds(int x, int y, byte info)
 	return (TRUE);
 }
 
-/*
-* Explanation of the plasma fractal algorithm:
-*
-* A grid of points is created with the properties of a 'height-map'
-* This is done by making the corners of the grid have a random value.
-* The grid is then subdivided into one with twice the resolution.
-* The new points midway between two 'known' points can be calculated
-* by taking the average value of the 'known' ones and randomly adding
-* or subtracting an amount proportional to the distance between those
-* points.  The final 'middle' points of the grid are then calculated
-* by averaging all four of the originally 'known' corner points.  An
-* random amount is added or subtracted from this to get a value of the
-* height at that point.  The scaling factor here is adjusted to the
-* slightly larger distance diagonally as compared to orthogonally.
-*
-* This is then repeated recursively to fill an entire 'height-map'
-* A rectangular map is done the same way, except there are different
-* scaling factors along the x and y directions.
-*
- */
 
+/*
+ * Explanation of the plasma fractal algorithm:
+ *
+ * A grid of points is created with the properties of a 'height-map'
+ * This is done by making the corners of the grid have a random value.
+ * The grid is then subdivided into one with twice the resolution.
+ * The new points midway between two 'known' points can be calculated
+ * by taking the average value of the 'known' ones and randomly adding
+ * or subtracting an amount proportional to the distance between those
+ * points.  The final 'middle' points of the grid are then calculated
+ * by averaging all four of the originally 'known' corner points.  An
+ * random amount is added or subtracted from this to get a value of the
+ * height at that point.  The scaling factor here is adjusted to the
+ * slightly larger distance diagonally as compared to orthogonally.
+ *
+ * This is then repeated recursively to fill an entire 'height-map'
+ * A rectangular map is done the same way, except there are different
+ * scaling factors along the x and y directions.
+ *
+ */
 static void frac_block(void)
 {
 	u16b lstep, hstep, i, j, size;
 
-	/* 
+	/*
 	 * Size is one bigger than normal blocks for speed
 	 * of algorithm with 2^n + 1
 	 */
@@ -2493,13 +2495,12 @@ static void frac_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of left and right points +random bit */
-					temp_block[j][i] = (((temp_block[j][i - hstep] + 
-					temp_block[j][i + hstep]) +
-					(randint1(lstep << 8) - (hstep << 8))) >> 1);
+					temp_block[j][i] = (((temp_block[j][i - hstep] +
+					         temp_block[j][i + hstep]) +
+					         (randint1(lstep << 8) - (hstep << 8))) >> 1);
 				}
 			}
 		}
-
 
 		/* middle left to right. */
 		for (j = hstep; j <= size - hstep; j += lstep)
@@ -2510,9 +2511,9 @@ static void frac_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of up and down points +random bit */
-					temp_block[j][i] = (((temp_block[j - hstep][i]
-					+ temp_block[j + hstep][i])
-					+ (randint1(lstep << 8) - (hstep << 8))) >> 1);
+					temp_block[j][i] = (((temp_block[j - hstep][i] +
+					          temp_block[j + hstep][i]) +
+					          (randint1(lstep << 8) - (hstep << 8))) >> 1);
 				}
 			}
 		}
@@ -2530,16 +2531,17 @@ static void frac_block(void)
 					 * reduce the effect of the square grid on the
 					 * shape of the fractal
 					 */
-					temp_block[j][i] = ((temp_block[j - hstep][i - hstep]
-					+ temp_block[j + hstep][i - hstep]
-					+ temp_block[j - hstep][i + hstep]
-					+ temp_block[j + hstep][i + hstep]) >> 2)
-					+ (((randint1(lstep << 8) - (hstep << 8)) * 181) >> 8);
+					temp_block[j][i] = ((temp_block[j - hstep][i - hstep] +
+					       temp_block[j + hstep][i - hstep] +
+					       temp_block[j - hstep][i + hstep] +
+					       temp_block[j + hstep][i + hstep]) >> 2) +
+					       (((randint1(lstep << 8) - (hstep << 8)) * 181) >> 8);
 				}
 			}
 		}
 	}
 }
+
 
 /*
  * This function smoothly interpolates between
@@ -2551,7 +2553,7 @@ static void smooth_block(void)
 {
 	u16b lstep, hstep, i, j, size;
 
-	/* 
+	/*
 	 * Size is one bigger than normal blocks for speed
 	 * of algorithm with 2^n + 1
 	 */
@@ -2575,8 +2577,8 @@ static void smooth_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of left and right points */
-					temp_block[j][i] = ((temp_block[j][i - hstep] + 
-					temp_block[j][i + hstep]) >> 1);
+					temp_block[j][i] = ((temp_block[j][i - hstep] +
+					                     temp_block[j][i + hstep]) >> 1);
 				}
 			}
 		}
@@ -2591,8 +2593,8 @@ static void smooth_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of up and down points */
-					temp_block[j][i] =((temp_block[j - hstep][i]
-					+ temp_block[j + hstep][i]) >> 1);
+					temp_block[j][i] = ((temp_block[j - hstep][i] +
+					                     temp_block[j + hstep][i]) >> 1);
 				}
 			}
 		}
@@ -2606,16 +2608,15 @@ static void smooth_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of corner points */
-					temp_block[j][i] = ((temp_block[j - hstep][i - hstep]
-					+ temp_block[j + hstep][i - hstep]
-					+ temp_block[j - hstep][i + hstep]
-					+ temp_block[j + hstep][i + hstep]) >> 2);
+					temp_block[j][i] = ((temp_block[j - hstep][i - hstep] +
+					                     temp_block[j + hstep][i - hstep] +
+					                     temp_block[j - hstep][i + hstep] +
+					                     temp_block[j + hstep][i + hstep]) >> 2);
 				}
 			}
 		}
 	}
 }
-
 
 
 /*
@@ -2628,13 +2629,15 @@ static void smooth_block(void)
  * so that choices can be made with less than 4 features.
  */
 static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
-			byte prob1, byte prob2, byte prob3, byte prob4, byte prob)
+                      byte prob1, byte prob2, byte prob3, byte prob4,
+                      byte prob)
 {
 	/* Chance factors */
 	u32b c1, c2, c3, c4, choice;
 
 	/* Zero the chance factors */
 	c1 = c2 = c3 = c4 = 0;
+
 
 	/* Calculate chance factors if feature != 0 */
 	if (feat1)
@@ -2698,6 +2701,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 	return (feat4);
 }
 
+
 /*
  * This function creates the sea based on the number in sea_type.
  * The higher the number - the greater the chance of deeper water.
@@ -2705,7 +2709,6 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
  * Note WILD_SEA and above generation types are reserved for use
  * with this function.
  */
-
 static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
 {
 	int i, j;
@@ -2721,10 +2724,12 @@ static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
 	}
 }
 
+
 #define ROAD_LEVEL		(WILD_BLOCK_SIZE * 150)
 #define TRACK_LEVEL		(WILD_BLOCK_SIZE * 140)
 #define ROAD_BORDER		(WILD_BLOCK_SIZE * 120)
 #define GROUND_LEVEL	(WILD_BLOCK_SIZE * 100)
+
 
 /*
  * Build a road or a track at this location
@@ -2738,15 +2743,15 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 {
 	int i, j, x1, y1;
 	u16b grad1[10], grad2[10], any;
-	
+
 	cave_type *c_ptr;
 
 	/* Only draw if road is on the square */
 	if (!(wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD)))
-	{		
+	{
 		/* No flags set yet */
 		any = FALSE;
-		
+
 		/* Only do the sides */
 		for (i = 2; i < 10; i += 2)
 		{
@@ -2766,7 +2771,7 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 					grad1[i] = TRACK_LEVEL;
 					any = TRUE;
 				}
-				
+
 				if (wild[y1][x1].done.info & WILD_INFO_ROAD)
 				{
 					/* Flag is set */
@@ -2775,21 +2780,21 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 				}
 			}
 		}
-		
+
 		/* No nearby roads */
 		if (!any) return;
-		
+
 		/* Convert from grad1 to grad2 */
 		for (i = 1; i < 10; i++)
 		{
-			grad2[i] = GROUND_LEVEL;	
+			grad2[i] = GROUND_LEVEL;
 		}
-		
+
 		/* Upper left */
 		if (grad1[4] && grad1[8])
 		{
 			grad2[7] = MAX(grad1[4], grad1[8]);
-			
+
 			any = FALSE;
 		}
 
@@ -2797,7 +2802,7 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 		if (grad1[8] && grad1[6])
 		{
 			grad2[9] = MAX(grad1[8], grad1[6]);
-			
+
 			any = FALSE;
 		}
 
@@ -2805,7 +2810,7 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 		if (grad1[6] && grad1[2])
 		{
 			grad2[3] = MAX(grad1[6], grad1[2]);
-			
+
 			any = FALSE;
 		}
 
@@ -2813,17 +2818,17 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 		if (grad1[2] && grad1[4])
 		{
 			grad2[1] = MAX(grad1[2], grad1[4]);
-			
+
 			any = FALSE;
 		}
-		
+
 		/* Hack - only if there really is a road */
 		if (any) return;
 	}
 	else
 	{
 		/* Do everything */
-		
+
 		/* Check each adjacent square to see if is road or track */
 		for (i = 1; i < 10; i++)
 		{
@@ -2842,7 +2847,7 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 					/* Flag is set */
 					grad2[i] = TRACK_LEVEL;
 				}
-				
+
 				if (wild[y1][x1].done.info & WILD_INFO_ROAD)
 				{
 					/* Flag is set */
@@ -2912,11 +2917,11 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
 {
 	int i, j;
+
 	for (j = 0; j < WILD_BLOCK_SIZE; j++)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-
 			if (temp_block[j][i] >= WILD_BLOCK_SIZE * 213)
 			{
 				/* 25% of the time use the other tile : it looks better this way */
@@ -2947,8 +2952,6 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
 
 
 
-
-
 /*
  * Make wilderness generation type 1
  *
@@ -2963,6 +2966,7 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 {
 	int i, j;
 	byte new_feat, element;
+
 
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -2989,6 +2993,7 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 		}
 	}
 }
+
 
 /*
  * Make wilderness generation type 2
@@ -3050,6 +3055,7 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
 	}
 }
 
+
 /*
  * This function makes a wilderness type specifed by data[0].
  * It then overlays a "circle" of other terrain on top.
@@ -3067,7 +3073,7 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 
 	/* Call the other routine to make the "base" terrain. */
 	gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
-		wild_gen_data[data[0]].gen_routine);
+	                 wild_gen_data[data[0]].gen_routine);
 
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -3109,6 +3115,7 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 	}
 }
 
+
 /*
  * The function that picks a "blending feature" for wild. gen. type 1
  */
@@ -3116,8 +3123,9 @@ static void blend_wild_01(cave_type *c_ptr, byte *data)
 {
 	/* Store an "average" terrain feature */
 	c_ptr->feat = pick_feat(data[0], data[2], data[4], data[6],
-		data[1], data[3], data[5], data[7], 128);
+	                        data[1], data[3], data[5], data[7], 128);
 }
+
 
 /*
  * The function that picks a "blending feature" for wild. gen. type 2
@@ -3127,6 +3135,7 @@ static void blend_wild_02(cave_type *c_ptr, byte *data)
 	/* Store the most likely terrain feature */
 	c_ptr->feat = data[0];
 }
+
 
 void blend_helper(cave_type *c_ptr, byte *data,int g_type)
 {
@@ -3146,13 +3155,14 @@ void blend_helper(cave_type *c_ptr, byte *data,int g_type)
 		case 3:
 			/* Use the other terrain's blend function */
 			blend_helper(c_ptr, wild_gen_data[data[0]].data,
-				 wild_gen_data[data[0]].gen_routine);
+			             wild_gen_data[data[0]].gen_routine);
 			break;
 
 		default:
 		msg_format("Illegal wilderness type %d ", g_type);
 	}
 }
+
 
 /*
  * Blend a block based on the adjacent blocks
@@ -3213,7 +3223,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 
 			/* Check to see if adjacent square is not in bounds */
 			if (((y + dy) < 0) || ((y + dy) >= max_wild) ||
-				((x + dx) < 0) || ((x + dx) >= max_wild)) continue;
+			    ((x + dx) < 0) || ((x + dx) >= max_wild)) continue;
 
 			/* Don't blend with yourself */
 			if ((dx == 0) && (dy == 0)) continue;
@@ -3228,36 +3238,40 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 
 			/* Blend with generation type specified by gen_routine */
 			blend_helper(&block_ptr[j][i], wild_gen_data[w_type].data,
-				 wild_gen_data[w_type].gen_routine);
+			             wild_gen_data[w_type].gen_routine);
 		}
 	}
 }
 
-/* Make the specified terrain type at a wilderness block */
+
+/*
+ * Make the specified terrain type at a wilderness block
+ */
 void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
 {
 	/* Based on type - choose wilderness block generation function */
 	switch (gen_type)
 	{
 		case 1:
-		/* Fractal plasma with weighted terrain probabilites */
-		make_wild_01(block_ptr, data);
-		break;
+			/* Fractal plasma with weighted terrain probabilites */
+			make_wild_01(block_ptr, data);
+			break;
 
 		case 2:
-		/* Uniform field + rare "out-crops" */
-		make_wild_02(block_ptr, data);
-		break;
+			/* Uniform field + rare "out-crops" */
+			make_wild_02(block_ptr, data);
+			break;
 
 		case 3:
-		/* Use another type + overlay a "circle" of terrain. */
-		make_wild_03(block_ptr, data);
-		break;
+			/* Use another type + overlay a "circle" of terrain. */
+			make_wild_03(block_ptr, data);
+			break;
 
 		default:
-		quit("Illegal wilderness block type.");
+			quit("Illegal wilderness block type.");
 	}
 }
+
 
 /*
  * Fill the block with perm. wall  This is only used by the vanilla town option.
@@ -3265,6 +3279,7 @@ void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
 static void fill_perm_wall(blk_ptr block_ptr)
 {
 	int i, j;
+
 	/* Overlay the block with grass */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -3274,6 +3289,7 @@ static void fill_perm_wall(blk_ptr block_ptr)
 		}
 	}
 }
+
 
 /* Add monsters to the wilderness block */
 static void add_monsters_block(int x, int y)
@@ -3324,7 +3340,10 @@ static void add_monsters_block(int x, int y)
 	}
 }
 
-/* Add monsters to the boundary of the visible grid. */
+
+/*
+ * Add monsters to the boundary of the visible grid.
+ */
 static void add_monsters(void)
 {
 	int x, y;
@@ -3340,7 +3359,7 @@ static void add_monsters(void)
 
 			/* Not too close to player */
 			if (distance(px / 16, py / 16,
-				 x + wild_grid.x, y + wild_grid.y) < 3) continue;
+			             x + wild_grid.x, y + wild_grid.y) < 3) continue;
 
 			/* Set the monster generation level */
 
@@ -3354,7 +3373,9 @@ static void add_monsters(void)
 }
 
 
-/* Add monsters to the wilderness in all blocks */
+/*
+ * Add monsters to the wilderness in all blocks
+ */
 void repopulate_wilderness(void)
 {
 	int x, y;
@@ -3373,10 +3394,12 @@ void repopulate_wilderness(void)
 			add_monsters_block(x + wild_grid.x, y + wild_grid.y);
 		}
 	}
-
 }
 
-/* Make a new block based on the terrain type */
+
+/*
+ * Make a new block based on the terrain type
+ */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
 	u16b w_town, w_type;
@@ -3429,7 +3452,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 			/* Overlay water */
 			wild_add_gradient(block_ptr, FEAT_SHAL_WATER, FEAT_DEEP_WATER);
 		}
-		
+
 		/* Add lava boundary effects. */
 		if (wild_info_bounds(x, y, WILD_INFO_LAVA))
 		{
@@ -3441,7 +3464,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 			/* Overlay lava */
 			wild_add_gradient(block_ptr, FEAT_SHAL_LAVA, FEAT_DEEP_LAVA);
 		}
-		
+
 		/* Add acid boundary effects.*/
 		if (wild_info_bounds(x, y, WILD_INFO_ACID))
 		{
@@ -3457,6 +3480,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		/* Add roads */
 		make_wild_road(block_ptr, x, y);
 	}
+
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
 
@@ -3495,6 +3519,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 #endif /* USE_SCRIPT */
 }
 
+
 /* Allocate all grids around player */
 static void init_wild_cache(void)
 {
@@ -3512,7 +3537,9 @@ static void init_wild_cache(void)
 }
 
 
-/* Allocate all grids around player */
+/*
+ * Allocate all grids around player
+ */
 static void allocate_all(void)
 {
 	u16b x, y;
@@ -3547,7 +3574,6 @@ static void allocate_all(void)
  * section of the wilderness by 16 units.  This is
  * done by scrolling the grid of pointers.
  */
-
 static void shift_down(void)
 {
 	u16b i, j;
@@ -3564,21 +3590,21 @@ static void shift_down(void)
 		/* Scroll pointers */
 		for (j = 1; j < WILD_GRID_SIZE; j++)
 		{
-			wild_grid.block_ptr[j - 1][i] =
-				wild_grid.block_ptr[j][i];
+			wild_grid.block_ptr[j - 1][i] = wild_grid.block_ptr[j][i];
 		}
 
 		/* Connect new grid to wilderness */
 		wild_grid.block_ptr[WILD_GRID_SIZE - 1][i] = block_ptr;
 
 		/* Make the new block */
-		gen_block(i + wild_grid.x,
-			WILD_GRID_SIZE - 1 + wild_grid.y, block_ptr);
+		gen_block(i + wild_grid.x, WILD_GRID_SIZE - 1 + wild_grid.y,
+		          block_ptr);
 	}
 
 	/* Add monsters */
 	add_monsters();
 }
+
 
 static void shift_up(void)
 {
@@ -3596,8 +3622,7 @@ static void shift_up(void)
 		/* Scroll pointers */
 		for (j = WILD_GRID_SIZE - 1; j > 0; j--)
 		{
-			wild_grid.block_ptr[j][i] =
-				wild_grid.block_ptr[j - 1][i];
+			wild_grid.block_ptr[j][i] = wild_grid.block_ptr[j - 1][i];
 		}
 
 		/* Connect new grid to wilderness */
@@ -3610,6 +3635,7 @@ static void shift_up(void)
 	/* Add monsters */
 	add_monsters();
 }
+
 
 static void shift_right(void)
 {
@@ -3627,16 +3653,15 @@ static void shift_right(void)
 		/* Scroll pointers */
 		for (i = 1; i < WILD_GRID_SIZE; i++)
 		{
-			wild_grid.block_ptr[j][i - 1] =
-				wild_grid.block_ptr[j][i];
+			wild_grid.block_ptr[j][i - 1] = wild_grid.block_ptr[j][i];
 		}
 
 		/* Connect new grid to wilderness */
 		wild_grid.block_ptr[j][WILD_GRID_SIZE - 1] = block_ptr;
 
 		/* Make the new block */
-		gen_block(WILD_GRID_SIZE - 1 + wild_grid.x,
-			j + wild_grid.y, block_ptr);
+		gen_block(WILD_GRID_SIZE - 1 + wild_grid.x, j + wild_grid.y,
+		          block_ptr);
 	}
 
 	/* Add monsters */
@@ -3660,8 +3685,7 @@ static void shift_left(void)
 		/* Scroll pointers */
 		for (i = WILD_GRID_SIZE - 1; i > 0; i--)
 		{
-			wild_grid.block_ptr[j][i] =
-				wild_grid.block_ptr[j][i - 1];
+			wild_grid.block_ptr[j][i] = wild_grid.block_ptr[j][i - 1];
 		}
 
 		/* Connect new grid to wilderness */
@@ -3674,6 +3698,7 @@ static void shift_left(void)
 	/* Add monsters */
 	add_monsters();
 }
+
 
 /*
  * Centre grid of wilderness blocks around player.
@@ -3689,8 +3714,8 @@ void move_wild(void)
 	/* Get upper left hand block in grid. */
 
 	/* Divide by 16 to get block from (x,y) coord */
-	x = ((u16b) p_ptr->wilderness_x>>4);
-	y = ((u16b) p_ptr->wilderness_y>>4);
+	x = ((u16b)p_ptr->wilderness_x>>4);
+	y = ((u16b)p_ptr->wilderness_y>>4);
 
 	/* The player sees the wilderness block he is on. */
 	wild[y][x].done.info |= WILD_INFO_SEEN;
@@ -3706,8 +3731,8 @@ void move_wild(void)
 	if (y + WILD_GRID_SIZE > max_wild) y = max_wild - WILD_GRID_SIZE;
 
 	/* Hack - set town */
-	p_ptr->town_num = wild[p_ptr->wilderness_y >> 4]
-		[p_ptr->wilderness_x >> 4].done.town;
+	p_ptr->town_num =
+	    wild[p_ptr->wilderness_y >> 4][p_ptr->wilderness_x >> 4].done.town;
 
 	/*
 	 * Hack - check to see if first block is the same.
@@ -3744,7 +3769,7 @@ void move_wild(void)
 		/* Recalculate boundaries */
 		wild_grid.x_max = (x + WILD_GRID_SIZE) << 4;
 		wild_grid.x_min = x << 4;
-		
+
 		max_wid = wild_grid.x_max;
 		min_wid = wild_grid.x_min;
 
@@ -3758,7 +3783,7 @@ void move_wild(void)
 	/* Recalculate boundaries */
 	wild_grid.x_max = (x + WILD_GRID_SIZE) << 4;
 	wild_grid.x_min = x << 4;
-	
+
 	max_wid = wild_grid.x_max;
 	min_wid = wild_grid.x_min;
 
@@ -3787,9 +3812,10 @@ void move_wild(void)
 static bool is_road_town(u16b town_num)
 {
 	/* Hack - change this when we implement other things */
-	
+
 	return (TRUE);
-} 
+}
+
 
 /*
  * Link two points in the wilderness with a road
@@ -3798,11 +3824,11 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 {
 	s16b xn, yn, i;
 	s16b dx, dy, changex, changey;
-	
+
 	u16b dist = distance(x1, y1, x2, y2);
 
 	wild_gen2_type *w_ptr;
-	
+
 	if (dist > 6)
 	{
 		/* Divide path in half and call routine twice. */
@@ -3831,7 +3857,7 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 
 		xn = x1 + dx + changex;
 		yn = y1 + dy + changey;
-		
+
 		/* Bounds checking */
 		if (xn < 0) xn = 0;
 		if (yn < 0) yn = 0;
@@ -3841,7 +3867,7 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 		/* Link the roads up */
 		road_link(x1, y1, xn, yn);
 		road_link(xn, yn, x2, y2);
-		
+
 		/* Done */
 		return;
 	}
@@ -3854,15 +3880,15 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 	{
 		xn = x1 + i * (x2 - x1) / dist;
 		yn = y1 + i * (y2 - y1) / dist;
-		
+
 		w_ptr = &wild[yn][xn].trans;
-		
+
 		/* No bridges yet */
 		if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
-		{ 
+		{
 			continue;
 		}
-		
+
 		/* Add the road to the wilderness */
 		if (w_ptr->law_map + w_ptr->pop_map < 256)
 		{
@@ -3874,6 +3900,7 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 		}
 	}
 }
+
 
 /*
  * Try to find a connecting square to a town.
@@ -3887,18 +3914,19 @@ static void road_link(u16b x1, u16b y1, u16b x2, u16b y2)
 static void road_connect(u16b *x, u16b *y, u16b town_num)
 {
 	/* Get town type */
-	
+
 	/* Get placement of gates */
-	
+
 	/* Use distance to find closest gate */
-	
+
 	/* Output resulting wilderness square */
-	
-	
+
+
 	/* Dodgy hack = just output median town square */
 	*x = town[town_num].x + 2;
 	*y = town[town_num].y;
 }
+
 
 /*
  * Create the roads in the wildernes.
@@ -3916,11 +3944,11 @@ static void create_roads(void)
 	s16b town1, town2, town3, town4;
 
 	u16b dist, dist2, max_dist;
-	
+
 	u16b **link_list;
 	u16b *town_number;
-	
-		
+
+
 	/* Find number of linkable towns */
 	for (i = 1; i < town_count; i++)
 	{
@@ -3930,32 +3958,32 @@ static void create_roads(void)
 			towns++;
 		}
 	}
-	
+
 	/* Make towns x towns array of u16b's */
 	C_MAKE(link_list, towns, u16b_ptr);
-	
+
 	for (i = 0; i < towns; i++)
 	{
 		C_MAKE(link_list[i], towns, u16b);
 	}
-	
+
 	/* Town lookup table */
 	C_MAKE(town_number, towns, u16b);
-	
+
 	/* Fill the lookup table */
 	towns = 0;
-	
+
 	for (i = 1; i < town_count; i++)
 	{
 		if (is_road_town(i))
 		{
 			town_number[towns] = i;
-			
+
 			/* Increment number of towns */
 			towns++;
 		}
 	}
-	
+
 	/* Tabulate distances less than ROAD_DIST */
 	for (i = 0; i < towns; i++)
 	{
@@ -3963,14 +3991,14 @@ static void create_roads(void)
 		{
 			/* Get distance */
 			dist = distance(town[town_number[i]].x, town[town_number[i]].y,
-				 town[town_number[j]].x, town[town_number[j]].y);
-			
+			                town[town_number[j]].x, town[town_number[j]].y);
+
 			/* Only save it if the distance is smaller than ROAD_DIST */
 			if (dist < ROAD_DIST)
 			{
 				link_list[j][i] = dist;
 				link_list[i][j] = dist;
-				
+
 				links += 2;
 			}
 		}
@@ -3982,7 +4010,7 @@ static void create_roads(void)
 		max_dist = ROAD_DIST;
 		town1 = -1;
 		town2 = -1;
-		
+
 		/* Find the shortest link */
 		for (i = 0; i < towns; i++)
 		{
@@ -3990,10 +4018,10 @@ static void create_roads(void)
 			{
 				/* Get distance */
 				dist = link_list[j][i];
-				
+
 				/* Already linked or no link at all? */
 				if (!dist) continue;
-			
+
 				if (dist < max_dist)
 				{
 					/* This link is better */
@@ -4003,64 +4031,64 @@ static void create_roads(void)
 				}
 			}
 		}
-		
+
 		/* No third town yet */
 		town3 = -1;
-		
+
 		/* Max distance is 2x the dist between the two towns */
 		max_dist += max_dist;
-		
-		/* 
+
+		/*
 		 * Compare the connections for the two towns to see
 		 * if they share a connection in common.
 		 *
 		 * Pick the shortest such dual link.
-		 */		 
+		 */
 		for (i = 0; i < towns; i++)
 		{
 			/* Distance from town1 to the new town */
 			dist = link_list[town1][i];
-			
+
 			/* No link? */
 			if (!dist) continue;
-			
+
 			/* Distance from town2 to the new town */
 			dist2 = link_list[town2][i];
-			
+
 			/* No link? */
 			if (!dist2) continue;
-			
+
 			if ((dist2 == ROAD_DIST * 2 + 1) &&
-				 (link_list[i][town1] != ROAD_DIST * 2 + 1))
+			    (link_list[i][town1] != ROAD_DIST * 2 + 1))
 			{
 				/* Prevent "overlinking" with third town */
 				link_list[i][town1] = ROAD_DIST * 2 + 1;
 				link_list[town1][i] = ROAD_DIST * 2 + 1;
-			
+
 				links -=2;
 			}
-			
+
 			if ((dist == ROAD_DIST * 2 + 1) &&
-				 (link_list[i][town2] != ROAD_DIST * 2 + 1))
+			    (link_list[i][town2] != ROAD_DIST * 2 + 1))
 			{
 				/* Prevent "overlinking" with third town */
 				link_list[i][town2] = ROAD_DIST * 2 + 1;
 				link_list[town2][i] = ROAD_DIST * 2 + 1;
-				
+
 				links -= 2;
 			}
-			
+
 			/* There is a link! */
 			if (dist + dist2 < max_dist)
 			{
 				/* Save the possible cross-roads partner */
 				town3 = i;
-				
+
 				/* Update distance so we pick the closest three towns */
 				max_dist = dist + dist2;
 			}
 		}
-		
+
 		if (town3 != -1)
 		{
 			/* Mark towns as connected to each other */
@@ -4070,79 +4098,78 @@ static void create_roads(void)
 			link_list[town2][town3] = ROAD_DIST * 2 + 1;
 			link_list[town3][town1] = ROAD_DIST * 2 + 1;
 			link_list[town3][town2] = ROAD_DIST * 2 + 1;
-			
+
 			/* Decrement link total */
 			links -= 6;
-			
+
 			/* Have a triangle of connected towns */
 			town1 = town_number[town1];
 			town2 = town_number[town2];
 			town3 = town_number[town3];
-			
+
 			/* Find midpoint */
 			x2 = (town[town1].x + town[town2].x + town[town3].x) / 3;
 			y2 = (town[town1].y + town[town2].y + town[town3].y) / 3;
-			
+
 			/* Connect the three towns to the midpoint */
 			x1 = x2;
 			x1 = y2;
-			
+
 			/* Get connection square for town1 */
 			road_connect(&x1, &y1, town1);
-			
+
 			/* Link town1 with the midpoint */
 			road_link(x1, y1, x2, y2);
-			
+
 			x1 = x2;
 			x1 = y2;
-			
+
 			/* Get connection square for town2 */
 			road_connect(&x1, &y1, town2);
-			
+
 			/* Link town2 with the midpoint */
 			road_link(x1, y1, x2, y2);
-			
+
 			x1 = x2;
 			x1 = y2;
-			
+
 			/* Get connection square for town3 */
 			road_connect(&x1, &y1, town3);
-			
+
 			/* Link town1 with the midpoint */
 			road_link(x1, y1, x2, y2);
 		}
 		else
 		{
-			
 			dist = link_list[town1][town2];
 			max_dist = (dist / 2) + 1;
-			
+
 			/* Mark the towns as connected to each other */
 			link_list[town1][town2] = ROAD_DIST * 2 + 1;
 			link_list[town2][town1] = ROAD_DIST * 2 + 1;
 
 			/* Decrement link total */
 			links -= 2;
-			
+
 			/* Hack - save the town number in link_list */
 			town3 = town1;
 			town4 = town2;
 
 			/* Hack - set j to be zero */
 			j = 0;
-			
+
 			town1 = town_number[town1];
 			town2 = town_number[town2];
-			
+
 			/* Get first point */
 			x1 = town[town2].x;
 			y1 = town[town2].y;
-			
+
 			/* Get second point */
 			x2 = town[town1].x;
 			y2 = town[town2].y;
-			
-			/* 
+
+			/*
 			 * In some cases, the road will "run into" other towns.
 			 * The following code hopefully checks for that.
 			 */
@@ -4150,40 +4177,40 @@ static void create_roads(void)
 			{
 				/* Ignore the towns we want to connect */
 				if ((i == town3) || (i == town4)) continue;
-				
+
 				/* Get location of the current town */
 				x3 = town[town_number[i]].x;
 				y3 = town[town_number[i]].y;
-				
+
 				/* See if is close */
 				if ((distance(x1, y1, x3, y3) > max_dist) &&
 					(distance(x2, y2, x3, y3) > max_dist)) continue;
-				
+
 				/* See if the town is "in the way" */
 				if (dist_to_line(y3, x3, y1, x1, y2, x2) > dist / ROAD_MIN)
 				{
 					continue;
 				}
-				
+
 				/* We have a problem - set j to be 1 (a flag) */
 				j = 1;
-				
+
 				/* Exit */
 				break;
 			}
-			
+
 			/* If there are no problems - link the two towns */
 			if (j == 0)
 			{
 				/* Get connection square for town1 */
 				road_connect(&x1, &y1, town1);
-			
+
 				x2 = x1;
 				y2 = y1;
-			
+
 				/* Get connection square for town2 */
 				road_connect(&x2, &y2, town2);
-			
+
 				/* Link the two towns */
 				road_link(x1, y1, x2, y2);
 			}
@@ -4195,12 +4222,12 @@ static void create_roads(void)
 	{
 		C_FREE(link_list[i], towns, u16b);
 	}
-	
+
 	C_FREE(link_list, towns, u16b_ptr);
 
 	/* Town lookup table */
 	C_FREE(town_number, towns, u16b);
-	
+
 	/* Done */
 }
 
@@ -4227,6 +4254,7 @@ static bool ang_sort_comp_height(vptr u, vptr v, int a, int b)
 	return (ha >= hb);
 }
 
+
 /*
  * Sorting hook -- swap function -- by "wilderness height"
  *
@@ -4250,6 +4278,7 @@ static void ang_sort_swap_height(vptr u, vptr v, int a, int b)
 	y[a] = y[b];
 	y[b] = temp;
 }
+
 
 /*
  * Make river between two points.
@@ -4294,13 +4323,13 @@ static void link_river(int x1, int x2, int y1, int y2)
 
 		xn = x1 + dx + changex;
 		yn = y1 + dy + changey;
-				
+
 		/* Bounds checking */
 		if (xn < 0) xn = 0;
 		if (yn < 0) yn = 0;
 		if (xn >= max_wild) xn = max_wild - 1;
 		if (yn >= max_wild) yn = max_wild - 1;
-		
+
 		/* construct river out of two smaller ones */
 		link_river(x1, xn, y1, yn);
 		link_river(xn, x2, yn, y2);
@@ -4319,6 +4348,7 @@ static void link_river(int x1, int x2, int y1, int y2)
 	}
 }
 
+
 /*
  * Make a few rivers in the wilderness.
  *
@@ -4326,7 +4356,6 @@ static void link_river(int x1, int x2, int y1, int y2)
  * The highest closest points are connected by a fractal line.
  * This is repeated until the highest point is below sea level.
  */
-
 static void create_rivers(void)
 {
 	int i, cur_posn, high_posn, dh, river_start;
@@ -4384,7 +4413,7 @@ static void create_rivers(void)
 		{
 			/* Hack - ignore deltas that already have been matched */
 			if ((temp_x[i] == -1) || (temp_y[i] == -1)) continue;
-			
+
 			/* Change in Height */
 			dh = ch - wild[temp_y[i]][temp_x[i]].trans.hgt_map;
 
@@ -4405,8 +4434,8 @@ static void create_rivers(void)
 
 		/* Make river between two points */
 		link_river(cx, temp_x[high_posn], cy, temp_y[high_posn]);
-		
-		/* 
+
+		/*
 		 * Mega hack - flag below sea level points
 		 * to stop "deltas" being made.
 		 */
@@ -4416,7 +4445,7 @@ static void create_rivers(void)
 			temp_x[high_posn] = -1;
 			temp_y[high_posn] = -1;
 		}
-		
+
 		/* Get new highest point */
 		cur_posn++;
 
@@ -4427,14 +4456,14 @@ static void create_rivers(void)
 		{
 			/* Ignore the point below sea level - already linked */
 			cur_posn++;
-			
+
 			cx = temp_x[cur_posn];
 			cy = temp_y[cur_posn];
 		}
 
 		/* Hack - failure to find a new node */
 		if (cur_posn >= temp_n - 1) break;
-		
+
 		ch = wild[cy][cx].trans.hgt_map;
 	}
 
@@ -4461,15 +4490,15 @@ void create_lakes(void)
 	int count, i, j, x ,y;
 
 	wild_gen2_type *w_ptr;
-	
+
 	bool river, clear;
 	byte lake_type;
-	
+
 	/* Try LAKE_NUM times */
 	for (count = 0; count < LAKE_NUM; count++)
 	{
 		/* Make a plasma fractal */
-		
+
 		/* Initialise temporary block */
 		clear_temp_block();
 		set_temp_corner_val(WILD_BLOCK_SIZE * 256);
@@ -4477,44 +4506,44 @@ void create_lakes(void)
 
 		/* Generate plasma factal */
 		frac_block();
-		
+
 		/* Get location */
 		x = randint1(max_wild - 16 - 1);
 		y = randint1(max_wild - 16 - 1);
-			
+
 		/* Clear river flag */
 		river = FALSE;
-		
+
 		/* Is the area clear? */
 		clear = TRUE;
-		
+
 		/* Look for free space */
 		for (i = x; i < x + 16; i++)
 		{
 			/* Early exit */
 			if (!clear) break;
-			
+
 			for (j = y; j < y + 16; j++)
 			{
-				w_ptr = &wild[j][i].trans;				
-			
+				w_ptr = &wild[j][i].trans;
+
 				/* If non-lake square */
 				if (temp_block[j - y][i - x] > WILD_BLOCK_SIZE * 128) continue;
-				
+
 				/* Below sea level? */
 				if (w_ptr->hgt_map <= 256 / SEA_FRACTION)
 				{
 					clear = FALSE;
 					break;
 				}
-			
+
 				if (w_ptr->info & WILD_INFO_WATER) river = TRUE;
 			}
 		}
-		
+
 		/* Try again somewhere else */
 		if (!clear) continue;
-		
+
 		/* What type of lake do we want? */
 		if (river)
 		{
@@ -4524,7 +4553,7 @@ void create_lakes(void)
 		else
 		{
 			w_ptr = &wild[y][x].trans;
-			
+
 			if ((w_ptr->law_map > 64) || (w_ptr->pop_map > 64))
 			{
 				/* Water if in lawful or populous region */
@@ -4552,9 +4581,9 @@ void create_lakes(void)
 			{
 				/* If non-lake square */
 				if (temp_block[j][i] > WILD_BLOCK_SIZE * 128) continue;
-				
+
 				w_ptr = &wild[j + y][i + x].trans;
-				
+
 				switch (lake_type)
 				{
 					case 1:
@@ -4578,6 +4607,7 @@ void create_lakes(void)
 	}
 }
 
+
 /*
  * Plasma routines used to build the wilderness.
  * These store the results scaled by a factor of 16
@@ -4599,6 +4629,7 @@ static void store_hgtmap(int x, int y, int val)
 
 	return;
 }
+
 
 /*
  * This function creates the first of the three parameters used to generate
@@ -4766,6 +4797,7 @@ static void store_popmap(int x, int y, int val, u16b sea)
 	return;
 }
 
+
 /*
  * This function creates the second of the three parameters used to generate
  * the wilderness.  This is done by making a plasma fractal.
@@ -4930,6 +4962,7 @@ static void store_lawmap(int x, int y, int val, u16b sea)
 	return;
 }
 
+
 /*
  * This function creates the third of the three parameters used to generate
  * the wilderness.  This is done by making a plasma fractal.
@@ -4945,11 +4978,11 @@ static void create_law_map(u16b sea)
 
 	int lstep, hstep, i, j, ii, jj, size;
 
-	/* 
+	/*
 	 * Size is one bigger than normal blocks for speed of
 	 * algorithm with 2^n + 1
 	 */
-	
+
 	size = max_wild - 1;
 
 	/* Clear the section */
@@ -5017,7 +5050,6 @@ static void create_law_map(u16b sea)
 			}
 		}
 
-
 		/* middle left to right. */
 		for (j = hstep; j <= size - hstep; j += lstep)
 		{
@@ -5081,7 +5113,10 @@ static void create_law_map(u16b sea)
 	}
 }
 
-/* Finish making the wilderness - recenter the screen around the player. */
+
+/*
+ * Finish making the wilderness - recenter the screen around the player.
+ */
 static void wild_done(void)
 {
 	px = (s16b)p_ptr->wilderness_x;
@@ -5124,6 +5159,7 @@ static void wild_done(void)
 	move_wild();
 }
 
+
 /*
  * Create the wilderness
  *
@@ -5139,19 +5175,18 @@ static void wild_done(void)
  * are then merged to work out the monster generation statistics for
  * each 16x16 block.
  *
- * Finally towns are placed. 
+ * Finally towns are placed.
  *
  * Problem: The towns don't take into account the hpl of the wilderness
  * properly yet.  There may need to be another union to store the information
- * as the wildness is being made... 
+ * as the wildness is being made...
  *
- * This code is incomplete: 
+ * This code is incomplete:
  * No specials yet.
  */
-
 void create_wilderness(void)
 {
-	int i,j;
+	int i, j;
 
 	u16b hgt_min, hgt_max, pop_min, pop_max, law_min, law_max;
 	byte sea_level;
@@ -5160,7 +5195,8 @@ void create_wilderness(void)
 	long hgt_scale, pop_scale, law_scale;
 
 	wild_tp_ptr w_ptr;
-	
+
+
 	/* Test wilderness generation information */
 	test_wild_data();
 
@@ -5177,7 +5213,7 @@ void create_wilderness(void)
 			{
 				/* Mega Hack - Use the 0 value (normally empty) to denote grass. */
 				w_ptr = &wild[j][i];
-				
+
 				w_ptr->done.wild = 0;
 
 				/* Nothing interesting here */
@@ -5234,11 +5270,11 @@ void create_wilderness(void)
 	/* Height scale factor */
 	hgt_scale = (hgt_max - hgt_min);
 
-	/* 
+	/*
 	 * The sea covers 1/SEA_FRACTION of the wilderness
 	 */
 	sea_level = (byte) (hgt_scale / SEA_FRACTION);
-	
+
 	hgt_min *= 16;
 
 	/* create "population density" information */
@@ -5272,7 +5308,7 @@ void create_wilderness(void)
 	/* Rescale minimum. */
 	pop_min *= 16;
 
-	create_law_map(sea_level * 16+ hgt_min);
+	create_law_map(sea_level * 16 + hgt_min);
 
 	/* work out extremes of "lawfulness" so it can be scaled. */
 
@@ -5309,52 +5345,52 @@ void create_wilderness(void)
 		{
 			/* Get wilderness grid */
 			w_ptr = &wild[j][i];
-			
+
 			/*
 			 * Store parameters before change the information
 			 * in the union.  (Want to scale values to be 0 - 255)
 			 */
-			
+
 			hgt = (byte) ((w_ptr->gen.hgt_map - hgt_min) * 16 / hgt_scale);
 			pop = (byte) ((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
 			law = (byte) ((w_ptr->gen.law_map - law_min) * 16 / law_scale);
-			
+
 			/*
 			 * Go to transition data structure
 			 */
 			w_ptr->trans.hgt_map = hgt;
 			w_ptr->trans.pop_map = pop;
 			w_ptr->trans.law_map = law;
-			
+
 			/* No town yet */
 			w_ptr->trans.town = 0;
-			
+
 			/* Type of town */
 			w_ptr->trans.town_type = 0;
-			
+
 			/* No info flags set yet */
 			w_ptr->trans.info = 0;
 		}
 	}
-	
-	
-	/* 
+
+
+	/*
 	 * Add in large level features.
 	 */
-	
+
 	/* Add in rivers... */
-	create_rivers();			
-	
+	create_rivers();
+
 	/* Add in lakes... */
 	create_lakes();
-	
+
 	/* Add towns + dungeons etc */
 	init_towns();
 
 	/* Connect the towns with roads */
 	create_roads();
 
-		
+
 	/* Convert the wilderness into the final data structure */
 	/* Fill wilderness with terrain */
 	for (i = 0; i < max_wild; i++)
@@ -5362,20 +5398,20 @@ void create_wilderness(void)
 		for (j = 0; j < max_wild; j++)
 		{
 			byte town, info, town_type;
-			
+
 			/* Get wilderness grid */
 			w_ptr = &wild[j][i];
-			
+
 			/* Save town and info status */
 			town = w_ptr->trans.town;
 			town_type = w_ptr->trans.town_type;
 			info = w_ptr->trans.info;
-						
+
 			/* Get HPL of grid */
 			hgt = w_ptr->trans.hgt_map;
 			pop = w_ptr->trans.pop_map;
 			law = w_ptr->trans.law_map;
-			
+
 			if (hgt < 256 / SEA_FRACTION)
 			{
 				/* Ocean */
@@ -5397,14 +5433,14 @@ void create_wilderness(void)
 				/* Rescale the height */
 				hgt = hgt - 256 / SEA_FRACTION;
 				hgt = (hgt * SEA_FRACTION) / (SEA_FRACTION - 1);
-				
+
 				/* Get wilderness type. */
 				w_ptr->done.wild = get_gen_type(hgt, pop, law);
 			}
-			
+
 			/* Town */
 			w_ptr->done.town = town;
-			
+
 			/* Set wilderness monsters if not in town */
 			if (!town)
 			{
@@ -5413,25 +5449,25 @@ void create_wilderness(void)
 
 				/* No monsters (probability 0 - 16) */
 				w_ptr->done.mon_prob = pop / 16;
-			}	
+			}
 			else
 			{
 				/* Set values depending on type of town */
 				set_mon_wild_values(town_type, &w_ptr->done);
 			}
-			
+
 			/* Info flags */
 			w_ptr->done.info = info;
 		}
 	}
-	
+
 
 	/* Free up memory used to create the wilderness */
 #if 0
 	C_FREE(wild_choice_tree, max_w_node, wild_choice_tree_type);
 	C_FREE(wild_temp_dist, max_wild, byte);
 #endif
-	
+
 	/* Done */
 	wild_done();
 }

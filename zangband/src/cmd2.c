@@ -1155,7 +1155,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 
 	if (*fld_ptr && (action == 0))
 	{
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *) &dig))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *)&dig))
 		{
 			/* Notice new floor grids */
 			if (!cave_floor_grid(c_ptr))
@@ -1166,7 +1166,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			}
 			
 			/* Finished tunneling */
-			return(FALSE);
+			return (FALSE);
 		}
 		
 		/* Keep on tunneling */
@@ -1191,7 +1191,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	}
 
 	else if ((c_ptr->feat == FEAT_TREES) ||
-		(c_ptr->feat == FEAT_PINE_TREE))
+	         (c_ptr->feat == FEAT_PINE_TREE))
 	{
 		/* Chop Down */
 		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(y, x, FEAT_GRASS))
@@ -1213,6 +1213,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			if (randint0(100) < 25) search();
 		}
 	}
+
 	else if (c_ptr->feat == FEAT_SNOW_TREE)
 	{
 		/* Chop Down */
@@ -1260,12 +1261,11 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		}
 	}
 
-
 	/* Granite + mountain side */
 	else if (((c_ptr->feat >= FEAT_WALL_EXTRA) &&
-	         (c_ptr->feat <= FEAT_WALL_SOLID)) ||
-		 (c_ptr->feat == FEAT_MOUNTAIN) ||
-		 (c_ptr->feat == FEAT_SNOW_MOUNTAIN))
+	          (c_ptr->feat <= FEAT_WALL_SOLID)) ||
+	         (c_ptr->feat == FEAT_MOUNTAIN) ||
+	         (c_ptr->feat == FEAT_SNOW_MOUNTAIN))
 	{
 		/* Tunnel */
 		if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(y, x, FEAT_FLOOR))
@@ -1285,10 +1285,9 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		}
 	}
 
-
 	/* Quartz / Magma */
 	else if ((c_ptr->feat >= FEAT_MAGMA) &&
-	    (c_ptr->feat <= FEAT_QUARTZ_K))
+	         (c_ptr->feat <= FEAT_QUARTZ_K))
 	{
 		bool okay;
 		bool gold = FALSE;
@@ -1473,15 +1472,17 @@ void do_cmd_tunnel(void)
 
 		/* No tunnelling through doors */
 		if ((c_ptr->feat == FEAT_CLOSED) ||
-		((c_ptr->feat >= FEAT_SHOP_HEAD) && (c_ptr->feat <= FEAT_SHOP_TAIL)))
+		    ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
+		     (c_ptr->feat <= FEAT_SHOP_TAIL)))
 		{
 			/* Message */
 			msg_print("You cannot tunnel through doors.");
 		}
 
 		/* No tunnelling through air */
-		else if (cave_floor_grid(c_ptr) || ((c_ptr->feat >= FEAT_PATTERN_START) &&
-		    (c_ptr->feat <= FEAT_PATTERN_XTRA2)))
+		else if (cave_floor_grid(c_ptr) ||
+		         ((c_ptr->feat >= FEAT_PATTERN_START) &&
+		          (c_ptr->feat <= FEAT_PATTERN_XTRA2)))
 		{
 			/* Message */
 			msg_print("You cannot tunnel through air.");
@@ -1654,7 +1655,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *) &i))
+	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *)&i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
@@ -1718,8 +1719,8 @@ void do_cmd_disarm(void)
 		/* See if only one target */
 		if (num_traps || num_chests)
 		{
-			bool too_many = (num_traps && num_chests) || (num_traps > 1) ||
-			    (num_chests > 1);
+			bool too_many = (num_traps + num_chests > 1);
+
 			if (!too_many) command_dir = coords_to_dir(y, x);
 		}
 	}
@@ -1848,7 +1849,7 @@ void do_cmd_alter(void)
 		}
 
 		/* Get grid */
-		c_ptr = area(y,x);
+		c_ptr = area(y, x);
 
 		/* Take a turn */
 		energy_use = 100;
@@ -1861,7 +1862,7 @@ void do_cmd_alter(void)
 		}
 
 		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
-					 (void *) &action))
+		                          (void *)&action))
 		{
 			switch (action)
 			{
@@ -1893,10 +1894,10 @@ void do_cmd_alter(void)
 		          (c_ptr->feat <= FEAT_PERM_SOLID)) ||
 		         ((c_ptr->feat == FEAT_TREES) ||
 		          (c_ptr->feat == FEAT_MOUNTAIN) ||
-			  (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
-			  (c_ptr->feat == FEAT_PINE_TREE) ||
-			  (c_ptr->feat == FEAT_SNOW_TREE) ||
-			  (c_ptr->feat == FEAT_JUNGLE)))
+		          (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
+		          (c_ptr->feat == FEAT_PINE_TREE) ||
+		          (c_ptr->feat == FEAT_SNOW_TREE) ||
+		          (c_ptr->feat == FEAT_JUNGLE)))
 		{
 			/* Tunnel */
 			more = do_cmd_tunnel_aux(y, x);
@@ -1991,7 +1992,6 @@ void do_cmd_spike(void)
 
 			disturb(0, 0);
 			return;
-
 		}
 
 		/* Get grid and contents */
