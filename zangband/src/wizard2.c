@@ -984,8 +984,6 @@ static void wiz_statistics(object_type *o_ptr)
 			{
 				other++;
 			}
-
-			if (matches) break;
 		}
 
 		/* Final dump */
