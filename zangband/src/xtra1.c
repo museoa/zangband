@@ -2787,7 +2787,7 @@ void calc_bonuses(void)
 	/* Assume not heavy */
 	p_ptr->heavy_shoot = FALSE;
 
-	/* It is hard to carholdry a heavy bow */
+	/* It is hard to carry a heavy bow */
 	if (hold < o_ptr->weight / 10)
 	{
 		/* Hard to wield a heavy bow */
@@ -2843,6 +2843,25 @@ void calc_bonuses(void)
 				if (p_ptr->lev >= 40) p_ptr->num_fire++;
 			}
 
+			/* Hack -- Rangers can use XBows as well*/
+			if ((p_ptr->pclass == CLASS_RANGER) &&
+			    (p_ptr->tval_ammo == TV_BOLT))
+			{
+				/* Extra shot at level 20 */
+				if (p_ptr->lev >= 30) p_ptr->num_fire++;
+			}
+
+			/* Hack -- Rogues love Slings */
+			if ((p_ptr->pclass == CLASS_ROGUE) &&
+			    (p_ptr->tval_ammo == TV_SHOT))
+			{
+				/* Extra shot at level 20 */
+				if (p_ptr->lev >= 20) p_ptr->num_fire++;
+
+				/* Extra shot at level 40 */
+				if (p_ptr->lev >= 40) p_ptr->num_fire++;
+			}
+
 			/*
 			 * Addendum -- also "Reward" high level warriors,
 			 * with _any_ missile weapon -- TY
@@ -2851,11 +2870,9 @@ void calc_bonuses(void)
 			   (p_ptr->tval_ammo <= TV_BOLT) &&
 			   (p_ptr->tval_ammo >= TV_SHOT))
 			{
-				/* Extra shot at level 25 */
-				if (p_ptr->lev >= 25) p_ptr->num_fire++;
+				/* Extra shot at level 40 */
+				if (p_ptr->lev >= 40) p_ptr->num_fire++;
 
-				/* Extra shot at level 50 */
-				if (p_ptr->lev >= 50) p_ptr->num_fire++;
 			}
 		}
 	}
@@ -2876,6 +2893,9 @@ void calc_bonuses(void)
 
 		/* Heavy weapon */
 		p_ptr->heavy_wield = TRUE;
+		
+		/* The player gets to swing a heavy weapon only once. -LM- */
+		p_ptr->num_blow = 1;
 	}
 
 
@@ -2891,41 +2911,41 @@ void calc_bonuses(void)
 		{
 			/* Warrior */
 			case CLASS_WARRIOR:
-				num = 6; wgt = 30; mul = 5; break;
+				num = 5; wgt = 30; mul = 5; break;
 
 			/* Mage */
 			case CLASS_MAGE:
 			case CLASS_HIGH_MAGE:
-				num = 4; wgt = 40; mul = 2; break;
+				num = 2; wgt = 40; mul = 2; break;
 
 			/* Priest, Mindcrafter */
 			case CLASS_PRIEST:
 			case CLASS_MINDCRAFTER:
-				num = 5; wgt = 35; mul = 3; break;
+				num = 4; wgt = 35; mul = 3; break;
 
 			/* Rogue */
 			case CLASS_ROGUE:
-				num = 5; wgt = 30; mul = 3; break;
+				num = 4; wgt = 30; mul = 3; break;
 
 			/* Ranger */
 			case CLASS_RANGER:
-				num = 5; wgt = 35; mul = 4; break;
+				num = 4; wgt = 35; mul = 4; break;
 
 			/* Paladin */
 			case CLASS_PALADIN:
-				num = 5; wgt = 30; mul = 4; break;
+				num = 4; wgt = 30; mul = 4; break;
 
 			/* Warrior-Mage */
 			case CLASS_WARRIOR_MAGE:
-				num = 5; wgt = 35; mul = 3; break;
+				num = 4; wgt = 35; mul = 3; break;
 
 			/* Chaos Warrior */
 			case CLASS_CHAOS_WARRIOR:
-				num = 5; wgt = 30; mul = 4; break;
+				num = 4; wgt = 30; mul = 4; break;
 
 			/* Monk */
 			case CLASS_MONK:
-				num = (p_ptr->lev<40?3:4); wgt = 40; mul = 4; break;
+				num = (p_ptr->lev<40?2:3); wgt = 40; mul = 4; break;
 		}
 
 		/* Enforce a minimum "weight" (tenth pounds) */
@@ -2951,9 +2971,6 @@ void calc_bonuses(void)
 
 		/* Add in the "bonus blows" */
 		p_ptr->num_blow += extra_blows;
-
-		/* Level bonus for warriors (1-3) */
-		if (p_ptr->pclass == CLASS_WARRIOR) p_ptr->num_blow += (p_ptr->lev) / 15;
 
 		/* Require at least one blow */
 		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
@@ -2989,6 +3006,8 @@ void calc_bonuses(void)
 			p_ptr->dis_to_d += (p_ptr->lev / 3);
 		}
 	}
+	/* Everyone gets two blows if not wielding a weapon. -LM- */
+	else if (!o_ptr->k_idx) p_ptr->num_blow = 2;
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
