@@ -17,8 +17,8 @@ Zangband 2.5.3b:
 - Added additional shopkeepers for each special building.
 - Added additional context sensitive help for the birth process and for
   debugging commands. Minor fixes and updates to the help files.
-- Added the experimental main-xpj.c file which uses a projected 3d
-  view (pre-alpha).
+- Added an experimental main-xpj.c file which uses a projected 3d
+  view (pre-alpha, do not use).
 - Added Debian and OpenBSD (needs testing) options to the standard
   makefile.
 - Updated mask.bmp and the graphics pref files.
@@ -30,8 +30,8 @@ Zangband 2.5.3b:
 - Fixed a bug allowing <Weapons> of Resist Acid to be created.
 - Fixed a bug with the ancestral kill count.
 - Fixed a problem with roguelike commands in the special buildings.
-- Hopefully fixed the bug which occasionally crashed the game when
-  monsters stole from the player.
+- Fixed the bug which occasionally crashed the game when monsters
+  stole from the player.
 
 
 ZAngband 2.5.3:
