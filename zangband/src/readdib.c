@@ -42,6 +42,14 @@
 
 
 /*
+ * Needed for lcc-win32
+ */
+#ifndef SEEK_SET
+#define SEEK_SET 0
+#endif
+
+
+/*
  * Number of bytes to be read during each read operation
  */
 #define MAXREAD  32768
@@ -53,7 +61,7 @@
  *
  * Returns number of bytes requested, or zero if something went wrong.
  */
-static DWORD PASCAL lread(int fh, VOID far *pv, DWORD ul)
+static DWORD PASCAL lread(int fh, VOID FAR *pv, DWORD ul)
 {
 	DWORD ulT = ul;
 	BYTE huge *hp = pv;
@@ -78,8 +86,8 @@ static DWORD PASCAL lread(int fh, VOID far *pv, DWORD ul)
  */
 static HPALETTE PASCAL NEAR MakeDIBPalette(LPBITMAPINFOHEADER lpInfo)
 {
-	NPLOGPALETTE npPal;
-	RGBQUAD far *lpRGB;
+	PLOGPALETTE npPal;
+	RGBQUAD FAR *lpRGB;
 	HPALETTE hLogPal;
 	WORD i;
 
@@ -89,7 +97,7 @@ static HPALETTE PASCAL NEAR MakeDIBPalette(LPBITMAPINFOHEADER lpInfo)
 	 */
 	if (lpInfo->biClrUsed)
 	{
-		npPal = (NPLOGPALETTE)LocalAlloc(LMEM_FIXED, sizeof(LOGPALETTE) +
+		npPal = (PLOGPALETTE)LocalAlloc(LMEM_FIXED, sizeof(LOGPALETTE) +
 		                                 (WORD)lpInfo->biClrUsed * sizeof(PALETTEENTRY));
 		if (!npPal)
 			return(FALSE);
@@ -314,8 +322,8 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 		GlobalUnlock(pInfo->hDIB);
 
 		hDC = GetDC(hWnd);
-		if (!MakeBitmapAndPalette(hDC, pInfo->hDIB, &(pInfo->hPalette),
-		                          &(pInfo->hBitmap)))
+		if (!MakeBitmapAndPalette(hDC, pInfo->hDIB, &((HPALETTE)pInfo->hPalette),
+		                          &((HBITMAP)pInfo->hBitmap)))
 		{
 			ReleaseDC(hWnd,hDC);
 			goto ErrExit2;
