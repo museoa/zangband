@@ -729,7 +729,7 @@ static int coords_to_dir(int x, int y)
  *
  * Returns TRUE if repeated commands may continue
  */
-bool do_cmd_open_aux(int y, int x)
+bool do_cmd_open_aux(int x, int y)
 {
 	int i;
 
@@ -903,7 +903,7 @@ void do_cmd_open(void)
 		else
 		{
 			/* Open the door */
-			more = do_cmd_open_aux(y, x);
+			more = do_cmd_open_aux(x, y);
 		}
 	}
 
@@ -922,7 +922,7 @@ void do_cmd_open(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_close_aux(int y, int x)
+static bool do_cmd_close_aux(int x, int y)
 {
 	cave_type	*c_ptr;
 
@@ -1052,7 +1052,7 @@ void do_cmd_close(void)
 		else
 		{
 			/* Close the door */
-			more = do_cmd_close_aux(y, x);
+			more = do_cmd_close_aux(x, y);
 		}
 	}
 
@@ -1856,7 +1856,7 @@ void do_cmd_alter(void)
 				case 2:
 				{
 					/* Unlock / open */
-					more = do_cmd_open_aux(y, x);
+					more = do_cmd_open_aux(x, y);
 					break;
 				}
 			}
@@ -1881,7 +1881,7 @@ void do_cmd_alter(void)
 		else if (c_ptr->feat == FEAT_CLOSED)
 		{
 			/* open */
-			more = do_cmd_open_aux(y, x);
+			more = do_cmd_open_aux(x, y);
 		}
 
 		/* Close open doors */
@@ -1889,7 +1889,7 @@ void do_cmd_alter(void)
 		         (c_ptr->feat == FEAT_BROKEN))
 		{
 			/* close */
-			more = do_cmd_close_aux(y, x);
+			more = do_cmd_close_aux(x, y);
 		}
 
 		/* Oops */

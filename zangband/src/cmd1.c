@@ -2374,7 +2374,7 @@ void move_player(int dir, int do_pickup)
 		if (p_can_pass_walls)
 		{
 			/* Automatically open the door? */
-			if (easy_open && do_cmd_open_aux(y, x))
+			if (easy_open && do_cmd_open_aux(x, y))
 			{
 				oktomove = FALSE;
 
@@ -2403,7 +2403,7 @@ void move_player(int dir, int do_pickup)
 				/* Try to open a door if is there */
 				if (easy_open)
 				{
-					(void)do_cmd_open_aux(y, x);
+					(void)do_cmd_open_aux(x, y);
 					return;
 				} 
 
