@@ -33,11 +33,10 @@ TK_PORT = @TK_PORT@
 ##
 ## Default target
 ##
-## Make sure the makefile is up to date first,
-## then compile zangband.
+## Compile zangband.
 ##
-default: makefile
-	$(MAKE) zangband
+zangband: $(objs-y)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
 
 ##
 ## Hack - make sure the build system is consistant.
@@ -73,9 +72,6 @@ install-files: makedirs
 install: install-files zangband
 	$(INSTALL)
 
-zangband: $(objs-y)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
-
 clean:
 	-rm -f $(clean-files)
 
@@ -89,4 +85,4 @@ test:
 	@echo I will install:
 	@echo $(dirlist) $(files) $(INSTALL)
 
-.PHONY: default makedirs install-files install clean test
+.PHONY: makedirs install-files install clean test
