@@ -3615,28 +3615,17 @@ bool tgt_pt(int *x, int *y)
 
 				*x += ddx[d];
 				*y += ddy[d];
+				
+				/* Center on cursor */
+				panel_center(*x, *y);
+				
+				/* Slide into legality */
+				if (*x < p_ptr->min_wid) *x = p_ptr->min_wid;
+				else if (*x >= p_ptr->max_wid) *x = p_ptr->max_wid - 1;
 
-				/* Hack -- Verify x */
-				if ((*x >= p_ptr->max_wid - 1)
-					|| (*x >= p_ptr->panel_x2 - COL_MAP))
-				{
-					(*x)--;
-				}
-				else if (*x <= p_ptr->panel_x1)
-				{
-					(*x)++;
-				}
-
-				/* Hack -- Verify y */
-				if ((*y >= p_ptr->max_hgt - 1)
-					|| (*y >= p_ptr->panel_y2 - 1))
-				{
-					(*y)--;
-				}
-				else if (*y <= p_ptr->panel_y1)
-				{
-					(*y)++;
-				}
+				/* Slide into legality */
+				if (*y < p_ptr->min_hgt) *y = p_ptr->min_hgt;
+				else if (*y >= p_ptr->max_hgt) *y = p_ptr->max_hgt - 1;
 
 				break;
 		}
