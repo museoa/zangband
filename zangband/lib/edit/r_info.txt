@@ -2150,7 +2150,7 @@ F:EVIL | FRIENDS | DROP_60 | DROP_90 | DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | MALE | WILD_DUNGEON_01 | WILD_WASTE1 | WILD_WASTE2
 F:WILD_SWAMP1 | WILD_SWAMP2
 D:A mutated rat-creature from the great waste, it is vaguely 
-D:humanoid in appearance and walks on its hind legs. This race
+D:humanoid in appearance and walks on its hind legs. This race 
 D:serves chaos fervently and is greatly feared by others.
 
 N:159:The wounded bear
