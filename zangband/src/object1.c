@@ -3180,19 +3180,35 @@ static object_type *recall_object_choice(int *command_wrk)
 	object_type *o_ptr = NULL;
 
 	/* Get type of prompt */
-	if (!repeat_pull(&type)) return (NULL);
-
+	if (!repeat_pull(&type))
+	{
+		/* Not a valid repeat - return invalid object */
+		return (NULL);
+	}
+	
+	/* Paranoia */
+	if (type == -1)
+	{
+		/* Invalid repeat - reset it */
+		repeat_clear();
+		return (NULL);
+	}
+	
 	/* Set type of prompt */
 	*command_wrk = type;
 
 	/* Get index */
-	if (!repeat_pull(&index)) return (NULL);
-
+	if (!repeat_pull(&index))
+	{
+		/* Not a valid repeat - return invalid object */
+		return (NULL);
+	}
+	
 	/* Paranoia */
 	if (index == -1)
 	{
+		/* Invalid repeat - reset it */
 		repeat_clear();
-
 		return (NULL);
 	}
 
@@ -3231,8 +3247,6 @@ static object_type *recall_object_choice(int *command_wrk)
 		{
 			/* Invalid repeat - reset it */
 			repeat_clear();
-
-			/* Not a valid object */
 			return (NULL);
 		}
 	}
@@ -3253,8 +3267,6 @@ static object_type *recall_object_choice(int *command_wrk)
 
 	/* Invalid repeat - reset it */
 	repeat_clear();
-
-	/* Not a valid object */
 	return (NULL);
 }
 
@@ -3417,9 +3429,6 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 
 	if (o_ptr)
 	{
-		/* Save this object */
-		save_object_choice(o_ptr, command_wrk);
-
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
 
