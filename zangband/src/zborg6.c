@@ -15462,10 +15462,10 @@ static bool borg_flow_dark_1(int b_stair)
 		x = borg_temp_x[i];
 
         /* Create a path */
-#if 0
         borg_flow_direct(y, x);
-#endif
+#if 0
         borg_flow_enqueue_grid(y, x);
+#endif
     }
 
     /* Spread the flow */
@@ -15557,10 +15557,10 @@ static bool borg_flow_dark_2(void)
 		x = borg_temp_x[i];
 
         /* Create a path */
-#if 0
         borg_flow_direct(y, x);
-#endif
+#if 0
         borg_flow_enqueue_grid(y, x);
+#endif
 	}
 
     /* Spread the flow */
