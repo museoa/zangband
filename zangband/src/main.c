@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: main.c */
 
 /*
@@ -425,9 +424,11 @@ int main(int argc, char *argv[])
 			{
 				if (!argv[i][2]) goto usage;
 #ifdef ANGBAND_2_8_1
-				strcpy(player_name, &argv[i][2]);
+				strncpy(player_name, &argv[i][2], 32);
+				player_name[31] = '\0';
 #else /* ANGBAND_2_8_1 */
-				strcpy(op_ptr->full_name, &argv[i][2]);
+				strncpy(op_ptr->full_name, &argv[i][2], 32);
+				op_ptr->full_name[31] = '\0';
 #endif /* ANGBAND_2_8_1 */
 				break;
 			}
