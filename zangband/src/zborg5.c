@@ -894,10 +894,7 @@ static void handle_old_mons(byte type)
 	int i;
 	
 	borg_kill *kill;
-	
-	map_block *mb_ptr;
-	int ox, oy;
-	
+		
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
 		kill = &borg_kills[i];
@@ -908,34 +905,7 @@ static void handle_old_mons(byte type)
 		/* Must be of correct type */
 		if (kill->type != type) continue;
 		
-		ox = kill->x;
-		oy = kill->y;
-		
-		if (map_in_bounds(ox, oy))
-		{
-			/* Access the grid */
-			mb_ptr = map_loc(ox, oy);
-		
-			/* Is a matching monster on this square? */
-			if (mb_ptr->monster == kill->r_idx)
-			{
-				/* Move the old monster to the used list */
-				kill->type = BORG_MON_USED;
-				
-				continue;	
-			}
-		}
-		
 		if (remove_bad_kills(i)) continue;
-		
-		/* Hack -- blind or hallucinating */
-		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE])
-		{
-			/* Move the old monster to the used list */
-			kill->type = BORG_MON_USED;
-
-			continue;
-		}
 
 		/* Move the old monster to the used list */
 		kill->type = BORG_MON_USED;
