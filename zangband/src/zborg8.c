@@ -255,9 +255,6 @@ static void borg_think_shop_sell(int item, list_item *l_ptr, bool home)
 	borg_note_fmt("# Sending key %c", I2A(item));
 	borg_keypress(I2A(item));
 
-	/* If not at home accept the price */
-	if (!home) borg_keypress('n');
-
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
 
@@ -303,9 +300,6 @@ static void borg_think_shop_buy(int item, bool home)
 
 	/* Buy the desired item */
 	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
-
-	/* Accept the price if not at home */
-	if (!home) borg_keypress('n');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
@@ -829,7 +823,7 @@ static bool borg_think_home_buy_aux(void)
 {
 	int slot;
 	int n, b_n = -1;
-	s32b p, b_p = 0L;
+	s32b p = 0L, b_p = 0L;
 	s32b p_left = 0;
 	s32b p_right = 0;
 
