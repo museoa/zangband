@@ -3598,7 +3598,7 @@
 #define	auto_scum				svr_ptr->options[2]
 #define stack_allow_items		svr_ptr->options[3]
 #define stack_allow_wands		svr_ptr->options[4]
-#define expand_look				svr_ptr->options[5]
+/* {TRUE, 0, NULL, 				"Number 34" } */
 #define expand_list				svr_ptr->options[6]
 #define view_perma_grids		p_ptr->options[31]
 #define view_torch_grids		p_ptr->options[32]
