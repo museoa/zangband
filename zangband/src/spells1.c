@@ -4188,12 +4188,12 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
 /*
  * Does the grid stop disintegration?
  */
-#define cave_stop_disintegration(Y,X) \
-	(((area(Y,X)->feat >= FEAT_PERM_EXTRA) && \
-	  (area(Y,X)->feat <= FEAT_PERM_SOLID)) || \
-	  (area(Y,X)->feat == FEAT_MOUNTAIN) || \
-	 ((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
-	  (area(Y,X)->feat <= FEAT_SHOP_TAIL)))
+#define cave_stop_disintegration(C) \
+	((((C)->feat >= FEAT_PERM_EXTRA) && \
+	  ((C)->feat <= FEAT_PERM_SOLID)) || \
+	  ((C)->feat == FEAT_MOUNTAIN) || \
+	 (((C)->feat >= FEAT_SHOP_HEAD) && \
+	  ((C)->feat <= FEAT_SHOP_TAIL)))
 
 
 /*
@@ -4225,6 +4225,8 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 
 	/* Slope, or 1/Slope, of LOS */
 	int m;
+	
+	cave_type *c_ptr;
 
 
 	/* Extract the offset */
@@ -4252,7 +4254,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 + 1; ty < y2; ty++)
 			{
-				if (cave_stop_disintegration(ty, x1)) return (FALSE);
+				c_ptr = area(ty, x1);
+				
+				if (cave_stop_disintegration(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+					FIELD_INFO_PERM))
+				{
+					return (FALSE);
+				}
 			}
 		}
 
@@ -4261,7 +4272,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 - 1; ty > y2; ty--)
 			{
-				if (cave_stop_disintegration(ty, x1)) return (FALSE);
+				c_ptr = area(ty, x1);
+				
+				if (cave_stop_disintegration(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+					FIELD_INFO_PERM))
+				{
+					return (FALSE);
+				}
 			}
 		}
 
@@ -4277,7 +4297,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 + 1; tx < x2; tx++)
 			{
-				if (cave_stop_disintegration(y1, tx)) return (FALSE);
+				c_ptr = area(y1, tx);
+				
+				if (cave_stop_disintegration(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+					FIELD_INFO_PERM))
+				{
+					return (FALSE);
+				}
 			}
 		}
 
@@ -4286,7 +4315,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 - 1; tx > x2; tx--)
 			{
-				if (cave_stop_disintegration(y1, tx)) return (FALSE);
+				c_ptr = area(y1, tx);
+				
+				if (cave_stop_disintegration(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+					FIELD_INFO_PERM))
+				{
+					return (FALSE);
+				}
 			}
 		}
 
@@ -4305,7 +4343,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 	{
 		if (ay == 2)
 		{
-			if (!cave_stop_disintegration(y1 + sy, x1)) return (TRUE);
+			c_ptr = area(y1 + sy, x1);
+			
+			if (!cave_stop_disintegration(c_ptr)) return (TRUE);
+			
+			/* Fields can block disintegration to */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+				FIELD_INFO_PERM))
+			{
+				return (FALSE);
+			}
 		}
 	}
 
@@ -4314,7 +4361,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 	{
 		if (ax == 2)
 		{
-			if (!cave_stop_disintegration(y1, x1 + sx)) return (TRUE);
+			c_ptr = area(y1, x1 + sx);
+			
+			if (!cave_stop_disintegration(c_ptr)) return (TRUE);
+			
+			/* Fields can block disintegration to */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+				FIELD_INFO_PERM))
+			{
+				return (FALSE);
+			}
 		}
 	}
 
@@ -4350,7 +4406,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx)
 		{
-			if (cave_stop_disintegration(ty, tx)) return (FALSE);
+			c_ptr = area(ty, tx);
+			
+			if (cave_stop_disintegration(c_ptr)) return (FALSE);
+			
+			/* Fields can block disintegration to */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+				FIELD_INFO_PERM))
+			{
+				return (FALSE);
+			}
 
 			qy += m;
 
@@ -4361,7 +4426,17 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 			else if (qy > f2)
 			{
 				ty += sy;
-				if (cave_stop_disintegration(ty, tx)) return (FALSE);
+				
+				c_ptr = area(ty, tx);
+				
+				if (cave_stop_disintegration(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+					FIELD_INFO_PERM))
+				{
+					return (FALSE);
+				}
 				qy -= f1;
 				tx += sx;
 			}
@@ -4397,7 +4472,16 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty)
 		{
-			if (cave_stop_disintegration(ty, tx)) return (FALSE);
+			c_ptr = area(ty, tx);
+			
+			if (cave_stop_disintegration(c_ptr)) return (FALSE);
+			
+			/* Fields can block disintegration to */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+				FIELD_INFO_PERM))
+			{
+				return (FALSE);
+			}
 
 			qx += m;
 
@@ -4408,7 +4492,17 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 			else if (qx > f2)
 			{
 				tx += sx;
-				if (cave_stop_disintegration(ty, tx)) return (FALSE);
+				
+				c_ptr = area(ty, tx);
+				
+				if (cave_stop_disintegration(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
+					FIELD_INFO_PERM))
+				{
+					return (FALSE);
+				}
 				qx -= f1;
 				ty += sy;
 			}
