@@ -2789,73 +2789,62 @@ static void borg_update_map(void)
  */
 static void borg_cheat_feats(void)
 {
-	int y = 0;
-	int x = 0;
-	int i = 0;
+	int x, y;
+	int i;
 
-    borg_grid *ag;
+    map_block *mb_ptr;
 
-		/* Currently only cheat towns and wilderness */
-		if (borg_skill[BI_CDEPTH] ==0)
+	/* Currently only cheat towns and wilderness */
+	if (borg_skill[BI_CDEPTH] ==0)
+	{
+		MAP_ITT_START(mb_ptr)
 		{
-
-			for (y=0; y < MAX_HGT-1 ; y++)
+			/* Dungeon Stair Location */
+			if (mb_ptr->terrain == FEAT_MORE)
 			{
-				for(x=0; x < MAX_WID -1; x++)
+				/* Get location */
+	        	MAP_GET_LOC(x, y);
+				
+				/* Check for an existing "down stairs" */
+	        	for (i = 0; i < track_more_num; i++)
+	        	{
+	        		/* We already knew about that one */
+	        		if ((track_more_x[i] == x) && (track_more_y[i] == y))
+	        		{
+						break;
+					}
+	        	}
+
+	        	/* Track the newly discovered "down stairs" */
+	        	if ((i == track_more_num) && (i < track_more_size))
+	        	{
+	        	    track_more_x[i] = x;
+	        	    track_more_y[i] = y;
+	        	    track_more_num++;
+	        	}
+			}
+
+
+#if 0
+			/* Shop Entry */
+			if (cave[y][x].feat >= FEAT_SHOP_HEAD &&
+				cave[y][x].feat <= FEAT_SHOP_TAIL)
+			{
+				for (i = 0; i < MAX_STORES; i++)
 				{
-
-		            /* Get the borg_grid */
-		            ag = &borg_grids[y][x];
-
-					/* Dungeon Stair Location */
-					if (map_loc(x, y)->terrain == FEAT_MORE)
+					if (cave[y][x].feat == FEAT_SHOP_HEAD + i)
 					{
-	                    /* Check for an existing "down stairs" */
-	                    for (i = 0; i < track_more_num; i++)
-	                    {
-	                        /* We already knew about that one */
-	                        if ((track_more_x[i] == x) && (track_more_y[i] == y))
-	                        {
-								break;
-							}
-	                    }
-
-	                    /* Track the newly discovered "down stairs" */
-	                    if ((i == track_more_num) && (i < track_more_size))
-	                    {
-	                        track_more_x[i] = x;
-	                        track_more_y[i] = y;
-	                        track_more_num++;
-	                    }
+						/* Shop Location */
+						track_shop_x[i] = x;
+						track_shop_y[i] = y;
 					}
-#if 0
-					/* Walls */
-					if (cave[y][x].feat >= FEAT_PERM_EXTRA &&
-						cave[y][x].feat <= FEAT_PERM_SOLID)
-					{
-					}
+				}
+			}
 #endif /* 0 */
-
-
-#if 0
-					/* Shop Entry */
-					if (cave[y][x].feat >= FEAT_SHOP_HEAD &&
-					    cave[y][x].feat <= FEAT_SHOP_TAIL)
-					{
-						for (i =0; i < MAX_STORES; i++)
-						{
-							if (cave[y][x].feat == FEAT_SHOP_HEAD + i)
-							{
-								/* Shop Location */
-								track_shop_x[i] = x;
-								track_shop_y[i] = y;
-							} /* grid check */
-						} /* Store number check */
-					}/* Shop Entry */
-#endif /* 0 */
-				} /* Width check */
-			} /* Heigth check */
-		} /* in town */
+		
+		}
+		MAP_ITT_END;
+	}
 }
 
 /*

@@ -294,8 +294,8 @@ map_blk_ptr *map_cache;
 byte *map_cache_refcount;
 
 /* Location of cache blocks */
-static int *map_cache_x;
-static int *map_cache_y;
+int *map_cache_x;
+int *map_cache_y;
 
 /* The map itself - grid of 16x16 blocks*/
 static int **map_grid;

@@ -4804,7 +4804,7 @@ void borg_write_map(bool ask)
     /* Free the "who" array */
     C_KILL(who, max_r_idx, u16b);
 
-#endif
+#endif /* 0 */
 
 
     my_fclose(borg_map_file);

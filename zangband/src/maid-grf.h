@@ -49,7 +49,7 @@
 			{ \
 				for (_map_j = 0; _map_j < WILD_BLOCK_SIZE; _map_j++) \
 				{ \
-					(M) = &map_cache[_map_count][_map_i][_map_j];\
+					(M) = &map_cache[_map_count][_map_j][_map_i];\
 
 
 #define MAP_ITT_END \
@@ -57,6 +57,11 @@
 			} \
 		} \
 	}
+
+/* Macro to extract location during itteration */
+#define MAP_GET_LOC(X, Y)\
+	(((X) = _map_i + map_cache_x[_map_count] * WILD_BLOCK_SIZE), \
+	 ((Y) = _map_j + map_cache_y[_map_count] * WILD_BLOCK_SIZE))
 
 /*
  * Map data structure
@@ -109,14 +114,15 @@ typedef errr (*map_erase_hook_type) (void);
 
 #endif /* TERM_USE_MAP */
 
-/* List of 16x16 blocks for the overhead map */
+/* Extern Variables */
+extern byte gamma_table[256];
 extern map_blk_ptr *map_cache;
-
-/* Refcount for map cache */
 extern byte *map_cache_refcount;
+extern int *map_cache_x;
+extern int *map_cache_y;
+
 
 /* Extern Functions */
-extern byte gamma_table[256];
 extern void build_gamma_table(int gamma);
 extern cptr get_default_font(int term_num);
 extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);

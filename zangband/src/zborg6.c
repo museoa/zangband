@@ -5651,11 +5651,11 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 
                 /* Skip useless attacks */
                 if (n <= 0) continue;
-
+#if 0
                 /* The game forbids targetting the outside walls */
                 if (x == 0 || y == 0 || x == MAX_WID-1 || y == MAX_HGT-1)
                    continue;
-
+#endif /* 0 */
                 /* Collect best attack */
                 if ((b_i >= 0) && (n < b_n)) continue;
 
