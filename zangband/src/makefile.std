@@ -117,7 +117,7 @@ BORGOBJS := \
 TKOBJS := \
 	tk/canv.o tk/cmdinfo.o tk/icon.o \
 	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
-	tk/r_info.o tk/widget.o tk/tk-util.o tk/tcltk.o
+	tk/widget.o tk/tk-util.o tk/tcltk.o
 
 ##
 ## The "source" and "object" files.
