@@ -2303,60 +2303,6 @@ static void angtk_character_generated(void)
 			"You must call \"angband init_icons\"");
 	}
 
-#if 0
-	/* Process each grid */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			/* A wall or secret door */
-			if (is_wall(y, x))
-			{
-				/* Note wall */
-				g_grid[y][x].xtra |= GRID_XTRA_WALL;
-			}
-
-			/* Only because not currently saved */
-			if (is_door(y, x))
-			{
-				/* Note wall */
-				g_grid[y][x].xtra |= GRID_XTRA_DOOR;
-			}
-		}
-	}
-
-	/*
-	 * If we didn't read the g_grid[].xtra information from a savefile,
-	 * then hack some right here. This gives us door alignment, but not
-	 * pillars.
-	 */
-	if (!g_grid_xtra_init)
-	{
-		/* Process each grid */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				int feat = area(x, y)->feat;
-	
-				/* This is a door (or secret door) */
-				if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
-					(feat == FEAT_CLOSED))
-				{
-					/* Note vertical doors */
-					if (door_vertical(y, x))
-					{
-						g_grid[y][x].xtra |= GRID_XTRA_ISVERT;
-					}
-				}
-			}
-		}
-    	
-		/* Note that g_grid[].xtra is initialized. */
-		g_grid_xtra_init = TRUE;
-    }
-#endif /* 0 */
-
 	/*
 	 * Assign icons to each grid. You have to do this *after* sourcing
 	 * the startup script, because that's where icon types are defined
@@ -2536,42 +2482,6 @@ int angtk_eval_file(cptr extFileName)
  */
 void angtk_cave_generated(void)
 {
-#if 0	
-	/* Check each grid for door alignment */
-	for (y = 0; y < g_cave_hgt; y++)
-	{
-		for (x = 0; x < g_cave_wid; x++)
-		{
-			int feat = area(x, y)->feat;
-
-			/* This is a door (or secret door) */
-			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) || (feat == FEAT_CLOSED))
-			{
-				/* Note vertical doors */
-				if (door_vertical(y, x))
-				{
-					g_grid[y][x].xtra |= GRID_XTRA_ISVERT;
-				}
-			}
-
-			/* A wall or secret door */
-			if (is_wall(y, x))
-			{
-				/* Note wall */
-				g_grid[y][x].xtra |= GRID_XTRA_WALL;
-			}
-
-			/* Only because not currently saved */
-			if (is_door(y, x))
-			{
-				/* Note wall */
-				g_grid[y][x].xtra |= GRID_XTRA_DOOR;
-			}
-		}
-	}
-
-#endif /* 0 */
-
 	g_icon_map_changed = TRUE;
 
 	Bind_Generic(EVENT_DUNGEON, KEYWORD_DUNGEON_GEN + 1);
@@ -2767,13 +2677,6 @@ bool player_test_feature(int y, int x, int mode)
 	{
 		/* Print a message */
 		if (msg) msgf(msg);
-
-		/* Mark unknown grid */
-		if (note)
-		{
-			/* Memorize the grid */
-			angtk_feat_known(y, x); /* TNB */
-		}
 
 		/* XXX Hack -- No energy is used */
 		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))

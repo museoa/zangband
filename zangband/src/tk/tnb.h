@@ -136,11 +136,6 @@ extern byte *g_feat_flag;
 #define GRID_LITE_NORMAL 1
 #define GRID_LITE_DARK 2
 
-/* Constants for t_grid.xtra */
-#define GRID_XTRA_ISVERT 0x0008 /* Door is vertical */
-#define GRID_XTRA_WALL 0x0010 /* Is a wall or secret door */
-#define GRID_XTRA_DOOR 0x0020 /* Is a door */
-
 
 /* Constants for t_grid.shape */
 enum {
@@ -171,14 +166,10 @@ typedef struct t_grid {
 	int f_idx; /* Feature */
 	object_type *o_ptr; /* Object */
 	int m_idx; /* Character/Monster */
-	int xtra; /* GRID_XTRA_XXX flags */
 	int shape; /* GRID_SHAPE_XXX enum */
 } t_grid;
 
 extern t_grid *g_grid[MAX_HGT];
-
-/* TRUE if g_grid[].xtra was initialized */
-extern int g_grid_xtra_init;
 
 extern bool g_daytime; /* Day or night */
 
@@ -187,12 +178,10 @@ extern void get_grid_info(int y, int x, t_grid *gridPtr);
 
 extern void angtk_image_reset(void);
 extern void angtk_cave_changed(void);
-extern void angtk_feat_known(int y, int x);
 extern void angtk_feat_changed(int y, int x);
 extern void angtk_view_floor(int y, int x, int info, int torch);
 extern void angtk_view_wall(int y, int x, int info, int torch);
 extern void set_grid_assign(int y, int x);
-extern bool door_vertical(int y, int x);
 extern void free_icons(void);
 extern void init_palette(void);
 

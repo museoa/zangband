@@ -601,377 +601,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	}
 }
 
-bool is_wall(int y, int x)
-{
-#if 0
-	int f_idx = area(x, y)->feat;
-
-	if ((f_idx == FEAT_SECRET) ||
-		((f_idx >= FEAT_MAGMA) && (f_idx <= FEAT_PERM_SOLID)))
-	{
-		return TRUE;
-	}
-#endif /* 0 */
-
-	return FALSE;
-}
-
-bool is_door(int y, int x)
-{
-#if 0
-	int f_idx = area(x, y)->feat;
-
-	if ((f_idx == FEAT_OPEN || f_idx == FEAT_BROKEN) || (f_idx == FEAT_CLOSED))
-		return TRUE;
-#endif /* 0 */
-
-	return FALSE;	
-}
-
-static int wall_shape(int y, int x, bool force)
-{
-	int i, j;
-	bool wall[3][3];
-	int n = 0, nswe = 0;
-	int col0n = 0, col2n = 0;
-	int row0n = 0, row2n = 0;
-	int shape;
-
-	if (!in_bounds2(y, x))
-		return GRID_SHAPE_NOT;
-
-	/* Require knowledge unless forced */
-	/* if (!force && !(area(x, y)->info & CAVE_MARK))
-		return GRID_SHAPE_NOT; */
-
-	/* Require wall or secret door */
-	if (!(g_grid[y][x].xtra & GRID_XTRA_WALL))
-		return GRID_SHAPE_NOT;
-
-	for (j = 0; j < 3; j++)
-	{
-		int yy = y - 1 + j;
-
-		for (i = 0; i < 3; i++)
-		{
-			int xx = x - 1 + i;
-			bool known;
-
-			if ((i == 1) && (j == 1))
-				continue;
-
-			if (!in_bounds2(yy, xx))
-			{
-				wall[j][i] = FALSE;
-				continue;
-			}
-
-			/* known = force || ((cave[yy][xx].info & CAVE_MARK) != 0); */
-			
-			known = TRUE;
-
-			wall[j][i] = known &&
-				(g_grid[yy][xx].xtra & (GRID_XTRA_WALL | GRID_XTRA_DOOR));
-
-			if (wall[j][i])
-			{
-				++n;
-				if (!i)
-					++col0n;
-				else if (i == 1)
-					++nswe;
-				else if (i == 2)
-					++col2n;
-
-				if (!j)
-					++row0n;
-				else if (j == 1)
-					++nswe;
-				else if (j == 2)
-					++row2n;
-			}
-		}
-	}
-
-	/* Surrounded */
-	if (n == 8)
-	{
-		return GRID_SHAPE_SINGLE;
-	}
-
-	/* Single, or no wall to N, S, W, or E */
-	if (!n || (!nswe))
-	{
-		/* A solitary wall */
-		if (!force)
-		{
-			/* Get the actual shape */
-			int shape = wall_shape(y, x, TRUE);
-
-			/* Not actually single */
-			if (shape != GRID_SHAPE_SINGLE)
-			{
-				switch (shape)
-				{
-					case GRID_SHAPE_NS:
-					case GRID_SHAPE_WE:
-						return shape;
-					case GRID_SHAPE_CORNER_NW:
-					case GRID_SHAPE_CORNER_NE:
-					case GRID_SHAPE_CORNER_SW:
-					case GRID_SHAPE_CORNER_SE:
-						return shape;
-					case GRID_SHAPE_TRI_N:
-					case GRID_SHAPE_TRI_S:
-						return GRID_SHAPE_WE;
-					case GRID_SHAPE_TRI_W:
-					case GRID_SHAPE_TRI_E:
-						return GRID_SHAPE_NS;
-					case GRID_SHAPE_QUAD:
-						return GRID_SHAPE_NS; /* FIXME: corner instead? */
-				}
-			}
-		}
-
-		return GRID_SHAPE_SINGLE;
-	}
-
-#if 1
-
-	shape = GRID_SHAPE_NOT;
-
-	if (nswe == 4)
-	{
-		shape = GRID_SHAPE_QUAD;
-
-		if (n < 6) return shape;
-
-		if (n == 6)
-		{
-			if (row0n == 3)
-				shape = GRID_SHAPE_TRI_S;
-			else if (row2n == 3)
-				shape = GRID_SHAPE_TRI_N;
-			else if (col0n == 3)
-				shape = GRID_SHAPE_TRI_E;
-			else if (col2n == 3)
-				shape = GRID_SHAPE_TRI_W;
-
-			return shape;
-		}
-
-		/* 7 grids, so must be corner */
-		if (!wall[0][0])
-			shape = GRID_SHAPE_CORNER_SE;
-		else if (!wall[2][0])
-			shape = GRID_SHAPE_CORNER_NE;
-		else if (!wall[0][2])
-			shape = GRID_SHAPE_CORNER_SW;
-		else
-			shape = GRID_SHAPE_CORNER_NW;
-
-		return shape;
-	}
-
-	if (nswe == 3)
-	{
-		/* Walls to N and S */
-		if (wall[0][1] && wall[2][1])
-		{
-			if (col0n == 3 || col2n == 3)
-				shape = GRID_SHAPE_NS;
-			else if (wall[1][0])
-				shape = GRID_SHAPE_TRI_W;
-			else
-				shape = GRID_SHAPE_TRI_E;
-		}
-
-		/* Walls to W and E */
-		else
-		{
-			if (row0n == 3 || row2n == 3)
-				shape = GRID_SHAPE_WE;
-			else if (wall[0][1])
-				shape = GRID_SHAPE_TRI_N;
-			else
-				shape = GRID_SHAPE_TRI_S;
-		}
-
-		return shape;
-	}
-
-	if (nswe == 2)
-	{
-		if (wall[0][1] && wall[2][1])
-			shape = GRID_SHAPE_NS;
-		if (wall[1][0] && wall[1][2])
-			shape = GRID_SHAPE_WE;
-
-		if (wall[0][1] && wall[1][0])
-			shape = GRID_SHAPE_CORNER_SE;
-		if (wall[0][1] && wall[1][2])
-			shape = GRID_SHAPE_CORNER_SW;
-		if (wall[2][1] && wall[1][0])
-			shape = GRID_SHAPE_CORNER_NE;
-		if (wall[2][1] && wall[1][2])
-			shape = GRID_SHAPE_CORNER_NW;
-
-		return shape;
-	}
-
-	if (nswe == 1)
-	{
-		if (wall[0][1] || wall[2][1])
-			shape = GRID_SHAPE_NS;
-		else
-			shape = GRID_SHAPE_WE;
-
-		return shape;
-	}
-
-	/* Should never happen */
-	return shape;
-
-#else /* not 1 */
-
-	/* One surrounding grid missing */
-	if (n == 7)
-	{
-		/* Not missing N, S, W or E */
-		if (nswe == 4)
-		{
-			/* Corner */
-			if (!wall[0][0])
-				return GRID_SHAPE_CORNER_SE;
-			if (!wall[2][0])
-				return GRID_SHAPE_CORNER_NE;
-			if (!wall[0][2])
-				return GRID_SHAPE_CORNER_SW;
-			return GRID_SHAPE_CORNER_NW;
-		}
-
-		/* Flat */
-		if (!wall[0][1] || !wall[2][1])
-			return GRID_SHAPE_WE;
-
-		return GRID_SHAPE_NS;
-	}
-
-	/* Two missing grids */
-	if (n == 6)
-	{
-		/* 2 corners missing, so TRI or QUAD */
-		if (nswe == 4)
-		{
-			if (row0n == 3)
-				return GRID_SHAPE_TRI_S;
-			if (row2n == 3)
-				return GRID_SHAPE_TRI_N;
-			if (col0n == 3)
-				return GRID_SHAPE_TRI_E;
-			if (col2n == 3)
-				return GRID_SHAPE_TRI_W;
-
-			/* Diagonally oposite corners missing */
-			return GRID_SHAPE_QUAD;
-		}
-
-		if (nswe == 2)
-		{
-			if (wall[0][1])
-				return GRID_SHAPE_NS;
-			return GRID_SHAPE_WE;
-		}
-
-		/* 2 in same row/col missing, so NS or WE */
-		if (row0n == 1 || row2n == 1)
-			return GRID_SHAPE_WE;
-		if (col0n == 1 || col2n == 1)
-			return GRID_SHAPE_NS;
-
-		/* 1 in different row/col missing, so TRI */
-		if (row0n == 3 || row2n == 3)
-			return wall[1][0] ? GRID_SHAPE_TRI_W : GRID_SHAPE_TRI_E;
-		return wall[0][1] ? GRID_SHAPE_TRI_N : GRID_SHAPE_TRI_S;
-	}
-
-	if (n == 5)
-	{
-		/* Three corners missing */
-		if (nswe == 4)
-			return GRID_SHAPE_QUAD;
-
-		if (!row0n || !row2n)
-			return GRID_SHAPE_WE;
-		if (!col0n || !col2n)
-			return GRID_SHAPE_NS;
-	}
-
-	if (nswe == 4)
-	{
-		return GRID_SHAPE_QUAD;
-	}
-
-	if (nswe == 3)
-	{
-		if (wall[0][1] && wall[2][1])
-			return wall[1][0] ? GRID_SHAPE_TRI_W : GRID_SHAPE_TRI_E;
-		return wall[0][1] ? GRID_SHAPE_TRI_N : GRID_SHAPE_TRI_S;
-	}
-
-	if (n == 3)
-	{
-		/* Sticks out from wall */
-		if (row0n == 3 || row2n == 3)
-			return GRID_SHAPE_NS;
-		if (col0n == 3 || col2n == 3)
-			return GRID_SHAPE_WE;
-	}
-
-	if (nswe == 2)
-	{
-		if (wall[0][1] && wall[2][1])
-			return GRID_SHAPE_NS;
-		if (wall[1][0] && wall[1][2])
-			return GRID_SHAPE_WE;
-
-		if (wall[0][1] && wall[1][0])
-			return GRID_SHAPE_CORNER_SE;
-		if (wall[0][1] && wall[1][2])
-			return GRID_SHAPE_CORNER_SW;
-		if (wall[2][1] && wall[1][0])
-			return GRID_SHAPE_CORNER_NE;
-		/* if (wall[2][1] && wall[1][2]) */
-			return GRID_SHAPE_CORNER_NW;
-	}
-
-	if (nswe == 1)
-	{
-		if (wall[0][1] || wall[2][1])
-			return GRID_SHAPE_NS;
-		return GRID_SHAPE_WE;
-	}
-
-	/* Only 2 touching, neither are N, S, W or E */
-	if (n == 2)
-	{
-		if (wall[0][1] || wall[2][1])
-			return GRID_SHAPE_NS;
-		return GRID_SHAPE_WE;
-	}
-
-	/* Only 1 touching */
-	if (n == 1)
-	{
-		if (wall[0][1] || wall[2][1])
-			return GRID_SHAPE_NS;
-		return GRID_SHAPE_WE;
-	}
-
-	return GRID_SHAPE_SINGLE;
-
-#endif /* not 1 */
-}
 
 /*
  * Called when knowledge about many grids changes.
@@ -987,7 +616,7 @@ void angtk_cave_changed(void)
 		for (x = 0; x < MAX_WID; x++)
 		{
 			get_grid_info(y, x, &g_grid[y][x]);
-			g_grid[y][x].shape = wall_shape(y, x, FALSE);
+			g_grid[y][x].shape = GRID_SHAPE_NOT;
 			set_grid_assign(y, x);
 			map_symbol_set(y, x);
 		}
@@ -1000,87 +629,12 @@ void angtk_cave_changed(void)
  */
 void angtk_feat_changed(int y, int x)
 {
-	int d, shape;
-
-	/* Forget walls and doors */
-	g_grid[y][x].xtra &= ~(GRID_XTRA_DOOR | GRID_XTRA_WALL);
-
 	/* Forget shape */
 	g_grid[y][x].shape = 0;
 
-	/* A wall (or secret door) */
-	if (is_wall(y, x))
-	{
-		/* Note wall */
-		g_grid[y][x].xtra |= GRID_XTRA_WALL;
-
-		/* Get shape */
-		g_grid[y][x].shape = wall_shape(y, x, FALSE);
-	}
-
-	/* A door */
-	else if (is_door(y, x))
-	{
-		/* Note door */
-		g_grid[y][x].xtra |= GRID_XTRA_DOOR;
-	}
-
 	set_grid_assign(y, x);
-
-	for (d = 0; d < 8; d++)
-	{
-		int yy = y + ddy_ddd[d];
-		int xx = x + ddx_ddd[d];
-		
-		if (in_bounds2(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
-		{
-			shape = wall_shape(yy, xx, FALSE);
-			if (shape != g_grid[yy][xx].shape)
-			{
-				g_grid[yy][xx].shape = shape;
-				set_grid_assign(yy, xx);
-			}
-		}
-	}
 }
 
-/*
- * Sets the shape for the given grid and surrounding grids.
- * Called when a grid becomes known.
- */
-void angtk_feat_known(int y, int x)
-{
-	int d, shape;
-
-	if (!(g_grid[y][x].xtra & (GRID_XTRA_WALL | GRID_XTRA_DOOR)))
-		return;
-
-	if (g_grid[y][x].xtra & GRID_XTRA_WALL)
-	{
-		shape = wall_shape(y, x, FALSE);
-		if (shape != g_grid[y][x].shape)
-		{
-			g_grid[y][x].shape = shape;
-			set_grid_assign(y, x);
-
-			for (d = 0; d < 8; d++)
-			{
-				int yy = y + ddy_ddd[d];
-				int xx = x + ddx_ddd[d];
-				
-				if (in_bounds2(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
-				{
-					shape = wall_shape(yy, xx, FALSE);
-					if (shape != g_grid[yy][xx].shape)
-					{
-						g_grid[yy][xx].shape = shape;
-						set_grid_assign(yy, xx);
-					}
-				}
-			}
-		}
-	}
-}
 
 /*
  * This routine determines the icon to use for the given cave
@@ -1102,51 +656,11 @@ void set_grid_assign(int y, int x)
 	/* Paranoia */
 	if (g_icon_map[ICON_LAYER_1][0] == NULL) return;
 
-	g_grid[y][x].xtra &= ~0x0001;
-
 	/* Get the assignment for this feature */
 	assign = g_assign[ASSIGN_FEATURE].assign[feat];
 
 	/* Get the shape of this grid */
 	shape = g_grid[y][x].shape;
-
-	/* If a door, set shape now */
-	if (is_door(y, x)) /* XTRA_DOOR */
-	{
-		if (g_grid[y][x].xtra & GRID_XTRA_ISVERT)
-			shape = GRID_SHAPE_NS;
-		else
-			shape = GRID_SHAPE_WE;
-	}
-
-	/* A valid shape */
-	if ((shape > 0) && (shape < GRID_SHAPE_MAX))
-	{
-		t_assign assign2;
-
-		/* Get the assignment for this shape */
-		assign2 = g_assignshape[shape][feat];
-
-		/* This is not a TYPE_DEFAULT icon */
-		if ((assign2.assignType != ASSIGN_TYPE_ICON) ||
-			(assign2.icon.type != ICON_TYPE_DEFAULT))
-		{
-			/* Use the shape icon */
-			assign = assign2;
-		}
-
-		/*
-		 * XXX Hack -- Remember if there is a second shape assignment.
-		 * The second assignment uses an "unknown" floor.
-		 */
-		assign2 = g_assignshape[shape][z_info->f_max + feat];
-		if ((assign2.assignType != ASSIGN_TYPE_ICON) ||
-			(assign2.icon.type != ICON_TYPE_DEFAULT))
-		{
-			/* Use the shape icon */
-			g_grid[y][x].xtra |= 0x0001;
-		}
-	}
 
 	if (assign.assignType == ASSIGN_TYPE_ALTERNATE)
 	{
@@ -1155,10 +669,9 @@ void set_grid_assign(int y, int x)
 		{
 			/* The reason must be REASON_FEATURE */
 			t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-			int vert = (g_grid[y][x].xtra & GRID_XTRA_ISVERT) != 0;
 
 			/* Index 0 is horizontal door, 1 is vertical door */
-			iconSpec = alternatePtr->icon[vert];
+			iconSpec = alternatePtr->icon[0];
 
 			assign.assignType = ASSIGN_TYPE_ICON;
 			assign.icon.type = iconSpec.type;
@@ -1204,10 +717,9 @@ void set_grid_assign(int y, int x)
 			{
 				/* The reason must be REASON_FEATURE */
 				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-				int vert = (g_grid[y][x].xtra & GRID_XTRA_ISVERT) != 0;
 	
 				/* Index 0 is horizontal door, 1 is vertical door */
-				iconSpec = alternatePtr->icon[vert];
+				iconSpec = alternatePtr->icon[0];
 
 				assign.assignType = ASSIGN_TYPE_ICON;
 				assign.icon.type = iconSpec.type;
@@ -1412,54 +924,6 @@ void init_palette(void)
 		quit_fmt("error reading \"%s\"", path);
 	}
 }
-
-/* 
- * Is the door horizontal or vertical?
- * Return 0 for horizontal, 1 for vertical
- */
-bool door_vertical(int y, int x)
-{
-	/* Ignore these for now */
-	(void) x;
-	(void) y;
-#if 0
-
-	bool wall_left, wall_right, wall_above, wall_below;
-	bool door_right, door_left;
-	int f_left, f_right;
-	
-	wall_left = !cave_floor_bold(y, x-1);
-	wall_right = !cave_floor_bold(y, x+1);
-	
-	wall_above = !cave_floor_bold(y-1, x);
-	wall_below = !cave_floor_bold(y+1, x);
-	
-	/* Walls on both horizontal sides */
-	if (wall_left && wall_right) return (0);
-	
-	/* Walls on both vertical sides */
-	if (wall_above && wall_below) return (1);
-	
-	/* Check for doors on either horizontal side */
-	f_left = area(x - 1, y)->feat;
-	f_right = area(x + 1, y)->feat;
-	
-	door_left = (f_left == FEAT_OPEN) || (f_left == FEAT_BROKEN) ||
-		(f_left == FEAT_CLOSED);
-	door_right = (f_right == FEAT_OPEN) || (f_right == FEAT_BROKEN) ||
-		(f_right == FEAT_CLOSED);
-
-	/* Doors on left and right */
-	if (door_left && door_right) return (0);
-	
-	/* Door on one side and wall on the other side */
-	if ((door_left && wall_right) || (door_right && wall_left)) return (0);
-#endif /* 0 */
-
-	/* Default to vertical door (handles stacked vertical doors too!) */
-	return (1);
-}
-
 
 /*
  * bg -- background bits
