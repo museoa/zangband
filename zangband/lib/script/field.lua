@@ -63,6 +63,41 @@ function corpse_type(c)
 	return 3;
 end
 
+--
+--	Initialise a corpse field
+--
+function corpse_init()
+	field.data[1] = race / 256
+	field.data[2] = race % 256
+	
+	set_corpse_size(field, corpse_type(r_info[race].d_char))
+
+	notice_field(field)
+end
+
+
+--
+--	Initialise a field with a counter
+--
+function counter_init(max)
+	local new_value
+
+	new_value = field.counter + power;
+
+	-- Bounds checking
+	if new_value > max then
+		field.counter = max
+		
+	elseif new_value < 0
+		-- Hack - we'll decrement next turn
+		field.counter = 1
+		
+	else
+		-- Store in the new value
+		f_ptr->counter = new_value
+	end
+end
+
 
 --
 --	Traps interact with magic
