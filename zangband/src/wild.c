@@ -316,7 +316,9 @@ static void add_town_wall(void)
 		{
 			/* Make town gates */
 			cave[0][i].feat = FEAT_CLOSED;
+			cave[0][i].fld_idx = FT_LOCK_DOOR;
 			cave[TOWN_HGT - 1][i].feat = FEAT_CLOSED;
+			cave[TOWN_HGT - 1][i].fld_idx = FT_LOCK_DOOR;
 		}
 		else
 		{
@@ -334,7 +336,9 @@ static void add_town_wall(void)
 		{
 			/* Make town gates (locked) */
 			cave[i][0].feat = FEAT_CLOSED;
+			cave[i][0].fld_idx = FT_LOCK_DOOR;
 			cave[i][TOWN_WID - 1].feat = FEAT_CLOSED;
+			cave[i][TOWN_WID - 1].fld_idx = FT_LOCK_DOOR;
 		}
 		else
 		{
@@ -499,9 +503,12 @@ static void town_gen(u16b town_num, int *xx, int *yy)
  */
 static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 {
-	int i, j, xx, yy;
-	byte feat;
-
+	int		i, j, xx, yy;
+	
+	cave_type	*c_ptr;
+	field_type	*f_ptr;
+	
+	u16b	fld_idx;
 
 	/* Find block to copy */
 	xx = (x - town[w_town].x) << 4;
@@ -512,12 +519,100 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			feat = cave[yy + j][xx + i].feat;
+			c_ptr = &cave[yy + j][xx + i];
 
-			if (feat != FEAT_NONE)
+			if (c_ptr->feat != FEAT_NONE)
 			{
 				/* Only copy if there is something there. */
-				block_ptr[j][i].feat = feat;
+				block_ptr[j][i].feat = c_ptr->feat;
+			}
+			
+			/* 
+			 * Instantiate field
+			 *
+			 * Note that most types of field are not in this list.
+			 *
+			 * Doors, buildings, traps, quests etc.
+			 * are all that are in this list.
+			 */
+			switch (c_ptr->fld_idx)
+			{
+				/* Nothing */
+				case 0: break;
+				
+				case FT_TRAP_DOOR:
+				case FT_TRAP_PIT:
+				case FT_TRAP_SPIKE_PIT:
+				case FT_TRAP_POISON_PIT:
+				case FT_TRAP_CURSE:
+				case FT_TRAP_TELEPORT:
+				case FT_TRAP_ELEMENT:
+				case FT_TRAP_BA_ELEMENT:
+				case FT_TRAP_GAS:
+				case FT_TRAP_TRAPS:
+				case FT_TRAP_TEMP_STAT:
+				case FT_TRAP_PERM_STAT:
+				case FT_TRAP_LOSE_XP:
+				case FT_TRAP_DISENCHANT:
+				case FT_TRAP_DROP_ITEM:
+				case FT_TRAP_MUTATE:
+				case FT_TRAP_NEW_LIFE:
+				case FT_TRAP_NO_LITE:
+				case FT_TRAP_HUNGER:
+				case FT_TRAP_NO_GOLD:
+				case FT_TRAP_HASTE_MON:
+				case FT_TRAP_RAISE_MON:
+				case FT_TRAP_DRAIN_MAGIC:
+				case FT_TRAP_AGGRAVATE:
+				case FT_TRAP_SUMMON:
+				case FT_TRAP_LOSE_MEMORY:
+				{
+					/* Add a door field */
+					fld_idx =create_field(c_ptr->fld_idx);
+					
+					/* Activate the trap */
+					if (fld_idx)
+					{
+						/* If it was placed properly */
+						block_ptr[j][i].fld_idx = fld_idx;
+		
+						f_ptr = &fld_list[fld_idx];
+						
+						/* Save the location */
+						f_ptr->fx = x * 16 + i;
+						f_ptr->fy = y * 16 + j;
+						
+						/* Hack - Initialise it (without "extra" information) */
+						(void)field_hook_single(&block_ptr[j][i].fld_idx,
+							 FIELD_ACT_INIT, 0);
+					}
+					
+					break;
+				}
+				
+				case FT_LOCK_DOOR:
+				case FT_JAM_DOOR:
+				{
+					/* Add a door field */
+					fld_idx =create_field(c_ptr->fld_idx);
+
+					if (fld_idx)
+					{
+						/* If it was placed properly */
+						block_ptr[j][i].fld_idx = fld_idx;
+		
+						f_ptr = &fld_list[fld_idx];
+						
+						/* Add "power" of lock / jam to the field */
+						f_ptr->counter = 9;
+						
+						/* Save the location */
+						f_ptr->fx = x * 16 + i;
+						f_ptr->fy = y * 16 + j;
+					}
+					
+					break;
+				}
 			}
 		}
 	}
@@ -3499,6 +3594,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 			/* Make the town */
 			town_gen(w_town, &dummy1, &dummy2);
 
+			/* Need to change this..... */
 			init_buildings();
 		}
 

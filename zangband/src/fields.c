@@ -1074,6 +1074,30 @@ s16b place_field(int y, int x, s16b t_idx)
 
 
 /*
+ * Create a field - it is up to the caller to link to the ground
+ */
+s16b create_field(s16b t_idx)
+{
+	s16b fld_idx;
+
+	field_type temp_field;
+	field_type *ft_ptr = &temp_field;
+
+	/* Make the field */
+	field_prep(ft_ptr, t_idx);
+
+	/* Create it */
+	fld_idx = f_pop();
+
+	if (!fld_idx) return (0);
+		
+	/* Move field to location in the list */
+	field_copy(&fld_list[fld_idx], ft_ptr);
+
+	return (fld_idx);
+}
+
+/*
  * Call the action function for the field pointed to by *field_ptr.
  *
  * This function does not do a list of fields like the one below.
