@@ -270,7 +270,6 @@ typedef struct borg_grid borg_grid;
 struct borg_grid
 {
     byte feat;      /* Grid type */
-    byte info;      /* Grid flags */
 
     byte take;      /* Object index */
     byte kill;      /* Monster index */
