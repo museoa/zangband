@@ -901,7 +901,7 @@ static void prt_speed(void)
 	}
 
 	/* Display the speed */
-	c_put_str(attr, format("%-11s", buf), Term->hgt - 1, COL_SPEED);
+	c_put_str(attr, format("%-10s", buf), Term->hgt - 1, COL_SPEED);
 }
 
 
