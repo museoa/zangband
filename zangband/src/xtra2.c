@@ -21,6 +21,7 @@
 void check_experience(void)
 {
 	bool level_reward = FALSE;
+	bool multi_rew = FALSE;
 	bool level_mutation = FALSE;
 
 	/* Hack -- lower limit */
@@ -138,7 +139,12 @@ void check_experience(void)
 
 		if (level_reward)
 		{
-			gain_level_reward(0);
+			if (!multi_rew)
+			{
+				gain_level_reward(0);
+				multi_rew = TRUE;
+			}
+			
 			level_reward = FALSE;
 		}
 
@@ -3244,13 +3250,6 @@ void gain_level_reward(int chosen_reward)
 	int i;
 
 	int count = 0;
-
-	if (!chosen_reward)
-	{
-		if (multi_rew) return;
-		else multi_rew = TRUE;
-	}
-
 
 	if (p_ptr->lev == 13) nasty_chance = 2;
 	else if (!(p_ptr->lev % 13)) nasty_chance = 3;

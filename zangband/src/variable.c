@@ -86,8 +86,8 @@ s16b command_arg;		/* Gives argument of current command */
 s16b command_rep;		/* Gives repetition of current command */
 s16b command_dir;		/* Gives direction of current command */
 
-s16b command_see;		/* See "cmd1.c" */
-s16b command_wrk;		/* See "cmd1.c" */
+s16b command_see;		/* See "cmd3.c" */
+s16b command_wrk;		/* See "cmd3.c" */
 
 s16b command_gap = 50;	/* See "cmd1.c" */
 
@@ -130,10 +130,14 @@ bool wizard;			/* Is the player currently in Wizard mode? */
 bool use_sound;			/* The "sound" mode is enabled */
 bool use_graphics;		/* The "graphics" mode is enabled */
 
+bool use_transparency = FALSE; /* Use transparent tiles */
+
 u16b total_winner;		/* Semi-Hack -- Game has been won */
 
 u16b panic_save;		/* Track some special "conditions" */
 u16b noscore;			/* Track various "cheating" conditions */
+
+bool can_save = TRUE;         /* Game can be saved */
 
 s16b signal_count;		/* Hack -- Count interupts */
 
@@ -146,7 +150,6 @@ bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters;	/* Hack -- optimize detect monsters */
 
-s16b inven_nxt;			/* Hack -- unused */
 bool hack_mind;
 bool hack_mutation;
 
@@ -165,7 +168,7 @@ s16b fld_cnt = 0;			/* Number of live fields */
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
 s16b hack_m_idx_ii = 0;
 s16b *hack_fld_ptr = NULL; /* Hack -- see "fields.c" */
-bool multi_rew = FALSE;
+
 char summon_kin_type;   /* Hack, by Julian Lighton: summon 'relatives' */
 
 int total_friends = 0;
@@ -218,6 +221,7 @@ bool disturb_state;			/* Disturn whenever player state changes */
 bool disturb_minor;			/* Disturb whenever boring things happen */
 bool disturb_other;			/* Disturb whenever various things happen */
 bool disturb_traps;			/* Disturb whenever you move out of detect radius */
+bool disturb_pets;		/* Pets moving nearby disturb us */
 
 bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */
@@ -230,8 +234,6 @@ bool silly_monsters;		/* Allow the silly monsters to be generated */
 bool auto_destroy;		/* Known worthless items are destroyed without confirmation */
 bool confirm_stairs;		/* Prompt before staircases... */
 bool wear_confirm;		/* Confirm before putting on known cursed items */
-
-bool disturb_pets;		/* Pets moving nearby disturb us */
 
 
 
@@ -264,10 +266,10 @@ bool track_target;			/* Monsters target the player */
 bool smart_learn;			/* Monsters learn from their mistakes */
 bool smart_cheat;			/* Monsters exploit player weaknesses */
 
-bool take_notes;                        /* Allow notes to be added to a file */
-bool auto_notes;                        /* Automatically take notes */
+bool take_notes;            /* Allow notes to be added to a file */
+bool auto_notes;            /* Automatically take notes */
 
-bool point_based;                       /* Point-based generation */
+bool point_based;           /* Point-based generation */
 
 /* Option Set 4 -- Efficiency */
 
@@ -310,6 +312,42 @@ bool cheat_room;		/* Peek into dungeon creation */
 bool cheat_xtra;		/* Peek into something else */
 bool cheat_know;		/* Know complete monster info */
 bool cheat_live;		/* Allow player to avoid death */
+
+
+/*
+ * Startup options
+ */
+bool vanilla_town;            /* Use "vanilla" town without set quests */
+bool ironman_shops;           /* Stores are permanently closed */
+bool ironman_small_levels;    /* Always create unusually small dungeon levels */
+bool ironman_downward;        /* Don't allow climbing upwards/recalling */
+bool ironman_autoscum;        /* Permanently enable the autoscummer */
+bool ironman_hard_quests;     /* Quest monsters get reinforcements */
+bool ironman_empty_levels;    /* Always create empty 'arena' levels */
+bool terrain_streams;         /* Create terrain 'streamers' in the dungeon */
+bool munchkin_death;          /* Ask for saving death */
+bool ironman_rooms;           /* Always generate very unusual rooms */
+bool ironman_nightmare;			/* Play the game in Nightmare mode */
+bool maximize_mode;
+bool preserve_mode;
+bool autoroller;
+
+
+
+/* Easy patch flags */
+bool easy_open;
+bool easy_disarm;
+bool easy_floor;
+
+bool use_command;
+bool center_player;
+bool avoid_center;
+
+/* Auto-destruction options */
+bool destroy_worthless;
+
+/* Monster lighting effects */
+bool monster_light;
 
 
 /* Special options */
@@ -669,9 +707,6 @@ cave_type *(*area)(int, int);
  * don't need to be redone if the player moves back and forth.
  */
 
-/* wilderness block - array of 16x16 cave grids. */
-/* cave_type *block[WILD_BLOCK_SIZE]; */
-
 /* block used to generate plasma fractal for random wilderness */
 u16b *temp_block[WILD_BLOCK_SIZE+1];
 
@@ -803,8 +838,8 @@ player_magic *mp_ptr;
  */
 u32b spell_learned1;	/* bit mask of spells learned */
 u32b spell_learned2;	/* bit mask of spells learned */
-u32b spell_worked1;	/* bit mask of spells tried and worked */
-u32b spell_worked2;	/* bit mask of spells tried and worked */
+u32b spell_worked1;		/* bit mask of spells tried and worked */
+u32b spell_worked2;		/* bit mask of spells tried and worked */
 u32b spell_forgotten1;	/* bit mask of spells learned but forgotten */
 u32b spell_forgotten2;	/* bit mask of spells learned but forgotten */
 byte spell_order[64];	/* order spells learned/remembered/forgotten */
@@ -1011,21 +1046,6 @@ bool monk_armour_aux;
 bool monk_notify_aux;
 
 
-/* Easy patch flags */
-bool easy_open;
-bool easy_disarm;
-bool easy_floor;
-
-bool use_command;
-bool center_player;
-bool avoid_center;
-
-/* Auto-destruction options */
-bool destroy_worthless;
-
-/* Monster lighting effects */
-bool monster_light;
-
 /*
  * Buildings
  */
@@ -1141,32 +1161,16 @@ int highscore_fd = -1;
 
 /*
  * Should the monster allocation fail with inappropriate terrain?
+ *
+ * This hack is only used by the polymoph function... this probably
+ * could be removed, and that function done a different way.
  */
 bool monster_terrain_sensitive = TRUE;
 
 int mutant_regenerate_mod = 100;
 
-/*
- * Startup options
- */
-bool vanilla_town;            /* Use "vanilla" town without set quests */
-bool ironman_shops;           /* Stores are permanently closed */
-bool ironman_small_levels;    /* Always create unusually small dungeon levels */
-bool ironman_downward;        /* Don't allow climbing upwards/recalling */
-bool ironman_autoscum;        /* Permanently enable the autoscummer */
-bool ironman_hard_quests;     /* Quest monsters get reinforcements */
-bool ironman_empty_levels;    /* Always create empty 'arena' levels */
-bool terrain_streams;         /* Create terrain 'streamers' in the dungeon */
-bool munchkin_death;          /* Ask for saving death */
-bool ironman_rooms;           /* Always generate very unusual rooms */
-bool ironman_nightmare;			/* Play the game in Nightmare mode */
-bool maximize_mode;
-bool preserve_mode;
-bool autoroller;
 
 
-bool use_transparency = FALSE; /* Use transparent tiles */
 
-bool can_save = TRUE;         /* Game can be saved */
 
 

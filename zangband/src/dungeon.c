@@ -1553,11 +1553,6 @@ static void process_world(void)
 		(void)set_tim_invis(p_ptr->tim_invis - 1);
 	}
 
-	if (multi_rew)
-	{
-		multi_rew = FALSE;
-	}
-
 	/* Timed esp */
 	if (p_ptr->tim_esp)
 	{
