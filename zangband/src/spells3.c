@@ -3137,6 +3137,7 @@ s16b spell_chance(int spell, int realm)
 {
 	int chance, minfail;
 	const magic_type *s_ptr;
+	int smana;
 
 
 	/* Paranoia -- must be literate */
@@ -3154,10 +3155,13 @@ s16b spell_chance(int spell, int realm)
 	/* Reduce failure rate by INT/WIS adjustment */
 	chance -= 3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
 
+	/* Get mana cost */
+	smana = spell_mana(spell, realm);
+
 	/* Not enough mana to cast */
-	if (s_ptr->smana > p_ptr->csp)
+	if (smana > p_ptr->csp)
 	{
-		chance += 5 * (s_ptr->smana - p_ptr->csp);
+		chance += 5 * (smana - p_ptr->csp);
 	}
 
 	/* Some mutations increase spell failure */
@@ -3206,6 +3210,32 @@ s16b spell_chance(int spell, int realm)
 
 	/* Return the chance */
 	return (chance);
+}
+
+/*
+ * Returns spell mana cost for spell
+ */
+int spell_mana(int spell, int realm)
+{
+	const magic_type *s_ptr;
+	int smana;
+
+
+	/* Paranoia -- must be literate */
+	if (!mp_ptr->spell_book) return (100);
+
+	/* Access the spell */
+	s_ptr = &mp_ptr->info[realm][spell];
+
+	smana = s_ptr->smana;
+
+	/* Chaos patrons improve chaos magic */
+	if (realm == REALM_CHAOS-1 && (p_ptr->flags4 & TR4_PATRON))
+	{
+		smana = (smana * 2 + 2) / 3;
+	}
+
+	return (smana);
 }
 
 
@@ -3967,7 +3997,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		/* Dump the spell --(-- */
 		prtf(x, y + i + 1, "  %c) %-30s%2d %4d %3d%%%s",
 				I2A(i), spell_names[realm][spell],
-				(int)s_ptr->slevel, (int)s_ptr->smana,
+				(int)s_ptr->slevel, spell_mana(spell, realm),
 				spell_chance(spell, realm), comment);
 	}
 

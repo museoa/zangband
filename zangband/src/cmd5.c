@@ -141,7 +141,8 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 			/* Belay that order */
 			if (!get_check("%^s %s (%d mana, %d%% fail)? ",
 						  prompt, spell_names[use_realm - 1][spell % 32],
-						  s_ptr->smana, spell_chance(spell, use_realm - 1))) continue;
+						  spell_mana(spell, use_realm - 1), 
+						  spell_chance(spell, use_realm - 1))) continue;
 		}
 
 		/* Stop the loop */
@@ -2632,7 +2633,7 @@ static bool cast_arcane_spell(int spell)
 void do_cmd_cast(void)
 {
 	int sval, spell, realm;
-	int chance;
+	int chance, smana;
 	int increment = 0;
 	int use_realm;
 	bool cast;
@@ -2709,9 +2710,11 @@ void do_cmd_cast(void)
 
 	s_ptr = &mp_ptr->info[use_realm - 1][spell];
 
+	/* Get mana cost */
+	smana = spell_mana(spell, use_realm - 1);
 
 	/* Verify "dangerous" spells */
-	if (s_ptr->smana > p_ptr->csp)
+	if (smana > p_ptr->csp)
 	{
 		/* Warning */
 		msgf("You do not have enough mana to %s this %s.",
@@ -2860,16 +2863,16 @@ void do_cmd_cast(void)
 	p_ptr->energy_use = 100;
 
 	/* Sufficient mana */
-	if (s_ptr->smana <= p_ptr->csp)
+	if (smana <= p_ptr->csp)
 	{
 		/* Use some mana */
-		p_ptr->csp -= s_ptr->smana;
+		p_ptr->csp -= smana;
 	}
 
 	/* Over-exert the player */
 	else
 	{
-		int oops = s_ptr->smana - p_ptr->csp;
+		int oops = smana - p_ptr->csp;
 
 		/* No mana left */
 		p_ptr->csp = 0;

@@ -790,6 +790,7 @@ extern bool bless_weapon(void);
 extern bool potion_smash_effect(int who, int x, int y, object_type *o_ptr);
 extern void display_spell_list(void);
 extern s16b spell_chance(int spell, int realm);
+extern int spell_mana(int spell, int realm);
 extern bool spell_okay(int spell, bool known, int realm);
 extern void spell_info(char *p, int spell, int realm);
 extern void print_spells(byte *spells, int num, int x, int y, int realm);
