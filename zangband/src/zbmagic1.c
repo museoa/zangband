@@ -44,36 +44,6 @@ bool borg_desperate = FALSE;
  * Given a "source" and "target" locations, extract a "direction",
  * which will move one step from the "source" towards the "target".
  *
- * Note that we use "diagonal" motion whenever possible.
- *
- * We return "5" if no motion is needed.
- */
-int borg_extract_dir(int x1, int y1, int x2, int y2)
-{
-	/* No movement required */
-	if ((y1 == y2) && (x1 == x2)) return (5);
-
-	/* South or North */
-	if (x1 == x2) return ((y1 < y2) ? 2 : 8);
-
-	/* East or West */
-	if (y1 == y2) return ((x1 < x2) ? 6 : 4);
-
-	/* South-east or South-west */
-	if (y1 < y2) return ((x1 < x2) ? 3 : 1);
-
-	/* North-east or North-west */
-	if (y1 > y2) return ((x1 < x2) ? 9 : 7);
-
-	/* Paranoia */
-	return (5);
-}
-
-
-/*
- * Given a "source" and "target" locations, extract a "direction",
- * which will move one step from the "source" towards the "target".
- *
  * We prefer "non-diagonal" motion, which allows us to save the
  * "diagonal" moves for avoiding pillars and other obstacles.
  *
@@ -897,6 +867,7 @@ bool borg_lite_beam(bool simulation, int *dir)
 
 		/* Require the ability */
 		if (!borg_spell_okay_fail(REALM_NATURE, 1, 4, 20) &&
+			!borg_spell_okay_fail(REALM_ARCANE, 2, 4, 20) &&
 			!borg_equips_wand_fail(SV_WAND_LITE) &&
 			!borg_equips_rod_fail(SV_ROD_LITE))
 			return (FALSE);
@@ -929,6 +900,7 @@ bool borg_lite_beam(bool simulation, int *dir)
 
 	/* cast the light beam */
 	if (borg_spell(REALM_NATURE, 1, 4) ||
+		borg_spell(REALM_ARCANE, 2, 4) ||
 		borg_zap_rod(SV_ROD_LITE) ||
 		borg_aim_wand(SV_WAND_LITE))
 	{	
@@ -2941,7 +2913,7 @@ bool borg_caution(void)
 		}
 
 		/* Flee for fuel */
-		if (bp_ptr->depth && (!l_ptr->k_idx || l_ptr->timeout < 1000))
+		if (bp_ptr->depth && (!l_ptr || l_ptr->timeout < 1000))
 		{
 			/* Start leaving */
 			if (!goal_leaving)

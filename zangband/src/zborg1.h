@@ -398,6 +398,7 @@ extern u32b borg_rand_local;	/* Save personal setting */
  */
 
 extern s32b borg_t;	/* Current "time" */
+extern s32b borg_temp_fill_valid;	/* When were the monster arrays filled */
 extern s32b need_see_inviso;	/* To tell me to cast it */
 extern s32b borg_see_inv;
 extern bool vault_on_level;	/* borg will search for a vault */
@@ -479,6 +480,8 @@ extern s16b borg_game_ratio;
 extern bool borg_shield;
 extern bool borg_on_glyph;	/* borg is standing on a glyph of warding */
 extern bool borg_create_door;	/* borg is going to create doors */
+extern bool borg_open_door_failed;
+extern bool borg_close_door_failed;
 extern bool borg_sleep_spell;
 extern bool borg_sleep_spell_ii;
 extern bool borg_slow_spell;
@@ -557,7 +560,7 @@ extern bool my_need_enchant_to_d;	/* Need some enchantment */
 extern s16b amt_food_scroll;
 extern s16b amt_food_hical;
 extern s16b amt_food_lowcal;
-extern s16b amt_torch_fuel;
+extern s16b amt_torch;
 extern s16b amt_lantern;
 extern s16b amt_flask;
 

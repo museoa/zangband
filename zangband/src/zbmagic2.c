@@ -5208,6 +5208,23 @@ void borg_temp_fill(bool all_monsters)
 	int x, y, dx, dy;
 	int x1, y1;
 
+	/* Avoid doing this costly procedure twice to get the same data */
+	if (all_monsters && 
+		borg_temp_fill_valid &&
+		borg_temp_fill_valid == borg_t) return;
+
+	/* Only if the temp arrays need to be filled */
+	if (all_monsters)
+	{
+		/* Set the counter to this turn */
+		borg_temp_fill_valid = borg_t;
+	}
+	else
+	{
+		/* Set the counter to never */
+		borg_temp_fill_valid = FALSE;
+	}
+
 	/* Reset lists */
 	borg_temp_n = 0;
 	borg_next_n = 0;
@@ -5231,7 +5248,7 @@ void borg_temp_fill(bool all_monsters)
 
 		/* Ignore multiplying monsters and when fleeing from scaries */
 		if (goal_ignoring && !bp_ptr->status.afraid &&
-			(FLAG(&r_info[kill->r_idx], RF_MULTIPLY))) continue;
+			FLAG(&r_info[kill->r_idx], RF_MULTIPLY)) continue;
 
 		/* Acquire location */
 		x = kill->x;

@@ -427,6 +427,36 @@ bool borg_recover(void)
 
 
 /*
+ * Given a "source" and "target" locations, extract a "direction",
+ * which will move one step from the "source" towards the "target".
+ *
+ * Note that we use "diagonal" motion whenever possible.
+ *
+ * We return "5" if no motion is needed.
+ */
+int borg_extract_dir(int x1, int y1, int x2, int y2)
+{
+	/* No movement required */
+	if ((y1 == y2) && (x1 == x2)) return (5);
+
+	/* South or North */
+	if (x1 == x2) return ((y1 < y2) ? 2 : 8);
+
+	/* East or West */
+	if (y1 == y2) return ((x1 < x2) ? 6 : 4);
+
+	/* South-east or South-west */
+	if (y1 < y2) return ((x1 < x2) ? 3 : 1);
+
+	/* North-east or North-west */
+	if (y1 > y2) return ((x1 < x2) ? 9 : 7);
+
+	/* Paranoia */
+	return (5);
+}
+
+
+/*
  * Take one "step" towards the given location, return TRUE if possible
  */
 static bool borg_play_step(int y2, int x2)
@@ -487,30 +517,41 @@ static bool borg_play_step(int y2, int x2)
 			g_x = x;
 			g_y = y;
 
-			/* Close */
-			borg_note("# Closing a door");
-			borg_keypress('c');
-			borg_keypress(I2D(dir));
-
-			/* Check for an existing flag */
-			for (i = 0; i < track_door_num; i++)
+			/* If the borg is in the dark and just failed to close the door */
+			if (!bp_ptr->cur_lite &&
+				borg_close_door_failed)
 			{
-				/* Stop if we already new about this door */
-				if ((track_door_x[i] == x) &&
-					(track_door_y[i] == y)) return (TRUE);
-			}
+				/* Hack the door closed */
+				mb_ptr->feat = FEAT_CLOSED;
 
-			/* Track the newly closed door */
-			if (i == track_door_num && i < track_door_size)
+				borg_close_door_failed = FALSE;
+			}
+			else
 			{
+				/* Close */
+				borg_note("# Closing a door");
+				borg_keypress('c');
+				borg_keypress(I2D(dir));
 
-				borg_note("# Noting the closing of a door.");
-				track_door_num++;
-				track_door_x[i] = x;
-				track_door_y[i] = y;
+				/* Check for an existing flag */
+				for (i = 0; i < track_door_num; i++)
+				{
+					/* Stop if we already knew about this door */
+					if ((track_door_x[i] == x) &&
+						(track_door_y[i] == y)) return (TRUE);
+				}
+
+				/* Track the newly closed door */
+				if (i == track_door_num && i < track_door_size)
+				{
+
+					borg_note("# Noting the closing of a door.");
+					track_door_num++;
+					track_door_x[i] = x;
+					track_door_y[i] = y;
+				}
+				return (TRUE);
 			}
-			return (TRUE);
-
 		}
 	}
 
@@ -588,9 +629,16 @@ static bool borg_play_step(int y2, int x2)
 		 * trap in order to escape this level.
 		 */
 
-		/* allow "destroy doors" */
-		if (borg_spell(REALM_ARCANE, 0, 6))
+		/* Cast a disarm with direction */
+		if (borg_spell(REALM_ARCANE, 0, 6) ||
+			borg_zap_rod(SV_ROD_DISARMING) ||
+			borg_aim_wand(SV_WAND_DISARMING) ||
+			borg_aim_wand(SV_WAND_TRAP_DOOR_DEST))
 		{
+			/* Make sure there is no target */
+			borg_keypress('*');
+			borg_keypress(ESCAPE);
+
 			borg_note("# Unbarring ways");
 			borg_keypress(I2D(dir));
 			mb_ptr->trap = FT_NONE;
@@ -620,21 +668,34 @@ static bool borg_play_step(int y2, int x2)
 		/* Paranoia XXX XXX XXX */
 		if (one_in_(100)) return (FALSE);
 
-		/* Open */
-		if (my_need_alter)
+		/* If the borg is in the dark and just failed to open the door */
+		if (!bp_ptr->cur_lite &&
+			borg_open_door_failed)
 		{
-			borg_keypress('+');
-			my_need_alter = FALSE;
+			/* Hack the door open */
+			mb_ptr->feat = FEAT_OPEN;
+
+			borg_open_door_failed = FALSE;
 		}
 		else
 		{
-			borg_note("# Opening a door");
-			borg_keypress('0');
-			borg_keypress('9');
-			borg_keypress('o');
+			/* Open */
+			if (my_need_alter)
+			{
+				borg_keypress('+');
+				my_need_alter = FALSE;
+			}
+			else
+			{
+				borg_note("# Opening a door");
+				borg_keypress('0');
+				borg_keypress('9');
+				borg_keypress('o');
+			}
+			borg_keypress(I2D(dir));
+
+			return (TRUE);
 		}
-		borg_keypress(I2D(dir));
-		return (TRUE);
 	}
 
 	/* Rubble, Treasure, Seams, Walls -- Tunnel or Melt */

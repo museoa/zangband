@@ -63,6 +63,7 @@ extern bool borg_flow_old(int why);
 /*
  * Flow to stairs
  */
+extern int borg_extract_dir(int x1, int y1, int x2, int y2);
 extern bool borg_flow_stair_both(int why);
 extern bool borg_flow_stair_less(int why);
 extern bool borg_flow_stair_more(int why);

@@ -398,7 +398,6 @@ bool borg_check_lite(void)
 	bool do_wall;
 	bool do_evil;
 
-	bool do_lite_aux = FALSE;
 
 
 	/* Never in town */
@@ -660,11 +659,11 @@ bool borg_check_lite(void)
 		}
 	}
 	/* add them up */
-	if (floors <= 11) do_lite = do_lite_aux = FALSE;
+	if (floors <= 11) do_lite = FALSE;
 
 	/* Vampires need to be careful for Light */
 	if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE))
-		do_lite = do_lite_aux = FALSE;
+		do_lite = FALSE;
 
 	/* Hack -- call lite */
 	if (do_lite && (!when_call_lite || (borg_t - when_call_lite >= 7)))
@@ -692,6 +691,72 @@ bool borg_check_lite(void)
 		}
 	}
 
+	/* What to do when the borg has no light */
+	if (!bp_ptr->cur_lite)
+	{
+		/* Set to default */
+		do_lite = FALSE;
+
+		/* Check all the surrounding spots */
+		for (x = c_x - 1; x <= c_x + 1; x++)
+		{
+			for (y = c_y - 1; y <= c_y + 1; y++)
+			{
+				/* Check if it is on the map */
+				if (!map_in_bounds(x, y)) continue;
+
+				/* Is it a dark spot */
+				if (!(map_loc(x, y)->flags & MAP_GLOW))
+				{
+					/* Think about lighting up */
+					do_lite = TRUE;
+
+					/* Remember where */
+					g_x = x;
+					g_y = y;
+				}
+			}
+		}
+
+		if (do_lite)
+		{
+			/* Can the borg cast a light area? */
+			if (borg_zap_rod(SV_ROD_ILLUMINATION) ||
+				borg_use_staff(SV_STAFF_LITE) ||
+				borg_read_scroll(SV_SCROLL_LIGHT) ||
+				borg_spell(REALM_ARCANE, 0, 5) ||
+				borg_spell(REALM_CHAOS, 0, 2) ||
+				borg_spell(REALM_NATURE, 0, 4) ||
+				borg_spell(REALM_SORCERY, 0, 3) ||
+				borg_spell(REALM_LIFE, 0, 4) ||
+				borg_mutation(MUT1_ILLUMINE))
+			{
+				/* making lite */
+				borg_note("# Trying to light the whole dungeon");
+
+				return (TRUE);
+			}
+
+			/* Release target */
+			borg_keypress('*');
+			borg_keypress(ESCAPE);
+
+			/* Can the borg cast a beam of light */
+			if (borg_spell(REALM_NATURE, 1, 4) ||
+				borg_spell(REALM_ARCANE, 2, 4) ||
+				borg_zap_rod(SV_ROD_LITE) ||
+				borg_aim_wand(SV_WAND_LITE))
+			{	
+				/* making lite */
+				borg_note("# Trying to light the whole dungeon");
+
+				/* show me the way */
+				borg_keypress(I2D(borg_extract_dir(c_x, c_y, g_x, g_y)));
+
+				return (TRUE);
+			}
+		}
+	}
 
 	/* Hack -- Wizard Lite */
 	if (TRUE && (!when_wizard_lite || (borg_t - when_wizard_lite >= 1000)))
@@ -725,7 +790,6 @@ bool borg_check_lite_only(void)
 	map_block *mb_ptr;
 
 	bool do_lite;
-	bool do_lite_aux = FALSE;
 
 	/* Never in town */
 	if (!bp_ptr->depth) return (FALSE);
@@ -793,7 +857,7 @@ bool borg_check_lite_only(void)
 		}
 	}
 	/* add them up */
-	if (floors <= 11) do_lite = do_lite_aux = FALSE;
+	if (floors <= 11) do_lite = FALSE;
 
 	/* Hack -- call lite */
 	if (do_lite && (!when_call_lite || (borg_t - when_call_lite >= 7)))
@@ -1285,20 +1349,13 @@ bool borg_enchanting(void)
 }
 
 
-/*
- * Recharge things
- *
- * XXX XXX XXX Prioritize available items
- */
+/* Recharge things.  Rods go first, then staffs and wands last. */
 bool borg_recharging(void)
 {
-	int i = -1;
-	bool charge = FALSE;
+	int i, charge = -1;
 
 	/* Forbid blind/confused */
 	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
-
-	/* XXX XXX XXX Dark */
 
 	/* Look for an item to recharge */
 	for (i = 0; i < inven_num; i++)
@@ -1308,66 +1365,50 @@ bool borg_recharging(void)
 		/* Skip empty /unaware items */
 		if (!l_ptr->k_idx) continue;
 
-		/* Skip non-identified items */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* assume we can't charge it. */
-		charge = FALSE;
-
-		/* Wands with no charges can be charged */
-		if ((l_ptr->tval == TV_WAND) && (l_ptr->pval < 1))
-			charge = TRUE;
-
-		/* recharge staves sometimes */
-		if (l_ptr->tval == TV_STAFF)
+		/* Wands or staffs with no charges can be charged */
+		if ((l_ptr->tval == TV_WAND || l_ptr->tval == TV_STAFF) &&
+			(l_ptr->pval < 1 ||
+			strstr(l_ptr->o_name, "{empty")))
 		{
-			/*
-			 * Allow staves to be recharged at 2 charges if
-			 * the borg has the big recharge spell. And its not a *Dest*
-			 */
-			if ((l_ptr->pval < 3) &&
-				k_info[l_ptr->k_idx].sval < SV_STAFF_POWER)
-				charge = TRUE;
-
-			/* recharge any staff at 0 charges */
-			if (l_ptr->pval < 1)
-				charge = TRUE;
+			/* Settle for this wand/staff. */
+			charge = i;
 		}
 
-		/* recharge rods that are 'charging' if we have the big recharge */
-		/* spell */
-		if (l_ptr->tval == TV_ROD && l_ptr->timeout)
+		/*
+		 * Recharging rods is not a smart idea as it is a real pain if your 
+		 * precious rod of recall is consumed by wild magic.
+		 * So only allow a Rod of Healing to be recharged when the borg is
+		 * low on HP and presumably will use the rod next turn.
+		 */
+		if (l_ptr->tval == TV_ROD && l_ptr->timeout &&
+			k_info[l_ptr->k_idx].sval == SV_ROD_HEALING && bp_ptr->chp < 100)
 		{
-			/*
-			 * Don't do this.  The borg will continue until wild magic consumes
-			 * his rod.  Not fun if it is the Rod of Recall.
-			 * There can be situations when it is a good thing to do, but when???
-			charge = TRUE;*/
-			charge = FALSE;
-		}
+			/* Settle for this rod */
+			charge = i;
 
-		/* get the next item if we are not to charge this one */
-		if (!charge) continue;
-
-		/* Attempt to recharge */
-		if (borg_activate_artifact(ART_THINGOL, FALSE) ||
-			borg_spell(REALM_ARCANE, 3, 0) ||
-			borg_spell(REALM_CHAOS, 2, 2) ||
-			borg_read_scroll(SV_SCROLL_RECHARGING) ||
-			borg_spell(REALM_SORCERY, 0, 7))
-		{
-			/* Message */
-			borg_note_fmt("Recharging %s", l_ptr->o_name);
-
-			/* Recharge the item */
-			borg_keypress(I2A(i));
-
-			/* Success */
-			return (TRUE);
-		}
-		else
-			/* if we fail once, no need to try again. */
+			/* Rods go first so leave the loop */
 			break;
+		}
+	}
+
+	/* Don't try to recharge if there is nothing to recharge */
+	if (charge == -1) return (FALSE);
+
+	/* Attempt to recharge */
+	if (borg_activate_artifact(ART_THINGOL, FALSE) ||
+		borg_spell(REALM_ARCANE, 3, 0) ||
+		borg_spell(REALM_CHAOS, 2, 2) ||
+		borg_spell(REALM_SORCERY, 0, 7) ||
+		borg_read_scroll(SV_SCROLL_RECHARGING))
+	{
+		/* Message */
+		borg_note_fmt("Recharging %s", inventory[i].o_name);
+
+		/* Recharge the item */
+		borg_keypress(I2A(i));
+
+		/* Success */
+		return (TRUE);
 	}
 
 	/* Nope */

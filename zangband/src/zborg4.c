@@ -1747,6 +1747,12 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		}
 
 		case SV_ROD_PESTICIDE:
+		{
+			/* Only for small borgs */
+			if (bp_ptr->lev > 25) break;
+
+			/* Fall through */
+		}
 		case SV_ROD_FIRE_BALL:
 		case SV_ROD_ACID_BALL:
 		case SV_ROD_ELEC_BALL:
@@ -1783,7 +1789,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 static void borg_notice_wands(list_item *l_ptr, int number)
 {
 	int sval = k_info[l_ptr->k_idx].sval;
-	int tval = 0, non_empty = 0;
+	int pval = 0, non_empty = 0;
 
 
 	/* Is this is a pile a wands with unknown charges? */
@@ -1792,26 +1798,26 @@ static void borg_notice_wands(list_item *l_ptr, int number)
 		/* Set the number of wands, later we guess how many charges there are */
 		non_empty = number;
 	}
-	/* This pile of wands has known tval or is empty */
+	/* This pile of wands has known pval or is empty */
 	else
 	{
 		/* Counting this wand while getting it from a shop or home */
 		if (l_ptr->treat_as == TREAT_AS_SHOP)
 		{
 			/* We get 1 wand and not all the charges */
-			tval = l_ptr->tval / l_ptr->number;
+			pval = l_ptr->pval / l_ptr->number;
 		}
 		/* Counting this pile while selling one */
 		else if (l_ptr->treat_as == TREAT_AS_LESS)
 		{
 			/* We get all the charges except for the charges of one wand */
-			tval = l_ptr->tval - l_ptr->tval / l_ptr->number;
+			pval = l_ptr->pval - l_ptr->pval / l_ptr->number;
 		}
 		/* Just count the stack will you */
 		else
 		{
 			/* All the charges */
-			tval = l_ptr->tval;
+			pval = l_ptr->pval;
 		}
 	}
 
@@ -1830,7 +1836,7 @@ static void borg_notice_wands(list_item *l_ptr, int number)
 		case SV_WAND_ROCKETS:
 		{
 			/* count the charges */
-			bp_ptr->able.ball += tval + 5 * non_empty;
+			bp_ptr->able.ball += pval + 5 * non_empty;
 
 			break;
 		}
@@ -1846,7 +1852,7 @@ static void borg_notice_wands(list_item *l_ptr, int number)
 		case SV_WAND_COLD_BOLT:
 		{
 			/* count the charges */
-			bp_ptr->able.bolt += tval + 2 * non_empty;
+			bp_ptr->able.bolt += pval + 2 * non_empty;
 
 			break;
 		}
@@ -2087,6 +2093,8 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		{
 			bp_ptr->able.fuel += number;
 			amt_flask += number;
+
+			break;
 		}
 
 		case TV_LITE:
@@ -2094,28 +2102,11 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* If not empty, count whatever it is as 1 fuel */
 			if (l_ptr->timeout) bp_ptr->able.fuel += number;
 
-			/* Torches or Lanterns */
-			l_ptr = look_up_equip_slot(EQUIP_LITE);
-
-			/* Does the borg wield a light item? */
-			if (l_ptr)
-			{
-				/* If the borg wields a lantern and has more in inventory */
-				if (k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN &&
-					k_ptr->sval == SV_LITE_LANTERN)
-				{
-					/* Count the lantern as lantern fuel */
-					amt_lantern += number;
-				}
-				
-				/* If the borg wields a torch and has more in inventory */
-				if (k_info[l_ptr->k_idx].sval == SV_LITE_TORCH &&
-					k_ptr->sval == SV_LITE_TORCH)
-				{
-					/* Count the torch as torch fuel */
-					amt_torch_fuel += number;
-				}
-			}
+			/* Count a lantern as lantern fuel */
+			if (k_ptr->sval == SV_LITE_LANTERN) amt_lantern += number;
+			
+			/* Count a torch as torch fuel */
+			if (k_ptr->sval == SV_LITE_TORCH) amt_torch += number;
 			
 			break;
 		}
@@ -2321,7 +2312,7 @@ static void borg_notice_aux2(void)
 	amt_food_scroll = 0;
 	amt_food_hical = 0;
 	amt_food_lowcal = 0;
-	amt_torch_fuel = 0;
+	amt_torch = 0;
 	amt_lantern = 0;
 	amt_flask = 0;
 

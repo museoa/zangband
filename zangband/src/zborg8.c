@@ -236,7 +236,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 /*
  * Sell items to the current shop
  */
-static void borg_think_shop_sell(int item, list_item *l_ptr)
+static void borg_think_shop_sell(int item, list_item *l_ptr, bool home)
 {
 	/* Log */
 	borg_note_fmt("# Selling %s", l_ptr->o_name);
@@ -255,12 +255,8 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 	borg_note_fmt("# Sending key %c", I2A(item));
 	borg_keypress(I2A(item));
 
-	/* Mega-Hack -- Accept the price */
-	borg_keypress('n');
-	borg_keypress('\r');
-	borg_keypress('\r');
-	borg_keypress('\r');
-	borg_keypress('\r');
+	/* If not at home accept the price */
+	if (!home) borg_keypress('n');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
@@ -273,7 +269,7 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 /*
  * Buy items from the current shop
  */
-static void borg_think_shop_buy(int item)
+static void borg_think_shop_buy(int item, bool home)
 {
 	list_item *l_ptr = &cur_list[item];
 
@@ -308,12 +304,8 @@ static void borg_think_shop_buy(int item)
 	/* Buy the desired item */
 	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
 
-	/* Mega-Hack -- Accept the price */
-	borg_keypress('n');
-	borg_keypress('\r');
-	borg_keypress('\r');
-	borg_keypress('\r');
-	borg_keypress('\r');
+	/* Accept the price if not at home */
+	if (!home) borg_keypress('n');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
@@ -495,7 +487,7 @@ static bool borg_think_home_sell_aux(void)
 	{
 		goal_shop = home_shop;
 
-		borg_think_shop_sell(index, &inventory[index]);
+		borg_think_shop_sell(index, &inventory[index], TRUE);
 
 		/* We have goal */
 		return (TRUE);
@@ -647,7 +639,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		goal_shop = shop;
 
 		/* Sell that item */
-		borg_think_shop_sell(b_i, &inventory[b_i]);
+		borg_think_shop_sell(b_i, &inventory[b_i], FALSE);
 
 		/* Success */
 		return (TRUE);
@@ -771,10 +763,12 @@ static bool borg_think_shop_buy_aux(int shop)
 		{
 			/* Get power for doing swap */
 			p = borg_think_buy_slot(l_ptr, slot, FALSE);
+
+			/* Also check if it is an item for the inventory */
 		}
 
 		/* Consider new inventory */
-		else
+		if (p <= b_p)
 		{
 			/* Hack - use 'INVEN_LESS' to say we want it in the inventory */
 			l_ptr->treat_as = TREAT_AS_LESS;
@@ -817,7 +811,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		goal_shop = shop;
 
 		/* Buy that item */
-		borg_think_shop_buy(b_n);
+		borg_think_shop_buy(b_n, FALSE);
 
 		/* Success */
 		return (TRUE);
@@ -906,7 +900,7 @@ static bool borg_think_home_buy_aux(void)
 		goal_shop = home_shop;
 
 		/* Buy that item */
-		borg_think_shop_buy(b_n);
+		borg_think_shop_buy(b_n, TRUE);
 
 		/* Success */
 		return (TRUE);
@@ -991,7 +985,7 @@ static bool borg_think_shop_grab_aux(int shop)
 		goal_shop = shop;
 
 		/* Buy that item */
-		borg_think_shop_buy(b_n);
+		borg_think_shop_buy(b_n, FALSE);
 
 		/* Hack - get out of the store */
 		borg_keypress(ESCAPE);
@@ -1051,7 +1045,7 @@ static bool borg_think_home_grab_aux(void)
 		goal_shop = home_shop;
 
 		/* Grab that item */
-		borg_think_shop_buy(b_n);
+		borg_think_shop_buy(b_n, TRUE);
 
 		/* Success */
 		return (TRUE);

@@ -1,6 +1,5 @@
 /* zbmagic1.c */
 extern bool borg_desperate;
-extern int borg_extract_dir(int x1, int y1, int x2, int y2);
 extern int borg_goto_dir(int x1, int y1, int x2, int y2);
 extern bool borg_eat_food_any(void);
 extern bool borg_surrounded(void);
