@@ -1303,7 +1303,7 @@ bool detect_objects_magic(void)
  * This is an "engine" function that does all the work, and
  * prevents a huge amount of code duplication.
  */
-static bool detect_mon_aux(bool tester(const monster_type *m_ptr, va_list *vp), cptr msg, ...)
+static bool detect_mon_aux(bool tester(const monster_type *m_ptr, vptr data), cptr msg, vptr data)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -1311,8 +1311,6 @@ static bool detect_mon_aux(bool tester(const monster_type *m_ptr, va_list *vp), 
 	int x, y, i;
 	
 	bool detect = FALSE;
-	
-	va_list vp;
 	
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++)
@@ -1331,11 +1329,8 @@ static bool detect_mon_aux(bool tester(const monster_type *m_ptr, va_list *vp), 
 		/* Do not detect mimics */
 		if (m_ptr->smart & (SM_MIMIC)) continue;
 		
-		/* Begin the Varargs Stuff */
-		va_start(vp, msg);
-
 		/* Detect monsters satisfying restriction */
-		if (tester(m_ptr, &vp))
+		if (tester(m_ptr, data))
 		{
 			/* Update monster recall window */
 			if (p_ptr->monster_race_idx == m_ptr->r_idx)
@@ -1356,9 +1351,6 @@ static bool detect_mon_aux(bool tester(const monster_type *m_ptr, va_list *vp), 
 			/* Detect */
 			detect = TRUE;
 		}
-		
-		/* End the Varargs Stuff */
-		va_end(vp);
 	}
 	
 	if (detect)
@@ -1375,12 +1367,12 @@ static bool detect_mon_aux(bool tester(const monster_type *m_ptr, va_list *vp), 
 
 
 /* Normal monster? */
-static bool norm_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool norm_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Ignore parameter */
-	(void) vp;
+	(void) data;
 
 	/* Do not detect mimics */
 	if (m_ptr->smart & (SM_MIMIC)) return (FALSE);
@@ -1399,17 +1391,17 @@ static bool norm_mon_tester(const monster_type *m_ptr, va_list *vp)
 bool detect_monsters_normal(void)
 {
 	return (detect_mon_aux(norm_mon_tester,
-			"You sense the presence of monsters!"));
+			"You sense the presence of monsters!", NULL));
 }
 
 
 /* Invisible monster? */
-static bool invis_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool invis_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Ignore parameter */
-	(void) vp;
+	(void) data;
 	
 	/* Detect invisible monsters */
 	return ((r_ptr->flags2 & RF2_INVISIBLE) ? TRUE : FALSE);
@@ -1421,17 +1413,17 @@ static bool invis_mon_tester(const monster_type *m_ptr, va_list *vp)
 bool detect_monsters_invis(void)
 {
 	return (detect_mon_aux(invis_mon_tester,
-			"You sense the presence of invisible creatures!"));
+			"You sense the presence of invisible creatures!", NULL));
 }
 
 
 /* Evil monster? */
-static bool evil_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool evil_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Ignore parameter */
-	(void) vp;
+	(void) data;
 	
 	/* Detect evil monsters */
 	if (r_ptr->flags2 & RF2_INVISIBLE)
@@ -1451,16 +1443,16 @@ static bool evil_mon_tester(const monster_type *m_ptr, va_list *vp)
 bool detect_monsters_evil(void)
 {
 	return (detect_mon_aux(evil_mon_tester,
-			"You sense the presence of evil creatures!"));
+			"You sense the presence of evil creatures!", NULL));
 }
 
 /* Nonliving monster? */
-static bool nonlive_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool nonlive_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Ignore parameter */
-	(void) vp;
+	(void) data;
 	
 	/* Not living? */
 	return (!monster_living(r_ptr));
@@ -1472,16 +1464,16 @@ static bool nonlive_mon_tester(const monster_type *m_ptr, va_list *vp)
 bool detect_monsters_nonliving(void)
 {
 	return (detect_mon_aux(nonlive_mon_tester,
-			"You sense the presence of unnatural beings!"));
+			"You sense the presence of unnatural beings!", NULL));
 }
 
 /* Living monster? */
-static bool live_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool live_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Ignore parameter */
-	(void) vp;
+	(void) data;
 	
 	/* Not living? */
 	return (monster_living(r_ptr));
@@ -1493,19 +1485,19 @@ static bool live_mon_tester(const monster_type *m_ptr, va_list *vp)
 bool detect_monsters_living(void)
 {
 	return (detect_mon_aux(live_mon_tester,
-			"You sense the presence of natural beings!"));
+			"You sense the presence of natural beings!", NULL));
 }
 
 
 /* Is a monster in the list of races? */
-static bool race_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool race_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	cptr match;
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Get string to compare with */
-	match = va_arg(*vp, cptr);
+	match = (cptr) data;
 	
 	/* Detect monsters with the same symbol */
 	return(strchr(match, r_ptr->d_char) ? TRUE : FALSE);
@@ -1517,19 +1509,18 @@ static bool race_mon_tester(const monster_type *m_ptr, va_list *vp)
 bool detect_monsters_string(cptr match)
 {
 	return (detect_mon_aux(race_mon_tester,
-			"You sense the presence of monsters!", match));
+			"You sense the presence of monsters!", (vptr) match));
 }
 
 /* Generic monster tester */
-static bool flag_mon_tester(const monster_type *m_ptr, va_list *vp)
+static bool flag_mon_tester(const monster_type *m_ptr, vptr data)
 {
 	u32b flag;
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
-	/* Get flags to compare with - note that ints may be 16bit... */
-	flag = va_arg(*vp, int);
-	flag += ((u32b) va_arg(*vp, int)) << 16;
+	/* Get flags to compare with */
+	flag = *((u32b *) data);
 	
 	if (r_ptr->flags3 & (flag))
 	{
@@ -1564,8 +1555,7 @@ bool detect_monsters_xxx(u32b match_flag)
 	}
 	
 	/* Result (note that ints might only be 16bit...) */
-	return (detect_mon_aux(flag_mon_tester, desc_monsters,
-						(int) (match_flag & 0xFFFF), (int) (match_flag >> 16)));
+	return (detect_mon_aux(flag_mon_tester, desc_monsters, (vptr) &match_flag));
 }
 
 
