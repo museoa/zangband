@@ -2324,8 +2324,14 @@ static void init_dungeon(place_type *pl_ptr, const dun_gen_type *d_ptr)
 	dt_ptr->habitat = d_ptr->habitat;
 	
 	/* Save level bounds */
-	dt_ptr->min_level = d_ptr->min_level;
-	dt_ptr->max_level = d_ptr->max_level;
+	dt_ptr->min_level = (d_ptr->min_level * rand_range(80, 120) + 50) / 100;
+	dt_ptr->max_level = (d_ptr->max_level * rand_range(80, 120) + 50) / 100;
+
+	/* Cap min/max level */
+	if (dt_ptr->min_level < 1)
+		dt_ptr->min_level = 1;
+	if (dt_ptr->max_level > 127)
+		dt_ptr->max_level = 127;
 	
 	/* Copy dungeon creation info */
 	dt_ptr->rooms = d_ptr->rooms;
