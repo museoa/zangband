@@ -1160,6 +1160,10 @@ static void rd_extra(void)
 	/* Fix up stats for old savefiles */
 	if (sf_version < 39)
 	{
+        /* This will be initialized again later, but we need it now for adjust_stat to work */
+        rp_ptr = &race_info[p_ptr->prace];
+        cp_ptr = &class_info[p_ptr->pclass];
+    
 		for (i = 0; i < 6; i++)
 		{
 			int bonus = race_info[p_ptr->prace].r_adj[i] +
