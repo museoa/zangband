@@ -723,24 +723,6 @@ static byte borg_magic_rating[8][4][8] =
 
 };
 
-
-
-
-/*
- * Constant "item description parsers" (singles)
- */
-static int borg_single_size;	/* Number of "singles" */
-static s16b *borg_single_what;	/* Kind indexes for "singles" */
-static cptr *borg_single_text;	/* Textual prefixes for "singles" */
-
-/*
- * Constant "item description parsers" (plurals)
- */
-static int borg_plural_size;	/* Number of "plurals" */
-static s16b *borg_plural_what;	/* Kind index for "plurals" */
-static cptr *borg_plural_text;	/* Textual prefixes for "plurals" */
-static cptr *borg_sv_plural_text;	/* Save Textual prefixes for "plurals" (in kind order) */
-
 /*
  * Return the slot that items of the given type are wielded into
  *
@@ -2820,11 +2802,6 @@ void borg_clear_3(void)
 	KILL(safe_items);
 	KILL(safe_home);
 	KILL(safe_shops);
-	KILL(borg_plural_text);
-	KILL(borg_sv_plural_text);
-	KILL(borg_plural_what);
-	KILL(borg_single_text);
-	KILL(borg_single_what);
 }
 
 /*
@@ -2873,158 +2850,6 @@ void borg_init_3(void)
 
 	/* Make the "safe" stores in the town */
 	C_MAKE(safe_shops, track_shop_size, borg_shop);
-
-	/*** Plural Object Templates ***/
-
-	/* Start with no objects */
-	size = 0;
-
-	/* Analyze some "item kinds" */
-	for (k = 1; k < z_info->k_max; k++)
-	{
-		object_type *o_ptr;
-
-		/* Get the kind */
-		object_kind *k_ptr = &k_info[k];
-
-		/* Skip "empty" items */
-		if (!k_ptr->name) continue;
-
-		/* Skip "gold" objects */
-		if (k_ptr->tval == TV_GOLD) continue;
-
-		/* Skip "artifacts" */
-		if (k_ptr->flags3 & TR3_INSTA_ART) continue;
-
-		/* Hack -- make an item */
-		o_ptr = object_prep(k);
-
-		/* Describe a "plural" object */
-		o_ptr->number = 2;
-		object_desc_store(buf, o_ptr, FALSE, 0, 256);
-
-		/* Save an entry */
-		text[size] = string_make(buf);
-		what[size] = k;
-		size++;
-	}
-
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_hook_string;
-	ang_sort_swap = ang_sort_swap_hook_string;
-
-	C_MAKE(borg_sv_plural_text, z_info->k_max, cptr);
-	for (i = 0; i < size; i++)
-	{
-		borg_sv_plural_text[what[i]] = text[i];
-	}
-	/* Sort */
-	ang_sort(text, what, size);
-
-	/* Save the size */
-	borg_plural_size = size;
-
-	/* Allocate the "item parsing arrays" (plurals) */
-	C_MAKE(borg_plural_text, borg_plural_size, cptr);
-	C_MAKE(borg_plural_what, borg_plural_size, s16b);
-
-	/* Save the entries */
-	for (i = 0; i < size; i++) borg_plural_text[i] = text[i];
-	for (i = 0; i < size; i++) borg_plural_what[i] = what[i];
-
-
-	/*** Singular Object Templates ***/
-
-	/* Start with no objects */
-	size = 0;
-
-	/* Analyze some "item kinds" */
-	for (k = 1; k < z_info->k_max; k++)
-	{
-		object_type *o_ptr;
-
-		/* Get the kind */
-		object_kind *k_ptr = &k_info[k];
-
-		/* Skip "empty" items */
-		if (!k_ptr->name) continue;
-
-		/* Skip "dungeon terrain" objects */
-		if (k_ptr->tval == TV_GOLD) continue;
-
-		/* Skip "artifacts" */
-		if (k_ptr->flags3 & TR3_INSTA_ART) continue;
-
-		/* Hack -- make an item */
-		o_ptr = object_prep(k);
-
-		/* Describe a "singular" object */
-		o_ptr->number = 1;
-		object_desc_store(buf, o_ptr, FALSE, 0, 256);
-
-		/* Save an entry */
-		text[size] = string_make(buf);
-		what[size] = k;
-		size++;
-	}
-
-	/* Analyze the "INSTA_ART" items */
-	for (i = 1; i < z_info->a_max; i++)
-	{
-		object_type *o_ptr;
-
-		artifact_type *a_ptr = &a_info[i];
-
-		cptr name = (a_name + a_ptr->name);
-
-		/* Skip "empty" items */
-		if (!a_ptr->name) continue;
-
-		/* Skip non INSTA_ART things */
-		if (!(a_ptr->flags3 & TR3_INSTA_ART)) continue;
-
-		/* Extract the "kind" */
-		k = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-		/* Hack -- make an item */
-		o_ptr = object_prep(k);
-
-		/* Save the index */
-/*         hack.name1 = i; */
-
-		/* Describe a "singular" object */
-		o_ptr->number = 1;
-		object_desc_store(buf, o_ptr, FALSE, 0, 256);
-
-		/* Extract the "suffix" length */
-		n = strlen(name) + 1;
-
-		/* Remove the "suffix" */
-		buf[strlen(buf) - n] = '\0';
-
-		/* Save an entry */
-		text[size] = string_make(buf);
-		what[size] = k;
-		size++;
-	}
-
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_hook_string;
-	ang_sort_swap = ang_sort_swap_hook_string;
-
-	/* Sort */
-	ang_sort(text, what, size);
-
-	/* Save the size */
-	borg_single_size = size;
-
-	/* Allocate the "item parsing arrays" (plurals) */
-	C_MAKE(borg_single_text, borg_single_size, cptr);
-	C_MAKE(borg_single_what, borg_single_size, s16b);
-
-	/* Save the entries */
-	for (i = 0; i < size; i++) borg_single_text[i] = text[i];
-	for (i = 0; i < size; i++) borg_single_what[i] = what[i];
 
 	/* Clean up */
 	FREE(what);
