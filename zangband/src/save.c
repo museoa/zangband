@@ -781,8 +781,11 @@ static void wr_store(store_type *st_ptr)
 	wr_s16b(st_ptr->good_buy);
 	wr_s16b(st_ptr->bad_buy);
 
+	/* Position in the town */
 	wr_u16b(st_ptr->x);
 	wr_u16b(st_ptr->y);
+	
+	/* Type of store */
 	wr_byte(st_ptr->type);
 
 	wr_s32b(st_ptr->last_visit);
@@ -1615,6 +1618,7 @@ static bool wr_savefile_new(void)
 
 		/* Type */
 		wr_u16b(town[i].type);
+		wr_byte(town[i].pop);
 
 		/* Location */
 		wr_byte(town[i].x);

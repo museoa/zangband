@@ -484,7 +484,10 @@ cave_type *(*area)(int, int);
  */
 
 /* block used to generate plasma fractal for random wilderness */
-u16b *temp_block[WILD_BLOCK_SIZE+1];
+u16b *temp_block[WILD_BLOCK_SIZE + 1];
+
+/* block used to make towns and cities in the wilderness */
+u16b *town_block[WILD_BLOCK_SIZE + 1];
 
 /* cache of blocks near the player */
 cave_type **wild_cache[WILD_BLOCKS];
@@ -821,11 +824,6 @@ bool (*get_obj_num_hook)(int k_idx);
 bool monk_armour_aux;
 bool monk_notify_aux;
 
-
-/*
- * Buildings
- */
-building_type building[MAX_BLDG];
 
 
 /*

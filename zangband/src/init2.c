@@ -1998,49 +1998,6 @@ static errr init_misc(void)
 
 
 /*
- * Initialize buildings
- */
-errr init_buildings(void)
-{
-	int i, j;
-
-	for (i = 0; i < MAX_BLDG; i++)
-	{
-		building[i].name[0] = '\0';
-		building[i].owner_name[0] = '\0';
-		building[i].owner_race[0] = '\0';
-
-		for (j = 0; j < 6; j++)
-		{
-			building[i].act_names[j][0] = '\0';
-			building[i].member_costs[j] = 0;
-			building[i].other_costs[j] = 0;
-			building[i].letters[j] = 0;
-			building[i].actions[j] = 0;
-			building[i].action_restr[j] = 0;
-		}
-
-		for (j = 0; j < MAX_CLASS; j++)
-		{
-			building[i].member_class[j] = 0;
-		}
-
-		for (j = 0; j < MAX_RACES; j++)
-		{
-			building[i].member_race[j] = 0;
-		}
-
-		for (j = 0; j < MAX_REALM+1; j++)
-		{
-			building[i].member_realm[j] = 0;
-		}
-	}
-
-	return (0);
-}
-
-
-/*
  * Initialize quest array
  */
 static errr init_quests(void)
@@ -2091,6 +2048,13 @@ static errr init_other(void)
 	{
 		/* Allocate one row of the temp_block */
 		C_MAKE(temp_block[i], WILD_BLOCK_SIZE + 1, u16b);
+	}
+
+	/* Allocate town temp block */
+	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
+	{
+		/* Allocate one row of the town_block */
+		C_MAKE(town_block[i], WILD_BLOCK_SIZE + 1, u16b);
 	}
 
 	/* Allocate cache of wilderness blocks */
@@ -2166,11 +2130,6 @@ static errr init_other(void)
 
 
 	/*** Prepare the options ***/
-	C_MAKE(p_ptr->options, OPT_PLAYER, bool);
-	C_MAKE(p_ptr->birth, OPT_BIRTH, bool);
-	C_MAKE(svr_ptr->options, OPT_SERVER, bool);
-
-	/* Initialise the options */
 	init_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
 	
 	
@@ -2592,10 +2551,6 @@ void init_angband(void)
 	/* Initialize monster info */
 	note("[Initializing arrays... (monsters)]");
 	if (init_r_info()) quit("Cannot initialize monsters");
-
-	/* Initialize building array */
-	note("[Initializing arrays... (buildings)]");
-	if (init_buildings()) quit("Cannot initialize buildings");
 
 	/* Initialize quest array */
 	note("[Initializing arrays... (quests)]");

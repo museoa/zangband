@@ -149,17 +149,27 @@ static long total_points(void)
 {
 	long temp;
 	long mult = 100;
-
-	if (preserve_mode) mult -= 10; /* Penalize preserve, maximize modes */
+	
+	/* AI is not that big a deal (yet) */
+	if (stupid_monsters) mult -= 20;
+	
+	/* Penalize preserve, maximize modes */
+	if (preserve_mode) mult -= 10;
 	if (maximize_mode) mult -= 15;
-	if (stupid_monsters) mult -= 20; /* AI is not that big a deal (yet) */
-	if (vanilla_town) mult += 5; /* Vanilla town is harder */
-	if (ironman_hard_quests) mult += 10; /* so are hard quests */
+	
+	/* Vanilla town is harder than normal */
+	if (vanilla_town) mult += 5;
+	
+	/* so are hard quests */
+	if (ironman_hard_quests) mult += 10;
 
 	/* Not too much of a reward since some people like playing with this. */
 	if (ironman_small_levels) mult += 5;
 
-	if (ironman_downward) mult +=10;
+	/* Moria mode is very hard */
+	if (ironman_moria) mult += 20;
+
+	/* More ironman options */
 	if (ironman_empty_levels) mult += 10;
 	if (ironman_nightmare) mult += 20;
 	if (ironman_rooms) mult +=10;

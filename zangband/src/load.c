@@ -1911,6 +1911,9 @@ static void load_wild_data(void)
 	}
 }
 
+/* The version when the format of the wilderness last changed */
+#define VERSION_CHANGE_WILD		22
+
 
 /*
  * Read the dungeon
@@ -2009,13 +2012,15 @@ static errr rd_dungeon(void)
 		/* Load dungeon map */
 		load_map(cur_hgt, 0, cur_wid, 0);
 	}
-	else if (sf_version < 21)
+	else if (sf_version < VERSION_CHANGE_WILD)
 	{
 		/* Load wilderness data */
 		load_wild_data();
 
 		if (p_ptr->depth)
 		{
+			dun_level_backup = p_ptr->depth;
+			
 			change_level(p_ptr->depth);
 			
 			/* Save player location */
@@ -2027,14 +2032,16 @@ static errr rd_dungeon(void)
 			wipe_o_list();
 			wipe_m_list();
 			
+			p_ptr->depth = dun_level_backup;
+			
+			change_level(p_ptr->depth);
+			
 			/* Load dungeon map */
 			load_map(cur_hgt, 0, cur_wid, 0);
 
 			/* Strip the wilderness map */
 			strip_map(wild_grid.y_max, wild_grid.y_min,
 			         wild_grid.x_max, wild_grid.x_min);
-			
-			change_level(p_ptr->depth);
 			
 			px = px_back;
 			py = py_back;
@@ -2161,7 +2168,7 @@ static errr rd_dungeon(void)
 		}
 
 		/* Dungeon */
-		else if (!((sf_version < 21) && (p_ptr->depth == 0)))
+		else if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
 		{
 			/* Access the item location */
 			c_ptr = area(o_ptr->iy,o_ptr->ix);
@@ -2214,7 +2221,7 @@ static errr rd_dungeon(void)
 		/* Read the monster */
 		rd_monster(m_ptr);
 
-		if (!((sf_version < 21) && (p_ptr->depth == 0)))
+		if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
 		{
 			/* Access grid */
 			c_ptr = area(m_ptr->fy,m_ptr->fx);
@@ -2256,7 +2263,7 @@ static errr rd_dungeon(void)
 			/* Read the field */
 			rd_field(f_ptr);
 
-			if (!((sf_version < 21) && (p_ptr->depth == 0)))
+			if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
 			{
 				/* Access the fields location */
 				c_ptr = area(f_ptr->fy, f_ptr->fx);
@@ -2289,7 +2296,7 @@ static errr rd_dungeon(void)
 	}
 
 	/* Hack - make new level only after objects + monsters are loaded */
-	if (sf_version < 21)
+	if (sf_version < VERSION_CHANGE_WILD)
 	{
 		/* enter the level */
 		change_level(p_ptr->depth);
@@ -3038,6 +3045,11 @@ static errr rd_savefile_new_aux(void)
 
 			/* Type */
 			rd_u16b(&town[i].type);
+			
+			if (sf_version > 21)
+			{
+				rd_byte(&town[i].pop);
+			}
 
 			/* Locatation */
 			rd_byte(&town[i].x);

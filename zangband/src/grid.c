@@ -437,7 +437,8 @@ void generate_fill(int y1, int x1, int y2, int x2, int feat)
 	{
 		for (x = x1; x <= x2; x++)
 		{
-			cave_set_feat(y, x, feat);
+			/* Hack - only draw on cave[][] */
+			cave[y][x].feat = feat;
 		}
 	}
 }

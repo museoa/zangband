@@ -1986,3 +1986,15 @@ void do_cmd_bldg(void)
 }
 
 #endif /* 0 */
+
+/*
+ * Initialize a building
+ */
+void build_init(int town_num, int build_num, byte build_type)
+{
+	/* Activate that building */
+	store_type *st_ptr = &town[town_num].store[build_num];
+
+
+	/* Add body here */
+}

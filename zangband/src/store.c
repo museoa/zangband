@@ -4481,7 +4481,7 @@ static byte store_table[MAX_STORES][STORE_CHOICES][2] =
 
 
 /*
- * Initialize the stores
+ * Initialize a store
  */
 void store_init(int town_num, int store_num, byte store_type)
 {
@@ -4504,6 +4504,7 @@ void store_init(int town_num, int store_num, byte store_type)
 	{
 		/* Assume full table */
 		st_ptr->table_size = STORE_CHOICES;
+		st_ptr->table_num = 0;
 		
 		/* Allocate the stock */
 		C_MAKE(st_ptr->table, st_ptr->table_size, s16b);

@@ -218,7 +218,8 @@ extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];
 extern cave_type *cave[MAX_HGT];
 extern cave_type *(*area)(int, int);
-extern u16b *temp_block[WILD_BLOCK_SIZE+1];
+extern u16b *temp_block[WILD_BLOCK_SIZE + 1];
+extern u16b *town_block[WILD_BLOCK_SIZE + 1];
 extern cave_type **wild_cache[WILD_BLOCKS];
 extern wild_grid_type wild_grid;
 extern wild_type **wild;
@@ -298,7 +299,6 @@ extern monster_hook_type get_mon_num2_hook;
 extern bool (*get_obj_num_hook)(int k_idx);
 extern bool monk_armour_aux;
 extern bool monk_notify_aux;
-extern building_type building[MAX_BLDG];
 extern u16b max_quests;
 extern u16b max_r_idx;
 extern u16b max_k_idx;
@@ -524,7 +524,6 @@ extern errr init_w_info(void);
 extern errr init_t_info(void);
 extern void init_file_paths(char *path);
 extern void init_angband(void);
-extern errr init_buildings(void);
 #ifdef ALLOW_TEMPLATES
 extern s16b error_idx;
 extern s16b error_line;
@@ -866,6 +865,7 @@ extern void quest_discovery(int q_idx);
 extern int quest_number(int level);
 extern int random_quest_number(int level);
 extern int number_of_quests(void);
+extern void build_init(int town_num, int build_num, byte build_type);
 
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);

@@ -1050,63 +1050,6 @@ struct quest_type
 };
 
 
-/*
- * A store owner
- */
-typedef struct owner_type owner_type;
-
-struct owner_type
-{
-	cptr owner_name;	/* Name */
-
-	s16b max_cost;		/* Purse limit / 100 */
-
-	byte max_inflate;	/* Inflation (max) */
-	byte min_inflate;	/* Inflation (min) */
-
-	byte haggle_per;	/* Haggle unit */
-
-	byte insult_max;	/* Insult limit */
-
-	byte owner_race;	/* Owner race */
-};
-
-
-
-
-/*
- * A store, with an owner, various state flags, a current stock
- * of items, and a table of items that are often purchased.
- */
-typedef struct store_type store_type;
-
-struct store_type
-{
-	byte type;				/* Store type */
-	byte owner;				/* Owner index */
-
-	s16b insult_cur;		/* Insult counter */
-
-	s16b good_buy;			/* Number of "good" buys */
-	s16b bad_buy;			/* Number of "bad" buys */
-
-	s32b store_open;		/* Closed until this turn */
-
-	s32b last_visit;		/* Last visited on this turn */
-
-	s16b table_num;			/* Table -- Number of entries */
-	s16b table_size;		/* Table -- Total Size of Array */
-	s16b *table;			/* Table -- Legal item kinds */
-
-	byte stock_num;			/* Stock -- Number of entries */
-	object_type *stock;		/* Stock -- Actual stock items */
-	
-	u16b x;					/* Location x coord. */
-	u16b y;					/* Location y coord. */
-};
-
-typedef store_type *store_ptr;
-
 typedef struct magic_type magic_type;
 
 struct magic_type
@@ -1559,8 +1502,8 @@ struct player_type
 	byte pet_pickup_items;		/* flag - allow pets to pickup items */
 	
 	/* Options */
-	bool *options;
-	bool *birth;
+	bool options[OPT_PLAYER];
+	bool birth[OPT_BIRTH];
 };
 
 
@@ -1578,7 +1521,7 @@ typedef struct server_type server_type;
 
 struct server_type
 {
-	bool *options;
+	bool options[OPT_SERVER];
 };
 
 
@@ -1612,6 +1555,67 @@ struct mindcraft_power
 
 
 /*
+ * A store owner
+ */
+typedef struct owner_type owner_type;
+
+struct owner_type
+{
+	cptr owner_name;	/* Name */
+
+	s16b max_cost;		/* Purse limit / 100 */
+
+	byte max_inflate;	/* Inflation (max) */
+	byte min_inflate;	/* Inflation (min) */
+
+	byte haggle_per;	/* Haggle unit */
+
+	byte insult_max;	/* Insult limit */
+
+	byte owner_race;	/* Owner race */
+};
+
+
+
+
+/*
+ * A store, with an owner, various state flags, a current stock
+ * of items, and a table of items that are often purchased.
+ */
+typedef struct store_type store_type;
+
+struct store_type
+{
+	byte type;				/* Store type */
+	byte owner;				/* Owner index */
+
+	s16b insult_cur;		/* Insult counter */
+
+	s16b good_buy;			/* Number of "good" buys */
+	s16b bad_buy;			/* Number of "bad" buys */
+
+	s32b store_open;		/* Closed until this turn */
+
+	s32b last_visit;		/* Last visited on this turn */
+
+	s16b table_num;			/* Table -- Number of entries */
+	s16b table_size;		/* Table -- Total Size of Array */
+	s16b *table;			/* Table -- Legal item kinds */
+
+	byte stock_num;			/* Stock -- Number of entries */
+	object_type *stock;		/* Stock -- Actual stock items */
+	
+	u16b x;					/* Location x coord. */
+	u16b y;					/* Location y coord. */
+};
+
+typedef store_type *store_ptr;
+
+
+/* Use the store type for owner, race, type etc. */
+#if 0
+
+/*
  * A structure to describe a building.
  * From Kamband
  */
@@ -1623,6 +1627,17 @@ struct building_type
 	char owner_name[20];            /* proprietor name */
 	char owner_race[20];            /* proprietor race */
 
+
+	/* 
+	 * I think this can all be "scriptified".
+	 *
+	 * No need for all the hacks.
+	 * This means that buildings and stores can share the same
+	 * data type.  The thing that interprets the data will be
+	 * different though.  This is naturally taken care of by
+	 * the fields code.
+	 */
+
 	char act_names[6][30];          /* action names */
 	s16b member_costs[6];           /* Costs for class members of building */
 	s16b other_costs[6];		    /* Costs for nonguild members */
@@ -1630,13 +1645,13 @@ struct building_type
 	s16b actions[6];                /* action codes */
 	s16b action_restr[6];           /* action restrictions */
 
-	field_action_type act_func[6];	/* Functions for the building */
-
 	s16b member_class[MAX_CLASS];   /* which classes are part of guild */
 	s16b member_race[MAX_RACES];    /* which classes are part of guild */
 	s16b member_realm[MAX_REALM+1]; /* which realms are part of guild */
 };
 
+
+#endif /* 0 */
 
 /*
  * A structure describing a town with
@@ -1646,13 +1661,17 @@ typedef struct town_type town_type;
 struct town_type
 {
 	char        name[32];
-	u32b        seed;      /* Seed for RNG */
-	store_type	*store;    /* The stores [MAX_STORES] */
+	u32b        seed;		/* Seed for RNG */
+	store_type	*store;		/* The stores[numstores] */
+	
+	u16b 	    type;		/* Type of town / dungeon / special */
+	
 	byte        numstores;
-	u16b 	    type;	/* Type of town / dungeon / special */
-	byte		x;	/* Location mod 16 in wilderness */
+	
+	byte		x;			/* Location mod 16 in wilderness */
 	byte		y;
-	byte		data[8];	/* Data describing sub-information */
+	
+	byte		pop;		/* population density (from wilderness) */
 };
 
 /* Dungeons */

@@ -3181,6 +3181,8 @@ static errr parse_line_feature(char *buf)
 }
 
 
+#if 0
+
 /*
  * Process "F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>" -- info for dungeon grid
  */
@@ -3339,6 +3341,7 @@ static errr parse_line_building(char *buf)
 	return (0);
 }
 
+#endif /* 0 */
 
 /*
  * Parse a sub-file of the "extra info"
@@ -3656,11 +3659,15 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 		return (0);
 	}
 
+#if 0
+
 	/* Process "B:<Index>:<Command>:..." -- Building definition */
 	else if (buf[0] == 'B')
 	{
 		return parse_line_building(buf);
 	}
+
+#endif /* 0 */
 
 	/* Process "M:<type>:<maximum>" -- set maximum values */
 	else if (buf[0] == 'M')
