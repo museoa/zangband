@@ -4643,21 +4643,28 @@ void acquirement(int y1, int x1, int num, bool great, bool known)
 	/* Acquirement */
 	while (num--)
 	{
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Wipe the object */
-		object_wipe(i_ptr);
-
-		if (great)
+		/* We want a good object */
+		while (TRUE)
 		{
-			/* Make a great object (if possible) */
-			if (!make_object(i_ptr, 40, theme)) continue;
-		}
-		else
-		{
-			/* Make a good object (if possible) */
-			if (!make_object(i_ptr, 20, theme)) continue;
+			/* Get local object */
+			i_ptr = &object_type_body;
+
+			/* Wipe the object */
+			object_wipe(i_ptr);
+	
+			if (great)
+			{
+				/* Make a great object (if possible) */
+				if (!make_object(i_ptr, 40, theme)) continue;
+			}
+			else
+			{
+				/* Make a good object (if possible) */
+				if (!make_object(i_ptr, 20, theme)) continue;
+			}
+
+			/* Check to see if the object is worth anything */
+			if (object_value_real(i_ptr) > 0) break;
 		}
 
 		if (known)
