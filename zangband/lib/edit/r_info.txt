@@ -13301,3 +13301,13 @@ F:WILD_ONLY | WILD_WOOD | FRIENDLY |
 F:RAND_25 | KILL_BODY
 D:Aw, it's a cute widdle bunny wabbit.  You get a vague feeling of
 D: uneasiness from it. 
+
+N:872:Unstable worm mass
+G:w:o
+I:100:3d8:10:5:5
+W:15:4:0:7
+B:EXPLODE:FIRE:5d5
+F:RAND_50 | RAND_25 | CAN_SWIM |
+F:STUPID | WEIRD_MIND | MULTIPLY | BASH_DOOR | 
+F:ANIMAL | HURT_LITE | NO_FEAR
+D:A seething mass of thick, glowing worms.
