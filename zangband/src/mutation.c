@@ -2319,8 +2319,8 @@ void mutation_power_aux(u32b power)
 		case 3: /* MUT1_LAUNCHER */
 			if (racial_aux(1, lvl, A_STR, 6))
 			{
-				/* Gives a multiplier of 2 at first, up to 5 at 48th */
-				do_cmd_throw_aux(2 + lvl / 16);
+				/* Gives a multiplier of 2 at first, up to 3 at level 30 */
+				do_cmd_throw_aux(2 + lvl / 30);
 			}
 			break;
 
