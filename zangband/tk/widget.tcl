@@ -245,17 +245,20 @@ proc NSWidget::Resize {oop width height} {
 
 	set widget [Info $oop widget]
 
+if 0 {
 	if {($width == [$widget cget -width]) && \
 		($height == [$widget cget -height])} {
 		return 0
 	}
+}
 
 	$widget configure -width $width -height $height
 
+if 0 {
 	# Hack -- Fully update the widget
 	$widget wipe
 	eval $widget center [$widget center]
-
+}
 	return 1
 }
 

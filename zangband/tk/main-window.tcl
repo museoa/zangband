@@ -290,8 +290,8 @@ proc NSMainWindow::InitWindow {oop} {
 	# The user can change the scale via a popup menu, so we save
 	# the desired scale.
 	set scale [Value bigmap,scale]
-	set width [expr {[$widget cget -width] - 16}]
-	set height [expr {[$widget cget -height] - 16}]
+	set width [expr $width - 16]
+	set height [expr $height - 16]
 	set mapId [NSObject::New NSMap $widget $width $height $scale $scale]
 	set widget2 [NSMap::Info $mapId widget]
 
