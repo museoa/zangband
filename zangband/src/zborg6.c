@@ -14428,7 +14428,7 @@ bool borg_flow_take(bool viewable, int nearness)
  *
  * b_stair is the index to the closest upstairs.
  */
-static bool borg_flow_dark_interesting(int y, int x, int b_stair)
+static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 {
 	int oy;
 	int ox, i;
@@ -14666,7 +14666,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 /*
  * Determine if a grid is "reachable" (and can be explored)
  */
-static bool borg_flow_dark_reachable(int y, int x)
+static bool borg_flow_dark_reachable(int x, int y)
 {
 	int j;
 
@@ -15075,7 +15075,7 @@ static bool borg_flow_dark_1(int b_stair)
 		x = borg_lite_x[i];
 
 		/* Skip "boring" grids (assume reachable) */
-		if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
+		if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
 
 		/* Careful -- Remember it */
 		borg_temp_x[borg_temp_n] = x;
@@ -15258,10 +15258,10 @@ static bool borg_flow_dark_3(int b_stair)
 			if (!map_in_bounds(x, y)) continue;
 
 			/* Skip "boring" grids */
-			if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
+			if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
 
 			/* Skip "unreachable" grids */
-			if (!borg_flow_dark_reachable(y, x)) continue;
+			if (!borg_flow_dark_reachable(x, y)) continue;
 
 			/* Careful -- Remember it */
 			borg_temp_x[borg_temp_n] = x;
@@ -15346,10 +15346,10 @@ static bool borg_flow_dark_4(int b_stair)
 			if (!map_in_bounds(x, y)) continue;
 
 			/* Skip "boring" grids */
-			if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
+			if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
 
 			/* Skip "unreachable" grids */
-			if (!borg_flow_dark_reachable(y, x)) continue;
+			if (!borg_flow_dark_reachable(x, y)) continue;
 
 			/* Careful -- Remember it */
 			borg_temp_x[borg_temp_n] = x;
@@ -15428,10 +15428,10 @@ static bool borg_flow_dark_5(int b_stair)
 		MAP_GET_LOC(x, y);
 
 		/* Skip "boring" grids */
-		if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
+		if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
 
 		/* Skip "unreachable" grids */
-		if (!borg_flow_dark_reachable(y, x)) continue;
+		if (!borg_flow_dark_reachable(x, y)) continue;
 
 		/* Careful -- Remember it */
 		borg_temp_x[borg_temp_n] = x;
@@ -15485,7 +15485,7 @@ bool borg_flow_dark(bool close)
 	int b_stair = -1;
 
 	/* Paranoia */
-	if (borg_flow_dark_interesting(c_y, c_x, -1))
+	if (borg_flow_dark_interesting(c_x, c_y, -1))
 	{
 		return (FALSE);
 	}
