@@ -503,10 +503,10 @@ term *angband_term[8];
  */
 char angband_term_name[8][16] =
 {
-	"Angband",
-	"Mirror",
-	"Recall",
-	"Choice",
+	"Zangband",
+	"Term-1",
+	"Term-2",
+	"Term-3",
 	"Term-4",
 	"Term-5",
 	"Term-6",
