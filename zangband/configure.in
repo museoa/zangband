@@ -173,6 +173,7 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor ftruncate gethostname memchr memmove memset mkdir modf select setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
 
 AC_CHECK_FUNCS([Tk_SetClassProcs])
+AC_CHECK_FUNCS([mkstemp])
 
 AC_CONFIG_FILES([makefile])
 AC_OUTPUT
