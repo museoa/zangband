@@ -14,6 +14,8 @@
 #include "zborg7.h"
 #include "zborg8.h"
 
+#if 0
+
 /*
  * Determine if an item can "absorb" a second item
  *
@@ -184,6 +186,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 	return (TRUE);
 }
 
+#endif /* 0 */
 
 
 /*
@@ -1024,6 +1027,13 @@ static bool borg_choose_shop(void)
 		borg_note_fmt("# Using previous goal shop: %d", goal_shop);
 		return (TRUE);
 	}
+	
+	/* Mega-hack - don't stay here too long */
+	if (borg_t - borg_began > 2000)
+	{
+		borg_note("# Staying too long in town");
+		return (FALSE);
+	}
 
 	/* Find 'best' shop to go to */
 	for (i = 0; i < track_shop_num; i++)
@@ -1078,7 +1088,7 @@ bool borg_think_store(void)
 		borg_oops("# Entering invalid store.");
 		return (FALSE);
 	}
-
+	
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
 
