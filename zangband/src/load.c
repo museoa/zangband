@@ -2045,6 +2045,7 @@ static errr rd_dungeon(void)
 			
 			wipe_o_list();
 			wipe_m_list();
+			wipe_f_list();
 			
 			p_ptr->depth = dun_level_backup;
 			
@@ -2077,6 +2078,7 @@ static errr rd_dungeon(void)
 			
 			wipe_m_list();
 			wipe_o_list();
+			wipe_f_list();
 		}
 	}
 	else
