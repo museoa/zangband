@@ -102,6 +102,19 @@ Zangband 2.7.3:
   "centered dot" character.  This is from "danceswithcrows@usa.net"
    on rec.games.roguelike.angband, and is untested.
 - Updated the FAQ.
+- The DOS version can now be compiled with current releases of the
+  Allegro library.
+- Apply Bablos's fixes to the amiga port.
+- Fix the query-symbol command so that it doesn't leave junk on the
+  screen.
+- Highlight quest monsters in visible monster list term.
+- Fix bounds checking so that rooms next to permanent walls on the
+  dungeon boundary get lit properly.
+- Attempt to fix the problem where the game generates towns with
+  blank spots for stores, when converting from old savefiles.
+- Display town names on large scale wilderness map when cursor is on
+  the towns.
+
 
 Zangband 2.7.2:
 - Made the HAVE_MKSTEMP option on by default for the linux ports.
