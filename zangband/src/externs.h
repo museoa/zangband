@@ -1254,6 +1254,7 @@ extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
 extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);
 extern void test_mon_wild_integrity(void);
 extern void test_decision_tree(void);
+extern void repopulate_wilderness(void);
 extern void create_wilderness(void);
 extern void move_wild(void);
 

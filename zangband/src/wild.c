@@ -355,15 +355,8 @@ static void town_gen_hack(u16b town_num)
 			/* Pick a random unplaced store */
 			k = ((n <= 1) ? 0 : rand_int(n));
 
-			/* 
-			 * Mega Hack XXX XXX XXX - different towns have
-			 * different stores in non vanilla_town mode.
-			 */
-			if((vanilla_town) || (rand_int(10 - rooms[k])))
-			{
-				/* Build that store at the proper location */
-				build_store(rooms[k], y, x);
-			}
+			/* Build that store at the proper location */
+			build_store(rooms[k], y, x);
 			
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
@@ -523,9 +516,9 @@ static void init_towns(void)
 	int best_town, town_value;
 
 	/* No towns yet */
-	town_count = 0;
+	town_count = 1;
 	
-	best_town = 0;
+	best_town = 1;
 	town_value = 256;
 
 	/*
@@ -570,7 +563,7 @@ static void init_towns(void)
 				w_ptr->mon_gen = 0;
 				
 				/* Monsters are fairly common */
-				w_ptr->mon_prob = 4;
+				w_ptr->mon_prob = 32;
 			}
 		}
 		
@@ -2951,7 +2944,7 @@ static void add_monsters_block(int x, int y)
 	 * Perhaps this should include the effects of stealth.
 	 */
 		
-	prob = 65536 / (wild[y][x].done.mon_prob + 1);
+	prob = 16384 / (wild[y][x].done.mon_prob + 1);
 		
 	xx = x * 16;
 	yy = y * 16;
@@ -2969,6 +2962,7 @@ static void add_monsters_block(int x, int y)
 	}
 }
 
+/* Add monsters to the boundary of the visible grid.*/
 static void add_monsters(void)
 {	
 	int x, y;
@@ -2982,6 +2976,10 @@ static void add_monsters(void)
 			if (!((x == 0) || (x == WILD_GRID_SIZE - 1))) continue;
 			if (!((y == 0) || (y == WILD_GRID_SIZE - 1))) continue;
 			
+			/* Not too close to player */
+			if (distance(px / 16, py / 16,
+				 x + wild_grid.x, y + wild_grid.y) < 3) continue; 
+			
 			/* Set the monster generation level */
 
 			/*Hack - use a number based on "law" statistic */
@@ -2991,6 +2989,29 @@ static void add_monsters(void)
 			add_monsters_block(x + wild_grid.x, y + wild_grid.y);
 		}
 	}
+}
+
+
+/* Add monsters to the wilderness in all blocks */
+void repopulate_wilderness(void)
+{
+	int x, y;
+	
+	/* Add monsters */
+	for (x = 0; x < WILD_GRID_SIZE; x++)
+	{
+		for(y = 0; y < WILD_GRID_SIZE; y++)
+		{
+			/* Set the monster generation level */
+
+			/*Hack - use a number based on "law" statistic */
+			monster_level = wild[y + wild_grid.y][x + wild_grid.x].done.mon_gen;
+	
+			/* Add monsters to block */
+			add_monsters_block(x + wild_grid.x, y + wild_grid.y);
+		}
+	}
+
 }
 
 /* Make a new block based on the terrain type */
@@ -4182,7 +4203,7 @@ void create_wilderness(void)
 				wild[j][i].done.mon_gen = 0;
 				
 				/* Monsters are fairly common */
-				wild[j][i].done.mon_prob = 4;
+				wild[j][i].done.mon_prob = 32;
 			}
 		}
 		

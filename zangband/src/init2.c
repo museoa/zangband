@@ -1950,8 +1950,9 @@ errr init_w_info(bool new_game)
 		
 		/* Make the function pointers point the the correct data type */
 		change_level(0);
-		
-		character_dungeon = TRUE;
+				
+		/* Add monsters to the wilderness */
+		repopulate_wilderness();
 	}
 		
 	/* Success */

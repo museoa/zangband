@@ -1173,6 +1173,32 @@ void generate_cave(void)
 	int y, x, num;
 
 
+	/* Build the wilderness */
+	if (!dun_level)
+	{
+		/* Hack XXX XXX */
+		/* Exit, information is already in other data type. */
+
+		px = p_ptr->wilderness_x;
+		py = p_ptr->wilderness_y;
+
+		/* Determine number of panels */
+		max_panel_rows = (max_wild*16 / SCREEN_HGT) * 2;
+		max_panel_cols = (max_wild*16 / SCREEN_WID) * 2;
+
+		/* Assume illegal panel */
+		panel_row = max_panel_rows;
+		panel_col = max_panel_cols;
+							
+		/* Add monsters to the wilderness */
+		repopulate_wilderness();
+		
+		/* The "dungeon" is nready */
+		character_dungeon = TRUE;
+				
+		return;
+	}
+	
 	/* The dungeon is not ready */
 	character_dungeon = FALSE;
 
@@ -1259,31 +1285,10 @@ void generate_cave(void)
 			{
 				quest_gen();
 			}*/
-#endif
-			/* Build the town */
-			if (!dun_level)
-			{
-				/* Hack XXX XXX */
-				/* Exit, information is already in other data type. */
+#endif			
 
-				px = p_ptr->wilderness_x;
-				py = p_ptr->wilderness_y;
+			okay = level_gen(&why);
 
-				/* Determine number of panels */
-				max_panel_rows = (max_wild*16 / SCREEN_HGT) * 2;
-				max_panel_cols = (max_wild*16 / SCREEN_WID) * 2;
-
-				/* Assume illegal panel */
-				panel_row = max_panel_rows;
-				panel_col = max_panel_cols;
-				return;
-			}
-
-			/* Build a real level */
-			else
-			{
-				okay = level_gen(&why);
-			}
 		}
 
 		/* Extract the feeling */
