@@ -1871,7 +1871,123 @@ char inkey(void)
  * index, which should greatly reduce the need for inscription space.
  *
  * Note that "quark zero" is NULL and should not be "dereferenced".
+ *
+ * From time to time, with random artifacts, and with a borg playing,
+ * the game will run out of quarks.  This has been fixed with the
+ * addition of the compact_quarks() routine.  This routine will remove
+ * the least recently used quark from the list.  If QUARK_MAX is bigger
+ * than the total number of objects possible in the game - then this
+ * will never be a problem.  (At least one quark will be unused.)
+ * As it stands, QUARK_MAX is smaller than that to save memory.  So
+ * occasionally, an object will get the "wrong" inscription.  This
+ * is better than disabling inscriptions alltogether though.  (That
+ * was the previous behaviour.)
+ *
+ * The quark_add_perm() function was added to make certain that some
+ * quarks wouldn't be affected by the compaction process.  These game
+ * inscriptions / strings should never be deallocated.  No matter how
+ * rarely they are used.
  */
+
+
+/*
+ * Sorting hook -- comp function -- by "access time"
+ *
+ * We use "u" and "v" to point to arrays of "x" and "y" positions,
+ * and sort the arrays by the value in y.  The value in x is
+ * saved as a reference to the old position in the list.
+ */
+static bool ang_sort_comp_a_time(vptr u, vptr v, int a, int b)
+{
+	s16b *y = (s16b*)(v);
+
+	/* Compare them */
+	return (y[a] <= y[b]);
+}
+
+
+/*
+ * Sorting hook -- swap function -- by "access time"
+ *
+ * We use "u" and "v" to point to arrays of "x" and "y" positions,
+ * and sort the arrays by the value in y.  The value in x is
+ * saved as a reference to the old position in the list.
+ */
+static void ang_sort_swap_a_time(vptr u, vptr v, int a, int b)
+{
+	s16b *x = (s16b*)(u);
+	s16b *y = (s16b*)(v);
+
+	s16b temp;
+
+	/* Swap "x" */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+
+	/* Swap "y" */
+	temp = y[a];
+	y[a] = y[b];
+	y[b] = temp;
+}
+
+
+/*
+ * Out of space - Compact the quarks
+ */
+static s16b compact_quarks(void)
+{
+	s16b empty, i;
+	
+	/* Save the times */
+	for (i = 1; i < quark__num; i++)
+	{
+		temp_x[i] = i;
+		temp_y[i] = quark__use[i];
+	}
+	
+	temp_n = quark__num;
+	
+	/* Set the sort hooks */
+	ang_sort_comp = ang_sort_comp_a_time;
+	ang_sort_swap = ang_sort_swap_a_time;
+
+	/* Sort by access time */
+	ang_sort(temp_x, temp_y, temp_n);
+
+	
+	/* Find the one with the least non-zero time */
+	i = 1;
+	
+	while(!temp_y[i]) i++;
+	
+	/* Save the most unused temporary quark */
+	empty = i;
+	
+	
+	/* Reset all the times to something "smaller" */
+	for(;i < quark__num; i++)
+	{
+		/* Paranoia */
+		if (temp_x[i])
+		{
+			quark__use[temp_x[i]] = temp_y[i];
+		}
+	}
+
+	/* 
+	 * Reset the time
+	 *
+	 * Note that QUARK_MAX * 3 must be less than the
+	 * size of a s16b.
+	 */
+	quark__tim = quark__num + 1;
+
+	/* Reset temp_n */
+	temp_n = 0;
+
+	return (empty);
+}
 
 /*
  * Add a new "quark" to the set of quarks.
@@ -1883,23 +1999,84 @@ s16b quark_add(cptr str)
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++)
 	{
+		/* Check for non-permanence */
+		if (!quark__use[i]) continue;
+		
 		/* Check for equality */
 		if (streq(quark__str[i], str)) return (i);
 	}
 
 	/* Paranoia -- Require room */
-	if (quark__num == QUARK_MAX) return (0);
-
-	/* New maximal quark */
-	quark__num = i + 1;
-
+	if (quark__num == QUARK_MAX)
+	{
+		i = compact_quarks();
+		
+		/* Paranoia - no room? */
+		if (!i) return(0);
+		
+		/* Delete the old quark */
+		string_free(quark__str[i]);
+	}
+	else
+	{
+		/* New maximal quark */
+		quark__num = i + 1;
+	}
+	
 	/* Add a new quark */
 	quark__str[i] = string_make(str);
+
+	/* Save the time */
+	quark__use[i] = ++quark__tim;
 
 	/* Return the index */
 	return (i);
 }
 
+
+/*
+ * Add a new permanent "quark" to the set of quarks.
+ */
+s16b quark_add_perm(cptr str)
+{
+	int i;
+
+	/* Look for an existing quark */
+	for (i = 1; i < quark__num; i++)
+	{
+		/* Check for permanence */
+		if (quark__use[i]) continue;
+		
+		/* Check for equality */
+		if (streq(quark__str[i], str)) return (i);
+	}
+
+	/* Paranoia -- Require room */
+	if (quark__num == QUARK_MAX)
+	{
+		i = compact_quarks();
+		
+		/* Paranoia - no room? */
+		if (!i) return(0);
+		
+		/* Delete the old quark */
+		string_free(quark__str[i]);
+	}
+	else
+	{
+		/* New maximal quark */
+		quark__num = i + 1;
+	}
+
+	/* Add a new quark */
+	quark__str[i] = string_make(str);
+
+	/* Make it permanent */
+	quark__use[i] = 0;
+
+	/* Return the index */
+	return (i);
+}
 
 /*
  * This function looks up a quark
@@ -1913,6 +2090,15 @@ cptr quark_str(s16b i)
 
 	/* Access the quark */
 	q = quark__str[i];
+	
+	/* Save the access time */
+	quark__use[i] = ++quark__tim;
+	
+	/* Compact from time to time */
+	if (quark__tim > 3 * QUARK_MAX)
+	{
+		(void) compact_quarks();
+	}
 
 	/* Return the quark */
 	return (q);

@@ -466,6 +466,16 @@ s16b quark__num;
  */
 cptr *quark__str;
 
+/*
+ * Current Quark time - for least recently used algorithm
+ */
+u16b quark__tim;
+
+/*
+ * Time of last access for each quark
+ */
+u16b *quark__use;
+
 
 /*
  * The next "free" index to use

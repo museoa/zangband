@@ -2731,6 +2731,7 @@ static errr init_other(void)
 
 	/* Quark variables */
 	C_MAKE(quark__str, QUARK_MAX, cptr);
+	C_MAKE(quark__use, QUARK_MAX, u16b);
 
 	/* Message variables */
 	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
@@ -2750,20 +2751,20 @@ static errr init_other(void)
 	/*** Pre-allocate the basic "auto-inscriptions" ***/
 
 	/* The "basic" feelings */
-	(void)quark_add("cursed");
-	(void)quark_add("broken");
-	(void)quark_add("average");
-	(void)quark_add("good");
+	(void)quark_add_perm("cursed");
+	(void)quark_add_perm("broken");
+	(void)quark_add_perm("average");
+	(void)quark_add_perm("good");
 
 	/* The "extra" feelings */
-	(void)quark_add("excellent");
-	(void)quark_add("worthless");
-	(void)quark_add("special");
-	(void)quark_add("terrible");
+	(void)quark_add_perm("excellent");
+	(void)quark_add_perm("worthless");
+	(void)quark_add_perm("special");
+	(void)quark_add_perm("terrible");
 
 	/* Some extra strings */
-	(void)quark_add("uncursed");
-	(void)quark_add("on sale");
+	(void)quark_add_perm("uncursed");
+	(void)quark_add_perm("on sale");
 
 
 	/*** Prepare the options ***/
