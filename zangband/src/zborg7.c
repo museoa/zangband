@@ -2865,7 +2865,6 @@ bool borg_test_stuff(bool star_id)
 				borg_note(format("# *IDENTIFY*ing %s.", item->desc));
 
 				/* we need to look at the screen next time through */
-				item->needs_I_exam = TRUE;
 				item->fully_identified = TRUE;
 
 				/* Equipment */

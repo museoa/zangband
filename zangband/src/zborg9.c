@@ -3000,9 +3000,8 @@ static void borg_display_item(object_type *item2)
 	prt(format("xtra_name = %-4d  value = %d   cursed = %ld",
 			   item->xtra_name, (long)item->value, item->cursed), j, 7);
 
-	prt(format("*id*need = %d  able = %d      fully_id = %d  timeout = %-d",
-			   item->needs_I_exam, item->able, item->fully_identified,
-			   item->timeout), j, 8);
+	prt(format("able = %d      fully_id = %d  timeout = %-d",
+			   item->able, item->fully_identified, item->timeout), j, 8);
 
 	/* maybe print the inscription */
 	prt(format("Inscription: %s", item->note), j, 9);

@@ -3052,14 +3052,6 @@ void borg_cheat_equip(void)
 			object_desc(buf, &inventory[i], TRUE, 3, 256);
 		}
 
-#if 0
-		/* Ignore "unchanged" items */
-		/* !FIX do I still need this?  I forget...  AJG */
-		if (borg_items[i].needs_I_exam)
-		{
-			if (streq(buf, borg_items[i].desc)) continue;
-		}
-#endif
 		/* Analyze the item (no price) */
 		borg_item_analyze(&borg_items[i], &inventory[i], buf);
 
@@ -3067,7 +3059,6 @@ void borg_cheat_equip(void)
 		if (object_known_full(&inventory[i]) || (inventory[i].info & OB_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
-			borg_items[i].needs_I_exam = TRUE;
 		}
 
 	}
@@ -3112,7 +3103,6 @@ void borg_cheat_inven(void)
 		if (object_known_full(&inventory[i]) || (inventory[i].info & OB_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
-			borg_items[i].needs_I_exam = TRUE;
 		}
 
 		/* Note changed inventory */

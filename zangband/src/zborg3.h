@@ -57,10 +57,6 @@ struct borg_item
 
 	bool fully_identified;	/* True if item is fully identified (AJG) */
 
-	bool needs_I_exam;	/* True if item needs to be examined for *ID* */
-
-	bool xxxx;	/* Unused */
-
 	byte tval;	/* Item type */
 	byte sval;	/* Item sub-type */
 	s16b pval;	/* Item extra-info */
