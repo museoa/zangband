@@ -91,6 +91,13 @@
 
 
 /*
+ * Switch on for compiling ZAngband with the new wilderness
+ * (version 2.5.0 and later).
+ */
+#define ZANGBAND_WILDERNESS
+
+
+/*
  * Extract the "WIN32" flag from the compiler
  */
 #if defined(__WIN32__) || defined(__WINNT__) || defined(__NT__)
@@ -366,8 +373,8 @@ struct _term_data
 
 	uint keys;
 
-	uint rows;
-	uint cols;
+	byte rows;
+	byte cols;
 
 	uint pos_x;
 	uint pos_y;
@@ -1054,7 +1061,7 @@ static void load_prefs(void)
 #ifdef SUPPORT_GAMMA
 
 	/* Extract the gamma correction */
-	gamma_correction = (GetPrivateProfileInt("Angband", "Gamma", 0, ini_file) != 0);
+	gamma_correction = GetPrivateProfileInt("Angband", "Gamma", 0, ini_file);
 
 #endif /* SUPPORT_GAMMA */
 
@@ -1593,7 +1600,7 @@ static void term_change_font(term_data *td)
 }
 
 
-extern void windows_map_aux(void);
+static void windows_map_aux(void);
 
 
 /*
@@ -2441,6 +2448,8 @@ static void windows_map_aux(void)
 	td->map_tile_wid = (td->tile_wid * td->cols) / MAX_WID;
 	td->map_tile_hgt = (td->tile_hgt * td->rows) / MAX_HGT;
 
+#ifdef ZANGBAND_WILDERNESS
+	
 	/* Is the player in the wilderness? */
 	if (dun_level == 0)
 	{
@@ -2451,6 +2460,9 @@ static void windows_map_aux(void)
 		max_y = wild_grid.y_max;
 	}
 	else
+
+#endif /* ZANGBAND_WILDERNESS */
+
 	{
 		min_x = 0;
 		min_y = 0;
