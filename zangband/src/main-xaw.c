@@ -23,8 +23,6 @@
  * create big performance problems for some really old X terminals (such
  * as 3/50's running Xkernel).
  *
- * None of the windows notice when they are resized.  XXX XXX XXX
- *
  * Initial framework (and some code) by Ben Harrison (benh@phial.com).
  *
  * Most of this file is by Torbjorn Lindgren (tl@cd.chalmers.se).
@@ -742,7 +740,7 @@ static void Resize_term(AngbandWidget wnew)
 		Term_activate(&data[0].t);
 				
 		/* redraw */
-		do_cmd_redraw();
+		do_cmd_redraw_term(i);
 	}
 	
 	

@@ -91,38 +91,46 @@ void do_cmd_redraw(void)
  * This is used when the map is resized.
  */
 
-void do_cmd_redraw_term(void)
+void do_cmd_redraw_term(int window)
 {
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
+	
+	/* The main window */
+	if (window == 0)
+	{
+		/* Combine and Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Combine and Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Update torch */
+		p_ptr->update |= (PU_TORCH);
 
-	/* Update torch */
-	p_ptr->update |= (PU_TORCH);
+		/* Update stuff */
+		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
-	/* Update stuff */
-	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
+		/* Forget lite/view */
+		p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
 
-	/* Forget lite/view */
-	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+		/* Update lite/view */
+		p_ptr->update |= (PU_VIEW | PU_LITE);
 
-	/* Update lite/view */
-	p_ptr->update |= (PU_VIEW | PU_LITE);
+		/* Update monsters */
+		p_ptr->update |= (PU_MONSTERS);
 
-	/* Update monsters */
-	p_ptr->update |= (PU_MONSTERS);
+		/* Redraw everything */
+		p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+	}
+	else
+	{
+		/* Other windows */
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 
-	/* Redraw everything */
-	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
-
+		/* Window stuff */
+		p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
+	}
+	
 	/* Hack -- update */
 	handle_stuff();
 

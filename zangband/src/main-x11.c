@@ -1830,7 +1830,7 @@ static errr CheckEvent(bool wait)
 				Term_activate(&data[0].t);
 				
 				/* redraw */
-				do_cmd_redraw();
+				do_cmd_redraw_term(window);
 			}
 			
 			break;
