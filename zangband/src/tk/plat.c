@@ -357,3 +357,85 @@ void Plat_SyncDisplay(Display *display)
 	TkpSync(display);
 #endif
 }
+
+/*
+ *--------------------------------------------------------------
+ *
+ * objcmd_system --
+ *
+ *--------------------------------------------------------------
+ */
+int
+objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+#ifdef PLATFORM_X11
+
+	return TCL_OK;
+	
+#endif /* PLATFORM_X11 */
+
+#ifdef PLATFORM_WIN
+
+	CommandInfo *infoCmd = (CommandInfo *) clientData;
+	int objC = objc - infoCmd->depth;
+	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
+
+	static char *cmdOptions[] = {"color", "workarea", NULL};
+	enum {IDX_COLOR, IDX_WORKAREA} option;
+	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
+
+	char *t, buf[128];
+	int i;
+	RECT rect;
+	
+	/* Required number of arguments */
+    if (objC < 2)
+    {
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
+		return TCL_ERROR;
+    }
+
+	/* Get requested option */
+    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+		(int *) &option) != TCL_OK)
+	{
+		return TCL_ERROR;
+    }
+
+	switch (option)
+	{
+		case IDX_COLOR: /* color */
+			t = Tcl_GetStringFromObj(objV[2], NULL);
+			for (i = 0; sysColors[i].name; i++)
+			{
+				if (!strcmp(t + 6, sysColors[i].name))
+				{
+					DWORD color = GetSysColor(sysColors[i].index);
+				    int red = GetRValue(color);
+				    int green = GetGValue(color);
+				    int blue = GetBValue(color);
+				    (void) sprintf(buf, "%d %d %d", red, green, blue);
+					Tcl_SetStringObj(Tcl_GetObjResult(interp), buf, -1);
+					return TCL_OK;
+				}
+			}
+			Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+				"unknown color name \"%s\"", t, NULL);
+			return TCL_ERROR;
+
+		case IDX_WORKAREA:
+			if (!SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0))
+			{
+				return TCL_ERROR;
+			}
+			sprintf(buf, "%ld %ld %ld %ld",
+				rect.left, rect.top, rect.right, rect.bottom);
+			Tcl_SetStringObj(resultPtr, buf, -1);
+			break;
+	}
+
+	return TCL_OK;
+
+#endif /* PLATFORM_WIN */
+}
+

@@ -490,4 +490,5 @@ DECLARE_TK_HOOK(equipinfo);
 DECLARE_TK_HOOK(inveninfo);
 DECLARE_TK_HOOK(term_char);
 DECLARE_TK_HOOK(term_attr);
+DECLARE_TK_HOOK(system);
 #endif /* _INCLUDE_TNB_H_ */

@@ -105,7 +105,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			{
 				return TCL_ERROR;
 			}
-			if (!in_bounds2(y, x))
+			if (!in_bounds2(x, y))
 			{
 				goto bad_location;
 			}
@@ -147,7 +147,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				return TCL_ERROR;
 			}
 	
-			if (!in_bounds2(y, x))
+			if (!in_bounds2(x, y))
 			{
 				goto bad_location;
 			}
@@ -178,7 +178,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 
 			/* Validate coordinates */
-			if (!in_bounds2(y, x))
+			if (!in_bounds2(x, y))
 			{
 				goto bad_location;
 			}
@@ -218,9 +218,9 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 
 			if (option == IDX_IN_BOUNDS)
-				Tcl_SetBooleanObj(resultPtr, in_bounds2(y, x));
+				Tcl_SetBooleanObj(resultPtr, in_bounds2(x, y));
 			else
-				Tcl_SetBooleanObj(resultPtr, in_bounds(y, x));
+				Tcl_SetBooleanObj(resultPtr, in_bounds(x, y));
 			break;
 
 		case IDX_EXISTS: /* exists */
@@ -1709,7 +1709,6 @@ objcmd_mindcraft(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	mindcraft_power *pow_ptr;
 	Tcl_Obj *listObjPtr;
 	int i;
-	char comment[80];
 
     if (objC < 2)
     {

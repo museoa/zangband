@@ -197,7 +197,7 @@ int map_symbol_proc(Widget *widgetPtr, int y, int x)
 	/* Hack - ignore parameter */
 	(void) widgetPtr;
 
-	if (in_bounds2(y, x))
+	if (in_bounds2 && in_bounds2(x, y))
 	{
 		symbol = g_map_symbol[y][x];
 #if USE_MAP_MIMIC
