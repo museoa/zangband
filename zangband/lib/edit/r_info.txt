@@ -533,16 +533,19 @@ F:WILD_WOOD | WILD_SWAMP
 D:A lone insect may be harmless, but there's a whole swarm of 
 D:them here!
 
-N:39:Topi Ylinen, the Cute, Furry Bunny
-G:r:U
-I:110:1d129:10:3:43
-W:1:7:0:66
-B:GAZE:TERRIFY:1d2
-F:FORCE_MAXHP | UNIQUE | CAN_SPEAK | 
-F:WILD_ONLY | WILD_WOOD | FRIENDLY | 
-F:RAND_25
-D:Aw, it's a cute widdle bunny wabbit.  You get a vague feeling of
-D: uneasiness from it. 
+N:39:Greater hell-beast
+G:U:s
+I:115:15d100:10:100:99
+W:1:6:0:25
+B:GAZE
+B:GAZE
+B:CRUSH
+F:EVIL | IM_ACID | IM_ELEC | IM_FIRE | IM_POIS | IM_COLD |
+F:RES_NETH | RES_WATE | RES_PLAS | RES_DISE | RES_NEXU |
+F:KILL_WALL | FORCE_MAXHP | CAN_SWIM | DROP_CORPSE
+S:1_IN_9 |
+S:TPORT | BLINK | TELE_AWAY
+D:This unholy abomination will crush you. Flee while you can! 
 
 N:40:Shrieker mushroom patch
 G:,:R
@@ -13285,3 +13288,14 @@ F:DROP_CORPSE | DROP_SKELETON
 S:1_IN_9 | 
 S:BO_NETH
 D:A monk in dusky robes trained in the most lethal martial arts.
+
+N:871:Topi Ylinen, the Cute, Furry Bunny
+G:r:U
+I:110:1d129:10:3:43
+W:1:7:0:66
+B:GAZE:TERRIFY:1d2
+F:FORCE_MAXHP | UNIQUE | CAN_SPEAK | 
+F:WILD_ONLY | WILD_WOOD | FRIENDLY | 
+F:RAND_25
+D:Aw, it's a cute widdle bunny wabbit.  You get a vague feeling of
+D: uneasiness from it. 
