@@ -115,8 +115,9 @@ static byte spell_color(int type)
 		/* Lookup this color */
 		a = strchr(color_char, c) - color_char;
 
-		/* Invalid color */
-		if ((a < 0) || (a > 15)) return (TERM_WHITE);
+		/* Invalid color (note check for < 0 removed, gave a silly
+		 * warning because bytes are always >= 0 -- RG) */
+		if (a > 15) return (TERM_WHITE);
 
 		/* Use this color */
 		return (a);
