@@ -3135,11 +3135,11 @@ void player_birth(void)
 	}
 
 	/* Note player birth in the message recall */
-	message_add(" ", TERM_WHITE);
-	message_add("  ", TERM_WHITE);
-	message_add("====================", TERM_WHITE);
-	message_add("  ", TERM_WHITE);
-	message_add(" ", TERM_WHITE);
+	message_add(" ", MSG_GENERIC);
+	message_add("  ", MSG_GENERIC);
+	message_add("====================", MSG_GENERIC);
+	message_add("  ", MSG_GENERIC);
+	message_add(" ", MSG_GENERIC);
 
 	/* Hack -- outfit the player */
 	player_outfit();

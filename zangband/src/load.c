@@ -1513,7 +1513,7 @@ static void rd_messages(void)
 		if (sf_version > 10)
 			rd_byte(&tmp8u);
 		else
-			tmp8u = TERM_WHITE;
+			tmp8u = MSG_GENERIC;
 
 		/* Save the message */
 		message_add(buf, tmp8u);
