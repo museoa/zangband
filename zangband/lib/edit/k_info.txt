@@ -1147,6 +1147,8 @@ I:45:24:5
 W:52:0:2:500
 A:52/1
 F:STR | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:133:Dexterity
 G:=:d
@@ -1154,6 +1156,8 @@ I:45:26:5
 W:52:0:2:500
 A:52/1
 F:DEX | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:134:Constitution
 G:=:d
@@ -1161,6 +1165,8 @@ I:45:27:5
 W:52:0:2:500
 A:52/1
 F:CON | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:135:Intelligence
 G:=:d
@@ -1168,6 +1174,8 @@ I:45:25:5
 W:52:0:2:500
 A:52/1
 F:INT | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:136:Speed
 G:=:d
@@ -1176,6 +1184,10 @@ W:100:0:2:10000
 A:100/1
 F:SPEED | HIDE_TYPE
 D:This ring almost vibrates with power.
+L:MAKE:	object.pval = randint1(object.pval / 2) + m_bonus(object.pval, level)
+L:MAKE:	while one_in_(2) do object.pval = object.pval + 1 end
+L:MAKE:	allow_curse = TRUE
+L:MAKE:	rating_boost = 25
 
 N:137:Sensing
 G:=:d
@@ -1183,6 +1195,8 @@ I:45:23:5
 W:9:0:2:50
 A:9/2
 F:SENSE | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:138:Teleportation
 G:=:d
@@ -1239,6 +1253,7 @@ I:45:2:-5
 W:9:0:2:0
 A:9/2
 F:CURSED | STR | HIDE_TYPE
+L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
 
 N:146:Flames
 G:=:d
@@ -1253,6 +1268,7 @@ L:USE:	fire_ball(GF_FIRE, dir, 100, 2)
 L:USE:	inc_oppose_fire(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
 L:DESC:	return "ball of fire and resist fire"
+L:MAKE:	object.to_a = rand_range(5, 10) + m_bonus(10, level)
 D:It feels warm to the touch.
 
 N:147:Acid
@@ -1268,6 +1284,7 @@ L:USE:	fire_ball(GF_ACID, dir, 100, 2)
 L:USE:	inc_oppose_acid(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
 L:DESC:	return "ball of acid and resist acid"
+L:MAKE:	object.to_a = rand_range(5, 10) + m_bonus(10, level)
 D:It is covered with a strange sheen.
 
 N:148:Ice
@@ -1283,6 +1300,7 @@ L:USE:	fire_ball(GF_COLD, dir, 100, 2)
 L:USE:	inc_oppose_cold(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
 L:DESC: return "ball of cold and resist cold"
+L:MAKE:	object.to_a = rand_range(5, 10) + m_bonus(10, level)
 D:It feels cool to the touch.
 
 N:149:Woe
@@ -1291,6 +1309,8 @@ I:45:0:-5
 W:75:0:2:0
 A:75/2
 F:CURSED | TELEPORT | WIS | CHR | HIDE_TYPE
+L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
+L:MAKE:	object.to_a = -(5 + m_bonus(10, level))
 
 N:150:Stupidity
 G:=:d
@@ -1298,24 +1318,31 @@ I:45:3:-5
 W:9:0:2:0
 A:9/2
 F:CURSED | INT | HIDE_TYPE
+L:MAKE:	object.pval = -(1 + m_bonus(-(object.pval), level))
 
 N:151:Combat
 G:=:d
 I:45:29:0
 W:35:0:2:500
 A:35/1
+L:MAKE:	object.to_d = rand_range(5, 13) + m_bonus(10, level)
+L:MAKE:	allow_curse = TRUE
 
 N:152:Skill
 G:=:d
 I:45:28:0
 W:35:0:2:500
 A:35/1
+L:MAKE:	object.to_h = rand_range(5, 13) + m_bonus(10, level)
+L:MAKE:	allow_curse = TRUE
 
 N:153:Protection
 G:=:d
 I:45:16:0
 W:17:0:2:200
 A:17/2
+L:MAKE:	object.to_a = rand_range(5, 13) + m_bonus(10, level)
+L:MAKE:	allow_curse = TRUE
 
 N:154:Aggravate Monster
 G:=:d
@@ -1379,6 +1406,9 @@ I:45:30:0
 W:65:0:2:1000
 A:65/1
 F:SHOW_MODS
+L:MAKE:	object.to_d = randint1(7) + m_bonus(10, level)
+L:MAKE:	object.to_h = randint1(7) + m_bonus(10, level)
+L:MAKE:	allow_curse = TRUE
 
 ##### Amulets #####
 
@@ -1388,6 +1418,8 @@ I:40:6:4
 W:35:0:3:500
 A:35/2:85/1
 F:INT | WIS | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:164:Charisma
 G:":d
@@ -1395,6 +1427,8 @@ I:40:7:4
 W:20:0:3:250
 A:20/2
 F:CHR | HIDE_TYPE
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:165:Sensing
 G:":d
@@ -1402,6 +1436,8 @@ I:40:5:5
 W:12:0:3:100
 A:12/2
 F:SENSE | HIDE_TYPE
+L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 N:166:Teleportation
 G:":d
@@ -1430,6 +1466,9 @@ I:40:2:0
 W:33:0:3:50
 A:33/3
 F:AGGRAVATE
+L:MAKE:	object.to_d = randint1(7) + m_bonus(10, level)
+L:MAKE:	object.to_h = randint1(7) + m_bonus(10, level)
+L:MAKE:	object.to_a = -(rand_range(5, 10))
 D:This amulet seems to growl silently as you touch it.
 
 ##### Extra armor #####
@@ -1451,6 +1490,10 @@ A:75/4:100/3
 P:0:0d0:0:0:3
 F:FREE_ACT | SEE_INVIS | SENSE |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
+L:MAKE:	object.to_a = randint1(5) + m_bonus(5, level)
+L:MAKE:	if one_in_(3) then object.flags3 = bOr(object.flags3, TR3_SLOW_DIGEST) end
+L:MAKE:	rating_boost = 25
 
 N:172:Destruction
 G:":d
@@ -1460,6 +1503,8 @@ A:80/2
 P:0:7d7:-5:-5:5
 F:CURSED | HEAVY_CURSE | STR | INT | WIS | DEX | CON | CHR | 
 F:TY_CURSE | NO_TELE | NO_MAGIC | REGEN | HIDE_TYPE
+L:MAKE:	object.pval = -(randint1(5) + m_bonus(-(object.pval), level))
+L:MAKE:	object.to_a = -(randint1(5) + m_bonus(5, level))
 
 
 ##### Scrolls #####
@@ -3953,6 +3998,10 @@ I:45:48:0
 W:105:0:2:100000
 A:100/5
 F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT
+L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:MAKE:	while one_in_(4) do add_ego_power(EGO_XTRA_HI_RESIST, object) end
+L:MAKE:	object.to_a = rand_range(10, 15) + m_bonus(10, level)
+L:MAKE:	rating_boost = 5
 
 N:436:Extra Attacks
 G:=:d
@@ -3960,6 +4009,8 @@ I:45:49:1
 W:75:0:2:10000
 A:75/8:100/2
 F:BLOWS
+L:MAKE:	if one_in_(7) then object.pval = 2 end
+L:MAKE:	allow_curse = TRUE
 
 N:437:Cure Light Wounds
 G:!:d
@@ -4324,6 +4375,7 @@ W:85:0:3:10000
 A:85/4
 F:NO_MAGIC
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:MAKE:	allow_curse = TRUE
 
 N:522:Anti-Teleportation
 G:":d
@@ -4332,6 +4384,7 @@ W:52:0:3:15000
 A:52/4
 F:NO_TELE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:MAKE:	allow_curse = TRUE
 
 #523 cannot have EASY_KNOW because it can get random resistances
 
@@ -4342,6 +4395,8 @@ W:75:0:3:5000
 A:75/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:MAKE:	if one_in_(3) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
+L:MAKE:	if one_in_(5) then object.flags2 = bOr(object.flags2, TR2_RES_POIS) end
 
 ##### New arms #####
 
@@ -4805,6 +4860,9 @@ I:45:52:4
 W:13:0:2:150
 A:13/2
 F:STEALTH | INFRA
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	if one_in_(3) then object.flags2 = bOr(object.flags2, TR2_SUST_DEX) end
+L:MAKE:	allow_curse = TRUE
 
 N:585:Fate
 G:=:d
@@ -4819,6 +4877,8 @@ I:45:54:2
 W:60:0:2:5000
 A:75/2
 F:SP
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
+L:MAKE:	allow_curse = TRUE
 
 ##### New amulets #####
 
@@ -4835,6 +4895,7 @@ I:40:17:4
 W:35:0:3:500
 A:35/2
 F:SLAY_UNDEAD | WIS
+L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 
 # 589 is unused
 

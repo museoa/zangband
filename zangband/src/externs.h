@@ -609,6 +609,7 @@ extern object_type *object_prep(int k_idx);
 extern object_type *object_dup(const object_type *o_ptr);
 extern void add_ego_flags(object_type *o_ptr, byte ego);
 extern void add_ego_power(int power, object_type *o_ptr);
+extern s16b m_bonus(int max, int level);
 extern void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags);
 extern void init_match_hook(byte tval, byte sval);
 extern byte kind_is_match(int k_idx);

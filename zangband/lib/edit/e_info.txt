@@ -536,13 +536,13 @@ N:78:of Sharpness
 X:24:20
 W:50:2:0:1500
 F:VORPAL | TUNNEL
-L:MAKE:	object.pval = m_bonus(5, lev) + 1
+L:MAKE:	object.pval = m_bonus(5, level) + 1
 
 N:79:of Earthquakes
 X:24:20
 W:50:2:0:2000
 F:TUNNEL | IMPACT
-L:MAKE:	object.pval = m_bonus(3, lev) + 3
+L:MAKE:	object.pval = m_bonus(3, level) + 3
 L:MAKE:	if one_in_(3) then
 L:MAKE:		object.flags1 = bOr(object.flags1, TR1_BLOWS)
 L:MAKE:		object.pval = object.pval - object.dd / 2
