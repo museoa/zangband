@@ -1017,11 +1017,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_OTHER_QUEST {DoUnderlyingCommand ^Q}
 		E_OTHER_TIME {DoUnderlyingCommand ^T}
 
-		E_TOOL_VAULT {
-			NSModule::LoadIfNeeded NSVaultEditor
-			NSWindowManager::Display vaulteditor
-		}
-
 		E_WINDOW_DEFPOS {
 			set title [mc dialog-title-defpos]
 			set message [mc dialog-msg-defpos]

@@ -115,9 +115,6 @@ proc NSConfig::Load {} {
 	Source [Global config,sprite] Config::Sprite
 	Source [Global config,assign] Config::Assign
 
-	# Create a vault for towns/quests
-	Global vault,current [vault create]
-
 	# Custom icon assignments for each character
 	Source char-icon Config::CharIcon
 #	charicon::Assign

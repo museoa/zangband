@@ -22,21 +22,8 @@ NSConfig::ShareConfigFile town town
 # Assign ascii-type icons to everything because not everything has an icon.
 NSConfig::SourceOne classic-common
 
-
 # Hack
 NSConfig::NoMoreIcons
-
-proc VaultCurrentProc {depth} {
-
-	if {$depth} {
-		vault current 0
-	}
-
-	return
-}
-
-# When entering a level, see if a custom .vlt file exists
-qebind VaultCurrent <Dungeon-enter> {VaultCurrentProc %c}
 
 # Apply gamma correction to "adam" icon type
 if {[Platform windows]} {

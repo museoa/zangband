@@ -120,7 +120,6 @@ set loc ja
 
 # Tool menu
 ::msgcat::mcset $loc Tool ツール
-::msgcat::mcset $loc "Vault Editor" 宝物庫エディタ
 
 # Window menu
 ::msgcat::mcset $loc Window ウィンドウ

@@ -372,13 +372,8 @@ proc NSWidget::CaveSize {oop _height _width} {
 
 	set widget [Info $oop widget]
 
-	if {[$widget cget -vaultnum]} {
-		set h [vault height [$widget cget -vaultnum]]
-		set w [vault width [$widget cget -vaultnum]]
-	} else {
-		set h [angband cave height]
-		set w [angband cave width]
-	}
+	set h [angband cave height]
+	set w [angband cave width]
 
 	Size $oop h2 w2
 	if {$h > $h2} {
@@ -441,13 +436,8 @@ proc NSWidget::IsoOffset {oop} {
 
 	set widget [Info $oop widget]
 
-	if {[$widget cget -vaultnum]} {
-		set h [vault height [$widget cget -vaultnum]]
-		set w [vault width [$widget cget -vaultnum]]
-	} else {
-		set h [angband cave height]
-		set w [angband cave width]
-	}
+	set h [angband cave height]
+	set w [angband cave width]
 
 	Size $oop h2 w2
 	if {$h > $h2} {
@@ -479,11 +469,7 @@ if {[$widget cget -style] == "iso"} {
 	scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
 	set height [expr {$y_max - $y_min + 1}]
 
-	if {[$widget cget -vaultnum]} {
-		set caveHgt [vault height [$widget cget -vaultnum]]
-	} else {
-		set caveHgt [angband cave height]
-	}
+	set caveHgt [angband cave height]
 
 	if {$caveHgt > $height} {
 		incr caveHgt 2
@@ -639,11 +625,7 @@ if {[$widget cget -style] == "iso"} {
 	scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
 	set width [expr {$x_max - $x_min + 1}]
 
-	if {[$widget cget -vaultnum]} {
-		set caveWid [vault width [$widget cget -vaultnum]]
-	} else {
-		set caveWid [angband cave width]
-	}
+	set caveWid [angband cave width]
 
 	if {$caveWid > $width} {
 		incr caveWid 2

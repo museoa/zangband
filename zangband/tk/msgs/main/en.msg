@@ -120,7 +120,6 @@ set loc en
 
 # Tool menu
 ::msgcat::mcset $loc Tool
-::msgcat::mcset $loc "Vault Editor"
 
 # Window menu
 ::msgcat::mcset $loc Window

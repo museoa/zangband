@@ -233,13 +233,8 @@ if {[$widget cget -style] == "iso"} {
 	set height [expr {$y_max - $y_min + 1}]
 	set width [expr {$x_max - $x_min + 1}]
 
-	if {[$widget cget -vaultnum]} {
-		set dunHgt [vault height [$widget cget -vaultnum]]
-		set dunWid [vault width [$widget cget -vaultnum]]
-	} else {
-		set dunHgt [angband cave height]
-		set dunWid [angband cave width]
-	}
+	set dunHgt [angband cave height]
+	set dunWid [angband cave width]
 
 	if {$dunHgt > $height} { incr dunHgt 2 }
 	if {$dunWid > $width} { incr dunWid 2 }
@@ -309,13 +304,9 @@ if {[$widget cget -style] == "iso"} {
 	set height [expr {$y_max - $y_min + 1}]
 	set width [expr {$x_max - $x_min + 1}]
 
-	if {[$widget cget -vaultnum]} {
-		set dunHgt [vault height [$widget cget -vaultnum]]
-		set dunWid [vault width [$widget cget -vaultnum]]
-	} else {
-		set dunHgt [angband cave height]
-		set dunWid [angband cave width]
-	}
+	set dunHgt [angband cave height]
+	set dunWid [angband cave width]
+	
 	
 	if {$dunHgt > $height} {
 		incr dunHgt 2
