@@ -1046,7 +1046,7 @@ static bool borg_choose_shop(void)
 
 		/* How useful is this shop? */
 		use = time / (dist + 1);
-		use *= (borg_shops[i].b_count + 1) / (borg_shops[i].u_count + 1);
+		use = use * (borg_shops[i].u_count + 1) / (borg_shops[i].b_count + 1);
 
 		/* Track most-useful shop */
 		if (use > bu)
