@@ -2071,7 +2071,7 @@ B:CLAW:EAT_FOOD:1d2
 B:BITE:EAT_FOOD:1d3
 F:WILD_DUNGEON_01
 F:MULTIPLY | IM_POIS | HURT_LITE | EVIL | DEMON | OPEN_DOOR | 
-F:TAKE_ITEM | CAN_SWIM 
+F:TAKE_ITEM | CAN_SWIM | SILLY
 D:Don't splash water on them, and don't feed them after midnight!
 
 N:154:Yeti
