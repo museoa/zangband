@@ -723,7 +723,7 @@ static bool borg_think_shop_buy_aux(int shop)
 	for (n = 0; n < cur_num; n++)
 	{
 		list_item *l_ptr = &cur_list[n];
-		
+
 		/* second check on empty */
 		if (!l_ptr->k_idx) continue;
 
@@ -732,7 +732,7 @@ static bool borg_think_shop_buy_aux(int shop)
 
 		/* Hack -- Require "sufficient" cash */
 		if (borg_gold < l_ptr->cost) continue;
-		
+
 		/* Obtain "slot" */
 		slot = borg_wield_slot(l_ptr);
 
@@ -742,9 +742,22 @@ static bool borg_think_shop_buy_aux(int shop)
 		 */
 		if (l_ptr->tval == TV_DIGGING) slot = -1;
 
+		/* skip it if it has not been decursed */
+		if (strstr(l_ptr->o_name, "{cursed") ||
+			KN_FLAG(l_ptr, TR_CURSED) ||
+			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
+
 		/* Consider new equipment */
 		if (slot >= 0)
 		{
+			list_item *k_ptr = &equipment[slot];
+		
+			/* skip this object if the slot is occupied by a cursed item */
+			if (k_ptr ||
+				strstr(k_ptr->o_name, "{cursed") ||
+				KN_FLAG(k_ptr, TR_CURSED) ||
+				KN_FLAG(k_ptr, TR_HEAVY_CURSE)) continue;
+
 			/* Get power for doing swap */
 			p = borg_think_buy_slot(l_ptr, slot, FALSE);
 		}
@@ -1394,7 +1407,7 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Avoid the burning sun */
-	if ((borg_race == RACE_VAMPIRE) && !(FLAG(bp_ptr, TR_RES_LITE)) &&
+	if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE) &&
 		!bp_ptr->depth &&
 		(bp_ptr->hour >= 5) && (bp_ptr->hour <= 18))
 	{

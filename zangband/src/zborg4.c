@@ -1213,7 +1213,7 @@ static void borg_notice_lite(void)
 			bp_ptr->able.fuel += 1000;
 
 			/* Vampires need to be concerned with Artifacts Lites */
-			if ((borg_race == RACE_VAMPIRE) && !(FLAG(bp_ptr, TR_RES_LITE)))
+			if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE))
 			{
 				bp_ptr->cur_lite = 1;
 			}
@@ -1755,13 +1755,49 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 
 
 /*
- * Notice wands
- * This is a bit crude but I was actually busy with something else
+ * Notice wands.  Separates the wands in ball or bolt wands.
+ * There is a wand feature that makes it hard to count charges:
+ * If you have a Wand of Foo (4 charges) and a Wand of Foo (8 charges)
+ * this is shown as 2 Wands of Foo (12 charges).  If you sell 1 in a shop
+ * you sell the Wand of Foo (4 charges).  But the borg can only guess that
+ * it is selling 6 charges.  I don't think this will cause a loop.
  */
-static void borg_notice_wands(list_item *l_ptr)
+static void borg_notice_wands(list_item *l_ptr, int number)
 {
 	int sval = k_info[l_ptr->k_idx].sval;
+	int tval = 0, non_empty = 0;
 
+
+	/* Is this is a pile a wands with unknown charges? */
+	if (!borg_obj_known_p(l_ptr) && !strstr(l_ptr->o_name, "{empty}"))
+	{
+		/* Set the number of wands, later we guess how many charges there are */
+		non_empty = number;
+	}
+	/* This pile of wands has known tval or is empty */
+	else
+	{
+		/* Counting this wand while getting it from a shop or home */
+		if (l_ptr->treat_as == TREAT_AS_SHOP)
+		{
+			/* We get 1 wand and not all the charges */
+			tval = l_ptr->tval / l_ptr->number;
+		}
+		/* Counting this pile while selling one */
+		else if (l_ptr->treat_as == TREAT_AS_LESS)
+		{
+			/* We get all the charges except for the charges of one wand */
+			tval = l_ptr->tval - l_ptr->tval / l_ptr->number;
+		}
+		/* Just count the stack will you */
+		else
+		{
+			/* All the charges */
+			tval = l_ptr->tval;
+		}
+	}
+
+	/* What sort of wand is this? */
 	switch (sval)
 	{
 		/* Ball Wands */
@@ -1775,21 +1811,8 @@ static void borg_notice_wands(list_item *l_ptr)
 		case SV_WAND_DRAGON_BREATH:
 		case SV_WAND_ROCKETS:
 		{
-			/* Is this wand identified? */
-			if (borg_obj_known_p(l_ptr))
-			{
-				/* Count the charges */
-				bp_ptr->able.ball += l_ptr->pval;
-			}
-			else
-			{
-				/* Is this wand known to be empty? */
-				if (!strstr(l_ptr->o_name, "{empty}"))
-				{
-					/* Assume 2 charges for an unid'd wand */
-					bp_ptr->able.ball += 2;
-				}
-			}
+			/* count the charges */
+			bp_ptr->able.ball += tval + 5 * non_empty;
 
 			break;
 		}
@@ -1804,21 +1827,8 @@ static void borg_notice_wands(list_item *l_ptr)
 		case SV_WAND_FIRE_BOLT:
 		case SV_WAND_COLD_BOLT:
 		{
-			/* Is this wand identified? */
-			if (borg_obj_known_p(l_ptr))
-			{
-				/* Count the charges */
-				bp_ptr->able.bolt += l_ptr->pval;
-			}
-			else
-			{
-				/* Is this wand known to be empty? */
-				if (!strstr(l_ptr->o_name, "{empty}"))
-				{
-					/* Assume 5 charges for an unid'd wand */
-					bp_ptr->able.bolt += 5;
-				}
-			}
+			/* count the charges */
+			bp_ptr->able.bolt += tval + 2 * non_empty;
 
 			break;
 		}
@@ -1826,6 +1836,7 @@ static void borg_notice_wands(list_item *l_ptr)
 		/* Don't bother with keeping the rest of the wands */
 		default:
 		{
+			/* Nothing */
 			break;
 		}
 	}
@@ -1935,7 +1946,17 @@ static void borg_notice_inven_item(list_item *l_ptr)
 	}
 	else
 	{
-		number = l_ptr->number;
+		/* Is this a home or shop item? */
+		if (l_ptr->treat_as == TREAT_AS_SHOP)
+		{
+			/* You can buy only one item from a shop */
+			number = 1;
+		}
+		else
+		{
+			/* Count the whole pile */
+			number = l_ptr->number;
+		}
 	}
 	
 	/* count up the items on the borg */
@@ -2038,7 +2059,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		case TV_WAND:
 		{
 			/* Wands */
-			borg_notice_wands(l_ptr);
+			borg_notice_wands(l_ptr, number);
 			break;
 		}
 
@@ -2230,19 +2251,11 @@ static void borg_notice_inven(void)
 		/* Hack - only 'LESS' items are treated as going into inven */
 		if (l_ptr->treat_as == TREAT_AS_LESS)
 		{
-			int num = l_ptr->number;
-
-			/* Hack - assume we get one item */
-			l_ptr->number = 1;
-
 			/* Hack - fix the treat_as value */
-			l_ptr->treat_as = TREAT_AS_NORM;
+			l_ptr->treat_as = TREAT_AS_SHOP;
 
 			/* Examine the item */
 			borg_notice_inven_item(l_ptr);
-
-			/* Restore number */
-			l_ptr->number = num;
 
 			/* Restore treat_as value */
 			l_ptr->treat_as = TREAT_AS_LESS;
@@ -2275,19 +2288,11 @@ static void borg_notice_inven(void)
 				/* Hack - only 'LESS' items are treated as going into inven */
 				if (l_ptr->treat_as == TREAT_AS_LESS)
 				{
-					int num = l_ptr->number;
-
-					/* Hack - assume we get one item */
-					l_ptr->number = 1;
-
 					/* Hack - fix the treat_as value */
-					l_ptr->treat_as = TREAT_AS_NORM;
+					l_ptr->treat_as = TREAT_AS_SHOP;
 
 					/* Examine the item */
 					borg_notice_inven_item(l_ptr);
-
-					/* Restore number */
-					l_ptr->number = num;
 
 					/* Restore treat_as value */
 					l_ptr->treat_as = TREAT_AS_LESS;
@@ -2608,8 +2613,7 @@ static void borg_notice_aux2(void)
 	 * Correct the high and low calorie foods for the correct
 	 * races.
 	 */
-	if ((borg_race <= RACE_IMP || borg_race >= RACE_SPRITE) &&
-		borg_race != RACE_GHOUL)
+	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
 		bp_ptr->food += amt_food_hical * 5;
 		if (bp_ptr->food <= 30)
@@ -3889,8 +3893,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 				case SV_FOOD_WAYBREAD:
 				case SV_FOOD_RATION:
 				{
-					if ((borg_race <= RACE_IMP || borg_race >= RACE_SPRITE) &&
-						borg_race != RACE_GHOUL)
+					if (!FLAG(bp_ptr, TR_CANT_EAT))
 					{
 						num_food += l_ptr->number;
 					}

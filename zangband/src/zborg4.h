@@ -27,6 +27,7 @@ extern void borg_list_info(byte list_type, vptr dummy);
 #define TREAT_AS_LESS	2		/* Pretend one less item */
 #define TREAT_AS_MORE	3		/* Pretend one more item */
 #define TREAT_AS_SWAP	4		/* Pretend other item is here */
+#define TREAT_AS_SHOP	5		/* Some trickery needed for shops */
 
 /* The current home */
 extern int home_shop;

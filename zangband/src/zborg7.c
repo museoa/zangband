@@ -663,7 +663,7 @@ bool borg_check_lite(void)
 	if (floors <= 11) do_lite = do_lite_aux = FALSE;
 
 	/* Vampires need to be careful for Light */
-	if ((borg_race == RACE_VAMPIRE) && !(FLAG(bp_ptr, TR_RES_LITE)))
+	if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE))
 		do_lite = do_lite_aux = FALSE;
 
 	/* Hack -- call lite */
@@ -1578,7 +1578,7 @@ static bool borg_crush_unidentified(list_item* item)
 		case TV_STAFF:
 		{
 			if (k_info[item->k_idx].sval == SV_STAFF_DARKNESS &&
-				borg_race != RACE_VAMPIRE) return TRUE;
+				FLAG(bp_ptr, TR_HURT_LITE)) return TRUE;
 			if (k_info[item->k_idx].sval >= SV_STAFF_SLOWNESS &&
 				k_info[item->k_idx].sval <= SV_STAFF_SUMMONING) return TRUE;
 			break;
@@ -2399,7 +2399,8 @@ bool borg_test_stuff_pseudo(void)
 				for (i = 0; i < inven_num; i++)
 				{
 					if (inventory[i].tval >= TV_SHOT &&
-						inventory[i].tval <= TV_DRAG_ARMOR)
+						inventory[i].tval <= TV_DRAG_ARMOR &&
+						!borg_obj_known_p(&inventory[i]))
 					{
 						borg_keypress('/');
 						break;
@@ -2581,7 +2582,8 @@ bool borg_remove_stuff(void)
 			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* skip it if it has not been decursed */
-		if (KN_FLAG(l_ptr, TR_CURSED) ||
+		if (strstr(l_ptr->o_name, "{cursed") ||
+			KN_FLAG(l_ptr, TR_CURSED) ||
 			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
 
 		/* Take it off */

@@ -975,7 +975,7 @@ static int borg_danger_aux2(int i, bool average)
 				if (z > 350)
 					z = 350;
 				/* Vamps hurt more */
-				if (borg_race == RACE_VAMPIRE)
+				if (FLAG(bp_ptr, TR_HURT_LITE))
 					z *= 2;
 				if (borg_goi)
 				{
@@ -3646,8 +3646,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* if you can digest food */
-	if ((borg_race <= RACE_IMP || borg_race >= RACE_SPRITE) &&
-		borg_race != RACE_GHOUL)
+	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
 		/* Prefer to buy HiCalorie foods over LowCalorie */
 		if (amt_food_hical <= 5) value += amt_food_hical * 50;
@@ -3893,7 +3892,7 @@ static s32b borg_power_aux4(void)
 	value += 500 * MIN(bp_ptr->able.ball, 10);
 
 	/* Reward carrying a wand or rod with bolts */
-	value += 50 * MIN(bp_ptr->able.bolt, 40);
+	value += 50 * MIN(bp_ptr->able.bolt, 5);
 
 	/*  -- Reward carrying a (empty) staff of destr/holiness/power */
 	if (bp_ptr->able.staff_cool) value += 2000L;

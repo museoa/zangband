@@ -697,10 +697,7 @@ static bool borg_eat_food_any(void)
 	object_kind *k_ptr;
 
 	/* No help for some */
-	if (borg_race >= RACE_GOLEM && borg_race <= RACE_SPECTRE)
-	{
-		return (FALSE);
-	}
+	if (FLAG(bp_ptr, TR_CANT_EAT)) return (FALSE);
 
 	/* Scan the inventory for "normal" food */
 	for (i = 0; i < inven_num; i++)
@@ -3826,40 +3823,48 @@ bool borg_caution(void)
  *
  * There are several types of damage inducers:
  *
- *   Attacking physically
+ *   Using rods
+ *   Activate Dragon Armour
+ *   Elemental Rings
+ *   Activating Artifacts
  *   Launching missiles
  *   Throwing objects
+ *	 Reading scrolls
+ *   Attacking physically
  *   Casting spells
- *   Praying prayers
- *   Using wands
- *   Using rods
  *   Using staffs
- *   Using scrolls
- *   Activating Artifacts
- *   Activate Dragon Armour
+ *   Aimng wands
  *   Racial Powers
- *   Elemental Rings
+ *   Mutation Powers
+ *   Emergency use of spells
+ *
+ * The order of these attack types is not random.  If two attacks do the same
+ * damage then the first in the list will prevail.  So that is why the rods
+ * are first and fainting is last.
  */
 
 #define BF_MIN					0
 
-#define BF_MUTATE				0
-#define BF_ROD					1
-#define BF_DRAGON_ARMOUR		2
-#define BF_RING					3
-#define BF_ARTIFACT				4
-#define BF_THRUST				5
-#define BF_OBJECT				6
-#define BF_SPELLCASTER			7
-#define BF_MINDCRAFTER			8
-#define BF_STAFF				9
-#define BF_WAND					10
-#define BF_SCROLL				11
-#define BF_LAUNCH				12
-#define BF_RACIAL				13
-#define BF_SPELL_RESERVE		14
+#define BF_ROD					0		/* Recharging objects */
+#define BF_DRAGON_ARMOUR		1
+#define BF_RING					2
+#define BF_ARTIFACT				3
+#define BF_LAUNCH				4		/* Cheap objects */
+#define BF_OBJECT				5
+#define BF_SCROLL				6
+#define BF_THRUST				7		/* Rest to restore hp/sp */
+#define BF_SPELLCASTER			8
+#define BF_MINDCRAFTER			9
+#define BF_STAFF				10		/* Objects with charges */
+#define BF_WAND					11
+#define BF_RACIAL				12		/* Powers that hurt to execute */
+#define BF_MUTATE				13
+#define BF_SPELL_RESERVE		14		/* Emergency spell uses */
+#define BF_MIND_RESERVE			15
+#define BF_SPELL_FAINT			16		/* Fainting spell uses */
+#define BF_MIND_FAINT			17
 
-#define	BF_MAX					15
+#define	BF_MAX					18
 
 
 /* What is the radius of the borg ball attacks? */
@@ -4022,7 +4027,7 @@ static int borg_thrust_damage_one(int i)
 /*
  * Simulate/Apply the optimal result of making a physical attack
  */
-static int borg_attack_aux_thrust(void)
+static int borg_attack_thrust(void)
 {
 	int p, dir;
 
@@ -5320,7 +5325,7 @@ static int borg_launch_ball(int rad, int dam, int typ, int max)
 
 
 /* Simulate/Apply the optimal result of activating an artifact */
-static int borg_attack_aux_artifact(int *b_slot)
+static int borg_attack_artifact(int *b_slot)
 {
 	/* Ignore parameter */
 	(void) b_slot;
@@ -5387,7 +5392,7 @@ static int borg_scroll_damage_monster(int sval)
  * Simulate/Apply the optimal result of reading a scroll
  *
  */
-static int borg_attack_aux_scroll(int *b_slot)
+static int borg_attack_scroll(int *b_slot)
 {
 	int n, b_n = 0;
 	int k;
@@ -5536,7 +5541,7 @@ static bool borg_missile_type(list_item *l_ptr)
  * Check out which ammo is available and then call the apropriate routine for it
  *
  */
-static int borg_attack_aux_launch(int *b_slot)
+static int borg_attack_launch(int *b_slot)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
@@ -5789,7 +5794,7 @@ static int borg_throw_damage(list_item *l_ptr, int *typ)
  *
  * First choose the "best" object to throw, then check targets.
  */
-static int borg_attack_aux_object(int *b_slot, int mult)
+static int borg_attack_object(int *b_slot, int mult)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
@@ -5889,7 +5894,7 @@ static int borg_ring_damage_monster(int sval)
 /*
  * Simulate/Apply the optimal result of Activating a ring
  */
-static int borg_attack_ring_aux(int *b_slot)
+static int borg_attack_ring(int *b_slot)
 {
 	int sval_l = -1, sval_r;
 	int n = 0, b_n = 0;
@@ -6075,7 +6080,7 @@ static int borg_dragon_damage_monster(int sval)
 /*
  * Simulate/Apply the optimal result of Activating a Dragon armour
  */
-static int borg_attack_dragon_aux(void)
+static int borg_attack_dragon(void)
 {
 	if (borg_simulate)
 	{
@@ -6175,7 +6180,7 @@ static int borg_rod_damage_monster(int sval)
 /*
  * Simulate/Apply the optimal result of using an attack rod
  */
-static int borg_attack_rod_aux(int *b_slot)
+static int borg_attack_rod(int *b_slot)
 {
 	int n, b_n = -1;
 	int k;
@@ -6340,7 +6345,7 @@ static int borg_wand_damage_monster(int sval)
  * Check out which wand is available and then call the apropriate routine for it
  *
  */
-static int borg_attack_wand_aux(int *b_slot)
+static int borg_attack_wand(int *b_slot)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
@@ -6621,7 +6626,7 @@ static int borg_racial_damage_monster(int race)
 
 
 /* Simulate/Apply the optimal result of Using a racial power. */
-static int borg_attack_racial_aux(void)
+static int borg_attack_racial(void)
 {
 	if (borg_simulate)
 	{
@@ -6717,14 +6722,14 @@ static int borg_mutate_damage_monster(u32b mut_nr, int *slot)
 		{
 			dam = bp_ptr->lev;
 			rad = 1 + bp_ptr->lev / 10;
-			return (borg_launch_dispel(dam, GF_LITE, rad));
+			return (borg_launch_dispel(dam, GF_LITE_WEAK, rad));
 		}
 
 		/* hit and phase door in one move like a novice rogue */
 		case MUT1_PANIC_HIT:
 		{
 			/* Its damage is at least equal to a normal hit */
-			dam = borg_attack_aux_thrust();
+			dam = borg_attack_thrust();
 
 			/* If there are a few monsters around then add bonus */
 			if (borg_temp_n < 5) dam = dam * 15 / 10;
@@ -6762,7 +6767,7 @@ static int borg_mutate_damage_monster(u32b mut_nr, int *slot)
 			/* This is not a real radius, it is a factor */
 			rad = 2 + bp_ptr->lev / 30;
 
-			return (borg_attack_aux_object(slot, rad));
+			return (borg_attack_object(slot, rad));
 		}
 
 		/* dud mutation */
@@ -6772,7 +6777,7 @@ static int borg_mutate_damage_monster(u32b mut_nr, int *slot)
 
 
 /* Simulate/Apply the optimal result of Using a mutation. */
-static int borg_attack_mutation_aux(int *b_slot, int *b_spell)
+static int borg_attack_mutation(int *b_slot, int *b_spell)
 {
 	int i, n, b_n = 0;
 	int b_x = c_x, b_y = c_y;
@@ -6848,110 +6853,6 @@ static int borg_attack_mutation_aux(int *b_slot, int *b_spell)
 	/* Success */
 	return (0);
 }
-
-
-#ifdef UNUSED_FUNC
-/*
- * This routine is the same as the one above only in an emergency case.
- * The borg will enter negative mana casting this
- * It is left here for future reference for when the new reserve
- * routine is written
- */
-static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
-                                              int rad, int dam, int typ)
-{
-	int b_n;
-	int i;
-
-	/* Fake our Mana */
-	int sv_mana = bp_ptr->csp;
-
-	/* Only Weak guys should try this */
-	if (bp_ptr->lev >= 15) return (0);
-
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
-
-	/* Must not have enough mana right now */
-	if (borg_spell_okay_fail(realm, book, what, 25)) return (0);
-
-	/* If there is more than one close monster, don't risk fainting */
-	if (borg_temp_n > 1) return (0);
-
-	/* Must be dangerous */
-	if (borg_danger(c_x, c_y, 1, TRUE) < avoidance * 2) return (0);
-
-	/* Find the monster */
-	for (i = 1; i < borg_kills_nxt; i++)
-	{
-		borg_kill *kill;
-
-		/* Monster */
-		kill = &borg_kills[i];
-
-		/* Skip dead monsters */
-		if (!kill->r_idx) continue;
-
-		/* Require current knowledge */
-		if (kill->when < borg_t) continue;
-
-		/* check the location */
-		if (borg_temp_x[0] != kill->x || borg_temp_y[0] != kill->y)
-			continue;
-
-		/* If it has too many hp to be taken out with this */
-		/* spell, don't bother trying */
-		/* NOTE: the +4 is because the damage is toned down
-		   as an 'average damage' */
-		if (kill->power > (dam + 4))
-			return (0);
-
-		break;
-	}
-
-	/* Require ability (with faked mana) */
-	bp_ptr->csp = bp_ptr->msp;
-	if (!borg_spell_okay_fail(realm, book, what, 25))
-	{
-		/* Restore Mana */
-		bp_ptr->csp = sv_mana;
-		return (0);
-	}
-
-	/* Choose optimal location */
-	b_n = borg_launch_bolt(dam, typ, MAX_RANGE);
-
-	/* return the value */
-	if (borg_simulate)
-	{
-		/* Restore Mana */
-		bp_ptr->csp = sv_mana;
-		return (b_n);
-	}
-
-	/* Cast the spell with fake mana */
-	bp_ptr->csp = bp_ptr->msp;
-
-	if (borg_spell_fail(realm, book, what, 25))
-	{
-		/* Note the use of the emergency spell */
-		borg_note("# Emergency use of an Attack Spell.");
-
-		/* verify use of spell */
-		/* borg_keypress('y'); */
-	}
-
-	/* Set our shooting flag */
-	successful_target = BORG_FRESH_TARGET;
-
-	/* restore true mana */
-	bp_ptr->csp = 0;
-
-	/* Value */
-	return (b_n);
-}
-#endif /* UNUSED_FUNC */
 
 
 /* Figure out how much damage mindcrafter spells do */
@@ -7052,8 +6953,9 @@ static int borg_mindcrafter_damage_monster(int spell)
 	}
 }
 
+
 /* Check the mindcrafter spells for damage */
-static int borg_attack_mindcrafter_aux(int *b_spell)
+static int borg_attack_mindcrafter(int *b_spell)
 {
 	int spell;
 	int n, b_n = 0;
@@ -7084,8 +6986,8 @@ static int borg_attack_mindcrafter_aux(int *b_spell)
 			/* Choose optimal location */
 			n = borg_mindcrafter_damage_monster(spell);
 
-			/* Penalize mana usage */
-			n = n - as->power;
+			/* Penalize mana usage (Add 1 to stimulate neural blast) */
+			n = n + 1 - as->power;
 
 			/* Compare with previous */
 			if (n <= b_n) continue;
@@ -7112,6 +7014,142 @@ static int borg_attack_mindcrafter_aux(int *b_spell)
 
 	/* Cast the spell */
 	(void)borg_mindcr(*b_spell, borg_minds[*b_spell].level);
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
+
+	/* Value */
+	return (b_n);
+}
+
+
+/* Check the mindcrafter spells for damage in emergency cases */
+static int borg_attack_mindcrafter_reserve(bool faint, int *b_spell)
+{
+	int spell;
+	int n, b_n = 0;
+	int b_x = 0, b_y = 0;
+	int fail_rate = (borg_fighting_unique ? 40 : 25);
+
+	int monster;
+
+	/* Fake our Mana */
+	int sv_mana = bp_ptr->csp;
+
+	bool spell_success;
+
+	borg_kill *kill;
+
+	if (borg_simulate)
+	{
+		/* Are you a mindcrafter? */
+		if (borg_class != CLASS_MINDCRAFTER) return (0);
+
+		/* No firing while blind, confused, or hallucinating */
+		if ((bp_ptr->status.blind && !(FLAG(bp_ptr, TR_TELEPATHY))) ||
+			bp_ptr->status.confused ||
+			bp_ptr->status.image) return (0);
+
+		/* Fainting is only for little guys */
+		if (faint && bp_ptr->lev >= 20) return (0);
+
+		/* Only big guys have reserve_mana */
+		if (!faint && bp_ptr->lev < 20) return (0);
+
+		/* There can only be one monster closeby */
+		if (borg_bolt_n != 1) return (0);
+
+		/* Must be dangerous */
+		if (faint && borg_danger(c_x, c_y, 1, TRUE) < avoidance * 2) return (0);
+
+		/* Loop through the spells */
+		for (spell = 0; spell < MINDCRAFT_MAX; spell++)
+		{
+			borg_mind *as = &borg_minds[spell];
+
+			/* Paranoia */
+			if (randint0(100) < 5) continue;
+
+			/* No point of trying unknown spells */
+			if (bp_ptr->lev < as->level) continue;
+
+			/* Require inability (right now) */
+			if (borg_mindcr_okay_fail(spell, as->level, fail_rate)) continue;
+
+			/* If there is enough mana then keep trying */
+			if (!faint && bp_ptr->csp < as->power) continue;
+
+			/* If there is almost enough mana then keep trying */
+			if (faint &&
+				(bp_ptr->csp + 5 <= as->power) &&
+				bp_ptr->csp >= as->power) continue;
+
+			/* Pretend there is enough mana */
+			bp_ptr->csp = bp_ptr->msp;
+
+			/* Can you cast the spell now? */
+			spell_success = borg_mindcr_okay_fail(spell, as->level, fail_rate);
+
+			/* Restore original mana */
+			bp_ptr->csp = sv_mana;
+
+			/* The fail rate was too bad */
+			if (!spell_success) continue;
+
+			/* Choose optimal location */
+			n = borg_mindcrafter_damage_monster(spell);
+
+			/* Find the index to the monster */
+			monster = map_loc(borg_bolt_x[0], borg_bolt_y[0])->kill;
+
+			/* Find the actual monster */
+			kill = &borg_kills[monster];
+
+			/* If the monster has more HP then a good hit don't try */
+			if (kill->power > n * 15 / 10) continue;
+
+			/* Compare with previous */
+			if (n <= b_n) continue;
+
+			/* Track this spell */
+			b_n = n;
+			*b_spell = spell;
+			b_x = g_x;
+			b_y = g_y;
+		}
+
+		/* Set the global coords */
+		g_x = b_x;
+		g_y = b_y;
+
+		/* Simulation */
+		return (b_n);
+	}
+
+	/* make a note */
+	borg_note_fmt("Emergency mindcr use: %s", (faint) ? "faint" : "reserve");
+
+	/* Set target for some spells */
+	if (*b_spell == MIND_NEURAL_BL ||
+		*b_spell == MIND_PULVERISE ||
+		*b_spell == MIND_PSYCHIC_DR) borg_target(g_x, g_y);
+
+	/* Pretend the borg has enough mana for this */
+	bp_ptr->csp = bp_ptr->msp;
+
+	/* Cast the spell */
+	(void)borg_mindcr(*b_spell, borg_minds[*b_spell].level);
+
+	/* Close your eyes */
+	if (faint)
+	{
+		/* confirm the spell use */
+		borg_keypress(' ');
+		borg_keypress('n');
+	}
+
+	/* Get the right amount of mana */
+	bp_ptr->csp = MAX(0, sv_mana - borg_minds[*b_spell].power);
 
 	/* Set our shooting flag */
 	successful_target = BORG_FRESH_TARGET;
@@ -8384,7 +8422,7 @@ static int borg_spell_damage_monster(int realm, int book, int spell)
 
 
 /* Check the spells for damage */
-static int borg_attack_spellcaster_aux(int *b_slot, int *b_spell)
+static int borg_attack_spell(int *b_slot, int *b_spell)
 {
 	int realm, book, spell;
 	int k, n, b_n = 0;
@@ -8480,14 +8518,172 @@ static int borg_attack_spellcaster_aux(int *b_slot, int *b_spell)
 
 
 /* Try to use the reserve mana for attacking anyway if there is one monster */
-static int borg_attack_spell_reserve_aux(int *b_slot, int *b_spell)
+static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 {
-	/* Hack - ignore parameters */
-	(void) b_slot;
-	(void) b_spell;
+	int realm, book, spell;
 
-	/* Leave this one for later */
-	return (0);
+	int k, n, b_n = 0;
+	int b_x = 0, b_y = 0;
+
+	int fail_rate = (borg_fighting_unique ? 40 : 25);
+	int monster;
+
+	/* Fake our Mana */
+	int sv_mana = bp_ptr->csp;
+
+	bool spell_success;
+
+	borg_kill *kill;
+	list_item *l_ptr;
+
+	if (borg_simulate)
+	{
+		/* Spells are not for warriors or mindcrafters */
+		if (borg_class == CLASS_WARRIOR ||
+			borg_class == CLASS_MINDCRAFTER) return (0);
+
+		/* Fainting is only for little guys */
+		if (faint && bp_ptr->lev >= 20) return (0);
+
+		/* Only big guys have reserve_mana */
+		if (!faint && bp_ptr->lev < 20) return (0);
+
+		/* This proc is useless for spellcasters with borg_reserve_mana = 0 */
+		if (!faint &&
+			borg_class != CLASS_PRIEST &&
+			borg_class != CLASS_MAGE &&
+			borg_class != CLASS_HIGH_MAGE) return (0);
+
+		/* No firing while blind, confused, or hallucinating */
+		if (bp_ptr->status.blind ||
+			bp_ptr->status.confused ||
+			bp_ptr->status.image) return (0);
+
+		/* There can only be one monster closeby */
+		if (borg_bolt_n != 1) return (0);
+
+		/* Must be dangerous */
+		if (faint && borg_danger(c_x, c_y, 1, TRUE) < avoidance * 2) return (0);
+
+		/* Loop through the inventory */
+		for (k = 0; k < inven_num; k++)
+		{
+			l_ptr = &inventory[k];
+
+			/* Stop after the books have been seen */
+			if (l_ptr->tval < TV_BOOKS_MIN) break;
+
+			/* Realize which realm this is */
+			realm = l_ptr->tval - TV_BOOKS_MIN + 1;
+
+			/* Is this a realm that the borg knows? */
+			if (realm != bp_ptr->realm1 &&
+				realm != bp_ptr->realm2) continue;
+
+			/* Realize which book this is */
+			book = k_info[l_ptr->k_idx].sval;
+
+			/* Loop through the spells */
+			for (spell = 0; spell < 8; spell++)
+			{
+				borg_magic *as = &borg_magics[realm][book][spell];
+
+				/* Paranoia */
+				if (randint0(100) < 5) continue;
+
+				/* There is no point trying too high level spells */
+				if (as->level > bp_ptr->lev) continue;
+
+				/* Require inability (right now) */
+				if (borg_spell_okay_fail(realm, book, spell, fail_rate)) continue;
+
+				/* If there is enough mana then keep trying */
+				if (!faint && bp_ptr->csp < as->power) continue;
+
+				/* If there is almost enough mana then keep trying */
+				if (faint &&
+					(bp_ptr->csp + 5 <= as->power) &&
+					bp_ptr->csp >= as->power) continue;
+
+				/* Pretend there is enough mana  */
+				bp_ptr->csp = bp_ptr->msp;
+
+				/* Can you cast the spell now? */
+				spell_success = borg_spell_okay_fail(realm, book, spell, fail_rate);
+
+				/* Restore original mana */
+				bp_ptr->csp = sv_mana;
+
+				/* The fail rate was too bad */
+				if (!spell_success) continue;
+
+				/* Choose optimal location */
+				n = borg_spell_damage_monster(realm, book, spell);
+
+				/* Find the index to the monster */
+				monster = map_loc(borg_bolt_x[0], borg_bolt_y[0])->kill;
+
+				/* Find the actual monster */
+				kill = &borg_kills[monster];
+
+				/* If the monster won't die of this don't bother trying */
+				if (kill->power > n) continue;
+
+				/* Compare with previous */
+				if (n <= b_n) continue;
+
+				/* Track this spell */
+				b_n = n;
+				*b_slot = k;
+				*b_spell = spell;
+				b_x = g_x;
+				b_y = g_y;
+			}
+		}
+
+		/* Set the global coords */
+		g_x = b_x;
+		g_y = b_y;
+
+		/* Simulation */
+		return (b_n);
+	}
+
+	/* Make a note */
+	borg_note_fmt("Emergency spell use: %s", (faint) ? "faint" : "reserve");
+
+	/* Get the book */
+	l_ptr = &inventory[*b_slot];
+
+	/* Find out the realm and the book */
+	realm = l_ptr->tval - TV_BOOKS_MIN + 1;
+	book = k_info[l_ptr->k_idx].sval;
+
+	/* Set the target (Okay if it is a dud target) */
+	borg_target(g_x, g_y);
+
+	/* Pretend the borg has enough mana for this */
+	bp_ptr->csp = bp_ptr->msp;
+
+	/* Cast the spell */
+	(void)borg_spell(realm, book, *b_spell);
+
+	/* Close your eyes */
+	if (faint)
+	{
+		/* confirm the spell use */
+		borg_keypress(' ');
+		borg_keypress('n');
+	}
+
+	/* Get the right amount of mana */
+	bp_ptr->csp = MAX(0, sv_mana - borg_magics[realm][book][spell].power);
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
+
+	/* Value */
+	return (b_n);
 }
 
 
@@ -8562,7 +8758,7 @@ static int borg_staff_damage_monster(int sval)
 /*
  *  Simulate/Apply the optimal result of using a "dispel" staff
  */
-static int borg_attack_staff_aux(int *b_slot)
+static int borg_attack_staff(int *b_slot)
 {
 	int i, k;
 	int n, b_n = 0;
@@ -8659,98 +8855,118 @@ static int borg_attack_aux(int what, int *slot, int *spell)
 	/* Analyze */
 	switch (what)
 	{
-		case BF_SPELLCASTER:
+		case BF_ROD:
 		{
-			/* Check the spells for damage */
-			return (borg_attack_spellcaster_aux(slot, spell));
-		}
-
-		case BF_SPELL_RESERVE:
-		{
-			/* Check the spells again if in trouble */
-			return (borg_attack_spell_reserve_aux(slot, spell));
-		}
-
-		case BF_MINDCRAFTER:
-		{
-			/* Check the Mindcrafter spells for damage */
-			return (borg_attack_mindcrafter_aux(spell));
-		}
-
-		case BF_STAFF:
-		{
-			/* Any damage inducing staff */
-			return (borg_attack_staff_aux(slot));
-		}
-
-		case BF_RING:
-		{
-			/* Any damage inducing ring */
-			return (borg_attack_ring_aux(slot));
+			/* Any damage inducing rod */
+			return (borg_attack_rod(slot));
 		}
 
 		case BF_DRAGON_ARMOUR:
 		{
 			/* Any damage inducing dragon armour */
-			return (borg_attack_dragon_aux());
+			return (borg_attack_dragon());
 		}
 
-		case BF_RACIAL:
+		case BF_RING:
 		{
-			/* Any damage inducing racial powers */
-			return (borg_attack_racial_aux());
-		}
-
-		case BF_MUTATE:
-		{
-			/* Any damage inducing mutation */
-			return (borg_attack_mutation_aux(slot, spell));
-		}
-
-		case BF_ROD:
-		{
-			/* Any damage inducing rod */
-			return (borg_attack_rod_aux(slot));
-		}
-
-		case BF_WAND:
-		{
-			/* Any damage inducing wand */
-			return (borg_attack_wand_aux(slot));
+			/* Any damage inducing ring */
+			return (borg_attack_ring(slot));
 		}
 
 		case BF_ARTIFACT:
 		{
 			/* Any damage inducing artifact */
-			return (borg_attack_aux_artifact(slot));
-		}
-
-		case BF_SCROLL:
-		{
-			/* Read some scroll that is nasty */
-			return (borg_attack_aux_scroll(slot));
+			return (borg_attack_artifact(slot));
 		}
 
 		case BF_LAUNCH:
 		{
 			/* Fire something with your launcher */
-			return (borg_attack_aux_launch(slot));
+			return (borg_attack_launch(slot));
 		}
 
 		case BF_OBJECT:
 		{
 			/* Object attack */
-			return (borg_attack_aux_object(slot, 1));
+			return (borg_attack_object(slot, 1));
+		}
+
+		case BF_SCROLL:
+		{
+			/* Read some scroll that is nasty */
+			return (borg_attack_scroll(slot));
 		}
 
 		case BF_THRUST:
 		{
 			/* Physical attack */
-			return (borg_attack_aux_thrust());
+			return (borg_attack_thrust());
 		}
+
+		case BF_SPELLCASTER:
+		{
+			/* Check the spells for damage */
+			return (borg_attack_spell(slot, spell));
+		}
+
+		case BF_MINDCRAFTER:
+		{
+			/* Check the Mindcrafter spells for damage */
+			return (borg_attack_mindcrafter(spell));
+		}
+
+		case BF_STAFF:
+		{
+			/* Any damage inducing staff */
+			return (borg_attack_staff(slot));
+		}
+
+		case BF_WAND:
+		{
+			/* Any damage inducing wand */
+			return (borg_attack_wand(slot));
+		}
+
+		case BF_RACIAL:
+		{
+			/* Any damage inducing racial powers */
+			return (borg_attack_racial());
+		}
+
+		case BF_MUTATE:
+		{
+			/* Any damage inducing mutation */
+			return (borg_attack_mutation(slot, spell));
+		}
+
+		case BF_SPELL_RESERVE:
+		{
+			/* Check the spells again if in trouble */
+			return (borg_attack_spell_reserve(FALSE, slot, spell));
+		}
+
+		case BF_MIND_RESERVE:
+		{
+			/* Check the Mindcrafter spells for damage */
+			return (borg_attack_mindcrafter_reserve(FALSE, spell));
+		}
+
+		case BF_SPELL_FAINT:
+		{
+			/* Check the spells again if in trouble */
+			return (borg_attack_spell_reserve(TRUE, slot, spell));
+		}
+
+		case BF_MIND_FAINT:
+		{
+			/* Check the Mindcrafter spells for damage */
+			return (borg_attack_mindcrafter_reserve(TRUE, spell));
+		}
+
 	}
 
-	borg_oops("# Invalid attack type.");
+	/* report code mistake */
+	borg_oops_fmt("The BF_value %d is not in the switch", what);
 
 	/* Oops */
 	return (0);
@@ -12307,7 +12523,7 @@ bool borg_check_rest(void)
 {
 	int i;
 
-	if ((borg_race == RACE_VAMPIRE) && !(FLAG(bp_ptr, TR_RES_LITE)))
+	if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE))
 	{
 		/* Do not rest in Sunlight */
 		if (!bp_ptr->depth)
