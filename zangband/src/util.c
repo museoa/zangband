@@ -2442,7 +2442,7 @@ static void msg_flush(int x)
 	byte a = TERM_L_BLUE;
 
 	/* Hack -- fake monochrome */
-	if (!use_color) a = TERM_WHITE;
+	if (!use_color || ironman_moria) a = TERM_WHITE;
 
 	/* Pause for response */
 	Term_putstr(x, 0, -1, a, "-more-");
@@ -2499,7 +2499,7 @@ void msg_print_color(byte attr, cptr msg)
 
 
 	/* Hack -- fake monochrome */
-	if (!use_color) attr = TERM_WHITE;
+	if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 	/* Hack -- Reset */
 	if (!msg_flag) p = 0;
@@ -2705,7 +2705,7 @@ void msg_format_color(byte attr, cptr fmt, ...)
 void c_put_str(byte attr, cptr str, int row, int col)
 {
 	/* Hack -- fake monochrome */
-	if (!use_color) attr = TERM_WHITE;
+	if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 	/* Position cursor, Dump the attr/text */
 	Term_putstr(col, row, -1, attr, str);
@@ -2729,7 +2729,7 @@ void put_str(cptr str, int row, int col)
 void c_prt(byte attr, cptr str, int row, int col)
 {
 	/* Hack -- fake monochrome */
-	if (!use_color) attr = TERM_WHITE;
+	if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 	/* Clear line, position cursor */
 	Term_erase(col, row, 255);
@@ -2774,7 +2774,7 @@ void c_roff(byte a, cptr str)
 
 
 	/* Hack -- fake monochrome */
-	if (!use_color) a = TERM_WHITE;
+	if (!use_color || ironman_moria) a = TERM_WHITE;
 
 
 	/* Obtain the size */
@@ -2931,8 +2931,16 @@ bool askfor_aux(char *buf, int len)
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	Term_putstr(x, y, -1, TERM_YELLOW, buf);
-
+	
+	/* Fake monochrome */
+	if (!use_color || ironman_moria)
+	{
+		Term_putstr(x, y, -1, TERM_WHITE, buf);
+	}
+	else
+	{
+		Term_putstr(x, y, -1, TERM_YELLOW, buf);
+	}
 
 	/* Process input */
 	while (!done)

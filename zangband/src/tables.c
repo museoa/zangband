@@ -6086,7 +6086,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  0, NULL,					"Number 199" },
 	{FALSE, 6, "ironman_empty_levels",	"Always create empty 'arena' levels" },
 	{TRUE,  6, "terrain_streams",		"Create terrain 'streamers' in the dungeon" },
-	{TRUE,  0, NULL,					"Number 202" },
+	{FALSE,  6, "ironman_moria",			"The good old days..." },
 	{FALSE, 6, "munchkin_death",		"Ask for saving death" },
 	{FALSE, 6, "ironman_rooms",			"Always generate very unusual rooms" },
 	{TRUE,  6, "maximize_mode",			"Maximize stats" },

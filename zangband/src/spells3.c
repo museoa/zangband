@@ -1089,7 +1089,7 @@ void fetch(int dir, int wgt, bool require_los)
 	}
 
 	/* Use a target */
-	if ((dir == 5) && target_okay())
+	if (!ironman_moria && (dir == 5) && target_okay())
 	{
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;

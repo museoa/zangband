@@ -155,7 +155,7 @@ static void show_status_bar(cptr letter, byte *colour, int num)
 {
 	int i;
 	
-	if (!use_color)
+	if (!use_color || ironman_moria)
 	{
 		/* Make the symbols white if colour is not used */
 		for (i = 0; i < num; i++)
@@ -1049,7 +1049,7 @@ static void health_redraw(void)
 		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
 
 		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
+		if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 		/* Dump the current "health" (use '*' symbols) */
 		Term_putstr(COL_INFO + 1, ROW_INFO, len, attr, "**********");
@@ -1299,7 +1299,7 @@ static void fix_message(void)
 			byte attr = message_color((s16b)i);
 
 			/* Hack -- fake monochrome */
-			if (!use_color) attr = TERM_WHITE;
+			if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 			/* Dump the message on the appropriate line */
 			Term_putstr(0, (h - 1) - i, -1, attr,
@@ -2799,6 +2799,29 @@ void calc_bonuses(void)
 		}
 	}
 
+	/* Remove flags that were not in Moria */
+	if (ironman_moria)
+	{
+		p_ptr->reflect = FALSE;
+		p_ptr->resist_pois = FALSE;
+		p_ptr->resist_fear = FALSE;
+		p_ptr->resist_lite = FALSE;
+		p_ptr->resist_dark = FALSE;
+		p_ptr->resist_confu = FALSE;
+		p_ptr->resist_sound = FALSE;
+		p_ptr->resist_shard = FALSE;
+		p_ptr->resist_nethr = FALSE;
+		p_ptr->resist_nexus = FALSE;
+		p_ptr->resist_chaos = FALSE;
+		p_ptr->resist_disen = FALSE;
+		
+		p_ptr->sh_fire = FALSE;
+		p_ptr->sh_elec = FALSE;
+		p_ptr->anti_tele = FALSE;
+		p_ptr->anti_magic = FALSE;
+		
+		p_ptr->lite = FALSE;
+	}
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)

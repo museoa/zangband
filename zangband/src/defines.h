@@ -2567,12 +2567,30 @@
  * Hack -- flag set 1 -- mask for "pval-dependant" flags.
  * Note that all "pval" dependant flags must be in "flags1".
  */
-#define TR1_PVAL_MASK   \
+#define TR1_PVAL_MASK \
 	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
      TR1_CON | TR1_CHR | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS)
 
+
+/*
+ * Hack - the high resists were not part of Moria.
+ */
+#define TR1_MORIA_MASK \
+	(~(TR1_CHAOTIC | TR1_VAMPIRIC | TR1_VORPAL | \
+	 TR1_BRAND_POIS | TR1_BRAND_ACID | TR1_BRAND_ELEC | \
+	 TR1_BRAND_FIRE | TR1_BRAND_COLD))
+
+#define TR2_MORIA_MASK \
+	(~(TR2_REFLECT | TR2_RES_POIS | TR2_RES_FEAR | TR2_RES_LITE | \
+	 TR2_RES_DARK | TR2_RES_CONF | TR2_RES_SOUND | \
+	 TR2_RES_SHARDS | TR2_RES_NETHER | TR2_RES_NEXUS | \
+	 TR2_RES_CHAOS | TR2_RES_DISEN))
+
+#define TR3_MORIA_MASK \
+	(~(TR3_SH_FIRE | TR3_SH_ELEC | TR3_NO_TELE | TR3_NO_MAGIC | \
+	 TR3_TY_CURSE | TR3_LITE))
 
 
 /*** Monster blow constants ***/
@@ -3351,7 +3369,7 @@
 /* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
 #define ironman_empty_levels	p_ptr->birth[8]
 #define terrain_streams			p_ptr->birth[9]
-/* {TRUE,  0, NULL,					"Number 202" }, p_ptr->birth[10] */
+#define ironman_moria			p_ptr->birth[10]
 #define munchkin_death			p_ptr->birth[11]
 #define ironman_rooms			p_ptr->birth[12]
 #define maximize_mode			p_ptr->birth[13]

@@ -3633,7 +3633,7 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay())
+	if (!ironman_moria && (dir == 5) && target_okay())
 	{
 		flg &= ~(PROJECT_STOP);
 		tx = p_ptr->target_col;
@@ -3660,7 +3660,7 @@ bool teleport_swap(int dir)
 	monster_type * m_ptr;
 	monster_race * r_ptr;
 
-	if ((dir == 5) && target_okay())
+	if (!ironman_moria && (dir == 5) && target_okay())
 	{
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
@@ -3797,7 +3797,7 @@ bool project_hook(int typ, int dir, int dam, u16b flg)
 	ty = p_ptr->py + ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay())
+	if (!ironman_moria && (dir == 5) && target_okay())
 	{
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;

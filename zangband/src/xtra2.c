@@ -2540,13 +2540,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
  *
  * Note that this code can be called from "get_aim_dir()".
  *
- * All locations must be on the current panel.  Consider the use of
- * "panel_bounds()" to allow "off-panel" targets, perhaps by using
- * some form of "scrolling" the map around the cursor.  XXX XXX XXX
- * That is, consider the possibility of "auto-scrolling" the screen
- * while the cursor moves around.  This may require changes in the
- * "update_mon()" code to allow "visibility" even if off panel, and
- * may require dynamic recalculation of the "temp" grid set.
+ * All locations must be on the current panel.
  *
  * Hack -- targeting/observing an "outer border grid" may induce
  * problems, so this is not currently allowed.

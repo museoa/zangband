@@ -1194,7 +1194,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
-				if (p_ptr->invuln || !use_color) a = TERM_WHITE;
+				if (p_ptr->invuln || !use_color || ironman_moria)
+				{
+					a = TERM_WHITE;
+				}
 				else if (p_ptr->wraith_form) a = TERM_L_DARK;
 			}
 
@@ -1288,7 +1291,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	/* Hack -- fake monochrome */
 	if (fake_monochrome)
 	{
-		if (p_ptr->invuln || !use_color) a = TERM_WHITE;
+		if (p_ptr->invuln || !use_color || ironman_moria) a = TERM_WHITE;
 		else if (p_ptr->wraith_form) a = TERM_L_DARK;
 	}
 
@@ -1325,7 +1328,7 @@ void print_rel(char c, byte a, int y, int x)
 		/* Hack -- fake monochrome */
 		if (fake_monochrome)
 		{
-			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
+			if (p_ptr->invuln || !use_color || ironman_moria) a = TERM_WHITE;
 			else if (p_ptr->wraith_form) a = TERM_L_DARK;
 		}
 

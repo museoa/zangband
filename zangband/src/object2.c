@@ -2006,6 +2006,9 @@ bool make_artifact(object_type *o_ptr)
 	int i;
 	int k_idx = 0;
 
+	/* Moria had no artifacts */
+	if (ironman_moria) return (FALSE);
+
 	/* No artifacts in the town */
 	if (!p_ptr->depth) return (FALSE);
 

@@ -1340,8 +1340,8 @@ static void roff_top(int r_idx)
 	a2 = r_ptr->x_attr;
 
 	/* Hack -- fake monochrome */
-	if (!use_color) a1 = TERM_WHITE;
-	if (!use_color) a2 = TERM_WHITE;
+	if (!use_color || ironman_moria) a1 = TERM_WHITE;
+	if (!use_color || ironman_moria) a2 = TERM_WHITE;
 
 
 	/* Clear the top line */

@@ -1805,6 +1805,30 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 		}
 #endif /* MUT3_SUS_STATS */
 	}
+	
+	/* Remove flags that were not in Moria */
+	if (ironman_moria)
+	{
+		p_ptr->reflect = FALSE;
+		p_ptr->resist_pois = FALSE;
+		p_ptr->resist_fear = FALSE;
+		p_ptr->resist_lite = FALSE;
+		p_ptr->resist_dark = FALSE;
+		p_ptr->resist_confu = FALSE;
+		p_ptr->resist_sound = FALSE;
+		p_ptr->resist_shard = FALSE;
+		p_ptr->resist_nethr = FALSE;
+		p_ptr->resist_nexus = FALSE;
+		p_ptr->resist_chaos = FALSE;
+		p_ptr->resist_disen = FALSE;
+		
+		p_ptr->sh_fire = FALSE;
+		p_ptr->sh_elec = FALSE;
+		p_ptr->anti_tele = FALSE;
+		p_ptr->anti_magic = FALSE;
+		
+		p_ptr->lite = FALSE;
+	}
 }
 
 
@@ -1831,7 +1855,7 @@ static void display_player_equippy(int y, int x)
 		c = object_char(o_ptr);
 
 		/* No color */
-		if (!use_color) a = TERM_WHITE;
+		if (!use_color || ironman_moria) a = TERM_WHITE;
 
 		/* Clear the part of the screen */
 		if (!o_ptr->k_idx)
@@ -2168,7 +2192,7 @@ static void display_player_stat_info(void)
 			}
 
 			/* Handle monochrome */
-			if (!use_color) a = TERM_WHITE;
+			if (!use_color || ironman_moria) a = TERM_WHITE;
 
 			/* Dump proper character */
 			Term_putch(col, row + stat, a, c);
@@ -2265,7 +2289,7 @@ static void display_player_stat_info(void)
 
 
 		/* No color */
-		if (!use_color) a = TERM_WHITE;
+		if (!use_color || ironman_moria) a = TERM_WHITE;
 
 		/* Dump */
 		Term_putch(col, row + stat, a, c);

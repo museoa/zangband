@@ -99,8 +99,15 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) = k_ptr->flags1 | o_ptr->flags1;
 	(*f2) = k_ptr->flags2 | o_ptr->flags2;
 	(*f3) = k_ptr->flags3 | o_ptr->flags3;
-}
 
+	/* Remove the Moria flags */
+	if (ironman_moria)
+	{
+		(*f1) &= TR1_MORIA_MASK;
+		(*f2) &= TR2_MORIA_MASK;
+		(*f3) &= TR3_MORIA_MASK;
+	}
+}
 
 
 /*
@@ -137,6 +144,14 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f1) |= o_ptr->kn_flags1;
 		(*f2) |= o_ptr->kn_flags2;
 		(*f3) |= o_ptr->kn_flags3;
+	}
+	
+	/* Remove the Moria flags */
+	if (ironman_moria)
+	{
+		(*f1) &= TR1_MORIA_MASK;
+		(*f2) &= TR2_MORIA_MASK;
+		(*f3) &= TR3_MORIA_MASK;
 	}
 }
 
@@ -1624,7 +1639,7 @@ void display_inven(void)
 		}
 
 		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
+		if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 		/* Display the entry itself */
 		Term_putstr(3, i, n, attr, o_name);
@@ -1701,7 +1716,7 @@ void display_equip(void)
 		}
 
 		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
+		if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 		/* Display the entry itself */
 		Term_putstr(3, i - INVEN_WIELD, n, attr, o_name);
@@ -1805,6 +1820,12 @@ void show_inven(void)
 		{
 			out_color[k] = TERM_L_DARK;
 		}
+		
+		/* Fake monochrome */
+		if (!use_color || ironman_moria)
+		{
+			out_color[k] = TERM_WHITE;
+		}
 
 		(void)strcpy(out_desc[k], o_name);
 
@@ -1852,6 +1873,12 @@ void show_inven(void)
 #ifdef AMIGA
 		if (a & 0x80) a |= 0x40;
 #endif
+
+		/* Fake monochrome */
+		if (!use_color || ironman_moria)
+		{
+			a = TERM_WHITE;
+		}
 
 		Term_draw(col + 3, j + 1, a, c);
 
@@ -1928,6 +1955,12 @@ void show_equip(void)
 		{
 			out_color[k] = TERM_L_DARK;
 		}
+		
+		/* Fake monochrome */
+		if (!use_color || ironman_moria)
+		{
+			out_color[k] = TERM_WHITE;
+		}
 
 		(void)strcpy(out_desc[k], o_name);
 
@@ -1978,6 +2011,12 @@ void show_equip(void)
 #ifdef AMIGA
 		if (a & 0x80) a |= 0x40;
 #endif
+
+		/* Fake monochrome */
+		if (!use_color || ironman_moria)
+		{
+			out_color[k] = TERM_WHITE;
+		}
 
 		Term_draw(col + 3, j + 1, a, c);
 
