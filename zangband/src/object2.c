@@ -866,7 +866,7 @@ void object_tried(object_type *o_ptr)
 }
 
 /*
- * The player has know *identified* the item
+ * The player has now *identified* the item
  */
 void object_mental(object_type *o_ptr)
 {
