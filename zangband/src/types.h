@@ -1360,15 +1360,6 @@ struct player_type
 	s16b wraith_form;	/* Timed wraithform */
 	s16b resist_magic;	/* Timed Resist Magic (later) */
 
-	s16b tim_xtra1;	/* Later */
-	s16b tim_xtra2;	/* Later */
-	s16b tim_xtra3;	/* Later */
-	s16b tim_xtra4;	/* Later */
-	s16b tim_xtra5;	/* Later */
-	s16b tim_xtra6;	/* Later */
-	s16b tim_xtra7;	/* Later */
-	s16b tim_xtra8;	/* Later */
-
 	u32b muta1;	/* Mutations */
 	u32b muta2;	/* Mutations */
 	u32b muta3;	/* Mutations */

@@ -996,14 +996,6 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->tim_esp);
 	wr_s16b(p_ptr->wraith_form);
 	wr_s16b(p_ptr->resist_magic);
-	wr_s16b(p_ptr->tim_xtra1);
-	wr_s16b(p_ptr->tim_xtra2);
-	wr_s16b(p_ptr->tim_xtra3);
-	wr_s16b(p_ptr->tim_xtra4);
-	wr_s16b(p_ptr->tim_xtra5);
-	wr_s16b(p_ptr->tim_xtra6);
-	wr_s16b(p_ptr->tim_xtra7);
-	wr_s16b(p_ptr->tim_xtra8);
 
 	wr_s16b(p_ptr->chaos_patron);
 	wr_u32b(p_ptr->muta1);

@@ -1285,14 +1285,6 @@ static void rd_extra(void)
 		p_ptr->tim_esp = 0;
 		p_ptr->wraith_form = 0;
 		p_ptr->resist_magic = 0;
-		p_ptr->tim_xtra1 = 0;
-		p_ptr->tim_xtra2 = 0;
-		p_ptr->tim_xtra3 = 0;
-		p_ptr->tim_xtra4 = 0;
-		p_ptr->tim_xtra5 = 0;
-		p_ptr->tim_xtra6 = 0;
-		p_ptr->tim_xtra7 = 0;
-		p_ptr->tim_xtra8 = 0;
 		p_ptr->chaos_patron = get_chaos_patron();
 		p_ptr->muta1 = 0;
 		p_ptr->muta2 = 0;
@@ -1305,14 +1297,11 @@ static void rd_extra(void)
 		rd_s16b(&p_ptr->tim_esp);
 		rd_s16b(&p_ptr->wraith_form);
 		rd_s16b(&p_ptr->resist_magic);
-		rd_s16b(&p_ptr->tim_xtra1);
-		rd_s16b(&p_ptr->tim_xtra2);
-		rd_s16b(&p_ptr->tim_xtra3);
-		rd_s16b(&p_ptr->tim_xtra4);
-		rd_s16b(&p_ptr->tim_xtra5);
-		rd_s16b(&p_ptr->tim_xtra6);
-		rd_s16b(&p_ptr->tim_xtra7);
-		rd_s16b(&p_ptr->tim_xtra8);
+		if (sf_version < 32)
+		{
+			/* Ignore unused counters */
+			strip_bytes(16);
+		}
 		rd_s16b(&p_ptr->chaos_patron);
 		rd_u32b(&p_ptr->muta1);
 		rd_u32b(&p_ptr->muta2);
