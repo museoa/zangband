@@ -366,6 +366,9 @@ list_item *look_up_equip_slot(int slot)
 	list_item *l_ptr;
 
 	int i;
+	
+	/* Paranoia */
+	if (slot < 0 || slot > equip_num) return (NULL);
 
 	/* Look in equipment */
 	l_ptr = &equipment[slot];
@@ -2507,7 +2510,7 @@ void borg_update_frame(void)
 	bp_ptr->max_lev = p_ptr->max_lev;
 
 	/* Note "Winner" */
-	bp_ptr->winner = p_ptr->state.total_winner;
+	bp_ptr->winner = (char) p_ptr->state.total_winner;
 
 	/* Assume experience is fine */
 	bp_ptr->status.fixexp = FALSE;
@@ -2865,10 +2868,10 @@ static void borg_notice_home_flags(list_item *l_ptr)
 
 	/* Count Sustains */
 	if (l_ptr->kn_flags2 & TR2_SUST_STR) num_sustain_str += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_INT) num_sustain_str += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_WIS) num_sustain_str += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_DEX) num_sustain_str += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_INT) num_sustain_int += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_WIS) num_sustain_wis += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_DEX) num_sustain_dex += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_con += l_ptr->number;
 	if (l_ptr->kn_flags2 & TR2_SUST_STR &&
 		l_ptr->kn_flags2 & TR2_SUST_INT &&
 		l_ptr->kn_flags2 & TR2_SUST_WIS &&
@@ -2921,6 +2924,9 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 	list_item *w_ptr;
 
 	dupe_count = l_ptr->number - 1;
+	
+	/* Paranoia */
+	if (dupe_count <= 0) return;
 
 	/* Look for other items before this one that are the same */
 	for (x = 0; x < i; x++)
@@ -2970,7 +2976,7 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 	}
 
 	/* There can be one dupe of rings because there are two ring slots. */
-	if (l_ptr->tval == TV_RING && dupe_count) dupe_count--;
+	if (l_ptr->tval == TV_RING) dupe_count--;
 
 	/* Add this items count to the total duplicate count */
 	num_duplicate_items += dupe_count;
@@ -3370,7 +3376,8 @@ static void borg_notice_home_spells(void)
 
 	/* Handle "identify" -> infinite identifies */
 	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
-		borg_spell_legal(REALM_ARCANE, 3, 2))
+		borg_spell_legal(REALM_ARCANE, 3, 2) ||
+		borg_mindcr_legal(MIND_PSYCHOMETRY, 25))
 	{
 		num_ident += 1000;
 	}
@@ -3378,6 +3385,7 @@ static void borg_notice_home_spells(void)
 	if (borg_spell_legal(REALM_NATURE, 2, 5) ||
 		borg_spell_legal(REALM_SORCERY, 1, 7) ||
 		borg_spell_legal(REALM_DEATH, 3, 2) ||
+		borg_spell_legal(REALM_TRUMP, 3, 1) ||
 		borg_spell_legal(REALM_LIFE, 3, 5))
 	{
 		num_ident += 1000;
@@ -3853,13 +3861,13 @@ static void borg_notice_home_aux(void)
 	/* Scan the home */
 	for (i = 0; i < (home_num + EQUIP_MAX); i++)
 	{
-		if (i < STORE_INVEN_MAX)
+		if (i < home_num)
 			l_ptr = &borg_home[i];
 		else
 			l_ptr = look_up_equip_slot(i - home_num);
 
 		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr || !l_ptr->k_idx) continue;
 
 		/* Don't count items we are swapping */
 		if (l_ptr->treat_as == TREAT_AS_SWAP) continue;
@@ -3894,6 +3902,7 @@ static void borg_notice_home_aux(void)
 
 		/* Hack - simulate change in number of items */
 		if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number = 1;
+		if (l_ptr->treat_as == TREAT_AS_SWAP) l_ptr->number = 1;	
 		if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
 
 		/* Notice item flags */

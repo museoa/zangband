@@ -2907,6 +2907,7 @@ bool borg_caution(void)
 		borg_note("# Resting here, waiting for Recall.");
 
 		/* rest here until lift off */
+		borg_keypress(ESCAPE);
 		borg_keypress('R');
 		borg_keypress('\n');
 
@@ -3813,6 +3814,8 @@ bool borg_caution(void)
  *   Using scrolls
  *   Activating Artifacts
  *   Activate Dragon Armour
+ *   Racial Powers
+ *   Elemental Rings
  */
 
 #define	BF_LAUNCH_NORMAL		0
@@ -3976,7 +3979,11 @@ bool borg_caution(void)
 #define	BF_RACIAL_SPRITE		145
 #define	BF_RACIAL_YEEK			146
 
-#define	BF_MAX					147
+#define    BF_RING_ACID 		147
+#define    BF_RING_FLAMES	 	148
+#define    BF_RING_ICE  		149
+
+#define    BF_MAX				150
 
 
 
@@ -6800,6 +6807,42 @@ static int borg_attack_aux_dragon(int sval, int rad, int dam, int typ)
 	return (b_n);
 }
 
+/*
+ * Simulate/Apply the optimal result of ACTIVATING an elemental RING
+ */
+static int borg_attack_aux_ring_bolt(int sval, int rad, int dam, int typ)
+{
+	int b_n;
+
+	/* No firing while blind, confused, or hallucinating */
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+	 	bp_ptr->status.image) return (0);
+
+	/* Paranoia */
+	if (borg_simulate && (randint0(100) < 5)) return (0);
+
+	/* Look for that ring and charged */
+	if (!borg_equips_ring(sval)) return (0);
+
+	/* Choose optimal location */
+	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
+
+	/* Simulation */
+	if (borg_simulate) return (b_n);
+
+	/* Activate the ring */
+	(void)borg_activate_ring(sval);
+
+	/* Use target */
+	borg_keypress('5');
+
+	/* Set our shooting flag */
+	successful_target = -1;
+
+	/* Value */
+	return (b_n);
+}
+
 /* Whirlwind--
  * Attacks adjacent monsters
  */
@@ -6812,7 +6855,7 @@ static int borg_attack_aux_nature_whirlwind(void)
 
 	map_block *mb_ptr;
 
-	if (!borg_spell_fail(REALM_NATURE, 3, 1, 20)) return 0;
+	if (!borg_spell_okay_fail(REALM_NATURE, 3, 1, 20)) return 0;
 
 	/* Scan neighboring grids */
 	for (dir = 0; dir <= 9; dir++)
@@ -6856,7 +6899,7 @@ static int borg_attack_aux_spell_callvoid(void)
 
 	map_block *mb_ptr;
 
-	if (!borg_spell_fail(REALM_CHAOS, 3, 7, 20)) return (0);
+	if (!borg_spell_okay_fail(REALM_CHAOS, 3, 7, 20)) return (0);
 	/* Scan neighboring grids */
 	for (dir = 0; dir <= 9; dir++)
 	{
@@ -7774,7 +7817,7 @@ static int borg_attack_aux(int what)
 			dam = 3 + ((bp_ptr->lev - 1) / 4) * (3 + (bp_ptr->lev / 15)) / 2;
 			rad = -1;
 			return (borg_attack_aux_mind_bolt
-					(MIND_NEURAL_BL, 2, rad, dam, GF_PSI));
+					(MIND_NEURAL_BL, 1, rad, dam, GF_PSI));
 		}
 
 		case BF_MIND_PULVERISE:
@@ -8349,7 +8392,33 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_racial_bolt
 					(RACE_YEEK, rad, dam, GF_OLD_SLEEP));
 		}
+		
+		case BF_RING_ACID:
+		{
+			/* Ring -- acid ball */
+			rad = 2;
+			dam = 100;
+			return (borg_attack_aux_ring_bolt
+					(SV_RING_ACID, rad, dam, GF_ACID));
+		}
 
+		case BF_RING_FLAMES:
+		{
+			/* Ring -- fire ball */
+			rad = 2;
+			dam = 100;
+			return (borg_attack_aux_ring_bolt
+					(SV_RING_FLAMES, rad, dam, GF_FIRE));
+		}
+
+		case BF_RING_ICE:
+		{
+			/* Ring -- cold ball */
+			rad = 2;
+			dam = 100;
+			return (borg_attack_aux_ring_bolt
+					(SV_RING_ICE, rad, dam, GF_COLD));
+		}
 	}
 
 	borg_oops("# Invalid attack type.");

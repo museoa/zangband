@@ -190,10 +190,10 @@ bool borg_item_icky(list_item *l_ptr)
 		slot = borg_wield_slot(l_ptr);
 
 		/* Obtain my equipped item in the slot */
-		l_ptr = &equipment[slot];
+		l_ptr = look_up_equip_slot(slot);
 
 		/* Is my item an ego or artifact? */
-		if (borg_obj_is_ego_art(l_ptr)) return (TRUE);
+		if (l_ptr && borg_obj_is_ego_art(l_ptr)) return (TRUE);
 	}
 	/* Assume not icky, I should have extra ID for the item */
 	return (FALSE);
@@ -663,13 +663,18 @@ bool borg_check_lite(void)
 	{
 		/* Call light */
 		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
+			borg_activate_artifact(ART_ELENDIL, FALSE) ||
+			borg_activate_artifact(ART_THRAIN, FALSE) ||
+			borg_activate_rand_art(ACT_LIGHT) ||
+			borg_activate_rand_art(ACT_MAP_LIGHT) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
 			borg_spell(REALM_ARCANE, 0, 5) ||
 			borg_spell(REALM_CHAOS, 0, 2) ||
 			borg_spell(REALM_NATURE, 0, 4) ||
-			borg_spell(REALM_SORCERY, 0, 3) || borg_spell(REALM_LIFE, 0, 4))
+			borg_spell(REALM_SORCERY, 0, 3) ||
+			borg_spell(REALM_LIFE, 0, 4))
 		{
 			borg_note("# Illuminating the room");
 
@@ -788,13 +793,18 @@ bool borg_check_lite_only(void)
 	{
 		/* Call light */
 		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
+			borg_activate_artifact(ART_ELENDIL, FALSE) ||
+			borg_activate_artifact(ART_THRAIN, FALSE) ||
+			borg_activate_rand_art(ACT_LIGHT) ||
+			borg_activate_rand_art(ACT_MAP_LIGHT) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
 			borg_spell(REALM_ARCANE, 0, 5) ||
 			borg_spell(REALM_CHAOS, 0, 2) ||
 			borg_spell(REALM_NATURE, 0, 4) ||
-			borg_spell(REALM_SORCERY, 0, 3) || borg_spell(REALM_LIFE, 0, 4))
+			borg_spell(REALM_SORCERY, 0, 3) ||
+			borg_spell(REALM_LIFE, 0, 4))
 		{
 			borg_note("# Illuminating the room prior to resting");
 
@@ -814,7 +824,8 @@ bool borg_check_lite_only(void)
 		/* Wizard lite */
 		if (borg_activate_artifact(ART_THRAIN, FALSE) ||
 			borg_spell(REALM_ARCANE, 3, 7) ||
-			borg_spell(REALM_SORCERY, 3, 3) || borg_spell(REALM_NATURE, 3, 5))
+			borg_spell(REALM_SORCERY, 3, 3) ||
+			borg_spell(REALM_NATURE, 3, 5))
 		{
 			borg_note("# Illuminating the dungeon prior to resting");
 
@@ -1390,11 +1401,12 @@ bool borg_recharging(void)
 		if (!charge) continue;
 
 		/* Attempt to recharge */
-		if (borg_spell(REALM_SORCERY, 0, 7) ||
+		if (borg_activate_artifact(ART_THINGOL, FALSE) ||
+			borg_activate_rand_art(ACT_RECHARGE) ||
+			borg_spell(REALM_SORCERY, 0, 7) ||
 			borg_spell(REALM_ARCANE, 3, 0) ||
 			borg_spell(REALM_CHAOS, 2, 2) ||
-			borg_read_scroll(SV_SCROLL_RECHARGING) ||
-			borg_activate_artifact(ART_THINGOL, FALSE))
+			borg_read_scroll(SV_SCROLL_RECHARGING))
 		{
 			/* Message */
 			borg_note_fmt("Recharging %s", l_ptr->o_name);
@@ -1949,7 +1961,7 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 	if (!l_ptr) return (FALSE);
 
 	/* Demand that the item is identified */
-	if (borg_obj_known_p(l_ptr)) return (FALSE);
+	if (!borg_obj_known_p(l_ptr)) return (FALSE);
 	
 	/* Some non-ego items should be *id'ed too */
 	if (l_ptr->tval == TV_SHIELD &&
@@ -2027,9 +2039,6 @@ bool borg_obj_star_id_able(list_item *l_ptr)
  * pick a random item and identify it if necessary", which might lower
  * the preference for identifying items that appear early in the pack.
  * Also, preventing inventory motion would allow proper time-stamping.
- *
- * This function is also repeated to *ID* objects.  Right now only objects
- * with random high resist or random powers are *ID*'d
  */
 bool borg_test_stuff(void)
 {
@@ -2067,7 +2076,7 @@ bool borg_test_stuff(void)
 		break;
 	}
 
-	/* Don't bother with the inventory if you found something in the equipment */
+	/* Only bother with the inventory if you found nothing in the equipment */
 	if (b_i < 0)
 	{
 		/* Look for an ego or artifact item to identify (inventory) */
@@ -2078,7 +2087,7 @@ bool borg_test_stuff(void)
 			if (borg_obj_known_p(l_ptr)) continue;
 
 			/* Assume nothing */
-			v = 0;
+			v = -1;
 
 			/* If the borg has unlimited identify then it should identify everything */
 			if (bp_ptr->able.id >= 100) v = 1;
@@ -2173,6 +2182,7 @@ bool borg_test_stuff(void)
 	{
 		/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
 		if (borg_activate_artifact(ART_ERIRIL, FALSE) ||
+			borg_activate_rand_art(ACT_ID_PLAIN) ||
 			borg_zap_rod(SV_ROD_IDENTIFY) ||
 			borg_spell(REALM_ARCANE, 3, 2) ||
 			borg_spell(REALM_SORCERY, 1, 1) ||
@@ -2223,6 +2233,14 @@ bool borg_test_stuff(void)
 	return (FALSE);
 }
 
+
+/*
+ * The basic method of *id*ing is that the first *id*-worthy item is *id*ed
+ * There are not so many items that have to be *id*ed thanks to
+ * borg_item_star_id_able.  Also, if there is a *id*-spell available but not
+ * an id-spell (or rod) then all identifying is done with *id*.  This way the
+ * borg does not have to worry about id-ing so much.
+ */
 bool borg_test_stuff_star(void)
 {
 	int i, b_i = -1;
@@ -2295,8 +2313,14 @@ bool borg_test_stuff_star(void)
 			borg_spell(REALM_TRUMP, 3, 1) ||
 			borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
 		{
-			if (!inven)
+			if (inven)
 			{
+				l_ptr = &inventory[b_i];
+			}
+			else
+			{
+				l_ptr = &equipment[b_i];
+				
 				/* Switch to equipment but not in case you go there immediately */
 				for (i = 0; i < inven_num; i++)
 				{
@@ -2327,7 +2351,110 @@ bool borg_test_stuff_star(void)
 				my_need_stat_check[i] = TRUE;
 				my_stat_max[i] = 0;
 			}
-		
+
+			/* Success */
+			return (TRUE);
+		}
+	}
+
+	/* Nothing to do */
+	return (FALSE);
+}
+
+
+bool borg_test_stuff_pseudo(void)
+{
+	int i, b_i = -1;
+
+	list_item *l_ptr;
+
+	bool inven = FALSE;
+
+	/* Only valid for mindcrafters between lvl 14 and 25 */
+	if (borg_class != CLASS_MINDCRAFTER || 
+	 	bp_ptr->lev < 15 || bp_ptr->lev > 24) return (FALSE);
+
+	/* don't ID stuff when you can't recover spent spell point immediately */
+	if (bp_ptr->csp < 50 &&
+	 	!borg_check_rest() &&
+	 	borg_mindcr_legal(MIND_PSYCHOMETRY, 15))
+	 	return (FALSE);
+
+	/* No ID if in danger */
+	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
+
+	/* Look for an item to pesudo identify */
+	for (i = 0; i < equip_num + inven_num; i++)
+	{
+	 	if (i >= equip_num)
+	 	{
+	 		inven = TRUE;
+	 		l_ptr = &inventory[i - equip_num];
+	 	}
+	 	else
+	 	{
+	 		l_ptr = look_up_equip_slot(i);
+
+	 		/* Ignore empty slots */
+	 		if (!l_ptr) continue;
+	 	}
+
+	 	/* Ignore items that were id'd before */
+	 	if (borg_obj_known_p(l_ptr)) continue;
+
+	 	/* Item has to be weapon, armor or ammo */
+	 	if (l_ptr->tval < TV_SHOT || l_ptr->tval > TV_DRAG_ARMOR) continue;
+
+	 	/* Item does not have a pseudo-id already (or comment) */
+	 	if (strstr(l_ptr->o_name, "{")) continue;
+
+	 	/* Track it */
+	 	if (inven)
+	 	{
+	 		b_i = i - equip_num;
+	 	}
+	 	else
+	 	{
+	 		b_i = i;
+	 	}
+
+	 	break;
+	}
+
+	/* Found something */
+	if (b_i >= 0)
+	{
+	 	if (borg_mindcr(MIND_PSYCHOMETRY, 15))
+	 	{
+	 		if (inven)
+	 		{
+	 			l_ptr = &inventory[b_i];
+	 		}
+	 		else
+	 		{
+	 			l_ptr = &equipment[b_i];
+
+	 			/* Switch to equipment but not in case you go there immediately */
+	 			for (i = 0; i < inven_num; i++)
+	 			{
+	 				if (inventory[i].tval >= TV_SHOT &&
+	 					inventory[i].tval <= TV_DRAG_ARMOR)
+	 				{
+	 					borg_keypress('/');
+	 					break;
+	 				}
+	 			}
+	 		}
+
+	 		/* Log -- may be cancelled */
+	 		borg_note_fmt("# pseudo identifying %s.", l_ptr->o_name);
+
+	 		/* Select the item */
+	 		borg_keypress(I2A(b_i));
+
+	 		/* press enter a few time (get rid of display) */
+	 		borg_keypress(ESCAPE);
+	 	
 			/* Success */
 			return (TRUE);
 		}

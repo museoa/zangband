@@ -14,7 +14,6 @@
 #include "zborg7.h"
 #include "zborg8.h"
 
-#if 0
 
 /*
  * Determine if an item can "absorb" a second item
@@ -65,34 +64,38 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_SCROLL:
+		case TV_ROD:
 		{
-			/* Food and Potions and Scrolls */
+			/* Food and Potions and Scrolls and Rods */
 
 			/* Assume okay */
 			break;
 		}
 
 		case TV_STAFF:
-		case TV_WAND:
 		{
-			/* Staffs and Wands */
+			/* Staffs */
 
 			/* Require knowledge */
 			if (!borg_obj_known_p(l_ptr) ||
 				!borg_obj_known_p(q_ptr)) return (FALSE);
-
-			/* Fall through */
-		}
-
-		case TV_ROD:
-		{
-			/* Staffs and Wands and Rods */
-
+			
 			/* Require identical charges */
 			if (l_ptr->pval != q_ptr->pval) return (FALSE);
-
-			/* Probably okay */
+			
 			break;
+		}
+		
+		case TV_WAND:
+ 		{
+			/* Wands */
+ 
+			/* Require equal knowledge */
+			if (borg_obj_known_p(l_ptr) !=
+				borg_obj_known_p(q_ptr)) return (FALSE);
+ 
+ 			/* Probably okay */
+ 			break;
 		}
 
 		case TV_BOW:
@@ -114,12 +117,25 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 
 			return (FALSE);
 		}
+	
+		case TV_LITE:
+		{
+			/* Lights */
+
+			/* Only Torches can stack */
+			if (k_info[l_ptr->k_idx].sval != SV_LITE_TORCH) return (FALSE);
+
+			/* Require identical charges */
+			if (l_ptr->timeout != q_ptr->timeout) return (FALSE);
+
+			/* Probably okay */
+			break;
+		}
 
 		case TV_RING:
 		case TV_AMULET:
-		case TV_LITE:
 		{
-			/* Rings, Amulets, Lites */
+			/* Rings, Amulets */
 
 			/* Require full knowledge of both items */
 			if (!borg_obj_known_p(l_ptr) ||
@@ -141,17 +157,14 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 
 			/* Require identical "pval" code */
 			if (l_ptr->pval != q_ptr->pval) return (FALSE);
-
-			/* Hack -- "artifact" or "ego" items don't stack */
-			if (borg_obj_is_ego_art(l_ptr)) return (FALSE);
+			
+			/* Hack --  items with hidden flags don't stack */
+			if (borg_obj_star_id_able(l_ptr)) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
 			if (l_ptr->kn_flags1 || q_ptr->kn_flags1) return (FALSE);
 			if (l_ptr->kn_flags2 || q_ptr->kn_flags2) return (FALSE);
 			if (l_ptr->kn_flags3 || q_ptr->kn_flags3) return (FALSE);
-
-			/* Hack -- Never stack recharging items */
-			if (l_ptr->timeout || q_ptr->timeout) return (FALSE);
 
 			/* Require identical "values" */
 			if (l_ptr->ac != q_ptr->ac) return (FALSE);
@@ -185,9 +198,6 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 	/* They match, so they must be similar */
 	return (TRUE);
 }
-
-#endif /* 0 */
-
 
 /*
  * This file handles the highest level goals, and store interaction.
@@ -308,7 +318,6 @@ static void borg_think_shop_buy(int item)
 	goal_shop = -1;
 }
 
-#if 0
 
 /*
  * Test to see if the item can be merged with anything in the home.
@@ -351,7 +360,7 @@ static int borg_think_home_sell_aux2(void)
 
 	/**** Get the starting best (current) ****/
 
-	/* Evaluate the home  */
+	/* Evaluate the home  */;
 	best_power = borg_power_home() + borg_power();
 
 	/* Try merges */
@@ -369,15 +378,13 @@ static int borg_think_home_sell_aux2(void)
 		 * Do not dump stuff at home that is not fully id'd and should be
 		 * This is good with random artifacts.
 		 */
-		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
+		if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr)) continue;
 
 		/* Can we merge with other items in the home? */
 		q_ptr = borg_can_merge_home(l_ptr);
 
 		/* No item to merge with? */
 		if (!q_ptr) continue;
-
-		q_ptr->treat_as = TREAT_AS_MORE;
 
 		if (l_ptr->number == 1)
 		{
@@ -429,7 +436,7 @@ static int borg_think_home_sell_aux2(void)
 		 * Do not dump stuff at home that is not fully id'd and should be
 		 * This is good with random artifacts.
 		 */
-		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
+		if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr)) continue;
 
 		if (l_ptr->number == 1)
 		{
@@ -494,7 +501,6 @@ static bool borg_think_home_sell_aux(void)
 	return (FALSE);
 }
 
-#endif /* 0 */
 
 /*
  * Determine if an item can be sold in the given store
@@ -879,7 +885,6 @@ static bool borg_think_home_buy_aux(void)
 	return (FALSE);
 }
 
-#if 0
 
 /*
  * Step 5 -- buy "interesting" things from a shop (to be used later)
@@ -962,7 +967,6 @@ static bool borg_think_shop_grab_aux(int shop)
 	return (FALSE);
 }
 
-#endif /* 0 */
 
 /*
  * Step 6 -- take "useless" things from the home (to be sold)
@@ -984,7 +988,7 @@ static bool borg_think_home_grab_aux(void)
 		list_item *l_ptr = &borg_home[n];
 
 		/* Remove the item */
-		l_ptr->treat_as = TREAT_AS_SWAP;
+		l_ptr->treat_as = TREAT_AS_LESS;
 
 		/* Evaluate the home */
 		s = borg_power_home() + borg_power();
@@ -1118,7 +1122,7 @@ bool borg_think_store(void)
 	if (shop_num == home_shop)
 	{
 		/* Step 1 -- Sell items to the home */
-		/* if (borg_think_home_sell_aux()) return (TRUE); */
+		if (borg_think_home_sell_aux()) return (TRUE);
 
 		/* Step 4 -- Buy items from the home (for the player) */
 		if (borg_think_home_buy_aux()) return (TRUE);
@@ -1137,7 +1141,7 @@ bool borg_think_store(void)
 		if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
 
 		/* Step 6 -- Buy items from the shops (for the home) */
-		/* if (borg_think_shop_grab_aux(shop_num)) return (TRUE); */
+		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
 
 		borg_note("# Nothing to do in the store.");
 	}
@@ -1623,6 +1627,9 @@ bool borg_think_dungeon(void)
 
 	/* Use things */
 	if (borg_use_things()) return (TRUE);
+	
+	/* Pseudo identify unknown things */
+	if (borg_test_stuff_pseudo()) return (TRUE);
 
 	/* Identify unknown things */
 	if (borg_test_stuff()) return (TRUE);

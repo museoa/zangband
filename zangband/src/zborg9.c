@@ -1452,7 +1452,8 @@ static void borg_parse_aux(cptr msg, int len)
 		(suffix(msg, " seems to be cursed.")))
 	{
 		/* Hack -- Oops */
-		borg_wearing_cursed = borg_wears_cursed(FALSE);
+		borg_wearing_cursed = TRUE;
+		(void) borg_wears_cursed(FALSE);
 		return;
 	}
 
@@ -3219,12 +3220,12 @@ void do_cmd_borg(void)
 		{
 			/* Command: toggle "flags" */
 						
+			/* Save and partly clear the screen */
 			Term_save();
+			clear_region(0, 1, 6);
+
 			do
 			{
-				/* Clear the screen */
-				Term_clear();
-				
 				/* List the possibilities */
 				prtf(1, 2,
 					"a)  The borg stops when he wins:         %s    (borg_stop_king)\n"

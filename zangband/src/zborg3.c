@@ -1539,6 +1539,16 @@ bool borg_activate_artifact(int name1, bool secondary)
 }
 
 /*
+ * Stub function until activations are exported properly
+ */
+bool borg_activate_rand_art(int effect)
+{
+	(void) effect;
+	
+	return (FALSE);
+}
+
+/*
  * Hack -- check and see if borg is wielding a dragon armor and if
  * he will pass a fail check.
  */
@@ -1627,6 +1637,109 @@ bool borg_activate_dragon(int drag_sval)
 	return (TRUE);
 }
 
+/*
+ * Hack -- check and see if borg is wielding a ring and if
+ * he will pass a fail check.
+ */
+bool borg_equips_ring(int ring_sval)
+{
+	int lev, chance;
+
+	/* Check the equipment */
+	list_item *l_ptr = &equipment[EQUIP_LEFT];
+
+	/* Get object type */
+	object_kind *k_ptr = &k_info[l_ptr->k_idx];
+
+	/* Skip incorrect rings */
+	if (k_info[l_ptr->k_idx].sval != ring_sval ||
+	 	!borg_obj_known_p(l_ptr) ||
+	 	l_ptr->timeout)
+	{
+	 	/* Try the other ring slot */
+	 	l_ptr = &equipment[EQUIP_RIGHT];
+
+	 	/* Get object type */
+	 	k_ptr = &k_info[l_ptr->k_idx];
+
+	 	if (k_ptr->sval != ring_sval ||
+	 		!borg_obj_known_p(l_ptr) ||
+	 		l_ptr->timeout) return (FALSE);
+	}
+
+	/* check on fail rate
+	 * The fail check is automatic for rings.  It is an attack
+	 * item.  He should not sit around failing 5 or 6 times in a row.
+	 * he should attempt to activate it, and if he is likely to fail, then
+	 * eh should look at a different attack option.  We are assuming
+	 * that the fail rate is about 50%.  So He may still try to activate it
+	 * and fail.  But he will not even try if he has negative chance or
+	 * less than twice the USE_DEVICE variable
+	 */
+	/* Extract the item level */
+	lev = k_ptr->level;
+
+	/* Base chance of success */
+	chance = bp_ptr->skill_dev;
+
+	/* Confusion hurts skill */
+	if (bp_ptr->status.confused) chance = chance / 2;
+
+	/* High level objects are harder */
+	chance = chance - ((lev > 50) ? 50 : lev);
+
+	/* Roll for usage */
+	if (chance < (USE_DEVICE * 2)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ *  Hack -- attempt to use the given ring
+ */
+bool borg_activate_ring(int ring_sval)
+{
+	/* Try a finger */
+	byte finger = EQUIP_LEFT;
+
+	/* Check the slot */
+	list_item *l_ptr = &equipment[finger];
+
+	/* Get object type */
+	object_kind *k_ptr = &k_info[l_ptr->k_idx];
+
+	/* Skip incorrect rings */
+	if (k_info[l_ptr->k_idx].sval != ring_sval ||
+	 	!borg_obj_known_p(l_ptr) ||
+	 	l_ptr->timeout)
+	{
+	 	/* Try the other finger */
+	 	byte finger = EQUIP_RIGHT;
+
+	 	/* Check the slot */
+	 	l_ptr = &equipment[finger];
+
+	 	/* Get object type */
+	 	k_ptr = &k_info[l_ptr->k_idx];
+
+	 	if (k_ptr->sval != ring_sval ||
+	 		!borg_obj_known_p(l_ptr) ||
+	 		l_ptr->timeout) return (FALSE);
+	}
+
+	/* Log the message */
+	borg_note_fmt("# Activating ring %s.", l_ptr->o_name);
+
+	/* Perform the action */
+	borg_keypress('A');
+	borg_keypress(I2A(finger));
+	borg_keypress(' ');
+
+	/* Success */
+	return (TRUE);
+}
 
 /*
  * Determine if borg can cast a given spell (when fully rested)

@@ -3667,8 +3667,8 @@ static s32b borg_power_aux4(void)
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		for (k = 0; (k < 4) && (k < bp_ptr->able.res_heat); k++) value += 500L;
-		for (k = 0; (k < 4) && (k < bp_ptr->able.res_cold); k++) value += 500L;
+		for (k = 0; (k < 4) && (k < bp_ptr->able.res_heat); k++) value += 1500L;
+		for (k = 0; (k < 4) && (k < bp_ptr->able.res_cold); k++) value += 1500L;
 	}
 
 	/* Reward ident */
