@@ -150,8 +150,10 @@ typedef struct borg_take borg_take;
 struct borg_take
 {
 	s16b k_idx;	/* Kind index */
-
-	byte x, y;	/* Location */
+	
+	/* Location */
+	s16b x;
+	s16b y;	
 
 	char unknown;	/* Unknown type */
 };
@@ -169,8 +171,10 @@ struct borg_kill
 
 	s16b power;	/* Estimated hit-points */
 	s32b when;	/* When last seen */
-
-	byte x, y;	/* Location */
+	
+	/* Location */
+	s16b x;
+	s16b y;
 
 	bool ranged_attack;	/* can attack from a dx */
 
@@ -189,8 +193,8 @@ typedef struct borg_shop borg_shop;
 struct borg_shop
 {
 	/* Location */
-	int x;
-	int y;
+	s16b x;
+	s16b y;
 
 	/* Time stamp */
 	s32b when;
