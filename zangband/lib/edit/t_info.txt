@@ -830,7 +830,7 @@ N:82:Expert Fletcher
 G:3:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:2:50:100:0:100:0:0:36
+D:2:50:100:0:100:0:0:42
 F:2,field_action_door_store
 F:19,field_action_isfletcher_tester
 
@@ -992,7 +992,7 @@ N:100:Expert Milliner
 G:2:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:50:100:50:50:0:0:36
+D:0:50:100:50:50:0:0:42
 F:2,field_action_door_store
 F:19,field_action_ishelm_tester
 
@@ -1333,3 +1333,12 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:100:0:0:0:0:0:0
 F:2,field_action_door_build
 F:18,field_action_library1 | 19,field_action_library2
+
+N:139:Casino
+G:7:o
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
+D:7:0:0:0:0:0:0:0
+F:2,field_action_door_build
+F:18,field_action_casino1 | 19,field_action_casino2
+
