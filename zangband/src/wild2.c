@@ -3335,10 +3335,8 @@ static void gen_block(int x, int y)
 	/* Day / Night - lighten or darken the new block */
 	light_dark_block(x, y);
 
-	/* Set the object generation level */
-
-	/* Hack - set object level to monster level */
-	object_level = wild[y][x].done.mon_gen;
+	/* Hack - set the base level to the monster generation level */
+	base_level = wild[y][x].done.mon_gen;
 
 	/* Add monsters */
 	add_monsters_block(x, y);

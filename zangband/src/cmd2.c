@@ -250,6 +250,8 @@ static void chest_death(int x, int y, object_type *o_ptr)
 
 	object_type *q_ptr;
 
+	int level;
+
 	/* 
 	 * Pick type of item to find in the chest.
 	 *
@@ -336,7 +338,7 @@ static void chest_death(int x, int y, object_type *o_ptr)
 	if (!o_ptr->pval) number = 0;
 
 	/* Determine the "value" of the items */
-	object_level = ABS(o_ptr->pval);
+	level = ABS(o_ptr->pval);
 
 	/* Drop some objects (non-chests) */
 	for (; number > 0; --number)
@@ -345,23 +347,20 @@ static void chest_death(int x, int y, object_type *o_ptr)
 		if (small_chest && one_in_(4))
 		{
 			/* Make some gold */
-			q_ptr = make_gold(0);
+			q_ptr = make_gold(level, 0);
 		}
 
 		/* Otherwise drop an item */
 		else
 		{
 			/* Make a good themed object */
-			q_ptr = make_object(15, NULL);
+			q_ptr = make_object(level, 15, NULL);
 			if (!q_ptr) continue;
 		}
 
 		/* Drop it in the dungeon */
 		drop_near(q_ptr, -1, x, y);
 	}
-
-	/* Reset the object level */
-	object_level = base_level;
 
 	/* Empty */
 	o_ptr->pval = 0;

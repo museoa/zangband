@@ -3145,9 +3145,6 @@ static void dungeon(void)
 
 	/*** Process this dungeon level ***/
 
-	/* Reset the object generation level */
-	object_level = base_level;
-
 	/* Main loop */
 	while (TRUE)
 	{

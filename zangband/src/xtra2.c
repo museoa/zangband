@@ -226,6 +226,8 @@ bool monster_death(int m_idx, bool explode)
 
 	object_type *q_ptr;
 
+	int level;
+
 	/* Notice changes in view */
 	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
 	{
@@ -597,7 +599,7 @@ bool monster_death(int m_idx, bool explode)
 		/* Prepare to make a Blade of Chaos */
 		q_ptr = object_prep(lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
-		apply_magic(q_ptr, object_level, 0, 0);
+		apply_magic(q_ptr, base_level, 0, 0);
 
 		/* Drop it in the dungeon */
 		drop_near(q_ptr, -1, x, y);
@@ -749,9 +751,9 @@ bool monster_death(int m_idx, bool explode)
 
 	/* Average dungeon and monster levels */
 	if (p_ptr->depth)
-		object_level = (p_ptr->depth + r_ptr->level) / 2;
+		level = (p_ptr->depth + r_ptr->level) / 2;
 	else
-		object_level = r_ptr->level;
+		level = r_ptr->level;
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++)
@@ -760,7 +762,7 @@ bool monster_death(int m_idx, bool explode)
 		if (do_gold && (!do_item || one_in_(2)))
 		{
 			/* Make some gold */
-			q_ptr = make_gold(force_coin);
+			q_ptr = make_gold(level, force_coin);
 
 			/* XXX XXX XXX */
 			dump_gold++;
@@ -774,7 +776,7 @@ bool monster_death(int m_idx, bool explode)
             for (i = 0; i < 1000; i++)
             {
                 /* Make an object */
-                q_ptr = make_object(delta_level, &r_ptr->obj_drop);
+                q_ptr = make_object(level, delta_level, &r_ptr->obj_drop);
 
                 if (!q_ptr) continue;
 
@@ -805,10 +807,6 @@ bool monster_death(int m_idx, bool explode)
 		/* Take notes on treasure */
 		lore_treasure(m_idx, dump_item, dump_gold);
 	}
-
-
-	/* Reset the object level */
-	object_level = base_level;
 
 	/* Return TRUE if we dropped a corpse for the player to see */
 	return (dropped_corpse);

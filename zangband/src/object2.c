@@ -2329,10 +2329,10 @@ static object_type *make_artifact(void)
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* XXX XXX Enforce minimum "object" level (loosely) */
-		if (k_info[k_idx].level > object_level)
+		if (k_info[k_idx].level > base_level)
 		{
 			/* Acquire the "out-of-depth factor" */
-			int d = (k_info[k_idx].level - object_level) * 5;
+			int d = (k_info[k_idx].level - base_level) * 5;
 
 			/* Roll for out-of-depth creation */
 			if (!one_in_(d)) continue;
@@ -3808,8 +3808,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 				r_ptr = &r_info[i];
 
 				/* Prefer less out-of-depth monsters */
-				if ((object_level < r_ptr->level) &&
-					!one_in_(r_ptr->level - object_level)) continue;
+				if ((level < r_ptr->level) &&
+					!one_in_(r_ptr->level - level)) continue;
 
 				/* Ignore dead monsters */
 				if (!r_ptr->rarity) continue;
@@ -4276,11 +4276,11 @@ byte kind_is_theme(int k_idx)
  *
  * This routine plays nasty games to generate the "special artifacts".
  *
- * This routine uses "object_level" for the "generation level".
+ * This routine uses "level" for the "generation level".
  *
  * We assume that the given object has been "wiped".
  */
-object_type *make_object(u16b delta_level, obj_theme *theme)
+object_type *make_object(int level, int delta_level, obj_theme *theme)
 {
 	int prob, base, min_level;
 	byte obj_level;
@@ -4314,7 +4314,7 @@ object_type *make_object(u16b delta_level, obj_theme *theme)
 	delta_level = randint0(delta_level);
 
 	/* Base level for the object */
-	base = object_level + delta_level;
+	base = level + delta_level;
 
 	/* Paranoia - don't let this get too high */
 	if (base > 100) base = 100;
@@ -4324,7 +4324,7 @@ object_type *make_object(u16b delta_level, obj_theme *theme)
 	{
 		flags = OC_FORCE_GOOD;
 
-		min_level = object_level + delta_level / 2;
+		min_level = level + delta_level / 2;
 	}
 	else
 	{
@@ -4556,7 +4556,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
  *
  * This routine plays nasty games to generate the "special artifacts".
  *
- * This routine uses "object_level" for the "generation level".
+ * This routine uses "base_level" + "delta_level" for the "generation level".
  *
  * This routine requires a clean floor grid destination.
  */
@@ -4579,12 +4579,9 @@ void place_object(int x, int y, bool good, bool great, int delta_level)
 		return;
 	}
 	
-	object_level = base_level + delta_level;
-
 	/* Make an object (if possible) */
-	o_ptr = make_object((good ? 15 : 0) + (great ? 15 : 0), &dun_ptr->theme);
-	
-	object_level = base_level;
+	o_ptr = make_object(base_level + delta_level,
+						(good ? 15 : 0) + (great ? 15 : 0), &dun_ptr->theme);
 
 	/* Put it on the ground */
 	(void)put_object(o_ptr, x, y);
@@ -4594,7 +4591,7 @@ void place_object(int x, int y, bool good, bool great, int delta_level)
 /*
  * Make a treasure object
  */
-object_type *make_gold(int coin_type)
+object_type *make_gold(int level, int coin_type)
 {
 	s16b i;
 
@@ -4610,12 +4607,12 @@ object_type *make_gold(int coin_type)
 	else
 	{
 		/* Hack -- Pick a Treasure variety */
-		i = ((randint1(object_level + 2) + 2) / 2) - 1;
+		i = ((randint1(level + 2) + 2) / 2) - 1;
 
 		/* Apply "extra" magic */
 		if (one_in_(GREAT_OBJ))
 		{
-			i += randint1(object_level + 1);
+			i += randint1(level + 1);
 		}
 	}
 
@@ -4646,7 +4643,7 @@ void place_gold(int x, int y)
 	object_type *o_ptr;
 
 	/* Make some gold */
-	o_ptr = make_gold(0);
+	o_ptr = make_gold(base_level, 0);
 
 	/* Put it on the ground */
 	(void)put_object(o_ptr, x, y);
@@ -4983,7 +4980,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			if (great)
 			{
 				/* Make a great object (if possible) */
-				o_ptr = make_object(40, &theme);
+				o_ptr = make_object(base_level, 40, &theme);
 
 				/* Paranoia */
 				if (!o_ptr) continue;
@@ -4991,7 +4988,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			else
 			{
 				/* Make a good object (if possible) */
-				o_ptr = make_object(20, &theme);
+				o_ptr = make_object(base_level, 20, &theme);
 
 				/* Paranoia */
 				if (!o_ptr) continue;

@@ -688,12 +688,12 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			o_ptr = make_object(30, &dun_ptr->theme);
+			o_ptr = make_object(base_level, 30, &dun_ptr->theme);
 		}
 		else
 		{
 			/* Make a good object */
-			o_ptr = make_object(15, &dun_ptr->theme);
+			o_ptr = make_object(base_level, 15, &dun_ptr->theme);
 		}
 
 		if (!o_ptr) continue;
@@ -1664,9 +1664,6 @@ void draw_quest(u16b place_num)
 
 	cave_type *c_ptr;
 
-	/* Save generation levels */
-	s16b temp_o_level = object_level;
-
 	/* Object theme */
 	obj_theme theme;
 
@@ -1687,9 +1684,6 @@ void draw_quest(u16b place_num)
 
 	/* Hack -- Induce consistant quest layout */
 	Rand_value = place[place_num].seed;
-
-	/* Change object level */
-	object_level = w_ptr->done.mon_gen;
 
 	/* Apply the monster restriction */
 	get_mon_num_prep(camp_types[q_ptr->data.wld.data].hook_func);
@@ -1826,7 +1820,4 @@ void draw_quest(u16b place_num)
 
 	/* Remove the monster restriction */
 	get_mon_num_prep(NULL);
-
-	/* Hack - Restore levels */
-	object_level = temp_o_level;
 }
