@@ -317,7 +317,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 	int rooms[MAX_STORES];
 	byte feat;
 
-	/* Prepare an Array of "remaining stores", and count them */
+	/* Prepare an array of "remaining stores", and count them */
 	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
 
 	/* Place three rows of stores */
@@ -347,8 +347,9 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 
 		feat = cave[*yy][*xx].feat;
 
-		/* If square is a shop, exit */
-		if ((feat == FEAT_PERM_EXTRA) || (feat == FEAT_FLOOR)) continue;
+		/* If square is a shop then try again */
+		if ((feat == FEAT_PERM_EXTRA) || (cave[*yy][*xx].fld_idx != 0))
+			continue;
 
 		/* Blank square */
 		break;
@@ -379,8 +380,6 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		add_town_wall();
 	}
 }
-
-
 
 
 /*
@@ -648,7 +647,7 @@ static void init_towns(void)
 		for (j = 0; j < MAX_STORES; j++)
 		{
 			/* Initialize */
-			store_init(town_count, j, j);
+			store_init(town_count, j, (byte)j);
 		}
 		
 		/* Place town on wilderness */
@@ -746,6 +745,16 @@ static void init_vanilla_town(void)
 	town[1].type = 1;
 	town[1].x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
 	town[1].y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
+
+	/* Allocate the stores */
+	C_MAKE(town[1].store, MAX_STORES, store_type);
+
+	/* Init the stores */
+	for (i = 0; i < MAX_STORES; i++)
+	{
+		/* Initialize */
+		store_init(1, i, (byte)i);
+	}
 
 	/* Place town on wilderness */
 	for (j = 0; j < (TOWN_HGT / 16 + 1); j++)
