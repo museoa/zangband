@@ -612,8 +612,6 @@ void teleport_player_level(void)
 	{
 		msgf(MSGT_TPLEVEL, "You sink through the floor.");
 
-		if (autosave_l) do_cmd_save_game(TRUE);
-
 		p_ptr->depth++;
 
 		/* Leaving */
@@ -622,8 +620,6 @@ void teleport_player_level(void)
 	else if (is_special_level(p_ptr->depth))
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
-
-		if (autosave_l) do_cmd_save_game(TRUE);
 
 		p_ptr->depth--;
 
@@ -634,16 +630,12 @@ void teleport_player_level(void)
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
 
-		if (autosave_l) do_cmd_save_game(TRUE);
-
 		/* Go down */
 		move_dun_level(-1);
 	}
 	else
 	{
 		msgf(MSGT_TPLEVEL, "You sink through the floor.");
-
-		if (autosave_l) do_cmd_save_game(TRUE);
 
 		/* Go up */
 	    move_dun_level(1);
@@ -1262,8 +1254,6 @@ void alter_reality(void)
 	if (p_ptr->depth)
 	{
 		msgf("The world changes!");
-
-		if (autosave_l) do_cmd_save_game(TRUE);
 
 		/* Leaving */
 		p_ptr->state.leaving = TRUE;

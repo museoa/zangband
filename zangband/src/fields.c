@@ -1706,10 +1706,6 @@ static void hit_trap(field_type *f_ptr)
  */
 bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 {
-	int dam;
-
-	cptr name;
-
 	/* Hack - ignore 'vp' */
 	(void)vp;
 
@@ -1726,13 +1722,7 @@ bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 		{
 			msgf("You have fallen through a trap door!");
 			sound(SOUND_FALL);
-			dam = damroll(4, 8);
-			name = "a trap door";
-			take_hit(dam, name);
-
-			/* Still alive and autosave enabled */
-			if (autosave_l && (p_ptr->chp >= 0))
-				do_cmd_save_game(TRUE);
+			take_hit(damroll(4, 8), "a trap door");
 
 			p_ptr->depth++;
 
@@ -1748,13 +1738,8 @@ bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 
 bool field_action_hit_trap_pit(field_type *f_ptr, va_list vp)
 {
-	int dam;
-
-	cptr name;
-
 	/* Hack - ignore 'vp' */
 	(void)vp;
-
 
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -1766,9 +1751,7 @@ bool field_action_hit_trap_pit(field_type *f_ptr, va_list vp)
 	else
 	{
 		msgf("You have fallen into a pit!");
-		dam = damroll(3, 8);
-		name = "a pit trap";
-		take_hit(dam, name);
+		take_hit(damroll(3, 8), "a pit trap");
 	}
 
 	/* Done */
@@ -1779,8 +1762,6 @@ bool field_action_hit_trap_pit(field_type *f_ptr, va_list vp)
 bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 {
 	int dam;
-
-	cptr name;
 
 	/* Hack - ignore 'vp' */
 	(void)vp;
@@ -1797,7 +1778,6 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 		msgf("You fall into a spiked pit!");
 
 		/* Base damage */
-		name = "a pit trap";
 		dam = damroll(4, 8);
 
 		/* Extra spike damage */
@@ -1805,13 +1785,12 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 		{
 			msgf("You are impaled!");
 
-			name = "a spiked pit";
 			dam *= 2;
 			(void)inc_cut(randint1(dam));
 		}
 
 		/* Take the damage */
-		take_hit(dam, name);
+		take_hit(dam, "a spiked pit trap");
 	}
 
 	/* Done */
@@ -1822,8 +1801,6 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 {
 	int dam;
-
-	cptr name;
 
 	/* Hack - ignore 'vp' */
 	(void)vp;
@@ -1842,14 +1819,10 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 		/* Base damage */
 		dam = damroll(6, 8);
 
-		name = "a pit trap";
-
 		/* Extra spike damage */
 		if (randint0(100) < 50)
 		{
 			msgf("You are impaled on poisonous spikes!");
-
-			name = "a spiked pit";
 
 			dam *= 2;
 			(void)inc_cut(randint1(dam));
@@ -1866,7 +1839,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 		}
 
 		/* Take the damage */
-		take_hit(dam, name);
+		take_hit(dam, "a spiked pit");
 	}
 
 	/* Done */
@@ -1941,8 +1914,6 @@ bool field_action_hit_trap_teleport(field_type *f_ptr, va_list vp)
 
 bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 {
-	int dam;
-
 	/* Hack - ignore 'vp' */
 	(void)vp;
 
@@ -1955,16 +1926,14 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		case 0:
 		{
 			msgf("You are enveloped in flames!");
-			dam = damroll(4, 6);
-			(void)fire_dam(dam, "a fire trap");
+			(void)fire_dam(damroll(4, 6), "a fire trap");
 			break;
 		}
 
 		case 1:
 		{
 			msgf("You are splashed with acid!");
-			dam = damroll(4, 6);
-			(void)acid_dam(dam, "an acid trap");
+			(void)acid_dam(damroll(4, 6), "an acid trap");
 			break;
 		}
 
@@ -1978,16 +1947,14 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		case 3:
 		{
 			msgf("You are splashed with freezing liquid!");
-			dam = damroll(4, 6);
-			(void)cold_dam(dam, "a cold trap");
+			(void)cold_dam(damroll(4, 6), "a cold trap");
 			break;
 		}
 
 		case 4:
 		{
 			msgf("You are hit by a spark!");
-			dam = damroll(4, 6);
-			(void)elec_dam(dam, "an electric trap");
+			(void)elec_dam(damroll(4, 6), "an electric trap");
 			break;
 		}
 	}
@@ -2158,8 +2125,6 @@ bool field_action_hit_trap_traps(field_type *f_ptr, va_list vp)
 
 bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 {
-	int dam;
-
 	/* Hack - ignore 'vp' */
 	(void)vp;
 
@@ -2174,8 +2139,7 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 			if (check_hit(f_ptr->data[1]))
 			{
 				msgf("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, "a dart trap");
+				take_hit(randint1(4), "a dart trap");
 				(void)do_dec_stat(A_STR);
 			}
 			else
@@ -2190,8 +2154,7 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 			if (check_hit(f_ptr->data[1]))
 			{
 				msgf("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, "a dart trap");
+				take_hit(randint1(4), "a dart trap");
 				(void)do_dec_stat(A_DEX);
 			}
 			else
@@ -2206,8 +2169,7 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 			if (check_hit(f_ptr->data[1]))
 			{
 				msgf("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, "a dart trap");
+				take_hit(randint1(4), "a dart trap");
 				(void)do_dec_stat(A_CON);
 			}
 			else
@@ -2225,8 +2187,6 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 
 bool field_action_hit_trap_perm_stat(field_type *f_ptr, va_list vp)
 {
-	int dam;
-
 	/* Hack - ignore 'vp' */
 	(void)vp;
 
@@ -2236,8 +2196,7 @@ bool field_action_hit_trap_perm_stat(field_type *f_ptr, va_list vp)
 	if (check_hit(f_ptr->data[1]))
 	{
 		msgf("A small dart hits you!");
-		dam = damroll(1, 4);
-		take_hit(dam, "a dart trap");
+		take_hit(randint1(4), "a dart trap");
 		(void)dec_stat(f_ptr->data[3], 30, TRUE);
 	}
 	else

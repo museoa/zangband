@@ -34,8 +34,6 @@ void do_cmd_go_up(void)
 		/* Success */
 		msgf(MSGT_STAIRS, "You enter a maze of up staircases.");
 
-		if (autosave_l) do_cmd_save_game(TRUE);
-
 		/* Create a way back */
 		p_ptr->state.create_down_stair = TRUE;
 
@@ -78,8 +76,6 @@ void do_cmd_go_down(void)
 
 		/* Success */
 		msgf(MSGT_STAIRS, "You enter a maze of down staircases.");
-
-		if (autosave_l) do_cmd_save_game(TRUE);
 
 		/* Create a way back */
 		p_ptr->state.create_up_stair = TRUE;

@@ -334,7 +334,6 @@ extern player_type *p_ptr @ player;
 /* Hack - options */
 extern bool ironman_nightmare;
 extern bool disturb_minor;
-extern byte autosave_l;
 
 /***** Functions *****/
 

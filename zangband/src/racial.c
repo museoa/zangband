@@ -283,8 +283,6 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				{
 					msgf("You start walking around. Your surroundings change.");
 
-					if (autosave_l) do_cmd_save_game(TRUE);
-
 					/* Leaving */
 					p_ptr->state.leaving = TRUE;
 				}

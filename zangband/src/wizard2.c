@@ -1313,8 +1313,6 @@ static void do_cmd_wiz_jump(void)
 	/* Accept request */
 	msgf("You jump to dungeon level %d.", p_ptr->cmd.arg);
 
-	if (autosave_l) do_cmd_save_game(TRUE);
-
 	/* Change level */
 	p_ptr->depth = p_ptr->cmd.arg;
 
