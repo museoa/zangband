@@ -974,7 +974,6 @@ proc NSOptions::GetPage {page} {
 				show_weights
 				show_icons
 				scroll_follow
-				allow_animation
 			}
 		}
 	

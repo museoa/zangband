@@ -144,7 +144,6 @@ proc NSValueManager::InitModule {} {
 	Manage show_icons 1
 	Manage ambient_delay 120
 	Manage scroll_follow 1
-	Manage allow_animation 1
 
 	Manage tip,current 1000
 	Manage tip,show 1

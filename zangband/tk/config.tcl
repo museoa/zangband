@@ -102,18 +102,20 @@ proc NSConfig::Load {} {
 
 	# Get the current configuration prefix
 	set prefix [Global config,prefix]
+	
+	angband_load note $prefix
 
 	# Try "prefix.cfg"
 	SourceOne $prefix.cfg
-
+	
 	# Try prefixNN.cfg
 	regsub {(16|24|32)} $prefix NN prefix
 	SourceOne $prefix.cfg
 
 	# These next files are automatically generated at shutdown
-	Source [Global config,alternate] Config::Alternate
-	Source [Global config,sprite] Config::Sprite
-	Source [Global config,assign] Config::Assign
+	# Source [Global config,alternate] Config::Alternate
+	# Source [Global config,sprite] Config::Sprite
+	# Source [Global config,assign] Config::Assign
 
 	# Custom icon assignments for each character
 	Source char-icon Config::CharIcon
@@ -333,7 +335,7 @@ proc NSConfig::CheckIconData {imageFile iconFile imageSize makeMask} {
 		set mtime2 [file mtime $iconFile]
 		if {$mtime < $mtime2} return
 	}
-
+	
 	# Tell the user why she's waiting
 	angband_load prompt "Writing icon file \"[file tail $iconFile]...\""
 
@@ -346,7 +348,7 @@ proc NSConfig::CheckIconData {imageFile iconFile imageSize makeMask} {
 	if {$makeMask} {
 		append command " -transparent white"
 	}
-
+	
 	eval $command
 
 	return
@@ -376,7 +378,7 @@ proc NSConfig::CreateIconType {iconType iconFile maskFile imageSize} {
 	# dragon.gif --> dragon.icd
 	set iconFile [file tail $iconFile]
 	set iconData [file rootname $iconFile].$depth.icd
-
+	
 	if {$imageSize != [icon size]} {
 		regsub $imageSize $iconData [icon size] iconData
 	}
@@ -444,7 +446,7 @@ proc NSConfig::CreateIconType {iconType iconFile maskFile imageSize} {
 	set canvas $::AngbandPriv(load,win).canvas
 	$canvas itemconfigure message -text "Initializing icons: $iconType"
 	update
-
+	
 	set depth [icon depth]
 
 	# dragon.gif --> dragon.icd
@@ -457,7 +459,7 @@ proc NSConfig::CreateIconType {iconType iconFile maskFile imageSize} {
 
 	CheckIconData $iconFile $iconData $imageSize 0
 	set iconData [FileLibData $iconData]
-
+	
 	# Now create the icon type
 	if {[catch {
 		icon createtype $iconType -file $iconData
