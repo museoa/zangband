@@ -3329,7 +3329,7 @@ static bool do_cmd_knowledge_uniques(int dummy)
 		if (!cheat_know && !r_ptr->r_sights) continue;
 
 		/* Require unique monsters if needed */
-		if (!MON_FLAG(r_ptr, 0, UNIQUE)) continue;
+		if (!FLAG(r_ptr, RF_UNIQUE)) continue;
 
 		/* Collect "appropriate" monsters */
 		who[n++] = i;
@@ -3621,7 +3621,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	{
 		monster_race *r_ptr = &r_info[kk];
 
-		if (MON_FLAG(r_ptr, 0, UNIQUE))
+		if (FLAG(r_ptr, RF_UNIQUE))
 		{
 			bool dead = (r_ptr->max_num == 0);
 
@@ -3659,7 +3659,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	{
 		monster_race *r_ptr = &r_info[who[i]];
 
-		if (MON_FLAG(r_ptr, 0, UNIQUE))
+		if (FLAG(r_ptr, RF_UNIQUE))
 		{
 			bool dead = (r_ptr->max_num == 0);
 

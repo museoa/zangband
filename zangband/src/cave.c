@@ -1041,7 +1041,7 @@ bool cave_valid_grid(const cave_type *c_ptr)
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Forbid artifact grids */
-		if (OBJ_FLAG(o_ptr, 2, INSTA_ART)) return (FALSE);
+		if (FLAG(o_ptr, TR_INSTA_ART)) return (FALSE);
 	}
 	OBJ_ITT_END;
 
@@ -2521,8 +2521,8 @@ void update_mon_lite(void)
 		rad = 0;
 
 		/* Note the radii are cumulative */
-		if (MON_FLAG(r_ptr, 6, LITE_1)) rad++;
-		if (MON_FLAG(r_ptr, 6, LITE_2)) rad += 2;
+		if (FLAG(r_ptr, RF_LITE_1)) rad++;
+		if (FLAG(r_ptr, RF_LITE_2)) rad += 2;
 
 		/* Exit if has no light */
 		if (!rad) continue;

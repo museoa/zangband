@@ -157,7 +157,7 @@ bool monst_spell_monst(int m_idx)
 			((f4 & RF3_BOLT_MASK) ||
 			 (f5 & RF4_BOLT_MASK) ||
 			 (f6 & RF5_BOLT_MASK)) &&
-			!MON_FLAG(r_ptr, 1, STUPID) &&
+			!FLAG(r_ptr, RF_STUPID) &&
 			!clean_shot(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy,
 						is_pet(m_ptr)))
 		{
@@ -185,7 +185,7 @@ bool monst_spell_monst(int m_idx)
 		}
 
 		/* Hack -- allow "desperate" spells */
-		if (MON_FLAG(r_ptr, 1, SMART) &&
+		if (FLAG(r_ptr, RF_SMART) &&
 			(m_ptr->hp < m_ptr->maxhp / 10) && one_in_(2))
 		{
 			/* Require intelligent spells */
@@ -1586,15 +1586,15 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				/* Attempt a saving throw */
-				if (MON_FLAG(tr_ptr, 0, UNIQUE) ||
-					MON_FLAG(tr_ptr, 2, NO_CONF) ||
+				if (FLAG(tr_ptr, RF_UNIQUE) ||
+					FLAG(tr_ptr, RF_NO_CONF) ||
 					(tr_ptr->level > randint1(rlev * 3) / 2))
 				{
 					/* No obvious effect */
 					if (see_both)
 					{
 						/* Memorize a flag */
-						if (MON_FLAG(tr_ptr, 2, NO_CONF))
+						if (FLAG(tr_ptr, RF_NO_CONF))
 						{
 							tr_ptr->r_flags[2] |= (RF2_NO_CONF);
 						}
@@ -1629,15 +1629,15 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				/* Attempt a saving throw */
-				if (MON_FLAG(tr_ptr, 0, UNIQUE) ||
-					MON_FLAG(tr_ptr, 2, NO_CONF) ||
+				if (FLAG(tr_ptr, RF_UNIQUE) ||
+					FLAG(tr_ptr, RF_NO_CONF) ||
 					(tr_ptr->level > randint1(rlev * 3) / 2))
 				{
 					/* No obvious effect */
 					if (see_both)
 					{
 						/* Memorize a flag */
-						if (MON_FLAG(tr_ptr, 2, NO_CONF))
+						if (FLAG(tr_ptr, RF_NO_CONF))
 						{
 							tr_ptr->r_flags[2] |= (RF2_NO_CONF);
 						}
@@ -2033,7 +2033,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (MON_FLAG(tr_ptr, 2, NO_FEAR))
+				if (FLAG(tr_ptr, RF_NO_FEAR))
 				{
 					if (see_t) msgf("%^s refuses to be frightened.",
 										  t_name);
@@ -2073,7 +2073,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				/* Simulate blindness with confusion */
-				if (MON_FLAG(tr_ptr, 2, NO_CONF))
+				if (FLAG(tr_ptr, RF_NO_CONF))
 				{
 					if (see_t) msgf("%^s is unaffected.", t_name);
 				}
@@ -2110,7 +2110,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (MON_FLAG(tr_ptr, 2, NO_CONF))
+				if (FLAG(tr_ptr, RF_NO_CONF))
 				{
 					if (see_t) msgf("%^s disbelieves the feeble spell.",
 										  t_name);
@@ -2149,7 +2149,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (MON_FLAG(tr_ptr, 0, UNIQUE))
+				if (FLAG(tr_ptr, RF_UNIQUE))
 				{
 					if (see_t) msgf("%^s is unaffected.", t_name);
 				}
@@ -2185,8 +2185,8 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (MON_FLAG(tr_ptr, 0, UNIQUE) ||
-					MON_FLAG(tr_ptr, 2, NO_STUN))
+				if (FLAG(tr_ptr, RF_UNIQUE) ||
+					FLAG(tr_ptr, RF_NO_STUN))
 				{
 					if (see_t) msgf("%^s is unaffected.", t_name);
 				}
@@ -2257,7 +2257,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (MON_FLAG(tr_ptr, 0, UNIQUE))
+				if (FLAG(tr_ptr, RF_UNIQUE))
 				{
 					if (see_both) msgf("^%s is unaffected!", t_name);
 				}
@@ -2435,9 +2435,9 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (MON_FLAG(tr_ptr, 2, RES_TELE))
+				if (FLAG(tr_ptr, RF_RES_TELE))
 				{
-					if (MON_FLAG(tr_ptr, 0, UNIQUE))
+					if (FLAG(tr_ptr, RF_UNIQUE))
 					{
 						if (see_t)
 						{
@@ -2549,7 +2549,7 @@ bool monst_spell_monst(int m_idx)
 
 						msgf("%^s magically summons %s %s.", m_name,
 								   m_poss,
-								   (MON_FLAG(r_ptr, 0, UNIQUE)
+								   (FLAG(r_ptr, RF_UNIQUE)
 									 ? "minions" : "kin"));
 					}
 					else

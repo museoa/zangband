@@ -1999,14 +1999,14 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 			if ((FLAG(bp_ptr, TR_SEE_INVIS)) || borg_see_inv) return (TRUE);
 
 			/* Monster is not invisible */
-			if (!(MON_FLAG(r_ptr, 1, INVISIBLE))) return (TRUE);
+			if (!(FLAG(r_ptr, RF_INVISIBLE))) return (TRUE);
 		}
 
 		/* Use "infravision" */
 		if (d <= bp_ptr->see_infra)
 		{
 			/* Infravision works on "warm" creatures */
-			if (!(MON_FLAG(r_ptr, 1, COLD_BLOOD))) return (TRUE);
+			if (!(FLAG(r_ptr, RF_COLD_BLOOD))) return (TRUE);
 		}
 	}
 
@@ -2015,8 +2015,8 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 	if (FLAG(bp_ptr, TR_TELEPATHY))
 	{
 		/* Telepathy fails on "strange" monsters */
-		if (MON_FLAG(r_ptr, 1, EMPTY_MIND)) return (FALSE);
-		if (MON_FLAG(r_ptr, 1, WEIRD_MIND)) return (FALSE);
+		if (FLAG(r_ptr, RF_EMPTY_MIND)) return (FALSE);
+		if (FLAG(r_ptr, RF_WEIRD_MIND)) return (FALSE);
 
 		/* Success */
 		return (TRUE);
@@ -2266,7 +2266,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 
 	/* Handle trappers and lurkers and mimics */
-	if (MON_FLAG(r_ptr, 0, CHAR_CLEAR) || MON_FLAG(r_ptr, 0, CHAR_MIMIC))
+	if (FLAG(r_ptr, RF_CHAR_CLEAR) || FLAG(r_ptr, RF_CHAR_MIMIC))
 	{
 		/* Note */
 		borg_note("# Bizarre monster nearby");
@@ -2355,7 +2355,7 @@ static void borg_count_death(cptr what)
 	/* Paranoia */
 	if (!r_idx) return;
 
-	if (MON_FLAG(&r_info[r_idx], 0, UNIQUE))
+	if (FLAG(&r_info[r_idx], RF_UNIQUE))
 	{
 		/* Reset unique on level flag */
 		unique_on_level = FALSE;
@@ -4606,7 +4606,7 @@ void borg_init_2(void)
 		if (!r_ptr->name) continue;
 
 		/* Skip non-unique monsters */
-		if (!MON_FLAG(r_ptr, 0, UNIQUE)) continue;
+		if (!FLAG(r_ptr, RF_UNIQUE)) continue;
 
 		/* Use it */
 		text[size] = r_name + r_ptr->name;
@@ -4647,7 +4647,7 @@ void borg_init_2(void)
 		if (!r_ptr->name) continue;
 
 		/* Skip unique monsters */
-		if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
+		if (FLAG(r_ptr, RF_UNIQUE)) continue;
 
 		/* Use it */
 		text[size] = r_name + r_ptr->name;

@@ -42,7 +42,7 @@ static int borg_danger_aux1(int r_idx)
 	/* apw PFE gives a protection.  */
 	/* Hack -- Apply "protection from evil" */
 	if ((borg_prot_from_evil) &&
-		(MON_FLAG(r_ptr, 2, EVIL)) && (bp_ptr->lev >= r_ptr->level))
+		(FLAG(r_ptr, RF_EVIL)) && (bp_ptr->lev >= r_ptr->level))
 	{
 		pfe = 1;
 	}
@@ -643,7 +643,7 @@ static int borg_danger_aux2(int i, bool average)
 	/* apw PFE gives a protection.  */
 	/* Hack -- Apply "protection from evil" */
 	if ((borg_prot_from_evil) &&
-		(MON_FLAG(r_ptr, 2, EVIL)) && ((bp_ptr->lev) >= r_ptr->level))
+		(FLAG(r_ptr, RF_EVIL)) && ((bp_ptr->lev) >= r_ptr->level))
 	{
 		pfe = 1;
 	}
@@ -2031,7 +2031,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 
 				break;
 			}
@@ -2059,7 +2059,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2090,7 +2090,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2106,7 +2106,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2122,7 +2122,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2138,7 +2138,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2165,7 +2165,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2192,7 +2192,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2219,7 +2219,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2246,7 +2246,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2273,7 +2273,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2300,7 +2300,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2326,7 +2326,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2353,7 +2353,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 
@@ -2380,7 +2380,7 @@ static int borg_danger_aux2(int i, bool average)
 					p = p / spot_safe;
 				}
 				/* reduce the fear if it is a unique */
-				if (MON_FLAG(r_ptr, 0, UNIQUE)) p = p * 75 / 100;
+				if (FLAG(r_ptr, RF_UNIQUE)) p = p * 75 / 100;
 				break;
 			}
 		}
@@ -2546,13 +2546,13 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	v1 = borg_danger_aux1(kill->r_idx);
 
 	/* No attacks for some monsters */
-	if (MON_FLAG(r_ptr, 0, NEVER_BLOW))
+	if (FLAG(r_ptr, RF_NEVER_BLOW))
 	{
 		v1 = 0;
 	}
 
 	/* No movement for some monsters */
-	if ((MON_FLAG(r_ptr, 0, NEVER_MOVE)) && (d > 1))
+	if ((FLAG(r_ptr, RF_NEVER_MOVE)) && (d > 1))
 	{
 		v1 = 0;
 	}
@@ -2572,13 +2572,13 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	}
 
 	/* multipliers yeild some trouble when I am weak */
-	if ((MON_FLAG(r_ptr, 1, MULTIPLY)) && (bp_ptr->lev < 20))
+	if ((FLAG(r_ptr, RF_MULTIPLY)) && (bp_ptr->lev < 20))
 	{							/* extra 50% */
 		v1 = v1 + (v1 * 15 / 10);
 	}
 
 	/* Friends yeild some trouble when I am weak */
-	if ((MON_FLAG(r_ptr, 0, FRIENDS) || MON_FLAG(r_ptr, 0, ESCORTS)) &&
+	if ((FLAG(r_ptr, RF_FRIENDS) || FLAG(r_ptr, RF_ESCORTS)) &&
 		(bp_ptr->lev < 20))
 	{
 		if (bp_ptr->lev < 15)
@@ -2637,8 +2637,8 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	{
 		if ((d == 1) &&
 			(!(kill->m_flags & MONST_ASLEEP)) &&
-			(!(MON_FLAG(r_ptr, 2, NO_SLEEP))) &&
-			(!(MON_FLAG(r_ptr, 0, UNIQUE))) &&
+			(!(FLAG(r_ptr, RF_NO_SLEEP))) &&
+			(!(FLAG(r_ptr, RF_UNIQUE))) &&
 			(r_ptr->level <= (bp_ptr->lev - 15)))
 		{
 			v1 = v1 / 3;
@@ -2687,7 +2687,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 		if (c > 1)
 		{
 			/* Hack -- stumble sometimes XXX XXX XXX */
-			if (MON_FLAG(r_ptr, 0, RAND_25) || MON_FLAG(r_ptr, 0, RAND_50)) r -= (r / 4);
+			if (FLAG(r_ptr, RF_RAND_25) || FLAG(r_ptr, RF_RAND_50)) r -= (r / 4);
 		}
 		/* Total danger */
 		v1 = v1 * r / 10;
@@ -2723,13 +2723,13 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 		v2 = borg_danger_aux2(i, average);
 
 		/* multipliers yeild some trouble when I am weak */
-		if ((MON_FLAG(r_ptr, 1, MULTIPLY)) && (bp_ptr->lev < 20))
+		if ((FLAG(r_ptr, RF_MULTIPLY)) && (bp_ptr->lev < 20))
 		{
 			v2 = v2 + (v2 * 12 / 10);
 		}
 
 		/* Friends yeild some trouble when I am weak */
-		if ((MON_FLAG(r_ptr, 0, FRIENDS) || MON_FLAG(r_ptr, 0, ESCORTS)) &&
+		if ((FLAG(r_ptr, RF_FRIENDS) || FLAG(r_ptr, RF_ESCORTS)) &&
 			(bp_ptr->lev < 20))
 		{
 			v2 = v2 + (v2 * 12 / 10);
@@ -2756,8 +2756,8 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 
 			if ((d == 1) &&
 				(!(kill->m_flags & MONST_ASLEEP)) &&
-				(!(MON_FLAG(r_ptr, 2, NO_SLEEP))) &&
-				(!(MON_FLAG(r_ptr, 0, UNIQUE))) &&
+				(!(FLAG(r_ptr, RF_NO_SLEEP))) &&
+				(!(FLAG(r_ptr, RF_UNIQUE))) &&
 				(r_ptr->level <=
 				 ((bp_ptr->lev <
 				   15) ? bp_ptr->lev : (((bp_ptr->lev - 10) / 4) * 3) + 10)))

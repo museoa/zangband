@@ -45,7 +45,7 @@ static bool know_armour(int r_idx)
 	if (kills > 304 / (4 + level)) return (TRUE);
 
 	/* Skip non-uniques */
-	if (!(MON_FLAG(r_ptr, 0, UNIQUE))) return (FALSE);
+	if (!(FLAG(r_ptr, RF_UNIQUE))) return (FALSE);
 
 	/* Unique monsters */
 	if (kills > 304 / (38 + (5 * level) / 4)) return (TRUE);
@@ -77,7 +77,7 @@ static bool know_damage(int r_idx, int i)
 	if ((4 + level) * a > 80 * d) return (TRUE);
 
 	/* Skip non-uniques */
-	if (!(MON_FLAG(r_ptr, 0, UNIQUE))) return (FALSE);
+	if (!(FLAG(r_ptr, RF_UNIQUE))) return (FALSE);
 
 	/* Unique monsters */
 	if ((4 + level) * (2 * a) > 80 * d) return (TRUE);
@@ -160,16 +160,16 @@ static void roff_mon_aux(int r_idx, int remem)
 
 		/* Hack -- maximal drops */
 		r_ptr->r_drop_gold = r_ptr->r_drop_item =
-			(((MON_FLAG(r_ptr, 0, DROP_4D2)) ? 8 : 0) +
-			 ((MON_FLAG(r_ptr, 0, DROP_3D2)) ? 6 : 0) +
-			 ((MON_FLAG(r_ptr, 0, DROP_2D2)) ? 4 : 0) +
-			 ((MON_FLAG(r_ptr, 0, DROP_1D2)) ? 2 : 0) +
-			 ((MON_FLAG(r_ptr, 0, DROP_90)) ? 1 : 0) +
-			 ((MON_FLAG(r_ptr, 0, DROP_60)) ? 1 : 0));
+			(((FLAG(r_ptr, RF_DROP_4D2)) ? 8 : 0) +
+			 ((FLAG(r_ptr, RF_DROP_3D2)) ? 6 : 0) +
+			 ((FLAG(r_ptr, RF_DROP_2D2)) ? 4 : 0) +
+			 ((FLAG(r_ptr, RF_DROP_1D2)) ? 2 : 0) +
+			 ((FLAG(r_ptr, RF_DROP_90)) ? 1 : 0) +
+			 ((FLAG(r_ptr, RF_DROP_60)) ? 1 : 0));
 
 		/* Hack -- but only "valid" drops */
-		if (MON_FLAG(r_ptr, 0, ONLY_GOLD)) r_ptr->r_drop_item = 0;
-		if (MON_FLAG(r_ptr, 0, ONLY_ITEM)) r_ptr->r_drop_gold = 0;
+		if (FLAG(r_ptr, RF_ONLY_GOLD)) r_ptr->r_drop_item = 0;
+		if (FLAG(r_ptr, RF_ONLY_ITEM)) r_ptr->r_drop_gold = 0;
 
 		/* Hack -- observe many spells */
 		r_ptr->r_cast_inate = MAX_UCHAR;
@@ -186,8 +186,8 @@ static void roff_mon_aux(int r_idx, int remem)
 
 
 	/* Extract a gender (if applicable) */
-	if (MON_FLAG(r_ptr, 0, FEMALE)) msex = 2;
-	else if (MON_FLAG(r_ptr, 0, MALE)) msex = 1;
+	if (FLAG(r_ptr, RF_FEMALE)) msex = 2;
+	else if (FLAG(r_ptr, RF_MALE)) msex = 1;
 
 
 	/* Obtain a copy of the "known" flags */
@@ -201,42 +201,42 @@ static void roff_mon_aux(int r_idx, int remem)
 
 
 	/* Assume some "obvious" flags */
-	if (MON_FLAG(r_ptr, 0, UNIQUE)) SET_FLAG(mf_ptr->flags, 0, RF0_UNIQUE);
-	if (MON_FLAG(r_ptr, 0, QUESTOR)) SET_FLAG(mf_ptr->flags, 0, RF0_QUESTOR);
-	if (MON_FLAG(r_ptr, 0, MALE)) SET_FLAG(mf_ptr->flags, 0, RF0_MALE);
-	if (MON_FLAG(r_ptr, 0, FEMALE)) SET_FLAG(mf_ptr->flags, 0, RF0_FEMALE);
+	if (FLAG(r_ptr, RF_UNIQUE)) SET_FLAG(mf_ptr->flags, 0, RF0_UNIQUE);
+	if (FLAG(r_ptr, RF_QUESTOR)) SET_FLAG(mf_ptr->flags, 0, RF0_QUESTOR);
+	if (FLAG(r_ptr, RF_MALE)) SET_FLAG(mf_ptr->flags, 0, RF0_MALE);
+	if (FLAG(r_ptr, RF_FEMALE)) SET_FLAG(mf_ptr->flags, 0, RF0_FEMALE);
 
 	/* Assume some "creation" flags */
-	if (MON_FLAG(r_ptr, 0, CHAR_MIMIC)) SET_FLAG(mf_ptr->flags, 0, RF0_CHAR_MIMIC);
-	if (MON_FLAG(r_ptr, 0, FRIENDS)) SET_FLAG(mf_ptr->flags, 0, RF0_FRIENDS);
-	if (MON_FLAG(r_ptr, 0, ESCORT)) SET_FLAG(mf_ptr->flags, 0, RF0_ESCORT);
-	if (MON_FLAG(r_ptr, 0, ESCORTS)) SET_FLAG(mf_ptr->flags, 0, RF0_ESCORTS);
+	if (FLAG(r_ptr, RF_CHAR_MIMIC)) SET_FLAG(mf_ptr->flags, 0, RF0_CHAR_MIMIC);
+	if (FLAG(r_ptr, RF_FRIENDS)) SET_FLAG(mf_ptr->flags, 0, RF0_FRIENDS);
+	if (FLAG(r_ptr, RF_ESCORT)) SET_FLAG(mf_ptr->flags, 0, RF0_ESCORT);
+	if (FLAG(r_ptr, RF_ESCORTS)) SET_FLAG(mf_ptr->flags, 0, RF0_ESCORTS);
 
 	/* Killing a monster reveals some properties */
 	if (r_ptr->r_tkills || cheat_know)
 	{
 		/* Know "race" flags */
-		if (MON_FLAG(r_ptr, 2, ORC)) SET_FLAG(mf_ptr->flags, 2, RF2_ORC);
-		if (MON_FLAG(r_ptr, 2, TROLL)) SET_FLAG(mf_ptr->flags, 2, RF2_TROLL);
-		if (MON_FLAG(r_ptr, 2, GIANT)) SET_FLAG(mf_ptr->flags, 2, RF2_GIANT);
-		if (MON_FLAG(r_ptr, 2, DRAGON)) SET_FLAG(mf_ptr->flags, 2, RF2_DRAGON);
-		if (MON_FLAG(r_ptr, 2, DEMON)) SET_FLAG(mf_ptr->flags, 2, RF2_DEMON);
-		if (MON_FLAG(r_ptr, 2, UNDEAD)) SET_FLAG(mf_ptr->flags, 2, RF2_UNDEAD);
-		if (MON_FLAG(r_ptr, 2, EVIL)) SET_FLAG(mf_ptr->flags, 2, RF2_EVIL);
-		if (MON_FLAG(r_ptr, 2, GOOD)) SET_FLAG(mf_ptr->flags, 2, RF2_GOOD);
-		if (MON_FLAG(r_ptr, 2, ANIMAL)) SET_FLAG(mf_ptr->flags, 2, RF2_ANIMAL);
-		if (MON_FLAG(r_ptr, 2, AMBERITE)) SET_FLAG(mf_ptr->flags, 2, RF2_AMBERITE);
+		if (FLAG(r_ptr, RF_ORC)) SET_FLAG(mf_ptr->flags, 2, RF2_ORC);
+		if (FLAG(r_ptr, RF_TROLL)) SET_FLAG(mf_ptr->flags, 2, RF2_TROLL);
+		if (FLAG(r_ptr, RF_GIANT)) SET_FLAG(mf_ptr->flags, 2, RF2_GIANT);
+		if (FLAG(r_ptr, RF_DRAGON)) SET_FLAG(mf_ptr->flags, 2, RF2_DRAGON);
+		if (FLAG(r_ptr, RF_DEMON)) SET_FLAG(mf_ptr->flags, 2, RF2_DEMON);
+		if (FLAG(r_ptr, RF_UNDEAD)) SET_FLAG(mf_ptr->flags, 2, RF2_UNDEAD);
+		if (FLAG(r_ptr, RF_EVIL)) SET_FLAG(mf_ptr->flags, 2, RF2_EVIL);
+		if (FLAG(r_ptr, RF_GOOD)) SET_FLAG(mf_ptr->flags, 2, RF2_GOOD);
+		if (FLAG(r_ptr, RF_ANIMAL)) SET_FLAG(mf_ptr->flags, 2, RF2_ANIMAL);
+		if (FLAG(r_ptr, RF_AMBERITE)) SET_FLAG(mf_ptr->flags, 2, RF2_AMBERITE);
 
 		/* Know 'quantum' flag */
-		if (MON_FLAG(r_ptr, 1, QUANTUM)) SET_FLAG(mf_ptr->flags, 1, RF1_QUANTUM);
+		if (FLAG(r_ptr, RF_QUANTUM)) SET_FLAG(mf_ptr->flags, 1, RF1_QUANTUM);
 
 		/* Know "forced" flags */
-		if (MON_FLAG(r_ptr, 0, FORCE_DEPTH)) SET_FLAG(mf_ptr->flags, 0, RF0_FORCE_DEPTH);
-		if (MON_FLAG(r_ptr, 0, FORCE_MAXHP)) SET_FLAG(mf_ptr->flags, 0, RF0_FORCE_MAXHP);
+		if (FLAG(r_ptr, RF_FORCE_DEPTH)) SET_FLAG(mf_ptr->flags, 0, RF0_FORCE_DEPTH);
+		if (FLAG(r_ptr, RF_FORCE_MAXHP)) SET_FLAG(mf_ptr->flags, 0, RF0_FORCE_MAXHP);
 	}
 
 	/* Treat uniques differently */
-	if (MON_FLAG(mf_ptr, 0, UNIQUE))
+	if (FLAG(mf_ptr, RF_UNIQUE))
 	{
 		/* Hack -- Determine if the unique is "dead" */
 		bool dead = (r_ptr->max_num == 0) ? TRUE : FALSE;
@@ -430,18 +430,18 @@ static void roff_mon_aux(int r_idx, int remem)
 		roff("moves");
 
 		/* Random-ness */
-		if ((MON_FLAG(mf_ptr, 0, RAND_50)) || (MON_FLAG(mf_ptr, 0, RAND_25)))
+		if ((FLAG(mf_ptr, RF_RAND_50)) || (FLAG(mf_ptr, RF_RAND_25)))
 		{
 			/* Adverb */
-			if ((MON_FLAG(mf_ptr, 0, RAND_50)) && (MON_FLAG(mf_ptr, 0, RAND_25)))
+			if ((FLAG(mf_ptr, RF_RAND_50)) && (FLAG(mf_ptr, RF_RAND_25)))
 			{
 				roff(" extremely");
 			}
-			else if (MON_FLAG(mf_ptr, 0, RAND_50))
+			else if (FLAG(mf_ptr, RF_RAND_50))
 			{
 				roff(" somewhat");
 			}
-			else if (MON_FLAG(mf_ptr, 0, RAND_25))
+			else if (FLAG(mf_ptr, RF_RAND_25))
 			{
 				roff(" a bit");
 			}
@@ -473,7 +473,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	}
 
 	/* The code above includes "attack speed" */
-	if (MON_FLAG(mf_ptr, 0, NEVER_MOVE))
+	if (FLAG(mf_ptr, RF_NEVER_MOVE))
 	{
 		/* Introduce */
 		if (old)
@@ -502,7 +502,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	if (r_ptr->r_tkills || cheat_know)
 	{
 		/* Introduction */
-		if (MON_FLAG(mf_ptr, 0, UNIQUE))
+		if (FLAG(mf_ptr, RF_UNIQUE))
 		{
 			roff("Killing this");
 		}
@@ -512,20 +512,20 @@ static void roff_mon_aux(int r_idx, int remem)
 		}
 
 		/* Describe the "quality" */
-		if (MON_FLAG(mf_ptr, 1, XXX_1)) roff(CLR_L_BLUE " some property");
-		if (MON_FLAG(mf_ptr, 2, ANIMAL)) roff(CLR_L_BLUE " natural");
-		if (MON_FLAG(mf_ptr, 2, EVIL)) roff(CLR_L_BLUE " evil");
-		if (MON_FLAG(mf_ptr, 2, GOOD)) roff(CLR_L_BLUE " good");
-		if (MON_FLAG(mf_ptr, 2, UNDEAD)) roff(CLR_L_BLUE " undead");
+		if (FLAG(mf_ptr, RF_XXX_1)) roff(CLR_L_BLUE " some property");
+		if (FLAG(mf_ptr, RF_ANIMAL)) roff(CLR_L_BLUE " natural");
+		if (FLAG(mf_ptr, RF_EVIL)) roff(CLR_L_BLUE " evil");
+		if (FLAG(mf_ptr, RF_GOOD)) roff(CLR_L_BLUE " good");
+		if (FLAG(mf_ptr, RF_UNDEAD)) roff(CLR_L_BLUE " undead");
 
 		/* Describe the "race" */
-		if (MON_FLAG(mf_ptr, 2, DRAGON)) roff(CLR_L_BLUE " dragon");
-		else if (MON_FLAG(mf_ptr, 2, DEMON)) roff(CLR_L_BLUE " demon");
-		else if (MON_FLAG(mf_ptr, 2, GIANT)) roff(CLR_L_BLUE " giant");
-		else if (MON_FLAG(mf_ptr, 2, TROLL)) roff(CLR_L_BLUE " troll");
-		else if (MON_FLAG(mf_ptr, 2, ORC)) roff(CLR_L_BLUE " orc");
-		else if (MON_FLAG(mf_ptr, 2, AMBERITE)) roff(CLR_L_BLUE " Amberite");
-		else if (MON_FLAG(mf_ptr, 1, QUANTUM)) roff(CLR_L_BLUE " quantum creature");
+		if (FLAG(mf_ptr, RF_DRAGON)) roff(CLR_L_BLUE " dragon");
+		else if (FLAG(mf_ptr, RF_DEMON)) roff(CLR_L_BLUE " demon");
+		else if (FLAG(mf_ptr, RF_GIANT)) roff(CLR_L_BLUE " giant");
+		else if (FLAG(mf_ptr, RF_TROLL)) roff(CLR_L_BLUE " troll");
+		else if (FLAG(mf_ptr, RF_ORC)) roff(CLR_L_BLUE " orc");
+		else if (FLAG(mf_ptr, RF_AMBERITE)) roff(CLR_L_BLUE " Amberite");
+		else if (FLAG(mf_ptr, RF_QUANTUM)) roff(CLR_L_BLUE " quantum creature");
 		else
 			roff(" creature");
 
@@ -566,59 +566,59 @@ static void roff_mon_aux(int r_idx, int remem)
 		}
 	}
 
-	if ((MON_FLAG(mf_ptr, 1, AURA_FIRE)) && (MON_FLAG(mf_ptr, 1, AURA_ELEC)))
+	if ((FLAG(mf_ptr, RF_AURA_FIRE)) && (FLAG(mf_ptr, RF_AURA_ELEC)))
 	{
 		roff(CLR_YELLOW "%^s is surrounded by flames and electricity.  ",
 					  wd_he[msex]);
 	}
-	else if ((MON_FLAG(mf_ptr, 2, AURA_COLD)) && (MON_FLAG(mf_ptr, 1, AURA_ELEC)))
+	else if ((FLAG(mf_ptr, RF_AURA_COLD)) && (FLAG(mf_ptr, RF_AURA_ELEC)))
 	{
 		roff(CLR_YELLOW "%^s is surrounded by ice and electricity.  ",
 					  wd_he[msex]);
 	}
-	else if (MON_FLAG(mf_ptr, 1, AURA_FIRE))
+	else if (FLAG(mf_ptr, RF_AURA_FIRE))
 	{
 		roff(CLR_YELLOW "%^s is surrounded by flames.  ", wd_he[msex]);
 	}
-	else if (MON_FLAG(mf_ptr, 2, AURA_COLD))
+	else if (FLAG(mf_ptr, RF_AURA_COLD))
 	{
 		roff(CLR_YELLOW "%^s is surrounded by ice.  ", wd_he[msex]);
 	}
-	else if (MON_FLAG(mf_ptr, 1, AURA_ELEC))
+	else if (FLAG(mf_ptr, RF_AURA_ELEC))
 	{
 		roff(CLR_YELLOW "%^s is surrounded by electricity.  ", wd_he[msex]);
 	}
 
-	if (MON_FLAG(mf_ptr, 1, REFLECTING))
+	if (FLAG(mf_ptr, RF_REFLECTING))
 	{
 		roff(CLR_YELLOW "%^s reflects bolt spells.  ", wd_he[msex]);
 	}
 
 	/* Describe escorts */
-	if ((MON_FLAG(mf_ptr, 0, ESCORT)) || (MON_FLAG(mf_ptr, 0, ESCORTS)))
+	if ((FLAG(mf_ptr, RF_ESCORT)) || (FLAG(mf_ptr, RF_ESCORTS)))
 	{
 		roff("%^s usually appears with escorts.  ", wd_he[msex]);
 	}
 
 	/* Describe friends */
-	else if (MON_FLAG(mf_ptr, 0, FRIENDS))
+	else if (FLAG(mf_ptr, RF_FRIENDS))
 	{
 		roff("%^s usually appears in groups.  ", wd_he[msex]);
 	}
 
-	else if (MON_FLAG(mf_ptr, 0, CHAR_MIMIC))
+	else if (FLAG(mf_ptr, RF_CHAR_MIMIC))
 	{
 		roff("%^s is a mimic.  ", wd_he[msex]);
 	}
 
 	/* Collect inate attacks */
-	if (MON_FLAG(mf_ptr, 3, SHRIEK)) vp[vn++] = "shriek for help";
-	if (MON_FLAG(mf_ptr, 3, ELDRITCH_HORROR)) vp[vn++] = "blast your sanity";
-	if (MON_FLAG(mf_ptr, 3, ROCKET)) vp[vn++] = "shoot a rocket";
-	if (MON_FLAG(mf_ptr, 3, ARROW_1)) vp[vn++] = "fire an arrow";
-	if (MON_FLAG(mf_ptr, 3, ARROW_2)) vp[vn++] = "fire arrows";
-	if (MON_FLAG(mf_ptr, 3, ARROW_3)) vp[vn++] = "fire a missile";
-	if (MON_FLAG(mf_ptr, 3, ARROW_4)) vp[vn++] = "fire missiles";
+	if (FLAG(mf_ptr, RF_SHRIEK)) vp[vn++] = "shriek for help";
+	if (FLAG(mf_ptr, RF_ELDRITCH_HORROR)) vp[vn++] = "blast your sanity";
+	if (FLAG(mf_ptr, RF_ROCKET)) vp[vn++] = "shoot a rocket";
+	if (FLAG(mf_ptr, RF_ARROW_1)) vp[vn++] = "fire an arrow";
+	if (FLAG(mf_ptr, RF_ARROW_2)) vp[vn++] = "fire arrows";
+	if (FLAG(mf_ptr, RF_ARROW_3)) vp[vn++] = "fire a missile";
+	if (FLAG(mf_ptr, RF_ARROW_4)) vp[vn++] = "fire missiles";
 
 	/* Describe inate attacks */
 	if (vn)
@@ -646,28 +646,28 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect breaths */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 3, BR_ACID)) vp[vn++] = "acid";
-	if (MON_FLAG(mf_ptr, 3, BR_ELEC)) vp[vn++] = "lightning";
-	if (MON_FLAG(mf_ptr, 3, BR_FIRE)) vp[vn++] = "fire";
-	if (MON_FLAG(mf_ptr, 3, BR_COLD)) vp[vn++] = "frost";
-	if (MON_FLAG(mf_ptr, 3, BR_POIS)) vp[vn++] = "poison";
-	if (MON_FLAG(mf_ptr, 3, BR_NETH)) vp[vn++] = "nether";
-	if (MON_FLAG(mf_ptr, 3, BR_LITE)) vp[vn++] = "light";
-	if (MON_FLAG(mf_ptr, 3, BR_DARK)) vp[vn++] = "darkness";
-	if (MON_FLAG(mf_ptr, 3, BR_CONF)) vp[vn++] = "confusion";
-	if (MON_FLAG(mf_ptr, 3, BR_SOUN)) vp[vn++] = "sound";
-	if (MON_FLAG(mf_ptr, 3, BR_CHAO)) vp[vn++] = "chaos";
-	if (MON_FLAG(mf_ptr, 3, BR_DISE)) vp[vn++] = "disenchantment";
-	if (MON_FLAG(mf_ptr, 3, BR_NEXU)) vp[vn++] = "nexus";
-	if (MON_FLAG(mf_ptr, 3, BR_TIME)) vp[vn++] = "time";
-	if (MON_FLAG(mf_ptr, 3, BR_INER)) vp[vn++] = "inertia";
-	if (MON_FLAG(mf_ptr, 3, BR_GRAV)) vp[vn++] = "gravity";
-	if (MON_FLAG(mf_ptr, 3, BR_SHAR)) vp[vn++] = "shards";
-	if (MON_FLAG(mf_ptr, 3, BR_PLAS)) vp[vn++] = "plasma";
-	if (MON_FLAG(mf_ptr, 3, BR_WALL)) vp[vn++] = "force";
-	if (MON_FLAG(mf_ptr, 3, BR_MANA)) vp[vn++] = "mana";
-	if (MON_FLAG(mf_ptr, 3, BR_NUKE)) vp[vn++] = "toxic waste";
-	if (MON_FLAG(mf_ptr, 3, BR_DISI)) vp[vn++] = "disintegration";
+	if (FLAG(mf_ptr, RF_BR_ACID)) vp[vn++] = "acid";
+	if (FLAG(mf_ptr, RF_BR_ELEC)) vp[vn++] = "lightning";
+	if (FLAG(mf_ptr, RF_BR_FIRE)) vp[vn++] = "fire";
+	if (FLAG(mf_ptr, RF_BR_COLD)) vp[vn++] = "frost";
+	if (FLAG(mf_ptr, RF_BR_POIS)) vp[vn++] = "poison";
+	if (FLAG(mf_ptr, RF_BR_NETH)) vp[vn++] = "nether";
+	if (FLAG(mf_ptr, RF_BR_LITE)) vp[vn++] = "light";
+	if (FLAG(mf_ptr, RF_BR_DARK)) vp[vn++] = "darkness";
+	if (FLAG(mf_ptr, RF_BR_CONF)) vp[vn++] = "confusion";
+	if (FLAG(mf_ptr, RF_BR_SOUN)) vp[vn++] = "sound";
+	if (FLAG(mf_ptr, RF_BR_CHAO)) vp[vn++] = "chaos";
+	if (FLAG(mf_ptr, RF_BR_DISE)) vp[vn++] = "disenchantment";
+	if (FLAG(mf_ptr, RF_BR_NEXU)) vp[vn++] = "nexus";
+	if (FLAG(mf_ptr, RF_BR_TIME)) vp[vn++] = "time";
+	if (FLAG(mf_ptr, RF_BR_INER)) vp[vn++] = "inertia";
+	if (FLAG(mf_ptr, RF_BR_GRAV)) vp[vn++] = "gravity";
+	if (FLAG(mf_ptr, RF_BR_SHAR)) vp[vn++] = "shards";
+	if (FLAG(mf_ptr, RF_BR_PLAS)) vp[vn++] = "plasma";
+	if (FLAG(mf_ptr, RF_BR_WALL)) vp[vn++] = "force";
+	if (FLAG(mf_ptr, RF_BR_MANA)) vp[vn++] = "mana";
+	if (FLAG(mf_ptr, RF_BR_NUKE)) vp[vn++] = "toxic waste";
+	if (FLAG(mf_ptr, RF_BR_DISI)) vp[vn++] = "disintegration";
 
 	/* Describe breaths */
 	if (vn)
@@ -695,72 +695,72 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect spells */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 4, BA_ACID)) vp[vn++] = "produce acid balls";
-	if (MON_FLAG(mf_ptr, 4, BA_ELEC)) vp[vn++] = "produce lightning balls";
-	if (MON_FLAG(mf_ptr, 4, BA_FIRE)) vp[vn++] = "produce fire balls";
-	if (MON_FLAG(mf_ptr, 4, BA_COLD)) vp[vn++] = "produce frost balls";
-	if (MON_FLAG(mf_ptr, 4, BA_POIS)) vp[vn++] = "produce poison balls";
-	if (MON_FLAG(mf_ptr, 4, BA_NETH)) vp[vn++] = "produce nether balls";
-	if (MON_FLAG(mf_ptr, 4, BA_WATE)) vp[vn++] = "produce water balls";
-	if (MON_FLAG(mf_ptr, 3, BA_NUKE)) vp[vn++] = "produce balls of radiation";
-	if (MON_FLAG(mf_ptr, 4, BA_MANA)) vp[vn++] = "invoke mana storms";
-	if (MON_FLAG(mf_ptr, 4, BA_DARK)) vp[vn++] = "invoke darkness storms";
-	if (MON_FLAG(mf_ptr, 3, BA_CHAO)) vp[vn++] = "invoke raw Logrus";
-	if (MON_FLAG(mf_ptr, 5, HAND_DOOM)) vp[vn++] = "invoke the Hand of Doom";
-	if (MON_FLAG(mf_ptr, 4, DRAIN_MANA)) vp[vn++] = "drain mana";
-	if (MON_FLAG(mf_ptr, 4, MIND_BLAST)) vp[vn++] = "cause mind blasting";
-	if (MON_FLAG(mf_ptr, 4, BRAIN_SMASH)) vp[vn++] = "cause brain smashing";
-	if (MON_FLAG(mf_ptr, 4, CAUSE_1)) vp[vn++] = "cause light wounds and cursing";
-	if (MON_FLAG(mf_ptr, 4, CAUSE_2)) vp[vn++] = "cause serious wounds and cursing";
-	if (MON_FLAG(mf_ptr, 4, CAUSE_3)) vp[vn++] = "cause critical wounds and cursing";
-	if (MON_FLAG(mf_ptr, 4, CAUSE_4)) vp[vn++] = "cause mortal wounds";
-	if (MON_FLAG(mf_ptr, 4, BO_ACID)) vp[vn++] = "produce acid bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_ELEC)) vp[vn++] = "produce lightning bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_FIRE)) vp[vn++] = "produce fire bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_COLD)) vp[vn++] = "produce frost bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_POIS)) vp[vn++] = "produce poison bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_NETH)) vp[vn++] = "produce nether bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_WATE)) vp[vn++] = "produce water bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_MANA)) vp[vn++] = "produce mana bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_PLAS)) vp[vn++] = "produce plasma bolts";
-	if (MON_FLAG(mf_ptr, 4, BO_ICEE)) vp[vn++] = "produce ice bolts";
-	if (MON_FLAG(mf_ptr, 4, MISSILE)) vp[vn++] = "produce magic missiles";
-	if (MON_FLAG(mf_ptr, 4, SCARE)) vp[vn++] = "terrify";
-	if (MON_FLAG(mf_ptr, 4, BLIND)) vp[vn++] = "blind";
-	if (MON_FLAG(mf_ptr, 4, CONF)) vp[vn++] = "confuse";
-	if (MON_FLAG(mf_ptr, 4, SLOW)) vp[vn++] = "slow";
-	if (MON_FLAG(mf_ptr, 4, HOLD)) vp[vn++] = "paralyze";
-	if (MON_FLAG(mf_ptr, 5, HASTE)) vp[vn++] = "haste-self";
-	if (MON_FLAG(mf_ptr, 5, HEAL)) vp[vn++] = "heal-self";
-	if (MON_FLAG(mf_ptr, 5, INVULNER)) vp[vn++] = "make invulnerable";
-	if (MON_FLAG(mf_ptr, 5, BLINK)) vp[vn++] = "blink-self";
-	if (MON_FLAG(mf_ptr, 5, TPORT)) vp[vn++] = "teleport-self";
-	if (MON_FLAG(mf_ptr, 5, XXX3)) vp[vn++] = "do something";
-	if (MON_FLAG(mf_ptr, 5, XXX4)) vp[vn++] = "do something";
-	if (MON_FLAG(mf_ptr, 5, TELE_TO)) vp[vn++] = "teleport to";
-	if (MON_FLAG(mf_ptr, 5, TELE_AWAY)) vp[vn++] = "teleport away";
-	if (MON_FLAG(mf_ptr, 5, TELE_LEVEL)) vp[vn++] = "teleport level";
-	if (MON_FLAG(mf_ptr, 5, XXX5)) vp[vn++] = "do something";
-	if (MON_FLAG(mf_ptr, 5, DARKNESS)) vp[vn++] = "create darkness";
-	if (MON_FLAG(mf_ptr, 5, TRAPS)) vp[vn++] = "create traps";
-	if (MON_FLAG(mf_ptr, 5, FORGET)) vp[vn++] = "cause amnesia";
-	if (MON_FLAG(mf_ptr, 5, RAISE_DEAD)) vp[vn++] = "raise dead";
-	if (MON_FLAG(mf_ptr, 5, S_MONSTER)) vp[vn++] = "summon a monster";
-	if (MON_FLAG(mf_ptr, 5, S_MONSTERS)) vp[vn++] = "summon monsters";
-	if (MON_FLAG(mf_ptr, 5, S_KIN)) vp[vn++] = "summon aid";
-	if (MON_FLAG(mf_ptr, 5, S_ANT)) vp[vn++] = "summon ants";
-	if (MON_FLAG(mf_ptr, 5, S_SPIDER)) vp[vn++] = "summon spiders";
-	if (MON_FLAG(mf_ptr, 5, S_HOUND)) vp[vn++] = "summon hounds";
-	if (MON_FLAG(mf_ptr, 5, S_HYDRA)) vp[vn++] = "summon hydras";
-	if (MON_FLAG(mf_ptr, 5, S_ANGEL)) vp[vn++] = "summon an angel";
-	if (MON_FLAG(mf_ptr, 5, S_DEMON)) vp[vn++] = "summon a demon";
-	if (MON_FLAG(mf_ptr, 5, S_UNDEAD)) vp[vn++] = "summon an undead";
-	if (MON_FLAG(mf_ptr, 5, S_DRAGON)) vp[vn++] = "summon a dragon";
-	if (MON_FLAG(mf_ptr, 5, S_HI_UNDEAD)) vp[vn++] = "summon Greater Undead";
-	if (MON_FLAG(mf_ptr, 5, S_HI_DRAGON)) vp[vn++] = "summon Ancient Dragons";
-	if (MON_FLAG(mf_ptr, 5, S_CYBER)) vp[vn++] = "summon Cyberdemons";
-	if (MON_FLAG(mf_ptr, 5, S_AMBERITES)) vp[vn++] = "summon Lords of Amber";
-	if (MON_FLAG(mf_ptr, 5, S_UNIQUE)) vp[vn++] = "summon Unique Monsters";
+	if (FLAG(mf_ptr, RF_BA_ACID)) vp[vn++] = "produce acid balls";
+	if (FLAG(mf_ptr, RF_BA_ELEC)) vp[vn++] = "produce lightning balls";
+	if (FLAG(mf_ptr, RF_BA_FIRE)) vp[vn++] = "produce fire balls";
+	if (FLAG(mf_ptr, RF_BA_COLD)) vp[vn++] = "produce frost balls";
+	if (FLAG(mf_ptr, RF_BA_POIS)) vp[vn++] = "produce poison balls";
+	if (FLAG(mf_ptr, RF_BA_NETH)) vp[vn++] = "produce nether balls";
+	if (FLAG(mf_ptr, RF_BA_WATE)) vp[vn++] = "produce water balls";
+	if (FLAG(mf_ptr, RF_BA_NUKE)) vp[vn++] = "produce balls of radiation";
+	if (FLAG(mf_ptr, RF_BA_MANA)) vp[vn++] = "invoke mana storms";
+	if (FLAG(mf_ptr, RF_BA_DARK)) vp[vn++] = "invoke darkness storms";
+	if (FLAG(mf_ptr, RF_BA_CHAO)) vp[vn++] = "invoke raw Logrus";
+	if (FLAG(mf_ptr, RF_HAND_DOOM)) vp[vn++] = "invoke the Hand of Doom";
+	if (FLAG(mf_ptr, RF_DRAIN_MANA)) vp[vn++] = "drain mana";
+	if (FLAG(mf_ptr, RF_MIND_BLAST)) vp[vn++] = "cause mind blasting";
+	if (FLAG(mf_ptr, RF_BRAIN_SMASH)) vp[vn++] = "cause brain smashing";
+	if (FLAG(mf_ptr, RF_CAUSE_1)) vp[vn++] = "cause light wounds and cursing";
+	if (FLAG(mf_ptr, RF_CAUSE_2)) vp[vn++] = "cause serious wounds and cursing";
+	if (FLAG(mf_ptr, RF_CAUSE_3)) vp[vn++] = "cause critical wounds and cursing";
+	if (FLAG(mf_ptr, RF_CAUSE_4)) vp[vn++] = "cause mortal wounds";
+	if (FLAG(mf_ptr, RF_BO_ACID)) vp[vn++] = "produce acid bolts";
+	if (FLAG(mf_ptr, RF_BO_ELEC)) vp[vn++] = "produce lightning bolts";
+	if (FLAG(mf_ptr, RF_BO_FIRE)) vp[vn++] = "produce fire bolts";
+	if (FLAG(mf_ptr, RF_BO_COLD)) vp[vn++] = "produce frost bolts";
+	if (FLAG(mf_ptr, RF_BO_POIS)) vp[vn++] = "produce poison bolts";
+	if (FLAG(mf_ptr, RF_BO_NETH)) vp[vn++] = "produce nether bolts";
+	if (FLAG(mf_ptr, RF_BO_WATE)) vp[vn++] = "produce water bolts";
+	if (FLAG(mf_ptr, RF_BO_MANA)) vp[vn++] = "produce mana bolts";
+	if (FLAG(mf_ptr, RF_BO_PLAS)) vp[vn++] = "produce plasma bolts";
+	if (FLAG(mf_ptr, RF_BO_ICEE)) vp[vn++] = "produce ice bolts";
+	if (FLAG(mf_ptr, RF_MISSILE)) vp[vn++] = "produce magic missiles";
+	if (FLAG(mf_ptr, RF_SCARE)) vp[vn++] = "terrify";
+	if (FLAG(mf_ptr, RF_BLIND)) vp[vn++] = "blind";
+	if (FLAG(mf_ptr, RF_CONF)) vp[vn++] = "confuse";
+	if (FLAG(mf_ptr, RF_SLOW)) vp[vn++] = "slow";
+	if (FLAG(mf_ptr, RF_HOLD)) vp[vn++] = "paralyze";
+	if (FLAG(mf_ptr, RF_HASTE)) vp[vn++] = "haste-self";
+	if (FLAG(mf_ptr, RF_HEAL)) vp[vn++] = "heal-self";
+	if (FLAG(mf_ptr, RF_INVULNER)) vp[vn++] = "make invulnerable";
+	if (FLAG(mf_ptr, RF_BLINK)) vp[vn++] = "blink-self";
+	if (FLAG(mf_ptr, RF_TPORT)) vp[vn++] = "teleport-self";
+	if (FLAG(mf_ptr, RF_XXX3)) vp[vn++] = "do something";
+	if (FLAG(mf_ptr, RF_XXX4)) vp[vn++] = "do something";
+	if (FLAG(mf_ptr, RF_TELE_TO)) vp[vn++] = "teleport to";
+	if (FLAG(mf_ptr, RF_TELE_AWAY)) vp[vn++] = "teleport away";
+	if (FLAG(mf_ptr, RF_TELE_LEVEL)) vp[vn++] = "teleport level";
+	if (FLAG(mf_ptr, RF_XXX5)) vp[vn++] = "do something";
+	if (FLAG(mf_ptr, RF_DARKNESS)) vp[vn++] = "create darkness";
+	if (FLAG(mf_ptr, RF_TRAPS)) vp[vn++] = "create traps";
+	if (FLAG(mf_ptr, RF_FORGET)) vp[vn++] = "cause amnesia";
+	if (FLAG(mf_ptr, RF_RAISE_DEAD)) vp[vn++] = "raise dead";
+	if (FLAG(mf_ptr, RF_S_MONSTER)) vp[vn++] = "summon a monster";
+	if (FLAG(mf_ptr, RF_S_MONSTERS)) vp[vn++] = "summon monsters";
+	if (FLAG(mf_ptr, RF_S_KIN)) vp[vn++] = "summon aid";
+	if (FLAG(mf_ptr, RF_S_ANT)) vp[vn++] = "summon ants";
+	if (FLAG(mf_ptr, RF_S_SPIDER)) vp[vn++] = "summon spiders";
+	if (FLAG(mf_ptr, RF_S_HOUND)) vp[vn++] = "summon hounds";
+	if (FLAG(mf_ptr, RF_S_HYDRA)) vp[vn++] = "summon hydras";
+	if (FLAG(mf_ptr, RF_S_ANGEL)) vp[vn++] = "summon an angel";
+	if (FLAG(mf_ptr, RF_S_DEMON)) vp[vn++] = "summon a demon";
+	if (FLAG(mf_ptr, RF_S_UNDEAD)) vp[vn++] = "summon an undead";
+	if (FLAG(mf_ptr, RF_S_DRAGON)) vp[vn++] = "summon a dragon";
+	if (FLAG(mf_ptr, RF_S_HI_UNDEAD)) vp[vn++] = "summon Greater Undead";
+	if (FLAG(mf_ptr, RF_S_HI_DRAGON)) vp[vn++] = "summon Ancient Dragons";
+	if (FLAG(mf_ptr, RF_S_CYBER)) vp[vn++] = "summon Cyberdemons";
+	if (FLAG(mf_ptr, RF_S_AMBERITES)) vp[vn++] = "summon Lords of Amber";
+	if (FLAG(mf_ptr, RF_S_UNIQUE)) vp[vn++] = "summon Unique Monsters";
 
 	/* Describe spells */
 	if (vn)
@@ -782,7 +782,7 @@ static void roff_mon_aux(int r_idx, int remem)
 		roff(" magical, casting spells");
 
 		/* Adverb */
-		if (MON_FLAG(mf_ptr, 1, SMART)) roff(CLR_ORANGE " intelligently");
+		if (FLAG(mf_ptr, RF_SMART)) roff(CLR_ORANGE " intelligently");
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
@@ -833,7 +833,7 @@ static void roff_mon_aux(int r_idx, int remem)
 		roff("%^s has an armor rating of %d", wd_he[msex], r_ptr->ac);
 
 		/* Maximized hitpoints */
-		if (MON_FLAG(mf_ptr, 0, FORCE_MAXHP))
+		if (FLAG(mf_ptr, RF_FORCE_MAXHP))
 		{
 			roff(" and a life rating of %d.  ",
 									  r_ptr->hdice * r_ptr->hside);
@@ -851,15 +851,15 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect special abilities. */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 1, OPEN_DOOR)) vp[vn++] = "open doors";
-	if (MON_FLAG(mf_ptr, 1, BASH_DOOR)) vp[vn++] = "bash down doors";
-	if (MON_FLAG(mf_ptr, 1, PASS_WALL)) vp[vn++] = "pass through walls";
-	if (MON_FLAG(mf_ptr, 1, KILL_WALL)) vp[vn++] = "bore through walls";
-	if (MON_FLAG(mf_ptr, 1, MOVE_BODY)) vp[vn++] = "push past weaker monsters";
-	if (MON_FLAG(mf_ptr, 1, KILL_BODY)) vp[vn++] = "destroy weaker monsters";
-	if (MON_FLAG(mf_ptr, 1, TAKE_ITEM)) vp[vn++] = "pick up objects";
-	if (MON_FLAG(mf_ptr, 1, KILL_ITEM)) vp[vn++] = "destroy objects";
-	if (MON_FLAG(mf_ptr, 6, LITE_1) || MON_FLAG(mf_ptr, 6, LITE_2)) vp[vn++] = "light the dungeon";
+	if (FLAG(mf_ptr, RF_OPEN_DOOR)) vp[vn++] = "open doors";
+	if (FLAG(mf_ptr, RF_BASH_DOOR)) vp[vn++] = "bash down doors";
+	if (FLAG(mf_ptr, RF_PASS_WALL)) vp[vn++] = "pass through walls";
+	if (FLAG(mf_ptr, RF_KILL_WALL)) vp[vn++] = "bore through walls";
+	if (FLAG(mf_ptr, RF_MOVE_BODY)) vp[vn++] = "push past weaker monsters";
+	if (FLAG(mf_ptr, RF_KILL_BODY)) vp[vn++] = "destroy weaker monsters";
+	if (FLAG(mf_ptr, RF_TAKE_ITEM)) vp[vn++] = "pick up objects";
+	if (FLAG(mf_ptr, RF_KILL_ITEM)) vp[vn++] = "destroy objects";
+	if (FLAG(mf_ptr, RF_LITE_1) || FLAG(mf_ptr, RF_LITE_2)) vp[vn++] = "light the dungeon";
 
 	/* Describe special abilities. */
 	if (vn)
@@ -886,27 +886,27 @@ static void roff_mon_aux(int r_idx, int remem)
 
 
 	/* Describe special abilities. */
-	if (MON_FLAG(mf_ptr, 1, INVISIBLE))
+	if (FLAG(mf_ptr, RF_INVISIBLE))
 	{
 		roff(CLR_L_BLUE "%^s is invisible.  ", wd_he[msex]);
 	}
-	if (MON_FLAG(mf_ptr, 1, COLD_BLOOD))
+	if (FLAG(mf_ptr, RF_COLD_BLOOD))
 	{
 		roff("%^s is cold blooded.  ", wd_he[msex]);
 	}
-	if (MON_FLAG(mf_ptr, 1, EMPTY_MIND))
+	if (FLAG(mf_ptr, RF_EMPTY_MIND))
 	{
 		roff("%^s is not detected by telepathy.  ", wd_he[msex]);
 	}
-	if (MON_FLAG(mf_ptr, 1, WEIRD_MIND))
+	if (FLAG(mf_ptr, RF_WEIRD_MIND))
 	{
 		roff("%^s is rarely detected by telepathy.  ", wd_he[msex]);
 	}
-	if (MON_FLAG(mf_ptr, 1, MULTIPLY))
+	if (FLAG(mf_ptr, RF_MULTIPLY))
 	{
 		roff(CLR_L_UMBER "%^s breeds explosively.  ", wd_he[msex]);
 	}
-	if (MON_FLAG(mf_ptr, 1, REGENERATE))
+	if (FLAG(mf_ptr, RF_REGENERATE))
 	{
 		roff("%^s regenerates quickly.  ", wd_he[msex]);
 	}
@@ -914,10 +914,10 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect susceptibilities */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 2, HURT_ROCK)) vp[vn++] = "rock remover";
-	if (MON_FLAG(mf_ptr, 2, HURT_LITE)) vp[vn++] = "bright light";
-	if (MON_FLAG(mf_ptr, 2, HURT_FIRE)) vp[vn++] = "fire";
-	if (MON_FLAG(mf_ptr, 2, HURT_COLD)) vp[vn++] = "cold";
+	if (FLAG(mf_ptr, RF_HURT_ROCK)) vp[vn++] = "rock remover";
+	if (FLAG(mf_ptr, RF_HURT_LITE)) vp[vn++] = "bright light";
+	if (FLAG(mf_ptr, RF_HURT_FIRE)) vp[vn++] = "fire";
+	if (FLAG(mf_ptr, RF_HURT_COLD)) vp[vn++] = "cold";
 
 	/* Describe susceptibilities */
 	if (vn)
@@ -945,11 +945,11 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect immunities */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 2, IM_ACID)) vp[vn++] = "acid";
-	if (MON_FLAG(mf_ptr, 2, IM_ELEC)) vp[vn++] = "lightning";
-	if (MON_FLAG(mf_ptr, 2, IM_FIRE)) vp[vn++] = "fire";
-	if (MON_FLAG(mf_ptr, 2, IM_COLD)) vp[vn++] = "cold";
-	if (MON_FLAG(mf_ptr, 2, IM_POIS)) vp[vn++] = "poison";
+	if (FLAG(mf_ptr, RF_IM_ACID)) vp[vn++] = "acid";
+	if (FLAG(mf_ptr, RF_IM_ELEC)) vp[vn++] = "lightning";
+	if (FLAG(mf_ptr, RF_IM_FIRE)) vp[vn++] = "fire";
+	if (FLAG(mf_ptr, RF_IM_COLD)) vp[vn++] = "cold";
+	if (FLAG(mf_ptr, RF_IM_POIS)) vp[vn++] = "poison";
 
 	/* Describe immunities */
 	if (vn)
@@ -977,13 +977,13 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect resistances */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 2, RES_NETH)) vp[vn++] = "nether";
-	if (MON_FLAG(mf_ptr, 2, RES_WATE)) vp[vn++] = "water";
-	if (MON_FLAG(mf_ptr, 2, RES_PLAS)) vp[vn++] = "plasma";
-	if (MON_FLAG(mf_ptr, 2, RES_NEXU)) vp[vn++] = "nexus";
-	if (MON_FLAG(mf_ptr, 2, RES_DISE)) vp[vn++] = "disenchantment";
-	if ((MON_FLAG(mf_ptr, 2, RES_TELE))
-		&& !(MON_FLAG(r_ptr, 0, UNIQUE))) vp[vn++] = "teleportation";
+	if (FLAG(mf_ptr, RF_RES_NETH)) vp[vn++] = "nether";
+	if (FLAG(mf_ptr, RF_RES_WATE)) vp[vn++] = "water";
+	if (FLAG(mf_ptr, RF_RES_PLAS)) vp[vn++] = "plasma";
+	if (FLAG(mf_ptr, RF_RES_NEXU)) vp[vn++] = "nexus";
+	if (FLAG(mf_ptr, RF_RES_DISE)) vp[vn++] = "disenchantment";
+	if ((FLAG(mf_ptr, RF_RES_TELE))
+		&& !(FLAG(r_ptr, RF_UNIQUE))) vp[vn++] = "teleportation";
 
 	/* Describe resistances */
 	if (vn)
@@ -1011,12 +1011,12 @@ static void roff_mon_aux(int r_idx, int remem)
 
 	/* Collect non-effects */
 	vn = 0;
-	if (MON_FLAG(mf_ptr, 2, NO_STUN)) vp[vn++] = "stunned";
-	if (MON_FLAG(mf_ptr, 2, NO_FEAR)) vp[vn++] = "frightened";
-	if (MON_FLAG(mf_ptr, 2, NO_CONF)) vp[vn++] = "confused";
-	if (MON_FLAG(mf_ptr, 2, NO_SLEEP)) vp[vn++] = "slept";
-	if ((MON_FLAG(mf_ptr, 2, RES_TELE))
-		&& (MON_FLAG(r_ptr, 0, UNIQUE))) vp[vn++] = "teleported";
+	if (FLAG(mf_ptr, RF_NO_STUN)) vp[vn++] = "stunned";
+	if (FLAG(mf_ptr, RF_NO_FEAR)) vp[vn++] = "frightened";
+	if (FLAG(mf_ptr, RF_NO_CONF)) vp[vn++] = "confused";
+	if (FLAG(mf_ptr, RF_NO_SLEEP)) vp[vn++] = "slept";
+	if ((FLAG(mf_ptr, RF_RES_TELE))
+		&& (FLAG(r_ptr, RF_UNIQUE))) vp[vn++] = "teleported";
 
 	/* Describe non-effects */
 	if (vn)
@@ -1132,13 +1132,13 @@ static void roff_mon_aux(int r_idx, int remem)
 
 
 		/* Great */
-		if (MON_FLAG(mf_ptr, 0, DROP_GREAT))
+		if (FLAG(mf_ptr, RF_DROP_GREAT))
 		{
 			p = " exceptional";
 		}
 
 		/* Good (no "n" needed) */
-		else if (MON_FLAG(mf_ptr, 0, DROP_GOOD))
+		else if (FLAG(mf_ptr, RF_DROP_GOOD))
 		{
 			p = " good";
 			sin = FALSE;
@@ -1433,7 +1433,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	}
 
 	/* Notice lack of attacks */
-	else if (MON_FLAG(mf_ptr, 0, NEVER_BLOW))
+	else if (FLAG(mf_ptr, RF_NEVER_BLOW))
 	{
 		roff("%^s has no physical attacks.  ", wd_he[msex]);
 	}
@@ -1449,7 +1449,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	 * Notice "Quest" monsters, but only if you
 	 * already encountered the monster.
 	 */
-	if ((MON_FLAG(mf_ptr, 0, QUESTOR)) && (r_ptr->r_sights))
+	if ((FLAG(mf_ptr, RF_QUESTOR)) && (r_ptr->r_sights))
 	{
 		roff("You feel an intense desire to kill this monster...  ");
 	}
@@ -1502,7 +1502,7 @@ void roff_mon_top(int r_idx)
 	Term_gotoxy(0, 0);
 
 	/* A title (use "The" for non-uniques) */
-	if (!(MON_FLAG(r_ptr, 0, UNIQUE)))
+	if (!(FLAG(r_ptr, RF_UNIQUE)))
 	{
 		roff("The ");
 	}
@@ -1622,11 +1622,11 @@ void display_visible(void)
 		}
 
 		/* Dump the name */
-		if (MON_FLAG(r_ptr, 0, UNIQUE))
+		if (FLAG(r_ptr, RF_UNIQUE))
 		{
 			roff(CLR_L_BLUE "%s", (r_name + r_ptr->name));
 		}
-		else if (MON_FLAG(r_ptr, 0, QUESTOR))
+		else if (FLAG(r_ptr, RF_QUESTOR))
 		{
 			roff(CLR_L_RED "%s", (r_name + r_ptr->name));
 		}
@@ -1717,9 +1717,9 @@ bool are_enemies(const monster_type *m_ptr, const monster_type *n_ptr)
 	const monster_race *s_ptr = &r_info[n_ptr->r_idx];
 
 	/* Friendly vs. opposite aligned normal or pet */
-	if (((MON_FLAG(r_ptr, 2, EVIL)) &&
-		 (MON_FLAG(s_ptr, 2, GOOD))) ||
-		((MON_FLAG(r_ptr, 2, GOOD)) && (MON_FLAG(s_ptr, 2, EVIL))))
+	if (((FLAG(r_ptr, RF_EVIL)) &&
+		 (FLAG(s_ptr, RF_GOOD))) ||
+		((FLAG(r_ptr, RF_GOOD)) && (FLAG(s_ptr, RF_EVIL))))
 	{
 		return TRUE;
 	}
@@ -1744,8 +1744,8 @@ bool are_enemies(const monster_type *m_ptr, const monster_type *n_ptr)
 bool monster_living(const monster_race *r_ptr)
 {
 	/* Non-living, undead, or demon */
-	if (MON_FLAG(r_ptr, 2, DEMON) || MON_FLAG(r_ptr, 2, UNDEAD) ||
-		MON_FLAG(r_ptr, 2, NONLIVING))
+	if (FLAG(r_ptr, RF_DEMON) || FLAG(r_ptr, RF_UNDEAD) ||
+		FLAG(r_ptr, RF_NONLIVING))
 		return FALSE;
 	else
 		return TRUE;

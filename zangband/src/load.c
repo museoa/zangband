@@ -2943,8 +2943,8 @@ static errr rd_savefile_new_aux(void)
 
 			/* Hack -- Reset the death counter */
 			r_ptr->max_num = 100;
-			if (MON_FLAG(r_ptr, 0, UNIQUE)) r_ptr->max_num = 1;
-			if (MON_FLAG(r_ptr, 2, UNIQUE_7)) r_ptr->max_num = 7;
+			if (FLAG(r_ptr, RF_UNIQUE)) r_ptr->max_num = 1;
+			if (FLAG(r_ptr, RF_UNIQUE_7)) r_ptr->max_num = 7;
 		}
 	}
 

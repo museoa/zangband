@@ -1483,7 +1483,7 @@ bool field_action_glyph_warding(field_type *f_ptr, va_list vp)
 	r_ptr = &r_info[m_ptr->r_idx];
 
 	if ((*flags & (MEG_DO_MOVE))
-		&& !MON_FLAG(r_ptr, 0, NEVER_BLOW)
+		&& !FLAG(r_ptr, RF_NEVER_BLOW)
 		&& (randint1(BREAK_GLYPH) < r_ptr->level))
 	{
 		/* Describe observable breakage */
@@ -1537,7 +1537,7 @@ bool field_action_glyph_explode(field_type *f_ptr, va_list vp)
 	r_ptr = &r_info[m_ptr->r_idx];
 
 	if ((*flags & (MEG_DO_MOVE))
-		&& !MON_FLAG(r_ptr, 0, NEVER_BLOW)
+		&& !FLAG(r_ptr, RF_NEVER_BLOW)
 		&& (randint1(BREAK_MINOR_GLYPH) < r_ptr->level))
 	{
 		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
@@ -1788,7 +1788,7 @@ bool field_action_corpse_look(field_type *f_ptr, va_list vp)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Are we looking at a unique corpse? */
-	if (MON_FLAG(r_ptr, 0, UNIQUE))
+	if (FLAG(r_ptr, RF_UNIQUE))
 	{
 		/* Copy name to the output string. */
 		(void)strnfmt(name, 40, "%s of %s", t_info[f_ptr->t_idx].name,
@@ -3391,7 +3391,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, va_list vp)
 	*flags |= MEG_DO_TURN;
 
 	/* Locked doors */
-	if (MON_FLAG(r_ptr, 1, OPEN_DOOR) &&
+	if (FLAG(r_ptr, RF_OPEN_DOOR) &&
 		(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Unlock */
@@ -3445,7 +3445,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, va_list vp)
 	*flags |= MEG_DO_TURN;
 
 	/* Stuck Door */
-	if (MON_FLAG(r_ptr, 1, BASH_DOOR) &&
+	if (FLAG(r_ptr, RF_BASH_DOOR) &&
 		(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Bash */

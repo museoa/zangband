@@ -1352,11 +1352,11 @@ static void spoil_mon_desc(cptr fname)
 		cptr name = (r_name + r_ptr->name);
 
 		/* Get the "name" */
-		if (MON_FLAG(r_ptr, 0, QUESTOR))
+		if (FLAG(r_ptr, RF_QUESTOR))
 		{
 			strnfmt(nam, 80, "[Q] %s", name);
 		}
-		else if (MON_FLAG(r_ptr, 0, UNIQUE))
+		else if (FLAG(r_ptr, RF_UNIQUE))
 		{
 			strnfmt(nam, 80, "[U] %s", name);
 		}
@@ -1386,7 +1386,7 @@ static void spoil_mon_desc(cptr fname)
 		strnfmt(ac, 80, "%d", r_ptr->ac);
 
 		/* Hitpoints */
-		if (MON_FLAG(r_ptr, 0, FORCE_MAXHP) || (r_ptr->hside == 1))
+		if (FLAG(r_ptr, RF_FORCE_MAXHP) || (r_ptr->hside == 1))
 		{
 			strnfmt(hp, 80, "%d", (int)r_ptr->hdice * r_ptr->hside);
 		}
@@ -2043,7 +2043,7 @@ static void spoil_mon_info(cptr fname)
 		if (flags3 & (RF2_RES_DISE)) vp[vn++] = "disenchantment";
 		if (flags3 & (RF2_RES_TELE)) vp[vn++] = "teleportation";
 		if ((flags3 & RF2_RES_TELE)
-			&& !(MON_FLAG(r_ptr, 0, UNIQUE))) vp[vn++] = "teleportation";
+			&& !(FLAG(r_ptr, RF_UNIQUE))) vp[vn++] = "teleportation";
 
 		if (vn)
 		{
@@ -2066,7 +2066,7 @@ static void spoil_mon_info(cptr fname)
 		if (flags3 & (RF2_NO_CONF)) vp[vn++] = "confused";
 		if (flags3 & (RF2_NO_SLEEP)) vp[vn++] = "slept";
 		if ((flags3 & RF2_RES_TELE)
-			&& (MON_FLAG(r_ptr, 0, UNIQUE))) vp[vn++] = "teleported";
+			&& (FLAG(r_ptr, RF_UNIQUE))) vp[vn++] = "teleported";
 
 		if (vn)
 		{

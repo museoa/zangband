@@ -3979,9 +3979,6 @@
 #define TR_FLAG(ff, i, flag) TEST_FLAG(ff, i, TR ## i ## _ ## flag)
 #define RF_FLAG(ff, i, flag) TEST_FLAG(ff, i, RF ## i ## _ ## flag)
 
-#define OBJ_FLAG(O, i, flag) TR_FLAG((O)->flags, i, flag)
-#define MON_FLAG(M, i, flag) RF_FLAG((M)->flags, i, flag)
-
 #define FLAG_AUX(P, TYPE, NUM, F) TYPE ## _ ## FLAG((P)->flags, NUM, F)
 #define FLAG(P, F) FLAG_AUX(P, F)
 

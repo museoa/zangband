@@ -64,10 +64,10 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	u32b f6 = (*f6p);
 
 	u32b smart = 0L;
-	bool is_dumb = (!MON_FLAG(r_ptr, 1, SMART));
+	bool is_dumb = (!FLAG(r_ptr, RF_SMART));
 
 	/* Too stupid to know anything */
-	if (MON_FLAG(r_ptr, 1, STUPID)) return;
+	if (FLAG(r_ptr, RF_STUPID)) return;
 
 	/* Update acquired knowledge */
 
@@ -523,7 +523,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 	int i;
 
 	/* Smart monsters restrict their spell choices. */
-	if (!stupid_monsters && !MON_FLAG(r_ptr, 1, STUPID))
+	if (!stupid_monsters && !FLAG(r_ptr, RF_STUPID))
 	{
 		/* What have we got? */
 		has_escape = ((f4 & (RF3_ESCAPE_MASK)) || (f5 & (RF4_ESCAPE_MASK)) ||
@@ -805,7 +805,7 @@ bool make_attack_spell(int m_idx)
 	f6 = r_ptr->flags[5];
 
 	/* Hack -- allow "desperate" spells */
-	if (MON_FLAG(r_ptr, 1, SMART) && (m_ptr->hp < m_ptr->maxhp / 10) &&
+	if (FLAG(r_ptr, RF_SMART) && (m_ptr->hp < m_ptr->maxhp / 10) &&
 		one_in_(2))
 	{
 		/* Require intelligent spells */
@@ -829,7 +829,7 @@ bool make_attack_spell(int m_idx)
 		if (((f4 & RF3_BOLT_MASK) ||
 			 (f5 & RF4_BOLT_MASK) ||
 			 (f6 & RF5_BOLT_MASK)) &&
-			!MON_FLAG(r_ptr, 1, STUPID) &&
+			!FLAG(r_ptr, RF_STUPID) &&
 			!clean_shot(m_ptr->fx, m_ptr->fy, px, py, FALSE))
 		{
 			/* Remove spells that will only hurt friends */
@@ -842,7 +842,7 @@ bool make_attack_spell(int m_idx)
 		if (((f4 & RF3_SUMMON_MASK) ||
 			 (f5 & RF4_SUMMON_MASK) ||
 			 (f6 & RF5_SUMMON_MASK)) &&
-			!MON_FLAG(r_ptr, 1, STUPID) && !(summon_possible(px, py)))
+			!FLAG(r_ptr, RF_STUPID) && !(summon_possible(px, py)))
 		{
 			/* Remove summoning spells */
 			f4 &= ~(RF3_SUMMON_MASK);
@@ -875,7 +875,7 @@ bool make_attack_spell(int m_idx)
 	failrate = 25 - (rlev + 3) / 4;
 
 	/* Hack -- Stupid monsters will never fail (for jellies and such) */
-	if (MON_FLAG(r_ptr, 1, STUPID)) failrate = 0;
+	if (FLAG(r_ptr, RF_STUPID)) failrate = 0;
 
 	/* Check for spell failure (inate attacks never fail) */
 	if ((thrown_spell >= 128) && (randint0(100) < failrate))

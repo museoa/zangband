@@ -119,7 +119,7 @@ void flee_message(cptr m_name, u16b r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 	
 	/* Immobile monsters can never flee */
-	if (MON_FLAG(r_ptr, 0, NEVER_MOVE)) return;
+	if (FLAG(r_ptr, RF_NEVER_MOVE)) return;
 	
 	/* Sound */
 	sound(SOUND_FLEE);
@@ -161,7 +161,7 @@ bool make_attack_normal(int m_idx)
 	bool visible = m_ptr->ml;
 
 	/* Not allowed to attack */
-	if (MON_FLAG(r_ptr, 0, NEVER_BLOW)) return (FALSE);
+	if (FLAG(r_ptr, RF_NEVER_BLOW)) return (FALSE);
 
 	/* ...nor if friendly */
 	if (!is_hostile(m_ptr)) return FALSE;
@@ -381,31 +381,31 @@ bool make_attack_normal(int m_idx)
 			disturb(TRUE);
 
 			if (FLAG(p_ptr, TR_SLAY_DRAGON) &&
-					MON_FLAG(r_ptr, 2, DRAGON))
+					FLAG(r_ptr, RF_DRAGON))
 				protect = 5;
 			else if (FLAG(p_ptr, TR_SLAY_DEMON) &&
-					MON_FLAG(r_ptr, 2, DEMON))
+					FLAG(r_ptr, RF_DEMON))
 				protect = 5;
 			else if (FLAG(p_ptr, TR_SLAY_UNDEAD) &&
-					MON_FLAG(r_ptr, 2, UNDEAD))
+					FLAG(r_ptr, RF_UNDEAD))
 				protect = 4;
 			else if (FLAG(p_ptr, TR_SLAY_ORC) &&
-					MON_FLAG(r_ptr, 2, ORC))
+					FLAG(r_ptr, RF_ORC))
 				protect = 4;
 			else if (FLAG(p_ptr, TR_SLAY_TROLL) &&
-					MON_FLAG(r_ptr, 2, TROLL))
+					FLAG(r_ptr, RF_TROLL))
 				protect = 4;
 			else if (FLAG(p_ptr, TR_SLAY_GIANT) &&
-					MON_FLAG(r_ptr, 2, GIANT))
+					FLAG(r_ptr, RF_GIANT))
 				protect = 4;
 			else if (FLAG(p_ptr, TR_SLAY_ANIMAL) &&
-					MON_FLAG(r_ptr, 2, ANIMAL))
+					FLAG(r_ptr, RF_ANIMAL))
 				protect = 3;
 			else if (FLAG(p_ptr, TR_SLAY_EVIL) &&
-					MON_FLAG(r_ptr, 2, EVIL))
+					FLAG(r_ptr, RF_EVIL))
 				protect = 3;
 			else if ((p_ptr->tim.protevil > 0) &&
-					MON_FLAG(r_ptr, 2, EVIL))
+					FLAG(r_ptr, RF_EVIL))
 				protect = 3;
 
 			/* Protection gets stronger with experience */
@@ -1524,7 +1524,7 @@ bool make_attack_normal(int m_idx)
 			{
 				if ((FLAG(p_ptr, TR_SH_FIRE)) && alive)
 				{
-					if (!MON_FLAG(r_ptr, 2, IM_FIRE))
+					if (!FLAG(r_ptr, RF_IM_FIRE))
 					{
 						int dam = damroll(2, 6);
 
@@ -1549,7 +1549,7 @@ bool make_attack_normal(int m_idx)
 
 				if ((FLAG(p_ptr, TR_SH_ELEC)) && alive)
 				{
-					if (!MON_FLAG(r_ptr, 2, IM_ELEC))
+					if (!FLAG(r_ptr, RF_IM_ELEC))
 					{
 						int dam = damroll(2, 6);
 
@@ -1574,7 +1574,7 @@ bool make_attack_normal(int m_idx)
 
 				if ((FLAG(p_ptr, TR_SH_ACID)) && alive)
 				{
-					if (!MON_FLAG(r_ptr, 2, IM_ACID))
+					if (!FLAG(r_ptr, RF_IM_ACID))
 					{
 						int dam = damroll(2, 6);
 
@@ -1599,7 +1599,7 @@ bool make_attack_normal(int m_idx)
 
 				if ((FLAG(p_ptr, TR_SH_COLD)) && alive)
 				{
-					if (!MON_FLAG(r_ptr, 2, IM_COLD))
+					if (!FLAG(r_ptr, RF_IM_COLD))
 					{
 						int dam = damroll(2, 6);
 

@@ -1422,7 +1422,7 @@ bool borg_think_dungeon(void)
 		r_ptr = &r_info[kill->r_idx];
 
 		/* Count the monsters which are "breeders" */
-		if (MON_FLAG(r_ptr, 1, MULTIPLY)) j++;
+		if (FLAG(r_ptr, RF_MULTIPLY)) j++;
 	}
 
 	/* hack -- close doors on breeder levles */

@@ -3176,7 +3176,7 @@ errr file_character(cptr name, bool full)
 		{
 			monster_race *r_ptr = &r_info[k];
 
-			if (MON_FLAG(r_ptr, 0, UNIQUE))
+			if (FLAG(r_ptr, RF_UNIQUE))
 			{
 				if (r_ptr->max_num == 0) Total++;
 			}

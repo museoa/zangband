@@ -1519,13 +1519,13 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 			feat_not_ascii = ((*a) & 0x80);
 
 			/* Desired attr */
-			if (!MON_FLAG(r_ptr, 0, ATTR_CLEAR) || feat_not_ascii)
+			if (!FLAG(r_ptr, RF_ATTR_CLEAR) || feat_not_ascii)
 			{
 				ma = r_ptr->x_attr;
 			}
 
 			/* Desired char */
-			if (!MON_FLAG(r_ptr, 0, CHAR_CLEAR) || feat_not_ascii)
+			if (!FLAG(r_ptr, RF_CHAR_CLEAR) || feat_not_ascii)
 			{
 				mc = r_ptr->x_char;
 			}
@@ -1534,10 +1534,10 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 			if (!(ma & 0x80))
 			{
 				/* Multi-hued monster */
-				if (MON_FLAG(r_ptr, 0, ATTR_MULTI))
+				if (FLAG(r_ptr, RF_ATTR_MULTI))
 				{
 					/* Is it a shapechanger? */
-					if (MON_FLAG(r_ptr, 1, SHAPECHANGER))
+					if (FLAG(r_ptr, RF_SHAPECHANGER))
 					{
 						if (use_graphics)
 						{
@@ -1555,7 +1555,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 					}
 
 					/* Multi-hued attr */
-					if (MON_FLAG(r_ptr, 1, ATTR_ANY))
+					if (FLAG(r_ptr, RF_ATTR_ANY))
 						ma = randint1(15);
 					else
 					{
@@ -1565,7 +1565,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 				}
 				/* Mimics' colors vary */
 				else if (((mc == '\"') || (mc == '!') || (mc == '='))
-						 && !MON_FLAG(r_ptr, 0, UNIQUE))
+						 && !FLAG(r_ptr, RF_UNIQUE))
 				{
 					/* Use char */ ;
 
@@ -1918,7 +1918,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 		map_mon_info(m_ptr, r_ptr, &a, &c, &map);
 		
 		/* Not hallucinating and Mimic in los? */
-		if (!halluc && visible && !m_ptr->ml && MON_FLAG(r_ptr, 0, CHAR_MIMIC))
+		if (!halluc && visible && !m_ptr->ml && FLAG(r_ptr, RF_CHAR_MIMIC))
 		{
 			/* Keep this grid */
 			map.flags |= MAP_ONCE;
