@@ -1115,7 +1115,7 @@ static errr process_music_config_file( const char *name, const char *section )
 				}
 				else
 				{
-					strcpy( song_description[index], "" );
+					song_description[index][0] = 0);
 				}
 			}
 			
@@ -1402,8 +1402,8 @@ static void init_music( void )
 	
 	for( i = 0; i < SONG_MAX; i++ )
 	{
-		strcpy( song_name[i], "" );
-		strcpy( song_description[i], "" );
+		song_name[i][0] = 0;
+		song_description[i][0] = 0;
 		song_volume[i] = ((gSoundVolume*255)/100);
 		song_repeat[i] = 1;
 		song[i] = (Movie)NULL;

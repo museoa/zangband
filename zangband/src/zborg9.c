@@ -3411,7 +3411,7 @@ void do_cmd_borg(void)
 			if (!get_string(borg_match, 70, "Borg Match String: "))
 			{
 				/* Cancel it */
-				strcpy(borg_match, "");
+				borg_match[0] = 0;
 
 				/* Message */
 				msgf("Borg Match String de-activated.");

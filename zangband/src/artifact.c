@@ -1437,7 +1437,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	if (a_scroll && (randint1(100) <= warrior_artifact_bias))
 		artifact_bias = BIAS_WARRIOR;
 
-	strcpy(new_name, "");
+	new_name[0] = 0;
 
 	if (!a_scroll && one_in_(A_CURSED))
 		a_cursed = TRUE;
@@ -1551,7 +1551,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	if (a_scroll)
 	{
 		char dummy_name[80];
-		strcpy(dummy_name, "");
+		dummy_name[0] = 0;
 		(void)identify_fully_aux(o_ptr);
 		o_ptr->info |= OB_STOREB;
 

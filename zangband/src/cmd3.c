@@ -589,7 +589,7 @@ void do_cmd_inscribe(void)
 	message_flush();
 
 	/* Start with nothing */
-	strcpy(out_val, "");
+	out_val[0] = 0;
 
 	/* Use old inscription */
 	if (o_ptr->inscription)

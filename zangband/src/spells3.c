@@ -3209,7 +3209,7 @@ bool spell_okay(int spell, bool known, int realm)
 void spell_info(char *p, int spell, int realm)
 {
 	/* Default */
-	strcpy(p, "");
+	p[0] = 0;
 
 	{
 		int plev = p_ptr->lev;

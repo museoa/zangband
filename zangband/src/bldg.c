@@ -466,7 +466,7 @@ static s32b gamble_init(void)
 	maxbet = MIN(maxbet, p_ptr->au);
 
 	/* Get the wager */
-	strcpy(out_val, "");
+	out_val[0] = 0;
 
 	/*
 	 * Use get_string() because we may need more than

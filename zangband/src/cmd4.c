@@ -189,10 +189,10 @@ void do_cmd_messages(void)
 	int wid, hgt;
 
 	/* Wipe finder */
-	strcpy(finder, "");
+	finder[0] = 0;
 
 	/* Wipe shower */
-	strcpy(shower, "");
+	shower[0] = 0;
 
 	/* Total messages */
 	n = message_num();
@@ -1223,7 +1223,7 @@ void do_cmd_pref(void)
 	char buf[80];
 
 	/* Default */
-	strcpy(buf, "");
+	buf[0] = 0;
 
 	/* Ask for a "user pref command" */
 	if (!get_string(buf, 80, "Pref: ")) return;
@@ -2995,7 +2995,7 @@ void do_cmd_note(void)
 	char buf[80];
 
 	/* Default */
-	strcpy(buf, "");
+	buf[0] = 0;
 
 	if (!get_string(buf, 60, "Note: ")) return;
 

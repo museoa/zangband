@@ -3043,13 +3043,13 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	Term_get_size(&wid, &hgt);
 
 	/* Wipe finder */
-	strcpy(finder, "");
+	finder[0] = 0;
 
 	/* Wipe shower */
-	strcpy(shower, "");
+	shower[0] = 0;
 
 	/* Wipe caption */
-	strcpy(caption, "");
+	caption[0] = 0;
 
 	/* Wipe the hooks */
 	for (i = 0; i < 62; i++)

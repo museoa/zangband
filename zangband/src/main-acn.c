@@ -1805,7 +1805,7 @@ int main(int argc, char *argv[])
 	signals_init();
 
 	/* No name (yet) */
-	strcpy(player_name, "");
+	player_name[0] = 0;
 
 	/* Hack -- Use the "pref-acn.prf" file */
 	ANGBAND_SYS = "acn";

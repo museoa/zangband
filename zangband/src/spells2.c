@@ -46,8 +46,8 @@ void self_knowledge(void)
 
 	int percent;
 
-	strcpy(Dummy, "");
-	strcpy(Liferating, "");
+	Dummy[0] = 0;
+	Liferating[0] = 0;
 
 	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
 					(2 * p_ptr->hitdie +

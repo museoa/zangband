@@ -1229,7 +1229,7 @@ static void player_wipe(void)
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(p_ptr->history[i], "");
+		p_ptr->history[i][0] = 0;
 	}
 
 	/* Start with no artifacts made yet */

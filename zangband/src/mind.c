@@ -34,7 +34,7 @@ void mindcraft_info(char *p, int power)
 {
 	int plev = p_ptr->lev;
 
-	strcpy(p, "");
+	p[0] = 0;
 
 	switch (power)
 	{

@@ -371,7 +371,7 @@ void do_cmd_script(void)
 			prtf(0, 0, "Lua command: ");
 
 			/* Empty default */
-			strcpy(tmp, "");
+			tmp[0] = 0;
 
 			/* Ask for a command */
 			if (!askfor_aux(tmp, 80)) break;

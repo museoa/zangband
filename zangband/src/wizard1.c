@@ -159,7 +159,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 
 
 	/* Misc info */
-	strcpy(dam, "");
+	dam[0] = 0;
 
 	/* Damage */
 	switch (q_ptr->tval)
