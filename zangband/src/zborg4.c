@@ -150,7 +150,7 @@ static void borg_notice_aux1(void)
 	int extra_might = 0;
 	int my_num_fire;
 
-	borg_item *item;
+	list_item *l_ptr;
 
 	u32b f1, f2, f3;
 
@@ -265,122 +265,115 @@ static void borg_notice_aux1(void)
 	if (f2 & (TR2_SUST_CHR)) borg_skill[BI_SCHR] = TRUE;
 
 
-
 	/* Clear the stat modifiers */
 	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
 
 	/* Scan the usable inventory */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < equip_num; i++)
 	{
-		item = &borg_items[i];
+		l_ptr = &equipment[i];
 
 		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		if (!l_ptr->k_idx) continue;
 
 		/* Check for cursed items */
-		if (item->cursed) borg_wearing_cursed = TRUE;
+		if (l_ptr->kn_flags3 & TR3_CURSED) borg_wearing_cursed = TRUE;
 
-		/* track number of items the borg has on him */
-		/* Count up how many artifacts the borg has on him */
-		borg_has_on[item->kind] += item->iqty;
-		/* if (item->name1)
-		   borg_artifact[item->name1] += item->iqty; */
+		/* Track number of items the borg has on him */
+		borg_has_on[l_ptr->k_idx] += l_ptr->number;
 
 		/* Affect stats */
-		if (item->flags1 & TR1_STR) my_stat_add[A_STR] += item->pval;
-		if (item->flags1 & TR1_INT) my_stat_add[A_INT] += item->pval;
-		if (item->flags1 & TR1_WIS) my_stat_add[A_WIS] += item->pval;
-		if (item->flags1 & TR1_DEX) my_stat_add[A_DEX] += item->pval;
-		if (item->flags1 & TR1_CON) my_stat_add[A_CON] += item->pval;
-		if (item->flags1 & TR1_CHR) my_stat_add[A_CHR] += item->pval;
+		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_INT) my_stat_add[A_INT] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_WIS) my_stat_add[A_WIS] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_DEX) my_stat_add[A_DEX] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_CON) my_stat_add[A_CON] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_CHR) my_stat_add[A_CHR] += l_ptr->pval;
 
-		/* various slays */
-		if (item->flags1 & TR1_SLAY_ANIMAL) borg_skill[BI_WS_ANIMAL] = TRUE;
-		if (item->flags1 & TR1_SLAY_EVIL) borg_skill[BI_WS_EVIL] = TRUE;
-
-		if (item->flags1 & TR1_SLAY_UNDEAD) borg_skill[BI_WS_UNDEAD] = TRUE;
-		if (item->flags1 & TR1_SLAY_DEMON) borg_skill[BI_WS_DEMON] = TRUE;
-		if (item->flags1 & TR1_SLAY_ORC) borg_skill[BI_WS_ORC] = TRUE;
-		if (item->flags1 & TR1_SLAY_TROLL) borg_skill[BI_WS_TROLL] = TRUE;
-		if (item->flags1 & TR1_SLAY_GIANT) borg_skill[BI_WS_GIANT] = TRUE;
-		if (item->flags1 & TR1_SLAY_DRAGON) borg_skill[BI_WS_DRAGON] = TRUE;
-		if (item->flags1 & TR1_KILL_DRAGON) borg_skill[BI_WK_DRAGON] = TRUE;
-		if (item->flags1 & TR1_IMPACT) borg_skill[BI_W_IMPACT] = TRUE;
-		if (item->flags1 & TR1_BRAND_ACID) borg_skill[BI_WB_ACID] = TRUE;
-		if (item->flags1 & TR1_BRAND_ELEC) borg_skill[BI_WB_ELEC] = TRUE;
-		if (item->flags1 & TR1_BRAND_FIRE) borg_skill[BI_WB_FIRE] = TRUE;
-		if (item->flags1 & TR1_BRAND_COLD) borg_skill[BI_WB_COLD] = TRUE;
-		if (item->flags1 & TR1_BRAND_POIS) borg_skill[BI_WB_POIS] = TRUE;
-		if (item->flags1 & TR1_VORPAL) borg_skill[BI_WB_VORPAL] = TRUE;
-		if (item->flags1 & TR1_VAMPIRIC) borg_skill[BI_WB_VAMPIRIC] = TRUE;
-		if (item->flags1 & TR1_CHAOTIC) borg_skill[BI_WB_CHAOTIC] = TRUE;
+		/* Various slays */
+		if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) borg_skill[BI_WS_ANIMAL] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) borg_skill[BI_WS_EVIL] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_UNDEAD) borg_skill[BI_WS_UNDEAD] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_DEMON) borg_skill[BI_WS_DEMON] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_ORC) borg_skill[BI_WS_ORC] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_TROLL) borg_skill[BI_WS_TROLL] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_GIANT) borg_skill[BI_WS_GIANT] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) borg_skill[BI_WS_DRAGON] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_KILL_DRAGON) borg_skill[BI_WK_DRAGON] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_IMPACT) borg_skill[BI_W_IMPACT] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_BRAND_ACID) borg_skill[BI_WB_ACID] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_BRAND_ELEC) borg_skill[BI_WB_ELEC] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_BRAND_FIRE) borg_skill[BI_WB_FIRE] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_BRAND_COLD) borg_skill[BI_WB_COLD] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_BRAND_POIS) borg_skill[BI_WB_POIS] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_VORPAL) borg_skill[BI_WB_VORPAL] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_VAMPIRIC) borg_skill[BI_WB_VAMPIRIC] = TRUE;
+		if (l_ptr->kn_flags1 & TR1_CHAOTIC) borg_skill[BI_WB_CHAOTIC] = TRUE;
 
 		/* Affect infravision */
-		if (item->flags1 & TR1_INFRA) borg_skill[BI_INFRA] += item->pval;
+		if (l_ptr->kn_flags1 & TR1_INFRA) borg_skill[BI_INFRA] += l_ptr->pval;
 
 		/* Affect stealth */
-		if (item->flags1 & TR1_STEALTH) borg_skill[BI_STL] += item->pval;
+		if (l_ptr->kn_flags1 & TR1_STEALTH) borg_skill[BI_STL] += l_ptr->pval;
 
 		/* Affect searching ability (factor of five) */
-		if (item->flags1 & TR1_SEARCH) borg_skill[BI_SRCH] += (item->pval * 5);
+		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCH] += l_ptr->pval * 5;
 
 		/* Affect searching frequency (factor of five) */
-		if (item->flags1 & TR1_SEARCH) borg_skill[BI_SRCHFREQ] +=
-				(item->pval * 5);
+		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCHFREQ] +=
+				(l_ptr->pval * 5);
 
 		/* Affect digging (factor of 20) */
-		if (item->flags1 & TR1_TUNNEL) borg_skill[BI_DIG] += (item->pval * 20);
+		if (l_ptr->kn_flags1 & TR1_TUNNEL) borg_skill[BI_DIG] += l_ptr->pval * 20;
 
 		/* Affect speed */
-		if (item->flags1 & TR1_SPEED) borg_skill[BI_SPEED] += item->pval;
+		if (l_ptr->kn_flags1 & TR1_SPEED) borg_skill[BI_SPEED] += l_ptr->pval;
 
 		/* Affect blows */
-		if (item->flags1 & TR1_BLOWS) extra_blows += item->pval;
+		if (l_ptr->kn_flags1 & TR1_BLOWS) extra_blows += l_ptr->pval;
 
 		/* Boost shots */
-		if (item->flags3 & TR3_XTRA_SHOTS) extra_shots++;
+		if (l_ptr->kn_flags3 & TR3_XTRA_SHOTS) extra_shots++;
 
 		/* Boost might */
-		if (item->flags3 & TR3_XTRA_MIGHT) extra_might++;
+		if (l_ptr->kn_flags3 & TR3_XTRA_MIGHT) extra_might++;
 
 		/* Various flags */
-		if (item->flags3 & TR3_SLOW_DIGEST) borg_skill[BI_SDIG] = TRUE;
-		if (item->flags3 & TR3_AGGRAVATE) borg_skill[BI_CRSAGRV] = TRUE;
-		if (item->flags3 & TR3_TY_CURSE) borg_skill[BI_CRSTY] = TRUE;
-		if (item->flags3 & TR3_TELEPORT) borg_skill[BI_CRSTELE] = TRUE;
-		if (item->flags3 & TR3_NO_TELE) borg_skill[BI_CRSNOTELE] = TRUE;
-		if (item->flags3 & TR3_NO_MAGIC) borg_skill[BI_CRSNOMAGIC] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) borg_skill[BI_SDIG] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_AGGRAVATE) borg_skill[BI_CRSAGRV] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_TY_CURSE) borg_skill[BI_CRSTY] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_TELEPORT) borg_skill[BI_CRSTELE] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_NO_TELE) borg_skill[BI_CRSNOTELE] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_NO_MAGIC) borg_skill[BI_CRSNOMAGIC] = TRUE;
 
-		if (item->flags3 & TR3_REGEN) borg_skill[BI_REG] = TRUE;
-		if (item->flags3 & TR3_TELEPATHY) borg_skill[BI_ESP] = TRUE;
-		if (item->flags3 & TR3_LITE) borg_skill[BI_LITE] = TRUE;
-		if (item->flags3 & TR3_SEE_INVIS) borg_skill[BI_SINV] = TRUE;
-		if (item->flags3 & TR3_FEATHER) borg_skill[BI_FEATH] = TRUE;
-		if (item->flags2 & TR2_FREE_ACT) borg_skill[BI_FRACT] = TRUE;
-		if (item->flags2 & TR2_HOLD_LIFE) borg_skill[BI_HLIFE] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_REGEN) borg_skill[BI_REG] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_TELEPATHY) borg_skill[BI_ESP] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_LITE) borg_skill[BI_LITE] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_SEE_INVIS) borg_skill[BI_SINV] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_FEATHER) borg_skill[BI_FEATH] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_FREE_ACT) borg_skill[BI_FRACT] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) borg_skill[BI_HLIFE] = TRUE;
 
 		/* Immunity flags */
-		/* if you are immune you automaticly resist */
-		if (item->flags2 & TR2_IM_FIRE)
+		if (l_ptr->kn_flags2 & TR2_IM_FIRE)
 		{
 			borg_skill[BI_IFIRE] = TRUE;
 			borg_skill[BI_RFIRE] = TRUE;
 			my_oppose_fire = TRUE;
 		}
-		if (item->flags2 & TR2_IM_ACID)
+		if (l_ptr->kn_flags2 & TR2_IM_ACID)
 		{
 			borg_skill[BI_IACID] = TRUE;
 			borg_skill[BI_RACID] = TRUE;
 			my_oppose_elec = TRUE;
 		}
-		if (item->flags2 & TR2_IM_COLD)
+		if (l_ptr->kn_flags2 & TR2_IM_COLD)
 		{
 			borg_skill[BI_ICOLD] = TRUE;
 			borg_skill[BI_RCOLD] = TRUE;
 			my_oppose_elec = TRUE;
 		}
-		if (item->flags2 & TR2_IM_ELEC)
+		if (l_ptr->kn_flags2 & TR2_IM_ELEC)
 		{
 			borg_skill[BI_IELEC] = TRUE;
 			borg_skill[BI_RELEC] = TRUE;
@@ -388,65 +381,50 @@ static void borg_notice_aux1(void)
 		}
 
 		/* Resistance flags */
-		if (item->flags2 & TR2_RES_ACID) borg_skill[BI_RACID] = TRUE;
-		if (item->flags2 & TR2_RES_ELEC) borg_skill[BI_RELEC] = TRUE;
-		if (item->flags2 & TR2_RES_FIRE) borg_skill[BI_RFIRE] = TRUE;
-		if (item->flags2 & TR2_RES_COLD) borg_skill[BI_RCOLD] = TRUE;
-		if (item->flags2 & TR2_RES_POIS) borg_skill[BI_RPOIS] = TRUE;
-		if (item->flags2 & TR2_RES_CONF) borg_skill[BI_RCONF] = TRUE;
-		if (item->flags2 & TR2_RES_SOUND) borg_skill[BI_RSND] = TRUE;
-		if (item->flags2 & TR2_RES_LITE) borg_skill[BI_RLITE] = TRUE;
-		if (item->flags2 & TR2_RES_DARK) borg_skill[BI_RDARK] = TRUE;
-		if (item->flags2 & TR2_RES_CHAOS) borg_skill[BI_RKAOS] = TRUE;
-		if (item->flags2 & TR2_RES_DISEN) borg_skill[BI_RDIS] = TRUE;
-		if (item->flags2 & TR2_RES_SHARDS) borg_skill[BI_RSHRD] = TRUE;
-		if (item->flags2 & TR2_RES_NEXUS) borg_skill[BI_RNXUS] = TRUE;
-		if (item->flags2 & TR2_RES_BLIND) borg_skill[BI_RBLIND] = TRUE;
-		if (item->flags2 & TR2_RES_NETHER) borg_skill[BI_RNTHR] = TRUE;
-		if (item->flags2 & TR2_REFLECT) borg_skill[BI_REFLECT] = TRUE;
-		if (item->flags2 & TR2_RES_FEAR) borg_skill[BI_RFEAR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_ACID) borg_skill[BI_RACID] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_ELEC) borg_skill[BI_RELEC] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_FIRE) borg_skill[BI_RFIRE] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_COLD) borg_skill[BI_RCOLD] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_POIS) borg_skill[BI_RPOIS] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_CONF) borg_skill[BI_RCONF] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_SOUND) borg_skill[BI_RSND] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_LITE) borg_skill[BI_RLITE] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_DARK) borg_skill[BI_RDARK] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_CHAOS) borg_skill[BI_RKAOS] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_DISEN) borg_skill[BI_RDIS] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_SHARDS) borg_skill[BI_RSHRD] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_NEXUS) borg_skill[BI_RNXUS] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_BLIND) borg_skill[BI_RBLIND] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_NETHER) borg_skill[BI_RNTHR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_REFLECT) borg_skill[BI_REFLECT] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_RES_FEAR) borg_skill[BI_RFEAR] = TRUE;
 
 		/* Sustain flags */
-		if (item->flags2 & TR2_SUST_STR) borg_skill[BI_SSTR] = TRUE;
-		if (item->flags2 & TR2_SUST_INT) borg_skill[BI_SINT] = TRUE;
-		if (item->flags2 & TR2_SUST_WIS) borg_skill[BI_SWIS] = TRUE;
-		if (item->flags2 & TR2_SUST_DEX) borg_skill[BI_SDEX] = TRUE;
-		if (item->flags2 & TR2_SUST_CON) borg_skill[BI_SCON] = TRUE;
-		if (item->flags2 & TR2_SUST_CHR) borg_skill[BI_SCHR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_STR) borg_skill[BI_SSTR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_INT) borg_skill[BI_SINT] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_WIS) borg_skill[BI_SWIS] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_DEX) borg_skill[BI_SDEX] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_CON) borg_skill[BI_SCON] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_SUST_CHR) borg_skill[BI_SCHR] = TRUE;
 
-#if 0
-		/* Hack -- The borg will miss read acid damaged items such as
-		 * Leather Gloves [2,-2] and falsely assume they help his power.
-		 * this hack rewrites the bonus to an extremely negative value
-		 * thus encouraging him to remove the non-helpful-non-harmful but
-		 * heavy-none-the-less item.
-		 */
-		if ((!item->name1 && !item->name2) &&
-			item->ac >= 1 && item->to_a + item->ac <= 0)
-		{
-			item->to_a -= 10;
-		}
-#endif
 		/* Modify the base armor class */
-		borg_skill[BI_ARMOR] += item->ac;
+		borg_skill[BI_ARMOR] += l_ptr->ac;
 
 		/* Apply the bonuses to armor class */
-		borg_skill[BI_ARMOR] += item->to_a;
-
+		borg_skill[BI_ARMOR] += l_ptr->to_a;
 
 		/* Keep track of weight */
-		borg_skill[BI_ENCUMBERD] += item->weight;
+		borg_skill[BI_ENCUMBERD] += l_ptr->weight;
 
 		/* Hack -- do not apply "weapon" bonuses */
-		if (i == INVEN_WIELD) continue;
+		if (i == EQUIP_WIELD) continue;
 
 		/* Hack -- do not apply "bow" bonuses */
-		if (i == INVEN_BOW) continue;
+		if (i == EQUIP_BOW) continue;
 
 		/* Apply the bonuses to hit/damage */
-		borg_skill[BI_TOHIT] += item->to_h;
-		borg_skill[BI_TODAM] += item->to_d;
-
+		borg_skill[BI_TOHIT] += l_ptr->to_h;
+		borg_skill[BI_TODAM] += l_ptr->to_d;
 	}
 
 	/* Vampires that do not Resist Light are in trouble */
@@ -454,7 +432,7 @@ static void borg_notice_aux1(void)
 		borg_skill[BI_FEAR_LITE] = TRUE;
 
 	/* Update "stats" */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		int use, ind, add;
 
@@ -518,48 +496,36 @@ static void borg_notice_aux1(void)
 	borg_skill[BI_ARMOR] += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
 	borg_skill[BI_TODAM] += ((int)(adj_str_td[my_stat_ind[A_STR]]) - 128);
 	borg_skill[BI_TOHIT] += ((int)(adj_dex_th[my_stat_ind[A_DEX]]) - 128);
-/*     borg_skill[BI_TOHIT] += ((int)(adj_str_th[my_stat_ind[A_STR]]) - 128); */
-
 
 	/* Obtain the "hold" value */
 	hold = adj_str_hold[my_stat_ind[A_STR]];
 
-
 	/* Examine the "current bow" */
-	item = &borg_items[INVEN_BOW];
-
-	/* attacking with bare hands */
-	if (item->iqty == 0)
-	{
-		item->ds = 0;
-		item->dd = 0;
-		item->to_d = 0;
-		item->to_h = 0;
-		item->weight = 0;
-	}
-
+	l_ptr = &equipment[EQUIP_BOW];
 
 	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
-	borg_skill[BI_BTOHIT] = item->to_h;
+	borg_skill[BI_BTOHIT] = l_ptr->to_h;
 	if (borg_skill[BI_BTOHIT] < 8 && borg_skill[BI_CLEVEL] >= 25)
 		borg_skill[BI_BTOHIT] = 8;
-	borg_skill[BI_BTODAM] = item->to_d;
+		
+	borg_skill[BI_BTODAM] = l_ptr->to_d;
 	if (borg_skill[BI_BTODAM] < 8 && borg_skill[BI_CLEVEL] >= 25)
 		borg_skill[BI_BTODAM] = 8;
 
-	/* It is hard to carholdry a heavy bow */
-	if (hold < item->weight / 10)
+	/* It is hard to carry a heavy bow */
+	if (hold < l_ptr->weight / 10)
 	{
 		borg_skill[BI_HEAVYBOW] = TRUE;
+		
 		/* Hard to wield a heavy bow */
-		borg_skill[BI_TOHIT] += 2 * (hold - item->weight / 10);
+		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
 	}
 
 	/* Compute "extra shots" if needed */
-	if (item->iqty && (hold >= item->weight / 10))
+	if (l_ptr->k_idx && (hold >= l_ptr->weight / 10))
 	{
 		/* Take note of required "tval" for missiles */
-		switch (item->sval)
+		switch (k_info[l_ptr->k_idx].sval)
 		{
 			case SV_SLING:
 			{
@@ -632,37 +598,27 @@ static void borg_notice_aux1(void)
 	borg_skill[BI_BMAXDAM] *= borg_skill[BI_SHOTS];
 
 	/* Examine the "main weapon" */
-	item = &borg_items[INVEN_WIELD];
-
-	/* attacking with bare hands */
-	if (item->iqty == 0)
-	{
-		item->ds = 0;
-		item->dd = 0;
-		item->to_d = 0;
-		item->to_h = 0;
-		item->weight = 0;
-	}
+	l_ptr = &equipment[EQUIP_WIELD];
 
 	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
-	borg_skill[BI_WTOHIT] = item->to_h;
+	borg_skill[BI_WTOHIT] = l_ptr->to_h;
 	if (borg_skill[BI_WTOHIT] < 8 && borg_skill[BI_CLEVEL] >= 25)
 		borg_skill[BI_WTOHIT] = 8;
-	borg_skill[BI_WTODAM] = item->to_d;
+	borg_skill[BI_WTODAM] = l_ptr->to_d;
 	if (borg_skill[BI_WTODAM] < 8 && borg_skill[BI_CLEVEL] >= 25)
 		borg_skill[BI_WTODAM] = 8;
 
 	/* It is hard to hold a heavy weapon */
-	if (hold < item->weight / 10)
+	if (hold < l_ptr->weight / 10)
 	{
 		borg_skill[BI_HEAVYWEPON] = TRUE;
 
 		/* Hard to wield a heavy weapon */
-		borg_skill[BI_TOHIT] += 2 * (hold - item->weight / 10);
+		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
 	}
 
 	/* Normal weapons */
-	if (item->iqty && (hold >= item->weight / 10))
+	if (l_ptr->k_idx && (hold >= l_ptr->weight / 10))
 	{
 		int str_index, dex_index;
 		int num = 0, wgt = 0, mul = 0, div = 0;
@@ -755,7 +711,7 @@ static void borg_notice_aux1(void)
 		}
 
 		/* Enforce a minimum "weight" (tenth pounds) */
-		div = ((item->weight < wgt) ? wgt : item->weight);
+		div = ((l_ptr->weight < wgt) ? wgt : l_ptr->weight);
 
 		/* Get the strength vs weight */
 		str_index = (adj_str_blow[my_stat_ind[A_STR]] * mul / div);
@@ -782,27 +738,27 @@ static void borg_notice_aux1(void)
 		if (borg_skill[BI_BLOWS] < 1) borg_skill[BI_BLOWS] = 1;
 
 		/* Boost digging skill by weapon weight */
-		borg_skill[BI_DIG] += (item->weight / 10);
+		borg_skill[BI_DIG] += (l_ptr->weight / 10);
 
 	}
 
 	/* priest weapon penalty for non-blessed edged weapons */
 	if ((borg_class == CLASS_PRIEST) &&
-		((item->tval == TV_SWORD) || (item->tval == TV_POLEARM)) &&
-		(!(item->flags3 & TR3_BLESSED)))
+		((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM)) &&
+		(!(l_ptr->kn_flags3 & TR3_BLESSED)))
 	{
 		/* Reduce the real bonuses */
-		borg_skill[BI_TOHIT] -= 2;
-		borg_skill[BI_TODAM] -= 2;
+		borg_skill[BI_TOHIT] -= 5;
+		borg_skill[BI_TODAM] -= 5;
 	}
 
 	/* Calculate "max" damage per "normal" blow  */
 	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
 	borg_skill[BI_WMAXDAM] =
-		(item->dd * item->ds + borg_skill[BI_TODAM] + borg_skill[BI_WTODAM]);
+		(l_ptr->dd * l_ptr->ds + borg_skill[BI_TODAM] + borg_skill[BI_WTODAM]);
 
 	/* Calculate base damage, used to calculating slays */
-	borg_skill[BI_WBASEDAM] = (item->dd * item->ds);
+	borg_skill[BI_WBASEDAM] = (l_ptr->dd * l_ptr->ds);
 
 	/* Hack -- Reward High Level Warriors with Res Fear */
 	if (borg_class == CLASS_WARRIOR)
@@ -871,15 +827,15 @@ static void borg_notice_aux1(void)
 		const martial_arts *ma_ptr = &ma_blows[MAX_MA];
 
 		/* Weight the armor */
-		monk_arm_wgt += borg_items[INVEN_BODY].weight;
-		monk_arm_wgt += borg_items[INVEN_HEAD].weight;
-		monk_arm_wgt += borg_items[INVEN_ARM].weight;
-		monk_arm_wgt += borg_items[INVEN_OUTER].weight;
-		monk_arm_wgt += borg_items[INVEN_HANDS].weight;
-		monk_arm_wgt += borg_items[INVEN_FEET].weight;
+		monk_arm_wgt += equipment[EQUIP_BODY].weight;
+		monk_arm_wgt += equipment[EQUIP_HEAD].weight;
+		monk_arm_wgt += equipment[EQUIP_ARM].weight;
+		monk_arm_wgt += equipment[EQUIP_OUTER].weight;
+		monk_arm_wgt += equipment[EQUIP_HANDS].weight;
+		monk_arm_wgt += equipment[EQUIP_FEET].weight;
 
 		/* Consider the Martial Arts */
-		if (!(borg_items[INVEN_WIELD].iqty))
+		if (!(equipment[EQUIP_WIELD].k_idx))
 		{
 			borg_skill[BI_BLOWS] = 2;
 
@@ -933,27 +889,27 @@ static void borg_notice_aux1(void)
 			/* Free action if unencumbered at level 25 */
 			if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_FRACT] = TRUE;
 
-			if (!(borg_items[INVEN_BODY].iqty))
+			if (!(equipment[EQUIP_BODY].k_idx))
 			{
 				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] * 3) / 2;
 			}
-			if (!(borg_items[INVEN_OUTER].iqty) && (borg_skill[BI_CLEVEL] > 15))
+			if (!(equipment[EQUIP_OUTER].k_idx) && (borg_skill[BI_CLEVEL] > 15))
 			{
 				borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 13) / 3);
 			}
-			if (!(borg_items[INVEN_ARM].iqty) && (borg_skill[BI_CLEVEL] > 10))
+			if (!(equipment[EQUIP_ARM].k_idx) && (borg_skill[BI_CLEVEL] > 10))
 			{
 				borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 8) / 3);
 			}
-			if (!(borg_items[INVEN_HEAD].iqty) && (borg_skill[BI_CLEVEL] > 4))
+			if (!(equipment[EQUIP_HEAD].k_idx) && (borg_skill[BI_CLEVEL] > 4))
 			{
 				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] - 2) / 3;
 			}
-			if (!(borg_items[INVEN_HANDS].iqty))
+			if (!(equipment[EQUIP_HANDS].k_idx))
 			{
 				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 2);
 			}
-			if (!(borg_items[INVEN_FEET].iqty))
+			if (!(equipment[EQUIP_FEET].k_idx))
 			{
 				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 3);
 			}
@@ -969,78 +925,78 @@ static void borg_notice_aux1(void)
 	my_need_brand_weapon = 0;
 
 	/* Hack -- enchant all the equipment (weapons) */
-	for (i = INVEN_WIELD; i <= INVEN_BOW; i++)
+	for (i = 0; i <= EQUIP_BOW; i++)
 	{
-		item = &borg_items[i];
+		l_ptr = &equipment[i];
 
 		/* Skip empty items */
-		if (!item->iqty) continue;
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip "unknown" items */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Enchant all weapons (to hit) */
 		if ((borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
 			 amt_enchant_weapon >= 1))
 		{
-			if (item->to_h < 15)
+			if (l_ptr->to_h < 15)
 			{
-				my_need_enchant_to_h += (15 - item->to_h);
+				my_need_enchant_to_h += (15 - l_ptr->to_h);
 			}
 
 			/* Enchant all weapons (to damage) */
-			if (item->to_d < 15)
+			if (l_ptr->to_d < 15)
 			{
-				my_need_enchant_to_d += (15 - item->to_d);
+				my_need_enchant_to_d += (15 - l_ptr->to_d);
 			}
 		}
 		else
 		{
-			if (item->to_h < 8)
+			if (l_ptr->to_h < 8)
 			{
-				my_need_enchant_to_h += (8 - item->to_h);
+				my_need_enchant_to_h += (8 - l_ptr->to_h);
 			}
 
 			/* Enchant all weapons (to damage) */
-			if (item->to_d < 8)
+			if (l_ptr->to_d < 8)
 			{
-				my_need_enchant_to_d += (8 - item->to_d);
+				my_need_enchant_to_d += (8 - l_ptr->to_d);
 			}
 		}
 	}
 
 	/* Hack -- enchant all the equipment (armor) */
-	for (i = INVEN_BODY; i <= INVEN_FEET; i++)
+	for (i = EQUIP_BODY; i <= EQUIP_FEET; i++)
 	{
-		item = &borg_items[i];
+		l_ptr = &equipment[i];
 
 		/* Skip empty items */
-		if (!item->iqty) continue;
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip "unknown" items */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* Note need for enchantment */
 		if ((borg_spell_okay_fail(REALM_SORCERY, 3, 5, 40) ||
 			 amt_enchant_armor >= 1))
 		{
-			if (item->to_a < 15)
+			if (l_ptr->to_a < 15)
 			{
-				my_need_enchant_to_a += (15 - item->to_a);
+				my_need_enchant_to_a += (15 - l_ptr->to_a);
 			}
 		}
 		else
 		{
-			if (item->to_a < 10)
+			if (l_ptr->to_a < 10)
 			{
-				my_need_enchant_to_a += (10 - item->to_a);
+				my_need_enchant_to_a += (10 - l_ptr->to_a);
 			}
 		}
 	}
 
 
 	/* Examine the lite */
-	item = &borg_items[INVEN_LITE];
+	l_ptr = &equipment[EQUIP_LITE];
 
 	/* Assume normal lite radius */
 	borg_skill[BI_CUR_LITE] = 0;
@@ -1049,21 +1005,21 @@ static void borg_notice_aux1(void)
 	if (borg_skill[BI_LITE]) borg_skill[BI_CUR_LITE] = 1;
 
 	/* Lite */
-	if (item->tval == TV_LITE)
+	if (l_ptr->tval == TV_LITE)
 	{
+		object_kind *k_ptr = &k_info[l_ptr->k_idx];
+	
 		/* Torches -- radius one */
-		if (item->sval == SV_LITE_TORCH) borg_skill[BI_CUR_LITE] = 1;
+		if (k_ptr->sval == SV_LITE_TORCH) borg_skill[BI_CUR_LITE] = 1;
 
 		/* Lanterns -- radius two */
-		if (item->sval == SV_LITE_LANTERN) borg_skill[BI_CUR_LITE] = 2;
+		if (k_ptr->sval == SV_LITE_LANTERN) borg_skill[BI_CUR_LITE] = 2;
 
 		/* No fuel means no radius */
-		if (!item->timeout) borg_skill[BI_CUR_LITE] = 0;
+		if (!l_ptr->timeout) borg_skill[BI_CUR_LITE] = 0;
 
 		/* Artifact lites -- radius three */
-		/* HACK assume non-torch/non lantern lite is artifact */
-		if ((item->sval != SV_LITE_TORCH) && (item->sval != SV_LITE_LANTERN))
-
+		if (l_ptr->kn_flags3 & TR3_INSTA_ART)
 		{
 			borg_skill[BI_CUR_LITE] = 3;
 
