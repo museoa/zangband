@@ -324,7 +324,7 @@ static void clean_blocks(block_type *b_ptr)
 		next_ptr = free_list->b_next;
 		
 		/* Destroy the current block */
-		KILL(free_list, block_type);
+		KILL(free_list);
 		
 		/* Point to next block */
 		free_list = next_ptr;
@@ -1119,7 +1119,7 @@ static void sort_split(s32b s1, s32b s2)
  * of marginally slower than O(n)
  *
  * This returns a list of the indecies to the start of each string,
- * in sorted order.  This must be C_KILLed in the caller.
+ * in sorted order.  This must be KILLed in the caller.
  */
 static s32b *sort_string(byte *string, s32b len)
 {
@@ -1267,7 +1267,7 @@ static s32b *sort_string(byte *string, s32b len)
 	}
 
 	/* Clean up */
-	C_KILL(group, len, s32b);
+	KILL(group);
 	
 	return (start);
 }
@@ -1330,7 +1330,7 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	}
 
 	/* Cleanup */
-	C_KILL(offsets, BLOCK_DATA_SIZE, s32b);
+	KILL(offsets);
 	
 	/* Change block, deleting old one */
 	h1_ptr->b_ptr = del_block(h1_ptr->b_ptr);
@@ -1444,7 +1444,7 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	}
 
 	/* Cleanup */
-	C_KILL(temp, size, u32b);
+	KILL(temp);
 }
 
 

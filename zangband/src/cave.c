@@ -2711,23 +2711,23 @@ void display_map(int *cy, int *cx)
 	for (i = 0; i < (hgt + 2); i++)
 	{
 		/* Free one row each array */
-		C_FREE(ma[i], (wid + 2), byte);
-		C_FREE(mc[i], (wid + 2), char);
+		FREE(ma[i]);
+		FREE(mc[i]);
 #ifdef USE_TRANSPARENCY
-		C_FREE(mta[i], (wid + 2), byte);
-		C_FREE(mtc[i], (wid + 2), char);
+		FREE(mta[i]);
+		FREE(mtc[i]);
 #endif /* USE_TRANSPARENCY */
-		C_FREE(mp[i], (wid + 2), byte);
+		FREE(mp[i]);
 	}
 
 	/* Free the maps */
-	C_FREE(ma, (hgt + 2), byte*);
-	C_FREE(mc, (hgt + 2), char*);
+	FREE(ma);
+	FREE(mc);
 #ifdef USE_TRANSPARENCY
-	C_FREE(mta, (hgt + 2), byte*);
-	C_FREE(mtc, (hgt + 2), char*);
+	FREE(mta);
+	FREE(mtc);
 #endif /* USE_TRANSPARENCY */
-	C_FREE(mp, (hgt + 2), byte*);
+	FREE(mp);
 }
 
 
@@ -3593,7 +3593,7 @@ errr vinfo_init(void)
 	}
 
 	/* Kill hack */
-	FREE(hack, vinfo_hack);
+	FREE(hack);
 
 	/* Success */
 	return (0);

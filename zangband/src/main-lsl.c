@@ -286,7 +286,7 @@ static void initfont(void)
 	gl_setfont(8, 12, font);
 	
 	/* Cleanup */
-	C_FREE(temp, 256 * 13, byte);
+	free(temp);
 	gzclose(fontfile);
 }
 

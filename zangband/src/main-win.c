@@ -24,13 +24,13 @@
  * See also "main-dos.c" and "main-ibm.c".
  *
  *
- * The "lib/user/pref-win.prf" file contains keymaps, macro definitions,
+ * The "lib/pref/pref-win.prf" file contains keymaps, macro definitions,
  * and/or color redefinitions.
  *
- * The "lib/user/font-win.prf" contains attr/char mappings for use with the
+ * The "lib/pref/font-win.prf" contains attr/char mappings for use with the
  * normal "*.fon" font files in the "lib/xtra/font/" directory.
  *
- * The "lib/user/graf-win.prf" contains attr/char mappings for use with the
+ * The "lib/pref/graf-win.prf" contains attr/char mappings for use with the
  * special "*.bmp" bitmap files in the "lib/xtra/graf/" directory, which
  * are activated by a menu item.
  *
@@ -38,7 +38,7 @@
  * Compiling this file, and using the resulting executable, requires
  * several extra files not distributed with the standard Angband code.
  * If "USE_GRAPHICS" is defined, then "readdib.h" and "readdib.c" must
- * be placed into "src/", and the "8X8.BMP" bitmap file must be placed
+ * be placed into "src/", and the "8x8.bmp" bitmap file must be placed
  * into "lib/xtra/graf".  In any case, some "*.fon" files (including
  * "8X13.FON" if nothing else) must be placed into "lib/xtra/font/".
  * If "USE_SOUND" is defined, then some special library (for example,
@@ -1275,7 +1275,7 @@ static int new_palette(void)
 			plog("Please switch to high- or true-color mode.");
 
 			/* Cleanup */
-			rnfree(lppe, lppeSize);
+			free(lppe);
 
 			/* Fail */
 			return (FALSE);
@@ -1331,14 +1331,14 @@ static int new_palette(void)
 	}
 
 	/* Free something */
-	if (lppe) rnfree(lppe, lppeSize);
+	if (lppe) free(lppe);
 
 	/* Create a new palette, or fail */
 	hNewPal = CreatePalette(pLogPal);
 	if (!hNewPal) quit("Cannot create palette!");
 
 	/* Free the palette */
-	rnfree(pLogPal, pLogPalSize);
+	free(pLogPal);
 
 	/* Main window */
 	td = &data[0];

@@ -147,7 +147,7 @@ u32b create_pixel(Display *dpy, byte red, byte green, byte blue)
 		}
 		
 		/* free the colour map */
-		C_FREE(colours, numcolours, XColor);
+		FREE(colours);
 	}
 
 	return (xcolour.pixel);
@@ -333,7 +333,7 @@ XImage *ReadBMP(Display *dpy, char *Name)
 	/* Failure */
 	if (Res == NULL)
 	{
-		C_KILL(Data, total, char);
+		KILL(Data);
 		fclose(f);
 		return (NULL);
 	}

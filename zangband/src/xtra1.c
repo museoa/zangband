@@ -1342,8 +1342,7 @@ static void fix_message(void)
 			if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 			/* Dump the message on the appropriate line */
-			Term_putstr(0, (h - 1) - i, -1, attr,
-			            message_str(i));
+			Term_putstr(0, (h - 1) - i, -1, attr, message_str((s16b)i));
 
 			/* Cursor */
 			(void)Term_locate(&x, &y);

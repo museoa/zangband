@@ -39,7 +39,7 @@ errr k_info_free(void)
 {
 	k_info_size = K_INFO_BASE_SIZE;
 
-	C_KILL(k_info, k_info_size, object_kind);
+	KILL(k_info);
 
 	/* Success */
 	return 0;
@@ -117,7 +117,7 @@ errr init_object_alloc(void)
 	/* Free the old "alloc_kind_table" (if it exists) */
 	if (alloc_kind_table)
 	{
-		C_KILL(alloc_kind_table, alloc_kind_size, alloc_entry);
+		KILL(alloc_kind_table);
 	}
 
 	/* Size of "alloc_kind_table" */
@@ -204,7 +204,7 @@ errr init_object_alloc(void)
 	/* Free the old ego item allocation table (if it exists) */
 	if (alloc_ego_table)
 	{
-		C_KILL(alloc_ego_table, z_info->e_max, alloc_entry);
+		KILL(alloc_ego_table);
 	}
 	
 	/* Create the ego item allocation table */

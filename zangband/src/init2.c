@@ -602,14 +602,14 @@ static errr init_info(cptr filename, header *head,
 		/*** Kill the fake arrays ***/
 
 		/* Free the "*_info" array */
-		C_KILL(head->info_ptr, head->info_size, char);
+		KILL(head->info_ptr);
 
 		/* Hack -- Free the "fake" arrays */
 		if (name)
-			C_KILL(head->name_ptr, z_info->fake_name_size, char);
+			KILL(head->name_ptr);
 
 		if (text)
-			C_KILL(head->text_ptr, z_info->fake_text_size, char);
+			KILL(head->text_ptr);
 
 #endif /* ALLOW_TEMPLATES */
 
@@ -653,13 +653,13 @@ static errr init_info(cptr filename, header *head,
 static errr free_info(header *head)
 {
 	if (head->info_ptr)
-		C_FREE(head->info_ptr, head->info_size, char);
+		FREE(head->info_ptr);
 
 	if (head->name_ptr)
-		C_FREE(head->name_ptr, head->name_size, char);
+		FREE(head->name_ptr);
 
 	if (head->text_ptr)
-		C_FREE(head->text_ptr, head->text_size, char);
+		FREE(head->text_ptr);
 
 	/* Success */
 	return (0);
@@ -1500,8 +1500,8 @@ void cleanup_angband(void)
 		string_free(macro__act[i]);
 	}
 
-	C_FREE((void*)macro__pat, MACRO_MAX, cptr);
-	C_FREE((void*)macro__act, MACRO_MAX, cptr);
+	FREE((void*)macro__pat);
+	FREE((void*)macro__act);
 
 	/* Free the keymaps */
 	for (i = 0; i < KEYMAP_MODES; ++i)
@@ -1513,31 +1513,31 @@ void cleanup_angband(void)
 	}
 
 	/* Free the allocation tables */
-	C_FREE(alloc_ego_table, alloc_ego_size, alloc_entry);
-	C_FREE(alloc_race_table, alloc_race_size, alloc_entry);
-	C_FREE(alloc_kind_table, alloc_kind_size, alloc_entry);
+	FREE(alloc_ego_table);
+	FREE(alloc_race_table);
+	FREE(alloc_kind_table);
 
 	/* Free the towns */
-	C_FREE(town, z_info->wp_max, town_type);
+	FREE(town);
 
 	/* Free the stores */
-	C_FREE(store_cache, STORE_CACHE_AMNT, store_type*);
+	FREE(store_cache);
 
 	/* Free the player inventory */
-	C_FREE(inventory, INVEN_TOTAL, object_type);
+	FREE(inventory);
 
 	/* Free the quest list */
-	C_FREE(quest, z_info->q_max, quest_type);
+	FREE(quest);
 
 	/* Free the lore, monster, and object lists */
-	C_FREE(m_list, z_info->m_max, monster_type);
-	C_FREE(o_list, z_info->o_max, object_type);
+	FREE(m_list);
+	FREE(o_list);
 
 #ifdef MONSTER_FLOW
 
 	/* Flow arrays */
-	C_FREE(cave_when, DUNGEON_HGT, byte_wid);
-	C_FREE(cave_cost, DUNGEON_HGT, byte_wid);
+	FREE(cave_when);
+	FREE(cave_cost);
 
 #endif /* MONSTER_FLOW */
 
@@ -1551,11 +1551,11 @@ void cleanup_angband(void)
 	for (i = 0; i < z_info->ws_max; i++)
 	{
 		/* Free one row of the wilderness */
-		C_FREE(wild[i], z_info->ws_max, wild_type);
+		FREE(wild[i]);
 	}
 
 	/* Free the wilderness itself */
-	C_FREE(wild, z_info->ws_max, wild_type*);
+	FREE(wild);
 
 
 	/* Free cache of wilderness blocks */
@@ -1564,18 +1564,18 @@ void cleanup_angband(void)
 		/* Free rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
-			C_FREE(wild_cache[i][j], WILD_BLOCK_SIZE, cave_type);
+			FREE(wild_cache[i][j]);
 		}
 
 		/* Free block */
-		C_FREE(wild_cache[i], WILD_BLOCK_SIZE, cave_type*);
+		FREE(wild_cache[i]);
 	}
 
 	/* Free temporary wilderness block */
 	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
 	{
 		/* Allocate one row of the temp_block */
-		C_FREE(temp_block[i], WILD_BLOCK_SIZE + 1, u16b);
+		FREE(temp_block[i]);
 	}
 #endif /* 0 */
 
@@ -1583,7 +1583,7 @@ void cleanup_angband(void)
 	for (i = 0; i < MAX_HGT; i++)
 	{
 		/* Allocate one row of the cave */
-		C_FREE(cave[i], MAX_WID, cave_type);
+		FREE(cave[i]);
 	}
 
 	/* Free the messages */

@@ -2871,8 +2871,7 @@ static void build_maze_vault(int x0, int y0, int xsize, int ysize)
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(x1, x2, y1, y2, randint1(5));
 
-	/* rnfree(visited, num_vertices * sizeof(int)); */
-	C_FREE(visited, num_vertices, int);
+	FREE(visited);
 }
 
 
@@ -2957,8 +2956,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	/* Fill with monsters and treasure, highest difficulty */
 	fill_treasure(x1, x2, y1, y2, 10);
 
-	/* rnfree(visited, num_vertices * sizeof(int)); */
-	C_FREE(visited, num_vertices, int);
+	FREE(visited);
 }
 
 

@@ -612,7 +612,7 @@ static GdkImage *resize_tiles(int tile_wid, int tile_hgt)
 	}
 	
 	/* Free offset table */
-	C_FREE(xoffsets, new_wid, int);
+	FREE(xoffsets);
 	
 	return (new_image);
 }

@@ -231,8 +231,8 @@ void do_cmd_messages(void)
 		/* Dump messages */
 		for (j = 0; (j < hgt-4) && (i + j < n); j++)
 		{
-			cptr msg = message_str(i+j);
-			byte attr = message_color(i+j);
+			cptr msg = message_str((s16b)(i+j));
+			byte attr = message_color((s16b)(i+j));
 
 			/* Hack -- fake monochrome */
 			if (!use_color || ironman_moria) attr = TERM_WHITE;
@@ -314,7 +314,7 @@ void do_cmd_messages(void)
 		/* Hack -- handle find */
 		if (k == '/')
 		{
-			int z;
+			s16b z;
 
 			/* Prompt */
 			prt("Find: ", hgt-1, 0);
@@ -3107,7 +3107,7 @@ static void do_cmd_knowledge_uniques(void)
 		message_flush();
 
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		return;
 	}
@@ -3126,7 +3126,7 @@ static void do_cmd_knowledge_uniques(void)
 	if (!fff)
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		return;
 	}
@@ -3143,7 +3143,7 @@ static void do_cmd_knowledge_uniques(void)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, z_info->r_max, u16b);
+	KILL(who);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3388,7 +3388,7 @@ static void do_cmd_knowledge_kill_count(void)
 		message_flush();
 
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		return;
 	}
@@ -3407,7 +3407,7 @@ static void do_cmd_knowledge_kill_count(void)
 	if (!fff)
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		return;
 	}
@@ -3517,7 +3517,7 @@ static void do_cmd_knowledge_kill_count(void)
 	}
 	
 	/* Free the "who" array */
-	C_KILL(who, z_info->r_max, u16b);
+	KILL(who);
 
 	/* Close the file */
 	my_fclose(fff);

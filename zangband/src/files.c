@@ -3049,7 +3049,7 @@ errr file_character(cptr name, bool full)
 
 	for (i = msg_max - 1; i >= 0; i--)
 	{
-		fprintf(fff, "%s\n", message_str(i));
+		fprintf(fff, "%s\n", message_str((s16b)i));
 	}
 	fprintf(fff, "\n\n");
 

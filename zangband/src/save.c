@@ -268,7 +268,7 @@ static errr wr_savefile(void)
 
 
 	/* Kill array XXX XXX XXX */
-	C_KILL(data_head, 65535, byte);
+	KILL(data_head);
 
 
 	/* Success */
@@ -434,7 +434,7 @@ static errr rd_savefile(void)
 
 
 	/* Kill array XXX XXX XXX */
-	C_KILL(data_head, 65535, byte);
+	KILL(data_head);
 
 
 	/* Success */
@@ -1447,8 +1447,8 @@ static bool wr_savefile_new(void)
 	/* Dump the messages and colors (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
-		wr_string(message_str(i));
-		wr_byte(message_color(i));
+		wr_string(message_str((s16b)i));
+		wr_byte(message_color((s16b)i));
 	}
 
 

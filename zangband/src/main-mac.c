@@ -3977,10 +3977,8 @@ static vptr lifeboat = NULL;
 /*
  * Hook to "release" memory
  */
-static vptr hook_rnfree(vptr v, huge size)
+static vptr hook_rnfree(vptr v)
 {
-
-#pragma unused (size)
 
 #ifdef USE_MALLOC
 

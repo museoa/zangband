@@ -2994,13 +2994,13 @@ static void create_roads(void)
 	/* Free the array */
 	for (i = 0; i < towns; i++)
 	{
-		C_FREE(link_list[i], towns, u16b);
+		FREE(link_list[i]);
 	}
 
-	C_FREE(link_list, towns, u16b*);
+	FREE(link_list);
 
 	/* Town lookup table */
-	C_FREE(town_number, towns, u16b);
+	FREE(town_number);
 
 	/* Done */
 }
@@ -4301,8 +4301,8 @@ void create_wilderness(void)
 
 	/* Free up memory used to create the wilderness */
 #if 0
-	C_FREE(wild_choice_tree, z_info->wn_max, wild_choice_tree_type);
-	C_FREE(wild_temp_dist, max_wild, byte);
+	FREE(wild_choice_tree);
+	FREE(wild_temp_dist);
 #endif
 
 	/* Done */

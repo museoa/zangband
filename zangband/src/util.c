@@ -1949,8 +1949,8 @@ errr quarks_free(void)
 	}
 
 	/* Free the list of "quarks" */
-	C_FREE((void*)quark__use, QUARK_MAX, u16b);
-	C_FREE((void*)quark__str, QUARK_MAX, cptr);
+	FREE((void*)quark__use);
+	FREE((void*)quark__str);
 
 	/* Success */
 	return (0);
@@ -2403,9 +2403,9 @@ errr messages_init(void)
 void messages_free(void)
 {
 	/* Free the messages */
-	C_FREE(message__ptr, MESSAGE_MAX, u16b);
-	C_FREE(message__buf, MESSAGE_BUF, char);
-	C_FREE(message__type, MESSAGE_MAX, u16b);
+	FREE(message__ptr);
+	FREE(message__buf);
+	FREE(message__type);
 }
 
 
@@ -2887,6 +2887,8 @@ void c_roff(byte a, cptr str)
 
 			/* Clear line, move cursor */
 			Term_erase(x, y, 255);
+
+			continue;
 		}
 
 		/* Clean up the char */
@@ -4003,5 +4005,3 @@ cptr get_default_font(int term_num)
 	
 	return (font);
 }
-
-

@@ -1441,7 +1441,7 @@ static void spoil_mon_desc(cptr fname)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, z_info->r_max, s16b);
+	KILL(who);
 
 	/* End it */
 	fprintf(fff, "\n");
@@ -2322,7 +2322,7 @@ static void spoil_mon_info(cptr fname)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, z_info->r_max, s16b);
+	KILL(who);
 
 	/* Check for errors */
 	if (ferror(fff))

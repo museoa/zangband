@@ -3293,7 +3293,7 @@ static void deallocate_store(void)
 	}
 
 	/* Delete store least used. */
-	C_FREE(store_cache[0]->stock, STORE_INVEN_MAX, object_type);
+	FREE(store_cache[0]->stock);
 
 	/* No stock */
 	store_cache[0]->stock_num = 0;

@@ -1523,7 +1523,7 @@ void do_cmd_query_symbol(void)
 	if (!n)
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		return;
 	}
@@ -1557,7 +1557,7 @@ void do_cmd_query_symbol(void)
 	if (query != 'y')
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		return;
 	}
@@ -1654,7 +1654,7 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, z_info->r_max, u16b);
+	KILL(who);
 
 	/* Re-display the identity */
 	prt(buf, 0, 0);
@@ -1739,7 +1739,7 @@ bool research_mon(void)
 		cheat_know = oldcheat;
 
 		/* Free the "who" array */
-		C_KILL(who, z_info->r_max, u16b);
+		KILL(who);
 
 		/* Restore */
 		screen_load();
@@ -1845,7 +1845,7 @@ bool research_mon(void)
 	cheat_know = oldcheat;
 
 	/* Free the "who" array */
-	C_KILL(who, z_info->r_max, u16b);
+	KILL(who);
 
 	/* Restore */
 	screen_load();
