@@ -5177,7 +5177,7 @@ void item_describe(object_type *o_ptr)
 			/* Restore old number of items */
 			o_ptr->number = num;
 		}
-		else
+		else if (list == &p_ptr->inventory)
 		{
 			/* No more items? */
 			msgf("There are %s.", o_name);
