@@ -33,7 +33,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 18
+#define SAVEFILE_VERSION 19
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -1373,7 +1373,8 @@
 #define ACT_XTRA_SPEED          96
 #define ACT_WRAITH              97
 #define ACT_INVULN              98
-/* 99 - 110 unused */
+#define ACT_TELEPORT_1			99
+/* 100 - 110 unused */
 #define ACT_LIGHT               111
 #define ACT_MAP_LIGHT           112
 #define ACT_DETECT_ALL          113
@@ -1388,9 +1389,10 @@
 #define ACT_RECHARGE            122
 #define ACT_ALCHEMY             123
 #define ACT_DIM_DOOR            124
-#define ACT_TELEPORT            125
+#define ACT_TELEPORT_2          125
 #define ACT_RECALL              126
-/* 127 -> unused */
+/* 127 unused */
+/* 128 - 255 Artifact activations */
 
 /*** Object "tval" and "sval" codes ***/
 
@@ -1405,11 +1407,11 @@
  * only armor and weapons and a few other items use any of these flags.
  */
 
-#define TV_SKELETON      1      /* Skeletons ('s'), not specified */
+#define TV_SKELETON      1      /* Skeletons ('~') */
 #define TV_BOTTLE        2      /* Empty bottles ('!') */
 #define TV_JUNK          3      /* Sticks, Pottery, etc ('~') */
 #define TV_SPIKE         5      /* Spikes ('~') */
-#define TV_CHEST         7      /* Chests ('~') */
+#define TV_CHEST         7      /* Chests ('&') */
 #define TV_FIGURINE      8      /* Magical figurines */
 #define TV_STATUE        9      /* Statue, what a silly object... */
 /*#define TV_CORPSE       10  */    /* Corpses are now fields */
@@ -2327,7 +2329,6 @@
 #define GF_JAM_DOOR     88
 #define GF_DOMINATION   89
 #define GF_DISP_GOOD    90
-
 #define MAX_GF				91
 
 /*
@@ -3212,18 +3213,11 @@
 
 
 
-
 /*
- * Artifacts use the "name1" field
- */
-#define artifact_p(T) \
-	((T)->name1 ? TRUE : FALSE)
-
-/*
- * Ego-Items use the "name2" field
+ * Ego-Items are named, but are not INSTA_ART.
  */
 #define ego_item_p(T) \
-	((T)->name2 ? TRUE : FALSE)
+	((((T)->xtra_name) && (!((T)->flags3 & TR3_INSTA_ART))) ? TRUE : FALSE)
 
 
 /*

@@ -6630,6 +6630,6 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	{field_action_door_lock_monster, "field_action_door_lock_monster"},
 	
 	/* Monster attemts to enter jammed door */
-	{field_action_door_jam_monster, "field_action_door_jam_monster"}
+	{field_action_door_jam_monster, "field_action_door_jam_monster"},
 };
 

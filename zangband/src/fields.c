@@ -1812,7 +1812,7 @@ static bool check_hit(int power)
  */
 static bool check_save(int power)
 {
-	int k, ac;
+	int k;
 
 	/* Percentile dice */
 	k = randint0(100);
@@ -1824,7 +1824,7 @@ static bool check_save(int power)
 	if (power <= 0) return (FALSE);
 
 	/* Power competes against saving throw */
-	if (randint1(power) > (p_ptr->skill_sav) return (TRUE);
+	if (randint1(power) > (p_ptr->skill_sav)) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -2553,7 +2553,7 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2571,7 +2571,7 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 		
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("There is a bright flash of light!");
 	(void)apply_disenchant(0);
@@ -2588,7 +2588,7 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 		
 	msg_print("You fumble with your equipment!");
 	
@@ -2611,7 +2611,7 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 		
 	(void)gain_random_mutation(0);
 }
@@ -2625,7 +2625,7 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 		
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
@@ -2650,7 +2650,7 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("Darkness surrounds you!");
 	
@@ -2683,7 +2683,7 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("You suddenly feel very, very hungry!");
 	
@@ -2707,7 +2707,7 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("Your purse becomes weightless!");
 	
@@ -2730,7 +2730,7 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("A shrill note sounds!");
 	
@@ -2749,7 +2749,7 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("You smell something musty.");
 	
@@ -2768,7 +2768,7 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("Static fills the air.");
 	
@@ -2809,7 +2809,7 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("Shouts fill the air!");
 	
@@ -2825,7 +2825,7 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("Zap!");
 	
@@ -2839,14 +2839,16 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 
 void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 {	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
 	/* Disturb the player */
 	disturb(0, 0);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1]))
+	if (!check_save(f_ptr->data[1]))
 	{
 		/* Find the trap */
-		hit_trap;
+		hit_trap(f_ptr);
 		
 		return;
 	}
@@ -3144,31 +3146,4 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 	
 	/* Cannot move */
 	mon_enter->do_move = FALSE;
-}
-
-/*
- * Initialise artifact-saving field
- */
-void field_action_preserve_init(s16b *field_ptr, void *input)
-{
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
-	/* Save the number of the artifact */
-	f_ptr->data[0] = (byte *) input;
-	
-	return;
-}
-
-/* Preserve an artifact */
-void field_action_preserve_artifact(s16b *field_ptr, void *nothing)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
-	artifact_type *a_ptr = &a_info[f_ptr->data[0]];
-	
-	/* Preserve the artifact mentioned in data[0] */
-	a_ptr->cur_num = 0;
-	
-	/* Delete the field */
-	delete_field_ptr(field_ptr);
 }

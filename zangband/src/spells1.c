@@ -1005,7 +1005,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 		if (o_ptr->number > 1) plural = TRUE;
 
 		/* Check for artifact */
-		if ((artifact_p(o_ptr) || o_ptr->art_name)) is_art = TRUE;
+		if (o_ptr->flags3 & TR3_INSTA_ART) is_art = TRUE;
 
 		/* Analyze the type */
 		switch (typ)
@@ -5465,7 +5465,6 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		}
 	}
 
-
 	/* Check features */
 	if (flg & (PROJECT_GRID))
 	{
@@ -5500,7 +5499,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				f_m_t.notice = notice;
 				
 				/* Affect fields on the grid */
-				field_hook(&area(py, px)->fld_idx,
+				field_hook(&area(y, x)->fld_idx,
 					FIELD_ACT_MAGIC_TARGET, (void *) &f_m_t);
 				
 				/* Restore notice variable */
@@ -5519,7 +5518,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				f_m_t.notice = notice;
 				
 				/* Affect fields on the grid */
-				field_hook(&area(py, px)->fld_idx,
+				field_hook(&area(y, x)->fld_idx,
 					FIELD_ACT_MAGIC_TARGET, (void *) &f_m_t);
 				
 				/* Restore notice variable */

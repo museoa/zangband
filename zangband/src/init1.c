@@ -1300,10 +1300,11 @@ errr init_k_info_txt(FILE *fp, char *buf)
 				&level, &extra, &wgt, &cost)) return (1);
 
 			/* Save the values */
-			k_ptr->level = level;
-			k_ptr->extra = extra;
 			k_ptr->weight = wgt;
 			k_ptr->cost = cost;
+			k_ptr->level = level;
+			
+			/* Note that extra is ignored here. */
 
 			/* Next... */
 			continue;

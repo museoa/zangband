@@ -1866,7 +1866,7 @@ static void player_outfit(void)
 		if (tv == TV_SWORD && p_ptr->pclass == CLASS_ROGUE &&
 			p_ptr->realm1 == REALM_DEATH) /* Only assassins get a poisoned weapon */
 		{
-			q_ptr->name2 = EGO_BRAND_POIS;
+			add_ego_flags(q_ptr, EGO_BRAND_POIS);
 		}
 
 		/* These objects are "storebought" */

@@ -550,8 +550,6 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->number);
 	wr_s16b(o_ptr->weight);
 
-	wr_byte(o_ptr->name1);
-	wr_byte(o_ptr->name2);
 	wr_s16b(o_ptr->timeout);
 
 	wr_s16b(o_ptr->to_h);
@@ -565,31 +563,12 @@ static void wr_item(object_type *o_ptr)
 
 	wr_byte(o_ptr->marked);
 
-#if 0
-	/* Old flags */
-	if (o_ptr->art_name || o_ptr->art_flags1 || o_ptr->art_flags2 ||
-	    o_ptr->art_flags3)
-	{
-#endif
-	wr_u32b(o_ptr->art_flags1);
-	wr_u32b(o_ptr->art_flags2);
-	wr_u32b(o_ptr->art_flags3);
-#if 0
-	}
-	else
-	{
-	wr_u32b(0L);
-	wr_u32b(0L);
-	wr_u32b(0L);
-	}
-#endif
+	wr_u32b(o_ptr->flags1);
+	wr_u32b(o_ptr->flags2);
+	wr_u32b(o_ptr->flags3);
 
 	/* Held by monster index */
 	wr_s16b(o_ptr->held_m_idx);
-
-	/* Extra information */
-	wr_byte(o_ptr->xtra1);
-	wr_byte(o_ptr->xtra2);
 
 	/* Feelings */
 	wr_byte(o_ptr->feeling);
@@ -604,10 +583,10 @@ static void wr_item(object_type *o_ptr)
 		wr_string("");
 	}
 
-	/* If it is a "new" named artifact, save the name */
-	if (o_ptr->art_name)
+	/* If it is a named item, save the name */
+	if (o_ptr->xtra_name)
 	{
-		wr_string(quark_str(o_ptr->art_name));
+		wr_string(quark_str(o_ptr->xtra_name));
 	}
 	else
 	{
@@ -635,6 +614,15 @@ static void wr_item(object_type *o_ptr)
 	wr_s32b(0);
 
 #endif /* USE_SCRIPT */
+
+	/* The new flags */
+	wr_s32b(o_ptr->cost);
+	
+	wr_byte(o_ptr->activate);
+	
+	wr_u32b(o_ptr->kn_flags1);
+	wr_u32b(o_ptr->kn_flags2);
+	wr_u32b(o_ptr->kn_flags3);
 }
 
 

@@ -23,7 +23,7 @@
 static byte value_check_aux1(object_type *o_ptr)
 {
 	/* Artifacts */
-	if (artifact_p(o_ptr) || o_ptr->art_name)
+	if (o_ptr->flags3 & TR3_INSTA_ART)
 	{
 		/* Cursed/Broken */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return FEEL_TERRIBLE;
@@ -71,7 +71,7 @@ static byte value_check_aux2(object_type *o_ptr)
 	if (broken_p(o_ptr)) return FEEL_BROKEN;
 
 	/* Artifacts -- except cursed/broken ones */
-	if (artifact_p(o_ptr) || o_ptr->art_name) return FEEL_GOOD;
+	if (o_ptr->flags3 & TR3_INSTA_ART) return FEEL_GOOD;
 
 	/* Ego-Items -- except cursed/broken ones */
 	if (ego_item_p(o_ptr)) return FEEL_GOOD;
@@ -1707,7 +1707,7 @@ static void process_world(void)
 	if (o_ptr->tval == TV_LITE)
 	{
 		/* Hack -- Use some fuel (except on artifacts) */
-		if (!artifact_p(o_ptr) && (o_ptr->pval > 0))
+		if (!(o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->pval > 0))
 		{
 			/* Decrease life-span */
 			o_ptr->pval--;
@@ -1898,7 +1898,7 @@ static void process_world(void)
 			if (o_ptr->tval == TV_LITE)
 			{
 				/* Use some fuel (except on artifacts) */
-				if (!artifact_p(o_ptr) && (o_ptr->pval > 0))
+				if (!(o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->pval > 0))
 				{
 					/* Heal the player a bit */
 					hp_player(o_ptr->pval / 20);
@@ -2179,7 +2179,8 @@ static void process_world(void)
 		}
 
 		/* Make a chainsword noise */
-		if ((o_ptr->name1 == ART_CHAINSWORD) && randint1(CHAINSWORD_NOISE) == 1)
+		if ((o_ptr->activate == ART_CHAINSWORD + 128) &&
+			 randint1(CHAINSWORD_NOISE) == 1)
 		{
 			char noise[1024];
 			if (!get_rnd_line("chainswd.txt", 0, noise))
@@ -2193,7 +2194,7 @@ static void process_world(void)
 		 */
 		if ((f3 & TR3_TELEPORT) && (randint0(100) < 1))
 		{
-			if ((o_ptr->ident & IDENT_CURSED) && !p_ptr->anti_tele)
+			if (cursed_p(o_ptr) && !p_ptr->anti_tele)
 			{
 				disturb(0, 0);
 
@@ -4096,16 +4097,6 @@ void play_game(bool new_game)
 
 	/* Make sure main term is active */
 	Term_activate(angband_term[0]);
-
-	/* Add in resizing for map */
-	angband_term[0]->resize_hook = resize_map;
-
-	/* Add in redraw hooks */
-	for (i = 1; i < 8; i++)
-	{
-		angband_term[i]->resize_hook = redraw_window;
-	}
-
 
 	/* Verify minimum size */
 	if ((Term->hgt < 24) || (Term->wid < 80))

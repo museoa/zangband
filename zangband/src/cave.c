@@ -430,7 +430,7 @@ bool cave_valid_grid(cave_type *c_ptr)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Forbid artifact grids */
-		if ((o_ptr->art_name) || artifact_p(o_ptr)) return (FALSE);
+		if (o_ptr->flags3 & TR3_INSTA_ART) return (FALSE);
 	}
 
 	/* Accept */

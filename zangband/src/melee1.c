@@ -701,7 +701,7 @@ bool make_attack_normal(int m_idx)
 							if (!o_ptr->k_idx) continue;
 
 							/* Skip artifacts */
-							if (artifact_p(o_ptr) || o_ptr->art_name) continue;
+							if (o_ptr->flags3 & TR3_INSTA_ART) continue;
 
 							/* Get a description */
 							object_desc(o_name, o_ptr, FALSE, 3);
@@ -870,7 +870,8 @@ bool make_attack_normal(int m_idx)
 						o_ptr = &inventory[INVEN_LITE];
 
 						/* Drain fuel */
-						if ((o_ptr->pval > 0) && (!artifact_p(o_ptr)))
+						if ((o_ptr->pval > 0) &&
+							 (!(o_ptr->flags3 & TR3_INSTA_ART)))
 						{
 							/* Reduce fuel */
 							o_ptr->pval -= (250 + randint1(250));

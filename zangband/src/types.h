@@ -172,10 +172,10 @@ struct object_kind
 	byte locale[4];		/* Allocation level(s) */
 	byte chance[4];		/* Allocation chance(s) */
 
-	byte level;			/* Level */
-	byte extra;			/* Something */
-
-
+	byte level;			/* Level */	
+	
+	byte extra;			/* Unused for now */
+	
 	byte d_attr;		/* Default object attribute */
 	char d_char;		/* Default object character */
 
@@ -701,8 +701,9 @@ struct wild_gen_data_type
  * Note that "object" records are "copied" on a fairly regular basis,
  * and care must be taken when handling such objects.
  *
- * Note that "object flags" must now be derived from the object kind,
- * the artifact and ego-item indexes, and the two "xtra" fields.
+ * "object flags" are now stored in the object data type, as are the
+ * known flags.  This allows the identification status of each flag
+ * to be stored seperately.
  *
  * Each cave grid points to one (or zero) objects via the "o_idx"
  * field (above).  Each object then points to one (or zero) objects
@@ -738,38 +739,40 @@ struct object_type
 
 	s16b weight;		/* Item weight */
 
-	byte name1;			/* Artifact type, if any */
-	byte name2;			/* Ego-Item type, if any */
-
-	byte xtra1;			/* Extra info type */
-	byte xtra2;			/* Extra info index */
-
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
 	s16b to_a;			/* Plusses to AC */
 
 	s16b ac;			/* Normal AC */
 
-	byte dd, ds;		/* Damage dice/sides */
-
 	s16b timeout;		/* Timeout Counter */
+
+	byte dd, ds;		/* Damage dice/sides */	
 
 	byte ident;			/* Special flags  */
 
 	byte marked;		/* Object is marked */
 
 	u16b inscription;	/* Inscription index */
-	u16b art_name;      /* Artifact name (random artifacts) */
+	u16b xtra_name;      /* Extra Name (Artifacts and ego items) */
 
-	byte feeling;          /* Game generated inscription number (eg, pseudo-id) */
-
-	u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
-	u32b art_flags2;        /* Flags, set 2  for the random artifacts of*/
-	u32b art_flags3;        /* Flags, set 3  Zangband */
+	u32b flags1;        /* Flags, set 1 */
+	u32b flags2;        /* Flags, set 2 */
+	u32b flags3;        /* Flags, set 3 */
+	
+	u32b kn_flags1;     /* Known Flags, set 1 */
+	u32b kn_flags2;     /* Known Flags, set 2 */
+	u32b kn_flags3;     /* Known Flags, set 3 */
 
 	s16b next_o_idx;	/* Next object in stack (if any) */
 
 	s16b held_m_idx;	/* Monster holding us (if any) */
+
+	s32b cost;			/* Object "base cost" */
+	
+	byte feeling;       /* Game generated inscription number (eg, pseudo-id) */
+
+	byte activate;	/* Activation type */
 
 #ifdef USE_SCRIPT
 	PyObject *python;
@@ -786,7 +789,7 @@ struct object_type
 	char x_char;		/* Desired object character */
 
 
-	byte flavor;			/* Special object flavor (or zero) */
+	byte flavor;		/* Special object flavor (or zero) */
 
 	bool easy_know;		/* This object is always known (if aware) */
 

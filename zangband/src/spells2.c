@@ -1687,9 +1687,7 @@ bool detect_objects_magic(void)
 		tv = o_ptr->tval;
 
 		/* Artifacts, misc magic items, or enchanted wearables */
-		if (artifact_p(o_ptr) ||
-			ego_item_p(o_ptr) ||
-			o_ptr->art_name ||
+		if (o_ptr->xtra_name ||
 		    (tv == TV_AMULET) ||
 			(tv == TV_RING) ||
 		    (tv == TV_STAFF) ||
@@ -2552,7 +2550,6 @@ bool destroy_area(int y1, int x1, int r, int full)
 	int       y, x, k, t;
 	cave_type *c_ptr;
 	bool      flag = FALSE;
-
 
 	/* Prevent destruction of quest levels and town */
 	if (p_ptr->inside_quest || !dun_level)

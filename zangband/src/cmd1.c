@@ -367,10 +367,6 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				}
 
 				if (mult < 30) mult = 30;
-
-				if ((o_ptr->name1 == ART_AEGLIN) &&
-				    strstr(r_name + r_ptr->name, "Fafner"))
-					mult *= 3;
 			}
 
 			/* Brand (Acid) */
@@ -642,7 +638,7 @@ bool auto_pickup_okay(object_type *o_ptr)
  */
 void py_pickup_aux(int o_idx)
 {
-	int slot, i;
+	int slot;
 
 	char o_name[80];
 	object_type *o_ptr;
@@ -660,19 +656,6 @@ void py_pickup_aux(int o_idx)
 
 	/* Message */
 	msg_format("You have %s (%c).", o_name, index_to_label(slot));
-
-	/* Check if completed a quest */
-	for (i = 0; i < max_quests; i++)
-	{
-		if ((quest[i].type == QUEST_TYPE_FIND_ARTIFACT) &&
-		    (quest[i].status == QUEST_STATUS_TAKEN) &&
-			   (quest[i].k_idx == o_ptr->name1))
-		{
-			quest[i].status = QUEST_STATUS_COMPLETED;
-			msg_print("You completed your quest!");
-			msg_print(NULL);
-		}
-	}
 
 	/* Delete the object */
 	delete_object_idx(o_idx);
@@ -1505,13 +1488,14 @@ void py_attack(int y, int x)
 	    ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero) ||
 	    !m_ptr->ml))
 	{
-		if (!inventory[INVEN_WIELD].art_name)
+		if (!inventory[INVEN_WIELD].xtra_name)
 		{
 			msg_format("You stop to avoid hitting %s.", m_name);
 			return;
 		}
 
-		if (!(streq(quark_str(inventory[INVEN_WIELD].art_name), "'Stormbringer'")))
+		/* Mega-hack */
+		if (!(streq(quark_str(inventory[INVEN_WIELD].xtra_name), "'Stormbringer'")))
 		{
 			msg_format("You stop to avoid hitting %s.", m_name);
 			return;
@@ -1636,7 +1620,7 @@ void py_attack(int y, int x)
 					drain_result = 0;
 			}
 
-			if ((f1 & TR1_VORPAL) && (randint1((o_ptr->name1 == ART_VORPAL_BLADE) ? 3 : 6) == 1))
+			if ((f1 & TR1_VORPAL) && (randint1((o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 3 : 6) == 1))
 				vorpal_cut = TRUE;
 			else vorpal_cut = FALSE;
 
@@ -1692,6 +1676,12 @@ void py_attack(int y, int x)
 				{
 					do_quake = TRUE;
 				}
+				
+				/* 
+				 * All of these artifact-specific effects
+				 * should be pythonized.
+				 */
+				
 
 				if (vorpal_cut)
 				{
@@ -1706,9 +1696,9 @@ void py_attack(int y, int x)
 					 */
 					int mult = 2;
 
-					int inc_chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
+					int inc_chance = (o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 2 : 4;
 
-					if ((o_ptr->name1 == ART_CHAINSWORD) && (randint1(2) != 1))
+					if ((o_ptr->activate + 128 == ART_CHAINSWORD) && (randint1(2) != 1))
 					{
 						char chainsword_noise[1024];
 						if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
@@ -1717,7 +1707,7 @@ void py_attack(int y, int x)
 						}
 					}
 
-					if (o_ptr->name1 == ART_VORPAL_BLADE)
+					if (o_ptr->activate + 128 == ART_VORPAL_BLADE)
 					{
 						msg_print("Your Vorpal Blade goes snicker-snack!");
 					}
@@ -2220,9 +2210,10 @@ void move_player(int dir, int do_pickup)
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
 
-	if (inventory[INVEN_WIELD].art_name)
+	/* Mega-hack */
+	if (inventory[INVEN_WIELD].xtra_name)
 	{
-		if (streq(quark_str(inventory[INVEN_WIELD].art_name), "'Stormbringer'"))
+		if (streq(quark_str(inventory[INVEN_WIELD].xtra_name), "'Stormbringer'"))
 			stormbringer = TRUE;
 	}
 

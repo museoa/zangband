@@ -96,99 +96,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Base object */
-	(*f1) = k_ptr->flags1;
-	(*f2) = k_ptr->flags2;
-	(*f3) = k_ptr->flags3;
-
-	/* Artifact */
-	if (o_ptr->name1)
-	{
-		artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-		(*f1) = a_ptr->flags1;
-		(*f2) = a_ptr->flags2;
-		(*f3) = a_ptr->flags3;
-	}
-
-	/* Ego-item */
-	if (o_ptr->name2)
-	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-		(*f1) |= e_ptr->flags1;
-		(*f2) |= e_ptr->flags2;
-		(*f3) |= e_ptr->flags3;
-	}
-
-	/* Random artifact ! */
-	if (o_ptr->art_flags1 || o_ptr->art_flags2 || o_ptr->art_flags3)
-	{
-		(*f1) |= o_ptr->art_flags1;
-		(*f2) |= o_ptr->art_flags2;
-		(*f3) |= o_ptr->art_flags3;
-	}
-
-	/* Extra powers */
-	if (!(o_ptr->art_name))
-	{
-		switch (o_ptr->xtra1)
-		{
-			case EGO_XTRA_SUSTAIN:
-			{
-				/* Choose a sustain */
-				switch (o_ptr->xtra2 % 6)
-				{
-					case 0: (*f2) |= (TR2_SUST_STR); break;
-					case 1: (*f2) |= (TR2_SUST_INT); break;
-					case 2: (*f2) |= (TR2_SUST_WIS); break;
-					case 3: (*f2) |= (TR2_SUST_DEX); break;
-					case 4: (*f2) |= (TR2_SUST_CON); break;
-					case 5: (*f2) |= (TR2_SUST_CHR); break;
-				}
-
-				break;
-			}
-
-			case EGO_XTRA_POWER:
-			{
-				/* Choose a power */
-				switch (o_ptr->xtra2 % 11)
-				{
-					case  0: (*f2) |= (TR2_RES_BLIND);  break;
-					case  1: (*f2) |= (TR2_RES_CONF);   break;
-					case  2: (*f2) |= (TR2_RES_SOUND);  break;
-					case  3: (*f2) |= (TR2_RES_SHARDS); break;
-					case  4: (*f2) |= (TR2_RES_NETHER); break;
-					case  5: (*f2) |= (TR2_RES_NEXUS);  break;
-					case  6: (*f2) |= (TR2_RES_CHAOS);  break;
-					case  7: (*f2) |= (TR2_RES_DISEN);  break;
-					case  8: (*f2) |= (TR2_RES_POIS);   break;
-					case  9: (*f2) |= (TR2_RES_DARK);   break;
-					case 10: (*f2) |= (TR2_RES_LITE);   break;
-				}
-
-				break;
-			}
-
-			case EGO_XTRA_ABILITY:
-			{
-				/* Choose an ability */
-				switch (o_ptr->xtra2 % 8)
-				{
-					case 0: (*f3) |= (TR3_FEATHER);     break;
-					case 1: (*f3) |= (TR3_LITE);        break;
-					case 2: (*f3) |= (TR3_SEE_INVIS);   break;
-					case 3: (*f3) |= (TR3_TELEPATHY);   break;
-					case 4: (*f3) |= (TR3_SLOW_DIGEST); break;
-					case 5: (*f3) |= (TR3_REGEN);       break;
-					case 6: (*f2) |= (TR2_FREE_ACT);    break;
-					case 7: (*f2) |= (TR2_HOLD_LIFE);   break;
-				}
-
-				break;
-			}
-		}
-	}
+	(*f1) = k_ptr->flags1 | o_ptr->flags1;
+	(*f2) = k_ptr->flags2 | o_ptr->flags2;
+	(*f3) = k_ptr->flags3 | o_ptr->flags3;
 }
 
 
@@ -198,8 +108,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
  */
 void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
-	bool spoil = FALSE;
-
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Clear */
@@ -213,123 +121,22 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f2) = k_ptr->flags2;
 	(*f3) = k_ptr->flags3;
 
-	/* Ego-item (known basic flags) */
-	if (o_ptr->name2)
-	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-		(*f1) |= e_ptr->flags1;
-		(*f2) |= e_ptr->flags2;
-		(*f3) |= e_ptr->flags3;
-	}
-
 	/* Show modifications to stats */
-	(*f1) |= (o_ptr->art_flags1 &
+	(*f1) |= (o_ptr->flags1 &
 		(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR));
 
 
-#ifdef SPOIL_ARTIFACTS
-	/* Full knowledge for some artifacts */
-	if (artifact_p(o_ptr) || o_ptr->art_name) spoil = TRUE;
-#endif /* SPOIL_ARTIFACTS */
-
-#ifdef SPOIL_EGO_ITEMS
-	/* Full knowledge for some ego-items */
-	if (ego_item_p(o_ptr)) spoil = TRUE;
-#endif /* SPOIL_EGO_ITEMS */
-
-	/* Need full knowledge or spoilers */
-	if (spoil || (o_ptr->ident & IDENT_MENTAL))
+	/* Identified? */
+	if (o_ptr->ident & (IDENT_KNOWN | IDENT_MENTAL))
 	{
-		/* Artifact */
-		if (o_ptr->name1)
-		{
-			artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-			(*f1) = a_ptr->flags1;
-			(*f2) = a_ptr->flags2;
-			(*f3) = a_ptr->flags3;
-		}
-
-		/* Ego-item */
-		if (o_ptr->name2)
-		{
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-			(*f1) |= e_ptr->flags1;
-			(*f2) |= e_ptr->flags2;
-			(*f3) |= e_ptr->flags3;
-		}
-
-		/* Random artifact ! */
-		if (o_ptr->art_flags1 || o_ptr->art_flags2 || o_ptr->art_flags3)
-		{
-			(*f1) |= o_ptr->art_flags1;
-			(*f2) |= o_ptr->art_flags2;
-			(*f3) |= o_ptr->art_flags3;
-		}
-
-		if (!(o_ptr->art_name))
-		{
-			/* Extra powers */
-			switch (o_ptr->xtra1)
-			{
-				case EGO_XTRA_SUSTAIN:
-				{
-					/* Choose a sustain */
-					switch (o_ptr->xtra2 % 6)
-					{
-						case 0: (*f2) |= (TR2_SUST_STR); break;
-						case 1: (*f2) |= (TR2_SUST_INT); break;
-						case 2: (*f2) |= (TR2_SUST_WIS); break;
-						case 3: (*f2) |= (TR2_SUST_DEX); break;
-						case 4: (*f2) |= (TR2_SUST_CON); break;
-						case 5: (*f2) |= (TR2_SUST_CHR); break;
-					}
-
-					break;
-				}
-
-				case EGO_XTRA_POWER:
-				{
-					/* Choose a power */
-					switch (o_ptr->xtra2 % 11)
-					{
-						case  0: (*f2) |= (TR2_RES_BLIND);  break;
-						case  1: (*f2) |= (TR2_RES_CONF);   break;
-						case  2: (*f2) |= (TR2_RES_SOUND);  break;
-						case  3: (*f2) |= (TR2_RES_SHARDS); break;
-						case  4: (*f2) |= (TR2_RES_NETHER); break;
-						case  5: (*f2) |= (TR2_RES_NEXUS);  break;
-						case  6: (*f2) |= (TR2_RES_CHAOS);  break;
-						case  7: (*f2) |= (TR2_RES_DISEN);  break;
-						case  8: (*f2) |= (TR2_RES_POIS);   break;
-						case  9: (*f2) |= (TR2_RES_DARK);   break;
-						case 10: (*f2) |= (TR2_RES_LITE);   break;
-					}
-
-					break;
-				}
-
-				case EGO_XTRA_ABILITY:
-				{
-					/* Choose an ability */
-					switch (o_ptr->xtra2 % 8)
-					{
-						case 0: (*f3) |= (TR3_FEATHER);     break;
-						case 1: (*f3) |= (TR3_LITE);        break;
-						case 2: (*f3) |= (TR3_SEE_INVIS);   break;
-						case 3: (*f3) |= (TR3_TELEPATHY);   break;
-						case 4: (*f3) |= (TR3_SLOW_DIGEST); break;
-						case 5: (*f3) |= (TR3_REGEN);       break;
-						case 6: (*f2) |= (TR2_FREE_ACT);    break;
-						case 7: (*f2) |= (TR2_HOLD_LIFE);   break;
-					}
-
-					break;
-				}
-			}
-		}
+		/* 
+		 * *Identify* sets these flags,
+		 * and ego items have some set on creation.
+		 */
+		
+		(*f1) |= o_ptr->kn_flags1;
+		(*f2) |= o_ptr->kn_flags2;
+		(*f3) |= o_ptr->kn_flags3;
 	}
 }
 
@@ -366,8 +173,6 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 }
 
 
-
-
 /*
  * Determine the "Activation" (if any) for an artifact
  * Return a string, or NULL for "no activation"
@@ -382,20 +187,9 @@ cptr item_activation(object_type *o_ptr)
 	/* Require activation ability */
 	if (!(f3 & (TR3_ACTIVATE))) return ("nothing");
 
-
-	/*
-	 * We need to deduce somehow that it is a random artifact -- one
-	 * problem: It could be a random artifact which has NOT YET received
-	 * a name. Thus we eliminate other possibilities instead of checking
-	 * for art_name
-	 */
-
-	if (!(o_ptr->name1) &&
-		 !(o_ptr->name2) &&
-		 !(o_ptr->xtra1) &&
-		  (o_ptr->xtra2))
+	if (o_ptr->activate < 128)
 	{
-		switch (o_ptr->xtra2)
+		switch (o_ptr->activate)
 		{
 			case ACT_SUNLIGHT:
 			{
@@ -685,7 +479,11 @@ cptr item_activation(object_type *o_ptr)
 			{
 				return "dimension door every 100 turns";
 			}
-			case ACT_TELEPORT:
+			case ACT_TELEPORT_1:
+			{
+				return "teleport (range 100) every 50+d50 turns";
+			}
+			case ACT_TELEPORT_2:
 			{
 				return "teleport (range 100) every 45 turns";
 			}
@@ -695,244 +493,241 @@ cptr item_activation(object_type *o_ptr)
 			}
 			default:
 			{
-				return "something undefined";
+				/* No randart activation */
+				break;
 			}
 		}
-	}
-
-	/* Some artifacts can be activated */
-	switch (o_ptr->name1)
+	}	
+	else
 	{
-		case ART_NARTHANC:
+		/* Some artifacts can be activated */
+		switch (o_ptr->activate - 128)
 		{
-			return "fire bolt (11d8) every 8+d8 turns";
+			case ART_NARTHANC:
+			{
+				return "fire bolt (11d8) every 8+d8 turns";
+			}
+			case ART_NIMTHANC:
+			{
+				return "frost bolt (8d8) every 7+d7 turns";
+			}
+			case ART_DETHANC:
+			{
+				return "lightning bolt (6d8) every 6+d6 turns";
+			}
+			case ART_RILIA:
+			{
+				return "stinking cloud (25) every 4+d4 turns";
+			}
+			case ART_BELANGIL:
+			{
+				return "frost ball (100) every 5+d5 turns";
+			}
+			case ART_DAL:
+			{
+				return "remove fear and cure poison every 5 turns";
+			}
+			case ART_RINGIL:
+			{
+				return "frost ball (200) every 300 turns";
+			}
+			case ART_DAWN:
+			{
+				return "summon the Legion of the Dawn every 500+d500 turns";
+			}
+			case ART_ANDURIL:
+			{
+				return "fire ball (150) every 400 turns";
+			}
+			case ART_FIRESTAR:
+			{
+				return "large fire ball (200) every 100 turns";
+			}
+			case ART_FEANOR:
+			{
+				return "haste self (20+d20 turns) every 200 turns";
+			}
+			case ART_THEODEN:
+			{
+				return "drain life (200) every 400 turns";
+			}
+			case ART_TURMIL:
+			{
+				return "drain life (200) every 70 turns";
+			}
+			case ART_CASPANION:
+			{
+				return "door and trap destruction every 10 turns";
+			}
+			case ART_AVAVIR:
+			{
+				return "word of recall every 200 turns";
+			}
+			case ART_TARATOL:
+			{
+				return "haste self (20+d20 turns) every 100+d100 turns";
+			}
+			case ART_ERIRIL:
+			{
+				return "identify every 10 turns";
+			}
+			case ART_OLORIN:
+			{
+				return "probing, detection and full id every 1000 turns";
+			}
+			case ART_EONWE:
+			{
+				return "mass genocide every 1000 turns";
+			}
+			case ART_LOTHARANG:
+			{
+				return "cure wounds (100) every 3+d3 turns";
+			}
+			case ART_BRAND:
+			{
+				return "fire branding of bolts every 999 turns";
+			}
+			case ART_ANGUIREL:
+			{
+				return "a getaway every 35 turns";
+			}
+			case ART_AEGLOS:
+			{
+				return "lightning ball (200) every 500 turns";
+			}
+			case ART_OROME:
+			{
+				return "stone to mud every 5 turns";
+			}
+			case ART_SOULKEEPER:
+			{
+				return "heal (1000) every 888 turns";
+			}
+			case ART_BELEGENNON:
+			{
+				return ("heal (777), curing and heroism every 300 turns");
+			}
+			case ART_CELEBORN:
+			{
+				return "genocide every 500 turns";
+			}
+			case ART_LUTHIEN:
+			{
+				return "restore life levels every 450 turns";
+			}
+			case ART_ULMO:
+			{
+				return "teleport away every 150 turns";
+			}
+			case ART_COLLUIN:
+			{
+				return "resistance (20+d20 turns) every 111 turns";
+			}
+			case ART_HOLCOLLETH:
+			{
+				return "Sleep II every 55 turns";
+			}
+			case ART_THINGOL:
+			{
+				return "recharge item every 70 turns";
+			}
+			case ART_COLANNON:
+			{
+				return "teleport every 45 turns";
+			}
+			case ART_TOTILA:
+			{
+				return "confuse monster every 15 turns";
+			}
+			case ART_CAMMITHRIM:
+			{
+				return "magic missile (3d6) every 2 turns";
+			}
+			case ART_PAURHACH:
+			{
+				return "fire bolt (11d8) every 8+d8 turns";
+			}
+			case ART_CORWIN:
+			{
+				return "frost bolt (8d8) every 7+d7 turns";
+			}
+			case ART_PAURAEGEN:
+			{
+				return "lightning bolt (6d8) every 6+d6 turns";
+			}
+			case ART_PAURNEN:
+			{
+				return "acid bolt (8d8) every 5+d5 turns";
+			}
+			case ART_FINGOLFIN:
+			{
+				return "a magical arrow (250) every 90+d90 turns";
+			}
+			case ART_HOLHENNETH:
+			{
+				return "detection every 55+d55 turns";
+			}
+			case ART_GONDOR:
+			{
+				return "heal (700) every 250 turns";
+			}
+			case ART_RAZORBACK:
+			{
+				return "star ball (1500) every 100 turns";
+			}
+			case ART_BLADETURNER:
+			{
+				return "breathe elements (1500), berserk rage, bless, and resistance";
+			}
+			case ART_GALADRIEL:
+			{
+				return "illumination every 10+d10 turns";
+			}
+			case ART_ELENDIL:
+			{
+				return "magic mapping and light every 50+d50 turns";
+			}
+			case ART_THRAIN:
+			{
+				return "clairvoyance and recall, draining you";
+			}
+			case ART_INGWE:
+			{
+				return "dispel evil (x5) every 300+d300 turns";
+			}
+			case ART_CARLAMMAS:
+			{
+				return "protection from evil every 225+d225 turns";
+			}
+			case ART_BARAHIR:
+			{
+				return "a strangling attack (200) every 100+d100 turns";
+			}
+			case ART_TULKAS:
+			{
+				return "haste self (75+d75 turns) every 150+d150 turns";
+			}
+			case ART_NARYA:
+			{
+				return "large fire ball (250) every 225+d225 turns";
+			}
+			case ART_NENYA:
+			{
+				return "large frost ball (400) every 325+d325 turns";
+			}
+			case ART_VILYA:
+			{
+				return "large lightning ball (500) every 425+d425 turns";
+			}
+			case ART_POWER:
+			{
+				return "bizarre things every 450+d450 turns";
+			}
+			case ART_DOR: case ART_TERROR:
+			{
+				return "rays of fear in every direction";
+			}
 		}
-		case ART_NIMTHANC:
-		{
-			return "frost bolt (8d8) every 7+d7 turns";
-		}
-		case ART_DETHANC:
-		{
-			return "lightning bolt (6d8) every 6+d6 turns";
-		}
-		case ART_RILIA:
-		{
-			return "stinking cloud (25) every 4+d4 turns";
-		}
-		case ART_BELANGIL:
-		{
-			return "frost ball (100) every 5+d5 turns";
-		}
-		case ART_DAL:
-		{
-			return "remove fear and cure poison every 5 turns";
-		}
-		case ART_RINGIL:
-		{
-			return "frost ball (200) every 300 turns";
-		}
-		case ART_DAWN:
-		{
-			return "summon the Legion of the Dawn every 500+d500 turns";
-		}
-		case ART_ANDURIL:
-		{
-			return "fire ball (150) every 400 turns";
-		}
-		case ART_FIRESTAR:
-		{
-			return "large fire ball (200) every 100 turns";
-		}
-		case ART_FEANOR:
-		{
-			return "haste self (20+d20 turns) every 200 turns";
-		}
-		case ART_THEODEN:
-		{
-			return "drain life (200) every 400 turns";
-		}
-		case ART_TURMIL:
-		{
-			return "drain life (200) every 70 turns";
-		}
-		case ART_CASPANION:
-		{
-			return "door and trap destruction every 10 turns";
-		}
-		case ART_AVAVIR:
-		{
-			return "word of recall every 200 turns";
-		}
-		case ART_TARATOL:
-		{
-			return "haste self (20+d20 turns) every 100+d100 turns";
-		}
-		case ART_ERIRIL:
-		{
-			return "identify every 10 turns";
-		}
-		case ART_OLORIN:
-		{
-			return "probing, detection and full id every 1000 turns";
-		}
-		case ART_EONWE:
-		{
-			return "mass genocide every 1000 turns";
-		}
-		case ART_LOTHARANG:
-		{
-			return "cure wounds (100) every 3+d3 turns";
-		}
-		case ART_BRAND:
-		{
-			return "fire branding of bolts every 999 turns";
-		}
-		case ART_ANGUIREL:
-		{
-			return "a getaway every 35 turns";
-		}
-		case ART_AEGLOS:
-		{
-			return "lightning ball (200) every 500 turns";
-		}
-		case ART_OROME:
-		{
-			return "stone to mud every 5 turns";
-		}
-		case ART_SOULKEEPER:
-		{
-			return "heal (1000) every 888 turns";
-		}
-		case ART_BELEGENNON:
-		{
-			return ("heal (777), curing and heroism every 300 turns");
-		}
-		case ART_CELEBORN:
-		{
-			return "genocide every 500 turns";
-		}
-		case ART_LUTHIEN:
-		{
-			return "restore life levels every 450 turns";
-		}
-		case ART_ULMO:
-		{
-			return "teleport away every 150 turns";
-		}
-		case ART_COLLUIN:
-		{
-			return "resistance (20+d20 turns) every 111 turns";
-		}
-		case ART_HOLCOLLETH:
-		{
-			return "Sleep II every 55 turns";
-		}
-		case ART_THINGOL:
-		{
-			return "recharge item every 70 turns";
-		}
-		case ART_COLANNON:
-		{
-			return "teleport every 45 turns";
-		}
-		case ART_TOTILA:
-		{
-			return "confuse monster every 15 turns";
-		}
-		case ART_CAMMITHRIM:
-		{
-			return "magic missile (3d6) every 2 turns";
-		}
-		case ART_PAURHACH:
-		{
-			return "fire bolt (11d8) every 8+d8 turns";
-		}
-		case ART_CORWIN:
-		{
-			return "frost bolt (8d8) every 7+d7 turns";
-		}
-		case ART_PAURAEGEN:
-		{
-			return "lightning bolt (6d8) every 6+d6 turns";
-		}
-		case ART_PAURNEN:
-		{
-			return "acid bolt (8d8) every 5+d5 turns";
-		}
-		case ART_FINGOLFIN:
-		{
-			return "a magical arrow (250) every 90+d90 turns";
-		}
-		case ART_HOLHENNETH:
-		{
-			return "detection every 55+d55 turns";
-		}
-		case ART_GONDOR:
-		{
-			return "heal (700) every 250 turns";
-		}
-		case ART_RAZORBACK:
-		{
-			return "star ball (1500) every 100 turns";
-		}
-		case ART_BLADETURNER:
-		{
-			return "breathe elements (1500), berserk rage, bless, and resistance";
-		}
-		case ART_GALADRIEL:
-		{
-			return "illumination every 10+d10 turns";
-		}
-		case ART_ELENDIL:
-		{
-			return "magic mapping and light every 50+d50 turns";
-		}
-		case ART_THRAIN:
-		{
-			return "clairvoyance and recall, draining you";
-		}
-		case ART_INGWE:
-		{
-			return "dispel evil (x5) every 300+d300 turns";
-		}
-		case ART_CARLAMMAS:
-		{
-			return "protection from evil every 225+d225 turns";
-		}
-		case ART_BARAHIR:
-		{
-			return "a strangling attack (200) every 100+d100 turns";
-		}
-		case ART_TULKAS:
-		{
-			return "haste self (75+d75 turns) every 150+d150 turns";
-		}
-		case ART_NARYA:
-		{
-			return "large fire ball (250) every 225+d225 turns";
-		}
-		case ART_NENYA:
-		{
-			return "large frost ball (400) every 325+d325 turns";
-		}
-		case ART_VILYA:
-		{
-			return "large lightning ball (500) every 425+d425 turns";
-		}
-		case ART_POWER:
-		{
-			return "bizarre things every 450+d450 turns";
-		}
-		case ART_DOR: case ART_TERROR:
-		{
-			return "rays of fear in every direction";
-		}
-	}
-
-
-	if (o_ptr->name2 == EGO_TRUMP)
-	{
-		return "teleport every 50+d50 turns";
 	}
 
 	if (o_ptr->tval == TV_RING)
@@ -1055,7 +850,7 @@ bool identify_fully_aux(object_type *o_ptr)
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE)
 	{
-		if (artifact_p(o_ptr))
+		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
 			info[i++] = "It provides light (radius 3) forever.";
 		}

@@ -756,7 +756,7 @@ bool apply_disenchant(int mode)
 
 
 	/* Artifacts have 71% chance to resist */
-	if ((artifact_p(o_ptr) || o_ptr->art_name) && (randint0(100) < 71))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && (randint0(100) < 71))
 	{
 		/* Message */
 		msg_format("Your %s (%c) resist%s disenchantment!",
@@ -926,15 +926,14 @@ void phlogiston(void)
  */
 void brand_weapon(int brand_type)
 {
-	object_type *o_ptr;
+	object_type *o_ptr = &inventory[INVEN_WIELD];
 
-	o_ptr = &inventory[INVEN_WIELD];
+	byte ego = 0;
 
 	/* you can never modify artifacts / ego-items */
 	/* you can never modify cursed items */
 	/* TY: You _can_ modify broken items (if you're silly enough) */
-	if (o_ptr->k_idx && !artifact_p(o_ptr) && !ego_item_p(o_ptr) &&
-	    !o_ptr->art_name && !cursed_p(o_ptr))
+	if (o_ptr->k_idx && !o_ptr->xtra_name && !cursed_p(o_ptr))
 	{
 		cptr act;
 
@@ -946,31 +945,32 @@ void brand_weapon(int brand_type)
 		{
 		case 4:
 			act = "seems very unstable now.";
-			o_ptr->name2 = EGO_TRUMP;
+			ego = EGO_TRUMP;
 			o_ptr->pval = randint1(2);
+			o_ptr->activate = ACT_TELEPORT_1;
 			break;
 		case 3:
 			act = "thirsts for blood!";
-			o_ptr->name2 = EGO_VAMPIRIC;
+			ego = EGO_VAMPIRIC;
 			break;
 		case 2:
 			act = "is coated with poison.";
-			o_ptr->name2 = EGO_BRAND_POIS;
+			ego = EGO_BRAND_POIS;
 			break;
 		case 1:
 			act = "is engulfed in raw Logrus!";
-			o_ptr->name2 = EGO_CHAOTIC;
+			ego = EGO_CHAOTIC;
 			break;
 		default:
 			if (randint0(100) < 25)
 			{
 				act = "is covered in a fiery shield!";
-				o_ptr->name2 = EGO_BRAND_FIRE;
+				ego = EGO_BRAND_FIRE;
 			}
 			else
 			{
 				act = "glows deep, icy blue!";
-				o_ptr->name2 = EGO_BRAND_COLD;
+				ego = EGO_BRAND_COLD;
 			}
 		}
 
@@ -985,6 +985,16 @@ void brand_weapon(int brand_type)
 		msg_print("The Branding failed.");
 
 		chg_virtue(V_ENCHANT, -2);
+	}
+	
+	if (ego)
+	{
+		/* Hack - save the price */
+		s32b cost = o_ptr->cost;
+		
+		add_ego_flags(o_ptr, ego);
+		
+		o_ptr->cost = cost;
 	}
 }
 
@@ -1290,11 +1300,11 @@ static int remove_curse_aux(int all)
 		/* Hack -- Assume felt */
 		o_ptr->ident |= (IDENT_SENSE);
 
-		if (o_ptr->art_flags3 & TR3_CURSED)
-			o_ptr->art_flags3 &= ~(TR3_CURSED);
+		if (o_ptr->flags3 & TR3_CURSED)
+			o_ptr->flags3 &= ~(TR3_CURSED);
 
-		if (o_ptr->art_flags3 & TR3_HEAVY_CURSE)
-			o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+		if (o_ptr->flags3 & TR3_HEAVY_CURSE)
+			o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 
 		/* Take note */
 		o_ptr->feeling = FEEL_UNCURSED;
@@ -1570,10 +1580,10 @@ static void break_curse(object_type *o_ptr)
 		o_ptr->ident &= ~(IDENT_CURSED);
 		o_ptr->ident |= (IDENT_SENSE);
 
-		if (o_ptr->art_flags3 & TR3_CURSED)
-			o_ptr->art_flags3 &= ~(TR3_CURSED);
-		if (o_ptr->art_flags3 & TR3_HEAVY_CURSE)
-			o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+		if (o_ptr->flags3 & TR3_CURSED)
+			o_ptr->flags3 &= ~(TR3_CURSED);
+		if (o_ptr->flags3 & TR3_HEAVY_CURSE)
+			o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 
 		o_ptr->feeling = FEEL_UNCURSED;
 	}
@@ -1599,7 +1609,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 {
 	int     i, chance, prob;
 	bool    res = FALSE;
-	bool    a = (artifact_p(o_ptr) || o_ptr->art_name);
+	bool    a = (o_ptr->flags3 & TR3_INSTA_ART);
 	bool    force = (eflag & ENCH_FORCE);
 
 
@@ -1811,19 +1821,11 @@ bool artifact_scroll(void)
 		okay = FALSE;
 	}
 
-	else if (o_ptr->name1 || o_ptr->art_name)
+	else if (o_ptr->xtra_name)
 	{
 		msg_format("The %s %s already %s!",
 		    o_name, ((o_ptr->number > 1) ? "are" : "is"),
-		    ((o_ptr->number > 1) ? "artifacts" : "an artifact"));
-		okay = FALSE;
-	}
-
-	else if (o_ptr->name2)
-	{
-		msg_format("The %s %s already %s!",
-		    o_name, ((o_ptr->number > 1) ? "are" : "is"),
-		    ((o_ptr->number > 1) ? "ego items" : "an ego item"));
+		    ((o_ptr->number > 1) ? "powerful items" : "a powerful item"));
 		okay = FALSE;
 	}
 
@@ -1867,7 +1869,7 @@ bool artifact_scroll(void)
  */
 static void bad_luck(object_type *o_ptr)
 {
-	bool is_art = artifact_p(o_ptr) || o_ptr->art_name;
+	bool is_art = (o_ptr->flags3 & TR3_INSTA_ART);
 	
 	/* Do not curse unwieldable items */
 	if (wield_slot(o_ptr) == -1) return;
@@ -1902,18 +1904,18 @@ static void bad_luck(object_type *o_ptr)
 	if (!randint0(666) && (!is_art || !randint0(3)))
 	{
 		/* Blast it */
-		o_ptr->name1 = 0;
-		o_ptr->name2 = EGO_BLASTED;
 		if (o_ptr->to_a) o_ptr->to_a = 0 - randint1(5) - randint1(5);
 		if (o_ptr->to_h) o_ptr->to_h = 0 - randint1(5) - randint1(5);
 		if (o_ptr->to_d) o_ptr->to_d = 0 - randint1(5) - randint1(5);
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
-		o_ptr->art_flags1 = 0;
-		o_ptr->art_flags2 = 0;
-		o_ptr->art_flags3 = 0;
+		o_ptr->flags1 = 0;
+		o_ptr->flags2 = 0;
+		o_ptr->flags3 = 0;
 
+		add_ego_flags(o_ptr, EGO_BLASTED);
+		
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
 
@@ -1944,7 +1946,7 @@ void identify_item(object_type *o_ptr)
 
 	if (!(o_ptr->ident & (IDENT_MENTAL)))
 	{
-		if ((o_ptr->art_name) || (artifact_p(o_ptr)))
+		if (o_ptr->flags3 & TR3_INSTA_ART)
 			chg_virtue(V_KNOWLEDGE, 3);
 		else
 			chg_virtue(V_KNOWLEDGE, 1);
@@ -1953,6 +1955,31 @@ void identify_item(object_type *o_ptr)
 	/* Identify it fully */
 	object_aware(o_ptr);
 	object_known(o_ptr);
+
+	if (o_ptr->flags3 & TR3_INSTA_ART)
+	{
+		/*
+		 * If the item was an artifact, and if the
+		 * auto-note is selected, write a message.
+		 */
+		if (auto_notes && take_notes)
+		{
+			char note[80];
+			char item_name[80];
+			object_desc(item_name, o_ptr, FALSE, 0);
+
+			/* Build note and write */
+			sprintf(note, "Found The %s", item_name);
+
+			add_note(note, 'A');
+		}
+	}
+
+	/* Save knowledge of artifact */
+	if (o_ptr->activate > 127)
+	{
+		a_info[o_ptr->activate - 128].cur_num = 2;
+	}
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -2019,25 +2046,6 @@ bool ident_spell(void)
 			   o_name);
 	}
 
-	/*
-	 * If the item was an artifact, and if the
-	 * auto-note is selected, write a message.
-	 */
-	if (auto_notes && take_notes && (artifact_p(o_ptr) || o_ptr->art_name) && a_info[o_ptr->name1].cur_num != 2)
-	{
-		char note[80];
-		char item_name[80];
-		object_desc(item_name, o_ptr, FALSE, 0);
-
-		/* Build note and write */
-		sprintf(note, "Found The %s", item_name);
-
-		add_note(note, 'A');
-
-		/* Mark item as found */
-		a_info[o_ptr->name1].cur_num = 2;
-	}
-
 	/* Something happened */
 	return (TRUE);
 }
@@ -2081,18 +2089,14 @@ bool mundane_spell(void)
 	/* No discount */
 	o_ptr->discount = 0;
 
-	/* No extra info */
-	o_ptr->xtra1 = 0;
-	o_ptr->xtra2 = 0;
-
-	/* No artifact name (random artifacts) */
-	o_ptr->art_name = 0;
-
 	/* Not identified yet */
 	o_ptr->ident = 0;
 
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
+	
+	/* Erase the activation */
+	o_ptr->activate = 0;
 
 	/* Erase the "feeling" */
 	o_ptr->feeling = FEEL_NONE;
@@ -2109,8 +2113,7 @@ bool mundane_spell(void)
 	o_ptr->to_a = k_ptr->to_a;
 
 	/* No longer artifact / ego item */
-	o_ptr->name1 = 0;
-	o_ptr->name2 = 0;
+	o_ptr->xtra_name = 0;
 
 	/* Default power */
 	o_ptr->ac = k_ptr->ac;
@@ -2118,9 +2121,9 @@ bool mundane_spell(void)
 	o_ptr->ds = k_ptr->ds;
 
 	/* No artifact powers */
-	o_ptr->art_flags1 = 0;
-	o_ptr->art_flags2 = 0;
-	o_ptr->art_flags3 = 0;
+	o_ptr->flags1 = 0;
+	o_ptr->flags2 = 0;
+	o_ptr->flags3 = 0;
 
 	/* For rod-stacking */
 	if (o_ptr->tval == TV_ROD)
@@ -2130,7 +2133,7 @@ bool mundane_spell(void)
 	}
 
 	/* Hack -- worthless items are always "broken" */
-	if (get_object_cost(o_ptr) <= 0) o_ptr->ident |= (IDENT_BROKEN);
+	if (o_ptr->cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
 
 	/* Hack -- cursed items are always "cursed" */
 	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
@@ -2176,6 +2179,11 @@ bool identify_fully(void)
 	/* Mark the item as fully known */
 	o_ptr->ident |= (IDENT_MENTAL);
 
+	/* Save all the known flags */
+	o_ptr->kn_flags1 = o_ptr->flags1;
+	o_ptr->kn_flags2 = o_ptr->flags2;
+	o_ptr->kn_flags3 = o_ptr->flags3;
+
 	/* Handle stuff */
 	handle_stuff();
 
@@ -2197,25 +2205,6 @@ bool identify_fully(void)
 	{
 		msg_format("On the ground: %s.",
 			   o_name);
-	}
-
-	/*
-	 * If the item was an artifact, and if the
-	 * auto-note is selected, write a message (if not written before).
-	 */
-	if (auto_notes && take_notes && (artifact_p(o_ptr) || o_ptr->art_name) && a_info[o_ptr->name1].cur_num != 2)
-	{
-		char note[80];
-		char item_name[80];
-		object_desc(item_name, o_ptr, FALSE, 0);
-
-		/* Build note and write */
-		sprintf(note, "Found The %s", item_name);
-
-		add_note(note, 'A');
-
-		/* Mark item as found */
-		a_info[o_ptr->name1].cur_num = 2;
 	}
 
 	/* Describe it fully */
@@ -2400,7 +2389,7 @@ bool recharge(int power)
 	if (fail)
 	{
 		/* Artifacts are never destroyed. */
-		if (artifact_p(o_ptr))
+		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
 			object_desc(o_name, o_ptr, TRUE, 0);
 			msg_format("The recharging backfires - %s is completely drained!", o_name);
@@ -2592,7 +2581,7 @@ bool bless_weapon(void)
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
-	if (o_ptr->ident & IDENT_CURSED)
+	if (cursed_p(o_ptr))
 	{
 		if (((f3 & TR3_HEAVY_CURSE) && (randint1(100) < 33)) ||
 		    (f3 & TR3_PERMA_CURSE))
@@ -2637,13 +2626,13 @@ bool bless_weapon(void)
 		return TRUE;
 	}
 
-	if (!(o_ptr->art_name || o_ptr->name1) || (randint1(3) == 1))
+	if (!(o_ptr->xtra_name) || (randint1(3) == 1))
 	{
 		/* Describe */
 		msg_format("%s %s shine%s!",
 		    ((item >= 0) ? "Your" : "The"), o_name,
 		    ((o_ptr->number > 1) ? "" : "s"));
-		o_ptr->art_flags3 |= TR3_BLESSED;
+		o_ptr->flags3 |= TR3_BLESSED;
 	}
 	else
 	{
@@ -3644,7 +3633,7 @@ int inven_damage(inven_func typ, int perc)
 		if (!o_ptr->k_idx) continue;
 
 		/* Hack -- for now, skip artifacts */
-		if (artifact_p(o_ptr) || o_ptr->art_name) continue;
+		if (o_ptr->flags3 & TR3_INSTA_ART) continue;
 
 		/* Give this item slot a shot at death */
 		if ((*typ)(o_ptr))
@@ -3910,9 +3899,9 @@ bool rustproof(void)
 	/* Description */
 	object_desc(o_name, o_ptr, FALSE, 0);
 
-	o_ptr->art_flags3 |= TR3_IGNORE_ACID;
+	o_ptr->flags3 |= TR3_IGNORE_ACID;
 
-	if ((o_ptr->to_a < 0) && !(o_ptr->ident & IDENT_CURSED))
+	if ((o_ptr->to_a < 0) && !(cursed_p(o_ptr)))
 	{
 		msg_format("%s %s look%s as good as new!",
 			((item >= 0) ? "Your" : "The"), o_name,
@@ -3949,7 +3938,7 @@ bool curse_armor(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if ((o_ptr->art_name || artifact_p(o_ptr)) && (randint0(100) < 50))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && (randint0(100) < 50))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -3965,17 +3954,17 @@ bool curse_armor(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Blast the armor */
-		o_ptr->name1 = 0;
-		o_ptr->name2 = EGO_BLASTED;
 		o_ptr->to_a = 0 - randint1(5) - randint1(5);
 		o_ptr->to_h = 0;
 		o_ptr->to_d = 0;
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
-		o_ptr->art_flags1 = 0;
-		o_ptr->art_flags2 = 0;
-		o_ptr->art_flags3 = 0;
+		o_ptr->flags1 = 0;
+		o_ptr->flags2 = 0;
+		o_ptr->flags3 = 0;
+
+		add_ego_flags(o_ptr, EGO_BLASTED);
 
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
@@ -4018,7 +4007,7 @@ bool curse_weapon(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if ((artifact_p(o_ptr) || o_ptr->art_name) && (randint0(100) < 50))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && (randint0(100) < 50))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -4034,18 +4023,17 @@ bool curse_weapon(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Shatter the weapon */
-		o_ptr->name1 = 0;
-		o_ptr->name2 = EGO_SHATTERED;
 		o_ptr->to_h = 0 - randint1(5) - randint1(5);
 		o_ptr->to_d = 0 - randint1(5) - randint1(5);
 		o_ptr->to_a = 0;
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
-		o_ptr->art_flags1 = 0;
-		o_ptr->art_flags2 = 0;
-		o_ptr->art_flags3 = 0;
+		o_ptr->flags1 = 0;
+		o_ptr->flags2 = 0;
+		o_ptr->flags3 = 0;
 
+		add_ego_flags(o_ptr, EGO_SHATTERED);
 
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
@@ -4084,8 +4072,7 @@ bool brand_bolts(void)
 		if (o_ptr->tval != TV_BOLT) continue;
 
 		/* Skip artifacts and ego-items */
-		if (o_ptr->art_name || artifact_p(o_ptr) || ego_item_p(o_ptr))
-			continue;
+		if (o_ptr->xtra_name) continue;
 
 		/* Skip cursed/broken items */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) continue;
@@ -4096,8 +4083,8 @@ bool brand_bolts(void)
 		/* Message */
 		msg_print("Your bolts are covered in a fiery aura!");
 
-		/* Ego-item */
-		o_ptr->name2 = EGO_FLAME;
+		/* Ego-item */	
+		add_ego_flags(o_ptr, EGO_FLAME);
 
 		/* Enchant */
 		enchant(o_ptr, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);

@@ -536,11 +536,11 @@ static void wiz_display_item(object_type *o_ptr)
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
 	           o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d), 6, j);
 
-	prt(format("name1 = %-4d  name2 = %-4d  cost = %ld",
-	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr)), 7, j);
+	prt(format("activate = %-4d  cost = %ld",
+	           o_ptr->activate, (long)object_value(o_ptr)), 7, j);
 
-	prt(format("ident = %04x  xtra1 = %-4d  xtra2 = %-4d  timeout = %-d",
-	           o_ptr->ident, o_ptr->xtra1, o_ptr->xtra2, o_ptr->timeout), 8, j);
+	prt(format("ident = %04x  timeout = %-d",
+	           o_ptr->ident, o_ptr->timeout), 8, j);
 
 	prt("+------------FLAGS1------------+", 10, j);
 	prt("AFFECT........SLAY........BRAND.", 11, j);
@@ -791,10 +791,10 @@ static void wiz_tweak_item(object_type *o_ptr)
 	o_ptr->to_d = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 
-	p = "Enter new 'xtra2' setting: ";
-	sprintf(tmp_val, "%d", o_ptr->xtra2);
+	p = "Enter new 'activate' setting: ";
+	sprintf(tmp_val, "%d", o_ptr->activate);
 	if (!get_string(p, tmp_val, 5)) return;
-	o_ptr->xtra2 = atoi(tmp_val);
+	o_ptr->activate = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 }
 
@@ -811,10 +811,8 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 	bool changed = FALSE;
 
-
 	/* Hack -- leave artifacts alone */
-	if (artifact_p(o_ptr) || o_ptr->art_name) return;
-
+	if (o_ptr->flags3 & TR3_INSTA_ART) return;
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -833,12 +831,13 @@ static void wiz_reroll_item(object_type *o_ptr)
 		if (!get_com("[a]ccept, [w]orthless, [c]ursed, [n]ormal, [g]ood, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
-			if (artifact_p(q_ptr))
+			if ((q_ptr->flags3 & TR3_INSTA_ART) && (q_ptr->activate > 128))
 			{
-				a_info[q_ptr->name1].cur_num = 0;
-				q_ptr->name1 = 0;
+				a_info[q_ptr->activate - 128].cur_num = 0;
+				q_ptr->activate = 0;
+				q_ptr->xtra_name = 0;
 			}
-
+			
 			changed = FALSE;
 			break;
 		}
@@ -851,10 +850,11 @@ static void wiz_reroll_item(object_type *o_ptr)
 		}
 
 		/* Preserve wizard-generated artifacts */
-		if (artifact_p(q_ptr))
+		if ((q_ptr->flags3 & TR3_INSTA_ART) && (q_ptr->activate > 128))
 		{
-			a_info[q_ptr->name1].cur_num = 0;
-			q_ptr->name1 = 0;
+			a_info[q_ptr->activate - 128].cur_num = 0;
+			q_ptr->activate = 0;
+			q_ptr->xtra_name = 0;
 		}
 
 		switch(ch)
@@ -900,7 +900,10 @@ static void wiz_reroll_item(object_type *o_ptr)
 				apply_magic(q_ptr, dun_level, TRUE, TRUE, TRUE, FALSE);
 
 				/* Failed to create normal artifact; make a random one */
-				if (!artifact_p(q_ptr)) create_artifact(q_ptr, FALSE);
+				if (!(q_ptr->flags3 & TR3_INSTA_ART))
+				{
+					create_artifact(q_ptr, FALSE);
+				}
 				break;
 			}
 		}
@@ -959,10 +962,6 @@ static void wiz_statistics(object_type *o_ptr)
 
 	cptr p = "Enter number of items to roll: ";
 	char tmp_val[80];
-
-
-	/* XXX XXX XXX Mega-Hack -- allow multiple artifacts */
-	if (artifact_p(o_ptr)) a_info[o_ptr->name1].cur_num = 0;
 
 
 	/* Interact */
@@ -1047,11 +1046,6 @@ static void wiz_statistics(object_type *o_ptr)
 			/* Create an object */
 			make_object(q_ptr, good, great);
 
-
-			/* XXX XXX XXX Mega-Hack -- allow multiple artifacts */
-			if (artifact_p(q_ptr)) a_info[q_ptr->name1].cur_num = 0;
-
-
 			/* Test for the same tval and sval. */
 			if ((o_ptr->tval) != (q_ptr->tval)) continue;
 			if ((o_ptr->sval) != (q_ptr->sval)) continue;
@@ -1064,7 +1058,7 @@ static void wiz_statistics(object_type *o_ptr)
 				 (q_ptr->to_a == o_ptr->to_a) &&
 				 (q_ptr->to_h == o_ptr->to_h) &&
 				 (q_ptr->to_d == o_ptr->to_d) &&
-				 (q_ptr->name1 == o_ptr->name1))
+				 (q_ptr->activate == o_ptr->activate))
 			{
 				matches++;
 			}
@@ -1097,11 +1091,13 @@ static void wiz_statistics(object_type *o_ptr)
 		/* Final dump */
 		msg_format(q, i, correct, matches, better, worse, other);
 		msg_print(NULL);
+		
+		/* Hack -- Normally only make a single artifact */
+		if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128))
+		{
+			a_info[o_ptr->activate - 128].cur_num = 1;
+		}
 	}
-
-
-	/* Hack -- Normally only make a single artifact */
-	if (artifact_p(o_ptr)) a_info[o_ptr->name1].cur_num = 1;
 }
 
 
@@ -1116,7 +1112,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 
 
 	/* Never duplicate artifacts */
-	if (artifact_p(o_ptr) || o_ptr->art_name) return;
+	if (o_ptr->flags3 & TR3_INSTA_ART) return;
 
 	/* Store old quantity. -LM- */
 	tmp_qnt = o_ptr->number;
@@ -1325,7 +1321,7 @@ static void wiz_create_item(void)
 			if (a_info[i].sval != q_ptr->sval) continue;
 
 			/* Choose this artifact */
-			q_ptr->name1 = i;
+			q_ptr->activate = i + 128;
 			break;
 		}
 

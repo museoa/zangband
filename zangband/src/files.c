@@ -198,25 +198,25 @@ static named_num gf_desc[] =
 	{"GF_COLD", 				GF_COLD				},
 	{"GF_FIRE",		 			GF_FIRE				},
 	{"GF_MISSILE",				GF_MISSILE			},
-	{"GF_ARROW",				GF_ARROW				},
+	{"GF_ARROW",				GF_ARROW			},
 	{"GF_PLASMA",				GF_PLASMA			},
-	{"GF_WATER",				GF_WATER				},
+	{"GF_WATER",				GF_WATER			},
 	{"GF_LITE",					GF_LITE				},
 	{"GF_DARK",					GF_DARK				},
 	{"GF_LITE_WEAK",			GF_LITE_WEAK		},
 	{"GF_DARK_WEAK",			GF_DARK_WEAK		},
 	{"GF_SHARDS",				GF_SHARDS			},
-	{"GF_SOUND",				GF_SOUND				},
+	{"GF_SOUND",				GF_SOUND			},
 	{"GF_CONFUSION",			GF_CONFUSION		},
-	{"GF_FORCE",				GF_FORCE				},
+	{"GF_FORCE",				GF_FORCE			},
 	{"GF_INERTIA",				GF_INERTIA			},
 	{"GF_MANA",					GF_MANA				},
 	{"GF_METEOR",				GF_METEOR			},
 	{"GF_ICE",					GF_ICE				},
-	{"GF_CHAOS",				GF_CHAOS				},
+	{"GF_CHAOS",				GF_CHAOS			},
 	{"GF_NETHER",				GF_NETHER			},
 	{"GF_DISENCHANT",			GF_DISENCHANT		},
-	{"GF_NEXUS",				GF_NEXUS				},
+	{"GF_NEXUS",				GF_NEXUS			},
 	{"GF_TIME",					GF_TIME				},
 	{"GF_GRAVITY",				GF_GRAVITY			},
 	{"GF_KILL_WALL",			GF_KILL_WALL		},
@@ -226,25 +226,25 @@ static named_num gf_desc[] =
 	{"GF_MAKE_DOOR",			GF_MAKE_DOOR		},
 	{"GF_MAKE_TRAP",			GF_MAKE_TRAP		},
 	{"GF_OLD_CLONE",			GF_OLD_CLONE		},
-	{"GF_OLD_POLY",			GF_OLD_POLY			},
-	{"GF_OLD_HEAL",			GF_OLD_HEAL			},
+	{"GF_OLD_POLY",				GF_OLD_POLY			},
+	{"GF_OLD_HEAL",				GF_OLD_HEAL			},
 	{"GF_OLD_SPEED",			GF_OLD_SPEED		},
-	{"GF_OLD_SLOW",			GF_OLD_SLOW			},
-	{"GF_OLD_CONF",			GF_OLD_CONF			},
+	{"GF_OLD_SLOW",				GF_OLD_SLOW			},
+	{"GF_OLD_CONF",				GF_OLD_CONF			},
 	{"GF_OLD_SLEEP",			GF_OLD_SLEEP		},
 	{"GF_OLD_DRAIN",			GF_OLD_DRAIN		},
 	{"GF_NEW_DRAIN",			GF_NEW_DRAIN		},
-	{"GF_AWAY_UNDEAD",		GF_AWAY_UNDEAD		},
+	{"GF_AWAY_UNDEAD",			GF_AWAY_UNDEAD		},
 	{"GF_AWAY_EVIL",			GF_AWAY_EVIL		},
-	{"GF_AWAY_ALL",			GF_AWAY_ALL			},
-	{"GF_TURN_UNDEAD",		GF_TURN_UNDEAD		},
+	{"GF_AWAY_ALL",				GF_AWAY_ALL			},
+	{"GF_TURN_UNDEAD",			GF_TURN_UNDEAD		},
 	{"GF_TURN_EVIL",			GF_TURN_EVIL		},
-	{"GF_TURN_ALL",			GF_TURN_ALL			},
-	{"GF_DISP_UNDEAD",		GF_DISP_UNDEAD		},
+	{"GF_TURN_ALL",				GF_TURN_ALL			},
+	{"GF_DISP_UNDEAD",			GF_DISP_UNDEAD		},
 	{"GF_DISP_EVIL",			GF_DISP_EVIL		},
-	{"GF_DISP_ALL",			GF_DISP_ALL			},
+	{"GF_DISP_ALL",				GF_DISP_ALL			},
 	{"GF_DISP_DEMON",			GF_DISP_DEMON		},
-	{"GF_DISP_LIVING",		GF_DISP_LIVING		},
+	{"GF_DISP_LIVING",			GF_DISP_LIVING		},
 	{"GF_ROCKET",				GF_ROCKET			},
 	{"GF_NUKE",					GF_NUKE				},
 	{"GF_MAKE_GLYPH",			GF_MAKE_GLYPH		},
@@ -254,17 +254,17 @@ static named_num gf_desc[] =
 	{"GF_STUN",					GF_STUN				},
 	{"GF_HOLY_FIRE",			GF_HOLY_FIRE		},
 	{"GF_HELL_FIRE",			GF_HELL_FIRE		},
-	{"GF_DISINTEGRATE",		GF_DISINTEGRATE	},
-	{"GF_CHARM",				GF_CHARM				},
-	{"GF_CONTROL_UNDEAD",	GF_CONTROL_UNDEAD	},
-	{"GF_CONTROL_ANIMAL",	GF_CONTROL_ANIMAL	},
+	{"GF_DISINTEGRATE",			GF_DISINTEGRATE		},
+	{"GF_CHARM",				GF_CHARM			},
+	{"GF_CONTROL_UNDEAD",		GF_CONTROL_UNDEAD	},
+	{"GF_CONTROL_ANIMAL",		GF_CONTROL_ANIMAL	},
 	{"GF_PSI",					GF_PSI				},
 	{"GF_PSI_DRAIN",			GF_PSI_DRAIN		},
-	{"GF_TELEKINESIS",		GF_TELEKINESIS		},
-	{"GF_JAM_DOOR",			GF_JAM_DOOR			},
+	{"GF_TELEKINESIS",			GF_TELEKINESIS		},
+	{"GF_JAM_DOOR",				GF_JAM_DOOR			},
 	{"GF_DOMINATION",			GF_DOMINATION		},
 	{"GF_DISP_GOOD",			GF_DISP_GOOD		},
-	{NULL, 						0						}
+	{NULL, 						0					}
 };
 
 
@@ -1481,7 +1481,8 @@ static void display_player_abilities(void)
 	{
 		/* Is there a vorpal effect we know about? */
 		object_flags(o_ptr, &f1, &f2, &f3);
-		if ((o_ptr->ident & IDENT_MENTAL) && (o_ptr->name1 == ART_VORPAL_BLADE))
+		if ((o_ptr->ident & IDENT_MENTAL) &&
+			 (o_ptr->activate - 128 == ART_VORPAL_BLADE))
 		{
 			/* vorpal blade */
 			avgdam *= 786;
@@ -4201,6 +4202,11 @@ static void show_info(void)
 		object_aware(o_ptr);
 		object_known(o_ptr);
 		o_ptr->ident |= IDENT_MENTAL;
+		
+		/* Save all the known flags */
+		o_ptr->kn_flags1 = o_ptr->flags1;
+		o_ptr->kn_flags2 = o_ptr->flags2;
+		o_ptr->kn_flags3 = o_ptr->flags3;
 	}
 
 	for (i = 1; i < max_towns; i++)
@@ -4219,6 +4225,11 @@ static void show_info(void)
 			object_aware(o_ptr);
 			object_known(o_ptr);
 			o_ptr->ident |= IDENT_MENTAL;
+			
+			/* Save all the known flags */
+			o_ptr->kn_flags1 = o_ptr->flags1;
+			o_ptr->kn_flags2 = o_ptr->flags2;
+			o_ptr->kn_flags3 = o_ptr->flags3;
 		}
 	}
 

@@ -215,16 +215,6 @@ byte get_object_level(object_type *o_ptr)
 }
 
 
-s32b get_object_cost(object_type *o_ptr)
-{
-#if 0
-	return get_object_cost_callback(o_ptr);
-#else
-	return k_info[o_ptr->k_idx].cost;
-#endif
-}
-
-
 cptr get_object_name(object_type *o_ptr)
 {
 #if 0

@@ -790,6 +790,8 @@ extern s16b lookup_kind(int tval, int sval);
 extern void object_wipe(object_type *o_ptr);
 extern void object_prep(object_type *o_ptr, int k_idx);
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
+extern void add_ego_flags(object_type *o_ptr, byte ego);
+extern void add_ego_power(int power, object_type *o_ptr);
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, bool curse);
 extern bool make_object(object_type *j_ptr, bool good, bool great);
 extern void place_object(int y, int x, bool good, bool great);
@@ -1148,9 +1150,9 @@ extern bool monst_spell_monst(int m_idx);
 
 /* artifact.c */
 extern bool create_artifact(object_type *o_ptr, bool a_scroll);
-extern void random_resistance(object_type * q_ptr, bool is_scroll, int specific);
-extern bool activate_random_artifact(object_type * o_ptr);
-extern void random_artifact_resistance(object_type * o_ptr);
+extern void random_resistance(object_type * q_ptr, int specific);
+extern bool activate_effect(object_type *o_ptr);
+extern void random_artifact_resistance(object_type *o_ptr);
 extern void create_named_art(int a_idx, int y, int x);
 
 /* scores.c */
@@ -1181,7 +1183,6 @@ extern errr k_info_alloc(void);
 extern errr k_info_free(void);
 extern object_kind *k_info_add(object_kind *k_info_entry);
 extern byte get_object_level(object_type *o_ptr);
-extern s32b get_object_cost(object_type *o_ptr);
 extern cptr get_object_name(object_type *o_ptr);
 extern byte get_object_d_attr(object_type *o_ptr);
 extern byte get_object_x_attr(object_type *o_ptr);

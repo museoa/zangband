@@ -2464,9 +2464,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	long tdam;
 	int tdam_remainder, tdam_whole;
 
+#if 0
 	/* Assume no weapon of velocity or accuracy bonus. */
 	int special_dam = 0;
 	int special_hit = 0;
+#endif /* 0 */
 
 	object_type *o_ptr;
 
@@ -2487,6 +2489,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	cave_type *c_ptr;
 
+	/* This "exception" will have to be added via python. */
+#if 0
 	/* Missile launchers of Velocity and Accuracy sometimes "supercharge" */
 	if ((j_ptr->name2 == EGO_VELOCITY) || (j_ptr->name2 == EGO_ACCURACY))
 	{
@@ -2503,6 +2507,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			msg_format("You feel your %s tremble in your hand.", o_name);
 		}
 	}
+#endif /* 0 */
 
 	/* Access the item (if in the pack) */
 	if (item >= 0)
@@ -2631,6 +2636,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* The real number of shots per round is (1 + n)/2 */
 	energy_use = (2 * energy_use / (1 + thits));
 
+	/* Another thing to do in python */
+#if 0
+
 	/* Fire ammo of backbiting, and it will turn on you. -LM- */
 	if (i_ptr->name2 == EGO_BACKBITING)
 	{
@@ -2647,6 +2655,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* That ends that shot! */
 		return;
 	}
+#endif /* 0 */
 
 	/* Start at the player */
 	y = py;
@@ -2761,8 +2770,10 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			/* Adjacent monsters are harder to hit if awake */
 			if ((cur_dis == 1) && (!sleeping_bonus)) armour += armour;
 
+#if 0
 			/* Weapons of velocity sometimes almost negate monster armour. */
 			if (special_hit) armour /= 3;
+#endif /* 0 */
 
 			/* Did we hit it (penalize range) */
 			if (test_hit_fire(chance2 + sleeping_bonus, armour, m_ptr->ml))
@@ -2837,11 +2848,13 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				tdam = damroll(tdam_whole, o_ptr->ds) +
 					(tdam_remainder * damroll(1, o_ptr->ds) / 10000);
 
+#if 0
 				/* If a weapon of velocity activates, increase damage. */
 				if (special_dam)
 				{
 					tdam += 15;
 				}
+#endif /* 0 */
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
@@ -3337,9 +3350,9 @@ void do_cmd_throw_aux(int mult)
 		j = 100;
 
 		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE,
-				(bool)!(q_ptr->ident & IDENT_CURSED))))
+				!(cursed_p(q_ptr)))))
 			msg_print("The Figurine writhes and then shatters.");
-		else if (q_ptr->ident & IDENT_CURSED)
+		else if (cursed_p(q_ptr))
 			msg_print("You have a bad feeling about this.");
 	}
 

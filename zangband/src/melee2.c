@@ -2808,8 +2808,8 @@ static void process_monster(int m_idx)
 					if (f1 & TR1_SLAY_EVIL)   flg3 |= (RF3_EVIL);
 
 					/* The object cannot be picked up by the monster */
-					if (artifact_p(o_ptr) || (r_ptr->flags3 & flg3) ||
-						(o_ptr->art_name))
+					if ((o_ptr->flags3 & TR3_INSTA_ART) ||
+						 (r_ptr->flags3 & flg3))
 					{
 						/* Only give a message for "take_item" */
 						if ((r_ptr->flags2 & (RF2_TAKE_ITEM)) && (r_ptr->flags2 & (RF2_STUPID)))

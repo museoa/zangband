@@ -613,7 +613,6 @@ static void mass_produce(object_type *o_ptr)
 
 	s32b cost = object_value(o_ptr);
 
-
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
@@ -662,7 +661,7 @@ static void mass_produce(object_type *o_ptr)
 		case TV_DIGGING:
 		case TV_BOW:
 		{
-			if (o_ptr->name2) break;
+			if (o_ptr->xtra_name) break;
 			if (cost <= 10L) size += damroll(3, 5);
 			if (cost <= 100L) size += damroll(3, 5);
 			break;
@@ -735,11 +734,11 @@ static void mass_produce(object_type *o_ptr)
 	}
 
 
-	if (o_ptr->art_name)
+	if (o_ptr->xtra_name)
 	{
 		if (cheat_peek && discount)
 		{
-			msg_print("No discount on random artifacts.");
+			msg_print("No discount on powerful items.");
 		}
 		discount = 0;
 	}
@@ -761,50 +760,46 @@ static void mass_produce(object_type *o_ptr)
 static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 {
 	/* Hack -- Identical items cannot be stacked */
-	if (o_ptr == j_ptr) return (0);
+	if (o_ptr == j_ptr) return (FALSE);
 
 	/* Different objects cannot be stacked */
-	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
+	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
 
 	/* Different charges (etc) cannot be stacked, unless wands or rods. */
-	if ((o_ptr->pval != j_ptr->pval) && (o_ptr->tval != TV_WAND) && (o_ptr->tval != TV_ROD)) return (0);
+	if ((o_ptr->pval != j_ptr->pval) &&
+		 (o_ptr->tval != TV_WAND) &&
+		 (o_ptr->tval != TV_ROD)) return (FALSE);
 
 	/* Require many identical values */
-	if (o_ptr->to_h != j_ptr->to_h) return (0);
-	if (o_ptr->to_d != j_ptr->to_d) return (0);
-	if (o_ptr->to_a != j_ptr->to_a) return (0);
+	if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
+	if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
+	if (o_ptr->to_a != j_ptr->to_a) return (FALSE);
 
-	/* Require identical "artifact" names */
-	if (o_ptr->name1 != j_ptr->name1) return (0);
+	/* Artifacts and ego items don't stack !*/
+	if (o_ptr->xtra_name || j_ptr->xtra_name) return (FALSE);
 
-	/* Require identical "ego-item" names */
-	if (o_ptr->name2 != j_ptr->name2) return (0);
+	/* Hack -- Identical flags! */
+	if ((o_ptr->flags1 != j_ptr->flags1) ||
+		(o_ptr->flags2 != j_ptr->flags2) ||
+		(o_ptr->flags3 != j_ptr->flags3))
+			return (FALSE);
 
-	/* Random artifacts don't stack !*/
-	if (o_ptr->art_name || j_ptr->art_name) return (0);
-
-	/* Hack -- Identical art_flags! */
-	if ((o_ptr->art_flags1 != j_ptr->art_flags1) ||
-		(o_ptr->art_flags2 != j_ptr->art_flags2) ||
-		(o_ptr->art_flags3 != j_ptr->art_flags3))
-			return (0);
-
-	/* Hack -- Never stack "powerful" items */
-	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);
+	/* Hack -- Never stack artifacts */
+	if (o_ptr->flags3 & TR3_INSTA_ART) return (FALSE);
 
 	/* Hack -- Never stack recharging items */
-	if (o_ptr->timeout || j_ptr->timeout) return (0);
+	if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
 
 	/* Require many identical values */
-	if (o_ptr->ac != j_ptr->ac)   return (0);
-	if (o_ptr->dd != j_ptr->dd)   return (0);
-	if (o_ptr->ds != j_ptr->ds)   return (0);
+	if (o_ptr->ac != j_ptr->ac)   return (FALSE);
+	if (o_ptr->dd != j_ptr->dd)   return (FALSE);
+	if (o_ptr->ds != j_ptr->ds)   return (FALSE);
 
 	/* Hack -- Never stack chests */
-	if (o_ptr->tval == TV_CHEST) return (0);
+	if (o_ptr->tval == TV_CHEST) return (FALSE);
 
 	/* Require matching discounts */
-	if (o_ptr->discount != j_ptr->discount) return (0);
+	if (o_ptr->discount != j_ptr->discount) return (FALSE);
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -1217,6 +1212,11 @@ static int store_carry(object_type *o_ptr)
 
 	/* All store items are fully *identified* */
 	o_ptr->ident |= IDENT_MENTAL;
+	
+	/* Save all the known flags */
+	o_ptr->kn_flags1 = o_ptr->flags1;
+	o_ptr->kn_flags2 = o_ptr->flags2;
+	o_ptr->kn_flags3 = o_ptr->flags3;
 
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
@@ -1361,8 +1361,8 @@ static bool black_market_crap(object_type *o_ptr)
 {
 	int 	i, j;
 
-	/* Ego items are never crap */
-	if (o_ptr->name2) return (FALSE);
+	/* Ego items + artifacts are never crap */
+	if (o_ptr->xtra_name) return (FALSE);
 
 	/* Good items are never crap */
 	if (o_ptr->to_a > 0) return (FALSE);
@@ -3889,9 +3889,11 @@ void store_shuffle(int which)
 		o_ptr = &st_ptr->stock[i];
 
 		/* Hack -- Sell all old items for "half price" */
-		if (!(o_ptr->art_name))
+		if (!(o_ptr->xtra_name))
+		{
 			o_ptr->discount = 50;
-
+		}
+		
 		/* Hack -- Items are no longer "fixed price" */
 		o_ptr->ident &= ~(IDENT_FIXED);
 

@@ -2002,7 +2002,7 @@ static void calc_torch(void)
 			}
 
 			/* Artifact Lites provide permanent, bright, lite */
-			if (artifact_p(o_ptr))
+			if (o_ptr->flags3 & TR3_INSTA_ART)
 			{
 				p_ptr->cur_lite += 3;
 				continue;

@@ -955,7 +955,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_AMULET:
 		{
 			/* Known artifacts */
-			if (artifact_p(o_ptr) && aware) break;
+			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware) break;
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
@@ -972,7 +972,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_RING:
 		{
 			/* Known artifacts */
-			if (artifact_p(o_ptr) && aware) break;
+			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware) break;
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
@@ -1181,7 +1181,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && (artifact_p(o_ptr) || o_ptr->art_name))
+		else if (known && (o_ptr->flags3 & TR3_INSTA_ART))
 		{
 			t = object_desc_str(t, "The ");
 		}
@@ -1231,7 +1231,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && (artifact_p(o_ptr) || o_ptr->art_name))
+		else if (known && (o_ptr->flags3 & TR3_INSTA_ART))
 		{
 			t = object_desc_str(t, "The ");
 		}
@@ -1307,40 +1307,12 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, &str[1]);
 		}
 
-		/* Is it a new random artifact ? */
-		else if (o_ptr->art_name)
+		/* Is it a new artifact or ego item? */
+		else if (o_ptr->xtra_name)
 		{
-#if 0
-			if (o_ptr->ident & IDENT_STOREB)
-				t = object_desc_str(t, " called '");
-			else
-#endif
-				t = object_desc_chr(t, ' ');
-
-			t = object_desc_str(t, quark_str(o_ptr->art_name));
-
-#if 0
-			if (o_ptr->ident & IDENT_STOREB)
-				t = object_desc_chr(t, '\'');
-#endif
-		}
-
-		/* Grab any artifact name */
-		else if (o_ptr->name1)
-		{
-			artifact_type *a_ptr = &a_info[o_ptr->name1];
-
 			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, (a_name + a_ptr->name));
-		}
 
-		/* Grab any ego-item name */
-		else if (o_ptr->name2)
-		{
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, (e_name + e_ptr->name));
+			t = object_desc_str(t, quark_str(o_ptr->xtra_name));
 		}
 	}
 
@@ -1791,7 +1763,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (!artifact_p(o_ptr)))
+	else if ((o_ptr->tval == TV_LITE) && (!(o_ptr->flags3 & TR3_INSTA_ART)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, " (with ");

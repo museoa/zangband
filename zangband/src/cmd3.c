@@ -140,7 +140,7 @@ static bool item_tester_hook_wear(object_type *o_ptr)
  */
 void do_cmd_wield(void)
 {
-	int i, item, slot;
+	int item, slot;
 
 	object_type forge;
 	object_type *q_ptr;
@@ -203,19 +203,6 @@ void do_cmd_wield(void)
 
 		if (!get_check(dummy))
 			return;
-	}
-
-	/* Check if completed a quest */
-	for (i = 0; i < max_quests; i++)
-	{
-		if ((quest[i].type == QUEST_TYPE_FIND_ARTIFACT) &&
-		    (quest[i].status == QUEST_STATUS_TAKEN) &&
-		    (quest[i].k_idx == o_ptr->name1))
-		{
-			quest[i].status = QUEST_STATUS_COMPLETED;
-			msg_print("You completed your quest!");
-			msg_print(NULL);
-		}
 	}
 
 	/* Take a turn */

@@ -584,31 +584,31 @@ void monster_death(int m_idx)
 		object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
 		/* Mega-Hack -- Name the sword */
-		q_ptr->art_name = quark_add("'Stormbringer'");
+		q_ptr->xtra_name = quark_add("'Stormbringer'");
 		q_ptr->to_h = 16;
 		q_ptr->to_d = 16;
 		q_ptr->ds = 6;
 		q_ptr->dd = 6;
 		q_ptr->pval = 2;
 
-		q_ptr->art_flags1 |= (TR1_VAMPIRIC | TR1_STR | TR1_CON);
-		q_ptr->art_flags2 |= (TR2_FREE_ACT | TR2_HOLD_LIFE |
-		                      TR2_RES_NEXUS | TR2_RES_CHAOS | TR2_RES_NETHER |
-		                      TR2_RES_CONF); /* No longer resist_disen */
-		q_ptr->art_flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
-		                      TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+		q_ptr->flags1 |= (TR1_VAMPIRIC | TR1_STR | TR1_CON);
+		q_ptr->flags2 |= (TR2_FREE_ACT | TR2_HOLD_LIFE |
+		                  TR2_RES_NEXUS | TR2_RES_CHAOS | TR2_RES_NETHER |
+		                  TR2_RES_CONF); /* No longer resist_disen */
+		q_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
+		                  TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 
 		/* Just to be sure */
-		q_ptr->art_flags3 |= TR3_NO_TELE; /* How's that for a downside? */
+		q_ptr->flags3 |= TR3_NO_TELE; /* How's that for a downside? */
 
 		/* For game balance... */
-		q_ptr->art_flags3 |= (TR3_CURSED | TR3_HEAVY_CURSE);
+		q_ptr->flags3 |= (TR3_CURSED | TR3_HEAVY_CURSE);
 		q_ptr->ident |= IDENT_CURSED;
 
 		if (randint1(2) == 1)
-			q_ptr->art_flags3 |= (TR3_DRAIN_EXP);
+			q_ptr->flags3 |= (TR3_DRAIN_EXP);
 		else
-			q_ptr->art_flags3 |= (TR3_AGGRAVATE);
+			q_ptr->flags3 |= (TR3_AGGRAVATE);
 
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);
@@ -707,10 +707,10 @@ void monster_death(int m_idx)
 		object_prep(q_ptr, lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
 
 		/* Mega-Hack -- Name the shirt */
-		q_ptr->art_name = quark_add("'I killed the GHB and all I got was this lousy t-shirt!'");
+		q_ptr->xtra_name = quark_add("'I killed the GHB and all I got was this lousy t-shirt!'");
 
-		q_ptr->art_flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
-									 TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+		q_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
+						 TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);
@@ -732,7 +732,7 @@ void monster_death(int m_idx)
 			object_prep(q_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 
 			/* Mega-Hack -- Mark this item as "Grond" */
-			q_ptr->name1 = ART_GROND;
+			q_ptr->activate = ART_GROND + 128;
 
 			/* Mega-Hack -- Actually create "Grond" */
 			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
@@ -751,7 +751,7 @@ void monster_death(int m_idx)
 			object_prep(q_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
 
 			/* Mega-Hack -- Mark this item as "Morgoth" */
-			q_ptr->name1 = ART_MORGOTH;
+			q_ptr->activate = ART_MORGOTH + 128;
 
 			/* Mega-Hack -- Actually create "Morgoth" */
 			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
@@ -860,6 +860,7 @@ void monster_death(int m_idx)
 					/* Create the artifact */
 					create_named_art(a_idx, y, x);
 
+					/* The artifact has been created */
 					a_info[a_idx].cur_num = 1;
 				}
 			}
@@ -3449,10 +3450,13 @@ void gain_level_reward(int chosen_reward)
 			}
 
 			object_prep(q_ptr, lookup_kind(tval, sval));
+			
 			q_ptr->to_h = 3 + randint1(dun_level) % 10;
 			q_ptr->to_d = 3 + randint1(dun_level) % 10;
-			random_resistance(q_ptr, FALSE, randint1(34) + 4);
-			q_ptr->name2 = EGO_CHAOTIC;
+			
+			random_resistance(q_ptr, randint1(34) + 4);
+			
+			add_ego_flags(q_ptr, EGO_CHAOTIC);
 
 #ifdef USE_SCRIPT
 			q_ptr->python = object_create_callback(q_ptr);

@@ -147,7 +147,7 @@ void redraw_window(void)
 	if (!character_dungeon) return;
 	
 	/* Hack - Activate term zero for the redraw */
-	Term_activate(&data[0].t);
+	Term_activate(&term_screen[0]);
 	
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
@@ -2986,145 +2986,6 @@ void do_cmd_save_screen(void)
 
 
 /*
- * Check the status of "artifacts"
- */
-static void do_cmd_knowledge_artifacts(void)
-{
-	int i, k, z;
-
-	FILE *fff;
-
-	char file_name[1024];
-
-	char base_name[80];
-
-	bool *okay;
-
-
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
-	/* Open a new file */
-	fff = my_fopen(file_name, "w");
-
-	/* Allocate the "okay" array */
-	C_MAKE(okay, max_a_idx, bool);
-
-	/* Scan the artifacts */
-	for (k = 0; k < max_a_idx; k++)
-	{
-		artifact_type *a_ptr = &a_info[k];
-
-		/* Default */
-		okay[k] = FALSE;
-
-		/* Skip "empty" artifacts */
-		if (!a_ptr->name) continue;
-
-		/* Skip "uncreated" artifacts */
-		if (!a_ptr->cur_num) continue;
-
-		/* Assume okay */
-		okay[k] = TRUE;
-	}
-
-	/* Check the dungeon */
-
-	/* This loop should work better in the wilderness then the above one */
-	for (i = 0; i < max_o_idx; i++)
-	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[i];
-
-		/* Exit if doesn't exist */
-		if (o_ptr->k_idx == 0) continue;
-
-		/* Exit if not in dungeon */
-		if (o_ptr->held_m_idx) continue;
-
-		/* Ignore non-artifacts */
-		if (!artifact_p(o_ptr)) continue;
-
-		/* Ignore known items */
-		if (object_known_p(o_ptr)) continue;
-
-		/* Note the artifact */
-		okay[o_ptr->name1] = FALSE;
-	}
-
-
-	/* Check the inventory and equipment */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		object_type *o_ptr = &inventory[i];
-
-		/* Ignore non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Ignore non-artifacts */
-		if (!artifact_p(o_ptr)) continue;
-
-		/* Ignore known items */
-		if (object_known_p(o_ptr)) continue;
-
-		/* Note the artifact */
-		okay[o_ptr->name1] = FALSE;
-	}
-
-	/* Scan the artifacts */
-	for (k = 0; k < max_a_idx; k++)
-	{
-		artifact_type *a_ptr = &a_info[k];
-
-		/* List "dead" ones */
-		if (!okay[k]) continue;
-
-		/* Paranoia */
-		strcpy(base_name, "Unknown Artifact");
-
-		/* Obtain the base object type */
-		z = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-		/* Real object */
-		if (z)
-		{
-			object_type forge;
-			object_type *q_ptr;
-
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Create fake object */
-			object_prep(q_ptr, z);
-
-			/* Make it an artifact */
-			q_ptr->name1 = k;
-
-			/* Describe the artifact */
-			object_desc_store(base_name, q_ptr, FALSE, 0);
-		}
-
-		/* Hack -- Build the artifact name */
-		fprintf(fff, "     The %s\n", base_name);
-	}
-
-	/* Free the "okay" array */
-	C_KILL(okay, max_a_idx, bool);
-
-	/* Close the file */
-	my_fclose(fff);
-
-	/* Display the file contents */
-	show_file(file_name, "Artifacts Seen", 0, 0);
-
-	/* Remove the file */
-	fd_kill(file_name);
-}
-
-
-/*
  * Display known uniques
  */
 static void do_cmd_knowledge_uniques(void)
@@ -3810,19 +3671,18 @@ void do_cmd_knowledge(void)
 		prt("Display current knowledge", 2, 0);
 
 		/* Give some choices */
-		prt("(1) Display known artifacts", 4, 5);
-		prt("(2) Display known uniques", 5, 5);
-		prt("(3) Display known objects", 6, 5);
-		prt("(4) Display kill count", 7, 5);
-		prt("(5) Display mutations", 8, 5);
-		prt("(6) Display current pets", 9, 5);
-		prt("(7) Display current quests", 10, 5);
-		prt("(8) Display virtues", 11, 5);
+		prt("(2) Display known uniques", 4, 5);
+		prt("(3) Display known objects", 5, 5);
+		prt("(4) Display kill count", 6, 5);
+		prt("(5) Display mutations", 7, 5);
+		prt("(6) Display current pets", 8, 5);
+		prt("(7) Display current quests", 9, 5);
+		prt("(8) Display virtues", 10, 5);
 		if (take_notes)
-			prt("(9) Display notes", 12, 5);
+			prt("(9) Display notes", 11, 5);
 
 		/* Prompt */
-		prt("Command: ", 14, 0);
+		prt("Command: ", 13, 0);
 
 		/* Prompt */
 		i = inkey();
@@ -3832,31 +3692,28 @@ void do_cmd_knowledge(void)
 
 		switch (i)
 		{
-		case '1': /* Artifacts */
-			do_cmd_knowledge_artifacts();
-			break;
-		case '2': /* Uniques */
+		case '1': /* Uniques */
 			do_cmd_knowledge_uniques();
 			break;
-		case '3': /* Objects */
+		case '2': /* Objects */
 			do_cmd_knowledge_objects();
 			break;
-		case '4': /* Kill count */
+		case '3': /* Kill count */
 			do_cmd_knowledge_kill_count();
 			break;
-		case '5': /* Mutations */
+		case '4': /* Mutations */
 			do_cmd_knowledge_mutations();
 			break;
-		case '6': /* Pets */
+		case '5': /* Pets */
 			do_cmd_knowledge_pets();
 			break;
-		case '7': /* Quests */
+		case '6': /* Quests */
 			do_cmd_knowledge_quests();
 			break;
-		case '8': /* Virtues */
+		case '7': /* Virtues */
 			do_cmd_knowledge_virtues();
 			break;
-		case '9': /* Notes */
+		case '8': /* Notes */
 			if (take_notes)
 				do_cmd_knowledge_notes();
 			else

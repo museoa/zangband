@@ -498,20 +498,23 @@ void curse_equipment(int chance, int heavy_chance)
 		return;
 	}
 
-	if ((randint1(100) <= heavy_chance) &&
-		(o_ptr->name1 || o_ptr->name2 || o_ptr->art_name))
+	if ((randint1(100) <= heavy_chance) && o_ptr->xtra_name)
 	{
 		if (!(o3 & TR3_HEAVY_CURSE))
+		{
 			changed = TRUE;
-		o_ptr->art_flags3 |= TR3_HEAVY_CURSE;
-		o_ptr->art_flags3 |= TR3_CURSED;
+		}
+		o_ptr->flags3 |= TR3_HEAVY_CURSE;
+		o_ptr->flags3 |= TR3_CURSED;
 		o_ptr->ident |= IDENT_CURSED;
 	}
 	else
 	{
-		if (!(o_ptr->ident & IDENT_CURSED))
+		if (!cursed_p(o_ptr))
+		{
 			changed = TRUE;
-		o_ptr->art_flags3 |= TR3_CURSED;
+		}
+		o_ptr->flags3 |= TR3_CURSED;
 		o_ptr->ident |= IDENT_CURSED;
 	}
 

@@ -2460,6 +2460,15 @@ errr init_x11(int argc, char *argv[])
 		/* Save global entry */
 		angband_term[i] = Term;
 	}
+	
+	/* Add in resizing for map */
+	angband_term[0]->resize_hook = resize_map;
+
+	/* Add in redraw hooks */
+	for (i = 1; i < num_term; i++)
+	{
+		angband_term[i]->resize_hook = redraw_window;
+	}
 
 	/* Raise the "Angband" window */
 	Infowin_set(data[0].win);
