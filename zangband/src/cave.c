@@ -2403,7 +2403,7 @@ void do_cmd_view_map(void)
  */
 void forget_view(void)
 {
-	int i;
+	int i, x, y;
 
 	cave_type *c_ptr;
 
@@ -2413,14 +2413,26 @@ void forget_view(void)
 	/* Clear them all */
 	for (i = 0; i < view_n; i++)
 	{
-		int y = view_y[i];
-		int x = view_x[i];
+		y = view_y[i];
+		x = view_x[i];
 
 		/* Access the grid */
 		c_ptr = area(y,x);
 
-		/* Forget that the grid is viewable or lit */
-		c_ptr->info &= ~(CAVE_VIEW | CAVE_LITE);
+		if (!(view_perma_grids || (c_ptr->info & CAVE_GLOW))
+			 && cave_floor_grid(c_ptr))
+		{
+			/* 
+			 * Do not memorize floor grids if
+			 * not glowing or the view_perma_grids option is set
+			 */
+			c_ptr->info &= ~(CAVE_MARK | CAVE_VIEW | CAVE_LITE);
+		}
+		else
+		{
+			/* Forget that the grid is viewable or lit */
+			c_ptr->info &= ~(CAVE_VIEW | CAVE_LITE);
+		}
 		
 		/* Only lite the spot if is on the panel (can change due to resizing */
 		if (!panel_contains(y, x)) continue;
@@ -3244,10 +3256,19 @@ void update_view(void)
 							info |= (CAVE_MARK);
 						}
 	
-						/* Option -- memorize all perma-lit floors */
-						else if (view_perma_grids && (info & (CAVE_GLOW)))
+						/* Mark all perma-lit floors */
+						else if (info & (CAVE_GLOW))
 						{
-							/* Memorize */
+							/*
+							 * Hack - Memorize
+							 *
+							 * These floors are forgotten unless the
+							 * view_perma_grids flag is set.
+							 *
+							 * This hack is done to simplify the map_info()
+							 * function enormously.  All glowing grids in
+							 * view are marked...
+							 */
 							info |= (CAVE_MARK);
 						}
 					}
@@ -3378,8 +3399,19 @@ void update_view(void)
 		/* Get grid info */
 		info = c_ptr->info;
 
-		/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
-		info &= ~(CAVE_TEMP | CAVE_XTRA);
+		if (!(view_perma_grids || (info & CAVE_GLOW)) && cave_floor_grid(c_ptr))
+		{
+			/* 
+			 * Do not memorize floor grids if
+			 * not glowing or the view_perma_grids option is set
+			 */
+			info &= ~(CAVE_MARK | CAVE_TEMP | CAVE_XTRA);
+		}
+		else
+		{
+			/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
+			info &= ~(CAVE_TEMP | CAVE_XTRA);
+		}
 
 		/* Save cave info */
 		c_ptr->info = info;
