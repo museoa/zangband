@@ -3488,6 +3488,10 @@ static char borg_inkey_hack(int flush_first)
 	bool borg_prompt;	/* ajg  For now we can just use this locally.
 						   in the 283 borg he uses this to optimize knowing if
 						   we are waiting at a prompt for info */
+	
+	bool borg_rand_quick;	/* Save system setting */
+	u32b borg_rand_value;	/* Save system setting */
+
 
 	/* Refresh the screen */
 	Term_fresh();

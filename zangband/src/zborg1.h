@@ -549,7 +549,6 @@ extern bool borg_flag_dump;	/* Save savefile at each death */
 extern bool borg_save;	/* do a save next time we get to press a key! */
 
 extern bool borg_borg_message;	/* List borg messages or not */
-extern bool borg_graphics;	/* List borg messages or not */
 extern bool borg_confirm_target;
 
 extern char borg_engine_date[];	/* last update */
@@ -557,11 +556,6 @@ extern char borg_engine_date[];	/* last update */
 /*
  * Use a simple internal random number generator
  */
-
-extern bool borg_rand_quick;	/* Save system setting */
-
-extern u32b borg_rand_value;	/* Save system setting */
-
 extern u32b borg_rand_local;	/* Save personal setting */
 
 

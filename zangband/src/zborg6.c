@@ -15406,7 +15406,7 @@ static void borg_flow_border(int y1, int x1, int y2, int x2, bool stop)
 			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
 		}
 	}
-}
+};
 
 
 /*
@@ -15447,7 +15447,7 @@ static bool borg_flow_dark_1(int b_stair)
 		borg_temp_y[borg_temp_n] = y;
 		borg_temp_n++;
 	}
-#endif 0
+#endif /* 0 */
 
 	/* Nothing */
 	if (!borg_temp_n) return (FALSE);
@@ -15466,7 +15466,7 @@ static bool borg_flow_dark_1(int b_stair)
         borg_flow_direct(y, x);
 #if 0
         borg_flow_enqueue_grid(y, x);
-#endif
+#endif /* 0 */
     }
 
     /* Spread the flow */

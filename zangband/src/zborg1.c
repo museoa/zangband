@@ -352,16 +352,12 @@ int sold_item_store;
 bool borg_flag_save = TRUE;	/* Save savefile at each level */
 bool borg_flag_dump = FALSE;	/* Save savefile at each death */
 bool borg_save = FALSE;	/* do a save next level */
-bool borg_graphics = FALSE;	/* rr9's graphics */
 bool borg_confirm_target = FALSE;	/* emergency spell use */
 
 /*
  * Use a simple internal random number generator
  */
 
-bool borg_rand_quick;	/* Save system setting */
-
-u32b borg_rand_value;	/* Save system setting */
 
 u32b borg_rand_local;	/* Save personal setting */
 
