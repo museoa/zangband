@@ -1,3 +1,5 @@
+subdir = ./lib/xtra/graf/
+
 ## makefile.zb
 
 files += lib/xtra/graf/16x16.bmp \

@@ -1,3 +1,5 @@
+subdir = ./lib/help/
+
 ## makefile.zb
 
 files += \

@@ -1,3 +1,5 @@
+subdir = ./src/
+
 ##
 ## Actually build the source to make the game
 ##

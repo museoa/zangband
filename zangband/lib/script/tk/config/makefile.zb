@@ -1,3 +1,5 @@
+subdir = ./lib/script/tk/config/
+
 ## makefile.zb
 
 files += $(addprefix lib/script/tk/config/, \

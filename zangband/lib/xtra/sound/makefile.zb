@@ -1,3 +1,5 @@
+subdir = ./lib/xtra/sound/
+
 ## makefile.zb
 
 files += lib/xtra/sound/sound.cfg

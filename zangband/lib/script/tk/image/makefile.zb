@@ -1,3 +1,5 @@
+subdir = ./lib/script/tk/image/
+
 ## makefile.zb
 
 files += lib/script/tk/image/*.gif lib/script/tk/image/angbandtk.ico

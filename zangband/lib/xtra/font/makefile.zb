@@ -1,3 +1,5 @@
+subdir = ./lib/xtra/font/
+
 ## makefile.zb
 
 files += $(addprefix lib/xtra/font/,\

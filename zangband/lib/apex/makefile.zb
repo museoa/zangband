@@ -1,3 +1,5 @@
+subdir = ./lib/apex/
+
 ## makefile.zb
 
 files += lib/apex/readme.txt lib/apex/z_scores.raw

@@ -1,3 +1,5 @@
+subdir = ./lib/script/tk/
+
 ## makefile.zb
 
 files += lib/script/tk/*.tcl lib/script/tk/tips.txt

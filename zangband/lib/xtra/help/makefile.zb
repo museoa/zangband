@@ -1,2 +1,4 @@
+subdir = ./lib/xtra/help/
+
 ## makefile.zb
 

@@ -32,7 +32,8 @@ datadir = @datadir@
 cygwin = @cygwin@
 TK_PORT = @TK_PORT@
 
-subdir = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+# subdir = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+subdir = 
 scandir = $(addprefix $(subdir),$(addsuffix /makefile.zb,$(dirs)))
 
 files = angdos.cfg readme z_faq.txt z_update.txt

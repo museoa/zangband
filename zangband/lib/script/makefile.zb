@@ -1,3 +1,5 @@
+subdir = ./lib/script/
+
 ## makefile.zb
 
 files += lib/script/init.lua lib/script/object.lua lib/script/test.lua

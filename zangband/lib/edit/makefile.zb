@@ -1,3 +1,5 @@
+subdir = ./lib/edit/
+
 ## makefile.zb
 
 files += \

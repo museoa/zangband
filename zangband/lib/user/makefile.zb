@@ -1,1 +1,3 @@
+subdir = ./lib/user/
+
 ## makefile.zb
