@@ -116,15 +116,6 @@
 #define AUTO_FLOW_MAX 2000
 
 
-
-/*
- * Enable the "borg_note()" usage of the Recall Window
- * Also specify the number of "rolling rows" to use
- */
-#define BORG_NOTE_ROWS      12
-
-
-
 /*
  * Size of Keypress buffer
  */
@@ -200,14 +191,10 @@ struct borg_shop
 };
 
 
-/*** Some variables ***/
-
-
 /*
  * Some variables
  */
 extern bool borg_active;	/* Actually active */
-extern bool borg_resurrect;	/* Continous play mode */
 extern bool borg_cancel;	/* Being cancelled */
 
 extern bool borg_stop_king;
@@ -219,7 +206,6 @@ extern bool borg_scums_uniques;
 /* Borg has is intrinsically broken */
 extern int *borg_has;
 extern int *borg_skill;
-extern int size_depth;
 extern int size_obj;
 
 
@@ -432,9 +418,6 @@ extern bool borg_flag_dump;	/* Save savefile at each death */
 
 extern bool borg_save;	/* do a save next time we get to press a key! */
 
-extern bool borg_borg_message;	/* List borg messages or not */
-extern bool borg_confirm_target;
-
 /*
  * Use a simple internal random number generator
  */
@@ -470,7 +453,6 @@ extern s32b when_detect_evil;
 
 extern bool my_need_alter;	/* incase of walls/doors */
 extern bool my_no_alter;	/* incase of walls/doors */
-extern bool borg_attempting_refresh;	/* for the goi spell */
 
 /*
  * Some information
@@ -641,9 +623,7 @@ extern int borg_feeling;	/* Current level "feeling" */
 /*
  * State variables extracted from the screen
  */
-
-extern s32b borg_exp;	/* Current experience */
-
+ 
 extern s32b borg_gold;	/* Current gold */
 
 extern int borg_stat[6];	/* Current stats */
@@ -744,12 +724,6 @@ extern s16b borg_kills_cnt;
 extern s16b borg_kills_nxt;
 
 extern borg_kill *borg_kills;
-
-/*
- * Hack -- count racial appearances per level
- */
-
-extern s16b *borg_race_count;
 
 
 /*

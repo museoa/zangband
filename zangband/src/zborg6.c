@@ -6508,11 +6508,6 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 		/* borg_keypress('y'); */
 	}
 
-	/* Use target */
-	/* borg_keypress('5'); */
-	borg_confirm_target = TRUE;
-
-
 	/* Set our shooting flag */
 	successful_target = -1;
 
@@ -10836,8 +10831,6 @@ bool borg_defend(int p1)
 				borg_note_fmt
 					("# refreshing GOI.  borg_goi=%d, p_ptr->invuln=%d, (ratio=%d)",
 					 borg_goi, p_ptr->invuln, borg_game_ratio);
-				borg_attempting_refresh = TRUE;
-				borg_goi = 12000;
 				return (TRUE);
 			}
 		}

@@ -2237,9 +2237,6 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 	borg_note_fmt("# There is a monster '%s' within %d grids of %d,%d",
 				  (r_name + r_ptr->name), r, x, y);
 
-	/* Hack -- count racial appearances */
-	if (borg_race_count[r_idx] < MAX_SHORT) borg_race_count[r_idx]++;
-
 
 	/* Handle trappers and lurkers and mimics */
 	if (r_ptr->flags1 & (RF1_CHAR_CLEAR | RF1_CHAR_MIMIC))
@@ -4244,9 +4241,6 @@ void borg_update(void)
 
 		/* Forget old monsters */
 		(void) C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
-
-		/* Hack -- Forget race counters */
-		(void) C_WIPE(borg_race_count, z_info->r_max, s16b);
 
 		/* Fake goal location */
 		g_x = c_x;

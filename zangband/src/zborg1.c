@@ -56,7 +56,6 @@ bool borg_scums_uniques;
 int *borg_has;
 int *borg_skill;
 int size_class;
-int size_depth;
 int size_obj;
 
 /*
@@ -64,7 +63,6 @@ int size_obj;
  */
 
 bool borg_active;	/* Actually active */
-bool borg_resurrect = FALSE;	/* continous play mode */
 
 bool borg_cancel;	/* Being cancelled */
 
@@ -79,7 +77,6 @@ int successful_target = 0;
 bool borg_flag_save = TRUE;	/* Save savefile at each level */
 bool borg_flag_dump = FALSE;	/* Save savefile at each death */
 bool borg_save = FALSE;	/* do a save next level */
-bool borg_confirm_target = FALSE;	/* emergency spell use */
 
 /*
  * Use a simple internal random number generator
@@ -118,7 +115,6 @@ s32b when_detect_evil = 0;	/* When we last detected monsters or evil */
 
 bool my_need_alter;	/* incase i hit a wall or door */
 bool my_no_alter;	/*  */
-bool borg_attempting_refresh = FALSE;	/* for the goi spell */
 
 /*
  * Some information
@@ -292,8 +288,6 @@ int borg_feeling = 0;	/* Current level "feeling" */
  * State variables extracted from the screen
  */
 
-s32b borg_exp;	/* Current experience */
-
 s32b borg_gold;	/* Current gold */
 
 int borg_stat[6];	/* Current stat values */
@@ -391,11 +385,6 @@ borg_take *borg_takes;
 s16b borg_kills_cnt;
 s16b borg_kills_nxt;
 borg_kill *borg_kills;
-
-/*
- * Hack -- count racial appearances per level
- */
-s16b *borg_race_count;
 
 
 /*
@@ -1028,10 +1017,6 @@ void borg_update_frame(void)
 	if ((p_ptr->exp < p_ptr->max_exp) &&
 		(borg_skill[BI_CLEVEL] != 50)) borg_skill[BI_ISFIXEXP] = TRUE;
 
-	/* Extract "EXP xxxxxxxx" */
-	borg_exp = p_ptr->exp;
-
-
 	/* Extract "AU xxxxxxxxx" */
 	borg_gold = p_ptr->au;
 
@@ -1235,11 +1220,6 @@ void borg_init_1(void)
 
 	/* Array of monsters */
 	C_MAKE(borg_kills, BORG_KILLS_MAX, borg_kill);
-
-	/*** Special counters ***/
-
-	/* Count racial appearances */
-	C_MAKE(borg_race_count, z_info->r_max, s16b);
 }
 
 

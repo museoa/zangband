@@ -915,19 +915,8 @@ static void borg_parse_aux(cptr msg, int len)
 		/* If we were casting a targetted spell and failed */
 		/* it does not mean we can't target that location */
 		successful_target = 0;
-
-		/* Incase we failed our emergency use of MM */
-		borg_confirm_target = FALSE;
-
-		/* Incase it was a goi refresh */
-		if (borg_attempting_refresh)
-		{
-			if (borg_goi > 1) borg_goi -= 12000;
-			borg_attempting_refresh = FALSE;
-		}
-
+		
 		return;
-
 	}
 
 
