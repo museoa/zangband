@@ -511,11 +511,18 @@ static const cheat_option_type cheat_info[CHEAT_MAX] =
 /*
  * Interact with some options for cheating
  */
-static void do_cmd_options_cheat(cptr info)
+static bool do_cmd_options_cheat(int dummy)
 {
 	char ch;
 
 	int i, k = 0, n = CHEAT_MAX;
+	
+	cptr info = "Cheaters never win";
+	
+	/* Hack - ignore unused parameter */
+	(void) dummy;
+	
+	screen_save();
 
 	/* Clear screen */
 	Term_clear();
@@ -552,7 +559,8 @@ static void do_cmd_options_cheat(cptr info)
 		{
 			case ESCAPE:
 			{
-				return;
+				screen_load();
+				return (FALSE);
 			}
 
 			case '-':
@@ -597,6 +605,9 @@ static void do_cmd_options_cheat(cptr info)
 			}
 		}
 	}
+	
+	screen_load();
+	return (FALSE);
 }
 
 
@@ -629,11 +640,18 @@ static s16b toggle_frequency(s16b current)
 /*
  * Interact with some options for cheating
  */
-static void do_cmd_options_autosave(cptr info)
+static bool do_cmd_options_autosave(int dummy)
 {
 	char ch;
 
 	int i, k = 0, n = 2;
+	
+	cptr info = "Autosave";
+	
+	/* Hack - ignore unused parameter */
+	(void) dummy;
+
+	screen_save();
 
 	/* Clear screen */
 	Term_clear();
@@ -672,7 +690,9 @@ static void do_cmd_options_autosave(cptr info)
 		{
 			case ESCAPE:
 			{
-				return;
+				screen_load();
+			
+				return (FALSE);
 			}
 
 			case '-':
@@ -726,19 +746,46 @@ static void do_cmd_options_autosave(cptr info)
 			}
 		}
 	}
+
+	screen_load();
+	
+	return (FALSE);
 }
+
+/* Current option flags */
+static byte option_flags;
+
+/*
+ * Screen titles for each option sub-window
+ */
+static cptr option_window_title[8] =
+{
+	"User Interface Options",
+	"Disturbance Options",
+	"Game-Play Options",
+	"Efficiency Options",
+	"Display Options",
+	"Birth Options",
+	"Artificial Intelligence Options",
+	"Testing Options"
+};
 
 
 /*
  * Interact with some options
  */
-static void do_cmd_options_aux(int page, cptr info)
+static bool do_cmd_options_aux(int page)
 {
 	char ch;
 	int i, k = 0, n = 0;
 	int opt[24];
 	char buf[80];
-
+	
+	cptr info = option_window_title[page];
+	
+	screen_save();
+	
+	page++;
 
 	/* Lookup the options */
 	for (i = 0; i < 24; i++) opt[i] = 0;
@@ -757,9 +804,11 @@ static void do_cmd_options_aux(int page, cptr info)
 		/* There are no options */
 		msg_print("There are no available options there at the moment.");
 		message_flush();
+		
+		screen_load();
 
 		/* Bail out */
-		return;
+		return (FALSE);
 	}
 
 	/* Clear screen */
@@ -797,7 +846,8 @@ static void do_cmd_options_aux(int page, cptr info)
 		{
 			case ESCAPE:
 			{
-				return;
+				screen_load();
+				return (FALSE);
 			}
 
 			case '-':
@@ -849,13 +899,18 @@ static void do_cmd_options_aux(int page, cptr info)
 			}
 		}
 	}
+	
+	/* Save the changes */
+	init_options(option_flags);
+
+	return (FALSE);
 }
 
 
 /*
  * Modify the "window" options
  */
-static void do_cmd_options_win(void)
+static bool do_cmd_options_win(int dummy)
 {
 	int i, j, d;
 
@@ -868,6 +923,9 @@ static void do_cmd_options_win(void)
 
 	u32b old_flag[ANGBAND_TERM_MAX];
 
+	/* Hack - ignore parameter */
+	(void) dummy;
+
 
 	/* Memorize old flags */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++)
@@ -876,10 +934,11 @@ static void do_cmd_options_win(void)
 		old_flag[j] = window_flag[j];
 	}
 
+	screen_save();
 
 	/* Clear screen */
 	Term_clear();
-
+	
 	/* Interact */
 	while (go)
 	{
@@ -990,6 +1049,13 @@ static void do_cmd_options_win(void)
 			}
 		}
 	}
+	
+	/* Hack - assume all windows will change */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL |
+					  PW_PLAYER | PW_MESSAGE | PW_OVERHEAD |
+					  PW_MONSTER | PW_OBJECT | PW_SNAPSHOT |
+					  PW_BORG_1 | PW_BORG_2 | PW_DUNGEON);
+
 
 	/* Notice changes */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++)
@@ -1014,9 +1080,162 @@ static void do_cmd_options_win(void)
 		/* Restore */
 		Term_activate(old);
 	}
+	
+	screen_load();
+	
+	return (FALSE);
+}
+
+/*
+ * Modify the base delay factor
+ */
+static bool do_cmd_options_delay(int dummy)
+{
+	char k;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	screen_save();
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Prompt */
+	prtf(0, 18, "Command: Base Delay Factor");
+
+	/* Get a new value */
+	while (1)
+	{
+		int msec = delay_factor * delay_factor * delay_factor;
+		prtf(0, 22, "Current base delay factor: %d (%d msec)",
+				   delay_factor, msec);
+		prtf(0, 20, "Delay Factor (0-9 or ESC to accept): ");
+
+		k = inkey();
+
+		if (k == ESCAPE) break;
+		if (isdigit(k)) delay_factor = D2I(k);
+		else
+			bell("Illegal delay factor!");
+	}
+
+	screen_load();
+
+
+	return (FALSE);
+}
+
+/*
+ * Modify the hitpoint warning threshold
+ */
+static bool do_cmd_options_hitpoint(int dummy)
+{
+	char k;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	screen_save();
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Prompt */
+	prtf(0, 18, "Command: Hitpoint Warning");
+
+	/* Get a new value */
+	while (1)
+	{
+		prtf(0, 22, "Current hitpoint warning: %d0%%",
+				   hitpoint_warn);
+		prtf(0, 20, "Hitpoint Warning (0-9 or ESC to accept): ");
+
+		k = inkey();
+
+		if (k == ESCAPE) break;
+		if (isdigit(k)) hitpoint_warn = D2I(k);
+		else
+			bell("Illegal hitpoint warning!");
+	}
+
+	screen_load();
+
+	return (FALSE);
+}
+
+static bool do_cmd_options_dump(int dummy)
+{
+	int i;
+	FILE *fff;
+	char buf[1024];
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	screen_save();
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
+
+	/* Open the file */
+	fff = my_fopen(buf, "w");
+
+	/* Failed */
+	if (!fff) return (FALSE);
+
+	/* Header */
+	fprintf(fff, "# File: pref-opt.prf\n\n");
+	fprintf(fff,
+			"# Allow user specification of various options\n\n");
+
+	/* Scan the options */
+	for (i = 0; i < OPT_MAX; i++)
+	{
+		if ((option_info[i].o_text) &&
+			(option_info[i].o_page != OPT_BIRTH_PAGE))
+		{
+			/* Dump the option */
+			fprintf(fff, "%c:%s\n",
+					(option_info[i].o_val ? 'Y' : 'X'),
+					option_info[i].o_text);
+		}
+	}
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Clear top row */
+	clear_msg();
+
+	/* Success message */
+	msg_print("Saved default options.");
+	message_flush();
+
+	screen_load();
+
+	return (FALSE);
 }
 
 
+/* The main options menu */
+menu_type options_menu[OPTION_MENU_MAX] =
+{
+	{"User Interface Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Disturbance Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Game-Play Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Efficiency Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Display Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Birth Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Artificial Intelligence Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Testing Options", do_cmd_options_aux, TRUE, FALSE},
+	{"Cheating Options", do_cmd_options_cheat, TRUE, FALSE},
+	{"Base Delay Factor", do_cmd_options_delay, TRUE, FALSE},
+	{"Hitpoint Warning", do_cmd_options_hitpoint, TRUE, FALSE},
+	{"Autosave Options", do_cmd_options_autosave, TRUE, FALSE},
+	{"Window Flags", do_cmd_options_win, TRUE, FALSE},
+	{"Dump Options to a Pref File", do_cmd_options_dump, TRUE, FALSE},
+};
 
 
 /*
@@ -1027,300 +1246,10 @@ static void do_cmd_options_win(void)
  */
 void do_cmd_options(byte flags)
 {
-	int k;
+	/* Save option flags so menu functions can access them */
+	option_flags = flags;
 
-
-	/* Save the screen */
-	screen_save();
-
-
-	/* Interact */
-	while (1)
-	{
-		/* Clear screen */
-		Term_clear();
-
-		/* Why are we here */
-		prtf(0, 2, "%s options", VERSION_NAME);
-
-		/* Give some choices */
-		prtf(5, 4, "(1) User Interface Options");
-		prtf(5, 5, "(2) Disturbance Options");
-		prtf(5, 6, "(3) Game-Play Options");
-		prtf(5, 7, "(4) Efficiency Options");
-		prtf(5, 8, "(5) Display Options");
-		prtf(5, 9, "(6) Birth Options");
-		prtf(5, 10, "(7) Artificial Intelligence Options");
-		prtf(5, 11, "(8) Testing Options");
-
-		/* Special choices */
-		prtf(5, 13, "(D) Base Delay Factor");
-		prtf(5, 14, "(H) Hitpoint Warning");
-		prtf(5, 15, "(A) Autosave Options");
-
-
-		/* Window flags */
-		prtf(5, 16, "(W) Window Flags");
-
-		/* Cheating */
-		prtf(5, 17, "(C) Cheating Options");
-
-		/* Dump Options */
-		prtf(5, 18, "(|) Dump Options to a Pref File");
-
-		/* Prompt */
-		prtf(0, 20, "Command: ");
-
-		/* Get command */
-		k = inkey();
-
-		/* Exit */
-		if (k == ESCAPE) break;
-
-		/* Analyze */
-		switch (k)
-		{
-				/* User Interface Options */
-			case '1':
-			{
-				/* Spawn */
-				do_cmd_options_aux(1, "User Interface Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Disturbance Options */
-			case '2':
-			{
-				/* Spawn */
-				do_cmd_options_aux(2, "Disturbance Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Game-Play Options */
-			case '3':
-			{
-				/* Spawn */
-				do_cmd_options_aux(3, "Game-Play Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Efficiency Options */
-			case '4':
-			{
-				/* Spawn */
-				do_cmd_options_aux(4, "Efficiency Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Display Options */
-			case '5':
-			{
-				/* Spawn */
-				do_cmd_options_aux(5, "Display Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Birth Options */
-			case '6':
-			{
-				/* Spawn */
-				do_cmd_options_aux(6, "Birth Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Artificial Intelligence Options */
-			case '7':
-			{
-				/* Spawn */
-				do_cmd_options_aux(7, "Artificial Intelligence Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Testing options */
-			case '8':
-			{
-				/* Spawn */
-				do_cmd_options_aux(8, "Testing Options");
-
-				/* Save the changes */
-				init_options(flags);
-				break;
-			}
-
-				/* Cheating Options */
-			case 'c':
-			case 'C':
-			{
-				/* Spawn */
-				do_cmd_options_cheat("Cheaters never win");
-				break;
-			}
-
-			case 'a':
-			case 'A':
-			{
-				do_cmd_options_autosave("Autosave");
-				break;
-			}
-
-				/* Window flags */
-			case 'W':
-			case 'w':
-			{
-				/* Spawn */
-				do_cmd_options_win();
-				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL |
-								  PW_PLAYER | PW_MESSAGE | PW_OVERHEAD |
-								  PW_MONSTER | PW_OBJECT | PW_SNAPSHOT |
-								  PW_BORG_1 | PW_BORG_2 | PW_DUNGEON);
-				break;
-			}
-
-				/* Hack -- Delay Speed */
-			case 'D':
-			case 'd':
-			{
-				screen_save();
-
-				/* Clear screen */
-				Term_clear();
-
-				/* Prompt */
-				prtf(0, 18, "Command: Base Delay Factor");
-
-				/* Get a new value */
-				while (1)
-				{
-					int msec = delay_factor * delay_factor * delay_factor;
-					prtf(0, 22, "Current base delay factor: %d (%d msec)",
-							   delay_factor, msec);
-					prtf(0, 20, "Delay Factor (0-9 or ESC to accept): ");
-
-					k = inkey();
-
-					if (k == ESCAPE) break;
-					if (isdigit(k)) delay_factor = D2I(k);
-					else
-						bell("Illegal delay factor!");
-				}
-
-				screen_load();
-
-				break;
-			}
-
-				/* Hack -- hitpoint warning factor */
-			case 'H':
-			case 'h':
-			{
-				screen_save();
-
-				/* Clear screen */
-				Term_clear();
-
-				/* Prompt */
-				prtf(0, 18, "Command: Hitpoint Warning");
-
-				/* Get a new value */
-				while (1)
-				{
-					prtf(0, 22, "Current hitpoint warning: %d0%%",
-							   hitpoint_warn);
-					prtf(0, 20, "Hitpoint Warning (0-9 or ESC to accept): ");
-
-					k = inkey();
-
-					if (k == ESCAPE) break;
-					if (isdigit(k)) hitpoint_warn = D2I(k);
-					else
-						bell("Illegal hitpoint warning!");
-				}
-
-				screen_load();
-
-				break;
-			}
-
-				/* Dump the current options to file */
-			case '|':
-			{
-				int i;
-				FILE *fff;
-				char buf[1024];
-
-				/* Build the filename */
-				path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
-
-				/* Open the file */
-				fff = my_fopen(buf, "w");
-
-				/* Failed */
-				if (!fff) break;
-
-				/* Header */
-				fprintf(fff, "# File: pref-opt.prf\n\n");
-				fprintf(fff,
-						"# Allow user specification of various options\n\n");
-
-				/* Scan the options */
-				for (i = 0; i < OPT_MAX; i++)
-				{
-					if ((option_info[i].o_text) &&
-						(option_info[i].o_page != OPT_BIRTH_PAGE))
-					{
-						/* Dump the option */
-						fprintf(fff, "%c:%s\n",
-								(option_info[i].o_val ? 'Y' : 'X'),
-								option_info[i].o_text);
-					}
-				}
-
-				/* Close the file */
-				my_fclose(fff);
-
-				/* Success message */
-				msg_print("Saved default options.");
-
-				break;
-			}
-
-				/* Unknown option */
-			default:
-			{
-				/* Oops */
-				bell("Illegal command for options!");
-				break;
-			}
-		}
-
-		/* Flush messages */
-		message_flush();
-	}
-
-
-	/* Restore the screen */
-	screen_load();
+	display_menu(OPTION_MENU_MAX, options_menu, -1, format("%s options", VERSION_NAME));
 
 	/* Hack - Redraw equippy chars */
 	p_ptr->redraw |= (PR_EQUIPPY);
