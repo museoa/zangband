@@ -2403,17 +2403,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_SLAYING_WEAPON:
 					{
-						do
+						while (one_in_(o_ptr->dd) && (o_ptr->dd < 10));
 						{
 							o_ptr->dd++;
 						}
-						while (one_in_(o_ptr->dd));
-
-						do
+						
+						while (one_in_(o_ptr->ds) && (o_ptr->ds < 10));
 						{
 							o_ptr->ds++;
 						}
-						while (one_in_(o_ptr->ds));
+						
 
 						if (one_in_(5))
 						{
@@ -2586,7 +2585,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Hack -- super-charge the damage dice */
-				while (one_in_(10L * o_ptr->dd * o_ptr->ds))
+				while (one_in_(10L * o_ptr->dd * o_ptr->ds) && (o_ptr->ds < 10))
 				{
 					o_ptr->ds++;
 				}
