@@ -477,20 +477,8 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 			}
 			else
 			{
-				/* Create empty floor */
-				cave[y][x].feat = FEAT_PEBBLES;
-
-				/* Create Dirt */
-				if (!randint0(3))
-				{
-					cave[y][x].feat = FEAT_DIRT;
-				}
-
 				/* Create see-through terrain */
-				else if (!randint0(20))
-				{
-					cave[y][x].feat = FEAT_NONE;
-				}
+				cave[y][x].feat = FEAT_NONE;
 			}
 		}
 	}
@@ -542,6 +530,9 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 	int i, j;
 	wild_gen2_type *w_ptr;
 
+	/* Population check */
+	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
+	
 	for (i = x - 1; i < x + xsize + 2; i++)
 	{
 		for (j = y - 1; j < y + ysize + 2; j++)
@@ -646,6 +637,9 @@ static void init_towns(void)
 				 * placement within the town.
 				 */
 				w_ptr->town_type = town[town_count].type;
+				
+				/* Hack - make a flat area around the town */
+				w_ptr->info |= WILD_INFO_ROAD;
 			}
 		}
 
@@ -2468,7 +2462,10 @@ static void frac_block(void)
 {
 	u16b lstep, hstep, i, j, size;
 
-	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
+	/* 
+	 * Size is one bigger than normal blocks for speed
+	 * of algorithm with 2^n + 1
+	 */
 	size = WILD_BLOCK_SIZE;
 
 	/* Initialize the step sizes */
@@ -2493,9 +2490,9 @@ static void frac_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of left and right points +random bit */
-					temp_block[j][i] = ((temp_block[j][i - hstep] + 
-					temp_block[j][i + hstep]) >> 1) +
-					((randint1(lstep << 8) - (hstep << 8)) >> 1);
+					temp_block[j][i] = (((temp_block[j][i - hstep] + 
+					temp_block[j][i + hstep]) +
+					(randint1(lstep << 8) - (hstep << 8))) >> 1);
 				}
 			}
 		}
@@ -2510,9 +2507,9 @@ static void frac_block(void)
 				if (temp_block[j][i] == MAX_SHORT)
 				{
 					/* Average of up and down points +random bit */
-					temp_block[j][i] =((temp_block[j - hstep][i]
-					+ temp_block[j + hstep][i]) >> 1)
-					+ ((randint1(lstep << 8) - (hstep << 8)) >> 1);
+					temp_block[j][i] = (((temp_block[j - hstep][i]
+					+ temp_block[j + hstep][i])
+					+ (randint1(lstep << 8) - (hstep << 8))) >> 1);
 				}
 			}
 		}
@@ -2540,6 +2537,82 @@ static void frac_block(void)
 		}
 	}
 }
+
+/*
+ * This function smoothly interpolates between
+ * the points on the grid.  (As opposed to frac_block()
+ * which adds random offsets to make a rough
+ * pattern.
+ */
+static void smooth_block(void)
+{
+	u16b lstep, hstep, i, j, size;
+
+	/* 
+	 * Size is one bigger than normal blocks for speed
+	 * of algorithm with 2^n + 1
+	 */
+	size = WILD_BLOCK_SIZE;
+
+	/* Initialize the step sizes */
+	lstep = hstep = size;
+
+	while (hstep > 1)
+	{
+		/* Halve the step sizes */
+		lstep = hstep;
+		hstep /= 2;
+
+		/* middle top to bottom. */
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = 0; j <= size; j += lstep)
+			{
+				/* only write to points that are "blank" */
+				if (temp_block[j][i] == MAX_SHORT)
+				{
+					/* Average of left and right points */
+					temp_block[j][i] = ((temp_block[j][i - hstep] + 
+					temp_block[j][i + hstep]) >> 1);
+				}
+			}
+		}
+
+
+		/* middle left to right. */
+		for (j = hstep; j <= size - hstep; j += lstep)
+		{
+			for (i = 0; i <= size; i += lstep)
+		   	{
+				/* only write to points that are "blank" */
+				if (temp_block[j][i] == MAX_SHORT)
+				{
+					/* Average of up and down points */
+					temp_block[j][i] =((temp_block[j - hstep][i]
+					+ temp_block[j + hstep][i]) >> 1);
+				}
+			}
+		}
+
+		/* center. */
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = hstep; j <= size - hstep; j += lstep)
+			{
+				/* only write to points that are "blank" */
+				if (temp_block[j][i] == MAX_SHORT)
+				{
+					/* Average of corner points */
+					temp_block[j][i] = ((temp_block[j - hstep][i - hstep]
+					+ temp_block[j + hstep][i - hstep]
+					+ temp_block[j - hstep][i + hstep]
+					+ temp_block[j + hstep][i + hstep]) >> 2);
+				}
+			}
+		}
+	}
+}
+
 
 
 /*
@@ -2645,8 +2718,8 @@ static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
 	}
 }
 
-#define ROAD_LEVEL		(WILD_BLOCK_SIZE * 180)
-#define TRACK_LEVEL		(WILD_BLOCK_SIZE * 160)
+#define ROAD_LEVEL		(WILD_BLOCK_SIZE * 150)
+#define TRACK_LEVEL		(WILD_BLOCK_SIZE * 140)
 #define ROAD_BORDER		(WILD_BLOCK_SIZE * 120)
 #define GROUND_LEVEL	(WILD_BLOCK_SIZE * 100)
 
@@ -2788,8 +2861,8 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 		temp_block[y1][x1] = grad2[i];
 	}
 
-	/* Build the fractal */
-	frac_block();
+	/* Build the road "density map" */
+	smooth_block();
 
 	/* Copy the result over the block */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
