@@ -2644,9 +2644,6 @@ static void amiga_map( void )
    /* Only in graphics mode */
    if ( !use_graphics ) return;
    
-   /* Not in wilderness - yet. */
-   if (!dun_level) return;
-
    /* Turn off cursor */
    if ( td->cursor_visible ) cursor_off( td );
 
@@ -2661,43 +2658,88 @@ static void amiga_map( void )
    td->map_x = (( td->fw * 80 ) - ( td->mpt_w * cur_wid )) / 2;
    td->map_y = (( td->fh * 24 ) - ( td->mpt_h * cur_hgt )) / 2;
 
-   /* Draw all "interesting" features */
-   for ( i = 0; i < cur_wid; i++ )
+   /* In dungeon */
+   if(dun_level)
    {
-      for ( j = 0; j < cur_hgt; j++ )
-      {
-         /* Get frame tile */
-         if ( i==0 || i == cur_wid - 1 || j == 0 || j == cur_hgt - 1 )
-         {
-            ta = f_info[63].z_attr;
-            tc = f_info[63].z_char;
-         }
+     /* Draw all "interesting" features */
+     for ( i = 0; i < cur_wid; i++ )
+     {
+      	for ( j = 0; j < cur_hgt; j++ )
+      	{
+         	/* Get frame tile */
+         	if ( i==0 || i == cur_wid - 1 || j == 0 || j == cur_hgt - 1 )
+         	{
+            	ta = f_info[63].z_attr;
+            	tc = f_info[63].z_char;
+         	}
 
-         /* Get tile from cave table */
-         else
-         {
-            map_info(j, i, &ta, (char *) &tc);
-         }
+         	/* Get tile from cave table */
+         	else
+         	{
+            		map_info(j, i, &ta, (char *) &tc);
+         	}
 
-         /* Ignore non-graphics */
-         if (ta & 0x80)
-         {
-            ta &= 0x1f;
-            tc &= 0x1f;
+         	/* Ignore non-graphics */
+         	if (ta & 0x80)
+         	{
+            		ta &= 0x1f;
+            		tc &= 0x1f;
 
-            /* Player XXX XXX XXX */
-            if (ta == 12 && tc ==0)
-            {
-               ta = ((p_ptr->pclass * 10 + p_ptr->prace) >> 5) + 12;
-               tc = ((p_ptr->pclass * 10 + p_ptr->prace) & 0x1f);
-            }
+            		/* Player XXX XXX XXX */
+            		if (ta == 12 && tc ==0)
+            		{
+               			ta = ((p_ptr->pclass * 10 + p_ptr->prace) >> 5) + 12;
+               			tc = ((p_ptr->pclass * 10 + p_ptr->prace) & 0x1f);
+            		}
 
-            /* Put the graphics to the screen */
-            put_gfx_map(td, i, j, tc, ta);
-         }
+            		/* Put the graphics to the screen */
+            		put_gfx_map(td, i, j, tc, ta);
+         	}
+      	}
+   }
+   else
+   {
+     /* The player is in the wilderness */ 
+      
+     /* Draw all "interesting" features */
+     for ( i = wild_grid.x_min; i < wild_grid.x_max; i++ )
+     {
+      	for ( j = wild_grid.y_min; j < wild_grid.y_max; j++ )
+      	{
+         	/* Get frame tile */
+         	if ( i==wild_grid.x_min || i == wild_grid.x_max - 1 ||
+			 j ==wild_grid.y_min || j == wild_grid.y_max - 1 )
+         	{
+            	ta = f_info[63].z_attr;
+            	tc = f_info[63].z_char;
+         	}
+
+         	/* Get tile from cave table */
+         	else
+         	{
+            		map_info(j, i, &ta, (char *) &tc);
+         	}
+
+         	/* Ignore non-graphics */
+         	if (ta & 0x80)
+         	{
+            		ta &= 0x1f;
+            		tc &= 0x1f;
+
+            		/* Player XXX XXX XXX */
+            		if (ta == 12 && tc ==0)
+            		{
+               			ta = ((p_ptr->pclass * 10 + p_ptr->prace) >> 5) + 12;
+               			tc = ((p_ptr->pclass * 10 + p_ptr->prace) & 0x1f);
+            		}
+
+            		/* Put the graphics to the screen */
+            		put_gfx_map(td, i, j, tc, ta);
+         	}
+      	 }
       }
    }
-
+   
    /* Draw a small cursor now */
    td->cursor_map = TRUE;
 
