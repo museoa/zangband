@@ -561,7 +561,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff("It is perfectly balanced for throwing.  ");
 	}
 
-	if (FLAG(of_ptr, TR_THROW))
+	if (FLAG(of_ptr, TR_WILD_SHOT))
 	{
 		roff("Its shots are not hindered by trees.  ");
 	}

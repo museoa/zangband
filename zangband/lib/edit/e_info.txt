@@ -411,7 +411,10 @@ W:20:4:0:1000
 C:0:0:0:10
 F:SPEED | HIDE_TYPE
 
-# 60 (unused)
+N:60:of the Wild
+X:35:5
+W:0:4:0:0
+F:WILD_WALK
 
 N:61:of Noise
 X:35:0
@@ -720,7 +723,11 @@ X:25:10
 W:20:1:0:50
 C:5:15:0:0
 
-# 106 (unused)
+N:106:of Hunting
+X:25:10
+W:0:4:0:0
+C:8:8:0:0
+F:WILD_SHOT | SLAY_ANIMAL
 
 # 107 (unused)
 
