@@ -1512,7 +1512,7 @@ static void birth_put_stats(void)
 	}
 }
 
-#endif 0
+#endif /* 0 */
 
 /*
  * Clear all the global "character" data
