@@ -254,7 +254,7 @@ static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx, in
 /*
  * Type 1 -- normal rectangular rooms
  */
-static void build_type1(int by0, int bx0)
+static void build_type1(int bx0, int by0)
 {
 	int y, x, y2, x2, yval, xval;
 	int y1, x1, xsize, ysize;
@@ -398,7 +398,7 @@ static void build_type1(int by0, int bx0)
 /*
  * Type 2 -- Overlapping rectangular rooms
  */
-static void build_type2(int by0, int bx0)
+static void build_type2(int bx0, int by0)
 {
 	int			xval, yval;
 	int			y1, x1, y2, x2;
@@ -466,7 +466,7 @@ static void build_type2(int by0, int bx0)
  * the code below will work (with "bounds checking") for 5x5, or even
  * for unsymetric values like 4x3 or 5x3 or 3x4 or 3x5, or even larger.
  */
-static void build_type3(int by0, int bx0)
+static void build_type3(int bx0, int by0)
 {
 	int			y, x, dy, dx, wy, wx;
 	int			y1a, x1a, y2a, x2a;
@@ -628,7 +628,7 @@ static void build_type3(int by0, int bx0)
  *	4 - Inner room has a maze
  *	5 - A set of four inner rooms
  */
-static void build_type4(int by0, int bx0)
+static void build_type4(int bx0, int by0)
 {
 	int         y, x, y1, x1;
 	int         y2, x2, tmp, yval, xval;
@@ -1341,7 +1341,7 @@ static const vault_aux_type nest_types[] =
  *
  * Note that "monster nests" will never contain "unique" monsters.
  */
-static void build_type5(int by0, int bx0)
+static void build_type5(int bx0, int by0)
 {
 	int y, x, y1, x1, y2, x2, xval, yval;
 	int i;
@@ -1503,7 +1503,7 @@ static const vault_aux_type pit_types[] =
  *
  * Note that "monster pits" will never contain "unique" monsters.
  */
-static void build_type6(int by0, int bx0)
+static void build_type6(int bx0, int by0)
 {
 	int y, x, y1, x1, y2, x2, xval, yval;
 	int i, j;
@@ -1987,7 +1987,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 /*
  * Type 7 -- simple vaults (see "v_info.txt")
  */
-static void build_type7(int by0, int bx0)
+static void build_type7(int bx0, int by0)
 {
 	vault_type *v_ptr = NULL;
 	int dummy = 0;
@@ -2084,7 +2084,7 @@ static void build_type7(int by0, int bx0)
 /*
  * Type 8 -- greater vaults (see "v_info.txt")
  */
-static void build_type8(int by0, int bx0)
+static void build_type8(int bx0, int by0)
 {
 	vault_type *v_ptr = NULL;
 	int dummy = 0;
@@ -2182,7 +2182,7 @@ static void build_type8(int by0, int bx0)
 /*
  * Type 9 -- Fractal cave system
  */
-static void build_type9(int by0, int bx0)
+static void build_type9(int bx0, int by0)
 {
 	int grd, roug, cutoff, xsize, ysize, xhsize, yhsize, y0, x0;
 
@@ -3507,7 +3507,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 /*
  * Type 10 -- Random vault
  */
-static void build_type10(int by0, int bx0)
+static void build_type10(int bx0, int by0)
 {
 	int y0, x0, xsize, ysize, vtype;
 
@@ -3564,7 +3564,7 @@ static void build_type10(int by0, int bx0)
  *
  * When done fill from the inside to find the walls,
  */
-static void build_type11(int by0, int bx0)
+static void build_type11(int bx0, int by0)
 {
 	int rad, x, y, x0, y0;
 	int light = FALSE;
@@ -3607,7 +3607,7 @@ static void build_type11(int by0, int bx0)
  *
  * When done fill from the inside to find the walls,
  */
-static void build_type12(int by0, int bx0)
+static void build_type12(int bx0, int by0)
 {
 	int rad, x, y, x0, y0;
 	int light = FALSE;
@@ -3693,7 +3693,7 @@ static void build_type12(int by0, int bx0)
 /*
  * Type 13 -- Rectangular room with central fractal feature
  */
-static void build_type13(int by0, int bx0)
+static void build_type13(int bx0, int by0)
 {
 	int grd, roug, xsize, ysize, xhsize, yhsize, y0, x0;
 
@@ -3797,7 +3797,7 @@ static void build_type13(int by0, int bx0)
  *	4 - Inner Plus
  *	5 - Anti-Plus breaking the room into 4 segments
  */
-static void build_type14(int by0, int bx0)
+static void build_type14(int bx0, int by0)
 {
 	int         y, x, y1, x1;
 	int         y2, x2, yval, xval;
@@ -3898,7 +3898,7 @@ static void build_type14(int by0, int bx0)
 /*
  * Type 15 -- Parallelagram Shaped Rooms
  */
-static void build_type15(int by0, int bx0)
+static void build_type15(int bx0, int by0)
 {
 	u16b		h, w;
 	int         y, x, y1, x1, yval, xval;
@@ -3963,21 +3963,21 @@ bool room_build(int by0, int bx0, int typ)
 	switch (typ)
 	{ 
 		/* Build an appropriate room */
-		case 15: build_type15(by0, bx0); break;
-		case 14: build_type14(by0, bx0); break;
-		case 13: build_type13(by0, bx0); break;
-		case 12: build_type12(by0, bx0); break;
-		case 11: build_type11(by0, bx0); break;
-		case 10: build_type10(by0, bx0); break;
-		case 9: build_type9(by0, bx0); break;
-		case 8: build_type8(by0, bx0); break;
-		case 7: build_type7(by0, bx0); break;
-		case 6: build_type6(by0, bx0); break;
-		case 5: build_type5(by0, bx0); break;
-		case 4: build_type4(by0, bx0); break;
-		case 3: build_type3(by0, bx0); break;
-		case 2: build_type2(by0, bx0); break;
-		case 1: build_type1(by0, bx0); break;
+		case 15: build_type15(bx0, by0); break;
+		case 14: build_type14(bx0, by0); break;
+		case 13: build_type13(bx0, by0); break;
+		case 12: build_type12(bx0, by0); break;
+		case 11: build_type11(bx0, by0); break;
+		case 10: build_type10(bx0, by0); break;
+		case 9: build_type9(bx0, by0); break;
+		case 8: build_type8(bx0, by0); break;
+		case 7: build_type7(bx0, by0); break;
+		case 6: build_type6(bx0, by0); break;
+		case 5: build_type5(bx0, by0); break;
+		case 4: build_type4(bx0, by0); break;
+		case 3: build_type3(bx0, by0); break;
+		case 2: build_type2(bx0, by0); break;
+		case 1: build_type1(bx0, by0); break;
 
 		/* Paranoia */
 		default: return (FALSE);
