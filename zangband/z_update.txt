@@ -26,6 +26,8 @@ Zangband 2.7.4
   been fixed.
   The borg now uses id / *id* again. 
   The borg can now activate rings, rods, wands etc.
+  The borg enchants items better.
+  Improve the borg ^z commands displays.
 - The game now makes wooden bridges over the rivers in the
   wilderness.
 - Changed the effects of the 'strange luck' flag to make them
@@ -117,8 +119,8 @@ Zangband 2.7.4
 - Updated the FAQ
 - Added some magical macros that allow easy access to the object
   and monster flags.
-- Revert change to get_check() that made it interpret enter as
-  "yes" in prompts.
+- Change the sense of the dangerous (y/n) questions so that yes
+  is always the safest option.
 - Use a smarter method of selecting which buildings to use.
   Rarity now works properly.
 - Fix some silly messages given when blind. 
@@ -148,6 +150,9 @@ Zangband 2.7.4
 - Add the auto-more option from angband.
 - Make starting in wizard mode be able to prevent death again.
   (Instead of crashing on an assert.)
+- Improved the error messages given when lua scripts fail.
+- Fix bug in message display when printing strings with embedded
+  carriage returns.
 
 
 Zangband 2.7.3:
