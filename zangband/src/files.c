@@ -2936,8 +2936,10 @@ errr file_character(cptr name, bool full)
 			fprintf(fff, "\n You have defeated %lu enemies.\n", Total);
 	}
 
+#if 0
 	fprintf(fff, "\n\n  [Virtues]\n\n");
 	dump_virtues(fff);
+#endif /* 0 */
 
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
