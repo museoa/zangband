@@ -2560,7 +2560,7 @@ static void process_monster(int m_idx)
 			 (void *) &mon_enter_test);
 			 
 		/* Take turn in some cases. */
-		if (!mon_enter_test.do_move && do_move) do_turn;
+		if (!mon_enter_test.do_move && do_move) do_turn = TRUE;
 		
 		/* Get result */
 		do_move = mon_enter_test.do_move;

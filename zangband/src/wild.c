@@ -320,10 +320,6 @@ static void add_town_wall(void)
 {
 	int i;
 	
-	
-	/* Mega hack - the field functions need area() to work */
-	area = access_cave;
-
 	/* Upper and lower walls */
 	for (i = 0; i < TOWN_WID; i++)
 	{
@@ -359,9 +355,6 @@ static void add_town_wall(void)
 			cave[i][TOWN_WID - 1].feat = FEAT_PERM_OUTER;
 		}
 	}
-	
-	/* Mega hack - back to the wilderness */
-	area = access_wild;
 }
 
 /*
