@@ -625,6 +625,80 @@ void search(void)
 	}
 }
 
+/*
+ * Determine if the object can be picked up, and has "=g" in its inscription.
+ */
+bool auto_pickup_okay(object_type *o_ptr)
+{
+	cptr s;
+
+	/* It can't be carried */
+	if (!inven_carry_okay(o_ptr)) return (FALSE);
+
+	/* No inscription */
+	if (!o_ptr->inscription) return (FALSE);
+
+	/* Find a '=' */
+	s = strchr(quark_str(o_ptr->inscription), '=');
+
+	/* Process inscription */
+	while (s)
+	{
+		/* Auto-pickup on "=g" */
+		if (s[1] == 'g') return (TRUE);
+
+		/* Find another '=' */
+		s = strchr(s + 1, '=');
+	}
+
+	/* Don't auto pickup */
+	return (FALSE);
+}
+
+/*
+ * Helper routine for py_pickup() and py_pickup_floor().
+ *
+ * Add the given dungeon object to the character's inventory.
+ *
+ * Delete the object afterwards.
+ */
+void py_pickup_aux(int o_idx)
+{
+	int slot, i;
+
+	char o_name[80];
+	object_type *o_ptr;
+
+	o_ptr = &o_list[o_idx];
+
+	/* Carry the object */
+	slot = inven_carry(o_ptr);
+
+	/* Get the object again */
+	o_ptr = &inventory[slot];
+
+	/* Describe the object */
+	object_desc(o_name, o_ptr, TRUE, 3);
+
+	/* Message */
+	msg_format("You have %s (%c).", o_name, index_to_label(slot));
+
+	/* Check if completed a quest */
+	for (i = 0; i < max_quests; i++)
+	{
+		if ((quest[i].type == QUEST_TYPE_FIND_ARTIFACT) &&
+		    (quest[i].status == QUEST_STATUS_TAKEN) &&
+			   (quest[i].k_idx == o_ptr->name1))
+		{
+			quest[i].status = QUEST_STATUS_COMPLETED;
+			msg_print("You completed your quest!");
+			msg_print(NULL);
+		}
+	}
+	
+	/* Delete the object */
+	delete_object_idx(o_idx);
+}
 
 /*
  * Automatically destroy items in this grid.
@@ -674,7 +748,6 @@ static void auto_destroy_items(cave_type *c_ptr)
 		}
 	}
 }
-
 
 
 /*
@@ -753,7 +826,13 @@ void carry(int pickup)
 			/* Delete the gold */
 			delete_object_idx(this_o_idx);
 		}
-
+		
+		/* Test for auto-pickup */
+		else if (auto_pickup_okay(o_ptr))
+		{
+			/* Pick up the object */
+			py_pickup_aux(this_o_idx);
+		}
 		/* Pick up objects */
 		else
 		{
@@ -785,36 +864,8 @@ void carry(int pickup)
 				/* Attempt to pick up an object. */
 				if (okay)
 				{
-					int slot;
-					int i;
-
-					/* Carry the item */
-					slot = inven_carry(o_ptr);
-
-					/* Get the item again */
-					o_ptr = &inventory[slot];
-
-					/* Describe the object */
-					object_desc(o_name, o_ptr, TRUE, 3);
-
-					/* Message */
-					msg_format("You have %s (%c).", o_name, index_to_label(slot));
-
-					/* Check if completed a quest */
-					for (i = 0; i < max_quests; i++)
-					{
-						if ((quest[i].type == QUEST_TYPE_FIND_ARTIFACT) &&
-						    (quest[i].status == QUEST_STATUS_TAKEN) &&
-						    (quest[i].k_idx == o_ptr->name1))
-						{
-							quest[i].status = QUEST_STATUS_COMPLETED;
-							msg_print("You completed your quest!");
-							msg_print(NULL);
-						}
-					}
-
-					/* Delete the object */
-					delete_object_idx(this_o_idx);
+					/* Pick up the object */
+					py_pickup_aux(this_o_idx);
 				}
 			}
 		}

@@ -3880,8 +3880,6 @@ void py_pickup_floor(int pickup)
 	char o_name[80];
 	object_type *o_ptr;
 
-	int i, slot;
-
 	int floor_num = 0, floor_list[23], floor_o_idx = 0;
 
 	int can_pickup = 0;
@@ -3928,6 +3926,17 @@ void py_pickup_floor(int pickup)
 			continue;
 		}
 
+		/* Test for auto-pickup */
+		if (auto_pickup_okay(o_ptr))
+		{
+			/* Pick up the object */
+			py_pickup_aux(this_o_idx);
+
+			/* Check the next object */
+			continue;
+		}
+		
+		
 		/* Count non-gold objects that can be picked up. */
 		if (inven_carry_okay(o_ptr))
 		{
@@ -4124,33 +4133,8 @@ void py_pickup_floor(int pickup)
 
 #endif /* ALLOW_EASY_SENSE */
 
-	/* Carry the object */
-	slot = inven_carry(o_ptr);
-
-	/* Get the object again */
-	o_ptr = &inventory[slot];
-
-	/* Describe the object */
-	object_desc(o_name, o_ptr, TRUE, 3);
-
-	/* Message */
-	msg_format("You have %s (%c).", o_name, index_to_label(slot));
-
-	/* Check if completed a quest */
-	for (i = 0; i < max_quests; i++)
-	{
-		if ((quest[i].type == QUEST_TYPE_FIND_ARTIFACT) &&
-			(quest[i].status == QUEST_STATUS_TAKEN) &&
-			(quest[i].k_idx == o_ptr->name1))
-		{
-			quest[i].status = QUEST_STATUS_COMPLETED;
-			msg_print("You completed your quest!");
-			msg_print(NULL);
-		}
-	}
-
-	/* Delete the object */
-	delete_object_idx(this_o_idx);
+	/* Pick up the object */
+	py_pickup_aux(this_o_idx);
 }
 
 #endif /* ALLOW_EASY_FLOOR */
