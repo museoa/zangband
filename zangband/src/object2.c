@@ -4309,6 +4309,9 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 		/* The player is lucky - the item is better than normal */
 		delta_level += 20;
 	}
+	
+	/* Renormalise the change in level */
+	delta_level = randint0(delta_level);
 
 	/* Base level for the object */
 	base = object_level + delta_level;
