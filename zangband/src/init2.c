@@ -267,19 +267,18 @@ static errr check_modification_date(int fd, cptr template_file)
 	/* Access stats on text file */
 	if (stat(buf, &txt_stat))
 	{
-		/* Error */
-		return (-1);
+		/* No text file - continue */
 	}
 
 	/* Access stats on raw file */
-	if (fstat(fd, &raw_stat))
+	else if (fstat(fd, &raw_stat))
 	{
 		/* Error */
 		return (-1);
 	}
 
 	/* Ensure text file is not newer than raw file */
-	if (txt_stat.st_mtime > raw_stat.st_mtime)
+	else if (txt_stat.st_mtime > raw_stat.st_mtime)
 	{
 		/* Reprocess text file */
 		return (-1);
@@ -1399,7 +1398,6 @@ static errr init_r_info_raw(int fd)
 	fd_read(fd, (char*)(r_text), r_head->text_size);
 
 #endif /* DELAY_LOAD_R_TEXT */
-
 
 	/* Success */
 	return (0);
@@ -2812,6 +2810,12 @@ static errr init_alloc(void)
 	}
 
 #endif /* SORT_R_INFO */
+
+#if 0
+
+	write_r_info_txt();
+
+#endif
 
 	/* Init the "alloc_kind_table" */
 	(void)init_object_alloc();
