@@ -890,6 +890,11 @@ extern player_magic *pmb_ptr;	/* Player magic info */
  */
 extern u16b borg_step;	/* Step count (if any) */
 
+/*
+ * Status message search string
+ */
+extern char borg_match[128];  /* Search string */
+
 
 /*
  * Log file
