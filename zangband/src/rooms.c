@@ -5189,7 +5189,7 @@ bool room_build(void)
 {
 	int x, y;
 
-	int type;
+	int type = 0;
 
 	int i;
 	int val, total;
@@ -5209,7 +5209,7 @@ bool room_build(void)
 	{
 		if (depth < room_list[i].depth) continue;
 		if (!(dun->room_types & room_list[i].flags)) continue;
-		if ((dun->crowded >= 2) && (room_list[type].flags & RT_TAG_CROWDED)) continue;
+		if ((dun->crowded >= 2) && (room_list[i].flags & RT_TAG_CROWDED)) continue;
 		
 		total += room_list[i].chance;
 	}
@@ -5221,7 +5221,7 @@ bool room_build(void)
 		
 		if (depth < room_list[i].depth) continue;
 		if (!(dun->room_types & room_list[i].flags)) continue;
-		if ((dun->crowded >= 2) && (room_list[type].flags & RT_TAG_CROWDED)) continue;
+		if ((dun->crowded >= 2) && (room_list[i].flags & RT_TAG_CROWDED)) continue;
 		
 		val -= room_list[i].chance;
 
