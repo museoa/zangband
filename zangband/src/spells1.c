@@ -1745,6 +1745,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				dam = 0;
 				note = " is immune!";
+
+				/* Memorize a flag */
+				if (seen) r_ptr->r_flags2 |= (RF2_EMPTY_MIND);
 			}
 			else if ((r_ptr->flags2 & RF2_STUPID) ||
 						(r_ptr->flags2 & RF2_WEIRD_MIND) ||
@@ -1836,6 +1839,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				dam = 0;
 				note = " is immune!";
+
+				/* Memorize a flag */
+				if (seen) r_ptr->r_flags2 |= (RF2_EMPTY_MIND);
 			}
 			else if ((r_ptr->flags2 & RF2_STUPID) ||
 			         (r_ptr->flags2 & RF2_WEIRD_MIND) ||
