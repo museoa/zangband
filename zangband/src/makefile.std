@@ -176,7 +176,7 @@ LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
 ## (Use the -m option to start the one you want.)
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g  -D"USE_GCU" -D"USE_VCS"\
-#         -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"
+#         -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
 #         `gtk-config --cflags` -D"USE_GTK" 
 #		 
 #LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga \
