@@ -1928,6 +1928,8 @@ static int priority_tunnel(int y, int x)
 	/* Count number of floors around square */ 
 	for (i = 1; i < 10; i++)
 	{
+		if (!in_bounds2(y + ddy[i], x + ddx[i])) continue;
+		
 		if (cave_floor_grid(&cave[y + ddy[i]][x + ddx[i]]))
 			count++;
 	}
@@ -3711,6 +3713,8 @@ void update_flow(void)
 		for (d = 0; d < 8; d++)
 		{
 			/* Add that child if "legal" */
+			if(!in_bounds2(y+ddy_ddd[d], x+ddx_ddd[d])) continue;
+			
 			update_flow_aux(y+ddy_ddd[d], x+ddx_ddd[d], area(y,x)->cost+1);
 		}
 	}
