@@ -690,7 +690,7 @@ s16b get_obj_num(int level, int min_level)
 	/* Pick an object */
 	value1 = randint0(total);
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 3; i++)
 	{
 		/* Try for a "better" object once */
 		value2 = randint0(total);
