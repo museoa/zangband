@@ -559,7 +559,6 @@ static void Widget_WorldChanged(ClientData instanceData)
     Widget *widgetPtr = (Widget *) instanceData;
 	Tk_Window tkwin = widgetPtr->tkwin;
     XGCValues gcValues;
-	WidgetItem *itemPtr;
 
 	/* Allocate GC */
     if (widgetPtr->copyGC == None)
@@ -594,27 +593,8 @@ static void Widget_WorldChanged(ClientData instanceData)
 	/* No bitmap yet */
 	if (widgetPtr->bitmap.pixelPtr == NULL)
 	{
-		DoubleLink *link;
-
 		/* Allocate bitmap */
 		Widget_CreateBitmap(widgetPtr);
-
-		/* Check each Widget item */
-		for (link = widgetPtr->linkerItem.head; link; link = link->next)
-		{
-			itemPtr = DoubleLink_Data(link, WidgetItem);
-			
-			/*
-			 * Some Widget items are not allowed to be out of bounds. In such
-			 * cases, we call a item-type-specific callback to allow the
-			 * item to move itself to a safe position.
-			 */
-			if (itemPtr->typePtr->changedProc)
-			{
-				(void) (*itemPtr->typePtr->changedProc)(widgetPtr->interp,
-					widgetPtr, itemPtr);
-			}
-		}
 	}
 
 	if (widgetPtr->noUpdate)
@@ -1361,27 +1341,6 @@ error:
 	return TCL_ERROR;
 }
 
-/*
- * Delete a Widget item. This is currently only called when a Widget
- * is deleted (ie, you can't delete an individual item. It would be
- * best to replace the linked list of items with another direct-lookup
- * method, and implement unique item ids like a Canvas.
- */
-static void WidgetItem_Delete(Widget *widgetPtr, WidgetItem *itemPtr)
-{
-	/* Call the item delete callback */
-	(*itemPtr->typePtr->deleteProc)(widgetPtr, itemPtr);
-
-	Tk_FreeConfigOptions((char *) itemPtr, itemPtr->typePtr->optionTable,
-		widgetPtr->tkwin);
-
-	/* Remove the item from the linked list of items */
-	DoubleLink_Unlink(&itemPtr->link);
-
-	/* Free the item memory */
-	Tcl_Free((char *) itemPtr);
-}
-
 
 static void Widget_DrawInvalid(Widget *widgetPtr)
 {
@@ -1503,16 +1462,6 @@ static void Widget_Destroy(Widget *widgetPtr)
 	if (widgetPtr->bitmap.pixelPtr != NULL)
 	{
 		Widget_DeleteBitmap(widgetPtr);
-	}
-
-	/*
-	 * Free each Widget item. It is very important that all Tk fonts
-	 * are freed.
-	 */
-	while (widgetPtr->linkerItem.head)
-	{
-		WidgetItem_Delete(widgetPtr,
-			DoubleLink_Data(widgetPtr->linkerItem.head, WidgetItem));
 	}
 
 	/*
@@ -1732,8 +1681,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->x_min = widgetPtr->x_max = 0;
 	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
 	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
-	DoubleLink_Init(&widgetPtr->linkerItem, NULL, NULL);
-	widgetPtr->linkerItem.what = "item";
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
