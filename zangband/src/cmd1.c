@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: cmd1.c */
 
 /* Purpose: Movement commands (part 1) */
@@ -2337,7 +2336,7 @@ void move_player(int dir, int do_pickup)
 	}
 	
 	/* Fields can block movement */
-	else if(!(p_can_pass_walls || p_can_pass_fields))
+	else if (!(p_can_pass_walls || p_can_pass_fields))
 	{
 		msg_print("You can't cross that!");
 		running = 0;

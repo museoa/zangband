@@ -3295,8 +3295,19 @@
   (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
    ((X) >= panel_col_min) && ((X) <= panel_col_max))
 
+/*
+ * Determine is a map location is fully inside the outer walls.
+ */
+#define in_bounds(Y,X) \
+	(((Y) > min_hgt) && ((X) > min_wid)\
+	 && ((Y) < max_hgt - 1) && ((X) < max_wid - 1))
 
-
+/*
+ * Determine is a map location is on or inside the outer walls.
+ */
+#define in_bounds2(Y,X) \
+	(((Y) >= min_hgt) && ((X) >= min_wid)\
+	 && ((Y) < max_hgt) && ((X) < max_wid))
 /*
  * Determine if a "legal" grid is a "floor" grid
  *

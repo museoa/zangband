@@ -146,8 +146,8 @@ void add_river(int feat1, int feat2)
 
 
 	/* Hack -- Choose starting point */
-	y2 = randint(cur_hgt / 2 - 2) + cur_hgt / 2;
-	x2 = randint(cur_wid / 2 - 2) + cur_wid / 2;
+	y2 = rand_range(min_hgt + 1, max_hgt - 2);
+	x2 = rand_range(min_wid + 1, max_wid - 2);
 
 	/* Hack -- Choose ending point somewhere on boundary */
 	switch(randint(4))
@@ -155,29 +155,29 @@ void add_river(int feat1, int feat2)
 		case 1:
 		{
 			/* top boundary */
-			x1 = randint(cur_wid-2)+1;
-			y1 = 1;
+			x1 = rand_range(min_wid + 1, max_wid - 2);
+			y1 = min_hgt + 1;
 			break;
 		}
 		case 2:
 		{
 			/* left boundary */
-			x1 = 1;
-			y1 = randint(cur_hgt-2)+1;
+			x1 = min_wid + 1;
+			y1 = rand_range(min_hgt + 1, max_hgt - 2);
 			break;
 		}
 		case 3:
 		{
 			/* right boundary */
-			x1 = cur_wid-1;
-			y1 = randint(cur_hgt-2)+1;
+			x1 = max_wid - 2;
+			y1 = rand_range(min_hgt + 1, max_hgt - 2);
 			break;
 		}
 		case 4:
 		{
 			/* bottom boundary */
-			x1 = randint(cur_wid-2)+1;
-			y1 = cur_hgt-1;
+			x1 = rand_range(min_wid + 1, max_wid - 2);
+			y1 = max_hgt - 2;
 			break;
 		}
 	}
@@ -212,8 +212,8 @@ void build_streamer(int feat, int chance)
 	cave_type *c_ptr;
 
 	/* Hack -- Choose starting point */
-	y = rand_spread(cur_hgt / 2, (cur_hgt / 2 > 10? 10: cur_hgt / 2));
-	x = rand_spread(cur_wid / 2, (cur_wid / 2 > 15? 15: cur_wid / 2));
+	y = rand_spread(max_hgt / 2, (max_hgt / 2 > 10? 10: max_hgt / 2));
+	x = rand_spread(max_wid / 2, (max_wid / 2 > 15? 15: max_wid / 2));
 
 	/* Choose a random compass direction */
 	dir = ddd[rand_int(8)];
@@ -335,8 +335,8 @@ void destroy_level(void)
 	for (n = 0; n < randint(5); n++)
 	{
 		/* Pick an epi-center */
-		x1 = rand_range(5, cur_wid - 1 - 5);
-		y1 = rand_range(5, cur_hgt - 1 - 5);
+		x1 = rand_range(min_wid + 5, max_wid - 1 - 5);
+		y1 = rand_range(min_hgt + 5, max_hgt - 1 - 5);
 
 		/* Big area of affect */
 		for (y = (y1 - 15); y <= (y1 + 15); y++)

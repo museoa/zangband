@@ -2105,16 +2105,11 @@ void do_cmd_debug(void)
 		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
-			/* Only make squares glow in dungeon. */
-			/* Daytime in the wilderness does this for you outside. */
-			if (dun_level)
+			for (y = min_hgt; y < max_hgt; y++)
 			{
-				for (y = 0; y < cur_hgt; y++)
+				for (x = min_wid; x < max_wid; x++)
 				{
-					for (x = 0; x < cur_wid; x++)
-					{
-						area(y, x)->info |= (CAVE_GLOW | CAVE_MARK);
-					}
+					area(y, x)->info |= (CAVE_GLOW | CAVE_MARK);
 				}
 			}
 

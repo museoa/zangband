@@ -1,5 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
-
 /* File: externs.h */
 
 /* Purpose: extern declarations (variables and functions) */
@@ -125,8 +123,10 @@ extern bool alive;
 extern bool death;
 extern s16b running;
 extern s16b resting;
-extern s16b cur_hgt;
-extern s16b cur_wid;
+extern s16b min_hgt;
+extern s16b max_hgt;
+extern s16b min_wid;
+extern s16b max_wid;
 extern s16b dun_level;
 extern s16b num_repro;
 extern bool mon_fight;
@@ -325,8 +325,6 @@ extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];
 extern cave_type *cave[MAX_HGT];
 extern cave_type *(*area)(int, int);
-extern bool (*in_bounds)(int, int);
-extern bool (*in_bounds2)(int, int);
 extern u16b *temp_block[WILD_BLOCK_SIZE+1];
 extern cave_type **wild_cache[WILD_BLOCKS];
 extern wild_grid_type wild_grid;
@@ -1194,7 +1192,7 @@ extern errr init_object_alloc(void);
 extern void k_info_reset(void);
 
 /* wild.c */
-extern void light_dark_block(blk_ptr block_ptr, u16b x, u16b y);
+extern void light_dark_block(blk_ptr block_ptr, int x, int y);
 extern void change_level(int);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
 extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);
@@ -1287,7 +1285,7 @@ extern void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_summon(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing);
-extern void make_lockjam_door(s16b y, s16b x, int power, bool jam);
+extern void make_lockjam_door(int y, int x, int power, bool jam);
 extern void field_action_door_unlock(s16b *field_ptr, void *input);
 extern void field_action_door_bash(s16b *field_ptr, void *input);
 extern void field_action_door_lock_monster(s16b *field_ptr, void *input);

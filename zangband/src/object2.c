@@ -4630,18 +4630,9 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		/* Random locations */
 		else
 		{
-			if (!dun_level)
-			{
 				/* Pick a location */
-				ty = wild_grid.y_min + rand_int(WILD_GRID_SIZE * 16);
-				tx = wild_grid.x_min + rand_int(WILD_GRID_SIZE * 16);
-			}
-			else
-			{
-				/* Pick a location */
-				ty = rand_int(cur_hgt);
-				tx = rand_int(cur_wid);
-			}
+				ty = rand_range(min_hgt, max_hgt - 1);
+				tx = rand_range(min_wid, max_wid - 1);
 		}
 
 		/* Grid */

@@ -2450,25 +2450,19 @@ static void windows_map_aux(void)
 
 #ifdef ZANGBAND_WILDERNESS
 	
-	/* Is the player in the wilderness? */
-	if (dun_level == 0)
-	{
-		/* Work out offset of corner of dungeon-sized segment of the wilderness */
-		min_x = wild_grid.x_min;
-		min_y = wild_grid.y_min;
-		max_x = wild_grid.x_max;
-		max_y = wild_grid.y_max;
-	}
-	else
+	min_x = min_wid;
+	min_y = min_hgt;
+	max_x = max_wid;
+	max_y = max_hgt;
+
+#else /* ZANGBAND_WILDERNESS */
+
+	min_x = 0;
+	min_y = 0;
+	max_x = cur_wid;
+	max_y = cur_hgt;
 
 #endif /* ZANGBAND_WILDERNESS */
-
-	{
-		min_x = 0;
-		min_y = 0;
-		max_x = cur_wid;
-		max_y = cur_hgt;
-	}
 
 #else /* ZANGBAND */
 

@@ -15,7 +15,7 @@
 /*
  * Distance between two points via Newton-Raphson technique
  */
-int distance (int y1, int x1, int y2, int x2)
+int distance(int y1, int x1, int y2, int x2)
 {
 	int dy = ABS(y2 - y1);
 	int dx = ABS(x2 - x1);
@@ -57,6 +57,7 @@ bool is_trap(cave_type *c_ptr)
 {
 	return (field_is_type(c_ptr->fld_idx, FTYPE_TRAP) != 0);
 }
+
 
 /*
  * Return TRUE if the given square contains a known trap
@@ -519,6 +520,7 @@ static void image_random(byte *ap, char *cp)
 	}
 }
 
+
 /*
  * The 16x16 tile of the terrain supports lighting
  */
@@ -586,7 +588,7 @@ static byte lighting_colours[16] =
 
 	/* TERM_GREEN */
 	TERM_L_GREEN,
-	
+
 	/* TERM_BLUE */
 	TERM_BLUE,
 
@@ -604,7 +606,7 @@ static byte lighting_colours[16] =
 
 	/* TERM_YELLOW */
 	TERM_YELLOW,
-	
+
 	/* TERM_L_RED */
 	TERM_L_RED,
 
@@ -681,7 +683,7 @@ static void variable_player_graph(byte *a, char *c)
 			if (use_graphics)
 			{
 				*a = BMP_FIRST_PC_CLASS + p_ptr->pclass;
-				*c = BMP_FIRST_PC_RACE  + p_ptr->prace;
+				*c = BMP_FIRST_PC_RACE + p_ptr->prace;
 			}
 		}
 		else
@@ -1019,7 +1021,6 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Use a dark tile */
 					c++;
 				}
-				
 			}
 			else if ((info & (CAVE_LITE | CAVE_MNLT)) && view_yellow_lite)
 			{
@@ -1221,14 +1222,14 @@ void map_info(int y, int x, byte *ap, char *cp)
 				if (use_transparency && (fld_ptr->info & (FIELD_INFO_TRANS)))
 				{
 					/* Take into account dynamic lighting. */
-					c += fld_ptr->f_char - f_ptr->x_char; 
+					c += fld_ptr->f_char - f_ptr->x_char;
 				}
 				else
 				{
 					/* Normal char */
 					c = fld_ptr->f_char;
 				}
-				
+
 				/* Normal attr */
 				a = fld_ptr->f_attr;
 			}
@@ -1537,7 +1538,6 @@ void note_wild_spot(cave_type *c_ptr)
 				c_ptr->info |= (CAVE_MARK);
 			}
 		}
-		
 		/* Memorize torch-lit squares */
 		else if (c_ptr->info & (CAVE_LITE))
 		{
@@ -1691,22 +1691,10 @@ void prt_map(void)
 
 
 	/* Get bounds */
-	if (dun_level)
-	{
-		/* Dungeon */
-		xmin = (0 < panel_col_min) ? panel_col_min : 0;
-		xmax = (cur_wid - 1 > panel_col_max) ? panel_col_max : cur_wid - 1;
-		ymin = (0 < panel_row_min) ? panel_row_min : 0;
-		ymax = (cur_hgt - 1 > panel_row_max) ? panel_row_max : cur_hgt - 1;
-	}
-	else
-	{
-		/* Wilderness */
-		xmin = (wild_grid.x_min < panel_col_min) ? panel_col_min : wild_grid.x_min;
-		xmax = (wild_grid.x_max - 1> panel_col_max) ? panel_col_max : wild_grid.x_max - 1;
-		ymin = (wild_grid.y_min < panel_row_min) ? panel_row_min : wild_grid.y_min;
-		ymax = (wild_grid.y_max - 1 > panel_row_max) ? panel_row_max : wild_grid.y_max - 1;
-	}
+	xmin = (min_wid < panel_col_min) ? panel_col_min : 0;
+	xmax = (max_wid - 1 > panel_col_max) ? panel_col_max : max_wid - 1;
+	ymin = (min_hgt < panel_row_min) ? panel_row_min : 0;
+	ymax = (max_hgt - 1 > panel_row_max) ? panel_row_max : max_hgt - 1;
 
 	/* Bottom section of screen */
 	for (y = 1; y <= ymin - panel_row_prt; y++)
@@ -1953,12 +1941,12 @@ void display_map(int *cy, int *cx)
 	int hgt = Term->hgt - 2;
 	int wid = Term->wid - 14;
 
-	int yrat = cur_hgt / hgt;
-	int xrat = cur_wid / wid;
+	int yrat = (max_hgt - min_hgt) / hgt;
+	int xrat = (max_wid - min_wid) / wid;
 
 	/* Take care of rounding */
-	if (cur_hgt % hgt) yrat++;
-	if (cur_wid % wid) xrat++;
+	if ((max_hgt - min_hgt) % hgt) yrat++;
+	if ((max_wid - min_wid) % wid) xrat++;
 
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
@@ -2074,9 +2062,9 @@ void display_map(int *cy, int *cx)
 		(*cx) = px / xrat + COL_MAP;
 
 		/* Fill in the map of dungeon */
-		for (i = 0; i < cur_wid; ++i)
+		for (i = min_wid; i < max_wid; ++i)
 		{
-			for (j = 0; j < cur_hgt; ++j)
+			for (j = min_hgt; j < max_hgt; ++j)
 			{
 				/* Location */
 				x = i / xrat + 1;
@@ -2542,7 +2530,7 @@ struct vinfo_type
 	s16b grid_x[8];
 	s16b grid_y[8];
 
-   u32b bits_4;
+	u32b bits_4;
 	u32b bits_3;
 	u32b bits_2;
 	u32b bits_1;
@@ -2656,8 +2644,7 @@ static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
 			/* Paranoia */
 			if (hack->num_slopes >= VINFO_MAX_SLOPES)
 			{
-				quit_fmt("Too many slopes (%d)!",
-			         	VINFO_MAX_SLOPES);
+				quit_fmt("Too many slopes (%d)!", VINFO_MAX_SLOPES);
 			}
 
 			/* Save the slope, and advance */
@@ -2889,7 +2876,7 @@ errr vinfo_init(void)
 		/* Extra values */
 		vinfo[e].y = y;
 		vinfo[e].x = x;
-		vinfo[e].d = ((y > x) ? (y + x/2) : (x + y/2));
+		vinfo[e].d = ((y > x) ? (y + x / 2) : (x + y / 2));
 		vinfo[e].r = ((!y) ? x : (!x) ? y : (y == x) ? y : 0);
 	}
 
@@ -2897,7 +2884,7 @@ errr vinfo_init(void)
 	/* Verify maximal bits XXX XXX XXX */
 	if (((vinfo[1].bits_4 | vinfo[2].bits_4) != VINFO_BITS_4) ||
 	    ((vinfo[1].bits_3 | vinfo[2].bits_3) != VINFO_BITS_3) ||
-		 ((vinfo[1].bits_2 | vinfo[2].bits_2) != VINFO_BITS_2) ||
+	    ((vinfo[1].bits_2 | vinfo[2].bits_2) != VINFO_BITS_2) ||
 	    ((vinfo[1].bits_1 | vinfo[2].bits_1) != VINFO_BITS_1) ||
 	    ((vinfo[1].bits_0 | vinfo[2].bits_0) != VINFO_BITS_0))
 	{
@@ -3115,7 +3102,7 @@ void update_view(void)
 			if ((bits0 & (p->bits_0)) ||
 			    (bits1 & (p->bits_1)) ||
 			    (bits2 & (p->bits_2)) ||
-				 (bits3 & (p->bits_3)) ||
+			    (bits3 & (p->bits_3)) ||
 			    (bits4 & (p->bits_4)))
 			{
 				/* Get location */
@@ -3192,7 +3179,7 @@ void update_view(void)
 							 * function enormously.  All lit grids in
 							 * view are marked...
 							 */
-						 
+
 							/* Memorize */
 							info |= (CAVE_MARK);
 						}
@@ -3200,7 +3187,7 @@ void update_view(void)
 					else
 					{
 						if (info & (CAVE_LITE | CAVE_GLOW))
-						{					 
+						{
 							/* Memorize */
 							info |= (CAVE_MARK);
 						}
@@ -3211,8 +3198,8 @@ void update_view(void)
 
 					/* Save in array */
 					view_y[view_n] = y;
-    				view_x[view_n] = x;
-    				view_n++;
+					view_x[view_n] = x;
+					view_n++;
 				}
 				/* Handle wall */
 				else
@@ -3306,7 +3293,7 @@ void update_view(void)
 				/* Memorize objects */
 				o_ptr->marked = TRUE;
 			}
-			
+
 			/* Show the fields */
 			for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
 			{
@@ -3367,23 +3354,23 @@ void update_view(void)
 static bool mon_invis;
 
 /*
- * Add a square to the changes array 
+ * Add a square to the changes array
  */
-static void mon_lite_hack(s16b y, s16b x)
+static void mon_lite_hack(int y, int x)
 {
 	cave_type *c_ptr;
-	
+
 	/* Out of bounds */
 	if (!in_bounds2(y, x)) return;
-	
+
 	c_ptr = area(y, x);
-	
+
 	/* Want a unlit square in view of the player */
 	if ((c_ptr->info & (CAVE_MNLT | CAVE_VIEW)) != CAVE_VIEW) return;
-	
+
 	/* Hack XXX XXX - Is it a wall and monster not in LOS? */
 	if (!cave_los_grid(c_ptr) && mon_invis) return;
-	
+
 	/* Save this square */
 	if (temp_n < TEMP_MAX)
 	{
@@ -3391,12 +3378,12 @@ static void mon_lite_hack(s16b y, s16b x)
 		temp_y[temp_n] = y;
 		temp_n++;
 	}
-	
+
 	/* Light it */
 	c_ptr->info |= CAVE_MNLT;
 }
 
-    
+ 
 
 
 /*
@@ -3413,27 +3400,27 @@ void update_mon_lite(void)
 {
 	int i, rad;
 	cave_type *c_ptr;
-	
+
 	s16b fx, fy;
-	
+
 	s16b end_temp;
-	
+
 	/* Clear all monster lit squares */
 	for (i = 0; i < lite_n; i++)
 	{
 		/* Point to grid */
 		c_ptr = area(lite_y[i], lite_x[i]);
-		
+
 		/* Set temp flag */
 		c_ptr->info |= (CAVE_TEMP);
-		
+
 		/* Clear monster illumination flag */
-		c_ptr->info &= ~(CAVE_MNLT);	
+		c_ptr->info &= ~(CAVE_MNLT);
 	}
-	
+
 	/* Empty temp list of new squares to lite up */
 	temp_n = 0;
-	
+
 	/* Loop through monsters, adding newly lit squares to changes list */
 	for (i = 1; i < m_max; i++)
 	{
@@ -3442,27 +3429,27 @@ void update_mon_lite(void)
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
-		
+
 		/* Is it too far away? */
 		if (m_ptr->cdis > MAX_SIGHT + 3) continue;
-		
+
 		/* Get lite radius */
 		rad = 0;
-		
+
 		/* Note the radii are cumulative */
 		if (r_ptr->flags7 & (RF7_LITE_1)) rad++;
 		if (r_ptr->flags7 & (RF7_LITE_2)) rad += 2;
-		
+
 		/* Exit if has no light */
 		if (!rad) continue;
-		
+
 		/* Access the location */
 		fx = m_ptr->fx;
 		fy = m_ptr->fy;
-		
+
 		/* Is the monster visible? */
 		mon_invis = !(area(fy, fx)->info & CAVE_VIEW);
-		
+
 		/* The square it is on */
 		mon_lite_hack(fy, fx);
 
@@ -3485,9 +3472,9 @@ void update_mon_lite(void)
 				mon_lite_hack(fy + 2, fx + 1);
 				mon_lite_hack(fy + 2, fx);
 				mon_lite_hack(fy + 2, fx - 1);
-				
+
 				c_ptr = area(fy + 2, fx);
-				
+
 				/* Radius 3 */
 				if ((rad == 3) && cave_floor_grid(c_ptr))
 				{
@@ -3503,9 +3490,9 @@ void update_mon_lite(void)
 				mon_lite_hack(fy - 2, fx + 1);
 				mon_lite_hack(fy - 2, fx);
 				mon_lite_hack(fy - 2, fx - 1);
-				
+
 				c_ptr = area(fy - 2, fx);
-				
+
 				/* Radius 3 */
 				if ((rad == 3) && cave_floor_grid(c_ptr))
 				{
@@ -3521,9 +3508,9 @@ void update_mon_lite(void)
 				mon_lite_hack(fy + 1, fx + 2);
 				mon_lite_hack(fy, fx + 2);
 				mon_lite_hack(fy - 1, fx + 2);
-				
+
 				c_ptr = area(fy, fx + 2);
-				
+
 				/* Radius 3 */
 				if ((rad == 3) && cave_floor_grid(c_ptr))
 				{
@@ -3539,9 +3526,9 @@ void update_mon_lite(void)
 				mon_lite_hack(fy + 1, fx - 2);
 				mon_lite_hack(fy, fx - 2);
 				mon_lite_hack(fy - 1, fx - 2);
-				
+
 				c_ptr = area(fy, fx - 2);
-				
+
 				/* Radius 3 */
 				if ((rad == 3) && cave_floor_grid(c_ptr))
 				{
@@ -3583,20 +3570,20 @@ void update_mon_lite(void)
 
 	/* Save end of list of new squares */
 	end_temp = temp_n;
-	
-	/* 
+
+	/*
 	 * Look at old set flags to see if there are any changes.
 	 */
 	for (i = 0; i < lite_n; i++)
 	{
 		fx = lite_x[i];
 		fy = lite_y[i];
-		
+
 		if (!in_bounds2(fy, fx)) continue;
-		
+
 		/* Point to grid */
 		c_ptr = area(fy, fx);
-		
+
 		/* It it no longer lit? */
 		if (!(c_ptr->info & CAVE_MNLT) && player_has_los_grid(c_ptr))
 		{
@@ -3604,31 +3591,31 @@ void update_mon_lite(void)
 			note_spot(fy, fx);
 			lite_spot(fy, fx);
 		}
-		
+
 		/* Add to end of temp array */
 		temp_x[temp_n] = fx;
 		temp_y[temp_n] = fy;
 		temp_n++;
 	}
-	
+
 	/* Clear the lite array */
 	lite_n = 0;
-	
+
 	/* Copy the temp array into the lit array lighting the new squares. */
 	for (i = 0; i < temp_n; i++)
 	{
 		fx = temp_x[i];
 		fy = temp_y[i];
-		
+
 		if (!in_bounds2(fy, fx)) continue;
-		
+
 		/* Point to grid */
 		c_ptr = area(fy, fx);
-		
+
 		if (i >= end_temp)
 		{
 			/* Clear the temp flag for the old lit grids */
-			c_ptr->info &= ~(CAVE_TEMP);	
+			c_ptr->info &= ~(CAVE_TEMP);
 		}
 		else
 		{
@@ -3639,14 +3626,14 @@ void update_mon_lite(void)
 				note_spot(fy, fx);
 				lite_spot(fy, fx);
 			}
-		
+
 			/* Save in the monster lit array */
 			lite_x[lite_n] = fx;
 			lite_y[lite_n] = fy;
 			lite_n++;
 		}
 	}
-	
+
 	/* Finished with temp_n */
 	temp_n = 0;
 }
@@ -3655,17 +3642,17 @@ void clear_mon_lite(void)
 {
 	int i;
 	cave_type *c_ptr;
-		
+
 	/* Clear all monster lit squares */
 	for (i = 0; i < lite_n; i++)
 	{
 		/* Point to grid */
 		c_ptr = area(lite_y[i], lite_x[i]);
-		
+
 		/* Clear monster illumination flag */
-		c_ptr->info &= ~(CAVE_MNLT);	
+		c_ptr->info &= ~(CAVE_MNLT);
 	}
-	
+
 	/* Empty the array */
 	lite_n = 0;
 }
@@ -3701,31 +3688,14 @@ void forget_flow(void)
 	/* Nothing to forget */
 	if (!flow_n) return;
 
-	if (!dun_level)
+	/* Check the entire dungeon */
+	for (y = min_hgt; y < max_hgt; y++)
 	{
-
-		/* Check the entire dungeon */
-		for (y = wild_grid.y_min; y < wild_grid.y_max - 1; y++)
+		for (x = min_wid; x < max_wid; x++)
 		{
-			for (x = wild_grid.x_min; x < wild_grid.x_max - 1; x++)
-			{
-				/* Forget the old data */
-				area(y, x)->cost = 0;
-				area(y, x)->when = 0;
-			}
-		}
-	}
-	else
-	{
-		/* Check the entire dungeon */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				/* Forget the old data */
-				area(y, x)->cost = 0;
-				area(y, x)->when = 0;
-			}
+			/* Forget the old data */
+			area(y, x)->cost = 0;
+			area(y, x)->when = 0;
 		}
 	}
 
@@ -3798,30 +3768,14 @@ void update_flow(void)
 	/* Cycle the old entries (once per 128 updates) */
 	if (flow_n++ == 255)
 	{
-		if (!dun_level)
+		/* Rotate the time-stamps */
+		for (y = min_hgt; y < max_hgt; y++)
 		{
-			/* Rotate the time-stamps */
-			for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
+			for (x = min_wid; x < max_wid; x++)
 			{
-				for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
-				{
-					c_ptr = area(y, x);
-					w = c_ptr->when;
-					c_ptr->when = (w > 128) ? (w - 128) : 0;
-				}
-			}
-		}
-		else
-		{
-			/* Rotate the time-stamps */
-			for (y = 0; y < cur_hgt; y++)
-			{
-				for (x = 0; x < cur_wid; x++)
-				{
-					c_ptr = area(y, x);
-					w = c_ptr->when;
-					c_ptr->when = (w > 128) ? (w - 128) : 0;
-				}
+				c_ptr = area(y, x);
+				w = c_ptr->when;
+				c_ptr->when = (w > 128) ? (w - 128) : 0;
 			}
 		}
 
@@ -3912,9 +3866,9 @@ void update_flow(void)
  */
 void map_area(void)
 {
-	int             i, x, y, y1, y2, x1, x2;
+	int i, x, y, y1, y2, x1, x2;
 
-	cave_type       *c_ptr;
+	cave_type *c_ptr;
 
 
 	/* Pick an area to map */
@@ -3923,22 +3877,11 @@ void map_area(void)
 	x1 = px - MAX_DETECT - randint(20);
 	x2 = px + MAX_DETECT + randint(20);
 
-	if (!dun_level)
-	{
-		/* Speed -- shrink to fit legal bounds */
-		if (y1 < wild_grid.y_min + 1) y1 = wild_grid.y_min + 1;
-		if (y2 > wild_grid.y_max - 2) y2 = wild_grid.y_max - 2;
-		if (x1 < wild_grid.x_min + 1) x1 = wild_grid.x_min + 1;
-		if (x2 > wild_grid.x_max - 2) x2 = wild_grid.x_max - 2;
-	}
-	else
-	{
-		/* Speed -- shrink to fit legal bounds */
-		if (y1 < 1) y1 = 1;
-		if (y2 > cur_hgt - 2) y2 = cur_hgt - 2;
-		if (x1 < 1) x1 = 1;
-		if (x2 > cur_wid - 2) x2 = cur_wid - 2;
-	}
+	/* Speed -- shrink to fit legal bounds */
+	if (y1 < min_hgt + 1) y1 = min_hgt + 1;
+	if (y2 > max_hgt - 2) y2 = max_hgt - 2;
+	if (x1 < min_wid + 1) x1 = min_wid + 1;
+	if (x2 > max_wid - 2) x2 = max_wid - 2;
 
 	/* Scan that area */
 	for (y = y1; y <= y2; y++)
@@ -3950,7 +3893,7 @@ void map_area(void)
 			/* All non-walls are "checked" */
 			if ((c_ptr->feat < FEAT_SECRET) ||
 			    (c_ptr->feat == FEAT_RUBBLE) ||
-				 ((c_ptr->feat >= FEAT_PATTERN_START)))
+			    (c_ptr->feat >= FEAT_PATTERN_START))
 			{
 				/* Memorize normal features */
 				if (c_ptr->feat >= FEAT_OPEN)
@@ -4040,42 +3983,22 @@ void wiz_lite(void)
 		update_mon(i, FALSE);
 	}
 
-	if (!dun_level)
+	/* Scan all normal grids */
+	for (y = min_hgt; y < max_hgt; y++)
 	{
-		/* Scan all normal grids */
-		for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
+		for (x = min_wid; x < max_wid; x++)
 		{
-			for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
-			{
-				cave_type *c_ptr = area(y,x);
+			cave_type *c_ptr = area(y,x);
 
-				/* Memorize normal features */
-				if (c_ptr->feat >= FEAT_OPEN)
-				{
-					/* Memorize the grid */
-					c_ptr->info |= (CAVE_MARK);
-				}
+			/* Memorize normal features */
+			if (c_ptr->feat >= FEAT_OPEN)
+			{
+				/* Memorize the grid */
+				c_ptr->info |= (CAVE_MARK);
 			}
 		}
 	}
-	else
-	{
-		/* Scan all normal grids */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				cave_type *c_ptr = area(y,x);
 
-				/* Memorize normal features */
-				if (c_ptr->feat >= FEAT_OPEN)
-				{
-					/* Memorize the grid */
-					c_ptr->info |= (CAVE_MARK);
-				}
-			}
-		}
-	}
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -4095,36 +4018,18 @@ void wiz_dark(void)
 {
 	int i, y, x;
 
-
-	if (!dun_level)
+	/* Forget every grid */
+	for (y = min_hgt; y < max_hgt; y++)
 	{
-		/* Forget every grid */
-		for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
+		for (x = min_wid; x < max_wid; x++)
 		{
-			for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
-			{
-				cave_type *c_ptr = area(y, x);
+			cave_type *c_ptr = area(y, x);
 
-				/* Process the grid */
-				c_ptr->info &= ~(CAVE_MARK);
-			}
-		}
-
-	}
-	else
-	{
-		/* Forget every grid */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				cave_type *c_ptr = area(y, x);
-
-				/* Process the grid */
-				c_ptr->info &= ~(CAVE_MARK);
-			}
+			/* Process the grid */
+			c_ptr->info &= ~(CAVE_MARK);
 		}
 	}
+
 	/* Forget all objects */
 	for (i = 1; i < o_max; i++)
 	{
@@ -4139,7 +4044,7 @@ void wiz_dark(void)
 		/* Forget the object */
 		o_ptr->marked = FALSE;
 	}
-	
+
 	/* Forget all fields */
 	for (i = 1; i < fld_max; i++)
 	{
@@ -4202,7 +4107,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 	int *max = x, *min = y;
 	int min1 = y1, min2 = y2;
 	int max1 = x1, max2 = x2;
-   int dmin, dmax;
+	int dmin, dmax;
 
 	/* Extract the distance travelled */
 	int dy = ABS(*y - y1);
@@ -4226,7 +4131,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 		max1 = y1; max2 = y2;
 		dmin = dx; dmax = dy;
 	}
-   else
+	else
 	{
 		dmin = dy; dmax = dx;
 	}
@@ -4286,7 +4191,7 @@ bool projectable(int y1, int x1, int y2, int x2)
  */
 void scatter(int *yp, int *xp, int y, int x, int d, int m)
 {
-	int nx, ny;
+	int nx = 0, ny = 0;
 
 	int c = 0;
 
@@ -4424,4 +4329,3 @@ void disturb(int stop_search, int unused_flag)
 	/* Flush the input if requested */
 	if (flush_disturb) flush();
 }
-

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: load.c */
 
 /* Purpose: support for loading savefiles -BEN- */
@@ -1987,8 +1986,8 @@ static errr rd_dungeon_aux(void)
 
 
 	/* Only read as necessary */
-	ymax = cur_hgt;
-	xmax = cur_wid;
+	ymax = max_hgt;
+	xmax = max_wid;
 
 	if (dun_level)
 	{
@@ -2607,9 +2606,9 @@ static errr rd_dungeon_aux(void)
 
 
 	/* Hack -- clean up the dungeon */
-	for (y = 0; y < cur_hgt; y++)
+	for (y = min_hgt; y < max_hgt; y++)
 	{
-		for (x = 0; x < cur_wid; x++)
+		for (x = min_wid; x < max_wid; x++)
 		{
 			cave_type *c_ptr = area(y,x);
 			
@@ -2908,6 +2907,15 @@ static void load_wild_data(void)
 				wild_cache[i + WILD_GRID_SIZE * j];
 		}
 	}
+	
+	/* If not in dungeon - reset the bounds */
+	if (!dun_level)
+	{
+		min_hgt = wild_grid.y_min;
+		max_hgt = wild_grid.y_max;
+		min_wid = wild_grid.x_min;
+		max_wid = wild_grid.x_max;
+	}
 }
 
 
@@ -2925,6 +2933,7 @@ static errr rd_dungeon(void)
 	cave_type *c_ptr;
 	u16b dun_level_backup, px_back, py_back;
 
+	u16b cur_wid, cur_hgt;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -2950,6 +2959,12 @@ static errr rd_dungeon(void)
 	rd_s16b(&cur_wid);
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
+	
+	/* Assume we are in the dungeon */
+	max_hgt = cur_hgt;
+	min_hgt = 0;
+	max_wid = cur_wid;
+	min_wid = 0;
 	
 	if (sf_version < 12)
 	{
@@ -3017,6 +3032,12 @@ static errr rd_dungeon(void)
 			         wild_grid.x_max, wild_grid.x_min);
 
 			change_level(dun_level);
+			
+			/* Restore the bounds */
+			max_hgt = cur_hgt;
+			min_hgt = 0;
+			max_wid = cur_wid;
+			min_wid = 0;
 		}
 		else
 		{
@@ -3225,9 +3246,18 @@ static errr rd_dungeon(void)
 			/* refresh wilderness */
 			character_dungeon = FALSE;
 		}
-
+		
 		/* enter the level */
 		change_level(dun_level);
+		
+		if (dun_level)
+		{
+			/* Restore the bounds */
+			max_hgt = cur_hgt;
+			min_hgt = 0;
+			max_wid = cur_wid;
+			min_wid = 0;
+		}
 	}
 	
 	/* 

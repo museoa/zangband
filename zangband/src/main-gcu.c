@@ -1083,7 +1083,7 @@ errr init_gcu(int argc, char *argv[])
 		int rows, cols, y, x;
 
 		/* Hack - the main window is huge */
-		cols = 80 + (COLS - 80) * 1 / 4;
+		cols = 80 + (COLS - 80) / 4;
 		rows = 24 + (LINES - 24) / 2;
 
 		/* Decide on size and position */
@@ -1095,25 +1095,25 @@ errr init_gcu(int argc, char *argv[])
 				break;
 
 			/* Lower left */
-			case 1:
-				rows = LINES - (rows + 1);
+			case 1:				
 				y = rows + 1;
 				x = 0;
+				rows = LINES - (rows + 1);
 				break;
 
 			/* Upper right */
-			case 2:
-				cols = COLS - (cols + 1);
+			case 2:				
 				y = 0;
 				x = cols + 1;
+				cols = COLS - (cols + 1);
 				break;
 
 			/* Lower right */
-			case 3:
-				rows = LINES - (rows + 1);
-				cols = COLS - (cols + 1);
+			case 3:				
 				y = rows + 1;
 				x = cols + 1;
+				rows = LINES - (rows + 1);
+				cols = COLS - (cols + 1);				
 				break;
 
 			/* XXX */

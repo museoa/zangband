@@ -1,5 +1,4 @@
-/* CVS: Last edit by $Author$ on $Date$
- *
+/*
  * File: grid.c
  * Purpose: low-level dungeon creation primitives
  */
@@ -31,8 +30,8 @@ bool new_player_spot(void)
 	while (max_attempts--)
 	{
 		/* Pick a legal spot */
-		y = rand_range(1, cur_hgt - 2);
-		x = rand_range(1, cur_wid - 2);
+		y = rand_range(min_hgt, max_hgt - 1);
+		x = rand_range(min_wid, max_wid - 1);
 
 		c_ptr = &cave[y][x];
 

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: wild.c */
 
 /* Purpose: Wilderness generation */
@@ -24,7 +23,7 @@ void blend_helper(cave_type *c_ptr, byte *data,int g_type);
 
 
 /* Lighten / Darken new block depending on Day/ Night */
-void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
+void light_dark_block(blk_ptr block_ptr, int x, int y)
 {
 	int i, j;
 
@@ -87,7 +86,9 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 }
 
 
-/* Lighten / Darken Wilderness */
+/*
+ * Lighten / Darken Wilderness
+ */
 static void day_night(void)
 {
 	u16b x, y;
@@ -99,8 +100,8 @@ static void day_night(void)
 		{
 			/* Light or darken wilderness block */
 			light_dark_block(wild_grid.block_ptr[y][x],
-			 (byte)(x + wild_grid.x_min / 16),
-			  (byte)(y + wild_grid.y_min / 16));
+			                 (x + min_wid / 16),
+			                 (y + min_hgt / 16));
 		}
 	}
 }
@@ -108,52 +109,6 @@ static void day_night(void)
 
 /* Town currently stored in cave[][] */
 static u16b cur_town;
-
-
-/* Old in_bounds(2) macros are now functions */
-
-
-/*
- * Determines if a map location is fully inside the outer walls
- */
-static bool in_bounds_cave(int y, int x)
-{
-	return ((y > 0) && (x > 0) && (y < cur_hgt-1) && (x < cur_wid-1));
-}
-
-/*
- * Determines if a map location is on or inside the outer walls
- */
-static bool in_bounds2_cave(int y, int x)
-{
-	return ((y >= 0) && (x >= 0) && (y < cur_hgt) && (x < cur_wid));
-}
-
-/*
- * Wilderness bounds functions.
- * These functions check to see if a square is accessable on the grid
- * of wilderness blocks in the cache.
- */
-
-/*
- * Determines if a map location is fully inside the outer boundary
- */
-static bool in_bounds_wild(int y, int x)
-{
-	return ((y > wild_grid.y_min) &&
-	        (x > wild_grid.x_min) &&
-	        (y < wild_grid.y_max - 1) &&
-	        (x < wild_grid.x_max - 1));
-}
-
-/*
- * Determines if a map location is on or inside the outer boundary
- */
-static bool in_bounds2_wild(int y, int x)
-{
-	return ((y >= wild_grid.y_min) && (x >= wild_grid.x_min) &&
-	        (y < wild_grid.y_max) && (x < wild_grid.x_max));
-}
 
 
 /* Access the old cave array. */
@@ -192,8 +147,14 @@ void change_level(int level)
 	if (!level)
 	{
 		/* In the wilderness */
-		in_bounds = in_bounds_wild;
-		in_bounds2 = in_bounds2_wild;
+		
+		/* Reset the bounds */
+		min_hgt = wild_grid.y_min;
+		max_hgt = wild_grid.y_max;
+		min_wid = wild_grid.x_min;
+		max_wid = wild_grid.x_max;
+		
+		/* Access the wilderness */
 		area = access_wild;
 
 		if (!dun_level)
@@ -205,8 +166,14 @@ void change_level(int level)
 	else
 	{
 		/* In the dungeon */
-		in_bounds = in_bounds_cave;
-		in_bounds2 = in_bounds2_cave;
+		
+		/* Reset the bounds */
+		min_hgt = 0;
+		max_hgt = MAX_HGT;
+		min_wid = 0;
+		max_wid = MAX_WID;
+
+		/* Access the cave */
 		area = access_cave;
 
 		/* No town stored in cave[][] */
@@ -2171,9 +2138,9 @@ void test_mon_wild_integrity(void)
 	if (dun_level) return;
 
 	/* Check the wilderness */
-	for (i = wild_grid.x_min; i < wild_grid.x_max; i++)
+	for (i = min_wid; i < max_wid; i++)
 	{
-		for (j = wild_grid.y_min; j < wild_grid.y_max; j++)
+		for (j = min_hgt; j < max_hgt; j++)
 		{
 			/* Point to location */
 			c_ptr = area(j, i);
@@ -2627,7 +2594,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
  * with this function.
  */
 
-static void make_wild_sea(blk_ptr block_ptr,byte sea_type)
+static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
 {
 	int i, j;
 
@@ -3205,7 +3172,7 @@ void repopulate_wilderness(void)
 }
 
 /* Make a new block based on the terrain type */
-static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
+static void gen_block(int x, int y, blk_ptr block_ptr)
 {
 	u16b w_town, w_type;
 	int dummy1, dummy2;
@@ -3228,7 +3195,7 @@ static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 	/* Create sea terrains if type >= WILD_SEA */
 	if (w_type >= WILD_SEA)
 	{
-		make_wild_sea(block_ptr, w_type - WILD_SEA);
+		make_wild_sea(block_ptr, (byte)(w_type - WILD_SEA));
 	}
 
 	/* Hack -Check for the vanilla town grass option. */
@@ -3533,6 +3500,9 @@ void move_wild(void)
 	wild_grid.y_max = (y + WILD_GRID_SIZE) << 4;
 	wild_grid.y_min = y << 4;
 
+	max_hgt = wild_grid.y_max;
+	min_hgt = wild_grid.y_min;
+
 	/* Shift in only a small discrepency */
 	if (abs(dy) == 1)
 	{
@@ -3549,6 +3519,9 @@ void move_wild(void)
 		/* Recalculate boundaries */
 		wild_grid.x_max = (x + WILD_GRID_SIZE) << 4;
 		wild_grid.x_min = x << 4;
+		
+		max_wid = wild_grid.x_max;
+		min_wid = wild_grid.x_min;
 
 		allocate_all();
 		return;
@@ -3560,6 +3533,9 @@ void move_wild(void)
 	/* Recalculate boundaries */
 	wild_grid.x_max = (x + WILD_GRID_SIZE) << 4;
 	wild_grid.x_min = x << 4;
+	
+	max_wid = wild_grid.x_max;
+	min_wid = wild_grid.x_min;
 
 	/* Shift in only a small discrepency */
 	if (abs(dx) == 1)

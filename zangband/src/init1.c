@@ -3625,11 +3625,11 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				/* cur_wid = panels_x * SCREEN_WID; */
 
 				/* Choose a panel row */
-				max_panel_rows = cur_hgt;
+				max_panel_rows = max_hgt;
 				if (max_panel_rows < 0) max_panel_rows = 0;
 
 				/* Choose a panel col */
-				max_panel_cols = cur_wid;
+				max_panel_cols = max_wid;
 				if (max_panel_cols < 0) max_panel_cols = 0;
 
 				/* Assume illegal panel */

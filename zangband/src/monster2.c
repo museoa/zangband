@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: monster2.c */
 
 /* Purpose: misc code for monsters */
@@ -2087,18 +2086,9 @@ bool alloc_monster(int dis, bool slp)
 	/* Find a legal, distant, unoccupied, space */
 	while (attempts_left--)
 	{
-		if (!dun_level)
-		{
-			/* Pick a location */
-			y = wild_grid.y_min + rand_int(WILD_GRID_SIZE * 16);
-			x = wild_grid.x_min + rand_int(WILD_GRID_SIZE * 16);
-		}
-		else
-		{
-			/* Pick a location */
-			y = rand_int(cur_hgt);
-			x = rand_int(cur_wid);
-		}
+		/* Pick a location */
+		y = rand_range(min_hgt, max_hgt - 1);
+		x = rand_range(min_wid, max_wid - 1);
 
 		/* Require empty floor grid (was "naked") */
 		c_ptr = area(y, x);
@@ -2506,10 +2496,10 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 		
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, 
-			 (void *) &mon_enter_test);
+			 (void *)&mon_enter_test);
 			 
 		/* Get result */
-		if(!mon_enter_test.do_move) continue;
+		if (!mon_enter_test.do_move) continue;
 
 		/* Okay */
 		break;

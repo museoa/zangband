@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: cmd2.c */
 
 /* Purpose: Movement commands (part 2) */
@@ -1954,7 +1953,8 @@ static bool get_spike(int *ip)
  */
 void do_cmd_spike(void)
 {
-	int y, x, dir, item;
+	int dir, item;
+	s16b y, x;
 
 	cave_type *c_ptr;
 

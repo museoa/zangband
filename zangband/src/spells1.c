@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: spells1.c */
 
 /* Purpose: Spell projection */

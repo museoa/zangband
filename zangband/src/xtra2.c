@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: xtra2.c */
 
 /* Purpose: effects of various "objects" */
@@ -376,8 +375,8 @@ void monster_death(int m_idx)
 				/* This only happens in the dungeon I hope. */
 
 				/* Count all hostile monsters */
-				for (i2 = 0; i2 < cur_wid; ++i2)
-					for (j2 = 0; j2 < cur_hgt; j2++)
+				for (i2 = min_wid; i2 < max_wid; ++i2)
+					for (j2 = min_hgt; j2 < max_hgt; j2++)
 						if (area(j2,i2)->m_idx > 0)
 							if (is_hostile(&m_list[area(j2,i2)->m_idx])
 								&& area(j2,i2)->m_idx!=m_idx)
@@ -542,20 +541,20 @@ void monster_death(int m_idx)
 			if (corpse)
 			{
 				/* Make a corpse */
-				if(place_field(y, x, FT_CORPSE))
+				if (place_field(y, x, FT_CORPSE))
 				{
 					/* Initialise it */
-					(void) field_hook_single(hack_fld_ptr,
+					(void)field_hook_single(hack_fld_ptr,
 						 FIELD_ACT_INIT, m_ptr);
 				}
 			}
 			else
 			{
 				/* Make a skeleton */
-				if(place_field(y, x, FT_SKELETON))
+				if (place_field(y, x, FT_SKELETON))
 				{
 					/* Initialise it */
-					(void) field_hook_single(hack_fld_ptr,
+					(void)field_hook_single(hack_fld_ptr,
 						 FIELD_ACT_INIT, m_ptr);
 				}
 			}		
@@ -1416,27 +1415,16 @@ bool change_panel(int dy, int dx)
 	y = panel_row_min + dy * (hgt / 2);
 	x = panel_col_min + dx * (wid / 2);
 
-	/* Verify wilderness */
-	if (!dun_level)
+	/* Bounds */
+	if (y > max_hgt - hgt) y = max_hgt - hgt;
+	if (y < min_hgt) y = min_hgt;
+	if (x > max_wid - wid) x = max_wid - wid;
+	if (x < min_wid) x = min_wid;
+	
+	if (vanilla_town)
 	{
-		if (y > wild_grid.y_max - hgt) y = wild_grid.y_max - hgt;
-		if (y < wild_grid.y_min) y = wild_grid.y_min;
-		if (x > wild_grid.x_max - wid) x = wild_grid.x_max - wid;
-		if (x < wild_grid.x_min) x = wild_grid.x_min;
-
-		if (vanilla_town)
-		{
-			x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
-			y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
-		}
-	}
-	else
-	{
-		/* Dungeon bounds */
-		if (y > cur_hgt - hgt) y = cur_hgt - hgt;
-		if (y < 0) y = 0;
-		if (x > cur_wid - wid) x = cur_wid - wid;
-		if (x < 0) x = 0;
+		x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
+		y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
 	}
 
 	/* Handle "changes" */
@@ -2393,8 +2381,9 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Do not describe this field */
 			if (f_ptr->info & FIELD_INFO_NO_LOOK) continue;
 
-			/* Describe it */
-			if (f_ptr->info & FIELD_INFO_MARK)
+			/* Describe if if is visible and known. */
+			if ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS))
+				 == (FIELD_INFO_MARK | FIELD_INFO_VIS))
 			{
 				/* See if it has a special name */
 				if (f_ptr->action[FIELD_ACT_LOOK])
@@ -2848,26 +2837,13 @@ bool target_set(int mode)
 							if (change_panel(dy, dx)) target_set_prepare(mode);
 						}
 
-						if (!dun_level)
-						{
-							/* Slide into legality */
-							if (x > wild_grid.x_max-1) x = wild_grid.x_max - 1;
-							else if (x < wild_grid.x_min) x = wild_grid.x_min;
+						/* Slide into legality */
+						if (x >= max_wid - 1) x = max_wid - 2;
+						else if (x <= min_wid) x = min_wid + 1;
 
-							/* Slide into legality */
-							if (y > wild_grid.y_max-1) y = wild_grid.y_max- 1;
-							else if (y < wild_grid.y_min) y = wild_grid.y_min;
-						}
-						else
-						{
-							/* Slide into legality */
-							if (x >= cur_wid-1) x = cur_wid - 2;
-							else if (x <= 0) x = 1;
-
-							/* Slide into legality */
-							if (y >= cur_hgt-1) y = cur_hgt- 2;
-							else if (y <= 0) y = 1;
-						}
+						/* Slide into legality */
+						if (y >= max_hgt - 1) y = max_hgt- 2;
+						else if (y <= min_hgt) y = min_hgt + 1;
 					}
 				}
 
@@ -3017,26 +2993,13 @@ bool target_set(int mode)
 					if (change_panel(dy, dx)) target_set_prepare(mode);
 				}
 
-				if (!dun_level)
-				{
-					/* Slide into legality */
-					if (x > wild_grid.x_max-1) x = wild_grid.x_max - 1;
-					else if (x < wild_grid.x_min) x = wild_grid.x_min;
+				/* Slide into legality */
+				if (x >= max_wid - 1) x = max_wid - 2;
+				else if (x <= min_wid) x = min_wid + 1;
 
-					/* Slide into legality */
-					if (y > wild_grid.y_max-1) y = wild_grid.y_max - 1;
-					else if (y < wild_grid.y_min) y = wild_grid.y_min;
-				}
-				else
-				{
-					/* Slide into legality */
-					if (x >= cur_wid-1) x = cur_wid - 2;
-					else if (x <= 0) x = 1;
-
-					/* Slide into legality */
-					if (y >= cur_hgt-1) y = cur_hgt- 2;
-					else if (y <= 0) y = 1;
-				}
+				/* Slide into legality */
+				if (y >= max_hgt - 1) y = max_hgt - 2;
+				else if (y <= min_hgt) y = min_hgt + 1;
 			}
 		}
 	}
@@ -3731,26 +3694,13 @@ bool tgt_pt(int *x, int *y)
 			*x += ddx[d];
 			*y += ddy[d];
 
-			if (!dun_level)
-			{
-				/* Hack -- Verify x */
-				if ((*x >= wild_grid.x_max - 1) || (*x >= panel_col_min + wid - 14)) (*x)--;
-				else if ((*x <= wild_grid.x_min) || (*x <= panel_col_min)) (*x)++;
+			/* Hack -- Verify x */
+			if ((*x >= max_wid - 1) || (*x >= panel_col_min + wid - 14)) (*x)--;
+			else if ((*x <= min_wid) || (*x <= panel_col_min)) (*x)++;
 
-				/* Hack -- Verify y */
-				if ((*y >= wild_grid.y_max - 1) || (*y >= panel_row_min + hgt - 2)) (*y)--;
-				else if ((*y <= wild_grid.y_min) || (*y <= panel_row_min)) (*y)++;
-			}
-			else
-			{
-				/* Hack -- Verify x */
-				if ((*x >= cur_wid - 1) || (*x >= panel_col_min + wid - 14)) (*x)--;
-				else if ((*x <= 0) || (*x <= panel_col_min)) (*x)++;
-
-				/* Hack -- Verify y */
-				if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + hgt - 2)) (*y)--;
-				else if ((*y <= 0) || (*y <= panel_row_min)) (*y)++;
-			}
+			/* Hack -- Verify y */
+			if ((*y >= max_hgt - 1) || (*y >= panel_row_min + hgt - 2)) (*y)--;
+			else if ((*y <= min_hgt) || (*y <= panel_row_min)) (*y)++;
 
 			break;
 		}

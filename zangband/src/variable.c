@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: variable.c */
 
 /* Purpose: Angband variables */
@@ -108,8 +107,11 @@ bool death;				/* True if player has died */
 s16b running;			/* Current counter for running, if any */
 s16b resting;			/* Current counter for resting, if any */
 
-s16b cur_hgt;			/* Current dungeon height */
-s16b cur_wid;			/* Current dungeon width */
+s16b min_hgt;			/* Current y bounds of area() */
+s16b max_hgt;
+s16b min_wid;			/* Current x bounds of area() */
+s16b max_wid;
+
 s16b dun_level;			/* Current dungeon level */
 s16b num_repro;			/* Current reproducer count */
 
@@ -652,13 +654,6 @@ cave_type *cave[MAX_HGT];
  */
 
 cave_type *(*area)(int, int);
-
-/* Function pointer that points to the relevant in_bounds fn. */
-bool (*in_bounds)(int, int);
-
-/* Function pointer that points to the relevant in_bounds2 fn. */
-bool (*in_bounds2)(int, int);
-
 
 /*
  * Variables used to access the scrollable wilderness.

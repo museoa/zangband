@@ -1327,6 +1327,9 @@ static void save_wild_data(void)
 static void wr_dungeon(void)
 {
 	int i;
+	
+	int cur_wid = max_wid;
+	int cur_hgt = max_hgt;
 
 	/*** Basic info ***/
 
@@ -1336,8 +1339,8 @@ static void wr_dungeon(void)
 	wr_u16b(num_repro);
 	wr_u16b(py);
 	wr_u16b(px);
-	wr_u16b(cur_hgt);
-	wr_u16b(cur_wid);
+	wr_u16b(max_hgt);
+	wr_u16b(max_wid);
 	wr_u16b(max_panel_rows);
 	wr_u16b(max_panel_cols);
 
@@ -1347,7 +1350,7 @@ static void wr_dungeon(void)
 	if (dun_level)
 	{
 		/* Save dungeon map */
-		save_map(cur_hgt, 0, cur_wid, 0);
+		save_map(max_hgt, min_hgt, max_wid, min_wid);
 
 		/* Save wilderness map */
 		change_level(0);
@@ -1356,6 +1359,10 @@ static void wr_dungeon(void)
 		         wild_grid.x_max, wild_grid.x_min);
 
 		change_level(dun_level);
+		
+		/* Restore bounds */
+		max_hgt = cur_hgt;
+		max_wid = cur_wid;
 	}
 	else
 	{

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: spells2.c */
 
 /* Purpose: Spell code (part 2) */
@@ -1351,9 +1350,6 @@ bool detect_traps(void)
 			/* Detect traps */
 			if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
 			{
-				/* Redraw */
-				lite_spot(y, x);
-
 				/* Obvious */
 				detect = TRUE;
 			}
@@ -2985,10 +2981,10 @@ bool earthquake(int cy, int cx, int r)
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
 								 FIELD_ACT_MON_ENTER_TEST, 
-								 (void *) &mon_enter_test);
+								 (void *)&mon_enter_test);
 			 
 							/* Get result */
-							if(!mon_enter_test.do_move) continue;
+							if (!mon_enter_test.do_move) continue;
 
 							/* ... nor on the Pattern */
 							if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&

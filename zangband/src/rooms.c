@@ -1,5 +1,4 @@
-/* CVS: Last edit by $Author$ on $Date$
- *
+/*
  * File: rooms.c
  * Purpose: make rooms. Used by generate.c when creating dungeons.
  */
@@ -2831,7 +2830,7 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int 
  * This routine is similar to the method used to update the monster flow
  * information.  It uses the temp grids as a circular queue.
  */
-static void cave_fill(byte y, byte x)
+static void cave_fill(int y, int x)
 {
 
 	int i, j, d;
@@ -3150,8 +3149,8 @@ void build_cavern(void)
 	if (dun_level <= randint(50)) light = TRUE;
 
 	/* Make a cave the size of the dungeon */
-	xsize = cur_wid - 1;
-	ysize = cur_hgt - 1;
+	xsize = max_wid - 1;
+	ysize = max_hgt - 1;
 	x0 = xsize / 2;
 	y0 = ysize / 2;
 
@@ -3344,8 +3343,8 @@ void build_lake(int type)
 	}
 
 	/* Make the size of the dungeon */
-	xsize = cur_wid - 1;
-	ysize = cur_hgt - 1;
+	xsize = max_wid - 1;
+	ysize = max_hgt - 1;
 	x0 = xsize / 2;
 	y0 = ysize / 2;
 

@@ -4155,7 +4155,8 @@ static void amiga_map( void )
 	byte tap,tcp;
 #endif
 #ifdef ANG282
-	int cur_wid = DUNGEON_WID,cur_hgt = DUNGEON_HGT;
+	int max_wid = DUNGEON_WID, max_hgt = DUNGEON_HGT;
+	int min_wid = 0, min_hgt = 0;
 #endif
 
 	/* Only in graphics mode, and not on Kickstart1.3 */
@@ -4178,8 +4179,8 @@ static void amiga_map( void )
 	if (dun_level)
 	{
 		/* Calculate offset values */
-		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * cur_wid )) / 2;
-		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * cur_hgt )) / 2;
+		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * max_wid )) / 2;
+		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * max_hgt )) / 2;
 	}
 	else
 	{
@@ -4205,12 +4206,12 @@ static void amiga_map( void )
 	{
 #endif
 		/* Draw all "interesting" features */
-		for ( i = 0; i < cur_wid; i++ )
+		for ( i = 0; i < max_wid; i++ )
 		{
-			for ( j = 0; j < cur_hgt; j++ )
+			for ( j = 0; j < max_hgt; j++ )
 			{
 				/* Get frame tile */
-				if ( (i == 0) || (i == cur_wid - 1) || (j == 0) || (j == cur_hgt - 1) )
+				if ( (i == 0) || (i == max_wid - 1) || (j == 0) || (j == max_hgt - 1) )
 				{
 #ifdef ANG283
 					ta = f_info[ 63 ].x_attr;

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File:field.c */
 
 /* Purpose: Field code */
@@ -822,7 +821,7 @@ void field_prep(field_type *f_ptr, int t_idx)
  */
 void init_fields(void)
 {
-	int fld_idx;
+	s16b fld_idx;
 	field_type *f_ptr;
 	field_thaum *t_ptr;
 	
@@ -925,7 +924,7 @@ bool field_detect_type(s16b fld_idx, byte typ)
 		/* Is it the correct type + invisible? */
 		if (t_info[f_ptr->t_idx].type == typ)
 		{
-			if(!(f_ptr->info & FIELD_INFO_VIS))
+			if (!(f_ptr->info & FIELD_INFO_VIS))
 			{
 				/* Now is visible + known */
 				f_ptr->info |= (FIELD_INFO_VIS | FIELD_INFO_MARK);
@@ -933,6 +932,9 @@ bool field_detect_type(s16b fld_idx, byte typ)
 
 			/* We found something */
 			flag = TRUE;
+			
+			/* Memorise it */
+			notice_field(f_ptr);
 		}
 
 		/* If not, get next one. */
@@ -1284,30 +1286,10 @@ void test_field_data_integrity(void)
 
 	s16b fld_idx;
 
-	int xmin, xmax, ymin, ymax;
-
-	/* Test cave data structure first */
-	/* In dungeon? */
-	if (dun_level)
-	{
-		xmin = 0;
-		ymin = 0;
-		xmax = cur_wid;
-		ymax = cur_hgt;
-	}
-	else
-	/* In wilderness */
-	{
-		xmin = wild_grid.x_min;
-		ymin = wild_grid.y_min;
-		xmax = wild_grid.x_max;
-		ymax = wild_grid.y_max;
-	}
-
 	/* Test cave data structure */
-	for (i = xmin; i < xmax; i++)
+	for (i = min_wid; i < max_wid; i++)
 	{
-		for (j = ymin; j < ymax; j++)
+		for (j = min_hgt; j < max_hgt; j++)
 		{
 			/* Point to location */
 			c_ptr = area(j, i);
@@ -1808,7 +1790,7 @@ static int check_hit(int power)
 static field_trap_type trap_num[] =
 {
 	{FT_TRAP_DOOR, 5, 0},
-	{FT_TRAP_PIT, 0, 0},	
+	{FT_TRAP_PIT, 5, 0},	
 	{FT_TRAP_SPIKE_PIT, 15, 0},
 	{FT_TRAP_POISON_PIT, 30, 0},
 	{FT_TRAP_CURSE, 20, 0},
@@ -1828,7 +1810,7 @@ static field_trap_type trap_num[] =
 	{FT_TRAP_HUNGER, 0, 0},
 	{FT_TRAP_NO_GOLD, 25, 0},
 	{FT_TRAP_HASTE_MON, 15, 0},
-	{FT_TRAP_RAISE_MON, 10, 0},
+	{FT_TRAP_RAISE_MON, 40, 0},
 	{FT_TRAP_DRAIN_MAGIC, 65, 0},
 	{FT_TRAP_AGGRAVATE, 15, 0},
 	{FT_TRAP_SUMMON, 20, 0},
@@ -1917,10 +1899,10 @@ void place_trap(int y, int x)
 	}
 
 	/* Activate the trap */
-	if(place_field(y, x, t_idx) && n_ptr->rand)
+	if (place_field(y, x, t_idx) && n_ptr->rand)
 	{
 		/* Initialise it */
-		(void) field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, &n_ptr->rand);
+		(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, &n_ptr->rand);
 	}
 }
 
@@ -1928,14 +1910,14 @@ void field_action_trap_init(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	byte *rand = (byte *) input;
+	byte *rand = (byte *)input;
 	
 	/*
 	 * Data[3] is equal to rand_int(rand)
 	 */
 	
 	/* Some traps use this field to store their sub-type. */
-	f_ptr->data[3] = rand_int(*rand);
+	f_ptr->data[3] = (byte)rand_int(*rand);
 
 	/* Initialize the name here? */
 	
@@ -2799,6 +2781,12 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	
 	/* Darkeness */
 	unlite_room(py, px);
+	
+	/* Recalculate torch */
+	p_ptr->update |= (PU_TORCH);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_EQUIP);
 }
 
 
@@ -3059,7 +3047,7 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 /*
  * Make a locked or jammed door on a square
  */
-void make_lockjam_door(s16b y, s16b x, int power, bool jam)
+void make_lockjam_door(int y, int x, int power, bool jam)
 {
 	cave_type *c_ptr = area(y, x);
 	field_type *f_ptr;
