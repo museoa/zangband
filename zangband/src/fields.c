@@ -3564,12 +3564,12 @@ void field_action_weaponmaster2(s16b *field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int *factor = ((int*) input);
 	s32b cost;
 	
 	if (p_ptr->command_cmd == 'E')
 	{
-		cost = f_ptr->data[1] * factor;
+		cost = f_ptr->data[1] * *factor;
 				
 		if (test_gold(&cost))
 		{
@@ -3580,11 +3580,11 @@ void field_action_weaponmaster2(s16b *field_ptr, void *input)
 		p_ptr->au -= cost;
 		
 		/* Hack, use factor as a return value */	
-		factor = TRUE;
+		*factor = TRUE;
 	}
 	else
 	{
-		factor = FALSE;
+		*factor = FALSE;
 	}
 }
 
@@ -3613,19 +3613,19 @@ void field_action_recharge2(s16b *field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int *factor = ((int*) input);
 	s32b cost;
 
 	if (p_ptr->command_cmd == 'R')
 	{
-		building_recharge(f_ptr->data[1] * factor);
+		building_recharge(f_ptr->data[1] * *factor);
 		
-		factor = TRUE;
+		*factor = TRUE;
 	}
 			
 	else if (p_ptr->command_cmd == 'I')
 	{
-		cost = f_ptr->data[2] * factor;
+		cost = f_ptr->data[2] * *factor;
 				
 		if (test_gold(&cost))
 		{
@@ -3641,12 +3641,12 @@ void field_action_recharge2(s16b *field_ptr, void *input)
 		/* Subtract off cost */
 		p_ptr->au -= cost;
 								
-		factor = TRUE;
+		*factor = TRUE;
 	}
 	else
 	{
 		/* We didn't do anything */
-		factor = FALSE;
+		*factor = FALSE;
 	}
 }
 
@@ -3672,20 +3672,20 @@ void field_action_weaponplus2(s16b *field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int *factor = ((int*) input);
 	
 	if (p_ptr->command_cmd == 'E')
 	{
 		item_tester_hook = item_tester_hook_melee_weapon;
 				
-		enchant_item(f_ptr->data[1] * factor, TRUE, TRUE, FALSE);
+		enchant_item(f_ptr->data[1] * *factor, TRUE, TRUE, FALSE);
 					
 		/* Hack, use factor as a return value */	
-		factor = TRUE;
+		*factor = TRUE;
 	}
 	else
 	{
-		factor = FALSE;
+		*factor = FALSE;
 	}
 }
 
@@ -3711,20 +3711,20 @@ void field_action_armourplus2(s16b *field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int *factor = ((int*) input);
 	
 	if (p_ptr->command_cmd == 'E')
 	{
 		item_tester_hook = item_tester_hook_armour;
 				
-		enchant_item(f_ptr->data[1] * factor, FALSE, FALSE, TRUE);			
+		enchant_item(f_ptr->data[1] * *factor, FALSE, FALSE, TRUE);			
 		
 		/* Hack, use factor as a return value */	
-		factor = TRUE;
+		*factor = TRUE;
 	}
 	else
 	{
-		factor = FALSE;
+		*factor = FALSE;
 	}
 }
 
@@ -3751,12 +3751,12 @@ void field_action_mutate2(s16b *field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int *factor = ((int*) input);
 	s32b cost;
 	
 	if (p_ptr->command_cmd == 'E')
 	{
-		cost = f_ptr->data[1] * factor * (count_mutations()+1);
+		cost = f_ptr->data[1] * *factor * (count_mutations()+1);
 				
 		if (test_gold(&cost))
 		{
@@ -3776,17 +3776,17 @@ void field_action_mutate2(s16b *field_ptr, void *input)
 			msg_print(NULL);
 			
 			/* Hack - We want to redraw the screen */
-			factor = 2;
+			*factor = 2;
 		}
 		else
 		{
 			/* Hack, use factor as a return value */	
-			factor = TRUE;
+			*factor = TRUE;
 		}
 	}
 	else
 	{
-		factor = FALSE;
+		*factor = FALSE;
 	}
 }
 
@@ -3812,12 +3812,12 @@ void field_action_buymap2(s16b *field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
-	int factor = *((int*) input);
+	int *factor = ((int*) input);
 	s32b cost;
 	
 	if (p_ptr->command_cmd == 'E')
 	{
-		cost = f_ptr->data[1] * factor;
+		cost = f_ptr->data[1] * *factor;
 				
 		if (test_gold(&cost))
 		{
@@ -3832,11 +3832,11 @@ void field_action_buymap2(s16b *field_ptr, void *input)
 		}	
 		
 		/* Hack, use factor as a return value */	
-		factor = TRUE;
+		*factor = TRUE;
 	}
 	else
 	{
-		factor = FALSE;
+		*factor = FALSE;
 	}
 }
 
