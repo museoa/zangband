@@ -660,9 +660,7 @@ static void quest_reward(int num, int x, int y)
 	while (TRUE)
 	{
 		/* Average of 20 great objects per game */
-		/* Unless you have the ironman deep quests option on -CK- */
-		if (randint0(number_of_quests()) < 20 
-		    || ironman_deep_quests)
+		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
 			o_ptr = make_object(30, dun_theme);
