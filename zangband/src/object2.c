@@ -3919,7 +3919,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	int prob, base, min_level;
 	byte obj_level;
 	byte flags;
-	int k_idx;
+	int k_idx = 0, count = 5;
 
 
 	/* Chance of "special object" */
@@ -3965,17 +3965,26 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	/* Is there a restriction already? */
 	if (!get_obj_num_hook)
 	{
-		/* Select items based on "theme" */
-		init_match_theme(theme);
+		while (!k_idx && (count > 0))
+		{
+			/* No infinite loops */
+			count--;
+			
+			/* Select items based on "theme" */
+			init_match_theme(theme);
 
-		/* Activate restriction */
-		get_obj_num_hook = kind_is_theme;
+			/* Activate restriction */
+			get_obj_num_hook = kind_is_theme;
 
-		/* Prepare allocation table */
-		get_obj_num_prep();
+			/* Prepare allocation table */
+			get_obj_num_prep();
 
-		/* Pick a random object */
-		k_idx = get_obj_num(base, min_level);
+			/* Pick a random object */
+			k_idx = get_obj_num(base, min_level);
+
+			/* Paranoia - try less hard to get something */
+			if (!k_idx) min_level /= 2;
+		}
 
 		/* Clear restriction */
 		get_obj_num_hook = NULL;
