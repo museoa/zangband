@@ -1005,7 +1005,7 @@ void create_closed_door(int x, int y)
 	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
-		cave_set_feat(x, y, FEAT_FLOOR);
+		cave_set_feat(x, y, the_floor());
 		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
@@ -2460,7 +2460,7 @@ bool destroy_area(int x1, int y1, int r)
 				else
 				{
 					/* Create floor */
-					cave_set_feat(x, y, FEAT_FLOOR);
+					cave_set_feat(x, y, the_floor());
 				}
 			}
 
@@ -2943,7 +2943,7 @@ bool earthquake(int cx, int cy, int r)
 				else
 				{
 					/* Create floor */
-					cave_set_feat(xx, yy, FEAT_FLOOR);
+					cave_set_feat(xx, yy, the_floor());
 				}
 			}
 

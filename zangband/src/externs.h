@@ -1062,6 +1062,7 @@ extern void repopulate_wilderness(void);
 extern void create_wilderness(void);
 extern void move_wild(void);
 extern void shift_in_bounds(int *x, int *y);
+extern byte the_floor(void);
 extern void change_level(int);
 extern int base_level(void);
 extern void wipe_all_list(void);

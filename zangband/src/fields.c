@@ -3520,7 +3520,7 @@ bool field_action_door_gf(field_type *f_ptr, va_list vp)
 		}
 
 		/* Destroy the feature */
-		cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_FLOOR);
+		cave_set_feat(f_ptr->fx, f_ptr->fy, the_floor());
 
 		/* Delete the field */
 		return (TRUE);

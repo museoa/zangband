@@ -1583,6 +1583,17 @@ static void init_dungeon(place_type *pl_ptr, const dun_gen_type *d_ptr)
 }
 
 
+/* Hack - return the current type of "floor" */
+byte the_floor(void)
+{
+	/* In the wilderness */
+	if (!p_ptr->depth) return (FEAT_DIRT);
+	
+	/* In the dungeon */
+	return (place[p_ptr->place_num].dungeon->floor);
+}
+
+
 static bool create_towns(int xx, int yy)
 {
 	int x, y, i;

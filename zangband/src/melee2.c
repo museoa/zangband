@@ -2267,7 +2267,7 @@ static void take_move(int m_idx, int *mm)
 			}
 
 			/* Notice */
-			cave_set_feat(nx, ny, FEAT_FLOOR);
+			cave_set_feat(nx, ny, the_floor());
 		}
 
 		else if (cave_wall_grid(c_ptr))

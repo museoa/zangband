@@ -1193,7 +1193,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			 (c_ptr->feat == FEAT_PILLAR))
 	{
 		/* Tunnel */
-		if ((p_ptr->skill.dig > 40 + randint0(1600)) && twall(x, y, FEAT_FLOOR))
+		if ((p_ptr->skill.dig > 40 + randint0(1600)) && twall(x, y, the_floor()))
 		{
 			msgf("You have finished the tunnel.");
 
@@ -1236,7 +1236,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 		}
 
 		/* Success */
-		if (okay && twall(x, y, FEAT_FLOOR))
+		if (okay && twall(x, y, the_floor()))
 		{
 			/* Found treasure */
 			if (gold)
@@ -1280,7 +1280,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if (c_ptr->feat == FEAT_RUBBLE)
 	{
 		/* Remove the rubble */
-		if ((p_ptr->skill.dig > randint0(200)) && twall(x, y, FEAT_FLOOR))
+		if ((p_ptr->skill.dig > randint0(200)) && twall(x, y, the_floor()))
 		{
 			/* Message */
 			msgf("You have removed the rubble.");
@@ -1311,7 +1311,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if (c_ptr->feat >= FEAT_SECRET)
 	{
 		/* Tunnel */
-		if ((p_ptr->skill.dig > 30 + randint0(1200)) && twall(x, y, FEAT_FLOOR))
+		if ((p_ptr->skill.dig > 30 + randint0(1200)) && twall(x, y, the_floor()))
 		{
 			msgf("You have finished the tunnel.");
 		}

@@ -4177,7 +4177,6 @@ static void amiga_map( void )
 						/* Put the graphics to the screen */
 						put_gfx_map( td, i, j, tc, ta );
 					}
-				
 				}
             }
 		}

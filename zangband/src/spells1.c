@@ -265,7 +265,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 				}
 
 				/* Now is floor */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				cave_set_feat(x, y, the_floor());
 			}
 
 			break;
@@ -343,7 +343,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Destroy the wall */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				cave_set_feat(x, y, the_floor());
 
 				/* Message */
 				if (known)
@@ -357,7 +357,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA_K)
 			{
 				/* Destroy the wall */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				cave_set_feat(x, y, the_floor());
 
 				/* Place some gold */
 				place_gold(x, y);
@@ -375,7 +375,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA)
 			{
 				/* Destroy the wall */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				cave_set_feat(x, y, the_floor());
 
 				/* Message */
 				if (known)
@@ -389,7 +389,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Destroy the rubble */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				cave_set_feat(x, y, the_floor());
 
 				/* Message */
 				if (known)
@@ -419,7 +419,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 					 || (c_ptr->feat == FEAT_CLOSED))
 			{
 				/* Destroy the feature */
-				cave_set_feat(x, y, FEAT_FLOOR);
+				cave_set_feat(x, y, the_floor());
 
 				/* Hack -- special message */
 				if (known)
@@ -4459,12 +4459,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 								(c_ptr->feat <= FEAT_WALL_SOLID ||
 								 c_ptr->feat > FEAT_SHAL_ACID))
 							{
-								if ((c_ptr->feat == FEAT_TREES) ||
-									(c_ptr->feat == FEAT_PINE_TREE) ||
-									(c_ptr->feat == FEAT_SNOW_TREE))
-									cave_set_feat(x, y, FEAT_DIRT);
-								else
-									cave_set_feat(x, y, FEAT_FLOOR);
+								cave_set_feat(x, y, the_floor());
 							}
 						}
 						else
