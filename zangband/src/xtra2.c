@@ -2274,6 +2274,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				if ((m_ptr->smart & SM_MIMIC) && mimic_desc(m_name, r_ptr))
 				{
 					/* Describe the object */
+					s3 = "a ";
 					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, m_name, info);
 					prt(out_val, 0, 0);
 					move_cursor_relative(y, x);

@@ -3179,7 +3179,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		update_mon_vis(m_ptr->r_idx, 1);
 		
 		/* We've spotted it */
-		msg_format("You've found a %s!", m_name);
+		msg_format("You discover %s!", m_name);
 	}
 
 
