@@ -327,6 +327,10 @@ void build_cmd_quest(int level)
 	message_flush();
 }
 
+
+/* Global that contains which building the player is in */
+static field_type resize_f_ptr;
+
 /*
  * Display a building.
  */
@@ -336,6 +340,9 @@ void display_build(const field_type *f_ptr)
 
 	cptr build_name = field_name(f_ptr);
 	cptr owner_name = quark_str(build_ptr->owner_name);
+
+	/* remember for the resize */
+	resize_f_ptr = *f_ptr;
 
 	/* The charisma factor */
 	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
@@ -355,6 +362,13 @@ void display_build(const field_type *f_ptr)
 	building_prt_gold();
 }
 
+
+/* Display the building without argument, relies on display_build going first */
+static void resize_build(void)
+{
+	/* Get the argument from the global */
+	display_build(&resize_f_ptr);
+}
 
 /*
  * display fruit for dice slots
@@ -1774,6 +1788,7 @@ static bool build_process_command(const field_type *f_ptr)
 			break;
 		}
 
+		case ' ':
 		case '\r':
 		{
 			/* Ignore return */
@@ -1839,6 +1854,9 @@ void do_cmd_bldg(const field_type *f_ptr)
 	/* Display the building */
 	display_build(f_ptr);
 
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = resize_build;
+
 	/* Interact with player */
 	while (!leave_build)
 	{
@@ -1881,10 +1899,14 @@ void do_cmd_bldg(const field_type *f_ptr)
 	/* Flush messages XXX XXX XXX */
 	message_flush();
 
+	/* Hack - reset the redraw hook */
+	angband_term[0]->resize_hook = resize_map;
 
 	/* Clear the screen */
 	Term_clear();
 
+	/* Update for the changed screen size */
+	resize_map();
 
 	/* Update everything */
 	p_ptr->update |= (PU_VIEW);
