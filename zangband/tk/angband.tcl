@@ -160,10 +160,6 @@ proc angband_display {window action args} {
 				NSModule::LoadIfNeeded NSBuilding
 			}
 
-			choosemonster {
-				NSModule::LoadIfNeeded NSChooseMonster
-			}
-
 			displayinfo {
 				NSModule::LoadIfNeeded NSDisplayInfo
 			}

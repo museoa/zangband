@@ -5,7 +5,6 @@ IndexOne NSBuilding building.tcl
 IndexOne NSCharacterWindow character-window.tcl
 IndexOne NSCharFlagsCanvas charflags-canvas.tcl
 IndexOne NSCharInfoCanvas charinfo-canvas.tcl
-IndexOne NSChooseMonster choose-monster.tcl
 IndexOne NSColorPreferences color.tcl
 IndexOne NSDisplayInfo display-info.tcl
 IndexOne NSFont font.tcl
