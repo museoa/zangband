@@ -926,58 +926,6 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 }
 
 
-/* Which items can be kept unidentified */
-bool borg_keep_unidentified(list_item *l_ptr)
-{
-	int sval;
-
-	/* This proc is there for unid'd items */
-	if (!l_ptr || borg_obj_known_p(l_ptr)) return (FALSE);
-
-	/* If this item has been pseudo id'd with boring results */
-	if (strstr(l_ptr->o_name, "{average") ||
-		strstr(l_ptr->o_name, "{cursed") ||
-		strstr(l_ptr->o_name, "{bad") ||
-		strstr(l_ptr->o_name, "{broken") ||
-		strstr(l_ptr->o_name, "{dubious") ||
-		strstr(l_ptr->o_name, "{worthless")) return (TRUE);
-
-	sval = k_info[l_ptr->k_idx].sval;
-
-	switch (l_ptr->tval)
-	{
-		case TV_RING:
-		{
-			if (sval <= SV_RING_TELEPORTATION) return (TRUE);
-			break;
-		}
-		case TV_AMULET:
-		{
-			if (sval <= SV_AMULET_TELEPORT) return (TRUE);
-			break;
-		}
-		case TV_STAFF:
-		{
-			if (sval == SV_STAFF_DARKNESS &&
-				!FLAG(bp_ptr, TR_HURT_LITE)) return (TRUE);
-			if (sval >= SV_STAFF_SLOWNESS &&
-				sval <= SV_STAFF_SUMMONING) return (TRUE);
-			break;
-		}
-		case TV_WAND:
-		{
-			if (sval == SV_WAND_CLONE_MONSTER) return (TRUE);
-			if (sval == SV_WAND_HASTE_MONSTER) return (TRUE);
-			if (sval == SV_WAND_HEAL_MONSTER) return (TRUE);
-			break;
-		}
-	}
-
-	/* This item needs to be identified */
-	return (FALSE);
-}
-
-
 /* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
 long borg_calc_pseudo(void)
 {
@@ -1116,20 +1064,26 @@ long borg_calc_pseudo(void)
  * cannot afford to just identify everything they find by using scrolls of
  * identify, because, in general, some items are, on average, "icky", and
  * not even worth the price of a new scroll of identify.
- *
  */
-bool borg_item_icky(list_item *l_ptr)
+bool borg_worthless_item(list_item *l_ptr)
 {
 	int slot;
-	int sval = k_info[l_ptr->k_idx].sval;
-
+	int sval;
 	list_item *q_ptr;
 
-	/* Not existing or identified items are not icky */
+	/* This proc is there for unid'd items */
 	if (!l_ptr || borg_obj_known_p(l_ptr)) return (FALSE);
 
-	/* if its average, dump it if you want to. */
-	if (strstr(l_ptr->o_name, "{average")) return (TRUE);
+	/* Just checking */
+	if (streq(l_ptr->o_name, "")) return (FALSE);
+
+	/* If this item has been pseudo id'd with boring results */
+	if (strstr(l_ptr->o_name, "{average") ||
+		strstr(l_ptr->o_name, "{cursed") ||
+		strstr(l_ptr->o_name, "{bad") ||
+		strstr(l_ptr->o_name, "{broken") ||
+		strstr(l_ptr->o_name, "{dubious") ||
+		strstr(l_ptr->o_name, "{worthless")) return (TRUE);
 
 	/* items that are terrible/excellent/special/tainted need ID */
 	if (strstr(l_ptr->o_name, "{special") ||
@@ -1137,48 +1091,7 @@ bool borg_item_icky(list_item *l_ptr)
 		strstr(l_ptr->o_name, "{excellent") ||
 		strstr(l_ptr->o_name, "{tainted")) return (FALSE);
 
-	/* If your pseudo capabilities are non-existent */
-	if (borg_calc_pseudo() > 100)
-	{
-
-		/* Swords */
-		if (l_ptr->tval == TV_SWORD)
-				return (sval == SV_BROKEN_DAGGER ||
-						sval == SV_BROKEN_SWORD ||
-						sval == SV_DAGGER);
-
-		/* Hafted */
-		if (l_ptr->tval == TV_HAFTED)
-			return (sval == SV_CLUB ||
-					sval == SV_WHIP);
-
-		/* Sling */
-		if (l_ptr->tval == TV_BOW) return (sval == SV_SLING);
-
-		/* Rags and Robes */
-		if (l_ptr->tval == TV_SOFT_ARMOR)
-			return (sval == SV_FILTHY_RAG ||
-					sval == SV_SOFT_LEATHER_ARMOR ||
-					sval == SV_SOFT_STUDDED_LEATHER ||
-					sval == SV_ROBE);
-
-		/* Cloak */
-		if (l_ptr->tval == TV_CLOAK) return (sval == SV_CLOAK);
-
-		/* Leather Gloves */
-		if (l_ptr->tval == TV_GLOVES)
-			return (sval == SV_SET_OF_LEATHER_GLOVES);
-
-		/* Helmet */
-		if (l_ptr->tval == TV_HELM) return (sval == SV_HARD_LEATHER_CAP);
-
-		/* Assume the item is not icky */
-		return (FALSE);
-	}
-
-
-	/*** {Good} items in inven, But I have {excellent} in equip ***/
-
+	/* If the item is good, check if the borg already has better */
 	if (strstr(l_ptr->o_name, "{good"))
 	{
 		/* Obtain the slot of the suspect item */
@@ -1196,8 +1109,76 @@ bool borg_item_icky(list_item *l_ptr)
 			strstr(q_ptr->o_name, "{tainted"))) return (TRUE);
 	}
 
-	/* Assume not icky, I should have extra ID for the item */
-	return (FALSE);
+	/* Is there something known about this item? */
+	if (!l_ptr->k_idx) return (FALSE);
+
+	/* pick up the items sval */
+	sval = k_info[l_ptr->k_idx].sval;
+
+	switch (l_ptr->tval)
+	{
+		case TV_RING:
+		{
+			if (sval <= SV_RING_TELEPORTATION) return (TRUE);
+			break;
+		}
+		case TV_AMULET:
+		{
+			if (sval <= SV_AMULET_TELEPORT) return (TRUE);
+			break;
+		}
+		case TV_STAFF:
+		{
+			if (sval == SV_STAFF_DARKNESS &&
+				!FLAG(bp_ptr, TR_HURT_LITE)) return (TRUE);
+			if (sval >= SV_STAFF_SLOWNESS &&
+				sval <= SV_STAFF_SUMMONING) return (TRUE);
+			break;
+		}
+		case TV_WAND:
+		{
+			if (sval == SV_WAND_CLONE_MONSTER) return (TRUE);
+			if (sval == SV_WAND_HASTE_MONSTER) return (TRUE);
+			if (sval == SV_WAND_HEAL_MONSTER) return (TRUE);
+			break;
+		}
+	}
+
+	/* If your pseudo capabilities are good then wait for pseudo id */
+	if (borg_calc_pseudo() < 100) return (FALSE);
+
+	switch (l_ptr->tval)
+	{
+		/* Swords */
+		case TV_SWORD: return (sval == SV_BROKEN_DAGGER ||
+							   sval == SV_BROKEN_SWORD ||
+							   sval == SV_DAGGER);
+
+		/* Hafted */
+		case TV_HAFTED:	return (sval == SV_CLUB ||
+								sval == SV_WHIP);
+
+		/* Sling */
+		case TV_BOW: return (sval == SV_SLING);
+
+		/* Rags and Robes */
+		case TV_SOFT_ARMOR:	return (sval == SV_FILTHY_RAG ||
+									sval == SV_SOFT_LEATHER_ARMOR ||
+									sval == SV_SOFT_STUDDED_LEATHER ||
+									sval == SV_ROBE);
+
+		/* Cloak */
+		case TV_CLOAK: return (sval == SV_CLOAK);
+
+		/* Leather Gloves */
+		case TV_GLOVES:	return (sval == SV_SET_OF_LEATHER_GLOVES);
+
+		/* Helmet */
+		case TV_HELM: return (sval == SV_HARD_LEATHER_CAP);
+
+		/* This item needs identification */
+		default: return (FALSE);
+	}
 }
 
 
@@ -2277,10 +2258,8 @@ bool borg_spell_legal(int realm, int book, int what)
 }
 
 
-/*
- * Determine if borg can cast a given spell (right now)
- */
-bool borg_spell_okay(int realm, int book, int what)
+/* Determine if borg can cast a given spell (right now) */
+static bool borg_spell_okay_aux(int realm, int book, int what, bool reserve)
 {
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
@@ -2297,12 +2276,36 @@ bool borg_spell_okay(int realm, int book, int what)
 	/* The spell must be affordable (now) */
 	if (borg_spell_mana(realm, book, what) > bp_ptr->csp) return (FALSE);
 
-	/* Check if this spell uses reserve mana */
-	if (!borg_reserve_allow(realm, book, what)) return (FALSE);
+	/* With the reserve check */
+	if (reserve)
+	{
+		/* Check if this spell uses reserve mana */
+		if (!borg_reserve_allow(realm, book, what)) return (FALSE);
+	}
+
+	/* Not if locked down */
+	if (FLAG(bp_ptr, TR_NO_MAGIC)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
 }
+
+
+/* Determine if borg can cast a given spell (right now) */
+bool borg_spell_okay(int realm, int book, int what)
+{
+	/* Do the work */
+	return (borg_spell_okay_aux(realm, book, what, TRUE));
+}
+
+
+/* Determine if borg can cast a given spell (right now) */
+bool borg_spell_okay_no_reserve(int realm, int book, int what)
+{
+	/* Do the work */
+	return (borg_spell_okay_aux(realm, book, what, FALSE));
+}
+
 
 /*
  * fail rate on a spell
@@ -2438,20 +2441,26 @@ bool borg_spell_legal_fail(int realm, int book, int what, int allow_fail)
 	return borg_spell_legal(realm, book, what);
 }
 
-/*
- * Attempt to cast a spell
- */
-bool borg_spell(int realm, int book, int what)
+
+/* Attempt to cast a spell */
+static bool borg_spell_aux(int realm, int book, int what, bool reserve)
 {
 	int i;
 
 	borg_magic *as = &borg_magics[realm][book][what];
 
-	/* Require ability (right now) */
-	if (!borg_spell_okay(realm, book, what)) return (FALSE);
-
-	/* Not if locked down */
-	if (FLAG(bp_ptr, TR_NO_MAGIC)) return (FALSE);
+	/* With the reserve check */
+	if (reserve)
+	{
+		/* Require ability (right now) */
+		if (!borg_spell_okay(realm, book, what)) return (FALSE);
+	}
+	else
+	/* Without the reserve check */
+	{
+		/* Require ability (right now) */
+		if (!borg_spell_okay_no_reserve(realm, book, what)) return (FALSE);
+	}
 
 	/* Look for the book */
 	i = borg_book[realm][book];
@@ -2479,6 +2488,22 @@ bool borg_spell(int realm, int book, int what)
 
 	/* Success */
 	return (TRUE);
+}
+
+
+/* Attempt to cast a spell */
+bool borg_spell(int realm, int book, int what)
+{
+	/* Do the work */
+	return (borg_spell_aux(realm, book, what, TRUE));
+}
+
+
+/* Attempt to cast a spell */
+bool borg_spell_no_reserve(int realm, int book, int what)
+{
+	/* Do the work */
+	return (borg_spell_aux(realm, book, what, FALSE));
 }
 
 
@@ -2545,10 +2570,9 @@ bool borg_mindcr_legal(int spell, int level)
 	return (TRUE);
 }
 
-/*
- * Determine if borg can cast a given spell (right now)
- */
-bool borg_mindcr_okay(int spell, int level)
+
+/* Determine if borg can cast a given spell (right now) */
+static bool borg_mindcr_okay_aux(int spell, int level, bool reserve)
 {
 	borg_mind *as = &borg_minds[spell];
 
@@ -2561,8 +2585,12 @@ bool borg_mindcr_okay(int spell, int level)
 	/* The spell must be affordable (now) */
 	if (as->power > bp_ptr->csp) return (FALSE);
 
-	/* Do not cut into reserve mana (for final teleport) */
-	if (!borg_reserve_allow_mindcrafter(spell)) return (FALSE);
+	/* Check for reserve mana */
+	if (reserve)
+	{
+		/* Do not cut into reserve mana (for final teleport) */
+		if (!borg_reserve_allow_mindcrafter(spell)) return (FALSE);
+	}
 
 	/* No go if there is an item with the NO_MAGIC flag */
 	if (FLAG(bp_ptr, TR_NO_MAGIC)) return (FALSE);
@@ -2571,9 +2599,24 @@ bool borg_mindcr_okay(int spell, int level)
 	return (TRUE);
 }
 
-/*
- * fail rate on a mindcrafter spell
- */
+
+/* Can the borg cast this spell with the current mana with the reserve check */
+bool borg_mindcr_okay(int spell, int level)
+{
+	/* Do the work */
+	return (borg_mindcr_okay_aux(spell, level, TRUE));
+}
+
+
+/* Can the borg cast this spell with the current mana without the reserve check */
+bool borg_mindcr_okay_no_reserve(int spell, int level)
+{
+	/* Do the work */
+	return (borg_mindcr_okay_aux(spell, level, FALSE));
+}
+
+
+/* fail rate on a mindcrafter spell */
 int borg_mindcr_fail_rate(int spell, int level)
 {
 	int chance, minfail;
@@ -2641,18 +2684,23 @@ bool borg_mindcr_legal_fail(int spell, int level, int allow_fail)
 	return borg_mindcr_legal(spell, level);
 }
 
-/*
- * Attempt to cast a mindcrafter spell
- */
-bool borg_mindcr(int spell, int level)
+/* Attempt to cast a mindcrafter spell */
+static bool borg_mindcr_aux(int spell, int level, bool reserve)
 {
 	borg_mind *as = &borg_minds[spell];
 
-	/* Require ability (right now) */
-	if (!borg_mindcr_okay(spell, level)) return (FALSE);
-
-	/* Not if locked down */
-	if (FLAG(bp_ptr, TR_NO_MAGIC)) return (FALSE);
+	/* Check for reserve mana */
+	if (reserve)
+	{
+		/* Require ability (right now) */
+		if (!borg_mindcr_okay(spell, level)) return (FALSE);
+	}
+	/* No check for reserve mana */
+	else
+	{
+		/* Require ability (right now) */
+		if (!borg_mindcr_okay_no_reserve(spell, level)) return (FALSE);
+	}
 
 	/* Debugging Info */
 	borg_note_fmt
@@ -2671,6 +2719,23 @@ bool borg_mindcr(int spell, int level)
 	/* Success */
 	return (TRUE);
 }
+
+
+/* Attempt to cast a mindcrafter spell without the reserve check */
+bool borg_mindcr_no_reserve(int spell, int level)
+{
+	/* Call the actual proc */
+	return (borg_mindcr_aux(spell, level, FALSE));
+}
+
+
+/* Attempt to cast a mindcrafter spell with the reserve check */
+bool borg_mindcr(int spell, int level)
+{
+	/* Call the actual proc */
+	return (borg_mindcr_aux(spell, level, TRUE));
+}
+
 
 static bool borg_power_check(bool race, u32b which, bool check_fail,
 						int lev_req, int cost, int use_stat, int difficulty)

@@ -440,8 +440,8 @@ static void borg_notice_improve_item(list_item *l_ptr, bool equip)
 	/* Does it need to be id'd? */
 	if (!borg_obj_known_p(l_ptr))
 	{
-		if (!borg_item_icky(l_ptr) &&
-			!borg_keep_unidentified(l_ptr)) bp_ptr->able.id_item += 1;
+		/* Count it */
+		bp_ptr->able.id_item += 1;
 	}
 	/* Do the other checks only for identified items */
 	else
@@ -4062,10 +4062,10 @@ static void borg_notice_home_player(void)
 static void borg_notice_home_item(list_item *l_ptr, int i)
 {
 	 /* If this item needs a scroll of *id* */
-	if (borg_obj_star_id_able(l_ptr) && !borg_obj_known_full(l_ptr))
+	if (KN_FLAG(l_ptr, TR_INSTA_ART) && !borg_obj_known_full(l_ptr))
 	{
 		/* count it */
-		num_artifact++;
+		num_artifact += l_ptr->number;
 	}
 
 
@@ -4833,7 +4833,7 @@ static s32b borg_power_home_aux1(void)
 		value += 1500L + (num_sustain_all - 2) * 1L;
 
 	/* Count the artifacts stored at home */
-	value += num_artifact * 10000;
+	value += num_artifact * 100000;
 
 	/*
 	 * Do a minus for too many duplicates.

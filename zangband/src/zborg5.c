@@ -3341,12 +3341,19 @@ static s32b borg_power_aux3(void)
 	if (FLAG(bp_ptr, TR_RES_NETHER)) value += 5500L;
 	if (FLAG(bp_ptr, TR_REFLECT)) value += 2000L;
 
+	/* Aura's */
+	if (FLAG(bp_ptr, TR_SH_FIRE)) value += 2000L;
+	if (FLAG(bp_ptr, TR_SH_ELEC)) value += 2000L;
+	if (FLAG(bp_ptr, TR_SH_COLD)) value += 2000L;
+	if (FLAG(bp_ptr, TR_SH_ACID)) value += 2000L;
+
 	/* Sustain flags */
 	if (bp_ptr->sust[A_STR]) value += 50L;
 	if (bp_ptr->sust[A_INT]) value += 50L;
 	if (bp_ptr->sust[A_WIS]) value += 50L;
 	if (bp_ptr->sust[A_CON]) value += 50L;
 	if (bp_ptr->sust[A_DEX]) value += 50L;
+	
 	/* boost for getting them all */
 	if (bp_ptr->sust[A_STR] &&
 		bp_ptr->sust[A_INT] &&
@@ -3446,7 +3453,6 @@ static s32b borg_power_aux3(void)
 		borg_class != CLASS_WARRIOR) value -= 1000000L;
 
 	/* Slightly penalize some flags */
-	if (FLAG(bp_ptr, TR_CURSED))  value -= 1000L;
 	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 2000L;
 	if (FLAG(bp_ptr, TR_TELEPORT))  value -= 1000L;
 	if (FLAG(bp_ptr, TR_HEAVY_CURSE))  value -= 5000L;

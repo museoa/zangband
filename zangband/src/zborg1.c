@@ -8,33 +8,15 @@
 #include "zborg1.h"
 
 /*
- * using 2 rings of Light Res.
- * does not know anti-teleport.
  * if a borg has no light and no money to buy fuel, sell some
  *    in order to raise cash.
- * Zborg.txt needs support for quest numbers on respawn
- *    and verify the quest numbers on from respawn.
- *    I dont know if the same random Quests are generated
- *	  for each respawned borg, if they are reset, or even
- *    marked as done.  Might need to watch it.
  * Inscription problem with long art names
- * learning - of prayers.
  *
  * Mimic Doors.
  *
- * mindcrafters need to be able to sell non ps-id items if they
- *   are low level and do not have ID or ps-id.
  * getting to a wilderness grid that has a town.
  *   using waypoints?
  * Using dimdoor to get accross lava and water.
- * Mutations can be activated.
- */
-
-/* Needs code:
- *    _QUESTITEM
- * TR2_NO_TELE
- * TR2_NO_MAGIC
- * TR2_TY_CURSE
  */
 
 /* Things that would be nice for the borg to know but would
@@ -43,7 +25,6 @@
  * - Aquatic animals stay in aquatic realms.
  * - Wraithform
  * - Summoning
- * - Fixed Quests
  */
 
 /*
@@ -73,7 +54,7 @@ bool borg_stop_king = TRUE;		/* The borg stops when he wins */
 bool borg_cheat_death = FALSE;	/* Is there life after death? */
 bool borg_flag_dump = FALSE;	/* Save savefile at each death */
 bool borg_flag_save = FALSE;	/* Save savefile at each level */
-bool borg_save = FALSE;			/* do a save next level */
+bool borg_save = FALSE;			/* Do a save next level */
 
 /*
  * Use a simple internal random number generator

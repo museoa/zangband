@@ -166,9 +166,8 @@ extern int borg_slot_from(int tval, int sval, int from);
 extern object_kind *borg_get_kind(int tval, int sval);
 extern int look_up_index(list_item *l_ptr);
 extern bool borg_obj_star_id_able(list_item *l_ptr);
-extern bool borg_keep_unidentified(list_item *l_ptr);
 extern long borg_calc_pseudo(void);
-extern bool borg_item_icky(list_item *l_ptr);
+extern bool borg_worthless_item(list_item *l_ptr);
 
 extern bool borg_refuel(void);
 extern bool borg_eat_food(int sval);
@@ -199,8 +198,10 @@ extern int borg_reserve_mana(void);
 extern byte borg_spell_mana(int realm, int book, int spell);
 extern bool borg_spell_legal(int realm, int book, int what);
 extern bool borg_spell_okay(int realm, int book, int what);
+extern bool borg_spell_okay_no_reserve(int realm, int book, int what);
 extern int  borg_spell_fail_rate(int realm, int book, int what);
 extern bool borg_spell(int realm, int book, int what);
+extern bool borg_spell_no_reserve(int realm, int book, int what);
 extern bool borg_spell_fail(int realm, int book, int what, int allow_fail);
 extern bool borg_spell_okay_fail(int realm, int book, int what, int allow_fail);
 extern bool borg_spell_legal_fail(int realm, int book, int what,
@@ -208,8 +209,10 @@ extern bool borg_spell_legal_fail(int realm, int book, int what,
 extern bool borg_uses_book(int realm, int book);
 extern bool borg_mindcr_legal(int spell, int level);
 extern bool borg_mindcr_okay(int spell, int level);
+extern bool borg_mindcr_okay_no_reserve(int spell, int level);
 extern int  borg_mindcr_fail_rate(int spell, int level);
 extern bool borg_mindcr(int spell, int level);
+extern bool borg_mindcr_no_reserve(int spell, int level);
 extern bool borg_mindcr_fail(int spell, int level, int allow_fail);
 extern bool borg_mindcr_okay_fail(int spell, int level, int allow_fail);
 extern bool borg_mindcr_legal_fail(int spell, int level, int allow_fail);

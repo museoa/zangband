@@ -1612,7 +1612,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
 		/* Convert the object to money! */
-		if (!borg_spell(REALM_SORCERY, 3, 6))
+		if (!borg_spell_no_reserve(REALM_SORCERY, 3, 6))
 		{
 			/* Try the mutation to gain money */
 			if (!borg_mutation(MUT1_MIDAS_TCH))
@@ -1742,17 +1742,13 @@ static bool borg_destroy_aux(bool must_destroy)
 		if (!l_ptr->k_idx) continue;
 
 		/* unknown? */
-		if (borg_keep_unidentified(l_ptr))
+		if (borg_worthless_item(l_ptr))
 		{
 			/* Some unknown items are valueless */
 			value = 0;
 		}
 		else
 		{
-			/* Skip "good" unknown items (unless "icky") */
-			if (!must_destroy && !destroy_weight &&
-				!borg_item_icky(l_ptr)) continue;
-
 			/* Skip items that need to be *id*'d */
 			if (strstr(l_ptr->o_name, "{special") ||
 				strstr(l_ptr->o_name, "{terrible") ||
@@ -1843,6 +1839,10 @@ static bool borg_destroy_aux(bool must_destroy)
 	/* Attempt to consume it */
 	if (borg_consume(l_ptr)) return (TRUE);
 
+	/* Make a note of the reason */
+	borg_note_fmt("# Destroying %sfor weight, value = %d",
+		(destroy_weight) ? "" : "not ", b_v);
+
 	/* Destroy the item */
 	if (destroy_weight)
 	{
@@ -1920,7 +1920,7 @@ bool borg_destroy(void)
 static bool borg_test_stuff(void)
 {
 	int i, b_i = -1;
-	s32b v, b_v = -1;
+	s32b v, b_v = 0;
 
 	list_item *l_ptr;
 
@@ -1961,26 +1961,32 @@ static bool borg_test_stuff(void)
 			if (borg_obj_known_p(l_ptr)) continue;
 
 			/* Assume nothing */
-			v = -1;
+			v = 0;
 
-			/* With unlimited identify the borg should identify everything */
-			if (bp_ptr->able.id >= 100) v = 1;
-
-			/* Ignore items that are very likely worth nothing */
-			if (borg_item_icky(l_ptr)) continue;
+			/* With unlimited identify */
+			if (bp_ptr->able.id >= 100)
+			{
+				/* The borg should identify everything */
+				v = 1;
+			}
+			/* Limited identify */
+			else
+			{
+				/* Ignore items that are very likely worth nothing */
+				if (borg_worthless_item(l_ptr)) continue;
+			}
 
 			/* Identify "good" items for a borg with light pseudo id */
-			if (strstr(l_ptr->o_name, "{good") &&
-				!borg_heavy_sense())
+			if (strstr(l_ptr->o_name, "{good"))
 			{
-				v = 10000L;
-			}
-			else if (strstr(l_ptr->o_name, "{good") &&
-				bp_ptr->able.id > 10)
-			{
-				v = 1000L;
+				/* If the {good} can hide ego stuff */
+				if (!borg_heavy_sense()) v += 10000L;
+
+				/* If there are enough id scrolls */
+				if (bp_ptr->able.id > 10) v += 1000L;
 			}
 			else if (strstr(l_ptr->o_name, "{excellent")) v = 20000L;
+			else if (strstr(l_ptr->o_name, "{tainted")) v = 20000L;
 			else if (strstr(l_ptr->o_name, "{special")) v = 50000L;
 			else if (strstr(l_ptr->o_name, "{terrible")) v = 50000L;
 
@@ -1991,46 +1997,58 @@ static bool borg_test_stuff(void)
 				switch (l_ptr->tval)
 				{
 					case TV_RING:
+					case TV_AMULET: v += 2000;
+					case TV_ROD:	v += 1000;
+					case TV_WAND:
+					case TV_STAFF:	v += 2000;
+					case TV_POTION:
+					case TV_SCROLL: v += 10;
+					case TV_FOOD:	v += 1;
+				}
+			}
+			else
+			{
+				/* Analyze the type */
+				switch (l_ptr->tval)
+				{
+					case TV_LITE:
+					{
+						v += 50000;
+
+						break;
+					}
+					case TV_RING:
 					case TV_AMULET:
 					{
-						/* Hack -- reward depth */
-						v += (bp_ptr->max_depth * 5000L);
-
+						v += 1000;
 						break;
 					}
-
-					case TV_ROD:
+					case TV_BOW:
+					case TV_DIGGING:
+					case TV_HAFTED:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_BOOTS:
+					case TV_GLOVES:
+					case TV_HELM:
+					case TV_CROWN:
+					case TV_SHIELD:
+					case TV_CLOAK:
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
 					{
-						/* Hack -- reward depth */
-						v += (bp_ptr->max_depth * 3000L);
+						/* If the borg has decent pseudo-id */
+						if (borg_calc_pseudo() < 100)
+						{
+							/* And it is heavy pseudo id then wait for it */
+							if (borg_heavy_sense()) continue;
 
-						break;
-					}
+							/* light pseudo may not work so id the item after a while */
+							if (randint0(1000)) continue;
+						}
 
-					case TV_WAND:
-					case TV_STAFF:
-					{
-						/* Hack -- reward depth */
-						v += (bp_ptr->max_depth * 2000L);
-
-						break;
-					}
-
-					case TV_POTION:
-					case TV_SCROLL:
-					{
-						/* Hack -- reward depth */
-						v += (bp_ptr->max_depth * 500L);
-
-						break;
-					}
-
-					case TV_FOOD:
-					{
-						/* Hack -- reward depth */
-						v += (bp_ptr->max_depth * 10L);
-
-						break;
+						v = 5;
 					}
 				}
 			}
@@ -2052,9 +2070,9 @@ static bool borg_test_stuff(void)
 		/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
 		if (borg_activate_artifact(ART_ERIRIL, FALSE) ||
 			borg_zap_rod(SV_ROD_IDENTIFY) ||
-			borg_spell(REALM_ARCANE, 3, 2) ||
-			borg_spell(REALM_SORCERY, 1, 1) ||
-			borg_mindcr(MIND_PSYCHOMETRY, 25) ||
+			borg_spell_no_reserve(REALM_ARCANE, 3, 2) ||
+			borg_spell_no_reserve(REALM_SORCERY, 1, 1) ||
+			borg_mindcr_no_reserve(MIND_PSYCHOMETRY, 25) ||
 			borg_use_staff(SV_STAFF_IDENTIFY) ||
 			borg_read_scroll(SV_SCROLL_IDENTIFY))
 		{
@@ -2159,11 +2177,11 @@ static bool borg_test_stuff_star(void)
 	/* Found something */
 	if (b_i >= 0)
 	{
-		if (borg_spell(REALM_SORCERY, 1, 7) ||
-			borg_spell(REALM_NATURE, 2, 5) ||
-			borg_spell(REALM_DEATH, 3, 2) ||
-			borg_spell(REALM_TRUMP, 3, 1) ||
-			borg_spell(REALM_LIFE, 3, 5) ||
+		if (borg_spell_no_reserve(REALM_SORCERY, 1, 7) ||
+			borg_spell_no_reserve(REALM_NATURE, 2, 5) ||
+			borg_spell_no_reserve(REALM_DEATH, 3, 2) ||
+			borg_spell_no_reserve(REALM_TRUMP, 3, 1) ||
+			borg_spell_no_reserve(REALM_LIFE, 3, 5) ||
 			borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
 		{
 			if (b_i >= equip_num)
@@ -2232,7 +2250,7 @@ static bool borg_test_stuff_pseudo(void)
 	if (!borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 15, 60) ||
 		bp_ptr->lev > 24)
 	{
-		/* Is it heavy pseudo id and likely to kick in by itself? */
+		/* Light pseudo id or unlikely pseudo id are not worth it? */
 		if (!borg_heavy_sense() ||
 			borg_calc_pseudo() > 100) return (FALSE);
 	}
@@ -2271,7 +2289,7 @@ static bool borg_test_stuff_pseudo(void)
 	if (b_i < 0) return (FALSE);
 
 	/* If you can cast the spell */
-	if (borg_mindcr(MIND_PSYCHOMETRY, 15))
+	if (borg_mindcr_no_reserve(MIND_PSYCHOMETRY, 15))
 	{
 		if (b_i >= equip_num)
 		{
@@ -2374,6 +2392,7 @@ bool borg_wear_stuff(void)
 	{
 		l_ptr = &inventory[i];
 
+		/* Ring fiddling */
 		ii = i;
 
 		/* Skip empty / unaware items */
@@ -2383,8 +2402,7 @@ bool borg_wear_stuff(void)
 		if (!borg_obj_known_p(l_ptr) &&
 			!strstr(l_ptr->o_name, "{average") &&
 			!strstr(l_ptr->o_name, "{good") &&
-			!strstr(l_ptr->o_name, "{excellent") &&
-			!strstr(l_ptr->o_name, "{special")) continue;
+			!strstr(l_ptr->o_name, "{excellent")) continue;
 
 		/* apw do not wear not *id* artifacts */
 		if (!borg_obj_known_full(l_ptr) &&
@@ -2475,14 +2493,6 @@ bool borg_wear_stuff(void)
 		{
 			borg_keypress('n');
 		}
-	}
-
-	/* Is the item cursed? */
-	if ((KN_FLAG(l_ptr, TR_CURSED) || KN_FLAG(l_ptr, TR_HEAVY_CURSE)) &&
-		confirm_wear)
-	{
-		/* Handle wearing cursed items correctly */
-		borg_keypress('y');
 	}
 
 	/* Okidoki */
@@ -2857,7 +2867,7 @@ bool borg_play_magic(bool bored)
 				borg_note("# Testing untried spell/prayer");
 
 				/* Hack -- Use spell or prayer */
-				if (borg_spell(realm, book, spell))
+				if (borg_spell_no_reserve(realm, book, spell))
 				{
 					/* Hack -- Allow attack spells */
 					if (as->method == BORG_MAGIC_AIM)

@@ -295,9 +295,6 @@ static void borg_think_shop_buy(int item)
 	/* Buy the desired item */
 	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
 
-	/* If the user likes this option */
-	if (check_transaction) borg_keypress('y');
-
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
 
@@ -333,8 +330,8 @@ static int borg_think_home_sell_aux2(void)
 
 	s32b p, b_p;
 
-	/* Evaluate the home  */
-	b_p = borg_power_home() + borg_power();
+	/* Evaluate the home */
+	b_p = borg_power() + borg_power_home();
 
 	/* Loop through all the items */
 	for (i = 0; i < inven_num; i++)
@@ -353,8 +350,8 @@ static int borg_think_home_sell_aux2(void)
 		/* Chuck item out of the inv */
 		l_ptr->treat_as = TREAT_AS_LESS;
 
-		/* Evaluate the new power  */
-		p = borg_power_home() + borg_power();
+		/* Evaluate the new power */
+		p = borg_power() + borg_power_home();
 
 		/* Restore item */
 		l_ptr->treat_as = TREAT_AS_NORM;
@@ -408,18 +405,22 @@ static bool borg_think_home_sell_aux(void)
  */
 static bool borg_good_sell(list_item *l_ptr)
 {
+	/* Just making sure */
+
+	if (!l_ptr) return (FALSE);
+
 	/* Never sell worthless items */
 	if (l_ptr->cost <= 0) return (FALSE);
 
 	/* Analyze the type */
 	switch (l_ptr->tval)
 	{
-		case TV_FOOD:
 		case TV_POTION:
 		case TV_SCROLL:
 		{
 			/* Never sell if not "known" and interesting */
-			if (!l_ptr->k_idx && (bp_ptr->max_depth > 20)) return (FALSE);
+			if (!borg_obj_known_p(l_ptr) &&
+				bp_ptr->max_depth > 20) return (FALSE);
 
 			break;
 		}
@@ -432,7 +433,7 @@ static bool borg_good_sell(list_item *l_ptr)
 		case TV_LITE:
 		{
 			/* Never sell if not "known" */
-			if (!l_ptr->k_idx) return (FALSE);
+			if (!borg_obj_known_p(l_ptr)) return (FALSE);
 
 			break;
 		}
@@ -452,19 +453,18 @@ static bool borg_good_sell(list_item *l_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+			/* Worthless items can be sold */
+			if (borg_worthless_item(l_ptr)) return (TRUE);
 
-			/* PseudoID items are ok to sell */
-			if (strstr(l_ptr->o_name, "{average")) break;
-
-			/* Only sell "known" items (unless "icky") */
-			if (!borg_item_icky(l_ptr)) return (FALSE);
+			/* Unknown items should not be sold */
+			if (borg_obj_known_p(l_ptr)) return (FALSE);
 
 			break;
 		}
 	}
 
-	/* Do not sell stuff that is not fully id'd and should be  */
-	if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr))
+	/* Do not sell an artifact that is not fully id'd and should be  */
+	if (!borg_obj_known_full(l_ptr) && KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
 		/* *identify* this item first */
 		return (FALSE);
@@ -923,7 +923,7 @@ static bool borg_think_home_grab_aux(void)
 	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
 	/* Evaluate the home */
-	b_s = borg_power_home() + borg_power();
+	b_s = borg_power() + borg_power_home();
 
 	/* Scan the home */
 	for (n = 0; n < home_num; n++)
@@ -934,7 +934,7 @@ static bool borg_think_home_grab_aux(void)
 		l_ptr->treat_as = TREAT_AS_LESS;
 
 		/* Evaluate the home */
-		s = borg_power_home() + borg_power();
+		s = borg_power() + borg_power_home();
 
 		/* Restore item */
 		l_ptr->treat_as = TREAT_AS_NORM;
@@ -946,9 +946,6 @@ static bool borg_think_home_grab_aux(void)
 		b_n = n;
 		b_s = s;
 	}
-
-	/* Evaluate the home */
-	s = borg_power_home();
 
 	/* Stockpile */
 	if (b_n >= 0)

@@ -2013,6 +2013,106 @@ static void borg_log_death_data(void)
 	my_fclose(borg_log_file);
 }
 
+
+/*
+ * The borg cannot handle all the values of all the options.  This is the list
+ * of options that have to be set a certain way.  When the borg is started
+ * they get the right value and when the borg stops running the original value
+ * is copied back
+ */
+static bool borg_rogue_like_commands;
+static bool borg_carry_query_flag;
+static bool borg_use_old_target;
+static bool borg_always_pickup;
+static bool borg_easy_open;
+static bool borg_easy_disarm;
+static bool borg_easy_floor;
+static bool borg_auto_more;
+static bool borg_disturb_other;
+static bool borg_confirm_wear;
+static bool borg_check_transaction;
+
+
+/* Turn on the right options */
+static void borg_set_options(void)
+{
+	/* We use the original keypress codes */
+	borg_rogue_like_commands = rogue_like_commands;
+	rogue_like_commands = FALSE;
+
+	/* We must pick items up without verification */
+	borg_carry_query_flag = carry_query_flag;
+	carry_query_flag = FALSE;
+
+	/* We specify targets before casting the spells */
+	borg_use_old_target = use_old_target;
+	use_old_target = TRUE;
+
+	/* We pick up items when we step on them */
+	borg_always_pickup = always_pickup;
+	always_pickup = TRUE;
+
+	/* The borg adds the direction so these should be off */
+	borg_easy_open = easy_open;
+	borg_easy_disarm = easy_disarm;
+	easy_open = FALSE;
+	easy_disarm = FALSE;
+
+	/* The borg doesn't understand the floor list */
+	borg_easy_floor = easy_floor;
+	easy_floor = FALSE;
+
+	/* Prevent the teleport [y/n] question */
+	borg_disturb_other = disturb_other;
+	disturb_other = FALSE;
+
+	/* The borg can get off-sequence with this */
+	borg_auto_more = auto_more;
+	auto_more = FALSE;
+
+	/* Keep track of these options values */
+	borg_confirm_wear = confirm_wear;
+	confirm_wear = FALSE;
+	borg_check_transaction = check_transaction;
+	check_transaction = FALSE;
+
+	/* set the continous play mode if the game cheat death is on */
+	if (cheat_live) borg_cheat_death = TRUE;
+}
+
+
+/* Set the options back to what they were */
+static void borg_reset_options(void)
+{
+	/* We use the original keypress codes */
+	rogue_like_commands = borg_rogue_like_commands;
+
+	/* We must pick items up without verification */
+	carry_query_flag = borg_carry_query_flag;
+
+	/* We specify targets before casting the spells */
+	use_old_target = borg_use_old_target;
+
+	/* We pick up items when we step on them */
+	always_pickup = borg_always_pickup;
+
+	/* The borg adds the direction so these should be off */
+	easy_open = borg_easy_open;
+	easy_disarm = borg_easy_disarm;
+
+	/* The borg doesn't understand the floor list */
+	easy_floor = borg_easy_floor;
+
+	/* The borg can get off-sequence with this */
+	auto_more = borg_auto_more;
+
+	/* Prevent some [y/n] questions */
+	disturb_other = borg_disturb_other;
+	confirm_wear = borg_confirm_wear;
+	check_transaction = borg_check_transaction;
+}
+
+
 /*
  * Mega-Hack -- special "inkey_hack" hook.  XXX XXX XXX
  *
@@ -2080,9 +2180,12 @@ static char borg_inkey_hack(int flush_first)
 		/* Message */
 		borg_note("# Removing keypress hook");
 
+		/* Set the options back to what they were */
+		borg_reset_options();
+
 		/* Remove hook */
 		inkey_hack = NULL;
-\
+
 		/* Flush keys */
 		borg_flush();
 
@@ -2379,41 +2482,8 @@ static void borg_cheat_temp_bools(void)
 	borg_esp = (p_ptr->tim.esp ? TRUE : FALSE);
 }
 
-/* Turn on the right options */
-static void borg_cheat_options(void)
-{
-	/* We use the original keypress codes */
-	rogue_like_commands = FALSE;
 
-	/* We must pick items up without verification */
-	carry_query_flag = FALSE;
-
-	/* We specify targets before casting the spells */
-	use_old_target = TRUE;
-
-	/* We pick up items when we step on them */
-	always_pickup = TRUE;
-
-	/* The borg adds the direction so these should be off */
-	easy_open = FALSE;
-	easy_disarm = FALSE;
-
-	/* The borg doesn't understand the floor list */
-	easy_floor = FALSE;
-
-	/* Prevent the teleport [y/n] question */
-	disturb_other = FALSE;
-
-	/* The borg can get off-sequence with this */
-	auto_more = FALSE;
-
-	/* set the continous play mode if the game cheat death is on */
-	if (cheat_live) borg_cheat_death = TRUE;
-}
-
-/*
- * Initialize the Borg
- */
+/* Initialize the Borg */
 void borg_init_9(void)
 {
 	/*** Hack -- initialize borg.ini options ***/
@@ -3079,7 +3149,7 @@ void do_cmd_borg(void)
 			borg_cheat_temp_bools();
 
 			/* Make sure the right options are set */
-			borg_cheat_options();
+			borg_set_options();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3108,7 +3178,7 @@ void do_cmd_borg(void)
 			borg_cheat_temp_bools();
 
 			/* Make sure the right options are set */
-			borg_cheat_options();
+			borg_set_options();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3156,7 +3226,7 @@ void do_cmd_borg(void)
 			borg_cheat_temp_bools();
 
 			/* Make sure the right options are set */
-			borg_cheat_options();
+			borg_set_options();
 
 			/* Message */
 			borg_note("# Installing keypress hook");

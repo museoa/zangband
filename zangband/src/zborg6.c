@@ -86,6 +86,8 @@ bool borg_recover(void)
 	/* Almost dead */
 	if (bp_ptr->chp < bp_ptr->mhp / 4) q = q - 10;
 
+	/* Minimize q a bit more */
+	q = MIN(q, bp_ptr->chp);
 
 	/*** Use "cheap" cures ***/
 
@@ -749,7 +751,7 @@ static bool borg_play_step(int y2, int x2)
 				borg_mutation(MUT1_EAT_ROCK) ||
 				borg_racial(RACE_HALF_GIANT))
 			{
-				borg_note("# Melting a wall");
+				borg_note_fmt("# Melting a wall (%c)", I2D(dir));
 				borg_keypress(I2D(dir));
 				return (TRUE);
 			}
