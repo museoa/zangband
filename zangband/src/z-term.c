@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: z-term.c */
 
 /*
@@ -1951,7 +1950,7 @@ errr Term_redraw(void)
 
 
 /*
- * Redraw part of a widow.
+ * Redraw part of a window.
  */
 errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
