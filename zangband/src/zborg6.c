@@ -4329,12 +4329,11 @@ extern int borg_attack_aux_thrust(void)
 	g_y = borg_temp_y[b_i];
 
 	mb_ptr = map_loc(g_x, g_y);
-	kill = &borg_kills[mb_ptr->kill];
 
 	/* Note */
 	borg_note(format
-			  ("# Facing %s at (%d,%d) who has %d Hit Points.",
-			   (r_name + r_info[kill->r_idx].name), g_y, g_x, kill->power));
+			  ("# Facing %s at (%d,%d).",
+			   (r_name + r_info[mb_ptr->monster].name), g_y, g_x));
 	borg_note(format
 			  ("# Attacking with weapon '%s'", borg_items[INVEN_WIELD].desc));
 
@@ -4363,23 +4362,18 @@ bool borg_target(int y, int x)
 
 	map_block *mb_ptr;
 
-	borg_kill *kill;
-
 	/* Bounds checking */
 	if (!map_in_bounds(x, y)) return (FALSE);
 
 	mb_ptr = map_loc(x, y);
 
-	kill = &borg_kills[mb_ptr->kill];
-
 
 	/* Log */
 	/* Report a little bit */
-	if (mb_ptr->kill)
+	if (mb_ptr->monster)
 	{
-		borg_note(format
-				  ("# Targeting %s who has %d Hit Points.",
-				   (r_name + r_info[kill->r_idx].name), kill->power));
+		borg_note(format("# Targeting %s.",
+				   (r_name + r_info[mb_ptr->monster].name)));
 	}
 	else
 	{
@@ -7399,12 +7393,10 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 
 	mb_ptr = map_loc(g_x, g_y);
 
-	kill = &borg_kills[mb_ptr->kill];
-
 	/* Note */
 	borg_note(format
-			  ("# Facing %s at (%d,%d) who has %d Hit Points.",
-			   (r_name + r_info[mb_ptr->monster].name), g_y, g_x, kill->power));
+			  ("# Facing %s at (%d,%d).",
+			   (r_name + r_info[mb_ptr->monster].name), g_y, g_x));
 	borg_note(format("# Attacking with Racial Attack '%d'", b_d));
 
 	/* Get a direction for attacking */
@@ -13001,20 +12993,18 @@ static bool borg_play_step(int y2, int x2)
 	/* Monsters -- Attack */
 	if (mb_ptr->kill)
 	{
-		borg_kill *kill = &borg_kills[mb_ptr->kill];
-
 		/* can't attack someone if afraid! */
 		if (borg_skill[BI_ISAFRAID])
 			return (FALSE);
 
 		/* Hack -- ignore Maggot until later.  */
-		if ((r_info[kill->r_idx].flags1 & RF1_UNIQUE) &&
+		if ((r_info[mb_ptr->monster].flags1 & RF1_UNIQUE) &&
 			borg_skill[BI_CDEPTH] == 0 && borg_skill[BI_CLEVEL] < 5)
 			return (FALSE);
 
 		/* Message */
 		borg_note(format("# Walking into a '%s' at (%d,%d)",
-						 r_name + r_info[kill->r_idx].name, kill->y, kill->x));
+						 r_name + r_info[mb_ptr->monster].name, x, y));
 
 		/* Walk into it */
 		if (my_no_alter)
