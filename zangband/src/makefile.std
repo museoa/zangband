@@ -403,9 +403,9 @@ LUAWSRCS := $(LUAWOBJS:.o=.c)
 ## Main list of objects and source files.
 ##
 
-SRCS := $(ANGSRCS) $(ZUTILSRCS) $(BORGSRCS)
+SRCS = $(ANGSRCS) $(ZUTILSRCS) $(BORGSRCS)
 
-OBJS := $(ANGOBJS) $(ZUTILOBJS) $(BORGOBJS) $(LUAOBJS) $(OTHEROBJS)
+OBJS = $(ANGOBJS) $(ZUTILOBJS) $(BORGOBJS) $(LUAOBJS) $(OTHEROBJS)
 
 ##
 ## Hack - GCC requires other flags
