@@ -3530,7 +3530,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 					OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 					{
 						/* Valid items only */
-						if (!item_tester_okay(q_ptr)) continue;
+						if (!item_tester_okay(o_ptr)) continue;
 					
 						/* Allow player to "refuse" certain actions */
 						if (!get_item_allow(o_ptr)) continue;
