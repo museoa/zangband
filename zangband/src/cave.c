@@ -1510,7 +1510,7 @@ void display_dungeon(void)
 void lite_spot(int y, int x)
 {
 	/* Redraw if on screen */
-	if (panel_contains(y, x))
+	if (panel_contains(y, x) && in_bounds(y, x))
 	{
 		byte a;
 		char c;
@@ -1613,7 +1613,7 @@ void prt_map(void)
 	/* Left section of screen */
 	for (x = 13; x < xmin - panel_col_prt; x++)
 	{
-		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+		for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
 		{
 			/* Efficiency -- Redraw that grid of the map */
 			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
@@ -1623,7 +1623,7 @@ void prt_map(void)
 	/* Right section of screen */
 	for (x = xmax - panel_col_prt; x < map_wid + 13; x++)
 	{
-		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+		for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
 		{
 			/* Efficiency -- Redraw that grid of the map */
 			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
