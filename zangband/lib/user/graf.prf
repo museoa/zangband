@@ -20,7 +20,7 @@
 ?:[EQU $SYS xaw]
 %:graf-xaw.prf
 
-?:[EQU $SYS x11]
+?:[IOR [EQU $SYS x11] [EQU $SYS xpj]]
 %:graf-x11.prf
 
 ?:[EQU $SYS lsl]
