@@ -2412,8 +2412,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		}
 		
 		/* Sometimes a field stops the feat from being mentioned */
-		if (fields_have_flags(c_ptr->fld_idx,
-			 FIELD_INFO_NFT_LOOK, FIELD_INFO_NFT_LOOK))
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NFT_LOOK))
 		{
 			if ((query != '\r') && (query != '\n'))
 			{

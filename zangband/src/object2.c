@@ -4596,10 +4596,8 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			    ((c_ptr->feat & 0x80) != 0x80)) continue;
 			
 			/* Check to see if fields dissallow placement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT,
-				 FIELD_INFO_NO_OBJCT))
-			{ 
-				/* Cannot drop here */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT))
+			{
 				continue;
 			}
 
@@ -4716,12 +4714,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			
 					
 		/* Check to see if fields dissallow placement */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT,
-			 FIELD_INFO_NO_OBJCT))
-		{ 
-			/* Cannot drop here */
-			continue;
-		}
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT)) continue;
 
 		/* Bounce to that location */
 		by = ty;

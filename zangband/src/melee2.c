@@ -2698,8 +2698,7 @@ static void process_monster(int m_idx)
 		}
 		
 		/* Require "empty" fields */
-		if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, FIELD_INFO_ENTER))
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER))
 		{
 			do_move = FALSE;
 		}

@@ -689,7 +689,7 @@ bool field_is_type(s16b fld_idx, byte typ)
  *
  * This is used to see of a grid blocks LOS or magic
  */
-bool fields_have_flags(s16b fld_idx, u16b info, u16b info_result)
+u16b fields_have_flags(s16b fld_idx, u16b info)
 {
 	field_type *f_ptr;
 	
@@ -708,11 +708,7 @@ bool fields_have_flags(s16b fld_idx, u16b info, u16b info_result)
 		fld_idx = f_ptr->next_f_idx;
 	}
 	
-	/* If all the requested flags are set - return true. */
-	if ((flags & info) == info_result) return TRUE;
-	
-	/* No match */
-	return FALSE;
+	return (flags & info);
 }
 
 

@@ -79,8 +79,7 @@ bool teleport_away(int m_idx, int dis)
 			c_ptr = area(ny, nx);
 			
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER)) continue;
 			
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -202,8 +201,7 @@ void teleport_to_player(int m_idx)
 			c_ptr = area(ny, nx);
 			
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER)) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -337,8 +335,7 @@ void teleport_player(int dis)
 			    ((c_ptr->feat & 0x60) == 0x60))) continue;
 
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER)) continue;
 			
 			/* No teleporting into vaults and such */
 			if (c_ptr->info & CAVE_ICKY) continue;
@@ -480,8 +477,8 @@ void teleport_player_to(int ny, int nx)
 		c_ptr = area(y, x);
 		
 		/* Can enter grid? */
-		if (cave_naked_grid(c_ptr) && fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, 0)) break;
+		if (cave_naked_grid(c_ptr) && !(fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER))) break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))

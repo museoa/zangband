@@ -2613,8 +2613,7 @@ void move_player(int dir, int do_pickup)
 	}
 	
 	/* Get passability of field(s) if there */
-	p_can_pass_fields = !fields_have_flags(c_ptr->fld_idx,
-		 FIELD_INFO_ENTER, FIELD_INFO_ENTER);
+	p_can_pass_fields = !(fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER));
 
 	/* Hack -- attack monsters */
 	if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr) || p_can_pass_walls))

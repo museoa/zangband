@@ -2813,8 +2813,7 @@ bool earthquake(int cy, int cx, int r)
 			if (map[16+y-cy][16+x-cx]) continue;
 		
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER)) continue;
 
 			/* Count "safe" grids */
 			sn++;

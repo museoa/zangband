@@ -313,8 +313,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 			
 			/* Require fields do not block magic */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -387,8 +386,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Require fields do not block magic */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -455,8 +453,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 			
 			/* Require fields do not block magic */
-			if (fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -4257,8 +4254,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 				if (cave_stop_disintegration(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-					FIELD_INFO_PERM))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 				{
 					return (FALSE);
 				}
@@ -4275,8 +4271,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 				if (cave_stop_disintegration(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-					FIELD_INFO_PERM))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 				{
 					return (FALSE);
 				}
@@ -4300,8 +4295,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 				if (cave_stop_disintegration(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-					FIELD_INFO_PERM))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 				{
 					return (FALSE);
 				}
@@ -4318,8 +4312,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 				if (cave_stop_disintegration(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-					FIELD_INFO_PERM))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 				{
 					return (FALSE);
 				}
@@ -4346,8 +4339,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 			if (!cave_stop_disintegration(c_ptr)) return (TRUE);
 			
 			/* Fields can block disintegration to */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-				FIELD_INFO_PERM))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 			{
 				return (FALSE);
 			}
@@ -4364,8 +4356,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 			if (!cave_stop_disintegration(c_ptr)) return (TRUE);
 			
 			/* Fields can block disintegration to */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-				FIELD_INFO_PERM))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 			{
 				return (FALSE);
 			}
@@ -4409,8 +4400,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 			if (cave_stop_disintegration(c_ptr)) return (FALSE);
 			
 			/* Fields can block disintegration to */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-				FIELD_INFO_PERM))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 			{
 				return (FALSE);
 			}
@@ -4430,8 +4420,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 				if (cave_stop_disintegration(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-					FIELD_INFO_PERM))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 				{
 					return (FALSE);
 				}
@@ -4475,8 +4464,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 			if (cave_stop_disintegration(c_ptr)) return (FALSE);
 			
 			/* Fields can block disintegration to */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-				FIELD_INFO_PERM))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 			{
 				return (FALSE);
 			}
@@ -4496,8 +4484,7 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 				if (cave_stop_disintegration(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM,
-					FIELD_INFO_PERM))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM))
 				{
 					return (FALSE);
 				}
@@ -4578,8 +4565,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				
 				/* Fields can block magic */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-					FIELD_INFO_NO_MAGIC))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 				{
 					return (FALSE);
 				}
@@ -4596,8 +4582,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				
 				/* Fields can block balls */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-					FIELD_INFO_NO_MAGIC))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 				{
 					return (FALSE);
 				}
@@ -4621,8 +4606,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				
 				/* Fields can block balls */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-					FIELD_INFO_NO_MAGIC))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 				{
 					return (FALSE);
 				}
@@ -4639,8 +4623,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				
 				/* Fields can block balls */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-					FIELD_INFO_NO_MAGIC))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 				{
 					return (FALSE);
 				}
@@ -4665,8 +4648,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 			c_ptr = area(y1 + sy, x1);
 			
 			/* Fields can block balls */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-				FIELD_INFO_NO_MAGIC))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 			{
 				return (FALSE);
 			}
@@ -4683,8 +4665,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 			c_ptr = area(y1, x1 + sx);
 			
 			/* Fields can block balls */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-				FIELD_INFO_NO_MAGIC))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 			{
 				return (FALSE);
 			}
@@ -4730,8 +4711,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 			if (!cave_floor_grid(c_ptr)) return (FALSE);
 			
 			/* Fields can block balls */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-				FIELD_INFO_NO_MAGIC))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 			{
 				return (FALSE);
 			}
@@ -4751,8 +4731,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				
 				/* Fields can block balls */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-					FIELD_INFO_NO_MAGIC))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 				{
 					return (FALSE);
 				}
@@ -4796,8 +4775,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 			if (!cave_floor_grid(c_ptr)) return (FALSE);
 			
 			/* Fields can block balls */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-				FIELD_INFO_NO_MAGIC))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 			{
 				return (FALSE);
 			}
@@ -4817,8 +4795,7 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
 				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				
 				/* Fields can block disintegration to */
-				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
-					FIELD_INFO_NO_MAGIC))
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 				{
 					return (FALSE);
 				}
@@ -5133,8 +5110,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
 		
 		/* Require fields do not block magic */
-		if (fields_have_flags(c_ptr->fld_idx,
-			 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) break;
 		
 		/* Advance */
 		y = ny;
