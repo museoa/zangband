@@ -412,7 +412,7 @@ static void prt_status(void)
  */
 static void prt_title(void)
 {
-	cptr p = "";
+	cptr p;
 
 	/* Wizard */
 	if (wizard)
@@ -1535,26 +1535,16 @@ static void calc_spells(void)
 		    (spell_learned1 & (1L << j)) :
 		    (spell_learned2 & (1L << (j - 32))))
 		{
-			/* Mark as forgotten */
+			/* Mark as forgotten - no longer known */
 			if (j < 32)
 			{
 				spell_forgotten1 |= (1L << j);
-				which = use_realm1;
-			}
-			else
-			{
-				spell_forgotten2 |= (1L << (j - 32));
-				which = use_realm2;
-			}
-
-			/* No longer known */
-			if (j < 32)
-			{
 				spell_learned1 &= ~(1L << j);
 				which = use_realm1;
 			}
 			else
 			{
+				spell_forgotten2 |= (1L << (j - 32));
 				spell_learned2 &= ~(1L << (j - 32));
 				which = use_realm2;
 			}
@@ -1589,26 +1579,16 @@ static void calc_spells(void)
 		    (spell_learned1 & (1L << j)) :
 		    (spell_learned2 & (1L << (j - 32))))
 		{
-			/* Mark as forgotten */
+			/* Mark as forgotten - no longer known */
 			if (j < 32)
 			{
 				spell_forgotten1 |= (1L << j);
-				which = use_realm1;
-			}
-			else
-			{
-				spell_forgotten2 |= (1L << (j - 32));
-				which = use_realm2;
-			}
-
-			/* No longer known */
-			if (j < 32)
-			{
 				spell_learned1 &= ~(1L << j);
 				which = use_realm1;
 			}
 			else
 			{
+				spell_forgotten2 |= (1L << (j - 32));
 				spell_learned2 &= ~(1L << (j - 32));
 				which = use_realm2;
 			}
@@ -1652,26 +1632,16 @@ static void calc_spells(void)
 		    (spell_forgotten1 & (1L << j)) :
 		    (spell_forgotten2 & (1L << (j - 32))))
 		{
-			/* No longer forgotten */
+			/* No longer forgotten - known once more */
 			if (j < 32)
 			{
 				spell_forgotten1 &= ~(1L << j);
-				which = use_realm1;
-			}
-			else
-			{
-				spell_forgotten2 &= ~(1L << (j - 32));
-				which = use_realm2;
-			}
-
-			/* Known once more */
-			if (j < 32)
-			{
 				spell_learned1 |= (1L << j);
 				which = use_realm1;
 			}
 			else
 			{
+				spell_forgotten2 &= ~(1L << (j - 32));
 				spell_learned2 |= (1L << (j - 32));
 				which = use_realm2;
 			}
@@ -2127,7 +2097,7 @@ static int weight_limit(void)
  * a large, heavy weapon - training that many classes simply do not have the
  * time or inclination for.  -LM-
  */
-sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
+sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
 {
 	int add_skill = 0;
 
@@ -2252,7 +2222,7 @@ sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
 }
 
 /* Calculate all class and race-based bonuses and penalties to missile Skill -LM- */
-sint add_special_missile_skill (byte pclass, s16b weight, object_type *o_ptr)
+sint add_special_missile_skill(byte pclass, s16b weight, object_type *o_ptr)
 {
 	int add_skill = 0;
 
@@ -3404,7 +3374,7 @@ void calc_bonuses(void)
 	{
 		int str_index, dex_index;
 
-		int num = 0, wgt = 0, mul = 0, div = 0;
+		int num = 0, wgt = 0, mul = 0, div;
 
 		/* Analyze the class */
 		switch (p_ptr->pclass)

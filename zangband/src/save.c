@@ -1670,10 +1670,8 @@ static bool wr_savefile_new(void)
 static bool save_player_aux(char *name)
 {
 	bool    ok = FALSE;
-
-	int             fd = -1;
-
-	int             mode = 0644;
+	int     fd;
+	int     mode = 0644;
 
 
 	/* No file yet */

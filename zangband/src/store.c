@@ -1618,7 +1618,7 @@ static void display_entry(int pos)
 	char		out_val[160];
 
 
-	int maxwid = 75;
+	int maxwid;
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
@@ -2318,7 +2318,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 static bool sell_haggle(object_type *o_ptr, s32b *price)
 {
 	s32b    purse, cur_ask, final_ask;
-	s32b    last_offer = 0, offer = 0;
+	s32b    last_offer, offer = 0;
 	s32b    x1, x2, x3;
 	s32b    min_per, max_per;
 	int     flag, loop_flag, noneed;

@@ -1483,7 +1483,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_RUMOR:
 		{
-			errr err = 0;
+			errr err;
 
 			switch (randint(20))
 			{

@@ -1770,7 +1770,7 @@ void display_inven(void)
 {
 	register        int i, n, z = 0;
 	object_type     *o_ptr;
-	byte            attr = TERM_WHITE;
+	byte            attr;
 	char            tmp_val[80];
 	char            o_name[80];
 
@@ -1859,7 +1859,7 @@ void display_equip(void)
 {
 	register        int i, n;
 	object_type     *o_ptr;
-	byte            attr = TERM_WHITE;
+	byte            attr;
 	char            tmp_val[80];
 	char            o_name[80];
 
@@ -2483,9 +2483,9 @@ static int get_tag(int *cp, char tag)
  */
 bool get_item(int *cp, cptr pmt, cptr str, int mode)
 {
-	s16b this_o_idx, next_o_idx = 0;
+	s16b this_o_idx, next_o_idx;
 
-	char n1, n2, which = ' ';
+	char which;
 
 	int j, k, i1, i2, e1, e2;
 
@@ -2665,10 +2665,6 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		/* Inventory screen */
 		if (!command_wrk)
 		{
-			/* Extract the legal requests */
-			n1 = I2A(i1);
-			n2 = I2A(i2);
-
 			/* Redraw if needed */
 			if (command_see) show_inven();
 		}
@@ -2676,10 +2672,6 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		/* Equipment screen */
 		else
 		{
-			/* Extract the legal requests */
-			n1 = I2A(e1 - INVEN_WIELD);
-			n2 = I2A(e2 - INVEN_WIELD);
-
 			/* Redraw if needed */
 			if (command_see) show_equip();
 		}
@@ -3188,7 +3180,7 @@ void show_floor(int y, int x)
  */
 bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
 {
-	char n1 = ' ', n2 = ' ', which = ' ';
+	char n1 = ' ', n2 = ' ', which;
 
 	int j, k, i1, i2, e1, e2;
 
@@ -3883,7 +3875,7 @@ bool get_item_floor(int *cp, cptr pmt, cptr str, int mode)
  */
 void py_pickup_floor(int pickup)
 {
-	s16b this_o_idx, next_o_idx = 0;
+	s16b this_o_idx, next_o_idx;
 
 	char o_name[80];
 	object_type *o_ptr;
