@@ -1212,8 +1212,8 @@ static bool borg_decurse(void)
 	if (borg_wearing_cursed)
 	{
 		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
-			(!borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-			 !borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
+			!(borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
+			 borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
 			&& !borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
 		{
 			return (FALSE);
