@@ -6137,6 +6137,9 @@ option_type option_info[] =
 
 	{ &stupid_monsters,             FALSE, 6, 5, 2,
 	"stupid_monsters",              "Monsters behave stupidly" },
+	
+	{ &silly_monsters,             TRUE, 6, 6, 17,
+	"silly_monsters",              "Allow silly monsters" },
 
 	{ &ironman_shops,               FALSE, 6, 6, 2,
 	"ironman_shops",                "Stores are permanently closed" },

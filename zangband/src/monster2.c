@@ -465,8 +465,15 @@ errr get_mon_num_prep(monster_hook_type monster_hook,
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Accept monsters which pass the restriction, if any */
+		
+		/*
+		 * Hack - check for silly monsters here.
+		 * This makes more sense then adding the test to every
+		 * hook function.
+		 */
 		if ((!get_mon_num_hook || (*get_mon_num_hook)(entry->index)) &&
-			(!get_mon_num2_hook || (*get_mon_num2_hook)(entry->index)))
+			(!get_mon_num2_hook || (*get_mon_num2_hook)(entry->index)) &&
+			(silly_monsters || !(r_info[entry->index].flags7 & RF7_SILLY)))
 		{
 			/* Accept this monster */
 			entry->prob2 = entry->prob1;
