@@ -2767,8 +2767,8 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Hit the trap */
-	hit_trap(f_ptr);
+	/* Disturb the player */
+	disturb(0, 0);
 	
 	msg_print("You are not sure what just happened!");
 	
