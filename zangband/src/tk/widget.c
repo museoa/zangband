@@ -289,7 +289,7 @@ static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
 			pixel = *src1 & 0x00FFFFFF;
 			
 			/* Hack - overlay */
-			/* if (!pixel) pixel = *src2 & 0x00FFFFFF; */
+			if (!pixel) pixel = *src2 & 0x00FFFFFF;
 			
 			b = (pixel & 0x00FF0000) >> 16;
 			g = (pixel & 0x0000FF00) >> 8;
