@@ -683,8 +683,8 @@ int main(int argc, char *argv[])
 	/* Make sure we have a display! */
 	if (!done) quit("Unable to prepare any 'display module'!");
 
-	/* Gtk initializes earlier */
-	if (!streq(ANGBAND_SYS, "gtk"))
+	/* Gtk and Tk initialise earlier */
+	if (!(streq(ANGBAND_SYS, "gtk") || streq(ANGBAND_SYS, "tnb")))
 	{
 		/* Catch nasty signals */
 		signals_init();

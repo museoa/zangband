@@ -469,6 +469,9 @@ int init_tnb(int argc, cptr *argv)
 	/* Initialize */
 	angtk_init();
 	
+	/* Catch nasty signals */
+	signals_init();
+	
 	/* Initialize */
 	init_angband();
 
@@ -482,6 +485,9 @@ int init_tnb(int argc, cptr *argv)
 				;
 	}
 #endif /* 0 */
+
+	/* Press a key for the player */
+	Term_keypress(' ');
 	
 	/* Paranoia */
 	return (0);
