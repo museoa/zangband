@@ -1290,8 +1290,19 @@ void verify_panel(void)
 	hgt -= ROW_MAP + 1;
 	wid -= COL_MAP + 1;
 
-	max_prow_min = max_panel_rows - hgt;
-	max_pcol_min = max_panel_cols - wid;
+	/* Where are we? */
+	if (!vanilla_town && !p_ptr->depth)
+	{
+		/* Fix the borders in the wilderness */
+		max_pcol_min = max_panel_cols - wid - 3 - COL_MAP;
+		max_prow_min = max_panel_rows - hgt - WILD_BLOCK_SIZE + 1 - ROW_MAP;
+	}
+	else
+	{
+		/* In the dungeon */
+		max_prow_min = max_panel_rows - hgt;
+		max_pcol_min = max_panel_cols - wid;
+	}
 
 	/* Bounds checking */
 	if (max_prow_min < 0) max_prow_min = 0;
