@@ -1426,6 +1426,9 @@ static void close_game_handle_death(void)
 				/* Dump char file */
 				char tmp[160] = "";
 
+				/* Clear this line first */
+				clear_row(23);
+
 				/* Prompt */
 				put_fstr(0, 23, "Filename: ");
 

@@ -1327,7 +1327,7 @@ static bool borg_build_armour(void)
 static bool borg_build_map(void)
 {
 	int i, j;
-	int x = c_x / 16, y = c_y / 16;
+	int x = c_x / WILD_BLOCK_SIZE, y = c_y / WILD_BLOCK_SIZE;
 	int radius = 20, sum = 0, count = 0;
 
 	/* Check the money */
@@ -1339,7 +1339,8 @@ static bool borg_build_map(void)
 		for (j = y - radius; j < y + radius + 1; j++)
 		{
 			/* In bounds? */
-			if ((i >= 0) && (i < max_wild) && (j >= 0) && (j < max_wild))
+			if (i >= 0 && i < max_wild - 1 &&
+				j >= 0 && j < max_wild - 1)
 			{
 				if (distance(i, j, x, y) >= radius) continue;
 
@@ -2306,7 +2307,6 @@ bool borg_think_dungeon(void)
 	}
 
 	/*** Nothing to do ***/
-
 
 	/* Set a flag that the borg is  not allowed to retreat for 5 rounds */
 	borg_no_retreat = 5;
