@@ -6974,7 +6974,7 @@ const mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET] =
 		"You can breathe fire.",
 		"You gain the ability to breathe fire.",
 		"You lose the ability to breathe fire.",
-		"Fire breath (dam lvl*2)",
+		"Fire breath (lvl*2)",
 		20, 20, A_CON, 18,
 		0
 	},
@@ -7971,7 +7971,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    "You can move youself accross the dungeon.",
 	    "(nothing)",
 	    "(nothing)",
-	    "Telport (range 10 + plev)",
+	    "Telport (range 10 + lvl)",
 	    5, 10, A_INT, 12,
 	    0
 	},
@@ -8061,7 +8061,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    "You can throw boulders with great force.",
 	    "(nothing)",
 	    "(nothing)",
-	    "Throw boulder (dam 3/2 * lev)",
+	    "Throw Boulder (3*lvl)/2",
 	    20, 15, A_STR, 12,
 	    0
 	},
@@ -8111,7 +8111,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    "You can fire magic missiles.",
 	    "(nothing)",
 	    "(nothing)",
-	    "Magic missile (3+(lev-1)/5)d4",
+	    "Magic missile",
 	    2, 2, A_INT, 9,
 	    0
 	},
