@@ -4440,9 +4440,6 @@ void change_level(int level)
 			del_wild_cache();
 			init_wild_cache();
 		}
-
-		p_ptr->place_num = wild[p_ptr->py / WILD_BLOCK_SIZE]
-		                       [p_ptr->px / WILD_BLOCK_SIZE].done.place;
 	}
 	else
 	{

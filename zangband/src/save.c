@@ -957,8 +957,8 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->max_depth);
 
 	/* More info */
-	wr_s16b(p_ptr->recall_depth);
-	wr_s16b(p_ptr->recall_place);
+	wr_s16b(0);					/* oops */
+	wr_s16b(0);					/* oops */
 	wr_s16b(0);					/* oops */
 	wr_s16b(0);					/* oops */
 	wr_s16b(p_ptr->rp.sc);
