@@ -726,8 +726,8 @@ D:1:50:100:0:100:0:0:62
 F:2,field_action_door_store
 F:19,field_action_isshield_tester
 
-# Axesman
-N:71:Axesman
+# Axeman
+N:71:Axeman
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
@@ -735,8 +735,8 @@ D:2:1:20:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
 
-# Axesman
-N:72:Advanced Axesman
+# Axeman
+N:72:Advanced Axeman
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
@@ -744,8 +744,8 @@ D:2:1:50:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
 
-# Axesman
-N:73:Expert Axesman
+# Axeman
+N:73:Expert Axeman
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
@@ -753,8 +753,8 @@ D:2:50:75:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
 
-# Axesman
-N:74:Arcane Axesman
+# Axeman
+N:74:Arcane Axeman
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
@@ -762,8 +762,8 @@ D:2:75:127:0:100:0:0:24
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
 
-# Axesman
-N:75:Obscure Axesman
+# Axeman
+N:75:Obscure Axeman
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
@@ -771,8 +771,8 @@ D:2:50:100:0:100:0:0:42
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
 
-# Axesman
-N:76:Rare Axesman
+# Axeman
+N:76:Rare Axeman
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
