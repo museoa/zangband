@@ -268,7 +268,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_AMBERITE:
 			{
 				/* Hack - use levels to choose ability */
-				if (mut_ptr->level == 30)
+				if (mut_ptr->level == 40)
 				{
 					msg_print("You picture the Pattern in your mind and walk it...");
 					(void)set_poisoned(0);
@@ -286,7 +286,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					(void)restore_level();
 				}
 
-				else if (mut_ptr->level == 40)
+				else if (mut_ptr->level == 30)
 				{
 					/* No effect in arena or quest */
 					if (p_ptr->inside_quest)
