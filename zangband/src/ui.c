@@ -1043,7 +1043,7 @@ bool get_string(char *buf, int len, cptr str, ...)
 	va_start(vp, str);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, str, vp);
+	(void)vstrnfmt(prompt, 1024, str, vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
