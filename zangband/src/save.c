@@ -1220,8 +1220,8 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 			/* Get the cave */
 			c_ptr = area(y,x);
 
-			/* Extract a byte */
-			tmp8u = c_ptr->mimic;
+			/* Extract a byte - the "mimic" feat variable has been removed. */
+			tmp8u = 0;
 
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))

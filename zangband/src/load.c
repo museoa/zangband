@@ -832,22 +832,36 @@ static errr rd_store(int town_number, int store_number)
 
 	int j;
 
-	byte num;
+	s16b good_buy, bad_buy, insult_cur;
+	s32b store_open;
+	
+	byte num, owner, type;
 
 	/* Read the basic info */
-	rd_s32b(&st_ptr->store_open);
-	rd_s16b(&st_ptr->insult_cur);
-	rd_byte(&st_ptr->owner);
+	rd_s32b(&store_open);
+	rd_s16b(&insult_cur);
+	rd_byte(&owner);
 	rd_byte(&num);
-	rd_s16b(&st_ptr->good_buy);
-	rd_s16b(&st_ptr->bad_buy);
+	rd_s16b(&good_buy);
+	rd_s16b(&bad_buy);
 	
 	if (sf_version > 20)
 	{
 		rd_u16b(&st_ptr->x);
 		rd_u16b(&st_ptr->y);
-		rd_byte(&st_ptr->type);
+		rd_byte(&type);
 	}
+	
+	/* Initialise the store */
+	store_init(town_number, store_number, type);
+	
+	/* Restore the saved parameters */
+	st_ptr->store_open = store_open;
+	st_ptr->insult_cur = insult_cur;
+	st_ptr->owner = owner;
+	st_ptr->good_buy = good_buy;
+	st_ptr->bad_buy = bad_buy;
+	
 
 	if (!z_older_than(2, 1, 3))
 	{
@@ -860,6 +874,8 @@ static errr rd_store(int town_number, int store_number)
 		st_ptr->last_visit = turn;
 	}
 
+	
+
 	/*
 	 * Hack - allocate store if it has stock
 	 * Note that this will change the order that
@@ -870,9 +886,6 @@ static errr rd_store(int town_number, int store_number)
 	if (num)
 	{
 		(void)allocate_store(st_ptr);
-
-		/* Save store type */
-		st_ptr->type = store_number;
 	}
 
 	/* Read the items */
@@ -899,9 +912,6 @@ static errr rd_store(int town_number, int store_number)
 			object_copy(&st_ptr->stock[k], q_ptr);
 		}
 	}
-
-	/* Fill the table of item-types that can be sold */
-	init_store_table(st_ptr);
 
 	/* Success */
 	return (0);
@@ -1642,12 +1652,8 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			/* Apply the RLE info */
 			for (i = count; i > 0; i--)
 			{
-				/* Access the cave */
-				c_ptr = area(y,x);
-
-				/* Extract "feat" */
-				c_ptr->mimic = tmp8u;
-
+				/* Ignore this (The mimic field has been removed) */
+			
 				/* Advance/Wrap */
 				if (++x >= xmax)
 				{

@@ -1052,9 +1052,6 @@ static bool store_will_buy(object_type *o_ptr)
 		}
 	}
 
-	/* Ignore "worthless" items XXX XXX XXX */
-	if (object_value(o_ptr) <= 0) return (FALSE);
-
 	/* Assume okay */
 	return (TRUE);
 }
@@ -2802,7 +2799,7 @@ static void store_purchase(int *store_top, town_type *twn_ptr)
 		else
 		{
 			/* Nothing left */
-			if (st_ptr->stock_num == 0) *store_top = 0;
+			if (st_ptr->stock_num == 0) store_top = 0;
 
 			/* Nothing left on that screen */
 			else if (*store_top >= st_ptr->stock_num) *store_top -= 12;
@@ -3581,15 +3578,16 @@ void do_cmd_store(field_type *f_ptr)
 	int tmp_chr;
 	int i;
 	int store_top;
+	
 	owner_type *ot_ptr;
-	town_type *twn_ptr = &town[p_ptr->town_num];
-
-
+	
+	town_type	*twn_ptr = &town[p_ptr->town_num];
+	
 	/* Get the store the player is on */
 	for (i = 0; i < twn_ptr->numstores; i++)
 	{
 		if ((p_ptr->py - twn_ptr->y * 16 == twn_ptr->store[i].y) && 
-		    (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
+		 (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
 		{
 			which = i;
 		}
@@ -4479,34 +4477,13 @@ static byte store_table[MAX_STORES][STORE_CHOICES][2] =
 };
 
 
-void init_store_table(store_type *store)
-{
-	int i;
-
-	/* Assume full table */
-	store->table_size = STORE_CHOICES;
-	
-	/* Allocate the stock */
-	C_MAKE(store->table, store->table_size, s16b);
-
-	/* Scan the choices */
-	for (i = 0; i < STORE_CHOICES; i++)
-	{
-		/* Extract the tval/sval codes */
-		int tv = store_table[store->type][i][0];
-		int sv = store_table[store->type][i][1];
-
-		/* Add that item index to the table */
-		store->table[store->table_num++] = lookup_kind(tv, sv);
-	}
-}
-
-
 /*
  * Initialize the stores
  */
 void store_init(int town_num, int store_num, byte store_type)
 {
+	int k;
+	
 	/* Activate that store */
 	st_ptr = &town[town_num].store[store_num];
 
@@ -4522,8 +4499,22 @@ void store_init(int town_num, int store_num, byte store_type)
 	/* Fill in table if required */
 	if (!((store_type == STORE_BLACK) || (store_type == STORE_HOME)))
 	{
-		/* Fill the table of item-types that can be sold */
-		init_store_table(st_ptr);
+		/* Assume full table */
+		st_ptr->table_size = STORE_CHOICES;
+		
+		/* Allocate the stock */
+		C_MAKE(st_ptr->table, st_ptr->table_size, s16b);
+
+		/* Scan the choices */
+		for (k = 0; k < STORE_CHOICES; k++)
+		{
+			/* Extract the tval/sval codes */
+			int tv = store_table[store_type][k][0];
+			int sv = store_table[store_type][k][1];
+
+			/* Add that item index to the table */
+			st_ptr->table[st_ptr->table_num++] = lookup_kind(tv, sv);
+		}
 	}
 
 	/* Initialize the store */
