@@ -1002,7 +1002,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Mind blast */
 	{
-		if (!p_ptr->resist_conf)
+		if (!p_ptr->resist_confu)
 		{
 			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
@@ -1022,7 +1022,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Brain smash */
 	{
-		if (!p_ptr->resist_conf)
+		if (!p_ptr->resist_confu)
 		{
 			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
@@ -2988,7 +2988,7 @@ void update_smart_learn(int m_idx, int what)
 
 
 	case DRS_NETH:
-		if (p_ptr->resist_neth) m_ptr->smart |= (SM_RES_NETH);
+		if (p_ptr->resist_nethr) m_ptr->smart |= (SM_RES_NETH);
 		break;
 
 	case DRS_LITE:
@@ -3004,7 +3004,7 @@ void update_smart_learn(int m_idx, int what)
 		break;
 
 	case DRS_CONF:
-		if (p_ptr->resist_conf) m_ptr->smart |= (SM_RES_CONF);
+		if (p_ptr->resist_confu) m_ptr->smart |= (SM_RES_CONF);
 		break;
 
 	case DRS_CHAOS:

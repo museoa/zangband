@@ -2076,7 +2076,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 			{
 				/* Prompt */
-				sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_dlv);
+				sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_depth);
 
 				/* Default */
 				sprintf(tmp_val, "%d", MAX(dun_level, 1));
@@ -2091,9 +2091,9 @@ static bool cast_trump_spell(int spell, bool success)
 					if (dummy < 1) dummy = 1;
 
 					/* Paranoia */
-					if (dummy > p_ptr->max_dlv) dummy = p_ptr->max_dlv;
+					if (dummy > p_ptr->max_depth) dummy = p_ptr->max_depth;
 
-					p_ptr->max_dlv = dummy;
+					p_ptr->max_depth = dummy;
 
 					/* Accept request */
 					msg_format("Recall depth set to level %d (%d').", dummy, dummy * 50);

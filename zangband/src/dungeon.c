@@ -1775,14 +1775,14 @@ static void process_world(void)
 
 		if ((p_ptr->muta2 & MUT2_ALCOHOL) && (randint1(6400) == 321))
 		{
-			if (!p_ptr->resist_conf && !p_ptr->resist_chaos)
+			if (!p_ptr->resist_confu && !p_ptr->resist_chaos)
 			{
 				disturb(0, 0);
 				p_ptr->redraw |= PR_EXTRA;
 				msg_print("You feel a SSSCHtupor cOmINg over yOu... *HIC*!");
 			}
 
-			if (!p_ptr->resist_conf)
+			if (!p_ptr->resist_confu)
 			{
 				(void)set_confused(p_ptr->confused + randint0(20) + 15);
 			}
@@ -2428,7 +2428,7 @@ static void process_world(void)
 				msg_print("You feel yourself yanked downwards!");
 
 				/* New depth */
-				dun_level = p_ptr->max_dlv;
+				dun_level = p_ptr->max_depth;
 
 				if (dun_level < 1) dun_level = 1;
 
@@ -3765,16 +3765,16 @@ static void dungeon(void)
 	}
 
 	/* Track maximum player level */
-	if (p_ptr->max_plv < p_ptr->lev)
+	if (p_ptr->max_lev < p_ptr->lev)
 	{
-		p_ptr->max_plv = p_ptr->lev;
+		p_ptr->max_lev = p_ptr->lev;
 	}
 
 
 	/* Track maximum dungeon level (if not in quest -KMW-) */
-	if ((p_ptr->max_dlv < dun_level) && !p_ptr->inside_quest)
+	if ((p_ptr->max_depth < dun_level) && !p_ptr->inside_quest)
 	{
-		p_ptr->max_dlv = dun_level;
+		p_ptr->max_depth = dun_level;
 	}
 
 	/* No stairs down from Quest */

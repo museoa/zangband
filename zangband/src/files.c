@@ -2832,8 +2832,8 @@ errr file_character(cptr name, bool full)
 	else
 		fprintf(fff, "\n Nightmare Mode:     OFF");
 
-	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_dlv,
-		50 * p_ptr->max_dlv);
+	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
+		50 * p_ptr->max_depth);
 
 	if (noscore)
 		fprintf(fff, "\n You have done something illegal.");
@@ -3963,7 +3963,7 @@ long total_points(void)
 
 	if (mult < 5) mult = 5; /* At least 5% of the original score */
 
-	temp = p_ptr->max_exp + (100 * p_ptr->max_dlv);
+	temp = p_ptr->max_exp + (100 * p_ptr->max_depth);
 
 	temp = (temp * mult / race_info[p_ptr->prace].r_exp);
 

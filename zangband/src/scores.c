@@ -450,8 +450,8 @@ errr top_twenty(void)
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
 	sprintf(the_score.cur_dun, "%3d", dun_level);
-	sprintf(the_score.max_lev, "%3d", p_ptr->max_plv);
-	sprintf(the_score.max_dun, "%3d", p_ptr->max_dlv);
+	sprintf(the_score.max_lev, "%3d", p_ptr->max_lev);
+	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
 
 	/* Save the cause of death (31 chars) */
 	sprintf(the_score.how, "%-.31s", died_from);
@@ -533,8 +533,8 @@ errr predict_score(void)
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
 	sprintf(the_score.cur_dun, "%3d", dun_level);
-	sprintf(the_score.max_lev, "%3d", p_ptr->max_plv);
-	sprintf(the_score.max_dun, "%3d", p_ptr->max_dlv);
+	sprintf(the_score.max_lev, "%3d", p_ptr->max_lev);
+	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
 
 	/* Hack -- no cause of death */
 	strcpy(the_score.how, "nobody (yet!)");
@@ -767,7 +767,7 @@ void kingly(void)
 	p_ptr->exp = p_ptr->max_exp;
 
 	/* Restore the level */
-	p_ptr->lev = p_ptr->max_plv;
+	p_ptr->lev = p_ptr->max_lev;
 
 	/* Hack -- Instant Gold */
 	p_ptr->au += 10000000L;

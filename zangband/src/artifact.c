@@ -2126,10 +2126,10 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_AVAVIR:
 			{
-				if (dun_level && (p_ptr->max_dlv > dun_level))
+				if (dun_level && (p_ptr->max_depth > dun_level))
 				{
 					if (get_check("Reset recall depth? "))
-					p_ptr->max_dlv = dun_level;
+					p_ptr->max_depth = dun_level;
 				}
 
 				msg_print("Your scythe glows soft white...");
@@ -2956,10 +2956,10 @@ bool activate_effect(object_type *o_ptr)
 			}
 			else
 			{
-				if (dun_level && (p_ptr->max_dlv > dun_level))
+				if (dun_level && (p_ptr->max_depth > dun_level))
 				{
 					if (get_check("Reset recall depth? "))
-					p_ptr->max_dlv = dun_level;
+					p_ptr->max_depth = dun_level;
 				}
 
 				msg_print("It glows soft white...");

@@ -1225,14 +1225,14 @@ static void rd_extra(void)
 	rd_s16b(&p_ptr->csp);
 	rd_u16b(&p_ptr->csp_frac);
 
-	rd_s16b(&p_ptr->max_plv);
-	rd_s16b(&p_ptr->max_dlv);
+	rd_s16b(&p_ptr->max_lev);
+	rd_s16b(&p_ptr->max_depth);
 
 	/* Repair maximum player level XXX XXX XXX */
-	if (p_ptr->max_plv < p_ptr->lev) p_ptr->max_plv = p_ptr->lev;
+	if (p_ptr->max_lev < p_ptr->lev) p_ptr->max_lev = p_ptr->lev;
 
 	/* Repair maximum dungeon level */
-	if (p_ptr->max_dlv < 0) p_ptr->max_dlv = 1;
+	if (p_ptr->max_depth < 0) p_ptr->max_depth = 1;
 
 	/* More info */
 	strip_bytes(8);
@@ -2821,7 +2821,7 @@ static errr rd_savefile_new_aux(void)
 	/* Read the player_hp array */
 	for (i = 0; i < tmp16u; i++)
 	{
-		rd_s16b(&player_hp[i]);
+		rd_s16b(&p_ptr->player_hp[i]);
 	}
 
 

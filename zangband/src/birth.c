@@ -840,7 +840,7 @@ static void save_prev_data(void)
 	/* Save the hitpoints */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
 	{
-		prev.hp[i] = player_hp[i];
+		prev.hp[i] = p_ptr->player_hp[i];
 	}
 }
 
@@ -882,7 +882,7 @@ static void load_prev_data(void)
 	/* Save the hitpoints */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
 	{
-		temp.hp[i] = player_hp[i];
+		temp.hp[i] = p_ptr->player_hp[i];
 	}
 
 
@@ -914,7 +914,7 @@ static void load_prev_data(void)
 	/* Save the hitpoints */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
 	{
-		player_hp[i] = prev.hp[i];
+		p_ptr->player_hp[i] = prev.hp[i];
 	}
 
 
@@ -1100,7 +1100,7 @@ static void get_extra(void)
 #endif
 
 	/* Level one */
-	p_ptr->max_plv = p_ptr->lev = 1;
+	p_ptr->max_lev = p_ptr->lev = 1;
 
 	/* Experience factor */
 	p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
@@ -1133,7 +1133,7 @@ static void get_extra(void)
 	max_value += PY_MAX_LEVEL;
 
 	/* Pre-calculate level 1 hitdice */
-	player_hp[0] = p_ptr->hitdie;
+	p_ptr->player_hp[0] = p_ptr->hitdie;
 
 	/* Roll out the hitpoints */
 	while (TRUE)
@@ -1143,20 +1143,20 @@ static void get_extra(void)
 		{
 			/* Add in racial hit dice */
 			j = randint1(rp_ptr->r_mhp);
-			player_hp[i] = player_hp[i - 1] + j;
+			p_ptr->player_hp[i] = p_ptr->player_hp[i - 1] + j;
 
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
-				player_hp[i] += randint1(cp_ptr->c_mhp);
+				p_ptr->player_hp[i] += randint1(cp_ptr->c_mhp);
 			}
 		}
 
 		/* XXX Could also require acceptable "mid-level" hitpoints */
 
 		/* Require "valid" hitpoints at highest level */
-		if (player_hp[PY_MAX_LEVEL - 1] < min_value) continue;
-		if (player_hp[PY_MAX_LEVEL - 1] > max_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL - 1] < min_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL - 1] > max_value) continue;
 
 		/* Acceptable */
 		break;
@@ -1164,7 +1164,7 @@ static void get_extra(void)
 
 #ifdef SHOW_LIFE_RATE
 
-	percent = (int)(((long)player_hp[PY_MAX_LEVEL - 1] * 200L) /
+	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
 		(2 * p_ptr->hitdie +
 		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 

@@ -79,7 +79,7 @@ void check_experience(void)
 		 * If auto-note taking enabled, write a note to the file.
 		 * Only write this note when the level is gained for the first time.
 		 */
-		if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_plv))
+		if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_lev))
 		{
 			char note[80];
 
@@ -90,7 +90,7 @@ void check_experience(void)
 		}
 
 		/* Save the highest level */
-		if (p_ptr->lev > p_ptr->max_plv)
+		if (p_ptr->lev > p_ptr->max_lev)
 		{
 			int vir, i;
 			for (vir = 0; vir < MAX_PLAYER_VIRTUES; vir++)
@@ -102,13 +102,13 @@ void check_experience(void)
 				 * Chance for a mutation is increased
 				 * if multiple levels are gained.
 				 */
-				for (i = p_ptr->max_plv; i < p_ptr->lev; i++)
+				for (i = p_ptr->max_lev; i < p_ptr->lev; i++)
 				{
 					if (randint1(5) == 1) level_mutation = TRUE;
 				}
 			}
 
-			p_ptr->max_plv = p_ptr->lev;
+			p_ptr->max_lev = p_ptr->lev;
 
 			if ((p_ptr->pclass == CLASS_CHAOS_WARRIOR) ||
 			    (p_ptr->muta2 & MUT2_CHAOS_GIFT))

@@ -2532,7 +2532,7 @@ void do_poly_self(void)
 		}
 
 		check_experience();
-		p_ptr->max_plv = p_ptr->lev;
+		p_ptr->max_lev = p_ptr->lev;
 
 		p_ptr->redraw |= (PR_BASIC);
 

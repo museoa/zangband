@@ -840,15 +840,6 @@ byte spell_order[64];	/* order spells learned/remembered/forgotten */
 
 
 /*
- * Calculated base hp values for player at each level,
- * store them so that drain life + restore life does not
- * affect hit points.  Also prevents shameless use of backup
- * savefiles for hitpoint acquirement.
- */
-s16b player_hp[PY_MAX_LEVEL];
-
-
-/*
  * The vault generation arrays
  */
 header *v_head;

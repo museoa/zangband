@@ -975,7 +975,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Increase "confused" */
-						if (!p_ptr->resist_conf)
+						if (!p_ptr->resist_confu)
 						{
 							if (set_confused(p_ptr->confused + 3 + randint1(rlev)))
 							{

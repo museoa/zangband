@@ -48,7 +48,7 @@ void self_knowledge(void)
 	strcpy(Dummy, "");
 	strcpy(Liferating, "");
 
-	percent = (int)(((long)player_hp[PY_MAX_LEVEL - 1] * 200L) /
+	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
 		(2 * p_ptr->hitdie +
 		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
@@ -883,7 +883,7 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are resistant to darkness.";
 	}
-	if (p_ptr->resist_conf)
+	if (p_ptr->resist_confu)
 	{
 		info[i++] = "You are resistant to confusion.";
 	}
@@ -907,7 +907,7 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are resistant to nexus attacks.";
 	}
-	if (p_ptr->resist_neth)
+	if (p_ptr->resist_nethr)
 	{
 		info[i++] = "You are resistant to nether forces.";
 	}

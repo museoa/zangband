@@ -107,11 +107,11 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (p_ptr->oppose_pois) smart |= (SM_OPP_POIS);
 
 		/* Know special resistances */
-		if (p_ptr->resist_neth) smart |= (SM_RES_NETH);
+		if (p_ptr->resist_nethr) smart |= (SM_RES_NETH);
 		if (p_ptr->resist_lite) smart |= (SM_RES_LITE);
 		if (p_ptr->resist_dark) smart |= (SM_RES_DARK);
 		if (p_ptr->resist_fear) smart |= (SM_RES_FEAR);
-		if (p_ptr->resist_conf) smart |= (SM_RES_CONF);
+		if (p_ptr->resist_confu) smart |= (SM_RES_CONF);
 		if (p_ptr->resist_chaos) smart |= (SM_RES_CHAOS);
 		if (p_ptr->resist_disen) smart |= (SM_RES_DISEN);
 		if (p_ptr->resist_blind) smart |= (SM_RES_BLIND);
@@ -1505,7 +1505,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("Your mind is blasted by psionic energy.");
 
-				if (!p_ptr->resist_conf)
+				if (!p_ptr->resist_confu)
 				{
 					(void)set_confused(p_ptr->confused + randint0(4) + 4);
 				}
@@ -1546,7 +1546,7 @@ bool make_attack_spell(int m_idx)
 				{
 					(void)set_blind(p_ptr->blind + 8 + randint0(8));
 				}
-				if (!p_ptr->resist_conf)
+				if (!p_ptr->resist_confu)
 				{
 					(void)set_confused(p_ptr->confused + randint0(4) + 4);
 				}
@@ -1821,7 +1821,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			if (blind) msg_format("%^s mumbles, and you hear puzzling noises.", m_name);
 			else msg_format("%^s creates a mesmerising illusion.", m_name);
-			if (p_ptr->resist_conf)
+			if (p_ptr->resist_confu)
 			{
 				msg_print("You disbelieve the feeble spell.");
 			}

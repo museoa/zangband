@@ -698,10 +698,10 @@ void recall_player(int turns)
 		return;
 	}
 
-	if (dun_level && (p_ptr->max_dlv > dun_level) && !p_ptr->inside_quest)
+	if (dun_level && (p_ptr->max_depth > dun_level) && !p_ptr->inside_quest)
 	{
 		if (get_check("Reset recall depth? "))
-			p_ptr->max_dlv = dun_level;
+			p_ptr->max_depth = dun_level;
 
 	}
 	if (!p_ptr->word_recall)

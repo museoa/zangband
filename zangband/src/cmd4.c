@@ -3591,7 +3591,7 @@ static void do_cmd_knowledge_quests(void)
 				/* New random */
 				rand_level = quest[i].level;
 
-				if (p_ptr->max_dlv >= rand_level)
+				if (p_ptr->max_depth >= rand_level)
 				{
 					/* Print the quest info */
 					r_ptr = &r_info[quest[i].r_idx];

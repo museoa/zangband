@@ -1005,8 +1005,8 @@ static void wr_extra(void)
 	wr_u16b(p_ptr->csp_frac);
 
 	/* Max Player and Dungeon Levels */
-	wr_s16b(p_ptr->max_plv);
-	wr_s16b(p_ptr->max_dlv);
+	wr_s16b(p_ptr->max_lev);
+	wr_s16b(p_ptr->max_depth);
 
 	/* More info */
 	wr_s16b(0);     /* oops */
@@ -1572,7 +1572,7 @@ static bool wr_savefile_new(void)
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++)
 	{
-		wr_s16b(player_hp[i]);
+		wr_s16b(p_ptr->player_hp[i]);
 	}
 
 

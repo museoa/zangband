@@ -353,7 +353,6 @@ extern u32b spell_worked2;
 extern u32b spell_forgotten1;
 extern u32b spell_forgotten2;
 extern byte spell_order[64];
-extern s16b player_hp[PY_MAX_LEVEL];
 extern header *v_head;
 extern vault_type *v_info;
 extern char *v_name;

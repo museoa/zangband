@@ -131,7 +131,7 @@ static void do_cmd_eat_food_aux(int item)
 
 			case SV_FOOD_CONFUSION:
 			{
-				if (!p_ptr->resist_conf)
+				if (!p_ptr->resist_confu)
 				{
 					if (set_confused(p_ptr->confused + randint0(10) + 10))
 					{
@@ -522,7 +522,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			chg_virtue(V_HARMONY, -1);
 
-			if (!p_ptr->resist_conf)
+			if (!p_ptr->resist_confu)
 			{
 				if (set_confused(p_ptr->confused + randint0(20) + 15))
 				{

@@ -27,7 +27,7 @@ void do_cmd_rerate(void)
 	max_value = (PY_MAX_LEVEL * 5 * (p_ptr->hitdie - 1)) / 8;
 	max_value += PY_MAX_LEVEL;
 
-	player_hp[0] = p_ptr->hitdie;
+	p_ptr->player_hp[0] = p_ptr->hitdie;
 
 	/* Rerate */
 	while (1)
@@ -37,21 +37,21 @@ void do_cmd_rerate(void)
 		{
 			/* Add in racial hit dice */
 			j = randint1(rp_ptr->r_mhp);
-			player_hp[i] = player_hp[i - 1] + j;
+			p_ptr->player_hp[i] = p_ptr->player_hp[i - 1] + j;
 
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
-				player_hp[i] += randint1(cp_ptr->c_mhp);
+				p_ptr->player_hp[i] += randint1(cp_ptr->c_mhp);
 			}
 		}
 
 		/* Legal values */
-		if ((player_hp[PY_MAX_LEVEL - 1] >= min_value) &&
-		    (player_hp[PY_MAX_LEVEL - 1] <= max_value)) break;
+		if ((p_ptr->player_hp[PY_MAX_LEVEL - 1] >= min_value) &&
+		    (p_ptr->player_hp[PY_MAX_LEVEL - 1] <= max_value)) break;
 	}
 
-	percent = (int)(((long)player_hp[PY_MAX_LEVEL - 1] * 200L) /
+	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
 		(2 * p_ptr->hitdie +
 		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 

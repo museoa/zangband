@@ -95,7 +95,7 @@ void have_nightmare(int r_idx)
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skill_sav * 100 / power))
 	{
-		if (!p_ptr->resist_conf)
+		if (!p_ptr->resist_confu)
 		{
 			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
@@ -117,7 +117,7 @@ void have_nightmare(int r_idx)
 	/* Brain smash */
 	if (!saving_throw(p_ptr->skill_sav * 100 / power))
 	{
-		if (!p_ptr->resist_conf)
+		if (!p_ptr->resist_confu)
 		{
 			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}

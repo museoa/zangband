@@ -2408,7 +2408,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 		case 2:
 		{
 			msg_print("A gas of scintillating colors surrounds you!");
-			if (!p_ptr->resist_conf)
+			if (!p_ptr->resist_confu)
 			{
 				(void)set_confused(p_ptr->confused + randint0(20) + 10);
 			}

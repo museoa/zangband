@@ -3664,7 +3664,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
 			if (fuzzy) msg_print("You are hit by nether forces!");
 
-			if (p_ptr->resist_neth)
+			if (p_ptr->resist_nethr)
 			{
 				if (p_ptr->prace != RACE_SPECTRE)
 					dam *= 6; dam /= (randint1(6) + 6);
@@ -3708,7 +3708,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				set_stun(p_ptr->stun + randint1(40));
 			}
-			if (!p_ptr->resist_conf)
+			if (!p_ptr->resist_confu)
 			{
 				set_confused(p_ptr->confused + randint1(5) + 5);
 			}
@@ -3730,7 +3730,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				dam *= 6; dam /= (randint1(6) + 6);
 			}
-			if (!p_ptr->resist_conf)
+			if (!p_ptr->resist_confu)
 			{
 				(void)set_confused(p_ptr->confused + randint0(20) + 10);
 			}
@@ -3743,7 +3743,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 					(void)gain_random_mutation(0);
 				}
 			}
-			if (!p_ptr->resist_neth && !p_ptr->resist_chaos)
+			if (!p_ptr->resist_nethr && !p_ptr->resist_chaos)
 			{
 				if (p_ptr->hold_life && (randint0(100) < 75))
 				{
@@ -3818,11 +3818,11 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_CONFUSION:
 		{
 			if (fuzzy) msg_print("You are hit by something puzzling!");
-			if (p_ptr->resist_conf)
+			if (p_ptr->resist_confu)
 			{
 				dam *= 5; dam /= (randint1(6) + 6);
 			}
-			if (!p_ptr->resist_conf)
+			if (!p_ptr->resist_confu)
 			{
 				(void)set_confused(p_ptr->confused + randint1(20) + 10);
 			}

@@ -2245,10 +2245,10 @@ void mutation_power_aux(u32b power)
 				}
 				else
 				{
-					if (dun_level && (p_ptr->max_dlv > dun_level))
+					if (dun_level && (p_ptr->max_depth > dun_level))
 					{
 						if (get_check("Reset recall depth? "))
-							p_ptr->max_dlv = dun_level;
+							p_ptr->max_depth = dun_level;
 					}
 					if (!p_ptr->word_recall)
 					{

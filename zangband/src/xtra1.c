@@ -445,7 +445,7 @@ static void prt_level(void)
 
 	sprintf(tmp, "%6d", p_ptr->lev);
 
-	if (p_ptr->lev >= p_ptr->max_plv)
+	if (p_ptr->lev >= p_ptr->max_lev)
 	{
 		put_str("LEVEL ", ROW_LEVEL, 0);
 		c_put_str(TERM_L_GREEN, tmp, ROW_LEVEL, COL_LEVEL + 6);
@@ -1932,7 +1932,7 @@ static void calc_hitpoints(void)
 	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
 
 	/* Calculate hitpoints */
-	mhp = player_hp[p_ptr->lev - 1] + (bonus * p_ptr->lev / 2);
+	mhp = p_ptr->player_hp[p_ptr->lev - 1] + (bonus * p_ptr->lev / 2);
 
 	/* Always have at least one hitpoint per level */
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
@@ -2345,7 +2345,7 @@ void calc_bonuses(void)
 	p_ptr->resist_fire = FALSE;
 	p_ptr->resist_cold = FALSE;
 	p_ptr->resist_pois = FALSE;
-	p_ptr->resist_conf = FALSE;
+	p_ptr->resist_confu = FALSE;
 	p_ptr->resist_sound = FALSE;
 	p_ptr->resist_lite = FALSE;
 	p_ptr->resist_dark = FALSE;
@@ -2354,7 +2354,7 @@ void calc_bonuses(void)
 	p_ptr->resist_shard = FALSE;
 	p_ptr->resist_nexus = FALSE;
 	p_ptr->resist_blind = FALSE;
-	p_ptr->resist_neth = FALSE;
+	p_ptr->resist_nethr = FALSE;
 	p_ptr->resist_fear = FALSE;
 	p_ptr->reflect = FALSE;
 	p_ptr->sh_fire = FALSE;
@@ -2424,7 +2424,7 @@ void calc_bonuses(void)
 			case CLASS_MINDCRAFTER:
 				if (p_ptr->lev >  9) p_ptr->resist_fear = TRUE;
 				if (p_ptr->lev > 19) p_ptr->sustain_wis = TRUE;
-				if (p_ptr->lev > 29) p_ptr->resist_conf = TRUE;
+				if (p_ptr->lev > 29) p_ptr->resist_confu = TRUE;
 				if (p_ptr->lev > 39) p_ptr->telepathy = TRUE;
 				break;
 			case CLASS_MONK:
@@ -2509,7 +2509,7 @@ void calc_bonuses(void)
 				if (p_ptr->lev > 19) p_ptr->immune_acid = TRUE;
 				break;
 			case RACE_KLACKON:
-				p_ptr->resist_conf = TRUE;
+				p_ptr->resist_confu = TRUE;
 				p_ptr->resist_acid = TRUE;
 
 				/* Klackons become faster */
@@ -2559,7 +2559,7 @@ void calc_bonuses(void)
 				if (p_ptr->lev > 9) p_ptr->resist_cold = TRUE;
 				break;
 			case RACE_ZOMBIE:
-				p_ptr->resist_neth = TRUE;
+				p_ptr->resist_nethr = TRUE;
 				p_ptr->hold_life = TRUE;
 				p_ptr->see_inv = TRUE;
 				p_ptr->resist_pois = TRUE;
@@ -2569,13 +2569,13 @@ void calc_bonuses(void)
 			case RACE_VAMPIRE:
 				p_ptr->resist_dark = TRUE;
 				p_ptr->hold_life = TRUE;
-				p_ptr->resist_neth = TRUE;
+				p_ptr->resist_nethr = TRUE;
 				p_ptr->resist_cold = TRUE;
 				p_ptr->resist_pois = TRUE;
 				p_ptr->lite = TRUE;
 				break;
 			case RACE_SPECTRE:
-				p_ptr->resist_neth = TRUE;
+				p_ptr->resist_nethr = TRUE;
 				p_ptr->hold_life = TRUE;
 				p_ptr->see_inv = TRUE;
 				p_ptr->resist_pois = TRUE;
@@ -2592,7 +2592,7 @@ void calc_bonuses(void)
 				p_ptr->pspeed += p_ptr->lev / 10;
 				break;
 			case RACE_BEASTMAN:
-				p_ptr->resist_conf = TRUE;
+				p_ptr->resist_confu = TRUE;
 				p_ptr->resist_sound = TRUE;
 				break;
 		}
@@ -2870,7 +2870,7 @@ void calc_bonuses(void)
 		if (f2 & (TR2_RES_COLD))   p_ptr->resist_cold = TRUE;
 		if (f2 & (TR2_RES_POIS))   p_ptr->resist_pois = TRUE;
 		if (f2 & (TR2_RES_FEAR))   p_ptr->resist_fear = TRUE;
-		if (f2 & (TR2_RES_CONF))   p_ptr->resist_conf = TRUE;
+		if (f2 & (TR2_RES_CONF))   p_ptr->resist_confu = TRUE;
 		if (f2 & (TR2_RES_SOUND))  p_ptr->resist_sound = TRUE;
 		if (f2 & (TR2_RES_LITE))   p_ptr->resist_lite = TRUE;
 		if (f2 & (TR2_RES_DARK))   p_ptr->resist_dark = TRUE;
@@ -2879,7 +2879,7 @@ void calc_bonuses(void)
 		if (f2 & (TR2_RES_SHARDS)) p_ptr->resist_shard = TRUE;
 		if (f2 & (TR2_RES_NEXUS))  p_ptr->resist_nexus = TRUE;
 		if (f2 & (TR2_RES_BLIND))  p_ptr->resist_blind = TRUE;
-		if (f2 & (TR2_RES_NETHER)) p_ptr->resist_neth = TRUE;
+		if (f2 & (TR2_RES_NETHER)) p_ptr->resist_nethr = TRUE;
 
 		if (f2 & (TR2_REFLECT))  p_ptr->reflect = TRUE;
 		if (f3 & (TR3_SH_FIRE))  p_ptr->sh_fire = TRUE;
