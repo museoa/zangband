@@ -1698,13 +1698,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 	{
 		/* Hallucinate */
 		image_random(&a, &c);
-		
-		/*
-		 * Can't get much information if hallucinating...
-		 *
-		 * This is a horible hack which breaks the tk port.
-		 * We need some way of outputing "random" data.
-		 */
+
 		if (glow)
 		{
 			map.flags = MAP_GLOW;

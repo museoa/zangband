@@ -2472,6 +2472,7 @@
 #define FF_PERM			0x10	/* Permanent terrain */
 #define FF_OBJECT		0x20	/* Terrain is described like an object */
 #define FF_PATTERN		0x40	/* The pattern */
+#define FF_MARK			0x80	/* Remember tile if seen */
 
 /*
  * Bit flags for the "project()" function
@@ -4106,6 +4107,12 @@
  */
 #define cave_pattern_grid(C) \
 	(f_info[(C)->feat].flags & FF_PATTERN)
+
+/*
+ * Is the grid worth remembering?
+ */
+#define cave_mem_grid(C) \
+	(f_info[(C)->feat].flags & FF_MARK)
 
 /*
  * Determine if a "legal" grid is within "los" of the player

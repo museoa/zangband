@@ -61,7 +61,7 @@ static cptr f_info_flags[] =
 	"PERM",
 	"OBJECT",
 	"PATTERN",
-	"DUMMY5"
+	"MARK"
 };
 
 
