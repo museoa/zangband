@@ -775,10 +775,24 @@ bool monster_death(int m_idx, bool explode)
 		/* Make Object */
 		else
 		{
-			u16b delta_level = (good ? 15 : 0) + (great ? 15 : 0);
+            u16b delta_level = (good ? 15 : 0) + (great ? 15 : 0);
 
-			/* Make an object */
-			q_ptr = make_object(delta_level, r_ptr->obj_drop);
+            for (i = 0; i < 1000; i++)
+            {
+                /* Make an object */
+                q_ptr = make_object(delta_level, r_ptr->obj_drop);
+
+                if (!q_ptr) continue;
+
+                /* "Good" and "great" drops must not be worthless */
+                if (good || great)
+                {
+                    if (cursed_p(q_ptr)) continue;
+                    if (object_value_real(q_ptr) <= 0) continue;
+                }
+
+                break;
+            }
 
 			/* Paranoia */
 			if (!q_ptr) continue;
