@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "grid.h"
 
 /*
  * Excise a field from a stack
@@ -3020,17 +3021,18 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, va_list vp)
  */
 void make_lockjam_door(int x, int y, int power, bool jam)
 {
-	cave_type *c_ptr = area(x, y);
+	cave_type *c_ptr;
 	field_type *f_ptr;
 
 	int old_power = 0;
 
-	/* Make a closed door on the square */
-	cave_set_feat(x, y, FEAT_CLOSED);
 	
 	/* Overlays are simpler */
 	if (ri_list[cur_region].flags & REGION_OVER)
 	{
+		/* Make a closed door on the square */
+		set_feat_bold(x, y, FEAT_CLOSED);
+	
 		/* Make a new field */
 		if (jam)
 		{
@@ -3045,6 +3047,11 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 
 		return;
 	}
+	
+	/* Make a closed door on the square */
+	cave_set_feat(x, y, FEAT_CLOSED);
+
+	c_ptr = area(x, y);
 
 	f_ptr = field_is_type(c_ptr, FTYPE_DOOR);
 

@@ -148,6 +148,7 @@ src/generate.o: src/grid.h src/generate.h src/rooms.h src/streams.h
 src/grid.o: src/grid.h src/generate.h
 src/rooms.o: src/grid.h src/generate.h src/rooms.h
 src/streams.o: src/grid.h src/generate.h
+src/fields.o: src/grid.h
 $(GRAFPORTS): src/maid-grf.h
 src/main-x11.o: src/maid-x11.h
 src/main-xaw.o: src/maid-x11.h

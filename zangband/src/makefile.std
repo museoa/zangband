@@ -605,6 +605,7 @@ generate.o: grid.h generate.h rooms.h streams.h
 grid.o: grid.h generate.h
 rooms.o: grid.h generate.h rooms.h
 streams.o: grid.h generate.h
+fields.o: grid.h
 main-ami.o: maid-grf.h
 maid-grf.o: maid-grf.h
 maid-x11.o: maid-grf.h
