@@ -1824,7 +1824,6 @@ static bool cast_trump_spell(int spell, bool success)
 	int plev = p_ptr->lev;
 	int dummy = 0;
 	bool no_trump = FALSE;
-	char ppp[80];
 	char tmp_val[160];
 
 
@@ -2029,14 +2028,12 @@ static bool cast_trump_spell(int spell, bool success)
 		case 3:				/* Reset Recall */
 			if (success)
 			{
-				/* Prompt */
-				sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_depth);
-
 				/* Default */
 				sprintf(tmp_val, "%d", MAX(p_ptr->depth, 1));
 
 				/* Ask for a level */
-				if (get_string(ppp, tmp_val, 11))
+				if (get_string(tmp_val, 11, "Reset to which level (1-%d): ",
+								 p_ptr->max_depth))
 				{
 					/* Extract request */
 					dummy = atoi(tmp_val);

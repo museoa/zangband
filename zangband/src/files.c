@@ -2570,7 +2570,7 @@ void do_cmd_character(void)
 		else if (c == 'f')
 		{
 			sprintf(tmp, "%s.txt", player_base);
-			if (get_string("File name: ", tmp, 80))
+			if (get_string(tmp, 80, "File name: "))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{
@@ -3435,7 +3435,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			xtmp[0] = '\0';
 
 			/* Get a filename */
-			if (!get_string("File name: ", xtmp, 80)) continue;
+			if (!get_string(xtmp, 80, "File name: ")) continue;
 
 			/* Check for a "valid" name */
 			if (!(xtmp[0] && (xtmp[0] != ' '))) continue;
@@ -3664,7 +3664,7 @@ void get_character_name(void)
 	strcpy(tmp, player_name);
 
 	/* Prompt for a new name */
-	if (get_string("Enter a name for your character: ", tmp, sizeof(tmp)))
+	if (get_string(tmp, sizeof(tmp), "Enter a name for your character: "))
 	{
 		/* Use the name */
 		strcpy(player_name, tmp);

@@ -445,7 +445,6 @@ static void pattern_teleport(void)
 	/* Ask for level */
 	if (get_check("Teleport level? "))
 	{
-		char ppp[80];
 		char tmp_val[160];
 
 		/* Only downward in ironman mode */
@@ -458,14 +457,12 @@ static void pattern_teleport(void)
 		else if (p_ptr->depth == 100)
 			max_level = 100;
 
-		/* Prompt */
-		sprintf(ppp, "Teleport to level (%d-%d): ", min_level, max_level);
-
 		/* Default */
 		sprintf(tmp_val, "%d", p_ptr->depth);
 
 		/* Ask for a level */
-		if (!get_string(ppp, tmp_val, 11)) return;
+		if (!get_string(tmp_val, 11, "Teleport to level (%d-%d): ",
+						min_level, max_level)) return;
 
 		/* Extract request */
 		p_ptr->command_arg = atoi(tmp_val);

@@ -1260,7 +1260,7 @@ extern void clear_msg(void);
 extern void clear_row(int row);
 extern void clear_region(int x, int y1, int y2);
 extern bool askfor_aux(char *buf, int len);
-extern bool get_string(cptr prompt, char *buf, int len);
+extern bool get_string(char *buf, int len, cptr str, ...);
 extern bool get_check(cptr prompt, ...);
 extern bool get_com(cptr prompt, char *command);
 extern s16b get_quantity(cptr prompt, int max);

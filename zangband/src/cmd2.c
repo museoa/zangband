@@ -2071,16 +2071,18 @@ void do_cmd_rest(void)
 	/* Prompt for time if needed */
 	if (p_ptr->command_arg <= 0)
 	{
-		cptr p = "Rest (0-9999, '*' for HP/SP, '&' as needed): ";
-
 		char out_val[80];
 
 		/* Default */
 		strcpy(out_val, "&");
 
 		/* Ask for duration */
-		if (!get_string(p, out_val, 5)) return;
-
+		if (!get_string(out_val, 5,
+        				"Rest (0-9999, '*' for HP/SP, '&' as needed): "))
+        {
+        	return;
+		}
+        
 		/* Rest until done */
 		if (out_val[0] == '&')
 		{

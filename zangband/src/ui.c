@@ -958,9 +958,22 @@ bool askfor_aux(char *buf, int len)
  *
  * We clear the input, and return FALSE, on "ESCAPE".
  */
-bool get_string(cptr prompt, char *buf, int len)
+bool get_string(char *buf, int len, cptr str, ...)
 {
 	bool res;
+    
+    va_list vp;
+
+	char prompt[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, str);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, str, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Paranoia XXX XXX XXX */
 	message_flush();
@@ -1123,7 +1136,7 @@ s16b get_quantity(cptr prompt, int max)
 	sprintf(buf, "%d", amt);
 
 	/* Ask for a quantity */
-	if (!get_string(prompt, buf, 7)) return (0);
+	if (!get_string(buf, 7, prompt)) return (0);
 
 	/* Extract a number */
 	amt = atoi(buf);

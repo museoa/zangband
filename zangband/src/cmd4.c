@@ -1341,7 +1341,7 @@ void do_cmd_pref(void)
 	strcpy(buf, "");
 
 	/* Ask for a "user pref command" */
-	if (!get_string("Pref: ", buf, 80)) return;
+	if (!get_string(buf, 80, "Pref: ")) return;
 
 	/* Process that pref command */
 	(void)process_pref_file_command(buf);
@@ -2829,7 +2829,7 @@ void do_cmd_note(void)
 	/* Default */
 	strcpy(buf, "");
 
-	if (!get_string("Note: ", buf, 60)) return;
+	if (!get_string(buf, 60, "Note: ")) return;
 
 	/* Ignore empty notes */
 	if (!buf[0] || (buf[0] == ' ')) return;

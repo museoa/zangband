@@ -46,14 +46,15 @@
 
 #define CGXSUPPORT					/* Define for RTG support. Leave on */
 #define ZANGBAND						/* Define if this is Zangband. Zangband now has extra gfx */
-//#define GFXFUNCS					/* Define if we allow gfx debugging functions. */
-//#define ANG283
-//#define ANG282                /* Based upon Angband 2.8.2 ? */
+/*#define GFXFUNCS */					/* Define if we allow gfx debugging functions. */
+/* #define ANG283 */
+/*#define ANG282 */               /* Based upon Angband 2.8.2 ? */
+
+#include "angband.h"
 
 #ifdef USE_AMI
 
 #ifndef __CEXTRACT__
-#include "angband.h"
 
 #include "vers.h"
 

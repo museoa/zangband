@@ -638,7 +638,7 @@ void do_cmd_inscribe(void)
 	}
 
 	/* Get a new inscription (possibly empty) */
-	if (get_string("Inscription: ", out_val, 80))
+	if (get_string(out_val, 80, "Inscription: "))
 	{
         /* Save the inscription */
         quark_remove(&o_ptr->inscription);
@@ -1243,7 +1243,7 @@ void do_cmd_query_symbol(void)
 	else if (sym == KTRL('M'))
 	{
 		all = TRUE;
-		if (!get_string("Name:", temp1, 70)) temp1[0] = 0;
+		if (!get_string(temp1, 70, "Name:")) temp1[0] = 0;
 		else
 			sprintf(buf, "Monsters with a name \"%s\"", temp1);
 	}

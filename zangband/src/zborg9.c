@@ -3456,7 +3456,7 @@ void do_cmd_borg(void)
 			strcpy(buf, "borg.log");
 
 			/* XXX XXX XXX Get the name and open the log file */
-			if (get_string("Borg Log File: ", buf, 70))
+			if (get_string(buf, 70, "Borg Log File: "))
 			{
 				/* Open a new file */
 				borg_fff = my_fopen(buf, "w");
@@ -3476,7 +3476,7 @@ void do_cmd_borg(void)
 			/* Activate a search string */
 
 			/* Get the new search string (or cancel the matching) */
-			if (!get_string("Borg Match String: ", borg_match, 70))
+			if (!get_string(borg_match, 70, "Borg Match String: "))
 			{
 				/* Cancel it */
 				strcpy(borg_match, "");

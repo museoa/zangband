@@ -432,7 +432,7 @@ static s32b gamble_oldgold;
  */
 static s32b gamble_init(void)
 {
-	char out_val[160], tmp_str[80];
+	char out_val[160];
 	cptr p;
 
 	s32b wager;
@@ -466,13 +466,12 @@ static s32b gamble_init(void)
 
 	/* Get the wager */
 	strcpy(out_val, "");
-	sprintf(tmp_str, "Your wager (1-%ld) ? ", maxbet);
 
 	/*
 	 * Use get_string() because we may need more than
 	 * the s16b value returned by get_quantity().
 	 */
-	if (!get_string(tmp_str, out_val, 33))
+	if (!get_string(out_val, 33, "Your wager (1-%ld) ? ", maxbet))
 	{
 		screen_load();
 		return (0);
