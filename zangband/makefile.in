@@ -11,7 +11,7 @@
 ##
 # @configure_input@
 
-
+CC := @CC@
 
 CFLAGS := @CFLAGS@ @DEFS@
 CPPFLAGS := @CPPFLAGS@

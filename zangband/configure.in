@@ -41,8 +41,9 @@ DEFAULT_PATH="$game_datadir"
 AC_SUBST(DEFAULT_PATH)
 
 dnl Checks for programs.
-AC_PROG_CC
-AC_CHECK_TOOL(RANLIB, ranlib)
+AC_PROG_CC(gcc-3.2 gcc cc egcs)
+
+
 
 dnl -fno-strength-reduce prevents a bug in some versions of gcc
 if test "$GCC" = yes; then
