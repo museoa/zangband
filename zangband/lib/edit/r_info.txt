@@ -2722,7 +2722,7 @@ F:BASH_DOOR | UNIQUE | FORCE_MAXHP | NO_CONF | NO_SLEEP
 F:ANIMAL | MALE | CAN_SPEAK | DROP_CORPSE | SILLY
 D:Fast-moving, with a taste for tuna sandwiches.
 
-N:201:Shadow Creature of Fiona
+N:201:Shadow creature
 G:h:s
 I:110:7d8:12:10:16
 W:14:2:0:151
