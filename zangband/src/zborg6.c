@@ -229,6 +229,12 @@ static void borg_flow_clear(void)
 	MAP_ITT_START(mb_ptr)
 	{
 		mb_ptr->cost = 255;
+		
+		if (borg_danger_wipe)
+		{
+			/* Clear the "icky" flag */
+			mb_ptr->info &= ~(BORG_MAP_ICKY);
+		}
 	}
 	MAP_ITT_END;
 
@@ -237,9 +243,6 @@ static void borg_flow_clear(void)
     {
         /* Wipe the "know" flags */
         WIPE(borg_data_know, borg_data);
-
-        /* Wipe the "icky" flags */
-        WIPE(borg_data_icky, borg_data);
 
         /* Wipe complete */
         borg_danger_wipe = FALSE;
@@ -419,7 +422,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
 
 
             /* Ignore "icky" grids */
-            if (borg_data_icky->data[y][x]) continue;
+            if (mb_ptr->info & BORG_MAP_ICKY) continue;
 
 
             /* Analyze every grid once */
@@ -439,7 +442,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
                     if (p > avoidance / 3)
                     {
                         /* Mark as icky */
-                        borg_data_icky->data[y][x] = TRUE;
+                        mb_ptr->info |= BORG_MAP_ICKY;
 
                         /* Ignore this grid */
                         continue;
@@ -480,9 +483,11 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
 static void borg_flow_enqueue_grid(int y, int x)
 {
     int old_head;
+	
+	map_block *mb_ptr = map_loc(x, y);
 
     /* Avoid icky grids */
-    if (borg_data_icky->data[y][x]) return;
+    if (mb_ptr->info & BORG_MAP_ICKY) return;
 
     /* Unknown */
     if (!borg_data_know->data[y][x])
@@ -495,7 +500,7 @@ static void borg_flow_enqueue_grid(int y, int x)
             !borg_desperate)
         {
             /* Icky */
-            borg_data_icky->data[y][x] = TRUE;
+            mb_ptr->info |= BORG_MAP_ICKY;
 
             /* Avoid */
             return;
@@ -14319,10 +14324,10 @@ extern void borg_flow_direct(int y, int x)
     int shift;
 
     borg_grid *ag;
-	map_block *mb_ptr;
+	map_block *mb_ptr = map_loc(x, y);
 
     /* Avoid icky grids */
-    if (borg_data_icky->data[y][x]) return;
+    if (mb_ptr->info & BORG_MAP_ICKY) return;
 
     /* Unknown */
     if (!borg_data_know->data[y][x])
@@ -14334,7 +14339,7 @@ extern void borg_flow_direct(int y, int x)
         if (borg_danger(y, x, 1, TRUE) > avoidance / 3)
         {
             /* Icky */
-            borg_data_icky->data[y][x] = TRUE;
+            mb_ptr->info |= BORG_MAP_ICKY;
 
 
             /* Avoid */
@@ -14422,7 +14427,7 @@ extern void borg_flow_direct(int y, int x)
 		 	mb_ptr->terrain <=FEAT_PERM_SOLID) return;
 
         /* Abort at "icky" grids */
-        if (borg_data_icky->data[y][x]) return;
+        if (mb_ptr->info & BORG_MAP_ICKY) return;
 
         /* Analyze every grid once */
         if (!borg_data_know->data[y][x])
@@ -14434,7 +14439,7 @@ extern void borg_flow_direct(int y, int x)
             if (borg_danger(y, x, 1, TRUE) > avoidance / 3)
             {
                 /* Mark as icky */
-                borg_data_icky->data[y][x] = TRUE;
+                mb_ptr->info |= BORG_MAP_ICKY;
 
                 /* Abort */
                 return;
@@ -14462,29 +14467,7 @@ extern void borg_flow_direct_dig(int y, int x)
     int shift;
 
     borg_grid *ag;
-
-#if 0
-    /* Avoid icky grids */
-    if (borg_data_icky->data[y][x]) return;
-
-    /* Unknown */
-    if (!borg_data_know->data[y][x])
-    {
-        /* Mark as known */
-        borg_data_know->data[y][x] = TRUE;
-
-        /* Mark dangerous grids as icky */
-        if (borg_danger(y, x, 1, TRUE) > avoidance / 3)
-        {
-            /* Icky */
-            borg_data_icky->data[y][x] = TRUE;
-
-            /* Avoid */
-            return;
-        }
-    }
-
-#endif
+	map_block *mb_ptr;
 
     /* Save the flow cost (zero) */
     borg_data_cost->data[y][x] = 0;
@@ -14540,10 +14523,11 @@ extern void borg_flow_direct_dig(int y, int x)
 
         /* Access the grid */
         ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
 
         /* Abort at "icky" grids */
-        if (borg_data_icky->data[y][x]) return;
+        if (mb_ptr->info & BORG_MAP_ICKY) return;
 
         /* Analyze every grid once */
         if (!borg_data_know->data[y][x])
@@ -14555,7 +14539,7 @@ extern void borg_flow_direct_dig(int y, int x)
             if (borg_danger(y, x, 1, TRUE) > avoidance / 3)
             {
                 /* Mark as icky */
-                borg_data_icky->data[y][x] = TRUE;
+                mb_ptr->info |= BORG_MAP_ICKY;
 
                 /* Abort */
                 return;
@@ -14578,29 +14562,67 @@ extern void borg_flow_direct_dig(int y, int x)
 static void borg_flow_border(int y1, int x1, int y2, int x2, bool stop)
 {
     int x, y;
+	
+	map_block *mb_ptr;
 
     /* Scan west/east edges */
     for (y = y1; y <= y2; y++)
     {
         /* Avoid/Clear west edge */
+		mb_ptr = map_loc(x1, y);
         borg_data_know->data[y][x1] = stop;
-        borg_data_icky->data[y][x1] = stop;
-
+		
+       	if (stop)
+		{
+			mb_ptr->info |= BORG_MAP_ICKY;
+		}
+		else
+		{
+			mb_ptr->info &= ~(BORG_MAP_ICKY);
+		}
+		
         /* Avoid/Clear east edge */
+		mb_ptr = map_loc(x2, y);
         borg_data_know->data[y][x2] = stop;
-        borg_data_icky->data[y][x2] = stop;
+		
+		if (stop)
+		{
+			mb_ptr->info |= BORG_MAP_ICKY;
+		}
+		else
+		{
+			mb_ptr->info &= ~(BORG_MAP_ICKY);
+		}
     }
 
     /* Scan north/south edges */
     for (x = x1; x <= x2; x++)
     {
         /* Avoid/Clear north edge */
+		mb_ptr = map_loc(x, y1);
         borg_data_know->data[y1][x] = stop;
-        borg_data_icky->data[y1][x] = stop;
+		
+		if (stop)
+		{
+			mb_ptr->info |= BORG_MAP_ICKY;
+		}
+		else
+		{
+			mb_ptr->info &= ~(BORG_MAP_ICKY);
+		}
 
         /* Avoid/Clear south edge */
+		mb_ptr = map_loc(x, y2);
         borg_data_know->data[y2][x] = stop;
-        borg_data_icky->data[y2][x] = stop;
+		
+		if (stop)
+		{
+			mb_ptr->info |= BORG_MAP_ICKY;
+		}
+		else
+		{
+			mb_ptr->info &= ~(BORG_MAP_ICKY);
+		}
     }
 }
 

@@ -2366,17 +2366,17 @@ static void borg_forget_map(void)
 	/* Itterate over the map */
 	MAP_ITT_START(mb_ptr)
 	{
+		/* Clear flow information */
 		mb_ptr->cost = 255;
 		mb_ptr->flow = 255;
+		
+		/* Clear icky flag */
+		mb_ptr->info &= ~(BORG_MAP_ICKY);
 	}
 	MAP_ITT_END;
 
     /* Clear "borg_data_know" */
     WIPE(borg_data_know, borg_data);
-
-    /* Clear "borg_data_icky" */
-    WIPE(borg_data_icky, borg_data);
-
 
     /* Forget the view */
     borg_forget_view();
@@ -2781,7 +2781,7 @@ static void borg_update_map(void)
                 borg_data_know->data[y][x] = FALSE;
 
                 /* Remove this grid from any flow */
-                borg_data_icky->data[y][x] = FALSE;
+                mb_ptr->info &= ~(BORG_MAP_ICKY);
 
                 /* Recalculate the view (if needed) */
                 if (mb_ptr->info & BORG_MAP_VIEW) borg_do_update_view = TRUE;

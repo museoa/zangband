@@ -94,6 +94,7 @@
 
 
 #define BORG_MAP_VIEW   0x01    /* in line of sight */
+#define BORG_MAP_ICKY	0x02	/* grids to avoid */
 
 /*
  * Maximum size of the "lite" array
@@ -1336,7 +1337,6 @@ extern borg_data *borg_data_cost;   /* Current "cost" data */
 
 extern borg_data *borg_data_know;   /* Current "know" flags */
 
-extern borg_data *borg_data_icky;   /* Current "icky" flags */
 
 
 /*
