@@ -581,9 +581,6 @@ static bool pattern_effect(void)
 }
 
 
-
-
-
 /*
  * Regenerate hit points				-RAK-
  */
@@ -677,10 +674,6 @@ static void regenmana(int percent)
 		p_ptr->window |= (PW_SPELL);
 	}
 }
-
-
-
-
 
 
 /*
@@ -2320,16 +2313,6 @@ static void process_command(void)
 
 		/*** Stairs and Doors and Chests and Traps ***/
 
-
-#if 0
-		/* Enter quest level -KMW- */
-		case '[':
-		{
-			do_cmd_quest();
-			break;
-		}
-#endif
-
 		/* Go up staircase */
 		case '<':
 		{
@@ -3552,7 +3535,7 @@ void play_game(bool new_game)
 	/* Make sure main term is active */
 	Term_activate(angband_term[0]);
 
-	if (!angband_term[0]) quit("Main terms does not exist!");
+	if (!angband_term[0]) quit("Main term does not exist!");
 	
 	/* Initialise the resize hooks */
 	angband_term[0]->resize_hook = resize_map;
