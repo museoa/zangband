@@ -47,7 +47,7 @@ ZAngband 2.7.0:
 - Replaced the underlying wilderness code.  The new code allows quests
   in the wilderness to be made.
 - Replaced the old cave[][] array with "regions".  Regions allow
-  multiple dungeons to be active at once.  They also simplifie the code
+  multiple dungeons to be active at once.  They also simplify the code
   for creating towns and quests in the wilderness.
 - Fixed the rng so it works on 64bit systems.
 - Prevented the player from gaining extra information when selling items
