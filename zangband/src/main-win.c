@@ -108,7 +108,7 @@
 /*
  * Hack -- allow use of "screen saver" mode
  */
-#define USE_SAVER
+/* #define USE_SAVER */
 
 #endif /* ALLOW_BORG */
 
