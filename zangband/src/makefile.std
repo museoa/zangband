@@ -108,7 +108,7 @@ BORGOBJS := \
 ## The list of ports available
 ##
 PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         sunos solaris sgi dec isc next aix cygwin dos ibm lcc risc emx \
+         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx \
 		 amiga borland
 
 ##
@@ -236,14 +236,7 @@ vt100: CFLAGS += -D"USE_CAP" -D"USE_HARDCODE"
 ##
 
 solaris: CFLAGS += -D"USE_X11" -D"USE_GCU" -D"SOLARIS"
-solaris: LIBS := -lX11 -lsocket -lcurses
-
-##
-## Variation -- compile for SunOS
-##
-
-sunos: CFLAGS += -D"USE_X11" -D"USE_GCU" -D"SUNOS"
-sunos: LIBS := -lX11 -lsocket -lcurses -lnsl -L/usr/lib
+solaris: LIBS := -lX11 -lcurses
 
 ##
 ## Variation -- compile for SGI Indigo runnig Irix
@@ -508,10 +501,14 @@ $(BORGOBJS): $(HDRS)
 ## Extra dependancies
 ##
 
+cmd6.o: script.h
+init1.c: init.h
+init2.c: init.h script.h
 generate.o: grid.h generate.h rooms.h streams.h
 grid.o: grid.h generate.h
 rooms.o: grid.h generate.h rooms.h
 streams.o: grid.h generate.h
+main-ami.o: maid-grf.h
 maid-grf.o: maid-grf.h
 maid-x11.o: maid-grf.h
 main-acn.o: maid-grf.h
@@ -520,10 +517,12 @@ main-win.o: maid-grf.h
 main-x11.o: maid-grf.h maid-x11.h
 main-xaw.o: maid-grf.h maid-x11.h
 main-xpj.o: maid-grf.h maid-x11.h
+script.o: script.h
 quest.o: wild.h grid.h
 readdib.o: readdib.h
 wild1.o: wild.h grid.h
 wild2.o: wild.h grid.h
+wizard2.o: script.h
 z-form.o: z-form.h z-util.h z-virt.h
 z-rand.o: z-rand.h
 z-term.o: z-term.h z-virt.h
