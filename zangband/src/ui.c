@@ -894,7 +894,7 @@ bool get_check(cptr prompt)
 	message_flush();
 
 	/* Prompt for it */
-	prtf(0, 0, buf, 78, "%.70s[y/n] ", prompt);
+	prtf(0, 0, "%.70s[y/n] ", prompt);
 
 	/* Get an acceptable answer */
 	while (TRUE)
