@@ -94,7 +94,7 @@ proc AutoAssignCharacterIcon {} {
 	set iconIndex -1
 
 	# The dg-classes.txt file contains a list of icons by race and class
-	set fileId [open [CPathTk image dg dg-classes.txt]]
+	set fileId [open [PathTk image dg dg-classes.txt]]
 
 	set playerRace [angband player race]
 	set playerClass [angband player class]

@@ -148,7 +148,7 @@ proc ConfigMap::InitImage {size} {
 	variable ImageData
 	variable ImageName
 
-	set path [CPathTk image dg micromap${size}x${size}.gif]
+	set path [PathTk image dg micromap${size}x${size}.gif]
 
 	# List of symbol names in gif-order
 	set ImageName [list \
