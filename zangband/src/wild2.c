@@ -3554,11 +3554,30 @@ static void allocate_block(int x, int y)
 		/* Get new block */
 		wild_grid[y][x] = wild_cache[wc_cnt++];
 
-		/* Generate the block */
-		gen_block(x, y);
-
-		if (place_num)
+	
+		/* Are we in the process of loading the game? */
+		if (character_loaded)
 		{
+			/* Generate the block */
+			gen_block(x, y);
+
+			if (place_num)
+			{
+				/* Increase refcount for region */
+				incref_region(place[place_num].region);
+			}
+		}
+		
+		/* We need to make sure the refcounted regions work */
+		else if (place_num)
+		{
+			/* Do we need to make the map? */
+			if (!place[place_num].region)
+			{
+				/* Create the place */
+				place_gen(place_num);
+			}
+			
 			/* Increase refcount for region */
 			incref_region(place[place_num].region);
 		}

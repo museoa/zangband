@@ -69,13 +69,13 @@ bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
 /*
  * Various things
  */
-bool character_generated;	/* The character exists */
-bool character_dungeon;	/* The character has a dungeon */
-bool character_loaded;	/* The character was loaded from a savefile */
-bool character_saved;	/* The character was just saved to a savefile */
+bool character_generated = FALSE;	/* The character exists */
+bool character_dungeon = FALSE;	/* The character has a dungeon */
+bool character_loaded = FALSE;	/* The character was loaded from a savefile */
+bool character_saved = FALSE;	/* The character was just saved to a savefile */
 
-bool character_icky;	/* The game is in an icky full screen mode */
-bool character_xtra;	/* The game is in an icky startup mode */
+bool character_icky = FALSE;	/* The game is in an icky full screen mode */
+bool character_xtra = FALSE;	/* The game is in an icky startup mode */
 
 u32b seed_flavor;	/* Hack -- consistent object colors */
 
