@@ -13,34 +13,7 @@
 #	This is the first file sourced during program initialization. It is 
 #	sourced before init_angband() is called.
 
-# variant --
 #
-#	Return 1 if we are playing any of the given variants.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc variant {args} {
-
-	global Angband
-
-	foreach name $args {
-		if {$::DEBUG} {
-			set variantList [list ZANGBANDTK]
-			if {[lsearch -exact $variantList $name] == -1} {
-				tk_messageBox -message "unknown variant \"$name\""
-			}
-		}
-		if {[string equal $name $Angband(variant)]} {
-			return 1
-		}
-	}
-	return 0
-}
-
 # Global --
 #
 #	Query and modify info.
@@ -1041,9 +1014,6 @@ proc NSInitStartup::InitStartup {} {
 	global auto_path
 	global Angband
 	global DEBUG
-
-	# Global variant
-	set Angband(variant) [angband game variant]
 	
 	# Angband's directory
 	set Angband(dir) [angband game directory ANGBAND_DIR_ROOT]
