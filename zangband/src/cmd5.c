@@ -34,7 +34,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	char choice;
 	const magic_type *s_ptr;
 	char out_val[160];
-	int use_realm = (realm_2 ? p_ptr->spell.r[1].realm : p_ptr->spell.r[0].realm);
+	int use_realm = p_ptr->spell.r[realm_2 ? 1 : 0].realm;
 	cptr p = ((mp_ptr->spell_book == TV_LIFE_BOOK) ? "prayer" : "spell");
 
 	/* Get the spell, if available */
@@ -358,7 +358,7 @@ void do_cmd_study(void)
 			{
 				/* Skip non "okay" prayers */
 				if (!spell_okay(spell, FALSE,
-								(increment ? p_ptr->spell.r[1].realm - 1 : p_ptr->spell.r[0].realm - 1)))
+								p_ptr->spell.r[increment / 32].realm - 1))
 					continue;
 
 				/* Hack -- Prepare the randomizer */
@@ -390,14 +390,7 @@ void do_cmd_study(void)
 	if (increment) spell += increment;
 
 	/* Learn the spell */
-	if (spell < 32)
-	{
-		p_ptr->spell.r[0].learned |= (1L << spell);
-	}
-	else
-	{
-		p_ptr->spell.r[1].learned |= (1L << (spell - 32));
-	}
+	p_ptr->spell.r[spell / 32].learned |= (1L << (spell % 32));
 
 	/* Find the next open entry in "spell.order[]" */
 	for (i = 0; i < PY_MAX_SPELLS; i++)
@@ -412,8 +405,7 @@ void do_cmd_study(void)
 	/* Mention the result */
 	msgf(MSGT_STUDY, "You have learned the %s of %s.",
 				   p, spell_names
-				   [(increment ? p_ptr->spell.r[1].realm - 1 : p_ptr->spell.r[0].realm -
-					 1)][spell % 32]);
+				   [p_ptr->spell.r[increment / 32].realm - 1][spell % 32]);
 
 	if (mp_ptr->spell_book == TV_LIFE_BOOK)
 		chg_virtue(V_FAITH, 1);
@@ -2717,9 +2709,7 @@ void do_cmd_cast(void)
 	/* Hack -- Handle stuff */
 	handle_stuff();
 
-	if (increment) realm = p_ptr->spell.r[1].realm;
-	else
-		realm = p_ptr->spell.r[0].realm;
+	realm = p_ptr->spell.r[increment / 32].realm;
 
 	/* Ask for a spell */
 	if (!get_spell
@@ -2733,7 +2723,7 @@ void do_cmd_cast(void)
 
 
 	/* Access the spell */
-	use_realm = (increment ? p_ptr->spell.r[1].realm : p_ptr->spell.r[0].realm);
+	use_realm = p_ptr->spell.r[increment / 32].realm;
 
 	s_ptr = &mp_ptr->info[use_realm - 1][spell];
 
@@ -2859,9 +2849,7 @@ void do_cmd_cast(void)
 		if (!cast) return;
 
 		/* A spell was cast */
-		if (!(increment ?
-			  (p_ptr->spell.r[1].worked & (1L << spell)) :
-			  (p_ptr->spell.r[0].worked & (1L << spell))))
+		if (!(p_ptr->spell.r[increment / 32].worked & (1L << spell)))
 		{
 			int e = s_ptr->sexp;
 

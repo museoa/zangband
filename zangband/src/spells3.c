@@ -2918,14 +2918,16 @@ void display_spell_list(void)
 {
 	int i, j;
 	int y = 0, x = 0;
-	int use_realm1 = p_ptr->spell.r[0].realm - 1;
-	int use_realm2 = p_ptr->spell.r[1].realm - 1;
+	int use_realm[2];
 	const magic_type *s_ptr;
 	char name[80];
 	char out_val[160];
 	int row = 0, col = 0;
 	unsigned int max_wid = 0;
 
+	use_realm[0] = p_ptr->spell.r[0].realm - 1;
+	use_realm[1] = p_ptr->spell.r[1].realm - 1;
+	
 	/* Erase window */
 	clear_from(0);
 
@@ -2999,7 +3001,7 @@ void display_spell_list(void)
 	/* Normal spellcaster with books */
 
 	/* Scan books */
-	for (j = 0; j < ((use_realm2 > -1) ? 2 : 1); j++)
+	for (j = 0; j < ((use_realm[1] > -1) ? 2 : 1); j++)
 	{
 		int n = 0;
 
@@ -3009,10 +3011,10 @@ void display_spell_list(void)
 			cptr a = CLR_WHITE;
 
 			/* Access the spell */
-			s_ptr = &mp_ptr->info[(j < 1) ? use_realm2 : use_realm2][i % 32];
+			s_ptr = &mp_ptr->info[use_realm[j]][i % 32];
 
 			strcpy(name,
-				   spell_names[(j < 1) ? use_realm1 : use_realm2][i % 32]);
+				   spell_names[use_realm[j]][i % 32]);
 
 			/* Illegible */
 			if (s_ptr->slevel >= 99)
@@ -3025,27 +3027,21 @@ void display_spell_list(void)
 			}
 
 			/* Forgotten */
-			else if ((j < 1) ?
-					 ((p_ptr->spell.r[0].forgotten & (1L << i))) :
-					 ((p_ptr->spell.r[1].forgotten & (1L << (i % 32)))))
+			else if (p_ptr->spell.r[j].forgotten & (1L << (i % 32)))
 			{
 				/* Forgotten */
 				a = CLR_ORANGE;
 			}
 
 			/* Unknown */
-			else if (!((j < 1) ?
-					   (p_ptr->spell.r[0].learned & (1L << i)) :
-					   (p_ptr->spell.r[1].learned & (1L << (i % 32)))))
+			else if (!(p_ptr->spell.r[j].learned & (1L << (i % 32))))
 			{
 				/* Unknown */
 				a = CLR_RED;
 			}
 
 			/* Untried */
-			else if (!((j < 1) ?
-					   (p_ptr->spell.r[0].worked & (1L << i)) :
-					   (p_ptr->spell.r[1].worked & (1L << (i % 32)))))
+			else if (!(p_ptr->spell.r[j].worked & (1L << (i % 32))))
 			{
 				/* Untried */
 				a = CLR_YELLOW;
