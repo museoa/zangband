@@ -654,8 +654,8 @@ extern void combine_pack(void);
 extern void reorder_pack(void);
 extern bool can_player_destroy_object(object_type *o_ptr);
 extern void display_koff(int k_idx);
-extern bool scan_floor(int *items, int *item_num, int y, int x, int mode);
-extern void show_floor(int y, int x);
+extern bool scan_floor(int *items, int *item_num, int x, int y, int mode);
+extern void show_floor(int x, int y);
 
 /* racial.c */
 extern bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty);

@@ -2162,7 +2162,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		{
 			int floor_list[23], floor_num;
 
-			if (scan_floor(floor_list, &floor_num, y, x, 0x02))
+			if (scan_floor(floor_list, &floor_num, x, y, 0x02))
 			{
 				/* Not boring */
 				boring = FALSE;
@@ -2205,7 +2205,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 						screen_save();
 
 						/* Display */
-						show_floor(y, x);
+						show_floor(x, y);
 
 						/* Prompt */
 						prt("Hit any key to continue", 0, 0);

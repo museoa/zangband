@@ -2703,7 +2703,7 @@ static int get_tag(int *cp, char tag)
  *		mode & 0x02 -- Marked items only
  *		mode & 0x04 -- Stop after first
  */
-bool scan_floor(int *items, int *item_num, int y, int x, int mode)
+bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 {
 	int this_o_idx, next_o_idx;
 
@@ -2751,7 +2751,7 @@ bool scan_floor(int *items, int *item_num, int y, int x, int mode)
 /*
  * Display a list of the items on the floor at the given location.
  */
-void show_floor(int y, int x)
+void show_floor(int x, int y)
 {
 	int i, j, k, l;
 	int col, len, lim;
@@ -2778,7 +2778,7 @@ void show_floor(int y, int x)
 	if (show_weights) lim -= 9;
 
 	/* Scan for objects in the grid, using item_tester_okay() */
-	(void)scan_floor(floor_list, &floor_num, y, x, 0x01);
+	(void)scan_floor(floor_list, &floor_num, x, y, 0x01);
 
 	/* Display the inventory */
 	for (k = 0, i = 0; i < floor_num; i++)
@@ -3024,7 +3024,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	if (floor)
 	{
 		/* Scan all objects in the grid */
-		(void)scan_floor(floor_list, &floor_num, py, px, 0x01);
+		(void)scan_floor(floor_list, &floor_num, px, py, 0x01);
 	}
 
 	/* Accept inventory */
@@ -3154,7 +3154,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			n2 = I2A(k - floor_top);
 
 			/* Redraw if needed */
-			if (p_ptr->command_see && easy_floor) show_floor(py, px);
+			if (p_ptr->command_see && easy_floor) show_floor(px, py);
 		}
 
 		/* Viewing inventory */
