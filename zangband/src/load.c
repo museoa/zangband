@@ -900,7 +900,7 @@ static void rd_store(int town_num, int store_num)
 	}
 
 	if (sf_version < 38)
-	{
+    {
 		/* Read the items */
 		for (j = 0; j < num; j++)
 		{
@@ -914,9 +914,11 @@ static void rd_store(int town_num, int store_num)
 			object_wipe(q_ptr);
 
 			/* Read the item */
-			rd_item(q_ptr);
-			
-			/* Ignore item */
+            rd_item(q_ptr);
+
+            /* Add object to store, if home */
+            if (type == BUILD_STORE_HOME)
+                add_object_list(&st_ptr->stock, q_ptr);
 		}
 	}
 	else
