@@ -857,18 +857,6 @@ const char b1 = '[', b2 = ']';
 
 
 /*
- * Hack -- the detection arrays
- */
-
-bool borg_detect_wall[6][6];
-
-bool borg_detect_trap[6][6];
-
-bool borg_detect_door[6][6];
-
-bool borg_detect_evil[6][6];
-
-/*
  * Locate the store doors
  */
 

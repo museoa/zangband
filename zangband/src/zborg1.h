@@ -44,11 +44,26 @@
  * and already tested for 'ickyness'.  This is done for
  * efficiency.
  */
-
-
 #define BORG_MAP_VIEW   0x01	/* in line of sight */
 #define BORG_MAP_ICKY	0x02	/* grids to avoid */
 #define BORG_MAP_KNOW	0x04	/* 'know' grids */
+
+
+
+/* Flags used to mark detection */
+#define BORG_DETECT_TRAP	0x01
+#define BORG_DETECT_DOOR	0x02
+#define BORG_DETECT_WALL	0x04
+#define BORG_DETECT_EVIL	0x08
+
+
+/*
+ * Borg detection radius.
+ *
+ * This is smaller than the actual detection radius because
+ * we don't want the borg to walk into undetected regions.
+ */
+#define BORG_MAX_DETECT		(MAX_DETECT - 2)
 
 /*
  * Maximum size of the "lite" array
@@ -1031,18 +1046,6 @@ extern FILE *borg_fff;	/* Log file */
 
 extern const char p1, p2, c1, c2, b1, b2;
 
-
-/*
- * Hack -- the detection arrays
- */
-
-extern bool borg_detect_wall[6][6];
-
-extern bool borg_detect_trap[6][6];
-
-extern bool borg_detect_door[6][6];
-
-extern bool borg_detect_evil[6][6];
 
 /*
  * Locate the store doors

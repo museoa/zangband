@@ -387,9 +387,7 @@ bool borg_check_lite(void)
 	int i, x, y;
 	int corners, floors;
 
-	int q_x, q_y;
-
-	map_block *mb_ptr;
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 
 	bool do_lite;
@@ -413,19 +411,11 @@ bool borg_check_lite(void)
 	/* XXX XXX XXX Dark */
 
 
-	/* Extract the panel */
-	q_x = w_x / 33;
-	q_y = w_y / 11;
-
-
 	/* Start */
 	do_trap = FALSE;
 
 	/* Determine if we need to detect traps */
-	if (!borg_detect_trap[q_y + 0][q_x + 0]) do_trap = TRUE;
-	if (!borg_detect_trap[q_y + 0][q_x + 1]) do_trap = TRUE;
-	if (!borg_detect_trap[q_y + 1][q_x + 0]) do_trap = TRUE;
-	if (!borg_detect_trap[q_y + 1][q_x + 1]) do_trap = TRUE;
+	if (!(mb_ptr->detect & BORG_DETECT_TRAP)) do_trap = TRUE;
 
 	/* Hack -- check traps every few turns anyway */
 	if (!when_detect_traps ||
@@ -436,10 +426,7 @@ bool borg_check_lite(void)
 	do_door = FALSE;
 
 	/* Determine if we need to detect doors */
-	if (!borg_detect_door[q_y + 0][q_x + 0]) do_door = TRUE;
-	if (!borg_detect_door[q_y + 0][q_x + 1]) do_door = TRUE;
-	if (!borg_detect_door[q_y + 1][q_x + 0]) do_door = TRUE;
-	if (!borg_detect_door[q_y + 1][q_x + 1]) do_door = TRUE;
+	if (!(mb_ptr->detect & BORG_DETECT_DOOR)) do_door = TRUE;
 
 	/* Hack -- check doors every few turns anyway */
 	if (!when_detect_doors ||
@@ -450,10 +437,7 @@ bool borg_check_lite(void)
 	do_wall = FALSE;
 
 	/* Determine if we need to detect walls */
-	if (!borg_detect_wall[q_y + 0][q_x + 0]) do_wall = TRUE;
-	if (!borg_detect_wall[q_y + 0][q_x + 1]) do_wall = TRUE;
-	if (!borg_detect_wall[q_y + 1][q_x + 0]) do_wall = TRUE;
-	if (!borg_detect_wall[q_y + 1][q_x + 1]) do_wall = TRUE;
+	if (!(mb_ptr->detect & BORG_DETECT_WALL)) do_wall = TRUE;
 
 	/* Hack -- check walls every few turns anyway */
 	if (!when_detect_walls ||
@@ -464,10 +448,7 @@ bool borg_check_lite(void)
 	do_evil = FALSE;
 
 	/* Determine if we need to detect evil */
-	if (!borg_detect_evil[q_y + 0][q_x + 0]) do_evil = TRUE;
-	if (!borg_detect_evil[q_y + 0][q_x + 1]) do_evil = TRUE;
-	if (!borg_detect_evil[q_y + 1][q_x + 0]) do_evil = TRUE;
-	if (!borg_detect_evil[q_y + 1][q_x + 1]) do_evil = TRUE;
+	if (!(mb_ptr->detect & BORG_DETECT_EVIL)) do_evil = TRUE;
 
 	/* Hack -- check evil every few turns anyway- more fq if low level */
 	if (!when_detect_evil ||

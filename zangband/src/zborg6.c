@@ -5642,12 +5642,6 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
 
 	monster_race *r_ptr;
 
-	int q_x, q_y;
-
-	/* Extract panel */
-	q_x = w_x / 33;
-	q_y = w_y / 11;
-
 	/* Reset damage */
 	n = 0;
 
@@ -5798,12 +5792,8 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
 				/* if this area has been magic mapped,
 				   * ok to shoot in the dark
 				 */
-				if (!borg_detect_wall[q_y + 0][q_x + 0] &&
-					!borg_detect_wall[q_y + 0][q_x + 1] &&
-					!borg_detect_wall[q_y + 1][q_x + 0] &&
-					!borg_detect_wall[q_y + 1][q_x + 1])
+				if (mb_ptr->detect & BORG_DETECT_WALL)
 				{
-
 					/* Stop at unknown grids (see above) */
 					/* note if beam, dispel, this is the end of the beam */
 					if (mb_ptr->terrain == FEAT_NONE)
@@ -14802,9 +14792,11 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 {
 	int oy;
 	int ox, i;
-	int j, b_j;
 
 	map_block *mb_ptr;
+	
+	/* Hack ignore parameter */
+	(void) b_stair;
 
 	/* Have the borg so some Searching */
 	borg_needs_searching = TRUE;
@@ -16039,7 +16031,7 @@ bool borg_flow_spastic(bool bored)
 		MAP_GET_LOC(x, y);
 
 		/* Avoid searching detected sectors */
-		if (borg_detect_door[y / 11][x / 33]) continue;
+		if (mb_ptr->detect & BORG_DETECT_DOOR) continue;
 
 		/* Skip ones that make me wander too far */
 		if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])

@@ -2663,8 +2663,6 @@ static bool borg_think_dungeon_brave(void)
 bool borg_think_dungeon(void)
 {
 	int i, j;
-	int b_j = -1;
-
 
 	int msec = ((delay_factor * delay_factor) +
 				(borg_delay_factor * borg_delay_factor));

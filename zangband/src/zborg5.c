@@ -2502,7 +2502,30 @@ static void borg_count_death(int i)
 }
 
 
+/* Mark detected region */
+static void detect_region(byte flag)
+{
+	int x, y;
 
+	map_block *mb_ptr;
+	
+	for (x = c_x - BORG_MAX_DETECT; x <= c_x + BORG_MAX_DETECT; x++)
+	{
+		for (y = c_y - BORG_MAX_DETECT; y <= c_y + BORG_MAX_DETECT; y++)
+		{
+			/* bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+			
+			/* Check distance */
+			if (distance(c_x, c_y, x, y) > BORG_MAX_DETECT) continue;
+			
+			mb_ptr = map_loc(x, y);
+			
+			/* Set flag */
+			mb_ptr->detect |= flag;
+		}
+	}
+}
 
 /*
  * Handle "detection" spells and "call lite"
@@ -2511,22 +2534,6 @@ static void borg_count_death(int i)
  */
 static bool borg_handle_self(cptr str)
 {
-	/* Hack - ignore parameter */
-	(void)str;
-
-	/* Detection does not work with panels any more */
-#if 0
-
-	int i;
-
-	int q_x, q_y;
-
-
-	/* Extract panel */
-	q_x = o_w_x / PANEL_WID;
-	q_y = o_w_y / PANEL_HGT;
-
-
 	/* Handle failure */
 	if (borg_failure)
 	{
@@ -2545,105 +2552,61 @@ static bool borg_handle_self(cptr str)
 	else if (prefix(str, "wall"))
 	{
 		/* Message */
-		borg_note(format("# Detected walls (%d,%d to %d,%d)",
-						 q_y, q_x, q_y + 1, q_x + 1));
-
+		borg_note("# Detected walls");
+		
 		/* Mark detected walls */
-		borg_detect_wall[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_wall[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_wall[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_wall[q_y + 1][q_x + 1] = TRUE;
+		detect_region(BORG_DETECT_WALL);
 	}
 
 	/* Handle "detect traps" */
 	else if (prefix(str, "trap"))
 	{
 		/* Message */
-		borg_note(format("# Detected traps (%d,%d to %d,%d)",
-						 q_y, q_x, q_y + 1, q_x + 1));
+		borg_note("# Detected traps");
 
 		/* Mark detected traps */
-		borg_detect_trap[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_trap[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_trap[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_trap[q_y + 1][q_x + 1] = TRUE;
+		detect_region(BORG_DETECT_TRAP);
 	}
 
 	/* Handle "detect doors" */
 	else if (prefix(str, "door"))
 	{
 		/* Message */
-		borg_note(format("# Detected doors (%d,%d to %d,%d)",
-						 q_y, q_x, q_y + 1, q_x + 1));
+		borg_note("# Detected doors");
 
 		/* Mark detected doors */
-		borg_detect_door[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_door[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_door[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_door[q_y + 1][q_x + 1] = TRUE;
+		detect_region(BORG_DETECT_DOOR);
 	}
 
 	/* Handle "detect traps and doors" */
 	else if (prefix(str, "both"))
 	{
 		/* Message */
-		borg_note(format("# Detected traps and doors (%d,%d to %d,%d)",
-						 q_y, q_x, q_y + 1, q_x + 1));
+		borg_note("# Detected traps and doors");
 
-		/* Mark detected traps */
-		borg_detect_trap[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_trap[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_trap[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_trap[q_y + 1][q_x + 1] = TRUE;
-
-		/* Mark detected doors */
-		borg_detect_door[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_door[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_door[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_door[q_y + 1][q_x + 1] = TRUE;
+		/* Mark detected traps + doors */
+		detect_region(BORG_DETECT_TRAP | BORG_DETECT_DOOR);
 	}
 
 	/* Handle "detect traps and doors and evil" */
 	else if (prefix(str, "TDE"))
 	{
 		/* Message */
-		borg_note(format("# Detected traps, doors & evil (%d,%d to %d,%d)",
-						 q_y, q_x, q_y + 1, q_x + 1));
-
-		/* Mark detected traps */
-		borg_detect_trap[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_trap[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_trap[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_trap[q_y + 1][q_x + 1] = TRUE;
-
-		/* Mark detected doors */
-		borg_detect_door[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_door[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_door[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_door[q_y + 1][q_x + 1] = TRUE;
-
-		/* Mark detected evil */
-		borg_detect_evil[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_evil[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_evil[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_evil[q_y + 1][q_x + 1] = TRUE;
+		borg_note("# Detected traps, doors & evil");
+		
+		/* Mark detected traps + doors + evil */
+		detect_region(BORG_DETECT_TRAP | BORG_DETECT_DOOR | BORG_DETECT_EVIL);
 	}
 
 	/* Handle "detect evil" */
 	else if (prefix(str, "evil"))
 	{
 		/* Message */
-		borg_note(format("# Detected evil (%d,%d to %d,%d)",
-						 q_y, q_x, q_y + 1, q_x + 1));
+		borg_note("# Detected evil");
 
 		/* Mark detected evil */
-		borg_detect_evil[q_y + 0][q_x + 0] = TRUE;
-		borg_detect_evil[q_y + 0][q_x + 1] = TRUE;
-		borg_detect_evil[q_y + 1][q_x + 0] = TRUE;
-		borg_detect_evil[q_y + 1][q_x + 1] = TRUE;
+		detect_region(BORG_DETECT_EVIL);
 	}
-
-#endif /* 0 */
 
 	/* Done */
 	return (TRUE);
@@ -3103,7 +3066,7 @@ static void borg_cheat_feats(void)
  */
 void borg_update(void)
 {
-	int i, k, x, y;
+	int i, k;
 
 	int hit_dist;
 
@@ -3623,18 +3586,6 @@ void borg_update(void)
 
 		/* Mega-Hack -- Clear "detect evil" stamp */
 		when_detect_evil = 0;
-
-		/* Hack -- Clear "panel" flags */
-		for (y = 0; y < 6; y++)
-		{
-			for (x = 0; x < 6; x++)
-			{
-				borg_detect_wall[y][x] = FALSE;
-				borg_detect_trap[y][x] = FALSE;
-				borg_detect_door[y][x] = FALSE;
-				borg_detect_evil[y][x] = FALSE;
-			}
-		}
 
 		/* Hack -- Clear "shop visit" stamps */
 		for (i = 0; i < (MAX_STORES); i++) borg_shops[i].when = 0;

@@ -119,6 +119,7 @@ struct map_block
 	byte cost;	/* "cost" data */
 
 	byte kill;	/* Entry into "kill" list */
+	byte detect;	/* Detection flags */
 #endif /* ALLOW_BORG */
 
 	/* We need to save the flags to get the refcounting right. */
