@@ -2440,54 +2440,101 @@ void do_cmd_colors(void)
 
 
 /*
- * Teke notes.  There are two ways this can happen, either in the message recall or
- * a file.  The command can also be passed a string, which will automatically be
- * written. -CK-
+ * Take notes. 
  */
-void do_cmd_note(char *note)
+void do_cmd_note(void)
 {
 	char buf[80];
 
 	/* Default */
 	strcpy(buf, "");
 
-	/* If a note is passed, use that, otherwise accept user input. */
-	if (streq(note, "")) { 
-	  
-	  if (!get_string("Note: ", buf, 60)) return;
+	if (!get_string("Note: ", buf, 60)) return;
 	
-	}
-	
-	else
-	  strncpy(buf, note, 60);
-
 	/* Ignore empty notes */
 	if (!buf[0] || (buf[0] == ' ')) return;
 
-	/* If the note taking option is on, write it to the file, otherwise write to
-	 * the message recall.
-	 */
-	if (take_notes) {
-
-          char final_note[80];
-          char long_day[25];
-          time_t ct = time((time_t*)0);
-
-          /* Get date and time */
-          (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
-
-          /* Make note */
-          sprintf(final_note, "%s | %s\n", long_day, buf);
-    
-	  /* Add note to buffer */
-	  fprintf(notes_file, final_note);
-
-	}
-
-	else msg_format("Note: %s", buf);
+	/* Call add_note to add the note */
+	add_note(buf, ' ');
 
 }
 
+/* Take notes.  This function adds a note either to the message recall or a notes
+ * file. 
+ */
+void add_note(char *note, char code)
+{
+        
+         char buf[80];
+
+	 strcpy(buf, "");
+	 strncpy(buf, note, 60);
+	
+	 /* If the note taking option is on, append the note to the file, otherwise
+	  * the message recall 
+	  */
+	 if (take_notes)
+	 {
+	   char final_note[80];
+	   char long_day[25];
+	   time_t ct = time((time_t*)NULL);
+	   char depths[32];
+           FILE *fff;
+ 
+  	  /* Get depth  */
+ 
+            if (!dun_level)
+              {
+                strcpy(depths, "  Town");
+              }
+            else if (depth_in_feet)
+               {
+                sprintf(depths, "%4dft", dun_level * 50);
+              }
+            else
+              {
+                sprintf(depths, "Lev%3d", dun_level);
+              }
+            
+            /* Get date and time */
+            strftime(long_day, 10, "%H:%M:%S", localtime(&ct));
+  
+            /* Make note */
+            sprintf(final_note, "%s %9ld %s %c: %s\n", long_day, turn, depths, code, note);
+      
+            /* Open notes file */
+            fff = my_fopen(notes_file(), "a");
+  
+	    /* Add note, and close note file */
+	    fprintf(fff, final_note);
+  
+            my_fclose(fff);
+  
+  	}
+  
+  	else msg_format("Note: %s", buf);
+  
+  }
+
+/* A short helper function for add_note and other functions that returns the file
+ * name for the notes file.
+ */
+char *notes_file(void) {
+
+        char fname[40];
+	static char buf[500];
+	char base_name[8];
+
+	/* Hack -- extract first 8 characters of name */
+	strncpy(base_name, player_name, 8);
+
+	/* Create the file name from the character's name plus .txt */
+	sprintf(fname, "%s.txt", base_name);
+	path_build(buf, 500, ANGBAND_DIR_SAVE, fname);
+
+	return buf;
+
+}
 
 /*
  * Mention the current version
@@ -3601,6 +3648,18 @@ static void do_cmd_knowledge_quests(void)
 	fd_kill(file_name);
 }
 
+/* Print notes file */
+
+void do_cmd_knowledge_notes(void)
+{
+
+        char fname[80];
+
+	strcpy(fname, notes_file());
+
+	show_file(fname, "Notes", 0, 0);
+
+}
 
 
 /*
@@ -3634,9 +3693,11 @@ void do_cmd_knowledge(void)
 		prt("(6) Display current pets", 9, 5);
 		prt("(7) Display current quests", 10, 5);
 		prt("(8) Display virtues", 11, 5);
+		if (take_notes)
+		  prt("(9) Display notes", 12, 5);
 
 		/* Prompt */
-		prt("Command: ", 13, 0);
+		prt("Command: ", 14, 0);
 
 		/* Prompt */
 		i = inkey();
@@ -3669,6 +3730,12 @@ void do_cmd_knowledge(void)
 			break;
 		case '8': /* Virtues */
 			do_cmd_knowledge_virtues();
+			break;
+		case '9': /* Notes */
+		        if (take_notes)
+                          do_cmd_knowledge_notes();
+			else
+			  bell();
 			break;
 
 		default: /* Unknown option */

@@ -230,6 +230,11 @@ bool auto_destroy;		/* Known worthless items are destroyed without confirmation 
 bool confirm_stairs;		/* Prompt before staircases... */
 bool wear_confirm;		/* Confirm before putting on known cursed items */
 
+bool disturb_pets;		/* Pets moving nearby disturb us */
+
+
+
+
 
 /* Option Set 3 -- Game-Play */
 
@@ -1124,4 +1129,4 @@ bool use_transparency = FALSE; /* Use transparent tiles */
 
 bool can_save = TRUE;         /* Game can be saved */
 
-FILE *notes_file;            /* File handle for the text notes file */
+

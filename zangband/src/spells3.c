@@ -1926,17 +1926,14 @@ bool ident_spell(void)
         /* If the item was an artifact, and if the auto-note is selected, write a message. */
         if (take_notes && auto_notes && (artifact_p(o_ptr) || o_ptr->art_name)) {
 
-          char note[80];
-          char long_day[25];
-          time_t ct = time((time_t*)0);
-          
-          /* Get date and time */
-          (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
-
-          /* Build note and write */
-          sprintf(note, "%s | Found %s\n", long_day, o_name);
-
-          fprintf(notes_file, "%s", note);
+	   char note[80];
+	   char item_name[80];
+	   object_desc(item_name, o_ptr, FALSE, 0);
+  	  
+	   /* Build note and write */
+	   sprintf(note, "Found The %s", item_name);
+	   
+	   add_note(note, 'A');
 
         }
 

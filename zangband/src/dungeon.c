@@ -3155,7 +3155,7 @@ static void process_command(void)
 		/* Take notes */
 		case ':':
 		{
-			do_cmd_note("");
+			do_cmd_note();
 			break;
 		}
 
@@ -4144,25 +4144,23 @@ void play_game(bool new_game)
 	/* Hack - if note file exists, load it */
 	if (!new_game && take_notes) {
 
-	  char buff[1024];
-	  char fname[80];
-	  char long_day[25];
-	  time_t ct = time((time_t*)0);
-
-	  /* Create the file name */
-	  sprintf(fname, "%s.txt", player_name);
-	  path_build(buff, 1024, ANGBAND_DIR_SAVE, fname);
-
-	  /* Open the file for appending */
-	  notes_file = my_fopen(buff, "a");
-
-	  /* Get the date */
-	  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
-
-	  /* Add in continuation info */
-	  fprintf(notes_file, "================================================\n");
-	  fprintf(notes_file, "New session start at %s\n\n", long_day);
-	  
+   	  char long_day[30];
+ 	  time_t ct = time((time_t*)NULL);
+	  FILE *fff;
+ 
+  	  /* Open file */
+          fff = my_fopen(notes_file(), "a");
+  
+  	  /* Get the date */
+  	  strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+  
+  	  /* Add in continuation info */
+  	  fprintf(fff, "================================================\n");
+  	  fprintf(fff, "New session start: %s\n\n", long_day);
+  
+          /* Close file */
+          my_fclose(fff);
+  	  
 	}
 
 	/* Roll new character */

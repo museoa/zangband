@@ -110,18 +110,11 @@ void check_experience(void)
                 /* If auto-note taking enabled, write a note to the file. */
                 if (take_notes && auto_notes) {
 
-                  char buf[80];
-                  char long_day[80];
-                  time_t ct = time((time_t*)0);
-                  
-                  /* Get date and time */
-                  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+                  char note[80];
 
-                  /* Build the message */
-                  sprintf(buf, "%s | %s reached level %d", long_day, player_name, p_ptr->lev);
+		  sprintf(note, "Reached level %d", p_ptr->lev);
 
-                  /* Write message */
-                  do_cmd_note(buf);
+		  add_note(note, 'L');
 
                 }
 
@@ -1216,14 +1209,12 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
                 /* If the player kills a Unique, and the notes options are on, write a note */
                 if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes) {
 
-                  char long_day[25];
-                  time_t ct = time((time_t*)0);
-
-                  /* Get date and time */
-                  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
-
-                  /* Write note */
-                  fprintf(notes_file, "%s | Killed %s\n", long_day, m_name);
+                   char note[80];
+ 
+                   /* Write note */
+                   sprintf(note, "Killed %s", m_name);
+ 
+		   add_note(note, 'U');
                   
                 }
 

@@ -4532,16 +4532,22 @@ void close_game(void)
 	  /* Variable for the date */
 	  time_t ct = time((time_t*)0);
 	  char long_day[25];
-
+	  FILE *fff;
 
 		/* Handle retirement */
 		if (total_winner) {
 
 		  if (take_notes) {
 
-		    (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
-		    fprintf(notes_file, "%s defeated the Serpent on %s\n.", player_name, long_day);
-		    fprintf(notes_file, "Long live %s!", player_name);
+		    /* Open notes file */
+		    fff = my_fopen(notes_file(), "a");
+
+		    strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+		    fprintf(fff, "%s slew the Serpent of Chaos on %s\n.", player_name, long_day);
+		    fprintf(fff, "Long live %s!\n", player_name);
+		    fprintf(fff, "================================================\n");
+
+		    my_fclose(fff);
 
 		  }
 
@@ -4561,11 +4567,18 @@ void close_game(void)
 		/* You are dead */
 		if (take_notes) {
 
+		 
+		  /* Open file */
+		  fff = my_fopen(notes_file(), "a");
+
 		  /* Get time */
-		  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+		  (void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
 		 
 		  /* Add note */
-		  fprintf(notes_file, "\n%s was killed by %s on %s\n",player_name, died_from, long_day);
+		  fprintf(fff, "\n%s was killed by %s on %s\n",player_name, died_from, long_day);
+
+		  /* Close file */
+		  my_fclose(fff);
 
 		}
 
@@ -4588,13 +4601,17 @@ void close_game(void)
                 if (take_notes) {
                   
                   char long_day[25];
-                  time_t ct = time((time_t*)0);
+                  time_t ct = time((time_t*)NULL);
+		  FILE *fff;
+
+		  fff = my_fopen(notes_file(), "a");
 
                   /* Get date and time */
-                  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+                  (void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
 
-                  fprintf(notes_file, "\nSession end: %s\n", long_day);
+                  fprintf(fff, "\nSession end: %s\n", long_day);
 
+		  my_fclose(fff);
 
                 }
 
@@ -4611,10 +4628,6 @@ void close_game(void)
 
 	/* Forget the high score fd */
 	highscore_fd = -1;
-
-	/* Close the notes file */
-	if (take_notes)
-	  my_fclose(notes_file);
 
 	/* Allow suspending now */
 	signals_handle_tstp();
