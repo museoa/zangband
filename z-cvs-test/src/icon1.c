@@ -1509,7 +1509,6 @@ void init_palette(void)
 	 * of icon data.
 	 */
 	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
-path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 	path_build(path, 1024, path2, "palette_256");
 
 	if (Palette_Init(g_interp, path) != TCL_OK)
@@ -1528,7 +1527,6 @@ path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 		Colormap_One2OneTable(g_darken[i].table);
 	}
 	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
-path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 	path_build(path, 1024, path2, "dark");
 	if (read_dark_file(path) != TCL_OK)
 	{

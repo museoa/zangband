@@ -59,7 +59,6 @@ extern bool game_in_progress;
 extern cptr ANGBAND_DIR_ROOT;
 extern cptr ANGBAND_DIR_TK;
 extern cptr ANGBAND_DIR_COMMON;
-extern cptr ANGBAND_DIR_COMMON_TK;
 
 /* canv-widget.c */
 extern void CanvasWidget_Idle(void);

@@ -1068,7 +1068,7 @@ char *keyword_path[] = {
 	"ANGBAND_DIR_ROOT",
 	"ANGBAND_DIR_USER",
 	"ANGBAND_DIR_TK",
-	"ANGBAND_DIR_COMMON_TK",
+	"ANGBAND_DIR_COMMON",
 	NULL
 };
 
@@ -1077,7 +1077,7 @@ static bool s_edit_path[] = {
 	FALSE,
 	FALSE,
 	FALSE,
-	TRUE,
+	FALSE,
 	TRUE
 };
 
@@ -1135,7 +1135,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 			if (confirm && game_in_progress && character_generated)
 			{
-#if 1 /* def PLATFORM_X11 */
 				int result;
 
 				result = Tcl_EvalEx(g_interp,
@@ -1146,20 +1145,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 					char *s = Tcl_GetStringResult(g_interp);
 					if (!strcmp(s, "cancel")) break;
 				}
-#endif /* PLATFORM_X11 */
-
-#ifdef PLATFORM_WINxx
-				int oldMode;
-				int winResult;
-
-				oldMode = Tcl_SetServiceMode(TCL_SERVICE_ALL);
-				winResult = MessageBox(NULL,
-					"Your character will not be saved!", "Quit Without Saving",
-					MB_ICONEXCLAMATION | MB_OKCANCEL);
-				(void) Tcl_SetServiceMode(oldMode);
-				
-				if (winResult == IDCANCEL) break;
-#endif /* PLATFORM_WIN */
 			}
 			quit(NULL);
 			break;
@@ -1181,7 +1166,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			angband_path[1] = &ANGBAND_DIR_USER;
 			angband_path[2] = &ANGBAND_DIR_TK;
 			angband_path[3] = &ANGBAND_DIR_COMMON;
-			angband_path[4] = &ANGBAND_DIR_COMMON_TK;
 			
 			if (objC == 4)
 			{

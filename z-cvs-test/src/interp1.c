@@ -3538,13 +3538,8 @@ void angtk_init(void)
 	/* Standard color palette */
 	init_palette();
 
-#if 0
-	/* Now Tcl is initialized */
-	Tcl_Initialized = 1;
-#endif
-
 	/* Source the "startup script" */
-	path_build(path, 1024, ANGBAND_DIR_COMMON_TK, "init-startup.tcl");
+	path_build(path, 1024, ANGBAND_DIR_TK, "init-startup.tcl");
 	validate_file(path, "Could not find a required file:\n\"%s\"\n"
 		"Make sure your unzip utility supports long filenames.");	
 	if (angtk_eval_file(path) == TCL_ERROR)
@@ -3679,7 +3674,7 @@ void angtk_character_generated(void)
 	int y, x;
 
 	/* Source a file to create the interface */
-	path_build(path, 1024, ANGBAND_DIR_COMMON_TK, "init-other.tcl");
+	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
 	if (angtk_eval_file(path) == TCL_ERROR)
 	{
 		HandleError();

@@ -27,7 +27,6 @@ bool game_in_progress = FALSE;
 cptr ANGBAND_DIR_ROOT;
 cptr ANGBAND_DIR_TK;
 cptr ANGBAND_DIR_COMMON;
-cptr ANGBAND_DIR_COMMON_TK;
 Tcl_Interp *g_interp;
 static char *gGameDir, *gVariantDir;
 
@@ -613,11 +612,7 @@ static void init_stuff(int argc, char **argv)
 	/* Save the application directory */
 	ANGBAND_DIR_ROOT = string_make(path);
 	
-	(void) sprintf(path, "%s%s%s", ANGBAND_DIR_ROOT, PATH_SEP, "tk");
-	ANGBAND_DIR_COMMON_TK = string_make(path);
-
-	/* Append "lib" directory to pathname */
-	(void) strcpy(p, "/lib/");
+	(void) sprintf(path, "%s%s%s%s", ANGBAND_DIR_ROOT, PATH_SEP,"lib", PATH_SEP);
 
 	/* Validate the path */
 	validate_dir(path);
