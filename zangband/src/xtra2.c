@@ -3209,13 +3209,13 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s whispers:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Use my gift wisely.'");
-			acquirement(py, px, 1, FALSE, FALSE);
+			acquirement(px, py, 1, FALSE, FALSE);
 			break;
 		case REW_GREA_OBJ:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Use my gift wisely.'");
-			acquirement(py, px, 1, TRUE, FALSE);
+			acquirement(px, py, 1, TRUE, FALSE);
 			break;
 		case REW_CHAOS_WP:
 			msg_format("The voice of %s booms out:",
@@ -3327,13 +3327,13 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy reward.'");
-			acquirement(py, px, rand_range(2, 3), FALSE, FALSE);
+			acquirement(px, py, rand_range(2, 3), FALSE, FALSE);
 			break;
 		case REW_GREA_OBS:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Behold, mortal, how generously I reward thy loyalty.'");
-			acquirement(py, px, rand_range(2, 3), TRUE, FALSE);
+			acquirement(px, py, rand_range(2, 3), TRUE, FALSE);
 			break;
 		case REW_TY_CURSE:
 		{

@@ -4636,7 +4636,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(int y1, int x1, int num, bool great, bool known)
+void acquirement(int x1, int y1, int num, bool great, bool known)
 {
 	object_type *i_ptr;
 	object_type object_type_body;

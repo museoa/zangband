@@ -1853,7 +1853,7 @@ void do_cmd_debug(void)
 		/* Good Objects */
 		case 'g':
 			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
-			acquirement(py, px, p_ptr->command_arg, FALSE, TRUE);
+			acquirement(px, py, p_ptr->command_arg, FALSE, TRUE);
 		break;
 
 		/* Hitpoint rerating */
@@ -1967,7 +1967,7 @@ void do_cmd_debug(void)
 		/* Very Good Objects */
 		case 'v':
 			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
-			acquirement(py, px, p_ptr->command_arg, TRUE, TRUE);
+			acquirement(px, py, p_ptr->command_arg, TRUE, TRUE);
 		break;
 
 		/* Wizard Light the Level */
