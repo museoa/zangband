@@ -3460,7 +3460,7 @@ static errr rd_savefile_new_aux(void)
 #endif
 
 	/* Read the pet command settings */
-	if (!z_older_than(2, 3, 3))
+	if (sf_version > 2)
 	{
 		rd_s16b(&p_ptr->pet_follow_distance);
 		rd_byte(&p_ptr->pet_open_doors);
