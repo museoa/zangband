@@ -3201,15 +3201,23 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 				case SV_RING_LORDLY:
 				{
-					do
+					if (randint(7)==1)
 					{
-						random_resistance(o_ptr, FALSE, randint(20) + 18);
+						/* Randart ring */
+						create_artifact(o_ptr, FALSE);
 					}
-					while (randint(4) == 1);
+					else
+					{
+						do
+						{
+							random_resistance(o_ptr, FALSE, randint(20) + 18);
+						}
+						while (randint(4) == 1);
 
-					/* Bonus to armor class */
-					o_ptr->to_a = 10 + randint(5) + m_bonus(10, level);
-					rating += 5;
+						/* Bonus to armor class */
+						o_ptr->to_a = 10 + randint(5) + m_bonus(10, level);
+						rating += 5;
+					}
 				}
 				break;
 
@@ -3438,14 +3446,22 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of the Magi -- never cursed */
 				case SV_AMULET_THE_MAGI:
 				{
-					o_ptr->pval = randint(5) + m_bonus(5, level);
-					o_ptr->to_a = randint(5) + m_bonus(5, level);
+					if (randint(7)==1)
+					{
+						/* Randart amulet */
+						create_artifact(o_ptr, FALSE);
+					}
+					else
+					{					
+						o_ptr->pval = randint(5) + m_bonus(5, level);
+						o_ptr->to_a = randint(5) + m_bonus(5, level);
 
-					if (randint(3) == 1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
-
-					/* Boost the rating */
-					rating += 25;
-
+						if (randint(3) == 1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+					
+						/* Boost the rating */
+						rating += 25;
+					}
+					
 					/* Mention the item */
 					if (cheat_peek) object_mention(o_ptr);
 

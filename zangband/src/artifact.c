@@ -1306,9 +1306,9 @@ static void give_activation_power(object_type *o_ptr)
 }
 
 
-static void get_random_name(char *return_name, bool armour, int power)
+static void get_random_name(char *return_name, byte tval, int power)
 {
-	if (randint(100) <= TABLE_NAME)
+	if ((randint(100) <= TABLE_NAME)||(tval==TV_AMULET)||(tval==TV_RING))
 	{
 		get_table_name(return_name);
 	}
@@ -1316,7 +1316,7 @@ static void get_random_name(char *return_name, bool armour, int power)
 	{
 		cptr filename;
 
-		switch (armour)
+		switch ((bool)(tval>=TV_BOOTS))
 		{
 			case 1:
 				switch (power)
@@ -1542,7 +1542,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		o_ptr->ident |= IDENT_STOREB; /* This will be used later on... */
 		if (!(get_string("What do you want to call the artifact? ", dummy_name, 80)))
 		{
-			get_random_name(new_name, (bool)(o_ptr->tval >= TV_BOOTS), power_level);
+			get_random_name(new_name, o_ptr->tval, power_level);
 		}
 		else
 		{
@@ -1559,7 +1559,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	}
 	else
 	{
-		get_random_name(new_name, (bool)(o_ptr->tval >= TV_BOOTS), power_level);
+		get_random_name(new_name, o_ptr->tval, power_level);
 	}
 
 	if (cheat_xtra)
