@@ -66,7 +66,7 @@
 
 
 
-/* Rest of the dependancies */
+/* Rest of the dependencies */
 
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>
@@ -774,7 +774,7 @@ static errr Metadpy_init_2(Display *dpy, cptr name)
 	m->fg = m->white;
 
 	/* Calculate the Maximum allowed Pixel value.  */
-	m->zg = (1 << m->depth) - 1;
+	m->zg = ((Pixell)1 << m->depth) - 1;
 
 	/* Save various default Flag Settings */
 	m->color = ((m->depth > 1) ? 1 : 0);
