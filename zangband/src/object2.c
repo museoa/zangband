@@ -437,7 +437,7 @@ static s16b o_cur = 0;
 static s16b o_pop(void)
 {
 	/* Wrap counter */
-	if (o_cur > o_max) o_cur = 0;
+	if (o_cur > o_max) o_cur = 1;
 	
 	
 	/*
@@ -478,7 +478,7 @@ static s16b o_pop(void)
 			o_cur++;
 			
 			/* Wrap counter */
-			if (o_cur >= o_max) o_cur = 0;
+			if (o_cur >= o_max) o_cur = 1;
 			
 			continue;
 		}
