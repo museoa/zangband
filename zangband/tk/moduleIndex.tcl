@@ -28,7 +28,6 @@ IndexOne NSMainWindow main-window.tcl
 IndexOne NSMessageWindow message-window.tcl
 IndexOne NSMiscPopup misc-popup.tcl
 IndexOne NSMiscWindow misc-window.tcl
-IndexOne NSOptions options.tcl
 IndexOne NSMindcraftMenu mindcraft-menu.tcl
 IndexOne NSMindcraftWindow mindcraft-window.tcl
 IndexOne NSPets pets.tcl
