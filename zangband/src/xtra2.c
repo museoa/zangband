@@ -3569,7 +3569,7 @@ void gain_level_reward(int chosen_reward)
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msgf("'Rise, my servant!'");
 			(void)restore_level();
-			(void)set_poisoned(0);
+			(void)clear_poisoned();
 			(void)clear_blind();
 			(void)clear_confused();
 			(void)set_image(0);

@@ -253,7 +253,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			case RACE_HALF_ORC:
 			{
 				msgf("You play tough.");
-				(void)set_afraid(0);
+				(void)clear_afraid();
 				break;
 			}
 
@@ -264,7 +264,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				{
 					(void)hp_player(30);
 				}
-				(void)set_afraid(0);
+				(void)clear_afraid();
 				(void)set_shero(p_ptr->tim.shero + 10 + randint1(plev));
 
 				break;
@@ -277,12 +277,12 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				{
 					msgf
 						("You picture the Pattern in your mind and walk it...");
-					(void)set_poisoned(0);
+					(void)clear_poisoned();
 					(void)set_image(0);
 					(void)set_stun(0);
 					(void)set_cut(0);
 					(void)clear_blind();
-					(void)set_afraid(0);
+					(void)clear_afraid();
 					(void)do_res_stat(A_STR);
 					(void)do_res_stat(A_INT);
 					(void)do_res_stat(A_WIS);
@@ -321,7 +321,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					(void)hp_player(30);
 				}
 
-				(void)set_afraid(0);
+				(void)clear_afraid();
 				(void)set_shero(p_ptr->tim.shero + 10 + randint1(plev));
 				break;
 			}

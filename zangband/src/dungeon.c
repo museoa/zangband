@@ -542,12 +542,12 @@ static bool pattern_effect(void)
 
 	if (c_ptr->feat == FEAT_PATTERN_END)
 	{
-		(void)set_poisoned(0);
+		(void)clear_poisoned();
 		(void)set_image(0);
 		(void)set_stun(0);
 		(void)set_cut(0);
 		(void)clear_blind();
-		(void)set_afraid(0);
+		(void)clear_afraid();
 		(void)do_res_stat(A_STR);
 		(void)do_res_stat(A_INT);
 		(void)do_res_stat(A_WIS);
@@ -1510,7 +1510,7 @@ static void process_world(void)
 	if (p_ptr->tim.infra) (void)set_tim_infra(p_ptr->tim.infra - 1);
 	if (p_ptr->tim.paralyzed) (void)set_paralyzed(p_ptr->tim.paralyzed - 1);
 	if (p_ptr->tim.confused) (void)inc_confused(-1);
-	if (p_ptr->tim.afraid) (void)set_afraid(p_ptr->tim.afraid - 1);
+	if (p_ptr->tim.afraid) (void)inc_afraid(-1);
 	if (p_ptr->tim.fast) (void)set_fast(p_ptr->tim.fast - 1);
 	if (p_ptr->tim.slow) (void)set_slow(p_ptr->tim.slow - 1);
 	if (p_ptr->tim.protevil) (void)set_protevil(p_ptr->tim.protevil - 1);
@@ -1535,7 +1535,7 @@ static void process_world(void)
 		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
 		/* Apply some healing */
-		(void)set_poisoned(p_ptr->tim.poisoned - adjust);
+		(void)inc_poisoned(-adjust);
 	}
 
 	/* Stun */
@@ -3582,8 +3582,8 @@ void play_game(bool new_game)
 				/* Hack -- Healing */
 				(void)clear_blind();
 				(void)clear_confused();
-				(void)set_poisoned(0);
-				(void)set_afraid(0);
+				(void)clear_poisoned();
+				(void)clear_afraid();
 				(void)set_paralyzed(0);
 				(void)set_image(0);
 				(void)set_stun(0);

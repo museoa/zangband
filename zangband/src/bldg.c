@@ -1711,7 +1711,7 @@ static void bldg_process_command(building_type * bldg, int i)
 		{
 			/* needs work */
 			hp_player(200);
-			set_poisoned(0);
+			clear_poisoned();
 			clear_blind();
 			clear_confused();
 			set_cut(0);

@@ -1119,7 +1119,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		}
 
 		(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
-		(void)set_afraid(0);
+		(void)clear_afraid();
 	}
 
 	else if (mut_ptr->which == MUT1_POLYMORPH)
@@ -1378,7 +1378,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		{
 			disturb(FALSE);
 			msgf("It's so dark... so scary!");
-			(void)set_afraid(p_ptr->tim.afraid + rand_range(13, 40));
+			(void)inc_afraid(rand_range(13, 40));
 		}
 	}
 

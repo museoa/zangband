@@ -806,7 +806,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		{
 			if (hp_player(200)) ident = TRUE;
 			if (clear_blind()) ident = TRUE;
-			if (set_poisoned(0)) ident = TRUE;
+			if (clear_poisoned()) ident = TRUE;
 			if (clear_confused()) ident = TRUE;
 			if (set_stun(0)) ident = TRUE;
 			if (set_cut(0)) ident = TRUE;

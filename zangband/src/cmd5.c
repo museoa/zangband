@@ -614,7 +614,7 @@ static bool cast_life_spell(int spell)
 			(void)set_blessed(p_ptr->tim.blessed + rand_range(12, 24));
 			break;
 		case 3:				/* Remove Fear */
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			break;
 		case 4:				/* Call Light */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
@@ -635,7 +635,7 @@ static bool cast_life_spell(int spell)
 			(void)remove_curse();
 			break;
 		case 9:				/* Cure Poison */
-			(void)set_poisoned(0);
+			(void)clear_poisoned();
 			break;
 		case 10:				/* Cure Critical Wounds */
 			(void)hp_player(damroll(8, 10));
@@ -694,8 +694,8 @@ static bool cast_life_spell(int spell)
 		case 22:				/* Holy Word */
 			(void)dispel_evil(plev * 4);
 			(void)hp_player(1000);
-			(void)set_afraid(0);
-			(void)set_poisoned(0);
+			(void)clear_afraid();
+			(void)clear_poisoned();
 			(void)set_stun(0);
 			(void)set_cut(0);
 			break;
@@ -706,7 +706,7 @@ static bool cast_life_spell(int spell)
 		case 24:				/* Heroism */
 			(void)set_hero(p_ptr->tim.hero + rand_range(25, 50));
 			(void)hp_player(10);
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			break;
 		case 25:				/* Prayer */
 			(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
@@ -752,7 +752,7 @@ static bool cast_life_spell(int spell)
 				(void)set_fast(p_ptr->tim.fast + randint1(5));
 			}
 
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			break;
 		case 31:				/* Holy Invulnerability */
 			(void)set_invuln(p_ptr->tim.invuln + rand_range(7, 14));
@@ -960,7 +960,7 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 7:				/* Cure Wounds + Poison */
 			(void)set_cut(0);
-			(void)set_poisoned(0);
+			(void)clear_poisoned();
 			break;
 		case 8:				/* Stone to Mud */
 			if (!get_aim_dir(&dir)) return FALSE;
@@ -1003,7 +1003,7 @@ static bool cast_nature_spell(int spell)
 			(void)hp_player(1000);
 			(void)set_stun(0);
 			(void)set_cut(0);
-			(void)set_poisoned(0);
+			(void)clear_poisoned();
 			break;
 		case 16:				/* Door Building */
 			(void)door_creation();
@@ -1518,7 +1518,7 @@ static bool cast_death_spell(int spell)
 		case 16:				/* Berserk */
 			(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
 			(void)hp_player(30);
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			break;
 		case 17:				/* Invoke Spirits */
 		{
@@ -1545,7 +1545,7 @@ static bool cast_death_spell(int spell)
 			else if (die < 14)
 			{
 				msgf("An unnamable evil brushes against your mind...");
-				(void)set_afraid(p_ptr->tim.afraid + rand_range(4, 8));
+				(void)inc_afraid(rand_range(4, 8));
 			}
 			else if (die < 26)
 			{
@@ -1656,7 +1656,7 @@ static bool cast_death_spell(int spell)
 		case 19:				/* Battle Frenzy */
 			(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
 			(void)hp_player(30);
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			if (!p_ptr->tim.fast)
 			{
 				(void)set_fast(rand_range(plev / 2, 20 + plev));
@@ -2558,7 +2558,7 @@ static bool cast_arcane_spell(int spell)
 			(void)detect_objects_normal();
 			break;
 		case 13:				/* Cure Poison */
-			(void)set_poisoned(0);
+			(void)clear_poisoned();
 			break;
 		case 14:				/* Resist Cold */
 			(void)set_oppose_cold(p_ptr->tim.oppose_cold + rand_range(20, 40));

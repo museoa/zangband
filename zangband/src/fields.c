@@ -2409,7 +2409,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 			else
 			{
 				dam *= 2;
-				(void)set_poisoned(p_ptr->tim.poisoned + randint1(dam));
+				(void)inc_poisoned(randint1(dam));
 			}
 		}
 
@@ -2521,7 +2521,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 			msgf("A pungent green gas surrounds you!");
 			if (!(p_ptr->flags2 & (TR2_RES_POIS)) && !p_ptr->tim.oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->tim.poisoned + rand_range(10, 30));
+				(void)inc_poisoned(rand_range(10, 30));
 			}
 			break;
 		}
@@ -2584,7 +2584,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 
 			if (!(p_ptr->flags2 & (TR2_RES_POIS)) && !p_ptr->tim.oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->tim.poisoned + rand_range(100, 150));
+				(void)inc_poisoned(rand_range(100, 150));
 			}
 			break;
 		}

@@ -1768,7 +1768,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_afraid(p_ptr->tim.afraid + rand_range(4, 8));
+				(void)inc_afraid(rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
 			break;

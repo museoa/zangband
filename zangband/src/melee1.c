@@ -529,8 +529,7 @@ bool make_attack_normal(int m_idx)
 						if (!((p_ptr->flags2 & (TR2_RES_POIS)) ||
 							 p_ptr->tim.oppose_pois))
 						{
-							if (set_poisoned
-								(p_ptr->tim.poisoned + randint1(rlev) + 5))
+							if (inc_poisoned(randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
@@ -938,7 +937,7 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							if (set_afraid(p_ptr->tim.afraid + 3 + randint1(rlev)))
+							if (inc_afraid(3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -1216,8 +1215,7 @@ bool make_attack_normal(int m_idx)
 						if (!((p_ptr->flags2 & (TR2_RES_POIS)) ||
 							 p_ptr->tim.oppose_pois))
 						{
-							if (set_poisoned
-								(p_ptr->tim.poisoned + randint1(rlev) + 5))
+							if (inc_poisoned(randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}

@@ -1521,8 +1521,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 									if (r_ptr->flags3 & RF3_NO_FEAR)
 										note = " is unaffected.";
 									else
-										(void)set_afraid(p_ptr->tim.afraid + 3 +
-														 randint1(dam));
+										(void)inc_afraid(3 + randint1(dam));
 									break;
 								}
 								default:
@@ -1702,7 +1701,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 								if (r_ptr->flags3 & RF3_NO_FEAR)
 									note = " is unaffected.";
 								else
-									(void)set_afraid(p_ptr->tim.afraid + dam);
+									(void)inc_afraid(dam);
 							}
 						}
 					}
@@ -3228,7 +3227,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 			if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
 			{
-				(void)set_poisoned(p_ptr->tim.poisoned + randint0(dam) + 10);
+				(void)inc_poisoned(randint0(dam) + 10);
 			}
 			break;
 		}
@@ -3242,7 +3241,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			take_hit(dam, killer);
 			if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
 			{
-				(void)set_poisoned(p_ptr->tim.poisoned + randint0(dam) + 10);
+				(void)inc_poisoned(randint0(dam) + 10);
 
 				if (one_in_(5))
 				{

@@ -1784,7 +1784,7 @@ bool activate_effect(object_type *o_ptr)
 				msgf("You breathe the elements.");
 				(void)fire_ball(GF_MISSILE, dir, 1000, 4);
 				msgf("Your armor glows many colours...");
-				(void)set_afraid(0);
+				(void)clear_afraid();
 				(void)set_shero(p_ptr->tim.shero + rand_range(50, 100));
 				(void)hp_player(30);
 				(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
@@ -1810,7 +1810,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_BELEGENNON:
 			{
 				msgf("A heavenly choir sings...");
-				(void)set_poisoned(0);
+				(void)clear_poisoned();
 				(void)set_cut(0);
 				(void)set_stun(0);
 				(void)clear_confused();
@@ -1997,8 +1997,8 @@ bool activate_effect(object_type *o_ptr)
 			case ART_DAL:
 			{
 				msgf("Your boots glow deep blue...");
-				(void)set_afraid(0);
-				(void)set_poisoned(0);
+				(void)clear_afraid();
+				(void)clear_poisoned();
 				o_ptr->timeout = 5;
 				break;
 			}
@@ -2256,7 +2256,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_CATAPULT:
 			{
 				msgf("Your sling hums...");
-				(void)set_afraid(0);
+				(void)clear_afraid();
 				(void)hp_player(45);
 				o_ptr->timeout = 10;
 				break;
@@ -2750,7 +2750,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_CURE_LW:
 		{
 			msgf("The %s radiates light blue...", o_name);
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			(void)hp_player(30);
 			o_ptr->timeout = 10;
 			break;
@@ -2768,8 +2768,8 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_CURE_POISON:
 		{
 			msgf("The %s glows deep blue...", o_name);
-			(void)set_afraid(0);
-			(void)set_poisoned(0);
+			(void)clear_afraid();
+			(void)clear_poisoned();
 			o_ptr->timeout = 5;
 			break;
 		}

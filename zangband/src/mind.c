@@ -391,7 +391,7 @@ static bool cast_mindcrafter_spell(int spell)
 			break;
 		case MINDCRAFT_ADRENALINE_CHANNELING:
 			/* Adrenaline */
-			(void)set_afraid(0);
+			(void)clear_afraid();
 			(void)set_stun(0);
 
 			/*

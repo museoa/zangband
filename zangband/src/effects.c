@@ -168,7 +168,7 @@ bool clear_confused(void)
 /*
  * Set "p_ptr->poisoned", notice observable changes
  */
-bool set_poisoned(int v)
+static bool set_poisoned(int v)
 {
 	bool notice = FALSE;
 
@@ -214,11 +214,28 @@ bool set_poisoned(int v)
 	return (TRUE);
 }
 
+/*
+ * Increase the poison counter
+ */
+bool inc_poisoned(int v)
+{
+	return(set_poisoned(p_ptr->tim.poisoned + v));
+}
+
+
+/*
+ * No more poison
+ */
+bool clear_poisoned(void)
+{
+	return(set_poisoned(0));
+}
+
 
 /*
  * Set "p_ptr->afraid", notice observable changes
  */
-bool set_afraid(int v)
+static bool set_afraid(int v)
 {
 	bool notice = FALSE;
 
@@ -266,6 +283,23 @@ bool set_afraid(int v)
 	return (TRUE);
 }
 
+
+/*
+ * Increase the afraid counter
+ */
+bool inc_afraid(int v)
+{
+	return(set_afraid(p_ptr->tim.afraid + v));
+}
+
+
+/*
+ * No more fear
+ */
+bool clear_afraid(void)
+{
+	return(set_afraid(0));
+}
 
 /*
  * Set "p_ptr->paralyzed", notice observable changes

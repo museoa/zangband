@@ -4845,7 +4845,7 @@ void sanity_blast(const monster_type *m_ptr)
 		if ((!(p_ptr->flags2 & (TR2_RES_FEAR))) || one_in_(5))
 		{
 			/* Get afraid, even if have resist fear! */
-			(void)set_afraid(p_ptr->tim.afraid + rand_range(10, 20));
+			(void)inc_afraid(rand_range(10, 20));
 		}
 		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
