@@ -779,7 +779,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 			}
 
 			/* Check for absence of shot (more or less) */
-			if (!player_can_see_bold(y,x))
+			if (!player_has_los_grid(c_ptr) && clean_shot(fy, fx, y, x, FALSE))
 			{
 				/* Calculate distance from player */
 				dis = distance(y, x, py, px);
@@ -857,7 +857,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Check for hidden, available grid */
-			if (!player_can_see_bold(y, x) && clean_shot(fy, fx, y, x, FALSE))
+			if (!player_has_los_grid(c_ptr) && clean_shot(fy, fx, y, x, FALSE))
 			{
 				/* Calculate distance from player */
 				dis = distance(y, x, py, px);
