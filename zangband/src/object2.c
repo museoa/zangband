@@ -567,11 +567,13 @@ void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr, object_type *o_ptr)
  */
 void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 {
-	/* Structure copy */
-	object_type temp_obj = *o2_ptr;
+	object_type temp_obj;
+	
+	/* Copy the objcet */
+	object_copy (&temp_obj, o2_ptr);
 
-	/* Structure copy */
-	*o2_ptr = *o1_ptr;
+	/* Copy the object */
+	object_copy(o2_ptr, o1_ptr);
 
 	/* Get correct next-object fields */
 	o2_ptr->next_o_idx = temp_obj.next_o_idx;
@@ -591,8 +593,8 @@ void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 	o2_ptr->allocated = temp_obj.allocated;
 	temp_obj.allocated = o1_ptr->allocated;
 
-	/* Structure copy */
-	*o1_ptr = temp_obj;
+	/* Copy the object */
+	object_copy(o1_ptr, &temp_obj);
 }
 
 /*
