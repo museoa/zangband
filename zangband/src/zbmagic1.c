@@ -250,7 +250,7 @@ bool borg_on_safe_feat(byte feat)
 	/* Swamp */
 	if (feat == FEAT_DEEP_SWAMP)
 	{
-		/* (temp) Immunity helps */
+		/* Immunity helps */
 		if (FLAG(bp_ptr, TR_IM_POIS)) return (TRUE);
 
 		return (FALSE);
@@ -258,14 +258,17 @@ bool borg_on_safe_feat(byte feat)
 
 	if (feat == FEAT_SHAL_SWAMP)
 	{
+		/* Immunity helps */
+		if (FLAG(bp_ptr, TR_IM_POIS)) return (TRUE);
+
 		/* (temp) Resistance helps */
 		if (FLAG(bp_ptr, TR_RES_POIS) || my_oppose_pois) return (TRUE);
 
 		/* Levitation helps */
 		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
 
-		/* Shallow swamp never hurts */
-		return (TRUE);
+		/* Shallow swamp does hurt */
+		return (FALSE);
 	}
 
 	/* Acid */
