@@ -436,6 +436,8 @@ proc NSRecall::RecallMindcraft {index} {
 	# If we are in "list mode", don't clobber the text
 	if {[string length [Info $oop hook]]} return
 
+if 0 {
+
 	# Get information about the power
 	angband mindcraft info $index attrib
 
@@ -466,6 +468,9 @@ proc NSRecall::RecallMindcraft {index} {
 	SetText $oop $icon $color $name $memory
 
 	return
+	
+}
+
 }
 
 # NSRecall::RecallMonster --
@@ -1609,6 +1614,8 @@ proc NSRecall::hook_mindcraft {oop message args} {
 			# Keep a list of chars
 			set match {}
 
+			if 0 {
+
 			# Process each power
 			foreach power $powerList {
 
@@ -1622,6 +1629,8 @@ proc NSRecall::hook_mindcraft {oop message args} {
 
 				# Keep a list of chars
 				lappend match $attrib(char)
+			}
+			
 			}
 		
 			# Delete trailing newline

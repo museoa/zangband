@@ -2,7 +2,6 @@ IndexOne NSAbout about.tcl
 IndexOne NSAlternate alternate.tcl
 IndexOne NSAssign assign.tcl
 IndexOne NSAutobar autobar.tcl
-IndexOne NSBookMenu book-menu.tcl
 IndexOne NSBookWindow book-window.tcl
 IndexOne NSBuilding building.tcl
 IndexOne NSCharacterWindow character-window.tcl

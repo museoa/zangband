@@ -537,23 +537,8 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_INVEN $entries
 
-	#
-	# Book Menu -- Hey, Steve!
-	#
-
-	if {[llength [angband player spell_book]]} {
-		NSModule::LoadIfNeeded NSBookMenu
-		NSObject::New NSBookMenu $mbarId
-	}
-
-	#
-	# Mindcraft Menu -- For Mindcrafter class only
-	#
-	
-	if {[string equal [angband player class] Mindcrafter]} {
-		NSModule::LoadIfNeeded NSMindcraftMenu
-		NSObject::New NSMindcraftMenu $mbarId
-	}
+	NSModule::LoadIfNeeded NSMindcraftMenu
+	NSObject::New NSMindcraftMenu $mbarId
 
 	#
 	# Action Menu
@@ -2330,12 +2315,8 @@ proc NSMainWindow::ButtonPress3 {oop x y X Y} {
 
 	set flags [angband inkey_flags]
 
-	# Popup spell list
-	if {[string equal $flags INKEY_SPELL]} {
-		NSBookMenu::PopupSelect $win.context $X $Y
-
 	# Run
-	} elseif {[string equal $flags INKEY_CMD]} {
+	if {[string equal $flags INKEY_CMD]} {
 		MouseCommand $oop $x $y .
 
 	# Set target

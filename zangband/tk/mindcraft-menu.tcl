@@ -60,6 +60,8 @@ proc NSMindcraftMenu::NSMindcraftMenu {oop mbarId} {
 		-menu MENU_MINDCRAFT -label [mc Mindcraft] -underline 0 \
 		-identifier M_MINDCRAFT
 
+	if 0 {
+
 	foreach power [angband mindcraft get] {
 		angband mindcraft info $power attrib
 		lappend entries [list -type command \
@@ -69,6 +71,8 @@ proc NSMindcraftMenu::NSMindcraftMenu {oop mbarId} {
 	}
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_MINDCRAFT $entries
+
+	}
 
 	return
 }
@@ -129,11 +133,17 @@ proc NSMindcraftMenu::SetupMenus {oop} {
 	set mbarId [Info $oop mbar]
 
 	set identList {}
+	
+	if 0 {
+	
+	
 	foreach power [angband mindcraft get] {
 		angband mindcraft info $power attrib
 		if {$attrib(okay)} {
 			lappend identList E_POWER_$attrib(char)
 		}
+	}
+
 	}
 
 	NSMenu::MenuEnable $mbarId $identList
@@ -206,6 +216,9 @@ proc NSMindcraftMenu::PopupSelect {menu x y} {
 
 	$menu delete 0 end
 	set num 0
+	
+	if 0 {
+	
 	foreach power [angband mindcraft get] {
 
 		# Get information about this power
@@ -221,6 +234,8 @@ proc NSMindcraftMenu::PopupSelect {menu x y} {
 
 		# Count the number of powers added to the menu
 		incr num
+	}
+	
 	}
 
 	if {$num} {
