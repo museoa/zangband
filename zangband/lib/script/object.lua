@@ -218,8 +218,8 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_DETONATIONS then
 		msgf("Massive explosions rupture your body!")
 		take_hit(damroll(50, 20), "a potion of Detonation")
-		set_stun(player.stun + 75)
-		set_cut(player.cut + 5000)
+		inc_stun(75)
+		inc_cut(5000)
 		ident = TRUE
 	elseif object.sval == SV_POTION_DEATH then
 		msgf("A feeling of Death flows through your body.")
@@ -256,33 +256,33 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_CURE_LIGHT then
 		if hp_player(38) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
-		if set_cut(player.cut - 10) then ident = TRUE end
+		if inc_cut(-10) then ident = TRUE end
 	elseif object.sval == SV_POTION_CURE_SERIOUS then
 		if hp_player(75) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
-		if set_cut((player.cut / 2) - 50) then ident = TRUE end
+		if inc_cut(-50) then ident = TRUE end
 	elseif object.sval == SV_POTION_CURE_CRITICAL then
 		if hp_player(150) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
 		if clear_poisoned() then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 	elseif object.sval == SV_POTION_HEALING then
 		if hp_player(300) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
 		if clear_poisoned() then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 	elseif object.sval == SV_POTION_STAR_HEALING then
 		if hp_player(1200) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
 		if clear_poisoned() then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 	elseif object.sval == SV_POTION_LIFE then
 		msgf("You feel life flow through your body!")
 		restore_level()
@@ -290,8 +290,8 @@ function quaff_potion(object)
 		clear_blind()
 		clear_confused()
 		clear_image()
-		set_stun(0)
-		set_cut(0)
+		clear_stun()
+		clear_cut()
 		do_res_stat(A_STR)
 		do_res_stat(A_CON)
 		do_res_stat(A_DEX)
@@ -391,8 +391,8 @@ function quaff_potion(object)
 		if clear_blind() then ident = TRUE end
 		if clear_poisoned() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 		if clear_image() then ident = TRUE end
 	elseif object.sval == SV_POTION_INVULNERABILITY then
 		inc_invuln(rand_range(7, 14))
@@ -653,13 +653,13 @@ function use_staff(object)
 		if clear_blind() then ident = TRUE end
 		if clear_poisoned() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 		if clear_image() then ident = TRUE end
 	elseif sval == SV_STAFF_HEALING then
 		if hp_player(300) then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 	elseif sval == SV_STAFF_THE_MAGI then
 		if do_res_stat(A_INT) then ident = TRUE end
 		if player.csp < player.msp then
@@ -691,8 +691,8 @@ function use_staff(object)
 		if clear_poisoned() then ident = TRUE end
 		if clear_afraid() then ident = TRUE end
 		if hp_player(50) then ident = TRUE end
-		if set_stun(0) then ident = TRUE end
-		if set_cut(0) then ident = TRUE end
+		if clear_stun() then ident = TRUE end
+		if clear_cut() then ident = TRUE end
 	elseif sval == SV_STAFF_GENOCIDE then
 		genocide(TRUE)
 		ident = TRUE
