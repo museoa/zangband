@@ -2726,7 +2726,7 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
  */
 static void make_wild_04(blk_ptr block_ptr, byte *data)
 {
-	int x, y, i, j;
+	int x, y, x1, y1, x2, y2, i, j;
 	int type;
 
 	cave_type *c_ptr;
@@ -2738,32 +2738,46 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 	switch (randint0(8))
 	{
 		case 0:
-		case 1:
-		{
+        case 1:
+        case 2:
+        {
+            /* Grass */
 			type = 1;
 			break;
-		}
-		case 4:
+        }
+		case 3:
+#if 0
+        {
+            /* Use "underlying" type */
+            gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
+                             wild_gen_data[data[0]].gen_routine);
+            return;
+        }
+#endif
+        case 4:
+        case 5:
 		{
-			type = 2;
-			break;
-		}
-		case 5:
-		{
-			type = 3;
+            /* Alternating grass & dirt */
+            type = 3;
 			break;
 		}
 		default:
 		{
-			type = 4;
+            /* Dirt with building */
+            type = 4;
 			break;
 		}
 	}
 
 	/* Get location of building */
-	x = rand_range(6, 10);
-	y = rand_range(6, 10);
+	x = rand_range(4, 11);
+	y = rand_range(3, 12);
 
+    /* Get size of building */
+    x1 = x - randint1(3);
+    x2 = x + randint1(3);
+    y1 = y - randint1(2);
+    y2 = y + randint1(2);
 
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -2782,8 +2796,8 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 				c_ptr->feat = FEAT_DIRT;
 			}
 
-			if ((i >= x - 1) && (i <= x + 1) &&
-				(i >= y - 1) && (i <= y + 1) && (type == 4))
+			if ((i >= x1) && (i <= x2) &&
+				(j >= y1) && (j <= y2) && (type == 4))
 			{
 				/* Build an invulnerable rectangular building */
 				c_ptr->feat = FEAT_PERM_EXTRA;
