@@ -153,26 +153,30 @@ static void borg_follow_take(int i)
  */
 static int borg_new_take(int k_idx, int y, int x)
 {
-    int i, n = -1;
+    int i, n = 0;
 
     borg_take *take;
 
     /* Look for a "dead" object */
-    for (i = 1; (n < 0) && (i < borg_takes_nxt); i++)
+    for (i = 1; i < borg_takes_nxt; i++)
     {
         /* Reuse "dead" objects */
-        if (!borg_takes[i].k_idx) n = i;
+        if (!borg_takes[i].k_idx)
+		{
+			n = i;
+			break;
+		}
     }
 
     /* Allocate a new object */
-    if ((n < 0) && (borg_takes_nxt < 256))
+    if ((n == 0) && (borg_takes_nxt < 256))
     {
         /* Acquire the entry, advance */
         n = borg_takes_nxt++;
     }
 
     /* Hack -- steal an old object */
-    if (n < 0)
+    if (n == 0)
     {
         /* Note */
         borg_note("# Too many objects");
@@ -183,7 +187,6 @@ static int borg_new_take(int k_idx, int y, int x)
         /* Delete it */
         borg_delete_take(n);
     }
-
 
     /* Count new object */
     borg_takes_cnt++;
@@ -204,7 +207,7 @@ static int borg_new_take(int k_idx, int y, int x)
     /* Note */
     borg_note(format("# Creating an object '%s' at (%d,%d)",
                      (k_name + k_info[take->k_idx].name),
-                     take->y, take->x));
+                     y, x));
 
     /* Wipe goals */
     goal = 0;
@@ -1839,10 +1842,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 
     int b_i, b_d;
 
-    borg_take *take;
     borg_kill *kill;
-
-    object_kind *k_ptr;
 
     monster_race *r_ptr;
 
@@ -1908,7 +1908,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
         borg_note("# Bizarre monster nearby");
     }
 
-
+#if 0
     /*** Hack -- Find a similar object ***/
 
     /* Nothing yet */
@@ -1989,7 +1989,9 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
         return (b_i);
     }
 
+#endif /* 0 */
 
+#if 0
     /*** Hack -- Find a similar monster ***/
 
     /* Nothing yet */
@@ -2062,6 +2064,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
         return (b_i);
     }
 
+#endif /* 0 */
 
     /*** Hack -- Find an existing monster ***/
 

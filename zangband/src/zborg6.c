@@ -12554,7 +12554,7 @@ static bool borg_play_step(int y2, int x2)
             {
                 borg_note(format("# Disarming a '%s' at (%d,%d)",
                          k_name + k_info[mb_ptr->object].name,
-                         take->y, take->x));
+                         y, x));
 
                 /* Open it */
                 borg_keypress('D');
