@@ -446,16 +446,16 @@ static void fill_town(byte x, byte y)
 		u16b *block_data = &temp_block[y][x];
 
 		/* Do not continue if hit a previously done area. */
-		if (*block_data == 1) return;
+		if (*block_data == CITY_WALL) return;
 
 		/* Do not redo a building */
-		if (*block_data == 2) return;
+		if (*block_data == CITY_INSIDE) return;
 
 		/* Save the square */
 		build_pop[build_count] = *block_data / WILD_BLOCK_SIZE;
 
 		/* Do not redo this square */
-		*block_data = 2;
+		*block_data = CITY_INSIDE;
 	}
 
 	build_x[build_count] = x;
@@ -486,7 +486,7 @@ static void find_walls(void)
 			if (temp_block[j][i] < WILD_BLOCK_SIZE * 128)
 			{
 				/* Outside the town */
-				temp_block[j][i] = 0;
+				temp_block[j][i] = CITY_OUTSIDE;
 			}
 		}
 	}
@@ -497,7 +497,7 @@ static void find_walls(void)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is a "city block" */
-			if (temp_block[j][i])
+			if (temp_block[j][i] != CITY_OUTSIDE)
 			{
 				/* Scan around */
 				for (k = -1; k <= 1; k++)
@@ -509,23 +509,22 @@ static void find_walls(void)
 							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
 						{
 							/* Is it outside? */
-							if (!temp_block[j + l][i + k])
+							if (temp_block[j + l][i + k] == CITY_OUTSIDE)
 							{
 								/* Make a wall */
-								temp_block[j][i] = 1;
+								temp_block[j][i] = CITY_WALL;
 							}
 						}
 						else
 						{
 							/* Make a wall */
-							temp_block[j][i] = 1;
+							temp_block[j][i] = CITY_WALL;
 						}
 					}
 				}
 			}
 		}
 	}
-
 }
 
 /*
@@ -534,7 +533,7 @@ static void find_walls(void)
 static byte fill_town_driver(void)
 {
 	/* Paranoia - middle square must be in the town */
-	if (!temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2]) return (0);
+	if (temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] == CITY_OUTSIDE) return (0);
 
 	build_count = 0;
 
@@ -561,7 +560,7 @@ static void remove_islands(void)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is a "wall block" */
-			if (temp_block[j][i] == 1)
+			if (temp_block[j][i] == CITY_WALL)
 			{
 				city_block = FALSE;
 				
@@ -575,7 +574,7 @@ static void remove_islands(void)
 							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
 						{
 							/* Is it a city block? */
-							if (temp_block[j + l][i + k] == 2)
+							if (temp_block[j + l][i + k] == CITY_INSIDE)
 							{
 								/* We are next to a city */
 								city_block = TRUE;
@@ -585,7 +584,7 @@ static void remove_islands(void)
 				}
 
 				/* No islands */
-				if (!city_block) temp_block[j][i] = 0;
+				if (!city_block) temp_block[j][i] = CITY_OUTSIDE;
 			}
 		}
 	}
@@ -698,7 +697,7 @@ static bool create_city(int x, int y, int town_num)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is it a city block? */
-			if (temp_block[j][i])
+			if (temp_block[j][i] != CITY_OUTSIDE)
 			{
 				w_ptr = &wild[y + j / 2][x + i / 2].trans;
 
@@ -1197,7 +1196,7 @@ void draw_city(place_type *pl_ptr)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Are we a wall? */
-			if (temp_block[j][i] == 1)
+			if (temp_block[j][i] == CITY_WALL)
 			{
 				/* Get coords in region */
 				y = j * 8;
@@ -1205,25 +1204,25 @@ void draw_city(place_type *pl_ptr)
 
 
 				/* Wall goes up */
-				if ((j > 0) && (temp_block[j - 1][i] == 1))
+				if ((j > 0) && (temp_block[j - 1][i] == CITY_WALL))
 				{
 					generate_fill(x + 3, y, x + 4, y + 4, FEAT_PERM_SOLID);
 				}
 
 				/* Wall goes left */
-				if ((i > 0) && (temp_block[j][i - 1] == 1))
+				if ((i > 0) && (temp_block[j][i - 1] == CITY_WALL))
 				{
 					generate_fill(x, y + 3, x + 4, y + 4, FEAT_PERM_SOLID);
 				}
 
 				/* Wall goes right */
-				if ((i < WILD_BLOCK_SIZE - 1) && (temp_block[j][i + 1] == 1))
+				if ((i < WILD_BLOCK_SIZE - 1) && (temp_block[j][i + 1] == CITY_WALL))
 				{
 					generate_fill(x + 3, y + 3, x + 7, y + 4, FEAT_PERM_SOLID);
 				}
 
 				/* Wall goes down */
-				if ((j < WILD_BLOCK_SIZE - 1) && (temp_block[j + 1][i] == 1))
+				if ((j < WILD_BLOCK_SIZE - 1) && (temp_block[j + 1][i] == CITY_WALL))
 				{
 					generate_fill(x + 3, y + 3, x + 4, y + 7, FEAT_PERM_SOLID);
 				}
