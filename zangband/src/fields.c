@@ -3103,14 +3103,23 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 	
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
+	/* Hack: No monster - cannot enter the grid */
+	if (!m_ptr)
+	{
+		/* Monsters cannot be generated / teleported on doors */
+		mon_enter->do_move = FALSE;
+		
+		/* Done */
+		return;
+	}	
+	
 	if (!mon_enter->do_move)
 	{
 		/* Monster cannot open the door */
 		
 		/* Done */
 		return;
-	}
-			
+	}			
 	
 	/* Locked doors */
 	if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
@@ -3149,6 +3158,16 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 	monster_type *m_ptr = mon_enter->m_ptr;
 	
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	/* Hack: No monster - cannot enter the grid */
+	if (!m_ptr)
+	{
+		/* Monsters cannot be generated / teleported on doors */
+		mon_enter->do_move = FALSE;
+		
+		/* Done */
+		return;
+	}
 	
 	if (!mon_enter->do_move)
 	{
