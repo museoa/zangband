@@ -569,7 +569,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 					{						
 						/* Hack - Initialise it (without "extra" information) */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
-							 FIELD_ACT_INIT, 0);
+							 FIELD_ACT_INIT, NULL);
 					}
 					
 					break;

@@ -1867,37 +1867,48 @@ static bool check_save(int power)
 	return (FALSE);
 }
 
+typedef struct field_trap_type field_trap_type;
+
+struct field_trap_type
+{
+	/* Field type */
+	u16b t_idx;
+	
+	/* Average level found on */
+	byte level;
+};
+
 
 /* Array used to work out which trap to place */
 static field_trap_type trap_num[] =
 {
-	{FT_TRAP_DOOR, 5, 0},
-	{FT_TRAP_PIT, 5, 0},	
-	{FT_TRAP_SPIKE_PIT, 15, 0},
-	{FT_TRAP_POISON_PIT, 30, 0},
-	{FT_TRAP_CURSE, 20, 0},
-	{FT_TRAP_TELEPORT, 40, 0},
-	{FT_TRAP_ELEMENT, 10, 5},
-	{FT_TRAP_BA_ELEMENT, 50, 5},
-	{FT_TRAP_GAS, 5, 5},
-	{FT_TRAP_TRAPS, 60, 0},
-	{FT_TRAP_TEMP_STAT, 25, 3},
-	{FT_TRAP_PERM_STAT, 70, 6},
-	{FT_TRAP_LOSE_XP, 80, 0},
-	{FT_TRAP_DISENCHANT, 35, 0}, 
-	{FT_TRAP_DROP_ITEM, 55, 0},
-	{FT_TRAP_MUTATE, 45, 0},
-	{FT_TRAP_NEW_LIFE, 100, 0},
-	{FT_TRAP_NO_LITE, 0, 0},
-	{FT_TRAP_HUNGER, 0, 0},
-	{FT_TRAP_NO_GOLD, 25, 0},
-	{FT_TRAP_HASTE_MON, 15, 0},
-	{FT_TRAP_RAISE_MON, 40, 0},
-	{FT_TRAP_DRAIN_MAGIC, 65, 0},
-	{FT_TRAP_AGGRAVATE, 15, 0},
-	{FT_TRAP_SUMMON, 20, 0},
-	{FT_TRAP_LOSE_MEMORY, 30, 0},
-	{0, 0, 0}
+	{FT_TRAP_DOOR,			5},
+	{FT_TRAP_PIT,			5},	
+	{FT_TRAP_SPIKE_PIT,		15},
+	{FT_TRAP_POISON_PIT,	30},
+	{FT_TRAP_CURSE,			20},
+	{FT_TRAP_TELEPORT,		40},
+	{FT_TRAP_ELEMENT,		10},
+	{FT_TRAP_BA_ELEMENT,	50},
+	{FT_TRAP_GAS,			5},
+	{FT_TRAP_TRAPS,			60},
+	{FT_TRAP_TEMP_STAT,		25},
+	{FT_TRAP_PERM_STAT,		70},
+	{FT_TRAP_LOSE_XP,		80},
+	{FT_TRAP_DISENCHANT,	35}, 
+	{FT_TRAP_DROP_ITEM,		55},
+	{FT_TRAP_MUTATE,		45},
+	{FT_TRAP_NEW_LIFE,		100},
+	{FT_TRAP_NO_LITE,		0},
+	{FT_TRAP_HUNGER,		0},
+	{FT_TRAP_NO_GOLD,		25},
+	{FT_TRAP_HASTE_MON,		15},
+	{FT_TRAP_RAISE_MON,		40},
+	{FT_TRAP_DRAIN_MAGIC,	65},
+	{FT_TRAP_AGGRAVATE,		15},
+	{FT_TRAP_SUMMON,		20},
+	{FT_TRAP_LOSE_MEMORY,	30},
+	{0,						0}
 };
 
 
@@ -1977,10 +1988,10 @@ void place_trap(int y, int x)
 	}
 
 	/* Activate the trap */
-	if (place_field(y, x, t_idx) && n_ptr->rand)
+	if (place_field(y, x, t_idx))
 	{
 		/* Initialise it */
-		(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, &n_ptr->rand);
+		(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, NULL);
 	}
 }
 
@@ -1988,18 +1999,18 @@ void place_trap(int y, int x)
 /*
  * Initialise the trap
  */
-void field_action_trap_init(s16b *field_ptr, void *input)
+void field_action_trap_init(s16b *field_ptr, void *nothing)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
-
-	byte *rand = (byte *)input;
 	
 	/*
 	 * Data[3] is equal to randint0(rand)
 	 */
-	
-	/* Some traps use this field to store their sub-type. */
-	f_ptr->data[3] = (byte)randint0(*rand);
+	if (f_ptr->data[3])
+	{
+		/* Some traps use this field to store their sub-type. */
+		f_ptr->data[3] = (byte)randint0(f_ptr->data[3]);
+	}
 
 	/* Initialize the name here? */
 	
