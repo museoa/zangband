@@ -14445,7 +14445,7 @@ D:A seething mass of thick, glowing worms.
 
 N:872:Auto-mobile
 G:g:R
-I:130:80d10:10:110:12
+I:130:80d10:10:50:12
 W:72:5:0:186750
 O:0:0:0
 B:BUTT:HURT:8d3
@@ -14623,7 +14623,7 @@ D:to dampen all other energies...
 
 N:883:Mana hound
 G:Z:B
-I:130:60d10:30:100:0
+I:130:60d10:30:50:0
 W:78:4:0:288568
 O:0:0:0
 B:BITE:HURT:25d1
