@@ -1496,14 +1496,327 @@ static int borg_launch_ball(int rad, int dam, int typ, int max)
 	return (b_n);
 }
 
+static int borg_find_radius(cptr act)
+{
+	char *here;
+	int rad = 0;
+
+	/* Just checking */
+	if (!act) return (0);
+
+	/* A large ball probably has radius 3 */
+	if (strstr(act, "large")) rad = BORG_BALL_RAD3;
+
+	/* Special cases */
+	if (strstr(act, "light area")) rad = BORG_BALL_RAD3;
+	if (strstr(act, "illumination")) rad = BORG_BALL_RAD2;
+
+	/* Find the substring for the radius */
+	here = strstr(act, "rad. ");
+
+	/* If no radius is mentioned give up */
+	if (!here) return (rad);
+
+	/* Jump past the search string */
+	here = here + 5;
+
+	/* As long as the string has digits in it */
+	while (*here - '0' >= 0 && *here - '0' <= 9)
+	{
+		/* create a number */
+		rad = rad * 10 + *here++ - '0';
+	}
+
+	/* Return the radius */
+	return (rad);
+}
+
+
+static int borg_find_damage(cptr act)
+{
+	char *here;
+	int dam = 0, ds = 0;
+
+	/* Just checking */
+	if (!act) return (0);
+
+	/* Special cases */
+	if (strstr(act, "illumination")) dam = 18;
+	if (strstr(act, "call chaos")) dam = 150;
+
+	/* Find the substring for the damage */
+	here = strstr(act, "(");
+
+	/* If no damage is mentioned give up */
+	if (!here) return (dam);
+
+	/* Jump past the search string */
+	here = here + 1;
+
+	/* As long as the string has digits in it */
+	while (*here - '0' >= 0 && *here - '0' <= 9)
+	{
+		/* create the damage */
+		dam = dam * 10 + *here++ - '0';
+	}
+
+	/* Is the damage composed of dd and ds? */
+	if (*here == 'd')
+	{
+		/* Jump past the die */
+		here = here + 1;
+
+		/* As long as the string has digits in it */
+		while (*here - '0' >= 0 && *here - '0' <= 9)
+		{
+			/* create the die */
+			ds = ds * 10 + *here++ - '0';
+		}
+
+		/* calculate the average damage */
+		dam = dam * (ds + 1) / 2;
+	}
+
+	/* return the damage found */
+	return (dam);
+}
+
+
+static int borg_damage_artifact_monster(cptr act)
+{
+	int rad = 0,
+		gf = 0,
+		dam = 0,
+		type = 0;
+
+	/* just checking */
+	if (!act) return (0);
+
+	/* Is it a bolt */
+	if (strstr(act, "bolt") ||
+		strstr(act, "arrows") ||
+		strstr(act, "missile") ||
+		strstr(act, "vampiric drain"))
+	{
+		type = 1;
+	}
+	/* How about a beam */
+	else if (strstr(act, "beam") ||
+			 strstr(act, "teleport away"))
+	{
+		type = 2;
+	}
+	/* How about a ball */
+	else if (strstr(act, "ball") ||
+			 strstr(act, "cloud") ||
+			 strstr(act, "rocket") ||
+			 strstr(act, "call") ||
+			 strstr(act, "breath"))
+	{
+		/* Pick up the radius */
+		rad = borg_find_radius(act);
+
+		/* default to 2 */
+		if (!rad) rad = BORG_BALL_RAD2;
+
+		type = 3;
+	}
+	/* How about a dispel */
+	else if (strstr(act, "dispel") ||
+			 strstr(act, "banish") ||
+			 strstr(act, "illumination") ||
+			 strstr(act, "light area") ||
+			 strstr(act, "monsters") ||
+			 strstr(act, "blast"))
+	{
+		/* Check the radius */
+		rad = borg_find_radius(act);
+
+		/* default to MAX_RANGE */
+		if (!rad) rad = MAX_RANGE;
+
+		type = 4;
+	}
+
+	/* Not a damage activation */
+	if (!type) return (0);
+
+	/* Is it acid damage */
+	if (strstr(act, "acid")) gf = GF_ACID;
+	/* How about fire */
+	else if (strstr(act, "fire")) gf = GF_FIRE;
+	/* How about cold */
+	else if (strstr(act, "cold") ||
+			strstr(act, "frost")) gf = GF_COLD;
+	/* How about lightning */
+	else if (strstr(act, "lightning") ||
+			strstr(act, "star")) gf = GF_ELEC;
+	/* How about poison */
+	else if (strstr(act, "poison") ||
+			strstr(act, "stinking")) gf = GF_POIS;
+	/* How about missile */
+	else if (strstr(act, "missile") ||
+			strstr(act, "elements")) gf = GF_MISSILE;
+	/* How about arrows */
+	else if (strstr(act, "arrow")) gf = GF_ARROW;
+	/* How about sleep */
+	else if (strstr(act, "sleep")) gf = GF_OLD_SLEEP;
+	/* How about slow */
+	else if (strstr(act, "slow")) gf = GF_OLD_SLOW;
+	/* How about teleport away */
+	else if (strstr(act, "teleport away")) gf = GF_AWAY_ALL;
+	/* How about light area */
+	else if (strstr(act, "light area") ||
+			strstr(act, "illumination")) gf = GF_LITE_WEAK;
+	/* How about power */
+	else if (strstr(act, "power")) gf = GF_DISP_ALL;
+	/* How about vampiric drain */
+	else if (strstr(act, "vampiric drain")) gf = GF_OLD_DRAIN;
+	/* How about rocket */
+	else if (strstr(act, "rocket")) gf = GF_ROCKET;
+	/* How about banish evil */
+	else if (strstr(act, "banish evil")) gf = GF_AWAY_EVIL;
+	/* How about banish undead */
+	else if (strstr(act, "banish undead")) gf = GF_AWAY_UNDEAD;
+	/* How about banishment */
+	else if (strstr(act, "banishment")) gf = GF_AWAY_ALL;
+	/* How about dispel evil */
+	else if (strstr(act, "dispel evil")) gf = GF_DISP_EVIL;
+	/* How about dispel good */
+	else if (strstr(act, "dispel good")) gf = GF_DISP_GOOD;
+	/* How about dispel all */
+	else if (strstr(act, "dispel monster")) gf = GF_DISP_ALL;
+	/* How about plasma */
+	else if (strstr(act, "plasma")) gf = GF_PLASMA;
+	/* How about water */
+	else if (strstr(act, "water")) gf = GF_WATER;
+	/* How about light */
+	else if (strstr(act, "light")) gf = GF_LITE;
+	/* How about dark */
+	else if (strstr(act, "dark")) gf = GF_DARK;
+	/* How about shards */
+	else if (strstr(act, "shards")) gf = GF_SHARDS;
+	/* How about sounds */
+	else if (strstr(act, "sound")) gf = GF_SOUND;
+	/* How about confusion */
+	else if (strstr(act, "confusion")) gf = GF_CONFUSION;
+	/* How about force */
+	else if (strstr(act, "force")) gf = GF_FORCE;
+	/* How about inertia */
+	else if (strstr(act, "inertia")) gf = GF_INERTIA;
+	/* How about mana */
+	else if (strstr(act, "mana")) gf = GF_MANA;
+	/* How about ice */
+	else if (strstr(act, "ice")) gf = GF_ICE;
+	/* How about chaos */
+	else if (strstr(act, "chaos")) gf = GF_CHAOS;
+	/* How about nether */
+	else if (strstr(act, "nether")) gf = GF_NETHER;
+	/* How about nexus */
+	else if (strstr(act, "nexus")) gf = GF_NEXUS;
+	/* How about time */
+	else if (strstr(act, "time")) gf = GF_TIME;
+	/* How about gravity */
+	else if (strstr(act, "gravity")) gf = GF_GRAVITY;
+	/* How about nuke */
+	else if (strstr(act, "nuke")) gf = GF_NUKE;
+	/* How about holy fire */
+	else if (strstr(act, "holy fire")) gf = GF_HOLY_FIRE;
+	/* How about hell fire */
+	else if (strstr(act, "hell fire")) gf = GF_HELL_FIRE;
+
+	/* Give up when the damage type is unknown */
+	if (!gf)
+	{
+		borg_oops("What is my damage type? %s", act);
+		return (0);
+	}
+
+	/* How much damage */
+	dam = borg_find_damage(act);
+	
+	/* Give up when the damage is 0 */
+	if (!dam)
+	{
+		borg_oops("What is my damage? %s", act);
+		return (0);
+	}
+
+	/* Calculate the potential damage */
+	switch (type)
+	{
+		case 1: return (borg_launch_bolt(dam, gf, MAX_RANGE));
+
+		case 2: return (borg_launch_beam(dam, gf, MAX_RANGE));
+
+		case 3: return (borg_launch_ball(rad, dam, gf, MAX_RANGE));
+
+		case 4: return (borg_launch_dispel(dam, gf, rad));
+
+		default: return (0);
+	}
+}
+
 
 /* Simulate/Apply the optimal result of activating an artifact */
 static int borg_attack_artifact(int *b_slot)
 {
-	/* Ignore parameter */
-	(void) b_slot;
-	/* Yeah well, how do I find out what the activation is */
-	return (0);
+	int i, n, b_n = 0;
+	list_item *l_ptr;
+	cptr act;
+
+	if (borg_simulate)
+	{
+		for (i = 0; i < equip_num; i++)
+		{
+			/* What item is this */
+			l_ptr = look_up_equip_slot(i);
+
+			/* Empty slot */
+			if (!l_ptr) continue;
+
+			/* Is this an artifact */
+			if (!KN_FLAG(l_ptr, TR_INSTA_ART)) continue;
+
+			/* Is there an activation? */
+			if (!KN_FLAG(l_ptr, TR_ACTIVATE)) continue;
+
+			/* Not recharging */
+			if (l_ptr->timeout) continue;
+
+			/* Hack!  Get the activation */
+			act = item_activation(&p_ptr->equipment[i]);
+
+			/* Get the attack value */
+			n = borg_damage_artifact_monster(act);
+
+			/* Is it better than before? */
+			if (n <= b_n) continue;
+
+			/* Keep track of the scroll */
+			*b_slot = i;
+			b_n = n;
+		}
+
+		/* Return the value of the simulation */
+		return (b_n);
+	}
+
+	/* Set the target */
+	borg_target(g_x, g_y);
+
+	/* Do it */
+	borg_note("# Activating artifact %s", equipment[*b_slot].o_name);
+
+	/* Activate the artifact */
+	borg_keypress('A');
+	borg_keypress(I2A(*b_slot));
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
+
+	/* Value */
+	return (b_n);
 }
 
 
