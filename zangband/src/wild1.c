@@ -83,6 +83,9 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	/* Draw stairs first for small towns */
 	if ((build_num < 10) && (!build[BUILD_STAIRS])) return(BUILD_STAIRS);
 	
+	/* Next, we need a general store */
+	if (!build[BUILD_STORE_GENERAL]) return(BUILD_STORE_GENERAL);
+	
 	for (i = 0; i < MAX_CITY_BUILD; i++)
 	{
 		/* All have equal prob. + effect due to total count */
