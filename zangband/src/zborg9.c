@@ -1,4 +1,4 @@
-/* File: borg9.c */
+/* File: zborg9.c */
 
 /* Purpose: Highest level functions for the Borg -BEN- */
 #include "angband.h"
@@ -2445,6 +2445,9 @@ void borg_init_9(void)
 
 	/* We must pick items up without verification */
 	carry_query_flag = FALSE;
+
+	/* No need to confirm in the shop */
+	check_transaction = FALSE;
 
 	/* We need space */
 	show_labels = FALSE;
