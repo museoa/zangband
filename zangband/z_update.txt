@@ -483,7 +483,7 @@ The following changes are mainly by Prfnoff and Eric Bock:
 -The Windows version will now try to create missing directories. (Eric Bock)
 
 ZAngband 2.2.6c
--*Really* fixed the bug that could cause crashs when finishing a random
+-*Really* fixed the bug that could cause crashes when finishing a random
  quest.
 -Several changes to the 'Old Castle' quest. Replaced the "unknown grids"
  with normal floor. Fixed a bug that placed Mother Hydra instead of
@@ -496,7 +496,7 @@ ZAngband 2.2.6c
 -Splitted up the cave generation source code.
 
 ZAngband 2.2.6b
--Fixed a bug that could cause crashs when finishing a random quest.
+-Fixed a bug that could cause crashes when finishing a random quest.
 
 ZAngband 2.2.6
 -Added a new quest and 3 new artifacts by Shayne Steele.
@@ -641,7 +641,7 @@ ZAngband 2.2.4
 -Increased the randomness of long-range teleport effects to decrease the
  frequency of consecutive teleports "bouncing" the player between two or
  three different spots (also from GWAngband).
--Golems have now a penality to dexterity (-2).
+-Golems have now a penalty to dexterity (-2).
 -Mindcrafters no longer get the 'dimension door' power.
 -Toned down The Katana of Groo and Stormbringer.
 -Toned down the number of extra attacks on random artifacts.
@@ -726,7 +726,7 @@ ZAngband 2.2.3
  'no climbing upwards', 'always small levels', and 'always autoscum'.
 -Added a menu for 'pet commands' (press 'p' to access it).  You can
  call them to you, send them out to kill monsters, dismiss them, and
- allow/dissallow opening of door and picking up items. Your pets will
+ allow/disallow opening of door and picking up items. Your pets will
  drop all picked up items when you disallow them to pick up anything.
 -Greatly lowered the fail-rates of the trump spells.
 -Trump summoning spells will now only summon hostile monsters if the
@@ -791,7 +791,7 @@ ZAngband 2.2.2d
 -Added many new rumors by Juergen Neitzel.
 -Fixed the display of the life rating.
 -Fixed the wilderness mode prompt.
--ZAngband now removes the '.lok' file when quiting at character
+-ZAngband now removes the '.lok' file when quitting at character
  generation on systems where VERIFY_SAVEFILE is defined.
 -Removed the space after Thorondor's name in r_info.txt.
 -Beholders are now worth less experience than the undead beholders.
@@ -801,13 +801,13 @@ ZAngband 2.2.2d
  Paladins of Death.
 -Fixed two bugs in the monster polymorph code.
 -Changed the prompt when quitting (commiting suicide).
--Changed the behaviour of the automatic trap disarming. Traps that
+-Changed the behavior of the automatic trap disarming. Traps that
  can't affect you are now ignored.
 -Disintegration spells no longer affect water or lava.
 -Fixed a bug in the artifact activation code that prevented
  artifact dragon scale mails from activating correctly.
 -Scrolls of artifact creation no longer affect dragon scale mails.
--Splitted up the source code into smaller files.
+-Split up the source code into smaller files.
 
 ZAngband 2.2.2c
 -The chaos tower can now remove mutations.
@@ -896,7 +896,7 @@ ZAngband 2.2.1
 -Changed the 'look' command to ignore boring terrains.
 -Changed the damage when walking over shallow lava.
 -Fixed a bug that allowed creation of townspeople in the dungeon.
--Changed the behaviour of the 'magic mapping' spell.
+-Changed the behavior of the 'magic mapping' spell.
 -Fixed a bug that allowed monsters to ignore 'glyphs of warding' and
  'exploding runes'.
 -Fixed bugs in the 'absorb light' mutation.
@@ -921,7 +921,7 @@ ZAngband 2.2.0
  Leigh Silas Hanrihan.
 -Added exploding, aquatic, swimming, and flying monsters.
 -Added new monster melee attacks (time, explode, and disease).
--Added Ken Wigles KAngband style town, quests and terrains.
+-Added Ken Wigle's KAngband style town, quests and terrains.
 -Changed quest system to allow more flexibility and multi-level quests.
 -Added big wilderness outside the towns with a modified fractal terrain
  generator from KAmband.
@@ -929,7 +929,7 @@ ZAngband 2.2.0
 -Removed the 64 kByte limits for monsters, items, artifacts, and vaults.
 -Moved the definition of the limits for the number of monsters, items,
  vaults, ... to an external data-file.
--Added Keldon Jones patch to allow automatic recreation of the raw-files.
+-Added Keldon Jones' patch to allow automatic recreation of the raw-files.
 -Added "equippy chars" in the inventory, equipment list and in shops.
 -Fixed the definitions of the new tiles for the Half-Ogres and Dark-Elfes.
 -Added support for the S-Lang scripting language, based on Scott Bigham's
@@ -956,7 +956,7 @@ ZAngband 2.1.1c
  choose the number of quests when loading the savegame. You may have to
  leave and reenter the current level, if it's a quest level.
 -Only Uniques will now resist disintegration effects.
--The last questmonster now drops all carried items, the normal monster
+-The last quest monster now drops all carried items, the normal monster
  drop and one reward item when you finish the quest.
 -Reward drops are no longer added to the monster knowledge.
 -Fixed the problem with the transparent color of the 8x8 bitmap.
@@ -1009,7 +1009,7 @@ ZAngband 2.1.1 beta 1
 
 
 Zangband 2.1.0e
--Fixed some bugs with the new bookstore and the store maintainance and
+-Fixed some bugs with the new bookstore and the store maintenance and
  owner shuffling works for the bookstore.
 -Fixed the problem with compiling the main.c file on Unix/Linux systems.
 
@@ -1040,7 +1040,7 @@ Zangband 2.1.0d
 Zangband 2.1.0c
 -Command (in powers menu) to dismiss all pets (costs no mana, takes a turn)
 -Alberich has lost his "deadly touch"
--Hilarious new nonsensical rumours courtesy of altavista translation service
+-Hilarious new nonsensical rumors courtesy of altavista translation service
 -A "pit" variant of the "symbol clone nest"
 -James Lockwood's store-auto*id* and examine patch
 -Patches from Silas Dunsmore, lots of little fixes
@@ -1056,7 +1056,7 @@ TODO (features/ideas/bugfixes that have not yet been implemented):
         * Bug? Eldritch horrors seen first via ESP don't blast your sanity?
         * Disintegration balls can explode out-of-bounds?
         * Add oriental melee weapons for monks (nunchaku, bo stick etc.)
-        * Smashed potions should also affect the player (if withing range)
+        * Smashed potions should also affect the player (if within range)
         * Perhaps add Silas Dunsmore's cumulative light radius patch
 
 --
@@ -1076,8 +1076,8 @@ Zangband 2.1.0
 -Activate power command ('U'/'O') uses a menu now
 -Total kill count option added in the 'knowledge' menu
 -The display command can dump to file (command 'f')
--New texts added (into lib/file/) by jd9072@aol.com, for extra colour
--Gollum patch (by John May & 'Tim') implemented (slighty toned down version)
+-New texts added (into lib/file/) by jd9072@aol.com, for extra color
+-Gollum patch (by John May & 'Tim') implemented (slightly toned down version)
 -Fixed a number of bugs in the object absorption code (also in store.c)
 -2 new magic realms: Trump (teleport+summoning), Arcane (weak general purpose)
 -The "Polymorph Self" is a bit less useless now
@@ -1102,7 +1102,7 @@ Zangband 2.1.0
 -Everybody's favourite monster, 'the Unmaker', is far nastier now
 -Some monsters are 'good' (as opposed to 'evil'), immune to holy fire
 -Some monsters are sanity-blasting 'eldritch horrors'
--For fairnesses' sake, monsters can also have reflection & auras of fire/elec
+-For fairness' sake, monsters can also have reflection & auras of fire/elec
 -Certain monsters may resist teleportation
 -Adjacent monsters which can teleport may follow you when you teleport
 -Clones drop treasure nor objects
