@@ -1410,18 +1410,13 @@ void identify_pack(void)
  */
 static bool uncurse_item(object_type *o_ptr, bool all)
 {
-	u32b f1, f2, f3, f4;
-	
 	bool heavy;
 
 	/* Uncursed already */
 	if (!cursed_p(o_ptr)) return (FALSE);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	/* Heavily Cursed Items need a special spell */
-	if (!all && (f3 & TR3_HEAVY_CURSE))
+	if (!all && (o_ptr->flags3 & TR3_HEAVY_CURSE))
 	{
 		/* Let the player know */
 		o_ptr->kn_flags3 |= TR3_HEAVY_CURSE;
@@ -1431,7 +1426,7 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	}
 
 	/* Perma-Cursed Items can NEVER be uncursed */
-	if (f3 & TR3_PERMA_CURSE) 
+	if (o_ptr->flags3 & TR3_PERMA_CURSE) 
 	{
 		/* Let the player know */
 		o_ptr->kn_flags3 |= TR3_PERMA_CURSE;
@@ -1670,12 +1665,8 @@ void stair_creation(void)
  */
 static void break_curse(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4;
-
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	if (cursed_p(o_ptr) && !(f3 & TR3_PERMA_CURSE) && (randint0(100) < 25))
+	if (cursed_p(o_ptr) && !(o_ptr->flags3 & TR3_PERMA_CURSE)
+		 && (randint0(100) < 25))
 	{
 		msgf("The curse is broken!");
 		
@@ -2599,7 +2590,6 @@ bool recharge(int power)
 bool bless_weapon(void)
 {
 	object_type *o_ptr;
-	u32b f1, f2, f3, f4;
 	char o_name[256];
 	cptr q, s;
 
@@ -2618,13 +2608,10 @@ bool bless_weapon(void)
 	/* Description */
 	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	if (cursed_p(o_ptr))
 	{
-		if (((f3 & TR3_HEAVY_CURSE) && (randint1(100) < 33)) ||
-			(f3 & TR3_PERMA_CURSE))
+		if (((o_ptr->flags3 & TR3_HEAVY_CURSE) && (randint1(100) < 33)) ||
+			(o_ptr->flags3 & TR3_PERMA_CURSE))
 		{
 			msgf("The black aura on the %s disrupts the blessing!",
 					   o_name);
@@ -2645,7 +2632,7 @@ bool bless_weapon(void)
 	 * artifact weapon they find. Ego weapons and normal weapons
 	 * can be blessed automatically.
 	 */
-	if (f3 & TR3_BLESSED)
+	if (o_ptr->flags3 & TR3_BLESSED)
 	{
 		msgf("The %s %s blessed already.", o_name,
 				   ((o_ptr->number > 1) ? "were" : "was"));
@@ -4077,10 +4064,8 @@ bool hates_cold(const object_type *o_ptr)
  */
 int set_acid_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4;
 	if (!hates_acid(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-	if (f3 & TR3_IGNORE_ACID) return (FALSE);
+	if (o_ptr->flags3 & TR3_IGNORE_ACID) return (FALSE);
 	return (TRUE);
 }
 
@@ -4090,10 +4075,8 @@ int set_acid_destroy(object_type *o_ptr)
  */
 int set_elec_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4;
 	if (!hates_elec(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-	if (f3 & TR3_IGNORE_ELEC) return (FALSE);
+	if (o_ptr->flags3 & TR3_IGNORE_ELEC) return (FALSE);
 	return (TRUE);
 }
 
@@ -4103,10 +4086,8 @@ int set_elec_destroy(object_type *o_ptr)
  */
 int set_fire_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4;
 	if (!hates_fire(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-	if (f3 & TR3_IGNORE_FIRE) return (FALSE);
+	if (o_ptr->flags3 & TR3_IGNORE_FIRE) return (FALSE);
 	return (TRUE);
 }
 
@@ -4116,10 +4097,8 @@ int set_fire_destroy(object_type *o_ptr)
  */
 int set_cold_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4;
 	if (!hates_cold(o_ptr)) return (FALSE);
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-	if (f3 & TR3_IGNORE_COLD) return (FALSE);
+	if (o_ptr->flags3 & TR3_IGNORE_COLD) return (FALSE);
 	return (TRUE);
 }
 
@@ -4211,7 +4190,6 @@ int inven_damage(inven_func typ, int perc)
 static int minus_ac(void)
 {
 	object_type *o_ptr = NULL;
-	u32b f1, f2, f3, f4;
 	char o_name[256];
 
 
@@ -4260,11 +4238,8 @@ static int minus_ac(void)
 	/* Describe */
 	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	/* Object resists */
-	if (f3 & TR3_IGNORE_ACID)
+	if (o_ptr->flags3 & TR3_IGNORE_ACID)
 	{
 		msgf("Your %s is unaffected!", o_name);
 

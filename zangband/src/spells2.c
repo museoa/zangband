@@ -62,21 +62,16 @@ void self_knowledge(void)
 	/* Acquire item flags from equipment */
 	for (k = 0; k < EQUIP_MAX; k++)
 	{
-		u32b t1, t2, t3, t4;
-
 		o_ptr = &p_ptr->equipment[k];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* Extract the flags */
-		object_flags(o_ptr, &t1, &t2, &t3, &t4);
-
 		/* Extract flags */
-		f1 |= t1;
-		f2 |= t2;
-		f3 |= t3;
-		f4 |= t4;
+		f1 |= o_ptr->flags1;
+		f2 |= o_ptr->flags2;
+		f3 |= o_ptr->flags3;
+		f4 |= o_ptr->flags4;
 	}
 
 	for (v_nr = 0; v_nr < MAX_PLAYER_VIRTUES; v_nr++)

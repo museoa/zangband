@@ -728,8 +728,6 @@ static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 	const u32b all_stats = (TR1_STR | TR1_INT | TR1_WIS |
 							TR1_DEX | TR1_CON | TR1_CHR);
 
-	u32b f1, f2, f3, f4;
-
 	cptr *affects_list;
 
 	/* If pval == 0, there is nothing to do. */
@@ -740,30 +738,27 @@ static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 		return;
 	}
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	affects_list = p_ptr->pval_affects;
 
 	/* Create the "+N" string */
 	strnfmt(p_ptr->pval_desc, 12, "%s%d", POSITIZE(o_ptr->pval), o_ptr->pval);
 
 	/* First, check to see if the pval affects all stats */
-	if ((f1 & all_stats) == all_stats)
+	if ((o_ptr->flags1 & all_stats) == all_stats)
 	{
 		*affects_list++ = "All stats";
 	}
 
 	/* Are any stats affected? */
-	else if (f1 & all_stats)
+	else if (o_ptr->flags1 & all_stats)
 	{
-		affects_list = spoiler_flag_aux(f1, stat_flags_desc,
+		affects_list = spoiler_flag_aux(o_ptr->flags1, stat_flags_desc,
 										affects_list,
 										N_ELEMENTS(stat_flags_desc));
 	}
 
 	/* And now the "rest" */
-	affects_list = spoiler_flag_aux(f1, pval_flags1_desc,
+	affects_list = spoiler_flag_aux(o_ptr->flags1, pval_flags1_desc,
 									affects_list, N_ELEMENTS(pval_flags1_desc));
 
 	/* Terminate the description list */
@@ -774,11 +769,7 @@ static void analyze_pval(const object_type *o_ptr, pval_info_type *p_ptr)
 /* Note the slaying specialties of a weapon */
 static void analyze_slay(const object_type *o_ptr, cptr *slay_list)
 {
-	u32b f1, f2, f3, f4;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	slay_list = spoiler_flag_aux(f1, slay_flags_desc, slay_list,
+	slay_list = spoiler_flag_aux(o_ptr->flags1, slay_flags_desc, slay_list,
 								 N_ELEMENTS(slay_flags_desc));
 
 	/* Terminate the description list */
@@ -788,11 +779,7 @@ static void analyze_slay(const object_type *o_ptr, cptr *slay_list)
 /* Note an object's elemental brands */
 static void analyze_brand(const object_type *o_ptr, cptr *brand_list)
 {
-	u32b f1, f2, f3, f4;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	brand_list = spoiler_flag_aux(f1, brand_flags_desc, brand_list,
+	brand_list = spoiler_flag_aux(o_ptr->flags1, brand_flags_desc, brand_list,
 								  N_ELEMENTS(brand_flags_desc));
 
 	/* Terminate the description list */
@@ -803,11 +790,7 @@ static void analyze_brand(const object_type *o_ptr, cptr *brand_list)
 /* Note the resistances granted by an object */
 static void analyze_resist(const object_type *o_ptr, cptr *resist_list)
 {
-	u32b f1, f2, f3, f4;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	resist_list = spoiler_flag_aux(f2, resist_flags_desc,
+	resist_list = spoiler_flag_aux(o_ptr->flags2, resist_flags_desc,
 								   resist_list, N_ELEMENTS(resist_flags_desc));
 
 	/* Terminate the description list */
@@ -818,11 +801,7 @@ static void analyze_resist(const object_type *o_ptr, cptr *resist_list)
 /* Note the immunities granted by an object */
 static void analyze_immune(const object_type *o_ptr, cptr *immune_list)
 {
-	u32b f1, f2, f3, f4;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	immune_list = spoiler_flag_aux(f2, immune_flags_desc,
+	immune_list = spoiler_flag_aux(o_ptr->flags2, immune_flags_desc,
 								   immune_list, N_ELEMENTS(immune_flags_desc));
 
 	/* Terminate the description list */
@@ -836,20 +815,16 @@ static void analyze_sustains(const object_type *o_ptr, cptr *sustain_list)
 	const u32b all_sustains = (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS |
 							   TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 
-	u32b f1, f2, f3, f4;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	/* Simplify things if an item sustains all stats */
-	if ((f2 & all_sustains) == all_sustains)
+	if ((o_ptr->flags2 & all_sustains) == all_sustains)
 	{
 		*sustain_list++ = "All stats";
 	}
 
 	/* Should we bother? */
-	else if ((f2 & all_sustains))
+	else if ((o_ptr->flags2 & all_sustains))
 	{
-		sustain_list = spoiler_flag_aux(f2, sustain_flags_desc,
+		sustain_list = spoiler_flag_aux(o_ptr->flags2, sustain_flags_desc,
 										sustain_list,
 										N_ELEMENTS(sustain_flags_desc));
 	}
@@ -865,14 +840,10 @@ static void analyze_sustains(const object_type *o_ptr, cptr *sustain_list)
  */
 static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 {
-	u32b f1, f2, f3, f4;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	misc_list = spoiler_flag_aux(f2, misc_flags2_desc, misc_list,
+	misc_list = spoiler_flag_aux(o_ptr->flags2, misc_flags2_desc, misc_list,
 								 N_ELEMENTS(misc_flags2_desc));
 
-	misc_list = spoiler_flag_aux(f3, misc_flags3_desc, misc_list,
+	misc_list = spoiler_flag_aux(o_ptr->flags3, misc_flags3_desc, misc_list,
 								 N_ELEMENTS(misc_flags3_desc));
 
 	/*
@@ -886,7 +857,7 @@ static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 	/*
 	 * Glowing artifacts -- small radius light.
 	 */
-	else if (f3 & (TR3_LITE))
+	else if (o_ptr->flags3 & (TR3_LITE))
 	{
 		*misc_list++ = "Permanent Light(1)";
 	}
@@ -899,15 +870,15 @@ static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 
 	if (cursed_p(o_ptr))
 	{
-		if (f3 & TR3_TY_CURSE)
+		if (o_ptr->flags3 & TR3_TY_CURSE)
 		{
 			*misc_list++ = "Ancient Curse";
 		}
-		if (f3 & TR3_PERMA_CURSE)
+		if (o_ptr->flags3 & TR3_PERMA_CURSE)
 		{
 			*misc_list++ = "Permanently Cursed";
 		}
-		else if (f3 & TR3_HEAVY_CURSE)
+		else if (o_ptr->flags3 & TR3_HEAVY_CURSE)
 		{
 			*misc_list++ = "Heavily Cursed";
 		}

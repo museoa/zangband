@@ -905,40 +905,77 @@ static void compare_weapon_aux1(const object_type *o_ptr)
 {
 	int r = 10;
 
-	u32b f1, f2, f3, f4;
-
-	/* Get the flags of the weapon */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	/* Print the relevant lines */
-	if (f1 & TR1_SLAY_ANIMAL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  CLR_YELLOW "Animals:", 17);
-	if (f1 & TR1_SLAY_EVIL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												CLR_YELLOW "Evil:", 15);
-	if (f1 & TR1_SLAY_UNDEAD) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  CLR_YELLOW "Undead:", 20);
-	if (f1 & TR1_SLAY_DEMON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_YELLOW "Demons:", 20);
-	if (f1 & TR1_SLAY_ORC) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-											   CLR_YELLOW "Orcs:", 20);
-	if (f1 & TR1_SLAY_TROLL) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_YELLOW "Trolls:", 20);
-	if (f1 & TR1_SLAY_GIANT) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_YELLOW "Giants:", 20);
-	if (f1 & TR1_SLAY_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  CLR_YELLOW "Dragons:", 20);
-	if (f1 & TR1_KILL_DRAGON) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												  CLR_YELLOW "Dragons:", 30);
-	if (f1 & TR1_BRAND_ACID) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_RED "Acid:", 20);
-	if (f1 & TR1_BRAND_ELEC) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_RED "Elec:", 20);
-	if (f1 & TR1_BRAND_FIRE) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_RED "Fire:", 20);
-	if (f1 & TR1_BRAND_COLD) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_RED "Cold:", 20);
-	if (f1 & TR1_BRAND_POIS) compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
-												 CLR_RED "Poison:", 20);
+	if (o_ptr->flags1 & TR1_SLAY_ANIMAL)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Animals:", 17);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_EVIL)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Evil:", 15);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_UNDEAD)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Undead:", 20);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_DEMON)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Demons:", 20);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_ORC)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Orcs:", 20);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_TROLL)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Trolls:", 20);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_GIANT)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Giants:", 20);
+	}
+	if (o_ptr->flags1 & TR1_SLAY_DRAGON)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Dragons:", 20);
+	}
+	if (o_ptr->flags1 & TR1_KILL_DRAGON)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_YELLOW "Dragons:", 30);
+	}
+	if (o_ptr->flags1 & TR1_BRAND_ACID)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_RED "Acid:", 20);
+	}
+	if (o_ptr->flags1 & TR1_BRAND_ELEC)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_RED "Elec:", 20);
+	}
+	if (o_ptr->flags1 & TR1_BRAND_FIRE)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_RED "Fire:", 20);
+	}
+	if (o_ptr->flags1 & TR1_BRAND_COLD)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_RED "Cold:", 20);
+	}
+	if (o_ptr->flags1 & TR1_BRAND_POIS)
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
+							CLR_RED "Poison:", 20);
+	}
 }
 
 

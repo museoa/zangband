@@ -673,8 +673,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 	cptr s;
 
-	u32b f1, f2, f3, f4;
-
 	object_type *bow_ptr;
 
 	/* damage dice, damage sides, damage bonus, energy */
@@ -687,9 +685,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	monster_race *r_ptr = &r_info[o_ptr->pval];
-
-	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* See if the object is "aware" */
 	if (object_aware_p(o_ptr)) aware = TRUE;
@@ -1222,7 +1217,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 
 	/* Display the item like a weapon */
-	if (f3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
+	if (o_ptr->flags3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
 
 	/* Display the item like a weapon */
 	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
@@ -1298,7 +1293,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			}
 
 			/* Apply the "Extra Might" flag */
-			if (f3 & (TR3_XTRA_MIGHT)) power++;
+			if (o_ptr->flags3 & (TR3_XTRA_MIGHT)) power++;
 
 			/* Append a special "damage" string */
 			strnfcat(buf, max, &len, " (x%d)", power);
@@ -1482,26 +1477,26 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 
 	/* Dump "pval" flags for wearable items */
-	if (known && (f1 & (TR1_PVAL_MASK)))
+	if (known && (o_ptr->flags1 & (TR1_PVAL_MASK)))
 	{
 		/* Start the display */
 		strnfcat(buf, max, &len, " (%+d", o_ptr->pval);
 
 		/* Do not display the "pval" flags */
-		if (f3 & (TR3_HIDE_TYPE))
+		if (o_ptr->flags3 & (TR3_HIDE_TYPE))
 		{
 			/* Nothing */
 		}
 
 		/* Speed */
-		else if (f1 & (TR1_SPEED))
+		else if (o_ptr->flags1 & (TR1_SPEED))
 		{
 			/* Dump " to speed" */
 			strnfcat(buf, max, &len, " to speed");
 		}
 
 		/* Attack speed */
-		else if (f1 & (TR1_BLOWS))
+		else if (o_ptr->flags1 & (TR1_BLOWS))
 		{
 			if (ABS(o_ptr->pval) == 1)
 			{

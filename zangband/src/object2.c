@@ -966,111 +966,108 @@ static s32b bonus_value(s32b x)
 s32b flag_cost(const object_type *o_ptr, int plusses)
 {
 	s32b total = 0;
-	u32b f1, f2, f3, f4;
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
-	if (f1 & TR1_STR) total += (500 * plusses);
-	if (f1 & TR1_INT) total += (500 * plusses);
-	if (f1 & TR1_WIS) total += (500 * plusses);
-	if (f1 & TR1_DEX) total += (500 * plusses);
-	if (f1 & TR1_CON) total += (500 * plusses);
-	if (f1 & TR1_CHR) total += (250 * plusses);
-	if (f1 & TR1_CHAOTIC) total += 5000;
-	if (f1 & TR1_VAMPIRIC) total += 5000;
-	if (f1 & TR1_STEALTH) total += (50 * plusses);
-	if (f1 & TR1_SEARCH) total += (50 * plusses);
-	if (f1 & TR1_INFRA) total += (30 * plusses);
-	if (f1 & TR1_TUNNEL) total += (20 * plusses);
-	if ((f1 & TR1_SPEED) && (plusses > 0)) total += (500 * sqvalue(plusses));
-	if ((f1 & TR1_BLOWS) && (plusses > 0)) total += (500 * sqvalue(plusses));
-	if (f1 & TR1_XXX1) total += 0;
-	if (f1 & TR1_XXX2) total += 0;
-	if (f1 & TR1_SLAY_ANIMAL) total += 750;
-	if (f1 & TR1_SLAY_EVIL) total += 750;
-	if (f1 & TR1_SLAY_UNDEAD) total += 750;
-	if (f1 & TR1_SLAY_DEMON) total += 750;
-	if (f1 & TR1_SLAY_ORC) total += 300;
-	if (f1 & TR1_SLAY_TROLL) total += 750;
-	if (f1 & TR1_SLAY_GIANT) total += 750;
-	if (f1 & TR1_SLAY_DRAGON) total += 750;
-	if (f1 & TR1_KILL_DRAGON) total += 1500;
-	if (f1 & TR1_VORPAL) total += 1500;
-	if (f1 & TR1_IMPACT) total += 1500;
-	if (f1 & TR1_BRAND_POIS) total += 1500;
-	if (f1 & TR1_BRAND_ACID) total += 1500;
-	if (f1 & TR1_BRAND_ELEC) total += 1500;
-	if (f1 & TR1_BRAND_FIRE) total += 1500;
-	if (f1 & TR1_BRAND_COLD) total += 1500;
-	if (f2 & TR2_SUST_STR) total += 200;
-	if (f2 & TR2_SUST_INT) total += 200;
-	if (f2 & TR2_SUST_WIS) total += 200;
-	if (f2 & TR2_SUST_DEX) total += 200;
-	if (f2 & TR2_SUST_CON) total += 200;
-	if (f2 & TR2_SUST_CHR) total += 100;
-	if (f2 & TR2_XXX1) total += 0;
-	if (f2 & TR2_XXX2) total += 0;
-	if (f2 & TR2_IM_ACID) total += 10000;
-	if (f2 & TR2_IM_ELEC) total += 10000;
-	if (f2 & TR2_IM_FIRE) total += 10000;
-	if (f2 & TR2_IM_COLD) total += 10000;
-	if (f2 & TR2_THROW) total += 2000;
-	if (f2 & TR2_REFLECT) total += 5000;
-	if (f2 & TR2_FREE_ACT) total += 3000;
-	if (f2 & TR2_HOLD_LIFE) total += 2000;
-	if (f2 & TR2_RES_ACID) total += 750;
-	if (f2 & TR2_RES_ELEC) total += 750;
-	if (f2 & TR2_RES_FIRE) total += 750;
-	if (f2 & TR2_RES_COLD) total += 750;
-	if (f2 & TR2_RES_POIS) total += 1500;
-	if (f2 & TR2_RES_FEAR) total += 1000;
-	if (f2 & TR2_RES_LITE) total += 750;
-	if (f2 & TR2_RES_DARK) total += 750;
-	if (f2 & TR2_RES_BLIND) total += 1000;
-	if (f2 & TR2_RES_CONF) total += 2000;
-	if (f2 & TR2_RES_SOUND) total += 1000;
-	if (f2 & TR2_RES_SHARDS) total += 1000;
-	if (f2 & TR2_RES_NETHER) total += 2000;
-	if (f2 & TR2_RES_NEXUS) total += 500;
-	if (f2 & TR2_RES_CHAOS) total += 2000;
-	if (f2 & TR2_RES_DISEN) total += 5000;
-	if (f3 & TR3_SH_FIRE) total += 1000;
-	if (f3 & TR3_SH_ELEC) total += 1000;
-	if (f3 & TR3_QUESTITEM) total += 0;
-	if (f3 & TR3_XXX4) total += 0;
-	if (f3 & TR3_NO_TELE) total += 1500;
-	if (f3 & TR3_NO_MAGIC) total += 1500;
-	if (f3 & TR3_TY_CURSE) total -= 15000;
-	if (f3 & TR3_EASY_KNOW) total += 0;
-	if (f3 & TR3_HIDE_TYPE) total += 0;
-	if (f3 & TR3_SHOW_MODS) total += 0;
-	if (f3 & TR3_INSTA_ART) total += 0;
-	if (f3 & TR3_FEATHER) total += 250;
-	if (f3 & TR3_LITE) total += 750;
-	if (f3 & TR3_SEE_INVIS) total += 2000;
-	if (f3 & TR3_TELEPATHY) total += 10000;
-	if (f3 & TR3_SLOW_DIGEST) total += 750;
-	if (f3 & TR3_REGEN) total += 1000;
-	if (f3 & TR3_XTRA_MIGHT) total += 5000;
-	if (f3 & TR3_XTRA_SHOTS) total += 5000;
-	if (f3 & TR3_IGNORE_ACID) total += 200;
-	if (f3 & TR3_IGNORE_ELEC) total += 50;
-	if (f3 & TR3_IGNORE_FIRE) total += 50;
-	if (f3 & TR3_IGNORE_COLD) total += 50;
-	if (f3 & TR3_ACTIVATE) total += 0;
-	if (f3 & TR3_DRAIN_EXP) total -= 12500;
-	if (f3 & TR3_TELEPORT)
+	if (o_ptr->flags1 & TR1_STR) total += (500 * plusses);
+	if (o_ptr->flags1 & TR1_INT) total += (500 * plusses);
+	if (o_ptr->flags1 & TR1_WIS) total += (500 * plusses);
+	if (o_ptr->flags1 & TR1_DEX) total += (500 * plusses);
+	if (o_ptr->flags1 & TR1_CON) total += (500 * plusses);
+	if (o_ptr->flags1 & TR1_CHR) total += (250 * plusses);
+	if (o_ptr->flags1 & TR1_CHAOTIC) total += 5000;
+	if (o_ptr->flags1 & TR1_VAMPIRIC) total += 5000;
+	if (o_ptr->flags1 & TR1_STEALTH) total += (50 * plusses);
+	if (o_ptr->flags1 & TR1_SEARCH) total += (50 * plusses);
+	if (o_ptr->flags1 & TR1_INFRA) total += (30 * plusses);
+	if (o_ptr->flags1 & TR1_TUNNEL) total += (20 * plusses);
+	if ((o_ptr->flags1 & TR1_SPEED) && (plusses > 0)) total += (500 * sqvalue(plusses));
+	if ((o_ptr->flags1 & TR1_BLOWS) && (plusses > 0)) total += (500 * sqvalue(plusses));
+	if (o_ptr->flags1 & TR1_XXX1) total += 0;
+	if (o_ptr->flags1 & TR1_XXX2) total += 0;
+	if (o_ptr->flags1 & TR1_SLAY_ANIMAL) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_EVIL) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_UNDEAD) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_DEMON) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_ORC) total += 300;
+	if (o_ptr->flags1 & TR1_SLAY_TROLL) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_GIANT) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_DRAGON) total += 750;
+	if (o_ptr->flags1 & TR1_KILL_DRAGON) total += 1500;
+	if (o_ptr->flags1 & TR1_VORPAL) total += 1500;
+	if (o_ptr->flags1 & TR1_IMPACT) total += 1500;
+	if (o_ptr->flags1 & TR1_BRAND_POIS) total += 1500;
+	if (o_ptr->flags1 & TR1_BRAND_ACID) total += 1500;
+	if (o_ptr->flags1 & TR1_BRAND_ELEC) total += 1500;
+	if (o_ptr->flags1 & TR1_BRAND_FIRE) total += 1500;
+	if (o_ptr->flags1 & TR1_BRAND_COLD) total += 1500;
+	if (o_ptr->flags2 & TR2_SUST_STR) total += 200;
+	if (o_ptr->flags2 & TR2_SUST_INT) total += 200;
+	if (o_ptr->flags2 & TR2_SUST_WIS) total += 200;
+	if (o_ptr->flags2 & TR2_SUST_DEX) total += 200;
+	if (o_ptr->flags2 & TR2_SUST_CON) total += 200;
+	if (o_ptr->flags2 & TR2_SUST_CHR) total += 100;
+	if (o_ptr->flags2 & TR2_XXX1) total += 0;
+	if (o_ptr->flags2 & TR2_XXX2) total += 0;
+	if (o_ptr->flags2 & TR2_IM_ACID) total += 10000;
+	if (o_ptr->flags2 & TR2_IM_ELEC) total += 10000;
+	if (o_ptr->flags2 & TR2_IM_FIRE) total += 10000;
+	if (o_ptr->flags2 & TR2_IM_COLD) total += 10000;
+	if (o_ptr->flags2 & TR2_THROW) total += 2000;
+	if (o_ptr->flags2 & TR2_REFLECT) total += 5000;
+	if (o_ptr->flags2 & TR2_FREE_ACT) total += 3000;
+	if (o_ptr->flags2 & TR2_HOLD_LIFE) total += 2000;
+	if (o_ptr->flags2 & TR2_RES_ACID) total += 750;
+	if (o_ptr->flags2 & TR2_RES_ELEC) total += 750;
+	if (o_ptr->flags2 & TR2_RES_FIRE) total += 750;
+	if (o_ptr->flags2 & TR2_RES_COLD) total += 750;
+	if (o_ptr->flags2 & TR2_RES_POIS) total += 1500;
+	if (o_ptr->flags2 & TR2_RES_FEAR) total += 1000;
+	if (o_ptr->flags2 & TR2_RES_LITE) total += 750;
+	if (o_ptr->flags2 & TR2_RES_DARK) total += 750;
+	if (o_ptr->flags2 & TR2_RES_BLIND) total += 1000;
+	if (o_ptr->flags2 & TR2_RES_CONF) total += 2000;
+	if (o_ptr->flags2 & TR2_RES_SOUND) total += 1000;
+	if (o_ptr->flags2 & TR2_RES_SHARDS) total += 1000;
+	if (o_ptr->flags2 & TR2_RES_NETHER) total += 2000;
+	if (o_ptr->flags2 & TR2_RES_NEXUS) total += 500;
+	if (o_ptr->flags2 & TR2_RES_CHAOS) total += 2000;
+	if (o_ptr->flags2 & TR2_RES_DISEN) total += 5000;
+	if (o_ptr->flags3 & TR3_SH_FIRE) total += 1000;
+	if (o_ptr->flags3 & TR3_SH_ELEC) total += 1000;
+	if (o_ptr->flags3 & TR3_QUESTITEM) total += 0;
+	if (o_ptr->flags3 & TR3_XXX4) total += 0;
+	if (o_ptr->flags3 & TR3_NO_TELE) total += 1500;
+	if (o_ptr->flags3 & TR3_NO_MAGIC) total += 1500;
+	if (o_ptr->flags3 & TR3_TY_CURSE) total -= 15000;
+	if (o_ptr->flags3 & TR3_EASY_KNOW) total += 0;
+	if (o_ptr->flags3 & TR3_HIDE_TYPE) total += 0;
+	if (o_ptr->flags3 & TR3_SHOW_MODS) total += 0;
+	if (o_ptr->flags3 & TR3_INSTA_ART) total += 0;
+	if (o_ptr->flags3 & TR3_FEATHER) total += 250;
+	if (o_ptr->flags3 & TR3_LITE) total += 750;
+	if (o_ptr->flags3 & TR3_SEE_INVIS) total += 2000;
+	if (o_ptr->flags3 & TR3_TELEPATHY) total += 10000;
+	if (o_ptr->flags3 & TR3_SLOW_DIGEST) total += 750;
+	if (o_ptr->flags3 & TR3_REGEN) total += 1000;
+	if (o_ptr->flags3 & TR3_XTRA_MIGHT) total += 5000;
+	if (o_ptr->flags3 & TR3_XTRA_SHOTS) total += 5000;
+	if (o_ptr->flags3 & TR3_IGNORE_ACID) total += 200;
+	if (o_ptr->flags3 & TR3_IGNORE_ELEC) total += 50;
+	if (o_ptr->flags3 & TR3_IGNORE_FIRE) total += 50;
+	if (o_ptr->flags3 & TR3_IGNORE_COLD) total += 50;
+	if (o_ptr->flags3 & TR3_ACTIVATE) total += 0;
+	if (o_ptr->flags3 & TR3_DRAIN_EXP) total -= 12500;
+	if (o_ptr->flags3 & TR3_TELEPORT)
 	{
 		if (cursed_p(o_ptr))
 			total -= 7500;
 		else
 			total += 250;
 	}
-	if (f3 & TR3_AGGRAVATE) total -= 5000;
-	if (f3 & TR3_BLESSED) total += 200;
-	if (f3 & TR3_CURSED) total -= 5000;
-	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
-	if (f3 & TR3_PERMA_CURSE) total -= 15000;
+	if (o_ptr->flags3 & TR3_AGGRAVATE) total -= 5000;
+	if (o_ptr->flags3 & TR3_BLESSED) total += 200;
+	if (o_ptr->flags3 & TR3_CURSED) total -= 5000;
+	if (o_ptr->flags3 & TR3_HEAVY_CURSE) total -= 12500;
+	if (o_ptr->flags3 & TR3_PERMA_CURSE) total -= 15000;
 
 	/* Also, give some extra for activatable powers... */
 	if (o_ptr->xtra_name && (o_ptr->flags3 & TR3_ACTIVATE) &&
@@ -1183,8 +1180,6 @@ s32b object_value_real(const object_type *o_ptr)
 {
 	s32b value;
 
-	u32b f1, f2, f3, f4;
-
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Base cost */
@@ -1192,9 +1187,6 @@ s32b object_value_real(const object_type *o_ptr)
 
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
-
-	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Mega Hack - extra price due to some flags... */
 
@@ -1229,26 +1221,26 @@ s32b object_value_real(const object_type *o_ptr)
 			if (!o_ptr->pval) break;
 
 			/* Give credit for stat bonuses */
-			if (f1 & (TR1_STR)) value += (o_ptr->pval * 200L);
-			if (f1 & (TR1_INT)) value += (o_ptr->pval * 200L);
-			if (f1 & (TR1_WIS)) value += (o_ptr->pval * 200L);
-			if (f1 & (TR1_DEX)) value += (o_ptr->pval * 200L);
-			if (f1 & (TR1_CON)) value += (o_ptr->pval * 200L);
-			if (f1 & (TR1_CHR)) value += (o_ptr->pval * 200L);
+			if (o_ptr->flags1 & (TR1_STR)) value += (o_ptr->pval * 200L);
+			if (o_ptr->flags1 & (TR1_INT)) value += (o_ptr->pval * 200L);
+			if (o_ptr->flags1 & (TR1_WIS)) value += (o_ptr->pval * 200L);
+			if (o_ptr->flags1 & (TR1_DEX)) value += (o_ptr->pval * 200L);
+			if (o_ptr->flags1 & (TR1_CON)) value += (o_ptr->pval * 200L);
+			if (o_ptr->flags1 & (TR1_CHR)) value += (o_ptr->pval * 200L);
 
 			/* Give credit for stealth and searching */
-			if (f1 & (TR1_STEALTH)) value += (o_ptr->pval * 100L);
-			if (f1 & (TR1_SEARCH)) value += (o_ptr->pval * 100L);
+			if (o_ptr->flags1 & (TR1_STEALTH)) value += (o_ptr->pval * 100L);
+			if (o_ptr->flags1 & (TR1_SEARCH)) value += (o_ptr->pval * 100L);
 
 			/* Give credit for infra-vision and tunneling */
-			if (f1 & (TR1_INFRA)) value += (o_ptr->pval * 30L);
-			if (f1 & (TR1_TUNNEL)) value += (o_ptr->pval * 20L);
+			if (o_ptr->flags1 & (TR1_INFRA)) value += (o_ptr->pval * 30L);
+			if (o_ptr->flags1 & (TR1_TUNNEL)) value += (o_ptr->pval * 20L);
 
 			/* Give credit for extra attacks */
-			if (f1 & (TR1_BLOWS)) value += (sqvalue(o_ptr->pval) * 500L);
+			if (o_ptr->flags1 & (TR1_BLOWS)) value += (sqvalue(o_ptr->pval) * 500L);
 
 			/* Give credit for speed bonus */
-			if (f1 & (TR1_SPEED)) value += (sqvalue(o_ptr->pval) * 500L);
+			if (o_ptr->flags1 & (TR1_SPEED)) value += (sqvalue(o_ptr->pval) * 500L);
 
 			break;
 		}

@@ -585,8 +585,6 @@ extern void object_store_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 /* object2.c */
 
 extern void reset_visuals(void);
-extern void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2,
-						 u32b *f3, u32b *f4);
 extern void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2,
 							   u32b *f3, u32b *f4);
 extern bool identify_fully_aux(const object_type *o_ptr);

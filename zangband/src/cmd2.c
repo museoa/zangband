@@ -2808,7 +2808,6 @@ void do_cmd_throw_aux(int mult)
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
-	u32b f1, f2, f3, f4;
 	cptr q, s;
 
 	bool potion;
@@ -2842,9 +2841,6 @@ void do_cmd_throw_aux(int mult)
 	/* Split object */
 	q_ptr = item_split(o_ptr, 1);
 
-	/* Extract the thrown object's flags. */
-	object_flags(q_ptr, &f1, &f2, &f3, &f4);
-
 	/* Description */
 	object_desc(o_name, q_ptr, FALSE, 3, 256);
 
@@ -2869,7 +2865,7 @@ void do_cmd_throw_aux(int mult)
 	 * only throwing weapons take advantage of bonuses to Skill from
 	 * other items. -LM-
 	 */
-	if (f2 & (TR2_THROW))
+	if (q_ptr->flags2 & (TR2_THROW))
 	{
 		chance = p_ptr->skill_tht + (p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ;
 	}
@@ -3043,7 +3039,7 @@ void do_cmd_throw_aux(int mult)
 				 * equation, but it does at least try to keep throwing
 				 * weapons competitive.
 				 */
-				if (f2 & (TR2_THROW))
+				if (q_ptr->flags2 & (TR2_THROW))
 				{
 					tdam *= 4 + p_ptr->lev / 6;
 				}
@@ -3057,7 +3053,7 @@ void do_cmd_throw_aux(int mult)
 				 * weapon.  Otherwise, grant the default multiplier.
 				 * (10x inflation)
 				 */
-				if (f2 & (TR2_THROW))
+				if (q_ptr->flags2 & (TR2_THROW))
 				{
 					tdam *= critical_shot(chance2, sleeping_bonus, o_name,
 										  m_name, m_ptr->ml);
@@ -3071,7 +3067,7 @@ void do_cmd_throw_aux(int mult)
 				 * Convert total or object-only Deadliness into a percen-
 				 * tage, and apply it as a bonus or penalty (100x inflation)
 				 */
-				if (f2 & (TR2_THROW))
+				if (q_ptr->flags2 & (TR2_THROW))
 				{
 					tdam *= deadliness_calc(total_deadliness);
 				}

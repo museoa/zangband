@@ -1006,8 +1006,6 @@ void do_cmd_zap_rod(void)
  */
 static bool item_tester_hook_activate(const object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4;
-
 	/* Check statues */
 	if (o_ptr->tval == TV_STATUE) return (TRUE);
 
@@ -1017,11 +1015,8 @@ static bool item_tester_hook_activate(const object_type *o_ptr)
 	/* Not known */
 	if (!object_known_p(o_ptr)) return (FALSE);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 	/* Check activation flag */
-	if (f3 & (TR3_ACTIVATE)) return (TRUE);
+	if (o_ptr->flags3 & (TR3_ACTIVATE)) return (TRUE);
 
 	/* Assume not */
 	return (FALSE);

@@ -2517,14 +2517,9 @@ static void take_move(int m_idx, int *mm)
 				if ((r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&
 					(!is_pet(m_ptr) || p_ptr->pet_pickup_items))
 				{
-					u32b f1, f2, f3, f4;
-
 					u32b flg3 = 0L;
 
 					char o_name[256];
-
-					/* Extract some flags */
-					object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 					/* Acquire the object name */
 					object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2533,15 +2528,15 @@ static void take_move(int m_idx, int *mm)
 					monster_desc(m_name, m_ptr, 0x04, 80);
 
 					/* React to objects that hurt the monster */
-					if (f1 & TR1_KILL_DRAGON) flg3 |= (RF3_DRAGON);
-					if (f1 & TR1_SLAY_DRAGON) flg3 |= (RF3_DRAGON);
-					if (f1 & TR1_SLAY_TROLL) flg3 |= (RF3_TROLL);
-					if (f1 & TR1_SLAY_GIANT) flg3 |= (RF3_GIANT);
-					if (f1 & TR1_SLAY_ORC) flg3 |= (RF3_ORC);
-					if (f1 & TR1_SLAY_DEMON) flg3 |= (RF3_DEMON);
-					if (f1 & TR1_SLAY_UNDEAD) flg3 |= (RF3_UNDEAD);
-					if (f1 & TR1_SLAY_ANIMAL) flg3 |= (RF3_ANIMAL);
-					if (f1 & TR1_SLAY_EVIL) flg3 |= (RF3_EVIL);
+					if (o_ptr->flags1 & TR1_KILL_DRAGON) flg3 |= (RF3_DRAGON);
+					if (o_ptr->flags1 & TR1_SLAY_DRAGON) flg3 |= (RF3_DRAGON);
+					if (o_ptr->flags1 & TR1_SLAY_TROLL) flg3 |= (RF3_TROLL);
+					if (o_ptr->flags1 & TR1_SLAY_GIANT) flg3 |= (RF3_GIANT);
+					if (o_ptr->flags1 & TR1_SLAY_ORC) flg3 |= (RF3_ORC);
+					if (o_ptr->flags1 & TR1_SLAY_DEMON) flg3 |= (RF3_DEMON);
+					if (o_ptr->flags1 & TR1_SLAY_UNDEAD) flg3 |= (RF3_UNDEAD);
+					if (o_ptr->flags1 & TR1_SLAY_ANIMAL) flg3 |= (RF3_ANIMAL);
+					if (o_ptr->flags1 & TR1_SLAY_EVIL) flg3 |= (RF3_EVIL);
 
 					/* The object cannot be picked up by the monster */
 					if ((o_ptr->flags3 & TR3_INSTA_ART) ||

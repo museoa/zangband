@@ -581,10 +581,6 @@ static void learn_map(void)
 static void wiz_display_item(const object_type *o_ptr)
 {
 	int j = 13;
-	u32b f1, f2, f3, f4;
-
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Clear the screen */
     clear_region(13 - 2, 1, 23);
@@ -615,7 +611,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	    		"siwdcc  ssidsahanvudotgddhuoclio\n"
 	    		"tnieoh  trnipttmiinmrrnrrraiierl\n"
 	    		"rtsxna..lcfgdkcpmldncltggpksdced\n"
-                "%v", binary_fmt, f1);
+                "%v", binary_fmt, o_ptr->flags1);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 				"SUST...IMMUN..RESIST............\n"
@@ -623,7 +619,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 	    		"tnieoh  ierlrfraierliatrnnnrhehi\n"
 	    		"rtsxna..dcedwlatdcedsrekdfddrxss\n"
-                "%v", binary_fmt, f2);
+                "%v", binary_fmt, o_ptr->flags2);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
 					"fe      ehsi  st    iiiiadta  hp\n"
@@ -634,7 +630,7 @@ static void wiz_display_item(const object_type *o_ptr)
 				    "uu  eg rnyoahivaeggoclioaeoasrrr\n"
 				    "rr  li sopdretitsehtierltxrtesss\n"
 				    "aa  ec ewestreshtntsdcedeptedeee\n"
-                    "%v", binary_fmt, f3);
+                    "%v", binary_fmt, o_ptr->flags3);
 }
 
 

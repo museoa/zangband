@@ -1435,7 +1435,6 @@ static void display_player_abilities(void)
 	int xthn, xthb;
 	int muta_att = 0;
 	long avgdam;
-	u32b f1, f2, f3, f4;
 	int energy_fire;
 	int shots, shot_frac;
 
@@ -1525,7 +1524,6 @@ static void display_player_abilities(void)
 	if (o_ptr->k_idx)
 	{
 		/* Is there a vorpal effect we know about? */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4);
 		if (object_known_p(o_ptr) &&
 			(o_ptr->activate - 128 == ART_VORPAL_BLADE))
 		{
@@ -1533,7 +1531,7 @@ static void display_player_abilities(void)
 			avgdam *= 786;
 			avgdam /= 500;
 		}
-		else if (object_known_p(o_ptr) && (f1 & TR1_VORPAL))
+		else if (object_known_p(o_ptr) && (o_ptr->flags1 & TR1_VORPAL))
 		{
 			/* vorpal flag only */
 			avgdam *= 609;

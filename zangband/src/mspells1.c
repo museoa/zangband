@@ -444,18 +444,15 @@ static void breath(int m_idx, int typ, int dam_hp, int rad, bool breath)
 void curse_equipment(int chance, int heavy_chance)
 {
 	bool changed = FALSE;
-	u32b o1, o2, o3, o4;
+
 	object_type *o_ptr = &p_ptr->equipment[randint0(EQUIP_MAX)];
 
 	if (randint1(100) > chance) return;
 
 	if (!o_ptr->k_idx) return;
 
-	object_flags(o_ptr, &o1, &o2, &o3, &o4);
-
-
 	/* Extra, biased saving throw for blessed items */
-	if ((o3 & TR3_BLESSED) && (randint1(888) > chance))
+	if ((o_ptr->flags3 & TR3_BLESSED) && (randint1(888) > chance))
 	{
 		msgf("Your %v resists cursing!", OBJECT_FMT(o_ptr, FALSE, 0));
 		return;
@@ -463,7 +460,7 @@ void curse_equipment(int chance, int heavy_chance)
 
 	if ((randint1(100) <= heavy_chance) && o_ptr->xtra_name)
 	{
-		if (!(o3 & TR3_HEAVY_CURSE))
+		if (!(o_ptr->flags3 & TR3_HEAVY_CURSE))
 		{
 			changed = TRUE;
 		}

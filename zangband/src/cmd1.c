@@ -239,10 +239,8 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	u32b f1, f2, f3, f4;
-
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4);
+	u32b f1 = o_ptr->flags1;
 
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
@@ -1421,7 +1419,6 @@ void py_attack(int x, int y)
 	int drain_left = MAX_VAMPIRIC_DRAIN;
 	s16b ghoul_paral = -1;
 	bool ghoul_hack = FALSE;
-	u32b f1, f2, f3, f4;
 	bool no_extra = FALSE;
 
 	/* Access the weapon */
@@ -1572,10 +1569,8 @@ void py_attack(int x, int y)
 			/* Hack -- bare hands do one damage */
 			k = 1;
 
-			object_flags(o_ptr, &f1, &f2, &f3, &f4);
-
 			/* Select a chaotic effect (50% chance) */
-			if ((f1 & TR1_CHAOTIC) && (one_in_(2)))
+			if ((o_ptr->flags1 & TR1_CHAOTIC) && (one_in_(2)))
 			{
 				if (one_in_(10)) chg_virtue(V_CHANCE, 1);
 
@@ -1607,7 +1602,7 @@ void py_attack(int x, int y)
 			}
 
 			/* Vampiric drain */
-			if ((f1 & TR1_VAMPIRIC) || (chaos_effect == 1))
+			if ((o_ptr->flags1 & TR1_VAMPIRIC) || (chaos_effect == 1))
 			{
 				/* Only drain "living" monsters */
 				if (monster_living(r_ptr))
@@ -1670,7 +1665,7 @@ void py_attack(int x, int y)
 				 * All of these artifact-specific effects
 				 * should be pythonized.
 				 */
-				if ((f1 & TR1_VORPAL) &&
+				if ((o_ptr->flags1 & TR1_VORPAL) &&
 					(one_in_((o_ptr->activate + 128 == ART_VORPAL_BLADE)
 							 ? 3 : 6)))
 				{
