@@ -63,6 +63,12 @@ static term_data data[MAX_TERM_DATA];
  */
 static bool game_in_progress = FALSE;
 
+
+/*
+ * Start a new game
+ */
+static bool gtk_newgame;
+
 /*
  * Number of active terms
  */
@@ -223,15 +229,26 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 
 static errr CheckEvent(bool wait)
 {
-	/* Hack - ignore parameter */
-	(void) wait;
+	/* Do not wait unless requested */
+	if (!wait && !gtk_events_pending()) return (1);
 	
-	while (gtk_events_pending())
-		gtk_main_iteration();
-
+	/* Process some events */
+	gtk_main_iteration();
+	
 	return (0);
 }
 
+
+static int waste_time(gpointer data)
+{
+	/* Hack - ignore data */
+	(void) data;
+	
+	/* Wait so we don't waste all the processor */
+	usleep(5);
+	
+	return(0);
+}
 
 static errr Term_flush_gtk(void)
 {
@@ -337,6 +354,11 @@ static void save_game_gtk(void)
 	}
 }
 
+static void cleanup_angband (void)
+{
+	/* Do nothing, because zangband doesn't have this yet. */
+}
+
 
 static void hook_quit(cptr str)
 {
@@ -365,6 +387,8 @@ static void destroy_event_handler(GtkButton *was_clicked, gpointer user_data)
 	(void) was_clicked;
 	(void) user_data;
 	
+	cleanup_angband();
+	
 	quit(NULL);
 }
 
@@ -377,10 +401,6 @@ static void hide_event_handler(GtkWidget *window, gpointer user_data)
 	gtk_widget_hide(window);
 }
 
-static void cleanup_angband (void)
-{
-	/* Do nothing, because zangband doesn't have this yet. */
-}
 
 
 static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
@@ -395,11 +415,11 @@ static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
 	}
 	else
 	{
+		/* Continue into angband code */
 		game_in_progress = TRUE;
-		Term_flush();
-		play_game(TRUE);
-		cleanup_angband();
-		quit(NULL);
+
+		/* Start a new game */
+		gtk_newgame = TRUE;
 	}
 }
 
@@ -519,16 +539,14 @@ static void file_ok_callback(GtkWidget *widget, GtkWidget *file_selector)
 	/* Hack - ignore widget */
 	(void) widget;
 	
+	/* Get the savefile name */
 	strcpy(savefile,
 		gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_selector)));
 
 	gtk_widget_destroy(file_selector);
 
+	/* Continue into angband */
 	game_in_progress = TRUE;
-	Term_flush();
-	play_game(FALSE);
-	cleanup_angband();
-	quit(NULL);
 }
 
 
@@ -597,6 +615,9 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
 	int i, mc, ms, mo, mx;
 
 	char msg[128];
+	
+	/* Hack - do not do anything until the player picks from the menu */
+	if (!game_in_progress) return (TRUE);
 
 	/* Hack - Ignore parameters */
 	(void) widget;
@@ -898,9 +919,15 @@ static void init_gtk_window(term_data *td, int i)
 /*
  * Initialization function
  */
-errr init_gtk(int argc, char **argv)
+errr init_gtk(unsigned char *new_game, int argc, char **argv)
 {
 	int i;
+	
+	/* See if gtk exists and works */
+	if (!gtk_init_check(&argc, &argv)) return (1);
+	
+	/* Hack - save variable so that everyone can use it */
+	gtk_newgame = *new_game;
 
 	/* Initialize the environment */
 	gtk_init(&argc, &argv);
@@ -941,25 +968,35 @@ errr init_gtk(int argc, char **argv)
 	quit_aux = hook_quit;
 	core_aux = hook_quit;
 
-	/* Set the system suffix */
-	ANGBAND_SYS = "gtk";
-
 	/* Catch nasty signals */
 	signals_init();
-	
+
 	/* Initialize */
 	init_angband();
-
+	
 	/* Prompt the user */
 	prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 17);
 	Term_fresh();
+	
+	gtk_idle_add(waste_time, NULL);
+	
+	while (!game_in_progress)
+	{
+		while (gtk_events_pending())
+		{
+			gtk_main_iteration();
+		}
 
-	/* Processing loop */
-	gtk_main();
-
-	/* Stop now */
-	exit(0);
-
+		/* Wait so we don't waste all the processor */
+		usleep(200);
+	}
+	
+	/* Load 'newgame' flag */
+	*new_game = gtk_newgame;
+	
+	/* Press a key for the player */
+	Term_keypress(' ');
+	
 	/* Success */
 	return (0);
 }

@@ -688,7 +688,11 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-gtk.c" support */
 	if (!done && (!mstr || (streq(mstr, "gtk"))))
 	{
-		init_gtk(argc, argv);
+		if (0 == init_gtk((unsigned char*) &new_game, argc, argv))
+		{
+			ANGBAND_SYS = "gtk";
+			done = TRUE;
+		}
 	}
 #endif
 
@@ -831,13 +835,16 @@ int main(int argc, char *argv[])
 	/* Hack -- If requested, display scores and quit */
 	if (show_score > 0) display_scores(0, show_score);
 
+	/* Gtk initializes earlier */
+	if (!streq(ANGBAND_SYS, "gtk"))
+	{
+		/* Catch nasty signals */
+		signals_init();
 
-	/* Catch nasty signals */
-	signals_init();
-
-	/* Initialize */
-	init_angband();
-
+		/* Initialize */
+		init_angband();
+	}
+	
 	/* Wait for response */
 	pause_line(23);
 

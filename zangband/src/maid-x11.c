@@ -54,8 +54,6 @@ u32b create_pixel(Display *dpy, byte red, byte green, byte blue)
 
 #ifdef SUPPORT_GAMMA
 
-	
-
 	if (!gamma_table_ready)
 	{
 		cptr str = getenv("ANGBAND_X11_GAMMA");
