@@ -108,7 +108,8 @@ BORGOBJS := \
 ## The list of ports available
 ##
 PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx amiga
+         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx amiga \
+		 borland
 
 ##
 ## Following are some "system" definitions
@@ -320,6 +321,7 @@ emx: CFLAGS := -MMD -O3 -DUSE_EMX -Zmt -Wall
 emx: LDFLAGS := -lvideo
 emx: AR := ar
 emx: OTHEROBJS := main-epm.o zangband.a
+emx: EXEC := .exe
 emx: INSTALL := \
 	copy zangband.exe ..\
 	emxbind -s ..\zangband.exe\
@@ -347,6 +349,21 @@ amiga: CC := sc
 amiga: CFLAGS := DEFINE AMIGA DEFINE USE_AMI
 amiga: OTHEROBJS := sound-ami.o
 amiga: INSTALL :=  # Fixme
+
+##
+## Variation -- Compile using Borland C++ 5.5 (Win32)
+##
+borland: CC := bcc32
+borland: LD := ilink32 -aa -x
+borland: RES := brc32
+borland: RESCMD := -r angband.rc
+borland: OTHEROBJS := angband.res c0w32.obj
+borland: CFLAGS := -Hc -tW -lGn -e$(EXE_FILE) -w- \
+		-D_WIN32_WINNT=0x0400 -DWINVER=0x0400
+borland: LDFLAGS := ,,
+borland: LIBS := cw32.lib import32.lib
+borland: INSTALL := copy zangband.exe ..
+borland: EXEC := .exe
 
 
 
