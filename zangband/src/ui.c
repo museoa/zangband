@@ -1476,7 +1476,7 @@ bool get_check(cptr prompt, ...)
 		i = inkey();
 		if (quick_messages) break;
 		if (i == ESCAPE) break;
-		if (strchr("YyNn\n\r", i)) break;
+		if (strchr("YyNn", i)) break;
 		bell("Illegal response to a 'yes/no' question!");
 	}
 
@@ -1486,7 +1486,7 @@ bool get_check(cptr prompt, ...)
 	/* Success? */
 	switch (i)
 	{
-		case 'y': case 'Y': case '\n': case '\r':
+		case 'y': case 'Y':
 			return (TRUE);
 		default:
 			return (FALSE);
