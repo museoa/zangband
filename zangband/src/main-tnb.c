@@ -38,11 +38,13 @@ char tnb_tile_file[1024];
 char tnb_font_file[1024];
 int tnb_font_size;
 
-void tnb_get_term(int x, int y, byte *a, char *c)
+void tnb_get_term(int x, int y, byte *a, char *c, byte *ta, char *tc)
 {
 	/* Get the term information */
 	*a = data.scr->a[y][x];
 	*c = data.scr->c[y][x];
+	*ta = data.scr->ta[y][x];
+	*tc = data.scr->tc[y][x];
 }
 
 static errr Term_user_tnb(int n)
