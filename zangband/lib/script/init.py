@@ -13,7 +13,7 @@ try:
 	import vars
 
 	from util import autorun
-	autorun.autorun_dir("startup")
+	#autorun.autorun_dir("startup")
 except:
 	import traceback
 	traceback.print_exc()
