@@ -35,7 +35,7 @@
 # and use those symbols for the recall window.  In theory, normally,
 # these monsters cannot be targetted, and when examined look like normal
 # objects, until the player "notices" them (perhaps check "awake").
-
+	
 # Note that there are (a few) normal monsters who are "violet" but not
 # ATTR_MULTI, and a lot of monsters which are "white" but not ATTR_CLEAR.
 
@@ -209,11 +209,14 @@ W:0:4:0:0
 B:HIT:HURT:1d3
 F:UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE | FRIENDLY
 F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY
-F:ONLY_ITEM | DROP_90 | DROP_GOOD | 
+F:ONLY_ITEM | DROP_90 | DROP_GOOD | DROP_GREAT
 F:OPEN_DOOR | BASH_DOOR | 
 F:NO_CONF | NO_SLEEP
-D:He's lost his dogs.  He's had his mushrooms stolen.  He's not a happy 
-D:hobbit!
+D:Before you appears a broad thick-set hobbit with a round red face. 
+D:"What's wrong with old Maggot?" asked Pippin.  "He's a good friend to 
+D:all the Brandybucks.  Of course he's a terror to trespassers, and keeps 
+D:ferocious dogs -- but after all, folk down here are near the border and 
+D:have to be more on their guard." 
 
 N:9:Blubbering idiot
 G:t:W
@@ -266,18 +269,18 @@ F:RAND_25 | WILD_TOWN | WILD_ONLY
 F:TAKE_ITEM | OPEN_DOOR
 D:You feel it isn't safe to touch him.
 
-N:14:Agent of black market
+N:14:Juvenile Thief
 G:t:D
 I:110:2d8:10:8:99
 W:0:1:0:0
 B:HIT:HURT:1d6
-B:TOUCH:EAT_ITEM
+B:TOUCH:EAT_GOLD
 F:MALE | DROP_CORPSE | DROP_SKELETON
 F:DROP_60 | WILD_TOWN |
 F:WILD_SWAMP | WILD_WOOD | WILD_GRASS | WILD_MOUNTAIN | WILD_ONLY
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL
-D:He 'finds' new wares for the Black Market. From unwary adventurers... 
+D:This town kid doesn't really have a handle on stealing yet. 
 
 N:15:Singing, happy drunk
 G:t:y
@@ -397,8 +400,8 @@ D:It is about four feet long and carnivorous.
 
 N:25:White icky thing
 G:i:w
-I:110:3d5:12:7:10
-W:1:1:0:2
+I:110:2d5:12:7:10
+W:1:1:0:1
 B:TOUCH:HURT:1d2
 F:RAND_50 | RAND_25 | CAN_SWIM |
 F:EMPTY_MIND | DROP_CORPSE
@@ -406,8 +409,8 @@ D:It is a smallish, slimy, icky creature.
 
 N:26:Clear icky thing
 G:i:B
-I:110:2d5:12:6:10
-W:1:1:0:1
+I:110:3d5:12:6:10
+W:2:1:0:1
 B:TOUCH:HURT:1d2
 F:ATTR_CLEAR | CAN_SWIM |
 F:RAND_50 | RAND_25 | 
@@ -447,9 +450,9 @@ D:It is a squat and ugly humanoid figure.
 
 N:30:Kobold
 G:k:g
-I:110:3d7:20:16:10
-W:1:1:0:5
-B:HIT:HURT:1d6
+I:110:5d5:20:16:10
+W:3:1:0:3
+B:HIT:HURT:1d8
 F:DROP_60 | WILD_TOO |
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
 F:EVIL | IM_POIS
@@ -530,19 +533,14 @@ F:WILD_WOOD | WILD_SWAMP
 D:A lone insect may be harmless, but there's a whole swarm of 
 D:them here!
 
-N:39:Greater hell-beast
-G:U:s
-I:115:15d100:10:100:99
-W:1:6:0:25
+N:39:Topi Ylinen, the Cute, Furry Bunny
+G:r:U
+I:100:1d10:10:1:99
+W:1:100:0:25
 B:GAZE
-B:GAZE
-B:CRUSH
-F:EVIL | IM_ACID | IM_ELEC | IM_FIRE | IM_POIS | IM_COLD |
-F:RES_NETH | RES_WATE | RES_PLAS | RES_DISE | RES_NEXU |
-F:KILL_WALL | FORCE_MAXHP | CAN_SWIM | DROP_CORPSE
-S:1_IN_9 |
-S:TPORT | BLINK | TELE_AWAY
-D:This unholy abomination will crush you. Flee while you can! 
+F:UNIQUE | CAN_SPEAK | WILD_ONLY | WILD_WOOD | FRIENDLY
+D:Aw, it's a cute widdle bunny wabbit.  You get a vague feeling of
+D:uneasiness from it. 
 
 N:40:Shrieker mushroom patch
 G:,:R
@@ -788,7 +786,8 @@ I:120:3d5:40:12:0
 W:2:2:0:8
 B:BITE:HURT:1d3
 B:BITE:HURT:1d3
-F:ANIMAL | WILD_ONLY | CAN_FLY | DROP_CORPSE | FORCE_MAXHP
+F:ANIMAL | WILD_ONLY | CAN_FLY | DROP_CORPSE | FORCE_MAXHP | WILD_GRASS 
+F:WILD_WOOD |
 D:It is a hooded crow, gray except for the black wings and head.
 
 N:62:Wild cat
@@ -813,7 +812,15 @@ F:RAND_50 | RAND_25 | WILD_TOO |
 F:ONLY_ITEM | DROP_90 | DROP_GOOD | DROP_GREAT |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | INVISIBLE
 F:EVIL
-D:He's been sneaking, and he wants his 'precious.'
+D:"Down the face of a precipice, sheer and almost smooth it seemed in the pale 
+D:moonlight, a small black shape was moving with its thin limbs splayed out. 
+D:Maybe its soft clinging hands and toes were used, but it looked as if it was 
+D:just creeping down on sticky pads, like some large prowling thing of 
+D:insect-kind.  And it was coming down head first, as if it was smelling its 
+D:way.  Now and again it lifted its head slowly, turning it right back on its 
+D:long skinny neck, and the hobbits caught a glimpse of two small pale gleaming 
+D:lights, its eyes that blinked at the moon for a moment and then were quickly 
+D:lidded again." 
 
 N:64:Green ooze
 G:j:g
@@ -869,7 +876,8 @@ I:120:4d5:40:12:0
 W:3:2:0:8
 B:BITE:HURT:1d4
 B:BITE:HURT:1d4
-F:ANIMAL | WILD_ONLY | CAN_FLY | DROP_CORPSE | FORCE_MAXHP
+F:ANIMAL | WILD_ONLY | CAN_FLY | DROP_CORPSE | FORCE_MAXHP | WILD_GRASS |
+F:WILD_WOOD
 D:Larger than a crow, pitch black.
 
 N:69:Giant white louse
@@ -1129,7 +1137,7 @@ F:DROP_60 | OPEN_DOOR | BASH_DOOR | FRIENDS | DROP_CORPSE |
 F:WILD_TOO | WILD_WOOD
 S:1_IN_8
 S:ARROW_1
-D:A cute little bear, full of merchandising potential. 
+D:A cute, furry little animal, full of merchandising potential. 
 
 N:93:Novice mage
 G:p:R
@@ -1343,7 +1351,7 @@ B:TOUCH:EAT_GOLD
 F:MALE | 
 F:FRIENDS | DROP_60 | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | HURT_LITE | RES_DISE | DROP_SKELETON | DROP_CORPSE
+F:HURT_LITE | RES_DISE | DROP_SKELETON | DROP_CORPSE
 D:Night dwarfs collecting new riches for their master, Alberich. 
 
 N:112:Disembodied hand that strangled people
@@ -1381,11 +1389,10 @@ G:r:R
 I:120:9d10:12:20:20
 W:6:1:0:10
 B:BITE:HURT:3d2
-B:BITE:HURT:3d1
 B:BITE:HURT:3d2
 F:EVIL | ANIMAL | DROP_CORPSE
 S:1_IN_9
-S:SCARE | CONF
+S:SCARE
 D:A ratlike creature with a humanlike face. "The bones of the 
 D:tiny paws, it is rumoured, imply prehensile characteristics 
 D:more typical of a diminutive monkey than a of a rat; while the 
@@ -1657,7 +1664,10 @@ F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON
 F:EVIL | RES_TELE
 S:1_IN_5 | 
 S:HEAL | SLOW | TRAPS | BO_COLD | BA_POIS
-D:He's been spying for Saruman.  He is a snivelling wretch with no morals.
+D:He's been spying for Saruman.  He is a snivelling wretch with no morals. 
+D:"At [Theoden's] feet upon the steps sat a wizened figure of a man, with a 
+D:pale wise face and heavy-lidded eyes...he laughed grimly, as he lifted his 
+D:heavy lids for a moment and gazed on the strangers with dark eyes." 
 
 N:138:Robin Hood, the Outlaw
 G:p:G
@@ -1700,7 +1710,9 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
 F:OPEN_DOOR | BASH_DOOR | CAN_SPEAK | DROP_SKELETON | DROP_CORPSE
 F:EVIL | ORC
 D:A captain of a regiment of weaker orcs, Lagduf keeps his troop in order 
-D:with displays of excessive violence.
+D:with displays of excessive violence. 
+D:"I've told you twice that Gorbag's swine got to the gate first, and none 
+D:of ours got out.  Lagduf and Muzgash ran through, but they were shot." 
 
 N:141:Brown yeek
 G:y:u
@@ -1843,7 +1855,7 @@ B:CLAW:EAT_FOOD:1d2
 B:BITE:EAT_FOOD:1d3
 F:MULTIPLY | IM_POIS | HURT_LITE | EVIL | DEMON | OPEN_DOOR | 
 F:TAKE_ITEM | CAN_SWIM 
-D:Don't feed them after midnight!
+D:Don't splash water on them, and don't feed them after midnight!
 
 N:154:Yeti
 G:Y:w
@@ -2050,7 +2062,11 @@ F:UNIQUE | MALE | EVIL
 F:FORCE_MAXHP | CAN_SPEAK | WILD_TOO | DROP_SKELETON | DROP_CORPSE
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:OPEN_DOOR | BASH_DOOR
-D:A nasty piece of work, Brodda picks on defenseless women and children.
+D:A nasty piece of work, Brodda picks on defenseless women and children. 
+D:"And Morwen was gone.  Empty stood her house, broken and cold.  It was 
+D:more than a year since she departed to Doriath.  Brodda the Easterling 
+D:(who had wedded Morwen's kinswoman Airin) had plundered her house, and 
+D:taken all that was left of her goods." 
 
 N:170:Bloodfang the Wolf
 G:C:R
@@ -2264,7 +2280,9 @@ B:HIT:HURT:1d10
 F:UNIQUE | MALE | CAN_SPEAK | FORCE_MAXHP | ESCORT | WILD_TOO |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | DROP_SKELETON | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | EVIL | ORC | IM_POIS
-D:He is a cunning and devious orc with a chaotic nature.
+D:He is a cunning and devious orc. 
+D:"Grishnakh [was] a short crook-legged creature, very broad and with 
+D:long arms that hung almost to the ground." 
 
 N:187:Giant piranha
 G:~:B
