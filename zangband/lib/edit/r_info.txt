@@ -3287,7 +3287,7 @@ F:NEVER_MOVE | DROP_60 | EVIL | DEMON | DROP_CORPSE
 F:IM_POIS | IM_COLD | IM_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
 F:RES_DISE
 S:1_IN_6
-S:BO_ACID | CONFUSE | DRAIN_MANA
+S:BO_ACID | CONF | DRAIN_MANA
 D:A creature like a giant purple Buddha with lots of teeth.
 D:  It eats sorcerors.
 
