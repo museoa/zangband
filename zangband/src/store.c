@@ -607,11 +607,8 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 		(o_ptr->flags3 != j_ptr->flags3))
 			return (FALSE);
 
-	if (o_ptr->tval != TV_LITE)
-	{
-		/* Hack -- Never stack recharging items */
-		if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
-	}
+	/* Require identical recharge times / fuel level */
+	if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
 
 	/* Require many identical values */
 	if (o_ptr->ac != j_ptr->ac)   return (FALSE);
