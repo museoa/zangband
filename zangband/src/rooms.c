@@ -2747,12 +2747,41 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int 
 
 
 /*
+ * Structure to hold all "fill" data
+ */
+
+typedef struct fill_data fill_data;
+
+struct fill_data
+{
+	
+	/* area center */
+	int y0;
+	int x0;
+	
+	/* area size */
+	int xsize;
+	int ysize;
+	
+	/* cutoffs */
+	int c1;
+	int c2;
+	int c3;
+	
+	/* features to fill with */
+	int feat1;
+	int feat2;
+	int feat3;
+	
+	/* number of filled squares */
+	int amount;
+};
+
+/*
  * Quick and nasty fill routine used to find the connected region
  * of floor in the middle of the cave
  */
-static void fill_hack(int y0, int x0, int y, int x,
-					  int xsize, int ysize, int c1, int c2, int c3,
-					  int feat1, int feat2, int feat3, int *amount)
+static void fill_hack(int y, int x, fill_data *fill)
 {
 	int i, j;
 
@@ -2763,28 +2792,32 @@ static void fill_hack(int y0, int x0, int y, int x,
 		for (j = -1; j <= 1; j++)
 		{
 			/* Don't leave the cave */
-			if (!in_bounds(y0 + y + j - ysize / 2, x0 + x + i - xsize / 2))
+			if (!in_bounds(fill->y0 + y + j - fill->ysize / 2,
+				fill->x0 + x + i - fill->xsize / 2))
 				return;
 			
 			/* If within bounds */
-			if ((x + i > 0) && (x + i < xsize) && (y + j > 0) && (y + j < ysize))
+			if ((x + i > 0) && (x + i < fill->xsize)
+				&& (y + j > 0) && (y + j < fill->ysize))
 			{
 				/* If not a wall or floor done before */
-				if (hack_isnt_wall(y + j + y0 - ysize / 2, x + i + x0 - xsize / 2,
-				      c1, c2, c3, feat1, feat2, feat3))
+				if (hack_isnt_wall(y + j + fill->y0 - fill->ysize / 2,
+					x + i + fill->x0 - fill->xsize / 2,
+					fill->c1, fill->c2, fill->c3,
+					fill->feat1, fill->feat2, fill->feat3))
 		 		{
 					/* then fill from the new point */
-					fill_hack(y0, x0, y + j, x + i, xsize, ysize,
-						c1, c2, c3, feat1, feat2, feat3, amount);
+					fill_hack(y + j, x + i, fill);
 
 					/* keep tally of size of cave system */
-					(*amount)++;
+					(fill->amount)++;
 				}
 			}
 			else
 			{
 				/* affect boundary */
-				cave[y0 + y + j - ysize / 2][x0 + x + i - xsize / 2].info |= CAVE_ICKY;
+				cave[fill->y0 + y + j - fill->ysize / 2]
+					[fill->x0 + x + i - fill->xsize / 2].info |= CAVE_ICKY;
 			}
 		}
 	}
@@ -2793,25 +2826,45 @@ static void fill_hack(int y0, int x0, int y, int x,
 
 static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, bool light, bool room)
 {
-	int x, y, i, amount, xhsize, yhsize;
+	int x, y, i, xhsize, yhsize;
+	fill_data fill;
 
 	/* offsets to middle from corner */
 	xhsize = xsize / 2;
 	yhsize = ysize / 2;
 
-	/* tally = 0 */
-	amount = 0;
 
 	/*
 	 * select region connected to center of cave system
 	 * this gets rid of alot of isolated one-sqaures that
 	 * can make teleport traps instadeaths...
 	 */
-	fill_hack(y0, x0, yhsize, xhsize, xsize, ysize, cutoff, 0, 0,
-	          FEAT_FLOOR, FEAT_FLOOR, FEAT_FLOOR, &amount);
+
+	/* area center */
+	fill.y0=y0;
+	fill.x0=x0;
+	
+	/* area size */
+	fill.xsize=xsize;
+	fill.ysize=ysize;
+	
+	/* cutoffs */
+	fill.c1=cutoff;
+	fill.c2=0;
+	fill.c3=0;
+	
+	/* features to fill with */
+	fill.feat1=FEAT_FLOOR;
+	fill.feat2=FEAT_FLOOR;
+	fill.feat3=FEAT_FLOOR;
+	
+	/* number of filled squares */
+	fill.amount=0;
+	
+	fill_hack(yhsize, xhsize, &fill);
 
 	/* if tally too small, try again */
-	if (amount < 10)
+	if (fill.amount < 10)
 	{
 		/* too small - clear area and try again later */
 		for (x = 0; x <= xsize; ++x)
@@ -3047,8 +3100,9 @@ void build_cavern(void)
 
 static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, int c3, int type)
 {
-	int x, y, i, amount, xhsize, yhsize;
+	int x, y, i, xhsize, yhsize;
 	int feat1, feat2, feat3;
+	fill_data fill;
 
 	/* offsets to middle from corner */
 	xhsize = xsize / 2;
@@ -3104,16 +3158,40 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 		default: return FALSE;
 	}
 
-	/* tally = 0 */
-	amount = 0;
+	/*
+	 * select region connected to center of cave system
+	 * this gets rid of alot of isolated one-sqaures that
+	 * can make teleport traps instadeaths...
+	 */
+
+	/* area center */
+	fill.y0=y0;
+	fill.x0=x0;
+	
+	/* area size */
+	fill.xsize=xsize;
+	fill.ysize=ysize;
+	
+	/* cutoffs */
+	fill.c1=c1;
+	fill.c2=c2;
+	fill.c3=c3;
+	
+	/* features to fill with */
+	fill.feat1=feat1;
+	fill.feat2=feat2;
+	fill.feat3=feat3;
+	
+	/* number of filled squares */
+	fill.amount=0;
 
 	/* select region connected to center of cave system
 	* this gets rid of alot of isolated one-sqaures that
 	* can make teleport traps instadeaths... */
-	fill_hack(y0, x0, yhsize, xhsize, xsize, ysize, c1, c2, c3, feat1, feat2, feat3, &amount);
+	fill_hack(yhsize, xhsize, &fill);
 
 	/* if tally too small, try again */
-	if (amount < 10)
+	if (fill.amount < 10)
 	{
 		/* too small -clear area and try again later */
 		for (x = 0; x <= xsize; ++x)
@@ -3185,6 +3263,13 @@ void build_lake(int type)
 	int grd, roug, xsize, ysize, x0, y0;
 	bool done = FALSE;
 	int c1, c2, c3;
+
+    /* paranoia - exit if lake type out of range.*/
+	if ((type<1)||(type>7)) 
+	   {
+	   msg_format("Invalid lake type (%d)", type);
+	   return;
+	   }
 
 	/* Make the size of the dungeon */
 	xsize = cur_wid - 1;
