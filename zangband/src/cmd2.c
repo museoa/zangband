@@ -1612,12 +1612,15 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	bool more = FALSE;
 	
 	int xp;
-
-	/* Take a turn */
-	energy_use = 100;
 	
 	/* Get trap */
 	fld_idx = field_first_known(c_ptr->fld_idx, FTYPE_TRAP);
+	
+	/* This should never happen - no trap here to disarm */
+	if (!fld_idx) return (FALSE);
+	
+	/* Take a turn */
+	energy_use = 100;
 	
 	/* Point to field */
 	f_ptr = &fld_list[fld_idx];
