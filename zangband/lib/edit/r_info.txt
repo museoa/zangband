@@ -9989,27 +9989,27 @@ N:708:Ent
 G:#:G
 I:120:40d100:30:120:15
 W:46:3:0:12500
-B:CRUSH:HURT:12d13
-B:CRUSH:HURT:12d13
-B:CRUSH:HURT:12d13
-B:CRUSH:HURT:12d13
+B:CRUSH:HURT:10d11
+B:CRUSH:HURT:10d11
+B:CRUSH:HURT:10d11
+B:CRUSH:HURT:10d11
 F:FORCE_SLEEP | FORCE_MAXHP | FRIENDLY |
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | MOVE_BODY |
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
-F:GOOD | ANIMAL 
-D:A treeherd, a sentient, moving tree. Its wrath is fearsome!
+F:GOOD | GIANT | MALE
+D:A treeherd; a sentient, moving tree. Its wrath is fearsome!
 
 N:709:Hru
 G:P:s
 I:120:40d100:30:150:15
 W:56:3:0:14500
-B:HIT:SHATTER:12d13
-B:HIT:SHATTER:12d13
-B:HIT:SHATTER:12d13
-B:HIT:SHATTER:12d13
+B:CRUSH:SHATTER:10d11
+B:CRUSH:SHATTER:10d11
+B:CRUSH:SHATTER:10d11
+B:CRUSH:SHATTER:10d11
 F:FORCE_SLEEP | FORCE_MAXHP | HURT_ROCK |
 F:ONLY_GOLD | DROP_4D2 | MOVE_BODY | KILL_WALL |
-F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
+F:SMART | KILL_ITEM | BASH_DOOR |
 F:EVIL | GIANT | MALE
 D:A rock giant, a being made of living stone.
 
@@ -10066,18 +10066,18 @@ D:The mighty dragon of the Norse myth, Fafner was a giant who slew his
 D:brother to win a treasure hoard, and then transformed himself into 
 D:a dragon, greedily watching over his hoard.
 
-N:713:Fangorn the Treebeard
+N:713:Fangorn
 G:#:G
 I:120:50d100:30:120:15
 W:47:3:0:13500
-B:CRUSH:HURT:13d13
-B:CRUSH:HURT:13d13
-B:CRUSH:HURT:13d13
-B:CRUSH:HURT:13d13
+B:CRUSH:HURT:12d11
+B:CRUSH:HURT:12d11
+B:CRUSH:HURT:12d11
+B:CRUSH:HURT:12d11
 F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | CAN_SPEAK |
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | MOVE_BODY |
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
-F:GOOD | ANIMAL | FRIENDLY
+F:GOOD | GIANT | FRIENDLY | MALE
 D:The oldest of all ents, a respected and feared ancient creature.
 
 N:714:Zhar the Twin Obscenity
