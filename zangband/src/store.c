@@ -311,10 +311,10 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	{
 		/* Comment */
 		msg_print(comment_7c[rand_int(MAX_COMMENT_7C)]);
-		
-		if (randint(4)==1)
+
+		if (randint(4) == 1)
 			chg_virtue(V_HONOUR, -1);
-		else if (randint(4)==1)
+		else if (randint(4) == 1)
 			chg_virtue(V_HONOUR, 1);
 
 		/* Sound */
@@ -2665,15 +2665,15 @@ static void store_purchase(void)
 			{
 				/* Say "okay" */
 				say_comment_1();
-				
+
 				if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
 					chg_virtue(V_JUSTICE, -1);
-				if((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
+				if ((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
 					chg_virtue(V_NATURE, -1);
 
 				/* Make a sound */
 				sound(SOUND_BUY);
-				
+
 				/* Be happy */
 				decrease_insults();
 
@@ -2975,9 +2975,9 @@ static void store_sell(void)
 			if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
 				chg_virtue(V_JUSTICE, -1);
 
-			if((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
+			if ((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
 				chg_virtue(V_NATURE, 1);
-			
+
 			/* Be happy */
 			decrease_insults();
 
@@ -3472,7 +3472,7 @@ static void store_process_command(void)
 	}
 }
 
-/* 
+/*
  * Deallocate stores stock.
  *
  * This routine is used to deallocate the first store in the
@@ -3482,41 +3482,41 @@ void deallocate_store(void)
 {
 	int i;
 	store_type *home;
-	
+
 	/* Return if there are no stores with stock */
 	if (store_cache_num == 0) return;
-	
+
 	/* Do not deallocate homes */
 	while (store_cache[0]->type == STORE_HOME)
 	{
 		/* Hack - move home to end of cache */
-		
+
 		/* Keep track of stuff in home */
 		home = store_cache[0];
-		
+
 		/* Resort the rest of the stores */
 		for (i = 1; i < store_cache_num; i++)
 		{
-			store_cache[i-1] = store_cache[i];
+			store_cache[i - 1] = store_cache[i];
 		}
-		
+
 		/* Move home to the end */
-		store_cache[store_cache_num-1] = home;	
+		store_cache[store_cache_num - 1] = home;
 	}
-	
+
 	/* Delete store least used. */
 	C_FREE(store_cache[0]->stock, store_cache[0]->stock_size, object_type);
-	
+
 	/* No stock */
 	store_cache[0]->stock_num = 0;
 	store_cache[0]->stock = NULL;
-		
+
 	/* Shift all other stores down the cache to fill the gap */
 	for (i = 1; i < store_cache_num; i++)
 	{
 		store_cache[i-1] = store_cache[i];
 	}
-	
+
 	/* Decrease number of stores with stock */
 	store_cache_num--;
 }
@@ -3531,7 +3531,7 @@ void deallocate_store(void)
 bool allocate_store(store_type *store)
 {
 	int i, n = 0;
-	
+
 	/* See if store has stock. */
 	if (store->stock != NULL)
 	{
@@ -3546,40 +3546,41 @@ bool allocate_store(store_type *store)
 				break;
 			}
 		}
-		
+
 		/* Resort order based on last_visit */
 		for (i = n + 1; i < store_cache_num; i++)
 		{
 			store_cache[i-1] = store_cache[i];
 		}
-		
+
 		/* Move current one to end */
 		store_cache[store_cache_num-1] = store;
-		
+
 		/* (No need to maintain store) */
-		return FALSE;	
+		return FALSE;
 	}
-	
+
 	/* Store does not have stock - so need to allocate. */
-	
+
 	/* See if cache is full */
 	if (store_cache_num == STORE_CACHE_AMNT)
 	{
 		/* Delete least used store */
-		deallocate_store();	
+		deallocate_store();
 	}
-	
+
 	/* Add store to end of cache */
 	store_cache[store_cache_num] = store;
-	
+
 	C_MAKE(store->stock, store->stock_size, object_type);
-	
+
 	/* The number in the cache has increased */
 	store_cache_num++;
-	
+
 	/* (Need to maintain stores) */
-	return TRUE; 
+	return TRUE;
 }
+
 
 /*
  * Enter a store, and interact with it.
@@ -3612,7 +3613,7 @@ void do_cmd_store(void)
 	}
 
 	/* Extract the store code */
-	
+
 	/* Later will have to modify data structures so multiple stores
 	 * of same type can exist in a town.
 	 * (Need to wait for python though - will probably be with "hotspot"
@@ -3637,7 +3638,6 @@ void do_cmd_store(void)
 		/* Hack - Maintain store if it is just allocated. */
 		maintain_num++;
 	}
-		
 
 	/* Maintain the store max. 20 times */
 	if (maintain_num > 20) maintain_num = 20;
@@ -3650,7 +3650,7 @@ void do_cmd_store(void)
 
 		/* Save the visit */
 		town[p_ptr->town_num].store[which].last_visit = turn;
-		
+
 		/* Store the type */
 		town[p_ptr->town_num].store[which].type = which;
 	}
@@ -4068,11 +4068,11 @@ void move_to_black_market(object_type *o_ptr)
 	if (allocate_store(st_ptr))
 	{
 		store_maint(p_ptr->town_num, STORE_BLACK);
-		
+
 		/* Store the type */
 		town[p_ptr->town_num].store[STORE_BLACK].type = STORE_BLACK;
 	}
-	
+
 	o_ptr->ident |= IDENT_STOREB;
 
 	(void)store_carry(o_ptr);

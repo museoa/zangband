@@ -1674,8 +1674,8 @@ void prt_map(void)
 #ifdef USE_TRANSPARENCY
 			byte ta;
 			char tc;
-	
-			if(!in_bounds2(y,x))
+
+			if (!in_bounds2(y, x))
 			{
 				/* Outside the wilderness */
 				a = TERM_WHITE;
@@ -1696,14 +1696,14 @@ void prt_map(void)
 			}
 
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
-			
-			if(!in_bounds2(y,x))
+
+			if (!in_bounds2(y, x))
 			{
 				/* Outside the wilderness */
-				a = TERM_WHITE;				
-				c = '#';				
+				a = TERM_WHITE;
+				c = '#';
 			}
 			else
 			{
@@ -1719,7 +1719,7 @@ void prt_map(void)
 			}
 
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c);
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
 		}
 	}
@@ -2695,10 +2695,10 @@ static int scan_grid(int y, int x)
 	cave_type *c_ptr;
 
 	/* In bounds? */
-	if (!in_bounds2(y,x)) return FALSE;
-	
-	c_ptr = area(y,x);
-	
+	if (!in_bounds2(y, x)) return FALSE;
+
+	c_ptr = area(y, x);
+
 	c_ptr->info |= (CAVE_XTRA);
 	cave_view_hack(c_ptr, y, x);
 
@@ -2811,7 +2811,7 @@ void update_view(void)
 
 	int y_max;
 	int x_max;
-	
+
 	int y_min;
 	int x_min;
 
@@ -2821,18 +2821,17 @@ void update_view(void)
 	{
 		y_max = wild_grid.y_max - 1;
 		x_max = wild_grid.x_max - 1;
-		
+
 		y_min = wild_grid.y_min;
 		x_min = wild_grid.x_min;
-	
 	}
 	else
 	{
 		y_max = cur_hgt - 1;
 		x_max = cur_wid - 1;
-		
+
 		y_min = 0;
-		x_min = 0;	
+		x_min = 0;
 	}
 
 
@@ -3300,8 +3299,8 @@ void forget_flow(void)
 			for (x = wild_grid.x_min; x < wild_grid.x_max - 1; x++)
 			{
 				/* Forget the old data */
-				area(y,x)->cost = 0;
-				area(y,x)->when = 0;
+				area(y, x)->cost = 0;
+				area(y, x)->when = 0;
 			}
 		}
 	}
@@ -3313,12 +3312,10 @@ void forget_flow(void)
 			for (x = 0; x < cur_wid; x++)
 			{
 				/* Forget the old data */
-				area(y,x)->cost = 0;
-				area(y,x)->when = 0;
+				area(y, x)->cost = 0;
+				area(y, x)->when = 0;
 			}
 		}
-	
-	
 	}
 
 	/* Start over */
@@ -3408,17 +3405,16 @@ void update_flow(void)
 
 	/* Cycle the old entries (once per 128 updates) */
 	if (flow_n == 255)
-	{		
-		if(!dun_level)
+	{
+		if (!dun_level)
 		{
-		
 			/* Rotate the time-stamps */
 			for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
 			{
 				for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
 				{
-					int w = area(y,x)->when;
-					area(y,x)->when = (w > 128) ? (w - 128) : 0;
+					int w = area(y, x)->when;
+					area(y, x)->when = (w > 128) ? (w - 128) : 0;
 				}
 			}
 		}
@@ -3429,12 +3425,12 @@ void update_flow(void)
 			{
 				for (x = 0; x < cur_wid; x++)
 				{
-					int w = area(y,x)->when;
-					area(y,x)->when = (w > 128) ? (w - 128) : 0;
+					int w = area(y, x)->when;
+					area(y, x)->when = (w > 128) ? (w - 128) : 0;
 				}
 			}
 		}
-		
+
 		/* Restart */
 		flow_n = 127;
 	}
@@ -3492,7 +3488,7 @@ void map_area(void)
 	x1 = panel_col_min - randint(20);
 	x2 = panel_col_max + randint(20);
 
-	if(!dun_level)
+	if (!dun_level)
 	{
 		/* Speed -- shrink to fit legal bounds */
 		if (y1 < wild_grid.y_min + 1) y1 = wild_grid.y_min + 1;
@@ -3506,7 +3502,7 @@ void map_area(void)
 		if (y1 < 1) y1 = 1;
 		if (y2 > cur_hgt - 2) y2 = cur_hgt - 2;
 		if (x1 < 1) x1 = 1;
-		if (x2 > cur_wid - 2) x2 = cur_wid - 2;	
+		if (x2 > cur_wid - 2) x2 = cur_wid - 2;
 	}
 
 	/* Scan that area */
@@ -3612,7 +3608,7 @@ void wiz_lite(void)
 	}
 
 	if (!dun_level)
-	{	
+	{
 		/* Scan all normal grids */
 		for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
 		{
@@ -3630,7 +3626,7 @@ void wiz_lite(void)
 		}
 	}
 	else
-	{	
+	{
 		/* Scan all normal grids */
 		for (y = 0; y < cur_hgt; y++)
 		{
@@ -3645,9 +3641,9 @@ void wiz_lite(void)
 					c_ptr->info |= (CAVE_MARK);
 				}
 			}
-		}	
+		}
 	}
-	
+
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 
@@ -3666,7 +3662,7 @@ void wiz_dark(void)
 {
 	int i, y, x;
 
-	
+
 	if (!dun_level)
 	{
 		/* Forget every grid */
@@ -3674,7 +3670,7 @@ void wiz_dark(void)
 		{
 			for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
 			{
-				cave_type *c_ptr = area(y,x);
+				cave_type *c_ptr = area(y, x);
 
 				/* Process the grid */
 				c_ptr->info &= ~(CAVE_MARK);
@@ -3683,18 +3679,18 @@ void wiz_dark(void)
 
 	}
 	else
-	{	
+	{
 		/* Forget every grid */
 		for (y = 0; y < cur_hgt; y++)
 		{
 			for (x = 0; x < cur_wid; x++)
 			{
-				cave_type *c_ptr = area(y,x);
-	
+				cave_type *c_ptr = area(y, x);
+
 				/* Process the grid */
 				c_ptr->info &= ~(CAVE_MARK);
 			}
-		}	
+		}
 	}
 	/* Forget all objects */
 	for (i = 1; i < o_max; i++)

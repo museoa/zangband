@@ -463,20 +463,20 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		x = x1 + ddx_ddd[i];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(y,x)) continue;
-		
+		if (!in_bounds2(y, x)) continue;
+
 		/* Ignore illegal locations */
-		if (!area(y,x)->when) continue;
+		if (!area(y, x)->when) continue;
 
 		/* Ignore ancient locations */
-		if (area(y,x)->when < when) continue;
+		if (area(y, x)->when < when) continue;
 
 		/* Ignore distant locations */
-		if (area(y,x)->cost > cost) continue;
+		if (area(y, x)->cost > cost) continue;
 
 		/* Save the cost and time */
-		when = area(y,x)->when;
-		cost = area(y,x)->cost;
+		when = area(y, x)->when;
+		cost = area(y, x)->cost;
 
 		/* Hack -- Save the "twiddled" location */
 		(*yp) = py + 16 * ddy_ddd[i];
@@ -539,13 +539,13 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 		x = fx + ddx_ddd[i];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(y,x)) continue;
-		
+		if (!in_bounds2(y, x)) continue;
+
 		/* Ignore illegal locations */
-		if (area(y,x)->when == 0) continue;
+		if (area(y, x)->when == 0) continue;
 
 		/* Ignore ancient locations */
-		if (area(y,x)->when < when) continue;
+		if (area(y, x)->when < when) continue;
 
 		/* Calculate distance of this grid from our destination */
 		dis = distance(y, x, y1, x1);
@@ -786,7 +786,7 @@ static bool get_moves(int m_idx, int *mm)
 			{
 				int x = px + ddx_ddd[i];
 				int y = py + ddy_ddd[i];
-				
+
 				/* Check grid */
 				if (monster_can_cross_terrain(area(y,x)->feat, r_ptr))
 				{
@@ -1372,15 +1372,15 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Message */
 			if (act && see_either)
 			{
-			          if ((p_ptr->image) && (randint(3)==1))
-				  {
-                                        strfmt(temp, "%s %s.",
-                                                        silly_attacks[randint(MAX_SILLY_ATTACK)-1],t_name);
-				  }
-                                else
-                                        strfmt(temp, act, t_name);
+				if ((p_ptr->image) && (randint(3) == 1))
+				{
+					strfmt(temp, "%s %s.",
+					       silly_attacks[randint(MAX_SILLY_ATTACK)-1],t_name);
+				}
+				else
+					strfmt(temp, act, t_name);
 
-                                msg_format("%^s %s", m_name, temp);
+				msg_format("%^s %s", m_name, temp);
 			}
 
 			/* Hack -- assume all attacks are obvious */
@@ -2029,9 +2029,9 @@ static void process_monster(int m_idx)
 			for (x = ox - 1; x <= ox + 1; x++)
 			{
 				/* Ignore locations off of edge */
-				if (!in_bounds2(y,x)) continue;
-				
-				if (area(y,x)->m_idx) k++;
+				if (!in_bounds2(y, x)) continue;
+
+				if (area(y, x)->m_idx) k++;
 			}
 		}
 
@@ -2259,8 +2259,8 @@ static void process_monster(int m_idx)
 		nx = ox + ddx[d];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(ny,nx)) continue;
-		
+		if (!in_bounds2(ny, nx)) continue;
+
 		/* Access that cave grid */
 		c_ptr = area(ny,nx);
 
@@ -2846,7 +2846,7 @@ static void process_monster(int m_idx)
 
 			/* Dump a message */
 			msg_format("%^s turns to fight!", m_name);
-			
+
 			chg_virtue(V_COMPASSION, -1);
 		}
 
@@ -2918,7 +2918,7 @@ void process_monsters(void)
 
 	int speed;
 
-	int old_total_friends = total_friends; 
+	int old_total_friends = total_friends;
 	s32b old_friend_align = friend_align;
 
 	/* Clear some variables */

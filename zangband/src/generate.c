@@ -1152,7 +1152,7 @@ static byte extract_feeling(void)
 	if (rating > 10) return 8;
 	if (rating > 0) return 9;
 
-	if((turn - old_turn) > 50000L)
+	if ((turn - old_turn) > 50000L)
 		chg_virtue(V_PATIENCE, 1);
 
 	return 10;
@@ -1248,7 +1248,7 @@ void generate_cave(void)
 				/* Small arena */
 				arena_gen();
 			}
-			
+
 			/* Quest levels -KMW- */
 			/* Hack - disabled.
 			else if (p_ptr->inside_quest)
@@ -1261,10 +1261,10 @@ void generate_cave(void)
 			{
 				/* Hack XXX XXX */
 				/* Exit, information is already in other data type. */
-				
+
 				px = p_ptr->wilderness_x;
 				py = p_ptr->wilderness_y;
-				
+
 				/* Determine number of panels */
 				max_panel_rows = (WILD_SIZE*16 / SCREEN_HGT) * 2;
 				max_panel_cols = (WILD_SIZE*16 / SCREEN_WID) * 2;

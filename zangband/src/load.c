@@ -505,7 +505,7 @@ static void rd_item(object_type *o_ptr)
 {
 	byte old_dd;
 	byte old_ds;
-	
+
 	byte tmpbyte;
 
 	s32b old_cost;
@@ -533,7 +533,6 @@ static void rd_item(object_type *o_ptr)
 		/* Location */
 		rd_s16b(&o_ptr->iy);
 		rd_s16b(&o_ptr->ix);
-	
 	}
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
@@ -833,9 +832,9 @@ static void rd_item(object_type *o_ptr)
 			}
 		}
 	}
-	
-	/* 
-	 *  Hack - reduce number of attacks from old objects 
+
+	/*
+	 *  Hack - reduce number of attacks from old objects
 	 *  This changed with the addition of oangband combat.
 	 */
 	if (z_older_than(2, 3, 4))
@@ -999,9 +998,8 @@ static void rd_monster(monster_type *m_ptr)
 		/* Location */
 		rd_s16b(&m_ptr->fy);
 		rd_s16b(&m_ptr->fx);
-	
 	}
-	
+
 	rd_s16b(&m_ptr->hp);
 	rd_s16b(&m_ptr->maxhp);
 	rd_s16b(&m_ptr->csleep);
@@ -1146,17 +1144,17 @@ static errr rd_store(int town_number, int store_number)
 	/* Extract the owner (see above) */
 	st_ptr->owner = (older_than(2, 7, 8) ? convert_owner[own] : own);
 
-	/* 
-	 * Hack - allocate store if it has stock 
+	/*
+	 * Hack - allocate store if it has stock
 	 * Note that this will change the order that
-	 * stores are removed from the cache. 
+	 * stores are removed from the cache.
 	 * The resulting list can be sorted... but it
 	 * doesn't really matter.
 	 */
-	if (num) 
+	if (num)
 	{
 		(void) allocate_store(st_ptr);
-		
+
 		/* Save store type */
 		st_ptr->type = store_number;
 	}
@@ -1592,7 +1590,7 @@ static void rd_extra(void)
 		p_ptr->muta1 = 0;
 		p_ptr->muta2 = 0;
 		p_ptr->muta3 = 0;
-		
+
 		get_virtues();
 	}
 	else
@@ -1612,7 +1610,7 @@ static void rd_extra(void)
 		rd_u32b(&p_ptr->muta1);
 		rd_u32b(&p_ptr->muta2);
 		rd_u32b(&p_ptr->muta3);
-		 
+
 		if (sf_version < 5)
 		{
 			get_virtues();
@@ -1857,8 +1855,8 @@ static errr rd_dungeon_aux(void)
 	/* Only read as necessary */
 	ymax = cur_hgt;
 	xmax = cur_wid;
-	
-	if(dun_level)
+
+	if (dun_level)
 	{
 		/* Read in the actual "cave" data */
 		total_count = 0;
@@ -1870,7 +1868,7 @@ static errr rd_dungeon_aux(void)
 			/* Extract some RLE info */
 			rd_byte(&count);
 			rd_byte(&tmp8u);
-	
+
 			/* Apply the RLE info */
 			for (i = count; i > 0; i--)
 			{
@@ -1912,20 +1910,20 @@ static errr rd_dungeon_aux(void)
 					{
 						c_ptr->info |= (CAVE_GLOW);
 					}
-	
+
 					/* Process the "floor type" */
 					switch (tmp8u & 0x0F)
 					{
 						/* Lite Room Floor */
 						case 2:
 						{
-							c_ptr->info |= (CAVE_GLOW);	
+							c_ptr->info |= (CAVE_GLOW);
 						}
-	
+
 						/* Dark Room Floor */
 						case 1:
 						{
-							c_ptr->info |= (CAVE_ROOM);	
+							c_ptr->info |= (CAVE_ROOM);
 							break;
 						}
 
@@ -1942,7 +1940,7 @@ static errr rd_dungeon_aux(void)
 							c_ptr->info |= (CAVE_ICKY);
 							break;
 						}
-	
+
 						/* Corridor Floor */
 						case 5:
 						{
@@ -1955,7 +1953,7 @@ static errr rd_dungeon_aux(void)
 							c_ptr->feat = FEAT_PERM_SOLID;
 							break;
 						}
-	
+
 						/* Granite wall (assume "basic") XXX XXX XXX */
 						case 12:
 						{
@@ -2586,7 +2584,7 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			{
 				/* Access the cave */
 				c_ptr = area(y,x);
-	
+
 				/* Extract "feat" */
 				c_ptr->mimic = tmp8u;
 
@@ -2616,7 +2614,7 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			{
 				/* Access the cave */
 				c_ptr = area(y,x);
-	
+
 				/* Extract "feat" */
 				c_ptr->special = tmp16s;
 
@@ -2635,15 +2633,15 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 }
 
 
-/* 
+/*
  * Load wilderness data
- */	
+ */
 static void load_wild_data(void)
 {
 	int i, j;
 	u16b tmp_u16b;
 	byte tmp_byte;
-		
+
 	/* Load bounds */
 	rd_u16b(&wild_grid.y_max);
 	rd_u16b(&wild_grid.x_max);
@@ -2651,13 +2649,13 @@ static void load_wild_data(void)
 	rd_u16b(&wild_grid.x_min);
 	rd_byte(&wild_grid.y);
 	rd_byte(&wild_grid.x);
-	
+
 	/* Load cache status */
 	rd_byte(&wild_grid.cache_count);
-	
+
 	/* Load wilderness seed */
 	rd_u32b(&wild_grid.wild_seed);
-	
+
 	/* Load wilderness map */
 	for (i = 0; i < WILD_SIZE; i++)
 	{
@@ -2667,14 +2665,14 @@ static void load_wild_data(void)
 			{
 				/* Terrain */
 				rd_u16b(&wild[j][i].done.wild);
-			
+
 				/* Town / Dungeon / Specials */
 				rd_u16b(&tmp_u16b);
 				wild[j][i].done.town = tmp_u16b;
-				
+
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
-			
+
 				/* Monster Gen type */
 				rd_byte(&tmp_byte);
 				wild[j][i].done.mon_gen = tmp_byte;
@@ -2682,32 +2680,31 @@ static void load_wild_data(void)
 			else
 			{
 				/* Changed size of data types. */
-				
+
 				/* Terrain */
 				rd_u16b(&wild[j][i].done.wild);
-			
+
 				/* Town / Dungeon / Specials */
 				rd_byte(&wild[j][i].done.town);
-			
+
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
-			
+
 				/* Monster Gen type */
 				rd_u16b(&wild[j][i].done.mon_gen);
-			
-			}			
-		}	
+			}
+		}
 	}
-	
+
 	/* Allocate blocks around player */
-	for(i = 0; i < WILD_GRID_SIZE; i++)
+	for (i = 0; i < WILD_GRID_SIZE; i++)
 	{
-		for(j = 0; j < WILD_GRID_SIZE; j++)
+		for (j = 0; j < WILD_GRID_SIZE; j++)
 		{
 			/* Allocate block and link to the grid */
-			wild_grid.block_ptr[j][i] = 
-				wild_cache[i + WILD_GRID_SIZE * j];	
-		}	
+			wild_grid.block_ptr[j][i] =
+				wild_cache[i + WILD_GRID_SIZE * j];
+		}
 	}
 }
 
@@ -2721,7 +2718,7 @@ static void load_wild_data(void)
 static errr rd_dungeon(void)
 {
 	int i;
-	
+
 	u16b limit;
 	cave_type *c_ptr;
 
@@ -2750,7 +2747,7 @@ static errr rd_dungeon(void)
 
 	/* There is no town stored in cave[][] */
 	set_no_town();
-	
+
 	/* Old method */
 	if (older_than(2, 8, 0))
 	{
@@ -2760,55 +2757,55 @@ static errr rd_dungeon(void)
 	{
 		/* Hack - do not load data into wilderness */
 		change_level(1);
-		
+
 		/* Load dungeon map*/
 		load_map(cur_hgt, 0, cur_wid, 0);
 	}
 	else
 	{
-		/* Load wilderness data */	
+		/* Load wilderness data */
 		load_wild_data();
-		
-		if(dun_level)
+
+		if (dun_level)
 		{
 			change_level(1);
-			
-			/* Load dungeon map*/
-			load_map(cur_hgt, 0, cur_wid, 0);	
-		
+
+			/* Load dungeon map */
+			load_map(cur_hgt, 0, cur_wid, 0);
+
 			/* Set pointers to wilderness - but do not make towns */
 			change_level(0);
-			
+
 			/* Load wilderness map*/
-			load_map(wild_grid.y_max, wild_grid.y_min,			  			   wild_grid.x_max, wild_grid.x_min);			
+			load_map(wild_grid.y_max, wild_grid.y_min,
+			         wild_grid.x_max, wild_grid.x_min);
 		}
 		else
 		{
 			/* Hack - move to level without creating it */
 			dun_level = 1;
 			change_level(0);
-			
-			/* Load the wilderness */			
+
+			/* Load the wilderness */
 			load_map(wild_grid.y_max, wild_grid.y_min,
-			   wild_grid.x_max, wild_grid.x_min);
-			   
+			         wild_grid.x_max, wild_grid.x_min);
+
 			/* Reset level */
-			dun_level = 0;	
+			dun_level = 0;
 		}
-		
-				
-		if (sf_version<8)
+
+		if (sf_version < 8)
 		{
 			create_wilderness();
 		}
 	}
-	
+
 	if (sf_version > 6)
-	{	
+	{
 		/* Allocate all the blocks */
 		change_level(dun_level);
 	}
-	
+
 	/*** Objects ***/
 
 	/* Read the item count */
@@ -2946,11 +2943,11 @@ static errr rd_dungeon(void)
 		character_dungeon = TRUE;
 	}
 
-	/* Hack - make new level only after objects + monsters are loaded */ 
+	/* Hack - make new level only after objects + monsters are loaded */
 	if (sf_version < 7)
-	{		
+	{
 		create_wilderness();
-		
+
 		change_level(dun_level);
 	}
 
@@ -3168,7 +3165,7 @@ static errr rd_savefile_new_aux(void)
 
 #endif
 
-	
+
 	/* 2.1.3 or newer version */
 	if (!z_older_than(2, 1, 3))
 	{
@@ -3312,8 +3309,7 @@ static errr rd_savefile_new_aux(void)
 
 		/* Incompatible save files */
 		/* Hack - ignore this for now. */
-		
-		if ((wild_x_size > 16*WILD_SIZE) || (wild_y_size > 16*WILD_SIZE))
+		if ((wild_x_size > 16 * WILD_SIZE) || (wild_y_size > 16 * WILD_SIZE))
 		{
 			note(format("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
 			return (23);
@@ -3715,20 +3711,20 @@ static errr rd_savefile_new_aux(void)
 		{
 			/* RNG seed */
 			rd_u32b(&town[i].seed);
-			
+
 			/* Number of stores */
 			rd_byte(&town[i].numstores);
-		
+
 			/* Type */
 			rd_u16b(&town[i].type);
-		
+
 			/* Locatation */
 			rd_byte(&town[i].x);
 			rd_byte(&town[i].y);
-		
+
 			/* Name */
 			rd_string(town[i].name, 32);
-		
+
 			/* Get the stores of all towns */
 			for (j = 0; j < town[i].numstores; j++)
 			{
@@ -3736,7 +3732,7 @@ static errr rd_savefile_new_aux(void)
 			}
 		}
 	}
-	
+
 	/* Read the pet command settings */
 	if (sf_version > 2)
 	{

@@ -138,7 +138,7 @@ void do_cmd_go_up(void)
 
 			/* New depth */
 			dun_level--;
-			
+
 			/* Leaving the dungeon to town */
 			if (!dun_level && p_ptr->town_num && !leaving_quest)
 				p_ptr->leaving_dungeon = TRUE;
@@ -1194,7 +1194,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		if ((p_ptr->skill_dig > 10 + rand_int(400)) && twall(y, x, FEAT_GRASS))
 		{
 			msg_print("You have cleared away the trees.");
-			
+
 			chg_virtue(V_DILIGENCE, 1);
 			chg_virtue(V_NATURE, -1);
 		}
@@ -1220,7 +1220,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		if ((p_ptr->skill_dig > 40 + rand_int(1600)) && twall(y, x, FEAT_FLOOR))
 		{
 			msg_print("You have finished the tunnel.");
-			
+
 			chg_virtue(V_DILIGENCE, 1);
 			chg_virtue(V_NATURE, -1);
 		}
@@ -1279,7 +1279,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			{
 				/* Message */
 				msg_print("You have finished the tunnel.");
-				
+
 				chg_virtue(V_DILIGENCE, 1);
 				chg_virtue(V_NATURE, -1);
 			}

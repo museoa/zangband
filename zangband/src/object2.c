@@ -93,9 +93,9 @@ void excise_object_idx(int o_idx)
 
 		/* Exit if is a "dummy" object */
 		if ((x == 0) && (y == 0)) return;
-		
+
 		/* Grid */
-		c_ptr = area(y,x);
+		c_ptr = area(y, x);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -167,7 +167,7 @@ void delete_object_idx(int o_idx)
 		/* Location */
 		y = j_ptr->iy;
 		x = j_ptr->ix;
-		
+
 		/* Refuse "illegal" locations */
 		if (in_bounds(y, x))
 		{
@@ -196,7 +196,7 @@ void delete_object(int y, int x)
 	cave_type *c_ptr;
 
 	s16b this_o_idx, next_o_idx = 0;
-	
+
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
 
@@ -224,7 +224,7 @@ void delete_object(int y, int x)
 		/* Count objects */
 		o_cnt--;
 	}
-	
+
 	/* Objects are gone */
 	c_ptr->o_idx = 0;
 

@@ -6482,40 +6482,39 @@ cptr game_inscriptions[] =
 };
 
 
- /* Weird melee attack types when hallucinating */
- cptr silly_attacks [MAX_SILLY_ATTACK] =
- {
- 	"smothers",
- 	"hugs",
- 	"humiliates",
- 	"whips",
- 	"kisses",
- 
- 	"disgusts",
- 	"pees all over",
- 	"passes the gas on",
- 	"makes obscene gestures at",
- 	"licks",
- 
- 	"stomps on",
- 	"swallows",
- 	"drools on",
- 	"misses",
- 	"shrinks",
- 
- 	"emasculates",
- 	"evaporates",
- 	"solidifies",
- 	"digitizes",
- 	"insta-kills",
- 
- 	"massacres",
- 	"slaughters",
- 	"drugs",
- 	"psychoanalyzes",
- 	"deconstructs",
- 
- 	"falsifies",
- 	"disbelieves",
- };
- 
+/* Weird melee attack types when hallucinating */
+cptr silly_attacks[MAX_SILLY_ATTACK] =
+{
+	"smothers",
+	"hugs",
+	"humiliates",
+	"whips",
+	"kisses",
+
+	"disgusts",
+	"pees all over",
+	"passes the gas on",
+	"makes obscene gestures at",
+	"licks",
+
+	"stomps on",
+	"swallows",
+	"drools on",
+	"misses",
+	"shrinks",
+
+	"emasculates",
+	"evaporates",
+	"solidifies",
+	"digitizes",
+	"insta-kills",
+
+	"massacres",
+	"slaughters",
+	"drugs",
+	"psychoanalyzes",
+	"deconstructs",
+
+	"falsifies",
+	"disbelieves",
+};

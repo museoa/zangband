@@ -3135,7 +3135,7 @@ errr file_character(cptr name, bool full)
 		else
 			fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
 	}
-	
+
 	fprintf(fff, "\n\n  [Virtues]\n\n");
 	dump_virtues(fff);
 

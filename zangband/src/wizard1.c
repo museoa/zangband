@@ -1358,7 +1358,7 @@ static void spoil_mon_desc(cptr fname)
 		if (r_ptr->name) who[n++] = i;
 	}
 
-        /* Select the sort method */
+	/* Select the sort method */
 	ang_sort_comp = ang_sort_comp_hook;
 	ang_sort_swap = ang_sort_swap_hook;
 
@@ -1542,16 +1542,16 @@ static void spoil_mon_info(cptr fname)
 	cptr p, q;
 	cptr vp[64];
 	u32b flags1, flags2, flags3, flags4, flags5, flags6;
-	
+
 	u16b why = 2;
 	s16b *who;
-		
-	
+
+
 	/* Allocate the "who" array */
 	C_MAKE(who, max_r_idx, s16b);
-		
+
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);	
+	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -1579,7 +1579,7 @@ static void spoil_mon_info(cptr fname)
 	spoil_out(buf);
 	spoil_out("------------------------------------------\n\n");
 
-	
+
 	/* Scan the monsters */
 	for (i = 1; i < max_r_idx; i++)
 	{
@@ -1589,7 +1589,7 @@ static void spoil_mon_info(cptr fname)
 		if (r_ptr->name) who[n++] = i;
 	}
 
-        /* Select the sort method */
+	/* Select the sort method */
 	ang_sort_comp = ang_sort_comp_hook;
 	ang_sort_swap = ang_sort_swap_hook;
 

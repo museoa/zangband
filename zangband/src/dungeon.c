@@ -865,12 +865,12 @@ static void process_world(void)
 	s32b regen_amount;
 	bool cave_no_regen = FALSE;
 	int upkeep_factor = 0;
-	
-	#if 0
+
+#if 0
 	cave_type *c_ptr;
 	int x, y;
-	#endif 0
-	
+#endif
+
 	object_type *o_ptr;
 	u32b f1 = 0 , f2 = 0 , f3 = 0;
 	int temp;
@@ -878,7 +878,7 @@ static void process_world(void)
 
 	/* Announce the level feeling */
 	if ((turn - old_turn == 1000) && (dun_level)) do_cmd_feeling();
-	
+
 	/* Every 10 game turns */
 	if (turn % 10) return;
 
@@ -1286,8 +1286,8 @@ static void process_world(void)
 			if (p_ptr->pspeed > 199) i = 49;
 			else if (p_ptr->pspeed < 0) i = 1;
 			else i = extract_energy[p_ptr->pspeed];
-				
-			i*=2;
+
+			i *= 2;
 
 			/* Regeneration takes more food */
 			if (p_ptr->regenerate) i += 30;
@@ -2266,7 +2266,7 @@ static void process_world(void)
 				msg_print("You feel yourself yanked upwards!");
 
 				dun_level = 0;
-				
+
 				leaving_quest = p_ptr->inside_quest;
 
 				/* Leaving an 'only once' quest marks it as failed */
@@ -2288,7 +2288,7 @@ static void process_world(void)
 				dun_level = p_ptr->max_dlv;
 
 				if (dun_level < 1) dun_level = 1;
-				
+
 				/* Nightmare mode makes recall more dangerous */
 				if (ironman_nightmare && !rand_int(666))
 				{
@@ -2695,15 +2695,15 @@ static void process_command(void)
 			do_cmd_bldg();
 			break;
 		}
-		
-		#if 0
+
+#if 0
 		/* Enter quest level -KMW- */
 		case '[':
 		{
 			do_cmd_quest();
 			break;
 		}
-		#endif 0
+#endif
 
 		/* Go up staircase */
 		case '<':
@@ -4023,8 +4023,7 @@ void play_game(bool new_game)
 		dun_level = 0;
 		p_ptr->inside_quest = 0;
 		p_ptr->inside_arena = 0;
-		
-		
+
 
 		/* Hack -- seed for flavors */
 		seed_flavor = rand_int(0x10000000);
@@ -4078,7 +4077,7 @@ void play_game(bool new_game)
 
 	/* Initialize the town-buildings if necessary */
 	if (!dun_level && !p_ptr->inside_quest)
-	{		
+	{
 		/* Init the town */
 		init_flags = INIT_ONLY_BUILDINGS;
 		process_dungeon_file("t_info.txt", 0, 0, MAX_HGT, MAX_WID);
@@ -4112,10 +4111,10 @@ void play_game(bool new_game)
 	Term_xtra(TERM_XTRA_REACT, 0);
 
 	/* Create the random wilderness */
-	if (new_game) 
+	if (new_game)
 	{
 		create_wilderness();
-		
+
 		/* Make the function pointers point the the correct data type */
 		change_level(dun_level);
 	}

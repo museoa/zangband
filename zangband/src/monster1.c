@@ -1670,9 +1670,6 @@ bool monster_lava(int r_idx)
 monster_hook_type get_monster_hook(void)
 {
 	/* Hack - no themed wilderness yet */
-	
-	
-	
 	if (!dun_level && !p_ptr->inside_quest)
 	{
 		return &(monster_town);
@@ -1697,7 +1694,7 @@ monster_hook_type get_monster_hook(void)
 		case TERRAIN_MOUNTAIN:
 			return &(monster_mountain);
 		default:
-			return &(monster_dungeon);		
+			return &(monster_dungeon);
 		}
 		#endif 0
 	}
@@ -1760,7 +1757,7 @@ void anger_monster(monster_type *m_ptr)
 		monster_desc(m_name, m_ptr, 0);
 		msg_format("%^s gets angry!", m_name);
 		set_hostile(m_ptr);
-		
+
 		chg_virtue(V_INDIVIDUALISM, 1);
 		chg_virtue(V_HONOUR, -1);
 		chg_virtue(V_JUSTICE, -1);

@@ -2754,25 +2754,24 @@ typedef struct fill_data fill_data;
 
 struct fill_data
 {
-	
 	/* area center */
 	int y0;
 	int x0;
-	
+
 	/* area size */
 	int xsize;
 	int ysize;
-	
+
 	/* cutoffs */
 	int c1;
 	int c2;
 	int c3;
-	
+
 	/* features to fill with */
 	int feat1;
 	int feat2;
 	int feat3;
-	
+
 	/* number of filled squares */
 	int amount;
 };
@@ -2795,7 +2794,7 @@ static void fill_hack(int y, int x, fill_data *fill)
 			if (!in_bounds(fill->y0 + y + j - fill->ysize / 2,
 				fill->x0 + x + i - fill->xsize / 2))
 				return;
-			
+
 			/* If within bounds */
 			if ((x + i > 0) && (x + i < fill->xsize)
 				&& (y + j > 0) && (y + j < fill->ysize))
@@ -2843,24 +2842,24 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 	/* area center */
 	fill.y0=y0;
 	fill.x0=x0;
-	
+
 	/* area size */
 	fill.xsize=xsize;
 	fill.ysize=ysize;
-	
+
 	/* cutoffs */
 	fill.c1=cutoff;
 	fill.c2=0;
 	fill.c3=0;
-	
+
 	/* features to fill with */
 	fill.feat1=FEAT_FLOOR;
 	fill.feat2=FEAT_FLOOR;
 	fill.feat3=FEAT_FLOOR;
-	
+
 	/* number of filled squares */
 	fill.amount=0;
-	
+
 	fill_hack(yhsize, xhsize, &fill);
 
 	/* if tally too small, try again */
@@ -3167,21 +3166,21 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 	/* area center */
 	fill.y0=y0;
 	fill.x0=x0;
-	
+
 	/* area size */
 	fill.xsize=xsize;
 	fill.ysize=ysize;
-	
+
 	/* cutoffs */
 	fill.c1=c1;
 	fill.c2=c2;
 	fill.c3=c3;
-	
+
 	/* features to fill with */
 	fill.feat1=feat1;
 	fill.feat2=feat2;
 	fill.feat3=feat3;
-	
+
 	/* number of filled squares */
 	fill.amount=0;
 
@@ -3256,20 +3255,21 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 }
 
 
-/* makes a lake/ collapsed cave system in the center of the dungeon */
-
+/*
+ * makes a lake/collapsed cave system in the center of the dungeon
+ */
 void build_lake(int type)
 {
 	int grd, roug, xsize, ysize, x0, y0;
 	bool done = FALSE;
 	int c1, c2, c3;
 
-    /* paranoia - exit if lake type out of range.*/
-	if ((type<1)||(type>7)) 
-	   {
-	   msg_format("Invalid lake type (%d)", type);
-	   return;
-	   }
+	/* paranoia - exit if lake type out of range.*/
+	if ((type < 1) || (type > 7))
+	{
+		msg_format("Invalid lake type (%d)", type);
+		return;
+	}
 
 	/* Make the size of the dungeon */
 	xsize = cur_wid - 1;

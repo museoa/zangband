@@ -3027,7 +3027,6 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 	}
 
 	/* Process "W:<command>: ..." -- info for the wilderness */
-	
 	else if (buf[0] == 'W')
 	{
 		/* Hack - turned off for now.*/
@@ -3038,9 +3037,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 	/* Process "P:<y>:<x>" -- player position */
 	else if (buf[0] == 'P')
 	{
-		
-		#if 0
-		
+#if 0
 		if (init_flags & INIT_CREATE_DUNGEON)
 		{
 			if (tokenize(buf + 2, 2, zz, 0) == 2)
@@ -3050,14 +3047,14 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				/* Hack - Set the dungeon size */
 				panels_y = (*y / SCREEN_HGT);
 				if (*y % SCREEN_HGT) panels_y++;
-				
+
 				/* Wilderness: so this is meaningless */
-				
+
 				/* cur_hgt = panels_y * SCREEN_HGT; */
 
 				panels_x = (*x / SCREEN_WID);
 				if (*x % SCREEN_WID) panels_x++;
-				
+
 				/* Wilderness: so this is meaningless */
 				/* cur_wid = panels_x * SCREEN_WID; */
 
@@ -3090,9 +3087,8 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				}
 			}
 		}
-		
-		#endif 0
-		
+#endif
+
 		return (0);
 	}
 
@@ -3171,14 +3167,14 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 			else if (zz[0][0] == 'W')
 			{
 				/* Hack - this flag has been disabled. */
-				#if 0
+#if 0
 				/* Maximum wild_x_size */
 				if (zz[0][1] == 'X')
 					max_wild_x = atoi(zz[1]);
 				/* Maximum wild_y_size */
 				if (zz[0][1] == 'Y')
 					max_wild_y = atoi(zz[1]);
-				#endif 0 
+#endif
 			}
 
 			return (0);
@@ -3676,7 +3672,7 @@ void write_r_info_txt(void)
 		fprintf(fff, "W:%d:%d:%d:%ld\n", r_ptr->level, r_ptr->rarity, r_ptr->extra, r_ptr->mexp);
 
 		/* Write Blows */
-		for(j = 0; j < 4; j++)
+		for (j = 0; j < 4; j++)
 		{
 			b_ptr = &(r_ptr->blow[j]);
 

@@ -1092,7 +1092,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 	s16b prev_s16b;
 
 	cave_type *c_ptr;
-	
+
 	/*** Simple "Run-Length-Encoding" of cave ***/
 
 	/* Note that this will induce two wasted bytes */
@@ -1105,8 +1105,8 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 		for (x = xmin; x < xmax; x++)
 		{
 			/* Get the cave */
-			c_ptr = area(y,x);
-	
+			c_ptr = area(y, x);
+
 			/* Extract a byte */
 			tmp8u = c_ptr->info;
 
@@ -1126,7 +1126,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 			}
 		}
 	}
-	
+
 	/* Flush the data (if any) */
 	if (count)
 	{
@@ -1196,7 +1196,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-			{	
+			{
 				wr_byte((byte)count);
 				wr_byte((byte)prev_char);
 				prev_char = tmp8u;
@@ -1261,13 +1261,13 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 	}
 }
 
-/* 
+/*
  * Save wilderness data
- */	
+ */
 static void save_wild_data(void)
 {
 	int i, j;
-	
+
 	/* Save bounds */
 	wr_u16b(wild_grid.y_max);
 	wr_u16b(wild_grid.x_max);
@@ -1275,13 +1275,13 @@ static void save_wild_data(void)
 	wr_u16b(wild_grid.x_min);
 	wr_byte(wild_grid.y);
 	wr_byte(wild_grid.x);
-	
+
 	/* Save cache status */
 	wr_byte(wild_grid.cache_count);
-	
+
 	/* Save wilderness seed */
 	wr_u32b(wild_grid.wild_seed);
-	
+
 	/* Save wilderness map */
 	for (i = 0; i < WILD_SIZE; i++)
 	{
@@ -1289,16 +1289,16 @@ static void save_wild_data(void)
 		{
 			/* Terrain */
 			wr_u16b(wild[j][i].done.wild);
-			
+
 			/* Town / Dungeon / Specials */
 			wr_byte(wild[j][i].done.town);
-			
+
 			/* Info flag */
 			wr_byte(wild[j][i].done.info);
-			
+
 			/* Monster Gen type */
-			wr_u16b(wild[j][i].done.mon_gen);			
-		}	
+			wr_u16b(wild[j][i].done.mon_gen);
+		}
 	}
 }
 
@@ -1321,25 +1321,27 @@ static void wr_dungeon(void)
 	wr_u16b(cur_wid);
 	wr_u16b(max_panel_rows);
 	wr_u16b(max_panel_cols);
-	
-	/* Save wilderness data */	
+
+	/* Save wilderness data */
 	save_wild_data();
-	
-	if(dun_level)
+
+	if (dun_level)
 	{
-		/* Save dungeon map*/
-		save_map(cur_hgt, 0, cur_wid, 0);	
-		
-		/* Save wilderness map*/
-		change_level(0); 
+		/* Save dungeon map */
+		save_map(cur_hgt, 0, cur_wid, 0);
+
+		/* Save wilderness map */
+		change_level(0);
+
 		save_map(wild_grid.y_max, wild_grid.y_min,
-		   wild_grid.x_max, wild_grid.x_min);
+		         wild_grid.x_max, wild_grid.x_min);
+
 		change_level(dun_level);
 	}
 	else
 	{
 		save_map(wild_grid.y_max, wild_grid.y_min,
-		   wild_grid.x_max, wild_grid.x_min);	
+		         wild_grid.x_max, wild_grid.x_min);
 	}
 
 
@@ -1594,20 +1596,20 @@ static bool wr_savefile_new(void)
 	{
 		/* RNG seed */
 		wr_u32b(town[i].seed);
-		
+
 		/* Number of stores */
 		wr_byte(town[i].numstores);
-		
+
 		/* Type */
 		wr_u16b(town[i].type);
-		
+
 		/* Locatation */
 		wr_byte(town[i].x);
 		wr_byte(town[i].y);
-		
+
 		/* Name */
 		wr_string(town[i].name);
-		
+
 		/* Dump the stores of all towns */
 		for (j = 0; j < town[i].numstores; j++)
 		{

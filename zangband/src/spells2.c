@@ -32,8 +32,8 @@ void self_knowledge(void)
 	int i = 0, j, k;
 
 	int v_nr = 0;
-	char v_string [8] [128];
-	
+	char v_string[8][128];
+
 	u32b f1 = 0L, f2 = 0L, f3 = 0L;
 
 	object_type *o_ptr;
@@ -57,7 +57,7 @@ void self_knowledge(void)
 
 	chg_virtue(V_KNOWLEDGE, 1);
 	chg_virtue(V_ENLIGHTEN, 1);
-	
+
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
 	{
@@ -79,12 +79,12 @@ void self_knowledge(void)
 
 	for (v_nr = 0; v_nr < 8; v_nr++)
 	{
-		char v_name [20];
+		char v_name[20];
 		char vir_desc[80];
 		int tester = p_ptr->virtues[v_nr];
-	
-		strcpy(v_name, virtue[(p_ptr->vir_types[v_nr])-1]);
- 
+
+		strcpy(v_name, virtue[(p_ptr->vir_types[v_nr]) - 1]);
+
 		sprintf(vir_desc, "Oops. No info about %s.", v_name);
 		if (tester < -100)
 			sprintf(vir_desc, "You are the polar opposite of %s (%d).",
@@ -104,7 +104,7 @@ void self_knowledge(void)
 		else if (tester < 0)
 			sprintf(vir_desc, "You have strayed from the path of %s (%d).",
 				v_name, tester);
-		else if (tester == 0)                   
+		else if (tester == 0)
 			sprintf(vir_desc,"You are neutral to %s (%d).",
 				v_name, tester);
 		else if (tester < 20)
@@ -125,9 +125,9 @@ void self_knowledge(void)
 		else
 			sprintf(vir_desc,"You are the living embodiment of %s (%d).",
 		v_name, tester);
-	
+
 		strcpy(v_string[v_nr], vir_desc);
-	
+
 		info[i++] = v_string[v_nr];
 	}
 
@@ -2472,7 +2472,7 @@ bool probing(void)
 	{
 		if (probe)
 			chg_virtue(V_KNOWLEDGE, 1);
-		
+
 		msg_print("That's all.");
 	}
 
@@ -2802,8 +2802,8 @@ bool earthquake(int cy, int cx, int r)
 			/* Move the player to the safe location */
 			py = sy;
 			px = sx;
-			
-			if(!dun_level)
+
+			if (!dun_level)
 			{
 				/* Scroll wilderness */
 				move_wild();
@@ -2820,7 +2820,7 @@ bool earthquake(int cy, int cx, int r)
 		}
 
 		/* Important -- no wall on player */
-		map[16+py-cy][16+px-cx] = FALSE;
+		map[16 + py - cy][16 + px - cx] = FALSE;
 
 		/* Take some damage */
 		if (damage) take_hit(damage, "an earthquake");
@@ -2837,10 +2837,10 @@ bool earthquake(int cy, int cx, int r)
 			xx = cx + dx;
 
 			/* Skip unaffected grids */
-			if (!map[16+yy-cy][16+xx-cx]) continue;
+			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
 			/* Access the grid */
-			c_ptr = area(yy,xx);
+			c_ptr = area(yy, xx);
 
 			/* Process monsters */
 			if (c_ptr->m_idx)
@@ -3522,15 +3522,15 @@ bool teleport_swap(int dir)
 	ty = m_ptr->fy;
 
 	/* Update the monster (new location) */
-	update_mon(area(ty,tx)->m_idx, TRUE);
+	update_mon(area(ty, tx)->m_idx, TRUE);
 
 	/* Redraw the old grid */
 	lite_spot(ty, tx);
 
 	/* Redraw the new grid */
 	lite_spot(py, px);
-	
-	if(!dun_level)
+
+	if (!dun_level)
 	{
 		/* Scroll wilderness */
 		move_wild();
@@ -3720,7 +3720,7 @@ bool poly_monster(int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	bool tester = (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
- 
+
 	if (tester)
 		chg_virtue(V_CHANCE, 1);
 

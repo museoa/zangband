@@ -3481,10 +3481,10 @@ void calc_bonuses(void)
 
 
 	/* Different calculation for monks with empty hands */
-	else if (p_ptr->pclass == CLASS_MONK && monk_empty_hands())
+	else if ((p_ptr->pclass == CLASS_MONK) && monk_empty_hands())
 	{
 		p_ptr->num_blow = 2;
-		
+
 		if (p_ptr->lev > 9) p_ptr->num_blow++;
 		if (p_ptr->lev > 14) p_ptr->num_blow++;
 		if (p_ptr->lev > 24) p_ptr->num_blow++;

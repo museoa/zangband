@@ -488,19 +488,19 @@ struct wild_grid_type
 	/* location of top left hand corner of grid div 16 */
 	byte x;
 	byte y;
-	
+
 	/* Pointers to blocks */
 	blk_ptr block_ptr[WILD_GRID_SIZE][WILD_GRID_SIZE];
-	
+
 	/* Number of grids in cache */
 	byte cache_count;
-	
+
 	u16b y_max;
 	u16b x_max;
-	
+
 	u16b y_min;
 	u16b x_min;
-	
+
 	u32b wild_seed;
 };
 
@@ -1109,7 +1109,7 @@ struct player_type
 	u32b muta1;
 	u32b muta2;
 	u32b muta3;
-	
+
 	s16b virtues[8];
 	s16b vir_types[8];
 

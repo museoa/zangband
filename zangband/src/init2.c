@@ -2410,7 +2410,7 @@ static errr init_towns(void)
 
 	/*** Make store stock cache ***/
 	C_MAKE(store_cache, STORE_CACHE_AMNT, store_ptr);
-	
+
 	/*** Prepare the Towns ***/
 
 	/* Allocate the towns */
@@ -2422,7 +2422,7 @@ static errr init_towns(void)
 
 		/* Allocate the stores */
 		C_MAKE(town[i].store, MAX_STORES, store_type);
-		
+
 		/* Fill in each store */
 		for (j = 0; j < MAX_STORES; j++)
 		{
@@ -2562,8 +2562,7 @@ static errr init_other(void)
 		/* Allocate one row of the cave */
 		C_MAKE(cave[i], MAX_WID, cave_type);
 	}
-	
-	
+
 	/* Allocate temporary wilderness block */
 	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
 	{
@@ -2576,28 +2575,27 @@ static errr init_other(void)
 	{
 		/* Allocate block */
 		C_MAKE(wild_cache[i], WILD_BLOCK_SIZE, cave_tp_ptr);
-		
+
 		/* Allocate rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE ; j++)
 		{
 			C_MAKE(wild_cache[i][j], WILD_BLOCK_SIZE, cave_type);
 		}
 	}
-	
+
 	/*
 	 * The grid around the player is allocated in variable.c
 	 * since it doesn't take much memory.
 	 */
-	
+
 	/* Allocate the wilderness itself */
 	for (i = 0; i < WILD_SIZE ; i++)
 	{
 		/* Allocate one row of the wilderness */
 		C_MAKE(wild[i], WILD_SIZE, wild_type);
 	}
-	
-	
-	
+
+
 	/*** Prepare the various "bizarre" arrays ***/
 
 	/* Macro variables */

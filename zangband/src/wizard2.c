@@ -1397,7 +1397,7 @@ static void do_cmd_wiz_jump(void)
 
 	/* Change level */
 	dun_level = command_arg;
-	
+
 	p_ptr->inside_arena = 0;
 	leaving_quest = p_ptr->inside_quest;
 
@@ -1784,20 +1784,19 @@ void do_cmd_debug(void)
 		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
-			
 			/* Only make squares glow in dungeon.*/
 			/* Daytime in the wilderness does this for you outside. */
 			if (dun_level)
 			{
-				for(y = 0; y < cur_hgt; y++)
+				for (y = 0; y < cur_hgt; y++)
 				{
-					for(x = 0; x < cur_wid; x++)
+					for (x = 0; x < cur_wid; x++)
 					{
-						area(y,x)->info |= (CAVE_GLOW | CAVE_MARK);
+						area(y, x)->info |= (CAVE_GLOW | CAVE_MARK);
 					}
 				}
 			}
-			
+
 			wiz_lite();
 			break;
 		}

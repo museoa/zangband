@@ -741,7 +741,7 @@ void kingly(void)
 {
 	/* Hack -- retire in town */
 	dun_level = 0;
-	
+
 	/* Fake death */
 	(void)strcpy(died_from, "Ripe Old Age");
 

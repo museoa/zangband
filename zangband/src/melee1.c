@@ -456,17 +456,16 @@ bool make_attack_normal(int m_idx)
 			}
 
 			/* Message */
-                        if (act)
-			 {
-                               if ((p_ptr->image) && (randint(3)==1))
-				 {
-
-                                       msg_format("%^s %s you.", m_name,
-                                       silly_attacks[randint(MAX_SILLY_ATTACK)-1]);
-				 }
-                               else
-                                       msg_format("%^s %s", m_name, act);
-			 }
+			if (act)
+			{
+				if ((p_ptr->image) && (randint(3) == 1))
+				{
+					msg_format("%^s %s you.", m_name,
+					           silly_attacks[randint(MAX_SILLY_ATTACK) - 1]);
+				}
+				else
+					msg_format("%^s %s", m_name, act);
+			}
 
 			/* Hack -- assume all attacks are obvious */
 			obvious = TRUE;
@@ -716,7 +715,7 @@ bool make_attack_normal(int m_idx)
 									   o_name, index_to_label(i));
 
 							chg_virtue(V_SACRIFICE, 1);
-							
+
 							/* Option */
 							if (testing_carry)
 							{

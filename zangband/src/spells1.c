@@ -1254,7 +1254,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	int do_fear = 0;
 
 	bool heal_leper = FALSE;
-	
+
 	/* Hold the monster name */
 	char m_name[80];
 
@@ -2161,7 +2161,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_INDIVIDUALISM, 1);
-	
+
 			if (is_friendly(m_ptr))
 				chg_virtue(V_HONOUR, 1);
 			else if (!(r_ptr->flags3 & RF3_EVIL))
@@ -2177,7 +2177,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				heal_leper = TRUE;
 				chg_virtue(V_COMPASSION, 5);
 			}
-	
+
 			if (r_ptr->flags3 & RF3_ANIMAL)
 				chg_virtue(V_NATURE, 1);
 
@@ -2328,7 +2328,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				note = " suddenly seems friendly!";
 				set_pet(m_ptr);
-				
+
 				chg_virtue(V_INDIVIDUALISM, -1);
 				if (r_ptr->flags3 & RF3_ANIMAL)
 					chg_virtue(V_NATURE, 1);
@@ -2400,7 +2400,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			{
 				note = " is tamed!";
 				set_pet(m_ptr);
-				
+
 				if (r_ptr->flags3 & RF3_ANIMAL)
 					chg_virtue(V_NATURE, 1);
 			}
@@ -2966,7 +2966,6 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	}
 
 
-	
 	/* Absolutely no effect */
 	if (skipped) return (FALSE);
 
@@ -3028,7 +3027,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 		/* Message */
 		note = " disappears!";
-		
+
 		chg_virtue(V_VALOUR, -1);
 
 		/* Teleport */
@@ -4796,7 +4795,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 						{
 							/* Disintegration balls explosions are stopped by perma-walls */
 							if (!in_disintegration_range(y2, x2, y, x)) continue;
-							
+
 							if (cave_valid_bold(y, x) &&
 								(area(y,x)->feat < FEAT_PATTERN_START ||
 								 area(y,x)->feat > FEAT_PATTERN_XTRA2) &&

@@ -351,15 +351,15 @@ void wipe_m_list(void)
 		/* Check to see if monster is accessable on map */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-		
-		if(in_bounds(y,x))
+
+		if (in_bounds(y, x))
 		{
 			/* Monster is gone */
 			area(y, x)->m_idx = 0;
 		}
 
 		/* Wipe the Monster */
-		(void) WIPE(m_ptr, monster_type);
+		(void)WIPE(m_ptr, monster_type);
 
 #ifdef USE_SCRIPT
 		delete_monster_callback(i);
@@ -2996,13 +2996,13 @@ void update_smart_learn(int m_idx, int what)
 bool player_place(int y, int x)
 {
 	/* Paranoia XXX XXX */
-	if (area(y,x)->m_idx != 0) return FALSE;
+	if (area(y, x)->m_idx != 0) return FALSE;
 
 	/* Save player location */
 	py = y;
 	px = x;
-	
-	if(!dun_level)
+
+	if (!dun_level)
 	{
 		/* Scroll wilderness */
 		move_wild();

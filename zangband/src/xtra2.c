@@ -353,7 +353,7 @@ void monster_death(int m_idx)
 			case QUEST_TYPE_KILL_ALL:
 			{
 				number_mon = 0;
-				
+
 				/* This only happens in the dungeon I hope. */
 
 				/* Count all hostile monsters */
@@ -1034,12 +1034,12 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 					p_ptr->au += reward;
 					p_ptr->redraw |= (PR_GOLD);
-					
+
 					chg_virtue(V_JUSTICE, 5);
 				}
 			}
 		}
-		
+
 		if (r_ptr->level > dun_level)
 		{
 			if (randint(10) <= (dun_level - r_ptr->level))
@@ -1047,10 +1047,10 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 		if (r_ptr->level >= 2 * (p_ptr->lev))
 			chg_virtue(V_VALOUR, 1);
-	
+
 		if ((r_ptr->flags1 & RF1_UNIQUE) && ((r_ptr->flags3 & RF3_EVIL) ||
 			(r_ptr->flags3 & RF3_GOOD)))
-			
+
 			chg_virtue(V_HARMONY, 2);
 
 		if ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags3 & RF3_GOOD))
@@ -1070,7 +1070,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		if ((r_ptr->flags1 & RF3_GOOD) &&
 			((r_ptr->level) / 10 + (3 * dun_level) >= randint(100)))
-			
+
 			chg_virtue(V_UNLIFE, 1);
 
 		/* "Good" angels */
@@ -1106,14 +1106,13 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 				chg_virtue(V_HONOUR, 1);
 			}
 		}
-		
+
 		for (i = 0; i < 4; i++)
 		{
-			if(r_ptr->blow[i].d_dice != 0) innocent = FALSE; /* Murderer! */
-		
-			if ((r_ptr->blow[i].effect == RBE_EAT_ITEM)
-				|| (r_ptr->blow[i].effect == RBE_EAT_GOLD))
-			
+			if (r_ptr->blow[i].d_dice != 0) innocent = FALSE; /* Murderer! */
+
+			if ((r_ptr->blow[i].effect == RBE_EAT_ITEM) ||
+			    (r_ptr->blow[i].effect == RBE_EAT_GOLD))
 				thief = TRUE; /* Thief! */
 		}
 
@@ -1124,9 +1123,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_JUSTICE, 3);
-			else if (1+((r_ptr->level) / 10 + (2 * dun_level))
-				>= randint(100))
-				
+			else if (1 + (r_ptr->level / 10 + (2 * dun_level)) >= randint(100))
 				chg_virtue(V_JUSTICE, 1);
 		}
 		else if (innocent)
@@ -1136,7 +1133,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & RF3_EVIL))
 		{
-			if (randint(3)==1) chg_virtue(V_NATURE, -1);
+			if (randint(3) == 1) chg_virtue(V_NATURE, -1);
 		}
 
 		/* Make a sound */
@@ -1333,7 +1330,7 @@ bool change_panel(int dy, int dx)
 	/* Verify the col */
 	if (x > max_panel_cols * (SCREEN_WID / 2)) x = max_panel_cols * (SCREEN_WID / 2);
 	else if (x < 0) x = 0;
-	
+
 	/* Verify wilderness */
 	if (!dun_level)
 	{
@@ -1886,10 +1883,10 @@ static void target_set_prepare(int mode)
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
 			cave_type *c_ptr;
-			
-			if(!in_bounds2(y,x)) continue;
-			
-			c_ptr = area(y,x);
+
+			if (!in_bounds2(y, x)) continue;
+
+			c_ptr = area(y, x);
 
 			/* Require line of sight, unless "look" is "expanded" */
 			if (!expand_look && !player_has_los_bold(y, x)) continue;
@@ -2449,7 +2446,7 @@ bool target_set(int mode)
 		{
 			y = temp_y[m];
 			x = temp_x[m];
-			
+
 			/* Access */
 			c_ptr = area(y,x);
 
@@ -2658,7 +2655,7 @@ bool target_set(int mode)
 						}
 
 						if (!dun_level)
-						{						
+						{
 							/* Slide into legality */
 							if (x >= wild_grid.x_max-1) x = wild_grid.x_max - 2;
 							else if (x <= wild_grid.x_min) x = wild_grid.x_min + 1;
@@ -2675,7 +2672,7 @@ bool target_set(int mode)
 
 							/* Slide into legality */
 							if (y >= cur_hgt-1) y = cur_hgt- 2;
-							else if (y <= 0) y = 1;						
+							else if (y <= 0) y = 1;
 						}
 					}
 				}
@@ -2830,11 +2827,11 @@ bool target_set(int mode)
 				}
 
 				if (!dun_level)
-				{						
+				{
 					/* Slide into legality */
 					if (x >= wild_grid.x_max-1) x = wild_grid.x_max - 2;
 					else if (x <= wild_grid.x_min) x = wild_grid.x_min + 1;
-						
+
 					/* Slide into legality */
 					if (y >= wild_grid.y_max-1) y = wild_grid.y_max- 2;
 					else if (y <= wild_grid.y_min) y = wild_grid.y_min + 1;
@@ -2847,7 +2844,7 @@ bool target_set(int mode)
 
 					/* Slide into legality */
 					if (y >= cur_hgt-1) y = cur_hgt- 2;
-					else if (y <= 0) y = 1;						
+					else if (y <= 0) y = 1;
 				}
 			}
 		}
@@ -3554,7 +3551,7 @@ bool tgt_pt(int *x, int *y)
 			*y += ddy[d];
 
 			if (!dun_level)
-			{	
+			{
 				/* Hack -- Verify x */
 				if ((*x >= wild_grid.x_max - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
 				else if ((*x <= wild_grid.x_min) || (*x <= panel_col_min)) (*x)++;
@@ -3572,8 +3569,6 @@ bool tgt_pt(int *x, int *y)
 				/* Hack -- Verify y */
 				if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
 				else if ((*y <= 0) || (*y <= panel_row_min)) (*y)++;
-			
-			
 			}
 
 			break;

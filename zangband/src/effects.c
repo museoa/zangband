@@ -35,7 +35,7 @@ bool set_blind(int v)
 		{
 			msg_print("You are blind!");
 			notice = TRUE;
-			
+
 			chg_virtue(V_ENLIGHTEN, -1);
 		}
 	}
@@ -99,7 +99,7 @@ bool set_confused(int v)
 		{
 			msg_print("You are confused!");
 			notice = TRUE;
-			
+
 			chg_virtue(V_HARMONY, -1);
 		}
 	}
@@ -204,7 +204,7 @@ bool set_afraid(int v)
 		{
 			msg_print("You are terrified!");
 			notice = TRUE;
-			
+
 			chg_virtue(V_VALOUR, -1);
 		}
 	}
@@ -370,7 +370,7 @@ bool set_fast(int v)
 		{
 			msg_print("You feel yourself moving faster!");
 			notice = TRUE;
-			
+
 			chg_virtue(V_PATIENCE, -1);
 			chg_virtue(V_DILIGENCE, 1);
 		}
@@ -819,7 +819,7 @@ bool set_invuln(int v)
 		{
 			msg_print("Invulnerability!");
 			notice = TRUE;
-			
+
 			chg_virtue(V_TEMPERANCE, -5);
 			chg_virtue(V_HONOUR, -5);
 			chg_virtue(V_SACRIFICE, -5);
@@ -1797,7 +1797,7 @@ bool set_food(int v)
 			/* Bloated */
 			case 5:
 			msg_print("You have gorged yourself!");
-			
+
 			chg_virtue(V_HARMONY, -1);
 			chg_virtue(V_PATIENCE, -1);
 			chg_virtue(V_TEMPERANCE, -2);
@@ -2006,7 +2006,7 @@ bool dec_stat(int stat, int amount, int permanent)
 		chg_virtue(V_SACRIFICE, 1);
 		if (stat == A_WIS || stat == A_INT)
 			chg_virtue(V_ENLIGHTEN, -2);
-		
+
 		/* Handle "low" values */
 		if (max <= 18)
 		{
@@ -2088,9 +2088,9 @@ bool hp_player(int num)
 	if (p_ptr->chp < p_ptr->mhp)
 	{
 		chg_virtue(V_CHANCE, -1);
-		if ((num > 0) && (p_ptr->chp < (p_ptr->mhp/3)))
+		if ((num > 0) && (p_ptr->chp < (p_ptr->mhp / 3)))
 			chg_virtue(V_TEMPERANCE, 1);
-		
+
 		/* Gain hitpoints */
 		p_ptr->chp += num;
 
@@ -2257,7 +2257,7 @@ bool do_inc_stat(int stat)
 		}
 		else if (stat == A_CON)
 			chg_virtue(V_VITALITY, 1);
-		
+
 		/* Message */
 		msg_format("Wow!  You feel very %s!", desc_stat_pos[stat]);
 
@@ -2387,7 +2387,7 @@ void do_poly_self(void)
 	int power = p_ptr->lev;
 
 	msg_print("You feel a change coming over you...");
-	
+
 	chg_virtue(V_CHANCE, 1);
 
 	if ((power > rand_int(20)) && (rand_int(3) == 1))
@@ -2476,7 +2476,6 @@ void do_poly_self(void)
 
 		if (effect_msg[0])
 		{
-			
 			msg_format("You turn into a%s %s!",
 			    (((new_race == RACE_AMBERITE) ||
 			      (new_race == RACE_ELF) ||
@@ -2485,8 +2484,6 @@ void do_poly_self(void)
 		}
 		else
 		{
-			
-			
 			msg_format("You turn into a %s%s!", effect_msg,
 				race_info[new_race].title);
 		}
@@ -2644,7 +2641,7 @@ void take_hit(int damage, cptr hit_from)
 	{
 		/* Sound */
 		sound(SOUND_DEATH);
-		
+
 		chg_virtue(V_SACRIFICE, 10);
 
 		/* Hack -- Note death */

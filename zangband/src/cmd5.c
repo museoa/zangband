@@ -1222,7 +1222,7 @@ static bool cast_chaos_spell(int spell)
 			some potent effects only at high level. */
 
 			int die = randint(100) + plev / 5;
-			
+
 			if (die < 26)
 				chg_virtue(V_CHANCE, 1);
 
@@ -1512,10 +1512,10 @@ static bool cast_death_spell(int spell)
 
 		dummy = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
 		if (drain_life(dir, dummy))
-		{			
+		{
 			chg_virtue(V_SACRIFICE, -1);
 			chg_virtue(V_VITALITY, -1);
-			
+
 			(void)hp_player(dummy);
 			/* Gain nutritional sustenance: 150/hp drained */
 			/* A Food ration gives 5000 food points (by contrast) */
@@ -1549,7 +1549,7 @@ static bool cast_death_spell(int spell)
 			if (!get_aim_dir(&dir)) return FALSE;
 
 			msg_print("You call on the power of the dead...");
-			
+
 			if (die < 26)
 				chg_virtue(V_CHANCE, 1);
 
@@ -1738,8 +1738,8 @@ static bool cast_death_spell(int spell)
 					msg_print("Ancient, long-dead forms arise from the ground to serve you!");
 				else
 					msg_print("'The dead arise... to punish you for disturbing them!'");
-			
-			chg_virtue(V_UNLIFE, 1);
+
+				chg_virtue(V_UNLIFE, 1);
 			}
 
 			break;
@@ -1876,7 +1876,7 @@ static bool cast_trump_spell(int spell, bool success)
 
 				if (die < 30)
 					chg_virtue(V_CHANCE, 1);
-				
+
 				if (die < 7)
 				{
 					msg_print("Oh no! It's Death!");
@@ -2757,7 +2757,7 @@ void do_cmd_cast(void)
 			else
 				chg_virtue(V_KNOWLEDGE, 1);
 		}
-		
+
 		/* Spells.  */
 		switch (realm)
 		{
@@ -2810,7 +2810,7 @@ void do_cmd_cast(void)
 
 			/* Gain experience */
 			gain_exp(e * s_ptr->slevel);
-			
+
 			if (mp_ptr->spell_book == TV_LIFE_BOOK)
 				chg_virtue(V_FAITH, 1);
 			else

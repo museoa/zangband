@@ -46,7 +46,7 @@ bool teleport_away(int m_idx, int dis)
 
 	/* Minimum distance */
 	min = dis / 2;
-	
+
 	if ((((p_ptr->chp * 10) / p_ptr->mhp) < 5) &&
 		(randint(5) > ((p_ptr->chp * 10) / p_ptr->mhp)))
 	{
@@ -333,8 +333,8 @@ void teleport_player(int dis)
 	/* Move the player */
 	py = y;
 	px = x;
-	
-	if(!dun_level)
+
+	if (!dun_level)
 	{
 		/* Scroll wilderness */
 		move_wild();
@@ -350,7 +350,7 @@ void teleport_player(int dis)
 
 		while (yy < 2)
 		{
-			if (xx == 0 && yy == 0)
+			if ((xx == 0) && (yy == 0))
 			{
 				/* Do nothing */
 			}
@@ -358,20 +358,22 @@ void teleport_player(int dis)
 			{
 				if (area(oy+yy,ox+xx)->m_idx)
 				{
-					if ((r_info[m_list[area(oy+yy,ox+xx)->m_idx].r_idx].flags6 & RF6_TPORT) &&
-					    !(r_info[m_list[area(oy+yy,ox+xx)->m_idx].r_idx].flags3 & RF3_RES_TELE))
+					if ((r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags6 & RF6_TPORT) &&
+					    !(r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags3 & RF3_RES_TELE))
 						/*
 						 * The latter limitation is to avoid
 						 * totally unkillable suckers...
 						 */
 					{
-						if (!(m_list[area(oy+yy,ox+xx)->m_idx].csleep))
-							teleport_to_player(area(oy+yy,ox+xx)->m_idx);
+						if (!(m_list[area(oy + yy, ox + xx)->m_idx].csleep))
+							teleport_to_player(area(oy + yy, ox + xx)->m_idx);
 					}
 				}
 			}
+
 			yy++;
 		}
+
 		xx++;
 	}
 
@@ -444,8 +446,8 @@ void teleport_player_to(int ny, int nx)
 	/* Move the player */
 	py = y;
 	px = x;
-	
-	if(!dun_level)
+
+	if (!dun_level)
 	{
 		/* Scroll wilderness */
 		move_wild();
@@ -501,7 +503,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level++;
-		
+
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -512,7 +514,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level--;
-		
+
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -523,7 +525,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level--;
-		
+
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -534,7 +536,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level++;
-		
+
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -670,7 +672,7 @@ bool apply_disenchant(int mode)
 	msg_format("Your %s (%c) %s disenchanted!",
 		   o_name, index_to_label(t),
 		   ((o_ptr->number != 1) ? "were" : "was"));
-		   
+
 	chg_virtue(V_HARMONY, 1);
 	chg_virtue(V_ENCHANT, -2);
 
@@ -868,7 +870,7 @@ void brand_weapon(int brand_type)
 		if (flush_failure) flush();
 
 		msg_print("The Branding failed.");
-		
+
 		chg_virtue(V_ENCHANT, -2);
 	}
 }
@@ -1608,8 +1610,8 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 		/* Message */
 		msg_print("The enchantment failed.");
-		
-		if (randint(3)==1) chg_virtue(V_ENCHANT, -1);
+
+		if (randint(3) == 1) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
@@ -1825,7 +1827,7 @@ void identify_item(object_type *o_ptr)
 	{
 		bad_luck(o_ptr);
 	}
-	
+
 	if (!(o_ptr->ident & (IDENT_MENTAL)))
 	{
 		if ((o_ptr->art_name) || (artifact_p(o_ptr)))
@@ -1833,7 +1835,7 @@ void identify_item(object_type *o_ptr)
 		else
 			chg_virtue(V_KNOWLEDGE, 1);
 	}
-	
+
 	/* Identify it fully */
 	object_aware(o_ptr);
 	object_known(o_ptr);
@@ -1951,7 +1953,7 @@ bool mundane_spell(void)
 	o_ptr->xtra2 = 0;
 
 	/* No artifact name (random artifacts) */
-	o_ptr->art_name = 0;      
+	o_ptr->art_name = 0;
 
 	/* Not identified yet */
 	o_ptr->ident = 0;

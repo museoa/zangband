@@ -227,7 +227,7 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	}
 
 	/* Show modifications to stats */
-	(*f1) |= (o_ptr->art_flags1 & 
+	(*f1) |= (o_ptr->art_flags1 &
 		(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR ));
 
 

@@ -522,7 +522,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_CONFUSION: /* Booze */
 		{
 			chg_virtue(V_HARMONY, -1);
-			
+
 			if (!p_ptr->resist_conf)
 			{
 				if (set_confused(p_ptr->confused + rand_int(20) + 15))
@@ -586,9 +586,9 @@ static void do_cmd_quaff_potion_aux(int item)
 			if (!p_ptr->hold_life && (p_ptr->exp > 0))
 			{
 				msg_print("You feel your memories fade.");
-				
+
 				chg_virtue(V_KNOWLEDGE, -5);
-				
+
 				lose_exp(p_ptr->exp / 4);
 				ident = TRUE;
 			}
@@ -659,7 +659,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			chg_virtue(V_VITALITY, -1);
 			chg_virtue(V_UNLIFE, 5);
-			
+
 			msg_print("A feeling of Death flows through your body.");
 			take_hit(5000, "a potion of Death");
 			ident = TRUE;
@@ -803,7 +803,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			chg_virtue(V_VITALITY, 1);
 			chg_virtue(V_UNLIFE, -5);
-			
+
 			msg_print("You feel life flow through your body!");
 			restore_level();
 			hp_player(5000);
@@ -930,7 +930,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_ENLIGHTENMENT:
 		{
 			chg_virtue(V_ENLIGHTEN, 1);
-			
+
 			msg_print("An image of your surroundings forms in your mind...");
 			wiz_lite();
 			ident = TRUE;
@@ -968,7 +968,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_EXPERIENCE:
 		{
 			chg_virtue(V_ENLIGHTEN, 1);
-			
+
 			if (p_ptr->exp < PY_MAX_EXP)
 			{
 				s32b ee = (p_ptr->exp / 2) + 10;
@@ -1016,7 +1016,7 @@ static void do_cmd_quaff_potion_aux(int item)
 			if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 			{
 				chg_virtue(V_CHANCE, -5);
-				
+
 				msg_print("You are cured of all mutations.");
 				p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
 				p_ptr->update |= PU_BONUS;
@@ -1035,7 +1035,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-	
+
 	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
@@ -2393,7 +2393,6 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			
 			fire_ball(GF_DISINTEGRATE, dir, 125 + randint(100), 2);
 			ident = TRUE;
 			break;

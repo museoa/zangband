@@ -888,7 +888,7 @@ static void hit_trap(void)
 					do_cmd_save_game(TRUE);
 
 				dun_level++;
-				
+
 				/* Leaving */
 				p_ptr->leaving = TRUE;
 			}
@@ -2388,26 +2388,24 @@ void move_player(int dir, int do_pickup)
 
 	/* Find the result of moving */
 	y = py + ddy[dir];
-	x = px + ddx[dir];	
+	x = px + ddx[dir];
 
 	/* Do not exit the wilderness-area */
-	if (!dun_level )
+	if (!dun_level)
 	{
-		if (!in_bounds2(y,x))
+		if (!in_bounds2(y, x))
 		{
 			/* Do not leave the wilderness */
 			msg_print("You can not leave the wilderness.");
 			return;
 		}
-		
 	}
+
 	/* Examine the destination */
 	c_ptr = area(y,x);
 
-
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
-
 
 	if (inventory[INVEN_WIELD].art_name)
 	{
@@ -2705,7 +2703,7 @@ void move_player(int dir, int do_pickup)
 		/* Move the player */
 		py = y;
 		px = x;
-		
+
 		if (!dun_level)
 		{
 			/* Scroll wilderness */
@@ -3201,7 +3199,7 @@ static bool run_test(void)
 
 	/* Where we came from */
 	prev_dir = find_prevdir;
-	
+
 
 	/* Range of newly adjacent grids */
 	max = (prev_dir & 0x01) + 1;
@@ -3219,7 +3217,7 @@ static bool run_test(void)
 		/* New location */
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
-		
+
 		/* Access grid */
 		c_ptr = area(row,col);
 

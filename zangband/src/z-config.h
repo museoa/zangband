@@ -634,4 +634,4 @@
 /*
  * Add caverns and lakes to the dungeon (buggy)
  */
- #define ALLOW_CAVERNS_AND_LAKES 
+#define ALLOW_CAVERNS_AND_LAKES

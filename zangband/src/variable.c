@@ -641,10 +641,10 @@ bool (*in_bounds2)(int, int);
 
 
 /*
- * Variables used to access the scrollable wilderness. 
+ * Variables used to access the scrollable wilderness.
  * This is designed to be as fast as possible - whilst using as little
  * RAM as possible to store a massive wilderness.
- * 
+ *
  * The wilderness is generated "on the fly" as the player moves around it.
  * To save time - blocks of 16x16 squares are saved in a cache so they
  * don't need to be redone if the player moves back and forth.

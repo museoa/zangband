@@ -2780,10 +2780,10 @@ void do_cmd_save_screen(void)
 static void do_cmd_knowledge_artifacts(void)
 {
 	int i, k, z;
-	
-	#if 0
+
+#if 0
 	int x, y;
-	#endif 0
+#endif
 
 	FILE *fff;
 
@@ -2854,10 +2854,10 @@ static void do_cmd_knowledge_artifacts(void)
 		}
 	}
 
-#endif 0
-	
+#endif
+
 	/* Check the dungeon */
-	
+
 	/* This loop should work better in the wilderness then the above one */
 	for (i = 0; i < max_o_idx; i++)
 	{
@@ -2865,13 +2865,13 @@ static void do_cmd_knowledge_artifacts(void)
 
 		/* Acquire object */
 		o_ptr = &o_list[i];
-		
+
 		/* Exit if doesn't exist */
 		if (o_ptr->k_idx == 0) continue;
-		
+
 		/* Exit if not in dungeon */
 		if ((o_ptr->ix == 0) && (o_ptr->iy == 0)) continue;
-		
+
 		/* Ignore non-artifacts */
 		if (!artifact_p(o_ptr)) continue;
 
