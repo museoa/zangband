@@ -28,6 +28,9 @@ Zangband 2.7.4
   The borg can now activate rings, rods, wands etc.
   The borg enchants items better.
   Improve the borg ^z commands displays.
+  The borg uses emergency spell casting more intelligently.
+  The borg understands more object flags.
+  The borg stores spell books it can't use yet in its home.
 - The game now makes wooden bridges over the rivers in the
   wilderness.
 - Changed the effects of the 'strange luck' flag to make them
@@ -158,6 +161,18 @@ Zangband 2.7.4
   properly when recombined.
 - Fix out of bounds problem with monster lights when teleporting
   in the wilderness.
+- Prevent crash when displaying large piles of items.
+- Made scrolls of *remove curse* give a message when successfully used.
+- Change monsters killed list under '~' menu to display monsters
+  in colour.
+- Added a new command in the 'show_file()' screens to 'search again'.
+  The highlighted strings now work with the colour escape sequences.
+- Prevent monster lights leaking through walls.  Make the lights update
+  the map when monsters move.
+- Fix crash when using cheat death in the dungeon whilst you are
+  poisoned, afraid, blind etc.
+- Make wiz_lite() only light the dungeon for one turn.
+
 
 Zangband 2.7.3:
 - Added many new object flags to describe new behaviour.
