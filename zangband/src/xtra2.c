@@ -410,6 +410,17 @@ void monster_death(int m_idx)
 					if (!p_ptr->inside_quest)
 						create_stairs = TRUE;
 
+					/* Take note */
+					if (auto_notes) 
+					{
+					  char note[80];
+
+					  sprintf(note, "Finished quest: %d %s", quest[i].max_num, (r_name + r_info[quest[i].r_idx].name));
+
+					  add_note(note, 'Q');
+
+					}
+					    
 					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
