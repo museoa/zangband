@@ -10,7 +10,9 @@ function summon_monsters(num, kind)
 		end
 	end
 
-	return ident
+	if ident then return TRUE
+	else return FALSE
+	end
 end
 
 function restore_mana()
