@@ -2237,6 +2237,52 @@ bool dispel_demons(int dam)
 
 
 /*
+ * Raise the dead
+ */
+bool raise_dead(int y, int x, bool pet)
+{
+	s16b i;
+	int ix, iy;
+	
+	bool    obvious = FALSE;
+
+
+	/* Check all (nearby) objects */
+	for (i = 1; i < o_max; i++)
+	{
+		object_type *o_ptr = &o_list[i];
+
+		/* Paranoia -- Skip missing objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Location */
+		iy = o_ptr->iy;
+		ix = o_ptr->ix;
+
+		/* Require line of sight */
+		if (!los(iy, ix, y, x)) continue;
+		
+		if (player_has_los_grid(area(iy, ix))) obvious = TRUE;
+		
+		/* Make a monster nearby if possible */
+		summon_named_creature(o_ptr->iy, o_ptr->ix,
+			o_ptr->pval, FALSE, FALSE, pet);
+
+		/* The corpse/skeleton is destroyed */			
+		floor_item_increase(i, -1);
+		floor_item_optimize(i);
+				
+		/* Hack, decrease counter properly */
+		i--;
+	}
+
+	/* Result */
+	return (obvious);
+}
+
+
+
+/*
  * Wake up all monsters, and speed up "los" monsters.
  */
 void aggravate_monsters(int who)

@@ -1,4 +1,5 @@
 /* CVS: Last edit by $Author$ on $Date$ */
+
 /* File: externs.h */
 
 /* Purpose: extern declarations (variables and functions) */
@@ -157,6 +158,8 @@ extern s16b o_max;
 extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
+extern s16b fld_max;
+extern s16b fld_cnt;
 extern s16b hack_m_idx;
 extern s16b hack_m_idx_ii;
 extern int total_friends;
@@ -323,6 +326,7 @@ extern wild_choice_tree_type *wild_choice_tree;
 extern byte *wild_temp_dist;
 extern object_type *o_list;
 extern monster_type *m_list;
+extern field_type *fld_list;
 extern u16b max_towns;
 extern u16b town_count;
 extern town_type *town;
@@ -373,6 +377,8 @@ extern header *r_head;
 extern monster_race *r_info;
 extern char *r_name;
 extern char *r_text;
+extern field_thaum *t_info;
+extern field_action *f_action;
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_GRAF;
 extern cptr ANGBAND_DIR;
@@ -407,6 +413,8 @@ extern u16b max_a_idx;
 extern u16b max_e_idx;
 extern u16b max_o_idx;
 extern u16b max_m_idx;
+extern u16b max_fld_idx;
+extern u16b max_t_idx;
 extern s32b max_wild_size;
 extern s32b max_wild;
 extern u16b max_w_node;
@@ -827,6 +835,7 @@ extern bool dispel_undead(int dam);
 extern bool dispel_monsters(int dam);
 extern bool dispel_living(int dam);
 extern bool dispel_demons(int dam);
+extern bool raise_dead(int y, int x, bool pet);
 extern bool turn_undead(void);
 extern bool destroy_area(int y1, int x1, int r, int full);
 extern bool earthquake(int cy, int cx, int r);
@@ -1272,3 +1281,22 @@ extern cptr notes_file(void);
 extern void output_note(char *final_note);
 extern void add_note(char *note, char code);
 extern void add_note_type(int note_number);
+
+/* fields.c */
+extern void excise_field_idx(int fld_idx);
+extern void delete_field_idx(int fld_idx);
+extern void delete_field_aux(s16b *fld_idx_ptr);
+extern void delete_field(int y, int x);
+extern void delete_field_location(cave_type *c_ptr);
+extern void compact_fields(int size);
+extern void wipe_f_list(void);
+extern s16b f_pop(void);
+extern void field_wipe(field_type *f_ptr);
+extern void field_copy(field_type *f_ptr, field_type *j_ptr);
+extern s16b field_add(field_type *f_ptr, s16b *fld_idx2);
+extern void field_sort_priority(s16b *fld_idx_ptr);
+extern void field_prep(field_type *f_ptr, int t_idx);
+extern bool field_is_type(s16b fld_idx, byte typ);
+extern s16b place_field(int y, int x, s16b t_idx);
+extern void process_fields(void);
+extern void test_field_data_integtrity(void);
