@@ -529,6 +529,17 @@ static bool wall_flip[PJ_MAX] =
 	0
 };
 
+/*
+ * For optimisation purposes - two arrays of bits for a row,
+ * marking whether or not this 16x16 block has changed.
+ *
+ * Hack - only "type2" rectangles change the values in this
+ * array, whereas "type1" rectangles are still affected
+ */
+static u32b pj_row1[32];
+static u32b pj_row2[32];
+static int pj_cur_row;
+
 
 /*
  * Hack -- cursor color
@@ -744,6 +755,13 @@ static errr Metadpy_update(int flush, int sync, int discard)
 
 	/* Sync if desired, using 'discard' */
 	if (sync) XSync(Metadpy->dpy, discard);
+
+	/* Clear the arrays used for optimisation */
+	(void) C_WIPE(pj_row1, 32, u32b);
+	(void) C_WIPE(pj_row2, 32, u32b);
+	
+	/* Hack - use crazy row to mark "nothing entered yet" */
+	pj_cur_row = -255;
 
 	/* Success */
 	return (0);
@@ -1901,6 +1919,40 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 	byte ta;
 	char tc;
 	
+	/* Look to see if we are already drawn */
+	if (y == pj_cur_row)
+	{
+		/* Are we drawn? */
+		if (pj_row1[x / 32] & (1L << (x % 32))) return (0);
+	}
+	else if (y == pj_cur_row - 1)
+	{
+		/* Are we drawn? */
+		if (pj_row2[x / 32] & (1L << (x % 32))) return (0);
+	}
+	else if (y == pj_cur_row + 1)
+	{
+		/* We've moved to another row */
+		
+		/* Copy the contents of the pj_row1[] array */
+		C_COPY(pj_row2, pj_row1, 32, u32b);
+		
+		/* Wipe the old "current row" */
+		(void) C_WIPE(pj_row1, 32, u32b);
+		
+		/* We are now at a larger row */
+		pj_cur_row++;
+	}
+	else
+	{
+		/* Clear the arrays used for optimisation */
+		(void) C_WIPE(pj_row1, 32, u32b);
+		(void) C_WIPE(pj_row2, 32, u32b);
+	
+		/* We are at row y */
+		pj_cur_row = y;
+	}
+	
 	if ((x > 0) && (y >= 0))
 	{
 		/* Get tiles we need */
@@ -2089,6 +2141,39 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 	char c;
 	byte ta;
 	char tc;
+	
+	/* Look to see if we are already drawn */
+	int cur_col = x / 32;
+	u32b row_mask = (1L << (x % 32));
+	
+	if (y == pj_cur_row)
+	{
+		/* Are we drawn? */
+		if (pj_row1[cur_col] & row_mask) return (0);
+	
+		/* Not drawn - mark we are drawn */
+		pj_row1[cur_col] |= row_mask;
+	}
+	else if (y == pj_cur_row - 1)
+	{
+		/* Are we drawn? */
+		if (pj_row2[cur_col] & row_mask) return (0);
+		
+		/* Not drawn - mark we are drawn */
+		pj_row2[cur_col] |= row_mask;
+	}
+	/* This should never happen */
+#if 0	
+	else
+	{
+		/* Clear the arrays used for optimisation */
+		(void) C_WIPE(pj_row1, 32, u32b);
+		(void) C_WIPE(pj_row2, 32, u32b);
+	
+		/* We are at row y */
+		pj_cur_row = y;
+	}
+#endif /* 0 */
 	
 	if ((x >= 0) && (y >= 0))
 	{
@@ -3023,6 +3108,14 @@ errr init_xpj(int argc, char *argv[])
 	
 	/* Mega Hack^2 - assume the top left corner is "black" */
 	pix_blank = XGetPixel(data[0].tiles, 0, P_TILE_SIZE * 6);
+	
+	/* Clear the arrays used for optimisation */
+	(void) C_WIPE(pj_row1, 32, u32b);
+	(void) C_WIPE(pj_row2, 32, u32b);
+	
+	/* Hack - use crazy row to mark "nothing entered yet" */
+	pj_cur_row = -255;
+	
 
 	/* Success */
 	return (0);
