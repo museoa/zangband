@@ -3321,7 +3321,7 @@ static bool run_test(void)
 	cave_type   *c_ptr;
 
 	/* Hack - do not run next to edge of wilderness */
-	if (!in_bounds(py, px)) return TRUE;
+	if (!in_bounds2(py, px)) return TRUE;
 
 	/* Where we came from */
 	prev_dir = find_prevdir;
