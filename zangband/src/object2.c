@@ -3993,7 +3993,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	/* Chance of "special object" */
 	if (delta_level > 0)
 	{
-		prob = 400 / delta_level;
+		prob = 800 / delta_level;
 		
 		/* bounds checking */
 		if (prob < 10) prob = 10;
@@ -4001,7 +4001,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	else
 	{
 		/* No divide by zero */
-		prob = 400;
+		prob = 800;
 	}
 
 	/* "Good Luck" mutation */
