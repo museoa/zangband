@@ -7074,7 +7074,7 @@ const mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET] =
 	    "You can consume solid rock.",
 	    "The walls look delicious.",
 	    "The walls look unappetizing.",
-	    "eat rock",
+	    "Eat rock",
 	    8, 12, A_CON, 18,
 	    0
 	},

@@ -2337,6 +2337,18 @@ static void spoil_mon_info(cptr fname)
 }
 
 
+/*
+ * Abbreviations of damaged stats
+ */
+static cptr long_stat_names[A_MAX] =
+{
+	"Strength",
+      "Intelligence",
+      "Wisdom",
+      "Dexterity",
+      "Constitution",
+      "Charisma"
+};
 
 
 /*
@@ -2399,7 +2411,7 @@ static void spoil_mutation(cptr fname)
 		}
 		
 		/* Describe mutation */
-		sprintf(buf, mut_ptr->desc_text);
+		sprintf(buf, format("%s \n", mut_ptr->desc_text));
 		spoil_out(buf);
 
 		/* Type 1? */
@@ -2414,8 +2426,8 @@ static void spoil_mutation(cptr fname)
 			sprintf(buf, "- HP/SP Cost: %d \n", mut_ptr->cost);
 			spoil_out(buf);
 
-			sprintf(buf, "- Statistic : %3s \n", 
-				stat_names_reduced[mut_ptr->stat]);
+			sprintf(buf, "- Statistic : %s \n", 
+			        long_stat_names[mut_ptr->stat]);
 			spoil_out(buf);
 
 			sprintf(buf, "- Difficulty: %d \n", mut_ptr->diff);
@@ -2495,7 +2507,7 @@ static void spoil_rac_pow(cptr fname)
 		sprintf(buf, "%s", rp_ptr->title);
 		spoiler_underline(buf);
 
-		sprintf(buf, mut_ptr->desc_text);
+		sprintf(buf, format("%s \n", mut_ptr->desc_text));
 		spoil_out(buf);
 
 		sprintf(buf, "- Activation: %s \n", mut_ptr->name);
@@ -2507,7 +2519,7 @@ static void spoil_rac_pow(cptr fname)
 		sprintf(buf, "- HP/SP Cost: %d \n", mut_ptr->cost);
 		spoil_out(buf);
 
-		sprintf(buf, "- Statistic : %3s \n", stat_names_reduced[mut_ptr->stat]);
+		sprintf(buf, "- Statistic : %3s \n", long_stat_names[mut_ptr->stat]);
 		spoil_out(buf);
 
 		sprintf(buf, "- Difficulty: %d \n", mut_ptr->diff);
