@@ -1968,6 +1968,8 @@ L:BUILD2:	cost = 20 * factor
 L:BUILD2:	if (test_gold(cost) == TRUE) then
 L:BUILD2:		if (building_healer() == TRUE) then
 L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		else
+L:BUILD2:			msgf("You are in fine health already.")
 L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
