@@ -106,7 +106,7 @@ BORGOBJS := \
 ##
 PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
          solaris sgi dec isc next aix cygwin dos ibm lcc risc emx \
-		 amiga borland
+		 amiga borland gcu
 
 ##
 ## Following are some "system" definitions
