@@ -962,7 +962,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			 */
 			switch(tree_ptr->info & 3)
 			{
-				case 1:
+				case DT_HGT:
 				{
 					/* Look at height */
 					if (tree_ptr->cutoff >= hgt)
@@ -976,7 +976,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 
 					break;
 				}
-				case 2:
+				case DT_POP:
 				{
 					/* Look at population */
 					if (tree_ptr->cutoff >= pop)
@@ -990,7 +990,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 
 					break;
 				}
-				case 3:
+				case DT_LAW:
 				{
 					/* Look at lawfulness */
 					if (tree_ptr->cutoff >= law)
@@ -1020,7 +1020,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			/* Go "left" */
 
 			/* See if references leaf node */
-			if (tree_ptr->info & 4)
+			if (tree_ptr->info & DT_LEFT)
 			{
 				/* If the bit is set - leaf */
 				return (tree_ptr->ptrnode1);
@@ -1036,7 +1036,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			/* Go "right" */
 
 			/* See if references leaf node */
-			if (tree_ptr->info & 8)
+			if (tree_ptr->info & DT_RIGHT)
 			{
 				/* If the bit is set - leaf */
 				return (tree_ptr->ptrnode2);
@@ -1106,7 +1106,7 @@ static u16b create_node(u16b node, bool branch)
 		tree_ptr->ptrnode1 = new_node;
 
 		/* Link is not to a leaf */
-		tree_ptr->info &= ~4;
+		tree_ptr->info &= ~DT_LEFT;
 	}
 	else
 	{
@@ -1114,7 +1114,7 @@ static u16b create_node(u16b node, bool branch)
 		tree_ptr->ptrnode2 = new_node;
 
 		/* Link is not to a leaf */
-		tree_ptr->info &= ~8;
+		tree_ptr->info &= ~DT_RIGHT;
 	}
 
 	/* Increase count of allocated nodes */
@@ -1190,7 +1190,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		}
 
 		/* Get left leaf status */
-		is_tree = (wild_choice_tree[old_node].info & 4);
+		is_tree = (wild_choice_tree[old_node].info & DT_LEFT);
 	}
 	else
 	{
@@ -1207,7 +1207,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		}
 
 		/* Get right leaf status */
-		is_tree = (wild_choice_tree[old_node].info & 8);
+		is_tree = (wild_choice_tree[old_node].info & DT_RIGHT);
 	}
 
 	/* Insert new node */
@@ -1237,7 +1237,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 	{
 		/* Set "info" bit-flag */
 		/* Only new node is a pointer to gen. type */
-		tree_ptr->info = 8;
+		tree_ptr->info = DT_RIGHT;
 
 		/* Calculate the chance fields */
 		tree_ptr->chance1 = wild_choice_tree[old_node].chance1 +
@@ -1249,7 +1249,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 	{
 		/* Set "info" bit-flag */
 		/* Both links are to wild. gen. types. */
-		tree_ptr->info = 8 + 4;
+		tree_ptr->info = DT_LEFT | DT_RIGHT;
 
 		/* Calculate the chance fields */
 		tree_ptr->chance1 = wild_gen_data[old_node].chance;
@@ -1306,7 +1306,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 	/* work out what has to be copied. */
 	if (branch1)
 	{
-		if (tree_ptr1->info & 4)
+		if (tree_ptr1->info & DT_LEFT)
 		{
 			/* need to copy tree of nodes */
 
@@ -1332,14 +1332,14 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
 
 			/* Recurse along branches to this node */
-			if (!(tree_ptr2->info & 4))
+			if (!(tree_ptr2->info & DT_LEFT))
 			{
 				/* Recurse along "left" branch */
 				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
 					return (0);
 			}
 
-			if (!(tree_ptr2->info & 8))
+			if (!(tree_ptr2->info & DT_RIGHT))
 			{
 				/* Recurse along "right" branch */
 				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
@@ -1358,7 +1358,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			if (branch2)
 			{
 				/* terminal branch */
-				tree_ptr2->info |= 4;
+				tree_ptr2->info |= DT_LEFT;
 
 				/* Copy information */
 				tree_ptr2->ptrnode1 = tree_ptr1->ptrnode1;
@@ -1367,7 +1367,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			else
 			{
 				/* terminal branch */
-				tree_ptr2->info |= 8;
+				tree_ptr2->info |= DT_RIGHT;
 
 				/* Copy information */
 				tree_ptr2->ptrnode2 = tree_ptr1->ptrnode1;
@@ -1380,7 +1380,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 	}
 	else
 	{
-		if (tree_ptr1->info & 8)
+		if (tree_ptr1->info & DT_RIGHT)
 		{
 			/* need to copy tree of nodes */
 
@@ -1406,14 +1406,14 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
 
 			/* Recurse along branches to this node */
-			if (!(tree_ptr2->info & 4))
+			if (!(tree_ptr2->info & DT_LEFT))
 			{
 				/* Recurse along "left" branch */
 				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
 					return (0);
 			}
 
-			if (!(tree_ptr2->info & 8))
+			if (!(tree_ptr2->info & DT_RIGHT))
 			{
 				/* Recurse along "right" branch */
 				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
@@ -1432,7 +1432,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			if (branch2)
 			{
 				/* terminal branch */
-				tree_ptr2->info |= 4;
+				tree_ptr2->info |= DT_LEFT;
 
 				/* Copy information */
 				tree_ptr2->ptrnode1 = tree_ptr1->ptrnode2;
@@ -1441,7 +1441,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			else
 			{
 				/* terminal branch */
-				tree_ptr2->info |= 8;
+				tree_ptr2->info |= DT_RIGHT;
 
 				/* Copy information */
 				tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
@@ -1491,7 +1491,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr->ptrnode1 = type1;
 
 		/* Cutoff = hgt , ptrnode1 = wild. gen. type. */
-		tree_ptr->info = 1 + 4;
+		tree_ptr->info = DT_HGT | DT_LEFT;
 
 		/* Wipe chance values (this probably isn't needed) */
 		tree_ptr->chance1 = 0;
@@ -1517,7 +1517,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr->ptrnode2 = type1;
 
 		/* Cutoff = hgt , ptrnode2 = wild. gen. type. */
-		tree_ptr->info = 1 + 8;
+		tree_ptr->info = DT_HGT | DT_RIGHT;
 
 		/* Wipe chance values (this probably isn't needed) */
 		tree_ptr->chance1 = 0;
@@ -1543,7 +1543,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr->ptrnode1 = type1;
 
 		/* Cutoff = pop , ptrnode1 = wild. gen. type. */
-		tree_ptr->info = 2 + 4;
+		tree_ptr->info = DT_POP | DT_LEFT;
 
 		/* Wipe chance values (this probably isn't needed) */
 		tree_ptr->chance1 = 0;
@@ -1569,7 +1569,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr->ptrnode2 = type1;
 
 		/* Cutoff = pop , ptrnode2 = wild. gen. type. */
-		tree_ptr->info = 2 + 8;
+		tree_ptr->info = DT_POP | DT_RIGHT;
 
 		/* Wipe chance values (this probably isn't needed) */
 		tree_ptr->chance1 = 0;
@@ -1595,7 +1595,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr->ptrnode1 = type1;
 
 		/* Cutoff = law , ptrnode1 = wild. gen. type. */
-		tree_ptr->info = 3 + 4;
+		tree_ptr->info = DT_LAW | DT_LEFT;
 
 		/* Wipe chance values (this probably isn't needed) */
 		tree_ptr->chance1 = 0;
@@ -1621,7 +1621,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr->ptrnode2 = type1;
 
 		/* Cutoff = law , ptrnode2 = wild. gen. type. */
-		tree_ptr->info = 3 + 8;
+		tree_ptr->info = DT_LAW | DT_RIGHT;
 
 		/* Wipe chance values (this probably isn't needed) */
 		tree_ptr->chance1 = 0;
@@ -1668,7 +1668,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 			tree_ptr->ptrnode2 = type2;
 
 			/* right branch is to a wild. gen. type - not a node. */
-			tree_ptr->info |= 8;
+			tree_ptr->info |= DT_RIGHT;
 
 			/* Done */
 			return (node);
@@ -1684,7 +1684,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 			tree_ptr->ptrnode1 = type2;
 
 			/* left branch is to a wild. gen. type - not a node. */
-			tree_ptr->info |= 4;
+			tree_ptr->info |= DT_LEFT;
 
 			/* Done */
 			return (node);
@@ -1706,7 +1706,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 	tree_ptr->ptrnode2 = type2;
 
 	/* Set info flag to show both branches are "leaves"*/
-	tree_ptr->info = 8 + 4;
+	tree_ptr->info = DT_LEFT | DT_RIGHT;
 
 	/* Look up chances and add to node. */
 	tree_ptr->chance1 = wild_gen_data[type1].chance;
@@ -1782,7 +1782,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		tree_ptr->cutoff = bound2->hgtmin;
 
 		/* Cutoff = hgt */
-		tree_ptr->info = 1;
+		tree_ptr->info = DT_HGT;
 
 		/* work out branch to follow */
 		branch = FALSE;
@@ -1816,7 +1816,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		tree_ptr->cutoff = bound2->hgtmax;
 
 		/* Cutoff = hgt */
-		tree_ptr->info = 1;
+		tree_ptr->info = DT_HGT;
 
 		/* work out branch to follow */
 		branch = TRUE;
@@ -1850,7 +1850,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		tree_ptr->cutoff = bound2->popmin;
 
 		/* Cutoff = pop */
-		tree_ptr->info = 2;
+		tree_ptr->info = DT_POP;
 
 		/* work out branch to follow */
 		branch = FALSE;
@@ -1884,7 +1884,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		tree_ptr->cutoff = bound2->popmax;
 
 		/* Cutoff = pop */
-		tree_ptr->info = 2;
+		tree_ptr->info = DT_POP;
 
 		/* work out branch to follow */
 		branch = TRUE;
@@ -1918,7 +1918,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		tree_ptr->cutoff = bound2->lawmin;
 
 		/* Cutoff = law */
-		tree_ptr->info = 3;
+		tree_ptr->info = DT_LAW;
 
 		/* work out branch to follow */
 		branch = FALSE;
@@ -1952,7 +1952,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		tree_ptr->cutoff = bound2->lawmax;
 
 		/* Cutoff = law */
-		tree_ptr->info = 3;
+		tree_ptr->info = DT_LAW;
 
 		/* work out branch to follow */
 		branch = TRUE;
@@ -2038,7 +2038,7 @@ static u16b add_node(wild_bound_box_type *bound,
 			 */
 			switch(tree_ptr->info & 3)
 			{
-				case 1:
+				case DT_HGT:
 				{
 					/* Look at height */
 					if (tree_ptr->cutoff >= bound->hgtmax)
@@ -2080,7 +2080,7 @@ static u16b add_node(wild_bound_box_type *bound,
 					}
 					break;
 				}
-				case 2:
+				case DT_POP:
 				{
 					/* Look at population */
 					if (tree_ptr->cutoff >= bound->popmax)
@@ -2122,7 +2122,7 @@ static u16b add_node(wild_bound_box_type *bound,
 					}
 					break;
 				}
-				case 3:
+				case DT_LAW:
 				{
 					/* Look at lawfulness */
 					if (tree_ptr->cutoff >= bound->lawmax)
@@ -2182,7 +2182,7 @@ static u16b add_node(wild_bound_box_type *bound,
 			/* Go "left" */
 
 			/* See if references leaf node */
-			if (tree_ptr->info & 4)
+			if (tree_ptr->info & DT_LEFT)
 			{
 				/* Hit leaf node */
 
@@ -2217,7 +2217,7 @@ static u16b add_node(wild_bound_box_type *bound,
 			/* Go "right" */
 
 			/* See if references leaf node */
-			if (tree_ptr->info & 8)
+			if (tree_ptr->info & DT_RIGHT)
 			{
 				/* Hit leaf node */
 
