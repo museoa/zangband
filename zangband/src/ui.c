@@ -916,10 +916,9 @@ s16b get_quantity(cptr prompt, int max)
  */
 void pause_line(int row)
 {
-	int i;
 	prtf(0, row, "");
 	put_fstr(23, row, "[Press any key to continue]");
-	i = inkey();
+	inkey();
 	prtf(0, row, "");
 }
 
