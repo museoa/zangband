@@ -30,8 +30,8 @@ extern map_info_hook_type old_info_hook;
 extern void borg_map_info(map_block *mb_ptr, term_map *map);
 
 
-#define WANK_TAKE	1
 #define WANK_KILL	2
+
 
 
 /*

@@ -122,6 +122,8 @@
  */
 #define KEY_SIZE 8192
 
+/* Maximum number of 'takes' */
+#define BORG_TAKES_MAX	1024
 
 
 
@@ -140,6 +142,8 @@ struct borg_take
 	byte x, y;	/* Location */
 
 	s16b when;	/* When last seen */
+	
+	char unknown;	/* Unknown type */
 };
 
 

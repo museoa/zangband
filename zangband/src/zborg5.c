@@ -177,14 +177,18 @@ static int borg_guess_kidx(int unknown)
 	return (0);
 }
 
+
 /*
  * Obtain a new "take" index
  */
-static int borg_new_take(int k_idx, int y, int x)
+static int borg_new_take(int k_idx, char unknown, int x, int y)
 {
 	int i, n = 0;
 
 	borg_take *take;
+	
+	/* Handle unknown items */
+	if (unknown) k_idx = borg_guess_kidx(unknown);
 
 	/* Look for a "dead" object */
 	for (i = 1; i < borg_takes_nxt; i++)
@@ -198,7 +202,7 @@ static int borg_new_take(int k_idx, int y, int x)
 	}
 
 	/* Allocate a new object */
-	if ((n == 0) && (borg_takes_nxt < 256))
+	if ((n == 0) && (borg_takes_nxt < BORG_TAKES_MAX))
 	{
 		/* Acquire the entry, advance */
 		n = borg_takes_nxt++;
@@ -242,125 +246,6 @@ static int borg_new_take(int k_idx, int y, int x)
 
 	/* Result */
 	return (n);
-}
-
-
-
-/*
- * Attempt to notice a changing "take"
- */
-static bool observe_take_diff(int y, int x)
-{
-	int i, k_idx;
-
-	borg_take *take;
-	map_block *mb_ptr;
-
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (FALSE);
-
-	/* Get grid */
-	mb_ptr = map_loc(x, y);
-
-	if (mb_ptr->object)
-	{
-		/* Get the kind */
-		k_idx = mb_ptr->object;
-	}
-	else
-	{
-		k_idx = borg_guess_kidx(mb_ptr->unknown);
-	}
-
-	/* Oops */
-	if (!k_idx) return (FALSE);
-
-	/* Make a new object */
-	i = borg_new_take(k_idx, y, x);
-
-	/* Get the object */
-	take = &borg_takes[i];
-
-	/* Timestamp */
-	take->when = borg_t;
-
-	/* Okay */
-	return (TRUE);
-}
-
-
-/*
- * Attempt to "track" a "take" at the given location
- * Assume that the object has not moved more than "d" grids
- * Note that, of course, objects are never supposed to move,
- * but we may want to take account of "falling" missiles later.
- */
-static bool observe_take_move(int y, int x, int d)
-{
-	int i, z, ox, oy;
-
-	object_kind *k_ptr;
-	map_block *mb_ptr;
-
-	/* Scan the objects */
-	for (i = 1; i < borg_takes_nxt; i++)
-	{
-		borg_take *take = &borg_takes[i];
-
-		/* Skip dead objects */
-		if (!take->k_idx) continue;
-
-		/* Skip assigned objects */
-		if (take->seen) continue;
-
-		/* Extract old location */
-		ox = take->x;
-		oy = take->y;
-
-		/* Calculate distance */
-		z = distance(oy, ox, y, x);
-
-		/* Too far? */
-		if (z > d) continue;
-
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
-
-		mb_ptr = map_loc(x, y);
-
-		/* Match type here */
-		if (mb_ptr->object != take->k_idx) continue;
-
-		/* Actual movement (?) */
-		if (z)
-		{
-			/* Track it */
-			take->x = x;
-			take->y = y;
-
-			k_ptr = &k_info[take->k_idx];
-
-			/* Note */
-			borg_note(format
-					  ("# Tracking an object '%s' at (%d,%d) from (%d,%d)",
-					   (k_name + k_ptr->name), take->y, take->x, ox, oy));
-
-			/* Clear goals if really critical to follow movement */
-			if (!borg_skill[BI_ESP] && goal == GOAL_TAKE) goal = 0;
-		}
-
-		/* Timestamp */
-		take->when = borg_t;
-
-		/* Mark as seen */
-		take->seen = TRUE;
-
-		/* Done */
-		return (TRUE);
-	}
-
-	/* Oops */
-	return (FALSE);
 }
 
 
@@ -2666,19 +2551,26 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	 */
 	if (map->object || map->unknown)
 	{
-		borg_wank *wank;
-
-		/* Check for memory overflow */
-		if (borg_wank_num == AUTO_VIEW_MAX)
-			borg_oops("too many objects or monsters");
-
-		/* Access next wank, advance */
-		wank = &borg_wanks[borg_wank_num++];
-
-		/* Save some information */
-		wank->x = x;
-		wank->y = y;
-		wank->type = WANK_TAKE;
+		/* Do we already know about this object? */
+		if (mb_ptr->take)
+		{
+			borg_take *bt_ptr = &borg_takes[mb_ptr->take];
+		
+			if (!((bt_ptr->k_idx == map->object) ||
+				(bt_ptr->unknown == map->unknown)))
+			{
+				/* The object is different- delete it */
+				borg_delete_take(mb_ptr->take);
+				
+				/* Make a new object */
+				mb_ptr->take = borg_new_take(mb_ptr->object, mb_ptr->unknown, x, y);
+			}
+		}
+		else
+		{
+			/* Make a new object */
+			mb_ptr->take = borg_new_take(mb_ptr->object, mb_ptr->unknown, x, y);
+		}
 	}
 
 	/* Analyze terrain */
@@ -3766,18 +3658,6 @@ void borg_update(void)
 			borg_wanks[i] = borg_wanks[--borg_wank_num];
 		}
 	}
-	/* Pass 2 -- stationary objects */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track stationary objects */
-		if ((wank->type == WANK_TAKE) && observe_take_move(wank->y, wank->x, 0))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
 	/* Pass 3a -- moving monsters (distance 1) */
 	for (i = borg_wank_num - 1; i >= 0; i--)
 	{
@@ -3825,18 +3705,6 @@ void borg_update(void)
 		/* Track moving monsters */
 		if ((wank->type == WANK_KILL) &&
 			observe_kill_move(wank->y, wank->x, 3, TRUE))
-		{
-			/* Hack -- excise the entry */
-			borg_wanks[i] = borg_wanks[--borg_wank_num];
-		}
-	}
-	/* Pass 4 -- new objects */
-	for (i = borg_wank_num - 1; i >= 0; i--)
-	{
-		borg_wank *wank = &borg_wanks[i];
-
-		/* Track new objects */
-		if ((wank->type == WANK_TAKE) && observe_take_diff(wank->y, wank->x))
 		{
 			/* Hack -- excise the entry */
 			borg_wanks[i] = borg_wanks[--borg_wank_num];

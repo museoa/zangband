@@ -111,17 +111,17 @@ struct map_block
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
 	u16b fear;	/* fear value */
+	
+	u16b kill;	/* Entry into "kill" list */
+	u16b take;	/* Entry into "take" list */
 
 	byte feat;	/* Terrain feature */
 	byte info;	/* info flags */
 
-
 	byte flow;	/* "flow" data */
 	byte cost;	/* "cost" data */
 
-	byte kill;	/* Entry into "kill" list */
 	byte detect;	/* Detection flags */
-
 	byte xtra;	/* search count */
 #endif /* ALLOW_BORG */
 

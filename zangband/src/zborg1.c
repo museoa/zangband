@@ -2446,7 +2446,7 @@ void borg_init_1(void)
 	borg_takes_nxt = 1;
 
 	/* Array of objects */
-	C_MAKE(borg_takes, 256, borg_take);
+	C_MAKE(borg_takes, BORG_TAKES_MAX, borg_take);
 
 	/* Scan the objects */
 	for (i = 0; i < z_info->k_max; i++)
@@ -2476,13 +2476,7 @@ void borg_init_1(void)
 
 		/* Skip non-monsters */
 		if (!r_ptr->name) continue;
-#if 0
-		/* Hack -- Skip "clear" monsters XXX XXX XXX */
-		if (r_ptr->flags1 & RF1_CHAR_CLEAR) continue;
 
-		/* Hack -- Skip "multi" monsters XXX XXX XXX */
-		if (r_ptr->flags1 & RF1_CHAR_MULTI) continue;
-#endif
 		/* Notice this monster */
 		borg_is_kill[(byte)(r_ptr->d_char)] = TRUE;
 	}
