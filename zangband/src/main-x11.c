@@ -2559,7 +2559,7 @@ errr init_x11(int argc, char *argv[])
 
 			td->TmpImage = XCreateImage(dpy,visual,depth,
 				ZPixmap, 0, TmpData,
-				td->fnt->wid, td->fnt->hgt, 8, 0);
+				td->fnt->wid, td->fnt->hgt, 32, 0);
 
 		}
 #endif /* USE_TRANSPARENCY */

@@ -931,13 +931,11 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 				{
 					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
 				}
-
 				/* Draw pending chars (black) */
 				else
 				{
 					(void)((*Term->wipe_hook)(fx, y, fn));
 				}
-
 				/* Forget */
 				fn = 0;
 			}
@@ -967,14 +965,12 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 				if (fa || always_text)
 				{
 					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
-				}
-
+				}	
 				/* Draw pending chars (black) */
 				else
 				{
 					(void)((*Term->wipe_hook)(fx, y, fn));
 				}
-
 				/* Forget */
 				fn = 0;
 			}
@@ -1006,13 +1002,11 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 				{
 					(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
 				}
-
 				/* Hack -- Erase "leading" spaces */
 				else
 				{
 					(void)((*Term->wipe_hook)(fx, y, fn));
 				}
-
 				/* Forget */
 				fn = 0;
 			}
@@ -1032,8 +1026,7 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 		if (fa || always_text)
 		{
 			(void)((*Term->text_hook)(fx, y, fn, fa, &scr_cc[fx]));
-		}
-
+		}	
 		/* Draw pending chars (black) */
 		else
 		{
