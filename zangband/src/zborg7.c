@@ -1468,7 +1468,6 @@ static bool borg_consume(list_item *l_ptr)
 }
 
 
-
 /*
  * Destroy "junk" items
  */
@@ -1478,7 +1477,12 @@ bool borg_crush_junk(void)
 	bool fix = FALSE;
 	s32b p;
 	s32b value;
-	s32b my_power = borg_power();
+	s32b my_power;
+	
+	/* Notice changes */
+	borg_notice();
+	
+	my_power = borg_power();
 
 	/* Hack -- no need */
 	if (!borg_do_crush_junk) return (FALSE);
@@ -1514,8 +1518,8 @@ bool borg_crush_junk(void)
 			if (!(l_ptr->info & OB_KNOWN) &&
 				!strstr(l_ptr->o_name, "{average")) continue;
 
-			/* Pretend item isn't there */
-			l_ptr->treat_as = TREAT_AS_GONE;
+			/* Pretend one item isn't there */
+			l_ptr->treat_as = TREAT_AS_LESS;
 
 			/* Fix later */
 			fix = TRUE;
@@ -1578,8 +1582,8 @@ bool borg_crush_junk(void)
 		/* Message */
 		borg_note(format("# Destroying %s.", l_ptr->o_name));
 
-		/* Destroy all items */
-		borg_keypresses("099");
+		/* Destroy one item */
+		borg_keypresses("01");
 
 		/* Destroy that item */
 		if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
@@ -1799,16 +1803,8 @@ bool borg_crush_slow(void)
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
-		if (l_ptr->number > 1)
-		{
-			/* Pretend item is less */
-			l_ptr->treat_as = TREAT_AS_LESS;
-		}
-		else
-		{
-			/* Pretend item isn't there */
-			l_ptr->treat_as = TREAT_AS_GONE;
-		}
+		/* Pretend item is less */
+		l_ptr->treat_as = TREAT_AS_LESS;
 
 		/* Fix later */
 		fix = TRUE;
@@ -2242,15 +2238,7 @@ static bool borg_wear_rings(void)
 		{
 			/* Pretend to move item into equipment slot */
 			equipment[slot].treat_as = TREAT_AS_SWAP;
-			
-			if (l_ptr->number > 1)
-			{
-				l_ptr->treat_as = TREAT_AS_LESS;
-			}
-			else
-			{
-				l_ptr->treat_as = TREAT_AS_GONE;
-			}
+			l_ptr->treat_as = TREAT_AS_LESS;
 			
 			/* Fix later */
 			fix = TRUE;
@@ -2496,15 +2484,7 @@ bool borg_wear_stuff(void)
 		{
 			/* Swap items */
 			equipment[slot].treat_as = TREAT_AS_SWAP;
-			
-			if (l_ptr->number > 1)
-			{
-				l_ptr->treat_as = TREAT_AS_LESS;
-			}
-			else
-			{
-				l_ptr->treat_as = TREAT_AS_GONE;
-			}
+			l_ptr->treat_as = TREAT_AS_LESS;
 			
 			/* Fix later */
 			fix = TRUE;

@@ -2060,6 +2060,10 @@ static void borg_notice_inven(void)
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
+		if ((l_ptr->treat_as == TREAT_AS_LESS) && (l_ptr->number == 1))
+		{
+			 continue;
+		}
 
 		/* Unaware item? */
 		if (!l_ptr->k_idx) continue;
@@ -4835,7 +4839,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Being too heavy is really bad */
-	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT] * 100
+	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT]
 		/ (adj_str_wgt[my_stat_ind[A_STR]] * adj_str_wgt[my_stat_ind[A_STR]]);
 
 
@@ -4861,21 +4865,12 @@ s32b borg_power(void)
 {
 	int i = 1;
 	s32b value = 0L;
-	s32b diff;
 
 	/* Process the equipment */
-	diff = borg_power_aux3();
+	value  += borg_power_aux3();
 	
-	borg_note(format("# Equip Power (%ld)", diff));
-	
-	value += diff;
-
 	/* Process the inventory */
-	diff = borg_power_aux4();
-	
-	borg_note(format("# Inven Power (%ld)", diff));
-	
-	value += diff;
+	value += borg_power_aux4();
 
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
@@ -4885,8 +4880,6 @@ s32b borg_power(void)
 		if ((cptr)NULL != borg_prepared(i)) break;
 	}
 	value += ((i - 1) * 20000L);
-	
-	borg_note(format("# Total Power (%ld)", value));
 
 	/* Return the value */
 	return (value);
