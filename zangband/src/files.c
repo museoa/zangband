@@ -2511,7 +2511,7 @@ static void display_player_skill_info(void)
 			c = '.';
 
 			/* Boost */
-			if (oflags.flags[0] & (1L << skill))
+			if (oflags.flags[0] & (TR0_SP << skill))
 			{
 				/* Default */
 				c = '*';
