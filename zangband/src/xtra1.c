@@ -3012,7 +3012,7 @@ static void calc_bonuses(void)
 	p_ptr->skill.dev += adj_int_dev[p_ptr->stat[A_INT].ind];
 
 	/* Affect Skill -- saving throw (WIS) */
-	p_ptr->skill.sav += adj_wis_sav[p_ptr->stat[A_WIS].ind];
+	p_ptr->skill.sav += (adj_wis_sav[p_ptr->stat[A_WIS].ind] - 128);
 
 	/* Affect Skill -- digging (STR) */
 	p_ptr->skill.dig += adj_str_dig[p_ptr->stat[A_STR].ind];
@@ -3047,6 +3047,9 @@ static void calc_bonuses(void)
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill.dig < 1) p_ptr->skill.dig = 1;
 
+	/* Limit Skill -- saving throw from 1 up */
+	if (p_ptr->skill.sav < 1) p_ptr->skill.sav = 1;
+
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill.stl > 30) p_ptr->skill.stl = 30;
 	if (p_ptr->skill.stl < 0) p_ptr->skill.stl = 0;
@@ -3054,8 +3057,8 @@ static void calc_bonuses(void)
 	/* Apply Skill -- Extract noise from stealth */
 	p_ptr->noise = (1L << (30 - p_ptr->skill.stl));
 
-	if ((p_ptr->flags3 & (TR3_NO_MAGIC)) && (p_ptr->skill.sav < 95))
-		 p_ptr->skill.sav = 95;
+	if ((p_ptr->flags3 & (TR3_NO_MAGIC)) && (p_ptr->skill.sav < p_ptr->lev + 85))
+		 p_ptr->skill.sav = p_ptr->lev - 85;
 
 	/* Assume not heavy */
 	p_ptr->heavy_wield = FALSE;

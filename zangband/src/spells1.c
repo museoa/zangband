@@ -1489,7 +1489,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
-					/* Saving throw */
+					/* Saving throw (unadjusted) */
 					if (saving_throw(p_ptr->skill.sav))
 					{
 						msgf("You resist the effects!");
@@ -1582,7 +1582,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
-					/* Saving throw */
+					/* Saving throw (unadjusted) */
 					if (saving_throw(p_ptr->skill.sav))
 					{
 						msgf("You resist the effects!");
@@ -1672,7 +1672,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
-					/* Saving throw */
+					/* Saving throw (unadjusted) */
 					if (saving_throw(p_ptr->skill.sav))
 					{
 						msgf("You resist the effects!");

@@ -1489,7 +1489,7 @@ static void display_player_abilities(void)
 							  CLR_WHITE "Stealth     : %v",
 		 					likert, xthn, 10,
 		 					likert, xthb, 10,
-		 					likert, p_ptr->skill.sav, 6,
+		 					likert, p_ptr->skill.sav, 10,
 		 					likert, p_ptr->skill.stl, 1);
 
 
