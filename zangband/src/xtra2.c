@@ -2318,10 +2318,23 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				s3 = "the entrance to the ";
 			}
-			else if ((feat == FEAT_FLOOR) || (feat == FEAT_DIRT))
+			else if ((feat == FEAT_FLOOR) || 
+					((feat & 0xF8) == 0x08) ||
+					(feat == FEAT_DEEP_WATER) ||
+					(feat == FEAT_SHAL_WATER) ||
+					(feat == FEAT_DEEP_LAVA) ||
+					(feat == FEAT_SHAL_LAVA) ||
+					(feat == FEAT_DIRT) ||
+					(feat == FEAT_DEEP_ACID) ||
+					(feat == FEAT_SHAL_ACID) ||
+					(feat == FEAT_JUNGLE))
 			{
 				s3 ="";
 			}
+			else if (feat == FEAT_OCEAN_WATER)
+			{
+				s3 ="the ";
+			} 
 			else
 			{
 				/* Pick proper indefinite article */
