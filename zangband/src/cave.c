@@ -2619,7 +2619,7 @@ void display_map(int *cx, int *cy)
 
                         wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
 
-                        int depth = (w_ptr->done.mon_gen - 1) / 10;
+                        int depth = (w_ptr->done.mon_gen + 9) / 10;
 
                         if (depth > 9) depth = 9;
 
