@@ -704,9 +704,6 @@ errr fd_seek(int fd, huge n)
 	p = lseek(fd, n, SEEK_SET);
 
 	/* Failure */
-	if (p < 0) return (1);
-
-	/* Failure */
 	if (p != n) return (1);
 
 	/* Success */
