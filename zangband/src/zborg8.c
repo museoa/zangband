@@ -1089,9 +1089,9 @@ static bool borg_think_home_grab_aux(void)
 static bool borg_choose_shop(void)
 {
 	int i;
-	int use, bu = 0;
-	int dist;
-	int time;
+	s32b use, bu = 0;
+	s32b dist;
+	s32b time;
 
 	/* Must be in town */
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
@@ -1128,7 +1128,7 @@ static bool borg_choose_shop(void)
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
 		/* We want to shop */
-		borg_note(format("# Goal shop: %d, use: %d", goal_shop, bu));
+		borg_note(format("# Goal shop: %d, use: %d", goal_shop, (int) bu));
 	
 		/* Success */
 		return (TRUE);
@@ -1397,27 +1397,8 @@ bool borg_think_dungeon(void)
 
 	int msec = (delay_factor * delay_factor);
 
-	/* Hack -- prevent clock wrapping Step 1 */
-	if (borg_t >= 12000 && borg_t <= 12025)
-	{
-		/* Clear Possible errors */
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-
-		/*
-		 * Messing with the old_level forces him to
-		 * re-explore this level, and reshop, if in town.
-		 */
-		old_depth = 126;
-
-		/* Continue on */
-		return (TRUE);
-	}
-
-	/* Hack -- prevent clock wrapping Step 2 */
-	if (borg_t >= 30000)
+	/* Hack -- prevent clock wrapping */
+	if (borg_t >= 20000000)
 	{
 		/* Panic */
 		borg_oops("clock overflow");
@@ -1426,11 +1407,11 @@ bool borg_think_dungeon(void)
 		return (TRUE);
 	}
 
-	/* add a short pause to slow the borg down for viewing */
+	/* Add a short pause to slow the borg down for viewing */
 	Term_xtra(TERM_XTRA_DELAY, msec);
 
 	/* Prevent clock overflow */
-	if (borg_t - borg_began >= 10000)
+	if (borg_t - borg_began >= 100000)
 	{
 		/* Start leaving */
 		if (!goal_leaving)
@@ -1468,21 +1449,6 @@ bool borg_think_dungeon(void)
 			goal_fleeing = TRUE;
 		}
 	}
-
-	/* Avoid annoying farming */
-	if (borg_t - borg_began >= 2000)
-	{
-		/* Ignore monsters from boredom */
-		if (!goal_ignoring)
-		{
-			/* Flee */
-			borg_note("# Ignoring breeders (boredom)");
-
-			/* Ignore multipliers */
-			goal_ignoring = TRUE;
-		}
-	}
-
 
 	/* Count the awake breeders */
 	for (j = 0, i = 1; i < borg_kills_nxt; i++)

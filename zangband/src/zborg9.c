@@ -125,10 +125,7 @@ bool borg_cheat_death;
  * (for example, attempting to open a hallucinatory door), and that sometimes,
  * the Borg performs a "repeated" command (rest, open, tunnel, or search),
  * which may actually take longer than a single turn.  This has the effect
- * that the "borg_t" variable is slightly lacking in "precision".  Note that
- * we can store every time-stamp in a 's16b', since we reset the clock to
- * 1000 on each new level, and we refuse to stay on any level longer than
- * 30000 turns, unless we are totally stuck, in which case we abort.
+ * that the "borg_t" variable is slightly lacking in "precision".
  *
  * Note that as of 2.7.9, the Borg can play any class, that is, he can make
  * "effective" use of at least a few spells/prayers, and is not "broken"
@@ -2639,7 +2636,7 @@ void borg_init_9(void)
 	prt("", 0, 0);
 
 	/* Reset the clock */
-	borg_t = 10;
+	borg_t = 1000;
 
 	/* Official message */
 	borg_note("# Ready...");
@@ -3055,11 +3052,6 @@ void borg_status(void)
 				attr = TERM_SLATE;
 			Term_putstr(43, 12, -1, attr, "Confused");
 
-			if (borg_t >= 12000) attr = TERM_BLUE;
-			else
-				attr = TERM_SLATE;
-			Term_putstr(29, 13, -1, attr, "Out of Sync");
-
 			if (borg_skill[BI_ISFIXEXP]) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
@@ -3377,8 +3369,10 @@ void do_cmd_borg(void)
 
 			/* Allowable Cheat -- Obtain "prot_from_evil" flag */
 			borg_prot_from_evil = (p_ptr->protevil ? TRUE : FALSE);
+
 			/* Allowable Cheat -- Obtain "speed" flag */
 			borg_speed = (p_ptr->fast ? TRUE : FALSE);
+
 			/* Allowable Cheat -- Obtain "goi" flag */
 			borg_goi = (p_ptr->invuln ? 9000 : 0);
 			borg_inviso = (p_ptr->tim_invis ? 9000 : 0);
@@ -3396,10 +3390,6 @@ void do_cmd_borg(void)
 
 			/* Message */
 			borg_note("# Installing keypress hook");
-
-			/* If the clock overflowed, fix that  */
-			if (borg_t > 9000)
-				borg_t = 9000;
 
 			/* Activate the key stealer */
 			inkey_hack = borg_inkey_hack;
@@ -3506,10 +3496,6 @@ void do_cmd_borg(void)
 
 			/* Message */
 			borg_note("# Installing keypress hook");
-
-			/* If the clock overflowed, fix that  */
-			if (borg_t > 9000)
-				borg_t = 9000;
 
 			/* Activate the key stealer */
 			inkey_hack = borg_inkey_hack;
@@ -4100,10 +4086,12 @@ void do_cmd_borg(void)
 		{
 			/* Command: Show time */
 			s32b time = borg_t - borg_began;
-			msg_format("time: (%d) ", time);
+
+			msg_format("time: (%d) ", (int) time);
 			time = (borg_time_town + (borg_t - borg_began));
-			msg_format("; from town (%d)", time);
-			msg_format("; need inviso (%d)", need_see_inviso);
+
+			msg_format("; from town (%d)", (int) time);
+			msg_format("; need inviso (%d)", (int) need_see_inviso);
 			break;
 		}
 
@@ -4111,6 +4099,7 @@ void do_cmd_borg(void)
 		{
 			/* APW command: debug -- change max depth */
 			int new_borg_skill[BI_MAXDEPTH];
+
 			/* Get the new max depth */
 			new_borg_skill[BI_MAXDEPTH] =
 				get_quantity("Enter new Max Depth: ", MAX_DEPTH - 1);

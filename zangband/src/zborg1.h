@@ -168,7 +168,7 @@ struct borg_kill
 	s16b r_idx;	/* Race index */
 
 	s16b power;	/* Estimated hit-points */
-	s16b when;	/* When last seen */
+	s32b when;	/* When last seen */
 
 	byte x, y;	/* Location */
 
@@ -193,7 +193,7 @@ struct borg_shop
 	int y;
 
 	/* Time stamp */
-	s16b when;
+	s32b when;
 
 	/* Is this shop useful? */
 	s16b b_count;
@@ -452,9 +452,9 @@ extern u32b borg_rand_local;	/* Save personal setting */
  * Hack -- time variables
  */
 
-extern s16b borg_t;	/* Current "time" */
-extern s16b need_see_inviso;	/* To tell me to cast it */
-extern s16b borg_see_inv;
+extern s32b borg_t;	/* Current "time" */
+extern s32b need_see_inviso;	/* To tell me to cast it */
+extern s32b borg_see_inv;
 extern bool vault_on_level;	/* borg will search for a vault */
 extern bool unique_on_level;
 extern bool scaryguy_on_level;
@@ -467,13 +467,13 @@ extern s16b borg_no_retreat;
  * Hack -- Other time variables
  */
 
-extern s16b when_call_lite;	/* When we last did call light */
-extern s16b when_wizard_lite;	/* When we last did wizard light */
+extern s32b when_call_lite;	/* When we last did call light */
+extern s32b when_wizard_lite;	/* When we last did wizard light */
 
-extern s16b when_detect_traps;	/* When we last detected traps */
-extern s16b when_detect_doors;	/* When we last detected doors */
-extern s16b when_detect_walls;	/* When we last detected walls */
-extern s16b when_detect_evil;
+extern s32b when_detect_traps;	/* When we last detected traps */
+extern s32b when_detect_doors;	/* When we last detected doors */
+extern s32b when_detect_walls;	/* When we last detected walls */
+extern s32b when_detect_evil;
 
 extern bool my_need_alter;	/* incase of walls/doors */
 extern bool my_no_alter;	/* incase of walls/doors */

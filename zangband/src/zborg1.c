@@ -100,9 +100,9 @@ u32b borg_rand_local;	/* Save personal setting */
  * Hack -- Time variables
  */
 
-s16b borg_t = 0L;	/* Current "time" */
-s16b need_see_inviso = 0;	/* cast this when required */
-s16b borg_see_inv = 0;
+s32b borg_t = 0L;	/* Current "time" */
+s32b need_see_inviso = 0;	/* cast this when required */
+s32b borg_see_inv = 0;
 bool vault_on_level;	/* Borg will search for a vault */
 bool unique_on_level;
 bool scaryguy_on_level;	/* flee from certain guys */
@@ -115,13 +115,13 @@ s16b borg_no_retreat = 0;
  * Hack -- Other time variables
  */
 
-s16b when_call_lite;	/* When we last did call light */
-s16b when_wizard_lite;	/* When we last did wizard light */
+s32b when_call_lite = 0;	/* When we last did call light */
+s32b when_wizard_lite = 0;	/* When we last did wizard light */
 
-s16b when_detect_traps;	/* When we last detected traps */
-s16b when_detect_doors;	/* When we last detected doors */
-s16b when_detect_walls;	/* When we last detected walls */
-s16b when_detect_evil;	/* When we last detected monsters or evil */
+s32b when_detect_traps = 0;	/* When we last detected traps */
+s32b when_detect_doors = 0;	/* When we last detected doors */
+s32b when_detect_walls = 0;	/* When we last detected walls */
+s32b when_detect_evil = 0;	/* When we last detected monsters or evil */
 
 bool my_need_alter;	/* incase i hit a wall or door */
 bool my_no_alter;	/*  */

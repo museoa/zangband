@@ -912,6 +912,9 @@ bool borg_eat_food(int sval)
 	return (TRUE);
 }
 
+
+static s32b when_last_quaff = 0;
+
 /*
  * Quaff a potion of cure critical wounds.  This is a special case
  *   for several reasons.
@@ -923,8 +926,6 @@ bool borg_eat_food(int sval)
   */
 bool borg_quaff_crit(bool no_check)
 {
-	static s16b when_last_quaff = 0;
-
 	if (no_check)
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_CRITICAL))

@@ -2173,9 +2173,9 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 		 * We stamp it now if we can, or later if we just did the spell
 		 * That way we dont loop casting the spell.    APW
 		 */
-		if (need_see_inviso < (borg_t))
+		if (need_see_inviso < borg_t)
 		{
-			need_see_inviso = (borg_t);
+			need_see_inviso = borg_t;
 		}
 
 		/* Ignore */
