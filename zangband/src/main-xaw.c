@@ -1613,4 +1613,3 @@ errr init_xaw(int argc, char *argv[])
 }
 
 #endif /* USE_XAW */
-

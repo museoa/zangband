@@ -65,7 +65,7 @@
 #define IsSpecialKey(keysym) \
   ((unsigned)(keysym) >= 0xFF00)
 
-
+/* #define SUPPORT_ANGBAND_X11_GAMMA */
 
 #ifdef SUPPORT_ANGBAND_X11_GAMMA
 
@@ -111,8 +111,9 @@ static void build_gamma_table(byte gamma)
 	
 	/* Hack - convergence is bad in this case. */
 	gamma_table[0] = 0;
+	gamma_table[255] = 255;
 	
-	for(i = 1; i < 256; i++)
+	for(i = 1; i < 255; i++)
 	{
 		/* 
 		 * Initialise the Taylor series
@@ -120,11 +121,11 @@ static void build_gamma_table(byte gamma)
 		 * value and diff have been scaled by 256
 		 */
 		
-		n = 0;
-		value = 255;
-		diff = gamma_helper[i] * gamma / 256;
+		n = 1;
+		value = 255 * 256;
+		diff = ((long) gamma_helper[i]) * gamma;
 		
-		while (diff)
+		while (diff < -128)
 		{
 			value += diff;
 			n++;
@@ -132,7 +133,7 @@ static void build_gamma_table(byte gamma)
 			
 			/*
 			 * Use the following identiy to calculate the gamma table.
-			 * exp(x) = 1 + x + x/2 + x^2/(2*3) + x^3/(2*3*4) +...
+			 * exp(x) = 1 + x + x^2/2 + x^3/(2*3) + x^4/(2*3*4) +...
 			 *
 			 * n is the current term number.
 			 * 
@@ -144,14 +145,14 @@ static void build_gamma_table(byte gamma)
 			 * a is i / 256
 			 * b is gamma / 256.
 			 */
-			diff *= (long) (gamma_helper[i] * gamma / 256) / ((long)(256 * n));
+			diff = (((diff * gamma_helper[i]) / 256) * gamma / 256) / ((long)(256 * n));
 		}
 		
 		/* 
 		 * Store the value in the table so that the
 		 * floating point pow function isn't needed .
 		 */
-		gamma_table[i] = value;		
+		gamma_table[i] = value / 256;		
 	}
 }
 

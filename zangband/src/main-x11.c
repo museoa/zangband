@@ -496,7 +496,6 @@ static errr Metadpy_init_2(Display *dpy, cptr name)
 	m->black = BlackPixelOfScreen(m->screen);
 	m->white = WhitePixelOfScreen(m->screen);
 
-
 	/*** Make some clever Guesses ***/
 
 	/* Guess at the desired 'fg' and 'bg' Pixell's */
@@ -1833,6 +1832,8 @@ static errr Term_xtra_x11_react(void)
 {
 	int i;
 
+	return(0);
+	
 	if (Metadpy->color)
 	{
 		/* Check the colors */
