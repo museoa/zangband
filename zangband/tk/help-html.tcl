@@ -715,13 +715,10 @@ proc NSHelp::GeometryCmd {oop} {
 	set widthList [winfo reqwidth $win.frameList]
 	set width [expr {$widthList + [font measure $font "W"] * 82 + 16}]
 
-	scan [angband system workarea] "%d %d %d %d" left top right bottom
-	if {[Platform unix]} {
-		set left 0
-		set top 0
-		set right [winfo screenwidth .]
-		set bottom [winfo screenheight .]
-	}
+	set left 0
+	set top 0
+	set right [winfo screenwidth .]
+	set bottom [winfo screenheight .]
 
 	# If this is being called in HardcodeGeometry(), then the window
 	# should be positioned offscreen.

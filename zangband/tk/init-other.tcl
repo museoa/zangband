@@ -521,16 +521,10 @@ proc HardcodeGeometry {} {
 
 proc MaximizeWindows {} {
 
-	# Get the desktop area. On MS Windows this command takes into account
-	# the screen area consumed by the Taskbar. On the Macintosh the menu
-	# bar should be accounted for.
-	scan [angband system workarea] "%d %d %d %d" left top right bottom
-	if {[Platform unix]} {
-		set left 0
-		set top 0
-		set right [winfo screenwidth .]
-		set bottom [winfo screenheight .]
-	}
+	set left 0
+	set top 0
+	set right [winfo screenwidth .]
+	set bottom [winfo screenheight .]
 
 	# Start with the Main Window as big as the desktop
 	set width $right

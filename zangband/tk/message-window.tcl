@@ -253,13 +253,11 @@ proc NSMessageWindow::DisplayCmd {oop message first args} {
 proc NSMessageWindow::GeometryCmd {oop} {
 
 	set win [Info $oop win]
-	scan [angband system workarea] "%d %d %d %d" left top right bottom
-	if {[Platform unix]} {
-		set left 0
-		set top 0
-		set right [winfo screenwidth .]
-		set bottom [winfo screenheight .]
-	}
+	set left 0
+	set top 0
+	set right [winfo screenwidth .]
+	set bottom [winfo screenheight .]
+	
 	set width [winfo width $win]
 	set height [winfo height $win]
 	set x [expr {$right - [NSToplevel::TotalWidth $win]}]
