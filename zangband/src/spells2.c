@@ -2879,6 +2879,10 @@ bool earthquake(int cy, int cx, int r)
 			py = sy;
 			px = sx;
 			
+			/* Move the player */
+			p_ptr->py = sy;
+			p_ptr->px = sx;
+			
 			if (!dun_level)
 			{
 				/* Scroll wilderness */
@@ -3662,6 +3666,10 @@ bool teleport_swap(int dir)
 	/* Move the player */
 	px = tx;
 	py = ty;
+
+	/* Move the player */
+	p_ptr->px = tx;
+	p_ptr->py = ty;
 
 	tx = m_ptr->fx;
 	ty = m_ptr->fy;

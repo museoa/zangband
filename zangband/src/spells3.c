@@ -425,6 +425,10 @@ void teleport_player(int dis)
 	py = y;
 	px = x;
 	
+	/* Move the player */
+	p_ptr->py = y;
+	p_ptr->px = x;
+	
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
@@ -556,6 +560,10 @@ void teleport_player_to(int ny, int nx)
 	/* Move the player */
 	py = y;
 	px = x;
+	
+	/* Move the player */
+	p_ptr->py = y;
+	p_ptr->px = x;
 	
 	if (!dun_level)
 	{

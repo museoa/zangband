@@ -1867,6 +1867,10 @@ static errr rd_dungeon(void)
 	rd_s16b(&cur_wid);
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
+
+	/* Temporary Hack */
+	p_ptr->py = py;
+	p_ptr->px = px;
 	
 	/* Assume we are in the dungeon */
 	max_hgt = cur_hgt;

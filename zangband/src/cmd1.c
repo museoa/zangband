@@ -2486,7 +2486,11 @@ void move_player(int dir, int do_pickup)
 		/* Move the player */
 		py = y;
 		px = x;
-		
+
+		/* Move the player */
+		p_ptr->py = y;
+		p_ptr->px = x;
+
 		if (!dun_level)
 		{
 			/* Scroll wilderness */

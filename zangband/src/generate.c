@@ -1158,6 +1158,9 @@ void generate_cave(void)
 		px = (s16b)p_ptr->wilderness_x;
 		py = (s16b)p_ptr->wilderness_y;
 
+		p_ptr->px = (s16b)p_ptr->wilderness_x;
+		p_ptr->py = (s16b)p_ptr->wilderness_y;
+
 		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
 		

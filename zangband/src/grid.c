@@ -52,6 +52,10 @@ bool new_player_spot(void)
 	py = y;
 	px = x;
 
+	/* Save the new player grid */
+	p_ptr->py = y;
+	p_ptr->px = x;
+
 	return TRUE;
 }
 

@@ -5132,6 +5132,9 @@ static void wild_done(void)
 	px = (s16b)p_ptr->wilderness_x;
 	py = (s16b)p_ptr->wilderness_y;
 
+	p_ptr->px = (s16b)p_ptr->wilderness_x;
+	p_ptr->py = (s16b)p_ptr->wilderness_y;
+
 	map_panel_size();
 
 	/* Hack - delete all items / monsters / fields in wilderness */

@@ -3048,6 +3048,10 @@ bool player_place(int y, int x)
 	py = y;
 	px = x;
 
+	/* Save player location */
+	p_ptr->py = y;
+	p_ptr->px = x;
+
 	if (!dun_level)
 	{
 		/* Scroll wilderness */

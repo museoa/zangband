@@ -1324,8 +1324,8 @@ static void wr_dungeon(void)
 	wr_u16b(dun_level);
 	wr_u16b(base_level);
 	wr_u16b(num_repro);
-	wr_u16b(py);
-	wr_u16b(px);
+	wr_u16b(p_ptr->py);
+	wr_u16b(p_ptr->px);
 	wr_u16b(max_hgt);
 	wr_u16b(max_wid);
 	wr_u16b(max_panel_rows);
