@@ -521,16 +521,6 @@ static bool cave_gen(void)
 		y = randint0(dun->row_rooms);
 		x = randint0(dun->col_rooms);
 
-		/* Align dungeon rooms */
-		if (dungeon_align)
-		{
-			/* Slide some rooms right */
-			if ((x % 3) == 0) x++;
-
-			/* Slide some rooms left */
-			if ((x % 3) == 2) x--;
-		}
-
 		/* Attempt an "unusual" room */
 		if (ironman_rooms || (randint0(DUN_UNUSUAL) < p_ptr->depth))
 		{

@@ -6175,7 +6175,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  1, "expand_list",			"Expand the power of the list commands" },
 	{TRUE,  3, "view_perma_grids",		"Map remembers all perma-lit grids" },
 	{FALSE, 3, "view_torch_grids",		"Map remembers all torch-lit grids" },
-	{FALSE, 3, "dungeon_align",			"Generate dungeons with aligned rooms" },
+	{TRUE,  0, NULL,					"Number 40" },
 	{TRUE,  3, "dungeon_stair",			"Generate dungeons with connected stairs" },
 	{TRUE,  0, NULL,					"Number 42" },
 	{TRUE,  0, NULL,					"Number 43" },

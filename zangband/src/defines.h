@@ -3602,7 +3602,7 @@
 #define expand_list				svr_ptr->options[6]
 #define view_perma_grids		p_ptr->options[31]
 #define view_torch_grids		p_ptr->options[32]
-#define dungeon_align			svr_ptr->options[7]
+/* {TRUE,  0, NULL,					"Number 40" }, svr_ptr->options[7] */
 #define dungeon_stair			svr_ptr->options[8]
 /* {TRUE,  0, NULL,					"Number 42" }, svr_ptr->options[9] */
 /* {TRUE,  0, NULL,					"Number 43" }, svr_ptr->options[10] */
