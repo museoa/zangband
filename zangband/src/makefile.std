@@ -194,11 +194,11 @@ linux_svga: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl \
 ##
 cygwin: CFLAGS += -W -pedantic -mno-cygwin -DWINDOWS
 cygwin: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
-cygwin: OTHEROBJS := angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
-cygwin: $(OTHEROBJS)
+cygwin: OTHEROBJS := angband.res readdib.o
+cygwin: angband.res readdib.o
 	# Blank line required here
 
 
@@ -299,11 +299,11 @@ lcc: LIBS := $(LCC_PATH)\lib\winmm.lib -I$(LCC_PATH)\include
 lcc: LDFLAGS := -s -subsystem windows
 lcc: RES := $(LCC_PATH)\bin\lrc.exe
 lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
-lcc: OTHEROBJS := angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := $(subst /, \, $(LUA))
 lcc: EXEC := .exe
-lcc: $(OTHEROBJS)
+lcc: OTHEROBJS := angband.res readdib.o
+lcc: angband.res readdib.o
 	# Blank line required here
 
 
@@ -318,7 +318,7 @@ risc: CFLAGS := -IOS:,C: -throwback -depend !Depend -Wan -ff -zps1 #-g
 risc: LDFLAGS := -s symbols #-d
 risc: INSTALL := Squeeze zangband ^.!RunImage
 risc: OTHEROBJS := C:o.Stubs OSLib:o.OSLib C:o.eventlib
-risc: $(OTHEROBJS)
+risc: C:o.Stubs OSLib:o.OSLib C:o.eventlib
 	# Blank line required here
 
 
@@ -330,14 +330,14 @@ risc: $(OTHEROBJS)
 emx: CFLAGS := -MMD -O3 -DUSE_EMX -Zmt -Wall
 emx: LDFLAGS := -lvideo
 emx: AR := ar
-emx: OTHEROBJS := main-epm.o zangband.a
 emx: EXEC := .exe
 emx: INSTALL := \
 	copy zangband.exe ..\
 	emxbind -s ..\zangband.exe\
 	copy aclient.exe ..\
 	emxbind -s ..\aclient.exe
-emx: $(OTHEROBJS)
+emx: OTHEROBJS := main-epm.o zangband.a
+emx: main-epm.o zangband.a
 	# Blank line required here
 
 
@@ -360,9 +360,9 @@ zangband.a: $(OBJS)
 amiga: LD := slink QUIET WITH zangband.lnk
 amiga: CC := sc
 amiga: CFLAGS := DEFINE AMIGA DEFINE USE_AMI
-amiga: OTHEROBJS := sound-ami.o
 amiga: INSTALL :=  # Fixme
-amiga: $(OTHEROBJS)
+amiga: OTHEROBJS := sound-ami.o
+amiga: sound-ami.o
 	# Blank line required here
 
 
