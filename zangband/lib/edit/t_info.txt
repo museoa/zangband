@@ -884,7 +884,7 @@ N:88:Obscure Warrior Hall
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:50:100:0:100:0:0:42
+D:2:50:100:5:95:0:0:42
 F:2,field_action_door_store
 F:19,field_action_isweaparmour_tester
 
@@ -929,7 +929,7 @@ N:93:Advanced Heavy Armoury
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:1:50:0:100:0:0:8
+D:1:1:50:20:80:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
 
@@ -938,7 +938,7 @@ N:94:Expert Heavy Armoury
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:50:75:0:100:0:0:8
+D:1:50:75:20:80:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
 
@@ -947,7 +947,7 @@ N:95:Arcane Heavy Armoury
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:75:127:0:100:0:0:42
+D:1:75:127:20:80:0:0:42
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
 
@@ -956,7 +956,7 @@ N:96:Obscure Heavy Armoury
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:50:100:0:100:0:0:26
+D:1:50:100:20:80:0:0:26
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
 
@@ -968,4 +968,212 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
+
+# Milliner
+N:98:Milliner
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:50:50:50:0:0:8
+F:2,field_action_door_store
+F:19,field_action_ishelm_tester
+
+# Milliner
+N:99:Advanced Milliner
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:50:50:0:0:8
+F:2,field_action_door_store
+F:19,field_action_ishelm_tester
+
+# Milliner
+N:100:Expert Milliner
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:50:50:0:0:36
+F:2,field_action_door_store
+F:19,field_action_ishelm_tester
+
+# Milliner
+N:101:Rare Milliner
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:100:50:50:0:0:62
+F:2,field_action_door_store
+F:19,field_action_ishelm_tester
+
+# Jeweler
+N:102:Jeweler
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:30:100:0:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isjewel_tester
+
+# Jeweler
+N:103:Copper Jewler
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:100:0:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isjewel_tester
+
+# Jeweler
+N:104:Silver Jeweler
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:40:70:100:0:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isjewel_tester
+
+# Jeweler
+N:105:Gold Jeweler
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:60:90:100:0:0:0:40
+F:2,field_action_door_store
+F:19,field_action_isjewel_tester
+
+# Jeweler
+N:106:Rare Jeweler
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:80:120:100:0:0:0:56
+F:2,field_action_door_store
+F:19,field_action_isjewel_tester
+
+# Statue Store
+N:107:Statue Store
+G:1:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:50:100:0:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isstatue_tester
+
+# Statue Store
+N:108:Expensive Statue Store
+G:1:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:100:0:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isstatue_tester
+
+# Figurine Store
+N:108:Figurine Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:26:26:100:0:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isfigurine_tester
+
+# Figurine Store
+N:109:Expensive Figurine Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:90:100:0:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isfigurine_tester
+
+# Potion Store
+N:110:Potion Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:30:0:0:100:0:8
+F:2,field_action_door_store
+F:19,field_action_ispotion_tester
+
+# Potion Store
+N:111:Cultured Potion Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:0:100:0:8
+F:2,field_action_door_store
+F:19,field_action_ispotion_tester
+
+# Potion Store
+N:112:Expensive Potion Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:40:70:0:0:100:0:24
+F:2,field_action_door_store
+F:19,field_action_ispotion_tester
+
+# Potion Store
+N:113:Obscure Potion Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:60:90:0:0:100:0:40
+F:2,field_action_door_store
+F:19,field_action_ispotion_tester
+
+# Potion Store
+N:114:Rare Potion Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:80:120:0:0:100:0:56
+F:2,field_action_door_store
+F:19,field_action_ispotion_tester
+
+# Scroll Store
+N:115:Scroll Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:30:0:0:100:0:8
+F:2,field_action_door_store
+F:19,field_action_isscroll_tester
+
+# Scroll Store
+N:116:Crafted Scroll Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:0:100:0:8
+F:2,field_action_door_store
+F:19,field_action_isscroll_tester
+
+# Scroll Store
+N:117:Expensive Scroll Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:40:70:0:0:100:0:24
+F:2,field_action_door_store
+F:19,field_action_isscroll_tester
+
+# Scroll Store
+N:118:Obscure Scroll Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:60:90:0:0:100:0:40
+F:2,field_action_door_store
+F:19,field_action_isscroll_tester
+
+# Scroll Store
+N:119:Rare Scroll Store
+G:5:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:80:120:0:0:100:0:56
+F:2,field_action_door_store
+F:19,field_action_isscroll_tester
+
 
