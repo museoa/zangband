@@ -837,7 +837,7 @@ bool player_can_see_bold(int x, int y)
  */
 bool no_lite(void)
 {
-	return (!player_can_see_bold(p_ptr->py, p_ptr->px));
+	return (!player_can_see_bold(p_ptr->px, p_ptr->py));
 }
 
 
