@@ -197,7 +197,6 @@ extern void angtk_health(char *buf);
 extern int angtk_tval_string(cptr *str, int tval);
 extern int angtk_tval_const(int *tval, cptr str);
 extern void angtk_init(void);
-extern bool player_test_feature(int y, int x, int mode);
 extern cptr player_status(int status, int *value);
 
 extern void blows_per_round(int *_blows, int *_muta_att);

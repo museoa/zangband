@@ -37,8 +37,8 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"blocked", "wild_name", NULL};
-	enum {IDX_BLOCKED, IDX_WILD_NAME} option;
+	static cptr cmdOptions[] = {"wild_name", NULL};
+	enum {IDX_WILD_NAME} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	int y, x;
@@ -58,35 +58,6 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 	switch (option)
 	{
-		case IDX_BLOCKED: /* blocked */
-			if (!character_dungeon) goto error;
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "y x");
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[3], &x) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-	
-			if (!in_bounds2(x, y))
-			{
-				/* Set the error */
-				Tcl_AppendStringsToObj(resultPtr, (char *) "location ",
-					format("y=%d,x=%d", y, x), " is not in bounds", NULL);
-			
-				goto error;
-			}
-			
-			blocked = !player_test_feature(y, x, 0);
-
-			Tcl_SetBooleanObj(resultPtr, blocked);
-			break;
 	
 		case IDX_WILD_NAME: /* wild_name */
 			if (!character_dungeon)
