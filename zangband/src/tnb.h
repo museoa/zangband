@@ -34,9 +34,6 @@
 #define CHEAT_MAX 6
 extern option_type cheat_info[];
 
-/* files.c */
-extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
-
 /* init1.c */
 extern char **r_info_flags[10];
 extern int r_info_flags_max;
@@ -231,12 +228,6 @@ extern int inkey_flags;
 
 /* r_info.c */
 extern long angtk_roff(int r_idx, char *buffer);
-
-typedef struct _buildingdata {
-	bool inside;
-	int building_loc;
-	building_type *bldg;
-} _buildingdata;
 
 /* store.c */
 typedef struct _storedata {
