@@ -87,7 +87,7 @@ ANGOBJS := $(LUAWOBJS) \
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
-	maid-grf.o main-dos.o main-ibm.o main-acn.o
+	maid-grf.o main-dos.o main-ibm.o main-acn.o main-emx.o
 
 ##
 ## The "Utility" files
@@ -107,7 +107,7 @@ BORGOBJS := \
 ## The list of ports available
 ##
 PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         solaris sgi dec isc next aix cygwin dos ibm lcc risc
+         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx
 
 ##
 ## Following are some "system" definitions
@@ -310,6 +310,33 @@ risc: LDFLAGS := -s symbols #-d
 risc: INSTALL := Squeeze zangband ^.!RunImage
 risc: OTHEROBJS += C:o.Stubs OSLib:o.OSLib C:o.eventlib
 
+##
+## Variation -- Compile for OS2  (based on old emx makefile)
+## Use 'dmake -B -r -f makefile.emx' to compile
+## (see "main-emx.c" for details).
+##
+emx: CFLAGS := -MMD -O3 -DUSE_EMX -Zmt -Wall
+emx: LDFLAGS := -lvideo
+emx: AR := ar
+emx: OTHEROBJS := main-epm.o zangband.a
+emx: INSTALL := \
+	copy zangband.exe ..\
+	emxbind -s ..\zangband.exe\
+	copy aclient.exe ..\
+	emxbind -s ..\aclient.exe
+
+##
+## Special EMX dependancies
+##
+
+aclient.exe: main-emx.c
+	$(CC) $(CFLAGS) -D__EMX__CLIENT__ -o $@ $< $(LDFLAGS)
+
+main-epm.o: main-emx.c
+	$(CC) $(CFLAGS) -DEMXPM -c -o $@ $<
+
+zangband.a: $(OBJS)
+	$(AR) r $@ $(OBJS)
 
 ##########################################################
 
