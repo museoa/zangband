@@ -1076,6 +1076,9 @@ Global tclCompiler 0
 	# Value Manager (needed for Birth Options Window)
 	Source value-manager.tcl
 	NSValueManager::InitModule
+	
+	# Turn on keyboard	
+#	Source keyboard.tcl
 
 	InitStartupScreen
 

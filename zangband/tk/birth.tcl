@@ -2224,18 +2224,6 @@ proc NSBirth::Configure {oop stage} {
 			# Cleanup at the C level
 			birth done
 
-			# Read a dead-character's save file
-			if {[info exists ::AngbandPriv(load,win)]} {
-				WindowBringToFront $::AngbandPriv(load,win)
-
-			# Hack -- Initialize the Load Window now, so when the
-			# Player Window is destroyed, the application still has
-			# an active front window (otherwise the application will
-			# be swapped into the background).
-			} else {
-				angband_load init
-			}
-
 			# Destroy player-info display
 			NSModule::CloseModule NSPlayer
 

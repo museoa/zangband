@@ -333,34 +333,6 @@ proc HardcodeGeometry {} {
 	wm geometry $win1 +$x+$y
 	update idletasks
 
-if 0 {
-	# Recall Window
-	set win1 [Window main]
-	set win2 [Window progress]
-	set win3 [Window recall]
-	set x 0 ; incr x $offset
-	set y [expr {[NSToplevel::FrameBottom $win1] + $spacing}]
-	if {[Value choicewindow,show]} {
-		set width [NSToplevel::ContentWidth $win3 \
-			[expr {[NSToplevel::TotalWidth $win1] / 2}]]
-	} else {
-		set width [NSToplevel::ContentWidth $win3 \
-			[expr {[NSToplevel::FrameRight $win1] - $x}]]
-	}
-	if {($y + [NSToplevel::TotalHeight $win3]) < [winfo screenheight .]} {
-		set height [winfo height $win3]
-	} else {
-		if {[winfo screenwidth .] >= 800} {
-			set height 100
-		} else {
-			set height [expr {[NSToplevel::FrameBottom $win2] - $y}]
-		}
-		set height [NSToplevel::ContentHeight $win3 $height]
-	}
-	wm geometry $win3 ${width}x$height+$x+$y
-	update idletasks
-}
-
 	# Message Window (width)
 	set win1 [Window micromap]
 	set win2 [Window message]
@@ -483,34 +455,6 @@ proc HardcodeGeometry {} {
 	set win1 [Window progress]
 	wm geometry $win1 +$x+$y
 	update
-
-if 0 {
-	# Recall Window
-	set win1 [Window main]
-	set win2 [Window progress]
-	set win3 [Window recall]
-	set x 0
-	set y [expr {[NSToplevel::FrameBottom $win1] + $spacing}]
-	if {[Value choicewindow,show]} {
-		set width [NSToplevel::ContentWidth $win3 \
-			[expr {[NSToplevel::TotalWidth $win1] / 2}]]
-	} else {
-		set width [NSToplevel::ContentWidth $win3 \
-			[expr {[NSToplevel::FrameRight $win1] - $x}]]
-	}
-	if {($y + [NSToplevel::TotalHeight $win3]) < [winfo screenheight .]} {
-		set height [winfo height $win3]
-	} else {
-		if {[winfo screenwidth .] >= 800} {
-			set height 100
-		} else {
-			set height [expr {[NSToplevel::FrameBottom $win2] - $y}]
-		}
-		set height [NSToplevel::ContentHeight $win3 $height]
-	}
-	wm geometry $win3 ${width}x$height+$x+$y
-	update
-}
 
 	# Message Window (width)
 	set win1 [Window micromap]
@@ -997,6 +941,10 @@ proc InitOther {} {
 
 	global Angband
 	
+	Source object.tcl
+	
+	InitLoadWindow
+	
 	angband_load progress 0.25
 	angband_load note "Sourcing scripts..."
 	
@@ -1025,15 +973,6 @@ proc InitOther {} {
 	
 	angband_load note "Initializing modules..."
 	InitModules
-
-	# XXX Hack -- If this is a new character, then read in the "default"
-	# settings from the tk/config/setting file
-	if {[Global isNewGame]} {
-		set fileName [PathTk config setting]
-		if {[file exists $fileName]} {
-			Config::Setting::Source $fileName
-		}
-	}
 
 	angband_load prompt "Initializing: Main Window"
 	NSModule::LoadIfNeeded NSMainWindow
@@ -1145,37 +1084,28 @@ proc InitOther {} {
 		}
 	}
 	if {[Platform windows]} {
-		if 1 {
-			wm deiconify [Window main]
+		wm deiconify [Window main]
+		update
+		if {[Value recall,show]} {
+			NSWindowManager::Display recall
+#			wm state [Window recall] normal
 			update
-			if {[Value recall,show]} {
-				NSWindowManager::Display recall
-#				wm state [Window recall] normal
-				update
-			}
-			if {[Value micromap,float]} {
-				wm state [Window micromap] normal
-			}
+		}
+		if {[Value micromap,float]} {
+			wm state [Window micromap] normal
+		}
+		update
+		if {[Value misc,float]} {
+			wm state [Window misc] normal
 			update
-			if {[Value misc,float]} {
-				wm state [Window misc] normal
-				update
-				if {[Value misc,layout] == "wide"} {
-					wm state [Window progress] normal
-					update
-				}
-			}
-			if {[Value message,float]} {
-				wm state [Window message] normal
+			if {[Value misc,layout] == "wide"} {
+				wm state [Window progress] normal
 				update
 			}
-		} else {
-			wm deiconify [Window main]
-			wm deiconify [Window recall]
-			wm deiconify [Window micromap]
-			wm deiconify [Window misc]
-			wm deiconify [Window progress]
-			wm deiconify [Window message]
+		}
+		if {[Value message,float]} {
+			wm state [Window message] normal
+			update
 		}
 	}
 	if {[Value choicewindow,show]} {
@@ -1202,24 +1132,6 @@ proc InitOther {} {
 		NSModule::LoadIfNeeded NSTips
 	}
 
-	### XXX Mega-Smegga-Hack -- A character record includes a "photo.txt"
-	### entry, which describes what is seen by the character at the time
-	### of death. The problem is that the monster and object lists are
-	### wiped after dungeon(). So I create the photo.txt file whenever
-	### leaving dungeon() and the character is dead.
-	Global photoId 0
-	Global photoText ""
-	qebind PhotoFileHack <Dungeon-leave> {
-		if {[angband player is_dead]} {
-			NSModule::LoadIfNeeded NSPhoto
-			Global photoText [NSUtils::TempFileName $Angband(dir)]
-			Global photoId [NSObject::New NSPhoto]
-			NSPhoto::ExamineWidget [Global photoId] [Global main,widget]
-			NSPhoto::WritePhotoText [Global photoId] [Global photoText]
-			NSObject::Delete NSPhoto [Global photoId]
-		}
-	}
-	
 	return
 }
 
@@ -1230,136 +1142,5 @@ if {[catch {
 
 } error]} {
 	HandleError $error
-}
-
-
-
-if {$DEBUG} {
-
-# feature lighting -radius 1 -brightness -35 -contrast 0 -gamma 0.8
-# feature lighting -radius 2 -brightness -80 -contrast 0 -gamma 0.8
-
-# feature lighting -radius 1 -brightness -0 -contrast -40 -gamma 0.7
-# feature lighting -radius 2 -brightness -0 -contrast -40 -gamma 0.4
-
-proc AdjustBrightnessContrast {what value} {
-
-	if {[string equal $what -gamma]} {
-		set value [expr {$value / 10.0}]
-	}
-	feature lighting -radius $::Radius $what $value
-	[Global main,widget] wipe
-
-	return
-}
-
-proc SetRadius {which} {
-
-	set ::Radius $which
-	scan [feature lighting -radius $::Radius] "%d %d %f" \
-		::Brightness ::Contrast gamma
-	set ::Gamma [expr {$gamma * 10.0}]
-
-	return
-}
-
-proc InitBrightnessContrast {} {
-
-	set win .brightnesscontrast
-	toplevel $win
-	wm withdraw $win
-	
-	scale $win.brightness \
-		-orient horizontal -label "Brightness" -variable ::Brightness \
-		-width 15 -sliderlength 20 -length 255 -from -127 -to 127 \
-		-command "AdjustBrightnessContrast -brightness" -showvalue yes
-	scale $win.contrast \
-		-orient horizontal -label "Contrast"  -variable ::Contrast \
-		-width 15 -sliderlength 20 -length 255 -from -127 -to 127 \
-		-command "AdjustBrightnessContrast -contrast" -showvalue yes
-	scale $win.gamma \
-		-orient horizontal -label "Gamma"  -variable ::Gamma \
-		-width 15 -sliderlength 20 -length 255 -from 0 -to 20 \
-		-command "AdjustBrightnessContrast -gamma" -showvalue yes
-	pack $win.brightness
-	pack $win.contrast
-	pack $win.gamma
-
-	bind $win <KeyPress-1> {SetRadius 1}
-	bind $win <KeyPress-2> {SetRadius 2}
-	bind $win <KeyPress-3> {SetRadius 3}
-}
-
-SetRadius 1
-InitBrightnessContrast
-
-} elseif 1 {
-
-	# Nothing
-	
-} else {
-
-set darkenFile [PathTk image darken.gif]
-if {[file exists $darkenFile]} {
-	image create photo Image_Darken -file $darkenFile
-	for {set i 0} {$i < 3} {incr i} {
-		set color {}
-		for {set y 0} {$y < 16} {incr y} {
-			for {set x 0} {$x < 16} {incr x} {
-				set rgb [Image_Darken get [expr {$x + $i * 16}] $y]
-				lappend color [eval format #%02x%02x%02x $rgb]
-			}
-		}
-		angband tint $i $color
-	}
-	image delete Image_Darken
-}
-
-}
-
-if 0 {
-
-catch {
-for {set y 0} {$y < 16} {incr y} {
-	set row {}
-	for {set x 0} {$x < 16} {incr x} {
-		lappend row [palette set [expr {$x + $y * 16}]]
-	}
-	lappend data $row
-}
-image create photo Palette -height 16 -width 16 -palette 256/256/256
-Palette put $data -to 0 0
-toplevel .palette
-label .palette.label -image Palette
-pack .palette.label
-} result
-}
-
-# Dump a list of vaults to a text window. I found a bug in a vault
-# by doing this (the height and width were reversed). We could
-# easily print out the vaults sorted by size, by type (lesser/greater) and
-# by rating!
-proc vaultHack {} {
-
-	toplevel .vault
-	set textBox [text .vault.text -font {Courier 9}]
-	pack $textBox
-	update
-	set max [debughook vault max]
-	for {set i 0} {$i < $max} {incr i} {
-		debughook vault info $i attrib
-		set height $attrib(height)
-		set width $attrib(width)
-		set text $attrib(text)
-		$textBox insert end "N:$i:$attrib(name)\n"
-		$textBox insert end "X:$attrib(type):$attrib(rating):$height:$width\n"
-		set offset 0
-		for {set y 0} {$y < $height} {incr y} {
-			$textBox insert end "D:[string range $text $offset \
-				[expr {$offset + $width - 1}]]\n"
-			incr offset $width
-		}
-		$textBox insert end \n
-	}
 }
 
