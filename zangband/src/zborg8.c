@@ -2837,15 +2837,8 @@ bool borg_think_dungeon(void)
     int b_j = -1;
 
 
-#ifdef BORG_TK
-    extern byte borgtk_delay_factor;
-    int msec = borgtk_delay_factor * borgtk_delay_factor;
-#else /* not BORG_TK */
     int msec = ((delay_factor * delay_factor) +
                 (borg_delay_factor * borg_delay_factor));
-#endif /* not BORG_TK */
-
-
 
     /* HACK allows user to stop the borg on certain levels */
     if (borg_skill[BI_CDEPTH] == borg_stop_dlevel) borg_oops("Auto-stop for user DLevel.");
@@ -2915,9 +2908,7 @@ bool borg_think_dungeon(void)
         borg_respawning --;
         return (TRUE);
     }
-#ifdef BORG_TK
-    if (msec)
-#endif /* BORG_TK */
+
     /* add a short pause to slow the borg down for viewing */
     Term_xtra(TERM_XTRA_DELAY, msec);
 

@@ -2889,8 +2889,6 @@ static void borg_update_map(void)
     /* Analyze the current map panel */
     for (dy = 0; dy < SCREEN_HGT; dy++)
     {
-#ifndef BORG_TK
-
         /* Direct access XXX XXX XXX */
         byte *aa = &(Term->scr->a[dy+1][13]);
         char *cc = &(Term->scr->c[dy+1][13]);
@@ -2899,8 +2897,6 @@ static void borg_update_map(void)
        byte a_trans;
        char c_trans;
 #endif /* ALLOW_BORG_GRAPHICS */
-
-#endif /* not BORG_TK */
 
         /* Scan the row */
         for (dx = 0; dx < SCREEN_WID; dx++)
@@ -2913,11 +2909,6 @@ static void borg_update_map(void)
             x = w_x + dx;
             y = w_y + dy;
 
-#ifdef BORG_TK
-
-            map_info(y, x, &t_a, &t_c);
-
-#else /* not BORG_TK */
 
 			/* Save contents */
             t_a = *aa++;
@@ -2936,7 +2927,6 @@ static void borg_update_map(void)
            }
 
 #endif /* ALLOW_BORG_GRAPHICS */
-#endif /* not BORG_TK */
 
             /* Get the borg_grid */
             ag = &borg_grids[y][x];
@@ -4994,13 +4984,6 @@ static bool ang_sort_comp_hook_strings(vptr u, vptr v, int a, int b)
     return (what[a] <= what[b]);
 }
 
-#ifdef BORG_TK
-void borg_forget_messages(void)
-{
-    borg_msg_len =0;
-    borg_msg_num = 0;
-}
-#endif /* borg_tk */
 
 /*
  * Sorting hook -- swap function -- see below

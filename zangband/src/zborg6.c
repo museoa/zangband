@@ -3,10 +3,6 @@
 
 #include "angband.h"
 
-#ifdef BORG_TK
-#include "tnb.h"
-#endif /* BORG_TK */
-
 #ifdef ALLOW_BORG
 
 #include "zborg1.h"

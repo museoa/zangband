@@ -1116,7 +1116,6 @@ bool borg_fighting_evil_unique;
 bool borg_fighting_summoner;
 
 
-#ifndef BORG_TK
 /*
  * Calculate "incremental motion". Used by project() and shoot().
  * Assumes that (*y,*x) lies on the path from (y1,x1) to (y2,x2).
@@ -1445,8 +1444,6 @@ errr borg_what_text(int x, int y, int n, byte *a, char *s)
     return (0);
 }
 
-#endif /* not BORG_TK */
-
 
 /*
  * Log a message to a file
@@ -1470,9 +1467,7 @@ void borg_note(cptr what)
     int w, h, x, y;
 
 
-#ifndef BORG_TK
     term *old = Term;
-#endif
 
     /* Memorize it */
     message_add(what, MSG_GENERIC);
@@ -1497,7 +1492,6 @@ void borg_note(cptr what)
         borg_note(format("# Anti-loop variable tick (%d).", time_this_panel));
     }
 
-#ifndef BORG_TK
     /* Scan windows */
     for (j = 0; j < 8; j++)
     {
@@ -1599,8 +1593,7 @@ void borg_note(cptr what)
         /* Use correct window */
         Term_activate(old);
     }
-#endif /* not BORG_TK */
- }
+}
 
 
 

@@ -1512,11 +1512,6 @@ extern glyph translate_visuals[255][255];
 
 #endif /* ALLOW_BORG_GRAPHICS */
 
-#ifdef BORG_TK
-extern cptr BORG_DIR_ROOT;
-extern cptr BORG_DIR_DATA;
-#endif /* BORG_TK */
-
 #endif
 
 #endif
