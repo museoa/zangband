@@ -179,6 +179,7 @@
 #define QX_KILL_WINNER			3
 #define QX_WILD_ENTER			4
 #define QX_KNOW_ARTIFACT		5
+#define QX_FIND_SHOP			6
 
 /*
  * Mega Hack XXX XXX Info for winner quest

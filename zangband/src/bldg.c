@@ -1865,32 +1865,17 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
  */
 void do_cmd_bldg(field_type *f_ptr)
 {
-	int i, which = -1;
 	store_type *b_ptr;
 	bool leave_build = FALSE;
 
-	place_type *pl_ptr = &place[p_ptr->place_num];
-
-	/* Get the building the player is on */
-	for (i = 0; i < pl_ptr->numstores; i++)
-	{
-		if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
-			(p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
-		{
-			which = i;
-		}
-	}
-
+	b_ptr = get_current_store();
+	
 	/* Paranoia */
-	if (which == -1)
-	{
-		msgf("Could not locate building!");
-		return;
-	}
-
-
-	b_ptr = &pl_ptr->store[which];
-
+	if (!b_ptr) return;
+	
+	/* Some quests are finished by finding a building */
+	trigger_quest_complete(QX_FIND_SHOP, (vptr)b_ptr);
+	
 	/* Forget the view */
 	forget_view();
 

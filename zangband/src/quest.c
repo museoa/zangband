@@ -228,6 +228,45 @@ static u16b find_good_dungeon(int level)
 	return (best_place);
 }
 
+/*
+ * Look for an appropriate town with a distance appropriate
+ * for the given level.
+ */
+static u16b find_good_town(int level)
+{
+	int i;
+	
+	int score, best_score = 0;
+	
+	int best_place = 0;
+	
+	place_type *pl_ptr;
+	
+	for (i = 0; i < place_count; i++)
+	{
+		pl_ptr = &place[i];
+		
+		/* Want towns with buildings */
+		if (!pl_ptr->numstores) continue;
+			
+		/* Get difference of distance in wilderness blocks and difficulty level */
+		score = abs(distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) - level);
+		
+		/* The bigger the difference, the less likely a high score is */
+		score = randint1(WILD_SIZE - score); 
+	
+		if (score > best_score)
+		{
+			best_score = score;
+			best_place = i;
+		}
+	}
+	
+	/* Best match to reward level */
+	return (best_place);
+}
+
+
 static cptr describe_quest_location(cptr * dirn, int x, int y)
 {
 	int i;
@@ -536,11 +575,28 @@ void activate_quests(int level)
 				
 				pl_ptr = &place[place_num];
 				
-				/* paranoia */
+				/* Need to be in the dungeon */
 				if (!pl_ptr->dungeon) break;
 			
 				/* Correct dungeon level? */
 				if (level != pl_ptr->dungeon->max_level) break;
+				
+				q_ptr->flags |= QUEST_FLAG_ACTIVE;
+			}
+			
+			case QUEST_TYPE_MESSAGE:
+			{
+				int place_num = q_ptr->data.msg.place;
+				
+				place_type *pl_ptr;
+				
+				/* Not correct place? */
+				if (place_num != p_ptr->place_num) break;
+				
+				pl_ptr = &place[place_num];
+				
+				/* Need to be on the surface */
+				if (pl_ptr->dungeon) break;
 				
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			}
@@ -839,6 +895,25 @@ void trigger_quest_complete(byte x_type, vptr data)
 					q_ptr->status = QUEST_STATUS_COMPLETED;
 				}
 			}
+			
+			case QX_FIND_SHOP:
+			{
+				place_type *pl_ptr;
+			
+				/* Towns must match */
+				if (p_ptr->place_num != q_ptr->data.msg.place) continue;
+				
+				pl_ptr = &place[p_ptr->place_num];
+				
+				/* Do the stores match? */
+				if ((store_type *) data != &pl_ptr->store[q_ptr->data.msg.shop]) continue;
+				
+				/* Complete the quest */
+				q_ptr->status = QUEST_STATUS_COMPLETED;
+				
+				msgf("You have found the place you were looking for and you deliver the message!");
+				message_flush();
+			}
 		}
 
 		/* Finished the quest? */
@@ -945,6 +1020,37 @@ void reward_quest(quest_type *q_ptr)
 			else
 			{
 				msgf("Still looking for them?");
+			}
+		}
+		
+		case QUEST_TYPE_MESSAGE:
+		{
+			if (q_ptr->status == QUEST_STATUS_COMPLETED)
+			{
+				/* Work out reward */
+				long reward = q_ptr->reward * 100;
+				
+				/* Give to player */
+				p_ptr->au += reward;
+				
+				msgf("You are given %ld gold pieces for your efforts.", reward);
+				
+				/* Allow another quest to be selected */
+				q_ptr->place = 0;
+				q_ptr->shop = 0;
+				
+				/* Allow this quest to be deleted if needed */
+				q_ptr->status = QUEST_STATUS_FINISHED;
+				
+				/* Take note */
+				if (auto_notes)
+				{
+					add_note('Q', "Finished quest: %s", q_ptr->name);
+				}
+			}
+			else
+			{
+				msgf("Please deliver it as soon as possible!");
 			}
 		}
 
@@ -1254,19 +1360,150 @@ static bool request_bounty(int dummy)
 }
 
 
-#define QUEST_MENU_MAX		3
+static quest_type *insert_message_quest(int dist)
+{
+	place_type *pl_ptr;
+	
+	quest_type *q_ptr;
+	store_type *st_ptr;
+	
+	cptr owner;
+
+	int store;
+	byte owner_num;
+	u16b place_num;
+
+	/* Get a new quest */
+	int q_num = q_pop();
+		
+	/* Paranoia */
+	if (!q_num) return (NULL);
+	
+	q_ptr = &quest[q_num];
+
+	/* Store in information */
+	q_ptr->type = QUEST_TYPE_MESSAGE;
+	
+	/* We have taken the quest */
+	q_ptr->status = QUEST_STATUS_TAKEN;
+
+	/* We don't need any special creation operation */
+	q_ptr->c_type = QC_NONE;
+	
+	/* Finished when the player finds it */
+	q_ptr->x_type = QX_FIND_SHOP;
+	
+	/* Find a town that is roughly dist wilderness blocks away */
+	place_num = find_good_town(dist);
+	
+	/* Get the place */
+	pl_ptr = &place[place_num];
+	
+	/* Find a store at that town */
+	while (TRUE)
+	{
+		store = randint0(pl_ptr->numstores);
+		
+		st_ptr = &pl_ptr->store[store];
+		
+		/* Want a store with an owner */
+		if (st_ptr->owner)
+		{
+			int field_num = wild_build[st_ptr->type].field;
+			
+			owner_num = t_info[field_num].data_init[0];
+			
+			/* Store or building? */
+			if (build_is_store(wild_build[st_ptr->type].type))
+			{
+				/* Store */
+				const owner_type *ot_ptr = &owners[owner_num][st_ptr->owner];
+				
+				owner = ot_ptr->owner_name;
+			
+			}
+			else
+			{
+				/* Building */
+				const b_own_type *bo_ptr = &b_owners[owner_num][st_ptr->owner];
+				
+				owner = bo_ptr->owner_name;
+			}
+		
+			break;
+		}
+	}
+		
+	/* XXX XXX Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Carry a message to %s in %s.", owner, pl_ptr->name);
+	
+	
+	/* Save the quest data */
+	q_ptr->data.msg.shop = store;
+	q_ptr->data.msg.place = place_num;
+	
+	/* Set the reward level */
+	q_ptr->reward = dist;
+	
+	/* Done */
+	return (q_ptr);
+}
+
+static bool request_message(int dummy)
+{
+	quest_type *q_ptr;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/*
+	 * Generate a quest to send a message to a town
+	 * roughly 50 wilderness blocks away
+	 */
+	q_ptr = insert_message_quest(50);
+
+	if (!q_ptr)
+	{
+		msgf("Sorry, I don't need any to send any messages today.");
+	
+		message_flush();
+	
+		/* No available quests, unfortunately. */
+		return (FALSE);
+	}
+		
+	/* Show it on the screen? */
+			
+	/* Display a helpful message. */
+	msgf("%s.", q_ptr->name);
+				  
+	message_flush();
+			
+	/* Remember who gave us the quest */
+	set_quest_giver(q_ptr);
+			
+	/* Exit */
+	return (TRUE);
+}
+
+
+#define QUEST_MENU_MAX		4
 
 /* The quest selection menu */
 static menu_type quest_menu[QUEST_MENU_MAX] =
 {
 	{"To fund a lost relic", NULL, request_find_item, MN_ACTIVE},
 	{"To hunt down a bounty of monsters", NULL, request_bounty, MN_ACTIVE},
+	{"To send a message to someone far away", NULL, request_message, MN_ACTIVE},
 	MENU_END
 };
 
 void request_quest(const store_type *b_ptr, int scale)
 {
-	/* Hack - ignore quest scale for now */
+	/*
+	 * Hack - ignore quest scale for now.
+	 * (Larger castles should offer harder quests)
+	 */
 	(void) scale;
 
 	/* Save building so we can remember the quest giver */

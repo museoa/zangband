@@ -2369,6 +2369,9 @@ void do_cmd_store(const field_type *f1_ptr)
 
 	/* Paranoia */
 	if (!st_ptr) return;
+	
+	/* Some quests are finished by finding a shop */
+	trigger_quest_complete(QX_FIND_SHOP, (vptr)st_ptr);
 
 	/* Hack - save interesting flags for later */
 	info_flags = f_ptr->data[7];

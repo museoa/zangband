@@ -3,8 +3,8 @@
 /* Purpose: Wilderness generation */
 
 /*
- * Copyright (c) 1989, 1999 James E. Wilson, Robert A. Koeneke,
- * Robert Ruehlmann
+ * Copyright (c) 1989, 2003 James E. Wilson, Robert A. Koeneke,
+ *                          Robert Ruehlmann, Steven Fuerst
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
@@ -37,7 +37,7 @@ static int wild_stairs_y = 0;
  * Pop, magic, law levels
  * Rarity
  */
-static wild_building_type wild_build[MAX_CITY_BUILD] =
+wild_building_type wild_build[MAX_CITY_BUILD] =
 {
 	{0, FT_STORE_GENERAL, BT_STORE, 100, 150, 150, 5},
 	{0, FT_STORE_ARMOURY, BT_STORE, 150, 150, 100, 2},

@@ -3,8 +3,8 @@
 /* Purpose: Wilderness + Quest generation header file */
 
 /*
- * Copyright (c) 1989, 1999 James E. Wilson, Robert A. Koeneke,
- * Robert Ruehlmann
+ * Copyright (c) 1989, 2003 James E. Wilson, Robert A. Koeneke,
+ *                          Robert Ruehlmann, Steven Fuerst
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
@@ -161,8 +161,8 @@ struct quest_aux_type
 	cptr name;
 };
 
-
 /* wild1.c */
+extern wild_building_type wild_build[MAX_CITY_BUILD];
 extern void init_vanilla_town(void);
 extern bool init_places(int xx, int yy);
 extern void clear_temp_block(void);
