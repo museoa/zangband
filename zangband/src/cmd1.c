@@ -625,7 +625,7 @@ void py_pickup_aux(int o_idx)
 	msg_format("You have %s (%c).", o_name, index_to_label(slot));
 
 	/* Delete the object */
-	delete_object_idx(o_idx);
+	delete_dungeon_object(o_idx);
 }
 
 
@@ -695,7 +695,7 @@ void carry(int pickup)
 			p_ptr->window |= (PW_PLAYER);
 
 			/* Delete the gold */
-			OBJ_DEL_CURRENT;
+			OBJ_DEL_FCURRENT;
 
 			/* Check the next object */
 			continue;
@@ -767,7 +767,7 @@ void carry(int pickup)
 						/* Physically try to destroy the item */
 						if (destroy_item_aux(o_ptr, o_ptr->number))
 						{
-							OBJ_DEL_CURRENT;
+							OBJ_DEL_FCURRENT;
 						}
 					}
 				}
@@ -909,7 +909,7 @@ void carry(int pickup)
 				/* Physically try to destroy the item */
 				if (destroy_item_aux(o_ptr, o_ptr->number))
 				{
-					delete_object_idx(floor_o_idx);
+					delete_dungeon_object(floor_o_idx);
 				}
 			}
 

@@ -833,7 +833,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 
 
 				/* Delete the object */
-				OBJ_DEL_CURRENT;
+				OBJ_DEL_FCURRENT;
 
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)

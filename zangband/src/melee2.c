@@ -2612,7 +2612,7 @@ static void take_move(int m_idx, int *mm)
 						}
 
 						/* Delete the object */
-						OBJ_DEL_CURRENT;
+						OBJ_DEL_FCURRENT;
 					}
 				}
 				OBJ_ITT_END;

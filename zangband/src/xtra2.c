@@ -504,7 +504,7 @@ bool monster_death(int m_idx, bool explode)
 #endif /* USE_CORPSES */
 
 	/* Drop objects being carried */
-	monster_drop_carried_objects(m_ptr);
+	drop_object_list(&m_ptr->hold_o_idx, m_ptr->fx, m_ptr->fy);
 
 	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
 	if (strstr((r_name + r_ptr->name), "Stormbringer"))

@@ -422,7 +422,7 @@ static void do_cmd_wiz_feature(int feat)
 	}
 
 	/* Nuke objects */
-	delete_object_idx(c_ptr->o_idx);
+	delete_object_list(&c_ptr->o_idx);
 
 	/* Nuke monsters */
 	delete_monster_idx(c_ptr->m_idx);

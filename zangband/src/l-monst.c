@@ -2354,27 +2354,6 @@ tolua_lerror:
  return 0;
 }
 
-/* function: monster_drop_carried_objects */
-static int toluaI_monster_monster_drop_carried_objects00(lua_State* tolua_S)
-{
- if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"monster_type"),0) ||
-     !tolua_isnoobj(tolua_S,2)
- )
-  goto tolua_lerror;
- else
- {
-  monster_type* m_ptr = ((monster_type*)  tolua_getusertype(tolua_S,1,0));
-  {
-   monster_drop_carried_objects(m_ptr);
-  }
- }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'monster_drop_carried_objects'.");
- return 0;
-}
-
 /* function: monster_dungeon */
 static int toluaI_monster_monster_dungeon00(lua_State* tolua_S)
 {
@@ -3467,7 +3446,6 @@ int tolua_monster_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"multiply_monster",toluaI_monster_multiply_monster00);
  tolua_function(tolua_S,NULL,"update_smart_learn",toluaI_monster_update_smart_learn00);
  tolua_function(tolua_S,NULL,"place_monster_one",toluaI_monster_place_monster_one00);
- tolua_function(tolua_S,NULL,"monster_drop_carried_objects",toluaI_monster_monster_drop_carried_objects00);
  tolua_function(tolua_S,NULL,"monster_dungeon",toluaI_monster_monster_dungeon00);
  tolua_function(tolua_S,NULL,"monster_quest",toluaI_monster_monster_quest00);
  tolua_function(tolua_S,NULL,"monster_ocean",toluaI_monster_monster_ocean00);
@@ -3901,7 +3879,6 @@ void tolua_monster_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"multiply_monster");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"update_smart_learn");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"place_monster_one");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"monster_drop_carried_objects");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"monster_dungeon");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"monster_quest");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"monster_ocean");

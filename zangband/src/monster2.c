@@ -124,15 +124,7 @@ void delete_monster_idx(int i)
 	}
 
 	/* Delete objects */
-	OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
-	{
-		/* Hack -- efficiency */
-		o_ptr->held_m_idx = 0;
-
-		/* Delete the object */
-		OBJ_DEL_CURRENT;
-	}
-	OBJ_ITT_END;
+	delete_object_list(&m_ptr->hold_o_idx);
 
 	/* Wipe the Monster */
 	(void)WIPE(m_ptr, monster_type);
@@ -3033,39 +3025,4 @@ void update_smart_learn(int m_idx, int what)
 			break;
 		}
 	}
-}
-
-
-/*
- * Drop all items carried by a monster
- */
-void monster_drop_carried_objects(monster_type *m_ptr)
-{
-	object_type forge;
-	object_type *o_ptr;
-	object_type *q_ptr;
-
-
-	/* Drop objects being carried */
-	OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
-	{
-		/* Paranoia */
-		o_ptr->held_m_idx = 0;
-
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Copy the object */
-		object_copy(q_ptr, o_ptr);
-
-		/* Delete the object */
-		OBJ_DEL_CURRENT;
-
-		/* Drop it */
-		(void)drop_near(q_ptr, -1, m_ptr->fx, m_ptr->fy);
-	}
-	OBJ_ITT_END;
-
-	/* Forget objects */
-	m_ptr->hold_o_idx = 0;
 }

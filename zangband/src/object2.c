@@ -96,28 +96,53 @@ void excise_object_idx(int o_idx)
  */
 void delete_object_idx(int o_idx)
 {
-	object_type *j_ptr;
+	object_type *o_ptr;
 
 	/* Excise */
 	excise_object_idx(o_idx);
 
 	/* Object */
-	j_ptr = &o_list[o_idx];
+	o_ptr = &o_list[o_idx];
 
 	/* Dungeon floor */
-	if (!(j_ptr->held_m_idx))
+	if (!(o_ptr->held_m_idx))
 	{
 		int y, x;
 
 		/* Location */
-		y = j_ptr->iy;
-		x = j_ptr->ix;
+		y = o_ptr->iy;
+		x = o_ptr->ix;
 
 		/* Visual update */
+		lite_spot(x, y);
 	}
 
 	/* Wipe the object */
-	object_wipe(j_ptr);
+	object_wipe(o_ptr);
+
+	/* Count objects */
+	o_cnt--;
+}
+
+/*
+ * Delete an object we know is lying on the dungeon
+ * floor.
+ */
+void delete_dungeon_object(int o_idx)
+{
+	object_type *o_ptr;
+	
+	/* Excise */
+	excise_object_idx(o_idx);
+
+	/* Object */
+	o_ptr = &o_list[o_idx];
+	
+	/* Visual update */
+	lite_spot(o_ptr->ix, o_ptr->iy);
+
+	/* Wipe the object */
+	object_wipe(o_ptr);
 
 	/* Count objects */
 	o_cnt--;
@@ -165,6 +190,36 @@ void delete_object_list(s16b *o_idx_ptr)
 
 	/* Objects are gone */
 	o_idx_ptr = 0;
+}
+
+/*
+ * Drop all the items in the list near the location (x, y).
+ */
+void drop_object_list(s16b *o_idx_ptr, int x, int y)
+{
+	object_type forge;
+	object_type *o_ptr;
+	object_type *q_ptr;
+
+	/* Drop objects being carried */
+	OBJ_ITT_START (*o_idx_ptr, o_ptr)
+	{
+		/* Get local object */
+		q_ptr = &forge;
+
+		/* Copy the object */
+		object_copy(q_ptr, o_ptr);
+
+		/* Delete the object */
+		object_wipe(o_ptr);
+
+		/* Drop it */
+		(void)drop_near(q_ptr, -1, x, y);
+	}
+	OBJ_ITT_END;
+
+	/* No more objects in the list */
+	*o_idx_ptr = 0;
 }
 
 
@@ -268,6 +323,8 @@ void compact_objects(int size)
 	int i, y, x, num, cnt;
 
 	int cur_lev, cur_dis, chance;
+	
+	bool object_held;
 
 
 	/* Compact */
@@ -320,6 +377,8 @@ void compact_objects(int size)
 
 				/* Monsters protect their objects */
 				if (randint0(100) < 90) continue;
+				
+				object_held = TRUE;
 			}
 
 			/* Dungeon */
@@ -328,6 +387,8 @@ void compact_objects(int size)
 				/* Get the location */
 				y = o_ptr->iy;
 				x = o_ptr->ix;
+				
+				object_held = FALSE;
 			}
 
 			/* Nearby objects start out "immune" */
@@ -344,8 +405,15 @@ void compact_objects(int size)
 			if (randint0(100) < chance) continue;
 
 			/* Delete the object */
-			delete_object_idx(i);
-
+			if (object_held)
+			{
+				delete_object_idx(i);
+			}
+			else
+			{
+				delete_dungeon_object(i);
+			}
+			
 			/* Count it */
 			num++;
 		}
@@ -418,7 +486,7 @@ void wipe_o_list(void)
 		c_ptr->o_idx = 0;
 			
 		/* Delete the object */
-		delete_object_idx(i);
+		delete_dungeon_object(i);
 	}
 	
 	/* Compress the object list */
@@ -455,9 +523,36 @@ void wipe_objects(int rg_idx)
 		}
 
 		/* Delete the object */
-		delete_object_idx(i);
+		delete_dungeon_object(i);
 	}
 }
+
+/*
+ * Return the item corresponding to the requested slot
+ * in a list of objects, or zero.
+ */
+s16b get_list_slot(s16b o_idx, int slot)
+{
+	object_type *o_ptr;
+	
+	/* Start counting at zero */
+	int i = 0;
+
+	/* Scan all objects in the grid */
+	OBJ_ITT_START (o_idx, o_ptr)
+	{
+		/* Hack - return slot */
+		if (i == slot) return (_this_o_idx);
+
+		/* Count objects */
+		i++;
+	}
+	OBJ_ITT_END;
+
+	/* The slot doesn't exist */
+	return (0);
+}
+
 
 
 /*
@@ -5083,7 +5178,7 @@ void floor_item_optimize(int item)
 	if (o_ptr->number) return;
 
 	/* Delete the object */
-	delete_object_idx(item);
+	delete_dungeon_object(item);
 }
 
 

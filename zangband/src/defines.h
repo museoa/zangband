@@ -3901,11 +3901,13 @@
 #define OBJ_ITT_END \
 		} \
 	}
+
 /*
- * Delete the current object we are scanning
+ * Delete the current (floor) object we are scanning
  */
-#define OBJ_DEL_CURRENT \
+#define OBJ_DEL_FCURRENT \
 	delete_object_idx(_this_o_idx)
+
 
 
 /*

@@ -3346,7 +3346,8 @@ void do_cmd_pet(void)
 
 					if (is_pet(m_ptr))
 					{
-						monster_drop_carried_objects(m_ptr);
+						drop_object_list(&m_ptr->hold_o_idx,
+										 m_ptr->fx, m_ptr->fy);
 					}
 				}
 			}

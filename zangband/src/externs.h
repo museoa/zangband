@@ -543,7 +543,6 @@ extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
 extern bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 							  bool pet);
-extern void monster_drop_carried_objects(monster_type *m_ptr);
 
 /* monster3.c (currently in monster1.c) */
 extern bool monster_dungeon(int r_idx);
@@ -635,11 +634,14 @@ extern void toggle_inven_equip(void);
 extern bool get_item(int *cp, cptr pmt, cptr str, int mode);
 extern void excise_object_idx(int o_idx);
 extern void delete_object_idx(int o_idx);
+extern void delete_dungeon_object(int o_idx);
 extern void delete_object(int x, int y);
 extern void delete_object_list(s16b *o_idx_ptr);
+extern void drop_object_list(s16b *o_idx_ptr, int x, int y);
 extern void compact_objects(int size);
 extern void wipe_o_list(void);
 extern void wipe_objects(int rg_idx);
+extern s16b get_list_slot(s16b o_idx, int slot);
 extern s16b o_pop(void);
 extern void get_obj_num_prep(void);
 extern errr get_obj_store_prep(void);
