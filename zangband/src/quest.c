@@ -1127,6 +1127,7 @@ void reward_quest(quest_type *q_ptr)
 }
 
 static const store_type *curr_build;
+static int curr_scale;
 
 /* Save the quest giver (current town + building) */
 static void set_quest_giver(quest_type *q_ptr)
@@ -1187,7 +1188,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	
 	/* Save the quest data */
 	q_ptr->data.fit.a_idx = a_idx;
-	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level, 0);
+	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level, curr_scale * 2);
 	
 	/* Where is it? */
 	pl_ptr = &place[q_ptr->data.fit.place];
@@ -1360,7 +1361,7 @@ static bool request_bounty(int dummy)
 		 * Random monster out of depth
 		 * (depending on level + number of quests)
 		 */
-		r_idx = get_mon_num(p_ptr->max_lev * 2);
+		r_idx = get_mon_num(p_ptr->max_lev + curr_scale);
 
 		r_ptr = &r_info[r_idx];
 		
@@ -1521,9 +1522,9 @@ static bool request_message(int dummy)
 	
 	/*
 	 * Generate a quest to send a message to a town
-	 * roughly 50 wilderness blocks away
+	 * roughly 20 to 50 wilderness squares away.
 	 */
-	q_ptr = insert_message_quest(50);
+	q_ptr = insert_message_quest(curr_scale * 2);
 
 	if (!q_ptr)
 	{
@@ -1580,7 +1581,7 @@ static quest_type *insert_find_place_quest(int dist)
 	q_ptr->x_type = QX_WILD_ENTER;
 	
 	/* Find a dungeon that is roughly dist wilderness blocks away */
-	place_num = find_good_dungeon(50, dist);
+	place_num = find_good_dungeon(curr_scale * 2, dist);
 	
 	/* Get the place */
 	pl_ptr = &place[place_num];
@@ -1605,7 +1606,7 @@ static quest_type *insert_find_place_quest(int dist)
 	q_ptr->data.fpl.place = place_num;
 	
 	/* Set the reward level */
-	q_ptr->reward = dist;
+	q_ptr->reward = dist + curr_scale * 2;
 	
 	/* Done */
 	return (q_ptr);
@@ -1620,9 +1621,9 @@ static bool request_find_place(int dummy)
 	
 	/*
 	 * Generate a quest to find a dungeon
-	 * roughly 100 wilderness blocks away
+	 * roughly 75 wilderness blocks away
 	 */
-	q_ptr = insert_find_place_quest(100);
+	q_ptr = insert_find_place_quest(75);
 
 	if (!q_ptr)
 	{
@@ -1664,14 +1665,21 @@ static menu_type quest_menu[QUEST_MENU_MAX] =
 
 void request_quest(const store_type *b_ptr, int scale)
 {
-	/*
-	 * Hack - ignore quest scale for now.
-	 * (Larger castles should offer harder quests)
-	 */
-	(void) scale;
-
 	/* Save building so we can remember the quest giver */
 	curr_build = b_ptr;
+	
+	/* Save scale so we can work out how hard to make the quest */
+	curr_scale = scale;
+	
+	/* Only allow artifact quests from large castles */
+	if (scale < 20)
+	{
+		quest_menu[0].flags &= ~(MN_ACTIVE);
+	}
+	else
+	{
+		quest_menu[0].flags |= MN_ACTIVE;
+	}
 
 	display_menu(quest_menu, -1, FALSE, NULL, "What type of quest would you like?");
 }

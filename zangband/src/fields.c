@@ -4730,7 +4730,7 @@ bool field_action_castlequest2(field_type *f_ptr, va_list vp)
 		else
 		{
 			/* Make a new quest */
-			request_quest(b_ptr, f_ptr->data[1] * *factor);
+			request_quest(b_ptr, f_ptr->data[1]);
 		}
 
 		/* Hack, use factor as a return value */
