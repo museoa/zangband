@@ -1,0 +1,20 @@
+Tag arena.txt 
+Tag attack.txt {* 0 0} {DistanceAttack 1147 1170} {AttackWalls 2294 2314} {Bashing 2876 2892} {MeleeWeapons 3594 3615} {MissileLaunch 5332 5354} {EgoArtifact 7752 7772} {MagicalAids 19032 19052} {DamageCalc 19406 19425} {MeleeCalc 20598 20616} {BareHandCalc 21403 21424} {FireCalc 21729 21746} {ThrowCalc 22707 22725} {MonkAttacks 24875 24895} {MonkAttackTypes 25545 25569} {MeleeTactics 26412 26433}
+Tag birth.txt {* 0 0} {StartUp 1117 1133} {CharAttributes 1604 1627} {RaceClassComb 2858 2881} {ChoosingMagic 6744 6766} {Restrictions 7862 7883} {RandomQuests 9243 9264} {AutoRoller 9593 9612} {LifeRating 11668 11687} {CharName 12343 12360} {StartInventory 12850 12873}
+Tag bldg.txt 
+Tag charattr.txt {* 0 0} {TheRaces 4913 4930} {TheClasses 21031 21050} {PrimaryStats 35284 35305} {PrimarySkills 39170 39192} {StatBonusTable 42977 43000} {SkillBonusTable 46125 46149}
+Tag command.txt {* 0 0} {OriginalKeyset 4759 4782} {RogueKeyset 8169 8189} {SpecialKeys 11737 11757} {CommandCounts 13969 13991} {ObjectSelection 15302 15326}
+Tag commdesc.txt {* 0 0} {Inventory 912 930} {Movement 3776 3793} {Resting 6382 6398} {Searching 7680 7698} {Alter 8793 8807} {SpellPrayer 12387 12407} {ObjectManip 14769 14789} {MagicalObject 17704 17726} {ThrowFire 19641 19659} {Looking 23932 23956} {Message 25989 26005} {GameStatus 26492 26511} {SaveExit 27897 27914} {UserPref 28651 28668} {Help 28830 28844} {Extra 30703 30717}
+Tag defend.txt {* 0 0} {Armor 2239 2253} {ResistingMagic 4239 4262} {EgoArtifact 6826 6846} {Resistances 13155 13175} {Unresistable 19876 19897} {Immunities 20759 20778} {Miscellaneous 21308 21330} {Recovering 21977 21996}
+Tag dungeon.txt {* 0 0} {MapSymbols 435 454} {WithinDungeon 2010 2032} {Objects 4075 4091} {Mining 5778 5793} {StairsDoorsEtc 7956 7979} {RandomQuests 9510 9531}
+Tag gambling.txt 
+Tag general.txt {* 0 0} {Overview 282 299} {Winning 1119 1135} {UponDeath 2839 2857} {DevTeam 3576 3592} {Web 4195 4207} {VersionNumber 7410 7432}
+Tag helpinfo.txt 
+Tag magic.txt {* 0 0} {ClassSpellAbil 3114 3137} {MagicRealms 8779 8799} {CastingSpells 14106 14128} {SpellTypes 16590 16609} {Pets 18040 18053} {Hints 19759 19773} {SpellLists 20751 20770}
+Tag objects.txt {* 0 0} {ObjectSymbols 738 760} {EquipInvent 1375 1395} {Stacking 3588 3605} {Generation 4122 4141} {Compaction 5731 5750} {CursedObjects 6600 6622} {AncientCurse 8692 8713} {ObjectFlavors 10149 10171} {PseudoID 11019 11036} {Identifying 12986 13006} {EgoObjects 14470 14489} {Artifacts 15325 15343} {RandomAbilities 18084 18108} {Inscriptions 19558 19579} {ObjectTypes 20639 20659}
+Tag option.txt {* 0 0} {UserInterface 857 879} {Disturbance 5086 5106} {GamePlay 7282 7299} {Efficiency 12202 12221} {Zangband 19271 19288} {Stacking 26139 26156} {BaseDealy 26574 26592} {Hitpoint 26857 26874} {Autosave 27109 27126} {Window 28272 28287} {Cheating 28374 28391} {StartUp 29285 29301}
+Tag pref.txt {* 0 0} {Commands 2799 2816} {Macros 4175 4190} {KeyMaps 6114 6130} {Visuals 7241 7257} {Colors 8484 8499} {Options 9013 9029}
+Tag readme.txt 
+Tag tang.txt 
+Tag town.txt {* 0 0} {MapSymbols 362 381} {TownLevel 1895 1913} {StandardTown 3275 3296} {LiteTown 4320 4337} {VanillaTown 4819 4839} {Townspeople 5120 5140} {Shopping 6281 6298} {Bartering 8268 8286} {ObjectPricing 9370 9392} {TheShops 10555 10572} {Buildings 12124 12142} {FixedQuests 13065 13085}
+Tag version.txt 
