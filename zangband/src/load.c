@@ -2797,6 +2797,16 @@ static errr rd_dungeon(void)
 	rd_s16b(&cur_wid);
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
+	
+	if (sf_version < 12)
+	{
+		max_panel_cols = max_panel_cols * map_wid / 2;
+		max_panel_rows = max_panel_rows * map_hgt / 2;
+		
+		/* Reset the panel */
+		panel_row_min = max_panel_rows;
+		panel_col_min = max_panel_cols;
+	}
 
 	/* Old method */
 	if (older_than(2, 8, 0))
@@ -3084,7 +3094,7 @@ static errr rd_dungeon(void)
 		/* enter the level */
 		change_level(dun_level);
 	}
-
+	
 	/* Success */
 	return (0);
 }

@@ -408,8 +408,8 @@ static bool cave_gen(void)
 	/* Global data */
 	dun = &dun_body;
 
-	if (!max_panel_rows) max_vault_ok--;
-	if (!max_panel_cols) max_vault_ok--;
+	if (max_panel_rows < 67) max_vault_ok--;
+	if (max_panel_cols < 34) max_vault_ok--;
 
 	/* Randomize the dungeon creation values */
 	dun_rooms = rand_range(DUN_ROOMS_MIN, DUN_ROOMS_MAX);
@@ -993,19 +993,19 @@ void map_panel_size(void)
 	if (dun_level)
 	{
 		/* Determine number of panels (dungeon) */
-		max_panel_rows = (cur_hgt / map_hgt) * 2;
-		max_panel_cols = (cur_wid / map_wid) * 2;
+		max_panel_rows = cur_hgt;
+		max_panel_cols = cur_wid;
 	}
 	else
 	{
 		/* Determine number of panels (wilderness) */
-		max_panel_rows = (max_wild * 16 / map_hgt) * 2;
-		max_panel_cols = (max_wild * 16 / map_wid) * 2;
+		max_panel_rows = max_wild * 16;
+		max_panel_cols = max_wild * 16;
 	}
 
 	/* Assume illegal panel */
-	panel_row = max_panel_rows;
-	panel_col = max_panel_cols;
+	panel_row_min = max_panel_rows;
+	panel_col_min = max_panel_cols;
 }
 
 /* Make a real level */

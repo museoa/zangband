@@ -3869,15 +3869,10 @@ static void dungeon(void)
 	verify_panel();
 
 	/* Validate the panel */
-	if (center_player || (vanilla_town && !dun_level))
+	if (vanilla_town && !dun_level)
 	{
 		panel_bounds_center();
 	}
-	else
-	{
-		panel_bounds();
-	}
-
 
 	/* Flush messages */
 	msg_print(NULL);

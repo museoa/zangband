@@ -1360,22 +1360,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 }
 
 
-
-/*
- * Calculates current boundaries
- * Called below and from "do_cmd_locate()".
- */
-void panel_bounds(void)
-{
-	panel_row_min = panel_row * (map_hgt / 2);
-	panel_row_max = panel_row_min + map_hgt - 1;
-	panel_row_prt = panel_row_min - 1;
-	panel_col_min = panel_col * (map_wid / 2);
-	panel_col_max = panel_col_min + map_wid - 1;
-	panel_col_prt = panel_col_min - 13;
-}
-
-
 /*
  * Calculates current boundaries
  * Called below and from "do_cmd_locate()".
@@ -1383,10 +1367,8 @@ void panel_bounds(void)
  */
 void panel_bounds_center(void)
 {
-	panel_row = panel_row_min / (map_hgt / 2);
 	panel_row_max = panel_row_min + map_hgt - 1;
 	panel_row_prt = panel_row_min - 1;
-	panel_col = panel_col_min / (map_wid / 2);
 	panel_col_max = panel_col_min + map_wid - 1;
 	panel_col_prt = panel_col_min - 13;
 }
@@ -1468,6 +1450,12 @@ void verify_panel(void)
 {
 	int y = py;
 	int x = px;
+	
+	int max_prow_min = max_panel_rows - map_hgt;
+	int max_pcol_min = max_panel_cols - map_wid;
+	
+	int prow_min;
+	int pcol_min;
 
 	/* Hack - in vanilla town mode - do not move the screen */
 	if (vanilla_town && (!dun_level))
@@ -1479,12 +1467,6 @@ void verify_panel(void)
 	/* Center on player */
 	if (center_player && (!avoid_center || !running))
 	{
-		int prow_min;
-		int pcol_min;
-
-		int max_prow_min = max_panel_rows * (map_hgt / 2);
-		int max_pcol_min = max_panel_cols * (map_wid / 2);
-
 		/* Center vertically */
 		prow_min = y - map_hgt / 2;
 		if (prow_min > max_prow_min) prow_min = max_prow_min;
@@ -1495,51 +1477,69 @@ void verify_panel(void)
 		if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 		else if (pcol_min < 0) pcol_min = 0;
 
-		/* Check for "no change" */
-		if ((prow_min == panel_row_min) && (pcol_min == panel_col_min)) return;
-
-		/* Save the new panel info */
-		panel_row_min = prow_min;
-		panel_col_min = pcol_min;
-
-		/* Recalculate the boundaries */
-		panel_bounds_center();
+		
 	}
 	else
 	{
-		int prow = panel_row;
-		int pcol = panel_col;
+		prow_min = panel_row_min;
+		pcol_min = panel_col_min;
 
 		/* Scroll screen when 2 grids from top/bottom edge */
-		if ((y < panel_row_min + 2) || (y > panel_row_max - 2))
+		if (y < panel_row_min + 2)
 		{
-			prow = ((y - map_hgt / 4) / (map_hgt / 2));
-			if (prow > max_panel_rows) prow = max_panel_rows;
-			else if (prow < 0) prow = 0;
+			while (y < prow_min + 2)
+			{
+				prow_min -= (map_hgt / 2);
+			}
+			
+			if (prow_min < 0) prow_min = 0;
+		}
+
+		if (y > panel_row_max - 2)
+		{
+			while (y > prow_min + map_hgt - 2)
+			{
+				prow_min += (map_hgt / 2);
+			}
+			
+			if (prow_min > max_prow_min) prow_min = max_prow_min;
 		}
 
 		/* Scroll screen when 4 grids from left/right edge */
-		if ((x < panel_col_min + 4) || (x > panel_col_max - 4))
+		if (x < panel_col_min + 4)
 		{
-			pcol = ((x - map_wid / 4) / (map_wid / 2));
-			if (pcol > max_panel_cols) pcol = max_panel_cols;
-			else if (pcol < 0) pcol = 0;
+			while (x < pcol_min + 4)
+			{
+				pcol_min -= (map_wid / 2);
+			}
+			
+			if (pcol_min < 0) pcol_min = 0;
 		}
-
-		/* Check for "no change" */
-		if ((prow == panel_row) && (pcol == panel_col)) return;
-
-		/* Hack -- optional disturb on "panel change" */
-		if (disturb_panel && !center_player) disturb(0, 0);
-
-		/* Save the new panel info */
-		panel_row = prow;
-		panel_col = pcol;
-
-		/* Recalculate the boundaries */
-		panel_bounds();
+		
+		if (x > panel_col_max - 4)
+		{
+			while (x > pcol_min + map_wid - 4)
+			{
+				pcol_min += (map_wid / 2);
+			}
+			
+			if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
+		}
 	}
 
+	/* Check for "no change" */
+	if ((prow_min == panel_row_min) && (pcol_min == panel_col_min)) return;
+
+	/* Save the new panel info */
+	panel_row_min = prow_min;
+	panel_col_min = pcol_min;
+
+	/* Hack -- optional disturb on "panel change" */
+	if (disturb_panel && !center_player) disturb(0, 0);
+		
+	/* Recalculate the boundaries */
+	panel_bounds_center();
+	
 	/* Update stuff */
 	p_ptr->update |= (PU_MONSTERS);
 
