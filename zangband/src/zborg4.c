@@ -390,9 +390,6 @@ bool borg_test_bad_curse(list_item *l_ptr)
 	/* Just checking */
 	if (!l_ptr) return (FALSE);
 
-	/* Extra test for weapons of Morgul */
-	if (l_ptr->xtra_name && strstr(l_ptr->xtra_name, "Morgul")) return (TRUE);
-
 	/* No borg can handle not teleporting */
 	if (KN_FLAG(l_ptr, TR_NO_TELE)) return (TRUE);
 
@@ -2737,8 +2734,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "satisfy hunger" -> infinite food */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
-		borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
+	if (borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
 		borg_spell_legal_fail(REALM_ARCANE, 2, 6, 40) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 40) ||
 		borg_racial_check(RACE_HOBBIT, TRUE))
@@ -3059,9 +3055,7 @@ void borg_update_frame(void)
 	s32b len = 10L * TOWN_DAWN;
 	s32b tick = turn % len + len / 4;
 
-	int hour = (24 * tick / len) % 24;
-
-	bp_ptr->hour = hour;
+	bp_ptr->hour = (24 * tick / len) % 24;
 
 	/* Note "Lev" vs "LEV" */
 	if (p_ptr->lev < p_ptr->max_lev) bp_ptr->status.fixlvl = TRUE;
@@ -3084,7 +3078,6 @@ void borg_update_frame(void)
 
 	/* Extract "AU xxxxxxxxx" */
 	borg_gold = p_ptr->au;
-
 
 	/* Extract "Fast (+x)" or "Slow (-x)" */
 	bp_ptr->speed = p_ptr->pspeed;
@@ -3189,7 +3182,7 @@ void borg_update_frame(void)
 	if (old_depth == 128) old_depth = bp_ptr->depth;
 
 	/* How deep can the borg expect to go down here?  */
-	bp_ptr->max_depth = (d_ptr) ? MAX(bp_ptr->depth, d_ptr->recall_depth) : 0;
+	bp_ptr->max_depth = (d_ptr) ? d_ptr->recall_depth : 0;
 
 	/* Hack -- Realms */
 	bp_ptr->realm1 = p_ptr->spell.r[0].realm;
@@ -3968,8 +3961,7 @@ static void borg_notice_home_scroll(list_item *l_ptr)
 static void borg_notice_home_spells(void)
 {
 	/* Handle "satisfy hunger" -> infinite food */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
-		borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
+	if (borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
 		borg_spell_legal_fail(REALM_ARCANE, 2, 6, 40) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 40))
 	{
@@ -4119,6 +4111,9 @@ static void borg_notice_home_player(void)
  */
 static void borg_notice_home_item(list_item *l_ptr, int i)
 {
+	/* Just checking */
+	if (!l_ptr) return;
+
 	 /* If this item needs a scroll of *id* */
 	if (KN_FLAG(l_ptr, TR_INSTA_ART) && !borg_obj_known_full(l_ptr))
 	{

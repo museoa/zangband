@@ -3138,10 +3138,10 @@ bool borg_leave_level(bool bored)
 		/* find the closest dungeon that contains the target_depth */
 		for (i = 0; i < borg_dungeon_num; i++)
 		{
-			if ((borg_dungeons[i].mindepth != 0 &&
-				 borg_dungeons[i].mindepth > target_depth) ||
-				(borg_dungeons[i].maxdepth != 0 &&
-				 borg_dungeons[i].maxdepth < target_depth)) continue;
+			if ((borg_dungeons[i].min_depth != 0 &&
+				 borg_dungeons[i].min_depth > target_depth) ||
+				(borg_dungeons[i].max_depth != 0 &&
+				 borg_dungeons[i].max_depth < target_depth)) continue;
 
 			/* How far is this dungeon? */
 			d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
@@ -3158,15 +3158,23 @@ bool borg_leave_level(bool bored)
 		if (b_i == -1) return (FALSE);
 
 		/* Flow closer to the desired dungeon */
-		if (borg_flow_dungeon(b_i)) return (TRUE);
+		if (borg_flow_block(borg_dungeons[b_i].x,
+							borg_dungeons[b_i].y,
+							"my dungeon"))
+		{
+			return (TRUE);
+		}
 
 		/* If the dungeon was visited and the target depth is not shallow */
-		if (target_depth >= borg_dungeons[b_i].mindepth + 4 &&
-			borg_dungeons[b_i].mindepth != 0 &&
+		if (target_depth >= borg_dungeons[b_i].min_depth + 4 &&
+			borg_dungeons[b_i].min_depth != 0 &&
 			bp_ptr->recall >= 4 && borg_recall())
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");
+
+			/* Do some bookkeeping */
+			borg_leave_wilderness();
 
 			/* Give it a shot */
 			return (TRUE);
@@ -3355,9 +3363,6 @@ bool borg_leave_level(bool bored)
 	/* Failure */
 	return (FALSE);
 }
-
-
-
 
 
 /*

@@ -2518,10 +2518,97 @@ static bool borg_handle_self(cptr str)
 }
 
 
-/* Add a dungeon to the array, overwrite an old one if it was an estimate */
-void borg_add_dungeon(int x, int y, bool guess)
+/* Try to add a town to the town list */
+int borg_add_town(int x, int y, cptr town_name)
 {
 	int i;
+
+	/* Loop through the towns */
+	for (i = 0; i < borg_town_num; i++)
+	{
+		/* Find the matching town */
+		if (streq(borg_towns[i].name, town_name)) break;
+	}
+
+	/* No need to duplicate towns */
+	if (i < borg_town_num) return (i);
+
+	/* Do we need to increase the size of the town array? */
+	if (borg_town_num == borg_town_size)
+	{
+		borg_town *temp;
+
+		/* Double size of arrays */
+		borg_town_size *= 2;
+
+		/* Make new (bigger) array */
+		C_MAKE(temp, borg_town_size, borg_town);
+
+		/* Copy into new array */
+		C_COPY(temp, borg_towns, borg_town_num, borg_town);
+
+		/* Get rid of old array */
+		FREE(borg_towns);
+
+		/* Use new array */
+		borg_towns = temp;
+	}
+
+	/* Add this town */
+	borg_towns[i].x = x;
+	borg_towns[i].y = y;
+	strncpy(borg_towns[i].name, town_name, strlen(town_name));
+
+	borg_note("# Adding town = %s, x, = %d, y = %d", town_name, x, y);
+
+	/* extend the list */
+	borg_town_num += 1;
+
+	return (i);
+}
+
+
+/* Find out the current towns name, add it to the array, return its index */
+static int borg_add_town_screen(int x, int y)
+{
+	int wid, hgt;
+	byte t_a;
+	char buf[T_NAME_LEN];
+	int count = 0;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* Pick up town name */
+	if (0 != borg_what_text(wid - T_NAME_LEN,
+							hgt - 1,
+							T_NAME_LEN - 1, &t_a, buf))
+	{
+		/* Failed to read off the screen */
+		return (-1);
+	}
+
+	/* Is the borg somewhere in the wilderness? */
+	if (strstr(buf, "Wilderness")) return (-1);
+
+	/* Is the borg somewhere next to a dungeon? */
+	if (strstr(buf, "Dungeon")) return (-1);
+
+	/* Is the borg somewhere next to a dungeon with a quest? */
+	if (strstr(buf, "Ruin")) return (-1);
+
+	/* Discard leading spaces */
+	while (buf[count] == ' ') count++;
+
+	/* Try to add this town */
+	return (borg_add_town(x, y, buf + count));
+}
+
+
+/* Add a dungeon to the array, overwrite an old one if it was an estimate */
+void borg_add_dungeon(int x, int y, bool guess, int depth)
+{
+	int i, b_i = 0;
 	int d, b_d = BORG_MAX_DISTANCE;
 
 	/* Do we need to increase the size of the dungeon array? */
@@ -2545,7 +2632,8 @@ void borg_add_dungeon(int x, int y, bool guess)
 		borg_dungeons = temp;
 	}
 
-	/* Check the guessed dungeons */
+
+	/* Find closest dungeon */
 	for (i = 0; i < borg_dungeon_num; i++)
 	{
 		/*
@@ -2558,23 +2646,36 @@ void borg_add_dungeon(int x, int y, bool guess)
 			(borg_dungeons[i].y == y ||
 			ABS(borg_dungeons[i].y - y) == 30)) return;
 
-		/* Skip the accurately placed dungeons */
-		if (!borg_dungeons[i].guess) continue;
-
 		/* Get the distance */
 		d = distance(x, y, borg_dungeons[i].x, borg_dungeons[i].y);
 
-		/* Too far from the estimate */
-		if (d > 120) continue;
+		/* Is it closer? */
+		if (d >= b_d) continue;
 
-		/* replace this one */
-		break;
+		/* remember */
+		b_i = i;
+		b_d = d;
 	}
 
-	borg_dungeons[i].x = x;
-	borg_dungeons[i].y = y;
-	borg_dungeons[i].guess = FALSE;
-	borg_dungeon_num++;
+	/* It is close */
+	if (b_d < 120)
+	{
+		/* The borg knows better already */
+		if (guess) return;
+	}
+	else b_i = borg_dungeon_num++;
+
+	borg_dungeons[b_i].x = x;
+	borg_dungeons[b_i].y = y;
+	borg_dungeons[b_i].guess = guess;
+
+	/* Add depth if it was given */
+	if (depth)
+	{
+		/* Assign depth */
+		borg_dungeons[b_i].min_depth = depth;
+		borg_dungeons[b_i].max_depth = depth;
+	}
 }
 
 
@@ -2764,7 +2865,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 			if (p_ptr->depth == 0)
 			{
 				/* Add this dungeon maybe */
-				borg_add_dungeon(x, y, TRUE);
+				borg_add_dungeon(x, y, FALSE, 0);
 			}
 
 			/* Done */
@@ -2781,25 +2882,25 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 		if (t_ptr->type == FTYPE_BUILD)
 		{
 			/* Check for an existing shop */
-			for (i = 0; i < track_shop_num; i++)
+			for (i = 0; i < borg_shop_num; i++)
 			{
 				/* Stop if we already knew about this shop */
 				if ((borg_shops[i].x == x) && (borg_shops[i].y == y)) break;
 			}
 
 			/* Do we need to increase the size of the shop array? */
-			if (i == track_shop_size)
+			if (i == borg_shop_size)
 			{
 				borg_shop *temp;
 
 				/* Double size of arrays */
-				track_shop_size *= 2;
+				borg_shop_size *= 2;
 
 				/* Make new (bigger) array */
-				C_MAKE(temp, track_shop_size, borg_shop);
+				C_MAKE(temp, borg_shop_size, borg_shop);
 
 				/* Copy into new array */
-				C_COPY(temp, borg_shops, track_shop_num, borg_shop);
+				C_COPY(temp, borg_shops, borg_shop_num, borg_shop);
 
 				/* Get rid of old array */
 				FREE(borg_shops);
@@ -2809,16 +2910,13 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 			}
 
 			/* Track the newly discovered shop */
-			if (i == track_shop_num)
+			if (i == borg_shop_num)
 			{
 				/* Position */
 				borg_shops[i].x = x;
 				borg_shops[i].y = y;
 
-				/* Hack that town name in there */
-				strncpy(borg_shops[i].town,
-						place[p_ptr->place_num].name,
-						T_NAME_LEN);
+				borg_shops[i].town_num = borg_add_town_screen(x, y);
 
 				/* Catch all the funny buildings */
 				if (streq(t_ptr->name, "Weaponmaster"))
@@ -2882,7 +2980,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 				borg_shops[i].when = borg_t - 1000;
 
 				/* One more shop */
-				track_shop_num++;
+				borg_shop_num++;
 			}
 		}
 		
@@ -4728,6 +4826,15 @@ void borg_init_2(void)
 
 	s16b *what;
 	cptr *text;
+
+	/* Make the towns in the wilderness */
+	C_MAKE(borg_towns, borg_town_size, borg_town);
+
+	/* Make the stores in the towns */
+	C_MAKE(borg_shops, borg_shop_size, borg_shop);
+
+	/* Make the dungeons in the wilderness */
+	C_MAKE(borg_dungeons, borg_dungeon_size, borg_dungeon);
 
 	/* Initialise los information */
 	borg_vinfo_init();

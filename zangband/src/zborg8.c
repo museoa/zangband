@@ -1010,16 +1010,12 @@ static bool borg_choose_shop(void)
 		return (TRUE);
 	}
 	
-	/* Mega-hack - don't stay here too long */
-	if (borg_t - borg_began > 2000)
-	{
-		borg_note("# Staying too long in town");
-		return (FALSE);
-	}
-
 	/* Find 'best' shop to go to */
-	for (i = 0; i < track_shop_num; i++)
+	for (i = 0; i < borg_shop_num; i++)
 	{
+		/* Do not revisit shops */
+		if (borg_shops[i].visit) continue;
+
 		/* Get distance */
 		dist = distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y);
 
@@ -1575,7 +1571,7 @@ bool borg_think_store(void)
 	goal = 0;
 
 	/* Retrieve the correct place */
-	for (i = 0; i < track_shop_num; i++)
+	for (i = 0; i < borg_shop_num; i++)
 	{
 		/* Find the right coords */
 		if (c_x == borg_shops[i].x && c_y == borg_shops[i].y)
@@ -1588,7 +1584,7 @@ bool borg_think_store(void)
 	}
 
 	/* This shop is not known! */
-	if (i == track_shop_num)
+	if (i == borg_shop_num)
 	{
 		borg_oops("Unknown shop entered");
 		return (FALSE);
@@ -1596,6 +1592,7 @@ bool borg_think_store(void)
 
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
+	borg_shops[shop_num].visit = TRUE;
 
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
@@ -1651,9 +1648,6 @@ bool borg_think_store(void)
 	/* Choose a shop to visit */
 	if (borg_choose_shop()) return (TRUE);
 
-	/* Assume no important shop */
-	goal_shop = -1;
-
 	/* No shop */
 	shop_num = -1;
 
@@ -1703,8 +1697,8 @@ static bool borg_think_dungeon_brave(void)
 			borg_note("# Fleeing town via Stairs.");
 			borg_keypress('>');
 
-			/* Pick up the dungeon number */
-			if (!bp_ptr->depth) borg_dungeon_remember(TRUE);
+			/* If the borg leaves the wilderness */
+			if (!bp_ptr->depth) borg_leave_wilderness();
 
 			/* Success */
 			return (TRUE);
@@ -2241,6 +2235,9 @@ bool borg_think_dungeon(void)
 
 		/* Let us know what the value is when we fail */
 		borg_note("# Failed to get good shop!");
+
+		goal_shop = -1;
+		shop_num = -1;
 	}
 
 

@@ -179,10 +179,11 @@ struct borg_shop
 	s16b y;
 
 	/* Town */
-	char town[T_NAME_LEN];
+	int town_num;
 
 	/* Time stamp */
 	s32b when;
+	bool visit;
 
 	/* Is this shop useful? */
 	char type;
@@ -203,11 +204,29 @@ struct borg_dungeon
 	s16b y;
 
 	/* depth */
-	s16b mindepth;
-	s16b maxdepth;
+	s16b min_depth;
+	s16b max_depth;
 
 	bool bottom;
 	bool guess;
+};
+
+/*
+ * A town
+ */
+typedef struct borg_town borg_town;
+
+struct borg_town
+{
+	/* Location */
+	s16b x;
+	s16b y;
+
+	/* name */
+	char name[T_NAME_LEN];
+
+	/* Was the borg here? */
+	bool visit;
 };
 
 /* Maximal distance the borg can travel between dungeons */
@@ -533,20 +552,27 @@ extern bool borg_fear_mon_spell;
 
 
 /* Which shop or dungeon to visit next */
+extern s16b goal_town;
 extern s16b goal_shop;
 extern s16b goal_dungeon;
 
 /* Current shop/dungeon index */
+extern s16b town_num;
 extern s16b shop_num;
 extern s16b dungeon_num;
 
 /* List of known shops and dungeons */
+extern borg_town *borg_towns;
 extern borg_shop *borg_shops;
 extern borg_dungeon *borg_dungeons;
 
+/* Number of allocated towns */
+extern s16b borg_town_num;
+extern s16b borg_town_size;
+
 /* Number of allocated stores */
-extern s16b track_shop_num;
-extern s16b track_shop_size;
+extern s16b borg_shop_num;
+extern s16b borg_shop_size;
 
 /* Number of allocated dungeons */
 extern s16b borg_dungeon_num;

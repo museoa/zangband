@@ -165,20 +165,27 @@ bool borg_confuse_spell;
 bool borg_fear_mon_spell;
 
 /* Which shop or dungeon to visit next */
+s16b goal_town = -1;
 s16b goal_shop = -1;
 s16b goal_dungeon = -1;
 
 /* Current shop/dungeon index */
+s16b town_num = -1;
 s16b shop_num = -1;
 s16b dungeon_num = -1;
 
 /* List of known shops and dungeons */
+borg_town *borg_towns;
 borg_shop *borg_shops;
 borg_dungeon *borg_dungeons;
 
 /* Number of allocated dungeons */
-s16b track_shop_num = 0;
-s16b track_shop_size = 16;
+s16b borg_town_num = 0;
+s16b borg_town_size = 20;
+
+/* Number of allocated dungeons */
+s16b borg_shop_num = 0;
+s16b borg_shop_size = 16;
 
 /* Number of allocated dungeons */
 s16b borg_dungeon_num = 0;

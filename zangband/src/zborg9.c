@@ -2218,6 +2218,71 @@ static void borg_reset_options(void)
 
 
 /*
+ * Check the overhead map for info about towns, dungeons and quests.
+ * One big hack.  Maybe maid-grf.c should provide some sort of borg_wild_map,
+ * like it provides the inventory and the equipment.
+ */
+static void borg_read_map(void)
+{
+	int i, j, x, y;
+	int depth;
+	place_type *pl_ptr;
+	wild_done_type *w_ptr;
+	u32b prev = 0;
+
+	for (i = 0; i < max_wild - 1; i++)
+	{
+		for (j = 0; j < max_wild - 1; j++)
+		{
+			w_ptr = &wild[j][i].done;
+
+			/* Do we have a place here? */
+			pl_ptr = (w_ptr->place ? &place[w_ptr->place] : NULL);
+
+			/* Skip non-places */
+			if (!pl_ptr) continue;
+
+			/* Skip unknown spots */
+			if (!(w_ptr->info & WILD_INFO_SEEN)) continue;
+
+			/* Create coords */
+			x = i * WILD_BLOCK_SIZE;
+			y = j * WILD_BLOCK_SIZE;
+
+			/* If this is a town add it to the list */
+			if (pl_ptr->numstores) borg_add_town(x , y, pl_ptr->name);
+
+			/* Is this a dungeon */
+			if (pl_ptr->dungeon)
+			{
+				/* No repeats of the same dungeon */
+				if (prev == pl_ptr->seed) continue;
+				prev = pl_ptr->seed;
+
+				/* A town dungeon always starts at level 1 */
+				if (pl_ptr->numstores) depth = 1;
+
+				/* In the wilderness the starting depth can vary */
+				else
+				{
+					/* Determine dungeon level */
+					depth = (pl_ptr->dungeon->min_level + 9) / 10;
+					
+					/* You never know */
+					if (depth > 9) depth = 9;
+
+					/* Create a possible min level for this dungeon */
+					depth = depth * 10 - 1;
+				}
+
+				/* Add dungeon */
+				borg_add_dungeon(x, y, TRUE, depth);
+			}
+		}
+	}
+}
+
+/*
  * Mega-Hack -- special "inkey_hack" hook.  XXX XXX XXX
  *
  * A special function hook (see "util.c") which allows the Borg to take
@@ -2315,26 +2380,6 @@ static char borg_inkey_hack(int flush_first)
 		}
 	}
 
-	/* Locate the cursor */
-	(void)Term_locate(&x, &y);
-
-
-	/* Assume no prompt/message is available */
-	borg_prompt = FALSE;
-
-	/*
-	 * Mega-Hack -- check for possible prompts/messages
-	 * If the first four characters on the message line all
-	 * have the same attribute (or are all spaces), and they
-	 * are not all spaces (ascii value 0x20)...
-	 */
-	if ((0 == borg_what_text(0, 0, 4, &t_a, buf)) &&
-		(t_a != TERM_DARK) && (*((u32b *)(buf)) != 0x20202020))
-	{
-		/* Assume a prompt/message is available */
-		borg_prompt = TRUE;
-	}
-
 	/* Mega-Hack -- Handle death */
 	if (p_ptr->state.is_dead)
 	{
@@ -2372,6 +2417,27 @@ static char borg_inkey_hack(int flush_first)
 		return (KTRL('C'));
 	}
 
+	/* Set the borg statuses and values correct */
+	borg_update_frame();
+
+	/* Assume no prompt/message is available */
+	borg_prompt = FALSE;
+
+	/*
+	 * Mega-Hack -- check for possible prompts/messages
+	 * If the first four characters on the message line all
+	 * have the same attribute (or are all spaces), and they
+	 * are not all spaces (ascii value 0x20)...
+	 */
+	if ((0 == borg_what_text(0, 0, 4, &t_a, buf)) &&
+		(t_a != TERM_DARK) && (*((u32b *)(buf)) != 0x20202020))
+	{
+		/* Assume a prompt/message is available */
+		borg_prompt = TRUE;
+	}
+
+	/* Locate the cursor */
+	(void)Term_locate(&x, &y);
 
 	/* 
 	 * Mega-Hack -- Catch "-more-" messages
@@ -2420,6 +2486,7 @@ static char borg_inkey_hack(int flush_first)
 		/* Clear the message */
 		return (KTRL('M'));
 	}
+
 	/* Flush messages */
 	borg_parse(NULL);
 	borg_dont_react = FALSE;
@@ -3253,6 +3320,9 @@ void do_cmd_borg(void)
 			/* Make sure the right options are set */
 			borg_set_options();
 
+			/* Read the wilderness map */
+			borg_read_map();
+
 			/* Message */
 			borg_note("# Installing keypress hook");
 
@@ -3281,6 +3351,9 @@ void do_cmd_borg(void)
 
 			/* Make sure the right options are set */
 			borg_set_options();
+
+			/* Read the wilderness map */
+			borg_read_map();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3329,6 +3402,9 @@ void do_cmd_borg(void)
 
 			/* Make sure the right options are set */
 			borg_set_options();
+
+			/* Read the wilderness map */
+			borg_read_map();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3810,12 +3886,35 @@ void do_cmd_borg(void)
 			break;
 		}
 
+		case '7':
+		{
+			/* Command: debug -- show towns */
+			int i, n = 0;
+
+			/* Get keypress */
+			msgf("There are %d known towns.", borg_town_num);
+			message_flush();
+
+			for (i = 0; i < borg_town_num; i++)
+			{
+				/* Print */
+				msgf("i = %d, (x, y) = (%d, %d), visit = %c, name = %s",
+					i, borg_towns[i].x, borg_towns[i].y,
+					(borg_towns[i].visit) ? 'T' : 'F',
+					borg_towns[i].name);
+
+				message_flush();
+			}
+
+			break;
+		}
+
 		case '8':
 		{
 			/* Command: debug -- show shops */
 			int i, n = 0;
 
-			for (i = 0; i < track_shop_num; i++)
+			for (i = 0; i < borg_shop_num; i++)
 			{
 				char c = (i < 10) ? i + '0' : '*';
 
@@ -3857,10 +3956,11 @@ void do_cmd_borg(void)
 			for (i = 0; i < borg_dungeon_num; i++)
 			{
 				/* Print */
-				msgf("i = %d, (x, y) = (%d, %d), min = %d, max = %d, bottom = %s",
+				msgf("i = %d, (x, y) = (%d, %d), guess = %c, min = %d, max = %d, bottom = %c",
 					i, borg_dungeons[i].x, borg_dungeons[i].y,
-					borg_dungeons[i].mindepth, borg_dungeons[i].maxdepth,
-					borg_dungeons[i].bottom ? "T" : "F");
+					borg_dungeons[i].guess ? 'T' : 'F',
+					borg_dungeons[i].min_depth, borg_dungeons[i].max_depth,
+					borg_dungeons[i].bottom ? 'T' : 'F');
 			}
 			break;
 		}

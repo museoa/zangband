@@ -210,7 +210,7 @@ bool borg_recall(void)
 	Term_get_size(&wid, &hgt);
 
 	/* Is the borg somewhere in the wilderness? */
-	if (borg_term_text_comp(wid - 18, hgt - 1, "Wilderness"))
+	if (borg_term_text_comp(wid - T_NAME_LEN, hgt - 1, "Wilderness"))
 		return (FALSE);
 
 	/* Multiple "recall" fails */
@@ -228,13 +228,8 @@ bool borg_recall(void)
 			borg_mutation(MUT1_RECALL) ||
 			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL))
 		{
-			/* reset recall depth in dungeon? */
-			if (bp_ptr->depth &&
-				bp_ptr->depth < borg_dungeons[dungeon_num].maxdepth)
-			{
-				/* Do not reset depth */
-				borg_keypress(ESCAPE);
-			}
+			/* Always try to cancel the reset recall. */
+			borg_keypress(ESCAPE);
 
 			/* Success */
 			return (TRUE);
@@ -2805,8 +2800,8 @@ bool borg_caution(void)
 			/* Take the stairs */
 			borg_keypress('>');
 
-			/* Pick up the dungeon number */
-			if (!bp_ptr->depth) borg_dungeon_remember(TRUE);
+			/* If the borg leaves the wilderness */
+			if (!bp_ptr->depth) borg_leave_wilderness();
 
 			/* Success */
 			return (TRUE);

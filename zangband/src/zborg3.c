@@ -3593,8 +3593,8 @@ void borg_dungeon_remember(bool down_stairs)
 	int i;
 	int d, b_d = BORG_MAX_DISTANCE;
 
-	/* Hack!  bp_ptr is not updated yet. */
-	if (p_ptr->depth == 0)
+	/* On top of a dungeon. */
+	if (bp_ptr->depth == 0)
 	{
 		/* There is no dungeon known */
 		if (!borg_dungeon_num) return;
@@ -3604,16 +3604,12 @@ void borg_dungeon_remember(bool down_stairs)
 		{
 			d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
 
-			borg_note("Remember b_d = %d, d = %d", b_d, d);
-
 			/* Ignore dungeons that are further away */
 			if (d > b_d) continue;
 
 			/* Remember this dungeon */
 			b_d = d;
 			dungeon_num = i;
-
-			borg_note("dungeon_num = %d", dungeon_num);
 		}
 	}
 	/* In a dungeon */
@@ -3623,19 +3619,19 @@ void borg_dungeon_remember(bool down_stairs)
 		if (dungeon_num == -1) return;
 
 		/* First time in this dungeon */
-		if (borg_dungeons[dungeon_num].mindepth == 0 ||
-			borg_dungeons[dungeon_num].mindepth > bp_ptr->depth)
+		if (borg_dungeons[dungeon_num].min_depth == 0 ||
+			borg_dungeons[dungeon_num].min_depth > bp_ptr->depth)
 		{
 			/* Set the minimal depth of this dungeon */
-			borg_dungeons[dungeon_num].mindepth = bp_ptr->depth;
+			borg_dungeons[dungeon_num].min_depth = bp_ptr->depth;
 		}
 
 		/* Getting deeper than ever before? */
 		if (down_stairs &&
-			borg_dungeons[dungeon_num].maxdepth <= bp_ptr->depth)
+			borg_dungeons[dungeon_num].max_depth <= bp_ptr->depth)
 		{
 			/* Set the deepest depth of this dungeon */
-			borg_dungeons[dungeon_num].maxdepth = bp_ptr->depth + 1;
+			borg_dungeons[dungeon_num].max_depth = bp_ptr->depth + 1;
 		}
 
 		/* Reached the bottom? */
@@ -3643,17 +3639,17 @@ void borg_dungeon_remember(bool down_stairs)
 		{
 			int wid, hgt;
 
-			if (borg_dungeons[dungeon_num].maxdepth < bp_ptr->depth)
+			if (borg_dungeons[dungeon_num].max_depth < bp_ptr->depth)
 			{
 				/* Set the deepest depth of this dungeon */
-				borg_dungeons[dungeon_num].maxdepth = bp_ptr->depth;
+				borg_dungeons[dungeon_num].max_depth = bp_ptr->depth;
 			}
 
 			/* Get size */
 			Term_get_size(&wid, &hgt);
 
 			/* If the screen says bottom */
-			if (borg_term_text_comp(wid - 18, hgt - 1, "Bottom"))
+			if (borg_term_text_comp(wid - T_NAME_LEN, hgt - 1, "Bottom"))
 			{
 				/* The borg has reached the bottom of this dungeon */
 				borg_dungeons[dungeon_num].bottom = TRUE;
@@ -3668,11 +3664,6 @@ void borg_dungeon_remember(bool down_stairs)
  */
 void borg_init_3(void)
 {
-	/* Make the stores in the town */
-	C_MAKE(borg_shops, track_shop_size, borg_shop);
-
-	/* Make the dungeons in the wilderness */
-	C_MAKE(borg_dungeons, borg_dungeon_size, borg_dungeon);
 }
 
 #else
