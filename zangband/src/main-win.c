@@ -3943,6 +3943,15 @@ static void hook_quit(cptr str)
 		data[i].w = 0;
 	}
 
+	/* Free the bitmap stuff */
+	DeleteObject(infGraph.hPalette);
+	DeleteObject(infGraph.hBitmap);
+
+#ifdef USE_TRANSPARENCY
+	DeleteObject(infMask.hPalette);
+	DeleteObject(infMask.hBitmap);
+#endif /* USE_TRANSPARENCY */
+
 
 	/*** Free some other stuff ***/
 
