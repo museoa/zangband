@@ -12,9 +12,6 @@
 #include "zborg5.h"
 #include "zborg6.h"
 
-/* Hackity-hack */
-#include "script.h"
-
 static bool borg_desperate = FALSE;
 
 
