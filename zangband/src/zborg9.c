@@ -15,10 +15,6 @@
 #include "zborg8.h"
 #include "zborg9.h"
 
-#ifdef BABLOS
-extern bool auto_play;
-extern bool keep_playing;
-#endif /* bablos */
 bool borg_cheat_death;
 
 /*
@@ -571,22 +567,13 @@ static bool borg_think(void)
         /* Prepare to retire */
         if (borg_stop_king)
         {
-#ifndef BABLOS
-            borg_write_map(FALSE);
-#endif /* bablos */
             borg_oops("retire");
         }
         /* Borg will be respawning */
         if (borg_respawn_winners)
         {
-#ifndef BABLOS
-            borg_write_map(FALSE);
-
-            /* respawn */
-            resurrect_borg();
-#endif /* bablos */
+			/* Do nothing now */
         }
-
     }
 
     /*** Handle stores ***/
@@ -3060,11 +3047,11 @@ static bool add_required_item(int class_num, int depth_num, int item_num, int nu
 
 static bool borg_load_requirement(char * string)
 {
-    int class_num=-1;
-    int depth_num=-1;
-    int item_num=-1;
-    int number_items=-1;
-    int x=-1;
+    int class_num= -1;
+    int depth_num= -1;
+    int item_num= -1;
+    int number_items= -1;
+    int x= -1;
 
     if (-1000 == (class_num = borg_getval(&string, "_CLASS")))
     {
@@ -3434,17 +3421,6 @@ static void init_borg_txt_file(void)
     return;
 }
 
-
-#ifndef BABLOS
-
-
-/* Allow the borg to play continously.  Reset all values, */
-void resurrect_borg(void)
-{
-
-
-}
-
 static void borg_log_death(void)
 {
    char buf[1024];
@@ -3488,7 +3464,6 @@ static void borg_log_death(void)
    my_fclose(borg_log_file);
 }
 
-#endif /* BABLOS */
 
 static void borg_log_death_data(void)
 {
@@ -3651,19 +3626,9 @@ static char borg_inkey_hack(int flush_first)
         /* Take note */
         borg_note("# Cheating death...");
 
-#ifndef BABLOS
-        /* Dump the Character Map*/
-        if (borg_skill[BI_CLEVEL] >= borg_dump_level ||
-            strstr(p_ptr->died_from, "starvation")) borg_write_map(FALSE);
-
         /* Log the death */
         borg_log_death();
         borg_log_death_data();
-
-        /* Reset the player game data then resurrect a new player */
-        resurrect_borg();
-
-#endif /* BABLOS */
 
         /* Cheat death */
         return ('n');
@@ -3702,37 +3667,18 @@ static char borg_inkey_hack(int flush_first)
     /* Mega-Hack -- Handle death */
     if (p_ptr->is_dead)
     {
-#ifndef BABLOS
-        /* Print the map */
-        if (borg_skill[BI_CLEVEL] >= borg_dump_level ||
-            strstr(p_ptr->died_from, "starvation"))  borg_write_map(FALSE);
-
         /* Log death */
         borg_log_death();
         borg_log_death_data();
 
-
-#endif /* bablos */
         /* flush the buffer */
         borg_flush();
+		
+		/* Oops  */
+        borg_oops("player died");
 
-        if (borg_cheat_death)
-        {
-            /* Reset death flag */
-            p_ptr->is_dead = FALSE;
-#ifndef BABLOS
-            /* Reset the player game data then resurrect a new player */
-            resurrect_borg();
-#endif /* bablos */
-        }
-        else
-        {
-            /* Oops  */
-            borg_oops("player died");
-
-            /* Useless keypress */
-            return (KTRL('C'));
-        }
+        /* Useless keypress */
+        return (KTRL('C'));
     }
 
 
@@ -4122,566 +4068,6 @@ void borg_init_9(void)
     initialized = TRUE;
 }
 
-#ifndef BABLOS
-/*
- * Write a file with the current dungeon info (Borg)
- * and his equipment, inventory and home (Player)
- * and his swap armor, weapon (Borg)
- * From Dennis Van Es,  With an addition of last messages from me (APW)
- */
-void borg_write_map(bool ask)
-{
-	(void) ask;
-
-	/* Hack - the borg cannot access the stores like this... */
-	return;
-#if 0
-    char buf2[1024];
-    char buf[80];
-    FILE *borg_map_file;
-    char line[MAX_WID + 1];
-
-    borg_item *item;
-
-    int i,j;
-    s16b m_idx;
-
-    store_type *st_ptr = &town[p_ptr->town_num].store[BORG_HOME];
-
-    bool *okay;
-
-    char o_name[80];
-	
-    /* Allocate the "okay" array */
-    C_MAKE(okay, max_a_idx, bool);
-
-    /* Hack -- drop permissions */
-    safe_setuid_drop();
-
-    /* Process the player name */
-    for (i = 0; player_name[i]; i++)
-    {
-        char c = player_name[i];
-
-        /* No control characters */
-        if (iscntrl(c))
-        {
-            /* Illegal characters */
-            quit_fmt("Illegal control char (0x%02X) in player name", c);
-        }
-
-        /* Convert all non-alphanumeric symbols */
-        if (!isalpha(c) && !isdigit(c)) c = '_';
-
-        /* Build "file_name" */
-        buf[i] = c;
-    }
-
-
-    /* Terminate */
-    buf[i++] = '.';
-    buf[i++] = 'm';
-    buf[i++] = 'a';
-    buf[i++] = 'p';
-    buf[i++] = '\0';
-
-    path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
-
-    /* XXX XXX XXX Get the name and open the map file */
-    if (ask && get_string("Borg map File: ", buf2, 70))
-    {
-        /* Open a new file */
-        borg_map_file = my_fopen(buf2, "w");
-
-        /* Failure */
-        if (!borg_map_file) msg_print("Cannot open that file.");
-    }
-    else if (!ask) borg_map_file = my_fopen(buf2, "w");
-
-
-    /* Hack -- grab permissions */
-    safe_setuid_grab();
-
-   fprintf(borg_map_file, "%s the %s %s, Level %d/%d\n", player_name,
-           race_info[p_ptr->prace].title,
-           class_info[p_ptr->pclass].title,
-           p_ptr->lev, p_ptr->max_lev);
-
-   fprintf(borg_map_file, "Exp: %lu  Gold: %lu  Turn: %lu\n", (long)total_points(), (long)p_ptr->au, (long)turn);
-   fprintf(borg_map_file, "Killed on level: %d (max. %d) by %s\n", p_ptr->depth, p_ptr->max_depth, p_ptr->died_from);
-   fprintf(borg_map_file, "Zborg Compile Date: %s\n", borg_engine_date);
-
-
-    for (i = 0; i < MAX_HGT; i++)
-    {
-        for (j = 0; j < MAX_WID; j++)
-        {
-            char ch;
-			
-			/* Bounds checking */
-			if (!map_in_bounds(j, i)) continue;
-
-			mb_ptr = map_loc(j, i);
-
-            m_idx = c_ptr->m_idx;
-
-            /* reset the ch each time through */
-            ch = ' ';
-
-            /* Known grids */
-            if (ag->feat)
-            {
-                ch = f_info[ag->feat].d_char;
-            }
-
-            /* Known Items */
-            if (mb_ptr->object)
-            {
-                object_kind *k_ptr = &k_info[mb_ptr->object];
-                ch = k_ptr->d_char;
-            }
-
-            /* UnKnown Monsters */
-            if (m_idx)
-            {
-                ch = '&';
-            }
-
-            /* Known Monsters */
-            if (mb_ptr->monster)
-            {
-                monster_race *r_ptr = &r_info[mb_ptr->monster];
-                ch = r_ptr->d_char;
-            }
-
-
-            /* The Player */
-            if ((i == c_y) && (j == c_x)) ch = '@';
-
-            line[j] = ch;
-        }
-        /* terminate the line */
-        line[j++] = '\0';
-
-        fprintf(borg_map_file, "%s\n", line);
-    }
-
-
-
-    /* Known/Seen monsters */
-    for (i = 1; i < borg_kills_nxt; i++)
-    {
-        borg_kill *kill = &borg_kills[i];
-
-        /* Skip dead monsters */
-        if (!kill->r_idx) continue;
-
-        /* Note */
-        fprintf(borg_map_file,"monster '%s' (%d) at (%d,%d)\n",
-                         (r_name + r_info[kill->r_idx].name), kill->r_idx,
-                         kill->y, kill->x);
-    }
-
-
-    /*** Dump the last few messages ***/
-    i = message_num();
-    if (i > 250) i = 250;
-    fprintf(borg_map_file, "\n\n  [Last Messages]\n\n");
-    while (i-- >0)
-    {
-        cptr msg  = message_str((s16b)i);
-
-        /* Eliminate some lines */
-        if (prefix(msg, "# Matched")
-        ||  prefix(msg, "# There is")
-        ||  prefix(msg, "# Tracking")
-        ||  prefix(msg, "# MISS_BY:")
-        ||  prefix(msg, "# HIT_BY:")
-        ||  prefix(msg, "> "))
-            continue;
-
-        fprintf(borg_map_file, "%s\n", msg);
-    }
-
-
-    /*** Player Equipment ***/
-    fprintf(borg_map_file, "\n\n  [Character Equipment]\n\n");
-    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-    {
-        object_desc(o_name, &inventory[i], TRUE, 3, 80);
-        fprintf(borg_map_file, "%c) %s\n",
-                index_to_label(i), o_name);
-    }
-
-    fprintf(borg_map_file, "\n\n");
-
-
-
-    /* Dump the inventory */
-    fprintf(borg_map_file, "  [Character Inventory]\n\n");
-    for (i = 0; i < INVEN_PACK; i++)
-    {
-        object_desc(o_name, &inventory[i], TRUE, 3, 80);
-        fprintf(borg_map_file, "%c) %s\n",
-                index_to_label(i), o_name);
-    }
-    fprintf(borg_map_file, "\n\n");
-
-
-
-    /* Dump the Home (page 1) */
-    fprintf(borg_map_file, "  [Home Inventory (page 1)]\n\n");
-    for (i = 0; i < 12; i++)
-    {
-        object_desc(o_name, &st_ptr->stock[i], TRUE, 3, 80);
-        fprintf(borg_map_file, "%c) %s\n", I2A(i%12), o_name);
-    }
-    fprintf(borg_map_file, "\n\n");
-
-
-    /* Dump the Home (page 2) */
-    fprintf(borg_map_file, "  [Home Inventory (page 2)]\n\n");
-    for (i = 12; i < 24; i++)
-    {
-        object_desc(o_name, &st_ptr->stock[i], TRUE, 3, 80);
-        fprintf(borg_map_file, "%c) %s\n", I2A(i%12), o_name);
-    }
-    fprintf(borg_map_file, "\n\n");
-
-
-    /* Write swap info */
-    if (borg_uses_swaps)
-    {
-        fprintf(borg_map_file, "  [Swap info]\n\n");
-        item = &borg_items[weapon_swap];
-        fprintf(borg_map_file,"Swap Weapon:  %s\n", item->desc);
-        item = &borg_items[armour_swap];
-        fprintf(borg_map_file,"Swap Armour:  %s", item->desc);
-        fprintf(borg_map_file, "\n\n");
-    }
-    fprintf(borg_map_file, "   [Player State at Death] \n\n");
-
-
-    /* Dump the player state */
-    fprintf(borg_map_file,  format("Current speed: %d. \n", borg_skill[BI_SPEED]));
-
-    if (p_ptr->blind)
-    {
-        fprintf(borg_map_file,  "You cannot see.\n");
-    }
-    if (p_ptr->confused)
-    {
-        fprintf(borg_map_file,  "You are confused.\n");
-    }
-    if (p_ptr->afraid)
-    {
-        fprintf(borg_map_file,  "You are terrified.\n");
-    }
-    if (p_ptr->cut)
-    {
-        fprintf(borg_map_file,  "You are bleeding.\n");
-    }
-    if (p_ptr->stun)
-    {
-        fprintf(borg_map_file,  "You are stunned.\n");
-    }
-    if (p_ptr->poisoned)
-    {
-        fprintf(borg_map_file,  "You are poisoned.\n");
-    }
-    if (p_ptr->image)
-    {
-        fprintf(borg_map_file,  "You are hallucinating.\n");
-    }
-    if (p_ptr->aggravate)
-    {
-        fprintf(borg_map_file,  "You aggravate monsters.\n");
-    }
-    if (p_ptr->blessed)
-    {
-        fprintf(borg_map_file,  "You feel rightous.\n");
-    }
-    if (p_ptr->hero)
-    {
-        fprintf(borg_map_file,  "You feel heroic.\n");
-    }
-    if (p_ptr->shero)
-    {
-        fprintf(borg_map_file,  "You are in a battle rage.\n");
-    }
-    if (p_ptr->protevil)
-    {
-        fprintf(borg_map_file,  "You are protected from evil.\n");
-    }
-    if (p_ptr->shield)
-    {
-        fprintf(borg_map_file,  "You are protected by a mystic shield.\n");
-    }
-    if (p_ptr->invuln)
-    {
-        fprintf(borg_map_file,  "You are temporarily invulnerable.\n");
-    }
-    if (p_ptr->confusing)
-    {
-        fprintf(borg_map_file,  "Your hands are glowing dull red.\n");
-    }
-    if (p_ptr->word_recall)
-    {
-        fprintf(borg_map_file,  format("You will soon be recalled.  (%d turns)\n", p_ptr->word_recall));
-    }
-    if (p_ptr->oppose_fire)
-    {
-        fprintf(borg_map_file,  format("You resist fire exceptionally well.\n"));
-    }
-    if (p_ptr->oppose_acid)
-    {
-        fprintf(borg_map_file,  format("You resist acid exceptionally well.\n"));
-    }
-    if (p_ptr->oppose_elec)
-    {
-        fprintf(borg_map_file,  format("You resist elec exceptionally well.\n"));
-    }
-    if (p_ptr->oppose_cold)
-    {
-        fprintf(borg_map_file,  format("You resist cold exceptionally well.\n"));
-    }
-    if (p_ptr->oppose_pois)
-    {
-        fprintf(borg_map_file,  format("You resist poison exceptionally well.\n"));
-    }
-#if 0
-	fprintf(borg_map_file, "borg_uses_swaps; %d\n", borg_uses_swaps);
-    fprintf(borg_map_file, "borg_worships_damage; %d\n", borg_worships_damage);
-    fprintf(borg_map_file, "borg_worships_speed; %d\n", borg_worships_speed);
-    fprintf(borg_map_file, "borg_worships_hp; %d\n", borg_worships_hp);
-    fprintf(borg_map_file, "borg_worships_mana; %d\n",borg_worships_mana);
-    fprintf(borg_map_file, "borg_worships_ac; %d\n",borg_worships_ac);
-    fprintf(borg_map_file, "borg_worships_gold; %d\n",borg_worships_gold);
-    fprintf(borg_map_file, "borg_plays_risky; %d\n",borg_plays_risky);
-    fprintf(borg_map_file, "borg_slow_optimizehome; %d\n\n",borg_slow_optimizehome);
-#endif
-    fprintf(borg_map_file, "\n\n");
-
-    /* Dump the spells */
-    if (borg_skill[BI_REALM1])
-    {
-        fprintf(borg_map_file,"\n\n   [ Realm 1 ] \n\n");
-        fprintf(borg_map_file,"Name                           Legal Times cast\n");
-        for (i = 0; i < 4; i++ )
-        {
-            for (j = 0; j < 8; j++)
-            {
-                borg_magic *as = &borg_magics[borg_skill[BI_REALM1]][i][j];
-                cptr legal;
-
-                if (as->level <99)
-                {
-                    legal = (borg_spell_legal(borg_skill[BI_REALM1], i, j) ? "Yes" : "No ");
-                    fprintf(borg_map_file,"%-30s   %s   %d\n",as->name, legal, (long)as->times);
-                }
-            }
-            fprintf(borg_map_file,"\n");
-        }
-	}
-
-    /* Dump the spells */
-    if (borg_skill[BI_REALM2])
-    {
-        fprintf(borg_map_file,"\n\n   [ Realm 2 ] \n\n");
-        fprintf(borg_map_file,"Name                           Legal Times cast\n");
-        for (i = 0; i < 4; i++ )
-        {
-            for (j = 0; j < 8; j++)
-            {
-                borg_magic *as = &borg_magics[borg_skill[BI_REALM2]][i][j];
-                cptr legal;
-
-                if (as->level <99)
-                {
-                    legal = (borg_spell_legal(borg_skill[BI_REALM2], i, j) ? "Yes" : "No ");
-                    fprintf(borg_map_file,"%-30s   %s   %d\n",as->name, legal, (long)as->times);
-                }
-            }
-            fprintf(borg_map_file,"\n");
-        }
-
-    }
-
-
-#if 0
-    /*** Dump the Uniques and Artifact Lists ***/
-
-    /* Scan the artifacts */
-    for (k = 0; k < max_a_idx; k++)
-    {
-        artifact_type *a_ptr = &a_info[k];
-
-        /* Default */
-        okay[k] = FALSE;
-
-        /* Skip "empty" artifacts */
-        if (!a_ptr->name) continue;
-
-        /* Skip "uncreated" artifacts */
-        if (!a_ptr->cur_num) continue;
-
-        /* Assume okay */
-        okay[k] = TRUE;
-    }
-
-    /* Check the dungeon */
-    for (y = 0; y < MAX_HGT; y++)
-    {
-        for (x = 0; x < MAX_WID; x++)
-        {
-            s16b this_o_idx, next_o_idx = 0;
-
-            /* Scan all objects in the grid */
-            for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx)
-            {
-                object_type *o_ptr;
-
-                /* Get the object */
-                o_ptr = &o_list[this_o_idx];
-
-                /* Get the next object */
-                next_o_idx = o_ptr->next_o_idx;
-
-                /* Ignore non-artifacts */
-                if (!artifact_p(o_ptr)) continue;
-
-                /* Ignore known items */
-                if (object_known_p(o_ptr)) continue;
-
-                /* Note the artifact */
-                okay[o_ptr->name1] = FALSE;
-            }
-        }
-    }
-
-    /* Check the inventory and equipment */
-    for (i = 0; i < INVEN_TOTAL; i++)
-    {
-        object_type *o_ptr = &inventory[i];
-
-        /* Ignore non-objects */
-        if (!o_ptr->k_idx) continue;
-
-        /* Ignore non-artifacts */
-        if (!artifact_p(o_ptr)) continue;
-
-        /* Ignore known items */
-        if (object_known_p(o_ptr)) continue;
-
-        /* Note the artifact */
-        okay[o_ptr->name1] = FALSE;
-    }
-
-    fprintf(borg_map_file, "\n\n");
-
-
-    /* Hack -- Build the artifact name */
-    fprintf(borg_map_file, "   [Artifact Info] \n\n");
-
-    /* Scan the artifacts */
-    for (k = 0; k < max_a_idx; k++)
-    {
-        artifact_type *a_ptr = &a_info[k];
-
-        /* List "dead" ones */
-        if (!okay[k]) continue;
-
-        /* Paranoia */
-        strcpy(o_name, "Unknown Artifact");
-
-        /* Obtain the base object type */
-        z = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-        /* Real object */
-        if (z)
-        {
-            object_type *i_ptr;
-            object_type object_type_body;
-
-            /* Get local object */
-            i_ptr = &object_type_body;
-
-            /* Create fake object */
-            object_prep(i_ptr, z);
-
-            /* Make it an artifact */
-            i_ptr->name1 = k;
-
-            /* Describe the artifact */
-            object_desc_store(o_name, i_ptr, FALSE, 0);
-        }
-
-        /* Hack -- Build the artifact name */
-        fprintf(borg_map_file, "The %s\n", o_name);
-    }
-
-    /* Free the "okay" array */
-    C_KILL(okay, max_a_idx, bool);
-    fprintf(borg_map_file, "\n\n");
-
- /* Display known uniques
-  *
-  * Note that the player ghosts are ignored.  XXX XXX XXX
-  */
-    /* Allocate the "who" array */
-    C_MAKE(who, max_r_idx, u16b);
-
-    /* Collect matching monsters */
-    for (i = 1, n = 0; i < max_r_idx; i++)
-    {
-        monster_race *r_ptr = &r_info[i];
-        monster_lore *l_ptr = &l_list[i];
-
-        /* Require known monsters */
-        if (!cheat_know && !l_ptr->r_sights) continue;
-
-        /* Require unique monsters */
-        if (!(r_ptr->flags1 & (RF1_UNIQUE))) continue;
-
-        /* Collect "appropriate" monsters */
-        who[n++] = i;
-    }
-
-    /* Select the sort method */
-    ang_sort_comp = ang_sort_comp_hook;
-    ang_sort_swap = ang_sort_swap_hook;
-
-    /* Sort the array by dungeon depth of monsters */
-    ang_sort(who, &why, n);
-
-
-    /* Hack -- Build the artifact name */
-    fprintf(borg_map_file, "   [Unique Info] \n\n");
-
-    /* Print the monsters */
-    for (i = 0; i < n; i++)
-    {
-        monster_race *r_ptr = &r_info[who[i]];
-        bool dead = (r_ptr->max_num == 0);
-
-        /* Print a message */
-        fprintf(borg_map_file, "%s is %s\n",
-                (r_name + r_ptr->name),
-                (dead ? "dead" : "alive"));
-    }
-
-    /* Free the "who" array */
-    C_KILL(who, max_r_idx, u16b);
-
-#endif /* 0 */
-
-
-    my_fclose(borg_map_file);
-
-#endif /* 0 */
-}
-
-#endif /* BABLOS */
 
 /* DVE's function for displaying the status of various info */
 /* Display what the borg is thinking DvE*/
@@ -5140,28 +4526,8 @@ void do_cmd_borg(void)
 {
     char cmd;
 
-
-#ifdef BABLOS
-
-    if (auto_play)
-    {
-        auto_play = FALSE;
-        keep_playing = TRUE;
-        cmd = 'z';
-    }
-    else
-    {
-
-#endif /* BABLOS */
-
     /* Get a "Borg command", or abort */
     if (!get_com("Borg command: ", &cmd)) return;
-
-#ifdef BABLOS
-
-    }
-
-#endif /* BABLOS */
 
     /* Simple help */
     if (cmd == '?')
@@ -6055,22 +5421,6 @@ void do_cmd_borg(void)
                 prt_map();
 		break;
 		}
-
-		case 'R':
-		{
-			/* Command: Resurrect Borg */
-           char cmd;
-
-           /* Confirm it */
-           get_com("Are you sure you want to Respawn this borg? (y or n)? ", &cmd);
-
-           if (cmd =='y' || cmd =='Y' )
-           {
-			   resurrect_borg();
-		   }
-
-           break;
-       }
 
         case '#':
         {

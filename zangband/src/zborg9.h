@@ -11,13 +11,6 @@
 /*
  * This file provides support for "borg9.c".
  */
-#ifndef BABLOS
-extern void resurrect_borg(void);
-extern void borg_write_map(bool ask);
-extern errr borg_enter_score(void);
-
-#endif /* bablos */
-
 extern void borg_status(void);
 
 /*

@@ -14,11 +14,6 @@
 #include "zborg7.h"
 #include "zborg8.h"
 
-#ifdef BABLOS
-extern bool borg_clock_over;
-#endif /* bablos */
-
-
 byte *test;
 byte *best;
 s32b *b_home_power;
@@ -2820,14 +2815,6 @@ bool borg_think_dungeon(void)
 	{
 		/* Panic */
 		borg_oops("clock overflow");
-
-#ifdef BABLOS
-		/* Clock overflow escape code */
-		printf("Clock overflow code!\n");
-		p_ptr->playing = FALSE;
-		p_ptr->leaving = TRUE;
-		borg_clock_over = TRUE;
-#endif /* BABLOS */
 
 		/* Oops */
 		return (TRUE);
