@@ -1088,29 +1088,6 @@ static void borg_parse_aux(cptr msg, int len)
 
 		/* Incase we failed our emergency use of MM */
 		borg_confirm_target = FALSE;
-#if 0
-		/* Check to see if it was a door then convert it */
-		if (ag->feat == FEAT_DOOR_HEAD)
-		{
-			/* What is my chance of opening the door? */
-			if (borg_skill[BI_DIS] < 20)
-			{
-				/* Set door as jammed, then bash it */
-				ag->feat = FEAT_DOOR_HEAD + 0x08;
-			}
-		}
-#endif /* 0 */
-
-		/* check for glyphs since we no longer have a launch message */
-		if (borg_casted_glyph)
-		{
-			/* Forget the newly created-though-failed  glyph */
-			track_glyph_num--;
-			track_glyph_x[track_glyph_num] = 0;
-			track_glyph_y[track_glyph_num] = 0;
-			borg_note("# Removing glyph from array,");
-			borg_casted_glyph = FALSE;
-		}
 
 		/* Incase it was a goi refresh */
 		if (borg_attempting_refresh)

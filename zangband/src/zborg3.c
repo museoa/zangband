@@ -1854,16 +1854,6 @@ bool borg_spell(int realm, int book, int what)
 	borg_keypress(I2A(i));
 	borg_keypress(I2A(what));
 
-	/* Because we have no launch message to indicate failure */
-	if (realm == 1 && book == 3 && what == 4)
-	{
-		borg_casted_glyph = TRUE;
-	}
-	else
-	{
-		borg_casted_glyph = FALSE;
-	}
-
 	/* increment the spell counter */
 	as->times++;
 

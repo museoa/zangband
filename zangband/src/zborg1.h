@@ -179,8 +179,6 @@ extern bool borg_active;	/* Actually active */
 extern bool borg_resurrect;	/* Continous play mode */
 extern bool borg_cancel;	/* Being cancelled */
 
-extern char genocide_target;	/* Identity of the poor unsuspecting soul */
-extern bool borg_casted_glyph;	/* we dont have a launch messages anymore */
 extern bool borg_stop_king;
 extern bool borg_dont_react;
 extern int successful_target;
@@ -789,7 +787,6 @@ extern FILE *borg_fff;	/* Log file */
 /*
  * Locate the store doors
  */
-
 extern s16b track_shop_num;
 extern s16b track_shop_size;
 extern int *track_shop_x;
@@ -799,7 +796,6 @@ extern int *track_shop_y;
 /*
  * Track "stairs up"
  */
-
 extern s16b track_less_num;
 extern s16b track_less_size;
 extern int *track_less_x;
@@ -809,7 +805,6 @@ extern int *track_less_y;
 /*
  * Track "stairs down"
  */
-
 extern s16b track_more_num;
 extern s16b track_more_size;
 extern int *track_more_x;
