@@ -2094,6 +2094,7 @@
 #define SV_AMULET_RESISTANCE            15
 #define SV_AMULET_PROT_EVIL             16
 #define SV_AMULET_PROT_UNDEAD           17
+#define SV_AMULET_LUCK                  18
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0
@@ -3017,7 +3018,7 @@
 #define TR3_PERMA_CURSE         0x80000000L	/* Item is Perma Cursed */
 
 
-#define TR4_XXX1                0x00000001L
+#define TR4_LUCK_10             0x00000001L
 #define TR4_XXX2                0x00000002L
 #define TR4_XXX3                0x00000004L
 #define TR4_XXX4                0x00000008L

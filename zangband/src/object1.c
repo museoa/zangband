@@ -830,6 +830,10 @@ bool identify_fully_aux(const object_type *o_ptr)
 		info[i++] = "It provides protection from dragons.";
 	}
 
+	if (f4 & TR4_LUCK_10)
+	{
+		info[i++] = "It increase your saving throws.";
+	}
 	if (f4 & TR4_MUTATE)
 	{
 		info[i++] = "It causes mutations.";

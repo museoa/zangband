@@ -2130,6 +2130,7 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "PermLite :", 3, TR3_LITE);
 	display_player_flag_aux(col, row++, "Mutate   :", 4, TR4_MUTATE);
 	display_player_flag_aux(col, row++, "Patron   :", 4, TR4_PATRON);
+	display_player_flag_aux(col, row++, "Good Luck:", 4, TR4_LUCK_10);
 	display_player_flag_aux(col, row++, "WeirdLuck:", 4, TR4_STRANGE_LUCK);
 	display_player_flag_aux(col, row++, "Pass Wall:", 4, TR4_PASS_WALL);
 	display_player_flag_aux(col, row++, "GhulTouch:", 4, TR4_GHOUL_TOUCH);

@@ -1079,7 +1079,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (o_ptr->flags3 & TR3_CURSED) total -= 5000;
 	if (o_ptr->flags3 & TR3_HEAVY_CURSE) total -= 12500;
 	if (o_ptr->flags3 & TR3_PERMA_CURSE) total -= 15000;
-	if (o_ptr->flags4 & TR4_XXX1) total += 0;
+	if (o_ptr->flags4 & TR4_LUCK_10) total += 1000;
 	if (o_ptr->flags4 & TR4_XXX2) total += 0;
 	if (o_ptr->flags4 & TR4_XXX3) total += 0;
 	if (o_ptr->flags4 & TR4_XXX4) total += 0;

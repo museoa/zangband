@@ -212,7 +212,7 @@ static void random_resistance(object_type *o_ptr, int specific)
 
 static void random_misc(object_type *o_ptr)
 {
-	switch (randint1(37))
+	switch (randint1(38))
 	{
 		case 1:
 			o_ptr->flags2 |= TR2_SUST_STR;
@@ -323,6 +323,10 @@ static void random_misc(object_type *o_ptr)
 			break;
 		case 37:
 			o_ptr->flags4 |= TR4_STRANGE_LUCK;
+			break;
+		case 38:
+			o_ptr->flags4 |= TR4_LUCK_10;
+			break;
 	}
 }
 

@@ -2500,6 +2500,9 @@ static void calc_bonuses(void)
 
 		/* Boost shots */
 		if (o_ptr->flags3 & (TR3_XTRA_SHOTS)) extra_shots++;
+		
+		/* Boost saving throws */
+		if (o_ptr->flags4 & (TR4_LUCK_10)) p_ptr->skill.sav += 10;
 
 		/* Modify the base armor class */
 		p_ptr->ac += o_ptr->ac;
