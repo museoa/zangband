@@ -366,6 +366,8 @@ void teleport_player(int dis)
 			}
 			else
 			{
+				if(!in_bounds2(oy+yy, ox+xx)) continue;
+				
 				if (area(oy+yy,ox+xx)->m_idx)
 				{
 					if ((r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags6 & RF6_TPORT) &&
@@ -892,7 +894,7 @@ void call_the_(void)
 {
 	int i;
 
-	if (in_bounds2(py, px) &&
+	if (in_bounds(py, px) &&
 	    cave_floor_grid(area(py - 1, px - 1)) &&
 	    cave_floor_grid(area(py - 1, px    )) &&
 	    cave_floor_grid(area(py - 1, px + 1)) &&
@@ -957,12 +959,14 @@ void fetch(int dir, int wgt, bool require_los)
 		tx = target_col;
 		ty = target_row;
 
-		if (distance(py, px, ty, tx) > MAX_RANGE)
+		/* Paranoia */
+		if ((distance(py, px, ty, tx) > MAX_RANGE)
+			 || (!in_bounds2(ty, tx)))
 		{
 			msg_print("You can't fetch something that far away!");
 			return;
 		}
-
+		
 		c_ptr = area(ty, tx);
 
 		/* We need an item to fetch */
@@ -992,16 +996,22 @@ void fetch(int dir, int wgt, bool require_los)
 		ty = py; /* Where to drop the item */
 		tx = px;
 
-		do
+		while(TRUE)
 		{
 			ty += ddy[dir];
 			tx += ddx[dir];
+			
+			/* paranoia */
+			if(!in_bounds2(ty, tx)) continue;
+			
 			c_ptr = area(ty, tx);
 
 			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
 			    !cave_floor_grid(c_ptr)) return;
+			    
+			/* found a spot */
+			if (!c_ptr->o_idx) break;
 		}
-		while (!c_ptr->o_idx);
 	}
 
 	o_ptr = &o_list[c_ptr->o_idx];
@@ -4129,6 +4139,9 @@ bool dimension_door(void)
 	if (!tgt_pt(&x, &y)) return FALSE;
 
 	p_ptr->energy -= 60 - plev;
+
+	/* paranoia */
+	if(!in_bounds2(y, x)) return FALSE;
 
 	c_ptr = area(y, x);
 
