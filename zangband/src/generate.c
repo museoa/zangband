@@ -4186,16 +4186,6 @@ static bool cave_gen(void)
 			if ((x % 3) == 2) x--;
 		}
 
-		/* Destroyed levels are boring */
-		if (destroyed)
-		{
-			/* Attempt a "trivial" room */
-			if (room_build(y, x, 1)) continue;
-
-			/* Never mind */
-			continue;
-		}
-
 		/* Attempt an "unusual" room */
 		if (ironman_rooms || (rand_int(DUN_UNUSUAL) < dun_level))
 		{
@@ -4370,19 +4360,19 @@ static bool cave_gen(void)
 			for (i = 0; i < randint(DUN_STR_QUA); i++)
 				build_streamer2(FEAT_TREES, FALSE, TRUE);
 
-	/* Choose water or lava */
-	if (rand_int(MAX_DEPTH) > dun_level)
-	{
-		feat1 = FEAT_DEEP_WATER;
-		feat2 = FEAT_SHAL_WATER;
-	}
-	else
-	{
-		feat1 = FEAT_DEEP_LAVA;
-		feat2 = FEAT_SHAL_LAVA;
-	}
+		/* Choose water or lava */
+		if (rand_int(MAX_DEPTH) > dun_level)
+		{
+			feat1 = FEAT_DEEP_WATER;
+			feat2 = FEAT_SHAL_WATER;
+		}
+		else
+		{
+			feat1 = FEAT_DEEP_LAVA;
+			feat2 = FEAT_SHAL_LAVA;
+		}
 
-	/* Hack -- Add some rivers */
+		/* Hack -- Add some rivers */
 		while(!rand_int(3)) add_river(feat1, feat2, randnor(40, 15));
 	}
 
