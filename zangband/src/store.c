@@ -1450,7 +1450,7 @@ static void store_create(void)
 		if (cur_store_num == STORE_BLACK)
 		{
 			/* Pick a level for object/magic */
-			level = 25 + rand_int(25);
+			level = 35 + p_ptr->lev;
 
 			/* Random item (usually of given level) */
 			i = get_obj_num(level);

@@ -476,7 +476,7 @@
  */
 #define STORE_INVEN_MAX 24              /* Max number of discrete objs in inven */
 #define STORE_CHOICES   48              /* Number of items to choose stock from */
-#define STORE_OBJ_LEVEL 5               /* Magic Level for normal stores */
+#define STORE_OBJ_LEVEL 10              /* Magic Level for normal stores */
 #define STORE_TURNOVER  9               /* Normal shop turnover, per day */
 #define STORE_MIN_KEEP  6               /* Min slots to "always" keep full */
 #define STORE_MAX_KEEP  18              /* Max slots to "always" keep full */
@@ -3587,4 +3587,37 @@ extern int PlayerUID;
 #define NOTE_SAVE_GAME		3
 #define NOTE_ENTER_DUNGEON	4
 
+/*
+ * Field information flags
+ */
+#define FIELD_INFO_TEMP		0x01	/* Temporary field - use counter */
+#define FIELD_INFO_FEAT		0x02	/* Terrain feature based field */
+#define FIELD_INFO_DUMMY1	0x04
+#define FIELD_INFO_DUMMY2	0x08
+#define FIELD_INFO_DUMMY3	0x10
+#define FIELD_INFO_DUMMY4	0x20
+#define FIELD_INFO_DUMMY5	0x40
+#define FIELD_INFO_DUMMY6	0x80
+
+
+
+/*
+ * Field Actions
+ */
+#define FIELD_ACT_INIT			0	/* Initialise the field data */
+#define FIELD_ACT_ALWAYS		1	/* Every turn */
+#define FIELD_ACT_PLAYER_ENTER		2	/* Player walks onto square */
+#define FIELD_ACT_PLAYER_ON		3	/* Player is on square */
+#define FIELD_ACT_PLAYER_LEAVE		4	/* Player leaves square */
+#define FIELD_ACT_MONSTER_ENTER		5	/* Monster walks onto square */
+#define FIELD_ACT_MONSTER_ON		6	/* Monster is on square */
+#define FIELD_ACT_MONSTER_LEAVE		7	/* Monster leaves square */
+#define FIELD_ACT_OBJECT_DROP		8	/* Object lands on square */
+#define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
+#define FIELD_ACT_MAGIC_PASS		10	/* bolt/beam/ball spell tries to pass this field */
+#define FIELD_ACT_MAGIC_TARGET		11	/* Targeting this square */
+#define FIELD_ACT_COMPACT		12	/* Compaction if too many */
+#define FIELD_ACT_EXIT			13	/* Field is destroyed */
+
+#define FIELD_ACTION_MAX		14	/* The last action + 1 */
 
