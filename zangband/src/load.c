@@ -2252,63 +2252,64 @@ static errr rd_dungeon(void)
 		note(format("Too many (%d) object entries!", limit));
 		return (151);
 	}
+	
+	/*
+	 * No objects yet
+	 */
+	o_cnt = 0;
 
 	/* Read the dungeon items */
-	for (i = 1; i < limit; i++)
+	for (o_max = 1; o_max < limit; o_max++)
 	{
-		int o_idx;
-
 		object_type *o_ptr;
 
-
-		/* Get a new record */
-		o_idx = o_pop();
-
-		/* Oops */
-		if (i != o_idx)
-        {
-			note(format("Object allocation error (%d <> %d)", i, o_idx));
-			return (152);
-		}
-
-
 		/* Acquire place */
-		o_ptr = &o_list[o_idx];
+		o_ptr = &o_list[o_max];
 
 		/* Read the item */
 		rd_item(o_ptr);
 		
 		/* Hack - import player inventory properly */
 		o_ptr->allocated = TRUE;
-
-		/* Dungeon items */
-		if (o_ptr->k_idx && !ignore_stuff && (o_ptr->ix || o_ptr->iy))
+		
+		/* Real item? */
+		if (o_ptr->k_idx)
 		{
-            if (!in_bounds(o_ptr->ix, o_ptr->iy))
-            {
-				note(format
-					 ("Object placement error (%d,%d)", o_ptr->ix, o_ptr->iy));
-				return (152);
+			/* Count objects */
+			o_cnt++;
+		
+			/* Dungeon items */
+			if (!ignore_stuff && (o_ptr->ix || o_ptr->iy))
+			{
+	            if (!in_bounds(o_ptr->ix, o_ptr->iy))
+    	        {
+					note(format
+						 ("Object placement error (%d,%d)", o_ptr->ix, o_ptr->iy));
+					return (152);
+				}
+	
+    	        /* Access the item location */
+				c_ptr = area(o_ptr->ix, o_ptr->iy);
+
+				/*
+				 * This is so much of a hack it hurts.  We really need
+				 * to have a loop... or something.
+				 */
+
+				/* XXX XXX Mega-hack - build a stack */
+				o_ptr->next_o_idx = c_ptr->o_idx;
+
+				/* Place the object */
+				c_ptr->o_idx = o_max;
+
+				/* Hack - set region of object */
+				o_ptr->region = cur_region;
 			}
-
-            /* Access the item location */
-			c_ptr = area(o_ptr->ix, o_ptr->iy);
-
-			/*
-			 * This is so much of a hack it hurts.  We really need
-			 * to have a loop... or something.
-			 */
-
-			/* XXX XXX Mega-hack - build a stack */
-			o_ptr->next_o_idx = c_ptr->o_idx;
-
-			/* Place the object */
-			c_ptr->o_idx = o_idx;
-
-			/* Hack - set region of object */
-			o_ptr->region = cur_region;
 		}
 	}
+	
+	/* Expand object array */
+	o_max++;
 
 	/* Repair inventory information */
 	if (sf_version < 37)
