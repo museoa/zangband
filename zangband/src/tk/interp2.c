@@ -13,24 +13,6 @@
 #include "tnb.h"
 #include "icon.h"
 
-
-/*
- * Write the user's inscription for the given object into buf.
- */
-static char *object_inscription(object_type *o_ptr, char *buf)
-{
-	/* No inscription yet */
-	buf[0] = '\0';
-
-	/* Use the user's inscription if available */
-	if (o_ptr->inscription)
-	{
-		(void) strcpy(buf, quark_str(o_ptr->inscription));
-	}
-
-	return buf;
-}
-
 /*
  *--------------------------------------------------------------
  *
@@ -162,12 +144,12 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 
 	static cptr cmdOptions[] = {"find", "memory",
 		NULL};
-	enum {IDX_FIND, IDX_MEMORY, IDX_INSCRIPTION} option;
+	enum {IDX_FIND, IDX_MEMORY} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
 	Tcl_Obj *listObjPtr;
-	char buf[80], *buffer, *t;
+	char *buffer, *t;
 	int i, tval;
 	long length;
 	object_type *o_ptr;
@@ -368,12 +350,10 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"abort", "tkdir"
-		"new", "open", "quit",
-		"keymap_dump", "version",
+		"new", "open", "quit", "version",
 		"savefile", NULL};
 	enum {IDX_ABORT, IDX_TKDIR,
-		IDX_NEW, IDX_OPEN, IDX_QUIT,
-		IDX_KEYMAP_DUMP, IDX_VERSION,
+		IDX_NEW, IDX_OPEN, IDX_QUIT, IDX_VERSION,
 		IDX_SAVEFILE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -516,43 +496,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				do_cmd_save_game(FALSE);
 			}
 			quit(NULL);
-			break;
-
-		case IDX_KEYMAP_DUMP: /* keymap_dump */
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "filename");
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetString(objV[2]);
-
-			/* */
-			if (t[0] && t[0] != ' ')
-			{
-				/* Translate the file path */
-				extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-				if (extString == NULL) return TCL_ERROR;
-
-				/* Dump the keymap */
-				if (keymap_dump(extString) == -1)
-				{
-					/* Set the error */
-					Tcl_AppendStringsToObj(resultPtr,
-						(char *) "error writing keymap file \"", t, "\"",
-						NULL);
-
-					/* Clean up */
-					Tcl_DStringFree(&extDString);
-
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-			}
 			break;
 
 		case IDX_VERSION: /* version */
