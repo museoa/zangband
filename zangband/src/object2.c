@@ -1398,21 +1398,18 @@ void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt)
 				/* Split the charges evenly - then move the "used ones" */
 				q_ptr->pval = new_charges - o_ptr->ac;
 				
-				if (amt < o_ptr->number)
-				{
-					o_ptr->pval -= new_charges - o_ptr->ac;
-				}
-				
-				q_ptr->ac = o_ptr->ac;
 				o_ptr->ac = 0;
+				q_ptr->ac = o_ptr->ac;
 			}
 		}
 		else
 		{
+			/* Rods are simple - just split them geometrically */
 			q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			
-			if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
 		}
+		
+		/* Subtract moved charges */
+		if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
 
 		/* Hack -- Rods also need to have their timeouts distributed.  The
 		 * dropped stack will accept all time remaining to charge up to its
