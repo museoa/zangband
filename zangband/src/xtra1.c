@@ -3590,6 +3590,9 @@ static void calc_bonuses(void)
 
 			/* Paranoia - require at least one blow */
 			if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
+			
+			/* Add in extra blows */
+			p_ptr->num_blow += extra_blows;
 
 
 			/* Boost digging skill by weapon weight */
