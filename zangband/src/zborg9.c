@@ -1547,7 +1547,6 @@ static void borg_parse_aux(cptr msg, int len)
 
             switch (item->tval)
             {
-                /* forget wands, staffs, weapons, armour */
                 case TV_WAND:
                 case TV_STAFF:
                 case TV_ROD:
@@ -1571,10 +1570,15 @@ static void borg_parse_aux(cptr msg, int len)
                 case TV_SOFT_ARMOR:
                 case TV_HARD_ARMOR:
                 case TV_DRAG_ARMOR:
+				{
+				/* forget wands, staffs, weapons, armour */
                 break;
+				}
 
                 default:
+				{
                     continue;
+				}
             }
                 /* forget it */
                 item->able = FALSE;
@@ -2662,8 +2666,10 @@ static bool borg_load_formula(char * string)
         switch (*string)
         {
             case ' ':
+			{
                 string++;
                 continue;
+			}
             case '0':
             case '1':
             case '2':
@@ -2674,6 +2680,7 @@ static bool borg_load_formula(char * string)
             case '7':
             case '8':
             case '9':
+			{
                 sscanf(string, "%d", &value);
                 if (iformula+2 > MAX_FORMULA_ELEMENTS)
                 {
@@ -2685,7 +2692,9 @@ static bool borg_load_formula(char * string)
                 formula[formula_num][iformula++] = BFO_NUMBER;
                 formula[formula_num][iformula++] = value;
                 break;
+			}
             case '_':
+			{
                 if (iformula+2 > MAX_FORMULA_ELEMENTS)
                 {
                     borg_note(format("too many elements in formula %03d", formula_num));
@@ -2729,7 +2738,9 @@ static bool borg_load_formula(char * string)
                 }
 
                 break;
+			}
             default:
+			{
                 if (iformula+1 > MAX_FORMULA_ELEMENTS)
                 {
                     borg_note(format("too many elements in formula %03d", formula_num));
@@ -2821,6 +2832,7 @@ static bool borg_load_formula(char * string)
                 formula[formula_num][0] = BFO_NUMBER;
                 formula[formula_num][1] = 0;
                 return FALSE;
+			}
         }
         string = strchr(string, ' ');
     }
@@ -5212,9 +5224,10 @@ void do_cmd_borg(void)
 
     switch (cmd)
     {
-        /* Command: Nothing */
         case '$':
         {
+			/* Command: Nothing */
+		
             int i;
             /*** Hack -- initialize borg.ini options ***/
 
@@ -5235,10 +5248,12 @@ void do_cmd_borg(void)
             borg_note("# Ready...");
             break;
         }
-        /* Command: Activate */
+
         case 'z':
         case 'Z':
         {
+			/* Command: Activate */
+		
             /* Activate */
             borg_active = TRUE;
 
@@ -5291,10 +5306,11 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: Update */
         case 'u':
         case 'U':
         {
+			/* Command: Update */
+		
             /* Activate */
             borg_active = TRUE;
 
@@ -5334,11 +5350,11 @@ void do_cmd_borg(void)
             break;
         }
 
-
-        /* Command: Step */
         case 'x':
         case 'X':
         {
+			/* Command: Step */
+			
             /* Activate */
             borg_active = TRUE;
 
@@ -5389,71 +5405,41 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: toggle "flags" */
         case 'f':
         case 'F':
         {
+			/* Command: toggle "flags" */
+		
             /* Get a "Borg command", or abort */
-            if (!get_com("Borg command: Toggle Flag: (m/d/s/f/g) ", &cmd)) return;
+            if (!get_com("Borg command: Toggle Flag: (m/s) ", &cmd)) return;
 
             switch (cmd)
             {
-                /* Give borg thought messages in window */
                 case 'm':
                 case 'M':
                 {
+					/* Give borg thought messages in window */
                     break;
                 }
 
-                /* Give borg the ability to use graphics ----broken */
-                case 'g':
-                case 'G':
-                {
-#if 0
-					borg_graphics = !borg_graphics;
-                    msg_format("Borg -- borg_graphics is now %d.",
-                                borg_graphics);
-#endif
-                    break;
-                }
-
-                /* Dump savefile at each death */
                 case 'd':
                 case 'D':
                 {
+					/* Dump savefile at each death */
                     borg_flag_dump = !borg_flag_dump;
                     msg_format("Borg -- borg_flag_dump is now %d.",
                                 borg_flag_dump);
-                    break;
-                }
-
-                /* Dump savefile at each level */
-                case 's':
-                case 'S':
-                {
-                    borg_flag_save = !borg_flag_save;
-                    msg_format("Borg -- borg_flag_save is now %d.",
-                                borg_flag_save);
-                    break;
-                }
-
-                /* clear 'fear' levels */
-                case 'f':
-                case 'F':
-                {
-                    msg_format("Command No Longer Usefull");
                     break;
                 }
             }
             break;
         }
 
-
-
-        /* Command: toggle "cheat" flags */
         case 'c':
         case 'C':
         {
+			/* Command: toggle "cheat" flags */
+		
             /* Get a "Borg command", or abort */
             if (!get_com("Borg command: Toggle Cheat: (d/i/e/s/p)", &cmd))
                 return;
@@ -5473,11 +5459,11 @@ void do_cmd_borg(void)
 
         }
 
-
-        /* Start a new log file */
         case 'l':
         case 'L':
         {
+			/* Start a new log file */
+		
             char buf[80];
 
             /* Close the log file */
@@ -5504,11 +5490,11 @@ void do_cmd_borg(void)
             break;
         }
 
-
-        /* Activate a search string */
         case 's':
         case 'S':
         {
+			/* Activate a search string */
+		
             /* Get the new search string (or cancel the matching) */
             if (!get_string("Borg Match String: ", borg_match, 70))
             {
@@ -5521,10 +5507,10 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: check Grid "feature" flags */
         case 'g':
         case 'G':
         {
+			/* Command: check Grid "feature" flags */
             int x, y;
 
             u16b low = 0, high = 0;
@@ -5535,51 +5521,148 @@ void do_cmd_borg(void)
             /* Extract a flag */
             switch (cmd)
             {
-                case '0': low = high = 1 << 0; break;
-                case '1': low = high = 1 << 1; break;
-                case '2': low = high = 1 << 2; break;
-                case '3': low = high = 1 << 3; break;
-                case '4': low = high = 1 << 4; break;
-                case '5': low = high = 1 << 5; break;
-                case '6': low = high = 1 << 6; break;
-                case '7': low = high = 1 << 7; break;
+                case '0':
+				{
+					low = high = 1 << 0;
+					break;
+				}
+                case '1':
+				{
+					low = high = 1 << 1;
+					break;
+				}
+                case '2':
+				{
+					low = high = 1 << 2;
+					break;
+					
+				}
+                case '3':
+				{
+					low = high = 1 << 3;
+					break;
+				}
+                case '4':
+				{
+					low = high = 1 << 4;
+					break;
+				}
+                case '5':
+				{
+					low = high = 1 << 5;
+					break;
+				}
+                case '6':
+				{
+					low = high = 1 << 6;
+					break;
+				}
+                case '7':
+				{
+					low = high = 1 << 7;
+					break;
+				}
 
-                case '.': low = high = FEAT_FLOOR; break;
-                case ' ': low = high = FEAT_NONE; break;
-                case 'i': low = high = FEAT_INVIS; break;
-                /* case ';': low = high = FEAT_GLYPH; break; */
-                case ',': low = high = FEAT_OPEN; break;
-                case 'x': low = high = FEAT_BROKEN; break;
-                case '<': low = high = FEAT_LESS; break;
-                case '>': low = high = FEAT_MORE; break;
-                /* case '@': low = FEAT_SHOP_HEAD;
-                          high = FEAT_SHOP_TAIL;
-                           break; */
-                /* case '^': low = FEAT_TRAP_TRAPDOOR;
-                          high = FEAT_TRAP_SLEEP;
-                          break; */
-                case '+': low  = high = FEAT_CLOSED; break;
-                case 's': low = high = FEAT_SECRET; break;
-                case ':': low = high = FEAT_RUBBLE; break;
-                case 'q': low = FEAT_MAGMA;
-                		  high = FEAT_QUARTZ_K;
-                case 'm': low = high = FEAT_MOUNTAIN; break;
-                case 't': low = high = FEAT_TREES; break;
-                case 'l': low = high = FEAT_SHAL_LAVA; break;
-                case 'L': low = high = FEAT_DEEP_LAVA; break;
-                case 'a': low = high = FEAT_SHAL_WATER; break;
-                case 'A': low = high = FEAT_DEEP_WATER; break;
+                case '.':
+				{
+					low = high = FEAT_FLOOR;
+					break;
+				}
+                case 'i':
+				{
+					low = high = FEAT_INVIS;
+					break;
+				}
+                case ',':
+				{
+					low = high = FEAT_OPEN;
+					break;
+				}
+                case 'x':
+				{
+					low = high = FEAT_BROKEN;
+					break;
+				}
+                case '<':
+				{
+					low = high = FEAT_LESS;
+					break;
+				}
+                case '>':
+				{
+					low = high = FEAT_MORE;
+					break;
+				}
+                case '+':
+				{
+					low  = high = FEAT_CLOSED;
+					break;
+				}
+                case 's':
+				{
+					low = high = FEAT_SECRET;
+					break;
+				}
+                case ':':
+				{
+					low = high = FEAT_RUBBLE;
+					break;
+				}
+                case 'q':
+				{
+					low = FEAT_MAGMA;
+                	high = FEAT_QUARTZ_K;
+					break;
+				}
+                case 'm':
+				{
+					low = high = FEAT_MOUNTAIN;
+					break;
+				}
+                case 't':
+				{
+					low = high = FEAT_TREES;
+					break;
+				}
+                case 'l':
+				{
+					low = high = FEAT_SHAL_LAVA;
+					break;
+				}
+                case 'L':
+				{
+					low = high = FEAT_DEEP_LAVA;
+					break;
+				}
+                case 'a':
+				{
+					low = high = FEAT_SHAL_WATER;
+					break;
+				}
+                case 'A':
+				{
+					low = high = FEAT_DEEP_WATER;
+					break;
+				}
 
-                case 'k':  break;
-                case '&':  break;
-                case 'w': low = FEAT_WALL_EXTRA;
-                          high = FEAT_WALL_SOLID;
-                          break;
-                case 'p': low = FEAT_PERM_EXTRA;
-                          high = FEAT_PERM_SOLID;
-                          break;
-
-                default: low = high = 0x00; break;
+                case 'w':
+				{
+					low = FEAT_WALL_EXTRA;
+                    high = FEAT_WALL_SOLID;
+                    break;
+				}
+                case 'p':
+				{
+					low = FEAT_PERM_EXTRA;
+                    high = FEAT_PERM_SOLID;
+                    break;
+				}
+				
+                default:
+				{
+					low = high = FEAT_NONE;
+					break;
+				}
             }
 
             /* Scan map */
@@ -5617,10 +5700,10 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: check "info" flags */
         case 'i':
         case 'I':
         {
+			/* Command: check "info" flags */
 #if 0
             int x, y;
 
@@ -5632,25 +5715,52 @@ void do_cmd_borg(void)
             /* Extract a flag */
             switch (cmd)
             {
-                case '0': mask = 1 << 0; break;
-                case '1': mask = 1 << 1; break;
-                case '2': mask = 1 << 2; break;
-                case '3': mask = 1 << 3; break;
-                case '4': mask = 1 << 4; break;
-                case '5': mask = 1 << 5; break;
-                case '6': mask = 1 << 6; break;
-                case '7': mask = 1 << 7; break;
+                case '0':
+				{
+					mask = 1 << 0;
+					break;
+				}
+                case '1':
+				{
+					mask = 1 << 1;
+					break;
+				}
+                case '2':
+				{
+					mask = 1 << 2;
+					break;
+				}
+                case '3':
+				{
+					mask = 1 << 3;
+					break;
+				}
+                case '4':
+				{
+					mask = 1 << 4;
+					break;
+				}
+                case '5':
+				{
+					mask = 1 << 5;
+					break;
+				}
+                case '6':
+				{
+					mask = 1 << 6;
+					break;
+				}
+                case '7':
+				{
+					mask = 1 << 7;
+					break;
+				}
 
-                case 'm': mask = BORG_MARK; break;
-                case 'g': mask = BORG_GLOW; break;
-                case 'd': mask = BORG_DARK; break;
-                case 'o': mask = BORG_OKAY; break;
-                case 'l': mask = BORG_LITE; break;
-                case 'v': mask = BORG_VIEW; break;
-                case 't': mask = BORG_TEMP; break;
-                case 'x': mask = BORG_XTRA; break;
-
-                default: mask = 0x000; break;
+                default:
+				{
+					mask = 0x00;
+					break;
+				}
             }
 
             /* Scan map */
@@ -5683,10 +5793,10 @@ void do_cmd_borg(void)
             break;
         }
 
-    /* Command: check "avoidances" */
         case 'a':
         case 'A':
         {
+			/* Command: check "avoidances" */
             int x, y, p;
 
             /* Scan map */
@@ -5719,10 +5829,9 @@ void do_cmd_borg(void)
             break;
         }
 
-
-    /* Command: check previous steps */
         case 'y':
         {
+			/* Command: check previous steps */
             int x, y, i;
 
             /* Scan map */
@@ -5751,10 +5860,10 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: show "monsters" */
         case 'k':
         case 'K':
         {
+			/* Command: show "monsters" */
             int i, n = 0;
 
             /* Scan the monsters */
@@ -5785,11 +5894,10 @@ void do_cmd_borg(void)
             break;
         }
 
-
-        /* Command: show "objects" */
         case 't':
         case 'T':
         {
+			/* Command: show "objects" */
             int i, n = 0;
 
             /* Scan the objects */
@@ -5820,10 +5928,9 @@ void do_cmd_borg(void)
             break;
         }
 
-
-        /* Command: debug -- current flow */
         case '%':
         {
+			/* Command: debug -- current flow */
             int i, x, y;
 
             /* Flow */
@@ -5867,9 +5974,10 @@ void do_cmd_borg(void)
             }
             break;
         }
-		/* Display the intended path to the flow */
+		
 		case '^':
 		{
+			/* Display the intended path to the flow */
 			    int x, y;
 				int o;
 				int false_y, false_x;
@@ -5948,9 +6056,9 @@ void do_cmd_borg(void)
 		break;
 		}
 
-		/* Command: Resurrect Borg */
 		case 'R':
 		{
+			/* Command: Resurrect Borg */
            char cmd;
 
            /* Confirm it */
@@ -5964,9 +6072,9 @@ void do_cmd_borg(void)
            break;
        }
 
-        /* Command: debug -- danger of grid */
         case '#':
         {
+			/* Command: debug -- danger of grid */
             int n = 0;
 
             /* Turns */
@@ -5979,9 +6087,9 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command:  Regional Fear Info*/
         case '_':
         {
+			/* Command:  Regional Fear Info*/
             int x, y, p;
 
             /* Scan map */
@@ -6014,10 +6122,10 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: debug -- Power */
         case 'p':
         case 'P':
         {
+			/* Command: debug -- Power */
             s32b p;
 
             /* Examine the screen */
@@ -6051,9 +6159,9 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: Show time */
         case '!':
         {
+			/* Command: Show time */
             s32b time = borg_t - borg_began;
             msg_format("time: (%d) ", time);
             time = (borg_time_town + (borg_t - borg_began));
@@ -6063,36 +6171,9 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Command: my LOS */
-        case '@':
-        {
-            int x, y;
-
-            /* Scan map */
-            for (y = w_y; y < w_y + SCREEN_HGT; y++)
-            {
-                for (x = w_x; x < w_x + SCREEN_WID; x++)
-                {
-                    byte a = TERM_RED;
-                    /* Obtain danger */
-                    if (!borg_los(y, x, c_y, c_x)) continue;
-
-                    /* Display */
-                    print_rel('*', a, y, x);
-                }
-            }
-
-            /* Get keypress */
-            msg_format("Borg has LOS to these places.");
-            msg_print(NULL);
-
-            /* Redraw map */
-            prt_map();
-            break;
-        }
-       /* APW command: debug -- change max depth */
        case '1':
-        {
+       {
+	   	/* APW command: debug -- change max depth */
            int new_borg_skill[BI_MAXDEPTH];
            /* Get the new max depth */
            new_borg_skill[BI_MAXDEPTH] = get_quantity("Enter new Max Depth: ", MAX_DEPTH - 1);
@@ -6106,9 +6187,10 @@ void do_cmd_borg(void)
 
            break;
        }
-       /* APW command: debug -- allow borg to stop */
+
        case 'q':
-        {
+       {
+	   		/* APW command: debug -- allow borg to stop */
            int new_borg_stop_dlevel = 127;
            int new_borg_stop_clevel = 51;
            char cmd;
@@ -6125,10 +6207,11 @@ void do_cmd_borg(void)
            break;
        }
 
-        /* Command: APW HACK debug -- preparation for level */
         case '2':
         {
-          int i=0;
+			/* Command: APW HACK debug -- preparation for level */
+		
+           int i=0;
 
             /* Examine the screen */
             borg_update_frame();
@@ -6162,10 +6245,10 @@ void do_cmd_borg(void)
             break;
         }
 		
-        /* Command: List the swap weapon and armour */
         case 'w':
         case 'W':
         {
+			/* Command: List the swap weapon and armour */
 
             borg_item *item;
 
@@ -6196,11 +6279,12 @@ void do_cmd_borg(void)
             msg_format("Swap Armour:  %s, value= %d", item->desc, armour_swap_value);
             break;
         }
-        /* Command: Display all known info on item */
+        
         case 'o':
         case 'O':
         {
-			int n =0;
+			/* Command: Display all known info on item */
+			int n = 0;
 
 			object_type *item2;
 
@@ -6249,6 +6333,7 @@ void do_cmd_borg(void)
         case 'd':
         case 'D':
         {
+			/* Dump realms */
             int ii = 1, k;
 
             /* Save the screen */
@@ -6285,8 +6370,8 @@ void do_cmd_borg(void)
            	            Term_putstr(1, ii++, -1, TERM_WHITE, format("%s, %s, attempted %d times",as->name, legal, as->times));
             	    }
 	        	    get_com("Exam spell books.  Press any key for next book.", &cmd);
-            	} /* Books */
-           	} /* Realms */
+            	}
+           	}
 
          /* Restore the screen */
          Term_load();
@@ -6295,10 +6380,10 @@ void do_cmd_borg(void)
          return;
         }
 
-        /* dump borg 'has' information */
         case 'h':
         case 'H':
         {
+			/* dump borg 'has' information */
             char cmd;
             int item = 0, to = 0;
 
@@ -6309,23 +6394,31 @@ void do_cmd_borg(void)
             {
                 case 'i':
                 case 'I':
+				{
                     item = 0;
                     to = z_info->k_max;
                     break;
+				}
                 case 'w':
                 case 'W':
+				{
                     item = z_info->k_max;
                     to = z_info->k_max * 2;
                     break;
+				}
                 case 'a':
                 case 'A':
+				{
                     item = z_info->k_max * 2;
                     to = z_info->k_max * 2 + z_info->a_max;
                     break;
+				}
                 default:
+				{
                     item = z_info->k_max * 2 + z_info->a_max;
                     to = z_info->k_max * 2 + z_info->a_max + BI_MAX;
                     break;
+				}
             }
             /* Examine the screen */
             borg_update_frame();
@@ -6375,30 +6468,16 @@ void do_cmd_borg(void)
             break;
         }
 
-        /* Version of the game */
-        case 'v':
-        case 'V':
-        {
-            msg_format("APW ZBorg Version: %s",borg_engine_date);
-            break;
-        }
-
-        /* Oops */
         default:
         {
+			/* Oops */
+		
             /* Message */
             msg_print("That is not a legal Borg command.");
             break;
         }
     }
 }
-
-
-
-
-
-
-
 
 #else
 

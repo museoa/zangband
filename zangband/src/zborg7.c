@@ -283,15 +283,23 @@ bool borg_use_things(void)
                 switch (item->sval)
                 {
                     case SV_POTION_ENLIGHTENMENT:
+					{
 
                         /* Never quaff these in town */
                         if (!borg_skill[BI_CDEPTH]) break;
+						
+						/* fall through */
+					}
 
                     case SV_POTION_AUGMENTATION:
                     case SV_POTION_EXPERIENCE:
+					{
 
                         /* Try quaffing the potion */
                         if (borg_quaff_potion(item->sval)) return (TRUE);
+						
+						break;
+					}
                 }
 
                 break;
@@ -1629,6 +1637,7 @@ static bool borg_consume(int i)
     switch (item->tval)
     {
         case TV_POTION:
+		{
 
         /* Check the potion */
         switch (item->sval)
@@ -1659,14 +1668,18 @@ static bool borg_consume(int i)
             case SV_POTION_SLOW_POISON:
             case SV_POTION_CURE_POISON:
             case SV_POTION_SPEED:
+			{
 
             /* Try quaffing the potion */
             if (borg_quaff_potion(item->sval)) return (TRUE);
+			}
         }
 
         break;
-
+		}
+		
         case TV_SCROLL:
+		{
 
         /* Check the scroll */
         switch (item->sval)
@@ -1683,15 +1696,19 @@ static bool borg_consume(int i)
             case SV_SCROLL_BLESSING:
             case SV_SCROLL_HOLY_CHANT:
             case SV_SCROLL_HOLY_PRAYER:
+			{
             /* XXX maybe consume Enchant scrolls on items */
 
             /* Try reading the scroll */
             if (borg_read_scroll(item->sval)) return (TRUE);
+			}
         }
 
         break;
+		}
 
         case TV_FOOD:
+		{
 
         /* Check the grub */
         switch (item->sval)
@@ -1711,12 +1728,15 @@ static bool borg_consume(int i)
             case SV_FOOD_WAYBREAD:
             case SV_FOOD_PINT_OF_ALE:
             case SV_FOOD_PINT_OF_WINE:
+			{
 
             /* Try eating the food (unless Bloated) */
             if (!borg_skill[BI_ISFULL] && borg_eat_food(item->sval)) return (TRUE);
+			}
         }
 
         break;
+		}
     }
 
 
@@ -2074,8 +2094,10 @@ bool borg_crush_hole(void)
             {
                 /* rings are under valued. */
                 case TV_RING:
+				{
                     p -= (item->iqty * value * 10);
                     break;
+				}
 
                 case TV_AMULET:
                 case TV_BOW:
@@ -2090,16 +2112,21 @@ bool borg_crush_hole(void)
                 case TV_SOFT_ARMOR:
                 case TV_HARD_ARMOR:
                 case TV_DRAG_ARMOR:
+				{
                     p -= (item->iqty * value * 5);
                     break;
+				}
                 case TV_CLOAK:
+				{
                     if (!item->xtra_name)
                     p -=(item->iqty *(300000L));
                     else
                     p -= (item->iqty * value);
                     break;
+				}
 
                 case TV_ROD:
+				{
                     /* BIG HACK! don't crush cool stuff. */
                     if ((item->sval != SV_ROD_DRAIN_LIFE) ||
                         (item->sval != SV_ROD_ACID_BALL) ||
@@ -2110,8 +2137,10 @@ bool borg_crush_hole(void)
                     else
                     p -= (item->iqty * value);
                     break;
+				}
 
                 case TV_STAFF:
+				{
                     /* BIG HACK! don't crush cool stuff. */
                     if (item->sval != SV_STAFF_DISPEL_EVIL ||
                         ((item->sval != SV_STAFF_POWER ||
@@ -2122,7 +2151,9 @@ bool borg_crush_hole(void)
                         p -= (item->iqty * (300000L));  /* value at 30k */
                     else
                     p -= (item->iqty * (value/2));
+				}
                 case TV_WAND:
+				{
                     /* BIG HACK! don't crush cool stuff. */
                     if ((item->sval != SV_WAND_DRAIN_LIFE) ||
                         (item->sval != SV_WAND_ACID_BALL) ||
@@ -2136,17 +2167,21 @@ bool borg_crush_hole(void)
                     else
                     p -= (item->iqty * (value/2));
                     break;
+				}
 
                 /* scrolls and potions crush easy */
                 case TV_SCROLL:
+				{
                     if ((item->sval != SV_SCROLL_PROTECTION_FROM_EVIL) ||
                         (item->sval != SV_SCROLL_RUNE_OF_PROTECTION))
                         p -=(item->iqty * (30000L));
                     else
                         p -= (item->iqty * (value/10));
                     break;
+				}
 
                 case TV_POTION:
+				{
                     /* BIG HACK! don't crush heal/mana potions.  It could be */
                     /* that we are in town and are collecting them. */
                     if ((item->sval != SV_POTION_HEALING) ||
@@ -2157,10 +2192,13 @@ bool borg_crush_hole(void)
                     else
                         p -= (item->iqty * (value/10));
                     break;
+				}
 
                 default:
+				{
                     p -= (item->iqty * (value/3));
                     break;
+				}
             }
         }
         else
@@ -2176,26 +2214,36 @@ bool borg_crush_hole(void)
             {
                 case TV_RING:
                 case TV_AMULET:
+				{
                 p -= (borg_skill[BI_MAXDEPTH] * 5000L);
                 break;
+				}
 
                 case TV_ROD:
+				{
                 p -= (borg_skill[BI_MAXDEPTH] * 3000L);
                 break;
+				}
 
                 case TV_STAFF:
                 case TV_WAND:
+				{
                 p -= (borg_skill[BI_MAXDEPTH] * 2000L);
                 break;
+				}
 
                 case TV_SCROLL:
                 case TV_POTION:
+				{
                 p -= (borg_skill[BI_MAXDEPTH] * 500L);
                 break;
+				}
 
                 case TV_FOOD:
+				{
                 p -= (borg_skill[BI_MAXDEPTH] * 10L);
                 break;
+				}
             }
         }
 
@@ -2208,22 +2256,30 @@ bool borg_crush_hole(void)
                 case TV_SHOT:
                 case TV_ARROW:
                 case TV_BOLT:
+				{
                 p -= 100L;
                 break;
+				}
 
                 case TV_BOW:
+				{
                 p -= 20000L;
                 break;
+				}
 
                 case TV_DIGGING:
+				{
                 p -= 10L;
                 break;
+				}
 
                 case TV_HAFTED:
                 case TV_POLEARM:
                 case TV_SWORD:
+				{
                 p -= 10000L;
                 break;
+				}
 
                 case TV_BOOTS:
                 case TV_GLOVES:
@@ -2231,24 +2287,32 @@ bool borg_crush_hole(void)
                 case TV_CROWN:
                 case TV_SHIELD:
                 case TV_CLOAK:
+				{
                 p -= 15000L;
                 break;
+				}
 
                 case TV_SOFT_ARMOR:
                 case TV_HARD_ARMOR:
                 case TV_DRAG_ARMOR:
+				{
                 p -= 15000L;
                 break;
+				}
 
                 case TV_AMULET:
                 case TV_RING:
+				{
                 p -= 5000L;
                 break;
+				}
 
                 case TV_STAFF:
                 case TV_WAND:
+				{
                 p -= 1000L;
                 break;
+				}
             }
         }
 
@@ -2631,29 +2695,36 @@ bool borg_test_stuff(bool star_id)
             {
                 case TV_RING:
                 case TV_AMULET:
+				{
 
                 /* Hack -- reward depth */
                 v += (borg_skill[BI_MAXDEPTH] * 5000L);
 
                 break;
+				}
 
                 case TV_ROD:
+				{
 
                 /* Hack -- reward depth */
                 v += (borg_skill[BI_MAXDEPTH] * 3000L);
 
                 break;
+				}
 
                 case TV_WAND:
                 case TV_STAFF:
+				{
 
                 /* Hack -- reward depth */
                 v += (borg_skill[BI_MAXDEPTH] * 2000L);
 
                 break;
+				}
 
                 case TV_POTION:
                 case TV_SCROLL:
+				{
 
                 /* Hack -- boring levels */
                 if (borg_skill[BI_MAXDEPTH] < 5) break;
@@ -2662,13 +2733,16 @@ bool borg_test_stuff(bool star_id)
                 v += (borg_skill[BI_MAXDEPTH] * 500L);
 
                 break;
+				}
 
                 case TV_FOOD:
+				{
 
                 /* Hack -- reward depth */
                 v += (borg_skill[BI_MAXDEPTH] * 10L);
 
                 break;
+				}
             }
         }
 
@@ -2676,30 +2750,38 @@ bool borg_test_stuff(bool star_id)
         switch (item->tval)
         {
             case TV_CHEST:
+			{
 
             /* Hack -- Always identify chests */
             v = item->value;
             break;
+			}
 
             case TV_WAND:
             case TV_STAFF:
+			{
 
             /* Hack -- Always identify (get charges) */
             v = item->value;
             break;
+			}
 
             case TV_RING:
             case TV_AMULET:
+			{
 
             /* Hack -- Always identify (get information) */
             v = item->value;
             break;
+			}
 
             case TV_LITE:
+			{
 
             /* Hack -- Always identify (get artifact info) */
             v = item->value;
             break;
+			}
 
             case TV_SHOT:
             case TV_ARROW:
@@ -2718,6 +2800,7 @@ bool borg_test_stuff(bool star_id)
             case TV_SOFT_ARMOR:
             case TV_HARD_ARMOR:
             case TV_DRAG_ARMOR:
+			{
 
             /* Mega-Hack -- use identify spell/prayer */
             if (borg_spell_legal(REALM_SORCERY, 1, 1) || borg_spell_legal(REALM_ARCANE,3, 2) ||
@@ -2761,6 +2844,7 @@ bool borg_test_stuff(bool star_id)
             if (item->tval == TV_DIGGING) v = item->value;
 
             break;
+			}
         }
 
         /* Ignore */

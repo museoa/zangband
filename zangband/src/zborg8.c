@@ -136,37 +136,41 @@ static bool borg_object_similar(borg_item  *o_ptr, borg_item  *j_ptr)
     /* Analyze the items */
     switch (o_ptr->tval)
     {
-        /* Chests */
         case TV_CHEST:
         {
+			/* Chests */
+		
             /* Never okay */
             return (0);
         }
 
-        /* Food and Potions and Scrolls */
         case TV_FOOD:
         case TV_POTION:
         case TV_SCROLL:
         {
+			/* Food and Potions and Scrolls */
+			
             /* Assume okay */
             break;
         }
 
-        /* Staffs and Wands */
-        case TV_STAFF:
+         case TV_STAFF:
         case TV_WAND:
         {
+			/* Staffs and Wands */
+		
             /* Require knowledge */
             if ((!o_ptr->able) || (!j_ptr->able)) return (0);
 
             /* Fall through */
         }
 
-        /* Staffs and Wands and Rods */
         case TV_ROD:
         {
+			/* Staffs and Wands and Rods */
+		
             /* Require permission */
-/*            if (!testing_stack) return (0);*/
+			/* if (!testing_stack) return (0); */
 
             /* Require identical charges */
             if (o_ptr->pval != j_ptr->pval) return (0);
@@ -175,7 +179,6 @@ static bool borg_object_similar(borg_item  *o_ptr, borg_item  *j_ptr)
             break;
         }
 
-        /* Weapons and Armor */
         case TV_BOW:
         case TV_DIGGING:
         case TV_HAFTED:
@@ -191,8 +194,10 @@ static bool borg_object_similar(borg_item  *o_ptr, borg_item  *j_ptr)
         case TV_HARD_ARMOR:
         case TV_DRAG_ARMOR:
         {
+			/* Weapons and Armor */
+		
             /* Require permission */
-/*            if (!testing_stack) return (0);*/
+			/* if (!testing_stack) return (0);*/
 
             /* XXX XXX XXX Require identical "sense" status */
             /* if ((o_ptr->ident & ID_SENSE) != */
@@ -201,22 +206,24 @@ static bool borg_object_similar(borg_item  *o_ptr, borg_item  *j_ptr)
             /* Fall through */
         }
 
-        /* Rings, Amulets, Lites */
         case TV_RING:
         case TV_AMULET:
         case TV_LITE:
         {
+			/* Rings, Amulets, Lites */
+		
             /* Require full knowledge of both items */
             if ((!o_ptr->able) || (!j_ptr->able)) return (0);
 
             /* Fall through */
         }
 
-        /* Missiles */
         case TV_BOLT:
         case TV_ARROW:
         case TV_SHOT:
         {
+			/* Missiles */
+		
             /* Require identical "bonuses" */
             if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
             if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
@@ -245,9 +252,10 @@ static bool borg_object_similar(borg_item  *o_ptr, borg_item  *j_ptr)
             break;
         }
 
-        /* Various */
         default:
         {
+			/* Various */
+		
             /* Require knowledge */
             if ((!o_ptr->able) || (!j_ptr->able)) return (0);
 
@@ -308,25 +316,34 @@ static int borg_min_item_quantity(borg_item *item)
     case TV_SHOT:
     case TV_ARROW:
     case TV_BOLT:
+	{
         /* Maximum number of items */
         if (item->iqty < 5)
             return (item->iqty);
         return (5);
+	}
 
     case TV_FOOD:
+	{
         if (item->iqty < 3)
             return (item->iqty);
         return (3);
+	}
+	
 #if 0
     case TV_POTION:
     case TV_SCROLL:
+	{
         if (item->iqty < 2)
             return (item->iqty);
         return (2);
+	}
 #endif
 
     default:
+	{
         return (1);
+	}
     }
 }
 
@@ -869,6 +886,9 @@ static bool borg_think_home_sell_aux( bool save_best )
  */
 static bool borg_good_sell(borg_item *item, int who)
 {
+	/* Ignore store parameter - stores do not work properly yet. */
+	(void) who;
+
     /* Never sell worthless items */
     if (item->value <= 0) return (FALSE);
 
@@ -877,6 +897,7 @@ static bool borg_good_sell(borg_item *item, int who)
     {
         case TV_POTION:
         case TV_SCROLL:
+		{
 
         /* Never sell if not "known" and interesting */
         if (!item->able && (borg_skill[BI_MAXDEPTH] > 5)) return (FALSE);
@@ -890,6 +911,7 @@ static bool borg_good_sell(borg_item *item, int who)
             borg_has[266] + num_mana > 99) return (FALSE);
 
         break;
+		}
 
         case TV_FOOD:
         case TV_ROD:
@@ -898,11 +920,13 @@ static bool borg_good_sell(borg_item *item, int who)
         case TV_RING:
         case TV_AMULET:
         case TV_LITE:
+		{
 
         /* Never sell if not "known" */
         if (!item->able) return (FALSE);
 
         break;
+		}
 
         case TV_BOW:
         case TV_DIGGING:
@@ -918,6 +942,7 @@ static bool borg_good_sell(borg_item *item, int who)
         case TV_SOFT_ARMOR:
         case TV_HARD_ARMOR:
         case TV_DRAG_ARMOR:
+		{
 
 		/* PseudoID items are ok to sell */
         if (strstr(item->desc, "{average")) break;
@@ -926,6 +951,7 @@ static bool borg_good_sell(borg_item *item, int who)
         if (!item->able && !borg_item_icky(item)) return (FALSE);
 
         break;
+		}
     }
 
 
@@ -936,164 +962,16 @@ static bool borg_good_sell(borg_item *item, int who)
                    /* For now check all artifacts */
                       return (FALSE);
     }
+
+
+
 #if 0
-    /* Do not sell stuff that is not fully id'd and should be  */
-    if (!item->fully_identified && item->name2)
-    {
-           switch (item->name2)
-           {
-            /* Robe of Permanance */
-            case EGO_PERMANENCE:
-            /* Armor of Elvenkind */
-            case EGO_ELVENKIND:
-            /* Cloak of Aman */
-            case EGO_AMAN:
-                return (FALSE);
-
-            /* Weapon (Defender) */
-            /* Weapon (Blessed) */
-            /* Weapon (Holy Avenger) */
-            case EGO_HA:
-            case EGO_BLESS_BLADE:
-            case EGO_DF:
-            /* Crown of the Magi */
-            case EGO_MAGI:
-            /* anything else */
-            default:
-                break;
-           }
-    }
-#endif /* 0 */
-
     /* Switch on the store */
     switch (who + 1)
     {
-        /* General Store */
-        case 1:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_DIGGING:
-                case TV_CLOAK:
-                case TV_FOOD:
-                case TV_FLASK:
-                case TV_LITE:
-                case TV_SPIKE:
-                return (TRUE);
-            }
-            break;
-
-        /* Armoury */
-        case 2:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_BOOTS:
-                case TV_GLOVES:
-                case TV_HELM:
-                case TV_CROWN:
-                case TV_SHIELD:
-                case TV_SOFT_ARMOR:
-                case TV_HARD_ARMOR:
-                case TV_DRAG_ARMOR:
-                return (TRUE);
-            }
-            break;
-
-        /* Weapon Shop */
-        case 3:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_SHOT:
-                case TV_BOLT:
-                case TV_ARROW:
-                case TV_BOW:
-                case TV_DIGGING:
-                case TV_HAFTED:
-                case TV_POLEARM:
-                case TV_SWORD:
-
-                return (TRUE);
-            }
-            break;
-
-        /* Temple */
-        case 4:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_HAFTED:
-                case TV_LIFE_BOOK:
-                case TV_SCROLL:
-                case TV_POTION:
-                return (TRUE);
-            }
-            break;
-
-        /* Alchemist */
-        case 5:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_SCROLL:
-                case TV_POTION:
-                return (TRUE);
-            }
-            break;
-
-        /* Magic Shop */
-        case 6:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_AMULET:
-                case TV_RING:
-                case TV_SCROLL:
-                case TV_POTION:
-                case TV_STAFF:
-                case TV_WAND:
-                case TV_ROD:
-                case TV_LIFE_BOOK:
-                case TV_SORCERY_BOOK:
-                case TV_NATURE_BOOK:
-                case TV_CHAOS_BOOK:
-                case TV_DEATH_BOOK:
-                case TV_TRUMP_BOOK:
-                case TV_ARCANE_BOOK:
-                return (TRUE);
-            }
-            break;
-
-		/* Black Market */
-
-		/* Home */
-
-        /* Book Shop */
-        case 9:
-
-            /* Analyze the type */
-            switch (item->tval)
-            {
-                case TV_LIFE_BOOK:
-                case TV_SORCERY_BOOK:
-                case TV_NATURE_BOOK:
-                case TV_CHAOS_BOOK:
-                case TV_DEATH_BOOK:
-                case TV_TRUMP_BOOK:
-                case TV_ARCANE_BOOK:
-                return (TRUE);
-            }
-            break;
-
-
+       /* Empty */
     }
+#endif /* 0 */
 
     /* Assume not */
     return (FALSE);
@@ -1254,12 +1132,14 @@ static bool borg_good_buy(borg_item *item, int who)
         case TV_SHOT:
         case TV_ARROW:
         case TV_BOLT:
+		{
         if (borg_skill[BI_CLEVEL] < 35)
         {
             if (item->to_h) return (FALSE);
             if (item->to_d) return (FALSE);
         }
         break;
+		}
 
         case TV_LIFE_BOOK:
         case TV_SORCERY_BOOK:
@@ -1268,12 +1148,10 @@ static bool borg_good_buy(borg_item *item, int who)
         case TV_DEATH_BOOK:
         case TV_TRUMP_BOOK:
         case TV_ARCANE_BOOK:
+		{
         if (item->discount) return (TRUE);
         break;
-
-        case TV_WAND:
-        case TV_STAFF:
-        break;
+		}
     }
 
     /* Don't buy from the BM until we are rich */
