@@ -4381,6 +4381,10 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 }
 
 
+/* Hack - predeclare for debug code below */
+static s16b *look_up_list(object_type *o_ptr);
+
+
 /*
  * Put an object on the ground.
  * We assume the grid is in bounds.
@@ -4413,6 +4417,9 @@ static bool put_object(object_type *o_ptr, int x, int y)
 
 		/* Notice + Redraw */
 		note_spot(x, y);
+		
+		/* Debug - scan player list for this item and complain if we find it */
+		look_up_list(j_ptr);
 
 		return (TRUE);
 	}
