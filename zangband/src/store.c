@@ -1322,77 +1322,27 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 	return (TRUE);
 }
 
-static bool store_buy_item(object_type *o_ptr, s32b *price)
+static bool store_access_item(object_type *o_ptr, s32b price, bool buy)
 {
 	char out_val[160];
 	char o_name[256];
 
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-
-	/* Extract the starting offer and the final offer */
-	s32b ask = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
-	
 	/* Describe the object (fully) */
 	object_desc_store(o_name, o_ptr, TRUE, 3, 256);
-
-	*price = 0;
-
-	/* Haggle for the whole pile */
-	ask *= o_ptr->number;
 	
-	/* Message */
-	msg_format("Buying %s.", o_name);
-	message_flush();
-
-	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
+	(void)sprintf(out_val, "%s %s, offer :  %ld",
+				  (buy) ? "Buying" : "Selling", o_name, (long) price);
 	put_str(out_val, 0, 1);
 	
-	/* Ask the user for a response */
-	if (!get_check("Do you want to buy it? ")) return (FALSE);
-	
-	/* Save price */
-	*price = ask;
-
-	/* Did sell item */
-	return (TRUE);
-}
-
-static bool store_sell_item(object_type *o_ptr, s32b *price)
-{
-	char out_val[160];
-	char o_name[256];
-
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-
-	/* Obtain the starting offer and the final offer */
-	s32b ask = price_item(o_ptr, ot_ptr->min_inflate, TRUE);
-	
-	/* Get a full description */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-	*price = 0;
-
-	/* Haggle for the whole pile */
-	ask *= o_ptr->number;
-	
-	/* Describe the transaction */
-	msg_format("Selling %s.", o_name);
-	message_flush();
-
-
-	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
-	put_str(out_val, 0, 1);
+	(void)sprintf(out_val, "Do you want to %s it? ", (buy) ? "buy" : "sell");
 	
 	/* Ask the user for a response */
-	if (!get_check("Do you want to sell it? ")) return (FALSE);
+	if (!get_check(out_val)) return (FALSE);
 	
-	/* Save price */
-	*price = ask;
-	
-	/* Did buy item */
+
+	/* Chose to make transaction */
 	return (TRUE);
 }
-
 
 /*
  * Buy an item from a store
@@ -1510,132 +1460,129 @@ static void store_purchase(int *store_top)
 	/* Attempt to buy it */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
-		/* Describe the object (fully) */
-		object_desc_store(o_name, j_ptr, TRUE, 3, 256);
-
-		/* Player wants it */
-		if (store_buy_item(j_ptr, &price))
+		/* Get price */
+		price = price_item(j_ptr, ot_ptr->min_inflate, FALSE) * amt;
+		
+		/* Player can afford it */
+		if (p_ptr->au < price)
 		{
-			/* Player can afford it */
-			if (p_ptr->au >= price)
+			/* Simple message (no insult) */
+			msg_print("You do not have enough gold.");
+
+		}
+
+		/* Player wants it? */
+		else if (store_access_item(j_ptr, price, TRUE))
+		{
+			/* Say "okay" */
+			say_comment_1();
+
+			/* Make a sound */
+			sound(SOUND_BUY);
+
+			/* Spend the money */
+			p_ptr->au -= price;
+
+			/* Update the display */
+			store_prt_gold();
+
+			/* Hack -- buying an item makes you aware of it */
+			object_aware(j_ptr);
+
+			/* Describe the transaction */
+			object_desc(o_name, j_ptr, TRUE, 3, 256);
+
+			/* Message */
+			msg_format("You bought %s for %ld gold.", o_name, (long)price);
+
+			/* Erase the inscription */
+			j_ptr->inscription = 0;
+
+			/* Erase the "feeling" */
+			j_ptr->feeling = FEEL_NONE;
+
+			/* Give it to the player */
+			j_ptr = inven_carry(j_ptr);
+
+			/* Describe the final result */
+			object_desc(o_name, j_ptr, TRUE, 3, 256);
+
+			/* Get slot */
+			item_new = get_item_position(p_ptr->inventory, j_ptr);
+
+			/* Message */
+			msg_format("You have %s (%c).", o_name, I2A(item_new));
+
+			/* Now, reduce the original stack's pval. */
+			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
 			{
-				/* Say "okay" */
-				say_comment_1();
+				o_ptr->pval -= j_ptr->pval;
 
-				/* Make a sound */
-				sound(SOUND_BUY);
-
-				/* Spend the money */
-				p_ptr->au -= price;
-
-				/* Update the display */
-				store_prt_gold();
-
-				/* Hack -- buying an item makes you aware of it */
-				object_aware(j_ptr);
-
-				/* Describe the transaction */
-				object_desc(o_name, j_ptr, TRUE, 3, 256);
-
-				/* Message */
-				msg_format("You bought %s for %ld gold.", o_name, (long)price);
-
-				/* Erase the inscription */
-				j_ptr->inscription = 0;
-
-				/* Erase the "feeling" */
-				j_ptr->feeling = FEEL_NONE;
-
-				/* Give it to the player */
-				j_ptr = inven_carry(j_ptr);
-
-				/* Describe the final result */
-				object_desc(o_name, j_ptr, TRUE, 3, 256);
-
-				/* Get slot */
-				item_new = get_item_position(p_ptr->inventory, j_ptr);
-
-				/* Message */
-				msg_format("You have %s (%c).", o_name, I2A(item_new));
-
-				/* Now, reduce the original stack's pval. */
-				if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-				{
-					o_ptr->pval -= j_ptr->pval;
-
-					/* No used charges in store stock */
-					o_ptr->ac = 0;
-				}
-
-				/* Handle stuff */
-				handle_stuff();
-
-				/* Note how many slots the store used to have */
-				i = get_list_length(st_ptr->stock);
-
-				/* Remove the bought items from the store */
-				item_increase(o_ptr, -amt);
-
-				/* Store is empty */
-				if (!st_ptr->stock)
-				{
-					/* Shuffle */
-					if (one_in_(STORE_SHUFFLE))
-					{
-						/* Message */
-						msg_print("The shopkeeper retires.");
-
-						/* Shuffle the store */
-						store_shuffle(st_ptr);
-					}
-
-					/* Maintain */
-					else
-					{
-						/* Message */
-						msg_print("The shopkeeper brings out some new stock.");
-					}
-
-					/* New inventory */
-					for (i = 0; i < 10; i++)
-					{
-						/* Maintain the store */
-						store_maint();
-					}
-
-					/* Start over */
-					*store_top = 0;
-
-					/* Redraw everything */
-					display_inventory(*store_top);
-				}
-
-				/* The item is gone */
-				else if (get_list_length(st_ptr->stock) != i)
-				{
-					/* Pick the correct screen */
-					if (*store_top >= get_list_length(st_ptr->stock))
-					{
-						*store_top -= 12;
-					}
-					
-					/* Redraw everything */
-					display_inventory(*store_top);
-				}
-
-				/* Item is still here */
-				else
-				{
-					/* Redraw the item */
-					display_entry(item);
-				}
+				/* No used charges in store stock */
+				o_ptr->ac = 0;
 			}
 
-			/* Player cannot afford it */
+			/* Handle stuff */
+			handle_stuff();
+
+			/* Note how many slots the store used to have */
+			i = get_list_length(st_ptr->stock);
+
+			/* Remove the bought items from the store */
+			item_increase(o_ptr, -amt);
+
+			/* Store is empty */
+			if (!st_ptr->stock)
+			{
+				/* Shuffle */
+				if (one_in_(STORE_SHUFFLE))
+				{
+					/* Message */
+					msg_print("The shopkeeper retires.");
+
+					/* Shuffle the store */
+					store_shuffle(st_ptr);
+				}
+
+				/* Maintain */
+				else
+				{
+					/* Message */
+					msg_print("The shopkeeper brings out some new stock.");
+				}
+
+				/* New inventory */
+				for (i = 0; i < 10; i++)
+				{
+					/* Maintain the store */
+					store_maint();
+				}
+
+				/* Start over */
+				*store_top = 0;
+
+				/* Redraw everything */
+				display_inventory(*store_top);
+			}
+
+			/* The item is gone */
+			else if (get_list_length(st_ptr->stock) != i)
+			{
+				/* Pick the correct screen */
+				if (*store_top >= get_list_length(st_ptr->stock))
+				{
+					*store_top -= 12;
+				}
+				
+				/* Redraw everything */
+				display_inventory(*store_top);
+			}
+
+			/* Item is still here */
 			else
 			{
-				/* Simple message (no insult) */
-				msg_print("You do not have enough gold.");
+				/* Redraw the item */
+				display_entry(item);
 			}
 		}
 	}
@@ -1706,6 +1653,7 @@ static void store_sell(int *store_top)
 	int item_pos;
 	int amt;
 
+	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 	s32b price, value, dummy;
 
 	object_type forge;
@@ -1824,8 +1772,11 @@ static void store_sell(int *store_top)
 	/* Real store */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
+		/* Get price */
+		price = price_item(q_ptr, ot_ptr->min_inflate, FALSE) * amt;
+	
 		/* Sold... */
-		if (store_sell_item(q_ptr, &price))
+		if (store_access_item(q_ptr, price, FALSE))
 		{
 			/* Say "okay" */
 			say_comment_1();
