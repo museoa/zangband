@@ -393,20 +393,20 @@ static void do_cmd_wiz_feature(int feat)
 		}
 
 		/* Try to place a new feature */
-		if (cave[y][x].feat == feat) continue;
+		if (area(y,x)->feat == feat) continue;
 
 		/* Okay */
 		break;
 	}
 
 	/* Nuke objects */
-	delete_object_idx(cave[y][x].o_idx);
+	delete_object_idx(area(y,x)->o_idx);
 
 	/* Nuke monsters */
-	delete_monster_idx(cave[y][x].m_idx);
+	delete_monster_idx(area(y,x)->m_idx);
 
 	/* Forget this grid */
-	cave[y][x].info &= ~(CAVE_MARK);
+	area(y,x)->info &= ~(CAVE_MARK);
 
 	/* Place the feature */
 	cave_set_feat(y, x, feat);
@@ -1397,7 +1397,7 @@ static void do_cmd_wiz_jump(void)
 
 	/* Change level */
 	dun_level = command_arg;
-
+	
 	p_ptr->inside_arena = 0;
 	leaving_quest = p_ptr->inside_quest;
 
@@ -1784,13 +1784,20 @@ void do_cmd_debug(void)
 		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
-			for(y = 0; y < cur_hgt; y++)
+			
+			/* Only make squares glow in dungeon.*/
+			/* Daytime in the wilderness does this for you outside. */
+			if (dun_level)
 			{
-				for(x = 0; x < cur_wid; x++)
+				for(y = 0; y < cur_hgt; y++)
 				{
-					cave[y][x].info |= (CAVE_GLOW | CAVE_MARK);
+					for(x = 0; x < cur_wid; x++)
+					{
+						area(y,x)->info |= (CAVE_GLOW | CAVE_MARK);
+					}
 				}
 			}
+			
 			wiz_lite();
 			break;
 		}

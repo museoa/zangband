@@ -1770,13 +1770,13 @@ bool activate_random_artifact(object_type * o_ptr)
 				{
 					y = py + ddy[dir];
 					x = px + ddx[dir];
-					c_ptr = &cave[y][x];
+					c_ptr = area(y,x);
 
 					/* Get the monster */
 					m_ptr = &m_list[c_ptr->m_idx];
 
 					/* Hack -- attack monsters */
-					if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x)))
+					if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
 						py_attack(y, x);
 				}
 			}

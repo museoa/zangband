@@ -433,10 +433,10 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	x1 = m_ptr->fx;
 
 	/* Monster grid */
-	c_ptr = &cave[y1][x1];
+	c_ptr = area(y1,x1);
 
 	/* The player is not currently near the monster grid */
-	if (c_ptr->when < cave[py][px].when)
+	if (c_ptr->when < area(py,px)->when)
 	{
 		/* The player has never been near the monster grid */
 		if (!c_ptr->when) return (FALSE);
@@ -463,17 +463,17 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		x = x1 + ddx_ddd[i];
 
 		/* Ignore illegal locations */
-		if (!cave[y][x].when) continue;
+		if (!area(y,x)->when) continue;
 
 		/* Ignore ancient locations */
-		if (cave[y][x].when < when) continue;
+		if (area(y,x)->when < when) continue;
 
 		/* Ignore distant locations */
-		if (cave[y][x].cost > cost) continue;
+		if (area(y,x)->cost > cost) continue;
 
 		/* Save the cost and time */
-		when = cave[y][x].when;
-		cost = cave[y][x].cost;
+		when = area(y,x)->when;
+		cost = area(y,x)->cost;
 
 		/* Hack -- Save the "twiddled" location */
 		(*yp) = py + 16 * ddy_ddd[i];
@@ -516,15 +516,15 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 	x1 = fx - (*xp);
 
 	/* The player is not currently near the monster grid */
-	if (cave[fy][fx].when < cave[py][px].when)
+	if (area(fy,fx)->when < area(py,px)->when)
 	{
 		/* No reason to attempt flowing */
 		return (FALSE);
 	}
 
 	/* Monster is too far away to use flow information */
-	if (cave[fy][fx].cost > MONSTER_FLOW_DEPTH) return (FALSE);
-	if (cave[fy][fx].cost > r_ptr->aaf) return (FALSE);
+	if (area(fy,fx)->cost > MONSTER_FLOW_DEPTH) return (FALSE);
+	if (area(fy,fx)->cost > r_ptr->aaf) return (FALSE);
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -536,16 +536,16 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 		x = fx + ddx_ddd[i];
 
 		/* Ignore illegal locations */
-		if (cave[y][x].when == 0) continue;
+		if (area(y,x)->when == 0) continue;
 
 		/* Ignore ancient locations */
-		if (cave[y][x].when < when) continue;
+		if (area(y,x)->when < when) continue;
 
 		/* Calculate distance of this grid from our destination */
 		dis = distance(y, x, y1, x1);
 
 		/* Score this grid */
-		s = 5000 / (dis + 3) - 500 / (cave[y][x].cost + 1);
+		s = 5000 / (dis + 3) - 500 / (area(y,x)->cost + 1);
 
 		/* No negative scores */
 		if (s < 0) s = 0;
@@ -554,7 +554,7 @@ static bool get_fear_moves_aux(int m_idx, int *yp, int *xp)
 		if (s < score) continue;
 
 		/* Save the score and time */
-		when = cave[y][x].when;
+		when = area(y,x)->when;
 		score = s;
 
 		/* Save the location */
@@ -620,10 +620,10 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				if (flow_by_sound)
 				{
 					/* Ignore grids very far from the player */
-					if (cave[y][x].when < cave[py][px].when) continue;
+					if (area(y,x)->when < area(py,px)->when) continue;
 
 					/* Ignore too-distant grids */
-					if (cave[y][x].cost > cave[fy][fx].cost + 2 * d) continue;
+					if (area(y,x)->cost > area(fy,fx)->cost + 2 * d) continue;
 				}
 
 				/* Check for absence of shot */
@@ -782,7 +782,7 @@ static bool get_moves(int m_idx, int *mm)
 				int y = py + ddy_ddd[i];
 
 				/* Check grid */
-				if (monster_can_cross_terrain(cave[y][x].feat, r_ptr))
+				if (monster_can_cross_terrain(area(y,x)->feat, r_ptr))
 				{
 					/* One more room grid */
 					room++;
@@ -1080,8 +1080,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	bool			explode = FALSE;
 	bool			fear = FALSE;
 	bool			heal_effect = FALSE;
-	byte            y_saver = t_ptr->fy;
-	byte            x_saver = t_ptr->fx;
+	int            y_saver = t_ptr->fy;
+	int            x_saver = t_ptr->fx;
 
 	bool see_m = m_ptr->ml;
 	bool see_t = t_ptr->ml;
@@ -2015,7 +2015,7 @@ static void process_monster(int m_idx)
 		{
 			for (x = ox - 1; x <= ox + 1; x++)
 			{
-				if (cave[y][x].m_idx) k++;
+				if (area(y,x)->m_idx) k++;
 			}
 		}
 
@@ -2243,7 +2243,7 @@ static void process_monster(int m_idx)
 		nx = ox + ddx[d];
 
 		/* Access that cave grid */
-		c_ptr = &cave[ny][nx];
+		c_ptr = area(ny,nx);
 
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
@@ -2257,7 +2257,7 @@ static void process_monster(int m_idx)
 		}
 
 		/* Hack -- trees are no obstacle */
-		else if (cave[ny][nx].feat == FEAT_TREES)
+		else if (area(ny,nx)->feat == FEAT_TREES)
 		{
 			do_move = TRUE;
 		}
@@ -2503,8 +2503,8 @@ static void process_monster(int m_idx)
 			do_turn = TRUE;
 		}
 
-		if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
-			(cave[ny][nx].feat <= FEAT_PATTERN_XTRA2) &&
+		if ((area(ny,nx)->feat >= FEAT_PATTERN_START) &&
+			(area(ny,nx)->feat <= FEAT_PATTERN_XTRA2) &&
 			!do_turn && !(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;
@@ -2534,7 +2534,7 @@ static void process_monster(int m_idx)
 				/* attack */
 				if ((m2_ptr->r_idx) && (m2_ptr->hp >= 0))
 				{
-					if (monst_attack_monst(m_idx, cave[ny][nx].m_idx))
+					if (monst_attack_monst(m_idx, area(ny,nx)->m_idx))
 					return;
 				}
 			}
@@ -2587,7 +2587,7 @@ static void process_monster(int m_idx)
 			do_turn = TRUE;
 
 			/* Hack -- Update the old location */
-			cave[oy][ox].m_idx = c_ptr->m_idx;
+			area(oy,ox)->m_idx = c_ptr->m_idx;
 
 			/* Mega-Hack -- move the old monster, if any */
 			if (c_ptr->m_idx)
@@ -3041,9 +3041,9 @@ void process_monsters(void)
 		/* Hack -- Monsters can "smell" the player from far away */
 		/* Note that most monsters have "aaf" of "20" or so */
 		else if (flow_by_sound &&
-			(cave[py][px].when == cave[fy][fx].when) &&
-			(cave[fy][fx].cost < MONSTER_FLOW_DEPTH) &&
-			(cave[fy][fx].cost < r_ptr->aaf))
+			(area(py,px)->when == area(fy,fx)->when) &&
+			(area(fy,fx)->cost < MONSTER_FLOW_DEPTH) &&
+			(area(fy,fx)->cost < r_ptr->aaf))
 		{
 			/* We can "smell" the player */
 			test = TRUE;

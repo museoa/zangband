@@ -80,16 +80,16 @@ bool teleport_away(int m_idx, int dis)
 			if (!cave_empty_bold(ny, nx)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
-			if (cave[ny][nx].feat == FEAT_GLYPH) continue;
-			if (cave[ny][nx].feat == FEAT_MINOR_GLYPH) continue;
+			if (area(ny,nx)->feat == FEAT_GLYPH) continue;
+			if (area(ny,nx)->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor onto the Pattern */
-			if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
-			    (cave[ny][nx].feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((area(ny,nx)->feat >= FEAT_PATTERN_START) &&
+			    (area(ny,nx)->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* No teleporting into vaults and such */
 			if (!(p_ptr->inside_quest || p_ptr->inside_arena))
-				if (cave[ny][nx].info & CAVE_ICKY) continue;
+				if (area(ny,nx)->info & CAVE_ICKY) continue;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -112,10 +112,10 @@ bool teleport_away(int m_idx, int dis)
 	sound(SOUND_TPOTHER);
 
 	/* Update the new location */
-	cave[ny][nx].m_idx = m_idx;
+	area(ny,nx)->m_idx = m_idx;
 
 	/* Update the old location */
-	cave[oy][ox].m_idx = 0;
+	area(oy,ox)->m_idx = 0;
 
 	/* Move the monster */
 	m_ptr->fy = ny;
@@ -189,12 +189,12 @@ void teleport_to_player(int m_idx)
 			if (!cave_empty_bold(ny, nx)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
-			if (cave[ny][nx].feat == FEAT_GLYPH) continue;
-			if (cave[ny][nx].feat == FEAT_MINOR_GLYPH) continue;
+			if (area(ny,nx)->feat == FEAT_GLYPH) continue;
+			if (area(ny,nx)->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor onto the Pattern */
-			if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
-			    (cave[ny][nx].feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((area(ny,nx)->feat >= FEAT_PATTERN_START) &&
+			    (area(ny,nx)->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* No teleporting into vaults and such */
 			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
@@ -219,10 +219,10 @@ void teleport_to_player(int m_idx)
 	sound(SOUND_TPOTHER);
 
 	/* Update the new location */
-	cave[ny][nx].m_idx = m_idx;
+	area(ny,nx)->m_idx = m_idx;
 
 	/* Update the old location */
-	cave[oy][ox].m_idx = 0;
+	area(oy,ox)->m_idx = 0;
 
 	/* Move the monster */
 	m_ptr->fy = ny;
@@ -301,10 +301,10 @@ void teleport_player(int dis)
 
 			/* Require "naked" floor space or trees */
 			if (!(cave_naked_bold(y, x) ||
-			    (cave[y][x].feat == FEAT_TREES))) continue;
+			    (area(y,x)->feat == FEAT_TREES))) continue;
 
 			/* No teleporting into vaults and such */
-			if (cave[y][x].info & CAVE_ICKY) continue;
+			if (area(y,x)->info & CAVE_ICKY) continue;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -333,6 +333,12 @@ void teleport_player(int dis)
 	/* Move the player */
 	py = y;
 	px = x;
+	
+	if(!dun_level)
+	{
+		/* Scroll wilderness */
+		move_wild();
+	}
 
 	/* Redraw the old spot */
 	lite_spot(oy, ox);
@@ -350,17 +356,17 @@ void teleport_player(int dis)
 			}
 			else
 			{
-				if (cave[oy+yy][ox+xx].m_idx)
+				if (area(oy+yy,ox+xx)->m_idx)
 				{
-					if ((r_info[m_list[cave[oy+yy][ox+xx].m_idx].r_idx].flags6 & RF6_TPORT) &&
-					    !(r_info[m_list[cave[oy+yy][ox+xx].m_idx].r_idx].flags3 & RF3_RES_TELE))
+					if ((r_info[m_list[area(oy+yy,ox+xx)->m_idx].r_idx].flags6 & RF6_TPORT) &&
+					    !(r_info[m_list[area(oy+yy,ox+xx)->m_idx].r_idx].flags3 & RF3_RES_TELE))
 						/*
 						 * The latter limitation is to avoid
 						 * totally unkillable suckers...
 						 */
 					{
-						if (!(m_list[cave[oy+yy][ox+xx].m_idx].csleep))
-							teleport_to_player(cave[oy+yy][ox+xx].m_idx);
+						if (!(m_list[area(oy+yy,ox+xx)->m_idx].csleep))
+							teleport_to_player(area(oy+yy,ox+xx)->m_idx);
 					}
 				}
 			}
@@ -438,6 +444,12 @@ void teleport_player_to(int ny, int nx)
 	/* Move the player */
 	py = y;
 	px = x;
+	
+	if(!dun_level)
+	{
+		/* Scroll wilderness */
+		move_wild();
+	}
 
 	/* Redraw the old spot */
 	lite_spot(oy, ox);
@@ -489,7 +501,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level++;
-
+		
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -500,7 +512,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level--;
-
+		
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -511,7 +523,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level--;
-
+		
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -522,7 +534,7 @@ void teleport_player_level(void)
 		if (autosave_l) do_cmd_save_game(TRUE);
 
 		dun_level++;
-
+		
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
@@ -919,7 +931,7 @@ void fetch(int dir, int wgt, bool require_los)
 	char            o_name[80];
 
 	/* Check to see if an object is already there */
-	if (cave[py][px].o_idx)
+	if (area(py,px)->o_idx)
 	{
 		msg_print("You can't fetch when you're already standing on something.");
 		return;
@@ -937,7 +949,7 @@ void fetch(int dir, int wgt, bool require_los)
 			return;
 		}
 
-		c_ptr = &cave[ty][tx];
+		c_ptr = area(ty,tx);
 
 		/* We need an item to fetch */
 		if (!c_ptr->o_idx)
@@ -971,7 +983,7 @@ void fetch(int dir, int wgt, bool require_los)
 		{
 			ty += ddy[dir];
 			tx += ddx[dir];
-			c_ptr = &cave[ty][tx];
+			c_ptr = area(ty,tx);
 
 			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
 			    !cave_floor_bold(ty, tx)) return;
@@ -990,10 +1002,10 @@ void fetch(int dir, int wgt, bool require_los)
 
 	i = c_ptr->o_idx;
 	c_ptr->o_idx = o_ptr->next_o_idx;
-	cave[py][px].o_idx = i; /* 'move' it */
+	area(py,px)->o_idx = i; /* 'move' it */
 	o_ptr->next_o_idx = 0;
-	o_ptr->iy = (byte)py;
-	o_ptr->ix = (byte)px;
+	o_ptr->iy = py;
+	o_ptr->ix = px;
 
 	object_desc(o_name, o_ptr, TRUE, 0);
 	msg_format("%^s flies through the air to your feet.", o_name);
@@ -3941,7 +3953,7 @@ static s16b poly_r_idx(int r_idx)
 
 bool polymorph_monster(int y, int x)
 {
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 	bool friendly, pet;
 	bool polymorphed = FALSE;
@@ -3995,7 +4007,7 @@ bool dimension_door(void)
 
 	p_ptr->energy -= 60 - plev;
 
-	if (!cave_empty_bold(y, x) || (cave[y][x].info & CAVE_ICKY) ||
+	if (!cave_empty_bold(y, x) || (area(y,x)->info & CAVE_ICKY) ||
 		(distance(y, x, py, px) > plev + 2) ||
 		(!rand_int(plev * plev / 2)))
 	{

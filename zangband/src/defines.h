@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 5
+#define SAVEFILE_VERSION 6
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -114,6 +114,23 @@
  * probably hard-coded to SCREEN_WID * 3.
  */
 #define MAX_WID         198
+
+
+/*
+ * Defines used by the wilderness data structures
+ */
+
+/* size of side of total wilderness square in blocks 2^n+1 works best*/
+#define WILD_SIZE	65
+
+/* number of wilderness blocks in cache */
+#define WILD_BLOCKS	50
+
+/* size of blocks - hard coded. */
+#define WILD_BLOCK_SIZE	16
+
+/* size of local wilderness grid in blocks - hard coded. */
+#define WILD_GRID_SIZE	7
 
 
 /*
@@ -3099,25 +3116,6 @@
 
 
 /*
- * Determines if a map location is fully inside the outer walls
- */
-#define in_bounds(Y,X) \
-   (((Y) > 0) && ((X) > 0) && ((Y) < cur_hgt-1) && ((X) < cur_wid-1))
-
-/*
- * Determines if a map location is on or inside the outer walls
- */
-#define in_bounds2(Y,X) \
-   (((Y) >= 0) && ((X) >= 0) && ((Y) < cur_hgt) && ((X) < cur_wid))
-
-/*
- * Determines if a map location is on or inside the outer walls
- * (unsigned version)
- */
-#define in_bounds2u(Y,X) \
-   (((Y) < cur_hgt) && ((X) < cur_wid))
-
-/*
  * Determines if a map location is currently "on screen" -RAK-
  * Note that "panel_contains(Y,X)" always implies "in_bounds2(Y,X)".
  */
@@ -3140,7 +3138,7 @@
  * -KMW-
  */
 #define cave_floor_bold(Y,X) \
-	(!(cave[Y][X].feat & 0x20))
+	(!(area(Y,X)->feat & 0x20))
 
 
 /*
@@ -3148,7 +3146,7 @@
  * Trees now block sight only half the time.
  */
 #define cave_half_bold(Y,X) \
-	((cave[Y][X].feat == FEAT_TREES) && (quick_rand()))
+	((area(Y,X)->feat == FEAT_TREES) && (quick_rand()))
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -3159,12 +3157,12 @@
  * Line 4 -- forbid normal objects
  */
 #define cave_clean_bold(Y,X) \
-	(((cave[Y][X].feat == FEAT_FLOOR) || \
-	  (cave[Y][X].feat == FEAT_SHAL_WATER) || \
-	  (cave[Y][X].feat == FEAT_SHAL_LAVA) || \
-	  (cave[Y][X].feat == FEAT_GRASS) || \
-	  (cave[Y][X].feat == FEAT_DIRT)) && \
-	  (cave[Y][X].o_idx == 0))
+	(((area(Y,X)->feat == FEAT_FLOOR) || \
+	  (area(Y,X)->feat == FEAT_SHAL_WATER) || \
+	  (area(Y,X)->feat == FEAT_SHAL_LAVA) || \
+	  (area(Y,X)->feat == FEAT_GRASS) || \
+	  (area(Y,X)->feat == FEAT_DIRT)) && \
+	  (area(Y,X)->o_idx == 0))
 
 /*
  * Determine if a "legal" grid is a "gen" floor grid
@@ -3177,10 +3175,10 @@
  *  Note: The *_SHAL_* possibilities are removed.
  */
 #define cave_gen_bold(Y,X) \
-	(((cave[Y][X].feat == FEAT_FLOOR) || \
-	  (cave[Y][X].feat == FEAT_GRASS) || \
-	  (cave[Y][X].feat == FEAT_DIRT)) && \
-	  (cave[Y][X].o_idx == 0))
+	(((area(Y,X)->feat == FEAT_FLOOR) || \
+	  (area(Y,X)->feat == FEAT_GRASS) || \
+	  (area(Y,X)->feat == FEAT_DIRT)) && \
+	  (area(Y,X)->o_idx == 0))
 
 
 /*
@@ -3192,7 +3190,7 @@
  */
 #define cave_empty_bold(Y,X) \
     (cave_floor_bold(Y,X) && \
-     !(cave[Y][X].m_idx) && \
+     !(area(Y,X)->m_idx) && \
      !(((Y) == py) && ((X) == px)))
 
 
@@ -3204,13 +3202,13 @@
  * Line 5 -- forbid player/monsters
  */
 #define cave_naked_bold(Y,X) \
-	(((cave[Y][X].feat == FEAT_FLOOR) || \
-	  (cave[Y][X].feat == FEAT_SHAL_WATER) || \
-	  (cave[Y][X].feat == FEAT_SHAL_LAVA) || \
-	  (cave[Y][X].feat == FEAT_GRASS) || \
-	  (cave[Y][X].feat == FEAT_DIRT)) && \
-	  (cave[Y][X].o_idx == 0) && \
-	  (cave[Y][X].m_idx == 0))
+	(((area(Y,X)->feat == FEAT_FLOOR) || \
+	  (area(Y,X)->feat == FEAT_SHAL_WATER) || \
+	  (area(Y,X)->feat == FEAT_SHAL_LAVA) || \
+	  (area(Y,X)->feat == FEAT_GRASS) || \
+	  (area(Y,X)->feat == FEAT_DIRT)) && \
+	  (area(Y,X)->o_idx == 0) && \
+	  (area(Y,X)->m_idx == 0))
 
 
 
@@ -3223,13 +3221,13 @@
  * Line 6-7 -- shop doors
  */
 #define cave_perma_bold(Y,X) \
-	((cave[Y][X].feat >= FEAT_PERM_EXTRA) || \
-	((cave[Y][X].feat == FEAT_LESS) || \
-	 (cave[Y][X].feat == FEAT_MORE)) || \
-	((cave[Y][X].feat >= FEAT_BLDG_HEAD) && \
-	 (cave[Y][X].feat <= FEAT_BLDG_TAIL)) || \
-	((cave[Y][X].feat >= FEAT_SHOP_HEAD) && \
-	 (cave[Y][X].feat <= FEAT_SHOP_TAIL)))
+	((area(Y,X)->feat >= FEAT_PERM_EXTRA) || \
+	((area(Y,X)->feat == FEAT_LESS) || \
+	 (area(Y,X)->feat == FEAT_MORE)) || \
+	((area(Y,X)->feat >= FEAT_BLDG_HEAD) && \
+	 (area(Y,X)->feat <= FEAT_BLDG_TAIL)) || \
+	((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
+	 (area(Y,X)->feat <= FEAT_SHOP_TAIL)))
 
 
 /*
@@ -3296,7 +3294,7 @@
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_has_los_bold(Y,X) \
-    ((cave[Y][X].info & (CAVE_VIEW)) != 0)
+    ((area(Y,X)->info & (CAVE_VIEW)) != 0)
 
 
 /*

@@ -473,6 +473,91 @@ struct cave_type
 };
 
 
+typedef cave_type **blk_ptr;
+
+/* Hack - to get the C_MAKE to work in init2.c */
+
+typedef cave_type *cave_tp_ptr;
+
+
+
+/* wilderness cache of blocks */
+
+typedef struct wild_cache_type wild_cache_type;
+
+struct wild_cache_type
+{
+	/* pointer to block */
+	blk_ptr block_ptr;
+		
+	/* location in wilderness div 16 */
+	byte x;
+	byte y;
+};
+
+/* Grid of blocks around the player. */
+
+typedef struct wild_grid_type wild_grid_type;
+
+struct wild_grid_type
+{
+	/* location of top left hand corner of grid div 16 */
+	byte x;
+	byte y;
+	
+	/* Pointers to blocks */
+	blk_ptr block_ptr[WILD_GRID_SIZE][WILD_GRID_SIZE];
+	
+	/* Location of blocks in cache */
+	byte block_num[WILD_GRID_SIZE][WILD_GRID_SIZE];
+	
+	/* Number of grids in cache */
+	byte cache_count;
+	
+	int y_max;
+	int x_max;
+	
+	int y_min;
+	int x_min;
+};
+
+
+/* Structure used to generate the wilderness */
+
+typedef struct wild_gen_type wild_gen_type;
+
+struct wild_gen_type
+{
+	u16b	hgt_map;
+	u16b	pop_map;
+	u16b	law_map;
+};
+
+/* Structure used to hold the completed wilderness */
+
+typedef struct wild_done_type wild_done_type;
+
+struct wild_done_type
+{
+	u16b	wild;
+	u16b	town;
+	byte	info;
+	byte	mon_gen;
+};
+
+/*
+ * To save room, the above two structures are combined to form the completed
+ * wilderness type.  The first one is only used in generation - the second
+ * from then onwards.
+ */
+
+typedef union wild_type wild_type;
+union wild_type
+{
+	wild_gen_type gen;
+	wild_done_type done;
+};
+
 
 /*
  * Object information, for a specific object.
@@ -508,8 +593,8 @@ struct object_type
 {
 	s16b k_idx;			/* Kind index (zero if "dead") */
 
-	byte iy;			/* Y-position on map, or zero */
-	byte ix;			/* X-position on map, or zero */
+	s16b iy;			/* Y-position on map, or zero */
+	s16b ix;			/* X-position on map, or zero */
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
@@ -598,8 +683,8 @@ struct monster_type
 {
 	s16b r_idx;			/* Monster race index */
 
-	byte fy;			/* Y location on map */
-	byte fx;			/* X location on map */
+	s16b fy;			/* Y location on map */
+	s16b fx;			/* X location on map */
 
 	s16b hp;			/* Current Hit points */
 	s16b maxhp;			/* Max Hit points */
@@ -1271,21 +1356,6 @@ struct border_type
 	byte	north_east;
 	byte	south_west;
 	byte	south_east;
-};
-
-
-/*
- * A structure describing a wilderness area
- * with a terrain or a town
- */
-typedef struct wilderness_type wilderness_type;
-struct wilderness_type
-{
-	int         terrain;
-	int         town;
-	int         road;
-	u32b        seed;
-	byte        level;
 };
 
 

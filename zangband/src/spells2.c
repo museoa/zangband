@@ -1334,7 +1334,7 @@ bool detect_traps(void)
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
 			/* Access the grid */
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Detect invisible traps */
 			if (c_ptr->feat == FEAT_INVIS)
@@ -1387,7 +1387,7 @@ bool detect_doors(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Detect secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
@@ -1442,7 +1442,7 @@ bool detect_stairs(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Detect stairs */
 			if ((c_ptr->feat == FEAT_LESS) ||
@@ -1488,7 +1488,7 @@ bool detect_treasure(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Notice embedded gold */
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
@@ -2518,7 +2518,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 			if (k > r) continue;
 
 			/* Access the grid */
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -2691,7 +2691,7 @@ bool earthquake(int cy, int cx, int r)
 			if (distance(cy, cx, yy, xx) > r) continue;
 
 			/* Access the grid */
-			c_ptr = &cave[yy][xx];
+			c_ptr = area(yy,xx);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -2802,6 +2802,12 @@ bool earthquake(int cy, int cx, int r)
 			/* Move the player to the safe location */
 			py = sy;
 			px = sx;
+			
+			if(!dun_level)
+			{
+				/* Scroll wilderness */
+				move_wild();
+			}
 
 			/* Redraw the old spot */
 			lite_spot(oy, ox);
@@ -2834,7 +2840,7 @@ bool earthquake(int cy, int cx, int r)
 			if (!map[16+yy-cy][16+xx-cx]) continue;
 
 			/* Access the grid */
-			c_ptr = &cave[yy][xx];
+			c_ptr = area(yy,xx);
 
 			/* Process monsters */
 			if (c_ptr->m_idx)
@@ -2874,12 +2880,12 @@ bool earthquake(int cy, int cx, int r)
 							if (!cave_empty_bold(y, x)) continue;
 
 							/* Hack -- no safety on glyph of warding */
-							if (cave[y][x].feat == FEAT_GLYPH) continue;
-							if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
+							if (area(y,x)->feat == FEAT_GLYPH) continue;
+							if (area(y,x)->feat == FEAT_MINOR_GLYPH) continue;
 
 							/* ... nor on the Pattern */
-							if ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-							    (cave[y][x].feat >= FEAT_PATTERN_START))
+							if ((area(y,x)->feat <= FEAT_PATTERN_XTRA2) &&
+							    (area(y,x)->feat >= FEAT_PATTERN_START))
 								continue;
 
 							/* Important -- Skip "quake" grids */
@@ -2927,13 +2933,13 @@ bool earthquake(int cy, int cx, int r)
 					/* Hack -- Escape from the rock */
 					if (sn)
 					{
-						int m_idx = cave[yy][xx].m_idx;
+						int m_idx = area(yy,xx)->m_idx;
 
 						/* Update the new location */
-						cave[sy][sx].m_idx = m_idx;
+						area(sy,sx)->m_idx = m_idx;
 
 						/* Update the old location */
-						cave[yy][xx].m_idx = 0;
+						area(yy,xx)->m_idx = 0;
 
 						/* Move the monster */
 						m_ptr->fy = sy;
@@ -2967,7 +2973,7 @@ bool earthquake(int cy, int cx, int r)
 			if (!map[16+yy-cy][16+xx-cx]) continue;
 
 			/* Access the cave grid */
-			c_ptr = &cave[yy][xx];
+			c_ptr = area(yy,xx);
 
 			/* Paranoia -- never affect player */
 			if ((yy == py) && (xx == px)) continue;
@@ -3065,7 +3071,7 @@ static void cave_temp_room_lite(void)
 			int y = temp_y[i] + ddy_cdd[j];
 			int x = temp_x[i] + ddx_cdd[j];
 
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			/* Verify */
 			if (!in_bounds2(y, x)) continue;
@@ -3154,7 +3160,7 @@ static void cave_temp_room_unlite(void)
 			int y = temp_y[i] + ddy_cdd[j];
 			int x = temp_x[i] + ddx_cdd[j];
 
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			/* Verify */
 			if (!in_bounds2(y, x)) continue;
@@ -3261,7 +3267,7 @@ static void cave_temp_room_aux(int y, int x)
 	if (!in_bounds(y, x)) return;
 
 	/* Get the grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
@@ -3476,7 +3482,7 @@ bool teleport_swap(int dir)
 		tx = px + ddx[dir];
 		ty = py + ddy[dir];
 	}
-	c_ptr = &cave[ty][tx];
+	c_ptr = area(ty,tx);
 
 	if (!c_ptr->m_idx)
 	{
@@ -3499,14 +3505,14 @@ bool teleport_swap(int dir)
 
 	sound(SOUND_TELEPORT);
 
-	cave[py][px].m_idx = c_ptr->m_idx;
+	area(py,px)->m_idx = c_ptr->m_idx;
 
 	/* Update the old location */
 	c_ptr->m_idx = 0;
 
 	/* Move the monster */
-	m_ptr->fy = (byte)py;
-	m_ptr->fx = (byte)px;
+	m_ptr->fy = py;
+	m_ptr->fx = px;
 
 	/* Move the player */
 	px = tx;
@@ -3516,13 +3522,19 @@ bool teleport_swap(int dir)
 	ty = m_ptr->fy;
 
 	/* Update the monster (new location) */
-	update_mon(cave[ty][tx].m_idx, TRUE);
+	update_mon(area(ty,tx)->m_idx, TRUE);
 
 	/* Redraw the old grid */
 	lite_spot(ty, tx);
 
 	/* Redraw the new grid */
 	lite_spot(py, px);
+	
+	if(!dun_level)
+	{
+		/* Scroll wilderness */
+		move_wild();
+	}
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

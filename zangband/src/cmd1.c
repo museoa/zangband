@@ -549,7 +549,7 @@ void search(void)
 			if (rand_int(100) < chance)
 			{
 				/* Access the grid */
-				c_ptr = &cave[y][x];
+				c_ptr = area(y,x);
 
 #ifdef USE_SCRIPT
 				if (player_search_grid_callback(y, x))
@@ -681,7 +681,7 @@ static void auto_destroy_items(cave_type *c_ptr)
  */
 void carry(int pickup)
 {
-	cave_type *c_ptr = &cave[py][px];
+	cave_type *c_ptr = area(py,px);
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -864,7 +864,7 @@ static void hit_trap(void)
 	disturb(0, 0);
 
 	/* Get the cave grid */
-	c_ptr = &cave[py][px];
+	c_ptr = area(py,px);
 
 	/* Analyze XXX XXX XXX */
 	switch (c_ptr->feat)
@@ -888,7 +888,7 @@ static void hit_trap(void)
 					do_cmd_save_game(TRUE);
 
 				dun_level++;
-
+				
 				/* Leaving */
 				p_ptr->leaving = TRUE;
 			}
@@ -1391,7 +1391,7 @@ void py_attack(int y, int x)
 
 	int blows;
 
-	cave_type       *c_ptr = &cave[y][x];
+	cave_type       *c_ptr = area(y,x);
 
 	monster_type    *m_ptr = &m_list[c_ptr->m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
@@ -1493,7 +1493,7 @@ void py_attack(int y, int x)
 	}
 
 	/* Monsters in rubble can take advantage of cover. -LM- */
-	if (cave[y][x].feat == FEAT_RUBBLE)
+	if (area(y,x)->feat == FEAT_RUBBLE)
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
@@ -1564,7 +1564,7 @@ void py_attack(int y, int x)
 		}
 
 		/* Damage, check for fear and death. */
-		if (mon_take_hit(cave[y][x].m_idx, bash_dam, &fear, NULL))
+		if (mon_take_hit(area(y,x)->m_idx, bash_dam, &fear, NULL))
 		{
 			/* Fight's over. */
 			return;
@@ -2193,20 +2193,20 @@ static void summon_pattern_vortex(int y, int x)
 
 static bool pattern_tile(int y, int x)
 {
-	return ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-	        (cave[y][x].feat >= FEAT_PATTERN_START));
+	return ((area(y,x)->feat <= FEAT_PATTERN_XTRA2) &&
+	        (area(y,x)->feat >= FEAT_PATTERN_START));
 }
 
 
 static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 {
 	/* Ignore illegal moves */
-	if (!player_can_enter(cave[n_y][n_x].feat)) return FALSE;
+	if (!player_can_enter(area(n_y,n_x)->feat)) return FALSE;
 
 	if (!pattern_tile(c_y, c_x) && !pattern_tile(n_y, n_x))
 		return TRUE;
 
-	if (cave[n_y][n_x].feat == FEAT_PATTERN_START)
+	if (area(n_y,n_x)->feat == FEAT_PATTERN_START)
 	{
 		if (!pattern_tile(c_y, c_x) &&
 			 !p_ptr->confused && !p_ptr->stun && !p_ptr->image)
@@ -2219,9 +2219,9 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 		else
 			return TRUE;
 	}
-	else if ((cave[n_y][n_x].feat == FEAT_PATTERN_OLD) ||
-				(cave[n_y][n_x].feat == FEAT_PATTERN_END) ||
-				(cave[n_y][n_x].feat == FEAT_PATTERN_XTRA2))
+	else if ((area(n_y,n_x)->feat == FEAT_PATTERN_OLD) ||
+				(area(n_y,n_x)->feat == FEAT_PATTERN_END) ||
+				(area(n_y,n_x)->feat == FEAT_PATTERN_XTRA2))
 	{
 		if (pattern_tile(c_y, c_x))
 		{
@@ -2243,12 +2243,12 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			}
 		}
 	}
-	else if ((cave[n_y][n_x].feat == FEAT_PATTERN_XTRA1) ||
-				(cave[c_y][c_x].feat == FEAT_PATTERN_XTRA1))
+	else if ((area(n_y,n_x)->feat == FEAT_PATTERN_XTRA1) ||
+				(area(c_y,c_x)->feat == FEAT_PATTERN_XTRA1))
 	{
 		return TRUE;
 	}
-	else if (cave[c_y][c_x].feat == FEAT_PATTERN_START)
+	else if (area(c_y,c_x)->feat == FEAT_PATTERN_START)
 	{
 		if (pattern_tile(n_y, n_x))
 			return TRUE;
@@ -2266,9 +2266,9 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			return FALSE;
 		}
 	}
-	else if ((cave[c_y][c_x].feat == FEAT_PATTERN_OLD) ||
-				(cave[c_y][c_x].feat == FEAT_PATTERN_END) ||
-				(cave[c_y][c_x].feat == FEAT_PATTERN_XTRA2))
+	else if ((area(c_y,c_x)->feat == FEAT_PATTERN_OLD) ||
+				(area(c_y,c_x)->feat == FEAT_PATTERN_END) ||
+				(area(c_y,c_x)->feat == FEAT_PATTERN_XTRA2))
 	{
 		if (!pattern_tile(n_y, n_x))
 		{
@@ -2311,7 +2311,7 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 		{
 			byte ok_move = FEAT_PATTERN_START;
 
-			switch (cave[c_y][c_x].feat)
+			switch (area(c_y,c_x)->feat)
 			{
 				case FEAT_PATTERN_1:
 					ok_move = FEAT_PATTERN_2;
@@ -2327,12 +2327,12 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 					break;
 				default:
 					if (wizard)
-						msg_format("Funny Pattern walking, %d.", cave[c_y][c_x]);
+						msg_format("Funny Pattern walking, %d.", *area(c_y,c_x));
 					return TRUE; /* Goof-up */
 			}
 
-			if ((cave[n_y][n_x].feat == ok_move) ||
-				 (cave[n_y][n_x].feat == cave[c_y][c_x].feat))
+			if ((area(n_y,n_x)->feat == ok_move) ||
+				 (area(n_y,n_x)->feat == area(c_y,c_x)->feat))
 				return TRUE;
 
 			else
@@ -2391,49 +2391,18 @@ void move_player(int dir, int do_pickup)
 	x = px + ddx[dir];
 
 	/* Examine the destination */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Exit the wilderness-area */
-	if (!dun_level &&
-		((x == 0) || (x == MAX_WID - 1) ||
-		 (y == 0) || (y == MAX_HGT - 1)))
+	if (!dun_level )
 	{
-		/* Can the player enter the grid? */
-		if (c_ptr->mimic && player_can_enter(c_ptr->mimic))
+		if ((y == 0) || (x == 0) || 
+			(y == (WILD_SIZE<<4) - 1) || (x == (WILD_SIZE<<4) - 1))
 		{
-			/* Hack: move to new area */
-			p_ptr->oldpx = x;
-			p_ptr->oldpy = y;
-
-			if (y == 0)
-			{
-				p_ptr->wilderness_y--;
-				p_ptr->oldpy = cur_hgt - 2;
-			}
-			else if (y == MAX_HGT - 1)
-			{
-				p_ptr->wilderness_y++;
-				p_ptr->oldpy = 1;
-			}
-
-			if (x == 0)
-			{
-				p_ptr->wilderness_x--;
-				p_ptr->oldpx = cur_wid - 2;
-			}
-			else if (x == MAX_WID - 1)
-			{
-				p_ptr->wilderness_x++;
-				p_ptr->oldpx = 1;
-			}
-
-			p_ptr->leftbldg = TRUE;
-			p_ptr->leaving = TRUE;
-
-			return;
+			/* Do not leave the wilderness */
+			oktomove = FALSE;
 		}
-
-		oktomove = FALSE;
+		
 	}
 
 	/* Get the monster */
@@ -2450,8 +2419,8 @@ void move_player(int dir, int do_pickup)
 	/* unless in Shadow Form */
 	if (p_ptr->wraith_form || p_ptr->pass_wall)
 		p_can_pass_walls = TRUE;
-	if ((cave[y][x].feat >= FEAT_PERM_EXTRA) &&
-	    (cave[y][x].feat <= FEAT_PERM_SOLID))
+	if ((area(y,x)->feat >= FEAT_PERM_EXTRA) &&
+	    (area(y,x)->feat <= FEAT_PERM_SOLID))
 	{
 		p_can_pass_walls = FALSE;
 	}
@@ -2486,11 +2455,11 @@ void move_player(int dir, int do_pickup)
 			    (r_info[m_ptr->r_idx].flags2 & RF2_PASS_WALL))
 			{
 				msg_format("You push past %s.", m_name);
-				m_ptr->fy = (byte)py;
-				m_ptr->fx = (byte)px;
-				cave[py][px].m_idx = c_ptr->m_idx;
+				m_ptr->fy = py;
+				m_ptr->fx = px;
+				area(py,px)->m_idx = c_ptr->m_idx;
 				c_ptr->m_idx = 0;
-				update_mon(cave[py][px].m_idx, TRUE);
+				update_mon(area(py,px)->m_idx, TRUE);
 			}
 			else
 			{
@@ -2736,6 +2705,14 @@ void move_player(int dir, int do_pickup)
 		/* Move the player */
 		py = y;
 		px = x;
+		
+		if (!dun_level)
+		{
+			/* Scroll wilderness */
+			p_ptr->wilderness_x = px;
+			p_ptr->wilderness_y = py;
+			move_wild();
+		}
 
 		/* Redraw new spot */
 		lite_spot(py, px);
@@ -2806,8 +2783,10 @@ void move_player(int dir, int do_pickup)
 			command_new = ']';
 		}
 
+#if 0
+
 		/* Handle quest areas -KMW- */
-		else if (cave[y][x].feat == FEAT_QUEST_ENTER)
+		else if (area(y,x)->feat == FEAT_QUEST_ENTER)
 		{
 			/* Disturb */
 			disturb(0, 0);
@@ -2816,7 +2795,7 @@ void move_player(int dir, int do_pickup)
 			command_new = '[';
 		}
 
-		else if (cave[y][x].feat == FEAT_QUEST_EXIT)
+		else if (area(y,x)->feat == FEAT_QUEST_EXIT)
 		{
 			if (quest[p_ptr->inside_quest].type == QUEST_TYPE_FIND_EXIT)
 			{
@@ -2835,12 +2814,14 @@ void move_player(int dir, int do_pickup)
 				quest[leaving_quest].status = QUEST_STATUS_FAILED;
 			}
 
-			p_ptr->inside_quest = cave[y][x].special;
+			p_ptr->inside_quest = area(y,x)->special;
 			dun_level = 0;
 			p_ptr->oldpx = 0;
 			p_ptr->oldpy = 0;
 			p_ptr->leaving = TRUE;
 		}
+
+#endif 0
 
 		/* Discover invisible traps */
 		else if (c_ptr->feat == FEAT_INVIS)
@@ -2884,21 +2865,21 @@ static int see_wall(int dir, int y, int x)
 	if (!in_bounds2(y, x)) return (FALSE);
 
 	/* Non-wall grids are not known walls */
-	if (cave[y][x].feat < FEAT_SECRET) return (FALSE);
+	if (area(y,x)->feat < FEAT_SECRET) return (FALSE);
 
-	if ((cave[y][x].feat >= FEAT_DEEP_WATER) &&
-	    (cave[y][x].feat <= FEAT_GRASS)) return (FALSE);
+	if ((area(y,x)->feat >= FEAT_DEEP_WATER) &&
+	    (area(y,x)->feat <= FEAT_GRASS)) return (FALSE);
 
-	if ((cave[y][x].feat >= FEAT_SHOP_HEAD) &&
-	    (cave[y][x].feat <= FEAT_SHOP_TAIL)) return (FALSE);
+	if ((area(y,x)->feat >= FEAT_SHOP_HEAD) &&
+	    (area(y,x)->feat <= FEAT_SHOP_TAIL)) return (FALSE);
 
-	if ((cave[y][x].feat >= FEAT_BLDG_HEAD) &&
-	    (cave[y][x].feat <= FEAT_BLDG_TAIL)) return (FALSE);
+	if ((area(y,x)->feat >= FEAT_BLDG_HEAD) &&
+	    (area(y,x)->feat <= FEAT_BLDG_TAIL)) return (FALSE);
 
-	if (cave[y][x].feat == FEAT_TREES) return (FALSE);
+	if (area(y,x)->feat == FEAT_TREES) return (FALSE);
 
 	/* Must be known to the player */
-	if (!(cave[y][x].info & (CAVE_MARK))) return (FALSE);
+	if (!(area(y,x)->info & (CAVE_MARK))) return (FALSE);
 
 	/* Default */
 	return (TRUE);
@@ -2918,7 +2899,7 @@ static int see_nothing(int dir, int y, int x)
 	if (!in_bounds2(y, x)) return (TRUE);
 
 	/* Memorized grids are always known */
-	if (cave[y][x].info & (CAVE_MARK)) return (FALSE);
+	if (area(y,x)->info & (CAVE_MARK)) return (FALSE);
 
 	/* Non-floor grids are unknown */
 	if (!cave_floor_bold(y, x)) return (TRUE);
@@ -3237,7 +3218,7 @@ static bool run_test(void)
 		col = px + ddx[new_dir];
 
 		/* Access grid */
-		c_ptr = &cave[row][col];
+		c_ptr = area(row,col);
 
 
 		/* Visible monsters abort running */
@@ -3379,7 +3360,7 @@ static bool run_test(void)
 
 		/* Analyze unknown grids and floors */
 		if (inv || cave_floor_bold(row, col) ||
-		    (cave[row][col].feat == FEAT_TREES))
+		    (area(row,col)->feat == FEAT_TREES))
 		{
 			/* Looking for open area */
 			if (find_openarea)
@@ -3454,7 +3435,7 @@ static bool run_test(void)
 			col = px + ddx[new_dir];
 
 			/* Access grid */
-			c_ptr = &cave[row][col];
+			c_ptr = area(row,col);
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
 			if (!(c_ptr->info & (CAVE_MARK)) ||
@@ -3490,7 +3471,7 @@ static bool run_test(void)
 			col = px + ddx[new_dir];
 
 			/* Access grid */
-			c_ptr = &cave[row][col];
+			c_ptr = area(row,col);
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
 			if (!(c_ptr->info & (CAVE_MARK)) ||
@@ -3618,7 +3599,7 @@ void run_step(int dir)
 	{
 		/* Hack -- do not start silly run */
 		if (see_wall(dir, py, px) &&
-		   (cave[py+ddy[dir]][px+ddx[dir]].feat != FEAT_TREES))
+		   (area(py+ddy[dir],px+ddx[dir])->feat != FEAT_TREES))
 		{
 			/* Message */
 			msg_print("You cannot run in that direction.");

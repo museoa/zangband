@@ -954,6 +954,7 @@ static void share_gold(void)
 }
 
 
+#if 0
 /*
  * Display quest information
  */
@@ -995,6 +996,9 @@ static void get_questinfo(int questnum)
 	}
 }
 
+#endif 0
+
+#if 0
 
 /*
  * Request a quest from the Lord.
@@ -1092,6 +1096,9 @@ static void castle_quest(void)
 		}
 	}
 }
+
+#endif
+
 
 
 /*
@@ -1714,7 +1721,7 @@ static void bldg_process_command(building_type *bldg, int i)
 
 #ifdef USE_SCRIPT
 
-	if (building_command_callback(cave[py][px].feat - FEAT_BLDG_HEAD, i))
+	if (building_command_callback(area(py,px)->feat - FEAT_BLDG_HEAD, i))
 	{
 		/* Script paid the price */
 		paid = TRUE;
@@ -1738,9 +1745,11 @@ static void bldg_process_command(building_type *bldg, int i)
 			case BACT_RACE_LEGENDS:
 				race_legends();
 				break;
+			#if 0
 			case BACT_QUEST:
 				castle_quest();
 				break;
+			#endif 0
 			case BACT_KING_LEGENDS:
 			case BACT_ARENA_LEGENDS:
 			case BACT_LEGENDS:
@@ -1864,6 +1873,8 @@ static void bldg_process_command(building_type *bldg, int i)
 }
 
 
+#if 0
+
 /*
  * Enter quest level
  */
@@ -1897,6 +1908,7 @@ void do_cmd_quest(void)
 	}
 }
 
+#endif
 
 /*
  * Do building commands
@@ -1909,14 +1921,14 @@ void do_cmd_bldg(void)
 	building_type   *bldg;
 
 
-	if (!((cave[py][px].feat >= FEAT_BLDG_HEAD) &&
-		  (cave[py][px].feat <= FEAT_BLDG_TAIL)))
+	if (!((area(py,px)->feat >= FEAT_BLDG_HEAD) &&
+		  (area(py,px)->feat <= FEAT_BLDG_TAIL)))
 	{
 		msg_print("You see no building here.");
 		return;
 	}
 
-	which = (cave[py][px].feat - FEAT_BLDG_HEAD);
+	which = (area(py,px)->feat - FEAT_BLDG_HEAD);
 	building_loc = which;
 
 	bldg = &building[which];

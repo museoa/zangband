@@ -2809,9 +2809,6 @@ void player_birth(void)
 		}
 	}
 
-	/* Generate the random seeds for the wilderness */
-	seed_wilderness();
-
 	/* Set the message window flag as default */
 	if (!window_flag[1])
 		window_flag[1] |= PW_MESSAGE;

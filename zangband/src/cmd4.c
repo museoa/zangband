@@ -2779,7 +2779,11 @@ void do_cmd_save_screen(void)
  */
 static void do_cmd_knowledge_artifacts(void)
 {
-	int i, k, z, x, y;
+	int i, k, z;
+	
+	#if 0
+	int x, y;
+	#endif 0
 
 	FILE *fff;
 
@@ -2816,12 +2820,14 @@ static void do_cmd_knowledge_artifacts(void)
 		okay[k] = TRUE;
 	}
 
+
+#if 0
 	/* Check the dungeon */
 	for (y = 0; y < cur_hgt; y++)
 	{
 		for (x = 0; x < cur_wid; x++)
 		{
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			s16b this_o_idx, next_o_idx = 0;
 
@@ -2847,6 +2853,35 @@ static void do_cmd_knowledge_artifacts(void)
 			}
 		}
 	}
+
+#endif 0
+	
+	/* Check the dungeon */
+	
+	/* This loop should work better in the wilderness then the above one */
+	for (i = 0; i < max_o_idx; i++)
+	{
+		object_type *o_ptr;
+
+		/* Acquire object */
+		o_ptr = &o_list[i];
+		
+		/* Exit if doesn't exist */
+		if (o_ptr->k_idx == 0) continue;
+		
+		/* Exit if not in dungeon */
+		if ((o_ptr->ix == 0) && (o_ptr->iy == 0)) continue;
+		
+		/* Ignore non-artifacts */
+		if (!artifact_p(o_ptr)) continue;
+
+		/* Ignore known items */
+		if (object_known_p(o_ptr)) continue;
+
+		/* Note the artifact */
+		okay[o_ptr->name1] = FALSE;
+	}
+
 
 	/* Check the inventory and equipment */
 	for (i = 0; i < INVEN_TOTAL; i++)

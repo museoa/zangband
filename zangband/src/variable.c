@@ -403,15 +403,15 @@ s16b lite_x[LITE_MAX];
  * Array of grids viewable to the player (see "cave.c")
  */
 s16b view_n;
-byte view_y[VIEW_MAX];
-byte view_x[VIEW_MAX];
+s16b view_y[VIEW_MAX];
+s16b view_x[VIEW_MAX];
 
 /*
  * Array of grids for use by various functions (see "cave.c")
  */
 s16b temp_n;
-byte temp_y[TEMP_MAX];
-byte temp_x[TEMP_MAX];
+s16b temp_y[TEMP_MAX];
+s16b temp_x[TEMP_MAX];
 
 
 /*
@@ -621,6 +621,47 @@ char angband_sound_name[SOUND_MAX][16] =
  * Not completely hardcoded, that would overflow memory
  */
 cave_type *cave[MAX_HGT];
+
+/*
+ * The function pointer that is used to access the dungeon / wilderness.
+ * It points to a simple function when in the dungeon, that evaluates
+ * cave[y][x]
+ * In the wilderness, things are more complicated.
+ */
+
+cave_type *(*area)(int, int);
+
+/* Function pointer that points to the relevant in_bounds fn. */
+bool (*in_bounds)(int, int);
+
+/* Function pointer that points to the relevant in_bounds2 fn. */
+bool (*in_bounds2)(int, int);
+
+
+/*
+ * Variables used to access the scrollable wilderness. 
+ * This is designed to be as fast as possible - whilst using as little
+ * RAM as possible to store a massive wilderness.
+ * 
+ * The wilderness is generated "on the fly" as the player moves around it.
+ * To save time - blocks of 16x16 squares are saved in a cache so they
+ * don't need to be redone if the player moves back and forth.
+ */
+
+/* wilderness block - array of 16x16 cave grids. */
+/* cave_type *block[WILD_BLOCK_SIZE]; */
+
+/* block used to generate plasma fractal for random wilderness */
+u16b *temp_block[WILD_BLOCK_SIZE+1];
+
+/* cache of blocks near the player */
+wild_cache_type wild_cache[WILD_BLOCKS];
+
+/* grid of blocks around the player */
+wild_grid_type wild_grid;
+
+/* The wilderness itself */
+wild_type *wild[WILD_SIZE];
 
 /*
  * The array of dungeon items [max_o_idx]
@@ -944,11 +985,6 @@ bool pillar_tunnels;
 
 /* Auto-destruction options */
 bool destroy_worthless;
-
-/*
- * Wilderness
- */
-wilderness_type **wilderness;
 
 
 /*

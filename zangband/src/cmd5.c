@@ -1101,7 +1101,7 @@ static bool cast_nature_spell(int spell)
 			{
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				c_ptr = &cave[y][x];
+				c_ptr = area(y,x);
 
 				/* Get the monster */
 				m_ptr = &m_list[c_ptr->m_idx];

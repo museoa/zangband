@@ -2149,7 +2149,8 @@ void handle_menupick( int mnum )
       else if ( ud == MNU_SCALEDMAP )
       {
          /* Draw the map */
-         amiga_map();
+
+	 amiga_map();
       }
 
       /* Find next menunumber */
@@ -2642,6 +2643,9 @@ static void amiga_map( void )
 
    /* Only in graphics mode */
    if ( !use_graphics ) return;
+   
+   /* Not in wilderness - yet. */
+   if (!dun_level) return;
 
    /* Turn off cursor */
    if ( td->cursor_visible ) cursor_off( td );

@@ -79,19 +79,6 @@ cptr funny_comments[MAX_SAN_COMMENT] =
 	"Far out!"
 };
 
-
-int get_wilderness_flag(void)
-{
-	int x = p_ptr->wilderness_x;
-	int y = p_ptr->wilderness_y;
-
-	if (dun_level)
-		return (RF8_DUNGEON);
-	else
-		return (1L << wilderness[y][x].terrain);
-}
-
-
 /*
  * Delete a monster by index.
  *
@@ -128,8 +115,10 @@ void delete_monster_idx(int i)
 
 
 	/* Monster is gone */
-	cave[y][x].m_idx = 0;
-
+	if (in_bounds(y,x))
+	{
+		area(y,x)->m_idx = 0;
+	}
 
 	/* Delete objects */
 	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -176,7 +165,7 @@ void delete_monster(int y, int x)
 	if (!in_bounds(y, x)) return;
 
 	/* Check the grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Delete the monster (if any) */
 	if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx);
@@ -209,7 +198,7 @@ static void compact_monsters_aux(int i1, int i2)
 	x = m_ptr->fx;
 
 	/* Cave grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Update the cave */
 	c_ptr->m_idx = i2;
@@ -342,7 +331,7 @@ void compact_monsters(int size)
  */
 void wipe_m_list(void)
 {
-	int i;
+	int i, x, y;
 
 	/* Delete all the monsters */
 	for (i = m_max - 1; i >= 1; i--)
@@ -359,8 +348,15 @@ void wipe_m_list(void)
 		/* Hack -- Reduce the racial counter */
 		r_ptr->cur_num--;
 
-		/* Monster is gone */
-		cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
+		/* Check to see if monster is accessable on map */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+		
+		if(in_bounds(y,x))
+		{
+			/* Monster is gone */
+			area(y, x)->m_idx = 0;
+		}
 
 		/* Wipe the Monster */
 		(void) WIPE(m_ptr, monster_type);
@@ -1505,16 +1501,16 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	    !cave_perma_bold(y, x))) return (FALSE);
 
 	/* Hack -- no creation on glyph of warding */
-	if (cave[y][x].feat == FEAT_GLYPH) return (FALSE);
-	if (cave[y][x].feat == FEAT_MINOR_GLYPH) return (FALSE);
+	if (area(y,x)->feat == FEAT_GLYPH) return (FALSE);
+	if (area(y,x)->feat == FEAT_MINOR_GLYPH) return (FALSE);
 
 	/* Nor on the Pattern */
-	if ((cave[y][x].feat >= FEAT_PATTERN_START) &&
-	    (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
+	if ((area(y,x)->feat >= FEAT_PATTERN_START) &&
+	    (area(y,x)->feat <= FEAT_PATTERN_XTRA2))
 		return (FALSE);
 
 	/* Nor on invisible walls */
-	if (cave[y][x].feat == FEAT_WALL_INVIS) return (FALSE);
+	if (area(y,x)->feat == FEAT_WALL_INVIS) return (FALSE);
 
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
@@ -1523,7 +1519,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	if (!r_ptr->name) return (FALSE);
 
 	if (monster_terrain_sensitive &&
-	    !monster_can_cross_terrain(cave[y][x].feat, r_ptr))
+	    !monster_can_cross_terrain(area(y,x)->feat, r_ptr))
 	{
 		return FALSE;
 	}
@@ -1578,7 +1574,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 
 
 	/* Access the location */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
@@ -1737,8 +1733,8 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 
 	int hack_n = 0;
 
-	byte hack_y[GROUP_MAX];
-	byte hack_x[GROUP_MAX];
+	int hack_y[GROUP_MAX];
+	int hack_x[GROUP_MAX];
 
 
 	/* Pick a group size */
@@ -2016,7 +2012,7 @@ bool alloc_horde(int y, int x)
 
 	if (attempts < 1) return FALSE;
 
-	m_idx = cave[y][x].m_idx;
+	m_idx = area(y,x)->m_idx;
 
 	summon_kin_type = r_ptr->d_char;
 
@@ -2048,15 +2044,24 @@ bool alloc_horde(int y, int x)
  */
 bool alloc_monster(int dis, bool slp)
 {
-	int			y = 0, x = 0;
-	int         attempts_left = 10000;
+	int	y = 0, x = 0;
+	int	attempts_left = 10000;
 
 	/* Find a legal, distant, unoccupied, space */
 	while (attempts_left--)
 	{
-		/* Pick a location */
-		y = rand_int(cur_hgt);
-		x = rand_int(cur_wid);
+		if (!dun_level)
+		{
+			/* Pick a location */
+			y = wild_grid.y_min + rand_int(WILD_GRID_SIZE * 16 - 2);
+			x = wild_grid.x_min + rand_int(WILD_GRID_SIZE * 16 - 2);
+		}
+		else
+		{
+			/* Pick a location */
+			y = rand_int(cur_hgt);
+			x = rand_int(cur_wid);
+		}
 
 		/* Require empty floor grid (was "naked") */
 		if (!cave_empty_bold(y, x)) continue;
@@ -2432,12 +2437,12 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 		if (!cave_empty_bold(y, x)) continue;
 
 		/* Hack -- no summon on glyph of warding */
-		if (cave[y][x].feat == FEAT_GLYPH) continue;
-		if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
+		if (area(y,x)->feat == FEAT_GLYPH) continue;
+		if (area(y,x)->feat == FEAT_MINOR_GLYPH) continue;
 
 		/* ... nor on the Pattern */
-		if ((cave[y][x].feat >= FEAT_PATTERN_START) &&
-			 (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
+		if ((area(y,x)->feat >= FEAT_PATTERN_START) &&
+			 (area(y,x)->feat <= FEAT_PATTERN_XTRA2))
 			continue;
 
 		/* Okay */
@@ -2985,11 +2990,17 @@ void update_smart_learn(int m_idx, int what)
 bool player_place(int y, int x)
 {
 	/* Paranoia XXX XXX */
-	if (cave[y][x].m_idx != 0) return FALSE;
+	if (area(y,x)->m_idx != 0) return FALSE;
 
 	/* Save player location */
 	py = y;
 	px = x;
+	
+	if(!dun_level)
+	{
+		/* Scroll wilderness */
+		move_wild();
+	}
 
 	/* Success */
 	return TRUE;

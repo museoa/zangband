@@ -1044,6 +1044,8 @@ static void arena_gen(void)
 }
 
 
+#if 0
+
 /*
  * Generate a quest level
  */
@@ -1073,6 +1075,8 @@ static void quest_gen(void)
 	init_flags = INIT_CREATE_DUNGEON | INIT_ASSIGN;
 	process_dungeon_file("q_info.txt", 0, 0, MAX_HGT, MAX_WID);
 }
+
+#endif 0
 
 /* Make a real level */
 static bool level_gen(cptr *why)
@@ -1244,18 +1248,31 @@ void generate_cave(void)
 				/* Small arena */
 				arena_gen();
 			}
-
+			
 			/* Quest levels -KMW- */
+			/* Hack - disabled.
 			else if (p_ptr->inside_quest)
 			{
 				quest_gen();
-			}
+			}*/
 
 			/* Build the town */
 			else if (!dun_level)
 			{
-				/* Make the wilderness */
-				wilderness_gen();
+				/* Hack XXX XXX */
+				/* Exit, information is already in other data type. */
+				
+				px = p_ptr->wilderness_x;
+				py = p_ptr->wilderness_y;
+				
+				/* Determine number of panels */
+				max_panel_rows = WILD_SIZE*16 * 2 - 2;
+				max_panel_cols = WILD_SIZE*16 * 2 - 2;
+
+				/* Assume illegal panel */
+				panel_row = max_panel_rows;
+				panel_col = max_panel_cols;
+				return;
 			}
 
 			/* Build a real level */

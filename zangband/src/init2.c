@@ -2541,7 +2541,7 @@ static errr init_quests(void)
  */
 static errr init_other(void)
 {
-	int i, n;
+	int i, j, n;
 
 
 	/*** Prepare the "dungeon" information ***/
@@ -2559,8 +2559,42 @@ static errr init_other(void)
 		/* Allocate one row of the cave */
 		C_MAKE(cave[i], MAX_WID, cave_type);
 	}
+	
+	
+	/* Allocate temporary wilderness block */
+	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
+	{
+		/* Allocate one row of the temp_block */
+		C_MAKE(temp_block[i], WILD_BLOCK_SIZE + 1, u16b);
+	}
 
-
+	/* Allocate cache of wilderness blocks */
+	for (i = 0; i < WILD_BLOCKS ; i++)
+	{
+		/* Allocate block */
+		C_MAKE(wild_cache[i].block_ptr, WILD_BLOCK_SIZE, cave_tp_ptr);
+		
+		/* Allocate rows of a block */
+		for (j = 0; j < WILD_BLOCK_SIZE ; j++)
+		{
+			C_MAKE(wild_cache[i].block_ptr[j], WILD_BLOCK_SIZE, cave_type);
+		}
+	}
+	
+	/*
+	 * The grid around the player is allocated in variable.c
+	 * since it doesn't take much memory.
+	 */
+	
+	/* Allocate the wilderness itself */
+	for (i = 0; i < WILD_SIZE ; i++)
+	{
+		/* Allocate one row of the wilderness */
+		C_MAKE(wild[i], WILD_SIZE, wild_type);
+	}
+	
+	
+	
 	/*** Prepare the various "bizarre" arrays ***/
 
 	/* Macro variables */
@@ -3044,10 +3078,6 @@ void init_angband(void)
 	/* Initialize monster info */
 	note("[Initializing arrays... (monsters)]");
 	if (init_r_info()) quit("Cannot initialize monsters");
-
-	/* Initialize wilderness array */
-	note("[Initializing arrays... (wilderness)]");
-	if (init_wilderness()) quit("Cannot initialize wilderness");
 
 	/* Initialize town array */
 	note("[Initializing arrays... (towns)]");

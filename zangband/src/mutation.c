@@ -1843,7 +1843,7 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) break;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				c_ptr = &cave[y][x];
+				c_ptr = area(y,x);
 
 				if (!(c_ptr->m_idx))
 				{
@@ -1905,7 +1905,7 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) break;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				c_ptr = &cave[y][x];
+				c_ptr = area(y,x);
 				if (cave_floor_bold(y, x))
 				{
 					msg_print("You bite into thin air!");
@@ -1953,6 +1953,12 @@ void mutation_power_aux(u32b power)
 
 				py = y;
 				px = x;
+				
+				if (!dun_level)
+				{
+					/* Scroll wilderness */
+					move_wild();
+				}
 
 				lite_spot(py, px);
 				lite_spot(oy, ox);
@@ -2166,7 +2172,7 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				if (cave[y][x].m_idx)
+				if (area(y,x)->m_idx)
 				{
 					py_attack(y, x);
 					teleport_player(30);
@@ -2230,7 +2236,7 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				c_ptr = &cave[y][x];
+				c_ptr = area(y,x);
 
 				if (!c_ptr->m_idx)
 				{
@@ -2265,7 +2271,7 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
-				c_ptr = &cave[y][x];
+				c_ptr = area(y,x);
 
 				if (!c_ptr->m_idx)
 				{

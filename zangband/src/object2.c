@@ -91,8 +91,11 @@ void excise_object_idx(int o_idx)
 		int y = j_ptr->iy;
 		int x = j_ptr->ix;
 
+		/* Exit if is a "dummy" object */
+		if ((x == 0) && (y == 0)) return;
+		
 		/* Grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -164,9 +167,13 @@ void delete_object_idx(int o_idx)
 		/* Location */
 		y = j_ptr->iy;
 		x = j_ptr->ix;
-
-		/* Visual update */
-		lite_spot(y, x);
+		
+		/* Refuse "illegal" locations */
+		if (in_bounds(y, x))
+		{
+			/* Visual update */
+			lite_spot(y, x);
+		}
 	}
 
 #ifdef USE_SCRIPT
@@ -189,14 +196,48 @@ void delete_object(int y, int x)
 	cave_type *c_ptr;
 
 	s16b this_o_idx, next_o_idx = 0;
-
-
+	
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
 
-
 	/* Grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
+
+	/* Scan all objects in the grid */
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		object_type *o_ptr;
+
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+#ifdef USE_SCRIPT
+		object_delete_callback(o_ptr);
+#endif /* USE_SCRIPT */
+
+		/* Wipe the object */
+		object_wipe(o_ptr);
+
+		/* Count objects */
+		o_cnt--;
+	}
+	
+	/* Objects are gone */
+	c_ptr->o_idx = 0;
+
+	/* Visual update */
+	lite_spot(y, x);
+}
+
+/*
+ * Deletes all objects at given location
+ */
+void delete_object_location(cave_type *c_ptr)
+{
+	s16b this_o_idx, next_o_idx = 0;
 
 	/* Scan all objects in the grid */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -222,9 +263,6 @@ void delete_object(int y, int x)
 
 	/* Objects are gone */
 	c_ptr->o_idx = 0;
-
-	/* Visual update */
-	lite_spot(y, x);
 }
 
 
@@ -292,7 +330,7 @@ static void compact_objects_aux(int i1, int i2)
 		x = o_ptr->ix;
 
 		/* Acquire grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Repair grid */
 		if (c_ptr->o_idx == i1)
@@ -489,7 +527,7 @@ void wipe_o_list(void)
 			int x = o_ptr->ix;
 
 			/* Access grid */
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Hack -- see above */
 			c_ptr->o_idx = 0;
@@ -4285,7 +4323,7 @@ void place_object(int y, int x, bool good, bool great)
 		o_ptr->ix = x;
 
 		/* Acquire grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4406,7 +4444,7 @@ void place_gold(int y, int x)
 		o_ptr->ix = x;
 
 		/* Acquire grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4523,7 +4561,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			if (!los(y, x, ty, tx)) continue;
 
 			/* Obtain grid */
-			c_ptr = &cave[ty][tx];
+			c_ptr = area(ty,tx);
 
 			/* Require floor space */
 			if ((c_ptr->feat != FEAT_FLOOR) &&
@@ -4616,12 +4654,22 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		/* Random locations */
 		else
 		{
-			ty = rand_int(cur_hgt);
-			tx = rand_int(cur_wid);
+			if (!dun_level)
+			{
+				/* Pick a location */
+				ty = wild_grid.y_min + rand_int(WILD_GRID_SIZE * 16 - 2);
+				tx = wild_grid.x_min + rand_int(WILD_GRID_SIZE * 16 - 2);
+			}
+			else
+			{
+				/* Pick a location */
+				ty = rand_int(cur_hgt);
+				tx = rand_int(cur_wid);
+			}
 		}
 
 		/* Grid */
-		c_ptr = &cave[ty][tx];
+		c_ptr = area(ty,tx);
 
 		/* Require floor space (or shallow terrain) -KMW- */
 		if ((c_ptr->feat != FEAT_FLOOR) &&
@@ -4642,7 +4690,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	}
 
 	/* Grid */
-	c_ptr = &cave[by][bx];
+	c_ptr = area(by,bx);
 
 	/* Hack - artifacts will not be affected by terrain */
 	if (!(artifact_p(j_ptr) || j_ptr->art_name))
@@ -4856,7 +4904,7 @@ void pick_trap(int y, int x)
 {
 	int feat;
 
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 
 	/* Paranoia */
 	if (c_ptr->feat != FEAT_INVIS) return;

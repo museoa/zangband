@@ -2828,7 +2828,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 		for (*x = xmin, i = 0; ((*x < xmax) && (i < len)); (*x)++, s++, i++)
 		{
 			/* Access the grid */
-			cave_type *c_ptr = &cave[*y][*x];
+			cave_type *c_ptr = area(*y,*x);
 
 			int idx = s[0];
 
@@ -3027,9 +3027,12 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 	}
 
 	/* Process "W:<command>: ..." -- info for the wilderness */
+	
 	else if (buf[0] == 'W')
 	{
-		return parse_line_wilderness(buf, ymin, xmin, ymax, xmax, y, x);
+		/* Hack - turned off for now.*/
+		return (0);
+		/*return parse_line_wilderness(buf, ymin, xmin, ymax, xmax, y, x); */
 	}
 
 	/* Process "P:<y>:<x>" -- player position */
@@ -3044,11 +3047,16 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				/* Hack - Set the dungeon size */
 				panels_y = (*y / SCREEN_HGT);
 				if (*y % SCREEN_HGT) panels_y++;
-				cur_hgt = panels_y * SCREEN_HGT;
+				
+				/* Wilderness: so this is meaningless */
+				
+				/* cur_hgt = panels_y * SCREEN_HGT; */
 
 				panels_x = (*x / SCREEN_WID);
 				if (*x % SCREEN_WID) panels_x++;
-				cur_wid = panels_x * SCREEN_WID;
+				
+				/* Wilderness: so this is meaningless */
+				/* cur_wid = panels_x * SCREEN_WID; */
 
 				/* Choose a panel row */
 				max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
@@ -3157,12 +3165,15 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 			/* Wilderness size */
 			else if (zz[0][0] == 'W')
 			{
+				/* Hack - this flag has been disabled. */
+				#if 0
 				/* Maximum wild_x_size */
 				if (zz[0][1] == 'X')
 					max_wild_x = atoi(zz[1]);
 				/* Maximum wild_y_size */
 				if (zz[0][1] == 'Y')
 					max_wild_y = atoi(zz[1]);
+				#endif 0 
 			}
 
 			return (0);

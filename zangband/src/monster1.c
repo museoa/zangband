@@ -1669,8 +1669,14 @@ bool monster_lava(int r_idx)
 
 monster_hook_type get_monster_hook(void)
 {
+	/* Hack - no themed wilderness yet */
+	
+	
+	
 	if (!dun_level && !p_ptr->inside_quest)
 	{
+		return &(monster_town);
+		#if 0
 		switch (wilderness[p_ptr->wilderness_y][p_ptr->wilderness_x].terrain)
 		{
 		case TERRAIN_TOWN:
@@ -1691,8 +1697,9 @@ monster_hook_type get_monster_hook(void)
 		case TERRAIN_MOUNTAIN:
 			return &(monster_mountain);
 		default:
-			return &(monster_dungeon);
+			return &(monster_dungeon);		
 		}
+		#endif 0
 	}
 	else
 	{
@@ -1704,7 +1711,7 @@ monster_hook_type get_monster_hook(void)
 monster_hook_type get_monster_hook2(int y, int x)
 {
 	/* Set the monster list */
-	switch (cave[y][x].feat)
+	switch (area(y,x)->feat)
 	{
 	case FEAT_SHAL_WATER:
 		return &(monster_shallow_water);

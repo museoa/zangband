@@ -361,12 +361,12 @@ static bool summon_possible(int y1, int x1)
 			if (distance(y1, x1, y, x) > 2) continue;
 
 			/* Hack: no summon on glyph of warding */
-			if (cave[y][x].feat == FEAT_GLYPH) continue;
-			if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
+			if (area(y,x)->feat == FEAT_GLYPH) continue;
+			if (area(y,x)->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor on the Pattern */
-			if ((cave[y][x].feat >= FEAT_PATTERN_START) &&
-			    (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((area(y,x)->feat >= FEAT_PATTERN_START) &&
+			    (area(y,x)->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* Require empty floor grid in line of sight */
 			if (cave_empty_bold(y, x) && los(y1, x1, y, x)) return (TRUE);
@@ -417,9 +417,9 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 		y = GRID_Y(grid_g[i]);
 		x = GRID_X(grid_g[i]);
 
-		if ((cave[y][x].m_idx > 0) && !((y == y2) && (x == x2)))
+		if ((area(y,x)->m_idx > 0) && !((y == y2) && (x == x2)))
 		{
-			monster_type *m_ptr = &m_list[cave[y][x].m_idx];
+			monster_type *m_ptr = &m_list[area(y,x)->m_idx];
 			if (friend == is_pet(m_ptr))
 			{
 				return (FALSE);

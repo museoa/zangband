@@ -539,8 +539,8 @@ static void wr_item(object_type *o_ptr)
 	wr_s16b(o_ptr->k_idx);
 
 	/* Location */
-	wr_byte(o_ptr->iy);
-	wr_byte(o_ptr->ix);
+	wr_s16b(o_ptr->iy);
+	wr_s16b(o_ptr->ix);
 
 	wr_byte(o_ptr->tval);
 	wr_byte(o_ptr->sval);
@@ -644,8 +644,8 @@ static void wr_item(object_type *o_ptr)
 static void wr_monster(monster_type *m_ptr)
 {
 	wr_s16b(m_ptr->r_idx);
-	wr_byte(m_ptr->fy);
-	wr_byte(m_ptr->fx);
+	wr_s16b(m_ptr->fy);
+	wr_s16b(m_ptr->fx);
 	wr_s16b(m_ptr->hp);
 	wr_s16b(m_ptr->maxhp);
 	wr_s16b(m_ptr->csleep);
@@ -1108,174 +1108,175 @@ static void wr_dungeon(void)
 	wr_u16b(max_panel_rows);
 	wr_u16b(max_panel_cols);
 
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_char = 0;
-
-	/* Dump the cave */
-	for (y = 0; y < cur_hgt; y++)
+	if(dun_level)
 	{
-		for (x = 0; x < cur_wid; x++)
+		/*** Simple "Run-Length-Encoding" of cave ***/
+
+		/* Note that this will induce two wasted bytes */
+		count = 0;
+		prev_char = 0;
+
+		/* Dump the cave */
+		for (y = 0; y < cur_hgt; y++)
 		{
-			/* Get the cave */
-			c_ptr = &cave[y][x];
-
-			/* Extract a byte */
-			tmp8u = c_ptr->info;
-
-			/* If the run is broken, or too full, flush it */
-			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			for (x = 0; x < cur_wid; x++)
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
-				prev_char = tmp8u;
-				count = 1;
-			}
+				/* Get the cave */
+				c_ptr = &cave[y][x];
+	
+				/* Extract a byte */
+				tmp8u = c_ptr->info;
 
-			/* Continue the run */
-			else
-			{
-				count++;
+				/* If the run is broken, or too full, flush it 	*/
+				if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+				{
+					wr_byte((byte)count);
+					wr_byte((byte)prev_char);
+					prev_char = tmp8u;
+					count = 1;
+				}
+
+				/* Continue the run */
+				else
+				{
+					count++;
+				}
 			}
 		}
-	}
-
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-	}
-
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_char = 0;
-
-	/* Dump the cave */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
+	
+		/* Flush the data (if any) */
+		if (count)
 		{
-			/* Get the cave */
-			c_ptr = &cave[y][x];
+			wr_byte((byte)count);
+			wr_byte((byte)prev_char);
+		}
 
-			/* Extract a byte */
-			tmp8u = c_ptr->feat;
 
-			/* If the run is broken, or too full, flush it */
-			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+		/*** Simple "Run-Length-Encoding" of cave ***/
+
+		/* Note that this will induce two wasted bytes */
+		count = 0;
+		prev_char = 0;
+
+		/* Dump the cave */
+		for (y = 0; y < cur_hgt; y++)
+		{
+			for (x = 0; x < cur_wid; x++)
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
-				prev_char = tmp8u;
-				count = 1;
-			}
+				/* Get the cave */
+				c_ptr = &cave[y][x];
 
-			/* Continue the run */
-			else
-			{
-				count++;
+				/* Extract a byte */
+				tmp8u = c_ptr->feat;
+
+				/* If the run is broken, or too full, flush it */
+				if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+				{
+					wr_byte((byte)count);
+					wr_byte((byte)prev_char);
+					prev_char = tmp8u;
+					count = 1;
+				}
+
+				/* Continue the run */
+				else
+				{
+					count++;
+				}
 			}
 		}
-	}
 
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-	}
-
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_char = 0;
-
-	/* Dump the cave */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
+		/* Flush the data (if any) */
+		if (count)
 		{
-			/* Get the cave */
-			c_ptr = &cave[y][x];
+			wr_byte((byte)count);
+			wr_byte((byte)prev_char);
+		}
 
-			/* Extract a byte */
-			tmp8u = c_ptr->mimic;
 
-			/* If the run is broken, or too full, flush it */
-			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+		/*** Simple "Run-Length-Encoding" of cave ***/
+
+		/* Note that this will induce two wasted bytes */
+		count = 0;
+		prev_char = 0;
+
+		/* Dump the cave */
+		for (y = 0; y < cur_hgt; y++)
+		{
+			for (x = 0; x < cur_wid; x++)
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
-				prev_char = tmp8u;
-				count = 1;
-			}
+				/* Get the cave */
+				c_ptr = &cave[y][x];
 
-			/* Continue the run */
-			else
-			{
-				count++;
+				/* Extract a byte */
+				tmp8u = c_ptr->mimic;
+
+				/* If the run is broken, or too full, flush it */
+				if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+				{	
+					wr_byte((byte)count);
+					wr_byte((byte)prev_char);
+					prev_char = tmp8u;
+					count = 1;
+				}
+
+				/* Continue the run */
+				else
+				{
+					count++;
+				}
 			}
 		}
-	}
 
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-	}
-
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_s16b = 0;
-
-	/* Dump the cave */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
+		/* Flush the data (if any) */
+		if (count)
 		{
-			/* Get the cave */
-			c_ptr = &cave[y][x];
+			wr_byte((byte)count);
+			wr_byte((byte)prev_char);
+		}
 
-			/* Extract a byte */
-			tmp16s = c_ptr->special;
 
-			/* If the run is broken, or too full, flush it */
-			if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
+		/*** Simple "Run-Length-Encoding" of cave ***/
+
+		/* Note that this will induce two wasted bytes */
+		count = 0;
+		prev_s16b = 0;
+
+		/* Dump the cave */
+		for (y = 0; y < cur_hgt; y++)
+		{
+			for (x = 0; x < cur_wid; x++)
 			{
-				wr_byte((byte)count);
-				wr_u16b(prev_s16b);
-				prev_s16b = tmp16s;
-				count = 1;
-			}
+				/* Get the cave */
+				c_ptr = &cave[y][x];
 
-			/* Continue the run */
-			else
-			{
-				count++;
+				/* Extract a byte */
+				tmp16s = c_ptr->special;
+
+				/* If the run is broken, or too full, flush it */
+				if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
+				{
+					wr_byte((byte)count);
+					wr_u16b(prev_s16b);
+					prev_s16b = tmp16s;
+					count = 1;
+				}
+
+				/* Continue the run */
+				else
+				{
+					count++;
+				}
 			}
 		}
-	}
 
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_u16b(prev_s16b);
+		/* Flush the data (if any) */
+		if (count)
+		{
+			wr_byte((byte)count);
+			wr_u16b(prev_s16b);
+		}
 	}
-
 
 	/* Compact the objects */
 	compact_objects(0);
@@ -1455,7 +1456,8 @@ static bool wr_savefile_new(void)
 	{
 		for (j = 0; j < max_wild_y; j++)
 		{
-			wr_u32b(wilderness[j][i].seed);
+			/* Dump dummy value */
+			wr_u32b(max_wild_x);
 		}
 	}
 

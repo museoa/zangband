@@ -353,12 +353,14 @@ void monster_death(int m_idx)
 			case QUEST_TYPE_KILL_ALL:
 			{
 				number_mon = 0;
+				
+				/* This only happens in the dungeon I hope. */
 
 				/* Count all hostile monsters */
 				for (i2 = 0; i2 < cur_wid; ++i2)
 					for (j2 = 0; j2 < cur_hgt; j2++)
-						if (cave[j2][i2].m_idx > 0)
-							if (is_hostile(&m_list[cave[j2][i2].m_idx]))
+						if (area(j2,i2)->m_idx > 0)
+							if (is_hostile(&m_list[area(j2,i2)->m_idx]))
 								number_mon++;
 
 				if ((number_mon - 1) == 0)
@@ -437,7 +439,7 @@ void monster_death(int m_idx)
 	if (create_stairs)
 	{
 		/* Stagger around */
-		while (cave_perma_bold(y, x) || cave[y][x].o_idx)
+		while (cave_perma_bold(y, x) || area(y,x)->o_idx)
 		{
 			/* Pick a location */
 			scatter(&ny, &nx, y, x, 1, 0);
@@ -1639,8 +1641,8 @@ bool target_okay(void)
  */
 static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
 {
-	byte *x = (byte*)(u);
-	byte *y = (byte*)(v);
+	s16b *x = (s16b*)(u);
+	s16b *y = (s16b*)(v);
 
 	int da, db, kx, ky;
 
@@ -1671,8 +1673,8 @@ static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
  */
 static void ang_sort_swap_distance(vptr u, vptr v, int a, int b)
 {
-	byte *x = (byte*)(u);
-	byte *y = (byte*)(v);
+	s16b *x = (s16b*)(u);
+	s16b *y = (s16b*)(v);
 
 	byte temp;
 
@@ -1760,7 +1762,7 @@ static bool target_set_accept(int y, int x)
 
 
 	/* Examine the grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Visible monsters */
 	if (c_ptr->m_idx)
@@ -1870,7 +1872,7 @@ static void target_set_prepare(int mode)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			/* Require line of sight, unless "look" is "expanded" */
 			if (!expand_look && !player_has_los_bold(y, x)) continue;
@@ -1920,7 +1922,7 @@ static void target_set_prepare(int mode)
  */
 static int target_set_aux(int y, int x, int mode, cptr info)
 {
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -2432,7 +2434,7 @@ bool target_set(int mode)
 			x = temp_x[m];
 
 			/* Access */
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Allow target */
 			if (target_able(c_ptr->m_idx))
@@ -2638,13 +2640,26 @@ bool target_set(int mode)
 							if (change_panel(dy, dx)) target_set_prepare(mode);
 						}
 
-						/* Slide into legality */
-						if (x >= cur_wid-1) x = cur_wid - 2;
-						else if (x <= 0) x = 1;
+						if (!dun_level)
+						{						
+							/* Slide into legality */
+							if (x >= wild_grid.x_max-1) x = wild_grid.x_max - 2;
+							else if (x <= wild_grid.x_min) x = wild_grid.x_min + 1;
 
-						/* Slide into legality */
-						if (y >= cur_hgt-1) y = cur_hgt- 2;
-						else if (y <= 0) y = 1;
+							/* Slide into legality */
+							if (y >= wild_grid.y_max-1) y = wild_grid.y_max- 2;
+							else if (y <= wild_grid.y_min) y = wild_grid.y_min + 1;
+						}
+						else
+						{
+							/* Slide into legality */
+							if (x >= cur_wid-1) x = cur_wid - 2;
+							else if (x <= 0) x = 1;
+
+							/* Slide into legality */
+							if (y >= cur_hgt-1) y = cur_hgt- 2;
+							else if (y <= 0) y = 1;						
+						}
 					}
 				}
 
@@ -2657,7 +2672,7 @@ bool target_set(int mode)
 		else
 		{
 			/* Access */
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			/* Default prompt */
 			strcpy(info, "q,t,p,m,+,-,<dir>");
@@ -2797,13 +2812,26 @@ bool target_set(int mode)
 					if (change_panel(dy, dx)) target_set_prepare(mode);
 				}
 
-				/* Slide into legality */
-				if (x >= cur_wid-1) x = cur_wid - 2;
-				else if (x <= 0) x = 1;
+				if (!dun_level)
+				{						
+					/* Slide into legality */
+					if (x >= wild_grid.x_max-1) x = wild_grid.x_max - 2;
+					else if (x <= wild_grid.x_min) x = wild_grid.x_min + 1;
+						
+					/* Slide into legality */
+					if (y >= wild_grid.y_max-1) y = wild_grid.y_max- 2;
+					else if (y <= wild_grid.y_min) y = wild_grid.y_min + 1;
+				}
+				else
+				{
+					/* Slide into legality */
+					if (x >= cur_wid-1) x = cur_wid - 2;
+					else if (x <= 0) x = 1;
 
-				/* Slide into legality */
-				if (y >= cur_hgt-1) y = cur_hgt- 2;
-				else if (y <= 0) y = 1;
+					/* Slide into legality */
+					if (y >= cur_hgt-1) y = cur_hgt- 2;
+					else if (y <= 0) y = 1;						
+				}
 			}
 		}
 	}
@@ -3508,13 +3536,28 @@ bool tgt_pt(int *x, int *y)
 			*x += ddx[d];
 			*y += ddy[d];
 
-			/* Hack -- Verify x */
-			if ((*x >= cur_wid - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
-			else if ((*x <= 0) || (*x <= panel_col_min)) (*x)++;
+			if (!dun_level)
+			{	
+				/* Hack -- Verify x */
+				if ((*x >= wild_grid.x_max - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
+				else if ((*x <= wild_grid.x_min) || (*x <= panel_col_min)) (*x)++;
 
-			/* Hack -- Verify y */
-			if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
-			else if ((*y <= 0) || (*y <= panel_row_min)) (*y)++;
+				/* Hack -- Verify y */
+				if ((*y >= wild_grid.y_max - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
+				else if ((*y <= wild_grid.y_min) || (*y <= panel_row_min)) (*y)++;
+			}
+			else
+			{
+				/* Hack -- Verify x */
+				if ((*x >= cur_wid - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
+				else if ((*x <= 0) || (*x <= panel_col_min)) (*x)++;
+
+				/* Hack -- Verify y */
+				if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
+				else if ((*y <= 0) || (*y <= panel_row_min)) (*y)++;
+			
+			
+			}
 
 			break;
 		}

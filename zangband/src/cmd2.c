@@ -23,8 +23,8 @@ void do_cmd_go_up(void)
 	cave_type *c_ptr;
 
 	/* Player grid */
-	c_ptr = &cave[py][px];
-
+	c_ptr = area(py,px);
+#if 0
 	/* Quest up stairs */
 	if (c_ptr->feat == FEAT_QUEST_UP)
 	{
@@ -65,8 +65,13 @@ void do_cmd_go_up(void)
 		p_ptr->oldpx = 0;
 		p_ptr->oldpy = 0;
 	}
+
 	/* Normal up stairs */
 	else if (c_ptr->feat == FEAT_LESS)
+#else 0
+	if (c_ptr->feat == FEAT_LESS)
+
+#endif 0
 	{
 		if (!dun_level)
 		{
@@ -109,6 +114,8 @@ void do_cmd_go_up(void)
 			if (cmd_go_up_callback()) return;
 #endif /* USE_SCRIPT */
 
+#if 0
+
 			if (p_ptr->inside_quest)
 			{
 				dun_level = 1;
@@ -124,13 +131,14 @@ void do_cmd_go_up(void)
 
 				p_ptr->inside_quest = c_ptr->special;
 			}
+#endif 0
 
 			/* Create a way back */
 			create_down_stair = TRUE;
 
 			/* New depth */
 			dun_level--;
-
+			
 			/* Leaving the dungeon to town */
 			if (!dun_level && p_ptr->town_num && !leaving_quest)
 				p_ptr->leaving_dungeon = TRUE;
@@ -157,9 +165,11 @@ void do_cmd_go_down(void)
 	bool fall_trap = FALSE;
 
 	/* Player grid */
-	c_ptr = &cave[py][px];
+	c_ptr = area(py,px);
 
 	if (c_ptr->feat == (FEAT_TRAP_TRAPDOOR)) fall_trap = TRUE;
+
+#if 0
 
 	/* Quest down stairs */
 	if (c_ptr->feat == FEAT_QUEST_DOWN)
@@ -199,6 +209,10 @@ void do_cmd_go_down(void)
 	}
 	/* Verify stairs */
 	else if ((c_ptr->feat != FEAT_MORE) && !fall_trap)
+#else 0
+	if ((c_ptr->feat != FEAT_MORE) && !fall_trap)
+#endif 0
+
 	{
 		msg_print("I see no down staircase here.");
 		return;
@@ -336,7 +350,7 @@ void do_cmd_toggle_search(void)
  */
 static s16b chest_check(int y, int x)
 {
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -642,10 +656,10 @@ static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
 		xx = px + ddx_ddd[d];
 
 		/* Must have knowledge */
-		if (!(cave[yy][xx].info & (CAVE_MARK))) continue;
+		if (!(area(yy,xx)->info & (CAVE_MARK))) continue;
 
 		/* Not looking for this feature */
-		if (!((*test)(cave[yy][xx].feat))) continue;
+		if (!((*test)(area(yy,xx)->feat))) continue;
 
 		/* OK */
 		++count;
@@ -748,7 +762,7 @@ static bool do_cmd_open_aux(int y, int x)
 	energy_use = 100;
 
 	/* Get requested grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Jammed door */
 	if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
@@ -895,7 +909,7 @@ void do_cmd_open(void)
 #endif /* USE_SCRIPT */
 
 		/* Get requested grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Check for chest */
 		o_idx = chest_check(y, x);
@@ -963,7 +977,7 @@ static bool do_cmd_close_aux(int y, int x)
 	energy_use = 100;
 
 	/* Get grid and contents */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Broken door */
 	if (c_ptr->feat == FEAT_BROKEN)
@@ -1036,7 +1050,7 @@ void do_cmd_close(void)
 		x = px + ddx[dir];
 
 		/* Get grid and contents */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Require open/broken door */
 		if ((c_ptr->feat != FEAT_OPEN) && (c_ptr->feat != FEAT_BROKEN))
@@ -1077,7 +1091,7 @@ void do_cmd_close(void)
 static bool do_cmd_tunnel_test(int y, int x)
 {
 	/* Must have knowledge */
-	if (!(cave[y][x].info & (CAVE_MARK)))
+	if (!(area(y,x)->info & (CAVE_MARK)))
 	{
 		/* Message */
 		msg_print("You see nothing there.");
@@ -1113,7 +1127,7 @@ static bool do_cmd_tunnel_test(int y, int x)
  */
 static bool twall(int y, int x, byte feat)
 {
-	cave_type	*c_ptr = &cave[y][x];
+	cave_type	*c_ptr = area(y,x);
 
 	/* Paranoia -- Require a wall or door or some such */
 	if (cave_floor_bold(y, x)) return (FALSE);
@@ -1156,7 +1170,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	energy_use = 100;
 
 	/* Get grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Sound */
 	sound(SOUND_DIG);
@@ -1409,7 +1423,7 @@ void do_cmd_tunnel(void)
 		x = px + ddx[dir];
 
 		/* Get grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* No tunnelling through doors */
 		if (((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
@@ -1476,7 +1490,7 @@ bool easy_open_door(int y, int x)
 {
 	int i, j;
 
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 
 	/* Must be a closed door */
 	if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -1676,7 +1690,7 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
 	energy_use = 100;
 
 	/* Get grid and contents */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Access trap name */
 	name = (f_name + f_info[c_ptr->feat].name);
@@ -1822,7 +1836,7 @@ void do_cmd_disarm(void)
 		x = px + ddx[dir];
 
 		/* Get grid and contents */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Check for chests */
 		o_idx = chest_check(y, x);
@@ -1886,7 +1900,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 	energy_use = 100;
 
 	/* Get grid */
-	c_ptr = &cave[y][x];
+	c_ptr = area(y,x);
 
 	/* Message */
 	msg_print("You smash into the door!");
@@ -2003,7 +2017,7 @@ void do_cmd_bash(void)
 		x = px + ddx[dir];
 
 		/* Get grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Nothing useful */
 		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -2079,7 +2093,7 @@ void do_cmd_alter(void)
 		x = px + ddx[dir];
 
 		/* Get grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Take a turn */
 		energy_use = 100;
@@ -2198,7 +2212,7 @@ void do_cmd_spike(void)
 		x = px + ddx[dir];
 
 		/* Get grid and contents */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 
 		/* Require closed door */
 		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -2328,7 +2342,7 @@ void do_cmd_run(void)
  */
 void do_cmd_stay(int pickup)
 {
-	cave_type *c_ptr = &cave[py][px];
+	cave_type *c_ptr = area(py,px);
 
 
 	/* Allow repeated command */
@@ -2388,6 +2402,8 @@ void do_cmd_stay(int pickup)
 		command_new = ']';
 	}
 
+#if 0
+
 	/* Exit a quest if reach the quest exit */
 	else if (c_ptr->feat == FEAT_QUEST_EXIT)
 	{
@@ -2411,14 +2427,14 @@ void do_cmd_stay(int pickup)
 			quest[leaving_quest].status = QUEST_STATUS_FAILED;
 		}
 
-		p_ptr->inside_quest = cave[py][px].special;
+		p_ptr->inside_quest = area(py,px)->special;
 		dun_level = 0;
 		p_ptr->oldpx = 0;
 		p_ptr->oldpy = 0;
 		p_ptr->leaving = TRUE;
 	}
+#endif 0
 }
-
 
 
 /*
@@ -2880,9 +2896,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 
 		/* Monster here, Try to hit it */
-		if (cave[y][x].m_idx)
+		if (area(y,x)->m_idx)
 		{
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -3250,9 +3266,9 @@ void do_cmd_throw_aux(int mult)
 
 
 		/* Monster here, Try to hit it */
-		if (cave[y][x].m_idx)
+		if (area(y,x)->m_idx)
 		{
-			cave_type *c_ptr = &cave[y][x];
+			cave_type *c_ptr = area(y,x);
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -3264,7 +3280,7 @@ void do_cmd_throw_aux(int mult)
 			chance2 = chance - distance(py, px, y, x);
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
-			if (cave[y][x].feat == FEAT_RUBBLE)
+			if (area(y,x)->feat == FEAT_RUBBLE)
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
@@ -3451,17 +3467,17 @@ void do_cmd_throw_aux(int mult)
 
 			if (potion_smash_effect(0, y, x, q_ptr->k_idx))
 			{
-				monster_type *m_ptr = &m_list[cave[y][x].m_idx];
+				monster_type *m_ptr = &m_list[area(y,x)->m_idx];
 
 				/* ToDo (Robert): fix the invulnerability */
-				if (cave[y][x].m_idx &&
-				    !is_hostile(&m_list[cave[y][x].m_idx]) &&
+				if (area(y,x)->m_idx &&
+				    !is_hostile(&m_list[area(y,x)->m_idx]) &&
 				    !(m_ptr->invulner))
 				{
 					char m_name[80];
-					monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
+					monster_desc(m_name, &m_list[area(y,x)->m_idx], 0);
 					msg_format("%^s gets angry!", m_name);
-					set_hostile(&m_list[cave[y][x].m_idx]);
+					set_hostile(&m_list[area(y,x)->m_idx]);
 				}
 			}
 

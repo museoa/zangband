@@ -307,7 +307,7 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			/* Sometimes stop at non-initial monsters/players */
 			if (flg & (PROJECT_STOP))
 			{
-				if ((n > 0) && (cave[y][x].m_idx != 0)) break;
+				if ((n > 0) && (area(y,x)->m_idx != 0)) break;
 			}
 
 			/* Slant */
@@ -369,7 +369,7 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			/* Sometimes stop at non-initial monsters/players */
 			if (flg & (PROJECT_STOP))
 			{
-				if ((n > 0) && (cave[y][x].m_idx != 0)) break;
+				if ((n > 0) && (area(y,x)->m_idx != 0)) break;
 			}
 
 			/* Slant */
@@ -425,7 +425,7 @@ sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			/* Sometimes stop at non-initial monsters/players */
 			if (flg & (PROJECT_STOP))
 			{
-				if ((n > 0) && (cave[y][x].m_idx != 0)) break;
+				if ((n > 0) && (area(y,x)->m_idx != 0)) break;
 			}
 
 			/* Advance (Y) */
@@ -470,7 +470,7 @@ static int project_m_y;
  */
 static bool project_f(int who, int r, int y, int x, int dam, int typ)
 {
-	cave_type       *c_ptr = &cave[y][x];
+	cave_type       *c_ptr = area(y,x);
 
 	bool obvious = FALSE;
 	bool known = player_has_los_bold(y, x);
@@ -762,9 +762,9 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_MAKE_TRAP:
 		{
 			/* Require a "naked" floor grid */
-			if ((cave[y][x].feat != FEAT_FLOOR) &&
-				 (cave[y][x].o_idx == 0) &&
-				 (cave[y][x].m_idx == 0))
+			if ((area(y,x)->feat != FEAT_FLOOR) &&
+				 (area(y,x)->o_idx == 0) &&
+				 (area(y,x)->m_idx == 0))
 				 break;
 
 			/* Place a trap */
@@ -879,7 +879,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
  */
 static bool project_o(int who, int r, int y, int x, int dam, int typ)
 {
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -1207,7 +1207,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 {
 	int tmp;
 
-	cave_type *c_ptr = &cave[y][x];
+	cave_type *c_ptr = area(y,x);
 
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
@@ -3039,7 +3039,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		x = m_ptr->fx;
 
 		/* Hack -- get new grid */
-		c_ptr = &cave[y][x];
+		c_ptr = area(y,x);
 	}
 
 	/* Sound and Impact breathers never stun */
@@ -3318,7 +3318,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 
 	if (p_ptr->reflect && !a_rad && (randint(10) != 1))
 	{
-		byte t_y, t_x;
+		int t_y, t_x;
 		int max_attempts = 10;
 
 		if (blind) msg_print("Something bounces!");
@@ -3331,7 +3331,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			t_x = m_list[who].fx - 1 + randint(3);
 			max_attempts--;
 		}
-		while (max_attempts && in_bounds2u(t_y, t_x) &&
+		while (max_attempts && in_bounds2(t_y, t_x) &&
 		     !(player_has_los_bold(t_y, t_x)));
 
 		if (max_attempts < 1)
@@ -4084,13 +4084,13 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
  * Does the grid stop disintegration?
  */
 #define cave_stop_disintegration(Y,X) \
-	(((cave[Y][X].feat >= FEAT_PERM_EXTRA) && \
-	  (cave[Y][X].feat <= FEAT_PERM_SOLID)) || \
-	  (cave[Y][X].feat == FEAT_MOUNTAIN) || \
-	 ((cave[Y][X].feat >= FEAT_SHOP_HEAD) && \
-	  (cave[Y][X].feat <= FEAT_SHOP_TAIL)) || \
-	 ((cave[Y][X].feat >= FEAT_BLDG_HEAD) && \
-	  (cave[Y][X].feat <= FEAT_BLDG_TAIL)))
+	(((area(Y,X)->feat >= FEAT_PERM_EXTRA) && \
+	  (area(Y,X)->feat <= FEAT_PERM_SOLID)) || \
+	  (area(Y,X)->feat == FEAT_MOUNTAIN) || \
+	 ((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
+	  (area(Y,X)->feat <= FEAT_SHOP_TAIL)) || \
+	 ((area(Y,X)->feat >= FEAT_BLDG_HEAD) && \
+	  (area(Y,X)->feat <= FEAT_BLDG_TAIL)))
 
 
 /*
@@ -4501,7 +4501,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	int grids = 0;
 
 	/* Coordinates of the affected grids */
-	byte gx[256], gy[256];
+	int gx[256], gy[256];
 
 	/* Encoded "radius" info (see above) */
 	byte gm[32];
@@ -4798,12 +4798,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 							if (!in_disintegration_range(y2, x2, y, x)) continue;
 							
 							if (cave_valid_bold(y, x) &&
-								(cave[y][x].feat < FEAT_PATTERN_START ||
-								 cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
-								(cave[y][x].feat < FEAT_DEEP_WATER ||
-								 cave[y][x].feat > FEAT_GRASS))
+								(area(y,x)->feat < FEAT_PATTERN_START ||
+								 area(y,x)->feat > FEAT_PATTERN_XTRA2) &&
+								(area(y,x)->feat < FEAT_DEEP_WATER ||
+								 area(y,x)->feat > FEAT_GRASS))
 							{
-								if (cave[y][x].feat == FEAT_TREES)
+								if (area(y,x)->feat == FEAT_TREES)
 									cave_set_feat(y, x, FEAT_GRASS);
 								else
 									cave_set_feat(y, x, FEAT_FLOOR);
@@ -5019,12 +5019,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 			}
 			else
 			{
-				monster_race *ref_ptr = &r_info[m_list[cave[y][x].m_idx].r_idx];
+				monster_race *ref_ptr = &r_info[m_list[area(y,x)->m_idx].r_idx];
 
 				if ((ref_ptr->flags2 & RF2_REFLECTING) &&
 				    (randint(10) != 1) && (dist_hack > 1))
 				{
-					byte t_y, t_x;
+					int t_y, t_x;
 					int max_attempts = 10;
 
 					/* Choose 'new' target */
@@ -5035,7 +5035,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 						max_attempts--;
 					}
 
-					while (max_attempts && in_bounds2u(t_y, t_x) &&
+					while (max_attempts && in_bounds2(t_y, t_x) &&
 					    !(los(y, x, t_y, t_x)));
 
 					if (max_attempts < 1)
@@ -5044,13 +5044,13 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 						t_x = x_saver;
 					}
 
-					if (m_list[cave[y][x].m_idx].ml)
+					if (m_list[area(y,x)->m_idx].ml)
 					{
 						msg_print("The attack bounces!");
 						ref_ptr->r_flags2 |= RF2_REFLECTING;
 					}
 
-					project(cave[y][x].m_idx, 0, t_y, t_x,  dam, typ, flg);
+					project(area(y,x)->m_idx, 0, t_y, t_x,  dam, typ, flg);
 				}
 				else
 				{
@@ -5067,15 +5067,15 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 			y = project_m_y;
 
 			/* Track if possible */
-			if (cave[y][x].m_idx > 0)
+			if (area(y,x)->m_idx > 0)
 			{
-				monster_type *m_ptr = &m_list[cave[y][x].m_idx];
+				monster_type *m_ptr = &m_list[area(y,x)->m_idx];
 
 				/* Hack -- auto-recall */
 				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
 				/* Hack - auto-track */
-				if (m_ptr->ml) health_track(cave[y][x].m_idx);
+				if (m_ptr->ml) health_track(area(y,x)->m_idx);
 			}
 		}
 	}

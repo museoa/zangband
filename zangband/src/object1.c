@@ -2552,7 +2552,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	if (floor)
 	{
 		/* Scan all objects in the grid */
-		for (this_o_idx = cave[py][px].o_idx; this_o_idx; this_o_idx = next_o_idx)
+		for (this_o_idx = area(py,px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{
 			object_type *o_ptr;
 
@@ -2811,7 +2811,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				if (allow_floor)
 				{
 					/* Scan all objects in the grid */
-					for (this_o_idx = cave[py][px].o_idx; this_o_idx; this_o_idx = next_o_idx)
+					for (this_o_idx = area(py,px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 					{
 						object_type *o_ptr;
 
@@ -3043,7 +3043,7 @@ bool scan_floor(int *items, int *item_num, int y, int x, int mode)
 	if (!in_bounds(y, x)) return (FALSE);
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(y,x)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -3893,7 +3893,7 @@ void py_pickup_floor(int pickup)
 	bool do_ask = TRUE;
 
 	/* Scan the pile of objects */
-	for (this_o_idx = cave[py][px].o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(py,px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
