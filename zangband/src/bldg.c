@@ -319,7 +319,7 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 /*
  * display fruit for dice slots
  */
-static void display_fruit(int row, int col, int fruit)
+static void display_fruit(int col, int row, int fruit)
 {
 	switch (fruit)
 	{
@@ -737,9 +737,9 @@ void gamble_dice_slots(void)
 		prt("/--------------------------\\", 7, 2);
 		prt("\\--------------------------/", 17, 2);
 		
-		display_fruit(8,  3, roll1 - 1);
-		display_fruit(8, 12, roll2 - 1);
-		display_fruit(8, 21, choice - 1);
+		display_fruit(3,  8, roll1 - 1);
+		display_fruit(12, 8, roll2 - 1);
+		display_fruit(21, 8, choice - 1);
 		
 		/* What did we win? */
 		if ((roll1 == roll2) && (roll2 == choice))
