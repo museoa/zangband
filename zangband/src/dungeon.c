@@ -3784,7 +3784,7 @@ static void dungeon(void)
 	verify_panel();
 
 	/* Validate the panel */
-	if (center_player)
+	if (center_player || (vanilla_town && !dun_level))
 	{
 		panel_bounds_center();
 	}
