@@ -335,6 +335,8 @@ extern player_type *p_ptr @ player;
 extern bool ironman_nightmare;
 extern bool disturb_minor;
 
+extern const byte adj_str_wgt[40];
+
 /***** Functions *****/
 
 extern bool inc_blind(int v);
