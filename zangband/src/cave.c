@@ -3516,7 +3516,7 @@ void update_mon_lite(void)
 			}
 
 			/* West of the monster */
-			if ((rad == 3) && cave_floor_grid(area(fy, fx - 2)))
+			if (cave_floor_grid(area(fy, fx - 1)))
 			{
 				mon_lite_hack(fy + 1, fx - 2);
 				mon_lite_hack(fy, fx - 2);
