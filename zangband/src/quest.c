@@ -1143,15 +1143,15 @@ void do_cmd_knowledge_quests(void)
 					else
 					{
 						strnfmt(tmp_str, 256, "%s (Dungeon level: %s)\n\n",
-								q_ptr->name, level, name);
+								q_ptr->name, level);
 					}
 				}
 				else
 				{
 					/* Assume we've completed it for now */
 					strnfmt(tmp_str, 256,
-							"%s (Completed on dungeon level %d). \n",
-							q_ptr->name, level, name);
+							"%s (Completed on dungeon level %s). \n",
+							q_ptr->name, level);
 				}
 
 				break;
