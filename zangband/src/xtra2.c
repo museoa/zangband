@@ -533,7 +533,6 @@ bool monster_death(int m_idx, bool explode)
 
 		/* For game balance... */
 		q_ptr->flags3 |= (TR3_CURSED | TR3_HEAVY_CURSE);
-		q_ptr->ident |= IDENT_CURSED;
 
 		if (one_in_(2))
 			q_ptr->flags3 |= (TR3_DRAIN_EXP);

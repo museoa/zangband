@@ -1406,9 +1406,6 @@ static int remove_curse_aux(int all)
 		/* Perma-Cursed Items can NEVER be uncursed */
 		if (f3 & TR3_PERMA_CURSE) continue;
 
-		/* Uncurse it */
-		o_ptr->ident &= ~(IDENT_CURSED);
-
 		/* Hack -- Assume felt */
 		o_ptr->ident |= (IDENT_SENSE);
 
@@ -1644,7 +1641,6 @@ static void break_curse(object_type *o_ptr)
 	{
 		msg_print("The curse is broken!");
 
-		o_ptr->ident &= ~(IDENT_CURSED);
 		o_ptr->ident |= (IDENT_SENSE);
 
 		if (o_ptr->flags3 & TR3_CURSED)
@@ -2003,7 +1999,7 @@ static void bad_luck(object_type *o_ptr)
 		/* Non-artifacts get rerolled */
 		if (!is_art)
 		{
-			o_ptr->ident |= IDENT_CURSED;
+			o_ptr->flags3 |= TR3_CURSED;
 
 			/* Prepare it */
 			object_prep(o_ptr, o_ptr->k_idx);
@@ -2016,7 +2012,7 @@ static void bad_luck(object_type *o_ptr)
 		}
 
 		/* Now curse it */
-		o_ptr->ident |= IDENT_CURSED;
+		o_ptr->flags3 |= TR3_CURSED;
 	}
 
 	/* Objects are blasted sometimes */
@@ -2034,9 +2030,6 @@ static void bad_luck(object_type *o_ptr)
 		o_ptr->flags3 = 0;
 
 		add_ego_flags(o_ptr, EGO_BLASTED);
-
-		/* Curse it */
-		o_ptr->ident |= (IDENT_CURSED);
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -2268,9 +2261,9 @@ bool mundane_spell(void)
 	o_ptr->ds = k_ptr->ds;
 
 	/* No artifact powers */
-	o_ptr->flags1 = 0;
-	o_ptr->flags2 = 0;
-	o_ptr->flags3 = 0;
+	o_ptr->flags1 = k_ptr->flags1;
+	o_ptr->flags2 = k_ptr->flags2;
+	o_ptr->flags3 = k_ptr->flags3;
 
 	/* For rod-stacking */
 	if (o_ptr->tval == TV_ROD)
@@ -2281,9 +2274,6 @@ bool mundane_spell(void)
 	
 	/* Initialise cost */
 	o_ptr->cost = k_ptr->cost;
-
-	/* Hack -- cursed items are always "cursed" */
-	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 
 	/* Something happened */
 	return (TRUE);
@@ -2752,7 +2742,7 @@ bool bless_weapon(void)
 				   ((item >= 0) ? "your" : "the"), o_name);
 
 		/* Uncurse it */
-		o_ptr->ident &= ~(IDENT_CURSED);
+		o_ptr->flags3 &= ~(TR3_CURSED);
 
 		/* Hack -- Assume felt */
 		o_ptr->ident |= (IDENT_SENSE);
@@ -4633,9 +4623,6 @@ bool curse_armor(void)
 
 		add_ego_flags(o_ptr, EGO_BLASTED);
 
-		/* Curse it */
-		o_ptr->ident |= (IDENT_CURSED);
-
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 
@@ -4698,9 +4685,6 @@ bool curse_weapon(void)
 		o_ptr->flags3 = 0;
 
 		add_ego_flags(o_ptr, EGO_SHATTERED);
-
-		/* Curse it */
-		o_ptr->ident |= (IDENT_CURSED);
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);

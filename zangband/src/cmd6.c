@@ -1220,7 +1220,7 @@ static void do_cmd_activate_aux(int item)
 	if (p_ptr->confused) chance /= 2;
 
 	/* Cursed items are difficult to activate */
-	if (o_ptr->ident & IDENT_CURSED) chance /= 3;
+	if (cursed_p(o_ptr)) chance /= 3;
 
 	/* High level objects are harder */
 	chance = chance - lev / 2;

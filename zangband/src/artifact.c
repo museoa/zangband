@@ -44,8 +44,6 @@ static void curse_artifact(object_type *o_ptr)
 
 	if ((p_ptr->pclass != CLASS_WARRIOR) && one_in_(3))
 		o_ptr->flags3 |= TR3_NO_MAGIC;
-
-	o_ptr->ident |= IDENT_CURSED;
 }
 
 
@@ -3094,7 +3092,6 @@ void random_artifact_resistance(object_type *o_ptr)
 		{
 			o_ptr->flags3 |=
 				(TR3_CURSED | TR3_HEAVY_CURSE | TR3_AGGRAVATE | TR3_TY_CURSE);
-			o_ptr->ident |= IDENT_CURSED;
 			return;
 		}
 	}
@@ -3223,9 +3220,6 @@ void create_named_art(int a_idx, int x, int y)
 
 	/* Save the inscription */
 	q_ptr->xtra_name = quark_add(a_name + a_ptr->name);
-
-	/* Hack -- acquire "cursed" flag */
-	if (a_ptr->flags3 & TR3_CURSED) q_ptr->ident |= (IDENT_CURSED);
 
 	random_artifact_resistance(q_ptr);
 

@@ -487,7 +487,6 @@ void curse_equipment(int chance, int heavy_chance)
 		}
 		o_ptr->flags3 |= TR3_HEAVY_CURSE;
 		o_ptr->flags3 |= TR3_CURSED;
-		o_ptr->ident |= IDENT_CURSED;
 	}
 	else
 	{
@@ -496,7 +495,6 @@ void curse_equipment(int chance, int heavy_chance)
 			changed = TRUE;
 		}
 		o_ptr->flags3 |= TR3_CURSED;
-		o_ptr->ident |= IDENT_CURSED;
 	}
 
 	if (changed)

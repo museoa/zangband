@@ -3562,8 +3562,7 @@ bool borg_remove_stuff(void)
 
 		/* skip it if it has not been decursed */
 		if ((item->cursed) ||
-			(item->flags3 & TR3_HEAVY_CURSE) ||
-			(inventory[i].ident & IDENT_CURSED)) continue;
+			(item->flags3 & TR3_HEAVY_CURSE)) continue;
 
 
 		/* Save the hole */
@@ -3706,7 +3705,7 @@ bool borg_wear_stuff(void)
 		if (!item->fully_identified && item->xtra_name) continue;
 
 		/* skip it if it has not been decursed, unless the One Ring */
-		if (((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE) || (inventory[i].ident & IDENT_CURSED))	/* &&
+		if (((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE))	/* &&
 																										   (item->name1 != ART_POWER) */ ) continue;
 
 		/* Where does it go */
@@ -4051,8 +4050,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 
 		/* Skip it if it has not been decursed */
 		if ((item->cursed) ||
-			(item->flags3 & TR3_HEAVY_CURSE) ||
-			(inventory[i].ident & IDENT_CURSED)) continue;
+			(item->flags3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Make sure it goes in this slot, special consideration
 		 * for checking rings
@@ -4061,8 +4059,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 
 		/* Make sure that slot does not have a cursed item */
 		if ((borg_items[slot].cursed) ||
-			(borg_items[slot].flags3 & TR3_HEAVY_CURSE) ||
-			(inventory[slot].ident & IDENT_CURSED)) continue;
+			(borg_items[slot].flags3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Wear the new item */
 		COPY(&borg_items[slot], item, borg_item);

@@ -1833,9 +1833,6 @@ void object_prep(object_type *o_ptr, int k_idx)
 	o_ptr->flags1 = k_ptr->flags1;
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
-
-	/* Hack -- cursed items are always "cursed" */
-	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 }
 
 
@@ -2101,9 +2098,6 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 {
 	ego_item_type *e_ptr = &e_info[ego];
 
-	/* Hack -- acquire "cursed" flag */
-	if (e_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
-
 	/* Hack -- apply extra penalties if needed */
 	if (cursed_p(o_ptr) || !o_ptr->cost)
 	{
@@ -2276,9 +2270,6 @@ bool make_artifact(object_type *o_ptr)
 			/* Hack - use the artifact price */
 			o_ptr->cost = k_info[o_ptr->k_idx].cost + a_ptr->cost;
 		}
-
-		/* Hack -- extract the "cursed" flag */
-		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (IDENT_CURSED);
 
 		/* Cheat -- peek at the item */
 		if (cheat_peek) object_mention(o_ptr);
@@ -2667,7 +2658,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 	/* Cursed some of the time (only wearable items) */
 	if ((randint0(100) < 15) && (flags & OC_NORMAL))
 	{
-		o_ptr->ident |= (IDENT_CURSED);
+		o_ptr->flags3 |= (TR3_CURSED);
 	}
 }
 
@@ -3109,7 +3100,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 	/* Cursed some of the time */
 	if ((randint0(100) < 15) && (flags & OC_NORMAL))
 	{
-		o_ptr->ident |= (IDENT_CURSED);
+		o_ptr->flags3 |= (TR3_CURSED);
 	}
 }
 
@@ -3154,7 +3145,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse pval */
 						o_ptr->pval = 0 - (o_ptr->pval);
@@ -3180,7 +3171,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse pval */
 						o_ptr->pval = 0 - (o_ptr->pval);
@@ -3207,7 +3198,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse pval */
 						o_ptr->pval = 0 - (o_ptr->pval);
@@ -3261,7 +3252,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse pval */
 						o_ptr->pval = 0 - (o_ptr->pval);
@@ -3290,7 +3281,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					o_ptr->cost = 0;
 
 					/* Cursed */
-					o_ptr->ident |= (IDENT_CURSED);
+					o_ptr->flags3 |= (TR3_CURSED);
 
 					/* Penalize */
 					o_ptr->pval = 0 - (1 + m_bonus(-(o_ptr->pval), level));
@@ -3306,7 +3297,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					o_ptr->cost = 0;
 
 					/* Cursed */
-					o_ptr->ident |= (IDENT_CURSED);
+					o_ptr->flags3 |= (TR3_CURSED);
 
 					/* Penalize */
 					o_ptr->to_a = 0 - (5 + m_bonus(10, level));
@@ -3329,7 +3320,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse bonus */
 						o_ptr->to_d = 0 - o_ptr->to_d;
@@ -3352,7 +3343,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse tohit */
 						o_ptr->to_h = 0 - o_ptr->to_h;
@@ -3375,7 +3366,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse toac */
 						o_ptr->to_a = 0 - o_ptr->to_a;
@@ -3399,7 +3390,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse bonuses */
 						o_ptr->to_h = 0 - o_ptr->to_h;
@@ -3424,7 +3415,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse pval */
 						o_ptr->pval = 0 - (o_ptr->pval);
@@ -3456,7 +3447,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse bonuses */
 						o_ptr->pval = 0 - o_ptr->pval;
@@ -3470,7 +3461,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				{
 					if (flags & OC_FORCE_BAD)
 					{
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 					}
 					break;
 				}
@@ -3501,7 +3492,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->cost = 0;
 
 						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
+						o_ptr->flags3 |= (TR3_CURSED);
 
 						/* Reverse bonuses */
 						o_ptr->pval = 0 - (o_ptr->pval);
@@ -3549,7 +3540,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					o_ptr->cost = 0;
 
 					/* Cursed */
-					o_ptr->ident |= (IDENT_CURSED);
+					o_ptr->flags3 |= (TR3_CURSED);
 
 					/* Penalize */
 					o_ptr->pval =
@@ -4001,9 +3992,6 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	if (o_ptr->k_idx)
 	{
 		object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-		/* Hack -- acquire "cursed" flag */
-		if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 
 		/* Mega Hack - reset cost if not a powerful item */
 		if (!o_ptr->xtra_name)
