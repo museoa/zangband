@@ -22,14 +22,15 @@ cptr notes_file(void)
 {
 	char fname[15];
 	static char buf[500];
-	char base_name[8];
+	char base_name[9];
 
 	/* Hack -- extract first 8 characters of name */
-	strncpy(base_name, player_name, 8);
+	strncpy(base_name, player_base, 8);
+	base_name[8] = 0;
 
 	/* Create the file name from the character's name plus .txt */
 	sprintf(fname, "%s.txt", base_name);
-	path_build(buf, 500, ANGBAND_DIR_USER, fname);
+	path_build(buf, 500, ANGBAND_DIR_SAVE, fname);
 
 	/* return the filename */
 	return buf;
