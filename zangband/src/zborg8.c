@@ -219,113 +219,176 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
  *   not worth any money, since it may save us money eventually.
  */
 
-#if 0
+
+/*
+ * Test to see if the item can be merged with anything in the home.
+ *
+ * Return a pointer to the item it merges with.
+ */
+static list_item *borg_can_merge_home(list_item *l_ptr)
+{
+	int i;
+	
+	list_item *q_ptr;
+	
+	/* Scan the home for matching items */
+	for (i = 0; i < home_num; i++)
+	{
+		q_ptr = &borg_home[i];
+		
+		/* Can they stack? */
+		if (borg_object_similar(l_ptr, q_ptr)) return (q_ptr);
+	}
+	
+	/* No match */
+	return (NULL);
+}
+
+
+
 /*
  * This will see what single addition/substitution is best for the home.
  */
-static void borg_think_home_sell_aux2(void)
+static list_item *borg_think_home_sell_aux2(void)
 {
-	borg_item *item;
-	borg_item *item2;
-	s32b home_power;
-	int i, k, n;
-	bool stacked = FALSE;
+	list_item *l_ptr;
+	list_item *q_ptr;
+	list_item *r_ptr = NULL;
+	
+	s32b power;
+	s32b best_power;
+	
+	int i;
 
-	s32b old_home_power;
-
-	/* get the starting best (current) */
+	/**** Get the starting best (current) ****/
+	
 	/* Examine the home  */
 	borg_notice_home();
 
 	/* Evaluate the home  */
-	best_home_power = borg_power_home();
-
-	/* try individual substitutions/additions.   */
-	for (n = 0; n < STORE_INVEN_MAX; n++)
+	best_power = borg_power_home() + borg_power();
+	
+	/* Try merges */
+	for (i = 0; i < inven_num; i++)
 	{
-		item2 = &borg_home[n];
-		for (i = 0; i < INVEN_PACK; i++)
+		l_ptr = &inventory[i];
+
+		/* Require "aware" */
+		if (!l_ptr->k_idx) continue;
+
+		/* Require "known" */
+		if (!(l_ptr->info & OB_KNOWN)) continue;
+
+		/*
+		 * Do not dump stuff at home that is not fully id'd and should be
+		 * This is good with random artifacts.
+		 */
+		if (!(l_ptr->info & OB_MENTAL) &&
+			l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+
+		/* Can we merge with other items in the home? */
+		q_ptr = borg_can_merge_home(l_ptr);
+		
+		/* No item to merge with? */
+		if (!q_ptr) continue;
+		
+		q_ptr->treat_as = TREAT_AS_MORE;
+		
+		if (l_ptr->number == 1)
 		{
-			item = &borg_items[i];
-
-			/* Require "aware" */
-			if (!l_ptr->k_idx) continue;
-
-			/* Require "known" */
-			if (!(l_ptr->info & OB_KNOWN)) continue;
-
-			/*
-			 * Do not dump stuff at home that is not fully id'd and should be
-			 * This is good with random artifacts.
-			 */
-			if (!(l_ptr->info & OB_MENTAL) &&
-				l_ptr->xtra_name && *l_ptr->xtra_name) continue;
-
-			/* stacking? */
-			if (borg_object_similar(item2, item))
-			{
-				/* if this stacks with what was previously here */
-				item2->iqty++;
-				stacked = TRUE;
-			}
-			else
-			{
-				bool found_match = FALSE;
-
-				/* eliminate items that would stack elsewhere in the list. */
-				for (k = 0; k < STORE_INVEN_MAX; k++)
-				{
-					if (borg_object_similar(&safe_home[k], item))
-					{
-						found_match = TRUE;
-						break;
-					}
-				}
-				if (found_match)
-					continue;
-
-				/* replace current item with this item */
-				COPY(item2, item, borg_item);
-
-				/* only move one into a non-stack slot */
-				item2->iqty = 1;
-			}
-
-			/* remove item from pack */
-			item->iqty--;
-
-			/* Note the attempt */
-			test[n] = i + STORE_INVEN_MAX;
-
-			/* Test to see if this is a good substitution. */
-			/* Examine the home  */
-			borg_notice_home();
-
-			/* Evaluate the home  */
-			home_power = borg_power_home();
-
-			/* Track best */
-			if (home_power > best_home_power)
-			{
-				/* Save the results */
-				for (k = 0; k < STORE_INVEN_MAX; k++) best[k] = test[k];
-
-				/* Use it */
-				best_home_power = home_power;
-			}
-
-			/* restore stuff */
-			COPY(item2, &safe_home[n], borg_item);
-
-			/* put item back into pack */
-			item->iqty++;
-
-			/* put the item back in the test array */
-			test[n] = n;
+			l_ptr->treat_as = TREAT_AS_SWAP;
 		}
+		else
+		{
+			l_ptr->treat_as = TREAT_AS_LESS;
+		}
+	
+		/* Test to see if this is a good move. */
+		
+		/* Examine the player */
+		borg_notice();
+		
+		/* Examine the home  */
+		borg_notice_home();
+
+		/* Evaluate the new power  */
+		power = borg_power_home() + borg_power();
+
+		/* Track best */
+		if (power > best_power)
+		{
+			/* Save the results */
+			r_ptr = l_ptr;
+
+			/* Use it */
+			best_power = power;
+		}
+
+		/* Restore stuff */
+		q_ptr->treat_as = TREAT_AS_NORM;
+		l_ptr->treat_as = TREAT_AS_NORM;
 	}
+
+	/* We have an addition? */
+	if (r_ptr) return (r_ptr);
+	
+	/* Do we have enough room to add items? */
+	if (home_num >= STORE_INVEN_MAX - 1) return (NULL);
+	
+	/* Try additions. */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		/* Require "aware" */
+		if (!l_ptr->k_idx) continue;
+
+		/* Require "known" */
+		if (!(l_ptr->info & OB_KNOWN)) continue;
+
+		/*
+		 * Do not dump stuff at home that is not fully id'd and should be
+		 * This is good with random artifacts.
+		 */
+		if (!(l_ptr->info & OB_MENTAL) &&
+			l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+
+		if (l_ptr->number == 1)
+		{
+			l_ptr->treat_as = TREAT_AS_SWAP;
+		}
+		else
+		{
+			l_ptr->treat_as = TREAT_AS_LESS;
+		}
+		
+		/* Examine the player */
+		borg_notice();
+		
+		/* Examine the home  */
+		borg_notice_home();
+
+		/* Evaluate the new power  */
+		power = borg_power_home() + borg_power();
+
+		/* Track best */
+		if (power > best_power)
+		{
+			/* Save the results */
+			r_ptr = l_ptr;
+
+			/* Use it */
+			best_power = power;
+		}
+
+		/* Restore stuff */
+		l_ptr->treat_as = TREAT_AS_NORM;
+	}
+
+	/* Item to give to home, if any. */
+	return (r_ptr);
 }
-#endif /* 0 */
+
 
 #if 0
 /* locate useless item */
@@ -382,7 +445,7 @@ static void borg_think_home_sell_aux3()
 }
 #endif /* 0 */
 
-#if 0
+
 /*
  * Step 1 -- sell "useful" things to the home (for later)
  */
@@ -535,7 +598,6 @@ static bool borg_think_home_sell_aux(void)
 	/* Assume not */
 	return (FALSE);
 }
-#endif /* 0 */
 
 
 /*
@@ -1342,14 +1404,10 @@ static bool borg_think_home_grab_aux(void)
  */
 static bool borg_think_shop_sell(void)
 {
-	int qty = 1;
-
 	/* Sell something if requested */
 	if ((goal_shop == shop_num) && (goal_item >= 0))
 	{
 		borg_item *item = &borg_items[goal_item];
-
-		qty = 1;
 
 		/* Log */
 		borg_note(format("# Selling %s", item->desc));
@@ -1359,15 +1417,6 @@ static bool borg_think_shop_sell(void)
 
 		/* Buy the desired item */
 		borg_keypress(I2A(goal_item));
-
-		/* Hack -- Sell a single item */
-		if (qty >= 2)
-		{
-			if (qty == 5) borg_keypress('5');
-			if (qty == 4) borg_keypress('4');
-			if (qty == 3) borg_keypress('3');
-			if (qty == 2) borg_keypress('2');
-		}
 
 		/* Mega-Hack -- Accept the price */
 		borg_keypress('\n');

@@ -142,7 +142,7 @@ void borg_list_info(byte list_type)
 			/* Notice changes */
 			borg_notice();
 
-			/* inventory changed so goals must change. */
+			/* Inventory changed so goals must change. */
 			goal_shop = goal_ware = goal_item = -1;
 
 			/* Note changed inventory */
@@ -156,7 +156,8 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice changes */
 			borg_notice();
-
+			
+			/* Equipment changed so goals must change. */
 			goal_shop = goal_ware = goal_item = -1;
 
 			/* Note changed inventory */
@@ -2678,6 +2679,9 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 		else
 			/* Check what the borg has on as well. */
 			w_ptr = &equipment[x - home_num];
+		
+		/* Don't count items we are swapping */
+		if (w_ptr->treat_as == TREAT_AS_SWAP) continue;
 
 		/*
 		 * If everything matches it is a duplicate item
@@ -3563,6 +3567,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 static void borg_notice_home_aux(void)
 {
 	int i;
+	int num;
 
 	list_item *l_ptr;
 
@@ -3578,12 +3583,53 @@ static void borg_notice_home_aux(void)
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
+		
+		/* Don't count items we are swapping */
+		if (l_ptr->treat_as == TREAT_AS_SWAP) continue;
+		
+		/* Save number of items */
+		num = l_ptr->number;
+		
+		/* Hack - simulate change in number of items */
+		if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number--;
+		if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
 
 		/* Notice item flags */
 		borg_notice_home_flags(l_ptr);
 
 		/* Notice the item itself */
 		borg_notice_home_item(l_ptr, i);
+		
+		/* Hack - revert change in number of items */
+		l_ptr->number = num;
+	}
+	
+	/* Scan the inventory for virtual home items */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		/* Ignore normal items */
+		if (l_ptr->treat_as == TREAT_AS_NORM) continue;
+		
+		/* Save number of items */
+		num = l_ptr->number;
+		
+		/* Hack - simulate change in number of items */
+		if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number = 1;
+		if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
+		
+		/* Notice item flags */
+		borg_notice_home_flags(l_ptr);
+
+		/* Notice the item itself */
+		borg_notice_home_item(l_ptr, home_num + EQUIP_MAX - 1);
+		
+		/* Hack - revert change in number of items */
+		l_ptr->number = num;
+	
+		/* Hack - assume only one swap at a time */
+		break;
 	}
 
 
