@@ -1795,6 +1795,179 @@ static int weight_limit(void)
 	return (i);
 }
 
+/* Calculate all class-based bonuses and penalties to melee Skill.  Oangband
+ * recognizes that it takes a great deal of training to get critical hits with
+ * a large, heavy weapon - training that many classes simply do not have the
+ * time or inclination for.  -LM- 
+ */
+sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
+{
+	int add_skill = 0;
+
+	switch (pclass)
+	{
+		/* Warrior.  Can use 15 lb weapons without penalty at level 1, and 45 lb weapons without penalty at 50th level. */
+		case CLASS_WARRIOR:
+		{
+			add_skill = 25 + p_ptr->lev - (weight / 6);
+			if (add_skill > 0) add_skill = 0;
+			if (add_skill < -10) add_skill = -10;
+			break;
+		}
+
+		/* Mage/High Mage.  Can use 6 lb weapons without penalty at level 1, and 16 lb weapons without penalty at 50th level. */
+		case CLASS_MAGE:
+		case CLASS_HIGH_MAGE:
+		{
+			add_skill = 20 + (2 * p_ptr->lev / 3) - (weight / 3);
+			if (add_skill > 0) add_skill = 0;
+			if (add_skill < -30) add_skill = -30;
+			break;
+		}
+
+		/* Priest.  Can use 12 lb weapons without penalty at level 1, and 22 lb weapons without penalty at 50th level. */
+		case CLASS_PRIEST:
+		{
+			add_skill = 30 + (1 * p_ptr->lev / 2) - (weight / 4);
+			if (add_skill > 0) add_skill = 0;
+			if (add_skill < -25) add_skill = -25;
+
+			/* Priest penalty for non-blessed edged weapons. */
+			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) && ((!p_ptr->bless_blade)))
+			{
+				add_skill -= 4 + p_ptr->lev / 3;
+
+				/* Icky weapon */
+				p_ptr->icky_wield = TRUE;
+			}
+			break;
+		}
+
+		/* Rogue.  Can use 10 lb weapons without penalty at level 1, and 20 lb
+		* weapons without penalty at 50th level. Can get a bonus for using light
+		* weapons.  */
+		case CLASS_ROGUE:
+		{
+			if (!o_ptr->k_idx) add_skill = 0;
+
+			else
+			{
+				add_skill = 33 + (2 * p_ptr->lev / 3) - (weight / 3);
+				if (add_skill > 0) add_skill = add_skill / 2;
+				if (add_skill > 15) add_skill = 15;
+				if (add_skill < -25) add_skill = -25;
+			}
+			break;
+		}
+
+		/* Ranger.  Can use 12 lb weapons without penalty at level 1, and 25 lb 
+		*weapons without penalty at 50th level. */
+		case CLASS_RANGER:
+		{
+			add_skill = 25 + (1 * p_ptr->lev / 2) - (weight / 5);
+			if (add_skill > 0) add_skill = 0;
+			if (add_skill < -20) add_skill = -20;
+			break;
+		}
+
+		/* Paladin/Chaos warrior/Warrior mage.  Can use 15 lb weapons without
+		* penalty at level 1, and 45 lb weapons without penalty at 50th level. */
+		case CLASS_PALADIN:
+		case CLASS_CHAOS_WARRIOR:
+		case CLASS_WARRIOR_MAGE:
+		{
+			add_skill = 25 + p_ptr->lev - (weight / 6);
+			if (add_skill > 0) add_skill = 0;
+			if (add_skill < -10) add_skill = -10;
+
+			/* Paladin penalty for non-blessed edged weapons. */
+			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) 
+				&& ((!p_ptr->bless_blade)))
+			{
+				add_skill -= 4 + p_ptr->lev / 3;
+
+				/* Icky weapon */
+				p_ptr->icky_wield = TRUE;
+			}
+			break;
+		}
+
+		/* Monk.  Can use 5 lb weapons without penalty at level 1, and
+		 * slightly over 12 lb weapons without penalty at 50th level. Much
+		 * prefers to use hands and feet.
+		 */
+		case CLASS_MONK:
+		{
+			if (!o_ptr->k_idx) add_skill = 14 + (p_ptr->lev);
+			else
+			{
+				add_skill = 16 + (p_ptr->lev / 2) - (weight / 3);
+				if (add_skill > 0) add_skill = 0;
+				if (add_skill < -30) add_skill = -30;
+			}
+			break;
+		}
+
+		/*
+		* MindCrafter.  Can use 6 lb weapons without penalty at level 1,
+		* and 16 lb weapons without penalty at 50th level.
+		*/
+		case CLASS_MINDCRAFTER:
+		{
+			add_skill = 20 + (2 * p_ptr->lev / 3) - (weight / 3);
+			if (add_skill > 0) add_skill = 0;
+			if (add_skill < -30) add_skill = -30;
+			break;
+		}
+	}
+
+	return (add_skill);
+}
+
+/* Calculate all class and race-based bonuses and penalties to missile Skill -LM- */
+sint add_special_missile_skill (byte pclass, s16b weight, object_type *o_ptr)
+{
+	int add_skill = 0;
+
+	switch (pclass)
+	{
+
+		/* Rogues are good with slings. */
+		case CLASS_ROGUE:
+		{
+			if (p_ptr->tval_ammo == TV_SHOT)
+			{
+				add_skill = 3 + p_ptr->lev / 4;
+			}
+			break;
+		}
+
+		/* Rangers have a high missile skill, but they are not supposed to
+		* be great with xbows and slings. */
+		case CLASS_RANGER:
+		{
+			if (p_ptr->tval_ammo == TV_SHOT)
+			{
+				add_skill = 0 - p_ptr->lev / 7;
+			}
+			if (p_ptr->tval_ammo == TV_BOLT)
+			{
+				add_skill = 0 - p_ptr->lev / 7;
+			}
+			break;
+		}
+
+		/* Monks get a small bonus with slings. */
+		case CLASS_MONK:
+		{
+			if (p_ptr->tval_ammo == TV_SHOT)
+			{
+				add_skill = p_ptr->lev / 7;
+			}
+		}
+	}
+	return (add_skill);
+}
 
 /*
  * Calculate the players current "state", taking into account
@@ -2876,6 +3049,9 @@ void calc_bonuses(void)
 			}
 		}
 	}
+	/* Add all class and race-specific adjustments to missile Skill. -LM- */
+	p_ptr->skill_thb += add_special_missile_skill (p_ptr->pclass, o_ptr->weight,
+	 o_ptr);
 
 
 	/* Examine the "main weapon" */
@@ -3008,6 +3184,10 @@ void calc_bonuses(void)
 	}
 	/* Everyone gets two blows if not wielding a weapon. -LM- */
 	else if (!o_ptr->k_idx) p_ptr->num_blow = 2;
+
+	/* Add all other class-specific adjustments to melee Skill. -LM- */
+	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass,o_ptr->weight,
+	 o_ptr);
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
