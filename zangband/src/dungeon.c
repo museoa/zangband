@@ -1375,8 +1375,8 @@ static void process_world(void)
 		{
 			upkeep_factor = total_friend_levels;
 
-			if (upkeep_factor > 100) upkeep_factor = 100;
-			else if (upkeep_factor < 10) upkeep_factor = 10;
+			if (upkeep_factor > 95) upkeep_factor = 95;
+			else if (upkeep_factor < 5) upkeep_factor = 5;
 
 #ifdef TRACK_FRIENDS
 			if (wizard)

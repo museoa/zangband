@@ -3114,8 +3114,8 @@ static void do_cmd_knowledge_pets(void)
 	{
 		show_upkeep = t_levels;
 
-		if (show_upkeep > 100) show_upkeep = 100;
-		else if (show_upkeep < 10) show_upkeep = 10;
+		if (show_upkeep > 95) show_upkeep = 95;
+		else if (show_upkeep < 5) show_upkeep = 5;
 	}
 
 
