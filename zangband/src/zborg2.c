@@ -2776,7 +2776,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map, vptr dummy)
 			}
 			
 			/* Track the newly discovered trap */
-			if (i == track_shop_num)
+			if (i == track_trap_num)
 			{
 				/* Position */
 				borg_traps[i].x = x;
@@ -2834,7 +2834,6 @@ void borg_map_erase(vptr dummy)
 	/* MT - Forget traps */
 	(void)C_WIPE(borg_traps, track_trap_size, borg_trap);
 	track_trap_num = 0;
-	track_trap_size = 1;
 }
 
 
