@@ -1704,7 +1704,7 @@ s16b lookup_kind(int tval, int sval)
 void object_wipe(object_type *o_ptr)
 {
 	/* Wipe the structure */
-	WIPE(o_ptr, object_type);
+	(void) WIPE(o_ptr, object_type);
 }
 
 
@@ -2117,23 +2117,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 					case 1:
 					{
 						o_ptr->name2 = EGO_HA;
-
-						if (randint(4) == 1)
-						{
-							o_ptr->art_flags1 |= TR1_BLOWS;
-							if (o_ptr->pval > 2)
-								o_ptr->pval = o_ptr->pval - randint(2);
-							
-							/* tone down number of attacks*/
-							if (o_ptr->pval>0)
-							{
-								o_ptr->pval-=(o_ptr->dd)/2;
-								if (o_ptr->pval<1)
-								{
-									o_ptr->pval=1;
-								}
-							}						
-						}
 						break;
 					}
 
@@ -2272,17 +2255,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 
 					case 29: case 30:
 					{
-						o_ptr->name2 = EGO_ATTACKS;
-						
-						/* tone down number of attacks*/
-						if (o_ptr->pval>0)
-						{
-							o_ptr->pval-=(o_ptr->dd)/2;
-							if (o_ptr->pval<1)
-							{
-								o_ptr->pval=1;
-							}
-						}						
+						o_ptr->name2 = EGO_ATTACKS;						
 						break;
 					}
 
@@ -2363,18 +2336,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 						else /* Hafted */
 						{
 							o_ptr->name2 = EGO_EARTHQUAKES;
-							if (randint(3) == 1) o_ptr->art_flags1 |= TR1_BLOWS;
-							o_ptr->pval = m_bonus(3, level);
-							
-							/* tone down number of attacks*/
-							if (o_ptr->pval>0)
-							{
-								o_ptr->pval-=(o_ptr->dd)/2;
-								if (o_ptr->pval<1)
-								{
-									o_ptr->pval=1;
-								}
-							}					
+							o_ptr->pval = m_bonus(3, level);					
 						}
 					}
 				}
@@ -3908,6 +3870,36 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
+		/* Hack -- acquire "broken" flag */
+		if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
+
+		/* Hack -- acquire "cursed" flag */
+		if (e_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
+
+		/* Hack -- apply extra penalties if needed */
+		if (cursed_p(o_ptr) || broken_p(o_ptr))
+		{
+			/* Hack -- obtain bonuses */
+			if (e_ptr->max_to_h) o_ptr->to_h -= randint(e_ptr->max_to_h);
+			if (e_ptr->max_to_d) o_ptr->to_d -= randint(e_ptr->max_to_d);
+			if (e_ptr->max_to_a) o_ptr->to_a -= randint(e_ptr->max_to_a);
+
+			/* Hack -- obtain pval */
+			if (e_ptr->max_pval) o_ptr->pval -= randint(e_ptr->max_pval);
+		}
+
+		/* Hack -- apply extra bonuses if needed */
+		else
+		{
+			/* Hack -- obtain bonuses */
+			if (e_ptr->max_to_h) o_ptr->to_h += randint(e_ptr->max_to_h);
+			if (e_ptr->max_to_d) o_ptr->to_d += randint(e_ptr->max_to_d);
+			if (e_ptr->max_to_a) o_ptr->to_a += randint(e_ptr->max_to_a);
+
+			/* Hack -- obtain pval */
+			if (e_ptr->max_pval) o_ptr->pval += randint(e_ptr->max_pval);
+		}
+		
 		/* Hack -- extra powers */
 		switch (o_ptr->name2)
 		{
@@ -3915,6 +3907,20 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 			case EGO_HA:
 			{
 				o_ptr->xtra1 = EGO_XTRA_SUSTAIN;
+				if (randint(4) == 1)
+				{
+					o_ptr->art_flags1 |= TR1_BLOWS;				
+					
+					/* tone down number of attacks*/
+					if (o_ptr->pval>0)
+					{
+						o_ptr->pval-=(o_ptr->dd)/2;
+						if (o_ptr->pval<1)
+						{
+							o_ptr->pval=1;
+						}
+					}
+				}
 				break;
 			}
 
@@ -3936,6 +3942,39 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 			case EGO_TRUMP:
 			{
 				if (randint(7) == 1) o_ptr->xtra1 = EGO_XTRA_ABILITY;
+				break;
+			}
+			
+			case EGO_ATTACKS:
+			{
+				o_ptr->art_flags1 |= TR1_BLOWS;
+				/* tone down number of attacks*/
+				if (o_ptr->pval>0)
+				{
+					o_ptr->pval-=(o_ptr->dd)/2;
+					if (o_ptr->pval<1)
+					{
+						o_ptr->pval=1;
+					}
+				}
+				break;
+			}
+
+			case EGO_EARTHQUAKES:
+			{
+				if (randint(3) == 1)
+				{
+					o_ptr->art_flags1 |= TR1_BLOWS;
+					/* tone down number of attacks*/
+					if (o_ptr->pval>0)
+					{
+						o_ptr->pval-=(o_ptr->dd)/2;
+						if (o_ptr->pval<1)
+						{
+							o_ptr->pval=1;
+						}
+					}
+				}			
 				break;
 			}
 
@@ -3972,35 +4011,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 		if (o_ptr->xtra1 && !o_ptr->art_name)
 			o_ptr->xtra2 = randint(256);
 
-		/* Hack -- acquire "broken" flag */
-		if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
-
-		/* Hack -- acquire "cursed" flag */
-		if (e_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
-
-		/* Hack -- apply extra penalties if needed */
-		if (cursed_p(o_ptr) || broken_p(o_ptr))
-		{
-			/* Hack -- obtain bonuses */
-			if (e_ptr->max_to_h) o_ptr->to_h -= randint(e_ptr->max_to_h);
-			if (e_ptr->max_to_d) o_ptr->to_d -= randint(e_ptr->max_to_d);
-			if (e_ptr->max_to_a) o_ptr->to_a -= randint(e_ptr->max_to_a);
-
-			/* Hack -- obtain pval */
-			if (e_ptr->max_pval) o_ptr->pval -= randint(e_ptr->max_pval);
-		}
-
-		/* Hack -- apply extra bonuses if needed */
-		else
-		{
-			/* Hack -- obtain bonuses */
-			if (e_ptr->max_to_h) o_ptr->to_h += randint(e_ptr->max_to_h);
-			if (e_ptr->max_to_d) o_ptr->to_d += randint(e_ptr->max_to_d);
-			if (e_ptr->max_to_a) o_ptr->to_a += randint(e_ptr->max_to_a);
-
-			/* Hack -- obtain pval */
-			if (e_ptr->max_pval) o_ptr->pval += randint(e_ptr->max_pval);
-		}
+		
 
 		/* Hack -- apply rating bonus */
 		rating += e_ptr->rating;
