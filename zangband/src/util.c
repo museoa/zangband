@@ -3592,22 +3592,29 @@ int get_keymap_dir(char ch)
 	cptr act, s;
 	int d = 0;
 
-	if (rogue_like_commands)
+	if (isdigit(ch))
 	{
-		act = keymap_act[KEYMAP_MODE_ROGUE][(byte)ch];
+		d = D2I(ch);
 	}
 	else
 	{
-		act = keymap_act[KEYMAP_MODE_ORIG][(byte)ch];
-	}
-
-	if (act)
-	{
-		/* Convert to a direction */
-		for (s = act; *s; ++s)
+		if (rogue_like_commands)
 		{
-			/* Use any digits in keymap */
-			if (isdigit(*s)) d = D2I(*s);
+			act = keymap_act[KEYMAP_MODE_ROGUE][(byte)ch];
+		}
+		else
+		{
+			act = keymap_act[KEYMAP_MODE_ORIG][(byte)ch];
+		}
+
+		if (act)
+		{
+			/* Convert to a direction */
+			for (s = act; *s; ++s)
+			{
+				/* Use any digits in keymap */
+				if (isdigit(*s)) d = D2I(*s);
+			}
 		}
 	}
 	return d;
