@@ -3339,6 +3339,19 @@ void update_stuff(void)
 
 	/* Character is in "icky" mode, no screen updates */
 	if (character_icky) return;
+	
+	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
+	{
+		p_ptr->update &= ~(PU_MON_LITE);
+		update_mon_lite();
+		
+		/*
+		 * Hack - the odds are that since monsters moved, 
+		 * we need to redraw the map.
+		 */
+		p_ptr->redraw |= (PR_MAP);
+		p_ptr->update |= (PU_VIEW);
+	}
 
 	if (p_ptr->update & (PU_VIEW))
 	{
@@ -3363,12 +3376,6 @@ void update_stuff(void)
 	{
 		p_ptr->update &= ~(PU_MONSTERS);
 		update_monsters(FALSE);
-	}
-
-	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
-	{
-		p_ptr->update &= ~(PU_MON_LITE);
-		update_mon_lite();
 	}
 }
 
