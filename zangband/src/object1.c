@@ -1710,7 +1710,6 @@ bool item_tester_hook_weapon_armour(const object_type *o_ptr)
 		case TV_SWORD:
 		case TV_HAFTED:
 		case TV_POLEARM:
-		case TV_DIGGING:
 		case TV_BOW:
 		case TV_DRAG_ARMOR:
 		case TV_HARD_ARMOR:

@@ -3881,12 +3881,12 @@ byte kind_is_theme(int k_idx)
 		case TV_HAFTED:		return (match_theme.combat);
 		case TV_POLEARM:	return (match_theme.combat);
 		case TV_SWORD:		return (match_theme.combat);
-		case TV_BOOTS:		return (match_theme.tools);
+		case TV_BOOTS:		return (match_theme.combat);
 		case TV_GLOVES:		return (match_theme.combat);
 		case TV_HELM:		return (match_theme.combat);
 		case TV_CROWN:		return (match_theme.treasure);
 		case TV_SHIELD:		return (match_theme.combat);
-		case TV_CLOAK:		return (match_theme.tools);
+		case TV_CLOAK:		return (match_theme.combat);
 		case TV_SOFT_ARMOR:	return (match_theme.combat);
 		case TV_HARD_ARMOR: return (match_theme.combat);
 		case TV_DRAG_ARMOR: return (match_theme.treasure);
