@@ -14,8 +14,6 @@
 
 #include "h-basic.h"
 
-#include "z-config.h"
-
 
 /*
  * A term_win is a "window" for a Term
