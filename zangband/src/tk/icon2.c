@@ -12,7 +12,7 @@
 
 #include "tnb.h"
 #include "icon.h"
-#include "widget.h"
+/* #include "widget.h" */
 
 static char *AssignToString_Flavor(char *buf, t_assign *assignPtr)
 {

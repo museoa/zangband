@@ -13,15 +13,10 @@
 typedef struct Widget Widget;
 typedef void Widget_CenterProc(Widget *widgetPtr, int y, int x);
 typedef void Widget_ChangedProc(Widget *widgetPtr);
-typedef int Widget_ConfigureProc(Tcl_Interp *interp, Widget *widgetPtr);
-typedef int Widget_CreateProc(Tcl_Interp *interp, Widget **widgetPtr);
 typedef void Widget_DestroyProc(Widget *widgetPtr);
-typedef void Widget_DrawAllProc(Widget *widgetPtr);
-typedef void Widget_DrawInvalidProc(Widget *widgetPtr);
 typedef int Widget_HitTestProc(Widget *widgetPtr, int x, int y, int col, int row, int *xc, int *yc);
 typedef void Widget_InvalidateProc(Widget *widgetPtr, int row, int col);
 typedef void Widget_InvalidateAreaProc(Widget *widgetPtr, int top, int left, int bottom, int right);
-typedef void Widget_WipeProc(Widget *widgetPtr);
 
 struct Widget
 {
@@ -50,13 +45,9 @@ struct Widget
 	int y, x;					/* Cave location (center of widget) */
 	Widget_CenterProc *centerProc; /* Per-widget centering routine */
 	Widget_ChangedProc *changedProc; /* Per-widget config routine */
-	Widget_ConfigureProc *configureProc; /* Per-widget config routine */
 	Widget_DestroyProc *destroyProc; /* Per-widget destroy routine */
-	Widget_DrawAllProc *drawAllProc;  /* Per-widget drawing routine */
-	Widget_DrawInvalidProc *drawInvalidProc;  /* Per-widget drawing routine */
 	Widget_InvalidateProc *invalidateProc;
 	Widget_InvalidateAreaProc *invalidateAreaProc;
-	Widget_WipeProc *wipeProc;  /* Per-widget fresh routine */
 	int noUpdate;				/* Drawing is disabled */
 
 	int tc;						/* rc * cc */
@@ -97,39 +88,6 @@ typedef struct WidgetItem
 	int minX, minY, maxX, maxY; /* Rows/Columns clobbered in widget */
 } WidgetItem;
 
-typedef int	WidgetItem_CreateProc _ANSI_ARGS_((Tcl_Interp *interp,
-	Widget *widgetPtr, WidgetItem *itemPtr,
-	int objc, Tcl_Obj *CONST objv[]));
-typedef int	WidgetItem_ConfigProc _ANSI_ARGS_((Tcl_Interp *interp,
-	Widget *widgetPtr, WidgetItem *itemPtr,
-	int objc, Tcl_Obj *CONST objv[]));
-typedef int	WidgetItem_DisplayProc _ANSI_ARGS_((Tcl_Interp *interp,
-	Widget *widgetPtr, WidgetItem *itemPtr));
-typedef int	WidgetItem_ChangedProc _ANSI_ARGS_((Tcl_Interp *interp,
-	Widget *widgetPtr, WidgetItem *itemPtr));
-typedef void WidgetItem_DeleteProc _ANSI_ARGS_((Widget *widgetPtr,
-	WidgetItem *itemPtr));
-
-/*
- * Records of the following type are used to describe a type of
- * extension (e.g. monster bar, status, etc.) that can modify the
- * appearance of a Widget.
- */
-
-typedef struct WidgetItemType
-{
-	cptr name;
-	int itemSize;
-	Tk_OptionSpec *optionSpecs;
-	Tk_OptionTable optionTable;
-	WidgetItem_CreateProc *createProc;
-	WidgetItem_ConfigProc *configProc;
-	WidgetItem_DisplayProc *displayProc;
-	WidgetItem_ChangedProc *changedProc;
-	WidgetItem_DeleteProc *deleteProc;
-	struct WidgetItemType *nextPtr;
-} WidgetItemType;
-
 
 /*
  * Widget items use tint tables for transparency. Since each tint table
@@ -145,10 +103,7 @@ typedef struct t_widget_color
 } t_widget_color;
 
 extern void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int right, int bottom);
-extern void Widget_DrawAll(Widget *widgetPtr);
 extern void Widget_EventuallyRedraw(Widget *widgetPtr);
-
-extern int init_widget(Tcl_Interp *interp);
 
 /* Extended Widget record */
 typedef struct ExWidget {

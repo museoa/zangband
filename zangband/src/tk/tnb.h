@@ -348,3 +348,6 @@ DECLARE_TK_HOOK(inveninfo);
 DECLARE_TK_HOOK(term_char);
 DECLARE_TK_HOOK(term_attr);
 #endif /* _INCLUDE_TNB_H_ */
+
+
+extern int init_widget(Tcl_Interp *interp);

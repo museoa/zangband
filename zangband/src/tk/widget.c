@@ -216,7 +216,7 @@ static void widget_draw_all(Widget *widgetPtr)
 		y = widgetPtr->y_min + tile / cc;
 		x = widgetPtr->x_min + tile % cc;
 
-		(*exPtr->whatToDrawProc)(widgetPtr, y, x, &wtd);
+		widget_wtd(widgetPtr, y, x, &wtd);
 
 		yp = tile / cc * widgetPtr->gheight;
 		xp = tile % cc * widgetPtr->gwidth;
@@ -306,7 +306,7 @@ static void widget_draw_invalid(Widget *widgetPtr)
 		y = widgetPtr->y_min + tile / cc;
 		x = widgetPtr->x_min + tile % cc;
 
-		(*exPtr->whatToDrawProc)(widgetPtr, y, x, &wtd);
+		widget_wtd(widgetPtr, y, x, &wtd);
 
 		/* Bitmap coords */
 		yp = (tile / cc) * widgetPtr->gheight;
@@ -366,20 +366,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 	widgetPtr->dh = db - dt + 1;
 }
 
-static int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
-{
-	ExWidget *exPtr = (ExWidget *) widgetPtr;
-
-	/* Hack - ignore unused parameter */
-	(void) interp;
-
-	/* Make this Widget draw icons */
-	widgetPtr->drawAllProc = widget_draw_all;
-	widgetPtr->drawInvalidProc = widget_draw_invalid;
-	exPtr->whatToDrawProc = widget_wtd;
-
-	return TCL_OK;
-}
 
 static void widget_changed(Widget *widgetPtr)
 {
@@ -427,14 +413,10 @@ static int widget_create(Tcl_Interp *interp, Widget **ptr)
 	(void) interp;
 
 	widgetPtr->centerProc = NULL;
-	widgetPtr->configureProc = widget_configure;
 	widgetPtr->changedProc = widget_changed;
 	widgetPtr->destroyProc = widget_destroy;
-	widgetPtr->drawInvalidProc = NULL;
-	widgetPtr->wipeProc = NULL;
 	widgetPtr->invalidateProc = NULL;
 	widgetPtr->invalidateAreaProc = NULL;
-	exPtr->whatToDrawProc = NULL;
 	exPtr->effect = NULL;
 
 	(*ptr) = widgetPtr;
@@ -720,13 +702,6 @@ static int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl
 			continue;
 		}
 
-		/* Client command */
-		if (widgetPtr->configureProc)
-		{
-			if ((*widgetPtr->configureProc)(interp, widgetPtr) != TCL_OK)
-				continue;
-		}
-
 		break;
 	}
 	if (!error)
@@ -797,10 +772,7 @@ static void Widget_Wipe(Widget *widgetPtr)
 
 	/* Don't bother drawing invalid grids */
 	widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
-/*
-	if (widgetPtr->wipeProc)
-		(*widgetPtr->wipeProc)(widgetPtr);
-*/
+
 	/* Redraw later */
 	Widget_EventuallyRedraw(widgetPtr);
 }
@@ -811,7 +783,7 @@ static void Widget_Invalidate(Widget *widgetPtr, int row, int col)
 	int cc = widgetPtr->cc;
 	int tile;
 
-if (widgetPtr->flags & WIDGET_WIPE) return;
+	if (widgetPtr->flags & WIDGET_WIPE) return;
 
 	if (row < 0 || row >= rc)
 		return;
@@ -1340,12 +1312,6 @@ error:
 }
 
 
-static void Widget_DrawInvalid(Widget *widgetPtr)
-{
-	if (widgetPtr->drawInvalidProc)
-		(*widgetPtr->drawInvalidProc)(widgetPtr);
-}
-
 
 /*
  * Actually draw stuff into the Widget's display. This routine is
@@ -1363,7 +1329,7 @@ static void Widget_Display(ClientData clientData)
 		widgetPtr->flags &= ~(WIDGET_WIPE | WIDGET_DRAW_INVALID);
 
 		/* Draw all grids */
-		Widget_DrawAll(widgetPtr);
+		widget_draw_all(widgetPtr);
 	}
 
 	/* We want to draw outdated grids */
@@ -1373,7 +1339,7 @@ static void Widget_Display(ClientData clientData)
 		widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
 
 		/* Draw outdated grids (offscreen) */
-		Widget_DrawInvalid(widgetPtr);
+		widget_draw_invalid(widgetPtr);
 	}
 
 	/* Forget that a redraw is scheduled */
@@ -1696,25 +1662,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 
 
 /*
- * Initialize the Widget package
- */
-int init_widget(Tcl_Interp *interp)
-{
-	/* Initialize Widget item colors */
-	if (WidgetColor_Init(interp) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Create the "widget" interpreter command */
-	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
-
-	/* Success */
-    return TCL_OK;
-}
-
-
-/*
  * This is a dummy lite_spot() routine that may get called before
  * the icons have been initialized.
  */
@@ -1738,14 +1685,6 @@ void angtk_lite_spot_real(int y, int x)
 	get_grid_info(y, x, &g_grid[y][x]);
 
 }
-
-
-void Widget_DrawAll(Widget *widgetPtr)
-{
-	if (widgetPtr->drawAllProc)
-		(*widgetPtr->drawAllProc)(widgetPtr);
-}
-
 
 void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int right)
 {
@@ -1778,7 +1717,23 @@ void Widget_EventuallyRedraw(Widget *widgetPtr)
 	widgetPtr->flags |= WIDGET_REDRAW;
 }
 
+/*
+ * Initialize the Widget package
+ */
+int init_widget(Tcl_Interp *interp)
+{
+	/* Initialize Widget item colors */
+	if (WidgetColor_Init(interp) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
 
+	/* Create the "widget" interpreter command */
+	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
+
+	/* Success */
+    return TCL_OK;
+}
 
 
 
