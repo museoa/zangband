@@ -536,14 +536,14 @@ s16b get_mon_num(int level)
 			if (!rand_int(NASTY_MON))
 			{				
 				/* Boost the level */
-				level += 10;
+				level += 7;
 			}
 
 			/* Occasional "nasty" monster */
 			if (!rand_int(NASTY_MON))
 			{
 				/* Boost the level */
-				level += 10;
+				level += 7;
 			}
 		}
 	}
