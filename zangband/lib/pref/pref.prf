@@ -52,6 +52,12 @@
 ?:[EQU $SYS acn]
 %:pref-acn.prf
 
+?:[EQU $SYS tk-win]
+%:pref-tk-win.prf
+
+?:[EQU $SYS tk-x11]
+%:pref-tk-x11.prf
+
 ?:1
 
 
