@@ -1,7 +1,6 @@
 #! /bin/sh
 
 set -x
-mkdir -p config
 aclocal
 autoheader
 automake --foreign --add-missing --copy

@@ -4,8 +4,6 @@ dnl Initialize autoconf - look for the existance of a file to make sure
 dnl the source distribution is installed correctly.
 AC_INIT(src/main.c)
 
-AC_CONFIG_AUX_DIR(config)
-
 dnl write the resulting #defines into a header file
 AM_CONFIG_HEADER(src/autoconf.h)
 
