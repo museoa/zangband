@@ -245,16 +245,6 @@ s16b lite_n = 0;
 s16b lite_y[LITE_MAX];
 s16b lite_x[LITE_MAX];
 
-/*
- * Array of monsters who have died from the result of a spell effect.
- *
- * This is used to prevent the stack-smash when too many monsters
- * die in an explosion chain-reaction.  (This is used as a circular
- * queue.)
- */
-s16b mon_d_head = 0;
-s16b mon_d_tail = 0;
-s16b mon_d_m_idx[DEATH_MAX];
 
 
 /*

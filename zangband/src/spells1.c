@@ -12,6 +12,19 @@
 
 #include "angband.h"
 
+/*
+ * Array of monsters who have died from the result of a spell effect.
+ *
+ * This is used to prevent the stack-smash when too many monsters
+ * die in an explosion chain-reaction.  (This is used as a circular
+ * queue.)
+ */
+s16b mon_d_head = 0;
+s16b mon_d_tail = 0;
+s16b mon_d_m_idx[DEATH_MAX];
+
+
+
 /* ToDo: Make this global */
 /* 1/x chance of reducing stats (for elemental attacks) */
 #define HURT_CHANCE 16
