@@ -1539,7 +1539,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 10:
 			{
 				/* RF5_MIND_BLAST */
-				if (borg_skill[BI_SAV] < 100)
+				if (bp_ptr->skill_sav < 100)
 					z = 35;
 				break;
 			}
@@ -1548,7 +1548,7 @@ static int borg_danger_aux2(int i, bool average)
 			{
 				/* RF5_BRAIN_SMASH */
 				z = (12 * 15);
-				p += 200 - 2 * borg_skill[BI_SAV];
+				p += 200 - 2 * bp_ptr->skill_sav;
 				if (p < 0) p = 0;
 				break;
 			}
@@ -1556,46 +1556,46 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 12:
 			{
 				/* RF5_CAUSE_1 */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				z = (3 * 8);
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
 					/* reduce by % chance of save  (add 20% for fudge) */
-					z = z * (120 - borg_skill[BI_SAV]) / 100;
+					z = z * (120 - bp_ptr->skill_sav) / 100;
 				break;
 			}
 
 			case 128 + 13:
 			{
 				/* RF5_CAUSE_2 */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				z = (8 * 8);
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
 					/* reduce by % chance of save  (add 20% for fudge) */
-					z = z * (120 - borg_skill[BI_SAV]) / 100;
+					z = z * (120 - bp_ptr->skill_sav) / 100;
 				break;
 			}
 
 			case 128 + 14:
 			{
 				/* RF5_CAUSE_3 */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				z = (10 * 15);
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
 					/* reduce by % chance of save  (add 20% for fudge) */
-					z = z * (120 - borg_skill[BI_SAV]) / 100;
+					z = z * (120 - bp_ptr->skill_sav) / 100;
 				break;
 			}
 
 			case 128 + 15:
 			{
 				/* RF5_CAUSE_4 */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				z = (15 * 15);
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1605,7 +1605,7 @@ static int borg_danger_aux2(int i, bool average)
 				/* do not count. */
 				if (!borg_full_damage)
 					/* reduce by % chance of save  (add 40% for fudge) */
-					z = z * (120 - borg_skill[BI_SAV]) / 100;
+					z = z * (120 - bp_ptr->skill_sav) / 100;
 				break;
 			}
 
@@ -1805,7 +1805,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 27:
 			{
 				/* RF5_SCARE */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1816,7 +1816,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 28:
 			{
 				/* RF5_BLIND */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1827,7 +1827,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 29:
 			{
 				/* RF5_CONF */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1839,7 +1839,7 @@ static int borg_danger_aux2(int i, bool average)
 			{
 				/* RF5_SLOW */
 				if (bp_ptr->flags2 & TR2_FREE_ACT) break;
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1851,7 +1851,7 @@ static int borg_danger_aux2(int i, bool average)
 			{
 				/* RF5_HOLD */
 				if (bp_ptr->flags2 & TR2_FREE_ACT) break;
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				p += 150;
 				break;
 			}
@@ -1859,7 +1859,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 160 + 0:
 			{
 				/* RF6_HASTE */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				z += (90 * bp_ptr->chp / 100);
 				p += 150;
 				/* if looking at full damage, things that are just annoying */
@@ -1938,7 +1938,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 160 + 10:
 			{
 				/* RF6_TELE_LEVEL */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1975,7 +1975,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 160 + 14:
 			{
 				/* RF6_FORGET */
-				if (borg_skill[BI_SAV] >= 100) break;
+				if (bp_ptr->skill_sav >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -3261,19 +3261,19 @@ static s32b borg_power_aux3(void)
 	/*** Reward current skills ***/
 
 	/* Hack -- tiny rewards */
-	value += (borg_skill[BI_DIS] * 2L);
-	value += (borg_skill[BI_DEV] * 25L);
-	value += (borg_skill[BI_SAV] * 25L);
+	value += (bp_ptr->skill_dis * 2L);
+	value += (bp_ptr->skill_dev * 25L);
+	value += (bp_ptr->skill_sav * 25L);
 	/* perfect saves are very nice */
-	if (borg_skill[BI_SAV] > 99)
+	if (bp_ptr->skill_sav > 99)
 		value += 10000;
-	value += (borg_skill[BI_STL] * 2L);
-	value += (borg_skill[BI_SRCH] * 1L);
-	value += (borg_skill[BI_SRCHFREQ] * 1L);
-	value += (borg_skill[BI_THN] * 5L);
-	value += (borg_skill[BI_THB] * 35L);
-	value += (borg_skill[BI_THT] * 2L);
-	value += (borg_skill[BI_DIG] * 2L);
+	value += (bp_ptr->skill_stl * 2L);
+	value += (bp_ptr->skill_sns * 1L);
+	value += (bp_ptr->skill_fos * 1L);
+	value += (bp_ptr->skill_thn * 5L);
+	value += (bp_ptr->skill_thb * 35L);
+	value += (bp_ptr->skill_tht * 2L);
+	value += (bp_ptr->skill_dig * 2L);
 
 
 	/*** Reward current flags ***/
@@ -3981,10 +3981,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Hack -- Apply "encumbrance" from weight */
-	if (borg_skill[BI_ENCUMBERD])
-	{
-		value -= (borg_skill[BI_ENCUMBERD] * 500L);
-	}
+	value -= bp_ptr->encumber * 500L;
 
 	/* Being too heavy is really bad */
 	value -= bp_ptr->weight / adj_str_wgt[my_stat_ind[A_STR]];
@@ -4362,7 +4359,7 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 100 ***/
 
 	/* must have lots of restore mana to go after MORGOTH */
-	if (!borg_skill[BI_KING])
+	if (!bp_ptr->winner)
 	{
 		if ((bp_ptr->msp > 100) && (borg_has[266] < 15)) return ("15ResMana");
 

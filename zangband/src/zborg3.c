@@ -1226,7 +1226,7 @@ bool borg_equips_rod(int sval)
 	lev = (k_ptr->level);
 
 	/* Base chance of success */
-	chance = borg_skill[BI_DEV];
+	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
 	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
@@ -1269,7 +1269,7 @@ bool borg_zap_rod(int sval)
 	lev = (k_ptr->level);
 
 	/* Base chance of success */
-	chance = borg_skill[BI_DEV];
+	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
 	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
@@ -1374,7 +1374,7 @@ bool borg_use_staff_fail(int sval)
 	lev = k_ptr->level;
 
 	/* Base chance of success */
-	chance = borg_skill[BI_DEV];
+	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
 	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
@@ -1437,7 +1437,7 @@ bool borg_equips_staff_fail(int sval)
 	lev = k_ptr->level;
 
 	/* Base chance of success */
-	chance = borg_skill[BI_DEV];
+	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
 	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
@@ -1577,7 +1577,7 @@ bool borg_equips_dragon(int drag_sval)
 	lev = k_ptr->level;
 
 	/* Base chance of success */
-	chance = borg_skill[BI_DEV];
+	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
 	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;

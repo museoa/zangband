@@ -864,7 +864,7 @@ bool borg_on_safe_grid(void)
 		if (borg_goi) return (TRUE);
 
 		/* Being non-encumbered helps */
-		if (!borg_skill[BI_ENCUMBERD]) return (TRUE);
+		if (!bp_ptr->encumber) return (TRUE);
 
 		/* Everything else hurts */
 		return (FALSE);
@@ -2922,8 +2922,8 @@ bool borg_leave_level(bool bored)
 	/* Power dive too 100 if ready */
 	if (!borg_prepared(100)) g = 1;
 
-	/* Power dive if Morgoth is dead */
-	if (borg_skill[BI_KING]) g = 1;
+	/* Power dive if the Serpent is dead */
+	if (bp_ptr->winner) g = 1;
 
 	/* Return to town to sell stuff */
 	if (bored && (k >= 12))

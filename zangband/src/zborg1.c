@@ -1012,7 +1012,7 @@ void borg_update_frame(void)
 
 
 	/* Note "Winner" */
-	borg_skill[BI_KING] = p_ptr->total_winner;
+	bp_ptr->winner = p_ptr->total_winner;
 
 	/* Assume experience is fine */
 	borg_skill[BI_ISFIXEXP] = FALSE;

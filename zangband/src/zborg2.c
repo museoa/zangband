@@ -1989,7 +1989,7 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 		}
 
 		/* Use "infravision" */
-		if (d <= borg_skill[BI_INFRA])
+		if (d <= bp_ptr->see_infra)
 		{
 			/* Infravision works on "warm" creatures */
 			if (!(r_ptr->flags2 & RF2_COLD_BLOOD)) return (TRUE);

@@ -404,7 +404,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 			/* Avoid Water if dangerous */
 			if (mb_ptr->feat == FEAT_SHAL_WATER &&
-				(borg_skill[BI_ENCUMBERD] &&
+				(bp_ptr->encumber &&
 				 !(bp_ptr->flags3 & TR3_FEATHER))) continue;
 
 			/* Avoid Mountains */
@@ -428,8 +428,8 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 				if (bp_ptr->chp < 60) continue;
 
 				/* Do not disarm when clumsy */
-				if (borg_skill[BI_DIS] < 30 && bp_ptr->lev < 20) continue;
-				if (borg_skill[BI_DIS] < 45 && bp_ptr->lev < 10) continue;
+				if ((bp_ptr->skill_dis < 30) && (bp_ptr->lev < 20)) continue;
+				if ((bp_ptr->skill_dis < 45) && (bp_ptr->lev < 10)) continue;
 			}
 #endif /* 0 */
 
@@ -1971,7 +1971,7 @@ static bool borg_heal(int danger)
 		if (borg_equips_staff_fail(SV_STAFF_TELEPORTATION))
 		{
 			/* Check my skill, drink a potion */
-			if ((borg_skill[BI_DEV] -
+			if ((bp_ptr->skill_dev -
 				 borg_get_kind(TV_STAFF, SV_STAFF_TELEPORTATION)->
 				 level > 7) && (danger < (avoidance + 35) * 15 / 10) &&
 				(borg_quaff_crit(FALSE) ||
@@ -2260,7 +2260,7 @@ static bool borg_heal(int danger)
 	 * (unless morgoth is dead)
 	 * Priests wont need to bail, they have good heal spells.
 	 */
-	if ((bp_ptr->max_depth >= 98) && !borg_skill[BI_KING] &&
+	if ((bp_ptr->max_depth >= 98) && !bp_ptr->winner &&
 		!borg_fighting_unique && (borg_class != CLASS_PRIEST))
 	{
 		/* Bail out to save the heal pots for Morgoth */
@@ -2271,8 +2271,8 @@ static bool borg_heal(int danger)
 	if (hp_down < 250 &&
 		danger / 2 < bp_ptr->chp + 200 &&
 		(((!bp_ptr->able.teleport ||
-		   borg_skill[BI_DEV] -
-		   borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) &&
+		   (bp_ptr->skill_dev -
+		   borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7)) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
 		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 		 borg_activate_artifact(ART_GONDOR, FALSE) ||
@@ -2292,8 +2292,8 @@ static bool borg_heal(int danger)
 		 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
 		 borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) ||
 		 ((!bp_ptr->able.teleport ||
-		   borg_skill[BI_DEV] - borg_get_kind(TV_ROD,
-											  SV_ROD_HEALING)->level > 7) &&
+		   (bp_ptr->skill_dev - borg_get_kind(TV_ROD,
+											  SV_ROD_HEALING)->level > 7)) &&
 		  borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) ||
 		 borg_quaff_potion(SV_POTION_HEALING)))
 	{
@@ -2306,8 +2306,8 @@ static bool borg_heal(int danger)
 		((borg_fighting_evil_unique &&
 		  borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||
 		 ((!bp_ptr->able.teleport ||
-		   borg_skill[BI_DEV] - borg_get_kind(TV_ROD,
-											  SV_ROD_HEALING)->level > 7) &&
+		   (bp_ptr->skill_dev - borg_get_kind(TV_ROD,
+											  SV_ROD_HEALING)->level > 7)) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
 		 borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) ||
 		 borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||
@@ -2333,8 +2333,8 @@ static bool borg_heal(int danger)
 		 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
 		 borg_use_staff_fail(SV_STAFF_HEALING) ||
 		 ((!bp_ptr->able.teleport ||
-		   borg_skill[BI_DEV] - borg_get_kind(TV_ROD,
-											  SV_ROD_HEALING)->level > 7) &&
+		   (bp_ptr->skill_dev - borg_get_kind(TV_ROD,
+											  SV_ROD_HEALING)->level > 7)) &&
 		  borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING)
 		 || borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 		 borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique &&
@@ -3967,7 +3967,7 @@ static int borg_thrust_damage_one(int i)
 	dam *= borg_skill[BI_BLOWS];
 
 	/* reduce for % chance to hit (AC) */
-	chance = (borg_skill[BI_THN] + ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 3));
+	chance = (bp_ptr->skill_thn + ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 3));
 	if ((r_ptr->ac * 3 / 4) > 0)
 		chance = (chance * 100) / (r_ptr->ac * 3 / 4);
 
@@ -5228,12 +5228,8 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 		/* dont do the check if esp */
 		if (!(bp_ptr->flags3 & TR3_TELEPATHY))
 		{
-			/* Check the missile path--no Infra, no HAS_LITE */
-			if (dist && (borg_skill[BI_INFRA] <= 0)
-#ifdef MONSTER_LITE
-				&& !(r_ptr->flags2 & RF2_HAS_LITE)
-#endif /* has_lite */
-				)
+			/* Check the missile path */
+			if (dist && !bp_ptr->see_infra)
 			{
 				/* Stop at unknown grids (see above) */
 				/* note if beam, dispel, this is the end of the beam */
@@ -13151,7 +13147,7 @@ bool borg_flow_kill_corridor(bool viewable)
 				borg_spell_legal(REALM_NATURE, 1, 0) ||
 				borg_spell_legal(REALM_CHAOS, 2, 3) ||
 				borg_racial_check(RACE_HALF_GIANT, TRUE) ||
-				borg_skill[BI_DIG] > (bp_ptr->depth > 80 ? 30 : 40))
+				(bp_ptr->skill_dig > (bp_ptr->depth > 80 ? 30 : 40)))
 			{
 				/* digging ought to work */
 			}
@@ -13653,8 +13649,11 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 			borg_spell_legal(REALM_CHAOS, 2, 3) ||
 			borg_racial(RACE_HALF_GIANT)) return (TRUE);
 
-		/* Do not dig unless we appear strong enough to succeed or we have a digger */
-		if (borg_skill[BI_DIG] > 40)
+		/*
+		 * Do not dig unless we appear strong
+		 * enough to succeed or we have a digger
+		 */
+		if (bp_ptr->skill_dig > 40)
 		{
 			/* digging ought to work */
 		}
@@ -13702,8 +13701,11 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 						borg_spell_legal(REALM_CHAOS, 0, 6) ||
 						borg_racial_check(RACE_HALF_GIANT, TRUE)) return (TRUE);
 
-					/* Do not dig unless we appear strong enough to succeed or we have a digger */
-					if (borg_skill[BI_DIG] > 40)
+					/*
+					 * Do not dig unless we appear strong
+					 * enough to succeed or we have a digger
+					 */
+					if (bp_ptr->skill_dig > 40)
 					{
 						/* digging ought to work, proceed */
 					}
@@ -13711,7 +13713,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 					{
 						continue;
 					}
-					if (borg_skill[BI_DIG] < 40) return (FALSE);
+					if (bp_ptr->skill_dig < 40) return (FALSE);
 
 					/* Glove up and dig in */
 					return (TRUE);
@@ -13807,8 +13809,8 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (bp_ptr->chp < 60) return (FALSE);
 
 		/* Do not disarm when clumsy */
-		if (borg_skill[BI_DIS] < 30 && bp_ptr->lev < 20) return (FALSE);
-		if (borg_skill[BI_DIS] < 45 && bp_ptr->lev < 10) return (FALSE);
+		if ((bp_ptr->skill_dis < 30) && (bp_ptr->lev < 20)) return (FALSE);
+		if ((bp_ptr->skill_dis < 45) && (bp_ptr->lev < 10)) return (FALSE);
 
 		/* NOTE: the flow code allows a borg to flow through a trap and so he may
 		 * still try to disarm one on his way to the other interesting grid.  If mods
@@ -13863,7 +13865,7 @@ static bool borg_flow_dark_reachable(int x, int y)
 
 		/* Accept Water if not drowning */
 		if (mb_ptr->feat == FEAT_SHAL_WATER &&
-			(!borg_skill[BI_ENCUMBERD] ||
+			(!bp_ptr->encumber ||
 			 (bp_ptr->flags3 & TR3_FEATHER))) return (TRUE);
 
 		/* I can push pass friendly monsters */
@@ -13994,7 +13996,7 @@ void borg_flow_direct(int x, int y)
 
 		/* Ignore certain "non-wall" grids */
 		if ((mb_ptr->feat == FEAT_SHAL_WATER &&
-			 (!borg_skill[BI_ENCUMBERD] &&
+			 (!bp_ptr->encumber &&
 			  !(bp_ptr->flags3 & TR3_FEATHER))) ||
 			(mb_ptr->feat == FEAT_SHAL_LAVA &&
 			 !(bp_ptr->flags2 & TR2_IM_FIRE))) return;

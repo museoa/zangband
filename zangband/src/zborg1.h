@@ -217,22 +217,27 @@ struct borg_ability
 	s16b teleport_level;
 	s16b escape;
 	s16b fuel;
+	
 	s16b heal;
 	s16b easy_heal;
 	s16b id;
 	s16b speed;
+	
 	s16b staff_magi;
 	s16b staff_dest;
 	s16b missile;
 	s16b curepois;
+	
 	s16b det_trap;
 	s16b det_door;
 	s16b det_evil;
 	s16b magic_map;
+	
 	s16b recharge;
 	s16b pfe;
 	s16b glyph;
 	s16b ccw;
+	
 	s16b csw;
 	s16b res_heat;
 	s16b res_cold;
@@ -256,6 +261,8 @@ struct borg_player
 
 	bool britelite;	/* Lite does not require fuel */
 	byte cur_lite;	/* Current light radius */
+	
+	bool winner;	/* Have we killed the Serpent? */
 
 	/* Hitpoints */
 	int chp;
@@ -287,27 +294,25 @@ struct borg_player
 
 
 	u32b value;	/* Cost of items we are carrying */
+	
 	s16b weight;	/* Weight of items we are carrying */
+	s16b encumber;	/* Weight of encumberance */
+	
+	s16b see_infra;	/* Infravision range */
+
+	s16b skill_dis;	/* Skill: Disarming */
+	s16b skill_dev;	/* Skill: Magic Devices */
+	s16b skill_sav;	/* Skill: Saving throw */
+	s16b skill_stl;	/* Skill: Stealth factor */
+	s16b skill_sns;	/* Skill: Sensing ability */
+	s16b skill_fos;	/* Skill: Searching frequency */
+	s16b skill_thn;	/* Skill: To hit (normal) */
+	s16b skill_thb;	/* Skill: To hit (shooting) */
+	s16b skill_tht;	/* Skill: To hit (throwing) */
+	s16b skill_dig;	/* Skill: Digging */
 };
 
 extern borg_player *bp_ptr;
-
-
-
-#define BI_INFRA	44
-#define BI_DIS		45
-#define BI_DEV		46
-#define BI_SAV		47
-#define BI_STL		48
-#define BI_SRCH		49
-#define BI_SRCHFREQ	50
-#define BI_THN		51
-#define BI_THB		52
-#define BI_THT		53
-#define BI_DIG		54
-
-
-#define BI_KING		99
 
 #define BI_ISWEAK 	100
 #define BI_ISHUNGRY	101
@@ -354,10 +359,9 @@ extern borg_player *bp_ptr;
 #define BI_CRSTY	141
 #define BI_CRSNOTELE	142		/* no teleport */
 #define BI_CRSNOMAGIC	143		/* no magic */
-#define BI_ENCUMBERD	144
 
 
-#define BI_MAX		145
+#define BI_MAX		144
 
 
 /*

@@ -442,7 +442,7 @@ static bool borg_think(void)
 	}
 
 	/* If king, maybe retire. */
-	if (borg_skill[BI_KING])
+	if (bp_ptr->winner)
 	{
 		/* Prepare to retire */
 		if (borg_stop_king)

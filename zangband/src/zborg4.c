@@ -311,34 +311,34 @@ static void borg_notice_player(void)
 	borg_skill[BI_BLOWS] = 1;
 
 	/* Base infravision (purely racial) */
-	borg_skill[BI_INFRA] = rb_ptr->infra;
+	bp_ptr->see_infra = rb_ptr->infra;
 
 	/* Base skill -- disarming */
-	borg_skill[BI_DIS] = rb_ptr->r_dis + cb_ptr->c_dis;
+	bp_ptr->skill_dis = rb_ptr->r_dis + cb_ptr->c_dis;
 
 	/* Base skill -- magic devices */
-	borg_skill[BI_DEV] = rb_ptr->r_dev + cb_ptr->c_dev;
+	bp_ptr->skill_dev = rb_ptr->r_dev + cb_ptr->c_dev;
 
 	/* Base skill -- saving throw */
-	borg_skill[BI_SAV] = rb_ptr->r_sav + cb_ptr->c_sav;
+	bp_ptr->skill_sav = rb_ptr->r_sav + cb_ptr->c_sav;
 
 	/* Base skill -- stealth */
-	borg_skill[BI_STL] = rb_ptr->r_stl + cb_ptr->c_stl;
+	bp_ptr->skill_stl = rb_ptr->r_stl + cb_ptr->c_stl;
 
 	/* Base skill -- searching ability */
-	borg_skill[BI_SRCH] = rb_ptr->r_sns + cb_ptr->c_sns;
+	bp_ptr->skill_sns = rb_ptr->r_sns + cb_ptr->c_sns;
 
 	/* Base skill -- searching frequency */
-	borg_skill[BI_SRCHFREQ] = rb_ptr->r_fos + cb_ptr->c_fos;
+	bp_ptr->skill_fos = rb_ptr->r_fos + cb_ptr->c_fos;
 
 	/* Base skill -- combat (normal) */
-	borg_skill[BI_THN] = rb_ptr->r_thn + cb_ptr->c_thn;
+	bp_ptr->skill_thn = rb_ptr->r_thn + cb_ptr->c_thn;
 
 	/* Base skill -- combat (shooting) */
-	borg_skill[BI_THB] = rb_ptr->r_thb + cb_ptr->c_thb;
+	bp_ptr->skill_thb = rb_ptr->r_thb + cb_ptr->c_thb;
 
 	/* Base skill -- combat (throwing) */
-	borg_skill[BI_THT] = rb_ptr->r_thb + cb_ptr->c_thb;
+	bp_ptr->skill_tht = rb_ptr->r_thb + cb_ptr->c_thb;
 
 	/* Racial Skills */
 
@@ -467,21 +467,21 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		bp_ptr->flags3 |= l_ptr->kn_flags3;
 
 		/* Affect infravision */
-		if (l_ptr->kn_flags1 & TR1_INFRA) borg_skill[BI_INFRA] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_INFRA) bp_ptr->see_infra += l_ptr->pval;
 
 		/* Affect stealth */
-		if (l_ptr->kn_flags1 & TR1_STEALTH) borg_skill[BI_STL] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_STEALTH) bp_ptr->skill_stl += l_ptr->pval;
 
 		/* Affect searching ability (factor of five) */
-		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCH] +=
+		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_sns +=
 				l_ptr->pval * 5;
 
 		/* Affect searching frequency (factor of five) */
-		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCHFREQ] +=
+		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_fos +=
 				(l_ptr->pval * 5);
 
 		/* Affect digging (factor of 20) */
-		if (l_ptr->kn_flags1 & TR1_TUNNEL) borg_skill[BI_DIG] +=
+		if (l_ptr->kn_flags1 & TR1_TUNNEL) bp_ptr->skill_dig +=
 				l_ptr->pval * 20;
 
 		/* Affect speed */
@@ -920,7 +920,7 @@ static void borg_notice_weapon(int hold, int extra_blows)
 		if (borg_skill[BI_BLOWS] < 1) borg_skill[BI_BLOWS] = 1;
 
 		/* Boost digging skill by weapon weight */
-		borg_skill[BI_DIG] += (l_ptr->weight / 10);
+		bp_ptr->skill_dig += (l_ptr->weight / 10);
 	}
 
 	/* priest weapon penalty for non-blessed edged weapons */
@@ -949,55 +949,54 @@ static void borg_notice_weapon(int hold, int extra_blows)
 static void borg_notice_skills(void)
 {
 	/* Affect Skill -- stealth (bonus one) */
-	borg_skill[BI_STL] += 1;
+	bp_ptr->skill_stl += 1;
 
 	/* Affect Skill -- disarming (DEX and INT) */
-	borg_skill[BI_DIS] += adj_dex_dis[my_stat_ind[A_DEX]];
-	borg_skill[BI_DIS] += adj_int_dis[my_stat_ind[A_INT]];
+	bp_ptr->skill_dis += adj_dex_dis[my_stat_ind[A_DEX]];
+	bp_ptr->skill_dis += adj_int_dis[my_stat_ind[A_INT]];
 
 	/* Affect Skill -- magic devices (INT) */
-	borg_skill[BI_DEV] += adj_int_dev[my_stat_ind[A_INT]];
+	bp_ptr->skill_dev += adj_int_dev[my_stat_ind[A_INT]];
 
 	/* Affect Skill -- saving throw (WIS) */
-	borg_skill[BI_SAV] += adj_wis_sav[my_stat_ind[A_WIS]];
+	bp_ptr->skill_sav += adj_wis_sav[my_stat_ind[A_WIS]];
 
 	/* Affect Skill -- digging (STR) */
-	borg_skill[BI_DIG] += adj_str_dig[my_stat_ind[A_STR]];
-
+	bp_ptr->skill_dig += adj_str_dig[my_stat_ind[A_STR]];
 
 	/* Affect Skill -- disarming (Level, by Class) */
-	borg_skill[BI_DIS] += (cb_ptr->x_dis * bp_ptr->max_lev / 10);
+	bp_ptr->skill_dis += (cb_ptr->x_dis * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
-	borg_skill[BI_DEV] += (cb_ptr->x_dev * bp_ptr->max_lev / 10);
+	bp_ptr->skill_dev += (cb_ptr->x_dev * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- saving throw (Level, by Class) */
-	borg_skill[BI_SAV] += (cb_ptr->x_sav * bp_ptr->max_lev / 10);
+	bp_ptr->skill_sav += (cb_ptr->x_sav * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- stealth (Level, by Class) */
-	borg_skill[BI_STL] += (cb_ptr->x_stl * bp_ptr->max_lev / 10);
+	bp_ptr->skill_stl += (cb_ptr->x_stl * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- search ability (Level, by Class) */
-	borg_skill[BI_SRCH] += (cb_ptr->x_sns * bp_ptr->max_lev / 10);
+	bp_ptr->skill_sns += (cb_ptr->x_sns * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	borg_skill[BI_SRCHFREQ] += (cb_ptr->x_fos * bp_ptr->max_lev / 10);
+	bp_ptr->skill_fos += (cb_ptr->x_fos * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-	borg_skill[BI_THN] += (cb_ptr->x_thn * bp_ptr->max_lev / 10);
+	bp_ptr->skill_thn += (cb_ptr->x_thn * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	borg_skill[BI_THB] += (cb_ptr->x_thb * bp_ptr->max_lev / 10);
+	bp_ptr->skill_thb += (cb_ptr->x_thb * bp_ptr->max_lev / 10);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
-	borg_skill[BI_THT] += (cb_ptr->x_thb * bp_ptr->max_lev / 10);
+	bp_ptr->skill_tht += (cb_ptr->x_thb * bp_ptr->max_lev / 10);
 
 	/* Limit Skill -- stealth from 0 to 30 */
-	if (borg_skill[BI_STL] > 30) borg_skill[BI_STL] = 30;
-	if (borg_skill[BI_STL] < 0) borg_skill[BI_STL] = 0;
+	if (bp_ptr->skill_stl > 30) bp_ptr->skill_stl = 30;
+	if (bp_ptr->skill_stl < 0) bp_ptr->skill_stl = 0;
 
 	/* Limit Skill -- digging from 1 up */
-	if (borg_skill[BI_DIG] < 1) borg_skill[BI_DIG] = 1;
+	if (bp_ptr->skill_dig < 1) bp_ptr->skill_dig = 1;
 }
 
 
@@ -1601,7 +1600,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 	{
 		case SV_ROD_IDENTIFY:
 		{
-			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			if (bp_ptr->skill_dev - k_ptr->level > 7)
 			{
 				bp_ptr->able.id += number * 100;
 			}
@@ -1615,7 +1614,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_RECALL:
 		{
 			/* Don't count on it if I suck at activations */
-			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			if (bp_ptr->skill_dev - k_ptr->level > 7)
 			{
 				bp_ptr->recall += number * 100;
 			}
@@ -1649,7 +1648,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_SPEED:
 		{
 			/* Don't count on it if I suck at activations */
-			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			if (bp_ptr->skill_dev - k_ptr->level > 7)
 			{
 				bp_ptr->able.speed += number * 100;
 			}
@@ -1670,7 +1669,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		{
 			/* only +2 per rod because of long charge time. */
 			/* Don't count on it if I suck at activations */
-			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			if (bp_ptr->skill_dev - k_ptr->level > 7)
 			{
 				bp_ptr->able.heal += number * 2;
 			}
@@ -1695,7 +1694,7 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 	 * Staves should not be carried to Morgoth, he drains
 	 * them to heal himself- not good at all
 	 */
-	if ((bp_ptr->max_depth >= 99) && !borg_skill[BI_KING])
+	if ((bp_ptr->max_depth >= 99) && !bp_ptr->winner)
 	{
 		/* skip these */
 		return;
@@ -1916,7 +1915,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			if (l_ptr->kn_flags3 & TR3_CURSED) break;
 
 			/* Do not carry if weak, won't be able to dig anyway */
-			if (borg_skill[BI_DIG] < 30) break;
+			if (bp_ptr->skill_dig < 30) break;
 
 			amt_digger += number;
 			break;
@@ -2392,7 +2391,7 @@ static void borg_notice_aux2(void)
 		bp_ptr->food -= 1000;
 
 	/*
-	 * Correct BI_ENCUMBERD from total weight to the degree
+	 * Correct bp_ptr->encumber from total weight to the degree
 	 * of being overweight.
 	 */
 	/* Extract the "weight limit" (in tenth pounds) */
@@ -2401,11 +2400,11 @@ static void borg_notice_aux2(void)
 	/* over or under the limit */
 	if (bp_ptr->weight > carry_capacity)
 	{
-		borg_skill[BI_ENCUMBERD] = (bp_ptr->weight - carry_capacity);
+		bp_ptr->encumber = (bp_ptr->weight - carry_capacity);
 	}
 	else
 	{
-		borg_skill[BI_ENCUMBERD] = 0;
+		bp_ptr->encumber = 0;
 	}
 }
 
