@@ -25,6 +25,7 @@ proc bgerror {err} {
 
 	global Angband
 	global errorInfo
+	global ErrorText
 
 	set info $errorInfo
 
@@ -48,6 +49,8 @@ proc bgerror {err} {
 
 	catch {
 		puts $fileId "***** ZAngband"
+		puts $fileId $ErrorText
+		puts $fileId "\n***** Last Stack:\n"
 		puts $fileId $info
 		puts $fileId ""
 	}
@@ -71,6 +74,7 @@ proc HandleError {err {prompt ""}} {
 
 	global Angband
 	global errorInfo
+	global ErrorText
 
 	set stack $errorInfo
 
@@ -97,6 +101,8 @@ proc HandleError {err {prompt ""}} {
 	} else {
 		catch {
 			puts $fileId "***** ZAngband"
+			puts $fileId $ErrorText
+			puts $fileId "\n***** Last Stack:\n"
 			puts $fileId $stack
 			puts $fileId ""
 		}

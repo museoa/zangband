@@ -48,6 +48,9 @@ proc traceflush {text} {
 
 	global traceId
 	global traceText
+	global ErrorText
+	
+	append ErrorText $traceText
 
 	$text insert end $traceText
 	scan [$text index end] %d.%d line char
@@ -116,6 +119,7 @@ proc tracesetup {} {
 	global errorInfo
 	global traceInfo
 	global traceText
+	global ErrorText
 
 	tracewindow
 
@@ -125,6 +129,7 @@ proc tracesetup {} {
 	set traceId ""
 	set traceInfo ""
 	set traceText ""
+	set ErrorText ""
 
 	$text insert end "# IGNORE errors about tclIndex. It is okay.\n"
 	$text insert end "# (If it is not okay, then ignore this message. ;-\})\n\n"
