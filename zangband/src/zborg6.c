@@ -4351,7 +4351,7 @@ extern int borg_attack_aux_thrust(void)
  *
  * Warning -- This will only work for locations on the current panel
  */
-bool borg_target(int y, int x)
+static bool borg_target(int x, int y)
 {
 	int x1, y1, x2, y2;
 
@@ -4405,84 +4405,6 @@ bool borg_target(int y, int x)
 	/* Success */
 	return (TRUE);
 }
-
-/*
- * Mark spot along the target path a wall.
- * This will mark the unknown squares as a wall.  This might not be
- * the wall we ran into but also might be.
- *
- * Warning -- This will only work for locations on the current panel
- */
-bool borg_target_unknown_wall(int y, int x)
-{
-	int n_x, n_y;
-	bool found = FALSE;
-	bool y_hall = FALSE;
-	bool x_hall = FALSE;
-
-	borg_note(format("# Perhaps wall near targetted location (%d,%d)", x, y));
-
-	/* Determine "path" */
-	n_x = c_x;
-	n_y = c_y;
-
-	/* check for 'in a hall' x axis */
-	/* This check is for this: */
-	/*
-	 *      x
-	 *    ..@..
-	 *      x
-	 *
-	 * 'x' being 'not a floor' and '.' being a floor.
-	 */
-
-	if (borg_cave_floor_bold(c_y + 1, c_x) &&
-		borg_cave_floor_bold(c_y + 2, c_x) &&
-		borg_cave_floor_bold(c_y - 1, c_x) &&
-		borg_cave_floor_bold(c_y - 2, c_x) &&
-		!borg_cave_floor_bold(c_y, c_x + 1) &&
-		!borg_cave_floor_bold(c_y, c_x - 1))
-		x_hall = TRUE;
-
-	/* check for 'in a hall' y axis */
-	if (borg_cave_floor_bold(c_y, c_x + 1) &&
-		borg_cave_floor_bold(c_y, c_x + 2) &&
-		borg_cave_floor_bold(c_y, c_x - 1) &&
-		borg_cave_floor_bold(c_y, c_x - 2) &&
-		!borg_cave_floor_bold(c_y + 1, c_x) &&
-		!borg_cave_floor_bold(c_y - 1, c_x))
-		y_hall = TRUE;
-
-	/* Initialise multi-move */
-	borg_mmove_init(c_x, c_y, x, y);
-
-	while (n_x != x && n_y != y)
-	{
-		map_block *mb_ptr;
-
-		/* Bounds checking */
-		if (map_in_bounds(n_x, n_y))
-		{
-			mb_ptr = map_loc(n_x, n_y);
-
-			if (!mb_ptr->feat &&
-				((n_y != c_y) || !y_hall) && ((n_x != c_x) || !x_hall))
-			{
-				borg_note(format
-						  ("# Guessing wall (%d,%d) near target (%d,%d)",
-						   n_x, n_y, x, y));
-				mb_ptr->feat = FEAT_WALL_SOLID;
-				found = TRUE;
-			}
-		}
-
-		/* Calculate the new location */
-		borg_mmove(&n_x, &n_y, c_x, c_y);
-	}
-
-	return found;
-}
-
 
 /*
  * Guess how much damage a spell attack will do to a monster
@@ -5816,7 +5738,7 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 	g_y = borg_temp_y[b_i] + b_o_y;
 
 	/* Target the location */
-	(void)borg_target(g_y, g_x);
+	(void)borg_target(g_x, g_y);
 
 	/* Result */
 	return (b_n);

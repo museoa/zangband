@@ -112,13 +112,11 @@ extern bool borg_flow_dark(bool neer);
  */
 extern bool borg_flow_spastic(bool bored);
 
-extern bool borg_target(int y, int x);
 extern int borg_launch_damage_one(int i, int dam, int typ);
 extern int borg_attack_aux_thrust(void);
 
 
 extern void borg_log_battle(bool);
-extern bool borg_target_unknown_wall(int g_y, int g_x);
 extern bool borg_lite_beam(bool simulation);
 extern bool borg_caution_phase(int emergency, int turns);
 

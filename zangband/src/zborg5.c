@@ -2877,6 +2877,7 @@ void borg_update(void)
 		}
 	}
 
+#if 0
 	/* if we didn't successfully target,
 	   mark the first unknown in the path as a wall
 	   If we mark a wall, let the borg shoot again */
@@ -2889,7 +2890,7 @@ void borg_update(void)
 				successful_target = 2;
 		}
 	}
-
+#endif /* 0 */
 	/*** Handle new levels ***/
 
 	/* Hack -- note new levels */
