@@ -636,8 +636,6 @@ proc NSCharInfoCanvas::SetInfo {oop} {
 			-fill [Value TERM_L_BLUE]
 	}
 
-	# Get hitpoint warning
-	set hitpoint_warn [angband setting set hitpoint_warn]
 
 	# Hit Points
 	set info [angband player hitpoints]
@@ -645,7 +643,7 @@ proc NSCharInfoCanvas::SetInfo {oop} {
 	set max [lindex $info 1]
 	if {$cur >= $max} {
 		set fill [Value TERM_L_BLUE]
-	} elseif {$cur > ($max * $hitpoint_warn) / 10} {
+	} elseif {$cur > ($max * 5) / 10} {
 		set fill [Value TERM_YELLOW]
 	} else {
 		set fill [Value TERM_L_RED]
@@ -658,7 +656,7 @@ proc NSCharInfoCanvas::SetInfo {oop} {
 	set max [lindex $info 1]
 	if {$cur >= $max} {
 		set fill [Value TERM_L_BLUE]
-	} elseif {$cur > ($max * $hitpoint_warn) / 10} {
+	} elseif {$cur > ($max * 5) / 10} {
 		set fill [Value TERM_YELLOW]
 	} else {
 		set fill [Value TERM_L_RED]

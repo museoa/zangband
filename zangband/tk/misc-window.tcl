@@ -782,11 +782,9 @@ proc NSMiscWindow::UpdateHP_SP_FD {which cur max frac} {
 
 	if {[string compare $which food]} {
 
-		set hitpoint_warn [angband setting set hitpoint_warn]
-	
 		if {$cur >= $max} {
 			set fill [Value TERM_L_GREEN]
-		} elseif {$cur > ($max * $hitpoint_warn) / 10} {
+		} elseif {$cur > ($max * 5) / 10} {
 			set fill [Value TERM_YELLOW]
 		} else {
 			if {$cur < 0} {set cur 0}
