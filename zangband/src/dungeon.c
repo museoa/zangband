@@ -4329,17 +4329,6 @@ void play_game(bool new_game)
 	/* Reset the visual mappings */
 	reset_visuals();
 
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_MONSTER);
-
-	/* Window stuff */
-	window_stuff();
-
-
 	/* Load the "pref" files */
 	load_all_pref_files();
 
@@ -4356,6 +4345,15 @@ void play_game(bool new_game)
 
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_MONSTER);
+	
+	/* Window stuff */
+	window_stuff();
 
 
 	/* Generate a dungeon level if needed */
