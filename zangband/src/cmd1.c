@@ -97,7 +97,7 @@ bool test_hit_fire(int chance, int ac, int vis)
 /*
  * Calculation of critical hits by the player in hand-to-hand combat. -LM-
  */
-static int critical_melee(int chance, int sleeping_bonus, char *m_name,
+static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
                           object_type *o_ptr)
 {
 	int power = (chance + sleeping_bonus);
@@ -568,7 +568,7 @@ void search(void)
 /*
  * Determine if the object can be picked up, and has "=g" in its inscription.
  */
-bool auto_pickup_okay(object_type *o_ptr)
+bool auto_pickup_okay(const object_type *o_ptr)
 {
 	cptr s;
 
@@ -922,7 +922,7 @@ void carry(int pickup)
 
 
 
-static void touch_zap_player(monster_type *m_ptr)
+static void touch_zap_player(const monster_type *m_ptr)
 {
 	int aura_damage;
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1146,8 +1146,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 }
 
 
-static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
-                         bool *fear, char *m_name)
+static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
+                         bool *fear, cptr m_name)
 {
 	int bash_chance, bash_quality, bash_dam;
 
@@ -1266,7 +1266,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
  * The monk special attacks and effects.
  */
 
-static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
+static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 {
 	int special_effect = 0, stun_effect = 0, times = 0;
 	const martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
@@ -2033,7 +2033,7 @@ static void summon_pattern_vortex(int x, int y)
 }
 
 
-static bool pattern_tile(cave_type *c_ptr)
+static bool pattern_tile(const cave_type *c_ptr)
 {
 	return ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
 			(c_ptr->feat >= FEAT_PATTERN_START));

@@ -2148,7 +2148,7 @@ void do_cmd_rest(void)
  *
  * Note that artifacts never break, see the "drop_near()" function.
  */
-static int breakage_chance(object_type *o_ptr)
+static int breakage_chance(const object_type *o_ptr)
 {
 	/* Examine the item type */
 	switch (o_ptr->tval)
@@ -2289,7 +2289,7 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
  *
  * Note that Bows of "Extra Shots" give an extra shot.
  */
-void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
+void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
