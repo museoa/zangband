@@ -12,14 +12,6 @@ class ranger_class(player_class_class):
 				30, 32, 28, 3,  24, 16, 56, 72,
 				8,  10, 10, 0,  0,  0,  30, 45,
 				4, 30, 20)
-	def __str__(self):
-		return self.name
-	def get_player_flags_hook(self, args):
-		pass
-	def destroy_object_hook(self, object):
-		pass
-	def sense_inventory_hook(self, args):
-		pass
 	# Give the ranger a dagger
 	def player_outfit_hook(self, data):
 		dagger = variable.objects.create("dagger")

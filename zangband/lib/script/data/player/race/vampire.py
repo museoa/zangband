@@ -15,8 +15,15 @@ class vampire(player_race):
 				5,
 				0x7FF)
 
-	def __str__(self):
-		return self.name
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_dark = 1
+		player.hold_life = 1
+		player.resist_neth = 1
+		player.resist_cold = 1
+		player.resist_pois = 1
+		player.lite = 1
+		return 1
 
 	def player_outfit_hook(self, data):
 		self.give_satisfy_hunger_scrolls()

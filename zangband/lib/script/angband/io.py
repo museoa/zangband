@@ -69,9 +69,13 @@ message_num = ioc.message_num
 
 message_str = ioc.message_str
 
+message_color = ioc.message_color
+
 message_add = ioc.message_add
 
 msg_print = ioc.msg_print
+
+msg_print_color = ioc.msg_print_color
 
 screen_save = ioc.screen_save
 

@@ -14,6 +14,9 @@ class half_orc(player_race):
 				62,  1, 120,  5,
 				3,
 				0x18D)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_dark = 1
+		return 1
 

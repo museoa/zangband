@@ -14,6 +14,10 @@ class half_ogre(player_race):
 				80,  8, 235, 60,
 				3,
 				0x407)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_dark = 1
+		player.sustain_str = 1
+		return 1
 

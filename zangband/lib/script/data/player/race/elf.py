@@ -14,6 +14,9 @@ class elf(player_race):
 				54,  4, 80,  6,
 				3,
 				0x75F)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_lite = 1
+		return 1
 

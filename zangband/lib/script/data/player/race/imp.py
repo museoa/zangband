@@ -14,6 +14,11 @@ class imp(player_race):
 				64,  1, 120,  5,
 				3,
 				0x7CB)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_fire = 1
+		if player.level > 9:
+			player.see_inv = 1
+		return 1
 

@@ -2146,7 +2146,7 @@ static bool player_birth_aux_1(void)
 	char inp[80];
 
 #ifdef USE_SCRIPT
-	int result
+	int result;
 #endif /* USE_SCRIPT */
 
 	/*** Instructions ***/

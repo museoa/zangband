@@ -14,6 +14,10 @@ class half_titan(player_race):
 				99, 11, 250, 86,
 				0,
 				0x727)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_chaos = 1
+		return 1
+
 

@@ -14,6 +14,10 @@ class nibelung(player_race):
 				40,  3, 78,  3,
 				5,
 				0x40F)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_disen = 1
+		player.resist_dark = 1
+		return 1
 

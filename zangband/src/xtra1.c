@@ -2452,164 +2452,161 @@ void calc_bonuses(void)
 					p_ptr->free_act = TRUE;
 				break;
 		}
-	}
 
-	/***** Races ****/
-	switch (p_ptr->prace)
-	{
-		case RACE_ELF:
-			p_ptr->resist_lite = TRUE;
-			break;
-		case RACE_HOBBIT:
-			p_ptr->sustain_dex = TRUE;
-			break;
-		case RACE_GNOME:
-			p_ptr->free_act = TRUE;
-			break;
-		case RACE_DWARF:
-			p_ptr->resist_blind = TRUE;
-			break;
-		case RACE_HALF_ORC:
-			p_ptr->resist_dark = TRUE;
-			break;
-		case RACE_HALF_TROLL:
-			p_ptr->sustain_str = TRUE;
+		/***** Races ****/
+		switch (p_ptr->prace)
+		{
+			case RACE_ELF:
+				p_ptr->resist_lite = TRUE;
+				break;
+			case RACE_HOBBIT:
+				p_ptr->sustain_dex = TRUE;
+				break;
+			case RACE_GNOME:
+				p_ptr->free_act = TRUE;
+				break;
+			case RACE_DWARF:
+				p_ptr->resist_blind = TRUE;
+				break;
+			case RACE_HALF_ORC:
+				p_ptr->resist_dark = TRUE;
+				break;
+			case RACE_HALF_TROLL:
+				p_ptr->sustain_str = TRUE;
 
-			if (p_ptr->lev > 14)
-			{
-				/* High level trolls heal fast... */
-				p_ptr->regenerate = TRUE;
-
-				if (p_ptr->pclass == CLASS_WARRIOR)
+				if (p_ptr->lev > 14)
 				{
-					p_ptr->slow_digest = TRUE;
-					/* Let's not make Regeneration
-					 * a disadvantage for the poor warriors who can
-					 * never learn a spell that satisfies hunger (actually
-					 * neither can rogues, but half-trolls are not
-					 * supposed to play rogues) */
+					/* High level trolls heal fast... */
+					p_ptr->regenerate = TRUE;
+
+					if (p_ptr->pclass == CLASS_WARRIOR)
+					{
+						p_ptr->slow_digest = TRUE;
+						/* Let's not make Regeneration
+						 * a disadvantage for the poor warriors who can
+						 * never learn a spell that satisfies hunger (actually
+						 * neither can rogues, but half-trolls are not
+						 * supposed to play rogues) */
+					}
 				}
-			}
-			break;
-		case RACE_AMBERITE:
-			p_ptr->sustain_con = TRUE;
-			p_ptr->regenerate = TRUE;  /* Amberites heal fast... */
-			break;
-		case RACE_HIGH_ELF:
-			p_ptr->resist_lite = TRUE;
-			p_ptr->see_inv = TRUE;
-			break;
-		case RACE_BARBARIAN:
-			p_ptr->resist_fear = TRUE;
-			break;
-		case RACE_HALF_OGRE:
-			p_ptr->resist_dark = TRUE;
-			p_ptr->sustain_str = TRUE;
-			break;
-		case RACE_HALF_GIANT:
-			p_ptr->sustain_str = TRUE;
-			p_ptr->resist_shard = TRUE;
-			break;
-		case RACE_HALF_TITAN:
-			p_ptr->resist_chaos = TRUE;
-			break;
-		case RACE_CYCLOPS:
-			p_ptr->resist_sound = TRUE;
-			break;
-		case RACE_YEEK:
-			p_ptr->resist_acid = TRUE;
-			if (p_ptr->lev > 19) p_ptr->immune_acid = TRUE;
-			break;
-		case RACE_KLACKON:
-			p_ptr->resist_conf = TRUE;
-			p_ptr->resist_acid = TRUE;
+				break;
+			case RACE_AMBERITE:
+				p_ptr->sustain_con = TRUE;
+				p_ptr->regenerate = TRUE;  /* Amberites heal fast... */
+				break;
+			case RACE_HIGH_ELF:
+				p_ptr->resist_lite = TRUE;
+				p_ptr->see_inv = TRUE;
+				break;
+			case RACE_BARBARIAN:
+				p_ptr->resist_fear = TRUE;
+				break;
+			case RACE_HALF_OGRE:
+				p_ptr->resist_dark = TRUE;
+				p_ptr->sustain_str = TRUE;
+				break;
+			case RACE_HALF_GIANT:
+				p_ptr->sustain_str = TRUE;
+				p_ptr->resist_shard = TRUE;
+				break;
+			case RACE_HALF_TITAN:
+				p_ptr->resist_chaos = TRUE;
+				break;
+			case RACE_CYCLOPS:
+				p_ptr->resist_sound = TRUE;
+				break;
+			case RACE_YEEK:
+				p_ptr->resist_acid = TRUE;
+				if (p_ptr->lev > 19) p_ptr->immune_acid = TRUE;
+				break;
+			case RACE_KLACKON:
+				p_ptr->resist_conf = TRUE;
+				p_ptr->resist_acid = TRUE;
 
-			/* Klackons become faster */
-			p_ptr->pspeed += (p_ptr->lev) / 10;
-			break;
-		case RACE_KOBOLD:
-			p_ptr->resist_pois = TRUE;
-			break;
-		case RACE_NIBELUNG:
-			p_ptr->resist_disen = TRUE;
-			p_ptr->resist_dark = TRUE;
-			break;
-		case RACE_DARK_ELF:
-			p_ptr->resist_dark = TRUE;
-			if (p_ptr->lev > 19) p_ptr->see_inv = TRUE;
-			break;
-		case RACE_DRACONIAN:
-			p_ptr->ffall = TRUE;
-			if (p_ptr->lev >  4) p_ptr->resist_fire = TRUE;
-			if (p_ptr->lev >  9) p_ptr->resist_cold = TRUE;
-			if (p_ptr->lev > 14) p_ptr->resist_acid = TRUE;
-			if (p_ptr->lev > 19) p_ptr->resist_elec = TRUE;
-			if (p_ptr->lev > 34) p_ptr->resist_pois = TRUE;
-			break;
-		case RACE_MIND_FLAYER:
-			p_ptr->sustain_int = TRUE;
-			p_ptr->sustain_wis = TRUE;
-			if (p_ptr->lev > 14) p_ptr->see_inv = TRUE;
-			if (p_ptr->lev > 29) p_ptr->telepathy = TRUE;
-			break;
-		case RACE_IMP:
-			p_ptr->resist_fire = TRUE;
-			if (p_ptr->lev > 9) p_ptr->see_inv = TRUE;
-			break;
-		case RACE_GOLEM:
-			p_ptr->slow_digest = TRUE;
-			p_ptr->free_act = TRUE;
-			p_ptr->see_inv = TRUE;
-			p_ptr->resist_pois = TRUE;
-			if (p_ptr->lev > 34) p_ptr->hold_life = TRUE;
-			break;
-		case RACE_SKELETON:
-			p_ptr->resist_shard = TRUE;
-			p_ptr->hold_life = TRUE;
-			p_ptr->see_inv = TRUE;
-			p_ptr->resist_pois = TRUE;
-			if (p_ptr->lev > 9) p_ptr->resist_cold = TRUE;
-			break;
-		case RACE_ZOMBIE:
-			p_ptr->resist_neth = TRUE;
-			p_ptr->hold_life = TRUE;
-			p_ptr->see_inv = TRUE;
-			p_ptr->resist_pois = TRUE;
-			p_ptr->slow_digest = TRUE;
-			if (p_ptr->lev > 4) p_ptr->resist_cold = TRUE;
-			break;
-		case RACE_VAMPIRE:
-			p_ptr->resist_dark = TRUE;
-			p_ptr->hold_life = TRUE;
-			p_ptr->resist_neth = TRUE;
-			p_ptr->resist_cold = TRUE;
-			p_ptr->resist_pois = TRUE;
-			p_ptr->lite = TRUE;
-			break;
-		case RACE_SPECTRE:
-			p_ptr->resist_neth = TRUE;
-			p_ptr->hold_life = TRUE;
-			p_ptr->see_inv = TRUE;
-			p_ptr->resist_pois = TRUE;
-			p_ptr->slow_digest = TRUE;
-			p_ptr->resist_cold = TRUE;
-			p_ptr->pass_wall = TRUE;
-			if (p_ptr->lev > 34) p_ptr->telepathy = TRUE;
-			break;
-		case RACE_SPRITE:
-			p_ptr->ffall = TRUE;
-			p_ptr->resist_lite = TRUE;
+				/* Klackons become faster */
+				p_ptr->pspeed += (p_ptr->lev) / 10;
+				break;
+			case RACE_KOBOLD:
+				p_ptr->resist_pois = TRUE;
+				break;
+			case RACE_NIBELUNG:
+				p_ptr->resist_disen = TRUE;
+				p_ptr->resist_dark = TRUE;
+				break;
+			case RACE_DARK_ELF:
+				p_ptr->resist_dark = TRUE;
+				if (p_ptr->lev > 19) p_ptr->see_inv = TRUE;
+				break;
+			case RACE_DRACONIAN:
+				p_ptr->ffall = TRUE;
+				if (p_ptr->lev >  4) p_ptr->resist_fire = TRUE;
+				if (p_ptr->lev >  9) p_ptr->resist_cold = TRUE;
+				if (p_ptr->lev > 14) p_ptr->resist_acid = TRUE;
+				if (p_ptr->lev > 19) p_ptr->resist_elec = TRUE;
+				if (p_ptr->lev > 34) p_ptr->resist_pois = TRUE;
+				break;
+			case RACE_MIND_FLAYER:
+				p_ptr->sustain_int = TRUE;
+				p_ptr->sustain_wis = TRUE;
+				if (p_ptr->lev > 14) p_ptr->see_inv = TRUE;
+				if (p_ptr->lev > 29) p_ptr->telepathy = TRUE;
+				break;
+			case RACE_IMP:
+				p_ptr->resist_fire = TRUE;
+				if (p_ptr->lev > 9) p_ptr->see_inv = TRUE;
+				break;
+			case RACE_GOLEM:
+				p_ptr->slow_digest = TRUE;
+				p_ptr->free_act = TRUE;
+				p_ptr->see_inv = TRUE;
+				p_ptr->resist_pois = TRUE;
+				if (p_ptr->lev > 34) p_ptr->hold_life = TRUE;
+				break;
+			case RACE_SKELETON:
+				p_ptr->resist_shard = TRUE;
+				p_ptr->hold_life = TRUE;
+				p_ptr->see_inv = TRUE;
+				p_ptr->resist_pois = TRUE;
+				if (p_ptr->lev > 9) p_ptr->resist_cold = TRUE;
+				break;
+			case RACE_ZOMBIE:
+				p_ptr->resist_neth = TRUE;
+				p_ptr->hold_life = TRUE;
+				p_ptr->see_inv = TRUE;
+				p_ptr->resist_pois = TRUE;
+				p_ptr->slow_digest = TRUE;
+				if (p_ptr->lev > 4) p_ptr->resist_cold = TRUE;
+				break;
+			case RACE_VAMPIRE:
+				p_ptr->resist_dark = TRUE;
+				p_ptr->hold_life = TRUE;
+				p_ptr->resist_neth = TRUE;
+				p_ptr->resist_cold = TRUE;
+				p_ptr->resist_pois = TRUE;
+				p_ptr->lite = TRUE;
+				break;
+			case RACE_SPECTRE:
+				p_ptr->resist_neth = TRUE;
+				p_ptr->hold_life = TRUE;
+				p_ptr->see_inv = TRUE;
+				p_ptr->resist_pois = TRUE;
+				p_ptr->slow_digest = TRUE;
+				p_ptr->resist_cold = TRUE;
+				p_ptr->pass_wall = TRUE;
+				if (p_ptr->lev > 34) p_ptr->telepathy = TRUE;
+				break;
+			case RACE_SPRITE:
+				p_ptr->ffall = TRUE;
+				p_ptr->resist_lite = TRUE;
 
-			/* Sprites become faster */
-			p_ptr->pspeed += p_ptr->lev / 10;
-			break;
-		case RACE_BEASTMAN:
-			p_ptr->resist_conf = TRUE;
-			p_ptr->resist_sound = TRUE;
-			break;
-		default:
-			/* Do nothing */
-			;
+				/* Sprites become faster */
+				p_ptr->pspeed += p_ptr->lev / 10;
+				break;
+			case RACE_BEASTMAN:
+				p_ptr->resist_conf = TRUE;
+				p_ptr->resist_sound = TRUE;
+				break;
+		}
 	}
 
 	/* Hack -- apply racial/class stat maxes */

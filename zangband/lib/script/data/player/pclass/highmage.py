@@ -12,14 +12,7 @@ class highmage_class(player_class_class):
 				30, 36, 30, 2,  16, 20, 34, 20,
 				7,  13, 9,  0,  0,  0,  15, 15,
 				0, 30, 12)
-	def __str__(self):
-		return self.name
-	def get_player_flags_hook(self, args):
-		pass
-	def destroy_object_hook(self, object):
-		pass
-	def sense_inventory_hook(self, args):
-		pass
+
 	def player_outfit_hook(self, data):
 		dagger = variable.objects.create("dagger")
 		player.give(dagger)

@@ -63,6 +63,7 @@ class player_class_class(player_class):
 
 		events.sense_inventory.append(self)
 		events.player_outfit.append(self)
+		events.get_player_flags.append(self)
 
 	def get_beam_chance(self):
 		from variable import player
@@ -80,4 +81,7 @@ class player_class_class(player_class):
 
 	def player_outfit_hook(self, data):
 		return 1
+
+	def __str__(self):
+		return self.name
 

@@ -14,6 +14,11 @@ class dark_elf(player_race):
 				54,  4, 80,  6,
 				5,
 				0x7DF)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_dark = 1
+		if player.level > 19:
+			player.see_inv = 1
+		return 1
 

@@ -15,6 +15,10 @@ class amberite(player_race, monster.amberite):
 				78,  6, 180, 15,
 				0,
 				0x7FF)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.sustain_con = 1
+		player.regenerate = 1
+		return 1
 

@@ -14,6 +14,9 @@ class gnome(player_race):
 				39,  3, 75,  3,
 				4,
 				0x60F)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.free_act = 1
+		return 1
 

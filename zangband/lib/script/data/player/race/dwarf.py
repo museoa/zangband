@@ -14,6 +14,9 @@ class dwarf(player_race):
 				46,  3, 120, 10,
 				5,
 				0x005)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_blind = 1
+		return 1
 

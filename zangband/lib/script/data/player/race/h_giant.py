@@ -14,6 +14,10 @@ class half_giant(player_race):
 				80, 10, 240, 64,
 				3,
 				0x011)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.sustain_str = 1
+		player.resist_shard = 1
+		return 1
 

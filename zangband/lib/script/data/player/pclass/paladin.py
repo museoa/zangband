@@ -12,14 +12,6 @@ class paladin_class(player_class_class):
 				20, 24, 26, 1,  12, 2, 68, 40,
 				7,  10, 11, 0,  0,  0,  35, 30,
 				6, 35, 20)
-	def __str__(self):
-		return self.name
-	def get_player_flags_hook(self, args):
-		pass
-	def destroy_object_hook(self, object):
-		pass
-	def sense_inventory_hook(self, args):
-		pass
 	def player_outfit_hook(self, data):
 		sword = variable.objects.create("broad sword")
 		player.give(sword)

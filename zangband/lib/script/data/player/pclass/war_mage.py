@@ -12,14 +12,6 @@ class warrior_mage_class(player_class_class):
 				30, 30, 28, 2,  18, 16, 50, 25,
 				7,  10,  9, 0,  0,  0,  20, 20,
 				4, 50, 20)
-	def __str__(self):
-		return self.name
-	def get_player_flags_hook(self, args):
-		pass
-	def destroy_object_hook(self, object):
-		pass
-	def sense_inventory_hook(self, args):
-		pass
 	def player_outfit_hook(self, data):
 		sword = variable.objects.create("short sword")
 		player.give(sword)

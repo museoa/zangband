@@ -15,8 +15,15 @@ class skeleton(player_race):
 				2,
 				0x70F)
 
-	def __str__(self):
-		return self.name
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_shard = 1
+		player.hold_life = 1
+		player.see_inv = 1
+		player.resist_pois = 1
+		if player.level > 9:
+			player.resist_cold = 1
+		return 1
 
 	def player_outfit_hook(self, data):
 		self.give_satisfy_hunger_scrolls()

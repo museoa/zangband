@@ -14,8 +14,6 @@ class warrior_class(player_class_class):
 				12, 7,  10, 0,  0,  0,  45, 45,
 				9,  0, 20)
 		events.destroy_object.append(self)
-	def __str__(self):
-		return self.name
 	def get_player_flags_hook(self, args):
 		if player.level > 29:
 			player.resist_fear = 1

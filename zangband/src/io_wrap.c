@@ -499,8 +499,10 @@ extern const char *quark_str(s16b );
 extern s16b quark_add(const char *);
 extern s16b message_num();
 extern const char *message_str(int );
-extern void message_add(const char *);
+extern byte message_color(int );
+extern void message_add(const char *,byte );
 extern void msg_print(const char *);
+extern void msg_print_color(byte ,const char *);
 extern void screen_save();
 extern void screen_load();
 extern void c_put_str(byte ,const char *,int ,int );
@@ -979,13 +981,26 @@ static PyObject *_wrap_message_str(PyObject *self, PyObject *args) {
     return _resultobj;
 }
 
+static PyObject *_wrap_message_color(PyObject *self, PyObject *args) {
+    int  _arg0;
+    PyObject  *_resultobj;
+    byte  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"i:message_color",&_arg0)) 
+        return NULL;
+    _result = (byte )message_color(_arg0);
+    _resultobj = Py_BuildValue("b",_result);
+    return _resultobj;
+}
+
 static PyObject *_wrap_message_add(PyObject *self, PyObject *args) {
     PyObject  *_resultobj;
+    byte  _arg1;
     char  *_arg0;
     self = self;
-    if(!PyArg_ParseTuple(args,"s:message_add",&_arg0)) 
+    if(!PyArg_ParseTuple(args,"sb:message_add",&_arg0,&_arg1)) 
         return NULL;
-    message_add(_arg0);
+    message_add(_arg0,_arg1);
     Py_INCREF(Py_None);
     _resultobj = Py_None;
     return _resultobj;
@@ -998,6 +1013,19 @@ static PyObject *_wrap_msg_print(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"s:msg_print",&_arg0)) 
         return NULL;
     msg_print(_arg0);
+    Py_INCREF(Py_None);
+    _resultobj = Py_None;
+    return _resultobj;
+}
+
+static PyObject *_wrap_msg_print_color(PyObject *self, PyObject *args) {
+    PyObject  *_resultobj;
+    byte  _arg0;
+    char  *_arg1;
+    self = self;
+    if(!PyArg_ParseTuple(args,"bs:msg_print_color",&_arg0,&_arg1)) 
+        return NULL;
+    msg_print_color(_arg0,_arg1);
     Py_INCREF(Py_None);
     _resultobj = Py_None;
     return _resultobj;
@@ -2102,8 +2130,10 @@ static PyMethodDef iocMethods[] = {
 	 { "c_put_str", _wrap_c_put_str, METH_VARARGS },
 	 { "screen_load", _wrap_screen_load, METH_VARARGS },
 	 { "screen_save", _wrap_screen_save, METH_VARARGS },
+	 { "msg_print_color", _wrap_msg_print_color, METH_VARARGS },
 	 { "msg_print", _wrap_msg_print, METH_VARARGS },
 	 { "message_add", _wrap_message_add, METH_VARARGS },
+	 { "message_color", _wrap_message_color, METH_VARARGS },
 	 { "message_str", _wrap_message_str, METH_VARARGS },
 	 { "message_num", _wrap_message_num, METH_VARARGS },
 	 { "quark_add", _wrap_quark_add, METH_VARARGS },

@@ -14,6 +14,11 @@ class yeek(player_race):
 				50,  3, 75,  3,
 				2,
 				0x60F)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_acid = 1
+		if player.level > 19:
+			player.immune_acid = 1
+		return 1
 

@@ -14,6 +14,9 @@ class hobbit(player_race):
 				33,  3, 50,  3,
 				4,
 				0x40B)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.sustain_dex = 1
+		return 1
 

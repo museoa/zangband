@@ -12,14 +12,6 @@ class mindcrafter_class(player_class_class):
 				30, 30, 30, 3,  22, 16, 50, 40,
 				10, 10, 10, 0,   0,  0, 20, 30,
 				2, 25, 20)
-	def __str__(self):
-		return self.name
-	def get_player_flags_hook(self, args):
-		pass
-	def destroy_object_hook(self, object):
-		pass
-	def sense_inventory_hook(self, args):
-		pass
 	def player_outfit_hook(self, data):
 		potion = variable.objects.create("potion of restore mana")
 		player.give(potion)

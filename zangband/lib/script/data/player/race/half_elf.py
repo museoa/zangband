@@ -14,6 +14,4 @@ class half_elf(player_race):
 				62,  6, 100, 10,
 				2,
                 0x7FF)
-	def __str__(self):
-		return self.name
 

@@ -14,6 +14,4 @@ class human(player_race):
 				66,  4, 150, 20,
 				0,
 				0x7FF)
-	def __str__(self):
-		return self.name
 

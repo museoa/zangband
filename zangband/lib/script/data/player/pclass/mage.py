@@ -54,14 +54,6 @@ class mage_class(spellcaster_mage_class, player_class_class):
 				7,  13, 9,  0,  0,  0,  15, 15,
 				0, 30, 15)
 		spellcaster_mage_class.__init__(self)
-	def __str__(self):
-		return self.name
-	def get_player_flags_hook(self, args):
-		pass
-	def destroy_object_hook(self, object):
-		pass
-	def sense_inventory_hook(self, args):
-		pass
 
 	# Give the player a dagger
 	def player_outfit_hook(self, data):

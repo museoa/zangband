@@ -63,7 +63,7 @@ class player_race(angband.prace.player_race):
 
 		from variable import events
 		events.player_outfit.append(self)
-		events.save_game.append(self)
+		events.get_player_flags.append(self)
 
 	def player_outfit_hook(self, data):
 		self.give_food_rations()
@@ -92,17 +92,9 @@ class player_race(angband.prace.player_race):
 		lite.pval = rand_range(3, 7) * 500
 		variable.player.give(lite)
 
-	# Make sure the constructor gets called when unpickling
-	def __getinitargs__(self):
-		return ()
-
 	def get_player_flags_hook(self, args):
 		return 1
 
-	def save_game_hook(self):
-		return ("race", self)
-
-	# Make sure the constructor gets called when unpickling
-	def __getinitargs__(self):
-		return ()
+	def __str__(self):
+		return self.name
 

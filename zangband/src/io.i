@@ -63,8 +63,10 @@ extern cptr quark_str(s16b num);
 extern s16b quark_add(cptr str);
 extern s16b message_num(void);
 extern cptr message_str(int age);
-extern void message_add(cptr msg);
+extern byte message_color(int age);
+extern void message_add(cptr msg, byte attr);
 extern void msg_print(cptr msg);
+extern void msg_print_color(byte attr, cptr msg);
 #ifndef SWIG
 extern void msg_format(cptr fmt, ...);
 #endif /* SWIG */

@@ -14,6 +14,9 @@ class cyclops(player_race):
 				80,  8, 235, 60,
 				1,
 				0x005)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_sound = 1
+		return 1
 

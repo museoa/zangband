@@ -14,6 +14,22 @@ class half_troll(player_race):
 				84,  8, 225, 40,
 				3,
 				0x005)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.sustain_str = 1
+
+		if player.level > 14:
+			# High level trolls heal fast...
+			player.regenerate = 1
+
+			# Let's not make Regeneration
+			# a disadvantage for the poor warriors who can
+			# never learn a spell that satisfies hunger (actually
+			# neither can rogues, but half-trolls are not
+			# supposed to play rogues)
+			if player.p_class.name == "Warrior":
+				player.slow_digest = 1
+
+		return 1
 

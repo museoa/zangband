@@ -14,6 +14,10 @@ class beastman(player_race):
 				61,  6, 120, 15,
 				0,
 				0x7CF)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_conf = 1
+		player.resist_sound = 1
+		return 1
 

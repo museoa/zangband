@@ -14,6 +14,14 @@ class mindflayer(player_race):
 				63,  6, 112, 10,
 				4,
 				0x746)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.sustain_int = 1
+		player.sustain_wis = 1
+		if player.level > 14:
+			player.see_inv = 1
+		if player.level > 29:
+			player.telepathy = 1
+		return 1
 

@@ -14,6 +14,11 @@ class klackon(player_race):
 				54,  3, 70,  4,
 				2,
 				0x011)
-	def __str__(self):
-		return self.name
+
+	def get_player_flags_hook(self, args):
+		from variable import player
+		player.resist_conf = 1
+		player.resist_acid = 1
+		player.pspeed = player.pspeed + player.level / 10
+		return 1
 
