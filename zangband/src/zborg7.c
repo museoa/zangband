@@ -1087,7 +1087,7 @@ static bool borg_enchant_to_a(void)
 	/* Enchant it */
 	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR) ||
-		!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 5, 40))
+		(!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 5, 40)))
 	{
 		/*
 		 * Find out if the prompt is at Inven or Equip by checking if
@@ -1201,7 +1201,7 @@ static bool borg_enchant_to_h(void)
 	/* Enchant it */
 	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT) ||
-		!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 4, 40))
+		(!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 4, 40)))
 		{
 
 		if (inven)
